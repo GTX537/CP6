@@ -955,6 +955,12 @@ using (var scope = app.Services.CreateScope())
     // 须置于 OawfPermissionSeed（及 OawfMenuSeed 的 734 锚定）之后、:1005 回填块之前。「贴点⊆种子」互锁。
     CP6.WebApi.Seed.WorkCalendarConnectorPermissionSeed.EnsureSeeded(db);
 
+    // 普通角色授权放开波 T1：逐租户预置「一般用户」(RoleId=10) + OA 办理最小键集（4 菜单 740/733/735/737 + 8 操作点）。
+    // 洁净部署下各波仅授 admin(RoleId=1)，普通员工无角色可用致 OA 全 403；本种子给每租户开箱即用的办理角色。
+    // 须置于 OawfPermissionSeed（及其三附加种子）之后：依赖菜单 740/733/735/737 与 MenuActions 目录已播种，
+    // RoleAction 挂锚定 MenuId（菜单行须先在）。幂等 insert-only（行存即跳过，admin 经 RolePermView 手工调整不被重置）。
+    CP6.WebApi.Seed.StandardRoleSeed.EnsureSeeded(db);
+
     // 补充：如果已有菜单数据但缺少用户管理菜单，追加插入
     if (!db.Sys_Menus.Any(m => m.MenuId == 107))
     {

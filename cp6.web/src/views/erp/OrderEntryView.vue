@@ -63,8 +63,8 @@
       <div class="btn-row">
         <el-button v-if="store.currentStep > 1" @click="onPrev">{{ t('sales.btn.prev') }}</el-button>
         <el-button v-if="store.currentStep < 3" type="primary" @click="onNext">{{ t('sales.btn.next') }}</el-button>
-        <el-button v-if="canSave" type="success" :loading="saving" @click="onSave">{{ t('sales.btn.save') }}</el-button>
-        <el-button v-if="store.isDelete" type="danger" :loading="saving" @click="onDelete">{{ t('sales.btn.delete') }}</el-button>
+        <el-button v-if="canSave" v-permission="'erp-order:add'" type="success" :loading="saving" @click="onSave">{{ t('sales.btn.save') }}</el-button>
+        <el-button v-if="store.isDelete" v-permission="'erp-order:del'" type="danger" :loading="saving" @click="onDelete">{{ t('sales.btn.delete') }}</el-button>
         <el-button @click="onReset">{{ t('sales.btn.clear') }}</el-button>
       </div>
     </el-card>

@@ -21,10 +21,10 @@
             size="small"
             style="width: 220px"
           />
-          <el-button type="primary" size="small" :loading="batchActing" @click="doBatch(true)">
+          <el-button v-permission="'oa-inbox:approve'" type="primary" size="small" :loading="batchActing" @click="doBatch(true)">
             {{ t('oa.pending.approve') }}
           </el-button>
-          <el-button type="danger" size="small" :loading="batchActing" @click="doBatch(false)">
+          <el-button v-permission="'oa-inbox:approve'" type="danger" size="small" :loading="batchActing" @click="doBatch(false)">
             {{ t('oa.pending.reject') }}
           </el-button>
         </div>

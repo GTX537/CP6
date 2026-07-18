@@ -1,7 +1,7 @@
 <template>
   <div class="flow-trigger-panel">
     <div class="panel-actions">
-      <el-button type="primary" @click="openCreate">{{ t('oa.flowtrigger.new') }}</el-button>
+      <el-button v-permission="'oa-flow-admin:FlowTrigger.Edit'" type="primary" @click="openCreate">{{ t('oa.flowtrigger.new') }}</el-button>
       <el-button :icon="Refresh" circle @click="reload" />
     </div>
 
@@ -17,7 +17,7 @@
       </el-table-column>
       <el-table-column :label="t('oa.flowtrigger.col.enabled')" width="90">
         <template #default="{ row }">
-          <el-switch :model-value="row.enabled" :loading="toggling.has(row.id)"
+          <el-switch v-permission="'oa-flow-admin:FlowTrigger.Edit'" :model-value="row.enabled" :loading="toggling.has(row.id)"
                      @change="(v: boolean | string | number) => toggleEnable(row, v as boolean)" />
         </template>
       </el-table-column>
@@ -29,10 +29,10 @@
       </el-table-column>
       <el-table-column :label="t('oa.flowtrigger.col.actions')" width="280" fixed="right">
         <template #default="{ row }">
-          <el-button link type="primary" @click="openEdit(row)">{{ t('common.edit') }}</el-button>
-          <el-button link type="primary" @click="manualFire(row)">{{ t('oa.flowtrigger.manualFire') }}</el-button>
+          <el-button v-permission="'oa-flow-admin:FlowTrigger.Edit'" link type="primary" @click="openEdit(row)">{{ t('common.edit') }}</el-button>
+          <el-button v-permission="'oa-flow-admin:FlowTrigger.Edit'" link type="primary" @click="manualFire(row)">{{ t('oa.flowtrigger.manualFire') }}</el-button>
           <el-button link @click="openFires(row)">{{ t('oa.flowtrigger.fires') }}</el-button>
-          <el-button v-if="row.triggerType === 2" link type="danger" @click="resetKey(row)">
+          <el-button v-if="row.triggerType === 2" v-permission="'oa-flow-admin:FlowTrigger.Edit'" link type="danger" @click="resetKey(row)">
             {{ t('oa.flowtrigger.resetKey') }}
           </el-button>
         </template>

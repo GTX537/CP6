@@ -17,7 +17,7 @@
         <el-divider direction="vertical" />
         <el-button size="small" :disabled="!canUndo" @click="undo">{{ t('撤销') }}</el-button>
         <el-button size="small" :disabled="!canRedo" @click="redo">{{ t('重做') }}</el-button>
-        <el-button type="primary" size="small" @click="save">{{ t('保存') }}</el-button>
+        <el-button v-permission="'oa-designer:edit'" type="primary" size="small" @click="save">{{ t('保存') }}</el-button>
       </el-space>
     </el-card>
 

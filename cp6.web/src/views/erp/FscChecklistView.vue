@@ -35,7 +35,7 @@
         <el-form-item>
           <el-button type="primary" @click="search" :loading="loading">{{ t('sales.btn.search') }}</el-button>
           <el-button @click="resetQuery">{{ t('sales.btn.clear') }}</el-button>
-          <el-button type="success" :icon="Document" @click="onIssue" :loading="issuing" :disabled="checkedCount === 0">
+          <el-button v-permission="'erp-fsc-checklist:issue'" type="success" :icon="Document" @click="onIssue" :loading="issuing" :disabled="checkedCount === 0">
             {{ t('sales.btn.issue') }}（{{ checkedCount }}）
           </el-button>
         </el-form-item>

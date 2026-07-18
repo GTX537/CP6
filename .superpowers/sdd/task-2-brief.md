@@ -1,19 +1,50 @@
-### Task 2: LocationPublishService.BuildItemAsync 批量化(事务内 7×N→常数次)
+### Task 2-6: v-permission 铺设（每模块一任务，共同规程）
 
-**Files:**
-- Modify: `CP6.Core\Services\Space\LocationPublishService.cs`(`BuildItemAsync:245-297`、`ResolveWarehouseCdAsync:311-322`、三个调用方 `PublishFloorAsync:87-94` / `DeactivateAsync:154` / `RepublishAsync:193`)
-- Test: 既有 LocationPublish 相关测试全绿 + `CP6.Tests` 内新增行为等价测试
+**模块分工与真相源：**
 
-**Interfaces:**
-- Produces: `private sealed class PublishLookup { Dictionary<Guid,Space_Rack> Racks; Dictionary<Guid,Space_Aisle> Aisles; Dictionary<Guid,Space_Zone> Zones; Dictionary<Guid,Space_Floor> Floors; Dictionary<Guid,Space_Site> Sites; }` + `private async Task<PublishLookup> LoadLookupAsync(IReadOnlyCollection<Space_Location> locs, CancellationToken ct)`(按 locs 的 RackId/FloorId 集合五张表各**一次** `Where(x => ids.Contains(x.Id))` 载入)+ `BuildItemAsync(l, op)` 改签名为 `BuildItem(Space_Location l, string op, PublishLookup lk)`(同步,纯查字典)。
+| Task | 模块/视图目录 | 真相源键表 | oracle 测试 |
+|---|---|---|---|
+| T2 | `cp6.web/src/views/oa` + `views/wf` | `docs/seeds/oawf-permission-keys.md` | `OawfPermissionAttributeTests` |
+| T3 | `views/erp` | `docs/seeds/erp-permission-keys.md`（无则 grep docs/seeds erp） | `ErpPermissionAttributeTests` |
+| T4 | `views/mes` | `docs/seeds/mes-*.md` | `MesPermissionAttributeTests` |
+| T5 | `views/fin` | `docs/seeds/fin-*.md`（无则以 oracle 测试内清单为准） | `Fin*PermissionAttributeTests` |
+| T6 | `views/pur` + `views/plan`（PLAN/PUB 前端页在 plan 目录；pub-codegen/pub-seq 若有独立页一并） | `docs/seeds/pur-*.md` + `plan-pub-*.md` | `PurPermissionAttributeTests` + `PlanPubPermissionAttributeTests` |
 
-**要点:** 行为**逐字段等价**——`BuildItem` 产出的 `LocationPublishItem`(含 PathJson 五级路径、WarehouseCd 回退 `Site.WarehouseCd ?? SiteCode`)与旧实现一致;缺挂(rack/floor 为 null)分支语义保持。三个调用方先收集 locs → `LoadLookupAsync` 一次 → 循环内纯内存构建。
+**共同规程（每个任务逐字适用；示例为形态说明，键名以各模块真相源为准）：**
 
-- [ ] **Step 1: 加行为等价测试**:同一楼层 2 库位(1 挂货架满五级、1 只挂楼层),断言 PathJson/WarehouseCd 与既有测试期望一致(若既有测试已覆盖此形态则引用其数据构造,不重复造)
-- [ ] **Step 2: 跑既有 LocationPublish 全部测试确认基线绿**
-- [ ] **Step 3: 重构**(LoadLookupAsync + BuildItem 纯函数化;删 ResolveWarehouseCdAsync 的逐库位查询,并入 lookup;`FirstOrDefaultAsync` 逐条查询全部消灭)
-- [ ] **Step 4: 全量后端测试绿(≥基线)**
-- [ ] **Step 5: Commit + push**(`perf(space): 波5 发布链BuildItem批量化——事务内7×N连查收敛为5表各一次预载`)
+- [ ] **Step 1: 建按钮-键映射清单（先盘后改）**
+
+读真相源键表，得该模块全部 `menu-key:action` 集。逐视图文件扫描**变更动作触发点**：调用 POST/PUT/PATCH/DELETE API 的按钮、菜单项、开关、行内操作链接。产出映射清单（视图文件 → 元素 → 键）写入任务报告。规则：
+1. 键**只取自真相源清单**，与控制器贴点逐字一致；找不到对应键的按钮=该端点未贴键（组件/只读POST豁免面），**不贴指令并在报告豁免小节列明**；
+2. 纯读操作（查询/翻页/导出预览/刷新/展开）不贴；
+3. 入口按钮贴，已被入口守住的对话框内确认按钮不重复贴；
+4. 一个按钮对应多端点取**主动作**的键（报告注明）。
+
+- [ ] **Step 2: 加指令**
+
+WMS 样板形态（`views/wms/StocktakeView.vue:86`）：
+```html
+<el-button v-if="canApprove" v-permission="'wms-stocktake:approve'" type="success" @click="onApprove">
+```
+既有 `v-if` 业务条件保留并列；只加 `v-permission="'<key>'"` 字面量，零脚本/样式/结构改动。
+
+- [ ] **Step 3: 前端三连验证**
+
+```
+cd cp6.web
+npx vue-tsc --noEmit
+npx vitest run
+npm run build
+```
+预期：type-check 零错 / vitest 全绿（基线数在任务报告记录）/ build 过。
+
+- [ ] **Step 4: Commit + push**
+
+```
+git add cp6.web/src/views/<mod>
+git commit -m "feat(web): <MOD> v-permission 铺设——<N>按钮×<M>视图, 键与后端贴点逐字对齐"
+git push
+```
 
 ---
 

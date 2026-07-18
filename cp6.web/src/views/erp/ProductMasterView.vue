@@ -68,12 +68,14 @@
         >{{ t('sales.btn.next') }}</el-button>
         <el-button
           v-if="canSave"
+          v-permission="'erp-product:add'"
           type="success"
           :loading="saving"
           @click="onSave"
         >{{ t('sales.btn.save') }}</el-button>
         <el-button
           v-if="store.isDelete"
+          v-permission="'erp-product:del'"
           type="danger"
           :loading="saving"
           @click="onDelete"

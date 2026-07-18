@@ -1,0 +1,74 @@
+# AI 接手说明
+
+## 当前项目状态
+
+快照日期 2026-07-18。仓库已改为私有，当前分支 `feat/general-role-vperm`，工作基点包含三库 Git LFS 迁移备份。系统不是原型：ERP/MES/WMS、财务、采购、OA/WF、权限、计划和 Space 均有大量生产代码与测试。
+
+## 当前开发优先级
+
+只继续 `docs/superpowers/plans/2026-07-17-general-role-vperm.md`：
+
+1. T4 MES `v-permission`。
+2. T5 FIN `v-permission`。
+3. T6 PUR/PLAN/PUB `v-permission`。
+4. T7 全量验收、合并、部署与一般用户冒烟。
+
+不要重新实现 T1–T3。它们已在 Git 中完成：标准角色、OA/WF 40×17、ERP 39×16。
+
+## 下一步应该继续什么
+
+从 T4 MES 开始：先读 MES 权限键表和反射 oracle，输出按钮映射清单，然后只在 `views/mes` template 中添加权限指令。T4 完成并验证后再进入 FIN，不跨任务混改。
+
+## 最近完成内容
+
+- `ddcfa1ac`：逐租户一般用户 RoleId=10 种子。
+- `15823c38`：OA/WF 前端权限指令。
+- `4a48525e`：ERP 前端权限指令。
+- `b43787e0`：三库验证备份经 Git LFS 固化。
+- `1aac4a5d`：换机恢复入口修正。
+
+## 为什么这样设计
+
+- 后端权限 fail-closed，前端权限仅 UX：即使 DOM/请求被伪造，服务器仍拒绝。
+- 标准角色 insert-only：不覆盖管理员后续手工授权。
+- 权限键从 Controller 贴点、种子和反射 oracle 互锁，防“有贴点无种子导致 admin 403”。
+- WF 归属闸在引擎层：避免不同 Controller 或未来调用方绕过。
+- 当前权限铺设任务限制为 template-only：降低大范围 UX 改造的回归面。
+
+## 哪些地方不能乱改
+
+- WMS 库存移动/台账不变量。
+- WF Token、Task、History 和状态迁移事务。
+- 多租户过滤、TenantId 盖章和权限聚合器。
+- Program.cs 种子执行顺序与幂等语义。
+- Controller 权限贴点、`docs/seeds` 键表与反射测试之间的逐字对应。
+- 数据库历史迁移和已验证备份。
+
+## 哪些地方仍需要重构
+
+- WF SignalR 定向推送。
+- Space rackSeq 完整排序。
+- FIN BudgetLine 版本级并发。
+- PMS/Sys 平台页权限 UX。
+- GR-VP 多端点保存按钮 add/edit 的精细 UX。
+- README/CODEMAP 旧计数刷新。
+
+## AI接手步骤
+
+1. `git status`，确认分支与用户改动。
+2. 读本目录全部 Markdown。
+3. 读当前 GR-VP plan、`docs/seeds` 中目标模块键表、对应权限反射测试。
+4. `git log -20 --oneline`，确认 T1–T3 和迁移提交存在。
+5. 对下一个模块先产出“视图 → 按钮 → 权限键”清单，再改 template。
+6. 不发明键，不给纯读动作贴键，不改 script/style。
+7. 跑 `vue-tsc`、Vitest、build；记录真实基线。
+8. 更新 `PROJECT_STATE.md` 与 `CHANGELOG-AI.md`，等待用户确认后提交。
+
+## 恢复上下文提示词
+
+```text
+请完整阅读 docs/project-memory、README、当前分支最近 30 条 git log，
+再阅读 docs/superpowers/plans/2026-07-17-general-role-vperm.md。
+确认当前 GR-VP 已完成 T1-T3，下一项是 T4 MES。
+先汇报状态、风险和拟修改范围，等我确认后再编码。
+```

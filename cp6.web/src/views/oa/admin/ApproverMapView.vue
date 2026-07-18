@@ -71,8 +71,8 @@ onMounted(async () => { await loadKeys(); await loadRoles(); await loadRows() })
       </el-table-column>
       <el-table-column :label="t('common.operation')" width="140">
         <template #default="{ row }">
-          <el-button link type="primary" size="small" @click="save(row)">{{ t('common.save') }}</el-button>
-          <el-button link type="danger" size="small" @click="del(row)">{{ t('common.delete') }}</el-button>
+          <el-button v-permission="'oa-approver-map:edit'" link type="primary" size="small" @click="save(row)">{{ t('common.save') }}</el-button>
+          <el-button v-permission="'oa-approver-map:del'" link type="danger" size="small" @click="del(row)">{{ t('common.delete') }}</el-button>
         </template>
       </el-table-column>
     </el-table>

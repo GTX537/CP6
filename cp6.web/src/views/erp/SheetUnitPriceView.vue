@@ -38,7 +38,7 @@
             :show-file-list="false"
             accept=".xls,.xlsx"
           >
-            <el-button :icon="Upload" type="primary">{{ t('sales.sup.selectExcel') }}</el-button>
+            <el-button v-permission="'erp-sheet-unit-price:import'" :icon="Upload" type="primary">{{ t('sales.sup.selectExcel') }}</el-button>
           </el-upload>
           <span v-if="selectedFile" class="file-name">{{ selectedFile.name }}</span>
         </el-form-item>
@@ -62,7 +62,7 @@
       <div style="margin-bottom: 8px; display: flex; align-items: center; gap: 12px;">
         <CpTag tone="info">{{ t('sales.list.totalCount', { n: rows.length }) }}</CpTag>
         <el-checkbox v-if="opType === 'register'" v-model="allSelected" @change="onToggleAll">{{ t('sales.sup.allSelect') }}</el-checkbox>
-        <el-button v-if="opType === 'register' && rows.length > 0" type="success" @click="onUpdate" :loading="updating">
+        <el-button v-if="opType === 'register' && rows.length > 0" v-permission="'erp-sheet-unit-price:edit'" type="success" @click="onUpdate" :loading="updating">
           {{ t('sales.btn.update') }}（{{ checkedCount }}）
         </el-button>
         <el-button @click="reset">{{ t('sales.btn.clear') }}</el-button>

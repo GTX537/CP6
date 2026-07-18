@@ -1,68 +1,114 @@
-# Task 2 报告：LocationPublishService.BuildItemAsync 批量化
+# Task 2 报告：OA + WF v-permission 铺设
 
-**分支** feat/space-wave5 · **提交** 52486c7（已 push，与 origin 同步）
+分支 `feat/general-role-vperm`。真相源 `docs/seeds/oawf-permission-keys.md` + oracle `CP6.Tests/OawfPermissionAttributeTests.cs`。
+只加 `v-permission` 模板属性，零脚本/样式/结构/i18n 改动。**40 按钮 × 17 视图**。
 
-（注：本文件此前残留一份无关任务报告，已整体覆盖为本次 Task 2 报告。）
+## 1. 按钮→键映射清单（视图 → 元素 → 键）
 
-## 实现
+### inbox/
+| # | 文件 | 元素 | 键 |
+|---|---|---|---|
+| 1 | inbox/InboxPending.vue | 批量「承认」按钮 doBatch(true) | `oa-inbox:approve` |
+| 2 | inbox/InboxPending.vue | 批量「否认」按钮 doBatch(false) | `oa-inbox:approve` |
+| 3 | inbox/FormDetail.vue | 承认 doAction(true) | `oa-inbox:approve` |
+| 4 | inbox/FormDetail.vue | 否认 doAction(false) | `oa-inbox:approve` |
+| 5 | inbox/FormDetail.vue | 转交入口 transferVisible=true | `oa-inbox:transfer` |
+| 6 | inbox/FormDetail.vue | 退回入口 sendbackVisible=true | `oa-inbox:sendback` |
+| 7 | inbox/InboxDraft.vue | 编辑草稿入口 openEdit | `oa-form-catalog:edit` |
+| 8 | inbox/InboxDraft.vue | 提交草稿 submitDraft | `oa-form-catalog:submit` |
+| 9 | inbox/InboxDraft.vue | 删除草稿 removeDraft | `oa-form-catalog:del` |
 
-将发布链路径解析从「事务内逐库位连查」重构为「一次预载 + 纯内存构建」。
+### catalog/
+| # | 文件 | 元素 | 键 |
+|---|---|---|---|
+| 10 | catalog/FormCatalog.vue | 收藏切换（收藏区卡片） | `oa-form-catalog:favorite` |
+| 11 | catalog/FormCatalog.vue | 收藏切换（分类树卡片） | `oa-form-catalog:favorite` |
+| 12 | catalog/FormInitiate.vue | 存暂存 doSave（draft.save） | `oa-form-catalog:add` |
+| 13 | catalog/FormInitiate.vue | 提交 doSubmit（主动作=submit；先 save 后 submit，取主动作键） | `oa-form-catalog:submit` |
 
-### 新增结构
-- `private sealed class PublishLookup`：Racks/Aisles/Zones/Floors/Sites 五个 `Dictionary<Guid, T>`（init-only）。
-- `private async Task<PublishLookup> LoadLookupAsync(IReadOnlyCollection<Space_Location> locs, CancellationToken ct)`
-  依赖链顺序加载，五张表各**一次** `Where(ids.Contains)`：
-  1. Rack ← locs 的 RackId 集合
-  2. Aisle ← racks 的 AisleId 集合
-  3. Zone ← racks 的 ZoneId 集合
-  4. Floor ← **zones 的 FloorId ∪ locs 的 FloorId**（并集：Path 链走 zone.FloorId，WarehouseCd 回退链走 l.FloorId 冗余列，两链共用同一 Floors/Sites 字典）
-  5. Site ← floors 的 SiteId 集合
-  每级 ids 空集直接跳过该查询。查询次数恒为常数 5，与库位数 N 无关。
+### notification/
+| # | 文件 | 元素 | 键 |
+|---|---|---|---|
+| 14 | notification/NotificationBell.vue | 全部标记已读 handleReadAll | `oa-inbox:read` |
 
-### 改签名
-- `BuildItemAsync(l, op)` → `static LocationPublishItem BuildItem(Space_Location l, string op, PublishLookup lk)`（同步，纯查字典）。
-- `ResolveWarehouseCdAsync(l)` → `static string? ResolveWarehouseCd(Space_Location l, PublishLookup lk)`；E-SPACE-405 长度守卫、`Site.WarehouseCd ?? SiteCode` 回退、无楼层归属返回 null 全部原样保留。
+### settings/
+| # | 文件 | 元素 | 键 |
+|---|---|---|---|
+| 15 | settings/InboxSettings.vue | 新增代理入口 openAddDialog | `oa-settings:delegate` |
+| 16 | settings/InboxSettings.vue | 删除代理 removeDelegate | `oa-settings:delegate` |
+| 17 | settings/InboxSettings.vue | 保存显示偏好 savePref（Pref.Save） | `oa-settings:edit` |
+| 18 | settings/InboxSettings.vue | 保存通知矩阵 saveNotifyMatrix（Pref.Save） | `oa-settings:edit` |
+| 19 | settings/InboxSettings.vue | 重置通知矩阵 resetNotifyMatrix（Pref.Save） | `oa-settings:edit` |
 
-### 三调用方接线
-- `PublishFloorAsync`：批构造后、foreach 前 `var lk = await LoadLookupAsync(locs, default)`；循环内 `BuildItem(l, "UPSERT", lk)`。
-- `DeactivateAsync`：单库位也走统一预载——lookup 在①前置校验前加载一次，供 `ResolveWarehouseCd`（stock 预检）与后续 `BuildItem(l, "DEACTIVATE", lk)` 共用（期间 FloorId/RackId 不变）。
-- `RepublishAsync`：foreach 前加载 `lk`，循环内 `BuildItem(l, "UPSERT", lk)`。
+### admin/
+| # | 文件 | 元素 | 键 |
+|---|---|---|---|
+| 20 | admin/FlowAdmin.vue | 批量改派入口 batchTransferVisible=true | `oa-inbox:batch-transfer` |
+| 21 | admin/FlowAdmin.vue | 流程启停 el-switch toggleEnable | `oa-flow-admin:enable` |
+| 22 | admin/ApproverMapView.vue | 保存行 save（create/update 双端点，取主动作 edit） | `oa-approver-map:edit` |
+| 23 | admin/ApproverMapView.vue | 删除行 del | `oa-approver-map:del` |
+| 24 | admin/WorkCalendar.vue | 导入日本假日 importJp | `oa-work-calendar:Calendar.Edit` |
+| 25 | admin/WorkCalendar.vue | 反转对话框「确定」saveDay（clear/toggle） | `oa-work-calendar:Calendar.Edit` |
+| 26 | admin/FlowTriggerPanel.vue | 新建触发器入口 openCreate | `oa-flow-admin:FlowTrigger.Edit` |
+| 27 | admin/FlowTriggerPanel.vue | 启停 el-switch toggleEnable | `oa-flow-admin:FlowTrigger.Edit` |
+| 28 | admin/FlowTriggerPanel.vue | 编辑入口 openEdit | `oa-flow-admin:FlowTrigger.Edit` |
+| 29 | admin/FlowTriggerPanel.vue | 手动试发 manualFire | `oa-flow-admin:FlowTrigger.Edit` |
+| 30 | admin/FlowTriggerPanel.vue | 重置 key resetKey | `oa-flow-admin:FlowTrigger.Edit` |
+| 31 | admin/WfConnectorPanel.vue | 新建连接器入口 openCreate | `oa-flow-admin:Connector.Edit` |
+| 32 | admin/WfConnectorPanel.vue | 启停 el-switch toggleEnable | `oa-flow-admin:Connector.Edit` |
+| 33 | admin/WfConnectorPanel.vue | 编辑入口 openEdit | `oa-flow-admin:Connector.Edit` |
 
-## 重构前后查询次数
+### designer/
+| # | 文件 | 元素 | 键 |
+|---|---|---|---|
+| 34 | designer/DesignerView.vue | 保存流程定义 doSave | `oa-designer:edit` |
+| 35 | designer/DesignerView.vue | 克隆入口 openCloneDialog（clone=新建 Wf_FlowDef） | `oa-designer:add` |
 
-| 路径 | 旧（事务内 / N 库位） | 新 |
-|---|---|---|
-| BuildItem 路径链 | 每库位最多 5 查（Rack/Aisle/Zone/Floor/Site）= 5×N | 预载 5 表各 1 = 5（含 WarehouseCd 链） |
-| ResolveWarehouseCd | 每库位 2 查（Floor/Site）= 2×N | 并入上面的 5，0 额外 |
-| **合计** | **约 7×N** | **常数 5** |
+### views/wf/
+| # | 文件 | 元素 | 键 |
+|---|---|---|---|
+| 36 | wf/TodoCenter.vue | 办理对话框「驳回」act(false)（Flow.Act） | `oa-inbox:approve` |
+| 37 | wf/TodoCenter.vue | 办理对话框「同意」act(true)（Flow.Act） | `oa-inbox:approve` |
+| 38 | wf/MyApplications.vue | 撤回 withdraw（Task.Withdraw） | `oa-inbox:withdraw` |
+| 39 | wf/designer/FlowDesigner.vue | 保存（旧栈 Flow.SaveDef → Wf_FlowDef） | `oa-designer:edit` |
+| 40 | wf/designer/FormDesigner.vue | 保存（旧栈 Form.SaveDef → Wf_FormDef） | `oa-designer:form-save` |
 
-Deactivate（N=1）：旧 2（预检）+ 最多 5（BuildItem）= 最多 7 → 新 5。
+用到的 22 个资源键均在真相源 §一/§二/§8 及 oracle `ActionVocabulary` 内逐字命中。
 
-## 行为等价性
+## 2. 豁免小节（看似变更但不贴指令的按钮/元素及理由）
 
-`BuildItem` 与旧 `BuildItemAsync` 逐字段等价，缺挂分支语义对齐：
-- aisle 缺失：旧 `aisle?.AisleCode`（null）↔ 新 TryGetValue 失败跳过（保持 null）。
-- site 缺失：旧 `site?.SiteCode`（null）↔ 新 TryGetValue 失败跳过（保持 null）。
-- zone/floor/rack 为 null 各级短路一致。
-- E-SPACE-405 抛出时机仍在循环内、`SaveChangesAsync` 之前——fail-fast 无孤儿性质不变。
+- **catalog/FormInitiate.vue「预览」doPreview** → `ForecastController.Preview`，真相源 §四#1 只读 POST 豁免（归 view，后端未贴键），不贴。
+- **query/FormQuery.vue「查询」onSearch** → `QueryController.Search`，真相源 §四#2 只读 POST 豁免，不贴。
+- **inbox/InboxView.vue「新建」openNewDialog** → 打开占位对话框（模板注释「起草功能后续版本实现」），当前不调任何写端点，无对应键，不贴。
+- **notification/NotificationBell.vue 通知条目点击 handleItemClick** → 语义主体是导航跳转（附带 read 标记），非独立按钮（`<li>`），贴则隐藏整条通知，不贴（已在「全部标记已读」按钮贴 `oa-inbox:read`）。
+- **inbox 行点击 markTaskRead / markCcRead、InboxDone/InboxRunning 行点击** → 行点击=打开详情（附带已读），非按钮、纯读导向，不贴。
+- **admin/ApproverMapView.vue「新增行」addRow** → 仅本地 push 空行，无 API，不贴。
+- **各 Refresh 刷新圈按钮** → 只读刷新，不贴。
+- **designer/DesignerView.vue「校验」doValidateClick、「新建」newFlow** → 纯客户端校验/本地重置，无 API，不贴。
+- **designer/DesignerCanvas.vue（撤销/重做/自动布局/网格/删除选中/调色板拖拽）、NodePropertyPanel.vue（档位/成员增删移位）** → 本地内存 schema 编辑，持久化统一走 DesignerView doSave，不贴。
+- **wf/designer FlowDesigner+FormDesigner（加载/撤销/重做/加节点/连线/删除/加字段/移位/删字段/选项增删）** → 本地画布编辑，持久化走已贴的 save 按钮，不贴。
+- **对话框内确认按钮不重复贴（入口已守）**：TransferDialog/SendBackDialog 确认（入口 FormDetail 转交/退回）、BatchTransferDialog 预览/确认/重试（入口 FlowAdmin 批量改派）、FlowTriggerDialog/WfConnectorDialog 保存（入口 openCreate/openEdit）、InboxSettings confirmAdd（入口 openAddDialog）、InboxDraft saveEdit（入口 openEdit）、DesignerView doClone（入口 openCloneDialog）。
 
-## 测试结果
+### 判定说明
+- **#13 FormInitiate 提交**：doSubmit 依次 `draft.save`(add) + `draft.submit`(submit)，取主动作 submit（§一#11/#33 归并语义）。
+- **#22 ApproverMapView 保存**：单一「保存」按钮据行 id 走 create(add) 或 update(edit) 双端点；取「修改/持久化」主动作 `oa-approver-map:edit`（`oa-approver-map:add` 亦为合法键，此处不额外拆）。
+- **#25 WorkCalendar 保存日**：反转入口是日历单元格 `<div @click>`（贴指令会破坏日历栅格），故按「入口非离散按钮」例外，改在对话框「确定」按钮贴 `Calendar.Edit`（唯一可离散隐藏的实际写按钮）。
 
-- 基线（重构前）：LocationPublishServiceTests 19 passed；全量 1811 passed / 5 skipped。
-- 新增 1 用例 `Publish_MixedMounting_FullFiveLevelAndFloorOnly_PathAndWarehouseCd_Equivalent`：
-  同层一次发布 2 库位——①满五级挂载（Site→Floor→Zone→**Aisle**→Rack，覆盖既有测试从未验的巷道支路 + 坐标 + WarehouseCd 回退）②只挂楼层（RackId=null，五级路径全 null/FloorLevel=0，WarehouseCd 仍走 l.FloorId→Site 回退到 "WH1"）。
-- 重构后：LocationPublishServiceTests 20 passed；**全量 1812 passed / 5 skipped**（≥ 基线 1811/5）。
-- 既有 20 断言零改动（等价性护栏）。5 skipped 为 SpaceSqlIntegrationTests（需 SQL Server，本环境一贯跳过，与本任务无关）。
+## 3. 验证输出
 
-## 改动文件
-- `CP6.Core/Services/Space/LocationPublishService.cs`（PublishLookup + LoadLookupAsync + BuildItem/ResolveWarehouseCd 纯函数化 + 三调用方接线）
-- `CP6.Tests/LocationPublishServiceTests.cs`（新增 1 等价用例）
+- `npx vue-tsc --noEmit` → TSC_EXIT=0（零类型错误）
+- `npx vitest run` → 71 files / 481 tests passed（VITEST_EXIT=0）
+- `npm run build` → built in 9.11s（BUILD_EXIT=0；仅既有 chunk 体积告警，非本波引入）
 
-## 自审
-- 五表恰好各一次查询：已核，每级 ids 空集短路，无 N 相关往返残留。
-- Floors/Sites 并集覆盖 WarehouseCd 链（l.FloorId）：已核，避免只挂楼层库位丢 WarehouseCd。
-- ToDictionary 无重复键风险：ids 均 Distinct，返回行按 PK 唯一。
-- InMemory 事务守卫、事件落库、SignalR 通知时序均未触碰。
+## 4. 自查
 
-## 疑虑
-- 无阻断性疑虑。轻微：新查询在真库为 5 次串行往返（依赖链使然，无法并行），但相较旧 7×N 已是数量级改善，且发布批通常单事务内容量有限。
+- `git diff` 仅 17 个 `.vue`（views/oa 13 + views/wf 4），无 views 外文件。
+- 22 键全部命中 oracle ActionVocabulary + menu-key `^oa-[a-z0-9-]+$`。
+- 无 `<script>`/`<style>` 改动 hunk（全为 `<template>` 属性追加）。
+- 既有 `v-if` 业务条件保留并列（FlowAdmin `v-if="activeTab==='flows'"`、MyApplications `v-if="row.status===0"`、FlowTrigger resetKey `v-if="row.triggerType===2"`）。
+
+## 5. 关注点 / 待议
+
+- **#22 ApproverMap 保存键**：一按钮双端点（create=add / update=edit），选 edit 为主动作；若审查倾向 add 可单点改（不影响后端 fail-closed）。
+- **wf/ 旧栈页可达性**：TodoCenter/MyApplications 路由已 redirect 至 /oa/inbox；FlowDesigner/FormDesigner 为收编旧设计器（Sys_Menu 741/742，权限仍锚 738）。指令 UX-only 且 fail-open，不可达时无害，已按 views/wf 在范围内一并铺设。
+- v-permission 纯 UX 层（store 未加载 fail-open，admin 持全键可见），后端 `[RequirePermission]`+403 才是强校验。

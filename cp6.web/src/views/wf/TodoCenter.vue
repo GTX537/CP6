@@ -39,8 +39,8 @@
       </div>
       <template #footer>
         <el-button @click="dialog.visible = false">{{ t('取消') }}</el-button>
-        <el-button type="danger" :loading="dialog.acting" @click="act(false)">{{ t('驳回') }}</el-button>
-        <el-button type="primary" :loading="dialog.acting" @click="act(true)">{{ t('同意') }}</el-button>
+        <el-button v-permission="'oa-inbox:approve'" type="danger" :loading="dialog.acting" @click="act(false)">{{ t('驳回') }}</el-button>
+        <el-button v-permission="'oa-inbox:approve'" type="primary" :loading="dialog.acting" @click="act(true)">{{ t('同意') }}</el-button>
       </template>
     </el-dialog>
   </div>

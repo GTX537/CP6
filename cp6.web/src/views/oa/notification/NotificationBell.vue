@@ -20,7 +20,7 @@
       <!-- 头部 -->
       <div class="notify-panel-header">
         <span class="notify-panel-title">{{ t('oa.notify.title') }}</span>
-        <el-button link size="small" :disabled="unreadCount === 0" @click="handleReadAll">
+        <el-button v-permission="'oa-inbox:read'" link size="small" :disabled="unreadCount === 0" @click="handleReadAll">
           {{ t('oa.notify.markAllRead') }}
         </el-button>
       </div>

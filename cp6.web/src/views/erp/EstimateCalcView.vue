@@ -67,13 +67,14 @@
         </el-button>
         <el-button
           v-if="btn.save"
+          v-permission="'erp-estimate-calc:add'"
           type="success"
           :loading="saving"
           @click="onSave"
         >
           {{ t('sales.btn.save') }}
         </el-button>
-        <el-button v-if="btn.del" type="danger" :loading="saving" @click="onDelete">{{ t('sales.op.delete') }}</el-button>
+        <el-button v-if="btn.del" v-permission="'erp-estimate-calc:del'" type="danger" :loading="saving" @click="onDelete">{{ t('sales.op.delete') }}</el-button>
         <el-button v-if="btn.close" @click="onReset">{{ t('sales.btn.cancel') }}</el-button>
         <el-button v-if="btn.cancel && !btn.close" @click="onReset">{{ t('sales.btn.cancel') }}</el-button>
       </div>

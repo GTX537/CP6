@@ -8,7 +8,7 @@
         <el-button size="small" @click="load">{{ t('加载') }}</el-button>
         <el-button size="small" :disabled="!canUndo" @click="undo">{{ t('撤销') }}</el-button>
         <el-button size="small" :disabled="!canRedo" @click="redo">{{ t('重做') }}</el-button>
-        <el-button type="primary" size="small" @click="save">{{ t('保存') }}</el-button>
+        <el-button v-permission="'oa-designer:form-save'" type="primary" size="small" @click="save">{{ t('保存') }}</el-button>
       </el-space>
     </el-card>
 

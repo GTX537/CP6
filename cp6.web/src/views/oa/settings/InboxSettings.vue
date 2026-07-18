@@ -4,7 +4,7 @@
       <!-- Tab 1: 代理人設定 -->
       <el-tab-pane :label="t('oa.settings.delegateTab')" name="delegate">
         <div class="tab-toolbar">
-          <el-button type="primary" @click="openAddDialog">{{ t('oa.settings.addDelegate') }}</el-button>
+          <el-button v-permission="'oa-settings:delegate'" type="primary" @click="openAddDialog">{{ t('oa.settings.addDelegate') }}</el-button>
         </div>
         <el-table :data="delegates" v-loading="delegateLoading" border stripe>
           <el-table-column :label="t('oa.settings.delegateName')" prop="delegateName" min-width="120" />
@@ -17,7 +17,7 @@
           <el-table-column :label="t('oa.settings.remark')" prop="remark" min-width="140" />
           <el-table-column :label="t('common.action')" width="80" fixed="right">
             <template #default="{ row }: { row: DelegateItem }">
-              <el-button type="danger" link @click="removeDelegate(row)">{{ t('common.delete') }}</el-button>
+              <el-button v-permission="'oa-settings:delegate'" type="danger" link @click="removeDelegate(row)">{{ t('common.delete') }}</el-button>
             </template>
           </el-table-column>
         </el-table>
@@ -36,7 +36,7 @@
             <el-switch v-model="prefs.showSummary" />
           </el-form-item>
           <el-form-item>
-            <el-button type="primary" :loading="prefSaving" @click="savePref">
+            <el-button v-permission="'oa-settings:edit'" type="primary" :loading="prefSaving" @click="savePref">
               {{ t('common.save') }}
             </el-button>
           </el-form-item>
@@ -72,10 +72,10 @@
             </el-table-column>
           </el-table>
           <div class="matrix-actions">
-            <el-button type="primary" :loading="notifySaving" @click="saveNotifyMatrix">
+            <el-button v-permission="'oa-settings:edit'" type="primary" :loading="notifySaving" @click="saveNotifyMatrix">
               {{ t('common.save') }}
             </el-button>
-            <el-button @click="resetNotifyMatrix">{{ t('oa.notify.matrix.reset') }}</el-button>
+            <el-button v-permission="'oa-settings:edit'" @click="resetNotifyMatrix">{{ t('oa.notify.matrix.reset') }}</el-button>
           </div>
         </el-card>
       </el-tab-pane>

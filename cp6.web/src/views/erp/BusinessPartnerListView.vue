@@ -60,7 +60,7 @@
       <div style="margin-bottom: 8px;">
         <CpTag tone="info">{{ t('sales.list.totalCount', { n: total }) }}</CpTag>
         <el-button v-if="selectedRow" type="primary" link size="small" style="margin-left: 12px" @click="goView">{{ t('sales.btn.openView') }}</el-button>
-        <el-button v-if="selectedRow" type="warning" link size="small" style="margin-left: 4px" @click="goEdit">{{ t('sales.op.edit') }}</el-button>
+        <el-button v-if="selectedRow" v-permission="'erp-business-partner:edit'" type="warning" link size="small" style="margin-left: 4px" @click="goEdit">{{ t('sales.op.edit') }}</el-button>
       </div>
       <el-table :data="rows" border stripe size="small" style="width: 100%" max-height="600" highlight-current-row @current-change="onCurrentChange" @sort-change="onSortChange">
         <el-table-column prop="rowNo" :label="t('sales.list.no')" width="60" align="center" />

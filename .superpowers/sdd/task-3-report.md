@@ -1,40 +1,91 @@
-# Task 3 报告：Space 波5 WmsBinConsumer 批量化
+# Task 3 报告：ERP v-permission 铺设
 
-## Status
-DONE。commit `c6d1b79`（分支 feat/space-wave5，已 push）。全量 1813 passed / 5 skipped（基线 1812 + 本任务新增 1 等价测试）。
+**STATUS: COMPLETE** — 39 按钮 × 16 视图，键与后端贴点（`docs/seeds/erp-permission-keys.md` §一 35 真·写端点）逐字对齐。
 
-## 实现
-`CP6.Core/Services/Wms/WmsBinConsumer.cs::ConsumeAsync` 循环前三次预载，替代旧「每 item 三次逐条查询」：
+## 真相源与规程
+- 键表：`docs/seeds/erp-permission-keys.md`（46 写端点 = 35 贴键 + 11 只读 POST 豁免；14 menu-key；action 词汇 = add/edit/del/cancel/correct/confirm/issue/import/close/split）。
+- oracle：`CP6.Tests/ErpPermissionAttributeTests.cs`（ActionVocabulary + ReadOnlyPostExemptions 为地面真相）。
+- 样式样板：commit 15823c38（OA/WF），WMS `StocktakeView.vue:86`。
+- 只加 `v-permission` template 字面量；既有 `v-if` 保留并列；零脚本/样式/i18n/后端改动。
 
-1. **bins 预载（覆盖旧查询①按 Id + ③按锚两处 DbSet 命中面）**：一次
-   `WmsBins.Where(idSet.Contains(Id) || (whSet.Contains(WarehouseCd) && codeSet.Contains(LocationCode))).LoadAsync()`，
-   再从 `_db.WmsBins.Local` 建 `binsById` 与 `binsByAnchor` 双字典（Local 含刚载入行 + 预先已跟踪行，等价旧 Local-first 优先级）。
-2. **库存合计预载（旧查询②）**：收集所有 DEACTIVATE 且 bin 已存在项的锚 `(bin.WarehouseCd, bin.LocationCode)`，一次
-   `Stocks.Where(...).GroupBy(...).Sum(PhysicalQty)` 聚成 `stockByAnchor`；循环内 `GetValueOrDefault(anchor, 0m)`（空集=0 等价旧 `SumAsync`）。
-3. 循环体三处逐条查询全部改为字典命中：`binsById.TryGetValue`（Id）/`stockByAnchor.GetValueOrDefault`（库存）/`binsByAnchor.TryGetValue`（锚碰撞）。
+## 映射清单（视图文件 → 元素 → 键）
 
-查询次数：旧 = O(3N)（N=批内 item 数）；新 = 恒定 2 次（bins 一次 Load + 库存一次 GroupBy，无 DEACTIVATE 时 1 次）。
+| # | 视图 | 元素（@click 处理器） | 键 |
+|---|---|---|---|
+| 1 | EstimateCalcListView.vue | onNew（新規/toolbar） | `erp-estimate-calc:add` |
+|  |  | onEdit（行编集） | `erp-estimate-calc:edit` |
+|  |  | onCopy（行複製→copy=add） | `erp-estimate-calc:add` |
+|  |  | onDelete（行削除） | `erp-estimate-calc:del` |
+| 2 | EstimateCalcView.vue | onSave（保存，btn.save）※多端点 | `erp-estimate-calc:add` |
+|  |  | onDelete（btn.del） | `erp-estimate-calc:del` |
+| 3 | QuotationListView.vue | onNew | `erp-quotation:add` |
+|  |  | onEdit | `erp-quotation:edit` |
+|  |  | onCopy（→add） | `erp-quotation:add` |
+|  |  | onIssue（発行） | `erp-quotation:issue` |
+|  |  | onDelete | `erp-quotation:del` |
+| 4 | QuotationView.vue | onSave（保存）※多端点 | `erp-quotation:add` |
+|  |  | onConfirm（確定登録） | `erp-quotation:confirm` |
+|  |  | onCancelConfirm（確定取消，§五归并2） | `erp-quotation:confirm` |
+|  |  | onIssue（発行） | `erp-quotation:issue` |
+|  |  | onDelete（削除） | `erp-quotation:del` |
+| 5 | ProductMasterListView.vue | onNew | `erp-product:add` |
+|  |  | onEdit | `erp-product:edit` |
+|  |  | onCopy（→add） | `erp-product:add` |
+|  |  | onDelete | `erp-product:del` |
+| 6 | ProductMasterView.vue | onSave（保存，canSave）※多端点 | `erp-product:add` |
+|  |  | onDelete（isDelete） | `erp-product:del` |
+| 7 | OrderListView.vue | openCancelDialog（取消入口，高危） | `erp-order:cancel` |
+| 8 | OrderEntryView.vue | onSave（保存，canSave）※多端点 | `erp-order:add` |
+|  |  | onDelete（isDelete） | `erp-order:del` |
+| 9 | OrderPriceCorrectionView.vue | onSubmit（一括更新，单价订正，高危） | `erp-order-price-correction:correct` |
+| 10 | FscChecklistView.vue | onIssue（発行） | `erp-fsc-checklist:issue` |
+| 11 | BusinessPartnerListView.vue | goEdit（行选中→編集入口） | `erp-business-partner:edit` |
+| 12 | BusinessPartnerView.vue | onSave（登録，canEdit）※多端点 | `erp-business-partner:add` |
+|  |  | onDelete（isDelete） | `erp-business-partner:del` |
+| 13 | SheetUnitPriceView.vue | selectExcel（→onFileChange 触发 importExcel） | `erp-sheet-unit-price:import` |
+|  |  | onUpdate（一括更新=batchUpdate） | `erp-sheet-unit-price:edit` |
+| 14 | PlateMoldView.vue | onSave/isDelete 分支（削除） | `erp-plate-mold:del` |
+|  |  | onSave/canEdit 分支（登録，Create/Revise/Update）※多端点 | `erp-plate-mold:add` |
+| 15 | BackorderListView.vue | openAction('close')（关闭残数入口） | `erp-backorder:close` |
+|  |  | openAction('split')（拆分新受注入口） | `erp-backorder:split` |
+| 16 | FxRateView.vue | openCreate（新建入口） | `erp-fx-rate:add` |
+|  |  | openEdit（行编集入口） | `erp-fx-rate:edit` |
+|  |  | remove（行删除） | `erp-fx-rate:del` |
 
-三分支语义（upsert 幂等 Version 判据 / 无 bin 墓碑防乱序复活 / 锚碰撞 REJECTED）、DetachOwnWrites/DeadLetter 路径、结果对象构造全部逐行为不动。
+**合计 = 39 directives / 16 views。**
 
-## 批内自碰撞结论（brief 要求的可达性判定）
-**旧实现存在「批内新插行影响后续判定」的可达代码路径**——旧两处查询均 `Local.FirstOrDefault(...) ?? DB.FirstOrDefaultAsync(...)`，Local-first 使同批前一 item 刚 Add 的 bin 被后一 item 看到：
-- 同 LocationId 双条 → 第二条走版本门 SKIPPED（既有测试 `Upsert_SameBatch_DuplicateLocationId_NoDoubleAdd` 断言此）。
-- 同锚不同 LocationId 双条 → 第二条 REJECTED（旧代码注释显式声称覆盖）。
+### 多端点按钮（规程规则 4，取主动作键 = add）
+以下「保存/登録」按钮由操作种别（New/Copy→Create=add，Edit→Update=edit；PlateMold 另含 Revise→§五归并 edit）动态派发单一端点，统按主动作 **add**（登録为该向导页首要语义）贴键，并注明：
+- EstimateCalcView.onSave、QuotationView.onSave、ProductMasterView.onSave、OrderEntryView.onSave、BusinessPartnerView.onSave、PlateMoldView.onSave(canEdit 分支)。
+- v-permission 为 UX-only fail-open、admin 不受影响；仅 edit-无-add 或 add-无-edit 的非常规授权组合下会出现单模式按钮误隐（可接受，已注明）。
 
-**上游可达性**：生产调用方 `LocationPublishService.PublishFloorAsync` 先跑 `PrecheckAsync`，`DuplicateGroups.Count > 0` 直接抛 `E-SPACE-307`（重复码被闸死），且每条 item 源自不同 PK 的 `Space_Location` 行——故这两条批内自碰撞路径**生产调用方不可达**（RepublishAsync/DeactivateAsync 同理，均由 distinct PK 行构建）。
+## 豁免小节（不贴指令的按钮/视图及理由）
 
-**但**消费端契约与既有测试要求保留该语义，故预载**不能**仅取批开始快照。处理：循环内每插入新 bin（UPSERT 新建 + DEACTIVATE 墓碑）**同步回填 binsById 与 binsByAnchor**，UPSERT 更新后按当前锚回填——使字典始终反映旧 Local 的实时可见性，判定完全等价。既有 12 用例（含 SameBatch/AnchorCollision）零改动全绿即为证。
+**整页无 ERP 写端点（不贴任何指令）：**
+- **CreditNoteListView.vue** — 唯一动作 goOrder（导航）；写端点仅 POST `/search`（只读 POST 豁免 §四#7）。
+- **OrderTraceView.vue** — GET-only 控制器；search/reload 为读、el-switch=groupByCorrelation 纯客户端分组切换。
+- **OtdReportView.vue** — Summary/ExportCsv 均只读 POST 豁免（§四#8/#9）；loadSummary/search/exportCsv/resetQuery 皆读。
 
-## 改动文件
-- `CP6.Core/Services/Wms/WmsBinConsumer.cs`（重构 + 注释固化可达性结论）
-- `CP6.Tests/WmsBinConsumerTests.cs`（新增 `MixedBatch_TwoUpsertOneDeactivate_EquivalentToPerItem`：UPSERT×2+DEACTIVATE×1 含 REJECTED，双 DB 跑批量路径 vs 逐条独立消费，断言逐项 Status/Success 及最终 bin IsActive/Version 两路径逐一相等）
+**页内个别按钮豁免：**
+- OrderCancelDialog.vue（onProbe/onForceConfirm）— **入口已守**：由 OrderListView.openCancelDialog（已贴 `erp-order:cancel`）唯一启动的对话框确认，按规则 3 不重复贴。
+- BackorderListView 对话框 submitAction — 同上，由 openAction close/split 两入口守，不重复贴。
+- PlateMoldListView.vue.onIssueLabel / PlateMoldView.vue.onIssueLabel — `Label` 为只读 POST 豁免（§四#6，AsNoTracking 生成 CSV）。
+- PlateMoldListView.vue.onPick（selectReturn）— picker 模式向父流程返回选择，无 ERP 写端点，无对应键。
+- PlateMoldView.vue.onPurchaseOrder — 発注（采购单）非 ERP 域端点（属 PUR/导航），无对应 ERP 键。
+- PlateMoldView.vue.onLoadByEstimate（sales.btn.import 标签）— 实为 getByEstimateCalc **读取**载入表单，非写端点。
+- 各列表 onView/goView、CSV/Export、search/reset/refresh/load/reload、向导 next/prev/clear、QuotationView addDetailRow/recalcTotalAmount/removeDetailRow（纯本地数组）、Step* 子组件（无 mutating API 调用，仅 ElMessageBox.confirm 清空确认）— 纯读/本地/导航，均不贴。
+
+## 验证输出
+- `npx vue-tsc --noEmit` → EXIT 0（零类型错）。
+- `npx vitest run` → **71 files / 481 tests passed**（基线全绿，EXIT 0）。
+- `npm run build` → built in 7.88s，EXIT 0（仅既有 chunk>500kB 提示，与本改无关）。
 
 ## 自审
-- 三处查询谓词逐一对照旧代码：Id 精确、锚精确 `(WarehouseCd,LocationCode)` pair、库存 `WarehouseCd==bin.WarehouseCd && LocationCd==bin.LocationCode` 求和 → 均保留，预载 Where 用集合超集 + 字典精确键，聚合/命中值不受超集影响。
-- DEACTIVATE 库存快照 vs 循环内：循环内从不写库存，快照与逐条查询同值；跨 item「UPSERT 建 bin→同批 DEACTIVATE 同 id」新建 bin 无对应 stock 行（stock 独立表未变），SumAsync=0 与 GetValueOrDefault=0 等价（且此路径生产亦不可达）。
-- WmsBin.WarehouseCd/LocationCode 为非空 string，锚字典 key 安全；item.WarehouseCd 在锚检查处已过 null-guard，加 `!`。
-- 无 DEACTIVATE 时跳过库存查询；空批 `idSet/whSet` 为空，`Where` 谓词返回空集，`Local` 为空，安全。
+- diff 仅 views/erp 下 16 个 .vue？ 是（`git diff --name-only` = 16 erp .vue；其余 .superpowers md 为 pre-existing CRLF 警告，未 stage）。
+- 每个键逐字在真相源？ 是（27 唯一 (键) 全部落在 §一表 + ActionVocabulary）。
+- 无脚本/样式 hunk？ 是（diff grep 确认仅 v-permission template 增行，零 `<script>`/`<style>`/import/function 改动）。
 
-## 疑虑
-- 理论边角（**非本任务回归、生产不可达**）：若同批内某 UPSERT 把已存在 bin 的 `LocationCode` 改成另一锚值，`binsByAnchor` 旧键会残留指向该 bin。但「发布后码冻结」（LocationCode 恒不变）是既有域不变式，无调用方触发码变更，既有测试亦不涉及；UPSERT 更新后已按当前锚回填新键，主路径无偏差。不视为缺口，仅记录。
+## 关注点 / concerns
+1. **多端点保存按钮键选择**（见上）：6 处 create-or-update 保存按钮统贴 add。若审计要求「可编辑不可新建」独立 UX 隐显，需拆键——但后端 fail-closed 已按端点各自 [RequirePermission]（add/edit 分别），前端仅 UX，风险可控。
+2. **PlateMoldView.onSave 三态**（Create/Revise/Update 共一按钮）：Revise 后端归并 edit（§五归并4），前端主动作按 add 贴；与 §五裁决一致。
+3. 前端 `v-permission` 指令为全局注册（沿用 OA/WF 波已验证机制），本任务未新增/改动指令实现。
