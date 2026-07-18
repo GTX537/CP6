@@ -10,6 +10,7 @@ This directory contains verified SQL Server backups for the three CP6 developmen
 git lfs install
 git clone https://github.com/GTX537/CP6.git C:\CP6
 Set-Location C:\CP6
+git checkout feat/general-role-vperm
 git lfs pull
 Get-FileHash migration\database\*.bak -Algorithm SHA256
 Get-Content migration\database\SHA256SUMS.txt
