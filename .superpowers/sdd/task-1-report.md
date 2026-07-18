@@ -1,121 +1,46 @@
-# Task 1 Report — 引擎归属闸四方法 + E-WF-029 (TDD)
+# Task 1 Report — StandardRoleSeed 标准角色种子（TDD）
 
-**Branch:** feat/wf-actor-ownership
-**Commit:** fd85127e (pushed to origin)
-**Status:** DONE
+STATUS: **DONE**
+Branch: feat/general-role-vperm  Commit: `ddcfa1ac` (pushed)
 
-## Summary
+## What was built (3 files, exactly)
+- **Create** `CP6.WebApi/Seed/StandardRoleSeed.cs` — per-tenant idempotent insert-only seed for 「一般用户」(RoleId=10).
+- **Modify** `CP6.WebApi/Program.cs` — registered `StandardRoleSeed.EnsureSeeded(db);` immediately after the OawfPermissionSeed chain.
+- **Test** `CP6.Tests/StandardRoleSeedTests.cs` — 7 Facts.
 
-Closed the P0 越权代批 hole (M-OA/WF #1) at the engine layer. Added a single ownership
-assertion helper `AssertActorMayHandleAsync(Wf_FlowTask, Guid actorId, Guid? onBehalfOf)`
-in a new partial `FlowEngine.Ownership.cs`, and wired it before every state mutation in the
-four mutating engine methods: `ActOnceAsync` / `TransferAsync` / `AddSignAsync` /
-`SendBackAsync` (SendBackTarget overload = single entry covering node/prevstage/starter).
+Seed content (decisions verbatim):
+- Role: (RoleId=10, RoleName="一般用户") per tenant.
+- Menus: {740, 733, 735, 737}.
+- Actions (8): (733 read/approve/transfer/sendback/withdraw), (735 submit/favorite), (737 delegate). NOT addsign.
 
-Three allow paths: assignee self / act-as with engine-side re-verified active delegate grant /
-SystemActor (Guid.Empty). Violation → `E-WF-029`; act-as without a valid grant → `E-WF-001`.
-`TransferAsync` gained `bool bypassOwnership = false`; only `InboxService.BatchTransferAsync`
-passes `true`.
+## Entity-shape adaptations
+- **Method name = `EnsureSeeded(CP6Context db)` (synchronous), NOT `SeedAsync`.** The brief skeleton showed `await StandardRoleSeed.SeedAsync(db)`, but the stronger/repeated instruction ("same call shape as neighbors", "mirror their exact mechanics") governs: every sibling seed (Pur/Oawf/Erp/Mes/Wms/…) and the Program.cs neighbors use synchronous `EnsureSeeded(db)` + single `db.SaveChanges()`. I mirrored that exactly; no `await` at the call site.
+- Sys_Role is composite-PK (TenantId, RoleId), int RoleId, does NOT inherit BaseTenantEntity — sets `TenantId`+`RoleId`+`RoleName` explicitly (existence guard on `TenantId==tid && RoleId==10`).
+- Sys_RoleMenu: int identity Id PK + explicit TenantId/RoleId/MenuId.
+- Sys_RoleAction: BaseTenantEntity (Guid Id) + RoleId/MenuId/ActionCode.
+- Tenant iteration/stamping/idempotency copied verbatim from Pur/OawfPermissionSeed: enumerate `db.Sys_Tenants.Select(t=>t.Id)`; explicit `TenantId=tid` (StampTenant fills only Guid.Empty); `IgnoreQueryFilters()` on existence checks; single `SaveChanges()` when changed; NoTenants → no-op.
 
-## Files changed
+## Program.cs insertion point
+After `WorkCalendarConnectorPermissionSeed.EnsureSeeded(db);` (last of the Oawf chain: OawfPermissionSeed → FlowTrigger → InboxBatchTransfer → WorkCalendarConnector), before the "缺用户管理菜单" block. Depends on menus 740/733/735/737 + MenuActions catalog seeded upstream.
 
-- **New** `CP6.Core/Services/Wf/FlowEngine.Ownership.cs` — gate helper + `SystemActor` const.
-- `CP6.Core/Services/Wf/FlowEngine.cs` — gate inserted in `ActOnceAsync` (after inst-Running
-  check, before `task.Status = ...`); corrected now-false "引擎不查委派" doc-comment.
-- `CP6.Core/Services/Wf/AdvancedFlow.cs` — `TransferAsync` signature + gate (bypass-guarded);
-  gate in `AddSignAsync` and `SendBackAsync(SendBackTarget)`.
-- `CP6.Core/Services/Wf/IFlowEngine.cs` — `TransferAsync` signature updated; line ~21
-  `ActAsAsync` doc-comment "引擎不查委派" corrected to "控制器先闸, 引擎复验(防御纵深)".
-- `CP6.Core/Services/Oa/InboxService.cs` — `BatchTransferAsync` call passes `bypassOwnership: true`.
-- `CP6.WebApi/Seed/I18nOaInboxScreenSeed.cs` — E-WF-029 five-language row after E-WF-008.
-- **New** `CP6.Tests/Wf/FlowActorOwnershipTests.cs` — 14 tests (brief code, adapted).
-- `CP6.Tests/Oa/ActAsServiceTests.cs` — existing-test correction (see below).
+## Fact #7 (aggregator end-to-end)
+PermissionAggregator resolves RoleIds = Sys_UserRoles ∪ Sys_User.RoleId. Constructed user with `RoleId=StandardRoleSeed.GeneralRoleId`. The aggregator's Sys_RoleActions query obeys the tenant query filter (`TenantId==CurrentTenantId`; single-arg ctx → `TenantContext.DefaultTenant` = 00000000-…-A1), so Fact #7 seeds under a Sys_Tenant with Id=DefaultTenant (not TenantA/B). Asserts ActionKeys == exactly 8 "menu-key:action", incl. "oa-inbox:approve", excludes "oa-inbox:addsign", count==8. Menu 740 (MenuKey=null parent) contributes nothing to ActionKeys — consistent with 8.
 
-Test-code adaptations vs brief: `Sys_User.Enable` is `bool` (brief used `1`) and there is no
-`UserTrueName` field — used `new Sys_User { Id, UserName="to", NickName="to", Enable=true }`
-via a `SeedUser` helper. `Password` has a default (`""`) so it was not required. DbSet names
-(`Wf_FlowDelegates`, `Wf_FlowHistories`, `Sys_Users`) matched the brief verbatim.
+## RED evidence
+`--filter StandardRoleSeedTests` on empty-shell seed:
+`Failed! - Failed: 5, Passed: 2, Total: 7`. The 5 content Facts fail (empty/null results); Facts 5 (DoesNotTouchAdminRole) and 6 (ActionsSubsetOfCatalog) pass trivially — they don't require the seed to act.
 
-## RED evidence (Step 2)
-
-New class run with `Transfer_BypassOwnership_*` temporarily commented (param did not yet exist):
-
-```
-Failed!  - Failed:     8, Passed:     5, Skipped:     0, Total:    13
-```
-
-The 8 failures = all violation/negative cases ("No exception was thrown"):
-Act_ByNonAssignee, ActAs_OnBehalfOfNotAssignee, ActAs_WithoutGrant,
-ActAs_ExpiredOrDisabledGrant, Act_DelegateDirect_WithoutActAs,
-Transfer_ByNonAssignee, SendBack_ByNonAssignee, AddSign_ByNonAssignee.
-The 5 passes = positive/system paths (ByAssignee ×3, SystemActor, ActAs_DelegateWithActiveGrant).
-
-## GREEN evidence (Step 4)
-
-After implementing the gate and restoring the bypass test:
-
-```
-Passed!  - Failed:     0, Passed:    14, Skipped:     0, Total:    14 - CP6.Tests.dll
-```
-
-## Full suite (Step 5)
-
-First full run surfaced exactly one red:
-
-```
-Failed!  - Failed:     1, Passed:  2211, Skipped:     5, Total:  2217
-  Failed CP6.Tests.ActAsServiceTests.ActAs_RecordsActualHandler_AndOnBehalfOf
-```
-
-After the actor correction below, final:
-
-```
-Passed!  - Failed:     0, Passed:  2212, Skipped:     5, Total:  2217 - CP6.Tests.dll (net8.0)
-```
-
-2198 baseline passed + 14 new = 2212. (The brief's "+15 / ≥2213" over-counted the provided
-test file by one — the code in the brief defines 14 `[Fact]` methods, not 15. No test was
-dropped; the count is fully accounted for.)
-
-## Existing-test actor corrections (1)
-
-**`CP6.Tests/Oa/ActAsServiceTests.cs:38-42` — `ActAs_RecordsActualHandler_AndOnBehalfOf`**
-- Old: `me` calls `ActAsAsync(task, actorId: me, onBehalfOf: grantor, ...)` with **no
-  `Wf_FlowDelegate` grant seeded**. Under the new engine-side re-verification this correctly
-  throws `E-WF-001`.
-- Correction: seeded an active `Wf_FlowDelegate { GrantorId = grantor, DelegateId = me,
-  Enable = true, ValidFrom = now-1d, ValidTo = now+1d }` before the act-as call.
-- Attribution: **test modeling gap, not a product path.** In production the controller's
-  `AssertActiveGrant` guarantees an active grant exists on any real act-as; the test omitted
-  seeding it. No gate was weakened — the fix models the real handler's precondition. The
-  sibling test `ActAs_NullOnBehalf_EquivalentToActAsync` (actor == assignee `grantor`,
-  onBehalfOf null → self path) needed no change and stayed green.
-
-No red revealed a product internal caller passing a non-assignee outside the two known
-exceptions (WfTimeoutService SystemActor, BatchTransferAsync bypass). No BLOCKED condition.
+## GREEN evidence
+- New class: `Passed! - Failed: 0, Passed: 7, Skipped: 0, Total: 7`.
+- Full suite: `Passed! - Failed: 0, Passed: 2220, Skipped: 5, Total: 2225` (= baseline 2213 + 7). Target met exactly.
 
 ## Self-review
+- Commit diff = exactly the 3 deliverable files (seed / Program.cs / test), 318 insertions.
+- Seed touches ONLY RoleId=10 rows (all guards + inserts pinned to GeneralRoleId=10). Fact #5 proves admin RoleId=1 three-table rows have zero diff across the seed call.
+- Program.cs insertion after the Oawf chain. No entity/migration changes.
+- Idempotency proven (Fact #4: second call → three-table counts unchanged; 2 roles / 8 menus / 16 actions across 2 tenants).
 
-- Gate precedes every state mutation in all four methods:
-  - `ActOnceAsync` — after `inst.Status != Running` early-return, before `task.Status = ...`.
-  - `TransferAsync` — after inst check, before target-user lookup / `task.AssigneeId = ...`;
-    wrapped in `if (!bypassOwnership)`.
-  - `AddSignAsync` — after inst check, before add-sign count and the `before`-suspend mutation.
-  - `SendBackAsync(SendBackTarget)` — after inst check, before `LoadSchemaAsync` and the
-    node/prevstage/starter switch, so all three send-back kinds are covered from one entry.
-    The legacy 3-arg overload forwards to this overload, so it is covered too.
-- IFlowEngine doc-comment (line ~21) and the mirror comment in FlowEngine.cs both corrected.
-- Diff limited to the eight in-scope files; staged explicitly (not `git add -A`) to avoid the
-  pre-existing untracked `PermissionSeedInterlockTests.cs` / any stray file.
-- `SystemActor` newly defined on the FlowEngine partial (Guid.Empty), matching
-  `WfTimeoutService.SystemActor`; no prior definition on FlowEngine, no collision (build clean).
-
-## Concerns
-
-- **Count expectation:** final passed = 2212, not the brief's ≥2213. Root cause is the brief's
-  own test file defining 14 `[Fact]`s while the prose said 15; 2198 + 14 = 2212 is internally
-  consistent and 0-fail. Flagging only so Task 2 does not treat 2212 as a shortfall.
-- **Out-of-scope-by-design:** `TimeoutAdvanceErrorEdgeAsync` is a fifth mutating engine method
-  but is invoked only by `WfTimeoutService` with `SystemActor`, so it is not an越权 surface and
-  was intentionally left ungated per the brief's four-method scope.
-- LF→CRLF warnings on the two new files (cosmetic, Windows checkout normalization).
+## Concerns / notes
+- **task-1-brief.md was modified in the working tree** (previous Task 1 "引擎归属闸" content replaced with this StandardRoleSeed brief) — the parent's handoff edit, NOT mine. I deliberately left it UNSTAGED / uncommitted. Likewise the stale `task-1-report.md` (old engine-ownership report) — this file — was overwritten with the current report. If the parent wants those doc changes to land, they need a separate commit.
+- Pre-existing untracked `CP6.Tests/PermissionSeedInterlockTests.cs` reflects only on the 9 named module seeds; StandardRoleSeed is not in its list → no interference.
+- RoleId=10 is a per-tenant convention number for this wave. Seed is insert-only: if a tenant already had a RoleId=10 under a different name, the seed skips it (leaves it intact) and would NOT create 一般用户. No such collision in current data per plan; flagging the assumption.
