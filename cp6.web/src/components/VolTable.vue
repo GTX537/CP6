@@ -122,10 +122,10 @@
             </el-button>
             <template #dropdown>
               <el-dropdown-menu>
-                <el-dropdown-item v-permission="editPermission" command="edit" :icon="Edit">{{ $t('table.edit') }}</el-dropdown-item>
+                <el-dropdown-item v-if="canUsePermission(editPermission)" command="edit" :icon="Edit">{{ $t('table.edit') }}</el-dropdown-item>
                 <slot name="mobile-extra-actions" :row="row" />
-                <el-dropdown-item v-permission="deletePermission" command="select" :icon="Select" divided>{{ $t('table.batchSelect') || '批量选择' }}</el-dropdown-item>
-                <el-dropdown-item v-permission="deletePermission" command="delete" :icon="Delete">
+                <el-dropdown-item v-if="canUsePermission(deletePermission)" command="select" :icon="Select" divided>{{ $t('table.batchSelect') || '批量选择' }}</el-dropdown-item>
+                <el-dropdown-item v-if="canUsePermission(deletePermission)" command="delete" :icon="Delete">
                   <span style="color: #f56c6c;">{{ $t('table.delete') }}</span>
                 </el-dropdown-item>
               </el-dropdown-menu>
@@ -299,9 +299,9 @@ function onCardClick(row: any, _ev: Event) {
   }
 }
 async function onCardCommand(cmd: string, row: any) {
-  if (cmd === 'edit') handleEdit(row)
-  else if (cmd === 'delete') handleDelete(row)
-  else if (cmd === 'select') {
+  if (cmd === 'edit' && canUsePermission(props.editPermission)) handleEdit(row)
+  else if (cmd === 'delete' && canUsePermission(props.deletePermission)) handleDelete(row)
+  else if (cmd === 'select' && canUsePermission(props.deletePermission)) {
     selectionMode.value = true
     toggleRowSelected(row, true)
   }
