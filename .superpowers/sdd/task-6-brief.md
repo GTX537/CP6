@@ -1,18 +1,21 @@
-### Task 6: 库位删除时清理 T_WmsBin 墓碑锚
+# GR-VP Task 6：PUR / PLAN / PUB v-permission 铺设
 
-**Files:**
-- Modify: `CP6.Core\Services\Space\SpaceMasterService.cs`(`DeleteRackAsync:415-501`、`DeleteAisleAsync:260-334` 中删 `Space_Locations` 处;另 grep 全仓其余 `Space_Locations.Remove` 删除通道——含 SceneService 保存删除分支,一并接线)
-- Test: `CP6.Tests\Space\`
+## 目标
 
-**Interfaces:**
-- Produces: `SpaceMasterService` 内 `private async Task RemoveTombstoneBinsAsync(List<Guid> locationIds)`:`_db.WmsBins.Where(b => locationIds.Contains(b.Id) && !b.IsActive)` → `RemoveRange`。**仅删 IsActive=false 的墓碑行**(活跃 bin 理论不可达——Status=1 不可删 E-SPACE-408;护栏兜底:命中活跃 bin 时不删并保留)。SceneService 若在别类,提取为 `internal static` 帮助或复制同构块并注释互指。
+以 PUR、PLAN/PUB Controller 的 `[RequirePermission]`、权限种子文档和反射 oracle 为真相源，为真实前端写动作补齐 `v-permission`，不发明权限键，不限制纯读动作。
 
-**要点:** 与库位删除**同一事务/同一 SaveChanges**;删除后同码再发布不再 REJECTED(锚释放)。顺带更新 `:495-499` 注释(「锚清理记后续票」→「波5 已清理」)。
+## 范围
 
-- [ ] **Step 1: 失败测试×2**(①删 Status=2 库位(带 IsActive=false bin)→bin 行消失 ②删 Status=0 库位(无 bin)→不炸)
-- [ ] **Step 2: 红 → 实现(所有删除通道接线)→ 绿 → 全量绿**
-- [ ] **Step 3: 追加集成断言**:同码重发布不再碰撞(构造 删→再建同码→publish→bin 重建 IsActive=true)
-- [ ] **Step 4: Commit + push**(`feat(space): 波5 库位删除清理T_WmsBin墓碑锚——同码再发布不再REJECTED`)
+- 扫描 `cp6.web/src/views/pur`、`cp6.web/src/views/plan`、`CodeGenView.vue`、`SeqView.vue`。
+- 覆盖 33 个唯一写权限键；`pur-subcontract:view`、`pub-codegen:view` 两个只读 POST 明确豁免。
+- 对话框确认按钮由入口权限守住时不重复贴点。
+- `SeqView` 的 CRUD 由通用 `VolTable` 提供，因此通过可选的 add/edit/delete permission props 接线；未传 props 的既有调用保持原行为。
 
----
+## 验收
+
+- [x] 12 个目标视图完成扫描，11 个视图有权限变更，`PurReconcileView` 无写动作贴点。
+- [x] 37 个页面级权限声明覆盖 33 个唯一后端写权限键，无缺失、无额外键。
+- [x] `VolTable` 桌面端与移动端新增/编辑/删除/批量入口均守权。
+- [x] 移动端无编辑/删除权限时不显示空“更多”菜单，点击卡片不会打开编辑框。
+- [x] 后端权限 oracle、类型检查、全量 Vitest、生产构建、真实浏览器抽样与正式复审通过。
 
