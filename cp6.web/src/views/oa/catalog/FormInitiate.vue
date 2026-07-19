@@ -63,6 +63,7 @@ import { useRoute, useRouter } from 'vue-router'
 import { useI18n } from 'vue-i18n'
 import { ElMessage } from 'element-plus'
 import { formApi } from '@/api/wf/form'
+import { flowApi } from '@/api/wf/flow'
 import { flowAdminApi } from '@/api/oa/flowAdmin'
 import { forecastApi } from '@/api/oa/forecast'
 import { draftApi } from '@/api/oa/draft'
@@ -175,12 +176,10 @@ async function doSubmit() {
   submitting.value = true
   try {
     // save → get draft id → submit
-    const saveRes = await draftApi.save(
-      resolvedFlowKey.value,
-      JSON.stringify(model.value),
-    )
-    const draftId: string = (saveRes as any).data?.id
-    await draftApi.submit(draftId)
+    await flowApi.submit({
+      flowKey: resolvedFlowKey.value,
+      varsJson: JSON.stringify(model.value),
+    })
     ElMessage.success(t('oa.initiate.submitOk'))
     router.push('/oa/inbox')
   } catch {
