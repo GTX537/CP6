@@ -11,8 +11,8 @@
           <el-option v-for="s in SCHEME_OPTIONS" :key="s.value" :value="s.value" :label="`${t(s.label)} (${s.value})`" />
         </el-select>
         <el-checkbox v-model="includeInactive" size="small" @change="reload">{{ t('含停用') }}</el-checkbox>
-        <el-button type="primary" size="small" @click="openCreate">{{ t('新建') }}</el-button>
-        <el-button size="small" @click="doImport">{{ t('导入模板') }}</el-button>
+        <el-button v-permission="'fin-account:add'" type="primary" size="small" @click="openCreate">{{ t('新建') }}</el-button>
+        <el-button v-permission="'fin-account:import'" size="small" @click="doImport">{{ t('导入模板') }}</el-button>
         <el-button size="small" @click="reload">{{ t('刷新') }}</el-button>
         <el-tag size="small" type="info">{{ t('共 {n} 条', { n: rows.length }) }}</el-tag>
       </div>
@@ -42,8 +42,8 @@
         </el-table-column>
         <el-table-column :label="t('操作')" width="140" fixed="right">
           <template #default="{ row }">
-            <el-button link type="primary" size="small" @click="openEdit(row)">{{ t('编辑') }}</el-button>
-            <el-button v-if="row.isActive" link type="danger" size="small" @click="deactivate(row)">{{ t('停用') }}</el-button>
+            <el-button v-permission="'fin-account:edit'" link type="primary" size="small" @click="openEdit(row)">{{ t('编辑') }}</el-button>
+            <el-button v-if="row.isActive" v-permission="'fin-account:deactivate'" link type="danger" size="small" @click="deactivate(row)">{{ t('停用') }}</el-button>
           </template>
         </el-table-column>
       </el-table>

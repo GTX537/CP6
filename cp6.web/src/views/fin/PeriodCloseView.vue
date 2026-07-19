@@ -34,8 +34,8 @@
         <el-table-column :label="t('操作')" width="200" fixed="right">
           <template #default="{ row }">
             <el-button v-if="row.status === 0" link type="primary" size="small" @click="preCheck(row)">{{ t('结账预检') }}</el-button>
-            <el-button v-if="row.status === 0" link type="success" size="small" @click="close(row)">{{ t('结账') }}</el-button>
-            <el-button v-if="row.status === 1" link type="warning" size="small" @click="reopen(row)">{{ t('反结账') }}</el-button>
+            <el-button v-if="row.status === 0" v-permission="'fin-period:close'" link type="success" size="small" @click="close(row)">{{ t('结账') }}</el-button>
+            <el-button v-if="row.status === 1" v-permission="'fin-period:reopen'" link type="warning" size="small" @click="reopen(row)">{{ t('反结账') }}</el-button>
           </template>
         </el-table-column>
       </el-table>

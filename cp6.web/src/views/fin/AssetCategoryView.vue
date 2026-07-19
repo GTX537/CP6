@@ -7,7 +7,7 @@
 
     <el-card shadow="never">
       <div class="table-toolbar">
-        <el-button type="primary" size="small" @click="openAdd">{{ t('新建') }}</el-button>
+        <el-button v-permission="'fin-asset-category:add'" type="primary" size="small" @click="openAdd">{{ t('新建') }}</el-button>
         <el-button size="small" @click="load">{{ t('刷新') }}</el-button>
         <el-tag size="small" type="info">{{ t('共 {n} 条', { n: rows.length }) }}</el-tag>
       </div>
@@ -27,8 +27,8 @@
         </el-table-column>
         <el-table-column :label="t('操作')" width="140" fixed="right">
           <template #default="{ row }">
-            <el-button link type="primary" size="small" @click="openEdit(row)">{{ t('编辑') }}</el-button>
-            <el-button link type="danger" size="small" @click="remove(row)">{{ t('删除') }}</el-button>
+            <el-button v-permission="'fin-asset-category:edit'" link type="primary" size="small" @click="openEdit(row)">{{ t('编辑') }}</el-button>
+            <el-button v-permission="'fin-asset-category:delete'" link type="danger" size="small" @click="remove(row)">{{ t('删除') }}</el-button>
           </template>
         </el-table-column>
       </el-table>

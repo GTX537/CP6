@@ -11,7 +11,7 @@
           <el-option :value="0" :label="t('bankrecon.status.open')" />
           <el-option :value="1" :label="t('bankrecon.status.locked')" />
         </el-select>
-        <el-button type="primary" size="small" @click="openCreate">{{ t('bankrecon.btn.createStatement') }}</el-button>
+        <el-button v-permission="'fin-bank-reconciliation:view'" type="primary" size="small" @click="openCreate">{{ t('bankrecon.btn.createStatement') }}</el-button>
         <el-button size="small" @click="load">{{ t('刷新') }}</el-button>
         <el-tag size="small" type="info">{{ t('共 {n} 条', { n: rows.length }) }}</el-tag>
       </div>
@@ -23,7 +23,7 @@
             <div class="lines-panel">
               <div class="table-toolbar">
                 <span class="lines-panel-title">{{ t('bankrecon.panel.bankLines') }}</span>
-                <el-button v-if="row.status === 0" type="primary" size="small" @click="openAddLine(row)">
+                <el-button v-if="row.status === 0" v-permission="'fin-bank-reconciliation:import'" type="primary" size="small" @click="openAddLine(row)">
                   {{ t('bankrecon.btn.addLine') }}
                 </el-button>
                 <el-button size="small" @click="loadLines(row.id!)">{{ t('刷新') }}</el-button>
@@ -63,13 +63,13 @@
                 </el-table-column>
                 <el-table-column :label="t('操作')" width="130" fixed="right">
                   <template #default="{ row: lr }">
-                    <el-button
+                    <el-button v-permission="'fin-bank-reconciliation:import'"
                       link type="primary" size="small"
                       :disabled="lr.source !== 2 || row.status !== 0"
                       @click="openEditLine(row, lr)">
                       {{ t('编辑') }}
                     </el-button>
-                    <el-button
+                    <el-button v-permission="'fin-bank-reconciliation:import'"
                       link type="danger" size="small"
                       :disabled="lr.source !== 2 || row.status !== 0"
                       @click="doDeleteLine(row, lr)">
@@ -99,7 +99,7 @@
         </el-table-column>
         <el-table-column :label="t('操作')" width="160" fixed="right">
           <template #default="{ row }">
-            <el-button link type="primary" size="small" @click="openImport(row)">{{ t('bankrecon.btn.import') }}</el-button>
+            <el-button v-permission="'fin-bank-reconciliation:import'" link type="primary" size="small" @click="openImport(row)">{{ t('bankrecon.btn.import') }}</el-button>
             <el-button link type="primary" size="small" @click="goWorkbench(row)">{{ t('bankrecon.workbench') }}</el-button>
           </template>
         </el-table-column>

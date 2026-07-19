@@ -13,7 +13,7 @@
             :label="`${p.year}-${String(p.month).padStart(2, '0')}`" :value="p.id" />
         </el-select>
         <el-button size="small" @click="loadPreview" :disabled="!periodId">{{ t('试算') }}</el-button>
-        <el-button type="primary" size="small" @click="run" :disabled="!periodId">{{ t('asset.action.run') }}</el-button>
+        <el-button v-permission="'fin-asset-deprec:run'" type="primary" size="small" @click="run" :disabled="!periodId">{{ t('asset.action.run') }}</el-button>
         <el-tag v-if="preview.length" size="small" type="info">{{ t('共 {n} 条', { n: preview.length }) }}</el-tag>
       </div>
 
@@ -46,8 +46,8 @@
         <el-table-column prop="totalAmount" :label="t('asset.field.amount')" align="right" width="130" />
         <el-table-column :label="t('操作')" width="180" fixed="right">
           <template #default="{ row }">
-            <el-button link type="primary" size="small" v-if="row.status === 0" @click="post(row.id)">{{ t('asset.action.post') }}</el-button>
-            <el-button link type="danger" size="small" v-if="row.status === 1" @click="reverse(row.id)">{{ t('asset.action.reverse') }}</el-button>
+            <el-button link type="primary" size="small" v-if="row.status === 0" v-permission="'fin-asset-deprec:post'" @click="post(row.id)">{{ t('asset.action.post') }}</el-button>
+            <el-button link type="danger" size="small" v-if="row.status === 1" v-permission="'fin-asset-deprec:reverse'" @click="reverse(row.id)">{{ t('asset.action.reverse') }}</el-button>
           </template>
         </el-table-column>
       </el-table>

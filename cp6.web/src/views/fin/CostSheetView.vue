@@ -11,7 +11,7 @@
           <el-option v-for="(lbl, v) in COST_SHEET_STATUS_LABEL" :key="v" :value="Number(v)" :label="t(lbl)" />
         </el-select>
         <el-button size="small" @click="load">{{ t('刷新') }}</el-button>
-        <el-button size="small" type="primary" @click="openCollect">{{ t('归集成本') }}</el-button>
+        <el-button v-permission="'fin-cost:collect'" size="small" type="primary" @click="openCollect">{{ t('归集成本') }}</el-button>
       </div>
 
       <el-table
@@ -99,7 +99,7 @@
         </el-table-column>
         <el-table-column :label="t('操作')" width="100" fixed="right">
           <template #default="{ row }">
-            <el-button v-if="row.status === 1" size="small" type="success" link @click="settle(row)">{{ t('结转') }}</el-button>
+            <el-button v-if="row.status === 1" v-permission="'fin-cost:settle'" size="small" type="success" link @click="settle(row)">{{ t('结转') }}</el-button>
           </template>
         </el-table-column>
       </el-table>

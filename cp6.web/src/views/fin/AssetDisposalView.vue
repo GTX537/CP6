@@ -10,7 +10,7 @@
         <el-select v-model="statusFilter" :placeholder="t('状态')" clearable size="small" @change="load" style="width:140px">
           <el-option v-for="s in [0,1,2]" :key="s" :value="s" :label="t('asset.runStatus.' + s)" />
         </el-select>
-        <el-button type="primary" size="small" @click="openAdd">{{ t('新建') }}</el-button>
+        <el-button v-permission="'fin-asset-disposal:add'" type="primary" size="small" @click="openAdd">{{ t('新建') }}</el-button>
         <el-button size="small" @click="load">{{ t('刷新') }}</el-button>
         <el-tag size="small" type="info">{{ t('共 {n} 条', { n: rows.length }) }}</el-tag>
       </div>
@@ -30,8 +30,8 @@
         </el-table-column>
         <el-table-column :label="t('操作')" width="180" fixed="right">
           <template #default="{ row }">
-            <el-button link type="primary" size="small" v-if="row.status === 0" @click="confirm(row)">{{ t('asset.action.confirm') }}</el-button>
-            <el-button link type="danger" size="small" v-if="row.status === 1" @click="reverse(row)">{{ t('asset.action.reverse') }}</el-button>
+            <el-button link type="primary" size="small" v-if="row.status === 0" v-permission="'fin-asset-disposal:confirm'" @click="confirm(row)">{{ t('asset.action.confirm') }}</el-button>
+            <el-button link type="danger" size="small" v-if="row.status === 1" v-permission="'fin-asset-disposal:reverse'" @click="reverse(row)">{{ t('asset.action.reverse') }}</el-button>
           </template>
         </el-table-column>
       </el-table>

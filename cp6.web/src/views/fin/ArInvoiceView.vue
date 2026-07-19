@@ -11,8 +11,8 @@
         <el-select v-model="status" size="small" style="width: 130px" clearable :placeholder="t('全部状态')" @change="reload">
           <el-option v-for="(lbl, k) in AR_INVOICE_STATUS_LABEL" :key="k" :value="Number(k)" :label="t(lbl)" />
         </el-select>
-        <el-button type="primary" size="small" @click="openCreate(false)">{{ t('新建发票') }}</el-button>
-        <el-button size="small" @click="openCreate(true)">{{ t('销售红字') }}</el-button>
+        <el-button v-permission="'fin-ar-invoice:add'" type="primary" size="small" @click="openCreate(false)">{{ t('新建发票') }}</el-button>
+        <el-button v-permission="'fin-ar-invoice:credit-memo'" size="small" @click="openCreate(true)">{{ t('销售红字') }}</el-button>
         <el-button size="small" @click="reload">{{ t('刷新') }}</el-button>
         <el-tag size="small" type="info">{{ t('共 {n} 条', { n: rows.length }) }}</el-tag>
       </div>
@@ -37,8 +37,8 @@
         </el-table-column>
         <el-table-column :label="t('操作')" width="140" fixed="right">
           <template #default="{ row }">
-            <el-button v-if="row.status === 0" link type="primary" size="small" @click="doPost(row)">{{ t('过账') }}</el-button>
-            <el-button v-if="row.status === 1 || row.status === 2" link type="danger" size="small" @click="doReverse(row)">{{ t('红冲') }}</el-button>
+            <el-button v-if="row.status === 0" v-permission="'fin-ar-invoice:post'" link type="primary" size="small" @click="doPost(row)">{{ t('过账') }}</el-button>
+            <el-button v-if="row.status === 1 || row.status === 2" v-permission="'fin-ar-invoice:reverse'" link type="danger" size="small" @click="doReverse(row)">{{ t('红冲') }}</el-button>
           </template>
         </el-table-column>
       </el-table>

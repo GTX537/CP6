@@ -13,7 +13,7 @@
           <template #header>
             <div class="panel-header">
               <span>{{ t('budget.panel.budgets') }}</span>
-              <el-button type="primary" size="small" @click="openCreateBudget">{{ t('budget.btn.createBudget') }}</el-button>
+              <el-button v-permission="'fin-budget:add'" type="primary" size="small" @click="openCreateBudget">{{ t('budget.btn.createBudget') }}</el-button>
             </div>
           </template>
           <div v-loading="budgetsLoading">
@@ -39,7 +39,7 @@
           <template #header>
             <div class="panel-header">
               <span>{{ t('budget.panel.versions') }}</span>
-              <el-button type="primary" size="small" @click="openCreateVersion">{{ t('budget.btn.createVersion') }}</el-button>
+              <el-button v-permission="'fin-budget:add'" type="primary" size="small" @click="openCreateVersion">{{ t('budget.btn.createVersion') }}</el-button>
             </div>
           </template>
           <div v-loading="versionsLoading">
@@ -60,15 +60,15 @@
                   {{ t(VERSION_STATUS_I18N[v.status] ?? '') }}
                 </el-tag>
                 <span class="version-actions">
-                  <el-button
+                  <el-button v-permission="'fin-budget:submit'"
                     v-if="v.status === 0"
                     link type="warning" size="small"
                     @click.stop="doSubmit(v)">{{ t('budget.btn.submit') }}</el-button>
-                  <el-button
+                  <el-button v-permission="'fin-budget:activate'"
                     v-if="v.status === 2"
                     link type="success" size="small"
                     @click.stop="doActivate(v)">{{ t('budget.btn.activate') }}</el-button>
-                  <el-button
+                  <el-button v-permission="'fin-budget:delete'"
                     v-if="v.status === 0"
                     link type="danger" size="small"
                     @click.stop="doDeleteVersion(v)">{{ t('删除') }}</el-button>
@@ -93,16 +93,16 @@
               <!-- 工具栏 (仅草稿可操作) -->
               <div v-if="selectedVersion" style="display:flex;gap:6px;align-items:center">
                 <template v-if="isDraft">
-                  <el-button type="primary" size="small" @click="openAddLine">{{ t('budget.btn.addLine') }}</el-button>
+                  <el-button v-permission="'fin-budget:edit'" type="primary" size="small" @click="openAddLine">{{ t('budget.btn.addLine') }}</el-button>
                   <el-upload
                     :show-file-list="false"
                     :before-upload="handleImportPreview"
                     accept=".xlsx,.xls"
                     :auto-upload="true"
                   >
-                    <el-button size="small">{{ t('budget.btn.importExcel') }}</el-button>
+                    <el-button v-permission="'fin-budget:import'" size="small">{{ t('budget.btn.importExcel') }}</el-button>
                   </el-upload>
-                  <el-button size="small" @click="openCopyFrom">{{ t('budget.btn.copyVersion') }}</el-button>
+                  <el-button v-permission="'fin-budget:add'" size="small" @click="openCopyFrom">{{ t('budget.btn.copyVersion') }}</el-button>
                 </template>
                 <el-button size="small" @click="loadLines">{{ t('刷新') }}</el-button>
               </div>
@@ -147,8 +147,8 @@
               align="right"
             >
               <template #default="{ row }">
-                <template v-if="isDraft">
-                  <el-input-number
+                <template v-if="isDraft && canEditBudget">
+                  <el-input-number v-permission="'fin-budget:edit'"
                     v-model="row.periods[m - 1]"
                     :controls="false"
                     size="small"
@@ -169,8 +169,8 @@
             </el-table-column>
             <el-table-column :label="t('budget.field.controlMode')" width="90" align="center">
               <template #default="{ row }">
-                <el-select
-                  v-if="isDraft"
+                <el-select v-permission="'fin-budget:edit'"
+                  v-if="isDraft && canEditBudget"
                   v-model="row.controlMode"
                   size="small"
                   style="width:80px"
@@ -183,8 +183,8 @@
             </el-table-column>
             <el-table-column :label="t('budget.field.controlBasis')" width="85" align="center">
               <template #default="{ row }">
-                <el-select
-                  v-if="isDraft"
+                <el-select v-permission="'fin-budget:edit'"
+                  v-if="isDraft && canEditBudget"
                   v-model="row.controlBasis"
                   size="small"
                   style="width:72px"
@@ -197,7 +197,7 @@
             </el-table-column>
             <el-table-column :label="t('操作')" width="68" fixed="right" align="center">
               <template #default="{ row }">
-                <el-button
+                <el-button v-permission="'fin-budget:edit'"
                   v-if="isDraft"
                   link type="danger" size="small"
                   @click="doDeleteLine(row)">{{ t('删除') }}</el-button>
@@ -409,6 +409,7 @@
 import { computed, onMounted, reactive, ref } from 'vue'
 import { useI18n } from 'vue-i18n'
 import { ElMessage, ElMessageBox } from 'element-plus'
+import { usePermissionStore } from '@/stores/permission'
 import { budgetApi, budgetVersionApi, budgetLineApi, costCenterApi } from '@/api/fin/budget'
 import { glAccountApi } from '@/api/fin/fin'
 import type { Budget, BudgetVersion, BudgetLineGridRow, BudgetLineDto, BudgetImportPreviewResult, CostCenter } from '@/types/fin/budget'
@@ -419,6 +420,7 @@ import {
 } from '@/types/fin/budget'
 
 const { t } = useI18n()
+const permissionStore = usePermissionStore()
 
 // ── 状态标签 i18n key map ──
 const VERSION_STATUS_I18N: Record<number, string> = {
@@ -457,6 +459,8 @@ const costCenters = ref<CostCenter[]>([])
 
 // 是否草稿状态（行编辑门控）
 const isDraft = computed(() => selectedVersion.value?.status === 0)
+// 与 v-permission 的 fail-open 语义一致；无编辑权时仍保留只读值。
+const canEditBudget = computed(() => !permissionStore.loaded || permissionStore.has('fin-budget:edit'))
 
 // ── 方案相关 ──
 const createBudgetVisible = ref(false)

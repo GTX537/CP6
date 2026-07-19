@@ -10,7 +10,7 @@
         <el-select v-model="statusFilter" size="small" clearable :placeholder="t('全部状态')" style="width: 130px" @change="reload">
           <el-option v-for="(lbl, k) in JOURNAL_STATUS_LABEL" :key="k" :value="Number(k)" :label="t(lbl)" />
         </el-select>
-        <el-button type="primary" size="small" @click="openCreate">{{ t('新建凭证') }}</el-button>
+        <el-button v-permission="'fin-journal:add'" type="primary" size="small" @click="openCreate">{{ t('新建凭证') }}</el-button>
         <el-button size="small" @click="reload">{{ t('刷新') }}</el-button>
         <el-tag size="small" type="info">{{ t('共 {n} 条', { n: rows.length }) }}</el-tag>
       </div>
@@ -36,10 +36,10 @@
         <el-table-column :label="t('操作')" width="230" fixed="right">
           <template #default="{ row }">
             <el-button link type="primary" size="small" @click="view(row)">{{ t('查看') }}</el-button>
-            <el-button v-if="row.status === 0" link type="success" size="small" @click="act(row, 'submit')">{{ t('提交') }}</el-button>
-            <el-button v-if="row.status === 1" link type="success" size="small" @click="act(row, 'post')">{{ t('过账') }}</el-button>
-            <el-button v-if="row.status === 1" link type="warning" size="small" @click="reject(row)">{{ t('驳回') }}</el-button>
-            <el-button v-if="row.status === 2" link type="danger" size="small" @click="reverse(row)">{{ t('红冲') }}</el-button>
+            <el-button v-if="row.status === 0" v-permission="'fin-journal:submit'" link type="success" size="small" @click="act(row, 'submit')">{{ t('提交') }}</el-button>
+            <el-button v-if="row.status === 1" v-permission="'fin-journal:post'" link type="success" size="small" @click="act(row, 'post')">{{ t('过账') }}</el-button>
+            <el-button v-if="row.status === 1" v-permission="'fin-journal:reject'" link type="warning" size="small" @click="reject(row)">{{ t('驳回') }}</el-button>
+            <el-button v-if="row.status === 2" v-permission="'fin-journal:reverse'" link type="danger" size="small" @click="reverse(row)">{{ t('红冲') }}</el-button>
           </template>
         </el-table-column>
       </el-table>

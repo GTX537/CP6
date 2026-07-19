@@ -7,20 +7,20 @@
 
     <el-card shadow="never" v-loading="loading">
       <div class="table-toolbar">
-        <el-button type="primary" size="small" @click="doAutoMatch">{{ t('bankrecon.btn.autoMatch') }}</el-button>
-        <el-button size="small" :disabled="!selectedLines.length || !selectedCands.length" @click="doManualMatch">
+        <el-button v-permission="'fin-bank-reconciliation:match'" type="primary" size="small" @click="doAutoMatch">{{ t('bankrecon.btn.autoMatch') }}</el-button>
+        <el-button v-permission="'fin-bank-reconciliation:match'" size="small" :disabled="!selectedLines.length || !selectedCands.length" @click="doManualMatch">
           {{ t('bankrecon.btn.manualMatch') }}
         </el-button>
-        <el-button size="small" :disabled="!selectedLines.length" @click="genVoucherVisible = true">
+        <el-button v-permission="'fin-bank-reconciliation:generate-voucher'" size="small" :disabled="!selectedLines.length" @click="genVoucherVisible = true">
           {{ t('bankrecon.btn.genVoucher') }}
         </el-button>
-        <el-button size="small" :disabled="!selectedLines.length" @click="doMarkPending">
+        <el-button v-permission="'fin-bank-reconciliation:mark-pending'" size="small" :disabled="!selectedLines.length" @click="doMarkPending">
           {{ t('bankrecon.btn.markPending') }}
         </el-button>
-        <el-button v-if="statement?.status === 0" type="warning" size="small" @click="doPreLock">
+        <el-button v-if="statement?.status === 0" v-permission="'fin-bank-reconciliation:lock'" type="warning" size="small" @click="doPreLock">
           {{ t('bankrecon.btn.lock') }}
         </el-button>
-        <el-button v-if="statement?.status === 1" size="small" @click="doUnlock">
+        <el-button v-if="statement?.status === 1" v-permission="'fin-bank-reconciliation:unlock'" size="small" @click="doUnlock">
           {{ t('bankrecon.btn.unlock') }}
         </el-button>
         <el-button size="small" @click="loadAll">{{ t('刷新') }}</el-button>
@@ -55,7 +55,7 @@
             </el-table-column>
             <el-table-column :label="t('操作')" width="80" fixed="right">
               <template #default="{ row }">
-                <el-button
+                <el-button v-permission="'fin-bank-reconciliation:match'"
                   v-if="row.matchStatus === 1 && row.matchGroupId"
                   link type="danger" size="small"
                   @click="openUnmatch(row)">

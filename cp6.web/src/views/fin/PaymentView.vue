@@ -11,7 +11,7 @@
         <el-select v-model="status" size="small" style="width: 130px" clearable :placeholder="t('全部状态')" @change="reload">
           <el-option v-for="(lbl, k) in PAYMENT_STATUS_LABEL" :key="k" :value="Number(k)" :label="t(lbl)" />
         </el-select>
-        <el-button type="primary" size="small" @click="openPay">{{ t('新建付款') }}</el-button>
+        <el-button v-permission="'fin-ap-payment:add'" type="primary" size="small" @click="openPay">{{ t('新建付款') }}</el-button>
         <el-button size="small" @click="bankDialog = true">{{ t('银行账户') }}</el-button>
         <el-button size="small" @click="reload">{{ t('刷新') }}</el-button>
         <el-tag size="small" type="info">{{ t('共 {n} 条', { n: rows.length }) }}</el-tag>
@@ -31,8 +31,8 @@
         <el-table-column :label="t('操作')" width="150" fixed="right">
           <template #default="{ row }">
             <template v-if="row.status === 1">
-              <el-button link type="primary" size="small" @click="openSettle(row)">{{ t('核销') }}</el-button>
-              <el-button link type="danger" size="small" @click="doReverse(row)">{{ t('撤销') }}</el-button>
+            <el-button v-permission="'fin-ap-payment:settle'" link type="primary" size="small" @click="openSettle(row)">{{ t('核销') }}</el-button>
+            <el-button v-permission="'fin-ap-payment:reverse'" link type="danger" size="small" @click="doReverse(row)">{{ t('撤销') }}</el-button>
             </template>
           </template>
         </el-table-column>
@@ -89,7 +89,7 @@
             <el-option v-for="a in leafAccounts" :key="a.id" :value="a.id!" :label="`${a.code} ${a.name}`" />
           </el-select>
         </el-form-item>
-        <el-button type="primary" size="small" @click="addBank">{{ t('新建') }}</el-button>
+        <el-button v-permission="'fin-ap-payment:bank'" type="primary" size="small" @click="addBank">{{ t('新建') }}</el-button>
       </el-form>
       <el-table :data="banks" border size="small">
         <el-table-column prop="code" :label="t('编码')" width="120" />
