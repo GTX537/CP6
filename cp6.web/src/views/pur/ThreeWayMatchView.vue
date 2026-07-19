@@ -11,7 +11,7 @@
         <el-select v-model="status" size="small" style="width: 130px" clearable :placeholder="t('全部状态')" @change="reload">
           <el-option v-for="(lbl, k) in MATCH_STATUS_LABEL" :key="k" :value="Number(k)" :label="t(lbl)" />
         </el-select>
-        <el-button type="primary" size="small" @click="openCreate">{{ t('匹配供应商发票') }}</el-button>
+        <el-button v-permission="'pur-match:add'" type="primary" size="small" @click="openCreate">{{ t('匹配供应商发票') }}</el-button>
         <el-button size="small" @click="reload">{{ t('刷新') }}</el-button>
         <el-tag size="small" type="info">{{ t('共 {n} 条', { n: rows.length }) }}</el-tag>
       </div>
@@ -37,8 +37,8 @@
         <el-table-column :label="t('操作')" width="190" fixed="right">
           <template #default="{ row }">
             <el-button link type="primary" size="small" @click="openDetail(row)">{{ t('查看') }}</el-button>
-            <el-button v-if="row.status === 1" link type="success" size="small" @click="doRelease(row)">{{ t('放行') }}</el-button>
-            <el-button v-if="row.status === 1" link type="danger" size="small" @click="doReject(row)">{{ t('拒绝') }}</el-button>
+            <el-button v-if="row.status === 1" v-permission="'pur-match:release'" link type="success" size="small" @click="doRelease(row)">{{ t('放行') }}</el-button>
+            <el-button v-if="row.status === 1" v-permission="'pur-match:reject'" link type="danger" size="small" @click="doReject(row)">{{ t('拒绝') }}</el-button>
           </template>
         </el-table-column>
       </el-table>

@@ -2,20 +2,20 @@
 
 ## 当前项目状态
 
-快照日期 2026-07-18。仓库已改为私有，GR-VP 功能分支已合入，当前分支 `main`，工作基点包含三库 Git LFS 迁移备份。系统不是原型：ERP/MES/WMS、财务、采购、OA/WF、权限、计划和 Space 均有大量生产代码与测试。
+快照日期 2026-07-19。仓库已改为私有，当前分支 `feat/gr-vp-t6`，T6 代码已提交为 `4bb7512` + `cf20d42`，工作基点包含三库 Git LFS 迁移备份。系统不是原型：ERP/MES/WMS、财务、采购、OA/WF、权限、计划和 Space 均有大量生产代码与测试。
 
 ## 当前开发优先级
 
 只继续 `docs/superpowers/plans/2026-07-17-general-role-vperm.md`：
 
-1. T6 PUR/PLAN/PUB `v-permission`。
-2. T7 全量验收、部署与一般用户冒烟。
+1. 将 T6 commits `4bb7512` + `cf20d42` 合入 `main`。
+2. 执行 T7 全量验收、双镜像部署与一般用户冒烟。
 
-不要重新实现 T1–T5。它们已在 Git 中完成：标准角色、OA/WF 40×17、ERP 39×16、MES 31×12、FIN 66×16。
+不要重新实现 T1–T6。它们已在 Git 中完成：标准角色、OA/WF 40×17、ERP 39×16、MES 31×12、FIN 66×16、PUR/PLAN/PUB 37 个页面级声明/33 个唯一键。
 
 ## 下一步应该继续什么
 
-从 T6 PUR/PLAN/PUB 开始：按域读取 Controller 权限贴点、Program action seed 与反射 oracle，先输出按钮映射清单，再修改目标视图。完成三连验证、真实浏览器抽样和独立复审后进入 T7，不跨任务混改。
+从 T7 开始：在 `main` 上完成 GR-VP 全波终审，启动 Docker Desktop，重建 API/Web 双镜像，验证四租户标准角色种子与 `qa_general` 端到端权限语义。部署过程不得带入并行的菜单设计页面或 `.claude/settings.local.json`。
 
 ## 最近完成内容
 
@@ -25,6 +25,7 @@
 - `8e696d2`：`feat/general-role-vperm` 合入 `main`。
 - `6e4ade1`：MES 31 条前端权限指令，12 个视图，24 个真实写权限键。
 - `5732057`：FIN 66 条前端权限指令，16 个视图，51 个真实权限键；预算 view-only 保留只读值。
+- `4bb7512`：PUR/PLAN/PUB 37 个页面级权限声明，33 个唯一写权限键；Seq 通用表格桌面/移动 CRUD 守权与 2 条回归测试。
 - `b43787e0`：三库验证备份经 Git LFS 固化。
 - `1aac4a5d`：换机恢复入口修正。
 
@@ -70,6 +71,6 @@
 ```text
 请完整阅读 docs/project-memory、README、当前分支最近 30 条 git log，
 再阅读 docs/superpowers/plans/2026-07-17-general-role-vperm.md。
-确认当前 GR-VP 已完成 T1-T5，下一项是 T6 PUR/PLAN/PUB。
+确认当前 GR-VP 已完成 T1-T6，下一项是 T7 部署与端到端冒烟。
 先汇报状态、风险和拟修改范围，再按本轮授权边界执行。
 ```

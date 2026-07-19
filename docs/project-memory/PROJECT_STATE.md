@@ -1,10 +1,10 @@
 # 项目当前状态
 
-最后更新：2026-07-18
+最后更新：2026-07-19
 
 ## Git
 
-- 当前分支：`main`
+- 当前分支：`feat/gr-vp-t6`
 - GR-VP 功能分支已通过 merge commit `8e696d2` 合入并推送
 - 远端：`origin`（GitHub 私有仓库）
 - 换机标签：`migration-2026-07-18-ready`
@@ -19,13 +19,14 @@
 | T3 ERP v-permission | 完成 | `4a48525e`，39 按钮/16 视图 |
 | T4 MES v-permission | 完成 | `6e4ade1`，31 指令/12 视图/24 键 |
 | T5 FIN v-permission | 完成 | `5732057`，66 指令/16 视图/51 键 |
-| T6 PUR/PLAN/PUB v-permission | 待办 | 未开始 |
-| T7 部署与冒烟 | 待办 | T4–T6 后执行 |
+| T6 PUR/PLAN/PUB v-permission | 完成 | `4bb7512` + `cf20d42`，37 页面级声明/12 视图/33 键；异步加载守权 |
+| T7 部署与冒烟 | 待办 | T6 合入 main 后执行 |
 
 ## 最近验证基线
 
 - 后端在 GR-VP T1 报告中：2220 passed / 5 skipped。
-- 前端在 T5 重新验证：71 files / 481 tests passed，type-check 0，build 通过；Chrome 权限矩阵与预算 view-only/edit-only 复测通过且 console 0 error。
+- 前端在 T6 重新验证：72 files / 487 tests passed，聚焦权限测试 6/6，type-check 0，build 通过；Chrome RFQ/Seq 权限矩阵通过且 console 0 error。
+- T6 后端权限 oracle：11/11 passed。
 - 这些是最近任务报告基线，不代表生成本知识库时重新运行了全量测试。
 
 ## 数据状态
@@ -36,4 +37,4 @@
 
 ## 下一动作
 
-开始 T6 PUR/PLAN/PUB：先按 Controller 贴点、action seed 与反射 oracle 分域建立“视图 → 写动作 → 权限键”清单，再铺设指令并完成三连验证、真实浏览器抽样与独立复审。不要重做 T1–T5。
+执行 T7：将 `4bb7512` + `cf20d42` 合入 `main`，完成全波终审；启动当前处于 stopped 的 Docker Desktop/WSL，重建 API/Web 双镜像，验证四租户角色种子、`qa_general` 8 键/4 菜单、审批归属闸与无权端点 403。不要重做 T1–T6。

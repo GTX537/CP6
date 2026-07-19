@@ -18,8 +18,8 @@
       </div>
       <!-- 桌面端：新增/删除按钮在顶部 -->
       <div v-if="!isMobile" class="button-area">
-        <el-button type="primary" :icon="Plus" @click="handleAdd">{{ $t('table.add') }}</el-button>
-        <el-button type="danger" :icon="Delete" @click="handleBatchDelete">{{ $t('table.delete') }}</el-button>
+        <el-button v-permission="addPermission" type="primary" :icon="Plus" @click="handleAdd">{{ $t('table.add') }}</el-button>
+        <el-button v-permission="deletePermission" type="danger" :icon="Delete" @click="handleBatchDelete">{{ $t('table.delete') }}</el-button>
       </div>
     </div>
 
@@ -55,8 +55,8 @@
       <el-table-column :label="$t('table.operation')" :width="$slots['extra-actions'] ? 220 : 150">
         <template #default="{ row }">
           <slot name="extra-actions" :row="row" />
-          <el-button link type="primary" @click="handleEdit(row)">{{ $t('table.edit') }}</el-button>
-          <el-button link type="danger" @click="handleDelete(row)">{{ $t('table.delete') }}</el-button>
+          <el-button v-permission="editPermission" link type="primary" @click="handleEdit(row)">{{ $t('table.edit') }}</el-button>
+          <el-button v-permission="deletePermission" link type="danger" @click="handleDelete(row)">{{ $t('table.delete') }}</el-button>
         </template>
       </el-table-column>
     </el-table>
@@ -73,7 +73,7 @@
         <span class="selection-count">{{ selectedRows.length }} / {{ tableData.length }}</span>
         <div class="selection-actions">
           <el-button size="small" @click="exitSelectionMode">{{ $t('table.cancel') }}</el-button>
-          <el-button size="small" type="danger" :disabled="!selectedRows.length" @click="handleBatchDelete">
+          <el-button v-permission="deletePermission" size="small" type="danger" :disabled="!selectedRows.length" @click="handleBatchDelete">
             {{ $t('table.delete') }}
           </el-button>
         </div>
@@ -111,7 +111,7 @@
 
           <!-- 更多菜单 -->
           <el-dropdown
-            v-if="!selectionMode"
+            v-if="!selectionMode && (hasDefaultMobileActions || $slots['mobile-extra-actions'])"
             trigger="click"
             placement="bottom-end"
             @command="(cmd: string) => onCardCommand(cmd, row)"
@@ -122,10 +122,10 @@
             </el-button>
             <template #dropdown>
               <el-dropdown-menu>
-                <el-dropdown-item command="edit" :icon="Edit">{{ $t('table.edit') }}</el-dropdown-item>
+                <el-dropdown-item v-if="canUsePermission(editPermission)" command="edit" :icon="Edit">{{ $t('table.edit') }}</el-dropdown-item>
                 <slot name="mobile-extra-actions" :row="row" />
-                <el-dropdown-item command="select" :icon="Select" divided>{{ $t('table.batchSelect') || '批量选择' }}</el-dropdown-item>
-                <el-dropdown-item command="delete" :icon="Delete">
+                <el-dropdown-item v-if="canUsePermission(deletePermission)" command="select" :icon="Select" divided>{{ $t('table.batchSelect') || '批量选择' }}</el-dropdown-item>
+                <el-dropdown-item v-if="canUsePermission(deletePermission)" command="delete" :icon="Delete">
                   <span style="color: #f56c6c;">{{ $t('table.delete') }}</span>
                 </el-dropdown-item>
               </el-dropdown-menu>
@@ -176,6 +176,7 @@
     <!-- 手机端：浮动新增按钮 -->
     <button
       v-if="isMobile && !selectionMode"
+      v-permission="addPermission"
       class="cp6-fab"
       :aria-label="$t('table.add')"
       @click="handleAdd"
@@ -201,9 +202,11 @@ import { Search, Plus, Delete, MoreFilled, Edit, Select } from '@element-plus/ic
 import { ElMessage, ElMessageBox } from 'element-plus'
 import VolForm from './VolForm.vue'
 import { useBreakpoint } from '@/composables/useBreakpoint'
+import { usePermissionStore } from '@/stores/permission'
 
 const { t } = useI18n()
 const { isMobile } = useBreakpoint()
+const permissionStore = usePermissionStore()
 
 // 定义列配置的类型
 export interface ColumnConfig {
@@ -221,6 +224,9 @@ export interface ColumnConfig {
 const props = withDefaults(defineProps<{
   columns: ColumnConfig[]
   idField?: string
+  addPermission?: string
+  editPermission?: string
+  deletePermission?: string
   api: {
     getList: (params: any) => Promise<any>
     add: (data: any) => Promise<any>
@@ -257,6 +263,13 @@ const allSelected = computed(() =>
   tableData.value.length > 0 && selectedRows.value.length === tableData.value.length
 )
 const someSelected = computed(() => selectedRows.value.length > 0)
+const hasDefaultMobileActions = computed(() =>
+  canUsePermission(props.editPermission) || canUsePermission(props.deletePermission)
+)
+
+function canUsePermission(key?: string) {
+  return !key || !permissionStore.loaded || permissionStore.has(key)
+}
 
 function isRowSelected(row: any) {
   return selectedRows.value.some(r => r[props.idField] === row[props.idField])
@@ -280,13 +293,15 @@ function onCardClick(row: any, _ev: Event) {
   if (selectionMode.value) {
     toggleRowSelected(row, !isRowSelected(row))
   } else {
-    handleEdit(row)
+    if (canUsePermission(props.editPermission)) {
+      handleEdit(row)
+    }
   }
 }
 async function onCardCommand(cmd: string, row: any) {
-  if (cmd === 'edit') handleEdit(row)
-  else if (cmd === 'delete') handleDelete(row)
-  else if (cmd === 'select') {
+  if (cmd === 'edit' && canUsePermission(props.editPermission)) handleEdit(row)
+  else if (cmd === 'delete' && canUsePermission(props.deletePermission)) handleDelete(row)
+  else if (cmd === 'select' && canUsePermission(props.deletePermission)) {
     selectionMode.value = true
     toggleRowSelected(row, true)
   }

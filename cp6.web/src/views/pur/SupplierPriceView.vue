@@ -10,7 +10,7 @@
         <el-input v-model="supplierId" size="small" style="width: 160px" :placeholder="t('供应商编码')" clearable @keyup.enter="reload" />
         <el-input v-model="itemId" size="small" style="width: 160px" :placeholder="t('物料编码（可选）')" clearable @keyup.enter="reload" />
         <el-button type="primary" size="small" @click="reload">{{ t('查询') }}</el-button>
-        <el-button size="small" :disabled="!supplierId.trim()" @click="openCreate">{{ t('新增价档') }}</el-button>
+        <el-button v-permission="'pur-supplier-price:add'" size="small" :disabled="!supplierId.trim()" @click="openCreate">{{ t('新增价档') }}</el-button>
         <el-tag size="small" type="info">{{ t('共 {n} 条', { n: rows.length }) }}</el-tag>
       </div>
 
@@ -34,7 +34,7 @@
         </el-table-column>
         <el-table-column :label="t('操作')" width="80" fixed="right">
           <template #default="{ row }">
-            <el-button link type="danger" size="small" @click="doDelete(row)">{{ t('删除') }}</el-button>
+            <el-button v-permission="'pur-supplier-price:delete'" link type="danger" size="small" @click="doDelete(row)">{{ t('删除') }}</el-button>
           </template>
         </el-table-column>
         <template #empty>

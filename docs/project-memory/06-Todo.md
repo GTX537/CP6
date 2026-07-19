@@ -4,11 +4,11 @@
 
 权威计划：`docs/superpowers/plans/2026-07-17-general-role-vperm.md`。
 
-1. T6：扫描 `views/pur`、`views/plan` 及独立 PLAN/PUB 页，铺设 PUR/PLAN/PUB 指令。
-2. T6 运行 `vue-tsc`、Vitest、前端 build，写 SDD 报告并单独提交。
-3. T7：在 main 上全波终审、重建 API/Web 镜像、权限种子 SQL 验证和真实一般用户端到端冒烟。
+1. T7：将 T6 合入 `main`，完成 GR-VP 全波终审。
+2. 重建 API/Web 双镜像并启动 Compose；前端有新权限代码，Web 镜像不可跳过。
+3. 验证四租户标准角色种子、admin 零扰动与 `qa_general` 的 8 键/4 菜单/归属闸/无权端点 403。
 
-共同规程：纯读按钮不贴；对话框确认若入口已守则不重复；新增/编辑双模式按钮优先用静态 `v-if`/`v-else` 分支逐键守权；任务范围仅 template 指令，不顺手重构。
+T6 已由 `4bb7512` + `cf20d42` 完成；不要重复铺设。Docker Desktop 当前未启动，部署前先启动并确认 `docker compose ps`。
 
 ## P1：GR-VP 收口票
 

@@ -53,7 +53,7 @@
 
     <div style="margin-bottom: 16px">
       <el-button type="primary" @click="preview">{{ t('预览生成') }}</el-button>
-      <el-button @click="save">{{ t('保存元数据') }}</el-button>
+      <el-button v-permission="'pub-codegen:save'" @click="save">{{ t('保存元数据') }}</el-button>
     </div>
 
     <el-card v-if="Object.keys(files).length">

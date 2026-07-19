@@ -11,7 +11,7 @@
         <el-select v-model="status" size="small" style="width: 130px" clearable :placeholder="t('全部状态')" @change="reload">
           <el-option v-for="(lbl, k) in PO_STATUS_LABEL" :key="k" :value="Number(k)" :label="t(lbl)" />
         </el-select>
-        <el-button type="primary" size="small" @click="openCreate">{{ t('新建采购单') }}</el-button>
+        <el-button v-permission="'pur-po:add'" type="primary" size="small" @click="openCreate">{{ t('新建采购单') }}</el-button>
         <el-button size="small" @click="reload">{{ t('刷新') }}</el-button>
         <el-tag size="small" type="info">{{ t('共 {n} 条', { n: rows.length }) }}</el-tag>
       </div>
@@ -40,8 +40,8 @@
         <el-table-column :label="t('操作')" width="170" fixed="right">
           <template #default="{ row }">
             <el-button link type="primary" size="small" @click="openDetail(row)">{{ t('查看') }}</el-button>
-            <el-button v-if="row.status === 0" link type="success" size="small" @click="doSubmit(row)">{{ t('送审') }}</el-button>
-            <el-button v-if="row.status === 0 || row.status === 2" link type="danger" size="small" @click="doCancel(row)">{{ t('取消') }}</el-button>
+            <el-button v-if="row.status === 0" v-permission="'pur-po:submit'" link type="success" size="small" @click="doSubmit(row)">{{ t('送审') }}</el-button>
+            <el-button v-if="row.status === 0 || row.status === 2" v-permission="'pur-po:cancel'" link type="danger" size="small" @click="doCancel(row)">{{ t('取消') }}</el-button>
           </template>
         </el-table-column>
       </el-table>
