@@ -214,6 +214,13 @@ dotnet publish CP6.WebApi/CP6.WebApi.csproj -c Release -o publish-docker -m:1
 
 progress.md 冒烟证据；MEMORY.md 交接点更新；v-permission 不对称 UX 票关闭。commit+push。
 
+### T7 完成记录（2026-07-19）
+
+- T6 已经 `d79a39c` no-ff 合入并推送 `main`；API/Web 双镜像从干净提交部署。
+- 冒烟发现并修复 FormInitiate 提交链错误依赖 `draft:add`：改走既有 `wf/flow/submit`，`main` 提交 `ffca422`。
+- `qa_general` 4 菜单/8 键；本人待办 200、他人待办 400、无权端点 403；测试实例和临时流程定义清理归零。
+- 当前 `CP6DB` 仅存在 `DEFAULT/A1` 一个启用租户，故完成“全部现存租户”SQL 验证；未虚构 B1/C1/D1。多租户种子行为由 `StandardRoleSeedTests` 继续覆盖。详见 `.superpowers/sdd/gr-vp-t7-report.md`。
+
 ---
 
 ## 完成后跟踪票

@@ -2,6 +2,15 @@
 
 > 依据 Git log 汇总，不替代完整 Git 历史。重点记录影响接手判断的里程碑。
 
+## 2026-07-19：GR-VP T7 部署与真实权限冒烟
+
+- `d79a39c`：T6 以 no-ff 合入并推送 `main`。
+- `ffca422`：修复 OA 发起页提交链误先调用 `draft/save(add)`；改为直接调用既有 `wf/flow/submit(submit)`，草稿保存权限保持不变，并新增组件回归测试。
+- 干净 `main` 验证：73 files / 488 tests、type-check 0、Vite 2649 modules production build。
+- API/Web 双镜像运行指纹分别为 `2ee04fc0…` / `0271d4af…`；HTTP 与最近 API 错误日志检查通过。
+- 当前租户注册表仅 `DEFAULT/A1`：一般用户 4 菜单/8 动作，admin 148 菜单/323 动作；`qa_general` 本人审批 200、他人待办 400、无权端点 403。
+- 两条测试流程实例及临时自审批定义清理归零，保留 `qa_general`。四租户原计划因 B1/C1/D1 不存在改按全部现存租户验收并记档。
+
 ## 2026-07-19：GR-VP PUR / PLAN / PUB T6
 
 - `4bb7512`：PUR/PLAN/PUB 扫描 12 个目标视图，37 个页面级权限声明覆盖 33 个唯一后端写权限键；2 个只读 POST 明确豁免。
