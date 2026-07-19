@@ -2,20 +2,15 @@
 
 ## 当前项目状态
 
-快照日期 2026-07-19。仓库已改为私有，当前分支 `feat/gr-vp-t6`，T6 代码已提交为 `4bb7512` + `cf20d42`，工作基点包含三库 Git LFS 迁移备份。系统不是原型：ERP/MES/WMS、财务、采购、OA/WF、权限、计划和 Space 均有大量生产代码与测试。
+快照日期 2026-07-19。仓库已改为私有，GR-VP T1–T7 已完成；T6 合入 `main` 的 merge commit 为 `d79a39c`，T7 OA 提交链修复为 `ffca422`。工作基点包含三库 Git LFS 迁移备份。系统不是原型：ERP/MES/WMS、财务、采购、OA/WF、权限、计划和 Space 均有大量生产代码与测试。
 
 ## 当前开发优先级
 
-只继续 `docs/superpowers/plans/2026-07-17-general-role-vperm.md`：
-
-1. 将 T6 commits `4bb7512` + `cf20d42` 合入 `main`。
-2. 执行 T7 全量验收、双镜像部署与一般用户冒烟。
-
-不要重新实现 T1–T6。它们已在 Git 中完成：标准角色、OA/WF 40×17、ERP 39×16、MES 31×12、FIN 66×16、PUR/PLAN/PUB 37 个页面级声明/33 个唯一键。
+不要重新实现 GR-VP T1–T7。标准角色、OA/WF 40×17、ERP 39×16、MES 31×12、FIN 66×16、PUR/PLAN/PUB 37 个页面级声明/33 个唯一键，以及部署冒烟均已完成。下一项应从 `06-Todo.md` 的 P1 票中选择。
 
 ## 下一步应该继续什么
 
-从 T7 开始：在 `main` 上完成 GR-VP 全波终审，启动 Docker Desktop，重建 API/Web 双镜像，验证四租户标准角色种子与 `qa_general` 端到端权限语义。部署过程不得带入并行的菜单设计页面或 `.claude/settings.local.json`。
+从 P1 收口票开始。当前 Docker Compose 正运行 API/Web/DB/Kafka/RabbitMQ/Redis；部署镜像来自干净 `main`，没有带入并行的菜单设计页面或 `.claude/settings.local.json`。当前 `CP6DB` 仅注册 `DEFAULT/A1`，四租户字面复验要等真实 B1/C1/D1 数据恢复后再做。
 
 ## 最近完成内容
 
@@ -28,6 +23,8 @@
 - `4bb7512`：PUR/PLAN/PUB 37 个页面级权限声明，33 个唯一写权限键；Seq 通用表格桌面/移动 CRUD 守权与 2 条回归测试。
 - `b43787e0`：三库验证备份经 Git LFS 固化。
 - `1aac4a5d`：换机恢复入口修正。
+- `d79a39c`：T6 no-ff 合入并推送 `main`。
+- `ffca422`：OA 表单提交改走 `submit` 权限端点；一般用户不再因草稿 `add` 权限而无法发起。
 
 ## 为什么这样设计
 

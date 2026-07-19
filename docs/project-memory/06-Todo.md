@@ -1,14 +1,14 @@
 # 当前待办与优先级
 
-## P0：继续当前 GR-VP 波
+## P0：GR-VP 波（已完成）
 
 权威计划：`docs/superpowers/plans/2026-07-17-general-role-vperm.md`。
 
-1. T7：将 T6 合入 `main`，完成 GR-VP 全波终审。
-2. 重建 API/Web 双镜像并启动 Compose；前端有新权限代码，Web 镜像不可跳过。
-3. 验证四租户标准角色种子、admin 零扰动与 `qa_general` 的 8 键/4 菜单/归属闸/无权端点 403。
+1. T6 已通过 `d79a39c` 合入并推送 `main`。
+2. API/Web 双镜像已重建并运行，Web 使用干净 `main` 产物。
+3. 当前注册租户仅 `DEFAULT/A1`，已验证 RoleId=10 的 4 菜单/8 动作、admin 零扰动，以及 `qa_general` 的本人审批、归属闸和无权端点 403。
 
-T6 已由 `4bb7512` + `cf20d42` 完成；不要重复铺设。Docker Desktop 当前未启动，部署前先启动并确认 `docker compose ps`。
+T1–T7 已完成，不要重复铺设。T7 细节见 `.superpowers/sdd/gr-vp-t7-report.md`。
 
 ## P1：GR-VP 收口票
 
@@ -16,6 +16,7 @@ T6 已由 `4bb7512` + `cf20d42` 完成；不要重复铺设。Docker Desktop 当
 - 决定标准角色是否使用日文显示名。
 - 为 B1/C1 等租户建立/挂接一般用户。
 - 评估 insert-only 标准角色种子是否应在管理员删除基线键后自动补回。
+- 若后续恢复的数据库重新出现 B1/C1/D1，补跑 T7 四租户 SQL 矩阵；当前库只有 A1，不要为凑验收数虚构租户。
 
 ## 已知跨波跟踪票
 
