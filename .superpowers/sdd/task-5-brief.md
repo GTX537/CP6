@@ -1,14 +1,22 @@
-### Task 5: SpaceLocateController 裸 BadRequest → BizException(E-SPACE-601/004)
+# GR-VP Task 5：FIN v-permission 铺设
 
-**Files:**
-- Modify: `CP6.WebApi\Controllers\Space\SpaceLocateController.cs:27,41`
-- Test: 既有 SpaceLocate 测试(若断言了裸 400 信封需同步改断言为 BizException 语义)
+## 目标
 
-**要点:** 两处 `return BadRequest(new { code=400, message="E-SPACE-xxx" })` 改 `throw new BizException("E-SPACE-601")` / `("E-SPACE-004")`,走 BizExceptionMiddleware 按 culture 翻译(词条已在 seed,零新增)。
+以 `CP6.WebApi/Controllers/Fin` 的 `[RequirePermission]` 与 `CP6.WebApi/Program.cs` FIN action seed 为真源，为 `cp6.web/src/views/fin` 的真实写入口添加 `v-permission`，不发明权限键，不给纯读动作加权限。
 
-- [ ] **Step 1: 失败/改写测试**(断言 message 不再是裸码——单测层面断言抛 BizException 且 code 正确)
-- [ ] **Step 2: 红 → 实现 → 绿 → 全量绿**
-- [ ] **Step 3: Commit + push**(`fix(space): 波5 E-SPACE-601/004 BizException化——定位端点统一走中间件翻译`)
+## 范围与约束
 
----
+- 只处理 FIN 视图；不修改后端权限语义、API 或种子。
+- 对话框确认按钮若其打开入口已受控，不重复贴点。
+- `BankStatementController` 当前 POST 新建贴点是 `fin-bank-reconciliation:view`，前端必须逐字跟随。
+- 预算草稿的金额、控制模式、控制口径是行内写入口：有 `fin-budget:edit` 才能编辑；无编辑权仍须显示只读值。
+- 权限 store 未加载时保持既有 fail-open 首屏语义，后端继续负责强校验。
 
+## 验收
+
+- [x] 16 个 FIN 视图共 66 个指令目标，覆盖 51 个真实权限键。
+- [x] 所有键逐字存在于 FIN Controller 贴点，写 API 入口反向扫描无遗漏。
+- [x] `vue-tsc`、Vitest、生产 build 通过。
+- [x] 系统 Chrome 覆盖 denied、单权限和预算 view-only/edit-only 场景，console error 为 0。
+- [x] 独立复审 blocker 清零。
+- [x] 代码提交并推送：`5732057`。

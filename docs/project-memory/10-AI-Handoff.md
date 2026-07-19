@@ -8,15 +8,14 @@
 
 只继续 `docs/superpowers/plans/2026-07-17-general-role-vperm.md`：
 
-1. T5 FIN `v-permission`。
-2. T6 PUR/PLAN/PUB `v-permission`。
-3. T7 全量验收、部署与一般用户冒烟。
+1. T6 PUR/PLAN/PUB `v-permission`。
+2. T7 全量验收、部署与一般用户冒烟。
 
-不要重新实现 T1–T4。它们已在 Git 中完成：标准角色、OA/WF 40×17、ERP 39×16、MES 31×12。
+不要重新实现 T1–T5。它们已在 Git 中完成：标准角色、OA/WF 40×17、ERP 39×16、MES 31×12、FIN 66×16。
 
 ## 下一步应该继续什么
 
-从 T5 FIN 开始：先读 FIN 权限键表和反射 oracle，输出按钮映射清单，然后只在 `views/fin` template 中添加权限指令。完成三连验证、真实浏览器抽样和独立复审后再进入 T6，不跨任务混改。
+从 T6 PUR/PLAN/PUB 开始：按域读取 Controller 权限贴点、Program action seed 与反射 oracle，先输出按钮映射清单，再修改目标视图。完成三连验证、真实浏览器抽样和独立复审后进入 T7，不跨任务混改。
 
 ## 最近完成内容
 
@@ -25,6 +24,7 @@
 - `4a48525e`：ERP 前端权限指令。
 - `8e696d2`：`feat/general-role-vperm` 合入 `main`。
 - `6e4ade1`：MES 31 条前端权限指令，12 个视图，24 个真实写权限键。
+- `5732057`：FIN 66 条前端权限指令，16 个视图，51 个真实权限键；预算 view-only 保留只读值。
 - `b43787e0`：三库验证备份经 Git LFS 固化。
 - `1aac4a5d`：换机恢复入口修正。
 
@@ -58,18 +58,18 @@
 
 1. `git status`，确认分支与用户改动。
 2. 读本目录全部 Markdown。
-3. 读当前 GR-VP plan、`docs/seeds` 中目标模块键表、对应权限反射测试。
-4. `git log -20 --oneline`，确认 T1–T3 和迁移提交存在。
+3. 读当前 GR-VP plan、目标模块 Controller 贴点、action seed 与对应权限反射测试。
+4. `git log -20 --oneline`，确认 T1–T5 和迁移提交存在。
 5. 对下一个模块先产出“视图 → 按钮 → 权限键”清单，再改 template。
 6. 不发明键，不给纯读动作贴键，不改 script/style。
 7. 跑 `vue-tsc`、Vitest、build；记录真实基线。
-8. 更新 `PROJECT_STATE.md` 与 `CHANGELOG-AI.md`，等待用户确认后提交。
+8. 更新 `PROJECT_STATE.md` 与 `CHANGELOG-AI.md`，按当前授权边界提交。
 
 ## 恢复上下文提示词
 
 ```text
 请完整阅读 docs/project-memory、README、当前分支最近 30 条 git log，
 再阅读 docs/superpowers/plans/2026-07-17-general-role-vperm.md。
-确认当前 GR-VP 已完成 T1-T4，下一项是 T5 FIN。
-先汇报状态、风险和拟修改范围，等我确认后再编码。
+确认当前 GR-VP 已完成 T1-T5，下一项是 T6 PUR/PLAN/PUB。
+先汇报状态、风险和拟修改范围，再按本轮授权边界执行。
 ```

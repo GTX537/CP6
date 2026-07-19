@@ -2,6 +2,13 @@
 
 > 依据 Git log 汇总，不替代完整 Git 历史。重点记录影响接手判断的里程碑。
 
+## 2026-07-18：GR-VP FIN T5
+
+- `5732057`：FIN 16 个视图完成 66 条 `v-permission` 铺设，覆盖 51 个真实权限键；所有键逐字命中 FIN Controller 贴点。
+- 预算 M1–M12、控制模式和控制口径实现“有 edit 权可写、无 edit 权只读”，修复独立复审发现的 view-only 空白风险；最终复审 0 blockers。
+- T5 前端验证：type-check 0、71 files / 481 tests、生产 build、系统 Chrome 权限矩阵与预算 view-only/edit-only 复测全部通过，console error 0。
+- 下一任务改为 T6 PUR/PLAN/PUB；T7 全量验收、部署与一般用户冒烟随后执行。
+
 ## 2026-07-18：GR-VP 合入 main 与 MES T4
 
 - `8e696d2`：`feat/general-role-vperm` 以 no-ff merge 合入并推送 `main`；合并后后端 build 通过，2220 passed / 5 skipped / 0 failed。

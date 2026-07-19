@@ -22,7 +22,8 @@
 - T2：OA/WF 共 40 个按钮、17 个视图完成 `v-permission` 铺设。
 - T3：ERP 共 39 个按钮、16 个视图完成 `v-permission` 铺设。
 - T4：MES 共 31 条指令、12 个视图、24 个真实写权限键完成 `v-permission` 铺设；设备、工单、质检的新增/编辑模式已精确分流。
-- T1–T4 均有 SDD 报告与审查记录，Git 提交见 `CHANGELOG-AI.md`。
+- T5：FIN 共 66 条指令、16 个视图、51 个真实权限键完成 `v-permission` 铺设；预算行内编辑在无 edit 权时保留只读值。
+- T1–T5 均有 SDD 报告与审查记录，Git 提交见 `CHANGELOG-AI.md`。
 
 ## 换机资产
 
