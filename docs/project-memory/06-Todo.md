@@ -8,7 +8,7 @@
 2. 重建 API/Web 双镜像并启动 Compose；前端有新权限代码，Web 镜像不可跳过。
 3. 验证四租户标准角色种子、admin 零扰动与 `qa_general` 的 8 键/4 菜单/归属闸/无权端点 403。
 
-T6 已由 `4bb7512` 完成；不要重复铺设。Docker Desktop 当前未启动，部署前先启动并确认 `docker compose ps`。
+T6 已由 `4bb7512` + `cf20d42` 完成；不要重复铺设。Docker Desktop 当前未启动，部署前先启动并确认 `docker compose ps`。
 
 ## P1：GR-VP 收口票
 

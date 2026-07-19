@@ -1,13 +1,13 @@
 # GR-VP Task 6 报告：PUR / PLAN / PUB v-permission
 
-**Status: DONE** — code commit `4bb7512` on `feat/gr-vp-t6`。
+**Status: DONE** — code commits `4bb7512` + `cf20d42` on `feat/gr-vp-t6`。
 
 ## 交付规模
 
 - 扫描 12 个目标视图，11 个视图产生权限改动；`PurReconcileView` 只有查询/只读动作。
 - 34 个直接 `v-permission` 声明 + `SeqView` 3 个权限 props，共 37 个页面级声明。
 - 覆盖 33 个唯一后端写权限键；静态 oracle 对比为 missing=0、extra=0。
-- `VolTable` 增加 3 个可选权限 props，并覆盖 9 个桌面/移动端 CRUD 入口；未传 props 时保持既有 fail-open 行为。
+- `VolTable` 增加 3 个可选权限 props，并以 DOM 指令、响应式条件渲染及事件守卫覆盖 9 个桌面/移动端 CRUD 入口；未传 props 时保持既有 fail-open 行为。
 
 ## 视图映射
 
@@ -37,18 +37,20 @@
 
 - 受限用户在手机端没有 edit/delete 权限时，原通用卡片仍显示空“更多”菜单；新增 `hasDefaultMobileActions` 后，仅在存在默认动作或扩展 slot 时渲染菜单。
 - 手机卡片点击原本会隐式打开编辑框；现在按 `editPermission` 进行同语义守权。
-- 为上述路径新增 `VolTable.permission.spec.ts` 两个回归用例。
+- 独立覆盖审计发现生产启动先 `app.mount()`、后异步 `loadMyActions()`；原指令只在 `mounted` 判定一次，首屏无权按钮可能持续保留。`cf20d42` 让指令在 `loaded: false → true` 时重判一次并立即注销监听。
+- Element Plus 下拉菜单项不是稳定的单根 DOM，组件级指令不能保证生效；移动 edit/delete/select 项改为响应式条件渲染，命令处理器同步二次守权。
+- `VolTable.permission.spec.ts` 扩展为 6 个回归用例，覆盖移动端 add-only/full、异步加载重判、真实指令 DOM 移除、桌面 edit-only、未传权限 props 的兼容行为。
 
 ## 验证
 
 - 后端 oracle：`PurPermissionAttributeTests` + `PlanPubPermissionAttributeTests`，11/11 passed。
 - `npx vue-tsc --noEmit`：通过，0 error。
-- `npx vitest run`：72 files / 483 tests passed。
+- `npx vitest run`：72 files / 487 tests passed。
 - `npm run build`：通过，Vite 8.0.6，2652 modules；仅既有 >500 kB chunk warning。
-- 新增聚焦测试：2/2 passed。
+- 新增聚焦测试：6/6 passed。
 - `git diff --check`：通过。
 - 真实 Chrome 首轮权限矩阵：受限 RFQ 仅保留“比价排名”；admin 保留 6 个写按钮；受限 Seq 保留新增且不可编辑，admin 可编辑；console error 0。审查发现的空菜单随后由持久回归测试覆盖。
-- 正式 pre-landing review：最终 0 blockers；无 SQL、数据迁移、后端权限语义或 API 变更。
+- 正式 pre-landing review 初审 0 blockers；ship 覆盖审计随后发现 1 个异步权限加载 blocker，已由 `cf20d42` 修复并纳入持久回归；最终独立复核为 0 blocker / 0 important。无 SQL、数据迁移、后端权限语义或 API 变更。
 
 ## 并行工作隔离
 

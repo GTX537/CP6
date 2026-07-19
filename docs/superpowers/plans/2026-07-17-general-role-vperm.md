@@ -178,6 +178,8 @@ git push
 
 ### Task 7: 部署上线 + 端到端冒烟
 
+> **T6 实施例外（2026-07-19，已接受）**：`SeqView` 的 CRUD 入口由通用 `VolTable` 在桌面/移动端生成，无法仅在 `views` 内添加字面量指令而完整覆盖。允许为 `VolTable` 增加可选 add/edit/delete permission props、移动卡片隐式编辑守权及对应回归测试；未传 props 的既有调用必须保持原行为。独立审计另发现权限在 `app.mount()` 后异步加载，故 `v-permission` 必须在 `loaded: false → true` 时重判。该例外只服务 T6 的 Seq 权限完整性，不授权其他结构重构。
+
 **Files:** 无代码改动。产物=冒烟记录入台账。
 
 **Interfaces:**

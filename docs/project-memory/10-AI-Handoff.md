@@ -2,13 +2,13 @@
 
 ## 当前项目状态
 
-快照日期 2026-07-19。仓库已改为私有，当前分支 `feat/gr-vp-t6`，T6 代码已提交为 `4bb7512`，工作基点包含三库 Git LFS 迁移备份。系统不是原型：ERP/MES/WMS、财务、采购、OA/WF、权限、计划和 Space 均有大量生产代码与测试。
+快照日期 2026-07-19。仓库已改为私有，当前分支 `feat/gr-vp-t6`，T6 代码已提交为 `4bb7512` + `cf20d42`，工作基点包含三库 Git LFS 迁移备份。系统不是原型：ERP/MES/WMS、财务、采购、OA/WF、权限、计划和 Space 均有大量生产代码与测试。
 
 ## 当前开发优先级
 
 只继续 `docs/superpowers/plans/2026-07-17-general-role-vperm.md`：
 
-1. 将 T6 commit `4bb7512` 合入 `main`。
+1. 将 T6 commits `4bb7512` + `cf20d42` 合入 `main`。
 2. 执行 T7 全量验收、双镜像部署与一般用户冒烟。
 
 不要重新实现 T1–T6。它们已在 Git 中完成：标准角色、OA/WF 40×17、ERP 39×16、MES 31×12、FIN 66×16、PUR/PLAN/PUB 37 个页面级声明/33 个唯一键。
@@ -71,6 +71,6 @@
 ```text
 请完整阅读 docs/project-memory、README、当前分支最近 30 条 git log，
 再阅读 docs/superpowers/plans/2026-07-17-general-role-vperm.md。
-确认当前 GR-VP 已完成 T1-T5，下一项是 T6 PUR/PLAN/PUB。
+确认当前 GR-VP 已完成 T1-T6，下一项是 T7 部署与端到端冒烟。
 先汇报状态、风险和拟修改范围，再按本轮授权边界执行。
 ```

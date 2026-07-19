@@ -6,7 +6,8 @@
 
 - `4bb7512`：PUR/PLAN/PUB 扫描 12 个目标视图，37 个页面级权限声明覆盖 33 个唯一后端写权限键；2 个只读 POST 明确豁免。
 - `VolTable` 通过可选 add/edit/delete permission props 接入 Seq CRUD，覆盖桌面与移动入口；受限移动端不再显示空菜单，也不会由卡片点击越权打开编辑框。
-- T6 验证：后端 oracle 11/11、type-check 0、72 files / 483 tests、生产 build、真实 Chrome 权限矩阵与正式复审全部通过。
+- `cf20d42`：修复 `app.mount()` 后异步加载权限导致首屏指令不重判的问题；移动下拉项改用响应式条件渲染并增加事件二次守权。
+- T6 验证：后端 oracle 11/11、type-check 0、72 files / 487 tests、聚焦权限测试 6/6、生产 build、真实 Chrome 权限矩阵与正式复审全部通过。
 - 下一任务为 T7：合入 main、双镜像部署、四租户种子 SQL 验证与 `qa_general` 端到端冒烟。
 
 ## 2026-07-18：GR-VP FIN T5
