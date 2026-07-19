@@ -9,7 +9,7 @@
       <div class="table-toolbar">
         <el-input v-model="keyword" size="small" style="width: 200px" :placeholder="t('物料编码')" clearable @keyup.enter="reload" />
         <el-button type="primary" size="small" @click="reload">{{ t('查询') }}</el-button>
-        <el-button size="small" @click="openCreate">{{ t('新增') }}</el-button>
+        <el-button v-permission="'plan-item-policy:add'" size="small" @click="openCreate">{{ t('新增') }}</el-button>
         <el-tag size="small" type="info">{{ t('共 {n} 条', { n: rows.length }) }}</el-tag>
       </div>
 
@@ -29,8 +29,8 @@
         <el-table-column prop="multipleQty" :label="t('订货倍数')" width="120" align="right" />
         <el-table-column :label="t('操作')" width="140" fixed="right">
           <template #default="{ row }">
-            <el-button link type="primary" size="small" @click="openEdit(row)">{{ t('编辑') }}</el-button>
-            <el-button link type="danger" size="small" @click="doDelete(row)">{{ t('删除') }}</el-button>
+            <el-button v-permission="'plan-item-policy:add'" link type="primary" size="small" @click="openEdit(row)">{{ t('编辑') }}</el-button>
+            <el-button v-permission="'plan-item-policy:delete'" link type="danger" size="small" @click="doDelete(row)">{{ t('删除') }}</el-button>
           </template>
         </el-table-column>
         <template #empty><span>{{ t('暂无数据') }}</span></template>

@@ -13,7 +13,7 @@
         <el-select v-model="source" size="small" style="width: 130px" clearable :placeholder="t('全部来源')" @change="reload">
           <el-option v-for="o in PR_SOURCE_OPTIONS" :key="o.value" :value="o.value" :label="t(o.label)" />
         </el-select>
-        <el-button type="primary" size="small" @click="openCreate">{{ t('新建申请') }}</el-button>
+        <el-button v-permission="'pur-pr:add'" type="primary" size="small" @click="openCreate">{{ t('新建申请') }}</el-button>
         <el-button size="small" @click="reload">{{ t('刷新') }}</el-button>
         <el-tag size="small" type="info">{{ t('共 {n} 条', { n: rows.length }) }}</el-tag>
       </div>
@@ -38,8 +38,8 @@
         <el-table-column :label="t('操作')" width="200" fixed="right">
           <template #default="{ row }">
             <el-button link type="primary" size="small" @click="openDetail(row)">{{ t('查看') }}</el-button>
-            <el-button v-if="row.status === 0" link type="success" size="small" @click="doSubmit(row)">{{ t('送审') }}</el-button>
-            <el-button v-if="row.status === 2" link type="warning" size="small" @click="doConvert(row)">{{ t('转采购订单') }}</el-button>
+            <el-button v-if="row.status === 0" v-permission="'pur-pr:submit'" link type="success" size="small" @click="doSubmit(row)">{{ t('送审') }}</el-button>
+            <el-button v-if="row.status === 2" v-permission="'pur-pr:convert'" link type="warning" size="small" @click="doConvert(row)">{{ t('转采购订单') }}</el-button>
           </template>
         </el-table-column>
       </el-table>
@@ -119,8 +119,8 @@
         </el-table>
       </template>
       <template #footer>
-        <el-button v-if="detail?.status === 0" type="success" size="small" @click="doSubmit(detail!)">{{ t('送审') }}</el-button>
-        <el-button v-if="detail?.status === 2" type="warning" size="small" @click="doConvert(detail!)">{{ t('转采购订单') }}</el-button>
+        <el-button v-if="detail?.status === 0" v-permission="'pur-pr:submit'" type="success" size="small" @click="doSubmit(detail!)">{{ t('送审') }}</el-button>
+        <el-button v-if="detail?.status === 2" v-permission="'pur-pr:convert'" type="warning" size="small" @click="doConvert(detail!)">{{ t('转采购订单') }}</el-button>
         <el-button size="small" @click="detailVisible = false">{{ t('关闭') }}</el-button>
       </template>
     </el-dialog>

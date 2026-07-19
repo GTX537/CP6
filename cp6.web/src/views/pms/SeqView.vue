@@ -1,6 +1,12 @@
 <template>
   <div>
-    <VolTable :columns="columns" :api="seqApi">
+    <VolTable
+      :columns="columns"
+      :api="seqApi"
+      add-permission="pub-seq:add"
+      edit-permission="pub-seq:edit"
+      delete-permission="pub-seq:delete"
+    >
       <template #extra-actions="{ row }">
         <el-button link type="primary" @click="preview(row)">{{ t('预览') }}</el-button>
       </template>

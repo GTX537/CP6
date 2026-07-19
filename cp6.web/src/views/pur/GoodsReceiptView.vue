@@ -9,7 +9,7 @@
       <div class="table-toolbar">
         <el-input v-model="poNo" size="small" style="width: 150px" :placeholder="t('采购订单号')" clearable @change="reload" />
         <el-input v-model="supplierId" size="small" style="width: 150px" :placeholder="t('供应商')" clearable @change="reload" />
-        <el-button type="primary" size="small" @click="openCreate">{{ t('新建收货') }}</el-button>
+        <el-button v-permission="'pur-gr:add'" type="primary" size="small" @click="openCreate">{{ t('新建收货') }}</el-button>
         <el-button size="small" @click="reload">{{ t('刷新') }}</el-button>
         <el-tag size="small" type="info">{{ t('共 {n} 条', { n: rows.length }) }}</el-tag>
       </div>
@@ -35,7 +35,7 @@
         <el-table-column :label="t('操作')" width="150" fixed="right">
           <template #default="{ row }">
             <el-button link type="primary" size="small" @click="openDetail(row)">{{ t('查看') }}</el-button>
-            <el-button v-if="row.status === 2" link type="success" size="small" @click="doApplyQc(row)">{{ t('应用检收') }}</el-button>
+            <el-button v-if="row.status === 2" v-permission="'pur-gr:qc'" link type="success" size="small" @click="doApplyQc(row)">{{ t('应用检收') }}</el-button>
           </template>
         </el-table-column>
       </el-table>

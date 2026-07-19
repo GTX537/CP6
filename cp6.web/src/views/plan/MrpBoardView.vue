@@ -7,7 +7,7 @@
 
     <el-card shadow="never">
       <div class="table-toolbar">
-        <el-button type="primary" size="small" :loading="running" @click="runMrp">{{ t('按开口受注运算') }}</el-button>
+        <el-button v-permission="'plan-mrp:run'" type="primary" size="small" :loading="running" @click="runMrp">{{ t('按开口受注运算') }}</el-button>
         <span class="lbl">{{ t('运算批次') }}：</span>
         <el-select v-model="currentRunId" size="small" style="width: 220px" @change="loadRun" :placeholder="t('无运算结果')">
           <el-option v-for="r in runs" :key="r.id" :label="r.runNo" :value="r.id" />
@@ -38,9 +38,9 @@
         </el-table-column>
         <el-table-column :label="t('操作')" width="200" fixed="right">
           <template #default="{ row }">
-            <el-button v-if="row.status === 0" link type="primary" size="small" @click="confirm(row)">{{ t('确认') }}</el-button>
-            <el-button v-if="row.status === 1" link type="success" size="small" @click="convert(row)">{{ t('转单') }}</el-button>
-            <el-button v-if="row.status === 0 || row.status === 1" link type="danger" size="small" @click="ignore(row)">{{ t('忽略') }}</el-button>
+            <el-button v-if="row.status === 0" v-permission="'plan-mrp:confirm'" link type="primary" size="small" @click="confirm(row)">{{ t('确认') }}</el-button>
+            <el-button v-if="row.status === 1" v-permission="'plan-mrp:convert'" link type="success" size="small" @click="convert(row)">{{ t('转单') }}</el-button>
+            <el-button v-if="row.status === 0 || row.status === 1" v-permission="'plan-mrp:ignore'" link type="danger" size="small" @click="ignore(row)">{{ t('忽略') }}</el-button>
           </template>
         </el-table-column>
         <template #empty><span>{{ t('无运算结果') }}</span></template>

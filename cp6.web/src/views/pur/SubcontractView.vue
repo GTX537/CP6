@@ -66,8 +66,8 @@
               </el-table-column>
             </el-table>
             <div class="row-actions">
-              <el-button type="primary" size="small" :loading="saving" @click="saveConsign">{{ t('保存支給材') }}</el-button>
-              <el-button type="success" size="small" :loading="saving" :disabled="!hasConsign" @click="issueAll">{{ t('一次发齐剩余') }}</el-button>
+              <el-button v-permission="'pur-subcontract:consign'" type="primary" size="small" :loading="saving" @click="saveConsign">{{ t('保存支給材') }}</el-button>
+              <el-button v-permission="'pur-subcontract:issue'" type="success" size="small" :loading="saving" :disabled="!hasConsign" @click="issueAll">{{ t('一次发齐剩余') }}</el-button>
             </div>
 
             <div class="lines-head"><span>{{ t('已登记支給材(实发追踪)') }}</span></div>
@@ -84,7 +84,7 @@
                 <template #default="{ row }">
                   <div class="batch-cell">
                     <el-input-number v-model="batchQty[row.consignItemId]" :min="0" size="small" controls-position="right" style="width:110px" />
-                    <el-button link type="primary" size="small" @click="issueBatch(row)">{{ t('发料') }}</el-button>
+                    <el-button v-permission="'pur-subcontract:issue'" link type="primary" size="small" @click="issueBatch(row)">{{ t('发料') }}</el-button>
                   </div>
                 </template>
               </el-table-column>
@@ -95,7 +95,7 @@
           <el-tab-pane :label="t('成品成本核算')" name="cost">
             <el-form inline size="small">
               <el-form-item :label="t('收成品数')"><el-input-number v-model="finishedQty" :min="0" size="small" controls-position="right" /></el-form-item>
-              <el-form-item><el-button type="primary" size="small" :loading="saving" @click="calcCost">{{ t('核算成品成本') }}</el-button></el-form-item>
+              <el-form-item><el-button v-permission="'pur-subcontract:cost'" type="primary" size="small" :loading="saving" @click="calcCost">{{ t('核算成品成本') }}</el-button></el-form-item>
             </el-form>
             <div class="hint">{{ t('成品成本=加工费(PO单价×成品数)+支給材成本(并入)，接财务成本会计') }}</div>
             <el-descriptions v-if="cost" :column="2" size="small" border style="margin-top:10px">

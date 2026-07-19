@@ -12,7 +12,7 @@
         </el-select>
         <el-divider direction="vertical" />
         <el-input v-model="fromPrNo" size="small" style="width: 160px" :placeholder="t('采购申请号')" clearable />
-        <el-button type="primary" size="small" @click="doCreateFromPr">{{ t('从PR发起询价') }}</el-button>
+        <el-button v-permission="'pur-rfq:add'" type="primary" size="small" @click="doCreateFromPr">{{ t('从PR发起询价') }}</el-button>
         <el-button size="small" @click="reload">{{ t('刷新') }}</el-button>
         <el-tag size="small" type="info">{{ t('共 {n} 条', { n: rows.length }) }}</el-tag>
       </div>
@@ -54,12 +54,12 @@
 
         <!-- 操作条 -->
         <div class="action-bar">
-          <el-button size="small" @click="openInvite">{{ t('邀请供应商') }}</el-button>
-          <el-button size="small" :disabled="!detail.suppliers?.length" @click="openQuote">{{ t('录入报价') }}</el-button>
-          <el-button size="small" type="primary" :disabled="!detail.quotes?.length" @click="doRank">{{ t('比价排名') }}</el-button>
-          <el-button size="small" type="success" :disabled="!hasPicks" @click="doSelect">{{ t('确认选定') }}</el-button>
-          <el-button size="small" :disabled="!hasSelected" @click="doWriteBack">{{ t('回写价表') }}</el-button>
-          <el-button size="small" type="warning" :disabled="!hasSelected" @click="doConvert">{{ t('转采购订单') }}</el-button>
+        <el-button v-permission="'pur-rfq:invite'" size="small" @click="openInvite">{{ t('邀请供应商') }}</el-button>
+        <el-button v-permission="'pur-rfq:quote'" size="small" :disabled="!detail.suppliers?.length" @click="openQuote">{{ t('录入报价') }}</el-button>
+        <el-button v-permission="'pur-rfq:rank'" size="small" type="primary" :disabled="!detail.quotes?.length" @click="doRank">{{ t('比价排名') }}</el-button>
+        <el-button v-permission="'pur-rfq:select'" size="small" type="success" :disabled="!hasPicks" @click="doSelect">{{ t('确认选定') }}</el-button>
+        <el-button v-permission="'pur-rfq:writeback'" size="small" :disabled="!hasSelected" @click="doWriteBack">{{ t('回写价表') }}</el-button>
+        <el-button v-permission="'pur-rfq:convert'" size="small" type="warning" :disabled="!hasSelected" @click="doConvert">{{ t('转采购订单') }}</el-button>
         </div>
 
         <!-- 被邀供应商 -->
