@@ -98,6 +98,16 @@ export class InstancedBuckets {
     }
   }
 
+  resetColors(hex = 0x607d8b): void {
+    const color = new Color(hex)
+    for (const [locationId, ref] of this._locationToInstance) {
+      const mesh = this._meshes.get(ref.meshId)
+      if (!mesh) continue
+      mesh.setColorAt(ref.instanceId, color)
+      if (mesh.instanceColor) mesh.instanceColor.needsUpdate = true
+    }
+  }
+
   dispose(): void {
     // UNIT_BOX is never disposed (shared global)
     for (const mesh of this._meshes.values()) {

@@ -48,5 +48,11 @@ public static class I18nSpaceScreenSeed
 
         // ── 警告类：WMS 同步停用未生效（04 章 §11，v1.1）──
         new Sys_Lang { LangKey = "W-SPACE-404", ZhCN = "停用未生效：WMS 侧仍有库存", ZhTW = "停用未生效：WMS 側仍有庫存", En = "Deactivation not applied: WMS still has stock", Ja = "無効化は未反映：WMS 側に在庫が残っています", Ko = "비활성화 미적용: WMS에 재고가 남아 있습니다" },
+
+        // ── 货场分析 / 控制塔（P2.5）──
+        new Sys_Lang { LangKey = "W-SPACE-701", ZhCN = "WMS 实时数据暂不可用，页面已降级显示", ZhTW = "WMS 即時資料暫不可用，頁面已降級顯示", En = "Live WMS data is temporarily unavailable; the view is degraded", Ja = "WMS リアルタイムデータを取得できないため縮退表示しています", Ko = "WMS 실시간 데이터를 사용할 수 없어 축소 표시 중입니다" },
+        new Sys_Lang { LangKey = "W-SPACE-702", ZhCN = "实时连接已断开，重连后将自动校准", ZhTW = "即時連線已中斷，重新連線後將自動校準", En = "The live connection is offline and will reconcile after reconnecting", Ja = "リアルタイム接続が切断されました。再接続後に自動補正します", Ko = "실시간 연결이 끊겼으며 재연결 후 자동 보정됩니다" },
+        new Sys_Lang { LangKey = "W-SPACE-703", ZhCN = "库容配置缺失、冲突或已超容，请检查库位容量与单位", ZhTW = "庫容設定缺失、衝突或已超容，請檢查庫位容量與單位", En = "Capacity is missing, conflicting, or exceeded; check the location capacity and unit", Ja = "容量設定の欠落・不整合または超過があります。ロケーション容量と単位を確認してください", Ko = "용량 설정이 누락·충돌했거나 초과되었습니다. 로케이션 용량과 단위를 확인하세요" },
+        new Sys_Lang { LangKey = "W-SPACE-704", ZhCN = "ABC 快照尚未生成或已经过期", ZhTW = "ABC 快照尚未產生或已經過期", En = "The ABC snapshot is missing or stale", Ja = "ABC スナップショットが未作成、または期限切れです", Ko = "ABC 스냅샷이 없거나 오래되었습니다" },
     };
 }

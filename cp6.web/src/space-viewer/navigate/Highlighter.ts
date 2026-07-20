@@ -63,6 +63,20 @@ export class Highlighter {
     return id
   }
 
+  /** Capture newly-applied base colors and redraw active interaction highlights. */
+  refresh(): void {
+    const viewer = this._viewer
+    if (!viewer) return
+    if (this._hoveredId && this._hoveredId !== this._selectedId) {
+      this._saved.set(this._hoveredId, this._readColor(this._hoveredId))
+      viewer.setInstanceColor(this._hoveredId, HOVER_HEX)
+    }
+    if (this._selectedId) {
+      this._saved.set(this._selectedId, this._readColor(this._selectedId))
+      viewer.setInstanceColor(this._selectedId, SELECT_HEX)
+    }
+  }
+
   clear(): void {
     const viewer = this._viewer
     if (viewer) {

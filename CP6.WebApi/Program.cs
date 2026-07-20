@@ -187,6 +187,7 @@ builder.Services.AddSingleton(builder.Configuration.GetSection("Wfs").Get<CP6.Co
     ?? new CP6.Core.Services.Wf.WfsInfraOptions());
 builder.Services.AddScoped<CP6.Core.Services.Wf.IWorkdayCalculator, CP6.Core.Services.Wf.WorkdayCalculator>();
 builder.Services.AddScoped<CP6.Core.Services.Wf.ITenantClock, CP6.Core.Services.Wf.TenantClock>(); // E-T2 租户时区源（workdays/untilDate 本地时刻解释；Sys_Tenant.TimeZoneId→Wfs:DefaultTimeZone→服务器本地）
+builder.Services.AddSingleton(TimeProvider.System);
 builder.Services.AddScoped<CP6.Core.Services.Wf.IWorkCalendarService, CP6.Core.Services.Wf.WorkCalendarService>(); // A-T4 年历管理页后端（例外表 CRUD/空态导入日本假日）
 
 // 4.0d OA 电子表单信箱（Phase B，消费 Wf 引擎）
@@ -448,6 +449,7 @@ builder.Services.AddScoped<CP6.Core.Services.Wms.IReportCenterService, CP6.Core.
 // ITenantContext / TenantMiddleware 已全局注册（S 类合规），Space 不再注册任何租户上下文。
 builder.Services.AddScoped<CP6.Core.Services.Space.LocationGeometryService>();
 builder.Services.AddScoped<CP6.Core.Services.Space.ISpaceMasterService, CP6.Core.Services.Space.SpaceMasterService>();
+builder.Services.AddScoped<CP6.Core.Services.Space.ISpaceAnalyticsService, CP6.Core.Services.Space.SpaceAnalyticsService>();
 builder.Services.AddScoped<CP6.Core.Services.Space.ICodeEngineService, CP6.Core.Services.Space.CodeEngineService>();  // ch03 可配置编码引擎
 // 4.x.2 Space ch01 编辑器配套后端（F-1/G-1/G-3/I-1）
 builder.Services.AddScoped<CP6.Core.Services.Space.ITemplateService, CP6.Core.Services.Space.TemplateService>();
@@ -465,6 +467,7 @@ builder.Services.AddScoped<CP6.Core.Services.Integration.ISpaceNotifier, CP6.Web
 builder.Services.AddScoped<CP6.Core.Services.Integration.IWmsLocationConsumer, CP6.Core.Services.Wms.WmsBinConsumer>();
 builder.Services.AddScoped<CP6.Core.Services.Integration.IWmsBinDeactivator, CP6.Core.Services.Wms.WmsBinDeactivator>(); // ch04 §6 v1.1 停用同步 RPC 真实现（TOCTOU 权威库存判定 + T_WmsBin 停用/墓碑）
 builder.Services.AddScoped<CP6.Core.Services.Integration.IWmsStockQuery, CP6.Core.Services.Wms.WmsStockQuery>();
+builder.Services.AddScoped<CP6.Core.Services.Integration.IWmsAnalyticsQuery, CP6.Core.Services.Wms.WmsAnalyticsQuery>();
 builder.Services.AddScoped<CP6.Core.Services.Integration.IWmsPickTaskQuery, CP6.Core.Services.Wms.WmsPickTaskQuery>();
 builder.Services.AddScoped<CP6.Core.Services.Integration.IWmsWorkloadQuery, CP6.Core.Services.Wms.WmsWorkloadQuery>();
 builder.Services.AddScoped<CP6.Core.Services.Integration.IWmsDeviceQuery, CP6.Core.Services.Wms.WmsDeviceQuery>();
@@ -556,6 +559,7 @@ builder.Services.AddHostedService<CP6.WebApi.BackgroundServices.IntegrationEvent
 builder.Services.AddHostedService<CP6.WebApi.BackgroundServices.FinReconciliationWorker>();
 // Space 库位对账 worker（波5）：每日扫已发布库位(Status=1)↔WMS bin 停用漂移，只读告警不自愈
 builder.Services.AddHostedService<CP6.WebApi.BackgroundServices.SpaceBinReconciliationWorker>();
+builder.Services.AddHostedService<CP6.WebApi.BackgroundServices.SpaceAbcSnapshotWorker>();
 builder.Services.AddHostedService<CP6.WebApi.BackgroundServices.AssetDepreciationWorker>(); // A3 §6.2 月末折旧 Worker（备草稿不过账）
 
 // 4.15.6 T15 / Gap 2.3 — Prometheus /metrics（ブリッジ業務指標）

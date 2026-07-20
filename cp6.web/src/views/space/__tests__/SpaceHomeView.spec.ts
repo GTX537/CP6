@@ -10,12 +10,15 @@ import SpaceHomeView from '../SpaceHomeView.vue'
 import type { SiteVO, FloorVO } from '@/types/space/scene'
 
 // router.push 用稳定 mock（hoisted，供导航断言）
-const { push } = vi.hoisted(() => ({ push: vi.fn() }))
+const { push, permissionHas } = vi.hoisted(() => ({ push: vi.fn(), permissionHas: vi.fn() }))
 
 // 站点/楼层 API 全 mock；vue-router 注入 stub（照 SpaceFloorView.spec 先例）
 vi.mock('@/api/space/site', () => ({ siteApi: { list: vi.fn() } }))
 vi.mock('@/api/space/floor', () => ({ floorApi: { list: vi.fn() } }))
 vi.mock('vue-router', () => ({ useRouter: () => ({ push }) }))
+vi.mock('@/stores/permission', () => ({
+  usePermissionStore: () => ({ loaded: true, has: permissionHas, loadMyActions: vi.fn() }),
+}))
 
 const sites: SiteVO[] = [
   { id: 's1', siteCode: 'TKY', siteName: '東京DC', enable: true },
@@ -43,6 +46,7 @@ function btnsByText(w: ReturnType<typeof mountView>, text: string) {
 describe('SpaceHomeView', () => {
   beforeEach(() => {
     vi.clearAllMocks()
+    permissionHas.mockReturnValue(true)
     vi.mocked(siteApi.list).mockResolvedValue({ code: 0, message: '', data: sites })
     vi.mocked(floorApi.list).mockImplementation((siteId: string) =>
       Promise.resolve({ code: 0, message: '', data: floorsBySite[siteId] || [] }),
@@ -79,11 +83,13 @@ describe('SpaceHomeView', () => {
     // 卡头「3D」→ space-viewer(params.siteId)；「全景」→ space-stacked(params.siteId)
     for (const b of btnsByText(w, 'space.home.viewer3d')) await b.trigger('click')
     for (const b of btnsByText(w, 'space.home.stacked')) await b.trigger('click')
+    for (const b of btnsByText(w, 'space.home.controlTower')) await b.trigger('click')
     // 楼层行「編集」→ space-editor(params.floorId)
     for (const b of btnsByText(w, 'space.common.edit')) await b.trigger('click')
 
     expect(push).toHaveBeenCalledWith({ name: 'space-viewer', params: { siteId: 's1' } })
     expect(push).toHaveBeenCalledWith({ name: 'space-stacked', params: { siteId: 's1' } })
+    expect(push).toHaveBeenCalledWith({ name: 'space-control-tower', params: { siteId: 's1' } })
     expect(push).toHaveBeenCalledWith({ name: 'space-editor', params: { floorId: 'f1' } })
     // 楼层行「3D」携 query.floorId
     expect(push).toHaveBeenCalledWith({ name: 'space-viewer', params: { siteId: 's1' }, query: { floorId: 'f1' } })

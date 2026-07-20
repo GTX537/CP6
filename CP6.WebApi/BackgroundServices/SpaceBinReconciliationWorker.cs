@@ -31,7 +31,19 @@ public class SpaceBinReconciliationWorker : BackgroundService
             await Task.Delay(StartupDelay, stoppingToken);
             while (!stoppingToken.IsCancellationRequested)
             {
-                await ProcessOnceAsync(stoppingToken);
+                try
+                {
+                    await ProcessOnceAsync(stoppingToken);
+                }
+                catch (OperationCanceledException) when (stoppingToken.IsCancellationRequested)
+                {
+                    break;
+                }
+                catch (Exception ex)
+                {
+                    // Tenant enumeration/infrastructure failures must not silently terminate the hosted service.
+                    _logger.LogError(ex, "Space bin reconciliation cycle failed; the next daily cycle will retry");
+                }
                 await Task.Delay(Interval, stoppingToken);
             }
         }

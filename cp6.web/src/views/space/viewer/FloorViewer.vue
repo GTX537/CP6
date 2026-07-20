@@ -43,8 +43,11 @@
         :mode="overlayMode"
         :polling="polling"
         :ts="overlayTs"
+        :live="liveConnected"
+        :warning-count="analysisWarningCount"
+        :stats="legendStats"
         @mode="onOverlayMode"
-        @refresh="refreshStock"
+        @refresh="refreshAll"
         @toggle-poll="onTogglePoll"
       />
 
@@ -77,7 +80,8 @@
 </template>
 
 <script setup lang="ts">
-import { ref, onMounted, onBeforeUnmount } from 'vue'
+import { computed, ref, onMounted, onBeforeUnmount } from 'vue'
+import * as signalR from '@microsoft/signalr'
 import { useRoute } from 'vue-router'
 import { useI18n } from 'vue-i18n'
 import { ElMessage } from 'element-plus'
@@ -85,7 +89,12 @@ import { SpaceViewer } from '@/space-viewer/SpaceViewer'
 import { Locator } from '@/space-viewer/navigate/Locator'
 import { StockOverlay } from '@/space-viewer/overlay/StockOverlay'
 import { stockApi } from '@/api/space/stock'
+import { floorApi } from '@/api/space/floor'
 import type { OverlayMode, WmsStockDto } from '@/types/space/overlay'
+import type { AbcResponse, StorageTypeResponse, UtilizationResponse } from '@/types/space/analytics'
+import { analyticsApi } from '@/api/space/analytics'
+import { siteApi } from '@/api/space/site'
+import { sceneApi } from '@/api/space/scene'
 import InfoCard from './InfoCard.vue'
 import FloorList from './FloorList.vue'
 import SearchBox from './SearchBox.vue'
@@ -93,10 +102,19 @@ import StockLegend from './StockLegend.vue'
 import { PathAnimator } from '@/space-viewer/advanced/PathAnimator'
 import { WorkloadHeatmap } from '@/space-viewer/advanced/WorkloadHeatmap'
 import { DeviceLayer } from '@/space-viewer/advanced/DeviceLayer'
-import { planPickComparison, type Pt, type PickComparison } from '@/space-viewer/advanced/PickPathPlanner'
+import { buildCenterlineGraph, pathBetween, planPickComparison, type Pt, type PickComparison } from '@/space-viewer/advanced/PickPathPlanner'
 import { mmToSec } from '@/space-viewer/advanced/cost'
 import { advancedApi } from '@/api/space/advanced'
 import AdvancedPanel from './AdvancedPanel.vue'
+import { DirtyLocationBatcher } from '@/utils/DirtyLocationBatcher'
+import {
+  getWmsConnection,
+  onWmsConnectionState,
+  startWmsConnection,
+  subscribeWarehouse,
+  unsubscribeWarehouse,
+  type StockChangedPayload,
+} from '@/utils/wmsHub'
 
 const { t } = useI18n()
 const route = useRoute()
@@ -118,6 +136,61 @@ const overlayMode = ref<OverlayMode>('status')
 const overlayTs = ref('')
 const polling = ref(false)
 const selectedStock = ref<WmsStockDto | null>(null)
+const stockItems = ref<WmsStockDto[]>([])
+const utilizationData = ref<UtilizationResponse | null>(null)
+const storageTypeData = ref<StorageTypeResponse | null>(null)
+const abcData = ref<AbcResponse | null>(null)
+const abcPathDistanceMm = ref<number | null>(null)
+const abcPathDegraded = ref(false)
+const liveConnected = ref(false)
+let floorGeneration = 0
+let stockGeneration = 0
+let analyticsGeneration = 0
+
+const analysisWarningCount = computed(() => {
+  if (overlayMode.value === 'utilization') return utilizationData.value?.warnings.length ?? 0
+  if (overlayMode.value === 'abc') return abcData.value?.warnings.length ?? 0
+  return 0
+})
+
+const legendStats = computed<Array<{ label: string; value: string }>>(() => {
+  if (overlayMode.value === 'status') {
+    const occupied = stockItems.value.filter((x) => x.qty > 0).length
+    return [
+      { label: t('库位'), value: String(stockItems.value.length) },
+      { label: t('有货'), value: String(occupied) },
+    ]
+  }
+  if (overlayMode.value === 'utilization') {
+    return (utilizationData.value?.zones ?? []).slice(0, 5).map((x) => ({
+      label: `${x.name} · ${uomLabel(x.capacityUom)}`,
+      value: `${(x.utilization * 100).toFixed(1)}%`,
+    }))
+  }
+  if (overlayMode.value === 'storageType') {
+    return (storageTypeData.value?.summary ?? []).slice(0, 6).map((x) => ({
+      label: t(x.typeKey), value: `${x.locationCount} · ${x.percentage.toFixed(1)}%`,
+    }))
+  }
+  if (overlayMode.value === 'abc') {
+    const products = abcData.value?.products ?? []
+    const rows = (['A', 'B', 'C'] as const).map((rank) => ({
+      label: `${rank} ${t('类物料')}`,
+      value: String(products.filter((x) => x.abcRank === rank).length),
+    }))
+    const distance = abcPathDistanceMm.value ?? abcData.value?.averageAShippingDistanceMm
+    if (distance != null) rows.push({
+      label: `A → ${t('出货口')}${abcPathDegraded.value ? ` (${t('近似')})` : ''}`,
+      value: `${(distance / 1000).toFixed(1)} m`,
+    })
+    return rows
+  }
+  return []
+})
+
+function uomLabel(uom: number): string {
+  return ({ 1: t('托盘'), 2: t('箱'), 3: t('件'), 4: 'L' } as Record<number, string>)[uom] ?? '-'
+}
 
 let pathAnimator: PathAnimator | null = null
 let heatmap: WorkloadHeatmap | null = null
@@ -144,6 +217,15 @@ function canvasNdc(e: MouseEvent): { x: number; y: number } {
 
 async function loadFloor(floorId: string): Promise<void> {
   if (!viewer) return
+  const generation = ++floorGeneration
+  clearDirtyRefresh()
+  overlay?.clearAnalytics()
+  stockItems.value = []
+  utilizationData.value = null
+  storageTypeData.value = null
+  abcData.value = null
+  abcPathDistanceMm.value = null
+  abcPathDegraded.value = false
   selectedId.value = null
   pathAnimator?.clear()
   pathLoaded.value = false
@@ -160,10 +242,12 @@ async function loadFloor(floorId: string): Promise<void> {
   progressText.value = ''
   try {
     await viewer.load(floorId)
+    if (generation !== floorGeneration) return
     currentFloorId.value = floorId
     viewer.home()
-    void refreshStock()   // 楼层就绪后叠加库存（currentFloorId 已设，避免 onReady 早触发拿空 floorId）
+    await Promise.all([refreshStock(floorId, generation), refreshAnalyticsMode(floorId, generation)])
   } catch {
+    if (generation !== floorGeneration) return
     errorMsg.value = t('加载失败')
     loading.value = false
   }
@@ -212,28 +296,130 @@ function onDblClick(e: MouseEvent): void {
   }
 }
 
-async function refreshStock(): Promise<void> {
-  if (!overlay) return
+async function refreshStock(
+  floorId = currentFloorId.value,
+  expectedFloorGeneration = floorGeneration,
+): Promise<void> {
+  if (!overlay || !floorId) return
+  const requestGeneration = ++stockGeneration
   try {
-    await overlay.refresh(currentFloorId.value)
-    overlay.setMode(overlayMode.value)
-    overlay.apply()
+    const env = await stockApi.floorStock(floorId)
+    if (!overlay || requestGeneration !== stockGeneration
+      || expectedFloorGeneration !== floorGeneration || floorId !== currentFloorId.value) return
+    overlay.setSnapshot(env.data.items, env.data.ts)
+    stockItems.value = env.data.items
+    if (!workloadOn.value) {
+      overlay.setMode(overlayMode.value)
+      overlay.apply()
+    }
     overlayTs.value = overlay.ts
     syncSelectedStock()
   } catch {
+    if (requestGeneration !== stockGeneration || expectedFloorGeneration !== floorGeneration) return
     ElMessage.warning(t('库存数据获取失败，显示上次快照'))   // W-SPACE-701
   }
 }
-function onOverlayMode(m: OverlayMode): void {
+
+async function refreshAnalyticsMode(
+  floorId = currentFloorId.value,
+  expectedFloorGeneration = floorGeneration,
+): Promise<void> {
+  if (!overlay || !floorId) return
+  const requestMode = overlayMode.value
+  const requestGeneration = ++analyticsGeneration
+  const isCurrent = () => requestGeneration === analyticsGeneration
+    && expectedFloorGeneration === floorGeneration
+    && floorId === currentFloorId.value
+    && requestMode === overlayMode.value
+  try {
+    if (requestMode === 'utilization') {
+      const env = await analyticsApi.utilization(floorId)
+      if (!isCurrent()) return
+      utilizationData.value = env.data
+      overlay.setUtilization(env.data.items)
+    } else if (requestMode === 'storageType') {
+      const env = await analyticsApi.storageTypes(floorId)
+      if (!isCurrent()) return
+      storageTypeData.value = env.data
+      overlay.setStorageTypes(env.data.items)
+    } else if (requestMode === 'abc') {
+      const env = await analyticsApi.abc(floorId)
+      if (!isCurrent()) return
+      abcData.value = env.data
+      overlay.setAbc(env.data.items)
+      await computeAbcPathDistance(env.data, floorId, requestGeneration)
+      if (!isCurrent()) return
+    }
+    if (!isCurrent() || workloadOn.value) return
+    overlay.setMode(requestMode)
+    overlay.apply()
+  } catch {
+    if (!isCurrent()) return
+    ElMessage.warning(t('分析数据获取失败，显示上次快照'))
+    if (!workloadOn.value) overlay.apply()
+  }
+}
+
+async function refreshAll(): Promise<void> {
+  await Promise.all([refreshStock(), refreshAnalyticsMode()])
+}
+
+async function onOverlayMode(m: OverlayMode): Promise<void> {
+  if (workloadOn.value) {
+    heatmap?.setEnabled(false)
+    workloadOn.value = false
+  }
   overlayMode.value = m
   overlay?.setMode(m)
-  if (m === 'off') { void onSwitchFloor(currentFloorId.value) }  // 关叠加→重载回灰（简单可靠）
+  if (m === 'utilization' || m === 'storageType' || m === 'abc') await refreshAnalyticsMode()
   else overlay?.apply()
 }
+
+let pollTimer = 0
 function onTogglePoll(): void {
   polling.value = !polling.value
-  if (polling.value) overlay?.startPolling(() => currentFloorId.value, 5000)
-  else overlay?.stopPolling()
+  if (polling.value) pollTimer = window.setInterval(() => { void refreshAll() }, 5000)
+  else if (pollTimer) { window.clearInterval(pollTimer); pollTimer = 0 }
+}
+
+async function computeAbcPathDistance(
+  data: AbcResponse,
+  floorId = currentFloorId.value,
+  expectedAnalyticsGeneration = analyticsGeneration,
+): Promise<void> {
+  abcPathDistanceMm.value = null
+  abcPathDegraded.value = false
+  const aLocations = data.items.filter((x) => x.abcRank === 'A' && x.absX != null && x.absY != null)
+  if (!aLocations.length || !data.shippingTargets.length) return
+  try {
+    const scene = (await sceneApi.get(floorId)).data
+    if (floorId !== currentFloorId.value || expectedAnalyticsGeneration !== analyticsGeneration) return
+    const graph = buildCenterlineGraph(scene.aisles)
+    const distances: number[] = []
+    for (const location of aLocations) {
+      let best = Number.POSITIVE_INFINITY
+      let bestDegraded = false
+      for (const target of data.shippingTargets) {
+        const path = pathBetween(
+          graph,
+          { x: location.absX!, y: location.absY! },
+          { x: target.x, y: target.y },
+        )
+        const distance = polylineDistance(path.points)
+        if (distance < best) { best = distance; bestDegraded = path.degraded }
+      }
+      if (Number.isFinite(best)) { distances.push(best); abcPathDegraded.value ||= bestDegraded }
+    }
+    if (distances.length) abcPathDistanceMm.value = distances.reduce((a, b) => a + b, 0) / distances.length
+  } catch {
+    // Keep the backend Euclidean fallback when scene/path data is unavailable.
+  }
+}
+
+function polylineDistance(points: Pt[]): number {
+  let total = 0
+  for (let i = 1; i < points.length; i++) total += Math.hypot(points[i]!.x - points[i - 1]!.x, points[i]!.y - points[i - 1]!.y)
+  return total
 }
 function syncSelectedStock(): void {
   // selectedId 是库位 GUID；库存快照按编码键 → 先经 viewer 把 GUID 解析成编码再查
@@ -309,10 +495,13 @@ async function onToggleWorkload(): Promise<void> {
     // 与 07 着色互斥：记住当前模式、把 StockOverlay 实际 _mode 也置 off（否则 07 轮询计时器
     // 每 5s 仍 apply 把库存色覆盖到热图上），并停掉 07 自动刷新。
     prevOverlayMode = overlayMode.value
-    overlayMode.value = 'off'
-    overlay?.setMode('off')
-    if (polling.value) { overlay?.stopPolling(); polling.value = false }
-    await viewer.load(currentFloorId.value)  // 复位为默认灰（不重叠 07 着色）
+    overlayMode.value = 'structure'
+    overlay?.setMode('structure')
+    overlay?.apply()
+    if (polling.value) {
+      polling.value = false
+      if (pollTimer) { window.clearInterval(pollTimer); pollTimer = 0 }
+    }
     heatmap.setEnabled(true)
     await heatmap.refresh(currentFloorId.value, workloadWin.from, exclusiveTo(workloadWin.to))
     ElMessage.info(t('作业热图（时间窗 {f}~{t}）已加载').replace('{f}', workloadWin.from).replace('{t}', workloadWin.to)) // I-SPACE-802
@@ -320,7 +509,9 @@ async function onToggleWorkload(): Promise<void> {
     heatmap.setEnabled(false)
     overlayMode.value = prevOverlayMode      // 还原热图开启前的 07 着色模式
     overlay?.setMode(prevOverlayMode)
-    await loadFloor(currentFloorId.value)    // 复位 + 按还原后的模式重涂 07 库存着色
+    if (prevOverlayMode === 'utilization' || prevOverlayMode === 'storageType' || prevOverlayMode === 'abc')
+      await refreshAnalyticsMode()
+    else overlay?.apply()
   }
 }
 
@@ -344,6 +535,72 @@ async function onToggleDevice(): Promise<void> {
     }
   } else {
     deviceLayer.clear()
+  }
+}
+
+let warehouseCd = ''
+let hubConnection: signalR.HubConnection | null = null
+let hubStockHandler: ((payload: StockChangedPayload) => void) | null = null
+let disposeHubState: (() => void) | null = null
+const dirtyBatcher = new DirtyLocationBatcher(
+  flushDirtyStock,
+  () => ElMessage.warning(t('实时库存刷新失败，等待下一次校准')),
+)
+
+function clearDirtyRefresh(): void {
+  dirtyBatcher.clear()
+}
+
+function scheduleDirtyRefresh(locationCode: string): void {
+  if (!viewer?.getLocationIdByCode(locationCode)) return
+  dirtyBatcher.add(locationCode)
+}
+
+async function flushDirtyStock(codes: string[]): Promise<void> {
+  if (!overlay || !currentFloorId.value || codes.length === 0) return
+  const floorId = currentFloorId.value
+  const env = await stockApi.floorStockDelta(floorId, codes)
+  if (!overlay || currentFloorId.value !== floorId) return
+  overlay.removeSnapshotCodes(codes)
+  overlay.mergeSnapshot(env.data.items, env.data.ts)
+  const next = new Map(stockItems.value.map((item) => [item.locationCode, item]))
+  for (const code of codes) next.delete(code)
+  for (const item of env.data.items) next.set(item.locationCode, item)
+  stockItems.value = [...next.values()]
+  overlayTs.value = env.data.ts
+  if (!workloadOn.value) {
+    if (overlayMode.value === 'utilization' || overlayMode.value === 'abc') await refreshAnalyticsMode()
+    else overlay.apply()
+  }
+  syncSelectedStock()
+}
+
+async function setupRealtime(): Promise<void> {
+  try {
+    const sites = (await siteApi.list()).data
+    const site = sites.find((item) => item.id === siteId)
+    warehouseCd = site?.warehouseCd || site?.siteCode || ''
+    if (!warehouseCd) return
+
+    hubConnection = getWmsConnection()
+    hubStockHandler = (payload) => {
+      if (payload.warehouseCd !== warehouseCd) return
+      scheduleDirtyRefresh(payload.locationCd)
+    }
+    hubConnection.on('StockChanged', hubStockHandler)
+
+    let connectedOnce = false
+    disposeHubState = onWmsConnectionState((state) => {
+      liveConnected.value = state === signalR.HubConnectionState.Connected
+      if (liveConnected.value) {
+        if (connectedOnce) void refreshAll()
+        connectedOnce = true
+      }
+    })
+    await subscribeWarehouse(warehouseCd)
+    await startWmsConnection()
+  } catch {
+    liveConnected.value = false
   }
 }
 
@@ -375,17 +632,30 @@ onMounted(async () => {
     (locationId) => { selectedId.value = locationId; syncSelectedStock() },
   )
 
-  const initialFloorId = (route.query['floorId'] as string) || ''
+  let initialFloorId = (route.query['floorId'] as string) || ''
   if (!initialFloorId) {
-    errorMsg.value = t('请通过 floorId 参数指定初始楼层')
-    return
+    try { initialFloorId = (await floorApi.list(siteId)).data[0]?.id || '' }
+    catch { initialFloorId = '' }
+    if (!initialFloorId) { errorMsg.value = t('该站点尚未配置楼层'); return }
   }
 
   await loadFloor(initialFloorId)
+  await setupRealtime()
 })
 
 onBeforeUnmount(() => {
+  floorGeneration++
+  stockGeneration++
+  analyticsGeneration++
   clearTimeout(hoverTimer)
+  dirtyBatcher.dispose()
+  if (pollTimer) { window.clearInterval(pollTimer); pollTimer = 0 }
+  if (hubConnection && hubStockHandler) hubConnection.off('StockChanged', hubStockHandler)
+  if (warehouseCd) void unsubscribeWarehouse(warehouseCd)
+  disposeHubState?.()
+  disposeHubState = null
+  hubConnection = null
+  hubStockHandler = null
   overlay?.dispose()
   overlay = null
   pathAnimator?.clear(); pathAnimator = null

@@ -49,8 +49,8 @@ public class SignalRWmsNotifier : IWmsNotifier
 
     public async Task NotifyStockChangedAsync(StockChangedEvent evt)
     {
-        // 全クライアント + 倉庫グループ + 製品グループの 3 経路に配信
-        await _hub.Clients.All.SendAsync("StockChanged", evt);
+        // 未过滤客户端走通用组；已订阅客户端只走仓库/产品过滤组，避免重复事件。
+        await _hub.Clients.Group(WmsHub.GeneralGroup).SendAsync("StockChanged", evt);
         if (!string.IsNullOrEmpty(evt.WarehouseCd))
             await _hub.Clients.Group($"wh:{evt.WarehouseCd}").SendAsync("StockChanged", evt);
         if (!string.IsNullOrEmpty(evt.ProductCd))
@@ -61,7 +61,7 @@ public class SignalRWmsNotifier : IWmsNotifier
     {
         var payload = new { receiptNo, warehouseCd, at = DateTime.Now };
         await Task.WhenAll(
-            _hub.Clients.All.SendAsync("InboundReceived", payload),
+            _hub.Clients.Group(WmsHub.GeneralGroup).SendAsync("InboundReceived", payload),
             _hub.Clients.Group($"wh:{warehouseCd}").SendAsync("InboundReceived", payload)
         );
 

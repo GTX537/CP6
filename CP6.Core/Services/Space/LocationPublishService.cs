@@ -345,6 +345,8 @@ public class LocationPublishService : ILocationPublishService
         if (l.SizeW.HasValue) attrs["sizeW"] = l.SizeW;
         if (l.SizeH.HasValue) attrs["sizeH"] = l.SizeH;
         if (l.SizeD.HasValue) attrs["sizeD"] = l.SizeD;
+        if (l.Capacity.HasValue) attrs["capacity"] = l.Capacity;
+        if (l.CapacityUom.HasValue) attrs["capacityUom"] = l.CapacityUom;
 
         return new LocationPublishItem
         {

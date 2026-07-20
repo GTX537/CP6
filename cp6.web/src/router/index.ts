@@ -1,6 +1,7 @@
 import { createRouter, createWebHistory, type RouteRecordRaw } from 'vue-router'
 import { ensureNamespacesForPath } from '@/i18n'
 import { usePlatformStore } from '@/stores/platform'
+import { usePermissionStore } from '@/stores/permission'
 
 // 路由路径 → 组件的映射表（所有可能的页面）
 const viewModules: Record<string, () => Promise<any>> = {
@@ -175,6 +176,7 @@ const viewModules: Record<string, () => Promise<any>> = {
   '/wms/report-center':        () => import('@/views/wms/ReportCenterView.vue'),
   // ── Space 空間管理（波2 P0）─────────────────────────────
   '/space/home': () => import('@/views/space/SpaceHomeView.vue'),
+  '/space/control-tower': () => import('@/views/space/control-tower/ControlTowerLandingView.vue'),
   '/space/site': () => import('@/views/space/master/SpaceSiteView.vue'),
   '/space/floor': () => import('@/views/space/master/SpaceFloorView.vue'),
   // ── Space 波3 生命周期 ─────────────────────────────
@@ -282,6 +284,12 @@ const staticRoutes: RouteRecordRaw[] = [
     name: 'space-stacked',
     component: () => import('@/views/space/stacked/StackedViewer.vue'),
     meta: { standalone: true, title: 'Space 3D 全层叠视图' },
+  },
+  {
+    path: '/space/control-tower/:siteId',
+    name: 'space-control-tower',
+    component: () => import('@/views/space/control-tower/SpaceControlTowerView.vue'),
+    meta: { standalone: true, title: 'Space Control Tower', permission: 'space-control-tower:view' },
   },
   {
     path: '/',
@@ -431,6 +439,16 @@ router.beforeEach(async (to, _from, next) => {
   ) {
     next('/sys/change-password')
     return
+  }
+
+  const requiredPermission = to.meta?.permission as string | undefined
+  if (requiredPermission) {
+    const permissions = usePermissionStore()
+    if (!permissions.loaded) await permissions.loadMyActions()
+    if (!permissions.has(requiredPermission)) {
+      next('/')
+      return
+    }
   }
 
   // 4. 独立窗口（popup）/ 改密页（standalone）：有登录态即可，不依赖动态菜单

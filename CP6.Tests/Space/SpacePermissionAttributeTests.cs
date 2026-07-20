@@ -29,6 +29,12 @@ public class SpacePermissionAttributeTests
         "space-code-rule:add", "space-code-rule:edit", "space-code-rule:delete",
         "space-code-rule:generate",
         "space-publish:publish", "space-publish:deactivate", "space-publish:adopt",
+        "space-control-tower:manage",
+    };
+
+    private static readonly Dictionary<string, string> PermissionedReadActions = new()
+    {
+        ["SpaceAnalyticsController.ControlTower"] = "space-control-tower:view",
     };
 
     /// <summary>只读语义的 POST 豁免（Controller.Method）——按「不得带特性」校验。</summary>
@@ -73,7 +79,7 @@ public class SpacePermissionAttributeTests
     public void SpaceControllers_AreDiscovered()
     {
         // 守卫：确保反射确实扫到 9 个 controller（防命名空间/程序集变动导致「空扫空过」）。
-        Assert.Equal(9, SpaceControllers.Count());
+        Assert.Equal(10, SpaceControllers.Count());
     }
 
     [Fact]
@@ -105,8 +111,19 @@ public class SpacePermissionAttributeTests
         foreach (var m in ActionMethods(c))
         {
             var readOnly = (IsGet(m) && !IsMutating(m)) || IsExempt(c, m);
-            if (readOnly && ReadPermission(m) != null)
-                offenders.Add($"{c.Name}.{m.Name}：只读端点误贴 [RequirePermission]");
+            if (!readOnly) continue;
+            var action = $"{c.Name}.{m.Name}";
+            var permission = ReadPermission(m);
+            if (PermissionedReadActions.TryGetValue(action, out var expected))
+            {
+                var actual = permission == null ? null : $"{permission.Value.menu}:{permission.Value.action}";
+                if (actual != expected)
+                    offenders.Add($"{action}：应使用独立只读权限 '{expected}'，实际 '{actual ?? "none"}'");
+            }
+            else if (permission != null)
+            {
+                offenders.Add($"{action}：只读端点误贴 [RequirePermission]");
+            }
         }
         Assert.True(offenders.Count == 0, "只读端点误贴权限点:\n" + string.Join("\n", offenders));
     }

@@ -8,6 +8,9 @@ export interface ViewerHandle {
   dataToWorld(p: { x: number; y: number; z: number }): Vector3
   instanceToLocation(meshId: number, instanceId: number): string | null
   setInstanceColor(locationId: string, hex: number): void
+  resetInstanceColors(hex?: number): void
+  /** Rebase active hover/selection highlights after a bulk color-layer update. */
+  refreshHighlights?(): void
   requestRender(): void
   onReady(cb: () => void): void
   onProgress(cb: (done: number, total: number) => void): void

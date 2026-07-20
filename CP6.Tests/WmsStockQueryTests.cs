@@ -116,7 +116,31 @@ public class WmsStockQueryTests
         Assert.Equal(1m, dto.AllocatedQty);
         Assert.Equal("PB", dto.TopMaterial);   // 占量最大
         Assert.Equal(2, dto.ProductKinds);
+        Assert.Equal(new[] { "PA", "PB" }, dto.ProductCodes.OrderBy(x => x));
         Assert.Null(dto.Capacity);             // CapacityQty=0 → null
+    }
+
+    [Fact]
+    public async Task GetStockByLocations_PublishedBinOnly_ReturnsCapacityAndEmptyStatus()
+    {
+        using var db = NewDb();
+        var id = Guid.NewGuid();
+        db.Space_Locations.Add(new CP6.Entity.DomainModels.Space.Space_Location
+        {
+            Id = id, LocationCode = "A-01", Status = 1,
+        });
+        db.WmsBins.Add(new WmsBin
+        {
+            Id = id, LocationCode = "A-01", WarehouseCd = "W1", IsActive = true,
+            Version = 2, AttrsJson = "{\"capacity\":12,\"capacityUom\":1}",
+        });
+        await db.SaveChangesAsync();
+
+        var dto = Assert.Single(await Stock(db).GetStockByLocationsAsync(new[] { "A-01" }));
+        Assert.Equal(0, dto.BinStatus);
+        Assert.Equal(12m, dto.Capacity);
+        Assert.Equal(1, dto.CapacityUom);
+        Assert.Equal("wms-bin", dto.CapacitySource);
     }
 
     [Fact]

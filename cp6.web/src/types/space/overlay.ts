@@ -5,8 +5,11 @@ export interface WmsStockDto {
   qty: number
   allocatedQty: number
   capacity: number | null
+  capacityUom: number | null
+  capacitySource: string | null
   topMaterial: string | null
   productKinds: number
+  productCodes: string[]
 }
 
 export interface FloorStockSnapshot {
@@ -20,4 +23,4 @@ export interface WmsLocationHit {
   lot: string | null
 }
 
-export type OverlayMode = 'status' | 'utilization' | 'off'
+export type OverlayMode = 'structure' | 'status' | 'utilization' | 'storageType' | 'abc' | 'off'

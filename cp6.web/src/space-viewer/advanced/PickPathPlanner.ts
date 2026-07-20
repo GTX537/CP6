@@ -137,7 +137,7 @@ export function astar(
 }
 
 /** 相邻两拣货点路径：a→接入→沿巷道→接入→b。不连通/无段 → 直连 degraded。 */
-function pathBetween(g: Graph, a: Pt, b: Pt): { points: Pt[]; degraded: boolean } {
+export function pathBetween(g: Graph, a: Pt, b: Pt): { points: Pt[]; degraded: boolean } {
   const accA = nearestAccess(g, a)
   const accB = nearestAccess(g, b)
   if (!accA || !accB) return { points: [a, b], degraded: true }
