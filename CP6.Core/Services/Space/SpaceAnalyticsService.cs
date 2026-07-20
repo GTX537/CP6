@@ -629,11 +629,11 @@ public sealed class SpaceAnalyticsService : ISpaceAnalyticsService
             join zoneEntity in _db.Space_Zones.AsNoTracking()
                 on (Guid?)(rack == null ? null : rack.ZoneId) equals (Guid?)zoneEntity.Id into zoneJoin
             from zone in zoneJoin.DefaultIfEmpty()
-            where l.FloorId.HasValue && floorIds.Contains(l.FloorId.GetValueOrDefault())
+            where l.FloorId.HasValue && floorIds.Contains(l.FloorId!.Value)
                   && l.Placed && l.LocationCode != null && !l.IsDeleted
             select new
             {
-                FloorId = l.FloorId.GetValueOrDefault(),
+                FloorId = l.FloorId!.Value,
                 Row = new LocationAnalyticsRow
                 {
                     LocationId = l.Id,
