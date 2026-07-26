@@ -179,17 +179,29 @@ public sealed class SpaceContextTenantTests
         var file = context.Model.FindEntityType(typeof(SpaceFile))!;
         var source = context.Model.FindEntityType(typeof(SpaceModelSource))!;
         var artifact = context.Model.FindEntityType(typeof(SpaceArtifact))!;
+        var job = context.Model.FindEntityType(typeof(SpaceJob))!;
+        var attempt = context.Model.FindEntityType(typeof(SpaceJobAttempt))!;
+        var step = context.Model.FindEntityType(typeof(SpaceJobStep))!;
+        var issue = context.Model.FindEntityType(typeof(SpaceModelIssue))!;
 
         Assert.Equal("Space_Model", model.GetTableName());
         Assert.Equal("Space_ModelVersion", version.GetTableName());
         Assert.Equal("Space_File", file.GetTableName());
         Assert.Equal("Space_ModelSource", source.GetTableName());
         Assert.Equal("Space_Artifact", artifact.GetTableName());
+        Assert.Equal("Space_Job", job.GetTableName());
+        Assert.Equal("Space_JobAttempt", attempt.GetTableName());
+        Assert.Equal("Space_JobStep", step.GetTableName());
+        Assert.Equal("Space_ModelIssue", issue.GetTableName());
         Assert.NotNull(model.GetQueryFilter());
         Assert.NotNull(version.GetQueryFilter());
         Assert.NotNull(file.GetQueryFilter());
         Assert.NotNull(source.GetQueryFilter());
         Assert.NotNull(artifact.GetQueryFilter());
+        Assert.NotNull(job.GetQueryFilter());
+        Assert.NotNull(attempt.GetQueryFilter());
+        Assert.NotNull(step.GetQueryFilter());
+        Assert.NotNull(issue.GetQueryFilter());
         Assert.Contains(
             model.GetIndexes(),
             x => x.IsUnique &&
@@ -226,10 +238,30 @@ public sealed class SpaceContextTenantTests
             artifact.GetForeignKeys(),
             x => x.Properties.Select(p => p.Name)
                 .SequenceEqual(new[] { "TenantId", "ModelVersionId", "SourceId" }));
+        Assert.Contains(
+            job.GetIndexes(),
+            x => x.IsUnique &&
+                 x.Properties.Select(p => p.Name)
+                     .SequenceEqual(new[] { "TenantId", "JobType", "BusinessKey" }));
+        Assert.Contains(
+            attempt.GetIndexes(),
+            x => x.IsUnique &&
+                 x.Properties.Select(p => p.Name)
+                     .SequenceEqual(new[] { "TenantId", "JobId", "AttemptNo" }));
+        Assert.Contains(
+            step.GetIndexes(),
+            x => x.IsUnique &&
+                 x.Properties.Select(p => p.Name)
+                     .SequenceEqual(new[] { "TenantId", "AttemptId", "StepCode" }));
+        Assert.Contains(
+            issue.GetForeignKeys(),
+            x => x.Properties.Select(p => p.Name)
+                .SequenceEqual(new[] { "TenantId", "JobId" }));
         Assert.True(model.FindProperty(nameof(SpaceModel.RowVersion))!.IsConcurrencyToken);
         Assert.True(version.FindProperty(nameof(SpaceModelVersion.RowVersion))!.IsConcurrencyToken);
         Assert.True(file.FindProperty(nameof(SpaceFile.RowVersion))!.IsConcurrencyToken);
         Assert.True(source.FindProperty(nameof(SpaceModelSource.RowVersion))!.IsConcurrencyToken);
+        Assert.True(job.FindProperty(nameof(SpaceJob.RowVersion))!.IsConcurrencyToken);
     }
 
     private static SpaceContext CreateContext(

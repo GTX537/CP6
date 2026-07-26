@@ -29,6 +29,10 @@ public sealed class SpaceContext : DbContext
     public DbSet<SpaceFile> Files => Set<SpaceFile>();
     public DbSet<SpaceModelSource> Sources => Set<SpaceModelSource>();
     public DbSet<SpaceArtifact> Artifacts => Set<SpaceArtifact>();
+    public DbSet<SpaceJob> Jobs => Set<SpaceJob>();
+    public DbSet<SpaceJobAttempt> JobAttempts => Set<SpaceJobAttempt>();
+    public DbSet<SpaceJobStep> JobSteps => Set<SpaceJobStep>();
+    public DbSet<SpaceModelIssue> Issues => Set<SpaceModelIssue>();
 
     protected override void OnModelCreating(ModelBuilder modelBuilder)
     {
@@ -36,7 +40,11 @@ public sealed class SpaceContext : DbContext
         ConfigureVersion(modelBuilder);
         ConfigureFile(modelBuilder);
         ConfigureSource(modelBuilder);
+        ConfigureJob(modelBuilder);
+        ConfigureJobAttempt(modelBuilder);
+        ConfigureJobStep(modelBuilder);
         ConfigureArtifact(modelBuilder);
+        ConfigureIssue(modelBuilder);
     }
 
     public override int SaveChanges(bool acceptAllChangesOnSuccess)
@@ -278,6 +286,8 @@ public sealed class SpaceContext : DbContext
         entity.ToTable("Space_Artifact");
         entity.HasKey(x => x.Id);
         entity.Property(x => x.Id).ValueGeneratedNever();
+        entity.HasAlternateKey(x => new { x.TenantId, x.Id })
+            .HasName("AK_Space_Artifact_TenantId_Id");
         ConfigureTenantEntity(entity);
 
         entity.Property(x => x.ArtifactType)
@@ -287,6 +297,9 @@ public sealed class SpaceContext : DbContext
 
         entity.HasIndex(x => new { x.TenantId, x.ModelVersionId })
             .HasDatabaseName("IX_Space_Artifact_Tenant_Version");
+        entity.HasIndex(x => new { x.TenantId, x.JobId })
+            .HasFilter("[JobId] IS NOT NULL AND [IsDeleted] = 0")
+            .HasDatabaseName("IX_Space_Artifact_Tenant_Job_Active");
         entity.HasIndex(x => new { x.TenantId, x.FileId })
             .HasFilter("[IsDeleted] = 0")
             .HasDatabaseName("IX_Space_Artifact_Tenant_File_Active");
@@ -312,6 +325,257 @@ public sealed class SpaceContext : DbContext
             .HasPrincipalKey(x => new { x.TenantId, x.ModelVersionId, x.Id })
             .OnDelete(DeleteBehavior.Restrict)
             .HasConstraintName("FK_Space_Artifact_Source_Tenant_Version");
+        entity.HasOne<SpaceJob>()
+            .WithMany()
+            .HasForeignKey(x => new { x.TenantId, x.JobId })
+            .HasPrincipalKey(x => new { x.TenantId, x.Id })
+            .OnDelete(DeleteBehavior.Restrict)
+            .HasConstraintName("FK_Space_Artifact_Job_Tenant");
+
+        entity.HasQueryFilter(x => x.TenantId == CurrentTenantId && !x.IsDeleted);
+    }
+
+    private void ConfigureJob(ModelBuilder modelBuilder)
+    {
+        var entity = modelBuilder.Entity<SpaceJob>();
+        entity.ToTable(
+            "Space_Job",
+            table =>
+            {
+                table.HasCheckConstraint(
+                    "CK_Space_Job_Attempts",
+                    "[AttemptCount] >= 0 AND [MaxAttempts] BETWEEN 1 AND 20 AND [AttemptCount] <= [MaxAttempts]");
+                table.HasCheckConstraint(
+                    "CK_Space_Job_Progress",
+                    "[ProgressDone] >= 0 AND [ProgressTotal] >= 0 AND ([ProgressTotal] = 0 OR [ProgressDone] <= [ProgressTotal])");
+                table.HasCheckConstraint(
+                    "CK_Space_Job_Lease",
+                    "([Status] = 1 AND [LockedBy] IS NOT NULL AND [LockedAtUtc] IS NOT NULL AND [LockExpiresAtUtc] IS NOT NULL AND [ActiveAttemptId] IS NOT NULL) OR ([Status] <> 1 AND [LockedBy] IS NULL AND [LockedAtUtc] IS NULL AND [LockExpiresAtUtc] IS NULL AND [ActiveAttemptId] IS NULL)");
+            });
+        entity.HasKey(x => x.Id);
+        entity.Property(x => x.Id).ValueGeneratedNever();
+        entity.HasAlternateKey(x => new { x.TenantId, x.Id })
+            .HasName("AK_Space_Job_TenantId_Id");
+        ConfigureTenantEntity(entity);
+
+        entity.Property(x => x.JobType)
+            .HasConversion<short>()
+            .HasColumnType("smallint");
+        entity.Property(x => x.SubjectType)
+            .HasConversion<short>()
+            .HasColumnType("smallint");
+        entity.Property(x => x.BusinessKey)
+            .HasColumnType("char(64)")
+            .IsUnicode(false)
+            .IsFixedLength()
+            .HasMaxLength(64)
+            .IsRequired();
+        entity.Property(x => x.InputHash)
+            .HasColumnType("char(64)")
+            .IsUnicode(false)
+            .IsFixedLength()
+            .HasMaxLength(64)
+            .IsRequired();
+        entity.Property(x => x.Status)
+            .HasConversion<short>()
+            .HasColumnType("smallint");
+        entity.Property(x => x.LockedBy).HasMaxLength(200);
+        entity.Property(x => x.ProgressStage).HasMaxLength(100);
+        entity.Property(x => x.PayloadJson).HasColumnType("nvarchar(max)");
+        entity.Property(x => x.ResultSummaryJson).HasColumnType("nvarchar(max)");
+        entity.Property(x => x.LastFailureKind)
+            .HasConversion<short?>()
+            .HasColumnType("smallint");
+        entity.Property(x => x.LastErrorCode).HasMaxLength(100);
+        entity.Property(x => x.LastErrorSummary).HasMaxLength(1000);
+        entity.Property(x => x.RowVersion).IsRowVersion();
+
+        entity.HasIndex(x => new { x.TenantId, x.JobType, x.BusinessKey })
+            .IsUnique()
+            .HasFilter("[Status] IN (0, 1) AND [IsDeleted] = 0")
+            .HasDatabaseName("UX_Space_Job_Tenant_Type_BusinessKey_Active");
+        entity.HasIndex(
+                x => new
+                {
+                    x.TenantId,
+                    x.Status,
+                    x.NextAttemptAtUtc,
+                    x.LockExpiresAtUtc,
+                    x.Priority,
+                    x.RequestedAtUtc,
+                })
+            .HasDatabaseName("IX_Space_Job_Tenant_Claim");
+        entity.HasIndex(x => new { x.TenantId, x.SubjectType, x.SubjectId })
+            .HasDatabaseName("IX_Space_Job_Tenant_Subject");
+        entity.HasIndex(x => new { x.TenantId, x.CorrelationId })
+            .HasDatabaseName("IX_Space_Job_Tenant_Correlation");
+
+        entity.HasOne<SpaceJob>()
+            .WithMany()
+            .HasForeignKey(x => new { x.TenantId, x.RetryOfJobId })
+            .HasPrincipalKey(x => new { x.TenantId, x.Id })
+            .OnDelete(DeleteBehavior.Restrict)
+            .HasConstraintName("FK_Space_Job_RetryOf_Tenant");
+
+        entity.HasQueryFilter(x => x.TenantId == CurrentTenantId && !x.IsDeleted);
+    }
+
+    private void ConfigureJobAttempt(ModelBuilder modelBuilder)
+    {
+        var entity = modelBuilder.Entity<SpaceJobAttempt>();
+        entity.ToTable(
+            "Space_JobAttempt",
+            table => table.HasCheckConstraint(
+                "CK_Space_JobAttempt_OutcomeTime",
+                "([Outcome] = 0 AND [FinishedAtUtc] IS NULL) OR ([Outcome] <> 0 AND [FinishedAtUtc] IS NOT NULL)"));
+        entity.HasKey(x => x.Id);
+        entity.Property(x => x.Id).ValueGeneratedNever();
+        entity.HasAlternateKey(x => new { x.TenantId, x.Id })
+            .HasName("AK_Space_JobAttempt_TenantId_Id");
+        ConfigureTenantEntity(entity);
+
+        entity.Property(x => x.WorkerId).HasMaxLength(200).IsRequired();
+        entity.Property(x => x.Outcome)
+            .HasConversion<short>()
+            .HasColumnType("smallint");
+        entity.Property(x => x.InputHash)
+            .HasColumnType("char(64)")
+            .IsUnicode(false)
+            .IsFixedLength()
+            .HasMaxLength(64)
+            .IsRequired();
+        entity.Property(x => x.ProcessorVersion).HasMaxLength(100).IsRequired();
+        entity.Property(x => x.ResourceUsageJson).HasColumnType("nvarchar(max)");
+        entity.Property(x => x.FailureKind)
+            .HasConversion<short?>()
+            .HasColumnType("smallint");
+        entity.Property(x => x.ErrorCode).HasMaxLength(100);
+        entity.Property(x => x.SanitizedError).HasMaxLength(1000);
+
+        entity.HasIndex(x => new { x.TenantId, x.JobId, x.AttemptNo })
+            .IsUnique()
+            .HasDatabaseName("UX_Space_JobAttempt_Tenant_Job_AttemptNo");
+        entity.HasIndex(x => new { x.TenantId, x.JobId, x.StartedAtUtc })
+            .HasDatabaseName("IX_Space_JobAttempt_Tenant_Job_Started");
+
+        entity.HasOne<SpaceJob>()
+            .WithMany()
+            .HasForeignKey(x => new { x.TenantId, x.JobId })
+            .HasPrincipalKey(x => new { x.TenantId, x.Id })
+            .OnDelete(DeleteBehavior.Restrict)
+            .HasConstraintName("FK_Space_JobAttempt_Job_Tenant");
+        entity.HasOne<SpaceArtifact>()
+            .WithMany()
+            .HasForeignKey(x => new { x.TenantId, x.DiagnosticArtifactId })
+            .HasPrincipalKey(x => new { x.TenantId, x.Id })
+            .OnDelete(DeleteBehavior.Restrict)
+            .HasConstraintName("FK_Space_JobAttempt_DiagnosticArtifact_Tenant");
+
+        entity.HasQueryFilter(x => x.TenantId == CurrentTenantId && !x.IsDeleted);
+    }
+
+    private void ConfigureJobStep(ModelBuilder modelBuilder)
+    {
+        var entity = modelBuilder.Entity<SpaceJobStep>();
+        entity.ToTable(
+            "Space_JobStep",
+            table => table.HasCheckConstraint(
+                "CK_Space_JobStep_StatusTime",
+                "([Status] = 0 AND [FinishedAtUtc] IS NULL) OR ([Status] <> 0 AND [FinishedAtUtc] IS NOT NULL)"));
+        entity.HasKey(x => x.Id);
+        entity.Property(x => x.Id).ValueGeneratedNever();
+        ConfigureTenantEntity(entity);
+
+        entity.Property(x => x.StepCode).HasMaxLength(100).IsRequired();
+        entity.Property(x => x.Status)
+            .HasConversion<short>()
+            .HasColumnType("smallint");
+        entity.Property(x => x.CheckpointJson).HasColumnType("nvarchar(max)");
+        entity.Property(x => x.OutputHash)
+            .HasColumnType("char(64)")
+            .IsUnicode(false)
+            .IsFixedLength()
+            .HasMaxLength(64);
+
+        entity.HasIndex(x => new { x.TenantId, x.AttemptId, x.StepCode })
+            .IsUnique()
+            .HasDatabaseName("UX_Space_JobStep_Tenant_Attempt_StepCode");
+        entity.HasIndex(x => new { x.TenantId, x.AttemptId, x.StepNo })
+            .IsUnique()
+            .HasDatabaseName("UX_Space_JobStep_Tenant_Attempt_StepNo");
+
+        entity.HasOne<SpaceJobAttempt>()
+            .WithMany()
+            .HasForeignKey(x => new { x.TenantId, x.AttemptId })
+            .HasPrincipalKey(x => new { x.TenantId, x.Id })
+            .OnDelete(DeleteBehavior.Restrict)
+            .HasConstraintName("FK_Space_JobStep_Attempt_Tenant");
+
+        entity.HasQueryFilter(x => x.TenantId == CurrentTenantId && !x.IsDeleted);
+    }
+
+    private void ConfigureIssue(ModelBuilder modelBuilder)
+    {
+        var entity = modelBuilder.Entity<SpaceModelIssue>();
+        entity.ToTable(
+            "Space_ModelIssue",
+            table =>
+            {
+                table.HasCheckConstraint(
+                    "CK_Space_ModelIssue_Context",
+                    "[ModelVersionId] IS NOT NULL OR [SourceId] IS NOT NULL OR [JobId] IS NOT NULL");
+                table.HasCheckConstraint(
+                    "CK_Space_ModelIssue_SourceVersion",
+                    "[SourceId] IS NULL OR [ModelVersionId] IS NOT NULL");
+            });
+        entity.HasKey(x => x.Id);
+        entity.Property(x => x.Id).ValueGeneratedNever();
+        ConfigureTenantEntity(entity);
+
+        entity.Property(x => x.Severity)
+            .HasConversion<short>()
+            .HasColumnType("smallint");
+        entity.Property(x => x.Code).HasMaxLength(100).IsRequired();
+        entity.Property(x => x.SourceRef).HasMaxLength(500);
+        entity.Property(x => x.MessageArgsJson).HasColumnType("nvarchar(max)");
+        entity.Property(x => x.SuggestedActionCode).HasMaxLength(100);
+        entity.Property(x => x.Status)
+            .HasConversion<short>()
+            .HasColumnType("smallint");
+        entity.Property(x => x.AcknowledgementReason).HasMaxLength(1000);
+
+        entity.HasIndex(
+                x => new
+                {
+                    x.TenantId,
+                    x.ModelVersionId,
+                    x.Status,
+                    x.Severity,
+                    x.Code,
+                })
+            .HasDatabaseName("IX_Space_ModelIssue_Tenant_Version_Status");
+        entity.HasIndex(x => new { x.TenantId, x.JobId, x.Status })
+            .HasFilter("[JobId] IS NOT NULL AND [IsDeleted] = 0")
+            .HasDatabaseName("IX_Space_ModelIssue_Tenant_Job_Status");
+
+        entity.HasOne<SpaceModelVersion>()
+            .WithMany()
+            .HasForeignKey(x => new { x.TenantId, x.ModelVersionId })
+            .HasPrincipalKey(x => new { x.TenantId, x.Id })
+            .OnDelete(DeleteBehavior.Restrict)
+            .HasConstraintName("FK_Space_ModelIssue_Version_Tenant");
+        entity.HasOne<SpaceModelSource>()
+            .WithMany()
+            .HasForeignKey(x => new { x.TenantId, x.ModelVersionId, x.SourceId })
+            .HasPrincipalKey(x => new { x.TenantId, x.ModelVersionId, x.Id })
+            .OnDelete(DeleteBehavior.Restrict)
+            .HasConstraintName("FK_Space_ModelIssue_Source_Tenant_Version");
+        entity.HasOne<SpaceJob>()
+            .WithMany()
+            .HasForeignKey(x => new { x.TenantId, x.JobId })
+            .HasPrincipalKey(x => new { x.TenantId, x.Id })
+            .OnDelete(DeleteBehavior.Restrict)
+            .HasConstraintName("FK_Space_ModelIssue_Job_Tenant");
 
         entity.HasQueryFilter(x => x.TenantId == CurrentTenantId && !x.IsDeleted);
     }

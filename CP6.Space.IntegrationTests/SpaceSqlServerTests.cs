@@ -26,6 +26,10 @@ public sealed class SpaceSqlServerTests
             Assert.Contains("Space_File", tables);
             Assert.Contains("Space_ModelSource", tables);
             Assert.Contains("Space_Artifact", tables);
+            Assert.Contains("Space_Job", tables);
+            Assert.Contains("Space_JobAttempt", tables);
+            Assert.Contains("Space_JobStep", tables);
+            Assert.Contains("Space_ModelIssue", tables);
             Assert.Contains(SpaceContext.MigrationsHistoryTable, tables);
             Assert.DoesNotContain("__EFMigrationsHistory", tables);
             Assert.DoesNotContain("Space_Site", tables);

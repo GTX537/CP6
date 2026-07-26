@@ -13,4 +13,7 @@ public static class SpaceErrorCodes
     public const string FileTypeMismatch = "SPACE_FILE_TYPE_MISMATCH";
     public const string FileQuarantined = "SPACE_FILE_QUARANTINED";
     public const string SourceUnsafe = "SPACE_SOURCE_UNSAFE";
+    public const string JobLeaseLost = "SPACE_JOB_LEASE_LOST";
+    public const string JobNotRetryable = "SPACE_JOB_NOT_RETRYABLE";
+    public const string ParseFailed = "SPACE_PARSE_FAILED";
 }

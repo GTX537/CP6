@@ -78,3 +78,75 @@ public enum SpaceArtifactType : short
     CanonicalSnapshot = 5,
     SceneChunk = 6,
 }
+
+public enum SpaceJobType : short
+{
+    FileScan = 0,
+    CadConvert = 1,
+    CadParse = 2,
+    ExcelPreview = 3,
+    Import = 4,
+    Validate = 5,
+    BuildScene = 6,
+    Publish = 7,
+    Reconcile = 8,
+    CloneVersion = 9,
+}
+
+public enum SpaceJobSubjectType : short
+{
+    File = 0,
+    ModelSource = 1,
+    ModelVersion = 2,
+    PublishAttempt = 3,
+}
+
+public enum SpaceJobStatus : short
+{
+    Queued = 0,
+    Running = 1,
+    Succeeded = 2,
+    Failed = 3,
+    Cancelled = 4,
+    DeadLetter = 5,
+}
+
+public enum SpaceJobAttemptOutcome : short
+{
+    Running = 0,
+    Succeeded = 1,
+    Failed = 2,
+    Abandoned = 3,
+    Cancelled = 4,
+}
+
+public enum SpaceJobStepStatus : short
+{
+    Running = 0,
+    Succeeded = 1,
+    Failed = 2,
+    Reused = 3,
+}
+
+public enum SpaceJobFailureKind : short
+{
+    Transient = 0,
+    Resource = 1,
+    Input = 2,
+    Security = 3,
+    Bug = 4,
+}
+
+public enum SpaceIssueSeverity : short
+{
+    Info = 0,
+    Warning = 1,
+    Blocking = 2,
+}
+
+public enum SpaceIssueStatus : short
+{
+    Open = 0,
+    Resolved = 1,
+    Acknowledged = 2,
+}

@@ -9,6 +9,7 @@ public sealed class SpaceArtifact : SpaceTenantEntity
     public Guid ModelVersionId { get; private set; }
     public Guid? SourceId { get; private set; }
     public Guid FileId { get; private set; }
+    public Guid? JobId { get; private set; }
     public SpaceArtifactType ArtifactType { get; private set; }
     public string SchemaVersion { get; private set; } = string.Empty;
 
@@ -46,6 +47,19 @@ public sealed class SpaceArtifact : SpaceTenantEntity
         };
         artifact.SetTenant(tenantId);
         return artifact;
+    }
+
+    public void AttachToJob(SpaceJob job)
+    {
+        ArgumentNullException.ThrowIfNull(job);
+        if (job.TenantId != TenantId)
+            throw new SpaceTenantScopeException(
+                "Artifact and Job tenants must match.");
+        if (JobId.HasValue && JobId != job.Id)
+            throw new SpaceJobStateException(
+                "Artifact Job lineage cannot be reassigned.");
+
+        JobId = job.Id;
     }
 
     private static string RequireSchemaVersion(string value)

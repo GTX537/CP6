@@ -6,6 +6,11 @@ public interface ISpaceExecutionContext
     Guid ActorId { get; }
 }
 
+public interface ISpaceCorrelationContext
+{
+    Guid CorrelationId { get; }
+}
+
 public interface ISpaceClock
 {
     DateTime UtcNow { get; }

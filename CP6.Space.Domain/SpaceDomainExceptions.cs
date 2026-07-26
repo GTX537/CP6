@@ -34,3 +34,29 @@ public sealed class SpaceFileReferenceException : InvalidOperationException
     {
     }
 }
+
+public sealed class SpaceJobStateException : InvalidOperationException
+{
+    public SpaceJobStateException(string message) : base(message)
+    {
+    }
+}
+
+public sealed class SpaceJobLeaseLostException : InvalidOperationException
+{
+    public SpaceJobLeaseLostException(string message) : base(message)
+    {
+    }
+
+    public SpaceJobLeaseLostException(string message, Exception innerException)
+        : base(message, innerException)
+    {
+    }
+}
+
+public sealed class SpaceJobNotRetryableException : InvalidOperationException
+{
+    public SpaceJobNotRetryableException(string message) : base(message)
+    {
+    }
+}
