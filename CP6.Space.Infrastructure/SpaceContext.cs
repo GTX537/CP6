@@ -1,0 +1,243 @@
+using CP6.Space.Application;
+using CP6.Space.Domain;
+using Microsoft.EntityFrameworkCore;
+using Microsoft.EntityFrameworkCore.ChangeTracking;
+
+namespace CP6.Space.Infrastructure;
+
+public sealed class SpaceContext : DbContext
+{
+    public const string MigrationsHistoryTable = "__EFMigrationsHistory_Space";
+
+    private readonly ISpaceExecutionContext _execution;
+    private readonly ISpaceClock _clock;
+
+    public SpaceContext(
+        DbContextOptions<SpaceContext> options,
+        ISpaceExecutionContext execution,
+        ISpaceClock clock)
+        : base(options)
+    {
+        _execution = execution;
+        _clock = clock;
+    }
+
+    public Guid CurrentTenantId => _execution.TenantId;
+
+    public DbSet<SpaceModel> Models => Set<SpaceModel>();
+    public DbSet<SpaceModelVersion> Versions => Set<SpaceModelVersion>();
+
+    protected override void OnModelCreating(ModelBuilder modelBuilder)
+    {
+        ConfigureModel(modelBuilder);
+        ConfigureVersion(modelBuilder);
+    }
+
+    public override int SaveChanges(bool acceptAllChangesOnSuccess)
+    {
+        ProtectPublishedHistory();
+        StampAndValidateTenant();
+        return base.SaveChanges(acceptAllChangesOnSuccess);
+    }
+
+    public override Task<int> SaveChangesAsync(
+        bool acceptAllChangesOnSuccess,
+        CancellationToken cancellationToken = default)
+    {
+        ProtectPublishedHistory();
+        StampAndValidateTenant();
+        return base.SaveChangesAsync(acceptAllChangesOnSuccess, cancellationToken);
+    }
+
+    private void ConfigureModel(ModelBuilder modelBuilder)
+    {
+        var entity = modelBuilder.Entity<SpaceModel>();
+        entity.ToTable("Space_Model");
+        entity.HasKey(x => x.Id);
+        entity.Property(x => x.Id).ValueGeneratedNever();
+        entity.HasAlternateKey(x => new { x.TenantId, x.Id })
+            .HasName("AK_Space_Model_TenantId_Id");
+        ConfigureTenantEntity(entity);
+
+        entity.Property(x => x.Mode)
+            .HasConversion<short>()
+            .HasColumnType("smallint");
+        entity.Property(x => x.CutoverState)
+            .HasConversion<short>()
+            .HasColumnType("smallint");
+        entity.Property(x => x.LastMaterializedHash)
+            .HasColumnType("char(64)")
+            .IsUnicode(false)
+            .IsFixedLength()
+            .HasMaxLength(64);
+        entity.Property(x => x.RowVersion).IsRowVersion();
+
+        entity.HasIndex(x => new { x.TenantId, x.SiteId })
+            .IsUnique()
+            .HasFilter("[IsDeleted] = 0")
+            .HasDatabaseName("UX_Space_Model_Tenant_Site_Active");
+        entity.HasIndex(x => new { x.TenantId, x.ActiveDraftVersionId })
+            .IsUnique()
+            .HasFilter("[ActiveDraftVersionId] IS NOT NULL AND [IsDeleted] = 0")
+            .HasDatabaseName("UX_Space_Model_Tenant_ActiveDraft");
+        entity.HasIndex(x => new { x.TenantId, x.CurrentPublishedVersionId })
+            .IsUnique()
+            .HasFilter("[CurrentPublishedVersionId] IS NOT NULL AND [IsDeleted] = 0")
+            .HasDatabaseName("UX_Space_Model_Tenant_CurrentPublished");
+
+        entity.HasOne<SpaceModelVersion>()
+            .WithMany()
+            .HasForeignKey(x => new { x.TenantId, x.Id, x.ActiveDraftVersionId })
+            .HasPrincipalKey(x => new { x.TenantId, x.ModelId, x.Id })
+            .OnDelete(DeleteBehavior.Restrict)
+            .HasConstraintName("FK_Space_Model_ActiveDraft_Tenant_Model_Version");
+        entity.HasOne<SpaceModelVersion>()
+            .WithMany()
+            .HasForeignKey(x => new { x.TenantId, x.Id, x.CurrentPublishedVersionId })
+            .HasPrincipalKey(x => new { x.TenantId, x.ModelId, x.Id })
+            .OnDelete(DeleteBehavior.Restrict)
+            .HasConstraintName("FK_Space_Model_CurrentPublished_Tenant_Model_Version");
+
+        entity.HasQueryFilter(x => x.TenantId == CurrentTenantId && !x.IsDeleted);
+    }
+
+    private void ConfigureVersion(ModelBuilder modelBuilder)
+    {
+        var entity = modelBuilder.Entity<SpaceModelVersion>();
+        entity.ToTable("Space_ModelVersion");
+        entity.HasKey(x => x.Id);
+        entity.Property(x => x.Id).ValueGeneratedNever();
+        entity.HasAlternateKey(x => new { x.TenantId, x.ModelId, x.Id })
+            .HasName("AK_Space_ModelVersion_TenantId_ModelId_Id");
+        ConfigureTenantEntity(entity);
+
+        entity.Property(x => x.Name).HasMaxLength(200).IsRequired();
+        entity.Property(x => x.Status)
+            .HasConversion<short>()
+            .HasColumnType("smallint");
+        entity.Property(x => x.ContentHash)
+            .HasColumnType("char(64)")
+            .IsUnicode(false)
+            .IsFixedLength()
+            .HasMaxLength(64);
+        entity.Property(x => x.ValidatedHash)
+            .HasColumnType("char(64)")
+            .IsUnicode(false)
+            .IsFixedLength()
+            .HasMaxLength(64);
+        entity.Property(x => x.WmsCapabilityHash)
+            .HasColumnType("char(64)")
+            .IsUnicode(false)
+            .IsFixedLength()
+            .HasMaxLength(64);
+        entity.Property(x => x.RuleSetVersion).HasMaxLength(50);
+        entity.Property(x => x.RowVersion).IsRowVersion();
+
+        entity.HasIndex(x => new { x.TenantId, x.ModelId, x.VersionNo })
+            .IsUnique()
+            .HasDatabaseName("UX_Space_ModelVersion_Tenant_Model_VersionNo");
+        entity.HasIndex(x => new { x.TenantId, x.ModelId, x.Status })
+            .HasDatabaseName("IX_Space_ModelVersion_Tenant_Model_Status");
+        entity.HasIndex(x => new { x.TenantId, x.BasedOnVersionId })
+            .HasFilter("[BasedOnVersionId] IS NOT NULL")
+            .HasDatabaseName("IX_Space_ModelVersion_Tenant_BasedOn");
+
+        entity.HasOne<SpaceModel>()
+            .WithMany()
+            .HasForeignKey(x => new { x.TenantId, x.ModelId })
+            .HasPrincipalKey(x => new { x.TenantId, x.Id })
+            .OnDelete(DeleteBehavior.Restrict)
+            .HasConstraintName("FK_Space_ModelVersion_Space_Model_Tenant_Model");
+        entity.HasOne<SpaceModelVersion>()
+            .WithMany()
+            .HasForeignKey(x => new { x.TenantId, x.ModelId, x.BasedOnVersionId })
+            .HasPrincipalKey(x => new { x.TenantId, x.ModelId, x.Id })
+            .OnDelete(DeleteBehavior.Restrict)
+            .HasConstraintName("FK_Space_ModelVersion_BasedOn_Tenant_Model_Version");
+
+        entity.HasQueryFilter(x => x.TenantId == CurrentTenantId && !x.IsDeleted);
+    }
+
+    private static void ConfigureTenantEntity<TEntity>(
+        Microsoft.EntityFrameworkCore.Metadata.Builders.EntityTypeBuilder<TEntity> entity)
+        where TEntity : SpaceTenantEntity
+    {
+        entity.Property(x => x.TenantId).IsRequired();
+        entity.Property(x => x.CreatedAtUtc).HasColumnType("datetime2");
+        entity.Property(x => x.ModifiedAtUtc).HasColumnType("datetime2");
+        entity.Property(x => x.IsDeleted).HasDefaultValue(false);
+    }
+
+    private void ProtectPublishedHistory()
+    {
+        foreach (var entry in ChangeTracker.Entries<SpaceModelVersion>())
+        {
+            if (entry.State == EntityState.Deleted)
+                throw new SpaceVersionStateException("Version history cannot be physically deleted.");
+
+            if (entry.State != EntityState.Modified)
+                continue;
+
+            var original = entry.Property(x => x.Status).OriginalValue;
+            var current = entry.Property(x => x.Status).CurrentValue;
+
+            var allowedTerminalTransition =
+                original == SpaceVersionStatus.Published &&
+                current == SpaceVersionStatus.Superseded;
+
+            if (original is SpaceVersionStatus.Published or SpaceVersionStatus.Superseded &&
+                !allowedTerminalTransition)
+            {
+                throw new SpaceVersionStateException("Published and Superseded versions are immutable.");
+            }
+        }
+    }
+
+    private void StampAndValidateTenant()
+    {
+        if (CurrentTenantId == Guid.Empty)
+            throw new SpaceTenantScopeException("A verified Space tenant context is required.");
+
+        var now = _clock.UtcNow;
+        if (now.Kind != DateTimeKind.Utc)
+            throw new InvalidOperationException("The Space clock must return UTC.");
+
+        foreach (var entry in ChangeTracker.Entries<SpaceTenantEntity>())
+        {
+            if (entry.State == EntityState.Deleted)
+                throw new InvalidOperationException("Space entities use explicit soft deletion.");
+
+            if (entry.State == EntityState.Added)
+            {
+                EnsureCurrentTenant(entry, includeOriginal: false);
+                entry.Property(nameof(SpaceTenantEntity.CreatedAtUtc)).CurrentValue = now;
+                entry.Property(nameof(SpaceTenantEntity.CreatedBy)).CurrentValue =
+                    _execution.ActorId == Guid.Empty ? null : _execution.ActorId;
+                continue;
+            }
+
+            if (entry.State == EntityState.Modified)
+            {
+                EnsureCurrentTenant(entry, includeOriginal: true);
+                entry.Property(nameof(SpaceTenantEntity.ModifiedAtUtc)).CurrentValue = now;
+                entry.Property(nameof(SpaceTenantEntity.ModifiedBy)).CurrentValue =
+                    _execution.ActorId == Guid.Empty ? null : _execution.ActorId;
+            }
+        }
+    }
+
+    private void EnsureCurrentTenant(
+        EntityEntry<SpaceTenantEntity> entry,
+        bool includeOriginal)
+    {
+        var tenant = entry.Property(nameof(SpaceTenantEntity.TenantId));
+        if (tenant.CurrentValue is not Guid current || current != CurrentTenantId)
+            throw new SpaceTenantScopeException("A cross-tenant Space write was rejected.");
+
+        if (includeOriginal &&
+            (tenant.OriginalValue is not Guid original || original != CurrentTenantId))
+        {
+            throw new SpaceTenantScopeException("Space TenantId cannot be reassigned.");
+        }
+    }
+}
