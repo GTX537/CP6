@@ -13,6 +13,20 @@ namespace CP6.Entity.DomainModels.Wf;
 [Table("Wf_Notification")]
 public class Wf_Notification : BaseTenantEntity
 {
+    /// <summary>Stable outbox idempotency key. Null only for legacy notification rows.</summary>
+    [MaxLength(300)]
+    public string? EventKey { get; set; }
+
+    public bool InAppRequested { get; set; } = true;
+    public bool EmailRequested { get; set; }
+    public int DispatchStatus { get; set; }
+    public int DispatchAttempts { get; set; }
+    public DateTime? NextAttemptAtUtc { get; set; }
+    public DateTime? DispatchedAtUtc { get; set; }
+
+    [MaxLength(2000)]
+    public string? LastDispatchError { get; set; }
+
     /// <summary>收件人 → Sys_User.Id</summary>
     public Guid UserId { get; set; }
 

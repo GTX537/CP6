@@ -61,7 +61,8 @@
 <script lang="ts">
 import type { Tone } from '@/components/base/CpTag.vue'
 
-export interface ListColumn {
+export type ListRow = Record<PropertyKey, any>
+export interface ListColumn<Row = unknown> {
   prop: string
   label: string
   width?: number
@@ -70,32 +71,40 @@ export interface ListColumn {
   kind?: 'text' | 'num' | 'mono' | 'tag' | 'date'
   overflowTooltip?: boolean
   fixed?: 'left' | 'right'
-  map?: (val: unknown, row: unknown) => { label: string; tone?: Tone }
+  map?: (val: unknown, row: Row) => { label: string; tone?: Tone }
   sortable?: 'custom' // 仅服务端排序；不接受 true（避免混入 el-table 客户端排序语义）
 }
 export type SortOrder = 'asc' | 'desc'
-export type ListFetch = (q: {
+export type ListFetch<Row = unknown> = (q: {
   page: number
   size: number
   filters: Record<string, unknown>
   statusKey?: string
   sortField?: string // 仅在存在有效排序时出现（见 sortable:'custom'）
   sortOrder?: SortOrder
-}) => Promise<{ rows: unknown[]; total: number }>
+}) => Promise<{ rows: Row[]; total: number }>
 export interface StatusTab { key: string; label: string; count: number; tone?: Tone }
+export interface ListPageExpose { reload: () => Promise<void> }
 </script>
 
-<script setup lang="ts">
-import { onMounted, ref } from 'vue'
-import { ElMessage, ElPagination, ElTable, ElTableColumn, vLoading } from 'element-plus'
+<script setup lang="ts" generic="Row = unknown">
+import { computed, onMounted, ref, shallowRef } from 'vue'
+import {
+  ElMessage,
+  ElPagination,
+  ElTable,
+  ElTableColumn,
+  vLoading,
+  type TableColumnCtx,
+} from 'element-plus'
 import CpStatusStrip from './CpStatusStrip.vue'
 import CpFilterBar, { type FilterField, type FilterBarLabels } from './CpFilterBar.vue'
 import CpTag from '@/components/base/CpTag.vue'
 import CpEmpty from '@/components/base/CpEmpty.vue'
 
 const props = withDefaults(defineProps<{
-  columns: ListColumn[]
-  fetch: ListFetch
+  columns: ListColumn<Row>[]
+  fetch: ListFetch<Row>
   searchFields?: FilterField[]
   statusTabs?: StatusTab[]
   selectable?: boolean
@@ -108,10 +117,15 @@ const props = withDefaults(defineProps<{
 }>(), { highlightCurrentRow: true, paginated: true, lazy: false })
 
 const emit = defineEmits<{
-  (e: 'selection-change', rows: unknown[]): void
+  (e: 'selection-change', rows: Row[]): void
   (e: 'total-change', total: number): void
   (e: 'sort-change', payload: { field?: string; order?: SortOrder }): void
   (e: 'reset'): void
+}>()
+defineSlots<{
+  toolbar?: () => any
+  expand?: (props: { row: Row }) => any
+  [name: `col-${string}`]: ((props: { row: Row }) => any) | undefined
 }>()
 
 // —— 内部状态 ——
@@ -119,7 +133,8 @@ const page = ref(1)
 const size = ref(20)
 const filters = ref<Record<string, unknown>>({})
 const statusKey = ref<string | undefined>(props.statusTabs?.[0]?.key)
-const rows = ref<unknown[]>([])
+const rows = shallowRef<Row[]>([])
+const tableRows = computed(() => rows.value as ListRow[])
 const total = ref(0)
 const loading = ref(false)
 const sortField = ref<string | undefined>(undefined)
@@ -172,8 +187,15 @@ function onSizeChange() { page.value = 1; load() }
 
 // —— 服务端排序（#19）：el-table @sort-change → 规范化 → page=1 重新 fetch + emit ——
 // lazy 列表从未加载过时排序同样触发首查（用户手势=显式意图）。
-function onSortChange({ prop, order }: { prop: string; order: 'ascending' | 'descending' | null }) {
-  sortField.value = order == null ? undefined : prop
+function onSortChange({
+  prop,
+  order,
+}: {
+  column: TableColumnCtx<ListRow>
+  prop: string | null
+  order: 'ascending' | 'descending' | null
+}) {
+  sortField.value = order == null || prop == null ? undefined : prop
   sortOrder.value = order === 'ascending' ? 'asc' : order === 'descending' ? 'desc' : undefined
   page.value = 1
   emit('sort-change', { field: sortField.value, order: sortOrder.value })
@@ -181,20 +203,23 @@ function onSortChange({ prop, order }: { prop: string; order: 'ascending' | 'des
 }
 
 // —— 列渲染 ——
-function cell(row: unknown, prop: string): unknown {
+function cell(row: Row, prop: string): unknown {
   return (row as Record<string, unknown>)?.[prop]
 }
-function colAlign(c: ListColumn): 'left' | 'right' | 'center' {
+function asRow(row: ListRow): Row {
+  return row as Row
+}
+function colAlign(c: ListColumn<Row>): 'left' | 'right' | 'center' {
   return c.align ?? (c.kind === 'num' ? 'right' : 'left')
 }
 // 单元格文案：map.label > date 截断(yyyy-MM-dd) > 原值
-function display(c: ListColumn, row: unknown): unknown {
+function display(c: ListColumn<Row>, row: Row): unknown {
   const v = cell(row, c.prop)
   if (c.map) return c.map(v, row).label
   if (c.kind === 'date') return v == null ? '' : String(v).slice(0, 10)
   return v
 }
-function mapTone(c: ListColumn, row: unknown): Tone | undefined {
+function mapTone(c: ListColumn<Row>, row: Row): Tone | undefined {
   return c.map?.(cell(row, c.prop), row).tone
 }
 </script>
@@ -222,14 +247,14 @@ function mapTone(c: ListColumn, row: unknown): Tone | undefined {
 
       <el-table
         v-loading="loading"
-        :data="rows"
+        :data="tableRows"
         :row-key="rowKey"
         :highlight-current-row="highlightCurrentRow"
         @selection-change="emit('selection-change', $event)"
         @sort-change="onSortChange"
       >
         <el-table-column v-if="$slots.expand" type="expand">
-          <template #default="{ row }"><slot name="expand" :row="row" /></template>
+          <template #default="{ row }"><slot name="expand" :row="asRow(row)" /></template>
         </el-table-column>
 
         <el-table-column v-if="selectable" type="selection" width="44" />
@@ -247,12 +272,12 @@ function mapTone(c: ListColumn, row: unknown): Tone | undefined {
           :align="colAlign(c)"
         >
           <template #default="{ row }">
-            <slot :name="`col-${c.prop}`" :row="row">
-              <CpTag v-if="c.kind === 'tag' && c.map" :tone="mapTone(c, row)">{{ display(c, row) }}</CpTag>
-              <CpTag v-else-if="c.kind === 'tag'" :status="String(cell(row, c.prop) ?? '')" />
-              <span v-else-if="c.kind === 'mono'" class="cp-mono">{{ display(c, row) }}</span>
-              <span v-else-if="c.kind === 'num'" class="num">{{ display(c, row) }}</span>
-              <template v-else>{{ display(c, row) }}</template>
+            <slot :name="`col-${c.prop}`" :row="asRow(row)">
+              <CpTag v-if="c.kind === 'tag' && c.map" :tone="mapTone(c, asRow(row))">{{ display(c, asRow(row)) }}</CpTag>
+              <CpTag v-else-if="c.kind === 'tag'" :status="String(cell(asRow(row), c.prop) ?? '')" />
+              <span v-else-if="c.kind === 'mono'" class="cp-mono">{{ display(c, asRow(row)) }}</span>
+              <span v-else-if="c.kind === 'num'" class="num">{{ display(c, asRow(row)) }}</span>
+              <template v-else>{{ display(c, asRow(row)) }}</template>
             </slot>
           </template>
         </el-table-column>

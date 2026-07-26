@@ -12,12 +12,25 @@ namespace CP6.Entity.DomainModels.Wf;
 [Table("Wf_FormData")]
 public class Wf_FormData : BaseTenantEntity
 {
+    /// <summary>Pinned immutable form definition. Null only for unrecoverable legacy rows.</summary>
+    public Guid? FormDefVersionId { get; set; }
+
     /// <summary>对应表单定义 FormKey</summary>
     [Required, MaxLength(100)]
     public string FormKey { get; set; } = string.Empty;
 
     /// <summary>提交时的表单定义版本（留痕：改版不动旧数据）</summary>
     public int FormVersion { get; set; }
+
+    /// <summary>Client idempotency token. Null is retained for legacy rows.</summary>
+    [MaxLength(100)]
+    public string? SubmissionKey { get; set; }
+
+    [MaxLength(64)]
+    public string? RequestHash { get; set; }
+
+    public Guid? SubmittedBy { get; set; }
+    public DateTime? SubmittedAtUtc { get; set; }
 
     /// <summary>业务关联键（流程实例 Id / 业务单号；阶段1 可空）</summary>
     [MaxLength(100)]
@@ -26,4 +39,7 @@ public class Wf_FormData : BaseTenantEntity
     /// <summary>字段值快照 JSON</summary>
     [Column(TypeName = "nvarchar(max)")]
     public string DataJson { get; set; } = "{}";
+
+    [Timestamp]
+    public byte[]? RowVersion { get; set; }
 }

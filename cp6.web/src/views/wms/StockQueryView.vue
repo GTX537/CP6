@@ -115,7 +115,7 @@ import { ref, computed } from 'vue'
 import { useI18n } from 'vue-i18n'
 import { ElMessage } from 'element-plus'
 import CpPageShell from '@/components/templates/CpPageShell.vue'
-import CpListPage, { type ListColumn, type ListFetch } from '@/components/templates/CpListPage.vue'
+import CpListPage, { type ListColumn, type ListFetch, type ListPageExpose } from '@/components/templates/CpListPage.vue'
 import { type FilterField } from '@/components/templates/CpFilterBar.vue'
 import { stockApi } from '@/api/wms/stock'
 import type { Stock, StockTransaction } from '@/types/wms/wms'
@@ -124,7 +124,7 @@ import { formatQty as fmtQty } from '@/utils/format'
 const { t } = useI18n()
 
 const total = ref<number>()
-const listRef = ref<InstanceType<typeof CpListPage> | null>(null)
+const listRef = ref<ListPageExpose | null>(null)
 function reloadList() { listRef.value?.reload() }
 
 // hasStockOnly：CpFilterBar 无 boolean 字段类型（缺口 #15）→ toolbar slot 复选，fetch 闭包读取
@@ -148,7 +148,7 @@ function qcTagOf(s?: string): 'success' | 'danger' | 'warning' | 'info' {
   }
 }
 
-const columns = computed<ListColumn[]>(() => [
+const columns = computed<ListColumn<Stock>[]>(() => [
   { prop: 'warehouseCd', label: t('wms.common.warehouse'), width: 80 },
   { prop: 'locationCd', label: t('wms.common.location'), width: 140 },
   { prop: 'productCd', label: t('wms.common.product'), width: 120 },
@@ -185,7 +185,7 @@ const searchFields = computed<FilterField[]>(() => [
   },
 ])
 
-const fetchList: ListFetch = async ({ page, size, filters }) => {
+const fetchList: ListFetch<Stock> = async ({ page, size, filters }) => {
   const f = filters as Record<string, unknown>
   const q: Record<string, unknown> = { page, pageSize: size, hasStockOnly: hasStockOnly.value }
   if (f.warehouseCd) q.warehouseCd = String(f.warehouseCd)

@@ -1,125 +1,158 @@
+using System.Text.Json;
 using CP6.Core.EFDbContext;
 using CP6.Core.Services.Oa;
 using CP6.Core.Services.Wf;
 using CP6.Entity.DomainModels.Wf;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Diagnostics;
-using System.Text.Json;
 
-namespace CP6.Tests;
+namespace CP6.Tests.Oa;
 
-public class DraftServiceTests
+public sealed class DraftServiceTests
 {
+    private const string V1 =
+        """{"fields":[{"name":"name","type":"input","required":true},{"name":"legacy","type":"input"}]}""";
+    private const string V2 =
+        """{"fields":[{"name":"name","type":"input","required":true},{"name":"count","type":"number","default":1}]}""";
+    private const string TableSchema =
+        """
+        {"fields":[{"name":"items","label":"采购明细","type":"table","required":true,"minRows":1,"maxRows":2,
+        "columns":[{"name":"material","label":"物料","type":"input","required":true},
+        {"name":"qty","label":"数量","type":"number","required":true}]}]}
+        """;
+
     private static CP6Context NewDb() => new(new DbContextOptionsBuilder<CP6Context>()
         .UseInMemoryDatabase(Guid.NewGuid().ToString())
-        .ConfigureWarnings(w => w.Ignore(InMemoryEventId.TransactionIgnoredWarning)).Options);
-    private static FlowEngine Engine(CP6Context db) => new(db, new ApproverResolver(db));
+        .ConfigureWarnings(x => x.Ignore(InMemoryEventId.TransactionIgnoredWarning)).Options);
 
-    private static async Task SeedFlowAsync(CP6Context db, Guid approver, string key = "leave")
+    private static DraftService Service(CP6Context db)
     {
-        db.Wf_FlowDefs.Add(new Wf_FlowDef
-        {
-            Id = Guid.NewGuid(), FlowKey = key, FlowName = key, FormKey = key,
-            SchemaJson = JsonSerializer.Serialize(new FlowSchema
-            {
-                Nodes =
-                {
-                    new FlowNode { Id = "n1", Type = "approval", ApproverStrategy = "Specified", ApproverUserId = approver },
-                    new FlowNode { Id = "end", Type = "end" },
-                },
-                Edges = { new FlowEdge { From = "n1", To = "end" } },
-            }),
-            Version = 1, Enable = true,
-        });
-        await db.SaveChangesAsync();
+        var forms = new FormService(db);
+        var submissions = new FormSubmissionService(
+            db, new DefinitionVersionResolver(db), forms,
+            new FlowEngine(db, new ApproverResolver(db)));
+        return new(db, new DefinitionVersionResolver(db), submissions);
+    }
+
+    private static async Task PublishAsync(CP6Context db, string schema, string name = "Form")
+    {
+        var forms = new FormService(db);
+        var draft = await forms.SaveDraftAsync("form", name, schema, null);
+        await forms.PublishAsync("form", draft.RowVersion, Guid.NewGuid());
+    }
+
+    private static JsonElement Json(string value)
+    {
+        using var doc = JsonDocument.Parse(value);
+        return doc.RootElement.Clone();
     }
 
     [Fact]
-    public async Task StartDraftAsync_DraftInstance_EntersFlow()
+    public async Task Create_only_creates_pinned_form_draft_and_list_detail_are_explicit()
     {
-        using var db = NewDb();
-        var approver = Guid.NewGuid(); var starter = Guid.NewGuid();
-        await SeedFlowAsync(db, approver);
+        await using var db = NewDb();
+        await PublishAsync(db, V1);
+        var owner = Guid.NewGuid();
 
-        var inst = new Wf_FlowInstance { Id = Guid.NewGuid(), FlowKey = "leave", StarterId = starter,
-            Status = FlowInstanceStatus.Draft, CurrentNode = "", VarsJson = """{"days":2}""", Creator = starter.ToString() };
-        db.Wf_FlowInstances.Add(inst);
-        await db.SaveChangesAsync();
-        Assert.Equal(0, await db.Wf_FlowTokens.CountAsync());
+        var created = await Service(db).CreateAsync(owner, "form", Json("""{"name":"A"}"""), "July");
+        var page = await Service(db).ListAsync(owner, 1, 20);
+        var detail = await Service(db).GetAsync(owner, created.Id);
 
-        await Engine(db).StartDraftAsync(inst.Id, starter);
-
-        var got = await db.Wf_FlowInstances.SingleAsync();
-        Assert.Equal(FlowInstanceStatus.Running, got.Status);
-        Assert.Equal("n1", got.CurrentNode);
-        Assert.Equal(1, await db.Wf_FlowTokens.CountAsync(t => t.Status == FlowTokenStatus.Active));
-        Assert.Equal(1, await db.Wf_FlowTasks.CountAsync(t => t.AssigneeId == approver && t.Status == FlowTaskStatus.Pending));
-        Assert.Equal(1, await db.Wf_FlowFormTos.CountAsync(f => f.Status == FlowFormToStatus.Pending));
+        Assert.Single(page.Items);
+        Assert.Equal(created.FormDefVersionId, detail.FormDefVersionId);
+        Assert.Equal("""{"name":"A"}""", detail.DataJson);
+        Assert.Contains(@"""legacy""", detail.SchemaJson);
+        Assert.Empty(db.Wf_FlowInstances);
+        Assert.Empty(db.Wf_FlowTokens);
+        Assert.Empty(db.Wf_FlowTasks);
+        Assert.Empty(db.Wf_FlowHistories);
     }
 
     [Fact]
-    public async Task StartDraftAsync_NotOwner_Throws()
+    public async Task Owner_and_row_version_checks_fail_closed()
     {
-        using var db = NewDb();
-        var approver = Guid.NewGuid(); var starter = Guid.NewGuid();
-        await SeedFlowAsync(db, approver);
-        var inst = new Wf_FlowInstance { Id = Guid.NewGuid(), FlowKey = "leave", StarterId = starter,
-            Status = FlowInstanceStatus.Draft, CurrentNode = "", VarsJson = "{}", Creator = starter.ToString() };
-        db.Wf_FlowInstances.Add(inst);
-        await db.SaveChangesAsync();
+        await using var db = NewDb();
+        await PublishAsync(db, V1);
+        var owner = Guid.NewGuid();
+        var created = await Service(db).CreateAsync(owner, "form", Json("{}"), null);
+        var row = await db.Wf_FormDrafts.SingleAsync();
+        row.RowVersion = new byte[] { 1 };
 
-        var ex = await Assert.ThrowsAsync<InvalidOperationException>(
-            () => Engine(db).StartDraftAsync(inst.Id, Guid.NewGuid()));
-        Assert.Equal("E-WF-003", ex.Message);
-    }
-
-    // ── T9: DraftService 草稿 CRUD ──────────────────────────────────────────
-    private static IDraftService Draft(CP6Context db) => new DraftService(db, Engine(db));
-
-    [Fact]
-    public async Task Save_List_Update_Delete_Roundtrip()
-    {
-        using var db = NewDb();
-        var starter = Guid.NewGuid();
-        await SeedFlowAsync(db, Guid.NewGuid());
-
-        var id = await Draft(db).SaveDraftAsync(starter, "leave", """{"days":1}""");
-        var list = await Draft(db).ListDraftsAsync(starter);
-        Assert.Single(list);
-        Assert.Equal(FlowInstanceStatus.Draft, (await db.Wf_FlowInstances.SingleAsync(i => i.Id == id)).Status);
-
-        await Draft(db).UpdateDraftAsync(starter, id, """{"days":3}""");
-        Assert.Equal("""{"days":3}""", (await db.Wf_FlowInstances.SingleAsync(i => i.Id == id)).VarsJson);
-
-        await Draft(db).DeleteDraftAsync(starter, id);
-        Assert.Empty(await Draft(db).ListDraftsAsync(starter));
+        await Assert.ThrowsAsync<UnauthorizedAccessException>(
+            () => Service(db).GetAsync(Guid.NewGuid(), created.Id));
+        var conflict = await Assert.ThrowsAsync<InvalidOperationException>(
+            () => Service(db).UpdateAsync(owner, created.Id, Json("{}"), null, new byte[] { 2 }));
+        Assert.Equal("E-WF-041", conflict.Message);
     }
 
     [Fact]
-    public async Task SubmitDraft_EntersFlow()
+    public async Task Stale_draft_requires_rebase_and_removed_values_require_confirmation()
     {
-        using var db = NewDb();
-        var starter = Guid.NewGuid(); var approver = Guid.NewGuid();
-        await SeedFlowAsync(db, approver);
-        var id = await Draft(db).SaveDraftAsync(starter, "leave", "{}");
+        await using var db = NewDb();
+        await PublishAsync(db, V1, "v1");
+        var owner = Guid.NewGuid();
+        var created = await Service(db).CreateAsync(
+            owner, "form", Json("""{"name":"A","legacy":"keep"}"""), null);
+        await PublishAsync(db, V2, "v2");
 
-        await Draft(db).SubmitDraftAsync(starter, id);
+        Assert.True((await Service(db).GetAsync(owner, created.Id)).Stale);
+        var stale = await Assert.ThrowsAsync<InvalidOperationException>(
+            () => Service(db).SubmitAsync(owner, created.Id, "stale-key", null));
+        Assert.Equal("E-WF-040", stale.Message);
 
-        var inst = await db.Wf_FlowInstances.SingleAsync(i => i.Id == id);
-        Assert.Equal(FlowInstanceStatus.Running, inst.Status);
-        Assert.Equal(1, await db.Wf_FlowTasks.CountAsync(t => t.AssigneeId == approver && t.Status == FlowTaskStatus.Pending));
+        var confirm = await Assert.ThrowsAsync<DraftRebaseConfirmationException>(
+            () => Service(db).RebaseAsync(owner, created.Id, 2, false, null));
+        Assert.Equal(new[] { "legacy" }, confirm.RemovedFields);
+        var rebased = await Service(db).RebaseAsync(owner, created.Id, 2, true, null);
+        Assert.Contains(@"""name"":""A""", rebased.DataJson);
+        Assert.Contains(@"""count"":1", rebased.DataJson);
+        Assert.Equal(new[] { "legacy" }, rebased.RemovedFields);
     }
 
     [Fact]
-    public async Task Update_NotOwner_Throws()
+    public async Task Failed_submit_stays_active_success_is_idempotent_and_hides_from_list()
     {
-        using var db = NewDb();
-        var starter = Guid.NewGuid();
-        await SeedFlowAsync(db, Guid.NewGuid());
-        var id = await Draft(db).SaveDraftAsync(starter, "leave", "{}");
+        await using var db = NewDb();
+        await PublishAsync(db, V1);
+        var owner = Guid.NewGuid();
+        var invalid = await Service(db).CreateAsync(owner, "form", Json("{}"), null);
+        await Assert.ThrowsAsync<InvalidOperationException>(
+            () => Service(db).SubmitAsync(owner, invalid.Id, "invalid-key", null));
+        Assert.Equal(WfFormDraftStatus.Active,
+            (await db.Wf_FormDrafts.SingleAsync(x => x.Id == invalid.Id)).Status);
 
-        var ex = await Assert.ThrowsAsync<InvalidOperationException>(
-            () => Draft(db).UpdateDraftAsync(Guid.NewGuid(), id, "{}"));
-        Assert.Equal("E-WF-003", ex.Message);
+        var valid = await Service(db).CreateAsync(owner, "form", Json("""{"name":"A"}"""), null);
+        var first = await Service(db).SubmitAsync(owner, valid.Id, "valid-key", null);
+        var retry = await Service(db).SubmitAsync(owner, valid.Id, "valid-key", null);
+        Assert.Equal(first, retry);
+        Assert.Equal(WfFormDraftStatus.Submitted,
+            (await db.Wf_FormDrafts.SingleAsync(x => x.Id == valid.Id)).Status);
+        Assert.DoesNotContain((await Service(db).ListAsync(owner, 1, 20)).Items, x => x.Id == valid.Id);
+        Assert.Single(db.Wf_FormDatas);
+    }
+
+    [Fact]
+    public async Task TableDraft_AllowsIncompleteRowsButRejectsInvalidShape()
+    {
+        await using var db = NewDb();
+        await PublishAsync(db, TableSchema);
+        var owner = Guid.NewGuid();
+
+        var draft = await Service(db).CreateAsync(
+            owner, "form", Json("""{"items":[{"material":"A-01"}]}"""), null);
+        Assert.Contains(@"""material"":""A-01""", draft.DataJson);
+
+        var wrongType = await Assert.ThrowsAsync<InvalidOperationException>(() =>
+            Service(db).UpdateAsync(owner, draft.Id,
+                Json("""{"items":[{"material":"A-01","qty":"two"}]}"""), null, null));
+        Assert.Equal("E-WF-047", wrongType.Message);
+
+        var unknownColumn = await Assert.ThrowsAsync<InvalidOperationException>(() =>
+            Service(db).UpdateAsync(owner, draft.Id,
+                Json("""{"items":[{"material":"A-01","unexpected":1}]}"""), null, null));
+        Assert.Equal("E-WF-047", unknownColumn.Message);
+
+        var persisted = await db.Wf_FormDrafts.SingleAsync(x => x.Id == draft.Id);
+        Assert.DoesNotContain("unexpected", persisted.DataJson);
     }
 }

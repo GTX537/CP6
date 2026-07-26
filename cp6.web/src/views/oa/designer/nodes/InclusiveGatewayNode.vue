@@ -1,8 +1,8 @@
 <script setup lang="ts">
 import { computed } from 'vue'
-import { Handle, Position } from '@vue-flow/core'
 import type { NodeProps } from '@vue-flow/core'
 import { useI18n } from 'vue-i18n'
+import FourWayHandles from './FourWayHandles.vue'
 
 const props = defineProps<NodeProps>()
 const { t } = useI18n()
@@ -14,12 +14,11 @@ const isJoin = computed(() => (props.data as NodeData)?.type === 'inclusiveJoin'
 <template>
   <!-- Inclusive gateway: 菱形 + 内嵌空心圆（BPMN inclusive 记号），区别 GatewayNode 的实心菱形 -->
   <div :class="['vf-node-inclusive-wrap', { 'vf-node--selected': props.selected }]">
-    <Handle type="target" :position="Position.Top" />
+    <FourWayHandles />
     <div class="vf-node-inclusive">
       <span class="inc-circle" />
       <span class="inc-label">{{ isJoin ? t('oa.designer.gw.inclusiveJoin') : t('oa.designer.gw.inclusiveSplit') }}</span>
     </div>
-    <Handle type="source" :position="Position.Bottom" />
   </div>
 </template>
 

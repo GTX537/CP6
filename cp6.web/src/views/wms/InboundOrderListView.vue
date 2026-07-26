@@ -64,7 +64,7 @@ function codeLabel(m: Record<number, string>, v: unknown): string {
   return m[v as number] || (v == null ? '' : String(v))
 }
 
-const columns = computed<ListColumn[]>(() => [
+const columns = computed<ListColumn<InboundOrder>[]>(() => [
   { prop: 'inboundNo', label: t('wms.inbound.fld.no'), kind: 'mono', width: 180 },
   { prop: 'status', label: t('wms.common.status'), width: 120, kind: 'tag',
     map: (v) => ({ label: codeLabel(statusMap.value, v), tone: statusTone(v as number) }) },
@@ -97,7 +97,7 @@ const searchFields = computed<FilterField[]>(() => [
 ])
 
 const PAGE_CAP = 500
-const fetchList: ListFetch = async ({ page, size, filters }) => {
+const fetchList: ListFetch<InboundOrder> = async ({ page, size, filters }) => {
   const f = filters as Record<string, unknown>
   const q: InboundOrderSearchQuery = { pageSize: PAGE_CAP }
   if (f.inboundNo) q.inboundNo = String(f.inboundNo)

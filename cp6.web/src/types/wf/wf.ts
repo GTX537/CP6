@@ -4,7 +4,7 @@
 export interface FormFieldDef {
   name: string
   label?: string
-  /** input/textarea/number/select/radio/checkbox/date/datetime/user/dept/upload */
+  /** input/textarea/number/select/radio/checkbox/date/datetime/user/dept/upload/table */
   type: string
   required?: boolean
   maxLength?: number
@@ -14,6 +14,24 @@ export interface FormFieldDef {
   options?: { label: string; value: string | number }[]
   /** user 字段：是否多选（存逗号分隔 GUID 或数组） */
   multiple?: boolean
+  /** table 字段：行对象的列定义 */
+  columns?: FormTableColumnDef[]
+  /** table 字段：最少/最多行数（默认 0/100，服务端硬上限 200） */
+  minRows?: number
+  maxRows?: number
+}
+
+/** 子表列。P1 不允许附件、人员、部门或嵌套子表，保证行数据保持扁平。 */
+export interface FormTableColumnDef {
+  name: string
+  label?: string
+  /** input/textarea/number/select/date/datetime */
+  type: string
+  required?: boolean
+  maxLength?: number
+  pattern?: string
+  placeholder?: string
+  options?: { label: string; value: string | number }[]
 }
 
 /** 规则动作类型（章06 §4）：显隐/必填/禁用(前端)/联动选项(前端)/计算回写 */

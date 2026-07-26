@@ -8,7 +8,8 @@
         <el-button size="small" @click="load">{{ t('加载') }}</el-button>
         <el-button size="small" :disabled="!canUndo" @click="undo">{{ t('撤销') }}</el-button>
         <el-button size="small" :disabled="!canRedo" @click="redo">{{ t('重做') }}</el-button>
-        <el-button v-permission="'oa-designer:form-save'" type="primary" size="small" @click="save">{{ t('保存') }}</el-button>
+        <el-button v-permission="'oa-designer:form-save'" size="small" @click="save">{{ t('保存草稿') }}</el-button>
+        <el-button v-permission="'oa-designer:form-publish'" type="primary" size="small" @click="publish">{{ t('发布') }}</el-button>
       </el-space>
     </el-card>
 
@@ -60,22 +61,24 @@
             <el-input v-model="selected.label" />
           </el-form-item>
           <el-form-item :label="t('类型')">
-            <el-select v-model="selected.type" style="width: 100%">
+            <el-select v-model="selected.type" style="width: 100%" @change="onFieldTypeChange">
               <el-option v-for="c in CONTROL_LIBRARY" :key="c.type" :label="t(c.label)" :value="c.type" />
             </el-select>
           </el-form-item>
           <el-form-item :label="t('必填')">
             <el-switch v-model="selected.required" />
           </el-form-item>
-          <el-form-item :label="t('最大长度')">
-            <el-input-number v-model="selected.maxLength" :min="0" :controls="false" style="width: 100%" />
-          </el-form-item>
-          <el-form-item :label="t('占位提示')">
-            <el-input v-model="selected.placeholder" />
-          </el-form-item>
-          <el-form-item :label="t('校验正则')">
-            <el-input v-model="selected.pattern" />
-          </el-form-item>
+          <template v-if="selected.type !== 'table'">
+            <el-form-item :label="t('最大长度')">
+              <el-input-number v-model="selected.maxLength" :min="1" :max="10000" :controls="false" style="width: 100%" />
+            </el-form-item>
+            <el-form-item :label="t('占位提示')">
+              <el-input v-model="selected.placeholder" />
+            </el-form-item>
+            <el-form-item :label="t('校验正则')">
+              <el-input v-model="selected.pattern" />
+            </el-form-item>
+          </template>
           <template v-if="isOptionType(selected.type)">
             <el-divider>{{ t('选项') }}</el-divider>
             <div v-for="(o, oi) in selected.options || []" :key="oi" class="opt-row">
@@ -84,6 +87,70 @@
               <el-button link type="danger" size="small" @click="removeOption(oi)">{{ t('删除') }}</el-button>
             </div>
             <el-button link size="small" @click="addOption">{{ t('添加选项') }}</el-button>
+          </template>
+          <template v-if="selected.type === 'table'">
+            <el-form-item :label="t('最少行数')">
+              <el-input-number v-model="selected.minRows" :min="0" :max="200" :controls="false" style="width: 100%" />
+            </el-form-item>
+            <el-form-item :label="t('最多行数')">
+              <el-input-number v-model="selected.maxRows" :min="1" :max="200" :controls="false" style="width: 100%" />
+            </el-form-item>
+            <el-divider>{{ t('子表列') }}</el-divider>
+            <div
+              v-for="(column, ci) in selected.columns || []"
+              :key="ci"
+              class="column-card"
+              :data-test="`table-column-${ci}`"
+            >
+              <div class="column-card__header">
+                <span>{{ t('列') }} {{ ci + 1 }}</span>
+                <el-button link type="danger" size="small" @click="removeTableColumn(ci)">{{ t('删除') }}</el-button>
+              </div>
+              <el-input v-model="column.name" :placeholder="t('列标识')" size="small" />
+              <el-input v-model="column.label" :placeholder="t('列标题')" size="small" />
+              <el-select
+                v-model="column.type"
+                :placeholder="t('列类型')"
+                size="small"
+                style="width: 100%"
+                @change="onColumnTypeChange(column)"
+              >
+                <el-option
+                  v-for="type in TABLE_COLUMN_TYPES"
+                  :key="type.type"
+                  :label="t(type.label)"
+                  :value="type.type"
+                />
+              </el-select>
+              <div class="column-required">
+                <span>{{ t('必填') }}</span>
+                <el-switch v-model="column.required" />
+              </div>
+              <template v-if="column.type === 'input' || column.type === 'textarea'">
+                <el-input-number
+                  v-model="column.maxLength"
+                  :min="1"
+                  :max="10000"
+                  :controls="false"
+                  :placeholder="t('最大长度')"
+                  style="width: 100%"
+                />
+                <el-input v-model="column.pattern" :placeholder="t('校验正则')" size="small" />
+              </template>
+              <template v-if="column.type === 'select'">
+                <div v-for="(option, oi) in column.options || []" :key="oi" class="opt-row">
+                  <el-input v-model="option.label" :placeholder="t('标签')" size="small" />
+                  <el-input v-model="option.value" :placeholder="t('值')" size="small" />
+                  <el-button link type="danger" size="small" @click="removeColumnOption(column, oi)">
+                    {{ t('删除') }}
+                  </el-button>
+                </div>
+                <el-button link size="small" @click="addColumnOption(column)">{{ t('添加选项') }}</el-button>
+              </template>
+            </div>
+            <el-button link size="small" data-test="add-table-column" @click="addTableColumn">
+              {{ t('添加列') }}
+            </el-button>
           </template>
         </el-form>
       </el-card>
@@ -96,11 +163,16 @@ import { computed, reactive, ref, watch } from 'vue'
 import { useI18n } from 'vue-i18n'
 import { ElMessage } from 'element-plus'
 import DynamicForm from '../DynamicForm.vue'
-import { CONTROL_LIBRARY, defaultFieldOf, isOptionType } from './controlLibrary'
+import {
+  CONTROL_LIBRARY,
+  TABLE_COLUMN_TYPES,
+  defaultFieldOf,
+  isOptionType,
+} from './controlLibrary'
 import { SchemaHistory } from './schemaHistory'
 import { validateFormSchema } from './designValidate'
 import { formApi } from '@/api/wf/form'
-import type { FormSchema, FormFieldDef } from '@/types/wf/wf'
+import type { FormSchema, FormFieldDef, FormTableColumnDef } from '@/types/wf/wf'
 
 const { t } = useI18n()
 
@@ -184,19 +256,67 @@ function addOption() {
 function removeOption(oi: number) {
   selected.value?.options?.splice(oi, 1)
 }
+function onFieldTypeChange(type: string) {
+  if (!selected.value) return
+  if (type === 'table') {
+    selected.value.minRows ??= 0
+    selected.value.maxRows ??= 20
+    selected.value.columns ??= [
+      { name: 'column1', label: '列1', type: 'input', required: false },
+    ]
+  } else if (isOptionType(type) && !selected.value.options?.length) {
+    selected.value.options = [
+      { label: '选项1', value: '1' },
+      { label: '选项2', value: '2' },
+    ]
+  }
+}
+function addTableColumn() {
+  if (!selected.value) return
+  selected.value.columns = selected.value.columns || []
+  const used = new Set(selected.value.columns.map((column) => column.name))
+  let index = 1
+  while (used.has(`column${index}`)) index++
+  selected.value.columns.push({
+    name: `column${index}`,
+    label: `列${index}`,
+    type: 'input',
+    required: false,
+  })
+}
+function removeTableColumn(index: number) {
+  selected.value?.columns?.splice(index, 1)
+}
+function onColumnTypeChange(column: FormTableColumnDef) {
+  if (column.type === 'select' && !column.options?.length) {
+    column.options = [
+      { label: '选项1', value: '1' },
+      { label: '选项2', value: '2' },
+    ]
+  }
+}
+function addColumnOption(column: FormTableColumnDef) {
+  column.options = column.options || []
+  column.options.push({ label: '', value: '' })
+}
+function removeColumnOption(column: FormTableColumnDef, index: number) {
+  column.options?.splice(index, 1)
+}
 
 // ── 加载 / 保存（接运行时 FormDef，章09 §5）──
+const draftRowVersion = ref<string>()
 async function load() {
   if (!formKey.value.trim()) {
     ElMessage.warning(t('请输入表单标识'))
     return
   }
-  const res = await formApi.getDef(formKey.value.trim())
+  const res = await formApi.getDraft(formKey.value.trim())
   if (!res.data) {
     ElMessage.info(t('该表单尚未定义'))
     return
   }
-  formName.value = res.data.formName || ''
+  formName.value = res.data.name || ''
+  draftRowVersion.value = res.data.rowVersion
   const parsed: FormSchema = JSON.parse(res.data.schemaJson || '{"fields":[]}')
   applySnapshot({ fields: parsed.fields || [], rules: parsed.rules || [] })
   history.reset(snapshot())
@@ -213,12 +333,19 @@ async function save() {
     ElMessage.error(errors[0])
     return
   }
-  await formApi.saveDef({
-    formKey: formKey.value.trim(),
-    formName: formName.value.trim(),
+  const res = await formApi.saveDraft(formKey.value.trim(), {
+    name: formName.value.trim(),
     schemaJson: JSON.stringify({ fields: schema.fields, rules: schema.rules || [] }),
+    rowVersion: draftRowVersion.value,
   })
+  draftRowVersion.value = res.data.rowVersion
   ElMessage.success(t('保存成功'))
+}
+async function publish() {
+  if (!draftRowVersion.value) { ElMessage.warning(t('请先保存草稿')); return }
+  await formApi.publish(formKey.value.trim(), draftRowVersion.value)
+  ElMessage.success(t('发布成功'))
+  await load()
 }
 </script>
 
@@ -229,7 +356,7 @@ async function save() {
 .pane { overflow: auto; }
 .pane.lib { width: 180px; flex: none; }
 .pane.canvas { flex: 1; }
-.pane.prop { width: 280px; flex: none; }
+.pane.prop { width: 360px; flex: none; }
 .pane-title { font-weight: 600; }
 .lib-item { display: flex; align-items: center; gap: 6px; padding: 8px; cursor: pointer; border-radius: 4px; }
 .lib-item:hover { background: var(--el-fill-color-light); }
@@ -238,4 +365,7 @@ async function save() {
 .field-meta { display: flex; align-items: center; gap: 6px; }
 .field-label { font-size: 13px; }
 .opt-row { display: flex; align-items: center; gap: 6px; margin-bottom: 6px; }
+.column-card { display: flex; flex-direction: column; gap: 8px; padding: 10px; margin-bottom: 10px; border: 1px solid var(--el-border-color-lighter); border-radius: 6px; }
+.column-card__header, .column-required { display: flex; align-items: center; justify-content: space-between; }
+.column-card__header { font-size: 12px; font-weight: 600; color: var(--el-text-color-regular); }
 </style>

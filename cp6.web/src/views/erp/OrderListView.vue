@@ -63,7 +63,7 @@ import { useI18n } from 'vue-i18n'
 import { useRouter } from 'vue-router'
 import { ElMessage } from 'element-plus'
 import { Download, Check, Connection } from '@element-plus/icons-vue'
-import CpListPage, { type ListColumn, type ListFetch, type SortOrder } from '@/components/templates/CpListPage.vue'
+import CpListPage, { type ListColumn, type ListFetch, type ListPageExpose, type SortOrder } from '@/components/templates/CpListPage.vue'
 import { type FilterField } from '@/components/templates/CpFilterBar.vue'
 import CpTag from '@/components/base/CpTag.vue'
 import { orderApi } from '@/api/erp/order'
@@ -73,7 +73,7 @@ import OrderCancelDialog from './OrderCancelDialog.vue'
 const { t } = useI18n()
 const router = useRouter()
 
-const listRef = ref<InstanceType<typeof CpListPage>>()
+const listRef = ref<ListPageExpose>()
 const total = ref<number>()
 const exporting = ref(false)
 
@@ -104,7 +104,7 @@ function onCancelled() {
   listRef.value?.reload()
 }
 
-const columns = computed<ListColumn[]>(() => [
+const columns = computed<ListColumn<OrderListItemDto>[]>(() => [
   { prop: 'rowNo', label: t('sales.list.no'), width: 60, align: 'center' },
   { prop: 'customerCd', label: t('sales.term.customer'), width: 100, sortable: 'custom' },
   { prop: 'customerName', label: t('sales.term.customer') + t('sales.term.bpName').slice(-1), width: 160 },
@@ -173,7 +173,7 @@ function buildQuery(filters: Record<string, unknown>, sortField?: string, sortOr
   return q as unknown as OrderQueryDto
 }
 
-const fetchList: ListFetch = async ({ page, size, filters, sortField, sortOrder }) => {
+const fetchList: ListFetch<OrderListItemDto> = async ({ page, size, filters, sortField, sortOrder }) => {
   lastFilters.value = filters
   lastSort.value = { sortField, sortOrder }
   const q = buildQuery(filters, sortField, sortOrder)

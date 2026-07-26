@@ -109,7 +109,7 @@ import { ref, reactive, computed } from 'vue'
 import { ElMessage, type FormRules } from 'element-plus'
 import { useI18n } from 'vue-i18n'
 import CpPageShell from '@/components/templates/CpPageShell.vue'
-import CpListPage, { type ListColumn, type ListFetch } from '@/components/templates/CpListPage.vue'
+import CpListPage, { type ListColumn, type ListFetch, type ListPageExpose } from '@/components/templates/CpListPage.vue'
 import { type FilterField } from '@/components/templates/CpFilterBar.vue'
 import CpFormDialog from '@/components/templates/CpFormDialog.vue'
 import CpEmpty from '@/components/base/CpEmpty.vue'
@@ -121,7 +121,7 @@ import { formatQty, formatDateTime } from '@/utils/format'
 const { t } = useI18n()
 
 const total = ref<number>()
-const listRef = ref<InstanceType<typeof CpListPage>>()
+const listRef = ref<ListPageExpose>()
 
 const carrierMap = computed<Record<string, string>>(() => ({
   YAMATO: t('ヤマト運輸'), SAGAWA: t('佐川急便'), JP: t('日本郵便'), SELF: t('自社便'), OTHER: t('その他'),
@@ -149,7 +149,7 @@ function eventType(s?: string): '' | 'primary' | 'success' | 'warning' | 'danger
 }
 function formatTs(ts: string) { return formatDateTime(ts) }
 
-const columns = computed<ListColumn[]>(() => [
+const columns = computed<ListColumn<CarrierShipment>[]>(() => [
   { prop: 'shipmentNo', label: t('wms.carrier.fld.no'), kind: 'mono', width: 180 },
   { prop: 'status', label: t('wms.common.status'), width: 110, kind: 'tag',
     map: (v) => ({ label: codeLabel(statusMap.value, v), tone: statusTone(v as number) }) },
@@ -183,7 +183,7 @@ const searchFields = computed<FilterField[]>(() => [
   },
 ])
 
-const fetchList: ListFetch = async ({ page, size, filters }) => {
+const fetchList: ListFetch<CarrierShipment> = async ({ page, size, filters }) => {
   const f = filters as Record<string, unknown>
   const q: Record<string, unknown> = { pageSize: 100 }
   if (f.shipmentNo) q.shipmentNo = String(f.shipmentNo)

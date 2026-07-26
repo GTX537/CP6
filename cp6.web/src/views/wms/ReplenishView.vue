@@ -93,7 +93,7 @@ import { ref, reactive, computed } from 'vue'
 import { ElMessage, ElMessageBox, type FormRules } from 'element-plus'
 import { useI18n } from 'vue-i18n'
 import CpPageShell from '@/components/templates/CpPageShell.vue'
-import CpListPage, { type ListColumn, type ListFetch } from '@/components/templates/CpListPage.vue'
+import CpListPage, { type ListColumn, type ListFetch, type ListPageExpose } from '@/components/templates/CpListPage.vue'
 import { type FilterField } from '@/components/templates/CpFilterBar.vue'
 import CpFormDialog from '@/components/templates/CpFormDialog.vue'
 import { type Tone } from '@/components/base/CpTag.vue'
@@ -105,7 +105,7 @@ const { t } = useI18n()
 
 // —— 头部计数 pill ——
 const total = ref<number>()
-const listRef = ref<InstanceType<typeof CpListPage>>()
+const listRef = ref<ListPageExpose>()
 function onReload() { listRef.value?.reload() }
 
 // —— 码值映射（i18n 反应式） ——
@@ -136,7 +136,7 @@ function codeLabel(m: Record<string, string> | Record<number, string>, v: unknow
 }
 
 // —— 列定义 ——
-const columns = computed<ListColumn[]>(() => [
+const columns = computed<ListColumn<ReplenishOrder>[]>(() => [
   { prop: 'replenishNo', label: t('wms.replenish.fld.no'), kind: 'mono', width: 180 },
   { prop: 'status', label: t('wms.common.status'), width: 100, kind: 'tag',
     map: (v) => ({ label: codeLabel(statusMap.value, v), tone: statusTone(v as number) }) },
@@ -168,7 +168,7 @@ const searchFields = computed<FilterField[]>(() => [
 
 // —— 取数：包装 replenishApi.search；扁平数组无 total → 客户端分页 ——
 const PAGE_CAP = 500
-const fetchList: ListFetch = async ({ page, size, filters }) => {
+const fetchList: ListFetch<ReplenishOrder> = async ({ page, size, filters }) => {
   const f = filters as Record<string, unknown>
   const q: ReplenishSearchQuery = { pageSize: PAGE_CAP }
   if (f.replenishNo) q.replenishNo = String(f.replenishNo)

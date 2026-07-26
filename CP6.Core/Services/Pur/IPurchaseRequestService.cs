@@ -1,4 +1,5 @@
 using CP6.Entity.DomainModels.Pur;
+using CP6.Core.Services.Sys;
 
 namespace CP6.Core.Services.Pur;
 
@@ -11,10 +12,11 @@ namespace CP6.Core.Services.Pur;
 public interface IPurchaseRequestService
 {
     /// <summary>取 PR（含行）。</summary>
-    Task<PurchaseRequest?> GetAsync(string prNo);
+    Task<PurchaseRequest?> GetAsync(string prNo, UserPermissionContext? permission = null);
 
     /// <summary>列出 PR（可按状态/来源过滤）。</summary>
-    Task<List<PurchaseRequest>> ListAsync(PrStatus? status = null, string? source = null);
+    Task<List<PurchaseRequest>> ListAsync(
+        PrStatus? status = null, string? source = null, UserPermissionContext? permission = null);
 
     /// <summary>
     /// 手工建采购申请（章05 §4）：Source=manual；采番 PrNo；状态草稿；至少一行（物料必填、数量&gt;0）。
@@ -24,13 +26,15 @@ public interface IPurchaseRequestService
     /// <summary>
     /// 送审（章05 §4）：草稿 → 调审批委托（桩即时通过 / 真实流程进 Submitted）→ 回填 ApprovalRef。
     /// </summary>
-    Task<PurchaseRequest> SubmitForApprovalAsync(string prNo, string? userName);
+    Task<PurchaseRequest> SubmitForApprovalAsync(
+        string prNo, Guid actorId, string? userName, UserPermissionContext permission,
+        CancellationToken ct = default);
 
     /// <summary>OA 审批通过回调：Submitted→Approved（幂等；不 SaveChanges，由 OA 引擎统一持久化）。</summary>
-    Task ApproveFromApprovalAsync(string prNo, string decidedBy);
+    Task ApproveFromApprovalAsync(string prNo, Guid instanceId, string decidedBy);
 
     /// <summary>OA 审批驳回回调：Submitted→Draft 可重编重送（幂等；不 SaveChanges）。</summary>
-    Task RejectFromApprovalAsync(string prNo, string reason);
+    Task RejectFromApprovalAsync(string prNo, Guid instanceId, string reason);
 
     /// <summary>
     /// 转 PO（章05 §5）：仅已批 PR。取可转行（有效 ∧ 有建议供应商 ∧ 未转出），按建议供应商分组，
@@ -40,6 +44,18 @@ public interface IPurchaseRequestService
     /// <returns>新建的 PO 号列表（按供应商一供应商一张）。</returns>
     Task<List<string>> ConvertToPoAsync(string prNo, string? userName);
 }
+
+public sealed record PurchaseRequestApprovalSnapshot(
+    int SnapshotVersion,
+    string PrNo,
+    string? RequesterId,
+    Guid? DeptId,
+    DateTime RequestDate,
+    string Source,
+    int LineCount,
+    decimal TotalEstimatedAmount,
+    bool HasUnpricedLines,
+    int SuggestedSupplierCount);
 
 /// <summary>建采购申请入参。</summary>
 public class PrCreateDto

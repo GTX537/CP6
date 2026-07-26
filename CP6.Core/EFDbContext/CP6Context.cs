@@ -379,10 +379,15 @@ public class CP6Context : DbContext, IDataProtectionKeyContext
     // ───── OA(Wf) 阶段1 运行时 ─────
     /// <summary>表单定义（OA 章02，JSON 列）</summary>
     public DbSet<Wf_FormDef> Wf_FormDefs { get; set; }
+    public DbSet<Wf_FormDefVersion> Wf_FormDefVersions { get; set; }
+    public DbSet<Wf_FormFlowBinding> Wf_FormFlowBindings { get; set; }
+    public DbSet<Wf_FormDraft> Wf_FormDrafts { get; set; }
     /// <summary>表单数据（OA 章02，JSON 列）</summary>
     public DbSet<Wf_FormData> Wf_FormDatas { get; set; }
     /// <summary>流程定义（OA 章03，节点/边 schema JSON）</summary>
     public DbSet<Wf_FlowDef> Wf_FlowDefs { get; set; }
+    public DbSet<Wf_FlowDefVersion> Wf_FlowDefVersions { get; set; }
+    public DbSet<Wf_FlowDefVersionDependency> Wf_FlowDefVersionDependencies { get; set; }
     /// <summary>流程实例（OA 章03，状态机状态载体）</summary>
     public DbSet<Wf_FlowInstance> Wf_FlowInstances { get; set; }
     /// <summary>流程待办任务（OA 章03，会签多条/节点）</summary>
@@ -706,6 +711,38 @@ public class CP6Context : DbContext, IDataProtectionKeyContext
         {
             e.HasIndex(x => x.FormKey).HasDatabaseName("IX_Wf_FormData_FormKey");
             e.HasIndex(x => x.BizId).HasDatabaseName("IX_Wf_FormData_Biz");
+            e.HasIndex(x => new { x.TenantId, x.SubmissionKey }).IsUnique()
+                .HasFilter("[SubmissionKey] IS NOT NULL")
+                .HasDatabaseName("UX_Wf_FormData_SubmissionKey");
+            e.HasIndex(x => new { x.TenantId, x.FormDefVersionId, x.SubmittedAtUtc })
+                .HasDatabaseName("IX_Wf_FormData_VersionSubmitted");
+        });
+        modelBuilder.Entity<Wf_FormDefVersion>(e =>
+        {
+            e.HasIndex(x => new { x.TenantId, x.FormDefId, x.Version }).IsUnique()
+                .HasDatabaseName("UX_Wf_FormDefVersion");
+            e.HasIndex(x => new { x.TenantId, x.FormDefId, x.Status }).IsUnique()
+                .HasFilter("[Status] = 0")
+                .HasDatabaseName("UX_Wf_FormDefVersion_OneDraft");
+            e.HasOne<Wf_FormDef>().WithMany().HasForeignKey(x => x.FormDefId).OnDelete(DeleteBehavior.Restrict);
+        });
+        modelBuilder.Entity<Wf_FormFlowBinding>(e =>
+        {
+            e.HasIndex(x => new { x.TenantId, x.FormDefId }).IsUnique()
+                .HasFilter("[Enable] = 1")
+                .HasDatabaseName("UX_Wf_FormFlowBinding_Active");
+            e.HasOne<Wf_FormDef>().WithMany().HasForeignKey(x => x.FormDefId).OnDelete(DeleteBehavior.Restrict);
+            e.HasOne<Wf_FlowDef>().WithMany().HasForeignKey(x => x.FlowDefId).OnDelete(DeleteBehavior.Restrict);
+        });
+        modelBuilder.Entity<Wf_FormDraft>(e =>
+        {
+            e.HasIndex(x => new { x.TenantId, x.OwnerUserId, x.Status, x.ModifyDate })
+                .HasDatabaseName("IX_Wf_FormDraft_Owner");
+            e.HasIndex(x => new { x.TenantId, x.LegacyFlowInstanceId }).IsUnique()
+                .HasFilter("[LegacyFlowInstanceId] IS NOT NULL")
+                .HasDatabaseName("UX_Wf_FormDraft_Legacy");
+            e.HasOne<Wf_FormDef>().WithMany().HasForeignKey(x => x.FormDefId).OnDelete(DeleteBehavior.Restrict);
+            e.HasOne<Wf_FormDefVersion>().WithMany().HasForeignKey(x => x.FormDefVersionId).OnDelete(DeleteBehavior.Restrict);
         });
 
         // OA 章03 流程引擎：FlowKey 唯一；任务按 实例+节点 / 处理人+状态 取（待办中心高频）
@@ -717,6 +754,24 @@ public class CP6Context : DbContext, IDataProtectionKeyContext
             e.HasIndex(x => new { x.TenantId, x.FlowCode }).IsUnique()
                 .HasFilter("[FlowCode] IS NOT NULL").HasDatabaseName("UX_Wf_FlowDef_Code");
         });
+        modelBuilder.Entity<Wf_FlowDefVersion>(e =>
+        {
+            e.HasIndex(x => new { x.TenantId, x.FlowDefId, x.Version }).IsUnique()
+                .HasDatabaseName("UX_Wf_FlowDefVersion");
+            e.HasIndex(x => new { x.TenantId, x.FlowDefId, x.Status }).IsUnique()
+                .HasFilter("[Status] = 0")
+                .HasDatabaseName("UX_Wf_FlowDefVersion_OneDraft");
+            e.HasOne<Wf_FlowDef>().WithMany().HasForeignKey(x => x.FlowDefId).OnDelete(DeleteBehavior.Restrict);
+        });
+        modelBuilder.Entity<Wf_FlowDefVersionDependency>(e =>
+        {
+            e.HasIndex(x => new { x.TenantId, x.FlowDefVersionId, x.NodeId, x.DependencyType }).IsUnique()
+                .HasDatabaseName("UX_Wf_FlowDefVersionDependency");
+            e.HasIndex(x => new { x.TenantId, x.TargetFlowDefVersionId })
+                .HasDatabaseName("IX_Wf_FlowDefVersionDependency_Target");
+            e.HasOne<Wf_FlowDefVersion>().WithMany().HasForeignKey(x => x.FlowDefVersionId).OnDelete(DeleteBehavior.Restrict);
+            e.HasOne<Wf_FlowDefVersion>().WithMany().HasForeignKey(x => x.TargetFlowDefVersionId).OnDelete(DeleteBehavior.Restrict);
+        });
         modelBuilder.Entity<Wf_FlowInstance>(e =>
         {
             e.HasIndex(x => x.StarterId).HasDatabaseName("IX_Wf_FlowInstance_Starter");   // 我的申请
@@ -726,6 +781,9 @@ public class CP6Context : DbContext, IDataProtectionKeyContext
             // 代码级 SubFlowNodeHandler 先查兜底(InMemory 无索引语义,B-T1)
             e.HasIndex(x => new { x.TenantId, x.ParentTokenId, x.SubIndex }).IsUnique()
                 .HasFilter("[ParentTokenId] IS NOT NULL").HasDatabaseName("UX_Wf_FlowInstance_SubSlot");
+            e.HasIndex(x => new { x.TenantId, x.BizType, x.BizId }).IsUnique()
+                .HasFilter("[BizType] IS NOT NULL AND [BizId] IS NOT NULL AND [Status] IN (0, 4)")
+                .HasDatabaseName("UX_Wf_FlowInstance_ActiveBusiness");
         });
         modelBuilder.Entity<Wf_FlowTask>(e =>
         {
@@ -733,6 +791,8 @@ public class CP6Context : DbContext, IDataProtectionKeyContext
             e.HasIndex(x => new { x.InstanceId, x.NodeId, x.TokenId, x.StageIndex, x.StageRound, x.Status })
                 .HasDatabaseName("IX_Wf_FlowTask_Tally");   // 串簽档·轮计票
             e.HasIndex(x => new { x.AssigneeId, x.Status }).HasDatabaseName("IX_Wf_FlowTask_AssigneeStatus"); // 待办中心
+            e.HasIndex(x => new { x.TenantId, x.AssigneeId, x.Status, x.InstanceId, x.CreateDate })
+                .HasDatabaseName("IX_Wf_FlowTask_PendingPage");
             e.HasIndex(x => new { x.Status, x.DueAt }).HasDatabaseName("IX_Wf_FlowTask_StatusDue");           // 章07 §4 超时扫描
             e.HasIndex(x => new { x.AssigneeId, x.IsRead }).HasDatabaseName("IX_Wf_FlowTask_AssigneeRead");    // 信箱未處理未读
         });
@@ -758,6 +818,9 @@ public class CP6Context : DbContext, IDataProtectionKeyContext
             e.HasIndex(x => new { x.InstanceId, x.StepSeq }).HasDatabaseName("IX_Wf_FlowFormTo_Step");
             e.HasIndex(x => new { x.InstanceId, x.TokenId }).HasDatabaseName("IX_Wf_FlowFormTo_Token");
             e.HasIndex(x => new { x.ExpectedHandlerId, x.Status }).HasDatabaseName("IX_Wf_FlowFormTo_Handler");
+            e.HasIndex(x => new { x.TenantId, x.ExpectedHandlerId, x.InstanceId }).HasDatabaseName("IX_Wf_FlowFormTo_ExpectedParticipant");
+            e.HasIndex(x => new { x.TenantId, x.ActualHandlerId, x.InstanceId }).HasDatabaseName("IX_Wf_FlowFormTo_ActualParticipant");
+            e.HasIndex(x => new { x.TenantId, x.OnBehalfOfId, x.InstanceId }).HasDatabaseName("IX_Wf_FlowFormTo_OnBehalfParticipant");
         });
         modelBuilder.Entity<Wf_FlowData>(e =>
             e.HasIndex(x => new { x.InstanceId, x.StepSeq }).HasDatabaseName("IX_Wf_FlowData_Step"));
@@ -765,13 +828,20 @@ public class CP6Context : DbContext, IDataProtectionKeyContext
         {
             e.HasIndex(x => new { x.RecipientId, x.IsRead }).HasDatabaseName("IX_Wf_FlowCc_Recipient");
             e.HasIndex(x => x.InstanceId).HasDatabaseName("IX_Wf_FlowCc_Instance");
+            e.HasIndex(x => new { x.TenantId, x.RecipientId, x.InstanceId }).HasDatabaseName("IX_Wf_FlowCc_Participant");
         });
         modelBuilder.Entity<Wf_FormFavorite>(e =>
             e.HasIndex(x => new { x.TenantId, x.UserId, x.FormKey }).IsUnique().HasDatabaseName("UX_Wf_FormFavorite"));
         modelBuilder.Entity<Wf_InboxPref>(e =>
             e.HasIndex(x => new { x.TenantId, x.UserId }).IsUnique().HasDatabaseName("UX_Wf_InboxPref_User"));
         modelBuilder.Entity<Wf_Notification>(e =>
-            e.HasIndex(x => new { x.TenantId, x.UserId, x.IsRead }).HasDatabaseName("IX_Wf_Notification_UserRead"));
+        {
+            e.HasIndex(x => new { x.TenantId, x.UserId, x.IsRead }).HasDatabaseName("IX_Wf_Notification_UserRead");
+            e.HasIndex(x => new { x.TenantId, x.EventKey }).IsUnique()
+                .HasFilter("[EventKey] IS NOT NULL").HasDatabaseName("UX_Wf_Notification_Event");
+            e.HasIndex(x => new { x.TenantId, x.DispatchStatus, x.NextAttemptAtUtc })
+                .HasDatabaseName("IX_Wf_Notification_Dispatch");
+        });
         modelBuilder.Entity<Wf_ApproverMap>(e =>
             e.HasIndex(x => new { x.TenantId, x.MapKey, x.MatchValue }).HasDatabaseName("IX_Wf_ApproverMap_Lookup"));
 
@@ -2309,6 +2379,7 @@ public class CP6Context : DbContext, IDataProtectionKeyContext
 
     public override int SaveChanges(bool acceptAllChangesOnSuccess)
     {
+        DefinitionImmutabilityInterceptor.Guard(this);
         StampTenant();   // SaveChanges() 经 base 路由至本重载，无需再覆盖无参版（避免重复盖章）
         var pending = CaptureFieldAuditBeforeSave();
         if (pending.Count == 0) return base.SaveChanges(acceptAllChangesOnSuccess);   // 无审计目标 → 零开销原路径
@@ -2329,6 +2400,7 @@ public class CP6Context : DbContext, IDataProtectionKeyContext
 
     public override async Task<int> SaveChangesAsync(bool acceptAllChangesOnSuccess, CancellationToken cancellationToken = default)
     {
+        DefinitionImmutabilityInterceptor.Guard(this);
         StampTenant();
         var pending = CaptureFieldAuditBeforeSave();
         if (pending.Count == 0) return await base.SaveChangesAsync(acceptAllChangesOnSuccess, cancellationToken);

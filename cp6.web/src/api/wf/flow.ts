@@ -9,6 +9,15 @@ export const flowApi = {
   getDef(flowKey: string) {
     return http.get(`/wf/flow/def/${flowKey}`)
   },
+  getDraft(flowKey: string) {
+    return http.get(`/oa/flow-defs/${encodeURIComponent(flowKey)}/draft`)
+  },
+  saveDraft(flowKey: string, data: { name: string; formKey?: string; schemaJson: string; rowVersion?: string }) {
+    return http.put(`/oa/flow-defs/${encodeURIComponent(flowKey)}/draft`, data)
+  },
+  publish(flowKey: string, rowVersion?: string) {
+    return http.post(`/oa/flow-defs/${encodeURIComponent(flowKey)}/publish`, { rowVersion })
+  },
 
   // 起流程 / 办理
   submit(data: { flowKey: string; varsJson?: string; bizType?: string; bizId?: string }) {

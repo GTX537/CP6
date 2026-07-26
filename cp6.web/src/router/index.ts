@@ -1,5 +1,5 @@
 import { createRouter, createWebHistory, type RouteRecordRaw } from 'vue-router'
-import { ensureNamespacesForPath } from '@/i18n'
+import { prefetchNamespacesForPath } from '@/i18n'
 import { usePlatformStore } from '@/stores/platform'
 
 // 路由路径 → 组件的映射表（所有可能的页面）
@@ -255,6 +255,42 @@ const staticRoutes: RouteRecordRaw[] = [
     component: () => import('@/views/erp/BusinessPartnerView.vue'),
     meta: { standalone: true, title: '取引先マスタ' }
   },
+  {
+    path: '/oa/designer/window',
+    component: () => import('@/views/DetachedWorkspaceView.vue'),
+    meta: { standalone: true, title: '流程设计器' },
+    children: [
+      {
+        path: '',
+        name: 'oa-designer-window',
+        component: () => import('@/views/oa/designer/DesignerView.vue'),
+      },
+    ],
+  },
+  {
+    path: '/wf/form-designer/window',
+    component: () => import('@/views/DetachedWorkspaceView.vue'),
+    meta: { standalone: true, title: '表单设计器', detachedInset: true },
+    children: [
+      {
+        path: '',
+        name: 'wf-form-designer-window',
+        component: () => import('@/views/wf/designer/FormDesigner.vue'),
+      },
+    ],
+  },
+  {
+    path: '/wf/flow-designer/window',
+    component: () => import('@/views/DetachedWorkspaceView.vue'),
+    meta: { standalone: true, title: '流程设计器（旧）', detachedInset: true },
+    children: [
+      {
+        path: '',
+        name: 'wf-flow-designer-window',
+        component: () => import('@/views/wf/designer/FlowDesigner.vue'),
+      },
+    ],
+  },
   // MES Control Tower 全屏大屏（独立路由、Layout 無し）
   {
     path: '/mes/control-tower/standalone',
@@ -282,6 +318,18 @@ const staticRoutes: RouteRecordRaw[] = [
     name: 'space-stacked',
     component: () => import('@/views/space/stacked/StackedViewer.vue'),
     meta: { standalone: true, title: 'Space 3D 全层叠视图' },
+  },
+  {
+    path: '/menu-designs',
+    name: 'menu-designs',
+    component: () => import('@/views/pms/MenuDesignVariantsView.vue'),
+    meta: { standalone: true, title: '菜单管理 UI 方案' }
+  },
+  {
+    path: '/flow-designs',
+    name: 'flow-designs',
+    component: () => import('@/views/oa/designer/FlowDesignVariantsView.vue'),
+    meta: { standalone: true, title: '流程设计器 UI 方案' }
   },
   {
     path: '/',
@@ -332,20 +380,16 @@ function oaSubChildren(): RouteRecordRaw[] {
  */
 export function addDynamicRoutes(menus: any[]) {
   // 先找到有 routePath 的菜单
-  const routeMenus = menus.filter(m => m.routePath && viewModules[m.routePath])
+  const seenRoutePaths = new Set<string>()
+  const routeMenus = menus.filter(m => {
+    const routePath = m.routePath as string | undefined
+    if (!routePath || !viewModules[routePath] || seenRoutePaths.has(routePath)) return false
+    seenRoutePaths.add(routePath)
+    return true
+  })
 
   // 第一个有效路由作为默认跳转
   const firstRoute = routeMenus[0]?.routePath || '/login'
-
-  routeMenus.forEach(menu => {
-    const route: RouteRecordRaw = {
-      path: menu.routePath.replace(/^\//, ''), // 去掉开头的 /，变成相对路径
-      name: menu.routePath.replace(/^\//, ''),
-      component: viewModules[menu.routePath]
-    } as RouteRecordRaw
-    // 添加为 layout 的子路由
-    router.addRoute('layout', route)
-  })
 
   // 更新 layout 的 redirect 为第一个有效页面
   // 通过添加一个带 redirect 的新 layout 路由来覆盖
@@ -387,41 +431,36 @@ export function resetRoutes() {
 }
 
 // 路由守卫
-router.beforeEach(async (to, _from, next) => {
+router.beforeEach((to) => {
   // T9：登录态信号由 httpOnly token 改为非敏感标志 cp6_authed（JS 读不到 httpOnly token）
   const authed = localStorage.getItem('cp6_authed')
 
   // 1. 去登录页，放行
   if (to.path === '/login') {
-    next()
-    return
+    return true
   }
 
   // 1b. SSO 落地屏：回调后此刻尚无 cp6_authed（落地页调 profile 才置），须无条件放行，
   //     由落地页自行拉 profile 写登录态/或显错误回登录。
   if (to.path === '/sso/landing') {
-    next()
-    return
+    return true
   }
 
   // 1c. #2 2FA 登录第二因素屏：密码已通过但 auth cookie 未签发（仅 pending cookie cp6_2fa），
   //     故此刻无 cp6_authed，须无条件放行；验证成功后由屏内自行置 cp6_authed 进首页。
   if (to.path === '/sys/2fa-challenge' || to.path === '/sys/2fa-enroll') {
-    next()
-    return
+    return true
   }
 
   // 2. 没有登录态，跳登录
   if (!authed) {
-    next('/login')
-    return
+    return '/login'
   }
 
   // 2b. S类 #5 带外平台区守卫（UX 层）：非平台超管访问 /platform/* → 回首页。
   //     真闸门在后端 [RequirePlatformAdmin]（claim 快判 + DB 回查 + imp 期拒）。
   if (to.path.startsWith('/platform/') && !usePlatformStore().isPlatformAdmin) {
-    next('/')
-    return
+    return '/'
   }
 
   // 3. 强制改密：登录态下若 mustChangePwd，除改密页自身外一律拦到改密页（避免死循环）
@@ -429,16 +468,14 @@ router.beforeEach(async (to, _from, next) => {
     localStorage.getItem('cp6_mustChangePwd') === '1' &&
     to.path !== '/sys/change-password'
   ) {
-    next('/sys/change-password')
-    return
+    return '/sys/change-password'
   }
 
   // 4. 独立窗口（popup）/ 改密页（standalone）：有登录态即可，不依赖动态菜单
   if (to.meta?.standalone) {
-    // i18n 优化 P4：进内容页前确保该路由所需语言命名空间已就绪（失败已在内部兜底全量）。
-    await ensureNamespacesForPath(to.path)
-    next()
-    return
+    // i18n 命名空间在后台预取；翻译接口波动不能阻塞页面导航。
+    prefetchNamespacesForPath(to.path)
+    return true
   }
 
   // 5. 有登录态但还没加载动态路由（页面刷新的情况）
@@ -448,17 +485,15 @@ router.beforeEach(async (to, _from, next) => {
       const menus = JSON.parse(menusStr)
       addDynamicRoutes(menus)
       // 重新导航到目标页面（因为路由刚添加，需要重新匹配）
-      next({ ...to, replace: true })
-      return
+      return { ...to, replace: true }
     } else {
-      next('/login')
-      return
+      return '/login'
     }
   }
 
-  // 6. 路由已加载：先确保命名空间就绪再放行（i18n 优化 P4 懒加载）。
-  await ensureNamespacesForPath(to.path)
-  next()
+  // 6. 路由已加载：立即放行，并在后台预取对应的 i18n 命名空间。
+  prefetchNamespacesForPath(to.path)
+  return true
 })
 
 export default router

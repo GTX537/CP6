@@ -1,8 +1,11 @@
 using CP6.Core.EFDbContext;
 using CP6.Core.Services.Pub;
 using CP6.Core.Services.Pur.Contracts;
+using CP6.Core.Services.Sys;
 using CP6.Entity.DomainModels.Pur;
+using CP6.Entity.DomainModels.Wf;
 using Microsoft.EntityFrameworkCore;
+using WfStatus = CP6.Core.Services.Wf.FlowInstanceStatus;
 
 namespace CP6.Core.Services.Pur;
 
@@ -16,19 +19,24 @@ public class PurchaseRequestService : IPurchaseRequestService
     private readonly ISeqService _seq;
     private readonly IApprovalService _approval;
     private readonly IPurchaseOrderService _po;
+    private readonly IDataScopeFilter _scope;
 
-    public PurchaseRequestService(CP6Context db, ISeqService seq, IApprovalService approval, IPurchaseOrderService po)
+    public PurchaseRequestService(CP6Context db, ISeqService seq, IApprovalService approval,
+        IPurchaseOrderService po, IDataScopeFilter? scope = null)
     {
         _db = db;
         _seq = seq;
         _approval = approval;
         _po = po;
+        _scope = scope ?? new DataScopeFilter(db);
     }
 
     /// <inheritdoc />
-    public async Task<PurchaseRequest?> GetAsync(string prNo)
+    public async Task<PurchaseRequest?> GetAsync(string prNo, UserPermissionContext? permission = null)
     {
-        var pr = await _db.PurchaseRequests.FirstOrDefaultAsync(p => p.PrNo == prNo && !p.IsDeleted);
+        var query = _db.PurchaseRequests.Where(p => p.PrNo == prNo && !p.IsDeleted);
+        if (permission != null) query = _scope.Apply(query, "pur-pr", permission);
+        var pr = await query.FirstOrDefaultAsync();
         if (pr != null)
             pr.Lines = await _db.PurchaseRequestLines
                 .Where(l => l.PrNo == prNo && !l.IsDeleted)
@@ -37,9 +45,11 @@ public class PurchaseRequestService : IPurchaseRequestService
     }
 
     /// <inheritdoc />
-    public async Task<List<PurchaseRequest>> ListAsync(PrStatus? status = null, string? source = null)
+    public async Task<List<PurchaseRequest>> ListAsync(
+        PrStatus? status = null, string? source = null, UserPermissionContext? permission = null)
     {
         var q = _db.PurchaseRequests.Where(p => !p.IsDeleted);
+        if (permission != null) q = _scope.Apply(q, "pur-pr", permission);
         if (status.HasValue) q = q.Where(p => p.Status == status.Value);
         if (!string.IsNullOrWhiteSpace(source)) q = q.Where(p => p.Source == source);
         var list = await q.OrderByDescending(p => p.RequestDate).ThenByDescending(p => p.PrNo).ToListAsync();
@@ -102,34 +112,98 @@ public class PurchaseRequestService : IPurchaseRequestService
     }
 
     /// <inheritdoc />
-    public async Task<PurchaseRequest> SubmitForApprovalAsync(string prNo, string? userName)
+    public async Task<PurchaseRequest> SubmitForApprovalAsync(
+        string prNo, Guid actorId, string? userName, UserPermissionContext permission,
+        CancellationToken ct = default)
     {
-        var pr = await _db.PurchaseRequests.FirstOrDefaultAsync(p => p.PrNo == prNo && !p.IsDeleted)
-                 ?? throw new InvalidOperationException("E-PUR-056"); // PR 不存在
-        if (pr.Status != PrStatus.Draft) throw new InvalidOperationException("E-PUR-052"); // 仅草稿可送审
-
-        var result = await _approval.SubmitAsync(new ApprovalSubmitRequest
+        if (actorId == Guid.Empty || actorId != permission.UserId)
+            throw new InvalidOperationException("E-PUR-057");
+        var ownsTransaction = _db.Database.IsRelational() && _db.Database.CurrentTransaction == null;
+        await using var transaction = ownsTransaction ? await _db.Database.BeginTransactionAsync(ct) : null;
+        try
         {
-            BizType = ApprovalBizType,
-            BizKey = pr.PrNo,
-            Amount = 0m, // PR 估价仅参考，不作审批金额（成交价在 PO）
-            Submitter = userName,
-        });
+            var scoped = _scope.Apply(
+                _db.PurchaseRequests.Where(p => p.PrNo == prNo && !p.IsDeleted),
+                "pur-pr", permission);
+            var pr = await scoped.FirstOrDefaultAsync(ct)
+                     ?? throw new UnauthorizedAccessException("E-PUR-059");
+            if (pr.Status != PrStatus.Draft)
+            {
+                var existing = await ActiveInstanceAsync(prNo, ct);
+                if (existing != null) throw new InvalidOperationException($"E-PUR-058:{existing.Id}");
+                throw new InvalidOperationException("E-PUR-052");
+            }
 
-        pr.ApprovalRef = result.ApprovalRef;
-        // 桩即时通过 → 直接置已批；真实流程未即时通过则置已提交（送审中），待回调确认
-        pr.Status = result.AutoApproved ? PrStatus.Approved : PrStatus.Submitted;
-        pr.Modifier = userName;
-        pr.ModifyDate = DateTime.Now;
-        await _db.SaveChangesAsync();
-        return pr;
+            var lines = await _db.PurchaseRequestLines
+                .Where(x => x.PrNo == prNo && !x.IsDeleted && x.Status == 0)
+                .OrderBy(x => x.LineNo).ToListAsync(ct);
+            var instanceId = Guid.NewGuid();
+            pr.Status = PrStatus.Submitted;
+            pr.ApprovalRef = instanceId.ToString();
+            pr.Modifier = userName;
+            pr.ModifyDate = DateTime.UtcNow;
+
+            var snapshot = BuildSnapshot(pr, lines);
+            var result = await _approval.SubmitAsync(new ApprovalSubmitRequest
+            {
+                BizType = ApprovalBizType,
+                BizKey = pr.PrNo,
+                ActorId = actorId,
+                Snapshot = snapshot,
+                InstanceId = instanceId,
+                Submitter = userName,
+            });
+            if (!result.AutoApproved &&
+                !string.Equals(result.ApprovalRef, pr.ApprovalRef, StringComparison.OrdinalIgnoreCase))
+                throw new InvalidOperationException("E-PUR-060");
+            if (result.AutoApproved)
+            {
+                pr.ApprovalRef = result.ApprovalRef;
+                pr.Status = PrStatus.Approved;
+            }
+
+            await _db.SaveChangesAsync(ct);
+            if (transaction != null) await transaction.CommitAsync(ct);
+            return pr;
+        }
+        catch (Exception ex) when (ex is DbUpdateException or DbUpdateConcurrencyException)
+        {
+            if (transaction != null) await transaction.RollbackAsync(ct);
+            _db.ChangeTracker.Clear();
+            var existing = await ActiveInstanceAsync(prNo, ct);
+            if (existing == null) throw;
+            var winner = await _db.PurchaseRequests.FirstAsync(x => x.PrNo == prNo && !x.IsDeleted, ct);
+            winner.ApprovalRef = existing.Id.ToString();
+            return winner;
+        }
+        catch
+        {
+            if (transaction != null) await transaction.RollbackAsync(ct);
+            throw;
+        }
     }
 
+    public static PurchaseRequestApprovalSnapshot BuildSnapshot(
+        PurchaseRequest pr, IReadOnlyCollection<PurchaseRequestLine> lines) =>
+        new(1, pr.PrNo, pr.RequesterId, pr.DeptId, pr.RequestDate.Date, pr.Source,
+            lines.Count,
+            lines.Sum(x => x.Qty * (x.EstPrice ?? 0m)),
+            lines.Any(x => x.EstPrice == null),
+            lines.Select(x => x.SuggestSupplierId).Where(x => !string.IsNullOrWhiteSpace(x))
+                .Distinct(StringComparer.OrdinalIgnoreCase).Count());
+
+    private Task<Wf_FlowInstance?> ActiveInstanceAsync(string prNo, CancellationToken ct) =>
+        _db.Wf_FlowInstances.AsNoTracking().FirstOrDefaultAsync(x =>
+            x.BizType == ApprovalBizType && x.BizId == prNo &&
+            (x.Status == WfStatus.Running || x.Status == WfStatus.Suspended), ct);
+
     /// <inheritdoc />
-    public async Task ApproveFromApprovalAsync(string prNo, string decidedBy)
+    public async Task ApproveFromApprovalAsync(string prNo, Guid instanceId, string decidedBy)
     {
-        var pr = await _db.PurchaseRequests.FirstOrDefaultAsync(p => p.PrNo == prNo && !p.IsDeleted);
-        if (pr == null || pr.Status != PrStatus.Submitted) return;   // 幂等：仅送审中可批
+        var pr = await LoadCallbackTargetAsync(prNo);
+        AssertCallbackCorrelation(pr, instanceId);
+        if (pr.Status == PrStatus.Approved) return;
+        if (pr.Status != PrStatus.Submitted) throw new InvalidOperationException("E-PUR-061");
         pr.Status = PrStatus.Approved;
         pr.Modifier = decidedBy;
         pr.ModifyDate = DateTime.Now;
@@ -137,13 +211,49 @@ public class PurchaseRequestService : IPurchaseRequestService
     }
 
     /// <inheritdoc />
-    public async Task RejectFromApprovalAsync(string prNo, string reason)
+    public async Task RejectFromApprovalAsync(string prNo, Guid instanceId, string reason)
     {
-        var pr = await _db.PurchaseRequests.FirstOrDefaultAsync(p => p.PrNo == prNo && !p.IsDeleted);
-        if (pr == null || pr.Status != PrStatus.Submitted) return;   // 幂等
+        var pr = await LoadCallbackTargetAsync(prNo);
+        AssertCallbackCorrelation(pr, instanceId);
+        if (pr.Status == PrStatus.Draft) return;
+        if (pr.Status != PrStatus.Submitted) throw new InvalidOperationException("E-PUR-061");
         pr.Status = PrStatus.Draft;   // 回退草稿可重编重送（驳回意见在 OA Wf_FlowHistory 留痕）
         pr.ModifyDate = DateTime.Now;
         // 不 SaveChanges
+    }
+
+    private async Task<PurchaseRequest> LoadCallbackTargetAsync(string prNo)
+    {
+        var tracked = _db.ChangeTracker.Entries<PurchaseRequest>()
+            .FirstOrDefault(x => x.Entity.PrNo == prNo && !x.Entity.IsDeleted);
+        if (tracked != null && tracked.State != EntityState.Unchanged) return tracked.Entity;
+
+        if (_db.Database.IsSqlServer())
+        {
+            // The FlowEngine owns the ambient transaction. Hold an update lock
+            // through its final SaveChanges/commit so a stale callback cannot
+            // race a reject/resubmit transition.
+            var locked = await _db.PurchaseRequests
+                .FromSqlInterpolated($"""
+                    SELECT * FROM [Pur_PurchaseRequest] WITH (UPDLOCK, HOLDLOCK, ROWLOCK)
+                    WHERE [PrNo] = {prNo} AND [IsDeleted] = CAST(0 AS bit)
+                    """)
+                .FirstOrDefaultAsync()
+                ?? throw new InvalidOperationException("E-PUR-056");
+            if (tracked != null) await tracked.ReloadAsync();
+            return tracked?.Entity ?? locked;
+        }
+
+        if (tracked != null) await tracked.ReloadAsync();
+        return tracked?.Entity
+               ?? await _db.PurchaseRequests.FirstOrDefaultAsync(x => x.PrNo == prNo && !x.IsDeleted)
+               ?? throw new InvalidOperationException("E-PUR-056");
+    }
+
+    private static void AssertCallbackCorrelation(PurchaseRequest pr, Guid instanceId)
+    {
+        if (!Guid.TryParse(pr.ApprovalRef, out var approvalRef) || approvalRef != instanceId)
+            throw new InvalidOperationException("E-PUR-061");
     }
 
     /// <inheritdoc />

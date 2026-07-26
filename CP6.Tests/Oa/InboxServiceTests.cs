@@ -167,14 +167,29 @@ public class InboxServiceTests
         await SeedAndSubmitAsync(db, starter, approver, cc);
         var instId = (await db.Wf_FlowInstances.SingleAsync()).Id;
 
-        var detail = await Inbox(db).DetailAsync(instId);
+        var detail = await Inbox(db).DetailAsync(approver, approver, instId);
         Assert.NotNull(detail);
-        Assert.Equal("请假单", detail!.FlowName);
+        Assert.Equal("请假单", detail!.Instance.FlowName);
         var cur = Assert.Single(detail.Timeline.Where(r => r.Status == FlowFormToStatus.Pending));
         Assert.Equal("n1", cur.NodeId);
         Assert.Equal("审批王", cur.ExpectedHandlerName);          // 应处理人名解析
         Assert.NotEmpty(detail.Forecast);                         // 预计段含 end（Running 才算）
         Assert.Contains(detail.Cc, c => c.RecipientName == "知会赵");
+    }
+
+    [Fact]
+    public async Task Detail_rejects_unrelated_user_without_returning_a_dto()
+    {
+        using var db = NewDb();
+        var starter = Guid.NewGuid(); var approver = Guid.NewGuid(); var cc = Guid.NewGuid();
+        await SeedAndSubmitAsync(db, starter, approver, cc);
+        var instId = (await db.Wf_FlowInstances.SingleAsync()).Id;
+
+        var unrelated = Guid.NewGuid();
+        var error = await Assert.ThrowsAsync<UnauthorizedAccessException>(() =>
+            Inbox(db).DetailAsync(unrelated, unrelated, instId));
+
+        Assert.Equal("E-WF-043", error.Message);
     }
 
     [Fact]

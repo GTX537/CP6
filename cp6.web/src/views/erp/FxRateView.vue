@@ -67,7 +67,7 @@ import { computed, reactive, ref } from 'vue'
 import { useI18n } from 'vue-i18n'
 import { ElMessage, ElMessageBox, type FormRules } from 'element-plus'
 import CpPageShell from '@/components/templates/CpPageShell.vue'
-import CpListPage, { type ListColumn, type ListFetch } from '@/components/templates/CpListPage.vue'
+import CpListPage, { type ListColumn, type ListFetch, type ListPageExpose } from '@/components/templates/CpListPage.vue'
 import { type FilterField } from '@/components/templates/CpFilterBar.vue'
 import CpFormDialog from '@/components/templates/CpFormDialog.vue'
 import CpTag from '@/components/base/CpTag.vue'
@@ -78,11 +78,11 @@ import type { FxRate } from '@/types/erp/fxRate'
 const { t } = useI18n()
 
 const total = ref<number>()
-const listRef = ref<InstanceType<typeof CpListPage> | null>(null)
+const listRef = ref<ListPageExpose | null>(null)
 function reloadList() { listRef.value?.reload() }
 
 // —— 列定义（rate 6 桁固定 → col slot；rateDate → kind:'date'）——
-const columns = computed<ListColumn[]>(() => [
+const columns = computed<ListColumn<FxRate>[]>(() => [
   { prop: 'currencyCd', label: t('erp.fxRate.col.currency'), width: 120 },
   { prop: 'rateDate', label: t('erp.fxRate.col.rateDate'), width: 150, kind: 'date' },
   { prop: 'rate', label: t('erp.fxRate.col.rate'), width: 160, align: 'right' },
@@ -101,7 +101,7 @@ const searchFields = computed<FilterField[]>(() => [
 ])
 
 // —— 取数：fxRateApi.list(currency?)；后端返回扁平数组无 total → 客户端分页 ——
-const fetchList: ListFetch = async ({ page, size, filters }) => {
+const fetchList: ListFetch<FxRate> = async ({ page, size, filters }) => {
   const f = filters as Record<string, unknown>
   const currency = f.currencyCd ? String(f.currencyCd).trim() : undefined
   const res = await fxRateApi.list(currency || undefined)

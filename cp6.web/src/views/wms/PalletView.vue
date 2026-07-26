@@ -90,7 +90,7 @@ import { ref, reactive, computed } from 'vue'
 import { ElMessage, ElMessageBox, type FormRules } from 'element-plus'
 import { useI18n } from 'vue-i18n'
 import CpPageShell from '@/components/templates/CpPageShell.vue'
-import CpListPage, { type ListColumn, type ListFetch } from '@/components/templates/CpListPage.vue'
+import CpListPage, { type ListColumn, type ListFetch, type ListPageExpose } from '@/components/templates/CpListPage.vue'
 import { type FilterField } from '@/components/templates/CpFilterBar.vue'
 import CpFormDialog from '@/components/templates/CpFormDialog.vue'
 import { type Tone } from '@/components/base/CpTag.vue'
@@ -101,7 +101,7 @@ import { formatQty as fmtQty } from '@/utils/format'
 const { t } = useI18n()
 
 const total = ref<number>()
-const listRef = ref<InstanceType<typeof CpListPage> | null>(null)
+const listRef = ref<ListPageExpose | null>(null)
 function reloadList() { listRef.value?.reload() }
 
 const statusMap = computed<Record<number, string>>(() => ({
@@ -122,7 +122,7 @@ function formatQty(n: number | undefined | null) {
   return fmtQty(n, 2)
 }
 
-const columns = computed<ListColumn[]>(() => [
+const columns = computed<ListColumn<Pallet>[]>(() => [
   { prop: 'palletNo', label: t('wms.pallet.fld.no'), kind: 'mono', width: 180 },
   { prop: 'status', label: t('wms.common.status'), width: 110, kind: 'tag',
     map: (v) => ({ label: codeLabel(statusMap.value, v), tone: statusTone(v as number) }) },
@@ -157,7 +157,7 @@ const searchFields = computed<FilterField[]>(() => [
 ])
 
 const PAGE_CAP = 500
-const fetchList: ListFetch = async ({ page, size, filters }) => {
+const fetchList: ListFetch<Pallet> = async ({ page, size, filters }) => {
   const f = filters as Record<string, unknown>
   const q: PalletSearchQuery = { pageSize: PAGE_CAP }
   if (f.palletNo) q.palletNo = String(f.palletNo)

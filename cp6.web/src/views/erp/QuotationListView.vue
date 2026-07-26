@@ -48,7 +48,7 @@ import { computed, onMounted, onBeforeUnmount, ref } from 'vue'
 import { useI18n } from 'vue-i18n'
 import { ElMessage, ElMessageBox } from 'element-plus'
 import { Plus } from '@element-plus/icons-vue'
-import CpListPage, { type ListColumn, type ListFetch, type SortOrder } from '@/components/templates/CpListPage.vue'
+import CpListPage, { type ListColumn, type ListFetch, type ListPageExpose, type SortOrder } from '@/components/templates/CpListPage.vue'
 import { type FilterField } from '@/components/templates/CpFilterBar.vue'
 import { type Tone } from '@/components/base/CpTag.vue'
 import { quotationApi } from '@/api/erp/quotation'
@@ -59,7 +59,7 @@ import { formatQty, formatNumber } from '@/utils/format'
 
 const { t } = useI18n()
 
-const listRef = ref<InstanceType<typeof CpListPage>>()
+const listRef = ref<ListPageExpose>()
 const bases = ref<MasterBase[]>([])
 
 // —— ステータス複数チェック（#15、toolbar）——
@@ -82,7 +82,7 @@ function statusTone(s?: string): Tone {
   return 'info'
 }
 
-const columns = computed<ListColumn[]>(() => [
+const columns = computed<ListColumn<QuotationListItem>[]>(() => [
   { prop: 'qtnNo', label: t('sales.term.qtnNo'), kind: 'mono', width: 120, fixed: 'left', sortable: 'custom' },
   { prop: 'qtnIssueDate', label: t('sales.qtn.issueDate'), kind: 'date', width: 110, sortable: 'custom' },
   { prop: 'baseCd', label: t('sales.term.base'), width: 70, sortable: 'custom' },
@@ -117,7 +117,7 @@ const searchFields = computed<FilterField[]>(() => [
   { key: 'customerProductName1', label: t('品名'), type: 'text' },
 ])
 
-const fetchList: ListFetch = async ({ page, size, filters, sortField, sortOrder }) => {
+const fetchList: ListFetch<QuotationListItem> = async ({ page, size, filters, sortField, sortOrder }) => {
   const f = filters as Record<string, unknown>
   const range = f.issueDate as [string, string] | undefined
   const q: Record<string, unknown> = {

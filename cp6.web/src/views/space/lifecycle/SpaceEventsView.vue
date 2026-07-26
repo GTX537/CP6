@@ -41,7 +41,7 @@ import { ref, computed, onMounted, onUnmounted } from 'vue'
 import { ElMessageBox } from 'element-plus'
 import { useI18n } from 'vue-i18n'
 import CpPageShell from '@/components/templates/CpPageShell.vue'
-import CpListPage, { type ListColumn, type ListFetch } from '@/components/templates/CpListPage.vue'
+import CpListPage, { type ListColumn, type ListFetch, type ListPageExpose } from '@/components/templates/CpListPage.vue'
 import { type Tone } from '@/components/base/CpTag.vue'
 import { publishApi } from '@/api/space/publish'
 import { useTOr } from '@/i18n/tOr'
@@ -56,7 +56,7 @@ const { t } = useI18n()
 const tr = useTOr()
 
 const PAGE_SIZE = 50
-const listRef = ref<InstanceType<typeof CpListPage> | null>(null)
+const listRef = ref<ListPageExpose | null>(null)
 const page = ref(1)
 const loading = ref(false)
 // 本页 rows.length===PAGE_SIZE 时才可能有下一页（无 total，游标翻页）
@@ -71,7 +71,7 @@ function statusTone(v: unknown): Tone {
   return STATUS_TONE[String(v)] ?? 'muted'
 }
 
-const columns = computed<ListColumn[]>(() => [
+const columns = computed<ListColumn<SpaceEventVO>[]>(() => [
   { prop: 'sourceNo', label: t('space.events.col.sourceNo'), width: 160, kind: 'mono' },
   { prop: 'hookName', label: t('space.events.col.hookName'), minWidth: 180, overflowTooltip: true },
   { prop: 'targetModule', label: t('space.events.col.targetModule'), width: 120 },
@@ -83,7 +83,7 @@ const columns = computed<ListColumn[]>(() => [
 ])
 
 // fetch 忽略模板 page/size（paginated=false → 恒 1/1000），改读本地 page 游标；返回当前页 rows，total=rows.length
-const fetchList: ListFetch = async () => {
+const fetchList: ListFetch<SpaceEventVO> = async () => {
   loading.value = true
   try {
     const res = await publishApi.events(page.value, PAGE_SIZE)

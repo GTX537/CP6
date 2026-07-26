@@ -85,7 +85,7 @@ import { useRouter } from 'vue-router'
 import { ElMessage } from 'element-plus'
 import { Check, CopyDocument, Refresh } from '@element-plus/icons-vue'
 import CpPageShell from '@/components/templates/CpPageShell.vue'
-import CpListPage, { type ListColumn, type ListFetch } from '@/components/templates/CpListPage.vue'
+import CpListPage, { type ListColumn, type ListFetch, type ListPageExpose } from '@/components/templates/CpListPage.vue'
 import { type FilterField } from '@/components/templates/CpFilterBar.vue'
 import CpTag from '@/components/base/CpTag.vue'
 import { backorderApi } from '@/api/erp/backorder'
@@ -97,7 +97,7 @@ type BackorderAction = 'close' | 'split'
 const { t } = useI18n()
 const router = useRouter()
 
-const listRef = ref<InstanceType<typeof CpListPage>>()
+const listRef = ref<ListPageExpose>()
 const total = ref<number>()
 const loading = ref(false)
 const actionLoading = ref(false)
@@ -114,7 +114,7 @@ const dialog = reactive<{
   reason: '',
 })
 
-const columns = computed<ListColumn[]>(() => [
+const columns = computed<ListColumn<BackorderQueueItem>[]>(() => [
   { prop: 'webOrderNo', label: t('erp.backorder.col.webOrderNo'), width: 155 },
   { prop: 'customerName', label: t('erp.backorder.col.customer'), minWidth: 180, overflowTooltip: true,
     map: (_v, row) => ({ label: (row as BackorderQueueItem).customerName || (row as BackorderQueueItem).customerCd || '' }) },
@@ -143,7 +143,7 @@ const searchFields = computed<FilterField[]>(() => [
   { key: 'dateTo', label: t('erp.backorder.search.dateTo'), type: 'date', valueFormat: 'YYYY-MM-DD' },
 ])
 
-const fetchList: ListFetch = async ({ filters }) => {
+const fetchList: ListFetch<BackorderQueueItem> = async ({ filters }) => {
   const f = filters as Record<string, unknown>
   loading.value = true
   try {

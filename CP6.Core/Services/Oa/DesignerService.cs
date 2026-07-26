@@ -88,7 +88,7 @@ public class DesignerService : IDesignerService
             throw new InvalidOperationException("E-WF-009");
 
         // ③ upsert（SaveDef 升版） + 身份码落库
-        await _flowDef.SaveDefAsync(req.FlowKey, req.FlowName, req.FormKey, req.SchemaJson, user);
+        await _flowDef.SaveDraftAsync(req.FlowKey, req.FlowName, req.FormKey, req.SchemaJson, req.RowVersion, user);
         var def = await _db.Wf_FlowDefs.FirstAsync(d => d.FlowKey == req.FlowKey);
         def.FunctionId = string.IsNullOrWhiteSpace(req.FunctionId) ? null : req.FunctionId;
         def.FlowCode = string.IsNullOrWhiteSpace(req.FlowCode) ? null : req.FlowCode;
@@ -102,7 +102,7 @@ public class DesignerService : IDesignerService
         if (await _db.Wf_FlowDefs.AnyAsync(d => d.FlowKey == req.NewFlowKey))
             throw new InvalidOperationException("E-WF-009");   // 新 FlowKey 已存在
         // 独立副本：同 schema/FormKey，清身份码 + 停用（避免撞唯一、需重新设定身份与启用）
-        await _flowDef.SaveDefAsync(req.NewFlowKey, req.NewFlowName, src.FormKey, src.SchemaJson, user);
+        await _flowDef.SaveDraftAsync(req.NewFlowKey, req.NewFlowName, src.FormKey, src.SchemaJson, null, user);
         var copy = await _db.Wf_FlowDefs.FirstAsync(d => d.FlowKey == req.NewFlowKey);
         copy.FunctionId = null; copy.FlowCode = null; copy.Enable = false;
         await _db.SaveChangesAsync();

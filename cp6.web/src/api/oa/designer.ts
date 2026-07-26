@@ -10,6 +10,8 @@ export const designerApi = {
   list:  (functionId?: string) => http.get('/oa/designer/list', { params: { functionId } }),
   load:  (flowKey: string) => http.get(`/oa/designer/load/${flowKey}`),
   save:  (body: SaveFlowBody) => http.post('/oa/designer/save', body),
+  publish: (flowKey: string, rowVersion?: string) =>
+    http.post(`/oa/flow-defs/${encodeURIComponent(flowKey)}/publish`, { rowVersion }),
   clone: (sourceFlowKey: string, newFlowKey: string, newFlowName: string) =>
            http.post('/oa/designer/clone', { sourceFlowKey, newFlowKey, newFlowName }),
   getServiceCatalog: async (): Promise<ServiceCatalog> => {

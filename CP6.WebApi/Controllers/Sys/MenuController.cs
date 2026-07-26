@@ -63,6 +63,67 @@ public class MenuController : ControllerBase
         return Ok(existing);
     }
 
+    /// <summary>
+    /// 批量保存菜单树的父子关系与同级顺序。
+    /// </summary>
+    [HttpPut("tree")]
+    [RequirePermission("menu", "edit")]
+    public async Task<IActionResult> UpdateTree([FromBody] MenuTreePosition[] positions)
+    {
+        if (positions.Length == 0)
+            return BadRequest(new { message = "菜单树不能为空" });
+
+        if (positions.Any(x => x.MenuId <= 0))
+            return BadRequest(new { message = "菜单 ID 必须大于 0" });
+
+        if (positions.Any(x => x.OrderNo < 0))
+            return BadRequest(new { message = "菜单排序不能小于 0" });
+
+        if (positions.GroupBy(x => x.MenuId).Any(group => group.Count() > 1))
+            return BadRequest(new { message = "菜单树包含重复 ID" });
+
+        var menus = await _context.Sys_Menus.ToListAsync();
+        var menuById = menus.ToDictionary(x => x.MenuId);
+        var missingId = positions
+            .Select(x => (int?)x.MenuId)
+            .FirstOrDefault(id => id.HasValue && !menuById.ContainsKey(id.Value));
+        if (missingId.HasValue)
+            return NotFound(new { message = $"菜单 {missingId.Value} 不存在" });
+
+        var parentById = menus.ToDictionary(x => x.MenuId, x => x.ParentId);
+        foreach (var position in positions)
+        {
+            if (position.ParentId == position.MenuId)
+                return BadRequest(new { message = $"菜单 {position.MenuId} 不能作为自己的父节点" });
+            if (position.ParentId.HasValue && !menuById.ContainsKey(position.ParentId.Value))
+                return BadRequest(new { message = $"父菜单 {position.ParentId.Value} 不存在" });
+
+            parentById[position.MenuId] = position.ParentId;
+        }
+
+        foreach (var position in positions)
+        {
+            var visited = new HashSet<int>();
+            int? currentId = position.MenuId;
+            while (currentId.HasValue)
+            {
+                if (!visited.Add(currentId.Value))
+                    return BadRequest(new { message = $"菜单 {position.MenuId} 的层级形成循环" });
+                currentId = parentById.GetValueOrDefault(currentId.Value);
+            }
+        }
+
+        foreach (var position in positions)
+        {
+            var menu = menuById[position.MenuId];
+            menu.ParentId = position.ParentId;
+            menu.OrderNo = position.OrderNo;
+        }
+
+        await _context.SaveChangesAsync();
+        return Ok(new { count = positions.Length });
+    }
+
     [HttpDelete]
     [RequirePermission("menu", "delete")]
     public async Task<IActionResult> Delete([FromBody] int[] ids)
@@ -77,3 +138,5 @@ public class MenuController : ControllerBase
         return Ok(new { count });
     }
 }
+
+public record MenuTreePosition(int MenuId, int? ParentId, int OrderNo);

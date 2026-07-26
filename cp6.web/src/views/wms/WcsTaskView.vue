@@ -111,7 +111,7 @@ import { ref, reactive, computed } from 'vue'
 import { ElMessage, type FormRules } from 'element-plus'
 import { useI18n } from 'vue-i18n'
 import CpPageShell from '@/components/templates/CpPageShell.vue'
-import CpListPage, { type ListColumn, type ListFetch } from '@/components/templates/CpListPage.vue'
+import CpListPage, { type ListColumn, type ListFetch, type ListPageExpose } from '@/components/templates/CpListPage.vue'
 import { type FilterField } from '@/components/templates/CpFilterBar.vue'
 import CpFormDialog from '@/components/templates/CpFormDialog.vue'
 import CpTag, { type Tone } from '@/components/base/CpTag.vue'
@@ -122,7 +122,7 @@ import { formatQty } from '@/utils/format'
 const { t } = useI18n()
 
 const total = ref<number>()
-const listRef = ref<InstanceType<typeof CpListPage>>()
+const listRef = ref<ListPageExpose>()
 
 const typeMap = computed<Record<string, string>>(() => ({
   MOVE: t('wms.wcs.type.move'),
@@ -145,7 +145,7 @@ function codeLabel(m: Record<string | number, string>, v: unknown): string {
   return m[v as number] || (v == null ? '' : String(v))
 }
 
-const columns = computed<ListColumn[]>(() => [
+const columns = computed<ListColumn<WcsTask>[]>(() => [
   { prop: 'taskNo', label: t('wms.wcs.fld.no'), kind: 'mono', width: 170 },
   { prop: 'status', label: t('wms.common.status'), width: 110, kind: 'tag',
     map: (v) => ({ label: codeLabel(statusMap.value, v), tone: statusTone(v as number) }) },
@@ -181,7 +181,7 @@ const searchFields = computed<FilterField[]>(() => [
   },
 ])
 
-const fetchList: ListFetch = async ({ page, size, filters }) => {
+const fetchList: ListFetch<WcsTask> = async ({ page, size, filters }) => {
   const f = filters as Record<string, unknown>
   const q: Record<string, unknown> = { pageSize: 100 }
   if (f.taskNo) q.taskNo = String(f.taskNo)

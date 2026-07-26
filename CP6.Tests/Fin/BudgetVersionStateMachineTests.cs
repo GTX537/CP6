@@ -9,7 +9,8 @@ namespace CP6.Tests.Fin;
 
 internal class StubApprovalForTest : IApprovalService
 {
-    public Task<Guid> SubmitAsync(string bizType, string bizId, Guid starterId, object? formSnapshot = null)
+    public Task<Guid> SubmitAsync(string bizType, string bizId, Guid starterId,
+        object? formSnapshot = null, Guid? instanceId = null)
         => Task.FromResult(Guid.NewGuid());
 
     public Task<ApprovalStatus> GetStatusAsync(string bizType, string bizId)

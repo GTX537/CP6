@@ -123,6 +123,9 @@ builder.Services.AddScoped<CP6.Core.Services.Wf.IApproverResolver, CP6.Core.Serv
 builder.Services.AddScoped<CP6.Core.Services.Wf.IApprovalStagePlanner, CP6.Core.Services.Wf.ApprovalStagePlanner>(); // 串簽 T2 档展平服务
 builder.Services.AddScoped<CP6.Core.Services.Wf.IApproverMapService, CP6.Core.Services.Wf.ApproverMapService>(); // ②b 审批人映射维护
 builder.Services.AddScoped<CP6.Core.Services.Wf.IFormService, CP6.Core.Services.Wf.FormService>();           // 章02 表单引擎（JSON 列 + 服务端 schema 复核）
+builder.Services.AddScoped<CP6.Core.Services.Wf.IDefinitionVersionResolver, CP6.Core.Services.Wf.DefinitionVersionResolver>();
+builder.Services.AddScoped<CP6.Core.Services.Wf.IFlowFormCompatibilityValidator, CP6.Core.Services.Wf.FlowFormCompatibilityValidator>();
+builder.Services.AddScoped<CP6.Core.Services.Wf.IFormSubmissionService, CP6.Core.Services.Wf.FormSubmissionService>();
 builder.Services.AddScoped<CP6.Core.Services.Wf.FlowEngine>();                                                // 章03 流程引擎状态机（会签/条件/幂等）；WfServiceJobService ctor 注入具体类型（internal Resume/FailServiceTokenAsync 不在接口上）
 builder.Services.AddScoped<CP6.Core.Services.Wf.IFlowEngine>(sp => sp.GetRequiredService<CP6.Core.Services.Wf.FlowEngine>()); // 接口与具体类共享同一 scoped 实例
 builder.Services.AddScoped<CP6.Core.Services.Wf.IFlowTriggerService, CP6.Core.Services.Wf.FlowTriggerService>(); // 事件触发 start：三入口单一出口（D2）
@@ -139,6 +142,7 @@ builder.Services.AddScoped<CP6.Core.Services.Wf.INodeHandler>(sp => new CP6.Core
     sp.GetRequiredService<IConfiguration>().GetValue<int?>("Wfs:SubFlowMaxInstances")));   // 子流程 B-T1 节点处理器（N 上限可配，缺省 100）
 builder.Services.AddScoped<CP6.Core.Services.Wf.IFlowDefService, CP6.Core.Services.Wf.FlowDefService>();     // 章03/04 流程定义 + 实例详情查询
 builder.Services.AddScoped<CP6.Core.Services.Wf.IWfNotifier, CP6.WebApi.Services.PersistentWfNotifier>();     // Phase D-1 N-T4 复合通知器（持久化+SignalR+邮件；替换 SignalRWfNotifier）
+builder.Services.AddHostedService<CP6.WebApi.BackgroundServices.WfNotificationDispatchWorker>();
 builder.Services.AddScoped<CP6.Core.Services.Wf.ITaskCenterService, CP6.Core.Services.Wf.TaskCenterService>(); // 章04 待办中心（待办/我的申请/撤回）
 
 // 4.0b OA(Wf) 阶段2 集成（章05 ★）：业务接入 OA 的同步回调
@@ -193,6 +197,12 @@ builder.Services.AddScoped<CP6.Core.Services.Wf.IWorkCalendarService, CP6.Core.S
 builder.Services.AddScoped<CP6.Core.Services.Oa.IForecastService, CP6.Core.Services.Oa.ForecastService>();
 builder.Services.AddScoped<CP6.Core.Services.Oa.IInboxService, CP6.Core.Services.Oa.InboxService>();
 builder.Services.AddScoped<CP6.Core.Services.Oa.IDraftService, CP6.Core.Services.Oa.DraftService>();
+builder.Services.AddScoped<CP6.Core.Services.Oa.IOaInstanceAccessService, CP6.Core.Services.Oa.OaInstanceAccessService>();
+builder.Services.AddScoped<CP6.Core.Services.Oa.IFormFieldProjectionService, CP6.Core.Services.Oa.FormFieldProjectionService>();
+builder.Services.AddScoped<CP6.Core.Services.Oa.ITaskDecisionService, CP6.Core.Services.Oa.TaskDecisionService>();
+builder.Services.AddScoped<CP6.Core.Services.Oa.IApprovalPanelService, CP6.Core.Services.Oa.ApprovalPanelService>();
+builder.Services.AddScoped<CP6.Core.Services.Oa.IApprovalBusinessAccessAuthorizer, CP6.Core.Services.Pur.PurchaseRequestApprovalAccessAuthorizer>();
+builder.Services.AddScoped<CP6.Core.Services.Oa.IOaP0MigrationService, CP6.Core.Services.Oa.OaP0MigrationService>();
 builder.Services.AddScoped<CP6.Core.Services.Oa.IFlowAdminService, CP6.Core.Services.Oa.FlowAdminService>();
 
 // 4.0e OA 信箱进阶（Phase C）
@@ -309,6 +319,7 @@ builder.Services.AddScoped<CP6.Core.Services.Sys.IFieldPermService, CP6.Core.Ser
 // 章03 数据权限资源注册（业务实体接 IDataScoped 后即生效；范围 1本人/2本部门/3及下级/4自定义/5全部）
 CP6.Core.Services.Sys.DataScopeRegistry.Register("order", "受注", new[] { 1, 2, 3, 4, 5 }, 2);
 CP6.Core.Services.Sys.DataScopeRegistry.Register("product", "製品", new[] { 1, 2, 3, 4, 5 }, 5);
+CP6.Core.Services.Sys.DataScopeRegistry.Register("pur-pr", "采购申请", new[] { 1, 2, 3, 4, 5 }, 1);
 // 章04 字段权限资源/字段注册（业务返回 DTO 贴 [FieldMask] 后即生效）
 CP6.Core.Services.Sys.FieldRegistry.Register("order",
     new CP6.Core.Services.Sys.FieldRegistry.Field("UnitPrice", "単価"),
@@ -695,6 +706,26 @@ builder.Services.AddCors(options =>
 });
 
 var app = builder.Build();
+
+if (args.Contains("--oa-p0-preflight", StringComparer.OrdinalIgnoreCase) ||
+    args.Contains("--oa-p0-backfill", StringComparer.OrdinalIgnoreCase))
+{
+    using var oaP0Scope = app.Services.CreateScope();
+    var migration = oaP0Scope.ServiceProvider.GetRequiredService<CP6.Core.Services.Oa.IOaP0MigrationService>();
+    if (args.Contains("--oa-p0-preflight", StringComparer.OrdinalIgnoreCase))
+    {
+        var report = await migration.PreflightAsync();
+        Console.WriteLine(System.Text.Json.JsonSerializer.Serialize(report));
+        Environment.ExitCode = report.SafeToBackfill ? 0 : 2;
+    }
+    else
+    {
+        var report = await migration.BackfillAsync();
+        Console.WriteLine(System.Text.Json.JsonSerializer.Serialize(report));
+        Environment.ExitCode = 0;
+    }
+    return;
+}
 
 // 票3：启动期校验已注册连接器的单次调用上界 < 服务任务租约（防长调用被 reaper 重投→重复外呼）。
 using (var _leaseScope = app.Services.CreateScope())

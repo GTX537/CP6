@@ -119,7 +119,7 @@ public partial class FlowEngine
 
         await AssertActorMayHandleAsync(task, actorId);   // ★ 归属闸（P0 票#1）：只有本任务处理人可退回
 
-        var schema = await LoadSchemaAsync(inst.FlowKey);
+        var schema = await LoadSchemaAsync(inst);
 
         switch ((target.Kind ?? "node").Trim().ToLowerInvariant())
         {

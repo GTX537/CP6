@@ -1,6 +1,6 @@
 <script setup lang="ts">
-import { Handle, Position } from '@vue-flow/core'
 import type { NodeProps } from '@vue-flow/core'
+import FourWayHandles from './FourWayHandles.vue'
 
 const props = defineProps<NodeProps>()
 
@@ -12,11 +12,10 @@ type NodeData = {
 <template>
   <!-- Gateway node: diamond shape for parallel split / join -->
   <div :class="['vf-node-gateway-wrap', { 'vf-node--selected': props.selected }]">
-    <Handle type="target" :position="Position.Top" />
+    <FourWayHandles />
     <div class="vf-node-gateway">
       <span class="gw-label">{{ (props.data as NodeData)?.type === 'parallelJoin' ? '汇聚' : '分叉' }}</span>
     </div>
-    <Handle type="source" :position="Position.Bottom" />
   </div>
 </template>
 

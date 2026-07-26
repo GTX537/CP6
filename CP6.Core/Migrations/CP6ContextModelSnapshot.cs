@@ -12335,6 +12335,10 @@ namespace CP6.Core.Migrations
                         .HasMaxLength(100)
                         .HasColumnType("nvarchar(100)");
 
+                    b.Property<string>("DetailRoute")
+                        .HasMaxLength(300)
+                        .HasColumnType("nvarchar(300)");
+
                     b.Property<bool>("Enable")
                         .HasColumnType("bit");
 
@@ -12527,6 +12531,9 @@ namespace CP6.Core.Migrations
                     b.HasIndex("RecipientId", "IsRead")
                         .HasDatabaseName("IX_Wf_FlowCc_Recipient");
 
+                    b.HasIndex("TenantId", "RecipientId", "InstanceId")
+                        .HasDatabaseName("IX_Wf_FlowCc_Participant");
+
                     b.ToTable("Wf_FlowCc");
                 });
 
@@ -12610,7 +12617,6 @@ namespace CP6.Core.Migrations
                         .HasColumnType("nvarchar(200)");
 
                     b.Property<string>("FormKey")
-                        .IsRequired()
                         .HasMaxLength(100)
                         .HasColumnType("nvarchar(100)");
 
@@ -12652,6 +12658,129 @@ namespace CP6.Core.Migrations
                         .HasFilter("[FunctionId] IS NOT NULL");
 
                     b.ToTable("Wf_FlowDef");
+                });
+
+            modelBuilder.Entity("CP6.Entity.DomainModels.Wf.Wf_FlowDefVersion", b =>
+                {
+                    b.Property<Guid>("Id")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("uniqueidentifier");
+
+                    b.Property<DateTime>("CreateDate")
+                        .HasColumnType("datetime2");
+
+                    b.Property<string>("Creator")
+                        .HasMaxLength(100)
+                        .HasColumnType("nvarchar(100)");
+
+                    b.Property<Guid>("FlowDefId")
+                        .HasColumnType("uniqueidentifier");
+
+                    b.Property<string>("FlowNameSnapshot")
+                        .IsRequired()
+                        .HasMaxLength(200)
+                        .HasColumnType("nvarchar(200)");
+
+                    b.Property<string>("Modifier")
+                        .HasMaxLength(100)
+                        .HasColumnType("nvarchar(100)");
+
+                    b.Property<DateTime?>("ModifyDate")
+                        .HasColumnType("datetime2");
+
+                    b.Property<DateTime?>("PublishedAtUtc")
+                        .HasColumnType("datetime2");
+
+                    b.Property<Guid?>("PublishedBy")
+                        .HasColumnType("uniqueidentifier");
+
+                    b.Property<byte[]>("RowVersion")
+                        .IsConcurrencyToken()
+                        .ValueGeneratedOnAddOrUpdate()
+                        .HasColumnType("rowversion");
+
+                    b.Property<string>("SchemaJson")
+                        .IsRequired()
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<int>("Status")
+                        .HasColumnType("int");
+
+                    b.Property<Guid>("TenantId")
+                        .HasColumnType("uniqueidentifier");
+
+                    b.Property<int>("Version")
+                        .HasColumnType("int");
+
+                    b.HasKey("Id");
+
+                    b.HasIndex("FlowDefId");
+
+                    b.HasIndex("TenantId", "FlowDefId", "Status")
+                        .IsUnique()
+                        .HasDatabaseName("UX_Wf_FlowDefVersion_OneDraft")
+                        .HasFilter("[Status] = 0");
+
+                    b.HasIndex("TenantId", "FlowDefId", "Version")
+                        .IsUnique()
+                        .HasDatabaseName("UX_Wf_FlowDefVersion");
+
+                    b.ToTable("Wf_FlowDefVersion");
+                });
+
+            modelBuilder.Entity("CP6.Entity.DomainModels.Wf.Wf_FlowDefVersionDependency", b =>
+                {
+                    b.Property<Guid>("Id")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("uniqueidentifier");
+
+                    b.Property<DateTime>("CreateDate")
+                        .HasColumnType("datetime2");
+
+                    b.Property<string>("Creator")
+                        .HasMaxLength(100)
+                        .HasColumnType("nvarchar(100)");
+
+                    b.Property<string>("DependencyType")
+                        .IsRequired()
+                        .HasMaxLength(30)
+                        .HasColumnType("nvarchar(30)");
+
+                    b.Property<Guid>("FlowDefVersionId")
+                        .HasColumnType("uniqueidentifier");
+
+                    b.Property<string>("Modifier")
+                        .HasMaxLength(100)
+                        .HasColumnType("nvarchar(100)");
+
+                    b.Property<DateTime?>("ModifyDate")
+                        .HasColumnType("datetime2");
+
+                    b.Property<string>("NodeId")
+                        .IsRequired()
+                        .HasMaxLength(100)
+                        .HasColumnType("nvarchar(100)");
+
+                    b.Property<Guid>("TargetFlowDefVersionId")
+                        .HasColumnType("uniqueidentifier");
+
+                    b.Property<Guid>("TenantId")
+                        .HasColumnType("uniqueidentifier");
+
+                    b.HasKey("Id");
+
+                    b.HasIndex("FlowDefVersionId");
+
+                    b.HasIndex("TargetFlowDefVersionId");
+
+                    b.HasIndex("TenantId", "TargetFlowDefVersionId")
+                        .HasDatabaseName("IX_Wf_FlowDefVersionDependency_Target");
+
+                    b.HasIndex("TenantId", "FlowDefVersionId", "NodeId", "DependencyType")
+                        .IsUnique()
+                        .HasDatabaseName("UX_Wf_FlowDefVersionDependency");
+
+                    b.ToTable("Wf_FlowDefVersionDependency");
                 });
 
             modelBuilder.Entity("CP6.Entity.DomainModels.Wf.Wf_FlowDelegate", b =>
@@ -12796,6 +12925,15 @@ namespace CP6.Core.Migrations
                     b.HasIndex("InstanceId", "TokenId")
                         .HasDatabaseName("IX_Wf_FlowFormTo_Token");
 
+                    b.HasIndex("TenantId", "ActualHandlerId", "InstanceId")
+                        .HasDatabaseName("IX_Wf_FlowFormTo_ActualParticipant");
+
+                    b.HasIndex("TenantId", "ExpectedHandlerId", "InstanceId")
+                        .HasDatabaseName("IX_Wf_FlowFormTo_ExpectedParticipant");
+
+                    b.HasIndex("TenantId", "OnBehalfOfId", "InstanceId")
+                        .HasDatabaseName("IX_Wf_FlowFormTo_OnBehalfParticipant");
+
                     b.ToTable("Wf_FlowFormTo");
                 });
 
@@ -12876,10 +13014,19 @@ namespace CP6.Core.Migrations
                         .HasMaxLength(100)
                         .HasColumnType("nvarchar(100)");
 
+                    b.Property<Guid?>("FlowDefVersionId")
+                        .HasColumnType("uniqueidentifier");
+
                     b.Property<string>("FlowKey")
                         .IsRequired()
                         .HasMaxLength(100)
                         .HasColumnType("nvarchar(100)");
+
+                    b.Property<Guid?>("FormDataId")
+                        .HasColumnType("uniqueidentifier");
+
+                    b.Property<Guid?>("FormDefVersionId")
+                        .HasColumnType("uniqueidentifier");
 
                     b.Property<string>("Modifier")
                         .HasMaxLength(100)
@@ -12925,6 +13072,11 @@ namespace CP6.Core.Migrations
 
                     b.HasIndex("TenantId", "ParentInstanceId")
                         .HasDatabaseName("IX_Wf_FlowInstance_Parent");
+
+                    b.HasIndex("TenantId", "BizType", "BizId")
+                        .IsUnique()
+                        .HasDatabaseName("UX_Wf_FlowInstance_ActiveBusiness")
+                        .HasFilter("[BizType] IS NOT NULL AND [BizId] IS NOT NULL AND [Status] IN (0, 4)");
 
                     b.HasIndex("TenantId", "ParentTokenId", "SubIndex")
                         .IsUnique()
@@ -13017,6 +13169,9 @@ namespace CP6.Core.Migrations
 
                     b.HasIndex("Status", "DueAt")
                         .HasDatabaseName("IX_Wf_FlowTask_StatusDue");
+
+                    b.HasIndex("TenantId", "AssigneeId", "Status", "InstanceId", "CreateDate")
+                        .HasDatabaseName("IX_Wf_FlowTask_PendingPage");
 
                     b.HasIndex("InstanceId", "NodeId", "TokenId", "StageIndex", "StageRound", "Status")
                         .HasDatabaseName("IX_Wf_FlowTask_Tally");
@@ -13173,6 +13328,9 @@ namespace CP6.Core.Migrations
                         .IsRequired()
                         .HasColumnType("nvarchar(max)");
 
+                    b.Property<Guid?>("FormDefVersionId")
+                        .HasColumnType("uniqueidentifier");
+
                     b.Property<string>("FormKey")
                         .IsRequired()
                         .HasMaxLength(100)
@@ -13188,6 +13346,25 @@ namespace CP6.Core.Migrations
                     b.Property<DateTime?>("ModifyDate")
                         .HasColumnType("datetime2");
 
+                    b.Property<string>("RequestHash")
+                        .HasMaxLength(64)
+                        .HasColumnType("nvarchar(64)");
+
+                    b.Property<byte[]>("RowVersion")
+                        .IsConcurrencyToken()
+                        .ValueGeneratedOnAddOrUpdate()
+                        .HasColumnType("rowversion");
+
+                    b.Property<string>("SubmissionKey")
+                        .HasMaxLength(100)
+                        .HasColumnType("nvarchar(100)");
+
+                    b.Property<DateTime?>("SubmittedAtUtc")
+                        .HasColumnType("datetime2");
+
+                    b.Property<Guid?>("SubmittedBy")
+                        .HasColumnType("uniqueidentifier");
+
                     b.Property<Guid>("TenantId")
                         .HasColumnType("uniqueidentifier");
 
@@ -13198,6 +13375,14 @@ namespace CP6.Core.Migrations
 
                     b.HasIndex("FormKey")
                         .HasDatabaseName("IX_Wf_FormData_FormKey");
+
+                    b.HasIndex("TenantId", "SubmissionKey")
+                        .IsUnique()
+                        .HasDatabaseName("UX_Wf_FormData_SubmissionKey")
+                        .HasFilter("[SubmissionKey] IS NOT NULL");
+
+                    b.HasIndex("TenantId", "FormDefVersionId", "SubmittedAtUtc")
+                        .HasDatabaseName("IX_Wf_FormData_VersionSubmitted");
 
                     b.ToTable("Wf_FormData");
                 });
@@ -13262,6 +13447,151 @@ namespace CP6.Core.Migrations
                     b.ToTable("Wf_FormDef");
                 });
 
+            modelBuilder.Entity("CP6.Entity.DomainModels.Wf.Wf_FormDefVersion", b =>
+                {
+                    b.Property<Guid>("Id")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("uniqueidentifier");
+
+                    b.Property<DateTime>("CreateDate")
+                        .HasColumnType("datetime2");
+
+                    b.Property<string>("Creator")
+                        .HasMaxLength(100)
+                        .HasColumnType("nvarchar(100)");
+
+                    b.Property<Guid>("FormDefId")
+                        .HasColumnType("uniqueidentifier");
+
+                    b.Property<string>("FormNameSnapshot")
+                        .IsRequired()
+                        .HasMaxLength(200)
+                        .HasColumnType("nvarchar(200)");
+
+                    b.Property<string>("Modifier")
+                        .HasMaxLength(100)
+                        .HasColumnType("nvarchar(100)");
+
+                    b.Property<DateTime?>("ModifyDate")
+                        .HasColumnType("datetime2");
+
+                    b.Property<DateTime?>("PublishedAtUtc")
+                        .HasColumnType("datetime2");
+
+                    b.Property<Guid?>("PublishedBy")
+                        .HasColumnType("uniqueidentifier");
+
+                    b.Property<byte[]>("RowVersion")
+                        .IsConcurrencyToken()
+                        .ValueGeneratedOnAddOrUpdate()
+                        .HasColumnType("rowversion");
+
+                    b.Property<string>("SchemaJson")
+                        .IsRequired()
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<int>("Status")
+                        .HasColumnType("int");
+
+                    b.Property<Guid>("TenantId")
+                        .HasColumnType("uniqueidentifier");
+
+                    b.Property<int>("Version")
+                        .HasColumnType("int");
+
+                    b.HasKey("Id");
+
+                    b.HasIndex("FormDefId");
+
+                    b.HasIndex("TenantId", "FormDefId", "Status")
+                        .IsUnique()
+                        .HasDatabaseName("UX_Wf_FormDefVersion_OneDraft")
+                        .HasFilter("[Status] = 0");
+
+                    b.HasIndex("TenantId", "FormDefId", "Version")
+                        .IsUnique()
+                        .HasDatabaseName("UX_Wf_FormDefVersion");
+
+                    b.ToTable("Wf_FormDefVersion");
+                });
+
+            modelBuilder.Entity("CP6.Entity.DomainModels.Wf.Wf_FormDraft", b =>
+                {
+                    b.Property<Guid>("Id")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("uniqueidentifier");
+
+                    b.Property<DateTime>("CreateDate")
+                        .HasColumnType("datetime2");
+
+                    b.Property<string>("Creator")
+                        .HasMaxLength(100)
+                        .HasColumnType("nvarchar(100)");
+
+                    b.Property<string>("DataJson")
+                        .IsRequired()
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<Guid>("FormDefId")
+                        .HasColumnType("uniqueidentifier");
+
+                    b.Property<Guid>("FormDefVersionId")
+                        .HasColumnType("uniqueidentifier");
+
+                    b.Property<Guid?>("LegacyFlowInstanceId")
+                        .HasColumnType("uniqueidentifier");
+
+                    b.Property<string>("Modifier")
+                        .HasMaxLength(100)
+                        .HasColumnType("nvarchar(100)");
+
+                    b.Property<DateTime?>("ModifyDate")
+                        .HasColumnType("datetime2");
+
+                    b.Property<Guid>("OwnerUserId")
+                        .HasColumnType("uniqueidentifier");
+
+                    b.Property<Guid?>("RebasedFromVersionId")
+                        .HasColumnType("uniqueidentifier");
+
+                    b.Property<byte[]>("RowVersion")
+                        .IsConcurrencyToken()
+                        .ValueGeneratedOnAddOrUpdate()
+                        .HasColumnType("rowversion");
+
+                    b.Property<int>("Status")
+                        .HasColumnType("int");
+
+                    b.Property<DateTime?>("SubmittedAtUtc")
+                        .HasColumnType("datetime2");
+
+                    b.Property<Guid?>("SubmittedFormDataId")
+                        .HasColumnType("uniqueidentifier");
+
+                    b.Property<Guid>("TenantId")
+                        .HasColumnType("uniqueidentifier");
+
+                    b.Property<string>("Title")
+                        .HasMaxLength(200)
+                        .HasColumnType("nvarchar(200)");
+
+                    b.HasKey("Id");
+
+                    b.HasIndex("FormDefId");
+
+                    b.HasIndex("FormDefVersionId");
+
+                    b.HasIndex("TenantId", "LegacyFlowInstanceId")
+                        .IsUnique()
+                        .HasDatabaseName("UX_Wf_FormDraft_Legacy")
+                        .HasFilter("[LegacyFlowInstanceId] IS NOT NULL");
+
+                    b.HasIndex("TenantId", "OwnerUserId", "Status", "ModifyDate")
+                        .HasDatabaseName("IX_Wf_FormDraft_Owner");
+
+                    b.ToTable("Wf_FormDraft");
+                });
+
             modelBuilder.Entity("CP6.Entity.DomainModels.Wf.Wf_FormFavorite", b =>
                 {
                     b.Property<Guid>("Id")
@@ -13300,6 +13630,57 @@ namespace CP6.Core.Migrations
                         .HasDatabaseName("UX_Wf_FormFavorite");
 
                     b.ToTable("Wf_FormFavorite");
+                });
+
+            modelBuilder.Entity("CP6.Entity.DomainModels.Wf.Wf_FormFlowBinding", b =>
+                {
+                    b.Property<Guid>("Id")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("uniqueidentifier");
+
+                    b.Property<DateTime>("CreateDate")
+                        .HasColumnType("datetime2");
+
+                    b.Property<string>("Creator")
+                        .HasMaxLength(100)
+                        .HasColumnType("nvarchar(100)");
+
+                    b.Property<bool>("Enable")
+                        .HasColumnType("bit");
+
+                    b.Property<Guid>("FlowDefId")
+                        .HasColumnType("uniqueidentifier");
+
+                    b.Property<Guid>("FormDefId")
+                        .HasColumnType("uniqueidentifier");
+
+                    b.Property<string>("Modifier")
+                        .HasMaxLength(100)
+                        .HasColumnType("nvarchar(100)");
+
+                    b.Property<DateTime?>("ModifyDate")
+                        .HasColumnType("datetime2");
+
+                    b.Property<byte[]>("RowVersion")
+                        .IsConcurrencyToken()
+                        .ValueGeneratedOnAddOrUpdate()
+                        .HasColumnType("rowversion");
+
+                    b.Property<Guid>("TenantId")
+                        .HasColumnType("uniqueidentifier");
+
+                    b.HasKey("Id");
+
+                    b.HasIndex("FlowDefId");
+
+                    b.HasIndex("FormDefId");
+
+                    b.HasIndex("TenantId", "FormDefId")
+                        .IsUnique()
+                        .HasDatabaseName("UX_Wf_FormFlowBinding_Active")
+                        .HasFilter("[Enable] = 1");
+
+                    b.ToTable("Wf_FormFlowBinding");
                 });
 
             modelBuilder.Entity("CP6.Entity.DomainModels.Wf.Wf_InboxPref", b =>
@@ -13358,9 +13739,28 @@ namespace CP6.Core.Migrations
                         .HasMaxLength(100)
                         .HasColumnType("nvarchar(100)");
 
+                    b.Property<int>("DispatchAttempts")
+                        .HasColumnType("int");
+
+                    b.Property<int>("DispatchStatus")
+                        .HasColumnType("int");
+
+                    b.Property<DateTime?>("DispatchedAtUtc")
+                        .HasColumnType("datetime2");
+
+                    b.Property<bool>("EmailRequested")
+                        .HasColumnType("bit");
+
+                    b.Property<string>("EventKey")
+                        .HasMaxLength(300)
+                        .HasColumnType("nvarchar(300)");
+
                     b.Property<string>("FlowKey")
                         .HasMaxLength(100)
                         .HasColumnType("nvarchar(100)");
+
+                    b.Property<bool>("InAppRequested")
+                        .HasColumnType("bit");
 
                     b.Property<Guid?>("InstanceId")
                         .HasColumnType("uniqueidentifier");
@@ -13368,11 +13768,18 @@ namespace CP6.Core.Migrations
                     b.Property<bool>("IsRead")
                         .HasColumnType("bit");
 
+                    b.Property<string>("LastDispatchError")
+                        .HasMaxLength(2000)
+                        .HasColumnType("nvarchar(2000)");
+
                     b.Property<string>("Modifier")
                         .HasMaxLength(100)
                         .HasColumnType("nvarchar(100)");
 
                     b.Property<DateTime?>("ModifyDate")
+                        .HasColumnType("datetime2");
+
+                    b.Property<DateTime?>("NextAttemptAtUtc")
                         .HasColumnType("datetime2");
 
                     b.Property<DateTime?>("ReadAt")
@@ -13396,6 +13803,14 @@ namespace CP6.Core.Migrations
                         .HasColumnType("uniqueidentifier");
 
                     b.HasKey("Id");
+
+                    b.HasIndex("TenantId", "EventKey")
+                        .IsUnique()
+                        .HasDatabaseName("UX_Wf_Notification_Event")
+                        .HasFilter("[EventKey] IS NOT NULL");
+
+                    b.HasIndex("TenantId", "DispatchStatus", "NextAttemptAtUtc")
+                        .HasDatabaseName("IX_Wf_Notification_Dispatch");
 
                     b.HasIndex("TenantId", "UserId", "IsRead")
                         .HasDatabaseName("IX_Wf_Notification_UserRead");
@@ -17660,6 +18075,69 @@ namespace CP6.Core.Migrations
                         .HasForeignKey("MatchNo")
                         .HasPrincipalKey("MatchNo")
                         .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+                });
+
+            modelBuilder.Entity("CP6.Entity.DomainModels.Wf.Wf_FlowDefVersion", b =>
+                {
+                    b.HasOne("CP6.Entity.DomainModels.Wf.Wf_FlowDef", null)
+                        .WithMany()
+                        .HasForeignKey("FlowDefId")
+                        .OnDelete(DeleteBehavior.Restrict)
+                        .IsRequired();
+                });
+
+            modelBuilder.Entity("CP6.Entity.DomainModels.Wf.Wf_FlowDefVersionDependency", b =>
+                {
+                    b.HasOne("CP6.Entity.DomainModels.Wf.Wf_FlowDefVersion", null)
+                        .WithMany()
+                        .HasForeignKey("FlowDefVersionId")
+                        .OnDelete(DeleteBehavior.Restrict)
+                        .IsRequired();
+
+                    b.HasOne("CP6.Entity.DomainModels.Wf.Wf_FlowDefVersion", null)
+                        .WithMany()
+                        .HasForeignKey("TargetFlowDefVersionId")
+                        .OnDelete(DeleteBehavior.Restrict)
+                        .IsRequired();
+                });
+
+            modelBuilder.Entity("CP6.Entity.DomainModels.Wf.Wf_FormDefVersion", b =>
+                {
+                    b.HasOne("CP6.Entity.DomainModels.Wf.Wf_FormDef", null)
+                        .WithMany()
+                        .HasForeignKey("FormDefId")
+                        .OnDelete(DeleteBehavior.Restrict)
+                        .IsRequired();
+                });
+
+            modelBuilder.Entity("CP6.Entity.DomainModels.Wf.Wf_FormDraft", b =>
+                {
+                    b.HasOne("CP6.Entity.DomainModels.Wf.Wf_FormDef", null)
+                        .WithMany()
+                        .HasForeignKey("FormDefId")
+                        .OnDelete(DeleteBehavior.Restrict)
+                        .IsRequired();
+
+                    b.HasOne("CP6.Entity.DomainModels.Wf.Wf_FormDefVersion", null)
+                        .WithMany()
+                        .HasForeignKey("FormDefVersionId")
+                        .OnDelete(DeleteBehavior.Restrict)
+                        .IsRequired();
+                });
+
+            modelBuilder.Entity("CP6.Entity.DomainModels.Wf.Wf_FormFlowBinding", b =>
+                {
+                    b.HasOne("CP6.Entity.DomainModels.Wf.Wf_FlowDef", null)
+                        .WithMany()
+                        .HasForeignKey("FlowDefId")
+                        .OnDelete(DeleteBehavior.Restrict)
+                        .IsRequired();
+
+                    b.HasOne("CP6.Entity.DomainModels.Wf.Wf_FormDef", null)
+                        .WithMany()
+                        .HasForeignKey("FormDefId")
+                        .OnDelete(DeleteBehavior.Restrict)
                         .IsRequired();
                 });
 

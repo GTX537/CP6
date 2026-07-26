@@ -73,7 +73,7 @@ import { useRouter, useRoute } from 'vue-router'
 import { ElMessage, ElMessageBox, type FormRules } from 'element-plus'
 import { useI18n } from 'vue-i18n'
 import CpPageShell from '@/components/templates/CpPageShell.vue'
-import CpListPage, { type ListColumn, type ListFetch } from '@/components/templates/CpListPage.vue'
+import CpListPage, { type ListColumn, type ListFetch, type ListPageExpose } from '@/components/templates/CpListPage.vue'
 import CpFormDialog from '@/components/templates/CpFormDialog.vue'
 import CpEmpty from '@/components/base/CpEmpty.vue'
 import { siteApi } from '@/api/space/site'
@@ -86,7 +86,7 @@ const route = useRoute()
 
 const total = ref<number>()
 // in-place 变更后命令式刷新（保留当前筛选/页码）
-const listRef = ref<InstanceType<typeof CpListPage> | null>(null)
+const listRef = ref<ListPageExpose | null>(null)
 function reloadList() { listRef.value?.reload() }
 
 // —— 站点上下文 ——
@@ -105,7 +105,7 @@ watch(selectedSiteId, (nv, ov) => {
   if (nv && ov) nextTick(reloadList)
 })
 
-const columns = computed<ListColumn[]>(() => [
+const columns = computed<ListColumn<FloorVO>[]>(() => [
   { prop: 'level', label: t('space.floor.fld.level'), width: 100, kind: 'num' },
   { prop: 'floorCode', label: t('space.floor.fld.floorCode'), width: 160, kind: 'mono' },
   { prop: 'floorName', label: t('space.floor.fld.floorName'), minWidth: 200 },
@@ -114,7 +114,7 @@ const columns = computed<ListColumn[]>(() => [
 ])
 
 // list 端点按 siteId 返回全量 → 前端切片分页（照 SpaceSiteView 切片写法）
-const fetchList: ListFetch = async ({ page, size }) => {
+const fetchList: ListFetch<FloorVO> = async ({ page, size }) => {
   if (!selectedSiteId.value) return { rows: [], total: 0 }
   const res = await floorApi.list(selectedSiteId.value)
   const all = res.data || []

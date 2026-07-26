@@ -161,7 +161,14 @@ public partial class FlowEngine
     /// <see cref="AdvanceAlongErrorEdge"/> 走 <c>IsError==true</c> 的边。</para></summary>
     internal async Task AdvanceToken(Wf_FlowInstance inst, FlowSchema schema, Wf_FlowToken token)
     {
-        foreach (var edge in schema.Edges.Where(e => e.From == token.NodeId && e.IsError != true))
+        var outgoing = schema.Edges
+            .Where(e => e.From == token.NodeId && e.IsError != true)
+            .ToList();
+        // 旧流程没有 Priority 时严格保留 SchemaJson 声明顺序；新版流程才启用显式优先级。
+        if (outgoing.Any(e => e.Priority.HasValue))
+            outgoing = outgoing.OrderBy(e => e.Priority ?? int.MaxValue).ToList();
+
+        foreach (var edge in outgoing)
         {
             if (!ExpressionEvaluator.Evaluate(edge.Condition, inst.VarsJson)) continue;
             var target = FindNode(schema, edge.To);
@@ -204,7 +211,7 @@ public partial class FlowEngine
         if (task is null || task.Status != FlowTaskStatus.Pending) return;
         var inst = await _db.Wf_FlowInstances.FirstOrDefaultAsync(i => i.Id == task.InstanceId, ct);
         if (inst is null || inst.Status != FlowInstanceStatus.Running) return;
-        var schema = Deserialize((await _db.Wf_FlowDefs.FirstAsync(d => d.FlowKey == inst.FlowKey, ct)).SchemaJson);
+        var schema = await LoadSchemaAsync(inst, ct);
         // 定位「本任务自己的」token（终审 Important#1）：按 task.TokenId 精确取，不按 (NodeId,Active) 泛取——
         // 畸形但合法 schema（split 双边汇入同一 approval）下同节点可有两枚 Active token，泛取可能选中兄弟 token
         // → 路由/作废/void 全打错支。三面（lookup/cancel/void）同源 task.TokenId。

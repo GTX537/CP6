@@ -41,7 +41,7 @@ public class PurPermissionSeedTests
         // 704 pur-match（既有）
         (704, "add"), (704, "release"), (704, "reject"),
         // 706 pur-pr（新增）
-        (706, "add"), (706, "submit"), (706, "convert"),
+        (706, "add"), (706, "submit"), (706, "convert"), (706, "query"),
         // 705 pur-rfq（新增）
         (705, "add"), (705, "invite"), (705, "quote"), (705, "rank"),
         (705, "select"), (705, "writeback"), (705, "convert"),
@@ -90,8 +90,8 @@ public class PurPermissionSeedTests
                 .Where(x => x.TenantId == tid && x.RoleId == 1).ToList();
 
             // 元组闭环计数：每租户各得全套 24。
-            Assert.Equal(24, menuActions.Count);
-            Assert.Equal(24, roleActions.Count);
+            Assert.Equal(25, menuActions.Count);
+            Assert.Equal(25, roleActions.Count);
 
             // 逐元组精确匹配（漏种 0 / 多种 0）。
             var maSet = menuActions.Select(x => (x.MenuId, x.ActionCode)).ToHashSet();
@@ -116,9 +116,9 @@ public class PurPermissionSeedTests
         Assert.Equal(ma1, db.Sys_MenuActions.IgnoreQueryFilters().Count());
         Assert.Equal(ra1, db.Sys_RoleActions.IgnoreQueryFilters().Count());
 
-        // 2 租户 × 24 元组 = 48。
-        Assert.Equal(48, ma1);
-        Assert.Equal(48, ra1);
+        // 2 租户 × 25 元组 = 50。
+        Assert.Equal(50, ma1);
+        Assert.Equal(50, ra1);
     }
 
     [Fact]
@@ -179,8 +179,8 @@ public class PurPermissionSeedTests
     public void ExpectedOracle_Covers24Tuples_Over7MenuKeys_NoDuplicates()
     {
         // oracle 自洽：24 元组、7 menu-key、无重复。
-        Assert.Equal(24, ExpectedTuples.Length);
-        Assert.Equal(24, ExpectedTuples.ToHashSet().Count);
+        Assert.Equal(25, ExpectedTuples.Length);
+        Assert.Equal(25, ExpectedTuples.ToHashSet().Count);
         Assert.Equal(7, ExpectedTuples.Select(t => t.MenuId).Distinct().Count());
     }
 }

@@ -89,7 +89,7 @@ import { ref, reactive, computed } from 'vue'
 import { ElMessage, ElMessageBox, type FormRules } from 'element-plus'
 import { useI18n } from 'vue-i18n'
 import CpPageShell from '@/components/templates/CpPageShell.vue'
-import CpListPage, { type ListColumn, type ListFetch } from '@/components/templates/CpListPage.vue'
+import CpListPage, { type ListColumn, type ListFetch, type ListPageExpose } from '@/components/templates/CpListPage.vue'
 import { type FilterField } from '@/components/templates/CpFilterBar.vue'
 import CpFormDialog from '@/components/templates/CpFormDialog.vue'
 import { type Tone } from '@/components/base/CpTag.vue'
@@ -100,7 +100,7 @@ import { formatQty as fmtQty } from '@/utils/format'
 const { t } = useI18n()
 
 const total = ref<number>()
-const listRef = ref<InstanceType<typeof CpListPage> | null>(null)
+const listRef = ref<ListPageExpose | null>(null)
 function reloadList() { listRef.value?.reload() }
 
 // overdueOnly：CpFilterBar 无 boolean 字段类型（缺口 #15）→ toolbar slot 复选，fetch 闭包读取
@@ -134,7 +134,7 @@ function overdueClass(row: SampleStock): string {
   return new Date(row.expectedReturnDate) < new Date() ? 'sample-overdue' : ''
 }
 
-const columns = computed<ListColumn[]>(() => [
+const columns = computed<ListColumn<SampleStock>[]>(() => [
   { prop: 'sampleNo', label: t('wms.sample.fld.no'), kind: 'mono', width: 180 },
   { prop: 'status', label: t('wms.common.status'), width: 100, kind: 'tag',
     map: (v) => ({ label: codeLabel(statusMap.value, v), tone: statusTone(v as number) }) },
@@ -174,7 +174,7 @@ const searchFields = computed<FilterField[]>(() => [
 ])
 
 const PAGE_CAP = 500
-const fetchList: ListFetch = async ({ page, size, filters }) => {
+const fetchList: ListFetch<SampleStock> = async ({ page, size, filters }) => {
   const f = filters as Record<string, unknown>
   const q: SampleSearchQuery = { pageSize: PAGE_CAP, overdueOnly: overdueOnly.value }
   if (f.sampleNo) q.sampleNo = String(f.sampleNo)

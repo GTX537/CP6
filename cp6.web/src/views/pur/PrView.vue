@@ -117,18 +117,25 @@
             <template #default="{ row }">{{ row.convertedPoNo || '—' }}</template>
           </el-table-column>
         </el-table>
+        <ApprovalPanel
+          :key="detail.prNo"
+          biz-type="PUR_PR"
+          :biz-id="detail.prNo || ''"
+          :submit-handler="submitCurrent"
+          @decided="reloadCurrentDetail"
+        />
       </template>
       <template #footer>
-        <el-button v-if="detail?.status === 0" v-permission="'pur-pr:submit'" type="success" size="small" @click="doSubmit(detail!)">{{ t('送审') }}</el-button>
         <el-button v-if="detail?.status === 2" v-permission="'pur-pr:convert'" type="warning" size="small" @click="doConvert(detail!)">{{ t('转采购订单') }}</el-button>
-        <el-button size="small" @click="detailVisible = false">{{ t('关闭') }}</el-button>
+        <el-button size="small" @click="closeDetail">{{ t('关闭') }}</el-button>
       </template>
     </el-dialog>
   </div>
 </template>
 
 <script setup lang="ts">
-import { onMounted, reactive, ref } from 'vue'
+import { onMounted, reactive, ref, watch } from 'vue'
+import { useRoute, useRouter } from 'vue-router'
 import { useI18n } from 'vue-i18n'
 import { ElMessage, ElMessageBox } from 'element-plus'
 import { prApi } from '@/api/pur/pur'
@@ -136,8 +143,11 @@ import {
   PR_STATUS_LABEL, PR_STATUS_TAG, PR_SOURCE_LABEL, PR_SOURCE_OPTIONS,
   type PurchaseRequest, type PrCreateForm, type PrLineCreateForm,
 } from '@/types/pur/pur'
+import ApprovalPanel from '@/components/approval/ApprovalPanel.vue'
 
 const { t } = useI18n()
+const route = useRoute()
+const router = useRouter()
 
 const rows = ref<PurchaseRequest[]>([])
 const loading = ref(false)
@@ -190,16 +200,43 @@ async function submit() {
 
 async function openDetail(row: PurchaseRequest) {
   if (!row.prNo) return
-  const res = await prApi.get(row.prNo)
+  await openDetailByNo(row.prNo, true)
+}
+
+async function openDetailByNo(prNo: string, updateRoute: boolean) {
+  const res = await prApi.get(prNo)
   detail.value = res?.data || null
   detailVisible.value = true
+  if (updateRoute && route.query.prNo !== prNo) {
+    await router.replace({ query: { ...route.query, prNo } })
+  }
+}
+
+async function closeDetail() {
+  detailVisible.value = false
+  detail.value = null
+  const query = { ...route.query }
+  delete query.prNo
+  await router.replace({ query })
 }
 
 async function doSubmit(row: PurchaseRequest) {
   if (!row.prNo) return
   await prApi.submit(row.prNo)
   ElMessage.success(t('已送审'))
-  detailVisible.value = false
+  await reload()
+  if (detail.value?.prNo === row.prNo) await reloadCurrentDetail()
+}
+
+async function submitCurrent() {
+  if (!detail.value?.prNo) return
+  await prApi.submit(detail.value.prNo)
+}
+
+async function reloadCurrentDetail() {
+  if (!detail.value?.prNo) return
+  const res = await prApi.get(detail.value.prNo)
+  detail.value = res?.data || null
   await reload()
 }
 
@@ -212,7 +249,16 @@ async function doConvert(row: PurchaseRequest) {
   await reload()
 }
 
-onMounted(reload)
+watch(() => route.query.prNo, async (value) => {
+  const prNo = typeof value === 'string' ? value : ''
+  if (prNo && prNo !== detail.value?.prNo) await openDetailByNo(prNo, false)
+})
+
+onMounted(async () => {
+  await reload()
+  const prNo = typeof route.query.prNo === 'string' ? route.query.prNo : ''
+  if (prNo) await openDetailByNo(prNo, false)
+})
 </script>
 
 <style scoped>

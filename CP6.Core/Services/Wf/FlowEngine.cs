@@ -45,19 +45,36 @@ public partial class FlowEngine : IFlowEngine
         new SubFlowNodeHandler(),   // ★ 子流程 B-T1：第 9 个（缺省上限 100；DI 实例携 app 配置）
     };
 
-    public async Task<Guid> SubmitAsync(string flowKey, Guid starterId, string varsJson, string? bizType = null, string? bizId = null)
+    public async Task<Guid> SubmitAsync(string flowKey, Guid starterId, string varsJson, string? bizType = null,
+        string? bizId = null, Guid? instanceId = null)
     {
-        var def = await _db.Wf_FlowDefs.FirstOrDefaultAsync(x => x.FlowKey == flowKey && x.Enable)
-                  ?? throw new InvalidOperationException($"流程定义不存在或已停用：{flowKey}");
-        var schema = Deserialize(def.SchemaJson);
-        var first = FirstNode(schema) ?? throw new InvalidOperationException($"流程 {flowKey} 无节点");
+        var resolved = await ResolveLatestFlowVersionAsync(flowKey);
+        return await StartPinnedAsync(resolved.Version.Id, starterId, varsJson,
+            bizType != null && bizId != null ? new FlowBusinessRef(bizType, bizId) : null, null,
+            instanceId: instanceId);
+    }
+
+    internal async Task<Guid> StartPinnedAsync(
+        Guid flowDefVersionId, Guid starterId, string varsJson,
+        FlowBusinessRef? businessRef, FlowFormRef? formRef,
+        CancellationToken ct = default, Guid? instanceId = null)
+    {
+        var version = await _db.Wf_FlowDefVersions.AsNoTracking()
+            .SingleOrDefaultAsync(x => x.Id == flowDefVersionId && x.Status == WfDefinitionVersionStatus.Published, ct)
+            ?? throw new InvalidOperationException("E-WF-046");
+        var head = await _db.Wf_FlowDefs.AsNoTracking().SingleAsync(x => x.Id == version.FlowDefId, ct);
+        var schema = Deserialize(version.SchemaJson);
+        var first = FirstNode(schema) ?? throw new InvalidOperationException($"流程 {head.FlowKey} 无节点");
 
         var inst = new Wf_FlowInstance
         {
-            Id = Guid.NewGuid(),
-            FlowKey = flowKey,
-            BizType = bizType,
-            BizId = bizId,
+            Id = instanceId ?? Guid.NewGuid(),
+            FlowDefVersionId = version.Id,
+            FormDefVersionId = formRef?.FormDefVersionId,
+            FormDataId = formRef?.FormDataId,
+            FlowKey = head.FlowKey,
+            BizType = businessRef?.BizType,
+            BizId = businessRef?.BizId,
             VarsJson = string.IsNullOrWhiteSpace(varsJson) ? "{}" : varsJson,
             StarterId = starterId,
             Status = FlowInstanceStatus.Running,
@@ -70,8 +87,8 @@ public partial class FlowEngine : IFlowEngine
         var root = SpawnToken(inst, first, parent: null, fork: null);
         await EnterNodeAsync(inst, schema, first, root);
         await DispatchIfFinishedAsync(inst, starterId, null);   // 极少数"起即终态"（如 start→end）也分发，决策人记发起人
-        await _db.SaveChangesAsync();
-        await FastPathSubFlowResumeAsync();   // ★ 子流程 fast path：无 subFlow 请求=Local 空集 O(1) no-op
+        await _db.SaveChangesAsync(ct);
+        await FastPathSubFlowResumeAsync(ct);   // ★ 子流程 fast path：无 subFlow 请求=Local 空集 O(1) no-op
         return inst.Id;
     }
 
@@ -86,7 +103,7 @@ public partial class FlowEngine : IFlowEngine
         if (inst.StarterId != actorId) throw new InvalidOperationException("E-WF-003");        // 越权提交
         if (inst.Status != FlowInstanceStatus.Draft) throw new InvalidOperationException("E-WF-003"); // 非草稿态
 
-        var schema = await LoadSchemaAsync(inst.FlowKey);
+        var schema = await LoadSchemaAsync(inst);
         var first = FirstNode(schema) ?? throw new InvalidOperationException($"流程 {inst.FlowKey} 无节点");
 
         inst.Status = FlowInstanceStatus.Running;
@@ -166,7 +183,7 @@ public partial class FlowEngine : IFlowEngine
             var seq = await _db.Wf_FlowFormTos
                 .Where(f => f.InstanceId == inst.Id && f.NodeId == task.NodeId && f.TokenId == task.TokenId)
                 .Select(f => (int?)f.StepSeq).MaxAsync() ?? NextStepSeq(inst.Id);
-            var snapNode = FindNode(await LoadSchemaAsync(inst.FlowKey), task.NodeId);
+            var snapNode = FindNode(await LoadSchemaAsync(inst), task.NodeId);
             if (snapNode is not null) WriteSnapshot(inst, snapNode, doneTok, seq);
         }
 
@@ -200,7 +217,7 @@ public partial class FlowEngine : IFlowEngine
         CancelPendingTasks(nodeTasks);   // 节点已决，作废本节点其余在途
         if (passed)
         {
-            var schema = await LoadSchemaAsync(inst.FlowKey);
+            var schema = await LoadSchemaAsync(inst);
             var tok = await _db.Wf_FlowTokens.FirstOrDefaultAsync(t => t.Id == task.TokenId);
             var plan = (tok is null || string.IsNullOrEmpty(tok.StagePlanJson))
                 ? null
@@ -235,7 +252,7 @@ public partial class FlowEngine : IFlowEngine
             var pruned = false;
             if (rejTok is not null && rejTok.ForkId is not null)
             {
-                var pruneSchema = await LoadSchemaAsync(inst.FlowKey);
+                var pruneSchema = await LoadSchemaAsync(inst);
                 pruned = await TryPruneBranchAsync(inst, pruneSchema, rejTok, actorId, comment);
             }
             if (!pruned)
@@ -261,12 +278,14 @@ public partial class FlowEngine : IFlowEngine
 
         if (inst.Status == FlowInstanceStatus.Approved)
         {
-            await _dispatcher.OnInstanceFinishedAsync(inst, approved: true, decidedBy, reason: null);
+            if (!string.Equals(inst.BizType, "SFS", StringComparison.OrdinalIgnoreCase))
+                await _dispatcher.OnInstanceFinishedAsync(inst, approved: true, decidedBy, reason: null);
             await _notifier.FlowApprovedAsync(inst.StarterId, inst.Id, inst.FlowKey);   // ★ D-1 N-T5
         }
         else if (inst.Status == FlowInstanceStatus.Rejected)
         {
-            await _dispatcher.OnInstanceFinishedAsync(inst, approved: false, decidedBy, reason);
+            if (!string.Equals(inst.BizType, "SFS", StringComparison.OrdinalIgnoreCase))
+                await _dispatcher.OnInstanceFinishedAsync(inst, approved: false, decidedBy, reason);
             await _notifier.FlowRejectedAsync(inst.StarterId, inst.Id, inst.FlowKey, reason);   // ★ D-1 N-T5
         }
     }
@@ -344,7 +363,7 @@ public partial class FlowEngine : IFlowEngine
                 // ★ P0-2 幂等闸：已恢复（消费/取消）或已离开该服务节点 → 不二次推进
                 if (token is null || token.Status != FlowTokenStatus.Active || token.NodeId != nodeId) return;
 
-                var schema = await LoadSchemaAsync(inst.FlowKey);
+                var schema = await LoadSchemaAsync(inst);
 
                 if (outputVars is { Count: > 0 })
                 {
@@ -384,7 +403,7 @@ public partial class FlowEngine : IFlowEngine
                 var token = await _db.Wf_FlowTokens.FirstOrDefaultAsync(t => t.Id == tokenId);
                 if (token is null || token.Status != FlowTokenStatus.Active || token.NodeId != nodeId) return;
 
-                var schema = await LoadSchemaAsync(inst.FlowKey);
+                var schema = await LoadSchemaAsync(inst);
                 var node = FindNode(schema, nodeId);
                 if (node is null) return;
 
@@ -457,11 +476,66 @@ public partial class FlowEngine : IFlowEngine
             Comment = comment,
         });
 
-    private async Task<FlowSchema> LoadSchemaAsync(string flowKey)
+    internal async Task<FlowSchema> LoadSchemaAsync(Wf_FlowInstance instance, CancellationToken ct = default)
     {
-        var def = await _db.Wf_FlowDefs.FirstOrDefaultAsync(x => x.FlowKey == flowKey)
-                  ?? throw new InvalidOperationException($"流程定义不存在：{flowKey}");
-        return Deserialize(def.SchemaJson);
+        if (instance.FlowDefVersionId is not Guid versionId)
+        {
+            // Explicit compatibility path for pre-P0 rows. New starts always pin before insert.
+            var legacy = await ResolveLatestFlowVersionAsync(instance.FlowKey, ct);
+            instance.FlowDefVersionId = legacy.Version.Id;
+            return Deserialize(legacy.Version.SchemaJson);
+        }
+        var version = await _db.Wf_FlowDefVersions.AsNoTracking()
+            .SingleOrDefaultAsync(x => x.Id == versionId && x.Status == WfDefinitionVersionStatus.Published, ct)
+            ?? throw new InvalidOperationException("E-WF-046");
+        return Deserialize(version.SchemaJson);
+    }
+
+    internal async Task ActOnceWithoutRetryAsync(
+        Guid taskId, Guid actorId, Guid? onBehalfOf, bool approve, string? comment)
+    {
+        await ActOnceAsync(taskId, actorId, approve, comment, onBehalfOf);
+        await FastPathSubFlowResumeAsync();
+    }
+
+    private async Task<FlowVersionResolution> ResolveLatestFlowVersionAsync(string flowKey, CancellationToken ct = default)
+    {
+        var head = await _db.Wf_FlowDefs.SingleOrDefaultAsync(x => x.FlowKey == flowKey && x.Enable, ct)
+                   ?? throw new InvalidOperationException("E-WF-029");
+        var version = await _db.Wf_FlowDefVersions
+            .Where(x => x.FlowDefId == head.Id && x.Status == WfDefinitionVersionStatus.Published)
+            .OrderByDescending(x => x.Version).FirstOrDefaultAsync(ct);
+        if (version == null)
+        {
+            if (await _db.Wf_FlowDefVersions.AnyAsync(x => x.FlowDefId == head.Id, ct))
+                throw new InvalidOperationException("E-WF-029");
+            // Explicit legacy compatibility: materialize the exact head bytes once, equivalent to backfill.
+            version = new Wf_FlowDefVersion
+            {
+                Id = Guid.NewGuid(), FlowDefId = head.Id, Version = head.Version,
+                Status = WfDefinitionVersionStatus.Published, FlowNameSnapshot = head.FlowName,
+                SchemaJson = head.SchemaJson, PublishedAtUtc = DateTime.UtcNow,
+                Creator = "legacy-runtime-backfill"
+            };
+            _db.Wf_FlowDefVersions.Add(version);
+            await _db.SaveChangesAsync(ct);
+        }
+        return new(head, version);
+    }
+
+    internal async Task<Guid> ResolvePinnedSubFlowVersionAsync(
+        Wf_FlowInstance parent, string nodeId, string legacySubFlowKey, CancellationToken ct = default)
+    {
+        if (parent.FlowDefVersionId is Guid parentVersionId)
+        {
+            var dependency = await _db.Wf_FlowDefVersionDependencies.AsNoTracking()
+                .SingleOrDefaultAsync(x => x.FlowDefVersionId == parentVersionId &&
+                                           x.NodeId == nodeId && x.DependencyType == "SubFlow", ct);
+            if (dependency != null) return dependency.TargetFlowDefVersionId;
+            if (await _db.Wf_FlowDefVersionDependencies.AnyAsync(x => x.FlowDefVersionId == parentVersionId, ct))
+                throw new InvalidOperationException("E-WF-046");
+        }
+        return (await ResolveLatestFlowVersionAsync(legacySubFlowKey, ct)).Version.Id;
     }
 
     private static FlowSchema Deserialize(string json)

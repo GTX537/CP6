@@ -27,10 +27,17 @@ public class ApprovalServiceTests
             },
             Edges = { new FlowEdge { From = "n1", To = "end" } },
         };
-        db.Wf_FlowDefs.Add(new Wf_FlowDef
+        var head = new Wf_FlowDef
         {
             Id = Guid.NewGuid(), FlowKey = flowKey, FlowName = flowKey, FormKey = bizType,
             SchemaJson = JsonSerializer.Serialize(schema), Version = 1, Enable = true,
+        };
+        db.Wf_FlowDefs.Add(head);
+        db.Wf_FlowDefVersions.Add(new Wf_FlowDefVersion
+        {
+            Id = Guid.NewGuid(), FlowDefId = head.Id, Version = 1,
+            Status = WfDefinitionVersionStatus.Published,
+            FlowNameSnapshot = head.FlowName, SchemaJson = head.SchemaJson,
         });
         db.Wf_ApprovalBindings.Add(new Wf_ApprovalBinding
         {

@@ -8,6 +8,8 @@ using CP6.Entity.DomainModels.Erp;
 using CP6.Entity.DomainModels.Pub;
 using CP6.Entity.DomainModels.Pur;
 using CP6.Entity.DomainModels.Wf;
+using CP6.Core.Services.Sys;
+using CP6.Entity.DomainModels.Sys;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Diagnostics;
 using Xunit;
@@ -60,6 +62,13 @@ public class PurApprovalIntegrationTests
         db.BusinessPartners.Add(new BusinessPartner { BpCd = Sup, BpName = "供应商", SupplierFlg = true });
         db.Pub_DocSequences.Add(new Pub_DocSequence { BizKey = "PO", Prefix = "PO", DateFormat = "yyyyMMdd", SeqLength = 4, ResetCycle = 0 });
         db.Pub_DocSequences.Add(new Pub_DocSequence { BizKey = "PR", Prefix = "PR", DateFormat = "yyyyMMdd", SeqLength = 4, ResetCycle = 0 });
+        db.Sys_Users.Add(new Sys_User
+        {
+            Id = Guid.Parse("10000000-0000-0000-0000-000000000001"),
+            UserName = "admin",
+            Password = "x",
+            Enable = true,
+        });
         await db.SaveChangesAsync();
     }
 
@@ -74,10 +83,20 @@ public class PurApprovalIntegrationTests
             },
             Edges = { new FlowEdge { From = "n1", To = "end" } },
         };
-        db.Wf_FlowDefs.Add(new Wf_FlowDef
+        var head = new Wf_FlowDef
         {
             Id = Guid.NewGuid(), FlowKey = flowKey, FlowName = bizType, FormKey = bizType,
             SchemaJson = JsonSerializer.Serialize(schema), Version = 1, Enable = true,
+        };
+        db.Wf_FlowDefs.Add(head);
+        db.Wf_FlowDefVersions.Add(new Wf_FlowDefVersion
+        {
+            Id = Guid.NewGuid(),
+            FlowDefId = head.Id,
+            Version = 1,
+            Status = WfDefinitionVersionStatus.Published,
+            FlowNameSnapshot = bizType,
+            SchemaJson = head.SchemaJson,
         });
         db.Wf_ApprovalBindings.Add(new Wf_ApprovalBinding { Id = Guid.NewGuid(), BizType = bizType, FlowKey = flowKey, Enable = true });
         await db.SaveChangesAsync();
@@ -153,7 +172,13 @@ public class PurApprovalIntegrationTests
             {
                 Lines = { new PrLineCreateDto { ItemId = "ITEM", Qty = 10m, EstPrice = 5m, SuggestSupplierId = Sup } },
             }, "admin")).PrNo;
-            await prSvc.SubmitForApprovalAsync(prNo, "admin");
+            await prSvc.SubmitForApprovalAsync(prNo, Guid.Parse("10000000-0000-0000-0000-000000000001"),
+                "admin", new UserPermissionContext
+                {
+                    UserId = Guid.Parse("10000000-0000-0000-0000-000000000001"),
+                    UserName = "admin",
+                    DataScopes = { ["pur-pr"] = 5 },
+                });
             Assert.Equal(PrStatus.Submitted, (await db.PurchaseRequests.FirstAsync(p => p.PrNo == prNo)).Status);
 
             var task = await db.Wf_FlowTasks.SingleAsync(t => t.Status == FlowTaskStatus.Pending);

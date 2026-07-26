@@ -1,3 +1,4 @@
+import { MarkerType } from '@vue-flow/core'
 import type { Node as VFNode, Edge as VFEdge } from '@vue-flow/core'
 
 export interface ApproverSpecDto {
@@ -64,8 +65,25 @@ export interface SchemaNode {
   subCompletionPolicy?: string                         // all | any
   x?: number; y?: number
 }
-export interface SchemaEdge { from: string; to: string; condition?: string; ccUsers?: string[]; isError?: boolean }
+export type FlowHandle = 'top' | 'right' | 'bottom' | 'left'
+
+export interface SchemaEdge {
+  id?: string
+  from: string
+  to: string
+  name?: string
+  condition?: string
+  priority?: number
+  sourceHandle?: FlowHandle
+  targetHandle?: FlowHandle
+  ccUsers?: string[]
+  isError?: boolean
+}
 export interface FlowSchemaDto { start?: string; nodes: SchemaNode[]; edges: SchemaEdge[] }
+
+export function isFallbackEdge(edge: Pick<SchemaEdge, 'condition' | 'isError'>): boolean {
+  return edge.isError !== true && !edge.condition?.trim()
+}
 
 // node-identity swatches (categorical, chart-color family §2.5). Rendering uses the
 // tokenized `.dot-<type>` CSS classes in DesignerCanvas; this `color` field is legacy metadata.
@@ -96,17 +114,37 @@ export function schemaToGraph(schema: FlowSchemaDto): { nodes: VFNode[]; edges: 
     data: { ...n },
     label: n.name || n.id,
   }))
-  const edges: VFEdge[] = (schema.edges ?? []).map(e => ({
-    id: `${e.from}__${e.to}`,
-    source: e.from,
-    target: e.to,
-    data: { condition: e.condition, ccUsers: e.ccUsers, isError: e.isError },
-    label: e.condition || undefined,
-    // 票9：失败边（IsError）用 danger 虚线视觉区分。颜色走 Design System token（禁硬编码色）。
-    ...(e.isError === true
-      ? { style: { stroke: 'var(--cp-danger)', strokeWidth: 2, strokeDasharray: '6 4' }, class: 'edge-error', animated: false }
-      : {}),
-  }))
+  const nodePosition = new Map(nodes.map(node => [node.id, node.position]))
+  const edges: VFEdge[] = (schema.edges ?? []).map((e, index) => {
+    const source = nodePosition.get(e.from)
+    const target = nodePosition.get(e.to)
+    const dx = (target?.x ?? 0) - (source?.x ?? 0)
+    const dy = (target?.y ?? 0) - (source?.y ?? 0)
+    const horizontal = Math.abs(dx) > Math.abs(dy)
+    const inferredSource: FlowHandle = horizontal ? (dx >= 0 ? 'right' : 'left') : (dy >= 0 ? 'bottom' : 'top')
+    const inferredTarget: FlowHandle = horizontal ? (dx >= 0 ? 'left' : 'right') : (dy >= 0 ? 'top' : 'bottom')
+    const id = e.id || `${e.from}__${e.to}__${index}`
+    const color = e.isError === true ? 'var(--cp-danger)' : 'var(--cp-muted)'
+
+    return {
+      id,
+      source: e.from,
+      target: e.to,
+      sourceHandle: e.sourceHandle ?? inferredSource,
+      targetHandle: e.targetHandle ?? inferredTarget,
+      type: 'smoothstep',
+      data: { ...e, id },
+      label: e.name || e.condition || undefined,
+      markerEnd: { type: MarkerType.ArrowClosed, color },
+      ...(e.isError === true
+        ? {
+            style: { stroke: color, strokeWidth: 2, strokeDasharray: '6 4' },
+            class: 'edge-error',
+            animated: false,
+          }
+        : {}),
+    }
+  })
   return { nodes, edges }
 }
 
@@ -129,12 +167,21 @@ export function graphToSchema(
     x: n.position?.x,
     y: n.position?.y,
   }))
-  const se: SchemaEdge[] = edges.map(e => ({
-    from: e.source, to: e.target,
-    condition: (e.data as any)?.condition || undefined,
-    ccUsers: (e.data as any)?.ccUsers || undefined,
-    isError: (e.data as any)?.isError || undefined,
-  }))
+  const se: SchemaEdge[] = edges.map(e => {
+    const data = (e.data ?? {}) as Partial<SchemaEdge>
+    return {
+      id: data.id || e.id,
+      from: e.source,
+      to: e.target,
+      name: data.name?.trim() || undefined,
+      condition: data.condition?.trim() || undefined,
+      priority: Number.isFinite(data.priority) ? Number(data.priority) : undefined,
+      sourceHandle: (e.sourceHandle ?? data.sourceHandle ?? undefined) as FlowHandle | undefined,
+      targetHandle: (e.targetHandle ?? data.targetHandle ?? undefined) as FlowHandle | undefined,
+      ccUsers: data.ccUsers?.length ? [...data.ccUsers] : undefined,
+      isError: data.isError || undefined,
+    }
+  })
   const start = sn.find(n => n.type === 'start')?.id
   return { start, nodes: sn, edges: se }
 }
