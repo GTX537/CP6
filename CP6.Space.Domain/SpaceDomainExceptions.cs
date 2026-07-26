@@ -20,3 +20,17 @@ public sealed class SpaceTenantScopeException : InvalidOperationException
     {
     }
 }
+
+public sealed class SpaceFileStateException : InvalidOperationException
+{
+    public SpaceFileStateException(string message) : base(message)
+    {
+    }
+}
+
+public sealed class SpaceFileReferenceException : InvalidOperationException
+{
+    public SpaceFileReferenceException(string message) : base(message)
+    {
+    }
+}

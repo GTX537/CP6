@@ -23,10 +23,216 @@ public sealed class SpaceSqlServerTests
 
             Assert.Contains("Space_Model", tables);
             Assert.Contains("Space_ModelVersion", tables);
+            Assert.Contains("Space_File", tables);
+            Assert.Contains("Space_ModelSource", tables);
+            Assert.Contains("Space_Artifact", tables);
             Assert.Contains(SpaceContext.MigrationsHistoryTable, tables);
             Assert.DoesNotContain("__EFMigrationsHistory", tables);
             Assert.DoesNotContain("Space_Site", tables);
         });
+    }
+
+    [SqlServerFact]
+    public async Task File_hash_deduplication_is_enforced_per_tenant()
+    {
+        var tenantA = Guid.NewGuid();
+        var tenantB = Guid.NewGuid();
+        var hash = new string('c', 64);
+
+        await WithDatabaseAsync(
+            async (_, connectionString) =>
+            {
+                await using (var first = CreateContext(
+                                 connectionString,
+                                 tenantA,
+                                 Guid.NewGuid()))
+                {
+                    first.Files.Add(NewCleanFile(
+                        tenantA,
+                        ".pdf",
+                        SpaceFileRetentionClass.Source,
+                        hash));
+                    await first.SaveChangesAsync();
+
+                    first.Files.Add(NewCleanFile(
+                        tenantA,
+                        ".pdf",
+                        SpaceFileRetentionClass.Source,
+                        hash));
+                    await Assert.ThrowsAsync<DbUpdateException>(
+                        () => first.SaveChangesAsync());
+                }
+
+                await using var second = CreateContext(
+                    connectionString,
+                    tenantB,
+                    Guid.NewGuid());
+                second.Files.Add(NewCleanFile(
+                    tenantB,
+                    ".pdf",
+                    SpaceFileRetentionClass.Source,
+                    hash));
+                await second.SaveChangesAsync();
+            });
+    }
+
+    [SqlServerFact]
+    public async Task Same_file_can_feed_multiple_versions_and_source_hash_lookup()
+    {
+        var tenantId = Guid.NewGuid();
+        var actorId = Guid.NewGuid();
+        var hash = new string('d', 64);
+
+        await WithDatabaseAsync(
+            async context =>
+            {
+                var model = SpaceModel.Create(tenantId, Guid.NewGuid());
+                var first = SpaceModelVersion.CreateDraft(
+                    tenantId,
+                    model.Id,
+                    1,
+                    "First");
+                var second = SpaceModelVersion.CreateDraft(
+                    tenantId,
+                    model.Id,
+                    2,
+                    "Second");
+                var file = NewCleanFile(
+                    tenantId,
+                    ".pdf",
+                    SpaceFileRetentionClass.Source,
+                    hash);
+                var firstSource = SpaceModelSource.CreateFileSource(
+                    tenantId,
+                    first.Id,
+                    SpaceSourceType.Pdf,
+                    file,
+                    "First import");
+                var secondSource = SpaceModelSource.CreateFileSource(
+                    tenantId,
+                    second.Id,
+                    SpaceSourceType.Pdf,
+                    file,
+                    "Second import");
+                context.AddRange(
+                    model,
+                    first,
+                    second,
+                    file,
+                    firstSource,
+                    secondSource);
+                await context.SaveChangesAsync();
+
+                var matches = await new EfSpaceSourceCatalog(context)
+                    .FindByHashAsync(tenantId, hash);
+
+                Assert.Equal(2, matches.Count);
+                Assert.All(matches, source => Assert.Equal(file.Id, source.FileId));
+                Assert.Equal(
+                    2,
+                    await context.Sources
+                        .Select(source => source.ModelVersionId)
+                        .Distinct()
+                        .CountAsync());
+            },
+            tenantId,
+            actorId);
+    }
+
+    [SqlServerFact]
+    public async Task Composite_foreign_keys_reject_cross_tenant_source_lineage()
+    {
+        var tenantA = Guid.NewGuid();
+        var tenantB = Guid.NewGuid();
+
+        await WithDatabaseAsync(
+            async (_, connectionString) =>
+            {
+                Guid versionB;
+                Guid fileA;
+                await using (var contextA = CreateContext(
+                                 connectionString,
+                                 tenantA,
+                                 Guid.NewGuid()))
+                {
+                    var file = NewCleanFile(
+                        tenantA,
+                        ".pdf",
+                        SpaceFileRetentionClass.Source);
+                    contextA.Files.Add(file);
+                    await contextA.SaveChangesAsync();
+                    fileA = file.Id;
+                }
+
+                await using (var contextB = CreateContext(
+                                 connectionString,
+                                 tenantB,
+                                 Guid.NewGuid()))
+                {
+                    var model = SpaceModel.Create(tenantB, Guid.NewGuid());
+                    var version = SpaceModelVersion.CreateDraft(
+                        tenantB,
+                        model.Id,
+                        1,
+                        "Tenant B");
+                    contextB.AddRange(model, version);
+                    await contextB.SaveChangesAsync();
+                    versionB = version.Id;
+                }
+
+                await using var context = CreateContext(
+                    connectionString,
+                    tenantA,
+                    Guid.NewGuid());
+                var sourceId = Guid.NewGuid();
+                var sql = $"""
+                    INSERT INTO [Space_ModelSource]
+                        ([Id], [ModelVersionId], [SourceType], [FileId],
+                         [DisplayName], [Sha256], [State], [TenantId],
+                         [CreatedAtUtc], [IsDeleted])
+                    VALUES
+                        ('{sourceId}', '{versionB}', 2, '{fileA}',
+                         'Cross tenant', '{new string('e', 64)}', 2, '{tenantA}',
+                         SYSUTCDATETIME(), 0)
+                    """;
+
+                await Assert.ThrowsAsync<SqlException>(
+                    () => context.Database.ExecuteSqlRawAsync(sql));
+            });
+    }
+
+    [SqlServerFact]
+    public async Task Database_restricts_physical_delete_of_a_referenced_file()
+    {
+        var tenantId = Guid.NewGuid();
+
+        await WithDatabaseAsync(
+            async context =>
+            {
+                var model = SpaceModel.Create(tenantId, Guid.NewGuid());
+                var version = SpaceModelVersion.CreateDraft(
+                    tenantId,
+                    model.Id,
+                    1,
+                    "Draft");
+                var file = NewCleanFile(
+                    tenantId,
+                    ".pdf",
+                    SpaceFileRetentionClass.Source);
+                var source = SpaceModelSource.CreateFileSource(
+                    tenantId,
+                    version.Id,
+                    SpaceSourceType.Pdf,
+                    file,
+                    "Floor");
+                context.AddRange(model, version, file, source);
+                await context.SaveChangesAsync();
+
+                await Assert.ThrowsAsync<SqlException>(
+                    () => context.Database.ExecuteSqlInterpolatedAsync(
+                        $"DELETE FROM [Space_File] WHERE [Id] = {file.Id}"));
+            },
+            tenantId);
     }
 
     [SqlServerFact]
@@ -233,6 +439,31 @@ public sealed class SpaceSqlServerTests
         while (await reader.ReadAsync())
             result.Add(reader.GetString(0));
         return result;
+    }
+
+    private static SpaceFile NewCleanFile(
+        Guid tenantId,
+        string extension,
+        SpaceFileRetentionClass retentionClass,
+        string? hash = null)
+    {
+        var contentType = extension == ".pdf" ? "application/pdf" : "image/png";
+        var file = SpaceFile.CreateUploading(
+            Guid.NewGuid(),
+            tenantId,
+            $"quarantine/{Guid.NewGuid():N}",
+            $"input{extension}",
+            contentType,
+            retentionClass);
+        file.CompleteQuarantine(
+            contentType,
+            extension,
+            12,
+            hash ?? Convert.ToHexString(Guid.NewGuid().ToByteArray()).ToLowerInvariant()
+                .PadRight(64, '0'));
+        file.BeginScanning();
+        file.MarkClean("test", "v1");
+        return file;
     }
 
     private sealed record TestExecutionContext(Guid TenantId, Guid ActorId)

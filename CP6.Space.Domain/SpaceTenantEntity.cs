@@ -22,4 +22,16 @@ public abstract class SpaceTenantEntity
         TenantId = tenantId;
     }
 
+    protected void SetId(Guid id)
+    {
+        if (id == Guid.Empty)
+            throw new ArgumentException("Entity identity is required.", nameof(id));
+
+        Id = id;
+    }
+
+    protected void MarkEntityDeleted()
+    {
+        IsDeleted = true;
+    }
 }
