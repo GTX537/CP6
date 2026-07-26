@@ -3,16 +3,17 @@
  * ============================================================
  * 範囲：space.rule.* / space.publish.* / space.events.*
  * 対象テーブル：Sys_Langs（列 LangKey / ZhCN / ZhTW / En / Ja / Ko）
- * 冪等：MERGE（既存キーは UPDATE、無ければ INSERT）
+ * 冪等：MERGE（既存キーは UPDATE、無ければ INSERT）+
+ *       厳密に限定した DELETE（廃止済みの events 2 キーのみ）
  * 実行：sqlcmd -S localhost\KOUSQLSERVER -d CP6DB -E -f 65001 -i docs/seeds/space-i18n-seed-2.sql -b
  *
  * キーの唯一の権威 = 3 コンポーネント実コード grep（Task 5 で対照済み）:
  *   SpaceCodeRuleView.vue + SegmentsEditor.vue（space.rule.*・64 件）
  *   SpacePublishView.vue（space.publish.*・47 件、波5 で goCodeRule/dupGroupTitle 追補）
- *   SpaceEventsView.vue（space.events.*・20 件）
+ *   SpaceEventsView.vue（space.events.*・21 件）
  * ★ space.common.* は 波2 space-i18n-seed.sql で登録済みのため本ファイルには含めない
  *   （edit/delete/cancel/save/action/required/success/confirmDelete/confirm 等は再利用）。
- * 合計 134 キー = rule 64 + publish 47 + events 20 + rack 3（波5 PropertiesPanel 単格採番 追補）。
+ * 合計 135 キー = rule 64 + publish 47 + events 21 + rack 3（波5 PropertiesPanel 単格採番 追補）。
  * ============================================================ */
 SET NOCOUNT ON; SET XACT_ABORT ON;
 SET QUOTED_IDENTIFIER ON; SET ANSI_NULLS ON;
@@ -146,21 +147,22 @@ INSERT INTO #i18n2 VALUES
   -- ── 波5：错误呈现统一（重复码明细展开 + 去编码规则页引导）──
   (N'space.publish.goCodeRule',    N'去编码规则页', N'前往編碼規則頁', N'Go to Code Rules', N'採番ルールへ',        N'코드 규칙으로 이동'),
   (N'space.publish.dupGroupTitle', N'重复组 {n}（{c} 个库位）', N'重複組 {n}（{c} 個庫位）', N'Duplicate group {n} ({c} locations)', N'重複グループ {n}（{c} 件）', N'중복 그룹 {n} ({c}개 로케이션)'),
-  -- ══ space.events.*（SpaceEventsView・20 件）══════════════════════════════
+  -- ══ space.events.*（SpaceEventsView・21 件）══════════════════════════════
   (N'space.events.title',          N'集成事件监视', N'整合事件監視', N'Integration Events', N'連携イベント監視', N'연동 이벤트 모니터'),
   (N'space.events.refresh',        N'刷新',       N'重新整理',   N'Refresh',           N'更新',                N'새로고침'),
   (N'space.events.prevPage',       N'上一页',     N'上一頁',     N'Prev',              N'前へ',                N'이전'),
   (N'space.events.nextPage',       N'下一页',     N'下一頁',     N'Next',              N'次へ',                N'다음'),
   (N'space.events.pageLabel',      N'第 {page} 页', N'第 {page} 頁', N'Page {page}',     N'{page} ページ',       N'{page} 페이지'),
   (N'space.events.empty',          N'暂无集成事件', N'暫無整合事件', N'No events',        N'連携イベントなし',    N'이벤트 없음'),
-  (N'space.events.detail',         N'详情',       N'詳情',       N'Detail',            N'詳細',                N'상세'),
   (N'space.events.col.sourceNo',   N'来源单号',   N'來源單號',   N'Source No',         N'ソース番号',          N'원본 번호'),
   (N'space.events.col.hookName',   N'钩子',       N'掛鉤',       N'Hook',              N'フック',              N'훅'),
   (N'space.events.col.targetModule', N'目标模块', N'目標模組',   N'Target',            N'連携先',              N'대상 모듈'),
   (N'space.events.col.status',     N'状态',       N'狀態',       N'Status',            N'ステータス',          N'상태'),
   (N'space.events.col.attempts',   N'尝试次数',   N'嘗試次數',   N'Attempts',          N'試行回数',            N'시도 횟수'),
   (N'space.events.col.createDate', N'发生时间',   N'發生時間',   N'Created',           N'発生日時',            N'발생 일시'),
-  (N'space.events.col.lastError',  N'最新错误',   N'最新錯誤',   N'Last Error',        N'最終エラー',          N'최근 오류'),
+  (N'space.events.col.safeErrorCode', N'安全错误码', N'安全錯誤碼', N'Safe Error Code', N'安全エラーコード',    N'안전 오류 코드'),
+  (N'space.events.col.correlationId', N'关联 ID', N'關聯 ID',   N'Correlation ID',    N'相関 ID',             N'상관관계 ID'),
+  (N'space.events.col.publishAttemptId', N'发布尝试 ID', N'發佈嘗試 ID', N'Publish Attempt ID', N'発行試行 ID', N'게시 시도 ID'),
   (N'space.events.status.SUCCESS', N'成功',       N'成功',       N'Success',           N'成功',                N'성공'),
   (N'space.events.status.SKIPPED', N'跳过',       N'跳過',       N'Skipped',           N'スキップ',            N'건너뜀'),
   (N'space.events.status.PENDING', N'待处理',     N'待處理',     N'Pending',           N'保留中',              N'대기'),
@@ -178,8 +180,31 @@ WHEN MATCHED THEN UPDATE SET tgt.ZhCN = src.ZhCN, tgt.ZhTW = src.ZhTW, tgt.En = 
 WHEN NOT MATCHED BY TARGET THEN INSERT (LangKey, ZhCN, ZhTW, En, Ja, Ko) VALUES (src.LangKey, src.ZhCN, src.ZhTW, src.En, src.Ja, src.Ko)
 OUTPUT $action INTO @actionLog;
 
+-- Task 9 security cleanup: remove exactly the two retired raw-error UI keys.
+-- The before/deleted/after checks make the invariant explicit and remain safe
+-- on repeated execution (the second and later runs delete zero rows).
+DECLARE @legacyEventKeysBefore INT = (
+    SELECT COUNT(*)
+    FROM Sys_Langs
+    WHERE LangKey IN (N'space.events.detail', N'space.events.col.lastError')
+);
+DECLARE @legacyEventKeysDeleted INT;
+
+DELETE FROM Sys_Langs
+WHERE LangKey IN (N'space.events.detail', N'space.events.col.lastError');
+SET @legacyEventKeysDeleted = @@ROWCOUNT;
+
+IF @legacyEventKeysDeleted <> @legacyEventKeysBefore
+   OR EXISTS (
+       SELECT 1
+       FROM Sys_Langs
+       WHERE LangKey IN (N'space.events.detail', N'space.events.col.lastError')
+   )
+    THROW 51000, 'Legacy Space event i18n cleanup invariant failed.', 1;
+
 DECLARE @ins INT = (SELECT COUNT(*) FROM @actionLog WHERE act = 'INSERT');
 DECLARE @upd INT = (SELECT COUNT(*) FROM @actionLog WHERE act = 'UPDATE');
-PRINT N'  追加: ' + CAST(@ins AS nvarchar(10)) + N' 件 / 更新: ' + CAST(@upd AS nvarchar(10)) + N' 件（合計 134 キー想定）';
+PRINT N'  追加: ' + CAST(@ins AS nvarchar(10)) + N' 件 / 更新: ' + CAST(@upd AS nvarchar(10)) + N' 件（合計 135 キー想定）';
+PRINT N'  廃止済み events キー削除: ' + CAST(@legacyEventKeysDeleted AS nvarchar(10)) + N' 件';
 DROP TABLE #i18n2;
 PRINT '=== Done ===';

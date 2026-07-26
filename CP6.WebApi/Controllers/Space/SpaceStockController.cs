@@ -26,7 +26,8 @@ public class SpaceStockController : ControllerBase
             .Select(l => l.LocationCode!)
             .ToListAsync(ct);
         var items = await _stock.GetStockByLocationsAsync(codes, ct);
-        return Ok2(new { items, ts = DateTime.Now });
+        var source = _stock.CaptureSource();
+        return Ok2(new { items, source, ts = source.ObservedAtUtc });
     }
 
     /// <summary>按物料/批次/容器反查库位（命中列表，前端逐个复用 06 定位）。</summary>
@@ -36,6 +37,6 @@ public class SpaceStockController : ControllerBase
     {
         var hits = await _stock.FindLocationsAsync(
             new StockLocateQuery { MaterialNo = material, Lot = lot, Container = container }, ct);
-        return Ok2(hits);
+        return Ok2(new { items = hits, source = _stock.CaptureSource() });
     }
 }

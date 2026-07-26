@@ -7340,6 +7340,15 @@ namespace CP6.Core.Migrations
                         .HasMaxLength(100)
                         .HasColumnType("nvarchar(100)");
 
+                    b.Property<Guid?>("DeadLetterNotificationLeaseId")
+                        .HasColumnType("uniqueidentifier");
+
+                    b.Property<DateTime?>("DeadLetterNotificationLeaseUntilUtc")
+                        .HasColumnType("datetime2");
+
+                    b.Property<DateTime?>("DeadLetterNotifiedAtUtc")
+                        .HasColumnType("datetime2");
+
                     b.Property<string>("HookName")
                         .IsRequired()
                         .HasMaxLength(100)
@@ -7347,6 +7356,9 @@ namespace CP6.Core.Migrations
 
                     b.Property<bool>("IsDeleted")
                         .HasColumnType("bit");
+
+                    b.Property<Guid?>("JobId")
+                        .HasColumnType("uniqueidentifier");
 
                     b.Property<string>("LastError")
                         .HasColumnType("nvarchar(max)");
@@ -7361,9 +7373,24 @@ namespace CP6.Core.Migrations
                     b.Property<DateTime?>("NextRetryAt")
                         .HasColumnType("datetime2");
 
+                    b.Property<DateTime?>("OccurredAtUtc")
+                        .HasColumnType("datetime2");
+
                     b.Property<string>("PayloadJson")
                         .IsRequired()
                         .HasColumnType("nvarchar(max)");
+
+                    b.Property<Guid?>("PublishAttemptId")
+                        .HasColumnType("uniqueidentifier");
+
+                    b.Property<Guid?>("RetryCompletionLeaseId")
+                        .HasColumnType("uniqueidentifier");
+
+                    b.Property<bool?>("RetryCompletionSucceeded")
+                        .HasColumnType("bit");
+
+                    b.Property<Guid?>("RetryLeaseId")
+                        .HasColumnType("uniqueidentifier");
 
                     b.Property<byte[]>("RowVersion")
                         .IsConcurrencyToken()
@@ -7404,6 +7431,22 @@ namespace CP6.Core.Migrations
                     b.HasIndex("SourceNo", "HookName");
 
                     b.HasIndex("Status", "NextRetryAt");
+
+                    b.HasIndex("TenantId", "CorrelationId");
+
+                    b.HasIndex("TenantId", "JobId");
+
+                    b.HasIndex("TenantId", "PublishAttemptId");
+
+                    b.HasIndex("TenantId", "RetryLeaseId");
+
+                    b.HasIndex("TenantId", "SourceModule", "OccurredAtUtc", "Id")
+                        .IsDescending(false, false, true, true);
+
+                    b.HasIndex("TenantId", "Status", "DeadLetterNotifiedAtUtc", "DeadLetterNotificationLeaseUntilUtc");
+
+                    b.HasIndex("TenantId", "SourceModule", "CorrelationId", "OccurredAtUtc", "Id")
+                        .IsDescending(false, false, false, true, true);
 
                     b.ToTable("T_IntegrationEvent");
                 });
@@ -10539,6 +10582,145 @@ namespace CP6.Core.Migrations
                         .IsUnique();
 
                     b.ToTable("Space_Aisle");
+                });
+
+            modelBuilder.Entity("CP6.Entity.DomainModels.Space.Space_AuditEvent", b =>
+                {
+                    b.Property<Guid>("Id")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("uniqueidentifier");
+
+                    b.Property<string>("Action")
+                        .IsRequired()
+                        .HasMaxLength(100)
+                        .HasColumnType("nvarchar(100)");
+
+                    b.Property<string>("ActorId")
+                        .IsRequired()
+                        .HasMaxLength(100)
+                        .HasColumnType("nvarchar(100)");
+
+                    b.Property<string>("ActorName")
+                        .HasMaxLength(100)
+                        .HasColumnType("nvarchar(100)");
+
+                    b.Property<string>("ActorType")
+                        .IsRequired()
+                        .HasMaxLength(16)
+                        .HasColumnType("nvarchar(16)");
+
+                    b.Property<string>("AfterHash")
+                        .HasColumnType("char(64)");
+
+                    b.Property<int?>("AttemptNo")
+                        .HasColumnType("int");
+
+                    b.Property<string>("AuthorizationEvidenceJson")
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<string>("BeforeHash")
+                        .HasColumnType("char(64)");
+
+                    b.Property<string>("ClientType")
+                        .HasMaxLength(32)
+                        .HasColumnType("nvarchar(32)");
+
+                    b.Property<Guid>("CorrelationId")
+                        .HasColumnType("uniqueidentifier");
+
+                    b.Property<DateTime>("CreateDate")
+                        .HasColumnType("datetime2");
+
+                    b.Property<string>("Creator")
+                        .HasMaxLength(100)
+                        .HasColumnType("nvarchar(100)");
+
+                    b.Property<Guid?>("FloorId")
+                        .HasColumnType("uniqueidentifier");
+
+                    b.Property<string>("IpAddress")
+                        .HasMaxLength(64)
+                        .HasColumnType("nvarchar(64)");
+
+                    b.Property<Guid?>("JobId")
+                        .HasColumnType("uniqueidentifier");
+
+                    b.Property<string>("Modifier")
+                        .HasMaxLength(100)
+                        .HasColumnType("nvarchar(100)");
+
+                    b.Property<DateTime?>("ModifyDate")
+                        .HasColumnType("datetime2");
+
+                    b.Property<DateTime>("OccurredAtUtc")
+                        .HasColumnType("datetime2");
+
+                    b.Property<string>("OrganizationContextId")
+                        .HasMaxLength(100)
+                        .HasColumnType("nvarchar(100)");
+
+                    b.Property<string>("Outcome")
+                        .IsRequired()
+                        .HasMaxLength(16)
+                        .HasColumnType("nvarchar(16)");
+
+                    b.Property<Guid?>("PublishAttemptId")
+                        .HasColumnType("uniqueidentifier");
+
+                    b.Property<string>("ReasonCode")
+                        .HasMaxLength(100)
+                        .HasColumnType("nvarchar(100)");
+
+                    b.Property<string>("ResourceId")
+                        .HasMaxLength(128)
+                        .HasColumnType("nvarchar(128)");
+
+                    b.Property<string>("ResourceType")
+                        .IsRequired()
+                        .HasMaxLength(64)
+                        .HasColumnType("nvarchar(64)");
+
+                    b.Property<Guid?>("RunId")
+                        .HasColumnType("uniqueidentifier");
+
+                    b.Property<Guid?>("SiteId")
+                        .HasColumnType("uniqueidentifier");
+
+                    b.Property<Guid>("TenantId")
+                        .HasColumnType("uniqueidentifier");
+
+                    b.Property<string>("TraceId")
+                        .IsRequired()
+                        .HasMaxLength(64)
+                        .HasColumnType("varchar(64)");
+
+                    b.Property<string>("UserAgent")
+                        .HasMaxLength(256)
+                        .HasColumnType("nvarchar(256)");
+
+                    b.Property<Guid?>("VersionId")
+                        .HasColumnType("uniqueidentifier");
+
+                    b.HasKey("Id");
+
+                    b.HasIndex("TenantId", "OccurredAtUtc");
+
+                    b.HasIndex("TenantId", "CorrelationId", "OccurredAtUtc");
+
+                    b.HasIndex("TenantId", "JobId", "RunId");
+
+                    b.HasIndex("TenantId", "PublishAttemptId", "OccurredAtUtc");
+
+                    b.ToTable("Space_AuditEvent", null, t =>
+                        {
+                            t.HasCheckConstraint("CK_Space_AuditEvent_ActorType", "[ActorType] IN ('User','System')");
+
+                            t.HasCheckConstraint("CK_Space_AuditEvent_Correlation", "[CorrelationId] <> '00000000-0000-0000-0000-000000000000'");
+
+                            t.HasCheckConstraint("CK_Space_AuditEvent_Outcome", "[Outcome] IN ('Started','Succeeded','Failed','Denied')");
+
+                            t.HasCheckConstraint("CK_Space_AuditEvent_Tenant", "[TenantId] <> '00000000-0000-0000-0000-000000000000'");
+                        });
                 });
 
             modelBuilder.Entity("CP6.Entity.DomainModels.Space.Space_CodeRule", b =>

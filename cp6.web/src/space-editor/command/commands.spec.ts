@@ -14,6 +14,13 @@ import type { EditorScene, RackVO, MarkerVO, ZoneVO } from '@/types/space/scene'
 
 function makeScene(racks: Partial<RackVO>[] = [], markers: Partial<MarkerVO>[] = []): EditorScene {
   return {
+    source: {
+      kind: 'Real',
+      dataSourceId: 'TEST_SPACE',
+      observedAtUtc: '2026-07-25T00:00:00Z',
+      isSimulated: false,
+      isAvailable: true,
+    },
     floor: {} as any,
     zones: [],
     aisles: [],

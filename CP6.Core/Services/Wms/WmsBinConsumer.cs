@@ -1,6 +1,8 @@
 using System.Text.Json;
+using System.Data;
 using CP6.Core.EFDbContext;
 using CP6.Core.Services.Integration;
+using CP6.Entity.DomainModels;
 using CP6.Entity.DomainModels.Wms;
 using CP6.Entity.DTOs.Space;
 using Microsoft.EntityFrameworkCore;
@@ -21,7 +23,73 @@ public class WmsBinConsumer : IWmsLocationConsumer
     public WmsBinConsumer(CP6Context db) => _db = db;
 
     /// <inheritdoc/>
-    public async Task<WmsConsumeResult> ConsumeAsync(LocationPublishBatch batch)
+    public async Task<WmsConsumeResult> ConsumeAsync(
+        LocationPublishBatch batch,
+        SpaceRetryFence? retryFence = null,
+        CancellationToken ct = default)
+    {
+        if (retryFence is null)
+            return await ConsumeCoreAsync(batch, null, ct);
+        if (retryFence.EventId == Guid.Empty ||
+            retryFence.LeaseId == Guid.Empty)
+        {
+            throw new InvalidOperationException(
+                "SPACE_RETRY_FENCE_INVALID");
+        }
+
+        await using var transaction = _db.Database.IsRelational()
+            ? await _db.Database.BeginTransactionAsync(
+                IsolationLevel.Serializable,
+                ct)
+            : null;
+        IntegrationEvent? retryEvent = null;
+        try
+        {
+            retryEvent = await LockRetryEventAsync(
+                retryFence,
+                DateTime.UtcNow,
+                ct);
+            if (retryEvent.RetryCompletionSucceeded.HasValue)
+            {
+                if (retryEvent.RetryCompletionLeaseId !=
+                    retryFence.LeaseId)
+                {
+                    throw new InvalidOperationException(
+                        "SPACE_RETRY_COMPLETION_PENDING");
+                }
+
+                if (transaction is not null)
+                    await transaction.CommitAsync(ct);
+                return new WmsConsumeResult
+                {
+                    Success =
+                        retryEvent.RetryCompletionSucceeded.Value,
+                    AllSkipped = true,
+                };
+            }
+
+            var result = await ConsumeCoreAsync(
+                batch,
+                retryEvent,
+                ct);
+            if (transaction is not null)
+                await transaction.CommitAsync(ct);
+            return result;
+        }
+        catch
+        {
+            DetachOwnWrites();
+            if (retryEvent is not null)
+                _db.Entry(retryEvent).State =
+                    EntityState.Detached;
+            throw;
+        }
+    }
+
+    private async Task<WmsConsumeResult> ConsumeCoreAsync(
+        LocationPublishBatch batch,
+        IntegrationEvent? retryEvent,
+        CancellationToken ct)
     {
         var result = new WmsConsumeResult { Success = true };
 
@@ -45,7 +113,7 @@ public class WmsBinConsumer : IWmsLocationConsumer
             .Select(i => i.WarehouseCd!).ToHashSet();
         await _db.WmsBins
             .Where(b => idSet.Contains(b.Id) || (whSet.Contains(b.WarehouseCd) && codeSet.Contains(b.LocationCode)))
-            .LoadAsync();
+            .LoadAsync(ct);
         foreach (var b in _db.WmsBins.Local)
         {
             binsById[b.Id] = b;
@@ -63,7 +131,7 @@ public class WmsBinConsumer : IWmsLocationConsumer
         //    同批前面 item 新插的 bin 走 binsById 命中不进 bin==null 分支，守卫不影响批内自碰撞语义。
         var missingIds = idSet.Where(id => !binsById.ContainsKey(id)).ToHashSet();
         var existingLocationIds = missingIds.Count > 0
-            ? (await _db.Space_Locations.Where(l => missingIds.Contains(l.Id)).Select(l => l.Id).ToListAsync())
+            ? (await _db.Space_Locations.Where(l => missingIds.Contains(l.Id)).Select(l => l.Id).ToListAsync(ct))
                 .ToHashSet()
             : new HashSet<Guid>();
 
@@ -86,7 +154,7 @@ public class WmsBinConsumer : IWmsLocationConsumer
                 .Where(s => stockWh.Contains(s.WarehouseCd) && stockCode.Contains(s.LocationCd))
                 .GroupBy(s => new { s.WarehouseCd, s.LocationCd })
                 .Select(g => new { g.Key.WarehouseCd, g.Key.LocationCd, Qty = g.Sum(x => x.PhysicalQty) })
-                .ToListAsync();
+                .ToListAsync(ct);
             foreach (var g in grouped)
                 stockByAnchor[(g.WarehouseCd, g.LocationCd)] = g.Qty;
         }
@@ -202,9 +270,16 @@ public class WmsBinConsumer : IWmsLocationConsumer
         // 的事件落库与 Worker 批尾簿记（Attempts/NextRetryAt 丢失 → 热循环永不 DeadLetter）。
         // 失败时只 detach 本方法 Add/Modify 的 WmsBin 行后 rethrow——绝不用 ChangeTracker.Clear()
         // （那会连 Worker 正在跟踪的事件行一起断开）。
+        if (retryEvent is not null)
+        {
+            retryEvent.RetryCompletionLeaseId =
+                retryEvent.RetryLeaseId;
+            retryEvent.RetryCompletionSucceeded =
+                result.Success;
+        }
         try
         {
-            await _db.SaveChangesAsync();
+            await _db.SaveChangesAsync(ct);
         }
         catch
         {
@@ -227,6 +302,72 @@ public class WmsBinConsumer : IWmsLocationConsumer
         {
             entry.State = EntityState.Detached;
         }
+    }
+
+    private async Task<IntegrationEvent> LockRetryEventAsync(
+        SpaceRetryFence fence,
+        DateTime lockNow,
+        CancellationToken ct)
+    {
+        var tenantId = _db.CurrentTenantId;
+        IntegrationEvent? retryEvent;
+        if (_db.Database.ProviderName?.Contains(
+                "SqlServer",
+                StringComparison.OrdinalIgnoreCase) == true)
+        {
+            retryEvent = await _db.IntegrationEvents
+                .FromSqlInterpolated(
+                    $"""
+                    SELECT *
+                    FROM [T_IntegrationEvent] WITH (UPDLOCK, HOLDLOCK, ROWLOCK)
+                    WHERE [Id] = {fence.EventId}
+                      AND [TenantId] = {tenantId}
+                      AND [Status] = {IntegrationEventStatus.Failed}
+                      AND [RetryLeaseId] = {fence.LeaseId}
+                      AND [NextRetryAt] > {lockNow}
+                    """)
+                .IgnoreQueryFilters()
+                .AsTracking()
+                .SingleOrDefaultAsync(ct);
+        }
+        else
+        {
+            var owned = _db.IntegrationEvents
+                .IgnoreQueryFilters()
+                .Where(e =>
+                    e.Id == fence.EventId &&
+                    e.TenantId == tenantId &&
+                    e.Status == IntegrationEventStatus.Failed &&
+                    e.RetryLeaseId == fence.LeaseId &&
+                    e.NextRetryAt > lockNow);
+            if (_db.Database.IsRelational())
+            {
+                // A same-value UPDATE acquires the provider's write lock
+                // before any WMS read/write. SQLite tests exercise this
+                // branch; SQL Server uses explicit lock hints above.
+                var affected = await owned.ExecuteUpdateAsync(
+                    setters => setters.SetProperty(
+                        e => e.RetryLeaseId,
+                        fence.LeaseId),
+                    ct);
+                if (affected != 1)
+                    retryEvent = null;
+                else
+                    retryEvent = await owned
+                        .AsTracking()
+                        .SingleOrDefaultAsync(ct);
+            }
+            else
+            {
+                retryEvent = await owned
+                    .AsTracking()
+                    .SingleOrDefaultAsync(ct);
+            }
+        }
+
+        return retryEvent ??
+            throw new InvalidOperationException(
+                "SPACE_RETRY_FENCE_LOST");
     }
 
     private static void Stamp(WmsBin bin, long version, string? publishedBy)

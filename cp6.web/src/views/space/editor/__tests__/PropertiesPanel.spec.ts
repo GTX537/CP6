@@ -34,7 +34,22 @@ const aisle = (over: Partial<AisleVO> = {}): AisleVO => ({
 })
 
 function makeScene(over: Partial<EditorScene> = {}): EditorScene {
-  return { floor: {} as any, zones: [], aisles: [], racks: [], locations: [], markers: [], ...over }
+  return {
+    source: {
+      kind: 'Real',
+      dataSourceId: 'TEST_SPACE',
+      observedAtUtc: '2026-07-25T00:00:00Z',
+      isSimulated: false,
+      isAvailable: true,
+    },
+    floor: {} as any,
+    zones: [],
+    aisles: [],
+    racks: [],
+    locations: [],
+    markers: [],
+    ...over,
+  }
 }
 
 const i18n = createI18n({ legacy: false, locale: 'zh', missingWarn: false, fallbackWarn: false, messages: {} })

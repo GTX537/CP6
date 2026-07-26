@@ -17,6 +17,28 @@ public class IntegrationEventOptions
     /// <summary>If false, the worker is a no-op.</summary>
     public bool Enabled { get; set; } = true;
 
+    /// <summary>Space retry processing lease duration in seconds.</summary>
+    public int SpaceRetryLeaseSeconds { get; set; } = 900;
+
+    /// <summary>Space retry lease heartbeat interval in seconds.</summary>
+    public int SpaceRetryHeartbeatSeconds { get; set; } = 60;
+
+    /// <summary>Space dead-letter notification claim duration in seconds.</summary>
+    public int SpaceDeadLetterNotificationLeaseSeconds { get; set; } = 300;
+
+    public void ValidateSpaceRetryLease()
+    {
+        if (SpaceRetryLeaseSeconds <= 0 ||
+            SpaceRetryHeartbeatSeconds <= 0 ||
+            (long)SpaceRetryHeartbeatSeconds * 3 >
+                SpaceRetryLeaseSeconds ||
+            SpaceDeadLetterNotificationLeaseSeconds <= 0)
+        {
+            throw new InvalidOperationException(
+                "SPACE_RETRY_LEASE_OPTIONS_INVALID");
+        }
+    }
+
     /// <summary>
     /// Gets the configured backoff in seconds for the current attempt count.
     /// </summary>

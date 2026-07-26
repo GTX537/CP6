@@ -17,7 +17,9 @@ public class OeeCalculationService : BackgroundService
 {
     private readonly IServiceScopeFactory _scopeFactory;
     private readonly ILogger<OeeCalculationService> _logger;
-    private static readonly TimeSpan Interval = TimeSpan.FromMinutes(5);
+
+    protected virtual TimeSpan StartupDelay => TimeSpan.FromSeconds(20);
+    protected virtual TimeSpan Interval => TimeSpan.FromMinutes(5);
 
     public OeeCalculationService(IServiceScopeFactory scopeFactory, ILogger<OeeCalculationService> logger)
     {
@@ -30,7 +32,7 @@ public class OeeCalculationService : BackgroundService
         _logger.LogInformation("OEE Calculation Service 起動");
 
         // 起動時に少し待ってから（DB 準備完了確認）
-        try { await Task.Delay(TimeSpan.FromSeconds(20), stoppingToken); }
+        try { await Task.Delay(StartupDelay, stoppingToken); }
         catch (OperationCanceledException) { return; }
 
         DateTime? lastDay = null;
@@ -59,6 +61,11 @@ public class OeeCalculationService : BackgroundService
                 }, _logger, stoppingToken);
 
                 lastDay = today;
+            }
+            catch (OperationCanceledException)
+                when (stoppingToken.IsCancellationRequested)
+            {
+                break;
             }
             catch (Exception ex)
             {

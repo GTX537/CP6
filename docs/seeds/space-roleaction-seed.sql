@@ -10,7 +10,7 @@
  *   space-menu-seed-2.sql）で作成済みであること:
  *     902 space-site（サイト管理） / 903 space-floor（フロア管理） /
  *     904 space-code-rule（コード規則） / 905 space-publish（発行センター） /
- *     906 space-events（連携イベント・授権動作なし）
+ *     906 space-audit（イベント・監査）
  *
  * 動作定義（計画 2026-07-07-space-wave4-crosscutting.md Global Constraints 映射表 逐字）:
  *   902 space-site      : add / edit / delete
@@ -18,7 +18,7 @@
  *                         全変更は「フロア編集」単一動作 edit に集約——動作爆発回避）
  *   904 space-code-rule : add / edit / delete / generate（generate-codes + gen-code）
  *   905 space-publish   : publish / deactivate / adopt
- *   906 space-events    : 動作なし（只读・[Authorize] のみ）
+ *   906 space-audit     : read（監査照会。RoleId=1 のみに初期授権）
  *
  * マルチテナント:
  *   Sys_MenuAction / Sys_RoleAction は BaseTenantEntity（TenantId 必須・行級隔離）。
@@ -60,8 +60,9 @@ INSERT INTO @Actions (MenuId, ActionCode, ActionName, Sort) VALUES
  (904, N'generate',   N'コード生成',       4),
  (905, N'publish',    N'発行',             1),
  (905, N'deactivate', N'停止',             2),
- (905, N'adopt',      N'採納',             3);
--- 合計 13 動作定義／租户
+ (905, N'adopt',      N'採納',             3),
+ (906, N'read',       N'查看审计',         0);
+-- 合計 14 動作定義／租户（E00-S04 は 906:read を追加）
 
 /* ------------------------------------------------------------
  * 1. Sys_MenuAction 登記（逐租户・冪等 NOT EXISTS）
@@ -93,12 +94,12 @@ WHERE NOT EXISTS (
  * ------------------------------------------------------------ */
 DECLARE @Tn INT, @Ma INT, @Ra INT;
 SELECT @Tn = COUNT(*) FROM Sys_Tenants;
-SELECT @Ma = COUNT(*) FROM Sys_MenuAction WHERE MenuId BETWEEN 902 AND 905;
-SELECT @Ra = COUNT(*) FROM Sys_RoleAction WHERE MenuId BETWEEN 902 AND 905 AND RoleId = 1;
+SELECT @Ma = COUNT(*) FROM Sys_MenuAction WHERE MenuId BETWEEN 902 AND 906;
+SELECT @Ra = COUNT(*) FROM Sys_RoleAction WHERE MenuId BETWEEN 902 AND 906 AND RoleId = 1;
 
 PRINT N'  租户数                    : ' + CAST(@Tn AS NVARCHAR(10));
-PRINT N'  MenuAction 件数(902-905)  : ' + CAST(@Ma AS NVARCHAR(10)) + N'（租户数 × 13 想定）';
-PRINT N'  RoleAction 件数(管理者)   : ' + CAST(@Ra AS NVARCHAR(10)) + N'（租户数 × 13 想定）';
+PRINT N'  MenuAction 件数(902-906)  : ' + CAST(@Ma AS NVARCHAR(10)) + N'（租户数 × 14 想定）';
+PRINT N'  RoleAction 件数(管理者)   : ' + CAST(@Ra AS NVARCHAR(10)) + N'（租户数 × 14 想定）';
 
 COMMIT TRANSACTION;
 PRINT '=== Space 権限点シード 完了 ===';
@@ -116,26 +117,26 @@ GO
 -- 各テナントの Space 権限点（MenuAction）一覧
 SELECT CONVERT(varchar(36), ma.TenantId) AS TenantId, ma.MenuId, ma.ActionCode, ma.ActionName, ma.Sort
 FROM Sys_MenuAction ma
-WHERE ma.MenuId BETWEEN 902 AND 905
+WHERE ma.MenuId BETWEEN 902 AND 906
 ORDER BY ma.TenantId, ma.MenuId, ma.Sort;
 
 -- 管理者ロールの授権（RoleAction）一覧
 SELECT CONVERT(varchar(36), ra.TenantId) AS TenantId, ra.RoleId, ra.MenuId, ra.ActionCode
 FROM Sys_RoleAction ra
-WHERE ra.MenuId BETWEEN 902 AND 905 AND ra.RoleId = 1
+WHERE ra.MenuId BETWEEN 902 AND 906 AND ra.RoleId = 1
 ORDER BY ra.TenantId, ra.MenuId, ra.ActionCode;
 
 /* ============================================================
  * 5. ロールバック用（緊急時のみ使用）
  * ============================================================
- * 注意: 本ファイルが追加した 902~905 の Space 権限点のみを対象とする。
+ * 注意: 本ファイルが追加した 902~906 の Space 権限点のみを対象とする。
  * ------------------------------------------------------------ */
 /*
 BEGIN TRANSACTION;
 -- RoleId=1 限定：本种子只授过管理员；不限定会连带删掉日后经 UI 授出的其他角色 Space 授权（波4 终审 T4 修正）
-DELETE FROM Sys_RoleAction WHERE RoleId = 1 AND MenuId BETWEEN 902 AND 905 AND ActionCode IN
- (N'add', N'edit', N'delete', N'generate', N'publish', N'deactivate', N'adopt');
-DELETE FROM Sys_MenuAction WHERE MenuId BETWEEN 902 AND 905 AND ActionCode IN
- (N'add', N'edit', N'delete', N'generate', N'publish', N'deactivate', N'adopt');
+DELETE FROM Sys_RoleAction WHERE RoleId = 1 AND MenuId BETWEEN 902 AND 906 AND ActionCode IN
+ (N'add', N'edit', N'delete', N'generate', N'publish', N'deactivate', N'adopt', N'read');
+DELETE FROM Sys_MenuAction WHERE MenuId BETWEEN 902 AND 906 AND ActionCode IN
+ (N'add', N'edit', N'delete', N'generate', N'publish', N'deactivate', N'adopt', N'read');
 COMMIT TRANSACTION;
 */

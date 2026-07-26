@@ -51,6 +51,7 @@ public class SceneIoService : ISceneIoService
 
         return new SceneExportDto
         {
+            Source = SpaceDataSourceDto.Runtime(),
             Meta = new SceneExportMeta
             {
                 FloorCode = floor.FloorCode, FloorName = floor.FloorName,
