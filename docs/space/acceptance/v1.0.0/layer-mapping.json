@@ -1,0 +1,17 @@
+{
+  "schemaVersion": 1,
+  "profileId": "space-cad-mapping-v1",
+  "rules": [
+    { "pattern": "WALL|F01_WALL|F02_WALL", "semanticType": "Wall" },
+    { "pattern": "RACK|F01_RACK|F02_RACK", "semanticType": "Rack" },
+    { "pattern": "AISLE", "semanticType": "Aisle" },
+    { "pattern": "DOOR", "semanticType": "Door" },
+    { "pattern": "DOCK", "semanticType": "Dock" },
+    { "pattern": "COLUMN", "semanticType": "Column" },
+    { "pattern": "EQUIP_CONVEYOR", "semanticType": "Equipment", "subtype": "Conveyor" },
+    { "pattern": "EQUIP_CHARGER", "semanticType": "Equipment", "subtype": "ChargingStation" }
+  ],
+  "unknownLayerPolicy": "CreateIssue",
+  "missingBlockAttributePolicy": "CreateIssue"
+}
+

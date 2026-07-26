@@ -1,0 +1,93 @@
+flowchart TB
+
+    classDef done fill:#E8F5E9,stroke:#2E7D32,color:#1B5E20,stroke-width:1.5px;
+    classDef partial fill:#FFF8E1,stroke:#F9A825,color:#6D4C00,stroke-width:2px;
+    classDef gap fill:#FFEBEE,stroke:#C62828,color:#7F0000,stroke-width:2px,stroke-dasharray:5 5;
+    classDef ext fill:#E3F2FD,stroke:#1565C0,color:#0D47A1,stroke-width:1.5px;
+
+    L1["绿色：主要实现"]:::done
+    L2["黄色：部分实现"]:::partial
+    L3["红色：缺失/未闭环"]:::gap
+
+    subgraph MODEL["A. 低成本空间建模工厂"]
+        direction LR
+        A1["CAD/DXF语义解析<br/>图层识别/比例/坐标/置信度"]:::gap
+        A2["Excel业务映射<br/>库位码/货架/设备/属性"]:::gap
+        A3["地图编辑器<br/>货架模板/阵列/JSON导入导出"]:::partial
+        A4["组件与设备模型库<br/>墙柱门月台/逐层格口/自定义属性"]:::gap
+        A5["校正/校验/版本分支<br/>预览/发布/主题"]:::gap
+        A1 --> A2 --> A3 --> A4 --> A5
+    end
+
+    subgraph MASTER["B. 空间事实主数据"]
+        direction LR
+        B1["园区→建筑→楼层→库区"]:::partial
+        B2["巷道→货架→库位"]:::done
+        B3["库位编码/批量生成<br/>绑定/发布前校验"]:::done
+        B4["空间元素/设备/设施<br/>属性模式与业务映射"]:::gap
+        B1 --> B2 --> B3
+        B2 --> B4
+    end
+
+    subgraph RUNTIME["C. 人、货、场数字孪生运行态"]
+        direction LR
+        C0["Three.js 楼层/跨层可视化"]:::done
+        C1["人：位置/闲忙/轨迹/作业停留"]:::gap
+        C2["货：库存/物料定位/利用率<br/>货主、SKU属性、ABC待补"]:::partial
+        C3["场：区域/通道/库容<br/>空间KPI与诊断待补"]:::partial
+        C4["设备：图层已有<br/>实时WCS/IoT/告警未接"]:::partial
+        C0 --> C1
+        C0 --> C2
+        C0 --> C3
+        C0 --> C4
+    end
+
+    subgraph DECISION["D. 运营分析与决策"]
+        direction LR
+        D1["拣货单路径回放/跨层<br/>NN+2opt what-if/工作量热图"]:::done
+        D2["指标诊断<br/>拥堵/停留/容量/路径绕行"]:::gap
+        D3["推荐与模拟<br/>上架/库位/拣选/人员调度"]:::gap
+        D1 --> D2 --> D3
+    end
+
+    subgraph EXECUTION["E. 执行与反馈闭环"]
+        direction LR
+        E1["审批后的建议<br/>转WMS/WCS/PDA任务"]:::gap
+        E2["库存/任务/人员/设备事件回流"]:::gap
+        E3["孪生状态更新<br/>效果对比/模型再训练"]:::gap
+        E1 --> E2 --> E3
+    end
+
+    subgraph PLAN["F. 规划态"]
+        direction LR
+        F1["布局方案版本比较"]:::gap
+        F2["历史实单仿真/产能验证"]:::gap
+        F3["方案发布/CAD导出或回写"]:::gap
+        F1 --> F2 --> F3
+    end
+
+    ERP["ERP<br/>订单/产品/物料/组织/成本"]:::ext
+    WMS["WMS<br/>仓库/库位/库存/入出库/拣货任务"]:::ext
+    EDGE["WCS/PDA/IoT<br/>设备状态/扫码位置/作业事件"]:::ext
+
+    A5 --> B1
+    B3 --> C0
+    B4 --> C0
+    C1 --> D2
+    C2 --> D1
+    C3 --> D2
+    C4 --> D2
+    D3 --> E1
+    E3 --> C0
+    D3 --> F1
+    F3 --> A5
+
+    ERP -.业务需求与主数据.-> B4
+    WMS -.库位发布/库存/任务.-> B3
+    WMS -.运行数据.-> C2
+    WMS -.拣货任务.-> D1
+    EDGE -.实时事件.-> C1
+    EDGE -.实时事件.-> C4
+    E1 -.执行指令.-> WMS
+    E1 -.执行指令.-> EDGE
+

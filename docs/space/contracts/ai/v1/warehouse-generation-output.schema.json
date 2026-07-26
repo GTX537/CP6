@@ -1,0 +1,247 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://cp6.local/contracts/space/ai/v1/warehouse-generation-output.schema.json",
+  "title": "CP6 Warehouse Generation Provider Output v1",
+  "type": "object",
+  "additionalProperties": false,
+  "required": [
+    "schemaVersion",
+    "providerRequestId",
+    "providerModel",
+    "usage",
+    "suggestions",
+    "diagnostics"
+  ],
+  "properties": {
+    "schemaVersion": {
+      "const": "1.0"
+    },
+    "providerRequestId": {
+      "type": "string",
+      "minLength": 1,
+      "maxLength": 256
+    },
+    "providerModel": {
+      "type": "string",
+      "minLength": 1,
+      "maxLength": 128
+    },
+    "usage": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": [
+        "inputUnits",
+        "outputUnits"
+      ],
+      "properties": {
+        "inputUnits": {
+          "type": "integer",
+          "minimum": 0
+        },
+        "outputUnits": {
+          "type": "integer",
+          "minimum": 0
+        }
+      }
+    },
+    "suggestions": {
+      "type": "array",
+      "maxItems": 1000000,
+      "items": {
+        "$ref": "#/$defs/suggestion"
+      }
+    },
+    "diagnostics": {
+      "type": "array",
+      "maxItems": 1000,
+      "items": {
+        "$ref": "#/$defs/diagnostic"
+      }
+    }
+  },
+  "$defs": {
+    "token": {
+      "type": "string",
+      "minLength": 1,
+      "maxLength": 256,
+      "pattern": "^[^\\u0000-\\u001F\\u007F]*$"
+    },
+    "spaceType": {
+      "enum": [
+        "Floor",
+        "Zone",
+        "Aisle",
+        "Rack",
+        "Wall",
+        "Column",
+        "Door",
+        "Dock",
+        "StaticEquipment",
+        "Ignore",
+        "Unknown"
+      ]
+    },
+    "suggestion": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": [
+        "sourceKey",
+        "suggestedType",
+        "confidence",
+        "attributes",
+        "relations",
+        "evidenceCodes"
+      ],
+      "properties": {
+        "sourceKey": {
+          "$ref": "#/$defs/token"
+        },
+        "suggestedType": {
+          "$ref": "#/$defs/spaceType"
+        },
+        "confidence": {
+          "type": "number",
+          "minimum": 0,
+          "maximum": 1
+        },
+        "attributes": {
+          "type": "object",
+          "additionalProperties": false,
+          "properties": {
+            "zonePurpose": {
+              "enum": [
+                "Receiving",
+                "Storage",
+                "Picking",
+                "Packing",
+                "Shipping",
+                "Staging",
+                "Passage",
+                "Unknown"
+              ]
+            },
+            "rackType": {
+              "enum": [
+                "Selective",
+                "DriveIn",
+                "Cantilever",
+                "Flow",
+                "Mobile",
+                "Unknown"
+              ]
+            },
+            "doorType": {
+              "enum": [
+                "Personnel",
+                "Rolling",
+                "Fire",
+                "Dock",
+                "Unknown"
+              ]
+            },
+            "dockType": {
+              "enum": [
+                "Inbound",
+                "Outbound",
+                "Shared",
+                "Unknown"
+              ]
+            },
+            "equipmentType": {
+              "enum": [
+                "Conveyor",
+                "Agv",
+                "Forklift",
+                "Workstation",
+                "Scale",
+                "Charger",
+                "Unknown"
+              ]
+            },
+            "semanticLabel": {
+              "$ref": "#/$defs/token"
+            }
+          }
+        },
+        "relations": {
+          "type": "array",
+          "maxItems": 32,
+          "items": {
+            "type": "object",
+            "additionalProperties": false,
+            "required": [
+              "relationType",
+              "targetSourceKey",
+              "confidence"
+            ],
+            "properties": {
+              "relationType": {
+                "enum": [
+                  "ParentCandidate",
+                  "AdjacentTo",
+                  "ContainedBy",
+                  "ServedByAisle"
+                ]
+              },
+              "targetSourceKey": {
+                "$ref": "#/$defs/token"
+              },
+              "confidence": {
+                "type": "number",
+                "minimum": 0,
+                "maximum": 1
+              }
+            }
+          }
+        },
+        "evidenceCodes": {
+          "type": "array",
+          "minItems": 1,
+          "maxItems": 16,
+          "uniqueItems": true,
+          "items": {
+            "enum": [
+              "LAYER_NAME",
+              "BLOCK_NAME",
+              "ATTRIBUTE_KEY",
+              "REPETITION_PATTERN",
+              "ADJACENCY",
+              "MAPPING_HINT",
+              "RULE_CONFLICT"
+            ]
+          }
+        }
+      }
+    },
+    "diagnostic": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": [
+        "code",
+        "severity"
+      ],
+      "properties": {
+        "code": {
+          "$ref": "#/$defs/token"
+        },
+        "severity": {
+          "enum": [
+            "Info",
+            "Warning",
+            "Error"
+          ]
+        },
+        "sourceKey": {
+          "anyOf": [
+            {
+              "$ref": "#/$defs/token"
+            },
+            {
+              "type": "null"
+            }
+          ]
+        }
+      }
+    }
+  }
+}

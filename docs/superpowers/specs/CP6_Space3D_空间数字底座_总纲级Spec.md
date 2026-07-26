@@ -1,5 +1,7 @@
 # CP6 WMS Space 3D 空间数字底座需求规格说明书
 
+> **历史文档提示（2026-07-23）**：本文保留 2026-06 的架构和代码参考价值，但其“CAD P3+”“人员永不纳入”等范围结论已被当前产品基线替代。实施、估算和验收请以 [`docs/space/requirements/01-product-requirements.md`](../../space/requirements/01-product-requirements.md) 及同目录 02～04 文档为准。
+
 版本：v0.1 草案  
 模块：CP6 Space 空间数字底座  
 适用系统：CP6 · WMS / Space / PUB / Integration  

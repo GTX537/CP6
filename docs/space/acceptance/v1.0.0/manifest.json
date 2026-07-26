@@ -1,0 +1,63 @@
+{
+  "datasetName": "CP6 Space MVP Synthetic Seed Pack",
+  "datasetVersion": "1.0.0",
+  "schemaVersion": 1,
+  "createdAtUtc": "2026-07-25T00:00:00Z",
+  "purpose": "DevelopmentSeed",
+  "countsTowardReleaseGate": false,
+  "unit": "Millimeter",
+  "coordinateSystem": "FloorLocal-ZUp",
+  "mappingProfileVersion": "space-cad-mapping-v1",
+  "ruleSetVersion": "space-v1",
+  "expectedAnswerVersion": "1.0.0",
+  "license": "Synthetic",
+  "samples": [
+    {
+      "sampleId": "L1-SEED-001",
+      "layoutFamily": "L1-RegularRectangular",
+      "split": "DevelopmentSeed",
+      "sourceFile": "seeds/01-regular-rectangular.dxf",
+      "sourceSha256": "29a69667fbea7aea9783f5602be105682cf74b25e4b2ef97afcb8d9652db4b11",
+      "expectedTargetCount": 8
+    },
+    {
+      "sampleId": "L2-SEED-001",
+      "layoutFamily": "L2-MultiFloor",
+      "split": "DevelopmentSeed",
+      "sourceFile": "seeds/02-multi-floor.dxf",
+      "sourceSha256": "745d5f41443c5b696aff0af5c7f34b049173d537d2f948076367de0c4d0786e7",
+      "expectedTargetCount": 6
+    },
+    {
+      "sampleId": "L3-SEED-001",
+      "layoutFamily": "L3-NonOrthogonal",
+      "split": "DevelopmentSeed",
+      "sourceFile": "seeds/03-non-orthogonal.dxf",
+      "sourceSha256": "f57d898276197123465c0e56f366f2133b666919af2e0a000806f0ebde99b8cb",
+      "expectedTargetCount": 4
+    },
+    {
+      "sampleId": "L4-SEED-001",
+      "layoutFamily": "L4-Comprehensive",
+      "split": "DevelopmentSeed",
+      "sourceFile": "seeds/04-comprehensive.dxf",
+      "sourceSha256": "6960eb8953b340c80d285d8449ff6ae34356d38fd2402caffe3bcfca0c37cfe3",
+      "expectedTargetCount": 9
+    },
+    {
+      "sampleId": "L5-SEED-001",
+      "layoutFamily": "L5-NoisyNonStandard",
+      "split": "DevelopmentSeed",
+      "sourceFile": "seeds/05-noisy-nonstandard.dxf",
+      "sourceSha256": "418cbb68cc7fbbf8cb0389b8ab1f56b925cc7ce225f16e257eacb31d7df3fb9f",
+      "expectedTargetCount": 3
+    }
+  ],
+  "files": {
+    "expectedElements": "expected-elements.jsonl",
+    "expectedIssues": "expected-issues.json",
+    "providerIr": "provider-ir.jsonl",
+    "layerMapping": "layer-mapping.json",
+    "license": "LICENSE.md"
+  }
+}
