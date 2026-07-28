@@ -39,11 +39,28 @@ else
     builder.Configuration.Sources.Add(localJsonSource);                 // 兜底（理论不达）
 
 // 1. 注册控制器（全局注册 OperLogFilter）
+if (builder.Environment.IsProduction())
+    CP6.WebApi.Configuration.ProductionConfigurationValidator.Validate(builder.Configuration);
+
 builder.Services.AddScoped<OperLogFilter>();
 builder.Services.AddControllers(options =>
 {
     options.Filters.AddService<OperLogFilter>();
 });
+builder.Services.AddSingleton(TimeProvider.System);
+builder.Services.AddHealthChecks()
+    .AddCheck(
+        "self",
+        () => Microsoft.Extensions.Diagnostics.HealthChecks.HealthCheckResult.Healthy(),
+        tags: ["live"])
+    .AddCheck<CP6.WebApi.Health.DatabaseReadinessHealthCheck>(
+        "sqlserver",
+        failureStatus: Microsoft.Extensions.Diagnostics.HealthChecks.HealthStatus.Unhealthy,
+        tags: ["ready"])
+    .AddCheck<CP6.WebApi.Health.DistributedCacheReadinessHealthCheck>(
+        "redis",
+        failureStatus: Microsoft.Extensions.Diagnostics.HealthChecks.HealthStatus.Unhealthy,
+        tags: ["ready"]);
 
 // 1.1 注册 SignalR
 builder.Services.AddSignalR();
@@ -54,6 +71,26 @@ builder.Services.AddSwaggerGen(c =>
 {
     // 完全修飾名で schemaId を一意化（入れ子型 DeleteRequest 等の衝突回避）
     c.CustomSchemaIds(t => (t.FullName ?? t.Name).Replace("+", "."));
+    c.AddSecurityDefinition("Bearer", new Microsoft.OpenApi.Models.OpenApiSecurityScheme
+    {
+        Name = "Authorization",
+        Type = Microsoft.OpenApi.Models.SecuritySchemeType.Http,
+        Scheme = "bearer",
+        BearerFormat = "JWT",
+        In = Microsoft.OpenApi.Models.ParameterLocation.Header,
+        Description = "原生客户端使用 Authorization: Bearer {accessToken}"
+    });
+    c.AddSecurityRequirement(new Microsoft.OpenApi.Models.OpenApiSecurityRequirement
+    {
+        [new Microsoft.OpenApi.Models.OpenApiSecurityScheme
+        {
+            Reference = new Microsoft.OpenApi.Models.OpenApiReference
+            {
+                Type = Microsoft.OpenApi.Models.ReferenceType.SecurityScheme,
+                Id = "Bearer"
+            }
+        }] = Array.Empty<string>()
+    });
 });
 
 // 3. 注册数据库上下文
@@ -75,11 +112,18 @@ if (!string.IsNullOrEmpty(redisConn))
         options.Configuration = redisConn;
         options.InstanceName = "CP6:";  // Key 前缀，区分不同应用
     });
+    builder.Services.AddSingleton<CP6.WebApi.Services.INativeSsoGrantCache>(
+        _ => new CP6.WebApi.Services.RedisNativeSsoGrantCache(
+            redisConn,
+            "CP6:"));
 }
 else
 {
     // 开发模式：内存缓存（零配置，行为和 Redis 一致）
     builder.Services.AddDistributedMemoryCache();
+    builder.Services.AddSingleton<
+        CP6.WebApi.Services.INativeSsoGrantCache,
+        CP6.WebApi.Services.MemoryNativeSsoGrantCache>();
 }
 builder.Services.AddSingleton<CacheService>();
 
@@ -104,6 +148,7 @@ builder.Services.AddHostedService<CP6.WebApi.BackgroundServices.KafkaOperLogCons
 
 // 操作日志保留期清理（默认 7 天，OperLog:RetentionDays 可配置）
 builder.Services.AddHostedService<CP6.WebApi.BackgroundServices.OperLogCleanupService>();
+builder.Services.AddHostedService<CP6.WebApi.BackgroundServices.WmsScanRetentionCleanupService>();
 
 // 3.4 RabbitMQ = 业务事件通知/告警 专任（低频・确实配信・可路由可重试）
 //  - RabbitMQService 实现 INotificationPublisher（出荷完了・棚卸差異 等业务事件）。
@@ -487,6 +532,17 @@ builder.Services.AddScoped<CP6.Core.Services.Wms.IIotService, CP6.Core.Services.
 
 // 4.22 MSBBWM300 モバイル作業指示（RFハンディ）
 builder.Services.AddScoped<CP6.Core.Services.Wms.IMobileService, CP6.Core.Services.Wms.MobileService>();
+builder.Services.AddScoped<CP6.Core.Services.Wms.IMobileTaskV1Service, CP6.Core.Services.Wms.MobileTaskV1Service>();
+builder.Services.AddScoped<CP6.Core.Services.Wms.IWmsAccessScopeProvider, CP6.Core.Services.Wms.WmsAccessScopeProvider>();
+builder.Services.AddScoped<CP6.Core.Services.Wms.IWmsRoleScopeService, CP6.Core.Services.Wms.WmsRoleScopeService>();
+builder.Services.AddScoped<CP6.Core.Services.Wms.IMobileTaskV2Service, CP6.Core.Services.Wms.MobileTaskV2Service>();
+builder.Services.AddScoped<CP6.Core.Services.Wms.IBarcodeAliasService, CP6.Core.Services.Wms.BarcodeAliasService>();
+builder.Services.AddScoped<CP6.Core.Services.Wms.IClientDeviceService, CP6.Core.Services.Wms.ClientDeviceService>();
+builder.Services.AddScoped<CP6.Core.Services.Wms.ISerialInventoryService, CP6.Core.Services.Wms.SerialInventoryService>();
+builder.Services.AddScoped<CP6.Core.Services.Wms.ILpnService, CP6.Core.Services.Wms.LpnService>();
+builder.Services.AddScoped<CP6.Core.Services.Wms.IBarcodeProfileService, CP6.Core.Services.Wms.BarcodeProfileService>();
+builder.Services.AddScoped<CP6.Core.Services.Wms.ILabelJobService, CP6.Core.Services.Wms.LabelJobService>();
+builder.Services.AddScoped<CP6.Core.Services.Wms.IMobileTaskNotifier, CP6.WebApi.Services.SignalRMobileTaskNotifier>();
 
 // 4.12 WM-3.5 WMS 自動展開フック（MES IssueAsync / PA CreateAsync 後に自動発火）
 // appsettings.json の WmsBridge:Enabled で切替（既定 true）。false の場合は no-op に置換。
@@ -577,6 +633,8 @@ builder.Services.AddSingleton<CP6.WebApi.Observability.BridgeMetricsCollector>()
 
 // S 类认证加固（T1）：Security 配置 + BCrypt 密码哈希服务
 builder.Services.Configure<CP6.Core.Services.Sys.SecurityOptions>(builder.Configuration.GetSection("Security"));
+builder.Services.AddScoped<CP6.WebApi.Services.IAuthSessionService, CP6.WebApi.Services.AuthSessionService>();
+builder.Services.AddScoped<CP6.WebApi.Services.INativeSsoGrantStore, CP6.WebApi.Services.NativeSsoGrantStore>();
 // 工厂注册显式选 IOptions 构造器：BCryptPasswordHasher 有 (int=11) 与 (IOptions) 两个公共构造器，
 // 内置容器无法择一（Development 下 ValidateOnBuild + EF 设计时构建都会报 ambiguous）。工厂绕开构造器选择。
 builder.Services.AddScoped<CP6.Core.Services.Sys.IPasswordHasher>(sp =>
@@ -705,6 +763,16 @@ builder.Services.AddCors(options =>
               .AllowCredentials());
 });
 
+// OpenAPI/contract CI can build the complete HTTP pipeline without starting
+// database-backed workers or requiring external infrastructure.
+if (builder.Configuration.GetValue<bool>("Startup:SkipHostedServices"))
+{
+    var hosted = builder.Services
+        .Where(x => x.ServiceType == typeof(IHostedService))
+        .ToList();
+    foreach (var descriptor in hosted) builder.Services.Remove(descriptor);
+}
+
 var app = builder.Build();
 
 if (args.Contains("--oa-p0-preflight", StringComparer.OrdinalIgnoreCase) ||
@@ -741,6 +809,8 @@ if (app.Environment.IsDevelopment())
 }
 
 // 7. 初始化种子数据（首次启动时自动创建）
+if (!app.Configuration.GetValue<bool>("Startup:SkipDatabaseInitialization"))
+{
 using (var scope = app.Services.CreateScope())
 {
     var db = scope.ServiceProvider.GetRequiredService<CP6Context>();
@@ -945,6 +1015,7 @@ using (var scope = app.Services.CreateScope())
     // Task 3a 贴了 [RequirePermission] 但 PermissionService 无 admin 旁路——不种 RoleAction 则 admin 也 403。
     // 须置于 WmsMenuSeed 之后（RoleAction 挂锚定 MenuId，菜单行须先在）。逐租户显式 TenantId + IgnoreQueryFilters 幂等。
     CP6.WebApi.Seed.WmsPermissionSeed.EnsureSeeded(db);
+    CP6.WebApi.Seed.WmsStandardRoleSeed.EnsureSeeded(db);
 
     // M-MES 横切接线 Task 2：MES 300 段菜单锚定 MenuKey（mes-*）。
     // ★须置于下方「无 MenuKey 菜单 RoutePath 自动回填」块（:894）之前：既有 300–315 由 Program.cs（本文件 :1511+）
@@ -2706,6 +2777,7 @@ using (var scope = app.Services.CreateScope())
         db.SaveChanges();
     }
 }
+}
 
 app.UseCors("AllowAll");
 
@@ -2746,6 +2818,22 @@ app.UseMiddleware<CP6.WebApi.Middleware.MustChangePasswordMiddleware>();
 
 app.UseAuthorization();
 app.MapControllers();
+app.MapHealthChecks(
+        "/health/live",
+        new Microsoft.AspNetCore.Diagnostics.HealthChecks.HealthCheckOptions
+        {
+            Predicate = registration => registration.Tags.Contains("live"),
+            ResponseWriter = CP6.WebApi.Health.HealthResponseWriter.WriteAsync
+        })
+    .AllowAnonymous();
+app.MapHealthChecks(
+        "/health/ready",
+        new Microsoft.AspNetCore.Diagnostics.HealthChecks.HealthCheckOptions
+        {
+            Predicate = registration => registration.Tags.Contains("ready"),
+            ResponseWriter = CP6.WebApi.Health.HealthResponseWriter.WriteAsync
+        })
+    .AllowAnonymous();
 
 // SignalR Hub 路由
 app.MapHub<NotifyHub>("/hubs/notify");

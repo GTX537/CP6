@@ -9,8 +9,8 @@ namespace CP6.Entity.DomainModels.Wms;
 /// <remarks>
 /// 仕様書 §22 ピッキング棚（前棚）← 保管棚（後棚）の補充。
 /// 業務 PK：ReplenishNo（RPLYYYYMMDD-NNNN）
-/// 状态：0=未実行 1=実行済 9=取消
-/// 実行時：保管棚 OUT + ピッキング棚 IN（=MOVE 一対）
+/// 状态：0=未発行 1=MOVE完了済 2=v2タスク発行済 9=取消
+/// 発行時：源在庫・先容量を予約。実在庫は v2 MOVE 完了時だけ移動する。
 ///
 /// 第一版：日次バッチで GenerateAsync → MinQty 割れ製品を抽出 → 補充指示一括生成
 /// </remarks>
@@ -51,7 +51,7 @@ public class ReplenishOrder : BaseBizEntity, IAuditable
     /// <summary>生成トリガ：BATCH=日次自動 / MANUAL=手動 / ALERT=リアルタイム</summary>
     [MaxLength(20)] public string TriggerType { get; set; } = "MANUAL";
 
-    /// <summary>ステータス：0=未実行 1=実行済 9=取消</summary>
+    /// <summary>ステータス：0=未発行 1=MOVE完了済 2=v2タスク発行済 9=取消</summary>
     public int Status { get; set; } = 0;
 
     /// <summary>実行 MOVE トランザクションNO（OUT 側）</summary>

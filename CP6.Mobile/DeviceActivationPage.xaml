@@ -1,0 +1,22 @@
+<ContentPage x:Class="CP6.Mobile.DeviceActivationPage"
+             xmlns="http://schemas.microsoft.com/dotnet/2021/maui"
+             xmlns:x="http://schemas.microsoft.com/winfx/2009/xaml"
+             xmlns:local="clr-namespace:CP6.Mobile"
+             xmlns:zxing="clr-namespace:ZXing.Net.Maui.Controls;assembly=ZXing.Net.Maui.Controls"
+             x:DataType="local:DeviceActivationViewModel"
+             Title="Device activation">
+  <ScrollView>
+    <VerticalStackLayout Padding="24" Spacing="14">
+      <Label Text="Activate this warehouse device" FontSize="26" FontAttributes="Bold" />
+      <Label Text="Scan the one-time activation QR created by an administrator. The QR supplies the trusted server and tenant." />
+      <zxing:CameraBarcodeReaderView HeightRequest="320"
+                                     IsDetecting="True"
+                                     BarcodesDetected="OnBarcodesDetected" />
+      <Editor Placeholder="cp6-activate://device?server=...&amp;tenant=...&amp;token=..."
+              Text="{Binding ActivationPayload}" AutoSize="TextChanges" />
+      <Button Text="Activate" Command="{Binding ActivateCommand}" />
+      <ActivityIndicator IsRunning="{Binding IsBusy}" IsVisible="{Binding IsBusy}" />
+      <Label Text="{Binding Message}" TextColor="#B42318" />
+    </VerticalStackLayout>
+  </ScrollView>
+</ContentPage>

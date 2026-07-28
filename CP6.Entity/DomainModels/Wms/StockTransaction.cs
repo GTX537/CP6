@@ -54,7 +54,7 @@ public class StockTransaction : BaseBizEntity
     public decimal? UnitPrice { get; set; }
 
     /// <summary>関連伝票NO（入庫予定NO / 出庫指示NO / 棚卸NO 等）</summary>
-    [MaxLength(25)] public string? RelatedNo { get; set; }
+    [MaxLength(36)] public string? RelatedNo { get; set; }
 
     /// <summary>関連伝票区分（INBOUND / OUTBOUND / STOCKTAKE 等）</summary>
     [MaxLength(20)] public string? RelatedType { get; set; }

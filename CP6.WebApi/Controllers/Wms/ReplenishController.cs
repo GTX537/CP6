@@ -36,7 +36,38 @@ public class ReplenishController : ControllerBase
             var no = await _svc.CreateAsync(dto, CurrentUser);
             return Ok(new { code = 0, message = "WM-MSG-071", data = new { replenishNo = no } });
         }
+        catch (WmsAccessDeniedException ex)
+        {
+            return StatusCode(StatusCodes.Status403Forbidden,
+                new { code = ex.Message, message = ex.Message });
+        }
         catch (InvalidOperationException ex) { return BadRequest(new { code = 400, message = ex.Message }); }
+    }
+
+    [HttpPut("{no}")]
+    [RequirePermission("wms-replenish", "add")]
+    public async Task<IActionResult> Update(
+        string no,
+        [FromBody] ReplenishOrderDto dto)
+    {
+        try
+        {
+            await _svc.UpdateAsync(no, dto, CurrentUser);
+            return Ok(new { code = 0, message = "WM-MSG-071" });
+        }
+        catch (WmsAccessDeniedException ex)
+        {
+            return StatusCode(StatusCodes.Status403Forbidden,
+                new { code = ex.Message, message = ex.Message });
+        }
+        catch (MobileTaskConflictException ex)
+        {
+            return Conflict(new { code = ex.Code, message = ex.Code });
+        }
+        catch (InvalidOperationException ex)
+        {
+            return BadRequest(new { code = 400, message = ex.Message });
+        }
     }
 
     /// <summary>バッチ：指定倉庫の MinQty 割れ製品に対し補充指示を一括生成</summary>
@@ -49,6 +80,11 @@ public class ReplenishController : ControllerBase
             var n = await _svc.GenerateBatchAsync(req.WarehouseCd, req.MinQty, CurrentUser);
             return Ok(new { code = 0, message = "WM-MSG-071", data = new { generated = n } });
         }
+        catch (WmsAccessDeniedException ex)
+        {
+            return StatusCode(StatusCodes.Status403Forbidden,
+                new { code = ex.Message, message = ex.Message });
+        }
         catch (InvalidOperationException ex) { return BadRequest(new { code = 400, message = ex.Message }); }
     }
 
@@ -56,7 +92,25 @@ public class ReplenishController : ControllerBase
     [RequirePermission("wms-replenish", "execute")]
     public async Task<IActionResult> Execute(string no)
     {
-        try { await _svc.ExecuteAsync(no, CurrentUser); return Ok(new { code = 0, message = "WM-MSG-071" }); }
+        try
+        {
+            var taskNo = await _svc.ExecuteAsync(no, CurrentUser);
+            return Ok(new
+            {
+                code = 0,
+                message = "WM-MSG-071",
+                data = new { taskNo }
+            });
+        }
+        catch (WmsAccessDeniedException ex)
+        {
+            return StatusCode(StatusCodes.Status403Forbidden,
+                new { code = ex.Message, message = ex.Message });
+        }
+        catch (MobileTaskConflictException ex)
+        {
+            return Conflict(new { code = ex.Code, message = ex.Code });
+        }
         catch (InsufficientStockException ex) { return BadRequest(new { code = 400, message = ex.Message }); }
         catch (InvalidOperationException ex) { return BadRequest(new { code = 400, message = ex.Message }); }
     }
@@ -66,6 +120,15 @@ public class ReplenishController : ControllerBase
     public async Task<IActionResult> Cancel(string no)
     {
         try { await _svc.CancelAsync(no, CurrentUser); return Ok(new { code = 0, message = "WM-MSG-071" }); }
+        catch (WmsAccessDeniedException ex)
+        {
+            return StatusCode(StatusCodes.Status403Forbidden,
+                new { code = ex.Message, message = ex.Message });
+        }
+        catch (MobileTaskConflictException ex)
+        {
+            return Conflict(new { code = ex.Code, message = ex.Code });
+        }
         catch (InvalidOperationException ex) { return BadRequest(new { code = 400, message = ex.Message }); }
     }
 

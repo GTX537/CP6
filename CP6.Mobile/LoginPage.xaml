@@ -1,0 +1,38 @@
+<ContentPage x:Class="CP6.Mobile.LoginPage"
+             xmlns="http://schemas.microsoft.com/dotnet/2021/maui"
+             xmlns:x="http://schemas.microsoft.com/winfx/2009/xaml"
+             xmlns:local="clr-namespace:CP6.Mobile"
+             x:DataType="local:LoginViewModel"
+             Title="Sign in">
+  <ScrollView>
+    <VerticalStackLayout Padding="28" Spacing="12" VerticalOptions="Center">
+      <Label Text="CP6 WMS Mobile" FontSize="30" FontAttributes="Bold" />
+      <Entry Placeholder="{Binding Text.Tenant}" Text="{Binding TenantCode}" />
+      <Entry Placeholder="{Binding Text.UserName}" Text="{Binding UserName}" />
+      <Entry Placeholder="{Binding Text.Password}" Text="{Binding Password}" IsPassword="True" />
+      <Button Text="{Binding Text.Login}" Command="{Binding LoginCommand}" />
+      <Button Text="{Binding Text.Sso}" Command="{Binding StartSsoCommand}" />
+      <Button Text="Activate warehouse device" Command="{Binding OpenDeviceActivationCommand}" />
+      <Label Text="Shared device quick switch" FontAttributes="Bold" />
+      <Grid ColumnDefinitions="*,*">
+        <Entry Placeholder="Badge" Text="{Binding BadgeNo}" />
+        <Entry Grid.Column="1" Placeholder="6-digit PIN" Text="{Binding QuickPin}"
+               IsPassword="True" Keyboard="Numeric" MaxLength="6" />
+      </Grid>
+      <Button Text="Quick switch" Command="{Binding QuickSwitchCommand}" />
+      <VerticalStackLayout IsVisible="{Binding ShowTwoFactor}">
+        <Label Text="{Binding Text.TwoFactor}" FontAttributes="Bold" />
+        <Label Text="{Binding TwoFactorSetupSecret, StringFormat='Authenticator secret: {0}'}" />
+        <Entry Placeholder="Verification code" Text="{Binding TwoFactorCode}" Keyboard="Numeric" />
+        <Button Text="{Binding Text.Verify}" Command="{Binding VerifyTwoFactorCommand}" />
+        <Button Text="{Binding Text.EmailOtp}" Command="{Binding SendEmailOtpCommand}" IsVisible="{Binding CanUseEmailOtp}" />
+      </VerticalStackLayout>
+      <Grid ColumnDefinitions="*,Auto">
+        <Entry Placeholder="zh-CN / zh-TW / en / ja / ko" Text="{Binding LanguageCode}" />
+        <Button Grid.Column="1" Text="{Binding Text.Language}" Command="{Binding ChangeLanguageCommand}" />
+      </Grid>
+      <ActivityIndicator IsRunning="{Binding IsBusy}" IsVisible="{Binding IsBusy}" />
+      <Label Text="{Binding Message}" TextColor="#B42318" />
+    </VerticalStackLayout>
+  </ScrollView>
+</ContentPage>

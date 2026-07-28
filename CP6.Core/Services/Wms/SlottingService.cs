@@ -2,6 +2,7 @@ using System.Text.Json;
 using CP6.Core.EFDbContext;
 using CP6.Entity.DomainModels.Wms;
 using Microsoft.EntityFrameworkCore;
+using Microsoft.EntityFrameworkCore.Storage;
 
 namespace CP6.Core.Services.Wms;
 
@@ -9,16 +10,27 @@ public class SlottingService : ISlottingService
 {
     private readonly CP6Context _db;
     private readonly IWmsSequenceService _seq;
+    private readonly IMobileTaskV2Service _tasks;
+    private readonly IWmsAccessScopeProvider _accessScopes;
     private const string Prefix = "SLP";
 
-    public SlottingService(CP6Context db, IWmsSequenceService seq)
+    public SlottingService(
+        CP6Context db,
+        IWmsSequenceService seq,
+        IMobileTaskV2Service tasks,
+        IWmsAccessScopeProvider accessScopes)
     {
-        _db = db; _seq = seq;
+        _db = db;
+        _seq = seq;
+        _tasks = tasks;
+        _accessScopes = accessScopes;
     }
 
     public async Task<List<SlottingPlan>> SearchAsync(string? warehouseCd, int? status)
     {
-        var query = _db.SlottingPlans.AsNoTracking().Where(x => !x.IsDeleted);
+        var query = (await _accessScopes.GetCurrentAsync())
+            .Apply(_db.SlottingPlans.AsNoTracking())
+            .Where(x => !x.IsDeleted);
         if (!string.IsNullOrWhiteSpace(warehouseCd)) query = query.Where(x => x.WarehouseCd == warehouseCd);
         if (status.HasValue) query = query.Where(x => x.Status == status.Value);
         return await query.OrderByDescending(x => x.AnalyzedAt).Take(200).ToListAsync();
@@ -26,7 +38,10 @@ public class SlottingService : ISlottingService
 
     public async Task<SlottingPlanResult?> GetAsync(string planNo)
     {
-        var p = await _db.SlottingPlans.AsNoTracking().FirstOrDefaultAsync(x => x.SlottingPlanNo == planNo && !x.IsDeleted);
+        var p = await (await _accessScopes.GetCurrentAsync())
+            .Apply(_db.SlottingPlans.AsNoTracking())
+            .FirstOrDefaultAsync(
+                x => x.SlottingPlanNo == planNo && !x.IsDeleted);
         if (p == null) return null;
         var recs = string.IsNullOrWhiteSpace(p.RecommendationsJson)
             ? new List<SlottingRecommendation>()
@@ -38,6 +53,10 @@ public class SlottingService : ISlottingService
     {
         if (string.IsNullOrWhiteSpace(warehouseCd))
             throw new InvalidOperationException("warehouseCd required");
+        warehouseCd = warehouseCd.Trim();
+        if (!(await _accessScopes.GetCurrentAsync())
+            .AllowsWarehouse(warehouseCd))
+            throw new WmsAccessDeniedException();
         if (analysisDays <= 0) analysisDays = 90;
 
         var since = DateTime.Today.AddDays(-analysisDays);
@@ -109,24 +128,176 @@ public class SlottingService : ISlottingService
         return no;
     }
 
-    public async Task ApproveAsync(string planNo, string? userName)
+    public async Task<int> ApproveAsync(string planNo, string? userName)
     {
-        var p = await _db.SlottingPlans.FirstOrDefaultAsync(x => x.SlottingPlanNo == planNo && !x.IsDeleted)
-            ?? throw new InvalidOperationException("WM-MSG-070");
-        if (p.Status != SlottingStatus.Recommended)
-            throw new InvalidOperationException("WM-MSG-043: 推奨完了以外は承認不可");
-        p.Status = SlottingStatus.Approved;
-        p.ApproverCd = userName;
-        p.Modifier = userName; p.ModifyDate = DateTime.Now;
-        await _db.SaveChangesAsync();
+        await using var tx = await BeginTransactionAsync();
+        try
+        {
+            var p = await (await _accessScopes.GetCurrentAsync())
+                    .Apply(_db.SlottingPlans)
+                    .FirstOrDefaultAsync(
+                        x => x.SlottingPlanNo == planNo && !x.IsDeleted)
+                ?? throw new InvalidOperationException("WM-MSG-070");
+            if (p.Status != SlottingStatus.Recommended)
+                throw new InvalidOperationException(
+                    "WM-MSG-043: 推奨完了以外は承認不可");
+
+            var recommendations = string.IsNullOrWhiteSpace(
+                    p.RecommendationsJson)
+                ? new List<SlottingRecommendation>()
+                : JsonSerializer.Deserialize<List<SlottingRecommendation>>(
+                    p.RecommendationsJson) ?? new();
+            var candidates = recommendations
+                .Where(x => x.NeedsRelocation)
+                .ToList();
+            var generated = 0;
+
+            foreach (var recommendation in candidates)
+            {
+                recommendation.GenerationErrorCode = null;
+                var source = await _db.Stocks.AsNoTracking()
+                    .Where(x => !x.IsDeleted
+                                && !x.RecallFlag
+                                && x.WarehouseCd == p.WarehouseCd
+                                && x.LocationCd
+                                    == recommendation.CurrentLocationCd
+                                && x.ProductCd
+                                    == recommendation.ProductCd
+                                && x.AvailableQty > 0m)
+                    .OrderByDescending(x => x.AvailableQty)
+                    .ThenBy(x => x.ExpiryDate ?? DateTime.MaxValue)
+                    .FirstOrDefaultAsync();
+                if (source is null)
+                {
+                    recommendation.GenerationErrorCode =
+                        "WM-SLOTTING-SOURCE-STOCK-NOT-FOUND";
+                    continue;
+                }
+
+                var targetPrefix =
+                    recommendation.RecommendedLocationPattern?
+                        .Replace("*", string.Empty)
+                        .Trim();
+                if (string.IsNullOrWhiteSpace(targetPrefix))
+                {
+                    recommendation.GenerationErrorCode =
+                        "WM-SLOTTING-TARGET-PATTERN-INVALID";
+                    continue;
+                }
+
+                var targets = await _db.Locations.AsNoTracking()
+                    .Where(x => !x.IsDeleted
+                                && !x.IsBlocked
+                                && x.WarehouseCd == p.WarehouseCd
+                                && x.LocationCd.StartsWith(targetPrefix)
+                                && x.LocationCd
+                                    != recommendation.CurrentLocationCd)
+                    .OrderBy(x => x.LocationCd)
+                    .ToListAsync();
+                if (targets.Count == 0)
+                {
+                    recommendation.GenerationErrorCode =
+                        "WM-SLOTTING-TARGET-LOCATION-NOT-FOUND";
+                    continue;
+                }
+
+                MobileTaskV2Dto? task = null;
+                foreach (var target in targets)
+                {
+                    try
+                    {
+                        task = await _tasks.CreateAsync(
+                            new CreateMoveTaskV2Request
+                            {
+                                OperationId = Guid.NewGuid(),
+                                Priority = recommendation.AbcRank == AbcRank.A
+                                    ? 1
+                                    : 2,
+                                WarehouseCd = p.WarehouseCd,
+                                AreaCd = target.AreaCd,
+                                FromLocationCd = source.LocationCd,
+                                ToLocationCd = target.LocationCd,
+                                ProductCd = source.ProductCd,
+                                LotNo = source.LotNo,
+                                Qty = source.AvailableQty,
+                                UnitCd = source.UnitCd,
+                                Instruction =
+                                    $"Slotting {p.SlottingPlanNo} / {recommendation.AbcRank}",
+                                SourceType = "SLOTTING",
+                                SourceNo = p.SlottingPlanNo
+                            },
+                            userName);
+                        break;
+                    }
+                    catch (MobileTaskConflictException ex)
+                        when (ex.Code == "WM-V2-TARGET-CAPACITY")
+                    {
+                        recommendation.GenerationErrorCode = ex.Code;
+                    }
+                }
+
+                if (task is null) continue;
+                recommendation.TargetLocationCd = task.ToLocationCd;
+                recommendation.MoveQty = task.Qty;
+                recommendation.MobileTaskNo = task.TaskNo;
+                recommendation.GenerationErrorCode = null;
+                generated++;
+            }
+
+            if (candidates.Count > 0 && generated == 0)
+                throw new MobileTaskConflictException(
+                    "WM-SLOTTING-NO-MOVE-TASK");
+
+            p.Status = SlottingStatus.Approved;
+            p.ApproverCd = userName;
+            p.RecommendationsJson =
+                JsonSerializer.Serialize(recommendations);
+            p.Modifier = userName;
+            p.ModifyDate = DateTime.Now;
+            await _db.SaveChangesAsync();
+            if (tx is not null) await tx.CommitAsync();
+            return generated;
+        }
+        catch
+        {
+            if (tx is not null) await tx.RollbackAsync();
+            throw;
+        }
     }
 
     public async Task CancelAsync(string planNo, string? userName)
     {
-        var p = await _db.SlottingPlans.FirstOrDefaultAsync(x => x.SlottingPlanNo == planNo && !x.IsDeleted)
-            ?? throw new InvalidOperationException("WM-MSG-070");
-        p.Status = SlottingStatus.Cancelled;
-        p.Modifier = userName; p.ModifyDate = DateTime.Now;
-        await _db.SaveChangesAsync();
+        await using var tx = await BeginTransactionAsync();
+        try
+        {
+            var p = await (await _accessScopes.GetCurrentAsync())
+                    .Apply(_db.SlottingPlans)
+                    .FirstOrDefaultAsync(
+                        x => x.SlottingPlanNo == planNo && !x.IsDeleted)
+                ?? throw new InvalidOperationException("WM-MSG-070");
+            if (p.Status == SlottingStatus.Cancelled)
+            {
+                if (tx is not null) await tx.CommitAsync();
+                return;
+            }
+            await _tasks.CancelPendingSourceTasksAsync(
+                "SLOTTING", planNo, userName);
+            p.Status = SlottingStatus.Cancelled;
+            p.Modifier = userName;
+            p.ModifyDate = DateTime.Now;
+            await _db.SaveChangesAsync();
+            if (tx is not null) await tx.CommitAsync();
+        }
+        catch
+        {
+            if (tx is not null) await tx.RollbackAsync();
+            throw;
+        }
     }
+
+    private async Task<IDbContextTransaction?> BeginTransactionAsync()
+        => _db.Database.IsRelational()
+           && _db.Database.CurrentTransaction is null
+            ? await _db.Database.BeginTransactionAsync()
+            : null;
 }

@@ -40,6 +40,17 @@ export interface StockTakeCompletedPayload {
   at: string
 }
 
+export interface MobileTaskEventPayload {
+  taskNo: string
+  taskType: 'MOVE'
+  status: number
+  assignedTo?: string
+  warehouseCd?: string
+  productCd?: string
+  rowVersion: string
+  at: string
+}
+
 let wmsConn: signalR.HubConnection | null = null
 
 export function getWmsConnection(): signalR.HubConnection {

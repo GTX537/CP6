@@ -1,0 +1,35 @@
+<ContentPage x:Class="CP6.Mobile.TaskListPage"
+             xmlns="http://schemas.microsoft.com/dotnet/2021/maui"
+             xmlns:x="http://schemas.microsoft.com/winfx/2009/xaml"
+             xmlns:api="clr-namespace:CP6.Client.Api;assembly=CP6.Client.Api"
+             xmlns:local="clr-namespace:CP6.Mobile"
+             x:DataType="local:TaskListViewModel"
+             Title="MOVE tasks">
+  <Grid RowDefinitions="Auto,*,Auto" Padding="16">
+    <Grid ColumnDefinitions="*,Auto,Auto">
+      <Label Text="{Binding Text.MobileTasksTitle}" FontSize="24" FontAttributes="Bold" VerticalOptions="Center" />
+      <Button Grid.Column="1" Text="{Binding Text.Refresh}" Command="{Binding LoadCommand}" />
+      <Button Grid.Column="2" Text="{Binding Text.Logout}" Command="{Binding LogoutCommand}" />
+    </Grid>
+    <RefreshView Grid.Row="1" Command="{Binding LoadCommand}" IsRefreshing="{Binding IsBusy}">
+      <CollectionView ItemsSource="{Binding Tasks}" SelectionMode="Single"
+                      SelectionChanged="Tasks_OnSelectionChanged">
+        <CollectionView.ItemTemplate>
+          <DataTemplate x:DataType="api:MobileTask">
+            <Border Padding="14" Margin="0,6" Stroke="#D7DCE5" StrokeShape="RoundRectangle 10">
+              <Grid RowDefinitions="Auto,Auto,Auto" ColumnDefinitions="*,Auto">
+                <Label Text="{Binding TaskNo}" FontAttributes="Bold" FontSize="18" />
+                <Label Grid.Column="1" Text="{Binding Status, StringFormat='Status {0}'}" />
+                <Label Grid.Row="1" Text="{Binding ProductCd}" />
+                <Label Grid.Row="1" Grid.Column="1" Text="{Binding Qty}" />
+                <Label Grid.Row="2" Grid.ColumnSpan="2"
+                       Text="{Binding FromLocationCd, StringFormat='From {0}'}" />
+              </Grid>
+            </Border>
+          </DataTemplate>
+        </CollectionView.ItemTemplate>
+      </CollectionView>
+    </RefreshView>
+    <Label Grid.Row="2" Text="{Binding Message}" TextColor="#B42318" />
+  </Grid>
+</ContentPage>

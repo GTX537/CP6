@@ -205,9 +205,29 @@ public class ProductMaster : BaseBizEntity, IAuditable
     /// <summary>mcframe7 転送FLG（mcframe7 が無い環境では常に false）</summary>
     public bool McTransferFlg { get; set; } = false;
 
+    /// <summary>None/Lot/Serial/LotAndSerial inventory trace mode.</summary>
+    public int TrackingMode { get; set; } = ProductTrackingMode.None;
+
+    /// <summary>
+    /// Set after the first serial ledger transaction. Once set, serial tracking
+    /// cannot be disabled or downgraded.
+    /// </summary>
+    public DateTime? SerialTrackingLockedAt { get; set; }
+
     // ───── ナビゲーションプロパティ ─────
     public List<ProductProcess> Processes { get; set; } = new();
     public List<ProductMaterial> Materials { get; set; } = new();
     public List<ProductLotPrice> LotPrices { get; set; } = new();
     public List<ProductCoProduct> CoProducts { get; set; } = new();
+}
+
+public static class ProductTrackingMode
+{
+    public const int None = 0;
+    public const int Lot = 1;
+    public const int Serial = 2;
+    public const int LotAndSerial = 3;
+
+    public static bool UsesLot(int value) => value is Lot or LotAndSerial;
+    public static bool UsesSerial(int value) => value is Serial or LotAndSerial;
 }

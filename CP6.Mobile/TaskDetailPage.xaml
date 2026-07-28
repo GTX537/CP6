@@ -1,0 +1,23 @@
+<ContentPage x:Class="CP6.Mobile.TaskDetailPage"
+             xmlns="http://schemas.microsoft.com/dotnet/2021/maui"
+             xmlns:x="http://schemas.microsoft.com/winfx/2009/xaml"
+             xmlns:local="clr-namespace:CP6.Mobile"
+             x:DataType="local:TaskDetailViewModel"
+             Title="Task detail">
+  <ScrollView>
+    <VerticalStackLayout Padding="20" Spacing="12">
+      <Label Text="{Binding Task.TaskNo}" FontSize="26" FontAttributes="Bold" />
+      <Label Text="{Binding Task.AssignedTo, StringFormat='Assignee: {0}'}" />
+      <Label Text="{Binding Task.WarehouseCd, StringFormat='Warehouse: {0}'}" />
+      <Label Text="{Binding Task.FromLocationCd, StringFormat='Source: {0}'}" />
+      <Label Text="{Binding Task.ProductCd, StringFormat='Product: {0}'}" />
+      <Label Text="{Binding Task.ToLocationCd, StringFormat='Target: {0}'}" />
+      <Label Text="{Binding Task.Qty, StringFormat='Quantity: {0}'}" FontSize="20" />
+      <Label Text="{Binding Task.Instruction}" />
+      <Button Text="{Binding Text.ClaimStart}" Command="{Binding ClaimOrStartCommand}" />
+      <Button Text="{Binding Text.SimulatedScan}" Command="{Binding OpenScanCommand}" />
+      <ActivityIndicator IsRunning="{Binding IsBusy}" IsVisible="{Binding IsBusy}" />
+      <Label Text="{Binding Message}" TextColor="#B42318" />
+    </VerticalStackLayout>
+  </ScrollView>
+</ContentPage>

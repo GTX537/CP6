@@ -375,6 +375,25 @@ public class CP6Context : DbContext, IDataProtectionKeyContext
     // ───── MSBBWM300 WMS モバイル作業指示 ─────
     /// <summary>モバイル作業指示（WM300）</summary>
     public DbSet<MobileTask> MobileTasks { get; set; }
+    public DbSet<WmsFeatureFlag> WmsFeatureFlags => Set<WmsFeatureFlag>();
+    public DbSet<WmsRoleScope> WmsRoleScopes => Set<WmsRoleScope>();
+    public DbSet<ClientDevice> ClientDevices => Set<ClientDevice>();
+    public DbSet<DeviceActivation> DeviceActivations => Set<DeviceActivation>();
+    public DbSet<BarcodeAlias> BarcodeAliases => Set<BarcodeAlias>();
+    public DbSet<MobileTaskReservation> MobileTaskReservations => Set<MobileTaskReservation>();
+    public DbSet<MobileTaskEvent> MobileTaskEvents => Set<MobileTaskEvent>();
+    public DbSet<MobileTaskScanLog> MobileTaskScanLogs => Set<MobileTaskScanLog>();
+    public DbSet<TaskCommandReceipt> TaskCommandReceipts => Set<TaskCommandReceipt>();
+    public DbSet<StockSerial> StockSerials => Set<StockSerial>();
+    public DbSet<StockSerialTransaction> StockSerialTransactions => Set<StockSerialTransaction>();
+    public DbSet<LogisticsUnit> LogisticsUnits => Set<LogisticsUnit>();
+    public DbSet<LpnContent> LpnContents => Set<LpnContent>();
+    public DbSet<LpnClosure> LpnClosures => Set<LpnClosure>();
+    public DbSet<LpnPolicy> LpnPolicies => Set<LpnPolicy>();
+    public DbSet<LpnEvent> LpnEvents => Set<LpnEvent>();
+    public DbSet<BarcodeProfile> BarcodeProfiles => Set<BarcodeProfile>();
+    public DbSet<LabelTemplate> LabelTemplates => Set<LabelTemplate>();
+    public DbSet<LabelJob> LabelJobs => Set<LabelJob>();
 
     // ───── OA(Wf) 阶段1 运行时 ─────
     /// <summary>表单定义（OA 章02，JSON 列）</summary>
@@ -581,6 +600,8 @@ public class CP6Context : DbContext, IDataProtectionKeyContext
             e.HasIndex(x => x.ParentId);              // 取直接下级
         });
         modelBuilder.Entity<Sys_User>().HasIndex(x => x.DeptId);   // 按部门取人（DataScope）
+        modelBuilder.Entity<Sys_User>().HasIndex(x => x.BadgeNo).IsUnique()
+            .HasFilter("[BadgeNo] IS NOT NULL");
 
         // P0-T3 Sys_Role 租户化：int RoleId 用户自定义主键 → 复合主键 (TenantId, RoleId)，每租户独立角色集。
         // RoleId 保持稳定（各租户副本同号），子表(UserRole/RoleAction/RoleDataScope/RoleFieldPerm/User.RoleId)
@@ -670,6 +691,7 @@ public class CP6Context : DbContext, IDataProtectionKeyContext
         {
             e.HasIndex(x => x.TokenHash).IsUnique().HasDatabaseName("UX_Sys_RefreshToken_TokenHash");
             e.HasIndex(x => x.UserId);
+            e.Property(x => x.RowVersion).IsRowVersion();
         });
 
         // S 类 #3 SSO：每租户一行（TenantId 单列唯一）。已含 TenantId → 反射批量自动跳过保留（spec R6 §1 锚点）。
@@ -2089,8 +2111,144 @@ public class CP6Context : DbContext, IDataProtectionKeyContext
             e.HasIndex(x => x.MobileTaskNo).IsUnique();
             e.HasIndex(x => new { x.AssignedTo, x.Status, x.IsDeleted });
             e.HasIndex(x => new { x.TaskType, x.Status });
+            e.HasIndex(x => new { x.ContractVersion, x.WarehouseCd, x.AreaCd, x.Status });
             e.HasIndex(x => new { x.Priority, x.Status });
             e.HasIndex(x => x.RelatedNo);
+            e.HasIndex(x => x.ParentTaskNo);
+            e.HasIndex(x => x.DueAt);
+            e.HasIndex(x => x.CompletionOperationId).IsUnique()
+                .HasFilter("[CompletionOperationId] IS NOT NULL");
+            e.Property(x => x.RowVersion).IsRowVersion();
+        });
+
+        modelBuilder.Entity<WmsFeatureFlag>(e =>
+        {
+            e.HasIndex(x => x.WarehouseCd).IsUnique();
+        });
+
+        modelBuilder.Entity<WmsRoleScope>(e =>
+        {
+            e.HasIndex(x => new
+            {
+                x.TenantId, x.RoleId, x.WarehouseCd, x.AreaCd
+            }).IsUnique();
+            e.HasIndex(x => new { x.RoleId, x.WarehouseCd, x.AreaCd });
+        });
+
+        modelBuilder.Entity<ClientDevice>(e =>
+        {
+            e.HasIndex(x => x.DeviceId).IsUnique();
+            e.HasIndex(x => new { x.Status, x.WarehouseCd, x.AreaCd });
+            e.HasIndex(x => x.LastSeenAt);
+        });
+
+        modelBuilder.Entity<DeviceActivation>(e =>
+        {
+            e.HasIndex(x => x.TokenHash).IsUnique();
+            e.HasIndex(x => new { x.ExpiresAt, x.ConsumedAt });
+        });
+
+        modelBuilder.Entity<BarcodeAlias>(e =>
+        {
+            e.HasIndex(x => x.Barcode).IsUnique();
+            e.HasIndex(x => new { x.BarcodeType, x.TargetKey });
+            e.HasIndex(x => new { x.ProductCd, x.LotNo });
+        });
+
+        modelBuilder.Entity<MobileTaskReservation>(e =>
+        {
+            e.HasIndex(x => x.TaskNo).IsUnique();
+            e.HasIndex(x => new
+            {
+                x.WarehouseCd, x.FromLocationCd, x.ProductCd, x.LotNo, x.IsActive
+            });
+        });
+
+        modelBuilder.Entity<MobileTaskEvent>(e =>
+        {
+            e.HasIndex(x => new { x.TaskNo, x.OccurredAt });
+            e.HasIndex(x => x.OperationId);
+            e.Property(x => x.DataJson).HasColumnType("nvarchar(max)");
+        });
+
+        modelBuilder.Entity<MobileTaskScanLog>(e =>
+        {
+            e.HasIndex(x => x.ClientScanNo).IsUnique();
+            e.HasIndex(x => new { x.TaskNo, x.ExecutionVersion, x.ScannedAt });
+            e.HasIndex(x => x.RetainUntil);
+        });
+
+        modelBuilder.Entity<TaskCommandReceipt>(e =>
+        {
+            e.HasIndex(x => x.OperationId).IsUnique();
+            e.HasIndex(x => new { x.TaskNo, x.CommandName });
+            e.Property(x => x.ResultJson).HasColumnType("nvarchar(max)");
+        });
+
+        modelBuilder.Entity<StockSerial>(e =>
+        {
+            e.HasIndex(x => new { x.ProductCd, x.SerialNo }).IsUnique();
+            e.HasIndex(x => new { x.WarehouseCd, x.LocationCd, x.ProductCd, x.LotNo });
+            e.HasIndex(x => x.LpnNo);
+        });
+
+        modelBuilder.Entity<StockSerialTransaction>(e =>
+        {
+            e.HasIndex(x => x.TxnNo).IsUnique();
+            e.HasIndex(x => new { x.ProductCd, x.SerialNo, x.OccurredAt });
+            e.HasIndex(x => x.OperationId);
+        });
+
+        modelBuilder.Entity<LogisticsUnit>(e =>
+        {
+            e.HasIndex(x => x.LpnNo).IsUnique();
+            e.HasIndex(x => new { x.WarehouseCd, x.LocationCd, x.Status });
+            e.HasIndex(x => x.ParentLpnNo);
+        });
+
+        modelBuilder.Entity<LpnContent>(e =>
+        {
+            e.HasIndex(x => new { x.LpnNo, x.ProductCd, x.LotNo, x.SerialNo }).IsUnique();
+            e.HasIndex(x => x.SerialNo).IsUnique().HasFilter("[SerialNo] IS NOT NULL");
+        });
+
+        modelBuilder.Entity<LpnClosure>(e =>
+        {
+            e.HasIndex(x => new { x.AncestorLpnNo, x.DescendantLpnNo }).IsUnique();
+            e.HasIndex(x => new { x.DescendantLpnNo, x.Depth });
+        });
+
+        modelBuilder.Entity<LpnPolicy>(e =>
+        {
+            e.HasIndex(x => new { x.WarehouseCd, x.ContainerType }).IsUnique();
+        });
+
+        modelBuilder.Entity<LpnEvent>(e =>
+        {
+            e.HasIndex(x => new { x.LpnNo, x.OccurredAt });
+            e.HasIndex(x => x.OperationId);
+            e.Property(x => x.DataJson).HasColumnType("nvarchar(max)");
+        });
+
+        modelBuilder.Entity<BarcodeProfile>(e =>
+        {
+            e.HasIndex(x => x.ProfileName).IsUnique();
+            e.HasIndex(x => new { x.IsEnabled, x.Priority });
+            e.Property(x => x.MappingJson).HasColumnType("nvarchar(max)");
+        });
+
+        modelBuilder.Entity<LabelTemplate>(e =>
+        {
+            e.HasIndex(x => x.TemplateName).IsUnique();
+            e.Property(x => x.TemplateBody).HasColumnType("nvarchar(max)");
+        });
+
+        modelBuilder.Entity<LabelJob>(e =>
+        {
+            e.HasIndex(x => x.JobNo).IsUnique();
+            e.HasIndex(x => x.OperationId).IsUnique();
+            e.HasIndex(x => new { x.WarehouseCd, x.Status, x.RequestedAt });
+            e.Property(x => x.PayloadJson).HasColumnType("nvarchar(max)");
         });
 
         // ═══════════════════════════════════════════════════════════
@@ -2377,9 +2535,24 @@ public class CP6Context : DbContext, IDataProtectionKeyContext
                 e.Entity.TenantId = CurrentTenantId;
     }
 
+    private void GuardSerialTrackingDowngrade()
+    {
+        foreach (var entry in ChangeTracker.Entries<ProductMaster>()
+                     .Where(x => x.State == EntityState.Modified))
+        {
+            var lockedBefore = entry.OriginalValues
+                .GetValue<DateTime?>(nameof(ProductMaster.SerialTrackingLockedAt));
+            if (!lockedBefore.HasValue) continue;
+            if (!entry.Entity.SerialTrackingLockedAt.HasValue
+                || !ProductTrackingMode.UsesSerial(entry.Entity.TrackingMode))
+                throw new InvalidOperationException("WM-SERIAL-TRACKING-LOCKED");
+        }
+    }
+
     public override int SaveChanges(bool acceptAllChangesOnSuccess)
     {
         DefinitionImmutabilityInterceptor.Guard(this);
+        GuardSerialTrackingDowngrade();
         StampTenant();   // SaveChanges() 经 base 路由至本重载，无需再覆盖无参版（避免重复盖章）
         var pending = CaptureFieldAuditBeforeSave();
         if (pending.Count == 0) return base.SaveChanges(acceptAllChangesOnSuccess);   // 无审计目标 → 零开销原路径
@@ -2401,6 +2574,7 @@ public class CP6Context : DbContext, IDataProtectionKeyContext
     public override async Task<int> SaveChangesAsync(bool acceptAllChangesOnSuccess, CancellationToken cancellationToken = default)
     {
         DefinitionImmutabilityInterceptor.Guard(this);
+        GuardSerialTrackingDowngrade();
         StampTenant();
         var pending = CaptureFieldAuditBeforeSave();
         if (pending.Count == 0) return await base.SaveChangesAsync(acceptAllChangesOnSuccess, cancellationToken);

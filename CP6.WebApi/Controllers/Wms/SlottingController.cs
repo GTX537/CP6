@@ -37,6 +37,11 @@ public class SlottingController : ControllerBase
             var no = await _svc.AnalyzeAsync(req.WarehouseCd, req.AnalysisDays, CurrentUser);
             return Ok(new { code = 0, message = "WM-MSG-071", data = new { slottingPlanNo = no } });
         }
+        catch (WmsAccessDeniedException ex)
+        {
+            return StatusCode(StatusCodes.Status403Forbidden,
+                new { code = ex.Message, message = ex.Message });
+        }
         catch (InvalidOperationException ex) { return BadRequest(new { code = 400, message = ex.Message }); }
     }
 
@@ -44,7 +49,25 @@ public class SlottingController : ControllerBase
     [RequirePermission("wms-slotting", "approve")]
     public async Task<IActionResult> Approve(string no)
     {
-        try { await _svc.ApproveAsync(no, CurrentUser); return Ok(new { code = 0, message = "WM-MSG-071" }); }
+        try
+        {
+            var generated = await _svc.ApproveAsync(no, CurrentUser);
+            return Ok(new
+            {
+                code = 0,
+                message = "WM-MSG-071",
+                data = new { generated }
+            });
+        }
+        catch (WmsAccessDeniedException ex)
+        {
+            return StatusCode(StatusCodes.Status403Forbidden,
+                new { code = ex.Message, message = ex.Message });
+        }
+        catch (MobileTaskConflictException ex)
+        {
+            return Conflict(new { code = ex.Code, message = ex.Code });
+        }
         catch (InvalidOperationException ex) { return BadRequest(new { code = 400, message = ex.Message }); }
     }
 
@@ -53,6 +76,15 @@ public class SlottingController : ControllerBase
     public async Task<IActionResult> Cancel(string no)
     {
         try { await _svc.CancelAsync(no, CurrentUser); return Ok(new { code = 0, message = "WM-MSG-071" }); }
+        catch (WmsAccessDeniedException ex)
+        {
+            return StatusCode(StatusCodes.Status403Forbidden,
+                new { code = ex.Message, message = ex.Message });
+        }
+        catch (MobileTaskConflictException ex)
+        {
+            return Conflict(new { code = ex.Code, message = ex.Code });
+        }
         catch (InvalidOperationException ex) { return BadRequest(new { code = 400, message = ex.Message }); }
     }
 

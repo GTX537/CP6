@@ -35,7 +35,13 @@ public class StockMovementService : IStockMovementService
         _finBridge = finBridge ?? new NoOpStockFinBridge();
     }
 
-    public async Task<string> ApplyAsync(StockMovementRequest req, CancellationToken ct = default)
+    public Task<string> ApplyAsync(StockMovementRequest req, CancellationToken ct = default)
+        => ApplyInternalAsync(req, publishWhenCommitted: true, ct);
+
+    private async Task<string> ApplyInternalAsync(
+        StockMovementRequest req,
+        bool publishWhenCommitted,
+        CancellationToken ct)
     {
         Validate(req);
 
@@ -58,7 +64,9 @@ public class StockMovementService : IStockMovementService
 
         // SQL Server のみトランザクションを張る（InMemory は SupportsTransactions=false）
         IDbContextTransaction? tx = null;
-        if (_db.Database.ProviderName != "Microsoft.EntityFrameworkCore.InMemory")
+        var isInMemory = _db.Database.ProviderName == "Microsoft.EntityFrameworkCore.InMemory";
+        var hasAmbientTransaction = _db.Database.CurrentTransaction != null;
+        if (!isInMemory && !hasAmbientTransaction)
         {
             tx = await _db.Database.BeginTransactionAsync(ct);
         }
@@ -144,31 +152,20 @@ public class StockMovementService : IStockMovementService
 
             await _db.SaveChangesAsync(ct);
             if (tx != null) await tx.CommitAsync(ct);
+            var canPublishNow = publishWhenCommitted && (tx != null || isInMemory);
 
             // WMS→Fin 库存过账桥点火（best-effort、commit 之后・通知の前、失敗しても在庫移動は成功扱い）。
             // 実際に過账するか否かは桥内の (TxnType,RelatedType) 帰属フィルタが判定（採購入庫/盘盈亏/报废のみ）。
-            try
+            if (canPublishNow) try
             {
                 await _finBridge.OnStockMovedAsync(txn, req.RelatedType ?? "", req.OperatorCd);
             }
             catch { /* fin bridge failure must not break stock movement */ }
 
             // SignalR リアルタイム通知（best-effort、失敗しても本処理は成功扱い）
-            try
+            if (canPublishNow) try
             {
-                await _notifier.NotifyStockChangedAsync(new StockChangedEvent
-                {
-                    TxnNo = txnNo,
-                    TxnType = req.TxnType,
-                    TxnAt = txn.TxnDateTime,
-                    WarehouseCd = req.WarehouseCd,
-                    LocationCd = req.LocationCd,
-                    ProductCd = req.ProductCd,
-                    LotNo = req.LotNo,
-                    Qty = req.Qty,
-                    RelatedNo = req.RelatedNo,
-                    OperatorCd = req.OperatorCd,
-                });
+                await PublishStockChangedAsync(txnNo, req, txn.TxnDateTime);
             }
             catch { /* notifier failure must not break stock movement */ }
 
@@ -192,7 +189,8 @@ public class StockMovementService : IStockMovementService
         if (string.Equals(req.FromLocationCd, req.ToLocationCd, StringComparison.OrdinalIgnoreCase))
             throw new ArgumentException("WM-MSG-010: 移動先は移動元と異なるロケーションを指定してください。");
 
-        // 棚卸凍結の双端予検（波F）：MOVE は 2 腿非原子（源 OUT commit 後に先 IN が弾かれると在庫が宙吊り）。
+        // 棚卸凍結の双端予検（波F）：MOVE 两腿加入同一事务；先预检目标库位，
+        // 避免完成事务在第二腿才发现冻结并做无谓回滚。
         // 腿1発行前に移動先の凍結を先読みして早期拒否する（移動元は腿1の ApplyAsync 内ガードが検査）。
         // TOCTOU（予検通過後に凍結開始）は残るが、窓は極小かつ StartCountAsync 時点の快照 BookQty が
         // 腿2前の在庫を反映するため棚卸収束は破れない。
@@ -202,8 +200,14 @@ public class StockMovementService : IStockMovementService
                 $"WM-MSG-304: 棚卸進行中のロケーション（{req.WarehouseCd} / {req.ToLocationCd}）は入出庫できません");
         }
 
+        IDbContextTransaction? tx = null;
+        var isInMemory = _db.Database.ProviderName == "Microsoft.EntityFrameworkCore.InMemory";
+        var hasAmbientTransaction = _db.Database.CurrentTransaction != null;
+        if (!isInMemory && !hasAmbientTransaction)
+            tx = await _db.Database.BeginTransactionAsync(ct);
+
         // 源 OUT 側：物理在庫を減らす（StockTransaction には MOVE 種別 + Qty=-X で記録）
-        var outNo = await ApplyAsync(new StockMovementRequest
+        var outRequest = new StockMovementRequest
         {
             TxnType = WmsTxnType.MOVE,
             WarehouseCd = req.WarehouseCd,
@@ -214,10 +218,10 @@ public class StockMovementService : IStockMovementService
             OperatorCd = req.OperatorCd,
             Remark = req.Remark ?? $"MOVE → {req.ToLocationCd}",
             RelatedType = "MOVE",
-        }, ct);
+        };
 
         // 先 IN 側：物理在庫を増やす（Qty=+X で記録）
-        var inNo = await ApplyAsync(new StockMovementRequest
+        var inRequest = new StockMovementRequest
         {
             TxnType = WmsTxnType.MOVE,
             WarehouseCd = req.WarehouseCd,
@@ -228,13 +232,59 @@ public class StockMovementService : IStockMovementService
             OperatorCd = req.OperatorCd,
             Remark = req.Remark ?? $"MOVE ← {req.FromLocationCd}",
             RelatedType = "MOVE",
-            RelatedNo = outNo,
-        }, ct);
+        };
 
-        return (outNo, inNo);
+        try
+        {
+            var outNo = await ApplyInternalAsync(outRequest, publishWhenCommitted: false, ct);
+            inRequest.RelatedNo = outNo;
+            var inNo = await ApplyInternalAsync(inRequest, publishWhenCommitted: false, ct);
+            if (tx != null) await tx.CommitAsync(ct);
+
+            // When this method owns the transaction boundary, publish only after
+            // both legs commit.  An ambient caller publishes after its own commit.
+            if (tx != null || (isInMemory && !hasAmbientTransaction))
+            {
+                try
+                {
+                    await PublishStockChangedAsync(outNo, outRequest);
+                    await PublishStockChangedAsync(inNo, inRequest);
+                }
+                catch { /* notifier failure must not break a committed MOVE */ }
+            }
+
+            return (outNo, inNo);
+        }
+        catch
+        {
+            if (tx != null) await tx.RollbackAsync(ct);
+            throw;
+        }
+        finally
+        {
+            if (tx != null) await tx.DisposeAsync();
+        }
     }
 
     // ───────── 内部ヘルパー ─────────
+
+    private Task PublishStockChangedAsync(
+        string txnNo,
+        StockMovementRequest req,
+        DateTime? txnAt = null)
+        => _notifier.NotifyStockChangedAsync(new StockChangedEvent
+        {
+            TxnNo = txnNo,
+            TxnType = req.TxnType,
+            TxnAt = txnAt ?? DateTime.Now,
+            WarehouseCd = req.WarehouseCd,
+            LocationCd = req.LocationCd,
+            ProductCd = req.ProductCd,
+            LotNo = req.LotNo,
+            Qty = req.Qty,
+            RelatedNo = req.RelatedNo,
+            OperatorCd = req.OperatorCd,
+        });
 
     /// <summary>
     /// 指定ロケーションが進行中の棚卸（Counting/DiffReview/AwaitingApproval）に覆われ、凍結中かを判定する（波F）。

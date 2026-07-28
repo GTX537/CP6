@@ -718,7 +718,7 @@ export interface ReplenishOrder {
   qty: number
   unitCd?: string
   triggerType: 'BATCH' | 'MANUAL' | 'ALERT'
-  status: number  // 0/1/9
+  status: number  // 0=未発行 / 1=完了 / 2=v2 MOVE発行済 / 9=取消
   outTxnNo?: string
   inTxnNo?: string
   executedAt?: string
@@ -760,6 +760,10 @@ export interface SlottingRecommendation {
   currentLocationCd?: string
   recommendedLocationPattern?: string
   needsRelocation: boolean
+  targetLocationCd?: string
+  moveQty?: number
+  mobileTaskNo?: string
+  generationErrorCode?: string
 }
 
 export interface SlottingPlanResult {
@@ -1208,18 +1212,16 @@ export interface IotAlert {
 // ───────── モバイル作業指示（WM300） ─────────
 
 export interface MobileTask {
-  id?: string
-  mobileTaskNo: string
-  taskType: string            // RECEIVE/PUTAWAY/PICK/COUNT/MOVE/LABEL
+  taskNo: string
+  taskType: 'MOVE'
   assignedTo?: string
-  priority: number            // 1=至急 2=通常
-  status: number              // 0=未着手 1=進行中 2=完了 9=取消
-  relatedNo?: string
-  relatedType?: string
+  priority: number
+  status: number
   productCd?: string
   productName?: string
   lotNo?: string
   warehouseCd?: string
+  areaCd?: string
   fromLocationCd?: string
   toLocationCd?: string
   qty: number
@@ -1227,17 +1229,87 @@ export interface MobileTask {
   unitCd?: string
   instruction?: string
   startedAt?: string
-  doneAt?: string
+  completedAt?: string
+  completionOperationId?: string
+  sourceType?: string
+  sourceNo?: string
+  plannedStartAt?: string
+  dueAt?: string
+  parentTaskNo?: string
+  remainderTaskNo?: string
+  exceptionReasonCd?: string
+  exceptionDescription?: string
+  executionVersion: number
+  executionId?: string
+  reservedSourceQty: number
+  reservedTargetCapacityQty: number
   remarks?: string
+  rowVersion: string
 }
 
 export interface MobileTaskQuery {
   assignedTo?: string
-  taskType?: string
+  includeUnassigned?: boolean
+  warehouseCd?: string
+  areaCd?: string
   status?: number
   openOnly?: boolean
   page?: number
   pageSize?: number
+}
+
+export interface PagedResult<T> {
+  items: T[]
+  total: number
+  page: number
+  pageSize: number
+}
+
+export interface CreateMoveTaskRequest {
+  operationId?: string
+  assignedTo?: string
+  priority?: number
+  warehouseCd: string
+  areaCd?: string
+  fromLocationCd: string
+  toLocationCd: string
+  productCd: string
+  productName?: string
+  lotNo?: string
+  qty: number
+  unitCd?: string
+  instruction?: string
+  remarks?: string
+  sourceType?: string
+  sourceNo?: string
+  plannedStartAt?: string
+  dueAt?: string
+}
+
+export interface AssignTaskRequest {
+  operationId?: string
+  assignedTo: string
+  rowVersion: string
+  deviceId?: string
+  executionVersion?: number
+}
+
+export interface TaskCommand {
+  operationId?: string
+  rowVersion: string
+  deviceId?: string
+  executionVersion?: number
+}
+
+export interface MobileTaskEvent {
+  taskNo: string
+  eventType: string
+  operationId?: string
+  executionVersion: number
+  userName?: string
+  deviceId?: string
+  occurredAt: string
+  dataJson?: string
 }
 
 export interface MobileStockLine {
@@ -1270,6 +1342,8 @@ export interface MobileScanRequest {
 }
 
 export interface MobileCompleteRequest {
+  operationId: string
+  rowVersion: string
   scannedQty?: number
   toLocationCd?: string
   remarks?: string

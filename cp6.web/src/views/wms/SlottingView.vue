@@ -59,6 +59,12 @@
             </el-table-column>
             <el-table-column prop="currentLocationCd" :label="t('wms.slotting.rec.currentLoc')" width="180" />
             <el-table-column prop="recommendedLocationPattern" :label="t('wms.slotting.rec.recPattern')" width="180" />
+            <el-table-column prop="targetLocationCd" :label="t('wms.replenish.fld.toLoc')" width="160">
+              <template #default="{ row }">{{ row.targetLocationCd || '—' }}</template>
+            </el-table-column>
+            <el-table-column prop="mobileTaskNo" label="MOVE Task" width="190">
+              <template #default="{ row }"><span class="cp-mono">{{ row.mobileTaskNo || '—' }}</span></template>
+            </el-table-column>
             <el-table-column :label="t('wms.slotting.rec.needsMove')" width="110" align="center">
               <template #default="{ row }">
                 <CpTag v-if="row.needsRelocation" tone="warn">{{ t('wms.common.confirm') }}</CpTag>
@@ -72,7 +78,7 @@
       <el-affix position="bottom" :offset="0">
         <div class="action-bar">
           <el-button v-if="currentResult.plan.status === 1" type="success" @click="onApprove">{{ t('wms.stocktake.btn.approve') }}</el-button>
-          <el-button v-if="currentResult.plan.status !== 9 && currentResult.plan.status !== 2" type="danger" plain @click="onCancel">{{ t('wms.outbound.btn.cancel') }}</el-button>
+          <el-button v-if="currentResult.plan.status !== 9" type="danger" plain @click="onCancel">{{ t('wms.outbound.btn.cancel') }}</el-button>
         </div>
       </el-affix>
     </template>
@@ -219,8 +225,8 @@ async function onApprove() {
   if (!currentResult.value) return
   try {
     await ElMessageBox.confirm(t('wms.slotting.msg.approveAsk'), t('wms.common.confirm'), { type: 'warning' })
-    await slottingApi.approve(currentResult.value.plan.slottingPlanNo)
-    ElMessage.success(t('wms.common.success'))
+    const res = await slottingApi.approve(currentResult.value.plan.slottingPlanNo)
+    ElMessage.success(`${t('wms.common.success')}: ${res.data.generated} MOVE`)
     listDirty.value = true
     await openDetail(currentResult.value.plan.slottingPlanNo)
   } catch { /* */ }

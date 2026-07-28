@@ -10,6 +10,8 @@ public interface IRefreshTokenService
 {
     /// <summary>签发新刷新令牌，返回原始令牌（仅此一次明文返回，须写入 httpOnly cookie）。</summary>
     Task<string> IssueAsync(Sys_User user, string? ip, string? ua);
+    Task<string> IssueAsync(Sys_User user, string? ip, string? ua, RefreshTokenClientContext client)
+        => IssueAsync(user, ip, ua);
 
     /// <summary>
     /// 轮换：校验原始令牌 → 吊销旧令牌 → 签发新令牌。返回新原始令牌 + 持有用户。
@@ -17,6 +19,8 @@ public interface IRefreshTokenService
     /// 错误经 <see cref="InvalidOperationException"/> 携带 E-SEC 码。
     /// </summary>
     Task<(string newToken, Sys_User user)> RotateAsync(string rawToken, string? ip, string? ua);
+    Task<(string newToken, Sys_User user)> RotateAsync(string rawToken, string? ip, string? ua, RefreshTokenClientContext client)
+        => RotateAsync(rawToken, ip, ua);
 
     /// <summary>吊销单个令牌（登出用）。令牌不存在或已吊销则静默。</summary>
     Task RevokeAsync(string rawToken);
@@ -27,4 +31,14 @@ public interface IRefreshTokenService
     /// （如改密：改密成功 ⇔ 旧凭证全失效，二者须同生共死）。
     /// </summary>
     Task RevokeAllForUserAsync(Guid userId, bool saveChanges = true);
+
+    /// <summary>Revoke every native refresh token issued to one registered device.</summary>
+    Task RevokeAllForDeviceAsync(Guid tenantId, string deviceId, bool saveChanges = true)
+        => Task.CompletedTask;
+}
+
+/// <summary>刷新令牌的非敏感客户端画像，用于设备级审计和会话追踪。</summary>
+public record RefreshTokenClientContext(string ClientKind, string? DeviceId, string? AppVersion)
+{
+    public static readonly RefreshTokenClientContext Web = new("Web", null, null);
 }

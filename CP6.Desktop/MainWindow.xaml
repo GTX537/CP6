@@ -1,0 +1,244 @@
+<Window x:Class="CP6.Desktop.MainWindow"
+        xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+        xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+        Title="CP6 WMS" Width="1280" Height="800"
+        Background="{StaticResource SurfaceBrush}">
+  <Grid Margin="24">
+    <Grid Visibility="{Binding IsUpgradeVisible, Converter={StaticResource BooleanToVisibilityConverter}}">
+      <StackPanel Width="620" HorizontalAlignment="Center" VerticalAlignment="Center">
+        <TextBlock Text="{Binding UpgradeHeading}" FontSize="28" FontWeight="SemiBold" />
+        <Grid Margin="0,16,0,0">
+          <Grid.ColumnDefinitions>
+            <ColumnDefinition Width="150" />
+            <ColumnDefinition Width="*" />
+          </Grid.ColumnDefinitions>
+          <Grid.RowDefinitions>
+            <RowDefinition Height="Auto" />
+            <RowDefinition Height="Auto" />
+            <RowDefinition Height="Auto" />
+            <RowDefinition Height="Auto" />
+          </Grid.RowDefinitions>
+          <TextBlock Text="{Binding Text[client.currentVersion]}" />
+          <TextBlock Grid.Column="1" Text="{Binding CurrentVersion}" />
+          <TextBlock Grid.Row="1" Text="{Binding Text[client.latestVersion]}" />
+          <TextBlock Grid.Row="1" Grid.Column="1" Text="{Binding LatestVersion}" />
+          <TextBlock Grid.Row="2" Text="{Binding Text[client.minimumVersion]}" />
+          <TextBlock Grid.Row="2" Grid.Column="1" Text="{Binding MinimumVersion}" />
+          <TextBlock Grid.Row="3" Text="{Binding Text[client.releaseHash]}" />
+          <TextBlock Grid.Row="3" Grid.Column="1" Text="{Binding ReleaseSha256}"
+                     TextWrapping="Wrap" FontFamily="Consolas" />
+        </Grid>
+        <TextBlock Text="{Binding DownloadUrl}" Margin="0,12,0,0"
+                   Foreground="{StaticResource PrimaryBrush}" TextWrapping="Wrap" />
+        <StackPanel Orientation="Horizontal" HorizontalAlignment="Center">
+          <Button Content="{Binding Text[client.downloadUpdate]}"
+                  Command="{Binding DownloadUpdateCommand}"
+                  IsEnabled="{Binding CanDownloadUpdate}" />
+          <Button Content="{Binding Text[client.retryStartup]}"
+                  Command="{Binding CheckClientAccessCommand}" />
+        </StackPanel>
+        <TextBlock Text="{Binding Text[client.businessDisabled]}" Margin="0,8"
+                   HorizontalAlignment="Center" />
+        <TextBlock Text="{Binding StatusMessage}" Foreground="#B42318" Margin="0,8"
+                   HorizontalAlignment="Center" TextWrapping="Wrap" />
+        <Expander Header="Device activation / server recovery" Margin="0,12,0,0">
+          <StackPanel>
+            <TextBox Text="{Binding ActivationPayload, UpdateSourceTrigger=PropertyChanged}"
+                     ToolTip="Paste cp6-activate QR payload" />
+            <StackPanel Orientation="Horizontal">
+              <Button Content="Activate device" Command="{Binding ActivateDeviceCommand}" />
+              <TextBlock Text="{Binding DeviceActivationStatus}"
+                         VerticalAlignment="Center" Margin="8" />
+            </StackPanel>
+          </StackPanel>
+        </Expander>
+      </StackPanel>
+    </Grid>
+
+    <Grid Visibility="{Binding IsLoginVisible, Converter={StaticResource BooleanToVisibilityConverter}}">
+      <Border Width="420" Padding="32" Background="White" CornerRadius="12"
+              HorizontalAlignment="Center" VerticalAlignment="Center">
+        <StackPanel>
+          <TextBlock Text="CP6 WMS Desktop" FontSize="28" FontWeight="SemiBold" Margin="4,0,4,20" />
+          <TextBlock Text="{Binding Text[client.tenant]}" />
+          <TextBox Text="{Binding TenantCode, UpdateSourceTrigger=PropertyChanged}" />
+          <TextBlock Text="{Binding Text[user.userName]}" />
+          <TextBox Text="{Binding UserName, UpdateSourceTrigger=PropertyChanged}" />
+          <TextBlock Text="{Binding Text[user.password]}" />
+          <PasswordBox PasswordChanged="PasswordBox_OnPasswordChanged" Margin="4" Padding="8" />
+          <StackPanel Orientation="Horizontal">
+            <Button Content="{Binding Text[login.button]}" Command="{Binding LoginCommand}" />
+            <Button Content="{Binding Text[client.sso]}" Command="{Binding StartSsoCommand}" />
+          </StackPanel>
+          <TextBlock Text="Controlled device activation" FontWeight="SemiBold" Margin="4,16,4,0" />
+          <TextBox Text="{Binding ActivationPayload, UpdateSourceTrigger=PropertyChanged}"
+                   ToolTip="Paste cp6-activate QR payload" />
+          <StackPanel Orientation="Horizontal">
+            <Button Content="Activate device" Command="{Binding ActivateDeviceCommand}" />
+            <TextBlock Text="{Binding DeviceActivationStatus}" VerticalAlignment="Center" Margin="8" />
+          </StackPanel>
+          <StackPanel Visibility="{Binding IsTwoFactorVisible, Converter={StaticResource BooleanToVisibilityConverter}}">
+            <TextBlock Text="{Binding Text[client.twoFactor]}" Margin="4,16,4,0" />
+            <TextBlock Text="{Binding TwoFactorSetupSecret, StringFormat='Authenticator secret: {0}'}"
+                       TextWrapping="Wrap" Margin="4" />
+            <TextBox Text="{Binding TwoFactorCode, UpdateSourceTrigger=PropertyChanged}" />
+            <StackPanel Orientation="Horizontal">
+              <Button Content="{Binding Text[client.verify]}" Command="{Binding VerifyTwoFactorCommand}" />
+              <Button Content="{Binding Text[client.emailOtp]}" Command="{Binding SendEmailOtpCommand}"
+                      Visibility="{Binding CanUseEmailOtp, Converter={StaticResource BooleanToVisibilityConverter}}" />
+            </StackPanel>
+          </StackPanel>
+          <TextBlock Text="{Binding StatusMessage}" Foreground="#B42318" Margin="4,12" TextWrapping="Wrap" />
+        </StackPanel>
+      </Border>
+    </Grid>
+
+    <Grid Visibility="{Binding IsTaskVisible, Converter={StaticResource BooleanToVisibilityConverter}}">
+      <Grid.RowDefinitions>
+        <RowDefinition Height="Auto" />
+        <RowDefinition Height="Auto" />
+        <RowDefinition Height="*" />
+      </Grid.RowDefinitions>
+      <DockPanel Margin="0,0,0,16">
+        <TextBlock Text="{Binding Text[client.taskControl]}" FontSize="26" FontWeight="SemiBold" />
+        <StackPanel DockPanel.Dock="Right" Orientation="Horizontal" HorizontalAlignment="Right">
+          <TextBlock Text="{Binding ConnectionStatus}" VerticalAlignment="Center" Margin="8" />
+          <ComboBox Width="100" SelectedValuePath="Content" SelectedValue="{Binding LanguageCode}" Margin="4">
+            <ComboBoxItem Content="zh-CN" />
+            <ComboBoxItem Content="zh-TW" />
+            <ComboBoxItem Content="en" />
+            <ComboBoxItem Content="ja" />
+            <ComboBoxItem Content="ko" />
+          </ComboBox>
+          <Button Content="{Binding Text[client.language]}" Command="{Binding ChangeLanguageCommand}" />
+          <Button Content="{Binding Text[wms.common.refresh]}" Command="{Binding LoadTasksCommand}" />
+          <Button Content="Start print gateway" Command="{Binding StartPrintGatewayCommand}" />
+          <Button Content="Stop gateway" Command="{Binding StopPrintGatewayCommand}" />
+          <TextBlock Text="{Binding PrintGatewayStatus}" VerticalAlignment="Center" Margin="8" />
+          <Button Content="{Binding Text[layout.logout]}" Command="{Binding LogoutCommand}" />
+        </StackPanel>
+      </DockPanel>
+      <DockPanel Grid.Row="1" Margin="0,0,0,12">
+        <TextBox Width="180" Text="{Binding FilterAssignedTo, UpdateSourceTrigger=PropertyChanged}"
+                 ToolTip="Assignee filter" />
+        <ComboBox Width="145" SelectedValuePath="Content" SelectedValue="{Binding FilterStatus}" Margin="4">
+          <ComboBoxItem Content="" />
+          <ComboBoxItem Content="0" />
+          <ComboBoxItem Content="1" />
+          <ComboBoxItem Content="2" />
+          <ComboBoxItem Content="3" />
+          <ComboBoxItem Content="4" />
+          <ComboBoxItem Content="5" />
+          <ComboBoxItem Content="9" />
+        </ComboBox>
+        <CheckBox Content="{Binding Text[client.openOnly]}" IsChecked="{Binding OpenOnly}"
+                  VerticalAlignment="Center" Margin="8" />
+        <Button Content="{Binding Text[client.applyFilters]}" Command="{Binding ApplyFiltersCommand}" />
+        <StackPanel DockPanel.Dock="Right" Orientation="Horizontal" HorizontalAlignment="Right">
+          <Button Content="{Binding Text[client.previous]}" Command="{Binding PreviousPageCommand}" />
+          <TextBlock Text="{Binding PageSummary}" VerticalAlignment="Center" Margin="8" />
+          <Button Content="{Binding Text[client.next]}" Command="{Binding NextPageCommand}" />
+        </StackPanel>
+      </DockPanel>
+      <Grid Grid.Row="2">
+        <Grid.ColumnDefinitions>
+          <ColumnDefinition Width="2*" />
+          <ColumnDefinition Width="*" />
+        </Grid.ColumnDefinitions>
+        <DataGrid ItemsSource="{Binding Tasks}" SelectedItem="{Binding SelectedTask}"
+                  AutoGenerateColumns="False" IsReadOnly="True" Background="White">
+          <DataGrid.Columns>
+            <DataGridTextColumn Header="Task" Binding="{Binding TaskNo}" Width="*" />
+            <DataGridTextColumn Header="Source" Binding="{Binding SourceReference}" Width="*" />
+            <DataGridTextColumn Header="Link" Binding="{Binding SourceLinkState}" Width="*" />
+            <DataGridTextColumn Header="Status" Binding="{Binding Status}" />
+            <DataGridTextColumn Header="Assignee" Binding="{Binding AssignedTo}" Width="*" />
+            <DataGridTextColumn Header="Area" Binding="{Binding AreaCd}" />
+            <DataGridTextColumn Header="From" Binding="{Binding FromLocationCd}" />
+            <DataGridTextColumn Header="To" Binding="{Binding ToLocationCd}" />
+            <DataGridTextColumn Header="Product" Binding="{Binding ProductCd}" />
+            <DataGridTextColumn Header="Qty" Binding="{Binding Qty}" />
+          </DataGrid.Columns>
+        </DataGrid>
+        <ScrollViewer Grid.Column="1" Margin="16,0,0,0">
+          <StackPanel>
+            <GroupBox Header="{Binding Text[client.selectedTask]}" Padding="12">
+              <StackPanel>
+                <TextBlock Text="{Binding SelectedTask.TaskNo}" FontSize="18" FontWeight="SemiBold" />
+                <TextBlock Text="{Binding SelectedTask.SourceReference, StringFormat='Source: {0}'}" />
+                <TextBlock Text="{Binding SelectedTask.SourceLinkState, StringFormat='Relationship: {0}'}" />
+                <TextBlock Text="{Binding SelectedTask.Instruction}" TextWrapping="Wrap" Margin="0,8" />
+                <TextBlock Text="{Binding SelectedTask.ExceptionReasonCd, StringFormat='Exception: {0}'}" />
+                <TextBlock Text="{Binding SelectedTask.ExecutionVersion, StringFormat='Execution version: {0}'}" />
+                <TextBlock Text="{Binding SelectedTask.ReservedSourceQty, StringFormat='Reserved source: {0}'}" />
+                <TextBlock Text="{Binding SelectedTask.ReservedTargetCapacityQty, StringFormat='Reserved capacity: {0}'}" />
+                <TextBox Text="{Binding Assignee}" />
+                <TextBox Text="{Binding ExceptionReasonCode}" ToolTip="Exception reason code" />
+                <TextBox Text="{Binding ActionReason}" ToolTip="Action reason" />
+                <StackPanel Orientation="Horizontal">
+                  <Button Content="{Binding Text[client.assign]}" Command="{Binding AssignTaskCommand}" />
+                  <Button Content="Pause" Command="{Binding PauseTaskCommand}" />
+                  <Button Content="Release" Command="{Binding ReleaseTaskCommand}" />
+                  <Button Content="Take over" Command="{Binding TakeoverTaskCommand}" />
+                  <Button Content="Exception" Command="{Binding RaiseExceptionCommand}" />
+                  <Button Content="{Binding Text[wms.common.cancel]}" Command="{Binding CancelTaskCommand}" />
+                </StackPanel>
+              </StackPanel>
+            </GroupBox>
+            <GroupBox Header="{Binding Text[client.createMove]}" Padding="12" Margin="0,16,0,0">
+              <StackPanel>
+                <TextBox Text="{Binding CreateWarehouse}" ToolTip="Warehouse" />
+                <TextBox Text="{Binding CreateArea}" ToolTip="Area" />
+                <TextBox Text="{Binding CreateFromLocation}" ToolTip="Source location" />
+                <TextBox Text="{Binding CreateToLocation}" ToolTip="Target location" />
+                <TextBox Text="{Binding CreateProduct}" ToolTip="Product" />
+                <TextBox Text="{Binding CreateLot}" ToolTip="Lot" />
+                <TextBox Text="{Binding CreateQuantity}" ToolTip="Quantity" />
+                <Button Content="{Binding Text[wms.common.create]}" Command="{Binding CreateTaskCommand}" HorizontalAlignment="Left" />
+              </StackPanel>
+            </GroupBox>
+            <GroupBox Header="Production controls" Padding="12" Margin="0,16,0,0">
+              <StackPanel>
+                <Button Content="Load devices, barcodes and analytics"
+                        Command="{Binding LoadProductionOverviewCommand}" HorizontalAlignment="Left" />
+                <TextBlock Text="{Binding ProductionSummary}" Margin="0,8" TextWrapping="Wrap" />
+                <TextBlock Text="Controlled devices" FontWeight="SemiBold" />
+                <DataGrid ItemsSource="{Binding Devices}" SelectedItem="{Binding SelectedDevice}"
+                          AutoGenerateColumns="False" IsReadOnly="True" Height="130">
+                  <DataGrid.Columns>
+                    <DataGridTextColumn Header="Device" Binding="{Binding DeviceId}" Width="*" />
+                    <DataGridTextColumn Header="Status" Binding="{Binding Status}" />
+                    <DataGridTextColumn Header="User" Binding="{Binding CurrentUser}" />
+                    <DataGridTextColumn Header="Last seen" Binding="{Binding LastSeenAt}" />
+                  </DataGrid.Columns>
+                </DataGrid>
+                <Button Content="Enable / disable selected device" Command="{Binding ToggleDeviceCommand}"
+                        HorizontalAlignment="Left" />
+                <TextBlock Text="Barcode mapping" FontWeight="SemiBold" Margin="0,10,0,0" />
+                <DataGrid ItemsSource="{Binding Barcodes}" SelectedItem="{Binding SelectedBarcode}"
+                          AutoGenerateColumns="False" IsReadOnly="True" Height="130">
+                  <DataGrid.Columns>
+                    <DataGridTextColumn Header="Barcode" Binding="{Binding Barcode}" Width="*" />
+                    <DataGridTextColumn Header="Type" Binding="{Binding BarcodeType}" />
+                    <DataGridTextColumn Header="Target" Binding="{Binding TargetKey}" Width="*" />
+                  </DataGrid.Columns>
+                </DataGrid>
+                <TextBox Text="{Binding BarcodeValue}" ToolTip="Barcode" />
+                <TextBox Text="{Binding BarcodeType}" ToolTip="Type: PRODUCT / LOT / LOCATION / PACKAGE / LPN / SERIAL" />
+                <TextBox Text="{Binding BarcodeTarget}" ToolTip="Target key" />
+                <TextBox Text="{Binding BarcodeProduct}" ToolTip="Product" />
+                <TextBox Text="{Binding BarcodeLot}" ToolTip="Lot" />
+                <TextBox Text="{Binding BarcodeLocation}" ToolTip="Location" />
+                <TextBox Text="{Binding BarcodePackageUnit}" ToolTip="Package unit" />
+                <TextBox Text="{Binding BarcodeConversionRate}" ToolTip="Conversion rate" />
+                <Button Content="Save barcode binding" Command="{Binding SaveBarcodeCommand}"
+                        HorizontalAlignment="Left" />
+              </StackPanel>
+            </GroupBox>
+            <TextBlock Text="{Binding StatusMessage}" Foreground="#B42318" Margin="4,12" TextWrapping="Wrap" />
+          </StackPanel>
+        </ScrollViewer>
+      </Grid>
+    </Grid>
+  </Grid>
+</Window>

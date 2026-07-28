@@ -1,0 +1,37 @@
+<ContentPage x:Class="CP6.Mobile.MoveScanPage"
+             xmlns="http://schemas.microsoft.com/dotnet/2021/maui"
+             xmlns:x="http://schemas.microsoft.com/winfx/2009/xaml"
+             xmlns:local="clr-namespace:CP6.Mobile"
+             xmlns:zxing="clr-namespace:ZXing.Net.Maui.Controls;assembly=ZXing.Net.Maui.Controls"
+             x:DataType="local:MoveScanViewModel"
+             Title="MOVE scan">
+  <ScrollView>
+    <VerticalStackLayout Padding="20" Spacing="14">
+      <Label Text="{Binding Task.TaskNo}" FontAttributes="Bold" />
+      <Label Text="{Binding StepTitle}" FontSize="26" FontAttributes="Bold" />
+      <Entry Placeholder="{Binding Text.ScanPlaceholder}" Text="{Binding ScanValue}" ReturnType="Done" />
+      <Grid ColumnDefinitions="*,*">
+        <Button Text="{Binding Text.SubmitScan}" Command="{Binding SubmitScanCommand}" />
+        <Button Grid.Column="1" Text="Camera" Command="{Binding ToggleCameraCommand}" />
+      </Grid>
+      <zxing:CameraBarcodeReaderView HeightRequest="280"
+                                     IsVisible="{Binding IsCameraOpen}"
+                                     IsDetecting="{Binding IsCameraOpen}"
+                                     BarcodesDetected="OnBarcodesDetected" />
+      <Label Text="{Binding Text.ConfirmQuantity}" />
+      <Entry Placeholder="{Binding Text.Quantity}" Text="{Binding Quantity}" Keyboard="Numeric" />
+      <Button Text="{Binding Text.ConfirmQuantity}" Command="{Binding ConfirmQuantityCommand}" />
+      <Entry Placeholder="Partial completion reason (required when quantity is short)"
+             Text="{Binding PartialReason}" />
+      <Button Text="{Binding Text.CompleteMove}" Command="{Binding CompleteCommand}" IsEnabled="{Binding CanComplete}" />
+      <Grid ColumnDefinitions="*,*">
+        <Button Text="{Binding Text.ReloadTask}" Command="{Binding ReloadTaskCommand}" />
+        <Button Grid.Column="1" Text="{Binding Text.RestartScan}" Command="{Binding ResetScanCommand}" />
+      </Grid>
+      <ActivityIndicator IsRunning="{Binding IsBusy}" IsVisible="{Binding IsBusy}" />
+      <Label Text="{Binding Message}" TextColor="#B42318" />
+      <Label Text="If a timeout occurs, reload task state before retrying. The same completion operation ID is retained until the outcome is known."
+             FontSize="12" TextColor="#667085" />
+    </VerticalStackLayout>
+  </ScrollView>
+</ContentPage>

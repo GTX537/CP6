@@ -79,4 +79,26 @@ public class RefreshTokenServiceTests
         await svc.RevokeAllForUserAsync(user.Id);
         await Assert.ThrowsAsync<InvalidOperationException>(() => svc.RotateAsync(rawB, null, null));
     }
+
+    [Fact]
+    public async Task Native_refresh_is_bound_to_client_kind_and_device()
+    {
+        using var db = TestHelper.CreateInMemoryContext();
+        var user = new Sys_User { UserName = "u", Password = "h" };
+        db.Sys_Users.Add(user);
+        db.SaveChanges();
+        var svc = Make(db);
+        var native = new RefreshTokenClientContext("Android", "device-a", "1.0.0");
+        var raw = await svc.IssueAsync(user, null, null, native);
+
+        var ex = await Assert.ThrowsAsync<InvalidOperationException>(() =>
+            svc.RotateAsync(
+                raw, null, null,
+                new RefreshTokenClientContext("Android", "device-b", "1.0.1")));
+
+        Assert.Equal("E-SEC-024", ex.Message);
+        Assert.All(
+            db.Sys_RefreshTokens.IgnoreQueryFilters().Where(x => x.UserId == user.Id),
+            token => Assert.NotNull(token.RevokedAt));
+    }
 }

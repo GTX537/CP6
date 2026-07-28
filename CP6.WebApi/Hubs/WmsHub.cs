@@ -1,4 +1,5 @@
 using Microsoft.AspNetCore.SignalR;
+using Microsoft.AspNetCore.Authorization;
 
 namespace CP6.WebApi.Hubs;
 
@@ -20,15 +21,21 @@ namespace CP6.WebApi.Hubs;
 ///   - wh:{warehouseCd}      倉庫別の絞り込み
 ///   - product:{productCd}    製品別の絞り込み
 /// </remarks>
+[Authorize]
 public class WmsHub : Hub
 {
     private readonly ILogger<WmsHub> _logger;
     public WmsHub(ILogger<WmsHub> logger) => _logger = logger;
 
-    public override Task OnConnectedAsync()
+    public static string TenantGroup(Guid tenantId) => $"tenant:{tenantId:N}";
+
+    public override async Task OnConnectedAsync()
     {
         _logger.LogInformation("WMS Hub 接続: {ConnectionId}", Context.ConnectionId);
-        return base.OnConnectedAsync();
+        var tenantClaim = Context.User?.FindFirst("tenant_id")?.Value;
+        if (Guid.TryParse(tenantClaim, out var tenantId))
+            await Groups.AddToGroupAsync(Context.ConnectionId, TenantGroup(tenantId));
+        await base.OnConnectedAsync();
     }
 
     public override Task OnDisconnectedAsync(Exception? exception)
