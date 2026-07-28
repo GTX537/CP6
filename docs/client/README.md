@@ -19,6 +19,12 @@ merged refresh, language packs, version checks, SignalR reconnection, logging
 redaction, activation, offline-progress, label-job, and scan contracts. They
 do not share UI controls or pages.
 
+The Windows and Android shells include a five-language fallback catalog for
+their critical startup, activation, task, scan, recovery, device, barcode, and
+print controls. A downloaded server language pack can override these values,
+but loss of the language-pack endpoint must not expose raw translation keys or
+force English-only recovery actions.
+
 The three active clients use `/api/v2/wms/tasks`. The literal v1 route remains
 available for one release cycle and accepts only v1 tasks. New production MOVE,
 serial/LPN, device, barcode, and label behavior must not be added to v1.

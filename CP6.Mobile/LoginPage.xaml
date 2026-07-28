@@ -3,27 +3,27 @@
              xmlns:x="http://schemas.microsoft.com/winfx/2009/xaml"
              xmlns:local="clr-namespace:CP6.Mobile"
              x:DataType="local:LoginViewModel"
-             Title="Sign in">
+             Title="{Binding Text.SignIn}">
   <ScrollView>
     <VerticalStackLayout Padding="28" Spacing="12" VerticalOptions="Center">
-      <Label Text="CP6 WMS Mobile" FontSize="30" FontAttributes="Bold" />
+      <Label Text="{Binding Text.MobileTitle}" FontSize="30" FontAttributes="Bold" />
       <Entry Placeholder="{Binding Text.Tenant}" Text="{Binding TenantCode}" />
       <Entry Placeholder="{Binding Text.UserName}" Text="{Binding UserName}" />
       <Entry Placeholder="{Binding Text.Password}" Text="{Binding Password}" IsPassword="True" />
       <Button Text="{Binding Text.Login}" Command="{Binding LoginCommand}" />
       <Button Text="{Binding Text.Sso}" Command="{Binding StartSsoCommand}" />
-      <Button Text="Activate warehouse device" Command="{Binding OpenDeviceActivationCommand}" />
-      <Label Text="Shared device quick switch" FontAttributes="Bold" />
+      <Button Text="{Binding Text.ActivateWarehouseDevice}" Command="{Binding OpenDeviceActivationCommand}" />
+      <Label Text="{Binding Text.SharedQuickSwitch}" FontAttributes="Bold" />
       <Grid ColumnDefinitions="*,*">
-        <Entry Placeholder="Badge" Text="{Binding BadgeNo}" />
-        <Entry Grid.Column="1" Placeholder="6-digit PIN" Text="{Binding QuickPin}"
+        <Entry Placeholder="{Binding Text.Badge}" Text="{Binding BadgeNo}" />
+        <Entry Grid.Column="1" Placeholder="{Binding Text.Pin}" Text="{Binding QuickPin}"
                IsPassword="True" Keyboard="Numeric" MaxLength="6" />
       </Grid>
-      <Button Text="Quick switch" Command="{Binding QuickSwitchCommand}" />
+      <Button Text="{Binding Text.QuickSwitch}" Command="{Binding QuickSwitchCommand}" />
       <VerticalStackLayout IsVisible="{Binding ShowTwoFactor}">
         <Label Text="{Binding Text.TwoFactor}" FontAttributes="Bold" />
-        <Label Text="{Binding TwoFactorSetupSecret, StringFormat='Authenticator secret: {0}'}" />
-        <Entry Placeholder="Verification code" Text="{Binding TwoFactorCode}" Keyboard="Numeric" />
+        <Label Text="{Binding AuthenticatorSecretText}" />
+        <Entry Placeholder="{Binding Text.VerificationCode}" Text="{Binding TwoFactorCode}" Keyboard="Numeric" />
         <Button Text="{Binding Text.Verify}" Command="{Binding VerifyTwoFactorCommand}" />
         <Button Text="{Binding Text.EmailOtp}" Command="{Binding SendEmailOtpCommand}" IsVisible="{Binding CanUseEmailOtp}" />
       </VerticalStackLayout>

@@ -4,7 +4,7 @@
              xmlns:local="clr-namespace:CP6.Mobile"
              xmlns:zxing="clr-namespace:ZXing.Net.Maui.Controls;assembly=ZXing.Net.Maui.Controls"
              x:DataType="local:MoveScanViewModel"
-             Title="MOVE scan">
+             Title="{Binding Text.MoveScanTitle}">
   <ScrollView>
     <VerticalStackLayout Padding="20" Spacing="14">
       <Label Text="{Binding Task.TaskNo}" FontAttributes="Bold" />
@@ -17,7 +17,7 @@
              Unfocused="ScanEntry_OnUnfocused" />
       <Grid ColumnDefinitions="*,*">
         <Button Text="{Binding Text.SubmitScan}" Command="{Binding SubmitScanCommand}" />
-        <Button Grid.Column="1" Text="Camera" Command="{Binding ToggleCameraCommand}" />
+        <Button Grid.Column="1" Text="{Binding Text.Camera}" Command="{Binding ToggleCameraCommand}" />
       </Grid>
       <zxing:CameraBarcodeReaderView HeightRequest="280"
                                      IsVisible="{Binding IsCameraOpen}"
@@ -26,7 +26,7 @@
       <Label Text="{Binding Text.ConfirmQuantity}" />
       <Entry Placeholder="{Binding Text.Quantity}" Text="{Binding Quantity}" Keyboard="Numeric" />
       <Button Text="{Binding Text.ConfirmQuantity}" Command="{Binding ConfirmQuantityCommand}" />
-      <Entry Placeholder="Partial completion reason (required when quantity is short)"
+      <Entry Placeholder="{Binding Text.PartialReason}"
              Text="{Binding PartialReason}" />
       <Button Text="{Binding Text.CompleteMove}" Command="{Binding CompleteCommand}" IsEnabled="{Binding CanComplete}" />
       <Grid ColumnDefinitions="*,*">
@@ -35,7 +35,7 @@
       </Grid>
       <ActivityIndicator IsRunning="{Binding IsBusy}" IsVisible="{Binding IsBusy}" />
       <Label Text="{Binding Message}" TextColor="#B42318" />
-      <Label Text="If a timeout occurs, reload task state before retrying. The same completion operation ID is retained until the outcome is known."
+      <Label Text="{Binding Text.TimeoutRetryGuidance}"
              FontSize="12" TextColor="#667085" />
     </VerticalStackLayout>
   </ScrollView>

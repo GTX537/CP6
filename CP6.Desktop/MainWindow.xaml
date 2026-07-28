@@ -41,12 +41,12 @@
                    HorizontalAlignment="Center" />
         <TextBlock Text="{Binding StatusMessage}" Foreground="#B42318" Margin="0,8"
                    HorizontalAlignment="Center" TextWrapping="Wrap" />
-        <Expander Header="Device activation / server recovery" Margin="0,12,0,0">
+        <Expander Header="{Binding Text[client.deviceRecovery]}" Margin="0,12,0,0">
           <StackPanel>
             <TextBox Text="{Binding ActivationPayload, UpdateSourceTrigger=PropertyChanged}"
-                     ToolTip="Paste cp6-activate QR payload" />
+                     ToolTip="{Binding Text[client.activationPayloadHint]}" />
             <StackPanel Orientation="Horizontal">
-              <Button Content="Activate device" Command="{Binding ActivateDeviceCommand}" />
+              <Button Content="{Binding Text[client.activateDevice]}" Command="{Binding ActivateDeviceCommand}" />
               <TextBlock Text="{Binding DeviceActivationStatus}"
                          VerticalAlignment="Center" Margin="8" />
             </StackPanel>
@@ -59,7 +59,7 @@
       <Border Width="420" Padding="32" Background="White" CornerRadius="12"
               HorizontalAlignment="Center" VerticalAlignment="Center">
         <StackPanel>
-          <TextBlock Text="CP6 WMS Desktop" FontSize="28" FontWeight="SemiBold" Margin="4,0,4,20" />
+          <TextBlock Text="{Binding Text[client.desktopTitle]}" FontSize="28" FontWeight="SemiBold" Margin="4,0,4,20" />
           <TextBlock Text="{Binding Text[client.tenant]}" />
           <TextBox Text="{Binding TenantCode, UpdateSourceTrigger=PropertyChanged}" />
           <TextBlock Text="{Binding Text[user.userName]}" />
@@ -70,16 +70,16 @@
             <Button Content="{Binding Text[login.button]}" Command="{Binding LoginCommand}" />
             <Button Content="{Binding Text[client.sso]}" Command="{Binding StartSsoCommand}" />
           </StackPanel>
-          <TextBlock Text="Controlled device activation" FontWeight="SemiBold" Margin="4,16,4,0" />
+          <TextBlock Text="{Binding Text[client.deviceActivation]}" FontWeight="SemiBold" Margin="4,16,4,0" />
           <TextBox Text="{Binding ActivationPayload, UpdateSourceTrigger=PropertyChanged}"
-                   ToolTip="Paste cp6-activate QR payload" />
+                   ToolTip="{Binding Text[client.activationPayloadHint]}" />
           <StackPanel Orientation="Horizontal">
-            <Button Content="Activate device" Command="{Binding ActivateDeviceCommand}" />
+            <Button Content="{Binding Text[client.activateDevice]}" Command="{Binding ActivateDeviceCommand}" />
             <TextBlock Text="{Binding DeviceActivationStatus}" VerticalAlignment="Center" Margin="8" />
           </StackPanel>
           <StackPanel Visibility="{Binding IsTwoFactorVisible, Converter={StaticResource BooleanToVisibilityConverter}}">
             <TextBlock Text="{Binding Text[client.twoFactor]}" Margin="4,16,4,0" />
-            <TextBlock Text="{Binding TwoFactorSetupSecret, StringFormat='Authenticator secret: {0}'}"
+            <TextBlock Text="{Binding AuthenticatorSecretText}"
                        TextWrapping="Wrap" Margin="4" />
             <TextBox Text="{Binding TwoFactorCode, UpdateSourceTrigger=PropertyChanged}" />
             <StackPanel Orientation="Horizontal">
@@ -112,15 +112,15 @@
           </ComboBox>
           <Button Content="{Binding Text[client.language]}" Command="{Binding ChangeLanguageCommand}" />
           <Button Content="{Binding Text[wms.common.refresh]}" Command="{Binding LoadTasksCommand}" />
-          <Button Content="Start print gateway" Command="{Binding StartPrintGatewayCommand}" />
-          <Button Content="Stop gateway" Command="{Binding StopPrintGatewayCommand}" />
+          <Button Content="{Binding Text[client.printGatewayStart]}" Command="{Binding StartPrintGatewayCommand}" />
+          <Button Content="{Binding Text[client.printGatewayStop]}" Command="{Binding StopPrintGatewayCommand}" />
           <TextBlock Text="{Binding PrintGatewayStatus}" VerticalAlignment="Center" Margin="8" />
           <Button Content="{Binding Text[layout.logout]}" Command="{Binding LogoutCommand}" />
         </StackPanel>
       </DockPanel>
       <DockPanel Grid.Row="1" Margin="0,0,0,12">
         <TextBox Width="180" Text="{Binding FilterAssignedTo, UpdateSourceTrigger=PropertyChanged}"
-                 ToolTip="Assignee filter" />
+                 ToolTip="{Binding Text[client.assigneeFilter]}" />
         <ComboBox Width="145" SelectedValuePath="Content" SelectedValue="{Binding FilterStatus}" Margin="4">
           <ComboBoxItem Content="" />
           <ComboBoxItem Content="0" />
@@ -174,13 +174,13 @@
                 <TextBlock Text="{Binding SelectedTask.ReservedTargetCapacityQty, StringFormat='Reserved capacity: {0}'}" />
                 <TextBox Text="{Binding Assignee}" />
                 <TextBox Text="{Binding ExceptionReasonCode}" ToolTip="Exception reason code" />
-                <TextBox Text="{Binding ActionReason}" ToolTip="Action reason" />
+                <TextBox Text="{Binding ActionReason}" ToolTip="{Binding Text[client.actionReason]}" />
                 <StackPanel Orientation="Horizontal">
                   <Button Content="{Binding Text[client.assign]}" Command="{Binding AssignTaskCommand}" />
-                  <Button Content="Pause" Command="{Binding PauseTaskCommand}" />
-                  <Button Content="Release" Command="{Binding ReleaseTaskCommand}" />
-                  <Button Content="Take over" Command="{Binding TakeoverTaskCommand}" />
-                  <Button Content="Exception" Command="{Binding RaiseExceptionCommand}" />
+                  <Button Content="{Binding Text[client.pause]}" Command="{Binding PauseTaskCommand}" />
+                  <Button Content="{Binding Text[client.release]}" Command="{Binding ReleaseTaskCommand}" />
+                  <Button Content="{Binding Text[client.takeover]}" Command="{Binding TakeoverTaskCommand}" />
+                  <Button Content="{Binding Text[client.exception]}" Command="{Binding RaiseExceptionCommand}" />
                   <Button Content="{Binding Text[wms.common.cancel]}" Command="{Binding CancelTaskCommand}" />
                 </StackPanel>
               </StackPanel>
@@ -197,12 +197,12 @@
                 <Button Content="{Binding Text[wms.common.create]}" Command="{Binding CreateTaskCommand}" HorizontalAlignment="Left" />
               </StackPanel>
             </GroupBox>
-            <GroupBox Header="Production controls" Padding="12" Margin="0,16,0,0">
+            <GroupBox Header="{Binding Text[client.productionControls]}" Padding="12" Margin="0,16,0,0">
               <StackPanel>
-                <Button Content="Load devices, barcodes and analytics"
+                <Button Content="{Binding Text[client.loadProductionOverview]}"
                         Command="{Binding LoadProductionOverviewCommand}" HorizontalAlignment="Left" />
                 <TextBlock Text="{Binding ProductionSummary}" Margin="0,8" TextWrapping="Wrap" />
-                <TextBlock Text="Controlled devices" FontWeight="SemiBold" />
+                <TextBlock Text="{Binding Text[client.controlledDevices]}" FontWeight="SemiBold" />
                 <DataGrid ItemsSource="{Binding Devices}" SelectedItem="{Binding SelectedDevice}"
                           AutoGenerateColumns="False" IsReadOnly="True" Height="130">
                   <DataGrid.Columns>
@@ -212,9 +212,9 @@
                     <DataGridTextColumn Header="Last seen" Binding="{Binding LastSeenAt}" />
                   </DataGrid.Columns>
                 </DataGrid>
-                <Button Content="Enable / disable selected device" Command="{Binding ToggleDeviceCommand}"
+                <Button Content="{Binding Text[client.toggleDevice]}" Command="{Binding ToggleDeviceCommand}"
                         HorizontalAlignment="Left" />
-                <TextBlock Text="Barcode mapping" FontWeight="SemiBold" Margin="0,10,0,0" />
+                <TextBlock Text="{Binding Text[client.barcodeMapping]}" FontWeight="SemiBold" Margin="0,10,0,0" />
                 <DataGrid ItemsSource="{Binding Barcodes}" SelectedItem="{Binding SelectedBarcode}"
                           AutoGenerateColumns="False" IsReadOnly="True" Height="130">
                   <DataGrid.Columns>
@@ -231,7 +231,7 @@
                 <TextBox Text="{Binding BarcodeLocation}" ToolTip="Location" />
                 <TextBox Text="{Binding BarcodePackageUnit}" ToolTip="Package unit" />
                 <TextBox Text="{Binding BarcodeConversionRate}" ToolTip="Conversion rate" />
-                <Button Content="Save barcode binding" Command="{Binding SaveBarcodeCommand}"
+                <Button Content="{Binding Text[client.saveBarcodeBinding]}" Command="{Binding SaveBarcodeCommand}"
                         HorizontalAlignment="Left" />
               </StackPanel>
             </GroupBox>

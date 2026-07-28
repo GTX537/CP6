@@ -4,7 +4,7 @@
              xmlns:api="clr-namespace:CP6.Client.Api;assembly=CP6.Client.Api"
              xmlns:local="clr-namespace:CP6.Mobile"
              x:DataType="local:TaskListViewModel"
-             Title="MOVE tasks">
+             Title="{Binding Text.MobileTasksTitle}">
   <Grid RowDefinitions="Auto,*,Auto" Padding="16">
     <Grid ColumnDefinitions="*,Auto,Auto">
       <Label Text="{Binding Text.MobileTasksTitle}" FontSize="24" FontAttributes="Bold" VerticalOptions="Center" />

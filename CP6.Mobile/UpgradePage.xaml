@@ -25,7 +25,7 @@
             Command="{Binding DownloadCommand}"
             IsEnabled="{Binding CanDownloadUpdate}" />
     <Button Text="{Binding Text.RetryStartup}" Command="{Binding RetryCommand}" />
-    <Button Text="Device activation / server recovery"
+    <Button Text="{Binding Text.DeviceRecovery}"
             Command="{Binding OpenDeviceActivationCommand}" />
     <Label Text="{Binding Text.BusinessDisabled}" />
     <ActivityIndicator IsRunning="{Binding IsBusy}" IsVisible="{Binding IsBusy}" />

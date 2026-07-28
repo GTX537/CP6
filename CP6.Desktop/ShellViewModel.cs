@@ -1,4 +1,5 @@
 using System.Collections.ObjectModel;
+using System.Globalization;
 using CommunityToolkit.Mvvm.ComponentModel;
 using CommunityToolkit.Mvvm.Input;
 using CP6.Client.Api;
@@ -32,7 +33,7 @@ public partial class ShellViewModel : ObservableObject
     [ObservableProperty] private string twoFactorMethod = "totp";
     [ObservableProperty] private string twoFactorSetupSecret = string.Empty;
     [ObservableProperty] private string statusMessage = string.Empty;
-    [ObservableProperty] private string connectionStatus = "Offline";
+    [ObservableProperty] private string connectionStatus = string.Empty;
     [ObservableProperty] private string upgradeHeading = string.Empty;
     [ObservableProperty] private string? downloadUrl;
     [ObservableProperty] private string currentVersion = string.Empty;
@@ -47,9 +48,9 @@ public partial class ShellViewModel : ObservableObject
     [ObservableProperty] private string actionReason = string.Empty;
     [ObservableProperty] private string exceptionReasonCode = string.Empty;
     [ObservableProperty] private string activationPayload = string.Empty;
-    [ObservableProperty] private string deviceActivationStatus = "Not activated";
-    [ObservableProperty] private string printGatewayStatus = "Stopped";
-    [ObservableProperty] private string productionSummary = "Production overview not loaded";
+    [ObservableProperty] private string deviceActivationStatus = string.Empty;
+    [ObservableProperty] private string printGatewayStatus = string.Empty;
+    [ObservableProperty] private string productionSummary = string.Empty;
     [ObservableProperty] private string barcodeValue = string.Empty;
     [ObservableProperty] private string barcodeType = "PRODUCT";
     [ObservableProperty] private string barcodeTarget = string.Empty;
@@ -76,6 +77,11 @@ public partial class ShellViewModel : ObservableObject
     private bool _enroll;
     private bool _clientAccessGranted;
     private ClientUpgradeDecision? _upgradeDecision;
+    private string _connectionState = "Offline";
+    private string _printGatewayState = "Stopped";
+    private TaskAnalytics? _lastAnalytics;
+    private string? _activatedDeviceMode;
+    private string? _activatedWarehouse;
     private const int PageSize = 50;
 
     public ShellViewModel(
@@ -100,20 +106,34 @@ public partial class ShellViewModel : ObservableObject
         _deviceActivation = deviceActivation;
         _labelGateway = labelGateway;
         _heartbeat = heartbeat;
-        _language.LanguageChanged += (_, _) => OnPropertyChanged(nameof(Text));
+        _language.LanguageChanged += (_, _) => ApplyLocalizedText();
         _realtime.TaskChanged += (_, _) =>
             System.Windows.Application.Current.Dispatcher.InvokeAsync(async () => await LoadTasksAsync());
         _realtime.ConnectionStateChanged += (_, state) =>
-            System.Windows.Application.Current.Dispatcher.Invoke(() => ConnectionStatus = state);
+            System.Windows.Application.Current.Dispatcher.Invoke(() =>
+            {
+                _connectionState = state;
+                ConnectionStatus = LocalizeState(state);
+            });
         _labelGateway.StateChanged += (_, state) =>
-            System.Windows.Application.Current.Dispatcher.Invoke(() => PrintGatewayStatus = state);
+            System.Windows.Application.Current.Dispatcher.Invoke(() =>
+            {
+                _printGatewayState = state;
+                PrintGatewayStatus = LocalizeState(state);
+            });
         _heartbeat.StateChanged += HeartbeatOnStateChanged;
+        ApplyLocalizedText();
     }
 
     public ObservableCollection<MobileTask> Tasks { get; } = new();
     public ObservableCollection<ClientDevice> Devices { get; } = new();
     public ObservableCollection<BarcodeAlias> Barcodes { get; } = new();
     public ILanguageService Text => _language;
+    public string AuthenticatorSecretText =>
+        string.Format(
+            CultureInfo.CurrentCulture,
+            _language["client.authenticatorSecret"],
+            TwoFactorSetupSecret);
     public string PageSummary => $"{Page} / {Math.Max(1, (int)Math.Ceiling(Total / (double)PageSize))} ({Total})";
 
     public async Task InitializeAsync()
@@ -132,7 +152,7 @@ public partial class ShellViewModel : ObservableObject
             IsUpgradeVisible = true;
             CanDownloadUpdate = false;
             UpgradeHeading = _language["client.startupBlocked"];
-            StatusMessage = "Checking client release policy...";
+            StatusMessage = _language["client.startupChecking"];
 
             _upgradeDecision = await _upgrades.CheckAccessAsync();
             CurrentVersion = _upgradeDecision.CurrentVersion;
@@ -148,7 +168,10 @@ public partial class ShellViewModel : ObservableObject
             if (!_upgradeDecision.BusinessAllowed)
             {
                 StatusMessage = _upgradeDecision.ErrorCode ??
-                                $"Minimum version: {_upgradeDecision.MinimumVersion}";
+                                string.Format(
+                                    CultureInfo.CurrentCulture,
+                                    _language["client.minimumVersionValue"],
+                                    _upgradeDecision.MinimumVersion);
                 return;
             }
 
@@ -167,7 +190,7 @@ public partial class ShellViewModel : ObservableObject
             : RunAsync(async () =>
             {
                 await _upgrades.OpenDownloadAsync(_upgradeDecision);
-                StatusMessage = "Update download opened.";
+                StatusMessage = _language["client.updateOpened"];
             });
 
     [RelayCommand]
@@ -192,7 +215,9 @@ public partial class ShellViewModel : ObservableObject
                 var setup = await _sessions.SetupTwoFactorAsync(_challenge);
                 TwoFactorSetupSecret = setup.Secret;
             }
-            StatusMessage = _enroll ? "2FA enrollment required" : "Enter verification code";
+            StatusMessage = _enroll
+                ? _language["client.enrollmentRequired"]
+                : _language["client.enterVerificationCode"];
         });
     }
 
@@ -217,7 +242,7 @@ public partial class ShellViewModel : ObservableObject
             {
                 await _sessions.RequestEmailOtpAsync(_challenge);
                 TwoFactorMethod = "email";
-                StatusMessage = "Email verification code sent";
+                StatusMessage = _language["client.emailCodeSent"];
             });
 
     [RelayCommand]
@@ -359,8 +384,9 @@ public partial class ShellViewModel : ObservableObject
         {
             var activated = await _deviceActivation.ActivateAsync(ActivationPayload);
             TenantCode = activated.TenantCode;
-            DeviceActivationStatus =
-                $"{activated.DeviceMode} / {activated.WarehouseCd ?? "all warehouses"}";
+            _activatedDeviceMode = activated.DeviceMode;
+            _activatedWarehouse = activated.WarehouseCd;
+            ApplyDeviceActivationStatus();
         });
 
     [RelayCommand]
@@ -368,7 +394,8 @@ public partial class ShellViewModel : ObservableObject
         => RunAsync(async () =>
         {
             await _labelGateway.StartAsync();
-            PrintGatewayStatus = "Running";
+            _printGatewayState = "Running";
+            PrintGatewayStatus = LocalizeState(_printGatewayState);
         });
 
     [RelayCommand]
@@ -434,7 +461,8 @@ public partial class ShellViewModel : ObservableObject
             await _realtime.StopAsync();
             IsTaskVisible = false;
             IsLoginVisible = true;
-            ConnectionStatus = "Offline";
+            _connectionState = "Offline";
+            ConnectionStatus = LocalizeState(_connectionState);
             Tasks.Clear();
         });
 
@@ -447,7 +475,8 @@ public partial class ShellViewModel : ObservableObject
         IsTaskVisible = true;
         await LoadTasksAsync();
         await _realtime.StartAsync();
-        ConnectionStatus = "Online";
+        _connectionState = "Online";
+        ConnectionStatus = LocalizeState(_connectionState);
     }
 
     private async Task LoadProductionOverviewCoreAsync()
@@ -461,10 +490,8 @@ public partial class ShellViewModel : ObservableObject
         foreach (var device in (await devicesTask).Items) Devices.Add(device);
         Barcodes.Clear();
         foreach (var barcode in (await barcodesTask).Items) Barcodes.Add(barcode);
-        ProductionSummary =
-            $"Created {analytics.Created} · Completed {analytics.Completed} · "
-            + $"Partial {analytics.PartiallyCompleted} · Exceptions {analytics.Exceptions} · "
-            + $"Overdue {analytics.Overdue} · Avg {analytics.AverageMinutes:F1} min";
+        _lastAnalytics = analytics;
+        ApplyProductionSummary();
     }
 
     private async Task RunAsync(Func<Task> action, bool showBusy = true)
@@ -502,7 +529,10 @@ public partial class ShellViewModel : ObservableObject
             if (e.Status is ClientDeviceHeartbeatStatus.Online
                 or ClientDeviceHeartbeatStatus.Offline
                 or ClientDeviceHeartbeatStatus.Rejected)
-                ConnectionStatus = e.Status.ToString();
+            {
+                _connectionState = e.Status.ToString();
+                ConnectionStatus = LocalizeState(_connectionState);
+            }
 
             if (e.Status != ClientDeviceHeartbeatStatus.Rejected)
                 return;
@@ -531,6 +561,8 @@ public partial class ShellViewModel : ObservableObject
 
     partial void OnPageChanged(int value) => OnPropertyChanged(nameof(PageSummary));
     partial void OnTotalChanged(int value) => OnPropertyChanged(nameof(PageSummary));
+    partial void OnTwoFactorSetupSecretChanged(string value) =>
+        OnPropertyChanged(nameof(AuthenticatorSecretText));
     partial void OnSelectedBarcodeChanged(BarcodeAlias? value)
     {
         if (value is null) return;
@@ -542,5 +574,55 @@ public partial class ShellViewModel : ObservableObject
         BarcodeLocation = value.LocationCd ?? string.Empty;
         BarcodePackageUnit = value.PackageUnitCd ?? string.Empty;
         BarcodeConversionRate = value.ConversionRate;
+    }
+
+    private void ApplyLocalizedText()
+    {
+        OnPropertyChanged(nameof(Text));
+        OnPropertyChanged(nameof(AuthenticatorSecretText));
+        ConnectionStatus = LocalizeState(_connectionState);
+        PrintGatewayStatus = LocalizeState(_printGatewayState);
+        ApplyDeviceActivationStatus();
+        ApplyProductionSummary();
+    }
+
+    private string LocalizeState(string state) =>
+        state switch
+        {
+            "Online" => _language["client.online"],
+            "Offline" => _language["client.offline"],
+            "Reconnecting" => _language["client.reconnecting"],
+            "Retrying" => _language["client.retrying"],
+            "Running" => _language["client.running"],
+            "Stopped" => _language["client.stopped"],
+            "Rejected" => _language["client.rejected"],
+            _ => state,
+        };
+
+    private void ApplyDeviceActivationStatus()
+    {
+        DeviceActivationStatus = _activatedDeviceMode == null
+            ? _language["client.notActivated"]
+            : $"{_activatedDeviceMode} / "
+              + (_activatedWarehouse ?? _language["client.allWarehouses"]);
+    }
+
+    private void ApplyProductionSummary()
+    {
+        if (_lastAnalytics == null)
+        {
+            ProductionSummary = _language["client.productionOverviewNotLoaded"];
+            return;
+        }
+
+        ProductionSummary = string.Format(
+            CultureInfo.CurrentCulture,
+            _language["client.productionSummary"],
+            _lastAnalytics.Created,
+            _lastAnalytics.Completed,
+            _lastAnalytics.PartiallyCompleted,
+            _lastAnalytics.Exceptions,
+            _lastAnalytics.Overdue,
+            _lastAnalytics.AverageMinutes);
     }
 }

@@ -3,7 +3,7 @@
              xmlns:x="http://schemas.microsoft.com/winfx/2009/xaml"
              xmlns:local="clr-namespace:CP6.Mobile"
              x:DataType="local:TaskDetailViewModel"
-             Title="Task detail">
+             Title="{Binding Text.TaskDetail}">
   <ScrollView>
     <VerticalStackLayout Padding="20" Spacing="12">
       <Label Text="{Binding Task.TaskNo}" FontSize="26" FontAttributes="Bold" />

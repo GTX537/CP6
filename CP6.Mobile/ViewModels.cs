@@ -56,6 +56,15 @@ public partial class LoginViewModel : MobileViewModel,
     [ObservableProperty] private string badgeNo = string.Empty;
     [ObservableProperty] private string quickPin = string.Empty;
 
+    public string AuthenticatorSecretText =>
+        string.Format(
+            CultureInfo.CurrentCulture,
+            Text.AuthenticatorSecret,
+            TwoFactorSetupSecret);
+
+    partial void OnTwoFactorSetupSecretChanged(string value) =>
+        OnPropertyChanged(nameof(AuthenticatorSecretText));
+
     public LoginViewModel(
         IClientSessionService sessions,
         ClientUpgradeService upgrades,
@@ -107,7 +116,7 @@ public partial class LoginViewModel : MobileViewModel,
             var setup = await _sessions.SetupTwoFactorAsync(_challenge);
             TwoFactorSetupSecret = setup.Secret;
         }
-        Message = _enroll ? "2FA enrollment required" : "Enter verification code";
+        Message = _enroll ? Text.EnrollmentRequired : Text.EnterVerificationCode;
     });
 
     [RelayCommand]
@@ -127,7 +136,7 @@ public partial class LoginViewModel : MobileViewModel,
         if (_challenge == null) return;
         await _sessions.RequestEmailOtpAsync(_challenge);
         TwoFactorMethod = "email";
-        Message = "Email verification code sent";
+        Message = Text.EmailCodeSent;
     });
 
     [RelayCommand]
@@ -157,6 +166,7 @@ public partial class LoginViewModel : MobileViewModel,
         {
             await _language.LoadAsync(LanguageCode);
             OnPropertyChanged(nameof(Text));
+            OnPropertyChanged(nameof(AuthenticatorSecretText));
         });
 
     public void Receive(SsoCallbackMessage message)
@@ -203,7 +213,11 @@ public partial class DeviceActivationViewModel : MobileViewModel
     private Task ActivateAsync() => RunAsync(async () =>
     {
         var result = await _activation.ActivateAsync(ActivationPayload);
-        Message = $"Activated: {result.DeviceId} ({result.DeviceMode})";
+        Message = string.Format(
+            CultureInfo.CurrentCulture,
+            Text.ActivatedDevice,
+            result.DeviceId,
+            result.DeviceMode);
         await Shell.Current.GoToAsync("..");
     });
 
@@ -365,7 +379,7 @@ public partial class MoveScanViewModel : MobileViewModel
     [ObservableProperty] private MobileTask? task;
     [ObservableProperty] private string scanValue = string.Empty;
     [ObservableProperty] private string quantity = string.Empty;
-    [ObservableProperty] private string stepTitle = "Scan source location";
+    [ObservableProperty] private string stepTitle = string.Empty;
     [ObservableProperty] private bool canComplete;
     [ObservableProperty] private string partialReason = string.Empty;
     [ObservableProperty] private bool isOfflineProgress;
@@ -544,7 +558,7 @@ public partial class MoveScanViewModel : MobileViewModel
         await _offline.ClearAsync();
         _state.SelectedTask = Task;
         _heartbeat.RequestImmediate();
-        Message = "MOVE completed";
+        Message = Text.MoveCompleted;
         CanComplete = false;
     });
 
@@ -564,7 +578,7 @@ public partial class MoveScanViewModel : MobileViewModel
         _heartbeat.RequestImmediate();
         if (Task.CompletionOperationId == _operationId)
         {
-            Message = "MOVE completed";
+            Message = Text.MoveCompleted;
             CanComplete = false;
         }
     });
@@ -590,7 +604,7 @@ public partial class MoveScanViewModel : MobileViewModel
         {
             MoveScanStep.SourceLocation => Text.ScanSource,
             MoveScanStep.Product => Text.ScanProduct,
-            MoveScanStep.Lot => "Scan lot",
+            MoveScanStep.Lot => Text.ScanLot,
             MoveScanStep.TargetLocation => Text.ScanTarget,
             MoveScanStep.Quantity => Text.ConfirmQuantity,
             MoveScanStep.ReadyToComplete => Text.ReadyComplete,
@@ -665,7 +679,7 @@ public partial class UpgradeViewModel : MobileViewModel
         var decision = _state.UpgradeDecision ??
                        throw new InvalidOperationException("E-CLIENT-BOOTSTRAP-REQUIRED");
         await _upgrades.OpenDownloadAsync(decision);
-        Message = "Update download opened.";
+        Message = Text.UpdateOpened;
     });
 
     [RelayCommand]
