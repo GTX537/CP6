@@ -1,0 +1,418 @@
+[CmdletBinding()]
+param(
+    [Parameter(Mandatory = $true)][string]$BaseUrl,
+    [Parameter(Mandatory = $true)][string]$ReleaseManifestPath,
+    [ValidatePattern("^\d+$")][string]$ExpectedApiVersion = "1",
+    [ValidateRange(1, 600)][int]$TimeoutSeconds = 60,
+    [ValidateRange(1, 900)][int]$MaxClockSkewSeconds = 120,
+    [string]$OutputEvidencePath,
+    [switch]$SkipArtifactDownload,
+    [switch]$AllowLoopbackHttp
+)
+
+$ErrorActionPreference = "Stop"
+
+function Normalize-Hex {
+    param([AllowNull()][string]$Value)
+    return ($Value -replace "[^A-Fa-f0-9]", "").ToUpperInvariant()
+}
+
+function Assert-SafeUri {
+    param(
+        [Parameter(Mandatory = $true)][string]$Value,
+        [Parameter(Mandatory = $true)][string]$Description,
+        [string[]]$AllowedExtensions = @()
+    )
+
+    $uri = $Value -as [Uri]
+    if ($null -eq $uri -or
+        -not $uri.IsAbsoluteUri -or
+        [string]::IsNullOrWhiteSpace($uri.Host) -or
+        -not [string]::IsNullOrWhiteSpace($uri.UserInfo)) {
+        throw "$Description must be an absolute URL without embedded credentials."
+    }
+    if ($uri.Scheme -ne [Uri]::UriSchemeHttps) {
+        if (-not ($AllowLoopbackHttp -and
+            $uri.Scheme -eq [Uri]::UriSchemeHttp -and
+            $uri.IsLoopback)) {
+            throw "$Description must use HTTPS."
+        }
+    }
+    if ($AllowedExtensions.Count -gt 0) {
+        if (-not [string]::IsNullOrWhiteSpace($uri.Fragment)) {
+            throw "$Description must not contain a URL fragment."
+        }
+        $extension = [IO.Path]::GetExtension($uri.AbsolutePath)
+        if (-not ($AllowedExtensions -contains $extension.ToLowerInvariant())) {
+            throw "$Description has an unsupported file extension."
+        }
+    }
+    return $uri
+}
+
+function Join-ApiUri {
+    param(
+        [Parameter(Mandatory = $true)][Uri]$Root,
+        [Parameter(Mandatory = $true)][string]$Relative
+    )
+
+    return "$($Root.AbsoluteUri.TrimEnd('/'))/$($Relative.TrimStart('/'))"
+}
+
+function Invoke-JsonGet {
+    param(
+        [Parameter(Mandatory = $true)][string]$Uri,
+        [Parameter(Mandatory = $true)][string]$Description
+    )
+
+    $startedAt = [DateTimeOffset]::UtcNow
+    try {
+        $response = Invoke-WebRequest `
+            -Uri $Uri `
+            -Method Get `
+            -UseBasicParsing `
+            -TimeoutSec $TimeoutSeconds `
+            -MaximumRedirection 0 `
+            -Headers @{ Accept = "application/json" }
+    }
+    catch {
+        $statusCode = $null
+        if ($null -ne $_.Exception.Response) {
+            $statusCode = [int]$_.Exception.Response.StatusCode
+        }
+        $suffix = if ($null -eq $statusCode) { "" } else { " (HTTP $statusCode)" }
+        throw "$Description request failed$suffix."
+    }
+    $completedAt = [DateTimeOffset]::UtcNow
+
+    if ([int]$response.StatusCode -ne 200) {
+        throw "$Description returned HTTP $([int]$response.StatusCode)."
+    }
+    $contentType = [string]$response.Headers["Content-Type"]
+    if ($contentType -notmatch "(?i)^application/json(?:;|$)") {
+        throw "$Description must return application/json."
+    }
+    try {
+        $data = $response.Content | ConvertFrom-Json
+    }
+    catch {
+        throw "$Description did not return valid JSON."
+    }
+
+    return [pscustomobject]@{
+        Data = $data
+        Response = $response
+        StartedAt = $startedAt
+        CompletedAt = $completedAt
+    }
+}
+
+function Assert-HealthEndpoint {
+    param(
+        [Parameter(Mandatory = $true)][Uri]$Root,
+        [Parameter(Mandatory = $true)][string]$Path,
+        [Parameter(Mandatory = $true)][string[]]$RequiredChecks
+    )
+
+    $result = Invoke-JsonGet `
+        -Uri (Join-ApiUri -Root $Root -Relative $Path) `
+        -Description $Path
+    if ([string]$result.Data.status -ne "Healthy") {
+        throw "$Path did not report Healthy."
+    }
+    if ([string]$result.Response.Headers["Cache-Control"] -notmatch "(?i)(^|,)\s*no-store\s*(,|$)") {
+        throw "$Path must return Cache-Control: no-store."
+    }
+
+    $checks = @($result.Data.checks)
+    foreach ($requiredCheck in $RequiredChecks) {
+        $match = @($checks | Where-Object { [string]$_.name -eq $requiredCheck })
+        if ($match.Count -ne 1 -or [string]$match[0].status -ne "Healthy") {
+            throw "$Path check '$requiredCheck' did not report Healthy."
+        }
+    }
+
+    return $result
+}
+
+function Read-ReleaseManifest {
+    param([Parameter(Mandatory = $true)][string]$Path)
+
+    $resolvedPath = (Resolve-Path -LiteralPath $Path -ErrorAction Stop).Path
+    try {
+        $manifest = [IO.File]::ReadAllText($resolvedPath, [Text.Encoding]::UTF8) |
+            ConvertFrom-Json
+    }
+    catch {
+        throw "Release manifest is not valid UTF-8 JSON."
+    }
+
+    if ([int]$manifest.SchemaVersion -ne 1) {
+        throw "Release manifest SchemaVersion must be 1."
+    }
+    if ([string]$manifest.ReleaseVersion -notmatch "^\d+\.\d+\.\d+$") {
+        throw "Release manifest ReleaseVersion must use major.minor.patch."
+    }
+
+    $requiredKinds = @(
+        "windows-msix",
+        "windows-appinstaller",
+        "android-apk"
+    )
+    $artifactMap = @{}
+    foreach ($artifact in @($manifest.Artifacts)) {
+        $kind = [string]$artifact.Kind
+        if ([string]::IsNullOrWhiteSpace($kind) -or $artifactMap.ContainsKey($kind)) {
+            throw "Release manifest contains a missing or duplicate artifact kind."
+        }
+        $sha256 = Normalize-Hex -Value ([string]$artifact.Sha256)
+        if ($sha256 -notmatch "^[A-F0-9]{64}$" -or [long]$artifact.Bytes -le 0) {
+            throw "Release manifest artifact '$kind' has invalid size or SHA-256."
+        }
+        $artifactMap[$kind] = [pscustomobject]@{
+            Kind = $kind
+            FileName = [string]$artifact.FileName
+            Bytes = [long]$artifact.Bytes
+            Sha256 = $sha256
+        }
+    }
+    foreach ($requiredKind in $requiredKinds) {
+        if (-not $artifactMap.ContainsKey($requiredKind)) {
+            throw "Release manifest is missing artifact '$requiredKind'."
+        }
+    }
+
+    return [pscustomobject]@{
+        Manifest = $manifest
+        Artifacts = $artifactMap
+    }
+}
+
+function Save-VerifiedArtifact {
+    param(
+        [Parameter(Mandatory = $true)][Uri]$Uri,
+        [Parameter(Mandatory = $true)]$ExpectedArtifact,
+        [Parameter(Mandatory = $true)][string]$Description
+    )
+
+    $temporaryPath = [IO.Path]::GetTempFileName()
+    try {
+        try {
+            $response = Invoke-WebRequest `
+                -Uri $Uri.AbsoluteUri `
+                -Method Get `
+                -UseBasicParsing `
+                -TimeoutSec $TimeoutSeconds `
+                -MaximumRedirection 0 `
+                -OutFile $temporaryPath `
+                -PassThru
+        }
+        catch {
+            throw "$Description download failed."
+        }
+        if ([int]$response.StatusCode -ne 200) {
+            throw "$Description download returned HTTP $([int]$response.StatusCode)."
+        }
+
+        $file = Get-Item -LiteralPath $temporaryPath
+        if ($file.Length -ne [long]$ExpectedArtifact.Bytes) {
+            throw "$Description size does not match the verified release manifest."
+        }
+        $actualHash = (Get-FileHash -LiteralPath $temporaryPath -Algorithm SHA256).Hash
+        if ($actualHash -ne [string]$ExpectedArtifact.Sha256) {
+            throw "$Description SHA-256 does not match the verified release manifest."
+        }
+
+        return $temporaryPath
+    }
+    catch {
+        [IO.File]::Delete($temporaryPath)
+        throw
+    }
+}
+
+function Assert-Bootstrap {
+    param(
+        [Parameter(Mandatory = $true)][Uri]$Root,
+        [Parameter(Mandatory = $true)][string]$Platform,
+        [Parameter(Mandatory = $true)][string]$ReleaseVersion,
+        [Parameter(Mandatory = $true)]$Artifacts
+    )
+
+    $encodedVersion = [Uri]::EscapeDataString($ReleaseVersion)
+    $endpoint = Join-ApiUri `
+        -Root $Root `
+        -Relative "api/client/bootstrap?platform=$Platform&currentVersion=$encodedVersion"
+    $result = Invoke-JsonGet -Uri $endpoint -Description "$Platform bootstrap"
+    $bootstrap = $result.Data
+
+    if ([string]$bootstrap.apiVersion -ne $ExpectedApiVersion) {
+        throw "$Platform bootstrap API version does not match '$ExpectedApiVersion'."
+    }
+    if ([string]$bootstrap.platform -ne $Platform -or
+        [string]$bootstrap.currentVersion -ne $ReleaseVersion -or
+        [string]$bootstrap.latestVersion -ne $ReleaseVersion) {
+        throw "$Platform bootstrap version metadata does not match release '$ReleaseVersion'."
+    }
+    $latestVersion = [version]$bootstrap.latestVersion
+    $minimumVersion = [version]$bootstrap.minimumVersion
+    if ($minimumVersion -gt $latestVersion) {
+        throw "$Platform bootstrap minimum version exceeds its latest version."
+    }
+    if ([bool]$bootstrap.upgradeRequired) {
+        throw "$Platform bootstrap unexpectedly blocks the current release."
+    }
+    if ([string]::IsNullOrWhiteSpace([string]$bootstrap.languageManifestVersion)) {
+        throw "$Platform bootstrap language manifest version is missing."
+    }
+
+    $serverUtc = [DateTimeOffset]::MinValue
+    if (-not [DateTimeOffset]::TryParse([string]$bootstrap.serverUtc, [ref]$serverUtc)) {
+        throw "$Platform bootstrap serverUtc is invalid."
+    }
+    $earliest = $result.StartedAt.AddSeconds(-$MaxClockSkewSeconds)
+    $latest = $result.CompletedAt.AddSeconds($MaxClockSkewSeconds)
+    if ($serverUtc -lt $earliest -or $serverUtc -gt $latest) {
+        throw "$Platform bootstrap server clock exceeds the allowed skew."
+    }
+
+    $allowedExtensions = if ($Platform -eq "windows") {
+        @(".msix", ".appinstaller")
+    }
+    else {
+        @(".apk")
+    }
+    $downloadUri = Assert-SafeUri `
+        -Value ([string]$bootstrap.downloadUrl) `
+        -Description "$Platform bootstrap download URL" `
+        -AllowedExtensions $allowedExtensions
+    $extension = [IO.Path]::GetExtension($downloadUri.AbsolutePath).ToLowerInvariant()
+    $artifactKind = switch ($extension) {
+        ".msix" { "windows-msix" }
+        ".appinstaller" { "windows-appinstaller" }
+        ".apk" { "android-apk" }
+        default { throw "$Platform bootstrap download type is unsupported." }
+    }
+    $artifact = $Artifacts[$artifactKind]
+    if ((Normalize-Hex -Value ([string]$bootstrap.sha256)) -ne $artifact.Sha256) {
+        throw "$Platform bootstrap SHA-256 does not match release artifact '$artifactKind'."
+    }
+
+    $downloadedPath = $null
+    $referencedMsixPath = $null
+    try {
+        if (-not $SkipArtifactDownload) {
+            $downloadedPath = Save-VerifiedArtifact `
+                -Uri $downloadUri `
+                -ExpectedArtifact $artifact `
+                -Description "$Platform release artifact"
+
+            if ($extension -eq ".appinstaller") {
+                try {
+                    [xml]$appInstaller = [IO.File]::ReadAllText(
+                        $downloadedPath,
+                        [Text.Encoding]::UTF8
+                    )
+                }
+                catch {
+                    throw "Downloaded AppInstaller is not valid XML."
+                }
+                $rootNode = $appInstaller.DocumentElement
+                $mainPackage = $appInstaller.SelectSingleNode(
+                    "/*[local-name()='AppInstaller']/*[local-name()='MainPackage']"
+                )
+                if ($null -eq $rootNode -or $null -eq $mainPackage) {
+                    throw "Downloaded AppInstaller is missing its root or MainPackage."
+                }
+                $selfUri = Assert-SafeUri `
+                    -Value ([string]$rootNode.Uri) `
+                    -Description "AppInstaller self URL" `
+                    -AllowedExtensions @(".appinstaller")
+                if ($selfUri.AbsoluteUri -ne $downloadUri.AbsoluteUri) {
+                    throw "AppInstaller self URL does not match the bootstrap download URL."
+                }
+                $mainPackageUri = Assert-SafeUri `
+                    -Value ([string]$mainPackage.Uri) `
+                    -Description "AppInstaller MainPackage URL" `
+                    -AllowedExtensions @(".msix")
+                $referencedMsixPath = Save-VerifiedArtifact `
+                    -Uri $mainPackageUri `
+                    -ExpectedArtifact $Artifacts["windows-msix"] `
+                    -Description "AppInstaller referenced MSIX"
+            }
+        }
+    }
+    finally {
+        if (-not [string]::IsNullOrWhiteSpace($downloadedPath)) {
+            [IO.File]::Delete($downloadedPath)
+        }
+        if (-not [string]::IsNullOrWhiteSpace($referencedMsixPath)) {
+            [IO.File]::Delete($referencedMsixPath)
+        }
+    }
+
+    return [pscustomobject]@{
+        Platform = $Platform
+        LatestVersion = [string]$bootstrap.latestVersion
+        MinimumVersion = [string]$bootstrap.minimumVersion
+        DownloadUrl = $downloadUri.AbsoluteUri
+        ArtifactKind = $artifactKind
+        Sha256 = $artifact.Sha256
+        ArtifactDownloaded = -not $SkipArtifactDownload
+    }
+}
+
+$baseUri = Assert-SafeUri -Value $BaseUrl -Description "BaseUrl"
+if (-not [string]::IsNullOrWhiteSpace($baseUri.Query) -or
+    -not [string]::IsNullOrWhiteSpace($baseUri.Fragment)) {
+    throw "BaseUrl must not contain a query or fragment."
+}
+$release = Read-ReleaseManifest -Path $ReleaseManifestPath
+$releaseVersion = [string]$release.Manifest.ReleaseVersion
+
+$live = Assert-HealthEndpoint `
+    -Root $baseUri `
+    -Path "health/live" `
+    -RequiredChecks @("self")
+$ready = Assert-HealthEndpoint `
+    -Root $baseUri `
+    -Path "health/ready" `
+    -RequiredChecks @("sqlserver", "redis")
+$windows = Assert-Bootstrap `
+    -Root $baseUri `
+    -Platform "windows" `
+    -ReleaseVersion $releaseVersion `
+    -Artifacts $release.Artifacts
+$android = Assert-Bootstrap `
+    -Root $baseUri `
+    -Platform "android" `
+    -ReleaseVersion $releaseVersion `
+    -Artifacts $release.Artifacts
+
+$evidence = [ordered]@{
+    SchemaVersion = 1
+    CheckedAtUtc = [DateTimeOffset]::UtcNow.ToString("O")
+    BaseUrl = $baseUri.AbsoluteUri.TrimEnd("/")
+    ApiVersion = $ExpectedApiVersion
+    ReleaseVersion = $releaseVersion
+    LiveStatus = [string]$live.Data.status
+    ReadyStatus = [string]$ready.Data.status
+    ArtifactDownloadsVerified = -not $SkipArtifactDownload
+    Clients = @($windows, $android)
+}
+$evidenceJson = $evidence | ConvertTo-Json -Depth 5
+if (-not [string]::IsNullOrWhiteSpace($OutputEvidencePath)) {
+    $evidencePath = [IO.Path]::GetFullPath($OutputEvidencePath)
+    $evidenceParent = Split-Path -Parent $evidencePath
+    if (-not [string]::IsNullOrWhiteSpace($evidenceParent)) {
+        [IO.Directory]::CreateDirectory($evidenceParent) | Out-Null
+    }
+    [IO.File]::WriteAllText(
+        $evidencePath,
+        $evidenceJson + [Environment]::NewLine,
+        [Text.UTF8Encoding]::new($false)
+    )
+}
+
+Write-Output $evidenceJson
+Write-Host "R2 deployment smoke test passed for $releaseVersion."
