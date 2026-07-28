@@ -1,5 +1,9 @@
 # CP6 production WMS clients
 
+> WMS R2 生产化的唯一规范源是
+> [`docs/client/r2/README.md`](./r2/README.md)。本文件保留通用客户端说明；
+> 如内容与 R2 主规范冲突，以 R2 主规范及其可执行门禁为准。
+
 The existing Vue application remains the complete management UI. The native
 clients add two focused experiences:
 
