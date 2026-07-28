@@ -203,8 +203,8 @@
       </el-tab-pane>
     </el-tabs>
 
-    <el-dialog v-model="activationVisible" title="Device activation" width="480px" append-to-body>
-      <el-form :model="activationForm" label-width="110px">
+    <el-dialog v-model="activationVisible" title="Device activation" width="560px" append-to-body>
+      <el-form :model="activationForm" label-width="140px">
         <el-form-item label="Server URL"><el-input v-model="activationForm.server" /></el-form-item>
         <el-form-item label="Tenant"><el-input v-model="activationForm.tenant" /></el-form-item>
         <el-form-item label="Platform">
@@ -215,6 +215,32 @@
         </el-form-item>
         <el-form-item label="Warehouse"><el-input v-model="activationForm.warehouseCd" /></el-form-item>
         <el-form-item label="Area"><el-input v-model="activationForm.areaCd" /></el-form-item>
+        <template v-if="activationForm.platform === 'Android'">
+          <el-divider content-position="left">Scanner provisioning</el-divider>
+          <el-form-item label="HID prefix">
+            <el-input v-model="activationForm.scanPrefix" maxlength="32" placeholder="Optional, e.g. ]C1" />
+          </el-form-item>
+          <el-form-item label="HID suffix">
+            <el-input v-model="activationForm.scanSuffix" maxlength="32" placeholder="Optional framing suffix" />
+          </el-form-item>
+          <el-form-item label="HID terminator">
+            <el-select v-model="activationForm.scanTerminator">
+              <el-option label="Enter / CR" value="Enter" />
+              <el-option label="Tab" value="Tab" />
+              <el-option label="Manual submit" value="None" />
+            </el-select>
+          </el-form-item>
+          <el-form-item label="Duplicate window">
+            <el-input-number
+              v-model="activationForm.scanDuplicateMs"
+              :min="100"
+              :max="5000"
+              :step="50"
+              controls-position="right"
+            />
+            <span class="field-suffix">ms</span>
+          </el-form-item>
+        </template>
       </el-form>
       <div v-if="activationQr" class="activation-qr">
         <img :src="activationQr" alt="Device activation QR" />
@@ -230,6 +256,7 @@ import { computed, onMounted, reactive, ref } from 'vue'
 import { ElMessage, ElMessageBox, type UploadFile } from 'element-plus'
 import QRCode from 'qrcode'
 import { productionApi } from '@/api/wms/production'
+import { buildDeviceActivationPayload, type ScannerHidTerminator } from '@/utils/deviceActivation'
 import type {
   BarcodeAlias, BarcodeImportResult, BarcodeProfile, ClientDevice, LabelJob,
   LabelTemplate, LogisticsUnit, StockSerial, TaskAnalytics, WmsFeatureFlag,
@@ -256,6 +283,8 @@ const activationQr = ref('')
 const activationForm = reactive({
   server: window.location.origin, tenant: '', platform: 'Android' as 'Android' | 'Windows',
   deviceMode: 'Shared' as 'Shared' | 'Personal', warehouseCd: '', areaCd: '',
+  scanPrefix: '', scanSuffix: '',
+  scanTerminator: 'Enter' as ScannerHidTerminator, scanDuplicateMs: 750,
 })
 const metrics = computed(() => [
   { label: 'Created', value: analytics.value?.created ?? 0 },
@@ -349,10 +378,16 @@ async function createActivation() {
     platform: activationForm.platform, deviceMode: activationForm.deviceMode,
     warehouseCd: activationForm.warehouseCd || undefined, areaCd: activationForm.areaCd || undefined,
   })
-  const query = new URLSearchParams({
-    server: activationForm.server, tenant: activationForm.tenant, token: ticket.activationToken,
+  activationPayload.value = buildDeviceActivationPayload({
+    server: activationForm.server,
+    tenant: activationForm.tenant,
+    token: ticket.activationToken,
+    platform: activationForm.platform,
+    scanPrefix: activationForm.scanPrefix,
+    scanSuffix: activationForm.scanSuffix,
+    scanTerminator: activationForm.scanTerminator,
+    scanDuplicateMs: activationForm.scanDuplicateMs,
   })
-  activationPayload.value = `cp6-activate://device?${query}`
   activationQr.value = await QRCode.toDataURL(activationPayload.value, { width: 300, errorCorrectionLevel: 'M' })
 }
 async function previewBarcodeFile(file: File) {
@@ -497,6 +532,7 @@ onMounted(() => loadTab(tab.value))
 <style scoped>
 .tab-toolbar { display: flex; gap: 8px; margin-bottom: 12px; }
 .scope-table { margin-top: 12px; }
+.field-suffix { margin-left: 8px; color: var(--el-text-color-secondary); }
 .activation-qr { display: grid; justify-items: center; gap: 12px; }
 .activation-qr img { width: 300px; height: 300px; }
 .activation-qr code { max-width: 100%; overflow-wrap: anywhere; }

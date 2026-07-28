@@ -354,6 +354,7 @@ public partial class MoveScanViewModel : MobileViewModel
     private readonly MobileClientState _state;
     private readonly IOfflineMoveProgressStore _offline;
     private readonly ClientDeviceHeartbeatLoop _heartbeat;
+    private readonly ScannerInputProcessor _scanner;
     private readonly MoveScanWorkflow _workflow = new();
     private TaskScanProfile? _scanProfile;
     private Guid _operationId = Guid.NewGuid();
@@ -375,6 +376,7 @@ public partial class MoveScanViewModel : MobileViewModel
         MobileClientState state,
         IOfflineMoveProgressStore offline,
         ClientDeviceHeartbeatLoop heartbeat,
+        ScannerInputProcessor scanner,
         ILanguageService language)
         : base(language)
     {
@@ -382,12 +384,17 @@ public partial class MoveScanViewModel : MobileViewModel
         _state = state;
         _offline = offline;
         _heartbeat = heartbeat;
+        _scanner = scanner;
         WeakReferenceMessenger.Default.Register<MoveScanViewModel, ScanBroadcastMessage>(
             this,
             static (recipient, message) =>
                 MainThread.BeginInvokeOnMainThread(
-                    async () => await recipient.AcceptExternalScanAsync(message.Value)));
+                    async () => await recipient.AcceptExternalScanAsync(
+                        message.Value,
+                        ScannerInputSource.Broadcast)));
     }
+
+    public ScannerHidTerminator HidTerminator => _scanner.HidTerminator;
 
     [RelayCommand]
     private Task LoadAsync() => RunAsync(async () =>
@@ -421,7 +428,10 @@ public partial class MoveScanViewModel : MobileViewModel
     });
 
     [RelayCommand]
-    private Task SubmitScanAsync() => RunAsync(async () =>
+    private Task SubmitScanAsync() =>
+        AcceptScanAsync(ScanValue, ScannerInputSource.Manual);
+
+    private Task SubmitAcceptedScanAsync() => RunAsync(async () =>
     {
         if (Task == null) return;
         if (Connectivity.Current.NetworkAccess == NetworkAccess.None)
@@ -461,12 +471,29 @@ public partial class MoveScanViewModel : MobileViewModel
         UpdateStep();
     });
 
-    public async Task AcceptExternalScanAsync(string value)
+    public Task AcceptHidScanAsync(string value) =>
+        AcceptScanAsync(value, ScannerInputSource.Hid);
+
+    public Task AcceptExternalScanAsync(
+        string value,
+        ScannerInputSource source = ScannerInputSource.Broadcast) =>
+        AcceptScanAsync(value, source);
+
+    private async Task AcceptScanAsync(string value, ScannerInputSource source)
     {
-        if (IsBusy || string.IsNullOrWhiteSpace(value)) return;
-        ScanValue = value.Trim();
-        IsCameraOpen = false;
-        await SubmitScanAsync();
+        if (IsBusy) return;
+        var result = _scanner.Accept(value, source);
+        if (source == ScannerInputSource.Camera
+            && result.Status != ScannerInputStatus.Invalid)
+            IsCameraOpen = false;
+        if (!result.IsAccepted)
+        {
+            Message = result.ErrorCode ?? "WM-SCAN-INPUT-INVALID";
+            return;
+        }
+
+        ScanValue = result.Value!;
+        await SubmitAcceptedScanAsync();
     }
 
     [RelayCommand]

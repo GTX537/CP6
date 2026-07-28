@@ -9,7 +9,12 @@
     <VerticalStackLayout Padding="20" Spacing="14">
       <Label Text="{Binding Task.TaskNo}" FontAttributes="Bold" />
       <Label Text="{Binding StepTitle}" FontSize="26" FontAttributes="Bold" />
-      <Entry Placeholder="{Binding Text.ScanPlaceholder}" Text="{Binding ScanValue}" ReturnType="Done" />
+      <Entry x:Name="ScanEntry"
+             Placeholder="{Binding Text.ScanPlaceholder}"
+             Text="{Binding ScanValue}"
+             ReturnType="Done"
+             Completed="ScanEntry_OnCompleted"
+             Unfocused="ScanEntry_OnUnfocused" />
       <Grid ColumnDefinitions="*,*">
         <Button Text="{Binding Text.SubmitScan}" Command="{Binding SubmitScanCommand}" />
         <Button Grid.Column="1" Text="Camera" Command="{Binding ToggleCameraCommand}" />

@@ -82,6 +82,6 @@ public sealed class ScannerBroadcastReceiver : BroadcastReceiver
             .Select(intent.GetStringExtra)
             .FirstOrDefault(x => !string.IsNullOrWhiteSpace(x));
         if (!string.IsNullOrWhiteSpace(value))
-            WeakReferenceMessenger.Default.Send(new ScanBroadcastMessage(value.Trim()));
+            WeakReferenceMessenger.Default.Send(new ScanBroadcastMessage(value));
     }
 }

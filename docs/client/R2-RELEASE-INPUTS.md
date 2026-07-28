@@ -67,7 +67,7 @@ include secret values.
 | Zones/areas | Exact areas assigned to supervisors, dispatchers, operators, and auditors | Pending |
 | Pilot users | Named owners for the four standard roles and emergency takeover | Pending |
 | Devices | Ten Android devices plus Web/Windows dispatch consoles; shared/personal mode decided per device | Pending |
-| Scanner mix | HID, camera, and/or Android broadcast models to validate | Pending |
+| Scanner mix | Exact HID, camera, and Android broadcast models; per-group HID prefix/suffix, Enter/Tab/manual terminator, and 100-5000 ms duplicate window approved for activation QR provisioning | Pending |
 | Barcode seed file | Product, lot, location, UOM, and conversion aliases preflighted before import | Pending |
 | MOVE scenarios | 1000 representative moves, including partial, pause/takeover, conflict, weak network, and exception cases | Pending |
 | Label printers | Printer IP/USB mapping, language (ZPL/TSPL/PDF), media size, and approved templates | Pending |

@@ -42,6 +42,14 @@ serial/LPN, device, barcode, and label behavior must not be added to v1.
   execution so stale scan progress cannot be submitted.
 - Android stores only an already-started task, scan profile, and uncommitted
   scan progress while offline. It never claims or commits inventory offline.
+- Android normalizes HID, camera, and vendor-broadcast input through one scan
+  gate. HID Enter/Tab termination, optional prefix/suffix framing, and the
+  100-5000 ms duplicate window are provisioned by the one-time activation QR
+  (defaults: Enter, no framing, 750 ms). Configured framing is mandatory for
+  HID input; camera, manual, and broadcast scans remain compatible with bare
+  barcodes. The duplicate gate runs across all input sources before a scan
+  request is created, while the server-side `ClientScanNo` remains the
+  authoritative retry/idempotency boundary.
 - Windows and Android send a signed heartbeat immediately after authentication,
   activation, foreground resume, and current-task changes, then every 60
   seconds while active. Writes never overlap; transient failures retry after

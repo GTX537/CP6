@@ -31,9 +31,11 @@ pilot candidate.
    `pub-data-scope:edit`; device management permission alone cannot widen a
    role's task access. A blank area grants the whole named warehouse. Roles
    other than administrator role `1` fail closed when they have no scope rows.
-6. Create activation tickets for the intended device group, then verify signed
-   heartbeat, remote disable, session revocation, and the 12-hour shared-device
-   full-auth boundary.
+6. Create activation tickets for the intended device group. For Android,
+   encode the approved HID prefix/suffix, Enter/Tab/manual termination mode,
+   and duplicate window in the activation QR. Then verify signed heartbeat,
+   remote disable, session revocation, and the 12-hour shared-device full-auth
+   boundary.
 7. Import barcode aliases through preflight first. Enable serial/LPN only after
    controlled conversion counts reconcile exactly with aggregate stock.
 8. Enable `ProductionMoveEnabled`, then `SerialLpnEnabled`, per warehouse.
@@ -160,6 +162,11 @@ runs. Never execute the write profile against a production warehouse.
   the task page, pause while Android is stopped, resume immediately in the
   foreground, report the active task, and force a return to activation/login
   after remote device disable.
+- Validate every pilot scanner path: HID Enter, HID Tab when used, camera, and
+  each vendor broadcast profile. Confirm configured HID framing is stripped,
+  missing framing is rejected, CR/LF/TAB never reaches barcode matching, and
+  the same normalized value delivered twice inside the configured window
+  produces one scan request and advances only one workflow step.
 - During the unknown-result drill, cut the response path after claim or
   completion reaches the server. The client must query task state once and
   must not replay the write automatically. A scan retry must retain the same

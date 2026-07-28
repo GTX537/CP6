@@ -39,6 +39,8 @@ public static class MauiProgram
         builder.Services.AddCp6ClientCore(options);
         builder.Services.AddSingleton<MobileClientState>();
         builder.Services.AddSingleton<DeviceActivationService>();
+        builder.Services.AddTransient(
+            _ => new ScannerInputProcessor(MobileScannerSettings.Read()));
         builder.Services.AddSingleton<AppShell>();
         builder.Services.AddTransient<LoginViewModel>();
         builder.Services.AddTransient<TaskListViewModel>();
