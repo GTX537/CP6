@@ -206,6 +206,34 @@ public sealed class WmsRoleScopeTests
         Assert.False((await unconfigured.GetCurrentAsync()).Allows("W01", "A1"));
     }
 
+    [Fact]
+    public async Task DisabledMove_BlocksNewWorkAndStillValidatesDevice()
+    {
+        await using var db = NewDb();
+        SeedWarehouses(db);
+        var flag = db.WmsFeatureFlags.Local.Single(x => x.WarehouseCd == "W01");
+        flag.ProductionMoveEnabled = false;
+        var pending = Mobile("T-DISABLED", "W01", "A1", MobileTaskStatus.Pending);
+        db.MobileTasks.Add(pending);
+        await db.SaveChangesAsync();
+        var service = MoveService(
+            db,
+            new WmsAccessScope(false, [new WmsScopeGrant("W01", "A1")]));
+
+        var createError = await Assert.ThrowsAsync<MobileTaskConflictException>(() =>
+            service.CreateAsync(Move(null), "dispatcher"));
+        Assert.Equal("WM-R2A-DISABLED", createError.Code);
+
+        var claimError = await Assert.ThrowsAsync<MobileTaskConflictException>(() =>
+            service.ClaimAsync(pending.MobileTaskNo, new ClaimTaskV2Request
+            {
+                OperationId = Guid.NewGuid(),
+                RowVersion = string.Empty,
+                DeviceId = "missing-device",
+            }, "operator"));
+        Assert.Equal("WM-V2-DEVICE-NOT-ACTIVE", claimError.Code);
+    }
+
     private static CP6Context NewDb()
     {
         var options = new DbContextOptionsBuilder<CP6Context>()
@@ -343,6 +371,17 @@ public sealed class WmsRoleScopeTests
                 WarehouseCd = "W02",
                 LocationCd = "W2-A1",
                 AreaCd = "A1"
+            });
+        db.WmsFeatureFlags.AddRange(
+            new WmsFeatureFlag
+            {
+                WarehouseCd = "W01",
+                ProductionMoveEnabled = true,
+            },
+            new WmsFeatureFlag
+            {
+                WarehouseCd = "W02",
+                ProductionMoveEnabled = true,
             });
     }
 

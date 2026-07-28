@@ -3,25 +3,75 @@
     <el-tabs v-model="tab" @tab-change="loadTab">
       <el-tab-pane label="Rollout" name="rollout" v-permission="'wms-mobile:device-manage'">
         <div class="tab-toolbar">
-          <el-button type="primary" @click="addFeatureFlag">Add warehouse</el-button>
+          <el-button type="primary" @click="openFeatureChange()">Request new warehouse</el-button>
           <el-button @click="loadFeatureFlags">Refresh</el-button>
         </div>
+        <el-alert
+          :closable="false"
+          type="warning"
+          title="Production feature flags are read-only here. Every change requires OA approval by a different person."
+          class="rollout-alert"
+        />
         <el-table :data="featureFlags">
           <el-table-column prop="warehouseCd" label="Warehouse" />
           <el-table-column label="Production MOVE">
-            <template #default="{ row }"><el-switch v-model="row.productionMoveEnabled" /></template>
-          </el-table-column>
-          <el-table-column label="Serial / LPN">
-            <template #default="{ row }"><el-switch v-model="row.serialLpnEnabled" /></template>
-          </el-table-column>
-          <el-table-column label="Scan retention (days)" min-width="180">
             <template #default="{ row }">
-              <el-input-number v-model="row.scanRetentionDays" :min="30" :max="3650" />
+              <el-tag :type="row.productionMoveEnabled ? 'success' : 'info'">
+                {{ row.productionMoveEnabled ? 'Enabled' : 'Disabled' }}
+              </el-tag>
             </template>
           </el-table-column>
+          <el-table-column label="Serial / LPN">
+            <template #default="{ row }">
+              <el-tag :type="row.serialLpnEnabled ? 'success' : 'info'">
+                {{ row.serialLpnEnabled ? 'Enabled' : 'Disabled' }}
+              </el-tag>
+            </template>
+          </el-table-column>
+          <el-table-column prop="scanRetentionDays" label="Scan retention (days)" min-width="180" />
+          <el-table-column label="Approval" min-width="160">
+            <template #default="{ row }">
+              <el-tag v-if="hasPendingFeatureChange(row.warehouseCd)" type="warning">Pending</el-tag>
+              <el-button
+                v-else
+                text
+                type="primary"
+                @click="openFeatureChange(row)"
+              >
+                Request change
+              </el-button>
+            </template>
+          </el-table-column>
+        </el-table>
+
+        <h4>Approval history</h4>
+        <el-table :data="featureChanges">
+          <el-table-column prop="warehouseCd" label="Warehouse" />
+          <el-table-column prop="changeTicket" label="Change ticket" min-width="140" />
+          <el-table-column label="Target" min-width="240">
+            <template #default="{ row }">
+              MOVE {{ row.targetProductionMoveEnabled ? 'on' : 'off' }};
+              Serial/LPN {{ row.targetSerialLpnEnabled ? 'on' : 'off' }};
+              {{ row.targetScanRetentionDays }} days
+            </template>
+          </el-table-column>
+          <el-table-column label="Status" min-width="150">
+            <template #default="{ row }">
+              <el-tag :type="featureStatusType(row.status)">{{ row.status }}</el-tag>
+              <div v-if="row.failureCode" class="failure-code">{{ row.failureCode }}</div>
+            </template>
+          </el-table-column>
+          <el-table-column prop="requestedAtUtc" label="Requested at" min-width="190" />
           <el-table-column label="Action">
             <template #default="{ row }">
-              <el-button text type="primary" @click="saveFeatureFlag(row)">Save</el-button>
+              <el-button
+                v-if="row.status === 'PENDING'"
+                text
+                type="danger"
+                @click="cancelFeatureChange(row)"
+              >
+                Cancel
+              </el-button>
             </template>
           </el-table-column>
         </el-table>
@@ -248,6 +298,36 @@
       </div>
       <template #footer><el-button type="primary" @click="createActivation">Generate one-time QR</el-button></template>
     </el-dialog>
+    <el-dialog v-model="featureChangeVisible" title="Request production feature change" width="620px">
+      <el-form label-width="180px">
+        <el-form-item label="Warehouse">
+          <el-input v-model="featureChangeForm.warehouseCd" :disabled="Boolean(featureChangeBase)" />
+        </el-form-item>
+        <el-form-item label="Production MOVE">
+          <el-switch v-model="featureChangeForm.productionMoveEnabled" />
+        </el-form-item>
+        <el-form-item label="Serial / LPN">
+          <el-switch v-model="featureChangeForm.serialLpnEnabled" />
+        </el-form-item>
+        <el-form-item label="Scan retention (days)">
+          <el-input-number v-model="featureChangeForm.scanRetentionDays" :min="30" :max="3650" />
+        </el-form-item>
+        <el-form-item label="Reason">
+          <el-input v-model="featureChangeForm.reason" type="textarea" :rows="3" />
+        </el-form-item>
+        <el-form-item label="External change ticket">
+          <el-input v-model="featureChangeForm.changeTicket" placeholder="CHG-..." />
+        </el-form-item>
+        <el-form-item label="R2A evidence URI">
+          <el-input v-model="featureChangeForm.evidenceUri" placeholder="s3://... or https://..." />
+        </el-form-item>
+      </el-form>
+      <template #footer>
+        <el-button @click="featureChangeVisible = false">Close</el-button>
+        <el-button type="primary" @click="submitFeatureChange">Submit for OA approval</el-button>
+      </template>
+    </el-dialog>
+
     <WmsSerialLpnDialogs
       ref="serialLpnDialogs"
       @serials-changed="loadSerials"
@@ -266,12 +346,24 @@ import WmsSerialLpnDialogs from './WmsSerialLpnDialogs.vue'
 import type {
   BarcodeAlias, BarcodeImportResult, BarcodeProfile, ClientDevice, LabelJob,
   LabelTemplate, LogisticsUnit, StockSerial, TaskAnalytics, WmsFeatureFlag,
-  WmsRoleScope,
+  WmsFeatureFlagChange, WmsFeatureFlagChangeStatus, WmsRoleScope,
 } from '@/api/wms/production'
 
 const tab = ref('rollout')
 const analytics = ref<TaskAnalytics>()
 const featureFlags = ref<WmsFeatureFlag[]>([])
+const featureChanges = ref<WmsFeatureFlagChange[]>([])
+const featureChangeVisible = ref(false)
+const featureChangeBase = ref<WmsFeatureFlag>()
+const featureChangeForm = reactive({
+  warehouseCd: '',
+  productionMoveEnabled: false,
+  serialLpnEnabled: false,
+  scanRetentionDays: 180,
+  reason: '',
+  changeTicket: '',
+  evidenceUri: '',
+})
 const scopeRoleId = ref(20)
 const roleScopes = ref<WmsRoleScope[]>([])
 const devices = ref<ClientDevice[]>([])
@@ -313,7 +405,12 @@ async function loadTab(name: string | number) {
   if (name === 'labels') await loadLabels()
 }
 async function loadDevices() { devices.value = (await productionApi.devices({ pageSize: 100 })).items }
-async function loadFeatureFlags() { featureFlags.value = await productionApi.featureFlags() }
+async function loadFeatureFlags() {
+  [featureFlags.value, featureChanges.value] = await Promise.all([
+    productionApi.featureFlags(),
+    productionApi.featureChanges(),
+  ])
+}
 async function loadRoleScopes() {
   roleScopes.value = await productionApi.roleScopes(scopeRoleId.value)
 }
@@ -337,24 +434,70 @@ async function saveRoleScopes() {
   )
   ElMessage.success('Role task scope saved')
 }
-async function addFeatureFlag() {
-  const result = await ElMessageBox.prompt('Warehouse code', 'Add rollout configuration', {
-    inputValidator: value => Boolean(value?.trim()) || 'Warehouse is required',
+function hasPendingFeatureChange(warehouseCd: string) {
+  return featureChanges.value.some(change =>
+    change.warehouseCd === warehouseCd && change.status === 'PENDING')
+}
+function featureStatusType(status: WmsFeatureFlagChangeStatus) {
+  if (status === 'APPLIED') return 'success'
+  if (status === 'PENDING') return 'warning'
+  if (status === 'REJECTED' || status === 'FAILED') return 'danger'
+  return 'info'
+}
+function openFeatureChange(flag?: WmsFeatureFlag) {
+  featureChangeBase.value = flag
+  Object.assign(featureChangeForm, {
+    warehouseCd: flag?.warehouseCd ?? '',
+    productionMoveEnabled: flag?.productionMoveEnabled ?? false,
+    serialLpnEnabled: flag?.serialLpnEnabled ?? false,
+    scanRetentionDays: flag?.scanRetentionDays ?? 180,
+    reason: '',
+    changeTicket: '',
+    evidenceUri: '',
   })
-  const flag: WmsFeatureFlag = {
-    warehouseCd: result.value.trim(),
-    productionMoveEnabled: false,
-    serialLpnEnabled: false,
-    scanRetentionDays: 180,
-    rowVersion: '',
+  featureChangeVisible.value = true
+}
+async function submitFeatureChange() {
+  if (!featureChangeForm.warehouseCd.trim()) {
+    ElMessage.error('Warehouse is required')
+    return
   }
-  await productionApi.updateFeatureFlag(flag)
+  if (!featureChangeForm.reason.trim()) {
+    ElMessage.error('Reason is required')
+    return
+  }
+  if (!featureChangeForm.changeTicket.trim()) {
+    ElMessage.error('External change ticket is required')
+    return
+  }
+  if (featureChangeForm.serialLpnEnabled && !featureChangeForm.productionMoveEnabled) {
+    ElMessage.error('Serial / LPN requires Production MOVE')
+    return
+  }
+  if (!featureChangeBase.value?.serialLpnEnabled
+      && featureChangeForm.serialLpnEnabled
+      && !featureChangeForm.evidenceUri.trim()) {
+    ElMessage.error('R2A exit evidence URI is required before enabling Serial / LPN')
+    return
+  }
+  await productionApi.requestFeatureChange({
+    warehouseCd: featureChangeForm.warehouseCd.trim(),
+    productionMoveEnabled: featureChangeForm.productionMoveEnabled,
+    serialLpnEnabled: featureChangeForm.serialLpnEnabled,
+    scanRetentionDays: featureChangeForm.scanRetentionDays,
+    rowVersion: featureChangeBase.value?.rowVersion ?? '',
+    reason: featureChangeForm.reason.trim(),
+    changeTicket: featureChangeForm.changeTicket.trim(),
+    evidenceUri: featureChangeForm.evidenceUri.trim() || undefined,
+  })
+  featureChangeVisible.value = false
+  ElMessage.success('Feature change submitted to OA approval')
   await loadFeatureFlags()
 }
-async function saveFeatureFlag(flag: WmsFeatureFlag) {
-  const updated = await productionApi.updateFeatureFlag(flag)
-  Object.assign(flag, updated)
-  ElMessage.success('Rollout settings saved')
+async function cancelFeatureChange(change: WmsFeatureFlagChange) {
+  await productionApi.cancelFeatureChange(change.id)
+  ElMessage.success('Feature change cancelled')
+  await loadFeatureFlags()
 }
 async function loadBarcodes() {
   [barcodes.value, barcodeProfiles.value] = await Promise.all([
@@ -502,6 +645,8 @@ onMounted(() => loadTab(tab.value))
 
 <style scoped>
 .tab-toolbar { display: flex; gap: 8px; margin-bottom: 12px; }
+.rollout-alert { margin-bottom: 12px; }
+.failure-code { margin-top: 4px; color: var(--el-color-danger); font-size: 12px; }
 .scope-table { margin-top: 12px; }
 .field-suffix { margin-left: 8px; color: var(--el-text-color-secondary); }
 .activation-qr { display: grid; justify-items: center; gap: 12px; }

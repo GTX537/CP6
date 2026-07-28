@@ -376,6 +376,7 @@ public class CP6Context : DbContext, IDataProtectionKeyContext
     /// <summary>モバイル作業指示（WM300）</summary>
     public DbSet<MobileTask> MobileTasks { get; set; }
     public DbSet<WmsFeatureFlag> WmsFeatureFlags => Set<WmsFeatureFlag>();
+    public DbSet<WmsFeatureFlagChange> WmsFeatureFlagChanges => Set<WmsFeatureFlagChange>();
     public DbSet<WmsRoleScope> WmsRoleScopes => Set<WmsRoleScope>();
     public DbSet<ClientDevice> ClientDevices => Set<ClientDevice>();
     public DbSet<DeviceActivation> DeviceActivations => Set<DeviceActivation>();
@@ -2123,7 +2124,16 @@ public class CP6Context : DbContext, IDataProtectionKeyContext
 
         modelBuilder.Entity<WmsFeatureFlag>(e =>
         {
-            e.HasIndex(x => x.WarehouseCd).IsUnique();
+            e.HasIndex(x => new { x.TenantId, x.WarehouseCd }).IsUnique();
+        });
+
+        modelBuilder.Entity<WmsFeatureFlagChange>(e =>
+        {
+            e.HasIndex(x => new { x.TenantId, x.OperationId }).IsUnique();
+            e.HasIndex(x => new { x.TenantId, x.WarehouseCd })
+                .IsUnique()
+                .HasFilter("[IsDeleted] = 0 AND [Status] = 'PENDING'");
+            e.HasIndex(x => new { x.TenantId, x.WarehouseCd, x.RequestedAtUtc });
         });
 
         modelBuilder.Entity<WmsRoleScope>(e =>

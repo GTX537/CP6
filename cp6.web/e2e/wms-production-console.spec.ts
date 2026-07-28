@@ -134,6 +134,32 @@ async function installApiFixtures(
       return
     }
 
+    if (pathname === '/api/v2/admin/wms-feature-changes' && request.method() === 'POST') {
+      const body = request.postDataJSON() as Record<string, unknown>
+      capturedMutations.push({ path: pathname, body })
+      await route.fulfill({
+        status: 202,
+        json: {
+          changeId: 'feature-change-1',
+          approvalInstanceId: 'approval-1',
+          status: 'PENDING',
+          change: {
+            id: 'feature-change-1',
+            flowInstanceId: 'approval-1',
+            status: 'PENDING',
+            requestedAtUtc: '2030-01-01T00:00:00Z',
+            ...body,
+          },
+        },
+      })
+      return
+    }
+
+    if (pathname === '/api/v2/admin/wms-feature-changes') {
+      await route.fulfill({ json: [] })
+      return
+    }
+
     if (pathname === '/api/v2/admin/client-devices' && request.method() === 'POST') {
       activationRequests.push(request.postDataJSON() as ActivationRequest)
       await route.fulfill({
@@ -281,6 +307,44 @@ async function installApiFixtures(
 function formInput(dialog: Locator, label: string) {
   return dialog.locator('.el-form-item', { hasText: label }).locator('input').first()
 }
+
+test('submits warehouse feature changes through OA approval without direct switches', async ({ page }) => {
+  const capturedMutations: CapturedMutation[] = []
+  await installApiFixtures(page, [], capturedMutations)
+
+  await page.goto('/wms/mobile-task')
+  await page.getByRole('button', { name: 'Production console' }).click()
+  const productionDialog = page.getByRole('dialog', { name: 'WMS production console' })
+  await expect(productionDialog.getByText(
+    'Every change requires OA approval by a different person.',
+    { exact: false },
+  )).toBeVisible()
+  await expect(productionDialog.getByRole('button', { name: 'Save', exact: true })).toHaveCount(0)
+  await productionDialog.getByRole('button', { name: 'Request change' }).click()
+
+  const changeDialog = page.getByRole('dialog', { name: 'Request production feature change' })
+  await changeDialog.locator('.el-form-item', { hasText: 'Serial / LPN' })
+    .locator('.el-switch').click()
+  await changeDialog.locator('.el-form-item', { hasText: 'Reason' })
+    .locator('textarea').fill('Controlled R2B stop')
+  await formInput(changeDialog, 'External change ticket').fill('CHG-200')
+  await changeDialog.getByRole('button', { name: 'Submit for OA approval' }).click()
+
+  await expect.poll(() => capturedMutations.length).toBe(1)
+  expect(capturedMutations[0]).toMatchObject({
+    path: '/api/v2/admin/wms-feature-changes',
+    body: {
+      operationId: expect.any(String),
+      warehouseCd: 'PILOT-WH',
+      productionMoveEnabled: true,
+      serialLpnEnabled: false,
+      scanRetentionDays: 180,
+      rowVersion: 'rollout-v1',
+      reason: 'Controlled R2B stop',
+      changeTicket: 'CHG-200',
+    },
+  })
+})
 
 test('provisions Android scanner settings in a one-time activation QR', async ({ page }) => {
   const activationRequests: ActivationRequest[] = []

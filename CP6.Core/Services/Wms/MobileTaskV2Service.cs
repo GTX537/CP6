@@ -157,6 +157,7 @@ public sealed class MobileTaskV2Service : IMobileTaskV2Service
             await EnsureAccessAsync(replay.WarehouseCd, replay.AreaCd, ct);
             return replay;
         }
+        await EnsureProductionMoveEnabledAsync(request.WarehouseCd, ct);
 
         IDbContextTransaction? tx = await BeginTransactionAsync(ct);
         MobileTask? task = null;
@@ -322,6 +323,7 @@ public sealed class MobileTaskV2Service : IMobileTaskV2Service
         var replay = await ReplayAsync(
             taskNo, request.OperationId, "source-sync", ct);
         if (replay is not null) return replay;
+        await EnsureProductionMoveEnabledAsync(request.WarehouseCd, ct);
 
         IDbContextTransaction? tx = await BeginTransactionAsync(ct);
         MobileTask? task = null;
@@ -1001,6 +1003,8 @@ public sealed class MobileTaskV2Service : IMobileTaskV2Service
         try
         {
             var task = await LoadAsync(taskNo, true, ct);
+            if (commandName is "claim" or "start")
+                await EnsureProductionMoveEnabledAsync(task.WarehouseCd, ct);
             ApplyRowVersion(task, command.RowVersion);
             mutate(task);
             Stamp(task, userName);
@@ -1340,11 +1344,6 @@ public sealed class MobileTaskV2Service : IMobileTaskV2Service
         CancellationToken ct)
     {
         var task = await LoadAsync(taskNo, false, ct);
-        var enabled = await _db.WmsFeatureFlags.AsNoTracking()
-            .AnyAsync(x => !x.IsDeleted
-                           && x.WarehouseCd == task.WarehouseCd
-                           && x.ProductionMoveEnabled, ct);
-        if (!enabled) return;
         if (string.IsNullOrWhiteSpace(deviceId)
             || !await _db.ClientDevices.AsNoTracking()
                 .AnyAsync(x => !x.IsDeleted
@@ -1354,6 +1353,18 @@ public sealed class MobileTaskV2Service : IMobileTaskV2Service
                                    || x.WarehouseCd == task.WarehouseCd)
                                && (x.AreaCd == null || x.AreaCd == task.AreaCd), ct))
             throw new MobileTaskConflictException("WM-V2-DEVICE-NOT-ACTIVE");
+    }
+
+    private async Task EnsureProductionMoveEnabledAsync(
+        string? warehouseCd,
+        CancellationToken ct)
+    {
+        var enabled = await _db.WmsFeatureFlags.AsNoTracking()
+            .AnyAsync(x => !x.IsDeleted
+                           && x.WarehouseCd == warehouseCd
+                           && x.ProductionMoveEnabled, ct);
+        if (!enabled)
+            throw new MobileTaskConflictException("WM-R2A-DISABLED");
     }
 
     private async Task<MobileTaskV2Dto?> ReplayAsync(

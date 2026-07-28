@@ -1,7 +1,5 @@
 using CP6.Core.Auth;
-using CP6.Core.EFDbContext;
 using CP6.Core.Services.Wms;
-using CP6.Entity.DomainModels.Wms;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
@@ -13,8 +11,8 @@ namespace CP6.WebApi.Controllers.Wms;
 [Authorize]
 public sealed class WmsFeatureFlagsController : ControllerBase
 {
-    private readonly CP6Context _db;
-    public WmsFeatureFlagsController(CP6Context db) => _db = db;
+    private readonly CP6.Core.EFDbContext.CP6Context _db;
+    public WmsFeatureFlagsController(CP6.Core.EFDbContext.CP6Context db) => _db = db;
 
     [HttpGet]
     [RequirePermission("wms-mobile", "device-manage")]
@@ -40,35 +38,13 @@ public sealed class WmsFeatureFlagsController : ControllerBase
         UpdateWmsFeatureFlagRequest request,
         CancellationToken ct)
     {
-        if (!await _db.Warehouses.AnyAsync(
-            x => !x.IsDeleted && x.WarehouseCd == warehouseCd, ct))
-            return NotFound(new { code = "WM-V2-WAREHOUSE-NOT-FOUND" });
-        var row = await _db.WmsFeatureFlags.FirstOrDefaultAsync(
-            x => !x.IsDeleted && x.WarehouseCd == warehouseCd, ct);
-        if (row is null)
+        _ = warehouseCd;
+        _ = request;
+        _ = ct;
+        return StatusCode(StatusCodes.Status410Gone, new
         {
-            row = new WmsFeatureFlag
-            {
-                WarehouseCd = warehouseCd,
-                Creator = User.Identity?.Name
-            };
-            _db.WmsFeatureFlags.Add(row);
-        }
-        row.ProductionMoveEnabled = request.ProductionMoveEnabled;
-        row.SerialLpnEnabled = request.SerialLpnEnabled;
-        row.ScanRetentionDays = Math.Clamp(request.ScanRetentionDays, 30, 3650);
-        row.Modifier = User.Identity?.Name;
-        row.ModifyDate = DateTime.Now;
-        await _db.SaveChangesAsync(ct);
-        return Ok(new WmsFeatureFlagDto
-        {
-            WarehouseCd = row.WarehouseCd,
-            ProductionMoveEnabled = row.ProductionMoveEnabled,
-            SerialLpnEnabled = row.SerialLpnEnabled,
-            ScanRetentionDays = row.ScanRetentionDays,
-            RowVersion = row.RowVersion is { Length: > 0 }
-                ? Convert.ToBase64String(row.RowVersion)
-                : string.Empty
+            code = "WM-FEATURE-APPROVAL-REQUIRED",
+            message = "Warehouse production flags must be changed through OA approval."
         });
     }
 }

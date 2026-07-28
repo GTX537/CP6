@@ -15,21 +15,29 @@ import { productionApi } from './production'
 describe('WMS production administration API', () => {
   beforeEach(() => vi.clearAllMocks())
 
-  it('updates a warehouse rollout flag with bounded retention data', () => {
-    productionApi.updateFeatureFlag({
+  it('submits warehouse rollout flags through the approval API', () => {
+    productionApi.requestFeatureChange({
+      operationId: 'feature-operation',
       warehouseCd: 'W 01',
       productionMoveEnabled: true,
       serialLpnEnabled: false,
       scanRetentionDays: 180,
       rowVersion: 'AQID',
+      reason: 'Enable pilot',
+      changeTicket: 'CHG-100',
     })
 
-    expect(http.put).toHaveBeenCalledWith(
-      '/v2/admin/wms-features/W%2001',
+    expect(http.post).toHaveBeenCalledWith(
+      '/v2/admin/wms-feature-changes',
       {
+        operationId: 'feature-operation',
+        warehouseCd: 'W 01',
         productionMoveEnabled: true,
         serialLpnEnabled: false,
         scanRetentionDays: 180,
+        rowVersion: 'AQID',
+        reason: 'Enable pilot',
+        changeTicket: 'CHG-100',
       },
     )
   })

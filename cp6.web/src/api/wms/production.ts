@@ -119,6 +119,46 @@ export interface WmsFeatureFlag {
   scanRetentionDays: number
   rowVersion: string
 }
+export type WmsFeatureFlagChangeStatus =
+  | 'PENDING'
+  | 'APPLIED'
+  | 'REJECTED'
+  | 'STALE'
+  | 'CANCELLED'
+  | 'FAILED'
+export interface WmsFeatureFlagChange {
+  id: string
+  operationId: string
+  warehouseCd: string
+  baseProductionMoveEnabled: boolean
+  baseSerialLpnEnabled: boolean
+  baseScanRetentionDays: number
+  baseFeatureRowVersion: string
+  targetProductionMoveEnabled: boolean
+  targetSerialLpnEnabled: boolean
+  targetScanRetentionDays: number
+  reason: string
+  changeTicket: string
+  evidenceUri?: string
+  status: WmsFeatureFlagChangeStatus
+  requestedById: string
+  requestedAtUtc: string
+  flowInstanceId: string
+  decidedById?: string
+  decidedAtUtc?: string
+  appliedAtUtc?: string
+  failureCode?: string
+}
+export interface CreateWmsFeatureFlagChange extends IdempotentProductionCommand {
+  warehouseCd: string
+  productionMoveEnabled: boolean
+  serialLpnEnabled: boolean
+  scanRetentionDays: number
+  rowVersion: string
+  reason: string
+  changeTicket: string
+  evidenceUri?: string
+}
 export interface WmsRoleScope {
   roleId: number
   warehouseCd: string
@@ -290,15 +330,19 @@ export const productionApi = {
   featureFlags() {
     return http.get<any, WmsFeatureFlag[]>('/v2/admin/wms-features')
   },
-  updateFeatureFlag(flag: WmsFeatureFlag) {
-    return http.put<any, WmsFeatureFlag>(
-      `/v2/admin/wms-features/${encodeURIComponent(flag.warehouseCd)}`,
-      {
-        productionMoveEnabled: flag.productionMoveEnabled,
-        serialLpnEnabled: flag.serialLpnEnabled,
-        scanRetentionDays: flag.scanRetentionDays,
-      },
-    )
+  featureChanges(params: { warehouseCd?: string, status?: WmsFeatureFlagChangeStatus } = {}) {
+    return http.get<any, WmsFeatureFlagChange[]>('/v2/admin/wms-feature-changes', { params })
+  },
+  requestFeatureChange(request: CreateWmsFeatureFlagChange) {
+    return http.post<any, {
+      changeId: string
+      approvalInstanceId: string
+      status: WmsFeatureFlagChangeStatus
+      change: WmsFeatureFlagChange
+    }>('/v2/admin/wms-feature-changes', withOperation(request))
+  },
+  cancelFeatureChange(changeId: string) {
+    return http.post(`/v2/admin/wms-feature-changes/${encodeURIComponent(changeId)}/cancel`)
   },
   roleScopes(roleId: number) {
     return http.get<any, WmsRoleScope[]>(`/v2/admin/wms-role-scopes/${roleId}`)

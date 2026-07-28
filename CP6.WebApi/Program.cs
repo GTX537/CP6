@@ -197,6 +197,7 @@ builder.Services.AddScoped<CP6.Core.Services.Wf.IApprovalCallback, CP6.Core.Serv
 builder.Services.AddScoped<CP6.Core.Services.Wf.IApprovalCallback, CP6.Core.Services.Fin.BudgetApprovalCallback>(); // A5 §8 预算版本审批回调（通过→自动激活/驳回→可重编）
 builder.Services.AddScoped<CP6.Core.Services.Wf.IApprovalCallback, CP6.Core.Services.Pur.PoApprovalCallback>(); // 采购 PO 审批回调（通过→Confirmed/驳回→Draft）
 builder.Services.AddScoped<CP6.Core.Services.Wf.IApprovalCallback, CP6.Core.Services.Pur.PrApprovalCallback>(); // 采购 PR 审批回调（通过→Approved/驳回→Draft）
+builder.Services.AddScoped<CP6.Core.Services.Wf.IApprovalCallback, CP6.Core.Services.Wms.WmsFeatureFlagApprovalCallback>();
 builder.Services.AddScoped<CP6.Core.Services.Fin.IBudgetService, CP6.Core.Services.Fin.BudgetService>();            // A5 预算方案/版本 CRUD + 送审 + OA 回调
 builder.Services.AddScoped<CP6.Core.Services.Fin.IBudgetLineService, CP6.Core.Services.Fin.BudgetLineService>();    // A5 预算行 Upsert/Delete + Excel 导入
 builder.Services.AddScoped<CP6.Core.Services.Fin.IBudgetReportService, CP6.Core.Services.Fin.BudgetReportService>(); // A5 预算 vs 实际报告 + 预控预检
@@ -535,6 +536,7 @@ builder.Services.AddScoped<CP6.Core.Services.Wms.IMobileService, CP6.Core.Servic
 builder.Services.AddScoped<CP6.Core.Services.Wms.IMobileTaskV1Service, CP6.Core.Services.Wms.MobileTaskV1Service>();
 builder.Services.AddScoped<CP6.Core.Services.Wms.IWmsAccessScopeProvider, CP6.Core.Services.Wms.WmsAccessScopeProvider>();
 builder.Services.AddScoped<CP6.Core.Services.Wms.IWmsRoleScopeService, CP6.Core.Services.Wms.WmsRoleScopeService>();
+builder.Services.AddScoped<CP6.Core.Services.Wms.IWmsFeatureFlagChangeService, CP6.Core.Services.Wms.WmsFeatureFlagChangeService>();
 builder.Services.AddScoped<CP6.Core.Services.Wms.IMobileTaskV2Service, CP6.Core.Services.Wms.MobileTaskV2Service>();
 builder.Services.AddScoped<CP6.Core.Services.Wms.IBarcodeAliasService, CP6.Core.Services.Wms.BarcodeAliasService>();
 builder.Services.AddScoped<CP6.Core.Services.Wms.IClientDeviceService, CP6.Core.Services.Wms.ClientDeviceService>();
@@ -990,6 +992,7 @@ using (var scope = app.Services.CreateScope())
     // 置于 admin 账号 seed 之后，确保首次启动时 admin 已落库，seed 内部可解析到真实 UserId。
     CP6.WebApi.Seed.A5BudgetFlowSeed.Seed(db);
     CP6.WebApi.Seed.PurApprovalFlowSeed.Seed(db);   // 采购 PR/PO 审批流程 + 绑定（PUR_PR/PUR_PO）
+    CP6.WebApi.Seed.WmsFeatureApprovalFlowSeed.Seed(db);
     CP6.WebApi.Seed.OaLeaveFormSeed.Seed(db);        // OA 请假演示表单 + 流程（填單→审批闭环 out-of-box）
     await CP6.WebApi.Seed.WfTokenBackfillSeed.EnsureAsync(db);   // WFS P1：在途实例 token 回填（每启动幂等）
 
