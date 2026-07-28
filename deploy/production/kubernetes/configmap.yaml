@@ -1,0 +1,14 @@
+apiVersion: v1
+kind: ConfigMap
+metadata:
+  name: cp6-runtime
+  namespace: CP6_NAMESPACE
+data:
+  ASPNETCORE_ENVIRONMENT: Production
+  Startup__Mode: Api
+  Startup__SkipDatabaseInitialization: "true"
+  Startup__SkipHostedServices: "false"
+  Release__Version: CP6_RELEASE_VERSION
+  Release__GitSha: CP6_GIT_SHA
+  Release__ApiImageDigest: CP6_API_DIGEST
+  Release__WebImageDigest: CP6_WEB_DIGEST

@@ -95,6 +95,26 @@ public sealed class Cp6R2ContractServer : IDisposable
             response.Headers["Cache-Control"] = "no-store";
             body = Utf8("{\"status\":\"Healthy\",\"checks\":[{\"name\":\"redis\",\"status\":\"Healthy\"},{\"name\":\"sqlserver\",\"status\":\"Healthy\"}]}");
         }
+        else if (path == "/health/release")
+        {
+            response.ContentType = "application/json";
+            response.Headers["Cache-Control"] = "no-store";
+            body = Utf8(
+                "{\"version\":\"1.0.0\"," +
+                "\"gitSha\":\"1111111111111111111111111111111111111111\"," +
+                "\"apiImageDigest\":\"sha256:" + new string('a', 64) + "\"," +
+                "\"webImageDigest\":\"sha256:" + new string('b', 64) + "\"," +
+                "\"latestMigration\":\"ContractMigration\"}");
+        }
+        else if (path == "/release.json")
+        {
+            response.ContentType = "application/json";
+            response.Headers["Cache-Control"] = "no-store";
+            body = Utf8(
+                "{\"version\":\"1.0.0\"," +
+                "\"gitSha\":\"1111111111111111111111111111111111111111\"," +
+                "\"generatedAtUtc\":\"2026-07-28T00:00:00Z\"}");
+        }
         else if (path == "/api/client/bootstrap")
         {
             string platform = request.QueryString["platform"] ?? "";
@@ -195,30 +215,48 @@ try {
             FileName = "CP6.Desktop.msix"
             Bytes = (Get-Item -LiteralPath $msixPath).Length
             Sha256 = (Get-FileHash -LiteralPath $msixPath -Algorithm SHA256).Hash
+            DownloadUrl = "$baseUrl/downloads/CP6.Desktop.msix"
         },
         [ordered]@{
             Kind = "windows-appinstaller"
             FileName = "CP6.Desktop.appinstaller"
             Bytes = (Get-Item -LiteralPath $appInstallerPath).Length
             Sha256 = (Get-FileHash -LiteralPath $appInstallerPath -Algorithm SHA256).Hash
+            DownloadUrl = "$baseUrl/downloads/CP6.Desktop.appinstaller"
         },
         [ordered]@{
             Kind = "android-apk"
             FileName = "CP6.Mobile.apk"
             Bytes = (Get-Item -LiteralPath $apkPath).Length
             Sha256 = (Get-FileHash -LiteralPath $apkPath -Algorithm SHA256).Hash
+            DownloadUrl = "$baseUrl/downloads/CP6.Mobile.apk"
         }
     )
     $manifestPath = Join-Path $temporaryRoot "release-manifest.json"
     $manifest = [ordered]@{
-        SchemaVersion = 1
+        SchemaVersion = 2
         ReleaseVersion = "1.0.0"
-        CreatedAtUtc = [DateTimeOffset]::UtcNow.ToString("O")
+        GitSha = "1" * 40
+        GeneratedAtUtc = [DateTimeOffset]::UtcNow.ToString("O")
+        EvidenceRootUri = "s3://cp6-contract/r2/1.0.0"
         Artifacts = $artifacts
+        Images = [ordered]@{
+            Api = [ordered]@{
+                Repository = "registry.example/cp6-api"
+                Digest = "sha256:" + ("a" * 64)
+            }
+            Web = [ordered]@{
+                Repository = "registry.example/cp6-web"
+                Digest = "sha256:" + ("b" * 64)
+            }
+        }
+        Database = [ordered]@{
+            LatestMigration = "ContractMigration"
+        }
     }
     Write-Utf8NoBom `
         -Path $manifestPath `
-        -Content (($manifest | ConvertTo-Json -Depth 5) + [Environment]::NewLine)
+        -Content (($manifest | ConvertTo-Json -Depth 8) + [Environment]::NewLine)
 
     $server = [Cp6R2ContractServer]::new(
         $baseUrl,
@@ -242,6 +280,7 @@ try {
         ConvertFrom-Json
     if ($evidence.LiveStatus -ne "Healthy" -or
         $evidence.ReadyStatus -ne "Healthy" -or
+        $evidence.WebReleaseIdentity.version -ne "1.0.0" -or
         -not [bool]$evidence.ArtifactDownloadsVerified -or
         @($evidence.Clients).Count -ne 2) {
         throw "Deployment smoke evidence is incomplete."
@@ -251,12 +290,12 @@ try {
     }
 
     $badManifestPath = Join-Path $temporaryRoot "release-manifest-bad-hash.json"
-    $badManifest = ($manifest | ConvertTo-Json -Depth 5) | ConvertFrom-Json
+    $badManifest = ($manifest | ConvertTo-Json -Depth 8) | ConvertFrom-Json
     ($badManifest.Artifacts |
         Where-Object { $_.Kind -eq "windows-appinstaller" }).Sha256 = "0" * 64
     Write-Utf8NoBom `
         -Path $badManifestPath `
-        -Content (($badManifest | ConvertTo-Json -Depth 5) + [Environment]::NewLine)
+        -Content (($badManifest | ConvertTo-Json -Depth 8) + [Environment]::NewLine)
     $badHashRejected = $false
     try {
         & (Join-Path $repoRoot "scripts\test-r2-deployment.ps1") `

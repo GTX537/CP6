@@ -172,6 +172,43 @@ $deploymentGateScript = [IO.File]::ReadAllText(
     (Join-Path $repoRoot "scripts\test-r2-deployment.ps1"),
     [Text.Encoding]::UTF8
 )
+$deploymentScript = [IO.File]::ReadAllText(
+    (Join-Path $repoRoot "scripts\deploy-r2.ps1"),
+    [Text.Encoding]::UTF8
+)
+$evidenceScript = [IO.File]::ReadAllText(
+    (Join-Path $repoRoot "scripts\publish-r2-evidence.ps1"),
+    [Text.Encoding]::UTF8
+)
+$candidateWorkflow = [IO.File]::ReadAllText(
+    (Join-Path $repoRoot ".github\workflows\r2-candidate.yml"),
+    [Text.Encoding]::UTF8
+)
+$deploymentWorkflow = [IO.File]::ReadAllText(
+    (Join-Path $repoRoot ".github\workflows\r2-deploy.yml"),
+    [Text.Encoding]::UTF8
+)
+$developmentCompose = [IO.File]::ReadAllText(
+    (Join-Path $repoRoot "docker-compose.yml"),
+    [Text.Encoding]::UTF8
+)
+$developmentKubernetesReadme = [IO.File]::ReadAllText(
+    (Join-Path $repoRoot "k8s\README.md"),
+    [Text.Encoding]::UTF8
+)
+$productionCompose = [IO.File]::ReadAllText(
+    (Join-Path $repoRoot "deploy\production\compose\compose.yaml"),
+    [Text.Encoding]::UTF8
+)
+$productionKubernetes = (
+    Get-ChildItem -LiteralPath (
+        Join-Path $repoRoot "deploy\production\kubernetes"
+    ) -File -Filter "*.yaml" |
+        Sort-Object Name |
+        ForEach-Object {
+            [IO.File]::ReadAllText($_.FullName, [Text.Encoding]::UTF8)
+        }
+) -join [Environment]::NewLine
 if ($desktopPublishScript -match "updates\.example\.internal") {
     throw "The Desktop publish script contains a placeholder update host."
 }
@@ -186,9 +223,23 @@ if ($artifactGateScript -notmatch 'windowsDownloadExtension' -or
     $artifactGateScript -notmatch '"\.appinstaller"\s*\{\s*\$appInstallerHash') {
     throw "Artifact gate must match the Windows bootstrap hash to its actual download type."
 }
+foreach ($manifestV2Contract in @(
+    "SchemaVersion\s*=\s*2",
+    "EvidenceRootUri",
+    "Images\s*=",
+    "SupplyChain\s*=",
+    "SqlIntegrationReport",
+    "Database\s*="
+)) {
+    if ($artifactGateScript -notmatch $manifestV2Contract) {
+        throw "Artifact gate is missing release manifest v2 contract '$manifestV2Contract'."
+    }
+}
 foreach ($requiredDeploymentProbe in @(
     "health/live",
     "health/ready",
+    "health/release",
+    "release.json",
     "api/client/bootstrap",
     "windows-msix",
     "windows-appinstaller",
@@ -202,6 +253,109 @@ if ($deploymentGateScript -match
     "DangerousAcceptAnyServerCertificateValidator|ServerCertificateValidationCallback|SkipCertificateCheck") {
     throw "Deployment gate must never bypass TLS certificate validation."
 }
+foreach ($deploymentContract in @(
+    "SchemaVersion.+2",
+    "GitSha",
+    "Images",
+    "LatestMigration",
+    "OutputEvidencePath"
+)) {
+    if ($deploymentGateScript -notmatch $deploymentContract) {
+        throw "Deployment gate is missing manifest/runtime contract '$deploymentContract'."
+    }
+}
+foreach ($deploymentRunnerContract in @(
+    "SchemaVersion.+2",
+    "database initialization",
+    "repo@digest|Repository\).+Digest",
+    "cp6-db-init",
+    "rollout.+status"
+)) {
+    if ($deploymentScript -notmatch $deploymentRunnerContract) {
+        throw "Deployment runner is missing '$deploymentRunnerContract'."
+    }
+}
+foreach ($evidenceContract in @(
+    "get-bucket-versioning",
+    "get-object-lock-configuration",
+    "object-lock-mode.+COMPLIANCE",
+    "object-lock-retain-until-date",
+    "server-side-encryption.+AES256",
+    "checksum-algorithm.+SHA256"
+)) {
+    if ($evidenceScript -notmatch $evidenceContract) {
+        throw "Evidence publisher is missing '$evidenceContract'."
+    }
+}
+foreach ($candidateContract in @(
+    'tags:\s*\r?\n\s*-\s*"v\*\.\*\.\*"',
+    "git rev-parse origin/main",
+    "self-hosted, Windows, X64, cp6-release",
+    "environment: r2-candidate",
+    "dotnet test CP6\.Tests",
+    "dotnet test CP6\.Client\.Tests",
+    "npm --prefix cp6\.web test",
+    "wms-production-console\.spec\.ts",
+    "anchore/syft",
+    "aquasec/trivy",
+    "publish-r2-evidence\.ps1"
+)) {
+    if ($candidateWorkflow -notmatch $candidateContract) {
+        throw "Candidate workflow is missing '$candidateContract'."
+    }
+}
+foreach ($workflowContract in @(
+    "type: environment",
+    "self-hosted, Windows, X64, cp6-deploy",
+    "environment:.+\$\{\{ inputs\.environment \}\}",
+    "manifest_sha256",
+    "CP6_VAULT_RENDERER",
+    "deploy-r2\.ps1",
+    "test-r2-deployment\.ps1"
+)) {
+    if ($deploymentWorkflow -notmatch $workflowContract) {
+        throw "Deployment workflow is missing '$workflowContract'."
+    }
+}
+if ($developmentCompose -notmatch "DEVELOPMENT ONLY" -or
+    $developmentKubernetesReadme -notmatch "DEVELOPMENT ONLY") {
+    throw "Root Compose and k8s assets must be explicitly marked development-only."
+}
+foreach ($composeContract in @(
+    "db-init:",
+    "Startup__Mode:\s*DatabaseInit",
+    "Startup__SkipDatabaseInitialization:\s*`"false`"",
+    "CP6_API_IMAGE.+repository@sha256:digest",
+    "cp6-api"
+)) {
+    if ($productionCompose -notmatch $composeContract) {
+        throw "Production Compose is missing '$composeContract'."
+    }
+}
+if ($productionCompose -match
+    "(?im)^\s*image:\s*(mcr\.microsoft\.com/mssql|redis:|rabbitmq:|apache/kafka)") {
+    throw "Production Compose must not contain local SQL, Redis, or messaging services."
+}
+foreach ($kubernetesContract in @(
+    "kind:\s*Job",
+    "name:\s*cp6-db-init",
+    "replicas:\s*2",
+    "maxUnavailable:\s*0",
+    "kind:\s*PodDisruptionBudget",
+    "topologySpreadConstraints:",
+    "readinessProbe:",
+    "livenessProbe:",
+    "startupProbe:",
+    "resources:",
+    "sessionAffinity:\s*ClientIP",
+    "ingressClassName:",
+    "secretName:",
+    "nginx\.ingress\.kubernetes\.io/affinity:\s*cookie"
+)) {
+    if ($productionKubernetes -notmatch $kubernetesContract) {
+        throw "Production Kubernetes templates are missing '$kubernetesContract'."
+    }
+}
 
 $releaseScripts = @(
     "scripts\test-r2-source-gate.ps1",
@@ -214,6 +368,12 @@ $releaseScripts = @(
     "scripts\test-r2-artifacts.ps1",
     "scripts\test-r2-deployment.ps1",
     "scripts\test-r2-deployment-contract.ps1",
+    "scripts\deploy-r2.ps1",
+    "scripts\publish-r2-evidence.ps1",
+    "scripts\new-r2-reconciliation-evidence.ps1",
+    "scripts\test-r2-pilot-exit.ps1",
+    "scripts\test-r2b-preflight.ps1",
+    "scripts\test-r2-operations-contract.ps1",
     "CP6.Desktop\scripts\publish-msix.ps1",
     "CP6.Mobile\scripts\publish-apk.ps1"
 )
@@ -235,6 +395,7 @@ foreach ($relativeScript in $releaseScripts) {
 & (Join-Path $repoRoot "scripts\test-r2-deployment-contract.ps1")
 & (Join-Path $repoRoot "scripts\test-r2-pilot-contract.ps1")
 & (Join-Path $repoRoot "scripts\test-r2-pilot-orchestration-contract.ps1")
+& (Join-Path $repoRoot "scripts\test-r2-operations-contract.ps1")
 & (Join-Path $repoRoot "scripts\test-native-client-contract.ps1") `
     -Configuration $Configuration `
     -SkipTests `

@@ -7,7 +7,25 @@ param(
     [Parameter(Mandatory = $true)]
     [ValidatePattern("^[A-Fa-f0-9]{64}$")]
     [string]$ExpectedAndroidSignerSha256,
-    [string]$ResolvedSettingsPath,
+    [Parameter(Mandatory = $true)][string]$ResolvedSettingsPath,
+    [Parameter(Mandatory = $true)]
+    [ValidatePattern("^[A-Fa-f0-9]{40}$")]
+    [string]$GitSha,
+    [Parameter(Mandatory = $true)][string]$ApiImageRepository,
+    [Parameter(Mandatory = $true)]
+    [ValidatePattern("^sha256:[A-Fa-f0-9]{64}$")]
+    [string]$ApiImageDigest,
+    [Parameter(Mandatory = $true)][string]$WebImageRepository,
+    [Parameter(Mandatory = $true)]
+    [ValidatePattern("^sha256:[A-Fa-f0-9]{64}$")]
+    [string]$WebImageDigest,
+    [Parameter(Mandatory = $true)][string]$SbomPath,
+    [Parameter(Mandatory = $true)][string]$VulnerabilityReportPath,
+    [Parameter(Mandatory = $true)][string]$DatabaseInitializationArtifactPath,
+    [Parameter(Mandatory = $true)][string]$SourceGateReportPath,
+    [Parameter(Mandatory = $true)][string]$SqlIntegrationReportPath,
+    [Parameter(Mandatory = $true)][string]$LatestMigration,
+    [Parameter(Mandatory = $true)][string]$EvidenceRootUri,
     [string]$OutputManifestPath
 )
 
@@ -216,6 +234,37 @@ function Normalize-Hex {
     return ($Value -replace "[^A-Fa-f0-9]", "").ToUpperInvariant()
 }
 
+function Get-EvidenceFile {
+    param(
+        [Parameter(Mandatory = $true)][string]$Path,
+        [Parameter(Mandatory = $true)][string]$Description
+    )
+
+    $resolved = Get-Item -LiteralPath (
+        Resolve-Path -LiteralPath $Path -ErrorAction Stop
+    ).Path
+    if ($resolved.Length -le 0) {
+        throw "$Description must not be empty."
+    }
+    return [ordered]@{
+        FileName = $resolved.Name
+        Bytes = $resolved.Length
+        Sha256 = (Get-FileHash -LiteralPath $resolved.FullName -Algorithm SHA256).Hash
+    }
+}
+
+function Assert-EvidenceRootUri {
+    param([Parameter(Mandatory = $true)][string]$Value)
+
+    $uri = $Value -as [Uri]
+    if ($null -eq $uri -or -not $uri.IsAbsoluteUri -or
+        ($uri.Scheme -ne "s3" -and $uri.Scheme -ne [Uri]::UriSchemeHttps) -or
+        [string]::IsNullOrWhiteSpace($uri.Host) -or
+        -not [string]::IsNullOrWhiteSpace($uri.UserInfo)) {
+        throw "EvidenceRootUri must be an absolute s3:// or HTTPS URI without credentials."
+    }
+}
+
 $resolvedArtifactDirectory = (Resolve-Path -LiteralPath $ArtifactDirectory -ErrorAction Stop).Path
 if ([string]::IsNullOrWhiteSpace($OutputManifestPath)) {
     $OutputManifestPath = Join-Path $resolvedArtifactDirectory "release-manifest.json"
@@ -345,6 +394,8 @@ $msixHash = (Get-FileHash -LiteralPath $msix.FullName -Algorithm SHA256).Hash
 $appInstallerHash = (Get-FileHash -LiteralPath $appInstaller.FullName -Algorithm SHA256).Hash
 $apkHash = (Get-FileHash -LiteralPath $apk.FullName -Algorithm SHA256).Hash
 
+$windowsDownloadUrl = $null
+$androidDownloadUrl = $null
 if (-not [string]::IsNullOrWhiteSpace($ResolvedSettingsPath)) {
     $settingsPath = (Resolve-Path -LiteralPath $ResolvedSettingsPath -ErrorAction Stop).Path
     $settings = [IO.File]::ReadAllText($settingsPath, [Text.Encoding]::UTF8) |
@@ -359,6 +410,7 @@ if (-not [string]::IsNullOrWhiteSpace($ResolvedSettingsPath)) {
         throw "Resolved Android bootstrap SHA-256 does not match the APK."
     }
     $windowsDownloadUrl = [string]$windows.DownloadUrl
+    $androidDownloadUrl = [string]$android.DownloadUrl
     Assert-HttpsUri -Value $windowsDownloadUrl `
         -Description "Resolved Windows download URL"
     Assert-HttpsUri -Value ([string]$android.DownloadUrl) `
@@ -401,45 +453,92 @@ if (-not [string]::IsNullOrWhiteSpace($ResolvedSettingsPath)) {
     }
 }
 
-$gitCommit = $null
-try {
-    $gitCommit = (& git -C (Split-Path -Parent $PSScriptRoot) rev-parse HEAD 2>$null).Trim()
+if ([string]::IsNullOrWhiteSpace($LatestMigration)) {
+    throw "LatestMigration is required."
 }
-catch {
-    $gitCommit = $null
-}
+Assert-EvidenceRootUri -Value $EvidenceRootUri
+$sbomEvidence = Get-EvidenceFile -Path $SbomPath -Description "SBOM"
+$vulnerabilityEvidence = Get-EvidenceFile `
+    -Path $VulnerabilityReportPath `
+    -Description "Vulnerability report"
+$databaseInitializationEvidence = Get-EvidenceFile `
+    -Path $DatabaseInitializationArtifactPath `
+    -Description "Database initialization artifact"
+$sourceGateEvidence = Get-EvidenceFile `
+    -Path $SourceGateReportPath `
+    -Description "Source gate report"
+$sqlIntegrationEvidence = Get-EvidenceFile `
+    -Path $SqlIntegrationReportPath `
+    -Description "SQL Server integration report"
 
 $releaseManifest = [ordered]@{
-    SchemaVersion = 1
+    SchemaVersion = 2
     ReleaseVersion = $ExpectedVersion
-    CreatedAtUtc = [DateTimeOffset]::UtcNow.ToString("O")
-    GitCommit = $gitCommit
-    WindowsPublisher = $ExpectedWindowsPublisher
-    AndroidSignerDn = $androidSignerDn
-    AndroidSignerSha256 = $androidSignerDigest
+    GitSha = $GitSha.ToLowerInvariant()
+    GeneratedAtUtc = [DateTimeOffset]::UtcNow.ToString("O")
+    EvidenceRootUri = $EvidenceRootUri.TrimEnd("/")
     Artifacts = @(
         [ordered]@{
             Kind = "windows-msix"
             FileName = $msix.Name
             Bytes = $msix.Length
             Sha256 = $msixHash
+            DownloadUrl = [string]$mainPackage.Uri
+            Signer = [ordered]@{
+                Type = "Authenticode"
+                Identity = $ExpectedWindowsPublisher
+                CertificateThumbprint = $authenticode.SignerCertificate.Thumbprint
+            }
         },
         [ordered]@{
             Kind = "windows-appinstaller"
             FileName = $appInstaller.Name
             Bytes = $appInstaller.Length
             Sha256 = $appInstallerHash
+            DownloadUrl = [string]$appInstallerRoot.Uri
+            Signer = [ordered]@{
+                Type = "MSIXReference"
+                Identity = $ExpectedWindowsPublisher
+                CertificateThumbprint = $authenticode.SignerCertificate.Thumbprint
+            }
         },
         [ordered]@{
             Kind = "android-apk"
             FileName = $apk.Name
             Bytes = $apk.Length
             Sha256 = $apkHash
+            DownloadUrl = $androidDownloadUrl
+            Signer = [ordered]@{
+                Type = "APK"
+                Identity = $androidSignerDn
+                CertificateSha256 = $androidSignerDigest
+            }
         }
     )
+    Images = [ordered]@{
+        Api = [ordered]@{
+            Repository = $ApiImageRepository
+            Digest = $ApiImageDigest.ToLowerInvariant()
+        }
+        Web = [ordered]@{
+            Repository = $WebImageRepository
+            Digest = $WebImageDigest.ToLowerInvariant()
+        }
+    }
+    SupplyChain = [ordered]@{
+        Sbom = $sbomEvidence
+        VulnerabilityReport = $vulnerabilityEvidence
+        SourceGateReport = $sourceGateEvidence
+        SqlIntegrationReport = $sqlIntegrationEvidence
+    }
+    Database = [ordered]@{
+        LatestMigration = $LatestMigration
+        InitializationArtifact = $databaseInitializationEvidence
+        MigrationPolicy = "ForwardOnly"
+    }
 }
 
-$manifestJson = $releaseManifest | ConvertTo-Json -Depth 5
+$manifestJson = $releaseManifest | ConvertTo-Json -Depth 10
 $outputParent = Split-Path -Parent $OutputManifestPath
 if (-not [string]::IsNullOrWhiteSpace($outputParent)) {
     [IO.Directory]::CreateDirectory($outputParent) | Out-Null

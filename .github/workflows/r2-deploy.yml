@@ -1,0 +1,146 @@
+name: R2 protected-environment deployment
+
+on:
+  workflow_dispatch:
+    inputs:
+      version:
+        description: Semantic release version without v prefix
+        required: true
+        type: string
+      environment:
+        description: Protected GitHub Environment
+        required: true
+        type: environment
+      target:
+        description: Deployment target
+        required: true
+        type: choice
+        options: [Compose, Kubernetes]
+      manifest_uri:
+        description: Canonical s3:// release-manifest.json URI
+        required: true
+        type: string
+      manifest_sha256:
+        description: Approved release manifest SHA-256
+        required: true
+        type: string
+      base_url:
+        description: External HTTPS API/Web base URL
+        required: true
+        type: string
+      namespace:
+        description: Kubernetes namespace
+        required: false
+        default: cp6-production
+        type: string
+      ingress_host:
+        description: Kubernetes ingress host
+        required: false
+        type: string
+
+permissions:
+  contents: read
+
+concurrency:
+  group: r2-deploy-${{ inputs.environment }}
+  cancel-in-progress: false
+
+jobs:
+  deploy:
+    runs-on: [self-hosted, Windows, X64, cp6-deploy]
+    environment: ${{ inputs.environment }}
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          ref: v${{ inputs.version }}
+      - name: Download and verify canonical manifest
+        shell: pwsh
+        run: |
+          if ("${{ inputs.version }}" -notmatch '^\d+\.\d+\.\d+$' -or
+              "${{ inputs.manifest_sha256 }}" -notmatch '^[A-Fa-f0-9]{64}$' -or
+              "${{ inputs.manifest_uri }}" -notmatch '^s3://') {
+            throw "Version, manifest URI, or manifest hash is invalid."
+          }
+          $manifest = Join-Path $env:RUNNER_TEMP "release-manifest.json"
+          aws --endpoint-url "${{ vars.R2_S3_ENDPOINT }}" s3 cp `
+            "${{ inputs.manifest_uri }}" $manifest --no-progress
+          if ($LASTEXITCODE -ne 0) { throw "Manifest download failed." }
+          $actual = (Get-FileHash $manifest -Algorithm SHA256).Hash
+          if ($actual -ne "${{ inputs.manifest_sha256 }}".ToUpperInvariant()) {
+            throw "Manifest SHA-256 does not match the approved value."
+          }
+          "CP6_RELEASE_MANIFEST=$manifest" >> $env:GITHUB_ENV
+      - name: Render runtime secrets from the environment vault
+        shell: pwsh
+        run: |
+          if ([string]::IsNullOrWhiteSpace($env:CP6_VAULT_RENDERER) -or
+              -not (Test-Path -LiteralPath $env:CP6_VAULT_RENDERER -PathType Leaf)) {
+            throw "The protected environment runner has no CP6_VAULT_RENDERER."
+          }
+          $secretFile = Join-Path $env:RUNNER_TEMP "cp6-runtime.env"
+          & $env:CP6_VAULT_RENDERER `
+            --environment "${{ inputs.environment }}" `
+            --output $secretFile
+          if ($LASTEXITCODE -ne 0 -or
+              -not (Test-Path -LiteralPath $secretFile -PathType Leaf) -or
+              (Get-Item -LiteralPath $secretFile).Length -le 0) {
+            throw "Vault secret rendering failed."
+          }
+          "CP6_RENDERED_SECRET_FILE=$secretFile" >> $env:GITHUB_ENV
+      - name: Deploy database initializer then runtime
+        shell: pwsh
+        run: |
+          $arguments = @{
+            Target = "${{ inputs.target }}"
+            ReleaseManifestPath = $env:CP6_RELEASE_MANIFEST
+            SecretEnvFile = $env:CP6_RENDERED_SECRET_FILE
+            Namespace = "${{ inputs.namespace }}"
+          }
+          if ("${{ inputs.target }}" -eq "Kubernetes") {
+            $arguments.IngressHost = "${{ inputs.ingress_host }}"
+            $arguments.IngressClass = "${{ vars.CP6_INGRESS_CLASS }}"
+            $arguments.TlsSecret = "${{ vars.CP6_TLS_SECRET }}"
+          }
+          ./scripts/deploy-r2.ps1 @arguments
+      - name: Verify runtime identity and remote artifacts
+        shell: pwsh
+        run: |
+          $evidence = Join-Path $env:RUNNER_TEMP "deployment-evidence.json"
+          ./scripts/test-r2-deployment.ps1 `
+            -BaseUrl "${{ inputs.base_url }}" `
+            -ReleaseManifestPath $env:CP6_RELEASE_MANIFEST `
+            -OutputEvidencePath $evidence
+          "CP6_DEPLOYMENT_EVIDENCE=$evidence" >> $env:GITHUB_ENV
+      - name: Archive immutable deployment evidence
+        id: evidence
+        shell: pwsh
+        run: |
+          $manifest = Get-Content $env:CP6_RELEASE_MANIFEST | ConvertFrom-Json
+          $deploymentRoot = "$($manifest.EvidenceRootUri)/deployments/${{ inputs.environment }}/${{ github.run_id }}"
+          ./scripts/publish-r2-evidence.ps1 `
+            -Paths @($env:CP6_DEPLOYMENT_EVIDENCE) `
+            -EvidenceRootUri $deploymentRoot `
+            -EndpointUrl ([uri]"${{ vars.R2_S3_ENDPOINT }}") | Out-Null
+          $hash = (Get-FileHash $env:CP6_DEPLOYMENT_EVIDENCE -Algorithm SHA256).Hash
+          "hash=$hash" >> $env:GITHUB_OUTPUT
+          "uri=$deploymentRoot/deployment-evidence.json" >> $env:GITHUB_OUTPUT
+      - name: Deployment summary
+        shell: pwsh
+        run: |
+          @"
+          ## R2 deployment
+          - Version: `${{ inputs.version }}`
+          - Environment: `${{ inputs.environment }}`
+          - Target: `${{ inputs.target }}`
+          - Evidence SHA-256: `${{ steps.evidence.outputs.hash }}`
+          - Evidence URI: `${{ steps.evidence.outputs.uri }}`
+          - Approved deployment actor: `${{ github.actor }}`
+          "@ >> $env:GITHUB_STEP_SUMMARY
+      - name: Remove rendered secrets
+        if: always()
+        shell: pwsh
+        run: |
+          if ($env:CP6_RENDERED_SECRET_FILE -and
+              (Test-Path -LiteralPath $env:CP6_RENDERED_SECRET_FILE)) {
+            Remove-Item -LiteralPath $env:CP6_RENDERED_SECRET_FILE -Force
+          }

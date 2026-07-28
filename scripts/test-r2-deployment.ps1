@@ -147,11 +147,29 @@ function Read-ReleaseManifest {
         throw "Release manifest is not valid UTF-8 JSON."
     }
 
-    if ([int]$manifest.SchemaVersion -ne 1) {
-        throw "Release manifest SchemaVersion must be 1."
+    if ([int]$manifest.SchemaVersion -ne 2) {
+        throw "Release manifest SchemaVersion must be 2."
     }
     if ([string]$manifest.ReleaseVersion -notmatch "^\d+\.\d+\.\d+$") {
         throw "Release manifest ReleaseVersion must use major.minor.patch."
+    }
+    if ([string]$manifest.GitSha -notmatch "^[A-Fa-f0-9]{40}$") {
+        throw "Release manifest GitSha must be a 40-character commit SHA."
+    }
+    $evidenceRoot = [string]$manifest.EvidenceRootUri -as [Uri]
+    if ($null -eq $evidenceRoot -or
+        ($evidenceRoot.Scheme -ne "s3" -and
+         $evidenceRoot.Scheme -ne [Uri]::UriSchemeHttps)) {
+        throw "Release manifest EvidenceRootUri must use s3:// or HTTPS."
+    }
+    foreach ($image in @($manifest.Images.Api, $manifest.Images.Web)) {
+        if ([string]::IsNullOrWhiteSpace([string]$image.Repository) -or
+            [string]$image.Digest -notmatch "^sha256:[A-Fa-f0-9]{64}$") {
+            throw "Release manifest image repository or digest is invalid."
+        }
+    }
+    if ([string]::IsNullOrWhiteSpace([string]$manifest.Database.LatestMigration)) {
+        throw "Release manifest Database.LatestMigration is required."
     }
 
     $requiredKinds = @(
@@ -174,7 +192,11 @@ function Read-ReleaseManifest {
             FileName = [string]$artifact.FileName
             Bytes = [long]$artifact.Bytes
             Sha256 = $sha256
+            DownloadUrl = [string]$artifact.DownloadUrl
         }
+        [void](Assert-SafeUri `
+            -Value ([string]$artifact.DownloadUrl) `
+            -Description "Release manifest artifact '$kind' URL")
     }
     foreach ($requiredKind in $requiredKinds) {
         if (-not $artifactMap.ContainsKey($requiredKind)) {
@@ -186,6 +208,51 @@ function Read-ReleaseManifest {
         Manifest = $manifest
         Artifacts = $artifactMap
     }
+}
+
+function Assert-ReleaseIdentity {
+    param(
+        [Parameter(Mandatory = $true)][Uri]$Root,
+        [Parameter(Mandatory = $true)]$Manifest
+    )
+
+    $result = Invoke-JsonGet `
+        -Uri (Join-ApiUri -Root $Root -Relative "health/release") `
+        -Description "health/release"
+    if ([string]$result.Response.Headers["Cache-Control"] -notmatch
+        "(?i)(^|,)\s*no-store\s*(,|$)") {
+        throw "health/release must return Cache-Control: no-store."
+    }
+    $identity = $result.Data
+    if ([string]$identity.version -ne [string]$Manifest.ReleaseVersion -or
+        [string]$identity.gitSha -ne [string]$Manifest.GitSha -or
+        [string]$identity.apiImageDigest -ne [string]$Manifest.Images.Api.Digest -or
+        [string]$identity.webImageDigest -ne [string]$Manifest.Images.Web.Digest -or
+        [string]$identity.latestMigration -ne
+            [string]$Manifest.Database.LatestMigration) {
+        throw "Running release identity does not match release-manifest.json."
+    }
+    return $identity
+}
+
+function Assert-WebReleaseIdentity {
+    param(
+        [Parameter(Mandatory = $true)][Uri]$Root,
+        [Parameter(Mandatory = $true)]$Manifest
+    )
+
+    $result = Invoke-JsonGet `
+        -Uri (Join-ApiUri -Root $Root -Relative "release.json") `
+        -Description "Web release.json"
+    if ([string]$result.Response.Headers["Cache-Control"] -notmatch
+        "(?i)(^|,)\s*no-store\s*(,|$)") {
+        throw "Web release.json must return Cache-Control: no-store."
+    }
+    if ([string]$result.Data.version -ne [string]$Manifest.ReleaseVersion -or
+        [string]$result.Data.gitSha -ne [string]$Manifest.GitSha) {
+        throw "Web release identity does not match release-manifest.json."
+    }
+    return $result.Data
 }
 
 function Save-VerifiedArtifact {
@@ -294,6 +361,9 @@ function Assert-Bootstrap {
         default { throw "$Platform bootstrap download type is unsupported." }
     }
     $artifact = $Artifacts[$artifactKind]
+    if ($downloadUri.AbsoluteUri -ne [string]$artifact.DownloadUrl) {
+        throw "$Platform bootstrap download URL does not match the release manifest."
+    }
     if ((Normalize-Hex -Value ([string]$bootstrap.sha256)) -ne $artifact.Sha256) {
         throw "$Platform bootstrap SHA-256 does not match release artifact '$artifactKind'."
     }
@@ -378,6 +448,12 @@ $ready = Assert-HealthEndpoint `
     -Root $baseUri `
     -Path "health/ready" `
     -RequiredChecks @("sqlserver", "redis")
+$releaseIdentity = Assert-ReleaseIdentity `
+    -Root $baseUri `
+    -Manifest $release.Manifest
+$webReleaseIdentity = Assert-WebReleaseIdentity `
+    -Root $baseUri `
+    -Manifest $release.Manifest
 $windows = Assert-Bootstrap `
     -Root $baseUri `
     -Platform "windows" `
@@ -390,13 +466,27 @@ $android = Assert-Bootstrap `
     -Artifacts $release.Artifacts
 
 $evidence = [ordered]@{
-    SchemaVersion = 1
+    SchemaVersion = 2
     CheckedAtUtc = [DateTimeOffset]::UtcNow.ToString("O")
     BaseUrl = $baseUri.AbsoluteUri.TrimEnd("/")
     ApiVersion = $ExpectedApiVersion
     ReleaseVersion = $releaseVersion
+    GitSha = [string]$release.Manifest.GitSha
+    ReleaseManifestSha256 = (
+        Get-FileHash -LiteralPath (
+            Resolve-Path -LiteralPath $ReleaseManifestPath
+        ).Path -Algorithm SHA256
+    ).Hash
+    EvidenceRootUri = [string]$release.Manifest.EvidenceRootUri
     LiveStatus = [string]$live.Data.status
     ReadyStatus = [string]$ready.Data.status
+    ReleaseIdentity = $releaseIdentity
+    WebReleaseIdentity = $webReleaseIdentity
+    RuntimeImages = [ordered]@{
+        Api = [string]$releaseIdentity.apiImageDigest
+        Web = [string]$releaseIdentity.webImageDigest
+    }
+    LatestMigration = [string]$releaseIdentity.latestMigration
     ArtifactDownloadsVerified = -not $SkipArtifactDownload
     Clients = @($windows, $android)
 }

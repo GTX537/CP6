@@ -1,0 +1,50 @@
+apiVersion: batch/v1
+kind: Job
+metadata:
+  name: cp6-db-init
+  namespace: CP6_NAMESPACE
+  labels:
+    app.kubernetes.io/name: cp6-db-init
+    app.kubernetes.io/version: CP6_RELEASE_VERSION
+spec:
+  backoffLimit: 0
+  ttlSecondsAfterFinished: 86400
+  template:
+    metadata:
+      labels:
+        app.kubernetes.io/name: cp6-db-init
+    spec:
+      restartPolicy: Never
+      containers:
+        - name: db-init
+          image: CP6_API_IMAGE
+          imagePullPolicy: IfNotPresent
+          envFrom:
+            - configMapRef:
+                name: cp6-runtime
+            - secretRef:
+                name: cp6-runtime-secrets
+          env:
+            - name: ASPNETCORE_ENVIRONMENT
+              value: Production
+            - name: Startup__Mode
+              value: DatabaseInit
+            - name: Startup__SkipDatabaseInitialization
+              value: "false"
+            - name: Startup__SkipHostedServices
+              value: "true"
+            - name: Release__Version
+              value: CP6_RELEASE_VERSION
+            - name: Release__GitSha
+              value: CP6_GIT_SHA
+            - name: Release__ApiImageDigest
+              value: CP6_API_DIGEST
+            - name: Release__WebImageDigest
+              value: CP6_WEB_DIGEST
+          resources:
+            requests:
+              cpu: 250m
+              memory: 512Mi
+            limits:
+              cpu: "1"
+              memory: 1Gi
