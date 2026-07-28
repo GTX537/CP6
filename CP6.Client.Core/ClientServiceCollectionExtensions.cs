@@ -24,6 +24,12 @@ public static class ClientServiceCollectionExtensions
         services.AddSingleton<NativeSsoService>();
         services.TryAddSingleton<IDeviceRequestSigner, UnsupportedDeviceRequestSigner>();
         services.AddSingleton<ClientDeviceHeartbeatService>();
+        services.AddSingleton<IClientDeviceHeartbeatSender>(sp =>
+            sp.GetRequiredService<ClientDeviceHeartbeatService>());
+        services.TryAddSingleton<IClientDeviceHeartbeatContext,
+            InactiveClientDeviceHeartbeatContext>();
+        services.TryAddSingleton(new ClientDeviceHeartbeatSchedule());
+        services.AddSingleton<ClientDeviceHeartbeatLoop>();
         services.TryAddSingleton<ILabelPrinter, UnsupportedLabelPrinter>();
         services.AddSingleton<LabelGatewayService>();
         services.TryAddSingleton<IPkceVerifierStore, MemoryPkceVerifierStore>();

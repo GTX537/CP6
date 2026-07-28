@@ -151,6 +151,10 @@ public static class DesktopSettings
         Environment.GetFolderPath(Environment.SpecialFolder.LocalApplicationData),
         "CP6",
         "desktop.api-url");
+    private static readonly string ActivationPath = Path.Combine(
+        Environment.GetFolderPath(Environment.SpecialFolder.LocalApplicationData),
+        "CP6",
+        "desktop.device-activated");
 
     public static string? ReadApiUrl()
         => File.Exists(ApiPath) ? File.ReadAllText(ApiPath).Trim() : null;
@@ -160,6 +164,21 @@ public static class DesktopSettings
         Directory.CreateDirectory(Path.GetDirectoryName(ApiPath)!);
         File.WriteAllText(ApiPath, value);
     }
+
+    public static bool IsDeviceActivated()
+    {
+        if (!File.Exists(ActivationPath))
+            return !string.IsNullOrWhiteSpace(ReadApiUrl());
+
+        return bool.TryParse(File.ReadAllText(ActivationPath), out var activated)
+               && activated;
+    }
+
+    public static void WriteDeviceActivation(bool activated)
+    {
+        Directory.CreateDirectory(Path.GetDirectoryName(ActivationPath)!);
+        File.WriteAllText(ActivationPath, activated.ToString());
+    }
 }
 
 public sealed class DesktopDeviceActivationService
@@ -167,15 +186,18 @@ public sealed class DesktopDeviceActivationService
     private readonly Cp6ApiClient _api;
     private readonly ClientOptions _options;
     private readonly IDeviceRequestSigner _signer;
+    private readonly ClientDeviceHeartbeatLoop _heartbeat;
 
     public DesktopDeviceActivationService(
         IHttpClientFactory clients,
         ClientOptions options,
-        IDeviceRequestSigner signer)
+        IDeviceRequestSigner signer,
+        ClientDeviceHeartbeatLoop heartbeat)
     {
         _api = new Cp6ApiClient(clients.CreateClient(ClientServiceCollectionExtensions.RawClient));
         _options = options;
         _signer = signer;
+        _heartbeat = heartbeat;
     }
 
     public async Task<ActivatedClientDevice> ActivateAsync(
@@ -198,6 +220,8 @@ public sealed class DesktopDeviceActivationService
                 PlatformVersion = _options.Context.PlatformVersion,
             }, ct);
             DesktopSettings.WriteApiUrl(ticket.Server.AbsoluteUri);
+            DesktopSettings.WriteDeviceActivation(true);
+            _heartbeat.RequestImmediate();
             return result;
         }
         catch

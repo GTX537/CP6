@@ -9,4 +9,10 @@ public sealed class MobileClientState
     public ClientUpgradeDecision? UpgradeDecision { get; set; }
     public bool IsDeviceActivated { get; set; } =
         Preferences.Default.Get("cp6.device-activated", false);
+
+    public void SetDeviceActivated(bool activated)
+    {
+        IsDeviceActivated = activated;
+        Preferences.Default.Set("cp6.device-activated", activated);
+    }
 }

@@ -156,6 +156,10 @@ runs. Never execute the write profile against a production warehouse.
 - Verify pause/takeover invalidation, request-result-unknown recovery, partial
   completion/remainder generation, device disable, PIN lockout, and print-job
   idempotency.
+- Verify Windows and Android heartbeats continue without opening or refreshing
+  the task page, pause while Android is stopped, resume immediately in the
+  foreground, report the active task, and force a return to activation/login
+  after remote device disable.
 - During the unknown-result drill, cut the response path after claim or
   completion reaches the server. The client must query task state once and
   must not replay the write automatically. A scan retry must retain the same

@@ -32,6 +32,8 @@ public static class MauiProgram
         builder.Services.AddSingleton<IRefreshTokenStore, SecureStorageRefreshTokenStore>();
         builder.Services.AddSingleton<IPkceVerifierStore, SecureStoragePkceVerifierStore>();
         builder.Services.AddSingleton<IDeviceRequestSigner, SecureStorageDeviceRequestSigner>();
+        builder.Services.AddSingleton<IClientDeviceHeartbeatContext,
+            MobileDeviceHeartbeatContext>();
         builder.Services.AddSingleton<ISystemBrowser, MauiSystemBrowser>();
         builder.Services.AddSingleton<IOfflineMoveProgressStore, FileOfflineMoveProgressStore>();
         builder.Services.AddCp6ClientCore(options);

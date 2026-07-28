@@ -9,18 +9,21 @@ public sealed class DeviceActivationService
     private readonly ClientOptions _options;
     private readonly IDeviceRequestSigner _signer;
     private readonly MobileClientState _state;
+    private readonly ClientDeviceHeartbeatLoop _heartbeat;
 
     public DeviceActivationService(
         IHttpClientFactory clients,
         ClientOptions options,
         IDeviceRequestSigner signer,
-        MobileClientState state)
+        MobileClientState state,
+        ClientDeviceHeartbeatLoop heartbeat)
     {
         _api = new Cp6ApiClient(
             clients.CreateClient(ClientServiceCollectionExtensions.RawClient));
         _options = options;
         _signer = signer;
         _state = state;
+        _heartbeat = heartbeat;
     }
 
     public async Task<ActivatedClientDevice> ActivateAsync(
@@ -44,8 +47,8 @@ public sealed class DeviceActivationService
             }, ct);
             Preferences.Default.Set("cp6.api-url", ticket.Server.AbsoluteUri);
             Preferences.Default.Set("cp6.tenant-code", result.TenantCode);
-            Preferences.Default.Set("cp6.device-activated", true);
-            _state.IsDeviceActivated = true;
+            _state.SetDeviceActivated(true);
+            _heartbeat.RequestImmediate();
             return result;
         }
         catch

@@ -37,6 +37,8 @@ public partial class App : Application
                 services.AddSingleton<IPkceVerifierStore, DpapiPkceVerifierStore>();
                 services.AddSingleton<ISystemBrowser, WindowsSystemBrowser>();
                 services.AddSingleton<IDeviceRequestSigner, WindowsDeviceRequestSigner>();
+                services.AddSingleton<IClientDeviceHeartbeatContext,
+                    DesktopDeviceHeartbeatContext>();
                 services.AddSingleton<ILabelPrinter, WindowsRawLabelPrinter>();
                 services.AddSingleton<DesktopDeviceActivationService>();
                 services.AddCp6ClientCore(options);
@@ -45,6 +47,8 @@ public partial class App : Application
             })
             .Build();
         await _host.StartAsync();
+        await _host.Services.GetRequiredService<ClientDeviceHeartbeatLoop>()
+            .StartAsync();
 
         var window = _host.Services.GetRequiredService<MainWindow>();
         window.Show();
@@ -58,6 +62,8 @@ public partial class App : Application
     {
         if (_host != null)
         {
+            await _host.Services.GetRequiredService<ClientDeviceHeartbeatLoop>()
+                .StopAsync();
             await _host.StopAsync();
             _host.Dispose();
         }

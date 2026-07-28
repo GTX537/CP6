@@ -9,7 +9,7 @@ public interface IDeviceRequestSigner
     Task<string> SignAsync(byte[] payload, CancellationToken ct = default);
 }
 
-public sealed class ClientDeviceHeartbeatService
+public sealed class ClientDeviceHeartbeatService : IClientDeviceHeartbeatSender
 {
     private readonly Cp6ApiClient _api;
     private readonly ClientOptions _options;

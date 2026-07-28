@@ -17,6 +17,7 @@ public partial class ShellViewModel : ObservableObject
     private readonly NativeSsoService _sso;
     private readonly DesktopDeviceActivationService _deviceActivation;
     private readonly LabelGatewayService _labelGateway;
+    private readonly ClientDeviceHeartbeatLoop _heartbeat;
 
     [ObservableProperty] private bool isLoginVisible = true;
     [ObservableProperty] private bool isTaskVisible;
@@ -86,7 +87,8 @@ public partial class ShellViewModel : ObservableObject
         ILanguageService language,
         NativeSsoService sso,
         DesktopDeviceActivationService deviceActivation,
-        LabelGatewayService labelGateway)
+        LabelGatewayService labelGateway,
+        ClientDeviceHeartbeatLoop heartbeat)
     {
         _sessions = sessions;
         _api = api;
@@ -97,6 +99,7 @@ public partial class ShellViewModel : ObservableObject
         _sso = sso;
         _deviceActivation = deviceActivation;
         _labelGateway = labelGateway;
+        _heartbeat = heartbeat;
         _language.LanguageChanged += (_, _) => OnPropertyChanged(nameof(Text));
         _realtime.TaskChanged += (_, _) =>
             System.Windows.Application.Current.Dispatcher.InvokeAsync(async () => await LoadTasksAsync());
@@ -104,6 +107,7 @@ public partial class ShellViewModel : ObservableObject
             System.Windows.Application.Current.Dispatcher.Invoke(() => ConnectionStatus = state);
         _labelGateway.StateChanged += (_, state) =>
             System.Windows.Application.Current.Dispatcher.Invoke(() => PrintGatewayStatus = state);
+        _heartbeat.StateChanged += HeartbeatOnStateChanged;
     }
 
     public ObservableCollection<MobileTask> Tasks { get; } = new();
@@ -489,6 +493,26 @@ public partial class ShellViewModel : ObservableObject
 
     private static string? NullIfEmpty(string value)
         => string.IsNullOrWhiteSpace(value) ? null : value.Trim();
+
+    private void HeartbeatOnStateChanged(
+        object? sender,
+        ClientDeviceHeartbeatStateChangedEventArgs e)
+        => System.Windows.Application.Current.Dispatcher.InvokeAsync(async () =>
+        {
+            if (e.Status is ClientDeviceHeartbeatStatus.Online
+                or ClientDeviceHeartbeatStatus.Offline
+                or ClientDeviceHeartbeatStatus.Rejected)
+                ConnectionStatus = e.Status.ToString();
+
+            if (e.Status != ClientDeviceHeartbeatStatus.Rejected)
+                return;
+
+            StatusMessage = e.ErrorCode ?? "WM-DEVICE-ACTIVATION-REQUIRED";
+            await _realtime.StopAsync();
+            IsTaskVisible = false;
+            IsLoginVisible = true;
+            Tasks.Clear();
+        });
 
     private bool EnsureClientAccess()
     {

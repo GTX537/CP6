@@ -42,6 +42,12 @@ serial/LPN, device, barcode, and label behavior must not be added to v1.
   execution so stale scan progress cannot be submitted.
 - Android stores only an already-started task, scan profile, and uncommitted
   scan progress while offline. It never claims or commits inventory offline.
+- Windows and Android send a signed heartbeat immediately after authentication,
+  activation, foreground resume, and current-task changes, then every 60
+  seconds while active. Writes never overlap; transient failures retry after
+  10 seconds. Android stops the loop while the app is stopped. A rejected
+  device clears the local activation state and session instead of continuing
+  warehouse work with stale admission.
 - Transport loss and client-side timeouts are treated as an unknown outcome,
   including `OperationCanceledException` raised by `HttpClient` timeouts.
   Claim/completion probe current task state without replaying the write.

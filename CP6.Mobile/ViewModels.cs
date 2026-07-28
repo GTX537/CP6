@@ -220,23 +220,23 @@ public partial class TaskListViewModel : MobileViewModel
     private readonly IClientSessionService _sessions;
     private readonly WmsTaskService _tasks;
     private readonly WmsRealtimeService _realtime;
-    private readonly ClientDeviceHeartbeatService _heartbeat;
     private readonly MobileClientState _state;
+    private readonly ClientDeviceHeartbeatLoop _heartbeat;
 
     public TaskListViewModel(
         IClientSessionService sessions,
         WmsTaskService tasks,
         WmsRealtimeService realtime,
-        ClientDeviceHeartbeatService heartbeat,
         MobileClientState state,
+        ClientDeviceHeartbeatLoop heartbeat,
         ILanguageService language)
         : base(language)
     {
         _sessions = sessions;
         _tasks = tasks;
         _realtime = realtime;
-        _heartbeat = heartbeat;
         _state = state;
+        _heartbeat = heartbeat;
     }
 
     public ObservableCollection<MobileTask> Tasks { get; } = new();
@@ -258,17 +258,15 @@ public partial class TaskListViewModel : MobileViewModel
         var result = await _tasks.GetMineAndUnassignedAsync(user);
         Tasks.Clear();
         foreach (var task in result.Items) Tasks.Add(task);
-        if (_state.IsDeviceActivated)
+        if (_state.SelectedTask is not null)
         {
-            var battery = (int)Math.Round(Battery.Default.ChargeLevel * 100);
-            var network = string.Join(
-                ",",
-                Connectivity.Current.ConnectionProfiles.Select(x => x.ToString()));
-            await _heartbeat.SendAsync(
-                result.Items.FirstOrDefault(x => x.Status == 1)?.TaskNo,
-                battery,
-                network);
+            _state.SelectedTask = result.Items.FirstOrDefault(
+                task => string.Equals(
+                    task.TaskNo,
+                    _state.SelectedTask.TaskNo,
+                    StringComparison.Ordinal));
         }
+        _heartbeat.RequestImmediate();
         await _realtime.StartAsync();
     });
 
@@ -294,6 +292,7 @@ public partial class TaskDetailViewModel : MobileViewModel
     private readonly WmsTaskService _tasks;
     private readonly IClientSessionService _sessions;
     private readonly MobileClientState _state;
+    private readonly ClientDeviceHeartbeatLoop _heartbeat;
 
     [ObservableProperty] private MobileTask? task;
 
@@ -301,12 +300,14 @@ public partial class TaskDetailViewModel : MobileViewModel
         WmsTaskService tasks,
         IClientSessionService sessions,
         MobileClientState state,
+        ClientDeviceHeartbeatLoop heartbeat,
         ILanguageService language)
         : base(language)
     {
         _tasks = tasks;
         _sessions = sessions;
         _state = state;
+        _heartbeat = heartbeat;
     }
 
     [RelayCommand]
@@ -316,6 +317,7 @@ public partial class TaskDetailViewModel : MobileViewModel
             ? null
             : await _tasks.GetAsync(_state.SelectedTask.TaskNo);
         _state.SelectedTask = Task;
+        _heartbeat.RequestImmediate();
     });
 
     [RelayCommand]
@@ -330,6 +332,7 @@ public partial class TaskDetailViewModel : MobileViewModel
         else if (!string.Equals(Task.AssignedTo, user, StringComparison.OrdinalIgnoreCase))
             throw new InvalidOperationException("WM-CONFLICT-TASK-NOT-ASSIGNED");
         _state.SelectedTask = Task;
+        _heartbeat.RequestImmediate();
     });
 
     [RelayCommand]
@@ -350,6 +353,7 @@ public partial class MoveScanViewModel : MobileViewModel
     private readonly WmsTaskService _tasks;
     private readonly MobileClientState _state;
     private readonly IOfflineMoveProgressStore _offline;
+    private readonly ClientDeviceHeartbeatLoop _heartbeat;
     private readonly MoveScanWorkflow _workflow = new();
     private TaskScanProfile? _scanProfile;
     private Guid _operationId = Guid.NewGuid();
@@ -370,12 +374,14 @@ public partial class MoveScanViewModel : MobileViewModel
         WmsTaskService tasks,
         MobileClientState state,
         IOfflineMoveProgressStore offline,
+        ClientDeviceHeartbeatLoop heartbeat,
         ILanguageService language)
         : base(language)
     {
         _tasks = tasks;
         _state = state;
         _offline = offline;
+        _heartbeat = heartbeat;
         WeakReferenceMessenger.Default.Register<MoveScanViewModel, ScanBroadcastMessage>(
             this,
             static (recipient, message) =>
@@ -410,6 +416,7 @@ public partial class MoveScanViewModel : MobileViewModel
             Message = "WM-OFFLINE-SCAN-CACHED";
         }
         _state.SelectedTask = Task;
+        _heartbeat.RequestImmediate();
         UpdateStep();
     });
 
@@ -509,6 +516,7 @@ public partial class MoveScanViewModel : MobileViewModel
         _workflow.MarkCompleted();
         await _offline.ClearAsync();
         _state.SelectedTask = Task;
+        _heartbeat.RequestImmediate();
         Message = "MOVE completed";
         CanComplete = false;
     });
@@ -526,6 +534,7 @@ public partial class MoveScanViewModel : MobileViewModel
             Message = "WM-V2-EXECUTION-CHANGED-RESCAN";
         }
         _state.SelectedTask = Task;
+        _heartbeat.RequestImmediate();
         if (Task.CompletionOperationId == _operationId)
         {
             Message = "MOVE completed";
