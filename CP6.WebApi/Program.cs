@@ -62,8 +62,17 @@ builder.Services.AddHealthChecks()
         failureStatus: Microsoft.Extensions.Diagnostics.HealthChecks.HealthStatus.Unhealthy,
         tags: ["ready"]);
 
-// 1.1 注册 SignalR
-builder.Services.AddSignalR();
+// 1.1 SignalR. Production Redis uses TLS through the validated connection string.
+var redisConn = builder.Configuration.GetConnectionString("Redis");
+var signalR = builder.Services.AddSignalR();
+if (!string.IsNullOrWhiteSpace(redisConn))
+{
+    signalR.AddStackExchangeRedis(redisConn, options =>
+    {
+        options.Configuration.ChannelPrefix =
+            StackExchange.Redis.RedisChannel.Literal("CP6:SignalR");
+    });
+}
 
 // 2. 注册 Swagger
 builder.Services.AddEndpointsApiExplorer();
@@ -102,8 +111,7 @@ builder.Services.AddDbContext<CP6Context>(options =>
 builder.Services.AddScoped<IDbConnection>(_ =>
     new SqlConnection(builder.Configuration.GetConnectionString("DefaultConnection")));
 
-// 3.2 注册缓存（开发用 Memory，生产切 Redis 只需改这里）
-var redisConn = builder.Configuration.GetConnectionString("Redis");
+// 3.2 分布式缓存：生产 Redis 供权限、认证和跨副本失效共用；开发使用进程内实现。
 if (!string.IsNullOrEmpty(redisConn))
 {
     // 生产模式：Redis（配置了连接字符串就用 Redis）
@@ -331,7 +339,7 @@ builder.Services.AddScoped<CP6.Core.Services.Pur.IPurReconcileService, CP6.Core.
 //   ⑤ IApprovalService(Pur.Contracts) → StubApprovalService（桩=即时通过；PO/PR 送审，OA 引擎接真实流程后换适配器）
 
 // 4.0.1 PUB 章01 权限引擎地基（多角色聚合 + 请求级上下文缓存）
-builder.Services.AddMemoryCache();                 // 权限上下文存活对象缓存（单机；多实例转 Redis）
+builder.Services.AddMemoryCache();                 // 其余仅需本机生命周期的缓存。
 builder.Services.AddHttpContextAccessor();          // 解析当前请求登录用户
 builder.Services.AddScoped<CP6.Core.Services.Common.ITenantContext, CP6.Core.Services.Common.TenantContext>(); // 章10 当前租户上下文（TenantMiddleware 写入，CP6Context 过滤/盖章读取）
 builder.Services.AddScoped<CP6.Core.Services.Common.ITenantEnumerator, CP6.Core.Services.Common.TenantEnumerator>(); // 章10 活跃租户枚举（后台 Worker 按租户循环用）
@@ -342,9 +350,37 @@ builder.Services.AddScoped<CP6.Core.Services.Sys.IDictService, CP6.Core.Services
 builder.Services.AddScoped<CP6.Core.Services.Pub.ISeqService, CP6.Core.Services.Pub.SeqService>();     // PUB 章05 富采番
 builder.Services.AddScoped<CP6.Core.Services.Pub.IExcelService, CP6.Core.Services.Pub.ExcelService>(); // PUB 章07 Excel 导入导出
 builder.Services.AddSingleton<CP6.Core.Services.Pub.CodeGenService>();                                 // PUB 章08 代码生成（无状态）
-// PUB 章06 附件存储（v1 本地盘；Storage:Provider 预留 OSS/MinIO）
+// Shared object storage keeps API replicas stateless in production.
 builder.Services.AddSingleton<CP6.Core.Services.Pub.IFileStore>(_ =>
 {
+    var provider = builder.Configuration["Storage:Provider"] ?? "Local";
+    if (provider.Equals("S3", StringComparison.OrdinalIgnoreCase))
+    {
+        var endpoint = builder.Configuration["Storage:S3:Endpoint"]
+                       ?? throw new InvalidOperationException("Storage:S3:Endpoint is required");
+        var accessKey = builder.Configuration["Storage:S3:AccessKey"]
+                        ?? throw new InvalidOperationException("Storage:S3:AccessKey is required");
+        var secretKey = builder.Configuration["Storage:S3:SecretKey"]
+                        ?? throw new InvalidOperationException("Storage:S3:SecretKey is required");
+        var bucket = builder.Configuration["Storage:S3:Bucket"]
+                     ?? throw new InvalidOperationException("Storage:S3:Bucket is required");
+        var client = new Amazon.S3.AmazonS3Client(
+            new Amazon.Runtime.BasicAWSCredentials(accessKey, secretKey),
+            new Amazon.S3.AmazonS3Config
+            {
+                ServiceURL = endpoint,
+                ForcePathStyle = builder.Configuration.GetValue(
+                    "Storage:S3:ForcePathStyle",
+                    true),
+            });
+        return new CP6.Core.Services.Pub.S3FileStore(
+            client,
+            bucket,
+            builder.Configuration["Storage:S3:Prefix"],
+            builder.Configuration["Storage:S3:ServerSideEncryption"] ?? "AES256",
+            builder.Configuration["Storage:S3:KmsKeyId"]);
+    }
+
     var root = builder.Configuration["Storage:LocalRoot"]
         ?? Path.Combine(builder.Environment.ContentRootPath, "App_Data", "uploads");
     return new CP6.Core.Services.Pub.LocalFileStore(root);
@@ -811,7 +847,14 @@ if (app.Environment.IsDevelopment())
 }
 
 // 7. 初始化种子数据（首次启动时自动创建）
-if (!app.Configuration.GetValue<bool>("Startup:SkipDatabaseInitialization"))
+var databaseInitializationOnly = string.Equals(
+    app.Configuration["Startup:Mode"],
+    "DatabaseInit",
+    StringComparison.OrdinalIgnoreCase);
+var runDatabaseInitialization = databaseInitializationOnly
+                                || !app.Configuration.GetValue<bool>(
+                                    "Startup:SkipDatabaseInitialization");
+if (runDatabaseInitialization)
 {
 using (var scope = app.Services.CreateScope())
 {
@@ -2782,6 +2825,13 @@ using (var scope = app.Services.CreateScope())
 }
 }
 
+if (databaseInitializationOnly)
+{
+    app.Logger.LogInformation(
+        "Database initialization completed; the one-shot process will exit.");
+    return;
+}
+
 app.UseCors("AllowAll");
 
 // T15 / Gap 2.3 — HTTP リクエスト指標を収集（http_request_duration_seconds 等）。
@@ -2839,6 +2889,30 @@ app.MapHealthChecks(
     .AllowAnonymous();
 
 // SignalR Hub 路由
+app.MapGet(
+        "/health/release",
+        async (
+            HttpContext http,
+            CP6.Core.EFDbContext.CP6Context db,
+            IConfiguration configuration) =>
+        {
+            http.Response.Headers.CacheControl = "no-store";
+            var migrations = await db.Database.GetAppliedMigrationsAsync(
+                http.RequestAborted);
+            var assembly = System.Reflection.Assembly.GetEntryAssembly();
+            return Results.Ok(new
+            {
+                version = configuration["Release:Version"]
+                          ?? assembly?.GetName().Version?.ToString()
+                          ?? "unknown",
+                gitSha = configuration["Release:GitSha"] ?? "unknown",
+                apiImageDigest = configuration["Release:ApiImageDigest"] ?? "unknown",
+                webImageDigest = configuration["Release:WebImageDigest"] ?? "unknown",
+                latestMigration = migrations.LastOrDefault(),
+            });
+        })
+    .AllowAnonymous();
+
 app.MapHub<NotifyHub>("/hubs/notify");
 app.MapHub<CP6.WebApi.Hubs.MesHub>("/hubs/mes");
 app.MapHub<CP6.WebApi.Hubs.WmsHub>("/hubs/wms");

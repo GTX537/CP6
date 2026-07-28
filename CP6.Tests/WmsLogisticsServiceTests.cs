@@ -25,6 +25,21 @@ public class WmsLogisticsServiceTests
     {
         var db = TestHelper.CreateInMemoryContext();
         db.Warehouses.Add(new Warehouse { WarehouseCd = "W01", WarehouseName = "M", AllowNegative = false });
+        db.WmsFeatureFlags.Add(new WmsFeatureFlag
+        {
+            WarehouseCd = "W01",
+            ProductionMoveEnabled = true,
+        });
+        db.ClientDevices.Add(new ClientDevice
+        {
+            DeviceId = "RF-01",
+            DeviceMode = ClientDeviceMode.Shared,
+            Platform = "Android",
+            Status = ClientDeviceStatus.Active,
+            PublicKey = "test-public-key",
+            WarehouseCd = "W01",
+            ActivatedAt = DateTime.UtcNow,
+        });
         db.Locations.AddRange(
             new Location { WarehouseCd = "W01", LocationCd = "RES-A-01", AreaCd = "RES", CapacityQty = 10_000m },
             new Location { WarehouseCd = "W01", LocationCd = "PIK-A-01", AreaCd = "PIK-A", CapacityQty = 10_000m },

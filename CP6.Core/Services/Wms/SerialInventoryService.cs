@@ -90,8 +90,12 @@ public sealed class SerialInventoryService : ISerialInventoryService
                 .Select(x => x.WarehouseCd)
                 .Distinct(StringComparer.OrdinalIgnoreCase)
                 .ToList();
+            if (stockWarehouses.Count > 1)
+                throw new MobileTaskConflictException(
+                    "WM-SERIAL-MULTI-WAREHOUSE-STOCK");
             if (stockWarehouses.Count > 0)
             {
+                var conversionWarehouse = stockWarehouses[0];
                 var enabledWarehouses = await _db.WmsFeatureFlags.AsNoTracking()
                     .Where(x => !x.IsDeleted
                                 && x.SerialLpnEnabled
@@ -102,7 +106,17 @@ public sealed class SerialInventoryService : ISerialInventoryService
                         enabledWarehouses,
                         StringComparer.OrdinalIgnoreCase).Any())
                     throw new MobileTaskConflictException(
-                        "WM-R2B-FEATURE-DISABLED");
+                        "WM-R2B-DISABLED");
+                var hasActiveTasks = await _db.MobileTasks.AsNoTracking()
+                    .AnyAsync(x => !x.IsDeleted
+                                   && x.WarehouseCd == conversionWarehouse
+                                   && x.Status != MobileTaskStatus.Completed
+                                   && x.Status != MobileTaskStatus.PartiallyCompleted
+                                   && x.Status != MobileTaskStatus.Cancelled,
+                        ct);
+                if (hasActiveTasks)
+                    throw new MobileTaskConflictException(
+                        "WM-R2B-ACTIVE-TASKS");
             }
             if (stocks.Any(x => x.PhysicalQty < 0m
                                 || decimal.Truncate(x.PhysicalQty) != x.PhysicalQty))
@@ -478,7 +492,7 @@ public sealed class SerialInventoryService : ISerialInventoryService
             .AnyAsync(x => !x.IsDeleted
                            && x.WarehouseCd == warehouseCd
                            && x.SerialLpnEnabled, ct))
-            throw new MobileTaskConflictException("WM-R2B-FEATURE-DISABLED");
+            throw new MobileTaskConflictException("WM-R2B-DISABLED");
     }
 
     private async Task<SerialOperationResult?> ReplayAsync(

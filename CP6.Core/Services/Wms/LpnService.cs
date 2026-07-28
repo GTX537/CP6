@@ -777,7 +777,7 @@ public sealed class LpnService : ILpnService
             .AnyAsync(x => !x.IsDeleted
                            && x.WarehouseCd == warehouseCd
                            && x.SerialLpnEnabled, ct))
-            throw new MobileTaskConflictException("WM-R2B-FEATURE-DISABLED");
+            throw new MobileTaskConflictException("WM-R2B-DISABLED");
     }
 
     private void ApplyRowVersion(LogisticsUnit unit, string encoded)

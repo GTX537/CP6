@@ -4,13 +4,14 @@
     <ProjectReference Include="..\CP6.Entity\CP6.Entity.csproj" />
   </ItemGroup>
 
-  <!-- PUB 权限引擎需 ASP.NET 共享框架：IMemoryCache / IHttpContextAccessor / MVC 授权·结果过滤器 / IActionResult -->
+  <!-- PUB 权限引擎需 ASP.NET 共享框架：IDistributedCache / IHttpContextAccessor / MVC 授权·结果过滤器 / IActionResult -->
   <ItemGroup>
     <FrameworkReference Include="Microsoft.AspNetCore.App" />
   </ItemGroup>
 
   <ItemGroup>
     <PackageReference Include="BCrypt.Net-Next" Version="4.0.3" />
+    <PackageReference Include="AWSSDK.S3" Version="3.7.511.8" />
     <PackageReference Include="Otp.NET" Version="1.4.0" />
     <PackageReference Include="ClosedXML" Version="0.105.0" />
     <PackageReference Include="Confluent.Kafka" Version="2.6.1" />

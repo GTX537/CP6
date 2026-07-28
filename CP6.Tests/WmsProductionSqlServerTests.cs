@@ -1,11 +1,13 @@
 using CP6.Core.EFDbContext;
 using CP6.Core.Services.Common;
+using CP6.Core.Services.Wf;
 using CP6.Core.Services.Wms;
 using CP6.Entity.DomainModels.Erp;
 using CP6.Entity.DomainModels.Wms;
 using CP6.Tests.Infra;
 using Microsoft.Data.SqlClient;
 using Microsoft.EntityFrameworkCore;
+using Moq;
 using Xunit.Sdk;
 
 namespace CP6.Tests;
@@ -440,7 +442,7 @@ public sealed class WmsProductionSqlServerTests(WmsProductionSqlFixture fixture)
 
         var disabled = await Assert.ThrowsAsync<MobileTaskConflictException>(
             () => service.EnableTrackingAsync(exact, "supervisor"));
-        Assert.Equal("WM-R2B-FEATURE-DISABLED", disabled.Code);
+        Assert.Equal("WM-R2B-DISABLED", disabled.Code);
         Assert.Empty(await db.StockSerials.ToListAsync());
 
         feature.SerialLpnEnabled = true;
@@ -472,6 +474,192 @@ public sealed class WmsProductionSqlServerTests(WmsProductionSqlFixture fixture)
         var downgrade = await Assert.ThrowsAsync<InvalidOperationException>(
             () => db.SaveChangesAsync());
         Assert.Equal("WM-SERIAL-TRACKING-LOCKED", downgrade.Message);
+    }
+
+    [SqlServerFact]
+    public async Task FeatureFlagApproval_EnforcesUniquePending_IdempotentReplay_AndAtomicApply()
+    {
+        var tenant = Guid.NewGuid();
+        var requester = Guid.NewGuid();
+        var approver = Guid.NewGuid();
+        var flowId = Guid.NewGuid();
+        var operationId = Guid.NewGuid();
+        var changeId = Guid.NewGuid();
+
+        await using (var seed = fixture.Create(tenant))
+        {
+            seed.Warehouses.AddRange(
+                new Warehouse
+                {
+                    WarehouseCd = "W01",
+                    WarehouseName = "Feature pilot",
+                },
+                new Warehouse
+                {
+                    WarehouseCd = "W02",
+                    WarehouseName = "Feature control",
+                });
+            seed.WmsFeatureFlagChanges.Add(PendingFeatureChange(
+                changeId, operationId, flowId, requester, "W01"));
+            await seed.SaveChangesAsync();
+        }
+
+        await using (var duplicate = fixture.Create(tenant))
+        {
+            duplicate.WmsFeatureFlagChanges.Add(PendingFeatureChange(
+                Guid.NewGuid(),
+                Guid.NewGuid(),
+                Guid.NewGuid(),
+                requester,
+                "W01"));
+            await Assert.ThrowsAsync<DbUpdateException>(
+                () => duplicate.SaveChangesAsync());
+        }
+
+        await using (var apply = fixture.Create(tenant))
+        {
+            var service = new WmsFeatureFlagChangeService(
+                apply,
+                Mock.Of<IApprovalService>(),
+                Mock.Of<ITaskCenterService>());
+            await service.ApplyApprovedAsync(changeId, new ApprovalCallbackContext
+            {
+                BizType = WmsFeatureFlagChangeService.ApprovalBizType,
+                InstanceId = flowId,
+                StarterId = requester,
+                DecidedById = approver,
+            });
+            await apply.SaveChangesAsync();
+        }
+
+        await using (var verify = fixture.Create(tenant))
+        {
+            var applied = await verify.WmsFeatureFlagChanges.SingleAsync(
+                x => x.Id == changeId);
+            var feature = await verify.WmsFeatureFlags.SingleAsync(
+                x => x.WarehouseCd == "W01");
+            Assert.Equal(WmsFeatureFlagChangeStatus.Applied, applied.Status);
+            Assert.Equal(approver, applied.DecidedById);
+            Assert.NotNull(applied.AppliedAtUtc);
+            Assert.True(feature.ProductionMoveEnabled);
+            Assert.Equal(365, feature.ScanRetentionDays);
+
+            var approval = new Mock<IApprovalService>(MockBehavior.Strict);
+            var service = new WmsFeatureFlagChangeService(
+                verify,
+                approval.Object,
+                Mock.Of<ITaskCenterService>());
+            var replay = await service.SubmitAsync(
+                new CreateWmsFeatureFlagChangeRequest
+                {
+                    OperationId = operationId,
+                    WarehouseCd = "W02",
+                    ProductionMoveEnabled = false,
+                    SerialLpnEnabled = false,
+                    ScanRetentionDays = 180,
+                    Reason = "must not be evaluated during replay",
+                    ChangeTicket = "CHG-REPLAY",
+                },
+                requester,
+                "requester");
+            Assert.Equal(changeId, replay.Id);
+            approval.VerifyNoOtherCalls();
+        }
+
+        await using (var reusedOperation = fixture.Create(tenant))
+        {
+            reusedOperation.WmsFeatureFlagChanges.Add(PendingFeatureChange(
+                Guid.NewGuid(),
+                operationId,
+                Guid.NewGuid(),
+                requester,
+                "W02"));
+            await Assert.ThrowsAsync<DbUpdateException>(
+                () => reusedOperation.SaveChangesAsync());
+        }
+    }
+
+    [SqlServerFact]
+    public async Task Serial_EnableTracking_RequiresSingleWarehouseAndNoActiveTasks()
+    {
+        var tenant = Guid.NewGuid();
+        await using var db = fixture.Create(tenant);
+        SeedWarehouse(db, serialEnabled: true);
+        db.ProductMasters.Add(new ProductMaster
+        {
+            ProductCd = "CONVERT-SAFE",
+            ItemCd = "CONVERT-SAFE",
+            TrackingMode = ProductTrackingMode.None,
+        });
+        db.Stocks.AddRange(
+            new Stock
+            {
+                WarehouseCd = "W01",
+                LocationCd = "A-01",
+                ProductCd = "CONVERT-SAFE",
+                LotNo = string.Empty,
+                PhysicalQty = 1,
+                AvailableQty = 1,
+            },
+            new Stock
+            {
+                WarehouseCd = "W02",
+                LocationCd = "B-01",
+                ProductCd = "CONVERT-SAFE",
+                LotNo = string.Empty,
+                PhysicalQty = 1,
+                AvailableQty = 1,
+            });
+        await db.SaveChangesAsync();
+        var service = new SerialInventoryService(
+            db,
+            new StockMovementService(db, new WmsSequenceService(db)));
+        var request = new EnableSerialTrackingRequest
+        {
+            OperationId = Guid.NewGuid(),
+            ProductCd = "CONVERT-SAFE",
+            TrackingMode = ProductTrackingMode.Serial,
+            ExistingSerials =
+            [
+                ExistingSerial("SAFE-001"),
+                new ExistingSerialInput
+                {
+                    SerialNo = "SAFE-002",
+                    WarehouseCd = "W02",
+                    LocationCd = "B-01",
+                    LotNo = string.Empty,
+                },
+            ],
+        };
+
+        var multiWarehouse =
+            await Assert.ThrowsAsync<MobileTaskConflictException>(
+                () => service.EnableTrackingAsync(request, "supervisor"));
+        Assert.Equal("WM-SERIAL-MULTI-WAREHOUSE-STOCK", multiWarehouse.Code);
+
+        var secondWarehouseStock = await db.Stocks.SingleAsync(
+            x => x.WarehouseCd == "W02"
+                 && x.ProductCd == "CONVERT-SAFE");
+        db.Stocks.Remove(secondWarehouseStock);
+        db.MobileTasks.Add(new MobileTask
+        {
+            MobileTaskNo = "MTK-R2B-ACTIVE",
+            TaskType = MobileTaskType.Move,
+            Status = MobileTaskStatus.Paused,
+            WarehouseCd = "W01",
+            ProductCd = "CONVERT-SAFE",
+        });
+        await db.SaveChangesAsync();
+
+        request.OperationId = Guid.NewGuid();
+        request.ExistingSerials =
+        [
+            ExistingSerial("SAFE-001"),
+        ];
+        var activeTask = await Assert.ThrowsAsync<MobileTaskConflictException>(
+            () => service.EnableTrackingAsync(request, "supervisor"));
+        Assert.Equal("WM-R2B-ACTIVE-TASKS", activeTask.Code);
+        Assert.Empty(await db.StockSerials.ToListAsync());
     }
 
     [SqlServerFact]
@@ -741,6 +929,32 @@ public sealed class WmsProductionSqlServerTests(WmsProductionSqlFixture fixture)
             WarehouseCd = "W01",
             LocationCd = "A-01",
             LotNo = string.Empty,
+        };
+
+    private static WmsFeatureFlagChange PendingFeatureChange(
+        Guid id,
+        Guid operationId,
+        Guid flowId,
+        Guid requester,
+        string warehouseCd)
+        => new()
+        {
+            Id = id,
+            OperationId = operationId,
+            WarehouseCd = warehouseCd,
+            BaseProductionMoveEnabled = false,
+            BaseSerialLpnEnabled = false,
+            BaseScanRetentionDays = 180,
+            BaseFeatureRowVersion = string.Empty,
+            TargetProductionMoveEnabled = true,
+            TargetSerialLpnEnabled = false,
+            TargetScanRetentionDays = 365,
+            Reason = "Controlled R2A enablement",
+            ChangeTicket = "CHG-SQL-R2",
+            Status = WmsFeatureFlagChangeStatus.Pending,
+            RequestedById = requester,
+            RequestedAtUtc = DateTime.UtcNow,
+            FlowInstanceId = flowId,
         };
 
     private static ClientDevice Device(string id) => new()

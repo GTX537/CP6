@@ -34,6 +34,10 @@ public class ProductionConfigurationValidatorTests
     [InlineData("Security:NativeClient:Windows:MinimumVersion", "2.0.0", "MinimumVersion")]
     [InlineData("Security:NativeClient:Windows:DownloadUrl", "http://downloads.cp6.example/cp6.msix", "DownloadUrl")]
     [InlineData("Security:NativeClient:Android:Sha256", "", "Sha256")]
+    [InlineData("Storage:Provider", "Local", "Storage:Provider")]
+    [InlineData("Storage:S3:Endpoint", "http://objects.cp6.example", "Storage:S3:Endpoint")]
+    [InlineData("Storage:S3:SecretKey", "__SET_VIA_ENV__", "Storage:S3:SecretKey")]
+    [InlineData("Startup:SkipDatabaseInitialization", "false", "SkipDatabaseInitialization")]
     public void GetErrors_RejectsUnsafeProductionValue(
         string key,
         string value,
@@ -116,7 +120,15 @@ public class ProductionConfigurationValidatorTests
             ["Security:NativeClient:Android:DownloadUrl"] =
                 "https://downloads.cp6.example/android/cp6-mobile.apk",
             ["Security:NativeClient:Android:Sha256"] =
-                "abcdef0123456789abcdef0123456789abcdef0123456789abcdef0123456789"
+                "abcdef0123456789abcdef0123456789abcdef0123456789abcdef0123456789",
+            ["Storage:Provider"] = "S3",
+            ["Storage:S3:Endpoint"] = "https://objects.cp6.example",
+            ["Storage:S3:Bucket"] = "cp6-production",
+            ["Storage:S3:AccessKey"] = "cp6-runtime",
+            ["Storage:S3:SecretKey"] = "a-strong-object-secret",
+            ["Storage:S3:ServerSideEncryption"] = "AES256",
+            ["Startup:Mode"] = "Api",
+            ["Startup:SkipDatabaseInitialization"] = "true"
         };
 
         if (overrides is not null)

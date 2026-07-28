@@ -40,6 +40,8 @@ internal static partial class ProductionConfigurationValidator
         ValidateCors(configuration, errors);
         ValidateNativeClient(configuration, errors);
         ValidateEmail(configuration, errors);
+        ValidateStorage(configuration, errors);
+        ValidateStartupMode(configuration, errors);
 
         return errors;
     }
@@ -238,6 +240,57 @@ internal static partial class ProductionConfigurationValidator
             errors.Add(
                 "Email:Smtp:Host is required when Security:TwoFactor:EmailFallbackEnabled is true.");
         }
+    }
+
+    private static void ValidateStorage(
+        IConfiguration configuration,
+        ICollection<string> errors)
+    {
+        if (!string.Equals(
+                configuration["Storage:Provider"],
+                "S3",
+                StringComparison.OrdinalIgnoreCase))
+        {
+            errors.Add("Storage:Provider must be S3 in production.");
+            return;
+        }
+
+        if (!TryGetHttpsUri(configuration["Storage:S3:Endpoint"], out _))
+            errors.Add("Storage:S3:Endpoint must be an HTTPS URL.");
+        if (string.IsNullOrWhiteSpace(configuration["Storage:S3:Bucket"]))
+            errors.Add("Storage:S3:Bucket is required.");
+        if (string.IsNullOrWhiteSpace(configuration["Storage:S3:AccessKey"]))
+            errors.Add("Storage:S3:AccessKey must be supplied through a production secret source.");
+        if (IsUnsafeSecret(configuration["Storage:S3:SecretKey"], minimumLength: 16))
+            errors.Add("Storage:S3:SecretKey must be supplied through a production secret source.");
+
+        var encryption = configuration["Storage:S3:ServerSideEncryption"];
+        if (encryption is not ("AES256" or "aws:kms"))
+            errors.Add("Storage:S3:ServerSideEncryption must be AES256 or aws:kms.");
+        if (encryption == "aws:kms"
+            && string.IsNullOrWhiteSpace(configuration["Storage:S3:KmsKeyId"]))
+            errors.Add("Storage:S3:KmsKeyId is required when aws:kms encryption is selected.");
+    }
+
+    private static void ValidateStartupMode(
+        IConfiguration configuration,
+        ICollection<string> errors)
+    {
+        var mode = configuration["Startup:Mode"] ?? "Api";
+        if (mode is not ("Api" or "DatabaseInit"))
+        {
+            errors.Add("Startup:Mode must be Api or DatabaseInit.");
+            return;
+        }
+
+        var skip = configuration.GetValue<bool>(
+            "Startup:SkipDatabaseInitialization");
+        if (mode == "Api" && !skip)
+            errors.Add(
+                "Startup:SkipDatabaseInitialization must be true for production API replicas.");
+        if (mode == "DatabaseInit" && skip)
+            errors.Add(
+                "Startup:SkipDatabaseInitialization must be false for the database initialization process.");
     }
 
     private static void ValidateOptionalHttpsUrl(

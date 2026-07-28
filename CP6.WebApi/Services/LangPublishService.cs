@@ -1,55 +1,48 @@
+using System.Text;
 using System.Text.Json;
 using CP6.Core.EFDbContext;
+using CP6.Core.Services.Pub;
 using CP6.WebApi.Localization;
 using Microsoft.EntityFrameworkCore;
 
 namespace CP6.WebApi.Services;
 
 /// <summary>
-/// i18n 优化 P4 发布模式：把 Sys_Lang（全局值）导出成版本化静态 JSON，供前端不可变长缓存读取。
-///
-/// 产物（ContentRoot/wwwroot/i18n 下）：
-/// - {version}/{lang}.json   每语言全量词条（不可变，文件名带版本号）
-/// - manifest.json           当前版本指针 { version, langs, publishedAt }
-///
-/// 切换版本只改 manifest（回滚=指回旧 version，旧文件保留）。运行时前端读静态文件，零 DB 读。
-/// 经 API 端点 GET /api/lang/published/{ver}/{lang} 下发并带 immutable 缓存头（也便于 CDN 前置）。
+/// Publishes immutable language packs and their mutable manifest through the
+/// configured shared file store. Production therefore has no pod-local state.
 /// </summary>
-public class LangPublishService
+public sealed class LangPublishService
 {
+    private const string Root = "i18n";
+    private const string ManifestPath = Root + "/manifest.json";
     private readonly IServiceScopeFactory _scopeFactory;
-    private readonly IWebHostEnvironment _env;
-    private readonly IConfiguration _config;
+    private readonly IFileStore _store;
+    private readonly IConfiguration _configuration;
 
-    public LangPublishService(IServiceScopeFactory scopeFactory, IWebHostEnvironment env, IConfiguration config)
+    public LangPublishService(
+        IServiceScopeFactory scopeFactory,
+        IFileStore store,
+        IConfiguration configuration)
     {
         _scopeFactory = scopeFactory;
-        _env = env;
-        _config = config;
+        _store = store;
+        _configuration = configuration;
     }
 
-    private string RootDir => Path.Combine(_env.ContentRootPath, "wwwroot", "i18n");
-    private string ManifestPath => Path.Combine(RootDir, "manifest.json");
-
-    /// <summary>执行一次发布，返回新版本号（vYYYYMMDDHHmmss）。</summary>
     public async Task<string> PublishAsync(string? publishedBy, DateTime now)
     {
         var version = "v" + now.ToString("yyyyMMddHHmmss");
-        var verDir = Path.Combine(RootDir, version);
-        Directory.CreateDirectory(verDir);
-
         using var scope = _scopeFactory.CreateScope();
-        var ctx = scope.ServiceProvider.GetRequiredService<CP6Context>();
-        var q = ctx.Sys_Langs.AsNoTracking().Where(l => l.TenantId == null);
-        if (_config.GetValue<bool>("I18n:ServeReviewedOnly")) q = q.Where(l => l.Status == "reviewed");  // i18n 优化 P5
-        var items = await q.ToListAsync();
+        var context = scope.ServiceProvider.GetRequiredService<CP6Context>();
+        var query = context.Sys_Langs.AsNoTracking().Where(x => x.TenantId == null);
+        if (_configuration.GetValue<bool>("I18n:ServeReviewedOnly"))
+            query = query.Where(x => x.Status == "reviewed");
+        var items = await query.ToListAsync();
 
         foreach (var lang in LangColumn.Codes)
-        {
-            var dict = LangColumn.ToDict(items, lang);
-            var json = JsonSerializer.Serialize(dict);
-            await File.WriteAllTextAsync(Path.Combine(verDir, $"{lang}.json"), json);
-        }
+            await SaveJsonAsync(
+                $"{Root}/{version}/{lang}.json",
+                LangColumn.ToDict(items, lang));
 
         var manifest = new LangManifest
         {
@@ -59,48 +52,80 @@ public class LangPublishService
             PublishedBy = publishedBy,
             Count = items.Count,
         };
-        await File.WriteAllTextAsync(ManifestPath, JsonSerializer.Serialize(manifest));
+        // Write the pointer last, so readers never observe a partial version.
+        await SaveJsonAsync(ManifestPath, manifest);
         return version;
     }
 
-    /// <summary>读取当前 manifest（未发布过返回 null）。</summary>
-    public LangManifest? GetManifest()
+    public async Task<LangManifest?> GetManifestAsync()
     {
-        if (!File.Exists(ManifestPath)) return null;
-        try { return JsonSerializer.Deserialize<LangManifest>(File.ReadAllText(ManifestPath)); }
-        catch { return null; }
+        try
+        {
+            await using var stream = await _store.OpenReadAsync(ManifestPath);
+            return await JsonSerializer.DeserializeAsync<LangManifest>(stream);
+        }
+        catch (FileNotFoundException)
+        {
+            return null;
+        }
+        catch (JsonException)
+        {
+            return null;
+        }
     }
 
-    /// <summary>读取某版本某语言的已发布 JSON 原文（不存在返回 null）。</summary>
-    public string? ReadPublished(string version, string lang)
+    public async Task<string?> ReadPublishedAsync(string version, string lang)
     {
-        // 防目录穿越：版本号/语言码白名单化
-        if (!IsSafeSegment(version) || !LangColumn.Codes.Contains(lang)) return null;
-        var path = Path.Combine(RootDir, version, $"{lang}.json");
-        return File.Exists(path) ? File.ReadAllText(path) : null;
+        if (!IsSafeSegment(version) || !LangColumn.Codes.Contains(lang))
+            return null;
+        try
+        {
+            await using var stream =
+                await _store.OpenReadAsync($"{Root}/{version}/{lang}.json");
+            using var reader = new StreamReader(stream, Encoding.UTF8);
+            return await reader.ReadToEndAsync();
+        }
+        catch (FileNotFoundException)
+        {
+            return null;
+        }
     }
 
-    /// <summary>把 manifest 指回某历史版本（回滚）。该版本目录须存在。</summary>
-    public bool Rollback(string version, string? operatedBy, DateTime now)
+    public async Task<bool> RollbackAsync(
+        string version,
+        string? operatedBy,
+        DateTime now)
     {
-        if (!IsSafeSegment(version) || !Directory.Exists(Path.Combine(RootDir, version))) return false;
-        var m = GetManifest() ?? new LangManifest();
-        m.Version = version;
-        m.PublishedAt = now;
-        m.PublishedBy = operatedBy;
-        m.Langs = LangColumn.Codes;
-        File.WriteAllText(ManifestPath, JsonSerializer.Serialize(m));
+        if (!IsSafeSegment(version)
+            || !_store.Exists($"{Root}/{version}/{LangColumn.Codes[0]}.json"))
+            return false;
+        var manifest = await GetManifestAsync() ?? new LangManifest();
+        manifest.Version = version;
+        manifest.PublishedAt = now;
+        manifest.PublishedBy = operatedBy;
+        manifest.Langs = LangColumn.Codes;
+        await SaveJsonAsync(ManifestPath, manifest);
         return true;
     }
 
-    private static bool IsSafeSegment(string s) =>
-        !string.IsNullOrEmpty(s) && s.All(c => char.IsLetterOrDigit(c) || c == '-' || c == '_');
+    private async Task SaveJsonAsync<T>(string key, T value)
+    {
+        await using var content = new MemoryStream(
+            JsonSerializer.SerializeToUtf8Bytes(value));
+        await _store.SaveAsync(content, key);
+    }
+
+    private static bool IsSafeSegment(string value)
+        => !string.IsNullOrEmpty(value)
+           && value.All(character =>
+               char.IsLetterOrDigit(character)
+               || character is '-' or '_');
 }
 
-public class LangManifest
+public sealed class LangManifest
 {
-    public string Version { get; set; } = "";
-    public string[] Langs { get; set; } = Array.Empty<string>();
+    public string Version { get; set; } = string.Empty;
+    public string[] Langs { get; set; } = [];
     public DateTime PublishedAt { get; set; }
     public string? PublishedBy { get; set; }
     public int Count { get; set; }

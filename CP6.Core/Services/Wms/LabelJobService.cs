@@ -110,7 +110,7 @@ public sealed class LabelJobService : ILabelJobService
             x => !x.IsDeleted
                  && x.WarehouseCd == request.WarehouseCd
                  && x.SerialLpnEnabled, ct))
-            throw new MobileTaskConflictException("WM-R2B-FEATURE-DISABLED");
+            throw new MobileTaskConflictException("WM-R2B-DISABLED");
         var template = await _db.LabelTemplates.FirstOrDefaultAsync(
             x => !x.IsDeleted
                  && x.IsEnabled

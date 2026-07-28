@@ -93,7 +93,7 @@ public class WmsPermissionAttributeTests
     [Fact]
     public void WmsControllers_AreDiscovered()
     {
-        Assert.Equal(42, WmsControllers.Count());
+        Assert.Equal(43, WmsControllers.Count());
     }
 
     [Fact]

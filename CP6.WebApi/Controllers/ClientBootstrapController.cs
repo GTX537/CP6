@@ -24,7 +24,7 @@ public sealed class ClientBootstrapController : ControllerBase
 
     [HttpGet("bootstrap")]
     [AllowAnonymous]
-    public ActionResult<ClientBootstrapDto> Get(
+    public async Task<ActionResult<ClientBootstrapDto>> Get(
         [FromQuery] string platform,
         [FromQuery] string currentVersion)
     {
@@ -35,6 +35,7 @@ public sealed class ClientBootstrapController : ControllerBase
                 : null;
         if (release is null) return BadRequest(new { message = "unsupported platform" });
 
+        var manifest = await _languages.GetManifestAsync();
         return new ClientBootstrapDto
         {
             ApiVersion = "1",
@@ -46,7 +47,7 @@ public sealed class ClientBootstrapController : ControllerBase
             UpgradeRequired = Compare(currentVersion, release.MinimumVersion) < 0,
             DownloadUrl = release.DownloadUrl,
             Sha256 = release.Sha256,
-            LanguageManifestVersion = _languages.GetManifest()?.Version ?? string.Empty
+            LanguageManifestVersion = manifest?.Version ?? string.Empty
         };
     }
 
