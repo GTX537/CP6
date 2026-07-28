@@ -124,6 +124,77 @@ export interface WmsRoleScope {
   warehouseCd: string
   areaCd?: string
 }
+export interface IdempotentProductionCommand {
+  operationId?: string
+}
+export type SerialLifecycleType =
+  | 'RECEIVE'
+  | 'PUTAWAY'
+  | 'MOVE'
+  | 'PICK'
+  | 'SHIP'
+  | 'COUNT'
+  | 'RETURN'
+export interface ExistingSerialInput {
+  serialNo: string
+  warehouseCd: string
+  locationCd: string
+  lotNo: string
+}
+export interface EnableSerialTrackingCommand extends IdempotentProductionCommand {
+  productCd: string
+  trackingMode: 2 | 3
+  existingSerials: ExistingSerialInput[]
+}
+export interface SerialLifecycleCommand extends IdempotentProductionCommand {
+  txnType: SerialLifecycleType
+  productCd: string
+  serialNos: string[]
+  warehouseCd: string
+  lotNo: string
+  fromLocationCd?: string
+  toLocationCd?: string
+  lpnNo?: string
+  deviceId?: string
+}
+export interface CreateLpnCommand extends IdempotentProductionCommand {
+  lpnNo: string
+  containerType: string
+  warehouseCd: string
+  locationCd: string
+  deviceId?: string
+}
+export interface LpnCommandBase extends IdempotentProductionCommand {
+  rowVersion: string
+  deviceId?: string
+}
+export interface PackLpnCommand extends LpnCommandBase {
+  childLpns: string[]
+  contents: LpnContent[]
+}
+export interface UnpackLpnCommand extends LpnCommandBase {
+  childLpns: string[]
+  serialNos: string[]
+}
+export interface MoveLpnCommand extends LpnCommandBase {
+  toLocationCd: string
+}
+export interface SplitLpnCommand extends LpnCommandBase {
+  targetLpnNo: string
+  targetContainerType: string
+  serialNos: string[]
+  childLpns: string[]
+}
+export interface MergeLpnCommand extends LpnCommandBase {
+  sourceLpnNo: string
+}
+export type LpnLifecycleAction = 'pack' | 'unpack' | 'move' | 'split' | 'merge'
+export type LpnLifecycleCommand =
+  | PackLpnCommand
+  | UnpackLpnCommand
+  | MoveLpnCommand
+  | SplitLpnCommand
+  | MergeLpnCommand
 
 const operationId = () => {
   if (typeof globalThis.crypto?.randomUUID === 'function')
@@ -133,6 +204,15 @@ const operationId = () => {
     const value = character === 'x' ? random : (random & 0x3) | 0x8
     return value.toString(16)
   })
+}
+
+export const newProductionOperationId = operationId
+
+function withOperation<T extends IdempotentProductionCommand>(request: T) {
+  return {
+    ...request,
+    operationId: request.operationId || operationId(),
+  }
 }
 
 export const productionApi = {
@@ -177,24 +257,22 @@ export const productionApi = {
   serials(params: Record<string, unknown> = {}) {
     return http.get<any, PagedResult<StockSerial>>('/v2/wms/serials', { params })
   },
-  postSerial(request: Record<string, unknown>) {
-    return http.post('/v2/wms/serials', { operationId: operationId(), ...request })
+  postSerial(request: SerialLifecycleCommand) {
+    return http.post('/v2/wms/serials', withOperation(request))
   },
-  enableSerialTracking(request: Record<string, unknown>) {
-    return http.post('/v2/wms/serials/enable-tracking', {
-      operationId: operationId(), ...request,
-    })
+  enableSerialTracking(request: EnableSerialTrackingCommand) {
+    return http.post('/v2/wms/serials/enable-tracking', withOperation(request))
   },
   lpns(params: Record<string, unknown> = {}) {
     return http.get<any, PagedResult<LogisticsUnit>>('/v2/wms/lpns', { params })
   },
-  createLpn(request: Record<string, unknown>) {
-    return http.post<any, LogisticsUnit>('/v2/wms/lpns', { operationId: operationId(), ...request })
+  createLpn(request: CreateLpnCommand) {
+    return http.post<any, LogisticsUnit>('/v2/wms/lpns', withOperation(request))
   },
-  lpnCommand(lpnNo: string, action: 'pack' | 'unpack' | 'move' | 'split' | 'merge', request: Record<string, unknown>) {
+  lpnCommand(lpnNo: string, action: LpnLifecycleAction, request: LpnLifecycleCommand) {
     return http.post<any, LogisticsUnit>(
       `/v2/wms/lpns/${encodeURIComponent(lpnNo)}/${action}`,
-      { operationId: operationId(), ...request },
+      withOperation(request),
     )
   },
   labelJobs(params: Record<string, unknown> = {}) {

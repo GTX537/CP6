@@ -248,6 +248,11 @@
       </div>
       <template #footer><el-button type="primary" @click="createActivation">Generate one-time QR</el-button></template>
     </el-dialog>
+    <WmsSerialLpnDialogs
+      ref="serialLpnDialogs"
+      @serials-changed="loadSerials"
+      @lpns-changed="loadLpns"
+    />
   </div>
 </template>
 
@@ -257,6 +262,7 @@ import { ElMessage, ElMessageBox, type UploadFile } from 'element-plus'
 import QRCode from 'qrcode'
 import { productionApi } from '@/api/wms/production'
 import { buildDeviceActivationPayload, type ScannerHidTerminator } from '@/utils/deviceActivation'
+import WmsSerialLpnDialogs from './WmsSerialLpnDialogs.vue'
 import type {
   BarcodeAlias, BarcodeImportResult, BarcodeProfile, ClientDevice, LabelJob,
   LabelTemplate, LogisticsUnit, StockSerial, TaskAnalytics, WmsFeatureFlag,
@@ -280,6 +286,7 @@ const pendingBarcodeFile = ref<File>()
 const activationVisible = ref(false)
 const activationPayload = ref('')
 const activationQr = ref('')
+const serialLpnDialogs = ref<InstanceType<typeof WmsSerialLpnDialogs>>()
 const activationForm = reactive({
   server: window.location.origin, tenant: '', platform: 'Android' as 'Android' | 'Windows',
   deviceMode: 'Shared' as 'Shared' | 'Personal', warehouseCd: '', areaCd: '',
@@ -447,65 +454,29 @@ async function testBarcodeParser() {
   const parsed = await productionApi.parseBarcode(result.value.trim())
   await ElMessageBox.alert(JSON.stringify(parsed, null, 2), 'Parser result')
 }
-async function postSerialLifecycle() {
-  const request = await promptJson('Post serial lifecycle transaction', {
-    txnType: 'MOVE', productCd: '', serialNos: [],
-    warehouseCd: '', lotNo: '', fromLocationCd: '', toLocationCd: '',
-    lpnNo: null, deviceId: null,
-  })
-  await productionApi.postSerial(request)
-  ElMessage.success('Serial transaction committed')
-  await loadSerials()
+function postSerialLifecycle() {
+  serialLpnDialogs.value?.openSerialLifecycle()
 }
-async function enableSerialTracking() {
-  const request = await promptJson('Controlled serial tracking conversion', {
-    productCd: '', trackingMode: 2, existingSerials: [],
-  })
-  await productionApi.enableSerialTracking(request)
-  ElMessage.success('Serial tracking enabled')
-  await loadSerials()
+function enableSerialTracking() {
+  serialLpnDialogs.value?.openSerialTracking()
 }
-async function createLpn() {
-  const result = await ElMessageBox.prompt('LPN, container type, warehouse, location (comma separated)', 'Create LPN')
-  const [lpnNo, containerType, warehouseCd, locationCd] = result.value.split(',').map(x => x.trim())
-  await productionApi.createLpn({ lpnNo, containerType, warehouseCd, locationCd })
-  await loadLpns()
+function createLpn() {
+  serialLpnDialogs.value?.openLpn('create')
 }
-async function moveLpn(lpn: LogisticsUnit) {
-  const result = await ElMessageBox.prompt('Target location', `Move ${lpn.lpnNo}`)
-  await productionApi.lpnCommand(lpn.lpnNo, 'move', {
-    rowVersion: lpn.rowVersion, toLocationCd: result.value.trim(),
-  })
-  await loadLpns()
+function moveLpn(lpn: LogisticsUnit) {
+  serialLpnDialogs.value?.openLpn('move', lpn)
 }
-async function packLpn(lpn: LogisticsUnit) {
-  const request = await promptJson(`Pack ${lpn.lpnNo}`, {
-    rowVersion: lpn.rowVersion, childLpns: [], contents: [],
-  })
-  await productionApi.lpnCommand(lpn.lpnNo, 'pack', request)
-  await loadLpns()
+function packLpn(lpn: LogisticsUnit) {
+  serialLpnDialogs.value?.openLpn('pack', lpn)
 }
-async function unpackLpn(lpn: LogisticsUnit) {
-  const request = await promptJson(`Unpack ${lpn.lpnNo}`, {
-    rowVersion: lpn.rowVersion, childLpns: [], serialNos: [],
-  })
-  await productionApi.lpnCommand(lpn.lpnNo, 'unpack', request)
-  await loadLpns()
+function unpackLpn(lpn: LogisticsUnit) {
+  serialLpnDialogs.value?.openLpn('unpack', lpn)
 }
-async function splitLpn(lpn: LogisticsUnit) {
-  const request = await promptJson(`Split ${lpn.lpnNo}`, {
-    rowVersion: lpn.rowVersion, targetLpnNo: '', targetContainerType: '',
-    serialNos: [], childLpns: [],
-  })
-  await productionApi.lpnCommand(lpn.lpnNo, 'split', request)
-  await loadLpns()
+function splitLpn(lpn: LogisticsUnit) {
+  serialLpnDialogs.value?.openLpn('split', lpn)
 }
-async function mergeLpn(lpn: LogisticsUnit) {
-  const request = await promptJson(`Merge into ${lpn.lpnNo}`, {
-    rowVersion: lpn.rowVersion, sourceLpnNo: '',
-  })
-  await productionApi.lpnCommand(lpn.lpnNo, 'merge', request)
-  await loadLpns()
+function mergeLpn(lpn: LogisticsUnit) {
+  serialLpnDialogs.value?.openLpn('merge', lpn)
 }
 async function createLabelJob() {
   const request = await promptJson('Create idempotent print job', {

@@ -77,9 +77,9 @@ for every pull request and push to `main`.
 The mocked Web acceptance project owns its authentication state and API
 fixtures. It verifies that production rollout/device data render, Android HID
 settings stay out of the activation-ticket request, the settings are encoded
-in the one-time QR, Windows hides scanner provisioning, and the browser reports
-no uncaught or console errors. It does not replace a deployed-environment smoke
-test.
+in the one-time QR, Windows hides scanner provisioning, typed serial/LPN forms
+reject invalid or empty commands, and an unconfirmed serial retry reuses the
+same operation ID. It does not replace a deployed-environment smoke test.
 
 When signed artifacts are ready, run `scripts/test-r2-artifacts.ps1` with the
 approved Windows publisher, Android signing-certificate fingerprint, and a
@@ -180,6 +180,10 @@ runs. Never execute the write profile against a production warehouse.
   completion reaches the server. The client must query task state once and
   must not replay the write automatically. A scan retry must retain the same
   `ClientScanNo`; completion retry must retain the same operation ID.
+- Repeat the unknown-result drill for one Web serial lifecycle command and one
+  LPN command. Keep the same dialog open, refresh server state, and confirm an
+  explicit retry carries the original operation ID. Closing and reopening the
+  dialog must create a new operation ID.
 - Before enabling R2B, include two products that deliberately share one serial
   number in the validation set. Moving, splitting, merging, or unpacking an LPN
   for one product must not change the other product's serial location or LPN.

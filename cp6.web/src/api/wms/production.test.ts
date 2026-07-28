@@ -35,7 +35,15 @@ describe('WMS production administration API', () => {
   })
 
   it('adds a unique operation ID to serial and label commands', () => {
-    productionApi.postSerial({ txnType: 'MOVE', productCd: 'P-1' })
+    productionApi.postSerial({
+      txnType: 'MOVE',
+      productCd: 'P-1',
+      serialNos: ['S-1'],
+      warehouseCd: 'W01',
+      lotNo: '',
+      fromLocationCd: 'A01',
+      toLocationCd: 'B01',
+    })
     productionApi.createLabelJob({ warehouseCd: 'W01', templateName: 'LPN' })
 
     expect(http.post).toHaveBeenNthCalledWith(
@@ -54,6 +62,9 @@ describe('WMS production administration API', () => {
     productionApi.lpnCommand('PALLET/01', 'split', {
       rowVersion: 'row-version',
       targetLpnNo: 'PALLET-02',
+      targetContainerType: 'PALLET',
+      serialNos: ['S-1'],
+      childLpns: [],
     })
 
     expect(http.post).toHaveBeenCalledWith(
@@ -63,6 +74,23 @@ describe('WMS production administration API', () => {
         rowVersion: 'row-version',
         targetLpnNo: 'PALLET-02',
       }),
+    )
+  })
+
+  it('preserves a supplied operation ID when an uncertain command is retried', () => {
+    productionApi.postSerial({
+      operationId: 'fixed-operation-id',
+      txnType: 'COUNT',
+      productCd: 'P-1',
+      serialNos: ['S-1'],
+      warehouseCd: 'W01',
+      lotNo: '',
+      fromLocationCd: 'A01',
+    })
+
+    expect(http.post).toHaveBeenCalledWith(
+      '/v2/wms/serials',
+      expect.objectContaining({ operationId: 'fixed-operation-id' }),
     )
   })
 

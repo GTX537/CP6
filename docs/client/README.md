@@ -72,6 +72,12 @@ serial/LPN, device, barcode, and label behavior must not be added to v1.
   merge, and unpack operations resolve that composite identity and never update
   another product that happens to use the same serial number. Moving a parent
   LPN moves the complete container tree in one transaction.
+- The Web production console exposes typed serial and LPN forms instead of raw
+  JSON command editing. It validates transaction-specific source/target
+  locations, duplicate serials, controlled-conversion buckets, LPN content
+  quantities, and no-op pack/unpack/split commands before submission. Each open
+  form keeps one operation ID across an unconfirmed response and explicit retry;
+  opening a new form starts a new operation.
 - Controlled conversion of existing stock to serial tracking requires every
   stock-bearing warehouse to have its R2B feature enabled, every physical unit
   to be scanned exactly once in its warehouse/location/lot bucket, and the
