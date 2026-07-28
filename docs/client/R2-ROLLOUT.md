@@ -56,6 +56,8 @@ Remove-Item Env:CP6_TEST_SQLSERVER
 dotnet test .\CP6.Client.Tests\CP6.Client.Tests.csproj -c Release
 npm --prefix .\cp6.web run type-check
 npm --prefix .\cp6.web test -- --maxWorkers=4
+npm --prefix .\cp6.web run e2e -- `
+  --project=wms-production-mocked e2e/wms-production-console.spec.ts
 npm --prefix .\cp6.web run build-only
 dotnet tool restore
 .\scripts\test-r2-source-gate.ps1 -Configuration Release
@@ -71,6 +73,13 @@ replenishment transaction write-back, source-document warehouse/area
 fail-closed behavior, serial reconciliation, and LPN tree atomicity. The
 `wms-production-sql.yml` workflow runs the same class against SQL Server 2022
 for every pull request and push to `main`.
+
+The mocked Web acceptance project owns its authentication state and API
+fixtures. It verifies that production rollout/device data render, Android HID
+settings stay out of the activation-ticket request, the settings are encoded
+in the one-time QR, Windows hides scanner provisioning, and the browser reports
+no uncaught or console errors. It does not replace a deployed-environment smoke
+test.
 
 When signed artifacts are ready, run `scripts/test-r2-artifacts.ps1` with the
 approved Windows publisher, Android signing-certificate fingerprint, and a
