@@ -26,6 +26,10 @@ param(
     [Parameter(Mandatory = $true)][string]$SqlIntegrationReportPath,
     [Parameter(Mandatory = $true)][string]$LatestMigration,
     [Parameter(Mandatory = $true)][string]$EvidenceRootUri,
+    [Parameter(Mandatory = $true)][string]$ExecutionSpecPath,
+    [Parameter(Mandatory = $true)][string]$ExecutionSpecRepositoryPath,
+    [Parameter(Mandatory = $true)][string]$FreezeSnapshotPath,
+    [Parameter(Mandatory = $true)][string]$FreezeSnapshotUri,
     [string]$OutputManifestPath
 )
 
@@ -470,6 +474,41 @@ $sourceGateEvidence = Get-EvidenceFile `
 $sqlIntegrationEvidence = Get-EvidenceFile `
     -Path $SqlIntegrationReportPath `
     -Description "SQL Server integration report"
+$executionSpecEvidence = Get-EvidenceFile `
+    -Path $ExecutionSpecPath `
+    -Description "R2 execution spec"
+$freezeSnapshotEvidence = Get-EvidenceFile `
+    -Path $FreezeSnapshotPath `
+    -Description "R2 release freeze snapshot"
+if ([IO.Path]::IsPathRooted($ExecutionSpecRepositoryPath) -or
+    $ExecutionSpecRepositoryPath -match "(^|[\\/])\.\.([\\/]|$)" -or
+    $ExecutionSpecRepositoryPath -notmatch "^docs/client/r2/releases/v$([regex]::Escape($ExpectedVersion))/candidate\.yaml$") {
+    throw "ExecutionSpecRepositoryPath must be the versioned repository release spec path."
+}
+$freezeSnapshot = Get-Content -LiteralPath $FreezeSnapshotPath -Raw |
+    ConvertFrom-Json
+if ([int]$freezeSnapshot.SchemaVersion -ne 1 -or
+    [string]$freezeSnapshot.Status -ne "Approved" -or
+    [string]$freezeSnapshot.ReleaseVersion -ne $ExpectedVersion -or
+    [string]$freezeSnapshot.Tag -ne "v$ExpectedVersion" -or
+    [string]$freezeSnapshot.GitSha -ne $GitSha.ToLowerInvariant() -or
+    [string]$freezeSnapshot.RepositoryPath -ne $ExecutionSpecRepositoryPath.Replace("\", "/") -or
+    [string]$freezeSnapshot.SpecSha256 -ne [string]$executionSpecEvidence.Sha256) {
+    throw "Release freeze snapshot does not bind the expected version, source, and execution spec."
+}
+$freezeUri = $FreezeSnapshotUri -as [Uri]
+if ($null -eq $freezeUri -or $freezeUri.Scheme -ne "s3" -or
+    $freezeUri.AbsolutePath -notmatch "/release-freeze\.json$") {
+    throw "FreezeSnapshotUri must be an s3:// URI ending in release-freeze.json."
+}
+if ([string]$freezeSnapshot.EvidenceRootUri -ne $EvidenceRootUri.TrimEnd("/") -or
+    $FreezeSnapshotUri -ne "$($EvidenceRootUri.TrimEnd("/"))/release-freeze.json") {
+    throw "Release freeze snapshot evidence root does not match the release evidence root."
+}
+if ([string]::IsNullOrWhiteSpace([string]$freezeSnapshot.ChangeTicket) -or
+    [string]::IsNullOrWhiteSpace([string]$freezeSnapshot.ApprovedAt)) {
+    throw "Release freeze snapshot must contain its change ticket and approval time."
+}
 
 $releaseManifest = [ordered]@{
     SchemaVersion = 2
@@ -477,6 +516,15 @@ $releaseManifest = [ordered]@{
     GitSha = $GitSha.ToLowerInvariant()
     GeneratedAtUtc = [DateTimeOffset]::UtcNow.ToString("O")
     EvidenceRootUri = $EvidenceRootUri.TrimEnd("/")
+    ExecutionSpec = [ordered]@{
+        Version = [int]$freezeSnapshot.SchemaVersion
+        RepositoryPath = $ExecutionSpecRepositoryPath.Replace("\", "/")
+        SpecSha256 = [string]$executionSpecEvidence.Sha256
+        FreezeSnapshotUri = $FreezeSnapshotUri
+        FreezeSnapshotSha256 = [string]$freezeSnapshotEvidence.Sha256
+        ChangeTicket = [string]$freezeSnapshot.ChangeTicket
+        ApprovedAt = [string]$freezeSnapshot.ApprovedAt
+    }
     Artifacts = @(
         [ordered]@{
             Kind = "windows-msix"

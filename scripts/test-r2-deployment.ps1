@@ -2,6 +2,9 @@
 param(
     [Parameter(Mandatory = $true)][string]$BaseUrl,
     [Parameter(Mandatory = $true)][string]$ReleaseManifestPath,
+    [Parameter(Mandatory = $true)][string]$ExecutionSpecPath,
+    [Parameter(Mandatory = $true)][string]$FreezeSnapshotPath,
+    [Parameter(Mandatory = $true)][string]$CandidateResultPath,
     [ValidatePattern("^\d+$")][string]$ExpectedApiVersion = "1",
     [ValidateRange(1, 600)][int]$TimeoutSeconds = 60,
     [ValidateRange(1, 900)][int]$MaxClockSkewSeconds = 120,
@@ -170,6 +173,17 @@ function Read-ReleaseManifest {
     }
     if ([string]::IsNullOrWhiteSpace([string]$manifest.Database.LatestMigration)) {
         throw "Release manifest Database.LatestMigration is required."
+    }
+    if ([int]$manifest.ExecutionSpec.Version -ne 1 -or
+        [string]$manifest.ExecutionSpec.RepositoryPath -notmatch
+            "^docs/client/r2/releases/v$([regex]::Escape([string]$manifest.ReleaseVersion))/candidate\.yaml$" -or
+        [string]$manifest.ExecutionSpec.SpecSha256 -notmatch "^[A-Fa-f0-9]{64}$" -or
+        [string]$manifest.ExecutionSpec.FreezeSnapshotSha256 -notmatch "^[A-Fa-f0-9]{64}$" -or
+        [string]$manifest.ExecutionSpec.FreezeSnapshotUri -notmatch
+            "^s3://[^/]+/.+/release-freeze\.json$" -or
+        [string]::IsNullOrWhiteSpace([string]$manifest.ExecutionSpec.ChangeTicket) -or
+        [string]::IsNullOrWhiteSpace([string]$manifest.ExecutionSpec.ApprovedAt)) {
+        throw "Release manifest ExecutionSpec is incomplete or invalid."
     }
 
     $requiredKinds = @(
@@ -439,6 +453,56 @@ if (-not [string]::IsNullOrWhiteSpace($baseUri.Query) -or
 }
 $release = Read-ReleaseManifest -Path $ReleaseManifestPath
 $releaseVersion = [string]$release.Manifest.ReleaseVersion
+$resolvedManifestPath = (Resolve-Path -LiteralPath $ReleaseManifestPath).Path
+$resolvedSpecPath = (Resolve-Path -LiteralPath $ExecutionSpecPath).Path
+$resolvedFreezePath = (Resolve-Path -LiteralPath $FreezeSnapshotPath).Path
+$resolvedCandidateResultPath = (Resolve-Path -LiteralPath $CandidateResultPath).Path
+$manifestHash = (
+    Get-FileHash -LiteralPath $resolvedManifestPath -Algorithm SHA256
+).Hash
+$specHash = (
+    Get-FileHash -LiteralPath $resolvedSpecPath -Algorithm SHA256
+).Hash
+$freezeHash = (
+    Get-FileHash -LiteralPath $resolvedFreezePath -Algorithm SHA256
+).Hash
+$candidateResultHash = (
+    Get-FileHash -LiteralPath $resolvedCandidateResultPath -Algorithm SHA256
+).Hash
+$freezeSnapshot = Get-Content -LiteralPath $resolvedFreezePath -Raw |
+    ConvertFrom-Json
+$candidateResult = Get-Content -LiteralPath $resolvedCandidateResultPath -Raw |
+    ConvertFrom-Json
+
+if ([int]$candidateResult.SchemaVersion -ne 1 -or
+    [string]$candidateResult.ReleaseVersion -ne $releaseVersion -or
+    [string]$candidateResult.Tag -ne "v$releaseVersion" -or
+    [string]$candidateResult.GitSha -ne ([string]$release.Manifest.GitSha).ToLowerInvariant() -or
+    [string]$candidateResult.ManifestSha256 -ne $manifestHash -or
+    [string]$candidateResult.FreezeSnapshotSha256 -ne $freezeHash -or
+    [string]$candidateResult.ExecutionSpecSha256 -ne $specHash) {
+    throw "Candidate result does not match the release manifest, freeze snapshot, and execution spec SHA-256 chain."
+}
+if ([string]$candidateResult.ManifestUri -ne
+        "$(([string]$release.Manifest.EvidenceRootUri).TrimEnd("/"))/release-manifest.json" -or
+    [string]$candidateResult.FreezeSnapshotUri -ne
+        [string]$release.Manifest.ExecutionSpec.FreezeSnapshotUri -or
+    [string]$candidateResult.ExecutionSpecPath -ne
+        [string]$release.Manifest.ExecutionSpec.RepositoryPath) {
+    throw "Candidate result immutable evidence URIs do not match the release manifest."
+}
+if ([int]$freezeSnapshot.SchemaVersion -ne 1 -or
+    [string]$freezeSnapshot.Status -ne "Approved" -or
+    [string]$freezeSnapshot.ReleaseVersion -ne $releaseVersion -or
+    [string]$freezeSnapshot.Tag -ne "v$releaseVersion" -or
+    [string]$freezeSnapshot.GitSha -ne ([string]$release.Manifest.GitSha).ToLowerInvariant() -or
+    [string]$freezeSnapshot.RepositoryPath -ne
+        [string]$release.Manifest.ExecutionSpec.RepositoryPath -or
+    [string]$freezeSnapshot.SpecSha256 -ne $specHash -or
+    [string]$release.Manifest.ExecutionSpec.SpecSha256 -ne $specHash -or
+    [string]$release.Manifest.ExecutionSpec.FreezeSnapshotSha256 -ne $freezeHash) {
+    throw "Freeze snapshot does not match the release manifest and execution spec SHA-256 chain."
+}
 
 $live = Assert-HealthEndpoint `
     -Root $baseUri `
@@ -472,11 +536,12 @@ $evidence = [ordered]@{
     ApiVersion = $ExpectedApiVersion
     ReleaseVersion = $releaseVersion
     GitSha = [string]$release.Manifest.GitSha
-    ReleaseManifestSha256 = (
-        Get-FileHash -LiteralPath (
-            Resolve-Path -LiteralPath $ReleaseManifestPath
-        ).Path -Algorithm SHA256
-    ).Hash
+    ReleaseManifestSha256 = $manifestHash
+    CandidateResultSha256 = $candidateResultHash
+    ExecutionSpecSha256 = $specHash
+    FreezeSnapshotSha256 = $freezeHash
+    FreezeSnapshotUri = [string]$release.Manifest.ExecutionSpec.FreezeSnapshotUri
+    ChangeTicket = [string]$release.Manifest.ExecutionSpec.ChangeTicket
     EvidenceRootUri = [string]$release.Manifest.EvidenceRootUri
     LiveStatus = [string]$live.Data.status
     ReadyStatus = [string]$ready.Data.status

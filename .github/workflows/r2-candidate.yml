@@ -18,6 +18,10 @@ jobs:
     runs-on: windows-latest
     outputs:
       version: ${{ steps.release.outputs.version }}
+      spec_path: ${{ steps.release.outputs.spec_path }}
+      spec_sha256: ${{ steps.release.outputs.spec_sha256 }}
+      snapshot_uri: ${{ steps.release.outputs.snapshot_uri }}
+      snapshot_sha256: ${{ steps.release.outputs.snapshot_sha256 }}
     steps:
       - uses: actions/checkout@v4
         with:
@@ -43,6 +47,40 @@ jobs:
           if ($mainSha -ne $env:GITHUB_SHA) {
             throw "The protected release tag must point at the current main commit."
           }
+          $tagType = (git cat-file -t $env:GITHUB_REF).Trim()
+          if ($tagType -ne "tag") {
+            throw "Candidate tags must be immutable annotated tags created by the freeze workflow."
+          }
+          $tagBody = (git cat-file -p $env:GITHUB_REF) -join "`n"
+          $metadata = @{}
+          foreach ($line in ($tagBody -split "`n")) {
+            if ($line -match "^(release-freeze-uri|release-freeze-sha256|execution-spec-path|execution-spec-sha256)=(.+)$") {
+              $metadata[$Matches[1]] = $Matches[2].Trim()
+            }
+          }
+          foreach ($key in @(
+            "release-freeze-uri",
+            "release-freeze-sha256",
+            "execution-spec-path",
+            "execution-spec-sha256"
+          )) {
+            if (-not $metadata.ContainsKey($key)) {
+              throw "Annotated release tag is missing '$key'."
+            }
+          }
+          if ($metadata["release-freeze-uri"] -notmatch "^s3://[^/]+/.+/release-freeze\.json$" -or
+              $metadata["release-freeze-sha256"] -notmatch "^[A-Fa-f0-9]{64}$" -or
+              $metadata["execution-spec-sha256"] -notmatch "^[A-Fa-f0-9]{64}$") {
+            throw "Annotated release tag freeze metadata is invalid."
+          }
+          $expectedSpecPath = "docs/client/r2/releases/v$version/candidate.yaml"
+          if ($metadata["execution-spec-path"] -ne $expectedSpecPath) {
+            throw "Annotated release tag execution spec path is invalid."
+          }
+          $actualSpecHash = (Get-FileHash -LiteralPath $expectedSpecPath -Algorithm SHA256).Hash
+          if ($actualSpecHash -ne $metadata["execution-spec-sha256"]) {
+            throw "Annotated release tag execution spec hash does not match the tagged source."
+          }
           [xml]$desktop = Get-Content CP6.Desktop/CP6.Desktop.csproj
           [xml]$mobile = Get-Content CP6.Mobile/CP6.Mobile.csproj
           if ([string]$desktop.Project.PropertyGroup.Version -ne $version -or
@@ -50,6 +88,10 @@ jobs:
             throw "Tag, Desktop version, and Android display version must match."
           }
           "version=$version" >> $env:GITHUB_OUTPUT
+          "spec_path=$expectedSpecPath" >> $env:GITHUB_OUTPUT
+          "spec_sha256=$actualSpecHash" >> $env:GITHUB_OUTPUT
+          "snapshot_uri=$($metadata["release-freeze-uri"])" >> $env:GITHUB_OUTPUT
+          "snapshot_sha256=$($metadata["release-freeze-sha256"])" >> $env:GITHUB_OUTPUT
       - name: Restore release gates
         shell: pwsh
         run: |
@@ -62,6 +104,12 @@ jobs:
         shell: pwsh
         run: |
           $report = Join-Path $env:RUNNER_TEMP "source-gate.txt"
+          & ./scripts/test-r2-release-readiness.ps1 `
+            -SpecPath "${{ steps.release.outputs.spec_path }}" `
+            -Mode Structure `
+            -ExpectedVersion "${{ steps.release.outputs.version }}" 2>&1 |
+            Tee-Object -FilePath $report
+          if ($LASTEXITCODE -ne 0) { throw "R2 execution spec structure gate failed." }
           & ./scripts/test-r2-source-gate.ps1 `
             -Configuration Release `
             -ExpectedVersion "${{ steps.release.outputs.version }}" 2>&1 |
@@ -232,6 +280,29 @@ jobs:
           dotnet-version: |
             8.0.x
             10.0.x
+      - uses: actions/setup-node@v4
+        with:
+          node-version: 22
+          cache: npm
+          cache-dependency-path: cp6.web/package-lock.json
+      - name: Verify immutable freeze snapshot
+        shell: pwsh
+        run: |
+          npm ci --prefix cp6.web --ignore-scripts
+          $snapshotPath = Join-Path $env:RUNNER_TEMP "release-freeze.json"
+          aws --endpoint-url "${{ vars.R2_S3_ENDPOINT }}" s3 cp `
+            "${{ needs.source-gate.outputs.snapshot_uri }}" $snapshotPath
+          if ($LASTEXITCODE -ne 0) {
+            throw "Unable to download the approved release freeze snapshot."
+          }
+          ./scripts/test-r2-release-readiness.ps1 `
+            -SpecPath "${{ needs.source-gate.outputs.spec_path }}" `
+            -Mode VerifySnapshot `
+            -ExpectedVersion "${{ needs.source-gate.outputs.version }}" `
+            -ExpectedGitSha $env:GITHUB_SHA `
+            -SnapshotPath $snapshotPath `
+            -ExpectedSnapshotSha256 "${{ needs.source-gate.outputs.snapshot_sha256 }}"
+          "CP6_R2_FREEZE_PATH=$snapshotPath" >> $env:GITHUB_ENV
       - name: Publish and sign native clients
         shell: pwsh
         env:
@@ -298,9 +369,37 @@ jobs:
             -SourceGateReportPath evidence/source/source-gate.txt `
             -SqlIntegrationReportPath evidence/sql/wms-sql.trx `
             -LatestMigration $latestMigration `
-            -EvidenceRootUri $evidenceRoot
+            -EvidenceRootUri $evidenceRoot `
+            -ExecutionSpecPath "${{ needs.source-gate.outputs.spec_path }}" `
+            -ExecutionSpecRepositoryPath "${{ needs.source-gate.outputs.spec_path }}" `
+            -FreezeSnapshotPath $env:CP6_R2_FREEZE_PATH `
+            -FreezeSnapshotUri "${{ needs.source-gate.outputs.snapshot_uri }}"
           "CP6_R2_EVIDENCE_ROOT=$evidenceRoot" >> $env:GITHUB_ENV
           "CP6_R2_INIT_ZIP=$initZip" >> $env:GITHUB_ENV
+      - name: Build immutable candidate result
+        shell: pwsh
+        run: |
+          $manifestPath = Join-Path $env:CP6_R2_ARTIFACT_DIR "release-manifest.json"
+          $manifestHash = (Get-FileHash -LiteralPath $manifestPath -Algorithm SHA256).Hash
+          $resultPath = Join-Path $env:CP6_R2_ARTIFACT_DIR "candidate-result.json"
+          $result = [ordered]@{
+            SchemaVersion = 1
+            ReleaseVersion = "${{ needs.source-gate.outputs.version }}"
+            Tag = "v${{ needs.source-gate.outputs.version }}"
+            GitSha = $env:GITHUB_SHA.ToLowerInvariant()
+            GeneratedAtUtc = [DateTimeOffset]::UtcNow.ToString("O")
+            ManifestUri = "$env:CP6_R2_EVIDENCE_ROOT/release-manifest.json"
+            ManifestSha256 = $manifestHash
+            FreezeSnapshotUri = "${{ needs.source-gate.outputs.snapshot_uri }}"
+            FreezeSnapshotSha256 = "${{ needs.source-gate.outputs.snapshot_sha256 }}"
+            ExecutionSpecPath = "${{ needs.source-gate.outputs.spec_path }}"
+            ExecutionSpecSha256 = "${{ needs.source-gate.outputs.spec_sha256 }}"
+          }
+          [IO.File]::WriteAllText(
+            $resultPath,
+            ($result | ConvertTo-Json -Depth 5) + [Environment]::NewLine,
+            [Text.UTF8Encoding]::new($false))
+          "CP6_R2_CANDIDATE_RESULT=$resultPath" >> $env:GITHUB_ENV
       - name: Archive immutable release evidence
         id: archive
         shell: pwsh
@@ -311,7 +410,8 @@ jobs:
             "evidence/images/sbom.json",
             "evidence/images/vulnerability-report.json",
             "evidence/source/source-gate.txt",
-            "evidence/sql/wms-sql.trx"
+            "evidence/sql/wms-sql.trx",
+            "${{ needs.source-gate.outputs.spec_path }}"
           )
           $paths += Get-ChildItem -LiteralPath $env:CP6_R2_ARTIFACT_DIR -File |
             Where-Object Name -ne "release-manifest.json" |
@@ -331,6 +431,9 @@ jobs:
           - Version: `${{ needs.source-gate.outputs.version }}`
           - Git SHA: `$env:GITHUB_SHA`
           - Manifest SHA-256: `${{ steps.archive.outputs.manifest_hash }}`
+          - Execution spec SHA-256: `${{ needs.source-gate.outputs.spec_sha256 }}`
+          - Freeze snapshot SHA-256: `${{ needs.source-gate.outputs.snapshot_sha256 }}`
+          - Candidate result: `$env:CP6_R2_EVIDENCE_ROOT/candidate-result.json`
           - Evidence URI: `$env:CP6_R2_EVIDENCE_ROOT`
           - Protected environment: `r2-candidate`
           - Approved deployment actor: `${{ github.actor }}`

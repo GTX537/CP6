@@ -26,6 +26,7 @@ Target Date 和 Approved At 使用 ISO 8601。
 | 消息 | RabbitMQ/Kafka 端点、账号与启用范围 | TBD | TBD | TBD | TBD | Platform |  | Pending |
 | 身份 | JWT、OIDC、回调地址、SMTP/OTP | TBD | TBD | TBD | TBD | Security |  | Pending |
 | 存储 | S3 端点、bucket、SSE、版本控制、Object Lock | TBD | TBD | TBD | TBD | Security |  | Pending |
+| 发布自动化 | 最小权限 GitHub App、Tag Ruleset 与冻结 Environment | TBD | TBD | TBD | TBD | Security |  | Pending |
 | 观测 | 日志、指标、告警、值班路由与保留期 | TBD | TBD | N/A | TBD | Operations |  | Pending |
 | 试点 | 租户、仓库、区域、一个设备组 | TBD | TBD | N/A | TBD | Warehouse Owner |  | Pending |
 | 角色 | 主管、调度、操作、审计四类负责人 | TBD | TBD | N/A | TBD | Business Owner |  | Pending |

@@ -17,7 +17,8 @@
     "e2e:report": "playwright show-report e2e/report",
     "i18n:pull": "node scripts/i18n-pull-keys.mjs",
     "i18n:check": "node scripts/i18n-check-keys.mjs",
-    "i18n:gen-types": "node scripts/i18n-gen-types.mjs"
+    "i18n:gen-types": "node scripts/i18n-gen-types.mjs",
+    "test:r2-readiness": "node --test scripts/r2-release-readiness.test.mjs"
   },
   "dependencies": {
     "@element-plus/icons-vue": "^2.3.2",
@@ -51,6 +52,7 @@
     "vite": "^8.1.5",
     "vite-plugin-vue-devtools": "^8.2.1",
     "vitest": "^4.1.9",
+    "yaml": "2.9.0",
     "vue-tsc": "^3.2.6"
   },
   "overrides": {

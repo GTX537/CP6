@@ -35,6 +35,7 @@
 | [04 R2A MOVE 试点](./04-r2a-move-pilot.md) | 设备、负载、恢复、每日对账和退出条件 |
 | [05 R2B 序列/LPN](./05-r2b-serial-lpn.md) | 预检、转换、永久锁定、差异和前滚修复 |
 | [06 运营与逐仓推广](./06-operations-rollout.md) | Go/No-Go、停用阈值、恢复演练和波次推广 |
+| [v1.0.0 候选执行规范](./releases/v1.0.0/candidate.md) | 生产输入冻结、受保护 Tag、签名候选与 Compose 验证 |
 
 ## 4. 实现与执行边界
 

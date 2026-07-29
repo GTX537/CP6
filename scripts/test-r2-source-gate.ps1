@@ -184,6 +184,10 @@ $candidateWorkflow = [IO.File]::ReadAllText(
     (Join-Path $repoRoot ".github\workflows\r2-candidate.yml"),
     [Text.Encoding]::UTF8
 )
+$freezeWorkflow = [IO.File]::ReadAllText(
+    (Join-Path $repoRoot ".github\workflows\r2-freeze.yml"),
+    [Text.Encoding]::UTF8
+)
 $deploymentWorkflow = [IO.File]::ReadAllText(
     (Join-Path $repoRoot ".github\workflows\r2-deploy.yml"),
     [Text.Encoding]::UTF8
@@ -229,7 +233,9 @@ foreach ($manifestV2Contract in @(
     "Images\s*=",
     "SupplyChain\s*=",
     "SqlIntegrationReport",
-    "Database\s*="
+    "Database\s*=",
+    "ExecutionSpec\s*=",
+    "FreezeSnapshotSha256"
 )) {
     if ($artifactGateScript -notmatch $manifestV2Contract) {
         throw "Artifact gate is missing release manifest v2 contract '$manifestV2Contract'."
@@ -258,7 +264,10 @@ foreach ($deploymentContract in @(
     "GitSha",
     "Images",
     "LatestMigration",
-    "OutputEvidencePath"
+    "OutputEvidencePath",
+    "CandidateResultSha256",
+    "ExecutionSpecSha256",
+    "FreezeSnapshotSha256"
 )) {
     if ($deploymentGateScript -notmatch $deploymentContract) {
         throw "Deployment gate is missing manifest/runtime contract '$deploymentContract'."
@@ -298,17 +307,40 @@ foreach ($candidateContract in @(
     "wms-production-console\.spec\.ts",
     "anchore/syft",
     "aquasec/trivy",
+    "release-freeze-uri",
+    "VerifySnapshot",
+    "candidate-result\.json",
     "publish-r2-evidence\.ps1"
 )) {
     if ($candidateWorkflow -notmatch $candidateContract) {
         throw "Candidate workflow is missing '$candidateContract'."
     }
 }
+foreach ($freezeContract in @(
+    "environment: r2-release-freeze",
+    "self-hosted, Windows, X64, cp6-release",
+    "actions/create-github-app-token@v3",
+    "permission-contents: write",
+    "persist-credentials: false",
+    "Mode Freeze",
+    "s3api head-object",
+    "ObjectLockMode",
+    "publish-r2-evidence\.ps1",
+    "git tag --annotate",
+    "release-freeze-sha256=",
+    "execution-spec-sha256="
+)) {
+    if ($freezeWorkflow -notmatch $freezeContract) {
+        throw "Release freeze workflow is missing '$freezeContract'."
+    }
+}
 foreach ($workflowContract in @(
     "type: environment",
     "self-hosted, Windows, X64, cp6-deploy",
     "environment:.+\$\{\{ inputs\.environment \}\}",
-    "manifest_sha256",
+    "candidate-result\.json",
+    "VerifySnapshot",
+    "CP6_CANDIDATE_RESULT",
     "CP6_VAULT_RENDERER",
     "deploy-r2\.ps1",
     "test-r2-deployment\.ps1"
@@ -366,6 +398,7 @@ $releaseScripts = @(
     "scripts\invoke-r2-pilot.ps1",
     "scripts\test-native-client-contract.ps1",
     "scripts\test-r2-artifacts.ps1",
+    "scripts\test-r2-release-readiness.ps1",
     "scripts\test-r2-deployment.ps1",
     "scripts\test-r2-deployment-contract.ps1",
     "scripts\deploy-r2.ps1",
@@ -393,6 +426,16 @@ foreach ($relativeScript in $releaseScripts) {
 }
 
 & (Join-Path $repoRoot "scripts\test-r2-deployment-contract.ps1")
+& (Join-Path $repoRoot "scripts\test-r2-release-readiness.ps1") `
+    -SpecPath (
+        Join-Path $repoRoot "docs\client\r2\releases\v$ExpectedVersion\candidate.yaml"
+    ) `
+    -Mode Structure `
+    -ExpectedVersion $ExpectedVersion
+Invoke-CheckedCommand -FilePath "npm.cmd" `
+    -ArgumentList @("run", "test:r2-readiness") `
+    -Description "R2 release readiness contract tests" `
+    -WorkingDirectory (Join-Path $repoRoot "cp6.web")
 & (Join-Path $repoRoot "scripts\test-r2-pilot-contract.ps1")
 & (Join-Path $repoRoot "scripts\test-r2-pilot-orchestration-contract.ps1")
 & (Join-Path $repoRoot "scripts\test-r2-operations-contract.ps1")

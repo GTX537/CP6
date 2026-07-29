@@ -38,13 +38,18 @@ TLS、SQL Server、Redis、JWT、CORS/OIDC、原生制品地址/哈希、S3 和�
 部署工作流 `.github/workflows/r2-deploy.yml` 必须在受保护 Environment 的
 `[self-hosted, Windows, X64, cp6-deploy]` runner 上：
 
-1. 从批准的 `s3://` URI 下载清单并核对批准 SHA-256；
-2. 从对应 `vX.Y.Z` Tag checkout；
-3. 临时渲染 Secret；
-4. 调用 `scripts/deploy-r2.ps1` 执行初始化和 digest 固定 rollout；
-5. 调用 `scripts/test-r2-deployment.ps1` 核对 live/ready/release、
+1. 只接收版本与受保护 Environment，从固定证据根下载
+   `candidate-result.json`；
+2. 从对应 `vX.Y.Z` Tag checkout，下载并核对 manifest、冻结快照和执行 Spec
+   的完整 SHA-256 链；
+3. 从冻结快照读取 Target、Base URL、namespace 和 Ingress 参数，禁止操作员
+   手工重复输入；
+4. 临时渲染 Secret；
+5. 调用 `scripts/deploy-r2.ps1` 执行初始化和 digest 固定 rollout；
+6. 调用 `scripts/test-r2-deployment.ps1` 核对 live/ready/release、
    `__EFMigrationsHistory` 最新值、运行镜像摘要、bootstrap 与远程原生制品；
-6. 生成并 Object Lock 归档 `deployment-evidence.json`。
+7. 生成并 Object Lock 归档 `deployment-evidence.json`，其中必须包含 Spec、
+   freeze snapshot、candidate result 与 manifest 的哈希链。
 
 `GET /health/release` 与 Web `release.json` 为只读发布身份；响应必须
 `no-store` 且不含 Secret、连接串、主机内部地址或异常详情。

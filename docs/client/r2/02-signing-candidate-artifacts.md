@@ -3,8 +3,12 @@
 ## 1. 触发与权限
 
 候选只由受保护 `vX.Y.Z` Tag 触发
-`.github/workflows/r2-candidate.yml`。流水线必须确认 Tag 指向当前 `main`
-提交，且 Tag、Desktop 版本、Android display version 一致。签名 Job 只在
+`.github/workflows/r2-candidate.yml`。Tag 只能由
+`.github/workflows/r2-freeze.yml` 在 `r2-release-freeze` Environment
+批准后使用最小权限 GitHub App 创建；默认 `GITHUB_TOKEN`、轻量 Tag、人工覆盖
+和 Tag 删除均禁止。流水线必须确认 annotated Tag 携带冻结快照 URI/哈希，
+指向当前 `main` 提交，且 Tag、Desktop 版本、Android display version 一致。
+签名 Job 只在
 受保护 `r2-candidate` Environment 的 `[self-hosted, Windows, X64,
 cp6-release]` runner 上运行。
 
@@ -25,6 +29,8 @@ cp6-release]` runner 上运行。
    `release-manifest.json`。
 6. 调用 `scripts/publish-r2-evidence.ps1` 以 SSE、SHA-256 checksum 和
    Object Lock COMPLIANCE 归档。
+7. 生成 `candidate-result.json`，不可变绑定 manifest、冻结快照、执行 Spec、
+   Tag 与 Git SHA。
 
 不在本规范复制脚本中的具体哈希和签名算法；脚本及其契约测试是可执行事实。
 
@@ -37,6 +43,8 @@ cp6-release]` runner 上运行。
 - API/Web 镜像 repository 与不可变 `sha256` digest；
 - SBOM、漏洞报告、源码门禁报告和 SQL Server 集成报告的 SHA-256；
 - 最新 EF 迁移、初始化制品 SHA-256 和 `ForwardOnly=true`；
+- `ExecutionSpec` 的仓库路径、Spec SHA-256、冻结快照 URI/SHA-256、变更工单
+  和批准时间；
 - `EvidenceRootUri`。
 
 最新迁移由候选提交内的实际迁移生成，不得在文档或脚本常量中维护“最新迁移
@@ -53,3 +61,4 @@ cp6-release]` runner 上运行。
 - 清单哈希进入发布审批记录。
 
 任何制品、配置 URL、镜像或证据变化都必须产生新候选，不允许覆盖原清单。
+Tag 一旦创建即视为版本已消费；失败后需更新补丁版本，不得删除后重打。

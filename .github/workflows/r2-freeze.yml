@@ -1,0 +1,177 @@
+name: R2 release freeze
+
+on:
+  workflow_dispatch:
+    inputs:
+      version:
+        description: Semantic release version without v prefix
+        required: true
+        default: 1.0.0
+        type: string
+
+permissions:
+  contents: read
+
+concurrency:
+  group: r2-release-freeze
+  cancel-in-progress: false
+
+jobs:
+  freeze:
+    runs-on: [self-hosted, Windows, X64, cp6-release]
+    environment: r2-release-freeze
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          ref: main
+          fetch-depth: 0
+          persist-credentials: false
+      - uses: actions/setup-node@v4
+        with:
+          node-version: 22
+          cache: npm
+          cache-dependency-path: cp6.web/package-lock.json
+      - name: Install readiness validator
+        working-directory: cp6.web
+        run: npm ci --ignore-scripts
+      - name: Validate main, versions, and unused tag
+        id: release
+        shell: pwsh
+        env:
+          VERSION: ${{ inputs.version }}
+        run: |
+          if ($env:VERSION -notmatch '^\d+\.\d+\.\d+$') {
+            throw "Version must use major.minor.patch."
+          }
+          git fetch origin main --no-tags
+          $headSha = (git rev-parse HEAD).Trim()
+          $mainSha = (git rev-parse origin/main).Trim()
+          if ($headSha -ne $mainSha) {
+            throw "Freeze checkout must equal the current origin/main commit."
+          }
+          [xml]$desktop = Get-Content CP6.Desktop/CP6.Desktop.csproj
+          [xml]$mobile = Get-Content CP6.Mobile/CP6.Mobile.csproj
+          if ([string]$desktop.Project.PropertyGroup.Version -ne $env:VERSION -or
+              [string]$mobile.Project.PropertyGroup.ApplicationDisplayVersion -ne $env:VERSION) {
+            throw "Desktop and Android versions must match the freeze version."
+          }
+          $tag = "v$env:VERSION"
+          git ls-remote --exit-code --tags origin "refs/tags/$tag" | Out-Null
+          if ($LASTEXITCODE -eq 0) {
+            throw "Protected release tag '$tag' already exists and cannot be reused."
+          }
+          if ($LASTEXITCODE -ne 2) {
+            throw "Unable to prove that protected release tag '$tag' is unused."
+          }
+          $specPath = "docs/client/r2/releases/v$env:VERSION/candidate.yaml"
+          if (-not (Test-Path -LiteralPath $specPath -PathType Leaf)) {
+            throw "Release spec '$specPath' does not exist."
+          }
+          "git_sha=$headSha" >> $env:GITHUB_OUTPUT
+          "tag=$tag" >> $env:GITHUB_OUTPUT
+          "spec_path=$specPath" >> $env:GITHUB_OUTPUT
+      - name: Generate approved immutable freeze snapshot
+        id: snapshot
+        shell: pwsh
+        env:
+          VERSION: ${{ inputs.version }}
+          GIT_SHA: ${{ steps.release.outputs.git_sha }}
+          SPEC_PATH: ${{ steps.release.outputs.spec_path }}
+          EXPECTED_EVIDENCE_ROOT: s3://${{ vars.R2_EVIDENCE_BUCKET }}/${{ vars.R2_EVIDENCE_PREFIX }}/v${{ inputs.version }}
+        run: |
+          $snapshotPath = Join-Path $env:RUNNER_TEMP "release-freeze.json"
+          ./scripts/test-r2-release-readiness.ps1 `
+            -SpecPath $env:SPEC_PATH `
+            -Mode Freeze `
+            -ExpectedVersion $env:VERSION `
+            -ExpectedGitSha $env:GIT_SHA `
+            -OutputSnapshotPath $snapshotPath `
+            -RepositoryPath $env:SPEC_PATH `
+            -Actor "${{ github.actor }}" `
+            -RunUri "${{ github.server_url }}/${{ github.repository }}/actions/runs/${{ github.run_id }}"
+          $snapshot = Get-Content -LiteralPath $snapshotPath -Raw | ConvertFrom-Json
+          if ([string]$snapshot.EvidenceRootUri -ne $env:EXPECTED_EVIDENCE_ROOT.TrimEnd("/")) {
+            throw "Spec evidenceRootUri does not match the protected Environment bucket and prefix."
+          }
+          $snapshotHash = (Get-FileHash -LiteralPath $snapshotPath -Algorithm SHA256).Hash
+          $specHash = (Get-FileHash -LiteralPath $env:SPEC_PATH -Algorithm SHA256).Hash
+          "path=$snapshotPath" >> $env:GITHUB_OUTPUT
+          "sha256=$snapshotHash" >> $env:GITHUB_OUTPUT
+          "spec_sha256=$specHash" >> $env:GITHUB_OUTPUT
+          "uri=$($snapshot.EvidenceRootUri)/release-freeze.json" >> $env:GITHUB_OUTPUT
+          "evidence_root=$($snapshot.EvidenceRootUri)" >> $env:GITHUB_OUTPUT
+      - name: Verify approved input evidence versions
+        shell: pwsh
+        run: |
+          $snapshot = Get-Content -LiteralPath "${{ steps.snapshot.outputs.path }}" -Raw |
+            ConvertFrom-Json
+          foreach ($input in @($snapshot.Inputs)) {
+            $uri = [uri][string]$input.EvidenceUri
+            $key = [uri]::UnescapeDataString($uri.AbsolutePath.TrimStart("/"))
+            $headJson = aws --endpoint-url "${{ vars.R2_S3_ENDPOINT }}" `
+              s3api head-object --bucket $uri.Host --key $key --output json
+            if ($LASTEXITCODE -ne 0) {
+              throw "Unable to verify immutable evidence for input '$($input.Id)'."
+            }
+            $head = ($headJson | Out-String) | ConvertFrom-Json
+            $evidenceCreatedAt = [DateTimeOffset][string]$head.LastModified
+            $approvedAt = [DateTimeOffset][string]$input.ApprovedAt
+            if ([string]::IsNullOrWhiteSpace([string]$head.VersionId) -or
+                [string]$head.ObjectLockMode -ne "COMPLIANCE" -or
+                $evidenceCreatedAt -gt $approvedAt) {
+              throw "Input '$($input.Id)' evidence is not versioned, compliance-locked, or predates approval."
+            }
+          }
+      - name: Archive Object Lock freeze snapshot
+        shell: pwsh
+        run: |
+          ./scripts/publish-r2-evidence.ps1 `
+            -Paths "${{ steps.snapshot.outputs.path }}" `
+            -EvidenceRootUri "${{ steps.snapshot.outputs.evidence_root }}" `
+            -EndpointUrl ([uri]"${{ vars.R2_S3_ENDPOINT }}") | Out-Null
+      - name: Create least-privilege GitHub App token
+        id: app-token
+        uses: actions/create-github-app-token@v3
+        with:
+          client-id: ${{ secrets.CP6_RELEASE_TAG_APP_CLIENT_ID }}
+          private-key: ${{ secrets.CP6_RELEASE_TAG_APP_PRIVATE_KEY }}
+          owner: ${{ github.repository_owner }}
+          repositories: ${{ github.event.repository.name }}
+          permission-contents: write
+      - name: Create immutable annotated release tag
+        shell: pwsh
+        env:
+          APP_TOKEN: ${{ steps.app-token.outputs.token }}
+          TAG: ${{ steps.release.outputs.tag }}
+          GIT_SHA: ${{ steps.release.outputs.git_sha }}
+          SPEC_PATH: ${{ steps.release.outputs.spec_path }}
+          SPEC_SHA256: ${{ steps.snapshot.outputs.spec_sha256 }}
+          SNAPSHOT_URI: ${{ steps.snapshot.outputs.uri }}
+          SNAPSHOT_SHA256: ${{ steps.snapshot.outputs.sha256 }}
+        run: |
+          git config user.name "cp6-release-app[bot]"
+          git config user.email "cp6-release-app[bot]@users.noreply.github.com"
+          $message = @"
+          CP6-R2-FREEZE
+          release-freeze-uri=$env:SNAPSHOT_URI
+          release-freeze-sha256=$env:SNAPSHOT_SHA256
+          execution-spec-path=$env:SPEC_PATH
+          execution-spec-sha256=$env:SPEC_SHA256
+          "@
+          git tag --annotate $env:TAG $env:GIT_SHA --message $message
+          $remote = "https://x-access-token:$env:APP_TOKEN@github.com/${{ github.repository }}.git"
+          git push $remote "refs/tags/$env:TAG"
+      - name: Freeze summary
+        shell: pwsh
+        run: |
+          @"
+          ## R2 release frozen
+
+          - Tag: `${{ steps.release.outputs.tag }}`
+          - Git SHA: `${{ steps.release.outputs.git_sha }}`
+          - Execution spec SHA-256: `${{ steps.snapshot.outputs.spec_sha256 }}`
+          - Freeze snapshot: `${{ steps.snapshot.outputs.uri }}`
+          - Freeze snapshot SHA-256: `${{ steps.snapshot.outputs.sha256 }}`
+          - Protected environment: `r2-release-freeze`
+          - Executed by: `${{ github.actor }}`
+          "@ >> $env:GITHUB_STEP_SUMMARY

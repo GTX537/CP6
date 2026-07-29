@@ -232,6 +232,36 @@ try {
             DownloadUrl = "$baseUrl/downloads/CP6.Mobile.apk"
         }
     )
+    $executionSpecPath = Join-Path $temporaryRoot "candidate.yaml"
+    Write-Utf8NoBom -Path $executionSpecPath -Content @"
+schemaVersion: 1
+release:
+  version: 1.0.0
+  tag: v1.0.0
+"@
+    $executionSpecHash = (
+        Get-FileHash -LiteralPath $executionSpecPath -Algorithm SHA256
+    ).Hash
+    $freezeSnapshotPath = Join-Path $temporaryRoot "release-freeze.json"
+    $freezeSnapshot = [ordered]@{
+        SchemaVersion = 1
+        Status = "Approved"
+        ReleaseVersion = "1.0.0"
+        Tag = "v1.0.0"
+        GitSha = "1" * 40
+        RepositoryPath = "docs/client/r2/releases/v1.0.0/candidate.yaml"
+        SpecSha256 = $executionSpecHash
+        ChangeTicket = "CHG-CONTRACT"
+        ApprovedAt = "2026-07-28T00:00:00Z"
+        ApprovalExpiresAt = "2099-01-01T00:00:00Z"
+        EvidenceRootUri = "s3://cp6-contract/r2/1.0.0"
+    }
+    Write-Utf8NoBom `
+        -Path $freezeSnapshotPath `
+        -Content (($freezeSnapshot | ConvertTo-Json -Depth 5) + [Environment]::NewLine)
+    $freezeSnapshotHash = (
+        Get-FileHash -LiteralPath $freezeSnapshotPath -Algorithm SHA256
+    ).Hash
     $manifestPath = Join-Path $temporaryRoot "release-manifest.json"
     $manifest = [ordered]@{
         SchemaVersion = 2
@@ -239,6 +269,15 @@ try {
         GitSha = "1" * 40
         GeneratedAtUtc = [DateTimeOffset]::UtcNow.ToString("O")
         EvidenceRootUri = "s3://cp6-contract/r2/1.0.0"
+        ExecutionSpec = [ordered]@{
+            Version = 1
+            RepositoryPath = "docs/client/r2/releases/v1.0.0/candidate.yaml"
+            SpecSha256 = $executionSpecHash
+            FreezeSnapshotUri = "s3://cp6-contract/r2/1.0.0/release-freeze.json"
+            FreezeSnapshotSha256 = $freezeSnapshotHash
+            ChangeTicket = "CHG-CONTRACT"
+            ApprovedAt = "2026-07-28T00:00:00Z"
+        }
         Artifacts = $artifacts
         Images = [ordered]@{
             Api = [ordered]@{
@@ -257,6 +296,26 @@ try {
     Write-Utf8NoBom `
         -Path $manifestPath `
         -Content (($manifest | ConvertTo-Json -Depth 8) + [Environment]::NewLine)
+    $manifestHash = (
+        Get-FileHash -LiteralPath $manifestPath -Algorithm SHA256
+    ).Hash
+    $candidateResultPath = Join-Path $temporaryRoot "candidate-result.json"
+    $candidateResult = [ordered]@{
+        SchemaVersion = 1
+        ReleaseVersion = "1.0.0"
+        Tag = "v1.0.0"
+        GitSha = "1" * 40
+        GeneratedAtUtc = "2026-07-28T00:00:00Z"
+        ManifestUri = "s3://cp6-contract/r2/1.0.0/release-manifest.json"
+        ManifestSha256 = $manifestHash
+        FreezeSnapshotUri = "s3://cp6-contract/r2/1.0.0/release-freeze.json"
+        FreezeSnapshotSha256 = $freezeSnapshotHash
+        ExecutionSpecPath = "docs/client/r2/releases/v1.0.0/candidate.yaml"
+        ExecutionSpecSha256 = $executionSpecHash
+    }
+    Write-Utf8NoBom `
+        -Path $candidateResultPath `
+        -Content (($candidateResult | ConvertTo-Json -Depth 5) + [Environment]::NewLine)
 
     $server = [Cp6R2ContractServer]::new(
         $baseUrl,
@@ -271,6 +330,9 @@ try {
     $smokeOutput = & (Join-Path $repoRoot "scripts\test-r2-deployment.ps1") `
         -BaseUrl $baseUrl `
         -ReleaseManifestPath $manifestPath `
+        -ExecutionSpecPath $executionSpecPath `
+        -FreezeSnapshotPath $freezeSnapshotPath `
+        -CandidateResultPath $candidateResultPath `
         -AllowLoopbackHttp `
         -OutputEvidencePath $evidencePath
     if (-not (Test-Path -LiteralPath $evidencePath -PathType Leaf)) {
@@ -281,6 +343,8 @@ try {
     if ($evidence.LiveStatus -ne "Healthy" -or
         $evidence.ReadyStatus -ne "Healthy" -or
         $evidence.WebReleaseIdentity.version -ne "1.0.0" -or
+        $evidence.ExecutionSpecSha256 -ne $executionSpecHash -or
+        $evidence.FreezeSnapshotSha256 -ne $freezeSnapshotHash -or
         -not [bool]$evidence.ArtifactDownloadsVerified -or
         @($evidence.Clients).Count -ne 2) {
         throw "Deployment smoke evidence is incomplete."
@@ -301,6 +365,9 @@ try {
         & (Join-Path $repoRoot "scripts\test-r2-deployment.ps1") `
             -BaseUrl $baseUrl `
             -ReleaseManifestPath $badManifestPath `
+            -ExecutionSpecPath $executionSpecPath `
+            -FreezeSnapshotPath $freezeSnapshotPath `
+            -CandidateResultPath $candidateResultPath `
             -AllowLoopbackHttp `
             -SkipArtifactDownload | Out-Null
     }
@@ -316,6 +383,9 @@ try {
         & (Join-Path $repoRoot "scripts\test-r2-deployment.ps1") `
             -BaseUrl "http://example.com" `
             -ReleaseManifestPath $manifestPath `
+            -ExecutionSpecPath $executionSpecPath `
+            -FreezeSnapshotPath $freezeSnapshotPath `
+            -CandidateResultPath $candidateResultPath `
             -AllowLoopbackHttp `
             -SkipArtifactDownload | Out-Null
     }
