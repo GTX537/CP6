@@ -11,6 +11,7 @@ public sealed class SpaceModelVersion : SpaceTenantEntity
     public string Name { get; private set; } = string.Empty;
     public SpaceVersionStatus Status { get; private set; }
     public Guid? BasedOnVersionId { get; private set; }
+    public Guid? CloneOperationId { get; private set; }
     public long ContentRevision { get; private set; }
     public string? ContentHash { get; private set; }
     public string? RuleSetVersion { get; private set; }
@@ -42,6 +43,61 @@ public sealed class SpaceModelVersion : SpaceTenantEntity
         };
         version.SetTenant(tenantId);
         return version;
+    }
+
+    public static SpaceModelVersion CreateInitializingClone(
+        Guid tenantId,
+        Guid modelId,
+        long versionNo,
+        string name,
+        Guid basedOnVersionId,
+        Guid cloneOperationId)
+    {
+        if (modelId == Guid.Empty)
+            throw new ArgumentException("Model is required.", nameof(modelId));
+        if (versionNo <= 0)
+            throw new ArgumentOutOfRangeException(nameof(versionNo), "Version number must be positive.");
+        if (basedOnVersionId == Guid.Empty)
+            throw new ArgumentException("Clone source version is required.", nameof(basedOnVersionId));
+        if (cloneOperationId == Guid.Empty)
+            throw new ArgumentException("Clone operation is required.", nameof(cloneOperationId));
+
+        var version = new SpaceModelVersion
+        {
+            ModelId = modelId,
+            VersionNo = versionNo,
+            Name = RequireName(name),
+            Status = SpaceVersionStatus.Initializing,
+            BasedOnVersionId = basedOnVersionId,
+            CloneOperationId = cloneOperationId,
+        };
+        version.SetTenant(tenantId);
+        return version;
+    }
+
+    public void CompleteInitialization(long sourceContentRevision)
+    {
+        RequireStatus(SpaceVersionStatus.Initializing);
+        if (sourceContentRevision < 0)
+            throw new ArgumentOutOfRangeException(nameof(sourceContentRevision));
+
+        ContentRevision = sourceContentRevision;
+        ClearValidationBinding();
+        Status = SpaceVersionStatus.Draft;
+    }
+
+    public void FailInitialization()
+    {
+        RequireStatus(SpaceVersionStatus.Initializing);
+        ClearValidationBinding();
+        Status = SpaceVersionStatus.Failed;
+    }
+
+    public void AbandonInitialization()
+    {
+        RequireStatus(SpaceVersionStatus.Initializing);
+        ClearValidationBinding();
+        Status = SpaceVersionStatus.Abandoned;
     }
 
     public void Rename(string name)

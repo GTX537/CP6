@@ -33,11 +33,31 @@ public sealed class SpaceContext : DbContext
     public DbSet<SpaceJobAttempt> JobAttempts => Set<SpaceJobAttempt>();
     public DbSet<SpaceJobStep> JobSteps => Set<SpaceJobStep>();
     public DbSet<SpaceModelIssue> Issues => Set<SpaceModelIssue>();
+    public DbSet<SpaceFloorRevision> FloorRevisions => Set<SpaceFloorRevision>();
+    public DbSet<SpaceZoneRevision> ZoneRevisions => Set<SpaceZoneRevision>();
+    public DbSet<SpaceAisleRevision> AisleRevisions => Set<SpaceAisleRevision>();
+    public DbSet<SpaceRackRevision> RackRevisions => Set<SpaceRackRevision>();
+    public DbSet<SpaceRackLevelRevision> RackLevelRevisions =>
+        Set<SpaceRackLevelRevision>();
+    public DbSet<SpaceLocationRevision> LocationRevisions =>
+        Set<SpaceLocationRevision>();
+    public DbSet<SpaceElementRevision> ElementRevisions =>
+        Set<SpaceElementRevision>();
+    public DbSet<SpaceElementAttribute> ElementAttributes =>
+        Set<SpaceElementAttribute>();
 
     protected override void OnModelCreating(ModelBuilder modelBuilder)
     {
         ConfigureModel(modelBuilder);
         ConfigureVersion(modelBuilder);
+        ConfigureFloorRevision(modelBuilder);
+        ConfigureZoneRevision(modelBuilder);
+        ConfigureAisleRevision(modelBuilder);
+        ConfigureRackRevision(modelBuilder);
+        ConfigureRackLevelRevision(modelBuilder);
+        ConfigureLocationRevision(modelBuilder);
+        ConfigureElementRevision(modelBuilder);
+        ConfigureElementAttribute(modelBuilder);
         ConfigureFile(modelBuilder);
         ConfigureSource(modelBuilder);
         ConfigureJob(modelBuilder);
@@ -50,6 +70,7 @@ public sealed class SpaceContext : DbContext
     public override int SaveChanges(bool acceptAllChangesOnSuccess)
     {
         ProtectPublishedHistory();
+        ProtectPublishedSnapshotWrites();
         StampAndValidateTenant();
         return base.SaveChanges(acceptAllChangesOnSuccess);
     }
@@ -59,6 +80,7 @@ public sealed class SpaceContext : DbContext
         CancellationToken cancellationToken = default)
     {
         ProtectPublishedHistory();
+        ProtectPublishedSnapshotWrites();
         StampAndValidateTenant();
         return base.SaveChangesAsync(acceptAllChangesOnSuccess, cancellationToken);
     }
@@ -157,6 +179,15 @@ public sealed class SpaceContext : DbContext
         entity.HasIndex(x => new { x.TenantId, x.BasedOnVersionId })
             .HasFilter("[BasedOnVersionId] IS NOT NULL")
             .HasDatabaseName("IX_Space_ModelVersion_Tenant_BasedOn");
+        entity.HasIndex(x => new
+        {
+            x.TenantId,
+            x.ModelId,
+            x.CloneOperationId,
+        })
+            .IsUnique()
+            .HasFilter("[CloneOperationId] IS NOT NULL")
+            .HasDatabaseName("UX_Space_ModelVersion_Tenant_Model_CloneOperation");
 
         entity.HasOne<SpaceModel>()
             .WithMany()
@@ -172,6 +203,447 @@ public sealed class SpaceContext : DbContext
             .HasConstraintName("FK_Space_ModelVersion_BasedOn_Tenant_Model_Version");
 
         entity.HasQueryFilter(x => x.TenantId == CurrentTenantId && !x.IsDeleted);
+    }
+
+    private void ConfigureFloorRevision(ModelBuilder modelBuilder)
+    {
+        var entity = ConfigureRevision<SpaceFloorRevision>(
+            modelBuilder,
+            "Space_FloorRevision");
+        entity.Property(x => x.FloorCode).HasMaxLength(100).IsRequired();
+        entity.Property(x => x.Name).HasMaxLength(200).IsRequired();
+        entity.Property(x => x.BoundaryJson).HasColumnType("nvarchar(max)").IsRequired();
+        entity.Property(x => x.CoordinateSystem).HasMaxLength(100).IsRequired();
+        entity.Property(x => x.UnderlayScale).HasColumnType("decimal(18,8)");
+        entity.Property(x => x.UnderlayRotationZ).HasColumnType("decimal(9,4)");
+
+        entity.HasIndex(x => new { x.TenantId, x.ModelVersionId, x.FloorCode })
+            .IsUnique()
+            .HasFilter("[IsDeleted] = 0")
+            .HasDatabaseName("UX_Space_FloorRevision_Version_Code_Active");
+        entity.HasIndex(x => new { x.TenantId, x.ModelVersionId, x.Level })
+            .HasDatabaseName("IX_Space_FloorRevision_Version_Level");
+        entity.HasOne<SpaceModelSource>()
+            .WithMany()
+            .HasForeignKey(x => new
+            {
+                x.TenantId,
+                x.ModelVersionId,
+                x.UnderlaySourceId,
+            })
+            .HasPrincipalKey(x => new { x.TenantId, x.ModelVersionId, x.Id })
+            .OnDelete(DeleteBehavior.Restrict)
+            .HasConstraintName("FK_Space_FloorRevision_UnderlaySource_Tenant_Version");
+    }
+
+    private void ConfigureZoneRevision(ModelBuilder modelBuilder)
+    {
+        var entity = ConfigureRevision<SpaceZoneRevision>(
+            modelBuilder,
+            "Space_ZoneRevision");
+        entity.Property(x => x.ZoneCode).HasMaxLength(100).IsRequired();
+        entity.Property(x => x.ZoneType).HasColumnType("smallint");
+        entity.Property(x => x.PolygonJson).HasColumnType("nvarchar(max)").IsRequired();
+        entity.Property(x => x.Color).HasMaxLength(50);
+        entity.Property(x => x.CapabilityFlags).HasMaxLength(1000);
+
+        entity.HasIndex(
+                x => new
+                {
+                    x.TenantId,
+                    x.ModelVersionId,
+                    x.FloorLogicalId,
+                    x.ZoneCode,
+                })
+            .IsUnique()
+            .HasFilter("[IsDeleted] = 0")
+            .HasDatabaseName("UX_Space_ZoneRevision_Floor_Code_Active");
+        entity.HasOne<SpaceFloorRevision>()
+            .WithMany()
+            .HasForeignKey(x => new
+            {
+                x.TenantId,
+                x.ModelVersionId,
+                x.FloorLogicalId,
+            })
+            .HasPrincipalKey(x => new
+            {
+                x.TenantId,
+                x.ModelVersionId,
+                x.LogicalId,
+            })
+            .OnDelete(DeleteBehavior.Restrict)
+            .HasConstraintName("FK_Space_ZoneRevision_Floor_Tenant_Version_Logical");
+    }
+
+    private void ConfigureAisleRevision(ModelBuilder modelBuilder)
+    {
+        var entity = ConfigureRevision<SpaceAisleRevision>(
+            modelBuilder,
+            "Space_AisleRevision");
+        entity.Property(x => x.AisleCode).HasMaxLength(100).IsRequired();
+        entity.Property(x => x.PolygonJson).HasColumnType("nvarchar(max)").IsRequired();
+        entity.Property(x => x.CenterlineJson).HasColumnType("nvarchar(max)").IsRequired();
+        entity.Property(x => x.Direction).HasColumnType("smallint");
+
+        entity.HasIndex(
+                x => new
+                {
+                    x.TenantId,
+                    x.ModelVersionId,
+                    x.ZoneLogicalId,
+                    x.AisleCode,
+                })
+            .IsUnique()
+            .HasFilter("[IsDeleted] = 0")
+            .HasDatabaseName("UX_Space_AisleRevision_Zone_Code_Active");
+        entity.HasOne<SpaceZoneRevision>()
+            .WithMany()
+            .HasForeignKey(x => new
+            {
+                x.TenantId,
+                x.ModelVersionId,
+                x.ZoneLogicalId,
+            })
+            .HasPrincipalKey(x => new
+            {
+                x.TenantId,
+                x.ModelVersionId,
+                x.LogicalId,
+            })
+            .OnDelete(DeleteBehavior.Restrict)
+            .HasConstraintName("FK_Space_AisleRevision_Zone_Tenant_Version_Logical");
+    }
+
+    private void ConfigureRackRevision(ModelBuilder modelBuilder)
+    {
+        var entity = ConfigureRevision<SpaceRackRevision>(
+            modelBuilder,
+            "Space_RackRevision");
+        entity.ToTable(
+            "Space_RackRevision",
+            table => table.HasCheckConstraint(
+                "CK_Space_RackRevision_Geometry",
+                "[RotationZ] >= 0 AND [RotationZ] < 360 AND [Width] >= 0 AND [Depth] >= 0 AND [Height] >= 0"));
+        entity.Property(x => x.RackCode).HasMaxLength(100).IsRequired();
+        entity.Property(x => x.RotationZ).HasColumnType("decimal(9,4)");
+
+        entity.HasIndex(
+                x => new
+                {
+                    x.TenantId,
+                    x.ModelVersionId,
+                    x.ZoneLogicalId,
+                    x.RackCode,
+                })
+            .IsUnique()
+            .HasFilter("[IsDeleted] = 0")
+            .HasDatabaseName("UX_Space_RackRevision_Zone_Code_Active");
+        entity.HasOne<SpaceFloorRevision>()
+            .WithMany()
+            .HasForeignKey(x => new
+            {
+                x.TenantId,
+                x.ModelVersionId,
+                x.FloorLogicalId,
+            })
+            .HasPrincipalKey(x => new
+            {
+                x.TenantId,
+                x.ModelVersionId,
+                x.LogicalId,
+            })
+            .OnDelete(DeleteBehavior.Restrict)
+            .HasConstraintName("FK_Space_RackRevision_Floor_Tenant_Version_Logical");
+        entity.HasOne<SpaceZoneRevision>()
+            .WithMany()
+            .HasForeignKey(x => new
+            {
+                x.TenantId,
+                x.ModelVersionId,
+                x.ZoneLogicalId,
+            })
+            .HasPrincipalKey(x => new
+            {
+                x.TenantId,
+                x.ModelVersionId,
+                x.LogicalId,
+            })
+            .OnDelete(DeleteBehavior.Restrict)
+            .HasConstraintName("FK_Space_RackRevision_Zone_Tenant_Version_Logical");
+        entity.HasOne<SpaceAisleRevision>()
+            .WithMany()
+            .HasForeignKey(x => new
+            {
+                x.TenantId,
+                x.ModelVersionId,
+                x.AisleLogicalId,
+            })
+            .HasPrincipalKey(x => new
+            {
+                x.TenantId,
+                x.ModelVersionId,
+                x.LogicalId,
+            })
+            .OnDelete(DeleteBehavior.Restrict)
+            .HasConstraintName("FK_Space_RackRevision_Aisle_Tenant_Version_Logical");
+    }
+
+    private void ConfigureRackLevelRevision(ModelBuilder modelBuilder)
+    {
+        var entity = ConfigureRevision<SpaceRackLevelRevision>(
+            modelBuilder,
+            "Space_RackLevelRevision");
+        entity.ToTable(
+            "Space_RackLevelRevision",
+            table => table.HasCheckConstraint(
+                "CK_Space_RackLevelRevision_Dimensions",
+                "[LevelNo] > 0 AND [ClearHeight] > 0 AND [BinCount] > 0 AND [DepthCount] > 0 AND [CellWidth] > 0 AND [CellDepth] > 0 AND ([MaxLoad] IS NULL OR [MaxLoad] >= 0)"));
+        entity.Property(x => x.MaxLoad).HasColumnType("decimal(18,4)");
+
+        entity.HasIndex(
+                x => new
+                {
+                    x.TenantId,
+                    x.ModelVersionId,
+                    x.RackLogicalId,
+                    x.LevelNo,
+                })
+            .IsUnique()
+            .HasFilter("[IsDeleted] = 0")
+            .HasDatabaseName("UX_Space_RackLevelRevision_Rack_Level_Active");
+        entity.HasOne<SpaceRackRevision>()
+            .WithMany()
+            .HasForeignKey(x => new
+            {
+                x.TenantId,
+                x.ModelVersionId,
+                x.RackLogicalId,
+            })
+            .HasPrincipalKey(x => new
+            {
+                x.TenantId,
+                x.ModelVersionId,
+                x.LogicalId,
+            })
+            .OnDelete(DeleteBehavior.Restrict)
+            .HasConstraintName("FK_Space_RackLevelRevision_Rack_Tenant_Version_Logical");
+    }
+
+    private void ConfigureLocationRevision(ModelBuilder modelBuilder)
+    {
+        var entity = ConfigureRevision<SpaceLocationRevision>(
+            modelBuilder,
+            "Space_LocationRevision");
+        entity.ToTable(
+            "Space_LocationRevision",
+            table => table.HasCheckConstraint(
+                "CK_Space_LocationRevision_Dimensions",
+                "[ColumnNo] > 0 AND [LevelNo] > 0 AND [DepthNo] > 0 AND [Width] > 0 AND [Height] > 0 AND [Depth] > 0 AND ([MaxLoad] IS NULL OR [MaxLoad] >= 0)"));
+        entity.Property(x => x.LocationCode).HasMaxLength(200);
+        entity.Property(x => x.MaxLoad).HasColumnType("decimal(18,4)");
+        entity.Property(x => x.CodeOrigin)
+            .HasConversion<short>()
+            .HasColumnType("smallint");
+        entity.Property(x => x.ExternalBindingState)
+            .HasConversion<short>()
+            .HasColumnType("smallint");
+
+        entity.HasIndex(x => new { x.TenantId, x.ModelVersionId, x.LocationCode })
+            .IsUnique()
+            .HasFilter("[LocationCode] IS NOT NULL AND [IsDeleted] = 0")
+            .HasDatabaseName("UX_Space_LocationRevision_Version_Code_Active");
+        entity.HasIndex(
+                x => new
+                {
+                    x.TenantId,
+                    x.ModelVersionId,
+                    x.RackLogicalId,
+                    x.LevelNo,
+                    x.ColumnNo,
+                    x.DepthNo,
+                })
+            .HasFilter("[RackLogicalId] IS NOT NULL AND [IsDeleted] = 0")
+            .HasDatabaseName("IX_Space_LocationRevision_Rack_Position_Active");
+        entity.HasOne<SpaceFloorRevision>()
+            .WithMany()
+            .HasForeignKey(x => new
+            {
+                x.TenantId,
+                x.ModelVersionId,
+                x.FloorLogicalId,
+            })
+            .HasPrincipalKey(x => new
+            {
+                x.TenantId,
+                x.ModelVersionId,
+                x.LogicalId,
+            })
+            .OnDelete(DeleteBehavior.Restrict)
+            .HasConstraintName("FK_Space_LocationRevision_Floor_Tenant_Version_Logical");
+        entity.HasOne<SpaceRackRevision>()
+            .WithMany()
+            .HasForeignKey(x => new
+            {
+                x.TenantId,
+                x.ModelVersionId,
+                x.RackLogicalId,
+            })
+            .HasPrincipalKey(x => new
+            {
+                x.TenantId,
+                x.ModelVersionId,
+                x.LogicalId,
+            })
+            .OnDelete(DeleteBehavior.Restrict)
+            .HasConstraintName("FK_Space_LocationRevision_Rack_Tenant_Version_Logical");
+    }
+
+    private void ConfigureElementRevision(ModelBuilder modelBuilder)
+    {
+        var entity = ConfigureRevision<SpaceElementRevision>(
+            modelBuilder,
+            "Space_ElementRevision");
+        entity.ToTable(
+            "Space_ElementRevision",
+            table => table.HasCheckConstraint(
+                "CK_Space_ElementRevision_Geometry",
+                "[RotationZ] >= 0 AND [RotationZ] < 360 AND [Width] >= 0 AND [Height] >= 0 AND [Depth] >= 0"));
+        entity.Property(x => x.ElementType).HasMaxLength(100).IsRequired();
+        entity.Property(x => x.GeometryJson).HasColumnType("nvarchar(max)").IsRequired();
+        entity.Property(x => x.RotationZ).HasColumnType("decimal(9,4)");
+        entity.Property(x => x.BusinessCode).HasMaxLength(200);
+        entity.Property(x => x.LinkedEntityType).HasMaxLength(100);
+
+        entity.HasIndex(
+                x => new
+                {
+                    x.TenantId,
+                    x.ModelVersionId,
+                    x.FloorLogicalId,
+                    x.ElementType,
+                })
+            .HasDatabaseName("IX_Space_ElementRevision_Floor_Type");
+        entity.HasOne<SpaceFloorRevision>()
+            .WithMany()
+            .HasForeignKey(x => new
+            {
+                x.TenantId,
+                x.ModelVersionId,
+                x.FloorLogicalId,
+            })
+            .HasPrincipalKey(x => new
+            {
+                x.TenantId,
+                x.ModelVersionId,
+                x.LogicalId,
+            })
+            .OnDelete(DeleteBehavior.Restrict)
+            .HasConstraintName("FK_Space_ElementRevision_Floor_Tenant_Version_Logical");
+        entity.HasOne<SpaceElementRevision>()
+            .WithMany()
+            .HasForeignKey(x => new
+            {
+                x.TenantId,
+                x.ModelVersionId,
+                x.ParentLogicalId,
+            })
+            .HasPrincipalKey(x => new
+            {
+                x.TenantId,
+                x.ModelVersionId,
+                x.LogicalId,
+            })
+            .OnDelete(DeleteBehavior.Restrict)
+            .HasConstraintName("FK_Space_ElementRevision_Parent_Tenant_Version_Logical");
+    }
+
+    private void ConfigureElementAttribute(ModelBuilder modelBuilder)
+    {
+        var entity = modelBuilder.Entity<SpaceElementAttribute>();
+        entity.ToTable("Space_ElementAttribute");
+        entity.HasKey(x => x.Id);
+        entity.Property(x => x.Id).ValueGeneratedNever();
+        ConfigureTenantEntity(entity);
+        entity.Property(x => x.Namespace).HasMaxLength(100).IsRequired();
+        entity.Property(x => x.Key).HasMaxLength(100).IsRequired();
+        entity.Property(x => x.ValueType).HasMaxLength(50).IsRequired();
+        entity.Property(x => x.Value).HasMaxLength(8000);
+        entity.Property(x => x.Unit).HasMaxLength(50);
+
+        entity.HasIndex(
+                x => new
+                {
+                    x.TenantId,
+                    x.ModelVersionId,
+                    x.ElementRevisionId,
+                    x.Namespace,
+                    x.Key,
+                })
+            .IsUnique()
+            .HasFilter("[IsDeleted] = 0")
+            .HasDatabaseName("UX_Space_ElementAttribute_Element_Key_Active");
+        entity.HasOne<SpaceElementRevision>()
+            .WithMany()
+            .HasForeignKey(x => new
+            {
+                x.TenantId,
+                x.ModelVersionId,
+                x.ElementRevisionId,
+            })
+            .HasPrincipalKey(x => new
+            {
+                x.TenantId,
+                x.ModelVersionId,
+                x.Id,
+            })
+            .OnDelete(DeleteBehavior.Restrict)
+            .HasConstraintName("FK_Space_ElementAttribute_Element_Tenant_Version");
+
+        entity.HasQueryFilter(x => x.TenantId == CurrentTenantId && !x.IsDeleted);
+    }
+
+    private Microsoft.EntityFrameworkCore.Metadata.Builders.EntityTypeBuilder<TEntity>
+        ConfigureRevision<TEntity>(
+            ModelBuilder modelBuilder,
+            string tableName)
+        where TEntity : SpaceRevisionEntity
+    {
+        var entity = modelBuilder.Entity<TEntity>();
+        entity.ToTable(tableName);
+        entity.HasKey(x => x.Id);
+        entity.Property(x => x.Id).ValueGeneratedNever();
+        entity.HasAlternateKey(x => new { x.TenantId, x.ModelVersionId, x.Id });
+        entity.HasAlternateKey(x => new
+        {
+            x.TenantId,
+            x.ModelVersionId,
+            x.LogicalId,
+        });
+        ConfigureTenantEntity(entity);
+        entity.Property(x => x.SourceRef).HasMaxLength(500);
+        entity.Property(x => x.LifecycleState)
+            .HasConversion<short>()
+            .HasColumnType("smallint");
+        entity.Property(x => x.RowVersion).IsRowVersion();
+
+        entity.HasOne<SpaceModelVersion>()
+            .WithMany()
+            .HasForeignKey(x => new { x.TenantId, x.ModelVersionId })
+            .HasPrincipalKey(x => new { x.TenantId, x.Id })
+            .OnDelete(DeleteBehavior.Restrict);
+        entity.HasOne<SpaceModelSource>()
+            .WithMany()
+            .HasForeignKey(x => new
+            {
+                x.TenantId,
+                x.ModelVersionId,
+                x.SourceId,
+            })
+            .HasPrincipalKey(x => new { x.TenantId, x.ModelVersionId, x.Id })
+            .OnDelete(DeleteBehavior.Restrict);
+        entity.HasQueryFilter(x => x.TenantId == CurrentTenantId && !x.IsDeleted);
+        return entity;
     }
 
     private void ConfigureFile(ModelBuilder modelBuilder)
@@ -611,6 +1083,55 @@ public sealed class SpaceContext : DbContext
                 !allowedTerminalTransition)
             {
                 throw new SpaceVersionStateException("Published and Superseded versions are immutable.");
+            }
+        }
+    }
+
+    private void ProtectPublishedSnapshotWrites()
+    {
+        var versionIds = ChangeTracker.Entries()
+            .Where(entry => entry.State is
+                EntityState.Added or EntityState.Modified or EntityState.Deleted)
+            .Select(entry => entry.Entity switch
+            {
+                SpaceRevisionEntity revision => revision.ModelVersionId,
+                SpaceElementAttribute attribute => attribute.ModelVersionId,
+                SpaceModelSource source => source.ModelVersionId,
+                _ => Guid.Empty,
+            })
+            .Where(versionId => versionId != Guid.Empty)
+            .Distinct()
+            .ToArray();
+        if (versionIds.Length == 0)
+            return;
+
+        var trackedStatuses = ChangeTracker.Entries<SpaceModelVersion>()
+            .ToDictionary(entry => entry.Entity.Id, entry => entry.Entity.Status);
+        var missingIds = versionIds
+            .Where(versionId => !trackedStatuses.ContainsKey(versionId))
+            .ToArray();
+        var persistedStatuses = missingIds.Length == 0
+            ? new Dictionary<Guid, SpaceVersionStatus>()
+            : Versions
+                .AsNoTracking()
+                .IgnoreQueryFilters()
+                .Where(version =>
+                    version.TenantId == CurrentTenantId &&
+                    missingIds.Contains(version.Id))
+                .ToDictionary(version => version.Id, version => version.Status);
+
+        foreach (var versionId in versionIds)
+        {
+            var status = trackedStatuses.TryGetValue(versionId, out var tracked)
+                ? tracked
+                : persistedStatuses.TryGetValue(versionId, out var persisted)
+                    ? persisted
+                    : throw new SpaceVersionStateException(
+                        "Snapshot content references an unknown model version.");
+            if (status is SpaceVersionStatus.Published or SpaceVersionStatus.Superseded)
+            {
+                throw new SpaceVersionStateException(
+                    "Published and Superseded snapshots are immutable.");
             }
         }
     }

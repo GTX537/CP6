@@ -26,6 +26,31 @@ public enum SpaceVersionStatus : short
     Published = 4,
     Superseded = 5,
     ReconciliationRequired = 6,
+    Initializing = 7,
+    Failed = 8,
+    Abandoned = 9,
+}
+
+public enum SpaceLifecycleState : short
+{
+    Active = 0,
+    Disabled = 1,
+    RemoveRequested = 2,
+}
+
+public enum SpaceLocationCodeOrigin : short
+{
+    Generated = 0,
+    Imported = 1,
+    Adopted = 2,
+    Manual = 3,
+}
+
+public enum SpaceExternalBindingState : short
+{
+    Unbound = 0,
+    Bound = 1,
+    PendingRemoval = 2,
 }
 
 public enum SpaceSourceType : short
