@@ -2,7 +2,9 @@
 
 ## P0：Space V1 下一批受控提取
 
-- 以 `2ccdff7a` 为唯一集成基线，进入 E02 S01 CAD 选择试验；只交付 ADR-0001 所需技术、授权、实体/版本和性能证据，不提前夹带完整 CAD 解析产品能力。
+- 以 `3742fbff` 为唯一 Space 代码集成基线。E02 S01 中立实验工具已集成，但最终签收仍需数据/QA 提供正式 20 文件黄金集（Calibration 10 / Validation 5 / Holdout 5、L1–L5 各至少 4）及 DWG/DXF 版本/实体矩阵。
+- 法务/采购需确认 ODA 正式 Web/SaaS 授权；工程需获得校验过的 ODA Windows/Linux SDK 包。APS 备试需批准区域、DPA、删除/保留证据和非生产凭据。平台/安全需提供 8 vCPU / 32GiB 的冻结隔离 Worker。
+- 外部输入齐全后，在同一冻结环境对 ODA 与 APS 各黄金样本 5 次、50MiB/100 万实体/200MiB 上限、超时/取消/并发进行评分；低于 ADR-0001 的 80 分硬门槛不得主选，若都失败则继续阻断 DWG Beta。
 - 按批次 B 启动 E07 WMS 契约、CP6 适配器和标准模拟器；保持与 E02 S01 独立提交、独立验收。
 - E13 Provider 试验按冻结批次并行评估，原始 CAD 不得外发，规则/Mock 路径不得依赖外部 Provider。
 - 为自动化执行身份提供可认证的 SQL Server 测试连接后，补跑当前 29 个 SQL-gated Space Integration 测试；2026-07-30 的本机尝试在业务断言前被 TLS/SSPI/Guest 身份认证阻断，未补跑前不得把“跳过”写成“通过”。

@@ -179,13 +179,14 @@ ADR 只解决技术方案，不得重新打开 D、T 或架构决策。
 | Three.js Viewer 与库存/路径页面 | Partial | `cp6.web/src/views/space` 已有编辑器、FloorViewer 和 StackedViewer |
 | Design V1 Contracts/Domain/Application | Partial | `539d56de` + `85792161` + `36f534d9` + `2ccdff7a` 已集成 E01 S01–S06 的版本、来源文件、Job Ledger、Published→Draft Clone、Design API v1、OpenAPI/生成 SDK、文件安全扫描与保留清理；E02 及后续用例仍待逐项进入基线 |
 | Design V1 Worker、校验与本地物化 | Partial | `2ccdff7a` 已集成 FileScan Processor 与隔离策略契约；Worker host 适配器、后续校验和本地物化仍未进入基线 |
+| CAD 转换技术选型 | Partial | `fe959066` + `3742fbff` 已集成 E02 S01 中立审计、压力、证据与 fail-closed preflight；正式黄金集、授权供应商试验和冻结 Worker 尚缺，未实现生产转换适配器 |
 | `BuildScene`/`Import` Job | CandidateOnly | `0d25da4d` 有候选实现，尚未按 E01/E02 依赖链复验 |
 | 文件、来源、Artifact 和 CAD/Excel 解析链 | Partial | 来源文件底座已在 `539d56de`，安全扫描与保留清理已在 `2ccdff7a`；Artifact、CAD/Excel 解析链仍未进入基线 |
 | AI Run/Proposal/Decision/Usage | NotStarted | 只有需求、设计和 JSON Schema |
 | 客户/供应商/3PL 多维 Portal | NotStarted | 主工作树无 Space ExternalOrganization/Grant 实现 |
 | CP6 WMS 发布 Saga 与标准模拟器 | Partial | Legacy 事件发布存在；Design V1 可恢复外部 Saga 尚未完成 |
 
-候选工作树不是实现真相。`0d25da4d` 只是保全检查点；只有经过 ADR-0003 的文件审计、按子任务独立提取、迁移验证和测试后，才能更新为 Implemented。当前唯一 Space 集成基线是 `2ccdff7a`。
+候选工作树不是实现真相。`0d25da4d` 只是保全检查点；只有经过 ADR-0003 的文件审计、按子任务独立提取、迁移验证和测试后，才能更新为 Implemented。当前唯一 Space 代码集成基线是 `3742fbff`；E02 S01 仍是 Partial，不得以实验工具替代最终技术选型或生产适配器。
 
 ## 10. 固定实施批次
 

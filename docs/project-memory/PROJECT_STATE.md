@@ -11,6 +11,7 @@
 - Space E01 S04 功能/集成提交：`bac76444` / `85792161`
 - Space E01 S05 功能/集成提交：`3258d47f` / `36f534d9`
 - Space E01 S06 功能/集成提交：`6daf1aeb` / `2ccdff7a`
+- Space E02 S01 实验门禁功能/集成提交：`fe959066` / `3742fbff`
 - Space 后续候选安全检查点：`checkpoint/space-candidate-20260730`（`0d25da4d`，不得整包合入）
 - 远端：`origin`（GitHub 私有仓库）
 - 换机标签：`migration-2026-07-18-ready`
@@ -22,7 +23,8 @@
 |---|---|---|
 | E00 S01–S04 | 已进入集成基线 | `539d56de`；事实清单、兼容护栏、数据源契约、审计/可观测性 |
 | E01 S01–S06 | 已进入集成基线 | `539d56de` + `85792161` + `36f534d9` + `2ccdff7a`；版本/来源文件/Job Ledger、Published→Draft Clone、Design API v1、生成 SDK、文件安全扫描与保留清理 |
-| E02 S01、E05–E12 | 候选证据，未集成 | `0d25da4d`；不得以候选报告替代集成验收 |
+| E02 S01 | 部分进入集成基线，最终签收受阻 | `fe959066` + `3742fbff`；中立审计/压力/运行证据/preflight 已集成，正式黄金集、授权、供应商包/凭据和冻结 Worker 尚缺 |
+| E05–E12 | 候选证据，未集成 | `0d25da4d`；不得以候选报告替代集成验收 |
 
 ## 上一完成波：GR-VP
 
@@ -39,6 +41,7 @@
 ## 最近验证基线
 
 - Space 集成基线已推进至 `2ccdff7a`：S06 功能态 CP6 主测试 2674 passed / 17 环境门禁 skipped；合并态 Release 全解构建 0 error（10 个既有 warning），Space Unit 52 passed，Space Integration 17 passed / 29 SQL 环境门禁 skipped，EF 模型与最新 Migration 一致，SDK drift 与 TypeScript strict 检查通过。强制连接本机 SQL 的补跑仍在业务断言前被 TLS/SSPI/Guest 执行身份认证阻断。
+- E02 S01 实验门禁已推进至 `3742fbff`：中立工具 10/10 测试通过，Aspose 隔离实验适配器构建 0 warning / 0 error；5 个冻结 Seed 完整性通过，50MiB 与 100 万实体压力资产生成通过。严格 readiness 按预期退出 `3`，ODA/APS 模板 preflight 按预期退出 `4`，表明外部签收条件仍未满足。
 - Space 集成前端：type-check 通过，86 files / 539 tests passed，production build 通过；仅有既有大 chunk 提示。
 - 后续候选检查点 `0d25da4d` 已独立通过更大范围候选回归，但它仍不是实现真相，也不授权整包合并。
 - 后端在 GR-VP T1 报告中：2220 passed / 5 skipped。
@@ -56,4 +59,4 @@
 
 ## 下一动作
 
-以 `2ccdff7a` 为唯一集成基线，下一步进入 E02 S01 CAD 选择试验与 E07 WMS 契约/模拟器；E13 Provider 试验按冻结批次并行评估。禁止把 E05–E12 候选整包合入。SQL Server 环境可用时补跑当前 29 个门禁测试。GR-VP T1–T7 已完成，不要重做。
+以 `3742fbff` 为唯一 Space 代码集成基线：E02 S01 等待正式 20 文件黄金集、DWG/DXF 矩阵、法务/采购授权、ODA SDK 或 APS 受控凭据及 8 vCPU / 32GiB 冻结 Worker 后完成同环境评分；等待期间继续 E07 WMS 契约/模拟器。E13 Provider 试验按冻结批次评估。禁止把 E05–E12 候选整包合入。SQL Server 环境可用时补跑当前 29 个门禁测试。GR-VP T1–T7 已完成，不要重做。
