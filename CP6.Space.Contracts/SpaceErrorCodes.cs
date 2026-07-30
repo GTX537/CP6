@@ -37,6 +37,11 @@ public static class SpaceErrorCodes
     public const string SourceUnsafe = "SPACE_SOURCE_UNSAFE";
     public const string JobLeaseLost = "SPACE_JOB_LEASE_LOST";
     public const string JobNotRetryable = "SPACE_JOB_NOT_RETRYABLE";
+    public const string JobProcessorUnavailable =
+        "SPACE_JOB_PROCESSOR_UNAVAILABLE";
+    public const string JobProcessorFailed =
+        "SPACE_JOB_PROCESSOR_FAILED";
+    public const string JobTimeout = "SPACE_JOB_TIMEOUT";
     public const string ParseFailed = "SPACE_PARSE_FAILED";
     public const string AiDisabled = "SPACE_AI_DISABLED";
     public const string AiQuotaExceeded = "SPACE_AI_QUOTA_EXCEEDED";

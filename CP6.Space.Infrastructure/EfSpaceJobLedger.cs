@@ -84,15 +84,52 @@ public sealed class EfSpaceJobLeaseStore : ISpaceJobLeaseStore
         _clock = clock;
     }
 
-    public async Task<SpaceJobLease?> TryClaimNextAsync(
+    public Task<SpaceJobLease?> TryClaimNextAsync(
         string workerId,
         string processorVersion,
         TimeSpan leaseDuration,
+        CancellationToken cancellationToken = default) =>
+        TryClaimNextCoreAsync(
+            workerId,
+            processorVersion,
+            leaseDuration,
+            supportedJobTypes: null,
+            cancellationToken);
+
+    public Task<SpaceJobLease?> TryClaimNextAsync(
+        string workerId,
+        string processorVersion,
+        TimeSpan leaseDuration,
+        IReadOnlyCollection<SpaceJobType> supportedJobTypes,
         CancellationToken cancellationToken = default)
+    {
+        ArgumentNullException.ThrowIfNull(supportedJobTypes);
+        if (supportedJobTypes.Count == 0)
+        {
+            throw new ArgumentException(
+                "At least one supported Job type is required.",
+                nameof(supportedJobTypes));
+        }
+
+        return TryClaimNextCoreAsync(
+            workerId,
+            processorVersion,
+            leaseDuration,
+            supportedJobTypes,
+            cancellationToken);
+    }
+
+    private async Task<SpaceJobLease?> TryClaimNextCoreAsync(
+        string workerId,
+        string processorVersion,
+        TimeSpan leaseDuration,
+        IReadOnlyCollection<SpaceJobType>? supportedJobTypes,
+        CancellationToken cancellationToken)
     {
         if (_context.CurrentTenantId == Guid.Empty)
             throw new SpaceTenantScopeException(
                 "A verified Space tenant context is required.");
+        var supportedTypes = supportedJobTypes?.Distinct().ToArray();
 
         for (var retry = 0; retry < ClaimConflictRetries; retry++)
         {
@@ -105,6 +142,8 @@ public sealed class EfSpaceJobLeaseStore : ISpaceJobLeaseStore
             {
                 var exhausted = await _context.Jobs
                     .Where(job =>
+                        (supportedTypes == null ||
+                         supportedTypes.Contains(job.JobType)) &&
                         job.Status == SpaceJobStatus.Running &&
                         job.LockExpiresAtUtc <= now &&
                         job.AttemptCount >= job.MaxAttempts)
@@ -129,6 +168,8 @@ public sealed class EfSpaceJobLeaseStore : ISpaceJobLeaseStore
 
                 var job = await _context.Jobs
                     .Where(candidate =>
+                        (supportedTypes == null ||
+                         supportedTypes.Contains(candidate.JobType)) &&
                         candidate.AttemptCount < candidate.MaxAttempts &&
                         ((candidate.Status == SpaceJobStatus.Queued &&
                           candidate.NextAttemptAtUtc <= now) ||
@@ -272,6 +313,83 @@ public sealed class EfSpaceJobLeaseStore : ISpaceJobLeaseStore
         else
         {
             step.Complete(checkpointJson, outputHash, now);
+        }
+
+        await SaveLeaseChangesAsync(cancellationToken);
+        return RefreshLease(lease, job);
+    }
+
+    public async Task<SpaceJobLease> ReuseStepAsync(
+        SpaceJobLease lease,
+        int stepNo,
+        string stepCode,
+        string checkpointJson,
+        string outputHash,
+        CancellationToken cancellationToken = default)
+    {
+        var now = RequireUtcNow();
+        var job = await LoadLeaseJobAsync(lease, now, cancellationToken);
+        job.FenceCheckpoint(lease.AttemptId, lease.WorkerId, now);
+        var existing = await _context.JobSteps.SingleOrDefaultAsync(
+            step =>
+                step.AttemptId == lease.AttemptId &&
+                step.StepCode == stepCode,
+            cancellationToken);
+        if (existing is not null)
+        {
+            if (existing.Status != SpaceJobStepStatus.Reused ||
+                existing.StepNo != stepNo ||
+                !string.Equals(
+                    existing.CheckpointJson,
+                    checkpointJson,
+                    StringComparison.Ordinal) ||
+                !string.Equals(
+                    existing.OutputHash,
+                    outputHash,
+                    StringComparison.OrdinalIgnoreCase))
+            {
+                throw new SpaceJobStateException(
+                    "A Job step cannot be reused with different output.");
+            }
+
+            await SaveLeaseChangesAsync(cancellationToken);
+            return RefreshLease(lease, job);
+        }
+
+        _context.JobSteps.Add(
+            SpaceJobStep.Reuse(
+                lease.TenantId,
+                lease.AttemptId,
+                stepNo,
+                stepCode,
+                checkpointJson,
+                outputHash,
+                now));
+        await SaveLeaseChangesAsync(cancellationToken);
+        return RefreshLease(lease, job);
+    }
+
+    public async Task<SpaceJobLease> FailStepAsync(
+        SpaceJobLease lease,
+        Guid stepId,
+        CancellationToken cancellationToken = default)
+    {
+        var now = RequireUtcNow();
+        var job = await LoadLeaseJobAsync(lease, now, cancellationToken);
+        job.FenceCheckpoint(lease.AttemptId, lease.WorkerId, now);
+        var step = await _context.JobSteps.SingleOrDefaultAsync(
+                       item =>
+                           item.Id == stepId &&
+                           item.AttemptId == lease.AttemptId,
+                       cancellationToken)
+                   ?? throw new KeyNotFoundException(
+                       "The Space Job step was not found.");
+        if (step.Status == SpaceJobStepStatus.Running)
+            step.Fail(now);
+        else if (step.Status != SpaceJobStepStatus.Failed)
+        {
+            throw new SpaceJobStateException(
+                "A completed Job step cannot be failed.");
         }
 
         await SaveLeaseChangesAsync(cancellationToken);
@@ -467,7 +585,10 @@ public sealed class EfSpaceJobLeaseStore : ISpaceJobLeaseStore
             job.SubjectId,
             job.InputHash,
             job.LockExpiresAtUtc!.Value,
-            job.RowVersion.ToArray());
+            job.RowVersion.ToArray(),
+            job.CancellationRequestedAtUtc.HasValue,
+            job.ProgressDone,
+            job.ProgressTotal);
 
     private static SpaceJobLease RefreshLease(
         SpaceJobLease lease,
@@ -476,6 +597,10 @@ public sealed class EfSpaceJobLeaseStore : ISpaceJobLeaseStore
         {
             LockExpiresAtUtc = job.LockExpiresAtUtc!.Value,
             RowVersion = job.RowVersion.ToArray(),
+            CancellationRequested =
+                job.CancellationRequestedAtUtc.HasValue,
+            ProgressDone = job.ProgressDone,
+            ProgressTotal = job.ProgressTotal,
         };
 
     private static SpaceJobLeaseLostException LeaseLost(Exception? inner = null)

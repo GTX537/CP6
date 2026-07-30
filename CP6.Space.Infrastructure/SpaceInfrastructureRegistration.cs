@@ -25,6 +25,7 @@ public static class SpaceInfrastructureRegistration
         services.AddSingleton<ISpaceClock, SystemSpaceClock>();
         services.TryAddSingleton(new SpaceFileUploadLimits());
         services.TryAddSingleton(new SpaceFileRetentionOptions());
+        services.TryAddSingleton(new SpaceJobProcessorOptions());
         services.TryAddSingleton(
             SpaceWorkerSandboxPolicy.FileSafetyDefault);
         services.TryAddSingleton<
@@ -42,6 +43,23 @@ public static class SpaceInfrastructureRegistration
         services.AddScoped<ISpaceJobQueue, EfSpaceJobQueue>();
         services.AddScoped<ISpaceJobLeaseStore, EfSpaceJobLeaseStore>();
         services.AddScoped<ISpaceJobProgressReader, EfSpaceJobProgressReader>();
+        services.TryAddScoped<
+            ISpaceImportJobStepExecutor,
+            UnavailableSpaceImportJobStepExecutor>();
+        services.TryAddScoped<
+            ISpaceBuildSceneJobStepExecutor,
+            UnavailableSpaceBuildSceneJobStepExecutor>();
+        services.TryAddEnumerable(
+            ServiceDescriptor.Scoped<
+                ISpaceJobProcessor,
+                SpaceImportJobProcessor>());
+        services.TryAddEnumerable(
+            ServiceDescriptor.Scoped<
+                ISpaceJobProcessor,
+                SpaceBuildSceneJobProcessor>());
+        services.AddScoped<
+            ISpaceJobProcessorRunner,
+            SpaceJobProcessorRunner>();
         services.AddScoped<ISpaceFileScanStateStore, EfSpaceFileScanStateStore>();
         services.AddScoped<ISpaceFileRetentionStore, EfSpaceFileRetentionStore>();
         services.TryAddScoped<
