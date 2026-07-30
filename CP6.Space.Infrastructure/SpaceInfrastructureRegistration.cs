@@ -49,6 +49,9 @@ public static class SpaceInfrastructureRegistration
         services.TryAddSingleton<ISpaceWmsSimulatorControl>(
             provider =>
                 provider.GetRequiredService<StandardSpaceWmsSimulator>());
+        services.TryAddSingleton<
+            ISpaceStandardWarehouseDatasetLoader,
+            StandardSpaceWarehouseDatasetLoader>();
         services.AddScoped<ISpaceWmsAdapter, Cp6SpaceWmsAdapter>();
         services.AddScoped<ISpaceWmsRuntimeSource>(
             provider => provider.GetRequiredService<ISpaceWmsAdapter>());
