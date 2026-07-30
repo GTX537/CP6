@@ -1,0 +1,42 @@
+{
+  "schemaVersion": 1,
+  "candidateId": "autodesk-aps-autocad-automation",
+  "candidateVersion": "<engine-alias-and-version>",
+  "deploymentMode": "ControlledService",
+  "dataset": {
+    "manifestPath": "<formal-golden-package>/manifest.json",
+    "stress50MiBPath": "<stress-assets>/stress-50mb.dxf",
+    "stressOneMillionPath": "<stress-assets>/stress-1m-entities.dxf"
+  },
+  "legal": {
+    "approvalReference": "<legal-or-procurement-record>",
+    "multiTenantSaasApproved": false,
+    "scaledWorkersApproved": false,
+    "disasterRecoveryApproved": false,
+    "nonProductionApproved": false,
+    "redistributionOrHostedServiceApproved": false
+  },
+  "isolation": {
+    "evidenceReference": "<worker-security-evidence>",
+    "workerVcpu": 8,
+    "workerMemoryMiB": 32768,
+    "networkPolicy": "ApprovedEndpointsOnly",
+    "restrictedServiceIdentity": true,
+    "noBusinessCredentials": true,
+    "dedicatedTemporaryDirectory": true,
+    "outOfProcess": true,
+    "processTreeKillVerified": true
+  },
+  "packages": [],
+  "requiredSecretEnvironmentVariables": [
+    "CP6_SPACE_APS_CLIENT_ID",
+    "CP6_SPACE_APS_CLIENT_SECRET"
+  ],
+  "controlledService": {
+    "approvedRegion": "<region>",
+    "regionApprovalReference": "<security-or-data-governance-record>",
+    "dpaReference": "<dpa-record>",
+    "retentionDeletionReference": "<retention-deletion-evidence>",
+    "engineVersion": "<engine-alias-and-version>"
+  }
+}
