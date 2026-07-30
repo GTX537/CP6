@@ -4,12 +4,12 @@
 - 集成分支：`integration/space-v1-20260730`
 - 基线父提交：`dcc1ac9a`
 - 初始集成提交：`539d56de`
-- 当前代码集成提交：`dca6e19c`
+- 当前代码集成提交：`b33929fb`
 - 候选检查点：`checkpoint/space-candidate-20260730` / `0d25da4d`
 
 ## 1. 本轮结论
 
-E00 S01–S04、E01 S01–S06、E07 S01–S04 与 E13 S01–S03 已进入唯一集成基线。E02 S01 的中立实验门禁也已进入基线，但最终技术选型仍受外部数据、授权和环境阻塞，不计作完整签收。各切片均按冻结边界独立实现或由候选重建并经过审查，没有整包合入候选。
+E00 S01–S04、E01 S01–S06、E07 S01–S04 与 E13 S01–S03、S12 已进入唯一集成基线。E02 S01 的中立实验门禁也已进入基线，但最终技术选型仍受外部数据、授权和环境阻塞，不计作完整签收。各切片均按冻结边界独立实现或由候选重建并经过审查，没有整包合入候选。
 
 ## 2. 已集成范围
 
@@ -31,6 +31,7 @@ E00 S01–S04、E01 S01–S06、E07 S01–S04 与 E13 S01–S03 已进入唯一�
 | E13 S01 | Provider/确定性端口、Schema v1 强类型契约、租户/Site/别名/数据策略/外部开关门禁、默认 Disabled 与配额失败关闭 |
 | E13 S02 | Run/Proposal/Decision/Usage 租户化审计模型、状态机、复合外键、唯一约束、RowVersion 和独立 Migration |
 | E13 S03 | Import 6 步/BuildScene 12 步显式处理器、类型过滤认领、租约心跳、取消、检查点复用、单调进度和失败关闭执行器端口 |
+| E13 S12 | 数据库三并发槽、日/月预算预留、Provider 请求幂等、Usage/实际费用同事务对账和租约回收 |
 
 ## 3. 候选保全边界
 
@@ -54,9 +55,9 @@ E00 S01–S04、E01 S01–S06、E07 S01–S04 与 E13 S01–S03 已进入唯一�
 
 | 检查 | 结果 |
 |---|---|
-| `dotnet build CP6.slnx -c Release --no-restore` | E13 S03 合并代码通过；0 errors，7 existing warnings |
-| Space UnitTests | 126 passed |
-| Space IntegrationTests | 默认门禁 45 passed、33 SQL-gated skipped；本机 SQL 全量启用 71 首轮通过，7 个并行建库/删库超时项串行复跑通过 |
+| `dotnet build CP6.slnx -c Release --no-restore` | Space、WebApi、Desktop、测试等项目完成编译；Android D8 因 D 盘 0GB 空闲失败，整解未通过；Space 受影响项目单独编译 0 errors |
+| Space UnitTests | 136 passed |
+| Space IntegrationTests | 默认门禁 46 passed、36 SQL-gated skipped；本机 SQL 全量启用 77 首轮通过，5 个并行建库/Migration/删库超时项串行复跑通过 |
 | EF Migration 一致性 | `has-pending-model-changes` 通过，无待迁移模型变更 |
 | CP6.Tests | 2680 passed，17 environment-gated skipped |
 | CP6.Client.Tests | 71 passed |
@@ -70,11 +71,12 @@ E00 S01–S04、E01 S01–S06、E07 S01–S04 与 E13 S01–S03 已进入唯一�
 | E13 S01 Provider 门禁 | 三类 Provider 共用同一 SPI；默认租户 Disabled、注册表为空、配额失败关闭；敏感标识不进入 Provider 输入；Provider 契约 18 passed，权限聚焦 17 passed |
 | E13 S02 数据模型门禁 | 四表租户过滤/复合外键/RowVersion/追加审计通过；新 SQL 测试真实落库并验证 Current Run 与 Provider 请求去重；E13-S02 新增 16 Unit、4 Integration（含 1 SQL） |
 | E13 S03 Worker 处理器门禁 | Import 6 步和 BuildScene 12 步目录固定；类型过滤、复用、取消、租约丢失、宿主停机、硬超时和安全失败分类通过；新增 13 Unit，SQL 聚焦 3/3 passed |
+| E13 S12 容量门禁 | 三并发第四稳定 429、策略收紧不超配、日/月预算原子竞争、过期未发送预留释放、Submitted 持有和 Provider 请求只计费一次；新增 10 Unit，SQL 聚焦 4/4 passed |
 | Frontend type-check | 通过 |
 | Frontend unit tests | 86 files，539 tests passed |
 | Frontend production build | 通过；保留既有大 chunk 提示 |
 
-默认跳过项是环境门禁，不视为失败，也不记作已通过。2026-07-30 已在提权的本地测试宿主中使用 Windows 集成认证连接 `KOUSQLSERVER`。E13-S03 后 78 个 Space Integration 测试全部实际启动：71 个首轮通过；7 个测试在并行创建、握手或删除独立数据库的压力下超时，随后逐项串行复跑全部通过。所有临时数据库均由测试清理，E13-S03 聚焦 SQL 测试最终 3/3 无跳过通过。
+默认跳过项是环境门禁，不视为失败，也不记作已通过。2026-07-30 已在提权的本地测试宿主中使用 Windows 集成认证连接 `KOUSQLSERVER`。E13-S12 后 82 个 Space Integration 测试全部实际启动：77 个首轮通过；5 个测试在并行创建、Migration 或删除独立数据库的压力下超时，随后逐项串行复跑全部通过。E13-S12 聚焦 SQL 测试最终 4/4 无跳过通过。
 
 S06 功能提交 `6daf1aeb` 与 no-ff 集成提交 `2ccdff7a` 交付独立 Migration `20260730152005_SpaceE01S06FileSafetyRetention`。E02 实验提交 `fe959066` 与 no-ff 集成提交 `3742fbff` 只增加 solution 外实验项目、文档和 CAD 文件字节稳定属性，不改生产 HTTP、数据库模型或前端产品代码；产品验证沿用 S06 基线。
 
@@ -88,11 +90,13 @@ E13 S02 功能提交 `cff25a25` 与 no-ff 集成提交 `94822669` 交付 `Space_
 
 E13 S03 功能提交 `cebd401a` 与 no-ff 集成提交 `dca6e19c` 交付 Import/BuildScene 可恢复处理器控制面。实际 CAD、规则、Provider、校验、融合、几何、Proposal/Issue 和 Usage 步骤仍由后续端口实现；默认执行器稳定返回 `SPACE_JOB_PROCESSOR_UNAVAILABLE`。本卡无 Migration、HTTP、外部网络调用或跨租户宿主循环。
 
+E13 S12 功能提交 `54456946` 与 no-ff 集成提交 `b33929fb` 交付 `Space_TenantAiWorkSlot`、`Space_AiBudgetReservation`、容量账本/Coordinator 和 Migration `20260730183757_SpaceE13S12AiCapacityLedger`。本卡没有 ProviderConfig 管理、HTTP、外部网络调用或匿名 RunId；S01 低层 Gateway 继续失败关闭，后续 BuildScene 执行器必须携带真实 Run/Worker/预算上下文使用容量账本。
+
 ## 6. 下一批固定顺序
 
 1. E02 S01：获得正式黄金集、DWG/DXF 矩阵、ODA/APS 授权材料和 8 vCPU / 32GiB 冻结 Worker 后，运行同环境试验并按 ADR-0001 评分签收。
 2. E07 S05：等待 E04 S04，不提前采用或切换。
-3. E13 S12：依赖 E13 S01、S03 已满足；交付数据库保护的单租户三并发、日/月预算预留、用量和费用审计，不提前实现 HTTP 或 Provider。
-4. E13 S04/S05：等待 E02 S03、CAD IR 最小化和正式供应商证据。
+3. E13 S04/S05：等待 E02 S03、CAD IR 最小化和正式供应商证据。
+4. E13 S13/S11/S18：分别等待 S04、Apply/恢复链和试点链；当前没有可独立启动的后续 E13 卡。
 
 每个子任务必须独立提取、审查、迁移验证、测试和提交。E05–E12 候选不得整包 merge 或 cherry-pick。
