@@ -26,6 +26,8 @@
     <ProjectReference Include="..\CP6.WebApi\CP6.WebApi.csproj" />
     <ProjectReference Include="..\CP6.Core\CP6.Core.csproj" />
     <ProjectReference Include="..\CP6.Entity\CP6.Entity.csproj" />
+    <ProjectReference Include="..\CP6.Space.Application\CP6.Space.Application.csproj" />
+    <ProjectReference Include="..\CP6.Space.Contracts\CP6.Space.Contracts.csproj" />
   </ItemGroup>
 
 </Project>
