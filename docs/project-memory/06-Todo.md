@@ -2,10 +2,10 @@
 
 ## P0：Space V1 下一批受控提取
 
-- 以 `36f534d9` 为唯一集成基线，从 `0d25da4d` 只提取 E01 S06（文件安全与保留）；单独审查 Quarantine→Scan→Safe/Rejected、引用感知删除、到期清理、迁移链和共享依赖并完整回归。
-- E01 S06 保持独立功能提交、no-ff 集成提交和交付报告；不得把候选中的后续 Scene/Asset/Planning/Publish 能力夹带进入。
-- 为自动化执行身份提供可认证的 SQL Server 测试连接后，补跑当前 24 个 SQL-gated Space Integration 测试；2026-07-30 的本机尝试在业务断言前被 TLS/SSPI/Guest 身份认证阻断，未补跑前不得把“跳过”写成“通过”。
-- E01 完成后再进入 E02 S01 CAD 选择试验与 E07 WMS 契约/模拟器；E13 Provider 试验按冻结批次并行评估。
+- 以 `2ccdff7a` 为唯一集成基线，进入 E02 S01 CAD 选择试验；只交付 ADR-0001 所需技术、授权、实体/版本和性能证据，不提前夹带完整 CAD 解析产品能力。
+- 按批次 B 启动 E07 WMS 契约、CP6 适配器和标准模拟器；保持与 E02 S01 独立提交、独立验收。
+- E13 Provider 试验按冻结批次并行评估，原始 CAD 不得外发，规则/Mock 路径不得依赖外部 Provider。
+- 为自动化执行身份提供可认证的 SQL Server 测试连接后，补跑当前 29 个 SQL-gated Space Integration 测试；2026-07-30 的本机尝试在业务断言前被 TLS/SSPI/Guest 身份认证阻断，未补跑前不得把“跳过”写成“通过”。
 - `0d25da4d` 中 E05–E12 是候选证据，不得整包 merge/cherry-pick；必须重新核对依赖、迁移链和产品冻结范围。
 - P2.5 不混入本轮 Space 基线，待 E01 基线稳定后另行评估。
 

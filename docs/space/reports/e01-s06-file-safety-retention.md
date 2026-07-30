@@ -1,8 +1,10 @@
 # E01-S06 文件安全扫描与保留清理交付报告
 
-- 状态：实现与验证完成，待提交并合入 Space 集成分支
+- 状态：已完成并合入 Space 集成分支
 - 工作分支：`codex/space-e01-s06-file-safety`
 - 基线：`integration/space-v1-20260730@a423bec8`
+- 功能提交：`6daf1aeb`
+- no-ff 集成提交：`2ccdff7a`
 - Migration：`20260730152005_SpaceE01S06FileSafetyRetention`
 
 ## 1. 交付范围
@@ -125,7 +127,7 @@ EF 检查结果：`No changes have been made to the model since the last migrati
 | Space UnitTests 全量 | 52 passed | E01-S01 至 S06 回归 |
 | Space IntegrationTests 全量 | 17 passed / 29 SQL-gated skipped | 非 SQL 测试全部通过；跳过项不计作 passed |
 | CP6.Tests 全量 | 2674 passed / 17 environment-gated skipped | Legacy Space 与其他模块回归 |
-| 全解决方案 Release build | succeeded，7 existing warnings / 0 errors | S06 项目 0 warnings |
+| 全解决方案 Release build | succeeded，10 existing warnings / 0 errors | S06 项目 0 warnings |
 | C# SDK | build passed | `net8.0`，0 warnings / 0 errors |
 | TypeScript SDK | strict/noEmit passed | Fetch client |
 | SDK drift check | passed | OpenAPI、C#、TypeScript 生成物一致 |
@@ -135,7 +137,8 @@ EF 检查结果：`No changes have been made to the model since the last migrati
 
 本机自动化身份仍因 TLS/SSPI/Guest 认证问题无法进入 SQL Server，所以 29 个
 Space SQL 测试只记作 skipped，不记作 passed；其中包含本卡新增的 5 个真实
-SQL Server 测试。7 个构建 warning 位于既有 `CP6.Tests` 代码，不在本卡范围。
+SQL Server 测试。10 个构建 warning 位于既有 `CP6.Core` 与 `CP6.Tests` 代码，
+不在本卡范围。
 S06 没有修改 `cp6.web` 产品代码，未重复运行前端应用测试。
 
 SDK 检查同时修正了 Windows `core.autocrlf=true` 下的伪漂移：生成器现在对
