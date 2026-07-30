@@ -2,9 +2,9 @@
 
 ## P0：Space V1 下一批受控提取
 
-- 以 `85792161` 为唯一集成基线，从 `0d25da4d` 只提取 E01 S05（Design API V1）；单独审查 API、权限、错误契约和共享依赖并完整回归。
-- E01 S05 通过后提取 E01 S06（文件安全与保留）；每项保持独立提交和报告。
-- 为自动化执行身份提供可认证的 SQL Server 测试连接后，补跑当前 22 个 SQL-gated Space Integration 测试；2026-07-30 的本机尝试在业务断言前被 TLS/SSPI/Guest 身份认证阻断，未补跑前不得把“跳过”写成“通过”。
+- 以 `36f534d9` 为唯一集成基线，从 `0d25da4d` 只提取 E01 S06（文件安全与保留）；单独审查 Quarantine→Scan→Safe/Rejected、引用感知删除、到期清理、迁移链和共享依赖并完整回归。
+- E01 S06 保持独立功能提交、no-ff 集成提交和交付报告；不得把候选中的后续 Scene/Asset/Planning/Publish 能力夹带进入。
+- 为自动化执行身份提供可认证的 SQL Server 测试连接后，补跑当前 24 个 SQL-gated Space Integration 测试；2026-07-30 的本机尝试在业务断言前被 TLS/SSPI/Guest 身份认证阻断，未补跑前不得把“跳过”写成“通过”。
 - E01 完成后再进入 E02 S01 CAD 选择试验与 E07 WMS 契约/模拟器；E13 Provider 试验按冻结批次并行评估。
 - `0d25da4d` 中 E05–E12 是候选证据，不得整包 merge/cherry-pick；必须重新核对依赖、迁移链和产品冻结范围。
 - P2.5 不混入本轮 Space 基线，待 E01 基线稳定后另行评估。

@@ -1,8 +1,9 @@
 # E01-S05 Design API v1 交付报告
 
 - 日期：2026-07-30
-- 状态：受控实现完成，待提交并合入唯一集成分支
-- 工作分支：`codex/space-e01-s05-design-api`
+- 状态：受控实现完成，已合入唯一集成分支
+- 功能提交：`codex/space-e01-s05-design-api@3258d47f`
+- 集成提交：`integration/space-v1-20260730@36f534d9`
 - 基线：`integration/space-v1-20260730@a9dc903c`
 - Migration：`20260726092519_SpaceE01S05DesignApiIdempotency`
 
