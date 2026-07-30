@@ -4,12 +4,12 @@
 - 集成分支：`integration/space-v1-20260730`
 - 基线父提交：`dcc1ac9a`
 - 初始集成提交：`539d56de`
-- 当前代码集成提交：`ea161975`
+- 当前代码集成提交：`94822669`
 - 候选检查点：`checkpoint/space-candidate-20260730` / `0d25da4d`
 
 ## 1. 本轮结论
 
-E00 S01–S04、E01 S01–S06、E07 S01–S04 与 E13 S01 已进入唯一集成基线。E02 S01 的中立实验门禁也已进入基线，但最终技术选型仍受外部数据、授权和环境阻塞，不计作完整签收。各切片均按冻结边界独立实现或由候选重建并经过审查，没有整包合入候选。
+E00 S01–S04、E01 S01–S06、E07 S01–S04 与 E13 S01–S02 已进入唯一集成基线。E02 S01 的中立实验门禁也已进入基线，但最终技术选型仍受外部数据、授权和环境阻塞，不计作完整签收。各切片均按冻结边界独立实现或由候选重建并经过审查，没有整包合入候选。
 
 ## 2. 已集成范围
 
@@ -29,6 +29,7 @@ E00 S01–S04、E01 S01–S06、E07 S01–S04 与 E13 S01 已进入唯一集成�
 | E07 S01–S03 | WMS 能力合同、CP6 真实适配器、持久化幂等账本、标准模拟器、库存/任务查询与故障注入 |
 | E07 S04 | 确定性 500 货架/10,000 库位标准仓、WMS seed、DXF/底图/期望答案、加载器与 6 个固定故障样本 |
 | E13 S01 | Provider/确定性端口、Schema v1 强类型契约、租户/Site/别名/数据策略/外部开关门禁、默认 Disabled 与配额失败关闭 |
+| E13 S02 | Run/Proposal/Decision/Usage 租户化审计模型、状态机、复合外键、唯一约束、RowVersion 和独立 Migration |
 
 ## 3. 候选保全边界
 
@@ -52,9 +53,9 @@ E00 S01–S04、E01 S01–S06、E07 S01–S04 与 E13 S01 已进入唯一集成�
 
 | 检查 | 结果 |
 |---|---|
-| `dotnet build CP6.slnx -c Release --no-restore` | E13 S01 合并态通过；0 errors，10 existing warnings |
-| Space UnitTests | 97 passed |
-| Space IntegrationTests | 41 passed，30 SQL-gated skipped；本机强制补跑在业务断言前被 TLS/SSPI/Guest 执行身份认证阻断 |
+| `dotnet build CP6.slnx -c Release --no-restore` | E13 S02 合并代码通过；0 errors；首次完整构建 10 existing warnings，最终增量构建 0 warnings |
+| Space UnitTests | 113 passed |
+| Space IntegrationTests | 默认门禁 44 passed、31 SQL-gated skipped；本机 SQL 全量启用 73 首轮通过，2 个既有并发测试超时后串行复跑通过 |
 | EF Migration 一致性 | `has-pending-model-changes` 通过，无待迁移模型变更 |
 | CP6.Tests | 2680 passed，17 environment-gated skipped |
 | CP6.Client.Tests | 71 passed |
@@ -66,11 +67,12 @@ E00 S01–S04、E01 S01–S06、E07 S01–S04 与 E13 S01 已进入唯一集成�
 | Aspose 隔离淘汰复现 | 适配器 build 0 warning / 0 error；25 次中 L5 5/5 崩溃，20 个成功观察均只保留图层 `0` |
 | E07 S04 数据与范围门禁 | 两次独立生成 17 个文件差异为 0；干净检出 Manifest 哈希错误为 0；新增 C# 精确格式通过；未混入 S05、E08、E13、Workload 或发布 Saga |
 | E13 S01 Provider 门禁 | 三类 Provider 共用同一 SPI；默认租户 Disabled、注册表为空、配额失败关闭；敏感标识不进入 Provider 输入；Provider 契约 18 passed，权限聚焦 17 passed |
+| E13 S02 数据模型门禁 | 四表租户过滤/复合外键/RowVersion/追加审计通过；新 SQL 测试真实落库并验证 Current Run 与 Provider 请求去重；E13-S02 新增 16 Unit、4 Integration（含 1 SQL） |
 | Frontend type-check | 通过 |
 | Frontend unit tests | 86 files，539 tests passed |
 | Frontend production build | 通过；保留既有大 chunk 提示 |
 
-跳过项是环境门禁，不视为失败，也不记作已通过。2026-07-30 已尝试以项目现有 Windows 集成认证连接本机 SQL Server；运行在建库和业务断言前被加密协商、SSPI 及自动化执行身份认证阻断。没有测试宿主进程残留。获得可认证的隔离 SQL 测试连接后，仍需补跑 30 个 Space SQL 集成测试，其中 5 个是 S06 新增测试，1 个是 E07 新增的迁移/事务合同测试。
+默认跳过项是环境门禁，不视为失败，也不记作已通过。2026-07-30 已在提权的本地测试宿主中使用 Windows 集成认证连接 `KOUSQLSERVER`，75 个 Space Integration 测试全部实际启动：73 个首轮通过；文件保留与 Job 业务键两个既有并发测试在并行建库压力下超时，随后分别串行复跑通过。所有临时数据库均由测试清理，新 E13-S02 SQL 测试无跳过通过。
 
 S06 功能提交 `6daf1aeb` 与 no-ff 集成提交 `2ccdff7a` 交付独立 Migration `20260730152005_SpaceE01S06FileSafetyRetention`。E02 实验提交 `fe959066` 与 no-ff 集成提交 `3742fbff` 只增加 solution 外实验项目、文档和 CAD 文件字节稳定属性，不改生产 HTTP、数据库模型或前端产品代码；产品验证沿用 S06 基线。
 
@@ -80,11 +82,13 @@ E07 S04 功能提交 `74577015` 与 no-ff 集成提交 `6d751e0c` 交付数据�
 
 E13 S01 功能提交 `8f7fc25e` 与 no-ff 集成提交 `ea161975` 交付 Provider/确定性端口、租户策略和失败关闭默认值。权限种子新增 `space:model:generate-ai` 与 `space:model:review-ai`，但权限不会启用 AI；未显式替换租户策略、Provider 注册和原子配额租约前不会发生 Provider 调用。本卡无 Migration、HTTP 或外部网络调用。
 
+E13 S02 功能提交 `cff25a25` 与 no-ff 集成提交 `94822669` 交付 `Space_GenerationRun`、`Space_GenerationProposal`、`Space_ProposalDecision` 和 `Space_AiUsageRecord`，以及 Migration `20260730174231_SpaceE13S02GenerationDataModel`。本卡只建立可审计持久化边界，不包含 ProviderConfig、Worker、CAD IR、输出校验、融合、Apply、预算或 HTTP。
+
 ## 6. 下一批固定顺序
 
 1. E02 S01：获得正式黄金集、DWG/DXF 矩阵、ODA/APS 授权材料和 8 vCPU / 32GiB 冻结 Worker 后，运行同环境试验并按 ADR-0001 评分签收。
 2. E07 S05：等待 E04 S04，不提前采用或切换。
-3. E13 S02：交付 Run、Proposal、Decision、Usage 租户隔离数据模型；不提前实现 S03～S07 或 S12。
+3. E13 S03：交付 Import/BuildScene Worker 处理器和可恢复执行边界；不提前实现 S04～S07、Apply 或 S12。
 4. E13 S04/S05：等待 E02 S03、CAD IR 最小化和正式供应商证据。
 
 每个子任务必须独立提取、审查、迁移验证、测试和提交。E05–E12 候选不得整包 merge 或 cherry-pick。
