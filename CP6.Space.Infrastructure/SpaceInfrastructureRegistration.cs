@@ -45,6 +45,13 @@ public static class SpaceInfrastructureRegistration
         services.AddScoped<SpaceVersionCloneCoordinator>();
         services.AddScoped<SpaceSourceCoordinator>();
         services.AddScoped<ISpaceDesignV1Service, SpaceDesignV1Service>();
+        services.TryAddSingleton<StandardSpaceWmsSimulator>();
+        services.TryAddSingleton<ISpaceWmsSimulatorControl>(
+            provider =>
+                provider.GetRequiredService<StandardSpaceWmsSimulator>());
+        services.AddScoped<ISpaceWmsAdapter, Cp6SpaceWmsAdapter>();
+        services.AddScoped<ISpaceWmsRuntimeSource>(
+            provider => provider.GetRequiredService<ISpaceWmsAdapter>());
         return services;
     }
 }

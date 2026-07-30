@@ -474,6 +474,8 @@ public class CP6Context : DbContext, IDataProtectionKeyContext
     // ───── Space ch04 v1.1 §5.3 发布落点（WMS 侧消费表，方案A 2026-07-05 拍板）─────
     /// <summary>WMS 库位消费表（Space 发布落点，幂等判据 lastVersion 存放处）</summary>
     public DbSet<CP6.Entity.DomainModels.Wms.WmsBin> WmsBins { get; set; }
+    /// <summary>Space WMS Adapter operation-key ledger.</summary>
+    public DbSet<SpaceWmsOperation> SpaceWmsOperations { get; set; }
 
     // ───── 财务（Fin）章01 总账内核 ─────
     /// <summary>会计科目（章01，多国别模板包 + Role 角色锚点）</summary>
@@ -2416,6 +2418,19 @@ public class CP6Context : DbContext, IDataProtectionKeyContext
             e.HasIndex(x => new { x.TenantId, x.WarehouseCd, x.LocationCode }).IsUnique();
             e.Property(x => x.PathJson).HasColumnType("nvarchar(max)");
             e.Property(x => x.AttrsJson).HasColumnType("nvarchar(max)");
+        });
+        modelBuilder.Entity<SpaceWmsOperation>(e =>
+        {
+            e.HasIndex(x => new { x.TenantId, x.OperationKey })
+                .IsUnique();
+            e.Property(x => x.PayloadHash)
+                .HasColumnType("char(64)")
+                .IsUnicode(false)
+                .IsFixedLength();
+            e.Property(x => x.ResultJson)
+                .HasColumnType("nvarchar(max)");
+            e.Property(x => x.ObservedAtUtc)
+                .HasColumnType("datetime2");
         });
 
         // ═══════════════════════════════════════════════════════════
