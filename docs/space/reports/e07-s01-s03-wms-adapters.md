@@ -1,8 +1,10 @@
 # E07-S01～S03 WMS 适配器合同、CP6 实现与标准模拟器交付报告
 
-- 状态：已完成，等待合入 Space 集成分支
+- 状态：已完成并合入 Space 集成分支
 - 工作分支：`codex/space-e07-wms-contract-adapters`
-- 集成基线：`integration/space-v1-20260730@9e270629`
+- 开发基线：`integration/space-v1-20260730@9e270629`
+- 功能提交：`d06a8bd1`
+- no-ff 集成提交：`6e67a9d1`
 - 合同版本：`space-wms-adapter-v1`
 - Migration：`20260730161925_SpaceE07S02WmsAdapterLedger`
 

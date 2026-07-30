@@ -2,7 +2,7 @@
 
 > 依据 Git log 汇总，不替代完整 Git 历史。重点记录影响接手判断的里程碑。
 
-## 2026-07-30：Space V1 E00 / E01 S01–S06 / E02 S01 实验门禁受控集成
+## 2026-07-30：Space V1 E00 / E01 S01–S06 / E02 S01 / E07 S01–S03 受控集成
 
 - `0d25da4d`：把 542 个文件的 Space 后续候选固化到 `checkpoint/space-candidate-20260730`；安全审计未发现真实凭据、私钥或异常构建产物。该提交仅作可回退候选，不是正式实现基线。
 - `539d56de`：从 `dcc1ac9a` 建立 `integration/space-v1-20260730`，no-ff 合入 E00 S01–S04 与 E01 S01–S03。
@@ -14,10 +14,13 @@
 - `2ccdff7a`：以 no-ff 方式把 S06 合入唯一 Space 集成分支。
 - `fe959066`：重建 E02 S01 非生产实验门禁，加入黄金集/版本矩阵审计、确定性 50MiB 与 100 万实体压力生成、子进程证据、ODA/APS fail-closed preflight、隔离 Aspose 26.6.0 复现及 DWG/DXF 字节稳定属性；未实现生产 CAD 适配器或 E02 S02。
 - `3742fbff`：以 no-ff 方式把 E02 S01 可交付实验切片合入唯一 Space 集成分支；最终技术选型继续由正式黄金集、授权、供应商包/凭据和冻结 Worker 阻塞。
+- `d06a8bd1`：按 E07 S01–S03 边界重建版本化 WMS 能力合同、CP6 真实适配器、持久化幂等操作账本和标准模拟器；加入跨站点操作键隔离、脏 EF 上下文失败关闭、真实/模拟来源标记及五类故障注入，未夹带 S04/S05、E08、E13、Workload 或发布 Saga。
+- `6e67a9d1`：以 no-ff 方式把 E07 S01–S03 合入唯一 Space 集成分支。
 - 冲突解决保留 WMS 序列追踪不可降级、Definition 不可变、Space 审计追加写三套保存护栏，并在 `CP6.slnx` 同时保留 Mobile 与六个 Space 项目。
 - S06 功能态验证：CP6 主测试 2674 passed / 17 environment-gated skipped；SDK drift、C# build、TypeScript strict compile、触及文件格式和范围污染审计通过。合并态全解构建 0 error / 10 existing warnings，Space Unit 52 passed、Space Integration 17 passed / 29 SQL-gated skipped，EF 模型无待迁移变更。前端产品代码未受影响，沿用此前 type-check、86 files / 539 tests 和 production build 通过基线。
 - E02 中立工具 10/10 测试通过，Aspose 实验适配器构建 0 warning / 0 error；严格 readiness 与 ODA/APS preflight 分别按预期失败关闭为退出码 `3` / `4`。Aspose 25 次复验中 L5 5/5 崩溃，成功样本 20/20 图层退化为 `0`，因此保持淘汰。
-- 下一步在外部条件到位时收口 E02 S01；等待期间进入 E07。E05–E12 保持候选状态，禁止整包合入。
+- E07 验证：Release 全解构建 0 error，Space Unit 73 passed，Space Integration 35 passed / 30 SQL-gated skipped，CP6.Tests 2674 passed / 17 environment-gated skipped，Client 71 passed，EF 模型无待迁移变更，新增文件精确格式门禁通过。
+- 下一步在外部条件到位时收口 E02 S01；独立推进 E07 S04 标准数据集，E07 S05 等待 E04 S04。未独立提取的剩余候选禁止整包合入。
 
 ## 2026-07-19：GR-VP T7 部署与真实权限冒烟
 
