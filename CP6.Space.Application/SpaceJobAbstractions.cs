@@ -13,7 +13,10 @@ public sealed record SpaceJobLease(
     Guid SubjectId,
     string InputHash,
     DateTime LockExpiresAtUtc,
-    byte[] RowVersion);
+    byte[] RowVersion,
+    bool CancellationRequested = false,
+    long ProgressDone = 0,
+    long ProgressTotal = 0);
 
 public sealed record SpaceReusableCheckpoint(
     Guid StepId,
@@ -82,6 +85,13 @@ public interface ISpaceJobLeaseStore
         TimeSpan leaseDuration,
         CancellationToken cancellationToken = default);
 
+    Task<SpaceJobLease?> TryClaimNextAsync(
+        string workerId,
+        string processorVersion,
+        TimeSpan leaseDuration,
+        IReadOnlyCollection<SpaceJobType> supportedJobTypes,
+        CancellationToken cancellationToken = default);
+
     Task<SpaceJobLease> RenewAsync(
         SpaceJobLease lease,
         TimeSpan leaseDuration,
@@ -105,6 +115,19 @@ public interface ISpaceJobLeaseStore
         Guid stepId,
         string checkpointJson,
         string outputHash,
+        CancellationToken cancellationToken = default);
+
+    Task<SpaceJobLease> ReuseStepAsync(
+        SpaceJobLease lease,
+        int stepNo,
+        string stepCode,
+        string checkpointJson,
+        string outputHash,
+        CancellationToken cancellationToken = default);
+
+    Task<SpaceJobLease> FailStepAsync(
+        SpaceJobLease lease,
+        Guid stepId,
         CancellationToken cancellationToken = default);
 
     Task<SpaceReusableCheckpoint?> FindReusableCheckpointAsync(
