@@ -1,0 +1,167 @@
+{
+  "schemaVersion": 1,
+  "evidenceDate": "2026-07-26",
+  "applicationCommit": "94bcb496",
+  "acceptanceSourceCommit": "f27efeff",
+  "environment": {
+    "operatingSystem": "Microsoft Windows NT 10.0.26200.0",
+    "processArchitecture": "X64",
+    "framework": ".NET 8.0.25",
+    "frozenWorkerReference": "8 vCPU / 32 GB; this local run is not the frozen Worker environment"
+  },
+  "datasetAudit": {
+    "datasetName": "CP6 Space MVP Synthetic Seed Pack",
+    "datasetVersion": "1.0.0",
+    "purpose": "DevelopmentSeed",
+    "integrityPassed": true,
+    "sampleCount": 5,
+    "expectedTargetCount": 30,
+    "observedFormats": [
+      "DXF"
+    ],
+    "observedCadVersions": [
+      "AC1015"
+    ],
+    "largestFileBytes": 891,
+    "largestEntityCount": 9,
+    "e02ReadinessPassed": false,
+    "strictReadinessAuditExitCode": 3,
+    "explicitStressAssetsAccepted": true,
+    "missingGates": [
+      "formal-golden-20",
+      "golden-split-distribution",
+      "four-per-layout-family",
+      "dwg-present",
+      "dwg-version-header-matrix",
+      "dxf-version-matrix"
+    ]
+  },
+  "harnessFailureClassification": {
+    "crashFixture": {
+      "expectedExitCode": 17,
+      "observedOutcome": "Crash",
+      "elapsedMilliseconds": 91.801
+    },
+    "timeoutFixture": {
+      "timeoutSeconds": 1,
+      "observedOutcome": "Timeout",
+      "elapsedMilliseconds": 1036.599
+    }
+  },
+  "neutralDxfProbe": {
+    "selectionScoreEligible": false,
+    "seedRuns": {
+      "attempts": 25,
+      "successes": 25,
+      "p50Milliseconds": 137.569,
+      "p95Milliseconds": 169.915,
+      "maximumMilliseconds": 170.260,
+      "maximumPeakWorkingSetMiB": 27.836,
+      "stableObservationHashesPerInput": true
+    },
+    "stress50MiB": {
+      "sourceSha256": "b03b98924ab15d2974ac9c4ca58f1d5b913c02d8b1bd5d468ef44d96aaa5539e",
+      "sizeBytes": 52868085,
+      "entityCount": 860000,
+      "attempts": 20,
+      "successes": 20,
+      "p50Milliseconds": 1012.12,
+      "p95Milliseconds": 1111.86,
+      "maximumMilliseconds": 1171.94,
+      "maximumPeakWorkingSetMiB": 104.96,
+      "stableObservationHashes": true
+    },
+    "stressOneMillion": {
+      "sourceSha256": "a7fba0380b1cb05f8b62c01581cda9700071f4780611bcc743a091ad92ca27b2",
+      "sizeBytes": 61517061,
+      "entityCount": 1000000,
+      "attempts": 5,
+      "successes": 5,
+      "p50Milliseconds": 1122.16,
+      "p95Milliseconds": 1137.41,
+      "maximumMilliseconds": 1137.41,
+      "maximumPeakWorkingSetMiB": 104.98,
+      "stableObservationHashes": true
+    }
+  },
+  "asposeCad": {
+    "packageVersion": "26.6.0",
+    "assemblyVersion": "26.6.0.0",
+    "licenseMode": "unlicensed evaluation",
+    "seedRuns": {
+      "attempts": 25,
+      "successes": 20,
+      "crashes": 5,
+      "successfulRunP50Milliseconds": 573.699,
+      "successfulRunP95Milliseconds": 698.649,
+      "successfulRunMaximumMilliseconds": 729.198,
+      "maximumPeakWorkingSetMiB": 91.785,
+      "l5CrashReproductions": 5,
+      "l5Exception": "Aspose.CAD.CadExceptions.ImageLoadException wrapping NullReferenceException while loading the noisy TEXT sample",
+      "allSuccessfulSamplesLostOriginalLayerNames": true,
+      "entityTypeUnitAndHandleCountsMatchedOnL1ToL4": true
+    },
+    "stress50MiBSmoke": {
+      "elapsedMilliseconds": 9973.946,
+      "peakWorkingSetMiB": 568.691,
+      "inputEntityCount": 860000,
+      "observedEntityCount": 100,
+      "capacityVerdict": "Unassessable under evaluation limits"
+    },
+    "stressOneMillionSmoke": {
+      "elapsedMilliseconds": 11450.301,
+      "peakWorkingSetMiB": 654.352,
+      "inputEntityCount": 1000000,
+      "observedEntityCount": 100,
+      "capacityVerdict": "Unassessable under evaluation limits"
+    },
+    "hardGateVerdict": "Fail: layer fidelity and L5 stability"
+  },
+  "odaFileConverterEvaluation": {
+    "selectionScoreEligible": false,
+    "productVersion": "27.1.0.0",
+    "windowsMsiSha256": "3d5961f510cf95f398b8e2920899dc8e8c51adecdaf5b20a40b3d1a29269de81",
+    "linuxAppImageSha256": "cb77a106354af98a1d355ba0191160aca3f90cb020946803e7c8132cba434dfc",
+    "windowsAuthenticode": {
+      "status": "Valid",
+      "signer": "CN=OPEN DESIGN ALLIANCE, O=OPEN DESIGN ALLIANCE, L=Scottsdale, S=Arizona, C=US",
+      "thumbprint": "D9EC7FAEB9F90F2D62580845C792435C56421D16"
+    },
+    "executionIsolation": "Windows MSI administrative image under tmp; no product installation. Linux AppImage extracted under tmp; no WSL package installation.",
+    "cliProbeAttempts": 3,
+    "cliProbeResult": "The current public page lists inputs but not an argument contract. Help and two guarded argument-order probes opened the GUI; every process was terminated and no CAD asset was produced.",
+    "licenseBoundary": "Official ODA FAQ says non-members may use this free example only for non-commercial applications. Do not use it as the CP6 acceptance-asset or production conversion chain without legal approval.",
+    "generatedCadAssetCount": 0,
+    "verdict": "Useful only as negative tooling/license evidence; it does not unblock the licensed ODA SDK trial."
+  },
+  "vendorTrialPreflight": {
+    "schemaVersion": 1,
+    "productionAdapterImplementationStarted": false,
+    "secretValuesSerialized": false,
+    "odaTemplate": {
+      "exitCode": 4,
+      "passed": false,
+      "expectedDisposition": "Fail closed until exact SDK version/packages, legal approval, frozen Worker evidence, formal dataset, and license environment variable are present."
+    },
+    "apsTemplate": {
+      "exitCode": 4,
+      "passed": false,
+      "expectedDisposition": "Fail closed until engine version, region/DPA/retention approvals, frozen Worker evidence, formal dataset, and credential environment variables are present."
+    },
+    "testCount": 9,
+    "verdict": "The licensed experiment can start only after preflight passes; passing preflight does not authorize E02-S02 or production deployment."
+  },
+  "externalInputDiscovery": {
+    "gitAcceptanceHistoryLatestCommit": "f27efeff",
+    "formalReleaseGateManifestFoundInAnyGitRef": false,
+    "dwgObjectFoundInAnyGitRef": false,
+    "localDwgFoundOutsideBuildAndDownloadedDemoDirectories": false,
+    "localOdaSdkArchiveFound": false,
+    "secretPresenceOnly": {
+      "CP6_SPACE_ODA_LICENSE_PATH": false,
+      "CP6_SPACE_APS_CLIENT_ID": false,
+      "CP6_SPACE_APS_CLIENT_SECRET": false
+    },
+    "secretValuesReadOrRecorded": false
+  }
+}

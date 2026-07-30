@@ -1,0 +1,78 @@
+{
+  "schemaVersion": 1,
+  "evidenceDate": "2026-07-30",
+  "baseCommit": "de27ef22",
+  "environment": {
+    "operatingSystem": "Microsoft Windows NT 10.0.26200.0",
+    "processArchitecture": "X64",
+    "framework": ".NET 8.0.25",
+    "frozenWorkerReference": "8 vCPU / 32 GiB; this local run is not the frozen Worker environment"
+  },
+  "officialDocumentationReview": {
+    "odaDrawingsRelease": "27.6",
+    "odaSaasMinimumPublishedTier": "Sustaining",
+    "odaPublishedFirstYearPriceUsd": 7500,
+    "apsBackupEngine": "Autodesk.AutoCAD+26_0",
+    "apsBackupEngineRemovalDate": "2032-03-29",
+    "asposeEvaluationRequiresLicenseForUnrestrictedTrial": true,
+    "realDwg2027RequiresWindows11": true,
+    "sources": [
+      "https://www.opendesign.com/products/drawings",
+      "https://www.opendesign.com/oda-membership",
+      "https://www.opendesign.com/faq/question/what-are-oda-viewer-and-oda-file-converter",
+      "https://aps.autodesk.com/automation-apis",
+      "https://aps.autodesk.com/blog/aps-business-model-evolution",
+      "https://aps.autodesk.com/blog/end-autocad-2021-engine-new-autocad-2027-engine-released",
+      "https://docs.aspose.com/cad/net/licensing/",
+      "https://purchase.aspose.com/policies/license-types",
+      "https://forge.autodesk.com/developer/overview/realdwg-api"
+    ]
+  },
+  "datasetAudit": {
+    "integrityPassed": true,
+    "sampleCount": 5,
+    "expectedTargetCount": 30,
+    "strictReadinessAuditExitCode": 3,
+    "e02ReadinessPassed": false,
+    "dxfByteStabilityGuard": "*.dxf -text",
+    "stress50MiB": {
+      "sizeBytes": 52868085,
+      "entityCount": 860000,
+      "sha256": "b03b98924ab15d2974ac9c4ca58f1d5b913c02d8b1bd5d468ef44d96aaa5539e"
+    },
+    "stressOneMillion": {
+      "sizeBytes": 61517061,
+      "entityCount": 1000000,
+      "sha256": "a7fba0380b1cb05f8b62c01581cda9700071f4780611bcc743a091ad92ca27b2"
+    },
+    "missingGates": [
+      "formal-golden-20",
+      "golden-split-distribution",
+      "four-per-layout-family",
+      "dwg-present",
+      "dwg-version-header-matrix",
+      "dxf-version-matrix"
+    ]
+  },
+  "vendorTrialPreflight": {
+    "toolTestsPassed": 10,
+    "odaTemplateExitCode": 4,
+    "apsTemplateExitCode": 4,
+    "secretValuesReadOrSerialized": false
+  },
+  "asposeCadRevalidation": {
+    "packageVersion": "26.6.0",
+    "attempts": 25,
+    "successes": 20,
+    "crashes": 5,
+    "l5CrashReproductions": 5,
+    "successfulObservationsWithOnlyLayerZero": 20,
+    "hardGateVerdict": "Fail: layer fidelity and L5 stability"
+  },
+  "scope": {
+    "productionAdapterImplemented": false,
+    "productionSolutionModified": false,
+    "e02S02Started": false,
+    "dwgWritebackIncluded": false
+  }
+}

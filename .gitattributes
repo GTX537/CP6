@@ -1,2 +1,4 @@
 # Environment migration assets are stored through Git LFS, not normal Git objects.
 migration/database/*.bak filter=lfs diff=lfs merge=lfs -text
+*.dxf -text
+*.dwg -text
