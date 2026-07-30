@@ -33,8 +33,12 @@ public sealed class SpaceModel : SpaceTenantEntity
     public void ReserveDraft(SpaceModelVersion version)
     {
         EnsureOwnVersion(version);
-        if (version.Status != SpaceVersionStatus.Draft)
-            throw new SpaceVersionStateException("Only a Draft version can occupy the active draft slot.");
+        if (version.Status is not (
+                SpaceVersionStatus.Draft or SpaceVersionStatus.Initializing))
+        {
+            throw new SpaceVersionStateException(
+                "Only a Draft or Initializing version can occupy the active draft slot.");
+        }
 
         if (ActiveDraftVersionId == version.Id)
             return;
@@ -54,6 +58,19 @@ public sealed class SpaceModel : SpaceTenantEntity
             throw new SpaceVersionConflictException("The version does not own the active draft slot.");
 
         ActiveDraftVersionId = null;
+    }
+
+    public void ReleaseFailedClone(SpaceModelVersion version)
+    {
+        EnsureOwnVersion(version);
+        if (version.Status is not (
+                SpaceVersionStatus.Failed or SpaceVersionStatus.Abandoned))
+        {
+            throw new SpaceVersionStateException(
+                "Only a terminal clone reservation can be released.");
+        }
+
+        ReleaseDraft(version.Id);
     }
 
     public void SetPublishedVersion(SpaceModelVersion version, string materializedHash)

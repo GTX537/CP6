@@ -60,8 +60,13 @@ public sealed class EfSpaceJobQueue : ISpaceJobQueue
         }
     }
 
-    public Task SaveChangesAsync(CancellationToken cancellationToken = default) =>
-        _context.SaveChangesAsync(cancellationToken);
+    public async Task SaveChangesAsync(CancellationToken cancellationToken = default)
+    {
+        await SpaceCloneReservationCleanup.ReleaseTrackedTerminalAsync(
+            _context,
+            cancellationToken);
+        await _context.SaveChangesAsync(cancellationToken);
+    }
 }
 
 public sealed class EfSpaceJobLeaseStore : ISpaceJobLeaseStore
@@ -113,6 +118,10 @@ public sealed class EfSpaceJobLeaseStore : ISpaceJobLeaseStore
                         "The final worker lease expired.",
                         cancellationToken);
                     exhausted.DeadLetterExpiredLease(now);
+                    await SpaceCloneReservationCleanup.ReleaseIfTerminalAsync(
+                        _context,
+                        exhausted,
+                        cancellationToken);
                     await _context.SaveChangesAsync(cancellationToken);
                     await transaction.CommitAsync(cancellationToken);
                     continue;
@@ -424,6 +433,9 @@ public sealed class EfSpaceJobLeaseStore : ISpaceJobLeaseStore
     {
         try
         {
+            await SpaceCloneReservationCleanup.ReleaseTrackedTerminalAsync(
+                _context,
+                cancellationToken);
             await _context.SaveChangesAsync(cancellationToken);
         }
         catch (DbUpdateConcurrencyException exception)
