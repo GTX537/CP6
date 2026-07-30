@@ -30,27 +30,29 @@ public sealed class EfSpaceFileCatalog : ISpaceFileCatalog
                      file.State == SpaceFileState.Clean),
                 cancellationToken);
 
-    public async Task<int> CountActiveReferencesAsync(
-        Guid tenantId,
-        Guid fileId,
+    public async Task AddQuarantinedWithScanJobAsync(
+        SpaceFile file,
+        SpaceJob scanJob,
         CancellationToken cancellationToken = default)
     {
-        var sources = await _context.Sources.CountAsync(
-            source => source.TenantId == tenantId && source.FileId == fileId,
-            cancellationToken);
-        var artifacts = await _context.Artifacts.CountAsync(
-            artifact => artifact.TenantId == tenantId && artifact.FileId == fileId,
-            cancellationToken);
-        return checked(sources + artifacts);
-    }
+        ArgumentNullException.ThrowIfNull(file);
+        ArgumentNullException.ThrowIfNull(scanJob);
+        if (file.TenantId != _context.CurrentTenantId ||
+            scanJob.TenantId != _context.CurrentTenantId ||
+            scanJob.JobType != SpaceJobType.FileScan ||
+            scanJob.SubjectType != SpaceJobSubjectType.File ||
+            scanJob.SubjectId != file.Id ||
+            scanJob.InputHash != file.Sha256 ||
+            file.State != SpaceFileState.Quarantined)
+        {
+            throw new SpaceTenantScopeException(
+                "The quarantined file and its scan Job must share the verified tenant and subject.");
+        }
 
-    public void Add(SpaceFile file)
-    {
         _context.Files.Add(file);
+        _context.Jobs.Add(scanJob);
+        await _context.SaveChangesAsync(cancellationToken);
     }
-
-    public Task SaveChangesAsync(CancellationToken cancellationToken = default) =>
-        _context.SaveChangesAsync(cancellationToken);
 }
 
 public sealed class EfSpaceSourceCatalog : ISpaceSourceCatalog

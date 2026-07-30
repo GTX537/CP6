@@ -28,6 +28,12 @@ public static class SpaceErrorCodes
     public const string FileTooLarge = "SPACE_FILE_TOO_LARGE";
     public const string FileTypeMismatch = "SPACE_FILE_TYPE_MISMATCH";
     public const string FileQuarantined = "SPACE_FILE_QUARANTINED";
+    public const string FileMalwareDetected = "SPACE_FILE_MALWARE_DETECTED";
+    public const string FileArchiveBomb = "SPACE_FILE_ARCHIVE_BOMB";
+    public const string FileEncryptedUnsupported =
+        "SPACE_FILE_ENCRYPTED_UNSUPPORTED";
+    public const string FileActiveContent = "SPACE_FILE_ACTIVE_CONTENT";
+    public const string FileCorrupt = "SPACE_FILE_CORRUPT";
     public const string SourceUnsafe = "SPACE_SOURCE_UNSAFE";
     public const string JobLeaseLost = "SPACE_JOB_LEASE_LOST";
     public const string JobNotRetryable = "SPACE_JOB_NOT_RETRYABLE";

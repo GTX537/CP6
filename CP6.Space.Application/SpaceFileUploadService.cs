@@ -56,17 +56,23 @@ public sealed class SpaceFileUploadService
     private readonly ISpaceQuarantineStore _quarantine;
     private readonly ISpaceFileCatalog _catalog;
     private readonly SpaceFileUploadLimits _limits;
+    private readonly ISpaceClock _clock;
+    private readonly SpaceFileRetentionOptions _retention;
 
     public SpaceFileUploadService(
         ISpaceExecutionContext execution,
         ISpaceQuarantineStore quarantine,
         ISpaceFileCatalog catalog,
-        SpaceFileUploadLimits? limits = null)
+        SpaceFileUploadLimits? limits = null,
+        ISpaceClock? clock = null,
+        SpaceFileRetentionOptions? retention = null)
     {
         _execution = execution;
         _quarantine = quarantine;
         _catalog = catalog;
         _limits = limits ?? new SpaceFileUploadLimits();
+        _clock = clock ?? new SystemSpaceClock();
+        _retention = retention ?? new SpaceFileRetentionOptions();
     }
 
     public async Task<SpaceFileUploadResult> UploadAsync(
@@ -76,9 +82,10 @@ public sealed class SpaceFileUploadService
     {
         ArgumentNullException.ThrowIfNull(request);
         ArgumentNullException.ThrowIfNull(input);
-        if (_execution.TenantId == Guid.Empty)
+        if (_execution.TenantId == Guid.Empty ||
+            _execution.ActorId == Guid.Empty)
             throw new SpaceTenantScopeException(
-                "A verified Space tenant context is required.");
+                "A verified Space tenant and actor are required.");
         if (!input.CanRead)
             throw new ArgumentException("Upload stream must be readable.", nameof(input));
 
@@ -122,13 +129,20 @@ public sealed class SpaceFileUploadService
                 return new SpaceFileUploadResult(duplicate, Reused: true);
             }
 
+            var now = _clock.UtcNow;
+            if (now.Kind != DateTimeKind.Utc)
+            {
+                throw new InvalidOperationException(
+                    "The Space clock must return UTC.");
+            }
             var file = SpaceFile.CreateUploading(
                 fileId,
                 _execution.TenantId,
                 session.StorageKey,
                 originalName,
                 NormalizeContentType(request.DeclaredContentType),
-                request.RetentionClass);
+                request.RetentionClass,
+                _retention.GetRetainUntilUtc(request.RetentionClass, now));
             file.CompleteQuarantine(
                 expected.DetectedContentType,
                 expected.Extension,
@@ -136,8 +150,30 @@ public sealed class SpaceFileUploadService
                 streamed.Sha256);
 
             await session.CommitAsync(cancellationToken);
-            _catalog.Add(file);
-            await _catalog.SaveChangesAsync(cancellationToken);
+            var enqueue = new SpaceJobEnqueueRequest(
+                SpaceJobType.FileScan,
+                SpaceJobSubjectType.File,
+                file.Id,
+                file.Sha256!,
+                SpaceFileScanProcessor.ProcessorVersion,
+                MaxAttempts: 5);
+            var scanJob = SpaceJob.CreateQueued(
+                _execution.TenantId,
+                enqueue.JobType,
+                enqueue.SubjectType,
+                enqueue.SubjectId,
+                SpaceJobBusinessKey.Create(enqueue),
+                enqueue.InputHash,
+                enqueue.Priority,
+                enqueue.MaxAttempts,
+                _execution.ActorId,
+                now,
+                CorrelationId(),
+                enqueue.PayloadJson);
+            await _catalog.AddQuarantinedWithScanJobAsync(
+                file,
+                scanJob,
+                cancellationToken);
 
             return new SpaceFileUploadResult(file, Reused: false);
         }
@@ -147,6 +183,12 @@ public sealed class SpaceFileUploadService
             throw;
         }
     }
+
+    private Guid CorrelationId() =>
+        _execution is ISpaceCorrelationContext correlation &&
+        correlation.CorrelationId != Guid.Empty
+            ? correlation.CorrelationId
+            : Guid.NewGuid();
 
     private static async Task<StreamedUpload> StreamAndHashAsync(
         Stream source,

@@ -25,7 +25,7 @@ if (!$tempRoot.StartsWith(
 }
 New-Item -ItemType Directory -Path $tempRoot | Out-Null
 
-function Normalize-GeneratedText {
+function Get-NormalizedGeneratedText {
     param([Parameter(Mandatory)][string]$Path)
 
     $content = [System.IO.File]::ReadAllText($Path)
@@ -35,9 +35,15 @@ function Normalize-GeneratedText {
         '(?m)[\t ]+$',
         ''
     ).TrimEnd("`n") + "`n"
+    return $content
+}
+
+function Normalize-GeneratedText {
+    param([Parameter(Mandatory)][string]$Path)
+
     [System.IO.File]::WriteAllText(
         $Path,
-        $content,
+        (Get-NormalizedGeneratedText -Path $Path),
         [System.Text.UTF8Encoding]::new($false)
     )
 }
@@ -73,6 +79,7 @@ try {
         /GenerateClientInterfaces:true
     if ($LASTEXITCODE -ne 0) { throw 'TypeScript client generation failed.' }
 
+    Normalize-GeneratedText -Path $generatedOpenApi
     Normalize-GeneratedText -Path $generatedCSharp
     Normalize-GeneratedText -Path $generatedTypeScript
 
@@ -84,8 +91,8 @@ try {
         )
         foreach ($pair in $pairs) {
             if (!(Test-Path -LiteralPath $pair[1]) -or
-                (Get-FileHash -Algorithm SHA256 -LiteralPath $pair[0]).Hash -ne
-                (Get-FileHash -Algorithm SHA256 -LiteralPath $pair[1]).Hash) {
+                (Get-NormalizedGeneratedText -Path $pair[0]) -cne
+                (Get-NormalizedGeneratedText -Path $pair[1])) {
                 throw "Generated artifact is stale: $($pair[1])"
             }
         }

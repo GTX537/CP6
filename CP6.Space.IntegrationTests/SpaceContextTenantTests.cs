@@ -231,6 +231,24 @@ public sealed class SpaceContextTenantTests
                  x.Properties.Select(p => p.Name)
                      .SequenceEqual(new[] { "TenantId", "Sha256", "RetentionClass" }));
         Assert.Contains(
+            file.GetIndexes(),
+            x => x.Properties.Select(p => p.Name)
+                .SequenceEqual(new[] { "TenantId", "RetainUntilUtc", "State" }));
+        Assert.Contains(
+            file.GetIndexes(),
+            x => x.Properties.Select(p => p.Name)
+                .SequenceEqual(
+                [
+                    "TenantId",
+                    "DeletionRequestedAtUtc",
+                    "ContentDeletedAtUtc",
+                ]));
+        Assert.NotNull(file.FindProperty(nameof(SpaceFile.RetainUntilUtc)));
+        Assert.NotNull(
+            file.FindProperty(nameof(SpaceFile.DeletionRequestedAtUtc)));
+        Assert.NotNull(
+            file.FindProperty(nameof(SpaceFile.ContentDeletedAtUtc)));
+        Assert.Contains(
             source.GetIndexes(),
             x => x.Properties.Select(p => p.Name)
                 .SequenceEqual(new[] { "TenantId", "Sha256" }));
