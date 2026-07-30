@@ -60,3 +60,19 @@ public sealed class SpaceJobNotRetryableException : InvalidOperationException
     {
     }
 }
+
+public sealed class SpaceGenerationStateException :
+    InvalidOperationException
+{
+    public SpaceGenerationStateException(string message) : base(message)
+    {
+    }
+}
+
+public sealed class SpaceProposalStateException :
+    InvalidOperationException
+{
+    public SpaceProposalStateException(string message) : base(message)
+    {
+    }
+}

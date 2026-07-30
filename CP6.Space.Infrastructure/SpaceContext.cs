@@ -35,6 +35,14 @@ public sealed class SpaceContext : DbContext
     public DbSet<SpaceModelIssue> Issues => Set<SpaceModelIssue>();
     public DbSet<SpaceIdempotencyRecord> IdempotencyRecords =>
         Set<SpaceIdempotencyRecord>();
+    public DbSet<SpaceGenerationRun> GenerationRuns =>
+        Set<SpaceGenerationRun>();
+    public DbSet<SpaceGenerationProposal> GenerationProposals =>
+        Set<SpaceGenerationProposal>();
+    public DbSet<SpaceProposalDecision> ProposalDecisions =>
+        Set<SpaceProposalDecision>();
+    public DbSet<SpaceAiUsageRecord> AiUsageRecords =>
+        Set<SpaceAiUsageRecord>();
     public DbSet<SpaceFloorRevision> FloorRevisions => Set<SpaceFloorRevision>();
     public DbSet<SpaceZoneRevision> ZoneRevisions => Set<SpaceZoneRevision>();
     public DbSet<SpaceAisleRevision> AisleRevisions => Set<SpaceAisleRevision>();
@@ -68,12 +76,17 @@ public sealed class SpaceContext : DbContext
         ConfigureArtifact(modelBuilder);
         ConfigureIssue(modelBuilder);
         ConfigureIdempotencyRecord(modelBuilder);
+        ConfigureGenerationRun(modelBuilder);
+        ConfigureGenerationProposal(modelBuilder);
+        ConfigureProposalDecision(modelBuilder);
+        ConfigureAiUsageRecord(modelBuilder);
     }
 
     public override int SaveChanges(bool acceptAllChangesOnSuccess)
     {
         ProtectPublishedHistory();
         ProtectPublishedSnapshotWrites();
+        ProtectProposalDecisionHistory();
         StampAndValidateTenant();
         return base.SaveChanges(acceptAllChangesOnSuccess);
     }
@@ -84,6 +97,7 @@ public sealed class SpaceContext : DbContext
     {
         ProtectPublishedHistory();
         ProtectPublishedSnapshotWrites();
+        ProtectProposalDecisionHistory();
         StampAndValidateTenant();
         return base.SaveChangesAsync(acceptAllChangesOnSuccess, cancellationToken);
     }
@@ -1122,6 +1136,381 @@ public sealed class SpaceContext : DbContext
             x => x.TenantId == CurrentTenantId && !x.IsDeleted);
     }
 
+    private void ConfigureGenerationRun(ModelBuilder modelBuilder)
+    {
+        var entity = modelBuilder.Entity<SpaceGenerationRun>();
+        entity.ToTable(
+            "Space_GenerationRun",
+            table => table.HasCheckConstraint(
+                "CK_Space_GenerationRun_Progress",
+                "[Progress] >= 0 AND [Progress] <= 100"));
+        entity.HasKey(x => x.Id);
+        entity.Property(x => x.Id).ValueGeneratedNever();
+        entity.HasAlternateKey(x => new { x.TenantId, x.Id })
+            .HasName("AK_Space_GenerationRun_TenantId_Id");
+        ConfigureTenantEntity(entity);
+
+        ConfigureHash(entity.Property(x => x.SourceHash));
+        ConfigureHash(entity.Property(x => x.IdempotencyKeyHash));
+        ConfigureHash(entity.Property(x => x.BusinessKeyHash));
+        entity.Property(x => x.Status)
+            .HasConversion<short>()
+            .HasColumnType("smallint");
+        entity.Property(x => x.PolicySnapshot)
+            .HasConversion<short>()
+            .HasColumnType("smallint");
+        entity.Property(x => x.RuleVersion)
+            .HasMaxLength(64)
+            .IsRequired();
+        entity.Property(x => x.ProviderCode).HasMaxLength(64);
+        entity.Property(x => x.ProviderModel).HasMaxLength(128);
+        entity.Property(x => x.InputSchemaVersion)
+            .HasMaxLength(32)
+            .IsRequired();
+        entity.Property(x => x.OutputSchemaVersion).HasMaxLength(32);
+        entity.Property(x => x.FailureCode).HasMaxLength(64);
+        entity.Property(x => x.FailureSummary).HasMaxLength(1024);
+        entity.Property(x => x.DegradedReason).HasMaxLength(64);
+        entity.Property(x => x.CancelRequestedAtUtc)
+            .HasColumnType("datetime2");
+        entity.Property(x => x.CancelledAtUtc)
+            .HasColumnType("datetime2");
+        entity.Property(x => x.ReviewCompletedAtUtc)
+            .HasColumnType("datetime2");
+        entity.Property(x => x.RowVersion).IsRowVersion();
+
+        entity.HasIndex(x => new { x.TenantId, x.BusinessKeyHash })
+            .IsUnique()
+            .HasFilter("[IsCurrent] = 1 AND [IsDeleted] = 0")
+            .HasDatabaseName(
+                "UX_GenerationRun_Tenant_Business_Current");
+        entity.HasIndex(
+                x => new
+                {
+                    x.TenantId,
+                    x.SiteId,
+                    x.Status,
+                    x.CreatedAtUtc,
+                })
+            .IsDescending(false, false, false, true)
+            .HasDatabaseName(
+                "IX_GenerationRun_Tenant_Site_Status_Created");
+        entity.HasIndex(x => new { x.TenantId, x.JobId })
+            .HasDatabaseName("IX_GenerationRun_Tenant_Job");
+        entity.HasIndex(
+                x => new
+                {
+                    x.TenantId,
+                    x.ModelVersionId,
+                    x.IsCurrent,
+                })
+            .HasDatabaseName(
+                "IX_GenerationRun_Tenant_Version_Current");
+
+        entity.HasOne<SpaceModelVersion>()
+            .WithMany()
+            .HasForeignKey(x => new { x.TenantId, x.ModelVersionId })
+            .HasPrincipalKey(x => new { x.TenantId, x.Id })
+            .OnDelete(DeleteBehavior.Restrict)
+            .HasConstraintName(
+                "FK_Space_GenerationRun_Version_Tenant");
+        entity.HasOne<SpaceModelSource>()
+            .WithMany()
+            .HasForeignKey(
+                x => new
+                {
+                    x.TenantId,
+                    x.ModelVersionId,
+                    x.SourceId,
+                })
+            .HasPrincipalKey(
+                x => new
+                {
+                    x.TenantId,
+                    x.ModelVersionId,
+                    x.Id,
+                })
+            .OnDelete(DeleteBehavior.Restrict)
+            .HasConstraintName(
+                "FK_Space_GenerationRun_Source_Tenant_Version");
+        entity.HasOne<SpaceJob>()
+            .WithMany()
+            .HasForeignKey(x => new { x.TenantId, x.JobId })
+            .HasPrincipalKey(x => new { x.TenantId, x.Id })
+            .OnDelete(DeleteBehavior.Restrict)
+            .HasConstraintName(
+                "FK_Space_GenerationRun_Job_Tenant");
+        entity.HasOne<SpaceGenerationRun>()
+            .WithMany()
+            .HasForeignKey(x => new { x.TenantId, x.BasedOnRunId })
+            .HasPrincipalKey(x => new { x.TenantId, x.Id })
+            .OnDelete(DeleteBehavior.Restrict)
+            .HasConstraintName(
+                "FK_Space_GenerationRun_BasedOn_Tenant");
+
+        entity.HasQueryFilter(
+            x => x.TenantId == CurrentTenantId && !x.IsDeleted);
+    }
+
+    private void ConfigureGenerationProposal(ModelBuilder modelBuilder)
+    {
+        var entity = modelBuilder.Entity<SpaceGenerationProposal>();
+        entity.ToTable(
+            "Space_GenerationProposal",
+            table => table.HasCheckConstraint(
+                "CK_Space_GenerationProposal_Confidence",
+                "[ConfidenceScore] >= 0 AND [ConfidenceScore] <= 1"));
+        entity.HasKey(x => x.Id);
+        entity.Property(x => x.Id).ValueGeneratedNever();
+        entity.HasAlternateKey(x => new { x.TenantId, x.Id })
+            .HasName(
+                "AK_Space_GenerationProposal_TenantId_Id");
+        entity.HasAlternateKey(
+                x => new { x.TenantId, x.RunId, x.Id })
+            .HasName(
+                "AK_Space_GenerationProposal_Tenant_Run_Id");
+        ConfigureTenantEntity(entity);
+
+        ConfigureHash(entity.Property(x => x.SourceHash));
+        entity.Property(x => x.SourceKey)
+            .HasMaxLength(256)
+            .IsRequired();
+        entity.Property(x => x.ProposalType)
+            .HasMaxLength(64)
+            .IsRequired();
+        ConfigureJson(entity.Property(x => x.SuggestedGeometryJson));
+        ConfigureJson(entity.Property(x => x.SuggestedAttributesJson));
+        ConfigureJson(entity.Property(x => x.SuggestedRelationsJson));
+        ConfigureJson(entity.Property(x => x.SourceRefsJson));
+        ConfigureJson(entity.Property(x => x.EvidenceJson));
+        ConfigureJson(entity.Property(x => x.FieldProvenanceJson));
+        entity.Property(x => x.HumanPatchJson)
+            .HasColumnType("nvarchar(max)");
+        entity.Property(x => x.LockedFieldsJson)
+            .HasColumnType("nvarchar(max)");
+        entity.Property(x => x.ConfidenceScore)
+            .HasColumnType("decimal(6,5)");
+        entity.Property(x => x.ConfidenceBand)
+            .HasConversion<short>()
+            .HasColumnType("smallint");
+        entity.Property(x => x.Status)
+            .HasConversion<short>()
+            .HasColumnType("smallint");
+        entity.Property(x => x.RowVersion).IsRowVersion();
+
+        entity.HasIndex(
+                x => new
+                {
+                    x.TenantId,
+                    x.RunId,
+                    x.SourceKey,
+                    x.ProposalType,
+                })
+            .IsUnique()
+            .HasFilter("[IsDeleted] = 0")
+            .HasDatabaseName(
+                "UX_Proposal_Tenant_Run_Source_Type");
+        entity.HasIndex(
+                x => new
+                {
+                    x.TenantId,
+                    x.RunId,
+                    x.Status,
+                    x.ConfidenceBand,
+                    x.ProposalType,
+                    x.Id,
+                })
+            .HasDatabaseName(
+                "IX_Proposal_Tenant_Run_Status_Band_Type");
+
+        entity.HasOne<SpaceGenerationRun>()
+            .WithMany()
+            .HasForeignKey(x => new { x.TenantId, x.RunId })
+            .HasPrincipalKey(x => new { x.TenantId, x.Id })
+            .OnDelete(DeleteBehavior.Restrict)
+            .HasConstraintName(
+                "FK_Space_GenerationProposal_Run_Tenant");
+        entity.HasOne<SpaceModelVersion>()
+            .WithMany()
+            .HasForeignKey(x => new { x.TenantId, x.ModelVersionId })
+            .HasPrincipalKey(x => new { x.TenantId, x.Id })
+            .OnDelete(DeleteBehavior.Restrict)
+            .HasConstraintName(
+                "FK_Space_GenerationProposal_Version_Tenant");
+
+        entity.HasQueryFilter(
+            x => x.TenantId == CurrentTenantId && !x.IsDeleted);
+    }
+
+    private void ConfigureProposalDecision(ModelBuilder modelBuilder)
+    {
+        var entity = modelBuilder.Entity<SpaceProposalDecision>();
+        entity.ToTable("Space_ProposalDecision");
+        entity.HasKey(x => x.Id);
+        entity.Property(x => x.Id).ValueGeneratedNever();
+        entity.HasAlternateKey(x => new { x.TenantId, x.Id })
+            .HasName("AK_Space_ProposalDecision_TenantId_Id");
+        ConfigureTenantEntity(entity);
+
+        entity.Property(x => x.DecisionType)
+            .HasConversion<short>()
+            .HasColumnType("smallint");
+        ConfigureJson(entity.Property(x => x.BeforeJson));
+        entity.Property(x => x.AfterJson)
+            .HasColumnType("nvarchar(max)");
+        entity.Property(x => x.LockedFieldsJson)
+            .HasColumnType("nvarchar(max)");
+        entity.Property(x => x.ReasonCode).HasMaxLength(64);
+        entity.Property(x => x.Comment).HasMaxLength(512);
+        entity.Property(x => x.RowVersion).IsRowVersion();
+
+        entity.HasIndex(
+                x => new
+                {
+                    x.TenantId,
+                    x.RunId,
+                    x.ProposalId,
+                    x.CreatedAtUtc,
+                })
+            .HasDatabaseName(
+                "IX_ProposalDecision_Tenant_Run_Proposal_Created");
+        entity.HasIndex(
+                x => new
+                {
+                    x.TenantId,
+                    x.DecisionBatchId,
+                    x.Id,
+                })
+            .HasDatabaseName(
+                "IX_ProposalDecision_Tenant_Batch");
+
+        entity.HasOne<SpaceGenerationRun>()
+            .WithMany()
+            .HasForeignKey(x => new { x.TenantId, x.RunId })
+            .HasPrincipalKey(x => new { x.TenantId, x.Id })
+            .OnDelete(DeleteBehavior.Restrict)
+            .HasConstraintName(
+                "FK_Space_ProposalDecision_Run_Tenant");
+        entity.HasOne<SpaceGenerationProposal>()
+            .WithMany()
+            .HasForeignKey(
+                x => new
+                {
+                    x.TenantId,
+                    x.RunId,
+                    x.ProposalId,
+                })
+            .HasPrincipalKey(
+                x => new
+                {
+                    x.TenantId,
+                    x.RunId,
+                    x.Id,
+                })
+            .OnDelete(DeleteBehavior.Restrict)
+            .HasConstraintName(
+                "FK_Space_ProposalDecision_Proposal_Tenant_Run");
+
+        entity.HasQueryFilter(
+            x => x.TenantId == CurrentTenantId && !x.IsDeleted);
+    }
+
+    private void ConfigureAiUsageRecord(ModelBuilder modelBuilder)
+    {
+        var entity = modelBuilder.Entity<SpaceAiUsageRecord>();
+        entity.ToTable(
+            "Space_AiUsageRecord",
+            table =>
+            {
+                table.HasCheckConstraint(
+                    "CK_Space_AiUsageRecord_Units",
+                    "[InputUnits] >= 0 AND [OutputUnits] >= 0");
+                table.HasCheckConstraint(
+                    "CK_Space_AiUsageRecord_Cost",
+                    "[EstimatedCostMinor] >= 0 AND " +
+                    "([ActualCostMinor] IS NULL OR [ActualCostMinor] >= 0)");
+                table.HasCheckConstraint(
+                    "CK_Space_AiUsageRecord_Latency",
+                    "[LatencyMs] >= 0");
+            });
+        entity.HasKey(x => x.Id);
+        entity.Property(x => x.Id).ValueGeneratedNever();
+        entity.HasAlternateKey(x => new { x.TenantId, x.Id })
+            .HasName("AK_Space_AiUsageRecord_TenantId_Id");
+        ConfigureTenantEntity(entity);
+
+        entity.Property(x => x.ProviderCode)
+            .HasMaxLength(64)
+            .IsRequired();
+        entity.Property(x => x.ProviderModel)
+            .HasMaxLength(128)
+            .IsRequired();
+        ConfigureHash(entity.Property(x => x.ProviderRequestIdHash));
+        entity.Property(x => x.Currency)
+            .HasColumnType("char(3)")
+            .IsUnicode(false)
+            .IsFixedLength()
+            .HasMaxLength(3);
+        entity.Property(x => x.Outcome)
+            .HasConversion<short>()
+            .HasColumnType("smallint");
+        entity.Property(x => x.RecordedAtUtc)
+            .HasColumnType("datetime2");
+        entity.Property(x => x.RowVersion).IsRowVersion();
+
+        entity.HasIndex(
+                x => new
+                {
+                    x.TenantId,
+                    x.ProviderRequestIdHash,
+                })
+            .IsUnique()
+            .HasFilter("[IsDeleted] = 0")
+            .HasDatabaseName(
+                "UX_AiUsage_Tenant_ProviderRequest");
+        entity.HasIndex(
+                x => new
+                {
+                    x.TenantId,
+                    x.RunId,
+                    x.RecordedAtUtc,
+                })
+            .HasDatabaseName(
+                "IX_AiUsage_Tenant_Run_Recorded");
+
+        entity.HasOne<SpaceGenerationRun>()
+            .WithMany()
+            .HasForeignKey(x => new { x.TenantId, x.RunId })
+            .HasPrincipalKey(x => new { x.TenantId, x.Id })
+            .OnDelete(DeleteBehavior.Restrict)
+            .HasConstraintName(
+                "FK_Space_AiUsageRecord_Run_Tenant");
+
+        entity.HasQueryFilter(
+            x => x.TenantId == CurrentTenantId && !x.IsDeleted);
+    }
+
+    private static void ConfigureHash(
+        Microsoft.EntityFrameworkCore.Metadata.Builders
+            .PropertyBuilder<string> property)
+    {
+        property
+            .HasColumnType("char(64)")
+            .IsUnicode(false)
+            .IsFixedLength()
+            .HasMaxLength(64)
+            .IsRequired();
+    }
+
+    private static void ConfigureJson(
+        Microsoft.EntityFrameworkCore.Metadata.Builders
+            .PropertyBuilder<string> property)
+    {
+        property
+            .HasColumnType("nvarchar(max)")
+            .IsRequired();
+    }
+
     private static void ConfigureTenantEntity<TEntity>(
         Microsoft.EntityFrameworkCore.Metadata.Builders.EntityTypeBuilder<TEntity> entity)
         where TEntity : SpaceTenantEntity
@@ -1202,6 +1591,19 @@ public sealed class SpaceContext : DbContext
             {
                 throw new SpaceVersionStateException(
                     "Published and Superseded snapshots are immutable.");
+            }
+        }
+    }
+
+    private void ProtectProposalDecisionHistory()
+    {
+        foreach (var entry in ChangeTracker
+            .Entries<SpaceProposalDecision>())
+        {
+            if (entry.State is EntityState.Modified or EntityState.Deleted)
+            {
+                throw new SpaceProposalStateException(
+                    "Proposal decisions are append-only.");
             }
         }
     }

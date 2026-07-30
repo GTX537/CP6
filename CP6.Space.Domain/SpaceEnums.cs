@@ -175,3 +175,55 @@ public enum SpaceIssueStatus : short
     Resolved = 1,
     Acknowledged = 2,
 }
+
+public enum SpaceAiPolicySnapshot : short
+{
+    Disabled = 0,
+    MetadataOnly = 1,
+    StructuredFeatures = 2,
+}
+
+public enum SpaceGenerationRunStatus : short
+{
+    Queued = 0,
+    Preparing = 1,
+    Inferring = 2,
+    Validating = 3,
+    AwaitingReview = 4,
+    Applying = 5,
+    Succeeded = 6,
+    Failed = 7,
+    Cancelled = 8,
+    Stale = 9,
+}
+
+public enum SpaceGenerationProposalStatus : short
+{
+    Proposed = 0,
+    Accepted = 1,
+    Rejected = 2,
+    Modified = 3,
+    Applied = 4,
+    Obsolete = 5,
+}
+
+public enum SpaceProposalDecisionType : short
+{
+    Accept = 1,
+    Reject = 2,
+    Modify = 3,
+}
+
+public enum SpaceConfidenceBand : short
+{
+    Low = 0,
+    Medium = 1,
+    High = 2,
+}
+
+public enum SpaceAiUsageOutcome : short
+{
+    Unknown = 0,
+    Succeeded = 1,
+    Failed = 2,
+}
