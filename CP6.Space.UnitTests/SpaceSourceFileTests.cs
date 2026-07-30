@@ -45,6 +45,10 @@ public sealed class SpaceSourceFileTests
         Assert.True(input.MaxRequestedBytes <= 64 * 1024);
         Assert.Equal(1, quarantine.Sessions.Single().CommitCount);
         Assert.Equal(0, quarantine.Sessions.Single().AbortCount);
+        var scanJob = Assert.Single(catalog.Jobs);
+        Assert.Equal(SpaceJobType.FileScan, scanJob.JobType);
+        Assert.Equal(result.File.Id, scanJob.SubjectId);
+        Assert.Equal(result.File.Sha256, scanJob.InputHash);
     }
 
     [Fact]
@@ -217,17 +221,20 @@ public sealed class SpaceSourceFileTests
     public async Task Referenced_file_cannot_be_deleted()
     {
         var file = NewCleanFile(TenantId, ".pdf", SpaceFileRetentionClass.Source);
-        var catalog = new FakeFileCatalog { ReferenceCount = 1 };
+        var retention = new FakeRetentionStore(
+            SpaceFileTombstoneStatus.Referenced);
         var service = new SpaceFileLifecycleService(
             new TestExecutionContext(TenantId, ActorId),
-            catalog);
+            retention,
+            new FakeFileStore(),
+            new TestClock());
 
         await Assert.ThrowsAsync<SpaceFileReferenceException>(
             () => service.DeleteAsync(file));
 
         Assert.False(file.IsDeleted);
         Assert.Equal(SpaceFileState.Clean, file.State);
-        Assert.Equal(0, catalog.SaveCount);
+        Assert.Equal(1, retention.TombstoneCalls);
     }
 
     [Fact]
@@ -322,7 +329,7 @@ public sealed class SpaceSourceFileTests
     private sealed class FakeFileCatalog : ISpaceFileCatalog
     {
         public List<SpaceFile> Files { get; } = [];
-        public int ReferenceCount { get; init; }
+        public List<SpaceJob> Jobs { get; } = [];
         public int SaveCount { get; private set; }
 
         public Task<SpaceFile?> FindReusableAsync(
@@ -336,22 +343,82 @@ public sealed class SpaceSourceFileTests
                     file.Sha256 == sha256 &&
                     file.RetentionClass == retentionClass));
 
-        public Task<int> CountActiveReferencesAsync(
-            Guid tenantId,
-            Guid fileId,
-            CancellationToken cancellationToken = default) =>
-            Task.FromResult(ReferenceCount);
-
-        public void Add(SpaceFile file)
+        public Task AddQuarantinedWithScanJobAsync(
+            SpaceFile file,
+            SpaceJob scanJob,
+            CancellationToken cancellationToken = default)
         {
             Files.Add(file);
-        }
-
-        public Task SaveChangesAsync(CancellationToken cancellationToken = default)
-        {
+            Jobs.Add(scanJob);
             SaveCount++;
             return Task.CompletedTask;
         }
+    }
+
+    private sealed class FakeRetentionStore : ISpaceFileRetentionStore
+    {
+        private readonly SpaceFileTombstoneStatus _status;
+
+        public FakeRetentionStore(SpaceFileTombstoneStatus status)
+        {
+            _status = status;
+        }
+
+        public int TombstoneCalls { get; private set; }
+
+        public Task<IReadOnlyList<Guid>> FindExpiredFileIdsAsync(
+            Guid tenantId,
+            DateTime nowUtc,
+            int batchSize,
+            CancellationToken cancellationToken = default) =>
+            Task.FromResult<IReadOnlyList<Guid>>([]);
+
+        public Task<IReadOnlyList<SpaceFileDeletionCandidate>>
+            FindPendingContentDeletionAsync(
+                Guid tenantId,
+                int batchSize,
+                CancellationToken cancellationToken = default) =>
+            Task.FromResult<IReadOnlyList<SpaceFileDeletionCandidate>>([]);
+
+        public Task<SpaceFileTombstoneResult> TryTombstoneAsync(
+            Guid tenantId,
+            Guid fileId,
+            DateTime nowUtc,
+            bool requireExpired,
+            CancellationToken cancellationToken = default)
+        {
+            TombstoneCalls++;
+            return Task.FromResult(new SpaceFileTombstoneResult(_status));
+        }
+
+        public Task MarkContentDeletedAsync(
+            SpaceFileDeletionCandidate candidate,
+            DateTime nowUtc,
+            CancellationToken cancellationToken = default) =>
+            Task.CompletedTask;
+    }
+
+    private sealed class FakeFileStore : ISpaceFileStore
+    {
+        public Task<Stream> OpenQuarantinedReadAsync(
+            Guid tenantId,
+            Guid fileId,
+            string storageKey,
+            CancellationToken cancellationToken = default) =>
+            Task.FromResult<Stream>(new MemoryStream());
+
+        public Task DeleteAsync(
+            Guid tenantId,
+            Guid fileId,
+            string storageKey,
+            CancellationToken cancellationToken = default) =>
+            Task.CompletedTask;
+    }
+
+    private sealed class TestClock : ISpaceClock
+    {
+        public DateTime UtcNow { get; } =
+            new(2026, 7, 26, 12, 0, 0, DateTimeKind.Utc);
     }
 
     private sealed class FakeQuarantineStore : ISpaceQuarantineStore

@@ -652,7 +652,11 @@ public sealed class SpaceContext : DbContext
     private void ConfigureFile(ModelBuilder modelBuilder)
     {
         var entity = modelBuilder.Entity<SpaceFile>();
-        entity.ToTable("Space_File");
+        entity.ToTable(
+            "Space_File",
+            table => table.HasCheckConstraint(
+                "CK_Space_File_ContentDeletion",
+                "[ContentDeletedAtUtc] IS NULL OR ([State] = 5 AND [DeletionRequestedAtUtc] IS NOT NULL AND [IsDeleted] = 1)"));
         entity.HasKey(x => x.Id);
         entity.Property(x => x.Id).ValueGeneratedNever();
         entity.HasAlternateKey(x => new { x.TenantId, x.Id })
@@ -678,6 +682,9 @@ public sealed class SpaceContext : DbContext
         entity.Property(x => x.RetentionClass)
             .HasConversion<short>()
             .HasColumnType("smallint");
+        entity.Property(x => x.RetainUntilUtc).HasColumnType("datetime2");
+        entity.Property(x => x.DeletionRequestedAtUtc).HasColumnType("datetime2");
+        entity.Property(x => x.ContentDeletedAtUtc).HasColumnType("datetime2");
         entity.Property(x => x.RowVersion).IsRowVersion();
 
         entity.HasIndex(x => x.StorageKey)
@@ -689,6 +696,19 @@ public sealed class SpaceContext : DbContext
             .HasDatabaseName("UX_Space_File_Tenant_Hash_Retention_Reusable");
         entity.HasIndex(x => new { x.TenantId, x.State })
             .HasDatabaseName("IX_Space_File_Tenant_State");
+        entity.HasIndex(x => new { x.TenantId, x.RetainUntilUtc, x.State })
+            .HasFilter("[RetainUntilUtc] IS NOT NULL AND [IsDeleted] = 0")
+            .HasDatabaseName("IX_Space_File_Tenant_Retention");
+        entity.HasIndex(
+                x => new
+                {
+                    x.TenantId,
+                    x.DeletionRequestedAtUtc,
+                    x.ContentDeletedAtUtc,
+                })
+            .HasFilter(
+                "[State] = 5 AND [DeletionRequestedAtUtc] IS NOT NULL AND [ContentDeletedAtUtc] IS NULL")
+            .HasDatabaseName("IX_Space_File_Tenant_PendingObjectDeletion");
 
         entity.HasQueryFilter(x => x.TenantId == CurrentTenantId && !x.IsDeleted);
     }

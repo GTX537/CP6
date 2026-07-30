@@ -331,10 +331,12 @@ public sealed class SpaceDesignV1Service : ISpaceDesignV1Service
                           ?? throw NotFound(
                               SpaceErrorCodes.VersionNotFound,
                               "Space version");
-            var file = await _context.Files
-                           .SingleOrDefaultAsync(
-                               candidate => candidate.Id == request.FileId,
-                               cancellationToken)
+            var file = await SpaceFileReferenceLock.LoadAsync(
+                           _context,
+                           _context.CurrentTenantId,
+                           request.FileId,
+                           includeDeleted: false,
+                           cancellationToken)
                        ?? throw new SpaceProblemException(
                            SpaceErrorCodes.SourceUnsafe,
                            422,

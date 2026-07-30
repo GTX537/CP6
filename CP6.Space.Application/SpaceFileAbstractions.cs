@@ -10,6 +10,21 @@ public interface ISpaceQuarantineStore
         CancellationToken cancellationToken = default);
 }
 
+public interface ISpaceFileStore
+{
+    Task<Stream> OpenQuarantinedReadAsync(
+        Guid tenantId,
+        Guid fileId,
+        string storageKey,
+        CancellationToken cancellationToken = default);
+
+    Task DeleteAsync(
+        Guid tenantId,
+        Guid fileId,
+        string storageKey,
+        CancellationToken cancellationToken = default);
+}
+
 public interface ISpaceQuarantineWriteSession : IAsyncDisposable
 {
     string StorageKey { get; }
@@ -27,13 +42,10 @@ public interface ISpaceFileCatalog
         SpaceFileRetentionClass retentionClass,
         CancellationToken cancellationToken = default);
 
-    Task<int> CountActiveReferencesAsync(
-        Guid tenantId,
-        Guid fileId,
+    Task AddQuarantinedWithScanJobAsync(
+        SpaceFile file,
+        SpaceJob scanJob,
         CancellationToken cancellationToken = default);
-
-    void Add(SpaceFile file);
-    Task SaveChangesAsync(CancellationToken cancellationToken = default);
 }
 
 public interface ISpaceSourceCatalog

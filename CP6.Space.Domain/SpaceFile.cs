@@ -18,6 +18,9 @@ public sealed class SpaceFile : SpaceTenantEntity
     public string? SignatureVersion { get; private set; }
     public string? ScanResultCode { get; private set; }
     public SpaceFileRetentionClass RetentionClass { get; private set; }
+    public DateTime? RetainUntilUtc { get; private set; }
+    public DateTime? DeletionRequestedAtUtc { get; private set; }
+    public DateTime? ContentDeletedAtUtc { get; private set; }
     public byte[] RowVersion { get; private set; } = [];
 
     public static SpaceFile CreateUploading(
@@ -26,14 +29,17 @@ public sealed class SpaceFile : SpaceTenantEntity
         string storageKey,
         string originalName,
         string? declaredContentType,
-        SpaceFileRetentionClass retentionClass)
+        SpaceFileRetentionClass retentionClass,
+        DateTime? retainUntilUtc = null)
     {
+        RequireOptionalUtc(retainUntilUtc, nameof(retainUntilUtc));
         var file = new SpaceFile
         {
             StorageKey = RequireText(storageKey, 500, nameof(storageKey)),
             OriginalName = RequireText(originalName, 260, nameof(originalName)),
             DeclaredContentType = OptionalText(declaredContentType, 200, nameof(declaredContentType)),
             RetentionClass = retentionClass,
+            RetainUntilUtc = retainUntilUtc,
             State = SpaceFileState.Uploading,
         };
         file.SetId(id);
@@ -63,6 +69,8 @@ public sealed class SpaceFile : SpaceTenantEntity
 
     public void BeginScanning()
     {
+        if (State == SpaceFileState.Scanning)
+            return;
         RequireState(SpaceFileState.Quarantined);
         State = SpaceFileState.Scanning;
     }
@@ -93,18 +101,58 @@ public sealed class SpaceFile : SpaceTenantEntity
         State = SpaceFileState.Rejected;
     }
 
-    public void Delete(int activeReferenceCount)
+    public void DeferScan(
+        string scanResultCode,
+        string? scanEngine = null,
+        string? signatureVersion = null)
     {
+        RequireState(SpaceFileState.Scanning);
+        ScanResultCode = RequireText(
+            scanResultCode,
+            100,
+            nameof(scanResultCode));
+        ScanEngine = OptionalText(scanEngine, 100, nameof(scanEngine));
+        SignatureVersion = OptionalText(
+            signatureVersion,
+            100,
+            nameof(signatureVersion));
+        State = SpaceFileState.Quarantined;
+    }
+
+    public void RequestDeletion(
+        int activeReferenceCount,
+        DateTime requestedAtUtc)
+    {
+        RequireUtc(requestedAtUtc, nameof(requestedAtUtc));
         if (activeReferenceCount < 0)
             throw new ArgumentOutOfRangeException(nameof(activeReferenceCount));
         if (activeReferenceCount != 0)
             throw new SpaceFileReferenceException(
                 "A referenced Space file cannot be deleted.");
         if (State == SpaceFileState.Deleted)
+        {
+            DeletionRequestedAtUtc ??= requestedAtUtc;
+            MarkEntityDeleted();
             return;
+        }
 
         State = SpaceFileState.Deleted;
+        DeletionRequestedAtUtc = requestedAtUtc;
         MarkEntityDeleted();
+    }
+
+    public void MarkContentDeleted(DateTime deletedAtUtc)
+    {
+        RequireUtc(deletedAtUtc, nameof(deletedAtUtc));
+        if (State != SpaceFileState.Deleted ||
+            !IsDeleted ||
+            !DeletionRequestedAtUtc.HasValue)
+        {
+            throw new SpaceFileStateException(
+                "Only a deletion tombstone can record object removal.");
+        }
+
+        ContentDeletedAtUtc ??= deletedAtUtc;
     }
 
     private void RequireState(SpaceFileState expected)
@@ -145,5 +193,19 @@ public sealed class SpaceFile : SpaceTenantEntity
         if (string.IsNullOrWhiteSpace(value))
             return null;
         return RequireText(value, maxLength, parameterName);
+    }
+
+    private static void RequireOptionalUtc(
+        DateTime? value,
+        string parameterName)
+    {
+        if (value.HasValue)
+            RequireUtc(value.Value, parameterName);
+    }
+
+    private static void RequireUtc(DateTime value, string parameterName)
+    {
+        if (value.Kind != DateTimeKind.Utc)
+            throw new ArgumentException("Time must be UTC.", parameterName);
     }
 }
