@@ -1,0 +1,7 @@
+{
+  "simulator": "standard-wms-simulator-v1",
+  "mode": "Timeout",
+  "delayMilliseconds": 250,
+  "errorCode": "SPACE_WMS_RETRYABLE",
+  "expectedResult": "TimeoutException"
+}

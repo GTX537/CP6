@@ -2,3 +2,7 @@
 migration/database/*.bak filter=lfs diff=lfs merge=lfs -text
 *.dxf -text
 *.dwg -text
+
+# Generated Space acceptance packages are byte-stable fixtures. Text
+# normalization would invalidate their manifest SHA-256 values on checkout.
+CP6.Tests/TestData/Space/Acceptance/** binary
