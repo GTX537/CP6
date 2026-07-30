@@ -1,7 +1,9 @@
 # E07-S04 标准 10,000 库位仓数据集交付报告
 
-- 状态：完成，待合入 Space 集成分支
+- 状态：已完成并合入 Space 集成分支
 - 工作分支：`codex/space-e07-s04-standard-dataset`
+- 功能提交：`74577015`
+- no-ff 集成提交：`6d751e0c`
 - 数据集版本：`1.0.0`
 - 生成器版本：`space-standard-warehouse-generator-v1`
 - 固定随机种子：`cp6-space-standard-warehouse-seed-v1`
@@ -82,7 +84,7 @@
 | 检查 | 结果 |
 |---|---:|
 | 生成器 Release build | 通过，0 warning / 0 error |
-| 全解决方案 Release build | 通过，0 warning / 0 error |
+| 全解决方案 Release build | 通过，10 个既有 warning / 0 error |
 | Space UnitTests | 79 passed |
 | Space IntegrationTests | 40 passed / 30 SQL-gated skipped |
 | 标准仓验收包专项 | 6 passed |
