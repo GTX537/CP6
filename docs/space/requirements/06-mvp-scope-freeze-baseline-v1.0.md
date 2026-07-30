@@ -170,22 +170,22 @@ ADR 只解决技术方案，不得重新打开 D、T 或架构决策。
 
 ## 9. 当前实现状态
 
-核验日期：2026-07-25。
+核验日期：2026-07-30。
 
 | 能力 | 实现状态 | 证据与说明 |
 |---|---|---|
 | Legacy Site/Floor/Zone/Aisle/Rack/Location | Implemented | 主工作树 `CP6.Entity/DomainModels/Space` 有 11 个运行态实体 |
 | Legacy 编辑、导入导出、编码和库位发布 | Partial | 主工作树 `CP6.Core/Services/Space` 和 `/api/space/...` 已有能力，但不是 Design V1 仓库版本 Saga |
 | Three.js Viewer 与库存/路径页面 | Partial | `cp6.web/src/views/space` 已有编辑器、FloorViewer 和 StackedViewer |
-| Design V1 Contracts/Domain/Application | Partial | 只存在于 `tmp/worktrees/space-volume1` 未提交候选工作树 |
-| Design V1 Worker、校验与本地物化 | Partial | 候选工作树有 Worker 和测试；尚未受控合入 |
-| `BuildScene`/`Import` Job | NotStarted | 枚举已存在，但 `SpaceJobRunner` 查询和 Dispatch 均未处理 |
-| 文件、来源、Artifact 和 CAD/Excel 解析链 | NotStarted | 主工作树无正式实现 |
+| Design V1 Contracts/Domain/Application | Partial | `539d56de` 已集成 E01 S01–S03 的版本、来源文件和 Job Ledger 底座；后续用例仍待逐项进入基线 |
+| Design V1 Worker、校验与本地物化 | CandidateOnly | `0d25da4d` 有候选实现和测试，尚未受控合入 |
+| `BuildScene`/`Import` Job | CandidateOnly | `0d25da4d` 有候选实现，尚未按 E01/E02 依赖链复验 |
+| 文件、来源、Artifact 和 CAD/Excel 解析链 | Partial | 来源文件底座已在 `539d56de`；Artifact、CAD/Excel 链仅在 `0d25da4d` 候选中 |
 | AI Run/Proposal/Decision/Usage | NotStarted | 只有需求、设计和 JSON Schema |
 | 客户/供应商/3PL 多维 Portal | NotStarted | 主工作树无 Space ExternalOrganization/Grant 实现 |
 | CP6 WMS 发布 Saga 与标准模拟器 | Partial | Legacy 事件发布存在；Design V1 可恢复外部 Saga 尚未完成 |
 
-候选工作树不是实现真相。只有经过 ADR-0003 的文件审计、独立提交、迁移验证和测试后，才能更新本表。
+候选工作树不是实现真相。`0d25da4d` 只是保全检查点；只有经过 ADR-0003 的文件审计、按子任务独立提取、迁移验证和测试后，才能更新为 Implemented。当前唯一 Space 集成基线是 `539d56de`。
 
 ## 10. 固定实施批次
 

@@ -1,6 +1,15 @@
 # 当前待办与优先级
 
-## P0：GR-VP 波（已完成）
+## P0：Space V1 下一批受控提取
+
+- 以 `539d56de` 为唯一集成基线，从 `0d25da4d` 只提取 E01 S04（Published→Draft Clone）；单独审查共享 Domain/DbContext/Migration 改动并完整回归。
+- E01 S04 通过后，按顺序提取 E01 S05（Design API V1）和 E01 S06（文件安全与保留）；每项保持独立提交和报告。
+- 为自动化执行身份提供可认证的 SQL Server 测试连接后，补跑当前 18 个 SQL-gated Space Integration 测试；2026-07-30 的本机尝试在业务断言前被 TLS/SSPI/Guest 身份认证阻断，未补跑前不得把“跳过”写成“通过”。
+- E01 完成后再进入 E02 S01 CAD 选择试验与 E07 WMS 契约/模拟器；E13 Provider 试验按冻结批次并行评估。
+- `0d25da4d` 中 E05–E12 是候选证据，不得整包 merge/cherry-pick；必须重新核对依赖、迁移链和产品冻结范围。
+- P2.5 不混入本轮 Space 基线，待 E01 基线稳定后另行评估。
+
+## 已完成：GR-VP 波
 
 权威计划：`docs/superpowers/plans/2026-07-17-general-role-vperm.md`。
 
