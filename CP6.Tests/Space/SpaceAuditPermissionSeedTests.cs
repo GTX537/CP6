@@ -68,6 +68,24 @@ public sealed class SpaceAuditPermissionSeedTests
                     x.RoleId == 1 &&
                     x.MenuId == 906 &&
                     x.ActionCode == "read"));
+            Assert.All(
+                new[] { "model:generate-ai", "model:review-ai" },
+                action =>
+                {
+                    Assert.True(db.Sys_MenuActions
+                        .IgnoreQueryFilters()
+                        .Any(x =>
+                            x.TenantId == tenant &&
+                            x.MenuId == 900 &&
+                            x.ActionCode == action));
+                    Assert.True(db.Sys_RoleActions
+                        .IgnoreQueryFilters()
+                        .Any(x =>
+                            x.TenantId == tenant &&
+                            x.RoleId == 1 &&
+                            x.MenuId == 900 &&
+                            x.ActionCode == action));
+                });
         });
 
         Assert.DoesNotContain(

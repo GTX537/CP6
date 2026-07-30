@@ -38,6 +38,7 @@ public class SpacePermissionAttributeTests
         "space-publish:publish", "space-publish:deactivate", "space-publish:adopt",
         "space-audit:read",
         "space:model:read", "space:model:edit", "space:source:upload",
+        "space:model:generate-ai", "space:model:review-ai",
     };
 
     private static readonly Dictionary<string, string> AllowedReadPermissions =
