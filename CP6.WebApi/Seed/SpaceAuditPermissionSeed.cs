@@ -34,6 +34,13 @@ public static class SpaceAuditPermissionSeed
     private const int AuditMenuId = 906;
     private const int AdministratorRoleId = 1;
     private static readonly SemaphoreSlim NonSqlGate = new(1, 1);
+    private static readonly (string Code, string Name, int Sort)[]
+        DesignActions =
+        [
+            ("model:read", "查看设计模型", 10),
+            ("model:edit", "编辑设计模型", 20),
+            ("source:upload", "关联安全来源", 30),
+        ];
 
     public static void EnsureSeeded(CP6Context db) =>
         EnsureSeededAsync(db).GetAwaiter().GetResult();
@@ -213,6 +220,49 @@ public static class SpaceAuditPermissionSeed
                 AuditMenuId,
                 ct);
 
+            foreach (var action in DesignActions)
+            {
+                if (!await db.Sys_MenuActions
+                        .IgnoreQueryFilters()
+                        .AnyAsync(
+                            x =>
+                                x.TenantId == tenantId &&
+                                x.MenuId == SpaceMenuId &&
+                                x.ActionCode == action.Code,
+                            ct))
+                {
+                    db.Sys_MenuActions.Add(new Sys_MenuAction
+                    {
+                        TenantId = tenantId,
+                        MenuId = SpaceMenuId,
+                        ActionCode = action.Code,
+                        ActionName = action.Name,
+                        Sort = action.Sort,
+                    });
+                    changed = true;
+                }
+
+                if (!await db.Sys_RoleActions
+                        .IgnoreQueryFilters()
+                        .AnyAsync(
+                            x =>
+                                x.TenantId == tenantId &&
+                                x.RoleId == AdministratorRoleId &&
+                                x.MenuId == SpaceMenuId &&
+                                x.ActionCode == action.Code,
+                            ct))
+                {
+                    db.Sys_RoleActions.Add(new Sys_RoleAction
+                    {
+                        TenantId = tenantId,
+                        RoleId = AdministratorRoleId,
+                        MenuId = SpaceMenuId,
+                        ActionCode = action.Code,
+                    });
+                    changed = true;
+                }
+            }
+
             if (!await db.Sys_MenuActions
                     .IgnoreQueryFilters()
                     .AnyAsync(
@@ -345,10 +395,33 @@ public static class SpaceAuditPermissionSeed
                         x.MenuId == AuditMenuId &&
                         x.ActionCode == "read",
                     ct);
+            var hasDesignActions = true;
+            foreach (var action in DesignActions)
+            {
+                hasDesignActions &=
+                    await db.Sys_MenuActions
+                        .IgnoreQueryFilters()
+                        .AnyAsync(
+                            x =>
+                                x.TenantId == tenantId &&
+                                x.MenuId == SpaceMenuId &&
+                                x.ActionCode == action.Code,
+                            ct) &&
+                    await db.Sys_RoleActions
+                        .IgnoreQueryFilters()
+                        .AnyAsync(
+                            x =>
+                                x.TenantId == tenantId &&
+                                x.RoleId == AdministratorRoleId &&
+                                x.MenuId == SpaceMenuId &&
+                                x.ActionCode == action.Code,
+                            ct);
+            }
             if (!hasSpaceMenu ||
                 !hasAuditMenu ||
                 !hasAction ||
-                !hasGrant)
+                !hasGrant ||
+                !hasDesignActions)
             {
                 return false;
             }

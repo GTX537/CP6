@@ -6,9 +6,25 @@ namespace CP6.Space.Contracts;
 /// </summary>
 public static class SpaceErrorCodes
 {
+    public const string AuthenticationRequired = "SPACE_AUTHENTICATION_REQUIRED";
     public const string TenantScopeDenied = "SPACE_TENANT_SCOPE_DENIED";
+    public const string ExternalSubjectDenied = "SPACE_EXTERNAL_SUBJECT_DENIED";
+    public const string PermissionDenied = "SPACE_PERMISSION_DENIED";
+    public const string DesignApiDisabled = "SPACE_DESIGN_API_DISABLED";
+    public const string ModelNotFound = "SPACE_MODEL_NOT_FOUND";
+    public const string VersionNotFound = "SPACE_VERSION_NOT_FOUND";
+    public const string SourceNotFound = "SPACE_SOURCE_NOT_FOUND";
+    public const string JobNotFound = "SPACE_JOB_NOT_FOUND";
+    public const string IssueNotFound = "SPACE_ISSUE_NOT_FOUND";
     public const string VersionConflict = "SPACE_VERSION_CONFLICT";
     public const string VersionStateInvalid = "SPACE_VERSION_STATE_INVALID";
+    public const string SourceConflict = "SPACE_SOURCE_CONFLICT";
+    public const string IdempotencyConflict = "SPACE_IDEMPOTENCY_KEY_REUSED";
+    public const string IdempotencyKeyRequired = "SPACE_IDEMPOTENCY_KEY_REQUIRED";
+    public const string CursorInvalid = "SPACE_CURSOR_INVALID";
+    public const string CursorScopeMismatch = "SPACE_CURSOR_SCOPE_MISMATCH";
+    public const string RequestInvalid = "SPACE_REQUEST_INVALID";
+    public const string ConcurrencyConflict = "SPACE_CONCURRENCY_CONFLICT";
     public const string FileTooLarge = "SPACE_FILE_TOO_LARGE";
     public const string FileTypeMismatch = "SPACE_FILE_TYPE_MISMATCH";
     public const string FileQuarantined = "SPACE_FILE_QUARANTINED";

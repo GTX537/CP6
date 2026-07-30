@@ -15,6 +15,8 @@ using CP6.WebApi.Hubs;
 using Prometheus;
 using CP6.Core.Services.Space.Compatibility;
 using CP6.Core.Services.Space.Observability;
+using CP6.Space.Application;
+using CP6.Space.Infrastructure;
 
 var builder = WebApplication.CreateBuilder(args);
 
@@ -51,6 +53,36 @@ builder.Services.AddControllers(options =>
     options.Filters.AddService<OperLogFilter>();
     options.Filters.AddService<SpaceAuditActionFilter>();
 });
+builder.Services.Configure<Microsoft.AspNetCore.Mvc.ApiBehaviorOptions>(
+    options =>
+    {
+        var legacyFactory = options.InvalidModelStateResponseFactory;
+        options.InvalidModelStateResponseFactory = context =>
+        {
+            if (!context.HttpContext.Request.Path.StartsWithSegments(
+                    "/api/space/design/v1"))
+            {
+                return legacyFactory(context);
+            }
+
+            var detail = string.Join(
+                "; ",
+                context.ModelState
+                    .SelectMany(entry => entry.Value?.Errors
+                        .Select(error =>
+                            $"{entry.Key}: {error.ErrorMessage}")
+                        ?? [])
+                    .Where(value => !string.IsNullOrWhiteSpace(value)));
+            return CP6.WebApi.Middleware
+                .SpaceDesignProblemDetailsMiddleware.CreateResult(
+                    context.HttpContext,
+                    StatusCodes.Status400BadRequest,
+                    CP6.Space.Contracts.SpaceErrorCodes.RequestInvalid,
+                    "The request is invalid.",
+                    detail,
+                    "correct-request");
+        };
+    });
 builder.Services.AddSingleton(TimeProvider.System);
 builder.Services.AddHealthChecks()
     .AddCheck(
@@ -82,8 +114,7 @@ if (!string.IsNullOrWhiteSpace(redisConn))
 builder.Services.AddEndpointsApiExplorer();
 builder.Services.AddSwaggerGen(c =>
 {
-    // 完全修飾名で schemaId を一意化（入れ子型 DeleteRequest 等の衝突回避）
-    c.CustomSchemaIds(t => (t.FullName ?? t.Name).Replace("+", "."));
+    CP6.WebApi.OpenApi.SpaceDesignV1OpenApi.Configure(c);
     c.AddSecurityDefinition("Bearer", new Microsoft.OpenApi.Models.OpenApiSecurityScheme
     {
         Name = "Authorization",
@@ -125,6 +156,10 @@ builder.Services.AddDbContext<CP6Context>((services, options) =>
     options
         .UseSqlServer(builder.Configuration.GetConnectionString("DefaultConnection"))
         .AddInterceptors(services.GetRequiredService<LegacySpaceWriteGuardInterceptor>()));
+builder.Services.AddSpaceDesignV1Persistence(
+    builder.Configuration.GetConnectionString("DefaultConnection")
+    ?? throw new InvalidOperationException(
+        "DefaultConnection is required for Space Design v1."));
 
 // 3.1 注册 Dapper 用的 IDbConnection（每次请求新建连接）
 builder.Services.AddScoped<IDbConnection>(_ =>
@@ -367,6 +402,15 @@ builder.Services.AddScoped<CP6.Core.Services.Space.Observability.ISpaceExecution
     sp => sp.GetRequiredService<CP6.Core.Services.Space.Observability.SpaceExecutionContextAccessor>());
 builder.Services.AddScoped<CP6.Core.Services.Space.Observability.ISpaceExecutionContextManager>(
     sp => sp.GetRequiredService<CP6.Core.Services.Space.Observability.SpaceExecutionContextAccessor>());
+builder.Services.AddScoped<
+    CP6.Space.Application.ISpaceExecutionContext,
+    CP6.WebApi.Services.HttpSpaceApplicationExecutionContext>();
+builder.Services.AddScoped<
+    ISpaceDesignAccessEvaluator,
+    CP6.WebApi.Services.CompatibilitySpaceDesignAccessEvaluator>();
+builder.Services.AddScoped<
+    ISpaceCursorCodec,
+    CP6.WebApi.Services.DataProtectionSpaceCursorCodec>();
 builder.Services.AddScoped<ISpaceAuditDbContextFactory, SpaceAuditDbContextFactory>();
 builder.Services.AddScoped<ISpaceAuditWriter, SpaceAuditWriter>();
 builder.Services.AddScoped<ISpaceRetryFinalizer, SpaceRetryFinalizer>();
@@ -899,6 +943,9 @@ using (var scope = app.Services.CreateScope())
 
     // Docker 环境下自动创建数据库并应用所有迁移
     db.Database.Migrate();
+    var spaceDb = scope.ServiceProvider
+        .GetRequiredService<CP6.Space.Infrastructure.SpaceContext>();
+    spaceDb.Database.Migrate();
 
     // SPACE observability must have one canonical UTC ordering column before
     // any seed, background worker, or request can query integration history.
@@ -2923,6 +2970,8 @@ app.UseMiddleware<CP6.WebApi.Middleware.TenantMiddleware>();
 
 // i18n 优化 P1：BizException → 本地化消息（须在 UseRequestLocalization 之后）。
 app.UseMiddleware<CP6.WebApi.Middleware.BizExceptionMiddleware>();
+app.UseMiddleware<
+    CP6.WebApi.Middleware.SpaceDesignProblemDetailsMiddleware>();
 app.UseMiddleware<CP6.WebApi.Middleware.SpaceExecutionContextMiddleware>();
 
 // S 类认证加固（T6）：CSRF 双提交校验 + 强制改密拦截。须在 BizExceptionMiddleware 下游

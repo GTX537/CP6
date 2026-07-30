@@ -183,6 +183,8 @@ public sealed class SpaceContextTenantTests
         var attempt = context.Model.FindEntityType(typeof(SpaceJobAttempt))!;
         var step = context.Model.FindEntityType(typeof(SpaceJobStep))!;
         var issue = context.Model.FindEntityType(typeof(SpaceModelIssue))!;
+        var idempotency =
+            context.Model.FindEntityType(typeof(SpaceIdempotencyRecord))!;
 
         Assert.Equal("Space_Model", model.GetTableName());
         Assert.Equal("Space_ModelVersion", version.GetTableName());
@@ -193,6 +195,7 @@ public sealed class SpaceContextTenantTests
         Assert.Equal("Space_JobAttempt", attempt.GetTableName());
         Assert.Equal("Space_JobStep", step.GetTableName());
         Assert.Equal("Space_ModelIssue", issue.GetTableName());
+        Assert.Equal("Space_IdempotencyRecord", idempotency.GetTableName());
         Assert.NotNull(model.GetQueryFilter());
         Assert.NotNull(version.GetQueryFilter());
         Assert.NotNull(file.GetQueryFilter());
@@ -202,6 +205,7 @@ public sealed class SpaceContextTenantTests
         Assert.NotNull(attempt.GetQueryFilter());
         Assert.NotNull(step.GetQueryFilter());
         Assert.NotNull(issue.GetQueryFilter());
+        Assert.NotNull(idempotency.GetQueryFilter());
         Assert.Contains(
             model.GetIndexes(),
             x => x.IsUnique &&
@@ -230,6 +234,16 @@ public sealed class SpaceContextTenantTests
             source.GetIndexes(),
             x => x.Properties.Select(p => p.Name)
                 .SequenceEqual(new[] { "TenantId", "Sha256" }));
+        Assert.Contains(
+            idempotency.GetIndexes(),
+            x => x.IsUnique &&
+                 x.Properties.Select(p => p.Name).SequenceEqual(
+                 [
+                     "TenantId",
+                     "PrincipalId",
+                     "Operation",
+                     "IdempotencyKeyHash",
+                 ]));
         Assert.Contains(
             source.GetForeignKeys(),
             x => x.Properties.Select(p => p.Name)

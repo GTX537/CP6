@@ -33,6 +33,8 @@ public sealed class SpaceContext : DbContext
     public DbSet<SpaceJobAttempt> JobAttempts => Set<SpaceJobAttempt>();
     public DbSet<SpaceJobStep> JobSteps => Set<SpaceJobStep>();
     public DbSet<SpaceModelIssue> Issues => Set<SpaceModelIssue>();
+    public DbSet<SpaceIdempotencyRecord> IdempotencyRecords =>
+        Set<SpaceIdempotencyRecord>();
     public DbSet<SpaceFloorRevision> FloorRevisions => Set<SpaceFloorRevision>();
     public DbSet<SpaceZoneRevision> ZoneRevisions => Set<SpaceZoneRevision>();
     public DbSet<SpaceAisleRevision> AisleRevisions => Set<SpaceAisleRevision>();
@@ -65,6 +67,7 @@ public sealed class SpaceContext : DbContext
         ConfigureJobStep(modelBuilder);
         ConfigureArtifact(modelBuilder);
         ConfigureIssue(modelBuilder);
+        ConfigureIdempotencyRecord(modelBuilder);
     }
 
     public override int SaveChanges(bool acceptAllChangesOnSuccess)
@@ -1050,6 +1053,53 @@ public sealed class SpaceContext : DbContext
             .HasConstraintName("FK_Space_ModelIssue_Job_Tenant");
 
         entity.HasQueryFilter(x => x.TenantId == CurrentTenantId && !x.IsDeleted);
+    }
+
+    private void ConfigureIdempotencyRecord(ModelBuilder modelBuilder)
+    {
+        var entity = modelBuilder.Entity<SpaceIdempotencyRecord>();
+        entity.ToTable("Space_IdempotencyRecord");
+        entity.HasKey(x => x.Id);
+        entity.Property(x => x.Id).ValueGeneratedNever();
+        ConfigureTenantEntity(entity);
+
+        entity.Property(x => x.Operation).HasMaxLength(100).IsRequired();
+        entity.Property(x => x.IdempotencyKeyHash)
+            .HasColumnType("char(64)")
+            .IsUnicode(false)
+            .IsFixedLength()
+            .HasMaxLength(64)
+            .IsRequired();
+        entity.Property(x => x.RequestHash)
+            .HasColumnType("char(64)")
+            .IsUnicode(false)
+            .IsFixedLength()
+            .HasMaxLength(64)
+            .IsRequired();
+        entity.Property(x => x.ResponseJson)
+            .HasColumnType("nvarchar(max)")
+            .IsRequired();
+        entity.Property(x => x.ReplayUntilUtc).HasColumnType("datetime2");
+        entity.Property(x => x.RetainUntilUtc).HasColumnType("datetime2");
+
+        entity.HasIndex(
+                x => new
+                {
+                    x.TenantId,
+                    x.PrincipalId,
+                    x.Operation,
+                    x.IdempotencyKeyHash,
+                })
+            .IsUnique()
+            .HasFilter("[IsDeleted] = 0")
+            .HasDatabaseName(
+                "UX_Space_IdempotencyRecord_Tenant_Principal_Operation_Key");
+        entity.HasIndex(x => new { x.TenantId, x.RetainUntilUtc })
+            .HasDatabaseName(
+                "IX_Space_IdempotencyRecord_Tenant_Retention");
+
+        entity.HasQueryFilter(
+            x => x.TenantId == CurrentTenantId && !x.IsDeleted);
     }
 
     private static void ConfigureTenantEntity<TEntity>(

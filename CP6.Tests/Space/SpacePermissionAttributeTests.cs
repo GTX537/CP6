@@ -37,6 +37,7 @@ public class SpacePermissionAttributeTests
         "space-code-rule:generate",
         "space-publish:publish", "space-publish:deactivate", "space-publish:adopt",
         "space-audit:read",
+        "space:model:read", "space:model:edit", "space:source:upload",
     };
 
     private static readonly Dictionary<string, string> AllowedReadPermissions =
@@ -45,6 +46,12 @@ public class SpacePermissionAttributeTests
             ["LocationPublishController.ListEvents"] = "space-audit:read",
             ["SpaceAuditController.Query"] = "space-audit:read",
             ["SpaceAuditController.Timeline"] = "space-audit:read",
+            ["SpaceDesignV1Controller.GetModel"] = "space:model:read",
+            ["SpaceDesignV1Controller.GetVersions"] = "space:model:read",
+            ["SpaceDesignV1Controller.GetVersion"] = "space:model:read",
+            ["SpaceDesignV1Controller.GetSources"] = "space:model:read",
+            ["SpaceDesignV1Controller.GetJob"] = "space:model:read",
+            ["SpaceDesignV1Controller.GetIssues"] = "space:model:read",
         };
 
     /// <summary>只读语义的 POST 豁免（Controller.Method）——按「不得带特性」校验。</summary>
@@ -88,8 +95,8 @@ public class SpacePermissionAttributeTests
     [Fact]
     public void SpaceControllers_AreDiscovered()
     {
-        // 守卫：确保反射确实扫到 10 个 controller（防命名空间/程序集变动导致「空扫空过」）。
-        Assert.Equal(10, SpaceControllers.Count());
+        // 守卫：确保反射确实扫到 11 个 controller（防命名空间/程序集变动导致「空扫空过」）。
+        Assert.Equal(11, SpaceControllers.Count());
     }
 
     [Fact]
@@ -97,19 +104,19 @@ public class SpacePermissionAttributeTests
     {
         var offenders = new List<string>();
         foreach (var c in SpaceControllers)
-        foreach (var m in ActionMethods(c).Where(IsMutating))
-        {
-            if (IsExempt(c, m)) continue; // 豁免项在专门用例校验「不得带」
-            var perm = ReadPermission(m);
-            if (perm == null)
+            foreach (var m in ActionMethods(c).Where(IsMutating))
             {
-                offenders.Add($"{c.Name}.{m.Name}：变更端点缺 [RequirePermission]");
-                continue;
+                if (IsExempt(c, m)) continue; // 豁免项在专门用例校验「不得带」
+                var perm = ReadPermission(m);
+                if (perm == null)
+                {
+                    offenders.Add($"{c.Name}.{m.Name}：变更端点缺 [RequirePermission]");
+                    continue;
+                }
+                var key = $"{perm.Value.menu}:{perm.Value.action}";
+                if (!Whitelist.Contains(key) || key == "space-audit:read")
+                    offenders.Add($"{c.Name}.{m.Name}：键 '{key}' 不在映射白名单");
             }
-            var key = $"{perm.Value.menu}:{perm.Value.action}";
-            if (!Whitelist.Contains(key) || key == "space-audit:read")
-                offenders.Add($"{c.Name}.{m.Name}：键 '{key}' 不在映射白名单");
-        }
         Assert.True(offenders.Count == 0, "变更端点权限点缺失/越界:\n" + string.Join("\n", offenders));
     }
 
@@ -118,31 +125,31 @@ public class SpacePermissionAttributeTests
     {
         var offenders = new List<string>();
         foreach (var c in SpaceControllers)
-        foreach (var m in ActionMethods(c))
-        {
-            var readOnly = (IsGet(m) && !IsMutating(m)) || IsExempt(c, m);
-            if (!readOnly)
-                continue;
+            foreach (var m in ActionMethods(c))
+            {
+                var readOnly = (IsGet(m) && !IsMutating(m)) || IsExempt(c, m);
+                if (!readOnly)
+                    continue;
 
-            var actionName = $"{c.Name}.{m.Name}";
-            var actual = ReadPermission(m);
-            if (AllowedReadPermissions.TryGetValue(
-                    actionName,
-                    out var expected))
-            {
-                var key = actual is null
-                    ? null
-                    : $"{actual.Value.menu}:{actual.Value.action}";
-                if (key != expected)
+                var actionName = $"{c.Name}.{m.Name}";
+                var actual = ReadPermission(m);
+                if (AllowedReadPermissions.TryGetValue(
+                        actionName,
+                        out var expected))
+                {
+                    var key = actual is null
+                        ? null
+                        : $"{actual.Value.menu}:{actual.Value.action}";
+                    if (key != expected)
+                        offenders.Add(
+                            $"{actionName}：期望 '{expected}'，实际 '{key ?? "<none>"}'");
+                }
+                else if (actual is not null)
+                {
                     offenders.Add(
-                        $"{actionName}：期望 '{expected}'，实际 '{key ?? "<none>"}'");
+                        $"{actionName}：非审计 GET/只读豁免误贴 [RequirePermission]");
+                }
             }
-            else if (actual is not null)
-            {
-                offenders.Add(
-                    $"{actionName}：非审计 GET/只读豁免误贴 [RequirePermission]");
-            }
-        }
 
         var discovered = SpaceControllers
             .SelectMany(c => ActionMethods(c).Select(m => (c, m)))
@@ -155,6 +162,29 @@ public class SpacePermissionAttributeTests
         Assert.True(
             offenders.Count == 0,
             "只读端点权限越界:\n" + string.Join("\n", offenders));
+    }
+
+    [Fact]
+    public void Design_source_creation_requires_upload_and_model_edit()
+    {
+        var method = typeof(SpaceDesignV1Controller)
+            .GetMethod(nameof(SpaceDesignV1Controller.CreateSource));
+        Assert.NotNull(method);
+
+        var permissions = CustomAttributeData
+            .GetCustomAttributes(method!)
+            .Where(data =>
+                data.AttributeType == typeof(RequirePermissionAttribute))
+            .Select(data =>
+                $"{data.ConstructorArguments[0].Value}:" +
+                $"{data.ConstructorArguments[1].Value}")
+            .ToHashSet();
+
+        Assert.True(permissions.SetEquals(
+        [
+            "space:source:upload",
+            "space:model:edit",
+        ]));
     }
 
     [Fact]
