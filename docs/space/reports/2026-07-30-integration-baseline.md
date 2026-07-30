@@ -55,7 +55,7 @@ E00 S01–S04、E01 S01–S06、E07 S01–S04 与 E13 S01–S03、S12 已进入�
 
 | 检查 | 结果 |
 |---|---|
-| `dotnet build CP6.slnx -c Release --no-restore` | Space、WebApi、Desktop、测试等项目完成编译；Android D8 因 D 盘 0GB 空闲失败，整解未通过；Space 受影响项目单独编译 0 errors |
+| `dotnet build CP6.slnx -c Release --no-restore` | 最终完整重跑 0 errors、10 existing warnings；包含 Android D8 打包 |
 | Space UnitTests | 136 passed |
 | Space IntegrationTests | 默认门禁 46 passed、36 SQL-gated skipped；本机 SQL 全量启用 77 首轮通过，5 个并行建库/Migration/删库超时项串行复跑通过 |
 | EF Migration 一致性 | `has-pending-model-changes` 通过，无待迁移模型变更 |

@@ -96,7 +96,7 @@ No changes have been made to the model since the last migration.
 | 检查 | 结果 |
 |---|---|
 | Space 受影响项目 Release 编译 | 0 errors；Infrastructure 首轮 3 existing warnings |
-| `dotnet build CP6.slnx -c Release --no-restore` | Space、WebApi、Desktop、测试等项目完成编译；Android D8 打包因 D 盘 0GB 空闲失败，整解构建未通过 |
+| `dotnet build CP6.slnx -c Release --no-restore` | 最终重跑 0 errors，10 existing warnings；包含 Android D8 打包 |
 | Space UnitTests | 136 passed；其中 E13-S12 新增 10 |
 | Space IntegrationTests（默认门禁） | 46 passed，36 SQL-gated skipped |
 | E13-S12 SQL Server 聚焦测试 | 4 passed，0 skipped |
@@ -120,11 +120,12 @@ E13-S12 SQL 测试真实连接本机 `KOUSQLSERVER`，使用 Windows 集成认�
 保留建库、RowVersion 删库和 Job Processor 删库；逐项串行复跑全部通过。
 因此不声称 82 项首轮一次性全绿。
 
-整解 Release 构建的唯一错误来自 Android D8：
+整解 Release 首轮的唯一错误来自 Android D8：
 `java.io.IOException: There is not enough space on the disk`。失败发生在
-移动端打包阶段，Space 受影响项目和测试产物此前均已编译成功。执行项目级
-`dotnet clean CP6.Mobile` 后 D 盘仍只有约 0.06GB 空闲，因此没有伪造一次
-成功的整解重跑。
+移动端打包阶段，Space 受影响项目和测试产物此前均已编译成功。随后只清理
+本轮已完成 S02/S03 工作树中可重建的 Android Release `bin/obj`，D 盘空闲
+从约 0.06GB 恢复到约 0.61GB；同一完整构建最终重跑通过，结果为
+0 errors、10 existing warnings。
 
 ## 6. 明确未实现
 
