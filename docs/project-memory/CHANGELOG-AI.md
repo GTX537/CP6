@@ -2,13 +2,15 @@
 
 > 依据 Git log 汇总，不替代完整 Git 历史。重点记录影响接手判断的里程碑。
 
-## 2026-07-30：Space V1 E00 / E01 S01–S03 受控集成
+## 2026-07-30：Space V1 E00 / E01 S01–S04 受控集成
 
 - `0d25da4d`：把 542 个文件的 Space 后续候选固化到 `checkpoint/space-candidate-20260730`；安全审计未发现真实凭据、私钥或异常构建产物。该提交仅作可回退候选，不是正式实现基线。
 - `539d56de`：从 `dcc1ac9a` 建立 `integration/space-v1-20260730`，no-ff 合入 E00 S01–S04 与 E01 S01–S03。
+- `bac76444`：从候选重建 E01 S04 最小切片，实现 Published→Draft Clone、八类版本快照、LogicalId 保留与 RowId 重映射、幂等预留、租约围栏和失败清理；未夹带后续 E05/E06/E12 能力。
+- `85792161`：以 no-ff 方式把 S04 合入唯一 Space 集成分支。
 - 冲突解决保留 WMS 序列追踪不可降级、Definition 不可变、Space 审计追加写三套保存护栏，并在 `CP6.slnx` 同时保留 Mobile 与六个 Space 项目。
-- 集成态验证：Release build 0 error / 10 existing warnings；Space Unit 35 passed；Space Integration 7 passed / 18 SQL-gated skipped；强制本机 SQL 补跑在业务断言前被 TLS/SSPI/执行身份认证阻断；CP6 主测试 2664 passed / 17 environment-gated skipped；前端 type-check、86 files / 539 tests 和 production build 全通过。
-- 下一步只从检查点提取 E01 S04，再顺序处理 S05、S06；E02 S01、E05–E12 保持候选状态，禁止整包合入。
+- S04 功能态验证：Release build 0 error / 10 existing warnings；CP6 主测试 2664 passed / 17 environment-gated skipped；合并态 Space Unit 41 passed、Space Integration 9 passed / 22 SQL-gated skipped，EF 模型无待迁移变更。前端未受 S04 影响，沿用此前 type-check、86 files / 539 tests 和 production build 通过基线。
+- 下一步只从检查点提取 E01 S05，再处理 S06；E02 S01、E05–E12 保持候选状态，禁止整包合入。
 
 ## 2026-07-19：GR-VP T7 部署与真实权限冒烟
 

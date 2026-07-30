@@ -8,6 +8,7 @@
 - T6 通过 merge commit `d79a39c` 合入并推送；T7 冒烟修复为 `ffca422`
 - Space 受控集成分支：`integration/space-v1-20260730`
 - Space E00 + E01 S01–S03 集成提交：`539d56de`
+- Space E01 S04 功能/集成提交：`bac76444` / `85792161`
 - Space 后续候选安全检查点：`checkpoint/space-candidate-20260730`（`0d25da4d`，不得整包合入）
 - 远端：`origin`（GitHub 私有仓库）
 - 换机标签：`migration-2026-07-18-ready`
@@ -18,8 +19,8 @@
 | 范围 | 状态 | 证据 |
 |---|---|---|
 | E00 S01–S04 | 已进入集成基线 | `539d56de`；事实清单、兼容护栏、数据源契约、审计/可观测性 |
-| E01 S01–S03 | 已进入集成基线 | `539d56de`；版本/来源文件/Job Ledger 及独立 Space DbContext |
-| E01 S04–S06 | 候选已保全，未集成 | `0d25da4d`；须按 S04→S05→S06 从检查点逐项提取和复验 |
+| E01 S01–S04 | 已进入集成基线 | `539d56de` + `85792161`；版本/来源文件/Job Ledger、独立 Space DbContext 及 Published→Draft Clone |
+| E01 S05–S06 | 候选已保全，未集成 | `0d25da4d`；须按 S05→S06 从检查点逐项提取和复验 |
 | E02 S01、E05–E12 | 候选证据，未集成 | `0d25da4d`；不得以候选报告替代集成验收 |
 
 ## 上一完成波：GR-VP
@@ -36,7 +37,7 @@
 
 ## 最近验证基线
 
-- Space 集成提交 `539d56de`：Release 全解构建 0 error（10 个既有 warning）；Space Unit 35 passed；Space Integration 7 passed / 18 SQL 环境门禁 skipped；强制连接本机 SQL 的补跑在业务断言前被 TLS/SSPI/执行身份认证阻断；CP6 主测试 2664 passed / 17 环境门禁 skipped。
+- Space 集成基线已推进至 `85792161`：S04 功能态 Release 全解构建 0 error（10 个既有 warning），CP6 主测试 2664 passed / 17 环境门禁 skipped；合并态 Space Unit 41 passed，Space Integration 9 passed / 22 SQL 环境门禁 skipped，EF 模型与最新 Migration 一致。强制连接本机 SQL 的补跑仍在业务断言前被 TLS/SSPI/执行身份认证阻断。
 - Space 集成前端：type-check 通过，86 files / 539 tests passed，production build 通过；仅有既有大 chunk 提示。
 - 后续候选检查点 `0d25da4d` 已独立通过更大范围候选回归，但它仍不是实现真相，也不授权整包合并。
 - 后端在 GR-VP T1 报告中：2220 passed / 5 skipped。
@@ -54,4 +55,4 @@
 
 ## 下一动作
 
-从 `0d25da4d` 只提取 E01 S04（Published→Draft Clone），在 `539d56de` 上独立审查、迁移和回归；通过后再依次处理 E01 S05 Design API V1、E01 S06 文件安全/保留。完成 E01 后再进入 E02 S01 与 E07，禁止把 E05–E12 候选整包合入。SQL Server 环境可用时补跑当前 18 个门禁测试。GR-VP T1–T7 已完成，不要重做。
+从 `0d25da4d` 只提取 E01 S05（Design API V1），在 `85792161` 上独立审查和回归；通过后再处理 E01 S06 文件安全/保留。完成 E01 后再进入 E02 S01 与 E07，禁止把 E05–E12 候选整包合入。SQL Server 环境可用时补跑当前 22 个门禁测试。GR-VP T1–T7 已完成，不要重做。
