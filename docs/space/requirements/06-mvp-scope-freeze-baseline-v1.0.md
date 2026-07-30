@@ -277,3 +277,4 @@ Beta 可以仅面向内部租户用户。外部 Portal 可以试点，但不是 
 - [Development Ready 实施交接](./07-development-ready-handoff.md)
 - [Scope Change RFC 模板](./08-scope-change-rfc-template.md)
 - [详细设计索引](../README.md)
+- [E13-S01 Provider SPI、租户策略与功能开关完成报告](../reports/e13-s01-provider-policy-contract.md)

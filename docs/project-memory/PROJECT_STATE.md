@@ -14,6 +14,7 @@
 - Space E02 S01 实验门禁功能/集成提交：`fe959066` / `3742fbff`
 - Space E07 S01–S03 功能/集成提交：`d06a8bd1` / `6e67a9d1`
 - Space E07 S04 功能/集成提交：`74577015` / `6d751e0c`
+- Space E13 S01 功能/集成提交：`8f7fc25e` / `ea161975`
 - Space 后续候选安全检查点：`checkpoint/space-candidate-20260730`（`0d25da4d`，不得整包合入）
 - 远端：`origin`（GitHub 私有仓库）
 - 换机标签：`migration-2026-07-18-ready`
@@ -27,6 +28,7 @@
 | E01 S01–S06 | 已进入集成基线 | `539d56de` + `85792161` + `36f534d9` + `2ccdff7a`；版本/来源文件/Job Ledger、Published→Draft Clone、Design API v1、生成 SDK、文件安全扫描与保留清理 |
 | E02 S01 | 部分进入集成基线，最终签收受阻 | `fe959066` + `3742fbff`；中立审计/压力/运行证据/preflight 已集成，正式黄金集、授权、供应商包/凭据和冻结 Worker 尚缺 |
 | E07 S01–S04 | 已进入集成基线 | `d06a8bd1` + `6e67a9d1` + `74577015` + `6d751e0c`；版本化能力合同、CP6 真实适配器、持久化幂等账本、标准模拟器、确定性 10,000 库位标准仓与故障包 |
+| E13 S01 | 已进入集成基线 | `8f7fc25e` + `ea161975`；Provider/确定性端口、Schema v1 强类型契约、租户/Site/别名/外部开关门禁、默认 Disabled 与配额失败关闭 |
 | E05–E12 剩余范围 | 候选证据，未集成 | `0d25da4d`；不得以候选报告替代集成验收 |
 
 ## 上一完成波：GR-VP
@@ -47,6 +49,7 @@
 - E02 S01 实验门禁已推进至 `3742fbff`：中立工具 10/10 测试通过，Aspose 隔离实验适配器构建 0 warning / 0 error；5 个冻结 Seed 完整性通过，50MiB 与 100 万实体压力资产生成通过。严格 readiness 按预期退出 `3`，ODA/APS 模板 preflight 按预期退出 `4`，表明外部签收条件仍未满足。
 - E07 S01–S03 已推进至 `6e67a9d1`：Release 全解构建 0 error（7 个既有测试 warning），Space Unit 73 passed，Space Integration 35 passed / 30 SQL 环境门禁 skipped，CP6 主测试 2674 passed / 17 environment-gated skipped，Client 71 passed，EF 模型与 Migration 一致；新增代码精确格式门禁通过。
 - E07 S04 已推进至 `6d751e0c`：500 货架、10,000 库位、100 SKU、5,000 库存记录、100 拣货任务和 6 个固定故障样本由同一固定种子生成；两次独立生成的 17 个文件差异为 0，干净检出后的 Manifest 16 个受管文件哈希错误为 0。合并态 Release 全解构建 0 error（10 个既有 warning），Space Unit 79 passed，Space Integration 40 passed / 30 SQL 环境门禁 skipped，CP6 主测试 2680 passed / 17 environment-gated skipped，Client 71 passed。
+- E13 S01 已推进至 `ea161975`：既有租户与未配置租户默认 Disabled，默认无 Provider 且配额租约失败关闭；Provider 输入不含租户/Site/文件/存储标识，外部 Provider 需 Site、别名、数据策略与显式开关全部放行。合并态 Release 全解构建 0 error（10 个既有 warning），Space Unit 97 passed，Space Integration 41 passed / 30 SQL 环境门禁 skipped，CP6 主测试 2680 passed / 17 environment-gated skipped，Client 71 passed。
 - Space 集成前端：type-check 通过，86 files / 539 tests passed，production build 通过；仅有既有大 chunk 提示。
 - 后续候选检查点 `0d25da4d` 已独立通过更大范围候选回归，但它仍不是实现真相，也不授权整包合并。
 - 后端在 GR-VP T1 报告中：2220 passed / 5 skipped。
@@ -64,4 +67,4 @@
 
 ## 下一动作
 
-以 `6d751e0c` 为唯一 Space 代码集成基线：E07 S01–S04 已完成；E07 S05 继续等待 E04 S04，不提前采用。E02 S01 等待正式 20 文件黄金集、DWG/DXF 矩阵、法务/采购授权、ODA SDK 或 APS 受控凭据及 8 vCPU / 32GiB 冻结 Worker 后完成同环境评分。下一项可独立推进的内部工作是按冻结批次审计 E13 Provider 试验；禁止把剩余候选整包合入。SQL Server 环境可用时补跑当前 30 个门禁测试。GR-VP T1–T7 已完成，不要重做。
+以 `ea161975` 为唯一 Space 代码集成基线：E13 S01 已完成，下一张可独立推进的内部卡为 E13 S02 Run/Proposal/Decision/Usage 数据模型。E13 S04 等待 E02 S03，E13 S05 等待 S04 与正式供应商证据；E07 S05 继续等待 E04 S04。E02 S01 等待正式 20 文件黄金集、DWG/DXF 矩阵、法务/采购授权、ODA SDK 或 APS 受控凭据及 8 vCPU / 32GiB 冻结 Worker 后完成同环境评分。禁止把剩余候选整包合入。SQL Server 环境可用时补跑当前 30 个门禁测试。GR-VP T1–T7 已完成，不要重做。

@@ -34,6 +34,8 @@
 - E07 功能态与合并态验证通过：Release 全解构建 0 error，Space Unit 73 passed，Space Integration 35 passed / 30 SQL-gated skipped，CP6 主测试 2674 passed / 17 environment-gated skipped，Client 71 passed，EF 模型无待迁移变更；未夹带 E07 S04/S05、E08、E13、Workload 或发布 Saga。
 - E07 S04 标准仓已按第 9 节冻结协议独立重建：功能提交 `74577015`，no-ff 集成提交 `6d751e0c`；交付确定性 500 货架、10,000 库位、SKU/库存/批次/容器、100 个拣货任务、DXF/底图/期望答案、WMS seed 与 6 个固定故障样本。
 - S04 两次独立生成 17 个文件逐字节差异为 0，干净检出后的 Manifest 哈希错误为 0；合并态 Release 全解构建 0 error（10 个既有 warning），Space Unit 79 passed、Space Integration 40 passed / 30 SQL-gated skipped、CP6 主测试 2680 passed / 17 environment-gated skipped、Client 71 passed。DWG 外部门禁继续归 E02，不伪造资产；E07 S05 仍等待 E04 S04。
+- E13 S01 已按 ADR-0002 和 AI Schema v1 冻结边界独立实现：功能提交 `8f7fc25e`，no-ff 集成提交 `ea161975`；交付 Provider/确定性端口、强类型输入输出、Provider 别名注册表、租户/Site/数据策略/外部开关门禁与原子配额租约端口。
+- S01 默认依赖注入为租户 Disabled、Provider 空注册和配额失败关闭；新增 `space:model:generate-ai` / `space:model:review-ai` 权限及四个稳定 AI 错误码。合并态 Release 全解构建 0 error（10 个既有 warning），Space Unit 97 passed、Space Integration 41 passed / 30 SQL-gated skipped、CP6 主测试 2680 passed / 17 environment-gated skipped、Client 71 passed；未新增 Migration、HTTP、外部适配器或 Provider 凭据。
 - `0d25da4d` 中尚未独立提取的剩余范围仍为候选，不计入已完成实现，后续必须按依赖顺序逐项提取。
 
 ## 当前 GR-VP 波已完成

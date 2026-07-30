@@ -4,12 +4,12 @@
 - 集成分支：`integration/space-v1-20260730`
 - 基线父提交：`dcc1ac9a`
 - 初始集成提交：`539d56de`
-- 当前代码集成提交：`6d751e0c`
+- 当前代码集成提交：`ea161975`
 - 候选检查点：`checkpoint/space-candidate-20260730` / `0d25da4d`
 
 ## 1. 本轮结论
 
-E00 S01–S04、E01 S01–S06 与 E07 S01–S04 已进入唯一集成基线。E02 S01 的中立实验门禁也已进入基线，但最终技术选型仍受外部数据、授权和环境阻塞，不计作完整签收。各切片均由候选重建并经过独立审查，没有整包合入候选。
+E00 S01–S04、E01 S01–S06、E07 S01–S04 与 E13 S01 已进入唯一集成基线。E02 S01 的中立实验门禁也已进入基线，但最终技术选型仍受外部数据、授权和环境阻塞，不计作完整签收。各切片均按冻结边界独立实现或由候选重建并经过审查，没有整包合入候选。
 
 ## 2. 已集成范围
 
@@ -28,6 +28,7 @@ E00 S01–S04、E01 S01–S06 与 E07 S01–S04 已进入唯一集成基线。E0
 | E02 S01（Partial） | 中立数据审计、压力生成、适配器运行证据、ODA/APS preflight、隔离供应商淘汰复现；不含生产 CAD 适配器 |
 | E07 S01–S03 | WMS 能力合同、CP6 真实适配器、持久化幂等账本、标准模拟器、库存/任务查询与故障注入 |
 | E07 S04 | 确定性 500 货架/10,000 库位标准仓、WMS seed、DXF/底图/期望答案、加载器与 6 个固定故障样本 |
+| E13 S01 | Provider/确定性端口、Schema v1 强类型契约、租户/Site/别名/数据策略/外部开关门禁、默认 Disabled 与配额失败关闭 |
 
 ## 3. 候选保全边界
 
@@ -51,9 +52,9 @@ E00 S01–S04、E01 S01–S06 与 E07 S01–S04 已进入唯一集成基线。E0
 
 | 检查 | 结果 |
 |---|---|
-| `dotnet build CP6.slnx -c Release` | E07 S04 合并态通过；0 errors，10 existing warnings |
-| Space UnitTests | 79 passed |
-| Space IntegrationTests | 40 passed，30 SQL-gated skipped；本机强制补跑在业务断言前被 TLS/SSPI/Guest 执行身份认证阻断 |
+| `dotnet build CP6.slnx -c Release --no-restore` | E13 S01 合并态通过；0 errors，10 existing warnings |
+| Space UnitTests | 97 passed |
+| Space IntegrationTests | 41 passed，30 SQL-gated skipped；本机强制补跑在业务断言前被 TLS/SSPI/Guest 执行身份认证阻断 |
 | EF Migration 一致性 | `has-pending-model-changes` 通过，无待迁移模型变更 |
 | CP6.Tests | 2680 passed，17 environment-gated skipped |
 | CP6.Client.Tests | 71 passed |
@@ -64,6 +65,7 @@ E00 S01–S04、E01 S01–S06 与 E07 S01–S04 已进入唯一集成基线。E0
 | E02 供应商 preflight | ODA/APS 模板均因缺授权包/受控凭据/冻结环境按预期退出 `4`；未读取或序列化 secret 值 |
 | Aspose 隔离淘汰复现 | 适配器 build 0 warning / 0 error；25 次中 L5 5/5 崩溃，20 个成功观察均只保留图层 `0` |
 | E07 S04 数据与范围门禁 | 两次独立生成 17 个文件差异为 0；干净检出 Manifest 哈希错误为 0；新增 C# 精确格式通过；未混入 S05、E08、E13、Workload 或发布 Saga |
+| E13 S01 Provider 门禁 | 三类 Provider 共用同一 SPI；默认租户 Disabled、注册表为空、配额失败关闭；敏感标识不进入 Provider 输入；Provider 契约 18 passed，权限聚焦 17 passed |
 | Frontend type-check | 通过 |
 | Frontend unit tests | 86 files，539 tests passed |
 | Frontend production build | 通过；保留既有大 chunk 提示 |
@@ -76,10 +78,13 @@ E07 功能提交 `d06a8bd1` 与 no-ff 集成提交 `6e67a9d1` 交付独立 Migra
 
 E07 S04 功能提交 `74577015` 与 no-ff 集成提交 `6d751e0c` 交付数据集版本 `1.0.0`、固定生成器/种子和 10,000 库位验收包。可选 XLSX 不属于第 9 节硬门槛；DWG 缺口继续由 E02-S01 许可转换器决策阻塞并在 Manifest 中明示，不伪造资产。
 
+E13 S01 功能提交 `8f7fc25e` 与 no-ff 集成提交 `ea161975` 交付 Provider/确定性端口、租户策略和失败关闭默认值。权限种子新增 `space:model:generate-ai` 与 `space:model:review-ai`，但权限不会启用 AI；未显式替换租户策略、Provider 注册和原子配额租约前不会发生 Provider 调用。本卡无 Migration、HTTP 或外部网络调用。
+
 ## 6. 下一批固定顺序
 
 1. E02 S01：获得正式黄金集、DWG/DXF 矩阵、ODA/APS 授权材料和 8 vCPU / 32GiB 冻结 Worker 后，运行同环境试验并按 ADR-0001 评分签收。
 2. E07 S05：等待 E04 S04，不提前采用或切换。
-3. E13：按冻结批次完成 Provider 技术/授权证据；这是当前可独立推进的内部工作。
+3. E13 S02：交付 Run、Proposal、Decision、Usage 租户隔离数据模型；不提前实现 S03～S07 或 S12。
+4. E13 S04/S05：等待 E02 S03、CAD IR 最小化和正式供应商证据。
 
 每个子任务必须独立提取、审查、迁移验证、测试和提交。E05–E12 候选不得整包 merge 或 cherry-pick。
