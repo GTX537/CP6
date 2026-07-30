@@ -43,6 +43,10 @@ public sealed class SpaceContext : DbContext
         Set<SpaceProposalDecision>();
     public DbSet<SpaceAiUsageRecord> AiUsageRecords =>
         Set<SpaceAiUsageRecord>();
+    public DbSet<SpaceTenantAiWorkSlot> TenantAiWorkSlots =>
+        Set<SpaceTenantAiWorkSlot>();
+    public DbSet<SpaceAiBudgetReservation> AiBudgetReservations =>
+        Set<SpaceAiBudgetReservation>();
     public DbSet<SpaceFloorRevision> FloorRevisions => Set<SpaceFloorRevision>();
     public DbSet<SpaceZoneRevision> ZoneRevisions => Set<SpaceZoneRevision>();
     public DbSet<SpaceAisleRevision> AisleRevisions => Set<SpaceAisleRevision>();
@@ -80,6 +84,8 @@ public sealed class SpaceContext : DbContext
         ConfigureGenerationProposal(modelBuilder);
         ConfigureProposalDecision(modelBuilder);
         ConfigureAiUsageRecord(modelBuilder);
+        ConfigureTenantAiWorkSlot(modelBuilder);
+        ConfigureAiBudgetReservation(modelBuilder);
     }
 
     public override int SaveChanges(bool acceptAllChangesOnSuccess)
@@ -87,6 +93,7 @@ public sealed class SpaceContext : DbContext
         ProtectPublishedHistory();
         ProtectPublishedSnapshotWrites();
         ProtectProposalDecisionHistory();
+        ProtectAiCapacityLedger();
         StampAndValidateTenant();
         return base.SaveChanges(acceptAllChangesOnSuccess);
     }
@@ -98,6 +105,7 @@ public sealed class SpaceContext : DbContext
         ProtectPublishedHistory();
         ProtectPublishedSnapshotWrites();
         ProtectProposalDecisionHistory();
+        ProtectAiCapacityLedger();
         StampAndValidateTenant();
         return base.SaveChangesAsync(acceptAllChangesOnSuccess, cancellationToken);
     }
@@ -1490,6 +1498,140 @@ public sealed class SpaceContext : DbContext
             x => x.TenantId == CurrentTenantId && !x.IsDeleted);
     }
 
+    private void ConfigureTenantAiWorkSlot(ModelBuilder modelBuilder)
+    {
+        var entity = modelBuilder.Entity<SpaceTenantAiWorkSlot>();
+        entity.ToTable(
+            "Space_TenantAiWorkSlot",
+            table =>
+            {
+                table.HasCheckConstraint(
+                    "CK_Space_TenantAiWorkSlot_SlotNo",
+                    "[SlotNo] >= 1 AND [SlotNo] <= 3");
+                table.HasCheckConstraint(
+                    "CK_Space_TenantAiWorkSlot_Lease",
+                    "([RunId] IS NULL AND [LeaseOwner] IS NULL AND " +
+                    "[LeaseExpiresAtUtc] IS NULL) OR " +
+                    "([RunId] IS NOT NULL AND [LeaseOwner] IS NOT NULL AND " +
+                    "[LeaseExpiresAtUtc] IS NOT NULL)");
+            });
+        entity.HasKey(x => new { x.TenantId, x.SlotNo });
+        entity.Property(x => x.TenantId).ValueGeneratedNever();
+        entity.Property(x => x.LeaseOwner)
+            .HasMaxLength(128);
+        entity.Property(x => x.LeaseExpiresAtUtc)
+            .HasColumnType("datetime2");
+        entity.Property(x => x.RowVersion).IsRowVersion();
+
+        entity.HasIndex(x => new { x.TenantId, x.RunId })
+            .IsUnique()
+            .HasFilter("[RunId] IS NOT NULL")
+            .HasDatabaseName(
+                "UX_TenantAiWorkSlot_Tenant_Run");
+        entity.HasIndex(
+                x => new
+                {
+                    x.TenantId,
+                    x.LeaseExpiresAtUtc,
+                    x.SlotNo,
+                })
+            .HasDatabaseName(
+                "IX_TenantAiWorkSlot_Tenant_Expiry");
+
+        entity.HasOne<SpaceGenerationRun>()
+            .WithMany()
+            .HasForeignKey(x => new { x.TenantId, x.RunId })
+            .HasPrincipalKey(x => new { x.TenantId, x.Id })
+            .OnDelete(DeleteBehavior.Restrict)
+            .HasConstraintName(
+                "FK_Space_TenantAiWorkSlot_Run_Tenant");
+
+        entity.HasQueryFilter(x => x.TenantId == CurrentTenantId);
+    }
+
+    private void ConfigureAiBudgetReservation(ModelBuilder modelBuilder)
+    {
+        var entity = modelBuilder.Entity<SpaceAiBudgetReservation>();
+        entity.ToTable(
+            "Space_AiBudgetReservation",
+            table =>
+            {
+                table.HasCheckConstraint(
+                    "CK_Space_AiBudgetReservation_Cost",
+                    "[ReservedCostMinor] >= 0 AND " +
+                    "([ActualCostMinor] IS NULL OR [ActualCostMinor] >= 0)");
+                table.HasCheckConstraint(
+                    "CK_Space_AiBudgetReservation_Period",
+                    "[PeriodMonth] = YEAR([PeriodDay]) * 100 + " +
+                    "MONTH([PeriodDay])");
+                table.HasCheckConstraint(
+                    "CK_Space_AiBudgetReservation_Currency",
+                    "[ReservedCostMinor] = 0 OR [Currency] IS NOT NULL");
+            });
+        entity.HasKey(x => x.Id);
+        entity.Property(x => x.Id).ValueGeneratedNever();
+        entity.HasAlternateKey(x => new { x.TenantId, x.Id })
+            .HasName(
+                "AK_Space_AiBudgetReservation_TenantId_Id");
+        ConfigureTenantEntity(entity);
+
+        ConfigureHash(entity.Property(x => x.ProviderRequestKey));
+        entity.Property(x => x.PeriodDay)
+            .HasColumnType("date");
+        entity.Property(x => x.Currency)
+            .HasColumnType("char(3)")
+            .IsUnicode(false)
+            .IsFixedLength()
+            .HasMaxLength(3);
+        entity.Property(x => x.Status)
+            .HasConversion<short>()
+            .HasColumnType("smallint");
+        entity.Property(x => x.ExpiresAtUtc)
+            .HasColumnType("datetime2");
+        entity.Property(x => x.RowVersion).IsRowVersion();
+
+        entity.HasIndex(
+                x => new
+                {
+                    x.TenantId,
+                    x.ProviderRequestKey,
+                })
+            .IsUnique()
+            .HasDatabaseName(
+                "UX_AiBudgetReservation_Tenant_Request");
+        entity.HasIndex(
+                x => new
+                {
+                    x.TenantId,
+                    x.Currency,
+                    x.PeriodDay,
+                    x.Status,
+                })
+            .HasDatabaseName(
+                "IX_AiBudgetReservation_Tenant_Day");
+        entity.HasIndex(
+                x => new
+                {
+                    x.TenantId,
+                    x.Currency,
+                    x.PeriodMonth,
+                    x.Status,
+                })
+            .HasDatabaseName(
+                "IX_AiBudgetReservation_Tenant_Month");
+
+        entity.HasOne<SpaceGenerationRun>()
+            .WithMany()
+            .HasForeignKey(x => new { x.TenantId, x.RunId })
+            .HasPrincipalKey(x => new { x.TenantId, x.Id })
+            .OnDelete(DeleteBehavior.Restrict)
+            .HasConstraintName(
+                "FK_Space_AiBudgetReservation_Run_Tenant");
+
+        entity.HasQueryFilter(
+            x => x.TenantId == CurrentTenantId && !x.IsDeleted);
+    }
+
     private static void ConfigureHash(
         Microsoft.EntityFrameworkCore.Metadata.Builders
             .PropertyBuilder<string> property)
@@ -1604,6 +1746,41 @@ public sealed class SpaceContext : DbContext
             {
                 throw new SpaceProposalStateException(
                     "Proposal decisions are append-only.");
+            }
+        }
+    }
+
+    private void ProtectAiCapacityLedger()
+    {
+        foreach (var entry in ChangeTracker
+            .Entries<SpaceTenantAiWorkSlot>())
+        {
+            if (entry.State == EntityState.Deleted)
+            {
+                throw new SpaceAiCapacityStateException(
+                    "AI work-slot rows cannot be deleted.");
+            }
+            if (entry.State == EntityState.Detached)
+                continue;
+            if (entry.Entity.TenantId != CurrentTenantId ||
+                entry.State == EntityState.Modified &&
+                entry.Property(x => x.TenantId).OriginalValue !=
+                CurrentTenantId)
+            {
+                throw new SpaceTenantScopeException(
+                    "A cross-tenant AI work-slot write was rejected.");
+            }
+        }
+
+        foreach (var entry in ChangeTracker
+            .Entries<SpaceAiBudgetReservation>())
+        {
+            if (entry.State == EntityState.Deleted ||
+                entry.State == EntityState.Modified &&
+                entry.Property(x => x.IsDeleted).IsModified)
+            {
+                throw new SpaceAiCapacityStateException(
+                    "AI budget reservations cannot be deleted.");
             }
         }
     }

@@ -12,7 +12,8 @@ public sealed class SpaceAiTenantPolicy
         IReadOnlyList<Guid> allowedSiteIds,
         IReadOnlyList<string> allowedProviderAliases,
         int maxConcurrentRuns,
-        bool externalProviderEnabled)
+        bool externalProviderEnabled,
+        SpaceAiBudgetLimits budgetLimits)
     {
         TenantId = tenantId;
         DataPolicy = dataPolicy;
@@ -20,6 +21,7 @@ public sealed class SpaceAiTenantPolicy
         AllowedProviderAliases = allowedProviderAliases;
         MaxConcurrentRuns = maxConcurrentRuns;
         ExternalProviderEnabled = externalProviderEnabled;
+        BudgetLimits = budgetLimits;
     }
 
     public Guid TenantId { get; }
@@ -28,6 +30,7 @@ public sealed class SpaceAiTenantPolicy
     public IReadOnlyList<string> AllowedProviderAliases { get; }
     public int MaxConcurrentRuns { get; }
     public bool ExternalProviderEnabled { get; }
+    public SpaceAiBudgetLimits BudgetLimits { get; }
     public bool IsEnabled => DataPolicy != SpaceAiDataPolicy.Disabled;
 
     public static SpaceAiTenantPolicy Disabled(Guid tenantId)
@@ -39,7 +42,8 @@ public sealed class SpaceAiTenantPolicy
             [],
             [],
             PlatformMaxConcurrentRuns,
-            false);
+            false,
+            SpaceAiBudgetLimits.Unpriced);
     }
 
     public static SpaceAiTenantPolicy Enabled(
@@ -48,7 +52,8 @@ public sealed class SpaceAiTenantPolicy
         IEnumerable<Guid> allowedSiteIds,
         IEnumerable<string> allowedProviderAliases,
         int maxConcurrentRuns = PlatformMaxConcurrentRuns,
-        bool externalProviderEnabled = false)
+        bool externalProviderEnabled = false,
+        SpaceAiBudgetLimits? budgetLimits = null)
     {
         EnsureTenant(tenantId);
         if (dataPolicy == SpaceAiDataPolicy.Disabled)
@@ -97,7 +102,8 @@ public sealed class SpaceAiTenantPolicy
             sites,
             aliases,
             maxConcurrentRuns,
-            externalProviderEnabled);
+            externalProviderEnabled,
+            (budgetLimits ?? SpaceAiBudgetLimits.Unpriced).Validate());
     }
 
     public bool AllowsSite(Guid siteId) =>

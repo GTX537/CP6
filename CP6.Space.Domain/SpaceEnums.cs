@@ -227,3 +227,12 @@ public enum SpaceAiUsageOutcome : short
     Succeeded = 1,
     Failed = 2,
 }
+
+public enum SpaceAiBudgetReservationStatus : short
+{
+    Reserved = 0,
+    Submitted = 1,
+    Reported = 2,
+    Released = 3,
+    Reconciled = 4,
+}

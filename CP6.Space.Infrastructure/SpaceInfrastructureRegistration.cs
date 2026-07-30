@@ -26,6 +26,7 @@ public static class SpaceInfrastructureRegistration
         services.TryAddSingleton(new SpaceFileUploadLimits());
         services.TryAddSingleton(new SpaceFileRetentionOptions());
         services.TryAddSingleton(new SpaceJobProcessorOptions());
+        services.TryAddSingleton(new SpaceAiCapacityOptions());
         services.TryAddSingleton(
             SpaceWorkerSandboxPolicy.FileSafetyDefault);
         services.TryAddSingleton<
@@ -43,6 +44,10 @@ public static class SpaceInfrastructureRegistration
         services.AddScoped<ISpaceJobQueue, EfSpaceJobQueue>();
         services.AddScoped<ISpaceJobLeaseStore, EfSpaceJobLeaseStore>();
         services.AddScoped<ISpaceJobProgressReader, EfSpaceJobProgressReader>();
+        services.AddScoped<
+            ISpaceAiCapacityLedger,
+            EfSpaceAiCapacityLedger>();
+        services.AddScoped<SpaceAiCapacityCoordinator>();
         services.TryAddScoped<
             ISpaceImportJobStepExecutor,
             UnavailableSpaceImportJobStepExecutor>();
