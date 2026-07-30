@@ -43,6 +43,7 @@
         :mode="overlayMode"
         :polling="polling"
         :ts="overlayTs"
+        :source="stockSource"
         @mode="onOverlayMode"
         @refresh="refreshStock"
         @toggle-poll="onTogglePoll"
@@ -56,6 +57,9 @@
         :show-optimized="showOptimized"
         :workload-on="workloadOn"
         :device-on="deviceOn"
+        :task-source="taskSource"
+        :workload-source="workloadSource"
+        :device-source="deviceSource"
         @load-path="onLoadPath"
         @play="onPathPlay"
         @pause="onPathPause"
@@ -86,6 +90,8 @@ import { Locator } from '@/space-viewer/navigate/Locator'
 import { StockOverlay } from '@/space-viewer/overlay/StockOverlay'
 import { stockApi } from '@/api/space/stock'
 import type { OverlayMode, WmsStockDto } from '@/types/space/overlay'
+import type { SpaceDataSource } from '@/types/space/dataSource'
+import { isUsableDataSource } from '@/types/space/dataSource'
 import InfoCard from './InfoCard.vue'
 import FloorList from './FloorList.vue'
 import SearchBox from './SearchBox.vue'
@@ -118,6 +124,17 @@ const overlayMode = ref<OverlayMode>('status')
 const overlayTs = ref('')
 const polling = ref(false)
 const selectedStock = ref<WmsStockDto | null>(null)
+const unavailableSource = (dataSourceId: string): SpaceDataSource => ({
+  kind: 'Unavailable',
+  dataSourceId,
+  observedAtUtc: '',
+  isSimulated: false,
+  isAvailable: false,
+})
+const stockSource = ref<SpaceDataSource>(unavailableSource('NOT_QUERIED'))
+const taskSource = ref<SpaceDataSource>(unavailableSource('NOT_QUERIED'))
+const workloadSource = ref<SpaceDataSource>(unavailableSource('NOT_QUERIED'))
+const deviceSource = ref<SpaceDataSource>(unavailableSource('NOT_QUERIED'))
 
 let pathAnimator: PathAnimator | null = null
 let heatmap: WorkloadHeatmap | null = null
@@ -216,9 +233,16 @@ async function refreshStock(): Promise<void> {
   if (!overlay) return
   try {
     await overlay.refresh(currentFloorId.value)
+    stockSource.value = overlay.source
+    overlayTs.value = overlay.ts
+    if (!isUsableDataSource(stockSource.value)) {
+      selectedStock.value = null
+      await viewer?.load(currentFloorId.value)
+      ElMessage.warning(t('搴撳瓨鏁版嵁婧愪笉鍙敤'))
+      return
+    }
     overlay.setMode(overlayMode.value)
     overlay.apply()
-    overlayTs.value = overlay.ts
     syncSelectedStock()
   } catch {
     ElMessage.warning(t('库存数据获取失败，显示上次快照'))   // W-SPACE-701
@@ -232,7 +256,7 @@ function onOverlayMode(m: OverlayMode): void {
 }
 function onTogglePoll(): void {
   polling.value = !polling.value
-  if (polling.value) overlay?.startPolling(() => currentFloorId.value, 5000)
+  if (polling.value) overlay?.startPolling(refreshStock, 5000)
   else overlay?.stopPolling()
 }
 function syncSelectedStock(): void {
@@ -243,7 +267,12 @@ function syncSelectedStock(): void {
 async function onLocateMaterial(material: string): Promise<void> {
   try {
     const env = await stockApi.locate({ material })
-    const hits = env.data
+    const hits = env.data.items
+    stockSource.value = env.data.source
+    if (!isUsableDataSource(stockSource.value)) {
+      ElMessage.warning(t('搴撳瓨鏁版嵁婧愪笉鍙敤'))
+      return
+    }
     if (!hits.length) { ElMessage.info(t('无库位存放该物料')); return }     // I-SPACE-701
     if (hits.length > 1) ElMessage.info(t('找到 {n} 个库位，点击定位').replace('{n}', String(hits.length)))  // I-SPACE-702
     if (locator) await locator.locate(hits[0]!.locationCode)               // 复用 06 定位（首个）
@@ -263,6 +292,11 @@ async function onLoadPath(taskNo: string): Promise<void> {
   try {
     const env = await advancedApi.pickPath(currentFloorId.value, taskNo)
     const data = env.data
+    taskSource.value = data.source
+    if (!isUsableDataSource(taskSource.value)) {
+      ElMessage.warning(t('浠诲姟鏁版嵁婧愪笉鍙敤'))
+      return
+    }
     const stopPts: Pt[] = [...data.stops]
       .sort((a, b) => a.seq - b.seq)                              // 按 LineNo(seq) 升序，固定 actual 语义
       .filter((s) => s.absX != null && s.absY != null)
@@ -315,6 +349,13 @@ async function onToggleWorkload(): Promise<void> {
     await viewer.load(currentFloorId.value)  // 复位为默认灰（不重叠 07 着色）
     heatmap.setEnabled(true)
     await heatmap.refresh(currentFloorId.value, workloadWin.from, exclusiveTo(workloadWin.to))
+    workloadSource.value = heatmap.source
+    if (!isUsableDataSource(workloadSource.value)) {
+      heatmap.setEnabled(false)
+      workloadOn.value = false
+      ElMessage.warning(t('浣滀笟鏁版嵁婧愪笉鍙敤'))
+      return
+    }
     ElMessage.info(t('作业热图（时间窗 {f}~{t}）已加载').replace('{f}', workloadWin.from).replace('{t}', workloadWin.to)) // I-SPACE-802
   } else {
     heatmap.setEnabled(false)
@@ -328,6 +369,13 @@ async function onApplyWorkload(win: { from: string; to: string }): Promise<void>
   workloadWin = win
   if (workloadOn.value && heatmap) {
     await heatmap.refresh(currentFloorId.value, win.from, exclusiveTo(win.to))
+    workloadSource.value = heatmap.source
+    if (!isUsableDataSource(workloadSource.value)) {
+      heatmap.setEnabled(false)
+      workloadOn.value = false
+      await viewer?.load(currentFloorId.value)
+      ElMessage.warning(t('Workload data source is unavailable'))
+    }
   }
 }
 
@@ -337,7 +385,14 @@ async function onToggleDevice(): Promise<void> {
   if (deviceOn.value) {
     try {
       const env = await advancedApi.devices(currentFloorId.value)
-      deviceLayer.setDevices(env.data)
+      deviceSource.value = env.data.source
+      if (!isUsableDataSource(deviceSource.value)) {
+        deviceOn.value = false
+        deviceLayer.clear()
+        ElMessage.warning(t('璁惧鏁版嵁婧愪笉鍙敤'))
+        return
+      }
+      deviceLayer.setDevices(env.data.items)
       ElMessage.info(t('设备联动为演示示意（未接实时）'))   // I-SPACE-803
     } catch {
       ElMessage.warning(t('高级可视化数据获取失败'))

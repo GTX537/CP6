@@ -4,7 +4,7 @@
 import i18n from '@/i18n'
 import { useI18n } from 'vue-i18n'
 
-/** DB(Sys_Lang) 中现存的全部词条 key（4421 个）。 */
+/** DB(Sys_Lang) 中现存的全部词条 key（4424 个）。 */
 export type MessageKey =
   | '(=1.0 必須)'
   | '(ファイルなし)'
@@ -1434,6 +1434,9 @@ export type MessageKey =
   | 'sec.sso.settingsSubtitle'
   | 'sec.sso.settingsTitle'
   | 'sec.sso.tenantCodePrompt'
+  | 'space.events.col.correlationId'
+  | 'space.events.col.publishAttemptId'
+  | 'space.events.col.safeErrorCode'
   | 'table.add'
   | 'table.addSuccess'
   | 'table.batchSelect'

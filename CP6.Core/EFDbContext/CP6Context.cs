@@ -161,6 +161,9 @@ public class CP6Context : DbContext, IDataProtectionKeyContext
     /// <summary>跨模块 Bridge Hook 持久化记录（重试 / DLQ / trace 基础）</summary>
     public DbSet<IntegrationEvent> IntegrationEvents { get; set; }
 
+    /// <summary>Space 专用只追加审计账本</summary>
+    public DbSet<Space_AuditEvent> SpaceAuditEvents => Set<Space_AuditEvent>();
+
     // ───── MSBBPA010 見積計算書 ─────
 
     /// <summary>見積計算書 主表</summary>
@@ -2271,8 +2274,63 @@ public class CP6Context : DbContext, IDataProtectionKeyContext
             e.HasIndex(x => new { x.Status, x.NextRetryAt });
             // 端到端 trace：按 CorrelationId 串起整条业务链
             e.HasIndex(x => x.CorrelationId);
+            e.HasIndex(x => new { x.TenantId, x.CorrelationId });
+            e.HasIndex(x => new { x.TenantId, x.JobId });
+            e.HasIndex(x => new { x.TenantId, x.PublishAttemptId });
+            e.HasIndex(x => new { x.TenantId, x.RetryLeaseId });
+            e.HasIndex(x => new
+                {
+                    x.TenantId,
+                    x.SourceModule,
+                    x.CorrelationId,
+                    x.OccurredAtUtc,
+                    x.Id,
+                })
+                .IsDescending(false, false, false, true, true);
+            e.HasIndex(x => new
+                {
+                    x.TenantId,
+                    x.SourceModule,
+                    x.OccurredAtUtc,
+                    x.Id,
+                })
+                .IsDescending(false, false, true, true);
+            e.HasIndex(x => new
+            {
+                x.TenantId,
+                x.Status,
+                x.DeadLetterNotifiedAtUtc,
+                x.DeadLetterNotificationLeaseUntilUtc,
+            });
             // 按业务号查询历史 hook 调用
             e.HasIndex(x => new { x.SourceNo, x.HookName });
+        });
+
+        modelBuilder.Entity<Space_AuditEvent>(e =>
+        {
+            e.ToTable("Space_AuditEvent", table =>
+            {
+                table.HasCheckConstraint(
+                    "CK_Space_AuditEvent_Tenant",
+                    "[TenantId] <> '00000000-0000-0000-0000-000000000000'");
+                table.HasCheckConstraint(
+                    "CK_Space_AuditEvent_Correlation",
+                    "[CorrelationId] <> '00000000-0000-0000-0000-000000000000'");
+                table.HasCheckConstraint(
+                    "CK_Space_AuditEvent_ActorType",
+                    "[ActorType] IN ('User','System')");
+                table.HasCheckConstraint(
+                    "CK_Space_AuditEvent_Outcome",
+                    "[Outcome] IN ('Started','Succeeded','Failed','Denied')");
+            });
+            e.Property(x => x.AuthorizationEvidenceJson).HasColumnType("nvarchar(max)");
+            e.Property(x => x.OccurredAtUtc).HasConversion(
+                value => value,
+                value => DateTime.SpecifyKind(value, DateTimeKind.Utc));
+            e.HasIndex(x => new { x.TenantId, x.OccurredAtUtc });
+            e.HasIndex(x => new { x.TenantId, x.CorrelationId, x.OccurredAtUtc });
+            e.HasIndex(x => new { x.TenantId, x.PublishAttemptId, x.OccurredAtUtc });
+            e.HasIndex(x => new { x.TenantId, x.JobId, x.RunId });
         });
 
         modelBuilder.Entity<Order>(e =>
@@ -2559,10 +2617,18 @@ public class CP6Context : DbContext, IDataProtectionKeyContext
         }
     }
 
+    private void RejectSpaceAuditMutation()
+    {
+        if (ChangeTracker.Entries<Space_AuditEvent>()
+            .Any(e => e.State is EntityState.Modified or EntityState.Deleted))
+            throw new InvalidOperationException("SPACE_AUDIT_APPEND_ONLY");
+    }
+
     public override int SaveChanges(bool acceptAllChangesOnSuccess)
     {
         DefinitionImmutabilityInterceptor.Guard(this);
         GuardSerialTrackingDowngrade();
+        RejectSpaceAuditMutation();
         StampTenant();   // SaveChanges() 经 base 路由至本重载，无需再覆盖无参版（避免重复盖章）
         var pending = CaptureFieldAuditBeforeSave();
         if (pending.Count == 0) return base.SaveChanges(acceptAllChangesOnSuccess);   // 无审计目标 → 零开销原路径
@@ -2585,6 +2651,7 @@ public class CP6Context : DbContext, IDataProtectionKeyContext
     {
         DefinitionImmutabilityInterceptor.Guard(this);
         GuardSerialTrackingDowngrade();
+        RejectSpaceAuditMutation();
         StampTenant();
         var pending = CaptureFieldAuditBeforeSave();
         if (pending.Count == 0) return await base.SaveChangesAsync(acceptAllChangesOnSuccess, cancellationToken);

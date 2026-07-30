@@ -21,7 +21,21 @@ const zone = (id: string): ZoneVO => ({
 })
 
 function makeScene(): EditorScene {
-  return { floor: {} as any, zones: [], aisles: [], racks: [], locations: [], markers: [] }
+  return {
+    source: {
+      kind: 'Real',
+      dataSourceId: 'TEST_SPACE',
+      observedAtUtc: '2026-07-25T00:00:00Z',
+      isSimulated: false,
+      isAvailable: true,
+    },
+    floor: {} as any,
+    zones: [],
+    aisles: [],
+    racks: [],
+    locations: [],
+    markers: [],
+  }
 }
 
 /** 抓取 save() 实际下发给后端的 DTO */

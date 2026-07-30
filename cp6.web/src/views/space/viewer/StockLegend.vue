@@ -1,6 +1,9 @@
 <!-- cp6.web/src/views/space/viewer/StockLegend.vue -->
 <template>
   <div class="stock-legend">
+    <div class="source-badge" :class="`source-${source.kind.toLowerCase()}`">
+      {{ dataSourceLabel(source) }} · {{ source.dataSourceId }}
+    </div>
     <div class="legend-modes">
       <button :class="{ on: mode === 'status' }" @click="$emit('mode', 'status')">{{ t('状态') }}</button>
       <button :class="{ on: mode === 'utilization' }" @click="$emit('mode', 'utilization')">{{ t('利用率') }}</button>
@@ -23,8 +26,10 @@
 <script setup lang="ts">
 import { useI18n } from 'vue-i18n'
 import type { OverlayMode } from '@/types/space/overlay'
+import type { SpaceDataSource } from '@/types/space/dataSource'
+import { dataSourceLabel } from '@/types/space/dataSource'
 const { t } = useI18n()
-defineProps<{ mode: OverlayMode; polling: boolean; ts: string }>()
+defineProps<{ mode: OverlayMode; polling: boolean; ts: string; source: SpaceDataSource }>()
 defineEmits<{ (e: 'mode', m: OverlayMode): void; (e: 'refresh'): void; (e: 'toggle-poll'): void }>()
 </script>
 
@@ -38,4 +43,8 @@ defineEmits<{ (e: 'mode', m: OverlayMode): void; (e: 'refresh'): void; (e: 'togg
 .sw { width: 12px; height: 12px; display: inline-block; border-radius: 2px; }
 .grad { display: inline-block; width: 80px; height: 10px; background: linear-gradient(90deg,#2196f3,#ffc107,#f44336); vertical-align: middle; }
 .legend-ts { color: #78909c; margin-top: 4px; }
+.source-badge { font-weight: 700; margin-bottom: 5px; letter-spacing: .04em; }
+.source-real { color: #66bb6a; }
+.source-simulated { color: #ffb74d; }
+.source-unavailable { color: #ef5350; }
 </style>

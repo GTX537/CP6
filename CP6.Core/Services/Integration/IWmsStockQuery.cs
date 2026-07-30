@@ -4,7 +4,7 @@ namespace CP6.Core.Services.Integration;
 /// WMS 库存只读查询契约（消费者 Space 侧定义；WMS 接真实现 <see cref="CP6.Core.Services.Wms.WmsStockQuery"/>）。
 /// 单向、纯读、join 按 LocationCode。多租户由 CP6Context 全局过滤自动隔离（无 tenantId 参数）。
 /// </summary>
-public interface IWmsStockQuery
+public interface IWmsStockQuery : ISpaceDataSourceDescriptor
 {
     /// <summary>批量按库位编码查库存（叠加主力）。未命中编码不在结果集。</summary>
     Task<IReadOnlyList<WmsStockDto>> GetStockByLocationsAsync(
@@ -49,6 +49,11 @@ public sealed class WmsLocationHit
 /// <summary>P1 桩：恒空/0。测试与 WMS 未接真时兜底。</summary>
 public sealed class StubWmsStockQuery : IWmsStockQuery
 {
+    public CP6.Entity.DTOs.Space.SpaceDataSourceKind DataSourceKind =>
+        CP6.Entity.DTOs.Space.SpaceDataSourceKind.Unavailable;
+
+    public string DataSourceId => "WMS_UNCONFIGURED";
+
     public Task<IReadOnlyList<WmsStockDto>> GetStockByLocationsAsync(
         IReadOnlyCollection<string> locationCodes, CancellationToken ct = default)
         => Task.FromResult<IReadOnlyList<WmsStockDto>>(Array.Empty<WmsStockDto>());

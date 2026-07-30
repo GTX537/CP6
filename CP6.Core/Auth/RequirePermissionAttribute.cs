@@ -1,4 +1,5 @@
 using CP6.Core.Services.Sys;
+using CP6.Core.Services.Space.Observability;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.Filters;
@@ -35,8 +36,65 @@ public sealed class RequirePermissionAttribute : Attribute, IAsyncAuthorizationF
 
         if (!await svc.HasActionAsync(_menu, _action))
         {
-            context.Result = new ObjectResult(new { code = 403, message = $"无权限：{_menu}:{_action}" })
+            var auditRead =
+                _menu == "space-audit" && _action == "read";
+            var message = auditRead
+                ? "SPACE_AUDIT_READ_FORBIDDEN"
+                : $"无权限：{_menu}:{_action}";
+            context.Result = new ObjectResult(new { code = 403, message })
             { StatusCode = StatusCodes.Status403Forbidden };
+
+            await AuditSpaceDenialAsync(context, auditRead);
+        }
+    }
+
+    private async Task AuditSpaceDenialAsync(
+        AuthorizationFilterContext context,
+        bool auditRead)
+    {
+        var request = context.HttpContext.Request;
+        if (!request.Path.StartsWithSegments("/api/space"))
+            return;
+
+        var writer = context.HttpContext.RequestServices
+            .GetService<ISpaceAuditWriter>();
+        if (writer is null)
+            return;
+
+        var requestAborted = context.HttpContext.RequestAborted;
+        try
+        {
+            await writer.TryAppendAsync(
+                new SpaceAuditEventInput(
+                    Action: "space.permission.check",
+                    ResourceType:
+                        context.ActionDescriptor.DisplayName ??
+                        "SpaceAction",
+                    ResourceId: request.Path.Value,
+                    Outcome: SpaceAuditOutcome.Denied,
+                    ReasonCode: auditRead
+                        ? "SPACE_AUDIT_READ_FORBIDDEN"
+                        : "SPACE_PERMISSION_DENIED",
+                    Evidence: new SpaceAuditEvidence(
+                        PermissionCode: $"{_menu}:{_action}",
+                        AuthorizationResult: "Denied"),
+                    ClientType: "Web",
+                    IpAddress:
+                        context.HttpContext.Connection.RemoteIpAddress
+                            ?.ToString(),
+                    UserAgent: request.Headers["User-Agent"].ToString()),
+                requestAborted);
+        }
+        catch (OperationCanceledException)
+            when (requestAborted.IsCancellationRequested)
+        {
+            // The 403 result was already established. Host/request
+            // cancellation must not turn a permission denial into a 500.
+        }
+        catch
+        {
+            // Permission denial audit is fail-open for the response. The
+            // production writer emits a safe operational classification.
         }
     }
 }

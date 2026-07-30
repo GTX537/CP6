@@ -1,5 +1,5 @@
 import http from '../http'
-import type { Envelope, EditorScene, SceneSaveDto, UnplacedLocationDto } from '@/types/space/scene'
+import type { Envelope, EditorScene, SceneExport, SceneSaveDto, UnplacedLocationDto } from '@/types/space/scene'
 
 export const sceneApi = {
   get(floorId: string) {
@@ -9,7 +9,7 @@ export const sceneApi = {
     return http.post<any, Envelope<{ idMap: Record<string, string> }>>(`/space/floor/${floorId}/scene`, dto)
   },
   exportScene(floorId: string) {
-    return http.get<any, Envelope<any>>(`/space/floor/${floorId}/export`)
+    return http.get<unknown, Envelope<SceneExport>>(`/space/floor/${floorId}/export`)
   },
   importScene(siteId: string, dto: unknown) {
     return http.post<any, Envelope<{ floorId: string }>>(`/space/site/${siteId}/import`, dto)

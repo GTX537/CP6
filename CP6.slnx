@@ -6,6 +6,12 @@
   <Project Path="CP6.Desktop/CP6.Desktop.csproj" />
   <Project Path="CP6.Entity/CP6.Entity.csproj" />
   <Project Path="CP6.Mobile/CP6.Mobile.csproj" />
+  <Project Path="CP6.Space.Application/CP6.Space.Application.csproj" />
+  <Project Path="CP6.Space.Contracts/CP6.Space.Contracts.csproj" />
+  <Project Path="CP6.Space.Domain/CP6.Space.Domain.csproj" />
+  <Project Path="CP6.Space.Infrastructure/CP6.Space.Infrastructure.csproj" />
+  <Project Path="CP6.Space.IntegrationTests/CP6.Space.IntegrationTests.csproj" />
+  <Project Path="CP6.Space.UnitTests/CP6.Space.UnitTests.csproj" />
   <Project Path="CP6.Tests/CP6.Tests.csproj" />
   <Project Path="CP6.WebApi/CP6.WebApi.csproj" />
 </Solution>

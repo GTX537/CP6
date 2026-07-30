@@ -1,6 +1,8 @@
 // cp6.web/src/space-viewer/advanced/WorkloadHeatmap.ts
 import type { ViewerHandle } from '../api/ViewerHandle'
 import type { WorkloadItem } from '@/types/space/advanced'
+import type { SpaceDataSource } from '@/types/space/dataSource'
+import { isUsableDataSource } from '@/types/space/dataSource'
 import { advancedApi } from '@/api/space/advanced'
 import { normalizeOpCounts, workloadToHex } from './workloadModel'
 
@@ -11,16 +13,26 @@ export class WorkloadHeatmap {
   private _raw = new Map<string, number>()   // code → opCount
   private _enabled = false
   private _ts = ''
+  private _source: SpaceDataSource = {
+    kind: 'Unavailable',
+    dataSourceId: 'NOT_QUERIED',
+    observedAtUtc: '',
+    isSimulated: false,
+    isAvailable: false,
+  }
 
   constructor(viewer: ViewerHandle) { this._viewer = viewer }
 
   get enabled(): boolean { return this._enabled }
   get ts(): string { return this._ts }
+  get source(): SpaceDataSource { return this._source }
 
   setEnabled(on: boolean): void { this._enabled = on }
-  setSnapshot(items: WorkloadItem[], ts = ''): void {
-    this._raw = new Map(items.map((i) => [i.locationCode, i.opCount]))
-    this._norm = normalizeOpCounts(items)
+  setSnapshot(items: WorkloadItem[], source: SpaceDataSource, ts = ''): void {
+    this._source = source
+    const trustedItems = isUsableDataSource(source) ? items : []
+    this._raw = new Map(trustedItems.map((i) => [i.locationCode, i.opCount]))
+    this._norm = normalizeOpCounts(trustedItems)
     this._ts = ts
   }
   getOpCount(code: string | null): number {
@@ -28,7 +40,7 @@ export class WorkloadHeatmap {
   }
 
   apply(): void {
-    if (!this._enabled) return
+    if (!this._enabled || !isUsableDataSource(this._source)) return
     for (const [code, t] of this._norm) {
       const id = this._viewer.getLocationIdByCode(code)
       if (!id) continue
@@ -39,7 +51,7 @@ export class WorkloadHeatmap {
 
   async refresh(floorId: string, from: string, to: string): Promise<void> {
     const env = await advancedApi.workload(floorId, from, to)
-    this.setSnapshot(env.data.items, env.data.to)
+    this.setSnapshot(env.data.items, env.data.source, env.data.to)
     this.apply()
   }
 

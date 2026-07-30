@@ -1,6 +1,11 @@
 <!-- cp6.web/src/views/space/viewer/AdvancedPanel.vue -->
 <template>
   <div class="advanced-panel">
+    <div class="ap-sources">
+      <span :class="`source-${taskSource.kind.toLowerCase()}`">TASK {{ dataSourceLabel(taskSource) }}</span>
+      <span :class="`source-${workloadSource.kind.toLowerCase()}`">WORK {{ dataSourceLabel(workloadSource) }}</span>
+      <span :class="`source-${deviceSource.kind.toLowerCase()}`">DEVICE {{ dataSourceLabel(deviceSource) }}</span>
+    </div>
     <div class="ap-section">
       <div class="ap-title">{{ t('拣货路径') }}</div>
       <div class="ap-row">
@@ -45,8 +50,20 @@
 <script setup lang="ts">
 import { ref } from 'vue'
 import { useI18n } from 'vue-i18n'
+import type { SpaceDataSource } from '@/types/space/dataSource'
+import { dataSourceLabel } from '@/types/space/dataSource'
 const { t } = useI18n()
-defineProps<{ pathLoaded: boolean; pathInfo: string; compareInfo: string; showOptimized: boolean; workloadOn: boolean; deviceOn: boolean }>()
+defineProps<{
+  pathLoaded: boolean
+  pathInfo: string
+  compareInfo: string
+  showOptimized: boolean
+  workloadOn: boolean
+  deviceOn: boolean
+  taskSource: SpaceDataSource
+  workloadSource: SpaceDataSource
+  deviceSource: SpaceDataSource
+}>()
 const emit = defineEmits<{
   (e: 'load-path', taskNo: string): void
   (e: 'toggle-optimized'): void
@@ -76,4 +93,9 @@ function onSpeed(ev: Event): void {
 .ap-btn:hover { background: rgba(126,87,194,.2); }
 .ap-check { display: flex; align-items: center; gap: 4px; }
 .ap-info { color: #80cbc4; margin-top: 2px; }
+.ap-sources { display: flex; justify-content: space-between; gap: 4px; margin-bottom: 6px;
+  font-size: 9px; font-weight: 700; letter-spacing: .03em; }
+.source-real { color: #66bb6a; }
+.source-simulated { color: #ffb74d; }
+.source-unavailable { color: #ef5350; }
 </style>

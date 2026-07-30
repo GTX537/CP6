@@ -1,7 +1,14 @@
 using System.Reflection;
 using CP6.Core.Auth;
+using CP6.Core.Services.Space.Observability;
+using CP6.Core.Services.Sys;
 using CP6.WebApi.Controllers.Space;
+using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
+using Microsoft.AspNetCore.Mvc.Abstractions;
+using Microsoft.AspNetCore.Mvc.Filters;
+using Microsoft.AspNetCore.Routing;
+using Microsoft.Extensions.DependencyInjection;
 
 namespace CP6.Tests.Space;
 
@@ -29,7 +36,16 @@ public class SpacePermissionAttributeTests
         "space-code-rule:add", "space-code-rule:edit", "space-code-rule:delete",
         "space-code-rule:generate",
         "space-publish:publish", "space-publish:deactivate", "space-publish:adopt",
+        "space-audit:read",
     };
+
+    private static readonly Dictionary<string, string> AllowedReadPermissions =
+        new()
+        {
+            ["LocationPublishController.ListEvents"] = "space-audit:read",
+            ["SpaceAuditController.Query"] = "space-audit:read",
+            ["SpaceAuditController.Timeline"] = "space-audit:read",
+        };
 
     /// <summary>只读语义的 POST 豁免（Controller.Method）——按「不得带特性」校验。</summary>
     private static readonly HashSet<string> ReadOnlyPostExemptions = new()
@@ -72,8 +88,8 @@ public class SpacePermissionAttributeTests
     [Fact]
     public void SpaceControllers_AreDiscovered()
     {
-        // 守卫：确保反射确实扫到 9 个 controller（防命名空间/程序集变动导致「空扫空过」）。
-        Assert.Equal(9, SpaceControllers.Count());
+        // 守卫：确保反射确实扫到 10 个 controller（防命名空间/程序集变动导致「空扫空过」）。
+        Assert.Equal(10, SpaceControllers.Count());
     }
 
     [Fact]
@@ -91,23 +107,192 @@ public class SpacePermissionAttributeTests
                 continue;
             }
             var key = $"{perm.Value.menu}:{perm.Value.action}";
-            if (!Whitelist.Contains(key))
+            if (!Whitelist.Contains(key) || key == "space-audit:read")
                 offenders.Add($"{c.Name}.{m.Name}：键 '{key}' 不在映射白名单");
         }
         Assert.True(offenders.Count == 0, "变更端点权限点缺失/越界:\n" + string.Join("\n", offenders));
     }
 
     [Fact]
-    public void NoReadOnlyAction_HasRequirePermission()
+    public void ReadOnly_permissions_match_the_exact_audit_allowlist()
     {
         var offenders = new List<string>();
         foreach (var c in SpaceControllers)
         foreach (var m in ActionMethods(c))
         {
             var readOnly = (IsGet(m) && !IsMutating(m)) || IsExempt(c, m);
-            if (readOnly && ReadPermission(m) != null)
-                offenders.Add($"{c.Name}.{m.Name}：只读端点误贴 [RequirePermission]");
+            if (!readOnly)
+                continue;
+
+            var actionName = $"{c.Name}.{m.Name}";
+            var actual = ReadPermission(m);
+            if (AllowedReadPermissions.TryGetValue(
+                    actionName,
+                    out var expected))
+            {
+                var key = actual is null
+                    ? null
+                    : $"{actual.Value.menu}:{actual.Value.action}";
+                if (key != expected)
+                    offenders.Add(
+                        $"{actionName}：期望 '{expected}'，实际 '{key ?? "<none>"}'");
+            }
+            else if (actual is not null)
+            {
+                offenders.Add(
+                    $"{actionName}：非审计 GET/只读豁免误贴 [RequirePermission]");
+            }
         }
-        Assert.True(offenders.Count == 0, "只读端点误贴权限点:\n" + string.Join("\n", offenders));
+
+        var discovered = SpaceControllers
+            .SelectMany(c => ActionMethods(c).Select(m => (c, m)))
+            .Where(x => IsGet(x.m) && ReadPermission(x.m) is not null)
+            .Select(x => $"{x.c.Name}.{x.m.Name}")
+            .ToHashSet();
+        if (!discovered.SetEquals(AllowedReadPermissions.Keys))
+            offenders.Add("带权限 GET 集合与唯一允许清单不一致");
+
+        Assert.True(
+            offenders.Count == 0,
+            "只读端点权限越界:\n" + string.Join("\n", offenders));
+    }
+
+    [Fact]
+    public async Task Space_mutation_permission_denial_appends_one_safe_denied_event()
+    {
+        var writer = new CapturingAuditWriter(true);
+        var context = AuthorizationContext(
+            writer,
+            method: "delete",
+            path: "/api/space/floor/11111111-1111-1111-1111-111111111111",
+            controller: "SpaceMaster",
+            action: "DeleteFloor");
+
+        await new RequirePermissionAttribute(
+            "space-floor",
+            "delete").OnAuthorizationAsync(context);
+
+        var result = Assert.IsType<ObjectResult>(context.Result);
+        Assert.Equal(StatusCodes.Status403Forbidden, result.StatusCode);
+        var audit = Assert.Single(writer.Inputs);
+        Assert.Equal("space.permission.check", audit.Action);
+        Assert.Equal("SpaceAction", audit.ResourceType);
+        Assert.Equal(context.HttpContext.Request.Path.Value, audit.ResourceId);
+        Assert.Equal(SpaceAuditOutcome.Denied, audit.Outcome);
+        Assert.Equal("SPACE_PERMISSION_DENIED", audit.ReasonCode);
+        Assert.Equal("space-floor:delete", audit.Evidence!.PermissionCode);
+        Assert.Equal("Denied", audit.Evidence.AuthorizationResult);
+        Assert.Equal("Web", audit.ClientType);
+        Assert.Equal("127.0.0.1", audit.IpAddress);
+        Assert.Equal("space-permission-test", audit.UserAgent);
+        Assert.False(Assert.Single(writer.Tokens).CanBeCanceled);
+        Assert.DoesNotContain(
+            "request-body-secret",
+            audit.ToString(),
+            StringComparison.OrdinalIgnoreCase);
+    }
+
+    [Fact]
+    public async Task Space_permission_denied_audit_failure_still_returns_403()
+    {
+        var writer = new CapturingAuditWriter(false);
+        var context = AuthorizationContext(
+            writer,
+            method: HttpMethods.Post,
+            path: "/api/space/floor",
+            controller: "SpaceMaster",
+            action: "CreateFloor");
+
+        await new RequirePermissionAttribute(
+            "space-floor",
+            "add").OnAuthorizationAsync(context);
+
+        var result = Assert.IsType<ObjectResult>(context.Result);
+        Assert.Equal(StatusCodes.Status403Forbidden, result.StatusCode);
+        Assert.Single(writer.Inputs);
+        Assert.Equal(SpaceAuditOutcome.Denied, writer.Inputs[0].Outcome);
+    }
+
+    [Theory]
+    [InlineData("GET", "/api/order")]
+    [InlineData("POST", "/api/order/create")]
+    public async Task Non_space_permission_denial_does_not_audit(
+        string method,
+        string path)
+    {
+        var writer = new CapturingAuditWriter(true);
+        var context = AuthorizationContext(
+            writer,
+            method,
+            path,
+            controller: "Probe",
+            action: "Write");
+
+        await new RequirePermissionAttribute(
+            "probe",
+            "write").OnAuthorizationAsync(context);
+
+        var result = Assert.IsType<ObjectResult>(context.Result);
+        Assert.Equal(StatusCodes.Status403Forbidden, result.StatusCode);
+        Assert.Empty(writer.Inputs);
+    }
+
+    private static AuthorizationFilterContext AuthorizationContext(
+        ISpaceAuditWriter writer,
+        string method,
+        string path,
+        string controller,
+        string action)
+    {
+        var services = new ServiceCollection()
+            .AddSingleton<IPermissionService>(new DeniedPermissionService())
+            .AddSingleton(writer)
+            .BuildServiceProvider();
+        var http = new DefaultHttpContext
+        {
+            RequestServices = services,
+        };
+        http.Request.Method = method;
+        http.Request.Path = path;
+        http.Request.Headers.UserAgent = "space-permission-test";
+        http.Connection.RemoteIpAddress =
+            System.Net.IPAddress.Parse("127.0.0.1");
+        var route = new RouteData();
+        route.Values["controller"] = controller;
+        route.Values["action"] = action;
+        var actionContext = new ActionContext(
+            http,
+            route,
+            new ActionDescriptor());
+        return new AuthorizationFilterContext(
+            actionContext,
+            new List<IFilterMetadata>());
+    }
+
+    private sealed class DeniedPermissionService : IPermissionService
+    {
+        public Task<bool> HasActionAsync(string menu, string action) =>
+            Task.FromResult(false);
+
+        public Task<bool> HasMenuAsync(string menu) => Task.FromResult(false);
+    }
+
+    private sealed class CapturingAuditWriter : ISpaceAuditWriter
+    {
+        private readonly bool _result;
+
+        public CapturingAuditWriter(bool result) => _result = result;
+
+        public List<SpaceAuditEventInput> Inputs { get; } = [];
+        public List<CancellationToken> Tokens { get; } = [];
+
+        public Task<bool> TryAppendAsync(
+            SpaceAuditEventInput input,
+            CancellationToken ct = default)
+        {
+            Inputs.Add(input);
+            Tokens.Add(ct);
+            return Task.FromResult(_result);
+        }
     }
 }

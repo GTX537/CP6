@@ -13,6 +13,8 @@ using CP6.Core.Utilities;
 using CP6.WebApi.Filters;
 using CP6.WebApi.Hubs;
 using Prometheus;
+using CP6.Core.Services.Space.Compatibility;
+using CP6.Core.Services.Space.Observability;
 
 var builder = WebApplication.CreateBuilder(args);
 
@@ -43,9 +45,11 @@ if (builder.Environment.IsProduction())
     CP6.WebApi.Configuration.ProductionConfigurationValidator.Validate(builder.Configuration);
 
 builder.Services.AddScoped<OperLogFilter>();
+builder.Services.AddScoped<SpaceAuditActionFilter>();
 builder.Services.AddControllers(options =>
 {
     options.Filters.AddService<OperLogFilter>();
+    options.Filters.AddService<SpaceAuditActionFilter>();
 });
 builder.Services.AddSingleton(TimeProvider.System);
 builder.Services.AddHealthChecks()
@@ -103,9 +107,24 @@ builder.Services.AddSwaggerGen(c =>
 });
 
 // 3. 注册数据库上下文
-builder.Services.AddDbContext<CP6Context>(options =>
+// Space E00: configuration-backed Tenant+Site compatibility gate.
+// E01 replaces only the resolver with SpaceContext; the legacy write guard remains.
+builder.Services.AddSingleton<
+    Microsoft.Extensions.Options.IValidateOptions<SpaceCompatibilityOptions>,
+    SpaceCompatibilityOptionsValidator>();
+builder.Services.AddOptions<SpaceCompatibilityOptions>()
+    .Bind(builder.Configuration.GetSection(SpaceCompatibilityOptions.SectionName))
+    .ValidateOnStart();
+builder.Services.AddScoped<ISpaceCompatibilityGate, SpaceCompatibilityGate>();
+builder.Services.AddScoped<LegacySpaceWriteGuardInterceptor>();
+builder.Services.Configure<SpaceObservabilityOptions>(
+    builder.Configuration.GetSection(
+        SpaceObservabilityOptions.SectionName));
+
+builder.Services.AddDbContext<CP6Context>((services, options) =>
     options
-        .UseSqlServer(builder.Configuration.GetConnectionString("DefaultConnection")));
+        .UseSqlServer(builder.Configuration.GetConnectionString("DefaultConnection"))
+        .AddInterceptors(services.GetRequiredService<LegacySpaceWriteGuardInterceptor>()));
 
 // 3.1 注册 Dapper 用的 IDbConnection（每次请求新建连接）
 builder.Services.AddScoped<IDbConnection>(_ =>
@@ -343,6 +362,18 @@ builder.Services.AddMemoryCache();                 // 其余仅需本机生命�
 builder.Services.AddHttpContextAccessor();          // 解析当前请求登录用户
 builder.Services.AddScoped<CP6.Core.Services.Common.ITenantContext, CP6.Core.Services.Common.TenantContext>(); // 章10 当前租户上下文（TenantMiddleware 写入，CP6Context 过滤/盖章读取）
 builder.Services.AddScoped<CP6.Core.Services.Common.ITenantEnumerator, CP6.Core.Services.Common.TenantEnumerator>(); // 章10 活跃租户枚举（后台 Worker 按租户循环用）
+builder.Services.AddScoped<CP6.Core.Services.Space.Observability.SpaceExecutionContextAccessor>();
+builder.Services.AddScoped<CP6.Core.Services.Space.Observability.ISpaceExecutionContextAccessor>(
+    sp => sp.GetRequiredService<CP6.Core.Services.Space.Observability.SpaceExecutionContextAccessor>());
+builder.Services.AddScoped<CP6.Core.Services.Space.Observability.ISpaceExecutionContextManager>(
+    sp => sp.GetRequiredService<CP6.Core.Services.Space.Observability.SpaceExecutionContextAccessor>());
+builder.Services.AddScoped<ISpaceAuditDbContextFactory, SpaceAuditDbContextFactory>();
+builder.Services.AddScoped<ISpaceAuditWriter, SpaceAuditWriter>();
+builder.Services.AddScoped<ISpaceRetryFinalizer, SpaceRetryFinalizer>();
+builder.Services.AddScoped<ISpaceAuditQueryService, SpaceAuditQueryService>();
+builder.Services.AddScoped<
+    ISpaceAuditMetricsSnapshotProvider,
+    SpaceAuditMetricsSnapshotProvider>();
 builder.Services.AddScoped<CP6.Core.Services.Sys.IPermissionAggregator, CP6.Core.Services.Sys.PermissionAggregator>();
 builder.Services.AddScoped<CP6.Core.Services.Sys.ICurrentPermissionContext, CP6.Core.Services.Sys.CurrentPermissionContext>();
 builder.Services.AddScoped<CP6.Core.Services.Sys.IUserRoleService, CP6.Core.Services.Sys.UserRoleService>();
@@ -652,7 +683,11 @@ builder.Services.Configure<CP6.Core.Options.IntegrationEventOptions>(
 builder.Services.AddScoped<CP6.Core.Services.Integration.IIntegrationEventDispatcher, CP6.Core.Services.Integration.IntegrationEventDispatcher>();
 
 // 4.15.4 DeadLetter 通知（SignalR + Sys_OperLog 双通知）
-builder.Services.AddScoped<CP6.Core.Services.Integration.IDeadLetterNotifier, CP6.Core.Services.Integration.DeadLetterNotifier>();
+builder.Services.AddScoped<CP6.Core.Services.Integration.DeadLetterNotifier>();
+builder.Services.AddScoped<CP6.Core.Services.Integration.IDeadLetterNotifier>(
+    sp => sp.GetRequiredService<CP6.Core.Services.Integration.DeadLetterNotifier>());
+builder.Services.AddScoped<CP6.Core.Services.Integration.ISpaceDeadLetterNotifier>(
+    sp => sp.GetRequiredService<CP6.Core.Services.Integration.DeadLetterNotifier>());
 
 // 4.15.5 Retry Worker — 60s ごとに Failed + NextRetryAt 到期 のイベントをリトライ
 builder.Services.AddHostedService<CP6.WebApi.BackgroundServices.IntegrationEventRetryWorker>();
@@ -668,6 +703,8 @@ builder.Services.AddHostedService<CP6.WebApi.BackgroundServices.AssetDepreciatio
 //  - Collector は prometheus-net BeforeCollect への薄いアダプタ（Singleton）。
 builder.Services.AddScoped<CP6.Core.Services.Integration.IBridgeMetricsSnapshotProvider, CP6.Core.Services.Integration.BridgeMetricsSnapshotProvider>();
 builder.Services.AddSingleton<CP6.WebApi.Observability.BridgeMetricsCollector>();
+builder.Services.AddSingleton<
+    CP6.WebApi.Observability.SpaceAuditMetricsCollector>();
 
 // S 类认证加固（T1）：Security 配置 + BCrypt 密码哈希服务
 builder.Services.Configure<CP6.Core.Services.Sys.SecurityOptions>(builder.Configuration.GetSection("Security"));
@@ -863,6 +900,25 @@ using (var scope = app.Services.CreateScope())
     // Docker 环境下自动创建数据库并应用所有迁移
     db.Database.Migrate();
 
+    // SPACE observability must have one canonical UTC ordering column before
+    // any seed, background worker, or request can query integration history.
+    // Historical server-local rows require an explicit deployment time zone.
+    var spaceObservabilityOptions = scope.ServiceProvider
+        .GetRequiredService<
+            Microsoft.Extensions.Options.IOptions<
+                SpaceObservabilityOptions>>()
+        .Value;
+    var occurredAtBackfillLogger = scope.ServiceProvider
+        .GetRequiredService<ILoggerFactory>()
+        .CreateLogger(
+            "SpaceIntegrationEventOccurredAtUtcBackfill");
+    await CP6.WebApi.BackgroundServices
+        .SpaceIntegrationEventOccurredAtUtcBackfill
+        .RunAsync(
+            db,
+            spaceObservabilityOptions,
+            occurredAtBackfillLogger);
+
     // 章10 默认租户种子（幂等，按 Id 判存）——登记进 Sys_Tenant 注册表供枚举/登录/管理用
     CP6.Core.Services.Common.TenantSeed.EnsureSeeded(db);
 
@@ -1038,6 +1094,10 @@ using (var scope = app.Services.CreateScope())
     CP6.WebApi.Seed.WmsFeatureApprovalFlowSeed.Seed(db);
     CP6.WebApi.Seed.OaLeaveFormSeed.Seed(db);        // OA 请假演示表单 + 流程（填單→审批闭环 out-of-box）
     await CP6.WebApi.Seed.WfTokenBackfillSeed.EnsureAsync(db);   // WFS P1：在途实例 token 回填（每启动幂等）
+
+    // Space E00-S04：900/906 菜单 + space-audit:read 按租户仅授管理员。
+    // TenantSeed 和基础菜单块均已完成；显式 TenantId + IgnoreQueryFilters 保证跨租户幂等。
+    await CP6.WebApi.Seed.SpaceAuditPermissionSeed.EnsureSeededAsync(db);
 
     // M-WMS 横切接线 Task 2：WMS 400 段菜单启动幂等种子（洁净部署自动可达）+ 30 权限键锚定行显式 MenuKey。
     // ★须置于下方「无 MenuKey 菜单 RoutePath 自动回填」块之前：同一启动内非锚定 WMS 内容页(null key)获派生键，
@@ -2863,6 +2923,7 @@ app.UseMiddleware<CP6.WebApi.Middleware.TenantMiddleware>();
 
 // i18n 优化 P1：BizException → 本地化消息（须在 UseRequestLocalization 之后）。
 app.UseMiddleware<CP6.WebApi.Middleware.BizExceptionMiddleware>();
+app.UseMiddleware<CP6.WebApi.Middleware.SpaceExecutionContextMiddleware>();
 
 // S 类认证加固（T6）：CSRF 双提交校验 + 强制改密拦截。须在 BizExceptionMiddleware 下游
 // （抛 BizException 被其捕获本地化）、UseAuthorization 上游、UseAuthentication 已在更上游（User 已填充）。
@@ -2921,5 +2982,9 @@ app.MapHub<CP6.WebApi.Hubs.SpaceHub>("/hubs/space");
 // T15 / Gap 2.3 — Prometheus 公開エンドポイント /metrics ＋ ブリッジ業務指標コレクタ起動
 app.MapMetrics();   // GET /metrics（Prometheus テキスト形式）
 app.Services.GetRequiredService<CP6.WebApi.Observability.BridgeMetricsCollector>().Register();
+CP6.WebApi.Observability.SpaceAuditMetricsRegistration.RegisterIfEnabled(
+    app.Configuration.GetValue<bool?>(
+        "SpaceObservability:MetricsEnabled") ?? true,
+    app.Services);
 
 app.Run();

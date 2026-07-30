@@ -7,7 +7,7 @@
      page 变更后 listRef.reload() 命令式重查。「刷新」按钮同 reload。
    - 页面只读——FAILED 重试由后端 Worker 自动完成，本页不提供任何重试/干预入口。
   状态六态色调：SUCCESS→ok / SKIPPED→muted / PENDING→info / FAILED→warn / DEAD→danger / COMPENSATED→muted
-  （CpTag Tone 域＝ ok|warn|danger|info|muted，全部合法）。lastError 有值给「詳細」按钮 → ElMessageBox.alert 全文。
+  （CpTag Tone 域＝ ok|warn|danger|info|muted，全部合法）。错误仅展示安全错误码及追踪标识。
 -->
 <template>
   <CpPageShell :title="t('space.events.title')">
@@ -25,26 +25,17 @@
         <span class="ev-page">{{ t('space.events.pageLabel', { page }) }}</span>
         <el-button :disabled="!hasNext" @click="nextPage">{{ t('space.events.nextPage') }}</el-button>
       </template>
-
-      <template #col-lastError="{ row }">
-        <el-button v-if="row.lastError" link type="danger" size="small" @click="showError(row.lastError)">
-          {{ t('space.events.detail') }}
-        </el-button>
-        <span v-else>—</span>
-      </template>
     </CpListPage>
   </CpPageShell>
 </template>
 
 <script setup lang="ts">
 import { ref, computed, onMounted, onUnmounted } from 'vue'
-import { ElMessageBox } from 'element-plus'
 import { useI18n } from 'vue-i18n'
 import CpPageShell from '@/components/templates/CpPageShell.vue'
 import CpListPage, { type ListColumn, type ListFetch, type ListPageExpose } from '@/components/templates/CpListPage.vue'
 import { type Tone } from '@/components/base/CpTag.vue'
 import { publishApi } from '@/api/space/publish'
-import { useTOr } from '@/i18n/tOr'
 import type { SpaceEventVO } from '@/types/space/scene'
 import {
   startSpaceConnection, onLocationPublished, offLocationPublished,
@@ -52,8 +43,6 @@ import {
 } from '@/utils/spaceHub'
 
 const { t } = useI18n()
-// lastError 可能是 E-SPACE 码：注册了词条即本地化，否则原样透出
-const tr = useTOr()
 
 const PAGE_SIZE = 50
 const listRef = ref<ListPageExpose | null>(null)
@@ -79,7 +68,13 @@ const columns = computed<ListColumn<SpaceEventVO>[]>(() => [
     map: (v) => ({ label: t(`space.events.status.${v}`), tone: statusTone(v) }) },
   { prop: 'attempts', label: t('space.events.col.attempts'), width: 90, kind: 'num' },
   { prop: 'createDate', label: t('space.events.col.createDate'), width: 120, kind: 'date' },
-  { prop: 'lastError', label: t('space.events.col.lastError'), minWidth: 120 },
+  { prop: 'safeErrorCode', label: t('space.events.col.safeErrorCode'), minWidth: 190,
+    map: (v) => ({ label: typeof v === 'string' && v ? v : '—' }) },
+  { prop: 'correlationId', label: t('space.events.col.correlationId'), minWidth: 300,
+    kind: 'mono', overflowTooltip: true },
+  { prop: 'publishAttemptId', label: t('space.events.col.publishAttemptId'), minWidth: 300,
+    kind: 'mono', overflowTooltip: true,
+    map: (v) => ({ label: typeof v === 'string' && v ? v : '—' }) },
 ])
 
 // fetch 忽略模板 page/size（paginated=false → 恒 1/1000），改读本地 page 游标；返回当前页 rows，total=rows.length
@@ -108,10 +103,6 @@ function nextPage() {
   page.value += 1
   listRef.value?.reload()
 }
-function showError(msg: string) {
-  ElMessageBox.alert(tr(msg), t('space.events.col.lastError'), { type: 'error' })
-}
-
 // SignalR：発布/停用プッシュ受信 → 第 1 頁へ戻して再取得（低頻イベント、全播）
 function onPublished(_payload: LocationPublishedPayload) {
   page.value = 1
