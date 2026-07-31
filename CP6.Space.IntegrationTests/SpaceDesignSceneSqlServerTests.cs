@@ -519,6 +519,354 @@ public sealed class SpaceDesignSceneSqlServerTests
         });
     }
 
+    [SqlServerFact]
+    public async Task Mixed_editor_batches_array_and_saved_compensation_are_atomic()
+    {
+        await WithDatabaseAsync(async (connectionString, execution, clock) =>
+        {
+            await using var context = CreateContext(
+                connectionString,
+                execution,
+                clock);
+            var seeded = await SeedDesignModelAsync(
+                context,
+                execution.ActorId,
+                clock.UtcNow);
+            var draft = SpaceModelVersion.CreateDraft(
+                execution.TenantId,
+                seeded.Model.Id,
+                2,
+                "Unified rack and element editing",
+                seeded.Published.Id);
+            seeded.Model.ReserveDraft(draft);
+            var floor = SpaceFloorRevision.Create(
+                execution.TenantId,
+                draft.Id,
+                Guid.NewGuid(),
+                seeded.Model.SiteId,
+                1,
+                "F1",
+                "Floor 1",
+                height: 6000);
+            var zone = SpaceZoneRevision.Create(
+                execution.TenantId,
+                draft.Id,
+                Guid.NewGuid(),
+                floor.LogicalId,
+                "Z1",
+                1);
+            var rack = SpaceRackRevision.Create(
+                execution.TenantId,
+                draft.Id,
+                Guid.NewGuid(),
+                floor.LogicalId,
+                zone.LogicalId,
+                "R-TEMPLATE");
+            rack.ConfigureGeometry(
+                1000,
+                2000,
+                0,
+                0,
+                1200,
+                800,
+                3000);
+            var level = SpaceRackLevelRevision.Create(
+                execution.TenantId,
+                draft.Id,
+                Guid.NewGuid(),
+                rack.LogicalId,
+                levelNo: 1,
+                bottomZ: 0,
+                clearHeight: 1200,
+                binCount: 2,
+                depthCount: 1,
+                cellWidth: 600,
+                cellDepth: 800,
+                maxLoad: 750,
+                beamHeight: 100);
+            var location = SpaceLocationRevision.Create(
+                execution.TenantId,
+                draft.Id,
+                Guid.NewGuid(),
+                floor.LogicalId,
+                rack.LogicalId,
+                "R-TEMPLATE-01",
+                columnNo: 1,
+                levelNo: 1,
+                depthNo: 1,
+                width: 600,
+                height: 1200,
+                depth: 800,
+                maxLoad: 750,
+                codeOrigin: SpaceLocationCodeOrigin.Manual,
+                externalBindingState: SpaceExternalBindingState.Bound);
+            var element = SpaceElementRevision.Create(
+                execution.TenantId,
+                draft.Id,
+                Guid.NewGuid(),
+                floor.LogicalId,
+                SpaceElementTypes.Column,
+                """
+                {"schemaVersion":1,"kind":"box","width":400,"height":5000,"depth":400}
+                """);
+            element.ConfigurePlacement(500, 700, 0, 0, 400, 5000, 400);
+            context.AddRange(
+                draft,
+                floor,
+                zone,
+                rack,
+                level,
+                location,
+                element);
+            await context.SaveChangesAsync();
+
+            var service = NewService(
+                context,
+                execution,
+                clock,
+                seeded.Model.SiteId);
+            var clientId = Guid.NewGuid();
+            var mixed = await service.ApplyElementCommandsAsync(
+                draft.Id,
+                floor.LogicalId,
+                new ApplySpaceElementCommandBatchRequest(
+                    SpaceElementCommandContract.SchemaVersion,
+                    Guid.NewGuid(),
+                    clientId,
+                    ExpectedFloorRevision: 0,
+                    [
+                        new SpaceElementCommandDto(
+                            Guid.NewGuid(),
+                            SpaceElementCommandContract.MoveObject,
+                            element.LogicalId,
+                            null,
+                            new SpaceMoveObjectDto(1500, 1700, 0)),
+                        new SpaceElementCommandDto(
+                            Guid.NewGuid(),
+                            SpaceElementCommandContract.MoveObject,
+                            rack.LogicalId,
+                            null,
+                            new SpaceMoveObjectDto(3000, 4000, 0)),
+                    ]));
+
+            Assert.Equal(1, mixed.FloorRevision);
+            Assert.Single(mixed.AffectedObjects);
+            Assert.Single(mixed.AffectedRacks!);
+            Assert.Equal(1500, mixed.AffectedObjects[0].Element.X);
+            Assert.Equal(3000, mixed.AffectedRacks![0].X);
+
+            var compensation = await service.ApplyElementCommandsAsync(
+                draft.Id,
+                floor.LogicalId,
+                new ApplySpaceElementCommandBatchRequest(
+                    SpaceElementCommandContract.SchemaVersion,
+                    Guid.NewGuid(),
+                    clientId,
+                    ExpectedFloorRevision: 1,
+                    [
+                        new SpaceElementCommandDto(
+                            Guid.NewGuid(),
+                            SpaceElementCommandContract.MoveObject,
+                            element.LogicalId,
+                            null,
+                            new SpaceMoveObjectDto(500, 700, 0)),
+                        new SpaceElementCommandDto(
+                            Guid.NewGuid(),
+                            SpaceElementCommandContract.MoveObject,
+                            rack.LogicalId,
+                            null,
+                            new SpaceMoveObjectDto(1000, 2000, 0)),
+                    ]));
+
+            Assert.Equal(2, compensation.FloorRevision);
+            Assert.Equal(500, compensation.AffectedObjects[0].Element.X);
+            Assert.Equal(1000, compensation.AffectedRacks![0].X);
+
+            var generated = await service.ApplyElementCommandsAsync(
+                draft.Id,
+                floor.LogicalId,
+                new ApplySpaceElementCommandBatchRequest(
+                    SpaceElementCommandContract.SchemaVersion,
+                    Guid.NewGuid(),
+                    clientId,
+                    ExpectedFloorRevision: 2,
+                    [
+                        new SpaceElementCommandDto(
+                            Guid.NewGuid(),
+                            SpaceElementCommandContract.GenerateRackArray,
+                            rack.LogicalId,
+                            null,
+                            GenerateRackArray:
+                                new SpaceGenerateRackArrayDto(
+                                    Rows: 2,
+                                    Columns: 2,
+                                    RowGap: 500,
+                                    ColumnGap: 300,
+                                    StaggerOffset: 100,
+                                    CodePrefix: "ARR-",
+                                    StartNumber: 1,
+                                    CodeDigits: 3)),
+                    ]));
+
+            Assert.Equal(3, generated.FloorRevision);
+            Assert.Equal(3, generated.AffectedRacks!.Count);
+            Assert.Equal(3, generated.AffectedRackLevels!.Count);
+            Assert.Equal(3, generated.AffectedLocations!.Count);
+            Assert.All(
+                generated.AffectedLocations,
+                generatedLocation =>
+                {
+                    Assert.Null(generatedLocation.LocationCode);
+                    Assert.Equal(
+                        SpaceLocationCodeOrigin.Generated.ToString(),
+                        generatedLocation.CodeOrigin);
+                    Assert.Equal(
+                        SpaceExternalBindingState.Unbound.ToString(),
+                        generatedLocation.ExternalBindingState);
+                });
+            var generatedIds = generated.AffectedRacks
+                .Select(candidate => candidate.Revision.LogicalId)
+                .ToArray();
+
+            var removed = await service.ApplyElementCommandsAsync(
+                draft.Id,
+                floor.LogicalId,
+                LifecycleBatch(
+                    clientId,
+                    expectedFloorRevision: 3,
+                    SpaceElementCommandContract.DeleteObject,
+                    generatedIds));
+            Assert.Equal(4, removed.FloorRevision);
+            Assert.All(
+                removed.AffectedRacks!,
+                candidate => Assert.Equal(
+                    SpaceLifecycleState.RemoveRequested.ToString(),
+                    candidate.Revision.LifecycleState));
+            Assert.All(
+                removed.AffectedRackLevels!,
+                candidate => Assert.Equal(
+                    SpaceLifecycleState.RemoveRequested.ToString(),
+                    candidate.Revision.LifecycleState));
+            Assert.All(
+                removed.AffectedLocations!,
+                candidate => Assert.Equal(
+                    SpaceLifecycleState.RemoveRequested.ToString(),
+                    candidate.Revision.LifecycleState));
+
+            var restored = await service.ApplyElementCommandsAsync(
+                draft.Id,
+                floor.LogicalId,
+                LifecycleBatch(
+                    clientId,
+                    expectedFloorRevision: 4,
+                    SpaceElementCommandContract.RestoreLogicalObject,
+                    generatedIds));
+            Assert.Equal(5, restored.FloorRevision);
+            Assert.All(
+                restored.AffectedRacks!,
+                candidate => Assert.Equal(
+                    SpaceLifecycleState.Active.ToString(),
+                    candidate.Revision.LifecycleState));
+
+            var atomicFailure =
+                new ApplySpaceElementCommandBatchRequest(
+                    SpaceElementCommandContract.SchemaVersion,
+                    Guid.NewGuid(),
+                    clientId,
+                    ExpectedFloorRevision: 5,
+                    [
+                        new SpaceElementCommandDto(
+                            Guid.NewGuid(),
+                            SpaceElementCommandContract.MoveObject,
+                            rack.LogicalId,
+                            null,
+                            new SpaceMoveObjectDto(9999, 9999, 0)),
+                        new SpaceElementCommandDto(
+                            Guid.NewGuid(),
+                            SpaceElementCommandContract.DeleteObject,
+                            Guid.NewGuid(),
+                            null),
+                    ]);
+            var problem = await Assert.ThrowsAsync<SpaceProblemException>(
+                () => service.ApplyElementCommandsAsync(
+                    draft.Id,
+                    floor.LogicalId,
+                    atomicFailure));
+
+            Assert.Equal(SpaceErrorCodes.LogicalIdNotFound, problem.Code);
+            var codeConflict =
+                await Assert.ThrowsAsync<SpaceProblemException>(
+                    () => service.ApplyElementCommandsAsync(
+                        draft.Id,
+                        floor.LogicalId,
+                        new ApplySpaceElementCommandBatchRequest(
+                            SpaceElementCommandContract.SchemaVersion,
+                            Guid.NewGuid(),
+                            clientId,
+                            ExpectedFloorRevision: 5,
+                            [
+                                new SpaceElementCommandDto(
+                                    Guid.NewGuid(),
+                                    SpaceElementCommandContract
+                                        .GenerateRackArray,
+                                    rack.LogicalId,
+                                    null,
+                                    GenerateRackArray:
+                                        new SpaceGenerateRackArrayDto(
+                                            Rows: 1,
+                                            Columns: 2,
+                                            RowGap: 0,
+                                            ColumnGap: 100,
+                                            StaggerOffset: 0,
+                                            CodePrefix: "ARR-",
+                                            StartNumber: 1,
+                                            CodeDigits: 3)),
+                            ])));
+            Assert.Equal(SpaceErrorCodes.CommandConflict, codeConflict.Code);
+            Assert.Equal(
+                1000,
+                await context.RackRevisions
+                    .AsNoTracking()
+                    .Where(candidate => candidate.Id == rack.Id)
+                    .Select(candidate => candidate.X)
+                    .SingleAsync());
+            Assert.Equal(
+                5,
+                await context.FloorRevisions
+                    .AsNoTracking()
+                    .Where(candidate => candidate.Id == floor.Id)
+                    .Select(candidate => candidate.Revision)
+                    .SingleAsync());
+            Assert.Equal(5, await context.ElementCommandBatches.CountAsync());
+            Assert.Equal(11, await context.ElementCommandRecords.CountAsync());
+            var arrayAudit = await context.ElementCommandRecords
+                .AsNoTracking()
+                .SingleAsync(candidate =>
+                    candidate.CommandType ==
+                    SpaceElementCommandContract.GenerateRackArray);
+            Assert.Contains("\"generatedRacks\"", arrayAudit.AfterJson);
+            Assert.Contains("\"rackCode\":\"ARR-001\"", arrayAudit.AfterJson);
+        });
+    }
+
+    private static ApplySpaceElementCommandBatchRequest LifecycleBatch(
+        Guid clientInstanceId,
+        long expectedFloorRevision,
+        string commandType,
+        IReadOnlyList<Guid> logicalIds) =>
+        new(
+            SpaceElementCommandContract.SchemaVersion,
+            Guid.NewGuid(),
+            clientInstanceId,
+            expectedFloorRevision,
+            logicalIds
+                .Select(logicalId => new SpaceElementCommandDto(
+                    Guid.NewGuid(),
+                    commandType,
+                    logicalId,
+                    null))
+                .ToArray());
+
     private static SpaceDesignV1Service NewService(
         SpaceContext context,
         TestExecutionContext execution,

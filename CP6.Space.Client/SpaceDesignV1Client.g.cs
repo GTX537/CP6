@@ -3344,6 +3344,15 @@ namespace CP6.Space.Client
         [System.Text.Json.Serialization.JsonPropertyName("idempotentReplay")]
         public bool IdempotentReplay { get; set; }
 
+        [System.Text.Json.Serialization.JsonPropertyName("affectedRacks")]
+        public System.Collections.Generic.ICollection<SpaceSceneRackDto> AffectedRacks { get; set; }
+
+        [System.Text.Json.Serialization.JsonPropertyName("affectedRackLevels")]
+        public System.Collections.Generic.ICollection<SpaceSceneRackLevelDto> AffectedRackLevels { get; set; }
+
+        [System.Text.Json.Serialization.JsonPropertyName("affectedLocations")]
+        public System.Collections.Generic.ICollection<SpaceSceneLocationDto> AffectedLocations { get; set; }
+
     }
 
     [System.CodeDom.Compiler.GeneratedCode("NJsonSchema", "14.7.1.0 (NJsonSchema v11.6.1.0 (Newtonsoft.Json v13.0.0.0))")]
@@ -3692,6 +3701,15 @@ namespace CP6.Space.Client
         [System.Text.Json.Serialization.JsonPropertyName("updateProperties")]
         public SpaceUpdateElementPropertiesDto UpdateProperties { get; set; }
 
+        [System.Text.Json.Serialization.JsonPropertyName("moveObject")]
+        public SpaceMoveObjectDto MoveObject { get; set; }
+
+        [System.Text.Json.Serialization.JsonPropertyName("rotateObject")]
+        public SpaceRotateObjectDto RotateObject { get; set; }
+
+        [System.Text.Json.Serialization.JsonPropertyName("generateRackArray")]
+        public SpaceGenerateRackArrayDto GenerateRackArray { get; set; }
+
     }
 
     [System.CodeDom.Compiler.GeneratedCode("NJsonSchema", "14.7.1.0 (NJsonSchema v11.6.1.0 (Newtonsoft.Json v13.0.0.0))")]
@@ -3745,6 +3763,36 @@ namespace CP6.Space.Client
 
         [System.Text.Json.Serialization.JsonPropertyName("rowVersion")]
         public string RowVersion { get; set; }
+
+    }
+
+    [System.CodeDom.Compiler.GeneratedCode("NJsonSchema", "14.7.1.0 (NJsonSchema v11.6.1.0 (Newtonsoft.Json v13.0.0.0))")]
+    public partial class SpaceGenerateRackArrayDto
+    {
+
+        [System.Text.Json.Serialization.JsonPropertyName("rows")]
+        public int Rows { get; set; }
+
+        [System.Text.Json.Serialization.JsonPropertyName("columns")]
+        public int Columns { get; set; }
+
+        [System.Text.Json.Serialization.JsonPropertyName("rowGap")]
+        public int RowGap { get; set; }
+
+        [System.Text.Json.Serialization.JsonPropertyName("columnGap")]
+        public int ColumnGap { get; set; }
+
+        [System.Text.Json.Serialization.JsonPropertyName("staggerOffset")]
+        public int StaggerOffset { get; set; }
+
+        [System.Text.Json.Serialization.JsonPropertyName("codePrefix")]
+        public string CodePrefix { get; set; }
+
+        [System.Text.Json.Serialization.JsonPropertyName("startNumber")]
+        public int StartNumber { get; set; }
+
+        [System.Text.Json.Serialization.JsonPropertyName("codeDigits")]
+        public int CodeDigits { get; set; }
 
     }
 
@@ -3901,6 +3949,30 @@ namespace CP6.Space.Client
 
         [System.Text.Json.Serialization.JsonPropertyName("rowVersion")]
         public string RowVersion { get; set; }
+
+    }
+
+    [System.CodeDom.Compiler.GeneratedCode("NJsonSchema", "14.7.1.0 (NJsonSchema v11.6.1.0 (Newtonsoft.Json v13.0.0.0))")]
+    public partial class SpaceMoveObjectDto
+    {
+
+        [System.Text.Json.Serialization.JsonPropertyName("x")]
+        public int X { get; set; }
+
+        [System.Text.Json.Serialization.JsonPropertyName("y")]
+        public int Y { get; set; }
+
+        [System.Text.Json.Serialization.JsonPropertyName("z")]
+        public int Z { get; set; }
+
+    }
+
+    [System.CodeDom.Compiler.GeneratedCode("NJsonSchema", "14.7.1.0 (NJsonSchema v11.6.1.0 (Newtonsoft.Json v13.0.0.0))")]
+    public partial class SpaceRotateObjectDto
+    {
+
+        [System.Text.Json.Serialization.JsonPropertyName("rotationZ")]
+        public double RotationZ { get; set; }
 
     }
 

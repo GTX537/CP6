@@ -48,6 +48,7 @@ describe('buildElementCanvasPlan', () => {
       {
         kind: 'rect',
         logicalId: activeId,
+        ownerKind: 'Element',
         elementType: 'Column',
         centerX: 800,
         centerY: 2200,
@@ -56,6 +57,58 @@ describe('buildElementCanvasPlan', () => {
         rotationZ: 90,
       },
     ])
+  })
+
+  it('projects the active rack envelope as a shared selectable object', () => {
+    const rackId = '44444444-4444-4444-4444-444444444444'
+    const scene = {
+      schemaVersion: 1,
+      authority: 'DesignRevision',
+      runtimeOverlayIncluded: false,
+      racks: [
+        {
+          revision: { logicalId: rackId, lifecycleState: 'Active' },
+          x: 100,
+          y: 200,
+          z: 0,
+          rotationZ: 0,
+          width: 1200,
+          depth: 800,
+          height: 3000,
+        },
+      ],
+      rackLevels: [
+        {
+          revision: {
+            logicalId: '55555555-5555-5555-5555-555555555555',
+            lifecycleState: 'Active',
+          },
+          rackLogicalId: rackId,
+          levelNo: 1,
+          bottomZ: 0,
+          clearHeight: 1000,
+          binCount: 2,
+          depthCount: 1,
+          cellWidth: 600,
+          cellDepth: 800,
+          beamHeight: 100,
+        },
+      ],
+      elements: [],
+    } as unknown as ISpaceDesignSceneDto
+
+    const rack = buildElementCanvasPlan(scene)[0]
+
+    expect(rack).toMatchObject({
+      kind: 'rect',
+      logicalId: rackId,
+      ownerKind: 'Rack',
+      elementType: 'Rack',
+      centerX: 700,
+      centerY: 600,
+      width: 1200,
+      depth: 800,
+    })
   })
 
   it('rotates polygon points into authoritative world coordinates', () => {

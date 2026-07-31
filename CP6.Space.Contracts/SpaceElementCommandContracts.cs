@@ -4,7 +4,11 @@ public static class SpaceElementCommandContract
 {
     public const int SchemaVersion = 1;
     public const string UpdateProperties = "UpdateProperties";
+    public const string MoveObject = "MoveObject";
+    public const string RotateObject = "RotateObject";
     public const string DeleteObject = "DeleteObject";
+    public const string RestoreLogicalObject = "RestoreLogicalObject";
+    public const string GenerateRackArray = "GenerateRackArray";
 }
 
 public sealed record SpaceElementAttributeWriteDto(
@@ -28,11 +32,32 @@ public sealed record SpaceUpdateElementPropertiesDto(
     Guid? LinkedLogicalId,
     IReadOnlyList<SpaceElementAttributeWriteDto> Attributes);
 
+public sealed record SpaceMoveObjectDto(
+    int X,
+    int Y,
+    int Z);
+
+public sealed record SpaceRotateObjectDto(
+    decimal RotationZ);
+
+public sealed record SpaceGenerateRackArrayDto(
+    int Rows,
+    int Columns,
+    int RowGap,
+    int ColumnGap,
+    int StaggerOffset,
+    string CodePrefix,
+    int StartNumber,
+    int CodeDigits);
+
 public sealed record SpaceElementCommandDto(
     Guid CommandId,
     string Type,
     Guid TargetLogicalId,
-    SpaceUpdateElementPropertiesDto? UpdateProperties);
+    SpaceUpdateElementPropertiesDto? UpdateProperties,
+    SpaceMoveObjectDto? MoveObject = null,
+    SpaceRotateObjectDto? RotateObject = null,
+    SpaceGenerateRackArrayDto? GenerateRackArray = null);
 
 public sealed record ApplySpaceElementCommandBatchRequest(
     int SchemaVersion,
@@ -53,4 +78,7 @@ public sealed record ApplySpaceElementCommandBatchResponse(
     long FloorRevision,
     long VersionContentRevision,
     IReadOnlyList<SpaceElementCommandResultDto> AffectedObjects,
-    bool IdempotentReplay);
+    bool IdempotentReplay,
+    IReadOnlyList<SpaceSceneRackDto>? AffectedRacks = null,
+    IReadOnlyList<SpaceSceneRackLevelDto>? AffectedRackLevels = null,
+    IReadOnlyList<SpaceSceneLocationDto>? AffectedLocations = null);

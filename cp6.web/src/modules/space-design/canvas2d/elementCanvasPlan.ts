@@ -7,6 +7,7 @@ import {
 export interface ElementCanvasRect {
   kind: 'rect'
   logicalId: string
+  ownerKind: 'Element' | 'Rack'
   elementType: string
   centerX: number
   centerY: number
@@ -18,6 +19,7 @@ export interface ElementCanvasRect {
 export interface ElementCanvasPolygon {
   kind: 'polygon'
   logicalId: string
+  ownerKind: 'Element'
   elementType: string
   points: readonly { x: number; y: number }[]
 }
@@ -33,17 +35,21 @@ export function buildElementCanvasPlan(
   const drawables: ElementCanvasDrawable[] = []
 
   for (const box of plan.boxes) {
-    if (
-      box.ownerKind !== 'Element' ||
-      box.lifecycleState !== 'Active' ||
-      !box.elementType
-    ) {
+    if (box.lifecycleState !== 'Active') {
       continue
     }
+    const elementType =
+      box.ownerKind === 'Rack' && box.materialRole === 'rack-envelope'
+        ? 'Rack'
+        : box.ownerKind === 'Element'
+          ? box.elementType
+          : undefined
+    if (!elementType) continue
     drawables.push({
       kind: 'rect',
       logicalId: box.logicalId,
-      elementType: box.elementType,
+      ownerKind: box.ownerKind as 'Element' | 'Rack',
+      elementType,
       centerX: box.center.x,
       centerY: box.center.y,
       width: box.size.width,
@@ -63,6 +69,7 @@ export function buildElementCanvasPlan(
     drawables.push({
       kind: 'polygon',
       logicalId: polygon.logicalId,
+      ownerKind: 'Element',
       elementType: polygon.elementType,
       points: polygon.outer.map((point) =>
         localToWorld(point, polygon.origin, polygon.rotationZ),

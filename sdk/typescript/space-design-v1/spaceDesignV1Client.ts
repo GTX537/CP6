@@ -1946,6 +1946,9 @@ export class ApplySpaceElementCommandBatchResponse implements IApplySpaceElement
     versionContentRevision?: number;
     affectedObjects?: SpaceElementCommandResultDto[] | undefined;
     idempotentReplay?: boolean;
+    affectedRacks?: SpaceSceneRackDto[] | undefined;
+    affectedRackLevels?: SpaceSceneRackLevelDto[] | undefined;
+    affectedLocations?: SpaceSceneLocationDto[] | undefined;
 
     constructor(data?: IApplySpaceElementCommandBatchResponse) {
         if (data) {
@@ -1967,6 +1970,21 @@ export class ApplySpaceElementCommandBatchResponse implements IApplySpaceElement
                     this.affectedObjects!.push(SpaceElementCommandResultDto.fromJS(item));
             }
             this.idempotentReplay = _data["idempotentReplay"];
+            if (Array.isArray(_data["affectedRacks"])) {
+                this.affectedRacks = [] as any;
+                for (let item of _data["affectedRacks"])
+                    this.affectedRacks!.push(SpaceSceneRackDto.fromJS(item));
+            }
+            if (Array.isArray(_data["affectedRackLevels"])) {
+                this.affectedRackLevels = [] as any;
+                for (let item of _data["affectedRackLevels"])
+                    this.affectedRackLevels!.push(SpaceSceneRackLevelDto.fromJS(item));
+            }
+            if (Array.isArray(_data["affectedLocations"])) {
+                this.affectedLocations = [] as any;
+                for (let item of _data["affectedLocations"])
+                    this.affectedLocations!.push(SpaceSceneLocationDto.fromJS(item));
+            }
         }
     }
 
@@ -1988,6 +2006,21 @@ export class ApplySpaceElementCommandBatchResponse implements IApplySpaceElement
                 data["affectedObjects"].push(item ? item.toJSON() : undefined as any);
         }
         data["idempotentReplay"] = this.idempotentReplay;
+        if (Array.isArray(this.affectedRacks)) {
+            data["affectedRacks"] = [];
+            for (let item of this.affectedRacks)
+                data["affectedRacks"].push(item ? item.toJSON() : undefined as any);
+        }
+        if (Array.isArray(this.affectedRackLevels)) {
+            data["affectedRackLevels"] = [];
+            for (let item of this.affectedRackLevels)
+                data["affectedRackLevels"].push(item ? item.toJSON() : undefined as any);
+        }
+        if (Array.isArray(this.affectedLocations)) {
+            data["affectedLocations"] = [];
+            for (let item of this.affectedLocations)
+                data["affectedLocations"].push(item ? item.toJSON() : undefined as any);
+        }
         return data;
     }
 }
@@ -1998,6 +2031,9 @@ export interface IApplySpaceElementCommandBatchResponse {
     versionContentRevision?: number;
     affectedObjects?: SpaceElementCommandResultDto[] | undefined;
     idempotentReplay?: boolean;
+    affectedRacks?: SpaceSceneRackDto[] | undefined;
+    affectedRackLevels?: SpaceSceneRackLevelDto[] | undefined;
+    affectedLocations?: SpaceSceneLocationDto[] | undefined;
 }
 
 export class AttachSpaceUnderlayRequest implements IAttachSpaceUnderlayRequest {
@@ -2837,6 +2873,9 @@ export class SpaceElementCommandDto implements ISpaceElementCommandDto {
     type?: string | undefined;
     targetLogicalId?: string;
     updateProperties?: SpaceUpdateElementPropertiesDto;
+    moveObject?: SpaceMoveObjectDto;
+    rotateObject?: SpaceRotateObjectDto;
+    generateRackArray?: SpaceGenerateRackArrayDto;
 
     constructor(data?: ISpaceElementCommandDto) {
         if (data) {
@@ -2853,6 +2892,9 @@ export class SpaceElementCommandDto implements ISpaceElementCommandDto {
             this.type = _data["type"];
             this.targetLogicalId = _data["targetLogicalId"];
             this.updateProperties = _data["updateProperties"] ? SpaceUpdateElementPropertiesDto.fromJS(_data["updateProperties"]) : undefined as any;
+            this.moveObject = _data["moveObject"] ? SpaceMoveObjectDto.fromJS(_data["moveObject"]) : undefined as any;
+            this.rotateObject = _data["rotateObject"] ? SpaceRotateObjectDto.fromJS(_data["rotateObject"]) : undefined as any;
+            this.generateRackArray = _data["generateRackArray"] ? SpaceGenerateRackArrayDto.fromJS(_data["generateRackArray"]) : undefined as any;
         }
     }
 
@@ -2869,6 +2911,9 @@ export class SpaceElementCommandDto implements ISpaceElementCommandDto {
         data["type"] = this.type;
         data["targetLogicalId"] = this.targetLogicalId;
         data["updateProperties"] = this.updateProperties ? this.updateProperties.toJSON() : undefined as any;
+        data["moveObject"] = this.moveObject ? this.moveObject.toJSON() : undefined as any;
+        data["rotateObject"] = this.rotateObject ? this.rotateObject.toJSON() : undefined as any;
+        data["generateRackArray"] = this.generateRackArray ? this.generateRackArray.toJSON() : undefined as any;
         return data;
     }
 }
@@ -2878,6 +2923,9 @@ export interface ISpaceElementCommandDto {
     type?: string | undefined;
     targetLogicalId?: string;
     updateProperties?: SpaceUpdateElementPropertiesDto;
+    moveObject?: SpaceMoveObjectDto;
+    rotateObject?: SpaceRotateObjectDto;
+    generateRackArray?: SpaceGenerateRackArrayDto;
 }
 
 export class SpaceElementCommandResultDto implements ISpaceElementCommandResultDto {
@@ -3006,6 +3054,70 @@ export interface ISpaceFileDto {
     state?: string | undefined;
     scanResultCode?: string | undefined;
     rowVersion?: string | undefined;
+}
+
+export class SpaceGenerateRackArrayDto implements ISpaceGenerateRackArrayDto {
+    rows?: number;
+    columns?: number;
+    rowGap?: number;
+    columnGap?: number;
+    staggerOffset?: number;
+    codePrefix?: string | undefined;
+    startNumber?: number;
+    codeDigits?: number;
+
+    constructor(data?: ISpaceGenerateRackArrayDto) {
+        if (data) {
+            for (var property in data) {
+                if (data.hasOwnProperty(property))
+                    (this as any)[property] = (data as any)[property];
+            }
+        }
+    }
+
+    init(_data?: any) {
+        if (_data) {
+            this.rows = _data["rows"];
+            this.columns = _data["columns"];
+            this.rowGap = _data["rowGap"];
+            this.columnGap = _data["columnGap"];
+            this.staggerOffset = _data["staggerOffset"];
+            this.codePrefix = _data["codePrefix"];
+            this.startNumber = _data["startNumber"];
+            this.codeDigits = _data["codeDigits"];
+        }
+    }
+
+    static fromJS(data: any): SpaceGenerateRackArrayDto {
+        data = typeof data === 'object' ? data : {};
+        let result = new SpaceGenerateRackArrayDto();
+        result.init(data);
+        return result;
+    }
+
+    toJSON(data?: any) {
+        data = typeof data === 'object' ? data : {};
+        data["rows"] = this.rows;
+        data["columns"] = this.columns;
+        data["rowGap"] = this.rowGap;
+        data["columnGap"] = this.columnGap;
+        data["staggerOffset"] = this.staggerOffset;
+        data["codePrefix"] = this.codePrefix;
+        data["startNumber"] = this.startNumber;
+        data["codeDigits"] = this.codeDigits;
+        return data;
+    }
+}
+
+export interface ISpaceGenerateRackArrayDto {
+    rows?: number;
+    columns?: number;
+    rowGap?: number;
+    columnGap?: number;
+    staggerOffset?: number;
+    codePrefix?: string | undefined;
+    startNumber?: number;
+    codeDigits?: number;
 }
 
 export class SpaceIssueDto implements ISpaceIssueDto {
@@ -3286,6 +3398,86 @@ export interface ISpaceModelDto {
     activeDraftVersionId?: string | undefined;
     currentPublishedVersionId?: string | undefined;
     rowVersion?: string | undefined;
+}
+
+export class SpaceMoveObjectDto implements ISpaceMoveObjectDto {
+    x?: number;
+    y?: number;
+    z?: number;
+
+    constructor(data?: ISpaceMoveObjectDto) {
+        if (data) {
+            for (var property in data) {
+                if (data.hasOwnProperty(property))
+                    (this as any)[property] = (data as any)[property];
+            }
+        }
+    }
+
+    init(_data?: any) {
+        if (_data) {
+            this.x = _data["x"];
+            this.y = _data["y"];
+            this.z = _data["z"];
+        }
+    }
+
+    static fromJS(data: any): SpaceMoveObjectDto {
+        data = typeof data === 'object' ? data : {};
+        let result = new SpaceMoveObjectDto();
+        result.init(data);
+        return result;
+    }
+
+    toJSON(data?: any) {
+        data = typeof data === 'object' ? data : {};
+        data["x"] = this.x;
+        data["y"] = this.y;
+        data["z"] = this.z;
+        return data;
+    }
+}
+
+export interface ISpaceMoveObjectDto {
+    x?: number;
+    y?: number;
+    z?: number;
+}
+
+export class SpaceRotateObjectDto implements ISpaceRotateObjectDto {
+    rotationZ?: number;
+
+    constructor(data?: ISpaceRotateObjectDto) {
+        if (data) {
+            for (var property in data) {
+                if (data.hasOwnProperty(property))
+                    (this as any)[property] = (data as any)[property];
+            }
+        }
+    }
+
+    init(_data?: any) {
+        if (_data) {
+            this.rotationZ = _data["rotationZ"];
+        }
+    }
+
+    static fromJS(data: any): SpaceRotateObjectDto {
+        data = typeof data === 'object' ? data : {};
+        let result = new SpaceRotateObjectDto();
+        result.init(data);
+        return result;
+    }
+
+    toJSON(data?: any) {
+        data = typeof data === 'object' ? data : {};
+        data["rotationZ"] = this.rotationZ;
+        return data;
+    }
+}
+
+export interface ISpaceRotateObjectDto {
+    rotationZ?: number;
 }
 
 export class SpaceSceneAisleDto implements ISpaceSceneAisleDto {
