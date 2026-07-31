@@ -86,6 +86,17 @@ export interface ISpaceDesignV1Client {
     getUnderlayContent(versionId: string, sourceId: string): Promise<FileResponse>;
 
     /**
+     * @return OK
+     */
+    getUnderlayCalibration(versionId: string, sourceId: string, floorLogicalId: string): Promise<SpaceUnderlayCalibrationDto>;
+
+    /**
+     * @param idempotency_Key Opaque caller key; 1-128 UTF-8 bytes. Reuse with a different request returns SPACE_IDEMPOTENCY_KEY_REUSED.
+     * @return OK
+     */
+    calibrateUnderlay(versionId: string, sourceId: string, idempotency_Key: string, body: SaveSpaceUnderlayCalibrationRequest): Promise<SaveSpaceUnderlayCalibrationResponse>;
+
+    /**
      * @param idempotency_Key Opaque caller key; 1-128 UTF-8 bytes. Reuse with a different request returns SPACE_IDEMPOTENCY_KEY_REUSED.
      * @return OK
      */
@@ -1278,6 +1289,200 @@ export class SpaceDesignV1Client implements ISpaceDesignV1Client {
     }
 
     /**
+     * @return OK
+     */
+    getUnderlayCalibration(versionId: string, sourceId: string, floorLogicalId: string): Promise<SpaceUnderlayCalibrationDto> {
+        let url_ = this.baseUrl + "/api/space/design/v1/versions/{versionId}/sources/{sourceId}/underlay-calibration?";
+        if (versionId === undefined || versionId === null)
+            throw new globalThis.Error("The parameter 'versionId' must be defined.");
+        url_ = url_.replace("{versionId}", encodeURIComponent("" + versionId));
+        if (sourceId === undefined || sourceId === null)
+            throw new globalThis.Error("The parameter 'sourceId' must be defined.");
+        url_ = url_.replace("{sourceId}", encodeURIComponent("" + sourceId));
+        if (floorLogicalId === undefined || floorLogicalId === null)
+            throw new globalThis.Error("The parameter 'floorLogicalId' must be defined and cannot be null.");
+        else
+            url_ += "floorLogicalId=" + encodeURIComponent("" + floorLogicalId) + "&";
+        url_ = url_.replace(/[?&]$/, "");
+
+        let options_: RequestInit = {
+            method: "GET",
+            headers: {
+                "Accept": "application/json"
+            }
+        };
+
+        return this.http.fetch(url_, options_).then((_response: Response) => {
+            return this.processGetUnderlayCalibration(_response);
+        });
+    }
+
+    protected processGetUnderlayCalibration(response: Response): Promise<SpaceUnderlayCalibrationDto> {
+        const status = response.status;
+        let _headers: any = {}; if (response.headers && response.headers.forEach) { response.headers.forEach((v: any, k: any) => _headers[k] = v); };
+        if (status === 200) {
+            return response.text().then((_responseText) => {
+            let result200: any = null;
+            let resultData200 = _responseText === "" ? null : JSON.parse(_responseText, this.jsonParseReviver);
+            result200 = SpaceUnderlayCalibrationDto.fromJS(resultData200);
+            return result200;
+            });
+        } else if (status === 400) {
+            return response.text().then((_responseText) => {
+            let result400: any = null;
+            let resultData400 = _responseText === "" ? null : JSON.parse(_responseText, this.jsonParseReviver);
+            result400 = SpaceDesignProblemDetails.fromJS(resultData400);
+            return throwException("Bad Request", status, _responseText, _headers, result400);
+            });
+        } else if (status === 401) {
+            return response.text().then((_responseText) => {
+            let result401: any = null;
+            let resultData401 = _responseText === "" ? null : JSON.parse(_responseText, this.jsonParseReviver);
+            result401 = SpaceDesignProblemDetails.fromJS(resultData401);
+            return throwException("Unauthorized", status, _responseText, _headers, result401);
+            });
+        } else if (status === 403) {
+            return response.text().then((_responseText) => {
+            let result403: any = null;
+            let resultData403 = _responseText === "" ? null : JSON.parse(_responseText, this.jsonParseReviver);
+            result403 = SpaceDesignProblemDetails.fromJS(resultData403);
+            return throwException("Forbidden", status, _responseText, _headers, result403);
+            });
+        } else if (status === 404) {
+            return response.text().then((_responseText) => {
+            let result404: any = null;
+            let resultData404 = _responseText === "" ? null : JSON.parse(_responseText, this.jsonParseReviver);
+            result404 = SpaceDesignProblemDetails.fromJS(resultData404);
+            return throwException("Not Found", status, _responseText, _headers, result404);
+            });
+        } else if (status === 409) {
+            return response.text().then((_responseText) => {
+            let result409: any = null;
+            let resultData409 = _responseText === "" ? null : JSON.parse(_responseText, this.jsonParseReviver);
+            result409 = SpaceDesignProblemDetails.fromJS(resultData409);
+            return throwException("Conflict", status, _responseText, _headers, result409);
+            });
+        } else if (status === 422) {
+            return response.text().then((_responseText) => {
+            let result422: any = null;
+            let resultData422 = _responseText === "" ? null : JSON.parse(_responseText, this.jsonParseReviver);
+            result422 = SpaceDesignProblemDetails.fromJS(resultData422);
+            return throwException("Unprocessable Content", status, _responseText, _headers, result422);
+            });
+        } else if (status === 500) {
+            return response.text().then((_responseText) => {
+            let result500: any = null;
+            let resultData500 = _responseText === "" ? null : JSON.parse(_responseText, this.jsonParseReviver);
+            result500 = SpaceDesignProblemDetails.fromJS(resultData500);
+            return throwException("Internal Server Error", status, _responseText, _headers, result500);
+            });
+        } else if (status !== 200 && status !== 204) {
+            return response.text().then((_responseText) => {
+            return throwException("An unexpected server error occurred.", status, _responseText, _headers);
+            });
+        }
+        return Promise.resolve<SpaceUnderlayCalibrationDto>(null as any);
+    }
+
+    /**
+     * @param idempotency_Key Opaque caller key; 1-128 UTF-8 bytes. Reuse with a different request returns SPACE_IDEMPOTENCY_KEY_REUSED.
+     * @return OK
+     */
+    calibrateUnderlay(versionId: string, sourceId: string, idempotency_Key: string, body: SaveSpaceUnderlayCalibrationRequest): Promise<SaveSpaceUnderlayCalibrationResponse> {
+        let url_ = this.baseUrl + "/api/space/design/v1/versions/{versionId}/sources/{sourceId}/underlay-calibration";
+        if (versionId === undefined || versionId === null)
+            throw new globalThis.Error("The parameter 'versionId' must be defined.");
+        url_ = url_.replace("{versionId}", encodeURIComponent("" + versionId));
+        if (sourceId === undefined || sourceId === null)
+            throw new globalThis.Error("The parameter 'sourceId' must be defined.");
+        url_ = url_.replace("{sourceId}", encodeURIComponent("" + sourceId));
+        url_ = url_.replace(/[?&]$/, "");
+
+        const content_ = JSON.stringify(body);
+
+        let options_: RequestInit = {
+            body: content_,
+            method: "POST",
+            headers: {
+                "Idempotency-Key": idempotency_Key !== undefined && idempotency_Key !== null ? "" + idempotency_Key : "",
+                "Content-Type": "application/json",
+                "Accept": "application/json"
+            }
+        };
+
+        return this.http.fetch(url_, options_).then((_response: Response) => {
+            return this.processCalibrateUnderlay(_response);
+        });
+    }
+
+    protected processCalibrateUnderlay(response: Response): Promise<SaveSpaceUnderlayCalibrationResponse> {
+        const status = response.status;
+        let _headers: any = {}; if (response.headers && response.headers.forEach) { response.headers.forEach((v: any, k: any) => _headers[k] = v); };
+        if (status === 200) {
+            return response.text().then((_responseText) => {
+            let result200: any = null;
+            let resultData200 = _responseText === "" ? null : JSON.parse(_responseText, this.jsonParseReviver);
+            result200 = SaveSpaceUnderlayCalibrationResponse.fromJS(resultData200);
+            return result200;
+            });
+        } else if (status === 400) {
+            return response.text().then((_responseText) => {
+            let result400: any = null;
+            let resultData400 = _responseText === "" ? null : JSON.parse(_responseText, this.jsonParseReviver);
+            result400 = SpaceDesignProblemDetails.fromJS(resultData400);
+            return throwException("Bad Request", status, _responseText, _headers, result400);
+            });
+        } else if (status === 401) {
+            return response.text().then((_responseText) => {
+            let result401: any = null;
+            let resultData401 = _responseText === "" ? null : JSON.parse(_responseText, this.jsonParseReviver);
+            result401 = SpaceDesignProblemDetails.fromJS(resultData401);
+            return throwException("Unauthorized", status, _responseText, _headers, result401);
+            });
+        } else if (status === 403) {
+            return response.text().then((_responseText) => {
+            let result403: any = null;
+            let resultData403 = _responseText === "" ? null : JSON.parse(_responseText, this.jsonParseReviver);
+            result403 = SpaceDesignProblemDetails.fromJS(resultData403);
+            return throwException("Forbidden", status, _responseText, _headers, result403);
+            });
+        } else if (status === 404) {
+            return response.text().then((_responseText) => {
+            let result404: any = null;
+            let resultData404 = _responseText === "" ? null : JSON.parse(_responseText, this.jsonParseReviver);
+            result404 = SpaceDesignProblemDetails.fromJS(resultData404);
+            return throwException("Not Found", status, _responseText, _headers, result404);
+            });
+        } else if (status === 409) {
+            return response.text().then((_responseText) => {
+            let result409: any = null;
+            let resultData409 = _responseText === "" ? null : JSON.parse(_responseText, this.jsonParseReviver);
+            result409 = SpaceDesignProblemDetails.fromJS(resultData409);
+            return throwException("Conflict", status, _responseText, _headers, result409);
+            });
+        } else if (status === 422) {
+            return response.text().then((_responseText) => {
+            let result422: any = null;
+            let resultData422 = _responseText === "" ? null : JSON.parse(_responseText, this.jsonParseReviver);
+            result422 = SpaceDesignProblemDetails.fromJS(resultData422);
+            return throwException("Unprocessable Content", status, _responseText, _headers, result422);
+            });
+        } else if (status === 500) {
+            return response.text().then((_responseText) => {
+            let result500: any = null;
+            let resultData500 = _responseText === "" ? null : JSON.parse(_responseText, this.jsonParseReviver);
+            result500 = SpaceDesignProblemDetails.fromJS(resultData500);
+            return throwException("Internal Server Error", status, _responseText, _headers, result500);
+            });
+        } else if (status !== 200 && status !== 204) {
+            return response.text().then((_responseText) => {
+            return throwException("An unexpected server error occurred.", status, _responseText, _headers);
+            });
+        }
+        return Promise.resolve<SaveSpaceUnderlayCalibrationResponse>(null as any);
+    }
+
+    /**
      * @param idempotency_Key Opaque caller key; 1-128 UTF-8 bytes. Reuse with a different request returns SPACE_IDEMPOTENCY_KEY_REUSED.
      * @return OK
      */
@@ -1955,6 +2160,114 @@ export interface ICreateSpaceVersionResponse {
     rowVersion?: string | undefined;
     jobId?: string;
     jobStatusUrl?: string | undefined;
+    idempotentReplay?: boolean;
+}
+
+export class SaveSpaceUnderlayCalibrationRequest implements ISaveSpaceUnderlayCalibrationRequest {
+    floorLogicalId?: string;
+    pageNumber?: number;
+    pixelWidth?: number;
+    pixelHeight?: number;
+    point1?: SpaceUnderlayCalibrationPointDto;
+    point2?: SpaceUnderlayCalibrationPointDto;
+    validationPoint?: SpaceUnderlayCalibrationPointDto;
+    expectedFloorRevision?: number;
+
+    constructor(data?: ISaveSpaceUnderlayCalibrationRequest) {
+        if (data) {
+            for (var property in data) {
+                if (data.hasOwnProperty(property))
+                    (this as any)[property] = (data as any)[property];
+            }
+        }
+    }
+
+    init(_data?: any) {
+        if (_data) {
+            this.floorLogicalId = _data["floorLogicalId"];
+            this.pageNumber = _data["pageNumber"];
+            this.pixelWidth = _data["pixelWidth"];
+            this.pixelHeight = _data["pixelHeight"];
+            this.point1 = _data["point1"] ? SpaceUnderlayCalibrationPointDto.fromJS(_data["point1"]) : undefined as any;
+            this.point2 = _data["point2"] ? SpaceUnderlayCalibrationPointDto.fromJS(_data["point2"]) : undefined as any;
+            this.validationPoint = _data["validationPoint"] ? SpaceUnderlayCalibrationPointDto.fromJS(_data["validationPoint"]) : undefined as any;
+            this.expectedFloorRevision = _data["expectedFloorRevision"];
+        }
+    }
+
+    static fromJS(data: any): SaveSpaceUnderlayCalibrationRequest {
+        data = typeof data === 'object' ? data : {};
+        let result = new SaveSpaceUnderlayCalibrationRequest();
+        result.init(data);
+        return result;
+    }
+
+    toJSON(data?: any) {
+        data = typeof data === 'object' ? data : {};
+        data["floorLogicalId"] = this.floorLogicalId;
+        data["pageNumber"] = this.pageNumber;
+        data["pixelWidth"] = this.pixelWidth;
+        data["pixelHeight"] = this.pixelHeight;
+        data["point1"] = this.point1 ? this.point1.toJSON() : undefined as any;
+        data["point2"] = this.point2 ? this.point2.toJSON() : undefined as any;
+        data["validationPoint"] = this.validationPoint ? this.validationPoint.toJSON() : undefined as any;
+        data["expectedFloorRevision"] = this.expectedFloorRevision;
+        return data;
+    }
+}
+
+export interface ISaveSpaceUnderlayCalibrationRequest {
+    floorLogicalId?: string;
+    pageNumber?: number;
+    pixelWidth?: number;
+    pixelHeight?: number;
+    point1?: SpaceUnderlayCalibrationPointDto;
+    point2?: SpaceUnderlayCalibrationPointDto;
+    validationPoint?: SpaceUnderlayCalibrationPointDto;
+    expectedFloorRevision?: number;
+}
+
+export class SaveSpaceUnderlayCalibrationResponse implements ISaveSpaceUnderlayCalibrationResponse {
+    floor?: SpaceSceneFloorDto;
+    calibration?: SpaceUnderlayCalibrationDto;
+    idempotentReplay?: boolean;
+
+    constructor(data?: ISaveSpaceUnderlayCalibrationResponse) {
+        if (data) {
+            for (var property in data) {
+                if (data.hasOwnProperty(property))
+                    (this as any)[property] = (data as any)[property];
+            }
+        }
+    }
+
+    init(_data?: any) {
+        if (_data) {
+            this.floor = _data["floor"] ? SpaceSceneFloorDto.fromJS(_data["floor"]) : undefined as any;
+            this.calibration = _data["calibration"] ? SpaceUnderlayCalibrationDto.fromJS(_data["calibration"]) : undefined as any;
+            this.idempotentReplay = _data["idempotentReplay"];
+        }
+    }
+
+    static fromJS(data: any): SaveSpaceUnderlayCalibrationResponse {
+        data = typeof data === 'object' ? data : {};
+        let result = new SaveSpaceUnderlayCalibrationResponse();
+        result.init(data);
+        return result;
+    }
+
+    toJSON(data?: any) {
+        data = typeof data === 'object' ? data : {};
+        data["floor"] = this.floor ? this.floor.toJSON() : undefined as any;
+        data["calibration"] = this.calibration ? this.calibration.toJSON() : undefined as any;
+        data["idempotentReplay"] = this.idempotentReplay;
+        return data;
+    }
+}
+
+export interface ISaveSpaceUnderlayCalibrationResponse {
+    floor?: SpaceSceneFloorDto;
+    calibration?: SpaceUnderlayCalibrationDto;
     idempotentReplay?: boolean;
 }
 
@@ -2821,6 +3134,7 @@ export class SpaceSceneFloorDto implements ISpaceSceneFloorDto {
     boundaryJson?: string | undefined;
     coordinateSystem?: string | undefined;
     underlaySourceId?: string | undefined;
+    underlayCalibrationId?: string | undefined;
     underlayScale?: number | undefined;
     underlayOffsetX?: number;
     underlayOffsetY?: number;
@@ -2848,6 +3162,7 @@ export class SpaceSceneFloorDto implements ISpaceSceneFloorDto {
             this.boundaryJson = _data["boundaryJson"];
             this.coordinateSystem = _data["coordinateSystem"];
             this.underlaySourceId = _data["underlaySourceId"];
+            this.underlayCalibrationId = _data["underlayCalibrationId"];
             this.underlayScale = _data["underlayScale"];
             this.underlayOffsetX = _data["underlayOffsetX"];
             this.underlayOffsetY = _data["underlayOffsetY"];
@@ -2875,6 +3190,7 @@ export class SpaceSceneFloorDto implements ISpaceSceneFloorDto {
         data["boundaryJson"] = this.boundaryJson;
         data["coordinateSystem"] = this.coordinateSystem;
         data["underlaySourceId"] = this.underlaySourceId;
+        data["underlayCalibrationId"] = this.underlayCalibrationId;
         data["underlayScale"] = this.underlayScale;
         data["underlayOffsetX"] = this.underlayOffsetX;
         data["underlayOffsetY"] = this.underlayOffsetY;
@@ -2895,6 +3211,7 @@ export interface ISpaceSceneFloorDto {
     boundaryJson?: string | undefined;
     coordinateSystem?: string | undefined;
     underlaySourceId?: string | undefined;
+    underlayCalibrationId?: string | undefined;
     underlayScale?: number | undefined;
     underlayOffsetX?: number;
     underlayOffsetY?: number;
@@ -3344,6 +3661,158 @@ export interface ISpaceSourceDto {
     unit?: string | undefined;
     scaleToMillimeters?: number | undefined;
     rowVersion?: string | undefined;
+}
+
+export class SpaceUnderlayCalibrationDto implements ISpaceUnderlayCalibrationDto {
+    id?: string;
+    modelVersionId?: string;
+    floorLogicalId?: string;
+    sourceId?: string;
+    pageNumber?: number;
+    pixelWidth?: number;
+    pixelHeight?: number;
+    point1?: SpaceUnderlayCalibrationPointDto;
+    point2?: SpaceUnderlayCalibrationPointDto;
+    validationPoint?: SpaceUnderlayCalibrationPointDto;
+    millimetersPerPixel?: number;
+    offsetX?: number;
+    offsetY?: number;
+    rotationZ?: number;
+    validationErrorMillimeters?: number;
+    errorThresholdMillimeters?: number;
+    createdAtUtc?: Date;
+    createdBy?: string | undefined;
+
+    constructor(data?: ISpaceUnderlayCalibrationDto) {
+        if (data) {
+            for (var property in data) {
+                if (data.hasOwnProperty(property))
+                    (this as any)[property] = (data as any)[property];
+            }
+        }
+    }
+
+    init(_data?: any) {
+        if (_data) {
+            this.id = _data["id"];
+            this.modelVersionId = _data["modelVersionId"];
+            this.floorLogicalId = _data["floorLogicalId"];
+            this.sourceId = _data["sourceId"];
+            this.pageNumber = _data["pageNumber"];
+            this.pixelWidth = _data["pixelWidth"];
+            this.pixelHeight = _data["pixelHeight"];
+            this.point1 = _data["point1"] ? SpaceUnderlayCalibrationPointDto.fromJS(_data["point1"]) : undefined as any;
+            this.point2 = _data["point2"] ? SpaceUnderlayCalibrationPointDto.fromJS(_data["point2"]) : undefined as any;
+            this.validationPoint = _data["validationPoint"] ? SpaceUnderlayCalibrationPointDto.fromJS(_data["validationPoint"]) : undefined as any;
+            this.millimetersPerPixel = _data["millimetersPerPixel"];
+            this.offsetX = _data["offsetX"];
+            this.offsetY = _data["offsetY"];
+            this.rotationZ = _data["rotationZ"];
+            this.validationErrorMillimeters = _data["validationErrorMillimeters"];
+            this.errorThresholdMillimeters = _data["errorThresholdMillimeters"];
+            this.createdAtUtc = _data["createdAtUtc"] ? new Date(_data["createdAtUtc"].toString()) : undefined as any;
+            this.createdBy = _data["createdBy"];
+        }
+    }
+
+    static fromJS(data: any): SpaceUnderlayCalibrationDto {
+        data = typeof data === 'object' ? data : {};
+        let result = new SpaceUnderlayCalibrationDto();
+        result.init(data);
+        return result;
+    }
+
+    toJSON(data?: any) {
+        data = typeof data === 'object' ? data : {};
+        data["id"] = this.id;
+        data["modelVersionId"] = this.modelVersionId;
+        data["floorLogicalId"] = this.floorLogicalId;
+        data["sourceId"] = this.sourceId;
+        data["pageNumber"] = this.pageNumber;
+        data["pixelWidth"] = this.pixelWidth;
+        data["pixelHeight"] = this.pixelHeight;
+        data["point1"] = this.point1 ? this.point1.toJSON() : undefined as any;
+        data["point2"] = this.point2 ? this.point2.toJSON() : undefined as any;
+        data["validationPoint"] = this.validationPoint ? this.validationPoint.toJSON() : undefined as any;
+        data["millimetersPerPixel"] = this.millimetersPerPixel;
+        data["offsetX"] = this.offsetX;
+        data["offsetY"] = this.offsetY;
+        data["rotationZ"] = this.rotationZ;
+        data["validationErrorMillimeters"] = this.validationErrorMillimeters;
+        data["errorThresholdMillimeters"] = this.errorThresholdMillimeters;
+        data["createdAtUtc"] = this.createdAtUtc ? this.createdAtUtc.toISOString() : undefined as any;
+        data["createdBy"] = this.createdBy;
+        return data;
+    }
+}
+
+export interface ISpaceUnderlayCalibrationDto {
+    id?: string;
+    modelVersionId?: string;
+    floorLogicalId?: string;
+    sourceId?: string;
+    pageNumber?: number;
+    pixelWidth?: number;
+    pixelHeight?: number;
+    point1?: SpaceUnderlayCalibrationPointDto;
+    point2?: SpaceUnderlayCalibrationPointDto;
+    validationPoint?: SpaceUnderlayCalibrationPointDto;
+    millimetersPerPixel?: number;
+    offsetX?: number;
+    offsetY?: number;
+    rotationZ?: number;
+    validationErrorMillimeters?: number;
+    errorThresholdMillimeters?: number;
+    createdAtUtc?: Date;
+    createdBy?: string | undefined;
+}
+
+export class SpaceUnderlayCalibrationPointDto implements ISpaceUnderlayCalibrationPointDto {
+    pixelX?: number;
+    pixelY?: number;
+    worldX?: number;
+    worldY?: number;
+
+    constructor(data?: ISpaceUnderlayCalibrationPointDto) {
+        if (data) {
+            for (var property in data) {
+                if (data.hasOwnProperty(property))
+                    (this as any)[property] = (data as any)[property];
+            }
+        }
+    }
+
+    init(_data?: any) {
+        if (_data) {
+            this.pixelX = _data["pixelX"];
+            this.pixelY = _data["pixelY"];
+            this.worldX = _data["worldX"];
+            this.worldY = _data["worldY"];
+        }
+    }
+
+    static fromJS(data: any): SpaceUnderlayCalibrationPointDto {
+        data = typeof data === 'object' ? data : {};
+        let result = new SpaceUnderlayCalibrationPointDto();
+        result.init(data);
+        return result;
+    }
+
+    toJSON(data?: any) {
+        data = typeof data === 'object' ? data : {};
+        data["pixelX"] = this.pixelX;
+        data["pixelY"] = this.pixelY;
+        data["worldX"] = this.worldX;
+        data["worldY"] = this.worldY;
+        return data;
+    }
+}
+
+export interface ISpaceUnderlayCalibrationPointDto {
+    pixelX?: number;
+    pixelY?: number;
+    worldX?: number;
+    worldY?: number;
 }
 
 export class SpaceVersionDto implements ISpaceVersionDto {

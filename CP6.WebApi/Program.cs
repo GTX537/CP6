@@ -156,6 +156,18 @@ builder.Services.AddDbContext<CP6Context>((services, options) =>
     options
         .UseSqlServer(builder.Configuration.GetConnectionString("DefaultConnection"))
         .AddInterceptors(services.GetRequiredService<LegacySpaceWriteGuardInterceptor>()));
+builder.Services.AddSingleton(
+    new SpaceUnderlayCalibrationOptions
+    {
+        MinimumValidationErrorMillimeters =
+            builder.Configuration.GetValue<decimal?>(
+                "Space:UnderlayCalibration:MinimumValidationErrorMillimeters")
+            ?? 50m,
+        RelativeValidationErrorTolerance =
+            builder.Configuration.GetValue<decimal?>(
+                "Space:UnderlayCalibration:RelativeValidationErrorTolerance")
+            ?? 0.002m,
+    });
 builder.Services.AddSpaceDesignV1Persistence(
     builder.Configuration.GetConnectionString("DefaultConnection")
     ?? throw new InvalidOperationException(

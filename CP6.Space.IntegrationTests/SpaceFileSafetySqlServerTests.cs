@@ -197,6 +197,148 @@ public sealed class SpaceFileSafetySqlServerTests
     }
 
     [SqlServerFact]
+    public async Task Underlay_calibration_is_audited_revisioned_and_idempotent()
+    {
+        await WithDatabaseAsync(async (connectionString, execution, clock) =>
+        {
+            var design = await SeedWritableDesignAsync(
+                connectionString,
+                execution,
+                clock);
+            var file = NewFile(
+                execution.TenantId,
+                clean: true,
+                retainUntilUtc: Now.AddDays(30));
+            var source = SpaceModelSource.CreateFileSource(
+                execution.TenantId,
+                design.DraftVersionId,
+                SpaceSourceType.Pdf,
+                file,
+                file.OriginalName);
+            var replacementFile = NewFile(
+                execution.TenantId,
+                clean: true,
+                retainUntilUtc: Now.AddDays(30));
+            var replacementSource = SpaceModelSource.CreateFileSource(
+                execution.TenantId,
+                design.DraftVersionId,
+                SpaceSourceType.Pdf,
+                replacementFile,
+                replacementFile.OriginalName);
+            await using (var seed = CreateContext(
+                             connectionString,
+                             execution,
+                             clock))
+            {
+                seed.AddRange(
+                    file,
+                    source,
+                    replacementFile,
+                    replacementSource);
+                await seed.SaveChangesAsync();
+            }
+
+            await using var context = CreateContext(
+                connectionString,
+                execution,
+                clock);
+            var service = NewUnderlayService(
+                context,
+                execution,
+                clock,
+                design.SiteId);
+            await service.AttachAsync(
+                design.DraftVersionId,
+                design.FloorLogicalId,
+                new AttachSpaceUnderlayRequest(
+                    source.Id,
+                    ExpectedFloorRevision: 0),
+                "attach-before-calibration");
+            var request = new SaveSpaceUnderlayCalibrationRequest(
+                design.FloorLogicalId,
+                PageNumber: 1,
+                PixelWidth: 1_000,
+                PixelHeight: 500,
+                new SpaceUnderlayCalibrationPointDto(
+                    0,
+                    500,
+                    1_000,
+                    2_000),
+                new SpaceUnderlayCalibrationPointDto(
+                    100,
+                    500,
+                    2_000,
+                    2_000),
+                new SpaceUnderlayCalibrationPointDto(
+                    0,
+                    400,
+                    1_000,
+                    3_000),
+                ExpectedFloorRevision: 1);
+
+            var first = await service.CalibrateAsync(
+                design.DraftVersionId,
+                source.Id,
+                request,
+                "calibrate-underlay-once");
+            var replay = await service.CalibrateAsync(
+                design.DraftVersionId,
+                source.Id,
+                request,
+                "calibrate-underlay-once");
+            var current = await service.GetCalibrationAsync(
+                design.DraftVersionId,
+                source.Id,
+                design.FloorLogicalId);
+
+            Assert.False(first.IdempotentReplay);
+            Assert.True(replay.IdempotentReplay);
+            Assert.Equal(first.Calibration.Id, replay.Calibration.Id);
+            Assert.Equal(first.Calibration.Id, current.Id);
+            Assert.Equal(10m, current.MillimetersPerPixel);
+            Assert.Equal(0m, current.ValidationErrorMillimeters);
+            Assert.Equal(50m, current.ErrorThresholdMillimeters);
+            Assert.Equal(2, first.Floor.RevisionNumber);
+            Assert.Equal(
+                first.Calibration.Id,
+                first.Floor.UnderlayCalibrationId);
+
+            context.ChangeTracker.Clear();
+            var floor = await context.FloorRevisions.SingleAsync(
+                candidate =>
+                    candidate.ModelVersionId == design.DraftVersionId &&
+                    candidate.LogicalId == design.FloorLogicalId);
+            var version = await context.Versions.SingleAsync(
+                candidate => candidate.Id == design.DraftVersionId);
+            Assert.Equal(first.Calibration.Id, floor.UnderlayCalibrationId);
+            Assert.Equal(10m, floor.UnderlayScale);
+            Assert.Equal(2, floor.Revision);
+            Assert.Equal(2, version.ContentRevision);
+            Assert.Single(context.UnderlayCalibrations);
+            Assert.Equal(2, context.IdempotencyRecords.Count());
+
+            await service.AttachAsync(
+                design.DraftVersionId,
+                design.FloorLogicalId,
+                new AttachSpaceUnderlayRequest(
+                    replacementSource.Id,
+                    ExpectedFloorRevision: 2),
+                "attach-replacement-underlay");
+            var keyConflict =
+                await Assert.ThrowsAsync<SpaceProblemException>(
+                    () => service.CalibrateAsync(
+                        design.DraftVersionId,
+                        replacementSource.Id,
+                        request,
+                        "calibrate-underlay-once"));
+            Assert.Equal(
+                SpaceErrorCodes.IdempotencyConflict,
+                keyConflict.Code);
+            Assert.Equal(409, keyConflict.StatusCode);
+        });
+    }
+
+    [SqlServerFact]
     public async Task Scan_and_retention_stores_do_not_cross_tenants()
     {
         await WithDatabaseAsync(async (connectionString, execution, clock) =>

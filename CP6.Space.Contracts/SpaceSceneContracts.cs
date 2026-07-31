@@ -43,6 +43,7 @@ public sealed record SpaceSceneFloorDto(
     string BoundaryJson,
     string CoordinateSystem,
     Guid? UnderlaySourceId,
+    Guid? UnderlayCalibrationId,
     decimal? UnderlayScale,
     int UnderlayOffsetX,
     int UnderlayOffsetY,

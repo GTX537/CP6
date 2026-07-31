@@ -21,6 +21,7 @@ public sealed class SpaceUnderlayV1Service : ISpaceUnderlayV1Service
     private readonly SpaceSourceCoordinator _sources;
     private readonly ISpaceFileStore _files;
     private readonly ISpaceClock _clock;
+    private readonly SpaceUnderlayCalibrationOptions _calibrationOptions;
 
     public SpaceUnderlayV1Service(
         SpaceContext context,
@@ -29,7 +30,8 @@ public sealed class SpaceUnderlayV1Service : ISpaceUnderlayV1Service
         SpaceFileUploadService uploads,
         SpaceSourceCoordinator sources,
         ISpaceFileStore files,
-        ISpaceClock clock)
+        ISpaceClock clock,
+        SpaceUnderlayCalibrationOptions? calibrationOptions = null)
     {
         _context = context;
         _execution = execution;
@@ -38,6 +40,16 @@ public sealed class SpaceUnderlayV1Service : ISpaceUnderlayV1Service
         _sources = sources;
         _files = files;
         _clock = clock;
+        _calibrationOptions =
+            calibrationOptions ?? new SpaceUnderlayCalibrationOptions();
+        if (_calibrationOptions.MinimumValidationErrorMillimeters
+            is <= 0 or > 10_000 ||
+            _calibrationOptions.RelativeValidationErrorTolerance
+            is <= 0 or > 0.1m)
+        {
+            throw new InvalidOperationException(
+                "The underlay calibration error tolerance is invalid.");
+        }
     }
 
     public async Task<UploadSpaceUnderlayResponse> UploadAsync(
@@ -316,12 +328,7 @@ public sealed class SpaceUnderlayV1Service : ISpaceUnderlayV1Service
             }
 
             floor.AdvanceRevision(request.ExpectedFloorRevision);
-            floor.ConfigureUnderlay(
-                source,
-                floor.UnderlayScale,
-                floor.UnderlayOffsetX,
-                floor.UnderlayOffsetY,
-                floor.UnderlayRotationZ);
+            floor.AttachUnderlay(source);
             version.TouchContent();
             await _context.SaveChangesAsync(cancellationToken);
 
@@ -353,6 +360,224 @@ public sealed class SpaceUnderlayV1Service : ISpaceUnderlayV1Service
                 SpaceErrorCodes.ConcurrencyConflict,
                 409,
                 "The floor underlay changed concurrently.",
+                recoveryAction: "reload-current-floor");
+        }
+        catch
+        {
+            await transaction.RollbackAsync(CancellationToken.None);
+            throw;
+        }
+    }
+
+    public async Task<SpaceUnderlayCalibrationDto> GetCalibrationAsync(
+        Guid versionId,
+        Guid sourceId,
+        Guid floorLogicalId,
+        CancellationToken cancellationToken = default)
+    {
+        EnsureExecutionContext();
+        if (sourceId == Guid.Empty || floorLogicalId == Guid.Empty)
+        {
+            throw NotFound(
+                SpaceErrorCodes.UnderlayCalibrationInvalid,
+                "Underlay calibration");
+        }
+        var scope = await (
+                from version in _context.Versions.AsNoTracking()
+                join model in _context.Models.AsNoTracking()
+                    on version.ModelId equals model.Id
+                where version.Id == versionId
+                select new { Version = version, Model = model })
+            .SingleOrDefaultAsync(cancellationToken);
+        if (scope is null)
+            throw NotFound(SpaceErrorCodes.VersionNotFound, "Space version");
+        EnsureReadable(scope.Model);
+
+        var result = await (
+                from floor in _context.FloorRevisions.AsNoTracking()
+                join calibration in _context.UnderlayCalibrations.AsNoTracking()
+                    on floor.UnderlayCalibrationId equals calibration.Id
+                where floor.ModelVersionId == versionId &&
+                      floor.LogicalId == floorLogicalId &&
+                      floor.UnderlaySourceId == sourceId &&
+                      calibration.SourceId == sourceId
+                select calibration)
+            .SingleOrDefaultAsync(cancellationToken);
+        return result is null
+            ? throw NotFound(
+                SpaceErrorCodes.UnderlayCalibrationInvalid,
+                "Underlay calibration")
+            : ToDto(result);
+    }
+
+    public async Task<SaveSpaceUnderlayCalibrationResponse> CalibrateAsync(
+        Guid versionId,
+        Guid sourceId,
+        SaveSpaceUnderlayCalibrationRequest request,
+        string idempotencyKey,
+        CancellationToken cancellationToken = default)
+    {
+        ArgumentNullException.ThrowIfNull(request);
+        EnsureExecutionContext();
+        if (sourceId == Guid.Empty ||
+            request.FloorLogicalId == Guid.Empty ||
+            request.ExpectedFloorRevision < 0 ||
+            request.Point1 is null ||
+            request.Point2 is null ||
+            request.ValidationPoint is null)
+        {
+            throw InvalidCalibration(
+                "A source, floor, three control points and a current floor revision are required.");
+        }
+
+        await LoadWritableVersionAsync(versionId, cancellationToken);
+        var operation =
+            $"cal-underlay:{versionId:N}:{request.FloorLogicalId:N}";
+        var requestHash = Hash(
+            JsonSerializer.Serialize(
+                new { SourceId = sourceId, Request = request },
+                JsonOptions));
+        var keyHash = IdempotencyKeyHash(operation, idempotencyKey);
+        var replay = await ReadCalibrationReplayAsync(
+            operation,
+            keyHash,
+            requestHash,
+            cancellationToken);
+        if (replay is not null)
+            return replay;
+
+        await using var transaction = await _context.Database
+            .BeginTransactionAsync(
+                IsolationLevel.Serializable,
+                cancellationToken);
+        try
+        {
+            var concurrentReplay = await ReadCalibrationReplayAsync(
+                operation,
+                keyHash,
+                requestHash,
+                cancellationToken);
+            if (concurrentReplay is not null)
+            {
+                await transaction.CommitAsync(cancellationToken);
+                return concurrentReplay;
+            }
+
+            var version = await _context.Versions
+                              .SingleOrDefaultAsync(
+                                  candidate => candidate.Id == versionId,
+                                  cancellationToken)
+                          ?? throw NotFound(
+                              SpaceErrorCodes.VersionNotFound,
+                              "Space version");
+            var floor = await _context.FloorRevisions
+                            .SingleOrDefaultAsync(
+                                candidate =>
+                                    candidate.ModelVersionId == versionId &&
+                                    candidate.LogicalId ==
+                                    request.FloorLogicalId,
+                                cancellationToken)
+                        ?? throw NotFound(
+                            SpaceErrorCodes.LogicalIdNotFound,
+                            "Space floor logical identity");
+            var source = await _context.Sources
+                             .SingleOrDefaultAsync(
+                                 candidate =>
+                                     candidate.ModelVersionId == versionId &&
+                                     candidate.Id == sourceId,
+                                 cancellationToken)
+                         ?? throw NotFound(
+                             SpaceErrorCodes.SourceNotFound,
+                             "Space source");
+            EnsureUnderlayType(source.SourceType);
+            if (source.SourceType != SpaceSourceType.Pdf &&
+                request.PageNumber != 1)
+            {
+                throw InvalidCalibration(
+                    "PNG and JPG underlays only support page 1.");
+            }
+            if (floor.UnderlaySourceId != sourceId)
+            {
+                throw InvalidCalibration(
+                    "The source is not the floor's current underlay.");
+            }
+            if (source.State != SpaceSourceState.Ready ||
+                !source.FileId.HasValue)
+            {
+                throw InvalidCalibration(
+                    "Only a ready scanned underlay can be calibrated.");
+            }
+            var fileIsClean = await _context.Files.AnyAsync(
+                file =>
+                    file.Id == source.FileId &&
+                    file.State == SpaceFileState.Clean,
+                cancellationToken);
+            if (!fileIsClean)
+            {
+                throw InvalidCalibration(
+                    "The underlay source file is not clean.");
+            }
+
+            var calibration = SpaceUnderlayCalibration.Create(
+                _execution.TenantId,
+                versionId,
+                request.FloorLogicalId,
+                sourceId,
+                request.PageNumber,
+                request.PixelWidth,
+                request.PixelHeight,
+                ToDomain(request.Point1),
+                ToDomain(request.Point2),
+                ToDomain(request.ValidationPoint),
+                _calibrationOptions.MinimumValidationErrorMillimeters,
+                _calibrationOptions.RelativeValidationErrorTolerance);
+            _context.UnderlayCalibrations.Add(calibration);
+            floor.AdvanceRevision(request.ExpectedFloorRevision);
+            floor.ApplyUnderlayCalibration(source, calibration);
+            version.TouchContent();
+            await _context.SaveChangesAsync(cancellationToken);
+
+            var response = new SaveSpaceUnderlayCalibrationResponse(
+                ToDto(floor),
+                ToDto(calibration),
+                IdempotentReplay: false);
+            _context.IdempotencyRecords.Add(
+                NewIdempotencyRecord(
+                    operation,
+                    keyHash,
+                    requestHash,
+                    JsonSerializer.Serialize(response, JsonOptions)));
+            await _context.SaveChangesAsync(cancellationToken);
+            await transaction.CommitAsync(cancellationToken);
+            return response;
+        }
+        catch (SpaceUnderlayCalibrationException exception)
+        {
+            await transaction.RollbackAsync(CancellationToken.None);
+            throw exception.ValidationErrorMillimeters.HasValue
+                ? new SpaceProblemException(
+                    SpaceErrorCodes.UnderlayCalibrationOutOfTolerance,
+                    422,
+                    "The underlay calibration is outside the accepted tolerance.",
+                    exception.Message,
+                    "select-a-better-validation-point")
+                : InvalidCalibration(exception.Message);
+        }
+        catch (DbUpdateException)
+        {
+            await transaction.RollbackAsync(CancellationToken.None);
+            _context.ChangeTracker.Clear();
+            var concurrentReplay = await ReadCalibrationReplayAsync(
+                operation,
+                keyHash,
+                requestHash,
+                cancellationToken);
+            if (concurrentReplay is not null)
+                return concurrentReplay;
+            throw new SpaceProblemException(
+                SpaceErrorCodes.ConcurrencyConflict,
+                409,
+                "The floor calibration changed concurrently.",
                 recoveryAction: "reload-current-floor");
         }
         catch
@@ -451,6 +676,48 @@ public sealed class SpaceUnderlayV1Service : ISpaceUnderlayV1Service
                     JsonOptions)
                 ?? throw new InvalidOperationException(
                     "The underlay idempotency response is invalid."))
+            with
+        {
+            IdempotentReplay = true,
+        };
+    }
+
+    private async Task<SaveSpaceUnderlayCalibrationResponse?>
+        ReadCalibrationReplayAsync(
+            string operation,
+            string keyHash,
+            string requestHash,
+            CancellationToken cancellationToken)
+    {
+        var record = await _context.IdempotencyRecords
+            .AsNoTracking()
+            .SingleOrDefaultAsync(
+                candidate =>
+                    candidate.PrincipalId == _execution.ActorId &&
+                    candidate.Operation == operation &&
+                    candidate.IdempotencyKeyHash == keyHash,
+                cancellationToken);
+        if (record is null)
+            return null;
+        if (!string.Equals(
+                record.RequestHash,
+                requestHash,
+                StringComparison.Ordinal) ||
+            record.ReplayUntilUtc < RequireUtcNow())
+        {
+            throw new SpaceProblemException(
+                SpaceErrorCodes.IdempotencyConflict,
+                409,
+                "The Idempotency-Key was already used with different or expired input.",
+                recoveryAction: "use-new-idempotency-key");
+        }
+
+        return (JsonSerializer
+                    .Deserialize<SaveSpaceUnderlayCalibrationResponse>(
+                        record.ResponseJson,
+                        JsonOptions)
+                ?? throw new InvalidOperationException(
+                    "The calibration idempotency response is invalid."))
             with
         {
             IdempotentReplay = true,
@@ -594,11 +861,54 @@ public sealed class SpaceUnderlayV1Service : ISpaceUnderlayV1Service
             floor.BoundaryJson,
             floor.CoordinateSystem,
             floor.UnderlaySourceId,
+            floor.UnderlayCalibrationId,
             floor.UnderlayScale,
             floor.UnderlayOffsetX,
             floor.UnderlayOffsetY,
             floor.UnderlayRotationZ,
             floor.Revision);
+
+    private static SpaceUnderlayCalibrationDto ToDto(
+        SpaceUnderlayCalibration calibration) =>
+        new(
+            calibration.Id,
+            calibration.ModelVersionId,
+            calibration.FloorLogicalId,
+            calibration.SourceId,
+            calibration.PageNumber,
+            calibration.PixelWidth,
+            calibration.PixelHeight,
+            new SpaceUnderlayCalibrationPointDto(
+                calibration.Point1PixelX,
+                calibration.Point1PixelY,
+                calibration.Point1WorldX,
+                calibration.Point1WorldY),
+            new SpaceUnderlayCalibrationPointDto(
+                calibration.Point2PixelX,
+                calibration.Point2PixelY,
+                calibration.Point2WorldX,
+                calibration.Point2WorldY),
+            new SpaceUnderlayCalibrationPointDto(
+                calibration.ValidationPixelX,
+                calibration.ValidationPixelY,
+                calibration.ValidationWorldX,
+                calibration.ValidationWorldY),
+            calibration.MillimetersPerPixel,
+            calibration.OffsetX,
+            calibration.OffsetY,
+            calibration.RotationZ,
+            calibration.ValidationErrorMillimeters,
+            calibration.ErrorThresholdMillimeters,
+            calibration.CreatedAtUtc,
+            calibration.CreatedBy);
+
+    private static SpaceCalibrationPoint ToDomain(
+        SpaceUnderlayCalibrationPointDto point) =>
+        new(
+            point.PixelX,
+            point.PixelY,
+            point.WorldX,
+            point.WorldY);
 
     private static string RowVersion(byte[] value) =>
         Convert.ToBase64String(value);
@@ -624,4 +934,12 @@ public sealed class SpaceUnderlayV1Service : ISpaceUnderlayV1Service
             "The underlay source is invalid.",
             detail,
             "choose-clean-pdf-png-or-jpg");
+
+    private static SpaceProblemException InvalidCalibration(string detail) =>
+        new(
+            SpaceErrorCodes.UnderlayCalibrationInvalid,
+            422,
+            "The underlay calibration is invalid.",
+            detail,
+            "select-valid-control-points");
 }

@@ -23,9 +23,10 @@ describe('buildUnderlayRenderPlan', () => {
 
     expect(plan).toEqual({
       x: 50,
-      y: 450,
+      y: 700,
       width: 500,
       height: 250,
+      imageOffsetY: 250,
       rotation: -90,
       millimetersPerPixel: 10,
       calibrated: true,

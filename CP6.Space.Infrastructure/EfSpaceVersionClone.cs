@@ -614,11 +614,53 @@ public sealed class EfSpaceVersionCloneProcessor : ISpaceVersionCloneProcessor
              WHERE s.[TenantId] = {tenantId}
                AND s.[ModelVersionId] = {sourceVersionId};
 
+             DECLARE @CalibrationMap TABLE
+             (
+                 [OldId] uniqueidentifier NOT NULL PRIMARY KEY,
+                 [NewId] uniqueidentifier NOT NULL UNIQUE
+             );
+             INSERT INTO @CalibrationMap ([OldId], [NewId])
+             SELECT [Id], NEWID()
+             FROM [Space_UnderlayCalibration]
+             WHERE [TenantId] = {tenantId}
+               AND [ModelVersionId] = {sourceVersionId}
+               AND [IsDeleted] = 0;
+
+             INSERT INTO [Space_UnderlayCalibration]
+                 ([Id], [ModelVersionId], [FloorLogicalId], [SourceId],
+                  [PageNumber], [PixelWidth], [PixelHeight],
+                  [Point1PixelX], [Point1PixelY], [Point1WorldX],
+                  [Point1WorldY], [Point2PixelX], [Point2PixelY],
+                  [Point2WorldX], [Point2WorldY], [ValidationPixelX],
+                  [ValidationPixelY], [ValidationWorldX], [ValidationWorldY],
+                  [MillimetersPerPixel], [OffsetX], [OffsetY], [RotationZ],
+                  [ValidationErrorMillimeters], [ErrorThresholdMillimeters],
+                  [TenantId], [CreatedAtUtc], [CreatedBy], [ModifiedAtUtc],
+                  [ModifiedBy], [IsDeleted])
+             SELECT cm.[NewId], {targetVersionId}, c.[FloorLogicalId],
+                    sm.[NewId], c.[PageNumber], c.[PixelWidth],
+                    c.[PixelHeight], c.[Point1PixelX], c.[Point1PixelY],
+                    c.[Point1WorldX], c.[Point1WorldY], c.[Point2PixelX],
+                    c.[Point2PixelY], c.[Point2WorldX], c.[Point2WorldY],
+                    c.[ValidationPixelX], c.[ValidationPixelY],
+                    c.[ValidationWorldX], c.[ValidationWorldY],
+                    c.[MillimetersPerPixel], c.[OffsetX], c.[OffsetY],
+                    c.[RotationZ], c.[ValidationErrorMillimeters],
+                    c.[ErrorThresholdMillimeters], {tenantId}, {nowUtc},
+                    {actorId}, NULL, NULL, 0
+             FROM [Space_UnderlayCalibration] c
+             INNER JOIN @CalibrationMap cm ON cm.[OldId] = c.[Id]
+             INNER JOIN @SourceMap sm ON sm.[OldId] = c.[SourceId]
+             WHERE c.[TenantId] = {tenantId}
+               AND c.[ModelVersionId] = {sourceVersionId}
+               AND c.[IsDeleted] = 0;
+
              INSERT INTO [Space_FloorRevision]
                  ([Id], [ModelVersionId], [LogicalId], [SourceId], [SourceRef],
                   [LifecycleState], [SiteLogicalId], [Level], [FloorCode], [Name],
                   [Elevation], [Height], [BoundaryJson], [CoordinateSystem],
-                  [UnderlaySourceId], [UnderlayScale], [UnderlayOffsetX],
+                  [UnderlaySourceId], [UnderlayCalibrationId],
+                  [UnderlayScale], [UnderlayOffsetX],
                   [UnderlayOffsetY], [UnderlayRotationZ], [Revision],
                   [TenantId], [CreatedAtUtc], [CreatedBy], [ModifiedAtUtc],
                   [ModifiedBy], [IsDeleted])
@@ -626,12 +668,15 @@ public sealed class EfSpaceVersionCloneProcessor : ISpaceVersionCloneProcessor
                     r.[SourceRef], r.[LifecycleState], r.[SiteLogicalId], r.[Level],
                     r.[FloorCode], r.[Name], r.[Elevation], r.[Height],
                     r.[BoundaryJson], r.[CoordinateSystem], um.[NewId],
+                    cm.[NewId],
                     r.[UnderlayScale], r.[UnderlayOffsetX], r.[UnderlayOffsetY],
                     r.[UnderlayRotationZ], r.[Revision], {tenantId}, {nowUtc},
                     {actorId}, NULL, NULL, 0
              FROM [Space_FloorRevision] r
              LEFT JOIN @SourceMap sm ON sm.[OldId] = r.[SourceId]
              LEFT JOIN @SourceMap um ON um.[OldId] = r.[UnderlaySourceId]
+             LEFT JOIN @CalibrationMap cm
+                ON cm.[OldId] = r.[UnderlayCalibrationId]
              WHERE r.[TenantId] = {tenantId}
                AND r.[ModelVersionId] = {sourceVersionId}
                AND r.[IsDeleted] = 0;

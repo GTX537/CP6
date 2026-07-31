@@ -31,6 +31,7 @@ public sealed class SpaceDesignV1OpenApiTests
             "/api/space/design/v1/versions/{versionId}/files/{fileId}",
             "/api/space/design/v1/versions/{versionId}/sources",
             "/api/space/design/v1/versions/{versionId}/sources/{sourceId}/content",
+            "/api/space/design/v1/versions/{versionId}/sources/{sourceId}/underlay-calibration",
             "/api/space/design/v1/versions/{versionId}/underlay-sources",
             "/api/space/design/v1/jobs/{jobId}",
             "/api/space/design/v1/versions/{versionId}/issues",
@@ -48,8 +49,8 @@ public sealed class SpaceDesignV1OpenApiTests
             .Select(operation =>
                 operation.Value.GetProperty("operationId").GetString())
             .ToArray();
-        Assert.Equal(15, operationIds.Length);
-        Assert.Equal(15, operationIds.Distinct().Count());
+        Assert.Equal(17, operationIds.Length);
+        Assert.Equal(17, operationIds.Distinct().Count());
         Assert.Contains("GetAssets", operationIds);
         Assert.Contains("CreateAsset", operationIds);
         Assert.Contains("CreateVersion", operationIds);
@@ -59,6 +60,8 @@ public sealed class SpaceDesignV1OpenApiTests
         Assert.Contains("GetFile", operationIds);
         Assert.Contains("GetUnderlayContent", operationIds);
         Assert.Contains("AttachUnderlay", operationIds);
+        Assert.Contains("GetUnderlayCalibration", operationIds);
+        Assert.Contains("CalibrateUnderlay", operationIds);
     }
 
     [Fact]
@@ -111,6 +114,41 @@ public sealed class SpaceDesignV1OpenApiTests
                 "/api/space/design/v1/versions/{versionId}/floors/{floorLogicalId}/underlay")
             .GetProperty("put");
 
+        Assert.True(
+            operation.GetProperty("requestBody").GetProperty("required")
+                .GetBoolean());
+        var idempotency = operation.GetProperty("parameters")
+            .EnumerateArray()
+            .Single(parameter =>
+                parameter.GetProperty("name").GetString() ==
+                "Idempotency-Key");
+        Assert.True(idempotency.GetProperty("required").GetBoolean());
+        Assert.True(
+            operation.GetProperty("responses")
+                .GetProperty("200")
+                .GetProperty("headers")
+                .TryGetProperty("Idempotent-Replay", out _));
+    }
+
+    [Fact]
+    public void Underlay_calibration_requires_floor_body_idempotency_and_replay_header()
+    {
+        using var document = ReadContract();
+        var path = document.RootElement
+            .GetProperty("paths")
+            .GetProperty(
+                "/api/space/design/v1/versions/{versionId}/sources/{sourceId}/underlay-calibration");
+
+        var floorLogicalId = path.GetProperty("get")
+            .GetProperty("parameters")
+            .EnumerateArray()
+            .Single(parameter =>
+                parameter.GetProperty("name").GetString() ==
+                "floorLogicalId");
+        Assert.Equal("query", floorLogicalId.GetProperty("in").GetString());
+        Assert.True(floorLogicalId.GetProperty("required").GetBoolean());
+
+        var operation = path.GetProperty("post");
         Assert.True(
             operation.GetProperty("requestBody").GetProperty("required")
                 .GetBoolean());
@@ -236,6 +274,8 @@ public sealed class SpaceDesignV1OpenApiTests
                      "GetFile",
                      "GetUnderlayContent",
                      "AttachUnderlay",
+                     "GetUnderlayCalibration",
+                     "CalibrateUnderlay",
                      "GetJob",
                      "GetIssues",
                  })

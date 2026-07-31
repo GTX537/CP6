@@ -269,6 +269,47 @@ public sealed class SpaceDesignV1Controller(
             enableRangeProcessing: false);
     }
 
+    [HttpGet(
+        "versions/{versionId:guid}/sources/{sourceId:guid}/underlay-calibration")]
+    [RequirePermission("space", "model:read")]
+    [ProducesResponseType<SpaceUnderlayCalibrationDto>(
+        StatusCodes.Status200OK)]
+    public Task<SpaceUnderlayCalibrationDto> GetUnderlayCalibration(
+        Guid versionId,
+        Guid sourceId,
+        [FromQuery, Required] Guid floorLogicalId,
+        CancellationToken cancellationToken) =>
+        underlays.GetCalibrationAsync(
+            versionId,
+            sourceId,
+            floorLogicalId,
+            cancellationToken);
+
+    [HttpPost(
+        "versions/{versionId:guid}/sources/{sourceId:guid}/underlay-calibration")]
+    [RequirePermission("space", "source:upload")]
+    [RequirePermission("space", "model:edit")]
+    [ProducesResponseType<SaveSpaceUnderlayCalibrationResponse>(
+        StatusCodes.Status200OK)]
+    public async Task<IActionResult> CalibrateUnderlay(
+        Guid versionId,
+        Guid sourceId,
+        [FromHeader(Name = "Idempotency-Key"), Required]
+        string idempotencyKey,
+        [FromBody, Required] SaveSpaceUnderlayCalibrationRequest request,
+        CancellationToken cancellationToken)
+    {
+        var result = await underlays.CalibrateAsync(
+            versionId,
+            sourceId,
+            request,
+            idempotencyKey,
+            cancellationToken);
+        Response.Headers["Idempotent-Replay"] =
+            result.IdempotentReplay ? "true" : "false";
+        return Ok(result);
+    }
+
     [HttpPut(
         "versions/{versionId:guid}/floors/{floorLogicalId:guid}/underlay")]
     [RequirePermission("space", "source:upload")]

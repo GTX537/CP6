@@ -39,6 +39,10 @@ public static class SpaceErrorCodes
     public const string FileCorrupt = "SPACE_FILE_CORRUPT";
     public const string FileNotFound = "SPACE_FILE_NOT_FOUND";
     public const string UnderlaySourceInvalid = "SPACE_UNDERLAY_SOURCE_INVALID";
+    public const string UnderlayCalibrationInvalid =
+        "SPACE_UNDERLAY_CALIBRATION_INVALID";
+    public const string UnderlayCalibrationOutOfTolerance =
+        "SPACE_UNDERLAY_CALIBRATION_OUT_OF_TOLERANCE";
     public const string SourceUnsafe = "SPACE_SOURCE_UNSAFE";
     public const string JobLeaseLost = "SPACE_JOB_LEASE_LOST";
     public const string JobNotRetryable = "SPACE_JOB_NOT_RETRYABLE";

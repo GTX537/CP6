@@ -52,6 +52,7 @@ public static class SpaceInfrastructureRegistration
         services.TryAddSingleton(new SpaceFileRetentionOptions());
         services.TryAddSingleton(new SpaceJobProcessorOptions());
         services.TryAddSingleton(new SpaceAiCapacityOptions());
+        services.TryAddSingleton(new SpaceUnderlayCalibrationOptions());
         services.TryAddSingleton(
             SpaceWorkerSandboxPolicy.FileSafetyDefault);
         services.TryAddSingleton<

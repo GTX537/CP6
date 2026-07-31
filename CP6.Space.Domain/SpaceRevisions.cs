@@ -60,6 +60,7 @@ public sealed class SpaceFloorRevision : SpaceRevisionEntity
     public string BoundaryJson { get; private set; } = "[]";
     public string CoordinateSystem { get; private set; } = "LOCAL_MM_Z_UP";
     public Guid? UnderlaySourceId { get; private set; }
+    public Guid? UnderlayCalibrationId { get; private set; }
     public decimal? UnderlayScale { get; private set; }
     public int UnderlayOffsetX { get; private set; }
     public int UnderlayOffsetY { get; private set; }
@@ -131,6 +132,51 @@ public sealed class SpaceFloorRevision : SpaceRevisionEntity
         UnderlayOffsetX = offsetX;
         UnderlayOffsetY = offsetY;
         UnderlayRotationZ = SpaceRevisionValue.Rotation(rotationZ);
+    }
+
+    public void AttachUnderlay(SpaceModelSource source)
+    {
+        ArgumentNullException.ThrowIfNull(source);
+        if (source.TenantId != TenantId ||
+            source.ModelVersionId != ModelVersionId)
+        {
+            throw new SpaceTenantScopeException(
+                "Underlay source must belong to the same tenant and version.");
+        }
+        if (UnderlaySourceId == source.Id)
+            return;
+
+        UnderlaySourceId = source.Id;
+        UnderlayCalibrationId = null;
+        UnderlayScale = null;
+        UnderlayOffsetX = 0;
+        UnderlayOffsetY = 0;
+        UnderlayRotationZ = 0;
+    }
+
+    public void ApplyUnderlayCalibration(
+        SpaceModelSource source,
+        SpaceUnderlayCalibration calibration)
+    {
+        ArgumentNullException.ThrowIfNull(source);
+        ArgumentNullException.ThrowIfNull(calibration);
+        if (source.TenantId != TenantId ||
+            source.ModelVersionId != ModelVersionId ||
+            source.Id != UnderlaySourceId ||
+            calibration.TenantId != TenantId ||
+            calibration.ModelVersionId != ModelVersionId ||
+            calibration.FloorLogicalId != LogicalId ||
+            calibration.SourceId != source.Id)
+        {
+            throw new SpaceTenantScopeException(
+                "Underlay calibration must match the attached source and floor.");
+        }
+
+        UnderlayCalibrationId = calibration.Id;
+        UnderlayScale = calibration.MillimetersPerPixel;
+        UnderlayOffsetX = calibration.OffsetX;
+        UnderlayOffsetY = calibration.OffsetY;
+        UnderlayRotationZ = calibration.RotationZ;
     }
 
     public void AdvanceRevision(long expectedRevision)
