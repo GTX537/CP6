@@ -24,6 +24,8 @@ public sealed class SpaceDesignV1OpenApiTests
         {
             "/api/space/design/v1/sites/{siteId}/model",
             "/api/space/design/v1/sites/{siteId}/versions",
+            "/api/space/design/v1/sites/{siteId}/runtime/inventory",
+            "/api/space/design/v1/sites/{siteId}/runtime/tasks",
             "/api/space/design/v1/assets",
             "/api/space/design/v1/versions/{versionId}",
             "/api/space/design/v1/versions/{versionId}/floors/{floorLogicalId}/commands",
@@ -55,8 +57,8 @@ public sealed class SpaceDesignV1OpenApiTests
             .Select(operation =>
                 operation.Value.GetProperty("operationId").GetString())
             .ToArray();
-        Assert.Equal(23, operationIds.Length);
-        Assert.Equal(23, operationIds.Distinct().Count());
+        Assert.Equal(25, operationIds.Length);
+        Assert.Equal(25, operationIds.Distinct().Count());
         Assert.Contains("GetAssets", operationIds);
         Assert.Contains("CreateAsset", operationIds);
         Assert.Contains("CreateVersion", operationIds);
@@ -74,6 +76,42 @@ public sealed class SpaceDesignV1OpenApiTests
         Assert.Contains("BindWmsAdoption", operationIds);
         Assert.Contains("BindWmsAdoptionBatch", operationIds);
         Assert.Contains("PlaceWmsAdoption", operationIds);
+        Assert.Contains("GetInventory", operationIds);
+        Assert.Contains("GetTasks", operationIds);
+    }
+
+    [Fact]
+    public void Runtime_inventory_and_task_contracts_expose_source_and_dual_identity()
+    {
+        using var document = ReadContract();
+        var root = document.RootElement;
+        var paths = root.GetProperty("paths");
+
+        Assert.True(paths.TryGetProperty(
+            "/api/space/design/v1/sites/{siteId}/runtime/inventory",
+            out _));
+        Assert.True(paths.TryGetProperty(
+            "/api/space/design/v1/sites/{siteId}/runtime/tasks",
+            out _));
+
+        var schemas = root.GetProperty("components").GetProperty("schemas");
+        var sourceProperties = schemas
+            .GetProperty("CP6.Space.Contracts.SpaceWmsRuntimeSourceDto")
+            .GetProperty("properties");
+        Assert.True(sourceProperties.TryGetProperty("kind", out _));
+        Assert.True(sourceProperties.TryGetProperty("observedAtUtc", out _));
+        Assert.True(sourceProperties.TryGetProperty("isAvailable", out _));
+
+        var inventoryProperties = schemas
+            .GetProperty("CP6.Space.Contracts.SpaceWmsRuntimeInventoryItemDto")
+            .GetProperty("properties");
+        Assert.True(inventoryProperties.TryGetProperty(
+            "locationLogicalId",
+            out _));
+        Assert.True(inventoryProperties.TryGetProperty(
+            "wmsLogicalId",
+            out _));
+        Assert.True(inventoryProperties.TryGetProperty("codeMatches", out _));
     }
 
     [Theory]
@@ -397,6 +435,8 @@ public sealed class SpaceDesignV1OpenApiTests
                      "BindWmsAdoption",
                      "BindWmsAdoptionBatch",
                      "PlaceWmsAdoption",
+                     "GetInventory",
+                     "GetTasks",
                  })
         {
             Assert.Contains(operation, csharp, StringComparison.Ordinal);

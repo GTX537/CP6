@@ -61,6 +61,8 @@ public class SpacePermissionAttributeTests
             ["SpaceDesignV1Controller.GetIssues"] = "space:model:read",
             ["SpaceDesignV1Controller.GetWmsAdoptionLocations"] =
                 "space:model:read",
+            ["SpaceWmsRuntimeController.GetInventory"] = "space:model:read",
+            ["SpaceWmsRuntimeController.GetTasks"] = "space:model:read",
         };
 
     /// <summary>只读语义的 POST 豁免（Controller.Method）——按「不得带特性」校验。</summary>
@@ -104,8 +106,8 @@ public class SpacePermissionAttributeTests
     [Fact]
     public void SpaceControllers_AreDiscovered()
     {
-        // 守卫：确保反射确实扫到 11 个 controller（防命名空间/程序集变动导致「空扫空过」）。
-        Assert.Equal(11, SpaceControllers.Count());
+        // 守卫：确保反射确实扫到 12 个 controller（防命名空间/程序集变动导致「空扫空过」）。
+        Assert.Equal(12, SpaceControllers.Count());
     }
 
     [Fact]
