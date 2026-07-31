@@ -121,7 +121,7 @@ public sealed class SpaceVersionCloneTests
             Guid.NewGuid(),
             Guid.NewGuid(),
             "Column",
-            """{"kind":"box"}""");
+            """{"schemaVersion":1,"kind":"box","width":200,"height":3000,"depth":200}""");
 
         Assert.Throws<SpaceTenantScopeException>(() =>
             SpaceElementAttribute.Create(

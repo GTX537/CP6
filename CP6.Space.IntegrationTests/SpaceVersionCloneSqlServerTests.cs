@@ -346,7 +346,7 @@ public sealed class SpaceVersionCloneSqlServerTests
                 Guid.NewGuid(),
                 floor.LogicalId,
                 "Column",
-                """{"kind":"box","width":200,"height":3000,"depth":200}""");
+                """{"schemaVersion":1,"kind":"box","width":200,"height":3000,"depth":200}""");
             element.SetModelAsset(Guid.NewGuid());
             element.ConfigurePlacement(0, 0, 0, 0, 200, 3000, 200);
             var attribute = SpaceElementAttribute.Create(
