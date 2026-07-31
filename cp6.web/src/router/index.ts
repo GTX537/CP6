@@ -308,6 +308,7 @@ const staticRoutes: RouteRecordRaw[] = [
   // Space Design V1 底图（独立路由；只消费 Design Revision，不读取 Legacy UnderlayImage URL）
   {
     path: '/space/design/:versionId/floors/:floorLogicalId/underlay',
+    alias: '/space/design/:versionId/floors/:floorLogicalId/editor',
     name: 'space-design-underlay',
     component: () => import('@/views/space/editor/DesignUnderlayView.vue'),
     meta: { standalone: true, title: 'Space Design V1 底图' }

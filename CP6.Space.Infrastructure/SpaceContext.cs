@@ -63,6 +63,10 @@ public sealed class SpaceContext : DbContext
         Set<SpaceElementRevision>();
     public DbSet<SpaceElementAttribute> ElementAttributes =>
         Set<SpaceElementAttribute>();
+    public DbSet<SpaceElementCommandBatch> ElementCommandBatches =>
+        Set<SpaceElementCommandBatch>();
+    public DbSet<SpaceElementCommandRecord> ElementCommandRecords =>
+        Set<SpaceElementCommandRecord>();
 
     protected override void OnModelCreating(ModelBuilder modelBuilder)
     {
@@ -79,6 +83,8 @@ public sealed class SpaceContext : DbContext
         ConfigureAssetVersion(modelBuilder);
         ConfigureElementRevision(modelBuilder);
         ConfigureElementAttribute(modelBuilder);
+        ConfigureElementCommandBatch(modelBuilder);
+        ConfigureElementCommandRecord(modelBuilder);
         ConfigureFile(modelBuilder);
         ConfigureSource(modelBuilder);
         ConfigureJob(modelBuilder);
@@ -103,6 +109,7 @@ public sealed class SpaceContext : DbContext
         ProtectAiCapacityLedger();
         ProtectAssetLibrary();
         ProtectUnderlayCalibrationHistory();
+        ProtectElementCommandHistory();
         StampAndValidateTenant();
         return base.SaveChanges(acceptAllChangesOnSuccess);
     }
@@ -117,6 +124,7 @@ public sealed class SpaceContext : DbContext
         ProtectAiCapacityLedger();
         ProtectAssetLibrary();
         ProtectUnderlayCalibrationHistory();
+        ProtectElementCommandHistory();
         StampAndValidateTenant();
         return base.SaveChangesAsync(acceptAllChangesOnSuccess, cancellationToken);
     }
@@ -890,6 +898,96 @@ public sealed class SpaceContext : DbContext
             })
             .OnDelete(DeleteBehavior.Restrict)
             .HasConstraintName("FK_Space_ElementAttribute_Element_Tenant_Version");
+
+        entity.HasQueryFilter(x => x.TenantId == CurrentTenantId && !x.IsDeleted);
+    }
+
+    private void ConfigureElementCommandBatch(ModelBuilder modelBuilder)
+    {
+        var entity = modelBuilder.Entity<SpaceElementCommandBatch>();
+        entity.ToTable(
+            "Space_ElementCommandBatch",
+            table => table.HasCheckConstraint(
+                "CK_Space_ElementCommandBatch_Result",
+                "([ResultFloorRevision] IS NULL AND [ResultVersionContentRevision] IS NULL AND [ResponseJson] IS NULL) OR " +
+                "([ResultFloorRevision] IS NOT NULL AND [ResultVersionContentRevision] IS NOT NULL AND [ResponseJson] IS NOT NULL)"));
+        entity.HasKey(x => x.Id);
+        entity.Property(x => x.Id).ValueGeneratedNever();
+        entity.HasAlternateKey(x => new { x.TenantId, x.Id })
+            .HasName("AK_Space_ElementCommandBatch_TenantId_Id");
+        ConfigureTenantEntity(entity);
+        entity.Property(x => x.RequestHash)
+            .HasColumnType("char(64)")
+            .IsUnicode(false)
+            .IsFixedLength()
+            .HasMaxLength(64)
+            .IsRequired();
+        entity.Property(x => x.ResponseJson).HasColumnType("nvarchar(max)");
+        entity.Property(x => x.AppliedAtUtc).HasColumnType("datetime2");
+
+        entity.HasIndex(x => new
+            {
+                x.TenantId,
+                x.ModelVersionId,
+                x.FloorLogicalId,
+                x.AppliedAtUtc,
+            })
+            .HasDatabaseName("IX_Space_ElementCommandBatch_Floor_Applied");
+        entity.HasOne<SpaceModelVersion>()
+            .WithMany()
+            .HasForeignKey(x => new { x.TenantId, x.ModelVersionId })
+            .HasPrincipalKey(x => new { x.TenantId, x.Id })
+            .OnDelete(DeleteBehavior.Restrict)
+            .HasConstraintName(
+                "FK_Space_ElementCommandBatch_Version_Tenant");
+        entity.HasOne<SpaceFloorRevision>()
+            .WithMany()
+            .HasForeignKey(x => new
+            {
+                x.TenantId,
+                x.ModelVersionId,
+                x.FloorLogicalId,
+            })
+            .HasPrincipalKey(x => new
+            {
+                x.TenantId,
+                x.ModelVersionId,
+                x.LogicalId,
+            })
+            .OnDelete(DeleteBehavior.Restrict)
+            .HasConstraintName(
+                "FK_Space_ElementCommandBatch_Floor_Tenant_Version_Logical");
+
+        entity.HasQueryFilter(x => x.TenantId == CurrentTenantId && !x.IsDeleted);
+    }
+
+    private void ConfigureElementCommandRecord(ModelBuilder modelBuilder)
+    {
+        var entity = modelBuilder.Entity<SpaceElementCommandRecord>();
+        entity.ToTable("Space_ElementCommandRecord");
+        entity.HasKey(x => x.Id);
+        entity.Property(x => x.Id).ValueGeneratedNever();
+        ConfigureTenantEntity(entity);
+        entity.Property(x => x.CommandType).HasMaxLength(100).IsRequired();
+        entity.Property(x => x.PayloadJson).HasColumnType("nvarchar(max)").IsRequired();
+        entity.Property(x => x.BeforeJson).HasColumnType("nvarchar(max)").IsRequired();
+        entity.Property(x => x.AfterJson).HasColumnType("nvarchar(max)").IsRequired();
+
+        entity.HasIndex(x => new
+            {
+                x.TenantId,
+                x.CommandBatchId,
+                x.SequenceNo,
+            })
+            .IsUnique()
+            .HasDatabaseName("UX_Space_ElementCommandRecord_Batch_Sequence");
+        entity.HasOne<SpaceElementCommandBatch>()
+            .WithMany()
+            .HasForeignKey(x => new { x.TenantId, x.CommandBatchId })
+            .HasPrincipalKey(x => new { x.TenantId, x.Id })
+            .OnDelete(DeleteBehavior.Restrict)
+            .HasConstraintName(
+                "FK_Space_ElementCommandRecord_Batch_Tenant");
 
         entity.HasQueryFilter(x => x.TenantId == CurrentTenantId && !x.IsDeleted);
     }
@@ -2111,6 +2209,46 @@ public sealed class SpaceContext : DbContext
             {
                 throw new SpaceUnderlayCalibrationException(
                     "Underlay calibration records are append-only.");
+            }
+        }
+    }
+
+    private void ProtectElementCommandHistory()
+    {
+        foreach (var entry in ChangeTracker
+            .Entries<SpaceElementCommandRecord>())
+        {
+            if (entry.State is EntityState.Modified or EntityState.Deleted)
+            {
+                throw new InvalidOperationException(
+                    "Element command audit records are append-only.");
+            }
+        }
+
+        foreach (var entry in ChangeTracker
+            .Entries<SpaceElementCommandBatch>())
+        {
+            if (entry.State == EntityState.Deleted)
+            {
+                throw new InvalidOperationException(
+                    "Element command batches cannot be deleted.");
+            }
+            if (entry.State != EntityState.Modified)
+                continue;
+
+            var allowed = new HashSet<string>(StringComparer.Ordinal)
+            {
+                nameof(SpaceElementCommandBatch.ResultFloorRevision),
+                nameof(SpaceElementCommandBatch.ResultVersionContentRevision),
+                nameof(SpaceElementCommandBatch.ResponseJson),
+            };
+            if (entry.Properties.Any(property =>
+                    property.IsModified &&
+                    !allowed.Contains(property.Metadata.Name)) ||
+                entry.Property(x => x.ResponseJson).OriginalValue is not null)
+            {
+                throw new InvalidOperationException(
+                    "Completed element command batches are immutable.");
             }
         }
     }

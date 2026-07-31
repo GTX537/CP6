@@ -628,6 +628,146 @@
         }
       }
     },
+    "/api/space/design/v1/versions/{versionId}/floors/{floorLogicalId}/commands": {
+      "post": {
+        "tags": [
+          "SpaceDesignV1"
+        ],
+        "operationId": "ApplyElementCommands",
+        "parameters": [
+          {
+            "name": "versionId",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "string",
+              "format": "uuid"
+            }
+          },
+          {
+            "name": "floorLogicalId",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "string",
+              "format": "uuid"
+            }
+          }
+        ],
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/CP6.Space.Contracts.ApplySpaceElementCommandBatchRequest"
+              }
+            },
+            "text/json": {
+              "schema": {
+                "$ref": "#/components/schemas/CP6.Space.Contracts.ApplySpaceElementCommandBatchRequest"
+              }
+            },
+            "application/*+json": {
+              "schema": {
+                "$ref": "#/components/schemas/CP6.Space.Contracts.ApplySpaceElementCommandBatchRequest"
+              }
+            }
+          },
+          "required": true
+        },
+        "responses": {
+          "400": {
+            "description": "Bad Request",
+            "content": {
+              "application/problem+json": {
+                "schema": {
+                  "$ref": "#/components/schemas/CP6.WebApi.OpenApi.SpaceDesignProblemDetails"
+                }
+              }
+            }
+          },
+          "401": {
+            "description": "Unauthorized",
+            "content": {
+              "application/problem+json": {
+                "schema": {
+                  "$ref": "#/components/schemas/CP6.WebApi.OpenApi.SpaceDesignProblemDetails"
+                }
+              }
+            }
+          },
+          "403": {
+            "description": "Forbidden",
+            "content": {
+              "application/problem+json": {
+                "schema": {
+                  "$ref": "#/components/schemas/CP6.WebApi.OpenApi.SpaceDesignProblemDetails"
+                }
+              }
+            }
+          },
+          "404": {
+            "description": "Not Found",
+            "content": {
+              "application/problem+json": {
+                "schema": {
+                  "$ref": "#/components/schemas/CP6.WebApi.OpenApi.SpaceDesignProblemDetails"
+                }
+              }
+            }
+          },
+          "409": {
+            "description": "Conflict",
+            "content": {
+              "application/problem+json": {
+                "schema": {
+                  "$ref": "#/components/schemas/CP6.WebApi.OpenApi.SpaceDesignProblemDetails"
+                }
+              }
+            }
+          },
+          "422": {
+            "description": "Unprocessable Content",
+            "content": {
+              "application/problem+json": {
+                "schema": {
+                  "$ref": "#/components/schemas/CP6.WebApi.OpenApi.SpaceDesignProblemDetails"
+                }
+              }
+            }
+          },
+          "500": {
+            "description": "Internal Server Error",
+            "content": {
+              "application/problem+json": {
+                "schema": {
+                  "$ref": "#/components/schemas/CP6.WebApi.OpenApi.SpaceDesignProblemDetails"
+                }
+              }
+            }
+          },
+          "200": {
+            "description": "OK",
+            "content": {
+              "text/plain": {
+                "schema": {
+                  "$ref": "#/components/schemas/CP6.Space.Contracts.ApplySpaceElementCommandBatchResponse"
+                }
+              },
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/CP6.Space.Contracts.ApplySpaceElementCommandBatchResponse"
+                }
+              },
+              "text/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/CP6.Space.Contracts.ApplySpaceElementCommandBatchResponse"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
     "/api/space/design/v1/assets": {
       "get": {
         "tags": [
@@ -2264,6 +2404,63 @@
   },
   "components": {
     "schemas": {
+      "CP6.Space.Contracts.ApplySpaceElementCommandBatchRequest": {
+        "type": "object",
+        "properties": {
+          "schemaVersion": {
+            "type": "integer",
+            "format": "int32"
+          },
+          "commandBatchId": {
+            "type": "string",
+            "format": "uuid"
+          },
+          "clientInstanceId": {
+            "type": "string",
+            "format": "uuid"
+          },
+          "expectedFloorRevision": {
+            "type": "integer",
+            "format": "int64"
+          },
+          "commands": {
+            "type": "array",
+            "items": {
+              "$ref": "#/components/schemas/CP6.Space.Contracts.SpaceElementCommandDto"
+            },
+            "nullable": true
+          }
+        },
+        "additionalProperties": false
+      },
+      "CP6.Space.Contracts.ApplySpaceElementCommandBatchResponse": {
+        "type": "object",
+        "properties": {
+          "commandBatchId": {
+            "type": "string",
+            "format": "uuid"
+          },
+          "floorRevision": {
+            "type": "integer",
+            "format": "int64"
+          },
+          "versionContentRevision": {
+            "type": "integer",
+            "format": "int64"
+          },
+          "affectedObjects": {
+            "type": "array",
+            "items": {
+              "$ref": "#/components/schemas/CP6.Space.Contracts.SpaceElementCommandResultDto"
+            },
+            "nullable": true
+          },
+          "idempotentReplay": {
+            "type": "boolean"
+          }
+        },
+        "additionalProperties": false
+      },
       "CP6.Space.Contracts.AttachSpaceUnderlayRequest": {
         "type": "object",
         "properties": {
@@ -2647,6 +2844,81 @@
             "nullable": true
           },
           "elementAttributes": {
+            "type": "array",
+            "items": {
+              "$ref": "#/components/schemas/CP6.Space.Contracts.SpaceSceneElementAttributeDto"
+            },
+            "nullable": true
+          }
+        },
+        "additionalProperties": false
+      },
+      "CP6.Space.Contracts.SpaceElementAttributeWriteDto": {
+        "type": "object",
+        "properties": {
+          "namespace": {
+            "type": "string",
+            "nullable": true
+          },
+          "key": {
+            "type": "string",
+            "nullable": true
+          },
+          "valueType": {
+            "type": "string",
+            "nullable": true
+          },
+          "value": {
+            "type": "string",
+            "nullable": true
+          },
+          "unit": {
+            "type": "string",
+            "nullable": true
+          }
+        },
+        "additionalProperties": false
+      },
+      "CP6.Space.Contracts.SpaceElementCommandDto": {
+        "type": "object",
+        "properties": {
+          "commandId": {
+            "type": "string",
+            "format": "uuid"
+          },
+          "type": {
+            "type": "string",
+            "nullable": true
+          },
+          "targetLogicalId": {
+            "type": "string",
+            "format": "uuid"
+          },
+          "updateProperties": {
+            "$ref": "#/components/schemas/CP6.Space.Contracts.SpaceUpdateElementPropertiesDto"
+          }
+        },
+        "additionalProperties": false
+      },
+      "CP6.Space.Contracts.SpaceElementCommandResultDto": {
+        "type": "object",
+        "properties": {
+          "commandId": {
+            "type": "string",
+            "format": "uuid"
+          },
+          "type": {
+            "type": "string",
+            "nullable": true
+          },
+          "targetLogicalId": {
+            "type": "string",
+            "format": "uuid"
+          },
+          "element": {
+            "$ref": "#/components/schemas/CP6.Space.Contracts.SpaceSceneElementDto"
+          },
+          "attributes": {
             "type": "array",
             "items": {
               "$ref": "#/components/schemas/CP6.Space.Contracts.SpaceSceneElementAttributeDto"
@@ -3511,6 +3783,64 @@
           "worldY": {
             "type": "integer",
             "format": "int32"
+          }
+        },
+        "additionalProperties": false
+      },
+      "CP6.Space.Contracts.SpaceUpdateElementPropertiesDto": {
+        "type": "object",
+        "properties": {
+          "geometryJson": {
+            "type": "string",
+            "nullable": true
+          },
+          "x": {
+            "type": "integer",
+            "format": "int32"
+          },
+          "y": {
+            "type": "integer",
+            "format": "int32"
+          },
+          "z": {
+            "type": "integer",
+            "format": "int32"
+          },
+          "rotationZ": {
+            "type": "number",
+            "format": "double"
+          },
+          "width": {
+            "type": "integer",
+            "format": "int32"
+          },
+          "height": {
+            "type": "integer",
+            "format": "int32"
+          },
+          "depth": {
+            "type": "integer",
+            "format": "int32"
+          },
+          "businessCode": {
+            "type": "string",
+            "nullable": true
+          },
+          "linkedEntityType": {
+            "type": "string",
+            "nullable": true
+          },
+          "linkedLogicalId": {
+            "type": "string",
+            "format": "uuid",
+            "nullable": true
+          },
+          "attributes": {
+            "type": "array",
+            "items": {
+              "$ref": "#/components/schemas/CP6.Space.Contracts.SpaceElementAttributeWriteDto"
+            },
+            "nullable": true
           }
         },
         "additionalProperties": false

@@ -76,6 +76,15 @@ namespace CP6.Space.Client
 
         /// <returns>OK</returns>
         /// <exception cref="ApiException">A server side error occurred.</exception>
+        System.Threading.Tasks.Task<ApplySpaceElementCommandBatchResponse> ApplyElementCommandsAsync(System.Guid versionId, System.Guid floorLogicalId, ApplySpaceElementCommandBatchRequest body);
+
+        /// <param name="cancellationToken">A cancellation token that can be used by other objects or threads to receive notice of cancellation.</param>
+        /// <returns>OK</returns>
+        /// <exception cref="ApiException">A server side error occurred.</exception>
+        System.Threading.Tasks.Task<ApplySpaceElementCommandBatchResponse> ApplyElementCommandsAsync(System.Guid versionId, System.Guid floorLogicalId, ApplySpaceElementCommandBatchRequest body, System.Threading.CancellationToken cancellationToken);
+
+        /// <returns>OK</returns>
+        /// <exception cref="ApiException">A server side error occurred.</exception>
         System.Threading.Tasks.Task<SpacePageOfSpaceAssetDto> GetAssetsAsync(string scope, string category, int? limit, string cursor);
 
         /// <param name="cancellationToken">A cancellation token that can be used by other objects or threads to receive notice of cancellation.</param>
@@ -924,6 +933,171 @@ namespace CP6.Space.Client
                         if (status_ == 200)
                         {
                             var objectResponse_ = await ReadObjectResponseAsync<SpaceDesignSceneDto>(response_, headers_, cancellationToken).ConfigureAwait(false);
+                            if (objectResponse_.Object == null)
+                            {
+                                throw new ApiException("Response was null which was not expected.", status_, objectResponse_.Text, headers_, null);
+                            }
+                            return objectResponse_.Object;
+                        }
+                        else
+                        if (status_ == 400)
+                        {
+                            var objectResponse_ = await ReadObjectResponseAsync<SpaceDesignProblemDetails>(response_, headers_, cancellationToken).ConfigureAwait(false);
+                            if (objectResponse_.Object == null)
+                            {
+                                throw new ApiException("Response was null which was not expected.", status_, objectResponse_.Text, headers_, null);
+                            }
+                            throw new ApiException<SpaceDesignProblemDetails>("Bad Request", status_, objectResponse_.Text, headers_, objectResponse_.Object, null);
+                        }
+                        else
+                        if (status_ == 401)
+                        {
+                            var objectResponse_ = await ReadObjectResponseAsync<SpaceDesignProblemDetails>(response_, headers_, cancellationToken).ConfigureAwait(false);
+                            if (objectResponse_.Object == null)
+                            {
+                                throw new ApiException("Response was null which was not expected.", status_, objectResponse_.Text, headers_, null);
+                            }
+                            throw new ApiException<SpaceDesignProblemDetails>("Unauthorized", status_, objectResponse_.Text, headers_, objectResponse_.Object, null);
+                        }
+                        else
+                        if (status_ == 403)
+                        {
+                            var objectResponse_ = await ReadObjectResponseAsync<SpaceDesignProblemDetails>(response_, headers_, cancellationToken).ConfigureAwait(false);
+                            if (objectResponse_.Object == null)
+                            {
+                                throw new ApiException("Response was null which was not expected.", status_, objectResponse_.Text, headers_, null);
+                            }
+                            throw new ApiException<SpaceDesignProblemDetails>("Forbidden", status_, objectResponse_.Text, headers_, objectResponse_.Object, null);
+                        }
+                        else
+                        if (status_ == 404)
+                        {
+                            var objectResponse_ = await ReadObjectResponseAsync<SpaceDesignProblemDetails>(response_, headers_, cancellationToken).ConfigureAwait(false);
+                            if (objectResponse_.Object == null)
+                            {
+                                throw new ApiException("Response was null which was not expected.", status_, objectResponse_.Text, headers_, null);
+                            }
+                            throw new ApiException<SpaceDesignProblemDetails>("Not Found", status_, objectResponse_.Text, headers_, objectResponse_.Object, null);
+                        }
+                        else
+                        if (status_ == 409)
+                        {
+                            var objectResponse_ = await ReadObjectResponseAsync<SpaceDesignProblemDetails>(response_, headers_, cancellationToken).ConfigureAwait(false);
+                            if (objectResponse_.Object == null)
+                            {
+                                throw new ApiException("Response was null which was not expected.", status_, objectResponse_.Text, headers_, null);
+                            }
+                            throw new ApiException<SpaceDesignProblemDetails>("Conflict", status_, objectResponse_.Text, headers_, objectResponse_.Object, null);
+                        }
+                        else
+                        if (status_ == 422)
+                        {
+                            var objectResponse_ = await ReadObjectResponseAsync<SpaceDesignProblemDetails>(response_, headers_, cancellationToken).ConfigureAwait(false);
+                            if (objectResponse_.Object == null)
+                            {
+                                throw new ApiException("Response was null which was not expected.", status_, objectResponse_.Text, headers_, null);
+                            }
+                            throw new ApiException<SpaceDesignProblemDetails>("Unprocessable Content", status_, objectResponse_.Text, headers_, objectResponse_.Object, null);
+                        }
+                        else
+                        if (status_ == 500)
+                        {
+                            var objectResponse_ = await ReadObjectResponseAsync<SpaceDesignProblemDetails>(response_, headers_, cancellationToken).ConfigureAwait(false);
+                            if (objectResponse_.Object == null)
+                            {
+                                throw new ApiException("Response was null which was not expected.", status_, objectResponse_.Text, headers_, null);
+                            }
+                            throw new ApiException<SpaceDesignProblemDetails>("Internal Server Error", status_, objectResponse_.Text, headers_, objectResponse_.Object, null);
+                        }
+                        else
+                        {
+                            var responseData_ = response_.Content == null ? null : await ReadAsStringAsync(response_.Content, cancellationToken).ConfigureAwait(false);
+                            throw new ApiException("The HTTP status code of the response was not expected (" + status_ + ").", status_, responseData_, headers_, null);
+                        }
+                    }
+                    finally
+                    {
+                        if (disposeResponse_)
+                            response_.Dispose();
+                    }
+                }
+            }
+            finally
+            {
+                if (disposeClient_)
+                    client_.Dispose();
+            }
+        }
+
+        /// <returns>OK</returns>
+        /// <exception cref="ApiException">A server side error occurred.</exception>
+        public virtual System.Threading.Tasks.Task<ApplySpaceElementCommandBatchResponse> ApplyElementCommandsAsync(System.Guid versionId, System.Guid floorLogicalId, ApplySpaceElementCommandBatchRequest body)
+        {
+            return ApplyElementCommandsAsync(versionId, floorLogicalId, body, System.Threading.CancellationToken.None);
+        }
+
+        /// <param name="cancellationToken">A cancellation token that can be used by other objects or threads to receive notice of cancellation.</param>
+        /// <returns>OK</returns>
+        /// <exception cref="ApiException">A server side error occurred.</exception>
+        public virtual async System.Threading.Tasks.Task<ApplySpaceElementCommandBatchResponse> ApplyElementCommandsAsync(System.Guid versionId, System.Guid floorLogicalId, ApplySpaceElementCommandBatchRequest body, System.Threading.CancellationToken cancellationToken)
+        {
+            if (versionId == null)
+                throw new System.ArgumentNullException("versionId");
+
+            if (floorLogicalId == null)
+                throw new System.ArgumentNullException("floorLogicalId");
+
+            if (body == null)
+                throw new System.ArgumentNullException("body");
+
+            var client_ = _httpClient;
+            var disposeClient_ = false;
+            try
+            {
+                using (var request_ = new System.Net.Http.HttpRequestMessage())
+                {
+                    var json_ = System.Text.Json.JsonSerializer.SerializeToUtf8Bytes(body, JsonSerializerSettings);
+                    var content_ = new System.Net.Http.ByteArrayContent(json_);
+                    content_.Headers.ContentType = System.Net.Http.Headers.MediaTypeHeaderValue.Parse("application/json");
+                    request_.Content = content_;
+                    request_.Method = new System.Net.Http.HttpMethod("POST");
+                    request_.Headers.Accept.Add(System.Net.Http.Headers.MediaTypeWithQualityHeaderValue.Parse("application/json"));
+
+                    var urlBuilder_ = new System.Text.StringBuilder();
+
+                    // Operation Path: "api/space/design/v1/versions/{versionId}/floors/{floorLogicalId}/commands"
+                    urlBuilder_.Append("api/space/design/v1/versions/");
+                    urlBuilder_.Append(System.Uri.EscapeDataString(ConvertToString(versionId, System.Globalization.CultureInfo.InvariantCulture)));
+                    urlBuilder_.Append("/floors/");
+                    urlBuilder_.Append(System.Uri.EscapeDataString(ConvertToString(floorLogicalId, System.Globalization.CultureInfo.InvariantCulture)));
+                    urlBuilder_.Append("/commands");
+
+                    PrepareRequest(client_, request_, urlBuilder_);
+
+                    var url_ = urlBuilder_.ToString();
+                    request_.RequestUri = new System.Uri(url_, System.UriKind.RelativeOrAbsolute);
+
+                    PrepareRequest(client_, request_, url_);
+
+                    var response_ = await client_.SendAsync(request_, System.Net.Http.HttpCompletionOption.ResponseHeadersRead, cancellationToken).ConfigureAwait(false);
+                    var disposeResponse_ = true;
+                    try
+                    {
+                        var headers_ = new System.Collections.Generic.Dictionary<string, System.Collections.Generic.IEnumerable<string>>();
+                        foreach (var item_ in response_.Headers)
+                            headers_[item_.Key] = item_.Value;
+                        if (response_.Content != null && response_.Content.Headers != null)
+                        {
+                            foreach (var item_ in response_.Content.Headers)
+                                headers_[item_.Key] = item_.Value;
+                        }
+
+                        ProcessResponse(client_, response_);
+
+                        var status_ = (int)response_.StatusCode;
+                        if (status_ == 200)
+                        {
+                            var objectResponse_ = await ReadObjectResponseAsync<ApplySpaceElementCommandBatchResponse>(response_, headers_, cancellationToken).ConfigureAwait(false);
                             if (objectResponse_.Object == null)
                             {
                                 throw new ApiException("Response was null which was not expected.", status_, objectResponse_.Text, headers_, null);
@@ -3131,6 +3305,48 @@ namespace CP6.Space.Client
     }
 
     [System.CodeDom.Compiler.GeneratedCode("NJsonSchema", "14.7.1.0 (NJsonSchema v11.6.1.0 (Newtonsoft.Json v13.0.0.0))")]
+    public partial class ApplySpaceElementCommandBatchRequest
+    {
+
+        [System.Text.Json.Serialization.JsonPropertyName("schemaVersion")]
+        public int SchemaVersion { get; set; }
+
+        [System.Text.Json.Serialization.JsonPropertyName("commandBatchId")]
+        public System.Guid CommandBatchId { get; set; }
+
+        [System.Text.Json.Serialization.JsonPropertyName("clientInstanceId")]
+        public System.Guid ClientInstanceId { get; set; }
+
+        [System.Text.Json.Serialization.JsonPropertyName("expectedFloorRevision")]
+        public long ExpectedFloorRevision { get; set; }
+
+        [System.Text.Json.Serialization.JsonPropertyName("commands")]
+        public System.Collections.Generic.ICollection<SpaceElementCommandDto> Commands { get; set; }
+
+    }
+
+    [System.CodeDom.Compiler.GeneratedCode("NJsonSchema", "14.7.1.0 (NJsonSchema v11.6.1.0 (Newtonsoft.Json v13.0.0.0))")]
+    public partial class ApplySpaceElementCommandBatchResponse
+    {
+
+        [System.Text.Json.Serialization.JsonPropertyName("commandBatchId")]
+        public System.Guid CommandBatchId { get; set; }
+
+        [System.Text.Json.Serialization.JsonPropertyName("floorRevision")]
+        public long FloorRevision { get; set; }
+
+        [System.Text.Json.Serialization.JsonPropertyName("versionContentRevision")]
+        public long VersionContentRevision { get; set; }
+
+        [System.Text.Json.Serialization.JsonPropertyName("affectedObjects")]
+        public System.Collections.Generic.ICollection<SpaceElementCommandResultDto> AffectedObjects { get; set; }
+
+        [System.Text.Json.Serialization.JsonPropertyName("idempotentReplay")]
+        public bool IdempotentReplay { get; set; }
+
+    }
+
+    [System.CodeDom.Compiler.GeneratedCode("NJsonSchema", "14.7.1.0 (NJsonSchema v11.6.1.0 (Newtonsoft.Json v13.0.0.0))")]
     public partial class AttachSpaceUnderlayRequest
     {
 
@@ -3436,6 +3652,66 @@ namespace CP6.Space.Client
 
         [System.Text.Json.Serialization.JsonPropertyName("elementAttributes")]
         public System.Collections.Generic.ICollection<SpaceSceneElementAttributeDto> ElementAttributes { get; set; }
+
+    }
+
+    [System.CodeDom.Compiler.GeneratedCode("NJsonSchema", "14.7.1.0 (NJsonSchema v11.6.1.0 (Newtonsoft.Json v13.0.0.0))")]
+    public partial class SpaceElementAttributeWriteDto
+    {
+
+        [System.Text.Json.Serialization.JsonPropertyName("namespace")]
+        public string Namespace { get; set; }
+
+        [System.Text.Json.Serialization.JsonPropertyName("key")]
+        public string Key { get; set; }
+
+        [System.Text.Json.Serialization.JsonPropertyName("valueType")]
+        public string ValueType { get; set; }
+
+        [System.Text.Json.Serialization.JsonPropertyName("value")]
+        public string Value { get; set; }
+
+        [System.Text.Json.Serialization.JsonPropertyName("unit")]
+        public string Unit { get; set; }
+
+    }
+
+    [System.CodeDom.Compiler.GeneratedCode("NJsonSchema", "14.7.1.0 (NJsonSchema v11.6.1.0 (Newtonsoft.Json v13.0.0.0))")]
+    public partial class SpaceElementCommandDto
+    {
+
+        [System.Text.Json.Serialization.JsonPropertyName("commandId")]
+        public System.Guid CommandId { get; set; }
+
+        [System.Text.Json.Serialization.JsonPropertyName("type")]
+        public string Type { get; set; }
+
+        [System.Text.Json.Serialization.JsonPropertyName("targetLogicalId")]
+        public System.Guid TargetLogicalId { get; set; }
+
+        [System.Text.Json.Serialization.JsonPropertyName("updateProperties")]
+        public SpaceUpdateElementPropertiesDto UpdateProperties { get; set; }
+
+    }
+
+    [System.CodeDom.Compiler.GeneratedCode("NJsonSchema", "14.7.1.0 (NJsonSchema v11.6.1.0 (Newtonsoft.Json v13.0.0.0))")]
+    public partial class SpaceElementCommandResultDto
+    {
+
+        [System.Text.Json.Serialization.JsonPropertyName("commandId")]
+        public System.Guid CommandId { get; set; }
+
+        [System.Text.Json.Serialization.JsonPropertyName("type")]
+        public string Type { get; set; }
+
+        [System.Text.Json.Serialization.JsonPropertyName("targetLogicalId")]
+        public System.Guid TargetLogicalId { get; set; }
+
+        [System.Text.Json.Serialization.JsonPropertyName("element")]
+        public SpaceSceneElementDto Element { get; set; }
+
+        [System.Text.Json.Serialization.JsonPropertyName("attributes")]
+        public System.Collections.Generic.ICollection<SpaceSceneElementAttributeDto> Attributes { get; set; }
 
     }
 
@@ -4090,6 +4366,48 @@ namespace CP6.Space.Client
 
         [System.Text.Json.Serialization.JsonPropertyName("worldY")]
         public int WorldY { get; set; }
+
+    }
+
+    [System.CodeDom.Compiler.GeneratedCode("NJsonSchema", "14.7.1.0 (NJsonSchema v11.6.1.0 (Newtonsoft.Json v13.0.0.0))")]
+    public partial class SpaceUpdateElementPropertiesDto
+    {
+
+        [System.Text.Json.Serialization.JsonPropertyName("geometryJson")]
+        public string GeometryJson { get; set; }
+
+        [System.Text.Json.Serialization.JsonPropertyName("x")]
+        public int X { get; set; }
+
+        [System.Text.Json.Serialization.JsonPropertyName("y")]
+        public int Y { get; set; }
+
+        [System.Text.Json.Serialization.JsonPropertyName("z")]
+        public int Z { get; set; }
+
+        [System.Text.Json.Serialization.JsonPropertyName("rotationZ")]
+        public double RotationZ { get; set; }
+
+        [System.Text.Json.Serialization.JsonPropertyName("width")]
+        public int Width { get; set; }
+
+        [System.Text.Json.Serialization.JsonPropertyName("height")]
+        public int Height { get; set; }
+
+        [System.Text.Json.Serialization.JsonPropertyName("depth")]
+        public int Depth { get; set; }
+
+        [System.Text.Json.Serialization.JsonPropertyName("businessCode")]
+        public string BusinessCode { get; set; }
+
+        [System.Text.Json.Serialization.JsonPropertyName("linkedEntityType")]
+        public string LinkedEntityType { get; set; }
+
+        [System.Text.Json.Serialization.JsonPropertyName("linkedLogicalId")]
+        public System.Guid? LinkedLogicalId { get; set; }
+
+        [System.Text.Json.Serialization.JsonPropertyName("attributes")]
+        public System.Collections.Generic.ICollection<SpaceElementAttributeWriteDto> Attributes { get; set; }
 
     }
 

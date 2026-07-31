@@ -121,6 +121,22 @@ public sealed class SpaceDesignV1Controller(
             floorLogicalId,
             cancellationToken);
 
+    [HttpPost(
+        "versions/{versionId:guid}/floors/{floorLogicalId:guid}/commands")]
+    [RequirePermission("space", "model:edit")]
+    [ProducesResponseType<ApplySpaceElementCommandBatchResponse>(
+        StatusCodes.Status200OK)]
+    public Task<ApplySpaceElementCommandBatchResponse> ApplyElementCommands(
+        Guid versionId,
+        Guid floorLogicalId,
+        [FromBody, Required] ApplySpaceElementCommandBatchRequest request,
+        CancellationToken cancellationToken) =>
+        service.ApplyElementCommandsAsync(
+            versionId,
+            floorLogicalId,
+            request,
+            cancellationToken);
+
     [HttpGet("assets")]
     [RequirePermission("space", "model:read")]
     [ProducesResponseType<SpacePage<SpaceAssetDto>>(StatusCodes.Status200OK)]

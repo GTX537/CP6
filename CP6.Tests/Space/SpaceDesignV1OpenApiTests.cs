@@ -26,6 +26,7 @@ public sealed class SpaceDesignV1OpenApiTests
             "/api/space/design/v1/sites/{siteId}/versions",
             "/api/space/design/v1/assets",
             "/api/space/design/v1/versions/{versionId}",
+            "/api/space/design/v1/versions/{versionId}/floors/{floorLogicalId}/commands",
             "/api/space/design/v1/versions/{versionId}/floors/{floorLogicalId}/scene",
             "/api/space/design/v1/versions/{versionId}/floors/{floorLogicalId}/underlay",
             "/api/space/design/v1/versions/{versionId}/files/{fileId}",
@@ -49,19 +50,55 @@ public sealed class SpaceDesignV1OpenApiTests
             .Select(operation =>
                 operation.Value.GetProperty("operationId").GetString())
             .ToArray();
-        Assert.Equal(17, operationIds.Length);
-        Assert.Equal(17, operationIds.Distinct().Count());
+        Assert.Equal(18, operationIds.Length);
+        Assert.Equal(18, operationIds.Distinct().Count());
         Assert.Contains("GetAssets", operationIds);
         Assert.Contains("CreateAsset", operationIds);
         Assert.Contains("CreateVersion", operationIds);
         Assert.Contains("CreateSource", operationIds);
         Assert.Contains("GetScene", operationIds);
+        Assert.Contains("ApplyElementCommands", operationIds);
         Assert.Contains("UploadUnderlay", operationIds);
         Assert.Contains("GetFile", operationIds);
         Assert.Contains("GetUnderlayContent", operationIds);
         Assert.Contains("AttachUnderlay", operationIds);
         Assert.Contains("GetUnderlayCalibration", operationIds);
         Assert.Contains("CalibrateUnderlay", operationIds);
+    }
+
+    [Fact]
+    public void Element_commands_use_a_required_batch_body_and_stable_response()
+    {
+        using var document = ReadContract();
+        var operation = document.RootElement
+            .GetProperty("paths")
+            .GetProperty(
+                "/api/space/design/v1/versions/{versionId}/floors/{floorLogicalId}/commands")
+            .GetProperty("post");
+
+        Assert.Equal(
+            "ApplyElementCommands",
+            operation.GetProperty("operationId").GetString());
+        Assert.True(
+            operation.GetProperty("requestBody").GetProperty("required")
+                .GetBoolean());
+        Assert.Equal(
+            "#/components/schemas/CP6.Space.Contracts.ApplySpaceElementCommandBatchRequest",
+            operation.GetProperty("requestBody")
+                .GetProperty("content")
+                .GetProperty("application/json")
+                .GetProperty("schema")
+                .GetProperty("$ref")
+                .GetString());
+        Assert.Equal(
+            "#/components/schemas/CP6.Space.Contracts.ApplySpaceElementCommandBatchResponse",
+            operation.GetProperty("responses")
+                .GetProperty("200")
+                .GetProperty("content")
+                .GetProperty("application/json")
+                .GetProperty("schema")
+                .GetProperty("$ref")
+                .GetString());
     }
 
     [Fact]
@@ -266,6 +303,7 @@ public sealed class SpaceDesignV1OpenApiTests
                      "CreateVersion",
                      "GetVersion",
                      "GetScene",
+                     "ApplyElementCommands",
                      "GetAssets",
                      "CreateAsset",
                      "GetSources",
