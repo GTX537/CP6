@@ -4,6 +4,8 @@
 // </auto-generated>
 //----------------------
 
+#nullable enable
+
 #pragma warning disable 108 // Disable "CS0108 '{derivedDto}.ToJson()' hides inherited member '{dtoBase}.ToJson()'. Use the new keyword if hiding was intended."
 #pragma warning disable 114 // Disable "CS0114 '{derivedDto}.RaisePropertyChanged(String)' hides inherited member 'dtoBase.RaisePropertyChanged(String)'. To make the current member override that implementation, add the override keyword. Otherwise add the new keyword."
 #pragma warning disable 472 // Disable "CS0472 The result of the expression is always 'false' since a value of type 'Int32' is never equal to 'null' of type 'Int32?'
@@ -38,12 +40,12 @@ namespace CP6.Space.Client
 
         /// <returns>OK</returns>
         /// <exception cref="ApiException">A server side error occurred.</exception>
-        System.Threading.Tasks.Task<SpacePageOfSpaceVersionDto> GetVersionsAsync(System.Guid siteId, string status, int? limit, string cursor);
+        System.Threading.Tasks.Task<SpacePageOfSpaceVersionDto> GetVersionsAsync(System.Guid siteId, string? status, int? limit, string? cursor);
 
         /// <param name="cancellationToken">A cancellation token that can be used by other objects or threads to receive notice of cancellation.</param>
         /// <returns>OK</returns>
         /// <exception cref="ApiException">A server side error occurred.</exception>
-        System.Threading.Tasks.Task<SpacePageOfSpaceVersionDto> GetVersionsAsync(System.Guid siteId, string status, int? limit, string cursor, System.Threading.CancellationToken cancellationToken);
+        System.Threading.Tasks.Task<SpacePageOfSpaceVersionDto> GetVersionsAsync(System.Guid siteId, string? status, int? limit, string? cursor, System.Threading.CancellationToken cancellationToken);
 
         /// <param name="idempotency_Key">Opaque caller key; 1-128 UTF-8 bytes. Reuse with a different request returns SPACE_IDEMPOTENCY_KEY_REUSED.</param>
         /// <returns>Accepted</returns>
@@ -85,12 +87,12 @@ namespace CP6.Space.Client
 
         /// <returns>OK</returns>
         /// <exception cref="ApiException">A server side error occurred.</exception>
-        System.Threading.Tasks.Task<SpacePageOfSpaceAssetDto> GetAssetsAsync(string scope, string category, int? limit, string cursor);
+        System.Threading.Tasks.Task<SpacePageOfSpaceAssetDto> GetAssetsAsync(string? scope, string? category, int? limit, string? cursor);
 
         /// <param name="cancellationToken">A cancellation token that can be used by other objects or threads to receive notice of cancellation.</param>
         /// <returns>OK</returns>
         /// <exception cref="ApiException">A server side error occurred.</exception>
-        System.Threading.Tasks.Task<SpacePageOfSpaceAssetDto> GetAssetsAsync(string scope, string category, int? limit, string cursor, System.Threading.CancellationToken cancellationToken);
+        System.Threading.Tasks.Task<SpacePageOfSpaceAssetDto> GetAssetsAsync(string? scope, string? category, int? limit, string? cursor, System.Threading.CancellationToken cancellationToken);
 
         /// <param name="idempotency_Key">Opaque caller key; 1-128 UTF-8 bytes. Reuse with a different request returns SPACE_IDEMPOTENCY_KEY_REUSED.</param>
         /// <returns>Created</returns>
@@ -105,12 +107,12 @@ namespace CP6.Space.Client
 
         /// <returns>OK</returns>
         /// <exception cref="ApiException">A server side error occurred.</exception>
-        System.Threading.Tasks.Task<SpacePageOfSpaceSourceDto> GetSourcesAsync(System.Guid versionId, string sourceType, string state, int? limit, string cursor);
+        System.Threading.Tasks.Task<SpacePageOfSpaceSourceDto> GetSourcesAsync(System.Guid versionId, string? sourceType, string? state, int? limit, string? cursor);
 
         /// <param name="cancellationToken">A cancellation token that can be used by other objects or threads to receive notice of cancellation.</param>
         /// <returns>OK</returns>
         /// <exception cref="ApiException">A server side error occurred.</exception>
-        System.Threading.Tasks.Task<SpacePageOfSpaceSourceDto> GetSourcesAsync(System.Guid versionId, string sourceType, string state, int? limit, string cursor, System.Threading.CancellationToken cancellationToken);
+        System.Threading.Tasks.Task<SpacePageOfSpaceSourceDto> GetSourcesAsync(System.Guid versionId, string? sourceType, string? state, int? limit, string? cursor, System.Threading.CancellationToken cancellationToken);
 
         /// <param name="idempotency_Key">Opaque caller key; 1-128 UTF-8 bytes. Reuse with a different request returns SPACE_IDEMPOTENCY_KEY_REUSED.</param>
         /// <returns>Created</returns>
@@ -192,12 +194,12 @@ namespace CP6.Space.Client
 
         /// <returns>OK</returns>
         /// <exception cref="ApiException">A server side error occurred.</exception>
-        System.Threading.Tasks.Task<SpacePageOfSpaceIssueDto> GetIssuesAsync(System.Guid versionId, string severity, string status, int? limit, string cursor);
+        System.Threading.Tasks.Task<SpacePageOfSpaceIssueDto> GetIssuesAsync(System.Guid versionId, string? severity, string? status, int? limit, string? cursor);
 
         /// <param name="cancellationToken">A cancellation token that can be used by other objects or threads to receive notice of cancellation.</param>
         /// <returns>OK</returns>
         /// <exception cref="ApiException">A server side error occurred.</exception>
-        System.Threading.Tasks.Task<SpacePageOfSpaceIssueDto> GetIssuesAsync(System.Guid versionId, string severity, string status, int? limit, string cursor, System.Threading.CancellationToken cancellationToken);
+        System.Threading.Tasks.Task<SpacePageOfSpaceIssueDto> GetIssuesAsync(System.Guid versionId, string? severity, string? status, int? limit, string? cursor, System.Threading.CancellationToken cancellationToken);
 
         /// <returns>OK</returns>
         /// <exception cref="ApiException">A server side error occurred.</exception>
@@ -210,12 +212,12 @@ namespace CP6.Space.Client
 
         /// <returns>OK</returns>
         /// <exception cref="ApiException">A server side error occurred.</exception>
-        System.Threading.Tasks.Task<SpacePageOfSpaceWmsAdoptionDto> GetWmsAdoptionLocationsAsync(System.Guid versionId, string status, string differenceCode, int? limit, string cursor);
+        System.Threading.Tasks.Task<SpacePageOfSpaceWmsAdoptionDto> GetWmsAdoptionLocationsAsync(System.Guid versionId, string? status, string? differenceCode, int? limit, string? cursor);
 
         /// <param name="cancellationToken">A cancellation token that can be used by other objects or threads to receive notice of cancellation.</param>
         /// <returns>OK</returns>
         /// <exception cref="ApiException">A server side error occurred.</exception>
-        System.Threading.Tasks.Task<SpacePageOfSpaceWmsAdoptionDto> GetWmsAdoptionLocationsAsync(System.Guid versionId, string status, string differenceCode, int? limit, string cursor, System.Threading.CancellationToken cancellationToken);
+        System.Threading.Tasks.Task<SpacePageOfSpaceWmsAdoptionDto> GetWmsAdoptionLocationsAsync(System.Guid versionId, string? status, string? differenceCode, int? limit, string? cursor, System.Threading.CancellationToken cancellationToken);
 
         /// <returns>OK</returns>
         /// <exception cref="ApiException">A server side error occurred.</exception>
@@ -246,21 +248,21 @@ namespace CP6.Space.Client
 
         /// <returns>OK</returns>
         /// <exception cref="ApiException">A server side error occurred.</exception>
-        System.Threading.Tasks.Task<SpaceWmsRuntimeInventoryResponse> GetInventoryAsync(System.Guid siteId, System.Collections.Generic.IEnumerable<System.Guid> locationLogicalId);
+        System.Threading.Tasks.Task<SpaceWmsRuntimeInventoryResponse> GetInventoryAsync(System.Guid siteId, System.Collections.Generic.IEnumerable<System.Guid>? locationLogicalId);
 
         /// <param name="cancellationToken">A cancellation token that can be used by other objects or threads to receive notice of cancellation.</param>
         /// <returns>OK</returns>
         /// <exception cref="ApiException">A server side error occurred.</exception>
-        System.Threading.Tasks.Task<SpaceWmsRuntimeInventoryResponse> GetInventoryAsync(System.Guid siteId, System.Collections.Generic.IEnumerable<System.Guid> locationLogicalId, System.Threading.CancellationToken cancellationToken);
+        System.Threading.Tasks.Task<SpaceWmsRuntimeInventoryResponse> GetInventoryAsync(System.Guid siteId, System.Collections.Generic.IEnumerable<System.Guid>? locationLogicalId, System.Threading.CancellationToken cancellationToken);
 
         /// <returns>OK</returns>
         /// <exception cref="ApiException">A server side error occurred.</exception>
-        System.Threading.Tasks.Task<SpaceWmsRuntimeTaskResponse> GetTasksAsync(System.Guid siteId, System.Collections.Generic.IEnumerable<System.Guid> locationLogicalId);
+        System.Threading.Tasks.Task<SpaceWmsRuntimeTaskResponse> GetTasksAsync(System.Guid siteId, System.Collections.Generic.IEnumerable<System.Guid>? locationLogicalId);
 
         /// <param name="cancellationToken">A cancellation token that can be used by other objects or threads to receive notice of cancellation.</param>
         /// <returns>OK</returns>
         /// <exception cref="ApiException">A server side error occurred.</exception>
-        System.Threading.Tasks.Task<SpaceWmsRuntimeTaskResponse> GetTasksAsync(System.Guid siteId, System.Collections.Generic.IEnumerable<System.Guid> locationLogicalId, System.Threading.CancellationToken cancellationToken);
+        System.Threading.Tasks.Task<SpaceWmsRuntimeTaskResponse> GetTasksAsync(System.Guid siteId, System.Collections.Generic.IEnumerable<System.Guid>? locationLogicalId, System.Threading.CancellationToken cancellationToken);
 
     }
 
@@ -451,7 +453,7 @@ namespace CP6.Space.Client
 
         /// <returns>OK</returns>
         /// <exception cref="ApiException">A server side error occurred.</exception>
-        public virtual System.Threading.Tasks.Task<SpacePageOfSpaceVersionDto> GetVersionsAsync(System.Guid siteId, string status, int? limit, string cursor)
+        public virtual System.Threading.Tasks.Task<SpacePageOfSpaceVersionDto> GetVersionsAsync(System.Guid siteId, string? status, int? limit, string? cursor)
         {
             return GetVersionsAsync(siteId, status, limit, cursor, System.Threading.CancellationToken.None);
         }
@@ -459,7 +461,7 @@ namespace CP6.Space.Client
         /// <param name="cancellationToken">A cancellation token that can be used by other objects or threads to receive notice of cancellation.</param>
         /// <returns>OK</returns>
         /// <exception cref="ApiException">A server side error occurred.</exception>
-        public virtual async System.Threading.Tasks.Task<SpacePageOfSpaceVersionDto> GetVersionsAsync(System.Guid siteId, string status, int? limit, string cursor, System.Threading.CancellationToken cancellationToken)
+        public virtual async System.Threading.Tasks.Task<SpacePageOfSpaceVersionDto> GetVersionsAsync(System.Guid siteId, string? status, int? limit, string? cursor, System.Threading.CancellationToken cancellationToken)
         {
             if (siteId == null)
                 throw new System.ArgumentNullException("siteId");
@@ -1259,7 +1261,7 @@ namespace CP6.Space.Client
 
         /// <returns>OK</returns>
         /// <exception cref="ApiException">A server side error occurred.</exception>
-        public virtual System.Threading.Tasks.Task<SpacePageOfSpaceAssetDto> GetAssetsAsync(string scope, string category, int? limit, string cursor)
+        public virtual System.Threading.Tasks.Task<SpacePageOfSpaceAssetDto> GetAssetsAsync(string? scope, string? category, int? limit, string? cursor)
         {
             return GetAssetsAsync(scope, category, limit, cursor, System.Threading.CancellationToken.None);
         }
@@ -1267,7 +1269,7 @@ namespace CP6.Space.Client
         /// <param name="cancellationToken">A cancellation token that can be used by other objects or threads to receive notice of cancellation.</param>
         /// <returns>OK</returns>
         /// <exception cref="ApiException">A server side error occurred.</exception>
-        public virtual async System.Threading.Tasks.Task<SpacePageOfSpaceAssetDto> GetAssetsAsync(string scope, string category, int? limit, string cursor, System.Threading.CancellationToken cancellationToken)
+        public virtual async System.Threading.Tasks.Task<SpacePageOfSpaceAssetDto> GetAssetsAsync(string? scope, string? category, int? limit, string? cursor, System.Threading.CancellationToken cancellationToken)
         {
             var client_ = _httpClient;
             var disposeClient_ = false;
@@ -1586,7 +1588,7 @@ namespace CP6.Space.Client
 
         /// <returns>OK</returns>
         /// <exception cref="ApiException">A server side error occurred.</exception>
-        public virtual System.Threading.Tasks.Task<SpacePageOfSpaceSourceDto> GetSourcesAsync(System.Guid versionId, string sourceType, string state, int? limit, string cursor)
+        public virtual System.Threading.Tasks.Task<SpacePageOfSpaceSourceDto> GetSourcesAsync(System.Guid versionId, string? sourceType, string? state, int? limit, string? cursor)
         {
             return GetSourcesAsync(versionId, sourceType, state, limit, cursor, System.Threading.CancellationToken.None);
         }
@@ -1594,7 +1596,7 @@ namespace CP6.Space.Client
         /// <param name="cancellationToken">A cancellation token that can be used by other objects or threads to receive notice of cancellation.</param>
         /// <returns>OK</returns>
         /// <exception cref="ApiException">A server side error occurred.</exception>
-        public virtual async System.Threading.Tasks.Task<SpacePageOfSpaceSourceDto> GetSourcesAsync(System.Guid versionId, string sourceType, string state, int? limit, string cursor, System.Threading.CancellationToken cancellationToken)
+        public virtual async System.Threading.Tasks.Task<SpacePageOfSpaceSourceDto> GetSourcesAsync(System.Guid versionId, string? sourceType, string? state, int? limit, string? cursor, System.Threading.CancellationToken cancellationToken)
         {
             if (versionId == null)
                 throw new System.ArgumentNullException("versionId");
@@ -3069,7 +3071,7 @@ namespace CP6.Space.Client
 
         /// <returns>OK</returns>
         /// <exception cref="ApiException">A server side error occurred.</exception>
-        public virtual System.Threading.Tasks.Task<SpacePageOfSpaceIssueDto> GetIssuesAsync(System.Guid versionId, string severity, string status, int? limit, string cursor)
+        public virtual System.Threading.Tasks.Task<SpacePageOfSpaceIssueDto> GetIssuesAsync(System.Guid versionId, string? severity, string? status, int? limit, string? cursor)
         {
             return GetIssuesAsync(versionId, severity, status, limit, cursor, System.Threading.CancellationToken.None);
         }
@@ -3077,7 +3079,7 @@ namespace CP6.Space.Client
         /// <param name="cancellationToken">A cancellation token that can be used by other objects or threads to receive notice of cancellation.</param>
         /// <returns>OK</returns>
         /// <exception cref="ApiException">A server side error occurred.</exception>
-        public virtual async System.Threading.Tasks.Task<SpacePageOfSpaceIssueDto> GetIssuesAsync(System.Guid versionId, string severity, string status, int? limit, string cursor, System.Threading.CancellationToken cancellationToken)
+        public virtual async System.Threading.Tasks.Task<SpacePageOfSpaceIssueDto> GetIssuesAsync(System.Guid versionId, string? severity, string? status, int? limit, string? cursor, System.Threading.CancellationToken cancellationToken)
         {
             if (versionId == null)
                 throw new System.ArgumentNullException("versionId");
@@ -3414,7 +3416,7 @@ namespace CP6.Space.Client
 
         /// <returns>OK</returns>
         /// <exception cref="ApiException">A server side error occurred.</exception>
-        public virtual System.Threading.Tasks.Task<SpacePageOfSpaceWmsAdoptionDto> GetWmsAdoptionLocationsAsync(System.Guid versionId, string status, string differenceCode, int? limit, string cursor)
+        public virtual System.Threading.Tasks.Task<SpacePageOfSpaceWmsAdoptionDto> GetWmsAdoptionLocationsAsync(System.Guid versionId, string? status, string? differenceCode, int? limit, string? cursor)
         {
             return GetWmsAdoptionLocationsAsync(versionId, status, differenceCode, limit, cursor, System.Threading.CancellationToken.None);
         }
@@ -3422,7 +3424,7 @@ namespace CP6.Space.Client
         /// <param name="cancellationToken">A cancellation token that can be used by other objects or threads to receive notice of cancellation.</param>
         /// <returns>OK</returns>
         /// <exception cref="ApiException">A server side error occurred.</exception>
-        public virtual async System.Threading.Tasks.Task<SpacePageOfSpaceWmsAdoptionDto> GetWmsAdoptionLocationsAsync(System.Guid versionId, string status, string differenceCode, int? limit, string cursor, System.Threading.CancellationToken cancellationToken)
+        public virtual async System.Threading.Tasks.Task<SpacePageOfSpaceWmsAdoptionDto> GetWmsAdoptionLocationsAsync(System.Guid versionId, string? status, string? differenceCode, int? limit, string? cursor, System.Threading.CancellationToken cancellationToken)
         {
             if (versionId == null)
                 throw new System.ArgumentNullException("versionId");
@@ -4075,7 +4077,7 @@ namespace CP6.Space.Client
 
         /// <returns>OK</returns>
         /// <exception cref="ApiException">A server side error occurred.</exception>
-        public virtual System.Threading.Tasks.Task<SpaceWmsRuntimeInventoryResponse> GetInventoryAsync(System.Guid siteId, System.Collections.Generic.IEnumerable<System.Guid> locationLogicalId)
+        public virtual System.Threading.Tasks.Task<SpaceWmsRuntimeInventoryResponse> GetInventoryAsync(System.Guid siteId, System.Collections.Generic.IEnumerable<System.Guid>? locationLogicalId)
         {
             return GetInventoryAsync(siteId, locationLogicalId, System.Threading.CancellationToken.None);
         }
@@ -4083,7 +4085,7 @@ namespace CP6.Space.Client
         /// <param name="cancellationToken">A cancellation token that can be used by other objects or threads to receive notice of cancellation.</param>
         /// <returns>OK</returns>
         /// <exception cref="ApiException">A server side error occurred.</exception>
-        public virtual async System.Threading.Tasks.Task<SpaceWmsRuntimeInventoryResponse> GetInventoryAsync(System.Guid siteId, System.Collections.Generic.IEnumerable<System.Guid> locationLogicalId, System.Threading.CancellationToken cancellationToken)
+        public virtual async System.Threading.Tasks.Task<SpaceWmsRuntimeInventoryResponse> GetInventoryAsync(System.Guid siteId, System.Collections.Generic.IEnumerable<System.Guid>? locationLogicalId, System.Threading.CancellationToken cancellationToken)
         {
             if (siteId == null)
                 throw new System.ArgumentNullException("siteId");
@@ -4254,7 +4256,7 @@ namespace CP6.Space.Client
 
         /// <returns>OK</returns>
         /// <exception cref="ApiException">A server side error occurred.</exception>
-        public virtual System.Threading.Tasks.Task<SpaceWmsRuntimeTaskResponse> GetTasksAsync(System.Guid siteId, System.Collections.Generic.IEnumerable<System.Guid> locationLogicalId)
+        public virtual System.Threading.Tasks.Task<SpaceWmsRuntimeTaskResponse> GetTasksAsync(System.Guid siteId, System.Collections.Generic.IEnumerable<System.Guid>? locationLogicalId)
         {
             return GetTasksAsync(siteId, locationLogicalId, System.Threading.CancellationToken.None);
         }
@@ -4262,7 +4264,7 @@ namespace CP6.Space.Client
         /// <param name="cancellationToken">A cancellation token that can be used by other objects or threads to receive notice of cancellation.</param>
         /// <returns>OK</returns>
         /// <exception cref="ApiException">A server side error occurred.</exception>
-        public virtual async System.Threading.Tasks.Task<SpaceWmsRuntimeTaskResponse> GetTasksAsync(System.Guid siteId, System.Collections.Generic.IEnumerable<System.Guid> locationLogicalId, System.Threading.CancellationToken cancellationToken)
+        public virtual async System.Threading.Tasks.Task<SpaceWmsRuntimeTaskResponse> GetTasksAsync(System.Guid siteId, System.Collections.Generic.IEnumerable<System.Guid>? locationLogicalId, System.Threading.CancellationToken cancellationToken)
         {
             if (siteId == null)
                 throw new System.ArgumentNullException("siteId");
@@ -4470,7 +4472,7 @@ namespace CP6.Space.Client
         {
             if (response == null || response.Content == null)
             {
-                return new ObjectResponseResult<T>(default(T), string.Empty);
+                return new ObjectResponseResult<T>(default(T)!, string.Empty);
             }
 
             if (ReadResponseAsString)
@@ -4479,7 +4481,7 @@ namespace CP6.Space.Client
                 try
                 {
                     var typedBody = System.Text.Json.JsonSerializer.Deserialize<T>(responseText, JsonSerializerSettings);
-                    return new ObjectResponseResult<T>(typedBody, responseText);
+                    return new ObjectResponseResult<T>(typedBody!, responseText);
                 }
                 catch (System.Text.Json.JsonException exception)
                 {
@@ -4494,7 +4496,7 @@ namespace CP6.Space.Client
                     using (var responseStream = await ReadAsStreamAsync(response.Content, cancellationToken).ConfigureAwait(false))
                     {
                         var typedBody = await System.Text.Json.JsonSerializer.DeserializeAsync<T>(responseStream, JsonSerializerSettings, cancellationToken).ConfigureAwait(false);
-                        return new ObjectResponseResult<T>(typedBody, string.Empty);
+                        return new ObjectResponseResult<T>(typedBody!, string.Empty);
                     }
                 }
                 catch (System.Text.Json.JsonException exception)
@@ -4505,7 +4507,7 @@ namespace CP6.Space.Client
             }
         }
 
-        private string ConvertToString(object value, System.Globalization.CultureInfo cultureInfo)
+        private string ConvertToString(object? value, System.Globalization.CultureInfo cultureInfo)
         {
             if (value == null)
             {
@@ -4565,19 +4567,19 @@ namespace CP6.Space.Client
     {
 
         [System.Text.Json.Serialization.JsonPropertyName("schemaVersion")]
-        public int SchemaVersion { get; set; }
+        public int SchemaVersion { get; set; } = default!;
 
         [System.Text.Json.Serialization.JsonPropertyName("commandBatchId")]
-        public System.Guid CommandBatchId { get; set; }
+        public System.Guid CommandBatchId { get; set; } = default!;
 
         [System.Text.Json.Serialization.JsonPropertyName("clientInstanceId")]
-        public System.Guid ClientInstanceId { get; set; }
+        public System.Guid ClientInstanceId { get; set; } = default!;
 
         [System.Text.Json.Serialization.JsonPropertyName("expectedFloorRevision")]
-        public long ExpectedFloorRevision { get; set; }
+        public long ExpectedFloorRevision { get; set; } = default!;
 
         [System.Text.Json.Serialization.JsonPropertyName("commands")]
-        public System.Collections.Generic.ICollection<SpaceElementCommandDto> Commands { get; set; }
+        public System.Collections.Generic.ICollection<SpaceElementCommandDto>? Commands { get; set; } = default!;
 
     }
 
@@ -4586,28 +4588,28 @@ namespace CP6.Space.Client
     {
 
         [System.Text.Json.Serialization.JsonPropertyName("commandBatchId")]
-        public System.Guid CommandBatchId { get; set; }
+        public System.Guid CommandBatchId { get; set; } = default!;
 
         [System.Text.Json.Serialization.JsonPropertyName("floorRevision")]
-        public long FloorRevision { get; set; }
+        public long FloorRevision { get; set; } = default!;
 
         [System.Text.Json.Serialization.JsonPropertyName("versionContentRevision")]
-        public long VersionContentRevision { get; set; }
+        public long VersionContentRevision { get; set; } = default!;
 
         [System.Text.Json.Serialization.JsonPropertyName("affectedObjects")]
-        public System.Collections.Generic.ICollection<SpaceElementCommandResultDto> AffectedObjects { get; set; }
+        public System.Collections.Generic.ICollection<SpaceElementCommandResultDto>? AffectedObjects { get; set; } = default!;
 
         [System.Text.Json.Serialization.JsonPropertyName("idempotentReplay")]
-        public bool IdempotentReplay { get; set; }
+        public bool IdempotentReplay { get; set; } = default!;
 
         [System.Text.Json.Serialization.JsonPropertyName("affectedRacks")]
-        public System.Collections.Generic.ICollection<SpaceSceneRackDto> AffectedRacks { get; set; }
+        public System.Collections.Generic.ICollection<SpaceSceneRackDto>? AffectedRacks { get; set; } = default!;
 
         [System.Text.Json.Serialization.JsonPropertyName("affectedRackLevels")]
-        public System.Collections.Generic.ICollection<SpaceSceneRackLevelDto> AffectedRackLevels { get; set; }
+        public System.Collections.Generic.ICollection<SpaceSceneRackLevelDto>? AffectedRackLevels { get; set; } = default!;
 
         [System.Text.Json.Serialization.JsonPropertyName("affectedLocations")]
-        public System.Collections.Generic.ICollection<SpaceSceneLocationDto> AffectedLocations { get; set; }
+        public System.Collections.Generic.ICollection<SpaceSceneLocationDto>? AffectedLocations { get; set; } = default!;
 
     }
 
@@ -4616,10 +4618,10 @@ namespace CP6.Space.Client
     {
 
         [System.Text.Json.Serialization.JsonPropertyName("sourceId")]
-        public System.Guid SourceId { get; set; }
+        public System.Guid SourceId { get; set; } = default!;
 
         [System.Text.Json.Serialization.JsonPropertyName("expectedFloorRevision")]
-        public long ExpectedFloorRevision { get; set; }
+        public long ExpectedFloorRevision { get; set; } = default!;
 
     }
 
@@ -4628,10 +4630,10 @@ namespace CP6.Space.Client
     {
 
         [System.Text.Json.Serialization.JsonPropertyName("floor")]
-        public SpaceSceneFloorDto Floor { get; set; }
+        public SpaceSceneFloorDto Floor { get; set; } = default!;
 
         [System.Text.Json.Serialization.JsonPropertyName("idempotentReplay")]
-        public bool IdempotentReplay { get; set; }
+        public bool IdempotentReplay { get; set; } = default!;
 
     }
 
@@ -4640,13 +4642,13 @@ namespace CP6.Space.Client
     {
 
         [System.Text.Json.Serialization.JsonPropertyName("adoptionId")]
-        public System.Guid AdoptionId { get; set; }
+        public System.Guid AdoptionId { get; set; } = default!;
 
         [System.Text.Json.Serialization.JsonPropertyName("locationLogicalId")]
-        public System.Guid LocationLogicalId { get; set; }
+        public System.Guid LocationLogicalId { get; set; } = default!;
 
         [System.Text.Json.Serialization.JsonPropertyName("expectedRowVersion")]
-        public string ExpectedRowVersion { get; set; }
+        public string? ExpectedRowVersion { get; set; } = default!;
 
     }
 
@@ -4655,7 +4657,7 @@ namespace CP6.Space.Client
     {
 
         [System.Text.Json.Serialization.JsonPropertyName("items")]
-        public System.Collections.Generic.ICollection<BatchBindSpaceWmsAdoptionItem> Items { get; set; }
+        public System.Collections.Generic.ICollection<BatchBindSpaceWmsAdoptionItem>? Items { get; set; } = default!;
 
     }
 
@@ -4664,10 +4666,10 @@ namespace CP6.Space.Client
     {
 
         [System.Text.Json.Serialization.JsonPropertyName("locationLogicalId")]
-        public System.Guid LocationLogicalId { get; set; }
+        public System.Guid LocationLogicalId { get; set; } = default!;
 
         [System.Text.Json.Serialization.JsonPropertyName("expectedRowVersion")]
-        public string ExpectedRowVersion { get; set; }
+        public string? ExpectedRowVersion { get; set; } = default!;
 
     }
 
@@ -4676,34 +4678,34 @@ namespace CP6.Space.Client
     {
 
         [System.Text.Json.Serialization.JsonPropertyName("assetCode")]
-        public string AssetCode { get; set; }
+        public string? AssetCode { get; set; } = default!;
 
         [System.Text.Json.Serialization.JsonPropertyName("name")]
-        public string Name { get; set; }
+        public string? Name { get; set; } = default!;
 
         [System.Text.Json.Serialization.JsonPropertyName("category")]
-        public string Category { get; set; }
+        public string? Category { get; set; } = default!;
 
         [System.Text.Json.Serialization.JsonPropertyName("format")]
-        public string Format { get; set; }
+        public string? Format { get; set; } = default!;
 
         [System.Text.Json.Serialization.JsonPropertyName("parameterSchemaJson")]
-        public string ParameterSchemaJson { get; set; }
+        public string? ParameterSchemaJson { get; set; } = default!;
 
         [System.Text.Json.Serialization.JsonPropertyName("contentHash")]
-        public string ContentHash { get; set; }
+        public string? ContentHash { get; set; } = default!;
 
         [System.Text.Json.Serialization.JsonPropertyName("description")]
-        public string Description { get; set; }
+        public string? Description { get; set; } = default!;
 
         [System.Text.Json.Serialization.JsonPropertyName("previewRef")]
-        public string PreviewRef { get; set; }
+        public string? PreviewRef { get; set; } = default!;
 
         [System.Text.Json.Serialization.JsonPropertyName("renderArtifactRef")]
-        public string RenderArtifactRef { get; set; }
+        public string? RenderArtifactRef { get; set; } = default!;
 
         [System.Text.Json.Serialization.JsonPropertyName("scope")]
-        public string Scope { get; set; }
+        public string? Scope { get; set; } = default!;
 
     }
 
@@ -4712,10 +4714,10 @@ namespace CP6.Space.Client
     {
 
         [System.Text.Json.Serialization.JsonPropertyName("asset")]
-        public SpaceAssetDto Asset { get; set; }
+        public SpaceAssetDto Asset { get; set; } = default!;
 
         [System.Text.Json.Serialization.JsonPropertyName("idempotentReplay")]
-        public bool IdempotentReplay { get; set; }
+        public bool IdempotentReplay { get; set; } = default!;
 
     }
 
@@ -4724,13 +4726,13 @@ namespace CP6.Space.Client
     {
 
         [System.Text.Json.Serialization.JsonPropertyName("fileId")]
-        public System.Guid FileId { get; set; }
+        public System.Guid FileId { get; set; } = default!;
 
         [System.Text.Json.Serialization.JsonPropertyName("sourceType")]
-        public string SourceType { get; set; }
+        public string? SourceType { get; set; } = default!;
 
         [System.Text.Json.Serialization.JsonPropertyName("displayName")]
-        public string DisplayName { get; set; }
+        public string? DisplayName { get; set; } = default!;
 
     }
 
@@ -4739,10 +4741,10 @@ namespace CP6.Space.Client
     {
 
         [System.Text.Json.Serialization.JsonPropertyName("source")]
-        public SpaceSourceDto Source { get; set; }
+        public SpaceSourceDto Source { get; set; } = default!;
 
         [System.Text.Json.Serialization.JsonPropertyName("idempotentReplay")]
-        public bool IdempotentReplay { get; set; }
+        public bool IdempotentReplay { get; set; } = default!;
 
     }
 
@@ -4751,13 +4753,13 @@ namespace CP6.Space.Client
     {
 
         [System.Text.Json.Serialization.JsonPropertyName("name")]
-        public string Name { get; set; }
+        public string? Name { get; set; } = default!;
 
         [System.Text.Json.Serialization.JsonPropertyName("basedOnVersionId")]
-        public System.Guid? BasedOnVersionId { get; set; }
+        public System.Guid? BasedOnVersionId { get; set; } = default!;
 
         [System.Text.Json.Serialization.JsonPropertyName("createMode")]
-        public string CreateMode { get; set; }
+        public string? CreateMode { get; set; } = default!;
 
     }
 
@@ -4766,28 +4768,28 @@ namespace CP6.Space.Client
     {
 
         [System.Text.Json.Serialization.JsonPropertyName("id")]
-        public System.Guid Id { get; set; }
+        public System.Guid Id { get; set; } = default!;
 
         [System.Text.Json.Serialization.JsonPropertyName("siteId")]
-        public System.Guid SiteId { get; set; }
+        public System.Guid SiteId { get; set; } = default!;
 
         [System.Text.Json.Serialization.JsonPropertyName("versionNo")]
-        public string VersionNo { get; set; }
+        public string? VersionNo { get; set; } = default!;
 
         [System.Text.Json.Serialization.JsonPropertyName("status")]
-        public string Status { get; set; }
+        public string? Status { get; set; } = default!;
 
         [System.Text.Json.Serialization.JsonPropertyName("rowVersion")]
-        public string RowVersion { get; set; }
+        public string? RowVersion { get; set; } = default!;
 
         [System.Text.Json.Serialization.JsonPropertyName("jobId")]
-        public System.Guid JobId { get; set; }
+        public System.Guid JobId { get; set; } = default!;
 
         [System.Text.Json.Serialization.JsonPropertyName("jobStatusUrl")]
-        public string JobStatusUrl { get; set; }
+        public string? JobStatusUrl { get; set; } = default!;
 
         [System.Text.Json.Serialization.JsonPropertyName("idempotentReplay")]
-        public bool IdempotentReplay { get; set; }
+        public bool IdempotentReplay { get; set; } = default!;
 
     }
 
@@ -4796,22 +4798,22 @@ namespace CP6.Space.Client
     {
 
         [System.Text.Json.Serialization.JsonPropertyName("floorLogicalId")]
-        public System.Guid FloorLogicalId { get; set; }
+        public System.Guid FloorLogicalId { get; set; } = default!;
 
         [System.Text.Json.Serialization.JsonPropertyName("rackLogicalId")]
-        public System.Guid RackLogicalId { get; set; }
+        public System.Guid RackLogicalId { get; set; } = default!;
 
         [System.Text.Json.Serialization.JsonPropertyName("column")]
-        public int Column { get; set; }
+        public int Column { get; set; } = default!;
 
         [System.Text.Json.Serialization.JsonPropertyName("level")]
-        public int Level { get; set; }
+        public int Level { get; set; } = default!;
 
         [System.Text.Json.Serialization.JsonPropertyName("depth")]
-        public int Depth { get; set; }
+        public int Depth { get; set; } = default!;
 
         [System.Text.Json.Serialization.JsonPropertyName("expectedRowVersion")]
-        public string ExpectedRowVersion { get; set; }
+        public string? ExpectedRowVersion { get; set; } = default!;
 
     }
 
@@ -4820,37 +4822,37 @@ namespace CP6.Space.Client
     {
 
         [System.Text.Json.Serialization.JsonPropertyName("siteId")]
-        public System.Guid SiteId { get; set; }
+        public System.Guid SiteId { get; set; } = default!;
 
         [System.Text.Json.Serialization.JsonPropertyName("adapterId")]
-        public string AdapterId { get; set; }
+        public string? AdapterId { get; set; } = default!;
 
         [System.Text.Json.Serialization.JsonPropertyName("dataSource")]
-        public string DataSource { get; set; }
+        public string? DataSource { get; set; } = default!;
 
         [System.Text.Json.Serialization.JsonPropertyName("dataSourceKind")]
-        public string DataSourceKind { get; set; }
+        public string? DataSourceKind { get; set; } = default!;
 
         [System.Text.Json.Serialization.JsonPropertyName("observedAtUtc")]
-        public System.DateTimeOffset ObservedAtUtc { get; set; }
+        public System.DateTimeOffset ObservedAtUtc { get; set; } = default!;
 
         [System.Text.Json.Serialization.JsonPropertyName("discoveredCount")]
-        public int DiscoveredCount { get; set; }
+        public int DiscoveredCount { get; set; } = default!;
 
         [System.Text.Json.Serialization.JsonPropertyName("updatedCount")]
-        public int UpdatedCount { get; set; }
+        public int UpdatedCount { get; set; } = default!;
 
         [System.Text.Json.Serialization.JsonPropertyName("missingCount")]
-        public int MissingCount { get; set; }
+        public int MissingCount { get; set; } = default!;
 
         [System.Text.Json.Serialization.JsonPropertyName("unboundCount")]
-        public int UnboundCount { get; set; }
+        public int UnboundCount { get; set; } = default!;
 
         [System.Text.Json.Serialization.JsonPropertyName("boundCount")]
-        public int BoundCount { get; set; }
+        public int BoundCount { get; set; } = default!;
 
         [System.Text.Json.Serialization.JsonPropertyName("differenceCount")]
-        public int DifferenceCount { get; set; }
+        public int DifferenceCount { get; set; } = default!;
 
     }
 
@@ -4859,28 +4861,28 @@ namespace CP6.Space.Client
     {
 
         [System.Text.Json.Serialization.JsonPropertyName("floorLogicalId")]
-        public System.Guid FloorLogicalId { get; set; }
+        public System.Guid FloorLogicalId { get; set; } = default!;
 
         [System.Text.Json.Serialization.JsonPropertyName("pageNumber")]
-        public int PageNumber { get; set; }
+        public int PageNumber { get; set; } = default!;
 
         [System.Text.Json.Serialization.JsonPropertyName("pixelWidth")]
-        public int PixelWidth { get; set; }
+        public int PixelWidth { get; set; } = default!;
 
         [System.Text.Json.Serialization.JsonPropertyName("pixelHeight")]
-        public int PixelHeight { get; set; }
+        public int PixelHeight { get; set; } = default!;
 
         [System.Text.Json.Serialization.JsonPropertyName("point1")]
-        public SpaceUnderlayCalibrationPointDto Point1 { get; set; }
+        public SpaceUnderlayCalibrationPointDto Point1 { get; set; } = default!;
 
         [System.Text.Json.Serialization.JsonPropertyName("point2")]
-        public SpaceUnderlayCalibrationPointDto Point2 { get; set; }
+        public SpaceUnderlayCalibrationPointDto Point2 { get; set; } = default!;
 
         [System.Text.Json.Serialization.JsonPropertyName("validationPoint")]
-        public SpaceUnderlayCalibrationPointDto ValidationPoint { get; set; }
+        public SpaceUnderlayCalibrationPointDto ValidationPoint { get; set; } = default!;
 
         [System.Text.Json.Serialization.JsonPropertyName("expectedFloorRevision")]
-        public long ExpectedFloorRevision { get; set; }
+        public long ExpectedFloorRevision { get; set; } = default!;
 
     }
 
@@ -4889,13 +4891,13 @@ namespace CP6.Space.Client
     {
 
         [System.Text.Json.Serialization.JsonPropertyName("floor")]
-        public SpaceSceneFloorDto Floor { get; set; }
+        public SpaceSceneFloorDto Floor { get; set; } = default!;
 
         [System.Text.Json.Serialization.JsonPropertyName("calibration")]
-        public SpaceUnderlayCalibrationDto Calibration { get; set; }
+        public SpaceUnderlayCalibrationDto Calibration { get; set; } = default!;
 
         [System.Text.Json.Serialization.JsonPropertyName("idempotentReplay")]
-        public bool IdempotentReplay { get; set; }
+        public bool IdempotentReplay { get; set; } = default!;
 
     }
 
@@ -4904,31 +4906,31 @@ namespace CP6.Space.Client
     {
 
         [System.Text.Json.Serialization.JsonPropertyName("id")]
-        public System.Guid Id { get; set; }
+        public System.Guid Id { get; set; } = default!;
 
         [System.Text.Json.Serialization.JsonPropertyName("scope")]
-        public string Scope { get; set; }
+        public string? Scope { get; set; } = default!;
 
         [System.Text.Json.Serialization.JsonPropertyName("assetCode")]
-        public string AssetCode { get; set; }
+        public string? AssetCode { get; set; } = default!;
 
         [System.Text.Json.Serialization.JsonPropertyName("name")]
-        public string Name { get; set; }
+        public string? Name { get; set; } = default!;
 
         [System.Text.Json.Serialization.JsonPropertyName("category")]
-        public string Category { get; set; }
+        public string? Category { get; set; } = default!;
 
         [System.Text.Json.Serialization.JsonPropertyName("description")]
-        public string Description { get; set; }
+        public string? Description { get; set; } = default!;
 
         [System.Text.Json.Serialization.JsonPropertyName("status")]
-        public string Status { get; set; }
+        public string? Status { get; set; } = default!;
 
         [System.Text.Json.Serialization.JsonPropertyName("latestVersion")]
-        public SpaceAssetVersionDto LatestVersion { get; set; }
+        public SpaceAssetVersionDto LatestVersion { get; set; } = default!;
 
         [System.Text.Json.Serialization.JsonPropertyName("rowVersion")]
-        public string RowVersion { get; set; }
+        public string? RowVersion { get; set; } = default!;
 
     }
 
@@ -4937,31 +4939,31 @@ namespace CP6.Space.Client
     {
 
         [System.Text.Json.Serialization.JsonPropertyName("id")]
-        public System.Guid Id { get; set; }
+        public System.Guid Id { get; set; } = default!;
 
         [System.Text.Json.Serialization.JsonPropertyName("versionNo")]
-        public long VersionNo { get; set; }
+        public long VersionNo { get; set; } = default!;
 
         [System.Text.Json.Serialization.JsonPropertyName("format")]
-        public string Format { get; set; }
+        public string? Format { get; set; } = default!;
 
         [System.Text.Json.Serialization.JsonPropertyName("parameterSchemaJson")]
-        public string ParameterSchemaJson { get; set; }
+        public string? ParameterSchemaJson { get; set; } = default!;
 
         [System.Text.Json.Serialization.JsonPropertyName("previewRef")]
-        public string PreviewRef { get; set; }
+        public string? PreviewRef { get; set; } = default!;
 
         [System.Text.Json.Serialization.JsonPropertyName("renderArtifactRef")]
-        public string RenderArtifactRef { get; set; }
+        public string? RenderArtifactRef { get; set; } = default!;
 
         [System.Text.Json.Serialization.JsonPropertyName("contentHash")]
-        public string ContentHash { get; set; }
+        public string? ContentHash { get; set; } = default!;
 
         [System.Text.Json.Serialization.JsonPropertyName("status")]
-        public string Status { get; set; }
+        public string? Status { get; set; } = default!;
 
         [System.Text.Json.Serialization.JsonPropertyName("rowVersion")]
-        public string RowVersion { get; set; }
+        public string? RowVersion { get; set; } = default!;
 
     }
 
@@ -4970,52 +4972,52 @@ namespace CP6.Space.Client
     {
 
         [System.Text.Json.Serialization.JsonPropertyName("schemaVersion")]
-        public int SchemaVersion { get; set; }
+        public int SchemaVersion { get; set; } = default!;
 
         [System.Text.Json.Serialization.JsonPropertyName("authority")]
-        public string Authority { get; set; }
+        public string? Authority { get; set; } = default!;
 
         [System.Text.Json.Serialization.JsonPropertyName("runtimeOverlayIncluded")]
-        public bool RuntimeOverlayIncluded { get; set; }
+        public bool RuntimeOverlayIncluded { get; set; } = default!;
 
         [System.Text.Json.Serialization.JsonPropertyName("modelVersionId")]
-        public System.Guid ModelVersionId { get; set; }
+        public System.Guid ModelVersionId { get; set; } = default!;
 
         [System.Text.Json.Serialization.JsonPropertyName("siteId")]
-        public System.Guid SiteId { get; set; }
+        public System.Guid SiteId { get; set; } = default!;
 
         [System.Text.Json.Serialization.JsonPropertyName("versionStatus")]
-        public string VersionStatus { get; set; }
+        public string? VersionStatus { get; set; } = default!;
 
         [System.Text.Json.Serialization.JsonPropertyName("contentRevision")]
-        public long ContentRevision { get; set; }
+        public long ContentRevision { get; set; } = default!;
 
         [System.Text.Json.Serialization.JsonPropertyName("contentHash")]
-        public string ContentHash { get; set; }
+        public string? ContentHash { get; set; } = default!;
 
         [System.Text.Json.Serialization.JsonPropertyName("floor")]
-        public SpaceSceneFloorDto Floor { get; set; }
+        public SpaceSceneFloorDto Floor { get; set; } = default!;
 
         [System.Text.Json.Serialization.JsonPropertyName("zones")]
-        public System.Collections.Generic.ICollection<SpaceSceneZoneDto> Zones { get; set; }
+        public System.Collections.Generic.ICollection<SpaceSceneZoneDto>? Zones { get; set; } = default!;
 
         [System.Text.Json.Serialization.JsonPropertyName("aisles")]
-        public System.Collections.Generic.ICollection<SpaceSceneAisleDto> Aisles { get; set; }
+        public System.Collections.Generic.ICollection<SpaceSceneAisleDto>? Aisles { get; set; } = default!;
 
         [System.Text.Json.Serialization.JsonPropertyName("racks")]
-        public System.Collections.Generic.ICollection<SpaceSceneRackDto> Racks { get; set; }
+        public System.Collections.Generic.ICollection<SpaceSceneRackDto>? Racks { get; set; } = default!;
 
         [System.Text.Json.Serialization.JsonPropertyName("rackLevels")]
-        public System.Collections.Generic.ICollection<SpaceSceneRackLevelDto> RackLevels { get; set; }
+        public System.Collections.Generic.ICollection<SpaceSceneRackLevelDto>? RackLevels { get; set; } = default!;
 
         [System.Text.Json.Serialization.JsonPropertyName("locations")]
-        public System.Collections.Generic.ICollection<SpaceSceneLocationDto> Locations { get; set; }
+        public System.Collections.Generic.ICollection<SpaceSceneLocationDto>? Locations { get; set; } = default!;
 
         [System.Text.Json.Serialization.JsonPropertyName("elements")]
-        public System.Collections.Generic.ICollection<SpaceSceneElementDto> Elements { get; set; }
+        public System.Collections.Generic.ICollection<SpaceSceneElementDto>? Elements { get; set; } = default!;
 
         [System.Text.Json.Serialization.JsonPropertyName("elementAttributes")]
-        public System.Collections.Generic.ICollection<SpaceSceneElementAttributeDto> ElementAttributes { get; set; }
+        public System.Collections.Generic.ICollection<SpaceSceneElementAttributeDto>? ElementAttributes { get; set; } = default!;
 
     }
 
@@ -5024,19 +5026,19 @@ namespace CP6.Space.Client
     {
 
         [System.Text.Json.Serialization.JsonPropertyName("namespace")]
-        public string Namespace { get; set; }
+        public string? Namespace { get; set; } = default!;
 
         [System.Text.Json.Serialization.JsonPropertyName("key")]
-        public string Key { get; set; }
+        public string? Key { get; set; } = default!;
 
         [System.Text.Json.Serialization.JsonPropertyName("valueType")]
-        public string ValueType { get; set; }
+        public string? ValueType { get; set; } = default!;
 
         [System.Text.Json.Serialization.JsonPropertyName("value")]
-        public string Value { get; set; }
+        public string? Value { get; set; } = default!;
 
         [System.Text.Json.Serialization.JsonPropertyName("unit")]
-        public string Unit { get; set; }
+        public string? Unit { get; set; } = default!;
 
     }
 
@@ -5045,25 +5047,25 @@ namespace CP6.Space.Client
     {
 
         [System.Text.Json.Serialization.JsonPropertyName("commandId")]
-        public System.Guid CommandId { get; set; }
+        public System.Guid CommandId { get; set; } = default!;
 
         [System.Text.Json.Serialization.JsonPropertyName("type")]
-        public string Type { get; set; }
+        public string? Type { get; set; } = default!;
 
         [System.Text.Json.Serialization.JsonPropertyName("targetLogicalId")]
-        public System.Guid TargetLogicalId { get; set; }
+        public System.Guid TargetLogicalId { get; set; } = default!;
 
         [System.Text.Json.Serialization.JsonPropertyName("updateProperties")]
-        public SpaceUpdateElementPropertiesDto UpdateProperties { get; set; }
+        public SpaceUpdateElementPropertiesDto UpdateProperties { get; set; } = default!;
 
         [System.Text.Json.Serialization.JsonPropertyName("moveObject")]
-        public SpaceMoveObjectDto MoveObject { get; set; }
+        public SpaceMoveObjectDto MoveObject { get; set; } = default!;
 
         [System.Text.Json.Serialization.JsonPropertyName("rotateObject")]
-        public SpaceRotateObjectDto RotateObject { get; set; }
+        public SpaceRotateObjectDto RotateObject { get; set; } = default!;
 
         [System.Text.Json.Serialization.JsonPropertyName("generateRackArray")]
-        public SpaceGenerateRackArrayDto GenerateRackArray { get; set; }
+        public SpaceGenerateRackArrayDto GenerateRackArray { get; set; } = default!;
 
     }
 
@@ -5072,19 +5074,19 @@ namespace CP6.Space.Client
     {
 
         [System.Text.Json.Serialization.JsonPropertyName("commandId")]
-        public System.Guid CommandId { get; set; }
+        public System.Guid CommandId { get; set; } = default!;
 
         [System.Text.Json.Serialization.JsonPropertyName("type")]
-        public string Type { get; set; }
+        public string? Type { get; set; } = default!;
 
         [System.Text.Json.Serialization.JsonPropertyName("targetLogicalId")]
-        public System.Guid TargetLogicalId { get; set; }
+        public System.Guid TargetLogicalId { get; set; } = default!;
 
         [System.Text.Json.Serialization.JsonPropertyName("element")]
-        public SpaceSceneElementDto Element { get; set; }
+        public SpaceSceneElementDto Element { get; set; } = default!;
 
         [System.Text.Json.Serialization.JsonPropertyName("attributes")]
-        public System.Collections.Generic.ICollection<SpaceSceneElementAttributeDto> Attributes { get; set; }
+        public System.Collections.Generic.ICollection<SpaceSceneElementAttributeDto>? Attributes { get; set; } = default!;
 
     }
 
@@ -5093,31 +5095,31 @@ namespace CP6.Space.Client
     {
 
         [System.Text.Json.Serialization.JsonPropertyName("id")]
-        public System.Guid Id { get; set; }
+        public System.Guid Id { get; set; } = default!;
 
         [System.Text.Json.Serialization.JsonPropertyName("originalName")]
-        public string OriginalName { get; set; }
+        public string? OriginalName { get; set; } = default!;
 
         [System.Text.Json.Serialization.JsonPropertyName("contentType")]
-        public string ContentType { get; set; }
+        public string? ContentType { get; set; } = default!;
 
         [System.Text.Json.Serialization.JsonPropertyName("extension")]
-        public string Extension { get; set; }
+        public string? Extension { get; set; } = default!;
 
         [System.Text.Json.Serialization.JsonPropertyName("sizeBytes")]
-        public long SizeBytes { get; set; }
+        public long SizeBytes { get; set; } = default!;
 
         [System.Text.Json.Serialization.JsonPropertyName("sha256")]
-        public string Sha256 { get; set; }
+        public string? Sha256 { get; set; } = default!;
 
         [System.Text.Json.Serialization.JsonPropertyName("state")]
-        public string State { get; set; }
+        public string? State { get; set; } = default!;
 
         [System.Text.Json.Serialization.JsonPropertyName("scanResultCode")]
-        public string ScanResultCode { get; set; }
+        public string? ScanResultCode { get; set; } = default!;
 
         [System.Text.Json.Serialization.JsonPropertyName("rowVersion")]
-        public string RowVersion { get; set; }
+        public string? RowVersion { get; set; } = default!;
 
     }
 
@@ -5126,28 +5128,28 @@ namespace CP6.Space.Client
     {
 
         [System.Text.Json.Serialization.JsonPropertyName("rows")]
-        public int Rows { get; set; }
+        public int Rows { get; set; } = default!;
 
         [System.Text.Json.Serialization.JsonPropertyName("columns")]
-        public int Columns { get; set; }
+        public int Columns { get; set; } = default!;
 
         [System.Text.Json.Serialization.JsonPropertyName("rowGap")]
-        public int RowGap { get; set; }
+        public int RowGap { get; set; } = default!;
 
         [System.Text.Json.Serialization.JsonPropertyName("columnGap")]
-        public int ColumnGap { get; set; }
+        public int ColumnGap { get; set; } = default!;
 
         [System.Text.Json.Serialization.JsonPropertyName("staggerOffset")]
-        public int StaggerOffset { get; set; }
+        public int StaggerOffset { get; set; } = default!;
 
         [System.Text.Json.Serialization.JsonPropertyName("codePrefix")]
-        public string CodePrefix { get; set; }
+        public string? CodePrefix { get; set; } = default!;
 
         [System.Text.Json.Serialization.JsonPropertyName("startNumber")]
-        public int StartNumber { get; set; }
+        public int StartNumber { get; set; } = default!;
 
         [System.Text.Json.Serialization.JsonPropertyName("codeDigits")]
-        public int CodeDigits { get; set; }
+        public int CodeDigits { get; set; } = default!;
 
     }
 
@@ -5156,52 +5158,52 @@ namespace CP6.Space.Client
     {
 
         [System.Text.Json.Serialization.JsonPropertyName("id")]
-        public System.Guid Id { get; set; }
+        public System.Guid Id { get; set; } = default!;
 
         [System.Text.Json.Serialization.JsonPropertyName("modelVersionId")]
-        public System.Guid? ModelVersionId { get; set; }
+        public System.Guid? ModelVersionId { get; set; } = default!;
 
         [System.Text.Json.Serialization.JsonPropertyName("sourceId")]
-        public System.Guid? SourceId { get; set; }
+        public System.Guid? SourceId { get; set; } = default!;
 
         [System.Text.Json.Serialization.JsonPropertyName("jobId")]
-        public System.Guid? JobId { get; set; }
+        public System.Guid? JobId { get; set; } = default!;
 
         [System.Text.Json.Serialization.JsonPropertyName("severity")]
-        public string Severity { get; set; }
+        public string? Severity { get; set; } = default!;
 
         [System.Text.Json.Serialization.JsonPropertyName("code")]
-        public string Code { get; set; }
+        public string? Code { get; set; } = default!;
 
         [System.Text.Json.Serialization.JsonPropertyName("sourceRef")]
-        public string SourceRef { get; set; }
+        public string? SourceRef { get; set; } = default!;
 
         [System.Text.Json.Serialization.JsonPropertyName("targetLogicalId")]
-        public System.Guid? TargetLogicalId { get; set; }
+        public System.Guid? TargetLogicalId { get; set; } = default!;
 
         [System.Text.Json.Serialization.JsonPropertyName("messageArgsJson")]
-        public string MessageArgsJson { get; set; }
+        public string? MessageArgsJson { get; set; } = default!;
 
         [System.Text.Json.Serialization.JsonPropertyName("suggestedActionCode")]
-        public string SuggestedActionCode { get; set; }
+        public string? SuggestedActionCode { get; set; } = default!;
 
         [System.Text.Json.Serialization.JsonPropertyName("status")]
-        public string Status { get; set; }
+        public string? Status { get; set; } = default!;
 
         [System.Text.Json.Serialization.JsonPropertyName("resolutionCommandBatchId")]
-        public System.Guid? ResolutionCommandBatchId { get; set; }
+        public System.Guid? ResolutionCommandBatchId { get; set; } = default!;
 
         [System.Text.Json.Serialization.JsonPropertyName("acknowledgedBy")]
-        public System.Guid? AcknowledgedBy { get; set; }
+        public System.Guid? AcknowledgedBy { get; set; } = default!;
 
         [System.Text.Json.Serialization.JsonPropertyName("acknowledgedAtUtc")]
-        public System.DateTimeOffset? AcknowledgedAtUtc { get; set; }
+        public System.DateTimeOffset? AcknowledgedAtUtc { get; set; } = default!;
 
         [System.Text.Json.Serialization.JsonPropertyName("acknowledgementReason")]
-        public string AcknowledgementReason { get; set; }
+        public string? AcknowledgementReason { get; set; } = default!;
 
         [System.Text.Json.Serialization.JsonPropertyName("createdAtUtc")]
-        public System.DateTimeOffset CreatedAtUtc { get; set; }
+        public System.DateTimeOffset CreatedAtUtc { get; set; } = default!;
 
     }
 
@@ -5210,73 +5212,73 @@ namespace CP6.Space.Client
     {
 
         [System.Text.Json.Serialization.JsonPropertyName("id")]
-        public System.Guid Id { get; set; }
+        public System.Guid Id { get; set; } = default!;
 
         [System.Text.Json.Serialization.JsonPropertyName("jobType")]
-        public string JobType { get; set; }
+        public string? JobType { get; set; } = default!;
 
         [System.Text.Json.Serialization.JsonPropertyName("subjectType")]
-        public string SubjectType { get; set; }
+        public string? SubjectType { get; set; } = default!;
 
         [System.Text.Json.Serialization.JsonPropertyName("subjectId")]
-        public System.Guid SubjectId { get; set; }
+        public System.Guid SubjectId { get; set; } = default!;
 
         [System.Text.Json.Serialization.JsonPropertyName("status")]
-        public string Status { get; set; }
+        public string? Status { get; set; } = default!;
 
         [System.Text.Json.Serialization.JsonPropertyName("progressDone")]
-        public long ProgressDone { get; set; }
+        public long ProgressDone { get; set; } = default!;
 
         [System.Text.Json.Serialization.JsonPropertyName("progressTotal")]
-        public long ProgressTotal { get; set; }
+        public long ProgressTotal { get; set; } = default!;
 
         [System.Text.Json.Serialization.JsonPropertyName("progressStage")]
-        public string ProgressStage { get; set; }
+        public string? ProgressStage { get; set; } = default!;
 
         [System.Text.Json.Serialization.JsonPropertyName("attemptCount")]
-        public int AttemptCount { get; set; }
+        public int AttemptCount { get; set; } = default!;
 
         [System.Text.Json.Serialization.JsonPropertyName("maxAttempts")]
-        public int MaxAttempts { get; set; }
+        public int MaxAttempts { get; set; } = default!;
 
         [System.Text.Json.Serialization.JsonPropertyName("nextAttemptAtUtc")]
-        public System.DateTimeOffset? NextAttemptAtUtc { get; set; }
+        public System.DateTimeOffset? NextAttemptAtUtc { get; set; } = default!;
 
         [System.Text.Json.Serialization.JsonPropertyName("lockExpiresAtUtc")]
-        public System.DateTimeOffset? LockExpiresAtUtc { get; set; }
+        public System.DateTimeOffset? LockExpiresAtUtc { get; set; } = default!;
 
         [System.Text.Json.Serialization.JsonPropertyName("cancellationRequested")]
-        public bool CancellationRequested { get; set; }
+        public bool CancellationRequested { get; set; } = default!;
 
         [System.Text.Json.Serialization.JsonPropertyName("lastErrorCode")]
-        public string LastErrorCode { get; set; }
+        public string? LastErrorCode { get; set; } = default!;
 
         [System.Text.Json.Serialization.JsonPropertyName("lastErrorSummary")]
-        public string LastErrorSummary { get; set; }
+        public string? LastErrorSummary { get; set; } = default!;
 
         [System.Text.Json.Serialization.JsonPropertyName("openInfoCount")]
-        public int OpenInfoCount { get; set; }
+        public int OpenInfoCount { get; set; } = default!;
 
         [System.Text.Json.Serialization.JsonPropertyName("openWarningCount")]
-        public int OpenWarningCount { get; set; }
+        public int OpenWarningCount { get; set; } = default!;
 
         [System.Text.Json.Serialization.JsonPropertyName("openBlockingCount")]
-        public int OpenBlockingCount { get; set; }
+        public int OpenBlockingCount { get; set; } = default!;
 
         [System.Text.Json.Serialization.JsonPropertyName("requestedAtUtc")]
-        public System.DateTimeOffset RequestedAtUtc { get; set; }
+        public System.DateTimeOffset RequestedAtUtc { get; set; } = default!;
 
         [System.Text.Json.Serialization.JsonPropertyName("startedAtUtc")]
-        public System.DateTimeOffset? StartedAtUtc { get; set; }
+        public System.DateTimeOffset? StartedAtUtc { get; set; } = default!;
 
         [System.Text.Json.Serialization.JsonPropertyName("finishedAtUtc")]
-        public System.DateTimeOffset? FinishedAtUtc { get; set; }
+        public System.DateTimeOffset? FinishedAtUtc { get; set; } = default!;
 
         [System.Text.Json.Serialization.JsonPropertyName("resultSummaryJson")]
-        public string ResultSummaryJson { get; set; }
+        public string? ResultSummaryJson { get; set; } = default!;
 
         [System.Text.Json.Serialization.JsonPropertyName("rowVersion")]
-        public string RowVersion { get; set; }
+        public string? RowVersion { get; set; } = default!;
 
     }
 
@@ -5285,25 +5287,25 @@ namespace CP6.Space.Client
     {
 
         [System.Text.Json.Serialization.JsonPropertyName("id")]
-        public System.Guid Id { get; set; }
+        public System.Guid Id { get; set; } = default!;
 
         [System.Text.Json.Serialization.JsonPropertyName("siteId")]
-        public System.Guid SiteId { get; set; }
+        public System.Guid SiteId { get; set; } = default!;
 
         [System.Text.Json.Serialization.JsonPropertyName("mode")]
-        public string Mode { get; set; }
+        public string? Mode { get; set; } = default!;
 
         [System.Text.Json.Serialization.JsonPropertyName("cutoverState")]
-        public string CutoverState { get; set; }
+        public string? CutoverState { get; set; } = default!;
 
         [System.Text.Json.Serialization.JsonPropertyName("activeDraftVersionId")]
-        public System.Guid? ActiveDraftVersionId { get; set; }
+        public System.Guid? ActiveDraftVersionId { get; set; } = default!;
 
         [System.Text.Json.Serialization.JsonPropertyName("currentPublishedVersionId")]
-        public System.Guid? CurrentPublishedVersionId { get; set; }
+        public System.Guid? CurrentPublishedVersionId { get; set; } = default!;
 
         [System.Text.Json.Serialization.JsonPropertyName("rowVersion")]
-        public string RowVersion { get; set; }
+        public string? RowVersion { get; set; } = default!;
 
     }
 
@@ -5312,13 +5314,13 @@ namespace CP6.Space.Client
     {
 
         [System.Text.Json.Serialization.JsonPropertyName("x")]
-        public int X { get; set; }
+        public int X { get; set; } = default!;
 
         [System.Text.Json.Serialization.JsonPropertyName("y")]
-        public int Y { get; set; }
+        public int Y { get; set; } = default!;
 
         [System.Text.Json.Serialization.JsonPropertyName("z")]
-        public int Z { get; set; }
+        public int Z { get; set; } = default!;
 
     }
 
@@ -5327,7 +5329,7 @@ namespace CP6.Space.Client
     {
 
         [System.Text.Json.Serialization.JsonPropertyName("rotationZ")]
-        public double RotationZ { get; set; }
+        public double RotationZ { get; set; } = default!;
 
     }
 
@@ -5336,22 +5338,22 @@ namespace CP6.Space.Client
     {
 
         [System.Text.Json.Serialization.JsonPropertyName("revision")]
-        public SpaceSceneRevisionDto Revision { get; set; }
+        public SpaceSceneRevisionDto Revision { get; set; } = default!;
 
         [System.Text.Json.Serialization.JsonPropertyName("zoneLogicalId")]
-        public System.Guid ZoneLogicalId { get; set; }
+        public System.Guid ZoneLogicalId { get; set; } = default!;
 
         [System.Text.Json.Serialization.JsonPropertyName("aisleCode")]
-        public string AisleCode { get; set; }
+        public string? AisleCode { get; set; } = default!;
 
         [System.Text.Json.Serialization.JsonPropertyName("polygonJson")]
-        public string PolygonJson { get; set; }
+        public string? PolygonJson { get; set; } = default!;
 
         [System.Text.Json.Serialization.JsonPropertyName("centerlineJson")]
-        public string CenterlineJson { get; set; }
+        public string? CenterlineJson { get; set; } = default!;
 
         [System.Text.Json.Serialization.JsonPropertyName("direction")]
-        public int Direction { get; set; }
+        public int Direction { get; set; } = default!;
 
     }
 
@@ -5360,25 +5362,25 @@ namespace CP6.Space.Client
     {
 
         [System.Text.Json.Serialization.JsonPropertyName("id")]
-        public System.Guid Id { get; set; }
+        public System.Guid Id { get; set; } = default!;
 
         [System.Text.Json.Serialization.JsonPropertyName("elementRevisionId")]
-        public System.Guid ElementRevisionId { get; set; }
+        public System.Guid ElementRevisionId { get; set; } = default!;
 
         [System.Text.Json.Serialization.JsonPropertyName("namespace")]
-        public string Namespace { get; set; }
+        public string? Namespace { get; set; } = default!;
 
         [System.Text.Json.Serialization.JsonPropertyName("key")]
-        public string Key { get; set; }
+        public string? Key { get; set; } = default!;
 
         [System.Text.Json.Serialization.JsonPropertyName("valueType")]
-        public string ValueType { get; set; }
+        public string? ValueType { get; set; } = default!;
 
         [System.Text.Json.Serialization.JsonPropertyName("value")]
-        public string Value { get; set; }
+        public string? Value { get; set; } = default!;
 
         [System.Text.Json.Serialization.JsonPropertyName("unit")]
-        public string Unit { get; set; }
+        public string? Unit { get; set; } = default!;
 
     }
 
@@ -5387,55 +5389,55 @@ namespace CP6.Space.Client
     {
 
         [System.Text.Json.Serialization.JsonPropertyName("revision")]
-        public SpaceSceneRevisionDto Revision { get; set; }
+        public SpaceSceneRevisionDto Revision { get; set; } = default!;
 
         [System.Text.Json.Serialization.JsonPropertyName("floorLogicalId")]
-        public System.Guid FloorLogicalId { get; set; }
+        public System.Guid FloorLogicalId { get; set; } = default!;
 
         [System.Text.Json.Serialization.JsonPropertyName("parentLogicalId")]
-        public System.Guid? ParentLogicalId { get; set; }
+        public System.Guid? ParentLogicalId { get; set; } = default!;
 
         [System.Text.Json.Serialization.JsonPropertyName("elementType")]
-        public string ElementType { get; set; }
+        public string? ElementType { get; set; } = default!;
 
         [System.Text.Json.Serialization.JsonPropertyName("geometryJson")]
-        public string GeometryJson { get; set; }
+        public string? GeometryJson { get; set; } = default!;
 
         [System.Text.Json.Serialization.JsonPropertyName("modelAssetId")]
-        public System.Guid? ModelAssetId { get; set; }
+        public System.Guid? ModelAssetId { get; set; } = default!;
 
         [System.Text.Json.Serialization.JsonPropertyName("modelAssetScope")]
-        public string ModelAssetScope { get; set; }
+        public string? ModelAssetScope { get; set; } = default!;
 
         [System.Text.Json.Serialization.JsonPropertyName("x")]
-        public int X { get; set; }
+        public int X { get; set; } = default!;
 
         [System.Text.Json.Serialization.JsonPropertyName("y")]
-        public int Y { get; set; }
+        public int Y { get; set; } = default!;
 
         [System.Text.Json.Serialization.JsonPropertyName("z")]
-        public int Z { get; set; }
+        public int Z { get; set; } = default!;
 
         [System.Text.Json.Serialization.JsonPropertyName("rotationZ")]
-        public double RotationZ { get; set; }
+        public double RotationZ { get; set; } = default!;
 
         [System.Text.Json.Serialization.JsonPropertyName("width")]
-        public int Width { get; set; }
+        public int Width { get; set; } = default!;
 
         [System.Text.Json.Serialization.JsonPropertyName("height")]
-        public int Height { get; set; }
+        public int Height { get; set; } = default!;
 
         [System.Text.Json.Serialization.JsonPropertyName("depth")]
-        public int Depth { get; set; }
+        public int Depth { get; set; } = default!;
 
         [System.Text.Json.Serialization.JsonPropertyName("businessCode")]
-        public string BusinessCode { get; set; }
+        public string? BusinessCode { get; set; } = default!;
 
         [System.Text.Json.Serialization.JsonPropertyName("linkedEntityType")]
-        public string LinkedEntityType { get; set; }
+        public string? LinkedEntityType { get; set; } = default!;
 
         [System.Text.Json.Serialization.JsonPropertyName("linkedLogicalId")]
-        public System.Guid? LinkedLogicalId { get; set; }
+        public System.Guid? LinkedLogicalId { get; set; } = default!;
 
     }
 
@@ -5444,52 +5446,52 @@ namespace CP6.Space.Client
     {
 
         [System.Text.Json.Serialization.JsonPropertyName("revision")]
-        public SpaceSceneRevisionDto Revision { get; set; }
+        public SpaceSceneRevisionDto Revision { get; set; } = default!;
 
         [System.Text.Json.Serialization.JsonPropertyName("siteLogicalId")]
-        public System.Guid SiteLogicalId { get; set; }
+        public System.Guid SiteLogicalId { get; set; } = default!;
 
         [System.Text.Json.Serialization.JsonPropertyName("level")]
-        public int Level { get; set; }
+        public int Level { get; set; } = default!;
 
         [System.Text.Json.Serialization.JsonPropertyName("floorCode")]
-        public string FloorCode { get; set; }
+        public string? FloorCode { get; set; } = default!;
 
         [System.Text.Json.Serialization.JsonPropertyName("name")]
-        public string Name { get; set; }
+        public string? Name { get; set; } = default!;
 
         [System.Text.Json.Serialization.JsonPropertyName("elevation")]
-        public int Elevation { get; set; }
+        public int Elevation { get; set; } = default!;
 
         [System.Text.Json.Serialization.JsonPropertyName("height")]
-        public int Height { get; set; }
+        public int Height { get; set; } = default!;
 
         [System.Text.Json.Serialization.JsonPropertyName("boundaryJson")]
-        public string BoundaryJson { get; set; }
+        public string? BoundaryJson { get; set; } = default!;
 
         [System.Text.Json.Serialization.JsonPropertyName("coordinateSystem")]
-        public string CoordinateSystem { get; set; }
+        public string? CoordinateSystem { get; set; } = default!;
 
         [System.Text.Json.Serialization.JsonPropertyName("underlaySourceId")]
-        public System.Guid? UnderlaySourceId { get; set; }
+        public System.Guid? UnderlaySourceId { get; set; } = default!;
 
         [System.Text.Json.Serialization.JsonPropertyName("underlayCalibrationId")]
-        public System.Guid? UnderlayCalibrationId { get; set; }
+        public System.Guid? UnderlayCalibrationId { get; set; } = default!;
 
         [System.Text.Json.Serialization.JsonPropertyName("underlayScale")]
-        public double? UnderlayScale { get; set; }
+        public double? UnderlayScale { get; set; } = default!;
 
         [System.Text.Json.Serialization.JsonPropertyName("underlayOffsetX")]
-        public int UnderlayOffsetX { get; set; }
+        public int UnderlayOffsetX { get; set; } = default!;
 
         [System.Text.Json.Serialization.JsonPropertyName("underlayOffsetY")]
-        public int UnderlayOffsetY { get; set; }
+        public int UnderlayOffsetY { get; set; } = default!;
 
         [System.Text.Json.Serialization.JsonPropertyName("underlayRotationZ")]
-        public double UnderlayRotationZ { get; set; }
+        public double UnderlayRotationZ { get; set; } = default!;
 
         [System.Text.Json.Serialization.JsonPropertyName("revisionNumber")]
-        public long RevisionNumber { get; set; }
+        public long RevisionNumber { get; set; } = default!;
 
     }
 
@@ -5498,43 +5500,43 @@ namespace CP6.Space.Client
     {
 
         [System.Text.Json.Serialization.JsonPropertyName("revision")]
-        public SpaceSceneRevisionDto Revision { get; set; }
+        public SpaceSceneRevisionDto Revision { get; set; } = default!;
 
         [System.Text.Json.Serialization.JsonPropertyName("floorLogicalId")]
-        public System.Guid FloorLogicalId { get; set; }
+        public System.Guid FloorLogicalId { get; set; } = default!;
 
         [System.Text.Json.Serialization.JsonPropertyName("rackLogicalId")]
-        public System.Guid? RackLogicalId { get; set; }
+        public System.Guid? RackLogicalId { get; set; } = default!;
 
         [System.Text.Json.Serialization.JsonPropertyName("locationCode")]
-        public string LocationCode { get; set; }
+        public string? LocationCode { get; set; } = default!;
 
         [System.Text.Json.Serialization.JsonPropertyName("columnNo")]
-        public int ColumnNo { get; set; }
+        public int ColumnNo { get; set; } = default!;
 
         [System.Text.Json.Serialization.JsonPropertyName("levelNo")]
-        public int LevelNo { get; set; }
+        public int LevelNo { get; set; } = default!;
 
         [System.Text.Json.Serialization.JsonPropertyName("depthNo")]
-        public int DepthNo { get; set; }
+        public int DepthNo { get; set; } = default!;
 
         [System.Text.Json.Serialization.JsonPropertyName("width")]
-        public int Width { get; set; }
+        public int Width { get; set; } = default!;
 
         [System.Text.Json.Serialization.JsonPropertyName("height")]
-        public int Height { get; set; }
+        public int Height { get; set; } = default!;
 
         [System.Text.Json.Serialization.JsonPropertyName("depth")]
-        public int Depth { get; set; }
+        public int Depth { get; set; } = default!;
 
         [System.Text.Json.Serialization.JsonPropertyName("maxLoad")]
-        public double? MaxLoad { get; set; }
+        public double? MaxLoad { get; set; } = default!;
 
         [System.Text.Json.Serialization.JsonPropertyName("codeOrigin")]
-        public string CodeOrigin { get; set; }
+        public string? CodeOrigin { get; set; } = default!;
 
         [System.Text.Json.Serialization.JsonPropertyName("externalBindingState")]
-        public string ExternalBindingState { get; set; }
+        public string? ExternalBindingState { get; set; } = default!;
 
     }
 
@@ -5543,43 +5545,43 @@ namespace CP6.Space.Client
     {
 
         [System.Text.Json.Serialization.JsonPropertyName("revision")]
-        public SpaceSceneRevisionDto Revision { get; set; }
+        public SpaceSceneRevisionDto Revision { get; set; } = default!;
 
         [System.Text.Json.Serialization.JsonPropertyName("floorLogicalId")]
-        public System.Guid FloorLogicalId { get; set; }
+        public System.Guid FloorLogicalId { get; set; } = default!;
 
         [System.Text.Json.Serialization.JsonPropertyName("zoneLogicalId")]
-        public System.Guid ZoneLogicalId { get; set; }
+        public System.Guid ZoneLogicalId { get; set; } = default!;
 
         [System.Text.Json.Serialization.JsonPropertyName("aisleLogicalId")]
-        public System.Guid? AisleLogicalId { get; set; }
+        public System.Guid? AisleLogicalId { get; set; } = default!;
 
         [System.Text.Json.Serialization.JsonPropertyName("rackCode")]
-        public string RackCode { get; set; }
+        public string? RackCode { get; set; } = default!;
 
         [System.Text.Json.Serialization.JsonPropertyName("templateVersionId")]
-        public System.Guid? TemplateVersionId { get; set; }
+        public System.Guid? TemplateVersionId { get; set; } = default!;
 
         [System.Text.Json.Serialization.JsonPropertyName("x")]
-        public int X { get; set; }
+        public int X { get; set; } = default!;
 
         [System.Text.Json.Serialization.JsonPropertyName("y")]
-        public int Y { get; set; }
+        public int Y { get; set; } = default!;
 
         [System.Text.Json.Serialization.JsonPropertyName("z")]
-        public int Z { get; set; }
+        public int Z { get; set; } = default!;
 
         [System.Text.Json.Serialization.JsonPropertyName("rotationZ")]
-        public double RotationZ { get; set; }
+        public double RotationZ { get; set; } = default!;
 
         [System.Text.Json.Serialization.JsonPropertyName("width")]
-        public int Width { get; set; }
+        public int Width { get; set; } = default!;
 
         [System.Text.Json.Serialization.JsonPropertyName("depth")]
-        public int Depth { get; set; }
+        public int Depth { get; set; } = default!;
 
         [System.Text.Json.Serialization.JsonPropertyName("height")]
-        public int Height { get; set; }
+        public int Height { get; set; } = default!;
 
     }
 
@@ -5588,37 +5590,37 @@ namespace CP6.Space.Client
     {
 
         [System.Text.Json.Serialization.JsonPropertyName("revision")]
-        public SpaceSceneRevisionDto Revision { get; set; }
+        public SpaceSceneRevisionDto Revision { get; set; } = default!;
 
         [System.Text.Json.Serialization.JsonPropertyName("rackLogicalId")]
-        public System.Guid RackLogicalId { get; set; }
+        public System.Guid RackLogicalId { get; set; } = default!;
 
         [System.Text.Json.Serialization.JsonPropertyName("levelNo")]
-        public int LevelNo { get; set; }
+        public int LevelNo { get; set; } = default!;
 
         [System.Text.Json.Serialization.JsonPropertyName("bottomZ")]
-        public int BottomZ { get; set; }
+        public int BottomZ { get; set; } = default!;
 
         [System.Text.Json.Serialization.JsonPropertyName("clearHeight")]
-        public int ClearHeight { get; set; }
+        public int ClearHeight { get; set; } = default!;
 
         [System.Text.Json.Serialization.JsonPropertyName("binCount")]
-        public int BinCount { get; set; }
+        public int BinCount { get; set; } = default!;
 
         [System.Text.Json.Serialization.JsonPropertyName("depthCount")]
-        public int DepthCount { get; set; }
+        public int DepthCount { get; set; } = default!;
 
         [System.Text.Json.Serialization.JsonPropertyName("cellWidth")]
-        public int CellWidth { get; set; }
+        public int CellWidth { get; set; } = default!;
 
         [System.Text.Json.Serialization.JsonPropertyName("cellDepth")]
-        public int CellDepth { get; set; }
+        public int CellDepth { get; set; } = default!;
 
         [System.Text.Json.Serialization.JsonPropertyName("beamHeight")]
-        public int BeamHeight { get; set; }
+        public int BeamHeight { get; set; } = default!;
 
         [System.Text.Json.Serialization.JsonPropertyName("maxLoad")]
-        public double? MaxLoad { get; set; }
+        public double? MaxLoad { get; set; } = default!;
 
     }
 
@@ -5627,22 +5629,22 @@ namespace CP6.Space.Client
     {
 
         [System.Text.Json.Serialization.JsonPropertyName("revisionId")]
-        public System.Guid RevisionId { get; set; }
+        public System.Guid RevisionId { get; set; } = default!;
 
         [System.Text.Json.Serialization.JsonPropertyName("logicalId")]
-        public System.Guid LogicalId { get; set; }
+        public System.Guid LogicalId { get; set; } = default!;
 
         [System.Text.Json.Serialization.JsonPropertyName("sourceId")]
-        public System.Guid? SourceId { get; set; }
+        public System.Guid? SourceId { get; set; } = default!;
 
         [System.Text.Json.Serialization.JsonPropertyName("sourceRef")]
-        public string SourceRef { get; set; }
+        public string? SourceRef { get; set; } = default!;
 
         [System.Text.Json.Serialization.JsonPropertyName("lifecycleState")]
-        public string LifecycleState { get; set; }
+        public string? LifecycleState { get; set; } = default!;
 
         [System.Text.Json.Serialization.JsonPropertyName("rowVersion")]
-        public string RowVersion { get; set; }
+        public string? RowVersion { get; set; } = default!;
 
     }
 
@@ -5651,25 +5653,25 @@ namespace CP6.Space.Client
     {
 
         [System.Text.Json.Serialization.JsonPropertyName("revision")]
-        public SpaceSceneRevisionDto Revision { get; set; }
+        public SpaceSceneRevisionDto Revision { get; set; } = default!;
 
         [System.Text.Json.Serialization.JsonPropertyName("floorLogicalId")]
-        public System.Guid FloorLogicalId { get; set; }
+        public System.Guid FloorLogicalId { get; set; } = default!;
 
         [System.Text.Json.Serialization.JsonPropertyName("zoneCode")]
-        public string ZoneCode { get; set; }
+        public string? ZoneCode { get; set; } = default!;
 
         [System.Text.Json.Serialization.JsonPropertyName("zoneType")]
-        public int ZoneType { get; set; }
+        public int ZoneType { get; set; } = default!;
 
         [System.Text.Json.Serialization.JsonPropertyName("polygonJson")]
-        public string PolygonJson { get; set; }
+        public string? PolygonJson { get; set; } = default!;
 
         [System.Text.Json.Serialization.JsonPropertyName("color")]
-        public string Color { get; set; }
+        public string? Color { get; set; } = default!;
 
         [System.Text.Json.Serialization.JsonPropertyName("capabilityFlags")]
-        public string CapabilityFlags { get; set; }
+        public string? CapabilityFlags { get; set; } = default!;
 
     }
 
@@ -5678,43 +5680,43 @@ namespace CP6.Space.Client
     {
 
         [System.Text.Json.Serialization.JsonPropertyName("id")]
-        public System.Guid Id { get; set; }
+        public System.Guid Id { get; set; } = default!;
 
         [System.Text.Json.Serialization.JsonPropertyName("modelVersionId")]
-        public System.Guid ModelVersionId { get; set; }
+        public System.Guid ModelVersionId { get; set; } = default!;
 
         [System.Text.Json.Serialization.JsonPropertyName("sourceType")]
-        public string SourceType { get; set; }
+        public string? SourceType { get; set; } = default!;
 
         [System.Text.Json.Serialization.JsonPropertyName("fileId")]
-        public System.Guid? FileId { get; set; }
+        public System.Guid? FileId { get; set; } = default!;
 
         [System.Text.Json.Serialization.JsonPropertyName("displayName")]
-        public string DisplayName { get; set; }
+        public string? DisplayName { get; set; } = default!;
 
         [System.Text.Json.Serialization.JsonPropertyName("sha256")]
-        public string Sha256 { get; set; }
+        public string? Sha256 { get; set; } = default!;
 
         [System.Text.Json.Serialization.JsonPropertyName("state")]
-        public string State { get; set; }
+        public string? State { get; set; } = default!;
 
         [System.Text.Json.Serialization.JsonPropertyName("parserVersion")]
-        public string ParserVersion { get; set; }
+        public string? ParserVersion { get; set; } = default!;
 
         [System.Text.Json.Serialization.JsonPropertyName("mappingProfileId")]
-        public System.Guid? MappingProfileId { get; set; }
+        public System.Guid? MappingProfileId { get; set; } = default!;
 
         [System.Text.Json.Serialization.JsonPropertyName("mappingProfileVersion")]
-        public long? MappingProfileVersion { get; set; }
+        public long? MappingProfileVersion { get; set; } = default!;
 
         [System.Text.Json.Serialization.JsonPropertyName("unit")]
-        public string Unit { get; set; }
+        public string? Unit { get; set; } = default!;
 
         [System.Text.Json.Serialization.JsonPropertyName("scaleToMillimeters")]
-        public double? ScaleToMillimeters { get; set; }
+        public double? ScaleToMillimeters { get; set; } = default!;
 
         [System.Text.Json.Serialization.JsonPropertyName("rowVersion")]
-        public string RowVersion { get; set; }
+        public string? RowVersion { get; set; } = default!;
 
     }
 
@@ -5723,58 +5725,58 @@ namespace CP6.Space.Client
     {
 
         [System.Text.Json.Serialization.JsonPropertyName("id")]
-        public System.Guid Id { get; set; }
+        public System.Guid Id { get; set; } = default!;
 
         [System.Text.Json.Serialization.JsonPropertyName("modelVersionId")]
-        public System.Guid ModelVersionId { get; set; }
+        public System.Guid ModelVersionId { get; set; } = default!;
 
         [System.Text.Json.Serialization.JsonPropertyName("floorLogicalId")]
-        public System.Guid FloorLogicalId { get; set; }
+        public System.Guid FloorLogicalId { get; set; } = default!;
 
         [System.Text.Json.Serialization.JsonPropertyName("sourceId")]
-        public System.Guid SourceId { get; set; }
+        public System.Guid SourceId { get; set; } = default!;
 
         [System.Text.Json.Serialization.JsonPropertyName("pageNumber")]
-        public int PageNumber { get; set; }
+        public int PageNumber { get; set; } = default!;
 
         [System.Text.Json.Serialization.JsonPropertyName("pixelWidth")]
-        public int PixelWidth { get; set; }
+        public int PixelWidth { get; set; } = default!;
 
         [System.Text.Json.Serialization.JsonPropertyName("pixelHeight")]
-        public int PixelHeight { get; set; }
+        public int PixelHeight { get; set; } = default!;
 
         [System.Text.Json.Serialization.JsonPropertyName("point1")]
-        public SpaceUnderlayCalibrationPointDto Point1 { get; set; }
+        public SpaceUnderlayCalibrationPointDto Point1 { get; set; } = default!;
 
         [System.Text.Json.Serialization.JsonPropertyName("point2")]
-        public SpaceUnderlayCalibrationPointDto Point2 { get; set; }
+        public SpaceUnderlayCalibrationPointDto Point2 { get; set; } = default!;
 
         [System.Text.Json.Serialization.JsonPropertyName("validationPoint")]
-        public SpaceUnderlayCalibrationPointDto ValidationPoint { get; set; }
+        public SpaceUnderlayCalibrationPointDto ValidationPoint { get; set; } = default!;
 
         [System.Text.Json.Serialization.JsonPropertyName("millimetersPerPixel")]
-        public double MillimetersPerPixel { get; set; }
+        public double MillimetersPerPixel { get; set; } = default!;
 
         [System.Text.Json.Serialization.JsonPropertyName("offsetX")]
-        public int OffsetX { get; set; }
+        public int OffsetX { get; set; } = default!;
 
         [System.Text.Json.Serialization.JsonPropertyName("offsetY")]
-        public int OffsetY { get; set; }
+        public int OffsetY { get; set; } = default!;
 
         [System.Text.Json.Serialization.JsonPropertyName("rotationZ")]
-        public double RotationZ { get; set; }
+        public double RotationZ { get; set; } = default!;
 
         [System.Text.Json.Serialization.JsonPropertyName("validationErrorMillimeters")]
-        public double ValidationErrorMillimeters { get; set; }
+        public double ValidationErrorMillimeters { get; set; } = default!;
 
         [System.Text.Json.Serialization.JsonPropertyName("errorThresholdMillimeters")]
-        public double ErrorThresholdMillimeters { get; set; }
+        public double ErrorThresholdMillimeters { get; set; } = default!;
 
         [System.Text.Json.Serialization.JsonPropertyName("createdAtUtc")]
-        public System.DateTimeOffset CreatedAtUtc { get; set; }
+        public System.DateTimeOffset CreatedAtUtc { get; set; } = default!;
 
         [System.Text.Json.Serialization.JsonPropertyName("createdBy")]
-        public System.Guid? CreatedBy { get; set; }
+        public System.Guid? CreatedBy { get; set; } = default!;
 
     }
 
@@ -5783,16 +5785,16 @@ namespace CP6.Space.Client
     {
 
         [System.Text.Json.Serialization.JsonPropertyName("pixelX")]
-        public double PixelX { get; set; }
+        public double PixelX { get; set; } = default!;
 
         [System.Text.Json.Serialization.JsonPropertyName("pixelY")]
-        public double PixelY { get; set; }
+        public double PixelY { get; set; } = default!;
 
         [System.Text.Json.Serialization.JsonPropertyName("worldX")]
-        public int WorldX { get; set; }
+        public int WorldX { get; set; } = default!;
 
         [System.Text.Json.Serialization.JsonPropertyName("worldY")]
-        public int WorldY { get; set; }
+        public int WorldY { get; set; } = default!;
 
     }
 
@@ -5801,40 +5803,40 @@ namespace CP6.Space.Client
     {
 
         [System.Text.Json.Serialization.JsonPropertyName("geometryJson")]
-        public string GeometryJson { get; set; }
+        public string? GeometryJson { get; set; } = default!;
 
         [System.Text.Json.Serialization.JsonPropertyName("x")]
-        public int X { get; set; }
+        public int X { get; set; } = default!;
 
         [System.Text.Json.Serialization.JsonPropertyName("y")]
-        public int Y { get; set; }
+        public int Y { get; set; } = default!;
 
         [System.Text.Json.Serialization.JsonPropertyName("z")]
-        public int Z { get; set; }
+        public int Z { get; set; } = default!;
 
         [System.Text.Json.Serialization.JsonPropertyName("rotationZ")]
-        public double RotationZ { get; set; }
+        public double RotationZ { get; set; } = default!;
 
         [System.Text.Json.Serialization.JsonPropertyName("width")]
-        public int Width { get; set; }
+        public int Width { get; set; } = default!;
 
         [System.Text.Json.Serialization.JsonPropertyName("height")]
-        public int Height { get; set; }
+        public int Height { get; set; } = default!;
 
         [System.Text.Json.Serialization.JsonPropertyName("depth")]
-        public int Depth { get; set; }
+        public int Depth { get; set; } = default!;
 
         [System.Text.Json.Serialization.JsonPropertyName("businessCode")]
-        public string BusinessCode { get; set; }
+        public string? BusinessCode { get; set; } = default!;
 
         [System.Text.Json.Serialization.JsonPropertyName("linkedEntityType")]
-        public string LinkedEntityType { get; set; }
+        public string? LinkedEntityType { get; set; } = default!;
 
         [System.Text.Json.Serialization.JsonPropertyName("linkedLogicalId")]
-        public System.Guid? LinkedLogicalId { get; set; }
+        public System.Guid? LinkedLogicalId { get; set; } = default!;
 
         [System.Text.Json.Serialization.JsonPropertyName("attributes")]
-        public System.Collections.Generic.ICollection<SpaceElementAttributeWriteDto> Attributes { get; set; }
+        public System.Collections.Generic.ICollection<SpaceElementAttributeWriteDto>? Attributes { get; set; } = default!;
 
     }
 
@@ -5843,40 +5845,40 @@ namespace CP6.Space.Client
     {
 
         [System.Text.Json.Serialization.JsonPropertyName("id")]
-        public System.Guid Id { get; set; }
+        public System.Guid Id { get; set; } = default!;
 
         [System.Text.Json.Serialization.JsonPropertyName("modelId")]
-        public System.Guid ModelId { get; set; }
+        public System.Guid ModelId { get; set; } = default!;
 
         [System.Text.Json.Serialization.JsonPropertyName("siteId")]
-        public System.Guid SiteId { get; set; }
+        public System.Guid SiteId { get; set; } = default!;
 
         [System.Text.Json.Serialization.JsonPropertyName("versionNo")]
-        public string VersionNo { get; set; }
+        public string? VersionNo { get; set; } = default!;
 
         [System.Text.Json.Serialization.JsonPropertyName("name")]
-        public string Name { get; set; }
+        public string? Name { get; set; } = default!;
 
         [System.Text.Json.Serialization.JsonPropertyName("status")]
-        public string Status { get; set; }
+        public string? Status { get; set; } = default!;
 
         [System.Text.Json.Serialization.JsonPropertyName("basedOnVersionId")]
-        public System.Guid? BasedOnVersionId { get; set; }
+        public System.Guid? BasedOnVersionId { get; set; } = default!;
 
         [System.Text.Json.Serialization.JsonPropertyName("contentRevision")]
-        public long ContentRevision { get; set; }
+        public long ContentRevision { get; set; } = default!;
 
         [System.Text.Json.Serialization.JsonPropertyName("contentHash")]
-        public string ContentHash { get; set; }
+        public string? ContentHash { get; set; } = default!;
 
         [System.Text.Json.Serialization.JsonPropertyName("validatedHash")]
-        public string ValidatedHash { get; set; }
+        public string? ValidatedHash { get; set; } = default!;
 
         [System.Text.Json.Serialization.JsonPropertyName("publishedAtUtc")]
-        public System.DateTimeOffset? PublishedAtUtc { get; set; }
+        public System.DateTimeOffset? PublishedAtUtc { get; set; } = default!;
 
         [System.Text.Json.Serialization.JsonPropertyName("rowVersion")]
-        public string RowVersion { get; set; }
+        public string? RowVersion { get; set; } = default!;
 
     }
 
@@ -5885,16 +5887,16 @@ namespace CP6.Space.Client
     {
 
         [System.Text.Json.Serialization.JsonPropertyName("items")]
-        public System.Collections.Generic.ICollection<SpaceWmsAdoptionDto> Items { get; set; }
+        public System.Collections.Generic.ICollection<SpaceWmsAdoptionDto>? Items { get; set; } = default!;
 
         [System.Text.Json.Serialization.JsonPropertyName("contentRevision")]
-        public long ContentRevision { get; set; }
+        public long ContentRevision { get; set; } = default!;
 
         [System.Text.Json.Serialization.JsonPropertyName("openWarningCount")]
-        public int OpenWarningCount { get; set; }
+        public int OpenWarningCount { get; set; } = default!;
 
         [System.Text.Json.Serialization.JsonPropertyName("openBlockingCount")]
-        public int OpenBlockingCount { get; set; }
+        public int OpenBlockingCount { get; set; } = default!;
 
     }
 
@@ -5903,64 +5905,64 @@ namespace CP6.Space.Client
     {
 
         [System.Text.Json.Serialization.JsonPropertyName("id")]
-        public System.Guid Id { get; set; }
+        public System.Guid Id { get; set; } = default!;
 
         [System.Text.Json.Serialization.JsonPropertyName("siteId")]
-        public System.Guid SiteId { get; set; }
+        public System.Guid SiteId { get; set; } = default!;
 
         [System.Text.Json.Serialization.JsonPropertyName("adapterId")]
-        public string AdapterId { get; set; }
+        public string? AdapterId { get; set; } = default!;
 
         [System.Text.Json.Serialization.JsonPropertyName("dataSource")]
-        public string DataSource { get; set; }
+        public string? DataSource { get; set; } = default!;
 
         [System.Text.Json.Serialization.JsonPropertyName("dataSourceKind")]
-        public string DataSourceKind { get; set; }
+        public string? DataSourceKind { get; set; } = default!;
 
         [System.Text.Json.Serialization.JsonPropertyName("wmsLogicalId")]
-        public System.Guid WmsLogicalId { get; set; }
+        public System.Guid WmsLogicalId { get; set; } = default!;
 
         [System.Text.Json.Serialization.JsonPropertyName("externalLocationId")]
-        public string ExternalLocationId { get; set; }
+        public string? ExternalLocationId { get; set; } = default!;
 
         [System.Text.Json.Serialization.JsonPropertyName("wmsLocationCode")]
-        public string WmsLocationCode { get; set; }
+        public string? WmsLocationCode { get; set; } = default!;
 
         [System.Text.Json.Serialization.JsonPropertyName("wmsIsActive")]
-        public bool WmsIsActive { get; set; }
+        public bool WmsIsActive { get; set; } = default!;
 
         [System.Text.Json.Serialization.JsonPropertyName("externalVersion")]
-        public string ExternalVersion { get; set; }
+        public string? ExternalVersion { get; set; } = default!;
 
         [System.Text.Json.Serialization.JsonPropertyName("wmsStateHash")]
-        public string WmsStateHash { get; set; }
+        public string? WmsStateHash { get; set; } = default!;
 
         [System.Text.Json.Serialization.JsonPropertyName("lastObservedAtUtc")]
-        public System.DateTimeOffset LastObservedAtUtc { get; set; }
+        public System.DateTimeOffset LastObservedAtUtc { get; set; } = default!;
 
         [System.Text.Json.Serialization.JsonPropertyName("status")]
-        public string Status { get; set; }
+        public string? Status { get; set; } = default!;
 
         [System.Text.Json.Serialization.JsonPropertyName("modelVersionId")]
-        public System.Guid? ModelVersionId { get; set; }
+        public System.Guid? ModelVersionId { get; set; } = default!;
 
         [System.Text.Json.Serialization.JsonPropertyName("locationLogicalId")]
-        public System.Guid? LocationLogicalId { get; set; }
+        public System.Guid? LocationLogicalId { get; set; } = default!;
 
         [System.Text.Json.Serialization.JsonPropertyName("spaceLocationCode")]
-        public string SpaceLocationCode { get; set; }
+        public string? SpaceLocationCode { get; set; } = default!;
 
         [System.Text.Json.Serialization.JsonPropertyName("hasGeometry")]
-        public bool HasGeometry { get; set; }
+        public bool HasGeometry { get; set; } = default!;
 
         [System.Text.Json.Serialization.JsonPropertyName("differenceCode")]
-        public string DifferenceCode { get; set; }
+        public string? DifferenceCode { get; set; } = default!;
 
         [System.Text.Json.Serialization.JsonPropertyName("boundAtUtc")]
-        public System.DateTimeOffset? BoundAtUtc { get; set; }
+        public System.DateTimeOffset? BoundAtUtc { get; set; } = default!;
 
         [System.Text.Json.Serialization.JsonPropertyName("rowVersion")]
-        public string RowVersion { get; set; }
+        public string? RowVersion { get; set; } = default!;
 
     }
 
@@ -5970,55 +5972,55 @@ namespace CP6.Space.Client
 
         [System.Text.Json.Serialization.JsonPropertyName("locationLogicalId")]
         [System.ComponentModel.DataAnnotations.Required(AllowEmptyStrings = true)]
-        public System.Guid LocationLogicalId { get; set; }
+        public System.Guid LocationLogicalId { get; set; } = default!;
 
         [System.Text.Json.Serialization.JsonPropertyName("wmsLogicalId")]
         [System.ComponentModel.DataAnnotations.Required(AllowEmptyStrings = true)]
-        public System.Guid WmsLogicalId { get; set; }
+        public System.Guid WmsLogicalId { get; set; } = default!;
 
         [System.Text.Json.Serialization.JsonPropertyName("spaceLocationCode")]
         [System.ComponentModel.DataAnnotations.Required(AllowEmptyStrings = true)]
-        public string SpaceLocationCode { get; set; }
+        public string SpaceLocationCode { get; set; } = default!;
 
         [System.Text.Json.Serialization.JsonPropertyName("wmsLocationCode")]
         [System.ComponentModel.DataAnnotations.Required(AllowEmptyStrings = true)]
-        public string WmsLocationCode { get; set; }
+        public string WmsLocationCode { get; set; } = default!;
 
         [System.Text.Json.Serialization.JsonPropertyName("codeMatches")]
-        public bool CodeMatches { get; set; }
+        public bool CodeMatches { get; set; } = default!;
 
         [System.Text.Json.Serialization.JsonPropertyName("floorLogicalId")]
         [System.ComponentModel.DataAnnotations.Required(AllowEmptyStrings = true)]
-        public System.Guid FloorLogicalId { get; set; }
+        public System.Guid FloorLogicalId { get; set; } = default!;
 
         [System.Text.Json.Serialization.JsonPropertyName("floorCode")]
         [System.ComponentModel.DataAnnotations.Required(AllowEmptyStrings = true)]
-        public string FloorCode { get; set; }
+        public string FloorCode { get; set; } = default!;
 
         [System.Text.Json.Serialization.JsonPropertyName("floorName")]
         [System.ComponentModel.DataAnnotations.Required(AllowEmptyStrings = true)]
-        public string FloorName { get; set; }
+        public string FloorName { get; set; } = default!;
 
         [System.Text.Json.Serialization.JsonPropertyName("floorLevel")]
-        public int FloorLevel { get; set; }
+        public int FloorLevel { get; set; } = default!;
 
         [System.Text.Json.Serialization.JsonPropertyName("physicalQuantity")]
-        public decimal PhysicalQuantity { get; set; }
+        public decimal PhysicalQuantity { get; set; } = default!;
 
         [System.Text.Json.Serialization.JsonPropertyName("allocatedQuantity")]
-        public decimal AllocatedQuantity { get; set; }
+        public decimal AllocatedQuantity { get; set; } = default!;
 
         [System.Text.Json.Serialization.JsonPropertyName("materialNumber")]
-        public string MaterialNumber { get; set; }
+        public string? MaterialNumber { get; set; } = default!;
 
         [System.Text.Json.Serialization.JsonPropertyName("lotNumber")]
-        public string LotNumber { get; set; }
+        public string? LotNumber { get; set; } = default!;
 
         [System.Text.Json.Serialization.JsonPropertyName("containerNumber")]
-        public string ContainerNumber { get; set; }
+        public string? ContainerNumber { get; set; } = default!;
 
         [System.Text.Json.Serialization.JsonPropertyName("ownerId")]
-        public string OwnerId { get; set; }
+        public string? OwnerId { get; set; } = default!;
 
     }
 
@@ -6028,15 +6030,15 @@ namespace CP6.Space.Client
 
         [System.Text.Json.Serialization.JsonPropertyName("siteId")]
         [System.ComponentModel.DataAnnotations.Required(AllowEmptyStrings = true)]
-        public System.Guid SiteId { get; set; }
+        public System.Guid SiteId { get; set; } = default!;
 
         [System.Text.Json.Serialization.JsonPropertyName("publishedVersionId")]
         [System.ComponentModel.DataAnnotations.Required(AllowEmptyStrings = true)]
-        public System.Guid PublishedVersionId { get; set; }
+        public System.Guid PublishedVersionId { get; set; } = default!;
 
         [System.Text.Json.Serialization.JsonPropertyName("warehouseCode")]
         [System.ComponentModel.DataAnnotations.Required(AllowEmptyStrings = true)]
-        public string WarehouseCode { get; set; }
+        public string WarehouseCode { get; set; } = default!;
 
         [System.Text.Json.Serialization.JsonPropertyName("source")]
         [System.ComponentModel.DataAnnotations.Required]
@@ -6054,21 +6056,21 @@ namespace CP6.Space.Client
 
         [System.Text.Json.Serialization.JsonPropertyName("kind")]
         [System.ComponentModel.DataAnnotations.Required(AllowEmptyStrings = true)]
-        public string Kind { get; set; }
+        public string Kind { get; set; } = default!;
 
         [System.Text.Json.Serialization.JsonPropertyName("dataSourceId")]
         [System.ComponentModel.DataAnnotations.Required(AllowEmptyStrings = true)]
-        public string DataSourceId { get; set; }
+        public string DataSourceId { get; set; } = default!;
 
         [System.Text.Json.Serialization.JsonPropertyName("observedAtUtc")]
         [System.ComponentModel.DataAnnotations.Required(AllowEmptyStrings = true)]
-        public System.DateTimeOffset ObservedAtUtc { get; set; }
+        public System.DateTimeOffset ObservedAtUtc { get; set; } = default!;
 
         [System.Text.Json.Serialization.JsonPropertyName("isSimulated")]
-        public bool IsSimulated { get; set; }
+        public bool IsSimulated { get; set; } = default!;
 
         [System.Text.Json.Serialization.JsonPropertyName("isAvailable")]
-        public bool IsAvailable { get; set; }
+        public bool IsAvailable { get; set; } = default!;
 
     }
 
@@ -6078,79 +6080,79 @@ namespace CP6.Space.Client
 
         [System.Text.Json.Serialization.JsonPropertyName("taskId")]
         [System.ComponentModel.DataAnnotations.Required(AllowEmptyStrings = true)]
-        public string TaskId { get; set; }
+        public string TaskId { get; set; } = default!;
 
         [System.Text.Json.Serialization.JsonPropertyName("taskType")]
         [System.ComponentModel.DataAnnotations.Required(AllowEmptyStrings = true)]
-        public string TaskType { get; set; }
+        public string TaskType { get; set; } = default!;
 
         [System.Text.Json.Serialization.JsonPropertyName("status")]
         [System.ComponentModel.DataAnnotations.Required(AllowEmptyStrings = true)]
-        public string Status { get; set; }
+        public string Status { get; set; } = default!;
 
         [System.Text.Json.Serialization.JsonPropertyName("sequenceNo")]
-        public int SequenceNo { get; set; }
+        public int SequenceNo { get; set; } = default!;
 
         [System.Text.Json.Serialization.JsonPropertyName("locationLogicalId")]
         [System.ComponentModel.DataAnnotations.Required(AllowEmptyStrings = true)]
-        public System.Guid LocationLogicalId { get; set; }
+        public System.Guid LocationLogicalId { get; set; } = default!;
 
         [System.Text.Json.Serialization.JsonPropertyName("wmsLogicalId")]
         [System.ComponentModel.DataAnnotations.Required(AllowEmptyStrings = true)]
-        public System.Guid WmsLogicalId { get; set; }
+        public System.Guid WmsLogicalId { get; set; } = default!;
 
         [System.Text.Json.Serialization.JsonPropertyName("spaceLocationCode")]
         [System.ComponentModel.DataAnnotations.Required(AllowEmptyStrings = true)]
-        public string SpaceLocationCode { get; set; }
+        public string SpaceLocationCode { get; set; } = default!;
 
         [System.Text.Json.Serialization.JsonPropertyName("wmsLocationCode")]
         [System.ComponentModel.DataAnnotations.Required(AllowEmptyStrings = true)]
-        public string WmsLocationCode { get; set; }
+        public string WmsLocationCode { get; set; } = default!;
 
         [System.Text.Json.Serialization.JsonPropertyName("codeMatches")]
-        public bool CodeMatches { get; set; }
+        public bool CodeMatches { get; set; } = default!;
 
         [System.Text.Json.Serialization.JsonPropertyName("floorLogicalId")]
         [System.ComponentModel.DataAnnotations.Required(AllowEmptyStrings = true)]
-        public System.Guid FloorLogicalId { get; set; }
+        public System.Guid FloorLogicalId { get; set; } = default!;
 
         [System.Text.Json.Serialization.JsonPropertyName("floorCode")]
         [System.ComponentModel.DataAnnotations.Required(AllowEmptyStrings = true)]
-        public string FloorCode { get; set; }
+        public string FloorCode { get; set; } = default!;
 
         [System.Text.Json.Serialization.JsonPropertyName("floorName")]
         [System.ComponentModel.DataAnnotations.Required(AllowEmptyStrings = true)]
-        public string FloorName { get; set; }
+        public string FloorName { get; set; } = default!;
 
         [System.Text.Json.Serialization.JsonPropertyName("floorLevel")]
-        public int FloorLevel { get; set; }
+        public int FloorLevel { get; set; } = default!;
 
         [System.Text.Json.Serialization.JsonPropertyName("zoneLogicalId")]
-        public System.Guid? ZoneLogicalId { get; set; }
+        public System.Guid? ZoneLogicalId { get; set; } = default!;
 
         [System.Text.Json.Serialization.JsonPropertyName("zoneCode")]
-        public string ZoneCode { get; set; }
+        public string? ZoneCode { get; set; } = default!;
 
         [System.Text.Json.Serialization.JsonPropertyName("rackLogicalId")]
-        public System.Guid? RackLogicalId { get; set; }
+        public System.Guid? RackLogicalId { get; set; } = default!;
 
         [System.Text.Json.Serialization.JsonPropertyName("rackCode")]
-        public string RackCode { get; set; }
+        public string? RackCode { get; set; } = default!;
 
         [System.Text.Json.Serialization.JsonPropertyName("anchorXMillimeters")]
-        public double? AnchorXMillimeters { get; set; }
+        public double? AnchorXMillimeters { get; set; } = default!;
 
         [System.Text.Json.Serialization.JsonPropertyName("anchorYMillimeters")]
-        public double? AnchorYMillimeters { get; set; }
+        public double? AnchorYMillimeters { get; set; } = default!;
 
         [System.Text.Json.Serialization.JsonPropertyName("anchorZMillimeters")]
-        public double? AnchorZMillimeters { get; set; }
+        public double? AnchorZMillimeters { get; set; } = default!;
 
         [System.Text.Json.Serialization.JsonPropertyName("quantity")]
-        public decimal? Quantity { get; set; }
+        public decimal? Quantity { get; set; } = default!;
 
         [System.Text.Json.Serialization.JsonPropertyName("materialNumber")]
-        public string MaterialNumber { get; set; }
+        public string? MaterialNumber { get; set; } = default!;
 
     }
 
@@ -6160,15 +6162,15 @@ namespace CP6.Space.Client
 
         [System.Text.Json.Serialization.JsonPropertyName("siteId")]
         [System.ComponentModel.DataAnnotations.Required(AllowEmptyStrings = true)]
-        public System.Guid SiteId { get; set; }
+        public System.Guid SiteId { get; set; } = default!;
 
         [System.Text.Json.Serialization.JsonPropertyName("publishedVersionId")]
         [System.ComponentModel.DataAnnotations.Required(AllowEmptyStrings = true)]
-        public System.Guid PublishedVersionId { get; set; }
+        public System.Guid PublishedVersionId { get; set; } = default!;
 
         [System.Text.Json.Serialization.JsonPropertyName("warehouseCode")]
         [System.ComponentModel.DataAnnotations.Required(AllowEmptyStrings = true)]
-        public string WarehouseCode { get; set; }
+        public string WarehouseCode { get; set; } = default!;
 
         [System.Text.Json.Serialization.JsonPropertyName("source")]
         [System.ComponentModel.DataAnnotations.Required]
@@ -6185,19 +6187,19 @@ namespace CP6.Space.Client
     {
 
         [System.Text.Json.Serialization.JsonPropertyName("file")]
-        public SpaceFileDto File { get; set; }
+        public SpaceFileDto File { get; set; } = default!;
 
         [System.Text.Json.Serialization.JsonPropertyName("source")]
-        public SpaceSourceDto Source { get; set; }
+        public SpaceSourceDto Source { get; set; } = default!;
 
         [System.Text.Json.Serialization.JsonPropertyName("scanJobId")]
-        public System.Guid? ScanJobId { get; set; }
+        public System.Guid? ScanJobId { get; set; } = default!;
 
         [System.Text.Json.Serialization.JsonPropertyName("jobStatusUrl")]
-        public string JobStatusUrl { get; set; }
+        public string? JobStatusUrl { get; set; } = default!;
 
         [System.Text.Json.Serialization.JsonPropertyName("reused")]
-        public bool Reused { get; set; }
+        public bool Reused { get; set; } = default!;
 
     }
 
@@ -6228,37 +6230,37 @@ namespace CP6.Space.Client
     {
 
         [System.Text.Json.Serialization.JsonPropertyName("type")]
-        public string Type { get; set; }
+        public string? Type { get; set; } = default!;
 
         [System.Text.Json.Serialization.JsonPropertyName("title")]
-        public string Title { get; set; }
+        public string? Title { get; set; } = default!;
 
         [System.Text.Json.Serialization.JsonPropertyName("status")]
-        public int? Status { get; set; }
+        public int? Status { get; set; } = default!;
 
         [System.Text.Json.Serialization.JsonPropertyName("detail")]
-        public string Detail { get; set; }
+        public string? Detail { get; set; } = default!;
 
         [System.Text.Json.Serialization.JsonPropertyName("instance")]
-        public string Instance { get; set; }
+        public string? Instance { get; set; } = default!;
 
         [System.Text.Json.Serialization.JsonPropertyName("code")]
         [System.ComponentModel.DataAnnotations.Required]
-        public string Code { get; set; }
+        public string Code { get; set; } = default!;
 
         [System.Text.Json.Serialization.JsonPropertyName("traceId")]
         [System.ComponentModel.DataAnnotations.Required]
-        public string TraceId { get; set; }
+        public string TraceId { get; set; } = default!;
 
         [System.Text.Json.Serialization.JsonPropertyName("correlationId")]
         [System.ComponentModel.DataAnnotations.Required]
-        public string CorrelationId { get; set; }
+        public string CorrelationId { get; set; } = default!;
 
         [System.Text.Json.Serialization.JsonPropertyName("recovery")]
         [System.ComponentModel.DataAnnotations.Required]
         public SpaceRecoveryDetails Recovery { get; set; } = new SpaceRecoveryDetails();
 
-        private System.Collections.Generic.IDictionary<string, object> _additionalProperties;
+        private System.Collections.Generic.IDictionary<string, object>? _additionalProperties;
 
         [System.Text.Json.Serialization.JsonExtensionData]
         public System.Collections.Generic.IDictionary<string, object> AdditionalProperties
@@ -6275,10 +6277,10 @@ namespace CP6.Space.Client
 
         [System.Text.Json.Serialization.JsonPropertyName("action")]
         [System.ComponentModel.DataAnnotations.Required]
-        public string Action { get; set; }
+        public string Action { get; set; } = default!;
 
         [System.Text.Json.Serialization.JsonPropertyName("retryable")]
-        public bool Retryable { get; set; }
+        public bool Retryable { get; set; } = default!;
 
     }
 
@@ -6287,10 +6289,10 @@ namespace CP6.Space.Client
     {
 
         [System.Text.Json.Serialization.JsonPropertyName("items")]
-        public System.Collections.Generic.ICollection<SpaceAssetDto> Items { get; set; }
+        public System.Collections.Generic.ICollection<SpaceAssetDto>? Items { get; set; } = default!;
 
         [System.Text.Json.Serialization.JsonPropertyName("nextCursor")]
-        public string NextCursor { get; set; }
+        public string? NextCursor { get; set; } = default!;
 
     }
 
@@ -6299,10 +6301,10 @@ namespace CP6.Space.Client
     {
 
         [System.Text.Json.Serialization.JsonPropertyName("items")]
-        public System.Collections.Generic.ICollection<SpaceIssueDto> Items { get; set; }
+        public System.Collections.Generic.ICollection<SpaceIssueDto>? Items { get; set; } = default!;
 
         [System.Text.Json.Serialization.JsonPropertyName("nextCursor")]
-        public string NextCursor { get; set; }
+        public string? NextCursor { get; set; } = default!;
 
     }
 
@@ -6311,10 +6313,10 @@ namespace CP6.Space.Client
     {
 
         [System.Text.Json.Serialization.JsonPropertyName("items")]
-        public System.Collections.Generic.ICollection<SpaceSourceDto> Items { get; set; }
+        public System.Collections.Generic.ICollection<SpaceSourceDto>? Items { get; set; } = default!;
 
         [System.Text.Json.Serialization.JsonPropertyName("nextCursor")]
-        public string NextCursor { get; set; }
+        public string? NextCursor { get; set; } = default!;
 
     }
 
@@ -6323,10 +6325,10 @@ namespace CP6.Space.Client
     {
 
         [System.Text.Json.Serialization.JsonPropertyName("items")]
-        public System.Collections.Generic.ICollection<SpaceVersionDto> Items { get; set; }
+        public System.Collections.Generic.ICollection<SpaceVersionDto>? Items { get; set; } = default!;
 
         [System.Text.Json.Serialization.JsonPropertyName("nextCursor")]
-        public string NextCursor { get; set; }
+        public string? NextCursor { get; set; } = default!;
 
     }
 
@@ -6335,10 +6337,10 @@ namespace CP6.Space.Client
     {
 
         [System.Text.Json.Serialization.JsonPropertyName("items")]
-        public System.Collections.Generic.ICollection<SpaceWmsAdoptionDto> Items { get; set; }
+        public System.Collections.Generic.ICollection<SpaceWmsAdoptionDto>? Items { get; set; } = default!;
 
         [System.Text.Json.Serialization.JsonPropertyName("nextCursor")]
-        public string NextCursor { get; set; }
+        public string? NextCursor { get; set; } = default!;
 
     }
 
@@ -6350,12 +6352,12 @@ namespace CP6.Space.Client
         {
         }
 
-        public FileParameter(System.IO.Stream data, string fileName)
+        public FileParameter(System.IO.Stream data, string? fileName)
             : this (data, fileName, null)
         {
         }
 
-        public FileParameter(System.IO.Stream data, string fileName, string contentType)
+        public FileParameter(System.IO.Stream data, string? fileName, string? contentType)
         {
             Data = data;
             FileName = fileName;
@@ -6364,16 +6366,16 @@ namespace CP6.Space.Client
 
         public System.IO.Stream Data { get; private set; }
 
-        public string FileName { get; private set; }
+        public string? FileName { get; private set; }
 
-        public string ContentType { get; private set; }
+        public string? ContentType { get; private set; }
     }
 
     [System.CodeDom.Compiler.GeneratedCode("NSwag", "14.7.1.0 (NJsonSchema v11.6.1.0 (Newtonsoft.Json v13.0.0.0))")]
     public partial class FileResponse : System.IDisposable
     {
-        private System.IDisposable _client;
-        private System.IDisposable _response;
+        private System.IDisposable? _client;
+        private System.IDisposable? _response;
 
         public int StatusCode { get; private set; }
 
@@ -6386,7 +6388,7 @@ namespace CP6.Space.Client
             get { return StatusCode == 206; }
         }
 
-        public FileResponse(int statusCode, System.Collections.Generic.IReadOnlyDictionary<string, System.Collections.Generic.IEnumerable<string>> headers, System.IO.Stream stream, System.IDisposable client, System.IDisposable response)
+        public FileResponse(int statusCode, System.Collections.Generic.IReadOnlyDictionary<string, System.Collections.Generic.IEnumerable<string>> headers, System.IO.Stream stream, System.IDisposable? client, System.IDisposable? response)
         {
             StatusCode = statusCode;
             Headers = headers;
@@ -6411,11 +6413,11 @@ namespace CP6.Space.Client
     {
         public int StatusCode { get; private set; }
 
-        public string Response { get; private set; }
+        public string? Response { get; private set; }
 
         public System.Collections.Generic.IReadOnlyDictionary<string, System.Collections.Generic.IEnumerable<string>> Headers { get; private set; }
 
-        public ApiException(string message, int statusCode, string response, System.Collections.Generic.IReadOnlyDictionary<string, System.Collections.Generic.IEnumerable<string>> headers, System.Exception innerException)
+        public ApiException(string message, int statusCode, string? response, System.Collections.Generic.IReadOnlyDictionary<string, System.Collections.Generic.IEnumerable<string>> headers, System.Exception? innerException)
             : base(message + "\n\nStatus: " + statusCode + "\nResponse: \n" + ((response == null) ? "(null)" : response.Substring(0, response.Length >= 512 ? 512 : response.Length)), innerException)
         {
             StatusCode = statusCode;
@@ -6434,7 +6436,7 @@ namespace CP6.Space.Client
     {
         public TResult Result { get; private set; }
 
-        public ApiException(string message, int statusCode, string response, System.Collections.Generic.IReadOnlyDictionary<string, System.Collections.Generic.IEnumerable<string>> headers, TResult result, System.Exception innerException)
+        public ApiException(string message, int statusCode, string? response, System.Collections.Generic.IReadOnlyDictionary<string, System.Collections.Generic.IEnumerable<string>> headers, TResult result, System.Exception? innerException)
             : base(message, statusCode, response, headers, innerException)
         {
             Result = result;

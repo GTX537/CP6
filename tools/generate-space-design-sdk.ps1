@@ -48,6 +48,75 @@ function Normalize-GeneratedText {
     )
 }
 
+function Set-SpaceRuntimeTypeScriptNullableTypes {
+    param([Parameter(Mandatory)][string]$Path)
+
+    $content = [System.IO.File]::ReadAllText($Path)
+    $blocks = @(
+        @{
+            Start = 'export class SpaceWmsRuntimeInventoryItemDto'
+            End = 'export class SpaceWmsRuntimeInventoryResponse'
+            Properties = @(
+                @('materialNumber', 'string'),
+                @('lotNumber', 'string'),
+                @('containerNumber', 'string'),
+                @('ownerId', 'string')
+            )
+        },
+        @{
+            Start = 'export class SpaceWmsRuntimeTaskItemDto'
+            End = 'export class SpaceWmsRuntimeTaskResponse'
+            Properties = @(
+                @('zoneLogicalId', 'string'),
+                @('zoneCode', 'string'),
+                @('rackLogicalId', 'string'),
+                @('rackCode', 'string'),
+                @('anchorXMillimeters', 'number'),
+                @('anchorYMillimeters', 'number'),
+                @('anchorZMillimeters', 'number'),
+                @('quantity', 'number'),
+                @('materialNumber', 'string')
+            )
+        }
+    )
+
+    foreach ($block in $blocks) {
+        $start = $content.IndexOf(
+            $block.Start,
+            [System.StringComparison]::Ordinal)
+        $end = $content.IndexOf(
+            $block.End,
+            $start,
+            [System.StringComparison]::Ordinal)
+        if ($start -lt 0 -or $end -le $start) {
+            throw "Could not locate generated TypeScript runtime block '$($block.Start)'."
+        }
+
+        $segment = $content.Substring($start, $end - $start)
+        foreach ($property in $block.Properties) {
+            $old = "$($property[0])?: $($property[1]) | undefined;"
+            $new = "$($property[0])?: $($property[1]) | null | undefined;"
+            $count = [System.Text.RegularExpressions.Regex]::Matches(
+                $segment,
+                [System.Text.RegularExpressions.Regex]::Escape($old)
+            ).Count
+            if ($count -ne 2) {
+                throw "Expected two generated declarations for '$old'; found $count."
+            }
+            $segment = $segment.Replace($old, $new)
+        }
+
+        $content = $content.Substring(0, $start) + $segment +
+            $content.Substring($end)
+    }
+
+    [System.IO.File]::WriteAllText(
+        $Path,
+        $content,
+        [System.Text.UTF8Encoding]::new($false)
+    )
+}
+
 try {
     $generatedOpenApi = Join-Path $tempRoot 'design-v1.openapi.json'
     $generatedCSharp = Join-Path $tempRoot 'SpaceDesignV1Client.g.cs'
@@ -68,6 +137,7 @@ try {
         /classname:SpaceDesignV1Client `
         /UseBaseUrl:false `
         /GenerateClientInterfaces:true `
+        /GenerateNullableReferenceTypes:true `
         /JsonLibrary:SystemTextJson
     if ($LASTEXITCODE -ne 0) { throw 'C# client generation failed.' }
 
@@ -78,6 +148,8 @@ try {
         /template:Fetch `
         /GenerateClientInterfaces:true
     if ($LASTEXITCODE -ne 0) { throw 'TypeScript client generation failed.' }
+
+    Set-SpaceRuntimeTypeScriptNullableTypes -Path $generatedTypeScript
 
     Normalize-GeneratedText -Path $generatedOpenApi
     Normalize-GeneratedText -Path $generatedCSharp

@@ -624,6 +624,14 @@ public sealed class SpaceDesignV1OpenApiTests
             "public decimal? Quantity { get; set; }",
             csharpTask,
             StringComparison.Ordinal);
+        Assert.Contains(
+            "public string? MaterialNumber { get; set; }",
+            csharpInventory,
+            StringComparison.Ordinal);
+        Assert.Contains(
+            "public string? ZoneCode { get; set; }",
+            csharpTask,
+            StringComparison.Ordinal);
 
         var inventoryResponse = ExtractTypeBlock(
             typescript,
@@ -683,6 +691,14 @@ public sealed class SpaceDesignV1OpenApiTests
             "spaceLocationCode",
             "wmsLocationCode",
             "codeMatches");
+        Assert.Contains(
+            "materialNumber?: string | null | undefined;",
+            inventoryItem,
+            StringComparison.Ordinal);
+        Assert.Contains(
+            "zoneCode?: string | null | undefined;",
+            taskItem,
+            StringComparison.Ordinal);
     }
 
     private static JsonElement Schema(JsonElement schemas, string name) =>

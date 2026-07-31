@@ -5750,10 +5750,10 @@ export class SpaceWmsRuntimeInventoryItemDto implements ISpaceWmsRuntimeInventor
     floorLevel!: number;
     physicalQuantity!: number;
     allocatedQuantity!: number;
-    materialNumber?: string | undefined;
-    lotNumber?: string | undefined;
-    containerNumber?: string | undefined;
-    ownerId?: string | undefined;
+    materialNumber?: string | null | undefined;
+    lotNumber?: string | null | undefined;
+    containerNumber?: string | null | undefined;
+    ownerId?: string | null | undefined;
 
     constructor(data?: ISpaceWmsRuntimeInventoryItemDto) {
         if (data) {
@@ -5824,10 +5824,10 @@ export interface ISpaceWmsRuntimeInventoryItemDto {
     floorLevel: number;
     physicalQuantity: number;
     allocatedQuantity: number;
-    materialNumber?: string | undefined;
-    lotNumber?: string | undefined;
-    containerNumber?: string | undefined;
-    ownerId?: string | undefined;
+    materialNumber?: string | null | undefined;
+    lotNumber?: string | null | undefined;
+    containerNumber?: string | null | undefined;
+    ownerId?: string | null | undefined;
 }
 
 export class SpaceWmsRuntimeInventoryResponse implements ISpaceWmsRuntimeInventoryResponse {
@@ -5960,15 +5960,15 @@ export class SpaceWmsRuntimeTaskItemDto implements ISpaceWmsRuntimeTaskItemDto {
     floorCode!: string;
     floorName!: string;
     floorLevel!: number;
-    zoneLogicalId?: string | undefined;
-    zoneCode?: string | undefined;
-    rackLogicalId?: string | undefined;
-    rackCode?: string | undefined;
-    anchorXMillimeters?: number | undefined;
-    anchorYMillimeters?: number | undefined;
-    anchorZMillimeters?: number | undefined;
-    quantity?: number | undefined;
-    materialNumber?: string | undefined;
+    zoneLogicalId?: string | null | undefined;
+    zoneCode?: string | null | undefined;
+    rackLogicalId?: string | null | undefined;
+    rackCode?: string | null | undefined;
+    anchorXMillimeters?: number | null | undefined;
+    anchorYMillimeters?: number | null | undefined;
+    anchorZMillimeters?: number | null | undefined;
+    quantity?: number | null | undefined;
+    materialNumber?: string | null | undefined;
 
     constructor(data?: ISpaceWmsRuntimeTaskItemDto) {
         if (data) {
@@ -6055,15 +6055,15 @@ export interface ISpaceWmsRuntimeTaskItemDto {
     floorCode: string;
     floorName: string;
     floorLevel: number;
-    zoneLogicalId?: string | undefined;
-    zoneCode?: string | undefined;
-    rackLogicalId?: string | undefined;
-    rackCode?: string | undefined;
-    anchorXMillimeters?: number | undefined;
-    anchorYMillimeters?: number | undefined;
-    anchorZMillimeters?: number | undefined;
-    quantity?: number | undefined;
-    materialNumber?: string | undefined;
+    zoneLogicalId?: string | null | undefined;
+    zoneCode?: string | null | undefined;
+    rackLogicalId?: string | null | undefined;
+    rackCode?: string | null | undefined;
+    anchorXMillimeters?: number | null | undefined;
+    anchorYMillimeters?: number | null | undefined;
+    anchorZMillimeters?: number | null | undefined;
+    quantity?: number | null | undefined;
+    materialNumber?: string | null | undefined;
 }
 
 export class SpaceWmsRuntimeTaskResponse implements ISpaceWmsRuntimeTaskResponse {
