@@ -2,7 +2,16 @@
 
 最后更新：2026-07-31
 
+## E07-S05 完成状态（2026-07-31）
+
+- E07-S05 存量 WMS 采纳与绑定已完成：独立采纳账本、刷新、分页、单项/批量绑定、空位放置、差异 Issue 同步、rowversion 并发、权限/OpenAPI/SDK 和 Design V1 编辑器侧栏均已闭环。
+- 功能提交 `15ccf992`，no-ff 集成提交 `389bf4ec`；交付报告见 `docs/space/reports/e07-s05-wms-adoption.md`。
+- 验证：Space Unit 218；默认 Space Integration 56 passed / 48 SQL-gated skipped；WMS 聚焦 11/11，其中 KOUSQLSERVER 3/3；OpenAPI/权限 35/35；前端 98 files / 579 tests；production build、完整 solution build、EF model drift 和 SDK drift 均通过。
+- E07-S01 至 E07-S05 已全部进入受控集成基线。下一张建议卡为 E08-S01 统一运行态数据源接口；库存/任务继续保持 WMS 运行态权威，不进入 Design Revision。
+
 ## Git
+
+- Space E07 S05 功能/集成提交：`15ccf992` / `389bf4ec`
 
 - 交付分支：`main`
 - T6 通过 merge commit `d79a39c` 合入并推送；T7 冒烟修复为 `ffca422`
