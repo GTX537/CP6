@@ -53,6 +53,14 @@ public enum SpaceExternalBindingState : short
     PendingRemoval = 2,
 }
 
+public enum SpaceWmsAdoptionStatus : short
+{
+    Unbound = 0,
+    Bound = 1,
+    Diverged = 2,
+    MissingInWms = 3,
+}
+
 public enum SpaceSourceType : short
 {
     Dwg = 0,

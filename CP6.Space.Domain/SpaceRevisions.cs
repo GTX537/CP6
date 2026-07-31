@@ -531,6 +531,27 @@ public sealed class SpaceLocationRevision : SpaceRevisionEntity
         revision.InitializeRevision(tenantId, modelVersionId, logicalId);
         return revision;
     }
+
+    public void BindAdoptedLocationCode(string locationCode)
+    {
+        var normalized = SpaceRevisionValue.RequiredText(
+            locationCode,
+            200,
+            nameof(locationCode));
+        if (ExternalBindingState == SpaceExternalBindingState.Bound &&
+            !string.Equals(
+                LocationCode,
+                normalized,
+                StringComparison.Ordinal))
+        {
+            throw new InvalidOperationException(
+                "A bound WMS location code cannot be replaced.");
+        }
+
+        LocationCode = normalized;
+        CodeOrigin = SpaceLocationCodeOrigin.Adopted;
+        ExternalBindingState = SpaceExternalBindingState.Bound;
+    }
 }
 
 public sealed class SpaceElementRevision : SpaceRevisionEntity

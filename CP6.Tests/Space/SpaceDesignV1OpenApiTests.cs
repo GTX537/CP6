@@ -36,6 +36,11 @@ public sealed class SpaceDesignV1OpenApiTests
             "/api/space/design/v1/versions/{versionId}/underlay-sources",
             "/api/space/design/v1/jobs/{jobId}",
             "/api/space/design/v1/versions/{versionId}/issues",
+            "/api/space/design/v1/versions/{versionId}/wms-adoption/refresh",
+            "/api/space/design/v1/versions/{versionId}/wms-adoption/locations",
+            "/api/space/design/v1/versions/{versionId}/wms-adoption/locations/{adoptionId}/bind",
+            "/api/space/design/v1/versions/{versionId}/wms-adoption/bindings:batch",
+            "/api/space/design/v1/versions/{versionId}/wms-adoption/locations/{adoptionId}/place",
         };
 
         Assert.Equal(
@@ -50,8 +55,8 @@ public sealed class SpaceDesignV1OpenApiTests
             .Select(operation =>
                 operation.Value.GetProperty("operationId").GetString())
             .ToArray();
-        Assert.Equal(18, operationIds.Length);
-        Assert.Equal(18, operationIds.Distinct().Count());
+        Assert.Equal(23, operationIds.Length);
+        Assert.Equal(23, operationIds.Distinct().Count());
         Assert.Contains("GetAssets", operationIds);
         Assert.Contains("CreateAsset", operationIds);
         Assert.Contains("CreateVersion", operationIds);
@@ -64,6 +69,77 @@ public sealed class SpaceDesignV1OpenApiTests
         Assert.Contains("AttachUnderlay", operationIds);
         Assert.Contains("GetUnderlayCalibration", operationIds);
         Assert.Contains("CalibrateUnderlay", operationIds);
+        Assert.Contains("RefreshWmsAdoption", operationIds);
+        Assert.Contains("GetWmsAdoptionLocations", operationIds);
+        Assert.Contains("BindWmsAdoption", operationIds);
+        Assert.Contains("BindWmsAdoptionBatch", operationIds);
+        Assert.Contains("PlaceWmsAdoption", operationIds);
+    }
+
+    [Theory]
+    [InlineData(
+        "/api/space/design/v1/versions/{versionId}/wms-adoption/locations/{adoptionId}/bind",
+        "CP6.Space.Contracts.BindSpaceWmsAdoptionRequest")]
+    [InlineData(
+        "/api/space/design/v1/versions/{versionId}/wms-adoption/bindings:batch",
+        "CP6.Space.Contracts.BatchBindSpaceWmsAdoptionRequest")]
+    [InlineData(
+        "/api/space/design/v1/versions/{versionId}/wms-adoption/locations/{adoptionId}/place",
+        "CP6.Space.Contracts.PlaceSpaceWmsAdoptionRequest")]
+    public void Wms_adoption_writes_use_stable_body_and_response_contracts(
+        string path,
+        string requestSchema)
+    {
+        using var document = ReadContract();
+        var operation = document.RootElement
+            .GetProperty("paths")
+            .GetProperty(path)
+            .GetProperty("post");
+
+        Assert.True(
+            operation.GetProperty("requestBody").GetProperty("required")
+                .GetBoolean());
+        Assert.Equal(
+            $"#/components/schemas/{requestSchema}",
+            operation.GetProperty("requestBody")
+                .GetProperty("content")
+                .GetProperty("application/json")
+                .GetProperty("schema")
+                .GetProperty("$ref")
+                .GetString());
+        Assert.Equal(
+            "#/components/schemas/CP6.Space.Contracts.SpaceWmsAdoptionCommandResponse",
+            operation.GetProperty("responses")
+                .GetProperty("200")
+                .GetProperty("content")
+                .GetProperty("application/json")
+                .GetProperty("schema")
+                .GetProperty("$ref")
+                .GetString());
+    }
+
+    [Fact]
+    public void Wms_refresh_exposes_gateway_and_unavailable_problem_details()
+    {
+        using var document = ReadContract();
+        var responses = document.RootElement
+            .GetProperty("paths")
+            .GetProperty(
+                "/api/space/design/v1/versions/{versionId}/wms-adoption/refresh")
+            .GetProperty("post")
+            .GetProperty("responses");
+
+        foreach (var status in new[] { "502", "503" })
+        {
+            Assert.Equal(
+                "#/components/schemas/CP6.WebApi.OpenApi.SpaceDesignProblemDetails",
+                responses.GetProperty(status)
+                    .GetProperty("content")
+                    .GetProperty("application/problem+json")
+                    .GetProperty("schema")
+                    .GetProperty("$ref")
+                    .GetString());
+        }
     }
 
     [Fact]
@@ -316,6 +392,11 @@ public sealed class SpaceDesignV1OpenApiTests
                      "CalibrateUnderlay",
                      "GetJob",
                      "GetIssues",
+                     "RefreshWmsAdoption",
+                     "GetWmsAdoptionLocations",
+                     "BindWmsAdoption",
+                     "BindWmsAdoptionBatch",
+                     "PlaceWmsAdoption",
                  })
         {
             Assert.Contains(operation, csharp, StringComparison.Ordinal);

@@ -69,7 +69,12 @@ public sealed class SpaceAuditPermissionSeedTests
                     x.MenuId == 906 &&
                     x.ActionCode == "read"));
             Assert.All(
-                new[] { "model:generate-ai", "model:review-ai" },
+                new[]
+                {
+                    "model:generate-ai",
+                    "model:review-ai",
+                    "integration:manage",
+                },
                 action =>
                 {
                     Assert.True(db.Sys_MenuActions

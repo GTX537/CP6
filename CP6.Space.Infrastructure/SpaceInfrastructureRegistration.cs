@@ -106,6 +106,12 @@ public static class SpaceInfrastructureRegistration
         services.AddScoped<SpaceSourceCoordinator>();
         services.AddScoped<ISpaceDesignV1Service, SpaceDesignV1Service>();
         services.AddScoped<ISpaceUnderlayV1Service, SpaceUnderlayV1Service>();
+        services.AddScoped<
+            ISpaceWarehouseResolver,
+            Cp6SpaceWarehouseResolver>();
+        services.AddScoped<
+            ISpaceWmsAdoptionService,
+            SpaceWmsAdoptionService>();
         services.TryAddSingleton<StandardSpaceWmsSimulator>();
         services.TryAddSingleton<ISpaceWmsSimulatorControl>(
             provider =>
