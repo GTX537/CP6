@@ -29,19 +29,12 @@ public sealed class SpaceModelSource : SpaceTenantEntity
         string displayName)
     {
         ArgumentNullException.ThrowIfNull(file);
-        if (modelVersionId == Guid.Empty)
-            throw new ArgumentException("Model version is required.", nameof(modelVersionId));
-        if (file.TenantId != tenantId)
-            throw new SpaceTenantScopeException("Source and file tenants must match.");
-        if (file.State != SpaceFileState.Clean || file.IsDeleted)
-            throw new SpaceFileStateException("A source requires a clean file.");
-        if (file.RetentionClass != SpaceFileRetentionClass.Source)
-            throw new SpaceFileStateException("A source requires Source retention.");
-        if (file.Sha256 is null)
-            throw new SpaceFileStateException("A source file requires a SHA-256 hash.");
-        if (!MatchesSourceType(sourceType, file.Extension))
-            throw new SpaceFileStateException(
-                "The source type does not match the clean file extension.");
+        ValidateFileSource(
+            tenantId,
+            modelVersionId,
+            sourceType,
+            file,
+            requireClean: true);
 
         var source = new SpaceModelSource
         {
@@ -49,8 +42,42 @@ public sealed class SpaceModelSource : SpaceTenantEntity
             SourceType = sourceType,
             FileId = file.Id,
             DisplayName = RequireText(displayName, 260, nameof(displayName)),
-            Sha256 = file.Sha256,
+            Sha256 = file.Sha256!,
             State = SpaceSourceState.Ready,
+        };
+        source.SetTenant(tenantId);
+        return source;
+    }
+
+    public static SpaceModelSource CreatePendingFileSource(
+        Guid tenantId,
+        Guid modelVersionId,
+        SpaceSourceType sourceType,
+        SpaceFile file,
+        string displayName)
+    {
+        ArgumentNullException.ThrowIfNull(file);
+        ValidateFileSource(
+            tenantId,
+            modelVersionId,
+            sourceType,
+            file,
+            requireClean: false);
+        if (file.State is not (
+            SpaceFileState.Quarantined or SpaceFileState.Scanning))
+        {
+            throw new SpaceFileStateException(
+                "A pending source requires a quarantined or scanning file.");
+        }
+
+        var source = new SpaceModelSource
+        {
+            ModelVersionId = modelVersionId,
+            SourceType = sourceType,
+            FileId = file.Id,
+            DisplayName = RequireText(displayName, 260, nameof(displayName)),
+            Sha256 = file.Sha256!,
+            State = SpaceSourceState.Scanning,
         };
         source.SetTenant(tenantId);
         return source;
@@ -138,6 +165,29 @@ public sealed class SpaceModelSource : SpaceTenantEntity
         State = SpaceSourceState.Rejected;
     }
 
+    public void CompleteFileScan(SpaceFile file)
+    {
+        ArgumentNullException.ThrowIfNull(file);
+        if (FileId != file.Id || TenantId != file.TenantId)
+        {
+            throw new SpaceTenantScopeException(
+                "The source and scanned file must share tenant and identity.");
+        }
+        if (State != SpaceSourceState.Scanning)
+        {
+            throw new SpaceFileStateException(
+                "Only a scanning source can accept a file scan result.");
+        }
+
+        State = file.State switch
+        {
+            SpaceFileState.Clean => SpaceSourceState.Ready,
+            SpaceFileState.Rejected => SpaceSourceState.Rejected,
+            _ => throw new SpaceFileStateException(
+                "The file scan has not reached a terminal result."),
+        };
+    }
+
     private void RequireState(SpaceSourceState expected)
     {
         if (State != expected)
@@ -165,6 +215,30 @@ public sealed class SpaceModelSource : SpaceTenantEntity
             (SpaceSourceType.Excel, ".xlsx") => true,
             _ => false,
         };
+
+    private static void ValidateFileSource(
+        Guid tenantId,
+        Guid modelVersionId,
+        SpaceSourceType sourceType,
+        SpaceFile file,
+        bool requireClean)
+    {
+        if (modelVersionId == Guid.Empty)
+            throw new ArgumentException("Model version is required.", nameof(modelVersionId));
+        if (file.TenantId != tenantId)
+            throw new SpaceTenantScopeException("Source and file tenants must match.");
+        if ((requireClean && file.State != SpaceFileState.Clean) || file.IsDeleted)
+            throw new SpaceFileStateException("A source requires a clean file.");
+        if (file.RetentionClass != SpaceFileRetentionClass.Source)
+            throw new SpaceFileStateException("A source requires Source retention.");
+        if (file.Sha256 is null)
+            throw new SpaceFileStateException("A source file requires a SHA-256 hash.");
+        if (!MatchesSourceType(sourceType, file.Extension))
+        {
+            throw new SpaceFileStateException(
+                "The source type does not match the file extension.");
+        }
+    }
 
     private static string RequireText(string value, int maxLength, string parameterName)
     {

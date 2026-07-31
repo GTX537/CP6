@@ -17,10 +17,28 @@ public sealed class SpaceFileSafetySqlServerTests
     {
         await WithDatabaseAsync(async (connectionString, execution, clock) =>
         {
+            var design = await SeedWritableDesignAsync(
+                connectionString,
+                execution,
+                clock);
             var (file, _) = await SeedFileScanAsync(
                 connectionString,
                 execution,
                 clock);
+            var source = SpaceModelSource.CreatePendingFileSource(
+                execution.TenantId,
+                design.DraftVersionId,
+                SpaceSourceType.Pdf,
+                file,
+                file.OriginalName);
+            await using (var sourceContext = CreateContext(
+                             connectionString,
+                             execution,
+                             clock))
+            {
+                sourceContext.Sources.Add(source);
+                await sourceContext.SaveChangesAsync();
+            }
             await using var worker = CreateContext(
                 connectionString,
                 execution,
@@ -50,6 +68,9 @@ public sealed class SpaceFileSafetySqlServerTests
             Assert.Equal(file.Id, persistedFile.Id);
             Assert.Equal(SpaceFileState.Clean, persistedFile.State);
             Assert.Equal("clamav", persistedFile.ScanEngine);
+            Assert.Equal(
+                SpaceSourceState.Ready,
+                (await verify.Sources.SingleAsync()).State);
             Assert.Equal(SpaceJobStatus.Succeeded, job.Status);
             Assert.Equal(SpaceJobAttemptOutcome.Succeeded, attempt.Outcome);
         });
@@ -102,6 +123,76 @@ public sealed class SpaceFileSafetySqlServerTests
             Assert.Equal(
                 SpaceFileTombstoneStatus.Referenced,
                 deletion.Status);
+        });
+    }
+
+    [SqlServerFact]
+    public async Task Ready_underlay_attachment_is_revisioned_and_idempotent()
+    {
+        await WithDatabaseAsync(async (connectionString, execution, clock) =>
+        {
+            var design = await SeedWritableDesignAsync(
+                connectionString,
+                execution,
+                clock);
+            var file = NewFile(
+                execution.TenantId,
+                clean: true,
+                retainUntilUtc: Now.AddDays(30));
+            var source = SpaceModelSource.CreateFileSource(
+                execution.TenantId,
+                design.DraftVersionId,
+                SpaceSourceType.Pdf,
+                file,
+                file.OriginalName);
+            await using (var seed = CreateContext(
+                             connectionString,
+                             execution,
+                             clock))
+            {
+                seed.AddRange(file, source);
+                await seed.SaveChangesAsync();
+            }
+
+            await using var context = CreateContext(
+                connectionString,
+                execution,
+                clock);
+            var service = NewUnderlayService(
+                context,
+                execution,
+                clock,
+                design.SiteId);
+            var request = new AttachSpaceUnderlayRequest(
+                source.Id,
+                ExpectedFloorRevision: 0);
+
+            var first = await service.AttachAsync(
+                design.DraftVersionId,
+                design.FloorLogicalId,
+                request,
+                "attach-underlay-once");
+            var replay = await service.AttachAsync(
+                design.DraftVersionId,
+                design.FloorLogicalId,
+                request,
+                "attach-underlay-once");
+
+            Assert.False(first.IdempotentReplay);
+            Assert.True(replay.IdempotentReplay);
+            Assert.Equal(source.Id, first.Floor.UnderlaySourceId);
+            Assert.Equal(1, first.Floor.RevisionNumber);
+            context.ChangeTracker.Clear();
+            var floor = await context.FloorRevisions.SingleAsync(
+                candidate =>
+                    candidate.ModelVersionId == design.DraftVersionId &&
+                    candidate.LogicalId == design.FloorLogicalId);
+            var version = await context.Versions.SingleAsync(
+                candidate => candidate.Id == design.DraftVersionId);
+            Assert.Equal(source.Id, floor.UnderlaySourceId);
+            Assert.Equal(1, floor.Revision);
+            Assert.Equal(1, version.ContentRevision);
+            Assert.Single(context.IdempotencyRecords);
         });
     }
 
@@ -363,7 +454,10 @@ public sealed class SpaceFileSafetySqlServerTests
         return file;
     }
 
-    private static async Task<(Guid SiteId, Guid DraftVersionId)>
+    private static async Task<(
+        Guid SiteId,
+        Guid DraftVersionId,
+        Guid FloorLogicalId)>
         SeedWritableDesignAsync(
             string connectionString,
             TestExecutionContext execution,
@@ -402,9 +496,17 @@ public sealed class SpaceFileSafetySqlServerTests
             "Draft",
             published.Id);
         model.ReserveDraft(draft);
-        context.Versions.Add(draft);
+        var floor = SpaceFloorRevision.Create(
+            execution.TenantId,
+            draft.Id,
+            Guid.NewGuid(),
+            model.SiteId,
+            1,
+            "F1",
+            "Floor 1");
+        context.AddRange(draft, floor);
         await context.SaveChangesAsync();
-        return (model.SiteId, draft.Id);
+        return (model.SiteId, draft.Id, floor.LogicalId);
     }
 
     private static SpaceDesignV1Service NewDesignService(
@@ -425,6 +527,27 @@ public sealed class SpaceFileSafetySqlServerTests
                     execution,
                     clock)),
             new SpaceSourceCoordinator(execution));
+
+    private static SpaceUnderlayV1Service NewUnderlayService(
+        SpaceContext context,
+        TestExecutionContext execution,
+        TestClock clock,
+        Guid siteId)
+    {
+        var files = new UnusedFileStore();
+        return new SpaceUnderlayV1Service(
+            context,
+            execution,
+            new TestAccessEvaluator(siteId),
+            new SpaceFileUploadService(
+                execution,
+                files,
+                new EfSpaceFileCatalog(context),
+                clock: clock),
+            new SpaceSourceCoordinator(execution),
+            files,
+            clock);
+    }
 
     private static async Task WithDatabaseAsync(
         Func<string, TestExecutionContext, TestClock, Task> action)
@@ -517,5 +640,31 @@ public sealed class SpaceFileSafetySqlServerTests
             string expectedResource,
             string expectedFilterHash) =>
             throw new NotSupportedException();
+    }
+
+    private sealed class UnusedFileStore :
+        ISpaceQuarantineStore,
+        ISpaceFileStore
+    {
+        public Task<ISpaceQuarantineWriteSession> OpenWriteAsync(
+            Guid tenantId,
+            Guid fileId,
+            CancellationToken cancellationToken = default) =>
+            Task.FromException<ISpaceQuarantineWriteSession>(
+                new NotSupportedException());
+
+        public Task<Stream> OpenQuarantinedReadAsync(
+            Guid tenantId,
+            Guid fileId,
+            string storageKey,
+            CancellationToken cancellationToken = default) =>
+            Task.FromException<Stream>(new NotSupportedException());
+
+        public Task DeleteAsync(
+            Guid tenantId,
+            Guid fileId,
+            string storageKey,
+            CancellationToken cancellationToken = default) =>
+            Task.FromException(new NotSupportedException());
     }
 }

@@ -1,12 +1,23 @@
 using System.ComponentModel.DataAnnotations;
+using System.Net.Http.Headers;
 using CP6.Core.Auth;
 using CP6.Space.Application;
 using CP6.Space.Contracts;
+using CP6.Space.Domain;
 using CP6.WebApi.OpenApi;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 
 namespace CP6.WebApi.Controllers.Space;
+
+public sealed class UploadSpaceUnderlayForm
+{
+    [Required]
+    public required IFormFile File { get; init; }
+
+    [Required]
+    public SpaceSourceType SourceType { get; init; }
+}
 
 [ApiController]
 [Authorize]
@@ -40,8 +51,11 @@ namespace CP6.WebApi.Controllers.Space;
     StatusCodes.Status500InternalServerError,
     "application/problem+json")]
 public sealed class SpaceDesignV1Controller(
-    ISpaceDesignV1Service service) : ControllerBase
+    ISpaceDesignV1Service service,
+    ISpaceUnderlayV1Service underlays) : ControllerBase
 {
+    private const long UnderlayUploadLimit = 100L * 1024L * 1024L;
+
     [HttpGet("sites/{siteId:guid}/model")]
     [RequirePermission("space", "model:read")]
     [ProducesResponseType<SpaceModelDto>(StatusCodes.Status200OK)]
@@ -186,6 +200,98 @@ public sealed class SpaceDesignV1Controller(
             nameof(GetSources),
             new { versionId },
             result);
+    }
+
+    [HttpPost("versions/{versionId:guid}/underlay-sources")]
+    [Consumes("multipart/form-data")]
+    [RequirePermission("space", "source:upload")]
+    [RequirePermission("space", "model:edit")]
+    [RequestSizeLimit(UnderlayUploadLimit)]
+    [RequestFormLimits(MultipartBodyLengthLimit = UnderlayUploadLimit)]
+    [ProducesResponseType<UploadSpaceUnderlayResponse>(
+        StatusCodes.Status202Accepted)]
+    public async Task<IActionResult> UploadUnderlay(
+        Guid versionId,
+        [FromForm] UploadSpaceUnderlayForm request,
+        CancellationToken cancellationToken)
+    {
+        await using var content = request.File.OpenReadStream();
+        var result = await underlays.UploadAsync(
+            versionId,
+            new UploadSpaceUnderlayRequest(
+                request.SourceType,
+                request.File.FileName,
+                request.File.ContentType),
+            content,
+            cancellationToken);
+        return Accepted(result.JobStatusUrl, result);
+    }
+
+    [HttpGet("versions/{versionId:guid}/files/{fileId:guid}")]
+    [RequirePermission("space", "model:read")]
+    [ProducesResponseType<SpaceFileDto>(StatusCodes.Status200OK)]
+    public Task<SpaceFileDto> GetFile(
+        Guid versionId,
+        Guid fileId,
+        CancellationToken cancellationToken) =>
+        underlays.GetFileAsync(
+            versionId,
+            fileId,
+            cancellationToken);
+
+    [HttpGet("versions/{versionId:guid}/sources/{sourceId:guid}/content")]
+    [RequirePermission("space", "model:read")]
+    [ProducesResponseType(
+        typeof(FileStreamResult),
+        StatusCodes.Status200OK,
+        "application/pdf",
+        "image/png",
+        "image/jpeg")]
+    public async Task<IActionResult> GetUnderlayContent(
+        Guid versionId,
+        Guid sourceId,
+        CancellationToken cancellationToken)
+    {
+        var content = await underlays.OpenContentAsync(
+            versionId,
+            sourceId,
+            cancellationToken);
+        Response.Headers.CacheControl = "private, no-store";
+        Response.Headers.XContentTypeOptions = "nosniff";
+        Response.Headers.ContentDisposition =
+            new ContentDispositionHeaderValue("inline")
+            {
+                FileNameStar = content.FileName,
+            }.ToString();
+        return File(
+            content.Content,
+            content.ContentType,
+            enableRangeProcessing: false);
+    }
+
+    [HttpPut(
+        "versions/{versionId:guid}/floors/{floorLogicalId:guid}/underlay")]
+    [RequirePermission("space", "source:upload")]
+    [RequirePermission("space", "model:edit")]
+    [ProducesResponseType<AttachSpaceUnderlayResponse>(
+        StatusCodes.Status200OK)]
+    public async Task<IActionResult> AttachUnderlay(
+        Guid versionId,
+        Guid floorLogicalId,
+        [FromHeader(Name = "Idempotency-Key"), Required]
+        string idempotencyKey,
+        [FromBody, Required] AttachSpaceUnderlayRequest request,
+        CancellationToken cancellationToken)
+    {
+        var result = await underlays.AttachAsync(
+            versionId,
+            floorLogicalId,
+            request,
+            idempotencyKey,
+            cancellationToken);
+        Response.Headers["Idempotent-Replay"] =
+            result.IdempotentReplay ? "true" : "false";
+        return Ok(result);
     }
 
     [HttpGet("jobs/{jobId:guid}")]

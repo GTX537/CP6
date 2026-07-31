@@ -7,6 +7,31 @@ namespace CP6.Space.Infrastructure;
 
 public static class SpaceInfrastructureRegistration
 {
+    public static IServiceCollection AddSpaceFileSystemStorage(
+        this IServiceCollection services,
+        string rootPath)
+    {
+        if (string.IsNullOrWhiteSpace(rootPath))
+        {
+            throw new InvalidOperationException(
+                "The Space file storage root is required.");
+        }
+
+        services.AddSingleton(
+            new SpaceFileStorageOptions
+            {
+                RootPath = Path.GetFullPath(rootPath),
+            });
+        services.AddSingleton<FileSystemSpaceFileStore>();
+        services.AddSingleton<ISpaceQuarantineStore>(
+            provider =>
+                provider.GetRequiredService<FileSystemSpaceFileStore>());
+        services.AddSingleton<ISpaceFileStore>(
+            provider =>
+                provider.GetRequiredService<FileSystemSpaceFileStore>());
+        return services;
+    }
+
     public static IServiceCollection AddSpaceDesignV1Persistence(
         this IServiceCollection services,
         string connectionString)
@@ -41,6 +66,7 @@ public static class SpaceInfrastructureRegistration
         services.AddScoped<SpaceAiGenerationGateway>();
         services.AddScoped<ISpaceFileCatalog, EfSpaceFileCatalog>();
         services.AddScoped<ISpaceSourceCatalog, EfSpaceSourceCatalog>();
+        services.AddScoped<SpaceFileUploadService>();
         services.AddScoped<ISpaceJobQueue, EfSpaceJobQueue>();
         services.AddScoped<ISpaceJobLeaseStore, EfSpaceJobLeaseStore>();
         services.AddScoped<ISpaceJobProgressReader, EfSpaceJobProgressReader>();
@@ -78,6 +104,7 @@ public static class SpaceInfrastructureRegistration
         services.AddScoped<SpaceVersionCloneCoordinator>();
         services.AddScoped<SpaceSourceCoordinator>();
         services.AddScoped<ISpaceDesignV1Service, SpaceDesignV1Service>();
+        services.AddScoped<ISpaceUnderlayV1Service, SpaceUnderlayV1Service>();
         services.TryAddSingleton<StandardSpaceWmsSimulator>();
         services.TryAddSingleton<ISpaceWmsSimulatorControl>(
             provider =>

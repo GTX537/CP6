@@ -66,6 +66,32 @@ public sealed record CreateSpaceSourceResponse(
     SpaceSourceDto Source,
     bool IdempotentReplay);
 
+public sealed record SpaceFileDto(
+    Guid Id,
+    string OriginalName,
+    string? ContentType,
+    string? Extension,
+    long SizeBytes,
+    string? Sha256,
+    string State,
+    string? ScanResultCode,
+    string RowVersion);
+
+public sealed record UploadSpaceUnderlayResponse(
+    SpaceFileDto File,
+    SpaceSourceDto Source,
+    Guid? ScanJobId,
+    string? JobStatusUrl,
+    bool Reused);
+
+public sealed record AttachSpaceUnderlayRequest(
+    Guid SourceId,
+    long ExpectedFloorRevision);
+
+public sealed record AttachSpaceUnderlayResponse(
+    SpaceSceneFloorDto Floor,
+    bool IdempotentReplay);
+
 public sealed record SpaceJobDto(
     Guid Id,
     string JobType,

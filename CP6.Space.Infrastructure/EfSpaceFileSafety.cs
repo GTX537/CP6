@@ -158,6 +158,9 @@ public sealed class EfSpaceFileScanStateStore : ISpaceFileScanStateStore
                             signatureVersion = result.SignatureVersion,
                         }));
                 attempt.Succeed(now);
+                await CompletePendingSourcesAsync(
+                    file,
+                    cancellationToken);
             }
             else
             {
@@ -171,6 +174,9 @@ public sealed class EfSpaceFileScanStateStore : ISpaceFileScanStateStore
                         result.ResultCode,
                         result.ScanEngine,
                         result.SignatureVersion);
+                    await CompletePendingSourcesAsync(
+                        file,
+                        cancellationToken);
                 }
                 else
                 {
@@ -237,6 +243,19 @@ public sealed class EfSpaceFileScanStateStore : ISpaceFileScanStateStore
                           cancellationToken)
                       ?? throw LeaseLost();
         return (job, attempt);
+    }
+
+    private async Task CompletePendingSourcesAsync(
+        SpaceFile file,
+        CancellationToken cancellationToken)
+    {
+        var sources = await _context.Sources
+            .Where(source =>
+                source.FileId == file.Id &&
+                source.State == SpaceSourceState.Scanning)
+            .ToListAsync(cancellationToken);
+        foreach (var source in sources)
+            source.CompleteFileScan(file);
     }
 
     private static void EnsureFileScanLease(SpaceJobLease lease)

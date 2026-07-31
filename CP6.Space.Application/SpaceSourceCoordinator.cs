@@ -39,6 +39,27 @@ public sealed class SpaceSourceCoordinator
         return source;
     }
 
+    public SpaceModelSource AddPendingFileSource(
+        SpaceModelVersion version,
+        SpaceFile file,
+        SpaceSourceType sourceType,
+        string displayName)
+    {
+        ArgumentNullException.ThrowIfNull(version);
+        ArgumentNullException.ThrowIfNull(file);
+        EnsureTenant(version.TenantId);
+        EnsureTenant(file.TenantId);
+
+        var source = SpaceModelSource.CreatePendingFileSource(
+            _execution.TenantId,
+            version.Id,
+            sourceType,
+            file,
+            displayName);
+        version.TouchContent();
+        return source;
+    }
+
     public SpaceArtifact AddArtifact(
         SpaceModelVersion version,
         SpaceModelSource? source,

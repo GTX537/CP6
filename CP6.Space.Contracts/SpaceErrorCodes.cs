@@ -37,6 +37,8 @@ public static class SpaceErrorCodes
         "SPACE_FILE_ENCRYPTED_UNSUPPORTED";
     public const string FileActiveContent = "SPACE_FILE_ACTIVE_CONTENT";
     public const string FileCorrupt = "SPACE_FILE_CORRUPT";
+    public const string FileNotFound = "SPACE_FILE_NOT_FOUND";
+    public const string UnderlaySourceInvalid = "SPACE_UNDERLAY_SOURCE_INVALID";
     public const string SourceUnsafe = "SPACE_SOURCE_UNSAFE";
     public const string JobLeaseLost = "SPACE_JOB_LEASE_LOST";
     public const string JobNotRetryable = "SPACE_JOB_NOT_RETRYABLE";
