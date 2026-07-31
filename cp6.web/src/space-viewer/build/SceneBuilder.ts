@@ -14,6 +14,11 @@ import {
 import type { EditorScene, ZoneVO, AisleVO, RackVO } from '@/types/space/scene'
 import { InstancedBuckets } from './InstancedBuckets'
 import { UNIT_BOX, addLights, makeRackEdges, zoneMaterial } from './BoxFactory'
+import {
+  ParametricDesignSceneBuilder,
+  type ParametricDesignSceneBuildResult,
+} from '../design/ParametricDesignSceneBuilder'
+import type { ParametricDesignSceneInput } from '../design/ParametricRenderPlan'
 
 export interface SceneBuildResult {
   objects: Object3D[]
@@ -27,6 +32,12 @@ interface BuildOptions {
 }
 
 export class SceneBuilder {
+  buildDesign(
+    scene: ParametricDesignSceneInput,
+  ): ParametricDesignSceneBuildResult {
+    return new ParametricDesignSceneBuilder().build(scene)
+  }
+
   build(scene: EditorScene, opts: BuildOptions = {}): SceneBuildResult {
     const objects: Object3D[] = []
 
@@ -161,9 +172,16 @@ export class SceneBuilder {
     const w = rack.cols * rack.cellW
     const h = rack.levels * rack.cellH
     const d = rack.depthCount * rack.cellD
-    frame.scale.set(w, h, d)
-    frame.position.set(rack.x, rack.y, rack.z)
-    frame.rotation.z = rack.rotationZ
+    const radians = (rack.rotationZ * Math.PI) / 180
+    const centerX = w / 2
+    const centerY = d / 2
+    frame.scale.set(w, d, h)
+    frame.position.set(
+      rack.x + centerX * Math.cos(radians) - centerY * Math.sin(radians),
+      rack.y + centerX * Math.sin(radians) + centerY * Math.cos(radians),
+      rack.z + h / 2,
+    )
+    frame.rotation.z = radians
     return frame
   }
 
