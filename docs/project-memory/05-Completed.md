@@ -36,6 +36,10 @@
 - S04 两次独立生成 17 个文件逐字节差异为 0，干净检出后的 Manifest 哈希错误为 0；合并态 Release 全解构建 0 error（10 个既有 warning），Space Unit 79 passed、Space Integration 40 passed / 30 SQL-gated skipped、CP6 主测试 2680 passed / 17 environment-gated skipped、Client 71 passed。DWG 外部门禁继续归 E02，不伪造资产；E07 S05 仍等待 E04 S04。
 - E13 S01 已按 ADR-0002 和 AI Schema v1 冻结边界独立实现：功能提交 `8f7fc25e`，no-ff 集成提交 `ea161975`；交付 Provider/确定性端口、强类型输入输出、Provider 别名注册表、租户/Site/数据策略/外部开关门禁与原子配额租约端口。
 - S01 默认依赖注入为租户 Disabled、Provider 空注册和配额失败关闭；新增 `space:model:generate-ai` / `space:model:review-ai` 权限及四个稳定 AI 错误码。合并态 Release 全解构建 0 error（10 个既有 warning），Space Unit 97 passed、Space Integration 41 passed / 30 SQL-gated skipped、CP6 主测试 2680 passed / 17 environment-gated skipped、Client 71 passed；未新增 Migration、HTTP、外部适配器或 Provider 凭据。
+- E13 S02/S03/S12 已分别以 `cff25a25` / `94822669`、`cebd401a` / `dca6e19c`、`54456946` / `b33929fb` 完成受控实现与集成：交付可审计 Run/Proposal/Decision/Usage 模型、Import/BuildScene 可恢复 Worker 控制面，以及数据库三并发槽和日/月预算原子账本；外部 Provider、CAD IR、输出校验、融合和 Apply 仍保持关闭。
+- E05 S01–S04 已按独立边界交付通用元素、非均匀逐层货架、Design Revision 权威场景和 System/Tenant 版本化资产库；功能/集成提交依次为 `5bb0cdfb` / `49dbabe3`、`2fc03681` / `3d554852`、`00021f0a` / `a1edecef`、`85b57960` / `888de795`。
+- E05 S05 以功能提交 `856f138c`、no-ff 集成提交 `a3864d9c` 交付 `space-parametric-v1` 确定性前端渲染链：逐层货架、box/path/polygon/point/asset、安全资产占位和稳定拾取映射均已覆盖；point 缺 Z、未知资产字段和运行态载荷失败关闭。
+- E05 最新验证：Space Unit 203 passed；默认 Integration 46 passed / 41 SQL-gated skipped，真实 SQL 聚焦链 11/11 passed；前端 type-check、88 files / 546 tests 和 production build 通过，仅保留既有大 chunk 提示。
 - `0d25da4d` 中尚未独立提取的剩余范围仍为候选，不计入已完成实现，后续必须按依赖顺序逐项提取。
 
 ## 当前 GR-VP 波已完成
