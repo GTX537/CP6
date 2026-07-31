@@ -447,6 +447,11 @@ public sealed class SpaceWmsRuntimeServiceTests
             SpaceWmsDataSourceKind.Real,
             SpaceWmsDataSourceKind.Unavailable,
         ];
+        fixture.Source.Observations =
+        [
+            new DateTimeOffset(2026, 7, 31, 15, 59, 55, TimeSpan.Zero),
+            new DateTimeOffset(2026, 7, 31, 16, 0, 0, TimeSpan.Zero),
+        ];
 
         var response = await fixture.Service.QueryInventoryAsync(fixture.SiteId);
 
@@ -454,7 +459,28 @@ public sealed class SpaceWmsRuntimeServiceTests
         Assert.Equal("Unavailable", response.Source.Kind);
         Assert.False(response.Source.IsAvailable);
         Assert.False(response.Source.IsSimulated);
+        Assert.Equal(
+            new DateTimeOffset(2026, 7, 31, 15, 59, 55, TimeSpan.Zero),
+            response.Source.ObservedAtUtc);
         Assert.Equal([500, 1], fixture.Source.InventoryBatchSizes);
+    }
+
+    [Fact]
+    public async Task Later_unavailable_chunk_cannot_change_data_source_identity()
+    {
+        await using var fixture = await RuntimeFixture.CreateAsync(
+            Enumerable.Range(1, 501).Select(value => $"L-{value:0000}").ToArray());
+        fixture.Source.ReturnedKinds =
+        [
+            SpaceWmsDataSourceKind.Real,
+            SpaceWmsDataSourceKind.Unavailable,
+        ];
+        fixture.Source.ReturnedDataSourceIds = ["RECORDING_WMS", "OTHER_WMS"];
+
+        var error = await Assert.ThrowsAsync<SpaceProblemException>(() =>
+            fixture.Service.QueryInventoryAsync(fixture.SiteId));
+
+        AssertContractViolation(error);
     }
 
     [Theory]

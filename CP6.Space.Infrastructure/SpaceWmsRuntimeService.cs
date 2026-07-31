@@ -498,12 +498,9 @@ public sealed class SpaceWmsRuntimeService : ISpaceWmsRuntimeService
         {
             ObservedAtUtc = next.ObservedAtUtc.ToUniversalTime(),
         };
-        if (normalized.Kind == SpaceWmsDataSourceKind.Unavailable)
-            return normalized;
         if (current is null)
             return normalized;
-        if (current.Kind != normalized.Kind ||
-            !string.Equals(
+        if (!string.Equals(
                 current.DataSourceId,
                 normalized.DataSourceId,
                 StringComparison.Ordinal))
@@ -511,12 +508,25 @@ public sealed class SpaceWmsRuntimeService : ISpaceWmsRuntimeService
             throw ContractViolation(
                 "WMS source provenance changed during the runtime query.");
         }
+        var earliestObservation = current.ObservedAtUtc <= normalized.ObservedAtUtc
+            ? current.ObservedAtUtc
+            : normalized.ObservedAtUtc;
+        if (normalized.Kind == SpaceWmsDataSourceKind.Unavailable)
+        {
+            return normalized with
+            {
+                ObservedAtUtc = earliestObservation,
+            };
+        }
+        if (current.Kind != normalized.Kind)
+        {
+            throw ContractViolation(
+                "WMS source provenance changed during the runtime query.");
+        }
 
         return current with
         {
-            ObservedAtUtc = current.ObservedAtUtc <= normalized.ObservedAtUtc
-                ? current.ObservedAtUtc
-                : normalized.ObservedAtUtc,
+            ObservedAtUtc = earliestObservation,
         };
     }
 
