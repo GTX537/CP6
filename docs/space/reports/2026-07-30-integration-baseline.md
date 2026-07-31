@@ -4,12 +4,12 @@
 - 集成分支：`integration/space-v1-20260730`
 - 基线父提交：`dcc1ac9a`
 - 初始集成提交：`539d56de`
-- 当前代码集成提交：`3d554852`
+- 当前代码集成提交：`a1edecef`
 - 候选检查点：`checkpoint/space-candidate-20260730` / `0d25da4d`
 
 ## 1. 本轮结论
 
-E00 S01–S04、E01 S01–S06、E05 S01–S02、E07 S01–S04 与 E13 S01–S03、S12 已进入唯一集成基线。E02 S01 的中立实验门禁也已进入基线，但最终技术选型仍受外部数据、授权和环境阻塞，不计作完整签收。各切片均按冻结边界独立实现或由候选重建并经过审查，没有整包合入候选。
+E00 S01–S04、E01 S01–S06、E05 S01–S03、E07 S01–S04 与 E13 S01–S03、S12 已进入唯一集成基线。E02 S01 的中立实验门禁也已进入基线，但最终技术选型仍受外部数据、授权和环境阻塞，不计作完整签收。各切片均按冻结边界独立实现或由候选重建并经过审查，没有整包合入候选。
 
 ## 2. 已集成范围
 
@@ -28,6 +28,7 @@ E00 S01–S04、E01 S01–S06、E05 S01–S02、E07 S01–S04 与 E13 S01–S03�
 | E02 S01（Partial） | 中立数据审计、压力生成、适配器运行证据、ODA/APS preflight、隔离供应商淘汰复现；不含生产 CAD 适配器 |
 | E05 S01 | 通用元素稳定类型、Geometry v1、类型化属性、运行态命名空间拒绝与租户隔离持久化 |
 | E05 S02 | 逐层货架独立尺寸/格口/深度/横梁/承重、原子更新、数据库约束和 Clone 保真 |
+| E05 S03 | Design Revision 权威的统一只读场景 DTO、稳定排序、运行态零载荷、租户/Site 门禁、OpenAPI 与双语言 SDK |
 | E07 S01–S03 | WMS 能力合同、CP6 真实适配器、持久化幂等账本、标准模拟器、库存/任务查询与故障注入 |
 | E07 S04 | 确定性 500 货架/10,000 库位标准仓、WMS seed、DXF/底图/期望答案、加载器与 6 个固定故障样本 |
 | E13 S01 | Provider/确定性端口、Schema v1 强类型契约、租户/Site/别名/数据策略/外部开关门禁、默认 Disabled 与配额失败关闭 |
@@ -57,9 +58,9 @@ E00 S01–S04、E01 S01–S06、E05 S01–S02、E07 S01–S04 与 E13 S01–S03�
 
 | 检查 | 结果 |
 |---|---|
-| `dotnet build CP6.slnx -c Release --no-restore` | E05-S01 后完整重跑 0 errors、7 existing warnings；包含 Android D8 打包 |
-| Space UnitTests | 191 passed |
-| Space IntegrationTests | 默认门禁 46 passed、38 SQL-gated skipped；E05-S02 聚焦与受影响 Clone SQL 7/7 通过；此前 82 项 SQL 基线为 77 首轮通过、5 个并行超时项串行复跑通过 |
+| `dotnet build CP6.slnx -c Release --no-restore` | E05-S03 后完整重跑 0 errors、10 existing warnings；包含 Android 打包 |
+| Space UnitTests | 195 passed |
+| Space IntegrationTests | 默认门禁 46 passed、39 SQL-gated skipped；E05-S01/S02/S03 与受影响 Clone SQL 串行聚焦 9/9 通过；此前 82 项 SQL 基线为 77 首轮通过、5 个并行超时项串行复跑通过 |
 | EF Migration 一致性 | `has-pending-model-changes` 通过，无待迁移模型变更 |
 | CP6.Tests | 2680 passed，17 environment-gated skipped |
 | CP6.Client.Tests | 71 passed |
@@ -76,6 +77,7 @@ E00 S01–S04、E01 S01–S06、E05 S01–S02、E07 S01–S04 与 E13 S01–S03�
 | E13 S12 容量门禁 | 三并发第四稳定 429、策略收紧不超配、日/月预算原子竞争、过期未发送预留释放、Submitted 持有和 Provider 请求只计费一次；新增 10 Unit，SQL 聚焦 4/4 passed |
 | E05 S01 元素门禁 | 六类必需元素、五种 Geometry v1、七种属性值、运行态命名空间前缀拒绝、唯一属性键、跨租户查询/版本失败关闭；E05 SQL 1/1、Clone SQL 6/6 |
 | E05 S02 逐层货架门禁 | 每层高度/格口/深度/尺寸/横梁/承重独立；原子更新、层号唯一、负值 Check Constraint、租户隔离和 Clone 保真；S02 SQL 1/1、Clone SQL 6/6 |
+| E05 S03 统一场景门禁 | `schemaVersion=1`、`authority=DesignRevision`、`runtimeOverlayIncluded=false`；Version/Floor/Site/租户失败关闭；OpenAPI/权限 13/13、S03 SQL 1/1、E05 链与 Clone SQL 9/9 |
 | Frontend type-check | 通过 |
 | Frontend unit tests | 86 files，539 tests passed |
 | Frontend production build | 通过；保留既有大 chunk 提示 |
@@ -100,13 +102,14 @@ E05 S01 功能提交 `5bb0cdfb` 与 no-ff 集成提交 `49dbabe3` 收紧既有 `
 
 E05 S02 功能提交 `2fc03681` 与 no-ff 集成提交 `3d554852` 交付 `BeamHeight`、创建/更新共用的逐层规格约束、Migration `20260731001924_SpaceE05S02RackLevelSpecification`、幂等 SQL 和 Clone 保真。本卡没有场景 DTO、资产库、Location 生成、HTTP、WMS 或渲染。
 
+E05 S03 功能提交 `00021f0a` 与 no-ff 集成提交 `a1edecef` 交付统一 Design Revision 场景 DTO、只读 `GetScene` API、稳定错误码、OpenAPI 与 C#/TypeScript SDK。场景不读取 Legacy `CP6Context`，不包含库存、任务、人员或设备运行态，也不提前引入 S04 资产作用域或 S05 参数化渲染。本卡无 Migration。
+
 ## 6. 下一批固定顺序
 
-1. E05 S03：统一 Design Revision 场景 DTO，固定旧 Rack/Location 只作为 Published 运行态物化且不复制库存事实。
-2. E05 S04：S03 后独立实现平台公共只读与租户私有资产库；不提前进入参数化渲染。
-3. E05 S05：等待 S03/S04，扩展逐层货架与通用元素参数化 3D 生成。
-4. E02 S01：获得正式黄金集、DWG/DXF 矩阵、ODA/APS 授权材料和 8 vCPU / 32GiB 冻结 Worker 后，运行同环境试验并按 ADR-0001 评分签收。
-5. E07 S05：等待 E04 S04，不提前采用或切换。
-6. E13 S04/S05：等待 E02 S03、CAD IR 最小化和正式供应商证据；S13/S11/S18 继续等待各自下游链。
+1. E05 S04：独立实现平台公共只读与租户私有资产库；复用 S03 的 `ModelAssetId` 引用，不提前进入参数化渲染。
+2. E05 S05：等待 S04，扩展逐层货架与通用元素参数化 3D 生成。
+3. E02 S01：获得正式黄金集、DWG/DXF 矩阵、ODA/APS 授权材料和 8 vCPU / 32GiB 冻结 Worker 后，运行同环境试验并按 ADR-0001 评分签收。
+4. E07 S05：等待 E04 S04，不提前采用或切换。
+5. E13 S04/S05：等待 E02 S03、CAD IR 最小化和正式供应商证据；S13/S11/S18 继续等待各自下游链。
 
 每个子任务必须独立提取、审查、迁移验证、测试和提交。E05–E12 候选不得整包 merge 或 cherry-pick。
