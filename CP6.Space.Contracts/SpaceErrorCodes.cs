@@ -63,6 +63,8 @@ public static class SpaceErrorCodes
     public const string AiSourcePolicyDenied =
         "SPACE_AI_SOURCE_POLICY_DENIED";
     public const string WmsUnavailable = "SPACE_WMS_UNAVAILABLE";
+    public const string WmsRuntimeContractViolation =
+        "SPACE_WMS_RUNTIME_CONTRACT_VIOLATION";
     public const string WmsAdoptionNotFound =
         "SPACE_WMS_ADOPTION_NOT_FOUND";
     public const string WmsAdoptionDuplicate =
