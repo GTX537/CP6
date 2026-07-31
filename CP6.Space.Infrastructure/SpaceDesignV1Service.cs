@@ -331,18 +331,20 @@ public sealed class SpaceDesignV1Service : ISpaceDesignV1Service
                 .ToDictionaryAsync(
                     candidate => candidate.LogicalId,
                     cancellationToken);
-            if (elements.Count != targetIds.Length)
+            var racks = await _context.RackRevisions
+                .Where(candidate =>
+                    candidate.ModelVersionId == versionId &&
+                    candidate.FloorLogicalId == floorLogicalId &&
+                    targetIds.Contains(candidate.LogicalId))
+                .ToDictionaryAsync(
+                    candidate => candidate.LogicalId,
+                    cancellationToken);
+            if (elements.Keys.Intersect(racks.Keys).Any() ||
+                elements.Count + racks.Count != targetIds.Length)
             {
                 throw NotFound(
                     SpaceErrorCodes.LogicalIdNotFound,
-                    "Space element logical identity");
-            }
-            if (elements.Values.Any(element =>
-                    element.LifecycleState != SpaceLifecycleState.Active))
-            {
-                throw NotFound(
-                    SpaceErrorCodes.LogicalIdNotFound,
-                    "Active Space element logical identity");
+                    "Space editor object logical identity");
             }
 
             var elementRevisionIds = elements.Values
@@ -358,6 +360,31 @@ public sealed class SpaceDesignV1Service : ISpaceDesignV1Service
                 .ToDictionary(
                     group => group.Key,
                     group => group.ToList());
+            var rackIds = racks.Keys.ToArray();
+            var rackLevels = await _context.RackLevelRevisions
+                .Where(candidate =>
+                    candidate.ModelVersionId == versionId &&
+                    rackIds.Contains(candidate.RackLogicalId))
+                .ToListAsync(cancellationToken);
+            var locations = await _context.LocationRevisions
+                .Where(candidate =>
+                    candidate.ModelVersionId == versionId &&
+                    candidate.FloorLogicalId == floorLogicalId &&
+                    candidate.RackLogicalId.HasValue &&
+                    rackIds.Contains(candidate.RackLogicalId.Value))
+                .ToListAsync(cancellationToken);
+
+            ValidateCommandTargets(
+                request.Commands,
+                elements,
+                racks,
+                rackLevels,
+                locations);
+            await ValidateRackArrayCodesAsync(
+                versionId,
+                request.Commands,
+                racks,
+                cancellationToken);
 
             var batch = SpaceElementCommandBatch.Create(
                 _execution.TenantId,
@@ -371,35 +398,125 @@ public sealed class SpaceDesignV1Service : ISpaceDesignV1Service
                 RequireUtcNow());
             _context.ElementCommandBatches.Add(batch);
 
-            var commandResults =
-                new List<(SpaceElementCommandDto Command,
-                    SpaceElementRevision Element,
-                    List<SpaceElementAttribute> Attributes)>();
+            var affectedElementCommands =
+                new Dictionary<Guid, SpaceElementCommandDto>();
+            var affectedRacks = new Dictionary<Guid, SpaceRackRevision>();
+            var affectedRackLevels =
+                new Dictionary<Guid, SpaceRackLevelRevision>();
+            var affectedLocations =
+                new Dictionary<Guid, SpaceLocationRevision>();
             for (var index = 0; index < request.Commands.Count; index++)
             {
                 var command = request.Commands[index];
-                var element = elements[command.TargetLogicalId];
-                if (!attributesByElement.TryGetValue(
-                        element.Id,
-                        out var attributes))
+                string beforeJson;
+                string afterJson;
+                string payloadJson;
+                if (elements.TryGetValue(
+                        command.TargetLogicalId,
+                        out var element))
                 {
-                    attributes = [];
-                    attributesByElement[element.Id] = attributes;
+                    if (!attributesByElement.TryGetValue(
+                            element.Id,
+                            out var attributes))
+                    {
+                        attributes = [];
+                        attributesByElement[element.Id] = attributes;
+                    }
+
+                    beforeJson = ElementAuditJson(element, attributes);
+                    payloadJson = ApplyElementCommand(
+                        command,
+                        element,
+                        attributes);
+                    afterJson = ElementAuditJson(element, attributes);
+                    affectedElementCommands[element.LogicalId] = command;
+                }
+                else
+                {
+                    var rack = racks[command.TargetLogicalId];
+                    var relatedLevels = rackLevels
+                        .Where(level => level.RackLogicalId == rack.LogicalId)
+                        .ToList();
+                    var relatedLocations = locations
+                        .Where(location =>
+                            location.RackLogicalId == rack.LogicalId)
+                        .ToList();
+                    beforeJson = RackAuditJson(
+                        rack,
+                        relatedLevels,
+                        relatedLocations);
+                    if (command.Type ==
+                        SpaceElementCommandContract.GenerateRackArray)
+                    {
+                        var generated = GenerateRackArray(
+                            versionId,
+                            floorLogicalId,
+                            rack,
+                            relatedLevels,
+                            relatedLocations,
+                            command.GenerateRackArray!);
+                        foreach (var generatedRack in generated.Racks)
+                        {
+                            racks[generatedRack.LogicalId] = generatedRack;
+                            affectedRacks[generatedRack.LogicalId] =
+                                generatedRack;
+                        }
+                        foreach (var level in generated.Levels)
+                        {
+                            rackLevels.Add(level);
+                            affectedRackLevels[level.LogicalId] = level;
+                        }
+                        foreach (var location in generated.Locations)
+                        {
+                            locations.Add(location);
+                            affectedLocations[location.LogicalId] = location;
+                        }
+                        payloadJson = JsonSerializer.Serialize(
+                            command.GenerateRackArray,
+                            JsonOptions);
+                        afterJson = JsonSerializer.Serialize(
+                            new
+                            {
+                                Source = JsonSerializer.Deserialize<JsonElement>(
+                                    RackAuditJson(
+                                        rack,
+                                        relatedLevels,
+                                        relatedLocations)),
+                                GeneratedRacks = generated.Racks.Select(
+                                    generatedRack =>
+                                        JsonSerializer.Deserialize<JsonElement>(
+                                            RackAuditJson(
+                                                generatedRack,
+                                                generated.Levels.Where(level =>
+                                                    level.RackLogicalId ==
+                                                    generatedRack.LogicalId),
+                                                generated.Locations.Where(
+                                                    location =>
+                                                        location.RackLogicalId ==
+                                                        generatedRack.LogicalId))))
+                                    .ToArray(),
+                            },
+                            JsonOptions);
+                    }
+                    else
+                    {
+                        payloadJson = ApplyRackCommand(
+                            command,
+                            rack,
+                            relatedLevels,
+                            relatedLocations);
+                        afterJson = RackAuditJson(
+                            rack,
+                            relatedLevels,
+                            relatedLocations);
+                        affectedRacks[rack.LogicalId] = rack;
+                        foreach (var level in relatedLevels)
+                            affectedRackLevels[level.LogicalId] = level;
+                        foreach (var location in relatedLocations)
+                            affectedLocations[location.LogicalId] = location;
+                    }
                 }
 
-                var beforeJson = ElementAuditJson(element, attributes);
-                var payloadJson = command.Type switch
-                {
-                    SpaceElementCommandContract.UpdateProperties =>
-                        ApplyElementProperties(
-                            element,
-                            attributes,
-                            command.UpdateProperties!),
-                    SpaceElementCommandContract.DeleteObject =>
-                        ApplyElementDeletion(element),
-                    _ => throw new UnreachableException(),
-                };
-                var afterJson = ElementAuditJson(element, attributes);
                 _context.ElementCommandRecords.Add(
                     SpaceElementCommandRecord.Create(
                         _execution.TenantId,
@@ -411,32 +528,54 @@ public sealed class SpaceDesignV1Service : ISpaceDesignV1Service
                         payloadJson,
                         beforeJson,
                         afterJson));
-                commandResults.Add((command, element, attributes));
             }
 
             floor.AdvanceRevision(request.ExpectedFloorRevision);
             version.TouchContent();
             await _context.SaveChangesAsync(cancellationToken);
 
-            var affected = commandResults
-                .Select(result => new SpaceElementCommandResultDto(
-                    result.Command.CommandId,
-                    result.Command.Type,
-                    result.Command.TargetLogicalId,
-                    ToSceneDto(result.Element),
-                    result.Attributes
+            var affected = affectedElementCommands
+                .OrderBy(pair => pair.Key)
+                .Select(pair =>
+                {
+                    var element = elements[pair.Key];
+                    var attributes = attributesByElement[element.Id];
+                    return new SpaceElementCommandResultDto(
+                        pair.Value.CommandId,
+                        pair.Value.Type,
+                        pair.Key,
+                        ToSceneDto(element),
+                        attributes
                         .Where(attribute => !attribute.IsDeleted)
                         .OrderBy(attribute => attribute.Namespace)
                         .ThenBy(attribute => attribute.Key)
                         .Select(ToSceneDto)
-                        .ToArray()))
+                        .ToArray());
+                })
                 .ToArray();
             var response = new ApplySpaceElementCommandBatchResponse(
                 request.CommandBatchId,
                 floor.Revision,
                 version.ContentRevision,
                 affected,
-                IdempotentReplay: false);
+                IdempotentReplay: false,
+                affectedRacks.Values
+                    .OrderBy(candidate => candidate.RackCode)
+                    .ThenBy(candidate => candidate.LogicalId)
+                    .Select(ToSceneDto)
+                    .ToArray(),
+                affectedRackLevels.Values
+                    .OrderBy(candidate => candidate.RackLogicalId)
+                    .ThenBy(candidate => candidate.LevelNo)
+                    .Select(ToSceneDto)
+                    .ToArray(),
+                affectedLocations.Values
+                    .OrderBy(candidate => candidate.RackLogicalId)
+                    .ThenBy(candidate => candidate.LevelNo)
+                    .ThenBy(candidate => candidate.ColumnNo)
+                    .ThenBy(candidate => candidate.DepthNo)
+                    .Select(ToSceneDto)
+                    .ToArray());
             batch.Complete(
                 floor.Revision,
                 version.ContentRevision,
@@ -463,11 +602,21 @@ public sealed class SpaceDesignV1Service : ISpaceDesignV1Service
         catch (ArgumentException exception)
         {
             await transaction.RollbackAsync(CancellationToken.None);
+            _context.ChangeTracker.Clear();
             throw Invalid("commands", exception.Message);
+        }
+        catch (OverflowException)
+        {
+            await transaction.RollbackAsync(CancellationToken.None);
+            _context.ChangeTracker.Clear();
+            throw Invalid(
+                "commands",
+                "The command result exceeds the supported coordinate or sequence range.");
         }
         catch
         {
             await transaction.RollbackAsync(CancellationToken.None);
+            _context.ChangeTracker.Clear();
             throw;
         }
     }
@@ -1100,15 +1249,21 @@ public sealed class SpaceDesignV1Service : ISpaceDesignV1Service
         {
             throw Invalid(
                 "commands",
-                "A target can appear only once in an E04-S03 command batch.");
+                "A target can appear only once in an editor command batch.");
         }
 
         foreach (var command in request.Commands)
         {
+            var payloadCount =
+                (command.UpdateProperties is null ? 0 : 1) +
+                (command.MoveObject is null ? 0 : 1) +
+                (command.RotateObject is null ? 0 : 1) +
+                (command.GenerateRackArray is null ? 0 : 1);
             switch (command.Type)
             {
                 case SpaceElementCommandContract.UpdateProperties
-                    when command.UpdateProperties is not null:
+                    when command.UpdateProperties is not null &&
+                         payloadCount == 1:
                     if (command.UpdateProperties.Attributes is null ||
                         command.UpdateProperties.Attributes.Count > 100)
                     {
@@ -1117,17 +1272,46 @@ public sealed class SpaceDesignV1Service : ISpaceDesignV1Service
                             "At most 100 attributes are allowed.");
                     }
                     break;
+                case SpaceElementCommandContract.MoveObject
+                    when command.MoveObject is not null &&
+                         payloadCount == 1:
+                    break;
+                case SpaceElementCommandContract.RotateObject
+                    when command.RotateObject is not null &&
+                         payloadCount == 1:
+                    break;
+                case SpaceElementCommandContract.GenerateRackArray
+                    when command.GenerateRackArray is not null &&
+                         payloadCount == 1:
+                    ValidateRackArray(command.GenerateRackArray);
+                    break;
                 case SpaceElementCommandContract.DeleteObject
-                    when command.UpdateProperties is null:
+                    when payloadCount == 0:
+                    break;
+                case SpaceElementCommandContract.RestoreLogicalObject
+                    when payloadCount == 0:
                     break;
                 case SpaceElementCommandContract.UpdateProperties:
                     throw Invalid(
                         "commands.updateProperties",
-                        "UpdateProperties requires its strongly typed payload.");
-                case SpaceElementCommandContract.DeleteObject:
+                        "UpdateProperties requires only its strongly typed payload.");
+                case SpaceElementCommandContract.MoveObject:
                     throw Invalid(
-                        "commands.updateProperties",
-                        "DeleteObject must not contain an update payload.");
+                        "commands.moveObject",
+                        "MoveObject requires only its strongly typed payload.");
+                case SpaceElementCommandContract.RotateObject:
+                    throw Invalid(
+                        "commands.rotateObject",
+                        "RotateObject requires only its strongly typed payload.");
+                case SpaceElementCommandContract.GenerateRackArray:
+                    throw Invalid(
+                        "commands.generateRackArray",
+                        "GenerateRackArray requires only its strongly typed payload.");
+                case SpaceElementCommandContract.DeleteObject:
+                case SpaceElementCommandContract.RestoreLogicalObject:
+                    throw Invalid(
+                        "commands",
+                        $"{command.Type} must not contain a payload.");
                 default:
                     throw new SpaceProblemException(
                         SpaceErrorCodes.CommandSchemaUnsupported,
@@ -1136,6 +1320,51 @@ public sealed class SpaceDesignV1Service : ISpaceDesignV1Service
                         $"Unsupported command type '{command.Type}'.",
                         "upgrade-client");
             }
+        }
+    }
+
+    private static void ValidateRackArray(SpaceGenerateRackArrayDto payload)
+    {
+        int total;
+        try
+        {
+            total = checked(payload.Rows * payload.Columns);
+        }
+        catch (OverflowException)
+        {
+            throw Invalid(
+                "commands.generateRackArray",
+                "The rack array dimensions are too large.");
+        }
+        if (payload.Rows is < 1 or > 100 ||
+            payload.Columns is < 1 or > 100 ||
+            total is < 2 or > 100)
+        {
+            throw Invalid(
+                "commands.generateRackArray",
+                "The rack array must contain between 2 and 100 total racks, including the template rack.");
+        }
+        if (payload.RowGap < 0 ||
+            payload.ColumnGap < 0 ||
+            payload.StaggerOffset < 0)
+        {
+            throw Invalid(
+                "commands.generateRackArray",
+                "Rack array gaps and stagger offset cannot be negative.");
+        }
+        if (string.IsNullOrWhiteSpace(payload.CodePrefix) ||
+            payload.CodePrefix.Trim().Length > 90)
+        {
+            throw Invalid(
+                "commands.generateRackArray.codePrefix",
+                "A code prefix of at most 90 characters is required.");
+        }
+        if (payload.StartNumber < 0 ||
+            payload.CodeDigits is < 1 or > 8)
+        {
+            throw Invalid(
+                "commands.generateRackArray",
+                "The code start number must be non-negative and codeDigits must be between 1 and 8.");
         }
     }
 
@@ -1176,6 +1405,399 @@ public sealed class SpaceDesignV1Service : ISpaceDesignV1Service
                 IdempotentReplay = true,
             };
     }
+
+    private static void ValidateCommandTargets(
+        IReadOnlyList<SpaceElementCommandDto> commands,
+        IReadOnlyDictionary<Guid, SpaceElementRevision> elements,
+        IReadOnlyDictionary<Guid, SpaceRackRevision> racks,
+        IReadOnlyCollection<SpaceRackLevelRevision> rackLevels,
+        IReadOnlyCollection<SpaceLocationRevision> locations)
+    {
+        foreach (var command in commands)
+        {
+            var isElement = elements.TryGetValue(
+                command.TargetLogicalId,
+                out var element);
+            var rack = isElement
+                ? null
+                : racks[command.TargetLogicalId];
+            var lifecycle = isElement
+                ? element!.LifecycleState
+                : rack!.LifecycleState;
+            var expectedLifecycle =
+                command.Type ==
+                SpaceElementCommandContract.RestoreLogicalObject
+                    ? SpaceLifecycleState.RemoveRequested
+                    : SpaceLifecycleState.Active;
+            if (lifecycle != expectedLifecycle)
+            {
+                throw Conflict(
+                    SpaceErrorCodes.CommandConflict,
+                    $"{command.Type} requires a {expectedLifecycle} target.",
+                    "reload-floor-scene");
+            }
+            if (command.Type ==
+                    SpaceElementCommandContract.UpdateProperties &&
+                !isElement)
+            {
+                throw Invalid(
+                    "commands.updateProperties",
+                    "UpdateProperties can target only a common element.");
+            }
+            if (command.Type ==
+                    SpaceElementCommandContract.GenerateRackArray &&
+                isElement)
+            {
+                throw Invalid(
+                    "commands.generateRackArray",
+                    "GenerateRackArray requires a rack template.");
+            }
+            if (command.Type !=
+                    SpaceElementCommandContract.GenerateRackArray ||
+                rack is null)
+            {
+                continue;
+            }
+
+            var generatedRackCount =
+                checked(
+                    command.GenerateRackArray!.Rows *
+                    command.GenerateRackArray.Columns) - 1;
+            var activeLevelCount = rackLevels.Count(candidate =>
+                candidate.RackLogicalId == rack.LogicalId &&
+                candidate.LifecycleState == SpaceLifecycleState.Active);
+            var activeLocationCount = locations.Count(candidate =>
+                candidate.RackLogicalId == rack.LogicalId &&
+                candidate.LifecycleState == SpaceLifecycleState.Active);
+            if (activeLevelCount == 0)
+            {
+                throw Invalid(
+                    "commands.generateRackArray",
+                    "The rack template must have at least one active design level.");
+            }
+            if (generatedRackCount * activeLevelCount > 2_000 ||
+                generatedRackCount * activeLocationCount > 5_000)
+            {
+                throw Invalid(
+                    "commands.generateRackArray",
+                    "The array would exceed the 2,000-level or 5,000-location command limit.");
+            }
+        }
+    }
+
+    private async Task ValidateRackArrayCodesAsync(
+        Guid versionId,
+        IReadOnlyList<SpaceElementCommandDto> commands,
+        IReadOnlyDictionary<Guid, SpaceRackRevision> racks,
+        CancellationToken cancellationToken)
+    {
+        var arrayCommands = commands
+            .Where(command =>
+                command.Type ==
+                SpaceElementCommandContract.GenerateRackArray)
+            .ToArray();
+        if (arrayCommands.Length == 0)
+            return;
+
+        var existing = await _context.RackRevisions
+            .AsNoTracking()
+            .Where(candidate => candidate.ModelVersionId == versionId)
+            .Select(candidate => new
+            {
+                candidate.ZoneLogicalId,
+                candidate.RackCode,
+            })
+            .ToListAsync(cancellationToken);
+        var reserved = existing
+            .Select(candidate =>
+                RackCodeKey(candidate.ZoneLogicalId, candidate.RackCode))
+            .ToHashSet(StringComparer.OrdinalIgnoreCase);
+        foreach (var command in arrayCommands)
+        {
+            var source = racks[command.TargetLogicalId];
+            var payload = command.GenerateRackArray!;
+            var generatedCount =
+                checked(payload.Rows * payload.Columns) - 1;
+            for (var index = 0; index < generatedCount; index++)
+            {
+                int number;
+                try
+                {
+                    number = checked(payload.StartNumber + index);
+                }
+                catch (OverflowException)
+                {
+                    throw Invalid(
+                        "commands.generateRackArray.startNumber",
+                        "The generated rack code sequence is too large.");
+                }
+                var code = RackArrayCode(payload, number);
+                if (code.Length > 100)
+                {
+                    throw Invalid(
+                        "commands.generateRackArray.codePrefix",
+                        "A generated rack code exceeds 100 characters.");
+                }
+                if (!reserved.Add(
+                        RackCodeKey(source.ZoneLogicalId, code)))
+                {
+                    throw Conflict(
+                        SpaceErrorCodes.CommandConflict,
+                        $"Rack code '{code}' already exists in the target zone.",
+                        "change-rack-code-preview");
+                }
+            }
+        }
+    }
+
+    private string ApplyElementCommand(
+        SpaceElementCommandDto command,
+        SpaceElementRevision element,
+        List<SpaceElementAttribute> attributes)
+    {
+        switch (command.Type)
+        {
+            case SpaceElementCommandContract.UpdateProperties:
+                return ApplyElementProperties(
+                    element,
+                    attributes,
+                    command.UpdateProperties!);
+            case SpaceElementCommandContract.MoveObject:
+                var move = command.MoveObject!;
+                element.ConfigurePlacement(
+                    move.X,
+                    move.Y,
+                    move.Z,
+                    element.RotationZ,
+                    element.Width,
+                    element.Height,
+                    element.Depth);
+                return JsonSerializer.Serialize(move, JsonOptions);
+            case SpaceElementCommandContract.RotateObject:
+                var rotation = command.RotateObject!;
+                element.ConfigurePlacement(
+                    element.X,
+                    element.Y,
+                    element.Z,
+                    rotation.RotationZ,
+                    element.Width,
+                    element.Height,
+                    element.Depth);
+                return JsonSerializer.Serialize(rotation, JsonOptions);
+            case SpaceElementCommandContract.DeleteObject:
+                element.ChangeLifecycle(
+                    SpaceLifecycleState.RemoveRequested);
+                return "{}";
+            case SpaceElementCommandContract.RestoreLogicalObject:
+                element.ChangeLifecycle(SpaceLifecycleState.Active);
+                return "{}";
+            default:
+                throw new UnreachableException();
+        }
+    }
+
+    private static string ApplyRackCommand(
+        SpaceElementCommandDto command,
+        SpaceRackRevision rack,
+        IReadOnlyCollection<SpaceRackLevelRevision> rackLevels,
+        IReadOnlyCollection<SpaceLocationRevision> locations)
+    {
+        switch (command.Type)
+        {
+            case SpaceElementCommandContract.MoveObject:
+                var move = command.MoveObject!;
+                rack.ConfigureGeometry(
+                    move.X,
+                    move.Y,
+                    move.Z,
+                    rack.RotationZ,
+                    rack.Width,
+                    rack.Depth,
+                    rack.Height,
+                    rack.TemplateVersionId);
+                return JsonSerializer.Serialize(move, JsonOptions);
+            case SpaceElementCommandContract.RotateObject:
+                var rotation = command.RotateObject!;
+                rack.ConfigureGeometry(
+                    rack.X,
+                    rack.Y,
+                    rack.Z,
+                    rotation.RotationZ,
+                    rack.Width,
+                    rack.Depth,
+                    rack.Height,
+                    rack.TemplateVersionId);
+                return JsonSerializer.Serialize(rotation, JsonOptions);
+            case SpaceElementCommandContract.DeleteObject:
+                ChangeRackLifecycle(
+                    rack,
+                    rackLevels,
+                    locations,
+                    SpaceLifecycleState.RemoveRequested);
+                return "{}";
+            case SpaceElementCommandContract.RestoreLogicalObject:
+                ChangeRackLifecycle(
+                    rack,
+                    rackLevels,
+                    locations,
+                    SpaceLifecycleState.Active);
+                return "{}";
+            default:
+                throw new UnreachableException();
+        }
+    }
+
+    private static void ChangeRackLifecycle(
+        SpaceRackRevision rack,
+        IEnumerable<SpaceRackLevelRevision> rackLevels,
+        IEnumerable<SpaceLocationRevision> locations,
+        SpaceLifecycleState lifecycle)
+    {
+        rack.ChangeLifecycle(lifecycle);
+        var sourceLifecycle =
+            lifecycle == SpaceLifecycleState.RemoveRequested
+                ? SpaceLifecycleState.Active
+                : SpaceLifecycleState.RemoveRequested;
+        foreach (var level in rackLevels.Where(candidate =>
+                     candidate.LifecycleState == sourceLifecycle))
+        {
+            level.ChangeLifecycle(lifecycle);
+        }
+        foreach (var location in locations.Where(candidate =>
+                     candidate.LifecycleState == sourceLifecycle))
+        {
+            location.ChangeLifecycle(lifecycle);
+        }
+    }
+
+    private RackArrayGeneration GenerateRackArray(
+        Guid versionId,
+        Guid floorLogicalId,
+        SpaceRackRevision source,
+        IReadOnlyCollection<SpaceRackLevelRevision> sourceLevels,
+        IReadOnlyCollection<SpaceLocationRevision> sourceLocations,
+        SpaceGenerateRackArrayDto payload)
+    {
+        var generatedRacks = new List<SpaceRackRevision>();
+        var generatedLevels = new List<SpaceRackLevelRevision>();
+        var generatedLocations = new List<SpaceLocationRevision>();
+        var radians = (double)source.RotationZ * Math.PI / 180d;
+        var cosine = Math.Cos(radians);
+        var sine = Math.Sin(radians);
+        var sequence = 0;
+        for (var row = 0; row < payload.Rows; row++)
+        {
+            for (var column = 0; column < payload.Columns; column++)
+            {
+                if (row == 0 && column == 0)
+                    continue;
+
+                var localX =
+                    column * ((long)source.Width + payload.ColumnGap) +
+                    (row % 2 == 1 ? payload.StaggerOffset : 0);
+                var localY =
+                    row * ((long)source.Depth + payload.RowGap);
+                var x = checked(
+                    source.X +
+                    (int)Math.Round(
+                        localX * cosine - localY * sine,
+                        MidpointRounding.AwayFromZero));
+                var y = checked(
+                    source.Y +
+                    (int)Math.Round(
+                        localX * sine + localY * cosine,
+                        MidpointRounding.AwayFromZero));
+                var rack = SpaceRackRevision.Create(
+                    _execution.TenantId,
+                    versionId,
+                    Guid.NewGuid(),
+                    floorLogicalId,
+                    source.ZoneLogicalId,
+                    RackArrayCode(
+                        payload,
+                        checked(payload.StartNumber + sequence)),
+                    source.AisleLogicalId);
+                rack.ConfigureGeometry(
+                    x,
+                    y,
+                    source.Z,
+                    source.RotationZ,
+                    source.Width,
+                    source.Depth,
+                    source.Height,
+                    source.TemplateVersionId);
+                generatedRacks.Add(rack);
+                _context.RackRevisions.Add(rack);
+
+                foreach (var sourceLevel in sourceLevels.Where(level =>
+                             level.LifecycleState ==
+                             SpaceLifecycleState.Active))
+                {
+                    var level = SpaceRackLevelRevision.Create(
+                        _execution.TenantId,
+                        versionId,
+                        Guid.NewGuid(),
+                        rack.LogicalId,
+                        sourceLevel.LevelNo,
+                        sourceLevel.BottomZ,
+                        sourceLevel.ClearHeight,
+                        sourceLevel.BinCount,
+                        sourceLevel.DepthCount,
+                        sourceLevel.CellWidth,
+                        sourceLevel.CellDepth,
+                        sourceLevel.MaxLoad,
+                        sourceLevel.BeamHeight);
+                    generatedLevels.Add(level);
+                    _context.RackLevelRevisions.Add(level);
+                }
+                foreach (var sourceLocation in sourceLocations.Where(
+                             location =>
+                                 location.LifecycleState ==
+                                 SpaceLifecycleState.Active))
+                {
+                    var location = SpaceLocationRevision.Create(
+                        _execution.TenantId,
+                        versionId,
+                        Guid.NewGuid(),
+                        floorLogicalId,
+                        rack.LogicalId,
+                        locationCode: null,
+                        sourceLocation.ColumnNo,
+                        sourceLocation.LevelNo,
+                        sourceLocation.DepthNo,
+                        sourceLocation.Width,
+                        sourceLocation.Height,
+                        sourceLocation.Depth,
+                        sourceLocation.MaxLoad,
+                        SpaceLocationCodeOrigin.Generated,
+                        SpaceExternalBindingState.Unbound);
+                    generatedLocations.Add(location);
+                    _context.LocationRevisions.Add(location);
+                }
+                sequence++;
+            }
+        }
+        return new RackArrayGeneration(
+            generatedRacks,
+            generatedLevels,
+            generatedLocations);
+    }
+
+    private static string RackArrayCode(
+        SpaceGenerateRackArrayDto payload,
+        int number) =>
+        $"{payload.CodePrefix.Trim()}" +
+        number.ToString(
+            $"D{payload.CodeDigits}",
+            CultureInfo.InvariantCulture);
+
+    private static string RackCodeKey(Guid zoneLogicalId, string rackCode) =>
+        $"{zoneLogicalId:D}\u001f{rackCode}";
+
+    private sealed record RackArrayGeneration(
+        IReadOnlyList<SpaceRackRevision> Racks,
+        IReadOnlyList<SpaceRackLevelRevision> Levels,
+        IReadOnlyList<SpaceLocationRevision> Locations);
 
     private string ApplyElementProperties(
         SpaceElementRevision element,
@@ -1245,12 +1867,6 @@ public sealed class SpaceDesignV1Service : ISpaceDesignV1Service
         return JsonSerializer.Serialize(payload, JsonOptions);
     }
 
-    private static string ApplyElementDeletion(SpaceElementRevision element)
-    {
-        element.ChangeLifecycle(SpaceLifecycleState.RemoveRequested);
-        return "{}";
-    }
-
     private static string ElementAuditJson(
         SpaceElementRevision element,
         IEnumerable<SpaceElementAttribute> attributes) =>
@@ -1282,6 +1898,69 @@ public sealed class SpaceDesignV1Service : ISpaceDesignV1Service
                         attribute.ValueType,
                         attribute.Value,
                         attribute.Unit,
+                    })
+                    .ToArray(),
+            },
+            JsonOptions);
+
+    private static string RackAuditJson(
+        SpaceRackRevision rack,
+        IEnumerable<SpaceRackLevelRevision> rackLevels,
+        IEnumerable<SpaceLocationRevision> locations) =>
+        JsonSerializer.Serialize(
+            new
+            {
+                rack.LogicalId,
+                rack.FloorLogicalId,
+                rack.ZoneLogicalId,
+                rack.AisleLogicalId,
+                rack.RackCode,
+                rack.TemplateVersionId,
+                rack.X,
+                rack.Y,
+                rack.Z,
+                rack.RotationZ,
+                rack.Width,
+                rack.Depth,
+                rack.Height,
+                LifecycleState = rack.LifecycleState.ToString(),
+                Levels = rackLevels
+                    .OrderBy(level => level.LevelNo)
+                    .Select(level => new
+                    {
+                        level.LogicalId,
+                        level.LevelNo,
+                        level.BottomZ,
+                        level.ClearHeight,
+                        level.BinCount,
+                        level.DepthCount,
+                        level.CellWidth,
+                        level.CellDepth,
+                        level.BeamHeight,
+                        level.MaxLoad,
+                        LifecycleState = level.LifecycleState.ToString(),
+                    })
+                    .ToArray(),
+                Locations = locations
+                    .OrderBy(location => location.LevelNo)
+                    .ThenBy(location => location.ColumnNo)
+                    .ThenBy(location => location.DepthNo)
+                    .Select(location => new
+                    {
+                        location.LogicalId,
+                        location.LocationCode,
+                        location.ColumnNo,
+                        location.LevelNo,
+                        location.DepthNo,
+                        location.Width,
+                        location.Height,
+                        location.Depth,
+                        location.MaxLoad,
+                        CodeOrigin = location.CodeOrigin.ToString(),
+                        ExternalBindingState =
+                            location.ExternalBindingState.ToString(),
+                        LifecycleState =
+                            location.LifecycleState.ToString(),
                     })
                     .ToArray(),
             },

@@ -8,7 +8,29 @@ import {
   type ElementPropertiesPayload,
 } from '@/api/space/designElements'
 import { designUnderlayApi } from '@/api/space/designUnderlay'
-import { ElementCanvasLayer } from '@/modules/space-design/canvas2d/ElementCanvasLayer'
+import {
+  ElementCanvasLayer,
+  type CanvasObjectRef,
+  type CanvasSelectionMode,
+} from '@/modules/space-design/canvas2d/ElementCanvasLayer'
+import {
+  buildElementCanvasPlan,
+  type ElementCanvasDrawable,
+} from '@/modules/space-design/canvas2d/elementCanvasPlan'
+import {
+  SavedCommandHistory,
+  buildAlignmentBatch,
+  buildDeleteBatch,
+  buildDistributionBatch,
+  buildRotationBatch,
+  type AlignmentMode,
+  type DistributionMode,
+  type EditorCommandInput,
+  type EditorObjectSnapshot,
+  type GenerateRackArrayPayload,
+  type ReversibleCommandBatch,
+} from '@/modules/space-design/commands/editorBatchCommands'
+import DesignBatchToolsPanel from '@/modules/space-design/panels/DesignBatchToolsPanel.vue'
 import DesignElementPropertiesPanel from '@/modules/space-design/panels/DesignElementPropertiesPanel.vue'
 import {
   decodeUnderlay,
@@ -28,6 +50,7 @@ import type {
   ISpaceSceneElementDto,
   ISpaceSceneElementAttributeDto,
   ISpaceSceneFloorDto,
+  ISpaceSceneRackDto,
 } from '../../../../../sdk/typescript/space-design-v1/spaceDesignV1Client'
 
 const maxUploadBytes = 100 * 1024 * 1024
@@ -42,7 +65,7 @@ const canvasRef = ref<HTMLDivElement>()
 const fileInputRef = ref<HTMLInputElement>()
 const designScene = ref<ISpaceDesignSceneDto | null>(null)
 const floor = ref<ISpaceSceneFloorDto | null>(null)
-const selectedLogicalId = ref<string | null>(null)
+const selectedObjects = ref<CanvasObjectRef[]>([])
 const loading = ref(true)
 const uploading = ref(false)
 const savingCalibration = ref(false)
@@ -62,6 +85,8 @@ let elementLayer: ElementCanvasLayer | null = null
 let resizeObserver: ResizeObserver | null = null
 let disposed = false
 const clientInstanceId = crypto.randomUUID()
+const history = new SavedCommandHistory()
+const historyRevision = ref(0)
 
 const calibrated = computed(() => Boolean(floor.value?.underlayCalibrationId))
 const hasUnderlay = computed(() => Boolean(floor.value?.underlaySourceId))
@@ -71,12 +96,53 @@ const activeElements = computed(() =>
     (element) => element.revision?.lifecycleState === 'Active',
   ),
 )
-const selectedElement = computed<ISpaceSceneElementDto | null>(
-  () =>
-    activeElements.value.find(
-      (element) => element.revision?.logicalId === selectedLogicalId.value,
-    ) ?? null,
+const activeRacks = computed(() =>
+  (designScene.value?.racks ?? []).filter(
+    (rack) => rack.revision?.lifecycleState === 'Active',
+  ),
 )
+const selectedElement = computed<ISpaceSceneElementDto | null>(() => {
+  const selection = selectedObjects.value
+  if (selection.length !== 1 || selection[0]?.ownerKind !== 'Element') {
+    return null
+  }
+  return (
+    activeElements.value.find(
+      (element) =>
+        element.revision?.logicalId === selection[0]?.logicalId,
+    ) ?? null
+  )
+})
+const selectedRack = computed<ISpaceSceneRackDto | null>(() => {
+  const selection = selectedObjects.value
+  if (selection.length !== 1 || selection[0]?.ownerKind !== 'Rack') return null
+  return (
+    activeRacks.value.find(
+      (rack) => rack.revision?.logicalId === selection[0]?.logicalId,
+    ) ?? null
+  )
+})
+const canUndo = computed(() => {
+  historyRevision.value
+  return history.canUndo
+})
+const canRedo = computed(() => {
+  historyRevision.value
+  return history.canRedo
+})
+const selectionBounds = computed(() => {
+  if (selectedObjects.value.length === 0) return ''
+  try {
+    const bounds = selectedSnapshots().map((snapshot) => snapshot.bounds)
+    return `X ${Math.round(Math.min(...bounds.map((item) => item.minX)))}…${Math.round(
+      Math.max(...bounds.map((item) => item.maxX)),
+    )} / Y ${Math.round(Math.min(...bounds.map((item) => item.minY)))}…${Math.round(
+      Math.max(...bounds.map((item) => item.maxY)),
+    )} mm`
+  } catch {
+    return ''
+  }
+})
 const selectedAttributes = computed<ISpaceSceneElementAttributeDto[]>(() => {
   const revisionId = selectedElement.value?.revision?.revisionId
   return revisionId
@@ -125,7 +191,7 @@ onMounted(async () => {
   await nextTick()
   if (!canvasRef.value) return
   stage = new UnderlayStage(canvasRef.value)
-  elementLayer = new ElementCanvasLayer(stage.stage, selectElement)
+  elementLayer = new ElementCanvasLayer(stage.stage, selectObjects)
   resizeObserver = new ResizeObserver((entries) => {
     const size = entries[0]?.contentRect
     if (size) {
@@ -166,16 +232,22 @@ async function loadScene(): Promise<void> {
     designScene.value = scene
     floor.value = scene.floor
     elementLayer?.setScene(scene)
-    if (
-      selectedLogicalId.value &&
-      !scene.elements?.some(
-        (element) =>
-          element.revision?.logicalId === selectedLogicalId.value &&
-          element.revision?.lifecycleState === 'Active',
-      )
-    ) {
-      selectElement(null)
-    }
+    const activeIds = new Set([
+      ...(scene.elements ?? [])
+        .filter(
+          (element) => element.revision?.lifecycleState === 'Active',
+        )
+        .map((element) => element.revision?.logicalId),
+      ...(scene.racks ?? [])
+        .filter((rack) => rack.revision?.lifecycleState === 'Active')
+        .map((rack) => rack.revision?.logicalId),
+    ])
+    selectedObjects.value = selectedObjects.value.filter((selection) =>
+      activeIds.has(selection.logicalId),
+    )
+    elementLayer?.setSelected(
+      selectedObjects.value.map((selection) => selection.logicalId),
+    )
     statusText.value = scene.floor.underlaySourceId
       ? calibrated.value
         ? t('底图已加载并标定')
@@ -408,10 +480,26 @@ async function saveCalibration(): Promise<void> {
   }
 }
 
-function selectElement(logicalId: string | null): void {
+function selectObjects(
+  objects: readonly CanvasObjectRef[],
+  mode: CanvasSelectionMode,
+): void {
   if (calibrationMode.value) return
-  selectedLogicalId.value = logicalId
-  elementLayer?.setSelected(logicalId)
+  if (mode === 'replace') {
+    selectedObjects.value = [...objects]
+  } else {
+    const selected = new Map(
+      selectedObjects.value.map((item) => [item.logicalId, item]),
+    )
+    for (const object of objects) {
+      if (selected.has(object.logicalId)) selected.delete(object.logicalId)
+      else selected.set(object.logicalId, object)
+    }
+    selectedObjects.value = [...selected.values()]
+  }
+  elementLayer?.setSelected(
+    selectedObjects.value.map((selection) => selection.logicalId),
+  )
 }
 
 async function saveElement(payload: ElementPropertiesPayload): Promise<void> {
@@ -422,14 +510,34 @@ async function saveElement(payload: ElementPropertiesPayload): Promise<void> {
   }
   savingElement.value = true
   try {
-    await designElementsApi.update(
-      versionId.value,
-      floorLogicalId.value,
-      currentFloor.revisionNumber ?? 0,
-      clientInstanceId,
-      element,
-      payload,
-    )
+    const logicalId = element.revision?.logicalId
+    if (!logicalId) throw new Error('Element logical identity is missing')
+    const before = elementPropertiesPayload(element)
+    await applyEditorCommands([
+      {
+        type: 'UpdateProperties',
+        targetLogicalId: logicalId,
+        updateProperties: payload,
+      },
+    ])
+    history.push({
+      label: '修改通用元素属性',
+      undo: [
+        {
+          type: 'UpdateProperties',
+          targetLogicalId: logicalId,
+          updateProperties: before,
+        },
+      ],
+      redo: [
+        {
+          type: 'UpdateProperties',
+          targetLogicalId: logicalId,
+          updateProperties: payload,
+        },
+      ],
+    })
+    touchHistory()
     await loadScene()
     ElMessage.success(t('元素属性已保存'))
   } catch {
@@ -440,15 +548,20 @@ async function saveElement(payload: ElementPropertiesPayload): Promise<void> {
 }
 
 async function removeElement(): Promise<void> {
-  const currentFloor = floor.value
-  const element = selectedElement.value
-  if (!currentFloor || !element || savingElement.value || readonlyScene.value) {
-    return
-  }
+  await removeSelected()
+}
+
+async function removeSelected(): Promise<void> {
+  if (
+    !floor.value ||
+    selectedObjects.value.length === 0 ||
+    savingElement.value ||
+    readonlyScene.value
+  ) return
   try {
     await ElMessageBox.confirm(
-      t('删除会把该草稿元素标记为待移除，是否继续？'),
-      t('删除草稿元素'),
+      `将 ${selectedObjects.value.length} 个草稿对象标记为待移除。保存后的撤销会写入补偿批次，是否继续？`,
+      '批量删除',
       { type: 'warning' },
     )
   } catch {
@@ -457,21 +570,266 @@ async function removeElement(): Promise<void> {
 
   savingElement.value = true
   try {
-    await designElementsApi.remove(
-      versionId.value,
-      floorLogicalId.value,
-      currentFloor.revisionNumber ?? 0,
-      clientInstanceId,
-      element,
-    )
-    selectElement(null)
-    await loadScene()
-    ElMessage.success(t('草稿元素已删除'))
+    const batch = buildDeleteBatch(selectedSnapshots())
+    await executeReversible('删除对象', batch)
+    selectObjects([], 'replace')
+    ElMessage.success('草稿对象已删除')
   } catch {
-    ElMessage.error(t('元素删除失败，请刷新场景后重试'))
+    ElMessage.error('对象删除失败，请刷新场景后重试')
   } finally {
     savingElement.value = false
   }
+}
+
+async function alignSelected(mode: AlignmentMode): Promise<void> {
+  await runBatchTool(
+    `对齐 ${selectedObjects.value.length} 个对象`,
+    buildAlignmentBatch(selectedSnapshots(), mode),
+  )
+}
+
+async function distributeSelected(mode: DistributionMode): Promise<void> {
+  await runBatchTool(
+    `等距分布 ${selectedObjects.value.length} 个对象`,
+    buildDistributionBatch(selectedSnapshots(), mode),
+  )
+}
+
+async function rotateSelected(degrees: number): Promise<void> {
+  await runBatchTool(
+    `旋转 ${selectedObjects.value.length} 个对象`,
+    buildRotationBatch(selectedSnapshots(), degrees),
+  )
+}
+
+async function runBatchTool(
+  label: string,
+  batch: ReversibleCommandBatch,
+): Promise<void> {
+  if (savingElement.value || readonlyScene.value || batch.forward.length === 0) {
+    return
+  }
+  savingElement.value = true
+  try {
+    await executeReversible(label, batch)
+    ElMessage.success(label)
+  } catch {
+    ElMessage.error(`${label}失败，请刷新场景后重试`)
+  } finally {
+    savingElement.value = false
+  }
+}
+
+async function generateRackArray(
+  payload: GenerateRackArrayPayload,
+): Promise<void> {
+  const rack = selectedRack.value
+  const logicalId = rack?.revision?.logicalId
+  if (
+    !rack ||
+    !logicalId ||
+    !floor.value ||
+    savingElement.value ||
+    readonlyScene.value
+  ) return
+  const generatedCount = payload.rows * payload.columns - 1
+  const firstCode = `${payload.codePrefix}${String(payload.startNumber).padStart(payload.codeDigits, '0')}`
+  const lastCode = `${payload.codePrefix}${String(
+    payload.startNumber + generatedCount - 1,
+  ).padStart(payload.codeDigits, '0')}`
+  try {
+    await ElMessageBox.confirm(
+      `模板货架 ${rack.rackCode} 计入阵列，将新增 ${generatedCount} 个货架（${firstCode} … ${lastCode}），并复制设计层与未绑定库位。是否继续？`,
+      '生成货架阵列',
+      { type: 'warning' },
+    )
+  } catch {
+    return
+  }
+
+  savingElement.value = true
+  try {
+    const response = await applyEditorCommands([
+      {
+        type: 'GenerateRackArray',
+        targetLogicalId: logicalId,
+        generateRackArray: payload,
+      },
+    ])
+    const generatedIds = (response.affectedRacks ?? [])
+      .map((generated) => generated.revision?.logicalId)
+      .filter((id): id is string => Boolean(id))
+    if (generatedIds.length !== generatedCount) {
+      throw new Error('Rack array response did not contain every generated rack')
+    }
+    history.push({
+      label: '生成货架阵列',
+      undo: generatedIds.map((targetLogicalId) => ({
+        type: 'DeleteObject',
+        targetLogicalId,
+      })),
+      redo: generatedIds.map((targetLogicalId) => ({
+        type: 'RestoreLogicalObject',
+        targetLogicalId,
+      })),
+    })
+    touchHistory()
+    await loadScene()
+    ElMessage.success(`已新增 ${generatedCount} 个草稿货架`)
+  } catch {
+    ElMessage.error('货架阵列生成失败，请检查编码预览和当前楼层修订')
+  } finally {
+    savingElement.value = false
+  }
+}
+
+async function undoSavedCommand(): Promise<void> {
+  const entry = history.takeUndo()
+  if (!entry || savingElement.value) return
+  savingElement.value = true
+  touchHistory()
+  try {
+    await applyEditorCommands(entry.undo)
+    history.completeUndo(entry)
+    await loadScene()
+    ElMessage.success(`已撤销：${entry.label}`)
+  } catch {
+    history.cancelUndo(entry)
+    ElMessage.error('撤销失败，请刷新场景后重试')
+  } finally {
+    savingElement.value = false
+    touchHistory()
+  }
+}
+
+async function redoSavedCommand(): Promise<void> {
+  const entry = history.takeRedo()
+  if (!entry || savingElement.value) return
+  savingElement.value = true
+  touchHistory()
+  try {
+    await applyEditorCommands(entry.redo)
+    history.completeRedo(entry)
+    await loadScene()
+    ElMessage.success(`已重做：${entry.label}`)
+  } catch {
+    history.cancelRedo(entry)
+    ElMessage.error('重做失败，请刷新场景后重试')
+  } finally {
+    savingElement.value = false
+    touchHistory()
+  }
+}
+
+async function executeReversible(
+  label: string,
+  batch: ReversibleCommandBatch,
+): Promise<void> {
+  await applyEditorCommands(batch.forward)
+  history.push({ label, undo: batch.reverse, redo: batch.forward })
+  touchHistory()
+  await loadScene()
+}
+
+function applyEditorCommands(commands: readonly EditorCommandInput[]) {
+  const currentFloor = floor.value
+  if (!currentFloor) throw new Error('Floor is unavailable')
+  return designElementsApi.apply(
+    versionId.value,
+    floorLogicalId.value,
+    currentFloor.revisionNumber ?? 0,
+    clientInstanceId,
+    commands,
+  )
+}
+
+function selectedSnapshots(): EditorObjectSnapshot[] {
+  const scene = designScene.value
+  if (!scene) return []
+  const drawables = new Map(
+    buildElementCanvasPlan(scene).map((drawable) => [
+      drawable.logicalId,
+      drawable,
+    ]),
+  )
+  return selectedObjects.value.map((selection) => {
+    const drawable = drawables.get(selection.logicalId)
+    const source =
+      selection.ownerKind === 'Rack'
+        ? activeRacks.value.find(
+            (rack) => rack.revision?.logicalId === selection.logicalId,
+          )
+        : activeElements.value.find(
+            (element) => element.revision?.logicalId === selection.logicalId,
+          )
+    if (!drawable || !source) {
+      throw new Error(`Selected object ${selection.logicalId} is unavailable`)
+    }
+    return {
+      logicalId: selection.logicalId,
+      ownerKind: selection.ownerKind,
+      x: source.x ?? 0,
+      y: source.y ?? 0,
+      z: source.z ?? 0,
+      rotationZ: source.rotationZ ?? 0,
+      bounds: drawableBounds(drawable),
+    }
+  })
+}
+
+function drawableBounds(drawable: ElementCanvasDrawable) {
+  if (drawable.kind === 'polygon') {
+    const xs = drawable.points.map((point) => point.x)
+    const ys = drawable.points.map((point) => point.y)
+    return {
+      minX: Math.min(...xs),
+      maxX: Math.max(...xs),
+      minY: Math.min(...ys),
+      maxY: Math.max(...ys),
+    }
+  }
+  const radians = (drawable.rotationZ * Math.PI) / 180
+  const halfX =
+    Math.abs(Math.cos(radians)) * drawable.width / 2 +
+    Math.abs(Math.sin(radians)) * drawable.depth / 2
+  const halfY =
+    Math.abs(Math.sin(radians)) * drawable.width / 2 +
+    Math.abs(Math.cos(radians)) * drawable.depth / 2
+  return {
+    minX: drawable.centerX - halfX,
+    maxX: drawable.centerX + halfX,
+    minY: drawable.centerY - halfY,
+    maxY: drawable.centerY + halfY,
+  }
+}
+
+function elementPropertiesPayload(
+  element: ISpaceSceneElementDto,
+): ElementPropertiesPayload {
+  return {
+    geometryJson: element.geometryJson ?? '{}',
+    x: element.x ?? 0,
+    y: element.y ?? 0,
+    z: element.z ?? 0,
+    rotationZ: element.rotationZ ?? 0,
+    width: element.width ?? 1,
+    height: element.height ?? 1,
+    depth: element.depth ?? 1,
+    businessCode: element.businessCode,
+    linkedEntityType: element.linkedEntityType,
+    linkedLogicalId: element.linkedLogicalId,
+    attributes: selectedAttributes.value.map((attribute) => ({
+      namespace: attribute.namespace ?? '',
+      key: attribute.key ?? '',
+      valueType: attribute.valueType ?? 'String',
+      value: attribute.value,
+      unit: attribute.unit,
+    })),
+  }
+}
+
+function touchHistory(): void {
+  historyRevision.value++
 }
 
 function delay(milliseconds: number): Promise<void> {
@@ -488,6 +846,9 @@ function delay(milliseconds: number): Promise<void> {
           {{ statusText }}
           <el-tag size="small" type="info">
             {{ t('{count} 个可编辑元素', { count: activeElements.length }) }}
+          </el-tag>
+          <el-tag size="small" type="success">
+            {{ activeRacks.length }} 个可编辑货架
           </el-tag>
           <el-tag v-if="readonlyScene" size="small" type="danger">
             {{ t('只读版本') }}
@@ -520,6 +881,23 @@ function delay(milliseconds: number): Promise<void> {
         </el-button>
       </div>
     </header>
+
+    <DesignBatchToolsPanel
+      :selected-count="selectedObjects.length"
+      :selection-bounds="selectionBounds"
+      :selected-rack-code="selectedRack?.rackCode"
+      :busy="savingElement"
+      :readonly="readonlyScene"
+      :can-undo="canUndo"
+      :can-redo="canRedo"
+      @align="alignSelected"
+      @distribute="distributeSelected"
+      @rotate="rotateSelected"
+      @remove="removeSelected"
+      @array="generateRackArray"
+      @undo="undoSavedCommand"
+      @redo="redoSavedCommand"
+    />
 
     <section class="workspace">
       <main ref="canvasRef" class="canvas" />

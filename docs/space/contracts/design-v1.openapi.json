@@ -2457,6 +2457,27 @@
           },
           "idempotentReplay": {
             "type": "boolean"
+          },
+          "affectedRacks": {
+            "type": "array",
+            "items": {
+              "$ref": "#/components/schemas/CP6.Space.Contracts.SpaceSceneRackDto"
+            },
+            "nullable": true
+          },
+          "affectedRackLevels": {
+            "type": "array",
+            "items": {
+              "$ref": "#/components/schemas/CP6.Space.Contracts.SpaceSceneRackLevelDto"
+            },
+            "nullable": true
+          },
+          "affectedLocations": {
+            "type": "array",
+            "items": {
+              "$ref": "#/components/schemas/CP6.Space.Contracts.SpaceSceneLocationDto"
+            },
+            "nullable": true
           }
         },
         "additionalProperties": false
@@ -2896,6 +2917,15 @@
           },
           "updateProperties": {
             "$ref": "#/components/schemas/CP6.Space.Contracts.SpaceUpdateElementPropertiesDto"
+          },
+          "moveObject": {
+            "$ref": "#/components/schemas/CP6.Space.Contracts.SpaceMoveObjectDto"
+          },
+          "rotateObject": {
+            "$ref": "#/components/schemas/CP6.Space.Contracts.SpaceRotateObjectDto"
+          },
+          "generateRackArray": {
+            "$ref": "#/components/schemas/CP6.Space.Contracts.SpaceGenerateRackArrayDto"
           }
         },
         "additionalProperties": false
@@ -2966,6 +2996,44 @@
           "rowVersion": {
             "type": "string",
             "nullable": true
+          }
+        },
+        "additionalProperties": false
+      },
+      "CP6.Space.Contracts.SpaceGenerateRackArrayDto": {
+        "type": "object",
+        "properties": {
+          "rows": {
+            "type": "integer",
+            "format": "int32"
+          },
+          "columns": {
+            "type": "integer",
+            "format": "int32"
+          },
+          "rowGap": {
+            "type": "integer",
+            "format": "int32"
+          },
+          "columnGap": {
+            "type": "integer",
+            "format": "int32"
+          },
+          "staggerOffset": {
+            "type": "integer",
+            "format": "int32"
+          },
+          "codePrefix": {
+            "type": "string",
+            "nullable": true
+          },
+          "startNumber": {
+            "type": "integer",
+            "format": "int32"
+          },
+          "codeDigits": {
+            "type": "integer",
+            "format": "int32"
           }
         },
         "additionalProperties": false
@@ -3180,6 +3248,34 @@
           "rowVersion": {
             "type": "string",
             "nullable": true
+          }
+        },
+        "additionalProperties": false
+      },
+      "CP6.Space.Contracts.SpaceMoveObjectDto": {
+        "type": "object",
+        "properties": {
+          "x": {
+            "type": "integer",
+            "format": "int32"
+          },
+          "y": {
+            "type": "integer",
+            "format": "int32"
+          },
+          "z": {
+            "type": "integer",
+            "format": "int32"
+          }
+        },
+        "additionalProperties": false
+      },
+      "CP6.Space.Contracts.SpaceRotateObjectDto": {
+        "type": "object",
+        "properties": {
+          "rotationZ": {
+            "type": "number",
+            "format": "double"
           }
         },
         "additionalProperties": false

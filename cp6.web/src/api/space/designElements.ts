@@ -4,6 +4,7 @@ import type {
   ISpaceElementAttributeWriteDto,
   ISpaceSceneElementDto,
 } from '../../../../sdk/typescript/space-design-v1/spaceDesignV1Client'
+import type { EditorCommandInput } from '@/modules/space-design/commands/editorBatchCommands'
 
 const root = '/space/design/v1'
 
@@ -32,20 +33,19 @@ export const designElementsApi = {
     payload: ElementPropertiesPayload,
   ) {
     const targetLogicalId = requireLogicalId(element)
-    return apply(versionId, floorLogicalId, {
-      schemaVersion: 1,
-      commandBatchId: crypto.randomUUID(),
-      clientInstanceId,
+    return designElementsApi.apply(
+      versionId,
+      floorLogicalId,
       expectedFloorRevision,
-      commands: [
+      clientInstanceId,
+      [
         {
-          commandId: crypto.randomUUID(),
           type: 'UpdateProperties',
           targetLogicalId,
           updateProperties: payload,
         },
       ],
-    })
+    )
   },
 
   remove(
@@ -56,18 +56,36 @@ export const designElementsApi = {
     element: ISpaceSceneElementDto,
   ) {
     const targetLogicalId = requireLogicalId(element)
+    return designElementsApi.apply(
+      versionId,
+      floorLogicalId,
+      expectedFloorRevision,
+      clientInstanceId,
+      [
+        {
+          type: 'DeleteObject',
+          targetLogicalId,
+        },
+      ],
+    )
+  },
+
+  apply(
+    versionId: string,
+    floorLogicalId: string,
+    expectedFloorRevision: number,
+    clientInstanceId: string,
+    commands: readonly EditorCommandInput[],
+  ) {
     return apply(versionId, floorLogicalId, {
       schemaVersion: 1,
       commandBatchId: crypto.randomUUID(),
       clientInstanceId,
       expectedFloorRevision,
-      commands: [
-        {
-          commandId: crypto.randomUUID(),
-          type: 'DeleteObject',
-          targetLogicalId,
-        },
-      ],
+      commands: commands.map((command) => ({
+        ...command,
+        commandId: crypto.randomUUID(),
+      })),
     })
   },
 }
