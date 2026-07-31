@@ -168,6 +168,9 @@ public sealed class SpaceVersionCloneSqlServerTests
             var sourceElement = await context.ElementRevisions
                 .AsNoTracking()
                 .SingleAsync(row => row.ModelVersionId == published.Id);
+            var sourceRackLevel = await context.RackLevelRevisions
+                .AsNoTracking()
+                .SingleAsync(row => row.ModelVersionId == published.Id);
             var sourceSource = await context.Sources
                 .AsNoTracking()
                 .SingleAsync(row => row.ModelVersionId == published.Id);
@@ -186,6 +189,8 @@ public sealed class SpaceVersionCloneSqlServerTests
                 row => row.ModelVersionId == started.Result.ModelVersionId);
             var targetElement = await context.ElementRevisions.SingleAsync(
                 row => row.ModelVersionId == started.Result.ModelVersionId);
+            var targetRackLevel = await context.RackLevelRevisions.SingleAsync(
+                row => row.ModelVersionId == started.Result.ModelVersionId);
             var targetAttribute = await context.ElementAttributes.SingleAsync(
                 row => row.ModelVersionId == started.Result.ModelVersionId);
 
@@ -198,6 +203,9 @@ public sealed class SpaceVersionCloneSqlServerTests
             Assert.NotEqual(sourceElement.Id, targetElement.Id);
             Assert.Equal(sourceElement.LogicalId, targetElement.LogicalId);
             Assert.Equal(sourceElement.ModelAssetId, targetElement.ModelAssetId);
+            Assert.Equal(sourceRackLevel.LogicalId, targetRackLevel.LogicalId);
+            Assert.Equal(sourceRackLevel.BeamHeight, targetRackLevel.BeamHeight);
+            Assert.Equal(sourceRackLevel.MaxLoad, targetRackLevel.MaxLoad);
             Assert.Equal(targetElement.Id, targetAttribute.ElementRevisionId);
         });
     }
@@ -326,7 +334,8 @@ public sealed class SpaceVersionCloneSqlServerTests
                 1,
                 1000,
                 800,
-                1250.5m);
+                maxLoad: 1250.5m,
+                beamHeight: 100);
             var location = SpaceLocationRevision.Create(
                 tenantId,
                 version.Id,

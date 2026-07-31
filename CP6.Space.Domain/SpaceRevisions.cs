@@ -314,6 +314,7 @@ public sealed class SpaceRackLevelRevision : SpaceRevisionEntity
     public int DepthCount { get; private set; }
     public int CellWidth { get; private set; }
     public int CellDepth { get; private set; }
+    public int BeamHeight { get; private set; }
     public decimal? MaxLoad { get; private set; }
 
     public static SpaceRackLevelRevision Create(
@@ -328,39 +329,84 @@ public sealed class SpaceRackLevelRevision : SpaceRevisionEntity
         int depthCount,
         int cellWidth,
         int cellDepth,
-        decimal? maxLoad = null)
+        decimal? maxLoad = null,
+        int beamHeight = 0)
     {
         SpaceRevisionValue.RequireIdentity(rackLogicalId, nameof(rackLogicalId));
-        if (levelNo <= 0 ||
-            clearHeight <= 0 ||
-            binCount <= 0 ||
-            depthCount <= 0 ||
-            cellWidth <= 0 ||
-            cellDepth <= 0)
-        {
-            throw new ArgumentOutOfRangeException(
-                nameof(levelNo),
-                "Rack level numbers, counts and dimensions must be positive.");
-        }
-        if (bottomZ < 0)
-            throw new ArgumentOutOfRangeException(nameof(bottomZ));
-        if (maxLoad < 0)
-            throw new ArgumentOutOfRangeException(nameof(maxLoad));
 
         var revision = new SpaceRackLevelRevision
         {
             RackLogicalId = rackLogicalId,
-            LevelNo = levelNo,
-            BottomZ = bottomZ,
-            ClearHeight = clearHeight,
-            BinCount = binCount,
-            DepthCount = depthCount,
-            CellWidth = cellWidth,
-            CellDepth = cellDepth,
-            MaxLoad = maxLoad,
         };
+        revision.UpdateSpecification(
+            levelNo,
+            bottomZ,
+            clearHeight,
+            binCount,
+            depthCount,
+            cellWidth,
+            cellDepth,
+            maxLoad,
+            beamHeight);
         revision.InitializeRevision(tenantId, modelVersionId, logicalId);
         return revision;
+    }
+
+    public void UpdateSpecification(
+        int levelNo,
+        int bottomZ,
+        int clearHeight,
+        int binCount,
+        int depthCount,
+        int cellWidth,
+        int cellDepth,
+        decimal? maxLoad = null,
+        int beamHeight = 0)
+    {
+        RequirePositive(levelNo, nameof(levelNo));
+        RequireNonNegative(bottomZ, nameof(bottomZ));
+        RequirePositive(clearHeight, nameof(clearHeight));
+        RequirePositive(binCount, nameof(binCount));
+        RequirePositive(depthCount, nameof(depthCount));
+        RequirePositive(cellWidth, nameof(cellWidth));
+        RequirePositive(cellDepth, nameof(cellDepth));
+        RequireNonNegative(beamHeight, nameof(beamHeight));
+        if (maxLoad < 0)
+        {
+            throw new ArgumentOutOfRangeException(
+                nameof(maxLoad),
+                "Rack level maximum load cannot be negative.");
+        }
+
+        LevelNo = levelNo;
+        BottomZ = bottomZ;
+        ClearHeight = clearHeight;
+        BinCount = binCount;
+        DepthCount = depthCount;
+        CellWidth = cellWidth;
+        CellDepth = cellDepth;
+        BeamHeight = beamHeight;
+        MaxLoad = maxLoad;
+    }
+
+    private static void RequirePositive(int value, string parameterName)
+    {
+        if (value <= 0)
+        {
+            throw new ArgumentOutOfRangeException(
+                parameterName,
+                "Rack level numbers, counts and cell dimensions must be positive.");
+        }
+    }
+
+    private static void RequireNonNegative(int value, string parameterName)
+    {
+        if (value < 0)
+        {
+            throw new ArgumentOutOfRangeException(
+                parameterName,
+                "Rack level offsets and beam dimensions cannot be negative.");
+        }
     }
 }
 

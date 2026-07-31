@@ -519,6 +519,136 @@ public sealed class SpaceSqlServerTests
             actorId);
     }
 
+    [SqlServerFact]
+    public async Task Rack_levels_persist_independent_specifications_with_tenant_isolation()
+    {
+        var tenantA = Guid.NewGuid();
+        var tenantB = Guid.NewGuid();
+        var actorId = Guid.NewGuid();
+
+        await WithDatabaseAsync(
+            async (_, connectionString) =>
+            {
+                await using (var writer = CreateContext(
+                                 connectionString,
+                                 tenantA,
+                                 actorId))
+                {
+                    var model = SpaceModel.Create(tenantA, Guid.NewGuid());
+                    var version = SpaceModelVersion.CreateDraft(
+                        tenantA,
+                        model.Id,
+                        1,
+                        "Rack level draft");
+                    var floor = SpaceFloorRevision.Create(
+                        tenantA,
+                        version.Id,
+                        Guid.NewGuid(),
+                        model.SiteId,
+                        1,
+                        "F1",
+                        "Floor 1");
+                    var zone = SpaceZoneRevision.Create(
+                        tenantA,
+                        version.Id,
+                        Guid.NewGuid(),
+                        floor.LogicalId,
+                        "Z1",
+                        0);
+                    var rack = SpaceRackRevision.Create(
+                        tenantA,
+                        version.Id,
+                        Guid.NewGuid(),
+                        floor.LogicalId,
+                        zone.LogicalId,
+                        "R1");
+                    rack.ConfigureGeometry(100, 200, 0, 90, 4800, 2200, 5000);
+                    var lower = SpaceRackLevelRevision.Create(
+                        tenantA,
+                        version.Id,
+                        Guid.NewGuid(),
+                        rack.LogicalId,
+                        levelNo: 1,
+                        bottomZ: 0,
+                        clearHeight: 1200,
+                        binCount: 4,
+                        depthCount: 1,
+                        cellWidth: 1000,
+                        cellDepth: 900,
+                        maxLoad: 1500.5m,
+                        beamHeight: 100);
+                    var upper = SpaceRackLevelRevision.Create(
+                        tenantA,
+                        version.Id,
+                        Guid.NewGuid(),
+                        rack.LogicalId,
+                        levelNo: 2,
+                        bottomZ: 1300,
+                        clearHeight: 800,
+                        binCount: 3,
+                        depthCount: 2,
+                        cellWidth: 1200,
+                        cellDepth: 1100,
+                        maxLoad: 750m,
+                        beamHeight: 80);
+
+                    writer.AddRange(model, version, floor, zone, rack, lower, upper);
+                    await writer.SaveChangesAsync();
+
+                    var persisted = await writer.RackLevelRevisions
+                        .OrderBy(level => level.LevelNo)
+                        .ToArrayAsync();
+                    Assert.Equal(2, persisted.Length);
+                    Assert.Equal(1200, persisted[0].ClearHeight);
+                    Assert.Equal(4, persisted[0].BinCount);
+                    Assert.Equal(1, persisted[0].DepthCount);
+                    Assert.Equal(100, persisted[0].BeamHeight);
+                    Assert.Equal(1500.5m, persisted[0].MaxLoad);
+                    Assert.Equal(1300, persisted[1].BottomZ);
+                    Assert.Equal(800, persisted[1].ClearHeight);
+                    Assert.Equal(3, persisted[1].BinCount);
+                    Assert.Equal(2, persisted[1].DepthCount);
+                    Assert.Equal(1200, persisted[1].CellWidth);
+                    Assert.Equal(1100, persisted[1].CellDepth);
+                    Assert.Equal(80, persisted[1].BeamHeight);
+                    Assert.Equal(750m, persisted[1].MaxLoad);
+
+                    await Assert.ThrowsAsync<SqlException>(
+                        () => writer.Database.ExecuteSqlInterpolatedAsync(
+                            $"UPDATE [Space_RackLevelRevision] SET [BeamHeight] = -1 WHERE [Id] = {lower.Id}"));
+
+                    writer.RackLevelRevisions.Add(
+                        SpaceRackLevelRevision.Create(
+                            tenantA,
+                            version.Id,
+                            Guid.NewGuid(),
+                            rack.LogicalId,
+                            levelNo: 2,
+                            bottomZ: 2200,
+                            clearHeight: 700,
+                            binCount: 2,
+                            depthCount: 1,
+                            cellWidth: 1400,
+                            cellDepth: 800));
+                    await Assert.ThrowsAsync<DbUpdateException>(
+                        () => writer.SaveChangesAsync());
+                }
+
+                await using var otherTenant = CreateContext(
+                    connectionString,
+                    tenantB,
+                    Guid.NewGuid());
+                Assert.Empty(await otherTenant.RackLevelRevisions.ToListAsync());
+                Assert.Equal(
+                    2,
+                    await otherTenant.RackLevelRevisions
+                        .IgnoreQueryFilters()
+                        .CountAsync());
+            },
+            tenantA,
+            actorId);
+    }
+
     private static async Task WithDatabaseAsync(
         Func<SpaceContext, Task> action,
         Guid? tenantId = null,
