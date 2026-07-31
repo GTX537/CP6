@@ -58,11 +58,13 @@ public sealed class SpaceWmsRuntimeService : ISpaceWmsRuntimeService
             {
                 throw;
             }
-            catch (Exception error)
+            catch (Exception)
             {
-                throw Unavailable(error);
+                throw Unavailable();
             }
 
+            result = ValidateInventoryResult(result);
+            var requestedChunkIds = logicalIds.ToHashSet();
             observedSource = MergeSource(observedSource, result.Source);
             if (observedSource.Kind == SpaceWmsDataSourceKind.Unavailable)
             {
@@ -74,7 +76,7 @@ public sealed class SpaceWmsRuntimeService : ISpaceWmsRuntimeService
                     []);
             }
 
-            ValidateInventoryItems(result.Items, scope);
+            ValidateInventoryItems(result.Items, scope, requestedChunkIds);
             foreach (var item in result.Items)
             {
                 var location = scope.LocationByWmsLogicalId[item.LogicalId];
@@ -140,11 +142,13 @@ public sealed class SpaceWmsRuntimeService : ISpaceWmsRuntimeService
             {
                 throw;
             }
-            catch (Exception error)
+            catch (Exception)
             {
-                throw Unavailable(error);
+                throw Unavailable();
             }
 
+            result = ValidateTaskResult(result);
+            var requestedChunkIds = logicalIds.ToHashSet();
             observedSource = MergeSource(observedSource, result.Source);
             if (observedSource.Kind == SpaceWmsDataSourceKind.Unavailable)
             {
@@ -156,7 +160,7 @@ public sealed class SpaceWmsRuntimeService : ISpaceWmsRuntimeService
                     []);
             }
 
-            ValidateTaskItems(result.Items, scope);
+            ValidateTaskItems(result.Items, scope, requestedChunkIds);
             foreach (var item in result.Items)
             {
                 var location = scope.LocationByWmsLogicalId[item.LogicalId];
@@ -220,6 +224,7 @@ public sealed class SpaceWmsRuntimeService : ISpaceWmsRuntimeService
         var requestedIds = locationLogicalIds?
             .Distinct()
             .ToArray();
+        var requestedIdSet = requestedIds?.ToHashSet();
         if (requestedIds?.Length > MaxLocationCount)
         {
             throw Invalid(
@@ -268,10 +273,10 @@ public sealed class SpaceWmsRuntimeService : ISpaceWmsRuntimeService
                 value.LifecycleState == SpaceLifecycleState.Active)
             .OrderBy(value => value.LogicalId)
             .ToListAsync(cancellationToken);
-        var selectedLocations = requestedIds is null
+        var selectedLocations = requestedIdSet is null
             ? allActiveLocations
             : allActiveLocations
-                .Where(value => requestedIds.Contains(value.LogicalId))
+                .Where(value => requestedIdSet.Contains(value.LogicalId))
                 .ToList();
         if (requestedIds is not null && selectedLocations.Count != requestedIds.Length)
         {
@@ -493,6 +498,8 @@ public sealed class SpaceWmsRuntimeService : ISpaceWmsRuntimeService
         {
             ObservedAtUtc = next.ObservedAtUtc.ToUniversalTime(),
         };
+        if (normalized.Kind == SpaceWmsDataSourceKind.Unavailable)
+            return normalized;
         if (current is null)
             return normalized;
         if (current.Kind != normalized.Kind ||
@@ -517,6 +524,9 @@ public sealed class SpaceWmsRuntimeService : ISpaceWmsRuntimeService
     {
         if (!Enum.IsDefined(typeof(SpaceWmsDataSourceKind), source.Kind))
             throw ContractViolation("The WMS source kind is invalid.");
+        var declaredKind = _source.RuntimeDataSourceKind;
+        if (!Enum.IsDefined(typeof(SpaceWmsDataSourceKind), declaredKind))
+            throw ContractViolation("The declared WMS source kind is invalid.");
         if (string.IsNullOrWhiteSpace(source.DataSourceId) ||
             source.DataSourceId.Length > 100)
         {
@@ -524,7 +534,8 @@ public sealed class SpaceWmsRuntimeService : ISpaceWmsRuntimeService
         }
         if (source.ObservedAtUtc == default)
             throw ContractViolation("The WMS observation time is invalid.");
-        if (source.Kind != _source.RuntimeDataSourceKind)
+        if (source.Kind != declaredKind &&
+            source.Kind != SpaceWmsDataSourceKind.Unavailable)
         {
             throw ContractViolation(
                 "The returned WMS source kind does not match the declared source.");
@@ -539,33 +550,61 @@ public sealed class SpaceWmsRuntimeService : ISpaceWmsRuntimeService
         }
     }
 
-    private static void ValidateInventoryItems(
-        IReadOnlyList<SpaceWmsInventoryItem>? items,
-        RuntimeScope scope)
+    private static SpaceWmsInventoryResult ValidateInventoryResult(
+        SpaceWmsInventoryResult? result)
     {
-        if (items is null)
+        if (result is null)
+            throw ContractViolation("The WMS inventory result is missing.");
+        if (result.Source is null)
+            throw ContractViolation("The WMS inventory source is missing.");
+        if (result.Items is null)
             throw ContractViolation("The WMS inventory collection is missing.");
+        if (result.Items.Any(item => item is null))
+            throw ContractViolation("The WMS inventory collection contains a null item.");
+        return result;
+    }
+
+    private static SpaceWmsTaskResult ValidateTaskResult(
+        SpaceWmsTaskResult? result)
+    {
+        if (result is null)
+            throw ContractViolation("The WMS task result is missing.");
+        if (result.Source is null)
+            throw ContractViolation("The WMS task source is missing.");
+        if (result.Items is null)
+            throw ContractViolation("The WMS task collection is missing.");
+        if (result.Items.Any(item => item is null))
+            throw ContractViolation("The WMS task collection contains a null item.");
+        return result;
+    }
+
+    private static void ValidateInventoryItems(
+        IReadOnlyList<SpaceWmsInventoryItem> items,
+        RuntimeScope scope,
+        IReadOnlySet<Guid> requestedChunkIds)
+    {
         foreach (var item in items)
         {
             ValidateLocationIdentity(
                 item.LogicalId,
                 item.LocationCode,
-                scope);
+                scope,
+                requestedChunkIds);
         }
     }
 
     private static void ValidateTaskItems(
-        IReadOnlyList<SpaceWmsTaskItem>? items,
-        RuntimeScope scope)
+        IReadOnlyList<SpaceWmsTaskItem> items,
+        RuntimeScope scope,
+        IReadOnlySet<Guid> requestedChunkIds)
     {
-        if (items is null)
-            throw ContractViolation("The WMS task collection is missing.");
         foreach (var item in items)
         {
             ValidateLocationIdentity(
                 item.LogicalId,
                 item.LocationCode,
-                scope);
+                scope,
+                requestedChunkIds);
             if (string.IsNullOrWhiteSpace(item.TaskId) ||
                 string.IsNullOrWhiteSpace(item.TaskType) ||
                 string.IsNullOrWhiteSpace(item.Status) ||
@@ -579,13 +618,15 @@ public sealed class SpaceWmsRuntimeService : ISpaceWmsRuntimeService
     private static void ValidateLocationIdentity(
         Guid logicalId,
         string locationCode,
-        RuntimeScope scope)
+        RuntimeScope scope,
+        IReadOnlySet<Guid> requestedChunkIds)
     {
         if (logicalId == Guid.Empty ||
+            !requestedChunkIds.Contains(logicalId) ||
             !scope.LocationByWmsLogicalId.ContainsKey(logicalId))
         {
             throw ContractViolation(
-                "A returned WMS location is outside the requested scope.");
+                "A returned WMS location is outside the current query chunk.");
         }
         if (string.IsNullOrWhiteSpace(locationCode))
             throw ContractViolation("A returned WMS location code is invalid.");
@@ -640,12 +681,12 @@ public sealed class SpaceWmsRuntimeService : ISpaceWmsRuntimeService
             detail,
             "verify-wms-adapter");
 
-    private static SpaceProblemException Unavailable(Exception error) =>
+    private static SpaceProblemException Unavailable() =>
         new(
             SpaceErrorCodes.WmsUnavailable,
             503,
             "The WMS runtime source is unavailable.",
-            error.Message,
+            "The WMS runtime adapter could not complete the query.",
             "retry-runtime-query",
             retryable: true);
 

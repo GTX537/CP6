@@ -270,10 +270,11 @@ public sealed class SpaceWmsRuntimeServiceTests
     }
 
     [Fact]
-    public async Task Transport_failure_is_retryable_but_cancellation_is_preserved()
+    public async Task Transport_failure_is_retryable_without_exposing_adapter_details()
     {
         await using var fixture = await RuntimeFixture.CreateAsync("L-001");
-        fixture.Source.QueryException = new TimeoutException("simulated timeout");
+        const string secret = "password=TOP_SECRET_TOKEN";
+        fixture.Source.QueryException = new TimeoutException(secret);
 
         var error = await Assert.ThrowsAsync<SpaceProblemException>(() =>
             fixture.Service.QueryTasksAsync(fixture.SiteId));
@@ -281,13 +282,23 @@ public sealed class SpaceWmsRuntimeServiceTests
         Assert.Equal(503, error.StatusCode);
         Assert.Equal(SpaceErrorCodes.WmsUnavailable, error.Code);
         Assert.True(error.Retryable);
+        Assert.DoesNotContain(secret, error.Detail ?? string.Empty);
+    }
 
+    [Fact]
+    public async Task Cancellation_from_inside_source_call_is_preserved()
+    {
+        await using var fixture = await RuntimeFixture.CreateAsync("L-001");
         using var cancellation = new CancellationTokenSource();
-        cancellation.Cancel();
+        fixture.Source.CancelTasksOnEntry = cancellation;
+
         await Assert.ThrowsAnyAsync<OperationCanceledException>(() =>
             fixture.Service.QueryTasksAsync(
                 fixture.SiteId,
                 cancellationToken: cancellation.Token));
+
+        Assert.True(cancellation.IsCancellationRequested);
+        Assert.Equal(1, fixture.Source.TaskQueryEntryCount);
     }
 
     [Fact]
@@ -359,6 +370,91 @@ public sealed class SpaceWmsRuntimeServiceTests
         var taskError = await Assert.ThrowsAsync<SpaceProblemException>(() =>
             fixture.Service.QueryTasksAsync(fixture.SiteId));
         AssertContractViolation(taskError);
+    }
+
+    [Theory]
+    [InlineData("inventory-result")]
+    [InlineData("inventory-source")]
+    [InlineData("inventory-element")]
+    [InlineData("task-result")]
+    [InlineData("task-source")]
+    [InlineData("task-element")]
+    public async Task Null_adapter_output_is_a_502_contract_violation(
+        string invalidCase)
+    {
+        await using var fixture = await RuntimeFixture.CreateAsync("L-001");
+        switch (invalidCase)
+        {
+            case "inventory-result":
+                fixture.Source.ReturnNullInventoryResult = true;
+                break;
+            case "inventory-source":
+                fixture.Source.ReturnNullInventorySource = true;
+                break;
+            case "inventory-element":
+                fixture.Source.ReturnNullInventoryElement = true;
+                break;
+            case "task-result":
+                fixture.Source.ReturnNullTaskResult = true;
+                break;
+            case "task-source":
+                fixture.Source.ReturnNullTaskSource = true;
+                break;
+            case "task-element":
+                fixture.Source.ReturnNullTaskElement = true;
+                break;
+            default:
+                throw new InvalidOperationException("Unknown test case.");
+        }
+
+        var error = invalidCase.StartsWith("inventory", StringComparison.Ordinal)
+            ? await Assert.ThrowsAsync<SpaceProblemException>(() =>
+                fixture.Service.QueryInventoryAsync(fixture.SiteId))
+            : await Assert.ThrowsAsync<SpaceProblemException>(() =>
+                fixture.Service.QueryTasksAsync(fixture.SiteId));
+
+        AssertContractViolation(error);
+    }
+
+    [Fact]
+    public async Task Returned_identity_must_belong_to_current_500_item_chunk()
+    {
+        await using var fixture = await RuntimeFixture.CreateAsync(
+            Enumerable.Range(1, 501).Select(value => $"L-{value:0000}").ToArray());
+        fixture.Source.UnexpectedInventoryIdentity = fixture.LocationIds[500];
+
+        var error = await Assert.ThrowsAsync<SpaceProblemException>(() =>
+            fixture.Service.QueryInventoryAsync(fixture.SiteId));
+
+        AssertContractViolation(error);
+    }
+
+    [Fact]
+    public async Task Later_unavailable_chunk_discards_prior_items()
+    {
+        await using var fixture = await RuntimeFixture.CreateAsync(
+            Enumerable.Range(1, 501).Select(value => $"L-{value:0000}").ToArray());
+        fixture.Source.InventoryOverrideItem = new(
+            fixture.LocationIds[0],
+            "L-0001",
+            1,
+            0,
+            "M1",
+            null,
+            null);
+        fixture.Source.ReturnedKinds =
+        [
+            SpaceWmsDataSourceKind.Real,
+            SpaceWmsDataSourceKind.Unavailable,
+        ];
+
+        var response = await fixture.Service.QueryInventoryAsync(fixture.SiteId);
+
+        Assert.Empty(response.Items);
+        Assert.Equal("Unavailable", response.Source.Kind);
+        Assert.False(response.Source.IsAvailable);
+        Assert.False(response.Source.IsSimulated);
+        Assert.Equal([500, 1], fixture.Source.InventoryBatchSizes);
     }
 
     [Theory]
@@ -685,8 +781,16 @@ public sealed class SpaceWmsRuntimeServiceTests
         public IReadOnlyList<string> ReturnedDataSourceIds { get; set; } =
             ["RECORDING_WMS"];
         public IReadOnlyList<SpaceWmsDataSourceKind>? ReturnedKinds { get; set; }
+        public bool ReturnNullInventoryResult { get; set; }
+        public bool ReturnNullTaskResult { get; set; }
+        public bool ReturnNullInventorySource { get; set; }
+        public bool ReturnNullTaskSource { get; set; }
         public bool ReturnNullInventoryItems { get; set; }
         public bool ReturnNullTaskItems { get; set; }
+        public bool ReturnNullInventoryElement { get; set; }
+        public bool ReturnNullTaskElement { get; set; }
+        public CancellationTokenSource? CancelTasksOnEntry { get; set; }
+        public int TaskQueryEntryCount { get; private set; }
         public SpaceWmsInventoryItem? InventoryOverrideItem { get; set; }
         public SpaceWmsTaskItem? TaskOverrideItem { get; set; }
         public List<int> InventoryBatchSizes { get; } = [];
@@ -697,6 +801,7 @@ public sealed class SpaceWmsRuntimeServiceTests
         public void ResetCalls()
         {
             _callIndex = 0;
+            TaskQueryEntryCount = 0;
             InventoryBatchSizes.Clear();
             TaskBatchSizes.Clear();
         }
@@ -709,28 +814,33 @@ public sealed class SpaceWmsRuntimeServiceTests
             if (QueryException is not null)
                 throw QueryException;
             InventoryBatchSizes.Add(request.LogicalIds.Count);
+            if (ReturnNullInventoryResult)
+                return Task.FromResult<SpaceWmsInventoryResult>(null!);
             var requested = request.LogicalIds.ToHashSet();
             IReadOnlyList<SpaceWmsInventoryItem>? items = ReturnNullInventoryItems
                 ? null
-                : UnexpectedInventoryIdentity.HasValue
-                    ?
-                    [
-                        new(
-                            UnexpectedInventoryIdentity.Value,
-                            "UNEXPECTED",
-                            1,
-                            0,
-                            null,
-                            null,
-                            null),
-                    ]
-                    : InventoryOverrideItem is not null
-                        ? [InventoryOverrideItem]
-                        : InventoryItems
-                            .Where(value => requested.Contains(value.LogicalId))
-                            .ToArray();
+                : ReturnNullInventoryElement
+                    ? new SpaceWmsInventoryItem[] { null! }
+                    : UnexpectedInventoryIdentity.HasValue
+                        ?
+                        [
+                            new(
+                                UnexpectedInventoryIdentity.Value,
+                                "UNEXPECTED",
+                                1,
+                                0,
+                                null,
+                                null,
+                                null),
+                        ]
+                        : InventoryOverrideItem is not null
+                            ? [InventoryOverrideItem]
+                            : InventoryItems
+                                .Where(value => requested.Contains(value.LogicalId))
+                                .ToArray();
+            var source = ReturnNullInventorySource ? null! : NextSource();
             return Task.FromResult(new SpaceWmsInventoryResult(
-                NextSource(),
+                source,
                 items!));
         }
 
@@ -739,18 +849,29 @@ public sealed class SpaceWmsRuntimeServiceTests
             CancellationToken ct = default)
         {
             ct.ThrowIfCancellationRequested();
+            TaskQueryEntryCount++;
+            if (CancelTasksOnEntry is not null)
+            {
+                CancelTasksOnEntry.Cancel();
+                ct.ThrowIfCancellationRequested();
+            }
             if (QueryException is not null)
                 throw QueryException;
             TaskBatchSizes.Add(request.LogicalIds.Count);
+            if (ReturnNullTaskResult)
+                return Task.FromResult<SpaceWmsTaskResult>(null!);
             var requested = request.LogicalIds.ToHashSet();
             IReadOnlyList<SpaceWmsTaskItem>? items = ReturnNullTaskItems
                 ? null
-                : TaskOverrideItem is not null
-                    ? [TaskOverrideItem]
-                    : TaskItems.Where(value => requested.Contains(value.LogicalId))
-                        .ToArray();
+                : ReturnNullTaskElement
+                    ? new SpaceWmsTaskItem[] { null! }
+                    : TaskOverrideItem is not null
+                        ? [TaskOverrideItem]
+                        : TaskItems.Where(value => requested.Contains(value.LogicalId))
+                            .ToArray();
+            var source = ReturnNullTaskSource ? null! : NextSource();
             return Task.FromResult(new SpaceWmsTaskResult(
-                NextSource(),
+                source,
                 items!));
         }
 
