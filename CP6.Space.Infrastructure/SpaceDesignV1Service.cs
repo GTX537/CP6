@@ -114,6 +114,139 @@ public sealed class SpaceDesignV1Service : ISpaceDesignV1Service
         return ToDto(result.Version, result.Model.SiteId);
     }
 
+    public async Task<SpaceDesignSceneDto> GetSceneAsync(
+        Guid versionId,
+        Guid floorLogicalId,
+        CancellationToken cancellationToken = default)
+    {
+        EnsureExecutionContext();
+        if (versionId == Guid.Empty)
+            throw NotFound(SpaceErrorCodes.VersionNotFound, "Space version");
+        if (floorLogicalId == Guid.Empty)
+        {
+            throw NotFound(
+                SpaceErrorCodes.LogicalIdNotFound,
+                "Space floor logical identity");
+        }
+
+        var scope = await (
+                from version in _context.Versions.AsNoTracking()
+                join model in _context.Models.AsNoTracking()
+                    on version.ModelId equals model.Id
+                where version.Id == versionId
+                select new { Version = version, Model = model })
+            .SingleOrDefaultAsync(cancellationToken);
+        if (scope is null)
+            throw NotFound(SpaceErrorCodes.VersionNotFound, "Space version");
+        EnsureReadable(scope.Model);
+
+        var floor = await _context.FloorRevisions
+            .AsNoTracking()
+            .SingleOrDefaultAsync(
+                candidate =>
+                    candidate.ModelVersionId == versionId &&
+                    candidate.LogicalId == floorLogicalId,
+                cancellationToken);
+        if (floor is null)
+        {
+            throw NotFound(
+                SpaceErrorCodes.LogicalIdNotFound,
+                "Space floor logical identity");
+        }
+
+        var zones = await _context.ZoneRevisions
+            .AsNoTracking()
+            .Where(candidate =>
+                candidate.ModelVersionId == versionId &&
+                candidate.FloorLogicalId == floorLogicalId)
+            .OrderBy(candidate => candidate.ZoneCode)
+            .ThenBy(candidate => candidate.LogicalId)
+            .ToArrayAsync(cancellationToken);
+        var zoneLogicalIds = zones
+            .Select(candidate => candidate.LogicalId)
+            .ToArray();
+        var aisles = zoneLogicalIds.Length == 0
+            ? []
+            : await _context.AisleRevisions
+                .AsNoTracking()
+                .Where(candidate =>
+                    candidate.ModelVersionId == versionId &&
+                    zoneLogicalIds.Contains(candidate.ZoneLogicalId))
+                .OrderBy(candidate => candidate.AisleCode)
+                .ThenBy(candidate => candidate.LogicalId)
+                .ToArrayAsync(cancellationToken);
+        var racks = await _context.RackRevisions
+            .AsNoTracking()
+            .Where(candidate =>
+                candidate.ModelVersionId == versionId &&
+                candidate.FloorLogicalId == floorLogicalId)
+            .OrderBy(candidate => candidate.RackCode)
+            .ThenBy(candidate => candidate.LogicalId)
+            .ToArrayAsync(cancellationToken);
+        var rackLogicalIds = racks
+            .Select(candidate => candidate.LogicalId)
+            .ToArray();
+        var rackLevels = rackLogicalIds.Length == 0
+            ? []
+            : await _context.RackLevelRevisions
+                .AsNoTracking()
+                .Where(candidate =>
+                    candidate.ModelVersionId == versionId &&
+                    rackLogicalIds.Contains(candidate.RackLogicalId))
+                .OrderBy(candidate => candidate.RackLogicalId)
+                .ThenBy(candidate => candidate.LevelNo)
+                .ThenBy(candidate => candidate.LogicalId)
+                .ToArrayAsync(cancellationToken);
+        var locations = await _context.LocationRevisions
+            .AsNoTracking()
+            .Where(candidate =>
+                candidate.ModelVersionId == versionId &&
+                candidate.FloorLogicalId == floorLogicalId)
+            .OrderBy(candidate => candidate.LocationCode)
+            .ThenBy(candidate => candidate.LogicalId)
+            .ToArrayAsync(cancellationToken);
+        var elements = await _context.ElementRevisions
+            .AsNoTracking()
+            .Where(candidate =>
+                candidate.ModelVersionId == versionId &&
+                candidate.FloorLogicalId == floorLogicalId)
+            .OrderBy(candidate => candidate.ElementType)
+            .ThenBy(candidate => candidate.LogicalId)
+            .ToArrayAsync(cancellationToken);
+        var elementRevisionIds = elements
+            .Select(candidate => candidate.Id)
+            .ToArray();
+        var attributes = elementRevisionIds.Length == 0
+            ? []
+            : await _context.ElementAttributes
+                .AsNoTracking()
+                .Where(candidate =>
+                    candidate.ModelVersionId == versionId &&
+                    elementRevisionIds.Contains(candidate.ElementRevisionId))
+                .OrderBy(candidate => candidate.ElementRevisionId)
+                .ThenBy(candidate => candidate.Namespace)
+                .ThenBy(candidate => candidate.Key)
+                .ToArrayAsync(cancellationToken);
+
+        return new SpaceDesignSceneDto(
+            SpaceDesignSceneContract.SchemaVersion,
+            SpaceDesignSceneContract.Authority,
+            RuntimeOverlayIncluded: false,
+            scope.Version.Id,
+            scope.Model.SiteId,
+            scope.Version.Status.ToString(),
+            scope.Version.ContentRevision,
+            scope.Version.ContentHash,
+            ToSceneDto(floor),
+            zones.Select(ToSceneDto).ToArray(),
+            aisles.Select(ToSceneDto).ToArray(),
+            racks.Select(ToSceneDto).ToArray(),
+            rackLevels.Select(ToSceneDto).ToArray(),
+            locations.Select(ToSceneDto).ToArray(),
+            elements.Select(ToSceneDto).ToArray(),
+            attributes.Select(ToSceneDto).ToArray());
+    }
+
     public async Task<CreateSpaceVersionResponse> CreateVersionAsync(
         Guid siteId,
         CreateSpaceVersionRequest request,
@@ -770,6 +903,136 @@ public sealed class SpaceDesignV1Service : ISpaceDesignV1Service
             : null;
         return new SpacePage<TDto>(items, next);
     }
+
+    private static SpaceSceneRevisionDto ToSceneRevision(
+        SpaceRevisionEntity revision) =>
+        new(
+            revision.Id,
+            revision.LogicalId,
+            revision.SourceId,
+            revision.SourceRef,
+            revision.LifecycleState.ToString(),
+            RowVersion(revision.RowVersion));
+
+    private static SpaceSceneFloorDto ToSceneDto(
+        SpaceFloorRevision floor) =>
+        new(
+            ToSceneRevision(floor),
+            floor.SiteLogicalId,
+            floor.Level,
+            floor.FloorCode,
+            floor.Name,
+            floor.Elevation,
+            floor.Height,
+            floor.BoundaryJson,
+            floor.CoordinateSystem,
+            floor.UnderlaySourceId,
+            floor.UnderlayScale,
+            floor.UnderlayOffsetX,
+            floor.UnderlayOffsetY,
+            floor.UnderlayRotationZ,
+            floor.Revision);
+
+    private static SpaceSceneZoneDto ToSceneDto(
+        SpaceZoneRevision zone) =>
+        new(
+            ToSceneRevision(zone),
+            zone.FloorLogicalId,
+            zone.ZoneCode,
+            zone.ZoneType,
+            zone.PolygonJson,
+            zone.Color,
+            zone.CapabilityFlags);
+
+    private static SpaceSceneAisleDto ToSceneDto(
+        SpaceAisleRevision aisle) =>
+        new(
+            ToSceneRevision(aisle),
+            aisle.ZoneLogicalId,
+            aisle.AisleCode,
+            aisle.PolygonJson,
+            aisle.CenterlineJson,
+            aisle.Direction);
+
+    private static SpaceSceneRackDto ToSceneDto(
+        SpaceRackRevision rack) =>
+        new(
+            ToSceneRevision(rack),
+            rack.FloorLogicalId,
+            rack.ZoneLogicalId,
+            rack.AisleLogicalId,
+            rack.RackCode,
+            rack.TemplateVersionId,
+            rack.X,
+            rack.Y,
+            rack.Z,
+            rack.RotationZ,
+            rack.Width,
+            rack.Depth,
+            rack.Height);
+
+    private static SpaceSceneRackLevelDto ToSceneDto(
+        SpaceRackLevelRevision level) =>
+        new(
+            ToSceneRevision(level),
+            level.RackLogicalId,
+            level.LevelNo,
+            level.BottomZ,
+            level.ClearHeight,
+            level.BinCount,
+            level.DepthCount,
+            level.CellWidth,
+            level.CellDepth,
+            level.BeamHeight,
+            level.MaxLoad);
+
+    private static SpaceSceneLocationDto ToSceneDto(
+        SpaceLocationRevision location) =>
+        new(
+            ToSceneRevision(location),
+            location.FloorLogicalId,
+            location.RackLogicalId,
+            location.LocationCode,
+            location.ColumnNo,
+            location.LevelNo,
+            location.DepthNo,
+            location.Width,
+            location.Height,
+            location.Depth,
+            location.MaxLoad,
+            location.CodeOrigin.ToString(),
+            location.ExternalBindingState.ToString());
+
+    private static SpaceSceneElementDto ToSceneDto(
+        SpaceElementRevision element) =>
+        new(
+            ToSceneRevision(element),
+            element.FloorLogicalId,
+            element.ParentLogicalId,
+            element.ElementType,
+            element.GeometryJson,
+            element.ModelAssetId,
+            element.X,
+            element.Y,
+            element.Z,
+            element.RotationZ,
+            element.Width,
+            element.Height,
+            element.Depth,
+            element.BusinessCode,
+            element.LinkedEntityType,
+            element.LinkedLogicalId);
+
+    private static SpaceSceneElementAttributeDto ToSceneDto(
+        SpaceElementAttribute attribute) =>
+        new(
+            attribute.Id,
+            attribute.ElementRevisionId,
+            attribute.Namespace,
+            attribute.Key,
+            attribute.ValueType,
+            attribute.Value,
+            attribute.Unit);
 
     private static SpaceModelDto ToDto(SpaceModel model) =>
         new(

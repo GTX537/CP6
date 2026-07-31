@@ -16,7 +16,7 @@ public sealed class SpaceDesignV1OpenApiTests
         "design-v1.openapi.json");
 
     [Fact]
-    public void Contract_contains_only_the_six_frozen_paths_and_eight_operations()
+    public void Contract_contains_the_frozen_paths_and_scene_operation()
     {
         using var document = ReadContract();
         var paths = document.RootElement.GetProperty("paths");
@@ -25,6 +25,7 @@ public sealed class SpaceDesignV1OpenApiTests
             "/api/space/design/v1/sites/{siteId}/model",
             "/api/space/design/v1/sites/{siteId}/versions",
             "/api/space/design/v1/versions/{versionId}",
+            "/api/space/design/v1/versions/{versionId}/floors/{floorLogicalId}/scene",
             "/api/space/design/v1/versions/{versionId}/sources",
             "/api/space/design/v1/jobs/{jobId}",
             "/api/space/design/v1/versions/{versionId}/issues",
@@ -42,10 +43,11 @@ public sealed class SpaceDesignV1OpenApiTests
             .Select(operation =>
                 operation.Value.GetProperty("operationId").GetString())
             .ToArray();
-        Assert.Equal(8, operationIds.Length);
-        Assert.Equal(8, operationIds.Distinct().Count());
+        Assert.Equal(9, operationIds.Length);
+        Assert.Equal(9, operationIds.Distinct().Count());
         Assert.Contains("CreateVersion", operationIds);
         Assert.Contains("CreateSource", operationIds);
+        Assert.Contains("GetScene", operationIds);
     }
 
     [Theory]
@@ -145,6 +147,7 @@ public sealed class SpaceDesignV1OpenApiTests
                      "GetVersions",
                      "CreateVersion",
                      "GetVersion",
+                     "GetScene",
                      "GetSources",
                      "CreateSource",
                      "GetJob",

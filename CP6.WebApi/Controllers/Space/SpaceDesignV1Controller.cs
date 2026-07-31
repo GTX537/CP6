@@ -95,6 +95,18 @@ public sealed class SpaceDesignV1Controller(
         CancellationToken cancellationToken) =>
         service.GetVersionAsync(versionId, cancellationToken);
 
+    [HttpGet("versions/{versionId:guid}/floors/{floorLogicalId:guid}/scene")]
+    [RequirePermission("space", "model:read")]
+    [ProducesResponseType<SpaceDesignSceneDto>(StatusCodes.Status200OK)]
+    public Task<SpaceDesignSceneDto> GetScene(
+        Guid versionId,
+        Guid floorLogicalId,
+        CancellationToken cancellationToken) =>
+        service.GetSceneAsync(
+            versionId,
+            floorLogicalId,
+            cancellationToken);
+
     [HttpGet("versions/{versionId:guid}/sources")]
     [RequirePermission("space", "model:read")]
     [ProducesResponseType<SpacePage<SpaceSourceDto>>(StatusCodes.Status200OK)]

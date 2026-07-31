@@ -34,6 +34,11 @@ export interface ISpaceDesignV1Client {
     getVersion(versionId: string): Promise<SpaceVersionDto>;
 
     /**
+     * @return OK
+     */
+    getScene(versionId: string, floorLogicalId: string): Promise<SpaceDesignSceneDto>;
+
+    /**
      * @param sourceType (optional)
      * @param state (optional)
      * @param limit (optional)
@@ -448,6 +453,98 @@ export class SpaceDesignV1Client implements ISpaceDesignV1Client {
             });
         }
         return Promise.resolve<SpaceVersionDto>(null as any);
+    }
+
+    /**
+     * @return OK
+     */
+    getScene(versionId: string, floorLogicalId: string): Promise<SpaceDesignSceneDto> {
+        let url_ = this.baseUrl + "/api/space/design/v1/versions/{versionId}/floors/{floorLogicalId}/scene";
+        if (versionId === undefined || versionId === null)
+            throw new globalThis.Error("The parameter 'versionId' must be defined.");
+        url_ = url_.replace("{versionId}", encodeURIComponent("" + versionId));
+        if (floorLogicalId === undefined || floorLogicalId === null)
+            throw new globalThis.Error("The parameter 'floorLogicalId' must be defined.");
+        url_ = url_.replace("{floorLogicalId}", encodeURIComponent("" + floorLogicalId));
+        url_ = url_.replace(/[?&]$/, "");
+
+        let options_: RequestInit = {
+            method: "GET",
+            headers: {
+                "Accept": "application/json"
+            }
+        };
+
+        return this.http.fetch(url_, options_).then((_response: Response) => {
+            return this.processGetScene(_response);
+        });
+    }
+
+    protected processGetScene(response: Response): Promise<SpaceDesignSceneDto> {
+        const status = response.status;
+        let _headers: any = {}; if (response.headers && response.headers.forEach) { response.headers.forEach((v: any, k: any) => _headers[k] = v); };
+        if (status === 200) {
+            return response.text().then((_responseText) => {
+            let result200: any = null;
+            let resultData200 = _responseText === "" ? null : JSON.parse(_responseText, this.jsonParseReviver);
+            result200 = SpaceDesignSceneDto.fromJS(resultData200);
+            return result200;
+            });
+        } else if (status === 400) {
+            return response.text().then((_responseText) => {
+            let result400: any = null;
+            let resultData400 = _responseText === "" ? null : JSON.parse(_responseText, this.jsonParseReviver);
+            result400 = SpaceDesignProblemDetails.fromJS(resultData400);
+            return throwException("Bad Request", status, _responseText, _headers, result400);
+            });
+        } else if (status === 401) {
+            return response.text().then((_responseText) => {
+            let result401: any = null;
+            let resultData401 = _responseText === "" ? null : JSON.parse(_responseText, this.jsonParseReviver);
+            result401 = SpaceDesignProblemDetails.fromJS(resultData401);
+            return throwException("Unauthorized", status, _responseText, _headers, result401);
+            });
+        } else if (status === 403) {
+            return response.text().then((_responseText) => {
+            let result403: any = null;
+            let resultData403 = _responseText === "" ? null : JSON.parse(_responseText, this.jsonParseReviver);
+            result403 = SpaceDesignProblemDetails.fromJS(resultData403);
+            return throwException("Forbidden", status, _responseText, _headers, result403);
+            });
+        } else if (status === 404) {
+            return response.text().then((_responseText) => {
+            let result404: any = null;
+            let resultData404 = _responseText === "" ? null : JSON.parse(_responseText, this.jsonParseReviver);
+            result404 = SpaceDesignProblemDetails.fromJS(resultData404);
+            return throwException("Not Found", status, _responseText, _headers, result404);
+            });
+        } else if (status === 409) {
+            return response.text().then((_responseText) => {
+            let result409: any = null;
+            let resultData409 = _responseText === "" ? null : JSON.parse(_responseText, this.jsonParseReviver);
+            result409 = SpaceDesignProblemDetails.fromJS(resultData409);
+            return throwException("Conflict", status, _responseText, _headers, result409);
+            });
+        } else if (status === 422) {
+            return response.text().then((_responseText) => {
+            let result422: any = null;
+            let resultData422 = _responseText === "" ? null : JSON.parse(_responseText, this.jsonParseReviver);
+            result422 = SpaceDesignProblemDetails.fromJS(resultData422);
+            return throwException("Unprocessable Content", status, _responseText, _headers, result422);
+            });
+        } else if (status === 500) {
+            return response.text().then((_responseText) => {
+            let result500: any = null;
+            let resultData500 = _responseText === "" ? null : JSON.parse(_responseText, this.jsonParseReviver);
+            result500 = SpaceDesignProblemDetails.fromJS(resultData500);
+            return throwException("Internal Server Error", status, _responseText, _headers, result500);
+            });
+        } else if (status !== 200 && status !== 204) {
+            return response.text().then((_responseText) => {
+            return throwException("An unexpected server error occurred.", status, _responseText, _headers);
+            });
+        }
+        return Promise.resolve<SpaceDesignSceneDto>(null as any);
     }
 
     /**
@@ -1045,6 +1142,158 @@ export interface ICreateSpaceVersionResponse {
     idempotentReplay?: boolean;
 }
 
+export class SpaceDesignSceneDto implements ISpaceDesignSceneDto {
+    schemaVersion?: number;
+    authority?: string | undefined;
+    runtimeOverlayIncluded?: boolean;
+    modelVersionId?: string;
+    siteId?: string;
+    versionStatus?: string | undefined;
+    contentRevision?: number;
+    contentHash?: string | undefined;
+    floor?: SpaceSceneFloorDto;
+    zones?: SpaceSceneZoneDto[] | undefined;
+    aisles?: SpaceSceneAisleDto[] | undefined;
+    racks?: SpaceSceneRackDto[] | undefined;
+    rackLevels?: SpaceSceneRackLevelDto[] | undefined;
+    locations?: SpaceSceneLocationDto[] | undefined;
+    elements?: SpaceSceneElementDto[] | undefined;
+    elementAttributes?: SpaceSceneElementAttributeDto[] | undefined;
+
+    constructor(data?: ISpaceDesignSceneDto) {
+        if (data) {
+            for (var property in data) {
+                if (data.hasOwnProperty(property))
+                    (this as any)[property] = (data as any)[property];
+            }
+        }
+    }
+
+    init(_data?: any) {
+        if (_data) {
+            this.schemaVersion = _data["schemaVersion"];
+            this.authority = _data["authority"];
+            this.runtimeOverlayIncluded = _data["runtimeOverlayIncluded"];
+            this.modelVersionId = _data["modelVersionId"];
+            this.siteId = _data["siteId"];
+            this.versionStatus = _data["versionStatus"];
+            this.contentRevision = _data["contentRevision"];
+            this.contentHash = _data["contentHash"];
+            this.floor = _data["floor"] ? SpaceSceneFloorDto.fromJS(_data["floor"]) : undefined as any;
+            if (Array.isArray(_data["zones"])) {
+                this.zones = [] as any;
+                for (let item of _data["zones"])
+                    this.zones!.push(SpaceSceneZoneDto.fromJS(item));
+            }
+            if (Array.isArray(_data["aisles"])) {
+                this.aisles = [] as any;
+                for (let item of _data["aisles"])
+                    this.aisles!.push(SpaceSceneAisleDto.fromJS(item));
+            }
+            if (Array.isArray(_data["racks"])) {
+                this.racks = [] as any;
+                for (let item of _data["racks"])
+                    this.racks!.push(SpaceSceneRackDto.fromJS(item));
+            }
+            if (Array.isArray(_data["rackLevels"])) {
+                this.rackLevels = [] as any;
+                for (let item of _data["rackLevels"])
+                    this.rackLevels!.push(SpaceSceneRackLevelDto.fromJS(item));
+            }
+            if (Array.isArray(_data["locations"])) {
+                this.locations = [] as any;
+                for (let item of _data["locations"])
+                    this.locations!.push(SpaceSceneLocationDto.fromJS(item));
+            }
+            if (Array.isArray(_data["elements"])) {
+                this.elements = [] as any;
+                for (let item of _data["elements"])
+                    this.elements!.push(SpaceSceneElementDto.fromJS(item));
+            }
+            if (Array.isArray(_data["elementAttributes"])) {
+                this.elementAttributes = [] as any;
+                for (let item of _data["elementAttributes"])
+                    this.elementAttributes!.push(SpaceSceneElementAttributeDto.fromJS(item));
+            }
+        }
+    }
+
+    static fromJS(data: any): SpaceDesignSceneDto {
+        data = typeof data === 'object' ? data : {};
+        let result = new SpaceDesignSceneDto();
+        result.init(data);
+        return result;
+    }
+
+    toJSON(data?: any) {
+        data = typeof data === 'object' ? data : {};
+        data["schemaVersion"] = this.schemaVersion;
+        data["authority"] = this.authority;
+        data["runtimeOverlayIncluded"] = this.runtimeOverlayIncluded;
+        data["modelVersionId"] = this.modelVersionId;
+        data["siteId"] = this.siteId;
+        data["versionStatus"] = this.versionStatus;
+        data["contentRevision"] = this.contentRevision;
+        data["contentHash"] = this.contentHash;
+        data["floor"] = this.floor ? this.floor.toJSON() : undefined as any;
+        if (Array.isArray(this.zones)) {
+            data["zones"] = [];
+            for (let item of this.zones)
+                data["zones"].push(item ? item.toJSON() : undefined as any);
+        }
+        if (Array.isArray(this.aisles)) {
+            data["aisles"] = [];
+            for (let item of this.aisles)
+                data["aisles"].push(item ? item.toJSON() : undefined as any);
+        }
+        if (Array.isArray(this.racks)) {
+            data["racks"] = [];
+            for (let item of this.racks)
+                data["racks"].push(item ? item.toJSON() : undefined as any);
+        }
+        if (Array.isArray(this.rackLevels)) {
+            data["rackLevels"] = [];
+            for (let item of this.rackLevels)
+                data["rackLevels"].push(item ? item.toJSON() : undefined as any);
+        }
+        if (Array.isArray(this.locations)) {
+            data["locations"] = [];
+            for (let item of this.locations)
+                data["locations"].push(item ? item.toJSON() : undefined as any);
+        }
+        if (Array.isArray(this.elements)) {
+            data["elements"] = [];
+            for (let item of this.elements)
+                data["elements"].push(item ? item.toJSON() : undefined as any);
+        }
+        if (Array.isArray(this.elementAttributes)) {
+            data["elementAttributes"] = [];
+            for (let item of this.elementAttributes)
+                data["elementAttributes"].push(item ? item.toJSON() : undefined as any);
+        }
+        return data;
+    }
+}
+
+export interface ISpaceDesignSceneDto {
+    schemaVersion?: number;
+    authority?: string | undefined;
+    runtimeOverlayIncluded?: boolean;
+    modelVersionId?: string;
+    siteId?: string;
+    versionStatus?: string | undefined;
+    contentRevision?: number;
+    contentHash?: string | undefined;
+    floor?: SpaceSceneFloorDto;
+    zones?: SpaceSceneZoneDto[] | undefined;
+    aisles?: SpaceSceneAisleDto[] | undefined;
+    racks?: SpaceSceneRackDto[] | undefined;
+    rackLevels?: SpaceSceneRackLevelDto[] | undefined;
+    locations?: SpaceSceneLocationDto[] | undefined;
+    elements?: SpaceSceneElementDto[] | undefined;
+    elementAttributes?: SpaceSceneElementAttributeDto[] | undefined;
+}
+
 export class SpaceIssueDto implements ISpaceIssueDto {
     id?: string;
     modelVersionId?: string | undefined;
@@ -1323,6 +1572,670 @@ export interface ISpaceModelDto {
     activeDraftVersionId?: string | undefined;
     currentPublishedVersionId?: string | undefined;
     rowVersion?: string | undefined;
+}
+
+export class SpaceSceneAisleDto implements ISpaceSceneAisleDto {
+    revision?: SpaceSceneRevisionDto;
+    zoneLogicalId?: string;
+    aisleCode?: string | undefined;
+    polygonJson?: string | undefined;
+    centerlineJson?: string | undefined;
+    direction?: number;
+
+    constructor(data?: ISpaceSceneAisleDto) {
+        if (data) {
+            for (var property in data) {
+                if (data.hasOwnProperty(property))
+                    (this as any)[property] = (data as any)[property];
+            }
+        }
+    }
+
+    init(_data?: any) {
+        if (_data) {
+            this.revision = _data["revision"] ? SpaceSceneRevisionDto.fromJS(_data["revision"]) : undefined as any;
+            this.zoneLogicalId = _data["zoneLogicalId"];
+            this.aisleCode = _data["aisleCode"];
+            this.polygonJson = _data["polygonJson"];
+            this.centerlineJson = _data["centerlineJson"];
+            this.direction = _data["direction"];
+        }
+    }
+
+    static fromJS(data: any): SpaceSceneAisleDto {
+        data = typeof data === 'object' ? data : {};
+        let result = new SpaceSceneAisleDto();
+        result.init(data);
+        return result;
+    }
+
+    toJSON(data?: any) {
+        data = typeof data === 'object' ? data : {};
+        data["revision"] = this.revision ? this.revision.toJSON() : undefined as any;
+        data["zoneLogicalId"] = this.zoneLogicalId;
+        data["aisleCode"] = this.aisleCode;
+        data["polygonJson"] = this.polygonJson;
+        data["centerlineJson"] = this.centerlineJson;
+        data["direction"] = this.direction;
+        return data;
+    }
+}
+
+export interface ISpaceSceneAisleDto {
+    revision?: SpaceSceneRevisionDto;
+    zoneLogicalId?: string;
+    aisleCode?: string | undefined;
+    polygonJson?: string | undefined;
+    centerlineJson?: string | undefined;
+    direction?: number;
+}
+
+export class SpaceSceneElementAttributeDto implements ISpaceSceneElementAttributeDto {
+    id?: string;
+    elementRevisionId?: string;
+    namespace?: string | undefined;
+    key?: string | undefined;
+    valueType?: string | undefined;
+    value?: string | undefined;
+    unit?: string | undefined;
+
+    constructor(data?: ISpaceSceneElementAttributeDto) {
+        if (data) {
+            for (var property in data) {
+                if (data.hasOwnProperty(property))
+                    (this as any)[property] = (data as any)[property];
+            }
+        }
+    }
+
+    init(_data?: any) {
+        if (_data) {
+            this.id = _data["id"];
+            this.elementRevisionId = _data["elementRevisionId"];
+            this.namespace = _data["namespace"];
+            this.key = _data["key"];
+            this.valueType = _data["valueType"];
+            this.value = _data["value"];
+            this.unit = _data["unit"];
+        }
+    }
+
+    static fromJS(data: any): SpaceSceneElementAttributeDto {
+        data = typeof data === 'object' ? data : {};
+        let result = new SpaceSceneElementAttributeDto();
+        result.init(data);
+        return result;
+    }
+
+    toJSON(data?: any) {
+        data = typeof data === 'object' ? data : {};
+        data["id"] = this.id;
+        data["elementRevisionId"] = this.elementRevisionId;
+        data["namespace"] = this.namespace;
+        data["key"] = this.key;
+        data["valueType"] = this.valueType;
+        data["value"] = this.value;
+        data["unit"] = this.unit;
+        return data;
+    }
+}
+
+export interface ISpaceSceneElementAttributeDto {
+    id?: string;
+    elementRevisionId?: string;
+    namespace?: string | undefined;
+    key?: string | undefined;
+    valueType?: string | undefined;
+    value?: string | undefined;
+    unit?: string | undefined;
+}
+
+export class SpaceSceneElementDto implements ISpaceSceneElementDto {
+    revision?: SpaceSceneRevisionDto;
+    floorLogicalId?: string;
+    parentLogicalId?: string | undefined;
+    elementType?: string | undefined;
+    geometryJson?: string | undefined;
+    modelAssetId?: string | undefined;
+    x?: number;
+    y?: number;
+    z?: number;
+    rotationZ?: number;
+    width?: number;
+    height?: number;
+    depth?: number;
+    businessCode?: string | undefined;
+    linkedEntityType?: string | undefined;
+    linkedLogicalId?: string | undefined;
+
+    constructor(data?: ISpaceSceneElementDto) {
+        if (data) {
+            for (var property in data) {
+                if (data.hasOwnProperty(property))
+                    (this as any)[property] = (data as any)[property];
+            }
+        }
+    }
+
+    init(_data?: any) {
+        if (_data) {
+            this.revision = _data["revision"] ? SpaceSceneRevisionDto.fromJS(_data["revision"]) : undefined as any;
+            this.floorLogicalId = _data["floorLogicalId"];
+            this.parentLogicalId = _data["parentLogicalId"];
+            this.elementType = _data["elementType"];
+            this.geometryJson = _data["geometryJson"];
+            this.modelAssetId = _data["modelAssetId"];
+            this.x = _data["x"];
+            this.y = _data["y"];
+            this.z = _data["z"];
+            this.rotationZ = _data["rotationZ"];
+            this.width = _data["width"];
+            this.height = _data["height"];
+            this.depth = _data["depth"];
+            this.businessCode = _data["businessCode"];
+            this.linkedEntityType = _data["linkedEntityType"];
+            this.linkedLogicalId = _data["linkedLogicalId"];
+        }
+    }
+
+    static fromJS(data: any): SpaceSceneElementDto {
+        data = typeof data === 'object' ? data : {};
+        let result = new SpaceSceneElementDto();
+        result.init(data);
+        return result;
+    }
+
+    toJSON(data?: any) {
+        data = typeof data === 'object' ? data : {};
+        data["revision"] = this.revision ? this.revision.toJSON() : undefined as any;
+        data["floorLogicalId"] = this.floorLogicalId;
+        data["parentLogicalId"] = this.parentLogicalId;
+        data["elementType"] = this.elementType;
+        data["geometryJson"] = this.geometryJson;
+        data["modelAssetId"] = this.modelAssetId;
+        data["x"] = this.x;
+        data["y"] = this.y;
+        data["z"] = this.z;
+        data["rotationZ"] = this.rotationZ;
+        data["width"] = this.width;
+        data["height"] = this.height;
+        data["depth"] = this.depth;
+        data["businessCode"] = this.businessCode;
+        data["linkedEntityType"] = this.linkedEntityType;
+        data["linkedLogicalId"] = this.linkedLogicalId;
+        return data;
+    }
+}
+
+export interface ISpaceSceneElementDto {
+    revision?: SpaceSceneRevisionDto;
+    floorLogicalId?: string;
+    parentLogicalId?: string | undefined;
+    elementType?: string | undefined;
+    geometryJson?: string | undefined;
+    modelAssetId?: string | undefined;
+    x?: number;
+    y?: number;
+    z?: number;
+    rotationZ?: number;
+    width?: number;
+    height?: number;
+    depth?: number;
+    businessCode?: string | undefined;
+    linkedEntityType?: string | undefined;
+    linkedLogicalId?: string | undefined;
+}
+
+export class SpaceSceneFloorDto implements ISpaceSceneFloorDto {
+    revision?: SpaceSceneRevisionDto;
+    siteLogicalId?: string;
+    level?: number;
+    floorCode?: string | undefined;
+    name?: string | undefined;
+    elevation?: number;
+    height?: number;
+    boundaryJson?: string | undefined;
+    coordinateSystem?: string | undefined;
+    underlaySourceId?: string | undefined;
+    underlayScale?: number | undefined;
+    underlayOffsetX?: number;
+    underlayOffsetY?: number;
+    underlayRotationZ?: number;
+    revisionNumber?: number;
+
+    constructor(data?: ISpaceSceneFloorDto) {
+        if (data) {
+            for (var property in data) {
+                if (data.hasOwnProperty(property))
+                    (this as any)[property] = (data as any)[property];
+            }
+        }
+    }
+
+    init(_data?: any) {
+        if (_data) {
+            this.revision = _data["revision"] ? SpaceSceneRevisionDto.fromJS(_data["revision"]) : undefined as any;
+            this.siteLogicalId = _data["siteLogicalId"];
+            this.level = _data["level"];
+            this.floorCode = _data["floorCode"];
+            this.name = _data["name"];
+            this.elevation = _data["elevation"];
+            this.height = _data["height"];
+            this.boundaryJson = _data["boundaryJson"];
+            this.coordinateSystem = _data["coordinateSystem"];
+            this.underlaySourceId = _data["underlaySourceId"];
+            this.underlayScale = _data["underlayScale"];
+            this.underlayOffsetX = _data["underlayOffsetX"];
+            this.underlayOffsetY = _data["underlayOffsetY"];
+            this.underlayRotationZ = _data["underlayRotationZ"];
+            this.revisionNumber = _data["revisionNumber"];
+        }
+    }
+
+    static fromJS(data: any): SpaceSceneFloorDto {
+        data = typeof data === 'object' ? data : {};
+        let result = new SpaceSceneFloorDto();
+        result.init(data);
+        return result;
+    }
+
+    toJSON(data?: any) {
+        data = typeof data === 'object' ? data : {};
+        data["revision"] = this.revision ? this.revision.toJSON() : undefined as any;
+        data["siteLogicalId"] = this.siteLogicalId;
+        data["level"] = this.level;
+        data["floorCode"] = this.floorCode;
+        data["name"] = this.name;
+        data["elevation"] = this.elevation;
+        data["height"] = this.height;
+        data["boundaryJson"] = this.boundaryJson;
+        data["coordinateSystem"] = this.coordinateSystem;
+        data["underlaySourceId"] = this.underlaySourceId;
+        data["underlayScale"] = this.underlayScale;
+        data["underlayOffsetX"] = this.underlayOffsetX;
+        data["underlayOffsetY"] = this.underlayOffsetY;
+        data["underlayRotationZ"] = this.underlayRotationZ;
+        data["revisionNumber"] = this.revisionNumber;
+        return data;
+    }
+}
+
+export interface ISpaceSceneFloorDto {
+    revision?: SpaceSceneRevisionDto;
+    siteLogicalId?: string;
+    level?: number;
+    floorCode?: string | undefined;
+    name?: string | undefined;
+    elevation?: number;
+    height?: number;
+    boundaryJson?: string | undefined;
+    coordinateSystem?: string | undefined;
+    underlaySourceId?: string | undefined;
+    underlayScale?: number | undefined;
+    underlayOffsetX?: number;
+    underlayOffsetY?: number;
+    underlayRotationZ?: number;
+    revisionNumber?: number;
+}
+
+export class SpaceSceneLocationDto implements ISpaceSceneLocationDto {
+    revision?: SpaceSceneRevisionDto;
+    floorLogicalId?: string;
+    rackLogicalId?: string | undefined;
+    locationCode?: string | undefined;
+    columnNo?: number;
+    levelNo?: number;
+    depthNo?: number;
+    width?: number;
+    height?: number;
+    depth?: number;
+    maxLoad?: number | undefined;
+    codeOrigin?: string | undefined;
+    externalBindingState?: string | undefined;
+
+    constructor(data?: ISpaceSceneLocationDto) {
+        if (data) {
+            for (var property in data) {
+                if (data.hasOwnProperty(property))
+                    (this as any)[property] = (data as any)[property];
+            }
+        }
+    }
+
+    init(_data?: any) {
+        if (_data) {
+            this.revision = _data["revision"] ? SpaceSceneRevisionDto.fromJS(_data["revision"]) : undefined as any;
+            this.floorLogicalId = _data["floorLogicalId"];
+            this.rackLogicalId = _data["rackLogicalId"];
+            this.locationCode = _data["locationCode"];
+            this.columnNo = _data["columnNo"];
+            this.levelNo = _data["levelNo"];
+            this.depthNo = _data["depthNo"];
+            this.width = _data["width"];
+            this.height = _data["height"];
+            this.depth = _data["depth"];
+            this.maxLoad = _data["maxLoad"];
+            this.codeOrigin = _data["codeOrigin"];
+            this.externalBindingState = _data["externalBindingState"];
+        }
+    }
+
+    static fromJS(data: any): SpaceSceneLocationDto {
+        data = typeof data === 'object' ? data : {};
+        let result = new SpaceSceneLocationDto();
+        result.init(data);
+        return result;
+    }
+
+    toJSON(data?: any) {
+        data = typeof data === 'object' ? data : {};
+        data["revision"] = this.revision ? this.revision.toJSON() : undefined as any;
+        data["floorLogicalId"] = this.floorLogicalId;
+        data["rackLogicalId"] = this.rackLogicalId;
+        data["locationCode"] = this.locationCode;
+        data["columnNo"] = this.columnNo;
+        data["levelNo"] = this.levelNo;
+        data["depthNo"] = this.depthNo;
+        data["width"] = this.width;
+        data["height"] = this.height;
+        data["depth"] = this.depth;
+        data["maxLoad"] = this.maxLoad;
+        data["codeOrigin"] = this.codeOrigin;
+        data["externalBindingState"] = this.externalBindingState;
+        return data;
+    }
+}
+
+export interface ISpaceSceneLocationDto {
+    revision?: SpaceSceneRevisionDto;
+    floorLogicalId?: string;
+    rackLogicalId?: string | undefined;
+    locationCode?: string | undefined;
+    columnNo?: number;
+    levelNo?: number;
+    depthNo?: number;
+    width?: number;
+    height?: number;
+    depth?: number;
+    maxLoad?: number | undefined;
+    codeOrigin?: string | undefined;
+    externalBindingState?: string | undefined;
+}
+
+export class SpaceSceneRackDto implements ISpaceSceneRackDto {
+    revision?: SpaceSceneRevisionDto;
+    floorLogicalId?: string;
+    zoneLogicalId?: string;
+    aisleLogicalId?: string | undefined;
+    rackCode?: string | undefined;
+    templateVersionId?: string | undefined;
+    x?: number;
+    y?: number;
+    z?: number;
+    rotationZ?: number;
+    width?: number;
+    depth?: number;
+    height?: number;
+
+    constructor(data?: ISpaceSceneRackDto) {
+        if (data) {
+            for (var property in data) {
+                if (data.hasOwnProperty(property))
+                    (this as any)[property] = (data as any)[property];
+            }
+        }
+    }
+
+    init(_data?: any) {
+        if (_data) {
+            this.revision = _data["revision"] ? SpaceSceneRevisionDto.fromJS(_data["revision"]) : undefined as any;
+            this.floorLogicalId = _data["floorLogicalId"];
+            this.zoneLogicalId = _data["zoneLogicalId"];
+            this.aisleLogicalId = _data["aisleLogicalId"];
+            this.rackCode = _data["rackCode"];
+            this.templateVersionId = _data["templateVersionId"];
+            this.x = _data["x"];
+            this.y = _data["y"];
+            this.z = _data["z"];
+            this.rotationZ = _data["rotationZ"];
+            this.width = _data["width"];
+            this.depth = _data["depth"];
+            this.height = _data["height"];
+        }
+    }
+
+    static fromJS(data: any): SpaceSceneRackDto {
+        data = typeof data === 'object' ? data : {};
+        let result = new SpaceSceneRackDto();
+        result.init(data);
+        return result;
+    }
+
+    toJSON(data?: any) {
+        data = typeof data === 'object' ? data : {};
+        data["revision"] = this.revision ? this.revision.toJSON() : undefined as any;
+        data["floorLogicalId"] = this.floorLogicalId;
+        data["zoneLogicalId"] = this.zoneLogicalId;
+        data["aisleLogicalId"] = this.aisleLogicalId;
+        data["rackCode"] = this.rackCode;
+        data["templateVersionId"] = this.templateVersionId;
+        data["x"] = this.x;
+        data["y"] = this.y;
+        data["z"] = this.z;
+        data["rotationZ"] = this.rotationZ;
+        data["width"] = this.width;
+        data["depth"] = this.depth;
+        data["height"] = this.height;
+        return data;
+    }
+}
+
+export interface ISpaceSceneRackDto {
+    revision?: SpaceSceneRevisionDto;
+    floorLogicalId?: string;
+    zoneLogicalId?: string;
+    aisleLogicalId?: string | undefined;
+    rackCode?: string | undefined;
+    templateVersionId?: string | undefined;
+    x?: number;
+    y?: number;
+    z?: number;
+    rotationZ?: number;
+    width?: number;
+    depth?: number;
+    height?: number;
+}
+
+export class SpaceSceneRackLevelDto implements ISpaceSceneRackLevelDto {
+    revision?: SpaceSceneRevisionDto;
+    rackLogicalId?: string;
+    levelNo?: number;
+    bottomZ?: number;
+    clearHeight?: number;
+    binCount?: number;
+    depthCount?: number;
+    cellWidth?: number;
+    cellDepth?: number;
+    beamHeight?: number;
+    maxLoad?: number | undefined;
+
+    constructor(data?: ISpaceSceneRackLevelDto) {
+        if (data) {
+            for (var property in data) {
+                if (data.hasOwnProperty(property))
+                    (this as any)[property] = (data as any)[property];
+            }
+        }
+    }
+
+    init(_data?: any) {
+        if (_data) {
+            this.revision = _data["revision"] ? SpaceSceneRevisionDto.fromJS(_data["revision"]) : undefined as any;
+            this.rackLogicalId = _data["rackLogicalId"];
+            this.levelNo = _data["levelNo"];
+            this.bottomZ = _data["bottomZ"];
+            this.clearHeight = _data["clearHeight"];
+            this.binCount = _data["binCount"];
+            this.depthCount = _data["depthCount"];
+            this.cellWidth = _data["cellWidth"];
+            this.cellDepth = _data["cellDepth"];
+            this.beamHeight = _data["beamHeight"];
+            this.maxLoad = _data["maxLoad"];
+        }
+    }
+
+    static fromJS(data: any): SpaceSceneRackLevelDto {
+        data = typeof data === 'object' ? data : {};
+        let result = new SpaceSceneRackLevelDto();
+        result.init(data);
+        return result;
+    }
+
+    toJSON(data?: any) {
+        data = typeof data === 'object' ? data : {};
+        data["revision"] = this.revision ? this.revision.toJSON() : undefined as any;
+        data["rackLogicalId"] = this.rackLogicalId;
+        data["levelNo"] = this.levelNo;
+        data["bottomZ"] = this.bottomZ;
+        data["clearHeight"] = this.clearHeight;
+        data["binCount"] = this.binCount;
+        data["depthCount"] = this.depthCount;
+        data["cellWidth"] = this.cellWidth;
+        data["cellDepth"] = this.cellDepth;
+        data["beamHeight"] = this.beamHeight;
+        data["maxLoad"] = this.maxLoad;
+        return data;
+    }
+}
+
+export interface ISpaceSceneRackLevelDto {
+    revision?: SpaceSceneRevisionDto;
+    rackLogicalId?: string;
+    levelNo?: number;
+    bottomZ?: number;
+    clearHeight?: number;
+    binCount?: number;
+    depthCount?: number;
+    cellWidth?: number;
+    cellDepth?: number;
+    beamHeight?: number;
+    maxLoad?: number | undefined;
+}
+
+export class SpaceSceneRevisionDto implements ISpaceSceneRevisionDto {
+    revisionId?: string;
+    logicalId?: string;
+    sourceId?: string | undefined;
+    sourceRef?: string | undefined;
+    lifecycleState?: string | undefined;
+    rowVersion?: string | undefined;
+
+    constructor(data?: ISpaceSceneRevisionDto) {
+        if (data) {
+            for (var property in data) {
+                if (data.hasOwnProperty(property))
+                    (this as any)[property] = (data as any)[property];
+            }
+        }
+    }
+
+    init(_data?: any) {
+        if (_data) {
+            this.revisionId = _data["revisionId"];
+            this.logicalId = _data["logicalId"];
+            this.sourceId = _data["sourceId"];
+            this.sourceRef = _data["sourceRef"];
+            this.lifecycleState = _data["lifecycleState"];
+            this.rowVersion = _data["rowVersion"];
+        }
+    }
+
+    static fromJS(data: any): SpaceSceneRevisionDto {
+        data = typeof data === 'object' ? data : {};
+        let result = new SpaceSceneRevisionDto();
+        result.init(data);
+        return result;
+    }
+
+    toJSON(data?: any) {
+        data = typeof data === 'object' ? data : {};
+        data["revisionId"] = this.revisionId;
+        data["logicalId"] = this.logicalId;
+        data["sourceId"] = this.sourceId;
+        data["sourceRef"] = this.sourceRef;
+        data["lifecycleState"] = this.lifecycleState;
+        data["rowVersion"] = this.rowVersion;
+        return data;
+    }
+}
+
+export interface ISpaceSceneRevisionDto {
+    revisionId?: string;
+    logicalId?: string;
+    sourceId?: string | undefined;
+    sourceRef?: string | undefined;
+    lifecycleState?: string | undefined;
+    rowVersion?: string | undefined;
+}
+
+export class SpaceSceneZoneDto implements ISpaceSceneZoneDto {
+    revision?: SpaceSceneRevisionDto;
+    floorLogicalId?: string;
+    zoneCode?: string | undefined;
+    zoneType?: number;
+    polygonJson?: string | undefined;
+    color?: string | undefined;
+    capabilityFlags?: string | undefined;
+
+    constructor(data?: ISpaceSceneZoneDto) {
+        if (data) {
+            for (var property in data) {
+                if (data.hasOwnProperty(property))
+                    (this as any)[property] = (data as any)[property];
+            }
+        }
+    }
+
+    init(_data?: any) {
+        if (_data) {
+            this.revision = _data["revision"] ? SpaceSceneRevisionDto.fromJS(_data["revision"]) : undefined as any;
+            this.floorLogicalId = _data["floorLogicalId"];
+            this.zoneCode = _data["zoneCode"];
+            this.zoneType = _data["zoneType"];
+            this.polygonJson = _data["polygonJson"];
+            this.color = _data["color"];
+            this.capabilityFlags = _data["capabilityFlags"];
+        }
+    }
+
+    static fromJS(data: any): SpaceSceneZoneDto {
+        data = typeof data === 'object' ? data : {};
+        let result = new SpaceSceneZoneDto();
+        result.init(data);
+        return result;
+    }
+
+    toJSON(data?: any) {
+        data = typeof data === 'object' ? data : {};
+        data["revision"] = this.revision ? this.revision.toJSON() : undefined as any;
+        data["floorLogicalId"] = this.floorLogicalId;
+        data["zoneCode"] = this.zoneCode;
+        data["zoneType"] = this.zoneType;
+        data["polygonJson"] = this.polygonJson;
+        data["color"] = this.color;
+        data["capabilityFlags"] = this.capabilityFlags;
+        return data;
+    }
+}
+
+export interface ISpaceSceneZoneDto {
+    revision?: SpaceSceneRevisionDto;
+    floorLogicalId?: string;
+    zoneCode?: string | undefined;
+    zoneType?: number;
+    polygonJson?: string | undefined;
+    color?: string | undefined;
+    capabilityFlags?: string | undefined;
 }
 
 export class SpaceSourceDto implements ISpaceSourceDto {

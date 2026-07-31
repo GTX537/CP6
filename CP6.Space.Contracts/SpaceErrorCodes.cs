@@ -13,6 +13,7 @@ public static class SpaceErrorCodes
     public const string DesignApiDisabled = "SPACE_DESIGN_API_DISABLED";
     public const string ModelNotFound = "SPACE_MODEL_NOT_FOUND";
     public const string VersionNotFound = "SPACE_VERSION_NOT_FOUND";
+    public const string LogicalIdNotFound = "SPACE_LOGICAL_ID_NOT_FOUND";
     public const string SourceNotFound = "SPACE_SOURCE_NOT_FOUND";
     public const string JobNotFound = "SPACE_JOB_NOT_FOUND";
     public const string IssueNotFound = "SPACE_ISSUE_NOT_FOUND";
