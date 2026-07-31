@@ -23,7 +23,7 @@ public sealed class SpaceDesignSceneSqlServerTests
             Guid siteId;
             Guid versionId;
             Guid floorLogicalId;
-            Guid modelAssetId;
+            SpaceAssetVersion modelAssetVersion;
 
             await using (var context = CreateContext(
                              connectionString,
@@ -150,8 +150,24 @@ public sealed class SpaceDesignSceneSqlServerTests
                     """
                     {"schemaVersion":1,"kind":"box","width":400,"height":5000,"depth":400}
                     """);
-                modelAssetId = Guid.NewGuid();
-                element.SetModelAsset(modelAssetId);
+                var modelAsset = SpaceAsset.CreateSystem(
+                    "SYS-COLUMN",
+                    "System Column",
+                    "Structure",
+                    null,
+                    execution.ActorId,
+                    clock.UtcNow);
+                modelAssetVersion = SpaceAssetVersion.CreateReady(
+                    modelAsset,
+                    1,
+                    SpaceAssetFormat.Glb,
+                    "{}",
+                    "assets/column.png",
+                    "assets/column.glb",
+                    new string('c', 64),
+                    execution.ActorId,
+                    clock.UtcNow);
+                element.AttachAsset(modelAssetVersion);
                 element.ConfigurePlacement(
                     500,
                     500,
@@ -177,6 +193,8 @@ public sealed class SpaceDesignSceneSqlServerTests
                     lower,
                     upper,
                     location,
+                    modelAsset,
+                    modelAssetVersion,
                     element,
                     attribute);
                 await context.SaveChangesAsync();
@@ -230,8 +248,11 @@ public sealed class SpaceDesignSceneSqlServerTests
                     SpaceElementTypes.Column,
                     scene.Elements[0].ElementType);
                 Assert.Equal(
-                    modelAssetId,
+                    modelAssetVersion.Id,
                     scene.Elements[0].ModelAssetId);
+                Assert.Equal(
+                    "System",
+                    scene.Elements[0].ModelAssetScope);
                 Assert.Single(scene.ElementAttributes);
                 Assert.Equal(
                     scene.Elements[0].Revision.RevisionId,

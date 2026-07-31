@@ -247,6 +247,204 @@ public sealed class SpaceDesignV1Service : ISpaceDesignV1Service
             attributes.Select(ToSceneDto).ToArray());
     }
 
+    public async Task<SpacePage<SpaceAssetDto>> GetAssetsAsync(
+        string? scope,
+        string? category,
+        int limit,
+        string? cursor,
+        CancellationToken cancellationToken = default)
+    {
+        EnsureExecutionContext();
+        limit = NormalizeLimit(limit);
+        var parsedScope = ParseOptionalEnum<SpaceAssetScope>(
+            scope,
+            nameof(scope));
+        var normalizedCategory = string.IsNullOrWhiteSpace(category)
+            ? null
+            : RequireText(category, 100, nameof(category));
+        var filterHash = Hash(
+            $"scope={Normalize(scope)}\ncategory={Normalize(normalizedCategory)}" +
+            $"\nlimit={limit}");
+        var offset = ReadOffset(cursor, "assets", filterHash);
+
+        var query = _context.Assets.AsNoTracking();
+        if (parsedScope.HasValue)
+            query = query.Where(asset => asset.Scope == parsedScope.Value);
+        if (normalizedCategory is not null)
+            query = query.Where(asset => asset.Category == normalizedCategory);
+
+        var assets = await query
+            .OrderBy(asset => asset.Scope)
+            .ThenBy(asset => asset.AssetCode)
+            .ThenBy(asset => asset.Id)
+            .Skip(offset)
+            .Take(limit + 1)
+            .ToListAsync(cancellationToken);
+        var assetIds = assets.Select(asset => asset.Id).ToArray();
+        var versions = assetIds.Length == 0
+            ? []
+            : await _context.AssetVersions
+                .AsNoTracking()
+                .Where(version =>
+                    assetIds.Contains(version.AssetId) &&
+                    version.Status == SpaceAssetVersionStatus.Ready)
+                .OrderByDescending(version => version.VersionNo)
+                .ThenBy(version => version.Id)
+                .ToArrayAsync(cancellationToken);
+        var latestByAsset = versions
+            .GroupBy(version => version.AssetId)
+            .ToDictionary(group => group.Key, group => group.First());
+
+        return Page(
+            assets,
+            limit,
+            offset,
+            "assets",
+            filterHash,
+            asset => ToDto(
+                asset,
+                latestByAsset.TryGetValue(asset.Id, out var latest)
+                    ? latest
+                    : throw new InvalidOperationException(
+                        "A visible asset is missing its ready immutable version.")));
+    }
+
+    public async Task<CreateSpaceAssetResponse> CreateAssetAsync(
+        CreateSpaceAssetRequest request,
+        string idempotencyKey,
+        CancellationToken cancellationToken = default)
+    {
+        ArgumentNullException.ThrowIfNull(request);
+        EnsureExecutionContext();
+        if (!string.Equals(
+                request.Scope?.Trim(),
+                SpaceAssetScope.Tenant.ToString(),
+                StringComparison.OrdinalIgnoreCase))
+        {
+            throw new SpaceProblemException(
+                SpaceErrorCodes.AssetScopeDenied,
+                403,
+                "System asset writes are not available through the tenant API.",
+                "Only scope=Tenant can be created through this endpoint.",
+                "use-tenant-scope");
+        }
+
+        var assetCode = RequireText(request.AssetCode, 100, "assetCode");
+        var name = RequireText(request.Name, 200, "name");
+        var category = RequireText(request.Category, 100, "category");
+        var format = ParseRequiredEnum<SpaceAssetFormat>(
+            request.Format,
+            "format");
+        var now = RequireUtcNow();
+        SpaceAsset asset;
+        SpaceAssetVersion version;
+        try
+        {
+            asset = SpaceAsset.CreateTenant(
+                _execution.TenantId,
+                assetCode,
+                name,
+                category,
+                request.Description,
+                _execution.ActorId,
+                now);
+            version = SpaceAssetVersion.CreateReady(
+                asset,
+                1,
+                format,
+                request.ParameterSchemaJson,
+                request.PreviewRef,
+                request.RenderArtifactRef,
+                request.ContentHash,
+                _execution.ActorId,
+                now);
+        }
+        catch (ArgumentException exception)
+        {
+            throw Invalid("asset", exception.Message);
+        }
+
+        const string operation = "create-asset";
+        var normalizedRequest = new CreateSpaceAssetRequest(
+            asset.AssetCode,
+            asset.Name,
+            asset.Category,
+            version.Format.ToString(),
+            version.ParameterSchemaJson,
+            version.ContentHash,
+            asset.Description,
+            version.PreviewRef,
+            version.RenderArtifactRef,
+            SpaceAssetScope.Tenant.ToString());
+        var requestHash = Hash(
+            JsonSerializer.Serialize(normalizedRequest, JsonOptions));
+        var keyHash = IdempotencyKeyHash(operation, idempotencyKey);
+        var replay = await ReadAssetReplayAsync(
+            operation,
+            keyHash,
+            requestHash,
+            cancellationToken);
+        if (replay is not null)
+            return replay;
+
+        await using var transaction = await _context.Database
+            .BeginTransactionAsync(
+                IsolationLevel.Serializable,
+                cancellationToken);
+        try
+        {
+            var concurrentReplay = await ReadAssetReplayAsync(
+                operation,
+                keyHash,
+                requestHash,
+                cancellationToken);
+            if (concurrentReplay is not null)
+            {
+                await transaction.CommitAsync(cancellationToken);
+                return concurrentReplay;
+            }
+
+            _context.Assets.Add(asset);
+            _context.AssetVersions.Add(version);
+            await _context.SaveChangesAsync(cancellationToken);
+
+            var response = new CreateSpaceAssetResponse(
+                ToDto(asset, version),
+                IdempotentReplay: false);
+            _context.IdempotencyRecords.Add(
+                NewIdempotencyRecord(
+                    operation,
+                    keyHash,
+                    requestHash,
+                    JsonSerializer.Serialize(response, JsonOptions),
+                    HttpCreated));
+            await _context.SaveChangesAsync(cancellationToken);
+            await transaction.CommitAsync(cancellationToken);
+            return response;
+        }
+        catch (DbUpdateException)
+        {
+            await transaction.RollbackAsync(CancellationToken.None);
+            _context.ChangeTracker.Clear();
+            var concurrentReplay = await ReadAssetReplayAsync(
+                operation,
+                keyHash,
+                requestHash,
+                cancellationToken);
+            if (concurrentReplay is not null)
+                return concurrentReplay;
+            throw Conflict(
+                SpaceErrorCodes.AssetConflict,
+                "An asset with this code already exists or changed concurrently.",
+                "choose-another-asset-code");
+        }
+        catch
+        {
+            await transaction.RollbackAsync(CancellationToken.None);
+            throw;
+        }
+    }
+
     public async Task<CreateSpaceVersionResponse> CreateVersionAsync(
         Guid siteId,
         CreateSpaceVersionRequest request,
@@ -754,6 +952,24 @@ public sealed class SpaceDesignV1Service : ISpaceDesignV1Service
         { IdempotentReplay = true };
     }
 
+    private async Task<CreateSpaceAssetResponse?> ReadAssetReplayAsync(
+        string operation,
+        string keyHash,
+        string requestHash,
+        CancellationToken cancellationToken)
+    {
+        var record = await FindIdempotencyAsync(
+            operation,
+            keyHash,
+            cancellationToken);
+        if (record is null)
+            return null;
+        EnsureMatchingIdempotency(record, requestHash);
+        return Deserialize<CreateSpaceAssetResponse>(record.ResponseJson)
+            with
+        { IdempotentReplay = true };
+    }
+
     private Task<SpaceIdempotencyRecord?> FindIdempotencyAsync(
         string operation,
         string keyHash,
@@ -1012,6 +1228,7 @@ public sealed class SpaceDesignV1Service : ISpaceDesignV1Service
             element.ElementType,
             element.GeometryJson,
             element.ModelAssetId,
+            element.ModelAssetScope?.ToString(),
             element.X,
             element.Y,
             element.Z,
@@ -1022,6 +1239,29 @@ public sealed class SpaceDesignV1Service : ISpaceDesignV1Service
             element.BusinessCode,
             element.LinkedEntityType,
             element.LinkedLogicalId);
+
+    private static SpaceAssetDto ToDto(
+        SpaceAsset asset,
+        SpaceAssetVersion latestVersion) =>
+        new(
+            asset.Id,
+            asset.Scope.ToString(),
+            asset.AssetCode,
+            asset.Name,
+            asset.Category,
+            asset.Description,
+            asset.Status.ToString(),
+            new SpaceAssetVersionDto(
+                latestVersion.Id,
+                latestVersion.VersionNo,
+                latestVersion.Format.ToString(),
+                latestVersion.ParameterSchemaJson,
+                latestVersion.PreviewRef,
+                latestVersion.RenderArtifactRef,
+                latestVersion.ContentHash,
+                latestVersion.Status.ToString(),
+                RowVersion(latestVersion.RowVersion)),
+            RowVersion(asset.RowVersion));
 
     private static SpaceSceneElementAttributeDto ToSceneDto(
         SpaceElementAttribute attribute) =>

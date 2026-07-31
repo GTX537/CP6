@@ -20,6 +20,8 @@ public static class SpaceErrorCodes
     public const string VersionConflict = "SPACE_VERSION_CONFLICT";
     public const string VersionStateInvalid = "SPACE_VERSION_STATE_INVALID";
     public const string SourceConflict = "SPACE_SOURCE_CONFLICT";
+    public const string AssetScopeDenied = "SPACE_ASSET_SCOPE_DENIED";
+    public const string AssetConflict = "SPACE_ASSET_CONFLICT";
     public const string IdempotencyConflict = "SPACE_IDEMPOTENCY_KEY_REUSED";
     public const string IdempotencyKeyRequired = "SPACE_IDEMPOTENCY_KEY_REQUIRED";
     public const string CursorInvalid = "SPACE_CURSOR_INVALID";

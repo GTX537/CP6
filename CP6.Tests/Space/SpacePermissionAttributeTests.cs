@@ -51,6 +51,7 @@ public class SpacePermissionAttributeTests
             ["SpaceDesignV1Controller.GetVersions"] = "space:model:read",
             ["SpaceDesignV1Controller.GetVersion"] = "space:model:read",
             ["SpaceDesignV1Controller.GetScene"] = "space:model:read",
+            ["SpaceDesignV1Controller.GetAssets"] = "space:model:read",
             ["SpaceDesignV1Controller.GetSources"] = "space:model:read",
             ["SpaceDesignV1Controller.GetJob"] = "space:model:read",
             ["SpaceDesignV1Controller.GetIssues"] = "space:model:read",

@@ -71,6 +71,18 @@ public interface ISpaceDesignV1Service
         Guid floorLogicalId,
         CancellationToken cancellationToken = default);
 
+    Task<SpacePage<SpaceAssetDto>> GetAssetsAsync(
+        string? scope,
+        string? category,
+        int limit,
+        string? cursor,
+        CancellationToken cancellationToken = default);
+
+    Task<CreateSpaceAssetResponse> CreateAssetAsync(
+        CreateSpaceAssetRequest request,
+        string idempotencyKey,
+        CancellationToken cancellationToken = default);
+
     Task<CreateSpaceVersionResponse> CreateVersionAsync(
         Guid siteId,
         CreateSpaceVersionRequest request,

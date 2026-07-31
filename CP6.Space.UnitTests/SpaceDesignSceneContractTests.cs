@@ -89,7 +89,7 @@ public sealed class SpaceDesignSceneContractTests
     }
 
     [Fact]
-    public void Scene_element_exposes_existing_asset_reference_only()
+    public void Scene_element_exposes_asset_version_and_scope_without_owner()
     {
         var propertyNames = typeof(SpaceSceneElementDto)
             .GetProperties()
@@ -97,7 +97,9 @@ public sealed class SpaceDesignSceneContractTests
             .ToHashSet(StringComparer.Ordinal);
 
         Assert.Contains(nameof(SpaceSceneElementDto.ModelAssetId), propertyNames);
-        Assert.DoesNotContain("ModelAssetScope", propertyNames);
+        Assert.Contains(
+            nameof(SpaceSceneElementDto.ModelAssetScope),
+            propertyNames);
         Assert.DoesNotContain("ModelAssetOwnerTenantId", propertyNames);
     }
 }
