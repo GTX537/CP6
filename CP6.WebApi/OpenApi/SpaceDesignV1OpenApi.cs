@@ -80,7 +80,8 @@ public sealed class SpaceDesignV1OperationFilter : IOperationFilter
                 "CreateVersion" or
                 "CreateSource" or
                 "CreateAsset" or
-                "AttachUnderlay"))
+                "AttachUnderlay" or
+                "CalibrateUnderlay"))
             return;
 
         var idempotencyKey = operation.Parameters.Single(
@@ -98,7 +99,9 @@ public sealed class SpaceDesignV1OperationFilter : IOperationFilter
         var successStatus = operation.OperationId switch
         {
             "CreateVersion" => StatusCodes.Status202Accepted.ToString(),
-            "AttachUnderlay" => StatusCodes.Status200OK.ToString(),
+            "AttachUnderlay" or
+                "CalibrateUnderlay" =>
+                StatusCodes.Status200OK.ToString(),
             _ => StatusCodes.Status201Created.ToString(),
         };
         operation.Responses[successStatus].Headers["Idempotent-Replay"] =

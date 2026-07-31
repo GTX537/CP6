@@ -55,6 +55,7 @@ public class SpacePermissionAttributeTests
             ["SpaceDesignV1Controller.GetSources"] = "space:model:read",
             ["SpaceDesignV1Controller.GetFile"] = "space:model:read",
             ["SpaceDesignV1Controller.GetUnderlayContent"] = "space:model:read",
+            ["SpaceDesignV1Controller.GetUnderlayCalibration"] = "space:model:read",
             ["SpaceDesignV1Controller.GetJob"] = "space:model:read",
             ["SpaceDesignV1Controller.GetIssues"] = "space:model:read",
         };
@@ -173,6 +174,7 @@ public class SpacePermissionAttributeTests
     [InlineData(nameof(SpaceDesignV1Controller.CreateSource))]
     [InlineData(nameof(SpaceDesignV1Controller.UploadUnderlay))]
     [InlineData(nameof(SpaceDesignV1Controller.AttachUnderlay))]
+    [InlineData(nameof(SpaceDesignV1Controller.CalibrateUnderlay))]
     public void Design_source_mutations_require_upload_and_model_edit(
         string methodName)
     {

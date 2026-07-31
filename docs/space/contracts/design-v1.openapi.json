@@ -1568,6 +1568,290 @@
         }
       }
     },
+    "/api/space/design/v1/versions/{versionId}/sources/{sourceId}/underlay-calibration": {
+      "get": {
+        "tags": [
+          "SpaceDesignV1"
+        ],
+        "operationId": "GetUnderlayCalibration",
+        "parameters": [
+          {
+            "name": "versionId",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "string",
+              "format": "uuid"
+            }
+          },
+          {
+            "name": "sourceId",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "string",
+              "format": "uuid"
+            }
+          },
+          {
+            "name": "floorLogicalId",
+            "in": "query",
+            "required": true,
+            "schema": {
+              "type": "string",
+              "format": "uuid"
+            }
+          }
+        ],
+        "responses": {
+          "400": {
+            "description": "Bad Request",
+            "content": {
+              "application/problem+json": {
+                "schema": {
+                  "$ref": "#/components/schemas/CP6.WebApi.OpenApi.SpaceDesignProblemDetails"
+                }
+              }
+            }
+          },
+          "401": {
+            "description": "Unauthorized",
+            "content": {
+              "application/problem+json": {
+                "schema": {
+                  "$ref": "#/components/schemas/CP6.WebApi.OpenApi.SpaceDesignProblemDetails"
+                }
+              }
+            }
+          },
+          "403": {
+            "description": "Forbidden",
+            "content": {
+              "application/problem+json": {
+                "schema": {
+                  "$ref": "#/components/schemas/CP6.WebApi.OpenApi.SpaceDesignProblemDetails"
+                }
+              }
+            }
+          },
+          "404": {
+            "description": "Not Found",
+            "content": {
+              "application/problem+json": {
+                "schema": {
+                  "$ref": "#/components/schemas/CP6.WebApi.OpenApi.SpaceDesignProblemDetails"
+                }
+              }
+            }
+          },
+          "409": {
+            "description": "Conflict",
+            "content": {
+              "application/problem+json": {
+                "schema": {
+                  "$ref": "#/components/schemas/CP6.WebApi.OpenApi.SpaceDesignProblemDetails"
+                }
+              }
+            }
+          },
+          "422": {
+            "description": "Unprocessable Content",
+            "content": {
+              "application/problem+json": {
+                "schema": {
+                  "$ref": "#/components/schemas/CP6.WebApi.OpenApi.SpaceDesignProblemDetails"
+                }
+              }
+            }
+          },
+          "500": {
+            "description": "Internal Server Error",
+            "content": {
+              "application/problem+json": {
+                "schema": {
+                  "$ref": "#/components/schemas/CP6.WebApi.OpenApi.SpaceDesignProblemDetails"
+                }
+              }
+            }
+          },
+          "200": {
+            "description": "OK",
+            "content": {
+              "text/plain": {
+                "schema": {
+                  "$ref": "#/components/schemas/CP6.Space.Contracts.SpaceUnderlayCalibrationDto"
+                }
+              },
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/CP6.Space.Contracts.SpaceUnderlayCalibrationDto"
+                }
+              },
+              "text/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/CP6.Space.Contracts.SpaceUnderlayCalibrationDto"
+                }
+              }
+            }
+          }
+        }
+      },
+      "post": {
+        "tags": [
+          "SpaceDesignV1"
+        ],
+        "operationId": "CalibrateUnderlay",
+        "parameters": [
+          {
+            "name": "versionId",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "string",
+              "format": "uuid"
+            }
+          },
+          {
+            "name": "sourceId",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "string",
+              "format": "uuid"
+            }
+          },
+          {
+            "name": "Idempotency-Key",
+            "in": "header",
+            "description": "Opaque caller key; 1-128 UTF-8 bytes. Reuse with a different request returns SPACE_IDEMPOTENCY_KEY_REUSED.",
+            "required": true,
+            "schema": {
+              "type": "string"
+            }
+          }
+        ],
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/CP6.Space.Contracts.SaveSpaceUnderlayCalibrationRequest"
+              }
+            },
+            "text/json": {
+              "schema": {
+                "$ref": "#/components/schemas/CP6.Space.Contracts.SaveSpaceUnderlayCalibrationRequest"
+              }
+            },
+            "application/*+json": {
+              "schema": {
+                "$ref": "#/components/schemas/CP6.Space.Contracts.SaveSpaceUnderlayCalibrationRequest"
+              }
+            }
+          },
+          "required": true
+        },
+        "responses": {
+          "400": {
+            "description": "Bad Request",
+            "content": {
+              "application/problem+json": {
+                "schema": {
+                  "$ref": "#/components/schemas/CP6.WebApi.OpenApi.SpaceDesignProblemDetails"
+                }
+              }
+            }
+          },
+          "401": {
+            "description": "Unauthorized",
+            "content": {
+              "application/problem+json": {
+                "schema": {
+                  "$ref": "#/components/schemas/CP6.WebApi.OpenApi.SpaceDesignProblemDetails"
+                }
+              }
+            }
+          },
+          "403": {
+            "description": "Forbidden",
+            "content": {
+              "application/problem+json": {
+                "schema": {
+                  "$ref": "#/components/schemas/CP6.WebApi.OpenApi.SpaceDesignProblemDetails"
+                }
+              }
+            }
+          },
+          "404": {
+            "description": "Not Found",
+            "content": {
+              "application/problem+json": {
+                "schema": {
+                  "$ref": "#/components/schemas/CP6.WebApi.OpenApi.SpaceDesignProblemDetails"
+                }
+              }
+            }
+          },
+          "409": {
+            "description": "Conflict",
+            "content": {
+              "application/problem+json": {
+                "schema": {
+                  "$ref": "#/components/schemas/CP6.WebApi.OpenApi.SpaceDesignProblemDetails"
+                }
+              }
+            }
+          },
+          "422": {
+            "description": "Unprocessable Content",
+            "content": {
+              "application/problem+json": {
+                "schema": {
+                  "$ref": "#/components/schemas/CP6.WebApi.OpenApi.SpaceDesignProblemDetails"
+                }
+              }
+            }
+          },
+          "500": {
+            "description": "Internal Server Error",
+            "content": {
+              "application/problem+json": {
+                "schema": {
+                  "$ref": "#/components/schemas/CP6.WebApi.OpenApi.SpaceDesignProblemDetails"
+                }
+              }
+            }
+          },
+          "200": {
+            "description": "OK",
+            "headers": {
+              "Idempotent-Replay": {
+                "description": "True when this response replays a stored result.",
+                "schema": {
+                  "type": "boolean"
+                }
+              }
+            },
+            "content": {
+              "text/plain": {
+                "schema": {
+                  "$ref": "#/components/schemas/CP6.Space.Contracts.SaveSpaceUnderlayCalibrationResponse"
+                }
+              },
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/CP6.Space.Contracts.SaveSpaceUnderlayCalibrationResponse"
+                }
+              },
+              "text/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/CP6.Space.Contracts.SaveSpaceUnderlayCalibrationResponse"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
     "/api/space/design/v1/versions/{versionId}/floors/{floorLogicalId}/underlay": {
       "put": {
         "tags": [
@@ -2143,6 +2427,56 @@
           "jobStatusUrl": {
             "type": "string",
             "nullable": true
+          },
+          "idempotentReplay": {
+            "type": "boolean"
+          }
+        },
+        "additionalProperties": false
+      },
+      "CP6.Space.Contracts.SaveSpaceUnderlayCalibrationRequest": {
+        "type": "object",
+        "properties": {
+          "floorLogicalId": {
+            "type": "string",
+            "format": "uuid"
+          },
+          "pageNumber": {
+            "type": "integer",
+            "format": "int32"
+          },
+          "pixelWidth": {
+            "type": "integer",
+            "format": "int32"
+          },
+          "pixelHeight": {
+            "type": "integer",
+            "format": "int32"
+          },
+          "point1": {
+            "$ref": "#/components/schemas/CP6.Space.Contracts.SpaceUnderlayCalibrationPointDto"
+          },
+          "point2": {
+            "$ref": "#/components/schemas/CP6.Space.Contracts.SpaceUnderlayCalibrationPointDto"
+          },
+          "validationPoint": {
+            "$ref": "#/components/schemas/CP6.Space.Contracts.SpaceUnderlayCalibrationPointDto"
+          },
+          "expectedFloorRevision": {
+            "type": "integer",
+            "format": "int64"
+          }
+        },
+        "additionalProperties": false
+      },
+      "CP6.Space.Contracts.SaveSpaceUnderlayCalibrationResponse": {
+        "type": "object",
+        "properties": {
+          "floor": {
+            "$ref": "#/components/schemas/CP6.Space.Contracts.SpaceSceneFloorDto"
+          },
+          "calibration": {
+            "$ref": "#/components/schemas/CP6.Space.Contracts.SpaceUnderlayCalibrationDto"
           },
           "idempotentReplay": {
             "type": "boolean"
@@ -2760,6 +3094,11 @@
             "format": "uuid",
             "nullable": true
           },
+          "underlayCalibrationId": {
+            "type": "string",
+            "format": "uuid",
+            "nullable": true
+          },
           "underlayScale": {
             "type": "number",
             "format": "double",
@@ -3074,6 +3413,104 @@
           "rowVersion": {
             "type": "string",
             "nullable": true
+          }
+        },
+        "additionalProperties": false
+      },
+      "CP6.Space.Contracts.SpaceUnderlayCalibrationDto": {
+        "type": "object",
+        "properties": {
+          "id": {
+            "type": "string",
+            "format": "uuid"
+          },
+          "modelVersionId": {
+            "type": "string",
+            "format": "uuid"
+          },
+          "floorLogicalId": {
+            "type": "string",
+            "format": "uuid"
+          },
+          "sourceId": {
+            "type": "string",
+            "format": "uuid"
+          },
+          "pageNumber": {
+            "type": "integer",
+            "format": "int32"
+          },
+          "pixelWidth": {
+            "type": "integer",
+            "format": "int32"
+          },
+          "pixelHeight": {
+            "type": "integer",
+            "format": "int32"
+          },
+          "point1": {
+            "$ref": "#/components/schemas/CP6.Space.Contracts.SpaceUnderlayCalibrationPointDto"
+          },
+          "point2": {
+            "$ref": "#/components/schemas/CP6.Space.Contracts.SpaceUnderlayCalibrationPointDto"
+          },
+          "validationPoint": {
+            "$ref": "#/components/schemas/CP6.Space.Contracts.SpaceUnderlayCalibrationPointDto"
+          },
+          "millimetersPerPixel": {
+            "type": "number",
+            "format": "double"
+          },
+          "offsetX": {
+            "type": "integer",
+            "format": "int32"
+          },
+          "offsetY": {
+            "type": "integer",
+            "format": "int32"
+          },
+          "rotationZ": {
+            "type": "number",
+            "format": "double"
+          },
+          "validationErrorMillimeters": {
+            "type": "number",
+            "format": "double"
+          },
+          "errorThresholdMillimeters": {
+            "type": "number",
+            "format": "double"
+          },
+          "createdAtUtc": {
+            "type": "string",
+            "format": "date-time"
+          },
+          "createdBy": {
+            "type": "string",
+            "format": "uuid",
+            "nullable": true
+          }
+        },
+        "additionalProperties": false
+      },
+      "CP6.Space.Contracts.SpaceUnderlayCalibrationPointDto": {
+        "type": "object",
+        "properties": {
+          "pixelX": {
+            "type": "number",
+            "format": "double"
+          },
+          "pixelY": {
+            "type": "number",
+            "format": "double"
+          },
+          "worldX": {
+            "type": "integer",
+            "format": "int32"
+          },
+          "worldY": {
+            "type": "integer",
+            "format": "int32"
           }
         },
         "additionalProperties": false

@@ -105,6 +105,7 @@ public sealed class SpaceVersionCloneSqlServerTests
             Assert.Contains("Space_AssetVersion", tableNames);
             Assert.Contains("Space_ElementRevision", tableNames);
             Assert.Contains("Space_ElementAttribute", tableNames);
+            Assert.Contains("Space_UnderlayCalibration", tableNames);
 
             var cloneColumn = await context.Database
                 .SqlQueryRaw<string>(
@@ -116,6 +117,17 @@ public sealed class SpaceVersionCloneSqlServerTests
                     """)
                 .SingleAsync();
             Assert.Equal("CloneOperationId", cloneColumn);
+
+            var calibrationColumn = await context.Database
+                .SqlQueryRaw<string>(
+                    """
+                    SELECT [name] AS [Value]
+                    FROM sys.columns
+                    WHERE [object_id] = OBJECT_ID('Space_FloorRevision')
+                      AND [name] = 'UnderlayCalibrationId'
+                    """)
+                .SingleAsync();
+            Assert.Equal("UnderlayCalibrationId", calibrationColumn);
         });
     }
 
@@ -175,6 +187,16 @@ public sealed class SpaceVersionCloneSqlServerTests
                 .SingleAsync(row => row.ModelVersionId == published.Id);
             var sourceSource = await context.Sources
                 .AsNoTracking()
+                .SingleAsync(row =>
+                    row.ModelVersionId == published.Id &&
+                    row.SourceType == SpaceSourceType.Editor);
+            var sourceUnderlay = await context.Sources
+                .AsNoTracking()
+                .SingleAsync(row =>
+                    row.ModelVersionId == published.Id &&
+                    row.SourceType == SpaceSourceType.Pdf);
+            var sourceCalibration = await context.UnderlayCalibrations
+                .AsNoTracking()
                 .SingleAsync(row => row.ModelVersionId == published.Id);
 
             var started = await StartAndProcessAsync(
@@ -185,8 +207,17 @@ public sealed class SpaceVersionCloneSqlServerTests
                 "Full clone");
             context.ChangeTracker.Clear();
 
-            var targetSource = await context.Sources.SingleAsync(
-                row => row.ModelVersionId == started.Result.ModelVersionId);
+            var targetSource = await context.Sources.SingleAsync(row =>
+                row.ModelVersionId == started.Result.ModelVersionId &&
+                row.SourceType == SpaceSourceType.Editor);
+            var targetUnderlay = await context.Sources.SingleAsync(row =>
+                row.ModelVersionId == started.Result.ModelVersionId &&
+                row.SourceType == SpaceSourceType.Pdf);
+            var targetCalibration =
+                await context.UnderlayCalibrations.SingleAsync(
+                    row =>
+                        row.ModelVersionId ==
+                        started.Result.ModelVersionId);
             var targetFloor = await context.FloorRevisions.SingleAsync(
                 row => row.ModelVersionId == started.Result.ModelVersionId);
             var targetElement = await context.ElementRevisions.SingleAsync(
@@ -196,12 +227,26 @@ public sealed class SpaceVersionCloneSqlServerTests
             var targetAttribute = await context.ElementAttributes.SingleAsync(
                 row => row.ModelVersionId == started.Result.ModelVersionId);
 
-            Assert.Equal(9, started.Counts.Total);
+            Assert.Equal(10, started.Counts.Total);
             Assert.NotEqual(sourceSource.Id, targetSource.Id);
             Assert.Equal(sourceSource.Sha256, targetSource.Sha256);
             Assert.NotEqual(sourceFloor.Id, targetFloor.Id);
             Assert.Equal(sourceFloor.LogicalId, targetFloor.LogicalId);
             Assert.Equal(targetSource.Id, targetFloor.SourceId);
+            Assert.NotEqual(sourceUnderlay.Id, targetUnderlay.Id);
+            Assert.Equal(targetUnderlay.Id, targetFloor.UnderlaySourceId);
+            Assert.NotEqual(
+                sourceCalibration.Id,
+                targetCalibration.Id);
+            Assert.Equal(
+                targetCalibration.Id,
+                targetFloor.UnderlayCalibrationId);
+            Assert.Equal(
+                targetUnderlay.Id,
+                targetCalibration.SourceId);
+            Assert.Equal(
+                sourceCalibration.ValidationErrorMillimeters,
+                targetCalibration.ValidationErrorMillimeters);
             Assert.NotEqual(sourceElement.Id, targetElement.Id);
             Assert.Equal(sourceElement.LogicalId, targetElement.LogicalId);
             Assert.Equal(sourceElement.ModelAssetId, targetElement.ModelAssetId);
@@ -307,6 +352,44 @@ public sealed class SpaceVersionCloneSqlServerTests
                 "F1",
                 "Floor 1");
             floor.AttachSource(source, "editor:floor-1");
+            var underlayFile = SpaceFile.CreateUploading(
+                Guid.NewGuid(),
+                tenantId,
+                $"quarantine/{Guid.NewGuid():N}",
+                "underlay.pdf",
+                "application/pdf",
+                SpaceFileRetentionClass.Source,
+                DateTime.UtcNow.AddDays(30));
+            underlayFile.CompleteQuarantine(
+                "application/pdf",
+                ".pdf",
+                128,
+                new string('d', 64));
+            underlayFile.BeginScanning();
+            underlayFile.MarkClean("test-av", "v1");
+            var underlaySource = SpaceModelSource.CreateFileSource(
+                tenantId,
+                version.Id,
+                SpaceSourceType.Pdf,
+                underlayFile,
+                "Underlay");
+            floor.AttachUnderlay(underlaySource);
+            var calibration = SpaceUnderlayCalibration.Create(
+                tenantId,
+                version.Id,
+                floor.LogicalId,
+                underlaySource.Id,
+                pageNumber: 1,
+                pixelWidth: 1_000,
+                pixelHeight: 500,
+                new SpaceCalibrationPoint(0, 500, 1_000, 2_000),
+                new SpaceCalibrationPoint(100, 500, 2_000, 2_000),
+                new SpaceCalibrationPoint(0, 400, 1_000, 3_000),
+                minimumErrorThresholdMillimeters: 50,
+                relativeErrorTolerance: 0.002m);
+            floor.ApplyUnderlayCalibration(
+                underlaySource,
+                calibration);
             var zone = SpaceZoneRevision.Create(
                 tenantId,
                 version.Id,
@@ -392,6 +475,9 @@ public sealed class SpaceVersionCloneSqlServerTests
                 "2h");
             context.AddRange(
                 source,
+                underlayFile,
+                underlaySource,
+                calibration,
                 floor,
                 zone,
                 aisle,

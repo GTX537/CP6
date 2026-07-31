@@ -92,6 +92,47 @@ public sealed record AttachSpaceUnderlayResponse(
     SpaceSceneFloorDto Floor,
     bool IdempotentReplay);
 
+public sealed record SpaceUnderlayCalibrationPointDto(
+    decimal PixelX,
+    decimal PixelY,
+    int WorldX,
+    int WorldY);
+
+public sealed record SaveSpaceUnderlayCalibrationRequest(
+    Guid FloorLogicalId,
+    int PageNumber,
+    int PixelWidth,
+    int PixelHeight,
+    SpaceUnderlayCalibrationPointDto Point1,
+    SpaceUnderlayCalibrationPointDto Point2,
+    SpaceUnderlayCalibrationPointDto ValidationPoint,
+    long ExpectedFloorRevision);
+
+public sealed record SpaceUnderlayCalibrationDto(
+    Guid Id,
+    Guid ModelVersionId,
+    Guid FloorLogicalId,
+    Guid SourceId,
+    int PageNumber,
+    int PixelWidth,
+    int PixelHeight,
+    SpaceUnderlayCalibrationPointDto Point1,
+    SpaceUnderlayCalibrationPointDto Point2,
+    SpaceUnderlayCalibrationPointDto ValidationPoint,
+    decimal MillimetersPerPixel,
+    int OffsetX,
+    int OffsetY,
+    decimal RotationZ,
+    decimal ValidationErrorMillimeters,
+    decimal ErrorThresholdMillimeters,
+    DateTime CreatedAtUtc,
+    Guid? CreatedBy);
+
+public sealed record SaveSpaceUnderlayCalibrationResponse(
+    SpaceSceneFloorDto Floor,
+    SpaceUnderlayCalibrationDto Calibration,
+    bool IdempotentReplay);
+
 public sealed record SpaceJobDto(
     Guid Id,
     string JobType,

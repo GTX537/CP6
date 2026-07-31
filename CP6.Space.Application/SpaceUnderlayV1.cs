@@ -13,6 +13,12 @@ public sealed record SpaceUnderlayContent(
     string ContentType,
     string FileName);
 
+public sealed class SpaceUnderlayCalibrationOptions
+{
+    public decimal MinimumValidationErrorMillimeters { get; init; } = 50m;
+    public decimal RelativeValidationErrorTolerance { get; init; } = 0.002m;
+}
+
 public interface ISpaceUnderlayV1Service
 {
     Task<UploadSpaceUnderlayResponse> UploadAsync(
@@ -35,6 +41,19 @@ public interface ISpaceUnderlayV1Service
         Guid versionId,
         Guid floorLogicalId,
         AttachSpaceUnderlayRequest request,
+        string idempotencyKey,
+        CancellationToken cancellationToken = default);
+
+    Task<SpaceUnderlayCalibrationDto> GetCalibrationAsync(
+        Guid versionId,
+        Guid sourceId,
+        Guid floorLogicalId,
+        CancellationToken cancellationToken = default);
+
+    Task<SaveSpaceUnderlayCalibrationResponse> CalibrateAsync(
+        Guid versionId,
+        Guid sourceId,
+        SaveSpaceUnderlayCalibrationRequest request,
         string idempotencyKey,
         CancellationToken cancellationToken = default);
 }

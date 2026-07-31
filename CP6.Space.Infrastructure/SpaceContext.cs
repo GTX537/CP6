@@ -48,6 +48,8 @@ public sealed class SpaceContext : DbContext
     public DbSet<SpaceAiBudgetReservation> AiBudgetReservations =>
         Set<SpaceAiBudgetReservation>();
     public DbSet<SpaceFloorRevision> FloorRevisions => Set<SpaceFloorRevision>();
+    public DbSet<SpaceUnderlayCalibration> UnderlayCalibrations =>
+        Set<SpaceUnderlayCalibration>();
     public DbSet<SpaceZoneRevision> ZoneRevisions => Set<SpaceZoneRevision>();
     public DbSet<SpaceAisleRevision> AisleRevisions => Set<SpaceAisleRevision>();
     public DbSet<SpaceRackRevision> RackRevisions => Set<SpaceRackRevision>();
@@ -67,6 +69,7 @@ public sealed class SpaceContext : DbContext
         ConfigureModel(modelBuilder);
         ConfigureVersion(modelBuilder);
         ConfigureFloorRevision(modelBuilder);
+        ConfigureUnderlayCalibration(modelBuilder);
         ConfigureZoneRevision(modelBuilder);
         ConfigureAisleRevision(modelBuilder);
         ConfigureRackRevision(modelBuilder);
@@ -99,6 +102,7 @@ public sealed class SpaceContext : DbContext
         ProtectProposalDecisionHistory();
         ProtectAiCapacityLedger();
         ProtectAssetLibrary();
+        ProtectUnderlayCalibrationHistory();
         StampAndValidateTenant();
         return base.SaveChanges(acceptAllChangesOnSuccess);
     }
@@ -112,6 +116,7 @@ public sealed class SpaceContext : DbContext
         ProtectProposalDecisionHistory();
         ProtectAiCapacityLedger();
         ProtectAssetLibrary();
+        ProtectUnderlayCalibrationHistory();
         StampAndValidateTenant();
         return base.SaveChangesAsync(acceptAllChangesOnSuccess, cancellationToken);
     }
@@ -265,6 +270,98 @@ public sealed class SpaceContext : DbContext
             .HasPrincipalKey(x => new { x.TenantId, x.ModelVersionId, x.Id })
             .OnDelete(DeleteBehavior.Restrict)
             .HasConstraintName("FK_Space_FloorRevision_UnderlaySource_Tenant_Version");
+        entity.HasOne<SpaceUnderlayCalibration>()
+            .WithMany()
+            .HasForeignKey(x => new
+            {
+                x.TenantId,
+                x.ModelVersionId,
+                x.LogicalId,
+                x.UnderlaySourceId,
+                x.UnderlayCalibrationId,
+            })
+            .HasPrincipalKey(x => new
+            {
+                x.TenantId,
+                x.ModelVersionId,
+                x.FloorLogicalId,
+                x.SourceId,
+                x.Id,
+            })
+            .OnDelete(DeleteBehavior.Restrict)
+            .HasConstraintName(
+                "FK_Space_FloorRevision_UnderlayCalibration_Tenant_Version_Floor_Source");
+    }
+
+    private void ConfigureUnderlayCalibration(ModelBuilder modelBuilder)
+    {
+        var entity = modelBuilder.Entity<SpaceUnderlayCalibration>();
+        entity.ToTable("Space_UnderlayCalibration");
+        entity.HasKey(x => x.Id);
+        entity.Property(x => x.Id).ValueGeneratedNever();
+        entity.HasAlternateKey(x => new
+            {
+                x.TenantId,
+                x.ModelVersionId,
+                x.FloorLogicalId,
+                x.SourceId,
+                x.Id,
+            })
+            .HasName(
+                "AK_Space_UnderlayCalibration_Tenant_Version_Floor_Source_Id");
+        ConfigureTenantEntity(entity);
+
+        entity.Property(x => x.Point1PixelX).HasColumnType("decimal(18,6)");
+        entity.Property(x => x.Point1PixelY).HasColumnType("decimal(18,6)");
+        entity.Property(x => x.Point2PixelX).HasColumnType("decimal(18,6)");
+        entity.Property(x => x.Point2PixelY).HasColumnType("decimal(18,6)");
+        entity.Property(x => x.ValidationPixelX).HasColumnType("decimal(18,6)");
+        entity.Property(x => x.ValidationPixelY).HasColumnType("decimal(18,6)");
+        entity.Property(x => x.MillimetersPerPixel)
+            .HasColumnType("decimal(18,8)");
+        entity.Property(x => x.RotationZ).HasColumnType("decimal(9,4)");
+        entity.Property(x => x.ValidationErrorMillimeters)
+            .HasColumnType("decimal(18,4)");
+        entity.Property(x => x.ErrorThresholdMillimeters)
+            .HasColumnType("decimal(18,4)");
+
+        entity.HasIndex(x => new
+            {
+                x.TenantId,
+                x.ModelVersionId,
+                x.FloorLogicalId,
+                x.CreatedAtUtc,
+            })
+            .HasDatabaseName(
+                "IX_Space_UnderlayCalibration_Version_Floor_Created");
+        entity.HasIndex(x => new
+            {
+                x.TenantId,
+                x.ModelVersionId,
+                x.SourceId,
+            })
+            .HasDatabaseName(
+                "IX_Space_UnderlayCalibration_Version_Source");
+        entity.HasOne<SpaceModelSource>()
+            .WithMany()
+            .HasForeignKey(x => new
+            {
+                x.TenantId,
+                x.ModelVersionId,
+                x.SourceId,
+            })
+            .HasPrincipalKey(x => new
+            {
+                x.TenantId,
+                x.ModelVersionId,
+                x.Id,
+            })
+            .OnDelete(DeleteBehavior.Restrict)
+            .HasConstraintName(
+                "FK_Space_UnderlayCalibration_Source_Tenant_Version");
+
+        entity.HasQueryFilter(
+            x => x.TenantId == CurrentTenantId && !x.IsDeleted);
     }
 
     private void ConfigureZoneRevision(ModelBuilder modelBuilder)
@@ -1867,6 +1964,8 @@ public sealed class SpaceContext : DbContext
                 SpaceRevisionEntity revision => revision.ModelVersionId,
                 SpaceElementAttribute attribute => attribute.ModelVersionId,
                 SpaceModelSource source => source.ModelVersionId,
+                SpaceUnderlayCalibration calibration =>
+                    calibration.ModelVersionId,
                 _ => Guid.Empty,
             })
             .Where(versionId => versionId != Guid.Empty)
@@ -2000,6 +2099,19 @@ public sealed class SpaceContext : DbContext
         {
             if (entry.State is EntityState.Added or EntityState.Modified)
                 entry.Entity.EnsureAssetReferenceConsistency();
+        }
+    }
+
+    private void ProtectUnderlayCalibrationHistory()
+    {
+        foreach (var entry in ChangeTracker
+            .Entries<SpaceUnderlayCalibration>())
+        {
+            if (entry.State is EntityState.Modified or EntityState.Deleted)
+            {
+                throw new SpaceUnderlayCalibrationException(
+                    "Underlay calibration records are append-only.");
+            }
         }
     }
 

@@ -20,6 +20,7 @@ export interface UnderlayRenderPlan {
   y: number
   width: number
   height: number
+  imageOffsetY: number
   rotation: number
   millimetersPerPixel: number
   calibrated: boolean
@@ -65,9 +66,10 @@ export function buildUnderlayRenderPlan(
 
   return {
     x,
-    y: originY - height,
+    y: originY,
     width,
     height,
+    imageOffsetY: height,
     rotation: -placement.rotationZ,
     millimetersPerPixel,
     calibrated,

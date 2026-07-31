@@ -5,6 +5,7 @@ import {
   type DecodedUnderlay,
 } from './decodeUnderlay'
 import { buildUnderlayRenderPlan } from './underlayPlan'
+import type { UnderlayPixelPoint } from './underlayCalibration'
 
 export interface UnderlayLayerState {
   visible: boolean
@@ -17,6 +18,12 @@ export class UnderlayStage {
   readonly layer: Konva.Layer
   private bitmap: DecodedUnderlay | null = null
   private floor: ISpaceSceneFloorDto | null = null
+  private underlayGroup: Konva.Group | null = null
+  private calibrationPoints: UnderlayPixelPoint[] = []
+  private calibrationEnabled = false
+  private calibrationHandler:
+    | ((point: UnderlayPixelPoint) => void)
+    | null = null
   private state: UnderlayLayerState = {
     visible: true,
     opacity: 0.55,
@@ -31,6 +38,32 @@ export class UnderlayStage {
     })
     this.layer = new Konva.Layer()
     this.stage.add(this.layer)
+    this.stage.on('pointerdown.calibration', () => {
+      if (!this.calibrationEnabled || !this.underlayGroup || !this.bitmap) return
+      const pointer = this.stage.getPointerPosition()
+      if (!pointer) return
+      const local = this.underlayGroup
+        .getAbsoluteTransform()
+        .copy()
+        .invert()
+        .point(pointer)
+      const point = {
+        x: local.x * this.bitmap.width / this.underlayGroup.width(),
+        y: local.y * this.bitmap.height / this.underlayGroup.height(),
+      }
+      if (
+        point.x < 0 ||
+        point.y < 0 ||
+        point.x > this.bitmap.width ||
+        point.y > this.bitmap.height
+      ) {
+        return
+      }
+      this.calibrationHandler?.({
+        x: Math.round(point.x * 1000) / 1000,
+        y: Math.round(point.y * 1000) / 1000,
+      })
+    })
   }
 
   setContent(
@@ -58,6 +91,29 @@ export class UnderlayStage {
     this.render()
   }
 
+  setFloor(floor: ISpaceSceneFloorDto | null): void {
+    this.floor = floor
+    this.render()
+  }
+
+  setCalibrationSelection(
+    enabled: boolean,
+    points: UnderlayPixelPoint[],
+    handler?: (point: UnderlayPixelPoint) => void,
+  ): void {
+    this.calibrationEnabled = enabled
+    this.calibrationPoints = points.slice(0, 3)
+    this.calibrationHandler = handler ?? null
+    this.stage.container().style.cursor = enabled ? 'crosshair' : 'default'
+    this.render()
+  }
+
+  getRasterSize(): { width: number; height: number } | null {
+    return this.bitmap
+      ? { width: this.bitmap.width, height: this.bitmap.height }
+      : null
+  }
+
   resize(width: number, height: number): void {
     if (width <= 0 || height <= 0) return
     this.stage.size({ width, height })
@@ -67,11 +123,13 @@ export class UnderlayStage {
   destroy(): void {
     releaseDecodedUnderlay(this.bitmap)
     this.bitmap = null
+    this.calibrationHandler = null
     this.stage.destroy()
   }
 
   private render(): void {
     this.layer.destroyChildren()
+    this.underlayGroup = null
     if (!this.bitmap || !this.floor) {
       this.layer.batchDraw()
       return
@@ -94,22 +152,56 @@ export class UnderlayStage {
         panY: 0,
       },
     )
-    const image = new Konva.Image({
-      name: 'underlay',
-      image: this.bitmap.image,
+    const group = new Konva.Group({
+      name: 'underlay-transform',
       x: plan.x,
       y: plan.y,
       width: plan.width,
       height: plan.height,
       rotation: plan.rotation,
+      offsetY: plan.imageOffsetY,
+      listening: false,
+    })
+    const image = new Konva.Image({
+      name: 'underlay',
+      image: this.bitmap.image,
+      x: 0,
+      y: 0,
+      width: plan.width,
+      height: plan.height,
       opacity: this.state.opacity,
       visible: this.state.visible,
-      listening: !this.state.locked,
+      listening: false,
       draggable: false,
     })
     image.setAttr('calibrated', plan.calibrated)
     image.setAttr('locked', this.state.locked)
-    this.layer.add(image)
+    group.add(image)
+    for (const [index, point] of this.calibrationPoints.entries()) {
+      const x = point.x * plan.width / this.bitmap.width
+      const y = point.y * plan.height / this.bitmap.height
+      group.add(new Konva.Circle({
+        name: 'calibration-point',
+        x,
+        y,
+        radius: 7,
+        fill: index === 2 ? '#f59e0b' : '#2563eb',
+        stroke: '#ffffff',
+        strokeWidth: 2,
+        listening: false,
+      }))
+      group.add(new Konva.Text({
+        x: x + 10,
+        y: y - 10,
+        text: index === 2 ? 'V' : `P${index + 1}`,
+        fill: '#111827',
+        fontSize: 14,
+        fontStyle: 'bold',
+        listening: false,
+      }))
+    }
+    this.underlayGroup = group
+    this.layer.add(group)
     this.layer.batchDraw()
   }
 }

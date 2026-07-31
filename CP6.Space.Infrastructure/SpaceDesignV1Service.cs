@@ -1143,6 +1143,7 @@ public sealed class SpaceDesignV1Service : ISpaceDesignV1Service
             floor.BoundaryJson,
             floor.CoordinateSystem,
             floor.UnderlaySourceId,
+            floor.UnderlayCalibrationId,
             floor.UnderlayScale,
             floor.UnderlayOffsetX,
             floor.UnderlayOffsetY,
