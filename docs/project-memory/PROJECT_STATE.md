@@ -2,6 +2,15 @@
 
 最后更新：2026-07-31
 
+## E08-S01 完成状态（2026-07-31）
+
+- E08-S01 统一运行态数据源已在功能分支 `codex/space-e08-s01-runtime-source` 完成，当前代码实现 HEAD `15f6a296`、设计提交 `636eb6d5`；待 Task 6 合入 Space 受控集成分支，尚无实际集成 merge hash。
+- 全量验证：Space Unit 220 passed / 0 failed / 0 skipped；默认 Space Integration 94 passed / 0 failed / 48 SQL 环境门禁 skipped；OpenAPI/权限/数据源合同聚焦 45 passed；Release 完整 solution build 0 error / 10 个既有 warning；SDK 无 drift；EF 无待迁移模型变化；feature range `git diff --check` 静默通过。
+- 运行权威规则：当前 Published/Active Space 模型是空间与身份权威；生产 `Cp6SpaceWmsAdapter` 是库存/任务运行态权威；模拟器只允许显式选择/测试；Design Revision 不持久化库存、任务等运行事实。
+- 已交付 `GET /api/space/design/v1/sites/{siteId}/runtime/inventory` 与 `GET /api/space/design/v1/sites/{siteId}/runtime/tasks`，均要求 `space:model:read`，支持重复 `locationLogicalId` 筛选、Space/WMS 双 LogicalId 与双编码。
+- 查询按 500 个位置分块、最多 10,000 个位置；来源/输出合同违例失败关闭为 502，适配器异常为可重试 503；明确 `Unavailable` 返回空 `Items` 并携带 `IsAvailable=false`，不与真实空结果混同。
+- 下一张建议卡为 E08-S02：库存来源/接收时间/延迟/健康展示及历史；交付报告见 `docs/space/reports/e08-s01-unified-runtime-source.md`。
+
 ## E07-S05 完成状态（2026-07-31）
 
 - E07-S05 存量 WMS 采纳与绑定已完成：独立采纳账本、刷新、分页、单项/批量绑定、空位放置、差异 Issue 同步、rowversion 并发、权限/OpenAPI/SDK 和 Design V1 编辑器侧栏均已闭环。
