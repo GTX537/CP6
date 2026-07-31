@@ -2,6 +2,14 @@
 
 > 依据 Git log 汇总，不替代完整 Git 历史。重点记录影响接手判断的里程碑。
 
+## 2026-07-31：Space V1 E04 S04 受控集成
+
+- `9a87dc30` / `f9c7fd21`：实现并 no-ff 集成货架/通用元素统一多选、套索、对齐、等距、旋转、批量删除、货架阵列与保存后补偿式撤销/重做。
+- schema v1 命令扩展 `MoveObject`、`RotateObject`、`RestoreLogicalObject` 和 `GenerateRackArray`；继续使用 S03 的 Serializable 批次、Floor/Version revision、请求哈希幂等与 append-only before/after 审计。
+- 阵列把模板计入总数，复制 Active RackLevel；生成库位使用新 LogicalId、空编码、Generated/Unbound，不复制 WMS 绑定语义。编码冲突、缺失目标和坐标/数量越界均在整批写入前失败关闭。
+- 合并态验证：完整 solution 0 error / 10 个既有 warning，Space Unit 213 passed，默认 Integration 48 passed / 45 SQL-gated skipped，Design Scene 真实 SQL 3/3 passed，API/OpenAPI/权限 25/25；前端 96 files / 575 tests、type-check 和 production build 通过；SDK/EF drift 通过。
+- E07 S05 的 E04 S04 前置依赖已解除；下一张建议卡为存量 WMS 采纳与绑定。E04 S05 仍等待 E02 S07，E04 S06 应独立排卡。
+
 ## 2026-07-30：Space V1 E00 / E01 S01–S06 / E02 S01 / E04 S01–S03 / E05 S01–S05 / E07 S01–S04 / E13 S01–S03、S12 受控集成
 
 - `0d25da4d`：把 542 个文件的 Space 后续候选固化到 `checkpoint/space-candidate-20260730`；安全审计未发现真实凭据、私钥或异常构建产物。该提交仅作可回退候选，不是正式实现基线。
