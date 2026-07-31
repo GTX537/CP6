@@ -498,6 +498,8 @@ public sealed class SpaceElementRevision : SpaceRevisionEntity
     public string ElementType { get; private set; } = string.Empty;
     public string GeometryJson { get; private set; } = "{}";
     public Guid? ModelAssetId { get; private set; }
+    public SpaceAssetScope? ModelAssetScope { get; private set; }
+    public Guid? ModelAssetOwnerTenantId { get; private set; }
     public int X { get; private set; }
     public int Y { get; private set; }
     public int Z { get; private set; }
@@ -549,9 +551,19 @@ public sealed class SpaceElementRevision : SpaceRevisionEntity
 
     public void UpdateGeometry(string geometryJson)
     {
-        GeometryJson = SpaceElementGeometry.Validate(
+        var validated = SpaceElementGeometry.Validate(
             geometryJson,
             nameof(geometryJson));
+        var geometryAssetVersionId =
+            SpaceElementGeometry.ReadAssetVersionId(validated);
+        if (geometryAssetVersionId.HasValue &&
+            geometryAssetVersionId != ModelAssetId)
+        {
+            throw new InvalidOperationException(
+                "Asset geometry must reference the attached asset version.");
+        }
+
+        GeometryJson = validated;
     }
 
     public void ConfigurePlacement(
@@ -573,11 +585,75 @@ public sealed class SpaceElementRevision : SpaceRevisionEntity
         Depth = depth;
     }
 
-    public void SetModelAsset(Guid? modelAssetId)
+    public void AttachAsset(SpaceAssetVersion assetVersion)
     {
-        if (modelAssetId == Guid.Empty)
-            throw new ArgumentException("Model asset identity cannot be empty.", nameof(modelAssetId));
-        ModelAssetId = modelAssetId;
+        ArgumentNullException.ThrowIfNull(assetVersion);
+        if (assetVersion.Status != SpaceAssetVersionStatus.Ready)
+        {
+            throw new InvalidOperationException(
+                "Only a ready asset version can be attached.");
+        }
+        if (!assetVersion.IsVisibleTo(TenantId))
+        {
+            throw new SpaceTenantScopeException(
+                "The asset version is not visible to this element tenant.");
+        }
+
+        var geometryAssetVersionId =
+            SpaceElementGeometry.ReadAssetVersionId(GeometryJson);
+        if (geometryAssetVersionId.HasValue &&
+            geometryAssetVersionId != assetVersion.Id)
+        {
+            throw new InvalidOperationException(
+                "Asset geometry must reference the attached asset version.");
+        }
+
+        ModelAssetId = assetVersion.Id;
+        ModelAssetScope = assetVersion.Scope;
+        ModelAssetOwnerTenantId = assetVersion.OwnerTenantId;
+    }
+
+    public void DetachAsset()
+    {
+        if (SpaceElementGeometry.ReadAssetVersionId(GeometryJson).HasValue)
+        {
+            throw new InvalidOperationException(
+                "Asset geometry requires an attached asset version.");
+        }
+
+        ModelAssetId = null;
+        ModelAssetScope = null;
+        ModelAssetOwnerTenantId = null;
+    }
+
+    public void EnsureAssetReferenceConsistency()
+    {
+        var geometryAssetVersionId =
+            SpaceElementGeometry.ReadAssetVersionId(GeometryJson);
+        if (geometryAssetVersionId.HasValue &&
+            geometryAssetVersionId != ModelAssetId)
+        {
+            throw new InvalidOperationException(
+                "Asset geometry must reference the attached asset version.");
+        }
+        if (ModelAssetId.HasValue != ModelAssetScope.HasValue ||
+            ModelAssetId.HasValue != ModelAssetOwnerTenantId.HasValue)
+        {
+            throw new InvalidOperationException(
+                "Asset identity, scope, and owner must be supplied together.");
+        }
+        if (ModelAssetScope == SpaceAssetScope.System &&
+            ModelAssetOwnerTenantId != Guid.Empty)
+        {
+            throw new SpaceTenantScopeException(
+                "System asset references use the platform owner identity.");
+        }
+        if (ModelAssetScope == SpaceAssetScope.Tenant &&
+            ModelAssetOwnerTenantId != TenantId)
+        {
+            throw new SpaceTenantScopeException(
+                "Tenant asset references must belong to the element tenant.");
+        }
     }
 
     public void ConfigureBusinessLink(

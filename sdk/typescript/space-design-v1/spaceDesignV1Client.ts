@@ -39,6 +39,21 @@ export interface ISpaceDesignV1Client {
     getScene(versionId: string, floorLogicalId: string): Promise<SpaceDesignSceneDto>;
 
     /**
+     * @param scope (optional)
+     * @param category (optional)
+     * @param limit (optional)
+     * @param cursor (optional)
+     * @return OK
+     */
+    getAssets(scope: string | undefined, category: string | undefined, limit: number | undefined, cursor: string | undefined): Promise<SpacePageOfSpaceAssetDto>;
+
+    /**
+     * @param idempotency_Key Opaque caller key; 1-128 UTF-8 bytes. Reuse with a different request returns SPACE_IDEMPOTENCY_KEY_REUSED.
+     * @return Created
+     */
+    createAsset(idempotency_Key: string, body: CreateSpaceAssetRequest): Promise<CreateSpaceAssetResponse>;
+
+    /**
      * @param sourceType (optional)
      * @param state (optional)
      * @param limit (optional)
@@ -548,6 +563,204 @@ export class SpaceDesignV1Client implements ISpaceDesignV1Client {
     }
 
     /**
+     * @param scope (optional)
+     * @param category (optional)
+     * @param limit (optional)
+     * @param cursor (optional)
+     * @return OK
+     */
+    getAssets(scope: string | undefined, category: string | undefined, limit: number | undefined, cursor: string | undefined): Promise<SpacePageOfSpaceAssetDto> {
+        let url_ = this.baseUrl + "/api/space/design/v1/assets?";
+        if (scope === null)
+            throw new globalThis.Error("The parameter 'scope' cannot be null.");
+        else if (scope !== undefined)
+            url_ += "scope=" + encodeURIComponent("" + scope) + "&";
+        if (category === null)
+            throw new globalThis.Error("The parameter 'category' cannot be null.");
+        else if (category !== undefined)
+            url_ += "category=" + encodeURIComponent("" + category) + "&";
+        if (limit === null)
+            throw new globalThis.Error("The parameter 'limit' cannot be null.");
+        else if (limit !== undefined)
+            url_ += "limit=" + encodeURIComponent("" + limit) + "&";
+        if (cursor === null)
+            throw new globalThis.Error("The parameter 'cursor' cannot be null.");
+        else if (cursor !== undefined)
+            url_ += "cursor=" + encodeURIComponent("" + cursor) + "&";
+        url_ = url_.replace(/[?&]$/, "");
+
+        let options_: RequestInit = {
+            method: "GET",
+            headers: {
+                "Accept": "application/json"
+            }
+        };
+
+        return this.http.fetch(url_, options_).then((_response: Response) => {
+            return this.processGetAssets(_response);
+        });
+    }
+
+    protected processGetAssets(response: Response): Promise<SpacePageOfSpaceAssetDto> {
+        const status = response.status;
+        let _headers: any = {}; if (response.headers && response.headers.forEach) { response.headers.forEach((v: any, k: any) => _headers[k] = v); };
+        if (status === 200) {
+            return response.text().then((_responseText) => {
+            let result200: any = null;
+            let resultData200 = _responseText === "" ? null : JSON.parse(_responseText, this.jsonParseReviver);
+            result200 = SpacePageOfSpaceAssetDto.fromJS(resultData200);
+            return result200;
+            });
+        } else if (status === 400) {
+            return response.text().then((_responseText) => {
+            let result400: any = null;
+            let resultData400 = _responseText === "" ? null : JSON.parse(_responseText, this.jsonParseReviver);
+            result400 = SpaceDesignProblemDetails.fromJS(resultData400);
+            return throwException("Bad Request", status, _responseText, _headers, result400);
+            });
+        } else if (status === 401) {
+            return response.text().then((_responseText) => {
+            let result401: any = null;
+            let resultData401 = _responseText === "" ? null : JSON.parse(_responseText, this.jsonParseReviver);
+            result401 = SpaceDesignProblemDetails.fromJS(resultData401);
+            return throwException("Unauthorized", status, _responseText, _headers, result401);
+            });
+        } else if (status === 403) {
+            return response.text().then((_responseText) => {
+            let result403: any = null;
+            let resultData403 = _responseText === "" ? null : JSON.parse(_responseText, this.jsonParseReviver);
+            result403 = SpaceDesignProblemDetails.fromJS(resultData403);
+            return throwException("Forbidden", status, _responseText, _headers, result403);
+            });
+        } else if (status === 404) {
+            return response.text().then((_responseText) => {
+            let result404: any = null;
+            let resultData404 = _responseText === "" ? null : JSON.parse(_responseText, this.jsonParseReviver);
+            result404 = SpaceDesignProblemDetails.fromJS(resultData404);
+            return throwException("Not Found", status, _responseText, _headers, result404);
+            });
+        } else if (status === 409) {
+            return response.text().then((_responseText) => {
+            let result409: any = null;
+            let resultData409 = _responseText === "" ? null : JSON.parse(_responseText, this.jsonParseReviver);
+            result409 = SpaceDesignProblemDetails.fromJS(resultData409);
+            return throwException("Conflict", status, _responseText, _headers, result409);
+            });
+        } else if (status === 422) {
+            return response.text().then((_responseText) => {
+            let result422: any = null;
+            let resultData422 = _responseText === "" ? null : JSON.parse(_responseText, this.jsonParseReviver);
+            result422 = SpaceDesignProblemDetails.fromJS(resultData422);
+            return throwException("Unprocessable Content", status, _responseText, _headers, result422);
+            });
+        } else if (status === 500) {
+            return response.text().then((_responseText) => {
+            let result500: any = null;
+            let resultData500 = _responseText === "" ? null : JSON.parse(_responseText, this.jsonParseReviver);
+            result500 = SpaceDesignProblemDetails.fromJS(resultData500);
+            return throwException("Internal Server Error", status, _responseText, _headers, result500);
+            });
+        } else if (status !== 200 && status !== 204) {
+            return response.text().then((_responseText) => {
+            return throwException("An unexpected server error occurred.", status, _responseText, _headers);
+            });
+        }
+        return Promise.resolve<SpacePageOfSpaceAssetDto>(null as any);
+    }
+
+    /**
+     * @param idempotency_Key Opaque caller key; 1-128 UTF-8 bytes. Reuse with a different request returns SPACE_IDEMPOTENCY_KEY_REUSED.
+     * @return Created
+     */
+    createAsset(idempotency_Key: string, body: CreateSpaceAssetRequest): Promise<CreateSpaceAssetResponse> {
+        let url_ = this.baseUrl + "/api/space/design/v1/assets";
+        url_ = url_.replace(/[?&]$/, "");
+
+        const content_ = JSON.stringify(body);
+
+        let options_: RequestInit = {
+            body: content_,
+            method: "POST",
+            headers: {
+                "Idempotency-Key": idempotency_Key !== undefined && idempotency_Key !== null ? "" + idempotency_Key : "",
+                "Content-Type": "application/json",
+                "Accept": "application/json"
+            }
+        };
+
+        return this.http.fetch(url_, options_).then((_response: Response) => {
+            return this.processCreateAsset(_response);
+        });
+    }
+
+    protected processCreateAsset(response: Response): Promise<CreateSpaceAssetResponse> {
+        const status = response.status;
+        let _headers: any = {}; if (response.headers && response.headers.forEach) { response.headers.forEach((v: any, k: any) => _headers[k] = v); };
+        if (status === 201) {
+            return response.text().then((_responseText) => {
+            let result201: any = null;
+            let resultData201 = _responseText === "" ? null : JSON.parse(_responseText, this.jsonParseReviver);
+            result201 = CreateSpaceAssetResponse.fromJS(resultData201);
+            return result201;
+            });
+        } else if (status === 400) {
+            return response.text().then((_responseText) => {
+            let result400: any = null;
+            let resultData400 = _responseText === "" ? null : JSON.parse(_responseText, this.jsonParseReviver);
+            result400 = SpaceDesignProblemDetails.fromJS(resultData400);
+            return throwException("Bad Request", status, _responseText, _headers, result400);
+            });
+        } else if (status === 401) {
+            return response.text().then((_responseText) => {
+            let result401: any = null;
+            let resultData401 = _responseText === "" ? null : JSON.parse(_responseText, this.jsonParseReviver);
+            result401 = SpaceDesignProblemDetails.fromJS(resultData401);
+            return throwException("Unauthorized", status, _responseText, _headers, result401);
+            });
+        } else if (status === 403) {
+            return response.text().then((_responseText) => {
+            let result403: any = null;
+            let resultData403 = _responseText === "" ? null : JSON.parse(_responseText, this.jsonParseReviver);
+            result403 = SpaceDesignProblemDetails.fromJS(resultData403);
+            return throwException("Forbidden", status, _responseText, _headers, result403);
+            });
+        } else if (status === 404) {
+            return response.text().then((_responseText) => {
+            let result404: any = null;
+            let resultData404 = _responseText === "" ? null : JSON.parse(_responseText, this.jsonParseReviver);
+            result404 = SpaceDesignProblemDetails.fromJS(resultData404);
+            return throwException("Not Found", status, _responseText, _headers, result404);
+            });
+        } else if (status === 409) {
+            return response.text().then((_responseText) => {
+            let result409: any = null;
+            let resultData409 = _responseText === "" ? null : JSON.parse(_responseText, this.jsonParseReviver);
+            result409 = SpaceDesignProblemDetails.fromJS(resultData409);
+            return throwException("Conflict", status, _responseText, _headers, result409);
+            });
+        } else if (status === 422) {
+            return response.text().then((_responseText) => {
+            let result422: any = null;
+            let resultData422 = _responseText === "" ? null : JSON.parse(_responseText, this.jsonParseReviver);
+            result422 = SpaceDesignProblemDetails.fromJS(resultData422);
+            return throwException("Unprocessable Content", status, _responseText, _headers, result422);
+            });
+        } else if (status === 500) {
+            return response.text().then((_responseText) => {
+            let result500: any = null;
+            let resultData500 = _responseText === "" ? null : JSON.parse(_responseText, this.jsonParseReviver);
+            result500 = SpaceDesignProblemDetails.fromJS(resultData500);
+            return throwException("Internal Server Error", status, _responseText, _headers, result500);
+            });
+        } else if (status !== 200 && status !== 204) {
+            return response.text().then((_responseText) => {
+            return throwException("An unexpected server error occurred.", status, _responseText, _headers);
+            });
+        }
+        return Promise.resolve<CreateSpaceAssetResponse>(null as any);
+    }
+
+    /**
      * @param sourceType (optional)
      * @param state (optional)
      * @param limit (optional)
@@ -950,6 +1163,118 @@ export class SpaceDesignV1Client implements ISpaceDesignV1Client {
     }
 }
 
+export class CreateSpaceAssetRequest implements ICreateSpaceAssetRequest {
+    assetCode?: string | undefined;
+    name?: string | undefined;
+    category?: string | undefined;
+    format?: string | undefined;
+    parameterSchemaJson?: string | undefined;
+    contentHash?: string | undefined;
+    description?: string | undefined;
+    previewRef?: string | undefined;
+    renderArtifactRef?: string | undefined;
+    scope?: string | undefined;
+
+    constructor(data?: ICreateSpaceAssetRequest) {
+        if (data) {
+            for (var property in data) {
+                if (data.hasOwnProperty(property))
+                    (this as any)[property] = (data as any)[property];
+            }
+        }
+    }
+
+    init(_data?: any) {
+        if (_data) {
+            this.assetCode = _data["assetCode"];
+            this.name = _data["name"];
+            this.category = _data["category"];
+            this.format = _data["format"];
+            this.parameterSchemaJson = _data["parameterSchemaJson"];
+            this.contentHash = _data["contentHash"];
+            this.description = _data["description"];
+            this.previewRef = _data["previewRef"];
+            this.renderArtifactRef = _data["renderArtifactRef"];
+            this.scope = _data["scope"];
+        }
+    }
+
+    static fromJS(data: any): CreateSpaceAssetRequest {
+        data = typeof data === 'object' ? data : {};
+        let result = new CreateSpaceAssetRequest();
+        result.init(data);
+        return result;
+    }
+
+    toJSON(data?: any) {
+        data = typeof data === 'object' ? data : {};
+        data["assetCode"] = this.assetCode;
+        data["name"] = this.name;
+        data["category"] = this.category;
+        data["format"] = this.format;
+        data["parameterSchemaJson"] = this.parameterSchemaJson;
+        data["contentHash"] = this.contentHash;
+        data["description"] = this.description;
+        data["previewRef"] = this.previewRef;
+        data["renderArtifactRef"] = this.renderArtifactRef;
+        data["scope"] = this.scope;
+        return data;
+    }
+}
+
+export interface ICreateSpaceAssetRequest {
+    assetCode?: string | undefined;
+    name?: string | undefined;
+    category?: string | undefined;
+    format?: string | undefined;
+    parameterSchemaJson?: string | undefined;
+    contentHash?: string | undefined;
+    description?: string | undefined;
+    previewRef?: string | undefined;
+    renderArtifactRef?: string | undefined;
+    scope?: string | undefined;
+}
+
+export class CreateSpaceAssetResponse implements ICreateSpaceAssetResponse {
+    asset?: SpaceAssetDto;
+    idempotentReplay?: boolean;
+
+    constructor(data?: ICreateSpaceAssetResponse) {
+        if (data) {
+            for (var property in data) {
+                if (data.hasOwnProperty(property))
+                    (this as any)[property] = (data as any)[property];
+            }
+        }
+    }
+
+    init(_data?: any) {
+        if (_data) {
+            this.asset = _data["asset"] ? SpaceAssetDto.fromJS(_data["asset"]) : undefined as any;
+            this.idempotentReplay = _data["idempotentReplay"];
+        }
+    }
+
+    static fromJS(data: any): CreateSpaceAssetResponse {
+        data = typeof data === 'object' ? data : {};
+        let result = new CreateSpaceAssetResponse();
+        result.init(data);
+        return result;
+    }
+
+    toJSON(data?: any) {
+        data = typeof data === 'object' ? data : {};
+        data["asset"] = this.asset ? this.asset.toJSON() : undefined as any;
+        data["idempotentReplay"] = this.idempotentReplay;
+        return data;
+    }
+}
+
+export interface ICreateSpaceAssetResponse {
+    asset?: SpaceAssetDto;
+    idempotentReplay?: boolean;
+}
+
 export class CreateSpaceSourceRequest implements ICreateSpaceSourceRequest {
     fileId?: string;
     sourceType?: string | undefined;
@@ -1140,6 +1465,142 @@ export interface ICreateSpaceVersionResponse {
     jobId?: string;
     jobStatusUrl?: string | undefined;
     idempotentReplay?: boolean;
+}
+
+export class SpaceAssetDto implements ISpaceAssetDto {
+    id?: string;
+    scope?: string | undefined;
+    assetCode?: string | undefined;
+    name?: string | undefined;
+    category?: string | undefined;
+    description?: string | undefined;
+    status?: string | undefined;
+    latestVersion?: SpaceAssetVersionDto;
+    rowVersion?: string | undefined;
+
+    constructor(data?: ISpaceAssetDto) {
+        if (data) {
+            for (var property in data) {
+                if (data.hasOwnProperty(property))
+                    (this as any)[property] = (data as any)[property];
+            }
+        }
+    }
+
+    init(_data?: any) {
+        if (_data) {
+            this.id = _data["id"];
+            this.scope = _data["scope"];
+            this.assetCode = _data["assetCode"];
+            this.name = _data["name"];
+            this.category = _data["category"];
+            this.description = _data["description"];
+            this.status = _data["status"];
+            this.latestVersion = _data["latestVersion"] ? SpaceAssetVersionDto.fromJS(_data["latestVersion"]) : undefined as any;
+            this.rowVersion = _data["rowVersion"];
+        }
+    }
+
+    static fromJS(data: any): SpaceAssetDto {
+        data = typeof data === 'object' ? data : {};
+        let result = new SpaceAssetDto();
+        result.init(data);
+        return result;
+    }
+
+    toJSON(data?: any) {
+        data = typeof data === 'object' ? data : {};
+        data["id"] = this.id;
+        data["scope"] = this.scope;
+        data["assetCode"] = this.assetCode;
+        data["name"] = this.name;
+        data["category"] = this.category;
+        data["description"] = this.description;
+        data["status"] = this.status;
+        data["latestVersion"] = this.latestVersion ? this.latestVersion.toJSON() : undefined as any;
+        data["rowVersion"] = this.rowVersion;
+        return data;
+    }
+}
+
+export interface ISpaceAssetDto {
+    id?: string;
+    scope?: string | undefined;
+    assetCode?: string | undefined;
+    name?: string | undefined;
+    category?: string | undefined;
+    description?: string | undefined;
+    status?: string | undefined;
+    latestVersion?: SpaceAssetVersionDto;
+    rowVersion?: string | undefined;
+}
+
+export class SpaceAssetVersionDto implements ISpaceAssetVersionDto {
+    id?: string;
+    versionNo?: number;
+    format?: string | undefined;
+    parameterSchemaJson?: string | undefined;
+    previewRef?: string | undefined;
+    renderArtifactRef?: string | undefined;
+    contentHash?: string | undefined;
+    status?: string | undefined;
+    rowVersion?: string | undefined;
+
+    constructor(data?: ISpaceAssetVersionDto) {
+        if (data) {
+            for (var property in data) {
+                if (data.hasOwnProperty(property))
+                    (this as any)[property] = (data as any)[property];
+            }
+        }
+    }
+
+    init(_data?: any) {
+        if (_data) {
+            this.id = _data["id"];
+            this.versionNo = _data["versionNo"];
+            this.format = _data["format"];
+            this.parameterSchemaJson = _data["parameterSchemaJson"];
+            this.previewRef = _data["previewRef"];
+            this.renderArtifactRef = _data["renderArtifactRef"];
+            this.contentHash = _data["contentHash"];
+            this.status = _data["status"];
+            this.rowVersion = _data["rowVersion"];
+        }
+    }
+
+    static fromJS(data: any): SpaceAssetVersionDto {
+        data = typeof data === 'object' ? data : {};
+        let result = new SpaceAssetVersionDto();
+        result.init(data);
+        return result;
+    }
+
+    toJSON(data?: any) {
+        data = typeof data === 'object' ? data : {};
+        data["id"] = this.id;
+        data["versionNo"] = this.versionNo;
+        data["format"] = this.format;
+        data["parameterSchemaJson"] = this.parameterSchemaJson;
+        data["previewRef"] = this.previewRef;
+        data["renderArtifactRef"] = this.renderArtifactRef;
+        data["contentHash"] = this.contentHash;
+        data["status"] = this.status;
+        data["rowVersion"] = this.rowVersion;
+        return data;
+    }
+}
+
+export interface ISpaceAssetVersionDto {
+    id?: string;
+    versionNo?: number;
+    format?: string | undefined;
+    parameterSchemaJson?: string | undefined;
+    previewRef?: string | undefined;
+    renderArtifactRef?: string | undefined;
+    contentHash?: string | undefined;
+    status?: string | undefined;
+    rowVersion?: string | undefined;
 }
 
 export class SpaceDesignSceneDto implements ISpaceDesignSceneDto {
@@ -1697,6 +2158,7 @@ export class SpaceSceneElementDto implements ISpaceSceneElementDto {
     elementType?: string | undefined;
     geometryJson?: string | undefined;
     modelAssetId?: string | undefined;
+    modelAssetScope?: string | undefined;
     x?: number;
     y?: number;
     z?: number;
@@ -1725,6 +2187,7 @@ export class SpaceSceneElementDto implements ISpaceSceneElementDto {
             this.elementType = _data["elementType"];
             this.geometryJson = _data["geometryJson"];
             this.modelAssetId = _data["modelAssetId"];
+            this.modelAssetScope = _data["modelAssetScope"];
             this.x = _data["x"];
             this.y = _data["y"];
             this.z = _data["z"];
@@ -1753,6 +2216,7 @@ export class SpaceSceneElementDto implements ISpaceSceneElementDto {
         data["elementType"] = this.elementType;
         data["geometryJson"] = this.geometryJson;
         data["modelAssetId"] = this.modelAssetId;
+        data["modelAssetScope"] = this.modelAssetScope;
         data["x"] = this.x;
         data["y"] = this.y;
         data["z"] = this.z;
@@ -1774,6 +2238,7 @@ export interface ISpaceSceneElementDto {
     elementType?: string | undefined;
     geometryJson?: string | undefined;
     modelAssetId?: string | undefined;
+    modelAssetScope?: string | undefined;
     x?: number;
     y?: number;
     z?: number;
@@ -2523,6 +2988,54 @@ export class SpaceRecoveryDetails implements ISpaceRecoveryDetails {
 export interface ISpaceRecoveryDetails {
     action: string;
     retryable?: boolean;
+}
+
+export class SpacePageOfSpaceAssetDto implements ISpacePageOfSpaceAssetDto {
+    items?: SpaceAssetDto[] | undefined;
+    nextCursor?: string | undefined;
+
+    constructor(data?: ISpacePageOfSpaceAssetDto) {
+        if (data) {
+            for (var property in data) {
+                if (data.hasOwnProperty(property))
+                    (this as any)[property] = (data as any)[property];
+            }
+        }
+    }
+
+    init(_data?: any) {
+        if (_data) {
+            if (Array.isArray(_data["items"])) {
+                this.items = [] as any;
+                for (let item of _data["items"])
+                    this.items!.push(SpaceAssetDto.fromJS(item));
+            }
+            this.nextCursor = _data["nextCursor"];
+        }
+    }
+
+    static fromJS(data: any): SpacePageOfSpaceAssetDto {
+        data = typeof data === 'object' ? data : {};
+        let result = new SpacePageOfSpaceAssetDto();
+        result.init(data);
+        return result;
+    }
+
+    toJSON(data?: any) {
+        data = typeof data === 'object' ? data : {};
+        if (Array.isArray(this.items)) {
+            data["items"] = [];
+            for (let item of this.items)
+                data["items"].push(item ? item.toJSON() : undefined as any);
+        }
+        data["nextCursor"] = this.nextCursor;
+        return data;
+    }
+}
+
+export interface ISpacePageOfSpaceAssetDto {
+    items?: SpaceAssetDto[] | undefined;
+    nextCursor?: string | undefined;
 }
 
 export class SpacePageOfSpaceIssueDto implements ISpacePageOfSpaceIssueDto {

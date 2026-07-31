@@ -299,6 +299,24 @@ internal static class SpaceElementGeometry
         }
     }
 
+    public static Guid? ReadAssetVersionId(string geometryJson)
+    {
+        using var document = JsonDocument.Parse(geometryJson);
+        var root = document.RootElement;
+        if (!root.TryGetProperty("kind", out var kind) ||
+            kind.ValueKind != JsonValueKind.String ||
+            kind.GetString() != "asset")
+        {
+            return null;
+        }
+
+        return root.TryGetProperty("assetVersionId", out var assetVersionId) &&
+               assetVersionId.ValueKind == JsonValueKind.String &&
+               Guid.TryParse(assetVersionId.GetString(), out var parsed)
+            ? parsed
+            : null;
+    }
+
     private static void RequirePoint(JsonElement root, string parameterName)
     {
         RequireInteger(root, "x", parameterName);

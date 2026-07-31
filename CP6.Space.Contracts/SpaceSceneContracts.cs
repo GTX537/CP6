@@ -116,6 +116,7 @@ public sealed record SpaceSceneElementDto(
     string ElementType,
     string GeometryJson,
     Guid? ModelAssetId,
+    string? ModelAssetScope,
     int X,
     int Y,
     int Z,

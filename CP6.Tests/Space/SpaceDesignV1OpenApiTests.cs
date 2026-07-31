@@ -24,6 +24,7 @@ public sealed class SpaceDesignV1OpenApiTests
         {
             "/api/space/design/v1/sites/{siteId}/model",
             "/api/space/design/v1/sites/{siteId}/versions",
+            "/api/space/design/v1/assets",
             "/api/space/design/v1/versions/{versionId}",
             "/api/space/design/v1/versions/{versionId}/floors/{floorLogicalId}/scene",
             "/api/space/design/v1/versions/{versionId}/sources",
@@ -43,8 +44,10 @@ public sealed class SpaceDesignV1OpenApiTests
             .Select(operation =>
                 operation.Value.GetProperty("operationId").GetString())
             .ToArray();
-        Assert.Equal(9, operationIds.Length);
-        Assert.Equal(9, operationIds.Distinct().Count());
+        Assert.Equal(11, operationIds.Length);
+        Assert.Equal(11, operationIds.Distinct().Count());
+        Assert.Contains("GetAssets", operationIds);
+        Assert.Contains("CreateAsset", operationIds);
         Assert.Contains("CreateVersion", operationIds);
         Assert.Contains("CreateSource", operationIds);
         Assert.Contains("GetScene", operationIds);
@@ -56,6 +59,9 @@ public sealed class SpaceDesignV1OpenApiTests
         "202")]
     [InlineData(
         "/api/space/design/v1/versions/{versionId}/sources",
+        "201")]
+    [InlineData(
+        "/api/space/design/v1/assets",
         "201")]
     public void Write_operations_require_body_idempotency_and_replay_header(
         string path,
@@ -148,6 +154,8 @@ public sealed class SpaceDesignV1OpenApiTests
                      "CreateVersion",
                      "GetVersion",
                      "GetScene",
+                     "GetAssets",
+                     "CreateAsset",
                      "GetSources",
                      "CreateSource",
                      "GetJob",

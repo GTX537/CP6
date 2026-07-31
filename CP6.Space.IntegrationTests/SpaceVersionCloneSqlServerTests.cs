@@ -101,6 +101,8 @@ public sealed class SpaceVersionCloneSqlServerTests
             Assert.Contains("Space_RackRevision", tableNames);
             Assert.Contains("Space_RackLevelRevision", tableNames);
             Assert.Contains("Space_LocationRevision", tableNames);
+            Assert.Contains("Space_Asset", tableNames);
+            Assert.Contains("Space_AssetVersion", tableNames);
             Assert.Contains("Space_ElementRevision", tableNames);
             Assert.Contains("Space_ElementAttribute", tableNames);
 
@@ -203,6 +205,12 @@ public sealed class SpaceVersionCloneSqlServerTests
             Assert.NotEqual(sourceElement.Id, targetElement.Id);
             Assert.Equal(sourceElement.LogicalId, targetElement.LogicalId);
             Assert.Equal(sourceElement.ModelAssetId, targetElement.ModelAssetId);
+            Assert.Equal(
+                sourceElement.ModelAssetScope,
+                targetElement.ModelAssetScope);
+            Assert.Equal(
+                sourceElement.ModelAssetOwnerTenantId,
+                targetElement.ModelAssetOwnerTenantId);
             Assert.Equal(sourceRackLevel.LogicalId, targetRackLevel.LogicalId);
             Assert.Equal(sourceRackLevel.BeamHeight, targetRackLevel.BeamHeight);
             Assert.Equal(sourceRackLevel.MaxLoad, targetRackLevel.MaxLoad);
@@ -356,7 +364,24 @@ public sealed class SpaceVersionCloneSqlServerTests
                 floor.LogicalId,
                 "Column",
                 """{"schemaVersion":1,"kind":"box","width":200,"height":3000,"depth":200}""");
-            element.SetModelAsset(Guid.NewGuid());
+            var asset = SpaceAsset.CreateSystem(
+                "SYS-COLUMN",
+                "System Column",
+                "Structure",
+                null,
+                actorId,
+                DateTime.UtcNow);
+            var assetVersion = SpaceAssetVersion.CreateReady(
+                asset,
+                1,
+                SpaceAssetFormat.Glb,
+                "{}",
+                "assets/column.png",
+                "assets/column.glb",
+                new string('c', 64),
+                actorId,
+                DateTime.UtcNow);
+            element.AttachAsset(assetVersion);
             element.ConfigurePlacement(0, 0, 0, 0, 200, 3000, 200);
             var attribute = SpaceElementAttribute.Create(
                 tenantId,
@@ -373,6 +398,8 @@ public sealed class SpaceVersionCloneSqlServerTests
                 rack,
                 rackLevel,
                 location,
+                asset,
+                assetVersion,
                 element,
                 attribute);
         }

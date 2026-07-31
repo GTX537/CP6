@@ -55,6 +55,8 @@ public sealed class SpaceContext : DbContext
         Set<SpaceRackLevelRevision>();
     public DbSet<SpaceLocationRevision> LocationRevisions =>
         Set<SpaceLocationRevision>();
+    public DbSet<SpaceAsset> Assets => Set<SpaceAsset>();
+    public DbSet<SpaceAssetVersion> AssetVersions => Set<SpaceAssetVersion>();
     public DbSet<SpaceElementRevision> ElementRevisions =>
         Set<SpaceElementRevision>();
     public DbSet<SpaceElementAttribute> ElementAttributes =>
@@ -70,6 +72,8 @@ public sealed class SpaceContext : DbContext
         ConfigureRackRevision(modelBuilder);
         ConfigureRackLevelRevision(modelBuilder);
         ConfigureLocationRevision(modelBuilder);
+        ConfigureAsset(modelBuilder);
+        ConfigureAssetVersion(modelBuilder);
         ConfigureElementRevision(modelBuilder);
         ConfigureElementAttribute(modelBuilder);
         ConfigureFile(modelBuilder);
@@ -94,6 +98,7 @@ public sealed class SpaceContext : DbContext
         ProtectPublishedSnapshotWrites();
         ProtectProposalDecisionHistory();
         ProtectAiCapacityLedger();
+        ProtectAssetLibrary();
         StampAndValidateTenant();
         return base.SaveChanges(acceptAllChangesOnSuccess);
     }
@@ -106,6 +111,7 @@ public sealed class SpaceContext : DbContext
         ProtectPublishedSnapshotWrites();
         ProtectProposalDecisionHistory();
         ProtectAiCapacityLedger();
+        ProtectAssetLibrary();
         StampAndValidateTenant();
         return base.SaveChangesAsync(acceptAllChangesOnSuccess, cancellationToken);
     }
@@ -524,6 +530,140 @@ public sealed class SpaceContext : DbContext
             .HasConstraintName("FK_Space_LocationRevision_Rack_Tenant_Version_Logical");
     }
 
+    private void ConfigureAsset(ModelBuilder modelBuilder)
+    {
+        var entity = modelBuilder.Entity<SpaceAsset>();
+        entity.ToTable(
+            "Space_Asset",
+            table => table.HasCheckConstraint(
+                "CK_Space_Asset_ScopeOwner",
+                "([Scope] = 0 AND [OwnerTenantId] = '00000000-0000-0000-0000-000000000000') OR " +
+                "([Scope] = 1 AND [OwnerTenantId] <> '00000000-0000-0000-0000-000000000000')"));
+        entity.HasKey(x => x.Id);
+        entity.Property(x => x.Id).ValueGeneratedNever();
+        entity.HasAlternateKey(x => new
+        {
+            x.Scope,
+            x.OwnerTenantId,
+            x.Id,
+        })
+            .HasName("AK_Space_Asset_Scope_Owner_Id");
+        entity.Property(x => x.Scope)
+            .HasConversion<short>()
+            .HasColumnType("smallint");
+        entity.Property(x => x.AssetCode).HasMaxLength(100).IsRequired();
+        entity.Property(x => x.Name).HasMaxLength(200).IsRequired();
+        entity.Property(x => x.Category).HasMaxLength(100).IsRequired();
+        entity.Property(x => x.Description).HasMaxLength(1000);
+        entity.Property(x => x.Status)
+            .HasConversion<short>()
+            .HasColumnType("smallint");
+        entity.Property(x => x.CreatedAtUtc).HasColumnType("datetime2");
+        entity.Property(x => x.RowVersion).IsRowVersion();
+
+        entity.HasIndex(x => new
+        {
+            x.Scope,
+            x.OwnerTenantId,
+            x.AssetCode,
+        })
+            .IsUnique()
+            .HasFilter("[IsDeleted] = 0")
+            .HasDatabaseName("UX_Space_Asset_Scope_Owner_Code_Active");
+        entity.HasIndex(x => new
+        {
+            x.Scope,
+            x.OwnerTenantId,
+            x.Category,
+        })
+            .HasDatabaseName("IX_Space_Asset_Scope_Owner_Category");
+
+        entity.HasQueryFilter(
+            x => !x.IsDeleted &&
+                 (x.Scope == SpaceAssetScope.System ||
+                  x.OwnerTenantId == CurrentTenantId));
+    }
+
+    private void ConfigureAssetVersion(ModelBuilder modelBuilder)
+    {
+        var entity = modelBuilder.Entity<SpaceAssetVersion>();
+        entity.ToTable(
+            "Space_AssetVersion",
+            table =>
+            {
+                table.HasCheckConstraint(
+                    "CK_Space_AssetVersion_ScopeOwner",
+                    "([Scope] = 0 AND [OwnerTenantId] = '00000000-0000-0000-0000-000000000000') OR " +
+                    "([Scope] = 1 AND [OwnerTenantId] <> '00000000-0000-0000-0000-000000000000')");
+                table.HasCheckConstraint(
+                    "CK_Space_AssetVersion_VersionNo",
+                    "[VersionNo] > 0");
+            });
+        entity.HasKey(x => x.Id);
+        entity.Property(x => x.Id).ValueGeneratedNever();
+        entity.HasAlternateKey(x => new
+        {
+            x.Scope,
+            x.OwnerTenantId,
+            x.Id,
+        })
+            .HasName("AK_Space_AssetVersion_Scope_Owner_Id");
+        entity.Property(x => x.Scope)
+            .HasConversion<short>()
+            .HasColumnType("smallint");
+        entity.Property(x => x.Format)
+            .HasConversion<short>()
+            .HasColumnType("smallint");
+        entity.Property(x => x.ParameterSchemaJson)
+            .HasColumnType("nvarchar(max)")
+            .IsRequired();
+        entity.Property(x => x.PreviewRef).HasMaxLength(500);
+        entity.Property(x => x.RenderArtifactRef).HasMaxLength(500);
+        entity.Property(x => x.ContentHash)
+            .HasColumnType("char(64)")
+            .IsUnicode(false)
+            .IsFixedLength()
+            .HasMaxLength(64)
+            .IsRequired();
+        entity.Property(x => x.Status)
+            .HasConversion<short>()
+            .HasColumnType("smallint");
+        entity.Property(x => x.CreatedAtUtc).HasColumnType("datetime2");
+        entity.Property(x => x.RowVersion).IsRowVersion();
+
+        entity.HasIndex(x => new
+        {
+            x.Scope,
+            x.OwnerTenantId,
+            x.AssetId,
+            x.VersionNo,
+        })
+            .IsUnique()
+            .HasDatabaseName(
+                "UX_Space_AssetVersion_Scope_Owner_Asset_VersionNo");
+        entity.HasOne<SpaceAsset>()
+            .WithMany()
+            .HasForeignKey(x => new
+            {
+                x.Scope,
+                x.OwnerTenantId,
+                x.AssetId,
+            })
+            .HasPrincipalKey(x => new
+            {
+                x.Scope,
+                x.OwnerTenantId,
+                x.Id,
+            })
+            .OnDelete(DeleteBehavior.Restrict)
+            .HasConstraintName(
+                "FK_Space_AssetVersion_Asset_Scope_Owner_Asset");
+
+        entity.HasQueryFilter(
+            x => x.Scope == SpaceAssetScope.System ||
+                 x.OwnerTenantId == CurrentTenantId);
+    }
+
     private void ConfigureElementRevision(ModelBuilder modelBuilder)
     {
         var entity = ConfigureRevision<SpaceElementRevision>(
@@ -531,11 +671,23 @@ public sealed class SpaceContext : DbContext
             "Space_ElementRevision");
         entity.ToTable(
             "Space_ElementRevision",
-            table => table.HasCheckConstraint(
-                "CK_Space_ElementRevision_Geometry",
-                "[RotationZ] >= 0 AND [RotationZ] < 360 AND [Width] >= 0 AND [Height] >= 0 AND [Depth] >= 0"));
+            table =>
+            {
+                table.HasCheckConstraint(
+                    "CK_Space_ElementRevision_Geometry",
+                    "[RotationZ] >= 0 AND [RotationZ] < 360 AND [Width] >= 0 AND [Height] >= 0 AND [Depth] >= 0");
+                table.HasCheckConstraint(
+                    "CK_Space_ElementRevision_ModelAssetScope",
+                    "([ModelAssetId] IS NULL AND [ModelAssetScope] IS NULL AND [ModelAssetOwnerTenantId] IS NULL) OR " +
+                    "([ModelAssetId] IS NOT NULL AND [ModelAssetScope] IS NOT NULL AND [ModelAssetOwnerTenantId] IS NOT NULL AND " +
+                    "(([ModelAssetScope] = 0 AND [ModelAssetOwnerTenantId] = '00000000-0000-0000-0000-000000000000') OR " +
+                    "([ModelAssetScope] = 1 AND [ModelAssetOwnerTenantId] = [TenantId])))");
+            });
         entity.Property(x => x.ElementType).HasMaxLength(100).IsRequired();
         entity.Property(x => x.GeometryJson).HasColumnType("nvarchar(max)").IsRequired();
+        entity.Property(x => x.ModelAssetScope)
+            .HasConversion<short?>()
+            .HasColumnType("smallint");
         entity.Property(x => x.RotationZ).HasColumnType("decimal(9,4)");
         entity.Property(x => x.BusinessCode).HasMaxLength(200);
         entity.Property(x => x.LinkedEntityType).HasMaxLength(100);
@@ -581,6 +733,23 @@ public sealed class SpaceContext : DbContext
             })
             .OnDelete(DeleteBehavior.Restrict)
             .HasConstraintName("FK_Space_ElementRevision_Parent_Tenant_Version_Logical");
+        entity.HasOne<SpaceAssetVersion>()
+            .WithMany()
+            .HasForeignKey(x => new
+            {
+                x.ModelAssetScope,
+                x.ModelAssetOwnerTenantId,
+                x.ModelAssetId,
+            })
+            .HasPrincipalKey(x => new
+            {
+                x.Scope,
+                x.OwnerTenantId,
+                x.Id,
+            })
+            .OnDelete(DeleteBehavior.Restrict)
+            .HasConstraintName(
+                "FK_Space_ElementRevision_AssetVersion_Scope_Owner_Version");
     }
 
     private void ConfigureElementAttribute(ModelBuilder modelBuilder)
@@ -1783,6 +1952,74 @@ public sealed class SpaceContext : DbContext
                     "AI budget reservations cannot be deleted.");
             }
         }
+    }
+
+    private void ProtectAssetLibrary()
+    {
+        foreach (var entry in ChangeTracker.Entries<SpaceAsset>())
+        {
+            if (entry.State == EntityState.Deleted)
+            {
+                throw new InvalidOperationException(
+                    "Space assets cannot be physically deleted.");
+            }
+            if (entry.State is not (
+                    EntityState.Added or EntityState.Modified))
+            {
+                continue;
+            }
+
+            EnsureAssetOwner(entry.Entity.Scope, entry.Entity.OwnerTenantId);
+            if (entry.State == EntityState.Modified &&
+                (entry.Property(x => x.Scope).OriginalValue !=
+                    entry.Entity.Scope ||
+                 entry.Property(x => x.OwnerTenantId).OriginalValue !=
+                    entry.Entity.OwnerTenantId))
+            {
+                throw new SpaceTenantScopeException(
+                    "Space asset scope and owner cannot be reassigned.");
+            }
+        }
+
+        foreach (var entry in ChangeTracker.Entries<SpaceAssetVersion>())
+        {
+            if (entry.State is EntityState.Deleted or EntityState.Modified)
+            {
+                throw new InvalidOperationException(
+                    "Space asset versions are immutable.");
+            }
+            if (entry.State == EntityState.Added)
+            {
+                EnsureAssetOwner(
+                    entry.Entity.Scope,
+                    entry.Entity.OwnerTenantId);
+            }
+        }
+
+        foreach (var entry in ChangeTracker.Entries<SpaceElementRevision>())
+        {
+            if (entry.State is EntityState.Added or EntityState.Modified)
+                entry.Entity.EnsureAssetReferenceConsistency();
+        }
+    }
+
+    private void EnsureAssetOwner(
+        SpaceAssetScope scope,
+        Guid ownerTenantId)
+    {
+        if (scope == SpaceAssetScope.System &&
+            ownerTenantId == Guid.Empty)
+        {
+            return;
+        }
+        if (scope == SpaceAssetScope.Tenant &&
+            ownerTenantId == CurrentTenantId)
+        {
+            return;
+        }
+
+        throw new SpaceTenantScopeException(
+            "A cross-tenant Space asset write was rejected.");
     }
 
     private void StampAndValidateTenant()

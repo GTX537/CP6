@@ -107,6 +107,44 @@ public sealed class SpaceDesignV1Controller(
             floorLogicalId,
             cancellationToken);
 
+    [HttpGet("assets")]
+    [RequirePermission("space", "model:read")]
+    [ProducesResponseType<SpacePage<SpaceAssetDto>>(StatusCodes.Status200OK)]
+    public Task<SpacePage<SpaceAssetDto>> GetAssets(
+        [FromQuery] string? scope = null,
+        [FromQuery] string? category = null,
+        [FromQuery] int limit = 50,
+        [FromQuery] string? cursor = null,
+        CancellationToken cancellationToken = default) =>
+        service.GetAssetsAsync(
+            scope,
+            category,
+            limit,
+            cursor,
+            cancellationToken);
+
+    [HttpPost("assets")]
+    [RequirePermission("space", "model:edit")]
+    [ProducesResponseType<CreateSpaceAssetResponse>(
+        StatusCodes.Status201Created)]
+    public async Task<IActionResult> CreateAsset(
+        [FromHeader(Name = "Idempotency-Key"), Required]
+        string idempotencyKey,
+        [FromBody, Required] CreateSpaceAssetRequest request,
+        CancellationToken cancellationToken)
+    {
+        var result = await service.CreateAssetAsync(
+            request,
+            idempotencyKey,
+            cancellationToken);
+        Response.Headers["Idempotent-Replay"] =
+            result.IdempotentReplay ? "true" : "false";
+        return CreatedAtAction(
+            nameof(GetAssets),
+            routeValues: null,
+            value: result);
+    }
+
     [HttpGet("versions/{versionId:guid}/sources")]
     [RequirePermission("space", "model:read")]
     [ProducesResponseType<SpacePage<SpaceSourceDto>>(StatusCodes.Status200OK)]

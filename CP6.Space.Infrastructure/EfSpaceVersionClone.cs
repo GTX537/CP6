@@ -736,18 +736,20 @@ public sealed class EfSpaceVersionCloneProcessor : ISpaceVersionCloneProcessor
                AND [ModelVersionId] = {sourceVersionId}
                AND [IsDeleted] = 0;
 
-             INSERT INTO [Space_ElementRevision]
-                 ([Id], [ModelVersionId], [LogicalId], [SourceId], [SourceRef],
-                  [LifecycleState], [FloorLogicalId], [ParentLogicalId],
-                  [ElementType], [GeometryJson], [ModelAssetId], [X], [Y], [Z],
-                  [RotationZ], [Width], [Height], [Depth], [BusinessCode],
+               INSERT INTO [Space_ElementRevision]
+                   ([Id], [ModelVersionId], [LogicalId], [SourceId], [SourceRef],
+                    [LifecycleState], [FloorLogicalId], [ParentLogicalId],
+                    [ElementType], [GeometryJson], [ModelAssetId], [ModelAssetScope],
+                    [ModelAssetOwnerTenantId], [X], [Y], [Z],
+                    [RotationZ], [Width], [Height], [Depth], [BusinessCode],
                   [LinkedEntityType], [LinkedLogicalId], [TenantId],
                   [CreatedAtUtc], [CreatedBy], [ModifiedAtUtc], [ModifiedBy],
                   [IsDeleted])
              SELECT em.[NewId], {targetVersionId}, r.[LogicalId], sm.[NewId],
-                    r.[SourceRef], r.[LifecycleState], r.[FloorLogicalId],
-                    r.[ParentLogicalId], r.[ElementType], r.[GeometryJson],
-                    r.[ModelAssetId], r.[X], r.[Y], r.[Z], r.[RotationZ],
+                      r.[SourceRef], r.[LifecycleState], r.[FloorLogicalId],
+                      r.[ParentLogicalId], r.[ElementType], r.[GeometryJson],
+                      r.[ModelAssetId], r.[ModelAssetScope],
+                      r.[ModelAssetOwnerTenantId], r.[X], r.[Y], r.[Z], r.[RotationZ],
                     r.[Width], r.[Height], r.[Depth], r.[BusinessCode],
                     r.[LinkedEntityType], r.[LinkedLogicalId], {tenantId},
                     {nowUtc}, {actorId}, NULL, NULL, 0

@@ -76,7 +76,8 @@ public sealed class SpaceDesignV1OperationFilter : IOperationFilter
         OpenApiOperation operation,
         OperationFilterContext context)
     {
-        if (operation.OperationId is not ("CreateVersion" or "CreateSource"))
+        if (operation.OperationId is not (
+                "CreateVersion" or "CreateSource" or "CreateAsset"))
             return;
 
         var idempotencyKey = operation.Parameters.Single(
