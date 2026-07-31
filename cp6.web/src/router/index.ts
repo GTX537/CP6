@@ -305,6 +305,13 @@ const staticRoutes: RouteRecordRaw[] = [
     component: () => import('@/views/space/editor/FloorEditor.vue'),
     meta: { standalone: true, title: 'Space 编辑器' }
   },
+  // Space Design V1 底图（独立路由；只消费 Design Revision，不读取 Legacy UnderlayImage URL）
+  {
+    path: '/space/design/:versionId/floors/:floorLogicalId/underlay',
+    name: 'space-design-underlay',
+    component: () => import('@/views/space/editor/DesignUnderlayView.vue'),
+    meta: { standalone: true, title: 'Space Design V1 底图' }
+  },
   // Space 3D 浏览器全屏（独立路由、无侧边栏；siteId 来自路由参数，floorId 可选 query）
   {
     path: '/space/viewer/:siteId',

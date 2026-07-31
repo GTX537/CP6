@@ -27,7 +27,11 @@ public sealed class SpaceDesignV1OpenApiTests
             "/api/space/design/v1/assets",
             "/api/space/design/v1/versions/{versionId}",
             "/api/space/design/v1/versions/{versionId}/floors/{floorLogicalId}/scene",
+            "/api/space/design/v1/versions/{versionId}/floors/{floorLogicalId}/underlay",
+            "/api/space/design/v1/versions/{versionId}/files/{fileId}",
             "/api/space/design/v1/versions/{versionId}/sources",
+            "/api/space/design/v1/versions/{versionId}/sources/{sourceId}/content",
+            "/api/space/design/v1/versions/{versionId}/underlay-sources",
             "/api/space/design/v1/jobs/{jobId}",
             "/api/space/design/v1/versions/{versionId}/issues",
         };
@@ -40,17 +44,87 @@ public sealed class SpaceDesignV1OpenApiTests
 
         var operationIds = paths.EnumerateObject()
             .SelectMany(path => path.Value.EnumerateObject())
-            .Where(operation => operation.Name is "get" or "post")
+            .Where(IsOperation)
             .Select(operation =>
                 operation.Value.GetProperty("operationId").GetString())
             .ToArray();
-        Assert.Equal(11, operationIds.Length);
-        Assert.Equal(11, operationIds.Distinct().Count());
+        Assert.Equal(15, operationIds.Length);
+        Assert.Equal(15, operationIds.Distinct().Count());
         Assert.Contains("GetAssets", operationIds);
         Assert.Contains("CreateAsset", operationIds);
         Assert.Contains("CreateVersion", operationIds);
         Assert.Contains("CreateSource", operationIds);
         Assert.Contains("GetScene", operationIds);
+        Assert.Contains("UploadUnderlay", operationIds);
+        Assert.Contains("GetFile", operationIds);
+        Assert.Contains("GetUnderlayContent", operationIds);
+        Assert.Contains("AttachUnderlay", operationIds);
+    }
+
+    [Fact]
+    public void Underlay_upload_and_content_use_bounded_binary_contracts()
+    {
+        using var document = ReadContract();
+        var paths = document.RootElement.GetProperty("paths");
+        var upload = paths
+            .GetProperty(
+                "/api/space/design/v1/versions/{versionId}/underlay-sources")
+            .GetProperty("post");
+        var multipart = upload.GetProperty("requestBody")
+            .GetProperty("content")
+            .GetProperty("multipart/form-data")
+            .GetProperty("schema");
+        var required = multipart.GetProperty("required")
+            .EnumerateArray()
+            .Select(value => value.GetString())
+            .ToHashSet();
+        Assert.True(required.SetEquals(["File", "SourceType"]));
+        var file = multipart.GetProperty("properties").GetProperty("File");
+        Assert.Equal("string", file.GetProperty("type").GetString());
+        Assert.Equal("binary", file.GetProperty("format").GetString());
+
+        var content = paths
+            .GetProperty(
+                "/api/space/design/v1/versions/{versionId}/sources/{sourceId}/content")
+            .GetProperty("get")
+            .GetProperty("responses")
+            .GetProperty("200")
+            .GetProperty("content");
+        Assert.True(content.TryGetProperty("application/pdf", out _));
+        Assert.True(content.TryGetProperty("image/png", out _));
+        Assert.True(content.TryGetProperty("image/jpeg", out _));
+        foreach (var mediaType in content.EnumerateObject())
+        {
+            var schema = mediaType.Value.GetProperty("schema");
+            Assert.Equal("string", schema.GetProperty("type").GetString());
+            Assert.Equal("binary", schema.GetProperty("format").GetString());
+        }
+    }
+
+    [Fact]
+    public void Underlay_attach_requires_body_idempotency_and_replay_header()
+    {
+        using var document = ReadContract();
+        var operation = document.RootElement
+            .GetProperty("paths")
+            .GetProperty(
+                "/api/space/design/v1/versions/{versionId}/floors/{floorLogicalId}/underlay")
+            .GetProperty("put");
+
+        Assert.True(
+            operation.GetProperty("requestBody").GetProperty("required")
+                .GetBoolean());
+        var idempotency = operation.GetProperty("parameters")
+            .EnumerateArray()
+            .Single(parameter =>
+                parameter.GetProperty("name").GetString() ==
+                "Idempotency-Key");
+        Assert.True(idempotency.GetProperty("required").GetBoolean());
+        Assert.True(
+            operation.GetProperty("responses")
+                .GetProperty("200")
+                .GetProperty("headers")
+                .TryGetProperty("Idempotent-Replay", out _));
     }
 
     [Theory]
@@ -112,7 +186,7 @@ public sealed class SpaceDesignV1OpenApiTests
                      .EnumerateObject())
         {
             foreach (var operation in path.Value.EnumerateObject()
-                         .Where(value => value.Name is "get" or "post"))
+                         .Where(IsOperation))
             {
                 foreach (var status in new[]
                          {
@@ -158,6 +232,10 @@ public sealed class SpaceDesignV1OpenApiTests
                      "CreateAsset",
                      "GetSources",
                      "CreateSource",
+                     "UploadUnderlay",
+                     "GetFile",
+                     "GetUnderlayContent",
+                     "AttachUnderlay",
                      "GetJob",
                      "GetIssues",
                  })
@@ -174,4 +252,7 @@ public sealed class SpaceDesignV1OpenApiTests
         Assert.True(File.Exists(OpenApiPath), OpenApiPath);
         return JsonDocument.Parse(File.ReadAllText(OpenApiPath));
     }
+
+    private static bool IsOperation(JsonProperty property) =>
+        property.Name is "get" or "post" or "put" or "patch" or "delete";
 }

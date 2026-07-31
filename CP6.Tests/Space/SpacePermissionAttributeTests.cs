@@ -53,6 +53,8 @@ public class SpacePermissionAttributeTests
             ["SpaceDesignV1Controller.GetScene"] = "space:model:read",
             ["SpaceDesignV1Controller.GetAssets"] = "space:model:read",
             ["SpaceDesignV1Controller.GetSources"] = "space:model:read",
+            ["SpaceDesignV1Controller.GetFile"] = "space:model:read",
+            ["SpaceDesignV1Controller.GetUnderlayContent"] = "space:model:read",
             ["SpaceDesignV1Controller.GetJob"] = "space:model:read",
             ["SpaceDesignV1Controller.GetIssues"] = "space:model:read",
         };
@@ -167,11 +169,15 @@ public class SpacePermissionAttributeTests
             "只读端点权限越界:\n" + string.Join("\n", offenders));
     }
 
-    [Fact]
-    public void Design_source_creation_requires_upload_and_model_edit()
+    [Theory]
+    [InlineData(nameof(SpaceDesignV1Controller.CreateSource))]
+    [InlineData(nameof(SpaceDesignV1Controller.UploadUnderlay))]
+    [InlineData(nameof(SpaceDesignV1Controller.AttachUnderlay))]
+    public void Design_source_mutations_require_upload_and_model_edit(
+        string methodName)
     {
         var method = typeof(SpaceDesignV1Controller)
-            .GetMethod(nameof(SpaceDesignV1Controller.CreateSource));
+            .GetMethod(methodName);
         Assert.NotNull(method);
 
         var permissions = CustomAttributeData

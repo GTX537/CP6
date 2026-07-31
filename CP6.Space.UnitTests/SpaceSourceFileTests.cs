@@ -46,6 +46,7 @@ public sealed class SpaceSourceFileTests
         Assert.Equal(1, quarantine.Sessions.Single().CommitCount);
         Assert.Equal(0, quarantine.Sessions.Single().AbortCount);
         var scanJob = Assert.Single(catalog.Jobs);
+        Assert.Equal(scanJob.Id, result.ScanJobId);
         Assert.Equal(SpaceJobType.FileScan, scanJob.JobType);
         Assert.Equal(result.File.Id, scanJob.SubjectId);
         Assert.Equal(result.File.Sha256, scanJob.InputHash);
@@ -215,6 +216,80 @@ public sealed class SpaceSourceFileTests
                 png,
                 SpaceSourceType.Pdf,
                 "Wrong type"));
+    }
+
+    [Fact]
+    public void Pending_source_tracks_safe_file_scan_without_weakening_clean_source_contract()
+    {
+        var version = SpaceModelVersion.CreateDraft(
+            TenantId,
+            Guid.NewGuid(),
+            1,
+            "Draft");
+        var file = NewQuarantinedFile(
+            TenantId,
+            ".pdf",
+            SpaceFileRetentionClass.Source);
+        var coordinator = new SpaceSourceCoordinator(
+            new TestExecutionContext(TenantId, ActorId));
+
+        var source = coordinator.AddPendingFileSource(
+            version,
+            file,
+            SpaceSourceType.Pdf,
+            "Floor plan");
+
+        Assert.Equal(SpaceSourceState.Scanning, source.State);
+        Assert.Equal(1, version.ContentRevision);
+        Assert.Throws<SpaceFileValidationException>(() =>
+            coordinator.AddFileSource(
+                version,
+                file,
+                SpaceSourceType.Pdf,
+                "Unsafe generic source"));
+
+        file.BeginScanning();
+        file.MarkClean("test-scanner", "signatures-v1");
+        source.CompleteFileScan(file);
+
+        Assert.Equal(SpaceSourceState.Ready, source.State);
+    }
+
+    [Fact]
+    public void Pending_source_rejects_wrong_types_and_follows_rejected_file()
+    {
+        var version = SpaceModelVersion.CreateDraft(
+            TenantId,
+            Guid.NewGuid(),
+            1,
+            "Draft");
+        var file = NewQuarantinedFile(
+            TenantId,
+            ".png",
+            SpaceFileRetentionClass.Source);
+        var coordinator = new SpaceSourceCoordinator(
+            new TestExecutionContext(TenantId, ActorId));
+
+        Assert.Throws<SpaceFileStateException>(() =>
+            coordinator.AddPendingFileSource(
+                version,
+                file,
+                SpaceSourceType.Pdf,
+                "Wrong type"));
+
+        var source = coordinator.AddPendingFileSource(
+            version,
+            file,
+            SpaceSourceType.Png,
+            "Floor image");
+        file.BeginScanning();
+        file.Reject(
+            SpaceErrorCodes.FileMalwareDetected,
+            "test-scanner",
+            "signatures-v1");
+        source.CompleteFileScan(file);
+
+        Assert.Equal(SpaceSourceState.Rejected, source.State);
     }
 
     [Fact]

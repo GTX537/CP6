@@ -160,6 +160,16 @@ builder.Services.AddSpaceDesignV1Persistence(
     builder.Configuration.GetConnectionString("DefaultConnection")
     ?? throw new InvalidOperationException(
         "DefaultConnection is required for Space Design v1."));
+var spaceFileRoot = builder.Configuration["Space:Files:RootPath"];
+if (string.IsNullOrWhiteSpace(spaceFileRoot))
+{
+    throw new InvalidOperationException(
+        "Space:Files:RootPath is required for quarantined Space files.");
+}
+builder.Services.AddSpaceFileSystemStorage(
+    Path.IsPathRooted(spaceFileRoot)
+        ? spaceFileRoot
+        : Path.Combine(builder.Environment.ContentRootPath, spaceFileRoot));
 
 // 3.1 注册 Dapper 用的 IDbConnection（每次请求新建连接）
 builder.Services.AddScoped<IDbConnection>(_ =>

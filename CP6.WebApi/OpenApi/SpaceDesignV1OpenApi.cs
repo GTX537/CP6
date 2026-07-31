@@ -77,7 +77,10 @@ public sealed class SpaceDesignV1OperationFilter : IOperationFilter
         OperationFilterContext context)
     {
         if (operation.OperationId is not (
-                "CreateVersion" or "CreateSource" or "CreateAsset"))
+                "CreateVersion" or
+                "CreateSource" or
+                "CreateAsset" or
+                "AttachUnderlay"))
             return;
 
         var idempotencyKey = operation.Parameters.Single(
@@ -92,9 +95,12 @@ public sealed class SpaceDesignV1OperationFilter : IOperationFilter
             "Opaque caller key; 1-128 UTF-8 bytes. Reuse with a different " +
             "request returns SPACE_IDEMPOTENCY_KEY_REUSED.";
 
-        var successStatus = operation.OperationId == "CreateVersion"
-            ? StatusCodes.Status202Accepted.ToString()
-            : StatusCodes.Status201Created.ToString();
+        var successStatus = operation.OperationId switch
+        {
+            "CreateVersion" => StatusCodes.Status202Accepted.ToString(),
+            "AttachUnderlay" => StatusCodes.Status200OK.ToString(),
+            _ => StatusCodes.Status201Created.ToString(),
+        };
         operation.Responses[successStatus].Headers["Idempotent-Replay"] =
             new OpenApiHeader
             {

@@ -14,7 +14,8 @@ public sealed record SpaceFileUploadRequest(
 
 public sealed record SpaceFileUploadResult(
     SpaceFile File,
-    bool Reused);
+    bool Reused,
+    Guid? ScanJobId);
 
 public sealed class SpaceFileUploadLimits
 {
@@ -126,7 +127,10 @@ public sealed class SpaceFileUploadService
             if (duplicate is not null)
             {
                 await session.AbortAsync(cancellationToken);
-                return new SpaceFileUploadResult(duplicate, Reused: true);
+                return new SpaceFileUploadResult(
+                    duplicate,
+                    Reused: true,
+                    ScanJobId: null);
             }
 
             var now = _clock.UtcNow;
@@ -175,7 +179,10 @@ public sealed class SpaceFileUploadService
                 scanJob,
                 cancellationToken);
 
-            return new SpaceFileUploadResult(file, Reused: false);
+            return new SpaceFileUploadResult(
+                file,
+                Reused: false,
+                scanJob.Id);
         }
         catch
         {
