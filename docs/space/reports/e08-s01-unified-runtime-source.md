@@ -1,15 +1,16 @@
 # E08-S01 统一运行态数据源交付报告
 
-- 状态：已完成，待合入 Space 受控集成分支
+- 状态：已完成并进入 Space 受控集成分支
 - 功能分支：`codex/space-e08-s01-runtime-source`
 - 设计提交：`636eb6d5`
 - 实施计划提交：`9d4383c1`
-- 当前代码实现 HEAD：`15f6a296`
-- 集成提交：尚不存在；Task 6 完成受控集成后补录实际 merge hash
+- 最终功能提交：`3df6b1d24841ad2723733719e15afdef8ae93df2`
+- no-ff 集成提交：`b2bb7a355b7ac3b93066f9f31357313b7256af0c`
 
-本报告记录 E08-S01 的代码实现和功能分支验证结果。`15f6a296` 是
-Task 1–4 的代码实现 HEAD，不包含本 Task 5 交付文档提交；本报告不声明
-尚未发生的集成合并或合并态测试。
+本报告记录 E08-S01 的实现、功能分支验证、最终复审修复和合并态验证结果。
+Task 5 全量门禁在代码实现 HEAD `15f6a296` 上完成；最终复审发现并修复了
+生成 SDK 的 nullable 契约问题，形成最终功能提交 `3df6b1d2`，随后以
+`b2bb7a35` 合入受控集成分支。
 
 ## 1. 交付范围
 
@@ -79,12 +80,16 @@ OpenAPI 对运行态 DTO 的 required/non-null 保证只由
 `decimal`、`decimal`、`decimal?`。TypeScript SDK 受 JavaScript 数值模型
 限制使用 `number`，但响应、来源、双身份、双编码等必填字段保持无 `?` 的
 required/non-null 生成保证，可选字段继续显式可选。
+C# 生成客户端启用 nullable reference type 注解；TypeScript 运行态 DTO 的
+可空字段同时接受合法 JSON `null` 与缺省 `undefined`，并且不改变其他 DTO
+既有的序列化行为。
 
 ## 4. 验证证据
 
-起始状态已核对为功能分支 `codex/space-e08-s01-runtime-source`、干净
-HEAD `15f6a296c4bbee0ff528c39c3ccb71917d81339f`。验证前 D 盘可用空间为
-3.02 GB；所有门禁串行执行，未删除缓存或执行破坏性清理。
+Task 5 全量验证的起始状态已核对为功能分支
+`codex/space-e08-s01-runtime-source`、干净代码实现 HEAD
+`15f6a296c4bbee0ff528c39c3ccb71917d81339f`。所有门禁串行执行，未删除缓存
+或执行破坏性清理。
 
 | 门禁 | 实际命令 | 实际结果 | 实测耗时 | warnings / errors |
 |---|---|---|---:|---:|
@@ -94,11 +99,41 @@ HEAD `15f6a296c4bbee0ff528c39c3ccb71917d81339f`。验证前 D 盘可用空间为
 | Release 完整 solution build | `dotnet build CP6.slnx -c Release --no-incremental` | succeeded；0 errors；MSBuild `00:03:07.05` | 187.373 s | 10 / 0 |
 | SDK/OpenAPI drift | `powershell -ExecutionPolicy Bypass -File tools/generate-space-design-sdk.ps1 -Check` | exit 0；OpenAPI、C#、TypeScript 生成物无 drift | 7.032 s | 0 / 0 |
 | EF 模型/迁移一致性 | `dotnet ef migrations has-pending-model-changes --project CP6.Space.Infrastructure/CP6.Space.Infrastructure.csproj --startup-project CP6.WebApi/CP6.WebApi.csproj --context SpaceContext` | exit 0；`No changes have been made to the model since the last migration.` | 11.041 s | 0 / 0 |
-| feature range whitespace | `git -c safe.directory=D:/CP6/tmp/worktrees/space-e04-s03-elements diff --check 636eb6d5..HEAD` | exit 0；silent | 0.087 s | 0 / 0 |
+| code range whitespace | `git -c safe.directory=D:/CP6/tmp/worktrees/space-e04-s03-elements diff --check 636eb6d5..15f6a296` | exit 0；silent | 0.087 s | 0 / 0 |
+
+### 4.1 最终复审与回归修复
+
+完整范围复审先由 core/security/data、API/contract/test 和 scope/plan 三路独立
+检查。core 与 scope 未发现 Critical/Important；API 复审发现生成客户端没有
+保留响应字段的合法 `null`。修复遵循 RED→GREEN：先扩展
+`Generated_runtime_clients_preserve_guarantees_and_decimals` 并确认单测失败，
+再调整生成配置、重新生成 C#/TypeScript SDK，最后由原复审者确认问题关闭。
+
+- OpenAPI/权限聚焦：34 passed / 0 failed / 0 skipped。
+- `CP6.Space.Client` Release build：0 warning / 0 error。
+- SDK/OpenAPI drift：exit 0。
+- 最终功能范围 `git diff --check 636eb6d5..3df6b1d2`：silent。
+
+### 4.2 合并态门禁
+
+最终功能提交 `3df6b1d2` 从受控集成 HEAD `3ab8998a` 以 `--no-ff` 合入，
+产生 merge commit `b2bb7a35`。以下命令均在
+`integration/space-v1-20260730` 的合并态执行：
+
+| 门禁 | 实际结果 | 实测耗时 |
+|---|---|---:|
+| Runtime/adapter unit | 23 passed / 0 failed / 0 skipped；runner 327 ms | 9.2 s |
+| Runtime service / production adapter / simulator integration | 56 passed / 0 failed / 0 skipped；runner 4 s | 43.8 s |
+| OpenAPI / permission | 34 passed / 0 failed / 0 skipped；runner 950 ms | 19.3 s |
+| SDK/OpenAPI drift | exit 0；OpenAPI、C#、TypeScript 生成物无 drift | 42.1 s |
+
+合并工作树首次以诊断性 `--no-restore` 运行 unit gate 时，因该新工作树尚无
+`project.assets.json` 而在测试发现前退出；随后按计划原命令恢复锁定依赖并得到
+上述 23/23 结果。依赖编译只产生下文已记录的既有 warning，没有新增错误。
 
 执行环境说明：UnitTests 命令首次在桌面受限沙箱中调用时，restore 在
 1.232 s 后因无权读取
-`C:\Users\tt\AppData\Roaming\NuGet\NuGet.Config` 而退出 1，尚未进入
+`%APPDATA%\NuGet\NuGet.Config` 而退出 1，尚未进入
 测试执行。随后以相同命令在获批的非沙箱进程中重跑，得到表内 220/220
 结果；该 ACL 阻断不是代码或测试失败。
 
@@ -122,8 +157,8 @@ HEAD `15f6a296c4bbee0ff528c39c3ccb71917d81339f`。验证前 D 盘可用空间为
 
 | 审计 | 结果 |
 |---|---|
-| `git -c safe.directory=D:/CP6/tmp/worktrees/space-e04-s03-elements diff --stat 636eb6d5..HEAD` | 17 files changed / 5,781 insertions / 12 deletions |
-| `git -c safe.directory=D:/CP6/tmp/worktrees/space-e04-s03-elements diff --name-only 636eb6d5..HEAD` | 下列 17 个文件，未发现范围外实现 |
+| `git -c safe.directory=D:/CP6/tmp/worktrees/space-e04-s03-elements diff --stat 636eb6d5..3df6b1d2` | 20 files changed / 6,482 insertions / 448 deletions |
+| `git -c safe.directory=D:/CP6/tmp/worktrees/space-e04-s03-elements diff --name-only 636eb6d5..3df6b1d2` | 下列 20 个文件，未发现范围外实现 |
 
 ```text
 CP6.Core/Auth/RequirePermissionAttribute.cs
@@ -140,21 +175,26 @@ CP6.Tests/Space/SpaceDesignV1OpenApiTests.cs
 CP6.Tests/Space/SpacePermissionAttributeTests.cs
 CP6.WebApi/Controllers/Space/SpaceWmsRuntimeController.cs
 CP6.WebApi/OpenApi/SpaceDesignV1OpenApi.cs
+docs/project-memory/PROJECT_STATE.md
 docs/space/contracts/design-v1.openapi.json
+docs/space/reports/e08-s01-unified-runtime-source.md
 docs/superpowers/plans/2026-07-31-space-e08-s01-unified-runtime-source.md
 sdk/typescript/space-design-v1/spaceDesignV1Client.ts
+tools/generate-space-design-sdk.ps1
 ```
 
 设计文档位于锚点提交 `636eb6d5`，因此按定义不会再次出现在
-`636eb6d5..HEAD` 的独占差异中；实施计划位于 `9d4383c1` 并出现在上表。
+`636eb6d5..3df6b1d2` 的独占差异中；实施计划位于 `9d4383c1` 并出现在上表。
 最终授权范围包括设计/计划文档、Task 1 合同/接口/测试、Task 2–3
 服务/测试、Task 4 控制器/DI/OpenAPI/C#/TypeScript 客户端，以及两项
-质量修复：
+既有质量修复与一项最终复审修复：
 
 - `RequirePermissionAttribute.cs` 的安全 Problem Details 为 opt-in、
   default-off；
 - `SpaceDesignV1OpenApi.cs` 的 required/nullability/decimal 修正只定位到
-  运行态 DTO。
+  运行态 DTO；
+- 生成 SDK 保留运行态 DTO 的 `null` 契约；C# 变化为 nullable 元数据，
+  TypeScript 类型重写严格限制到两个运行态 item DTO block。
 
 范围内没有 EF Migration、模型快照或增量 SQL，没有前端 Viewer 组件，
 没有旧 Stock/Task controller 变更，也没有 Design Revision 持久化变更。
