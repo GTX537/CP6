@@ -13,6 +13,7 @@
 - Space E01 S06 功能/集成提交：`6daf1aeb` / `2ccdff7a`
 - Space E02 S01 实验门禁功能/集成提交：`fe959066` / `3742fbff`
 - Space E04 S01 功能/集成提交：`1d57a3b5` / `e8e84853`
+- Space E04 S02 功能/集成提交：`20ee0af0` / `c1043d15`
 - Space E07 S01–S03 功能/集成提交：`d06a8bd1` / `6e67a9d1`
 - Space E07 S04 功能/集成提交：`74577015` / `6d751e0c`
 - Space E13 S01 功能/集成提交：`8f7fc25e` / `ea161975`
@@ -24,7 +25,7 @@
 - Space E05 S03 功能/集成提交：`00021f0a` / `a1edecef`
 - Space E05 S04 功能/集成提交：`85b57960` / `888de795`
 - Space E05 S05 功能/集成提交：`856f138c` / `a3864d9c`
-- Space 当前基线文档提交：`b721468c`
+- Space 当前基线文档提交：`96113ea3`
 - Space 后续候选安全检查点：`checkpoint/space-candidate-20260730`（`0d25da4d`，不得整包合入）
 - 远端：`origin`（GitHub 私有仓库）
 - 换机标签：`migration-2026-07-18-ready`
@@ -37,11 +38,11 @@
 | E00 S01–S04 | 已进入集成基线 | `539d56de`；事实清单、兼容护栏、数据源契约、审计/可观测性 |
 | E01 S01–S06 | 已进入集成基线 | `539d56de` + `85792161` + `36f534d9` + `2ccdff7a`；版本/来源文件/Job Ledger、Published→Draft Clone、Design API v1、生成 SDK、文件安全扫描与保留清理 |
 | E02 S01 | 部分进入集成基线，最终签收受阻 | `fe959066` + `3742fbff`；中立审计/压力/运行证据/preflight 已集成，正式黄金集、授权、供应商包/凭据和冻结 Worker 尚缺 |
-| E04 S01 | 已进入集成基线 | `1d57a3b5` + `e8e84853`；PDF/PNG/JPG 上传、E01 安全扫描复用、Ready/Clean 挂接、受权 Blob 与 PDF.js/Konva 底图渲染 |
+| E04 S01–S02 | 已进入集成基线 | `1d57a3b5` + `e8e84853` + `20ee0af0` + `c1043d15`；安全底图上传/渲染、两点等比标定、第三点动态误差验证、append-only 审计、revision 与 Clone 保真 |
 | E07 S01–S04 | 已进入集成基线 | `d06a8bd1` + `6e67a9d1` + `74577015` + `6d751e0c`；版本化能力合同、CP6 真实适配器、持久化幂等账本、标准模拟器、确定性 10,000 库位标准仓与故障包 |
 | E13 S01–S03、S12 | 已进入集成基线 | Provider/确定性端口、可审计 Run/Proposal/Decision/Usage 模型、可恢复 Worker 控制面，以及数据库并发槽与预算账本 |
 | E05 S01–S05 | 已进入集成基线 | 通用元素、逐层货架、统一场景 DTO、版本化资产库及确定性参数化 3D 渲染 |
-| E04 S02–S04、E06、E08 等剩余范围 | 候选证据或尚未实现 | `0d25da4d` 只作提取来源；不得以候选报告替代集成验收 |
+| E04 S03–S04、E06、E08 等剩余范围 | 候选证据或尚未实现 | `0d25da4d` 只作提取来源；不得以候选报告替代集成验收 |
 
 ## 上一完成波：GR-VP
 
@@ -57,14 +58,14 @@
 
 ## 最近验证基线
 
-- Space 唯一集成基线已推进至代码提交 `e8e84853`、文档提交 `b721468c`。E04-S01 合并态完整 solution 构建 0 warning / 0 error；Space Unit 205 passed，默认 Space Integration 48 passed / 42 SQL-gated skipped，E04 文件安全/底图事务真实 SQL 6/6 passed；CP6.Tests 2685 passed / 17 environment-gated skipped；EF 无待迁移模型变更，SDK drift、C# SDK 和 TypeScript strict 检查通过。
+- Space 唯一集成基线已推进至代码提交 `c1043d15`、文档提交 `96113ea3`。E04-S02 合并态完整 solution 构建 0 warning / 0 error；Space Unit 210 passed，默认 Space Integration 48 passed / 43 SQL-gated skipped，E04 文件安全/标定 Migration/Clone 真实 SQL 9/9 passed；CP6.Tests 2687 passed / 17 environment-gated skipped；EF 无待迁移模型变更，SDK drift、C# SDK 和 TypeScript strict 检查通过。
 - E02 S01 实验门禁已推进至 `3742fbff`：中立工具 10/10 测试通过，Aspose 隔离实验适配器构建 0 warning / 0 error；5 个冻结 Seed 完整性通过，50MiB 与 100 万实体压力资产生成通过。严格 readiness 按预期退出 `3`，ODA/APS 模板 preflight 按预期退出 `4`，表明外部签收条件仍未满足。
 - E07 S01–S03 已推进至 `6e67a9d1`：Release 全解构建 0 error（7 个既有测试 warning），Space Unit 73 passed，Space Integration 35 passed / 30 SQL 环境门禁 skipped，CP6 主测试 2674 passed / 17 environment-gated skipped，Client 71 passed，EF 模型与 Migration 一致；新增代码精确格式门禁通过。
 - E07 S04 已推进至 `6d751e0c`：500 货架、10,000 库位、100 SKU、5,000 库存记录、100 拣货任务和 6 个固定故障样本由同一固定种子生成；两次独立生成的 17 个文件差异为 0，干净检出后的 Manifest 16 个受管文件哈希错误为 0。合并态 Release 全解构建 0 error（10 个既有 warning），Space Unit 79 passed，Space Integration 40 passed / 30 SQL 环境门禁 skipped，CP6 主测试 2680 passed / 17 environment-gated skipped，Client 71 passed。
 - E13 S01–S03、S12 已完成 Provider 安全端口、运行审计模型、可恢复 Worker 控制面、三并发槽和日/月预算原子账本；外部 Provider、CAD IR、输出校验与 Apply 仍未提前启用。
 - E05 S01–S05 已完成通用元素、非均匀逐层货架、Design Revision 权威场景、System/Tenant 版本化资产库和 `space-parametric-v1` 确定性前端渲染链；资产不加载外部 URL 或脚本。
-- E04 S01 已完成 PDF/PNG/JPG 底图上传、安全扫描、挂接与渲染；只有 Ready/Clean 来源可以经受权 Blob 端点读取。默认扫描器继续失败关闭，多副本生产环境必须配置真实扫描引擎与共享耐久卷。
-- Space 集成前端：type-check 通过，90 files / 557 tests passed，production build 通过；仅有既有大 chunk 提示。
+- E04 S01–S02 已完成 PDF/PNG/JPG 底图上传、安全扫描、挂接、渲染和坐标标定；服务端重算两点等比变换，并以 `max(50mm, 实际距离×0.2%)` 验证第三点。默认扫描器继续失败关闭，多副本生产环境必须配置真实扫描引擎与共享耐久卷。
+- Space 集成前端：type-check 通过，91 files / 561 tests passed，production build 通过；仅有既有大 chunk 提示。
 - 后续候选检查点 `0d25da4d` 已独立通过更大范围候选回归，但它仍不是实现真相，也不授权整包合并。
 - 后端在 GR-VP T1 报告中：2220 passed / 5 skipped。
 - 前端在 T7 干净 `main` 重新验证：73 files / 488 tests passed，type-check 0，2649 modules production build 通过；在线 Web 与新 chunk 均为 200。
@@ -81,4 +82,4 @@
 
 ## 下一动作
 
-以 `e8e84853` 为当前 Space 代码集成基线，`b721468c` 为对应文档基线。E04 S01 与 E05 S01–S05 已完成；下一张可独立推进的 3D Space 卡为 E04 S02 两点标定，随后按 S03→S04 推进并解除 E07 S05 的前置阻塞。E13 S04 等待 E02 S03，E13 S05 等待 S04 与正式供应商证据；E02 S01 等待正式黄金集、授权和冻结 Worker。禁止把剩余候选整包合入。GR-VP T1–T7 已完成，不要重做。
+以 `c1043d15` 为当前 Space 代码集成基线，`96113ea3` 为对应文档基线。E04 S01–S02 与 E05 S01–S05 已完成；下一张可独立推进的 3D Space 卡为 E04 S03 通用元素选择与属性面板，随后按 S04 推进并解除 E07 S05 的前置阻塞。E13 S04 等待 E02 S03，E13 S05 等待 S04 与正式供应商证据；E02 S01 等待正式黄金集、授权和冻结 Worker。禁止把剩余候选整包合入。GR-VP T1–T7 已完成，不要重做。

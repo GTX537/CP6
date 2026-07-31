@@ -2,7 +2,7 @@
 
 > 依据 Git log 汇总，不替代完整 Git 历史。重点记录影响接手判断的里程碑。
 
-## 2026-07-30：Space V1 E00 / E01 S01–S06 / E02 S01 / E04 S01 / E05 S01–S05 / E07 S01–S04 / E13 S01–S03、S12 受控集成
+## 2026-07-30：Space V1 E00 / E01 S01–S06 / E02 S01 / E04 S01–S02 / E05 S01–S05 / E07 S01–S04 / E13 S01–S03、S12 受控集成
 
 - `0d25da4d`：把 542 个文件的 Space 后续候选固化到 `checkpoint/space-candidate-20260730`；安全审计未发现真实凭据、私钥或异常构建产物。该提交仅作可回退候选，不是正式实现基线。
 - `539d56de`：从 `dcc1ac9a` 建立 `integration/space-v1-20260730`，no-ff 合入 E00 S01–S04 与 E01 S01–S03。
@@ -31,6 +31,8 @@
 - `335659b2`：记录 E05 S05 完成报告并把唯一集成基线推进到 S05。
 - `1d57a3b5` / `e8e84853`：实现并受控集成 E04 S01 PDF/PNG/JPG 底图上传、安全扫描、Ready/Clean 楼层挂接、受权 Blob 内容读取和 PDF.js/Konva 渲染。
 - `b721468c`：记录 E04 S01 完成报告并把唯一集成基线推进到 S01。
+- `20ee0af0` / `c1043d15`：实现并受控集成 E04 S02 两点等比标定、第三控制点动态误差验证、坐标确认、append-only 审计、revision、来源复合外键与 Clone 保真。
+- `96113ea3`：记录 E04 S02 完成报告并把唯一集成基线推进到 S02。
 - 冲突解决保留 WMS 序列追踪不可降级、Definition 不可变、Space 审计追加写三套保存护栏，并在 `CP6.slnx` 同时保留 Mobile 与六个 Space 项目。
 - S06 功能态验证：CP6 主测试 2674 passed / 17 environment-gated skipped；SDK drift、C# build、TypeScript strict compile、触及文件格式和范围污染审计通过。合并态全解构建 0 error / 10 existing warnings，Space Unit 52 passed、Space Integration 17 passed / 29 SQL-gated skipped，EF 模型无待迁移变更。前端产品代码未受影响，沿用此前 type-check、86 files / 539 tests 和 production build 通过基线。
 - E02 中立工具 10/10 测试通过，Aspose 实验适配器构建 0 warning / 0 error；严格 readiness 与 ODA/APS preflight 分别按预期失败关闭为退出码 `3` / `4`。Aspose 25 次复验中 L5 5/5 崩溃，成功样本 20/20 图层退化为 `0`，因此保持淘汰。
@@ -39,7 +41,8 @@
 - E13 S01 验证：合并态 Release 全解构建 0 error / 10 existing warnings，Space Unit 97 passed，Space Integration 41 passed / 30 SQL-gated skipped，CP6.Tests 2680 passed / 17 environment-gated skipped，Client 71 passed；Provider 契约 18 passed、权限聚焦 17 passed，新增/修改 C# 精确格式门禁通过。
 - E05 S05 合并态验证：聚焦渲染 2 files / 7 tests、完整前端 88 files / 546 tests、type-check 和 production build 全部通过；仅保留既有大 chunk 提示。
 - E04 S01 验证：聚焦 API/OpenAPI/权限/存储 22/22，Space Unit 205/205，默认 Integration 48 passed / 42 SQL-gated skipped，真实 SQL 6/6，CP6.Tests 2685 passed / 17 environment-gated skipped；前端聚焦 2 files / 11 tests、全量 90 files / 557 tests、type-check 与 production build 通过；合并态完整 solution 0 warning / 0 error。
-- 下一张可独立推进的 3D Space 卡为 E04 S02 两点标定；E13 S04/S05、E07 S05 和 E02 S01 继续遵守各自依赖与外部门禁。未独立提取的剩余候选禁止整包合入。
+- E04 S02 验证：Space Unit 210/210，默认 Integration 48 passed / 43 SQL-gated skipped，真实 SQL 9/9，CP6.Tests 2687 passed / 17 environment-gated skipped，API/权限 20/20；前端聚焦 3 files / 15 tests、全量 91 files / 561 tests、type-check 与 production build 通过；SDK/EF drift 通过，合并态完整 solution 0 warning / 0 error。
+- 下一张可独立推进的 3D Space 卡为 E04 S03 通用元素选择与属性面板；E13 S04/S05、E07 S05 和 E02 S01 继续遵守各自依赖与外部门禁。未独立提取的剩余候选禁止整包合入。
 
 ## 2026-07-19：GR-VP T7 部署与真实权限冒烟
 

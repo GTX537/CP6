@@ -42,6 +42,8 @@
 - E05 最新验证：Space Unit 203 passed；默认 Integration 46 passed / 41 SQL-gated skipped，真实 SQL 聚焦链 11/11 passed；前端 type-check、88 files / 546 tests 和 production build 通过，仅保留既有大 chunk 提示。
 - E04 S01 以功能提交 `1d57a3b5`、no-ff 集成提交 `e8e84853` 交付 PDF/PNG/JPG 底图上传、E01 文件安全扫描复用、Ready/Clean 楼层挂接、受权 Blob 内容读取及 PDF.js/Konva 渲染；显隐、透明度和锁定已覆盖，S02 标定与 S03/S04 编辑命令未提前混入。
 - E04 S01 验证：Space Unit 205 passed；默认 Integration 48 passed / 42 SQL-gated skipped，真实 SQL 6/6 passed；CP6.Tests 2685 passed / 17 environment-gated skipped；前端 type-check、90 files / 557 tests 和 production build 通过；合并态完整 solution 0 warning / 0 error。
+- E04 S02 以功能提交 `20ee0af0`、no-ff 集成提交 `c1043d15` 交付两点等比标定、第三控制点动态阈值验证、坐标确认、append-only 审计记录、Floor/Version revision、来源复合外键与 Published→Draft Clone 保真；没有混入 S03/S04 编辑命令。
+- E04 S02 验证：Space Unit 210 passed；默认 Integration 48 passed / 43 SQL-gated skipped，真实 SQL 9/9 passed；CP6.Tests 2687 passed / 17 environment-gated skipped；API/权限 20/20，前端聚焦 3 files / 15 tests、全量 91 files / 561 tests、type-check 与 production build 通过；合并态完整 solution 0 warning / 0 error。
 - `0d25da4d` 中尚未独立提取的剩余范围仍为候选，不计入已完成实现，后续必须按依赖顺序逐项提取。
 
 ## 当前 GR-VP 波已完成
