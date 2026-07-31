@@ -3087,7 +3087,7 @@
     "/api/space/design/v1/sites/{siteId}/runtime/inventory": {
       "get": {
         "tags": [
-          "SpaceDesignV1"
+          "SpaceWmsRuntime"
         ],
         "operationId": "GetInventory",
         "parameters": [
@@ -3229,7 +3229,7 @@
     "/api/space/design/v1/sites/{siteId}/runtime/tasks": {
       "get": {
         "tags": [
-          "SpaceDesignV1"
+          "SpaceWmsRuntime"
         ],
         "operationId": "GetTasks",
         "parameters": [
@@ -5202,6 +5202,19 @@
         "additionalProperties": false
       },
       "CP6.Space.Contracts.SpaceWmsRuntimeInventoryItemDto": {
+        "required": [
+          "allocatedQuantity",
+          "codeMatches",
+          "floorCode",
+          "floorLevel",
+          "floorLogicalId",
+          "floorName",
+          "locationLogicalId",
+          "physicalQuantity",
+          "spaceLocationCode",
+          "wmsLocationCode",
+          "wmsLogicalId"
+        ],
         "type": "object",
         "properties": {
           "locationLogicalId": {
@@ -5213,12 +5226,10 @@
             "format": "uuid"
           },
           "spaceLocationCode": {
-            "type": "string",
-            "nullable": true
+            "type": "string"
           },
           "wmsLocationCode": {
-            "type": "string",
-            "nullable": true
+            "type": "string"
           },
           "codeMatches": {
             "type": "boolean"
@@ -5228,12 +5239,10 @@
             "format": "uuid"
           },
           "floorCode": {
-            "type": "string",
-            "nullable": true
+            "type": "string"
           },
           "floorName": {
-            "type": "string",
-            "nullable": true
+            "type": "string"
           },
           "floorLevel": {
             "type": "integer",
@@ -5241,11 +5250,11 @@
           },
           "physicalQuantity": {
             "type": "number",
-            "format": "double"
+            "format": "decimal"
           },
           "allocatedQuantity": {
             "type": "number",
-            "format": "double"
+            "format": "decimal"
           },
           "materialNumber": {
             "type": "string",
@@ -5267,6 +5276,13 @@
         "additionalProperties": false
       },
       "CP6.Space.Contracts.SpaceWmsRuntimeInventoryResponse": {
+        "required": [
+          "items",
+          "publishedVersionId",
+          "siteId",
+          "source",
+          "warehouseCode"
+        ],
         "type": "object",
         "properties": {
           "siteId": {
@@ -5278,8 +5294,7 @@
             "format": "uuid"
           },
           "warehouseCode": {
-            "type": "string",
-            "nullable": true
+            "type": "string"
           },
           "source": {
             "$ref": "#/components/schemas/CP6.Space.Contracts.SpaceWmsRuntimeSourceDto"
@@ -5288,22 +5303,26 @@
             "type": "array",
             "items": {
               "$ref": "#/components/schemas/CP6.Space.Contracts.SpaceWmsRuntimeInventoryItemDto"
-            },
-            "nullable": true
+            }
           }
         },
         "additionalProperties": false
       },
       "CP6.Space.Contracts.SpaceWmsRuntimeSourceDto": {
+        "required": [
+          "dataSourceId",
+          "isAvailable",
+          "isSimulated",
+          "kind",
+          "observedAtUtc"
+        ],
         "type": "object",
         "properties": {
           "kind": {
-            "type": "string",
-            "nullable": true
+            "type": "string"
           },
           "dataSourceId": {
-            "type": "string",
-            "nullable": true
+            "type": "string"
           },
           "observedAtUtc": {
             "type": "string",
@@ -5319,19 +5338,31 @@
         "additionalProperties": false
       },
       "CP6.Space.Contracts.SpaceWmsRuntimeTaskItemDto": {
+        "required": [
+          "codeMatches",
+          "floorCode",
+          "floorLevel",
+          "floorLogicalId",
+          "floorName",
+          "locationLogicalId",
+          "sequenceNo",
+          "spaceLocationCode",
+          "status",
+          "taskId",
+          "taskType",
+          "wmsLocationCode",
+          "wmsLogicalId"
+        ],
         "type": "object",
         "properties": {
           "taskId": {
-            "type": "string",
-            "nullable": true
+            "type": "string"
           },
           "taskType": {
-            "type": "string",
-            "nullable": true
+            "type": "string"
           },
           "status": {
-            "type": "string",
-            "nullable": true
+            "type": "string"
           },
           "sequenceNo": {
             "type": "integer",
@@ -5346,12 +5377,10 @@
             "format": "uuid"
           },
           "spaceLocationCode": {
-            "type": "string",
-            "nullable": true
+            "type": "string"
           },
           "wmsLocationCode": {
-            "type": "string",
-            "nullable": true
+            "type": "string"
           },
           "codeMatches": {
             "type": "boolean"
@@ -5361,12 +5390,10 @@
             "format": "uuid"
           },
           "floorCode": {
-            "type": "string",
-            "nullable": true
+            "type": "string"
           },
           "floorName": {
-            "type": "string",
-            "nullable": true
+            "type": "string"
           },
           "floorLevel": {
             "type": "integer",
@@ -5407,7 +5434,7 @@
           },
           "quantity": {
             "type": "number",
-            "format": "double",
+            "format": "decimal",
             "nullable": true
           },
           "materialNumber": {
@@ -5418,6 +5445,13 @@
         "additionalProperties": false
       },
       "CP6.Space.Contracts.SpaceWmsRuntimeTaskResponse": {
+        "required": [
+          "items",
+          "publishedVersionId",
+          "siteId",
+          "source",
+          "warehouseCode"
+        ],
         "type": "object",
         "properties": {
           "siteId": {
@@ -5429,8 +5463,7 @@
             "format": "uuid"
           },
           "warehouseCode": {
-            "type": "string",
-            "nullable": true
+            "type": "string"
           },
           "source": {
             "$ref": "#/components/schemas/CP6.Space.Contracts.SpaceWmsRuntimeSourceDto"
@@ -5439,8 +5472,7 @@
             "type": "array",
             "items": {
               "$ref": "#/components/schemas/CP6.Space.Contracts.SpaceWmsRuntimeTaskItemDto"
-            },
-            "nullable": true
+            }
           }
         },
         "additionalProperties": false

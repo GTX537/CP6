@@ -1,4 +1,6 @@
 using System.Reflection;
+using System.Text;
+using System.Text.Json;
 using CP6.Core.Auth;
 using CP6.Core.Services.Space.Observability;
 using CP6.Core.Services.Sys;
@@ -283,6 +285,123 @@ public class SpacePermissionAttributeTests
     }
 
     [Theory]
+    [InlineData(nameof(SpaceWmsRuntimeController.GetInventory))]
+    [InlineData(nameof(SpaceWmsRuntimeController.GetTasks))]
+    public void Runtime_reads_opt_in_to_problem_details(string methodName)
+    {
+        var method = typeof(SpaceWmsRuntimeController).GetMethod(methodName);
+        Assert.NotNull(method);
+        var permission = Assert.Single(
+            CustomAttributeData.GetCustomAttributes(method!),
+            data =>
+                data.AttributeType ==
+                typeof(RequirePermissionAttribute));
+
+        var optIn = Assert.Single(
+            permission.NamedArguments,
+            argument => argument.MemberName == "UseProblemDetails");
+        Assert.True((bool)optIn.TypedValue.Value!);
+    }
+
+    [Fact]
+    public async Task Runtime_permission_denial_serializes_space_problem_details()
+    {
+        var writer = new CapturingAuditWriter(true);
+        var path =
+            "/api/space/design/v1/sites/" +
+            "11111111-1111-1111-1111-111111111111/runtime/inventory";
+        var context = AuthorizationContext(
+            writer,
+            method: HttpMethods.Get,
+            path,
+            controller: "SpaceWmsRuntime",
+            action: nameof(SpaceWmsRuntimeController.GetInventory));
+        context.HttpContext.TraceIdentifier = "trace-fallback";
+        context.HttpContext.Response.Headers["X-Trace-ID"] = "trace-123";
+        context.HttpContext.Request.Headers["X-Correlation-ID"] = "corr-456";
+        var method = typeof(SpaceWmsRuntimeController).GetMethod(
+            nameof(SpaceWmsRuntimeController.GetInventory));
+        var permission = Assert.Single(
+            method!.GetCustomAttributes<RequirePermissionAttribute>());
+
+        await permission.OnAuthorizationAsync(context);
+
+        var result = Assert.IsType<ObjectResult>(context.Result);
+        var body = await ExecuteAsync(context, result);
+        Assert.Equal(StatusCodes.Status403Forbidden, result.StatusCode);
+        Assert.Equal(
+            StatusCodes.Status403Forbidden,
+            context.HttpContext.Response.StatusCode);
+        Assert.StartsWith(
+            "application/problem+json",
+            context.HttpContext.Response.ContentType,
+            StringComparison.OrdinalIgnoreCase);
+        using var document = JsonDocument.Parse(body);
+        var problem = document.RootElement;
+        Assert.Equal(
+            "https://cp6.example/problems/space-permission-denied",
+            problem.GetProperty("type").GetString());
+        Assert.Equal(
+            "The Space request was denied.",
+            problem.GetProperty("title").GetString());
+        Assert.Equal(403, problem.GetProperty("status").GetInt32());
+        Assert.Equal(
+            "Request access to use this Space operation.",
+            problem.GetProperty("detail").GetString());
+        Assert.Equal(path, problem.GetProperty("instance").GetString());
+        Assert.Equal(
+            "SPACE_PERMISSION_DENIED",
+            problem.GetProperty("code").GetString());
+        Assert.Equal("trace-123", problem.GetProperty("traceId").GetString());
+        Assert.Equal(
+            "corr-456",
+            problem.GetProperty("correlationId").GetString());
+        var recovery = problem.GetProperty("recovery");
+        Assert.Equal(
+            "request-access",
+            recovery.GetProperty("action").GetString());
+        Assert.False(recovery.GetProperty("retryable").GetBoolean());
+        Assert.DoesNotContain(
+            "space:model:read",
+            body,
+            StringComparison.OrdinalIgnoreCase);
+        Assert.Single(writer.Inputs);
+        Assert.False(Assert.Single(writer.Tokens).CanBeCanceled);
+    }
+
+    [Fact]
+    public async Task Legacy_permission_denial_keeps_code_and_message_json()
+    {
+        var writer = new CapturingAuditWriter(true);
+        var context = AuthorizationContext(
+            writer,
+            method: HttpMethods.Get,
+            path: "/api/order",
+            controller: "Probe",
+            action: "Read");
+
+        await new RequirePermissionAttribute(
+            "probe",
+            "read").OnAuthorizationAsync(context);
+
+        var result = Assert.IsType<ObjectResult>(context.Result);
+        var body = await ExecuteAsync(context, result);
+        Assert.Equal(StatusCodes.Status403Forbidden, result.StatusCode);
+        Assert.StartsWith(
+            "application/json",
+            context.HttpContext.Response.ContentType,
+            StringComparison.OrdinalIgnoreCase);
+        using var document = JsonDocument.Parse(body);
+        Assert.Equal(403, document.RootElement.GetProperty("code").GetInt32());
+        Assert.Contains(
+            "probe:read",
+            document.RootElement.GetProperty("message").GetString(),
+            StringComparison.Ordinal);
+        Assert.False(document.RootElement.TryGetProperty("recovery", out _));
+        Assert.Empty(writer.Inputs);
+    }
+
+    [Theory]
     [InlineData("GET", "/api/order")]
     [InlineData("POST", "/api/order/create")]
     public async Task Non_space_permission_denial_does_not_audit(
@@ -314,12 +433,14 @@ public class SpacePermissionAttributeTests
         string action)
     {
         var services = new ServiceCollection()
+            .AddLogging()
             .AddSingleton<IPermissionService>(new DeniedPermissionService())
-            .AddSingleton(writer)
-            .BuildServiceProvider();
+            .AddSingleton(writer);
+        services.AddControllers();
+        var provider = services.BuildServiceProvider();
         var http = new DefaultHttpContext
         {
-            RequestServices = services,
+            RequestServices = provider,
         };
         http.Request.Method = method;
         http.Request.Path = path;
@@ -336,6 +457,16 @@ public class SpacePermissionAttributeTests
         return new AuthorizationFilterContext(
             actionContext,
             new List<IFilterMetadata>());
+    }
+
+    private static async Task<string> ExecuteAsync(
+        AuthorizationFilterContext context,
+        ObjectResult result)
+    {
+        var body = new MemoryStream();
+        context.HttpContext.Response.Body = body;
+        await result.ExecuteResultAsync(context);
+        return Encoding.UTF8.GetString(body.ToArray());
     }
 
     private sealed class DeniedPermissionService : IPermissionService

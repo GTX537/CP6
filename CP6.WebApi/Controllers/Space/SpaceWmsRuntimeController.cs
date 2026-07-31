@@ -7,19 +7,9 @@ using Microsoft.AspNetCore.Mvc;
 
 namespace CP6.WebApi.Controllers.Space;
 
-[AttributeUsage(AttributeTargets.Class)]
-internal sealed class SpaceDesignV1ContractControllerAttribute :
-    Attribute,
-    Microsoft.AspNetCore.Mvc.ApplicationModels.IControllerModelConvention
-{
-    public void Apply(
-        Microsoft.AspNetCore.Mvc.ApplicationModels.ControllerModel controller) =>
-        controller.ControllerName = "SpaceDesignV1";
-}
-
 [ApiController]
 [Authorize]
-[SpaceDesignV1ContractController]
+[SpaceDesignV1Contract]
 [Route("api/space/design/v1/sites/{siteId:guid}/runtime")]
 [ProducesResponseType(
     typeof(SpaceDesignProblemDetails),
@@ -61,7 +51,10 @@ public sealed class SpaceWmsRuntimeController(
     ISpaceWmsRuntimeService runtime) : ControllerBase
 {
     [HttpGet("inventory")]
-    [RequirePermission("space", "model:read")]
+    [RequirePermission(
+        "space",
+        "model:read",
+        UseProblemDetails = true)]
     [ProducesResponseType<SpaceWmsRuntimeInventoryResponse>(
         StatusCodes.Status200OK)]
     public Task<SpaceWmsRuntimeInventoryResponse> GetInventory(
@@ -75,7 +68,10 @@ public sealed class SpaceWmsRuntimeController(
             cancellationToken);
 
     [HttpGet("tasks")]
-    [RequirePermission("space", "model:read")]
+    [RequirePermission(
+        "space",
+        "model:read",
+        UseProblemDetails = true)]
     [ProducesResponseType<SpaceWmsRuntimeTaskResponse>(
         StatusCodes.Status200OK)]
     public Task<SpaceWmsRuntimeTaskResponse> GetTasks(

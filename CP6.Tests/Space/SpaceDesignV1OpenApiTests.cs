@@ -1,5 +1,9 @@
 using System.Text.Json;
 using CP6.Space.Contracts;
+using CP6.WebApi.Controllers.Space;
+using Microsoft.AspNetCore.Mvc.Controllers;
+using Microsoft.AspNetCore.Mvc.Infrastructure;
+using Microsoft.Extensions.DependencyInjection;
 
 namespace CP6.Tests.Space;
 
@@ -112,6 +116,146 @@ public sealed class SpaceDesignV1OpenApiTests
             "wmsLogicalId",
             out _));
         Assert.True(inventoryProperties.TryGetProperty("codeMatches", out _));
+    }
+
+    [Fact]
+    public void Runtime_contracts_freeze_required_nullability_and_decimals()
+    {
+        using var document = ReadContract();
+        var schemas = document.RootElement
+            .GetProperty("components")
+            .GetProperty("schemas");
+        var inventoryResponse = Schema(
+            schemas,
+            "CP6.Space.Contracts.SpaceWmsRuntimeInventoryResponse");
+        var taskResponse = Schema(
+            schemas,
+            "CP6.Space.Contracts.SpaceWmsRuntimeTaskResponse");
+        var source = Schema(
+            schemas,
+            "CP6.Space.Contracts.SpaceWmsRuntimeSourceDto");
+        var inventoryItem = Schema(
+            schemas,
+            "CP6.Space.Contracts.SpaceWmsRuntimeInventoryItemDto");
+        var taskItem = Schema(
+            schemas,
+            "CP6.Space.Contracts.SpaceWmsRuntimeTaskItemDto");
+
+        AssertExactRequired(
+            inventoryResponse,
+            "siteId",
+            "publishedVersionId",
+            "warehouseCode",
+            "source",
+            "items");
+        AssertExactRequired(
+            taskResponse,
+            "siteId",
+            "publishedVersionId",
+            "warehouseCode",
+            "source",
+            "items");
+        AssertExactRequired(
+            source,
+            "kind",
+            "dataSourceId",
+            "observedAtUtc",
+            "isSimulated",
+            "isAvailable");
+        AssertExactRequired(
+            inventoryItem,
+            "locationLogicalId",
+            "wmsLogicalId",
+            "spaceLocationCode",
+            "wmsLocationCode",
+            "codeMatches",
+            "floorLogicalId",
+            "floorCode",
+            "floorName",
+            "floorLevel",
+            "physicalQuantity",
+            "allocatedQuantity");
+        AssertExactRequired(
+            taskItem,
+            "taskId",
+            "taskType",
+            "status",
+            "sequenceNo",
+            "locationLogicalId",
+            "wmsLogicalId",
+            "spaceLocationCode",
+            "wmsLocationCode",
+            "codeMatches",
+            "floorLogicalId",
+            "floorCode",
+            "floorName",
+            "floorLevel");
+
+        AssertNonNullable(
+            inventoryResponse,
+            "siteId",
+            "publishedVersionId",
+            "warehouseCode",
+            "source",
+            "items");
+        AssertNonNullable(
+            source,
+            "kind",
+            "dataSourceId",
+            "observedAtUtc",
+            "isSimulated",
+            "isAvailable");
+        AssertNonNullable(
+            inventoryItem,
+            "spaceLocationCode",
+            "wmsLocationCode",
+            "floorCode",
+            "floorName",
+            "physicalQuantity",
+            "allocatedQuantity");
+        AssertNonNullable(
+            taskItem,
+            "taskId",
+            "taskType",
+            "status",
+            "spaceLocationCode",
+            "wmsLocationCode",
+            "floorCode",
+            "floorName");
+        AssertNullable(inventoryItem, "materialNumber", "ownerId");
+        AssertNullable(taskItem, "zoneLogicalId", "quantity", "materialNumber");
+
+        AssertNumberFormat(inventoryItem, "physicalQuantity", "decimal", false);
+        AssertNumberFormat(inventoryItem, "allocatedQuantity", "decimal", false);
+        AssertNumberFormat(taskItem, "quantity", "decimal", true);
+    }
+
+    [Fact]
+    public void Runtime_controller_preserves_its_mvc_identity()
+    {
+        var services = new ServiceCollection();
+        services.AddLogging();
+        services.AddControllers()
+            .AddApplicationPart(typeof(SpaceWmsRuntimeController).Assembly);
+        using var provider = services.BuildServiceProvider();
+        var actions = provider
+            .GetRequiredService<IActionDescriptorCollectionProvider>()
+            .ActionDescriptors.Items
+            .OfType<ControllerActionDescriptor>()
+            .Where(action =>
+                action.ControllerTypeInfo.AsType() ==
+                typeof(SpaceWmsRuntimeController))
+            .OrderBy(action => action.ActionName)
+            .ToArray();
+
+        Assert.Equal(
+            ["GetInventory", "GetTasks"],
+            actions.Select(action => action.ActionName));
+        Assert.All(
+            actions,
+            action => Assert.Equal(
+                "SpaceWmsRuntime",
+                action.ControllerName));
     }
 
     [Theory]
@@ -444,6 +588,199 @@ public sealed class SpaceDesignV1OpenApiTests
         }
         Assert.DoesNotContain("GET2", csharp, StringComparison.Ordinal);
         Assert.DoesNotContain("Dto2", csharp, StringComparison.Ordinal);
+    }
+
+    [Fact]
+    public void Generated_runtime_clients_preserve_guarantees_and_decimals()
+    {
+        var csharp = File.ReadAllText(
+            Path.Combine(
+                RepositoryRoot,
+                "CP6.Space.Client",
+                "SpaceDesignV1Client.g.cs"));
+        var typescript = File.ReadAllText(
+            Path.Combine(
+                RepositoryRoot,
+                "sdk",
+                "typescript",
+                "space-design-v1",
+                "spaceDesignV1Client.ts"));
+
+        var csharpInventory = ExtractTypeBlock(
+            csharp,
+            "public partial class SpaceWmsRuntimeInventoryItemDto");
+        var csharpTask = ExtractTypeBlock(
+            csharp,
+            "public partial class SpaceWmsRuntimeTaskItemDto");
+        Assert.Contains(
+            "public decimal PhysicalQuantity { get; set; }",
+            csharpInventory,
+            StringComparison.Ordinal);
+        Assert.Contains(
+            "public decimal AllocatedQuantity { get; set; }",
+            csharpInventory,
+            StringComparison.Ordinal);
+        Assert.Contains(
+            "public decimal? Quantity { get; set; }",
+            csharpTask,
+            StringComparison.Ordinal);
+
+        var inventoryResponse = ExtractTypeBlock(
+            typescript,
+            "export interface ISpaceWmsRuntimeInventoryResponse");
+        AssertRequiredTypeScriptProperties(
+            inventoryResponse,
+            "siteId",
+            "publishedVersionId",
+            "warehouseCode",
+            "source",
+            "items");
+
+        var source = ExtractTypeBlock(
+            typescript,
+            "export interface ISpaceWmsRuntimeSourceDto");
+        AssertRequiredTypeScriptProperties(
+            source,
+            "kind",
+            "dataSourceId",
+            "observedAtUtc",
+            "isSimulated",
+            "isAvailable");
+
+        var taskResponse = ExtractTypeBlock(
+            typescript,
+            "export interface ISpaceWmsRuntimeTaskResponse");
+        AssertRequiredTypeScriptProperties(
+            taskResponse,
+            "siteId",
+            "publishedVersionId",
+            "warehouseCode",
+            "source",
+            "items");
+
+        var inventoryItem = ExtractTypeBlock(
+            typescript,
+            "export interface ISpaceWmsRuntimeInventoryItemDto");
+        AssertRequiredTypeScriptProperties(
+            inventoryItem,
+            "locationLogicalId",
+            "wmsLogicalId",
+            "spaceLocationCode",
+            "wmsLocationCode",
+            "codeMatches");
+
+        var taskItem = ExtractTypeBlock(
+            typescript,
+            "export interface ISpaceWmsRuntimeTaskItemDto");
+        AssertRequiredTypeScriptProperties(
+            taskItem,
+            "taskId",
+            "taskType",
+            "status",
+            "sequenceNo",
+            "locationLogicalId",
+            "wmsLogicalId",
+            "spaceLocationCode",
+            "wmsLocationCode",
+            "codeMatches");
+    }
+
+    private static JsonElement Schema(JsonElement schemas, string name) =>
+        schemas.GetProperty(name);
+
+    private static void AssertExactRequired(
+        JsonElement schema,
+        params string[] expected)
+    {
+        Assert.True(schema.TryGetProperty("required", out var required));
+        Assert.True(required
+            .EnumerateArray()
+            .Select(value => value.GetString())
+            .ToHashSet()
+            .SetEquals(expected));
+        AssertNonNullable(schema, expected);
+    }
+
+    private static void AssertNonNullable(
+        JsonElement schema,
+        params string[] propertyNames)
+    {
+        var properties = schema.GetProperty("properties");
+        foreach (var propertyName in propertyNames)
+        {
+            var property = properties.GetProperty(propertyName);
+            Assert.False(
+                property.TryGetProperty("nullable", out var nullable) &&
+                nullable.GetBoolean(),
+                $"{propertyName} must be non-nullable.");
+        }
+    }
+
+    private static void AssertNullable(
+        JsonElement schema,
+        params string[] propertyNames)
+    {
+        var properties = schema.GetProperty("properties");
+        foreach (var propertyName in propertyNames)
+        {
+            Assert.True(
+                properties.GetProperty(propertyName)
+                    .GetProperty("nullable")
+                    .GetBoolean(),
+                $"{propertyName} must remain nullable.");
+        }
+    }
+
+    private static void AssertNumberFormat(
+        JsonElement schema,
+        string propertyName,
+        string format,
+        bool nullable)
+    {
+        var property = schema.GetProperty("properties")
+            .GetProperty(propertyName);
+        Assert.Equal("number", property.GetProperty("type").GetString());
+        Assert.Equal(format, property.GetProperty("format").GetString());
+        Assert.Equal(
+            nullable,
+            property.TryGetProperty("nullable", out var nullableProperty) &&
+            nullableProperty.GetBoolean());
+    }
+
+    private static string ExtractTypeBlock(string text, string declaration)
+    {
+        var start = text.IndexOf(declaration, StringComparison.Ordinal);
+        Assert.True(start >= 0, $"Missing generated type: {declaration}");
+        var openingBrace = text.IndexOf('{', start);
+        Assert.True(openingBrace >= 0, $"Missing type body: {declaration}");
+        var depth = 0;
+        for (var index = openingBrace; index < text.Length; index++)
+        {
+            if (text[index] == '{')
+                depth++;
+            else if (text[index] == '}' && --depth == 0)
+                return text[start..(index + 1)];
+        }
+
+        throw new Xunit.Sdk.XunitException(
+            $"Unterminated generated type: {declaration}");
+    }
+
+    private static void AssertRequiredTypeScriptProperties(
+        string typeBlock,
+        params string[] propertyNames)
+    {
+        foreach (var propertyName in propertyNames)
+        {
+            Assert.Contains(
+                $"{propertyName}:",
+                typeBlock,
+                StringComparison.Ordinal);
+            Assert.DoesNotContain(
+                $"{propertyName}?:",
+                typeBlock,
+                StringComparison.Ordinal);
+        }
     }
 
     private static JsonDocument ReadContract()

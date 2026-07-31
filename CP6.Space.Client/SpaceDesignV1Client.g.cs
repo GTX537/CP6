@@ -5969,37 +5969,44 @@ namespace CP6.Space.Client
     {
 
         [System.Text.Json.Serialization.JsonPropertyName("locationLogicalId")]
+        [System.ComponentModel.DataAnnotations.Required(AllowEmptyStrings = true)]
         public System.Guid LocationLogicalId { get; set; }
 
         [System.Text.Json.Serialization.JsonPropertyName("wmsLogicalId")]
+        [System.ComponentModel.DataAnnotations.Required(AllowEmptyStrings = true)]
         public System.Guid WmsLogicalId { get; set; }
 
         [System.Text.Json.Serialization.JsonPropertyName("spaceLocationCode")]
+        [System.ComponentModel.DataAnnotations.Required(AllowEmptyStrings = true)]
         public string SpaceLocationCode { get; set; }
 
         [System.Text.Json.Serialization.JsonPropertyName("wmsLocationCode")]
+        [System.ComponentModel.DataAnnotations.Required(AllowEmptyStrings = true)]
         public string WmsLocationCode { get; set; }
 
         [System.Text.Json.Serialization.JsonPropertyName("codeMatches")]
         public bool CodeMatches { get; set; }
 
         [System.Text.Json.Serialization.JsonPropertyName("floorLogicalId")]
+        [System.ComponentModel.DataAnnotations.Required(AllowEmptyStrings = true)]
         public System.Guid FloorLogicalId { get; set; }
 
         [System.Text.Json.Serialization.JsonPropertyName("floorCode")]
+        [System.ComponentModel.DataAnnotations.Required(AllowEmptyStrings = true)]
         public string FloorCode { get; set; }
 
         [System.Text.Json.Serialization.JsonPropertyName("floorName")]
+        [System.ComponentModel.DataAnnotations.Required(AllowEmptyStrings = true)]
         public string FloorName { get; set; }
 
         [System.Text.Json.Serialization.JsonPropertyName("floorLevel")]
         public int FloorLevel { get; set; }
 
         [System.Text.Json.Serialization.JsonPropertyName("physicalQuantity")]
-        public double PhysicalQuantity { get; set; }
+        public decimal PhysicalQuantity { get; set; }
 
         [System.Text.Json.Serialization.JsonPropertyName("allocatedQuantity")]
-        public double AllocatedQuantity { get; set; }
+        public decimal AllocatedQuantity { get; set; }
 
         [System.Text.Json.Serialization.JsonPropertyName("materialNumber")]
         public string MaterialNumber { get; set; }
@@ -6020,19 +6027,24 @@ namespace CP6.Space.Client
     {
 
         [System.Text.Json.Serialization.JsonPropertyName("siteId")]
+        [System.ComponentModel.DataAnnotations.Required(AllowEmptyStrings = true)]
         public System.Guid SiteId { get; set; }
 
         [System.Text.Json.Serialization.JsonPropertyName("publishedVersionId")]
+        [System.ComponentModel.DataAnnotations.Required(AllowEmptyStrings = true)]
         public System.Guid PublishedVersionId { get; set; }
 
         [System.Text.Json.Serialization.JsonPropertyName("warehouseCode")]
+        [System.ComponentModel.DataAnnotations.Required(AllowEmptyStrings = true)]
         public string WarehouseCode { get; set; }
 
         [System.Text.Json.Serialization.JsonPropertyName("source")]
-        public SpaceWmsRuntimeSourceDto Source { get; set; }
+        [System.ComponentModel.DataAnnotations.Required]
+        public SpaceWmsRuntimeSourceDto Source { get; set; } = new SpaceWmsRuntimeSourceDto();
 
         [System.Text.Json.Serialization.JsonPropertyName("items")]
-        public System.Collections.Generic.ICollection<SpaceWmsRuntimeInventoryItemDto> Items { get; set; }
+        [System.ComponentModel.DataAnnotations.Required]
+        public System.Collections.Generic.ICollection<SpaceWmsRuntimeInventoryItemDto> Items { get; set; } = new System.Collections.ObjectModel.Collection<SpaceWmsRuntimeInventoryItemDto>();
 
     }
 
@@ -6041,12 +6053,15 @@ namespace CP6.Space.Client
     {
 
         [System.Text.Json.Serialization.JsonPropertyName("kind")]
+        [System.ComponentModel.DataAnnotations.Required(AllowEmptyStrings = true)]
         public string Kind { get; set; }
 
         [System.Text.Json.Serialization.JsonPropertyName("dataSourceId")]
+        [System.ComponentModel.DataAnnotations.Required(AllowEmptyStrings = true)]
         public string DataSourceId { get; set; }
 
         [System.Text.Json.Serialization.JsonPropertyName("observedAtUtc")]
+        [System.ComponentModel.DataAnnotations.Required(AllowEmptyStrings = true)]
         public System.DateTimeOffset ObservedAtUtc { get; set; }
 
         [System.Text.Json.Serialization.JsonPropertyName("isSimulated")]
@@ -6062,39 +6077,49 @@ namespace CP6.Space.Client
     {
 
         [System.Text.Json.Serialization.JsonPropertyName("taskId")]
+        [System.ComponentModel.DataAnnotations.Required(AllowEmptyStrings = true)]
         public string TaskId { get; set; }
 
         [System.Text.Json.Serialization.JsonPropertyName("taskType")]
+        [System.ComponentModel.DataAnnotations.Required(AllowEmptyStrings = true)]
         public string TaskType { get; set; }
 
         [System.Text.Json.Serialization.JsonPropertyName("status")]
+        [System.ComponentModel.DataAnnotations.Required(AllowEmptyStrings = true)]
         public string Status { get; set; }
 
         [System.Text.Json.Serialization.JsonPropertyName("sequenceNo")]
         public int SequenceNo { get; set; }
 
         [System.Text.Json.Serialization.JsonPropertyName("locationLogicalId")]
+        [System.ComponentModel.DataAnnotations.Required(AllowEmptyStrings = true)]
         public System.Guid LocationLogicalId { get; set; }
 
         [System.Text.Json.Serialization.JsonPropertyName("wmsLogicalId")]
+        [System.ComponentModel.DataAnnotations.Required(AllowEmptyStrings = true)]
         public System.Guid WmsLogicalId { get; set; }
 
         [System.Text.Json.Serialization.JsonPropertyName("spaceLocationCode")]
+        [System.ComponentModel.DataAnnotations.Required(AllowEmptyStrings = true)]
         public string SpaceLocationCode { get; set; }
 
         [System.Text.Json.Serialization.JsonPropertyName("wmsLocationCode")]
+        [System.ComponentModel.DataAnnotations.Required(AllowEmptyStrings = true)]
         public string WmsLocationCode { get; set; }
 
         [System.Text.Json.Serialization.JsonPropertyName("codeMatches")]
         public bool CodeMatches { get; set; }
 
         [System.Text.Json.Serialization.JsonPropertyName("floorLogicalId")]
+        [System.ComponentModel.DataAnnotations.Required(AllowEmptyStrings = true)]
         public System.Guid FloorLogicalId { get; set; }
 
         [System.Text.Json.Serialization.JsonPropertyName("floorCode")]
+        [System.ComponentModel.DataAnnotations.Required(AllowEmptyStrings = true)]
         public string FloorCode { get; set; }
 
         [System.Text.Json.Serialization.JsonPropertyName("floorName")]
+        [System.ComponentModel.DataAnnotations.Required(AllowEmptyStrings = true)]
         public string FloorName { get; set; }
 
         [System.Text.Json.Serialization.JsonPropertyName("floorLevel")]
@@ -6122,7 +6147,7 @@ namespace CP6.Space.Client
         public double? AnchorZMillimeters { get; set; }
 
         [System.Text.Json.Serialization.JsonPropertyName("quantity")]
-        public double? Quantity { get; set; }
+        public decimal? Quantity { get; set; }
 
         [System.Text.Json.Serialization.JsonPropertyName("materialNumber")]
         public string MaterialNumber { get; set; }
@@ -6134,19 +6159,24 @@ namespace CP6.Space.Client
     {
 
         [System.Text.Json.Serialization.JsonPropertyName("siteId")]
+        [System.ComponentModel.DataAnnotations.Required(AllowEmptyStrings = true)]
         public System.Guid SiteId { get; set; }
 
         [System.Text.Json.Serialization.JsonPropertyName("publishedVersionId")]
+        [System.ComponentModel.DataAnnotations.Required(AllowEmptyStrings = true)]
         public System.Guid PublishedVersionId { get; set; }
 
         [System.Text.Json.Serialization.JsonPropertyName("warehouseCode")]
+        [System.ComponentModel.DataAnnotations.Required(AllowEmptyStrings = true)]
         public string WarehouseCode { get; set; }
 
         [System.Text.Json.Serialization.JsonPropertyName("source")]
-        public SpaceWmsRuntimeSourceDto Source { get; set; }
+        [System.ComponentModel.DataAnnotations.Required]
+        public SpaceWmsRuntimeSourceDto Source { get; set; } = new SpaceWmsRuntimeSourceDto();
 
         [System.Text.Json.Serialization.JsonPropertyName("items")]
-        public System.Collections.Generic.ICollection<SpaceWmsRuntimeTaskItemDto> Items { get; set; }
+        [System.ComponentModel.DataAnnotations.Required]
+        public System.Collections.Generic.ICollection<SpaceWmsRuntimeTaskItemDto> Items { get; set; } = new System.Collections.ObjectModel.Collection<SpaceWmsRuntimeTaskItemDto>();
 
     }
 

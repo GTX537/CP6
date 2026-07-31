@@ -5739,17 +5739,17 @@ export interface ISpaceWmsAdoptionDto {
 }
 
 export class SpaceWmsRuntimeInventoryItemDto implements ISpaceWmsRuntimeInventoryItemDto {
-    locationLogicalId?: string;
-    wmsLogicalId?: string;
-    spaceLocationCode?: string | undefined;
-    wmsLocationCode?: string | undefined;
-    codeMatches?: boolean;
-    floorLogicalId?: string;
-    floorCode?: string | undefined;
-    floorName?: string | undefined;
-    floorLevel?: number;
-    physicalQuantity?: number;
-    allocatedQuantity?: number;
+    locationLogicalId!: string;
+    wmsLogicalId!: string;
+    spaceLocationCode!: string;
+    wmsLocationCode!: string;
+    codeMatches!: boolean;
+    floorLogicalId!: string;
+    floorCode!: string;
+    floorName!: string;
+    floorLevel!: number;
+    physicalQuantity!: number;
+    allocatedQuantity!: number;
     materialNumber?: string | undefined;
     lotNumber?: string | undefined;
     containerNumber?: string | undefined;
@@ -5813,17 +5813,17 @@ export class SpaceWmsRuntimeInventoryItemDto implements ISpaceWmsRuntimeInventor
 }
 
 export interface ISpaceWmsRuntimeInventoryItemDto {
-    locationLogicalId?: string;
-    wmsLogicalId?: string;
-    spaceLocationCode?: string | undefined;
-    wmsLocationCode?: string | undefined;
-    codeMatches?: boolean;
-    floorLogicalId?: string;
-    floorCode?: string | undefined;
-    floorName?: string | undefined;
-    floorLevel?: number;
-    physicalQuantity?: number;
-    allocatedQuantity?: number;
+    locationLogicalId: string;
+    wmsLogicalId: string;
+    spaceLocationCode: string;
+    wmsLocationCode: string;
+    codeMatches: boolean;
+    floorLogicalId: string;
+    floorCode: string;
+    floorName: string;
+    floorLevel: number;
+    physicalQuantity: number;
+    allocatedQuantity: number;
     materialNumber?: string | undefined;
     lotNumber?: string | undefined;
     containerNumber?: string | undefined;
@@ -5831,11 +5831,11 @@ export interface ISpaceWmsRuntimeInventoryItemDto {
 }
 
 export class SpaceWmsRuntimeInventoryResponse implements ISpaceWmsRuntimeInventoryResponse {
-    siteId?: string;
-    publishedVersionId?: string;
-    warehouseCode?: string | undefined;
-    source?: SpaceWmsRuntimeSourceDto;
-    items?: SpaceWmsRuntimeInventoryItemDto[] | undefined;
+    siteId!: string;
+    publishedVersionId!: string;
+    warehouseCode!: string;
+    source!: SpaceWmsRuntimeSourceDto;
+    items!: SpaceWmsRuntimeInventoryItemDto[];
 
     constructor(data?: ISpaceWmsRuntimeInventoryResponse) {
         if (data) {
@@ -5844,6 +5844,10 @@ export class SpaceWmsRuntimeInventoryResponse implements ISpaceWmsRuntimeInvento
                     (this as any)[property] = (data as any)[property];
             }
         }
+        if (!data) {
+            this.source = new SpaceWmsRuntimeSourceDto();
+            this.items = [];
+        }
     }
 
     init(_data?: any) {
@@ -5851,7 +5855,7 @@ export class SpaceWmsRuntimeInventoryResponse implements ISpaceWmsRuntimeInvento
             this.siteId = _data["siteId"];
             this.publishedVersionId = _data["publishedVersionId"];
             this.warehouseCode = _data["warehouseCode"];
-            this.source = _data["source"] ? SpaceWmsRuntimeSourceDto.fromJS(_data["source"]) : undefined as any;
+            this.source = _data["source"] ? SpaceWmsRuntimeSourceDto.fromJS(_data["source"]) : new SpaceWmsRuntimeSourceDto();
             if (Array.isArray(_data["items"])) {
                 this.items = [] as any;
                 for (let item of _data["items"])
@@ -5883,19 +5887,19 @@ export class SpaceWmsRuntimeInventoryResponse implements ISpaceWmsRuntimeInvento
 }
 
 export interface ISpaceWmsRuntimeInventoryResponse {
-    siteId?: string;
-    publishedVersionId?: string;
-    warehouseCode?: string | undefined;
-    source?: SpaceWmsRuntimeSourceDto;
-    items?: SpaceWmsRuntimeInventoryItemDto[] | undefined;
+    siteId: string;
+    publishedVersionId: string;
+    warehouseCode: string;
+    source: SpaceWmsRuntimeSourceDto;
+    items: SpaceWmsRuntimeInventoryItemDto[];
 }
 
 export class SpaceWmsRuntimeSourceDto implements ISpaceWmsRuntimeSourceDto {
-    kind?: string | undefined;
-    dataSourceId?: string | undefined;
-    observedAtUtc?: Date;
-    isSimulated?: boolean;
-    isAvailable?: boolean;
+    kind!: string;
+    dataSourceId!: string;
+    observedAtUtc!: Date;
+    isSimulated!: boolean;
+    isAvailable!: boolean;
 
     constructor(data?: ISpaceWmsRuntimeSourceDto) {
         if (data) {
@@ -5935,27 +5939,27 @@ export class SpaceWmsRuntimeSourceDto implements ISpaceWmsRuntimeSourceDto {
 }
 
 export interface ISpaceWmsRuntimeSourceDto {
-    kind?: string | undefined;
-    dataSourceId?: string | undefined;
-    observedAtUtc?: Date;
-    isSimulated?: boolean;
-    isAvailable?: boolean;
+    kind: string;
+    dataSourceId: string;
+    observedAtUtc: Date;
+    isSimulated: boolean;
+    isAvailable: boolean;
 }
 
 export class SpaceWmsRuntimeTaskItemDto implements ISpaceWmsRuntimeTaskItemDto {
-    taskId?: string | undefined;
-    taskType?: string | undefined;
-    status?: string | undefined;
-    sequenceNo?: number;
-    locationLogicalId?: string;
-    wmsLogicalId?: string;
-    spaceLocationCode?: string | undefined;
-    wmsLocationCode?: string | undefined;
-    codeMatches?: boolean;
-    floorLogicalId?: string;
-    floorCode?: string | undefined;
-    floorName?: string | undefined;
-    floorLevel?: number;
+    taskId!: string;
+    taskType!: string;
+    status!: string;
+    sequenceNo!: number;
+    locationLogicalId!: string;
+    wmsLogicalId!: string;
+    spaceLocationCode!: string;
+    wmsLocationCode!: string;
+    codeMatches!: boolean;
+    floorLogicalId!: string;
+    floorCode!: string;
+    floorName!: string;
+    floorLevel!: number;
     zoneLogicalId?: string | undefined;
     zoneCode?: string | undefined;
     rackLogicalId?: string | undefined;
@@ -6038,19 +6042,19 @@ export class SpaceWmsRuntimeTaskItemDto implements ISpaceWmsRuntimeTaskItemDto {
 }
 
 export interface ISpaceWmsRuntimeTaskItemDto {
-    taskId?: string | undefined;
-    taskType?: string | undefined;
-    status?: string | undefined;
-    sequenceNo?: number;
-    locationLogicalId?: string;
-    wmsLogicalId?: string;
-    spaceLocationCode?: string | undefined;
-    wmsLocationCode?: string | undefined;
-    codeMatches?: boolean;
-    floorLogicalId?: string;
-    floorCode?: string | undefined;
-    floorName?: string | undefined;
-    floorLevel?: number;
+    taskId: string;
+    taskType: string;
+    status: string;
+    sequenceNo: number;
+    locationLogicalId: string;
+    wmsLogicalId: string;
+    spaceLocationCode: string;
+    wmsLocationCode: string;
+    codeMatches: boolean;
+    floorLogicalId: string;
+    floorCode: string;
+    floorName: string;
+    floorLevel: number;
     zoneLogicalId?: string | undefined;
     zoneCode?: string | undefined;
     rackLogicalId?: string | undefined;
@@ -6063,11 +6067,11 @@ export interface ISpaceWmsRuntimeTaskItemDto {
 }
 
 export class SpaceWmsRuntimeTaskResponse implements ISpaceWmsRuntimeTaskResponse {
-    siteId?: string;
-    publishedVersionId?: string;
-    warehouseCode?: string | undefined;
-    source?: SpaceWmsRuntimeSourceDto;
-    items?: SpaceWmsRuntimeTaskItemDto[] | undefined;
+    siteId!: string;
+    publishedVersionId!: string;
+    warehouseCode!: string;
+    source!: SpaceWmsRuntimeSourceDto;
+    items!: SpaceWmsRuntimeTaskItemDto[];
 
     constructor(data?: ISpaceWmsRuntimeTaskResponse) {
         if (data) {
@@ -6076,6 +6080,10 @@ export class SpaceWmsRuntimeTaskResponse implements ISpaceWmsRuntimeTaskResponse
                     (this as any)[property] = (data as any)[property];
             }
         }
+        if (!data) {
+            this.source = new SpaceWmsRuntimeSourceDto();
+            this.items = [];
+        }
     }
 
     init(_data?: any) {
@@ -6083,7 +6091,7 @@ export class SpaceWmsRuntimeTaskResponse implements ISpaceWmsRuntimeTaskResponse
             this.siteId = _data["siteId"];
             this.publishedVersionId = _data["publishedVersionId"];
             this.warehouseCode = _data["warehouseCode"];
-            this.source = _data["source"] ? SpaceWmsRuntimeSourceDto.fromJS(_data["source"]) : undefined as any;
+            this.source = _data["source"] ? SpaceWmsRuntimeSourceDto.fromJS(_data["source"]) : new SpaceWmsRuntimeSourceDto();
             if (Array.isArray(_data["items"])) {
                 this.items = [] as any;
                 for (let item of _data["items"])
@@ -6115,11 +6123,11 @@ export class SpaceWmsRuntimeTaskResponse implements ISpaceWmsRuntimeTaskResponse
 }
 
 export interface ISpaceWmsRuntimeTaskResponse {
-    siteId?: string;
-    publishedVersionId?: string;
-    warehouseCode?: string | undefined;
-    source?: SpaceWmsRuntimeSourceDto;
-    items?: SpaceWmsRuntimeTaskItemDto[] | undefined;
+    siteId: string;
+    publishedVersionId: string;
+    warehouseCode: string;
+    source: SpaceWmsRuntimeSourceDto;
+    items: SpaceWmsRuntimeTaskItemDto[];
 }
 
 export class UploadSpaceUnderlayResponse implements IUploadSpaceUnderlayResponse {
