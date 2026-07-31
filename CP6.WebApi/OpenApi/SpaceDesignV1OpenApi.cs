@@ -1,7 +1,13 @@
+using CP6.Space.Contracts;
 using Microsoft.OpenApi.Models;
 using Swashbuckle.AspNetCore.SwaggerGen;
 
 namespace CP6.WebApi.OpenApi;
+
+[AttributeUsage(AttributeTargets.Class)]
+public sealed class SpaceDesignV1ContractAttribute : Attribute
+{
+}
 
 public static class SpaceDesignV1OpenApi
 {
@@ -16,6 +22,7 @@ public static class SpaceDesignV1OpenApi
                     ? methodInfo.Name
                     : null);
         options.CustomSchemaIds(GetSchemaId);
+        options.SchemaFilter<SpaceWmsRuntimeSchemaFilter>();
         options.OperationFilter<SpaceDesignV1OperationFilter>();
         options.SwaggerDoc(
             "v1",
@@ -43,7 +50,10 @@ public static class SpaceDesignV1OpenApi
     private static bool IsContractController(
         Microsoft.AspNetCore.Mvc.ApiExplorer.ApiDescription description) =>
         description.ActionDescriptor.RouteValues["controller"] ==
-        "SpaceDesignV1";
+        "SpaceDesignV1" ||
+        description.ActionDescriptor.EndpointMetadata
+            .OfType<SpaceDesignV1ContractAttribute>()
+            .Any();
 
     private static string GetSchemaId(Type type)
     {
@@ -67,6 +77,141 @@ public static class SpaceDesignV1OpenApi
             "And",
             type.GetGenericArguments().Select(GetShortSchemaId));
         return $"{genericName}Of{argumentNames}";
+    }
+}
+
+public sealed class SpaceWmsRuntimeSchemaFilter : ISchemaFilter
+{
+    private static readonly IReadOnlyDictionary<Type, string[]>
+        RequiredProperties = new Dictionary<Type, string[]>
+        {
+            [typeof(SpaceWmsRuntimeInventoryResponse)] =
+            [
+                "siteId",
+                "publishedVersionId",
+                "warehouseCode",
+                "source",
+                "items",
+            ],
+            [typeof(SpaceWmsRuntimeTaskResponse)] =
+            [
+                "siteId",
+                "publishedVersionId",
+                "warehouseCode",
+                "source",
+                "items",
+            ],
+            [typeof(SpaceWmsRuntimeSourceDto)] =
+            [
+                "kind",
+                "dataSourceId",
+                "observedAtUtc",
+                "isSimulated",
+                "isAvailable",
+            ],
+            [typeof(SpaceWmsRuntimeInventoryItemDto)] =
+            [
+                "locationLogicalId",
+                "wmsLogicalId",
+                "spaceLocationCode",
+                "wmsLocationCode",
+                "codeMatches",
+                "floorLogicalId",
+                "floorCode",
+                "floorName",
+                "floorLevel",
+                "physicalQuantity",
+                "allocatedQuantity",
+            ],
+            [typeof(SpaceWmsRuntimeTaskItemDto)] =
+            [
+                "taskId",
+                "taskType",
+                "status",
+                "sequenceNo",
+                "locationLogicalId",
+                "wmsLogicalId",
+                "spaceLocationCode",
+                "wmsLocationCode",
+                "codeMatches",
+                "floorLogicalId",
+                "floorCode",
+                "floorName",
+                "floorLevel",
+            ],
+        };
+
+    public void Apply(OpenApiSchema schema, SchemaFilterContext context)
+    {
+        if (!RequiredProperties.TryGetValue(
+                context.Type,
+                out var requiredProperties))
+            return;
+
+        schema.Required.Clear();
+        foreach (var propertyName in requiredProperties)
+        {
+            schema.Required.Add(propertyName);
+            Property(schema, propertyName).Nullable = false;
+        }
+
+        if (context.Type == typeof(SpaceWmsRuntimeInventoryItemDto))
+        {
+            SetNullable(
+                schema,
+                true,
+                "materialNumber",
+                "lotNumber",
+                "containerNumber",
+                "ownerId");
+            SetNumberFormat(schema, "physicalQuantity", "decimal", false);
+            SetNumberFormat(schema, "allocatedQuantity", "decimal", false);
+        }
+        else if (context.Type == typeof(SpaceWmsRuntimeTaskItemDto))
+        {
+            SetNullable(
+                schema,
+                true,
+                "zoneLogicalId",
+                "zoneCode",
+                "rackLogicalId",
+                "rackCode",
+                "anchorXMillimeters",
+                "anchorYMillimeters",
+                "anchorZMillimeters",
+                "quantity",
+                "materialNumber");
+            SetNumberFormat(schema, "quantity", "decimal", true);
+        }
+    }
+
+    private static OpenApiSchema Property(
+        OpenApiSchema schema,
+        string propertyName) =>
+        schema.Properties.TryGetValue(propertyName, out var property)
+            ? property
+            : throw new InvalidOperationException(
+                $"Runtime schema property '{propertyName}' was not generated.");
+
+    private static void SetNullable(
+        OpenApiSchema schema,
+        bool nullable,
+        params string[] propertyNames)
+    {
+        foreach (var propertyName in propertyNames)
+            Property(schema, propertyName).Nullable = nullable;
+    }
+
+    private static void SetNumberFormat(
+        OpenApiSchema schema,
+        string propertyName,
+        string format,
+        bool nullable)
+    {
+        var property = Property(schema, propertyName);
+        property.Type = "number";
+        property.Format = format;
+        property.Nullable = nullable;
     }
 }
 

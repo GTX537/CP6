@@ -361,6 +361,13 @@ public sealed class StandardSpaceWmsSimulatorTests
             value => value.ServiceType == typeof(ISpaceWmsRuntimeSource));
         Assert.NotNull(runtimeSource.ImplementationFactory);
         Assert.Equal(ServiceLifetime.Scoped, runtimeSource.Lifetime);
+        var runtimeService = Assert.Single(
+            services,
+            value => value.ServiceType == typeof(ISpaceWmsRuntimeService));
+        Assert.Equal(
+            typeof(SpaceWmsRuntimeService),
+            runtimeService.ImplementationType);
+        Assert.Equal(ServiceLifetime.Scoped, runtimeService.Lifetime);
         Assert.Contains(
             services,
             value =>

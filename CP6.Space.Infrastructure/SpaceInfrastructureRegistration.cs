@@ -122,6 +122,7 @@ public static class SpaceInfrastructureRegistration
         services.AddScoped<ISpaceWmsAdapter, Cp6SpaceWmsAdapter>();
         services.AddScoped<ISpaceWmsRuntimeSource>(
             provider => provider.GetRequiredService<ISpaceWmsAdapter>());
+        services.AddScoped<ISpaceWmsRuntimeService, SpaceWmsRuntimeService>();
         return services;
     }
 }

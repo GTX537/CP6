@@ -1,3 +1,4 @@
+using System.Diagnostics;
 using CP6.Core.Services.Sys;
 using CP6.Core.Services.Space.Observability;
 using Microsoft.AspNetCore.Http;
@@ -18,6 +19,8 @@ public sealed class RequirePermissionAttribute : Attribute, IAsyncAuthorizationF
     private readonly string _menu;
     private readonly string _action;
 
+    public bool UseProblemDetails { get; set; }
+
     public RequirePermissionAttribute(string menu, string action)
     {
         _menu = menu;
@@ -29,8 +32,19 @@ public sealed class RequirePermissionAttribute : Attribute, IAsyncAuthorizationF
         var svc = context.HttpContext.RequestServices.GetService<IPermissionService>();
         if (svc == null)
         {
-            context.Result = new ObjectResult(new { code = 500, message = "权限服务未注册" })
-            { StatusCode = StatusCodes.Status500InternalServerError };
+            context.Result = UseProblemDetails
+                ? ProblemResult(
+                    context,
+                    StatusCodes.Status500InternalServerError,
+                    "SPACE_PERMISSION_SERVICE_UNAVAILABLE",
+                    "The Space permission service is unavailable.",
+                    "Try the request again later.",
+                    "retry",
+                    true)
+                : new ObjectResult(new { code = 500, message = "权限服务未注册" })
+                {
+                    StatusCode = StatusCodes.Status500InternalServerError,
+                };
             return;
         }
 
@@ -41,12 +55,66 @@ public sealed class RequirePermissionAttribute : Attribute, IAsyncAuthorizationF
             var message = auditRead
                 ? "SPACE_AUDIT_READ_FORBIDDEN"
                 : $"无权限：{_menu}:{_action}";
-            context.Result = new ObjectResult(new { code = 403, message })
-            { StatusCode = StatusCodes.Status403Forbidden };
+            context.Result = UseProblemDetails
+                ? ProblemResult(
+                    context,
+                    StatusCodes.Status403Forbidden,
+                    "SPACE_PERMISSION_DENIED",
+                    "The Space request was denied.",
+                    "Request access to use this Space operation.",
+                    "request-access",
+                    false)
+                : new ObjectResult(new { code = 403, message })
+                {
+                    StatusCode = StatusCodes.Status403Forbidden,
+                };
 
             await AuditSpaceDenialAsync(context, auditRead);
         }
     }
+
+    private static ObjectResult ProblemResult(
+        AuthorizationFilterContext context,
+        int status,
+        string code,
+        string title,
+        string detail,
+        string recoveryAction,
+        bool retryable)
+    {
+        var http = context.HttpContext;
+        var problem = new ProblemDetails
+        {
+            Type = $"https://cp6.example/problems/{ToSlug(code)}",
+            Title = title,
+            Status = status,
+            Detail = detail,
+            Instance = http.Request.Path,
+        };
+        problem.Extensions["code"] = code;
+        problem.Extensions["traceId"] =
+            http.Response.Headers["X-Trace-ID"].FirstOrDefault()
+            ?? Activity.Current?.TraceId.ToHexString()
+            ?? http.TraceIdentifier;
+        problem.Extensions["correlationId"] =
+            http.Response.Headers["X-Correlation-ID"].FirstOrDefault()
+            ?? http.Request.Headers["X-Correlation-ID"].FirstOrDefault()
+            ?? string.Empty;
+        problem.Extensions["recovery"] = new
+        {
+            action = recoveryAction,
+            retryable,
+        };
+
+        return new ObjectResult(problem)
+        {
+            StatusCode = status,
+            ContentTypes = { "application/problem+json" },
+        };
+    }
+
+    private static string ToSlug(string code) =>
+        code.ToLowerInvariant().Replace('_', '-');
 
     private async Task AuditSpaceDenialAsync(
         AuthorizationFilterContext context,
