@@ -490,11 +490,12 @@ public sealed class SpaceElementRevision : SpaceRevisionEntity
         {
             FloorLogicalId = floorLogicalId,
             ParentLogicalId = parentLogicalId,
-            ElementType = SpaceRevisionValue.RequiredText(
+            ElementType = SpaceElementTypes.Normalize(
                 elementType,
-                100,
                 nameof(elementType)),
-            GeometryJson = SpaceRevisionValue.Json(geometryJson, nameof(geometryJson)),
+            GeometryJson = SpaceElementGeometry.Validate(
+                geometryJson,
+                nameof(geometryJson)),
         };
         revision.InitializeRevision(tenantId, modelVersionId, logicalId);
         return revision;
@@ -502,7 +503,9 @@ public sealed class SpaceElementRevision : SpaceRevisionEntity
 
     public void UpdateGeometry(string geometryJson)
     {
-        GeometryJson = SpaceRevisionValue.Json(geometryJson, nameof(geometryJson));
+        GeometryJson = SpaceElementGeometry.Validate(
+            geometryJson,
+            nameof(geometryJson));
     }
 
     public void ConfigurePlacement(
@@ -585,18 +588,21 @@ public sealed class SpaceElementAttribute : SpaceTenantEntity
         if (element.TenantId != tenantId)
             throw new SpaceTenantScopeException("Element attribute tenant does not match.");
 
+        var normalized = SpaceElementAttributeValueTypes.Normalize(
+            valueType,
+            value,
+            unit);
         var attribute = new SpaceElementAttribute
         {
             ModelVersionId = element.ModelVersionId,
             ElementRevisionId = element.Id,
-            Namespace = SpaceRevisionValue.RequiredText(
+            Namespace = SpaceElementAttributeNamespaces.Normalize(
                 attributeNamespace,
-                100,
                 nameof(attributeNamespace)),
             Key = SpaceRevisionValue.RequiredText(key, 100, nameof(key)),
-            ValueType = SpaceRevisionValue.RequiredText(valueType, 50, nameof(valueType)),
-            Value = SpaceRevisionValue.OptionalText(value, 8000, nameof(value)),
-            Unit = SpaceRevisionValue.OptionalText(unit, 50, nameof(unit)),
+            ValueType = normalized.ValueType,
+            Value = normalized.Value,
+            Unit = normalized.Unit,
         };
         attribute.SetTenant(tenantId);
         return attribute;
@@ -604,9 +610,13 @@ public sealed class SpaceElementAttribute : SpaceTenantEntity
 
     public void UpdateValue(string valueType, string? value, string? unit = null)
     {
-        ValueType = SpaceRevisionValue.RequiredText(valueType, 50, nameof(valueType));
-        Value = SpaceRevisionValue.OptionalText(value, 8000, nameof(value));
-        Unit = SpaceRevisionValue.OptionalText(unit, 50, nameof(unit));
+        var normalized = SpaceElementAttributeValueTypes.Normalize(
+            valueType,
+            value,
+            unit);
+        ValueType = normalized.ValueType;
+        Value = normalized.Value;
+        Unit = normalized.Unit;
     }
 }
 

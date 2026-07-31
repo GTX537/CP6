@@ -376,6 +376,149 @@ public sealed class SpaceSqlServerTests
             });
     }
 
+    [SqlServerFact]
+    public async Task Common_elements_and_attributes_persist_with_tenant_isolation()
+    {
+        var tenantA = Guid.NewGuid();
+        var tenantB = Guid.NewGuid();
+        var actorId = Guid.NewGuid();
+
+        await WithDatabaseAsync(
+            async (_, connectionString) =>
+            {
+                Guid versionId;
+                Guid floorLogicalId;
+                await using (var writer = CreateContext(
+                                 connectionString,
+                                 tenantA,
+                                 actorId))
+                {
+                    var model = SpaceModel.Create(tenantA, Guid.NewGuid());
+                    var version = SpaceModelVersion.CreateDraft(
+                        tenantA,
+                        model.Id,
+                        1,
+                        "Element draft");
+                    var floor = SpaceFloorRevision.Create(
+                        tenantA,
+                        version.Id,
+                        Guid.NewGuid(),
+                        model.SiteId,
+                        1,
+                        "F1",
+                        "Floor 1");
+                    versionId = version.Id;
+                    floorLogicalId = floor.LogicalId;
+                    var types = new[]
+                    {
+                        SpaceElementTypes.Wall,
+                        SpaceElementTypes.Column,
+                        SpaceElementTypes.Door,
+                        SpaceElementTypes.Dock,
+                        SpaceElementTypes.Pallet,
+                        SpaceElementTypes.Device,
+                    };
+                    var elements = types
+                        .Select((type, index) =>
+                        {
+                            var element = SpaceElementRevision.Create(
+                                tenantA,
+                                version.Id,
+                                Guid.NewGuid(),
+                                floor.LogicalId,
+                                type,
+                                """
+                                {"schemaVersion":1,"kind":"box","width":800,"height":2200,"depth":400}
+                                """);
+                            element.ConfigurePlacement(
+                                index * 1000,
+                                0,
+                                0,
+                                0,
+                                800,
+                                2200,
+                                400);
+                            return element;
+                        })
+                        .ToArray();
+                    var attribute = SpaceElementAttribute.Create(
+                        tenantA,
+                        elements[5],
+                        SpaceElementAttributeNamespaces.Manufacturer,
+                        "ratedPower",
+                        SpaceElementAttributeValueTypes.Decimal,
+                        "12.500",
+                        "kW");
+
+                    writer.AddRange(model, version, floor);
+                    writer.ElementRevisions.AddRange(elements);
+                    writer.ElementAttributes.Add(attribute);
+                    await writer.SaveChangesAsync();
+
+                    Assert.Equal(
+                        types,
+                        await writer.ElementRevisions
+                            .OrderBy(element => element.X)
+                            .Select(element => element.ElementType)
+                            .ToArrayAsync());
+                    Assert.Equal(
+                        "12.5",
+                        await writer.ElementAttributes
+                            .Select(item => item.Value)
+                            .SingleAsync());
+
+                    writer.ElementAttributes.Add(
+                        SpaceElementAttribute.Create(
+                            tenantA,
+                            elements[5],
+                            SpaceElementAttributeNamespaces.Manufacturer,
+                            "ratedPower",
+                            SpaceElementAttributeValueTypes.Decimal,
+                            "13",
+                            "kW"));
+                    await Assert.ThrowsAsync<DbUpdateException>(
+                        () => writer.SaveChangesAsync());
+                }
+
+                await using (var otherTenant = CreateContext(
+                                 connectionString,
+                                 tenantB,
+                                 Guid.NewGuid()))
+                {
+                    Assert.Empty(await otherTenant.ElementRevisions.ToListAsync());
+                    Assert.Empty(await otherTenant.ElementAttributes.ToListAsync());
+                    Assert.Equal(
+                        6,
+                        await otherTenant.ElementRevisions
+                            .IgnoreQueryFilters()
+                            .CountAsync());
+                    Assert.Single(
+                        await otherTenant.ElementAttributes
+                            .IgnoreQueryFilters()
+                            .ToListAsync());
+                }
+
+                await using var crossTenant = CreateContext(
+                    connectionString,
+                    tenantB,
+                    Guid.NewGuid());
+                crossTenant.ElementRevisions.Add(
+                    SpaceElementRevision.Create(
+                        tenantB,
+                        versionId,
+                        Guid.NewGuid(),
+                        floorLogicalId,
+                        SpaceElementTypes.Column,
+                        """
+                        {"schemaVersion":1,"kind":"box","width":200,"height":3000,"depth":200}
+                        """));
+                await Assert.ThrowsAsync<SpaceVersionStateException>(
+                    () => crossTenant.SaveChangesAsync());
+            },
+            tenantA,
+            actorId);
+    }
+
     private static async Task WithDatabaseAsync(
         Func<SpaceContext, Task> action,
         Guid? tenantId = null,
