@@ -32,6 +32,7 @@ import {
 } from '@/modules/space-design/commands/editorBatchCommands'
 import DesignBatchToolsPanel from '@/modules/space-design/panels/DesignBatchToolsPanel.vue'
 import DesignElementPropertiesPanel from '@/modules/space-design/panels/DesignElementPropertiesPanel.vue'
+import DesignWmsAdoptionPanel from '@/modules/space-design/panels/DesignWmsAdoptionPanel.vue'
 import {
   decodeUnderlay,
   releaseDecodedUnderlay,
@@ -963,6 +964,15 @@ function delay(milliseconds: number): Promise<void> {
         :readonly="readonlyScene"
         @save="saveElement"
         @remove="removeElement"
+      />
+      <DesignWmsAdoptionPanel
+        v-else
+        :version-id="versionId"
+        :floor-logical-id="floorLogicalId"
+        :scene="designScene"
+        :selected-rack="selectedRack"
+        :readonly="readonlyScene"
+        @changed="loadScene"
       />
     </section>
 

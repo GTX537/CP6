@@ -67,6 +67,8 @@ public sealed class SpaceContext : DbContext
         Set<SpaceElementCommandBatch>();
     public DbSet<SpaceElementCommandRecord> ElementCommandRecords =>
         Set<SpaceElementCommandRecord>();
+    public DbSet<SpaceWmsAdoption> WmsAdoptions =>
+        Set<SpaceWmsAdoption>();
 
     protected override void OnModelCreating(ModelBuilder modelBuilder)
     {
@@ -85,6 +87,7 @@ public sealed class SpaceContext : DbContext
         ConfigureElementAttribute(modelBuilder);
         ConfigureElementCommandBatch(modelBuilder);
         ConfigureElementCommandRecord(modelBuilder);
+        ConfigureWmsAdoption(modelBuilder);
         ConfigureFile(modelBuilder);
         ConfigureSource(modelBuilder);
         ConfigureJob(modelBuilder);
@@ -633,6 +636,92 @@ public sealed class SpaceContext : DbContext
             })
             .OnDelete(DeleteBehavior.Restrict)
             .HasConstraintName("FK_Space_LocationRevision_Rack_Tenant_Version_Logical");
+    }
+
+    private void ConfigureWmsAdoption(ModelBuilder modelBuilder)
+    {
+        var entity = modelBuilder.Entity<SpaceWmsAdoption>();
+        entity.ToTable("Space_WmsAdoption");
+        entity.HasKey(x => x.Id);
+        entity.Property(x => x.Id).ValueGeneratedNever();
+        entity.HasAlternateKey(x => new { x.TenantId, x.Id })
+            .HasName("AK_Space_WmsAdoption_TenantId_Id");
+        ConfigureTenantEntity(entity);
+
+        entity.Property(x => x.AdapterId).HasMaxLength(100).IsRequired();
+        entity.Property(x => x.DataSource).HasMaxLength(100).IsRequired();
+        entity.Property(x => x.DataSourceKind).HasMaxLength(20).IsRequired();
+        entity.Property(x => x.ExternalLocationId).HasMaxLength(200);
+        entity.Property(x => x.WmsLocationCode).HasMaxLength(200).IsRequired();
+        entity.Property(x => x.ExternalVersion).HasMaxLength(100).IsRequired();
+        entity.Property(x => x.WmsStateHash)
+            .HasColumnType("char(64)")
+            .IsUnicode(false)
+            .IsFixedLength()
+            .HasMaxLength(64);
+        entity.Property(x => x.LastObservedAtUtc).HasColumnType("datetime2");
+        entity.Property(x => x.Status)
+            .HasConversion<short>()
+            .HasColumnType("smallint");
+        entity.Property(x => x.BoundLocationCode).HasMaxLength(200);
+        entity.Property(x => x.BoundAtUtc).HasColumnType("datetime2");
+        entity.Property(x => x.RowVersion).IsRowVersion();
+
+        entity.HasIndex(x => new
+        {
+            x.TenantId,
+            x.SiteId,
+            x.AdapterId,
+            x.WmsLogicalId,
+        })
+            .IsUnique()
+            .HasFilter("[IsDeleted] = 0")
+            .HasDatabaseName(
+                "UX_Space_WmsAdoption_Tenant_Site_Adapter_WmsLogical");
+        entity.HasIndex(x => new
+        {
+            x.TenantId,
+            x.SiteId,
+            x.AdapterId,
+            x.ExternalLocationId,
+        })
+            .IsUnique()
+            .HasFilter(
+                "[ExternalLocationId] IS NOT NULL AND [IsDeleted] = 0")
+            .HasDatabaseName(
+                "UX_Space_WmsAdoption_Tenant_Site_Adapter_External");
+        entity.HasIndex(x => new
+        {
+            x.TenantId,
+            x.SiteId,
+            x.AdapterId,
+            x.LocationLogicalId,
+        })
+            .IsUnique()
+            .HasFilter(
+                "[LocationLogicalId] IS NOT NULL AND [IsDeleted] = 0")
+            .HasDatabaseName(
+                "UX_Space_WmsAdoption_Tenant_Site_Adapter_Location");
+        entity.HasIndex(x => new
+        {
+            x.TenantId,
+            x.SiteId,
+            x.AdapterId,
+            x.Status,
+            x.WmsLocationCode,
+        })
+            .HasDatabaseName(
+                "IX_Space_WmsAdoption_Tenant_Site_Adapter_Status_Code");
+
+        entity.HasOne<SpaceModelVersion>()
+            .WithMany()
+            .HasForeignKey(x => new { x.TenantId, x.ModelVersionId })
+            .HasPrincipalKey(x => new { x.TenantId, x.Id })
+            .OnDelete(DeleteBehavior.Restrict)
+            .HasConstraintName(
+                "FK_Space_WmsAdoption_ModelVersion_Tenant");
+        entity.HasQueryFilter(
+            x => x.TenantId == CurrentTenantId && !x.IsDeleted);
     }
 
     private void ConfigureAsset(ModelBuilder modelBuilder)

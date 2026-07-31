@@ -62,4 +62,21 @@ public static class SpaceErrorCodes
         "SPACE_AI_PROVIDER_UNAVAILABLE";
     public const string AiSourcePolicyDenied =
         "SPACE_AI_SOURCE_POLICY_DENIED";
+    public const string WmsUnavailable = "SPACE_WMS_UNAVAILABLE";
+    public const string WmsAdoptionNotFound =
+        "SPACE_WMS_ADOPTION_NOT_FOUND";
+    public const string WmsAdoptionDuplicate =
+        "SPACE_WMS_ADOPTION_DUPLICATE";
+    public const string WmsAdoptionMissing =
+        "SPACE_WMS_ADOPTION_MISSING";
+    public const string WmsLocationUnbound =
+        "SPACE_WMS_LOCATION_UNBOUND";
+    public const string WmsLocationCodeDuplicate =
+        "SPACE_WMS_LOCATION_CODE_DUPLICATE";
+    public const string WmsBindingGeometryMissing =
+        "SPACE_WMS_BINDING_GEOMETRY_MISSING";
+    public const string WmsBindingCodeMismatch =
+        "SPACE_WMS_BINDING_CODE_MISMATCH";
+    public const string WmsLocationMissing =
+        "SPACE_WMS_LOCATION_MISSING";
 }

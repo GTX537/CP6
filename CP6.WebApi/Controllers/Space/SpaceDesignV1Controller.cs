@@ -52,7 +52,8 @@ public sealed class UploadSpaceUnderlayForm
     "application/problem+json")]
 public sealed class SpaceDesignV1Controller(
     ISpaceDesignV1Service service,
-    ISpaceUnderlayV1Service underlays) : ControllerBase
+    ISpaceUnderlayV1Service underlays,
+    ISpaceWmsAdoptionService wmsAdoptions) : ControllerBase
 {
     private const long UnderlayUploadLimit = 100L * 1024L * 1024L;
 
@@ -375,5 +376,87 @@ public sealed class SpaceDesignV1Controller(
             status,
             limit,
             cursor,
+            cancellationToken);
+
+    [HttpPost("versions/{versionId:guid}/wms-adoption/refresh")]
+    [RequirePermission("space", "integration:manage")]
+    [RequirePermission("space", "model:edit")]
+    [ProducesResponseType<RefreshSpaceWmsAdoptionResponse>(
+        StatusCodes.Status200OK)]
+    [ProducesResponseType(
+        typeof(SpaceDesignProblemDetails),
+        StatusCodes.Status502BadGateway,
+        "application/problem+json")]
+    [ProducesResponseType(
+        typeof(SpaceDesignProblemDetails),
+        StatusCodes.Status503ServiceUnavailable,
+        "application/problem+json")]
+    public Task<RefreshSpaceWmsAdoptionResponse> RefreshWmsAdoption(
+        Guid versionId,
+        CancellationToken cancellationToken) =>
+        wmsAdoptions.RefreshAsync(versionId, cancellationToken);
+
+    [HttpGet("versions/{versionId:guid}/wms-adoption/locations")]
+    [RequirePermission("space", "model:read")]
+    [ProducesResponseType<SpacePage<SpaceWmsAdoptionDto>>(
+        StatusCodes.Status200OK)]
+    public Task<SpacePage<SpaceWmsAdoptionDto>> GetWmsAdoptionLocations(
+        Guid versionId,
+        [FromQuery] string? status = null,
+        [FromQuery] string? differenceCode = null,
+        [FromQuery] int limit = 50,
+        [FromQuery] string? cursor = null,
+        CancellationToken cancellationToken = default) =>
+        wmsAdoptions.GetLocationsAsync(
+            versionId,
+            status,
+            differenceCode,
+            limit,
+            cursor,
+            cancellationToken);
+
+    [HttpPost(
+        "versions/{versionId:guid}/wms-adoption/locations/{adoptionId:guid}/bind")]
+    [RequirePermission("space", "model:edit")]
+    [ProducesResponseType<SpaceWmsAdoptionCommandResponse>(
+        StatusCodes.Status200OK)]
+    public Task<SpaceWmsAdoptionCommandResponse> BindWmsAdoption(
+        Guid versionId,
+        Guid adoptionId,
+        [FromBody, Required] BindSpaceWmsAdoptionRequest request,
+        CancellationToken cancellationToken) =>
+        wmsAdoptions.BindAsync(
+            versionId,
+            adoptionId,
+            request,
+            cancellationToken);
+
+    [HttpPost("versions/{versionId:guid}/wms-adoption/bindings:batch")]
+    [RequirePermission("space", "model:edit")]
+    [ProducesResponseType<SpaceWmsAdoptionCommandResponse>(
+        StatusCodes.Status200OK)]
+    public Task<SpaceWmsAdoptionCommandResponse> BindWmsAdoptionBatch(
+        Guid versionId,
+        [FromBody, Required] BatchBindSpaceWmsAdoptionRequest request,
+        CancellationToken cancellationToken) =>
+        wmsAdoptions.BindBatchAsync(
+            versionId,
+            request,
+            cancellationToken);
+
+    [HttpPost(
+        "versions/{versionId:guid}/wms-adoption/locations/{adoptionId:guid}/place")]
+    [RequirePermission("space", "model:edit")]
+    [ProducesResponseType<SpaceWmsAdoptionCommandResponse>(
+        StatusCodes.Status200OK)]
+    public Task<SpaceWmsAdoptionCommandResponse> PlaceWmsAdoption(
+        Guid versionId,
+        Guid adoptionId,
+        [FromBody, Required] PlaceSpaceWmsAdoptionRequest request,
+        CancellationToken cancellationToken) =>
+        wmsAdoptions.PlaceAsync(
+            versionId,
+            adoptionId,
+            request,
             cancellationToken);
 }

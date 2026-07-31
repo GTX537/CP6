@@ -39,6 +39,7 @@ public class SpacePermissionAttributeTests
         "space-audit:read",
         "space:model:read", "space:model:edit", "space:source:upload",
         "space:model:generate-ai", "space:model:review-ai",
+        "space:integration:manage",
     };
 
     private static readonly Dictionary<string, string> AllowedReadPermissions =
@@ -58,6 +59,8 @@ public class SpacePermissionAttributeTests
             ["SpaceDesignV1Controller.GetUnderlayCalibration"] = "space:model:read",
             ["SpaceDesignV1Controller.GetJob"] = "space:model:read",
             ["SpaceDesignV1Controller.GetIssues"] = "space:model:read",
+            ["SpaceDesignV1Controller.GetWmsAdoptionLocations"] =
+                "space:model:read",
         };
 
     /// <summary>只读语义的 POST 豁免（Controller.Method）——按「不得带特性」校验。</summary>
@@ -194,6 +197,29 @@ public class SpacePermissionAttributeTests
         Assert.True(permissions.SetEquals(
         [
             "space:source:upload",
+            "space:model:edit",
+        ]));
+    }
+
+    [Fact]
+    public void Wms_refresh_requires_integration_manage_and_model_edit()
+    {
+        var method = typeof(SpaceDesignV1Controller)
+            .GetMethod(nameof(SpaceDesignV1Controller.RefreshWmsAdoption));
+        Assert.NotNull(method);
+
+        var permissions = CustomAttributeData
+            .GetCustomAttributes(method!)
+            .Where(data =>
+                data.AttributeType == typeof(RequirePermissionAttribute))
+            .Select(data =>
+                $"{data.ConstructorArguments[0].Value}:" +
+                $"{data.ConstructorArguments[1].Value}")
+            .ToHashSet();
+
+        Assert.True(permissions.SetEquals(
+        [
+            "space:integration:manage",
             "space:model:edit",
         ]));
     }
