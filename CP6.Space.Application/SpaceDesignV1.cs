@@ -66,6 +66,11 @@ public interface ISpaceDesignV1Service
         Guid versionId,
         CancellationToken cancellationToken = default);
 
+    Task<SpaceDesignSceneDto> GetSceneAsync(
+        Guid versionId,
+        Guid floorLogicalId,
+        CancellationToken cancellationToken = default);
+
     Task<CreateSpaceVersionResponse> CreateVersionAsync(
         Guid siteId,
         CreateSpaceVersionRequest request,

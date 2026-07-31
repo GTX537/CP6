@@ -67,6 +67,15 @@ namespace CP6.Space.Client
 
         /// <returns>OK</returns>
         /// <exception cref="ApiException">A server side error occurred.</exception>
+        System.Threading.Tasks.Task<SpaceDesignSceneDto> GetSceneAsync(System.Guid versionId, System.Guid floorLogicalId);
+
+        /// <param name="cancellationToken">A cancellation token that can be used by other objects or threads to receive notice of cancellation.</param>
+        /// <returns>OK</returns>
+        /// <exception cref="ApiException">A server side error occurred.</exception>
+        System.Threading.Tasks.Task<SpaceDesignSceneDto> GetSceneAsync(System.Guid versionId, System.Guid floorLogicalId, System.Threading.CancellationToken cancellationToken);
+
+        /// <returns>OK</returns>
+        /// <exception cref="ApiException">A server side error occurred.</exception>
         System.Threading.Tasks.Task<SpacePageOfSpaceSourceDto> GetSourcesAsync(System.Guid versionId, string sourceType, string state, int? limit, string cursor);
 
         /// <param name="cancellationToken">A cancellation token that can be used by other objects or threads to receive notice of cancellation.</param>
@@ -679,6 +688,164 @@ namespace CP6.Space.Client
                         if (status_ == 200)
                         {
                             var objectResponse_ = await ReadObjectResponseAsync<SpaceVersionDto>(response_, headers_, cancellationToken).ConfigureAwait(false);
+                            if (objectResponse_.Object == null)
+                            {
+                                throw new ApiException("Response was null which was not expected.", status_, objectResponse_.Text, headers_, null);
+                            }
+                            return objectResponse_.Object;
+                        }
+                        else
+                        if (status_ == 400)
+                        {
+                            var objectResponse_ = await ReadObjectResponseAsync<SpaceDesignProblemDetails>(response_, headers_, cancellationToken).ConfigureAwait(false);
+                            if (objectResponse_.Object == null)
+                            {
+                                throw new ApiException("Response was null which was not expected.", status_, objectResponse_.Text, headers_, null);
+                            }
+                            throw new ApiException<SpaceDesignProblemDetails>("Bad Request", status_, objectResponse_.Text, headers_, objectResponse_.Object, null);
+                        }
+                        else
+                        if (status_ == 401)
+                        {
+                            var objectResponse_ = await ReadObjectResponseAsync<SpaceDesignProblemDetails>(response_, headers_, cancellationToken).ConfigureAwait(false);
+                            if (objectResponse_.Object == null)
+                            {
+                                throw new ApiException("Response was null which was not expected.", status_, objectResponse_.Text, headers_, null);
+                            }
+                            throw new ApiException<SpaceDesignProblemDetails>("Unauthorized", status_, objectResponse_.Text, headers_, objectResponse_.Object, null);
+                        }
+                        else
+                        if (status_ == 403)
+                        {
+                            var objectResponse_ = await ReadObjectResponseAsync<SpaceDesignProblemDetails>(response_, headers_, cancellationToken).ConfigureAwait(false);
+                            if (objectResponse_.Object == null)
+                            {
+                                throw new ApiException("Response was null which was not expected.", status_, objectResponse_.Text, headers_, null);
+                            }
+                            throw new ApiException<SpaceDesignProblemDetails>("Forbidden", status_, objectResponse_.Text, headers_, objectResponse_.Object, null);
+                        }
+                        else
+                        if (status_ == 404)
+                        {
+                            var objectResponse_ = await ReadObjectResponseAsync<SpaceDesignProblemDetails>(response_, headers_, cancellationToken).ConfigureAwait(false);
+                            if (objectResponse_.Object == null)
+                            {
+                                throw new ApiException("Response was null which was not expected.", status_, objectResponse_.Text, headers_, null);
+                            }
+                            throw new ApiException<SpaceDesignProblemDetails>("Not Found", status_, objectResponse_.Text, headers_, objectResponse_.Object, null);
+                        }
+                        else
+                        if (status_ == 409)
+                        {
+                            var objectResponse_ = await ReadObjectResponseAsync<SpaceDesignProblemDetails>(response_, headers_, cancellationToken).ConfigureAwait(false);
+                            if (objectResponse_.Object == null)
+                            {
+                                throw new ApiException("Response was null which was not expected.", status_, objectResponse_.Text, headers_, null);
+                            }
+                            throw new ApiException<SpaceDesignProblemDetails>("Conflict", status_, objectResponse_.Text, headers_, objectResponse_.Object, null);
+                        }
+                        else
+                        if (status_ == 422)
+                        {
+                            var objectResponse_ = await ReadObjectResponseAsync<SpaceDesignProblemDetails>(response_, headers_, cancellationToken).ConfigureAwait(false);
+                            if (objectResponse_.Object == null)
+                            {
+                                throw new ApiException("Response was null which was not expected.", status_, objectResponse_.Text, headers_, null);
+                            }
+                            throw new ApiException<SpaceDesignProblemDetails>("Unprocessable Content", status_, objectResponse_.Text, headers_, objectResponse_.Object, null);
+                        }
+                        else
+                        if (status_ == 500)
+                        {
+                            var objectResponse_ = await ReadObjectResponseAsync<SpaceDesignProblemDetails>(response_, headers_, cancellationToken).ConfigureAwait(false);
+                            if (objectResponse_.Object == null)
+                            {
+                                throw new ApiException("Response was null which was not expected.", status_, objectResponse_.Text, headers_, null);
+                            }
+                            throw new ApiException<SpaceDesignProblemDetails>("Internal Server Error", status_, objectResponse_.Text, headers_, objectResponse_.Object, null);
+                        }
+                        else
+                        {
+                            var responseData_ = response_.Content == null ? null : await ReadAsStringAsync(response_.Content, cancellationToken).ConfigureAwait(false);
+                            throw new ApiException("The HTTP status code of the response was not expected (" + status_ + ").", status_, responseData_, headers_, null);
+                        }
+                    }
+                    finally
+                    {
+                        if (disposeResponse_)
+                            response_.Dispose();
+                    }
+                }
+            }
+            finally
+            {
+                if (disposeClient_)
+                    client_.Dispose();
+            }
+        }
+
+        /// <returns>OK</returns>
+        /// <exception cref="ApiException">A server side error occurred.</exception>
+        public virtual System.Threading.Tasks.Task<SpaceDesignSceneDto> GetSceneAsync(System.Guid versionId, System.Guid floorLogicalId)
+        {
+            return GetSceneAsync(versionId, floorLogicalId, System.Threading.CancellationToken.None);
+        }
+
+        /// <param name="cancellationToken">A cancellation token that can be used by other objects or threads to receive notice of cancellation.</param>
+        /// <returns>OK</returns>
+        /// <exception cref="ApiException">A server side error occurred.</exception>
+        public virtual async System.Threading.Tasks.Task<SpaceDesignSceneDto> GetSceneAsync(System.Guid versionId, System.Guid floorLogicalId, System.Threading.CancellationToken cancellationToken)
+        {
+            if (versionId == null)
+                throw new System.ArgumentNullException("versionId");
+
+            if (floorLogicalId == null)
+                throw new System.ArgumentNullException("floorLogicalId");
+
+            var client_ = _httpClient;
+            var disposeClient_ = false;
+            try
+            {
+                using (var request_ = new System.Net.Http.HttpRequestMessage())
+                {
+                    request_.Method = new System.Net.Http.HttpMethod("GET");
+                    request_.Headers.Accept.Add(System.Net.Http.Headers.MediaTypeWithQualityHeaderValue.Parse("application/json"));
+
+                    var urlBuilder_ = new System.Text.StringBuilder();
+
+                    // Operation Path: "api/space/design/v1/versions/{versionId}/floors/{floorLogicalId}/scene"
+                    urlBuilder_.Append("api/space/design/v1/versions/");
+                    urlBuilder_.Append(System.Uri.EscapeDataString(ConvertToString(versionId, System.Globalization.CultureInfo.InvariantCulture)));
+                    urlBuilder_.Append("/floors/");
+                    urlBuilder_.Append(System.Uri.EscapeDataString(ConvertToString(floorLogicalId, System.Globalization.CultureInfo.InvariantCulture)));
+                    urlBuilder_.Append("/scene");
+
+                    PrepareRequest(client_, request_, urlBuilder_);
+
+                    var url_ = urlBuilder_.ToString();
+                    request_.RequestUri = new System.Uri(url_, System.UriKind.RelativeOrAbsolute);
+
+                    PrepareRequest(client_, request_, url_);
+
+                    var response_ = await client_.SendAsync(request_, System.Net.Http.HttpCompletionOption.ResponseHeadersRead, cancellationToken).ConfigureAwait(false);
+                    var disposeResponse_ = true;
+                    try
+                    {
+                        var headers_ = new System.Collections.Generic.Dictionary<string, System.Collections.Generic.IEnumerable<string>>();
+                        foreach (var item_ in response_.Headers)
+                            headers_[item_.Key] = item_.Value;
+                        if (response_.Content != null && response_.Content.Headers != null)
+                        {
+                            foreach (var item_ in response_.Content.Headers)
+                                headers_[item_.Key] = item_.Value;
+                        }
+
+                        ProcessResponse(client_, response_);
+
+                        var status_ = (int)response_.StatusCode;
+                        if (status_ == 200)
+                        {
+                            var objectResponse_ = await ReadObjectResponseAsync<SpaceDesignSceneDto>(response_, headers_, cancellationToken).ConfigureAwait(false);
                             if (objectResponse_.Object == null)
                             {
                                 throw new ApiException("Response was null which was not expected.", status_, objectResponse_.Text, headers_, null);
@@ -1637,6 +1804,60 @@ namespace CP6.Space.Client
     }
 
     [System.CodeDom.Compiler.GeneratedCode("NJsonSchema", "14.7.1.0 (NJsonSchema v11.6.1.0 (Newtonsoft.Json v13.0.0.0))")]
+    public partial class SpaceDesignSceneDto
+    {
+
+        [System.Text.Json.Serialization.JsonPropertyName("schemaVersion")]
+        public int SchemaVersion { get; set; }
+
+        [System.Text.Json.Serialization.JsonPropertyName("authority")]
+        public string Authority { get; set; }
+
+        [System.Text.Json.Serialization.JsonPropertyName("runtimeOverlayIncluded")]
+        public bool RuntimeOverlayIncluded { get; set; }
+
+        [System.Text.Json.Serialization.JsonPropertyName("modelVersionId")]
+        public System.Guid ModelVersionId { get; set; }
+
+        [System.Text.Json.Serialization.JsonPropertyName("siteId")]
+        public System.Guid SiteId { get; set; }
+
+        [System.Text.Json.Serialization.JsonPropertyName("versionStatus")]
+        public string VersionStatus { get; set; }
+
+        [System.Text.Json.Serialization.JsonPropertyName("contentRevision")]
+        public long ContentRevision { get; set; }
+
+        [System.Text.Json.Serialization.JsonPropertyName("contentHash")]
+        public string ContentHash { get; set; }
+
+        [System.Text.Json.Serialization.JsonPropertyName("floor")]
+        public SpaceSceneFloorDto Floor { get; set; }
+
+        [System.Text.Json.Serialization.JsonPropertyName("zones")]
+        public System.Collections.Generic.ICollection<SpaceSceneZoneDto> Zones { get; set; }
+
+        [System.Text.Json.Serialization.JsonPropertyName("aisles")]
+        public System.Collections.Generic.ICollection<SpaceSceneAisleDto> Aisles { get; set; }
+
+        [System.Text.Json.Serialization.JsonPropertyName("racks")]
+        public System.Collections.Generic.ICollection<SpaceSceneRackDto> Racks { get; set; }
+
+        [System.Text.Json.Serialization.JsonPropertyName("rackLevels")]
+        public System.Collections.Generic.ICollection<SpaceSceneRackLevelDto> RackLevels { get; set; }
+
+        [System.Text.Json.Serialization.JsonPropertyName("locations")]
+        public System.Collections.Generic.ICollection<SpaceSceneLocationDto> Locations { get; set; }
+
+        [System.Text.Json.Serialization.JsonPropertyName("elements")]
+        public System.Collections.Generic.ICollection<SpaceSceneElementDto> Elements { get; set; }
+
+        [System.Text.Json.Serialization.JsonPropertyName("elementAttributes")]
+        public System.Collections.Generic.ICollection<SpaceSceneElementAttributeDto> ElementAttributes { get; set; }
+
+    }
+
+    [System.CodeDom.Compiler.GeneratedCode("NJsonSchema", "14.7.1.0 (NJsonSchema v11.6.1.0 (Newtonsoft.Json v13.0.0.0))")]
     public partial class SpaceIssueDto
     {
 
@@ -1789,6 +2010,342 @@ namespace CP6.Space.Client
 
         [System.Text.Json.Serialization.JsonPropertyName("rowVersion")]
         public string RowVersion { get; set; }
+
+    }
+
+    [System.CodeDom.Compiler.GeneratedCode("NJsonSchema", "14.7.1.0 (NJsonSchema v11.6.1.0 (Newtonsoft.Json v13.0.0.0))")]
+    public partial class SpaceSceneAisleDto
+    {
+
+        [System.Text.Json.Serialization.JsonPropertyName("revision")]
+        public SpaceSceneRevisionDto Revision { get; set; }
+
+        [System.Text.Json.Serialization.JsonPropertyName("zoneLogicalId")]
+        public System.Guid ZoneLogicalId { get; set; }
+
+        [System.Text.Json.Serialization.JsonPropertyName("aisleCode")]
+        public string AisleCode { get; set; }
+
+        [System.Text.Json.Serialization.JsonPropertyName("polygonJson")]
+        public string PolygonJson { get; set; }
+
+        [System.Text.Json.Serialization.JsonPropertyName("centerlineJson")]
+        public string CenterlineJson { get; set; }
+
+        [System.Text.Json.Serialization.JsonPropertyName("direction")]
+        public int Direction { get; set; }
+
+    }
+
+    [System.CodeDom.Compiler.GeneratedCode("NJsonSchema", "14.7.1.0 (NJsonSchema v11.6.1.0 (Newtonsoft.Json v13.0.0.0))")]
+    public partial class SpaceSceneElementAttributeDto
+    {
+
+        [System.Text.Json.Serialization.JsonPropertyName("id")]
+        public System.Guid Id { get; set; }
+
+        [System.Text.Json.Serialization.JsonPropertyName("elementRevisionId")]
+        public System.Guid ElementRevisionId { get; set; }
+
+        [System.Text.Json.Serialization.JsonPropertyName("namespace")]
+        public string Namespace { get; set; }
+
+        [System.Text.Json.Serialization.JsonPropertyName("key")]
+        public string Key { get; set; }
+
+        [System.Text.Json.Serialization.JsonPropertyName("valueType")]
+        public string ValueType { get; set; }
+
+        [System.Text.Json.Serialization.JsonPropertyName("value")]
+        public string Value { get; set; }
+
+        [System.Text.Json.Serialization.JsonPropertyName("unit")]
+        public string Unit { get; set; }
+
+    }
+
+    [System.CodeDom.Compiler.GeneratedCode("NJsonSchema", "14.7.1.0 (NJsonSchema v11.6.1.0 (Newtonsoft.Json v13.0.0.0))")]
+    public partial class SpaceSceneElementDto
+    {
+
+        [System.Text.Json.Serialization.JsonPropertyName("revision")]
+        public SpaceSceneRevisionDto Revision { get; set; }
+
+        [System.Text.Json.Serialization.JsonPropertyName("floorLogicalId")]
+        public System.Guid FloorLogicalId { get; set; }
+
+        [System.Text.Json.Serialization.JsonPropertyName("parentLogicalId")]
+        public System.Guid? ParentLogicalId { get; set; }
+
+        [System.Text.Json.Serialization.JsonPropertyName("elementType")]
+        public string ElementType { get; set; }
+
+        [System.Text.Json.Serialization.JsonPropertyName("geometryJson")]
+        public string GeometryJson { get; set; }
+
+        [System.Text.Json.Serialization.JsonPropertyName("modelAssetId")]
+        public System.Guid? ModelAssetId { get; set; }
+
+        [System.Text.Json.Serialization.JsonPropertyName("x")]
+        public int X { get; set; }
+
+        [System.Text.Json.Serialization.JsonPropertyName("y")]
+        public int Y { get; set; }
+
+        [System.Text.Json.Serialization.JsonPropertyName("z")]
+        public int Z { get; set; }
+
+        [System.Text.Json.Serialization.JsonPropertyName("rotationZ")]
+        public double RotationZ { get; set; }
+
+        [System.Text.Json.Serialization.JsonPropertyName("width")]
+        public int Width { get; set; }
+
+        [System.Text.Json.Serialization.JsonPropertyName("height")]
+        public int Height { get; set; }
+
+        [System.Text.Json.Serialization.JsonPropertyName("depth")]
+        public int Depth { get; set; }
+
+        [System.Text.Json.Serialization.JsonPropertyName("businessCode")]
+        public string BusinessCode { get; set; }
+
+        [System.Text.Json.Serialization.JsonPropertyName("linkedEntityType")]
+        public string LinkedEntityType { get; set; }
+
+        [System.Text.Json.Serialization.JsonPropertyName("linkedLogicalId")]
+        public System.Guid? LinkedLogicalId { get; set; }
+
+    }
+
+    [System.CodeDom.Compiler.GeneratedCode("NJsonSchema", "14.7.1.0 (NJsonSchema v11.6.1.0 (Newtonsoft.Json v13.0.0.0))")]
+    public partial class SpaceSceneFloorDto
+    {
+
+        [System.Text.Json.Serialization.JsonPropertyName("revision")]
+        public SpaceSceneRevisionDto Revision { get; set; }
+
+        [System.Text.Json.Serialization.JsonPropertyName("siteLogicalId")]
+        public System.Guid SiteLogicalId { get; set; }
+
+        [System.Text.Json.Serialization.JsonPropertyName("level")]
+        public int Level { get; set; }
+
+        [System.Text.Json.Serialization.JsonPropertyName("floorCode")]
+        public string FloorCode { get; set; }
+
+        [System.Text.Json.Serialization.JsonPropertyName("name")]
+        public string Name { get; set; }
+
+        [System.Text.Json.Serialization.JsonPropertyName("elevation")]
+        public int Elevation { get; set; }
+
+        [System.Text.Json.Serialization.JsonPropertyName("height")]
+        public int Height { get; set; }
+
+        [System.Text.Json.Serialization.JsonPropertyName("boundaryJson")]
+        public string BoundaryJson { get; set; }
+
+        [System.Text.Json.Serialization.JsonPropertyName("coordinateSystem")]
+        public string CoordinateSystem { get; set; }
+
+        [System.Text.Json.Serialization.JsonPropertyName("underlaySourceId")]
+        public System.Guid? UnderlaySourceId { get; set; }
+
+        [System.Text.Json.Serialization.JsonPropertyName("underlayScale")]
+        public double? UnderlayScale { get; set; }
+
+        [System.Text.Json.Serialization.JsonPropertyName("underlayOffsetX")]
+        public int UnderlayOffsetX { get; set; }
+
+        [System.Text.Json.Serialization.JsonPropertyName("underlayOffsetY")]
+        public int UnderlayOffsetY { get; set; }
+
+        [System.Text.Json.Serialization.JsonPropertyName("underlayRotationZ")]
+        public double UnderlayRotationZ { get; set; }
+
+        [System.Text.Json.Serialization.JsonPropertyName("revisionNumber")]
+        public long RevisionNumber { get; set; }
+
+    }
+
+    [System.CodeDom.Compiler.GeneratedCode("NJsonSchema", "14.7.1.0 (NJsonSchema v11.6.1.0 (Newtonsoft.Json v13.0.0.0))")]
+    public partial class SpaceSceneLocationDto
+    {
+
+        [System.Text.Json.Serialization.JsonPropertyName("revision")]
+        public SpaceSceneRevisionDto Revision { get; set; }
+
+        [System.Text.Json.Serialization.JsonPropertyName("floorLogicalId")]
+        public System.Guid FloorLogicalId { get; set; }
+
+        [System.Text.Json.Serialization.JsonPropertyName("rackLogicalId")]
+        public System.Guid? RackLogicalId { get; set; }
+
+        [System.Text.Json.Serialization.JsonPropertyName("locationCode")]
+        public string LocationCode { get; set; }
+
+        [System.Text.Json.Serialization.JsonPropertyName("columnNo")]
+        public int ColumnNo { get; set; }
+
+        [System.Text.Json.Serialization.JsonPropertyName("levelNo")]
+        public int LevelNo { get; set; }
+
+        [System.Text.Json.Serialization.JsonPropertyName("depthNo")]
+        public int DepthNo { get; set; }
+
+        [System.Text.Json.Serialization.JsonPropertyName("width")]
+        public int Width { get; set; }
+
+        [System.Text.Json.Serialization.JsonPropertyName("height")]
+        public int Height { get; set; }
+
+        [System.Text.Json.Serialization.JsonPropertyName("depth")]
+        public int Depth { get; set; }
+
+        [System.Text.Json.Serialization.JsonPropertyName("maxLoad")]
+        public double? MaxLoad { get; set; }
+
+        [System.Text.Json.Serialization.JsonPropertyName("codeOrigin")]
+        public string CodeOrigin { get; set; }
+
+        [System.Text.Json.Serialization.JsonPropertyName("externalBindingState")]
+        public string ExternalBindingState { get; set; }
+
+    }
+
+    [System.CodeDom.Compiler.GeneratedCode("NJsonSchema", "14.7.1.0 (NJsonSchema v11.6.1.0 (Newtonsoft.Json v13.0.0.0))")]
+    public partial class SpaceSceneRackDto
+    {
+
+        [System.Text.Json.Serialization.JsonPropertyName("revision")]
+        public SpaceSceneRevisionDto Revision { get; set; }
+
+        [System.Text.Json.Serialization.JsonPropertyName("floorLogicalId")]
+        public System.Guid FloorLogicalId { get; set; }
+
+        [System.Text.Json.Serialization.JsonPropertyName("zoneLogicalId")]
+        public System.Guid ZoneLogicalId { get; set; }
+
+        [System.Text.Json.Serialization.JsonPropertyName("aisleLogicalId")]
+        public System.Guid? AisleLogicalId { get; set; }
+
+        [System.Text.Json.Serialization.JsonPropertyName("rackCode")]
+        public string RackCode { get; set; }
+
+        [System.Text.Json.Serialization.JsonPropertyName("templateVersionId")]
+        public System.Guid? TemplateVersionId { get; set; }
+
+        [System.Text.Json.Serialization.JsonPropertyName("x")]
+        public int X { get; set; }
+
+        [System.Text.Json.Serialization.JsonPropertyName("y")]
+        public int Y { get; set; }
+
+        [System.Text.Json.Serialization.JsonPropertyName("z")]
+        public int Z { get; set; }
+
+        [System.Text.Json.Serialization.JsonPropertyName("rotationZ")]
+        public double RotationZ { get; set; }
+
+        [System.Text.Json.Serialization.JsonPropertyName("width")]
+        public int Width { get; set; }
+
+        [System.Text.Json.Serialization.JsonPropertyName("depth")]
+        public int Depth { get; set; }
+
+        [System.Text.Json.Serialization.JsonPropertyName("height")]
+        public int Height { get; set; }
+
+    }
+
+    [System.CodeDom.Compiler.GeneratedCode("NJsonSchema", "14.7.1.0 (NJsonSchema v11.6.1.0 (Newtonsoft.Json v13.0.0.0))")]
+    public partial class SpaceSceneRackLevelDto
+    {
+
+        [System.Text.Json.Serialization.JsonPropertyName("revision")]
+        public SpaceSceneRevisionDto Revision { get; set; }
+
+        [System.Text.Json.Serialization.JsonPropertyName("rackLogicalId")]
+        public System.Guid RackLogicalId { get; set; }
+
+        [System.Text.Json.Serialization.JsonPropertyName("levelNo")]
+        public int LevelNo { get; set; }
+
+        [System.Text.Json.Serialization.JsonPropertyName("bottomZ")]
+        public int BottomZ { get; set; }
+
+        [System.Text.Json.Serialization.JsonPropertyName("clearHeight")]
+        public int ClearHeight { get; set; }
+
+        [System.Text.Json.Serialization.JsonPropertyName("binCount")]
+        public int BinCount { get; set; }
+
+        [System.Text.Json.Serialization.JsonPropertyName("depthCount")]
+        public int DepthCount { get; set; }
+
+        [System.Text.Json.Serialization.JsonPropertyName("cellWidth")]
+        public int CellWidth { get; set; }
+
+        [System.Text.Json.Serialization.JsonPropertyName("cellDepth")]
+        public int CellDepth { get; set; }
+
+        [System.Text.Json.Serialization.JsonPropertyName("beamHeight")]
+        public int BeamHeight { get; set; }
+
+        [System.Text.Json.Serialization.JsonPropertyName("maxLoad")]
+        public double? MaxLoad { get; set; }
+
+    }
+
+    [System.CodeDom.Compiler.GeneratedCode("NJsonSchema", "14.7.1.0 (NJsonSchema v11.6.1.0 (Newtonsoft.Json v13.0.0.0))")]
+    public partial class SpaceSceneRevisionDto
+    {
+
+        [System.Text.Json.Serialization.JsonPropertyName("revisionId")]
+        public System.Guid RevisionId { get; set; }
+
+        [System.Text.Json.Serialization.JsonPropertyName("logicalId")]
+        public System.Guid LogicalId { get; set; }
+
+        [System.Text.Json.Serialization.JsonPropertyName("sourceId")]
+        public System.Guid? SourceId { get; set; }
+
+        [System.Text.Json.Serialization.JsonPropertyName("sourceRef")]
+        public string SourceRef { get; set; }
+
+        [System.Text.Json.Serialization.JsonPropertyName("lifecycleState")]
+        public string LifecycleState { get; set; }
+
+        [System.Text.Json.Serialization.JsonPropertyName("rowVersion")]
+        public string RowVersion { get; set; }
+
+    }
+
+    [System.CodeDom.Compiler.GeneratedCode("NJsonSchema", "14.7.1.0 (NJsonSchema v11.6.1.0 (Newtonsoft.Json v13.0.0.0))")]
+    public partial class SpaceSceneZoneDto
+    {
+
+        [System.Text.Json.Serialization.JsonPropertyName("revision")]
+        public SpaceSceneRevisionDto Revision { get; set; }
+
+        [System.Text.Json.Serialization.JsonPropertyName("floorLogicalId")]
+        public System.Guid FloorLogicalId { get; set; }
+
+        [System.Text.Json.Serialization.JsonPropertyName("zoneCode")]
+        public string ZoneCode { get; set; }
+
+        [System.Text.Json.Serialization.JsonPropertyName("zoneType")]
+        public int ZoneType { get; set; }
+
+        [System.Text.Json.Serialization.JsonPropertyName("polygonJson")]
+        public string PolygonJson { get; set; }
+
+        [System.Text.Json.Serialization.JsonPropertyName("color")]
+        public string Color { get; set; }
+
+        [System.Text.Json.Serialization.JsonPropertyName("capabilityFlags")]
+        public string CapabilityFlags { get; set; }
 
     }
 
