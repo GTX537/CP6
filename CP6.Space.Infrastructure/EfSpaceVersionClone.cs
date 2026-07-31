@@ -691,12 +691,13 @@ public sealed class EfSpaceVersionCloneProcessor : ISpaceVersionCloneProcessor
                  ([Id], [ModelVersionId], [LogicalId], [SourceId], [SourceRef],
                   [LifecycleState], [RackLogicalId], [LevelNo], [BottomZ],
                   [ClearHeight], [BinCount], [DepthCount], [CellWidth],
-                  [CellDepth], [MaxLoad], [TenantId], [CreatedAtUtc],
+                  [CellDepth], [BeamHeight], [MaxLoad], [TenantId], [CreatedAtUtc],
                   [CreatedBy], [ModifiedAtUtc], [ModifiedBy], [IsDeleted])
              SELECT NEWID(), {targetVersionId}, r.[LogicalId], sm.[NewId],
                     r.[SourceRef], r.[LifecycleState], r.[RackLogicalId],
                     r.[LevelNo], r.[BottomZ], r.[ClearHeight], r.[BinCount],
-                    r.[DepthCount], r.[CellWidth], r.[CellDepth], r.[MaxLoad],
+                    r.[DepthCount], r.[CellWidth], r.[CellDepth], r.[BeamHeight],
+                    r.[MaxLoad],
                     {tenantId}, {nowUtc}, {actorId}, NULL, NULL, 0
              FROM [Space_RackLevelRevision] r
              LEFT JOIN @SourceMap sm ON sm.[OldId] = r.[SourceId]

@@ -423,7 +423,7 @@ public sealed class SpaceContext : DbContext
             "Space_RackLevelRevision",
             table => table.HasCheckConstraint(
                 "CK_Space_RackLevelRevision_Dimensions",
-                "[LevelNo] > 0 AND [ClearHeight] > 0 AND [BinCount] > 0 AND [DepthCount] > 0 AND [CellWidth] > 0 AND [CellDepth] > 0 AND ([MaxLoad] IS NULL OR [MaxLoad] >= 0)"));
+                "[LevelNo] > 0 AND [BottomZ] >= 0 AND [ClearHeight] > 0 AND [BinCount] > 0 AND [DepthCount] > 0 AND [CellWidth] > 0 AND [CellDepth] > 0 AND [BeamHeight] >= 0 AND ([MaxLoad] IS NULL OR [MaxLoad] >= 0)"));
         entity.Property(x => x.MaxLoad).HasColumnType("decimal(18,4)");
 
         entity.HasIndex(
