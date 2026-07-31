@@ -243,6 +243,278 @@ public sealed class SpaceWmsRuntimeServiceTests
                 .ToArray());
     }
 
+    [Fact]
+    public async Task Unavailable_source_returns_empty_with_explicit_flags()
+    {
+        await using var fixture = await RuntimeFixture.CreateAsync("L-001");
+        fixture.Source.DeclaredKind = SpaceWmsDataSourceKind.Unavailable;
+
+        var response = await fixture.Service.QueryInventoryAsync(fixture.SiteId);
+
+        Assert.Empty(response.Items);
+        Assert.Equal("Unavailable", response.Source.Kind);
+        Assert.False(response.Source.IsAvailable);
+        Assert.False(response.Source.IsSimulated);
+    }
+
+    [Fact]
+    public async Task Returned_identity_outside_requested_scope_is_a_502_contract_violation()
+    {
+        await using var fixture = await RuntimeFixture.CreateAsync("L-001");
+        fixture.Source.UnexpectedInventoryIdentity = Guid.NewGuid();
+
+        var error = await Assert.ThrowsAsync<SpaceProblemException>(() =>
+            fixture.Service.QueryInventoryAsync(fixture.SiteId));
+
+        AssertContractViolation(error);
+    }
+
+    [Fact]
+    public async Task Transport_failure_is_retryable_but_cancellation_is_preserved()
+    {
+        await using var fixture = await RuntimeFixture.CreateAsync("L-001");
+        fixture.Source.QueryException = new TimeoutException("simulated timeout");
+
+        var error = await Assert.ThrowsAsync<SpaceProblemException>(() =>
+            fixture.Service.QueryTasksAsync(fixture.SiteId));
+
+        Assert.Equal(503, error.StatusCode);
+        Assert.Equal(SpaceErrorCodes.WmsUnavailable, error.Code);
+        Assert.True(error.Retryable);
+
+        using var cancellation = new CancellationTokenSource();
+        cancellation.Cancel();
+        await Assert.ThrowsAnyAsync<OperationCanceledException>(() =>
+            fixture.Service.QueryTasksAsync(
+                fixture.SiteId,
+                cancellationToken: cancellation.Token));
+    }
+
+    [Fact]
+    public async Task Multi_chunk_snapshot_uses_earliest_observation_and_rejects_source_change()
+    {
+        await using var fixture = await RuntimeFixture.CreateAsync(
+            Enumerable.Range(1, 501).Select(value => $"L-{value:0000}").ToArray());
+        fixture.Source.Observations =
+        [
+            new DateTimeOffset(2026, 7, 31, 16, 0, 0, TimeSpan.Zero),
+            new DateTimeOffset(2026, 7, 31, 15, 59, 55, TimeSpan.Zero),
+        ];
+
+        var response = await fixture.Service.QueryInventoryAsync(fixture.SiteId);
+
+        Assert.Equal(
+            new DateTimeOffset(2026, 7, 31, 15, 59, 55, TimeSpan.Zero),
+            response.Source.ObservedAtUtc);
+
+        fixture.Source.ResetCalls();
+        fixture.Source.ReturnedDataSourceIds = ["RECORDING_WMS", "OTHER_WMS"];
+        var error = await Assert.ThrowsAsync<SpaceProblemException>(() =>
+            fixture.Service.QueryInventoryAsync(fixture.SiteId));
+
+        AssertContractViolation(error);
+    }
+
+    [Fact]
+    public async Task Empty_published_selection_keeps_declared_source_without_calling_wms()
+    {
+        await using var fixture = await RuntimeFixture.CreateAsync();
+
+        var response = await fixture.Service.QueryInventoryAsync(fixture.SiteId);
+
+        Assert.Empty(response.Items);
+        Assert.Equal("Real", response.Source.Kind);
+        Assert.True(response.Source.IsAvailable);
+        Assert.Empty(fixture.Source.InventoryBatchSizes);
+    }
+
+    [Fact]
+    public async Task More_than_10000_requested_locations_fail_before_wms()
+    {
+        await using var fixture = await RuntimeFixture.CreateAsync("L-001");
+        var requested = Enumerable.Range(0, 10_001)
+            .Select(_ => Guid.NewGuid())
+            .ToArray();
+
+        var error = await Assert.ThrowsAsync<SpaceProblemException>(() =>
+            fixture.Service.QueryInventoryAsync(fixture.SiteId, requested));
+
+        Assert.Equal(400, error.StatusCode);
+        Assert.Equal(SpaceErrorCodes.RequestInvalid, error.Code);
+        Assert.Empty(fixture.Source.InventoryBatchSizes);
+    }
+
+    [Fact]
+    public async Task Null_item_collections_are_502_contract_violations()
+    {
+        await using var fixture = await RuntimeFixture.CreateAsync("L-001");
+        fixture.Source.ReturnNullInventoryItems = true;
+
+        var inventoryError = await Assert.ThrowsAsync<SpaceProblemException>(() =>
+            fixture.Service.QueryInventoryAsync(fixture.SiteId));
+
+        AssertContractViolation(inventoryError);
+        fixture.Source.ReturnNullInventoryItems = false;
+        fixture.Source.ReturnNullTaskItems = true;
+        var taskError = await Assert.ThrowsAsync<SpaceProblemException>(() =>
+            fixture.Service.QueryTasksAsync(fixture.SiteId));
+        AssertContractViolation(taskError);
+    }
+
+    [Theory]
+    [InlineData("empty-identity")]
+    [InlineData("outside-identity")]
+    [InlineData("blank-location-code")]
+    public async Task Invalid_inventory_items_are_502_contract_violations(string invalidCase)
+    {
+        await using var fixture = await RuntimeFixture.CreateAsync("L-001");
+        fixture.Source.InventoryOverrideItem = invalidCase switch
+        {
+            "empty-identity" => new(Guid.Empty, "L-001", 1, 0, null, null, null),
+            "outside-identity" => new(Guid.NewGuid(), "L-001", 1, 0, null, null, null),
+            "blank-location-code" => new(
+                fixture.LocationIds[0], " ", 1, 0, null, null, null),
+            _ => throw new InvalidOperationException("Unknown test case."),
+        };
+
+        var error = await Assert.ThrowsAsync<SpaceProblemException>(() =>
+            fixture.Service.QueryInventoryAsync(fixture.SiteId));
+
+        AssertContractViolation(error);
+    }
+
+    [Theory]
+    [InlineData("blank-task-id")]
+    [InlineData("blank-task-type")]
+    [InlineData("blank-status")]
+    [InlineData("invalid-sequence")]
+    [InlineData("blank-location-code")]
+    public async Task Invalid_task_items_are_502_contract_violations(string invalidCase)
+    {
+        await using var fixture = await RuntimeFixture.CreateAsync("L-001");
+        var taskId = invalidCase == "blank-task-id" ? " " : "TASK-1";
+        var taskType = invalidCase == "blank-task-type" ? " " : "Pick";
+        var status = invalidCase == "blank-status" ? " " : "Released";
+        var sequence = invalidCase == "invalid-sequence" ? 0 : 1;
+        var locationCode = invalidCase == "blank-location-code" ? " " : "L-001";
+        fixture.Source.TaskOverrideItem = new(
+            taskId,
+            taskType,
+            status,
+            sequence,
+            fixture.LocationIds[0],
+            locationCode,
+            1,
+            "M1");
+
+        var error = await Assert.ThrowsAsync<SpaceProblemException>(() =>
+            fixture.Service.QueryTasksAsync(fixture.SiteId));
+
+        AssertContractViolation(error);
+    }
+
+    [Theory]
+    [InlineData("undefined-kind")]
+    [InlineData("blank-source-id")]
+    [InlineData("long-source-id")]
+    [InlineData("default-observation")]
+    [InlineData("kind-mismatch")]
+    [InlineData("source-id-mismatch")]
+    public async Task Invalid_source_metadata_is_a_502_contract_violation(string invalidCase)
+    {
+        await using var fixture = await RuntimeFixture.CreateAsync("L-001");
+        switch (invalidCase)
+        {
+            case "undefined-kind":
+                fixture.Source.ReturnedKinds = [(SpaceWmsDataSourceKind)999];
+                break;
+            case "blank-source-id":
+                fixture.Source.ReturnedDataSourceIds = [" "];
+                break;
+            case "long-source-id":
+                fixture.Source.ReturnedDataSourceIds = [new string('x', 101)];
+                break;
+            case "default-observation":
+                fixture.Source.Observations = [default];
+                break;
+            case "kind-mismatch":
+                fixture.Source.ReturnedKinds = [SpaceWmsDataSourceKind.Simulated];
+                break;
+            case "source-id-mismatch":
+                fixture.Source.ReturnedDataSourceIds = ["OTHER_WMS"];
+                break;
+            default:
+                throw new InvalidOperationException("Unknown test case.");
+        }
+
+        var error = await Assert.ThrowsAsync<SpaceProblemException>(() =>
+            fixture.Service.QueryInventoryAsync(fixture.SiteId));
+
+        AssertContractViolation(error);
+    }
+
+    private static void AssertContractViolation(SpaceProblemException error)
+    {
+        Assert.Equal(502, error.StatusCode);
+        Assert.Equal(SpaceErrorCodes.WmsRuntimeContractViolation, error.Code);
+        Assert.False(error.Retryable);
+    }
+
+    private sealed class RuntimeFixture : IAsyncDisposable
+    {
+        private RuntimeFixture(
+            SpaceContext context,
+            RecordingRuntimeSource source,
+            SpaceWmsRuntimeService service,
+            Guid siteId,
+            IReadOnlyList<Guid> locationIds)
+        {
+            Context = context;
+            Source = source;
+            Service = service;
+            SiteId = siteId;
+            LocationIds = locationIds;
+        }
+
+        public SpaceContext Context { get; }
+        public RecordingRuntimeSource Source { get; }
+        public SpaceWmsRuntimeService Service { get; }
+        public Guid SiteId { get; }
+        public IReadOnlyList<Guid> LocationIds { get; }
+
+        public static async Task<RuntimeFixture> CreateAsync(
+            params string[] locationCodes)
+        {
+            var execution = Execution();
+            var clock = new TestClock();
+            var context = NewContext(execution, clock);
+            try
+            {
+                var seeded = await SeedPublishedAsync(context, locationCodes);
+                var source = new RecordingRuntimeSource();
+                var service = CreateService(
+                    context,
+                    execution,
+                    clock,
+                    seeded.SiteId,
+                    source);
+                return new RuntimeFixture(
+                    context,
+                    source,
+                    service,
+                    seeded.SiteId,
+                    seeded.LocationIds);
+            }
+            catch
+            {
+                await context.DisposeAsync();
+                throw;
+            }
+        }
+
+        public ValueTask DisposeAsync() => Context.DisposeAsync();
+    }
+
     private static TestExecutionContext Execution() =>
         new(Guid.NewGuid(), Guid.NewGuid(), Guid.NewGuid());
 
@@ -398,26 +670,68 @@ public sealed class SpaceWmsRuntimeServiceTests
 
     private sealed class RecordingRuntimeSource : ISpaceWmsRuntimeSource
     {
+        private int _callIndex;
+
         public string RuntimeAdapterId => "recording-wms-v1";
-        public string RuntimeDataSourceId => "RECORDING_WMS";
-        public SpaceWmsDataSourceKind RuntimeDataSourceKind =>
+        public string RuntimeDataSourceId => DeclaredDataSourceId;
+        public SpaceWmsDataSourceKind RuntimeDataSourceKind => DeclaredKind;
+        public string DeclaredDataSourceId { get; set; } = "RECORDING_WMS";
+        public SpaceWmsDataSourceKind DeclaredKind { get; set; } =
             SpaceWmsDataSourceKind.Real;
+        public Exception? QueryException { get; set; }
+        public Guid? UnexpectedInventoryIdentity { get; set; }
+        public IReadOnlyList<DateTimeOffset> Observations { get; set; } =
+            [new DateTimeOffset(Now)];
+        public IReadOnlyList<string> ReturnedDataSourceIds { get; set; } =
+            ["RECORDING_WMS"];
+        public IReadOnlyList<SpaceWmsDataSourceKind>? ReturnedKinds { get; set; }
+        public bool ReturnNullInventoryItems { get; set; }
+        public bool ReturnNullTaskItems { get; set; }
+        public SpaceWmsInventoryItem? InventoryOverrideItem { get; set; }
+        public SpaceWmsTaskItem? TaskOverrideItem { get; set; }
         public List<int> InventoryBatchSizes { get; } = [];
         public List<int> TaskBatchSizes { get; } = [];
         public IReadOnlyList<SpaceWmsInventoryItem> InventoryItems { get; init; } = [];
         public IReadOnlyList<SpaceWmsTaskItem> TaskItems { get; init; } = [];
+
+        public void ResetCalls()
+        {
+            _callIndex = 0;
+            InventoryBatchSizes.Clear();
+            TaskBatchSizes.Clear();
+        }
 
         public Task<SpaceWmsInventoryResult> QueryInventoryAsync(
             SpaceWmsInventoryQuery request,
             CancellationToken ct = default)
         {
             ct.ThrowIfCancellationRequested();
+            if (QueryException is not null)
+                throw QueryException;
             InventoryBatchSizes.Add(request.LogicalIds.Count);
             var requested = request.LogicalIds.ToHashSet();
+            IReadOnlyList<SpaceWmsInventoryItem>? items = ReturnNullInventoryItems
+                ? null
+                : UnexpectedInventoryIdentity.HasValue
+                    ?
+                    [
+                        new(
+                            UnexpectedInventoryIdentity.Value,
+                            "UNEXPECTED",
+                            1,
+                            0,
+                            null,
+                            null,
+                            null),
+                    ]
+                    : InventoryOverrideItem is not null
+                        ? [InventoryOverrideItem]
+                        : InventoryItems
+                            .Where(value => requested.Contains(value.LogicalId))
+                            .ToArray();
             return Task.FromResult(new SpaceWmsInventoryResult(
-                Source(),
-                InventoryItems.Where(value => requested.Contains(value.LogicalId))
-                    .ToArray()));
+                NextSource(),
+                items!));
         }
 
         public Task<SpaceWmsTaskResult> QueryTasksAsync(
@@ -425,18 +739,33 @@ public sealed class SpaceWmsRuntimeServiceTests
             CancellationToken ct = default)
         {
             ct.ThrowIfCancellationRequested();
+            if (QueryException is not null)
+                throw QueryException;
             TaskBatchSizes.Add(request.LogicalIds.Count);
             var requested = request.LogicalIds.ToHashSet();
+            IReadOnlyList<SpaceWmsTaskItem>? items = ReturnNullTaskItems
+                ? null
+                : TaskOverrideItem is not null
+                    ? [TaskOverrideItem]
+                    : TaskItems.Where(value => requested.Contains(value.LogicalId))
+                        .ToArray();
             return Task.FromResult(new SpaceWmsTaskResult(
-                Source(),
-                TaskItems.Where(value => requested.Contains(value.LogicalId))
-                    .ToArray()));
+                NextSource(),
+                items!));
         }
 
-        private static SpaceWmsSourceMetadata Source() =>
-            new(
-                SpaceWmsDataSourceKind.Real,
-                "RECORDING_WMS",
-                new DateTimeOffset(Now));
+        private SpaceWmsSourceMetadata NextSource()
+        {
+            var sourceIndex = Math.Min(_callIndex, ReturnedDataSourceIds.Count - 1);
+            var observationIndex = Math.Min(_callIndex, Observations.Count - 1);
+            var kind = ReturnedKinds is null
+                ? DeclaredKind
+                : ReturnedKinds[Math.Min(_callIndex, ReturnedKinds.Count - 1)];
+            _callIndex++;
+            return new SpaceWmsSourceMetadata(
+                kind,
+                ReturnedDataSourceIds[sourceIndex],
+                Observations[observationIndex]);
+        }
     }
 }
