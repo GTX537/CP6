@@ -4,12 +4,12 @@
 - 集成分支：`integration/space-v1-20260730`
 - 基线父提交：`dcc1ac9a`
 - 初始集成提交：`539d56de`
-- 当前代码集成提交：`c1043d15`
+- 当前代码集成提交：`39146c38`
 - 候选检查点：`checkpoint/space-candidate-20260730` / `0d25da4d`
 
 ## 1. 本轮结论
 
-E00 S01–S04、E01 S01–S06、E04 S01–S02、E05 S01–S05、E07 S01–S04 与 E13 S01–S03、S12 已进入唯一集成基线。E02 S01 的中立实验门禁也已进入基线，但最终技术选型仍受外部数据、授权和环境阻塞，不计作完整签收。各切片均按冻结边界独立实现或由候选重建并经过审查，没有整包合入候选。
+E00 S01–S04、E01 S01–S06、E04 S01–S03、E05 S01–S05、E07 S01–S04 与 E13 S01–S03、S12 已进入唯一集成基线。E02 S01 的中立实验门禁也已进入基线，但最终技术选型仍受外部数据、授权和环境阻塞，不计作完整签收。各切片均按冻结边界独立实现或由候选重建并经过审查，没有整包合入候选。
 
 ## 2. 已集成范围
 
@@ -28,6 +28,7 @@ E00 S01–S04、E01 S01–S06、E04 S01–S02、E05 S01–S05、E07 S01–S04 �
 | E02 S01（Partial） | 中立数据审计、压力生成、适配器运行证据、ODA/APS preflight、隔离供应商淘汰复现；不含生产 CAD 适配器 |
 | E04 S01 | PDF/PNG/JPG 底图上传、E01 安全扫描复用、Ready/Clean 楼层挂接、受权 Blob 读取、PDF.js/Konva 渲染及显隐/透明度/锁定 |
 | E04 S02 | 两点等比标定、第三控制点动态误差阈值、坐标确认、append-only 审计记录、Floor/Version revision、Clone 保真与双语言 SDK |
+| E04 S03 | 通用元素 2D 单选、属性面板、删除标记、Draft/revision 并发、原子命令批次、协议幂等与逐命令 before/after 审计 |
 | E05 S01 | 通用元素稳定类型、Geometry v1、类型化属性、运行态命名空间拒绝与租户隔离持久化 |
 | E05 S02 | 逐层货架独立尺寸/格口/深度/横梁/承重、原子更新、数据库约束和 Clone 保真 |
 | E05 S03 | Design Revision 权威的统一只读场景 DTO、稳定排序、运行态零载荷、租户/Site 门禁、OpenAPI 与双语言 SDK |
@@ -62,11 +63,11 @@ E00 S01–S04、E01 S01–S06、E04 S01–S02、E05 S01–S05、E07 S01–S04 �
 
 | 检查 | 结果 |
 |---|---|
-| `dotnet build CP6.slnx --no-restore` | E04-S02 合并态完整 solution 构建 0 errors、0 warnings；包含 Desktop 与 Android |
-| Space UnitTests | 210 passed |
-| Space IntegrationTests | 默认门禁 48 passed、43 SQL-gated skipped；E04-S02 文件安全、标定 Migration 与 Clone SQL 聚焦 9/9 通过；E05-S01/S02/S03/S04 与受影响 Clone SQL 串行聚焦 11/11 通过；此前 82 项 SQL 基线为 77 首轮通过、5 个并行超时项串行复跑通过 |
+| `dotnet build CP6.slnx --no-restore` | E04-S03 合并态完整 solution 构建 0 errors；包含 Desktop 与 Android；干净编译显式报告 10 个既有 OA/WMS/测试 nullable/analyzer warning |
+| Space UnitTests | 213 passed |
+| Space IntegrationTests | 默认门禁 48 passed、44 SQL-gated skipped；E04-S03 命令闭环 SQL 1/1 无跳过通过；E04-S02 文件安全、标定 Migration 与 Clone SQL 聚焦 9/9 通过；E05-S01/S02/S03/S04 与受影响 Clone SQL 串行聚焦 11/11 通过；此前 82 项 SQL 基线为 77 首轮通过、5 个并行超时项串行复跑通过 |
 | EF Migration 一致性 | `has-pending-model-changes` 通过，无待迁移模型变更 |
-| CP6.Tests | 2687 passed，17 environment-gated skipped |
+| CP6.Tests | E04-S03 OpenAPI/权限聚焦 21/21；全量 2682 passed、6 个既有 RFQ 固定日期失败、17 environment-gated skipped；同一 RFQ 失败已在 `f8dff096` 基线复现 |
 | CP6.Client.Tests | 71 passed |
 | SDK 生成闭环 | drift check、C# build、TypeScript strict compile 通过 |
 | S06 范围与格式门禁 | 触及文件格式、提交差异和后续能力污染扫描通过 |
@@ -86,8 +87,9 @@ E00 S01–S04、E01 S01–S06、E04 S01–S02、E05 S01–S05、E07 S01–S04 �
 | E05 S05 参数化渲染门禁 | 非均匀逐层货架、五种通用几何、point 必需 Z、固定资产版本/范围、安全 transform 白名单、稳定拾取映射和旧货架坐标回归；聚焦 2 files/7 tests、全量 88 files/546 tests、type-check 与 production build 通过 |
 | E04 S01 底图门禁 | 仅 PDF/PNG/JPG；100 MiB；Pending→扫描终态同步；仅 Ready/Clean 可挂接和读取；租户/Site/Version/Floor 复验；本地 PDF.js worker；显隐/透明度/锁定；SQL 6/6、前端聚焦 2 files/11 tests |
 | E04 S02 标定门禁 | 像素左上/Y-down 到毫米 Y-up 的统一等比变换；P1/P2 退化拒绝；第三点误差≤`max(50mm, 实际距离×0.2%)`；服务端重算、append-only、来源复合外键、幂等与 Clone 保真；SQL 9/9、前端聚焦 3 files/15 tests |
+| E04 S03 元素编辑门禁 | Active 通用元素单选、统一 RenderPlan 2D 投影、位置/尺寸/业务关联/类型化属性编辑、RemoveRequested 删除；Draft/revision 失败关闭；命令批次幂等、全目标预加载、失败全回滚和逐命令 before/after 审计；SQL 1/1、OpenAPI/权限 21/21、前端聚焦 4 files/8 tests |
 | Frontend type-check | 通过 |
-| Frontend unit tests | 91 files，561 tests passed |
+| Frontend unit tests | 95 files，569 tests passed；E04-S03 合并态再次全量通过 |
 | Frontend production build | 通过；保留既有大 chunk 提示 |
 
 默认跳过项是环境门禁，不视为失败，也不记作已通过。2026-07-30 已在提权的本地测试宿主中使用 Windows 集成认证连接 `KOUSQLSERVER`。E13-S12 后 82 个 Space Integration 测试全部实际启动：77 个首轮通过；5 个测试在并行创建、Migration 或删除独立数据库的压力下超时，随后逐项串行复跑全部通过。E13-S12 聚焦 SQL 测试最终 4/4 无跳过通过。
@@ -120,9 +122,11 @@ E04 S01 功能提交 `1d57a3b5` 与 no-ff 集成提交 `e8e84853` 交付 PDF/PNG
 
 E04 S02 功能提交 `20ee0af0` 与 no-ff 集成提交 `c1043d15` 交付像素左上/Y-down 到楼层毫米 Y-up 的两点等比标定、第三控制点动态误差验证、append-only 标定账本、Floor 当前标定引用、来源一致性复合外键、revision/幂等/Clone 语义，以及 OpenAPI/C#/TypeScript SDK。服务端使用 `max(50mm, P1/P2 实际距离×0.2%)` 重算有效阈值，替换底图会清除旧标定。本卡没有混入 S03/S04 编辑命令。
 
+E04 S03 功能提交 `b322e84a` 与 no-ff 集成提交 `39146c38` 交付通用元素单选、属性面板、RemoveRequested 删除、`UpdateProperties`/`DeleteObject` schema v1 命令批次、Floor/Version revision、持久化幂等响应和逐命令 before/after 审计，以及 Migration `20260731035237_SpaceE04S03ElementCommands`、OpenAPI 与 C#/TypeScript SDK。服务端在 Serializable 事务内预加载全部目标，任一失败整批回滚；相同 `commandBatchId` 只允许回放相同完整请求。本卡没有混入 S04 多选、对齐、分布、阵列或撤销栈。
+
 ## 6. 下一批固定顺序
 
-1. E04 S03：通用元素选择/属性面板；随后按 S04 多选/对齐/分布/阵列推进。
+1. E04 S04：多选、对齐、分布与阵列命令；沿用 S03 命令批次、revision 和审计边界。
 2. E02 S01：获得正式黄金集、DWG/DXF 矩阵、ODA/APS 授权材料和 8 vCPU / 32GiB 冻结 Worker 后，运行同环境试验并按 ADR-0001 评分签收。
 3. E07 S05：等待 E04 S04，不提前采用或切换。
 4. E13 S04/S05：等待 E02 S03、CAD IR 最小化和正式供应商证据；S13/S11/S18 继续等待各自下游链。
