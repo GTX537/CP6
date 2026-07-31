@@ -105,6 +105,144 @@ public sealed class SpaceWmsRuntimeServiceTests
         Assert.Empty(source.TaskBatchSizes);
     }
 
+    [Fact]
+    public async Task Repeated_requested_locations_count_once_toward_query_limit()
+    {
+        var execution = Execution();
+        var clock = new TestClock();
+        await using var context = NewContext(execution, clock);
+        var seeded = await SeedPublishedAsync(context, "L-001");
+        var source = new RecordingRuntimeSource();
+        var service = CreateService(context, execution, clock, seeded.SiteId, source);
+        var repeated = Enumerable.Repeat(seeded.LocationIds[0], 10_001).ToArray();
+
+        await service.QueryInventoryAsync(seeded.SiteId, repeated);
+
+        Assert.Equal([1], source.InventoryBatchSizes);
+    }
+
+    [Fact]
+    public async Task Full_site_query_over_limit_fails_before_wms()
+    {
+        var execution = Execution();
+        var clock = new TestClock();
+        await using var context = NewContext(execution, clock);
+        var seeded = await SeedPublishedAsync(
+            context,
+            Enumerable.Range(1, 10_001)
+                .Select(value => $"L-{value:00000}")
+                .ToArray());
+        var source = new RecordingRuntimeSource();
+        var service = CreateService(context, execution, clock, seeded.SiteId, source);
+
+        var error = await Assert.ThrowsAsync<SpaceProblemException>(() =>
+            service.QueryInventoryAsync(seeded.SiteId));
+
+        Assert.Equal(400, error.StatusCode);
+        Assert.Equal(SpaceErrorCodes.RequestInvalid, error.Code);
+        Assert.Empty(source.InventoryBatchSizes);
+    }
+
+    [Fact]
+    public async Task Current_published_native_and_adopted_identity_collision_fails_before_wms()
+    {
+        var execution = Execution();
+        var clock = new TestClock();
+        await using var context = NewContext(execution, clock);
+        var seeded = await SeedPublishedAsync(context, "NATIVE-01", "ADOPTED-01");
+        var source = new RecordingRuntimeSource();
+        var adoption = SpaceWmsAdoption.Discover(
+            execution.TenantId,
+            seeded.SiteId,
+            source.RuntimeAdapterId,
+            source.RuntimeDataSourceId,
+            source.RuntimeDataSourceKind.ToString(),
+            seeded.LocationIds[0],
+            "external-adopted-01",
+            "ADOPTED-01",
+            true,
+            "1",
+            Hash,
+            Now);
+        adoption.Bind(seeded.PublishedVersionId, seeded.LocationIds[1], Now);
+        context.WmsAdoptions.Add(adoption);
+        await context.SaveChangesAsync();
+        var service = CreateService(context, execution, clock, seeded.SiteId, source);
+
+        var error = await Assert.ThrowsAsync<SpaceProblemException>(() =>
+            service.QueryTasksAsync(seeded.SiteId, [seeded.LocationIds[1]]));
+
+        Assert.Equal(409, error.StatusCode);
+        Assert.Equal(SpaceErrorCodes.WmsAdoptionDuplicate, error.Code);
+        Assert.Empty(source.TaskBatchSizes);
+    }
+
+    [Fact]
+    public async Task Inventory_and_tasks_are_globally_sorted_after_all_chunks()
+    {
+        var execution = Execution();
+        var clock = new TestClock();
+        await using var context = NewContext(execution, clock);
+        var seededLocations = Enumerable.Range(1, 501)
+            .Select(value => new SeedLocation(
+                LogicalId(value),
+                value switch
+                {
+                    1 => "Z-0001",
+                    501 => "A-0001",
+                    _ => $"M-{value:0000}",
+                }))
+            .ToArray();
+        var seeded = await SeedPublishedAsync(context, seededLocations);
+        var firstChunkId = seeded.LocationIds[0];
+        var secondChunkId = seeded.LocationIds[500];
+        var source = new RecordingRuntimeSource
+        {
+            InventoryItems =
+            [
+                new(firstChunkId, "Z-0001", 1, 0, "M1", null, null),
+                new(firstChunkId, "Z-0001", 2, 0, null, "L1", null),
+                new(secondChunkId, "A-0001", 3, 0, "Z1", null, null),
+                new(firstChunkId, "Z-0001", 4, 0, null, null, "C2"),
+                new(firstChunkId, "Z-0001", 5, 0, null, null, "C1"),
+            ],
+            TaskItems =
+            [
+                new("B", "Pick", "Released", 1, firstChunkId, "Z-0001", 1, "M1"),
+                new("A", "Pick", "Released", 2, firstChunkId, "Z-0001", 1, "M1"),
+                new("A", "Pick", "Released", 1, secondChunkId, "A-0001", 1, "M1"),
+                new("A", "Pick", "Released", 1, firstChunkId, "Z-0001", 1, "M1"),
+            ],
+        };
+        var service = CreateService(context, execution, clock, seeded.SiteId, source);
+
+        var inventory = await service.QueryInventoryAsync(seeded.SiteId);
+        var tasks = await service.QueryTasksAsync(seeded.SiteId);
+
+        Assert.Equal(
+            [
+                "A-0001|Z1|<null>|<null>",
+                "Z-0001|<null>|<null>|C1",
+                "Z-0001|<null>|<null>|C2",
+                "Z-0001|<null>|L1|<null>",
+                "Z-0001|M1|<null>|<null>",
+            ],
+            inventory.Items.Select(value =>
+                $"{value.SpaceLocationCode}|{value.MaterialNumber ?? "<null>"}|" +
+                $"{value.LotNumber ?? "<null>"}|{value.ContainerNumber ?? "<null>"}")
+                .ToArray());
+        Assert.Equal(
+            [
+                $"A|1|{firstChunkId:D}",
+                $"A|1|{secondChunkId:D}",
+                $"A|2|{firstChunkId:D}",
+                $"B|1|{firstChunkId:D}",
+            ],
+            tasks.Items.Select(value =>
+                $"{value.TaskId}|{value.SequenceNo}|{value.LocationLogicalId:D}")
+                .ToArray());
+    }
+
     private static TestExecutionContext Execution() =>
         new(Guid.NewGuid(), Guid.NewGuid(), Guid.NewGuid());
 
@@ -128,10 +266,22 @@ public sealed class SpaceWmsRuntimeServiceTests
         Guid PublishedVersionId,
         IReadOnlyList<Guid> LocationIds);
 
+    private sealed record SeedLocation(Guid LogicalId, string Code);
+
     private static async Task<SeededPublished> SeedPublishedAsync(
         SpaceContext context,
-        params string[] locationCodes)
+        params string[] locationCodes) =>
+        await SeedPublishedAsync(
+            context,
+            locationCodes
+                .Select(value => new SeedLocation(Guid.NewGuid(), value))
+                .ToArray());
+
+    private static async Task<SeededPublished> SeedPublishedAsync(
+        SpaceContext context,
+        IReadOnlyList<SeedLocation> seededLocations)
     {
+        var locationCodes = seededLocations.Select(value => value.Code).ToArray();
         var tenantId = context.CurrentTenantId;
         var siteId = Guid.NewGuid();
         var model = SpaceModel.Create(tenantId, siteId);
@@ -163,7 +313,7 @@ public sealed class SpaceWmsRuntimeServiceTests
             depthCount: 1,
             cellWidth: 1_000,
             cellDepth: 1_100);
-        var locationIds = locationCodes.Select(_ => Guid.NewGuid()).ToArray();
+        var locationIds = seededLocations.Select(value => value.LogicalId).ToArray();
         var locations = locationIds.Select((logicalId, index) =>
             SpaceLocationRevision.Create(
                 tenantId, version.Id, logicalId, floorLogicalId,
@@ -190,6 +340,9 @@ public sealed class SpaceWmsRuntimeServiceTests
         await context.SaveChangesAsync();
         return new SeededPublished(siteId, version.Id, locationIds);
     }
+
+    private static Guid LogicalId(int value) =>
+        Guid.Parse($"10000000-0000-0000-0000-{value:000000000000}");
 
     private static SpaceContext NewContext(
         ISpaceExecutionContext execution,

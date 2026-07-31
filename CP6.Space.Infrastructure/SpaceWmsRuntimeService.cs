@@ -81,7 +81,12 @@ public sealed class SpaceWmsRuntimeService : ISpaceWmsRuntimeService
             scope.PublishedVersionId,
             scope.WarehouseCode,
             ToDto(observedSource ?? DeclaredSource()),
-            items);
+            items
+                .OrderBy(value => value.SpaceLocationCode, StringComparer.Ordinal)
+                .ThenBy(value => value.MaterialNumber, StringComparer.Ordinal)
+                .ThenBy(value => value.LotNumber, StringComparer.Ordinal)
+                .ThenBy(value => value.ContainerNumber, StringComparer.Ordinal)
+                .ToArray());
     }
 
     public async Task<SpaceWmsRuntimeTaskResponse> QueryTasksAsync(
@@ -139,7 +144,11 @@ public sealed class SpaceWmsRuntimeService : ISpaceWmsRuntimeService
             scope.PublishedVersionId,
             scope.WarehouseCode,
             ToDto(observedSource ?? DeclaredSource()),
-            items);
+            items
+                .OrderBy(value => value.TaskId, StringComparer.Ordinal)
+                .ThenBy(value => value.SequenceNo)
+                .ThenBy(value => value.LocationLogicalId)
+                .ToArray());
     }
 
     private async Task<RuntimeScope> LoadScopeAsync(
@@ -156,7 +165,10 @@ public sealed class SpaceWmsRuntimeService : ISpaceWmsRuntimeService
                 "locationLogicalIds",
                 "Location identities must be non-empty.");
         }
-        if (locationLogicalIds?.Count > MaxLocationCount)
+        var requestedIds = locationLogicalIds?
+            .Distinct()
+            .ToArray();
+        if (requestedIds?.Length > MaxLocationCount)
         {
             throw Invalid(
                 "locationLogicalIds",
@@ -197,24 +209,29 @@ public sealed class SpaceWmsRuntimeService : ISpaceWmsRuntimeService
                 "publish-version");
         }
 
-        var requestedIds = locationLogicalIds?
-            .Distinct()
-            .ToArray();
-        var locationQuery = _context.LocationRevisions
+        var allActiveLocations = await _context.LocationRevisions
             .AsNoTracking()
             .Where(value =>
                 value.ModelVersionId == publishedVersionId &&
-                value.LifecycleState == SpaceLifecycleState.Active);
-        if (requestedIds is not null)
-            locationQuery = locationQuery.Where(value => requestedIds.Contains(value.LogicalId));
-        var selectedLocations = await locationQuery
+                value.LifecycleState == SpaceLifecycleState.Active)
             .OrderBy(value => value.LogicalId)
             .ToListAsync(cancellationToken);
+        var selectedLocations = requestedIds is null
+            ? allActiveLocations
+            : allActiveLocations
+                .Where(value => requestedIds.Contains(value.LogicalId))
+                .ToList();
         if (requestedIds is not null && selectedLocations.Count != requestedIds.Length)
         {
             throw NotFound(
                 SpaceErrorCodes.LogicalIdNotFound,
                 "A requested location was not found in the current Published version.");
+        }
+        if (selectedLocations.Count > MaxLocationCount)
+        {
+            throw Invalid(
+                "locationLogicalIds",
+                $"No more than {MaxLocationCount} locations may be queried.");
         }
 
         var floors = await _context.FloorRevisions
@@ -247,7 +264,7 @@ public sealed class SpaceWmsRuntimeService : ISpaceWmsRuntimeService
         var rackLevelByPosition = rackLevels.ToDictionary(
             value => (value.RackLogicalId, value.LevelNo));
 
-        var activeLocationIds = selectedLocations
+        var activeLocationIds = allActiveLocations
             .Select(value => value.LogicalId)
             .ToHashSet();
         var adoptions = await _context.WmsAdoptions
@@ -257,7 +274,10 @@ public sealed class SpaceWmsRuntimeService : ISpaceWmsRuntimeService
                 value.AdapterId == _source.RuntimeAdapterId &&
                 value.LocationLogicalId != null)
             .ToListAsync(cancellationToken);
-        if (adoptions
+        var currentAdoptions = adoptions
+            .Where(value => activeLocationIds.Contains(value.LocationLogicalId!.Value))
+            .ToArray();
+        if (currentAdoptions
             .GroupBy(value => value.LocationLogicalId!.Value)
             .Any(group => group.Count() > 1))
         {
@@ -266,7 +286,7 @@ public sealed class SpaceWmsRuntimeService : ISpaceWmsRuntimeService
                 "A Space location has multiple WMS bindings.",
                 "repair-wms-adoption");
         }
-        if (adoptions
+        if (currentAdoptions
             .GroupBy(value => value.WmsLogicalId)
             .Any(group => group.Select(value => value.LocationLogicalId).Distinct().Count() > 1))
         {
@@ -275,9 +295,20 @@ public sealed class SpaceWmsRuntimeService : ISpaceWmsRuntimeService
                 "A WMS location is mapped to multiple Space locations.",
                 "repair-wms-adoption");
         }
-        var adoptionBySpaceId = adoptions
-            .Where(value => activeLocationIds.Contains(value.LocationLogicalId!.Value))
+        var adoptionBySpaceId = currentAdoptions
             .ToDictionary(value => value.LocationLogicalId!.Value);
+        var allCurrentWmsLogicalIds = allActiveLocations
+            .Select(value => adoptionBySpaceId.TryGetValue(value.LogicalId, out var adoption)
+                ? adoption.WmsLogicalId
+                : value.LogicalId)
+            .ToArray();
+        if (allCurrentWmsLogicalIds.Distinct().Count() != allCurrentWmsLogicalIds.Length)
+        {
+            throw Conflict(
+                SpaceErrorCodes.WmsAdoptionDuplicate,
+                "A WMS location is mapped to multiple Space locations.",
+                "repair-wms-adoption");
+        }
 
         var locations = new List<RuntimeLocation>(selectedLocations.Count);
         foreach (var location in selectedLocations)
@@ -347,12 +378,22 @@ public sealed class SpaceWmsRuntimeService : ISpaceWmsRuntimeService
                 anchorZ));
         }
 
-        if (locations.GroupBy(value => value.WmsLogicalId).Any(group => group.Count() > 1))
+        var wmsLogicalIds = locations
+            .Select(value => value.WmsLogicalId)
+            .Distinct()
+            .ToArray();
+        if (wmsLogicalIds.Length != locations.Count)
         {
             throw Conflict(
                 SpaceErrorCodes.WmsAdoptionDuplicate,
                 "A WMS location is mapped to multiple Space locations.",
                 "repair-wms-adoption");
+        }
+        if (wmsLogicalIds.Length > MaxLocationCount)
+        {
+            throw Invalid(
+                "locationLogicalIds",
+                $"No more than {MaxLocationCount} mapped WMS locations may be queried.");
         }
 
         var warehouse = await _warehouses.ResolveAsync(siteId, cancellationToken)
@@ -368,9 +409,6 @@ public sealed class SpaceWmsRuntimeService : ISpaceWmsRuntimeService
             siteId,
             warehouse.WarehouseCode,
             correlationId);
-        var wmsLogicalIds = locations
-            .Select(value => value.WmsLogicalId)
-            .ToArray();
         return new RuntimeScope(
             publishedVersionId,
             warehouse.WarehouseCode,
