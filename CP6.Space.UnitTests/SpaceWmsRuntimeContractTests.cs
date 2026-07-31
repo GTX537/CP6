@@ -31,6 +31,12 @@ public sealed class SpaceWmsRuntimeContractTests
             "LotNumber",
             "ContainerNumber",
             "OwnerId");
+        AssertPropertyOrder<SpaceWmsRuntimeInventoryResponse>(
+            "SiteId",
+            "PublishedVersionId",
+            "WarehouseCode",
+            "Source",
+            "Items");
         AssertPropertyOrder<SpaceWmsRuntimeTaskItemDto>(
             "TaskId",
             "TaskType",
@@ -54,6 +60,12 @@ public sealed class SpaceWmsRuntimeContractTests
             "AnchorZMillimeters",
             "Quantity",
             "MaterialNumber");
+        AssertPropertyOrder<SpaceWmsRuntimeTaskResponse>(
+            "SiteId",
+            "PublishedVersionId",
+            "WarehouseCode",
+            "Source",
+            "Items");
     }
 
     [Fact]
@@ -62,16 +74,21 @@ public sealed class SpaceWmsRuntimeContractTests
         var methods = typeof(ISpaceWmsRuntimeService).GetMethods();
 
         Assert.Equal(2, methods.Length);
+        var inventory = Assert.Single(
+            methods,
+            method => method.Name == "QueryInventoryAsync");
         Assert.Equal(
             typeof(Task<SpaceWmsRuntimeInventoryResponse>),
-            Assert.Single(
-                methods,
-                method => method.Name == "QueryInventoryAsync").ReturnType);
+            inventory.ReturnType);
+        AssertQueryParameters(inventory);
+
+        var tasks = Assert.Single(
+            methods,
+            method => method.Name == "QueryTasksAsync");
         Assert.Equal(
             typeof(Task<SpaceWmsRuntimeTaskResponse>),
-            Assert.Single(
-                methods,
-                method => method.Name == "QueryTasksAsync").ReturnType);
+            tasks.ReturnType);
+        AssertQueryParameters(tasks);
         Assert.Equal(
             "SPACE_WMS_RUNTIME_CONTRACT_VIOLATION",
             SpaceErrorCodes.WmsRuntimeContractViolation);
@@ -86,5 +103,35 @@ public sealed class SpaceWmsRuntimeContractTests
             .ToArray();
 
         Assert.Equal(expected, actual);
+    }
+
+    private static void AssertQueryParameters(MethodInfo method)
+    {
+        var parameters = method.GetParameters();
+
+        Assert.Collection(
+            parameters,
+            parameter =>
+            {
+                Assert.Equal("siteId", parameter.Name);
+                Assert.Equal(typeof(Guid), parameter.ParameterType);
+                Assert.False(parameter.IsOptional);
+            },
+            parameter =>
+            {
+                Assert.Equal("locationLogicalIds", parameter.Name);
+                Assert.Equal(typeof(IReadOnlyCollection<Guid>), parameter.ParameterType);
+                Assert.True(parameter.IsOptional);
+                Assert.True(parameter.HasDefaultValue);
+                Assert.Null(parameter.DefaultValue);
+            },
+            parameter =>
+            {
+                Assert.Equal("cancellationToken", parameter.Name);
+                Assert.Equal(typeof(CancellationToken), parameter.ParameterType);
+                Assert.True(parameter.IsOptional);
+                Assert.True(parameter.HasDefaultValue);
+                Assert.Null(parameter.DefaultValue);
+            });
     }
 }
