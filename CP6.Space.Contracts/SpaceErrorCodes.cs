@@ -43,6 +43,10 @@ public static class SpaceErrorCodes
         "SPACE_UNDERLAY_CALIBRATION_INVALID";
     public const string UnderlayCalibrationOutOfTolerance =
         "SPACE_UNDERLAY_CALIBRATION_OUT_OF_TOLERANCE";
+    public const string FloorRevisionConflict = "SPACE_FLOOR_REVISION_CONFLICT";
+    public const string CommandSchemaUnsupported =
+        "SPACE_COMMAND_SCHEMA_UNSUPPORTED";
+    public const string CommandConflict = "SPACE_COMMAND_CONFLICT";
     public const string SourceUnsafe = "SPACE_SOURCE_UNSAFE";
     public const string JobLeaseLost = "SPACE_JOB_LEASE_LOST";
     public const string JobNotRetryable = "SPACE_JOB_NOT_RETRYABLE";

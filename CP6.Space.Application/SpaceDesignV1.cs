@@ -71,6 +71,12 @@ public interface ISpaceDesignV1Service
         Guid floorLogicalId,
         CancellationToken cancellationToken = default);
 
+    Task<ApplySpaceElementCommandBatchResponse> ApplyElementCommandsAsync(
+        Guid versionId,
+        Guid floorLogicalId,
+        ApplySpaceElementCommandBatchRequest request,
+        CancellationToken cancellationToken = default);
+
     Task<SpacePage<SpaceAssetDto>> GetAssetsAsync(
         string? scope,
         string? category,

@@ -39,6 +39,11 @@ export interface ISpaceDesignV1Client {
     getScene(versionId: string, floorLogicalId: string): Promise<SpaceDesignSceneDto>;
 
     /**
+     * @return OK
+     */
+    applyElementCommands(versionId: string, floorLogicalId: string, body: ApplySpaceElementCommandBatchRequest): Promise<ApplySpaceElementCommandBatchResponse>;
+
+    /**
      * @param scope (optional)
      * @param category (optional)
      * @param limit (optional)
@@ -594,6 +599,102 @@ export class SpaceDesignV1Client implements ISpaceDesignV1Client {
             });
         }
         return Promise.resolve<SpaceDesignSceneDto>(null as any);
+    }
+
+    /**
+     * @return OK
+     */
+    applyElementCommands(versionId: string, floorLogicalId: string, body: ApplySpaceElementCommandBatchRequest): Promise<ApplySpaceElementCommandBatchResponse> {
+        let url_ = this.baseUrl + "/api/space/design/v1/versions/{versionId}/floors/{floorLogicalId}/commands";
+        if (versionId === undefined || versionId === null)
+            throw new globalThis.Error("The parameter 'versionId' must be defined.");
+        url_ = url_.replace("{versionId}", encodeURIComponent("" + versionId));
+        if (floorLogicalId === undefined || floorLogicalId === null)
+            throw new globalThis.Error("The parameter 'floorLogicalId' must be defined.");
+        url_ = url_.replace("{floorLogicalId}", encodeURIComponent("" + floorLogicalId));
+        url_ = url_.replace(/[?&]$/, "");
+
+        const content_ = JSON.stringify(body);
+
+        let options_: RequestInit = {
+            body: content_,
+            method: "POST",
+            headers: {
+                "Content-Type": "application/json",
+                "Accept": "application/json"
+            }
+        };
+
+        return this.http.fetch(url_, options_).then((_response: Response) => {
+            return this.processApplyElementCommands(_response);
+        });
+    }
+
+    protected processApplyElementCommands(response: Response): Promise<ApplySpaceElementCommandBatchResponse> {
+        const status = response.status;
+        let _headers: any = {}; if (response.headers && response.headers.forEach) { response.headers.forEach((v: any, k: any) => _headers[k] = v); };
+        if (status === 200) {
+            return response.text().then((_responseText) => {
+            let result200: any = null;
+            let resultData200 = _responseText === "" ? null : JSON.parse(_responseText, this.jsonParseReviver);
+            result200 = ApplySpaceElementCommandBatchResponse.fromJS(resultData200);
+            return result200;
+            });
+        } else if (status === 400) {
+            return response.text().then((_responseText) => {
+            let result400: any = null;
+            let resultData400 = _responseText === "" ? null : JSON.parse(_responseText, this.jsonParseReviver);
+            result400 = SpaceDesignProblemDetails.fromJS(resultData400);
+            return throwException("Bad Request", status, _responseText, _headers, result400);
+            });
+        } else if (status === 401) {
+            return response.text().then((_responseText) => {
+            let result401: any = null;
+            let resultData401 = _responseText === "" ? null : JSON.parse(_responseText, this.jsonParseReviver);
+            result401 = SpaceDesignProblemDetails.fromJS(resultData401);
+            return throwException("Unauthorized", status, _responseText, _headers, result401);
+            });
+        } else if (status === 403) {
+            return response.text().then((_responseText) => {
+            let result403: any = null;
+            let resultData403 = _responseText === "" ? null : JSON.parse(_responseText, this.jsonParseReviver);
+            result403 = SpaceDesignProblemDetails.fromJS(resultData403);
+            return throwException("Forbidden", status, _responseText, _headers, result403);
+            });
+        } else if (status === 404) {
+            return response.text().then((_responseText) => {
+            let result404: any = null;
+            let resultData404 = _responseText === "" ? null : JSON.parse(_responseText, this.jsonParseReviver);
+            result404 = SpaceDesignProblemDetails.fromJS(resultData404);
+            return throwException("Not Found", status, _responseText, _headers, result404);
+            });
+        } else if (status === 409) {
+            return response.text().then((_responseText) => {
+            let result409: any = null;
+            let resultData409 = _responseText === "" ? null : JSON.parse(_responseText, this.jsonParseReviver);
+            result409 = SpaceDesignProblemDetails.fromJS(resultData409);
+            return throwException("Conflict", status, _responseText, _headers, result409);
+            });
+        } else if (status === 422) {
+            return response.text().then((_responseText) => {
+            let result422: any = null;
+            let resultData422 = _responseText === "" ? null : JSON.parse(_responseText, this.jsonParseReviver);
+            result422 = SpaceDesignProblemDetails.fromJS(resultData422);
+            return throwException("Unprocessable Content", status, _responseText, _headers, result422);
+            });
+        } else if (status === 500) {
+            return response.text().then((_responseText) => {
+            let result500: any = null;
+            let resultData500 = _responseText === "" ? null : JSON.parse(_responseText, this.jsonParseReviver);
+            result500 = SpaceDesignProblemDetails.fromJS(resultData500);
+            return throwException("Internal Server Error", status, _responseText, _headers, result500);
+            });
+        } else if (status !== 200 && status !== 204) {
+            return response.text().then((_responseText) => {
+            return throwException("An unexpected server error occurred.", status, _responseText, _headers);
+            });
+        }
+        return Promise.resolve<ApplySpaceElementCommandBatchResponse>(null as any);
     }
 
     /**
@@ -1779,6 +1880,126 @@ export class SpaceDesignV1Client implements ISpaceDesignV1Client {
     }
 }
 
+export class ApplySpaceElementCommandBatchRequest implements IApplySpaceElementCommandBatchRequest {
+    schemaVersion?: number;
+    commandBatchId?: string;
+    clientInstanceId?: string;
+    expectedFloorRevision?: number;
+    commands?: SpaceElementCommandDto[] | undefined;
+
+    constructor(data?: IApplySpaceElementCommandBatchRequest) {
+        if (data) {
+            for (var property in data) {
+                if (data.hasOwnProperty(property))
+                    (this as any)[property] = (data as any)[property];
+            }
+        }
+    }
+
+    init(_data?: any) {
+        if (_data) {
+            this.schemaVersion = _data["schemaVersion"];
+            this.commandBatchId = _data["commandBatchId"];
+            this.clientInstanceId = _data["clientInstanceId"];
+            this.expectedFloorRevision = _data["expectedFloorRevision"];
+            if (Array.isArray(_data["commands"])) {
+                this.commands = [] as any;
+                for (let item of _data["commands"])
+                    this.commands!.push(SpaceElementCommandDto.fromJS(item));
+            }
+        }
+    }
+
+    static fromJS(data: any): ApplySpaceElementCommandBatchRequest {
+        data = typeof data === 'object' ? data : {};
+        let result = new ApplySpaceElementCommandBatchRequest();
+        result.init(data);
+        return result;
+    }
+
+    toJSON(data?: any) {
+        data = typeof data === 'object' ? data : {};
+        data["schemaVersion"] = this.schemaVersion;
+        data["commandBatchId"] = this.commandBatchId;
+        data["clientInstanceId"] = this.clientInstanceId;
+        data["expectedFloorRevision"] = this.expectedFloorRevision;
+        if (Array.isArray(this.commands)) {
+            data["commands"] = [];
+            for (let item of this.commands)
+                data["commands"].push(item ? item.toJSON() : undefined as any);
+        }
+        return data;
+    }
+}
+
+export interface IApplySpaceElementCommandBatchRequest {
+    schemaVersion?: number;
+    commandBatchId?: string;
+    clientInstanceId?: string;
+    expectedFloorRevision?: number;
+    commands?: SpaceElementCommandDto[] | undefined;
+}
+
+export class ApplySpaceElementCommandBatchResponse implements IApplySpaceElementCommandBatchResponse {
+    commandBatchId?: string;
+    floorRevision?: number;
+    versionContentRevision?: number;
+    affectedObjects?: SpaceElementCommandResultDto[] | undefined;
+    idempotentReplay?: boolean;
+
+    constructor(data?: IApplySpaceElementCommandBatchResponse) {
+        if (data) {
+            for (var property in data) {
+                if (data.hasOwnProperty(property))
+                    (this as any)[property] = (data as any)[property];
+            }
+        }
+    }
+
+    init(_data?: any) {
+        if (_data) {
+            this.commandBatchId = _data["commandBatchId"];
+            this.floorRevision = _data["floorRevision"];
+            this.versionContentRevision = _data["versionContentRevision"];
+            if (Array.isArray(_data["affectedObjects"])) {
+                this.affectedObjects = [] as any;
+                for (let item of _data["affectedObjects"])
+                    this.affectedObjects!.push(SpaceElementCommandResultDto.fromJS(item));
+            }
+            this.idempotentReplay = _data["idempotentReplay"];
+        }
+    }
+
+    static fromJS(data: any): ApplySpaceElementCommandBatchResponse {
+        data = typeof data === 'object' ? data : {};
+        let result = new ApplySpaceElementCommandBatchResponse();
+        result.init(data);
+        return result;
+    }
+
+    toJSON(data?: any) {
+        data = typeof data === 'object' ? data : {};
+        data["commandBatchId"] = this.commandBatchId;
+        data["floorRevision"] = this.floorRevision;
+        data["versionContentRevision"] = this.versionContentRevision;
+        if (Array.isArray(this.affectedObjects)) {
+            data["affectedObjects"] = [];
+            for (let item of this.affectedObjects)
+                data["affectedObjects"].push(item ? item.toJSON() : undefined as any);
+        }
+        data["idempotentReplay"] = this.idempotentReplay;
+        return data;
+    }
+}
+
+export interface IApplySpaceElementCommandBatchResponse {
+    commandBatchId?: string;
+    floorRevision?: number;
+    versionContentRevision?: number;
+    affectedObjects?: SpaceElementCommandResultDto[] | undefined;
+    idempotentReplay?: boolean;
+}
+
 export class AttachSpaceUnderlayRequest implements IAttachSpaceUnderlayRequest {
     sourceId?: string;
     expectedFloorRevision?: number;
@@ -2557,6 +2778,166 @@ export interface ISpaceDesignSceneDto {
     locations?: SpaceSceneLocationDto[] | undefined;
     elements?: SpaceSceneElementDto[] | undefined;
     elementAttributes?: SpaceSceneElementAttributeDto[] | undefined;
+}
+
+export class SpaceElementAttributeWriteDto implements ISpaceElementAttributeWriteDto {
+    namespace?: string | undefined;
+    key?: string | undefined;
+    valueType?: string | undefined;
+    value?: string | undefined;
+    unit?: string | undefined;
+
+    constructor(data?: ISpaceElementAttributeWriteDto) {
+        if (data) {
+            for (var property in data) {
+                if (data.hasOwnProperty(property))
+                    (this as any)[property] = (data as any)[property];
+            }
+        }
+    }
+
+    init(_data?: any) {
+        if (_data) {
+            this.namespace = _data["namespace"];
+            this.key = _data["key"];
+            this.valueType = _data["valueType"];
+            this.value = _data["value"];
+            this.unit = _data["unit"];
+        }
+    }
+
+    static fromJS(data: any): SpaceElementAttributeWriteDto {
+        data = typeof data === 'object' ? data : {};
+        let result = new SpaceElementAttributeWriteDto();
+        result.init(data);
+        return result;
+    }
+
+    toJSON(data?: any) {
+        data = typeof data === 'object' ? data : {};
+        data["namespace"] = this.namespace;
+        data["key"] = this.key;
+        data["valueType"] = this.valueType;
+        data["value"] = this.value;
+        data["unit"] = this.unit;
+        return data;
+    }
+}
+
+export interface ISpaceElementAttributeWriteDto {
+    namespace?: string | undefined;
+    key?: string | undefined;
+    valueType?: string | undefined;
+    value?: string | undefined;
+    unit?: string | undefined;
+}
+
+export class SpaceElementCommandDto implements ISpaceElementCommandDto {
+    commandId?: string;
+    type?: string | undefined;
+    targetLogicalId?: string;
+    updateProperties?: SpaceUpdateElementPropertiesDto;
+
+    constructor(data?: ISpaceElementCommandDto) {
+        if (data) {
+            for (var property in data) {
+                if (data.hasOwnProperty(property))
+                    (this as any)[property] = (data as any)[property];
+            }
+        }
+    }
+
+    init(_data?: any) {
+        if (_data) {
+            this.commandId = _data["commandId"];
+            this.type = _data["type"];
+            this.targetLogicalId = _data["targetLogicalId"];
+            this.updateProperties = _data["updateProperties"] ? SpaceUpdateElementPropertiesDto.fromJS(_data["updateProperties"]) : undefined as any;
+        }
+    }
+
+    static fromJS(data: any): SpaceElementCommandDto {
+        data = typeof data === 'object' ? data : {};
+        let result = new SpaceElementCommandDto();
+        result.init(data);
+        return result;
+    }
+
+    toJSON(data?: any) {
+        data = typeof data === 'object' ? data : {};
+        data["commandId"] = this.commandId;
+        data["type"] = this.type;
+        data["targetLogicalId"] = this.targetLogicalId;
+        data["updateProperties"] = this.updateProperties ? this.updateProperties.toJSON() : undefined as any;
+        return data;
+    }
+}
+
+export interface ISpaceElementCommandDto {
+    commandId?: string;
+    type?: string | undefined;
+    targetLogicalId?: string;
+    updateProperties?: SpaceUpdateElementPropertiesDto;
+}
+
+export class SpaceElementCommandResultDto implements ISpaceElementCommandResultDto {
+    commandId?: string;
+    type?: string | undefined;
+    targetLogicalId?: string;
+    element?: SpaceSceneElementDto;
+    attributes?: SpaceSceneElementAttributeDto[] | undefined;
+
+    constructor(data?: ISpaceElementCommandResultDto) {
+        if (data) {
+            for (var property in data) {
+                if (data.hasOwnProperty(property))
+                    (this as any)[property] = (data as any)[property];
+            }
+        }
+    }
+
+    init(_data?: any) {
+        if (_data) {
+            this.commandId = _data["commandId"];
+            this.type = _data["type"];
+            this.targetLogicalId = _data["targetLogicalId"];
+            this.element = _data["element"] ? SpaceSceneElementDto.fromJS(_data["element"]) : undefined as any;
+            if (Array.isArray(_data["attributes"])) {
+                this.attributes = [] as any;
+                for (let item of _data["attributes"])
+                    this.attributes!.push(SpaceSceneElementAttributeDto.fromJS(item));
+            }
+        }
+    }
+
+    static fromJS(data: any): SpaceElementCommandResultDto {
+        data = typeof data === 'object' ? data : {};
+        let result = new SpaceElementCommandResultDto();
+        result.init(data);
+        return result;
+    }
+
+    toJSON(data?: any) {
+        data = typeof data === 'object' ? data : {};
+        data["commandId"] = this.commandId;
+        data["type"] = this.type;
+        data["targetLogicalId"] = this.targetLogicalId;
+        data["element"] = this.element ? this.element.toJSON() : undefined as any;
+        if (Array.isArray(this.attributes)) {
+            data["attributes"] = [];
+            for (let item of this.attributes)
+                data["attributes"].push(item ? item.toJSON() : undefined as any);
+        }
+        return data;
+    }
+}
+
+export interface ISpaceElementCommandResultDto {
+    commandId?: string;
+    type?: string | undefined;
+    targetLogicalId?: string;
+    element?: SpaceSceneElementDto;
+    attributes?: SpaceSceneElementAttributeDto[] | undefined;
 }
 
 export class SpaceFileDto implements ISpaceFileDto {
@@ -3813,6 +4194,94 @@ export interface ISpaceUnderlayCalibrationPointDto {
     pixelY?: number;
     worldX?: number;
     worldY?: number;
+}
+
+export class SpaceUpdateElementPropertiesDto implements ISpaceUpdateElementPropertiesDto {
+    geometryJson?: string | undefined;
+    x?: number;
+    y?: number;
+    z?: number;
+    rotationZ?: number;
+    width?: number;
+    height?: number;
+    depth?: number;
+    businessCode?: string | undefined;
+    linkedEntityType?: string | undefined;
+    linkedLogicalId?: string | undefined;
+    attributes?: SpaceElementAttributeWriteDto[] | undefined;
+
+    constructor(data?: ISpaceUpdateElementPropertiesDto) {
+        if (data) {
+            for (var property in data) {
+                if (data.hasOwnProperty(property))
+                    (this as any)[property] = (data as any)[property];
+            }
+        }
+    }
+
+    init(_data?: any) {
+        if (_data) {
+            this.geometryJson = _data["geometryJson"];
+            this.x = _data["x"];
+            this.y = _data["y"];
+            this.z = _data["z"];
+            this.rotationZ = _data["rotationZ"];
+            this.width = _data["width"];
+            this.height = _data["height"];
+            this.depth = _data["depth"];
+            this.businessCode = _data["businessCode"];
+            this.linkedEntityType = _data["linkedEntityType"];
+            this.linkedLogicalId = _data["linkedLogicalId"];
+            if (Array.isArray(_data["attributes"])) {
+                this.attributes = [] as any;
+                for (let item of _data["attributes"])
+                    this.attributes!.push(SpaceElementAttributeWriteDto.fromJS(item));
+            }
+        }
+    }
+
+    static fromJS(data: any): SpaceUpdateElementPropertiesDto {
+        data = typeof data === 'object' ? data : {};
+        let result = new SpaceUpdateElementPropertiesDto();
+        result.init(data);
+        return result;
+    }
+
+    toJSON(data?: any) {
+        data = typeof data === 'object' ? data : {};
+        data["geometryJson"] = this.geometryJson;
+        data["x"] = this.x;
+        data["y"] = this.y;
+        data["z"] = this.z;
+        data["rotationZ"] = this.rotationZ;
+        data["width"] = this.width;
+        data["height"] = this.height;
+        data["depth"] = this.depth;
+        data["businessCode"] = this.businessCode;
+        data["linkedEntityType"] = this.linkedEntityType;
+        data["linkedLogicalId"] = this.linkedLogicalId;
+        if (Array.isArray(this.attributes)) {
+            data["attributes"] = [];
+            for (let item of this.attributes)
+                data["attributes"].push(item ? item.toJSON() : undefined as any);
+        }
+        return data;
+    }
+}
+
+export interface ISpaceUpdateElementPropertiesDto {
+    geometryJson?: string | undefined;
+    x?: number;
+    y?: number;
+    z?: number;
+    rotationZ?: number;
+    width?: number;
+    height?: number;
+    depth?: number;
+    businessCode?: string | undefined;
+    linkedEntityType?: string | undefined;
+    linkedLogicalId?: string | undefined;
+    attributes?: SpaceElementAttributeWriteDto[] | undefined;
 }
 
 export class SpaceVersionDto implements ISpaceVersionDto {

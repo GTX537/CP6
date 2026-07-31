@@ -297,6 +297,228 @@ public sealed class SpaceDesignSceneSqlServerTests
         });
     }
 
+    [SqlServerFact]
+    public async Task Element_commands_update_delete_replay_and_audit_atomically()
+    {
+        await WithDatabaseAsync(async (connectionString, execution, clock) =>
+        {
+            await using var context = CreateContext(
+                connectionString,
+                execution,
+                clock);
+            var seeded = await SeedDesignModelAsync(
+                context,
+                execution.ActorId,
+                clock.UtcNow);
+            var draft = SpaceModelVersion.CreateDraft(
+                execution.TenantId,
+                seeded.Model.Id,
+                2,
+                "Element editing",
+                seeded.Published.Id);
+            seeded.Model.ReserveDraft(draft);
+            var floor = SpaceFloorRevision.Create(
+                execution.TenantId,
+                draft.Id,
+                Guid.NewGuid(),
+                seeded.Model.SiteId,
+                1,
+                "F1",
+                "Floor 1",
+                height: 6000);
+            var element = SpaceElementRevision.Create(
+                execution.TenantId,
+                draft.Id,
+                Guid.NewGuid(),
+                floor.LogicalId,
+                SpaceElementTypes.Column,
+                """
+                {"schemaVersion":1,"kind":"box","width":400,"height":5000,"depth":400}
+                """);
+            element.ConfigurePlacement(1000, 2000, 0, 0, 400, 5000, 400);
+            var attribute = SpaceElementAttribute.Create(
+                execution.TenantId,
+                element,
+                SpaceElementAttributeNamespaces.Design,
+                "label",
+                SpaceElementAttributeValueTypes.String,
+                "Column A");
+            context.AddRange(draft, floor, element, attribute);
+            await context.SaveChangesAsync();
+
+            var service = NewService(
+                context,
+                execution,
+                clock,
+                seeded.Model.SiteId);
+            var update = new ApplySpaceElementCommandBatchRequest(
+                SpaceElementCommandContract.SchemaVersion,
+                Guid.NewGuid(),
+                Guid.NewGuid(),
+                ExpectedFloorRevision: 0,
+                [
+                    new SpaceElementCommandDto(
+                        Guid.NewGuid(),
+                        SpaceElementCommandContract.UpdateProperties,
+                        element.LogicalId,
+                        new SpaceUpdateElementPropertiesDto(
+                            """
+                            {"schemaVersion":1,"kind":"box","width":600,"height":5200,"depth":500}
+                            """,
+                            X: 1200,
+                            Y: 2200,
+                            Z: 0,
+                            RotationZ: 90,
+                            Width: 600,
+                            Height: 5200,
+                            Depth: 500,
+                            BusinessCode: "C-100",
+                            LinkedEntityType: null,
+                            LinkedLogicalId: null,
+                            [
+                                new SpaceElementAttributeWriteDto(
+                                    SpaceElementAttributeNamespaces.Design,
+                                    "label",
+                                    SpaceElementAttributeValueTypes.String,
+                                    "Column B",
+                                    null),
+                                new SpaceElementAttributeWriteDto(
+                                    SpaceElementAttributeNamespaces.Manufacturer,
+                                    "material",
+                                    SpaceElementAttributeValueTypes.String,
+                                    "steel",
+                                    null),
+                            ]))
+                ]);
+
+            var updated = await service.ApplyElementCommandsAsync(
+                draft.Id,
+                floor.LogicalId,
+                update);
+            var replay = await service.ApplyElementCommandsAsync(
+                draft.Id,
+                floor.LogicalId,
+                update);
+
+            Assert.Equal(1, updated.FloorRevision);
+            Assert.Equal(1, updated.VersionContentRevision);
+            Assert.False(updated.IdempotentReplay);
+            Assert.True(replay.IdempotentReplay);
+            Assert.Equal(updated.FloorRevision, replay.FloorRevision);
+            Assert.Single(updated.AffectedObjects);
+            Assert.Equal(1200, updated.AffectedObjects[0].Element.X);
+            Assert.Equal("C-100", updated.AffectedObjects[0].Element.BusinessCode);
+            Assert.Equal(2, updated.AffectedObjects[0].Attributes.Count);
+            Assert.Single(context.ElementCommandBatches);
+            Assert.Single(context.ElementCommandRecords);
+            var audit = await context.ElementCommandRecords
+                .AsNoTracking()
+                .SingleAsync();
+            Assert.Contains("\"businessCode\":null", audit.BeforeJson);
+            Assert.Contains("\"businessCode\":\"C-100\"", audit.AfterJson);
+            Assert.Contains("\"label\"", audit.AfterJson);
+
+            var stale = new ApplySpaceElementCommandBatchRequest(
+                SpaceElementCommandContract.SchemaVersion,
+                Guid.NewGuid(),
+                update.ClientInstanceId,
+                ExpectedFloorRevision: 0,
+                [
+                    new SpaceElementCommandDto(
+                        Guid.NewGuid(),
+                        SpaceElementCommandContract.DeleteObject,
+                        element.LogicalId,
+                        null)
+                ]);
+            var staleProblem = await Assert.ThrowsAsync<SpaceProblemException>(
+                () => service.ApplyElementCommandsAsync(
+                    draft.Id,
+                    floor.LogicalId,
+                    stale));
+            Assert.Equal(
+                SpaceErrorCodes.FloorRevisionConflict,
+                staleProblem.Code);
+            Assert.Equal(409, staleProblem.StatusCode);
+            Assert.Single(context.ElementCommandBatches);
+
+            var atomicFailure = update with
+            {
+                CommandBatchId = Guid.NewGuid(),
+                ExpectedFloorRevision = 1,
+                Commands =
+                [
+                    update.Commands[0] with
+                    {
+                        CommandId = Guid.NewGuid(),
+                        UpdateProperties =
+                            update.Commands[0].UpdateProperties! with
+                            {
+                                X = 1500,
+                            },
+                    },
+                    new SpaceElementCommandDto(
+                        Guid.NewGuid(),
+                        SpaceElementCommandContract.DeleteObject,
+                        Guid.NewGuid(),
+                        null),
+                ],
+            };
+            var atomicProblem = await Assert.ThrowsAsync<SpaceProblemException>(
+                () => service.ApplyElementCommandsAsync(
+                    draft.Id,
+                    floor.LogicalId,
+                    atomicFailure));
+            Assert.Equal(
+                SpaceErrorCodes.LogicalIdNotFound,
+                atomicProblem.Code);
+            Assert.Equal(404, atomicProblem.StatusCode);
+            Assert.Single(context.ElementCommandBatches);
+            Assert.Single(context.ElementCommandRecords);
+            Assert.Equal(
+                1200,
+                await context.ElementRevisions
+                    .AsNoTracking()
+                    .Where(candidate => candidate.Id == element.Id)
+                    .Select(candidate => candidate.X)
+                    .SingleAsync());
+            Assert.Equal(
+                1,
+                await context.FloorRevisions
+                    .AsNoTracking()
+                    .Where(candidate => candidate.Id == floor.Id)
+                    .Select(candidate => candidate.Revision)
+                    .SingleAsync());
+
+            var remove = stale with
+            {
+                CommandBatchId = Guid.NewGuid(),
+                ExpectedFloorRevision = 1,
+                Commands =
+                [
+                    stale.Commands[0] with { CommandId = Guid.NewGuid() }
+                ],
+            };
+            var removed = await service.ApplyElementCommandsAsync(
+                draft.Id,
+                floor.LogicalId,
+                remove);
+            var scene = await service.GetSceneAsync(
+                draft.Id,
+                floor.LogicalId);
+
+            Assert.Equal(2, removed.FloorRevision);
+            Assert.Equal(2, removed.VersionContentRevision);
+            Assert.Equal(
+                SpaceLifecycleState.RemoveRequested.ToString(),
+                removed.AffectedObjects[0].Element.Revision.LifecycleState);
+            Assert.Equal(
+                SpaceLifecycleState.RemoveRequested.ToString(),
+                scene.Elements[0].Revision.LifecycleState);
+            Assert.Equal(2, await context.ElementCommandBatches.CountAsync());
+            Assert.Equal(2, await context.ElementCommandRecords.CountAsync());
+        });
+    }
+
     private static SpaceDesignV1Service NewService(
         SpaceContext context,
         TestExecutionContext execution,

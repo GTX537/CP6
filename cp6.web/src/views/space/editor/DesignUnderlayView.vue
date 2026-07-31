@@ -2,8 +2,14 @@
 import { computed, nextTick, onBeforeUnmount, onMounted, ref, watch } from 'vue'
 import { useRoute } from 'vue-router'
 import { useI18n } from 'vue-i18n'
-import { ElMessage } from 'element-plus'
+import { ElMessage, ElMessageBox } from 'element-plus'
+import {
+  designElementsApi,
+  type ElementPropertiesPayload,
+} from '@/api/space/designElements'
 import { designUnderlayApi } from '@/api/space/designUnderlay'
+import { ElementCanvasLayer } from '@/modules/space-design/canvas2d/ElementCanvasLayer'
+import DesignElementPropertiesPanel from '@/modules/space-design/panels/DesignElementPropertiesPanel.vue'
 import {
   decodeUnderlay,
   releaseDecodedUnderlay,
@@ -17,7 +23,12 @@ import {
   UnderlayStage,
   type UnderlayLayerState,
 } from '@/space-editor/underlay/UnderlayStage'
-import type { ISpaceSceneFloorDto } from '../../../../../sdk/typescript/space-design-v1/spaceDesignV1Client'
+import type {
+  ISpaceDesignSceneDto,
+  ISpaceSceneElementDto,
+  ISpaceSceneElementAttributeDto,
+  ISpaceSceneFloorDto,
+} from '../../../../../sdk/typescript/space-design-v1/spaceDesignV1Client'
 
 const maxUploadBytes = 100 * 1024 * 1024
 const pollAttempts = 30
@@ -29,10 +40,13 @@ const versionId = computed(() => String(route.params.versionId ?? ''))
 const floorLogicalId = computed(() => String(route.params.floorLogicalId ?? ''))
 const canvasRef = ref<HTMLDivElement>()
 const fileInputRef = ref<HTMLInputElement>()
+const designScene = ref<ISpaceDesignSceneDto | null>(null)
 const floor = ref<ISpaceSceneFloorDto | null>(null)
+const selectedLogicalId = ref<string | null>(null)
 const loading = ref(true)
 const uploading = ref(false)
 const savingCalibration = ref(false)
+const savingElement = ref(false)
 const calibrationMode = ref(false)
 const statusText = ref('')
 const visible = ref(true)
@@ -44,11 +58,33 @@ const calibrationPoints = ref([
   { pixel: null as UnderlayPixelPoint | null, worldX: 0, worldY: 10_000 },
 ])
 let stage: UnderlayStage | null = null
+let elementLayer: ElementCanvasLayer | null = null
 let resizeObserver: ResizeObserver | null = null
 let disposed = false
+const clientInstanceId = crypto.randomUUID()
 
 const calibrated = computed(() => Boolean(floor.value?.underlayCalibrationId))
 const hasUnderlay = computed(() => Boolean(floor.value?.underlaySourceId))
+const readonlyScene = computed(() => designScene.value?.versionStatus !== 'Draft')
+const activeElements = computed(() =>
+  (designScene.value?.elements ?? []).filter(
+    (element) => element.revision?.lifecycleState === 'Active',
+  ),
+)
+const selectedElement = computed<ISpaceSceneElementDto | null>(
+  () =>
+    activeElements.value.find(
+      (element) => element.revision?.logicalId === selectedLogicalId.value,
+    ) ?? null,
+)
+const selectedAttributes = computed<ISpaceSceneElementAttributeDto[]>(() => {
+  const revisionId = selectedElement.value?.revision?.revisionId
+  return revisionId
+    ? (designScene.value?.elementAttributes ?? []).filter(
+        (attribute) => attribute.elementRevisionId === revisionId,
+      )
+    : []
+})
 const calibrationPreview = computed(() => {
   const size = stage?.getRasterSize()
   const [point1, point2, validationPoint] = calibrationPoints.value
@@ -89,9 +125,13 @@ onMounted(async () => {
   await nextTick()
   if (!canvasRef.value) return
   stage = new UnderlayStage(canvasRef.value)
+  elementLayer = new ElementCanvasLayer(stage.stage, selectElement)
   resizeObserver = new ResizeObserver((entries) => {
     const size = entries[0]?.contentRect
-    if (size) stage?.resize(size.width, size.height)
+    if (size) {
+      stage?.resize(size.width, size.height)
+      elementLayer?.resize()
+    }
   })
   resizeObserver.observe(canvasRef.value)
   await loadScene()
@@ -100,6 +140,8 @@ onMounted(async () => {
 onBeforeUnmount(() => {
   disposed = true
   resizeObserver?.disconnect()
+  elementLayer?.destroy()
+  elementLayer = null
   stage?.destroy()
   stage = null
 })
@@ -121,7 +163,19 @@ async function loadScene(): Promise<void> {
       floorLogicalId.value,
     )
     if (!scene.floor) throw new Error('Design scene is missing its floor')
+    designScene.value = scene
     floor.value = scene.floor
+    elementLayer?.setScene(scene)
+    if (
+      selectedLogicalId.value &&
+      !scene.elements?.some(
+        (element) =>
+          element.revision?.logicalId === selectedLogicalId.value &&
+          element.revision?.lifecycleState === 'Active',
+      )
+    ) {
+      selectElement(null)
+    }
     statusText.value = scene.floor.underlaySourceId
       ? calibrated.value
         ? t('底图已加载并标定')
@@ -246,6 +300,7 @@ function beginCalibration(): void {
   if (!hasUnderlay.value || !stage?.getRasterSize()) return
   visible.value = true
   calibrationMode.value = true
+  elementLayer?.setEnabled(false)
   resetCalibrationPoints()
 }
 
@@ -261,6 +316,7 @@ function resetCalibrationPoints(): void {
 function cancelCalibration(): void {
   calibrationMode.value = false
   stage?.setCalibrationSelection(false, [])
+  elementLayer?.setEnabled(true)
 }
 
 function onCalibrationPoint(point: UnderlayPixelPoint): void {
@@ -352,6 +408,72 @@ async function saveCalibration(): Promise<void> {
   }
 }
 
+function selectElement(logicalId: string | null): void {
+  if (calibrationMode.value) return
+  selectedLogicalId.value = logicalId
+  elementLayer?.setSelected(logicalId)
+}
+
+async function saveElement(payload: ElementPropertiesPayload): Promise<void> {
+  const currentFloor = floor.value
+  const element = selectedElement.value
+  if (!currentFloor || !element || savingElement.value || readonlyScene.value) {
+    return
+  }
+  savingElement.value = true
+  try {
+    await designElementsApi.update(
+      versionId.value,
+      floorLogicalId.value,
+      currentFloor.revisionNumber ?? 0,
+      clientInstanceId,
+      element,
+      payload,
+    )
+    await loadScene()
+    ElMessage.success(t('元素属性已保存'))
+  } catch {
+    ElMessage.error(t('元素保存失败，请刷新场景后重试'))
+  } finally {
+    savingElement.value = false
+  }
+}
+
+async function removeElement(): Promise<void> {
+  const currentFloor = floor.value
+  const element = selectedElement.value
+  if (!currentFloor || !element || savingElement.value || readonlyScene.value) {
+    return
+  }
+  try {
+    await ElMessageBox.confirm(
+      t('删除会把该草稿元素标记为待移除，是否继续？'),
+      t('删除草稿元素'),
+      { type: 'warning' },
+    )
+  } catch {
+    return
+  }
+
+  savingElement.value = true
+  try {
+    await designElementsApi.remove(
+      versionId.value,
+      floorLogicalId.value,
+      currentFloor.revisionNumber ?? 0,
+      clientInstanceId,
+      element,
+    )
+    selectElement(null)
+    await loadScene()
+    ElMessage.success(t('草稿元素已删除'))
+  } catch {
+    ElMessage.error(t('元素删除失败，请刷新场景后重试'))
+  } finally {
+    savingElement.value = false
+  }
+}
+
 function delay(milliseconds: number): Promise<void> {
   return new Promise((resolve) => setTimeout(resolve, milliseconds))
 }
@@ -361,9 +483,15 @@ function delay(milliseconds: number): Promise<void> {
   <div class="underlay-editor" v-loading="loading">
     <header class="toolbar">
       <div>
-        <div class="title">{{ t('Design V1 底图') }}</div>
+        <div class="title">{{ t('Design V1 楼层编辑器') }}</div>
         <div class="status">
           {{ statusText }}
+          <el-tag size="small" type="info">
+            {{ t('{count} 个可编辑元素', { count: activeElements.length }) }}
+          </el-tag>
+          <el-tag v-if="readonlyScene" size="small" type="danger">
+            {{ t('只读版本') }}
+          </el-tag>
           <el-tag v-if="hasUnderlay" size="small" :type="calibrated ? 'success' : 'warning'">
             {{ calibrated ? t('已标定') : t('未标定') }}
           </el-tag>
@@ -449,6 +577,15 @@ function delay(milliseconds: number): Promise<void> {
           </el-button>
         </div>
       </aside>
+      <DesignElementPropertiesPanel
+        v-else-if="selectedElement"
+        :element="selectedElement"
+        :attributes="selectedAttributes"
+        :saving="savingElement"
+        :readonly="readonlyScene"
+        @save="saveElement"
+        @remove="removeElement"
+      />
     </section>
 
     <input

@@ -786,6 +786,11 @@ public sealed class SpaceElementAttribute : SpaceTenantEntity
         Value = normalized.Value;
         Unit = normalized.Unit;
     }
+
+    public void Remove()
+    {
+        MarkEntityDeleted();
+    }
 }
 
 internal static class SpaceRevisionValue

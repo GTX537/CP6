@@ -1,4 +1,5 @@
 using System.Data;
+using System.Diagnostics;
 using System.Globalization;
 using System.Security.Cryptography;
 using System.Text;
@@ -245,6 +246,230 @@ public sealed class SpaceDesignV1Service : ISpaceDesignV1Service
             locations.Select(ToSceneDto).ToArray(),
             elements.Select(ToSceneDto).ToArray(),
             attributes.Select(ToSceneDto).ToArray());
+    }
+
+    public async Task<ApplySpaceElementCommandBatchResponse>
+        ApplyElementCommandsAsync(
+            Guid versionId,
+            Guid floorLogicalId,
+            ApplySpaceElementCommandBatchRequest request,
+            CancellationToken cancellationToken = default)
+    {
+        ArgumentNullException.ThrowIfNull(request);
+        EnsureExecutionContext();
+        ValidateElementCommandBatch(request);
+
+        var model = await FindModelByVersionAsync(versionId, cancellationToken);
+        EnsureWritable(model);
+        var requestHash = Hash(
+            $"{versionId:D}\n{floorLogicalId:D}\n" +
+            JsonSerializer.Serialize(request, JsonOptions));
+        var replay = await ReadElementCommandReplayAsync(
+            request.CommandBatchId,
+            requestHash,
+            cancellationToken);
+        if (replay is not null)
+            return replay;
+
+        await using var transaction = await _context.Database
+            .BeginTransactionAsync(
+                IsolationLevel.Serializable,
+                cancellationToken);
+        try
+        {
+            var concurrentReplay = await ReadElementCommandReplayAsync(
+                request.CommandBatchId,
+                requestHash,
+                cancellationToken);
+            if (concurrentReplay is not null)
+            {
+                await transaction.CommitAsync(cancellationToken);
+                return concurrentReplay;
+            }
+
+            var version = await _context.Versions
+                              .SingleOrDefaultAsync(
+                                  candidate => candidate.Id == versionId,
+                                  cancellationToken)
+                          ?? throw NotFound(
+                              SpaceErrorCodes.VersionNotFound,
+                              "Space version");
+            if (version.Status != SpaceVersionStatus.Draft)
+            {
+                throw Conflict(
+                    SpaceErrorCodes.VersionStateInvalid,
+                    "Only a Draft version accepts editor commands.",
+                    "open-or-create-draft");
+            }
+
+            var floor = await _context.FloorRevisions
+                            .SingleOrDefaultAsync(
+                                candidate =>
+                                    candidate.ModelVersionId == versionId &&
+                                    candidate.LogicalId == floorLogicalId,
+                                cancellationToken)
+                        ?? throw NotFound(
+                            SpaceErrorCodes.LogicalIdNotFound,
+                            "Space floor logical identity");
+            if (floor.Revision != request.ExpectedFloorRevision)
+            {
+                throw Conflict(
+                    SpaceErrorCodes.FloorRevisionConflict,
+                    $"Expected floor revision {request.ExpectedFloorRevision}, " +
+                    $"but the current revision is {floor.Revision}.",
+                    "reload-floor-scene");
+            }
+
+            var targetIds = request.Commands
+                .Select(command => command.TargetLogicalId)
+                .ToArray();
+            var elements = await _context.ElementRevisions
+                .Where(candidate =>
+                    candidate.ModelVersionId == versionId &&
+                    candidate.FloorLogicalId == floorLogicalId &&
+                    targetIds.Contains(candidate.LogicalId))
+                .ToDictionaryAsync(
+                    candidate => candidate.LogicalId,
+                    cancellationToken);
+            if (elements.Count != targetIds.Length)
+            {
+                throw NotFound(
+                    SpaceErrorCodes.LogicalIdNotFound,
+                    "Space element logical identity");
+            }
+            if (elements.Values.Any(element =>
+                    element.LifecycleState != SpaceLifecycleState.Active))
+            {
+                throw NotFound(
+                    SpaceErrorCodes.LogicalIdNotFound,
+                    "Active Space element logical identity");
+            }
+
+            var elementRevisionIds = elements.Values
+                .Select(element => element.Id)
+                .ToArray();
+            var loadedAttributes = await _context.ElementAttributes
+                .Where(attribute =>
+                    attribute.ModelVersionId == versionId &&
+                    elementRevisionIds.Contains(attribute.ElementRevisionId))
+                .ToListAsync(cancellationToken);
+            var attributesByElement = loadedAttributes
+                .GroupBy(attribute => attribute.ElementRevisionId)
+                .ToDictionary(
+                    group => group.Key,
+                    group => group.ToList());
+
+            var batch = SpaceElementCommandBatch.Create(
+                _execution.TenantId,
+                request.CommandBatchId,
+                versionId,
+                floorLogicalId,
+                request.ClientInstanceId,
+                request.ExpectedFloorRevision,
+                requestHash,
+                _execution.ActorId,
+                RequireUtcNow());
+            _context.ElementCommandBatches.Add(batch);
+
+            var commandResults =
+                new List<(SpaceElementCommandDto Command,
+                    SpaceElementRevision Element,
+                    List<SpaceElementAttribute> Attributes)>();
+            for (var index = 0; index < request.Commands.Count; index++)
+            {
+                var command = request.Commands[index];
+                var element = elements[command.TargetLogicalId];
+                if (!attributesByElement.TryGetValue(
+                        element.Id,
+                        out var attributes))
+                {
+                    attributes = [];
+                    attributesByElement[element.Id] = attributes;
+                }
+
+                var beforeJson = ElementAuditJson(element, attributes);
+                var payloadJson = command.Type switch
+                {
+                    SpaceElementCommandContract.UpdateProperties =>
+                        ApplyElementProperties(
+                            element,
+                            attributes,
+                            command.UpdateProperties!),
+                    SpaceElementCommandContract.DeleteObject =>
+                        ApplyElementDeletion(element),
+                    _ => throw new UnreachableException(),
+                };
+                var afterJson = ElementAuditJson(element, attributes);
+                _context.ElementCommandRecords.Add(
+                    SpaceElementCommandRecord.Create(
+                        _execution.TenantId,
+                        command.CommandId,
+                        batch,
+                        index,
+                        command.Type,
+                        command.TargetLogicalId,
+                        payloadJson,
+                        beforeJson,
+                        afterJson));
+                commandResults.Add((command, element, attributes));
+            }
+
+            floor.AdvanceRevision(request.ExpectedFloorRevision);
+            version.TouchContent();
+            await _context.SaveChangesAsync(cancellationToken);
+
+            var affected = commandResults
+                .Select(result => new SpaceElementCommandResultDto(
+                    result.Command.CommandId,
+                    result.Command.Type,
+                    result.Command.TargetLogicalId,
+                    ToSceneDto(result.Element),
+                    result.Attributes
+                        .Where(attribute => !attribute.IsDeleted)
+                        .OrderBy(attribute => attribute.Namespace)
+                        .ThenBy(attribute => attribute.Key)
+                        .Select(ToSceneDto)
+                        .ToArray()))
+                .ToArray();
+            var response = new ApplySpaceElementCommandBatchResponse(
+                request.CommandBatchId,
+                floor.Revision,
+                version.ContentRevision,
+                affected,
+                IdempotentReplay: false);
+            batch.Complete(
+                floor.Revision,
+                version.ContentRevision,
+                JsonSerializer.Serialize(response, JsonOptions));
+            await _context.SaveChangesAsync(cancellationToken);
+            await transaction.CommitAsync(cancellationToken);
+            return response;
+        }
+        catch (DbUpdateException)
+        {
+            await transaction.RollbackAsync(CancellationToken.None);
+            _context.ChangeTracker.Clear();
+            var concurrentReplay = await ReadElementCommandReplayAsync(
+                request.CommandBatchId,
+                requestHash,
+                cancellationToken);
+            if (concurrentReplay is not null)
+                return concurrentReplay;
+            throw Conflict(
+                SpaceErrorCodes.CommandConflict,
+                "The command batch conflicted with a concurrent editor write.",
+                "reload-floor-scene");
+        }
+        catch (ArgumentException exception)
+        {
+            await transaction.RollbackAsync(CancellationToken.None);
+            throw Invalid("commands", exception.Message);
+        }
+        catch
+        {
+            await transaction.RollbackAsync(CancellationToken.None);
+            throw;
+        }
     }
 
     public async Task<SpacePage<SpaceAssetDto>> GetAssetsAsync(
@@ -823,6 +1048,247 @@ public sealed class SpaceDesignV1Service : ISpaceDesignV1Service
             filterHash,
             ToDto);
     }
+
+    private static void ValidateElementCommandBatch(
+        ApplySpaceElementCommandBatchRequest request)
+    {
+        if (request.SchemaVersion != SpaceElementCommandContract.SchemaVersion)
+        {
+            throw new SpaceProblemException(
+                SpaceErrorCodes.CommandSchemaUnsupported,
+                422,
+                "The command schema is not supported.",
+                $"schemaVersion must be {SpaceElementCommandContract.SchemaVersion}.",
+                "upgrade-client");
+        }
+        if (request.CommandBatchId == Guid.Empty)
+            throw Invalid("commandBatchId", "A non-empty identity is required.");
+        if (request.ClientInstanceId == Guid.Empty)
+            throw Invalid("clientInstanceId", "A non-empty identity is required.");
+        if (request.ExpectedFloorRevision < 0)
+        {
+            throw Invalid(
+                "expectedFloorRevision",
+                "A non-negative revision is required.");
+        }
+        if (request.Commands is null ||
+            request.Commands.Count is < 1 or > 100)
+        {
+            throw Invalid(
+                "commands",
+                "A command batch must contain between 1 and 100 commands.");
+        }
+        if (request.Commands.Any(command => command is null))
+            throw Invalid("commands", "Command entries cannot be null.");
+        if (request.Commands.Any(command =>
+                command.CommandId == Guid.Empty ||
+                command.TargetLogicalId == Guid.Empty))
+        {
+            throw Invalid(
+                "commands",
+                "Every command and target must have a non-empty identity.");
+        }
+        if (request.Commands.Select(command => command.CommandId).Distinct().Count()
+            != request.Commands.Count)
+        {
+            throw Invalid("commands", "Command identities must be unique.");
+        }
+        if (request.Commands
+                .Select(command => command.TargetLogicalId)
+                .Distinct()
+                .Count() != request.Commands.Count)
+        {
+            throw Invalid(
+                "commands",
+                "A target can appear only once in an E04-S03 command batch.");
+        }
+
+        foreach (var command in request.Commands)
+        {
+            switch (command.Type)
+            {
+                case SpaceElementCommandContract.UpdateProperties
+                    when command.UpdateProperties is not null:
+                    if (command.UpdateProperties.Attributes is null ||
+                        command.UpdateProperties.Attributes.Count > 100)
+                    {
+                        throw Invalid(
+                            "commands.updateProperties.attributes",
+                            "At most 100 attributes are allowed.");
+                    }
+                    break;
+                case SpaceElementCommandContract.DeleteObject
+                    when command.UpdateProperties is null:
+                    break;
+                case SpaceElementCommandContract.UpdateProperties:
+                    throw Invalid(
+                        "commands.updateProperties",
+                        "UpdateProperties requires its strongly typed payload.");
+                case SpaceElementCommandContract.DeleteObject:
+                    throw Invalid(
+                        "commands.updateProperties",
+                        "DeleteObject must not contain an update payload.");
+                default:
+                    throw new SpaceProblemException(
+                        SpaceErrorCodes.CommandSchemaUnsupported,
+                        422,
+                        "The command type is not supported.",
+                        $"Unsupported command type '{command.Type}'.",
+                        "upgrade-client");
+            }
+        }
+    }
+
+    private async Task<ApplySpaceElementCommandBatchResponse?>
+        ReadElementCommandReplayAsync(
+            Guid commandBatchId,
+            string requestHash,
+            CancellationToken cancellationToken)
+    {
+        var batch = await _context.ElementCommandBatches
+            .AsNoTracking()
+            .SingleOrDefaultAsync(
+                candidate => candidate.Id == commandBatchId,
+                cancellationToken);
+        if (batch is null)
+            return null;
+        if (!string.Equals(
+                batch.RequestHash,
+                requestHash,
+                StringComparison.Ordinal))
+        {
+            throw Conflict(
+                SpaceErrorCodes.CommandConflict,
+                "The commandBatchId was already used with different input.",
+                "create-new-command-batch");
+        }
+        if (batch.ResponseJson is null)
+        {
+            throw Conflict(
+                SpaceErrorCodes.CommandConflict,
+                "The command batch has not reached a replayable state.",
+                "reload-floor-scene");
+        }
+        return Deserialize<ApplySpaceElementCommandBatchResponse>(
+                batch.ResponseJson)
+            with
+            {
+                IdempotentReplay = true,
+            };
+    }
+
+    private string ApplyElementProperties(
+        SpaceElementRevision element,
+        List<SpaceElementAttribute> attributes,
+        SpaceUpdateElementPropertiesDto payload)
+    {
+        element.UpdateGeometry(payload.GeometryJson);
+        element.ConfigurePlacement(
+            payload.X,
+            payload.Y,
+            payload.Z,
+            payload.RotationZ,
+            payload.Width,
+            payload.Height,
+            payload.Depth);
+        element.ConfigureBusinessLink(
+            payload.BusinessCode,
+            payload.LinkedEntityType,
+            payload.LinkedLogicalId);
+
+        var existing = attributes.ToDictionary(
+            AttributeKey,
+            StringComparer.OrdinalIgnoreCase);
+        var retained = new HashSet<string>(StringComparer.OrdinalIgnoreCase);
+        foreach (var requested in payload.Attributes)
+        {
+            if (requested is null)
+            {
+                throw new ArgumentException(
+                    "Attribute entries cannot be null.",
+                    nameof(payload));
+            }
+            var candidate = SpaceElementAttribute.Create(
+                _execution.TenantId,
+                element,
+                requested.Namespace,
+                requested.Key,
+                requested.ValueType,
+                requested.Value,
+                requested.Unit);
+            var key = AttributeKey(candidate);
+            if (!retained.Add(key))
+            {
+                throw new ArgumentException(
+                    "Element attribute namespace and key pairs must be unique.",
+                    nameof(payload));
+            }
+            if (existing.TryGetValue(key, out var current))
+            {
+                current.UpdateValue(
+                    requested.ValueType,
+                    requested.Value,
+                    requested.Unit);
+                continue;
+            }
+
+            attributes.Add(candidate);
+            _context.ElementAttributes.Add(candidate);
+        }
+
+        foreach (var attribute in attributes.Where(attribute =>
+                     !attribute.IsDeleted &&
+                     !retained.Contains(AttributeKey(attribute))))
+        {
+            attribute.Remove();
+        }
+        return JsonSerializer.Serialize(payload, JsonOptions);
+    }
+
+    private static string ApplyElementDeletion(SpaceElementRevision element)
+    {
+        element.ChangeLifecycle(SpaceLifecycleState.RemoveRequested);
+        return "{}";
+    }
+
+    private static string ElementAuditJson(
+        SpaceElementRevision element,
+        IEnumerable<SpaceElementAttribute> attributes) =>
+        JsonSerializer.Serialize(
+            new
+            {
+                element.LogicalId,
+                element.ElementType,
+                element.GeometryJson,
+                element.X,
+                element.Y,
+                element.Z,
+                element.RotationZ,
+                element.Width,
+                element.Height,
+                element.Depth,
+                element.BusinessCode,
+                element.LinkedEntityType,
+                element.LinkedLogicalId,
+                LifecycleState = element.LifecycleState.ToString(),
+                Attributes = attributes
+                    .Where(attribute => !attribute.IsDeleted)
+                    .OrderBy(attribute => attribute.Namespace)
+                    .ThenBy(attribute => attribute.Key)
+                    .Select(attribute => new
+                    {
+                        attribute.Namespace,
+                        attribute.Key,
+                        attribute.ValueType,
+                        attribute.Value,
+                        attribute.Unit,
+                    })
+                    .ToArray(),
+            },
+            JsonOptions);
+
+    private static string AttributeKey(SpaceElementAttribute attribute) =>
+        $"{attribute.Namespace}\u001f{attribute.Key}";
 
     private async Task<SpaceModel> FindModelBySiteAsync(
         Guid siteId,
