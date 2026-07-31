@@ -4,12 +4,12 @@
 - 集成分支：`integration/space-v1-20260730`
 - 基线父提交：`dcc1ac9a`
 - 初始集成提交：`539d56de`
-- 当前代码集成提交：`888de795`
+- 当前代码集成提交：`a3864d9c`
 - 候选检查点：`checkpoint/space-candidate-20260730` / `0d25da4d`
 
 ## 1. 本轮结论
 
-E00 S01–S04、E01 S01–S06、E05 S01–S04、E07 S01–S04 与 E13 S01–S03、S12 已进入唯一集成基线。E02 S01 的中立实验门禁也已进入基线，但最终技术选型仍受外部数据、授权和环境阻塞，不计作完整签收。各切片均按冻结边界独立实现或由候选重建并经过审查，没有整包合入候选。
+E00 S01–S04、E01 S01–S06、E05 S01–S05、E07 S01–S04 与 E13 S01–S03、S12 已进入唯一集成基线。E02 S01 的中立实验门禁也已进入基线，但最终技术选型仍受外部数据、授权和环境阻塞，不计作完整签收。各切片均按冻结边界独立实现或由候选重建并经过审查，没有整包合入候选。
 
 ## 2. 已集成范围
 
@@ -30,6 +30,7 @@ E00 S01–S04、E01 S01–S06、E05 S01–S04、E07 S01–S04 与 E13 S01–S03�
 | E05 S02 | 逐层货架独立尺寸/格口/深度/横梁/承重、原子更新、数据库约束和 Clone 保真 |
 | E05 S03 | Design Revision 权威的统一只读场景 DTO、稳定排序、运行态零载荷、租户/Site 门禁、OpenAPI 与双语言 SDK |
 | E05 S04 | System 公共只读与 Tenant 私有资产库、不可变具体版本、元素复合引用、升级失败关闭、OpenAPI 与双语言 SDK |
+| E05 S05 | Design API v1 确定性参数化 3D 渲染、非均匀逐层货架、通用元素/安全资产占位、稳定拾取映射与坐标契约回归 |
 | E07 S01–S03 | WMS 能力合同、CP6 真实适配器、持久化幂等账本、标准模拟器、库存/任务查询与故障注入 |
 | E07 S04 | 确定性 500 货架/10,000 库位标准仓、WMS seed、DXF/底图/期望答案、加载器与 6 个固定故障样本 |
 | E13 S01 | Provider/确定性端口、Schema v1 强类型契约、租户/Site/别名/数据策略/外部开关门禁、默认 Disabled 与配额失败关闭 |
@@ -80,8 +81,9 @@ E00 S01–S04、E01 S01–S06、E05 S01–S04、E07 S01–S04 与 E13 S01–S03�
 | E05 S02 逐层货架门禁 | 每层高度/格口/深度/尺寸/横梁/承重独立；原子更新、层号唯一、负值 Check Constraint、租户隔离和 Clone 保真；S02 SQL 1/1、Clone SQL 6/6 |
 | E05 S03 统一场景门禁 | `schemaVersion=1`、`authority=DesignRevision`、`runtimeOverlayIncluded=false`；Version/Floor/Site/租户失败关闭；OpenAPI/权限 13/13、S03 SQL 1/1、E05 链与 Clone SQL 9/9 |
 | E05 S04 资产库门禁 | System 全租户只读可见、Tenant 所有者隔离、租户 API 拒绝 System 写入、具体版本不可变、元素 scope/owner/version 复合约束、旧引用 Migration 51000 失败关闭；OpenAPI/权限 14/14、S04 SQL 2/2、E05 链与 Clone SQL 11/11 |
+| E05 S05 参数化渲染门禁 | 非均匀逐层货架、五种通用几何、point 必需 Z、固定资产版本/范围、安全 transform 白名单、稳定拾取映射和旧货架坐标回归；聚焦 2 files/7 tests、全量 88 files/546 tests、type-check 与 production build 通过 |
 | Frontend type-check | 通过 |
-| Frontend unit tests | 86 files，539 tests passed |
+| Frontend unit tests | 88 files，546 tests passed |
 | Frontend production build | 通过；保留既有大 chunk 提示 |
 
 默认跳过项是环境门禁，不视为失败，也不记作已通过。2026-07-30 已在提权的本地测试宿主中使用 Windows 集成认证连接 `KOUSQLSERVER`。E13-S12 后 82 个 Space Integration 测试全部实际启动：77 个首轮通过；5 个测试在并行创建、Migration 或删除独立数据库的压力下超时，随后逐项串行复跑全部通过。E13-S12 聚焦 SQL 测试最终 4/4 无跳过通过。
@@ -108,11 +110,12 @@ E05 S03 功能提交 `00021f0a` 与 no-ff 集成提交 `a1edecef` 交付统一 D
 
 E05 S04 功能提交 `85b57960` 与 no-ff 集成提交 `888de795` 交付 System 公共只读与 Tenant 私有资产库、不可变资产版本、元素精确版本引用、Migration `20260731010047_SpaceE05S04AssetLibrary`、幂等 SQL、OpenAPI 与 C#/TypeScript SDK。旧的非空 `ModelAssetId` 无法证明其指向资产头还是具体版本，Migration 因此以 SQL 错误 51000 失败关闭，不静默转换或清空。Scene 只公开 `ModelAssetScope`，内部 Owner Tenant ID 不进入公开契约。本卡没有 S05 参数化生成器、外部 URL 加载、脚本执行或运行态覆盖。
 
+E05 S05 功能提交 `856f138c` 与 no-ff 集成提交 `a3864d9c` 交付版本固定为 `space-parametric-v1` 的前端确定性参数化渲染器。它直接消费统一 Design scene DTO，使用逐层真实参数生成货架，并支持 box/path/polygon/point/asset、安全资产占位和稳定拾取映射；point 缺失领域必需 Z、未知资产 transform、运行态载荷或不一致资产引用均失败关闭。本卡无后端、API、OpenAPI、SDK、数据库或 Migration 变更。
+
 ## 6. 下一批固定顺序
 
-1. E05 S05：扩展逐层货架与通用元素参数化 3D 生成；复用 S04 的内部具体资产版本引用，不扩大为外部 URL 或脚本执行。
-2. E02 S01：获得正式黄金集、DWG/DXF 矩阵、ODA/APS 授权材料和 8 vCPU / 32GiB 冻结 Worker 后，运行同环境试验并按 ADR-0001 评分签收。
-3. E07 S05：等待 E04 S04，不提前采用或切换。
-4. E13 S04/S05：等待 E02 S03、CAD IR 最小化和正式供应商证据；S13/S11/S18 继续等待各自下游链。
+1. E02 S01：获得正式黄金集、DWG/DXF 矩阵、ODA/APS 授权材料和 8 vCPU / 32GiB 冻结 Worker 后，运行同环境试验并按 ADR-0001 评分签收。
+2. E07 S05：等待 E04 S04，不提前采用或切换。
+3. E13 S04/S05：等待 E02 S03、CAD IR 最小化和正式供应商证据；S13/S11/S18 继续等待各自下游链。
 
 每个子任务必须独立提取、审查、迁移验证、测试和提交。E05–E12 候选不得整包 merge 或 cherry-pick。
