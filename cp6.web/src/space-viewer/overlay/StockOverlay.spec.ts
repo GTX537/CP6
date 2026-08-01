@@ -18,6 +18,7 @@ vi.mock('@/api/space/runtime', () => ({
 function fakeViewer() {
   return {
     setInstanceColor: vi.fn(),
+    setInstanceColors: vi.fn(),
     requestRender: vi.fn(),
   }
 }
@@ -66,8 +67,24 @@ describe('StockOverlay', () => {
     overlay.setMode('status')
     overlay.apply()
 
-    expect(viewer.setInstanceColor).toHaveBeenCalledWith('location-1', binStatusToHex(0))
-    expect(viewer.setInstanceColor).toHaveBeenCalledWith('location-2', binStatusToHex(1))
+    expect(viewer.setInstanceColors).toHaveBeenCalledWith([
+      { locationId: 'location-1', hex: binStatusToHex(0) },
+      { locationId: 'location-2', hex: binStatusToHex(1) },
+    ])
+    expect(viewer.requestRender).toHaveBeenCalled()
+  })
+
+  it('falls back to individual color writes for older viewer handles', () => {
+    const viewer = {
+      setInstanceColor: vi.fn(),
+      requestRender: vi.fn(),
+    }
+    const overlay = new StockOverlay(viewer as never)
+    overlay.setSnapshot([dto('location-1', 'A-01', 1)], real)
+
+    overlay.apply()
+
+    expect(viewer.setInstanceColor).toHaveBeenCalledWith('location-1', binStatusToHex(1))
     expect(viewer.requestRender).toHaveBeenCalled()
   })
 
@@ -77,7 +94,7 @@ describe('StockOverlay', () => {
     overlay.setSnapshot([dto('location-1', 'A-01', 1)], real)
     overlay.setMode('off')
     overlay.apply()
-    expect(viewer.setInstanceColor).not.toHaveBeenCalled()
+    expect(viewer.setInstanceColors).not.toHaveBeenCalled()
   })
 
   it('gets selected stock by logical identity', () => {
@@ -94,7 +111,7 @@ describe('StockOverlay', () => {
     overlay.apply()
     expect(overlay.source.kind).toBe('Simulated')
     expect(overlay.getStock('location-1')).not.toBeNull()
-    expect(viewer.setInstanceColor).toHaveBeenCalled()
+    expect(viewer.setInstanceColors).toHaveBeenCalled()
   })
 
   it('does not treat unavailable source as empty real stock', () => {
@@ -107,7 +124,7 @@ describe('StockOverlay', () => {
     })
     overlay.apply()
     expect(overlay.getStock('location-1')).toBeNull()
-    expect(viewer.setInstanceColor).not.toHaveBeenCalled()
+    expect(viewer.setInstanceColors).not.toHaveBeenCalled()
     expect(overlay.source.kind).toBe('Unavailable')
   })
 

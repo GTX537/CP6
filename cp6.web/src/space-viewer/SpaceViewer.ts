@@ -214,6 +214,11 @@ export class SpaceViewer implements ViewerHandle {
     this.requestRender()
   }
 
+  setInstanceColors(colors: Iterable<{ locationId: string; hex: number }>): void {
+    this._buckets?.setColors(colors)
+    this.requestRender()
+  }
+
   requestRender(): void { this._loop.markDirty() }
 
   onReady(cb: () => void): void { this._readyCbs.push(cb) }

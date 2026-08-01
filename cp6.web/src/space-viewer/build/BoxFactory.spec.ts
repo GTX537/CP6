@@ -1,5 +1,5 @@
 import { describe, expect, it } from 'vitest'
-import { Quaternion, Vector3 } from 'three'
+import { Matrix4, Quaternion, Vector3 } from 'three'
 import type { EditorScene } from '@/types/space/scene'
 import { makeInstanceMatrix } from './BoxFactory'
 import { SceneBuilder } from './SceneBuilder'
@@ -21,7 +21,7 @@ describe('makeInstanceMatrix', () => {
     expect(localX.z).toBeCloseTo(0)
   })
 
-  it('centers legacy rack frames around the origin corner using contract degrees', () => {
+  it('centers instanced rack frames around the origin corner using contract degrees', () => {
     const scene: EditorScene = {
       source: {
         kind: 'Real',
@@ -69,14 +69,23 @@ describe('makeInstanceMatrix', () => {
     const result = new SceneBuilder().build(scene)
     const frame = result.objects
       .flatMap((object) => object.children)
-      .find((object) => object.type === 'LineSegments')
+      .find((object) => object.name === 'space-instanced-racks')
 
     expect(frame).toBeDefined()
-    expect(frame!.scale.toArray()).toEqual([2000, 600, 3000])
-    expect(frame!.position.x).toBeCloseTo(-200)
-    expect(frame!.position.y).toBeCloseTo(1200)
-    expect(frame!.position.z).toBeCloseTo(1550)
-    expect(frame!.rotation.z).toBeCloseTo(Math.PI / 2)
+    const matrix = new Matrix4()
+    ;(frame as { getMatrixAt: (index: number, target: Matrix4) => void }).getMatrixAt(0, matrix)
+    const position = new Vector3()
+    const rotation = new Quaternion()
+    const scale = new Vector3()
+    matrix.decompose(position, rotation, scale)
+    const localX = new Vector3(1, 0, 0).applyQuaternion(rotation)
+
+    expect(scale.toArray()).toEqual([2000, 600, 3000])
+    expect(position.x).toBeCloseTo(-200)
+    expect(position.y).toBeCloseTo(1200)
+    expect(position.z).toBeCloseTo(1550)
+    expect(localX.x).toBeCloseTo(0)
+    expect(localX.y).toBeCloseTo(1)
     result.buckets.dispose()
   })
 })

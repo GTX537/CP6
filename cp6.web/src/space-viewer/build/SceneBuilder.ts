@@ -4,16 +4,14 @@ import {
   ShapeGeometry,
   Object3D,
   Group,
-  LineSegments,
-  LineBasicMaterial,
-  EdgesGeometry,
   MeshBasicMaterial,
   Color,
   PlaneGeometry,
 } from 'three'
-import type { EditorScene, ZoneVO, AisleVO, RackVO } from '@/types/space/scene'
+import type { EditorScene, ZoneVO, AisleVO } from '@/types/space/scene'
 import { InstancedBuckets } from './InstancedBuckets'
-import { UNIT_BOX, addLights, makeRackEdges, zoneMaterial } from './BoxFactory'
+import { addLights, zoneMaterial } from './BoxFactory'
+import { buildInstancedRacks } from './InstancedRacks'
 import {
   ParametricDesignSceneBuilder,
   type ParametricDesignSceneBuildResult,
@@ -93,10 +91,7 @@ export class SceneBuilder {
 
     // Rack frames
     const rackGroup = new Group()
-    for (const rack of scene.racks) {
-      const frame = this._buildRackFrame(rack)
-      rackGroup.add(frame)
-    }
+    rackGroup.add(buildInstancedRacks(scene.racks))
     objects.push(rackGroup)
 
     // InstancedBuckets for locations (synchronous build — requestIdleCallback batching is a K-3+ refinement)
@@ -164,25 +159,6 @@ export class SceneBuilder {
       depthWrite: false,
     })
     return new Mesh(geo, mat)
-  }
-
-  private _buildRackFrame(rack: RackVO): LineSegments {
-    const frame = makeRackEdges()
-    // Size = total rack envelope in mm
-    const w = rack.cols * rack.cellW
-    const h = rack.levels * rack.cellH
-    const d = rack.depthCount * rack.cellD
-    const radians = (rack.rotationZ * Math.PI) / 180
-    const centerX = w / 2
-    const centerY = d / 2
-    frame.scale.set(w, d, h)
-    frame.position.set(
-      rack.x + centerX * Math.cos(radians) - centerY * Math.sin(radians),
-      rack.y + centerX * Math.sin(radians) + centerY * Math.cos(radians),
-      rack.z + h / 2,
-    )
-    frame.rotation.z = radians
-    return frame
   }
 
   private _parsePolygon(polyStr: string): [number, number][] {
