@@ -9,6 +9,7 @@ using Microsoft.EntityFrameworkCore.Migrations;
 
 namespace CP6.Space.IntegrationTests;
 
+[Collection(SpaceSqlServerCollection.Name)]
 public sealed class SpaceAssetLibrarySqlServerTests
 {
     private const string ContentHash =
@@ -308,8 +309,26 @@ public sealed class SpaceAssetLibrarySqlServerTests
                 1,
                 "F1",
                 "Floor 1");
-            context.Add(floor);
-            await context.SaveChangesAsync();
+            // The current entity contains columns introduced after the migration
+            // under test. Seed only the schema that existed at E05-S02 so this
+            // test reaches the intended legacy ModelAssetId migration guard.
+            await context.Database.ExecuteSqlInterpolatedAsync(
+                $$"""
+                INSERT INTO [Space_FloorRevision]
+                    ([Id], [BoundaryJson], [CoordinateSystem], [CreatedAtUtc],
+                     [CreatedBy], [Elevation], [FloorCode], [Height], [IsDeleted],
+                     [Level], [LifecycleState], [LogicalId], [ModelVersionId],
+                     [ModifiedAtUtc], [ModifiedBy], [Name], [Revision],
+                     [SiteLogicalId], [SourceId], [SourceRef], [TenantId],
+                     [UnderlayOffsetX], [UnderlayOffsetY], [UnderlayRotationZ],
+                     [UnderlayScale], [UnderlaySourceId])
+                VALUES
+                    ({{floor.Id}}, N'[]', N'Local', {{clock.UtcNow}},
+                     {{execution.ActorId}}, 0, N'F1', 0, 0, 1, 0,
+                     {{floor.LogicalId}}, {{version.Id}}, NULL, NULL, N'Floor 1',
+                     1, {{model.SiteId}}, NULL, NULL, {{execution.TenantId}},
+                     0, 0, 0, NULL, NULL);
+                """);
 
             await context.Database.ExecuteSqlInterpolatedAsync(
                 $$"""

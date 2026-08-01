@@ -69,6 +69,10 @@ public sealed class SpaceContext : DbContext
         Set<SpaceElementCommandRecord>();
     public DbSet<SpaceWmsAdoption> WmsAdoptions =>
         Set<SpaceWmsAdoption>();
+    public DbSet<SpaceExternalOrganization> ExternalOrganizations =>
+        Set<SpaceExternalOrganization>();
+    public DbSet<SpaceExternalMembership> ExternalMemberships =>
+        Set<SpaceExternalMembership>();
 
     protected override void OnModelCreating(ModelBuilder modelBuilder)
     {
@@ -88,6 +92,8 @@ public sealed class SpaceContext : DbContext
         ConfigureElementCommandBatch(modelBuilder);
         ConfigureElementCommandRecord(modelBuilder);
         ConfigureWmsAdoption(modelBuilder);
+        ConfigureExternalOrganization(modelBuilder);
+        ConfigureExternalMembership(modelBuilder);
         ConfigureFile(modelBuilder);
         ConfigureSource(modelBuilder);
         ConfigureJob(modelBuilder);
@@ -2104,6 +2110,151 @@ public sealed class SpaceContext : DbContext
         property
             .HasColumnType("nvarchar(max)")
             .IsRequired();
+    }
+
+    private void ConfigureExternalOrganization(ModelBuilder modelBuilder)
+    {
+        var entity = modelBuilder.Entity<SpaceExternalOrganization>();
+        entity.ToTable(
+            "Space_ExternalOrganization",
+            table =>
+            {
+                table.HasCheckConstraint(
+                    "CK_Space_ExternalOrganization_BusinessPartner",
+                    "([BusinessPartnerType] IS NULL AND [BusinessPartnerId] IS NULL) OR " +
+                    "([BusinessPartnerType] IS NOT NULL AND [BusinessPartnerId] IS NOT NULL)");
+                table.HasCheckConstraint(
+                    "CK_Space_ExternalOrganization_Type",
+                    "[Type] >= 0 AND [Type] <= 2");
+                table.HasCheckConstraint(
+                    "CK_Space_ExternalOrganization_Status",
+                    "[Status] >= 0 AND [Status] <= 2");
+            });
+        entity.HasKey(x => x.Id);
+        entity.Property(x => x.Id).ValueGeneratedNever();
+        entity.HasAlternateKey(x => new { x.TenantId, x.Id })
+            .HasName("AK_Space_ExternalOrganization_TenantId_Id");
+        ConfigureTenantEntity(entity);
+
+        entity.Property(x => x.Type)
+            .HasConversion<short>()
+            .HasColumnType("smallint");
+        entity.Property(x => x.BusinessPartnerType)
+            .HasMaxLength(50)
+            .IsUnicode(false);
+        entity.Property(x => x.Code).HasMaxLength(50).IsRequired();
+        entity.Property(x => x.NormalizedCode)
+            .HasMaxLength(50)
+            .IsUnicode(false)
+            .IsRequired();
+        entity.Property(x => x.Name).HasMaxLength(200).IsRequired();
+        entity.Property(x => x.Status)
+            .HasConversion<short>()
+            .HasColumnType("smallint");
+        entity.Property(x => x.SecurityStamp)
+            .HasColumnType("bigint");
+        entity.Property(x => x.RowVersion).IsRowVersion();
+
+        entity.HasIndex(x => new
+            {
+                x.TenantId,
+                x.Type,
+                x.NormalizedCode,
+            })
+            .IsUnique()
+            .HasFilter("[IsDeleted] = 0")
+            .HasDatabaseName(
+                "UX_Space_ExternalOrganization_Tenant_Type_Code");
+        entity.HasIndex(x => new
+            {
+                x.TenantId,
+                x.Type,
+                x.BusinessPartnerType,
+                x.BusinessPartnerId,
+            })
+            .IsUnique()
+            .HasFilter(
+                "[BusinessPartnerId] IS NOT NULL AND [IsDeleted] = 0")
+            .HasDatabaseName(
+                "UX_Space_ExternalOrganization_Tenant_Type_Partner");
+        entity.HasIndex(x => new { x.TenantId, x.Status, x.Name })
+            .HasDatabaseName(
+                "IX_Space_ExternalOrganization_Tenant_Status_Name");
+
+        entity.HasQueryFilter(
+            x => x.TenantId == CurrentTenantId && !x.IsDeleted);
+    }
+
+    private void ConfigureExternalMembership(ModelBuilder modelBuilder)
+    {
+        var entity = modelBuilder.Entity<SpaceExternalMembership>();
+        entity.ToTable(
+            "Space_ExternalMembership",
+            table =>
+            {
+                table.HasCheckConstraint(
+                    "CK_Space_ExternalMembership_Validity",
+                    "[ValidToUtc] IS NULL OR [ValidToUtc] > [ValidFromUtc]");
+                table.HasCheckConstraint(
+                    "CK_Space_ExternalMembership_Role",
+                    "[Role] >= 0 AND [Role] <= 2");
+                table.HasCheckConstraint(
+                    "CK_Space_ExternalMembership_Status",
+                    "[Status] >= 0 AND [Status] <= 3");
+            });
+        entity.HasKey(x => x.Id);
+        entity.Property(x => x.Id).ValueGeneratedNever();
+        entity.HasAlternateKey(x => new { x.TenantId, x.Id })
+            .HasName("AK_Space_ExternalMembership_TenantId_Id");
+        ConfigureTenantEntity(entity);
+
+        entity.Property(x => x.Role)
+            .HasConversion<short>()
+            .HasColumnType("smallint");
+        entity.Property(x => x.ValidFromUtc)
+            .HasColumnType("datetime2");
+        entity.Property(x => x.ValidToUtc)
+            .HasColumnType("datetime2");
+        entity.Property(x => x.Status)
+            .HasConversion<short>()
+            .HasColumnType("smallint");
+        entity.Property(x => x.AcceptedAtUtc)
+            .HasColumnType("datetime2");
+        entity.Property(x => x.SecurityStamp)
+            .HasColumnType("bigint");
+        entity.Property(x => x.RowVersion).IsRowVersion();
+
+        entity.HasIndex(x => new
+            {
+                x.TenantId,
+                x.OrganizationId,
+                x.UserId,
+            })
+            .IsUnique()
+            .HasFilter("[Status] <> 3 AND [IsDeleted] = 0")
+            .HasDatabaseName(
+                "UX_Space_ExternalMembership_Tenant_Organization_User_Current");
+        entity.HasIndex(x => new
+            {
+                x.TenantId,
+                x.UserId,
+                x.Status,
+                x.ValidFromUtc,
+                x.ValidToUtc,
+            })
+            .HasDatabaseName(
+                "IX_Space_ExternalMembership_Tenant_User_Status_Validity");
+
+        entity.HasOne<SpaceExternalOrganization>()
+            .WithMany()
+            .HasForeignKey(x => new { x.TenantId, x.OrganizationId })
+            .HasPrincipalKey(x => new { x.TenantId, x.Id })
+            .OnDelete(DeleteBehavior.Restrict)
+            .HasConstraintName(
+                "FK_Space_ExternalMembership_Organization_Tenant");
+
+        entity.HasQueryFilter(
+            x => x.TenantId == CurrentTenantId && !x.IsDeleted);
     }
 
     private static void ConfigureTenantEntity<TEntity>(

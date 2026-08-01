@@ -74,6 +74,8 @@ public sealed class SpaceAuditPermissionSeedTests
                     "model:generate-ai",
                     "model:review-ai",
                     "integration:manage",
+                    "external:read",
+                    "external:manage",
                 },
                 action =>
                 {

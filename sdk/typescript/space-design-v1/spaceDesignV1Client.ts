@@ -151,6 +151,44 @@ export interface ISpaceDesignV1Client {
     placeWmsAdoption(versionId: string, adoptionId: string, body: PlaceSpaceWmsAdoptionRequest): Promise<SpaceWmsAdoptionCommandResponse>;
 
     /**
+     * @param type (optional)
+     * @param status (optional)
+     * @return OK
+     */
+    getOrganizations(type: string | undefined, status: string | undefined): Promise<SpaceExternalOrganizationDto[]>;
+
+    /**
+     * @return Created
+     */
+    createOrganization(body: CreateSpaceExternalOrganizationRequest): Promise<SpaceExternalOrganizationDto>;
+
+    /**
+     * @return OK
+     */
+    getOrganization(organizationId: string): Promise<SpaceExternalOrganizationDto>;
+
+    /**
+     * @return OK
+     */
+    updateOrganization(organizationId: string, body: UpdateSpaceExternalOrganizationRequest): Promise<SpaceExternalOrganizationDto>;
+
+    /**
+     * @param status (optional)
+     * @return OK
+     */
+    getMemberships(organizationId: string, status: string | undefined): Promise<SpaceExternalMembershipDto[]>;
+
+    /**
+     * @return Created
+     */
+    createMembership(organizationId: string, body: CreateSpaceExternalMembershipRequest): Promise<SpaceExternalMembershipDto>;
+
+    /**
+     * @return OK
+     */
+    updateMembership(organizationId: string, membershipId: string, body: UpdateSpaceExternalMembershipRequest): Promise<SpaceExternalMembershipDto>;
+
+    /**
      * @param locationLogicalId (optional)
      * @return OK
      */
@@ -2432,6 +2470,671 @@ export class SpaceDesignV1Client implements ISpaceDesignV1Client {
     }
 
     /**
+     * @param type (optional)
+     * @param status (optional)
+     * @return OK
+     */
+    getOrganizations(type: string | undefined, status: string | undefined): Promise<SpaceExternalOrganizationDto[]> {
+        let url_ = this.baseUrl + "/api/space/external-organization?";
+        if (type === null)
+            throw new globalThis.Error("The parameter 'type' cannot be null.");
+        else if (type !== undefined)
+            url_ += "type=" + encodeURIComponent("" + type) + "&";
+        if (status === null)
+            throw new globalThis.Error("The parameter 'status' cannot be null.");
+        else if (status !== undefined)
+            url_ += "status=" + encodeURIComponent("" + status) + "&";
+        url_ = url_.replace(/[?&]$/, "");
+
+        let options_: RequestInit = {
+            method: "GET",
+            headers: {
+                "Accept": "application/json"
+            }
+        };
+
+        return this.http.fetch(url_, options_).then((_response: Response) => {
+            return this.processGetOrganizations(_response);
+        });
+    }
+
+    protected processGetOrganizations(response: Response): Promise<SpaceExternalOrganizationDto[]> {
+        const status = response.status;
+        let _headers: any = {}; if (response.headers && response.headers.forEach) { response.headers.forEach((v: any, k: any) => _headers[k] = v); };
+        if (status === 200) {
+            return response.text().then((_responseText) => {
+            let result200: any = null;
+            let resultData200 = _responseText === "" ? null : JSON.parse(_responseText, this.jsonParseReviver);
+            if (Array.isArray(resultData200)) {
+                result200 = [] as any;
+                for (let item of resultData200)
+                    result200!.push(SpaceExternalOrganizationDto.fromJS(item));
+            }
+            else {
+                result200 = null as any;
+            }
+            return result200;
+            });
+        } else if (status === 400) {
+            return response.text().then((_responseText) => {
+            let result400: any = null;
+            let resultData400 = _responseText === "" ? null : JSON.parse(_responseText, this.jsonParseReviver);
+            result400 = SpaceDesignProblemDetails.fromJS(resultData400);
+            return throwException("Bad Request", status, _responseText, _headers, result400);
+            });
+        } else if (status === 401) {
+            return response.text().then((_responseText) => {
+            let result401: any = null;
+            let resultData401 = _responseText === "" ? null : JSON.parse(_responseText, this.jsonParseReviver);
+            result401 = SpaceDesignProblemDetails.fromJS(resultData401);
+            return throwException("Unauthorized", status, _responseText, _headers, result401);
+            });
+        } else if (status === 403) {
+            return response.text().then((_responseText) => {
+            let result403: any = null;
+            let resultData403 = _responseText === "" ? null : JSON.parse(_responseText, this.jsonParseReviver);
+            result403 = SpaceDesignProblemDetails.fromJS(resultData403);
+            return throwException("Forbidden", status, _responseText, _headers, result403);
+            });
+        } else if (status === 404) {
+            return response.text().then((_responseText) => {
+            let result404: any = null;
+            let resultData404 = _responseText === "" ? null : JSON.parse(_responseText, this.jsonParseReviver);
+            result404 = SpaceDesignProblemDetails.fromJS(resultData404);
+            return throwException("Not Found", status, _responseText, _headers, result404);
+            });
+        } else if (status === 409) {
+            return response.text().then((_responseText) => {
+            let result409: any = null;
+            let resultData409 = _responseText === "" ? null : JSON.parse(_responseText, this.jsonParseReviver);
+            result409 = SpaceDesignProblemDetails.fromJS(resultData409);
+            return throwException("Conflict", status, _responseText, _headers, result409);
+            });
+        } else if (status === 422) {
+            return response.text().then((_responseText) => {
+            let result422: any = null;
+            let resultData422 = _responseText === "" ? null : JSON.parse(_responseText, this.jsonParseReviver);
+            result422 = SpaceDesignProblemDetails.fromJS(resultData422);
+            return throwException("Unprocessable Content", status, _responseText, _headers, result422);
+            });
+        } else if (status === 500) {
+            return response.text().then((_responseText) => {
+            let result500: any = null;
+            let resultData500 = _responseText === "" ? null : JSON.parse(_responseText, this.jsonParseReviver);
+            result500 = SpaceDesignProblemDetails.fromJS(resultData500);
+            return throwException("Internal Server Error", status, _responseText, _headers, result500);
+            });
+        } else if (status !== 200 && status !== 204) {
+            return response.text().then((_responseText) => {
+            return throwException("An unexpected server error occurred.", status, _responseText, _headers);
+            });
+        }
+        return Promise.resolve<SpaceExternalOrganizationDto[]>(null as any);
+    }
+
+    /**
+     * @return Created
+     */
+    createOrganization(body: CreateSpaceExternalOrganizationRequest): Promise<SpaceExternalOrganizationDto> {
+        let url_ = this.baseUrl + "/api/space/external-organization";
+        url_ = url_.replace(/[?&]$/, "");
+
+        const content_ = JSON.stringify(body);
+
+        let options_: RequestInit = {
+            body: content_,
+            method: "POST",
+            headers: {
+                "Content-Type": "application/json",
+                "Accept": "application/json"
+            }
+        };
+
+        return this.http.fetch(url_, options_).then((_response: Response) => {
+            return this.processCreateOrganization(_response);
+        });
+    }
+
+    protected processCreateOrganization(response: Response): Promise<SpaceExternalOrganizationDto> {
+        const status = response.status;
+        let _headers: any = {}; if (response.headers && response.headers.forEach) { response.headers.forEach((v: any, k: any) => _headers[k] = v); };
+        if (status === 201) {
+            return response.text().then((_responseText) => {
+            let result201: any = null;
+            let resultData201 = _responseText === "" ? null : JSON.parse(_responseText, this.jsonParseReviver);
+            result201 = SpaceExternalOrganizationDto.fromJS(resultData201);
+            return result201;
+            });
+        } else if (status === 400) {
+            return response.text().then((_responseText) => {
+            let result400: any = null;
+            let resultData400 = _responseText === "" ? null : JSON.parse(_responseText, this.jsonParseReviver);
+            result400 = SpaceDesignProblemDetails.fromJS(resultData400);
+            return throwException("Bad Request", status, _responseText, _headers, result400);
+            });
+        } else if (status === 401) {
+            return response.text().then((_responseText) => {
+            let result401: any = null;
+            let resultData401 = _responseText === "" ? null : JSON.parse(_responseText, this.jsonParseReviver);
+            result401 = SpaceDesignProblemDetails.fromJS(resultData401);
+            return throwException("Unauthorized", status, _responseText, _headers, result401);
+            });
+        } else if (status === 403) {
+            return response.text().then((_responseText) => {
+            let result403: any = null;
+            let resultData403 = _responseText === "" ? null : JSON.parse(_responseText, this.jsonParseReviver);
+            result403 = SpaceDesignProblemDetails.fromJS(resultData403);
+            return throwException("Forbidden", status, _responseText, _headers, result403);
+            });
+        } else if (status === 404) {
+            return response.text().then((_responseText) => {
+            let result404: any = null;
+            let resultData404 = _responseText === "" ? null : JSON.parse(_responseText, this.jsonParseReviver);
+            result404 = SpaceDesignProblemDetails.fromJS(resultData404);
+            return throwException("Not Found", status, _responseText, _headers, result404);
+            });
+        } else if (status === 409) {
+            return response.text().then((_responseText) => {
+            let result409: any = null;
+            let resultData409 = _responseText === "" ? null : JSON.parse(_responseText, this.jsonParseReviver);
+            result409 = SpaceDesignProblemDetails.fromJS(resultData409);
+            return throwException("Conflict", status, _responseText, _headers, result409);
+            });
+        } else if (status === 422) {
+            return response.text().then((_responseText) => {
+            let result422: any = null;
+            let resultData422 = _responseText === "" ? null : JSON.parse(_responseText, this.jsonParseReviver);
+            result422 = SpaceDesignProblemDetails.fromJS(resultData422);
+            return throwException("Unprocessable Content", status, _responseText, _headers, result422);
+            });
+        } else if (status === 500) {
+            return response.text().then((_responseText) => {
+            let result500: any = null;
+            let resultData500 = _responseText === "" ? null : JSON.parse(_responseText, this.jsonParseReviver);
+            result500 = SpaceDesignProblemDetails.fromJS(resultData500);
+            return throwException("Internal Server Error", status, _responseText, _headers, result500);
+            });
+        } else if (status !== 200 && status !== 204) {
+            return response.text().then((_responseText) => {
+            return throwException("An unexpected server error occurred.", status, _responseText, _headers);
+            });
+        }
+        return Promise.resolve<SpaceExternalOrganizationDto>(null as any);
+    }
+
+    /**
+     * @return OK
+     */
+    getOrganization(organizationId: string): Promise<SpaceExternalOrganizationDto> {
+        let url_ = this.baseUrl + "/api/space/external-organization/{organizationId}";
+        if (organizationId === undefined || organizationId === null)
+            throw new globalThis.Error("The parameter 'organizationId' must be defined.");
+        url_ = url_.replace("{organizationId}", encodeURIComponent("" + organizationId));
+        url_ = url_.replace(/[?&]$/, "");
+
+        let options_: RequestInit = {
+            method: "GET",
+            headers: {
+                "Accept": "application/json"
+            }
+        };
+
+        return this.http.fetch(url_, options_).then((_response: Response) => {
+            return this.processGetOrganization(_response);
+        });
+    }
+
+    protected processGetOrganization(response: Response): Promise<SpaceExternalOrganizationDto> {
+        const status = response.status;
+        let _headers: any = {}; if (response.headers && response.headers.forEach) { response.headers.forEach((v: any, k: any) => _headers[k] = v); };
+        if (status === 200) {
+            return response.text().then((_responseText) => {
+            let result200: any = null;
+            let resultData200 = _responseText === "" ? null : JSON.parse(_responseText, this.jsonParseReviver);
+            result200 = SpaceExternalOrganizationDto.fromJS(resultData200);
+            return result200;
+            });
+        } else if (status === 400) {
+            return response.text().then((_responseText) => {
+            let result400: any = null;
+            let resultData400 = _responseText === "" ? null : JSON.parse(_responseText, this.jsonParseReviver);
+            result400 = SpaceDesignProblemDetails.fromJS(resultData400);
+            return throwException("Bad Request", status, _responseText, _headers, result400);
+            });
+        } else if (status === 401) {
+            return response.text().then((_responseText) => {
+            let result401: any = null;
+            let resultData401 = _responseText === "" ? null : JSON.parse(_responseText, this.jsonParseReviver);
+            result401 = SpaceDesignProblemDetails.fromJS(resultData401);
+            return throwException("Unauthorized", status, _responseText, _headers, result401);
+            });
+        } else if (status === 403) {
+            return response.text().then((_responseText) => {
+            let result403: any = null;
+            let resultData403 = _responseText === "" ? null : JSON.parse(_responseText, this.jsonParseReviver);
+            result403 = SpaceDesignProblemDetails.fromJS(resultData403);
+            return throwException("Forbidden", status, _responseText, _headers, result403);
+            });
+        } else if (status === 404) {
+            return response.text().then((_responseText) => {
+            let result404: any = null;
+            let resultData404 = _responseText === "" ? null : JSON.parse(_responseText, this.jsonParseReviver);
+            result404 = SpaceDesignProblemDetails.fromJS(resultData404);
+            return throwException("Not Found", status, _responseText, _headers, result404);
+            });
+        } else if (status === 409) {
+            return response.text().then((_responseText) => {
+            let result409: any = null;
+            let resultData409 = _responseText === "" ? null : JSON.parse(_responseText, this.jsonParseReviver);
+            result409 = SpaceDesignProblemDetails.fromJS(resultData409);
+            return throwException("Conflict", status, _responseText, _headers, result409);
+            });
+        } else if (status === 422) {
+            return response.text().then((_responseText) => {
+            let result422: any = null;
+            let resultData422 = _responseText === "" ? null : JSON.parse(_responseText, this.jsonParseReviver);
+            result422 = SpaceDesignProblemDetails.fromJS(resultData422);
+            return throwException("Unprocessable Content", status, _responseText, _headers, result422);
+            });
+        } else if (status === 500) {
+            return response.text().then((_responseText) => {
+            let result500: any = null;
+            let resultData500 = _responseText === "" ? null : JSON.parse(_responseText, this.jsonParseReviver);
+            result500 = SpaceDesignProblemDetails.fromJS(resultData500);
+            return throwException("Internal Server Error", status, _responseText, _headers, result500);
+            });
+        } else if (status !== 200 && status !== 204) {
+            return response.text().then((_responseText) => {
+            return throwException("An unexpected server error occurred.", status, _responseText, _headers);
+            });
+        }
+        return Promise.resolve<SpaceExternalOrganizationDto>(null as any);
+    }
+
+    /**
+     * @return OK
+     */
+    updateOrganization(organizationId: string, body: UpdateSpaceExternalOrganizationRequest): Promise<SpaceExternalOrganizationDto> {
+        let url_ = this.baseUrl + "/api/space/external-organization/{organizationId}";
+        if (organizationId === undefined || organizationId === null)
+            throw new globalThis.Error("The parameter 'organizationId' must be defined.");
+        url_ = url_.replace("{organizationId}", encodeURIComponent("" + organizationId));
+        url_ = url_.replace(/[?&]$/, "");
+
+        const content_ = JSON.stringify(body);
+
+        let options_: RequestInit = {
+            body: content_,
+            method: "PUT",
+            headers: {
+                "Content-Type": "application/json",
+                "Accept": "application/json"
+            }
+        };
+
+        return this.http.fetch(url_, options_).then((_response: Response) => {
+            return this.processUpdateOrganization(_response);
+        });
+    }
+
+    protected processUpdateOrganization(response: Response): Promise<SpaceExternalOrganizationDto> {
+        const status = response.status;
+        let _headers: any = {}; if (response.headers && response.headers.forEach) { response.headers.forEach((v: any, k: any) => _headers[k] = v); };
+        if (status === 200) {
+            return response.text().then((_responseText) => {
+            let result200: any = null;
+            let resultData200 = _responseText === "" ? null : JSON.parse(_responseText, this.jsonParseReviver);
+            result200 = SpaceExternalOrganizationDto.fromJS(resultData200);
+            return result200;
+            });
+        } else if (status === 400) {
+            return response.text().then((_responseText) => {
+            let result400: any = null;
+            let resultData400 = _responseText === "" ? null : JSON.parse(_responseText, this.jsonParseReviver);
+            result400 = SpaceDesignProblemDetails.fromJS(resultData400);
+            return throwException("Bad Request", status, _responseText, _headers, result400);
+            });
+        } else if (status === 401) {
+            return response.text().then((_responseText) => {
+            let result401: any = null;
+            let resultData401 = _responseText === "" ? null : JSON.parse(_responseText, this.jsonParseReviver);
+            result401 = SpaceDesignProblemDetails.fromJS(resultData401);
+            return throwException("Unauthorized", status, _responseText, _headers, result401);
+            });
+        } else if (status === 403) {
+            return response.text().then((_responseText) => {
+            let result403: any = null;
+            let resultData403 = _responseText === "" ? null : JSON.parse(_responseText, this.jsonParseReviver);
+            result403 = SpaceDesignProblemDetails.fromJS(resultData403);
+            return throwException("Forbidden", status, _responseText, _headers, result403);
+            });
+        } else if (status === 404) {
+            return response.text().then((_responseText) => {
+            let result404: any = null;
+            let resultData404 = _responseText === "" ? null : JSON.parse(_responseText, this.jsonParseReviver);
+            result404 = SpaceDesignProblemDetails.fromJS(resultData404);
+            return throwException("Not Found", status, _responseText, _headers, result404);
+            });
+        } else if (status === 409) {
+            return response.text().then((_responseText) => {
+            let result409: any = null;
+            let resultData409 = _responseText === "" ? null : JSON.parse(_responseText, this.jsonParseReviver);
+            result409 = SpaceDesignProblemDetails.fromJS(resultData409);
+            return throwException("Conflict", status, _responseText, _headers, result409);
+            });
+        } else if (status === 422) {
+            return response.text().then((_responseText) => {
+            let result422: any = null;
+            let resultData422 = _responseText === "" ? null : JSON.parse(_responseText, this.jsonParseReviver);
+            result422 = SpaceDesignProblemDetails.fromJS(resultData422);
+            return throwException("Unprocessable Content", status, _responseText, _headers, result422);
+            });
+        } else if (status === 500) {
+            return response.text().then((_responseText) => {
+            let result500: any = null;
+            let resultData500 = _responseText === "" ? null : JSON.parse(_responseText, this.jsonParseReviver);
+            result500 = SpaceDesignProblemDetails.fromJS(resultData500);
+            return throwException("Internal Server Error", status, _responseText, _headers, result500);
+            });
+        } else if (status !== 200 && status !== 204) {
+            return response.text().then((_responseText) => {
+            return throwException("An unexpected server error occurred.", status, _responseText, _headers);
+            });
+        }
+        return Promise.resolve<SpaceExternalOrganizationDto>(null as any);
+    }
+
+    /**
+     * @param status (optional)
+     * @return OK
+     */
+    getMemberships(organizationId: string, status: string | undefined): Promise<SpaceExternalMembershipDto[]> {
+        let url_ = this.baseUrl + "/api/space/external-organization/{organizationId}/membership?";
+        if (organizationId === undefined || organizationId === null)
+            throw new globalThis.Error("The parameter 'organizationId' must be defined.");
+        url_ = url_.replace("{organizationId}", encodeURIComponent("" + organizationId));
+        if (status === null)
+            throw new globalThis.Error("The parameter 'status' cannot be null.");
+        else if (status !== undefined)
+            url_ += "status=" + encodeURIComponent("" + status) + "&";
+        url_ = url_.replace(/[?&]$/, "");
+
+        let options_: RequestInit = {
+            method: "GET",
+            headers: {
+                "Accept": "application/json"
+            }
+        };
+
+        return this.http.fetch(url_, options_).then((_response: Response) => {
+            return this.processGetMemberships(_response);
+        });
+    }
+
+    protected processGetMemberships(response: Response): Promise<SpaceExternalMembershipDto[]> {
+        const status = response.status;
+        let _headers: any = {}; if (response.headers && response.headers.forEach) { response.headers.forEach((v: any, k: any) => _headers[k] = v); };
+        if (status === 200) {
+            return response.text().then((_responseText) => {
+            let result200: any = null;
+            let resultData200 = _responseText === "" ? null : JSON.parse(_responseText, this.jsonParseReviver);
+            if (Array.isArray(resultData200)) {
+                result200 = [] as any;
+                for (let item of resultData200)
+                    result200!.push(SpaceExternalMembershipDto.fromJS(item));
+            }
+            else {
+                result200 = null as any;
+            }
+            return result200;
+            });
+        } else if (status === 400) {
+            return response.text().then((_responseText) => {
+            let result400: any = null;
+            let resultData400 = _responseText === "" ? null : JSON.parse(_responseText, this.jsonParseReviver);
+            result400 = SpaceDesignProblemDetails.fromJS(resultData400);
+            return throwException("Bad Request", status, _responseText, _headers, result400);
+            });
+        } else if (status === 401) {
+            return response.text().then((_responseText) => {
+            let result401: any = null;
+            let resultData401 = _responseText === "" ? null : JSON.parse(_responseText, this.jsonParseReviver);
+            result401 = SpaceDesignProblemDetails.fromJS(resultData401);
+            return throwException("Unauthorized", status, _responseText, _headers, result401);
+            });
+        } else if (status === 403) {
+            return response.text().then((_responseText) => {
+            let result403: any = null;
+            let resultData403 = _responseText === "" ? null : JSON.parse(_responseText, this.jsonParseReviver);
+            result403 = SpaceDesignProblemDetails.fromJS(resultData403);
+            return throwException("Forbidden", status, _responseText, _headers, result403);
+            });
+        } else if (status === 404) {
+            return response.text().then((_responseText) => {
+            let result404: any = null;
+            let resultData404 = _responseText === "" ? null : JSON.parse(_responseText, this.jsonParseReviver);
+            result404 = SpaceDesignProblemDetails.fromJS(resultData404);
+            return throwException("Not Found", status, _responseText, _headers, result404);
+            });
+        } else if (status === 409) {
+            return response.text().then((_responseText) => {
+            let result409: any = null;
+            let resultData409 = _responseText === "" ? null : JSON.parse(_responseText, this.jsonParseReviver);
+            result409 = SpaceDesignProblemDetails.fromJS(resultData409);
+            return throwException("Conflict", status, _responseText, _headers, result409);
+            });
+        } else if (status === 422) {
+            return response.text().then((_responseText) => {
+            let result422: any = null;
+            let resultData422 = _responseText === "" ? null : JSON.parse(_responseText, this.jsonParseReviver);
+            result422 = SpaceDesignProblemDetails.fromJS(resultData422);
+            return throwException("Unprocessable Content", status, _responseText, _headers, result422);
+            });
+        } else if (status === 500) {
+            return response.text().then((_responseText) => {
+            let result500: any = null;
+            let resultData500 = _responseText === "" ? null : JSON.parse(_responseText, this.jsonParseReviver);
+            result500 = SpaceDesignProblemDetails.fromJS(resultData500);
+            return throwException("Internal Server Error", status, _responseText, _headers, result500);
+            });
+        } else if (status !== 200 && status !== 204) {
+            return response.text().then((_responseText) => {
+            return throwException("An unexpected server error occurred.", status, _responseText, _headers);
+            });
+        }
+        return Promise.resolve<SpaceExternalMembershipDto[]>(null as any);
+    }
+
+    /**
+     * @return Created
+     */
+    createMembership(organizationId: string, body: CreateSpaceExternalMembershipRequest): Promise<SpaceExternalMembershipDto> {
+        let url_ = this.baseUrl + "/api/space/external-organization/{organizationId}/membership";
+        if (organizationId === undefined || organizationId === null)
+            throw new globalThis.Error("The parameter 'organizationId' must be defined.");
+        url_ = url_.replace("{organizationId}", encodeURIComponent("" + organizationId));
+        url_ = url_.replace(/[?&]$/, "");
+
+        const content_ = JSON.stringify(body);
+
+        let options_: RequestInit = {
+            body: content_,
+            method: "POST",
+            headers: {
+                "Content-Type": "application/json",
+                "Accept": "application/json"
+            }
+        };
+
+        return this.http.fetch(url_, options_).then((_response: Response) => {
+            return this.processCreateMembership(_response);
+        });
+    }
+
+    protected processCreateMembership(response: Response): Promise<SpaceExternalMembershipDto> {
+        const status = response.status;
+        let _headers: any = {}; if (response.headers && response.headers.forEach) { response.headers.forEach((v: any, k: any) => _headers[k] = v); };
+        if (status === 201) {
+            return response.text().then((_responseText) => {
+            let result201: any = null;
+            let resultData201 = _responseText === "" ? null : JSON.parse(_responseText, this.jsonParseReviver);
+            result201 = SpaceExternalMembershipDto.fromJS(resultData201);
+            return result201;
+            });
+        } else if (status === 400) {
+            return response.text().then((_responseText) => {
+            let result400: any = null;
+            let resultData400 = _responseText === "" ? null : JSON.parse(_responseText, this.jsonParseReviver);
+            result400 = SpaceDesignProblemDetails.fromJS(resultData400);
+            return throwException("Bad Request", status, _responseText, _headers, result400);
+            });
+        } else if (status === 401) {
+            return response.text().then((_responseText) => {
+            let result401: any = null;
+            let resultData401 = _responseText === "" ? null : JSON.parse(_responseText, this.jsonParseReviver);
+            result401 = SpaceDesignProblemDetails.fromJS(resultData401);
+            return throwException("Unauthorized", status, _responseText, _headers, result401);
+            });
+        } else if (status === 403) {
+            return response.text().then((_responseText) => {
+            let result403: any = null;
+            let resultData403 = _responseText === "" ? null : JSON.parse(_responseText, this.jsonParseReviver);
+            result403 = SpaceDesignProblemDetails.fromJS(resultData403);
+            return throwException("Forbidden", status, _responseText, _headers, result403);
+            });
+        } else if (status === 404) {
+            return response.text().then((_responseText) => {
+            let result404: any = null;
+            let resultData404 = _responseText === "" ? null : JSON.parse(_responseText, this.jsonParseReviver);
+            result404 = SpaceDesignProblemDetails.fromJS(resultData404);
+            return throwException("Not Found", status, _responseText, _headers, result404);
+            });
+        } else if (status === 409) {
+            return response.text().then((_responseText) => {
+            let result409: any = null;
+            let resultData409 = _responseText === "" ? null : JSON.parse(_responseText, this.jsonParseReviver);
+            result409 = SpaceDesignProblemDetails.fromJS(resultData409);
+            return throwException("Conflict", status, _responseText, _headers, result409);
+            });
+        } else if (status === 422) {
+            return response.text().then((_responseText) => {
+            let result422: any = null;
+            let resultData422 = _responseText === "" ? null : JSON.parse(_responseText, this.jsonParseReviver);
+            result422 = SpaceDesignProblemDetails.fromJS(resultData422);
+            return throwException("Unprocessable Content", status, _responseText, _headers, result422);
+            });
+        } else if (status === 500) {
+            return response.text().then((_responseText) => {
+            let result500: any = null;
+            let resultData500 = _responseText === "" ? null : JSON.parse(_responseText, this.jsonParseReviver);
+            result500 = SpaceDesignProblemDetails.fromJS(resultData500);
+            return throwException("Internal Server Error", status, _responseText, _headers, result500);
+            });
+        } else if (status !== 200 && status !== 204) {
+            return response.text().then((_responseText) => {
+            return throwException("An unexpected server error occurred.", status, _responseText, _headers);
+            });
+        }
+        return Promise.resolve<SpaceExternalMembershipDto>(null as any);
+    }
+
+    /**
+     * @return OK
+     */
+    updateMembership(organizationId: string, membershipId: string, body: UpdateSpaceExternalMembershipRequest): Promise<SpaceExternalMembershipDto> {
+        let url_ = this.baseUrl + "/api/space/external-organization/{organizationId}/membership/{membershipId}";
+        if (organizationId === undefined || organizationId === null)
+            throw new globalThis.Error("The parameter 'organizationId' must be defined.");
+        url_ = url_.replace("{organizationId}", encodeURIComponent("" + organizationId));
+        if (membershipId === undefined || membershipId === null)
+            throw new globalThis.Error("The parameter 'membershipId' must be defined.");
+        url_ = url_.replace("{membershipId}", encodeURIComponent("" + membershipId));
+        url_ = url_.replace(/[?&]$/, "");
+
+        const content_ = JSON.stringify(body);
+
+        let options_: RequestInit = {
+            body: content_,
+            method: "PUT",
+            headers: {
+                "Content-Type": "application/json",
+                "Accept": "application/json"
+            }
+        };
+
+        return this.http.fetch(url_, options_).then((_response: Response) => {
+            return this.processUpdateMembership(_response);
+        });
+    }
+
+    protected processUpdateMembership(response: Response): Promise<SpaceExternalMembershipDto> {
+        const status = response.status;
+        let _headers: any = {}; if (response.headers && response.headers.forEach) { response.headers.forEach((v: any, k: any) => _headers[k] = v); };
+        if (status === 200) {
+            return response.text().then((_responseText) => {
+            let result200: any = null;
+            let resultData200 = _responseText === "" ? null : JSON.parse(_responseText, this.jsonParseReviver);
+            result200 = SpaceExternalMembershipDto.fromJS(resultData200);
+            return result200;
+            });
+        } else if (status === 400) {
+            return response.text().then((_responseText) => {
+            let result400: any = null;
+            let resultData400 = _responseText === "" ? null : JSON.parse(_responseText, this.jsonParseReviver);
+            result400 = SpaceDesignProblemDetails.fromJS(resultData400);
+            return throwException("Bad Request", status, _responseText, _headers, result400);
+            });
+        } else if (status === 401) {
+            return response.text().then((_responseText) => {
+            let result401: any = null;
+            let resultData401 = _responseText === "" ? null : JSON.parse(_responseText, this.jsonParseReviver);
+            result401 = SpaceDesignProblemDetails.fromJS(resultData401);
+            return throwException("Unauthorized", status, _responseText, _headers, result401);
+            });
+        } else if (status === 403) {
+            return response.text().then((_responseText) => {
+            let result403: any = null;
+            let resultData403 = _responseText === "" ? null : JSON.parse(_responseText, this.jsonParseReviver);
+            result403 = SpaceDesignProblemDetails.fromJS(resultData403);
+            return throwException("Forbidden", status, _responseText, _headers, result403);
+            });
+        } else if (status === 404) {
+            return response.text().then((_responseText) => {
+            let result404: any = null;
+            let resultData404 = _responseText === "" ? null : JSON.parse(_responseText, this.jsonParseReviver);
+            result404 = SpaceDesignProblemDetails.fromJS(resultData404);
+            return throwException("Not Found", status, _responseText, _headers, result404);
+            });
+        } else if (status === 409) {
+            return response.text().then((_responseText) => {
+            let result409: any = null;
+            let resultData409 = _responseText === "" ? null : JSON.parse(_responseText, this.jsonParseReviver);
+            result409 = SpaceDesignProblemDetails.fromJS(resultData409);
+            return throwException("Conflict", status, _responseText, _headers, result409);
+            });
+        } else if (status === 422) {
+            return response.text().then((_responseText) => {
+            let result422: any = null;
+            let resultData422 = _responseText === "" ? null : JSON.parse(_responseText, this.jsonParseReviver);
+            result422 = SpaceDesignProblemDetails.fromJS(resultData422);
+            return throwException("Unprocessable Content", status, _responseText, _headers, result422);
+            });
+        } else if (status === 500) {
+            return response.text().then((_responseText) => {
+            let result500: any = null;
+            let resultData500 = _responseText === "" ? null : JSON.parse(_responseText, this.jsonParseReviver);
+            result500 = SpaceDesignProblemDetails.fromJS(resultData500);
+            return throwException("Internal Server Error", status, _responseText, _headers, result500);
+            });
+        } else if (status !== 200 && status !== 204) {
+            return response.text().then((_responseText) => {
+            return throwException("An unexpected server error occurred.", status, _responseText, _headers);
+            });
+        }
+        return Promise.resolve<SpaceExternalMembershipDto>(null as any);
+    }
+
+    /**
      * @param locationLogicalId (optional)
      * @return OK
      */
@@ -3350,6 +4053,114 @@ export interface ICreateSpaceAssetResponse {
     idempotentReplay?: boolean;
 }
 
+export class CreateSpaceExternalMembershipRequest implements ICreateSpaceExternalMembershipRequest {
+    userId?: string;
+    role?: string | undefined;
+    validFromUtc?: Date | undefined;
+    validToUtc?: Date | undefined;
+    status?: string | undefined;
+
+    constructor(data?: ICreateSpaceExternalMembershipRequest) {
+        if (data) {
+            for (var property in data) {
+                if (data.hasOwnProperty(property))
+                    (this as any)[property] = (data as any)[property];
+            }
+        }
+    }
+
+    init(_data?: any) {
+        if (_data) {
+            this.userId = _data["userId"];
+            this.role = _data["role"];
+            this.validFromUtc = _data["validFromUtc"] ? new Date(_data["validFromUtc"].toString()) : undefined as any;
+            this.validToUtc = _data["validToUtc"] ? new Date(_data["validToUtc"].toString()) : undefined as any;
+            this.status = _data["status"];
+        }
+    }
+
+    static fromJS(data: any): CreateSpaceExternalMembershipRequest {
+        data = typeof data === 'object' ? data : {};
+        let result = new CreateSpaceExternalMembershipRequest();
+        result.init(data);
+        return result;
+    }
+
+    toJSON(data?: any) {
+        data = typeof data === 'object' ? data : {};
+        data["userId"] = this.userId;
+        data["role"] = this.role;
+        data["validFromUtc"] = this.validFromUtc ? this.validFromUtc.toISOString() : undefined as any;
+        data["validToUtc"] = this.validToUtc ? this.validToUtc.toISOString() : undefined as any;
+        data["status"] = this.status;
+        return data;
+    }
+}
+
+export interface ICreateSpaceExternalMembershipRequest {
+    userId?: string;
+    role?: string | undefined;
+    validFromUtc?: Date | undefined;
+    validToUtc?: Date | undefined;
+    status?: string | undefined;
+}
+
+export class CreateSpaceExternalOrganizationRequest implements ICreateSpaceExternalOrganizationRequest {
+    type?: string | undefined;
+    code?: string | undefined;
+    name?: string | undefined;
+    businessPartnerType?: string | undefined;
+    businessPartnerId?: string | undefined;
+    status?: string | undefined;
+
+    constructor(data?: ICreateSpaceExternalOrganizationRequest) {
+        if (data) {
+            for (var property in data) {
+                if (data.hasOwnProperty(property))
+                    (this as any)[property] = (data as any)[property];
+            }
+        }
+    }
+
+    init(_data?: any) {
+        if (_data) {
+            this.type = _data["type"];
+            this.code = _data["code"];
+            this.name = _data["name"];
+            this.businessPartnerType = _data["businessPartnerType"];
+            this.businessPartnerId = _data["businessPartnerId"];
+            this.status = _data["status"];
+        }
+    }
+
+    static fromJS(data: any): CreateSpaceExternalOrganizationRequest {
+        data = typeof data === 'object' ? data : {};
+        let result = new CreateSpaceExternalOrganizationRequest();
+        result.init(data);
+        return result;
+    }
+
+    toJSON(data?: any) {
+        data = typeof data === 'object' ? data : {};
+        data["type"] = this.type;
+        data["code"] = this.code;
+        data["name"] = this.name;
+        data["businessPartnerType"] = this.businessPartnerType;
+        data["businessPartnerId"] = this.businessPartnerId;
+        data["status"] = this.status;
+        return data;
+    }
+}
+
+export interface ICreateSpaceExternalOrganizationRequest {
+    type?: string | undefined;
+    code?: string | undefined;
+    name?: string | undefined;
+    businessPartnerType?: string | undefined;
+    businessPartnerId?: string | undefined;
+    status?: string | undefined;
+}
+
 export class CreateSpaceSourceRequest implements ICreateSpaceSourceRequest {
     fileId?: string;
     sourceType?: string | undefined;
@@ -4240,6 +5051,174 @@ export interface ISpaceElementCommandResultDto {
     targetLogicalId?: string;
     element?: SpaceSceneElementDto;
     attributes?: SpaceSceneElementAttributeDto[] | undefined;
+}
+
+export class SpaceExternalMembershipDto implements ISpaceExternalMembershipDto {
+    id?: string;
+    organizationId?: string;
+    userId?: string;
+    role?: string | undefined;
+    validFromUtc?: Date;
+    validToUtc?: Date | undefined;
+    status?: string | undefined;
+    invitedBy?: string | undefined;
+    acceptedAtUtc?: Date | undefined;
+    securityStamp?: number;
+    createdAtUtc?: Date;
+    createdBy?: string | undefined;
+    modifiedAtUtc?: Date | undefined;
+    modifiedBy?: string | undefined;
+
+    constructor(data?: ISpaceExternalMembershipDto) {
+        if (data) {
+            for (var property in data) {
+                if (data.hasOwnProperty(property))
+                    (this as any)[property] = (data as any)[property];
+            }
+        }
+    }
+
+    init(_data?: any) {
+        if (_data) {
+            this.id = _data["id"];
+            this.organizationId = _data["organizationId"];
+            this.userId = _data["userId"];
+            this.role = _data["role"];
+            this.validFromUtc = _data["validFromUtc"] ? new Date(_data["validFromUtc"].toString()) : undefined as any;
+            this.validToUtc = _data["validToUtc"] ? new Date(_data["validToUtc"].toString()) : undefined as any;
+            this.status = _data["status"];
+            this.invitedBy = _data["invitedBy"];
+            this.acceptedAtUtc = _data["acceptedAtUtc"] ? new Date(_data["acceptedAtUtc"].toString()) : undefined as any;
+            this.securityStamp = _data["securityStamp"];
+            this.createdAtUtc = _data["createdAtUtc"] ? new Date(_data["createdAtUtc"].toString()) : undefined as any;
+            this.createdBy = _data["createdBy"];
+            this.modifiedAtUtc = _data["modifiedAtUtc"] ? new Date(_data["modifiedAtUtc"].toString()) : undefined as any;
+            this.modifiedBy = _data["modifiedBy"];
+        }
+    }
+
+    static fromJS(data: any): SpaceExternalMembershipDto {
+        data = typeof data === 'object' ? data : {};
+        let result = new SpaceExternalMembershipDto();
+        result.init(data);
+        return result;
+    }
+
+    toJSON(data?: any) {
+        data = typeof data === 'object' ? data : {};
+        data["id"] = this.id;
+        data["organizationId"] = this.organizationId;
+        data["userId"] = this.userId;
+        data["role"] = this.role;
+        data["validFromUtc"] = this.validFromUtc ? this.validFromUtc.toISOString() : undefined as any;
+        data["validToUtc"] = this.validToUtc ? this.validToUtc.toISOString() : undefined as any;
+        data["status"] = this.status;
+        data["invitedBy"] = this.invitedBy;
+        data["acceptedAtUtc"] = this.acceptedAtUtc ? this.acceptedAtUtc.toISOString() : undefined as any;
+        data["securityStamp"] = this.securityStamp;
+        data["createdAtUtc"] = this.createdAtUtc ? this.createdAtUtc.toISOString() : undefined as any;
+        data["createdBy"] = this.createdBy;
+        data["modifiedAtUtc"] = this.modifiedAtUtc ? this.modifiedAtUtc.toISOString() : undefined as any;
+        data["modifiedBy"] = this.modifiedBy;
+        return data;
+    }
+}
+
+export interface ISpaceExternalMembershipDto {
+    id?: string;
+    organizationId?: string;
+    userId?: string;
+    role?: string | undefined;
+    validFromUtc?: Date;
+    validToUtc?: Date | undefined;
+    status?: string | undefined;
+    invitedBy?: string | undefined;
+    acceptedAtUtc?: Date | undefined;
+    securityStamp?: number;
+    createdAtUtc?: Date;
+    createdBy?: string | undefined;
+    modifiedAtUtc?: Date | undefined;
+    modifiedBy?: string | undefined;
+}
+
+export class SpaceExternalOrganizationDto implements ISpaceExternalOrganizationDto {
+    id?: string;
+    type?: string | undefined;
+    code?: string | undefined;
+    name?: string | undefined;
+    businessPartnerType?: string | undefined;
+    businessPartnerId?: string | undefined;
+    status?: string | undefined;
+    securityStamp?: number;
+    createdAtUtc?: Date;
+    createdBy?: string | undefined;
+    modifiedAtUtc?: Date | undefined;
+    modifiedBy?: string | undefined;
+
+    constructor(data?: ISpaceExternalOrganizationDto) {
+        if (data) {
+            for (var property in data) {
+                if (data.hasOwnProperty(property))
+                    (this as any)[property] = (data as any)[property];
+            }
+        }
+    }
+
+    init(_data?: any) {
+        if (_data) {
+            this.id = _data["id"];
+            this.type = _data["type"];
+            this.code = _data["code"];
+            this.name = _data["name"];
+            this.businessPartnerType = _data["businessPartnerType"];
+            this.businessPartnerId = _data["businessPartnerId"];
+            this.status = _data["status"];
+            this.securityStamp = _data["securityStamp"];
+            this.createdAtUtc = _data["createdAtUtc"] ? new Date(_data["createdAtUtc"].toString()) : undefined as any;
+            this.createdBy = _data["createdBy"];
+            this.modifiedAtUtc = _data["modifiedAtUtc"] ? new Date(_data["modifiedAtUtc"].toString()) : undefined as any;
+            this.modifiedBy = _data["modifiedBy"];
+        }
+    }
+
+    static fromJS(data: any): SpaceExternalOrganizationDto {
+        data = typeof data === 'object' ? data : {};
+        let result = new SpaceExternalOrganizationDto();
+        result.init(data);
+        return result;
+    }
+
+    toJSON(data?: any) {
+        data = typeof data === 'object' ? data : {};
+        data["id"] = this.id;
+        data["type"] = this.type;
+        data["code"] = this.code;
+        data["name"] = this.name;
+        data["businessPartnerType"] = this.businessPartnerType;
+        data["businessPartnerId"] = this.businessPartnerId;
+        data["status"] = this.status;
+        data["securityStamp"] = this.securityStamp;
+        data["createdAtUtc"] = this.createdAtUtc ? this.createdAtUtc.toISOString() : undefined as any;
+        data["createdBy"] = this.createdBy;
+        data["modifiedAtUtc"] = this.modifiedAtUtc ? this.modifiedAtUtc.toISOString() : undefined as any;
+        data["modifiedBy"] = this.modifiedBy;
+        return data;
+    }
+}
+
+export interface ISpaceExternalOrganizationDto {
+    id?: string;
+    type?: string | undefined;
+    code?: string | undefined;
+    name?: string | undefined;
+    businessPartnerType?: string | undefined;
+    businessPartnerId?: string | undefined;
+    status?: string | undefined;
+    securityStamp?: number;
+    createdAtUtc?: Date;
+    createdBy?: string | undefined;
+    modifiedAtUtc?: Date | undefined;
+    modifiedBy?: string | undefined;
 }
 
 export class SpaceFileDto implements ISpaceFileDto {
@@ -6937,6 +7916,106 @@ export interface ISpaceWmsRuntimeTaskWorkloadDto {
     zoneCode?: string | null | undefined;
     stopCount: number;
     totalQuantity: number;
+}
+
+export class UpdateSpaceExternalMembershipRequest implements IUpdateSpaceExternalMembershipRequest {
+    role?: string | undefined;
+    validFromUtc?: Date;
+    validToUtc?: Date | undefined;
+    status?: string | undefined;
+
+    constructor(data?: IUpdateSpaceExternalMembershipRequest) {
+        if (data) {
+            for (var property in data) {
+                if (data.hasOwnProperty(property))
+                    (this as any)[property] = (data as any)[property];
+            }
+        }
+    }
+
+    init(_data?: any) {
+        if (_data) {
+            this.role = _data["role"];
+            this.validFromUtc = _data["validFromUtc"] ? new Date(_data["validFromUtc"].toString()) : undefined as any;
+            this.validToUtc = _data["validToUtc"] ? new Date(_data["validToUtc"].toString()) : undefined as any;
+            this.status = _data["status"];
+        }
+    }
+
+    static fromJS(data: any): UpdateSpaceExternalMembershipRequest {
+        data = typeof data === 'object' ? data : {};
+        let result = new UpdateSpaceExternalMembershipRequest();
+        result.init(data);
+        return result;
+    }
+
+    toJSON(data?: any) {
+        data = typeof data === 'object' ? data : {};
+        data["role"] = this.role;
+        data["validFromUtc"] = this.validFromUtc ? this.validFromUtc.toISOString() : undefined as any;
+        data["validToUtc"] = this.validToUtc ? this.validToUtc.toISOString() : undefined as any;
+        data["status"] = this.status;
+        return data;
+    }
+}
+
+export interface IUpdateSpaceExternalMembershipRequest {
+    role?: string | undefined;
+    validFromUtc?: Date;
+    validToUtc?: Date | undefined;
+    status?: string | undefined;
+}
+
+export class UpdateSpaceExternalOrganizationRequest implements IUpdateSpaceExternalOrganizationRequest {
+    code?: string | undefined;
+    name?: string | undefined;
+    businessPartnerType?: string | undefined;
+    businessPartnerId?: string | undefined;
+    status?: string | undefined;
+
+    constructor(data?: IUpdateSpaceExternalOrganizationRequest) {
+        if (data) {
+            for (var property in data) {
+                if (data.hasOwnProperty(property))
+                    (this as any)[property] = (data as any)[property];
+            }
+        }
+    }
+
+    init(_data?: any) {
+        if (_data) {
+            this.code = _data["code"];
+            this.name = _data["name"];
+            this.businessPartnerType = _data["businessPartnerType"];
+            this.businessPartnerId = _data["businessPartnerId"];
+            this.status = _data["status"];
+        }
+    }
+
+    static fromJS(data: any): UpdateSpaceExternalOrganizationRequest {
+        data = typeof data === 'object' ? data : {};
+        let result = new UpdateSpaceExternalOrganizationRequest();
+        result.init(data);
+        return result;
+    }
+
+    toJSON(data?: any) {
+        data = typeof data === 'object' ? data : {};
+        data["code"] = this.code;
+        data["name"] = this.name;
+        data["businessPartnerType"] = this.businessPartnerType;
+        data["businessPartnerId"] = this.businessPartnerId;
+        data["status"] = this.status;
+        return data;
+    }
+}
+
+export interface IUpdateSpaceExternalOrganizationRequest {
+    code?: string | undefined;
+    name?: string | undefined;
+    businessPartnerType?: string | undefined;
+    businessPartnerId?: string | undefined;
+    status?: string | undefined;
 }
 
 export class UploadSpaceUnderlayResponse implements IUploadSpaceUnderlayResponse {

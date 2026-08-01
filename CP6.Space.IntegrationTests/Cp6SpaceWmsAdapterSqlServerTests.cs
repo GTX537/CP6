@@ -8,6 +8,7 @@ using Microsoft.EntityFrameworkCore;
 
 namespace CP6.Space.IntegrationTests;
 
+[Collection(SpaceSqlServerCollection.Name)]
 public sealed class Cp6SpaceWmsAdapterSqlServerTests
 {
     private static readonly Guid TenantId =

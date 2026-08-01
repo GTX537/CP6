@@ -49,6 +49,10 @@ public sealed class SpaceDesignV1OpenApiTests
             "/api/space/design/v1/versions/{versionId}/wms-adoption/locations/{adoptionId}/bind",
             "/api/space/design/v1/versions/{versionId}/wms-adoption/bindings:batch",
             "/api/space/design/v1/versions/{versionId}/wms-adoption/locations/{adoptionId}/place",
+            "/api/space/external-organization",
+            "/api/space/external-organization/{organizationId}",
+            "/api/space/external-organization/{organizationId}/membership",
+            "/api/space/external-organization/{organizationId}/membership/{membershipId}",
         };
 
         Assert.Equal(
@@ -63,8 +67,8 @@ public sealed class SpaceDesignV1OpenApiTests
             .Select(operation =>
                 operation.Value.GetProperty("operationId").GetString())
             .ToArray();
-        Assert.Equal(27, operationIds.Length);
-        Assert.Equal(27, operationIds.Distinct().Count());
+        Assert.Equal(34, operationIds.Length);
+        Assert.Equal(34, operationIds.Distinct().Count());
         Assert.Contains("GetAssets", operationIds);
         Assert.Contains("CreateAsset", operationIds);
         Assert.Contains("CreateVersion", operationIds);
@@ -86,6 +90,13 @@ public sealed class SpaceDesignV1OpenApiTests
         Assert.Contains("LocateInventory", operationIds);
         Assert.Contains("GetTasks", operationIds);
         Assert.Contains("GetTaskPath", operationIds);
+        Assert.Contains("GetOrganizations", operationIds);
+        Assert.Contains("GetOrganization", operationIds);
+        Assert.Contains("CreateOrganization", operationIds);
+        Assert.Contains("UpdateOrganization", operationIds);
+        Assert.Contains("GetMemberships", operationIds);
+        Assert.Contains("CreateMembership", operationIds);
+        Assert.Contains("UpdateMembership", operationIds);
 
         var taskIdParameter = paths
             .GetProperty("/api/space/design/v1/sites/{siteId}/runtime/tasks/path")
@@ -96,6 +107,45 @@ public sealed class SpaceDesignV1OpenApiTests
                 parameter.GetProperty("name").GetString() == "taskId");
         Assert.True(taskIdParameter.GetProperty("required").GetBoolean());
         Assert.Equal("query", taskIdParameter.GetProperty("in").GetString());
+    }
+
+    [Fact]
+    public void External_organization_contract_exposes_typed_management_surface()
+    {
+        using var document = ReadContract();
+        var root = document.RootElement;
+        var paths = root.GetProperty("paths");
+        var organizations = paths.GetProperty(
+            "/api/space/external-organization");
+        var membership = paths.GetProperty(
+            "/api/space/external-organization/{organizationId}/membership");
+
+        Assert.Equal(
+            "#/components/schemas/CP6.Space.Contracts.CreateSpaceExternalOrganizationRequest",
+            organizations.GetProperty("post")
+                .GetProperty("requestBody")
+                .GetProperty("content")
+                .GetProperty("application/json")
+                .GetProperty("schema")
+                .GetProperty("$ref")
+                .GetString());
+        Assert.Equal(
+            "#/components/schemas/CP6.Space.Contracts.CreateSpaceExternalMembershipRequest",
+            membership.GetProperty("post")
+                .GetProperty("requestBody")
+                .GetProperty("content")
+                .GetProperty("application/json")
+                .GetProperty("schema")
+                .GetProperty("$ref")
+                .GetString());
+
+        var schemas = root.GetProperty("components").GetProperty("schemas");
+        Assert.True(schemas.TryGetProperty(
+            "CP6.Space.Contracts.SpaceExternalOrganizationDto",
+            out _));
+        Assert.True(schemas.TryGetProperty(
+            "CP6.Space.Contracts.SpaceExternalMembershipDto",
+            out _));
     }
 
     [Fact]
@@ -737,7 +787,14 @@ public sealed class SpaceDesignV1OpenApiTests
                      "GetInventory",
                      "LocateInventory",
                      "GetTasks",
-                 })
+                     "GetOrganizations",
+                     "GetOrganization",
+                     "CreateOrganization",
+                     "UpdateOrganization",
+                     "GetMemberships",
+                     "CreateMembership",
+                     "UpdateMembership",
+                  })
         {
             Assert.Contains(operation, csharp, StringComparison.Ordinal);
             Assert.Contains(operation, typescript, StringComparison.OrdinalIgnoreCase);

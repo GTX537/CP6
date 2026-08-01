@@ -11,6 +11,7 @@ using Microsoft.Extensions.DependencyInjection;
 
 namespace CP6.Space.IntegrationTests;
 
+[Collection(SpaceSqlServerCollection.Name)]
 public sealed class SpaceJobProcessorPersistenceTests
 {
     private static readonly DateTime Now =
