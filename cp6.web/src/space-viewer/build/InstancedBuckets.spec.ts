@@ -1,4 +1,5 @@
 import { describe, it, expect } from 'vitest'
+import { Color } from 'three'
 import { InstancedBuckets } from './InstancedBuckets'
 
 describe('InstancedBuckets', () => {
@@ -61,5 +62,31 @@ describe('InstancedBuckets', () => {
     expect(b.bucketCount()).toBe(1)
     expect(b.meshIdForZone('Z2')).toBeUndefined()
     expect(b.meshIdForZone('Z3')).toBeUndefined()
+  })
+
+  it('preallocates default colors and updates multiple instances as one batch', () => {
+    const b = new InstancedBuckets()
+    b.build([
+      { id: 'L1', zoneId: 'Z1', placed: true, ...baseLoc },
+      { id: 'L2', zoneId: 'Z1', placed: true, absX: 1, absY: 0, absZ: 0, sizeW: 1, sizeH: 1, sizeD: 1, rotationZ: 0 },
+    ])
+    const mesh = [...b.meshes][0]!
+    const color = new Color()
+
+    expect(mesh.instanceColor).not.toBeNull()
+    mesh.getColorAt(0, color)
+    expect(color.r).toBeCloseTo(0.8)
+    expect(color.g).toBeCloseTo(0.8)
+    expect(color.b).toBeCloseTo(0.8)
+
+    expect(b.setColors([
+      { locationId: 'L1', hex: 0xff0000 },
+      { locationId: 'missing', hex: 0xffffff },
+      { locationId: 'L2', hex: 0x00ff00 },
+    ])).toBe(2)
+    mesh.getColorAt(0, color)
+    expect(color.getHex()).toBe(0xff0000)
+    mesh.getColorAt(1, color)
+    expect(color.getHex()).toBe(0x00ff00)
   })
 })

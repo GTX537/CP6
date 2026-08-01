@@ -1,3 +1,4 @@
+using System.Diagnostics;
 using CP6.Space.Application;
 using CP6.Space.Contracts;
 using CP6.Space.Domain;
@@ -275,22 +276,28 @@ public sealed class SpaceWmsRuntimeServiceTests
     }
 
     [Fact]
-    public async Task Inventory_and_task_queries_use_500_item_chunks()
+    public async Task Exactly_10000_locations_use_twenty_500_item_chunks()
     {
         var execution = Execution();
         var clock = new TestClock();
         await using var context = NewContext(execution, clock);
         var seeded = await SeedPublishedAsync(
             context,
-            Enumerable.Range(1, 1_001).Select(value => $"L-{value:0000}").ToArray());
+            Enumerable.Range(1, 10_000).Select(value => $"L-{value:00000}").ToArray());
         var source = new RecordingRuntimeSource();
         var service = CreateService(context, execution, clock, seeded.SiteId, source);
 
+        var stopwatch = Stopwatch.StartNew();
         await service.QueryInventoryAsync(seeded.SiteId);
+        var inventoryElapsed = stopwatch.Elapsed;
+        stopwatch.Restart();
         await service.QueryTasksAsync(seeded.SiteId);
+        var taskElapsed = stopwatch.Elapsed;
 
-        Assert.Equal([500, 500, 1], source.InventoryBatchSizes);
-        Assert.Equal([500, 500, 1], source.TaskBatchSizes);
+        Assert.Equal(Enumerable.Repeat(500, 20), source.InventoryBatchSizes);
+        Assert.Equal(Enumerable.Repeat(500, 20), source.TaskBatchSizes);
+        Assert.InRange(inventoryElapsed.TotalMilliseconds, 0, 3_000);
+        Assert.InRange(taskElapsed.TotalMilliseconds, 0, 3_000);
     }
 
     [Fact]

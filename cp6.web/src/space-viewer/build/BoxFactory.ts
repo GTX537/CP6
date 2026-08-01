@@ -17,10 +17,9 @@ import {
 export const UNIT_BOX = new BoxGeometry(1, 1, 1)
 
 export const locMaterial = new MeshLambertMaterial({
-  color: 0x607d8b,
-  vertexColors: false,
+  color: 0xffffff,
+  vertexColors: true,
 })
-locMaterial.vertexColors = false
 
 export const rackEdgesMaterial = new LineBasicMaterial({ color: 0x90a4ae })
 

@@ -53,11 +53,19 @@ export class StockOverlay {
 
   apply(): void {
     if (this._mode === 'off' || !isUsableDataSource(this._source)) return
+    const colors: Array<{ locationId: string; hex: number }> = []
     for (const [locationLogicalId, stock] of this._byId) {
       const hex = this._mode === 'utilization'
         ? utilizationToHex(locationUtilization(stock))
         : binStatusToHex(stock.binStatus)
-      this._viewer.setInstanceColor(locationLogicalId, hex)
+      colors.push({ locationId: locationLogicalId, hex })
+    }
+    if (this._viewer.setInstanceColors) {
+      this._viewer.setInstanceColors(colors)
+    } else {
+      for (const color of colors) {
+        this._viewer.setInstanceColor(color.locationId, color.hex)
+      }
     }
     this._viewer.requestRender()
   }

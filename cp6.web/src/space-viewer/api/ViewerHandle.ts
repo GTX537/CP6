@@ -9,6 +9,7 @@ export interface ViewerHandle {
   dataToWorld(p: { x: number; y: number; z: number }): Vector3
   instanceToLocation(meshId: number, instanceId: number): string | null
   setInstanceColor(locationId: string, hex: number): void
+  setInstanceColors?(colors: Iterable<{ locationId: string; hex: number }>): void
   requestRender(): void
   onReady(cb: () => void): void
   onProgress(cb: (done: number, total: number) => void): void
