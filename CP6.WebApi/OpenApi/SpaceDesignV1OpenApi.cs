@@ -224,6 +224,144 @@ public sealed class SpaceWmsRuntimeSchemaFilter : ISchemaFilter
                 "aisleCode",
                 "centerlineJson",
             ],
+            [typeof(CreateSpaceFieldPolicyRequest)] =
+            [
+                "name",
+                "audienceType",
+                "fields",
+            ],
+            [typeof(UpdateSpaceFieldPolicyRequest)] =
+            [
+                "name",
+                "fields",
+                "canExport",
+                "status",
+            ],
+            [typeof(SpaceFieldPolicyFieldRequest)] =
+            [
+                "resourceType",
+                "fieldName",
+            ],
+            [typeof(SpaceFieldPolicyFieldDto)] =
+            [
+                "resourceType",
+                "fieldName",
+                "maskingRule",
+            ],
+            [typeof(SpaceFieldPolicyDto)] =
+            [
+                "id",
+                "name",
+                "audienceType",
+                "canExport",
+                "status",
+                "policyVersion",
+                "fields",
+                "createdAtUtc",
+            ],
+            [typeof(SpacePortalOrganizationDto)] =
+            [
+                "organizationId",
+                "type",
+                "code",
+                "name",
+                "role",
+                "validFromUtc",
+                "organizationSecurityStamp",
+                "membershipSecurityStamp",
+            ],
+            [typeof(SpacePortalSiteDto)] =
+            [
+                "siteId",
+                "publishedVersionId",
+                "canViewScene",
+                "canViewStock",
+                "canViewTasks",
+                "canExport",
+                "authorizationVersion",
+            ],
+            [typeof(SpacePortalPublishedSceneDto)] =
+            [
+                "siteId",
+                "publishedVersionId",
+                "authorizationVersion",
+                "floors",
+            ],
+            [typeof(SpacePortalFloorDto)] =
+            [
+                "logicalId",
+                "zones",
+                "aisles",
+                "racks",
+                "rackLevels",
+                "locations",
+                "elements",
+            ],
+            [typeof(SpacePortalZoneDto)] =
+            [
+                "logicalId",
+                "floorLogicalId",
+            ],
+            [typeof(SpacePortalAisleDto)] =
+            [
+                "logicalId",
+                "zoneLogicalId",
+            ],
+            [typeof(SpacePortalRackDto)] =
+            [
+                "logicalId",
+                "floorLogicalId",
+                "zoneLogicalId",
+            ],
+            [typeof(SpacePortalRackLevelDto)] =
+            [
+                "logicalId",
+                "rackLogicalId",
+            ],
+            [typeof(SpacePortalLocationDto)] =
+            [
+                "logicalId",
+                "floorLogicalId",
+            ],
+            [typeof(SpacePortalElementDto)] =
+            [
+                "logicalId",
+                "floorLogicalId",
+            ],
+            [typeof(SpacePortalRuntimeSourceDto)] =
+            [
+                "observedAtUtc",
+                "receivedAtUtc",
+                "delayMilliseconds",
+                "isAvailable",
+            ],
+            [typeof(SpacePortalStockResponse)] =
+            [
+                "siteId",
+                "publishedVersionId",
+                "authorizationVersion",
+                "source",
+                "items",
+            ],
+            [typeof(SpacePortalStockItemDto)] =
+            [
+                "locationLogicalId",
+                "floorLogicalId",
+            ],
+            [typeof(SpacePortalTaskResponse)] =
+            [
+                "siteId",
+                "publishedVersionId",
+                "authorizationVersion",
+                "source",
+                "items",
+            ],
+            [typeof(SpacePortalTaskItemDto)] =
+            [
+                "locationLogicalId",
+                "floorLogicalId",
+                "zoneLogicalId",
+            ],
         };
 
     public void Apply(OpenApiSchema schema, SchemaFilterContext context)
@@ -294,6 +432,28 @@ public sealed class SpaceWmsRuntimeSchemaFilter : ISchemaFilter
         {
             SetNullable(schema, true, "zoneLogicalId", "zoneCode");
             SetNumberFormat(schema, "totalQuantity", "decimal", false);
+        }
+        else if (context.Type == typeof(SpacePortalRackDto))
+        {
+            SetNumberFormat(schema, "rotationZ", "decimal", true);
+        }
+        else if (context.Type == typeof(SpacePortalRackLevelDto))
+        {
+            SetNumberFormat(schema, "maxLoad", "decimal", true);
+        }
+        else if (context.Type == typeof(SpacePortalLocationDto))
+        {
+            SetNumberFormat(schema, "maxLoad", "decimal", true);
+        }
+        else if (context.Type == typeof(SpacePortalStockItemDto))
+        {
+            SetNumberFormat(schema, "physicalQuantity", "decimal", true);
+            SetNumberFormat(schema, "allocatedQuantity", "decimal", true);
+        }
+        else if (context.Type == typeof(SpacePortalTaskItemDto))
+        {
+            SetNullable(schema, true, "zoneLogicalId");
+            SetNumberFormat(schema, "quantity", "decimal", true);
         }
     }
 

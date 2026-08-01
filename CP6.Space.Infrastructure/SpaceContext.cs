@@ -83,6 +83,10 @@ public sealed class SpaceContext : DbContext
         Set<SpaceExternalGrantOwner>();
     public DbSet<SpaceExternalGrantObject> ExternalGrantObjects =>
         Set<SpaceExternalGrantObject>();
+    public DbSet<SpaceFieldPolicy> FieldPolicies =>
+        Set<SpaceFieldPolicy>();
+    public DbSet<SpaceFieldPolicyField> FieldPolicyFields =>
+        Set<SpaceFieldPolicyField>();
 
     protected override void OnModelCreating(ModelBuilder modelBuilder)
     {
@@ -109,6 +113,8 @@ public sealed class SpaceContext : DbContext
         ConfigureExternalGrantZone(modelBuilder);
         ConfigureExternalGrantOwner(modelBuilder);
         ConfigureExternalGrantObject(modelBuilder);
+        ConfigureFieldPolicy(modelBuilder);
+        ConfigureFieldPolicyField(modelBuilder);
         ConfigureFile(modelBuilder);
         ConfigureSource(modelBuilder);
         ConfigureJob(modelBuilder);
@@ -2310,6 +2316,13 @@ public sealed class SpaceContext : DbContext
             .OnDelete(DeleteBehavior.Restrict)
             .HasConstraintName(
                 "FK_Space_ExternalGrant_Organization_Tenant");
+        entity.HasOne<SpaceFieldPolicy>()
+            .WithMany()
+            .HasForeignKey(x => new { x.TenantId, x.FieldPolicyId })
+            .HasPrincipalKey(x => new { x.TenantId, x.Id })
+            .OnDelete(DeleteBehavior.Restrict)
+            .HasConstraintName(
+                "FK_Space_ExternalGrant_FieldPolicy_Tenant");
         entity.HasIndex(x => new
             {
                 x.TenantId,
@@ -2461,6 +2474,102 @@ public sealed class SpaceContext : DbContext
             .IsUnique()
             .HasFilter("[IsDeleted] = 0")
             .HasDatabaseName("UX_Space_ExternalGrantObject_Current");
+        entity.HasQueryFilter(
+            x => x.TenantId == CurrentTenantId && !x.IsDeleted);
+    }
+
+    private void ConfigureFieldPolicy(ModelBuilder modelBuilder)
+    {
+        var entity = modelBuilder.Entity<SpaceFieldPolicy>();
+        entity.ToTable(
+            "Space_FieldPolicy",
+            table =>
+            {
+                table.HasCheckConstraint(
+                    "CK_Space_FieldPolicy_AudienceType",
+                    "[AudienceType] >= 0 AND [AudienceType] <= 2");
+                table.HasCheckConstraint(
+                    "CK_Space_FieldPolicy_Status",
+                    "[Status] >= 0 AND [Status] <= 1");
+                table.HasCheckConstraint(
+                    "CK_Space_FieldPolicy_Version",
+                    "[PolicyVersion] > 0");
+            });
+        entity.HasKey(x => x.Id);
+        entity.Property(x => x.Id).ValueGeneratedNever();
+        entity.HasAlternateKey(x => new { x.TenantId, x.Id })
+            .HasName("AK_Space_FieldPolicy_TenantId_Id");
+        ConfigureTenantEntity(entity);
+        entity.Property(x => x.Name).HasMaxLength(200).IsRequired();
+        entity.Property(x => x.NormalizedName)
+            .HasMaxLength(200)
+            .IsRequired();
+        entity.Property(x => x.AudienceType)
+            .HasConversion<short>()
+            .HasColumnType("smallint");
+        entity.Property(x => x.Status)
+            .HasConversion<short>()
+            .HasColumnType("smallint");
+        entity.Property(x => x.PolicyVersion).HasColumnType("bigint");
+        entity.Property(x => x.RowVersion).IsRowVersion();
+        entity.HasIndex(x => new
+            {
+                x.TenantId,
+                x.AudienceType,
+                x.NormalizedName,
+            })
+            .IsUnique()
+            .HasFilter("[IsDeleted] = 0")
+            .HasDatabaseName("UX_Space_FieldPolicy_CurrentName");
+        entity.HasQueryFilter(
+            x => x.TenantId == CurrentTenantId && !x.IsDeleted);
+    }
+
+    private void ConfigureFieldPolicyField(ModelBuilder modelBuilder)
+    {
+        var entity = modelBuilder.Entity<SpaceFieldPolicyField>();
+        entity.ToTable(
+            "Space_FieldPolicyField",
+            table =>
+            {
+                table.HasCheckConstraint(
+                    "CK_Space_FieldPolicyField_ResourceType",
+                    "[ResourceType] >= 0 AND [ResourceType] <= 2");
+                table.HasCheckConstraint(
+                    "CK_Space_FieldPolicyField_MaskingRule",
+                    "[MaskingRule] >= 0 AND [MaskingRule] <= 3");
+            });
+        entity.HasKey(x => x.Id);
+        entity.Property(x => x.Id).ValueGeneratedNever();
+        entity.HasAlternateKey(x => new { x.TenantId, x.Id })
+            .HasName("AK_Space_FieldPolicyField_TenantId_Id");
+        ConfigureTenantEntity(entity);
+        entity.Property(x => x.ResourceType)
+            .HasConversion<short>()
+            .HasColumnType("smallint");
+        entity.Property(x => x.FieldName).HasMaxLength(100).IsRequired();
+        entity.Property(x => x.NormalizedFieldName)
+            .HasMaxLength(100)
+            .IsRequired();
+        entity.Property(x => x.MaskingRule)
+            .HasConversion<short>()
+            .HasColumnType("smallint");
+        entity.HasOne<SpaceFieldPolicy>()
+            .WithMany()
+            .HasForeignKey(x => new { x.TenantId, x.PolicyId })
+            .HasPrincipalKey(x => new { x.TenantId, x.Id })
+            .OnDelete(DeleteBehavior.Restrict)
+            .HasConstraintName("FK_Space_FieldPolicyField_Policy_Tenant");
+        entity.HasIndex(x => new
+            {
+                x.TenantId,
+                x.PolicyId,
+                x.ResourceType,
+                x.NormalizedFieldName,
+            })
+            .IsUnique()
+            .HasFilter("[IsDeleted] = 0")
+            .HasDatabaseName("UX_Space_FieldPolicyField_Current");
         entity.HasQueryFilter(
             x => x.TenantId == CurrentTenantId && !x.IsDeleted);
     }

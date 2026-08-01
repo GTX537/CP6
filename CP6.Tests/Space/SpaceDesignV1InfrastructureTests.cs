@@ -89,6 +89,33 @@ public sealed class SpaceDesignV1InfrastructureTests
             body.RootElement.GetProperty("code").GetString());
     }
 
+    [Theory]
+    [InlineData("/api/space/field-policy/test")]
+    [InlineData("/api/space/portal/v1/sites")]
+    public async Task External_policy_and_portal_paths_use_safe_problem_details(
+        string path)
+    {
+        var context = new DefaultHttpContext();
+        context.Request.Path = path;
+        context.Response.Body = new MemoryStream();
+        var middleware = new SpaceDesignProblemDetailsMiddleware(
+            _ => throw new SpaceProblemException(
+                SpaceErrorCodes.ExternalScopeDenied,
+                404,
+                "Not found"),
+            NullLogger<SpaceDesignProblemDetailsMiddleware>.Instance);
+
+        await middleware.InvokeAsync(context);
+
+        Assert.Equal(404, context.Response.StatusCode);
+        Assert.Equal("application/problem+json", context.Response.ContentType);
+        context.Response.Body.Position = 0;
+        using var body = await JsonDocument.ParseAsync(context.Response.Body);
+        Assert.Equal(
+            SpaceErrorCodes.ExternalScopeDenied,
+            body.RootElement.GetProperty("code").GetString());
+    }
+
     [Fact]
     public void Compatibility_gate_requires_global_and_verified_site_cutover()
     {

@@ -280,6 +280,119 @@ public class SpaceExecutionContextMiddlewareTests
     }
 
     [Theory]
+    [InlineData("")]
+    [InlineData("partner")]
+    public async Task Unknown_explicit_subject_type_fails_closed(string subjectType)
+    {
+        var context = Context(extra: new[]
+        {
+            new Claim("subject_type", subjectType),
+        });
+
+        var error = await Assert.ThrowsAsync<BizException>(() =>
+            Invoke(MakeMiddleware(_ => Task.CompletedTask), context));
+
+        Assert.Equal("SPACE_EXTERNAL_SUBJECT_DENIED", error.Code);
+        Assert.Equal(StatusCodes.Status403Forbidden, error.HttpStatus);
+    }
+
+    [Fact]
+    public async Task External_portal_organizations_allows_no_selected_organization()
+    {
+        var context = Context(
+            path: "/api/space/portal/v1/organizations",
+            extra: new[] { new Claim("subject_type", "external") });
+        var accessor = new SpaceExecutionContextAccessor();
+        ISpaceExecutionContext? seen = null;
+
+        await Invoke(
+            MakeMiddleware(_ =>
+            {
+                seen = accessor.Current;
+                return Task.CompletedTask;
+            }),
+            context,
+            accessor);
+
+        Assert.NotNull(seen);
+        Assert.Null(seen.OrganizationContextId);
+    }
+
+    [Fact]
+    public async Task External_portal_site_accepts_one_guid_organization_context()
+    {
+        var organizationId = Guid.NewGuid();
+        var context = Context(
+            path: "/api/space/portal/v1/sites",
+            extra: new[]
+            {
+                new Claim("subject_type", "EXTERNAL"),
+                new Claim("organization_context_id", organizationId.ToString()),
+            });
+        var accessor = new SpaceExecutionContextAccessor();
+        ISpaceExecutionContext? seen = null;
+
+        await Invoke(
+            MakeMiddleware(_ =>
+            {
+                seen = accessor.Current;
+                return Task.CompletedTask;
+            }),
+            context,
+            accessor);
+
+        Assert.NotNull(seen);
+        Assert.Equal(organizationId.ToString(), seen.OrganizationContextId);
+    }
+
+    [Fact]
+    public async Task External_portal_resource_requires_organization_context()
+    {
+        var context = Context(
+            path: "/api/space/portal/v1/sites",
+            extra: new[] { new Claim("subject_type", "external") });
+
+        var error = await Assert.ThrowsAsync<BizException>(() =>
+            Invoke(MakeMiddleware(_ => Task.CompletedTask), context));
+
+        Assert.Equal("SPACE_ORGANIZATION_CONTEXT_REQUIRED", error.Code);
+        Assert.Equal(StatusCodes.Status403Forbidden, error.HttpStatus);
+    }
+
+    [Fact]
+    public async Task External_portal_is_read_only()
+    {
+        var context = Context(
+            path: "/api/space/portal/v1/sites",
+            extra: new[]
+            {
+                new Claim("subject_type", "external"),
+                new Claim("organization_context_id", Guid.NewGuid().ToString()),
+            });
+        context.Request.Method = HttpMethods.Post;
+
+        var error = await Assert.ThrowsAsync<BizException>(() =>
+            Invoke(MakeMiddleware(_ => Task.CompletedTask), context));
+
+        Assert.Equal("SPACE_EXTERNAL_PORTAL_READ_ONLY", error.Code);
+        Assert.Equal(StatusCodes.Status403Forbidden, error.HttpStatus);
+    }
+
+    [Fact]
+    public async Task Internal_subject_cannot_enter_external_portal()
+    {
+        var context = Context(
+            path: "/api/space/portal/v1/organizations",
+            extra: new[] { new Claim("subject_type", "internal") });
+
+        var error = await Assert.ThrowsAsync<BizException>(() =>
+            Invoke(MakeMiddleware(_ => Task.CompletedTask), context));
+
+        Assert.Equal("SPACE_EXTERNAL_PORTAL_SUBJECT_REQUIRED", error.Code);
+        Assert.Equal(StatusCodes.Status403Forbidden, error.HttpStatus);
+    }
+
+    [Theory]
     [InlineData("internal", "external")]
     [InlineData("external", "internal")]
     [InlineData("internal", "internal")]

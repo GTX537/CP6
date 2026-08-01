@@ -4,6 +4,8 @@ public interface ISpaceExecutionContext
 {
     Guid TenantId { get; }
     Guid ActorId { get; }
+    bool IsExternal => false;
+    Guid? OrganizationContextId => null;
 }
 
 public interface ISpaceCorrelationContext

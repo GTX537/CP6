@@ -13,7 +13,8 @@ using CoreExecutionContextAccessor =
 namespace CP6.WebApi.Services;
 
 public sealed class HttpSpaceApplicationExecutionContext(
-    CoreExecutionContextAccessor accessor) :
+    CoreExecutionContextAccessor accessor,
+    IHttpContextAccessor http) :
     CP6.Space.Application.ISpaceExecutionContext,
     ISpaceCorrelationContext
 {
@@ -27,6 +28,24 @@ public sealed class HttpSpaceApplicationExecutionContext(
             : Guid.Empty;
 
     public Guid CorrelationId => Current?.CorrelationId ?? Guid.Empty;
+
+    public bool IsExternal =>
+        Current is not null &&
+        http.HttpContext?.User.Identities
+            .Where(identity => identity.IsAuthenticated)
+            .SelectMany(identity => identity.FindAll("subject_type"))
+            .Select(claim => claim.Value)
+            .SingleOrDefault() is string subjectType &&
+        string.Equals(
+            subjectType,
+            "external",
+            StringComparison.OrdinalIgnoreCase);
+
+    public Guid? OrganizationContextId =>
+        Guid.TryParse(Current?.OrganizationContextId, out var organizationId) &&
+        organizationId != Guid.Empty
+            ? organizationId
+            : null;
 }
 
 public sealed class CompatibilitySpaceDesignAccessEvaluator(

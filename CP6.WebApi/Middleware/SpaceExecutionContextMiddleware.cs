@@ -12,6 +12,9 @@ public sealed class SpaceExecutionContextMiddleware
     private const string CorrelationHeader = "X-Correlation-ID";
     private const string TraceHeader = "X-Trace-ID";
     private const string SpacePath = "/api/space";
+    private const string PortalPath = "/api/space/portal/v1";
+    private const string PortalOrganizationsPath =
+        "/api/space/portal/v1/organizations";
 
     private readonly RequestDelegate _next;
     private readonly ILogger<SpaceExecutionContextMiddleware> _logger;
@@ -95,6 +98,20 @@ public sealed class SpaceExecutionContextMiddleware
         var organization = string.IsNullOrWhiteSpace(organizationValue)
             ? null
             : organizationValue;
+        if (subjectTypes.Length == 1 &&
+            !string.Equals(
+                subjectType,
+                "internal",
+                StringComparison.OrdinalIgnoreCase) &&
+            !string.Equals(
+                subjectType,
+                "external",
+                StringComparison.OrdinalIgnoreCase))
+        {
+            throw new BizException(
+                "SPACE_EXTERNAL_SUBJECT_DENIED",
+                StatusCodes.Status403Forbidden);
+        }
         var external =
             string.Equals(
                 subjectType,
@@ -105,10 +122,42 @@ public sealed class SpaceExecutionContextMiddleware
                     subjectType,
                     "internal",
                     StringComparison.OrdinalIgnoreCase));
-        if (external)
+        var portal = context.Request.Path.StartsWithSegments(PortalPath);
+        if (external && !portal)
             throw new BizException(
                 "SPACE_EXTERNAL_SUBJECT_DENIED",
                 StatusCodes.Status403Forbidden);
+        if (portal && !string.Equals(
+                subjectType,
+                "external",
+                StringComparison.OrdinalIgnoreCase))
+        {
+            throw new BizException(
+                "SPACE_EXTERNAL_PORTAL_SUBJECT_REQUIRED",
+                StatusCodes.Status403Forbidden);
+        }
+        if (external && context.Request.Method is not ("GET" or "HEAD"))
+        {
+            throw new BizException(
+                "SPACE_EXTERNAL_PORTAL_READ_ONLY",
+                StatusCodes.Status403Forbidden);
+        }
+        if (external && !string.IsNullOrWhiteSpace(organization) &&
+            (!Guid.TryParse(organization, out var organizationId) ||
+             organizationId == Guid.Empty))
+        {
+            throw new BizException(
+                "SPACE_ORGANIZATION_CONTEXT_REQUIRED",
+                StatusCodes.Status403Forbidden);
+        }
+        if (external &&
+            !context.Request.Path.Equals(new PathString(PortalOrganizationsPath)) &&
+            string.IsNullOrWhiteSpace(organization))
+        {
+            throw new BizException(
+                "SPACE_ORGANIZATION_CONTEXT_REQUIRED",
+                StatusCodes.Status403Forbidden);
+        }
 
         var actorNames = ClaimValues(identities, ClaimTypes.Name);
         var actorName = actorNames.Length == 1
