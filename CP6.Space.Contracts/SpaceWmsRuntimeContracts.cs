@@ -96,3 +96,48 @@ public sealed record SpaceWmsRuntimeTaskResponse(
     string WarehouseCode,
     SpaceWmsRuntimeSourceDto Source,
     IReadOnlyList<SpaceWmsRuntimeTaskItemDto> Items);
+
+public sealed record SpaceWmsRuntimeTaskFloorDto(
+    Guid FloorLogicalId,
+    string FloorCode,
+    string FloorName,
+    int FloorLevel,
+    int ElevationMillimeters,
+    int HeightMillimeters,
+    int StopCount,
+    decimal TotalQuantity);
+
+public sealed record SpaceWmsRuntimeTaskWorkloadDto(
+    Guid FloorLogicalId,
+    string FloorCode,
+    Guid? ZoneLogicalId,
+    string? ZoneCode,
+    int StopCount,
+    decimal TotalQuantity);
+
+public sealed record SpaceWmsRuntimeTaskAisleDto(
+    Guid FloorLogicalId,
+    Guid ZoneLogicalId,
+    Guid AisleLogicalId,
+    string AisleCode,
+    string CenterlineJson);
+
+public sealed record SpaceWmsRuntimeTaskPathResponse(
+    Guid SiteId,
+    Guid PublishedVersionId,
+    string WarehouseCode,
+    SpaceWmsRuntimeSourceDto Source,
+    string TaskId,
+    int StopCount,
+    int LocatedStopCount,
+    int FloorCount,
+    int ZoneCount,
+    int FloorTransitionCount,
+    int ZoneTransitionCount,
+    decimal TotalQuantity,
+    bool CrossFloor,
+    bool CrossZone,
+    IReadOnlyList<SpaceWmsRuntimeTaskItemDto> ActualStops,
+    IReadOnlyList<SpaceWmsRuntimeTaskFloorDto> Floors,
+    IReadOnlyList<SpaceWmsRuntimeTaskWorkloadDto> Workloads,
+    IReadOnlyList<SpaceWmsRuntimeTaskAisleDto> Aisles);

@@ -18,4 +18,9 @@ public interface ISpaceWmsRuntimeService
         Guid siteId,
         IReadOnlyCollection<Guid>? locationLogicalIds = null,
         CancellationToken cancellationToken = default);
+
+    Task<SpaceWmsRuntimeTaskPathResponse> GetTaskPathAsync(
+        Guid siteId,
+        string taskId,
+        CancellationToken cancellationToken = default);
 }

@@ -73,6 +73,80 @@ export interface SpaceRuntimeInventoryLocateResponse {
   items: SpaceRuntimeInventoryLocateHit[]
 }
 
+export interface SpaceRuntimeTaskItem {
+  taskId: string
+  taskType: string
+  status: string
+  sequenceNo: number
+  locationLogicalId: string
+  wmsLogicalId: string
+  spaceLocationCode: string
+  wmsLocationCode: string
+  codeMatches: boolean
+  floorLogicalId: string
+  floorCode: string
+  floorName: string
+  floorLevel: number
+  zoneLogicalId: string | null
+  zoneCode: string | null
+  rackLogicalId: string | null
+  rackCode: string | null
+  anchorXMillimeters: number | null
+  anchorYMillimeters: number | null
+  anchorZMillimeters: number | null
+  quantity: number | null
+  materialNumber: string | null
+}
+
+export interface SpaceRuntimeTaskFloor {
+  floorLogicalId: string
+  floorCode: string
+  floorName: string
+  floorLevel: number
+  elevationMillimeters: number
+  heightMillimeters: number
+  stopCount: number
+  totalQuantity: number
+}
+
+export interface SpaceRuntimeTaskWorkload {
+  floorLogicalId: string
+  floorCode: string
+  zoneLogicalId: string | null
+  zoneCode: string | null
+  stopCount: number
+  totalQuantity: number
+}
+
+export interface SpaceRuntimeTaskAisle {
+  floorLogicalId: string
+  zoneLogicalId: string
+  aisleLogicalId: string
+  aisleCode: string
+  centerlineJson: string
+}
+
+export interface SpaceRuntimeTaskPathResponse {
+  siteId: string
+  publishedVersionId: string
+  warehouseCode: string
+  source: SpaceRuntimeSource
+  taskId: string
+  stopCount: number
+  locatedStopCount: number
+  floorCount: number
+  zoneCount: number
+  floorTransitionCount: number
+  zoneTransitionCount: number
+  totalQuantity: number
+  crossFloor: boolean
+  crossZone: boolean
+  actualStops: SpaceRuntimeTaskItem[]
+  floors: SpaceRuntimeTaskFloor[]
+  workloads: SpaceRuntimeTaskWorkload[]
+  aisles: SpaceRuntimeTaskAisle[]
+}
+
 export interface RuntimeLocationRef {
   locationLogicalId: string
   locationCode: string

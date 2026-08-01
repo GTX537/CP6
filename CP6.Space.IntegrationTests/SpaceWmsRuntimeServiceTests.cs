@@ -72,6 +72,98 @@ public sealed class SpaceWmsRuntimeServiceTests
     }
 
     [Fact]
+    public async Task Task_path_filters_at_source_and_explains_actual_cross_floor_workload()
+    {
+        var execution = Execution();
+        var clock = new TestClock();
+        await using var context = NewContext(execution, clock);
+        var seeded = await SeedPublishedAsync(
+            context,
+            [
+                new SeedLocation(LogicalId(1), "F1-A", FloorLevel: 1),
+                new SeedLocation(LogicalId(2), "F2-B", FloorLevel: 2),
+                new SeedLocation(LogicalId(3), "F2-C", FloorLevel: 2),
+            ]);
+        var source = new RecordingRuntimeSource
+        {
+            TaskItems =
+            [
+                new("TASK-1", "Pick", "Released", 2,
+                    seeded.LocationIds[1], "F2-B", 3, "SKU-B"),
+                new("OTHER", "Pick", "Released", 1,
+                    seeded.LocationIds[2], "F2-C", 99, "SKU-X"),
+                new("TASK-1", "Pick", "Released", 1,
+                    seeded.LocationIds[0], "F1-A", 2, "SKU-A"),
+                new("TASK-1", "Pick", "Released", 3,
+                    seeded.LocationIds[2], "F2-C", null, "SKU-C"),
+            ],
+        };
+        var service = CreateService(context, execution, clock, seeded.SiteId, source);
+
+        var response = await service.GetTaskPathAsync(seeded.SiteId, " task-1 ");
+
+        Assert.Equal("TASK-1", response.TaskId);
+        Assert.Equal(3, response.StopCount);
+        Assert.Equal(3, response.LocatedStopCount);
+        Assert.Equal(2, response.FloorCount);
+        Assert.Equal(2, response.ZoneCount);
+        Assert.Equal(1, response.FloorTransitionCount);
+        Assert.Equal(1, response.ZoneTransitionCount);
+        Assert.Equal(5, response.TotalQuantity);
+        Assert.True(response.CrossFloor);
+        Assert.True(response.CrossZone);
+        Assert.Equal([1, 2, 3], response.ActualStops.Select(value => value.SequenceNo));
+        Assert.Equal(["F1", "F2"], response.Floors.Select(value => value.FloorCode));
+        Assert.Equal([1, 2], response.Floors.Select(value => value.StopCount));
+        Assert.Equal([2m, 3m], response.Floors.Select(value => value.TotalQuantity));
+        Assert.Equal(2, response.Workloads.Count);
+        Assert.Equal(2, response.Aisles.Count);
+        Assert.All(source.TaskFilters, filter => Assert.Equal(["TASK-1"], filter));
+    }
+
+    [Fact]
+    public async Task Task_path_distinguishes_empty_available_from_unavailable_source()
+    {
+        await using var fixture = await RuntimeFixture.CreateAsync("L-001");
+
+        var empty = await fixture.Service.GetTaskPathAsync(
+            fixture.SiteId,
+            "MISSING");
+
+        Assert.True(empty.Source.IsAvailable);
+        Assert.Empty(empty.ActualStops);
+        Assert.Equal(0, empty.StopCount);
+        Assert.Equal(["MISSING"], Assert.Single(fixture.Source.TaskFilters));
+
+        fixture.Source.ResetCalls();
+        fixture.Source.DeclaredKind = SpaceWmsDataSourceKind.Unavailable;
+        var unavailable = await fixture.Service.GetTaskPathAsync(
+            fixture.SiteId,
+            "MISSING");
+
+        Assert.False(unavailable.Source.IsAvailable);
+        Assert.Empty(unavailable.ActualStops);
+    }
+
+    [Fact]
+    public async Task Task_path_rejects_duplicate_actual_sequence_numbers()
+    {
+        await using var fixture = await RuntimeFixture.CreateAsync("L-001");
+        fixture.Source.TaskItems =
+        [
+            new("TASK-1", "Pick", "Released", 1,
+                fixture.LocationIds[0], "L-001", 1, "SKU-A"),
+            new("TASK-1", "Pick", "Released", 1,
+                fixture.LocationIds[0], "L-001", 2, "SKU-B"),
+        ];
+
+        var error = await Assert.ThrowsAsync<SpaceProblemException>(() =>
+            fixture.Service.GetTaskPathAsync(fixture.SiteId, "TASK-1"));
+
+        AssertContractViolation(error);
+    }
+
+    [Fact]
     public async Task Inventory_locate_normalizes_ands_groups_and_sorts_cross_floor_hits()
     {
         var execution = Execution();
@@ -847,6 +939,7 @@ public sealed class SpaceWmsRuntimeServiceTests
         {
             var floorLogicalId = Guid.NewGuid();
             var zoneLogicalId = Guid.NewGuid();
+            var aisleLogicalId = Guid.NewGuid();
             var rackLogicalId = Guid.NewGuid();
             var floor = SpaceFloorRevision.Create(
                 tenantId,
@@ -856,6 +949,7 @@ public sealed class SpaceWmsRuntimeServiceTests
                 floorGroup.Key,
                 $"F{floorGroup.Key}",
                 $"Floor {floorGroup.Key}",
+                elevation: (floorGroup.Key - 1) * 5_000,
                 height: 5_000);
             var zone = SpaceZoneRevision.Create(
                 tenantId,
@@ -864,13 +958,22 @@ public sealed class SpaceWmsRuntimeServiceTests
                 floorLogicalId,
                 $"STORAGE-{floorGroup.Key}",
                 zoneType: 1);
+            var aisle = SpaceAisleRevision.Create(
+                tenantId,
+                version.Id,
+                aisleLogicalId,
+                zoneLogicalId,
+                $"AISLE-{floorGroup.Key:00}",
+                direction: 0);
+            aisle.ConfigureShape("[]", "[[0,500],[10000,500]]");
             var rack = SpaceRackRevision.Create(
                 tenantId,
                 version.Id,
                 rackLogicalId,
                 floorLogicalId,
                 zoneLogicalId,
-                $"RACK-{floorGroup.Key:00}");
+                $"RACK-{floorGroup.Key:00}",
+                aisleLogicalId);
             var floorLocations = floorGroup.ToArray();
             rack.ConfigureGeometry(
                 0, 0, 0, 0,
@@ -896,7 +999,7 @@ public sealed class SpaceWmsRuntimeServiceTests
                     width: 1_000,
                     height: 1_200,
                     depth: 1_100)).ToArray();
-            context.AddRange(floor, zone, rack, level);
+            context.AddRange(floor, zone, aisle, rack, level);
             context.AddRange(locations);
         }
         await context.SaveChangesAsync();
@@ -1001,8 +1104,9 @@ public sealed class SpaceWmsRuntimeServiceTests
         public List<int> InventoryBatchSizes { get; } = [];
         public List<SpaceWmsInventoryLocateCriteria?> InventoryCriteria { get; } = [];
         public List<int> TaskBatchSizes { get; } = [];
+        public List<IReadOnlyList<string>?> TaskFilters { get; } = [];
         public IReadOnlyList<SpaceWmsInventoryItem> InventoryItems { get; set; } = [];
-        public IReadOnlyList<SpaceWmsTaskItem> TaskItems { get; init; } = [];
+        public IReadOnlyList<SpaceWmsTaskItem> TaskItems { get; set; } = [];
 
         public void ResetCalls()
         {
@@ -1011,6 +1115,7 @@ public sealed class SpaceWmsRuntimeServiceTests
             InventoryBatchSizes.Clear();
             InventoryCriteria.Clear();
             TaskBatchSizes.Clear();
+            TaskFilters.Clear();
         }
 
         public Task<SpaceWmsInventoryResult> QueryInventoryAsync(
@@ -1069,6 +1174,7 @@ public sealed class SpaceWmsRuntimeServiceTests
             if (QueryException is not null)
                 throw QueryException;
             TaskBatchSizes.Add(request.LogicalIds.Count);
+            TaskFilters.Add(request.TaskIds);
             if (ReturnNullTaskResult)
                 return Task.FromResult<SpaceWmsTaskResult>(null!);
             var requested = request.LogicalIds.ToHashSet();
@@ -1078,8 +1184,13 @@ public sealed class SpaceWmsRuntimeServiceTests
                     ? new SpaceWmsTaskItem[] { null! }
                     : TaskOverrideItem is not null
                         ? [TaskOverrideItem]
-                        : TaskItems.Where(value => requested.Contains(value.LogicalId))
-                            .ToArray();
+                        : TaskItems.Where(value =>
+                                requested.Contains(value.LogicalId) &&
+                                (request.TaskIds is null ||
+                                 request.TaskIds.Contains(
+                                     value.TaskId,
+                                     StringComparer.Ordinal)))
+                              .ToArray();
             var source = ReturnNullTaskSource ? null! : NextSource();
             return Task.FromResult(new SpaceWmsTaskResult(
                 source,

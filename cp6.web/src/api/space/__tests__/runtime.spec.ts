@@ -51,4 +51,12 @@ describe('spaceRuntimeApi', () => {
     const [, config] = vi.mocked(http.get).mock.calls[0]!
     expect([...(config?.params as URLSearchParams).keys()]).toEqual([])
   })
+
+  it('normalizes a task identity without exposing business characters as path segments', async () => {
+    await spaceRuntimeApi.taskPath('site-1', ' pick/001 ')
+
+    const [url, config] = vi.mocked(http.get).mock.calls[0]!
+    expect(url).toBe('/space/design/v1/sites/site-1/runtime/tasks/path')
+    expect((config?.params as URLSearchParams).get('taskId')).toBe('PICK/001')
+  })
 })

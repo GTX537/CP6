@@ -98,6 +98,47 @@ public sealed class SpaceWmsRuntimeContractTests
             "WarehouseCode",
             "Source",
             "Items");
+        AssertPropertyOrder<SpaceWmsRuntimeTaskFloorDto>(
+            "FloorLogicalId",
+            "FloorCode",
+            "FloorName",
+            "FloorLevel",
+            "ElevationMillimeters",
+            "HeightMillimeters",
+            "StopCount",
+            "TotalQuantity");
+        AssertPropertyOrder<SpaceWmsRuntimeTaskWorkloadDto>(
+            "FloorLogicalId",
+            "FloorCode",
+            "ZoneLogicalId",
+            "ZoneCode",
+            "StopCount",
+            "TotalQuantity");
+        AssertPropertyOrder<SpaceWmsRuntimeTaskAisleDto>(
+            "FloorLogicalId",
+            "ZoneLogicalId",
+            "AisleLogicalId",
+            "AisleCode",
+            "CenterlineJson");
+        AssertPropertyOrder<SpaceWmsRuntimeTaskPathResponse>(
+            "SiteId",
+            "PublishedVersionId",
+            "WarehouseCode",
+            "Source",
+            "TaskId",
+            "StopCount",
+            "LocatedStopCount",
+            "FloorCount",
+            "ZoneCount",
+            "FloorTransitionCount",
+            "ZoneTransitionCount",
+            "TotalQuantity",
+            "CrossFloor",
+            "CrossZone",
+            "ActualStops",
+            "Floors",
+            "Workloads",
+            "Aisles");
     }
 
     [Fact]
@@ -105,7 +146,7 @@ public sealed class SpaceWmsRuntimeContractTests
     {
         var methods = typeof(ISpaceWmsRuntimeService).GetMethods();
 
-        Assert.Equal(3, methods.Length);
+        Assert.Equal(4, methods.Length);
         var inventory = Assert.Single(
             methods,
             method => method.Name == "QueryInventoryAsync");
@@ -145,6 +186,28 @@ public sealed class SpaceWmsRuntimeContractTests
             typeof(Task<SpaceWmsRuntimeTaskResponse>),
             tasks.ReturnType);
         AssertQueryParameters(tasks);
+
+        var taskPath = Assert.Single(
+            methods,
+            method => method.Name == "GetTaskPathAsync");
+        Assert.Equal(
+            typeof(Task<SpaceWmsRuntimeTaskPathResponse>),
+            taskPath.ReturnType);
+        Assert.Collection(
+            taskPath.GetParameters(),
+            parameter =>
+            {
+                Assert.Equal("siteId", parameter.Name);
+                Assert.Equal(typeof(Guid), parameter.ParameterType);
+                Assert.False(parameter.IsOptional);
+            },
+            parameter =>
+            {
+                Assert.Equal("taskId", parameter.Name);
+                Assert.Equal(typeof(string), parameter.ParameterType);
+                Assert.False(parameter.IsOptional);
+            },
+            AssertCancellationParameter);
         Assert.Equal(
             "SPACE_WMS_RUNTIME_CONTRACT_VIOLATION",
             SpaceErrorCodes.WmsRuntimeContractViolation);

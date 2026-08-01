@@ -77,6 +77,14 @@ function Set-SpaceRuntimeTypeScriptNullableTypes {
                 @('quantity', 'number'),
                 @('materialNumber', 'string')
             )
+        },
+        @{
+            Start = 'export class SpaceWmsRuntimeTaskWorkloadDto'
+            End = 'export class UploadSpaceUnderlayResponse'
+            Properties = @(
+                @('zoneLogicalId', 'string'),
+                @('zoneCode', 'string')
+            )
         }
     )
 
