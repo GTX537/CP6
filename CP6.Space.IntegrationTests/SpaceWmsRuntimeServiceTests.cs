@@ -54,6 +54,9 @@ public sealed class SpaceWmsRuntimeServiceTests
         var tasks = await service.QueryTasksAsync(seeded.SiteId);
 
         Assert.Equal("Simulated", inventory.Source.Kind);
+        Assert.Equal(simulator.RuntimeAdapterId, inventory.Source.AdapterId);
+        Assert.Equal(simulator.RuntimeDataSourceId, inventory.Source.DataSourceId);
+        Assert.Equal(new DateTimeOffset(Now), inventory.Source.ReceivedAtUtc);
         Assert.True(inventory.Source.IsSimulated);
         Assert.Equal(2, inventory.Items.Count);
         var adopted = Assert.Single(inventory.Items,
@@ -317,6 +320,9 @@ public sealed class SpaceWmsRuntimeServiceTests
         Assert.Equal(
             new DateTimeOffset(2026, 7, 31, 15, 59, 55, TimeSpan.Zero),
             response.Source.ObservedAtUtc);
+        Assert.Equal(new DateTimeOffset(Now), response.Source.ReceivedAtUtc);
+        Assert.Equal(5_000, response.Source.DelayMilliseconds);
+        Assert.Equal(0, response.Source.ClockSkewMilliseconds);
 
         fixture.Source.ResetCalls();
         fixture.Source.ReturnedDataSourceIds = ["RECORDING_WMS", "OTHER_WMS"];
@@ -335,8 +341,45 @@ public sealed class SpaceWmsRuntimeServiceTests
 
         Assert.Empty(response.Items);
         Assert.Equal("Real", response.Source.Kind);
+        Assert.Equal(fixture.Source.RuntimeAdapterId, response.Source.AdapterId);
+        Assert.Equal(new DateTimeOffset(Now), response.Source.ReceivedAtUtc);
         Assert.True(response.Source.IsAvailable);
         Assert.Empty(fixture.Source.InventoryBatchSizes);
+    }
+
+    [Fact]
+    public async Task Runtime_source_reports_receive_delay_and_forward_clock_skew()
+    {
+        await using var fixture = await RuntimeFixture.CreateAsync("L-001");
+        fixture.Clock.UtcNow = Now.AddSeconds(12);
+
+        var delayed = await fixture.Service.QueryInventoryAsync(fixture.SiteId);
+
+        Assert.Equal("recording-wms-v1", delayed.Source.AdapterId);
+        Assert.Equal(new DateTimeOffset(Now.AddSeconds(12)), delayed.Source.ReceivedAtUtc);
+        Assert.Equal(12_000, delayed.Source.DelayMilliseconds);
+        Assert.Equal(0, delayed.Source.ClockSkewMilliseconds);
+
+        fixture.Source.ResetCalls();
+        fixture.Source.Observations = [new DateTimeOffset(Now.AddSeconds(3))];
+        fixture.Clock.UtcNow = Now;
+
+        var skewed = await fixture.Service.QueryTasksAsync(fixture.SiteId);
+
+        Assert.Equal(0, skewed.Source.DelayMilliseconds);
+        Assert.Equal(3_000, skewed.Source.ClockSkewMilliseconds);
+    }
+
+    [Fact]
+    public async Task Runtime_source_rejects_a_non_utc_receive_clock()
+    {
+        await using var fixture = await RuntimeFixture.CreateAsync("L-001");
+        fixture.Clock.UtcNow = DateTime.SpecifyKind(Now, DateTimeKind.Local);
+
+        var error = await Assert.ThrowsAsync<InvalidOperationException>(() =>
+            fixture.Service.QueryInventoryAsync(fixture.SiteId));
+
+        Assert.Equal("The Space clock must return UTC.", error.Message);
     }
 
     [Fact]
@@ -586,12 +629,14 @@ public sealed class SpaceWmsRuntimeServiceTests
     {
         private RuntimeFixture(
             SpaceContext context,
+            TestClock clock,
             RecordingRuntimeSource source,
             SpaceWmsRuntimeService service,
             Guid siteId,
             IReadOnlyList<Guid> locationIds)
         {
             Context = context;
+            Clock = clock;
             Source = source;
             Service = service;
             SiteId = siteId;
@@ -599,6 +644,7 @@ public sealed class SpaceWmsRuntimeServiceTests
         }
 
         public SpaceContext Context { get; }
+        public TestClock Clock { get; }
         public RecordingRuntimeSource Source { get; }
         public SpaceWmsRuntimeService Service { get; }
         public Guid SiteId { get; }
@@ -622,6 +668,7 @@ public sealed class SpaceWmsRuntimeServiceTests
                     source);
                 return new RuntimeFixture(
                     context,
+                    clock,
                     source,
                     service,
                     seeded.SiteId,
@@ -762,7 +809,7 @@ public sealed class SpaceWmsRuntimeServiceTests
 
     private sealed class TestClock : ISpaceClock
     {
-        public DateTime UtcNow => Now;
+        public DateTime UtcNow { get; set; } = Now;
     }
 
     private sealed class TestAccessEvaluator(Guid allowedSiteId) :

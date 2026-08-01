@@ -104,8 +104,12 @@ public sealed class SpaceWmsRuntimeSchemaFilter : ISchemaFilter
             [typeof(SpaceWmsRuntimeSourceDto)] =
             [
                 "kind",
+                "adapterId",
                 "dataSourceId",
                 "observedAtUtc",
+                "receivedAtUtc",
+                "delayMilliseconds",
+                "clockSkewMilliseconds",
                 "isSimulated",
                 "isAvailable",
             ],

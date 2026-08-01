@@ -6058,6 +6058,10 @@ namespace CP6.Space.Client
         [System.ComponentModel.DataAnnotations.Required(AllowEmptyStrings = true)]
         public string Kind { get; set; } = default!;
 
+        [System.Text.Json.Serialization.JsonPropertyName("adapterId")]
+        [System.ComponentModel.DataAnnotations.Required(AllowEmptyStrings = true)]
+        public string AdapterId { get; set; } = default!;
+
         [System.Text.Json.Serialization.JsonPropertyName("dataSourceId")]
         [System.ComponentModel.DataAnnotations.Required(AllowEmptyStrings = true)]
         public string DataSourceId { get; set; } = default!;
@@ -6065,6 +6069,16 @@ namespace CP6.Space.Client
         [System.Text.Json.Serialization.JsonPropertyName("observedAtUtc")]
         [System.ComponentModel.DataAnnotations.Required(AllowEmptyStrings = true)]
         public System.DateTimeOffset ObservedAtUtc { get; set; } = default!;
+
+        [System.Text.Json.Serialization.JsonPropertyName("receivedAtUtc")]
+        [System.ComponentModel.DataAnnotations.Required(AllowEmptyStrings = true)]
+        public System.DateTimeOffset ReceivedAtUtc { get; set; } = default!;
+
+        [System.Text.Json.Serialization.JsonPropertyName("delayMilliseconds")]
+        public long DelayMilliseconds { get; set; } = default!;
+
+        [System.Text.Json.Serialization.JsonPropertyName("clockSkewMilliseconds")]
+        public long ClockSkewMilliseconds { get; set; } = default!;
 
         [System.Text.Json.Serialization.JsonPropertyName("isSimulated")]
         public bool IsSimulated { get; set; } = default!;

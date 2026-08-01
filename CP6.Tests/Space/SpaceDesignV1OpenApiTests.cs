@@ -103,7 +103,11 @@ public sealed class SpaceDesignV1OpenApiTests
             .GetProperty("CP6.Space.Contracts.SpaceWmsRuntimeSourceDto")
             .GetProperty("properties");
         Assert.True(sourceProperties.TryGetProperty("kind", out _));
+        Assert.True(sourceProperties.TryGetProperty("adapterId", out _));
         Assert.True(sourceProperties.TryGetProperty("observedAtUtc", out _));
+        Assert.True(sourceProperties.TryGetProperty("receivedAtUtc", out _));
+        Assert.True(sourceProperties.TryGetProperty("delayMilliseconds", out _));
+        Assert.True(sourceProperties.TryGetProperty("clockSkewMilliseconds", out _));
         Assert.True(sourceProperties.TryGetProperty("isAvailable", out _));
 
         var inventoryProperties = schemas
@@ -158,8 +162,12 @@ public sealed class SpaceDesignV1OpenApiTests
         AssertExactRequired(
             source,
             "kind",
+            "adapterId",
             "dataSourceId",
             "observedAtUtc",
+            "receivedAtUtc",
+            "delayMilliseconds",
+            "clockSkewMilliseconds",
             "isSimulated",
             "isAvailable");
         AssertExactRequired(
@@ -612,6 +620,25 @@ public sealed class SpaceDesignV1OpenApiTests
         var csharpTask = ExtractTypeBlock(
             csharp,
             "public partial class SpaceWmsRuntimeTaskItemDto");
+        var csharpSource = ExtractTypeBlock(
+            csharp,
+            "public partial class SpaceWmsRuntimeSourceDto");
+        Assert.Contains(
+            "public string AdapterId { get; set; }",
+            csharpSource,
+            StringComparison.Ordinal);
+        Assert.Contains(
+            "public System.DateTimeOffset ReceivedAtUtc { get; set; }",
+            csharpSource,
+            StringComparison.Ordinal);
+        Assert.Contains(
+            "public long DelayMilliseconds { get; set; }",
+            csharpSource,
+            StringComparison.Ordinal);
+        Assert.Contains(
+            "public long ClockSkewMilliseconds { get; set; }",
+            csharpSource,
+            StringComparison.Ordinal);
         Assert.Contains(
             "public decimal PhysicalQuantity { get; set; }",
             csharpInventory,
@@ -650,8 +677,12 @@ public sealed class SpaceDesignV1OpenApiTests
         AssertRequiredTypeScriptProperties(
             source,
             "kind",
+            "adapterId",
             "dataSourceId",
             "observedAtUtc",
+            "receivedAtUtc",
+            "delayMilliseconds",
+            "clockSkewMilliseconds",
             "isSimulated",
             "isAvailable");
 

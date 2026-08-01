@@ -5896,8 +5896,12 @@ export interface ISpaceWmsRuntimeInventoryResponse {
 
 export class SpaceWmsRuntimeSourceDto implements ISpaceWmsRuntimeSourceDto {
     kind!: string;
+    adapterId!: string;
     dataSourceId!: string;
     observedAtUtc!: Date;
+    receivedAtUtc!: Date;
+    delayMilliseconds!: number;
+    clockSkewMilliseconds!: number;
     isSimulated!: boolean;
     isAvailable!: boolean;
 
@@ -5913,8 +5917,12 @@ export class SpaceWmsRuntimeSourceDto implements ISpaceWmsRuntimeSourceDto {
     init(_data?: any) {
         if (_data) {
             this.kind = _data["kind"];
+            this.adapterId = _data["adapterId"];
             this.dataSourceId = _data["dataSourceId"];
             this.observedAtUtc = _data["observedAtUtc"] ? new Date(_data["observedAtUtc"].toString()) : undefined as any;
+            this.receivedAtUtc = _data["receivedAtUtc"] ? new Date(_data["receivedAtUtc"].toString()) : undefined as any;
+            this.delayMilliseconds = _data["delayMilliseconds"];
+            this.clockSkewMilliseconds = _data["clockSkewMilliseconds"];
             this.isSimulated = _data["isSimulated"];
             this.isAvailable = _data["isAvailable"];
         }
@@ -5930,8 +5938,12 @@ export class SpaceWmsRuntimeSourceDto implements ISpaceWmsRuntimeSourceDto {
     toJSON(data?: any) {
         data = typeof data === 'object' ? data : {};
         data["kind"] = this.kind;
+        data["adapterId"] = this.adapterId;
         data["dataSourceId"] = this.dataSourceId;
         data["observedAtUtc"] = this.observedAtUtc ? this.observedAtUtc.toISOString() : undefined as any;
+        data["receivedAtUtc"] = this.receivedAtUtc ? this.receivedAtUtc.toISOString() : undefined as any;
+        data["delayMilliseconds"] = this.delayMilliseconds;
+        data["clockSkewMilliseconds"] = this.clockSkewMilliseconds;
         data["isSimulated"] = this.isSimulated;
         data["isAvailable"] = this.isAvailable;
         return data;
@@ -5940,8 +5952,12 @@ export class SpaceWmsRuntimeSourceDto implements ISpaceWmsRuntimeSourceDto {
 
 export interface ISpaceWmsRuntimeSourceDto {
     kind: string;
+    adapterId: string;
     dataSourceId: string;
     observedAtUtc: Date;
+    receivedAtUtc: Date;
+    delayMilliseconds: number;
+    clockSkewMilliseconds: number;
     isSimulated: boolean;
     isAvailable: boolean;
 }

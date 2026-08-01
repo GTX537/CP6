@@ -1,72 +1,117 @@
-// cp6.web/src/space-viewer/overlay/StockOverlay.ts
 import type { ViewerHandle } from '../api/ViewerHandle'
-import type { WmsStockDto, OverlayMode } from '@/types/space/overlay'
-import type { SpaceDataSource } from '@/types/space/dataSource'
+import type { OverlayMode } from '@/types/space/overlay'
 import { isUsableDataSource } from '@/types/space/dataSource'
-import { stockApi } from '@/api/space/stock'
+import { spaceRuntimeApi } from '@/api/space/runtime'
+import type {
+  RuntimeLocationRef,
+  RuntimeStockItem,
+  SpaceRuntimeInventoryResponse,
+  SpaceRuntimeSource,
+} from '@/types/space/runtime'
 import { binStatusToHex, locationUtilization, utilizationToHex } from './stockModel'
+import { aggregateRuntimeStock } from './runtimeStockModel'
 
 export class StockOverlay {
   private _viewer: ViewerHandle
   private _mode: OverlayMode = 'status'
-  private _byCode = new Map<string, WmsStockDto>()
+  private _byId = new Map<string, RuntimeStockItem>()
   private _ts = ''
-  private _source: SpaceDataSource = {
+  private _source: SpaceRuntimeSource = {
     kind: 'Unavailable',
+    adapterId: 'NOT_QUERIED',
     dataSourceId: 'NOT_QUERIED',
     observedAtUtc: '',
+    receivedAtUtc: '',
+    delayMilliseconds: 0,
+    clockSkewMilliseconds: 0,
     isSimulated: false,
     isAvailable: false,
   }
   private _pollTimer = 0
   private _minIntervalMs = 5000
+  private _refreshVersion = 0
 
   constructor(viewer: ViewerHandle) { this._viewer = viewer }
 
   get mode(): OverlayMode { return this._mode }
   get ts(): string { return this._ts }
-  get source(): SpaceDataSource { return this._source }
+  get source(): SpaceRuntimeSource { return this._source }
 
-  setMode(m: OverlayMode): void { this._mode = m }
-  setSnapshot(items: WmsStockDto[], source: SpaceDataSource, ts = ''): void {
+  setMode(mode: OverlayMode): void { this._mode = mode }
+
+  setSnapshot(items: RuntimeStockItem[], source: SpaceRuntimeSource): void {
     this._source = source
-    this._byCode = isUsableDataSource(source)
-      ? new Map(items.map((i) => [i.locationCode, i]))
+    this._byId = isUsableDataSource(source)
+      ? new Map(items.map((item) => [item.locationLogicalId, item]))
       : new Map()
-    this._ts = ts
-  }
-  getStock(code: string | null): WmsStockDto | null {
-    return code ? (this._byCode.get(code) ?? null) : null
+    this._ts = source.observedAtUtc
   }
 
-  /** 按当前模式着色（off 不着色，由调用方先回灰）。 */
+  getStock(locationLogicalId: string | null): RuntimeStockItem | null {
+    return locationLogicalId ? (this._byId.get(locationLogicalId) ?? null) : null
+  }
+
   apply(): void {
     if (this._mode === 'off' || !isUsableDataSource(this._source)) return
-    for (const [code, d] of this._byCode) {
-      const id = this._viewer.getLocationIdByCode(code)   // 库存按编码键，实例着色按库位 GUID → 先解析
-      if (!id) continue
+    for (const [locationLogicalId, stock] of this._byId) {
       const hex = this._mode === 'utilization'
-        ? utilizationToHex(locationUtilization(d))
-        : binStatusToHex(d.binStatus)
-      this._viewer.setInstanceColor(id, hex)
+        ? utilizationToHex(locationUtilization(stock))
+        : binStatusToHex(stock.binStatus)
+      this._viewer.setInstanceColor(locationLogicalId, hex)
     }
     this._viewer.requestRender()
   }
 
-  /** 拉当前楼层快照并着色。 */
-  async refresh(floorId: string): Promise<void> {
-    const env = await stockApi.floorStock(floorId)
-    this.setSnapshot(env.data.items, env.data.source, env.data.ts)
+  async refresh(siteId: string, locations: readonly RuntimeLocationRef[]): Promise<boolean> {
+    const refreshVersion = ++this._refreshVersion
+    if (locations.length === 0) {
+      this.setSnapshot([], {
+        kind: 'Unavailable',
+        adapterId: 'NOT_QUERIED',
+        dataSourceId: 'EMPTY_FLOOR_SCOPE',
+        observedAtUtc: '',
+        receivedAtUtc: '',
+        delayMilliseconds: 0,
+        clockSkewMilliseconds: 0,
+        isSimulated: false,
+        isAvailable: false,
+      })
+      return true
+    }
+    let response: SpaceRuntimeInventoryResponse
+    try {
+      response = await spaceRuntimeApi.inventory(
+        siteId,
+        locations.map((location) => location.locationLogicalId),
+      )
+    } catch (error) {
+      if (refreshVersion !== this._refreshVersion) return false
+      throw error
+    }
+    if (refreshVersion !== this._refreshVersion) return false
+    this.setSnapshot(aggregateRuntimeStock(response, locations), response.source)
     this.apply()
+    return true
   }
+
+  invalidateRefreshes(): void { this._refreshVersion++ }
 
   startPolling(refresh: () => Promise<void> | void, intervalMs: number): void {
     this.stopPolling()
     const ms = Math.max(this._minIntervalMs, intervalMs)
     this._pollTimer = window.setInterval(() => { void refresh() }, ms)
   }
+
   stopPolling(): void {
-    if (this._pollTimer) { clearInterval(this._pollTimer); this._pollTimer = 0 }
+    if (this._pollTimer) {
+      clearInterval(this._pollTimer)
+      this._pollTimer = 0
+    }
   }
-  dispose(): void { this.stopPolling(); this._byCode.clear() }
+
+  dispose(): void {
+    this.invalidateRefreshes()
+    this.stopPolling()
+    this._byId.clear()
+  }
 }
