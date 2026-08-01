@@ -104,4 +104,20 @@ public sealed class SpaceWmsRuntimeController(
             siteId,
             locationLogicalIds,
             cancellationToken);
+
+    [HttpGet("tasks/path")]
+    [RequirePermission(
+        "space",
+        "model:read",
+        UseProblemDetails = true)]
+    [ProducesResponseType<SpaceWmsRuntimeTaskPathResponse>(
+        StatusCodes.Status200OK)]
+    public Task<SpaceWmsRuntimeTaskPathResponse> GetTaskPath(
+        Guid siteId,
+        [FromQuery] string taskId,
+        CancellationToken cancellationToken = default) =>
+        runtime.GetTaskPathAsync(
+            siteId,
+            taskId,
+            cancellationToken);
 }

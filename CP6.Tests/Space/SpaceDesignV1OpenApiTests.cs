@@ -31,6 +31,7 @@ public sealed class SpaceDesignV1OpenApiTests
             "/api/space/design/v1/sites/{siteId}/runtime/inventory",
             "/api/space/design/v1/sites/{siteId}/runtime/inventory/locate",
             "/api/space/design/v1/sites/{siteId}/runtime/tasks",
+            "/api/space/design/v1/sites/{siteId}/runtime/tasks/path",
             "/api/space/design/v1/assets",
             "/api/space/design/v1/versions/{versionId}",
             "/api/space/design/v1/versions/{versionId}/floors/{floorLogicalId}/commands",
@@ -62,8 +63,8 @@ public sealed class SpaceDesignV1OpenApiTests
             .Select(operation =>
                 operation.Value.GetProperty("operationId").GetString())
             .ToArray();
-        Assert.Equal(26, operationIds.Length);
-        Assert.Equal(26, operationIds.Distinct().Count());
+        Assert.Equal(27, operationIds.Length);
+        Assert.Equal(27, operationIds.Distinct().Count());
         Assert.Contains("GetAssets", operationIds);
         Assert.Contains("CreateAsset", operationIds);
         Assert.Contains("CreateVersion", operationIds);
@@ -84,6 +85,17 @@ public sealed class SpaceDesignV1OpenApiTests
         Assert.Contains("GetInventory", operationIds);
         Assert.Contains("LocateInventory", operationIds);
         Assert.Contains("GetTasks", operationIds);
+        Assert.Contains("GetTaskPath", operationIds);
+
+        var taskIdParameter = paths
+            .GetProperty("/api/space/design/v1/sites/{siteId}/runtime/tasks/path")
+            .GetProperty("get")
+            .GetProperty("parameters")
+            .EnumerateArray()
+            .Single(parameter =>
+                parameter.GetProperty("name").GetString() == "taskId");
+        Assert.True(taskIdParameter.GetProperty("required").GetBoolean());
+        Assert.Equal("query", taskIdParameter.GetProperty("in").GetString());
     }
 
     [Fact]
@@ -101,6 +113,9 @@ public sealed class SpaceDesignV1OpenApiTests
             out _));
         Assert.True(paths.TryGetProperty(
             "/api/space/design/v1/sites/{siteId}/runtime/tasks",
+            out _));
+        Assert.True(paths.TryGetProperty(
+            "/api/space/design/v1/sites/{siteId}/runtime/tasks/path",
             out _));
 
         var schemas = root.GetProperty("components").GetProperty("schemas");
@@ -158,6 +173,18 @@ public sealed class SpaceDesignV1OpenApiTests
         var taskItem = Schema(
             schemas,
             "CP6.Space.Contracts.SpaceWmsRuntimeTaskItemDto");
+        var taskPath = Schema(
+            schemas,
+            "CP6.Space.Contracts.SpaceWmsRuntimeTaskPathResponse");
+        var taskFloor = Schema(
+            schemas,
+            "CP6.Space.Contracts.SpaceWmsRuntimeTaskFloorDto");
+        var taskWorkload = Schema(
+            schemas,
+            "CP6.Space.Contracts.SpaceWmsRuntimeTaskWorkloadDto");
+        var taskAisle = Schema(
+            schemas,
+            "CP6.Space.Contracts.SpaceWmsRuntimeTaskAisleDto");
 
         AssertExactRequired(
             inventoryResponse,
@@ -243,6 +270,49 @@ public sealed class SpaceDesignV1OpenApiTests
             "floorCode",
             "floorName",
             "floorLevel");
+        AssertExactRequired(
+            taskPath,
+            "siteId",
+            "publishedVersionId",
+            "warehouseCode",
+            "source",
+            "taskId",
+            "stopCount",
+            "locatedStopCount",
+            "floorCount",
+            "zoneCount",
+            "floorTransitionCount",
+            "zoneTransitionCount",
+            "totalQuantity",
+            "crossFloor",
+            "crossZone",
+            "actualStops",
+            "floors",
+            "workloads",
+            "aisles");
+        AssertExactRequired(
+            taskFloor,
+            "floorLogicalId",
+            "floorCode",
+            "floorName",
+            "floorLevel",
+            "elevationMillimeters",
+            "heightMillimeters",
+            "stopCount",
+            "totalQuantity");
+        AssertExactRequired(
+            taskWorkload,
+            "floorLogicalId",
+            "floorCode",
+            "stopCount",
+            "totalQuantity");
+        AssertExactRequired(
+            taskAisle,
+            "floorLogicalId",
+            "zoneLogicalId",
+            "aisleLogicalId",
+            "aisleCode",
+            "centerlineJson");
 
         AssertNonNullable(
             inventoryResponse,
@@ -303,12 +373,16 @@ public sealed class SpaceDesignV1OpenApiTests
             "lotNumber",
             "containerNumber");
         AssertNullable(taskItem, "zoneLogicalId", "quantity", "materialNumber");
+        AssertNullable(taskWorkload, "zoneLogicalId", "zoneCode");
 
         AssertNumberFormat(inventoryItem, "physicalQuantity", "decimal", false);
         AssertNumberFormat(inventoryItem, "allocatedQuantity", "decimal", false);
         AssertNumberFormat(locateHit, "physicalQuantity", "decimal", false);
         AssertNumberFormat(locateHit, "allocatedQuantity", "decimal", false);
         AssertNumberFormat(taskItem, "quantity", "decimal", true);
+        AssertNumberFormat(taskPath, "totalQuantity", "decimal", false);
+        AssertNumberFormat(taskFloor, "totalQuantity", "decimal", false);
+        AssertNumberFormat(taskWorkload, "totalQuantity", "decimal", false);
     }
 
     [Fact]
@@ -330,7 +404,7 @@ public sealed class SpaceDesignV1OpenApiTests
             .ToArray();
 
         Assert.Equal(
-            ["GetInventory", "GetTasks", "LocateInventory"],
+            ["GetInventory", "GetTaskPath", "GetTasks", "LocateInventory"],
             actions.Select(action => action.ActionName));
         Assert.All(
             actions,

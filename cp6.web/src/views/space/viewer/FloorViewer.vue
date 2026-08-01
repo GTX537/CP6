@@ -61,8 +61,11 @@
       <!-- Advanced panel (bottom-right): pick-path / workload / devices -->
       <AdvancedPanel
         :path-loaded="pathLoaded"
+        :path-loading="taskPathLoading"
         :path-info="pathInfo"
         :compare-info="compareInfo"
+        :task-path="taskPath"
+        :optimized-stops="optimizedStops"
         :show-optimized="showOptimized"
         :workload-on="workloadOn"
         :device-on="deviceOn"
@@ -70,6 +73,7 @@
         :workload-source="workloadSource"
         :device-source="deviceSource"
         @load-path="onLoadPath"
+        @locate-task-stop="onLocateTaskStop"
         @play="onPathPlay"
         @pause="onPathPause"
         @step="onPathStep"
@@ -106,6 +110,8 @@ import type {
   SpaceRuntimeInventoryLocateQuery,
   SpaceRuntimeInventoryLocateResponse,
   SpaceRuntimeSource,
+  SpaceRuntimeTaskItem,
+  SpaceRuntimeTaskPathResponse,
 } from '@/types/space/runtime'
 import {
   initialRuntimeRefreshState,
@@ -121,8 +127,10 @@ import StockLegend from './StockLegend.vue'
 import { PathAnimator } from '@/space-viewer/advanced/PathAnimator'
 import { WorkloadHeatmap } from '@/space-viewer/advanced/WorkloadHeatmap'
 import { DeviceLayer } from '@/space-viewer/advanced/DeviceLayer'
-import { planPickComparison, type Pt, type PickComparison } from '@/space-viewer/advanced/PickPathPlanner'
-import { mmToSec } from '@/space-viewer/advanced/cost'
+import {
+  planRuntimeTaskPath,
+  type RuntimeTaskPathPlan,
+} from '@/space-viewer/advanced/runtimeTaskPath'
 import { advancedApi } from '@/api/space/advanced'
 import AdvancedPanel from './AdvancedPanel.vue'
 
@@ -142,6 +150,8 @@ let locator: Locator | null = null
 let overlay: StockOverlay | null = null
 let hoverTimer = 0
 let locateRequestVersion = 0
+let taskPathRequestVersion = 0
+let preserveTaskPathNavigation = false
 
 const overlayMode = ref<OverlayMode>('status')
 const overlayTs = ref('')
@@ -178,8 +188,11 @@ let heatmap: WorkloadHeatmap | null = null
 let deviceLayer: DeviceLayer | null = null
 
 const pathLoaded = ref(false)
+const taskPathLoading = ref(false)
 const pathInfo = ref('')
-const comparison = ref<PickComparison | null>(null)
+const taskPath = ref<SpaceRuntimeTaskPathResponse | null>(null)
+const taskPathPlan = ref<RuntimeTaskPathPlan | null>(null)
+const optimizedStops = ref<SpaceRuntimeTaskItem[]>([])
 const showOptimized = ref(false)
 const compareInfo = ref('')
 const workloadOn = ref(false)
@@ -198,12 +211,17 @@ function canvasNdc(e: MouseEvent): { x: number; y: number } {
 
 async function loadFloor(floorId: string): Promise<void> {
   if (!viewer) return
+  if (!preserveTaskPathNavigation) taskPathRequestVersion++
   overlay?.invalidateRefreshes()
   selectedId.value = null
   pathAnimator?.clear()
   pathLoaded.value = false
   pathInfo.value = ''
-  comparison.value = null
+  taskPath.value = null
+  taskPathPlan.value = null
+  optimizedStops.value = []
+  taskPathLoading.value = false
+  taskSource.value = unavailableSource('NOT_QUERIED')
   showOptimized.value = false
   compareInfo.value = ''
   deviceLayer?.clear()
@@ -345,42 +363,100 @@ function onPathReplay(): void { pathAnimator?.replay() }
 function onPathSpeed(v: number): void { pathAnimator?.setSpeed(v) }
 
 async function onLoadPath(taskNo: string): Promise<void> {
-  if (!taskNo || !pathAnimator) return
+  if (!taskNo.trim() || !pathAnimator) return
+  const requestVersion = ++taskPathRequestVersion
+  taskPathLoading.value = true
+  pathAnimator.clear()
+  pathLoaded.value = false
+  pathInfo.value = ''
+  compareInfo.value = ''
+  showOptimized.value = false
+  taskPath.value = null
+  taskPathPlan.value = null
+  optimizedStops.value = []
   try {
-    const env = await advancedApi.pickPath(currentFloorId.value, taskNo)
-    const data = env.data
+    const data = await spaceRuntimeApi.taskPath(siteId, taskNo)
+    if (requestVersion !== taskPathRequestVersion) return
     taskSource.value = data.source
+    taskPath.value = data
     if (!isUsableDataSource(taskSource.value)) {
-      ElMessage.warning(t('浠诲姟鏁版嵁婧愪笉鍙敤'))
+      ElMessage.warning(t('任务数据源不可用，不能判定任务路径'))
       return
     }
-    const stopPts: Pt[] = [...data.stops]
-      .sort((a, b) => a.seq - b.seq)                              // 按 LineNo(seq) 升序，固定 actual 语义
-      .filter((s) => s.absX != null && s.absY != null)
-      .map((s) => ({ x: s.absX as number, y: s.absY as number }))
-    if (stopPts.length < 2) { ElMessage.info(t('该拣货单无可定位拣货点')); return }
-    const cmp = planPickComparison(data.aisles, stopPts)
-    comparison.value = cmp
-    pathAnimator.setPath(cmp.actual.points)                       // 青线 + 小车 = 实际 LineNo 序
+    if (data.stopCount === 0) {
+      ElMessage.info(t('没有找到该拣货任务'))
+      return
+    }
+    const plan = planRuntimeTaskPath(data)
+    if (!plan) {
+      ElMessage.info(
+        data.locatedStopCount < data.stopCount
+          ? t('任务含未定位停靠点，已显示实际顺序和工作量，但不能生成完整路径')
+          : t('任务停靠点不足，已显示实际顺序和工作量'),
+      )
+      return
+    }
+    taskPathPlan.value = plan
+    optimizedStops.value = plan.optimizedStops
+    pathAnimator.setPath(plan.actualPoints)                       // 青线 + 小车 = WMS 实际序
     showOptimized.value = false
     pathAnimator.setComparisonPath(null)
     pathLoaded.value = true
     pathInfo.value = t('拣货路径：{n} 点，总距 {d} 米')
-      .replace('{n}', String(stopPts.length))
-      .replace('{d}', (cmp.actualMm / 1000).toFixed(1))           // I-SPACE-801
+      .replace('{n}', String(data.stopCount))
+      .replace('{d}', (plan.actualMillimeters / 1000).toFixed(1)) // I-SPACE-801
     compareInfo.value = t('实际 {am} 米 / {as} 秒 ・ 优化 {om} 米 / {os} 秒 ・ 省 {p}%')
-      .replace('{am}', (cmp.actualMm / 1000).toFixed(1)).replace('{as}', mmToSec(cmp.actualMm).toFixed(0))
-      .replace('{om}', (cmp.optimizedMm / 1000).toFixed(1)).replace('{os}', mmToSec(cmp.optimizedMm).toFixed(0))
-      .replace('{p}', cmp.savingsPct.toFixed(0))
-    if (cmp.actual.degraded) ElMessage.warning(t('巷道路径不连通，近似直连显示'))  // W-SPACE-801
+      .replace('{am}', (plan.actualMillimeters / 1000).toFixed(1)).replace('{as}', plan.actualSeconds.toFixed(0))
+      .replace('{om}', (plan.optimizedMillimeters / 1000).toFixed(1)).replace('{os}', plan.optimizedSeconds.toFixed(0))
+      .replace('{p}', plan.savingsPercent.toFixed(0))
+    if (plan.degraded) {
+      ElMessage.warning(
+        data.crossFloor
+          ? t('跨层连接拓扑不可用，跨层段按近似直连显示')
+          : t('巷道路径不连通，近似直连显示'),
+      ) // W-SPACE-801
+    }
   } catch {
+    if (requestVersion !== taskPathRequestVersion) return
     ElMessage.warning(t('高级可视化数据获取失败'))   // W-SPACE-802
+  } finally {
+    if (requestVersion === taskPathRequestVersion) taskPathLoading.value = false
+  }
+}
+
+async function onLocateTaskStop(stop: SpaceRuntimeTaskItem): Promise<void> {
+  const response = taskPath.value
+  const plan = taskPathPlan.value
+  const source = taskSource.value
+  const optimized = optimizedStops.value
+  const info = pathInfo.value
+  const comparisonInfo = compareInfo.value
+  const optimizedVisible = showOptimized.value
+  const requestVersion = taskPathRequestVersion
+  preserveTaskPathNavigation = true
+  try {
+    await locator?.locate(stop.spaceLocationCode)
+  } finally {
+    preserveTaskPathNavigation = false
+  }
+  if (!response || requestVersion !== taskPathRequestVersion) return
+  taskPath.value = response
+  taskPathPlan.value = plan
+  taskSource.value = source
+  optimizedStops.value = optimized
+  pathInfo.value = info
+  compareInfo.value = comparisonInfo
+  showOptimized.value = optimizedVisible
+  if (plan && pathAnimator) {
+    pathAnimator.setPath(plan.actualPoints)
+    pathAnimator.setComparisonPath(optimizedVisible ? plan.optimizedPoints : null)
+    pathLoaded.value = true
   }
 }
 
 function onToggleOptimized(): void {
   showOptimized.value = !showOptimized.value
-  pathAnimator?.setComparisonPath(showOptimized.value ? (comparison.value?.optimized.points ?? null) : null)
+  pathAnimator?.setComparisonPath(showOptimized.value ? (taskPathPlan.value?.optimizedPoints ?? null) : null)
 }
 
 // 选择器的 to 日期含义为"含当天"；后端时间窗半开 [from,to) → 查询上界取 to+1 天，

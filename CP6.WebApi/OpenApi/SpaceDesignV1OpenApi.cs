@@ -112,6 +112,27 @@ public sealed class SpaceWmsRuntimeSchemaFilter : ISchemaFilter
                 "source",
                 "items",
             ],
+            [typeof(SpaceWmsRuntimeTaskPathResponse)] =
+            [
+                "siteId",
+                "publishedVersionId",
+                "warehouseCode",
+                "source",
+                "taskId",
+                "stopCount",
+                "locatedStopCount",
+                "floorCount",
+                "zoneCount",
+                "floorTransitionCount",
+                "zoneTransitionCount",
+                "totalQuantity",
+                "crossFloor",
+                "crossZone",
+                "actualStops",
+                "floors",
+                "workloads",
+                "aisles",
+            ],
             [typeof(SpaceWmsRuntimeSourceDto)] =
             [
                 "kind",
@@ -177,6 +198,32 @@ public sealed class SpaceWmsRuntimeSchemaFilter : ISchemaFilter
                 "floorName",
                 "floorLevel",
             ],
+            [typeof(SpaceWmsRuntimeTaskFloorDto)] =
+            [
+                "floorLogicalId",
+                "floorCode",
+                "floorName",
+                "floorLevel",
+                "elevationMillimeters",
+                "heightMillimeters",
+                "stopCount",
+                "totalQuantity",
+            ],
+            [typeof(SpaceWmsRuntimeTaskWorkloadDto)] =
+            [
+                "floorLogicalId",
+                "floorCode",
+                "stopCount",
+                "totalQuantity",
+            ],
+            [typeof(SpaceWmsRuntimeTaskAisleDto)] =
+            [
+                "floorLogicalId",
+                "zoneLogicalId",
+                "aisleLogicalId",
+                "aisleCode",
+                "centerlineJson",
+            ],
         };
 
     public void Apply(OpenApiSchema schema, SchemaFilterContext context)
@@ -235,6 +282,19 @@ public sealed class SpaceWmsRuntimeSchemaFilter : ISchemaFilter
                 "materialNumber");
             SetNumberFormat(schema, "quantity", "decimal", true);
         }
+        else if (context.Type == typeof(SpaceWmsRuntimeTaskPathResponse))
+        {
+            SetNumberFormat(schema, "totalQuantity", "decimal", false);
+        }
+        else if (context.Type == typeof(SpaceWmsRuntimeTaskFloorDto))
+        {
+            SetNumberFormat(schema, "totalQuantity", "decimal", false);
+        }
+        else if (context.Type == typeof(SpaceWmsRuntimeTaskWorkloadDto))
+        {
+            SetNullable(schema, true, "zoneLogicalId", "zoneCode");
+            SetNumberFormat(schema, "totalQuantity", "decimal", false);
+        }
     }
 
     private static OpenApiSchema Property(
@@ -273,6 +333,22 @@ public sealed class SpaceDesignV1OperationFilter : IOperationFilter
         OpenApiOperation operation,
         OperationFilterContext context)
     {
+        if (operation.OperationId == "GetTaskPath")
+        {
+            var taskId = operation.Parameters.Single(
+                parameter =>
+                    parameter.In == ParameterLocation.Query &&
+                    string.Equals(
+                        parameter.Name,
+                        "taskId",
+                        StringComparison.Ordinal));
+            taskId.Required = true;
+            taskId.Description =
+                "WMS task identity; normalized by trimming and upper-casing. " +
+                "1-100 characters.";
+            return;
+        }
+
         if (operation.OperationId is not (
                 "CreateVersion" or
                 "CreateSource" or

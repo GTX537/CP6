@@ -209,8 +209,193 @@ public sealed class SpaceWmsRuntimeService : ISpaceWmsRuntimeService
     public async Task<SpaceWmsRuntimeTaskResponse> QueryTasksAsync(
         Guid siteId,
         IReadOnlyCollection<Guid>? locationLogicalIds = null,
+        CancellationToken cancellationToken = default) =>
+        await QueryTasksCoreAsync(
+            siteId,
+            locationLogicalIds,
+            taskIds: null,
+            cancellationToken);
+
+    public async Task<SpaceWmsRuntimeTaskPathResponse> GetTaskPathAsync(
+        Guid siteId,
+        string taskId,
         CancellationToken cancellationToken = default)
     {
+        var normalizedTaskId = NormalizeTaskId(taskId);
+        var tasks = await QueryTasksCoreAsync(
+            siteId,
+            locationLogicalIds: null,
+            [normalizedTaskId],
+            cancellationToken);
+        if (!tasks.Source.IsAvailable || tasks.Items.Count == 0)
+        {
+            return new SpaceWmsRuntimeTaskPathResponse(
+                tasks.SiteId,
+                tasks.PublishedVersionId,
+                tasks.WarehouseCode,
+                tasks.Source,
+                normalizedTaskId,
+                0,
+                0,
+                0,
+                0,
+                0,
+                0,
+                0,
+                false,
+                false,
+                [],
+                [],
+                [],
+                []);
+        }
+
+        var actualStops = tasks.Items
+            .OrderBy(value => value.SequenceNo)
+            .ThenBy(value => value.LocationLogicalId)
+            .ToArray();
+        if (actualStops
+            .GroupBy(value => value.SequenceNo)
+            .Any(group => group.Count() > 1))
+        {
+            throw ContractViolation(
+                "A WMS task path returned duplicate sequence numbers.");
+        }
+
+        var floorIds = actualStops
+            .Select(value => value.FloorLogicalId)
+            .Distinct()
+            .ToArray();
+        var floorIdSet = floorIds.ToHashSet();
+        var floorRevisions = await _context.FloorRevisions
+            .AsNoTracking()
+            .Where(value =>
+                value.ModelVersionId == tasks.PublishedVersionId &&
+                value.LifecycleState == SpaceLifecycleState.Active &&
+                floorIdSet.Contains(value.LogicalId))
+            .ToListAsync(cancellationToken);
+        if (floorRevisions.Count != floorIds.Length)
+        {
+            throw Conflict(
+                SpaceErrorCodes.VersionStateInvalid,
+                "Published task floor geometry is inconsistent.",
+                "repair-published-version");
+        }
+
+        var floorDtos = floorRevisions
+            .Select(floor =>
+            {
+                var stops = actualStops
+                    .Where(value => value.FloorLogicalId == floor.LogicalId)
+                    .ToArray();
+                return new SpaceWmsRuntimeTaskFloorDto(
+                    floor.LogicalId,
+                    floor.FloorCode,
+                    floor.Name,
+                    floor.Level,
+                    floor.Elevation,
+                    floor.Height,
+                    stops.Length,
+                    stops.Sum(value => value.Quantity ?? 0));
+            })
+            .OrderBy(value => value.FloorLevel)
+            .ThenBy(value => value.FloorCode, StringComparer.Ordinal)
+            .ToArray();
+        var workloads = actualStops
+            .GroupBy(value => new
+            {
+                value.FloorLogicalId,
+                value.FloorCode,
+                value.ZoneLogicalId,
+                value.ZoneCode,
+            })
+            .Select(group => new SpaceWmsRuntimeTaskWorkloadDto(
+                group.Key.FloorLogicalId,
+                group.Key.FloorCode,
+                group.Key.ZoneLogicalId,
+                group.Key.ZoneCode,
+                group.Count(),
+                group.Sum(value => value.Quantity ?? 0)))
+            .OrderBy(value =>
+                floorDtos.Single(floor =>
+                    floor.FloorLogicalId == value.FloorLogicalId).FloorLevel)
+            .ThenBy(value => value.FloorCode, StringComparer.Ordinal)
+            .ThenBy(value => value.ZoneCode, StringComparer.Ordinal)
+            .ToArray();
+
+        var zones = await _context.ZoneRevisions
+            .AsNoTracking()
+            .Where(value =>
+                value.ModelVersionId == tasks.PublishedVersionId &&
+                value.LifecycleState == SpaceLifecycleState.Active &&
+                floorIdSet.Contains(value.FloorLogicalId))
+            .ToListAsync(cancellationToken);
+        var zoneById = zones.ToDictionary(value => value.LogicalId);
+        var zoneIds = zoneById.Keys.ToArray();
+        var aisleRevisions = await _context.AisleRevisions
+            .AsNoTracking()
+            .Where(value =>
+                value.ModelVersionId == tasks.PublishedVersionId &&
+                value.LifecycleState == SpaceLifecycleState.Active &&
+                zoneIds.Contains(value.ZoneLogicalId))
+            .ToListAsync(cancellationToken);
+        var aisles = aisleRevisions
+            .Select(aisle => new SpaceWmsRuntimeTaskAisleDto(
+                zoneById[aisle.ZoneLogicalId].FloorLogicalId,
+                aisle.ZoneLogicalId,
+                aisle.LogicalId,
+                aisle.AisleCode,
+                aisle.CenterlineJson))
+            .OrderBy(value =>
+                floorDtos.Single(floor =>
+                    floor.FloorLogicalId == value.FloorLogicalId).FloorLevel)
+            .ThenBy(value => value.AisleCode, StringComparer.Ordinal)
+            .ThenBy(value => value.AisleLogicalId)
+            .ToArray();
+
+        var floorTransitions = CountTransitions(
+            actualStops.Select(value => (Guid?)value.FloorLogicalId));
+        var zoneTransitions = CountTransitions(
+            actualStops.Select(value => value.ZoneLogicalId));
+        var zoneCount = actualStops
+            .Select(value => value.ZoneLogicalId)
+            .Distinct()
+            .Count();
+        return new SpaceWmsRuntimeTaskPathResponse(
+            tasks.SiteId,
+            tasks.PublishedVersionId,
+            tasks.WarehouseCode,
+            tasks.Source,
+            normalizedTaskId,
+            actualStops.Length,
+            actualStops.Count(value =>
+                value.AnchorXMillimeters.HasValue &&
+                value.AnchorYMillimeters.HasValue),
+            floorDtos.Length,
+            zoneCount,
+            floorTransitions,
+            zoneTransitions,
+            actualStops.Sum(value => value.Quantity ?? 0),
+            floorTransitions > 0,
+            zoneTransitions > 0,
+            actualStops,
+            floorDtos,
+            workloads,
+            aisles);
+    }
+
+    private async Task<SpaceWmsRuntimeTaskResponse> QueryTasksCoreAsync(
+        Guid siteId,
+        IReadOnlyCollection<Guid>? locationLogicalIds,
+        IReadOnlyCollection<string>? taskIds,
+        CancellationToken cancellationToken)
+    {
+        var normalizedTaskIds = taskIds?
+            .Select(NormalizeTaskId)
+            .Distinct(StringComparer.Ordinal)
+            .ToArray();
+        var normalizedTaskIdSet = normalizedTaskIds?.ToHashSet(
+            StringComparer.Ordinal);
         var scope = await LoadScopeAsync(
             siteId,
             locationLogicalIds,
@@ -224,7 +409,10 @@ public sealed class SpaceWmsRuntimeService : ISpaceWmsRuntimeService
             try
             {
                 result = await _source.QueryTasksAsync(
-                    new SpaceWmsTaskQuery(scope.WmsContext, logicalIds),
+                    new SpaceWmsTaskQuery(
+                        scope.WmsContext,
+                        logicalIds,
+                        normalizedTaskIds),
                     cancellationToken);
             }
             catch (OperationCanceledException) when (cancellationToken.IsCancellationRequested)
@@ -250,6 +438,13 @@ public sealed class SpaceWmsRuntimeService : ISpaceWmsRuntimeService
             }
 
             ValidateTaskItems(result.Items, scope, requestedChunkIds);
+            if (normalizedTaskIdSet is not null && result.Items.Any(item =>
+                    !normalizedTaskIdSet.Contains(
+                        item.TaskId.Trim().ToUpperInvariant())))
+            {
+                throw ContractViolation(
+                    "A WMS task query returned an item outside the requested task filter.");
+            }
             foreach (var item in result.Items)
             {
                 var location = scope.LocationByWmsLogicalId[item.LogicalId];
@@ -295,6 +490,22 @@ public sealed class SpaceWmsRuntimeService : ISpaceWmsRuntimeService
             scope.WarehouseCode,
             ToDto(observedSource),
             orderedItems);
+    }
+
+    private static int CountTransitions(IEnumerable<Guid?> values)
+    {
+        using var enumerator = values.GetEnumerator();
+        if (!enumerator.MoveNext())
+            return 0;
+        var previous = enumerator.Current;
+        var count = 0;
+        while (enumerator.MoveNext())
+        {
+            if (enumerator.Current != previous)
+                count++;
+            previous = enumerator.Current;
+        }
+        return count;
     }
 
     private async Task<RuntimeScope> LoadScopeAsync(
@@ -806,6 +1017,18 @@ public sealed class SpaceWmsRuntimeService : ISpaceWmsRuntimeService
             : value.Trim();
         if (normalized?.Length > 100)
             throw Invalid(field, "The value must not exceed 100 characters.");
+        return normalized;
+    }
+
+    private static string NormalizeTaskId(string value)
+    {
+        var normalized = string.IsNullOrWhiteSpace(value)
+            ? null
+            : value.Trim().ToUpperInvariant();
+        if (normalized is null)
+            throw Invalid("taskId", "A task identity is required.");
+        if (normalized.Length > 100)
+            throw Invalid("taskId", "The value must not exceed 100 characters.");
         return normalized;
     }
 

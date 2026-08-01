@@ -3,6 +3,7 @@ import type {
   SpaceRuntimeInventoryLocateQuery,
   SpaceRuntimeInventoryLocateResponse,
   SpaceRuntimeInventoryResponse,
+  SpaceRuntimeTaskPathResponse,
 } from '@/types/space/runtime'
 
 export const spaceRuntimeApi = {
@@ -26,6 +27,14 @@ export const spaceRuntimeApi = {
     if (containerNumber) params.set('containerNumber', containerNumber)
     return http.get<unknown, SpaceRuntimeInventoryLocateResponse>(
       `/space/design/v1/sites/${siteId}/runtime/inventory/locate`,
+      { params },
+    )
+  },
+  taskPath(siteId: string, taskId: string) {
+    const normalized = taskId.trim().toUpperCase()
+    const params = new URLSearchParams({ taskId: normalized })
+    return http.get<unknown, SpaceRuntimeTaskPathResponse>(
+      `/space/design/v1/sites/${siteId}/runtime/tasks/path`,
       { params },
     )
   },
