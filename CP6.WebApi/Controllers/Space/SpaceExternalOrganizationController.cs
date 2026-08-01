@@ -41,7 +41,8 @@ namespace CP6.WebApi.Controllers.Space;
     StatusCodes.Status500InternalServerError,
     "application/problem+json")]
 public sealed class SpaceExternalOrganizationController(
-    ISpaceExternalOrganizationService service) : ControllerBase
+    ISpaceExternalOrganizationService service,
+    ISpaceExternalGrantService grants) : ControllerBase
 {
     [HttpGet]
     [RequirePermission(
@@ -154,6 +155,82 @@ public sealed class SpaceExternalOrganizationController(
         service.UpdateMembershipAsync(
             organizationId,
             membershipId,
+            request,
+            cancellationToken);
+
+    [HttpGet("{organizationId:guid}/grant")]
+    [RequirePermission(
+        "space",
+        "external:read",
+        UseProblemDetails = true)]
+    [ProducesResponseType<IReadOnlyList<SpaceExternalGrantDto>>(
+        StatusCodes.Status200OK)]
+    public Task<IReadOnlyList<SpaceExternalGrantDto>> GetGrants(
+        Guid organizationId,
+        [FromQuery] string? status = null,
+        CancellationToken cancellationToken = default) =>
+        grants.GetGrantsAsync(
+            organizationId,
+            status,
+            cancellationToken);
+
+    [HttpGet("{organizationId:guid}/grant/{grantId:guid}")]
+    [RequirePermission(
+        "space",
+        "external:read",
+        UseProblemDetails = true)]
+    [ProducesResponseType<SpaceExternalGrantDto>(
+        StatusCodes.Status200OK)]
+    public Task<SpaceExternalGrantDto> GetGrant(
+        Guid organizationId,
+        Guid grantId,
+        CancellationToken cancellationToken) =>
+        grants.GetGrantAsync(
+            organizationId,
+            grantId,
+            cancellationToken);
+
+    [HttpPost("{organizationId:guid}/grant")]
+    [RequirePermission(
+        "space",
+        "external:manage",
+        UseProblemDetails = true)]
+    [ProducesResponseType<SpaceExternalGrantDto>(
+        StatusCodes.Status201Created)]
+    public async Task<IActionResult> CreateGrant(
+        Guid organizationId,
+        [FromBody, Required] CreateSpaceExternalGrantRequest request,
+        CancellationToken cancellationToken)
+    {
+        var result = await grants.CreateGrantAsync(
+            organizationId,
+            request,
+            cancellationToken);
+        return CreatedAtAction(
+            nameof(GetGrant),
+            new
+            {
+                organizationId,
+                grantId = result.Id,
+            },
+            result);
+    }
+
+    [HttpPut("{organizationId:guid}/grant/{grantId:guid}")]
+    [RequirePermission(
+        "space",
+        "external:manage",
+        UseProblemDetails = true)]
+    [ProducesResponseType<SpaceExternalGrantDto>(
+        StatusCodes.Status200OK)]
+    public Task<SpaceExternalGrantDto> UpdateGrant(
+        Guid organizationId,
+        Guid grantId,
+        [FromBody, Required] UpdateSpaceExternalGrantRequest request,
+        CancellationToken cancellationToken) =>
+        grants.UpdateGrantAsync(
+            organizationId,
+            grantId,
             request,
             cancellationToken);
 }

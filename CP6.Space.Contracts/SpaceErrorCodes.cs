@@ -89,6 +89,24 @@ public static class SpaceErrorCodes
         "SPACE_EXTERNAL_MEMBERSHIP_NOT_FOUND";
     public const string ExternalMembershipConflict =
         "SPACE_EXTERNAL_MEMBERSHIP_CONFLICT";
+    public const string ExternalGrantNotFound =
+        "SPACE_EXTERNAL_GRANT_NOT_FOUND";
+    public const string ExternalGrantConflict =
+        "SPACE_EXTERNAL_GRANT_CONFLICT";
+    public const string ExternalGrantScopeInvalid =
+        "SPACE_EXTERNAL_GRANT_SCOPE_INVALID";
+    public const string ExternalOrganizationContextRequired =
+        "SPACE_EXTERNAL_ORGANIZATION_CONTEXT_REQUIRED";
+    public const string ExternalMembershipInactive =
+        "SPACE_EXTERNAL_MEMBERSHIP_INACTIVE";
+    public const string ExternalGrantInactive =
+        "SPACE_EXTERNAL_GRANT_INACTIVE";
+    public const string ExternalScopeDenied =
+        "SPACE_EXTERNAL_SCOPE_DENIED";
+    public const string ExternalScopeAllowed =
+        "SPACE_EXTERNAL_SCOPE_ALLOWED";
+    public const string InternalScopeAllowed =
+        "SPACE_INTERNAL_SCOPE_ALLOWED";
     public const string ExternalReferenceNotFound =
         "SPACE_EXTERNAL_REFERENCE_NOT_FOUND";
     public const string ExternalAccessStateInvalid =

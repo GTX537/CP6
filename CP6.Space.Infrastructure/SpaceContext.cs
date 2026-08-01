@@ -73,6 +73,16 @@ public sealed class SpaceContext : DbContext
         Set<SpaceExternalOrganization>();
     public DbSet<SpaceExternalMembership> ExternalMemberships =>
         Set<SpaceExternalMembership>();
+    public DbSet<SpaceExternalGrant> ExternalGrants =>
+        Set<SpaceExternalGrant>();
+    public DbSet<SpaceExternalGrantFloor> ExternalGrantFloors =>
+        Set<SpaceExternalGrantFloor>();
+    public DbSet<SpaceExternalGrantZone> ExternalGrantZones =>
+        Set<SpaceExternalGrantZone>();
+    public DbSet<SpaceExternalGrantOwner> ExternalGrantOwners =>
+        Set<SpaceExternalGrantOwner>();
+    public DbSet<SpaceExternalGrantObject> ExternalGrantObjects =>
+        Set<SpaceExternalGrantObject>();
 
     protected override void OnModelCreating(ModelBuilder modelBuilder)
     {
@@ -94,6 +104,11 @@ public sealed class SpaceContext : DbContext
         ConfigureWmsAdoption(modelBuilder);
         ConfigureExternalOrganization(modelBuilder);
         ConfigureExternalMembership(modelBuilder);
+        ConfigureExternalGrant(modelBuilder);
+        ConfigureExternalGrantFloor(modelBuilder);
+        ConfigureExternalGrantZone(modelBuilder);
+        ConfigureExternalGrantOwner(modelBuilder);
+        ConfigureExternalGrantObject(modelBuilder);
         ConfigureFile(modelBuilder);
         ConfigureSource(modelBuilder);
         ConfigureJob(modelBuilder);
@@ -2253,6 +2268,199 @@ public sealed class SpaceContext : DbContext
             .HasConstraintName(
                 "FK_Space_ExternalMembership_Organization_Tenant");
 
+        entity.HasQueryFilter(
+            x => x.TenantId == CurrentTenantId && !x.IsDeleted);
+    }
+
+    private void ConfigureExternalGrant(ModelBuilder modelBuilder)
+    {
+        var entity = modelBuilder.Entity<SpaceExternalGrant>();
+        entity.ToTable(
+            "Space_ExternalGrant",
+            table =>
+            {
+                table.HasCheckConstraint(
+                    "CK_Space_ExternalGrant_Status",
+                    "[Status] >= 0 AND [Status] <= 2");
+                table.HasCheckConstraint(
+                    "CK_Space_ExternalGrant_Validity",
+                    "[ValidToUtc] IS NULL OR [ValidToUtc] > [ValidFromUtc]");
+                table.HasCheckConstraint(
+                    "CK_Space_ExternalGrant_Version",
+                    "[GrantVersion] > 0");
+            });
+        entity.HasKey(x => x.Id);
+        entity.Property(x => x.Id).ValueGeneratedNever();
+        entity.HasAlternateKey(x => new { x.TenantId, x.Id })
+            .HasName("AK_Space_ExternalGrant_TenantId_Id");
+        ConfigureTenantEntity(entity);
+
+        entity.Property(x => x.Status)
+            .HasConversion<short>()
+            .HasColumnType("smallint");
+        entity.Property(x => x.ValidFromUtc).HasColumnType("datetime2");
+        entity.Property(x => x.ValidToUtc).HasColumnType("datetime2");
+        entity.Property(x => x.GrantVersion).HasColumnType("bigint");
+        entity.Property(x => x.RowVersion).IsRowVersion();
+
+        entity.HasOne<SpaceExternalOrganization>()
+            .WithMany()
+            .HasForeignKey(x => new { x.TenantId, x.OrganizationId })
+            .HasPrincipalKey(x => new { x.TenantId, x.Id })
+            .OnDelete(DeleteBehavior.Restrict)
+            .HasConstraintName(
+                "FK_Space_ExternalGrant_Organization_Tenant");
+        entity.HasIndex(x => new
+            {
+                x.TenantId,
+                x.OrganizationId,
+                x.Status,
+                x.ValidFromUtc,
+                x.ValidToUtc,
+            })
+            .HasDatabaseName(
+                "IX_Space_ExternalGrant_Organization_Status_Validity");
+        entity.HasIndex(x => new
+            {
+                x.TenantId,
+                x.OrganizationId,
+                x.SiteId,
+                x.Status,
+            })
+            .HasDatabaseName(
+                "IX_Space_ExternalGrant_Organization_Site_Status");
+        entity.HasQueryFilter(
+            x => x.TenantId == CurrentTenantId && !x.IsDeleted);
+    }
+
+    private void ConfigureExternalGrantFloor(ModelBuilder modelBuilder)
+    {
+        var entity = modelBuilder.Entity<SpaceExternalGrantFloor>();
+        entity.ToTable("Space_ExternalGrantFloor");
+        entity.HasKey(x => x.Id);
+        entity.Property(x => x.Id).ValueGeneratedNever();
+        entity.HasAlternateKey(x => new { x.TenantId, x.Id })
+            .HasName("AK_Space_ExternalGrantFloor_TenantId_Id");
+        ConfigureTenantEntity(entity);
+        entity.HasOne<SpaceExternalGrant>()
+            .WithMany()
+            .HasForeignKey(x => new { x.TenantId, x.GrantId })
+            .HasPrincipalKey(x => new { x.TenantId, x.Id })
+            .OnDelete(DeleteBehavior.Restrict)
+            .HasConstraintName("FK_Space_ExternalGrantFloor_Grant_Tenant");
+        entity.HasIndex(x => new
+            {
+                x.TenantId,
+                x.GrantId,
+                x.FloorLogicalId,
+            })
+            .IsUnique()
+            .HasFilter("[IsDeleted] = 0")
+            .HasDatabaseName("UX_Space_ExternalGrantFloor_Current");
+        entity.HasQueryFilter(
+            x => x.TenantId == CurrentTenantId && !x.IsDeleted);
+    }
+
+    private void ConfigureExternalGrantZone(ModelBuilder modelBuilder)
+    {
+        var entity = modelBuilder.Entity<SpaceExternalGrantZone>();
+        entity.ToTable("Space_ExternalGrantZone");
+        entity.HasKey(x => x.Id);
+        entity.Property(x => x.Id).ValueGeneratedNever();
+        entity.HasAlternateKey(x => new { x.TenantId, x.Id })
+            .HasName("AK_Space_ExternalGrantZone_TenantId_Id");
+        ConfigureTenantEntity(entity);
+        entity.HasOne<SpaceExternalGrant>()
+            .WithMany()
+            .HasForeignKey(x => new { x.TenantId, x.GrantId })
+            .HasPrincipalKey(x => new { x.TenantId, x.Id })
+            .OnDelete(DeleteBehavior.Restrict)
+            .HasConstraintName("FK_Space_ExternalGrantZone_Grant_Tenant");
+        entity.HasIndex(x => new
+            {
+                x.TenantId,
+                x.GrantId,
+                x.ZoneLogicalId,
+            })
+            .IsUnique()
+            .HasFilter("[IsDeleted] = 0")
+            .HasDatabaseName("UX_Space_ExternalGrantZone_Current");
+        entity.HasQueryFilter(
+            x => x.TenantId == CurrentTenantId && !x.IsDeleted);
+    }
+
+    private void ConfigureExternalGrantOwner(ModelBuilder modelBuilder)
+    {
+        var entity = modelBuilder.Entity<SpaceExternalGrantOwner>();
+        entity.ToTable("Space_ExternalGrantOwner");
+        entity.HasKey(x => x.Id);
+        entity.Property(x => x.Id).ValueGeneratedNever();
+        entity.HasAlternateKey(x => new { x.TenantId, x.Id })
+            .HasName("AK_Space_ExternalGrantOwner_TenantId_Id");
+        ConfigureTenantEntity(entity);
+        entity.Property(x => x.OwnerId).HasMaxLength(100).IsRequired();
+        entity.Property(x => x.NormalizedOwnerId)
+            .HasMaxLength(100)
+            .IsUnicode(false)
+            .IsRequired();
+        entity.HasOne<SpaceExternalGrant>()
+            .WithMany()
+            .HasForeignKey(x => new { x.TenantId, x.GrantId })
+            .HasPrincipalKey(x => new { x.TenantId, x.Id })
+            .OnDelete(DeleteBehavior.Restrict)
+            .HasConstraintName("FK_Space_ExternalGrantOwner_Grant_Tenant");
+        entity.HasIndex(x => new
+            {
+                x.TenantId,
+                x.GrantId,
+                x.NormalizedOwnerId,
+            })
+            .IsUnique()
+            .HasFilter("[IsDeleted] = 0")
+            .HasDatabaseName("UX_Space_ExternalGrantOwner_Current");
+        entity.HasQueryFilter(
+            x => x.TenantId == CurrentTenantId && !x.IsDeleted);
+    }
+
+    private void ConfigureExternalGrantObject(ModelBuilder modelBuilder)
+    {
+        var entity = modelBuilder.Entity<SpaceExternalGrantObject>();
+        entity.ToTable("Space_ExternalGrantObject");
+        entity.HasKey(x => x.Id);
+        entity.Property(x => x.Id).ValueGeneratedNever();
+        entity.HasAlternateKey(x => new { x.TenantId, x.Id })
+            .HasName("AK_Space_ExternalGrantObject_TenantId_Id");
+        ConfigureTenantEntity(entity);
+        entity.Property(x => x.BusinessObjectType)
+            .HasMaxLength(50)
+            .IsRequired();
+        entity.Property(x => x.NormalizedBusinessObjectType)
+            .HasMaxLength(50)
+            .IsUnicode(false)
+            .IsRequired();
+        entity.Property(x => x.BusinessObjectId)
+            .HasMaxLength(200)
+            .IsRequired();
+        entity.Property(x => x.NormalizedBusinessObjectId)
+            .HasMaxLength(200)
+            .IsUnicode(false)
+            .IsRequired();
+        entity.HasOne<SpaceExternalGrant>()
+            .WithMany()
+            .HasForeignKey(x => new { x.TenantId, x.GrantId })
+            .HasPrincipalKey(x => new { x.TenantId, x.Id })
+            .OnDelete(DeleteBehavior.Restrict)
+            .HasConstraintName("FK_Space_ExternalGrantObject_Grant_Tenant");
+        entity.HasIndex(x => new
+            {
+                x.TenantId,
+                x.GrantId,
+                x.NormalizedBusinessObjectType,
+                x.NormalizedBusinessObjectId,
+            })
+            .IsUnique()
+            .HasFilter("[IsDeleted] = 0")
+            .HasDatabaseName("UX_Space_ExternalGrantObject_Current");
         entity.HasQueryFilter(
             x => x.TenantId == CurrentTenantId && !x.IsDeleted);
     }

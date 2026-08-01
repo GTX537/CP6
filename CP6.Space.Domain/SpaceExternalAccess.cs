@@ -87,7 +87,10 @@ public sealed class SpaceExternalOrganization : SpaceTenantEntity
         IncrementSecurityStamp();
     }
 
-    public void TouchMembershipSecurityStamp()
+    public void TouchMembershipSecurityStamp() =>
+        TouchAuthorizationSecurityStamp();
+
+    public void TouchAuthorizationSecurityStamp()
     {
         if (Status == SpaceExternalOrganizationStatus.Closed)
         {

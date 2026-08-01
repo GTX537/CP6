@@ -53,6 +53,8 @@ public sealed class SpaceDesignV1OpenApiTests
             "/api/space/external-organization/{organizationId}",
             "/api/space/external-organization/{organizationId}/membership",
             "/api/space/external-organization/{organizationId}/membership/{membershipId}",
+            "/api/space/external-organization/{organizationId}/grant",
+            "/api/space/external-organization/{organizationId}/grant/{grantId}",
         };
 
         Assert.Equal(
@@ -67,8 +69,8 @@ public sealed class SpaceDesignV1OpenApiTests
             .Select(operation =>
                 operation.Value.GetProperty("operationId").GetString())
             .ToArray();
-        Assert.Equal(34, operationIds.Length);
-        Assert.Equal(34, operationIds.Distinct().Count());
+        Assert.Equal(38, operationIds.Length);
+        Assert.Equal(38, operationIds.Distinct().Count());
         Assert.Contains("GetAssets", operationIds);
         Assert.Contains("CreateAsset", operationIds);
         Assert.Contains("CreateVersion", operationIds);
@@ -97,6 +99,10 @@ public sealed class SpaceDesignV1OpenApiTests
         Assert.Contains("GetMemberships", operationIds);
         Assert.Contains("CreateMembership", operationIds);
         Assert.Contains("UpdateMembership", operationIds);
+        Assert.Contains("GetGrants", operationIds);
+        Assert.Contains("GetGrant", operationIds);
+        Assert.Contains("CreateGrant", operationIds);
+        Assert.Contains("UpdateGrant", operationIds);
 
         var taskIdParameter = paths
             .GetProperty("/api/space/design/v1/sites/{siteId}/runtime/tasks/path")
@@ -119,6 +125,8 @@ public sealed class SpaceDesignV1OpenApiTests
             "/api/space/external-organization");
         var membership = paths.GetProperty(
             "/api/space/external-organization/{organizationId}/membership");
+        var grant = paths.GetProperty(
+            "/api/space/external-organization/{organizationId}/grant");
 
         Assert.Equal(
             "#/components/schemas/CP6.Space.Contracts.CreateSpaceExternalOrganizationRequest",
@@ -138,6 +146,15 @@ public sealed class SpaceDesignV1OpenApiTests
                 .GetProperty("schema")
                 .GetProperty("$ref")
                 .GetString());
+        Assert.Equal(
+            "#/components/schemas/CP6.Space.Contracts.CreateSpaceExternalGrantRequest",
+            grant.GetProperty("post")
+                .GetProperty("requestBody")
+                .GetProperty("content")
+                .GetProperty("application/json")
+                .GetProperty("schema")
+                .GetProperty("$ref")
+                .GetString());
 
         var schemas = root.GetProperty("components").GetProperty("schemas");
         Assert.True(schemas.TryGetProperty(
@@ -145,6 +162,12 @@ public sealed class SpaceDesignV1OpenApiTests
             out _));
         Assert.True(schemas.TryGetProperty(
             "CP6.Space.Contracts.SpaceExternalMembershipDto",
+            out _));
+        Assert.True(schemas.TryGetProperty(
+            "CP6.Space.Contracts.SpaceExternalGrantDto",
+            out _));
+        Assert.True(schemas.TryGetProperty(
+            "CP6.Space.Contracts.SpaceExternalGrantObjectDto",
             out _));
     }
 
@@ -794,6 +817,10 @@ public sealed class SpaceDesignV1OpenApiTests
                      "GetMemberships",
                      "CreateMembership",
                      "UpdateMembership",
+                     "GetGrants",
+                     "GetGrant",
+                     "CreateGrant",
+                     "UpdateGrant",
                   })
         {
             Assert.Contains(operation, csharp, StringComparison.Ordinal);
