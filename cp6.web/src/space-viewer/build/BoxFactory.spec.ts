@@ -1,5 +1,5 @@
 import { describe, expect, it } from 'vitest'
-import { Matrix4, Quaternion, Vector3 } from 'three'
+import { InstancedMesh, Matrix4, Quaternion, Vector3 } from 'three'
 import type { EditorScene } from '@/types/space/scene'
 import { makeInstanceMatrix } from './BoxFactory'
 import { SceneBuilder } from './SceneBuilder'
@@ -69,11 +69,12 @@ describe('makeInstanceMatrix', () => {
     const result = new SceneBuilder().build(scene)
     const frame = result.objects
       .flatMap((object) => object.children)
-      .find((object) => object.name === 'space-instanced-racks')
+      .find((object): object is InstancedMesh =>
+        object instanceof InstancedMesh && object.name === 'space-instanced-racks')
 
     expect(frame).toBeDefined()
     const matrix = new Matrix4()
-    ;(frame as { getMatrixAt: (index: number, target: Matrix4) => void }).getMatrixAt(0, matrix)
+    frame!.getMatrixAt(0, matrix)
     const position = new Vector3()
     const rotation = new Quaternion()
     const scale = new Vector3()
