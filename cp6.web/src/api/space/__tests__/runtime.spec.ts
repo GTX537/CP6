@@ -26,4 +26,29 @@ describe('spaceRuntimeApi', () => {
       'location-2',
     ])
   })
+
+  it('serializes normalized material, lot, and container locate criteria', async () => {
+    await spaceRuntimeApi.locateInventory('site-1', {
+      materialNumber: ' SKU-01 ',
+      lotNumber: ' LOT-01 ',
+      containerNumber: ' BOX-01 ',
+    })
+
+    const [url, config] = vi.mocked(http.get).mock.calls[0]!
+    expect(url).toBe('/space/design/v1/sites/site-1/runtime/inventory/locate')
+    const params = config?.params as URLSearchParams
+    expect(params.get('materialNumber')).toBe('SKU-01')
+    expect(params.get('lotNumber')).toBe('LOT-01')
+    expect(params.get('containerNumber')).toBe('BOX-01')
+  })
+
+  it('omits blank locate criteria so the server can reject an empty request', async () => {
+    await spaceRuntimeApi.locateInventory('site-1', {
+      materialNumber: ' ',
+      lotNumber: '',
+    })
+
+    const [, config] = vi.mocked(http.get).mock.calls[0]!
+    expect([...(config?.params as URLSearchParams).keys()]).toEqual([])
+  })
 })

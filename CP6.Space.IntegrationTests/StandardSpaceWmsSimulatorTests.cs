@@ -145,6 +145,32 @@ public sealed class StandardSpaceWmsSimulatorTests
     }
 
     [Fact]
+    public async Task Inventory_locate_uses_exact_and_semantics_and_positive_quantity()
+    {
+        var simulator = new StandardSpaceWmsSimulator();
+        var firstId = LocationId(1);
+        var secondId = LocationId(2);
+        simulator.SeedInventory(
+            Context(),
+            [
+                new(firstId, "A-01", 12, 0, "SKU-01", "LOT-01", "BOX-01"),
+                new(secondId, "A-02", 8, 0, "SKU-01", "LOT-02", "BOX-01"),
+                new(secondId, "A-02", 0, 0, "SKU-01", "LOT-01", "BOX-01"),
+            ]);
+
+        var result = await simulator.QueryInventoryAsync(
+            new SpaceWmsInventoryQuery(
+                Context(),
+                [firstId, secondId],
+                LocateCriteria: new SpaceWmsInventoryLocateCriteria(
+                    "SKU-01",
+                    "LOT-01",
+                    "BOX-01")));
+
+        Assert.Equal(firstId, Assert.Single(result.Items).LogicalId);
+    }
+
+    [Fact]
     public async Task Portal_scope_filters_owner_and_task_before_results_return()
     {
         var simulator = new StandardSpaceWmsSimulator();

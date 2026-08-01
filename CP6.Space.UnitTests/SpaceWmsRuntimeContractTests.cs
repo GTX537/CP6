@@ -41,6 +41,34 @@ public sealed class SpaceWmsRuntimeContractTests
             "WarehouseCode",
             "Source",
             "Items");
+        AssertPropertyOrder<SpaceWmsRuntimeInventoryLocateCriteriaDto>(
+            "MaterialNumber",
+            "LotNumber",
+            "ContainerNumber");
+        AssertPropertyOrder<SpaceWmsRuntimeInventoryLocateHitDto>(
+            "LocationLogicalId",
+            "WmsLogicalId",
+            "SpaceLocationCode",
+            "WmsLocationCode",
+            "CodeMatches",
+            "FloorLogicalId",
+            "FloorCode",
+            "FloorName",
+            "FloorLevel",
+            "PhysicalQuantity",
+            "AllocatedQuantity",
+            "MaterialNumbers",
+            "LotNumbers",
+            "ContainerNumbers");
+        AssertPropertyOrder<SpaceWmsRuntimeInventoryLocateResponse>(
+            "SiteId",
+            "PublishedVersionId",
+            "WarehouseCode",
+            "Source",
+            "Criteria",
+            "LocationCount",
+            "FloorCount",
+            "Items");
         AssertPropertyOrder<SpaceWmsRuntimeTaskItemDto>(
             "TaskId",
             "TaskType",
@@ -77,7 +105,7 @@ public sealed class SpaceWmsRuntimeContractTests
     {
         var methods = typeof(ISpaceWmsRuntimeService).GetMethods();
 
-        Assert.Equal(2, methods.Length);
+        Assert.Equal(3, methods.Length);
         var inventory = Assert.Single(
             methods,
             method => method.Name == "QueryInventoryAsync");
@@ -85,6 +113,30 @@ public sealed class SpaceWmsRuntimeContractTests
             typeof(Task<SpaceWmsRuntimeInventoryResponse>),
             inventory.ReturnType);
         AssertQueryParameters(inventory);
+
+        var locate = Assert.Single(
+            methods,
+            method => method.Name == "LocateInventoryAsync");
+        Assert.Equal(
+            typeof(Task<SpaceWmsRuntimeInventoryLocateResponse>),
+            locate.ReturnType);
+        Assert.Collection(
+            locate.GetParameters(),
+            parameter =>
+            {
+                Assert.Equal("siteId", parameter.Name);
+                Assert.Equal(typeof(Guid), parameter.ParameterType);
+                Assert.False(parameter.IsOptional);
+            },
+            parameter =>
+            {
+                Assert.Equal("criteria", parameter.Name);
+                Assert.Equal(
+                    typeof(SpaceWmsInventoryLocateCriteria),
+                    parameter.ParameterType);
+                Assert.False(parameter.IsOptional);
+            },
+            AssertCancellationParameter);
 
         var tasks = Assert.Single(
             methods,
@@ -130,12 +182,15 @@ public sealed class SpaceWmsRuntimeContractTests
                 Assert.Null(parameter.DefaultValue);
             },
             parameter =>
-            {
-                Assert.Equal("cancellationToken", parameter.Name);
-                Assert.Equal(typeof(CancellationToken), parameter.ParameterType);
-                Assert.True(parameter.IsOptional);
-                Assert.True(parameter.HasDefaultValue);
-                Assert.Null(parameter.DefaultValue);
-            });
+                AssertCancellationParameter(parameter));
+    }
+
+    private static void AssertCancellationParameter(ParameterInfo parameter)
+    {
+        Assert.Equal("cancellationToken", parameter.Name);
+        Assert.Equal(typeof(CancellationToken), parameter.ParameterType);
+        Assert.True(parameter.IsOptional);
+        Assert.True(parameter.HasDefaultValue);
+        Assert.Null(parameter.DefaultValue);
     }
 }

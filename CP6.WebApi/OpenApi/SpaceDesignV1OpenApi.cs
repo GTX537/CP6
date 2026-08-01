@@ -93,6 +93,17 @@ public sealed class SpaceWmsRuntimeSchemaFilter : ISchemaFilter
                 "source",
                 "items",
             ],
+            [typeof(SpaceWmsRuntimeInventoryLocateResponse)] =
+            [
+                "siteId",
+                "publishedVersionId",
+                "warehouseCode",
+                "source",
+                "criteria",
+                "locationCount",
+                "floorCount",
+                "items",
+            ],
             [typeof(SpaceWmsRuntimeTaskResponse)] =
             [
                 "siteId",
@@ -126,6 +137,29 @@ public sealed class SpaceWmsRuntimeSchemaFilter : ISchemaFilter
                 "floorLevel",
                 "physicalQuantity",
                 "allocatedQuantity",
+            ],
+            [typeof(SpaceWmsRuntimeInventoryLocateCriteriaDto)] =
+            [
+                "materialNumber",
+                "lotNumber",
+                "containerNumber",
+            ],
+            [typeof(SpaceWmsRuntimeInventoryLocateHitDto)] =
+            [
+                "locationLogicalId",
+                "wmsLogicalId",
+                "spaceLocationCode",
+                "wmsLocationCode",
+                "codeMatches",
+                "floorLogicalId",
+                "floorCode",
+                "floorName",
+                "floorLevel",
+                "physicalQuantity",
+                "allocatedQuantity",
+                "materialNumbers",
+                "lotNumbers",
+                "containerNumbers",
             ],
             [typeof(SpaceWmsRuntimeTaskItemDto)] =
             [
@@ -168,6 +202,20 @@ public sealed class SpaceWmsRuntimeSchemaFilter : ISchemaFilter
                 "lotNumber",
                 "containerNumber",
                 "ownerId");
+            SetNumberFormat(schema, "physicalQuantity", "decimal", false);
+            SetNumberFormat(schema, "allocatedQuantity", "decimal", false);
+        }
+        else if (context.Type == typeof(SpaceWmsRuntimeInventoryLocateCriteriaDto))
+        {
+            SetNullable(
+                schema,
+                true,
+                "materialNumber",
+                "lotNumber",
+                "containerNumber");
+        }
+        else if (context.Type == typeof(SpaceWmsRuntimeInventoryLocateHitDto))
+        {
             SetNumberFormat(schema, "physicalQuantity", "decimal", false);
             SetNumberFormat(schema, "allocatedQuantity", "decimal", false);
         }

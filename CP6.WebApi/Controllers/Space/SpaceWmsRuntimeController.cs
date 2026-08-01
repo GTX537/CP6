@@ -67,6 +67,27 @@ public sealed class SpaceWmsRuntimeController(
             locationLogicalIds,
             cancellationToken);
 
+    [HttpGet("inventory/locate")]
+    [RequirePermission(
+        "space",
+        "model:read",
+        UseProblemDetails = true)]
+    [ProducesResponseType<SpaceWmsRuntimeInventoryLocateResponse>(
+        StatusCodes.Status200OK)]
+    public Task<SpaceWmsRuntimeInventoryLocateResponse> LocateInventory(
+        Guid siteId,
+        [FromQuery] string? materialNumber = null,
+        [FromQuery] string? lotNumber = null,
+        [FromQuery] string? containerNumber = null,
+        CancellationToken cancellationToken = default) =>
+        runtime.LocateInventoryAsync(
+            siteId,
+            new SpaceWmsInventoryLocateCriteria(
+                materialNumber,
+                lotNumber,
+                containerNumber),
+            cancellationToken);
+
     [HttpGet("tasks")]
     [RequirePermission(
         "space",

@@ -20,7 +20,15 @@
       />
 
       <!-- Search box (top-left, barcode scanner / manual entry) -->
-      <SearchBox class="viewer-searchbox" @locate="onLocate" @locate-material="onLocateMaterial" />
+      <SearchBox class="viewer-searchbox" @locate="onLocate" @locate-stock="onLocateStock" />
+      <div v-if="locateLoading" class="viewer-locate-loading">{{ t('正在查询库存位置') }}…</div>
+      <InventoryLocateResults
+        v-if="locateResult"
+        class="viewer-locate-results"
+        :response="locateResult"
+        @select="onSelectLocateHit"
+        @close="locateResult = null"
+      />
 
       <!-- Toolbar (top-center) -->
       <div class="viewer-toolbar">
@@ -89,11 +97,16 @@ import { ElMessage } from 'element-plus'
 import { SpaceViewer } from '@/space-viewer/SpaceViewer'
 import { Locator } from '@/space-viewer/navigate/Locator'
 import { StockOverlay } from '@/space-viewer/overlay/StockOverlay'
-import { stockApi } from '@/api/space/stock'
+import { spaceRuntimeApi } from '@/api/space/runtime'
 import type { OverlayMode, WmsStockDto } from '@/types/space/overlay'
 import type { SpaceDataSource } from '@/types/space/dataSource'
 import { isUsableDataSource } from '@/types/space/dataSource'
-import type { SpaceRuntimeSource } from '@/types/space/runtime'
+import type {
+  SpaceRuntimeInventoryLocateHit,
+  SpaceRuntimeInventoryLocateQuery,
+  SpaceRuntimeInventoryLocateResponse,
+  SpaceRuntimeSource,
+} from '@/types/space/runtime'
 import {
   initialRuntimeRefreshState,
   recordRuntimeFailure,
@@ -103,6 +116,7 @@ import {
 import InfoCard from './InfoCard.vue'
 import FloorList from './FloorList.vue'
 import SearchBox from './SearchBox.vue'
+import InventoryLocateResults from './InventoryLocateResults.vue'
 import StockLegend from './StockLegend.vue'
 import { PathAnimator } from '@/space-viewer/advanced/PathAnimator'
 import { WorkloadHeatmap } from '@/space-viewer/advanced/WorkloadHeatmap'
@@ -127,11 +141,14 @@ let viewer: SpaceViewer | null = null
 let locator: Locator | null = null
 let overlay: StockOverlay | null = null
 let hoverTimer = 0
+let locateRequestVersion = 0
 
 const overlayMode = ref<OverlayMode>('status')
 const overlayTs = ref('')
 const polling = ref(false)
 const selectedStock = ref<WmsStockDto | null>(null)
+const locateLoading = ref(false)
+const locateResult = ref<SpaceRuntimeInventoryLocateResponse | null>(null)
 const unavailableRuntimeSource = (dataSourceId: string): SpaceRuntimeSource => ({
   kind: 'Unavailable',
   adapterId: dataSourceId,
@@ -288,20 +305,37 @@ function onTogglePoll(): void {
 function syncSelectedStock(): void {
   selectedStock.value = overlay?.getStock(selectedId.value) ?? null
 }
-async function onLocateMaterial(material: string): Promise<void> {
+async function onLocateStock(criteria: SpaceRuntimeInventoryLocateQuery): Promise<void> {
+  const requestVersion = ++locateRequestVersion
+  locateLoading.value = true
+  locateResult.value = null
   try {
-    const env = await stockApi.locate({ material })
-    const hits = env.data.items
-    if (!isUsableDataSource(env.data.source)) {
-      ElMessage.warning(t('搴撳瓨鏁版嵁婧愪笉鍙敤'))
+    const response = await spaceRuntimeApi.locateInventory(siteId, criteria)
+    if (requestVersion !== locateRequestVersion) return
+    locateResult.value = response
+    if (!isUsableDataSource(response.source)) {
+      ElMessage.warning(t('库存数据源不可用，不能判定定位结果'))
       return
     }
-    if (!hits.length) { ElMessage.info(t('无库位存放该物料')); return }     // I-SPACE-701
-    if (hits.length > 1) ElMessage.info(t('找到 {n} 个库位，点击定位').replace('{n}', String(hits.length)))  // I-SPACE-702
-    if (locator) await locator.locate(hits[0]!.locationCode)               // 复用 06 定位（首个）
+    if (response.locationCount === 0) {
+      ElMessage.info(t('没有库位匹配当前物料、批次或容器条件'))
+      return
+    }
+    ElMessage.info(
+      t('找到 {locations} 个库位，分布在 {floors} 个楼层，请选择定位')
+        .replace('{locations}', String(response.locationCount))
+        .replace('{floors}', String(response.floorCount)),
+    )
   } catch {
+    if (requestVersion !== locateRequestVersion) return
     ElMessage.warning(t('库存数据获取失败'))
+  } finally {
+    if (requestVersion === locateRequestVersion) locateLoading.value = false
   }
+}
+
+async function onSelectLocateHit(hit: SpaceRuntimeInventoryLocateHit): Promise<void> {
+  await locator?.locate(hit.spaceLocationCode)
 }
 
 function onPathPlay(): void { pathAnimator?.play() }
@@ -511,6 +545,23 @@ onBeforeUnmount(() => {
   left: 16px;
   width: 230px;
   z-index: 10;
+}
+
+.viewer-locate-loading,
+.viewer-locate-results {
+  position: absolute;
+  top: 104px;
+  left: 16px;
+  z-index: 11;
+}
+
+.viewer-locate-loading {
+  padding: 7px 10px;
+  color: #b3e5fc;
+  background: rgba(10, 15, 29, 0.94);
+  border: 1px solid rgba(79, 195, 247, 0.25);
+  border-radius: 5px;
+  font-size: 12px;
 }
 
 .viewer-toolbar {

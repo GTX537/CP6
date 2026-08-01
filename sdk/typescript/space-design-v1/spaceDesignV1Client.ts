@@ -157,6 +157,14 @@ export interface ISpaceDesignV1Client {
     getInventory(siteId: string, locationLogicalId: string[] | undefined): Promise<SpaceWmsRuntimeInventoryResponse>;
 
     /**
+     * @param materialNumber (optional)
+     * @param lotNumber (optional)
+     * @param containerNumber (optional)
+     * @return OK
+     */
+    locateInventory(siteId: string, materialNumber: string | undefined, lotNumber: string | undefined, containerNumber: string | undefined): Promise<SpaceWmsRuntimeInventoryLocateResponse>;
+
+    /**
      * @param locationLogicalId (optional)
      * @return OK
      */
@@ -2523,6 +2531,124 @@ export class SpaceDesignV1Client implements ISpaceDesignV1Client {
             });
         }
         return Promise.resolve<SpaceWmsRuntimeInventoryResponse>(null as any);
+    }
+
+    /**
+     * @param materialNumber (optional)
+     * @param lotNumber (optional)
+     * @param containerNumber (optional)
+     * @return OK
+     */
+    locateInventory(siteId: string, materialNumber: string | undefined, lotNumber: string | undefined, containerNumber: string | undefined): Promise<SpaceWmsRuntimeInventoryLocateResponse> {
+        let url_ = this.baseUrl + "/api/space/design/v1/sites/{siteId}/runtime/inventory/locate?";
+        if (siteId === undefined || siteId === null)
+            throw new globalThis.Error("The parameter 'siteId' must be defined.");
+        url_ = url_.replace("{siteId}", encodeURIComponent("" + siteId));
+        if (materialNumber === null)
+            throw new globalThis.Error("The parameter 'materialNumber' cannot be null.");
+        else if (materialNumber !== undefined)
+            url_ += "materialNumber=" + encodeURIComponent("" + materialNumber) + "&";
+        if (lotNumber === null)
+            throw new globalThis.Error("The parameter 'lotNumber' cannot be null.");
+        else if (lotNumber !== undefined)
+            url_ += "lotNumber=" + encodeURIComponent("" + lotNumber) + "&";
+        if (containerNumber === null)
+            throw new globalThis.Error("The parameter 'containerNumber' cannot be null.");
+        else if (containerNumber !== undefined)
+            url_ += "containerNumber=" + encodeURIComponent("" + containerNumber) + "&";
+        url_ = url_.replace(/[?&]$/, "");
+
+        let options_: RequestInit = {
+            method: "GET",
+            headers: {
+                "Accept": "application/json"
+            }
+        };
+
+        return this.http.fetch(url_, options_).then((_response: Response) => {
+            return this.processLocateInventory(_response);
+        });
+    }
+
+    protected processLocateInventory(response: Response): Promise<SpaceWmsRuntimeInventoryLocateResponse> {
+        const status = response.status;
+        let _headers: any = {}; if (response.headers && response.headers.forEach) { response.headers.forEach((v: any, k: any) => _headers[k] = v); };
+        if (status === 200) {
+            return response.text().then((_responseText) => {
+            let result200: any = null;
+            let resultData200 = _responseText === "" ? null : JSON.parse(_responseText, this.jsonParseReviver);
+            result200 = SpaceWmsRuntimeInventoryLocateResponse.fromJS(resultData200);
+            return result200;
+            });
+        } else if (status === 400) {
+            return response.text().then((_responseText) => {
+            let result400: any = null;
+            let resultData400 = _responseText === "" ? null : JSON.parse(_responseText, this.jsonParseReviver);
+            result400 = SpaceDesignProblemDetails.fromJS(resultData400);
+            return throwException("Bad Request", status, _responseText, _headers, result400);
+            });
+        } else if (status === 401) {
+            return response.text().then((_responseText) => {
+            let result401: any = null;
+            let resultData401 = _responseText === "" ? null : JSON.parse(_responseText, this.jsonParseReviver);
+            result401 = SpaceDesignProblemDetails.fromJS(resultData401);
+            return throwException("Unauthorized", status, _responseText, _headers, result401);
+            });
+        } else if (status === 403) {
+            return response.text().then((_responseText) => {
+            let result403: any = null;
+            let resultData403 = _responseText === "" ? null : JSON.parse(_responseText, this.jsonParseReviver);
+            result403 = SpaceDesignProblemDetails.fromJS(resultData403);
+            return throwException("Forbidden", status, _responseText, _headers, result403);
+            });
+        } else if (status === 404) {
+            return response.text().then((_responseText) => {
+            let result404: any = null;
+            let resultData404 = _responseText === "" ? null : JSON.parse(_responseText, this.jsonParseReviver);
+            result404 = SpaceDesignProblemDetails.fromJS(resultData404);
+            return throwException("Not Found", status, _responseText, _headers, result404);
+            });
+        } else if (status === 409) {
+            return response.text().then((_responseText) => {
+            let result409: any = null;
+            let resultData409 = _responseText === "" ? null : JSON.parse(_responseText, this.jsonParseReviver);
+            result409 = SpaceDesignProblemDetails.fromJS(resultData409);
+            return throwException("Conflict", status, _responseText, _headers, result409);
+            });
+        } else if (status === 422) {
+            return response.text().then((_responseText) => {
+            let result422: any = null;
+            let resultData422 = _responseText === "" ? null : JSON.parse(_responseText, this.jsonParseReviver);
+            result422 = SpaceDesignProblemDetails.fromJS(resultData422);
+            return throwException("Unprocessable Content", status, _responseText, _headers, result422);
+            });
+        } else if (status === 500) {
+            return response.text().then((_responseText) => {
+            let result500: any = null;
+            let resultData500 = _responseText === "" ? null : JSON.parse(_responseText, this.jsonParseReviver);
+            result500 = SpaceDesignProblemDetails.fromJS(resultData500);
+            return throwException("Internal Server Error", status, _responseText, _headers, result500);
+            });
+        } else if (status === 502) {
+            return response.text().then((_responseText) => {
+            let result502: any = null;
+            let resultData502 = _responseText === "" ? null : JSON.parse(_responseText, this.jsonParseReviver);
+            result502 = SpaceDesignProblemDetails.fromJS(resultData502);
+            return throwException("Bad Gateway", status, _responseText, _headers, result502);
+            });
+        } else if (status === 503) {
+            return response.text().then((_responseText) => {
+            let result503: any = null;
+            let resultData503 = _responseText === "" ? null : JSON.parse(_responseText, this.jsonParseReviver);
+            result503 = SpaceDesignProblemDetails.fromJS(resultData503);
+            return throwException("Service Unavailable", status, _responseText, _headers, result503);
+            });
+        } else if (status !== 200 && status !== 204) {
+            return response.text().then((_responseText) => {
+            return throwException("An unexpected server error occurred.", status, _responseText, _headers);
+            });
+        }
+        return Promise.resolve<SpaceWmsRuntimeInventoryLocateResponse>(null as any);
     }
 
     /**
@@ -5828,6 +5954,244 @@ export interface ISpaceWmsRuntimeInventoryItemDto {
     lotNumber?: string | null | undefined;
     containerNumber?: string | null | undefined;
     ownerId?: string | null | undefined;
+}
+
+export class SpaceWmsRuntimeInventoryLocateCriteriaDto implements ISpaceWmsRuntimeInventoryLocateCriteriaDto {
+    materialNumber!: string | undefined;
+    lotNumber!: string | undefined;
+    containerNumber!: string | undefined;
+
+    constructor(data?: ISpaceWmsRuntimeInventoryLocateCriteriaDto) {
+        if (data) {
+            for (var property in data) {
+                if (data.hasOwnProperty(property))
+                    (this as any)[property] = (data as any)[property];
+            }
+        }
+    }
+
+    init(_data?: any) {
+        if (_data) {
+            this.materialNumber = _data["materialNumber"];
+            this.lotNumber = _data["lotNumber"];
+            this.containerNumber = _data["containerNumber"];
+        }
+    }
+
+    static fromJS(data: any): SpaceWmsRuntimeInventoryLocateCriteriaDto {
+        data = typeof data === 'object' ? data : {};
+        let result = new SpaceWmsRuntimeInventoryLocateCriteriaDto();
+        result.init(data);
+        return result;
+    }
+
+    toJSON(data?: any) {
+        data = typeof data === 'object' ? data : {};
+        data["materialNumber"] = this.materialNumber;
+        data["lotNumber"] = this.lotNumber;
+        data["containerNumber"] = this.containerNumber;
+        return data;
+    }
+}
+
+export interface ISpaceWmsRuntimeInventoryLocateCriteriaDto {
+    materialNumber: string | undefined;
+    lotNumber: string | undefined;
+    containerNumber: string | undefined;
+}
+
+export class SpaceWmsRuntimeInventoryLocateHitDto implements ISpaceWmsRuntimeInventoryLocateHitDto {
+    locationLogicalId!: string;
+    wmsLogicalId!: string;
+    spaceLocationCode!: string;
+    wmsLocationCode!: string;
+    codeMatches!: boolean;
+    floorLogicalId!: string;
+    floorCode!: string;
+    floorName!: string;
+    floorLevel!: number;
+    physicalQuantity!: number;
+    allocatedQuantity!: number;
+    materialNumbers!: string[];
+    lotNumbers!: string[];
+    containerNumbers!: string[];
+
+    constructor(data?: ISpaceWmsRuntimeInventoryLocateHitDto) {
+        if (data) {
+            for (var property in data) {
+                if (data.hasOwnProperty(property))
+                    (this as any)[property] = (data as any)[property];
+            }
+        }
+        if (!data) {
+            this.materialNumbers = [];
+            this.lotNumbers = [];
+            this.containerNumbers = [];
+        }
+    }
+
+    init(_data?: any) {
+        if (_data) {
+            this.locationLogicalId = _data["locationLogicalId"];
+            this.wmsLogicalId = _data["wmsLogicalId"];
+            this.spaceLocationCode = _data["spaceLocationCode"];
+            this.wmsLocationCode = _data["wmsLocationCode"];
+            this.codeMatches = _data["codeMatches"];
+            this.floorLogicalId = _data["floorLogicalId"];
+            this.floorCode = _data["floorCode"];
+            this.floorName = _data["floorName"];
+            this.floorLevel = _data["floorLevel"];
+            this.physicalQuantity = _data["physicalQuantity"];
+            this.allocatedQuantity = _data["allocatedQuantity"];
+            if (Array.isArray(_data["materialNumbers"])) {
+                this.materialNumbers = [] as any;
+                for (let item of _data["materialNumbers"])
+                    this.materialNumbers!.push(item);
+            }
+            if (Array.isArray(_data["lotNumbers"])) {
+                this.lotNumbers = [] as any;
+                for (let item of _data["lotNumbers"])
+                    this.lotNumbers!.push(item);
+            }
+            if (Array.isArray(_data["containerNumbers"])) {
+                this.containerNumbers = [] as any;
+                for (let item of _data["containerNumbers"])
+                    this.containerNumbers!.push(item);
+            }
+        }
+    }
+
+    static fromJS(data: any): SpaceWmsRuntimeInventoryLocateHitDto {
+        data = typeof data === 'object' ? data : {};
+        let result = new SpaceWmsRuntimeInventoryLocateHitDto();
+        result.init(data);
+        return result;
+    }
+
+    toJSON(data?: any) {
+        data = typeof data === 'object' ? data : {};
+        data["locationLogicalId"] = this.locationLogicalId;
+        data["wmsLogicalId"] = this.wmsLogicalId;
+        data["spaceLocationCode"] = this.spaceLocationCode;
+        data["wmsLocationCode"] = this.wmsLocationCode;
+        data["codeMatches"] = this.codeMatches;
+        data["floorLogicalId"] = this.floorLogicalId;
+        data["floorCode"] = this.floorCode;
+        data["floorName"] = this.floorName;
+        data["floorLevel"] = this.floorLevel;
+        data["physicalQuantity"] = this.physicalQuantity;
+        data["allocatedQuantity"] = this.allocatedQuantity;
+        if (Array.isArray(this.materialNumbers)) {
+            data["materialNumbers"] = [];
+            for (let item of this.materialNumbers)
+                data["materialNumbers"].push(item);
+        }
+        if (Array.isArray(this.lotNumbers)) {
+            data["lotNumbers"] = [];
+            for (let item of this.lotNumbers)
+                data["lotNumbers"].push(item);
+        }
+        if (Array.isArray(this.containerNumbers)) {
+            data["containerNumbers"] = [];
+            for (let item of this.containerNumbers)
+                data["containerNumbers"].push(item);
+        }
+        return data;
+    }
+}
+
+export interface ISpaceWmsRuntimeInventoryLocateHitDto {
+    locationLogicalId: string;
+    wmsLogicalId: string;
+    spaceLocationCode: string;
+    wmsLocationCode: string;
+    codeMatches: boolean;
+    floorLogicalId: string;
+    floorCode: string;
+    floorName: string;
+    floorLevel: number;
+    physicalQuantity: number;
+    allocatedQuantity: number;
+    materialNumbers: string[];
+    lotNumbers: string[];
+    containerNumbers: string[];
+}
+
+export class SpaceWmsRuntimeInventoryLocateResponse implements ISpaceWmsRuntimeInventoryLocateResponse {
+    siteId!: string;
+    publishedVersionId!: string;
+    warehouseCode!: string;
+    source!: SpaceWmsRuntimeSourceDto;
+    criteria!: SpaceWmsRuntimeInventoryLocateCriteriaDto;
+    locationCount!: number;
+    floorCount!: number;
+    items!: SpaceWmsRuntimeInventoryLocateHitDto[];
+
+    constructor(data?: ISpaceWmsRuntimeInventoryLocateResponse) {
+        if (data) {
+            for (var property in data) {
+                if (data.hasOwnProperty(property))
+                    (this as any)[property] = (data as any)[property];
+            }
+        }
+        if (!data) {
+            this.source = new SpaceWmsRuntimeSourceDto();
+            this.criteria = new SpaceWmsRuntimeInventoryLocateCriteriaDto();
+            this.items = [];
+        }
+    }
+
+    init(_data?: any) {
+        if (_data) {
+            this.siteId = _data["siteId"];
+            this.publishedVersionId = _data["publishedVersionId"];
+            this.warehouseCode = _data["warehouseCode"];
+            this.source = _data["source"] ? SpaceWmsRuntimeSourceDto.fromJS(_data["source"]) : new SpaceWmsRuntimeSourceDto();
+            this.criteria = _data["criteria"] ? SpaceWmsRuntimeInventoryLocateCriteriaDto.fromJS(_data["criteria"]) : new SpaceWmsRuntimeInventoryLocateCriteriaDto();
+            this.locationCount = _data["locationCount"];
+            this.floorCount = _data["floorCount"];
+            if (Array.isArray(_data["items"])) {
+                this.items = [] as any;
+                for (let item of _data["items"])
+                    this.items!.push(SpaceWmsRuntimeInventoryLocateHitDto.fromJS(item));
+            }
+        }
+    }
+
+    static fromJS(data: any): SpaceWmsRuntimeInventoryLocateResponse {
+        data = typeof data === 'object' ? data : {};
+        let result = new SpaceWmsRuntimeInventoryLocateResponse();
+        result.init(data);
+        return result;
+    }
+
+    toJSON(data?: any) {
+        data = typeof data === 'object' ? data : {};
+        data["siteId"] = this.siteId;
+        data["publishedVersionId"] = this.publishedVersionId;
+        data["warehouseCode"] = this.warehouseCode;
+        data["source"] = this.source ? this.source.toJSON() : undefined as any;
+        data["criteria"] = this.criteria ? this.criteria.toJSON() : undefined as any;
+        data["locationCount"] = this.locationCount;
+        data["floorCount"] = this.floorCount;
+        if (Array.isArray(this.items)) {
+            data["items"] = [];
+            for (let item of this.items)
+                data["items"].push(item ? item.toJSON() : undefined as any);
+        }
+        return data;
+    }
+}
+
+export interface ISpaceWmsRuntimeInventoryLocateResponse {
+    siteId: string;
+    publishedVersionId: string;
+    warehouseCode: string;
+    source: SpaceWmsRuntimeSourceDto;
+    criteria: SpaceWmsRuntimeInventoryLocateCriteriaDto;
+    locationCount: number;
+    floorCount: number;
+    items: SpaceWmsRuntimeInventoryLocateHitDto[];
 }
 
 export class SpaceWmsRuntimeInventoryResponse implements ISpaceWmsRuntimeInventoryResponse {

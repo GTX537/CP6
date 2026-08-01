@@ -42,6 +42,106 @@ public sealed class SpaceWmsRuntimeService : ISpaceWmsRuntimeService
             siteId,
             locationLogicalIds,
             cancellationToken);
+        var result = await QueryInventorySourceAsync(
+            scope,
+            locateCriteria: null,
+            cancellationToken);
+
+        var orderedItems = result.Items
+            .OrderBy(value => value.SpaceLocationCode, StringComparer.Ordinal)
+            .ThenBy(value => value.MaterialNumber, StringComparer.Ordinal)
+            .ThenBy(value => value.LotNumber, StringComparer.Ordinal)
+            .ThenBy(value => value.ContainerNumber, StringComparer.Ordinal)
+            .ToArray();
+        return new SpaceWmsRuntimeInventoryResponse(
+            siteId,
+            scope.PublishedVersionId,
+            scope.WarehouseCode,
+            ToDto(result.Source),
+            orderedItems);
+    }
+
+    public async Task<SpaceWmsRuntimeInventoryLocateResponse> LocateInventoryAsync(
+        Guid siteId,
+        SpaceWmsInventoryLocateCriteria criteria,
+        CancellationToken cancellationToken = default)
+    {
+        ArgumentNullException.ThrowIfNull(criteria);
+        var normalized = new SpaceWmsInventoryLocateCriteria(
+            NormalizeLocateCriterion("materialNumber", criteria.MaterialNumber),
+            NormalizeLocateCriterion("lotNumber", criteria.LotNumber),
+            NormalizeLocateCriterion("containerNumber", criteria.ContainerNumber));
+        if (normalized.MaterialNumber is null &&
+            normalized.LotNumber is null &&
+            normalized.ContainerNumber is null)
+        {
+            throw Invalid(
+                "criteria",
+                "At least one material, lot, or container criterion is required.");
+        }
+
+        var scope = await LoadScopeAsync(
+            siteId,
+            locationLogicalIds: null,
+            cancellationToken);
+        var result = await QueryInventorySourceAsync(
+            scope,
+            normalized,
+            cancellationToken);
+        var hits = result.Items
+            .GroupBy(value => value.LocationLogicalId)
+            .Select(group =>
+            {
+                var first = group.First();
+                if (group
+                    .Select(value => value.WmsLocationCode)
+                    .Distinct(StringComparer.Ordinal)
+                    .Count() != 1)
+                {
+                    throw ContractViolation(
+                        "A located WMS identity returned multiple location codes.");
+                }
+                return new SpaceWmsRuntimeInventoryLocateHitDto(
+                    first.LocationLogicalId,
+                    first.WmsLogicalId,
+                    first.SpaceLocationCode,
+                    first.WmsLocationCode,
+                    group.All(value => value.CodeMatches),
+                    first.FloorLogicalId,
+                    first.FloorCode,
+                    first.FloorName,
+                    first.FloorLevel,
+                    group.Sum(value => value.PhysicalQuantity),
+                    group.Sum(value => value.AllocatedQuantity),
+                    LocateFacts(group.Select(value => value.MaterialNumber)),
+                    LocateFacts(group.Select(value => value.LotNumber)),
+                    LocateFacts(group.Select(value => value.ContainerNumber)));
+            })
+            .OrderBy(value => value.FloorLevel)
+            .ThenBy(value => value.FloorCode, StringComparer.Ordinal)
+            .ThenBy(value => value.SpaceLocationCode, StringComparer.Ordinal)
+            .ThenBy(value => value.LocationLogicalId)
+            .ToArray();
+
+        return new SpaceWmsRuntimeInventoryLocateResponse(
+            siteId,
+            scope.PublishedVersionId,
+            scope.WarehouseCode,
+            ToDto(result.Source),
+            new SpaceWmsRuntimeInventoryLocateCriteriaDto(
+                normalized.MaterialNumber,
+                normalized.LotNumber,
+                normalized.ContainerNumber),
+            hits.Length,
+            hits.Select(value => value.FloorLogicalId).Distinct().Count(),
+            hits);
+    }
+
+    private async Task<RuntimeInventoryResult> QueryInventorySourceAsync(
+        RuntimeScope scope,
+        SpaceWmsInventoryLocateCriteria? locateCriteria,
+        CancellationToken cancellationToken)
+    {
         SpaceWmsSourceMetadata? observedSource = null;
         var items = new List<SpaceWmsRuntimeInventoryItemDto>();
 
@@ -51,7 +151,10 @@ public sealed class SpaceWmsRuntimeService : ISpaceWmsRuntimeService
             try
             {
                 result = await _source.QueryInventoryAsync(
-                    new SpaceWmsInventoryQuery(scope.WmsContext, logicalIds),
+                    new SpaceWmsInventoryQuery(
+                        scope.WmsContext,
+                        logicalIds,
+                        LocateCriteria: locateCriteria),
                     cancellationToken);
             }
             catch (OperationCanceledException) when (cancellationToken.IsCancellationRequested)
@@ -68,15 +171,12 @@ public sealed class SpaceWmsRuntimeService : ISpaceWmsRuntimeService
             observedSource = MergeSource(observedSource, result.Source);
             if (observedSource.Kind == SpaceWmsDataSourceKind.Unavailable)
             {
-                return new SpaceWmsRuntimeInventoryResponse(
-                    siteId,
-                    scope.PublishedVersionId,
-                    scope.WarehouseCode,
-                    ToDto(observedSource),
-                    []);
+                return new RuntimeInventoryResult(observedSource, []);
             }
 
             ValidateInventoryItems(result.Items, scope, requestedChunkIds);
+            if (locateCriteria is not null)
+                ValidateLocateItems(result.Items, locateCriteria);
             foreach (var item in result.Items)
             {
                 var location = scope.LocationByWmsLogicalId[item.LogicalId];
@@ -103,19 +203,7 @@ public sealed class SpaceWmsRuntimeService : ISpaceWmsRuntimeService
         }
 
         observedSource ??= MergeSource(null, DeclaredSource());
-
-        var orderedItems = items
-            .OrderBy(value => value.SpaceLocationCode, StringComparer.Ordinal)
-            .ThenBy(value => value.MaterialNumber, StringComparer.Ordinal)
-            .ThenBy(value => value.LotNumber, StringComparer.Ordinal)
-            .ThenBy(value => value.ContainerNumber, StringComparer.Ordinal)
-            .ToArray();
-        return new SpaceWmsRuntimeInventoryResponse(
-            siteId,
-            scope.PublishedVersionId,
-            scope.WarehouseCode,
-            ToDto(observedSource),
-            orderedItems);
+        return new RuntimeInventoryResult(observedSource, items);
     }
 
     public async Task<SpaceWmsRuntimeTaskResponse> QueryTasksAsync(
@@ -610,6 +698,26 @@ public sealed class SpaceWmsRuntimeService : ISpaceWmsRuntimeService
         }
     }
 
+    private static void ValidateLocateItems(
+        IReadOnlyList<SpaceWmsInventoryItem> items,
+        SpaceWmsInventoryLocateCriteria criteria)
+    {
+        foreach (var item in items)
+        {
+            if (item.PhysicalQuantity <= 0 ||
+                !MatchesLocate(item.MaterialNumber, criteria.MaterialNumber) ||
+                !MatchesLocate(item.LotNumber, criteria.LotNumber) ||
+                !MatchesLocate(item.ContainerNumber, criteria.ContainerNumber))
+            {
+                throw ContractViolation(
+                    "A returned WMS inventory item does not match the locate criteria.");
+            }
+        }
+    }
+
+    private static bool MatchesLocate(string? actual, string? expected) =>
+        expected is null || string.Equals(actual, expected, StringComparison.Ordinal);
+
     private static void ValidateTaskItems(
         IReadOnlyList<SpaceWmsTaskItem> items,
         RuntimeScope scope,
@@ -689,6 +797,27 @@ public sealed class SpaceWmsRuntimeService : ISpaceWmsRuntimeService
     private static long WholeMilliseconds(TimeSpan value) =>
         (long)Math.Floor(value.TotalMilliseconds);
 
+    private static string? NormalizeLocateCriterion(
+        string field,
+        string? value)
+    {
+        var normalized = string.IsNullOrWhiteSpace(value)
+            ? null
+            : value.Trim();
+        if (normalized?.Length > 100)
+            throw Invalid(field, "The value must not exceed 100 characters.");
+        return normalized;
+    }
+
+    private static IReadOnlyList<string> LocateFacts(
+        IEnumerable<string?> values) =>
+        values
+            .Where(value => !string.IsNullOrWhiteSpace(value))
+            .Select(value => value!)
+            .Distinct(StringComparer.Ordinal)
+            .OrderBy(value => value, StringComparer.Ordinal)
+            .ToArray();
+
     private static SpaceProblemException Invalid(
         string field,
         string detail) =>
@@ -742,6 +871,10 @@ public sealed class SpaceWmsRuntimeService : ISpaceWmsRuntimeService
         double? AnchorXMillimeters,
         double? AnchorYMillimeters,
         double? AnchorZMillimeters);
+
+    private sealed record RuntimeInventoryResult(
+        SpaceWmsSourceMetadata Source,
+        IReadOnlyList<SpaceWmsRuntimeInventoryItemDto> Items);
 
     private sealed record RuntimeScope(
         Guid PublishedVersionId,

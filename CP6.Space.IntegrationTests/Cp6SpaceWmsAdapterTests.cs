@@ -240,6 +240,107 @@ public sealed class Cp6SpaceWmsAdapterTests
     }
 
     [Fact]
+    public async Task Inventory_locate_filters_stock_and_active_container_with_and_semantics()
+    {
+        await using var db = NewDb();
+        var firstId = LocationId(1);
+        var secondId = LocationId(2);
+        db.WmsBins.AddRange(
+            new WmsBin
+            {
+                Id = firstId,
+                LocationCode = "A-01",
+                WarehouseCd = "WH-01",
+                Version = 1,
+                IsActive = true,
+            },
+            new WmsBin
+            {
+                Id = secondId,
+                LocationCode = "A-02",
+                WarehouseCd = "WH-01",
+                Version = 1,
+                IsActive = true,
+            });
+        db.Stocks.AddRange(
+            new Stock
+            {
+                Id = Guid.NewGuid(),
+                WarehouseCd = "WH-01",
+                LocationCd = "A-01",
+                ProductCd = "SKU-01",
+                LotNo = "LOT-01",
+                PhysicalQty = 10,
+            },
+            new Stock
+            {
+                Id = Guid.NewGuid(),
+                WarehouseCd = "WH-01",
+                LocationCd = "A-02",
+                ProductCd = "SKU-01",
+                LotNo = "LOT-02",
+                PhysicalQty = 20,
+            });
+        db.Pallets.AddRange(
+            new Pallet
+            {
+                Id = Guid.NewGuid(),
+                PalletNo = "PALLET-01",
+                ProductCd = "SKU-01",
+                LotNo = "LOT-02",
+                CartonQty = 8,
+                WarehouseCd = "WH-01",
+                LocationCd = "A-02",
+                Status = PalletStatus.InStock,
+            },
+            new Pallet
+            {
+                Id = Guid.NewGuid(),
+                PalletNo = "PALLET-SHIPPED",
+                ProductCd = "SKU-01",
+                LotNo = "LOT-01",
+                CartonQty = 9,
+                WarehouseCd = "WH-01",
+                LocationCd = "A-01",
+                Status = PalletStatus.Shipped,
+            });
+        await db.SaveChangesAsync();
+        var adapter = new Cp6SpaceWmsAdapter(db);
+
+        var stock = await adapter.QueryInventoryAsync(
+            new SpaceWmsInventoryQuery(
+                Context(),
+                [firstId, secondId],
+                LocateCriteria: new SpaceWmsInventoryLocateCriteria(
+                    "SKU-01",
+                    "LOT-01",
+                    null)));
+        var container = await adapter.QueryInventoryAsync(
+            new SpaceWmsInventoryQuery(
+                Context(),
+                [firstId, secondId],
+                LocateCriteria: new SpaceWmsInventoryLocateCriteria(
+                    "SKU-01",
+                    "LOT-02",
+                    "PALLET-01")));
+        var shipped = await adapter.QueryInventoryAsync(
+            new SpaceWmsInventoryQuery(
+                Context(),
+                [firstId, secondId],
+                LocateCriteria: new SpaceWmsInventoryLocateCriteria(
+                    null,
+                    null,
+                    "PALLET-SHIPPED")));
+
+        Assert.Equal(firstId, Assert.Single(stock.Items).LogicalId);
+        var pallet = Assert.Single(container.Items);
+        Assert.Equal(secondId, pallet.LogicalId);
+        Assert.Equal("PALLET-01", pallet.ContainerNumber);
+        Assert.Equal(8, pallet.PhysicalQuantity);
+        Assert.Empty(shipped.Items);
+    }
+
+    [Fact]
     public async Task Tenant_mismatch_is_rejected_before_any_wms_query()
     {
         await using var db = NewDb();

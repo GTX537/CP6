@@ -72,6 +72,117 @@ public sealed class SpaceWmsRuntimeServiceTests
     }
 
     [Fact]
+    public async Task Inventory_locate_normalizes_ands_groups_and_sorts_cross_floor_hits()
+    {
+        var execution = Execution();
+        var clock = new TestClock();
+        await using var context = NewContext(execution, clock);
+        var seededLocations = new[]
+        {
+            new SeedLocation(LogicalId(1), "F2-A", FloorLevel: 2),
+            new SeedLocation(LogicalId(2), "F1-B", FloorLevel: 1),
+            new SeedLocation(LogicalId(3), "F1-C", FloorLevel: 1),
+        };
+        var seeded = await SeedPublishedAsync(context, seededLocations);
+        var source = new RecordingRuntimeSource
+        {
+            InventoryItems =
+            [
+                new(LogicalId(1), "F2-A", 5, 1, "SKU-01", "LOT-01", "BOX-01"),
+                new(LogicalId(2), "F1-B", 3, 1, "SKU-01", "LOT-01", "BOX-01"),
+                new(LogicalId(2), "F1-B", 2, 0, "SKU-01", "LOT-01", "BOX-01"),
+                new(LogicalId(3), "F1-C", 99, 0, "SKU-01", "LOT-OTHER", "BOX-01"),
+            ],
+        };
+        var service = CreateService(context, execution, clock, seeded.SiteId, source);
+
+        var response = await service.LocateInventoryAsync(
+            seeded.SiteId,
+            new SpaceWmsInventoryLocateCriteria(
+                "  SKU-01 ",
+                " LOT-01 ",
+                " BOX-01 "));
+
+        Assert.Equal("SKU-01", response.Criteria.MaterialNumber);
+        Assert.Equal("LOT-01", response.Criteria.LotNumber);
+        Assert.Equal("BOX-01", response.Criteria.ContainerNumber);
+        Assert.Equal(2, response.LocationCount);
+        Assert.Equal(2, response.FloorCount);
+        Assert.Equal(["F1-B", "F2-A"],
+            response.Items.Select(value => value.SpaceLocationCode).ToArray());
+        var aggregated = response.Items[0];
+        Assert.Equal(5, aggregated.PhysicalQuantity);
+        Assert.Equal(1, aggregated.AllocatedQuantity);
+        Assert.Equal(["SKU-01"], aggregated.MaterialNumbers);
+        Assert.Equal(["LOT-01"], aggregated.LotNumbers);
+        Assert.Equal(["BOX-01"], aggregated.ContainerNumbers);
+        Assert.All(source.InventoryCriteria, criteria =>
+        {
+            Assert.Equal("SKU-01", criteria!.MaterialNumber);
+            Assert.Equal("LOT-01", criteria.LotNumber);
+            Assert.Equal("BOX-01", criteria.ContainerNumber);
+        });
+    }
+
+    [Fact]
+    public async Task Inventory_locate_distinguishes_empty_available_and_unavailable_sources()
+    {
+        await using var fixture = await RuntimeFixture.CreateAsync("L-001");
+
+        var empty = await fixture.Service.LocateInventoryAsync(
+            fixture.SiteId,
+            new SpaceWmsInventoryLocateCriteria("MISSING", null, null));
+
+        Assert.True(empty.Source.IsAvailable);
+        Assert.Empty(empty.Items);
+        Assert.Equal(0, empty.LocationCount);
+        Assert.Equal(0, empty.FloorCount);
+
+        fixture.Source.ResetCalls();
+        fixture.Source.DeclaredKind = SpaceWmsDataSourceKind.Unavailable;
+        var unavailable = await fixture.Service.LocateInventoryAsync(
+            fixture.SiteId,
+            new SpaceWmsInventoryLocateCriteria("MISSING", null, null));
+
+        Assert.False(unavailable.Source.IsAvailable);
+        Assert.Empty(unavailable.Items);
+    }
+
+    [Fact]
+    public async Task Inventory_locate_rejects_empty_criteria_before_scope_or_wms_query()
+    {
+        await using var fixture = await RuntimeFixture.CreateAsync("L-001");
+
+        var error = await Assert.ThrowsAsync<SpaceProblemException>(() =>
+            fixture.Service.LocateInventoryAsync(
+                fixture.SiteId,
+                new SpaceWmsInventoryLocateCriteria(" ", "", null)));
+
+        Assert.Equal(400, error.StatusCode);
+        Assert.Equal(SpaceErrorCodes.RequestInvalid, error.Code);
+        Assert.Empty(fixture.Source.InventoryBatchSizes);
+    }
+
+    [Fact]
+    public async Task Inventory_locate_rejects_source_items_outside_exact_criteria()
+    {
+        await using var fixture = await RuntimeFixture.CreateAsync("L-001");
+        fixture.Source.IgnoreLocateCriteria = true;
+        fixture.Source.InventoryItems =
+        [
+            new(fixture.LocationIds[0], "L-001", 1, 0, "OTHER", null, null),
+        ];
+
+        var error = await Assert.ThrowsAsync<SpaceProblemException>(() =>
+            fixture.Service.LocateInventoryAsync(
+                fixture.SiteId,
+                new SpaceWmsInventoryLocateCriteria("SKU-01", null, null)));
+
+        Assert.Equal(502, error.StatusCode);
+        Assert.Equal(SpaceErrorCodes.WmsRuntimeContractViolation, error.Code);
+    }
+
+    [Fact]
     public async Task Inventory_and_task_queries_use_500_item_chunks()
     {
         var execution = Execution();
@@ -707,7 +818,10 @@ public sealed class SpaceWmsRuntimeServiceTests
         Guid PublishedVersionId,
         IReadOnlyList<Guid> LocationIds);
 
-    private sealed record SeedLocation(Guid LogicalId, string Code);
+    private sealed record SeedLocation(
+        Guid LogicalId,
+        string Code,
+        int FloorLevel = 1);
 
     private static async Task<SeededPublished> SeedPublishedAsync(
         SpaceContext context,
@@ -722,52 +836,69 @@ public sealed class SpaceWmsRuntimeServiceTests
         SpaceContext context,
         IReadOnlyList<SeedLocation> seededLocations)
     {
-        var locationCodes = seededLocations.Select(value => value.Code).ToArray();
         var tenantId = context.CurrentTenantId;
         var siteId = Guid.NewGuid();
         var model = SpaceModel.Create(tenantId, siteId);
         var version = SpaceModelVersion.CreateDraft(
             tenantId, model.Id, 1, "Published runtime");
-        var floorLogicalId = Guid.NewGuid();
-        var zoneLogicalId = Guid.NewGuid();
-        var rackLogicalId = Guid.NewGuid();
-        var floor = SpaceFloorRevision.Create(
-            tenantId, version.Id, floorLogicalId, siteId, 1,
-            "F1", "Floor 1", height: 5_000);
-        var zone = SpaceZoneRevision.Create(
-            tenantId, version.Id, zoneLogicalId, floorLogicalId,
-            "STORAGE", zoneType: 1);
-        var rack = SpaceRackRevision.Create(
-            tenantId, version.Id, rackLogicalId, floorLogicalId,
-            zoneLogicalId, "RACK-01");
-        rack.ConfigureGeometry(
-            0, 0, 0, 0,
-            width: Math.Max(1, locationCodes.Length) * 1_000,
-            depth: 1_100,
-            height: 4_000);
-        var level = SpaceRackLevelRevision.Create(
-            tenantId, version.Id, Guid.NewGuid(), rackLogicalId,
-            levelNo: 1,
-            bottomZ: 0,
-            clearHeight: 1_200,
-            binCount: Math.Max(1, locationCodes.Length),
-            depthCount: 1,
-            cellWidth: 1_000,
-            cellDepth: 1_100);
         var locationIds = seededLocations.Select(value => value.LogicalId).ToArray();
-        var locations = locationIds.Select((logicalId, index) =>
-            SpaceLocationRevision.Create(
-                tenantId, version.Id, logicalId, floorLogicalId,
-                rackLogicalId, locationCodes[index],
-                columnNo: index + 1,
+        context.AddRange(model, version);
+        foreach (var floorGroup in seededLocations.GroupBy(value => value.FloorLevel))
+        {
+            var floorLogicalId = Guid.NewGuid();
+            var zoneLogicalId = Guid.NewGuid();
+            var rackLogicalId = Guid.NewGuid();
+            var floor = SpaceFloorRevision.Create(
+                tenantId,
+                version.Id,
+                floorLogicalId,
+                siteId,
+                floorGroup.Key,
+                $"F{floorGroup.Key}",
+                $"Floor {floorGroup.Key}",
+                height: 5_000);
+            var zone = SpaceZoneRevision.Create(
+                tenantId,
+                version.Id,
+                zoneLogicalId,
+                floorLogicalId,
+                $"STORAGE-{floorGroup.Key}",
+                zoneType: 1);
+            var rack = SpaceRackRevision.Create(
+                tenantId,
+                version.Id,
+                rackLogicalId,
+                floorLogicalId,
+                zoneLogicalId,
+                $"RACK-{floorGroup.Key:00}");
+            var floorLocations = floorGroup.ToArray();
+            rack.ConfigureGeometry(
+                0, 0, 0, 0,
+                width: Math.Max(1, floorLocations.Length) * 1_000,
+                depth: 1_100,
+                height: 4_000);
+            var level = SpaceRackLevelRevision.Create(
+                tenantId, version.Id, Guid.NewGuid(), rackLogicalId,
                 levelNo: 1,
-                depthNo: 1,
-                width: 1_000,
-                height: 1_200,
-                depth: 1_100)).ToArray();
-
-        context.AddRange(model, version, floor, zone, rack, level);
-        context.AddRange(locations);
+                bottomZ: 0,
+                clearHeight: 1_200,
+                binCount: Math.Max(1, floorLocations.Length),
+                depthCount: 1,
+                cellWidth: 1_000,
+                cellDepth: 1_100);
+            var locations = floorLocations.Select((seed, index) =>
+                SpaceLocationRevision.Create(
+                    tenantId, version.Id, seed.LogicalId, floorLogicalId,
+                    rackLogicalId, seed.Code,
+                    columnNo: index + 1,
+                    levelNo: 1,
+                    depthNo: 1,
+                    width: 1_000,
+                    height: 1_200,
+                    depth: 1_100)).ToArray();
+            context.AddRange(floor, zone, rack, level);
+            context.AddRange(locations);
+        }
         await context.SaveChangesAsync();
         version.BeginValidation();
         version.MarkReady(Hash, "space-v1", Hash);
@@ -861,14 +992,16 @@ public sealed class SpaceWmsRuntimeServiceTests
         public bool ReturnNullInventoryItems { get; set; }
         public bool ReturnNullTaskItems { get; set; }
         public bool ReturnNullInventoryElement { get; set; }
+        public bool IgnoreLocateCriteria { get; set; }
         public bool ReturnNullTaskElement { get; set; }
         public CancellationTokenSource? CancelTasksOnEntry { get; set; }
         public int TaskQueryEntryCount { get; private set; }
         public SpaceWmsInventoryItem? InventoryOverrideItem { get; set; }
         public SpaceWmsTaskItem? TaskOverrideItem { get; set; }
         public List<int> InventoryBatchSizes { get; } = [];
+        public List<SpaceWmsInventoryLocateCriteria?> InventoryCriteria { get; } = [];
         public List<int> TaskBatchSizes { get; } = [];
-        public IReadOnlyList<SpaceWmsInventoryItem> InventoryItems { get; init; } = [];
+        public IReadOnlyList<SpaceWmsInventoryItem> InventoryItems { get; set; } = [];
         public IReadOnlyList<SpaceWmsTaskItem> TaskItems { get; init; } = [];
 
         public void ResetCalls()
@@ -876,6 +1009,7 @@ public sealed class SpaceWmsRuntimeServiceTests
             _callIndex = 0;
             TaskQueryEntryCount = 0;
             InventoryBatchSizes.Clear();
+            InventoryCriteria.Clear();
             TaskBatchSizes.Clear();
         }
 
@@ -887,6 +1021,7 @@ public sealed class SpaceWmsRuntimeServiceTests
             if (QueryException is not null)
                 throw QueryException;
             InventoryBatchSizes.Add(request.LogicalIds.Count);
+            InventoryCriteria.Add(request.LocateCriteria);
             if (ReturnNullInventoryResult)
                 return Task.FromResult<SpaceWmsInventoryResult>(null!);
             var requested = request.LogicalIds.ToHashSet();
@@ -909,7 +1044,10 @@ public sealed class SpaceWmsRuntimeServiceTests
                         : InventoryOverrideItem is not null
                             ? [InventoryOverrideItem]
                             : InventoryItems
-                                .Where(value => requested.Contains(value.LogicalId))
+                                .Where(value =>
+                                    requested.Contains(value.LogicalId) &&
+                                    (IgnoreLocateCriteria ||
+                                     MatchesLocate(value, request.LocateCriteria)))
                                 .ToArray();
             var source = ReturnNullInventorySource ? null! : NextSource();
             return Task.FromResult(new SpaceWmsInventoryResult(
@@ -961,5 +1099,17 @@ public sealed class SpaceWmsRuntimeServiceTests
                 ReturnedDataSourceIds[sourceIndex],
                 Observations[observationIndex]);
         }
+
+        private static bool MatchesLocate(
+            SpaceWmsInventoryItem item,
+            SpaceWmsInventoryLocateCriteria? criteria) =>
+            criteria is null ||
+            (item.PhysicalQuantity > 0 &&
+             Matches(item.MaterialNumber, criteria.MaterialNumber) &&
+             Matches(item.LotNumber, criteria.LotNumber) &&
+             Matches(item.ContainerNumber, criteria.ContainerNumber));
+
+        private static bool Matches(string? actual, string? expected) =>
+            expected is null || string.Equals(actual, expected, StringComparison.Ordinal);
     }
 }

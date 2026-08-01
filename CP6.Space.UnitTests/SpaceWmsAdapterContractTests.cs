@@ -39,6 +39,19 @@ public sealed class SpaceWmsAdapterContractTests
             methodNames);
         Assert.DoesNotContain(nameof(ISpaceWmsAdapter.PreflightAsync),
             methodNames);
+
+        var query = new SpaceWmsInventoryQuery(
+            Context(),
+            [LocationId(1)],
+            LocateCriteria: new SpaceWmsInventoryLocateCriteria(
+                "SKU-01",
+                "LOT-01",
+                "PALLET-01"));
+        var criteria = Assert.IsType<SpaceWmsInventoryLocateCriteria>(
+            query.LocateCriteria);
+        Assert.Equal("SKU-01", criteria.MaterialNumber);
+        Assert.Equal("LOT-01", criteria.LotNumber);
+        Assert.Equal("PALLET-01", criteria.ContainerNumber);
     }
 
     [Theory]
