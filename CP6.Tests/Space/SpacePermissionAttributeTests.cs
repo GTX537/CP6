@@ -74,6 +74,10 @@ public class SpacePermissionAttributeTests
                 "space:external:read",
             ["SpaceExternalOrganizationController.GetMemberships"] =
                 "space:external:read",
+            ["SpaceExternalOrganizationController.GetGrants"] =
+                "space:external:read",
+            ["SpaceExternalOrganizationController.GetGrant"] =
+                "space:external:read",
         };
 
     /// <summary>只读语义的 POST 豁免（Controller.Method）——按「不得带特性」校验。</summary>

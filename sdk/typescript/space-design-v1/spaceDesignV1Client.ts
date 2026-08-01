@@ -189,6 +189,27 @@ export interface ISpaceDesignV1Client {
     updateMembership(organizationId: string, membershipId: string, body: UpdateSpaceExternalMembershipRequest): Promise<SpaceExternalMembershipDto>;
 
     /**
+     * @param status (optional)
+     * @return OK
+     */
+    getGrants(organizationId: string, status: string | undefined): Promise<SpaceExternalGrantDto[]>;
+
+    /**
+     * @return Created
+     */
+    createGrant(organizationId: string, body: CreateSpaceExternalGrantRequest): Promise<SpaceExternalGrantDto>;
+
+    /**
+     * @return OK
+     */
+    getGrant(organizationId: string, grantId: string): Promise<SpaceExternalGrantDto>;
+
+    /**
+     * @return OK
+     */
+    updateGrant(organizationId: string, grantId: string, body: UpdateSpaceExternalGrantRequest): Promise<SpaceExternalGrantDto>;
+
+    /**
      * @param locationLogicalId (optional)
      * @return OK
      */
@@ -3135,6 +3156,388 @@ export class SpaceDesignV1Client implements ISpaceDesignV1Client {
     }
 
     /**
+     * @param status (optional)
+     * @return OK
+     */
+    getGrants(organizationId: string, status: string | undefined): Promise<SpaceExternalGrantDto[]> {
+        let url_ = this.baseUrl + "/api/space/external-organization/{organizationId}/grant?";
+        if (organizationId === undefined || organizationId === null)
+            throw new globalThis.Error("The parameter 'organizationId' must be defined.");
+        url_ = url_.replace("{organizationId}", encodeURIComponent("" + organizationId));
+        if (status === null)
+            throw new globalThis.Error("The parameter 'status' cannot be null.");
+        else if (status !== undefined)
+            url_ += "status=" + encodeURIComponent("" + status) + "&";
+        url_ = url_.replace(/[?&]$/, "");
+
+        let options_: RequestInit = {
+            method: "GET",
+            headers: {
+                "Accept": "application/json"
+            }
+        };
+
+        return this.http.fetch(url_, options_).then((_response: Response) => {
+            return this.processGetGrants(_response);
+        });
+    }
+
+    protected processGetGrants(response: Response): Promise<SpaceExternalGrantDto[]> {
+        const status = response.status;
+        let _headers: any = {}; if (response.headers && response.headers.forEach) { response.headers.forEach((v: any, k: any) => _headers[k] = v); };
+        if (status === 200) {
+            return response.text().then((_responseText) => {
+            let result200: any = null;
+            let resultData200 = _responseText === "" ? null : JSON.parse(_responseText, this.jsonParseReviver);
+            if (Array.isArray(resultData200)) {
+                result200 = [] as any;
+                for (let item of resultData200)
+                    result200!.push(SpaceExternalGrantDto.fromJS(item));
+            }
+            else {
+                result200 = null as any;
+            }
+            return result200;
+            });
+        } else if (status === 400) {
+            return response.text().then((_responseText) => {
+            let result400: any = null;
+            let resultData400 = _responseText === "" ? null : JSON.parse(_responseText, this.jsonParseReviver);
+            result400 = SpaceDesignProblemDetails.fromJS(resultData400);
+            return throwException("Bad Request", status, _responseText, _headers, result400);
+            });
+        } else if (status === 401) {
+            return response.text().then((_responseText) => {
+            let result401: any = null;
+            let resultData401 = _responseText === "" ? null : JSON.parse(_responseText, this.jsonParseReviver);
+            result401 = SpaceDesignProblemDetails.fromJS(resultData401);
+            return throwException("Unauthorized", status, _responseText, _headers, result401);
+            });
+        } else if (status === 403) {
+            return response.text().then((_responseText) => {
+            let result403: any = null;
+            let resultData403 = _responseText === "" ? null : JSON.parse(_responseText, this.jsonParseReviver);
+            result403 = SpaceDesignProblemDetails.fromJS(resultData403);
+            return throwException("Forbidden", status, _responseText, _headers, result403);
+            });
+        } else if (status === 404) {
+            return response.text().then((_responseText) => {
+            let result404: any = null;
+            let resultData404 = _responseText === "" ? null : JSON.parse(_responseText, this.jsonParseReviver);
+            result404 = SpaceDesignProblemDetails.fromJS(resultData404);
+            return throwException("Not Found", status, _responseText, _headers, result404);
+            });
+        } else if (status === 409) {
+            return response.text().then((_responseText) => {
+            let result409: any = null;
+            let resultData409 = _responseText === "" ? null : JSON.parse(_responseText, this.jsonParseReviver);
+            result409 = SpaceDesignProblemDetails.fromJS(resultData409);
+            return throwException("Conflict", status, _responseText, _headers, result409);
+            });
+        } else if (status === 422) {
+            return response.text().then((_responseText) => {
+            let result422: any = null;
+            let resultData422 = _responseText === "" ? null : JSON.parse(_responseText, this.jsonParseReviver);
+            result422 = SpaceDesignProblemDetails.fromJS(resultData422);
+            return throwException("Unprocessable Content", status, _responseText, _headers, result422);
+            });
+        } else if (status === 500) {
+            return response.text().then((_responseText) => {
+            let result500: any = null;
+            let resultData500 = _responseText === "" ? null : JSON.parse(_responseText, this.jsonParseReviver);
+            result500 = SpaceDesignProblemDetails.fromJS(resultData500);
+            return throwException("Internal Server Error", status, _responseText, _headers, result500);
+            });
+        } else if (status !== 200 && status !== 204) {
+            return response.text().then((_responseText) => {
+            return throwException("An unexpected server error occurred.", status, _responseText, _headers);
+            });
+        }
+        return Promise.resolve<SpaceExternalGrantDto[]>(null as any);
+    }
+
+    /**
+     * @return Created
+     */
+    createGrant(organizationId: string, body: CreateSpaceExternalGrantRequest): Promise<SpaceExternalGrantDto> {
+        let url_ = this.baseUrl + "/api/space/external-organization/{organizationId}/grant";
+        if (organizationId === undefined || organizationId === null)
+            throw new globalThis.Error("The parameter 'organizationId' must be defined.");
+        url_ = url_.replace("{organizationId}", encodeURIComponent("" + organizationId));
+        url_ = url_.replace(/[?&]$/, "");
+
+        const content_ = JSON.stringify(body);
+
+        let options_: RequestInit = {
+            body: content_,
+            method: "POST",
+            headers: {
+                "Content-Type": "application/json",
+                "Accept": "application/json"
+            }
+        };
+
+        return this.http.fetch(url_, options_).then((_response: Response) => {
+            return this.processCreateGrant(_response);
+        });
+    }
+
+    protected processCreateGrant(response: Response): Promise<SpaceExternalGrantDto> {
+        const status = response.status;
+        let _headers: any = {}; if (response.headers && response.headers.forEach) { response.headers.forEach((v: any, k: any) => _headers[k] = v); };
+        if (status === 201) {
+            return response.text().then((_responseText) => {
+            let result201: any = null;
+            let resultData201 = _responseText === "" ? null : JSON.parse(_responseText, this.jsonParseReviver);
+            result201 = SpaceExternalGrantDto.fromJS(resultData201);
+            return result201;
+            });
+        } else if (status === 400) {
+            return response.text().then((_responseText) => {
+            let result400: any = null;
+            let resultData400 = _responseText === "" ? null : JSON.parse(_responseText, this.jsonParseReviver);
+            result400 = SpaceDesignProblemDetails.fromJS(resultData400);
+            return throwException("Bad Request", status, _responseText, _headers, result400);
+            });
+        } else if (status === 401) {
+            return response.text().then((_responseText) => {
+            let result401: any = null;
+            let resultData401 = _responseText === "" ? null : JSON.parse(_responseText, this.jsonParseReviver);
+            result401 = SpaceDesignProblemDetails.fromJS(resultData401);
+            return throwException("Unauthorized", status, _responseText, _headers, result401);
+            });
+        } else if (status === 403) {
+            return response.text().then((_responseText) => {
+            let result403: any = null;
+            let resultData403 = _responseText === "" ? null : JSON.parse(_responseText, this.jsonParseReviver);
+            result403 = SpaceDesignProblemDetails.fromJS(resultData403);
+            return throwException("Forbidden", status, _responseText, _headers, result403);
+            });
+        } else if (status === 404) {
+            return response.text().then((_responseText) => {
+            let result404: any = null;
+            let resultData404 = _responseText === "" ? null : JSON.parse(_responseText, this.jsonParseReviver);
+            result404 = SpaceDesignProblemDetails.fromJS(resultData404);
+            return throwException("Not Found", status, _responseText, _headers, result404);
+            });
+        } else if (status === 409) {
+            return response.text().then((_responseText) => {
+            let result409: any = null;
+            let resultData409 = _responseText === "" ? null : JSON.parse(_responseText, this.jsonParseReviver);
+            result409 = SpaceDesignProblemDetails.fromJS(resultData409);
+            return throwException("Conflict", status, _responseText, _headers, result409);
+            });
+        } else if (status === 422) {
+            return response.text().then((_responseText) => {
+            let result422: any = null;
+            let resultData422 = _responseText === "" ? null : JSON.parse(_responseText, this.jsonParseReviver);
+            result422 = SpaceDesignProblemDetails.fromJS(resultData422);
+            return throwException("Unprocessable Content", status, _responseText, _headers, result422);
+            });
+        } else if (status === 500) {
+            return response.text().then((_responseText) => {
+            let result500: any = null;
+            let resultData500 = _responseText === "" ? null : JSON.parse(_responseText, this.jsonParseReviver);
+            result500 = SpaceDesignProblemDetails.fromJS(resultData500);
+            return throwException("Internal Server Error", status, _responseText, _headers, result500);
+            });
+        } else if (status !== 200 && status !== 204) {
+            return response.text().then((_responseText) => {
+            return throwException("An unexpected server error occurred.", status, _responseText, _headers);
+            });
+        }
+        return Promise.resolve<SpaceExternalGrantDto>(null as any);
+    }
+
+    /**
+     * @return OK
+     */
+    getGrant(organizationId: string, grantId: string): Promise<SpaceExternalGrantDto> {
+        let url_ = this.baseUrl + "/api/space/external-organization/{organizationId}/grant/{grantId}";
+        if (organizationId === undefined || organizationId === null)
+            throw new globalThis.Error("The parameter 'organizationId' must be defined.");
+        url_ = url_.replace("{organizationId}", encodeURIComponent("" + organizationId));
+        if (grantId === undefined || grantId === null)
+            throw new globalThis.Error("The parameter 'grantId' must be defined.");
+        url_ = url_.replace("{grantId}", encodeURIComponent("" + grantId));
+        url_ = url_.replace(/[?&]$/, "");
+
+        let options_: RequestInit = {
+            method: "GET",
+            headers: {
+                "Accept": "application/json"
+            }
+        };
+
+        return this.http.fetch(url_, options_).then((_response: Response) => {
+            return this.processGetGrant(_response);
+        });
+    }
+
+    protected processGetGrant(response: Response): Promise<SpaceExternalGrantDto> {
+        const status = response.status;
+        let _headers: any = {}; if (response.headers && response.headers.forEach) { response.headers.forEach((v: any, k: any) => _headers[k] = v); };
+        if (status === 200) {
+            return response.text().then((_responseText) => {
+            let result200: any = null;
+            let resultData200 = _responseText === "" ? null : JSON.parse(_responseText, this.jsonParseReviver);
+            result200 = SpaceExternalGrantDto.fromJS(resultData200);
+            return result200;
+            });
+        } else if (status === 400) {
+            return response.text().then((_responseText) => {
+            let result400: any = null;
+            let resultData400 = _responseText === "" ? null : JSON.parse(_responseText, this.jsonParseReviver);
+            result400 = SpaceDesignProblemDetails.fromJS(resultData400);
+            return throwException("Bad Request", status, _responseText, _headers, result400);
+            });
+        } else if (status === 401) {
+            return response.text().then((_responseText) => {
+            let result401: any = null;
+            let resultData401 = _responseText === "" ? null : JSON.parse(_responseText, this.jsonParseReviver);
+            result401 = SpaceDesignProblemDetails.fromJS(resultData401);
+            return throwException("Unauthorized", status, _responseText, _headers, result401);
+            });
+        } else if (status === 403) {
+            return response.text().then((_responseText) => {
+            let result403: any = null;
+            let resultData403 = _responseText === "" ? null : JSON.parse(_responseText, this.jsonParseReviver);
+            result403 = SpaceDesignProblemDetails.fromJS(resultData403);
+            return throwException("Forbidden", status, _responseText, _headers, result403);
+            });
+        } else if (status === 404) {
+            return response.text().then((_responseText) => {
+            let result404: any = null;
+            let resultData404 = _responseText === "" ? null : JSON.parse(_responseText, this.jsonParseReviver);
+            result404 = SpaceDesignProblemDetails.fromJS(resultData404);
+            return throwException("Not Found", status, _responseText, _headers, result404);
+            });
+        } else if (status === 409) {
+            return response.text().then((_responseText) => {
+            let result409: any = null;
+            let resultData409 = _responseText === "" ? null : JSON.parse(_responseText, this.jsonParseReviver);
+            result409 = SpaceDesignProblemDetails.fromJS(resultData409);
+            return throwException("Conflict", status, _responseText, _headers, result409);
+            });
+        } else if (status === 422) {
+            return response.text().then((_responseText) => {
+            let result422: any = null;
+            let resultData422 = _responseText === "" ? null : JSON.parse(_responseText, this.jsonParseReviver);
+            result422 = SpaceDesignProblemDetails.fromJS(resultData422);
+            return throwException("Unprocessable Content", status, _responseText, _headers, result422);
+            });
+        } else if (status === 500) {
+            return response.text().then((_responseText) => {
+            let result500: any = null;
+            let resultData500 = _responseText === "" ? null : JSON.parse(_responseText, this.jsonParseReviver);
+            result500 = SpaceDesignProblemDetails.fromJS(resultData500);
+            return throwException("Internal Server Error", status, _responseText, _headers, result500);
+            });
+        } else if (status !== 200 && status !== 204) {
+            return response.text().then((_responseText) => {
+            return throwException("An unexpected server error occurred.", status, _responseText, _headers);
+            });
+        }
+        return Promise.resolve<SpaceExternalGrantDto>(null as any);
+    }
+
+    /**
+     * @return OK
+     */
+    updateGrant(organizationId: string, grantId: string, body: UpdateSpaceExternalGrantRequest): Promise<SpaceExternalGrantDto> {
+        let url_ = this.baseUrl + "/api/space/external-organization/{organizationId}/grant/{grantId}";
+        if (organizationId === undefined || organizationId === null)
+            throw new globalThis.Error("The parameter 'organizationId' must be defined.");
+        url_ = url_.replace("{organizationId}", encodeURIComponent("" + organizationId));
+        if (grantId === undefined || grantId === null)
+            throw new globalThis.Error("The parameter 'grantId' must be defined.");
+        url_ = url_.replace("{grantId}", encodeURIComponent("" + grantId));
+        url_ = url_.replace(/[?&]$/, "");
+
+        const content_ = JSON.stringify(body);
+
+        let options_: RequestInit = {
+            body: content_,
+            method: "PUT",
+            headers: {
+                "Content-Type": "application/json",
+                "Accept": "application/json"
+            }
+        };
+
+        return this.http.fetch(url_, options_).then((_response: Response) => {
+            return this.processUpdateGrant(_response);
+        });
+    }
+
+    protected processUpdateGrant(response: Response): Promise<SpaceExternalGrantDto> {
+        const status = response.status;
+        let _headers: any = {}; if (response.headers && response.headers.forEach) { response.headers.forEach((v: any, k: any) => _headers[k] = v); };
+        if (status === 200) {
+            return response.text().then((_responseText) => {
+            let result200: any = null;
+            let resultData200 = _responseText === "" ? null : JSON.parse(_responseText, this.jsonParseReviver);
+            result200 = SpaceExternalGrantDto.fromJS(resultData200);
+            return result200;
+            });
+        } else if (status === 400) {
+            return response.text().then((_responseText) => {
+            let result400: any = null;
+            let resultData400 = _responseText === "" ? null : JSON.parse(_responseText, this.jsonParseReviver);
+            result400 = SpaceDesignProblemDetails.fromJS(resultData400);
+            return throwException("Bad Request", status, _responseText, _headers, result400);
+            });
+        } else if (status === 401) {
+            return response.text().then((_responseText) => {
+            let result401: any = null;
+            let resultData401 = _responseText === "" ? null : JSON.parse(_responseText, this.jsonParseReviver);
+            result401 = SpaceDesignProblemDetails.fromJS(resultData401);
+            return throwException("Unauthorized", status, _responseText, _headers, result401);
+            });
+        } else if (status === 403) {
+            return response.text().then((_responseText) => {
+            let result403: any = null;
+            let resultData403 = _responseText === "" ? null : JSON.parse(_responseText, this.jsonParseReviver);
+            result403 = SpaceDesignProblemDetails.fromJS(resultData403);
+            return throwException("Forbidden", status, _responseText, _headers, result403);
+            });
+        } else if (status === 404) {
+            return response.text().then((_responseText) => {
+            let result404: any = null;
+            let resultData404 = _responseText === "" ? null : JSON.parse(_responseText, this.jsonParseReviver);
+            result404 = SpaceDesignProblemDetails.fromJS(resultData404);
+            return throwException("Not Found", status, _responseText, _headers, result404);
+            });
+        } else if (status === 409) {
+            return response.text().then((_responseText) => {
+            let result409: any = null;
+            let resultData409 = _responseText === "" ? null : JSON.parse(_responseText, this.jsonParseReviver);
+            result409 = SpaceDesignProblemDetails.fromJS(resultData409);
+            return throwException("Conflict", status, _responseText, _headers, result409);
+            });
+        } else if (status === 422) {
+            return response.text().then((_responseText) => {
+            let result422: any = null;
+            let resultData422 = _responseText === "" ? null : JSON.parse(_responseText, this.jsonParseReviver);
+            result422 = SpaceDesignProblemDetails.fromJS(resultData422);
+            return throwException("Unprocessable Content", status, _responseText, _headers, result422);
+            });
+        } else if (status === 500) {
+            return response.text().then((_responseText) => {
+            let result500: any = null;
+            let resultData500 = _responseText === "" ? null : JSON.parse(_responseText, this.jsonParseReviver);
+            result500 = SpaceDesignProblemDetails.fromJS(resultData500);
+            return throwException("Internal Server Error", status, _responseText, _headers, result500);
+            });
+        } else if (status !== 200 && status !== 204) {
+            return response.text().then((_responseText) => {
+            return throwException("An unexpected server error occurred.", status, _responseText, _headers);
+            });
+        }
+        return Promise.resolve<SpaceExternalGrantDto>(null as any);
+    }
+
+    /**
      * @param locationLogicalId (optional)
      * @return OK
      */
@@ -4051,6 +4454,110 @@ export class CreateSpaceAssetResponse implements ICreateSpaceAssetResponse {
 export interface ICreateSpaceAssetResponse {
     asset?: SpaceAssetDto;
     idempotentReplay?: boolean;
+}
+
+export class CreateSpaceExternalGrantRequest implements ICreateSpaceExternalGrantRequest {
+    siteId?: string;
+    floorLogicalIds?: string[] | undefined;
+    zoneLogicalIds?: string[] | undefined;
+    ownerIds?: string[] | undefined;
+    objects?: SpaceExternalGrantObjectRequest[] | undefined;
+    fieldPolicyId?: string | undefined;
+    canExport?: boolean;
+    validFromUtc?: Date | undefined;
+    validToUtc?: Date | undefined;
+    status?: string | undefined;
+
+    constructor(data?: ICreateSpaceExternalGrantRequest) {
+        if (data) {
+            for (var property in data) {
+                if (data.hasOwnProperty(property))
+                    (this as any)[property] = (data as any)[property];
+            }
+        }
+    }
+
+    init(_data?: any) {
+        if (_data) {
+            this.siteId = _data["siteId"];
+            if (Array.isArray(_data["floorLogicalIds"])) {
+                this.floorLogicalIds = [] as any;
+                for (let item of _data["floorLogicalIds"])
+                    this.floorLogicalIds!.push(item);
+            }
+            if (Array.isArray(_data["zoneLogicalIds"])) {
+                this.zoneLogicalIds = [] as any;
+                for (let item of _data["zoneLogicalIds"])
+                    this.zoneLogicalIds!.push(item);
+            }
+            if (Array.isArray(_data["ownerIds"])) {
+                this.ownerIds = [] as any;
+                for (let item of _data["ownerIds"])
+                    this.ownerIds!.push(item);
+            }
+            if (Array.isArray(_data["objects"])) {
+                this.objects = [] as any;
+                for (let item of _data["objects"])
+                    this.objects!.push(SpaceExternalGrantObjectRequest.fromJS(item));
+            }
+            this.fieldPolicyId = _data["fieldPolicyId"];
+            this.canExport = _data["canExport"];
+            this.validFromUtc = _data["validFromUtc"] ? new Date(_data["validFromUtc"].toString()) : undefined as any;
+            this.validToUtc = _data["validToUtc"] ? new Date(_data["validToUtc"].toString()) : undefined as any;
+            this.status = _data["status"];
+        }
+    }
+
+    static fromJS(data: any): CreateSpaceExternalGrantRequest {
+        data = typeof data === 'object' ? data : {};
+        let result = new CreateSpaceExternalGrantRequest();
+        result.init(data);
+        return result;
+    }
+
+    toJSON(data?: any) {
+        data = typeof data === 'object' ? data : {};
+        data["siteId"] = this.siteId;
+        if (Array.isArray(this.floorLogicalIds)) {
+            data["floorLogicalIds"] = [];
+            for (let item of this.floorLogicalIds)
+                data["floorLogicalIds"].push(item);
+        }
+        if (Array.isArray(this.zoneLogicalIds)) {
+            data["zoneLogicalIds"] = [];
+            for (let item of this.zoneLogicalIds)
+                data["zoneLogicalIds"].push(item);
+        }
+        if (Array.isArray(this.ownerIds)) {
+            data["ownerIds"] = [];
+            for (let item of this.ownerIds)
+                data["ownerIds"].push(item);
+        }
+        if (Array.isArray(this.objects)) {
+            data["objects"] = [];
+            for (let item of this.objects)
+                data["objects"].push(item ? item.toJSON() : undefined as any);
+        }
+        data["fieldPolicyId"] = this.fieldPolicyId;
+        data["canExport"] = this.canExport;
+        data["validFromUtc"] = this.validFromUtc ? this.validFromUtc.toISOString() : undefined as any;
+        data["validToUtc"] = this.validToUtc ? this.validToUtc.toISOString() : undefined as any;
+        data["status"] = this.status;
+        return data;
+    }
+}
+
+export interface ICreateSpaceExternalGrantRequest {
+    siteId?: string;
+    floorLogicalIds?: string[] | undefined;
+    zoneLogicalIds?: string[] | undefined;
+    ownerIds?: string[] | undefined;
+    objects?: SpaceExternalGrantObjectRequest[] | undefined;
+    fieldPolicyId?: string | undefined;
+    canExport?: boolean;
+    validFromUtc?: Date | undefined;
+    validToUtc?: Date | undefined;
+    status?: string | undefined;
 }
 
 export class CreateSpaceExternalMembershipRequest implements ICreateSpaceExternalMembershipRequest {
@@ -5051,6 +5558,218 @@ export interface ISpaceElementCommandResultDto {
     targetLogicalId?: string;
     element?: SpaceSceneElementDto;
     attributes?: SpaceSceneElementAttributeDto[] | undefined;
+}
+
+export class SpaceExternalGrantDto implements ISpaceExternalGrantDto {
+    id?: string;
+    organizationId?: string;
+    siteId?: string;
+    floorLogicalIds?: string[] | undefined;
+    zoneLogicalIds?: string[] | undefined;
+    ownerIds?: string[] | undefined;
+    objects?: SpaceExternalGrantObjectDto[] | undefined;
+    fieldPolicyId?: string | undefined;
+    canExport?: boolean;
+    validFromUtc?: Date;
+    validToUtc?: Date | undefined;
+    status?: string | undefined;
+    grantVersion?: number;
+    createdAtUtc?: Date;
+    createdBy?: string | undefined;
+    modifiedAtUtc?: Date | undefined;
+    modifiedBy?: string | undefined;
+
+    constructor(data?: ISpaceExternalGrantDto) {
+        if (data) {
+            for (var property in data) {
+                if (data.hasOwnProperty(property))
+                    (this as any)[property] = (data as any)[property];
+            }
+        }
+    }
+
+    init(_data?: any) {
+        if (_data) {
+            this.id = _data["id"];
+            this.organizationId = _data["organizationId"];
+            this.siteId = _data["siteId"];
+            if (Array.isArray(_data["floorLogicalIds"])) {
+                this.floorLogicalIds = [] as any;
+                for (let item of _data["floorLogicalIds"])
+                    this.floorLogicalIds!.push(item);
+            }
+            if (Array.isArray(_data["zoneLogicalIds"])) {
+                this.zoneLogicalIds = [] as any;
+                for (let item of _data["zoneLogicalIds"])
+                    this.zoneLogicalIds!.push(item);
+            }
+            if (Array.isArray(_data["ownerIds"])) {
+                this.ownerIds = [] as any;
+                for (let item of _data["ownerIds"])
+                    this.ownerIds!.push(item);
+            }
+            if (Array.isArray(_data["objects"])) {
+                this.objects = [] as any;
+                for (let item of _data["objects"])
+                    this.objects!.push(SpaceExternalGrantObjectDto.fromJS(item));
+            }
+            this.fieldPolicyId = _data["fieldPolicyId"];
+            this.canExport = _data["canExport"];
+            this.validFromUtc = _data["validFromUtc"] ? new Date(_data["validFromUtc"].toString()) : undefined as any;
+            this.validToUtc = _data["validToUtc"] ? new Date(_data["validToUtc"].toString()) : undefined as any;
+            this.status = _data["status"];
+            this.grantVersion = _data["grantVersion"];
+            this.createdAtUtc = _data["createdAtUtc"] ? new Date(_data["createdAtUtc"].toString()) : undefined as any;
+            this.createdBy = _data["createdBy"];
+            this.modifiedAtUtc = _data["modifiedAtUtc"] ? new Date(_data["modifiedAtUtc"].toString()) : undefined as any;
+            this.modifiedBy = _data["modifiedBy"];
+        }
+    }
+
+    static fromJS(data: any): SpaceExternalGrantDto {
+        data = typeof data === 'object' ? data : {};
+        let result = new SpaceExternalGrantDto();
+        result.init(data);
+        return result;
+    }
+
+    toJSON(data?: any) {
+        data = typeof data === 'object' ? data : {};
+        data["id"] = this.id;
+        data["organizationId"] = this.organizationId;
+        data["siteId"] = this.siteId;
+        if (Array.isArray(this.floorLogicalIds)) {
+            data["floorLogicalIds"] = [];
+            for (let item of this.floorLogicalIds)
+                data["floorLogicalIds"].push(item);
+        }
+        if (Array.isArray(this.zoneLogicalIds)) {
+            data["zoneLogicalIds"] = [];
+            for (let item of this.zoneLogicalIds)
+                data["zoneLogicalIds"].push(item);
+        }
+        if (Array.isArray(this.ownerIds)) {
+            data["ownerIds"] = [];
+            for (let item of this.ownerIds)
+                data["ownerIds"].push(item);
+        }
+        if (Array.isArray(this.objects)) {
+            data["objects"] = [];
+            for (let item of this.objects)
+                data["objects"].push(item ? item.toJSON() : undefined as any);
+        }
+        data["fieldPolicyId"] = this.fieldPolicyId;
+        data["canExport"] = this.canExport;
+        data["validFromUtc"] = this.validFromUtc ? this.validFromUtc.toISOString() : undefined as any;
+        data["validToUtc"] = this.validToUtc ? this.validToUtc.toISOString() : undefined as any;
+        data["status"] = this.status;
+        data["grantVersion"] = this.grantVersion;
+        data["createdAtUtc"] = this.createdAtUtc ? this.createdAtUtc.toISOString() : undefined as any;
+        data["createdBy"] = this.createdBy;
+        data["modifiedAtUtc"] = this.modifiedAtUtc ? this.modifiedAtUtc.toISOString() : undefined as any;
+        data["modifiedBy"] = this.modifiedBy;
+        return data;
+    }
+}
+
+export interface ISpaceExternalGrantDto {
+    id?: string;
+    organizationId?: string;
+    siteId?: string;
+    floorLogicalIds?: string[] | undefined;
+    zoneLogicalIds?: string[] | undefined;
+    ownerIds?: string[] | undefined;
+    objects?: SpaceExternalGrantObjectDto[] | undefined;
+    fieldPolicyId?: string | undefined;
+    canExport?: boolean;
+    validFromUtc?: Date;
+    validToUtc?: Date | undefined;
+    status?: string | undefined;
+    grantVersion?: number;
+    createdAtUtc?: Date;
+    createdBy?: string | undefined;
+    modifiedAtUtc?: Date | undefined;
+    modifiedBy?: string | undefined;
+}
+
+export class SpaceExternalGrantObjectDto implements ISpaceExternalGrantObjectDto {
+    businessObjectType?: string | undefined;
+    businessObjectId?: string | undefined;
+
+    constructor(data?: ISpaceExternalGrantObjectDto) {
+        if (data) {
+            for (var property in data) {
+                if (data.hasOwnProperty(property))
+                    (this as any)[property] = (data as any)[property];
+            }
+        }
+    }
+
+    init(_data?: any) {
+        if (_data) {
+            this.businessObjectType = _data["businessObjectType"];
+            this.businessObjectId = _data["businessObjectId"];
+        }
+    }
+
+    static fromJS(data: any): SpaceExternalGrantObjectDto {
+        data = typeof data === 'object' ? data : {};
+        let result = new SpaceExternalGrantObjectDto();
+        result.init(data);
+        return result;
+    }
+
+    toJSON(data?: any) {
+        data = typeof data === 'object' ? data : {};
+        data["businessObjectType"] = this.businessObjectType;
+        data["businessObjectId"] = this.businessObjectId;
+        return data;
+    }
+}
+
+export interface ISpaceExternalGrantObjectDto {
+    businessObjectType?: string | undefined;
+    businessObjectId?: string | undefined;
+}
+
+export class SpaceExternalGrantObjectRequest implements ISpaceExternalGrantObjectRequest {
+    businessObjectType?: string | undefined;
+    businessObjectId?: string | undefined;
+
+    constructor(data?: ISpaceExternalGrantObjectRequest) {
+        if (data) {
+            for (var property in data) {
+                if (data.hasOwnProperty(property))
+                    (this as any)[property] = (data as any)[property];
+            }
+        }
+    }
+
+    init(_data?: any) {
+        if (_data) {
+            this.businessObjectType = _data["businessObjectType"];
+            this.businessObjectId = _data["businessObjectId"];
+        }
+    }
+
+    static fromJS(data: any): SpaceExternalGrantObjectRequest {
+        data = typeof data === 'object' ? data : {};
+        let result = new SpaceExternalGrantObjectRequest();
+        result.init(data);
+        return result;
+    }
+
+    toJSON(data?: any) {
+        data = typeof data === 'object' ? data : {};
+        data["businessObjectType"] = this.businessObjectType;
+        data["businessObjectId"] = this.businessObjectId;
+        return data;
+    }
+}
+
+export interface ISpaceExternalGrantObjectRequest {
+    businessObjectType?: string | undefined;
+    businessObjectId?: string | undefined;
 }
 
 export class SpaceExternalMembershipDto implements ISpaceExternalMembershipDto {
@@ -7916,6 +8635,110 @@ export interface ISpaceWmsRuntimeTaskWorkloadDto {
     zoneCode?: string | null | undefined;
     stopCount: number;
     totalQuantity: number;
+}
+
+export class UpdateSpaceExternalGrantRequest implements IUpdateSpaceExternalGrantRequest {
+    siteId?: string;
+    floorLogicalIds?: string[] | undefined;
+    zoneLogicalIds?: string[] | undefined;
+    ownerIds?: string[] | undefined;
+    objects?: SpaceExternalGrantObjectRequest[] | undefined;
+    fieldPolicyId?: string | undefined;
+    canExport?: boolean;
+    validFromUtc?: Date;
+    validToUtc?: Date | undefined;
+    status?: string | undefined;
+
+    constructor(data?: IUpdateSpaceExternalGrantRequest) {
+        if (data) {
+            for (var property in data) {
+                if (data.hasOwnProperty(property))
+                    (this as any)[property] = (data as any)[property];
+            }
+        }
+    }
+
+    init(_data?: any) {
+        if (_data) {
+            this.siteId = _data["siteId"];
+            if (Array.isArray(_data["floorLogicalIds"])) {
+                this.floorLogicalIds = [] as any;
+                for (let item of _data["floorLogicalIds"])
+                    this.floorLogicalIds!.push(item);
+            }
+            if (Array.isArray(_data["zoneLogicalIds"])) {
+                this.zoneLogicalIds = [] as any;
+                for (let item of _data["zoneLogicalIds"])
+                    this.zoneLogicalIds!.push(item);
+            }
+            if (Array.isArray(_data["ownerIds"])) {
+                this.ownerIds = [] as any;
+                for (let item of _data["ownerIds"])
+                    this.ownerIds!.push(item);
+            }
+            if (Array.isArray(_data["objects"])) {
+                this.objects = [] as any;
+                for (let item of _data["objects"])
+                    this.objects!.push(SpaceExternalGrantObjectRequest.fromJS(item));
+            }
+            this.fieldPolicyId = _data["fieldPolicyId"];
+            this.canExport = _data["canExport"];
+            this.validFromUtc = _data["validFromUtc"] ? new Date(_data["validFromUtc"].toString()) : undefined as any;
+            this.validToUtc = _data["validToUtc"] ? new Date(_data["validToUtc"].toString()) : undefined as any;
+            this.status = _data["status"];
+        }
+    }
+
+    static fromJS(data: any): UpdateSpaceExternalGrantRequest {
+        data = typeof data === 'object' ? data : {};
+        let result = new UpdateSpaceExternalGrantRequest();
+        result.init(data);
+        return result;
+    }
+
+    toJSON(data?: any) {
+        data = typeof data === 'object' ? data : {};
+        data["siteId"] = this.siteId;
+        if (Array.isArray(this.floorLogicalIds)) {
+            data["floorLogicalIds"] = [];
+            for (let item of this.floorLogicalIds)
+                data["floorLogicalIds"].push(item);
+        }
+        if (Array.isArray(this.zoneLogicalIds)) {
+            data["zoneLogicalIds"] = [];
+            for (let item of this.zoneLogicalIds)
+                data["zoneLogicalIds"].push(item);
+        }
+        if (Array.isArray(this.ownerIds)) {
+            data["ownerIds"] = [];
+            for (let item of this.ownerIds)
+                data["ownerIds"].push(item);
+        }
+        if (Array.isArray(this.objects)) {
+            data["objects"] = [];
+            for (let item of this.objects)
+                data["objects"].push(item ? item.toJSON() : undefined as any);
+        }
+        data["fieldPolicyId"] = this.fieldPolicyId;
+        data["canExport"] = this.canExport;
+        data["validFromUtc"] = this.validFromUtc ? this.validFromUtc.toISOString() : undefined as any;
+        data["validToUtc"] = this.validToUtc ? this.validToUtc.toISOString() : undefined as any;
+        data["status"] = this.status;
+        return data;
+    }
+}
+
+export interface IUpdateSpaceExternalGrantRequest {
+    siteId?: string;
+    floorLogicalIds?: string[] | undefined;
+    zoneLogicalIds?: string[] | undefined;
+    ownerIds?: string[] | undefined;
+    objects?: SpaceExternalGrantObjectRequest[] | undefined;
+    fieldPolicyId?: string | undefined;
+    canExport?: boolean;
+    validFromUtc?: Date;
+    validToUtc?: Date | undefined;
+    status?: string | undefined;
 }
 
 export class UpdateSpaceExternalMembershipRequest implements IUpdateSpaceExternalMembershipRequest {

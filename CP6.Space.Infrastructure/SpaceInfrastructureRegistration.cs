@@ -111,6 +111,10 @@ public static class SpaceInfrastructureRegistration
         services.AddScoped<
             ISpaceExternalOrganizationService,
             SpaceExternalOrganizationService>();
+        services.AddScoped<
+            ISpaceExternalGrantService,
+            SpaceExternalGrantService>();
+        services.AddScoped<ISpaceAccessEvaluator, SpaceAccessEvaluator>();
         services.AddScoped<ISpaceUnderlayV1Service, SpaceUnderlayV1Service>();
         services.AddScoped<
             ISpaceWarehouseResolver,
