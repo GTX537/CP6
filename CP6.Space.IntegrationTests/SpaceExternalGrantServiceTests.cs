@@ -90,7 +90,7 @@ public sealed class SpaceExternalGrantServiceTests
     }
 
     [Fact]
-    public async Task Unknown_site_and_reserved_field_policy_fail_closed()
+    public async Task Unknown_site_and_invalid_field_policy_fail_closed()
     {
         await using var fixture = await CreateFixtureAsync();
         var service = new SpaceExternalGrantService(
@@ -102,16 +102,57 @@ public sealed class SpaceExternalGrantServiceTests
             service.CreateGrantAsync(
                 fixture.Organization.Id,
                 new CreateSpaceExternalGrantRequest(Guid.NewGuid())));
-        var fieldPolicy = await Assert.ThrowsAsync<SpaceProblemException>(() =>
+        var missingPolicy = await Assert.ThrowsAsync<SpaceProblemException>(() =>
             service.CreateGrantAsync(
                 fixture.Organization.Id,
                 new CreateSpaceExternalGrantRequest(
                     fixture.SiteId,
                     FieldPolicyId: Guid.NewGuid())));
+        var vendorPolicy = SpaceFieldPolicy.Create(
+            fixture.TenantId,
+            "Vendor portal",
+            SpaceExternalOrganizationType.Supplier,
+            false);
+        fixture.Context.FieldPolicies.Add(vendorPolicy);
+        await fixture.Context.SaveChangesAsync();
+        var wrongAudience = await Assert.ThrowsAsync<SpaceProblemException>(() =>
+            service.CreateGrantAsync(
+                fixture.Organization.Id,
+                new CreateSpaceExternalGrantRequest(
+                    fixture.SiteId,
+                    FieldPolicyId: vendorPolicy.Id)));
 
         Assert.Equal(404, unknownSite.StatusCode);
         Assert.Equal(SpaceErrorCodes.ExternalGrantScopeInvalid, unknownSite.Code);
-        Assert.Equal(422, fieldPolicy.StatusCode);
+        Assert.Equal(SpaceErrorCodes.FieldPolicyDenied, missingPolicy.Code);
+        Assert.Equal(422, missingPolicy.StatusCode);
+        Assert.Equal(SpaceErrorCodes.FieldPolicyDenied, wrongAudience.Code);
+        Assert.Equal(422, wrongAudience.StatusCode);
+    }
+
+    [Fact]
+    public async Task Active_matching_field_policy_can_be_attached_to_a_grant()
+    {
+        await using var fixture = await CreateFixtureAsync();
+        var policy = SpaceFieldPolicy.Create(
+            fixture.TenantId,
+            "Customer portal",
+            SpaceExternalOrganizationType.Customer,
+            false);
+        fixture.Context.FieldPolicies.Add(policy);
+        await fixture.Context.SaveChangesAsync();
+        var service = new SpaceExternalGrantService(
+            fixture.Context,
+            fixture.Execution,
+            fixture.Clock);
+
+        var created = await service.CreateGrantAsync(
+            fixture.Organization.Id,
+            new CreateSpaceExternalGrantRequest(
+                fixture.SiteId,
+                FieldPolicyId: policy.Id));
+
+        Assert.Equal(policy.Id, created.FieldPolicyId);
     }
 
     [Fact]
@@ -216,6 +257,7 @@ public sealed class SpaceExternalGrantServiceTests
             execution,
             clock,
             organization,
+            tenantId,
             siteId,
             floorA,
             floorB,
@@ -229,6 +271,7 @@ public sealed class SpaceExternalGrantServiceTests
         TestExecutionContext Execution,
         TestClock Clock,
         SpaceExternalOrganization Organization,
+        Guid TenantId,
         Guid SiteId,
         Guid FloorA,
         Guid FloorB,

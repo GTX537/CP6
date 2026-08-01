@@ -180,6 +180,50 @@ public sealed class SpaceAccessEvaluatorTests
         Assert.False(export.Allowed);
     }
 
+    [Fact]
+    public async Task Export_requires_both_grant_and_active_policy_capability()
+    {
+        var fixture = await CreateFixtureAsync();
+        await using var context = fixture.Context;
+        var policy = SpaceFieldPolicy.Create(
+            fixture.TenantId,
+            "Customer stock export",
+            SpaceExternalOrganizationType.Customer,
+            canExport: false);
+        context.FieldPolicies.Add(policy);
+        var grant = AddGrant(
+            context,
+            fixture,
+            fixture.SiteA,
+            Guid.NewGuid(),
+            "OWNER-A",
+            canExport: true,
+            fieldPolicyId: policy.Id);
+        await context.SaveChangesAsync();
+        var evaluator = CreateEvaluator(context, fixture);
+        var resource = new SpaceResource(
+            fixture.TenantId,
+            SpaceResourceType.Stock,
+            fixture.SiteA,
+            grantFloor(context, grant.Id),
+            OwnerId: "OWNER-A");
+
+        var denied = await evaluator.EvaluateAsync(
+            fixture.Principal,
+            SpaceAccessAction.Export,
+            resource);
+        policy.Update(policy.Name, true, SpaceFieldPolicyStatus.Active);
+        await context.SaveChangesAsync();
+        var allowed = await evaluator.EvaluateAsync(
+            fixture.Principal,
+            SpaceAccessAction.Export,
+            resource);
+
+        Assert.False(denied.Allowed);
+        Assert.True(allowed.Allowed);
+        Assert.Equal([policy.Id], allowed.FieldPolicyIds);
+    }
+
     private static Guid grantFloor(SpaceContext context, Guid grantId) =>
         context.ExternalGrantFloors.Local
             .Single(item => item.GrantId == grantId)
@@ -191,13 +235,14 @@ public sealed class SpaceAccessEvaluatorTests
         Guid siteId,
         Guid floorId,
         string ownerId,
-        bool canExport = false)
+        bool canExport = false,
+        Guid? fieldPolicyId = null)
     {
         var grant = SpaceExternalGrant.Create(
             fixture.TenantId,
             fixture.Organization.Id,
             siteId,
-            null,
+            fieldPolicyId,
             canExport,
             fixture.Now.AddDays(-1),
             null,

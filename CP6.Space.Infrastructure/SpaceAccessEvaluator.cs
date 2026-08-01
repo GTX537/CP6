@@ -29,46 +29,7 @@ public sealed class SpaceAccessEvaluator(
             resource.ResourceType,
             organization,
             cancellationToken);
-        if (!scope.Allowed)
-            return Denied(scope.ReasonCode, scope);
-        if (resource.TenantId != scope.TenantId ||
-            resource.SiteId == Guid.Empty ||
-            resource.ResourceType != scope.ResourceType ||
-            !Enum.IsDefined(action))
-        {
-            return Denied(SpaceErrorCodes.ExternalScopeDenied, scope);
-        }
-        if (scope.IsInternal)
-        {
-            return new SpaceAccessDecision(
-                true,
-                SpaceErrorCodes.InternalScopeAllowed,
-                [],
-                [],
-                scope);
-        }
-        if (string.IsNullOrWhiteSpace(resource.BusinessObjectType) !=
-            string.IsNullOrWhiteSpace(resource.BusinessObjectId))
-        {
-            return Denied(SpaceErrorCodes.ExternalScopeDenied, scope);
-        }
-
-        var matched = scope.Clauses
-            .Where(clause => Matches(clause, action, resource))
-            .ToArray();
-        if (matched.Length == 0)
-            return Denied(SpaceErrorCodes.ExternalScopeDenied, scope);
-
-        return new SpaceAccessDecision(
-            true,
-            SpaceErrorCodes.ExternalScopeAllowed,
-            matched.Select(item => item.GrantId).Distinct().ToArray(),
-            matched
-                .Where(item => item.FieldPolicyId.HasValue)
-                .Select(item => item.FieldPolicyId!.Value)
-                .Distinct()
-                .ToArray(),
-            scope);
+        return SpaceAccessScopeMatcher.Evaluate(scope, action, resource);
     }
 
     public async Task<SpaceQueryScope> BuildQueryScopeAsync(
@@ -198,8 +159,35 @@ public sealed class SpaceAccessEvaluator(
             .AsNoTracking()
             .Where(item => grantIds.Contains(item.GrantId))
             .ToListAsync(cancellationToken);
+        var policyIds = grants
+            .Where(item => item.FieldPolicyId.HasValue)
+            .Select(item => item.FieldPolicyId!.Value)
+            .Distinct()
+            .ToArray();
+        var policies = policyIds.Length == 0
+            ? []
+            : await context.FieldPolicies
+                .AsNoTracking()
+                .Where(item =>
+                    policyIds.Contains(item.Id) &&
+                    item.Status == SpaceFieldPolicyStatus.Active &&
+                    item.AudienceType == organizationRow.Type)
+                .ToListAsync(cancellationToken);
+        var policyById = policies.ToDictionary(item => item.Id);
+        var policyFields = policies.Count == 0
+            ? []
+            : await context.FieldPolicyFields
+                .AsNoTracking()
+                .Where(item => policyIds.Contains(item.PolicyId))
+                .ToListAsync(cancellationToken);
 
-        var clauses = grants.Select(grant => new SpaceGrantClause(
+        var clauses = grants.Select(grant =>
+        {
+            var policy = grant.FieldPolicyId.HasValue &&
+                policyById.TryGetValue(grant.FieldPolicyId.Value, out var found)
+                    ? found
+                    : null;
+            return new SpaceGrantClause(
                 grant.Id,
                 grant.GrantVersion,
                 grant.SiteId,
@@ -227,8 +215,21 @@ public sealed class SpaceAccessEvaluator(
                         item.NormalizedBusinessObjectId))
                     .ToArray(),
                 grant.FieldPolicyId,
-                grant.CanExport))
-            .ToArray();
+                policy?.PolicyVersion ?? 0,
+                policy?.CanExport ?? false,
+                policy is null
+                    ? []
+                    : policyFields
+                        .Where(item => item.PolicyId == policy.Id)
+                        .OrderBy(item => item.ResourceType)
+                        .ThenBy(item => item.NormalizedFieldName)
+                        .Select(item => new SpaceGrantFieldRule(
+                            ToResourceType(item.ResourceType),
+                            item.FieldName,
+                            item.MaskingRule))
+                        .ToArray(),
+                grant.CanExport);
+        }).ToArray();
 
         return new SpaceQueryScope(
             true,
@@ -243,50 +244,10 @@ public sealed class SpaceAccessEvaluator(
             AuthorizationVersion(
                 organizationRow.SecurityStamp,
                 membership.SecurityStamp,
-                grants),
+                grants,
+                policies),
             clauses);
     }
-
-    private static bool Matches(
-        SpaceGrantClause clause,
-        SpaceAccessAction action,
-        SpaceResource resource)
-    {
-        if (clause.SiteId != resource.SiteId ||
-            (action == SpaceAccessAction.Export && !clause.CanExport) ||
-            !Matches(clause.FloorLogicalIds, resource.FloorLogicalId) ||
-            !Matches(clause.ZoneLogicalIds, resource.ZoneLogicalId) ||
-            !Matches(clause.OwnerIds, resource.OwnerId))
-        {
-            return false;
-        }
-
-        if (clause.Objects.Count == 0)
-            return true;
-        if (string.IsNullOrWhiteSpace(resource.BusinessObjectType) ||
-            string.IsNullOrWhiteSpace(resource.BusinessObjectId))
-        {
-            return false;
-        }
-        var type = resource.BusinessObjectType.Trim().ToUpperInvariant();
-        var id = resource.BusinessObjectId.Trim().ToUpperInvariant();
-        return clause.Objects.Any(item =>
-            item.BusinessObjectType == type &&
-            item.BusinessObjectId == id);
-    }
-
-    private static bool Matches(
-        IReadOnlyList<Guid> allowed,
-        Guid? value) =>
-        allowed.Count == 0 ||
-        (value.HasValue && allowed.Contains(value.Value));
-
-    private static bool Matches(
-        IReadOnlyList<string> allowed,
-        string? value) =>
-        allowed.Count == 0 ||
-        (!string.IsNullOrWhiteSpace(value) &&
-         allowed.Contains(value.Trim().ToUpperInvariant()));
 
     private static SpaceAccessDecision Denied(
         string reasonCode,
@@ -316,7 +277,8 @@ public sealed class SpaceAccessEvaluator(
     private static string AuthorizationVersion(
         long organizationSecurityStamp,
         long membershipSecurityStamp,
-        IReadOnlyList<SpaceExternalGrant> grants)
+        IReadOnlyList<SpaceExternalGrant> grants,
+        IReadOnlyList<SpaceFieldPolicy> policies)
     {
         var material = new StringBuilder()
             .Append(organizationSecurityStamp)
@@ -330,9 +292,29 @@ public sealed class SpaceAccessEvaluator(
                 .Append('@')
                 .Append(grant.GrantVersion);
         }
+        foreach (var policy in policies.OrderBy(item => item.Id))
+        {
+            material
+                .Append(':')
+                .Append(policy.Id.ToString("N"))
+                .Append('@')
+                .Append(policy.PolicyVersion);
+        }
         return Convert.ToHexString(
             SHA256.HashData(Encoding.UTF8.GetBytes(material.ToString())));
     }
+
+    private static SpaceResourceType ToResourceType(
+        SpaceFieldPolicyResourceType resourceType) =>
+        resourceType switch
+        {
+            SpaceFieldPolicyResourceType.PublishedScene =>
+                SpaceResourceType.PublishedScene,
+            SpaceFieldPolicyResourceType.Stock => SpaceResourceType.Stock,
+            SpaceFieldPolicyResourceType.Task => SpaceResourceType.Task,
+            _ => throw new InvalidOperationException(
+                "The field policy resource type is not supported."),
+        };
 
     private DateTime RequireUtcNow()
     {

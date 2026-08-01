@@ -73,6 +73,7 @@ public sealed class SpaceExternalGrantService(
             cancellationToken);
         var now = RequireUtcNow();
         var input = await ValidateScopeAsync(
+            organization,
             request.SiteId,
             request.FloorLogicalIds,
             request.ZoneLogicalIds,
@@ -115,6 +116,7 @@ public sealed class SpaceExternalGrantService(
             asTracking: true,
             cancellationToken);
         var input = await ValidateScopeAsync(
+            organization,
             request.SiteId,
             request.FloorLogicalIds,
             request.ZoneLogicalIds,
@@ -177,6 +179,7 @@ public sealed class SpaceExternalGrantService(
     }
 
     private async Task<NormalizedGrantScope> ValidateScopeAsync(
+        SpaceExternalOrganization organization,
         Guid siteId,
         IEnumerable<Guid>? floorLogicalIds,
         IEnumerable<Guid>? zoneLogicalIds,
@@ -187,14 +190,29 @@ public sealed class SpaceExternalGrantService(
     {
         if (siteId == Guid.Empty)
             throw ScopeNotFound();
-        if (fieldPolicyId.HasValue)
+        if (fieldPolicyId == Guid.Empty)
         {
             throw new SpaceProblemException(
                 SpaceErrorCodes.ExternalGrantScopeInvalid,
                 422,
-                "Field policies are not available for external grants yet.",
-                "FieldPolicyId is reserved for E09-S03.",
-                "remove-field-policy");
+                "The external grant scope is invalid.",
+                "FieldPolicyId cannot be empty.",
+                "select-field-policy");
+        }
+        if (fieldPolicyId.HasValue &&
+            !await context.FieldPolicies.AsNoTracking().AnyAsync(
+                item =>
+                    item.Id == fieldPolicyId.Value &&
+                    item.Status == SpaceFieldPolicyStatus.Active &&
+                    item.AudienceType == organization.Type,
+                cancellationToken))
+        {
+            throw new SpaceProblemException(
+                SpaceErrorCodes.FieldPolicyDenied,
+                422,
+                "The field policy cannot be used by this grant.",
+                "Select an active field policy for the organization's audience.",
+                "select-field-policy");
         }
 
         var floors = NormalizeGuids(floorLogicalIds, "FloorLogicalIds");

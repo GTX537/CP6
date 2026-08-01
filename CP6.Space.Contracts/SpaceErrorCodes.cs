@@ -95,6 +95,18 @@ public static class SpaceErrorCodes
         "SPACE_EXTERNAL_GRANT_CONFLICT";
     public const string ExternalGrantScopeInvalid =
         "SPACE_EXTERNAL_GRANT_SCOPE_INVALID";
+    public const string FieldPolicyNotFound =
+        "SPACE_FIELD_POLICY_NOT_FOUND";
+    public const string FieldPolicyConflict =
+        "SPACE_FIELD_POLICY_CONFLICT";
+    public const string FieldPolicyInvalid =
+        "SPACE_FIELD_POLICY_INVALID";
+    public const string FieldPolicyDenied =
+        "SPACE_FIELD_POLICY_DENIED";
+    public const string ExternalPortalSubjectRequired =
+        "SPACE_EXTERNAL_PORTAL_SUBJECT_REQUIRED";
+    public const string ExternalPortalReadOnly =
+        "SPACE_EXTERNAL_PORTAL_READ_ONLY";
     public const string ExternalOrganizationContextRequired =
         "SPACE_EXTERNAL_ORGANIZATION_CONTEXT_REQUIRED";
     public const string ExternalMembershipInactive =

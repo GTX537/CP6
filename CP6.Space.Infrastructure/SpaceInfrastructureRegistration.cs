@@ -105,6 +105,7 @@ public static class SpaceInfrastructureRegistration
         services.AddScoped<SpaceVersionCloneCoordinator>();
         services.AddScoped<SpaceSourceCoordinator>();
         services.AddScoped<ISpaceDesignV1Service, SpaceDesignV1Service>();
+        services.AddScoped<ISpacePublishedSceneReader, SpacePublishedSceneReader>();
         services.AddScoped<
             ISpaceExternalReferenceValidator,
             Cp6SpaceExternalReferenceValidator>();
@@ -114,6 +115,7 @@ public static class SpaceInfrastructureRegistration
         services.AddScoped<
             ISpaceExternalGrantService,
             SpaceExternalGrantService>();
+        services.AddScoped<ISpaceFieldPolicyService, SpaceFieldPolicyService>();
         services.AddScoped<ISpaceAccessEvaluator, SpaceAccessEvaluator>();
         services.AddScoped<ISpaceUnderlayV1Service, SpaceUnderlayV1Service>();
         services.AddScoped<
@@ -133,6 +135,9 @@ public static class SpaceInfrastructureRegistration
         services.AddScoped<ISpaceWmsRuntimeSource>(
             provider => provider.GetRequiredService<ISpaceWmsAdapter>());
         services.AddScoped<ISpaceWmsRuntimeService, SpaceWmsRuntimeService>();
+        services.AddScoped<
+            ISpaceExternalPortalService,
+            SpaceExternalPortalService>();
         return services;
     }
 }

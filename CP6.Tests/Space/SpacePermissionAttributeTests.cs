@@ -78,6 +78,10 @@ public class SpacePermissionAttributeTests
                 "space:external:read",
             ["SpaceExternalOrganizationController.GetGrant"] =
                 "space:external:read",
+            ["SpaceFieldPolicyController.GetFieldPolicies"] =
+                "space:external:read",
+            ["SpaceFieldPolicyController.GetFieldPolicy"] =
+                "space:external:read",
         };
 
     /// <summary>只读语义的 POST 豁免（Controller.Method）——按「不得带特性」校验。</summary>
@@ -122,7 +126,7 @@ public class SpacePermissionAttributeTests
     public void SpaceControllers_AreDiscovered()
     {
         // 守卫：确保反射确实扫到 13 个 controller（防命名空间/程序集变动导致「空扫空过」）。
-        Assert.Equal(13, SpaceControllers.Count());
+        Assert.Equal(15, SpaceControllers.Count());
     }
 
     [Fact]

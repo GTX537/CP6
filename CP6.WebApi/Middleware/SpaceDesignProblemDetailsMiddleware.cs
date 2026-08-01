@@ -17,6 +17,8 @@ public sealed class SpaceDesignProblemDetailsMiddleware(
     private const string DesignPath = "/api/space/design/v1";
     private const string ExternalOrganizationPath =
         "/api/space/external-organization";
+    private const string FieldPolicyPath = "/api/space/field-policy";
+    private const string PortalPath = "/api/space/portal/v1";
     private static readonly JsonSerializerOptions JsonOptions =
         new(JsonSerializerDefaults.Web);
 
@@ -24,7 +26,9 @@ public sealed class SpaceDesignProblemDetailsMiddleware(
     {
         if (!context.Request.Path.StartsWithSegments(DesignPath) &&
             !context.Request.Path.StartsWithSegments(
-                ExternalOrganizationPath))
+                ExternalOrganizationPath) &&
+            !context.Request.Path.StartsWithSegments(FieldPolicyPath) &&
+            !context.Request.Path.StartsWithSegments(PortalPath))
         {
             await next(context);
             return;

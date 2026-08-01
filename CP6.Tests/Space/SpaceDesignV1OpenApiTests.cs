@@ -55,6 +55,13 @@ public sealed class SpaceDesignV1OpenApiTests
             "/api/space/external-organization/{organizationId}/membership/{membershipId}",
             "/api/space/external-organization/{organizationId}/grant",
             "/api/space/external-organization/{organizationId}/grant/{grantId}",
+            "/api/space/field-policy",
+            "/api/space/field-policy/{policyId}",
+            "/api/space/portal/v1/organizations",
+            "/api/space/portal/v1/sites",
+            "/api/space/portal/v1/sites/{siteId}/published-scene",
+            "/api/space/portal/v1/sites/{siteId}/stock",
+            "/api/space/portal/v1/sites/{siteId}/tasks",
         };
 
         Assert.Equal(
@@ -69,8 +76,8 @@ public sealed class SpaceDesignV1OpenApiTests
             .Select(operation =>
                 operation.Value.GetProperty("operationId").GetString())
             .ToArray();
-        Assert.Equal(38, operationIds.Length);
-        Assert.Equal(38, operationIds.Distinct().Count());
+        Assert.Equal(47, operationIds.Length);
+        Assert.Equal(47, operationIds.Distinct().Count());
         Assert.Contains("GetAssets", operationIds);
         Assert.Contains("CreateAsset", operationIds);
         Assert.Contains("CreateVersion", operationIds);
@@ -103,6 +110,15 @@ public sealed class SpaceDesignV1OpenApiTests
         Assert.Contains("GetGrant", operationIds);
         Assert.Contains("CreateGrant", operationIds);
         Assert.Contains("UpdateGrant", operationIds);
+        Assert.Contains("GetFieldPolicies", operationIds);
+        Assert.Contains("GetFieldPolicy", operationIds);
+        Assert.Contains("CreateFieldPolicy", operationIds);
+        Assert.Contains("UpdateFieldPolicy", operationIds);
+        Assert.Contains("GetPortalOrganizations", operationIds);
+        Assert.Contains("GetPortalSites", operationIds);
+        Assert.Contains("GetPortalPublishedScene", operationIds);
+        Assert.Contains("GetPortalStock", operationIds);
+        Assert.Contains("GetPortalTasks", operationIds);
 
         var taskIdParameter = paths
             .GetProperty("/api/space/design/v1/sites/{siteId}/runtime/tasks/path")
@@ -169,6 +185,89 @@ public sealed class SpaceDesignV1OpenApiTests
         Assert.True(schemas.TryGetProperty(
             "CP6.Space.Contracts.SpaceExternalGrantObjectDto",
             out _));
+    }
+
+    [Fact]
+    public void Field_policy_and_portal_contracts_freeze_allowlist_boundaries()
+    {
+        using var document = ReadContract();
+        var schemas = document.RootElement
+            .GetProperty("components")
+            .GetProperty("schemas");
+        var create = Schema(
+            schemas,
+            "CP6.Space.Contracts.CreateSpaceFieldPolicyRequest");
+        var update = Schema(
+            schemas,
+            "CP6.Space.Contracts.UpdateSpaceFieldPolicyRequest");
+        var field = Schema(
+            schemas,
+            "CP6.Space.Contracts.SpaceFieldPolicyFieldRequest");
+        AssertExactRequired(create, "name", "audienceType", "fields");
+        AssertExactRequired(
+            update,
+            "name",
+            "fields",
+            "canExport",
+            "status");
+        AssertExactRequired(field, "resourceType", "fieldName");
+
+        var scene = Schema(
+            schemas,
+            "CP6.Space.Contracts.SpacePortalPublishedSceneDto");
+        var floor = Schema(
+            schemas,
+            "CP6.Space.Contracts.SpacePortalFloorDto");
+        var stock = Schema(
+            schemas,
+            "CP6.Space.Contracts.SpacePortalStockItemDto");
+        var task = Schema(
+            schemas,
+            "CP6.Space.Contracts.SpacePortalTaskItemDto");
+        AssertExactRequired(
+            scene,
+            "siteId",
+            "publishedVersionId",
+            "authorizationVersion",
+            "floors");
+        AssertExactRequired(
+            floor,
+            "logicalId",
+            "zones",
+            "aisles",
+            "racks",
+            "rackLevels",
+            "locations",
+            "elements");
+        AssertNullable(floor, "level", "code", "name", "boundaryJson");
+        AssertExactRequired(stock, "locationLogicalId", "floorLogicalId");
+        AssertNullable(stock, "materialNumber", "lotNumber", "ownerId");
+        AssertNumberFormat(stock, "physicalQuantity", "decimal", true);
+        AssertExactRequiredNames(
+            task,
+            "locationLogicalId",
+            "floorLogicalId",
+            "zoneLogicalId");
+        AssertNonNullable(task, "locationLogicalId", "floorLogicalId");
+        AssertNullable(task, "zoneLogicalId", "taskId", "materialNumber");
+        AssertNumberFormat(task, "quantity", "decimal", true);
+
+        foreach (var forbidden in new[]
+                 {
+                     "revisionId",
+                     "sourceId",
+                     "sourceRef",
+                     "rowVersion",
+                     "contentHash",
+                     "elementAttributes",
+                     "underlaySourceId",
+                 })
+        {
+            Assert.DoesNotContain(
+                forbidden,
+                scene.GetRawText() + floor.GetRawText(),
+                StringComparison.OrdinalIgnoreCase);
+        }
     }
 
     [Fact]
@@ -821,6 +920,15 @@ public sealed class SpaceDesignV1OpenApiTests
                      "GetGrant",
                      "CreateGrant",
                      "UpdateGrant",
+                     "GetFieldPolicies",
+                     "GetFieldPolicy",
+                     "CreateFieldPolicy",
+                     "UpdateFieldPolicy",
+                     "GetPortalOrganizations",
+                     "GetPortalSites",
+                     "GetPortalPublishedScene",
+                     "GetPortalStock",
+                     "GetPortalTasks",
                   })
         {
             Assert.Contains(operation, csharp, StringComparison.Ordinal);
