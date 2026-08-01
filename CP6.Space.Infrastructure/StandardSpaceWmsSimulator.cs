@@ -309,6 +309,7 @@ public sealed class StandardSpaceWmsSimulator :
         lock (state.Gate)
         {
             var filter = Filter(request.LogicalIds);
+            var locate = request.LocateCriteria;
             return new SpaceWmsInventoryResult(
                 Source(),
                 state.Inventory
@@ -318,12 +319,21 @@ public sealed class StandardSpaceWmsSimulator :
                          (item.OwnerId is not null &&
                           request.OwnerIds.Contains(
                               item.OwnerId,
-                              StringComparer.Ordinal))))
+                              StringComparer.Ordinal))) &&
+                        (locate is null ||
+                         (item.PhysicalQuantity > 0 &&
+                          Matches(item.MaterialNumber, locate.MaterialNumber) &&
+                          Matches(item.LotNumber, locate.LotNumber) &&
+                          Matches(item.ContainerNumber, locate.ContainerNumber))))
                     .OrderBy(item => item.LocationCode, StringComparer.Ordinal)
                     .ThenBy(item => item.MaterialNumber, StringComparer.Ordinal)
                     .ToArray());
         }
     }
+
+    private static bool Matches(string? actual, string? expected) =>
+        string.IsNullOrWhiteSpace(expected) ||
+        string.Equals(actual, expected.Trim(), StringComparison.Ordinal);
 
     public async Task<SpaceWmsTaskResult> QueryTasksAsync(
         SpaceWmsTaskQuery request,

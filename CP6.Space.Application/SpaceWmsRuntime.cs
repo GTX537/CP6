@@ -9,6 +9,11 @@ public interface ISpaceWmsRuntimeService
         IReadOnlyCollection<Guid>? locationLogicalIds = null,
         CancellationToken cancellationToken = default);
 
+    Task<SpaceWmsRuntimeInventoryLocateResponse> LocateInventoryAsync(
+        Guid siteId,
+        SpaceWmsInventoryLocateCriteria criteria,
+        CancellationToken cancellationToken = default);
+
     Task<SpaceWmsRuntimeTaskResponse> QueryTasksAsync(
         Guid siteId,
         IReadOnlyCollection<Guid>? locationLogicalIds = null,

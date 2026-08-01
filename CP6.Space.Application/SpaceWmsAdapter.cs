@@ -484,7 +484,13 @@ public sealed record SpaceWmsBlockingReferences(
 public sealed record SpaceWmsInventoryQuery(
     SpaceWmsContext Context,
     IReadOnlyList<Guid> LogicalIds,
-    IReadOnlyList<string>? OwnerIds = null);
+    IReadOnlyList<string>? OwnerIds = null,
+    SpaceWmsInventoryLocateCriteria? LocateCriteria = null);
+
+public sealed record SpaceWmsInventoryLocateCriteria(
+    string? MaterialNumber,
+    string? LotNumber,
+    string? ContainerNumber);
 
 public sealed record SpaceWmsInventoryItem(
     Guid LogicalId,

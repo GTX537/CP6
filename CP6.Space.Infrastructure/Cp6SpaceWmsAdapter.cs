@@ -459,6 +459,47 @@ public sealed class Cp6SpaceWmsAdapter : ISpaceWmsAdapter
             .ToArray();
         if (request.OwnerIds is not null && ownerIds!.Length == 0)
             return new SpaceWmsInventoryResult(Source(), []);
+        var locate = request.LocateCriteria;
+        if (!string.IsNullOrWhiteSpace(locate?.ContainerNumber))
+        {
+            if (ownerIds is not null)
+                return new SpaceWmsInventoryResult(Source(), []);
+            var containerNumber = locate.ContainerNumber.Trim();
+            var palletQuery = _db.Pallets
+                .AsNoTracking()
+                .Where(pallet =>
+                    pallet.WarehouseCd == request.Context.WarehouseCode &&
+                    codes.Contains(pallet.LocationCd) &&
+                    pallet.PalletNo == containerNumber &&
+                    pallet.Status != PalletStatus.Shipped &&
+                    pallet.CartonQty > 0);
+            if (!string.IsNullOrWhiteSpace(locate.MaterialNumber))
+            {
+                var materialNumber = locate.MaterialNumber.Trim();
+                palletQuery = palletQuery.Where(pallet =>
+                    pallet.ProductCd == materialNumber);
+            }
+            if (!string.IsNullOrWhiteSpace(locate.LotNumber))
+            {
+                var lotNumber = locate.LotNumber.Trim();
+                palletQuery = palletQuery.Where(pallet =>
+                    pallet.LotNo == lotNumber);
+            }
+            var pallets = await palletQuery
+                .OrderBy(pallet => pallet.LocationCd)
+                .ThenBy(pallet => pallet.PalletNo)
+                .ToListAsync(ct);
+            return new SpaceWmsInventoryResult(
+                Source(),
+                pallets.Select(pallet => new SpaceWmsInventoryItem(
+                    codeToId[pallet.LocationCd],
+                    pallet.LocationCd,
+                    pallet.CartonQty,
+                    0,
+                    pallet.ProductCd,
+                    pallet.LotNo,
+                    pallet.PalletNo)).ToArray());
+        }
         var stockQuery = _db.Stocks
             .AsNoTracking()
             .Where(stock =>
@@ -469,6 +510,21 @@ public sealed class Cp6SpaceWmsAdapter : ISpaceWmsAdapter
             stockQuery = stockQuery.Where(stock =>
                 stock.OwnerCd != null &&
                 ownerIds.Contains(stock.OwnerCd));
+        }
+        if (locate is not null)
+        {
+            stockQuery = stockQuery.Where(stock => stock.PhysicalQty > 0);
+            if (!string.IsNullOrWhiteSpace(locate.MaterialNumber))
+            {
+                var materialNumber = locate.MaterialNumber.Trim();
+                stockQuery = stockQuery.Where(stock =>
+                    stock.ProductCd == materialNumber);
+            }
+            if (!string.IsNullOrWhiteSpace(locate.LotNumber))
+            {
+                var lotNumber = locate.LotNumber.Trim();
+                stockQuery = stockQuery.Where(stock => stock.LotNo == lotNumber);
+            }
         }
         var stocks = await stockQuery
             .OrderBy(stock => stock.LocationCd)

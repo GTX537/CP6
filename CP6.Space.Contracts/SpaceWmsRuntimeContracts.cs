@@ -35,6 +35,37 @@ public sealed record SpaceWmsRuntimeInventoryResponse(
     SpaceWmsRuntimeSourceDto Source,
     IReadOnlyList<SpaceWmsRuntimeInventoryItemDto> Items);
 
+public sealed record SpaceWmsRuntimeInventoryLocateCriteriaDto(
+    string? MaterialNumber,
+    string? LotNumber,
+    string? ContainerNumber);
+
+public sealed record SpaceWmsRuntimeInventoryLocateHitDto(
+    Guid LocationLogicalId,
+    Guid WmsLogicalId,
+    string SpaceLocationCode,
+    string WmsLocationCode,
+    bool CodeMatches,
+    Guid FloorLogicalId,
+    string FloorCode,
+    string FloorName,
+    int FloorLevel,
+    decimal PhysicalQuantity,
+    decimal AllocatedQuantity,
+    IReadOnlyList<string> MaterialNumbers,
+    IReadOnlyList<string> LotNumbers,
+    IReadOnlyList<string> ContainerNumbers);
+
+public sealed record SpaceWmsRuntimeInventoryLocateResponse(
+    Guid SiteId,
+    Guid PublishedVersionId,
+    string WarehouseCode,
+    SpaceWmsRuntimeSourceDto Source,
+    SpaceWmsRuntimeInventoryLocateCriteriaDto Criteria,
+    int LocationCount,
+    int FloorCount,
+    IReadOnlyList<SpaceWmsRuntimeInventoryLocateHitDto> Items);
+
 public sealed record SpaceWmsRuntimeTaskItemDto(
     string TaskId,
     string TaskType,

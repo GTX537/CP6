@@ -3226,6 +3226,158 @@
         }
       }
     },
+    "/api/space/design/v1/sites/{siteId}/runtime/inventory/locate": {
+      "get": {
+        "tags": [
+          "SpaceWmsRuntime"
+        ],
+        "operationId": "LocateInventory",
+        "parameters": [
+          {
+            "name": "siteId",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "string",
+              "format": "uuid"
+            }
+          },
+          {
+            "name": "materialNumber",
+            "in": "query",
+            "schema": {
+              "type": "string"
+            }
+          },
+          {
+            "name": "lotNumber",
+            "in": "query",
+            "schema": {
+              "type": "string"
+            }
+          },
+          {
+            "name": "containerNumber",
+            "in": "query",
+            "schema": {
+              "type": "string"
+            }
+          }
+        ],
+        "responses": {
+          "400": {
+            "description": "Bad Request",
+            "content": {
+              "application/problem+json": {
+                "schema": {
+                  "$ref": "#/components/schemas/CP6.WebApi.OpenApi.SpaceDesignProblemDetails"
+                }
+              }
+            }
+          },
+          "401": {
+            "description": "Unauthorized",
+            "content": {
+              "application/problem+json": {
+                "schema": {
+                  "$ref": "#/components/schemas/CP6.WebApi.OpenApi.SpaceDesignProblemDetails"
+                }
+              }
+            }
+          },
+          "403": {
+            "description": "Forbidden",
+            "content": {
+              "application/problem+json": {
+                "schema": {
+                  "$ref": "#/components/schemas/CP6.WebApi.OpenApi.SpaceDesignProblemDetails"
+                }
+              }
+            }
+          },
+          "404": {
+            "description": "Not Found",
+            "content": {
+              "application/problem+json": {
+                "schema": {
+                  "$ref": "#/components/schemas/CP6.WebApi.OpenApi.SpaceDesignProblemDetails"
+                }
+              }
+            }
+          },
+          "409": {
+            "description": "Conflict",
+            "content": {
+              "application/problem+json": {
+                "schema": {
+                  "$ref": "#/components/schemas/CP6.WebApi.OpenApi.SpaceDesignProblemDetails"
+                }
+              }
+            }
+          },
+          "422": {
+            "description": "Unprocessable Content",
+            "content": {
+              "application/problem+json": {
+                "schema": {
+                  "$ref": "#/components/schemas/CP6.WebApi.OpenApi.SpaceDesignProblemDetails"
+                }
+              }
+            }
+          },
+          "500": {
+            "description": "Internal Server Error",
+            "content": {
+              "application/problem+json": {
+                "schema": {
+                  "$ref": "#/components/schemas/CP6.WebApi.OpenApi.SpaceDesignProblemDetails"
+                }
+              }
+            }
+          },
+          "502": {
+            "description": "Bad Gateway",
+            "content": {
+              "application/problem+json": {
+                "schema": {
+                  "$ref": "#/components/schemas/CP6.WebApi.OpenApi.SpaceDesignProblemDetails"
+                }
+              }
+            }
+          },
+          "503": {
+            "description": "Service Unavailable",
+            "content": {
+              "application/problem+json": {
+                "schema": {
+                  "$ref": "#/components/schemas/CP6.WebApi.OpenApi.SpaceDesignProblemDetails"
+                }
+              }
+            }
+          },
+          "200": {
+            "description": "OK",
+            "content": {
+              "text/plain": {
+                "schema": {
+                  "$ref": "#/components/schemas/CP6.Space.Contracts.SpaceWmsRuntimeInventoryLocateResponse"
+                }
+              },
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/CP6.Space.Contracts.SpaceWmsRuntimeInventoryLocateResponse"
+                }
+              },
+              "text/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/CP6.Space.Contracts.SpaceWmsRuntimeInventoryLocateResponse"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
     "/api/space/design/v1/sites/{siteId}/runtime/tasks": {
       "get": {
         "tags": [
@@ -5271,6 +5423,155 @@
           "ownerId": {
             "type": "string",
             "nullable": true
+          }
+        },
+        "additionalProperties": false
+      },
+      "CP6.Space.Contracts.SpaceWmsRuntimeInventoryLocateCriteriaDto": {
+        "required": [
+          "containerNumber",
+          "lotNumber",
+          "materialNumber"
+        ],
+        "type": "object",
+        "properties": {
+          "materialNumber": {
+            "type": "string",
+            "nullable": true
+          },
+          "lotNumber": {
+            "type": "string",
+            "nullable": true
+          },
+          "containerNumber": {
+            "type": "string",
+            "nullable": true
+          }
+        },
+        "additionalProperties": false
+      },
+      "CP6.Space.Contracts.SpaceWmsRuntimeInventoryLocateHitDto": {
+        "required": [
+          "allocatedQuantity",
+          "codeMatches",
+          "containerNumbers",
+          "floorCode",
+          "floorLevel",
+          "floorLogicalId",
+          "floorName",
+          "locationLogicalId",
+          "lotNumbers",
+          "materialNumbers",
+          "physicalQuantity",
+          "spaceLocationCode",
+          "wmsLocationCode",
+          "wmsLogicalId"
+        ],
+        "type": "object",
+        "properties": {
+          "locationLogicalId": {
+            "type": "string",
+            "format": "uuid"
+          },
+          "wmsLogicalId": {
+            "type": "string",
+            "format": "uuid"
+          },
+          "spaceLocationCode": {
+            "type": "string"
+          },
+          "wmsLocationCode": {
+            "type": "string"
+          },
+          "codeMatches": {
+            "type": "boolean"
+          },
+          "floorLogicalId": {
+            "type": "string",
+            "format": "uuid"
+          },
+          "floorCode": {
+            "type": "string"
+          },
+          "floorName": {
+            "type": "string"
+          },
+          "floorLevel": {
+            "type": "integer",
+            "format": "int32"
+          },
+          "physicalQuantity": {
+            "type": "number",
+            "format": "decimal"
+          },
+          "allocatedQuantity": {
+            "type": "number",
+            "format": "decimal"
+          },
+          "materialNumbers": {
+            "type": "array",
+            "items": {
+              "type": "string"
+            }
+          },
+          "lotNumbers": {
+            "type": "array",
+            "items": {
+              "type": "string"
+            }
+          },
+          "containerNumbers": {
+            "type": "array",
+            "items": {
+              "type": "string"
+            }
+          }
+        },
+        "additionalProperties": false
+      },
+      "CP6.Space.Contracts.SpaceWmsRuntimeInventoryLocateResponse": {
+        "required": [
+          "criteria",
+          "floorCount",
+          "items",
+          "locationCount",
+          "publishedVersionId",
+          "siteId",
+          "source",
+          "warehouseCode"
+        ],
+        "type": "object",
+        "properties": {
+          "siteId": {
+            "type": "string",
+            "format": "uuid"
+          },
+          "publishedVersionId": {
+            "type": "string",
+            "format": "uuid"
+          },
+          "warehouseCode": {
+            "type": "string"
+          },
+          "source": {
+            "$ref": "#/components/schemas/CP6.Space.Contracts.SpaceWmsRuntimeSourceDto"
+          },
+          "criteria": {
+            "$ref": "#/components/schemas/CP6.Space.Contracts.SpaceWmsRuntimeInventoryLocateCriteriaDto"
+          },
+          "locationCount": {
+            "type": "integer",
+            "format": "int32"
+          },
+          "floorCount": {
+            "type": "integer",
+            "format": "int32"
+          },
+          "items": {
+            "type": "array",
+            "items": {
+              "$ref": "#/components/schemas/CP6.Space.Contracts.SpaceWmsRuntimeInventoryLocateHitDto"
+            }
           }
         },
         "additionalProperties": false

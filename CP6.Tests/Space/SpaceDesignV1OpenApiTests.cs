@@ -29,6 +29,7 @@ public sealed class SpaceDesignV1OpenApiTests
             "/api/space/design/v1/sites/{siteId}/model",
             "/api/space/design/v1/sites/{siteId}/versions",
             "/api/space/design/v1/sites/{siteId}/runtime/inventory",
+            "/api/space/design/v1/sites/{siteId}/runtime/inventory/locate",
             "/api/space/design/v1/sites/{siteId}/runtime/tasks",
             "/api/space/design/v1/assets",
             "/api/space/design/v1/versions/{versionId}",
@@ -61,8 +62,8 @@ public sealed class SpaceDesignV1OpenApiTests
             .Select(operation =>
                 operation.Value.GetProperty("operationId").GetString())
             .ToArray();
-        Assert.Equal(25, operationIds.Length);
-        Assert.Equal(25, operationIds.Distinct().Count());
+        Assert.Equal(26, operationIds.Length);
+        Assert.Equal(26, operationIds.Distinct().Count());
         Assert.Contains("GetAssets", operationIds);
         Assert.Contains("CreateAsset", operationIds);
         Assert.Contains("CreateVersion", operationIds);
@@ -81,6 +82,7 @@ public sealed class SpaceDesignV1OpenApiTests
         Assert.Contains("BindWmsAdoptionBatch", operationIds);
         Assert.Contains("PlaceWmsAdoption", operationIds);
         Assert.Contains("GetInventory", operationIds);
+        Assert.Contains("LocateInventory", operationIds);
         Assert.Contains("GetTasks", operationIds);
     }
 
@@ -93,6 +95,9 @@ public sealed class SpaceDesignV1OpenApiTests
 
         Assert.True(paths.TryGetProperty(
             "/api/space/design/v1/sites/{siteId}/runtime/inventory",
+            out _));
+        Assert.True(paths.TryGetProperty(
+            "/api/space/design/v1/sites/{siteId}/runtime/inventory/locate",
             out _));
         Assert.True(paths.TryGetProperty(
             "/api/space/design/v1/sites/{siteId}/runtime/tasks",
@@ -135,6 +140,15 @@ public sealed class SpaceDesignV1OpenApiTests
         var taskResponse = Schema(
             schemas,
             "CP6.Space.Contracts.SpaceWmsRuntimeTaskResponse");
+        var locateResponse = Schema(
+            schemas,
+            "CP6.Space.Contracts.SpaceWmsRuntimeInventoryLocateResponse");
+        var locateCriteria = Schema(
+            schemas,
+            "CP6.Space.Contracts.SpaceWmsRuntimeInventoryLocateCriteriaDto");
+        var locateHit = Schema(
+            schemas,
+            "CP6.Space.Contracts.SpaceWmsRuntimeInventoryLocateHitDto");
         var source = Schema(
             schemas,
             "CP6.Space.Contracts.SpaceWmsRuntimeSourceDto");
@@ -159,6 +173,37 @@ public sealed class SpaceDesignV1OpenApiTests
             "warehouseCode",
             "source",
             "items");
+        AssertExactRequired(
+            locateResponse,
+            "siteId",
+            "publishedVersionId",
+            "warehouseCode",
+            "source",
+            "criteria",
+            "locationCount",
+            "floorCount",
+            "items");
+        AssertExactRequiredNames(
+            locateCriteria,
+            "materialNumber",
+            "lotNumber",
+            "containerNumber");
+        AssertExactRequired(
+            locateHit,
+            "locationLogicalId",
+            "wmsLogicalId",
+            "spaceLocationCode",
+            "wmsLocationCode",
+            "codeMatches",
+            "floorLogicalId",
+            "floorCode",
+            "floorName",
+            "floorLevel",
+            "physicalQuantity",
+            "allocatedQuantity",
+            "materialNumbers",
+            "lotNumbers",
+            "containerNumbers");
         AssertExactRequired(
             source,
             "kind",
@@ -207,6 +252,16 @@ public sealed class SpaceDesignV1OpenApiTests
             "source",
             "items");
         AssertNonNullable(
+            locateResponse,
+            "siteId",
+            "publishedVersionId",
+            "warehouseCode",
+            "source",
+            "criteria",
+            "locationCount",
+            "floorCount",
+            "items");
+        AssertNonNullable(
             source,
             "kind",
             "dataSourceId",
@@ -222,6 +277,17 @@ public sealed class SpaceDesignV1OpenApiTests
             "physicalQuantity",
             "allocatedQuantity");
         AssertNonNullable(
+            locateHit,
+            "spaceLocationCode",
+            "wmsLocationCode",
+            "floorCode",
+            "floorName",
+            "physicalQuantity",
+            "allocatedQuantity",
+            "materialNumbers",
+            "lotNumbers",
+            "containerNumbers");
+        AssertNonNullable(
             taskItem,
             "taskId",
             "taskType",
@@ -231,10 +297,17 @@ public sealed class SpaceDesignV1OpenApiTests
             "floorCode",
             "floorName");
         AssertNullable(inventoryItem, "materialNumber", "ownerId");
+        AssertNullable(
+            locateCriteria,
+            "materialNumber",
+            "lotNumber",
+            "containerNumber");
         AssertNullable(taskItem, "zoneLogicalId", "quantity", "materialNumber");
 
         AssertNumberFormat(inventoryItem, "physicalQuantity", "decimal", false);
         AssertNumberFormat(inventoryItem, "allocatedQuantity", "decimal", false);
+        AssertNumberFormat(locateHit, "physicalQuantity", "decimal", false);
+        AssertNumberFormat(locateHit, "allocatedQuantity", "decimal", false);
         AssertNumberFormat(taskItem, "quantity", "decimal", true);
     }
 
@@ -257,7 +330,7 @@ public sealed class SpaceDesignV1OpenApiTests
             .ToArray();
 
         Assert.Equal(
-            ["GetInventory", "GetTasks"],
+            ["GetInventory", "GetTasks", "LocateInventory"],
             actions.Select(action => action.ActionName));
         Assert.All(
             actions,
@@ -588,6 +661,7 @@ public sealed class SpaceDesignV1OpenApiTests
                      "BindWmsAdoptionBatch",
                      "PlaceWmsAdoption",
                      "GetInventory",
+                     "LocateInventory",
                      "GetTasks",
                  })
         {
@@ -620,6 +694,9 @@ public sealed class SpaceDesignV1OpenApiTests
         var csharpTask = ExtractTypeBlock(
             csharp,
             "public partial class SpaceWmsRuntimeTaskItemDto");
+        var csharpLocateHit = ExtractTypeBlock(
+            csharp,
+            "public partial class SpaceWmsRuntimeInventoryLocateHitDto");
         var csharpSource = ExtractTypeBlock(
             csharp,
             "public partial class SpaceWmsRuntimeSourceDto");
@@ -646,6 +723,10 @@ public sealed class SpaceDesignV1OpenApiTests
         Assert.Contains(
             "public decimal AllocatedQuantity { get; set; }",
             csharpInventory,
+            StringComparison.Ordinal);
+        Assert.Contains(
+            "public decimal PhysicalQuantity { get; set; }",
+            csharpLocateHit,
             StringComparison.Ordinal);
         Assert.Contains(
             "public decimal? Quantity { get; set; }",
@@ -685,6 +766,40 @@ public sealed class SpaceDesignV1OpenApiTests
             "clockSkewMilliseconds",
             "isSimulated",
             "isAvailable");
+
+        var locateResponse = ExtractTypeBlock(
+            typescript,
+            "export interface ISpaceWmsRuntimeInventoryLocateResponse");
+        AssertRequiredTypeScriptProperties(
+            locateResponse,
+            "siteId",
+            "publishedVersionId",
+            "warehouseCode",
+            "source",
+            "criteria",
+            "locationCount",
+            "floorCount",
+            "items");
+
+        var locateHit = ExtractTypeBlock(
+            typescript,
+            "export interface ISpaceWmsRuntimeInventoryLocateHitDto");
+        AssertRequiredTypeScriptProperties(
+            locateHit,
+            "locationLogicalId",
+            "wmsLogicalId",
+            "spaceLocationCode",
+            "wmsLocationCode",
+            "codeMatches",
+            "floorLogicalId",
+            "floorCode",
+            "floorName",
+            "floorLevel",
+            "physicalQuantity",
+            "allocatedQuantity",
+            "materialNumbers",
+            "lotNumbers",
+            "containerNumbers");
 
         var taskResponse = ExtractTypeBlock(
             typescript,
@@ -739,13 +854,20 @@ public sealed class SpaceDesignV1OpenApiTests
         JsonElement schema,
         params string[] expected)
     {
+        AssertExactRequiredNames(schema, expected);
+        AssertNonNullable(schema, expected);
+    }
+
+    private static void AssertExactRequiredNames(
+        JsonElement schema,
+        params string[] expected)
+    {
         Assert.True(schema.TryGetProperty("required", out var required));
         Assert.True(required
             .EnumerateArray()
             .Select(value => value.GetString())
             .ToHashSet()
             .SetEquals(expected));
-        AssertNonNullable(schema, expected);
     }
 
     private static void AssertNonNullable(
