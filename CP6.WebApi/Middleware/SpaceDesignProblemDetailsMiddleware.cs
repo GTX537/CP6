@@ -15,12 +15,16 @@ public sealed class SpaceDesignProblemDetailsMiddleware(
     ILogger<SpaceDesignProblemDetailsMiddleware> logger)
 {
     private const string DesignPath = "/api/space/design/v1";
+    private const string ExternalOrganizationPath =
+        "/api/space/external-organization";
     private static readonly JsonSerializerOptions JsonOptions =
         new(JsonSerializerDefaults.Web);
 
     public async Task InvokeAsync(HttpContext context)
     {
-        if (!context.Request.Path.StartsWithSegments(DesignPath))
+        if (!context.Request.Path.StartsWithSegments(DesignPath) &&
+            !context.Request.Path.StartsWithSegments(
+                ExternalOrganizationPath))
         {
             await next(context);
             return;
@@ -119,6 +123,16 @@ public sealed class SpaceDesignProblemDetailsMiddleware(
                 "The Space version state does not allow this operation.",
                 exception.Message,
                 "reload-current-version");
+        }
+        catch (SpaceExternalAccessStateException exception)
+        {
+            await WriteAsync(
+                context,
+                409,
+                SpaceErrorCodes.ExternalAccessStateInvalid,
+                "The external access state does not allow this operation.",
+                exception.Message,
+                "reload-current-resource");
         }
         catch (SpaceFileValidationException exception)
         {

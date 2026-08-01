@@ -14,7 +14,7 @@ public sealed class SpaceContextTenantTests
     [Fact]
     public async Task Query_filter_prevents_cross_tenant_reads()
     {
-        var root = new InMemoryDatabaseRoot();
+        var root = SpaceTestDatabaseRoots.InMemory;
         var database = Guid.NewGuid().ToString("N");
         var tenantA = Guid.NewGuid();
         var tenantB = Guid.NewGuid();
@@ -33,7 +33,7 @@ public sealed class SpaceContextTenantTests
     [Fact]
     public async Task File_source_and_artifact_filters_prevent_cross_tenant_reads()
     {
-        var root = new InMemoryDatabaseRoot();
+        var root = SpaceTestDatabaseRoots.InMemory;
         var database = Guid.NewGuid().ToString("N");
         var tenantA = Guid.NewGuid();
         var tenantB = Guid.NewGuid();
@@ -84,7 +84,7 @@ public sealed class SpaceContextTenantTests
     [Fact]
     public async Task Source_catalog_queries_by_tenant_and_sha256()
     {
-        var root = new InMemoryDatabaseRoot();
+        var root = SpaceTestDatabaseRoots.InMemory;
         var database = Guid.NewGuid().ToString("N");
         var tenantId = Guid.NewGuid();
         var hash = new string('a', 64);
@@ -120,7 +120,7 @@ public sealed class SpaceContextTenantTests
     [Fact]
     public async Task Save_rejects_cross_tenant_entities()
     {
-        var root = new InMemoryDatabaseRoot();
+        var root = SpaceTestDatabaseRoots.InMemory;
         var database = Guid.NewGuid().ToString("N");
         var tenantA = Guid.NewGuid();
 
@@ -134,7 +134,7 @@ public sealed class SpaceContextTenantTests
     [Fact]
     public async Task Save_fails_closed_without_verified_tenant()
     {
-        var root = new InMemoryDatabaseRoot();
+        var root = SpaceTestDatabaseRoots.InMemory;
         var options = NewOptions(root, Guid.NewGuid().ToString("N"));
         await using var context = new SpaceContext(
             options,
@@ -149,7 +149,7 @@ public sealed class SpaceContextTenantTests
     [Fact]
     public async Task Save_stamps_utc_audit_fields()
     {
-        var root = new InMemoryDatabaseRoot();
+        var root = SpaceTestDatabaseRoots.InMemory;
         var tenantId = Guid.NewGuid();
         var actorId = Guid.NewGuid();
         await using var context = new SpaceContext(
@@ -170,7 +170,7 @@ public sealed class SpaceContextTenantTests
     {
         var tenantId = Guid.NewGuid();
         using var context = CreateContext(
-            new InMemoryDatabaseRoot(),
+            SpaceTestDatabaseRoots.InMemory,
             Guid.NewGuid().ToString("N"),
             tenantId);
 

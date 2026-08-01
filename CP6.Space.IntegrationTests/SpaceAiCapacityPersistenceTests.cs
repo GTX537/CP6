@@ -11,6 +11,7 @@ using Microsoft.Extensions.DependencyInjection;
 
 namespace CP6.Space.IntegrationTests;
 
+[Collection(SpaceSqlServerCollection.Name)]
 public sealed class SpaceAiCapacityPersistenceTests
 {
     private static readonly DateTime InitialNow =
@@ -19,7 +20,7 @@ public sealed class SpaceAiCapacityPersistenceTests
     [Fact]
     public void Ef_model_and_registration_freeze_capacity_boundaries()
     {
-        var root = new InMemoryDatabaseRoot();
+        var root = SpaceTestDatabaseRoots.InMemory;
         using var context = CreateInMemoryContext(
             root,
             Guid.NewGuid().ToString("N"),

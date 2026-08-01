@@ -3,6 +3,7 @@ using CP6.Core.Services.Space.Compatibility;
 using CP6.Core.Services.Space.Observability;
 using CP6.Space.Application;
 using CP6.Space.Contracts;
+using CP6.Space.Domain;
 using CP6.WebApi.Middleware;
 using CP6.WebApi.Services;
 using Microsoft.AspNetCore.DataProtection;
@@ -66,6 +67,26 @@ public sealed class SpaceDesignV1InfrastructureTests
             () => middleware.InvokeAsync(context));
 
         Assert.Equal("legacy", error.Message);
+    }
+
+    [Fact]
+    public async Task External_organization_path_uses_the_same_safe_problem_shape()
+    {
+        var context = new DefaultHttpContext();
+        context.Request.Path = "/api/space/external-organization/test";
+        context.Response.Body = new MemoryStream();
+        var middleware = new SpaceDesignProblemDetailsMiddleware(
+            _ => throw new SpaceExternalAccessStateException("closed"),
+            NullLogger<SpaceDesignProblemDetailsMiddleware>.Instance);
+
+        await middleware.InvokeAsync(context);
+
+        Assert.Equal(409, context.Response.StatusCode);
+        context.Response.Body.Position = 0;
+        using var body = await JsonDocument.ParseAsync(context.Response.Body);
+        Assert.Equal(
+            SpaceErrorCodes.ExternalAccessStateInvalid,
+            body.RootElement.GetProperty("code").GetString());
     }
 
     [Fact]

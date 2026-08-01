@@ -105,6 +105,12 @@ public static class SpaceInfrastructureRegistration
         services.AddScoped<SpaceVersionCloneCoordinator>();
         services.AddScoped<SpaceSourceCoordinator>();
         services.AddScoped<ISpaceDesignV1Service, SpaceDesignV1Service>();
+        services.AddScoped<
+            ISpaceExternalReferenceValidator,
+            Cp6SpaceExternalReferenceValidator>();
+        services.AddScoped<
+            ISpaceExternalOrganizationService,
+            SpaceExternalOrganizationService>();
         services.AddScoped<ISpaceUnderlayV1Service, SpaceUnderlayV1Service>();
         services.AddScoped<
             ISpaceWarehouseResolver,

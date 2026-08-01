@@ -43,6 +43,8 @@ public static class SpaceAuditPermissionSeed
             ("model:generate-ai", "创建 AI 生成任务", 40),
             ("model:review-ai", "审查 AI 提案", 50),
             ("integration:manage", "管理 WMS 集成", 60),
+            ("external:read", "查看外部组织与成员", 70),
+            ("external:manage", "管理外部组织与成员", 80),
         ];
 
     public static void EnsureSeeded(CP6Context db) =>

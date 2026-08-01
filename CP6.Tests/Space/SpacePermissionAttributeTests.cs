@@ -42,6 +42,7 @@ public class SpacePermissionAttributeTests
         "space:model:read", "space:model:edit", "space:source:upload",
         "space:model:generate-ai", "space:model:review-ai",
         "space:integration:manage",
+        "space:external:read", "space:external:manage",
     };
 
     private static readonly Dictionary<string, string> AllowedReadPermissions =
@@ -64,7 +65,15 @@ public class SpacePermissionAttributeTests
             ["SpaceDesignV1Controller.GetWmsAdoptionLocations"] =
                 "space:model:read",
             ["SpaceWmsRuntimeController.GetInventory"] = "space:model:read",
+            ["SpaceWmsRuntimeController.LocateInventory"] = "space:model:read",
             ["SpaceWmsRuntimeController.GetTasks"] = "space:model:read",
+            ["SpaceWmsRuntimeController.GetTaskPath"] = "space:model:read",
+            ["SpaceExternalOrganizationController.GetOrganizations"] =
+                "space:external:read",
+            ["SpaceExternalOrganizationController.GetOrganization"] =
+                "space:external:read",
+            ["SpaceExternalOrganizationController.GetMemberships"] =
+                "space:external:read",
         };
 
     /// <summary>只读语义的 POST 豁免（Controller.Method）——按「不得带特性」校验。</summary>
@@ -108,8 +117,8 @@ public class SpacePermissionAttributeTests
     [Fact]
     public void SpaceControllers_AreDiscovered()
     {
-        // 守卫：确保反射确实扫到 12 个 controller（防命名空间/程序集变动导致「空扫空过」）。
-        Assert.Equal(12, SpaceControllers.Count());
+        // 守卫：确保反射确实扫到 13 个 controller（防命名空间/程序集变动导致「空扫空过」）。
+        Assert.Equal(13, SpaceControllers.Count());
     }
 
     [Fact]

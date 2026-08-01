@@ -6,6 +6,7 @@ using Microsoft.EntityFrameworkCore;
 
 namespace CP6.Space.IntegrationTests;
 
+[Collection(SpaceSqlServerCollection.Name)]
 public sealed class SpaceSqlServerTests
 {
     private const string ContentHash =

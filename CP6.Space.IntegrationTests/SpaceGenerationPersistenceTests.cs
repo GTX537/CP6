@@ -9,6 +9,7 @@ using Microsoft.EntityFrameworkCore.Storage;
 
 namespace CP6.Space.IntegrationTests;
 
+[Collection(SpaceSqlServerCollection.Name)]
 public sealed class SpaceGenerationPersistenceTests
 {
     private static readonly DateTime Now =
@@ -23,7 +24,7 @@ public sealed class SpaceGenerationPersistenceTests
     [Fact]
     public async Task Generation_records_are_hidden_from_other_tenants()
     {
-        var root = new InMemoryDatabaseRoot();
+        var root = SpaceTestDatabaseRoots.InMemory;
         var database = Guid.NewGuid().ToString("N");
         var tenantA = Guid.NewGuid();
         var tenantB = Guid.NewGuid();
@@ -67,7 +68,7 @@ public sealed class SpaceGenerationPersistenceTests
     [Fact]
     public async Task Proposal_decisions_are_append_only()
     {
-        var root = new InMemoryDatabaseRoot();
+        var root = SpaceTestDatabaseRoots.InMemory;
         var database = Guid.NewGuid().ToString("N");
         var tenantId = Guid.NewGuid();
 
@@ -111,7 +112,7 @@ public sealed class SpaceGenerationPersistenceTests
     [Fact]
     public void Ef_model_freezes_generation_tables_keys_and_guards()
     {
-        var root = new InMemoryDatabaseRoot();
+        var root = SpaceTestDatabaseRoots.InMemory;
         using var context = CreateContext(
             root,
             Guid.NewGuid().ToString("N"),

@@ -81,4 +81,16 @@ public static class SpaceErrorCodes
         "SPACE_WMS_BINDING_CODE_MISMATCH";
     public const string WmsLocationMissing =
         "SPACE_WMS_LOCATION_MISSING";
+    public const string ExternalOrganizationNotFound =
+        "SPACE_EXTERNAL_ORGANIZATION_NOT_FOUND";
+    public const string ExternalOrganizationConflict =
+        "SPACE_EXTERNAL_ORGANIZATION_CONFLICT";
+    public const string ExternalMembershipNotFound =
+        "SPACE_EXTERNAL_MEMBERSHIP_NOT_FOUND";
+    public const string ExternalMembershipConflict =
+        "SPACE_EXTERNAL_MEMBERSHIP_CONFLICT";
+    public const string ExternalReferenceNotFound =
+        "SPACE_EXTERNAL_REFERENCE_NOT_FOUND";
+    public const string ExternalAccessStateInvalid =
+        "SPACE_EXTERNAL_ACCESS_STATE_INVALID";
 }

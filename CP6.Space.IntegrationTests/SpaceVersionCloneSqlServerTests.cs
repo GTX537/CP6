@@ -7,6 +7,7 @@ using Microsoft.EntityFrameworkCore.Storage;
 
 namespace CP6.Space.IntegrationTests;
 
+[Collection(SpaceSqlServerCollection.Name)]
 public sealed class SpaceVersionCloneSqlServerTests
 {
     private const string ContentHash =
@@ -565,7 +566,7 @@ public sealed class SpaceVersionCloneSqlServerTests
         var options = new DbContextOptionsBuilder<SpaceContext>()
             .UseInMemoryDatabase(
                 Guid.NewGuid().ToString("N"),
-                new InMemoryDatabaseRoot())
+                SpaceTestDatabaseRoots.InMemory)
             .Options;
         return new SpaceContext(
             options,

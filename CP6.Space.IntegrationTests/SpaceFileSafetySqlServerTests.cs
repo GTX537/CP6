@@ -7,6 +7,7 @@ using Microsoft.EntityFrameworkCore;
 
 namespace CP6.Space.IntegrationTests;
 
+[Collection(SpaceSqlServerCollection.Name)]
 public sealed class SpaceFileSafetySqlServerTests
 {
     private static readonly DateTime Now =
