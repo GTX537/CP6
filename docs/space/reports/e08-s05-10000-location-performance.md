@@ -1,7 +1,9 @@
 # E08-S05 10,000 库位性能基线交付报告
 
-- 状态：功能分支已完成，待进入 Space 受控集成分支
+- 状态：已完成并进入 Space 受控集成分支
 - 功能分支：`codex/space-e08-s05-performance`
+- 功能提交：`cc1d8baf`（性能基线）+ `24464fab`（类型门禁 follow-up）
+- no-ff 集成提交：`7a05c05f` + `675e485c`
 - 起始基线：`5d37865aa5619c5ebe8694460e5638959d6c8e90`
 - 基准日期：2026-08-01
 
@@ -110,6 +112,20 @@ WMS 前以 400 拒绝。也就是说 10,000 是可执行上限，而不是只写
 
 .NET 首次全量编译中出现的 warning 均来自本卡未修改的既有 OA/WMS/测试文件；最终 WebApi 与
 C# SDK 增量 Release build 均为 0 warning / 0 error。
+
+### 3.5 合并态聚焦门禁
+
+| 门禁 | 结果 |
+|---|---|
+| Viewer 实例化/着色聚焦 | 4 files / 19 tests passed |
+| CPU 性能门禁 | 1 passed；36 draw calls，建图 163.83ms，标签 9.14ms，拾取 0.07ms，着色 8.69ms |
+| 运行态 10,000/10,001 边界 | 2 passed / 0 failed |
+| follow-up 货架矩阵 | 2 passed / 0 failed |
+| 前端 type-check | passed |
+| 完整 E08-S05 range whitespace | passed |
+
+合并态 CPU 基准与 type-check 曾并行执行，因此建图/着色时间高于功能分支单独运行，但仍分别只有
+3,000ms 门槛的 5.5% 与 0.3%；硬件 WebGL 所对应的产品代码在 follow-up 中未发生变化。
 
 ## 4. 可重复执行
 
