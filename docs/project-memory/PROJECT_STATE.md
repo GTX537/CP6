@@ -2,6 +2,18 @@
 
 最后更新：2026-08-01
 
+## E09-S02 完成状态（2026-08-01）
+
+- E09-S02 外部组合授权与访问求值器已完成并进入受控集成基线：功能提交 `cae12c7e`，no-ff 集成提交 `feefa9cd`，起始基线 `8869ac58`。
+- 新增 `Space_ExternalGrant` 及 Floor/Zone/Owner/Object 规范化子表；Site 必填，Floor/Zone 固定使用当前 Published Revision 的稳定 LogicalId，数据库以复合租户外键、状态/有效期/版本检查和过滤唯一索引失败关闭。
+- 多个 Grant 保持完整子句 OR，单个 Grant 内 Site/Floor/Zone/Owner/BusinessObject 按 AND 匹配；禁止跨 Grant 展平维度造成笛卡尔权限升级。Export 还要求命中子句显式 `CanExport`。
+- `ISpaceAccessEvaluator` 验证可信 Tenant/User、单一 Organization Context、Active Organization、有效 Active Membership 与有效 Active Grant；任一缺失、过期、暂停、撤销、歧义或跨组织拼接均拒绝。安全范围携带组织/成员安全戳、GrantVersion 和确定性 AuthorizationVersion。
+- 新增 `/api/space/external-organization/{organizationId}/grant` 管理 API，读取/变更沿用 `space:external:read/manage`。`FieldPolicyId` 在 E09-S03 前只作保留字段，非空请求固定 422；外部主体仍被全局拒绝直接进入 `/api/space`，未提前开放 Portal。
+- OpenAPI 增加 2 个 route family / 4 个操作并更新 C#/TypeScript SDK；运行时客户端表面哈希为 `FFCE63E749C7653E553A57D32EA85A7FF846F17199AF3436FE787CD26F509259`。
+- 功能门禁：Space Unit 228/228；Space Integration + KOUSQLSERVER 169/169、0 skipped；CP6.Tests 2703 passed / 17 environment-gated skipped；完整 solution build 0 error；前端 106 files / 607 tests、type-check、production build；EF/SDK drift 与 C#/TypeScript SDK 编译通过。S01→S02 增量 SQL 在临时库连续执行两次通过。
+- 合并态聚焦门禁：完整 solution build 0 error、领域 4/4、访问求值/管理/真实 SQL 10/10、权限/OpenAPI 35/35、EF/SDK drift 通过。交付报告见 `docs/space/reports/e09-s02-external-grant-scope-evaluator.md`。
+- 下一张建议卡为 E09-S03：接入 Published-only 外部只读 Portal、资源 DTO allowlist、字段策略/脱敏和导出裁剪；完成前继续保留外部主体的全局拒绝。
+
 ## E09-S01 完成状态（2026-08-01）
 
 - E09-S01 外部组织与成员模型已完成并进入受控集成基线：功能提交 `a599cfd7`，no-ff 集成提交 `09538ca3`，起始基线 `0c02fc80`。
@@ -82,6 +94,7 @@
 - Space E08 S04 功能/集成提交：`9f7e38f8` / `994339a6`
 - Space E08 S05 功能/集成提交：`cc1d8baf` + `24464fab` / `7a05c05f` + `675e485c`
 - Space E09 S01 功能/集成提交：`a599cfd7` / `09538ca3`
+- Space E09 S02 功能/集成提交：`cae12c7e` / `feefa9cd`
 
 - 交付分支：`main`
 - T6 通过 merge commit `d79a39c` 合入并推送；T7 冒烟修复为 `ffca422`
@@ -122,7 +135,7 @@
 | E04 S01–S04 | 已进入集成基线 | `1d57a3b5` + `e8e84853` + `20ee0af0` + `c1043d15` + `b322e84a` + `39146c38` + `9a87dc30` + `f9c7fd21`；安全底图、坐标标定、通用元素属性、货架/元素统一多选、对齐、等距、旋转、删除、阵列与补偿式撤销/重做 |
 | E07 S01–S05 | 已进入集成基线 | `d06a8bd1` + `6e67a9d1` + `74577015` + `6d751e0c` + `15ccf992` + `389bf4ec`；版本化能力合同、CP6 真实适配器、持久化幂等账本、标准模拟器、确定性标准仓与存量 WMS 采纳/绑定 |
 | E08 S01–S05 | 已进入集成基线 | `3df6b1d2` + `b2bb7a35` + `9a478c7a` + `d4cd8a82` + `8d8f7e01` + `dfb6e93b` + `9f7e38f8` + `994339a6` + `cc1d8baf` + `24464fab` + `7a05c05f` + `675e485c`；统一 Published 运行源、双身份、来源新鲜度、库存定位、任务路径与 10,000 库位性能基线 |
-| E09 S01 | 已进入集成基线 | `a599cfd7` + `09538ca3`；租户权威外部组织/成员、ERP 客商与用户引用校验、生命周期、安全戳、真实 SQL 约束及管理 API/SDK |
+| E09 S01–S02 | 已进入集成基线 | `a599cfd7` + `09538ca3` + `cae12c7e` + `feefa9cd`；租户权威外部组织/成员、ERP 客商与用户引用校验、组合 Grant、Organization Context、访问求值、安全戳/版本、真实 SQL 约束及管理 API/SDK |
 | E13 S01–S03、S12 | 已进入集成基线 | Provider/确定性端口、可审计 Run/Proposal/Decision/Usage 模型、可恢复 Worker 控制面，以及数据库并发槽与预算账本 |
 | E05 S01–S05 | 已进入集成基线 | 通用元素、逐层货架、统一场景 DTO、版本化资产库及确定性参数化 3D 渲染 |
 | E04 S05–S06、E06、E08 S05+ 等剩余范围 | 候选证据或尚未实现 | `0d25da4d` 只作提取来源；不得以候选报告替代集成验收 |
@@ -141,6 +154,7 @@
 
 ## 最近验证基线
 
+- E09-S02 已推进至受控集成提交 `feefa9cd`：功能分支门禁为 Space Unit 228/228、Space Integration + KOUSQLSERVER 169/169 且 0 skipped、CP6.Tests 2703 passed / 17 environment-gated skipped、完整 solution build 0 error、前端 106 files / 607 tests、EF/SDK drift、C#/TypeScript SDK 编译与 S01→S02 幂等增量 SQL 双执行通过；合并态聚焦门禁为 4/4、10/10、35/35 及 EF/SDK drift。
 - E09-S01 已推进至受控集成提交 `09538ca3`：功能分支门禁为 Space Unit 224/224、Space Integration + KOUSQLSERVER 159/159 且 0 skipped、CP6.Tests 2703 passed / 17 environment-gated skipped、完整 solution build 0 error、前端 106 files / 607 tests、EF/SDK drift、TypeScript SDK 和运行时客户端表面通过；合并态聚焦门禁为 4/4、6/6、49/49 及 EF/SDK drift。
 - E08-S04 已推进至受控集成提交 `994339a6`：功能分支门禁为 Space Unit 220/220、Space Integration 105 passed / 48 SQL-gated skipped、OpenAPI/SDK 18/18、前端 105 files / 603 tests、type-check、production build、WebApi/C#/TypeScript SDK build 与 SDK drift；合并态聚焦门禁为 runtime 47/47、OpenAPI/SDK 18/18、前端 9/9、type-check 和 SDK drift。
 - E08-S03 已推进至受控集成提交 `dfb6e93b`：功能分支门禁为 Space Unit 220/220、Space Integration 101 passed / 48 SQL-gated skipped、OpenAPI/SDK 18/18、前端 103 files / 597 tests、type-check、production build、WebApi/C#/TypeScript SDK build 与 SDK drift；合并态聚焦门禁为 runtime 44/44、OpenAPI/SDK 18/18、前端 5/5 和 type-check。
@@ -171,4 +185,4 @@
 
 ## 下一动作
 
-以 `09538ca3` 为当前 Space 代码集成基线。E07-S05、E08-S01～S05 与 E09-S01 已完成；下一张建议卡为 E09-S02 组合数据范围 Grant。E04 S05 仍等待 E02 S07，E04 S06 已具备依赖但应独立排卡；E13 S04 等待 E02 S03，E13 S05 等待 S04 与正式供应商证据；E02 S01 等待正式黄金集、授权和冻结 Worker。禁止把剩余候选整包合入。GR-VP T1–T7 已完成，不要重做。
+以 `feefa9cd` 为当前 Space 代码集成基线。E07-S05、E08-S01～S05 与 E09-S01～S02 已完成；下一张建议卡为 E09-S03 Published-only 外部只读 Portal、字段 allowlist/脱敏与导出裁剪。E04 S05 仍等待 E02 S07，E04 S06 已具备依赖但应独立排卡；E13 S04 等待 E02 S03，E13 S05 等待 S04 与正式供应商证据；E02 S01 等待正式黄金集、授权和冻结 Worker。禁止把剩余候选整包合入。GR-VP T1–T7 已完成，不要重做。
