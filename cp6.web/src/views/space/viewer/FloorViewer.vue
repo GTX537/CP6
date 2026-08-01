@@ -44,6 +44,7 @@
         :polling="polling"
         :ts="overlayTs"
         :source="stockSource"
+        :refresh-state="stockRefreshState"
         @mode="onOverlayMode"
         @refresh="refreshStock"
         @toggle-poll="onTogglePoll"
@@ -92,6 +93,13 @@ import { stockApi } from '@/api/space/stock'
 import type { OverlayMode, WmsStockDto } from '@/types/space/overlay'
 import type { SpaceDataSource } from '@/types/space/dataSource'
 import { isUsableDataSource } from '@/types/space/dataSource'
+import type { SpaceRuntimeSource } from '@/types/space/runtime'
+import {
+  initialRuntimeRefreshState,
+  recordRuntimeFailure,
+  recordRuntimeResult,
+  runtimeFailureCode,
+} from '@/space-viewer/overlay/runtimeRefreshState'
 import InfoCard from './InfoCard.vue'
 import FloorList from './FloorList.vue'
 import SearchBox from './SearchBox.vue'
@@ -124,6 +132,17 @@ const overlayMode = ref<OverlayMode>('status')
 const overlayTs = ref('')
 const polling = ref(false)
 const selectedStock = ref<WmsStockDto | null>(null)
+const unavailableRuntimeSource = (dataSourceId: string): SpaceRuntimeSource => ({
+  kind: 'Unavailable',
+  adapterId: dataSourceId,
+  dataSourceId,
+  observedAtUtc: '',
+  receivedAtUtc: '',
+  delayMilliseconds: 0,
+  clockSkewMilliseconds: 0,
+  isSimulated: false,
+  isAvailable: false,
+})
 const unavailableSource = (dataSourceId: string): SpaceDataSource => ({
   kind: 'Unavailable',
   dataSourceId,
@@ -131,7 +150,8 @@ const unavailableSource = (dataSourceId: string): SpaceDataSource => ({
   isSimulated: false,
   isAvailable: false,
 })
-const stockSource = ref<SpaceDataSource>(unavailableSource('NOT_QUERIED'))
+const stockSource = ref<SpaceRuntimeSource>(unavailableRuntimeSource('NOT_QUERIED'))
+const stockRefreshState = ref(initialRuntimeRefreshState())
 const taskSource = ref<SpaceDataSource>(unavailableSource('NOT_QUERIED'))
 const workloadSource = ref<SpaceDataSource>(unavailableSource('NOT_QUERIED'))
 const deviceSource = ref<SpaceDataSource>(unavailableSource('NOT_QUERIED'))
@@ -161,6 +181,7 @@ function canvasNdc(e: MouseEvent): { x: number; y: number } {
 
 async function loadFloor(floorId: string): Promise<void> {
   if (!viewer) return
+  overlay?.invalidateRefreshes()
   selectedId.value = null
   pathAnimator?.clear()
   pathLoaded.value = false
@@ -230,21 +251,26 @@ function onDblClick(e: MouseEvent): void {
 }
 
 async function refreshStock(): Promise<void> {
-  if (!overlay) return
+  if (!overlay || !viewer) return
   try {
-    await overlay.refresh(currentFloorId.value)
+    const applied = await overlay.refresh(siteId, viewer.getLocationEntries())
+    if (!applied) return
     stockSource.value = overlay.source
     overlayTs.value = overlay.ts
+    stockRefreshState.value = recordRuntimeResult(stockRefreshState.value, overlay.source)
     if (!isUsableDataSource(stockSource.value)) {
       selectedStock.value = null
       await viewer?.load(currentFloorId.value)
       ElMessage.warning(t('搴撳瓨鏁版嵁婧愪笉鍙敤'))
       return
     }
-    overlay.setMode(overlayMode.value)
-    overlay.apply()
     syncSelectedStock()
-  } catch {
+  } catch (error) {
+    stockRefreshState.value = recordRuntimeFailure(
+      stockRefreshState.value,
+      new Date().toISOString(),
+      runtimeFailureCode(error),
+    )
     ElMessage.warning(t('库存数据获取失败，显示上次快照'))   // W-SPACE-701
   }
 }
@@ -260,16 +286,13 @@ function onTogglePoll(): void {
   else overlay?.stopPolling()
 }
 function syncSelectedStock(): void {
-  // selectedId 是库位 GUID；库存快照按编码键 → 先经 viewer 把 GUID 解析成编码再查
-  const code = selectedId.value ? (viewer?.getLocationCode(selectedId.value) ?? null) : null
-  selectedStock.value = code ? (overlay?.getStock(code) ?? null) : null
+  selectedStock.value = overlay?.getStock(selectedId.value) ?? null
 }
 async function onLocateMaterial(material: string): Promise<void> {
   try {
     const env = await stockApi.locate({ material })
     const hits = env.data.items
-    stockSource.value = env.data.source
-    if (!isUsableDataSource(stockSource.value)) {
+    if (!isUsableDataSource(env.data.source)) {
       ElMessage.warning(t('搴撳瓨鏁版嵁婧愪笉鍙敤'))
       return
     }

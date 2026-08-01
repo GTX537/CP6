@@ -2,8 +2,12 @@ namespace CP6.Space.Contracts;
 
 public sealed record SpaceWmsRuntimeSourceDto(
     string Kind,
+    string AdapterId,
     string DataSourceId,
     DateTimeOffset ObservedAtUtc,
+    DateTimeOffset ReceivedAtUtc,
+    long DelayMilliseconds,
+    long ClockSkewMilliseconds,
     bool IsSimulated,
     bool IsAvailable);
 

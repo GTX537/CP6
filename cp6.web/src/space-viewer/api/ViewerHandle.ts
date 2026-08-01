@@ -1,4 +1,5 @@
 import type { Box3, Group, Vector3 } from 'three'
+import type { RuntimeLocationRef } from '@/types/space/runtime'
 
 export interface ViewerHandle {
   load(floorId: string): Promise<void>
@@ -12,6 +13,7 @@ export interface ViewerHandle {
   onReady(cb: () => void): void
   onProgress(cb: (done: number, total: number) => void): void
   getCurrentFloorId(): string
+  getLocationEntries(): RuntimeLocationRef[]
   getLocationCode(locationId: string): string | null
   getLocationIdByCode(code: string): string | null
   flyToData(p: { x: number; y: number; z: number }): void

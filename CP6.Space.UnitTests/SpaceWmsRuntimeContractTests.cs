@@ -11,8 +11,12 @@ public sealed class SpaceWmsRuntimeContractTests
     {
         AssertPropertyOrder<SpaceWmsRuntimeSourceDto>(
             "Kind",
+            "AdapterId",
             "DataSourceId",
             "ObservedAtUtc",
+            "ReceivedAtUtc",
+            "DelayMilliseconds",
+            "ClockSkewMilliseconds",
             "IsSimulated",
             "IsAvailable");
         AssertPropertyOrder<SpaceWmsRuntimeInventoryItemDto>(

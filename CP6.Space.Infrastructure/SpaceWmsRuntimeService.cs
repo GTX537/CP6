@@ -104,17 +104,18 @@ public sealed class SpaceWmsRuntimeService : ISpaceWmsRuntimeService
 
         observedSource ??= MergeSource(null, DeclaredSource());
 
+        var orderedItems = items
+            .OrderBy(value => value.SpaceLocationCode, StringComparer.Ordinal)
+            .ThenBy(value => value.MaterialNumber, StringComparer.Ordinal)
+            .ThenBy(value => value.LotNumber, StringComparer.Ordinal)
+            .ThenBy(value => value.ContainerNumber, StringComparer.Ordinal)
+            .ToArray();
         return new SpaceWmsRuntimeInventoryResponse(
             siteId,
             scope.PublishedVersionId,
             scope.WarehouseCode,
             ToDto(observedSource),
-            items
-                .OrderBy(value => value.SpaceLocationCode, StringComparer.Ordinal)
-                .ThenBy(value => value.MaterialNumber, StringComparer.Ordinal)
-                .ThenBy(value => value.LotNumber, StringComparer.Ordinal)
-                .ThenBy(value => value.ContainerNumber, StringComparer.Ordinal)
-                .ToArray());
+            orderedItems);
     }
 
     public async Task<SpaceWmsRuntimeTaskResponse> QueryTasksAsync(
@@ -195,16 +196,17 @@ public sealed class SpaceWmsRuntimeService : ISpaceWmsRuntimeService
 
         observedSource ??= MergeSource(null, DeclaredSource());
 
+        var orderedItems = items
+            .OrderBy(value => value.TaskId, StringComparer.Ordinal)
+            .ThenBy(value => value.SequenceNo)
+            .ThenBy(value => value.LocationLogicalId)
+            .ToArray();
         return new SpaceWmsRuntimeTaskResponse(
             siteId,
             scope.PublishedVersionId,
             scope.WarehouseCode,
             ToDto(observedSource),
-            items
-                .OrderBy(value => value.TaskId, StringComparer.Ordinal)
-                .ThenBy(value => value.SequenceNo)
-                .ThenBy(value => value.LocationLogicalId)
-                .ToArray());
+            orderedItems);
     }
 
     private async Task<RuntimeScope> LoadScopeAsync(
@@ -534,6 +536,11 @@ public sealed class SpaceWmsRuntimeService : ISpaceWmsRuntimeService
     {
         if (!Enum.IsDefined(typeof(SpaceWmsDataSourceKind), source.Kind))
             throw ContractViolation("The WMS source kind is invalid.");
+        if (string.IsNullOrWhiteSpace(_source.RuntimeAdapterId) ||
+            _source.RuntimeAdapterId.Length > 100)
+        {
+            throw ContractViolation("The WMS runtime adapter identity is invalid.");
+        }
         var declaredKind = _source.RuntimeDataSourceKind;
         if (!Enum.IsDefined(typeof(SpaceWmsDataSourceKind), declaredKind))
             throw ContractViolation("The declared WMS source kind is invalid.");
@@ -653,14 +660,34 @@ public sealed class SpaceWmsRuntimeService : ISpaceWmsRuntimeService
             new DateTimeOffset(now));
     }
 
-    private static SpaceWmsRuntimeSourceDto ToDto(
-        SpaceWmsSourceMetadata source) =>
-        new(
+    private SpaceWmsRuntimeSourceDto ToDto(
+        SpaceWmsSourceMetadata source)
+    {
+        var receivedAtUtc = ReceiveTime();
+        var observedAtUtc = source.ObservedAtUtc.ToUniversalTime();
+        var age = receivedAtUtc - observedAtUtc;
+        return new SpaceWmsRuntimeSourceDto(
             source.Kind.ToString(),
+            _source.RuntimeAdapterId,
             source.DataSourceId,
-            source.ObservedAtUtc.ToUniversalTime(),
+            observedAtUtc,
+            receivedAtUtc,
+            age >= TimeSpan.Zero ? WholeMilliseconds(age) : 0,
+            age < TimeSpan.Zero ? WholeMilliseconds(-age) : 0,
             source.IsSimulated,
             source.IsAvailable);
+    }
+
+    private DateTimeOffset ReceiveTime()
+    {
+        var now = _clock.UtcNow;
+        if (now.Kind != DateTimeKind.Utc)
+            throw new InvalidOperationException("The Space clock must return UTC.");
+        return new DateTimeOffset(now);
+    }
+
+    private static long WholeMilliseconds(TimeSpan value) =>
+        (long)Math.Floor(value.TotalMilliseconds);
 
     private static SpaceProblemException Invalid(
         string field,

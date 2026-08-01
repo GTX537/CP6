@@ -5310,15 +5310,22 @@
       },
       "CP6.Space.Contracts.SpaceWmsRuntimeSourceDto": {
         "required": [
+          "adapterId",
+          "clockSkewMilliseconds",
           "dataSourceId",
+          "delayMilliseconds",
           "isAvailable",
           "isSimulated",
           "kind",
-          "observedAtUtc"
+          "observedAtUtc",
+          "receivedAtUtc"
         ],
         "type": "object",
         "properties": {
           "kind": {
+            "type": "string"
+          },
+          "adapterId": {
             "type": "string"
           },
           "dataSourceId": {
@@ -5327,6 +5334,18 @@
           "observedAtUtc": {
             "type": "string",
             "format": "date-time"
+          },
+          "receivedAtUtc": {
+            "type": "string",
+            "format": "date-time"
+          },
+          "delayMilliseconds": {
+            "type": "integer",
+            "format": "int64"
+          },
+          "clockSkewMilliseconds": {
+            "type": "integer",
+            "format": "int64"
           },
           "isSimulated": {
             "type": "boolean"

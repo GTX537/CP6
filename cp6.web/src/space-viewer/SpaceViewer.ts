@@ -255,6 +255,12 @@ export class SpaceViewer implements ViewerHandle {
   // ── New N-4 navigation helpers ────────────────────────────────────────────
 
   getCurrentFloorId(): string { return this._currentFloorId }
+  getLocationEntries() {
+    return [...this._locationCodes].map(([locationLogicalId, locationCode]) => ({
+      locationLogicalId,
+      locationCode,
+    }))
+  }
   getLocationCode(locationId: string): string | null { return this._locationCodes.get(locationId) ?? null }
   getLocationIdByCode(code: string): string | null { return this._codeToId.get(code) ?? null }
 
