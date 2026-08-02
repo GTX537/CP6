@@ -619,12 +619,12 @@ namespace CP6.Space.Client
 
         /// <returns>OK</returns>
         /// <exception cref="ApiException">A server side error occurred.</exception>
-        System.Threading.Tasks.Task<SpaceWmsRuntimeInventoryLocateResponse> LocateInventoryAsync(System.Guid siteId, string? materialNumber, string? lotNumber, string? containerNumber);
+        System.Threading.Tasks.Task<SpaceWmsRuntimeInventoryLocateResponse> LocateInventoryAsync(System.Guid siteId, string? materialNumber, string? lotNumber, string? containerNumber, string? ownerId);
 
         /// <param name="cancellationToken">A cancellation token that can be used by other objects or threads to receive notice of cancellation.</param>
         /// <returns>OK</returns>
         /// <exception cref="ApiException">A server side error occurred.</exception>
-        System.Threading.Tasks.Task<SpaceWmsRuntimeInventoryLocateResponse> LocateInventoryAsync(System.Guid siteId, string? materialNumber, string? lotNumber, string? containerNumber, System.Threading.CancellationToken cancellationToken);
+        System.Threading.Tasks.Task<SpaceWmsRuntimeInventoryLocateResponse> LocateInventoryAsync(System.Guid siteId, string? materialNumber, string? lotNumber, string? containerNumber, string? ownerId, System.Threading.CancellationToken cancellationToken);
 
         /// <returns>OK</returns>
         /// <exception cref="ApiException">A server side error occurred.</exception>
@@ -11137,15 +11137,15 @@ namespace CP6.Space.Client
 
         /// <returns>OK</returns>
         /// <exception cref="ApiException">A server side error occurred.</exception>
-        public virtual System.Threading.Tasks.Task<SpaceWmsRuntimeInventoryLocateResponse> LocateInventoryAsync(System.Guid siteId, string? materialNumber, string? lotNumber, string? containerNumber)
+        public virtual System.Threading.Tasks.Task<SpaceWmsRuntimeInventoryLocateResponse> LocateInventoryAsync(System.Guid siteId, string? materialNumber, string? lotNumber, string? containerNumber, string? ownerId)
         {
-            return LocateInventoryAsync(siteId, materialNumber, lotNumber, containerNumber, System.Threading.CancellationToken.None);
+            return LocateInventoryAsync(siteId, materialNumber, lotNumber, containerNumber, ownerId, System.Threading.CancellationToken.None);
         }
 
         /// <param name="cancellationToken">A cancellation token that can be used by other objects or threads to receive notice of cancellation.</param>
         /// <returns>OK</returns>
         /// <exception cref="ApiException">A server side error occurred.</exception>
-        public virtual async System.Threading.Tasks.Task<SpaceWmsRuntimeInventoryLocateResponse> LocateInventoryAsync(System.Guid siteId, string? materialNumber, string? lotNumber, string? containerNumber, System.Threading.CancellationToken cancellationToken)
+        public virtual async System.Threading.Tasks.Task<SpaceWmsRuntimeInventoryLocateResponse> LocateInventoryAsync(System.Guid siteId, string? materialNumber, string? lotNumber, string? containerNumber, string? ownerId, System.Threading.CancellationToken cancellationToken)
         {
             if (siteId == null)
                 throw new System.ArgumentNullException("siteId");
@@ -11177,6 +11177,10 @@ namespace CP6.Space.Client
                     if (containerNumber != null)
                     {
                         urlBuilder_.Append(System.Uri.EscapeDataString("containerNumber")).Append('=').Append(System.Uri.EscapeDataString(ConvertToString(containerNumber, System.Globalization.CultureInfo.InvariantCulture))).Append('&');
+                    }
+                    if (ownerId != null)
+                    {
+                        urlBuilder_.Append(System.Uri.EscapeDataString("ownerId")).Append('=').Append(System.Uri.EscapeDataString(ConvertToString(ownerId, System.Globalization.CultureInfo.InvariantCulture))).Append('&');
                     }
                     urlBuilder_.Length--;
 
@@ -15580,6 +15584,9 @@ namespace CP6.Space.Client
         [System.Text.Json.Serialization.JsonPropertyName("containerNumber")]
         public string? ContainerNumber { get; set; } = default!;
 
+        [System.Text.Json.Serialization.JsonPropertyName("ownerId")]
+        public string? OwnerId { get; set; } = default!;
+
     }
 
     [System.CodeDom.Compiler.GeneratedCode("NJsonSchema", "14.7.1.0 (NJsonSchema v11.6.1.0 (Newtonsoft.Json v13.0.0.0))")]
@@ -15637,6 +15644,10 @@ namespace CP6.Space.Client
         [System.Text.Json.Serialization.JsonPropertyName("containerNumbers")]
         [System.ComponentModel.DataAnnotations.Required]
         public System.Collections.Generic.ICollection<string> ContainerNumbers { get; set; } = new System.Collections.ObjectModel.Collection<string>();
+
+        [System.Text.Json.Serialization.JsonPropertyName("ownerIds")]
+        [System.ComponentModel.DataAnnotations.Required]
+        public System.Collections.Generic.ICollection<string> OwnerIds { get; set; } = new System.Collections.ObjectModel.Collection<string>();
 
     }
 

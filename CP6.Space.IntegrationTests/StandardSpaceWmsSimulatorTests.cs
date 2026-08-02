@@ -153,9 +153,9 @@ public sealed class StandardSpaceWmsSimulatorTests
         simulator.SeedInventory(
             Context(),
             [
-                new(firstId, "A-01", 12, 0, "SKU-01", "LOT-01", "BOX-01"),
-                new(secondId, "A-02", 8, 0, "SKU-01", "LOT-02", "BOX-01"),
-                new(secondId, "A-02", 0, 0, "SKU-01", "LOT-01", "BOX-01"),
+                new(firstId, "A-01", 12, 0, "SKU-01", "LOT-01", "BOX-01", "OWNER-A"),
+                new(secondId, "A-02", 8, 0, "SKU-01", "LOT-02", "BOX-01", "OWNER-B"),
+                new(secondId, "A-02", 0, 0, "SKU-01", "LOT-01", "BOX-01", "OWNER-A"),
             ]);
 
         var result = await simulator.QueryInventoryAsync(
@@ -165,7 +165,8 @@ public sealed class StandardSpaceWmsSimulatorTests
                 LocateCriteria: new SpaceWmsInventoryLocateCriteria(
                     "SKU-01",
                     "LOT-01",
-                    "BOX-01")));
+                    "BOX-01",
+                    "owner-a")));
 
         Assert.Equal(firstId, Assert.Single(result.Items).LogicalId);
     }

@@ -38,7 +38,8 @@ public sealed record SpaceWmsRuntimeInventoryResponse(
 public sealed record SpaceWmsRuntimeInventoryLocateCriteriaDto(
     string? MaterialNumber,
     string? LotNumber,
-    string? ContainerNumber);
+    string? ContainerNumber,
+    string? OwnerId);
 
 public sealed record SpaceWmsRuntimeInventoryLocateHitDto(
     Guid LocationLogicalId,
@@ -54,7 +55,8 @@ public sealed record SpaceWmsRuntimeInventoryLocateHitDto(
     decimal AllocatedQuantity,
     IReadOnlyList<string> MaterialNumbers,
     IReadOnlyList<string> LotNumbers,
-    IReadOnlyList<string> ContainerNumbers);
+    IReadOnlyList<string> ContainerNumbers,
+    IReadOnlyList<string> OwnerIds);
 
 public sealed record SpaceWmsRuntimeInventoryLocateResponse(
     Guid SiteId,

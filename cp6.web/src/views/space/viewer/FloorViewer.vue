@@ -21,6 +21,15 @@
 
       <!-- Search box (top-left, barcode scanner / manual entry) -->
       <SearchBox class="viewer-searchbox" @locate="onLocate" @locate-stock="onLocateStock" />
+      <InventorySpatialFilter
+        class="viewer-spatial-filter"
+        :loading="spatialFilterLoading"
+        :response="spatialFilterResponse"
+        :current-floor-id="currentFloorId"
+        @apply="onApplySpatialFilter"
+        @clear="onClearSpatialFilter"
+        @switch-floor="onSwitchFloor"
+      />
       <div v-if="locateLoading" class="viewer-locate-loading">{{ t('正在查询库存位置') }}…</div>
       <InventoryLocateResults
         v-if="locateResult"
@@ -137,6 +146,7 @@ import InfoCard from './InfoCard.vue'
 import FloorList from './FloorList.vue'
 import SearchBox from './SearchBox.vue'
 import InventoryLocateResults from './InventoryLocateResults.vue'
+import InventorySpatialFilter from './InventorySpatialFilter.vue'
 import StockLegend from './StockLegend.vue'
 import { PathAnimator } from '@/space-viewer/advanced/PathAnimator'
 import { WorkloadHeatmap } from '@/space-viewer/advanced/WorkloadHeatmap'
@@ -164,6 +174,7 @@ let locator: Locator | null = null
 let overlay: StockOverlay | null = null
 let hoverTimer = 0
 let locateRequestVersion = 0
+let spatialFilterRequestVersion = 0
 let taskPathRequestVersion = 0
 let deviceCurrentRequestVersion = 0
 let personnelCurrentRequestVersion = 0
@@ -176,6 +187,8 @@ const polling = ref(false)
 const selectedStock = ref<WmsStockDto | null>(null)
 const locateLoading = ref(false)
 const locateResult = ref<SpaceRuntimeInventoryLocateResponse | null>(null)
+const spatialFilterLoading = ref(false)
+const spatialFilterResponse = ref<SpaceRuntimeInventoryLocateResponse | null>(null)
 const unavailableRuntimeSource = (dataSourceId: string): SpaceRuntimeSource => ({
   kind: 'Unavailable',
   adapterId: dataSourceId,
@@ -389,6 +402,50 @@ async function onLocateStock(criteria: SpaceRuntimeInventoryLocateQuery): Promis
 
 async function onSelectLocateHit(hit: SpaceRuntimeInventoryLocateHit): Promise<void> {
   await locator?.locate(hit.spaceLocationCode)
+}
+
+async function onApplySpatialFilter(
+  criteria: SpaceRuntimeInventoryLocateQuery,
+): Promise<void> {
+  if (!overlay) return
+  const requestVersion = ++spatialFilterRequestVersion
+  spatialFilterLoading.value = true
+  try {
+    if (workloadOn.value) await onToggleWorkload()
+    const response = await spaceRuntimeApi.locateInventory(siteId, criteria)
+    if (requestVersion !== spatialFilterRequestVersion) return
+    spatialFilterResponse.value = response
+    if (!isUsableDataSource(response.source)) {
+      await clearSpatialFilterColors()
+      ElMessage.warning(t('库存数据源不可用，不能判定筛选结果'))
+      return
+    }
+    overlay.setSpatialFilter(response.items.map((item) => item.locationLogicalId))
+    if (response.locationCount === 0) {
+      ElMessage.info(t('没有库位匹配当前筛选条件'))
+    }
+  } catch {
+    if (requestVersion !== spatialFilterRequestVersion) return
+    ElMessage.warning(t('库存空间筛选失败，保留上次筛选状态'))
+  } finally {
+    if (requestVersion === spatialFilterRequestVersion) spatialFilterLoading.value = false
+  }
+}
+
+async function onClearSpatialFilter(): Promise<void> {
+  spatialFilterRequestVersion++
+  spatialFilterLoading.value = false
+  spatialFilterResponse.value = null
+  await clearSpatialFilterColors()
+}
+
+async function clearSpatialFilterColors(): Promise<void> {
+  overlay?.clearSpatialFilter()
+  if (overlay?.mode === 'off' && viewer && currentFloorId.value) {
+    await viewer.load(currentFloorId.value)
+  } else {
+    overlay?.apply()
+  }
 }
 
 function onPathPlay(): void { pathAnimator?.play() }
@@ -789,6 +846,7 @@ onMounted(async () => {
 
 onBeforeUnmount(() => {
   clearTimeout(hoverTimer)
+  spatialFilterRequestVersion++
   overlay?.dispose()
   overlay = null
   pathAnimator?.clear(); pathAnimator = null
@@ -840,11 +898,18 @@ onBeforeUnmount(() => {
   z-index: 10;
 }
 
+.viewer-spatial-filter {
+  position: absolute;
+  top: 104px;
+  left: 16px;
+  z-index: 10;
+}
+
 .viewer-locate-loading,
 .viewer-locate-results {
   position: absolute;
   top: 104px;
-  left: 16px;
+  left: 340px;
   z-index: 11;
 }
 

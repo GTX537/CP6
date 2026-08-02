@@ -27,11 +27,12 @@ describe('spaceRuntimeApi', () => {
     ])
   })
 
-  it('serializes normalized material, lot, and container locate criteria', async () => {
+  it('serializes normalized owner, material, lot, and container locate criteria', async () => {
     await spaceRuntimeApi.locateInventory('site-1', {
       materialNumber: ' SKU-01 ',
       lotNumber: ' LOT-01 ',
       containerNumber: ' BOX-01 ',
+      ownerId: ' owner-a ',
     })
 
     const [url, config] = vi.mocked(http.get).mock.calls[0]!
@@ -40,6 +41,7 @@ describe('spaceRuntimeApi', () => {
     expect(params.get('materialNumber')).toBe('SKU-01')
     expect(params.get('lotNumber')).toBe('LOT-01')
     expect(params.get('containerNumber')).toBe('BOX-01')
+    expect(params.get('ownerId')).toBe('OWNER-A')
   })
 
   it('omits blank locate criteria so the server can reject an empty request', async () => {

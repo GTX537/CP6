@@ -136,6 +136,69 @@ public sealed class Cp6SpaceWmsAdapterSqlServerTests
         });
     }
 
+    [SqlServerFact]
+    public async Task Inventory_spatial_filter_joins_container_to_its_unique_stock_owner()
+    {
+        await WithDatabaseAsync(async connectionString =>
+        {
+            await using var context = CreateContext(connectionString);
+            var adapter = new Cp6SpaceWmsAdapter(context);
+            var batch = Batch(1, Mutation(1, "A-01"));
+            var applied = await adapter.ApplyBatchAsync(batch);
+            Assert.Equal(
+                SpaceWmsBatchAssessmentKind.Succeeded,
+                SpaceWmsContract.AssessBatchResult(batch, applied).Kind);
+
+            context.Stocks.Add(new Stock
+            {
+                Id = Guid.NewGuid(),
+                WarehouseCd = "WH-01",
+                LocationCd = "A-01",
+                ProductCd = "SKU-01",
+                LotNo = "LOT-01",
+                PhysicalQty = 12,
+                AvailableQty = 12,
+                OwnerCd = "OWNER-A",
+            });
+            context.Pallets.Add(new Pallet
+            {
+                Id = Guid.NewGuid(),
+                PalletNo = "PALLET-01",
+                ProductCd = "SKU-01",
+                LotNo = "LOT-01",
+                CartonQty = 8,
+                WarehouseCd = "WH-01",
+                LocationCd = "A-01",
+                Status = PalletStatus.InStock,
+            });
+            await context.SaveChangesAsync();
+
+            var matched = await adapter.QueryInventoryAsync(
+                new SpaceWmsInventoryQuery(
+                    Context(),
+                    [LocationId(1)],
+                    LocateCriteria: new SpaceWmsInventoryLocateCriteria(
+                        "SKU-01",
+                        "LOT-01",
+                        "PALLET-01",
+                        "owner-a")));
+            var rejected = await adapter.QueryInventoryAsync(
+                new SpaceWmsInventoryQuery(
+                    Context(),
+                    [LocationId(1)],
+                    LocateCriteria: new SpaceWmsInventoryLocateCriteria(
+                        "SKU-01",
+                        "LOT-01",
+                        "PALLET-01",
+                        "OWNER-B")));
+
+            var item = Assert.Single(matched.Items);
+            Assert.Equal("OWNER-A", item.OwnerId);
+            Assert.Equal("PALLET-01", item.ContainerNumber);
+            Assert.Empty(rejected.Items);
+        });
+    }
+
     private static async Task WithDatabaseAsync(
         Func<string, Task> action)
     {

@@ -164,6 +164,7 @@ public sealed class SpaceWmsRuntimeSchemaFilter : ISchemaFilter
                 "materialNumber",
                 "lotNumber",
                 "containerNumber",
+                "ownerId",
             ],
             [typeof(SpaceWmsRuntimeInventoryLocateHitDto)] =
             [
@@ -181,6 +182,7 @@ public sealed class SpaceWmsRuntimeSchemaFilter : ISchemaFilter
                 "materialNumbers",
                 "lotNumbers",
                 "containerNumbers",
+                "ownerIds",
             ],
             [typeof(SpaceWmsRuntimeTaskItemDto)] =
             [
@@ -829,7 +831,8 @@ public sealed class SpaceWmsRuntimeSchemaFilter : ISchemaFilter
                 true,
                 "materialNumber",
                 "lotNumber",
-                "containerNumber");
+                "containerNumber",
+                "ownerId");
         }
         else if (context.Type == typeof(SpaceWmsRuntimeInventoryLocateHitDto))
         {

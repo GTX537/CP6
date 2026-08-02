@@ -29,6 +29,7 @@ function response(
       materialNumber: 'SKU-01',
       lotNumber: null,
       containerNumber: null,
+      ownerId: 'OWNER-A',
     },
     locationCount: 2,
     floorCount: 2,
@@ -48,6 +49,7 @@ function response(
         materialNumbers: ['SKU-01'],
         lotNumbers: ['LOT-01'],
         containerNumbers: [],
+        ownerIds: ['OWNER-A'],
       },
       {
         locationLogicalId: 'location-2',
@@ -64,6 +66,7 @@ function response(
         materialNumbers: ['SKU-01'],
         lotNumbers: [],
         containerNumbers: ['BOX-01'],
+        ownerIds: ['OWNER-A'],
       },
     ],
     ...overrides,
@@ -94,7 +97,7 @@ describe('InventoryLocateResults', () => {
     const empty = mount(InventoryLocateResults, {
       props: { response: response({ locationCount: 0, floorCount: 0, items: [] }) },
     })
-    expect(empty.text()).toContain('没有库位匹配当前物料、批次或容器条件')
+    expect(empty.text()).toContain('没有库位匹配当前货主、物料、批次或容器条件')
 
     const unavailable = mount(InventoryLocateResults, {
       props: {
@@ -107,6 +110,6 @@ describe('InventoryLocateResults', () => {
       },
     })
     expect(unavailable.text()).toContain('库存数据源不可用，不能判定是否存在匹配库存')
-    expect(unavailable.text()).not.toContain('没有库位匹配当前物料、批次或容器条件')
+    expect(unavailable.text()).not.toContain('没有库位匹配当前货主、物料、批次或容器条件')
   })
 })

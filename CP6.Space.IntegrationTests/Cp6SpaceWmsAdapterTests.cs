@@ -280,6 +280,7 @@ public sealed class Cp6SpaceWmsAdapterTests
                 ProductCd = "SKU-01",
                 LotNo = "LOT-02",
                 PhysicalQty = 20,
+                OwnerCd = "OWNER-A",
             });
         db.Pallets.AddRange(
             new Pallet
@@ -322,7 +323,17 @@ public sealed class Cp6SpaceWmsAdapterTests
                 LocateCriteria: new SpaceWmsInventoryLocateCriteria(
                     "SKU-01",
                     "LOT-02",
-                    "PALLET-01")));
+                    "PALLET-01",
+                    "owner-a")));
+        var wrongOwner = await adapter.QueryInventoryAsync(
+            new SpaceWmsInventoryQuery(
+                Context(),
+                [firstId, secondId],
+                LocateCriteria: new SpaceWmsInventoryLocateCriteria(
+                    "SKU-01",
+                    "LOT-02",
+                    "PALLET-01",
+                    "OWNER-B")));
         var shipped = await adapter.QueryInventoryAsync(
             new SpaceWmsInventoryQuery(
                 Context(),
@@ -337,6 +348,8 @@ public sealed class Cp6SpaceWmsAdapterTests
         Assert.Equal(secondId, pallet.LogicalId);
         Assert.Equal("PALLET-01", pallet.ContainerNumber);
         Assert.Equal(8, pallet.PhysicalQuantity);
+        Assert.Equal("OWNER-A", pallet.OwnerId);
+        Assert.Empty(wrongOwner.Items);
         Assert.Empty(shipped.Items);
     }
 

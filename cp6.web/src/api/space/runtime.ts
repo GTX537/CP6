@@ -25,9 +25,11 @@ export const spaceRuntimeApi = {
     const materialNumber = criteria.materialNumber?.trim()
     const lotNumber = criteria.lotNumber?.trim()
     const containerNumber = criteria.containerNumber?.trim()
+    const ownerId = criteria.ownerId?.trim().toUpperCase()
     if (materialNumber) params.set('materialNumber', materialNumber)
     if (lotNumber) params.set('lotNumber', lotNumber)
     if (containerNumber) params.set('containerNumber', containerNumber)
+    if (ownerId) params.set('ownerId', ownerId)
     return http.get<unknown, SpaceRuntimeInventoryLocateResponse>(
       `/space/design/v1/sites/${siteId}/runtime/inventory/locate`,
       { params },

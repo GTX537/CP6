@@ -846,7 +846,8 @@ public sealed class SpaceDesignV1OpenApiTests
             locateCriteria,
             "materialNumber",
             "lotNumber",
-            "containerNumber");
+            "containerNumber",
+            "ownerId");
         AssertExactRequired(
             locateHit,
             "locationLogicalId",
@@ -862,7 +863,8 @@ public sealed class SpaceDesignV1OpenApiTests
             "allocatedQuantity",
             "materialNumbers",
             "lotNumbers",
-            "containerNumbers");
+            "containerNumbers",
+            "ownerIds");
         AssertExactRequired(
             source,
             "kind",
@@ -988,7 +990,8 @@ public sealed class SpaceDesignV1OpenApiTests
             "allocatedQuantity",
             "materialNumbers",
             "lotNumbers",
-            "containerNumbers");
+            "containerNumbers",
+            "ownerIds");
         AssertNonNullable(
             taskItem,
             "taskId",
@@ -1003,7 +1006,8 @@ public sealed class SpaceDesignV1OpenApiTests
             locateCriteria,
             "materialNumber",
             "lotNumber",
-            "containerNumber");
+            "containerNumber",
+            "ownerId");
         AssertNullable(taskItem, "zoneLogicalId", "quantity", "materialNumber");
         AssertNullable(taskWorkload, "zoneLogicalId", "zoneCode");
 
@@ -1431,6 +1435,9 @@ public sealed class SpaceDesignV1OpenApiTests
         var csharpLocateHit = ExtractTypeBlock(
             csharp,
             "public partial class SpaceWmsRuntimeInventoryLocateHitDto");
+        var csharpLocateCriteria = ExtractTypeBlock(
+            csharp,
+            "public partial class SpaceWmsRuntimeInventoryLocateCriteriaDto");
         var csharpSource = ExtractTypeBlock(
             csharp,
             "public partial class SpaceWmsRuntimeSourceDto");
@@ -1469,6 +1476,10 @@ public sealed class SpaceDesignV1OpenApiTests
         Assert.Contains(
             "public string? MaterialNumber { get; set; }",
             csharpInventory,
+            StringComparison.Ordinal);
+        Assert.Contains(
+            "public string? OwnerId { get; set; }",
+            csharpLocateCriteria,
             StringComparison.Ordinal);
         Assert.Contains(
             "public string? ZoneCode { get; set; }",
@@ -1533,7 +1544,16 @@ public sealed class SpaceDesignV1OpenApiTests
             "allocatedQuantity",
             "materialNumbers",
             "lotNumbers",
-            "containerNumbers");
+            "containerNumbers",
+            "ownerIds");
+
+        var locateCriteriaTypeScript = ExtractTypeBlock(
+            typescript,
+            "export interface ISpaceWmsRuntimeInventoryLocateCriteriaDto");
+        Assert.Contains(
+            "ownerId: string | null | undefined;",
+            locateCriteriaTypeScript,
+            StringComparison.Ordinal);
 
         var taskResponse = ExtractTypeBlock(
             typescript,
