@@ -1,9 +1,10 @@
 # E11-S01 运营诊断交付报告
 
-- 状态：功能分支验证完成，待进入 Space 受控集成分支
+- 状态：已进入 Space 受控集成分支
 - 起始基线：`b6770e7943a7daf3d313e91d695f78ef808ec6f3`
 - 合同提交：`66b6c17f15b4589e6654537ae550476c90d21c25`
 - 功能提交：`53a07d46a0df10a9e5254ea89fc969deb71e2a45`
+- no-ff 集成提交：`8d4732e21c86696848503aeb07ef54c900ae044d`
 - 功能分支：`codex/space-e11-s01-operational-diagnostics`
 - Migration：无
 
@@ -71,6 +72,7 @@ i18n 静态门禁仍报告集成基线已有的 911 个缺失键；本卡将快�
 | TypeScript SDK strict no-emit | passed |
 | Git 差异检查 | passed |
 | i18n 静态门禁 | 911 项既有基线欠账；本卡净新增 0 |
+| 合并态冒烟 | 引擎 4/4、服务 7/7、权限/审计/契约/种子 59/59、前端 12/12、严格类型与 SDK drift passed |
 
 完整 solution 首次以 `--no-restore` 运行时发现新工作树中 8 个非本卡工程缺少
 `project.assets.json`。完成一次 solution restore 后，同一 Release 非增量构建以
