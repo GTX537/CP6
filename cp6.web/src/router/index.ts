@@ -181,6 +181,7 @@ const viewModules: Record<string, () => Promise<any>> = {
   '/space/code-rule': () => import('@/views/space/lifecycle/SpaceCodeRuleView.vue'),
   '/space/publish': () => import('@/views/space/lifecycle/SpacePublishView.vue'),
   '/space/events': () => import('@/views/space/lifecycle/SpaceEventsView.vue'),
+  '/space/ai-admin': () => import('@/views/space/admin/SpaceAiAdminView.vue'),
 }
 
 // 静态路由：登录页 / Layout壳子 / 独立窗口

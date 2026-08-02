@@ -63,15 +63,17 @@ public static class SpaceInfrastructureRegistration
         services.TryAddSingleton(
             SpaceWorkerSandboxPolicy.FileSafetyDefault);
         services.TryAddSingleton<
-            ISpaceAiTenantPolicySource,
-            DisabledSpaceAiTenantPolicySource>();
-        services.TryAddSingleton<
             ISpaceAiQuotaLeaseManager,
             ClosedSpaceAiQuotaLeaseManager>();
         services.TryAddSingleton<
             IWarehouseGenerationProviderRegistry,
             WarehouseGenerationProviderRegistry>();
         services.AddScoped<SpaceAiGenerationGateway>();
+        services.AddScoped<SpaceAiAdministrationService>();
+        services.AddScoped<ISpaceAiAdministrationService>(provider =>
+            provider.GetRequiredService<SpaceAiAdministrationService>());
+        services.AddScoped<ISpaceAiTenantPolicySource>(provider =>
+            provider.GetRequiredService<SpaceAiAdministrationService>());
         services.AddScoped<ISpaceFileCatalog, EfSpaceFileCatalog>();
         services.AddScoped<ISpaceSourceCatalog, EfSpaceSourceCatalog>();
         services.AddScoped<SpaceFileUploadService>();

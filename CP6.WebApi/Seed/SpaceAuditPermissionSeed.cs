@@ -32,6 +32,7 @@ public static class SpaceAuditPermissionSeed
 
     private const int SpaceMenuId = 900;
     private const int AuditMenuId = 906;
+    private const int AiAdminMenuId = 907;
     private const int AdministratorRoleId = 1;
     private static readonly SemaphoreSlim NonSqlGate = new(1, 1);
     private static readonly (string Code, string Name, int Sort)[]
@@ -45,6 +46,12 @@ public static class SpaceAuditPermissionSeed
             ("integration:manage", "管理 WMS 集成", 60),
             ("external:read", "查看外部组织与成员", 70),
             ("external:manage", "管理外部组织与成员", 80),
+        ];
+    private static readonly (string Code, string Name, int Sort)[]
+        AiAdminActions =
+        [
+            ("read", "查看 AI 策略与用量", 10),
+            ("manage", "管理 AI 策略与预算", 20),
         ];
 
     public static void EnsureSeeded(CP6Context db) =>
@@ -209,6 +216,33 @@ public static class SpaceAuditPermissionSeed
             changed = true;
         }
 
+        var aiAdminMenu = await db.Sys_Menus.SingleOrDefaultAsync(
+            x => x.MenuId == AiAdminMenuId,
+            ct);
+        if (aiAdminMenu is null)
+        {
+            db.Sys_Menus.Add(new Sys_Menu
+            {
+                MenuId = AiAdminMenuId,
+                MenuName = "AI 策略与用量",
+                MenuKey = "space-ai-admin",
+                RoutePath = "/space/ai-admin",
+                Icon = "Cpu",
+                ParentId = SpaceMenuId,
+                OrderNo = AiAdminMenuId,
+                Enable = true,
+            });
+            changed = true;
+        }
+        else if (!string.Equals(
+                     aiAdminMenu.MenuKey,
+                     "space-ai-admin",
+                     StringComparison.Ordinal))
+        {
+            aiAdminMenu.MenuKey = "space-ai-admin";
+            changed = true;
+        }
+
         var tenantIds = await db.Sys_Tenants
             .Select(x => x.Id)
             .ToListAsync(ct);
@@ -223,6 +257,11 @@ public static class SpaceAuditPermissionSeed
                 db,
                 tenantId,
                 AuditMenuId,
+                ct);
+            changed |= await EnsureRoleMenuAsync(
+                db,
+                tenantId,
+                AiAdminMenuId,
                 ct);
 
             foreach (var action in DesignActions)
@@ -307,6 +346,49 @@ public static class SpaceAuditPermissionSeed
                 });
                 changed = true;
             }
+
+            foreach (var action in AiAdminActions)
+            {
+                if (!await db.Sys_MenuActions
+                        .IgnoreQueryFilters()
+                        .AnyAsync(
+                            x =>
+                                x.TenantId == tenantId &&
+                                x.MenuId == AiAdminMenuId &&
+                                x.ActionCode == action.Code,
+                            ct))
+                {
+                    db.Sys_MenuActions.Add(new Sys_MenuAction
+                    {
+                        TenantId = tenantId,
+                        MenuId = AiAdminMenuId,
+                        ActionCode = action.Code,
+                        ActionName = action.Name,
+                        Sort = action.Sort,
+                    });
+                    changed = true;
+                }
+
+                if (!await db.Sys_RoleActions
+                        .IgnoreQueryFilters()
+                        .AnyAsync(
+                            x =>
+                                x.TenantId == tenantId &&
+                                x.RoleId == AdministratorRoleId &&
+                                x.MenuId == AiAdminMenuId &&
+                                x.ActionCode == action.Code,
+                            ct))
+                {
+                    db.Sys_RoleActions.Add(new Sys_RoleAction
+                    {
+                        TenantId = tenantId,
+                        RoleId = AdministratorRoleId,
+                        MenuId = AiAdminMenuId,
+                        ActionCode = action.Code,
+                    });
+                    changed = true;
+                }
+            }
         }
 
         if (changed)
@@ -360,6 +442,11 @@ public static class SpaceAuditPermissionSeed
                 x =>
                     x.MenuId == AuditMenuId &&
                     x.MenuKey == "space-audit",
+                ct) ||
+            !await db.Sys_Menus.AnyAsync(
+                x =>
+                    x.MenuId == AiAdminMenuId &&
+                    x.MenuKey == "space-ai-admin",
                 ct))
         {
             return false;
@@ -382,6 +469,14 @@ public static class SpaceAuditPermissionSeed
                         x.TenantId == tenantId &&
                         x.RoleId == AdministratorRoleId &&
                         x.MenuId == AuditMenuId,
+                    ct);
+            var hasAiAdminMenu = await db.Sys_RoleMenus
+                .IgnoreQueryFilters()
+                .AnyAsync(
+                    x =>
+                        x.TenantId == tenantId &&
+                        x.RoleId == AdministratorRoleId &&
+                        x.MenuId == AiAdminMenuId,
                     ct);
             var hasAction = await db.Sys_MenuActions
                 .IgnoreQueryFilters()
@@ -422,11 +517,35 @@ public static class SpaceAuditPermissionSeed
                                 x.ActionCode == action.Code,
                             ct);
             }
+            var hasAiAdminActions = true;
+            foreach (var action in AiAdminActions)
+            {
+                hasAiAdminActions &=
+                    await db.Sys_MenuActions
+                        .IgnoreQueryFilters()
+                        .AnyAsync(
+                            x =>
+                                x.TenantId == tenantId &&
+                                x.MenuId == AiAdminMenuId &&
+                                x.ActionCode == action.Code,
+                            ct) &&
+                    await db.Sys_RoleActions
+                        .IgnoreQueryFilters()
+                        .AnyAsync(
+                            x =>
+                                x.TenantId == tenantId &&
+                                x.RoleId == AdministratorRoleId &&
+                                x.MenuId == AiAdminMenuId &&
+                                x.ActionCode == action.Code,
+                            ct);
+            }
             if (!hasSpaceMenu ||
                 !hasAuditMenu ||
+                !hasAiAdminMenu ||
                 !hasAction ||
                 !hasGrant ||
-                !hasDesignActions)
+                !hasDesignActions ||
+                !hasAiAdminActions)
             {
                 return false;
             }

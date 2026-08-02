@@ -12,6 +12,28 @@ export interface ISpaceDesignV1Client {
     /**
      * @return OK
      */
+    getPolicy(): Promise<SpaceAiPolicyDto>;
+
+    /**
+     * @param idempotency_Key Opaque caller key; 1-128 UTF-8 bytes. Reuse with a different request returns SPACE_IDEMPOTENCY_KEY_REUSED.
+     * @return OK
+     */
+    updatePolicy(idempotency_Key: string, body: UpdateSpaceAiPolicyRequest): Promise<UpdateSpaceAiPolicyResponse>;
+
+    /**
+     * @param fromUtc (optional)
+     * @param toUtc (optional)
+     * @param providerAlias (optional)
+     * @param outcome (optional)
+     * @param page (optional)
+     * @param pageSize (optional)
+     * @return OK
+     */
+    getUsage(fromUtc: Date | undefined, toUtc: Date | undefined, providerAlias: string | undefined, outcome: string | undefined, page: number | undefined, pageSize: number | undefined): Promise<SpaceAiUsagePageDto>;
+
+    /**
+     * @return OK
+     */
     downloadStandardExcelTemplate(): Promise<FileResponse>;
 
     /**
@@ -339,6 +361,300 @@ export class SpaceDesignV1Client implements ISpaceDesignV1Client {
     constructor(baseUrl?: string, http?: { fetch(url: RequestInfo, init?: RequestInit): Promise<Response> }) {
         this.http = http ? http : window as any;
         this.baseUrl = baseUrl ?? "";
+    }
+
+    /**
+     * @return OK
+     */
+    getPolicy(): Promise<SpaceAiPolicyDto> {
+        let url_ = this.baseUrl + "/api/space/design/v1/ai-policy";
+        url_ = url_.replace(/[?&]$/, "");
+
+        let options_: RequestInit = {
+            method: "GET",
+            headers: {
+                "Accept": "application/json"
+            }
+        };
+
+        return this.http.fetch(url_, options_).then((_response: Response) => {
+            return this.processGetPolicy(_response);
+        });
+    }
+
+    protected processGetPolicy(response: Response): Promise<SpaceAiPolicyDto> {
+        const status = response.status;
+        let _headers: any = {}; if (response.headers && response.headers.forEach) { response.headers.forEach((v: any, k: any) => _headers[k] = v); };
+        if (status === 200) {
+            return response.text().then((_responseText) => {
+            let result200: any = null;
+            let resultData200 = _responseText === "" ? null : JSON.parse(_responseText, this.jsonParseReviver);
+            result200 = SpaceAiPolicyDto.fromJS(resultData200);
+            return result200;
+            });
+        } else if (status === 400) {
+            return response.text().then((_responseText) => {
+            let result400: any = null;
+            let resultData400 = _responseText === "" ? null : JSON.parse(_responseText, this.jsonParseReviver);
+            result400 = SpaceDesignProblemDetails.fromJS(resultData400);
+            return throwException("Bad Request", status, _responseText, _headers, result400);
+            });
+        } else if (status === 401) {
+            return response.text().then((_responseText) => {
+            let result401: any = null;
+            let resultData401 = _responseText === "" ? null : JSON.parse(_responseText, this.jsonParseReviver);
+            result401 = SpaceDesignProblemDetails.fromJS(resultData401);
+            return throwException("Unauthorized", status, _responseText, _headers, result401);
+            });
+        } else if (status === 403) {
+            return response.text().then((_responseText) => {
+            let result403: any = null;
+            let resultData403 = _responseText === "" ? null : JSON.parse(_responseText, this.jsonParseReviver);
+            result403 = SpaceDesignProblemDetails.fromJS(resultData403);
+            return throwException("Forbidden", status, _responseText, _headers, result403);
+            });
+        } else if (status === 404) {
+            return response.text().then((_responseText) => {
+            let result404: any = null;
+            let resultData404 = _responseText === "" ? null : JSON.parse(_responseText, this.jsonParseReviver);
+            result404 = SpaceDesignProblemDetails.fromJS(resultData404);
+            return throwException("Not Found", status, _responseText, _headers, result404);
+            });
+        } else if (status === 409) {
+            return response.text().then((_responseText) => {
+            let result409: any = null;
+            let resultData409 = _responseText === "" ? null : JSON.parse(_responseText, this.jsonParseReviver);
+            result409 = SpaceDesignProblemDetails.fromJS(resultData409);
+            return throwException("Conflict", status, _responseText, _headers, result409);
+            });
+        } else if (status === 422) {
+            return response.text().then((_responseText) => {
+            let result422: any = null;
+            let resultData422 = _responseText === "" ? null : JSON.parse(_responseText, this.jsonParseReviver);
+            result422 = SpaceDesignProblemDetails.fromJS(resultData422);
+            return throwException("Unprocessable Content", status, _responseText, _headers, result422);
+            });
+        } else if (status === 500) {
+            return response.text().then((_responseText) => {
+            let result500: any = null;
+            let resultData500 = _responseText === "" ? null : JSON.parse(_responseText, this.jsonParseReviver);
+            result500 = SpaceDesignProblemDetails.fromJS(resultData500);
+            return throwException("Internal Server Error", status, _responseText, _headers, result500);
+            });
+        } else if (status !== 200 && status !== 204) {
+            return response.text().then((_responseText) => {
+            return throwException("An unexpected server error occurred.", status, _responseText, _headers);
+            });
+        }
+        return Promise.resolve<SpaceAiPolicyDto>(null as any);
+    }
+
+    /**
+     * @param idempotency_Key Opaque caller key; 1-128 UTF-8 bytes. Reuse with a different request returns SPACE_IDEMPOTENCY_KEY_REUSED.
+     * @return OK
+     */
+    updatePolicy(idempotency_Key: string, body: UpdateSpaceAiPolicyRequest): Promise<UpdateSpaceAiPolicyResponse> {
+        let url_ = this.baseUrl + "/api/space/design/v1/ai-policy";
+        url_ = url_.replace(/[?&]$/, "");
+
+        const content_ = JSON.stringify(body);
+
+        let options_: RequestInit = {
+            body: content_,
+            method: "PUT",
+            headers: {
+                "Idempotency-Key": idempotency_Key !== undefined && idempotency_Key !== null ? "" + idempotency_Key : "",
+                "Content-Type": "application/json",
+                "Accept": "application/json"
+            }
+        };
+
+        return this.http.fetch(url_, options_).then((_response: Response) => {
+            return this.processUpdatePolicy(_response);
+        });
+    }
+
+    protected processUpdatePolicy(response: Response): Promise<UpdateSpaceAiPolicyResponse> {
+        const status = response.status;
+        let _headers: any = {}; if (response.headers && response.headers.forEach) { response.headers.forEach((v: any, k: any) => _headers[k] = v); };
+        if (status === 200) {
+            return response.text().then((_responseText) => {
+            let result200: any = null;
+            let resultData200 = _responseText === "" ? null : JSON.parse(_responseText, this.jsonParseReviver);
+            result200 = UpdateSpaceAiPolicyResponse.fromJS(resultData200);
+            return result200;
+            });
+        } else if (status === 400) {
+            return response.text().then((_responseText) => {
+            let result400: any = null;
+            let resultData400 = _responseText === "" ? null : JSON.parse(_responseText, this.jsonParseReviver);
+            result400 = SpaceDesignProblemDetails.fromJS(resultData400);
+            return throwException("Bad Request", status, _responseText, _headers, result400);
+            });
+        } else if (status === 401) {
+            return response.text().then((_responseText) => {
+            let result401: any = null;
+            let resultData401 = _responseText === "" ? null : JSON.parse(_responseText, this.jsonParseReviver);
+            result401 = SpaceDesignProblemDetails.fromJS(resultData401);
+            return throwException("Unauthorized", status, _responseText, _headers, result401);
+            });
+        } else if (status === 403) {
+            return response.text().then((_responseText) => {
+            let result403: any = null;
+            let resultData403 = _responseText === "" ? null : JSON.parse(_responseText, this.jsonParseReviver);
+            result403 = SpaceDesignProblemDetails.fromJS(resultData403);
+            return throwException("Forbidden", status, _responseText, _headers, result403);
+            });
+        } else if (status === 404) {
+            return response.text().then((_responseText) => {
+            let result404: any = null;
+            let resultData404 = _responseText === "" ? null : JSON.parse(_responseText, this.jsonParseReviver);
+            result404 = SpaceDesignProblemDetails.fromJS(resultData404);
+            return throwException("Not Found", status, _responseText, _headers, result404);
+            });
+        } else if (status === 409) {
+            return response.text().then((_responseText) => {
+            let result409: any = null;
+            let resultData409 = _responseText === "" ? null : JSON.parse(_responseText, this.jsonParseReviver);
+            result409 = SpaceDesignProblemDetails.fromJS(resultData409);
+            return throwException("Conflict", status, _responseText, _headers, result409);
+            });
+        } else if (status === 422) {
+            return response.text().then((_responseText) => {
+            let result422: any = null;
+            let resultData422 = _responseText === "" ? null : JSON.parse(_responseText, this.jsonParseReviver);
+            result422 = SpaceDesignProblemDetails.fromJS(resultData422);
+            return throwException("Unprocessable Content", status, _responseText, _headers, result422);
+            });
+        } else if (status === 500) {
+            return response.text().then((_responseText) => {
+            let result500: any = null;
+            let resultData500 = _responseText === "" ? null : JSON.parse(_responseText, this.jsonParseReviver);
+            result500 = SpaceDesignProblemDetails.fromJS(resultData500);
+            return throwException("Internal Server Error", status, _responseText, _headers, result500);
+            });
+        } else if (status !== 200 && status !== 204) {
+            return response.text().then((_responseText) => {
+            return throwException("An unexpected server error occurred.", status, _responseText, _headers);
+            });
+        }
+        return Promise.resolve<UpdateSpaceAiPolicyResponse>(null as any);
+    }
+
+    /**
+     * @param fromUtc (optional)
+     * @param toUtc (optional)
+     * @param providerAlias (optional)
+     * @param outcome (optional)
+     * @param page (optional)
+     * @param pageSize (optional)
+     * @return OK
+     */
+    getUsage(fromUtc: Date | undefined, toUtc: Date | undefined, providerAlias: string | undefined, outcome: string | undefined, page: number | undefined, pageSize: number | undefined): Promise<SpaceAiUsagePageDto> {
+        let url_ = this.baseUrl + "/api/space/design/v1/ai-usage?";
+        if (fromUtc === null)
+            throw new globalThis.Error("The parameter 'fromUtc' cannot be null.");
+        else if (fromUtc !== undefined)
+            url_ += "FromUtc=" + encodeURIComponent(fromUtc ? "" + fromUtc.toISOString() : "") + "&";
+        if (toUtc === null)
+            throw new globalThis.Error("The parameter 'toUtc' cannot be null.");
+        else if (toUtc !== undefined)
+            url_ += "ToUtc=" + encodeURIComponent(toUtc ? "" + toUtc.toISOString() : "") + "&";
+        if (providerAlias === null)
+            throw new globalThis.Error("The parameter 'providerAlias' cannot be null.");
+        else if (providerAlias !== undefined)
+            url_ += "ProviderAlias=" + encodeURIComponent("" + providerAlias) + "&";
+        if (outcome === null)
+            throw new globalThis.Error("The parameter 'outcome' cannot be null.");
+        else if (outcome !== undefined)
+            url_ += "Outcome=" + encodeURIComponent("" + outcome) + "&";
+        if (page === null)
+            throw new globalThis.Error("The parameter 'page' cannot be null.");
+        else if (page !== undefined)
+            url_ += "Page=" + encodeURIComponent("" + page) + "&";
+        if (pageSize === null)
+            throw new globalThis.Error("The parameter 'pageSize' cannot be null.");
+        else if (pageSize !== undefined)
+            url_ += "PageSize=" + encodeURIComponent("" + pageSize) + "&";
+        url_ = url_.replace(/[?&]$/, "");
+
+        let options_: RequestInit = {
+            method: "GET",
+            headers: {
+                "Accept": "application/json"
+            }
+        };
+
+        return this.http.fetch(url_, options_).then((_response: Response) => {
+            return this.processGetUsage(_response);
+        });
+    }
+
+    protected processGetUsage(response: Response): Promise<SpaceAiUsagePageDto> {
+        const status = response.status;
+        let _headers: any = {}; if (response.headers && response.headers.forEach) { response.headers.forEach((v: any, k: any) => _headers[k] = v); };
+        if (status === 200) {
+            return response.text().then((_responseText) => {
+            let result200: any = null;
+            let resultData200 = _responseText === "" ? null : JSON.parse(_responseText, this.jsonParseReviver);
+            result200 = SpaceAiUsagePageDto.fromJS(resultData200);
+            return result200;
+            });
+        } else if (status === 400) {
+            return response.text().then((_responseText) => {
+            let result400: any = null;
+            let resultData400 = _responseText === "" ? null : JSON.parse(_responseText, this.jsonParseReviver);
+            result400 = SpaceDesignProblemDetails.fromJS(resultData400);
+            return throwException("Bad Request", status, _responseText, _headers, result400);
+            });
+        } else if (status === 401) {
+            return response.text().then((_responseText) => {
+            let result401: any = null;
+            let resultData401 = _responseText === "" ? null : JSON.parse(_responseText, this.jsonParseReviver);
+            result401 = SpaceDesignProblemDetails.fromJS(resultData401);
+            return throwException("Unauthorized", status, _responseText, _headers, result401);
+            });
+        } else if (status === 403) {
+            return response.text().then((_responseText) => {
+            let result403: any = null;
+            let resultData403 = _responseText === "" ? null : JSON.parse(_responseText, this.jsonParseReviver);
+            result403 = SpaceDesignProblemDetails.fromJS(resultData403);
+            return throwException("Forbidden", status, _responseText, _headers, result403);
+            });
+        } else if (status === 404) {
+            return response.text().then((_responseText) => {
+            let result404: any = null;
+            let resultData404 = _responseText === "" ? null : JSON.parse(_responseText, this.jsonParseReviver);
+            result404 = SpaceDesignProblemDetails.fromJS(resultData404);
+            return throwException("Not Found", status, _responseText, _headers, result404);
+            });
+        } else if (status === 409) {
+            return response.text().then((_responseText) => {
+            let result409: any = null;
+            let resultData409 = _responseText === "" ? null : JSON.parse(_responseText, this.jsonParseReviver);
+            result409 = SpaceDesignProblemDetails.fromJS(resultData409);
+            return throwException("Conflict", status, _responseText, _headers, result409);
+            });
+        } else if (status === 422) {
+            return response.text().then((_responseText) => {
+            let result422: any = null;
+            let resultData422 = _responseText === "" ? null : JSON.parse(_responseText, this.jsonParseReviver);
+            result422 = SpaceDesignProblemDetails.fromJS(resultData422);
+            return throwException("Unprocessable Content", status, _responseText, _headers, result422);
+            });
+        } else if (status === 500) {
+            return response.text().then((_responseText) => {
+            let result500: any = null;
+            let resultData500 = _responseText === "" ? null : JSON.parse(_responseText, this.jsonParseReviver);
+            result500 = SpaceDesignProblemDetails.fromJS(resultData500);
+            return throwException("Internal Server Error", status, _responseText, _headers, result500);
+            });
+        } else if (status !== 200 && status !== 204) {
+            return response.text().then((_responseText) => {
+            return throwException("An unexpected server error occurred.", status, _responseText, _headers);
+            });
+        }
+        return Promise.resolve<SpaceAiUsagePageDto>(null as any);
     }
 
     /**
@@ -7168,6 +7484,415 @@ export interface ISaveSpaceUnderlayCalibrationResponse {
     idempotentReplay?: boolean;
 }
 
+export class SpaceAiApprovedProviderDto implements ISpaceAiApprovedProviderDto {
+    alias!: string;
+    kind!: string;
+
+    constructor(data?: ISpaceAiApprovedProviderDto) {
+        if (data) {
+            for (var property in data) {
+                if (data.hasOwnProperty(property))
+                    (this as any)[property] = (data as any)[property];
+            }
+        }
+    }
+
+    init(_data?: any) {
+        if (_data) {
+            this.alias = _data["alias"];
+            this.kind = _data["kind"];
+        }
+    }
+
+    static fromJS(data: any): SpaceAiApprovedProviderDto {
+        data = typeof data === 'object' ? data : {};
+        let result = new SpaceAiApprovedProviderDto();
+        result.init(data);
+        return result;
+    }
+
+    toJSON(data?: any) {
+        data = typeof data === 'object' ? data : {};
+        data["alias"] = this.alias;
+        data["kind"] = this.kind;
+        return data;
+    }
+}
+
+export interface ISpaceAiApprovedProviderDto {
+    alias: string;
+    kind: string;
+}
+
+export class SpaceAiBudgetBalanceDto implements ISpaceAiBudgetBalanceDto {
+    limitMinor?: number | undefined;
+    consumedMinor!: number;
+    remainingMinor?: number | undefined;
+    currency?: string | undefined;
+
+    constructor(data?: ISpaceAiBudgetBalanceDto) {
+        if (data) {
+            for (var property in data) {
+                if (data.hasOwnProperty(property))
+                    (this as any)[property] = (data as any)[property];
+            }
+        }
+    }
+
+    init(_data?: any) {
+        if (_data) {
+            this.limitMinor = _data["limitMinor"];
+            this.consumedMinor = _data["consumedMinor"];
+            this.remainingMinor = _data["remainingMinor"];
+            this.currency = _data["currency"];
+        }
+    }
+
+    static fromJS(data: any): SpaceAiBudgetBalanceDto {
+        data = typeof data === 'object' ? data : {};
+        let result = new SpaceAiBudgetBalanceDto();
+        result.init(data);
+        return result;
+    }
+
+    toJSON(data?: any) {
+        data = typeof data === 'object' ? data : {};
+        data["limitMinor"] = this.limitMinor;
+        data["consumedMinor"] = this.consumedMinor;
+        data["remainingMinor"] = this.remainingMinor;
+        data["currency"] = this.currency;
+        return data;
+    }
+}
+
+export interface ISpaceAiBudgetBalanceDto {
+    limitMinor?: number | undefined;
+    consumedMinor: number;
+    remainingMinor?: number | undefined;
+    currency?: string | undefined;
+}
+
+export class SpaceAiPolicyDto implements ISpaceAiPolicyDto {
+    version!: number;
+    dataPolicy!: string;
+    allowedSiteIds!: string[];
+    allowedProviderAliases!: string[];
+    maxConcurrentRuns!: number;
+    externalProviderEnabled!: boolean;
+    dailyBudgetMinor?: number | undefined;
+    monthlyBudgetMinor?: number | undefined;
+    currency?: string | undefined;
+    approvedProviders!: SpaceAiApprovedProviderDto[];
+    updatedAtUtc?: Date | undefined;
+    updatedBy?: string | undefined;
+
+    constructor(data?: ISpaceAiPolicyDto) {
+        if (data) {
+            for (var property in data) {
+                if (data.hasOwnProperty(property))
+                    (this as any)[property] = (data as any)[property];
+            }
+        }
+        if (!data) {
+            this.allowedSiteIds = [];
+            this.allowedProviderAliases = [];
+            this.approvedProviders = [];
+        }
+    }
+
+    init(_data?: any) {
+        if (_data) {
+            this.version = _data["version"];
+            this.dataPolicy = _data["dataPolicy"];
+            if (Array.isArray(_data["allowedSiteIds"])) {
+                this.allowedSiteIds = [] as any;
+                for (let item of _data["allowedSiteIds"])
+                    this.allowedSiteIds!.push(item);
+            }
+            if (Array.isArray(_data["allowedProviderAliases"])) {
+                this.allowedProviderAliases = [] as any;
+                for (let item of _data["allowedProviderAliases"])
+                    this.allowedProviderAliases!.push(item);
+            }
+            this.maxConcurrentRuns = _data["maxConcurrentRuns"];
+            this.externalProviderEnabled = _data["externalProviderEnabled"];
+            this.dailyBudgetMinor = _data["dailyBudgetMinor"];
+            this.monthlyBudgetMinor = _data["monthlyBudgetMinor"];
+            this.currency = _data["currency"];
+            if (Array.isArray(_data["approvedProviders"])) {
+                this.approvedProviders = [] as any;
+                for (let item of _data["approvedProviders"])
+                    this.approvedProviders!.push(SpaceAiApprovedProviderDto.fromJS(item));
+            }
+            this.updatedAtUtc = _data["updatedAtUtc"] ? new Date(_data["updatedAtUtc"].toString()) : undefined as any;
+            this.updatedBy = _data["updatedBy"];
+        }
+    }
+
+    static fromJS(data: any): SpaceAiPolicyDto {
+        data = typeof data === 'object' ? data : {};
+        let result = new SpaceAiPolicyDto();
+        result.init(data);
+        return result;
+    }
+
+    toJSON(data?: any) {
+        data = typeof data === 'object' ? data : {};
+        data["version"] = this.version;
+        data["dataPolicy"] = this.dataPolicy;
+        if (Array.isArray(this.allowedSiteIds)) {
+            data["allowedSiteIds"] = [];
+            for (let item of this.allowedSiteIds)
+                data["allowedSiteIds"].push(item);
+        }
+        if (Array.isArray(this.allowedProviderAliases)) {
+            data["allowedProviderAliases"] = [];
+            for (let item of this.allowedProviderAliases)
+                data["allowedProviderAliases"].push(item);
+        }
+        data["maxConcurrentRuns"] = this.maxConcurrentRuns;
+        data["externalProviderEnabled"] = this.externalProviderEnabled;
+        data["dailyBudgetMinor"] = this.dailyBudgetMinor;
+        data["monthlyBudgetMinor"] = this.monthlyBudgetMinor;
+        data["currency"] = this.currency;
+        if (Array.isArray(this.approvedProviders)) {
+            data["approvedProviders"] = [];
+            for (let item of this.approvedProviders)
+                data["approvedProviders"].push(item ? item.toJSON() : undefined as any);
+        }
+        data["updatedAtUtc"] = this.updatedAtUtc ? this.updatedAtUtc.toISOString() : undefined as any;
+        data["updatedBy"] = this.updatedBy;
+        return data;
+    }
+}
+
+export interface ISpaceAiPolicyDto {
+    version: number;
+    dataPolicy: string;
+    allowedSiteIds: string[];
+    allowedProviderAliases: string[];
+    maxConcurrentRuns: number;
+    externalProviderEnabled: boolean;
+    dailyBudgetMinor?: number | undefined;
+    monthlyBudgetMinor?: number | undefined;
+    currency?: string | undefined;
+    approvedProviders: SpaceAiApprovedProviderDto[];
+    updatedAtUtc?: Date | undefined;
+    updatedBy?: string | undefined;
+}
+
+export class SpaceAiUsageItemDto implements ISpaceAiUsageItemDto {
+    id!: string;
+    runId!: string;
+    providerAlias!: string;
+    providerModel!: string;
+    inputUnits!: number;
+    outputUnits!: number;
+    estimatedCostMinor!: number;
+    actualCostMinor?: number | undefined;
+    currency?: string | undefined;
+    latencyMs!: number;
+    outcome!: string;
+    recordedAtUtc!: Date;
+
+    constructor(data?: ISpaceAiUsageItemDto) {
+        if (data) {
+            for (var property in data) {
+                if (data.hasOwnProperty(property))
+                    (this as any)[property] = (data as any)[property];
+            }
+        }
+    }
+
+    init(_data?: any) {
+        if (_data) {
+            this.id = _data["id"];
+            this.runId = _data["runId"];
+            this.providerAlias = _data["providerAlias"];
+            this.providerModel = _data["providerModel"];
+            this.inputUnits = _data["inputUnits"];
+            this.outputUnits = _data["outputUnits"];
+            this.estimatedCostMinor = _data["estimatedCostMinor"];
+            this.actualCostMinor = _data["actualCostMinor"];
+            this.currency = _data["currency"];
+            this.latencyMs = _data["latencyMs"];
+            this.outcome = _data["outcome"];
+            this.recordedAtUtc = _data["recordedAtUtc"] ? new Date(_data["recordedAtUtc"].toString()) : undefined as any;
+        }
+    }
+
+    static fromJS(data: any): SpaceAiUsageItemDto {
+        data = typeof data === 'object' ? data : {};
+        let result = new SpaceAiUsageItemDto();
+        result.init(data);
+        return result;
+    }
+
+    toJSON(data?: any) {
+        data = typeof data === 'object' ? data : {};
+        data["id"] = this.id;
+        data["runId"] = this.runId;
+        data["providerAlias"] = this.providerAlias;
+        data["providerModel"] = this.providerModel;
+        data["inputUnits"] = this.inputUnits;
+        data["outputUnits"] = this.outputUnits;
+        data["estimatedCostMinor"] = this.estimatedCostMinor;
+        data["actualCostMinor"] = this.actualCostMinor;
+        data["currency"] = this.currency;
+        data["latencyMs"] = this.latencyMs;
+        data["outcome"] = this.outcome;
+        data["recordedAtUtc"] = this.recordedAtUtc ? this.recordedAtUtc.toISOString() : undefined as any;
+        return data;
+    }
+}
+
+export interface ISpaceAiUsageItemDto {
+    id: string;
+    runId: string;
+    providerAlias: string;
+    providerModel: string;
+    inputUnits: number;
+    outputUnits: number;
+    estimatedCostMinor: number;
+    actualCostMinor?: number | undefined;
+    currency?: string | undefined;
+    latencyMs: number;
+    outcome: string;
+    recordedAtUtc: Date;
+}
+
+export class SpaceAiUsagePageDto implements ISpaceAiUsagePageDto {
+    items!: SpaceAiUsageItemDto[];
+    total!: number;
+    page!: number;
+    pageSize!: number;
+    summary!: SpaceAiUsageSummaryDto;
+
+    constructor(data?: ISpaceAiUsagePageDto) {
+        if (data) {
+            for (var property in data) {
+                if (data.hasOwnProperty(property))
+                    (this as any)[property] = (data as any)[property];
+            }
+        }
+        if (!data) {
+            this.items = [];
+            this.summary = new SpaceAiUsageSummaryDto();
+        }
+    }
+
+    init(_data?: any) {
+        if (_data) {
+            if (Array.isArray(_data["items"])) {
+                this.items = [] as any;
+                for (let item of _data["items"])
+                    this.items!.push(SpaceAiUsageItemDto.fromJS(item));
+            }
+            this.total = _data["total"];
+            this.page = _data["page"];
+            this.pageSize = _data["pageSize"];
+            this.summary = _data["summary"] ? SpaceAiUsageSummaryDto.fromJS(_data["summary"]) : new SpaceAiUsageSummaryDto();
+        }
+    }
+
+    static fromJS(data: any): SpaceAiUsagePageDto {
+        data = typeof data === 'object' ? data : {};
+        let result = new SpaceAiUsagePageDto();
+        result.init(data);
+        return result;
+    }
+
+    toJSON(data?: any) {
+        data = typeof data === 'object' ? data : {};
+        if (Array.isArray(this.items)) {
+            data["items"] = [];
+            for (let item of this.items)
+                data["items"].push(item ? item.toJSON() : undefined as any);
+        }
+        data["total"] = this.total;
+        data["page"] = this.page;
+        data["pageSize"] = this.pageSize;
+        data["summary"] = this.summary ? this.summary.toJSON() : undefined as any;
+        return data;
+    }
+}
+
+export interface ISpaceAiUsagePageDto {
+    items: SpaceAiUsageItemDto[];
+    total: number;
+    page: number;
+    pageSize: number;
+    summary: SpaceAiUsageSummaryDto;
+}
+
+export class SpaceAiUsageSummaryDto implements ISpaceAiUsageSummaryDto {
+    totalRuns!: number;
+    inputUnits!: number;
+    outputUnits!: number;
+    estimatedCostMinor!: number;
+    actualCostMinor!: number;
+    hasUnpricedUsage!: boolean;
+    dailyBudget!: SpaceAiBudgetBalanceDto;
+    monthlyBudget!: SpaceAiBudgetBalanceDto;
+
+    constructor(data?: ISpaceAiUsageSummaryDto) {
+        if (data) {
+            for (var property in data) {
+                if (data.hasOwnProperty(property))
+                    (this as any)[property] = (data as any)[property];
+            }
+        }
+        if (!data) {
+            this.dailyBudget = new SpaceAiBudgetBalanceDto();
+            this.monthlyBudget = new SpaceAiBudgetBalanceDto();
+        }
+    }
+
+    init(_data?: any) {
+        if (_data) {
+            this.totalRuns = _data["totalRuns"];
+            this.inputUnits = _data["inputUnits"];
+            this.outputUnits = _data["outputUnits"];
+            this.estimatedCostMinor = _data["estimatedCostMinor"];
+            this.actualCostMinor = _data["actualCostMinor"];
+            this.hasUnpricedUsage = _data["hasUnpricedUsage"];
+            this.dailyBudget = _data["dailyBudget"] ? SpaceAiBudgetBalanceDto.fromJS(_data["dailyBudget"]) : new SpaceAiBudgetBalanceDto();
+            this.monthlyBudget = _data["monthlyBudget"] ? SpaceAiBudgetBalanceDto.fromJS(_data["monthlyBudget"]) : new SpaceAiBudgetBalanceDto();
+        }
+    }
+
+    static fromJS(data: any): SpaceAiUsageSummaryDto {
+        data = typeof data === 'object' ? data : {};
+        let result = new SpaceAiUsageSummaryDto();
+        result.init(data);
+        return result;
+    }
+
+    toJSON(data?: any) {
+        data = typeof data === 'object' ? data : {};
+        data["totalRuns"] = this.totalRuns;
+        data["inputUnits"] = this.inputUnits;
+        data["outputUnits"] = this.outputUnits;
+        data["estimatedCostMinor"] = this.estimatedCostMinor;
+        data["actualCostMinor"] = this.actualCostMinor;
+        data["hasUnpricedUsage"] = this.hasUnpricedUsage;
+        data["dailyBudget"] = this.dailyBudget ? this.dailyBudget.toJSON() : undefined as any;
+        data["monthlyBudget"] = this.monthlyBudget ? this.monthlyBudget.toJSON() : undefined as any;
+        return data;
+    }
+}
+
+export interface ISpaceAiUsageSummaryDto {
+    totalRuns: number;
+    inputUnits: number;
+    outputUnits: number;
+    estimatedCostMinor: number;
+    actualCostMinor: number;
+    hasUnpricedUsage: boolean;
+    dailyBudget: SpaceAiBudgetBalanceDto;
+    monthlyBudget: SpaceAiBudgetBalanceDto;
+}
+
 export class SpaceAssetDto implements ISpaceAssetDto {
     id?: string;
     scope?: string | undefined;
@@ -12959,6 +13684,137 @@ export interface IStartSpaceExcelPreflightResponse {
     mappingProfileVersion: number;
     mappingDefinitionHash: string;
     source: SpaceSourceDto;
+    idempotentReplay: boolean;
+}
+
+export class UpdateSpaceAiPolicyRequest implements IUpdateSpaceAiPolicyRequest {
+    expectedVersion!: number;
+    dataPolicy!: string;
+    allowedSiteIds!: string[];
+    allowedProviderAliases!: string[];
+    maxConcurrentRuns!: number;
+    externalProviderEnabled!: boolean;
+    dailyBudgetMinor?: number | undefined;
+    monthlyBudgetMinor?: number | undefined;
+    currency?: string | undefined;
+
+    constructor(data?: IUpdateSpaceAiPolicyRequest) {
+        if (data) {
+            for (var property in data) {
+                if (data.hasOwnProperty(property))
+                    (this as any)[property] = (data as any)[property];
+            }
+        }
+        if (!data) {
+            this.allowedSiteIds = [];
+            this.allowedProviderAliases = [];
+        }
+    }
+
+    init(_data?: any) {
+        if (_data) {
+            this.expectedVersion = _data["expectedVersion"];
+            this.dataPolicy = _data["dataPolicy"];
+            if (Array.isArray(_data["allowedSiteIds"])) {
+                this.allowedSiteIds = [] as any;
+                for (let item of _data["allowedSiteIds"])
+                    this.allowedSiteIds!.push(item);
+            }
+            if (Array.isArray(_data["allowedProviderAliases"])) {
+                this.allowedProviderAliases = [] as any;
+                for (let item of _data["allowedProviderAliases"])
+                    this.allowedProviderAliases!.push(item);
+            }
+            this.maxConcurrentRuns = _data["maxConcurrentRuns"];
+            this.externalProviderEnabled = _data["externalProviderEnabled"];
+            this.dailyBudgetMinor = _data["dailyBudgetMinor"];
+            this.monthlyBudgetMinor = _data["monthlyBudgetMinor"];
+            this.currency = _data["currency"];
+        }
+    }
+
+    static fromJS(data: any): UpdateSpaceAiPolicyRequest {
+        data = typeof data === 'object' ? data : {};
+        let result = new UpdateSpaceAiPolicyRequest();
+        result.init(data);
+        return result;
+    }
+
+    toJSON(data?: any) {
+        data = typeof data === 'object' ? data : {};
+        data["expectedVersion"] = this.expectedVersion;
+        data["dataPolicy"] = this.dataPolicy;
+        if (Array.isArray(this.allowedSiteIds)) {
+            data["allowedSiteIds"] = [];
+            for (let item of this.allowedSiteIds)
+                data["allowedSiteIds"].push(item);
+        }
+        if (Array.isArray(this.allowedProviderAliases)) {
+            data["allowedProviderAliases"] = [];
+            for (let item of this.allowedProviderAliases)
+                data["allowedProviderAliases"].push(item);
+        }
+        data["maxConcurrentRuns"] = this.maxConcurrentRuns;
+        data["externalProviderEnabled"] = this.externalProviderEnabled;
+        data["dailyBudgetMinor"] = this.dailyBudgetMinor;
+        data["monthlyBudgetMinor"] = this.monthlyBudgetMinor;
+        data["currency"] = this.currency;
+        return data;
+    }
+}
+
+export interface IUpdateSpaceAiPolicyRequest {
+    expectedVersion: number;
+    dataPolicy: string;
+    allowedSiteIds: string[];
+    allowedProviderAliases: string[];
+    maxConcurrentRuns: number;
+    externalProviderEnabled: boolean;
+    dailyBudgetMinor?: number | undefined;
+    monthlyBudgetMinor?: number | undefined;
+    currency?: string | undefined;
+}
+
+export class UpdateSpaceAiPolicyResponse implements IUpdateSpaceAiPolicyResponse {
+    policy!: SpaceAiPolicyDto;
+    idempotentReplay!: boolean;
+
+    constructor(data?: IUpdateSpaceAiPolicyResponse) {
+        if (data) {
+            for (var property in data) {
+                if (data.hasOwnProperty(property))
+                    (this as any)[property] = (data as any)[property];
+            }
+        }
+        if (!data) {
+            this.policy = new SpaceAiPolicyDto();
+        }
+    }
+
+    init(_data?: any) {
+        if (_data) {
+            this.policy = _data["policy"] ? SpaceAiPolicyDto.fromJS(_data["policy"]) : new SpaceAiPolicyDto();
+            this.idempotentReplay = _data["idempotentReplay"];
+        }
+    }
+
+    static fromJS(data: any): UpdateSpaceAiPolicyResponse {
+        data = typeof data === 'object' ? data : {};
+        let result = new UpdateSpaceAiPolicyResponse();
+        result.init(data);
+        return result;
+    }
+
+    toJSON(data?: any) {
+        data = typeof data === 'object' ? data : {};
+        data["policy"] = this.policy ? this.policy.toJSON() : undefined as any;
+        data["idempotentReplay"] = this.idempotentReplay;
+        return data;
+    }
+}
+
+export interface IUpdateSpaceAiPolicyResponse {
+    policy: SpaceAiPolicyDto;
     idempotentReplay: boolean;
 }
 

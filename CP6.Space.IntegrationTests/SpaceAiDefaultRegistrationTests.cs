@@ -12,6 +12,10 @@ public sealed class SpaceAiDefaultRegistrationTests
         var services = new ServiceCollection();
         services.AddSpaceDesignV1Persistence(
             "Server=(localdb)\\mssqllocaldb;Database=cp6-space-ai-test;");
+        services.AddScoped<ISpaceExecutionContext>(_ =>
+            new TestExecutionContext(
+                Guid.Parse("11111111-1111-1111-1111-111111111111"),
+                Guid.Parse("aaaaaaaa-aaaa-aaaa-aaaa-aaaaaaaaaaaa")));
         await using var provider = services.BuildServiceProvider();
 
         var policySource =
@@ -23,14 +27,19 @@ public sealed class SpaceAiDefaultRegistrationTests
         var tenantId =
             Guid.Parse("11111111-1111-1111-1111-111111111111");
 
-        var policy = await policySource.GetPolicyAsync(tenantId);
         var lease = await quota.TryAcquireAsync(tenantId, 3);
 
-        Assert.IsType<DisabledSpaceAiTenantPolicySource>(policySource);
+        Assert.IsType<SpaceAiAdministrationService>(policySource);
+        Assert.Same(
+            policySource,
+            provider.GetRequiredService<ISpaceAiAdministrationService>());
         Assert.IsType<ClosedSpaceAiQuotaLeaseManager>(quota);
         Assert.IsType<WarehouseGenerationProviderRegistry>(registry);
-        Assert.False(policy.IsEnabled);
         Assert.Null(lease);
         Assert.False(registry.TryGet("external-v1", out _));
+        Assert.Empty(registry.Registrations);
     }
+
+    private sealed record TestExecutionContext(Guid TenantId, Guid ActorId) :
+        ISpaceExecutionContext;
 }
