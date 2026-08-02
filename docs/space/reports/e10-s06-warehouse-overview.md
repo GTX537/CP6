@@ -1,11 +1,11 @@
 # E10-S06 仓库 KPI 快照、利用率与 ABC 口径交付报告
 
-- 状态：功能分支已完成，待进入 Space 受控集成分支
+- 状态：已进入 Space 受控集成分支
 - 功能分支：`codex/space-e10-s06-warehouse-overview`
 - 起始基线：`240a32bcde7d28632ab4ff2029d578d9ff0be03f`
 - 合同提交：`bffe1877`
 - 功能提交：`0676ba4a`
-- no-ff 集成提交：待完成
+- no-ff 集成提交：`5f86edcb`
 - Migration：无
 
 ## 1. 交付结果
@@ -65,6 +65,8 @@ Portal、容量主数据、设备控制、MQTT/OPC UA、历史趋势、预测、
 | EF 模型与 OpenAPI/C#/TypeScript SDK 漂移 | passed；无待迁移模型变化 |
 | Git 差异检查 | passed |
 | i18n 快照 | 未通过：集成基线已有 881 项，本卡新增 30 项，共 911 项 |
+| 合并态后端冒烟 | 合同 23/23；Runtime/适配器 81/81；权限/OpenAPI 46/46 |
+| 合并态前端冒烟 | 3 files / 25 tests；严格类型检查 passed |
 
 i18n 结果作为显式技术债保留：本卡没有手工篡改生成快照，也没有把缺少正式翻译的
 文字伪装为已完成。它不影响类型、构建或运行测试，但在发布本地化验收前必须补齐。

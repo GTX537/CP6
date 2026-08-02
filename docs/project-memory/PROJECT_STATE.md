@@ -2,6 +2,14 @@
 
 最后更新：2026-08-02
 
+## E10-S06 完成状态（2026-08-02）
+
+- E10-S06 已进入受控集成基线：合同 `bffe1877`、实现 `0676ba4a`、文档 `969e7c38`、no-ff 集成 `5f86edcb`。新增只读 `GET /api/space/design/v1/sites/{siteId}/runtime/overview`，只汇总当前 Published/Active 模型，ABC 窗口限定为 1～365 个完整自然日；库存、作业和 ABC 保持独立来源、观察时间和部分可用语义。
+- 楼层面积使用毫米边界鞋带公式，缺失任一活动楼层面积时不伪造站点总面积；货架占地率只表达建模足迹。占用率按正库存物理库位计算；因没有容量主数据，容量利用率固定为空并给出 `WMS_LOCATION_CAPACITY_NOT_AVAILABLE`。库存不跨单位合计，活动任务数/Stop 数不冒充吞吐量。
+- ABC 只使用正数 OUT 事实，按出库量和物料稳定排序，以排名前累计占比 `<80%`/`<95%` 划分 A/B/C；有当前库存但无正出库事实的 SKU 明确为 Unclassified。Viewer 新增 KPI/异常/逐层总览和固定 ABC 颜色，ABC、库存空间筛选、作业热图三个颜色权威互斥，请求版本阻止旧响应覆盖。
+- Design V1 从 67 增至 68 operations，C#/TypeScript SDK 已同步，无数据库 Migration。功能分支全量门禁：Space Unit 236/236、默认 Space Integration 198 passed / 62 SQL-environment skipped、本卡真实 SQL 3/3、CP6.Tests 2739 passed / 17 environment-gated skipped、前端 115 files / 639 tests、完整 solution 0 error / 10 条既有 warning、EF/SDK drift 和生产构建通过。合并态冒烟：合同 23/23、Runtime/适配器 81/81、权限/OpenAPI 46/46、前端 25/25、类型检查和 SDK drift 通过。
+- i18n 快照仍未绿色：集成基线已有 881 项，本卡新增 30 项，共 911 项；没有篡改生成快照掩盖技术债。E10 P2 S01～S06 至此均有完成证据。CAD/E06 主链继续等待正式黄金集、授权供应商证据和冻结 Worker；下一张独立实施卡须按依赖重新选择，不能把快照口径直接扩写成趋势、推荐或执行控制。
+
 ## E10-S05 完成状态（2026-08-02）
 
 - E10-S05 已进入受控集成基线：实现 `65c59555`、文档 `53bea9b9`、no-ff 集成 `e270c2cc`。复用 `GET /api/space/design/v1/sites/{siteId}/runtime/inventory/locate`，新增可选货主条件；货主、SKU、批次和容器至少一个，多个条件固定精确 AND，货主在服务边界规范为大写。
@@ -266,6 +274,7 @@
 
 ## 最近验证基线
 
+- E10-S06 已推进至受控集成提交 `5f86edcb`：仓库 KPI、面积/占用口径、独立来源部分快照、ABC 分类和 Viewer 互斥覆盖完成；Space Unit 236/236、默认 Space Integration 198 passed / 62 SQL-gated skipped、本卡真实 SQL 3/3、CP6.Tests 2739 passed / 17 environment-gated skipped、前端 115 files / 639 tests、完整 solution 0 error / 10 条既有 warning、EF/SDK drift 通过。合并态合同 23/23、Runtime/适配器 81/81、权限/OpenAPI 46/46、前端 25/25、类型检查和 SDK drift 通过。i18n 保留 881 项基线债务和本卡新增 30 项。交付证据见 `docs/space/reports/e10-s06-warehouse-overview.md`。
 - E10-S05 已推进至受控集成提交 `e270c2cc`：货主、SKU、批次和容器精确 AND 空间筛选完成；运行合同 2/2、Runtime/适配器 68/68、权限/OpenAPI 45/45、前端 114 files / 632 tests、Space Unit 236/236、默认 Space Integration 190 passed / 61 SQL-gated skipped、CP6.Tests 2738 passed / 17 environment-gated skipped、完整 solution 0 error / 10 条既有 warning、EF/SDK/TypeScript drift 通过，本卡真实 SQL 1/1。完整真实 SQL 矩阵 250 passed / 1 个已知基线失败。交付证据见 `docs/space/reports/e10-s05-inventory-spatial-filters.md`。
 - E10-S04 已推进至受控集成提交 `b4d5b81e`：设备当前/告警投影、读取 API 和 3D 叠加完成；领域 2/2、设备服务 9/9、本卡真实 SQL 2/2、权限/审计/OpenAPI 70/70、前端 113 files / 629 tests、Space Unit 236/236、默认 Space Integration 189 passed / 60 SQL-gated skipped、CP6.Tests 2738 passed / 17 environment-gated skipped、完整 solution 0 error / 10 条既有 warning、EF/SDK drift 与两个 TypeScript strict no-emit 通过。完整真实 SQL 矩阵 248 passed / 1 已知基线失败；合并态设备 9/9、权限/审计/OpenAPI 70/70、前端聚焦 14/14、EF/SDK drift 通过。交付证据见 `docs/space/reports/e10-s04-device-runtime-overlay.md`。
 - E04-S06 已推进至受控集成提交 `2b6ef127`：功能分支与合并态前端全量均为 108 files / 612 tests，聚焦 4 files / 13 tests、type-check 和 production build 通过；Space Unit 231/231、默认 Space Integration 140 passed / 55 SQL-gated skipped、Design Scene 真 SQL 3/3、Space Integration + KOUSQLSERVER 195/195 且 0 skipped、CP6.Tests 2720 passed / 17 environment-gated skipped、完整 solution 非增量构建 0 error / 10 条既有 warning，以及 SDK drift、TypeScript SDK strict no-emit 和差异门禁均通过。
@@ -305,4 +314,4 @@
 
 ## 下一动作
 
-以 `e270c2cc` 为当前 Space 代码集成基线。E03-S01～S03、E13-S16 与 E10-S01～S05 已完成；下一步不能绕过依赖提前做 CAD/外部 Provider 链。E03-S04 与 E04-S05 继续等待 E02-S07/CAD 语义预览，E13-S04 等待 E02-S03，E13-S05 等待 S04 与正式供应商证据；E06-S01 继续等待 E02～E05 与 E13 主链。可独立推进时，E10-S06“仓库 KPI 快照、利用率与 ABC 口径”是已具备前置条件的 P2 候选，但仍低于解除 CAD 主链外部条件；E02-S01 继续等待正式黄金集、授权和冻结 Worker，E09 的产品/QA/WMS/安全 GA 签字仍由发布治理完成。禁止把候选检查点 `0d25da4d` 整包合入，GR-VP T1–T7 不要重做。
+以 `5f86edcb` 为当前 Space 代码集成基线。E03-S01～S03、E13-S16 与 E10-S01～S06 已完成，E10 P2 全组收口；下一步不能绕过依赖提前做 CAD/外部 Provider 链，也不能把 E10-S06 的当前快照口径直接扩写为 E11 趋势、诊断、推荐或执行控制。E03-S04 与 E04-S05 继续等待 E02-S07/CAD 语义预览，E13-S04 等待 E02-S03，E13-S05 等待 S04 与正式供应商证据；E06-S01 继续等待 E02～E05 与 E13 主链。下一张独立实施卡应在依赖盘点后从已解锁 backlog 选择；E02-S01 继续等待正式黄金集、授权和冻结 Worker，E09 的产品/QA/WMS/安全 GA 签字仍由发布治理完成。i18n 当前还有 911 项显式快照债务，其中 30 项来自 E10-S06。禁止把候选检查点 `0d25da4d` 整包合入，GR-VP T1–T7 不要重做。
