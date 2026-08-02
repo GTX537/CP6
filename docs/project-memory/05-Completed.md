@@ -1,5 +1,13 @@
 # 已完成能力与近期里程碑
 
+## 2026-08-02 E12-S04 多场景比较与决策记录
+
+- 以 `7b919b4b` 完成同源不可变仿真证据比较、显式基线/阈值、基线差值、风险标记和追加式人工决策；功能分支已先行推送远端备份。
+- 强制 2～10 个不同生产隔离分支共享站点、模型、基础 Published 版本、历史样本和仿真口径；容量假设差异显式呈现，不计算总分、不排名、不推荐且不允许生产回写。
+- 新增 6 个 API、4 个权限、四张租户隔离证据表，OpenAPI 增至 83 operations；规划页提供跨分支证据矩阵和 Selected/Deferred/RejectedAll 决策链。47 个新增词条具备五语运行时种子，既有 i18n 欠账仍为 908。
+- 全量门禁为 Space Unit 272、默认 Space Integration 245 passed / 63 SQL-gated skipped、CP6.Tests 2775 passed / 17 environment-gated skipped、前端 123 files / 674 tests、非增量 Release 0 error / 10 条既有 warning；双 EF、SDK、TypeScript 与生产构建通过。
+- no-ff 受控集成、合并态复验与资源清理待完成后补记；`main` 未修改。下一张独立实施卡为 E12-S05 标准交换格式导出。
+
 ## 2026-08-02 E12-S03 距离、拥堵、容量、吞吐和成本仿真
 
 - 以 `ab21aed4` 完成确定性仿真引擎、不可变证据、迁移、API/UI/权限/SDK，文档 tip `2cd1faed` 先行推送远端备份；no-ff 受控集成提交为 `f2d68897`。
