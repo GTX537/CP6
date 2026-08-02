@@ -20,7 +20,7 @@
       {{ t('库存数据源不可用，不能判定是否存在匹配库存') }}
     </div>
     <div v-else-if="response.locationCount === 0" class="locate-state locate-empty">
-      {{ t('没有库位匹配当前物料、批次或容器条件') }}
+      {{ t('没有库位匹配当前货主、物料、批次或容器条件') }}
     </div>
     <template v-else>
       <div class="locate-summary">
@@ -72,6 +72,7 @@ const criteriaText = computed(() => {
     criteria.materialNumber && `${t('物料')}=${criteria.materialNumber}`,
     criteria.lotNumber && `${t('批次')}=${criteria.lotNumber}`,
     criteria.containerNumber && `${t('容器')}=${criteria.containerNumber}`,
+    criteria.ownerId && `${t('货主')}=${criteria.ownerId}`,
   ].filter(Boolean).join(' · ')
 })
 
@@ -100,6 +101,7 @@ function factText(hit: SpaceRuntimeInventoryLocateHit): string {
     hit.materialNumbers.length && `${t('物料')} ${hit.materialNumbers.join(', ')}`,
     hit.lotNumbers.length && `${t('批次')} ${hit.lotNumbers.join(', ')}`,
     hit.containerNumbers.length && `${t('容器')} ${hit.containerNumbers.join(', ')}`,
+    hit.ownerIds.length && `${t('货主')} ${hit.ownerIds.join(', ')}`,
   ].filter(Boolean).join(' · ')
 }
 

@@ -181,10 +181,10 @@ public sealed class SpaceWmsRuntimeServiceTests
         {
             InventoryItems =
             [
-                new(LogicalId(1), "F2-A", 5, 1, "SKU-01", "LOT-01", "BOX-01"),
-                new(LogicalId(2), "F1-B", 3, 1, "SKU-01", "LOT-01", "BOX-01"),
-                new(LogicalId(2), "F1-B", 2, 0, "SKU-01", "LOT-01", "BOX-01"),
-                new(LogicalId(3), "F1-C", 99, 0, "SKU-01", "LOT-OTHER", "BOX-01"),
+                new(LogicalId(1), "F2-A", 5, 1, "SKU-01", "LOT-01", "BOX-01", "OWNER-A"),
+                new(LogicalId(2), "F1-B", 3, 1, "SKU-01", "LOT-01", "BOX-01", "OWNER-A"),
+                new(LogicalId(2), "F1-B", 2, 0, "SKU-01", "LOT-01", "BOX-01", "OWNER-A"),
+                new(LogicalId(3), "F1-C", 99, 0, "SKU-01", "LOT-OTHER", "BOX-01", "OWNER-B"),
             ],
         };
         var service = CreateService(context, execution, clock, seeded.SiteId, source);
@@ -194,11 +194,13 @@ public sealed class SpaceWmsRuntimeServiceTests
             new SpaceWmsInventoryLocateCriteria(
                 "  SKU-01 ",
                 " LOT-01 ",
-                " BOX-01 "));
+                " BOX-01 ",
+                " owner-a "));
 
         Assert.Equal("SKU-01", response.Criteria.MaterialNumber);
         Assert.Equal("LOT-01", response.Criteria.LotNumber);
         Assert.Equal("BOX-01", response.Criteria.ContainerNumber);
+        Assert.Equal("OWNER-A", response.Criteria.OwnerId);
         Assert.Equal(2, response.LocationCount);
         Assert.Equal(2, response.FloorCount);
         Assert.Equal(["F1-B", "F2-A"],
@@ -209,12 +211,16 @@ public sealed class SpaceWmsRuntimeServiceTests
         Assert.Equal(["SKU-01"], aggregated.MaterialNumbers);
         Assert.Equal(["LOT-01"], aggregated.LotNumbers);
         Assert.Equal(["BOX-01"], aggregated.ContainerNumbers);
+        Assert.Equal(["OWNER-A"], aggregated.OwnerIds);
         Assert.All(source.InventoryCriteria, criteria =>
         {
             Assert.Equal("SKU-01", criteria!.MaterialNumber);
             Assert.Equal("LOT-01", criteria.LotNumber);
             Assert.Equal("BOX-01", criteria.ContainerNumber);
+            Assert.Equal("OWNER-A", criteria.OwnerId);
         });
+        Assert.All(source.InventoryOwnerScopes, ownerIds =>
+            Assert.Equal(["OWNER-A"], ownerIds));
     }
 
     [Fact]
@@ -270,6 +276,37 @@ public sealed class SpaceWmsRuntimeServiceTests
             fixture.Service.LocateInventoryAsync(
                 fixture.SiteId,
                 new SpaceWmsInventoryLocateCriteria("SKU-01", null, null)));
+
+        Assert.Equal(502, error.StatusCode);
+        Assert.Equal(SpaceErrorCodes.WmsRuntimeContractViolation, error.Code);
+    }
+
+    [Fact]
+    public async Task Inventory_locate_rejects_source_items_outside_owner_criterion()
+    {
+        await using var fixture = await RuntimeFixture.CreateAsync("L-001");
+        fixture.Source.IgnoreLocateCriteria = true;
+        fixture.Source.InventoryItems =
+        [
+            new(
+                fixture.LocationIds[0],
+                "L-001",
+                1,
+                0,
+                "SKU-01",
+                null,
+                null,
+                "OWNER-B"),
+        ];
+
+        var error = await Assert.ThrowsAsync<SpaceProblemException>(() =>
+            fixture.Service.LocateInventoryAsync(
+                fixture.SiteId,
+                new SpaceWmsInventoryLocateCriteria(
+                    null,
+                    null,
+                    null,
+                    "owner-a")));
 
         Assert.Equal(502, error.StatusCode);
         Assert.Equal(SpaceErrorCodes.WmsRuntimeContractViolation, error.Code);
@@ -1110,6 +1147,7 @@ public sealed class SpaceWmsRuntimeServiceTests
         public SpaceWmsTaskItem? TaskOverrideItem { get; set; }
         public List<int> InventoryBatchSizes { get; } = [];
         public List<SpaceWmsInventoryLocateCriteria?> InventoryCriteria { get; } = [];
+        public List<IReadOnlyList<string>?> InventoryOwnerScopes { get; } = [];
         public List<int> TaskBatchSizes { get; } = [];
         public List<IReadOnlyList<string>?> TaskFilters { get; } = [];
         public IReadOnlyList<SpaceWmsInventoryItem> InventoryItems { get; set; } = [];
@@ -1121,6 +1159,7 @@ public sealed class SpaceWmsRuntimeServiceTests
             TaskQueryEntryCount = 0;
             InventoryBatchSizes.Clear();
             InventoryCriteria.Clear();
+            InventoryOwnerScopes.Clear();
             TaskBatchSizes.Clear();
             TaskFilters.Clear();
         }
@@ -1134,6 +1173,7 @@ public sealed class SpaceWmsRuntimeServiceTests
                 throw QueryException;
             InventoryBatchSizes.Add(request.LogicalIds.Count);
             InventoryCriteria.Add(request.LocateCriteria);
+            InventoryOwnerScopes.Add(request.OwnerIds);
             if (ReturnNullInventoryResult)
                 return Task.FromResult<SpaceWmsInventoryResult>(null!);
             var requested = request.LogicalIds.ToHashSet();
@@ -1225,7 +1265,11 @@ public sealed class SpaceWmsRuntimeServiceTests
             (item.PhysicalQuantity > 0 &&
              Matches(item.MaterialNumber, criteria.MaterialNumber) &&
              Matches(item.LotNumber, criteria.LotNumber) &&
-             Matches(item.ContainerNumber, criteria.ContainerNumber));
+             Matches(item.ContainerNumber, criteria.ContainerNumber) &&
+             (criteria.OwnerId is null || string.Equals(
+                 item.OwnerId,
+                 criteria.OwnerId,
+                 StringComparison.OrdinalIgnoreCase)));
 
         private static bool Matches(string? actual, string? expected) =>
             expected is null || string.Equals(actual, expected, StringComparison.Ordinal);

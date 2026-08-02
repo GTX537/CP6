@@ -44,7 +44,8 @@ public sealed class SpaceWmsRuntimeContractTests
         AssertPropertyOrder<SpaceWmsRuntimeInventoryLocateCriteriaDto>(
             "MaterialNumber",
             "LotNumber",
-            "ContainerNumber");
+            "ContainerNumber",
+            "OwnerId");
         AssertPropertyOrder<SpaceWmsRuntimeInventoryLocateHitDto>(
             "LocationLogicalId",
             "WmsLogicalId",
@@ -59,7 +60,8 @@ public sealed class SpaceWmsRuntimeContractTests
             "AllocatedQuantity",
             "MaterialNumbers",
             "LotNumbers",
-            "ContainerNumbers");
+            "ContainerNumbers",
+            "OwnerIds");
         AssertPropertyOrder<SpaceWmsRuntimeInventoryLocateResponse>(
             "SiteId",
             "PublishedVersionId",

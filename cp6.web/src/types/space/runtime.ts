@@ -37,12 +37,14 @@ export interface SpaceRuntimeInventoryLocateQuery {
   materialNumber?: string
   lotNumber?: string
   containerNumber?: string
+  ownerId?: string
 }
 
 export interface SpaceRuntimeInventoryLocateCriteria {
   materialNumber: string | null
   lotNumber: string | null
   containerNumber: string | null
+  ownerId: string | null
 }
 
 export interface SpaceRuntimeInventoryLocateHit {
@@ -60,6 +62,7 @@ export interface SpaceRuntimeInventoryLocateHit {
   materialNumbers: string[]
   lotNumbers: string[]
   containerNumbers: string[]
+  ownerIds: string[]
 }
 
 export interface SpaceRuntimeInventoryLocateResponse {

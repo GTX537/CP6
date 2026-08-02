@@ -12,6 +12,9 @@ import { binStatusToHex, locationUtilization, utilizationToHex } from './stockMo
 import { aggregateRuntimeStock } from './runtimeStockModel'
 
 export class StockOverlay {
+  static readonly FILTER_MATCH_HEX = 0xffc107
+  static readonly FILTER_EXCLUDED_HEX = 0x263238
+
   private _viewer: ViewerHandle
   private _mode: OverlayMode = 'status'
   private _byId = new Map<string, RuntimeStockItem>()
@@ -30,6 +33,7 @@ export class StockOverlay {
   private _pollTimer = 0
   private _minIntervalMs = 5000
   private _refreshVersion = 0
+  private _spatialFilterIds: Set<string> | null = null
 
   constructor(viewer: ViewerHandle) { this._viewer = viewer }
 
@@ -38,6 +42,17 @@ export class StockOverlay {
   get source(): SpaceRuntimeSource { return this._source }
 
   setMode(mode: OverlayMode): void { this._mode = mode }
+
+  setSpatialFilter(locationLogicalIds: Iterable<string>): void {
+    this._spatialFilterIds = new Set(locationLogicalIds)
+    this.apply()
+  }
+
+  clearSpatialFilter(): void {
+    this._spatialFilterIds = null
+  }
+
+  get spatialFilterActive(): boolean { return this._spatialFilterIds !== null }
 
   setSnapshot(items: RuntimeStockItem[], source: SpaceRuntimeSource): void {
     this._source = source
@@ -52,14 +67,19 @@ export class StockOverlay {
   }
 
   apply(): void {
-    if (this._mode === 'off' || !isUsableDataSource(this._source)) return
+    if (!isUsableDataSource(this._source)) return
     const colors: Array<{ locationId: string; hex: number }> = []
     for (const [locationLogicalId, stock] of this._byId) {
-      const hex = this._mode === 'utilization'
-        ? utilizationToHex(locationUtilization(stock))
-        : binStatusToHex(stock.binStatus)
+      const hex = this._spatialFilterIds !== null
+        ? this._spatialFilterIds.has(locationLogicalId)
+          ? StockOverlay.FILTER_MATCH_HEX
+          : StockOverlay.FILTER_EXCLUDED_HEX
+        : this._mode === 'utilization'
+          ? utilizationToHex(locationUtilization(stock))
+          : binStatusToHex(stock.binStatus)
       colors.push({ locationId: locationLogicalId, hex })
     }
+    if (this._spatialFilterIds === null && this._mode === 'off') return
     if (this._viewer.setInstanceColors) {
       this._viewer.setInstanceColors(colors)
     } else {

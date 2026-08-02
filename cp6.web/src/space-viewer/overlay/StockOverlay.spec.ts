@@ -97,6 +97,26 @@ describe('StockOverlay', () => {
     expect(viewer.setInstanceColors).not.toHaveBeenCalled()
   })
 
+  it('keeps a spatial filter active across stock modes and marks excluded locations', () => {
+    const viewer = fakeViewer()
+    const overlay = new StockOverlay(viewer as never)
+    overlay.setSnapshot([
+      dto('location-1', 'A-01', 1),
+      dto('location-2', 'A-02', 1),
+    ], real)
+    overlay.setMode('off')
+
+    overlay.setSpatialFilter(['location-2'])
+
+    expect(overlay.spatialFilterActive).toBe(true)
+    expect(viewer.setInstanceColors).toHaveBeenLastCalledWith([
+      { locationId: 'location-1', hex: StockOverlay.FILTER_EXCLUDED_HEX },
+      { locationId: 'location-2', hex: StockOverlay.FILTER_MATCH_HEX },
+    ])
+    overlay.clearSpatialFilter()
+    expect(overlay.spatialFilterActive).toBe(false)
+  })
+
   it('gets selected stock by logical identity', () => {
     const overlay = new StockOverlay(fakeViewer() as never)
     overlay.setSnapshot([dto('location-1', 'A-01', 1)], real)

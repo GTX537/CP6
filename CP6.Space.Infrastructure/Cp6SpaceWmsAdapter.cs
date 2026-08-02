@@ -457,13 +457,27 @@ public sealed class Cp6SpaceWmsAdapter : ISpaceWmsAdapter
             .Select(value => value.Trim().ToUpperInvariant())
             .Distinct(StringComparer.Ordinal)
             .ToArray();
-        if (request.OwnerIds is not null && ownerIds!.Length == 0)
-            return new SpaceWmsInventoryResult(Source(), []);
         var locate = request.LocateCriteria;
+        if (!string.IsNullOrWhiteSpace(locate?.OwnerId))
+        {
+            var locatedOwnerId = locate.OwnerId.Trim().ToUpperInvariant();
+            ownerIds = ownerIds is null
+                ? [locatedOwnerId]
+                : ownerIds
+                    .Where(value => string.Equals(
+                        value,
+                        locatedOwnerId,
+                        StringComparison.Ordinal))
+                    .ToArray();
+        }
+        if ((request.OwnerIds is not null ||
+             !string.IsNullOrWhiteSpace(locate?.OwnerId)) &&
+            ownerIds!.Length == 0)
+        {
+            return new SpaceWmsInventoryResult(Source(), []);
+        }
         if (!string.IsNullOrWhiteSpace(locate?.ContainerNumber))
         {
-            if (ownerIds is not null)
-                return new SpaceWmsInventoryResult(Source(), []);
             var containerNumber = locate.ContainerNumber.Trim();
             var palletQuery = _db.Pallets
                 .AsNoTracking()
@@ -489,16 +503,51 @@ public sealed class Cp6SpaceWmsAdapter : ISpaceWmsAdapter
                 .OrderBy(pallet => pallet.LocationCd)
                 .ThenBy(pallet => pallet.PalletNo)
                 .ToListAsync(ct);
+            var ownerQuery = _db.Stocks
+                .AsNoTracking()
+                .Where(stock =>
+                    stock.WarehouseCd == request.Context.WarehouseCode &&
+                    codes.Contains(stock.LocationCd) &&
+                    stock.PhysicalQty > 0);
+            if (ownerIds is not null)
+            {
+                ownerQuery = ownerQuery.Where(stock =>
+                    stock.OwnerCd != null &&
+                    ownerIds.Contains(stock.OwnerCd));
+            }
+            var stockOwners = await ownerQuery
+                .Select(stock => new
+                {
+                    stock.LocationCd,
+                    stock.ProductCd,
+                    stock.LotNo,
+                    stock.OwnerCd,
+                })
+                .ToListAsync(ct);
+            var ownerByStockIdentity = stockOwners.ToDictionary(
+                value => (value.LocationCd, value.ProductCd, value.LotNo),
+                value => value.OwnerCd?.Trim().ToUpperInvariant());
             return new SpaceWmsInventoryResult(
                 Source(),
-                pallets.Select(pallet => new SpaceWmsInventoryItem(
-                    codeToId[pallet.LocationCd],
-                    pallet.LocationCd,
-                    pallet.CartonQty,
-                    0,
-                    pallet.ProductCd,
-                    pallet.LotNo,
-                    pallet.PalletNo)).ToArray());
+                pallets
+                    .Where(pallet => ownerIds is null ||
+                        ownerByStockIdentity.ContainsKey((
+                            pallet.LocationCd,
+                            pallet.ProductCd,
+                            pallet.LotNo)))
+                    .Select(pallet => new SpaceWmsInventoryItem(
+                        codeToId[pallet.LocationCd],
+                        pallet.LocationCd,
+                        pallet.CartonQty,
+                        0,
+                        pallet.ProductCd,
+                        pallet.LotNo,
+                        pallet.PalletNo,
+                        ownerByStockIdentity.GetValueOrDefault((
+                            pallet.LocationCd,
+                            pallet.ProductCd,
+                            pallet.LotNo))))
+                    .ToArray());
         }
         var stockQuery = _db.Stocks
             .AsNoTracking()
@@ -541,7 +590,7 @@ public sealed class Cp6SpaceWmsAdapter : ISpaceWmsAdapter
                 stock.ProductCd,
                 stock.LotNo,
                 null,
-                stock.OwnerCd)).ToArray());
+                stock.OwnerCd?.Trim().ToUpperInvariant())).ToArray());
     }
 
     public async Task<SpaceWmsTaskResult> QueryTasksAsync(

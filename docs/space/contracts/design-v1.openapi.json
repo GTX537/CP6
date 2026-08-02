@@ -8439,6 +8439,13 @@
             "schema": {
               "type": "string"
             }
+          },
+          {
+            "name": "ownerId",
+            "in": "query",
+            "schema": {
+              "type": "string"
+            }
           }
         ],
         "responses": {
@@ -13928,7 +13935,8 @@
         "required": [
           "containerNumber",
           "lotNumber",
-          "materialNumber"
+          "materialNumber",
+          "ownerId"
         ],
         "type": "object",
         "properties": {
@@ -13941,6 +13949,10 @@
             "nullable": true
           },
           "containerNumber": {
+            "type": "string",
+            "nullable": true
+          },
+          "ownerId": {
             "type": "string",
             "nullable": true
           }
@@ -13959,6 +13971,7 @@
           "locationLogicalId",
           "lotNumbers",
           "materialNumbers",
+          "ownerIds",
           "physicalQuantity",
           "spaceLocationCode",
           "wmsLocationCode",
@@ -14018,6 +14031,12 @@
             }
           },
           "containerNumbers": {
+            "type": "array",
+            "items": {
+              "type": "string"
+            }
+          },
+          "ownerIds": {
             "type": "array",
             "items": {
               "type": "string"

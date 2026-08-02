@@ -490,7 +490,8 @@ public sealed record SpaceWmsInventoryQuery(
 public sealed record SpaceWmsInventoryLocateCriteria(
     string? MaterialNumber,
     string? LotNumber,
-    string? ContainerNumber);
+    string? ContainerNumber,
+    string? OwnerId = null);
 
 public sealed record SpaceWmsInventoryItem(
     Guid LogicalId,

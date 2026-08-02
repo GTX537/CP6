@@ -118,6 +118,52 @@ function Set-SpaceRuntimeTypeScriptNullableTypes {
             $content.Substring($end)
     }
 
+    $requiredNullableBlocks = @(
+        @{
+            Start = 'export class SpaceWmsRuntimeInventoryLocateCriteriaDto'
+            End = 'export class SpaceWmsRuntimeInventoryLocateHitDto'
+            Properties = @(
+                @('materialNumber', 'string'),
+                @('lotNumber', 'string'),
+                @('containerNumber', 'string'),
+                @('ownerId', 'string')
+            )
+        }
+    )
+    foreach ($block in $requiredNullableBlocks) {
+        $start = $content.IndexOf(
+            $block.Start,
+            [System.StringComparison]::Ordinal)
+        $end = $content.IndexOf(
+            $block.End,
+            $start,
+            [System.StringComparison]::Ordinal)
+        if ($start -lt 0 -or $end -le $start) {
+            throw "Could not locate generated TypeScript runtime block '$($block.Start)'."
+        }
+
+        $segment = $content.Substring($start, $end - $start)
+        foreach ($property in $block.Properties) {
+            $classOld = "$($property[0])!: $($property[1]) | undefined;"
+            $classNew = "$($property[0])!: $($property[1]) | null | undefined;"
+            $interfaceOld = "$($property[0]): $($property[1]) | undefined;"
+            $interfaceNew = "$($property[0]): $($property[1]) | null | undefined;"
+            foreach ($pair in @(@($classOld, $classNew), @($interfaceOld, $interfaceNew))) {
+                $count = [System.Text.RegularExpressions.Regex]::Matches(
+                    $segment,
+                    [System.Text.RegularExpressions.Regex]::Escape($pair[0])
+                ).Count
+                if ($count -ne 1) {
+                    throw "Expected one generated declaration for '$($pair[0])'; found $count."
+                }
+                $segment = $segment.Replace($pair[0], $pair[1])
+            }
+        }
+
+        $content = $content.Substring(0, $start) + $segment +
+            $content.Substring($end)
+    }
+
     [System.IO.File]::WriteAllText(
         $Path,
         $content,

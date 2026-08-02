@@ -70,14 +70,16 @@ public sealed class SpaceWmsRuntimeService : ISpaceWmsRuntimeService
         var normalized = new SpaceWmsInventoryLocateCriteria(
             NormalizeLocateCriterion("materialNumber", criteria.MaterialNumber),
             NormalizeLocateCriterion("lotNumber", criteria.LotNumber),
-            NormalizeLocateCriterion("containerNumber", criteria.ContainerNumber));
+            NormalizeLocateCriterion("containerNumber", criteria.ContainerNumber),
+            NormalizeOwnerCriterion(criteria.OwnerId));
         if (normalized.MaterialNumber is null &&
             normalized.LotNumber is null &&
-            normalized.ContainerNumber is null)
+            normalized.ContainerNumber is null &&
+            normalized.OwnerId is null)
         {
             throw Invalid(
                 "criteria",
-                "At least one material, lot, or container criterion is required.");
+                "At least one owner, material, lot, or container criterion is required.");
         }
 
         var scope = await LoadScopeAsync(
@@ -115,7 +117,8 @@ public sealed class SpaceWmsRuntimeService : ISpaceWmsRuntimeService
                     group.Sum(value => value.AllocatedQuantity),
                     LocateFacts(group.Select(value => value.MaterialNumber)),
                     LocateFacts(group.Select(value => value.LotNumber)),
-                    LocateFacts(group.Select(value => value.ContainerNumber)));
+                    LocateFacts(group.Select(value => value.ContainerNumber)),
+                    LocateFacts(group.Select(value => value.OwnerId)));
             })
             .OrderBy(value => value.FloorLevel)
             .ThenBy(value => value.FloorCode, StringComparer.Ordinal)
@@ -131,7 +134,8 @@ public sealed class SpaceWmsRuntimeService : ISpaceWmsRuntimeService
             new SpaceWmsRuntimeInventoryLocateCriteriaDto(
                 normalized.MaterialNumber,
                 normalized.LotNumber,
-                normalized.ContainerNumber),
+                normalized.ContainerNumber,
+                normalized.OwnerId),
             hits.Length,
             hits.Select(value => value.FloorLogicalId).Distinct().Count(),
             hits);
@@ -154,6 +158,9 @@ public sealed class SpaceWmsRuntimeService : ISpaceWmsRuntimeService
                     new SpaceWmsInventoryQuery(
                         scope.WmsContext,
                         logicalIds,
+                        OwnerIds: locateCriteria?.OwnerId is null
+                            ? null
+                            : [locateCriteria.OwnerId],
                         LocateCriteria: locateCriteria),
                     cancellationToken);
             }
@@ -918,7 +925,8 @@ public sealed class SpaceWmsRuntimeService : ISpaceWmsRuntimeService
             if (item.PhysicalQuantity <= 0 ||
                 !MatchesLocate(item.MaterialNumber, criteria.MaterialNumber) ||
                 !MatchesLocate(item.LotNumber, criteria.LotNumber) ||
-                !MatchesLocate(item.ContainerNumber, criteria.ContainerNumber))
+                !MatchesLocate(item.ContainerNumber, criteria.ContainerNumber) ||
+                !MatchesOwner(item.OwnerId, criteria.OwnerId))
             {
                 throw ContractViolation(
                     "A returned WMS inventory item does not match the locate criteria.");
@@ -928,6 +936,10 @@ public sealed class SpaceWmsRuntimeService : ISpaceWmsRuntimeService
 
     private static bool MatchesLocate(string? actual, string? expected) =>
         expected is null || string.Equals(actual, expected, StringComparison.Ordinal);
+
+    private static bool MatchesOwner(string? actual, string? expected) =>
+        expected is null ||
+        string.Equals(actual, expected, StringComparison.OrdinalIgnoreCase);
 
     private static void ValidateTaskItems(
         IReadOnlyList<SpaceWmsTaskItem> items,
@@ -1018,6 +1030,12 @@ public sealed class SpaceWmsRuntimeService : ISpaceWmsRuntimeService
         if (normalized?.Length > 100)
             throw Invalid(field, "The value must not exceed 100 characters.");
         return normalized;
+    }
+
+    private static string? NormalizeOwnerCriterion(string? value)
+    {
+        var normalized = NormalizeLocateCriterion("ownerId", value);
+        return normalized?.ToUpperInvariant();
     }
 
     private static string NormalizeTaskId(string value)

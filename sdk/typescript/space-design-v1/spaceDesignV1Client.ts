@@ -393,9 +393,10 @@ export interface ISpaceDesignV1Client {
      * @param materialNumber (optional)
      * @param lotNumber (optional)
      * @param containerNumber (optional)
+     * @param ownerId (optional)
      * @return OK
      */
-    locateInventory(siteId: string, materialNumber: string | undefined, lotNumber: string | undefined, containerNumber: string | undefined): Promise<SpaceWmsRuntimeInventoryLocateResponse>;
+    locateInventory(siteId: string, materialNumber: string | undefined, lotNumber: string | undefined, containerNumber: string | undefined, ownerId: string | undefined): Promise<SpaceWmsRuntimeInventoryLocateResponse>;
 
     /**
      * @param locationLogicalId (optional)
@@ -6705,9 +6706,10 @@ export class SpaceDesignV1Client implements ISpaceDesignV1Client {
      * @param materialNumber (optional)
      * @param lotNumber (optional)
      * @param containerNumber (optional)
+     * @param ownerId (optional)
      * @return OK
      */
-    locateInventory(siteId: string, materialNumber: string | undefined, lotNumber: string | undefined, containerNumber: string | undefined): Promise<SpaceWmsRuntimeInventoryLocateResponse> {
+    locateInventory(siteId: string, materialNumber: string | undefined, lotNumber: string | undefined, containerNumber: string | undefined, ownerId: string | undefined): Promise<SpaceWmsRuntimeInventoryLocateResponse> {
         let url_ = this.baseUrl + "/api/space/design/v1/sites/{siteId}/runtime/inventory/locate?";
         if (siteId === undefined || siteId === null)
             throw new globalThis.Error("The parameter 'siteId' must be defined.");
@@ -6724,6 +6726,10 @@ export class SpaceDesignV1Client implements ISpaceDesignV1Client {
             throw new globalThis.Error("The parameter 'containerNumber' cannot be null.");
         else if (containerNumber !== undefined)
             url_ += "containerNumber=" + encodeURIComponent("" + containerNumber) + "&";
+        if (ownerId === null)
+            throw new globalThis.Error("The parameter 'ownerId' cannot be null.");
+        else if (ownerId !== undefined)
+            url_ += "ownerId=" + encodeURIComponent("" + ownerId) + "&";
         url_ = url_.replace(/[?&]$/, "");
 
         let options_: RequestInit = {
@@ -15012,9 +15018,10 @@ export interface ISpaceWmsRuntimeInventoryItemDto {
 }
 
 export class SpaceWmsRuntimeInventoryLocateCriteriaDto implements ISpaceWmsRuntimeInventoryLocateCriteriaDto {
-    materialNumber!: string | undefined;
-    lotNumber!: string | undefined;
-    containerNumber!: string | undefined;
+    materialNumber!: string | null | undefined;
+    lotNumber!: string | null | undefined;
+    containerNumber!: string | null | undefined;
+    ownerId!: string | null | undefined;
 
     constructor(data?: ISpaceWmsRuntimeInventoryLocateCriteriaDto) {
         if (data) {
@@ -15030,6 +15037,7 @@ export class SpaceWmsRuntimeInventoryLocateCriteriaDto implements ISpaceWmsRunti
             this.materialNumber = _data["materialNumber"];
             this.lotNumber = _data["lotNumber"];
             this.containerNumber = _data["containerNumber"];
+            this.ownerId = _data["ownerId"];
         }
     }
 
@@ -15045,14 +15053,16 @@ export class SpaceWmsRuntimeInventoryLocateCriteriaDto implements ISpaceWmsRunti
         data["materialNumber"] = this.materialNumber;
         data["lotNumber"] = this.lotNumber;
         data["containerNumber"] = this.containerNumber;
+        data["ownerId"] = this.ownerId;
         return data;
     }
 }
 
 export interface ISpaceWmsRuntimeInventoryLocateCriteriaDto {
-    materialNumber: string | undefined;
-    lotNumber: string | undefined;
-    containerNumber: string | undefined;
+    materialNumber: string | null | undefined;
+    lotNumber: string | null | undefined;
+    containerNumber: string | null | undefined;
+    ownerId: string | null | undefined;
 }
 
 export class SpaceWmsRuntimeInventoryLocateHitDto implements ISpaceWmsRuntimeInventoryLocateHitDto {
@@ -15070,6 +15080,7 @@ export class SpaceWmsRuntimeInventoryLocateHitDto implements ISpaceWmsRuntimeInv
     materialNumbers!: string[];
     lotNumbers!: string[];
     containerNumbers!: string[];
+    ownerIds!: string[];
 
     constructor(data?: ISpaceWmsRuntimeInventoryLocateHitDto) {
         if (data) {
@@ -15082,6 +15093,7 @@ export class SpaceWmsRuntimeInventoryLocateHitDto implements ISpaceWmsRuntimeInv
             this.materialNumbers = [];
             this.lotNumbers = [];
             this.containerNumbers = [];
+            this.ownerIds = [];
         }
     }
 
@@ -15112,6 +15124,11 @@ export class SpaceWmsRuntimeInventoryLocateHitDto implements ISpaceWmsRuntimeInv
                 this.containerNumbers = [] as any;
                 for (let item of _data["containerNumbers"])
                     this.containerNumbers!.push(item);
+            }
+            if (Array.isArray(_data["ownerIds"])) {
+                this.ownerIds = [] as any;
+                for (let item of _data["ownerIds"])
+                    this.ownerIds!.push(item);
             }
         }
     }
@@ -15151,6 +15168,11 @@ export class SpaceWmsRuntimeInventoryLocateHitDto implements ISpaceWmsRuntimeInv
             for (let item of this.containerNumbers)
                 data["containerNumbers"].push(item);
         }
+        if (Array.isArray(this.ownerIds)) {
+            data["ownerIds"] = [];
+            for (let item of this.ownerIds)
+                data["ownerIds"].push(item);
+        }
         return data;
     }
 }
@@ -15170,6 +15192,7 @@ export interface ISpaceWmsRuntimeInventoryLocateHitDto {
     materialNumbers: string[];
     lotNumbers: string[];
     containerNumbers: string[];
+    ownerIds: string[];
 }
 
 export class SpaceWmsRuntimeInventoryLocateResponse implements ISpaceWmsRuntimeInventoryLocateResponse {

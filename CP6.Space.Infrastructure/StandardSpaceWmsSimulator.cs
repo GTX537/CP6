@@ -317,14 +317,17 @@ public sealed class StandardSpaceWmsSimulator :
                         filter(item.LogicalId) &&
                         (request.OwnerIds is null ||
                          (item.OwnerId is not null &&
-                          request.OwnerIds.Contains(
-                              item.OwnerId,
-                              StringComparer.Ordinal))) &&
-                        (locate is null ||
-                         (item.PhysicalQuantity > 0 &&
-                          Matches(item.MaterialNumber, locate.MaterialNumber) &&
-                          Matches(item.LotNumber, locate.LotNumber) &&
-                          Matches(item.ContainerNumber, locate.ContainerNumber))))
+                          request.OwnerIds.Any(ownerId =>
+                              string.Equals(
+                                  ownerId?.Trim(),
+                                  item.OwnerId,
+                                  StringComparison.OrdinalIgnoreCase)))) &&
+                         (locate is null ||
+                          (item.PhysicalQuantity > 0 &&
+                           Matches(item.MaterialNumber, locate.MaterialNumber) &&
+                           Matches(item.LotNumber, locate.LotNumber) &&
+                           Matches(item.ContainerNumber, locate.ContainerNumber) &&
+                           MatchesOwner(item.OwnerId, locate.OwnerId))))
                     .OrderBy(item => item.LocationCode, StringComparer.Ordinal)
                     .ThenBy(item => item.MaterialNumber, StringComparer.Ordinal)
                     .ToArray());
@@ -334,6 +337,10 @@ public sealed class StandardSpaceWmsSimulator :
     private static bool Matches(string? actual, string? expected) =>
         string.IsNullOrWhiteSpace(expected) ||
         string.Equals(actual, expected.Trim(), StringComparison.Ordinal);
+
+    private static bool MatchesOwner(string? actual, string? expected) =>
+        string.IsNullOrWhiteSpace(expected) ||
+        string.Equals(actual, expected.Trim(), StringComparison.OrdinalIgnoreCase);
 
     public async Task<SpaceWmsTaskResult> QueryTasksAsync(
         SpaceWmsTaskQuery request,

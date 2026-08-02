@@ -79,13 +79,15 @@ public sealed class SpaceWmsRuntimeController(
         [FromQuery] string? materialNumber = null,
         [FromQuery] string? lotNumber = null,
         [FromQuery] string? containerNumber = null,
+        [FromQuery] string? ownerId = null,
         CancellationToken cancellationToken = default) =>
         runtime.LocateInventoryAsync(
             siteId,
             new SpaceWmsInventoryLocateCriteria(
                 materialNumber,
                 lotNumber,
-                containerNumber),
+                containerNumber,
+                ownerId),
             cancellationToken);
 
     [HttpGet("tasks")]
