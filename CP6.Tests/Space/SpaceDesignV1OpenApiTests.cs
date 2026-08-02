@@ -80,6 +80,8 @@ public sealed class SpaceDesignV1OpenApiTests
             "/api/space/portal/v1/sites/{siteId}/published-scene",
             "/api/space/planning/v1/sites/{siteId}/scenario-branches",
             "/api/space/planning/v1/sites/{siteId}/scenario-branches/{branchId}",
+            "/api/space/planning/v1/sites/{siteId}/scenario-branches/{branchId}/historical-datasets",
+            "/api/space/planning/v1/sites/{siteId}/scenario-branches/{branchId}/historical-datasets/{datasetId}",
             "/api/space/portal/v1/sites/{siteId}/stock",
             "/api/space/portal/v1/sites/{siteId}/tasks",
         };
@@ -96,8 +98,8 @@ public sealed class SpaceDesignV1OpenApiTests
             .Select(operation =>
                 operation.Value.GetProperty("operationId").GetString())
             .ToArray();
-        Assert.Equal(71, operationIds.Length);
-        Assert.Equal(71, operationIds.Distinct().Count());
+        Assert.Equal(74, operationIds.Length);
+        Assert.Equal(74, operationIds.Distinct().Count());
         Assert.Contains("GetPolicy", operationIds);
         Assert.Contains("UpdatePolicy", operationIds);
         Assert.Contains("GetUsage", operationIds);
@@ -160,6 +162,9 @@ public sealed class SpaceDesignV1OpenApiTests
         Assert.Contains("CreateBranch", operationIds);
         Assert.Contains("GetBranch", operationIds);
         Assert.Contains("GetBranches", operationIds);
+        Assert.Contains("CreateHistoricalDataset", operationIds);
+        Assert.Contains("GetHistoricalDataset", operationIds);
+        Assert.Contains("GetHistoricalDatasets", operationIds);
         Assert.Contains("GetPortalStock", operationIds);
         Assert.Contains("GetPortalTasks", operationIds);
 
@@ -1457,6 +1462,9 @@ public sealed class SpaceDesignV1OpenApiTests
                      "GetPortalPublishedScene",
                      "GetPortalStock",
                      "GetPortalTasks",
+                     "CreateHistoricalDataset",
+                     "GetHistoricalDataset",
+                     "GetHistoricalDatasets",
                   })
         {
             Assert.Contains(operation, csharp, StringComparison.Ordinal);

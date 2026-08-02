@@ -37,6 +37,22 @@ public enum SpaceModelVersionPurpose : short
     PlanningScenario = 1,
 }
 
+public enum SpacePlanningTaskType : short
+{
+    Putaway = 0,
+    Pick = 1,
+    Replenishment = 2,
+    Move = 3,
+    Other = 4,
+}
+
+public enum SpacePlanningTaskOutcome : short
+{
+    Completed = 0,
+    Cancelled = 1,
+    Failed = 2,
+}
+
 public enum SpaceLifecycleState : short
 {
     Active = 0,

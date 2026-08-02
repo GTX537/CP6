@@ -387,6 +387,23 @@ export interface ISpaceDesignV1Client {
      * @param body (optional)
      * @return OK
      */
+    createHistoricalDataset(siteId: string, branchId: string, datasetId: string, body: CreateSpacePlanningHistoricalDatasetRequest | undefined): Promise<CreateSpacePlanningHistoricalDatasetResponse>;
+
+    /**
+     * @return OK
+     */
+    getHistoricalDataset(siteId: string, branchId: string, datasetId: string): Promise<SpacePlanningHistoricalDatasetDto>;
+
+    /**
+     * @param limit (optional)
+     * @return OK
+     */
+    getHistoricalDatasets(siteId: string, branchId: string, limit: number | undefined): Promise<SpacePlanningHistoricalDatasetListResponse>;
+
+    /**
+     * @param body (optional)
+     * @return OK
+     */
     createBranch(siteId: string, branchId: string, body: CreateSpacePlanningScenarioBranchRequest | undefined): Promise<CreateSpacePlanningScenarioBranchResponse>;
 
     /**
@@ -6621,6 +6638,298 @@ export class SpaceDesignV1Client implements ISpaceDesignV1Client {
      * @param body (optional)
      * @return OK
      */
+    createHistoricalDataset(siteId: string, branchId: string, datasetId: string, body: CreateSpacePlanningHistoricalDatasetRequest | undefined): Promise<CreateSpacePlanningHistoricalDatasetResponse> {
+        let url_ = this.baseUrl + "/api/space/planning/v1/sites/{siteId}/scenario-branches/{branchId}/historical-datasets/{datasetId}";
+        if (siteId === undefined || siteId === null)
+            throw new globalThis.Error("The parameter 'siteId' must be defined.");
+        url_ = url_.replace("{siteId}", encodeURIComponent("" + siteId));
+        if (branchId === undefined || branchId === null)
+            throw new globalThis.Error("The parameter 'branchId' must be defined.");
+        url_ = url_.replace("{branchId}", encodeURIComponent("" + branchId));
+        if (datasetId === undefined || datasetId === null)
+            throw new globalThis.Error("The parameter 'datasetId' must be defined.");
+        url_ = url_.replace("{datasetId}", encodeURIComponent("" + datasetId));
+        url_ = url_.replace(/[?&]$/, "");
+
+        const content_ = JSON.stringify(body);
+
+        let options_: RequestInit = {
+            body: content_,
+            method: "PUT",
+            headers: {
+                "Content-Type": "application/json",
+                "Accept": "application/json"
+            }
+        };
+
+        return this.http.fetch(url_, options_).then((_response: Response) => {
+            return this.processCreateHistoricalDataset(_response);
+        });
+    }
+
+    protected processCreateHistoricalDataset(response: Response): Promise<CreateSpacePlanningHistoricalDatasetResponse> {
+        const status = response.status;
+        let _headers: any = {}; if (response.headers && response.headers.forEach) { response.headers.forEach((v: any, k: any) => _headers[k] = v); };
+        if (status === 200) {
+            return response.text().then((_responseText) => {
+            let result200: any = null;
+            let resultData200 = _responseText === "" ? null : JSON.parse(_responseText, this.jsonParseReviver);
+            result200 = CreateSpacePlanningHistoricalDatasetResponse.fromJS(resultData200);
+            return result200;
+            });
+        } else if (status === 400) {
+            return response.text().then((_responseText) => {
+            let result400: any = null;
+            let resultData400 = _responseText === "" ? null : JSON.parse(_responseText, this.jsonParseReviver);
+            result400 = SpaceDesignProblemDetails.fromJS(resultData400);
+            return throwException("Bad Request", status, _responseText, _headers, result400);
+            });
+        } else if (status === 401) {
+            return response.text().then((_responseText) => {
+            let result401: any = null;
+            let resultData401 = _responseText === "" ? null : JSON.parse(_responseText, this.jsonParseReviver);
+            result401 = SpaceDesignProblemDetails.fromJS(resultData401);
+            return throwException("Unauthorized", status, _responseText, _headers, result401);
+            });
+        } else if (status === 403) {
+            return response.text().then((_responseText) => {
+            let result403: any = null;
+            let resultData403 = _responseText === "" ? null : JSON.parse(_responseText, this.jsonParseReviver);
+            result403 = SpaceDesignProblemDetails.fromJS(resultData403);
+            return throwException("Forbidden", status, _responseText, _headers, result403);
+            });
+        } else if (status === 404) {
+            return response.text().then((_responseText) => {
+            let result404: any = null;
+            let resultData404 = _responseText === "" ? null : JSON.parse(_responseText, this.jsonParseReviver);
+            result404 = SpaceDesignProblemDetails.fromJS(resultData404);
+            return throwException("Not Found", status, _responseText, _headers, result404);
+            });
+        } else if (status === 409) {
+            return response.text().then((_responseText) => {
+            let result409: any = null;
+            let resultData409 = _responseText === "" ? null : JSON.parse(_responseText, this.jsonParseReviver);
+            result409 = SpaceDesignProblemDetails.fromJS(resultData409);
+            return throwException("Conflict", status, _responseText, _headers, result409);
+            });
+        } else if (status === 422) {
+            return response.text().then((_responseText) => {
+            let result422: any = null;
+            let resultData422 = _responseText === "" ? null : JSON.parse(_responseText, this.jsonParseReviver);
+            result422 = SpaceDesignProblemDetails.fromJS(resultData422);
+            return throwException("Unprocessable Content", status, _responseText, _headers, result422);
+            });
+        } else if (status === 500) {
+            return response.text().then((_responseText) => {
+            let result500: any = null;
+            let resultData500 = _responseText === "" ? null : JSON.parse(_responseText, this.jsonParseReviver);
+            result500 = SpaceDesignProblemDetails.fromJS(resultData500);
+            return throwException("Internal Server Error", status, _responseText, _headers, result500);
+            });
+        } else if (status !== 200 && status !== 204) {
+            return response.text().then((_responseText) => {
+            return throwException("An unexpected server error occurred.", status, _responseText, _headers);
+            });
+        }
+        return Promise.resolve<CreateSpacePlanningHistoricalDatasetResponse>(null as any);
+    }
+
+    /**
+     * @return OK
+     */
+    getHistoricalDataset(siteId: string, branchId: string, datasetId: string): Promise<SpacePlanningHistoricalDatasetDto> {
+        let url_ = this.baseUrl + "/api/space/planning/v1/sites/{siteId}/scenario-branches/{branchId}/historical-datasets/{datasetId}";
+        if (siteId === undefined || siteId === null)
+            throw new globalThis.Error("The parameter 'siteId' must be defined.");
+        url_ = url_.replace("{siteId}", encodeURIComponent("" + siteId));
+        if (branchId === undefined || branchId === null)
+            throw new globalThis.Error("The parameter 'branchId' must be defined.");
+        url_ = url_.replace("{branchId}", encodeURIComponent("" + branchId));
+        if (datasetId === undefined || datasetId === null)
+            throw new globalThis.Error("The parameter 'datasetId' must be defined.");
+        url_ = url_.replace("{datasetId}", encodeURIComponent("" + datasetId));
+        url_ = url_.replace(/[?&]$/, "");
+
+        let options_: RequestInit = {
+            method: "GET",
+            headers: {
+                "Accept": "application/json"
+            }
+        };
+
+        return this.http.fetch(url_, options_).then((_response: Response) => {
+            return this.processGetHistoricalDataset(_response);
+        });
+    }
+
+    protected processGetHistoricalDataset(response: Response): Promise<SpacePlanningHistoricalDatasetDto> {
+        const status = response.status;
+        let _headers: any = {}; if (response.headers && response.headers.forEach) { response.headers.forEach((v: any, k: any) => _headers[k] = v); };
+        if (status === 200) {
+            return response.text().then((_responseText) => {
+            let result200: any = null;
+            let resultData200 = _responseText === "" ? null : JSON.parse(_responseText, this.jsonParseReviver);
+            result200 = SpacePlanningHistoricalDatasetDto.fromJS(resultData200);
+            return result200;
+            });
+        } else if (status === 400) {
+            return response.text().then((_responseText) => {
+            let result400: any = null;
+            let resultData400 = _responseText === "" ? null : JSON.parse(_responseText, this.jsonParseReviver);
+            result400 = SpaceDesignProblemDetails.fromJS(resultData400);
+            return throwException("Bad Request", status, _responseText, _headers, result400);
+            });
+        } else if (status === 401) {
+            return response.text().then((_responseText) => {
+            let result401: any = null;
+            let resultData401 = _responseText === "" ? null : JSON.parse(_responseText, this.jsonParseReviver);
+            result401 = SpaceDesignProblemDetails.fromJS(resultData401);
+            return throwException("Unauthorized", status, _responseText, _headers, result401);
+            });
+        } else if (status === 403) {
+            return response.text().then((_responseText) => {
+            let result403: any = null;
+            let resultData403 = _responseText === "" ? null : JSON.parse(_responseText, this.jsonParseReviver);
+            result403 = SpaceDesignProblemDetails.fromJS(resultData403);
+            return throwException("Forbidden", status, _responseText, _headers, result403);
+            });
+        } else if (status === 404) {
+            return response.text().then((_responseText) => {
+            let result404: any = null;
+            let resultData404 = _responseText === "" ? null : JSON.parse(_responseText, this.jsonParseReviver);
+            result404 = SpaceDesignProblemDetails.fromJS(resultData404);
+            return throwException("Not Found", status, _responseText, _headers, result404);
+            });
+        } else if (status === 409) {
+            return response.text().then((_responseText) => {
+            let result409: any = null;
+            let resultData409 = _responseText === "" ? null : JSON.parse(_responseText, this.jsonParseReviver);
+            result409 = SpaceDesignProblemDetails.fromJS(resultData409);
+            return throwException("Conflict", status, _responseText, _headers, result409);
+            });
+        } else if (status === 422) {
+            return response.text().then((_responseText) => {
+            let result422: any = null;
+            let resultData422 = _responseText === "" ? null : JSON.parse(_responseText, this.jsonParseReviver);
+            result422 = SpaceDesignProblemDetails.fromJS(resultData422);
+            return throwException("Unprocessable Content", status, _responseText, _headers, result422);
+            });
+        } else if (status === 500) {
+            return response.text().then((_responseText) => {
+            let result500: any = null;
+            let resultData500 = _responseText === "" ? null : JSON.parse(_responseText, this.jsonParseReviver);
+            result500 = SpaceDesignProblemDetails.fromJS(resultData500);
+            return throwException("Internal Server Error", status, _responseText, _headers, result500);
+            });
+        } else if (status !== 200 && status !== 204) {
+            return response.text().then((_responseText) => {
+            return throwException("An unexpected server error occurred.", status, _responseText, _headers);
+            });
+        }
+        return Promise.resolve<SpacePlanningHistoricalDatasetDto>(null as any);
+    }
+
+    /**
+     * @param limit (optional)
+     * @return OK
+     */
+    getHistoricalDatasets(siteId: string, branchId: string, limit: number | undefined): Promise<SpacePlanningHistoricalDatasetListResponse> {
+        let url_ = this.baseUrl + "/api/space/planning/v1/sites/{siteId}/scenario-branches/{branchId}/historical-datasets?";
+        if (siteId === undefined || siteId === null)
+            throw new globalThis.Error("The parameter 'siteId' must be defined.");
+        url_ = url_.replace("{siteId}", encodeURIComponent("" + siteId));
+        if (branchId === undefined || branchId === null)
+            throw new globalThis.Error("The parameter 'branchId' must be defined.");
+        url_ = url_.replace("{branchId}", encodeURIComponent("" + branchId));
+        if (limit === null)
+            throw new globalThis.Error("The parameter 'limit' cannot be null.");
+        else if (limit !== undefined)
+            url_ += "limit=" + encodeURIComponent("" + limit) + "&";
+        url_ = url_.replace(/[?&]$/, "");
+
+        let options_: RequestInit = {
+            method: "GET",
+            headers: {
+                "Accept": "application/json"
+            }
+        };
+
+        return this.http.fetch(url_, options_).then((_response: Response) => {
+            return this.processGetHistoricalDatasets(_response);
+        });
+    }
+
+    protected processGetHistoricalDatasets(response: Response): Promise<SpacePlanningHistoricalDatasetListResponse> {
+        const status = response.status;
+        let _headers: any = {}; if (response.headers && response.headers.forEach) { response.headers.forEach((v: any, k: any) => _headers[k] = v); };
+        if (status === 200) {
+            return response.text().then((_responseText) => {
+            let result200: any = null;
+            let resultData200 = _responseText === "" ? null : JSON.parse(_responseText, this.jsonParseReviver);
+            result200 = SpacePlanningHistoricalDatasetListResponse.fromJS(resultData200);
+            return result200;
+            });
+        } else if (status === 400) {
+            return response.text().then((_responseText) => {
+            let result400: any = null;
+            let resultData400 = _responseText === "" ? null : JSON.parse(_responseText, this.jsonParseReviver);
+            result400 = SpaceDesignProblemDetails.fromJS(resultData400);
+            return throwException("Bad Request", status, _responseText, _headers, result400);
+            });
+        } else if (status === 401) {
+            return response.text().then((_responseText) => {
+            let result401: any = null;
+            let resultData401 = _responseText === "" ? null : JSON.parse(_responseText, this.jsonParseReviver);
+            result401 = SpaceDesignProblemDetails.fromJS(resultData401);
+            return throwException("Unauthorized", status, _responseText, _headers, result401);
+            });
+        } else if (status === 403) {
+            return response.text().then((_responseText) => {
+            let result403: any = null;
+            let resultData403 = _responseText === "" ? null : JSON.parse(_responseText, this.jsonParseReviver);
+            result403 = SpaceDesignProblemDetails.fromJS(resultData403);
+            return throwException("Forbidden", status, _responseText, _headers, result403);
+            });
+        } else if (status === 404) {
+            return response.text().then((_responseText) => {
+            let result404: any = null;
+            let resultData404 = _responseText === "" ? null : JSON.parse(_responseText, this.jsonParseReviver);
+            result404 = SpaceDesignProblemDetails.fromJS(resultData404);
+            return throwException("Not Found", status, _responseText, _headers, result404);
+            });
+        } else if (status === 409) {
+            return response.text().then((_responseText) => {
+            let result409: any = null;
+            let resultData409 = _responseText === "" ? null : JSON.parse(_responseText, this.jsonParseReviver);
+            result409 = SpaceDesignProblemDetails.fromJS(resultData409);
+            return throwException("Conflict", status, _responseText, _headers, result409);
+            });
+        } else if (status === 422) {
+            return response.text().then((_responseText) => {
+            let result422: any = null;
+            let resultData422 = _responseText === "" ? null : JSON.parse(_responseText, this.jsonParseReviver);
+            result422 = SpaceDesignProblemDetails.fromJS(resultData422);
+            return throwException("Unprocessable Content", status, _responseText, _headers, result422);
+            });
+        } else if (status === 500) {
+            return response.text().then((_responseText) => {
+            let result500: any = null;
+            let resultData500 = _responseText === "" ? null : JSON.parse(_responseText, this.jsonParseReviver);
+            result500 = SpaceDesignProblemDetails.fromJS(resultData500);
+            return throwException("Internal Server Error", status, _responseText, _headers, result500);
+            });
+        } else if (status !== 200 && status !== 204) {
+            return response.text().then((_responseText) => {
+            return throwException("An unexpected server error occurred.", status, _responseText, _headers);
+            });
+        }
+        return Promise.resolve<SpacePlanningHistoricalDatasetListResponse>(null as any);
+    }
+
+    /**
+     * @param body (optional)
+     * @return OK
+     */
     createBranch(siteId: string, branchId: string, body: CreateSpacePlanningScenarioBranchRequest | undefined): Promise<CreateSpacePlanningScenarioBranchResponse> {
         let url_ = this.baseUrl + "/api/space/planning/v1/sites/{siteId}/scenario-branches/{branchId}";
         if (siteId === undefined || siteId === null)
@@ -8253,6 +8562,186 @@ export interface ICreateSpaceFieldPolicyRequest {
     audienceType: string;
     fields: SpaceFieldPolicyFieldRequest[];
     canExport?: boolean;
+}
+
+export class CreateSpacePlanningHistoricalDatasetRequest implements ICreateSpacePlanningHistoricalDatasetRequest {
+    name?: string | undefined;
+    historicalFromUtc?: Date;
+    historicalToUtc?: Date;
+    replayStartUtc?: Date;
+    replaySpeedFactor?: number;
+    sourceDatasetHash?: string | undefined;
+    confirmDeidentified?: boolean;
+    tasks?: CreateSpacePlanningHistoricalTaskRequest[] | undefined;
+
+    constructor(data?: ICreateSpacePlanningHistoricalDatasetRequest) {
+        if (data) {
+            for (var property in data) {
+                if (data.hasOwnProperty(property))
+                    (this as any)[property] = (data as any)[property];
+            }
+        }
+    }
+
+    init(_data?: any) {
+        if (_data) {
+            this.name = _data["name"];
+            this.historicalFromUtc = _data["historicalFromUtc"] ? new Date(_data["historicalFromUtc"].toString()) : undefined as any;
+            this.historicalToUtc = _data["historicalToUtc"] ? new Date(_data["historicalToUtc"].toString()) : undefined as any;
+            this.replayStartUtc = _data["replayStartUtc"] ? new Date(_data["replayStartUtc"].toString()) : undefined as any;
+            this.replaySpeedFactor = _data["replaySpeedFactor"];
+            this.sourceDatasetHash = _data["sourceDatasetHash"];
+            this.confirmDeidentified = _data["confirmDeidentified"];
+            if (Array.isArray(_data["tasks"])) {
+                this.tasks = [] as any;
+                for (let item of _data["tasks"])
+                    this.tasks!.push(CreateSpacePlanningHistoricalTaskRequest.fromJS(item));
+            }
+        }
+    }
+
+    static fromJS(data: any): CreateSpacePlanningHistoricalDatasetRequest {
+        data = typeof data === 'object' ? data : {};
+        let result = new CreateSpacePlanningHistoricalDatasetRequest();
+        result.init(data);
+        return result;
+    }
+
+    toJSON(data?: any) {
+        data = typeof data === 'object' ? data : {};
+        data["name"] = this.name;
+        data["historicalFromUtc"] = this.historicalFromUtc ? this.historicalFromUtc.toISOString() : undefined as any;
+        data["historicalToUtc"] = this.historicalToUtc ? this.historicalToUtc.toISOString() : undefined as any;
+        data["replayStartUtc"] = this.replayStartUtc ? this.replayStartUtc.toISOString() : undefined as any;
+        data["replaySpeedFactor"] = this.replaySpeedFactor;
+        data["sourceDatasetHash"] = this.sourceDatasetHash;
+        data["confirmDeidentified"] = this.confirmDeidentified;
+        if (Array.isArray(this.tasks)) {
+            data["tasks"] = [];
+            for (let item of this.tasks)
+                data["tasks"].push(item ? item.toJSON() : undefined as any);
+        }
+        return data;
+    }
+}
+
+export interface ICreateSpacePlanningHistoricalDatasetRequest {
+    name?: string | undefined;
+    historicalFromUtc?: Date;
+    historicalToUtc?: Date;
+    replayStartUtc?: Date;
+    replaySpeedFactor?: number;
+    sourceDatasetHash?: string | undefined;
+    confirmDeidentified?: boolean;
+    tasks?: CreateSpacePlanningHistoricalTaskRequest[] | undefined;
+}
+
+export class CreateSpacePlanningHistoricalDatasetResponse implements ICreateSpacePlanningHistoricalDatasetResponse {
+    outcome?: string | undefined;
+    dataset?: SpacePlanningHistoricalDatasetDto;
+
+    constructor(data?: ICreateSpacePlanningHistoricalDatasetResponse) {
+        if (data) {
+            for (var property in data) {
+                if (data.hasOwnProperty(property))
+                    (this as any)[property] = (data as any)[property];
+            }
+        }
+    }
+
+    init(_data?: any) {
+        if (_data) {
+            this.outcome = _data["outcome"];
+            this.dataset = _data["dataset"] ? SpacePlanningHistoricalDatasetDto.fromJS(_data["dataset"]) : undefined as any;
+        }
+    }
+
+    static fromJS(data: any): CreateSpacePlanningHistoricalDatasetResponse {
+        data = typeof data === 'object' ? data : {};
+        let result = new CreateSpacePlanningHistoricalDatasetResponse();
+        result.init(data);
+        return result;
+    }
+
+    toJSON(data?: any) {
+        data = typeof data === 'object' ? data : {};
+        data["outcome"] = this.outcome;
+        data["dataset"] = this.dataset ? this.dataset.toJSON() : undefined as any;
+        return data;
+    }
+}
+
+export interface ICreateSpacePlanningHistoricalDatasetResponse {
+    outcome?: string | undefined;
+    dataset?: SpacePlanningHistoricalDatasetDto;
+}
+
+export class CreateSpacePlanningHistoricalTaskRequest implements ICreateSpacePlanningHistoricalTaskRequest {
+    taskToken?: string | undefined;
+    workerToken?: string | undefined;
+    taskType?: string | undefined;
+    outcome?: string | undefined;
+    originalCreatedAtUtc?: Date;
+    originalCompletedAtUtc?: Date;
+    fromLocationLogicalId?: string | undefined;
+    toLocationLogicalId?: string;
+    quantity?: number;
+
+    constructor(data?: ICreateSpacePlanningHistoricalTaskRequest) {
+        if (data) {
+            for (var property in data) {
+                if (data.hasOwnProperty(property))
+                    (this as any)[property] = (data as any)[property];
+            }
+        }
+    }
+
+    init(_data?: any) {
+        if (_data) {
+            this.taskToken = _data["taskToken"];
+            this.workerToken = _data["workerToken"];
+            this.taskType = _data["taskType"];
+            this.outcome = _data["outcome"];
+            this.originalCreatedAtUtc = _data["originalCreatedAtUtc"] ? new Date(_data["originalCreatedAtUtc"].toString()) : undefined as any;
+            this.originalCompletedAtUtc = _data["originalCompletedAtUtc"] ? new Date(_data["originalCompletedAtUtc"].toString()) : undefined as any;
+            this.fromLocationLogicalId = _data["fromLocationLogicalId"];
+            this.toLocationLogicalId = _data["toLocationLogicalId"];
+            this.quantity = _data["quantity"];
+        }
+    }
+
+    static fromJS(data: any): CreateSpacePlanningHistoricalTaskRequest {
+        data = typeof data === 'object' ? data : {};
+        let result = new CreateSpacePlanningHistoricalTaskRequest();
+        result.init(data);
+        return result;
+    }
+
+    toJSON(data?: any) {
+        data = typeof data === 'object' ? data : {};
+        data["taskToken"] = this.taskToken;
+        data["workerToken"] = this.workerToken;
+        data["taskType"] = this.taskType;
+        data["outcome"] = this.outcome;
+        data["originalCreatedAtUtc"] = this.originalCreatedAtUtc ? this.originalCreatedAtUtc.toISOString() : undefined as any;
+        data["originalCompletedAtUtc"] = this.originalCompletedAtUtc ? this.originalCompletedAtUtc.toISOString() : undefined as any;
+        data["fromLocationLogicalId"] = this.fromLocationLogicalId;
+        data["toLocationLogicalId"] = this.toLocationLogicalId;
+        data["quantity"] = this.quantity;
+        return data;
+    }
+}
+
+export interface ICreateSpacePlanningHistoricalTaskRequest {
+    taskToken?: string | undefined;
+    workerToken?: string | undefined;
+    taskType?: string | undefined;
+    outcome?: string | undefined;
+    originalCreatedAtUtc?: Date;
+    originalCompletedAtUtc?: Date;
+    fromLocationLogicalId?: string | undefined;
+    toLocationLogicalId?: string;
+    quantity?: number;
 }
 
 export class CreateSpacePlanningScenarioBranchRequest implements ICreateSpacePlanningScenarioBranchRequest {
@@ -13006,6 +13495,382 @@ export interface ISpacePersonnelTrajectoryResponse {
     retentionCutoffUtc: Date;
     items: SpacePersonnelTrajectoryPointDto[];
     nextCursor: string | undefined;
+}
+
+export class SpacePlanningHistoricalDatasetDto implements ISpacePlanningHistoricalDatasetDto {
+    datasetId?: string;
+    branchId?: string;
+    siteId?: string;
+    scenarioVersionId?: string;
+    name?: string | undefined;
+    taskCount?: number;
+    sourceDatasetHash?: string | undefined;
+    definitionVersion?: string | undefined;
+    deidentificationVersion?: string | undefined;
+    deidentified?: boolean;
+    productionWriteAllowed?: boolean;
+    replayClock?: SpacePlanningReplayClockDto;
+    tasks?: SpacePlanningHistoricalTaskDto[] | undefined;
+    createdAtUtc?: Date;
+    createdBy?: string;
+    limitations?: string[] | undefined;
+
+    constructor(data?: ISpacePlanningHistoricalDatasetDto) {
+        if (data) {
+            for (var property in data) {
+                if (data.hasOwnProperty(property))
+                    (this as any)[property] = (data as any)[property];
+            }
+        }
+    }
+
+    init(_data?: any) {
+        if (_data) {
+            this.datasetId = _data["datasetId"];
+            this.branchId = _data["branchId"];
+            this.siteId = _data["siteId"];
+            this.scenarioVersionId = _data["scenarioVersionId"];
+            this.name = _data["name"];
+            this.taskCount = _data["taskCount"];
+            this.sourceDatasetHash = _data["sourceDatasetHash"];
+            this.definitionVersion = _data["definitionVersion"];
+            this.deidentificationVersion = _data["deidentificationVersion"];
+            this.deidentified = _data["deidentified"];
+            this.productionWriteAllowed = _data["productionWriteAllowed"];
+            this.replayClock = _data["replayClock"] ? SpacePlanningReplayClockDto.fromJS(_data["replayClock"]) : undefined as any;
+            if (Array.isArray(_data["tasks"])) {
+                this.tasks = [] as any;
+                for (let item of _data["tasks"])
+                    this.tasks!.push(SpacePlanningHistoricalTaskDto.fromJS(item));
+            }
+            this.createdAtUtc = _data["createdAtUtc"] ? new Date(_data["createdAtUtc"].toString()) : undefined as any;
+            this.createdBy = _data["createdBy"];
+            if (Array.isArray(_data["limitations"])) {
+                this.limitations = [] as any;
+                for (let item of _data["limitations"])
+                    this.limitations!.push(item);
+            }
+        }
+    }
+
+    static fromJS(data: any): SpacePlanningHistoricalDatasetDto {
+        data = typeof data === 'object' ? data : {};
+        let result = new SpacePlanningHistoricalDatasetDto();
+        result.init(data);
+        return result;
+    }
+
+    toJSON(data?: any) {
+        data = typeof data === 'object' ? data : {};
+        data["datasetId"] = this.datasetId;
+        data["branchId"] = this.branchId;
+        data["siteId"] = this.siteId;
+        data["scenarioVersionId"] = this.scenarioVersionId;
+        data["name"] = this.name;
+        data["taskCount"] = this.taskCount;
+        data["sourceDatasetHash"] = this.sourceDatasetHash;
+        data["definitionVersion"] = this.definitionVersion;
+        data["deidentificationVersion"] = this.deidentificationVersion;
+        data["deidentified"] = this.deidentified;
+        data["productionWriteAllowed"] = this.productionWriteAllowed;
+        data["replayClock"] = this.replayClock ? this.replayClock.toJSON() : undefined as any;
+        if (Array.isArray(this.tasks)) {
+            data["tasks"] = [];
+            for (let item of this.tasks)
+                data["tasks"].push(item ? item.toJSON() : undefined as any);
+        }
+        data["createdAtUtc"] = this.createdAtUtc ? this.createdAtUtc.toISOString() : undefined as any;
+        data["createdBy"] = this.createdBy;
+        if (Array.isArray(this.limitations)) {
+            data["limitations"] = [];
+            for (let item of this.limitations)
+                data["limitations"].push(item);
+        }
+        return data;
+    }
+}
+
+export interface ISpacePlanningHistoricalDatasetDto {
+    datasetId?: string;
+    branchId?: string;
+    siteId?: string;
+    scenarioVersionId?: string;
+    name?: string | undefined;
+    taskCount?: number;
+    sourceDatasetHash?: string | undefined;
+    definitionVersion?: string | undefined;
+    deidentificationVersion?: string | undefined;
+    deidentified?: boolean;
+    productionWriteAllowed?: boolean;
+    replayClock?: SpacePlanningReplayClockDto;
+    tasks?: SpacePlanningHistoricalTaskDto[] | undefined;
+    createdAtUtc?: Date;
+    createdBy?: string;
+    limitations?: string[] | undefined;
+}
+
+export class SpacePlanningHistoricalDatasetListResponse implements ISpacePlanningHistoricalDatasetListResponse {
+    items?: SpacePlanningHistoricalDatasetSummaryDto[] | undefined;
+    isTruncated?: boolean;
+
+    constructor(data?: ISpacePlanningHistoricalDatasetListResponse) {
+        if (data) {
+            for (var property in data) {
+                if (data.hasOwnProperty(property))
+                    (this as any)[property] = (data as any)[property];
+            }
+        }
+    }
+
+    init(_data?: any) {
+        if (_data) {
+            if (Array.isArray(_data["items"])) {
+                this.items = [] as any;
+                for (let item of _data["items"])
+                    this.items!.push(SpacePlanningHistoricalDatasetSummaryDto.fromJS(item));
+            }
+            this.isTruncated = _data["isTruncated"];
+        }
+    }
+
+    static fromJS(data: any): SpacePlanningHistoricalDatasetListResponse {
+        data = typeof data === 'object' ? data : {};
+        let result = new SpacePlanningHistoricalDatasetListResponse();
+        result.init(data);
+        return result;
+    }
+
+    toJSON(data?: any) {
+        data = typeof data === 'object' ? data : {};
+        if (Array.isArray(this.items)) {
+            data["items"] = [];
+            for (let item of this.items)
+                data["items"].push(item ? item.toJSON() : undefined as any);
+        }
+        data["isTruncated"] = this.isTruncated;
+        return data;
+    }
+}
+
+export interface ISpacePlanningHistoricalDatasetListResponse {
+    items?: SpacePlanningHistoricalDatasetSummaryDto[] | undefined;
+    isTruncated?: boolean;
+}
+
+export class SpacePlanningHistoricalDatasetSummaryDto implements ISpacePlanningHistoricalDatasetSummaryDto {
+    datasetId?: string;
+    branchId?: string;
+    scenarioVersionId?: string;
+    name?: string | undefined;
+    taskCount?: number;
+    historicalFromUtc?: Date;
+    historicalToUtc?: Date;
+    replayStartUtc?: Date;
+    replayEndUtc?: Date;
+    replaySpeedFactor?: number;
+    createdAtUtc?: Date;
+
+    constructor(data?: ISpacePlanningHistoricalDatasetSummaryDto) {
+        if (data) {
+            for (var property in data) {
+                if (data.hasOwnProperty(property))
+                    (this as any)[property] = (data as any)[property];
+            }
+        }
+    }
+
+    init(_data?: any) {
+        if (_data) {
+            this.datasetId = _data["datasetId"];
+            this.branchId = _data["branchId"];
+            this.scenarioVersionId = _data["scenarioVersionId"];
+            this.name = _data["name"];
+            this.taskCount = _data["taskCount"];
+            this.historicalFromUtc = _data["historicalFromUtc"] ? new Date(_data["historicalFromUtc"].toString()) : undefined as any;
+            this.historicalToUtc = _data["historicalToUtc"] ? new Date(_data["historicalToUtc"].toString()) : undefined as any;
+            this.replayStartUtc = _data["replayStartUtc"] ? new Date(_data["replayStartUtc"].toString()) : undefined as any;
+            this.replayEndUtc = _data["replayEndUtc"] ? new Date(_data["replayEndUtc"].toString()) : undefined as any;
+            this.replaySpeedFactor = _data["replaySpeedFactor"];
+            this.createdAtUtc = _data["createdAtUtc"] ? new Date(_data["createdAtUtc"].toString()) : undefined as any;
+        }
+    }
+
+    static fromJS(data: any): SpacePlanningHistoricalDatasetSummaryDto {
+        data = typeof data === 'object' ? data : {};
+        let result = new SpacePlanningHistoricalDatasetSummaryDto();
+        result.init(data);
+        return result;
+    }
+
+    toJSON(data?: any) {
+        data = typeof data === 'object' ? data : {};
+        data["datasetId"] = this.datasetId;
+        data["branchId"] = this.branchId;
+        data["scenarioVersionId"] = this.scenarioVersionId;
+        data["name"] = this.name;
+        data["taskCount"] = this.taskCount;
+        data["historicalFromUtc"] = this.historicalFromUtc ? this.historicalFromUtc.toISOString() : undefined as any;
+        data["historicalToUtc"] = this.historicalToUtc ? this.historicalToUtc.toISOString() : undefined as any;
+        data["replayStartUtc"] = this.replayStartUtc ? this.replayStartUtc.toISOString() : undefined as any;
+        data["replayEndUtc"] = this.replayEndUtc ? this.replayEndUtc.toISOString() : undefined as any;
+        data["replaySpeedFactor"] = this.replaySpeedFactor;
+        data["createdAtUtc"] = this.createdAtUtc ? this.createdAtUtc.toISOString() : undefined as any;
+        return data;
+    }
+}
+
+export interface ISpacePlanningHistoricalDatasetSummaryDto {
+    datasetId?: string;
+    branchId?: string;
+    scenarioVersionId?: string;
+    name?: string | undefined;
+    taskCount?: number;
+    historicalFromUtc?: Date;
+    historicalToUtc?: Date;
+    replayStartUtc?: Date;
+    replayEndUtc?: Date;
+    replaySpeedFactor?: number;
+    createdAtUtc?: Date;
+}
+
+export class SpacePlanningHistoricalTaskDto implements ISpacePlanningHistoricalTaskDto {
+    sequenceNo?: number;
+    taskToken?: string | undefined;
+    workerToken?: string | undefined;
+    taskType?: string | undefined;
+    outcome?: string | undefined;
+    originalCreatedAtUtc?: Date;
+    originalCompletedAtUtc?: Date;
+    replayCreatedAtUtc?: Date;
+    replayCompletedAtUtc?: Date;
+    fromLocationLogicalId?: string | undefined;
+    toLocationLogicalId?: string;
+    quantity?: number;
+
+    constructor(data?: ISpacePlanningHistoricalTaskDto) {
+        if (data) {
+            for (var property in data) {
+                if (data.hasOwnProperty(property))
+                    (this as any)[property] = (data as any)[property];
+            }
+        }
+    }
+
+    init(_data?: any) {
+        if (_data) {
+            this.sequenceNo = _data["sequenceNo"];
+            this.taskToken = _data["taskToken"];
+            this.workerToken = _data["workerToken"];
+            this.taskType = _data["taskType"];
+            this.outcome = _data["outcome"];
+            this.originalCreatedAtUtc = _data["originalCreatedAtUtc"] ? new Date(_data["originalCreatedAtUtc"].toString()) : undefined as any;
+            this.originalCompletedAtUtc = _data["originalCompletedAtUtc"] ? new Date(_data["originalCompletedAtUtc"].toString()) : undefined as any;
+            this.replayCreatedAtUtc = _data["replayCreatedAtUtc"] ? new Date(_data["replayCreatedAtUtc"].toString()) : undefined as any;
+            this.replayCompletedAtUtc = _data["replayCompletedAtUtc"] ? new Date(_data["replayCompletedAtUtc"].toString()) : undefined as any;
+            this.fromLocationLogicalId = _data["fromLocationLogicalId"];
+            this.toLocationLogicalId = _data["toLocationLogicalId"];
+            this.quantity = _data["quantity"];
+        }
+    }
+
+    static fromJS(data: any): SpacePlanningHistoricalTaskDto {
+        data = typeof data === 'object' ? data : {};
+        let result = new SpacePlanningHistoricalTaskDto();
+        result.init(data);
+        return result;
+    }
+
+    toJSON(data?: any) {
+        data = typeof data === 'object' ? data : {};
+        data["sequenceNo"] = this.sequenceNo;
+        data["taskToken"] = this.taskToken;
+        data["workerToken"] = this.workerToken;
+        data["taskType"] = this.taskType;
+        data["outcome"] = this.outcome;
+        data["originalCreatedAtUtc"] = this.originalCreatedAtUtc ? this.originalCreatedAtUtc.toISOString() : undefined as any;
+        data["originalCompletedAtUtc"] = this.originalCompletedAtUtc ? this.originalCompletedAtUtc.toISOString() : undefined as any;
+        data["replayCreatedAtUtc"] = this.replayCreatedAtUtc ? this.replayCreatedAtUtc.toISOString() : undefined as any;
+        data["replayCompletedAtUtc"] = this.replayCompletedAtUtc ? this.replayCompletedAtUtc.toISOString() : undefined as any;
+        data["fromLocationLogicalId"] = this.fromLocationLogicalId;
+        data["toLocationLogicalId"] = this.toLocationLogicalId;
+        data["quantity"] = this.quantity;
+        return data;
+    }
+}
+
+export interface ISpacePlanningHistoricalTaskDto {
+    sequenceNo?: number;
+    taskToken?: string | undefined;
+    workerToken?: string | undefined;
+    taskType?: string | undefined;
+    outcome?: string | undefined;
+    originalCreatedAtUtc?: Date;
+    originalCompletedAtUtc?: Date;
+    replayCreatedAtUtc?: Date;
+    replayCompletedAtUtc?: Date;
+    fromLocationLogicalId?: string | undefined;
+    toLocationLogicalId?: string;
+    quantity?: number;
+}
+
+export class SpacePlanningReplayClockDto implements ISpacePlanningReplayClockDto {
+    historicalFromUtc?: Date;
+    historicalToUtc?: Date;
+    replayStartUtc?: Date;
+    replayEndUtc?: Date;
+    replaySpeedFactor?: number;
+    historicalDurationSeconds?: number;
+    replayDurationSeconds?: number;
+
+    constructor(data?: ISpacePlanningReplayClockDto) {
+        if (data) {
+            for (var property in data) {
+                if (data.hasOwnProperty(property))
+                    (this as any)[property] = (data as any)[property];
+            }
+        }
+    }
+
+    init(_data?: any) {
+        if (_data) {
+            this.historicalFromUtc = _data["historicalFromUtc"] ? new Date(_data["historicalFromUtc"].toString()) : undefined as any;
+            this.historicalToUtc = _data["historicalToUtc"] ? new Date(_data["historicalToUtc"].toString()) : undefined as any;
+            this.replayStartUtc = _data["replayStartUtc"] ? new Date(_data["replayStartUtc"].toString()) : undefined as any;
+            this.replayEndUtc = _data["replayEndUtc"] ? new Date(_data["replayEndUtc"].toString()) : undefined as any;
+            this.replaySpeedFactor = _data["replaySpeedFactor"];
+            this.historicalDurationSeconds = _data["historicalDurationSeconds"];
+            this.replayDurationSeconds = _data["replayDurationSeconds"];
+        }
+    }
+
+    static fromJS(data: any): SpacePlanningReplayClockDto {
+        data = typeof data === 'object' ? data : {};
+        let result = new SpacePlanningReplayClockDto();
+        result.init(data);
+        return result;
+    }
+
+    toJSON(data?: any) {
+        data = typeof data === 'object' ? data : {};
+        data["historicalFromUtc"] = this.historicalFromUtc ? this.historicalFromUtc.toISOString() : undefined as any;
+        data["historicalToUtc"] = this.historicalToUtc ? this.historicalToUtc.toISOString() : undefined as any;
+        data["replayStartUtc"] = this.replayStartUtc ? this.replayStartUtc.toISOString() : undefined as any;
+        data["replayEndUtc"] = this.replayEndUtc ? this.replayEndUtc.toISOString() : undefined as any;
+        data["replaySpeedFactor"] = this.replaySpeedFactor;
+        data["historicalDurationSeconds"] = this.historicalDurationSeconds;
+        data["replayDurationSeconds"] = this.replayDurationSeconds;
+        return data;
+    }
+}
+
+export interface ISpacePlanningReplayClockDto {
+    historicalFromUtc?: Date;
+    historicalToUtc?: Date;
+    replayStartUtc?: Date;
+    replayEndUtc?: Date;
+    replaySpeedFactor?: number;
+    historicalDurationSeconds?: number;
+    replayDurationSeconds?: number;
 }
 
 export class SpacePlanningScenarioBranchDto implements ISpacePlanningScenarioBranchDto {

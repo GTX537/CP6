@@ -81,10 +81,32 @@
           </CpTag>
         </template>
       </el-table-column>
+      <el-table-column :label="tr('space.planningScenario.history', '历史数据')" width="120">
+        <template #default="{ row }">
+          <el-button
+            v-if="canUseDataset(row)"
+            data-test="open-datasets"
+            link
+            type="primary"
+            @click="selectedBranch = selectedBranch?.branchId === row.branchId ? null : row"
+          >
+            {{ selectedBranch?.branchId === row.branchId
+              ? tr('space.planningScenario.collapseHistory', '收起')
+              : tr('space.planningScenario.openHistory', '打开') }}
+          </el-button>
+          <span v-else>—</span>
+        </template>
+      </el-table-column>
     </el-table>
     <CpEmpty
       v-else-if="!loading"
       :text="tr('space.planningScenario.empty', '尚未创建规划场景。')"
+    />
+    <PlanningHistoricalDatasetPanel
+      v-if="selectedBranch"
+      :site-id="siteId"
+      :branch-id="selectedBranch.branchId"
+      :branch-name="selectedBranch.name"
     />
   </section>
 </template>
@@ -97,6 +119,7 @@ import CpTag, { type Tone } from '@/components/base/CpTag.vue'
 import { planningScenarioApi } from '@/api/space/planningScenario'
 import { useTOr } from '@/i18n/tOr'
 import type { SpacePlanningScenarioBranch } from '@/api/space/planningScenario'
+import PlanningHistoricalDatasetPanel from './PlanningHistoricalDatasetPanel.vue'
 
 const props = defineProps<{
   siteId: string
@@ -109,6 +132,7 @@ const name = ref('')
 const loading = ref(false)
 const creating = ref(false)
 const error = ref('')
+const selectedBranch = ref<SpacePlanningScenarioBranch | null>(null)
 let loadSequence = 0
 let pollTimer: ReturnType<typeof setTimeout> | undefined
 
@@ -137,6 +161,9 @@ async function load() {
     const response = await planningScenarioApi.list(props.siteId)
     if (sequence !== loadSequence) return
     branches.value = response.items
+    if (selectedBranch.value && !response.items.some(
+      item => item.branchId === selectedBranch.value?.branchId && canUseDataset(item),
+    )) selectedBranch.value = null
     if (response.items.some(item =>
       item.cloneJobStatus === 'Queued' || item.cloneJobStatus === 'Running')) {
       pollTimer = setTimeout(load, 2_000)
@@ -210,6 +237,12 @@ function statusTone(status: string): Tone {
 
 function shortId(value: string) {
   return value.length > 12 ? `${value.slice(0, 8)}…` : value
+}
+
+function canUseDataset(branch: SpacePlanningScenarioBranch) {
+  return branch.branchStatus === 'Ready' &&
+    branch.cloneJobStatus === 'Succeeded' &&
+    branch.productionIsolated
 }
 </script>
 
