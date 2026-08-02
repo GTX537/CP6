@@ -111,6 +111,14 @@ public static class SpaceErrorCodes
         "SPACE_OPERATIONS_DIAGNOSTICS_INTERNAL_ONLY";
     public const string OperationsDiagnosticsEvidenceLimit =
         "SPACE_OPERATIONS_DIAGNOSTICS_EVIDENCE_LIMIT";
+    public const string PutawayRecommendationsInternalOnly =
+        "SPACE_PUTAWAY_RECOMMENDATIONS_INTERNAL_ONLY";
+    public const string PutawayRecommendationConflict =
+        "SPACE_PUTAWAY_RECOMMENDATION_CONFLICT";
+    public const string PutawayRecommendationNotFound =
+        "SPACE_PUTAWAY_RECOMMENDATION_NOT_FOUND";
+    public const string PutawayRecommendationEvidenceLimit =
+        "SPACE_PUTAWAY_RECOMMENDATION_EVIDENCE_LIMIT";
     public const string DeviceEventInvalid =
         "SPACE_DEVICE_EVENT_INVALID";
     public const string DeviceEventConflict =

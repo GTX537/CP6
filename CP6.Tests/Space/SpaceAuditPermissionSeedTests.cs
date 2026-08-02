@@ -100,6 +100,8 @@ public sealed class SpaceAuditPermissionSeedTests
                     "external:read",
                     "external:manage",
                     "operations:diagnostics:read",
+                    "operations:recommendations:read",
+                    "operations:recommendations:generate",
                 },
                 action =>
                 {
@@ -510,6 +512,24 @@ public sealed class SpaceAuditPermissionSeedTests
         var rows = I18nSpaceOperationsDiagnosticsSeed.Items;
 
         Assert.Equal(35, rows.Length);
+        Assert.Equal(rows.Length, rows.Select(row => row.LangKey).Distinct().Count());
+        Assert.All(rows, row =>
+        {
+            Assert.False(string.IsNullOrWhiteSpace(row.LangKey));
+            Assert.False(string.IsNullOrWhiteSpace(row.ZhCN));
+            Assert.False(string.IsNullOrWhiteSpace(row.ZhTW));
+            Assert.False(string.IsNullOrWhiteSpace(row.En));
+            Assert.False(string.IsNullOrWhiteSpace(row.Ja));
+            Assert.False(string.IsNullOrWhiteSpace(row.Ko));
+        });
+    }
+
+    [Fact]
+    public void Putaway_recommendation_screen_has_complete_five_language_text()
+    {
+        var rows = I18nSpacePutawayRecommendationSeed.Items;
+
+        Assert.Equal(42, rows.Length);
         Assert.Equal(rows.Length, rows.Select(row => row.LangKey).Distinct().Count());
         Assert.All(rows, row =>
         {

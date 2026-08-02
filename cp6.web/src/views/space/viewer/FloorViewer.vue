@@ -63,6 +63,12 @@
           :title="t('运营诊断')"
           @click="toggleOperationsDiagnostic"
         >DIAG</button>
+        <button
+          class="tb-btn tb-text"
+          :class="{ on: putawayRecommendationOpen }"
+          :title="t('上架推荐')"
+          @click="togglePutawayRecommendation"
+        >PUT</button>
       </div>
 
       <WarehouseOverviewPanel
@@ -86,6 +92,17 @@
         @select-location="onSelectDiagnosticLocation"
         @switch-floor="onSwitchFloor"
         @close="closeOperationsDiagnostic"
+      />
+
+      <PutawayRecommendationPanel
+        v-if="putawayRecommendationOpen"
+        :current-floor-id="currentFloorId"
+        :result="putawayRecommendation"
+        :loading="putawayRecommendationLoading"
+        :error="putawayRecommendationError"
+        @generate="generatePutawayRecommendation"
+        @locate="onSelectPutawayLocation"
+        @close="closePutawayRecommendation"
       />
 
       <!-- Info card (top-right) -->
@@ -174,6 +191,8 @@ import type {
   SpaceWarehouseAbcRank,
   SpaceWarehouseOverviewResponse,
   SpaceOperationsDiagnosticResponse,
+  GenerateSpacePutawayRecommendationRequest,
+  SpacePutawayRecommendation,
 } from '@/types/space/runtime'
 import {
   initialRuntimeRefreshState,
@@ -198,6 +217,7 @@ import {
 import AdvancedPanel from './AdvancedPanel.vue'
 import WarehouseOverviewPanel from './WarehouseOverviewPanel.vue'
 import OperationsDiagnosticPanel from './OperationsDiagnosticPanel.vue'
+import PutawayRecommendationPanel from './PutawayRecommendationPanel.vue'
 
 const { t } = useI18n()
 const route = useRoute()
@@ -222,6 +242,7 @@ let personnelCurrentRequestVersion = 0
 let personnelTrajectoryRequestVersion = 0
 let warehouseOverviewRequestVersion = 0
 let operationsDiagnosticRequestVersion = 0
+let putawayRecommendationRequestVersion = 0
 let preserveTaskPathNavigation = false
 
 const overlayMode = ref<OverlayMode>('status')
@@ -240,6 +261,10 @@ const operationsDiagnosticOpen = ref(false)
 const operationsDiagnosticLoading = ref(false)
 const operationsDiagnostic = ref<SpaceOperationsDiagnosticResponse | null>(null)
 const operationsDiagnosticError = ref('')
+const putawayRecommendationOpen = ref(false)
+const putawayRecommendationLoading = ref(false)
+const putawayRecommendation = ref<SpacePutawayRecommendation | null>(null)
+const putawayRecommendationError = ref('')
 const unavailableRuntimeSource = (dataSourceId: string): SpaceRuntimeSource => ({
   kind: 'Unavailable',
   adapterId: dataSourceId,
@@ -358,7 +383,10 @@ function onFocusSelected(): void { viewer?.focusSelected() }
 
 async function toggleWarehouseOverview(): Promise<void> {
   warehouseOverviewOpen.value = !warehouseOverviewOpen.value
-  if (warehouseOverviewOpen.value) closeOperationsDiagnostic()
+  if (warehouseOverviewOpen.value) {
+    closeOperationsDiagnostic()
+    closePutawayRecommendation()
+  }
   if (warehouseOverviewOpen.value && !warehouseOverview.value) {
     await refreshWarehouseOverview(90)
   }
@@ -377,6 +405,7 @@ async function toggleOperationsDiagnostic(): Promise<void> {
     return
   }
   closeWarehouseOverview()
+  closePutawayRecommendation()
   if (!operationsDiagnostic.value) await refreshOperationsDiagnostic(8)
 }
 
@@ -411,6 +440,50 @@ async function refreshOperationsDiagnostic(hours: number): Promise<void> {
 }
 
 async function onSelectDiagnosticLocation(locationCode: string): Promise<void> {
+  await locator?.locate(locationCode)
+}
+
+function togglePutawayRecommendation(): void {
+  putawayRecommendationOpen.value = !putawayRecommendationOpen.value
+  if (!putawayRecommendationOpen.value) {
+    closePutawayRecommendation()
+    return
+  }
+  closeWarehouseOverview()
+  closeOperationsDiagnostic()
+}
+
+function closePutawayRecommendation(): void {
+  putawayRecommendationOpen.value = false
+  putawayRecommendationRequestVersion++
+  putawayRecommendationLoading.value = false
+}
+
+async function generatePutawayRecommendation(
+  request: GenerateSpacePutawayRecommendationRequest,
+): Promise<void> {
+  const requestVersion = ++putawayRecommendationRequestVersion
+  putawayRecommendationLoading.value = true
+  putawayRecommendationError.value = ''
+  try {
+    const response = await spaceRuntimeApi.generatePutawayRecommendation(
+      siteId,
+      globalThis.crypto.randomUUID(),
+      request,
+    )
+    if (requestVersion !== putawayRecommendationRequestVersion) return
+    putawayRecommendation.value = response.recommendation
+  } catch {
+    if (requestVersion !== putawayRecommendationRequestVersion) return
+    putawayRecommendationError.value = t('上架推荐生成失败，保留上次成功结果')
+  } finally {
+    if (requestVersion === putawayRecommendationRequestVersion) {
+      putawayRecommendationLoading.value = false
+    }
+  }
+}
+
+async function onSelectPutawayLocation(locationCode: string): Promise<void> {
   await locator?.locate(locationCode)
 }
 
@@ -1020,6 +1093,7 @@ onBeforeUnmount(() => {
   spatialFilterRequestVersion++
   warehouseOverviewRequestVersion++
   operationsDiagnosticRequestVersion++
+  putawayRecommendationRequestVersion++
   overlay?.dispose()
   overlay = null
   pathAnimator?.clear(); pathAnimator = null

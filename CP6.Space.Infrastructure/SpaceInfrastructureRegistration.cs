@@ -169,6 +169,10 @@ public static class SpaceInfrastructureRegistration
         services.AddScoped<
             ISpaceOperationsDiagnosticService,
             SpaceOperationsDiagnosticService>();
+        services.TryAddSingleton<SpacePutawayRecommendationEngine>();
+        services.AddScoped<
+            ISpacePutawayRecommendationService,
+            SpacePutawayRecommendationService>();
         services.AddScoped<
             ISpaceDeviceEventService,
             SpaceDeviceEventService>();

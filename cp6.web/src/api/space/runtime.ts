@@ -9,9 +9,29 @@ import type {
   SpaceRuntimeTaskPathResponse,
   SpaceWarehouseOverviewResponse,
   SpaceOperationsDiagnosticResponse,
+  GenerateSpacePutawayRecommendationRequest,
+  GenerateSpacePutawayRecommendationResponse,
+  SpacePutawayRecommendation,
 } from '@/types/space/runtime'
 
 export const spaceRuntimeApi = {
+  generatePutawayRecommendation(
+    siteId: string,
+    recommendationId: string,
+    request: GenerateSpacePutawayRecommendationRequest,
+  ) {
+    return http.put<unknown, GenerateSpacePutawayRecommendationResponse>(
+      `/space/operations/v1/sites/${encodeURIComponent(siteId)}` +
+        `/putaway-recommendations/${encodeURIComponent(recommendationId)}`,
+      request,
+    )
+  },
+  putawayRecommendation(siteId: string, recommendationId: string) {
+    return http.get<unknown, SpacePutawayRecommendation>(
+      `/space/operations/v1/sites/${encodeURIComponent(siteId)}` +
+        `/putaway-recommendations/${encodeURIComponent(recommendationId)}`,
+    )
+  },
   operationsDiagnostics(siteId: string, fromUtc: string, toUtc: string) {
     const params = new URLSearchParams({ fromUtc, toUtc })
     return http.get<unknown, SpaceOperationsDiagnosticResponse>(
