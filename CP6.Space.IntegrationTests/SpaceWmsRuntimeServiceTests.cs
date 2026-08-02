@@ -53,6 +53,7 @@ public sealed class SpaceWmsRuntimeServiceTests
 
         var inventory = await service.QueryInventoryAsync(seeded.SiteId);
         var tasks = await service.QueryTasksAsync(seeded.SiteId);
+        var dispatchTasks = await service.QueryDispatchTasksAsync(seeded.SiteId);
 
         Assert.Equal("Simulated", inventory.Source.Kind);
         Assert.Equal(simulator.RuntimeAdapterId, inventory.Source.AdapterId);
@@ -70,6 +71,15 @@ public sealed class SpaceWmsRuntimeServiceTests
         Assert.NotNull(task.AnchorXMillimeters);
         Assert.NotNull(task.AnchorYMillimeters);
         Assert.NotNull(task.AnchorZMillimeters);
+        var dispatchTask = Assert.Single(dispatchTasks.Items);
+        Assert.Equal("PICK-001", dispatchTask.TaskId);
+        Assert.Equal("Pending", dispatchTask.Status);
+        Assert.Equal("Source", dispatchTask.TargetLocationRole);
+        Assert.Equal(seeded.LocationIds[1], dispatchTask.LocationLogicalId);
+        Assert.Equal(adoptedWmsId, dispatchTask.WmsLogicalId);
+        Assert.True(dispatchTask.TargetLocationResolved);
+        Assert.True(dispatchTask.CodeMatches);
+        Assert.False(string.IsNullOrWhiteSpace(dispatchTask.RowVersion));
     }
 
     [Fact]

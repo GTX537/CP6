@@ -526,6 +526,28 @@ public sealed record SpaceWmsTaskResult(
     SpaceWmsSourceMetadata Source,
     IReadOnlyList<SpaceWmsTaskItem> Items);
 
+public sealed record SpaceWmsDispatchTaskQuery(
+    SpaceWmsContext Context);
+
+public sealed record SpaceWmsDispatchTaskItem(
+    string TaskId,
+    string TaskType,
+    string Status,
+    string? AssignedTo,
+    int Priority,
+    int ContractVersion,
+    int ExecutionVersion,
+    string RowVersion,
+    Guid? LogicalId,
+    string? LocationCode,
+    string LocationRole,
+    decimal Quantity,
+    string? MaterialNumber);
+
+public sealed record SpaceWmsDispatchTaskResult(
+    SpaceWmsSourceMetadata Source,
+    IReadOnlyList<SpaceWmsDispatchTaskItem> Items);
+
 public sealed record SpaceWmsAbcQuery(
     SpaceWmsContext Context,
     DateOnly FromDateInclusive,
@@ -558,6 +580,13 @@ public interface ISpaceWmsRuntimeSource
     Task<SpaceWmsTaskResult> QueryTasksAsync(
         SpaceWmsTaskQuery request,
         CancellationToken ct = default);
+
+    Task<SpaceWmsDispatchTaskResult> QueryDispatchTasksAsync(
+        SpaceWmsDispatchTaskQuery request,
+        CancellationToken ct = default) =>
+        Task.FromException<SpaceWmsDispatchTaskResult>(
+            new NotSupportedException(
+                "The WMS runtime source does not expose dispatch-task facts."));
 
     Task<SpaceWmsAbcResult> QueryAbcAsync(
         SpaceWmsAbcQuery request,

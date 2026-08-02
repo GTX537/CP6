@@ -1,0 +1,55 @@
+using CP6.Entity.DomainModels;
+
+namespace CP6.WebApi.Seed;
+
+/// <summary>
+/// Space E11-S03 人员/任务调度建议画面词条。由 Program.cs 按租户幂等补齐。
+/// </summary>
+public static class I18nSpaceDispatchRecommendationSeed
+{
+    public static readonly Sys_Lang[] Items =
+    [
+        new() { LangKey = "人员调度建议", ZhCN = "人员调度建议", ZhTW = "人員調度建議", En = "Personnel dispatch recommendations", Ja = "人員配車推奨", Ko = "인력 배차 추천" },
+        new() { LangKey = "建议不会审批、分配、认领、启动或修改任务", ZhCN = "建议不会审批、分配、认领、启动或修改任务", ZhTW = "建議不會核准、指派、認領、啟動或修改任務", En = "Recommendations do not approve, assign, claim, start, or modify tasks", Ja = "推奨はタスクの承認、割当、取得、開始、変更を行いません", Ko = "추천은 작업을 승인, 할당, 수락, 시작 또는 수정하지 않습니다" },
+        new() { LangKey = "任务类型", ZhCN = "任务类型", ZhTW = "任務類型", En = "Task type", Ja = "タスク種別", Ko = "작업 유형" },
+        new() { LangKey = "全部待处理任务", ZhCN = "全部待处理任务", ZhTW = "全部待處理任務", En = "All pending tasks", Ja = "すべての保留中タスク", Ko = "모든 대기 작업" },
+        new() { LangKey = "最大几何距离（米）", ZhCN = "最大几何距离（米）", ZhTW = "最大幾何距離（公尺）", En = "Maximum geometric distance (m)", Ja = "最大幾何距離（m）", Ko = "최대 기하 거리(m)" },
+        new() { LangKey = "最大建议数", ZhCN = "最大建议数", ZhTW = "最大建議數", En = "Maximum recommendations", Ja = "最大推奨数", Ko = "최대 추천 수" },
+        new() { LangKey = "仅当前楼层任务", ZhCN = "仅当前楼层任务", ZhTW = "僅目前樓層任務", En = "Current-floor tasks only", Ja = "現在のフロアのタスクのみ", Ko = "현재 층 작업만" },
+        new() { LangKey = "允许跨楼层匹配", ZhCN = "允许跨楼层匹配", ZhTW = "允許跨樓層配對", En = "Allow cross-floor matching", Ja = "フロア間マッチングを許可", Ko = "층간 매칭 허용" },
+        new() { LangKey = "包含模拟人员", ZhCN = "包含模拟人员", ZhTW = "包含模擬人員", En = "Include simulated personnel", Ja = "シミュレーション人員を含める", Ko = "시뮬레이션 인력 포함" },
+        new() { LangKey = "生成建议", ZhCN = "生成建议", ZhTW = "產生建議", En = "Generate recommendations", Ja = "推奨を生成", Ko = "추천 생성" },
+        new() { LangKey = "正在更新，当前显示上次成功建议", ZhCN = "正在更新，当前显示上次成功建议", ZhTW = "正在更新，目前顯示上次成功建議", En = "Updating; showing the last successful recommendations", Ja = "更新中です。前回成功した推奨を表示しています", Ko = "업데이트 중이며 마지막 성공 추천을 표시합니다" },
+        new() { LangKey = "尚无调度建议", ZhCN = "尚无调度建议", ZhTW = "尚無調度建議", En = "No dispatch recommendation yet", Ja = "配車推奨はまだありません", Ko = "배차 추천이 아직 없습니다" },
+        new() { LangKey = "调度任务来源", ZhCN = "调度任务来源", ZhTW = "調度任務來源", En = "Dispatch-task source", Ja = "配車タスクソース", Ko = "배차 작업 소스" },
+        new() { LangKey = "人员状态来源", ZhCN = "人员状态来源", ZhTW = "人員狀態來源", En = "Personnel-state source", Ja = "人員状態ソース", Ko = "인력 상태 소스" },
+        new() { LangKey = "任务人员匹配", ZhCN = "任务人员匹配", ZhTW = "任務人員配對", En = "Task-person matching", Ja = "タスクと人員のマッチング", Ko = "작업-인력 매칭" },
+        new() { LangKey = "检查任务", ZhCN = "检查任务", ZhTW = "檢查任務", En = "Tasks examined", Ja = "検査タスク", Ko = "검사 작업" },
+        new() { LangKey = "可用任务", ZhCN = "可用任务", ZhTW = "可用任務", En = "Eligible tasks", Ja = "対象タスク", Ko = "대상 작업" },
+        new() { LangKey = "检查人员", ZhCN = "检查人员", ZhTW = "檢查人員", En = "Personnel examined", Ja = "検査人員", Ko = "검사 인력" },
+        new() { LangKey = "可用人员", ZhCN = "可用人员", ZhTW = "可用人員", En = "Eligible personnel", Ja = "対象人員", Ko = "대상 인력" },
+        new() { LangKey = "可用匹配对", ZhCN = "可用匹配对", ZhTW = "可用配對", En = "Eligible pairs", Ja = "対象ペア", Ko = "대상 쌍" },
+        new() { LangKey = "建议结果已截断", ZhCN = "建议结果已截断", ZhTW = "建議結果已截斷", En = "Recommendation results are truncated", Ja = "推奨結果は省略されています", Ko = "추천 결과가 잘렸습니다" },
+        new() { LangKey = "并发证据", ZhCN = "并发证据", ZhTW = "並行控制證據", En = "Concurrency evidence", Ja = "同時実行制御の証跡", Ko = "동시성 증거" },
+        new() { LangKey = "位置时点", ZhCN = "位置时点", ZhTW = "位置時點", En = "Position time", Ja = "位置時刻", Ko = "위치 시각" },
+        new() { LangKey = "工作状态时点", ZhCN = "工作状态时点", ZhTW = "工作狀態時點", En = "Work-state time", Ja = "作業状態時刻", Ko = "작업 상태 시각" },
+        new() { LangKey = "当前约束下没有可解释的调度建议", ZhCN = "当前约束下没有可解释的调度建议", ZhTW = "目前約束下沒有可解釋的調度建議", En = "No explainable dispatch recommendation satisfies the current constraints", Ja = "現在の制約を満たす説明可能な配車推奨はありません", Ko = "현재 제약을 충족하는 설명 가능한 배차 추천이 없습니다" },
+        new() { LangKey = "人员调度建议生成失败，保留上次成功结果", ZhCN = "人员调度建议生成失败，保留上次成功结果", ZhTW = "人員調度建議產生失敗，保留上次成功結果", En = "Dispatch recommendation generation failed; keeping the last successful result", Ja = "配車推奨の生成に失敗しました。前回成功した結果を保持します", Ko = "배차 추천 생성에 실패하여 마지막 성공 결과를 유지합니다" },
+        new() { LangKey = "TASK_OUTSIDE_REQUESTED_SCOPE", ZhCN = "任务超出请求范围", ZhTW = "任務超出請求範圍", En = "Task outside requested scope", Ja = "要求範囲外のタスク", Ko = "요청 범위 밖 작업" },
+        new() { LangKey = "TASK_NOT_PENDING", ZhCN = "任务不是待处理状态", ZhTW = "任務不是待處理狀態", En = "Task is not pending", Ja = "タスクが保留中ではありません", Ko = "작업이 대기 상태가 아님" },
+        new() { LangKey = "TASK_ALREADY_ASSIGNED", ZhCN = "任务已分配", ZhTW = "任務已指派", En = "Task already assigned", Ja = "タスクは割当済みです", Ko = "작업이 이미 할당됨" },
+        new() { LangKey = "INVALID_DISPATCH_TASK", ZhCN = "调度任务无效", ZhTW = "調度任務無效", En = "Invalid dispatch task", Ja = "無効な配車タスク", Ko = "잘못된 배차 작업" },
+        new() { LangKey = "TASK_TARGET_OUTSIDE_PUBLISHED_MODEL", ZhCN = "任务目标不在 Published 模型中", ZhTW = "任務目標不在 Published 模型中", En = "Task target is outside the Published model", Ja = "タスク対象が Published モデル外です", Ko = "작업 대상이 Published 모델 밖임" },
+        new() { LangKey = "TASK_LOCATION_CODE_MISMATCH", ZhCN = "任务库位代码不一致", ZhTW = "任務儲位代碼不一致", En = "Task location code mismatch", Ja = "タスクのロケーションコード不一致", Ko = "작업 로케이션 코드 불일치" },
+        new() { LangKey = "ELIGIBLE_TASK_WITHOUT_COMPATIBLE_PERSON", ZhCN = "可用任务没有兼容人员", ZhTW = "可用任務沒有相容人員", En = "Eligible task has no compatible person", Ja = "対象タスクに適合する人員がいません", Ko = "대상 작업에 호환 인력이 없음" },
+        new() { LangKey = "PERSON_POSITION_STALE", ZhCN = "人员位置陈旧", ZhTW = "人員位置過時", En = "Personnel position is stale", Ja = "人員位置が古い", Ko = "인력 위치가 오래됨" },
+        new() { LangKey = "PERSON_WORK_STATE_STALE", ZhCN = "人员工作状态陈旧", ZhTW = "人員工作狀態過時", En = "Personnel work state is stale", Ja = "人員の作業状態が古い", Ko = "인력 작업 상태가 오래됨" },
+        new() { LangKey = "PERSON_NOT_IDLE", ZhCN = "人员不是空闲状态", ZhTW = "人員不是閒置狀態", En = "Personnel is not idle", Ja = "人員がアイドル状態ではありません", Ko = "인력이 유휴 상태가 아님" },
+        new() { LangKey = "SIMULATED_PERSON_EXCLUDED", ZhCN = "模拟人员已排除", ZhTW = "模擬人員已排除", En = "Simulated personnel excluded", Ja = "シミュレーション人員を除外", Ko = "시뮬레이션 인력 제외" },
+        new() { LangKey = "PERSON_POSITION_UNRESOLVED", ZhCN = "人员位置无法解析", ZhTW = "人員位置無法解析", En = "Personnel position cannot be resolved", Ja = "人員位置を解決できません", Ko = "인력 위치를 확인할 수 없음" },
+        new() { LangKey = "ELIGIBLE_PERSON_WITHOUT_COMPATIBLE_TASK", ZhCN = "可用人员没有兼容任务", ZhTW = "可用人員沒有相容任務", En = "Eligible person has no compatible task", Ja = "対象人員に適合するタスクがありません", Ko = "대상 인력에 호환 작업이 없음" },
+        new() { LangKey = "CROSS_FLOOR_PAIR_REJECTED", ZhCN = "跨楼层匹配对已拒绝", ZhTW = "跨樓層配對已拒絕", En = "Cross-floor pair rejected", Ja = "フロア間ペアを除外", Ko = "층간 매칭 쌍 거부" },
+        new() { LangKey = "DISTANCE_UNVERIFIABLE_PAIR_REJECTED", ZhCN = "距离无法验证的匹配对已拒绝", ZhTW = "距離無法驗證的配對已拒絕", En = "Pair rejected because distance cannot be verified", Ja = "距離を検証できないペアを除外", Ko = "거리를 확인할 수 없는 매칭 쌍 거부" },
+        new() { LangKey = "DISTANCE_EXCEEDED_PAIR_REJECTED", ZhCN = "超过距离限制的匹配对已拒绝", ZhTW = "超過距離限制的配對已拒絕", En = "Pair rejected because distance limit was exceeded", Ja = "距離上限を超えたペアを除外", Ko = "거리 제한을 초과한 매칭 쌍 거부" },
+    ];
+}

@@ -107,6 +107,8 @@ public sealed class SpaceContext : DbContext
         Set<SpaceExcelMappingProfileVersion>();
     public DbSet<SpacePutawayRecommendation> PutawayRecommendations =>
         Set<SpacePutawayRecommendation>();
+    public DbSet<SpaceDispatchRecommendation> DispatchRecommendations =>
+        Set<SpaceDispatchRecommendation>();
 
     protected override void OnModelCreating(ModelBuilder modelBuilder)
     {
@@ -144,6 +146,7 @@ public sealed class SpaceContext : DbContext
         ConfigureExcelMappingProfile(modelBuilder);
         ConfigureExcelMappingProfileVersion(modelBuilder);
         ConfigurePutawayRecommendation(modelBuilder);
+        ConfigureDispatchRecommendation(modelBuilder);
         ConfigureFile(modelBuilder);
         ConfigureSource(modelBuilder);
         ConfigureJob(modelBuilder);
@@ -175,6 +178,7 @@ public sealed class SpaceContext : DbContext
         ProtectPersonnelEventHistory();
         ProtectDeviceEventHistory();
         ProtectPutawayRecommendationHistory();
+        ProtectDispatchRecommendationHistory();
         StampAndValidateTenant();
         return base.SaveChanges(acceptAllChangesOnSuccess);
     }
@@ -195,6 +199,7 @@ public sealed class SpaceContext : DbContext
         ProtectPersonnelEventHistory();
         ProtectDeviceEventHistory();
         ProtectPutawayRecommendationHistory();
+        ProtectDispatchRecommendationHistory();
         StampAndValidateTenant();
         return base.SaveChangesAsync(acceptAllChangesOnSuccess, cancellationToken);
     }
@@ -3378,6 +3383,109 @@ public sealed class SpaceContext : DbContext
             x => x.TenantId == CurrentTenantId && !x.IsDeleted);
     }
 
+    private void ConfigureDispatchRecommendation(ModelBuilder modelBuilder)
+    {
+        var entity = modelBuilder.Entity<SpaceDispatchRecommendation>();
+        entity.ToTable(
+            "Space_DispatchRecommendation",
+            table =>
+            {
+                table.HasCheckConstraint(
+                    "CK_Space_DispatchRecommendation_Counts",
+                    "[ExaminedTaskCount] >= 0 AND " +
+                    "[EligibleTaskCount] >= 0 AND " +
+                    "[ExaminedPersonCount] >= 0 AND " +
+                    "[EligiblePersonCount] >= 0 AND " +
+                    "[EligiblePairCount] >= 0 AND " +
+                    "[MatchableAssignmentCount] >= 0 AND " +
+                    "[ReturnedAssignmentCount] >= 0 AND " +
+                    "[EligibleTaskCount] <= [ExaminedTaskCount] AND " +
+                    "[EligiblePersonCount] <= [ExaminedPersonCount] AND " +
+                    "[MatchableAssignmentCount] <= [EligibleTaskCount] AND " +
+                    "[MatchableAssignmentCount] <= [EligiblePersonCount] AND " +
+                    "[MatchableAssignmentCount] <= [EligiblePairCount] AND " +
+                    "[ReturnedAssignmentCount] <= [MatchableAssignmentCount] AND " +
+                    "(([IsTruncated] = 1 AND " +
+                    "[ReturnedAssignmentCount] < [MatchableAssignmentCount]) OR " +
+                    "([IsTruncated] = 0 AND " +
+                    "[ReturnedAssignmentCount] = [MatchableAssignmentCount]))");
+                table.HasCheckConstraint(
+                    "CK_Space_DispatchRecommendation_Evidence",
+                    "[Outcome] IN ('NoAssignment', 'AssignmentsGenerated') AND " +
+                    "ISJSON([RequestJson]) = 1 AND " +
+                    "ISJSON([SourcesJson]) = 1 AND " +
+                    "ISJSON([ExclusionsJson]) = 1 AND " +
+                    "ISJSON([ExclusionSamplesJson]) = 1 AND " +
+                    "ISJSON([AssignmentsJson]) = 1 AND " +
+                    "ISJSON([LimitationsJson]) = 1");
+                table.HasCheckConstraint(
+                    "CK_Space_DispatchRecommendation_Immutable",
+                    "LEN([RequestHash]) = 64 AND " +
+                    "[RequestHash] NOT LIKE '%[^0-9a-f]%' AND " +
+                    "[IsDeleted] = 0");
+            });
+        entity.HasKey(x => x.Id);
+        entity.Property(x => x.Id).ValueGeneratedNever();
+        ConfigureTenantEntity(entity);
+        entity.HasAlternateKey(x => new { x.TenantId, x.Id })
+            .HasName("AK_Space_DispatchRecommendation_Tenant_Id");
+        entity.Property(x => x.WarehouseCode)
+            .HasMaxLength(100)
+            .IsUnicode(false)
+            .IsRequired();
+        entity.Property(x => x.GeneratedAtUtc).HasColumnType("datetime2");
+        entity.Property(x => x.DefinitionVersion)
+            .HasMaxLength(50)
+            .IsUnicode(false)
+            .IsRequired();
+        entity.Property(x => x.Outcome)
+            .HasMaxLength(30)
+            .IsUnicode(false)
+            .IsRequired();
+        entity.Property(x => x.RequestJson)
+            .HasColumnType("nvarchar(max)")
+            .IsRequired();
+        entity.Property(x => x.SourcesJson)
+            .HasColumnType("nvarchar(max)")
+            .IsRequired();
+        entity.Property(x => x.ExclusionsJson)
+            .HasColumnType("nvarchar(max)")
+            .IsRequired();
+        entity.Property(x => x.ExclusionSamplesJson)
+            .HasColumnType("nvarchar(max)")
+            .IsRequired();
+        entity.Property(x => x.AssignmentsJson)
+            .HasColumnType("nvarchar(max)")
+            .IsRequired();
+        entity.Property(x => x.LimitationsJson)
+            .HasColumnType("nvarchar(max)")
+            .IsRequired();
+        entity.Property(x => x.RequestHash)
+            .HasColumnType("char(64)")
+            .IsUnicode(false)
+            .IsFixedLength()
+            .HasMaxLength(64)
+            .IsRequired();
+        entity.HasIndex(x => new
+            {
+                x.TenantId,
+                x.SiteId,
+                x.GeneratedAtUtc,
+                x.Id,
+            })
+            .HasDatabaseName(
+                "IX_Space_DispatchRecommendation_Tenant_Site_Generated");
+        entity.HasOne<SpaceModelVersion>()
+            .WithMany()
+            .HasForeignKey(x => new { x.TenantId, x.PublishedVersionId })
+            .HasPrincipalKey(x => new { x.TenantId, x.Id })
+            .OnDelete(DeleteBehavior.Restrict)
+            .HasConstraintName(
+                "FK_Space_DispatchRecommendation_Version_Tenant");
+        entity.HasQueryFilter(
+            x => x.TenantId == CurrentTenantId && !x.IsDeleted);
+    }
+
     private static void ConfigureTenantEntity<TEntity>(
         Microsoft.EntityFrameworkCore.Metadata.Builders.EntityTypeBuilder<TEntity> entity)
         where TEntity : SpaceTenantEntity
@@ -3396,6 +3504,17 @@ public sealed class SpaceContext : DbContext
         {
             throw new InvalidOperationException(
                 "Putaway recommendations are immutable.");
+        }
+    }
+
+    private void ProtectDispatchRecommendationHistory()
+    {
+        if (ChangeTracker.Entries<SpaceDispatchRecommendation>()
+            .Any(entry =>
+                entry.State is EntityState.Modified or EntityState.Deleted))
+        {
+            throw new InvalidOperationException(
+                "Dispatch recommendations are immutable.");
         }
     }
 

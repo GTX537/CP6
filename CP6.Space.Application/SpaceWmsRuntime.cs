@@ -19,6 +19,13 @@ public interface ISpaceWmsRuntimeService
         IReadOnlyCollection<Guid>? locationLogicalIds = null,
         CancellationToken cancellationToken = default);
 
+    Task<SpaceWmsRuntimeDispatchTaskResponse> QueryDispatchTasksAsync(
+        Guid siteId,
+        CancellationToken cancellationToken = default) =>
+        Task.FromException<SpaceWmsRuntimeDispatchTaskResponse>(
+            new NotSupportedException(
+                "The WMS runtime service does not expose dispatch-task facts."));
+
     Task<SpaceWmsRuntimeTaskPathResponse> GetTaskPathAsync(
         Guid siteId,
         string taskId,

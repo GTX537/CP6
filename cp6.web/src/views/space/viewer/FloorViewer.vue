@@ -69,6 +69,12 @@
           :title="t('上架推荐')"
           @click="togglePutawayRecommendation"
         >PUT</button>
+        <button
+          class="tb-btn tb-text"
+          :class="{ on: dispatchRecommendationOpen }"
+          :title="t('人员调度建议')"
+          @click="toggleDispatchRecommendation"
+        >DSP</button>
       </div>
 
       <WarehouseOverviewPanel
@@ -103,6 +109,17 @@
         @generate="generatePutawayRecommendation"
         @locate="onSelectPutawayLocation"
         @close="closePutawayRecommendation"
+      />
+
+      <DispatchRecommendationPanel
+        v-if="dispatchRecommendationOpen"
+        :current-floor-id="currentFloorId"
+        :result="dispatchRecommendation"
+        :loading="dispatchRecommendationLoading"
+        :error="dispatchRecommendationError"
+        @generate="generateDispatchRecommendation"
+        @locate="onSelectDispatchLocation"
+        @close="closeDispatchRecommendation"
       />
 
       <!-- Info card (top-right) -->
@@ -193,6 +210,8 @@ import type {
   SpaceOperationsDiagnosticResponse,
   GenerateSpacePutawayRecommendationRequest,
   SpacePutawayRecommendation,
+  GenerateSpaceDispatchRecommendationRequest,
+  SpaceDispatchRecommendation,
 } from '@/types/space/runtime'
 import {
   initialRuntimeRefreshState,
@@ -218,6 +237,7 @@ import AdvancedPanel from './AdvancedPanel.vue'
 import WarehouseOverviewPanel from './WarehouseOverviewPanel.vue'
 import OperationsDiagnosticPanel from './OperationsDiagnosticPanel.vue'
 import PutawayRecommendationPanel from './PutawayRecommendationPanel.vue'
+import DispatchRecommendationPanel from './DispatchRecommendationPanel.vue'
 
 const { t } = useI18n()
 const route = useRoute()
@@ -243,6 +263,7 @@ let personnelTrajectoryRequestVersion = 0
 let warehouseOverviewRequestVersion = 0
 let operationsDiagnosticRequestVersion = 0
 let putawayRecommendationRequestVersion = 0
+let dispatchRecommendationRequestVersion = 0
 let preserveTaskPathNavigation = false
 
 const overlayMode = ref<OverlayMode>('status')
@@ -265,6 +286,10 @@ const putawayRecommendationOpen = ref(false)
 const putawayRecommendationLoading = ref(false)
 const putawayRecommendation = ref<SpacePutawayRecommendation | null>(null)
 const putawayRecommendationError = ref('')
+const dispatchRecommendationOpen = ref(false)
+const dispatchRecommendationLoading = ref(false)
+const dispatchRecommendation = ref<SpaceDispatchRecommendation | null>(null)
+const dispatchRecommendationError = ref('')
 const unavailableRuntimeSource = (dataSourceId: string): SpaceRuntimeSource => ({
   kind: 'Unavailable',
   adapterId: dataSourceId,
@@ -386,6 +411,7 @@ async function toggleWarehouseOverview(): Promise<void> {
   if (warehouseOverviewOpen.value) {
     closeOperationsDiagnostic()
     closePutawayRecommendation()
+    closeDispatchRecommendation()
   }
   if (warehouseOverviewOpen.value && !warehouseOverview.value) {
     await refreshWarehouseOverview(90)
@@ -406,6 +432,7 @@ async function toggleOperationsDiagnostic(): Promise<void> {
   }
   closeWarehouseOverview()
   closePutawayRecommendation()
+  closeDispatchRecommendation()
   if (!operationsDiagnostic.value) await refreshOperationsDiagnostic(8)
 }
 
@@ -451,6 +478,7 @@ function togglePutawayRecommendation(): void {
   }
   closeWarehouseOverview()
   closeOperationsDiagnostic()
+  closeDispatchRecommendation()
 }
 
 function closePutawayRecommendation(): void {
@@ -484,6 +512,51 @@ async function generatePutawayRecommendation(
 }
 
 async function onSelectPutawayLocation(locationCode: string): Promise<void> {
+  await locator?.locate(locationCode)
+}
+
+function toggleDispatchRecommendation(): void {
+  dispatchRecommendationOpen.value = !dispatchRecommendationOpen.value
+  if (!dispatchRecommendationOpen.value) {
+    closeDispatchRecommendation()
+    return
+  }
+  closeWarehouseOverview()
+  closeOperationsDiagnostic()
+  closePutawayRecommendation()
+}
+
+function closeDispatchRecommendation(): void {
+  dispatchRecommendationOpen.value = false
+  dispatchRecommendationRequestVersion++
+  dispatchRecommendationLoading.value = false
+}
+
+async function generateDispatchRecommendation(
+  request: GenerateSpaceDispatchRecommendationRequest,
+): Promise<void> {
+  const requestVersion = ++dispatchRecommendationRequestVersion
+  dispatchRecommendationLoading.value = true
+  dispatchRecommendationError.value = ''
+  try {
+    const response = await spaceRuntimeApi.generateDispatchRecommendation(
+      siteId,
+      globalThis.crypto.randomUUID(),
+      request,
+    )
+    if (requestVersion !== dispatchRecommendationRequestVersion) return
+    dispatchRecommendation.value = response.recommendation
+  } catch {
+    if (requestVersion !== dispatchRecommendationRequestVersion) return
+    dispatchRecommendationError.value = t('人员调度建议生成失败，保留上次成功结果')
+  } finally {
+    if (requestVersion === dispatchRecommendationRequestVersion) {
+      dispatchRecommendationLoading.value = false
+    }
+  }
+}
+
+async function onSelectDispatchLocation(locationCode: string): Promise<void> {
   await locator?.locate(locationCode)
 }
 

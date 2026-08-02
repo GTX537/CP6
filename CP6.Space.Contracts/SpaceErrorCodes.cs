@@ -119,6 +119,16 @@ public static class SpaceErrorCodes
         "SPACE_PUTAWAY_RECOMMENDATION_NOT_FOUND";
     public const string PutawayRecommendationEvidenceLimit =
         "SPACE_PUTAWAY_RECOMMENDATION_EVIDENCE_LIMIT";
+    public const string DispatchRecommendationsInternalOnly =
+        "SPACE_DISPATCH_RECOMMENDATIONS_INTERNAL_ONLY";
+    public const string DispatchRecommendationConflict =
+        "SPACE_DISPATCH_RECOMMENDATION_CONFLICT";
+    public const string DispatchRecommendationNotFound =
+        "SPACE_DISPATCH_RECOMMENDATION_NOT_FOUND";
+    public const string DispatchRecommendationEvidenceLimit =
+        "SPACE_DISPATCH_RECOMMENDATION_EVIDENCE_LIMIT";
+    public const string DispatchRecommendationPairLimit =
+        "SPACE_DISPATCH_RECOMMENDATION_PAIR_LIMIT";
     public const string DeviceEventInvalid =
         "SPACE_DEVICE_EVENT_INVALID";
     public const string DeviceEventConflict =

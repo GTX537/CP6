@@ -244,7 +244,7 @@ public sealed class SpaceWmsRuntimeContractTests
     {
         var methods = typeof(ISpaceWmsRuntimeService).GetMethods();
 
-        Assert.Equal(5, methods.Length);
+        Assert.Equal(6, methods.Length);
         var inventory = Assert.Single(
             methods,
             method => method.Name == "QueryInventoryAsync");
@@ -284,6 +284,22 @@ public sealed class SpaceWmsRuntimeContractTests
             typeof(Task<SpaceWmsRuntimeTaskResponse>),
             tasks.ReturnType);
         AssertQueryParameters(tasks);
+
+        var dispatchTasks = Assert.Single(
+            methods,
+            method => method.Name == "QueryDispatchTasksAsync");
+        Assert.Equal(
+            typeof(Task<SpaceWmsRuntimeDispatchTaskResponse>),
+            dispatchTasks.ReturnType);
+        Assert.Collection(
+            dispatchTasks.GetParameters(),
+            parameter =>
+            {
+                Assert.Equal("siteId", parameter.Name);
+                Assert.Equal(typeof(Guid), parameter.ParameterType);
+                Assert.False(parameter.IsOptional);
+            },
+            AssertCancellationParameter);
 
         var overview = Assert.Single(
             methods,

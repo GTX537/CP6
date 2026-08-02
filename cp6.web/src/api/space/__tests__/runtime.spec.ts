@@ -36,6 +36,34 @@ describe('spaceRuntimeApi', () => {
     )
   })
 
+  it('puts an idempotent dispatch recommendation request under the operations API', async () => {
+    const request = {
+      taskType: 'PICK',
+      allowCrossFloor: false,
+      includeSimulatedPersonnel: false,
+      maximumAssignments: 20,
+    }
+
+    await spaceRuntimeApi.generateDispatchRecommendation(
+      'site/1',
+      'recommendation/1',
+      request,
+    )
+
+    expect(http.put).toHaveBeenCalledWith(
+      '/space/operations/v1/sites/site%2F1/dispatch-recommendations/recommendation%2F1',
+      request,
+    )
+  })
+
+  it('gets immutable dispatch recommendation evidence by identity', async () => {
+    await spaceRuntimeApi.dispatchRecommendation('site/1', 'recommendation/1')
+
+    expect(http.get).toHaveBeenCalledWith(
+      '/space/operations/v1/sites/site%2F1/dispatch-recommendations/recommendation%2F1',
+    )
+  })
+
   it('gets immutable putaway recommendation evidence by identity', async () => {
     await spaceRuntimeApi.putawayRecommendation('site/1', 'recommendation/1')
 
