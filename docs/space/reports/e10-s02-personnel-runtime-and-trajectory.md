@@ -1,9 +1,11 @@
 # E10-S02 人员实时位置、授权轨迹与 3D 叠加完成报告
 
-- 状态：**Feature complete / pending controlled integration**
+- 状态：**Integrated**
 - 日期：2026-08-02
 - 功能分支：`codex/space-e10-s02-personnel-runtime`
 - 实现提交：`e70c2715`
+- 文档提交：`86ad63bb`
+- no-ff 集成提交：`29a69a2b`
 - 集成目标：`integration/space-v1-20260730`
 
 ## 1. 交付结论
