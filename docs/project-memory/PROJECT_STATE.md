@@ -2,6 +2,17 @@
 
 最后更新：2026-08-02
 
+## E09-S05 完成状态（2026-08-02）
+
+- E09-S05 外部访问审计与有效期已完成并进入受控集成基线：功能提交 `83798dcf`，no-ff 集成提交 `c658871c`，起始基线 `a5b53a2b`。
+- 登录继续复用统一 `Sys_SecurityLog`；Space 追加写账本新增稳定 Portal 会话入口、组织选择、PublishedScene/Stock/Task 查看事件，记录 Organization Context、Site、结果、条目数、授权版本、Correlation/Trace 与受控客户端元数据，404 范围拒绝记为 `Denied` 且不保存异常明文。
+- Organization、Membership、Grant、FieldPolicy 变更端点使用稳定业务动作码和 `space:external:manage` 证据；写入前审计失败关闭，成功写入后最终审计不可用返回 outcome unknown。暂停、撤销和退休通过同一 update 资源链可追踪。
+- 外部 `Export` 求值现在强制审计允许/拒绝，并记录组织/成员安全戳、AuthorizationVersion、GrantIds 与 FieldPolicyIds；审计不可用时清空命中授权并返回 `SPACE_AUDIT_UNAVAILABLE`。本卡未新增独立导出端点。
+- 同一现有会话已自动化证明 Membership/Grant 到期、暂停、撤销以及 FieldPolicy 退休在下一请求立即失效；Active Policy 版本变化在下一响应产生新 AuthorizationVersion。真 SQL 连续证明成员到期→Grant 到期→续期恢复→Policy 退休的逐请求重验证链。
+- 本卡无新端点、DTO、迁移或 SDK 表面变化，OpenAPI 保持 36 paths / 47 operations。门禁：审计聚焦 48/48、Portal/真 SQL 合并态 16/16、Space Unit 231/231、Space Integration + KOUSQLSERVER 195/195、CP6.Tests 2720 passed / 17 既有环境 Skip、非增量 solution 0 error / 10 条既有 warning、EF/SDK drift、TypeScript SDK strict no-emit、前端 type-check/106 files/607 tests/production build 全部通过。
+- E09-S01～S05 工程范围完成；产品、QA、WMS 与安全负责人的正式 GA 签字仍是发布治理动作，机器证据见 `docs/space/reports/e09-s05-external-access-audit-validity.md`。
+- 下一张建议独立卡为 E04-S06“2D/3D 同源预览”；E04-S03、E05-S03 依赖已满足。E04-S05 继续等待 E02-S07，E10 仍为 P2。
+
 ## E09-S04 完成状态（2026-08-02）
 
 - E09-S04 跨租户越权自动化已完成并进入受控集成基线：功能提交 `f045bd6f`，no-ff 集成提交 `c82d4fae`，起始基线 `dfacbb48`。
@@ -212,4 +223,4 @@
 
 ## 下一动作
 
-以 `c82d4fae` 为当前 Space 代码集成基线。E07-S05、E08-S01～S05 与 E09-S01～S04 已完成；下一张建议卡为 E09-S05 外部访问审计和有效期，覆盖登录、组织选择、查看、导出、授权/策略变化及现有会话即时失效。E04 S05 仍等待 E02 S07，E04 S06 已具备依赖但应独立排卡；E13 S04 等待 E02 S03，E13 S05 等待 S04 与正式供应商证据；E02 S01 等待正式黄金集、授权和冻结 Worker。禁止把剩余候选整包合入。GR-VP T1–T7 已完成，不要重做。
+以 `c658871c` 为当前 Space 代码集成基线。E07-S05、E08-S01～S05 与 E09-S01～S05 已完成；下一张建议独立卡为 E04-S06“2D/3D 同源预览”，其 E04-S03、E05-S03 依赖已满足。E09 的产品、QA、WMS 与安全正式 GA 签字仍由发布治理完成。E04-S05 继续等待 E02-S07；E13-S04 等待 E02-S03，E13-S05 等待 S04 与正式供应商证据；E02-S01 等待正式黄金集、授权和冻结 Worker；E10 属于 P2。禁止把剩余候选整包合入。GR-VP T1–T7 已完成，不要重做。
