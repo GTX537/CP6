@@ -261,6 +261,140 @@ export interface CreateSpacePlanningSimulationRunResponse {
   run: SpacePlanningSimulationRun
 }
 
+export interface CreateSpacePlanningComparisonRequest {
+  name: string
+  baselineRunId: string
+  runIds: string[]
+  minimumDistanceCoveragePercent: number
+  maximumPeakCapacityUtilizationPercent: number
+  maximumCongestionTaskHours: number
+  maximumTotalCost?: number | null
+}
+
+export interface SpacePlanningComparisonRisk {
+  code: string
+  severity: 'Information' | 'Warning' | 'Critical'
+}
+
+export interface SpacePlanningComparisonEntry {
+  sequenceNo: number
+  runId: string
+  branchId: string
+  scenarioVersionId: string
+  scenarioContentRevision: number
+  runName: string
+  runResultHash: string
+  isBaseline: boolean
+  metrics: {
+    distanceCoveragePercent: number
+    totalDistanceMeters: number
+    congestionTaskSeconds: number
+    congestionTaskHours: number
+    overloadedLocationCount: number
+    peakCapacityUtilizationPercent: number
+    averageCompletedTasksPerHour: number
+    peakCompletedTasksPerHour: number
+    totalCost: number
+  }
+  deltaFromBaseline: {
+    distanceMeters: number
+    congestionTaskSeconds: number
+    overloadedLocationCount: number
+    peakCapacityUtilizationPercentagePoints: number
+    averageCompletedTasksPerHour: number
+    totalCost: number
+  }
+  risks: SpacePlanningComparisonRisk[]
+}
+
+export interface SpacePlanningComparison {
+  comparisonId: string
+  siteId: string
+  modelId: string
+  basePublishedVersionId: string
+  baselineRunId: string
+  name: string
+  status: string
+  definitionVersion: string
+  requestHash: string
+  comparisonHash: string
+  sourceDatasetHash: string
+  currencyCode: string
+  historicalFromUtc: string
+  historicalToUtc: string
+  thresholds: {
+    minimumDistanceCoveragePercent: number
+    maximumPeakCapacityUtilizationPercent: number
+    maximumCongestionTaskHours: number
+    maximumTotalCost?: number | null
+  }
+  entries: SpacePlanningComparisonEntry[]
+  automatedRanking: boolean
+  productionWriteAllowed: boolean
+  createdAtUtc: string
+  createdBy: string
+  limitations: string[]
+}
+
+export interface SpacePlanningComparisonSummary {
+  comparisonId: string
+  baselineRunId: string
+  name: string
+  currencyCode: string
+  runCount: number
+  riskCount: number
+  createdAtUtc: string
+}
+
+export interface SpacePlanningComparisonList {
+  items: SpacePlanningComparisonSummary[]
+  isTruncated: boolean
+}
+
+export interface CreateSpacePlanningComparisonResponse {
+  outcome: 'Created' | 'Duplicate'
+  comparison: SpacePlanningComparison
+}
+
+export type SpacePlanningDecisionOutcome =
+  | 'Selected'
+  | 'Deferred'
+  | 'RejectedAll'
+
+export interface CreateSpacePlanningDecisionRequest {
+  outcome: SpacePlanningDecisionOutcome
+  selectedRunId?: string | null
+  rationale: string
+  supersedesDecisionId?: string | null
+}
+
+export interface SpacePlanningDecision {
+  decisionId: string
+  siteId: string
+  comparisonId: string
+  selectedRunId?: string | null
+  supersedesDecisionId?: string | null
+  outcome: SpacePlanningDecisionOutcome
+  rationale: string
+  comparisonHash: string
+  definitionVersion: string
+  humanDecision: boolean
+  automatedRecommendation: boolean
+  productionWriteAllowed: boolean
+  createdAtUtc: string
+  createdBy: string
+}
+
+export interface SpacePlanningDecisionList {
+  items: SpacePlanningDecision[]
+  isTruncated: boolean
+}
+
+export interface CreateSpacePlanningDecisionResponse {
+  outcome: 'Created' | 'Duplicate'
+  decision: SpacePlanningDecision
+}
+
 export const planningScenarioApi = {
   getModel(siteId: string) {
     return http.get<unknown, SpaceDesignModel>(
@@ -341,6 +475,58 @@ export const planningSimulationApi = {
   ) {
     return http.put<unknown, CreateSpacePlanningSimulationRunResponse>(
       `${simulationRoot(siteId, branchId)}/${encodeURIComponent(runId)}`,
+      request,
+    )
+  },
+}
+
+function comparisonRoot(siteId: string) {
+  return `${planningRoot}/sites/${encodeURIComponent(siteId)}/comparisons`
+}
+
+export const planningComparisonApi = {
+  list(siteId: string, limit = 50) {
+    return http.get<unknown, SpacePlanningComparisonList>(
+      comparisonRoot(siteId),
+      { params: { limit } },
+    )
+  },
+  get(siteId: string, comparisonId: string) {
+    return http.get<unknown, SpacePlanningComparison>(
+      `${comparisonRoot(siteId)}/${encodeURIComponent(comparisonId)}`,
+    )
+  },
+  create(
+    siteId: string,
+    comparisonId: string,
+    request: CreateSpacePlanningComparisonRequest,
+  ) {
+    return http.put<unknown, CreateSpacePlanningComparisonResponse>(
+      `${comparisonRoot(siteId)}/${encodeURIComponent(comparisonId)}`,
+      request,
+    )
+  },
+  listDecisions(siteId: string, comparisonId: string, limit = 50) {
+    return http.get<unknown, SpacePlanningDecisionList>(
+      `${comparisonRoot(siteId)}/${encodeURIComponent(comparisonId)}/decisions`,
+      { params: { limit } },
+    )
+  },
+  getDecision(siteId: string, comparisonId: string, decisionId: string) {
+    return http.get<unknown, SpacePlanningDecision>(
+      `${comparisonRoot(siteId)}/${encodeURIComponent(comparisonId)}` +
+        `/decisions/${encodeURIComponent(decisionId)}`,
+    )
+  },
+  createDecision(
+    siteId: string,
+    comparisonId: string,
+    decisionId: string,
+    request: CreateSpacePlanningDecisionRequest,
+  ) {
+    return http.put<unknown, CreateSpacePlanningDecisionResponse>(
+      `${comparisonRoot(siteId)}/${encodeURIComponent(comparisonId)}` +
+        `/decisions/${encodeURIComponent(decisionId)}`,
       request,
     )
   },

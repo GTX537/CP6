@@ -84,6 +84,10 @@ public sealed class SpaceDesignV1OpenApiTests
             "/api/space/planning/v1/sites/{siteId}/scenario-branches/{branchId}/historical-datasets/{datasetId}",
             "/api/space/planning/v1/sites/{siteId}/scenario-branches/{branchId}/simulation-runs",
             "/api/space/planning/v1/sites/{siteId}/scenario-branches/{branchId}/simulation-runs/{runId}",
+            "/api/space/planning/v1/sites/{siteId}/comparisons",
+            "/api/space/planning/v1/sites/{siteId}/comparisons/{comparisonId}",
+            "/api/space/planning/v1/sites/{siteId}/comparisons/{comparisonId}/decisions",
+            "/api/space/planning/v1/sites/{siteId}/comparisons/{comparisonId}/decisions/{decisionId}",
             "/api/space/portal/v1/sites/{siteId}/stock",
             "/api/space/portal/v1/sites/{siteId}/tasks",
         };
@@ -100,8 +104,8 @@ public sealed class SpaceDesignV1OpenApiTests
             .Select(operation =>
                 operation.Value.GetProperty("operationId").GetString())
             .ToArray();
-        Assert.Equal(77, operationIds.Length);
-        Assert.Equal(77, operationIds.Distinct().Count());
+        Assert.Equal(83, operationIds.Length);
+        Assert.Equal(83, operationIds.Distinct().Count());
         Assert.Contains("GetPolicy", operationIds);
         Assert.Contains("UpdatePolicy", operationIds);
         Assert.Contains("GetUsage", operationIds);
@@ -170,6 +174,12 @@ public sealed class SpaceDesignV1OpenApiTests
         Assert.Contains("CreateSimulationRun", operationIds);
         Assert.Contains("GetSimulationRun", operationIds);
         Assert.Contains("GetSimulationRuns", operationIds);
+        Assert.Contains("CreateComparison", operationIds);
+        Assert.Contains("GetComparison", operationIds);
+        Assert.Contains("GetComparisons", operationIds);
+        Assert.Contains("CreateDecision", operationIds);
+        Assert.Contains("GetDecision", operationIds);
+        Assert.Contains("GetDecisions", operationIds);
         Assert.Contains("GetPortalStock", operationIds);
         Assert.Contains("GetPortalTasks", operationIds);
 
@@ -1473,6 +1483,12 @@ public sealed class SpaceDesignV1OpenApiTests
                      "CreateSimulationRun",
                      "GetSimulationRun",
                      "GetSimulationRuns",
+                     "CreateComparison",
+                     "GetComparison",
+                     "GetComparisons",
+                     "CreateDecision",
+                     "GetDecision",
+                     "GetDecisions",
                   })
         {
             Assert.Contains(operation, csharp, StringComparison.Ordinal);

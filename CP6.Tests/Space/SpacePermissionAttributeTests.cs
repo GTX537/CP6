@@ -57,6 +57,10 @@ public class SpacePermissionAttributeTests
         "space:planning:dataset:create",
         "space:planning:simulation:read",
         "space:planning:simulation:create",
+        "space:planning:comparison:read",
+        "space:planning:comparison:create",
+        "space:planning:decision:read",
+        "space:planning:decision:create",
         "space-ai-admin:read", "space-ai-admin:manage",
     };
 
@@ -142,6 +146,14 @@ public class SpacePermissionAttributeTests
                 "space:planning:simulation:read",
             ["SpacePlanningSimulationController.GetSimulationRuns"] =
                 "space:planning:simulation:read",
+            ["SpacePlanningComparisonController.GetComparison"] =
+                "space:planning:comparison:read",
+            ["SpacePlanningComparisonController.GetComparisons"] =
+                "space:planning:comparison:read",
+            ["SpacePlanningComparisonController.GetDecision"] =
+                "space:planning:decision:read",
+            ["SpacePlanningComparisonController.GetDecisions"] =
+                "space:planning:decision:read",
         };
 
     /// <summary>只读语义的 POST 豁免（Controller.Method）——按「不得带特性」校验。</summary>
@@ -186,7 +198,7 @@ public class SpacePermissionAttributeTests
     public void SpaceControllers_AreDiscovered()
     {
         // 守卫：确保反射确实扫到全部 controller（防命名空间/程序集变动导致「空扫空过」）。
-        Assert.Equal(29, SpaceControllers.Count());
+        Assert.Equal(30, SpaceControllers.Count());
     }
 
     [Fact]

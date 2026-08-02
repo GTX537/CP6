@@ -387,6 +387,40 @@ export interface ISpaceDesignV1Client {
      * @param body (optional)
      * @return OK
      */
+    createComparison(siteId: string, comparisonId: string, body: CreateSpacePlanningComparisonRequest | undefined): Promise<CreateSpacePlanningComparisonResponse>;
+
+    /**
+     * @return OK
+     */
+    getComparison(siteId: string, comparisonId: string): Promise<SpacePlanningComparisonDto>;
+
+    /**
+     * @param limit (optional)
+     * @return OK
+     */
+    getComparisons(siteId: string, limit: number | undefined): Promise<SpacePlanningComparisonListResponse>;
+
+    /**
+     * @param body (optional)
+     * @return OK
+     */
+    createDecision(siteId: string, comparisonId: string, decisionId: string, body: CreateSpacePlanningDecisionRequest | undefined): Promise<CreateSpacePlanningDecisionResponse>;
+
+    /**
+     * @return OK
+     */
+    getDecision(siteId: string, comparisonId: string, decisionId: string): Promise<SpacePlanningDecisionDto>;
+
+    /**
+     * @param limit (optional)
+     * @return OK
+     */
+    getDecisions(siteId: string, comparisonId: string, limit: number | undefined): Promise<SpacePlanningDecisionListResponse>;
+
+    /**
+     * @param body (optional)
+     * @return OK
+     */
     createHistoricalDataset(siteId: string, branchId: string, datasetId: string, body: CreateSpacePlanningHistoricalDatasetRequest | undefined): Promise<CreateSpacePlanningHistoricalDatasetResponse>;
 
     /**
@@ -6655,6 +6689,581 @@ export class SpaceDesignV1Client implements ISpaceDesignV1Client {
      * @param body (optional)
      * @return OK
      */
+    createComparison(siteId: string, comparisonId: string, body: CreateSpacePlanningComparisonRequest | undefined): Promise<CreateSpacePlanningComparisonResponse> {
+        let url_ = this.baseUrl + "/api/space/planning/v1/sites/{siteId}/comparisons/{comparisonId}";
+        if (siteId === undefined || siteId === null)
+            throw new globalThis.Error("The parameter 'siteId' must be defined.");
+        url_ = url_.replace("{siteId}", encodeURIComponent("" + siteId));
+        if (comparisonId === undefined || comparisonId === null)
+            throw new globalThis.Error("The parameter 'comparisonId' must be defined.");
+        url_ = url_.replace("{comparisonId}", encodeURIComponent("" + comparisonId));
+        url_ = url_.replace(/[?&]$/, "");
+
+        const content_ = JSON.stringify(body);
+
+        let options_: RequestInit = {
+            body: content_,
+            method: "PUT",
+            headers: {
+                "Content-Type": "application/json",
+                "Accept": "application/json"
+            }
+        };
+
+        return this.http.fetch(url_, options_).then((_response: Response) => {
+            return this.processCreateComparison(_response);
+        });
+    }
+
+    protected processCreateComparison(response: Response): Promise<CreateSpacePlanningComparisonResponse> {
+        const status = response.status;
+        let _headers: any = {}; if (response.headers && response.headers.forEach) { response.headers.forEach((v: any, k: any) => _headers[k] = v); };
+        if (status === 200) {
+            return response.text().then((_responseText) => {
+            let result200: any = null;
+            let resultData200 = _responseText === "" ? null : JSON.parse(_responseText, this.jsonParseReviver);
+            result200 = CreateSpacePlanningComparisonResponse.fromJS(resultData200);
+            return result200;
+            });
+        } else if (status === 400) {
+            return response.text().then((_responseText) => {
+            let result400: any = null;
+            let resultData400 = _responseText === "" ? null : JSON.parse(_responseText, this.jsonParseReviver);
+            result400 = SpaceDesignProblemDetails.fromJS(resultData400);
+            return throwException("Bad Request", status, _responseText, _headers, result400);
+            });
+        } else if (status === 401) {
+            return response.text().then((_responseText) => {
+            let result401: any = null;
+            let resultData401 = _responseText === "" ? null : JSON.parse(_responseText, this.jsonParseReviver);
+            result401 = SpaceDesignProblemDetails.fromJS(resultData401);
+            return throwException("Unauthorized", status, _responseText, _headers, result401);
+            });
+        } else if (status === 403) {
+            return response.text().then((_responseText) => {
+            let result403: any = null;
+            let resultData403 = _responseText === "" ? null : JSON.parse(_responseText, this.jsonParseReviver);
+            result403 = SpaceDesignProblemDetails.fromJS(resultData403);
+            return throwException("Forbidden", status, _responseText, _headers, result403);
+            });
+        } else if (status === 404) {
+            return response.text().then((_responseText) => {
+            let result404: any = null;
+            let resultData404 = _responseText === "" ? null : JSON.parse(_responseText, this.jsonParseReviver);
+            result404 = SpaceDesignProblemDetails.fromJS(resultData404);
+            return throwException("Not Found", status, _responseText, _headers, result404);
+            });
+        } else if (status === 409) {
+            return response.text().then((_responseText) => {
+            let result409: any = null;
+            let resultData409 = _responseText === "" ? null : JSON.parse(_responseText, this.jsonParseReviver);
+            result409 = SpaceDesignProblemDetails.fromJS(resultData409);
+            return throwException("Conflict", status, _responseText, _headers, result409);
+            });
+        } else if (status === 422) {
+            return response.text().then((_responseText) => {
+            let result422: any = null;
+            let resultData422 = _responseText === "" ? null : JSON.parse(_responseText, this.jsonParseReviver);
+            result422 = SpaceDesignProblemDetails.fromJS(resultData422);
+            return throwException("Unprocessable Content", status, _responseText, _headers, result422);
+            });
+        } else if (status === 500) {
+            return response.text().then((_responseText) => {
+            let result500: any = null;
+            let resultData500 = _responseText === "" ? null : JSON.parse(_responseText, this.jsonParseReviver);
+            result500 = SpaceDesignProblemDetails.fromJS(resultData500);
+            return throwException("Internal Server Error", status, _responseText, _headers, result500);
+            });
+        } else if (status !== 200 && status !== 204) {
+            return response.text().then((_responseText) => {
+            return throwException("An unexpected server error occurred.", status, _responseText, _headers);
+            });
+        }
+        return Promise.resolve<CreateSpacePlanningComparisonResponse>(null as any);
+    }
+
+    /**
+     * @return OK
+     */
+    getComparison(siteId: string, comparisonId: string): Promise<SpacePlanningComparisonDto> {
+        let url_ = this.baseUrl + "/api/space/planning/v1/sites/{siteId}/comparisons/{comparisonId}";
+        if (siteId === undefined || siteId === null)
+            throw new globalThis.Error("The parameter 'siteId' must be defined.");
+        url_ = url_.replace("{siteId}", encodeURIComponent("" + siteId));
+        if (comparisonId === undefined || comparisonId === null)
+            throw new globalThis.Error("The parameter 'comparisonId' must be defined.");
+        url_ = url_.replace("{comparisonId}", encodeURIComponent("" + comparisonId));
+        url_ = url_.replace(/[?&]$/, "");
+
+        let options_: RequestInit = {
+            method: "GET",
+            headers: {
+                "Accept": "application/json"
+            }
+        };
+
+        return this.http.fetch(url_, options_).then((_response: Response) => {
+            return this.processGetComparison(_response);
+        });
+    }
+
+    protected processGetComparison(response: Response): Promise<SpacePlanningComparisonDto> {
+        const status = response.status;
+        let _headers: any = {}; if (response.headers && response.headers.forEach) { response.headers.forEach((v: any, k: any) => _headers[k] = v); };
+        if (status === 200) {
+            return response.text().then((_responseText) => {
+            let result200: any = null;
+            let resultData200 = _responseText === "" ? null : JSON.parse(_responseText, this.jsonParseReviver);
+            result200 = SpacePlanningComparisonDto.fromJS(resultData200);
+            return result200;
+            });
+        } else if (status === 400) {
+            return response.text().then((_responseText) => {
+            let result400: any = null;
+            let resultData400 = _responseText === "" ? null : JSON.parse(_responseText, this.jsonParseReviver);
+            result400 = SpaceDesignProblemDetails.fromJS(resultData400);
+            return throwException("Bad Request", status, _responseText, _headers, result400);
+            });
+        } else if (status === 401) {
+            return response.text().then((_responseText) => {
+            let result401: any = null;
+            let resultData401 = _responseText === "" ? null : JSON.parse(_responseText, this.jsonParseReviver);
+            result401 = SpaceDesignProblemDetails.fromJS(resultData401);
+            return throwException("Unauthorized", status, _responseText, _headers, result401);
+            });
+        } else if (status === 403) {
+            return response.text().then((_responseText) => {
+            let result403: any = null;
+            let resultData403 = _responseText === "" ? null : JSON.parse(_responseText, this.jsonParseReviver);
+            result403 = SpaceDesignProblemDetails.fromJS(resultData403);
+            return throwException("Forbidden", status, _responseText, _headers, result403);
+            });
+        } else if (status === 404) {
+            return response.text().then((_responseText) => {
+            let result404: any = null;
+            let resultData404 = _responseText === "" ? null : JSON.parse(_responseText, this.jsonParseReviver);
+            result404 = SpaceDesignProblemDetails.fromJS(resultData404);
+            return throwException("Not Found", status, _responseText, _headers, result404);
+            });
+        } else if (status === 409) {
+            return response.text().then((_responseText) => {
+            let result409: any = null;
+            let resultData409 = _responseText === "" ? null : JSON.parse(_responseText, this.jsonParseReviver);
+            result409 = SpaceDesignProblemDetails.fromJS(resultData409);
+            return throwException("Conflict", status, _responseText, _headers, result409);
+            });
+        } else if (status === 422) {
+            return response.text().then((_responseText) => {
+            let result422: any = null;
+            let resultData422 = _responseText === "" ? null : JSON.parse(_responseText, this.jsonParseReviver);
+            result422 = SpaceDesignProblemDetails.fromJS(resultData422);
+            return throwException("Unprocessable Content", status, _responseText, _headers, result422);
+            });
+        } else if (status === 500) {
+            return response.text().then((_responseText) => {
+            let result500: any = null;
+            let resultData500 = _responseText === "" ? null : JSON.parse(_responseText, this.jsonParseReviver);
+            result500 = SpaceDesignProblemDetails.fromJS(resultData500);
+            return throwException("Internal Server Error", status, _responseText, _headers, result500);
+            });
+        } else if (status !== 200 && status !== 204) {
+            return response.text().then((_responseText) => {
+            return throwException("An unexpected server error occurred.", status, _responseText, _headers);
+            });
+        }
+        return Promise.resolve<SpacePlanningComparisonDto>(null as any);
+    }
+
+    /**
+     * @param limit (optional)
+     * @return OK
+     */
+    getComparisons(siteId: string, limit: number | undefined): Promise<SpacePlanningComparisonListResponse> {
+        let url_ = this.baseUrl + "/api/space/planning/v1/sites/{siteId}/comparisons?";
+        if (siteId === undefined || siteId === null)
+            throw new globalThis.Error("The parameter 'siteId' must be defined.");
+        url_ = url_.replace("{siteId}", encodeURIComponent("" + siteId));
+        if (limit === null)
+            throw new globalThis.Error("The parameter 'limit' cannot be null.");
+        else if (limit !== undefined)
+            url_ += "limit=" + encodeURIComponent("" + limit) + "&";
+        url_ = url_.replace(/[?&]$/, "");
+
+        let options_: RequestInit = {
+            method: "GET",
+            headers: {
+                "Accept": "application/json"
+            }
+        };
+
+        return this.http.fetch(url_, options_).then((_response: Response) => {
+            return this.processGetComparisons(_response);
+        });
+    }
+
+    protected processGetComparisons(response: Response): Promise<SpacePlanningComparisonListResponse> {
+        const status = response.status;
+        let _headers: any = {}; if (response.headers && response.headers.forEach) { response.headers.forEach((v: any, k: any) => _headers[k] = v); };
+        if (status === 200) {
+            return response.text().then((_responseText) => {
+            let result200: any = null;
+            let resultData200 = _responseText === "" ? null : JSON.parse(_responseText, this.jsonParseReviver);
+            result200 = SpacePlanningComparisonListResponse.fromJS(resultData200);
+            return result200;
+            });
+        } else if (status === 400) {
+            return response.text().then((_responseText) => {
+            let result400: any = null;
+            let resultData400 = _responseText === "" ? null : JSON.parse(_responseText, this.jsonParseReviver);
+            result400 = SpaceDesignProblemDetails.fromJS(resultData400);
+            return throwException("Bad Request", status, _responseText, _headers, result400);
+            });
+        } else if (status === 401) {
+            return response.text().then((_responseText) => {
+            let result401: any = null;
+            let resultData401 = _responseText === "" ? null : JSON.parse(_responseText, this.jsonParseReviver);
+            result401 = SpaceDesignProblemDetails.fromJS(resultData401);
+            return throwException("Unauthorized", status, _responseText, _headers, result401);
+            });
+        } else if (status === 403) {
+            return response.text().then((_responseText) => {
+            let result403: any = null;
+            let resultData403 = _responseText === "" ? null : JSON.parse(_responseText, this.jsonParseReviver);
+            result403 = SpaceDesignProblemDetails.fromJS(resultData403);
+            return throwException("Forbidden", status, _responseText, _headers, result403);
+            });
+        } else if (status === 404) {
+            return response.text().then((_responseText) => {
+            let result404: any = null;
+            let resultData404 = _responseText === "" ? null : JSON.parse(_responseText, this.jsonParseReviver);
+            result404 = SpaceDesignProblemDetails.fromJS(resultData404);
+            return throwException("Not Found", status, _responseText, _headers, result404);
+            });
+        } else if (status === 409) {
+            return response.text().then((_responseText) => {
+            let result409: any = null;
+            let resultData409 = _responseText === "" ? null : JSON.parse(_responseText, this.jsonParseReviver);
+            result409 = SpaceDesignProblemDetails.fromJS(resultData409);
+            return throwException("Conflict", status, _responseText, _headers, result409);
+            });
+        } else if (status === 422) {
+            return response.text().then((_responseText) => {
+            let result422: any = null;
+            let resultData422 = _responseText === "" ? null : JSON.parse(_responseText, this.jsonParseReviver);
+            result422 = SpaceDesignProblemDetails.fromJS(resultData422);
+            return throwException("Unprocessable Content", status, _responseText, _headers, result422);
+            });
+        } else if (status === 500) {
+            return response.text().then((_responseText) => {
+            let result500: any = null;
+            let resultData500 = _responseText === "" ? null : JSON.parse(_responseText, this.jsonParseReviver);
+            result500 = SpaceDesignProblemDetails.fromJS(resultData500);
+            return throwException("Internal Server Error", status, _responseText, _headers, result500);
+            });
+        } else if (status !== 200 && status !== 204) {
+            return response.text().then((_responseText) => {
+            return throwException("An unexpected server error occurred.", status, _responseText, _headers);
+            });
+        }
+        return Promise.resolve<SpacePlanningComparisonListResponse>(null as any);
+    }
+
+    /**
+     * @param body (optional)
+     * @return OK
+     */
+    createDecision(siteId: string, comparisonId: string, decisionId: string, body: CreateSpacePlanningDecisionRequest | undefined): Promise<CreateSpacePlanningDecisionResponse> {
+        let url_ = this.baseUrl + "/api/space/planning/v1/sites/{siteId}/comparisons/{comparisonId}/decisions/{decisionId}";
+        if (siteId === undefined || siteId === null)
+            throw new globalThis.Error("The parameter 'siteId' must be defined.");
+        url_ = url_.replace("{siteId}", encodeURIComponent("" + siteId));
+        if (comparisonId === undefined || comparisonId === null)
+            throw new globalThis.Error("The parameter 'comparisonId' must be defined.");
+        url_ = url_.replace("{comparisonId}", encodeURIComponent("" + comparisonId));
+        if (decisionId === undefined || decisionId === null)
+            throw new globalThis.Error("The parameter 'decisionId' must be defined.");
+        url_ = url_.replace("{decisionId}", encodeURIComponent("" + decisionId));
+        url_ = url_.replace(/[?&]$/, "");
+
+        const content_ = JSON.stringify(body);
+
+        let options_: RequestInit = {
+            body: content_,
+            method: "PUT",
+            headers: {
+                "Content-Type": "application/json",
+                "Accept": "application/json"
+            }
+        };
+
+        return this.http.fetch(url_, options_).then((_response: Response) => {
+            return this.processCreateDecision(_response);
+        });
+    }
+
+    protected processCreateDecision(response: Response): Promise<CreateSpacePlanningDecisionResponse> {
+        const status = response.status;
+        let _headers: any = {}; if (response.headers && response.headers.forEach) { response.headers.forEach((v: any, k: any) => _headers[k] = v); };
+        if (status === 200) {
+            return response.text().then((_responseText) => {
+            let result200: any = null;
+            let resultData200 = _responseText === "" ? null : JSON.parse(_responseText, this.jsonParseReviver);
+            result200 = CreateSpacePlanningDecisionResponse.fromJS(resultData200);
+            return result200;
+            });
+        } else if (status === 400) {
+            return response.text().then((_responseText) => {
+            let result400: any = null;
+            let resultData400 = _responseText === "" ? null : JSON.parse(_responseText, this.jsonParseReviver);
+            result400 = SpaceDesignProblemDetails.fromJS(resultData400);
+            return throwException("Bad Request", status, _responseText, _headers, result400);
+            });
+        } else if (status === 401) {
+            return response.text().then((_responseText) => {
+            let result401: any = null;
+            let resultData401 = _responseText === "" ? null : JSON.parse(_responseText, this.jsonParseReviver);
+            result401 = SpaceDesignProblemDetails.fromJS(resultData401);
+            return throwException("Unauthorized", status, _responseText, _headers, result401);
+            });
+        } else if (status === 403) {
+            return response.text().then((_responseText) => {
+            let result403: any = null;
+            let resultData403 = _responseText === "" ? null : JSON.parse(_responseText, this.jsonParseReviver);
+            result403 = SpaceDesignProblemDetails.fromJS(resultData403);
+            return throwException("Forbidden", status, _responseText, _headers, result403);
+            });
+        } else if (status === 404) {
+            return response.text().then((_responseText) => {
+            let result404: any = null;
+            let resultData404 = _responseText === "" ? null : JSON.parse(_responseText, this.jsonParseReviver);
+            result404 = SpaceDesignProblemDetails.fromJS(resultData404);
+            return throwException("Not Found", status, _responseText, _headers, result404);
+            });
+        } else if (status === 409) {
+            return response.text().then((_responseText) => {
+            let result409: any = null;
+            let resultData409 = _responseText === "" ? null : JSON.parse(_responseText, this.jsonParseReviver);
+            result409 = SpaceDesignProblemDetails.fromJS(resultData409);
+            return throwException("Conflict", status, _responseText, _headers, result409);
+            });
+        } else if (status === 422) {
+            return response.text().then((_responseText) => {
+            let result422: any = null;
+            let resultData422 = _responseText === "" ? null : JSON.parse(_responseText, this.jsonParseReviver);
+            result422 = SpaceDesignProblemDetails.fromJS(resultData422);
+            return throwException("Unprocessable Content", status, _responseText, _headers, result422);
+            });
+        } else if (status === 500) {
+            return response.text().then((_responseText) => {
+            let result500: any = null;
+            let resultData500 = _responseText === "" ? null : JSON.parse(_responseText, this.jsonParseReviver);
+            result500 = SpaceDesignProblemDetails.fromJS(resultData500);
+            return throwException("Internal Server Error", status, _responseText, _headers, result500);
+            });
+        } else if (status !== 200 && status !== 204) {
+            return response.text().then((_responseText) => {
+            return throwException("An unexpected server error occurred.", status, _responseText, _headers);
+            });
+        }
+        return Promise.resolve<CreateSpacePlanningDecisionResponse>(null as any);
+    }
+
+    /**
+     * @return OK
+     */
+    getDecision(siteId: string, comparisonId: string, decisionId: string): Promise<SpacePlanningDecisionDto> {
+        let url_ = this.baseUrl + "/api/space/planning/v1/sites/{siteId}/comparisons/{comparisonId}/decisions/{decisionId}";
+        if (siteId === undefined || siteId === null)
+            throw new globalThis.Error("The parameter 'siteId' must be defined.");
+        url_ = url_.replace("{siteId}", encodeURIComponent("" + siteId));
+        if (comparisonId === undefined || comparisonId === null)
+            throw new globalThis.Error("The parameter 'comparisonId' must be defined.");
+        url_ = url_.replace("{comparisonId}", encodeURIComponent("" + comparisonId));
+        if (decisionId === undefined || decisionId === null)
+            throw new globalThis.Error("The parameter 'decisionId' must be defined.");
+        url_ = url_.replace("{decisionId}", encodeURIComponent("" + decisionId));
+        url_ = url_.replace(/[?&]$/, "");
+
+        let options_: RequestInit = {
+            method: "GET",
+            headers: {
+                "Accept": "application/json"
+            }
+        };
+
+        return this.http.fetch(url_, options_).then((_response: Response) => {
+            return this.processGetDecision(_response);
+        });
+    }
+
+    protected processGetDecision(response: Response): Promise<SpacePlanningDecisionDto> {
+        const status = response.status;
+        let _headers: any = {}; if (response.headers && response.headers.forEach) { response.headers.forEach((v: any, k: any) => _headers[k] = v); };
+        if (status === 200) {
+            return response.text().then((_responseText) => {
+            let result200: any = null;
+            let resultData200 = _responseText === "" ? null : JSON.parse(_responseText, this.jsonParseReviver);
+            result200 = SpacePlanningDecisionDto.fromJS(resultData200);
+            return result200;
+            });
+        } else if (status === 400) {
+            return response.text().then((_responseText) => {
+            let result400: any = null;
+            let resultData400 = _responseText === "" ? null : JSON.parse(_responseText, this.jsonParseReviver);
+            result400 = SpaceDesignProblemDetails.fromJS(resultData400);
+            return throwException("Bad Request", status, _responseText, _headers, result400);
+            });
+        } else if (status === 401) {
+            return response.text().then((_responseText) => {
+            let result401: any = null;
+            let resultData401 = _responseText === "" ? null : JSON.parse(_responseText, this.jsonParseReviver);
+            result401 = SpaceDesignProblemDetails.fromJS(resultData401);
+            return throwException("Unauthorized", status, _responseText, _headers, result401);
+            });
+        } else if (status === 403) {
+            return response.text().then((_responseText) => {
+            let result403: any = null;
+            let resultData403 = _responseText === "" ? null : JSON.parse(_responseText, this.jsonParseReviver);
+            result403 = SpaceDesignProblemDetails.fromJS(resultData403);
+            return throwException("Forbidden", status, _responseText, _headers, result403);
+            });
+        } else if (status === 404) {
+            return response.text().then((_responseText) => {
+            let result404: any = null;
+            let resultData404 = _responseText === "" ? null : JSON.parse(_responseText, this.jsonParseReviver);
+            result404 = SpaceDesignProblemDetails.fromJS(resultData404);
+            return throwException("Not Found", status, _responseText, _headers, result404);
+            });
+        } else if (status === 409) {
+            return response.text().then((_responseText) => {
+            let result409: any = null;
+            let resultData409 = _responseText === "" ? null : JSON.parse(_responseText, this.jsonParseReviver);
+            result409 = SpaceDesignProblemDetails.fromJS(resultData409);
+            return throwException("Conflict", status, _responseText, _headers, result409);
+            });
+        } else if (status === 422) {
+            return response.text().then((_responseText) => {
+            let result422: any = null;
+            let resultData422 = _responseText === "" ? null : JSON.parse(_responseText, this.jsonParseReviver);
+            result422 = SpaceDesignProblemDetails.fromJS(resultData422);
+            return throwException("Unprocessable Content", status, _responseText, _headers, result422);
+            });
+        } else if (status === 500) {
+            return response.text().then((_responseText) => {
+            let result500: any = null;
+            let resultData500 = _responseText === "" ? null : JSON.parse(_responseText, this.jsonParseReviver);
+            result500 = SpaceDesignProblemDetails.fromJS(resultData500);
+            return throwException("Internal Server Error", status, _responseText, _headers, result500);
+            });
+        } else if (status !== 200 && status !== 204) {
+            return response.text().then((_responseText) => {
+            return throwException("An unexpected server error occurred.", status, _responseText, _headers);
+            });
+        }
+        return Promise.resolve<SpacePlanningDecisionDto>(null as any);
+    }
+
+    /**
+     * @param limit (optional)
+     * @return OK
+     */
+    getDecisions(siteId: string, comparisonId: string, limit: number | undefined): Promise<SpacePlanningDecisionListResponse> {
+        let url_ = this.baseUrl + "/api/space/planning/v1/sites/{siteId}/comparisons/{comparisonId}/decisions?";
+        if (siteId === undefined || siteId === null)
+            throw new globalThis.Error("The parameter 'siteId' must be defined.");
+        url_ = url_.replace("{siteId}", encodeURIComponent("" + siteId));
+        if (comparisonId === undefined || comparisonId === null)
+            throw new globalThis.Error("The parameter 'comparisonId' must be defined.");
+        url_ = url_.replace("{comparisonId}", encodeURIComponent("" + comparisonId));
+        if (limit === null)
+            throw new globalThis.Error("The parameter 'limit' cannot be null.");
+        else if (limit !== undefined)
+            url_ += "limit=" + encodeURIComponent("" + limit) + "&";
+        url_ = url_.replace(/[?&]$/, "");
+
+        let options_: RequestInit = {
+            method: "GET",
+            headers: {
+                "Accept": "application/json"
+            }
+        };
+
+        return this.http.fetch(url_, options_).then((_response: Response) => {
+            return this.processGetDecisions(_response);
+        });
+    }
+
+    protected processGetDecisions(response: Response): Promise<SpacePlanningDecisionListResponse> {
+        const status = response.status;
+        let _headers: any = {}; if (response.headers && response.headers.forEach) { response.headers.forEach((v: any, k: any) => _headers[k] = v); };
+        if (status === 200) {
+            return response.text().then((_responseText) => {
+            let result200: any = null;
+            let resultData200 = _responseText === "" ? null : JSON.parse(_responseText, this.jsonParseReviver);
+            result200 = SpacePlanningDecisionListResponse.fromJS(resultData200);
+            return result200;
+            });
+        } else if (status === 400) {
+            return response.text().then((_responseText) => {
+            let result400: any = null;
+            let resultData400 = _responseText === "" ? null : JSON.parse(_responseText, this.jsonParseReviver);
+            result400 = SpaceDesignProblemDetails.fromJS(resultData400);
+            return throwException("Bad Request", status, _responseText, _headers, result400);
+            });
+        } else if (status === 401) {
+            return response.text().then((_responseText) => {
+            let result401: any = null;
+            let resultData401 = _responseText === "" ? null : JSON.parse(_responseText, this.jsonParseReviver);
+            result401 = SpaceDesignProblemDetails.fromJS(resultData401);
+            return throwException("Unauthorized", status, _responseText, _headers, result401);
+            });
+        } else if (status === 403) {
+            return response.text().then((_responseText) => {
+            let result403: any = null;
+            let resultData403 = _responseText === "" ? null : JSON.parse(_responseText, this.jsonParseReviver);
+            result403 = SpaceDesignProblemDetails.fromJS(resultData403);
+            return throwException("Forbidden", status, _responseText, _headers, result403);
+            });
+        } else if (status === 404) {
+            return response.text().then((_responseText) => {
+            let result404: any = null;
+            let resultData404 = _responseText === "" ? null : JSON.parse(_responseText, this.jsonParseReviver);
+            result404 = SpaceDesignProblemDetails.fromJS(resultData404);
+            return throwException("Not Found", status, _responseText, _headers, result404);
+            });
+        } else if (status === 409) {
+            return response.text().then((_responseText) => {
+            let result409: any = null;
+            let resultData409 = _responseText === "" ? null : JSON.parse(_responseText, this.jsonParseReviver);
+            result409 = SpaceDesignProblemDetails.fromJS(resultData409);
+            return throwException("Conflict", status, _responseText, _headers, result409);
+            });
+        } else if (status === 422) {
+            return response.text().then((_responseText) => {
+            let result422: any = null;
+            let resultData422 = _responseText === "" ? null : JSON.parse(_responseText, this.jsonParseReviver);
+            result422 = SpaceDesignProblemDetails.fromJS(resultData422);
+            return throwException("Unprocessable Content", status, _responseText, _headers, result422);
+            });
+        } else if (status === 500) {
+            return response.text().then((_responseText) => {
+            let result500: any = null;
+            let resultData500 = _responseText === "" ? null : JSON.parse(_responseText, this.jsonParseReviver);
+            result500 = SpaceDesignProblemDetails.fromJS(resultData500);
+            return throwException("Internal Server Error", status, _responseText, _headers, result500);
+            });
+        } else if (status !== 200 && status !== 204) {
+            return response.text().then((_responseText) => {
+            return throwException("An unexpected server error occurred.", status, _responseText, _headers);
+            });
+        }
+        return Promise.resolve<SpacePlanningDecisionListResponse>(null as any);
+    }
+
+    /**
+     * @param body (optional)
+     * @return OK
+     */
     createHistoricalDataset(siteId: string, branchId: string, datasetId: string, body: CreateSpacePlanningHistoricalDatasetRequest | undefined): Promise<CreateSpacePlanningHistoricalDatasetResponse> {
         let url_ = this.baseUrl + "/api/space/planning/v1/sites/{siteId}/scenario-branches/{branchId}/historical-datasets/{datasetId}";
         if (siteId === undefined || siteId === null)
@@ -8871,6 +9480,202 @@ export interface ICreateSpaceFieldPolicyRequest {
     audienceType: string;
     fields: SpaceFieldPolicyFieldRequest[];
     canExport?: boolean;
+}
+
+export class CreateSpacePlanningComparisonRequest implements ICreateSpacePlanningComparisonRequest {
+    name?: string | undefined;
+    baselineRunId?: string;
+    runIds?: string[] | undefined;
+    minimumDistanceCoveragePercent?: number;
+    maximumPeakCapacityUtilizationPercent?: number;
+    maximumCongestionTaskHours?: number;
+    maximumTotalCost?: number | undefined;
+
+    constructor(data?: ICreateSpacePlanningComparisonRequest) {
+        if (data) {
+            for (var property in data) {
+                if (data.hasOwnProperty(property))
+                    (this as any)[property] = (data as any)[property];
+            }
+        }
+    }
+
+    init(_data?: any) {
+        if (_data) {
+            this.name = _data["name"];
+            this.baselineRunId = _data["baselineRunId"];
+            if (Array.isArray(_data["runIds"])) {
+                this.runIds = [] as any;
+                for (let item of _data["runIds"])
+                    this.runIds!.push(item);
+            }
+            this.minimumDistanceCoveragePercent = _data["minimumDistanceCoveragePercent"];
+            this.maximumPeakCapacityUtilizationPercent = _data["maximumPeakCapacityUtilizationPercent"];
+            this.maximumCongestionTaskHours = _data["maximumCongestionTaskHours"];
+            this.maximumTotalCost = _data["maximumTotalCost"];
+        }
+    }
+
+    static fromJS(data: any): CreateSpacePlanningComparisonRequest {
+        data = typeof data === 'object' ? data : {};
+        let result = new CreateSpacePlanningComparisonRequest();
+        result.init(data);
+        return result;
+    }
+
+    toJSON(data?: any) {
+        data = typeof data === 'object' ? data : {};
+        data["name"] = this.name;
+        data["baselineRunId"] = this.baselineRunId;
+        if (Array.isArray(this.runIds)) {
+            data["runIds"] = [];
+            for (let item of this.runIds)
+                data["runIds"].push(item);
+        }
+        data["minimumDistanceCoveragePercent"] = this.minimumDistanceCoveragePercent;
+        data["maximumPeakCapacityUtilizationPercent"] = this.maximumPeakCapacityUtilizationPercent;
+        data["maximumCongestionTaskHours"] = this.maximumCongestionTaskHours;
+        data["maximumTotalCost"] = this.maximumTotalCost;
+        return data;
+    }
+}
+
+export interface ICreateSpacePlanningComparisonRequest {
+    name?: string | undefined;
+    baselineRunId?: string;
+    runIds?: string[] | undefined;
+    minimumDistanceCoveragePercent?: number;
+    maximumPeakCapacityUtilizationPercent?: number;
+    maximumCongestionTaskHours?: number;
+    maximumTotalCost?: number | undefined;
+}
+
+export class CreateSpacePlanningComparisonResponse implements ICreateSpacePlanningComparisonResponse {
+    outcome?: string | undefined;
+    comparison?: SpacePlanningComparisonDto;
+
+    constructor(data?: ICreateSpacePlanningComparisonResponse) {
+        if (data) {
+            for (var property in data) {
+                if (data.hasOwnProperty(property))
+                    (this as any)[property] = (data as any)[property];
+            }
+        }
+    }
+
+    init(_data?: any) {
+        if (_data) {
+            this.outcome = _data["outcome"];
+            this.comparison = _data["comparison"] ? SpacePlanningComparisonDto.fromJS(_data["comparison"]) : undefined as any;
+        }
+    }
+
+    static fromJS(data: any): CreateSpacePlanningComparisonResponse {
+        data = typeof data === 'object' ? data : {};
+        let result = new CreateSpacePlanningComparisonResponse();
+        result.init(data);
+        return result;
+    }
+
+    toJSON(data?: any) {
+        data = typeof data === 'object' ? data : {};
+        data["outcome"] = this.outcome;
+        data["comparison"] = this.comparison ? this.comparison.toJSON() : undefined as any;
+        return data;
+    }
+}
+
+export interface ICreateSpacePlanningComparisonResponse {
+    outcome?: string | undefined;
+    comparison?: SpacePlanningComparisonDto;
+}
+
+export class CreateSpacePlanningDecisionRequest implements ICreateSpacePlanningDecisionRequest {
+    outcome?: string | undefined;
+    selectedRunId?: string | undefined;
+    rationale?: string | undefined;
+    supersedesDecisionId?: string | undefined;
+
+    constructor(data?: ICreateSpacePlanningDecisionRequest) {
+        if (data) {
+            for (var property in data) {
+                if (data.hasOwnProperty(property))
+                    (this as any)[property] = (data as any)[property];
+            }
+        }
+    }
+
+    init(_data?: any) {
+        if (_data) {
+            this.outcome = _data["outcome"];
+            this.selectedRunId = _data["selectedRunId"];
+            this.rationale = _data["rationale"];
+            this.supersedesDecisionId = _data["supersedesDecisionId"];
+        }
+    }
+
+    static fromJS(data: any): CreateSpacePlanningDecisionRequest {
+        data = typeof data === 'object' ? data : {};
+        let result = new CreateSpacePlanningDecisionRequest();
+        result.init(data);
+        return result;
+    }
+
+    toJSON(data?: any) {
+        data = typeof data === 'object' ? data : {};
+        data["outcome"] = this.outcome;
+        data["selectedRunId"] = this.selectedRunId;
+        data["rationale"] = this.rationale;
+        data["supersedesDecisionId"] = this.supersedesDecisionId;
+        return data;
+    }
+}
+
+export interface ICreateSpacePlanningDecisionRequest {
+    outcome?: string | undefined;
+    selectedRunId?: string | undefined;
+    rationale?: string | undefined;
+    supersedesDecisionId?: string | undefined;
+}
+
+export class CreateSpacePlanningDecisionResponse implements ICreateSpacePlanningDecisionResponse {
+    outcome?: string | undefined;
+    decision?: SpacePlanningDecisionDto;
+
+    constructor(data?: ICreateSpacePlanningDecisionResponse) {
+        if (data) {
+            for (var property in data) {
+                if (data.hasOwnProperty(property))
+                    (this as any)[property] = (data as any)[property];
+            }
+        }
+    }
+
+    init(_data?: any) {
+        if (_data) {
+            this.outcome = _data["outcome"];
+            this.decision = _data["decision"] ? SpacePlanningDecisionDto.fromJS(_data["decision"]) : undefined as any;
+        }
+    }
+
+    static fromJS(data: any): CreateSpacePlanningDecisionResponse {
+        data = typeof data === 'object' ? data : {};
+        let result = new CreateSpacePlanningDecisionResponse();
+        result.init(data);
+        return result;
+    }
+
+    toJSON(data?: any) {
+        data = typeof data === 'object' ? data : {};
+        data["outcome"] = this.outcome;
+        data["decision"] = this.decision ? this.decision.toJSON() : undefined as any;
+        return data;
+    }
+}
+
+export interface ICreateSpacePlanningDecisionResponse {
+    outcome?: string | undefined;
+    decision?: SpacePlanningDecisionDto;
 }
 
 export class CreateSpacePlanningHistoricalDatasetRequest implements ICreateSpacePlanningHistoricalDatasetRequest {
@@ -13924,6 +14729,678 @@ export interface ISpacePersonnelTrajectoryResponse {
     retentionCutoffUtc: Date;
     items: SpacePersonnelTrajectoryPointDto[];
     nextCursor: string | undefined;
+}
+
+export class SpacePlanningComparisonDeltaDto implements ISpacePlanningComparisonDeltaDto {
+    distanceMeters?: number;
+    congestionTaskSeconds?: number;
+    overloadedLocationCount?: number;
+    peakCapacityUtilizationPercentagePoints?: number;
+    averageCompletedTasksPerHour?: number;
+    totalCost?: number;
+
+    constructor(data?: ISpacePlanningComparisonDeltaDto) {
+        if (data) {
+            for (var property in data) {
+                if (data.hasOwnProperty(property))
+                    (this as any)[property] = (data as any)[property];
+            }
+        }
+    }
+
+    init(_data?: any) {
+        if (_data) {
+            this.distanceMeters = _data["distanceMeters"];
+            this.congestionTaskSeconds = _data["congestionTaskSeconds"];
+            this.overloadedLocationCount = _data["overloadedLocationCount"];
+            this.peakCapacityUtilizationPercentagePoints = _data["peakCapacityUtilizationPercentagePoints"];
+            this.averageCompletedTasksPerHour = _data["averageCompletedTasksPerHour"];
+            this.totalCost = _data["totalCost"];
+        }
+    }
+
+    static fromJS(data: any): SpacePlanningComparisonDeltaDto {
+        data = typeof data === 'object' ? data : {};
+        let result = new SpacePlanningComparisonDeltaDto();
+        result.init(data);
+        return result;
+    }
+
+    toJSON(data?: any) {
+        data = typeof data === 'object' ? data : {};
+        data["distanceMeters"] = this.distanceMeters;
+        data["congestionTaskSeconds"] = this.congestionTaskSeconds;
+        data["overloadedLocationCount"] = this.overloadedLocationCount;
+        data["peakCapacityUtilizationPercentagePoints"] = this.peakCapacityUtilizationPercentagePoints;
+        data["averageCompletedTasksPerHour"] = this.averageCompletedTasksPerHour;
+        data["totalCost"] = this.totalCost;
+        return data;
+    }
+}
+
+export interface ISpacePlanningComparisonDeltaDto {
+    distanceMeters?: number;
+    congestionTaskSeconds?: number;
+    overloadedLocationCount?: number;
+    peakCapacityUtilizationPercentagePoints?: number;
+    averageCompletedTasksPerHour?: number;
+    totalCost?: number;
+}
+
+export class SpacePlanningComparisonDto implements ISpacePlanningComparisonDto {
+    comparisonId?: string;
+    siteId?: string;
+    modelId?: string;
+    basePublishedVersionId?: string;
+    baselineRunId?: string;
+    name?: string | undefined;
+    status?: string | undefined;
+    definitionVersion?: string | undefined;
+    requestHash?: string | undefined;
+    comparisonHash?: string | undefined;
+    sourceDatasetHash?: string | undefined;
+    currencyCode?: string | undefined;
+    historicalFromUtc?: Date;
+    historicalToUtc?: Date;
+    thresholds?: SpacePlanningComparisonThresholdsDto;
+    entries?: SpacePlanningComparisonEntryDto[] | undefined;
+    automatedRanking?: boolean;
+    productionWriteAllowed?: boolean;
+    createdAtUtc?: Date;
+    createdBy?: string;
+    limitations?: string[] | undefined;
+
+    constructor(data?: ISpacePlanningComparisonDto) {
+        if (data) {
+            for (var property in data) {
+                if (data.hasOwnProperty(property))
+                    (this as any)[property] = (data as any)[property];
+            }
+        }
+    }
+
+    init(_data?: any) {
+        if (_data) {
+            this.comparisonId = _data["comparisonId"];
+            this.siteId = _data["siteId"];
+            this.modelId = _data["modelId"];
+            this.basePublishedVersionId = _data["basePublishedVersionId"];
+            this.baselineRunId = _data["baselineRunId"];
+            this.name = _data["name"];
+            this.status = _data["status"];
+            this.definitionVersion = _data["definitionVersion"];
+            this.requestHash = _data["requestHash"];
+            this.comparisonHash = _data["comparisonHash"];
+            this.sourceDatasetHash = _data["sourceDatasetHash"];
+            this.currencyCode = _data["currencyCode"];
+            this.historicalFromUtc = _data["historicalFromUtc"] ? new Date(_data["historicalFromUtc"].toString()) : undefined as any;
+            this.historicalToUtc = _data["historicalToUtc"] ? new Date(_data["historicalToUtc"].toString()) : undefined as any;
+            this.thresholds = _data["thresholds"] ? SpacePlanningComparisonThresholdsDto.fromJS(_data["thresholds"]) : undefined as any;
+            if (Array.isArray(_data["entries"])) {
+                this.entries = [] as any;
+                for (let item of _data["entries"])
+                    this.entries!.push(SpacePlanningComparisonEntryDto.fromJS(item));
+            }
+            this.automatedRanking = _data["automatedRanking"];
+            this.productionWriteAllowed = _data["productionWriteAllowed"];
+            this.createdAtUtc = _data["createdAtUtc"] ? new Date(_data["createdAtUtc"].toString()) : undefined as any;
+            this.createdBy = _data["createdBy"];
+            if (Array.isArray(_data["limitations"])) {
+                this.limitations = [] as any;
+                for (let item of _data["limitations"])
+                    this.limitations!.push(item);
+            }
+        }
+    }
+
+    static fromJS(data: any): SpacePlanningComparisonDto {
+        data = typeof data === 'object' ? data : {};
+        let result = new SpacePlanningComparisonDto();
+        result.init(data);
+        return result;
+    }
+
+    toJSON(data?: any) {
+        data = typeof data === 'object' ? data : {};
+        data["comparisonId"] = this.comparisonId;
+        data["siteId"] = this.siteId;
+        data["modelId"] = this.modelId;
+        data["basePublishedVersionId"] = this.basePublishedVersionId;
+        data["baselineRunId"] = this.baselineRunId;
+        data["name"] = this.name;
+        data["status"] = this.status;
+        data["definitionVersion"] = this.definitionVersion;
+        data["requestHash"] = this.requestHash;
+        data["comparisonHash"] = this.comparisonHash;
+        data["sourceDatasetHash"] = this.sourceDatasetHash;
+        data["currencyCode"] = this.currencyCode;
+        data["historicalFromUtc"] = this.historicalFromUtc ? this.historicalFromUtc.toISOString() : undefined as any;
+        data["historicalToUtc"] = this.historicalToUtc ? this.historicalToUtc.toISOString() : undefined as any;
+        data["thresholds"] = this.thresholds ? this.thresholds.toJSON() : undefined as any;
+        if (Array.isArray(this.entries)) {
+            data["entries"] = [];
+            for (let item of this.entries)
+                data["entries"].push(item ? item.toJSON() : undefined as any);
+        }
+        data["automatedRanking"] = this.automatedRanking;
+        data["productionWriteAllowed"] = this.productionWriteAllowed;
+        data["createdAtUtc"] = this.createdAtUtc ? this.createdAtUtc.toISOString() : undefined as any;
+        data["createdBy"] = this.createdBy;
+        if (Array.isArray(this.limitations)) {
+            data["limitations"] = [];
+            for (let item of this.limitations)
+                data["limitations"].push(item);
+        }
+        return data;
+    }
+}
+
+export interface ISpacePlanningComparisonDto {
+    comparisonId?: string;
+    siteId?: string;
+    modelId?: string;
+    basePublishedVersionId?: string;
+    baselineRunId?: string;
+    name?: string | undefined;
+    status?: string | undefined;
+    definitionVersion?: string | undefined;
+    requestHash?: string | undefined;
+    comparisonHash?: string | undefined;
+    sourceDatasetHash?: string | undefined;
+    currencyCode?: string | undefined;
+    historicalFromUtc?: Date;
+    historicalToUtc?: Date;
+    thresholds?: SpacePlanningComparisonThresholdsDto;
+    entries?: SpacePlanningComparisonEntryDto[] | undefined;
+    automatedRanking?: boolean;
+    productionWriteAllowed?: boolean;
+    createdAtUtc?: Date;
+    createdBy?: string;
+    limitations?: string[] | undefined;
+}
+
+export class SpacePlanningComparisonEntryDto implements ISpacePlanningComparisonEntryDto {
+    sequenceNo?: number;
+    runId?: string;
+    branchId?: string;
+    scenarioVersionId?: string;
+    scenarioContentRevision?: number;
+    runName?: string | undefined;
+    runResultHash?: string | undefined;
+    isBaseline?: boolean;
+    metrics?: SpacePlanningComparisonMetricsDto;
+    deltaFromBaseline?: SpacePlanningComparisonDeltaDto;
+    risks?: SpacePlanningComparisonRiskDto[] | undefined;
+
+    constructor(data?: ISpacePlanningComparisonEntryDto) {
+        if (data) {
+            for (var property in data) {
+                if (data.hasOwnProperty(property))
+                    (this as any)[property] = (data as any)[property];
+            }
+        }
+    }
+
+    init(_data?: any) {
+        if (_data) {
+            this.sequenceNo = _data["sequenceNo"];
+            this.runId = _data["runId"];
+            this.branchId = _data["branchId"];
+            this.scenarioVersionId = _data["scenarioVersionId"];
+            this.scenarioContentRevision = _data["scenarioContentRevision"];
+            this.runName = _data["runName"];
+            this.runResultHash = _data["runResultHash"];
+            this.isBaseline = _data["isBaseline"];
+            this.metrics = _data["metrics"] ? SpacePlanningComparisonMetricsDto.fromJS(_data["metrics"]) : undefined as any;
+            this.deltaFromBaseline = _data["deltaFromBaseline"] ? SpacePlanningComparisonDeltaDto.fromJS(_data["deltaFromBaseline"]) : undefined as any;
+            if (Array.isArray(_data["risks"])) {
+                this.risks = [] as any;
+                for (let item of _data["risks"])
+                    this.risks!.push(SpacePlanningComparisonRiskDto.fromJS(item));
+            }
+        }
+    }
+
+    static fromJS(data: any): SpacePlanningComparisonEntryDto {
+        data = typeof data === 'object' ? data : {};
+        let result = new SpacePlanningComparisonEntryDto();
+        result.init(data);
+        return result;
+    }
+
+    toJSON(data?: any) {
+        data = typeof data === 'object' ? data : {};
+        data["sequenceNo"] = this.sequenceNo;
+        data["runId"] = this.runId;
+        data["branchId"] = this.branchId;
+        data["scenarioVersionId"] = this.scenarioVersionId;
+        data["scenarioContentRevision"] = this.scenarioContentRevision;
+        data["runName"] = this.runName;
+        data["runResultHash"] = this.runResultHash;
+        data["isBaseline"] = this.isBaseline;
+        data["metrics"] = this.metrics ? this.metrics.toJSON() : undefined as any;
+        data["deltaFromBaseline"] = this.deltaFromBaseline ? this.deltaFromBaseline.toJSON() : undefined as any;
+        if (Array.isArray(this.risks)) {
+            data["risks"] = [];
+            for (let item of this.risks)
+                data["risks"].push(item ? item.toJSON() : undefined as any);
+        }
+        return data;
+    }
+}
+
+export interface ISpacePlanningComparisonEntryDto {
+    sequenceNo?: number;
+    runId?: string;
+    branchId?: string;
+    scenarioVersionId?: string;
+    scenarioContentRevision?: number;
+    runName?: string | undefined;
+    runResultHash?: string | undefined;
+    isBaseline?: boolean;
+    metrics?: SpacePlanningComparisonMetricsDto;
+    deltaFromBaseline?: SpacePlanningComparisonDeltaDto;
+    risks?: SpacePlanningComparisonRiskDto[] | undefined;
+}
+
+export class SpacePlanningComparisonListResponse implements ISpacePlanningComparisonListResponse {
+    items?: SpacePlanningComparisonSummaryDto[] | undefined;
+    isTruncated?: boolean;
+
+    constructor(data?: ISpacePlanningComparisonListResponse) {
+        if (data) {
+            for (var property in data) {
+                if (data.hasOwnProperty(property))
+                    (this as any)[property] = (data as any)[property];
+            }
+        }
+    }
+
+    init(_data?: any) {
+        if (_data) {
+            if (Array.isArray(_data["items"])) {
+                this.items = [] as any;
+                for (let item of _data["items"])
+                    this.items!.push(SpacePlanningComparisonSummaryDto.fromJS(item));
+            }
+            this.isTruncated = _data["isTruncated"];
+        }
+    }
+
+    static fromJS(data: any): SpacePlanningComparisonListResponse {
+        data = typeof data === 'object' ? data : {};
+        let result = new SpacePlanningComparisonListResponse();
+        result.init(data);
+        return result;
+    }
+
+    toJSON(data?: any) {
+        data = typeof data === 'object' ? data : {};
+        if (Array.isArray(this.items)) {
+            data["items"] = [];
+            for (let item of this.items)
+                data["items"].push(item ? item.toJSON() : undefined as any);
+        }
+        data["isTruncated"] = this.isTruncated;
+        return data;
+    }
+}
+
+export interface ISpacePlanningComparisonListResponse {
+    items?: SpacePlanningComparisonSummaryDto[] | undefined;
+    isTruncated?: boolean;
+}
+
+export class SpacePlanningComparisonMetricsDto implements ISpacePlanningComparisonMetricsDto {
+    distanceCoveragePercent?: number;
+    totalDistanceMeters?: number;
+    congestionTaskSeconds?: number;
+    congestionTaskHours?: number;
+    overloadedLocationCount?: number;
+    peakCapacityUtilizationPercent?: number;
+    averageCompletedTasksPerHour?: number;
+    peakCompletedTasksPerHour?: number;
+    totalCost?: number;
+
+    constructor(data?: ISpacePlanningComparisonMetricsDto) {
+        if (data) {
+            for (var property in data) {
+                if (data.hasOwnProperty(property))
+                    (this as any)[property] = (data as any)[property];
+            }
+        }
+    }
+
+    init(_data?: any) {
+        if (_data) {
+            this.distanceCoveragePercent = _data["distanceCoveragePercent"];
+            this.totalDistanceMeters = _data["totalDistanceMeters"];
+            this.congestionTaskSeconds = _data["congestionTaskSeconds"];
+            this.congestionTaskHours = _data["congestionTaskHours"];
+            this.overloadedLocationCount = _data["overloadedLocationCount"];
+            this.peakCapacityUtilizationPercent = _data["peakCapacityUtilizationPercent"];
+            this.averageCompletedTasksPerHour = _data["averageCompletedTasksPerHour"];
+            this.peakCompletedTasksPerHour = _data["peakCompletedTasksPerHour"];
+            this.totalCost = _data["totalCost"];
+        }
+    }
+
+    static fromJS(data: any): SpacePlanningComparisonMetricsDto {
+        data = typeof data === 'object' ? data : {};
+        let result = new SpacePlanningComparisonMetricsDto();
+        result.init(data);
+        return result;
+    }
+
+    toJSON(data?: any) {
+        data = typeof data === 'object' ? data : {};
+        data["distanceCoveragePercent"] = this.distanceCoveragePercent;
+        data["totalDistanceMeters"] = this.totalDistanceMeters;
+        data["congestionTaskSeconds"] = this.congestionTaskSeconds;
+        data["congestionTaskHours"] = this.congestionTaskHours;
+        data["overloadedLocationCount"] = this.overloadedLocationCount;
+        data["peakCapacityUtilizationPercent"] = this.peakCapacityUtilizationPercent;
+        data["averageCompletedTasksPerHour"] = this.averageCompletedTasksPerHour;
+        data["peakCompletedTasksPerHour"] = this.peakCompletedTasksPerHour;
+        data["totalCost"] = this.totalCost;
+        return data;
+    }
+}
+
+export interface ISpacePlanningComparisonMetricsDto {
+    distanceCoveragePercent?: number;
+    totalDistanceMeters?: number;
+    congestionTaskSeconds?: number;
+    congestionTaskHours?: number;
+    overloadedLocationCount?: number;
+    peakCapacityUtilizationPercent?: number;
+    averageCompletedTasksPerHour?: number;
+    peakCompletedTasksPerHour?: number;
+    totalCost?: number;
+}
+
+export class SpacePlanningComparisonRiskDto implements ISpacePlanningComparisonRiskDto {
+    code?: string | undefined;
+    severity?: string | undefined;
+
+    constructor(data?: ISpacePlanningComparisonRiskDto) {
+        if (data) {
+            for (var property in data) {
+                if (data.hasOwnProperty(property))
+                    (this as any)[property] = (data as any)[property];
+            }
+        }
+    }
+
+    init(_data?: any) {
+        if (_data) {
+            this.code = _data["code"];
+            this.severity = _data["severity"];
+        }
+    }
+
+    static fromJS(data: any): SpacePlanningComparisonRiskDto {
+        data = typeof data === 'object' ? data : {};
+        let result = new SpacePlanningComparisonRiskDto();
+        result.init(data);
+        return result;
+    }
+
+    toJSON(data?: any) {
+        data = typeof data === 'object' ? data : {};
+        data["code"] = this.code;
+        data["severity"] = this.severity;
+        return data;
+    }
+}
+
+export interface ISpacePlanningComparisonRiskDto {
+    code?: string | undefined;
+    severity?: string | undefined;
+}
+
+export class SpacePlanningComparisonSummaryDto implements ISpacePlanningComparisonSummaryDto {
+    comparisonId?: string;
+    baselineRunId?: string;
+    name?: string | undefined;
+    currencyCode?: string | undefined;
+    runCount?: number;
+    riskCount?: number;
+    createdAtUtc?: Date;
+
+    constructor(data?: ISpacePlanningComparisonSummaryDto) {
+        if (data) {
+            for (var property in data) {
+                if (data.hasOwnProperty(property))
+                    (this as any)[property] = (data as any)[property];
+            }
+        }
+    }
+
+    init(_data?: any) {
+        if (_data) {
+            this.comparisonId = _data["comparisonId"];
+            this.baselineRunId = _data["baselineRunId"];
+            this.name = _data["name"];
+            this.currencyCode = _data["currencyCode"];
+            this.runCount = _data["runCount"];
+            this.riskCount = _data["riskCount"];
+            this.createdAtUtc = _data["createdAtUtc"] ? new Date(_data["createdAtUtc"].toString()) : undefined as any;
+        }
+    }
+
+    static fromJS(data: any): SpacePlanningComparisonSummaryDto {
+        data = typeof data === 'object' ? data : {};
+        let result = new SpacePlanningComparisonSummaryDto();
+        result.init(data);
+        return result;
+    }
+
+    toJSON(data?: any) {
+        data = typeof data === 'object' ? data : {};
+        data["comparisonId"] = this.comparisonId;
+        data["baselineRunId"] = this.baselineRunId;
+        data["name"] = this.name;
+        data["currencyCode"] = this.currencyCode;
+        data["runCount"] = this.runCount;
+        data["riskCount"] = this.riskCount;
+        data["createdAtUtc"] = this.createdAtUtc ? this.createdAtUtc.toISOString() : undefined as any;
+        return data;
+    }
+}
+
+export interface ISpacePlanningComparisonSummaryDto {
+    comparisonId?: string;
+    baselineRunId?: string;
+    name?: string | undefined;
+    currencyCode?: string | undefined;
+    runCount?: number;
+    riskCount?: number;
+    createdAtUtc?: Date;
+}
+
+export class SpacePlanningComparisonThresholdsDto implements ISpacePlanningComparisonThresholdsDto {
+    minimumDistanceCoveragePercent?: number;
+    maximumPeakCapacityUtilizationPercent?: number;
+    maximumCongestionTaskHours?: number;
+    maximumTotalCost?: number | undefined;
+
+    constructor(data?: ISpacePlanningComparisonThresholdsDto) {
+        if (data) {
+            for (var property in data) {
+                if (data.hasOwnProperty(property))
+                    (this as any)[property] = (data as any)[property];
+            }
+        }
+    }
+
+    init(_data?: any) {
+        if (_data) {
+            this.minimumDistanceCoveragePercent = _data["minimumDistanceCoveragePercent"];
+            this.maximumPeakCapacityUtilizationPercent = _data["maximumPeakCapacityUtilizationPercent"];
+            this.maximumCongestionTaskHours = _data["maximumCongestionTaskHours"];
+            this.maximumTotalCost = _data["maximumTotalCost"];
+        }
+    }
+
+    static fromJS(data: any): SpacePlanningComparisonThresholdsDto {
+        data = typeof data === 'object' ? data : {};
+        let result = new SpacePlanningComparisonThresholdsDto();
+        result.init(data);
+        return result;
+    }
+
+    toJSON(data?: any) {
+        data = typeof data === 'object' ? data : {};
+        data["minimumDistanceCoveragePercent"] = this.minimumDistanceCoveragePercent;
+        data["maximumPeakCapacityUtilizationPercent"] = this.maximumPeakCapacityUtilizationPercent;
+        data["maximumCongestionTaskHours"] = this.maximumCongestionTaskHours;
+        data["maximumTotalCost"] = this.maximumTotalCost;
+        return data;
+    }
+}
+
+export interface ISpacePlanningComparisonThresholdsDto {
+    minimumDistanceCoveragePercent?: number;
+    maximumPeakCapacityUtilizationPercent?: number;
+    maximumCongestionTaskHours?: number;
+    maximumTotalCost?: number | undefined;
+}
+
+export class SpacePlanningDecisionDto implements ISpacePlanningDecisionDto {
+    decisionId?: string;
+    siteId?: string;
+    comparisonId?: string;
+    selectedRunId?: string | undefined;
+    supersedesDecisionId?: string | undefined;
+    outcome?: string | undefined;
+    rationale?: string | undefined;
+    comparisonHash?: string | undefined;
+    definitionVersion?: string | undefined;
+    humanDecision?: boolean;
+    automatedRecommendation?: boolean;
+    productionWriteAllowed?: boolean;
+    createdAtUtc?: Date;
+    createdBy?: string;
+
+    constructor(data?: ISpacePlanningDecisionDto) {
+        if (data) {
+            for (var property in data) {
+                if (data.hasOwnProperty(property))
+                    (this as any)[property] = (data as any)[property];
+            }
+        }
+    }
+
+    init(_data?: any) {
+        if (_data) {
+            this.decisionId = _data["decisionId"];
+            this.siteId = _data["siteId"];
+            this.comparisonId = _data["comparisonId"];
+            this.selectedRunId = _data["selectedRunId"];
+            this.supersedesDecisionId = _data["supersedesDecisionId"];
+            this.outcome = _data["outcome"];
+            this.rationale = _data["rationale"];
+            this.comparisonHash = _data["comparisonHash"];
+            this.definitionVersion = _data["definitionVersion"];
+            this.humanDecision = _data["humanDecision"];
+            this.automatedRecommendation = _data["automatedRecommendation"];
+            this.productionWriteAllowed = _data["productionWriteAllowed"];
+            this.createdAtUtc = _data["createdAtUtc"] ? new Date(_data["createdAtUtc"].toString()) : undefined as any;
+            this.createdBy = _data["createdBy"];
+        }
+    }
+
+    static fromJS(data: any): SpacePlanningDecisionDto {
+        data = typeof data === 'object' ? data : {};
+        let result = new SpacePlanningDecisionDto();
+        result.init(data);
+        return result;
+    }
+
+    toJSON(data?: any) {
+        data = typeof data === 'object' ? data : {};
+        data["decisionId"] = this.decisionId;
+        data["siteId"] = this.siteId;
+        data["comparisonId"] = this.comparisonId;
+        data["selectedRunId"] = this.selectedRunId;
+        data["supersedesDecisionId"] = this.supersedesDecisionId;
+        data["outcome"] = this.outcome;
+        data["rationale"] = this.rationale;
+        data["comparisonHash"] = this.comparisonHash;
+        data["definitionVersion"] = this.definitionVersion;
+        data["humanDecision"] = this.humanDecision;
+        data["automatedRecommendation"] = this.automatedRecommendation;
+        data["productionWriteAllowed"] = this.productionWriteAllowed;
+        data["createdAtUtc"] = this.createdAtUtc ? this.createdAtUtc.toISOString() : undefined as any;
+        data["createdBy"] = this.createdBy;
+        return data;
+    }
+}
+
+export interface ISpacePlanningDecisionDto {
+    decisionId?: string;
+    siteId?: string;
+    comparisonId?: string;
+    selectedRunId?: string | undefined;
+    supersedesDecisionId?: string | undefined;
+    outcome?: string | undefined;
+    rationale?: string | undefined;
+    comparisonHash?: string | undefined;
+    definitionVersion?: string | undefined;
+    humanDecision?: boolean;
+    automatedRecommendation?: boolean;
+    productionWriteAllowed?: boolean;
+    createdAtUtc?: Date;
+    createdBy?: string;
+}
+
+export class SpacePlanningDecisionListResponse implements ISpacePlanningDecisionListResponse {
+    items?: SpacePlanningDecisionDto[] | undefined;
+    isTruncated?: boolean;
+
+    constructor(data?: ISpacePlanningDecisionListResponse) {
+        if (data) {
+            for (var property in data) {
+                if (data.hasOwnProperty(property))
+                    (this as any)[property] = (data as any)[property];
+            }
+        }
+    }
+
+    init(_data?: any) {
+        if (_data) {
+            if (Array.isArray(_data["items"])) {
+                this.items = [] as any;
+                for (let item of _data["items"])
+                    this.items!.push(SpacePlanningDecisionDto.fromJS(item));
+            }
+            this.isTruncated = _data["isTruncated"];
+        }
+    }
+
+    static fromJS(data: any): SpacePlanningDecisionListResponse {
+        data = typeof data === 'object' ? data : {};
+        let result = new SpacePlanningDecisionListResponse();
+        result.init(data);
+        return result;
+    }
+
+    toJSON(data?: any) {
+        data = typeof data === 'object' ? data : {};
+        if (Array.isArray(this.items)) {
+            data["items"] = [];
+            for (let item of this.items)
+                data["items"].push(item ? item.toJSON() : undefined as any);
+        }
+        data["isTruncated"] = this.isTruncated;
+        return data;
+    }
+}
+
+export interface ISpacePlanningDecisionListResponse {
+    items?: SpacePlanningDecisionDto[] | undefined;
+    isTruncated?: boolean;
 }
 
 export class SpacePlanningHistoricalDatasetDto implements ISpacePlanningHistoricalDatasetDto {

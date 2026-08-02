@@ -138,6 +138,9 @@ function mountPanel() {
       directives: {
         permission: {},
       },
+      stubs: {
+        PlanningComparisonPanel: true,
+      },
     },
   })
 }

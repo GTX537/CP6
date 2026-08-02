@@ -256,4 +256,18 @@ public static class SpaceErrorCodes
         "SPACE_PLANNING_SIMULATION_REQUEST_INVALID";
     public const string PlanningSimulationGeometryInvalid =
         "SPACE_PLANNING_SIMULATION_GEOMETRY_INVALID";
+    public const string PlanningComparisonConflict =
+        "SPACE_PLANNING_COMPARISON_CONFLICT";
+    public const string PlanningComparisonNotFound =
+        "SPACE_PLANNING_COMPARISON_NOT_FOUND";
+    public const string PlanningComparisonRequestInvalid =
+        "SPACE_PLANNING_COMPARISON_REQUEST_INVALID";
+    public const string PlanningComparisonEvidenceInvalid =
+        "SPACE_PLANNING_COMPARISON_EVIDENCE_INVALID";
+    public const string PlanningDecisionConflict =
+        "SPACE_PLANNING_DECISION_CONFLICT";
+    public const string PlanningDecisionNotFound =
+        "SPACE_PLANNING_DECISION_NOT_FOUND";
+    public const string PlanningDecisionInvalid =
+        "SPACE_PLANNING_DECISION_INVALID";
 }
