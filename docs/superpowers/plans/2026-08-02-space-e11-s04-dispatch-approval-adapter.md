@@ -1,6 +1,6 @@
 # Space E11-S04 建议审批与任务适配实现计划
 
-状态：实现与合并态验证完成，已进入受控集成
+状态：实现、受控集成、远端核验与临时资源清理完成
 起始基线：`bf1bf4ca5f5cdcd4c8bc4f4a15939e694353eec4`  
 功能分支：`codex/space-e11-s04-dispatch-approval-adapter`
 
