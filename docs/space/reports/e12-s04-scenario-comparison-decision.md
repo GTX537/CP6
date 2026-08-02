@@ -1,9 +1,9 @@
 # E12-S04 多场景比较与决策记录交付报告
 
-- 状态：功能实现、全量门禁与远端功能分支备份完成，受控集成与临时资源清理待本报告后续记录
+- 状态：功能实现、全量门禁、远端备份、no-ff 受控集成与合并态复验完成，临时资源清理待本报告后续记录
 - 起始基线：`6d13d7da0b63ae0f023724ba12a3f1a458fcb2c7`
 - 功能提交：`7b919b4b`
-- no-ff 集成提交：`PENDING_INTEGRATION_COMMIT`
+- no-ff 集成提交：`577168e3`
 - 功能分支：`codex/space-e12-s04-comparison-decision`
 - Migration：`20260802224514_SpaceE12S04PlanningComparisonDecision`
 
@@ -75,4 +75,4 @@ Design V1 OpenAPI 从 77 增至 83 个唯一 operation，C# 与 TypeScript 生�
 
 ## 7. 远端备份与资源清理
 
-功能提交 `7b919b4b` 已推送远端备份。含本报告的最新功能 tip、受控集成提交、合并态复验、功能工作树/本地与远端临时分支清理及实际释放空间将在完成后补记；`main` 不在本卡操作范围内。
+功能分支最新 tip `a9298bad`（含交付文档）已推送远端备份，并以 `--no-ff` 合入受控集成，集成提交为 `577168e3`。合并树与功能 tip 文件树一致；合并态再次通过引擎 4/4、服务 3/3、权限/合同/OpenAPI/五语 66/66、前端 3 files / 10 tests、类型检查、双 EF、SDK drift、TypeScript SDK strict no-emit 与 Git 差异检查。功能工作树及本地/远端临时分支清理和实际释放空间将在完成后补记；`main` 不在本卡操作范围内。
