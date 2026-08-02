@@ -664,6 +664,33 @@ namespace CP6.Space.Client
 
         /// <returns>OK</returns>
         /// <exception cref="ApiException">A server side error occurred.</exception>
+        System.Threading.Tasks.Task<CreateSpacePlanningSimulationRunResponse> CreateSimulationRunAsync(System.Guid siteId, System.Guid branchId, System.Guid runId, CreateSpacePlanningSimulationRunRequest? body);
+
+        /// <param name="cancellationToken">A cancellation token that can be used by other objects or threads to receive notice of cancellation.</param>
+        /// <returns>OK</returns>
+        /// <exception cref="ApiException">A server side error occurred.</exception>
+        System.Threading.Tasks.Task<CreateSpacePlanningSimulationRunResponse> CreateSimulationRunAsync(System.Guid siteId, System.Guid branchId, System.Guid runId, CreateSpacePlanningSimulationRunRequest? body, System.Threading.CancellationToken cancellationToken);
+
+        /// <returns>OK</returns>
+        /// <exception cref="ApiException">A server side error occurred.</exception>
+        System.Threading.Tasks.Task<SpacePlanningSimulationRunDto> GetSimulationRunAsync(System.Guid siteId, System.Guid branchId, System.Guid runId);
+
+        /// <param name="cancellationToken">A cancellation token that can be used by other objects or threads to receive notice of cancellation.</param>
+        /// <returns>OK</returns>
+        /// <exception cref="ApiException">A server side error occurred.</exception>
+        System.Threading.Tasks.Task<SpacePlanningSimulationRunDto> GetSimulationRunAsync(System.Guid siteId, System.Guid branchId, System.Guid runId, System.Threading.CancellationToken cancellationToken);
+
+        /// <returns>OK</returns>
+        /// <exception cref="ApiException">A server side error occurred.</exception>
+        System.Threading.Tasks.Task<SpacePlanningSimulationRunListResponse> GetSimulationRunsAsync(System.Guid siteId, System.Guid branchId, int? limit);
+
+        /// <param name="cancellationToken">A cancellation token that can be used by other objects or threads to receive notice of cancellation.</param>
+        /// <returns>OK</returns>
+        /// <exception cref="ApiException">A server side error occurred.</exception>
+        System.Threading.Tasks.Task<SpacePlanningSimulationRunListResponse> GetSimulationRunsAsync(System.Guid siteId, System.Guid branchId, int? limit, System.Threading.CancellationToken cancellationToken);
+
+        /// <returns>OK</returns>
+        /// <exception cref="ApiException">A server side error occurred.</exception>
         System.Threading.Tasks.Task<SpaceWmsRuntimeInventoryResponse> GetInventoryAsync(System.Guid siteId, System.Collections.Generic.IEnumerable<System.Guid>? locationLogicalId);
 
         /// <param name="cancellationToken">A cancellation token that can be used by other objects or threads to receive notice of cancellation.</param>
@@ -11990,6 +12017,498 @@ namespace CP6.Space.Client
 
         /// <returns>OK</returns>
         /// <exception cref="ApiException">A server side error occurred.</exception>
+        public virtual System.Threading.Tasks.Task<CreateSpacePlanningSimulationRunResponse> CreateSimulationRunAsync(System.Guid siteId, System.Guid branchId, System.Guid runId, CreateSpacePlanningSimulationRunRequest? body)
+        {
+            return CreateSimulationRunAsync(siteId, branchId, runId, body, System.Threading.CancellationToken.None);
+        }
+
+        /// <param name="cancellationToken">A cancellation token that can be used by other objects or threads to receive notice of cancellation.</param>
+        /// <returns>OK</returns>
+        /// <exception cref="ApiException">A server side error occurred.</exception>
+        public virtual async System.Threading.Tasks.Task<CreateSpacePlanningSimulationRunResponse> CreateSimulationRunAsync(System.Guid siteId, System.Guid branchId, System.Guid runId, CreateSpacePlanningSimulationRunRequest? body, System.Threading.CancellationToken cancellationToken)
+        {
+            if (siteId == null)
+                throw new System.ArgumentNullException("siteId");
+
+            if (branchId == null)
+                throw new System.ArgumentNullException("branchId");
+
+            if (runId == null)
+                throw new System.ArgumentNullException("runId");
+
+            var client_ = _httpClient;
+            var disposeClient_ = false;
+            try
+            {
+                using (var request_ = new System.Net.Http.HttpRequestMessage())
+                {
+                    var json_ = System.Text.Json.JsonSerializer.SerializeToUtf8Bytes(body, JsonSerializerSettings);
+                    var content_ = new System.Net.Http.ByteArrayContent(json_);
+                    content_.Headers.ContentType = System.Net.Http.Headers.MediaTypeHeaderValue.Parse("application/json");
+                    request_.Content = content_;
+                    request_.Method = new System.Net.Http.HttpMethod("PUT");
+                    request_.Headers.Accept.Add(System.Net.Http.Headers.MediaTypeWithQualityHeaderValue.Parse("application/json"));
+
+                    var urlBuilder_ = new System.Text.StringBuilder();
+
+                    // Operation Path: "api/space/planning/v1/sites/{siteId}/scenario-branches/{branchId}/simulation-runs/{runId}"
+                    urlBuilder_.Append("api/space/planning/v1/sites/");
+                    urlBuilder_.Append(System.Uri.EscapeDataString(ConvertToString(siteId, System.Globalization.CultureInfo.InvariantCulture)));
+                    urlBuilder_.Append("/scenario-branches/");
+                    urlBuilder_.Append(System.Uri.EscapeDataString(ConvertToString(branchId, System.Globalization.CultureInfo.InvariantCulture)));
+                    urlBuilder_.Append("/simulation-runs/");
+                    urlBuilder_.Append(System.Uri.EscapeDataString(ConvertToString(runId, System.Globalization.CultureInfo.InvariantCulture)));
+
+                    PrepareRequest(client_, request_, urlBuilder_);
+
+                    var url_ = urlBuilder_.ToString();
+                    request_.RequestUri = new System.Uri(url_, System.UriKind.RelativeOrAbsolute);
+
+                    PrepareRequest(client_, request_, url_);
+
+                    var response_ = await client_.SendAsync(request_, System.Net.Http.HttpCompletionOption.ResponseHeadersRead, cancellationToken).ConfigureAwait(false);
+                    var disposeResponse_ = true;
+                    try
+                    {
+                        var headers_ = new System.Collections.Generic.Dictionary<string, System.Collections.Generic.IEnumerable<string>>();
+                        foreach (var item_ in response_.Headers)
+                            headers_[item_.Key] = item_.Value;
+                        if (response_.Content != null && response_.Content.Headers != null)
+                        {
+                            foreach (var item_ in response_.Content.Headers)
+                                headers_[item_.Key] = item_.Value;
+                        }
+
+                        ProcessResponse(client_, response_);
+
+                        var status_ = (int)response_.StatusCode;
+                        if (status_ == 200)
+                        {
+                            var objectResponse_ = await ReadObjectResponseAsync<CreateSpacePlanningSimulationRunResponse>(response_, headers_, cancellationToken).ConfigureAwait(false);
+                            if (objectResponse_.Object == null)
+                            {
+                                throw new ApiException("Response was null which was not expected.", status_, objectResponse_.Text, headers_, null);
+                            }
+                            return objectResponse_.Object;
+                        }
+                        else
+                        if (status_ == 400)
+                        {
+                            var objectResponse_ = await ReadObjectResponseAsync<SpaceDesignProblemDetails>(response_, headers_, cancellationToken).ConfigureAwait(false);
+                            if (objectResponse_.Object == null)
+                            {
+                                throw new ApiException("Response was null which was not expected.", status_, objectResponse_.Text, headers_, null);
+                            }
+                            throw new ApiException<SpaceDesignProblemDetails>("Bad Request", status_, objectResponse_.Text, headers_, objectResponse_.Object, null);
+                        }
+                        else
+                        if (status_ == 401)
+                        {
+                            var objectResponse_ = await ReadObjectResponseAsync<SpaceDesignProblemDetails>(response_, headers_, cancellationToken).ConfigureAwait(false);
+                            if (objectResponse_.Object == null)
+                            {
+                                throw new ApiException("Response was null which was not expected.", status_, objectResponse_.Text, headers_, null);
+                            }
+                            throw new ApiException<SpaceDesignProblemDetails>("Unauthorized", status_, objectResponse_.Text, headers_, objectResponse_.Object, null);
+                        }
+                        else
+                        if (status_ == 403)
+                        {
+                            var objectResponse_ = await ReadObjectResponseAsync<SpaceDesignProblemDetails>(response_, headers_, cancellationToken).ConfigureAwait(false);
+                            if (objectResponse_.Object == null)
+                            {
+                                throw new ApiException("Response was null which was not expected.", status_, objectResponse_.Text, headers_, null);
+                            }
+                            throw new ApiException<SpaceDesignProblemDetails>("Forbidden", status_, objectResponse_.Text, headers_, objectResponse_.Object, null);
+                        }
+                        else
+                        if (status_ == 404)
+                        {
+                            var objectResponse_ = await ReadObjectResponseAsync<SpaceDesignProblemDetails>(response_, headers_, cancellationToken).ConfigureAwait(false);
+                            if (objectResponse_.Object == null)
+                            {
+                                throw new ApiException("Response was null which was not expected.", status_, objectResponse_.Text, headers_, null);
+                            }
+                            throw new ApiException<SpaceDesignProblemDetails>("Not Found", status_, objectResponse_.Text, headers_, objectResponse_.Object, null);
+                        }
+                        else
+                        if (status_ == 409)
+                        {
+                            var objectResponse_ = await ReadObjectResponseAsync<SpaceDesignProblemDetails>(response_, headers_, cancellationToken).ConfigureAwait(false);
+                            if (objectResponse_.Object == null)
+                            {
+                                throw new ApiException("Response was null which was not expected.", status_, objectResponse_.Text, headers_, null);
+                            }
+                            throw new ApiException<SpaceDesignProblemDetails>("Conflict", status_, objectResponse_.Text, headers_, objectResponse_.Object, null);
+                        }
+                        else
+                        if (status_ == 422)
+                        {
+                            var objectResponse_ = await ReadObjectResponseAsync<SpaceDesignProblemDetails>(response_, headers_, cancellationToken).ConfigureAwait(false);
+                            if (objectResponse_.Object == null)
+                            {
+                                throw new ApiException("Response was null which was not expected.", status_, objectResponse_.Text, headers_, null);
+                            }
+                            throw new ApiException<SpaceDesignProblemDetails>("Unprocessable Content", status_, objectResponse_.Text, headers_, objectResponse_.Object, null);
+                        }
+                        else
+                        if (status_ == 500)
+                        {
+                            var objectResponse_ = await ReadObjectResponseAsync<SpaceDesignProblemDetails>(response_, headers_, cancellationToken).ConfigureAwait(false);
+                            if (objectResponse_.Object == null)
+                            {
+                                throw new ApiException("Response was null which was not expected.", status_, objectResponse_.Text, headers_, null);
+                            }
+                            throw new ApiException<SpaceDesignProblemDetails>("Internal Server Error", status_, objectResponse_.Text, headers_, objectResponse_.Object, null);
+                        }
+                        else
+                        {
+                            var responseData_ = response_.Content == null ? null : await ReadAsStringAsync(response_.Content, cancellationToken).ConfigureAwait(false);
+                            throw new ApiException("The HTTP status code of the response was not expected (" + status_ + ").", status_, responseData_, headers_, null);
+                        }
+                    }
+                    finally
+                    {
+                        if (disposeResponse_)
+                            response_.Dispose();
+                    }
+                }
+            }
+            finally
+            {
+                if (disposeClient_)
+                    client_.Dispose();
+            }
+        }
+
+        /// <returns>OK</returns>
+        /// <exception cref="ApiException">A server side error occurred.</exception>
+        public virtual System.Threading.Tasks.Task<SpacePlanningSimulationRunDto> GetSimulationRunAsync(System.Guid siteId, System.Guid branchId, System.Guid runId)
+        {
+            return GetSimulationRunAsync(siteId, branchId, runId, System.Threading.CancellationToken.None);
+        }
+
+        /// <param name="cancellationToken">A cancellation token that can be used by other objects or threads to receive notice of cancellation.</param>
+        /// <returns>OK</returns>
+        /// <exception cref="ApiException">A server side error occurred.</exception>
+        public virtual async System.Threading.Tasks.Task<SpacePlanningSimulationRunDto> GetSimulationRunAsync(System.Guid siteId, System.Guid branchId, System.Guid runId, System.Threading.CancellationToken cancellationToken)
+        {
+            if (siteId == null)
+                throw new System.ArgumentNullException("siteId");
+
+            if (branchId == null)
+                throw new System.ArgumentNullException("branchId");
+
+            if (runId == null)
+                throw new System.ArgumentNullException("runId");
+
+            var client_ = _httpClient;
+            var disposeClient_ = false;
+            try
+            {
+                using (var request_ = new System.Net.Http.HttpRequestMessage())
+                {
+                    request_.Method = new System.Net.Http.HttpMethod("GET");
+                    request_.Headers.Accept.Add(System.Net.Http.Headers.MediaTypeWithQualityHeaderValue.Parse("application/json"));
+
+                    var urlBuilder_ = new System.Text.StringBuilder();
+
+                    // Operation Path: "api/space/planning/v1/sites/{siteId}/scenario-branches/{branchId}/simulation-runs/{runId}"
+                    urlBuilder_.Append("api/space/planning/v1/sites/");
+                    urlBuilder_.Append(System.Uri.EscapeDataString(ConvertToString(siteId, System.Globalization.CultureInfo.InvariantCulture)));
+                    urlBuilder_.Append("/scenario-branches/");
+                    urlBuilder_.Append(System.Uri.EscapeDataString(ConvertToString(branchId, System.Globalization.CultureInfo.InvariantCulture)));
+                    urlBuilder_.Append("/simulation-runs/");
+                    urlBuilder_.Append(System.Uri.EscapeDataString(ConvertToString(runId, System.Globalization.CultureInfo.InvariantCulture)));
+
+                    PrepareRequest(client_, request_, urlBuilder_);
+
+                    var url_ = urlBuilder_.ToString();
+                    request_.RequestUri = new System.Uri(url_, System.UriKind.RelativeOrAbsolute);
+
+                    PrepareRequest(client_, request_, url_);
+
+                    var response_ = await client_.SendAsync(request_, System.Net.Http.HttpCompletionOption.ResponseHeadersRead, cancellationToken).ConfigureAwait(false);
+                    var disposeResponse_ = true;
+                    try
+                    {
+                        var headers_ = new System.Collections.Generic.Dictionary<string, System.Collections.Generic.IEnumerable<string>>();
+                        foreach (var item_ in response_.Headers)
+                            headers_[item_.Key] = item_.Value;
+                        if (response_.Content != null && response_.Content.Headers != null)
+                        {
+                            foreach (var item_ in response_.Content.Headers)
+                                headers_[item_.Key] = item_.Value;
+                        }
+
+                        ProcessResponse(client_, response_);
+
+                        var status_ = (int)response_.StatusCode;
+                        if (status_ == 200)
+                        {
+                            var objectResponse_ = await ReadObjectResponseAsync<SpacePlanningSimulationRunDto>(response_, headers_, cancellationToken).ConfigureAwait(false);
+                            if (objectResponse_.Object == null)
+                            {
+                                throw new ApiException("Response was null which was not expected.", status_, objectResponse_.Text, headers_, null);
+                            }
+                            return objectResponse_.Object;
+                        }
+                        else
+                        if (status_ == 400)
+                        {
+                            var objectResponse_ = await ReadObjectResponseAsync<SpaceDesignProblemDetails>(response_, headers_, cancellationToken).ConfigureAwait(false);
+                            if (objectResponse_.Object == null)
+                            {
+                                throw new ApiException("Response was null which was not expected.", status_, objectResponse_.Text, headers_, null);
+                            }
+                            throw new ApiException<SpaceDesignProblemDetails>("Bad Request", status_, objectResponse_.Text, headers_, objectResponse_.Object, null);
+                        }
+                        else
+                        if (status_ == 401)
+                        {
+                            var objectResponse_ = await ReadObjectResponseAsync<SpaceDesignProblemDetails>(response_, headers_, cancellationToken).ConfigureAwait(false);
+                            if (objectResponse_.Object == null)
+                            {
+                                throw new ApiException("Response was null which was not expected.", status_, objectResponse_.Text, headers_, null);
+                            }
+                            throw new ApiException<SpaceDesignProblemDetails>("Unauthorized", status_, objectResponse_.Text, headers_, objectResponse_.Object, null);
+                        }
+                        else
+                        if (status_ == 403)
+                        {
+                            var objectResponse_ = await ReadObjectResponseAsync<SpaceDesignProblemDetails>(response_, headers_, cancellationToken).ConfigureAwait(false);
+                            if (objectResponse_.Object == null)
+                            {
+                                throw new ApiException("Response was null which was not expected.", status_, objectResponse_.Text, headers_, null);
+                            }
+                            throw new ApiException<SpaceDesignProblemDetails>("Forbidden", status_, objectResponse_.Text, headers_, objectResponse_.Object, null);
+                        }
+                        else
+                        if (status_ == 404)
+                        {
+                            var objectResponse_ = await ReadObjectResponseAsync<SpaceDesignProblemDetails>(response_, headers_, cancellationToken).ConfigureAwait(false);
+                            if (objectResponse_.Object == null)
+                            {
+                                throw new ApiException("Response was null which was not expected.", status_, objectResponse_.Text, headers_, null);
+                            }
+                            throw new ApiException<SpaceDesignProblemDetails>("Not Found", status_, objectResponse_.Text, headers_, objectResponse_.Object, null);
+                        }
+                        else
+                        if (status_ == 409)
+                        {
+                            var objectResponse_ = await ReadObjectResponseAsync<SpaceDesignProblemDetails>(response_, headers_, cancellationToken).ConfigureAwait(false);
+                            if (objectResponse_.Object == null)
+                            {
+                                throw new ApiException("Response was null which was not expected.", status_, objectResponse_.Text, headers_, null);
+                            }
+                            throw new ApiException<SpaceDesignProblemDetails>("Conflict", status_, objectResponse_.Text, headers_, objectResponse_.Object, null);
+                        }
+                        else
+                        if (status_ == 422)
+                        {
+                            var objectResponse_ = await ReadObjectResponseAsync<SpaceDesignProblemDetails>(response_, headers_, cancellationToken).ConfigureAwait(false);
+                            if (objectResponse_.Object == null)
+                            {
+                                throw new ApiException("Response was null which was not expected.", status_, objectResponse_.Text, headers_, null);
+                            }
+                            throw new ApiException<SpaceDesignProblemDetails>("Unprocessable Content", status_, objectResponse_.Text, headers_, objectResponse_.Object, null);
+                        }
+                        else
+                        if (status_ == 500)
+                        {
+                            var objectResponse_ = await ReadObjectResponseAsync<SpaceDesignProblemDetails>(response_, headers_, cancellationToken).ConfigureAwait(false);
+                            if (objectResponse_.Object == null)
+                            {
+                                throw new ApiException("Response was null which was not expected.", status_, objectResponse_.Text, headers_, null);
+                            }
+                            throw new ApiException<SpaceDesignProblemDetails>("Internal Server Error", status_, objectResponse_.Text, headers_, objectResponse_.Object, null);
+                        }
+                        else
+                        {
+                            var responseData_ = response_.Content == null ? null : await ReadAsStringAsync(response_.Content, cancellationToken).ConfigureAwait(false);
+                            throw new ApiException("The HTTP status code of the response was not expected (" + status_ + ").", status_, responseData_, headers_, null);
+                        }
+                    }
+                    finally
+                    {
+                        if (disposeResponse_)
+                            response_.Dispose();
+                    }
+                }
+            }
+            finally
+            {
+                if (disposeClient_)
+                    client_.Dispose();
+            }
+        }
+
+        /// <returns>OK</returns>
+        /// <exception cref="ApiException">A server side error occurred.</exception>
+        public virtual System.Threading.Tasks.Task<SpacePlanningSimulationRunListResponse> GetSimulationRunsAsync(System.Guid siteId, System.Guid branchId, int? limit)
+        {
+            return GetSimulationRunsAsync(siteId, branchId, limit, System.Threading.CancellationToken.None);
+        }
+
+        /// <param name="cancellationToken">A cancellation token that can be used by other objects or threads to receive notice of cancellation.</param>
+        /// <returns>OK</returns>
+        /// <exception cref="ApiException">A server side error occurred.</exception>
+        public virtual async System.Threading.Tasks.Task<SpacePlanningSimulationRunListResponse> GetSimulationRunsAsync(System.Guid siteId, System.Guid branchId, int? limit, System.Threading.CancellationToken cancellationToken)
+        {
+            if (siteId == null)
+                throw new System.ArgumentNullException("siteId");
+
+            if (branchId == null)
+                throw new System.ArgumentNullException("branchId");
+
+            var client_ = _httpClient;
+            var disposeClient_ = false;
+            try
+            {
+                using (var request_ = new System.Net.Http.HttpRequestMessage())
+                {
+                    request_.Method = new System.Net.Http.HttpMethod("GET");
+                    request_.Headers.Accept.Add(System.Net.Http.Headers.MediaTypeWithQualityHeaderValue.Parse("application/json"));
+
+                    var urlBuilder_ = new System.Text.StringBuilder();
+
+                    // Operation Path: "api/space/planning/v1/sites/{siteId}/scenario-branches/{branchId}/simulation-runs"
+                    urlBuilder_.Append("api/space/planning/v1/sites/");
+                    urlBuilder_.Append(System.Uri.EscapeDataString(ConvertToString(siteId, System.Globalization.CultureInfo.InvariantCulture)));
+                    urlBuilder_.Append("/scenario-branches/");
+                    urlBuilder_.Append(System.Uri.EscapeDataString(ConvertToString(branchId, System.Globalization.CultureInfo.InvariantCulture)));
+                    urlBuilder_.Append("/simulation-runs");
+                    urlBuilder_.Append('?');
+                    if (limit != null)
+                    {
+                        urlBuilder_.Append(System.Uri.EscapeDataString("limit")).Append('=').Append(System.Uri.EscapeDataString(ConvertToString(limit, System.Globalization.CultureInfo.InvariantCulture))).Append('&');
+                    }
+                    urlBuilder_.Length--;
+
+                    PrepareRequest(client_, request_, urlBuilder_);
+
+                    var url_ = urlBuilder_.ToString();
+                    request_.RequestUri = new System.Uri(url_, System.UriKind.RelativeOrAbsolute);
+
+                    PrepareRequest(client_, request_, url_);
+
+                    var response_ = await client_.SendAsync(request_, System.Net.Http.HttpCompletionOption.ResponseHeadersRead, cancellationToken).ConfigureAwait(false);
+                    var disposeResponse_ = true;
+                    try
+                    {
+                        var headers_ = new System.Collections.Generic.Dictionary<string, System.Collections.Generic.IEnumerable<string>>();
+                        foreach (var item_ in response_.Headers)
+                            headers_[item_.Key] = item_.Value;
+                        if (response_.Content != null && response_.Content.Headers != null)
+                        {
+                            foreach (var item_ in response_.Content.Headers)
+                                headers_[item_.Key] = item_.Value;
+                        }
+
+                        ProcessResponse(client_, response_);
+
+                        var status_ = (int)response_.StatusCode;
+                        if (status_ == 200)
+                        {
+                            var objectResponse_ = await ReadObjectResponseAsync<SpacePlanningSimulationRunListResponse>(response_, headers_, cancellationToken).ConfigureAwait(false);
+                            if (objectResponse_.Object == null)
+                            {
+                                throw new ApiException("Response was null which was not expected.", status_, objectResponse_.Text, headers_, null);
+                            }
+                            return objectResponse_.Object;
+                        }
+                        else
+                        if (status_ == 400)
+                        {
+                            var objectResponse_ = await ReadObjectResponseAsync<SpaceDesignProblemDetails>(response_, headers_, cancellationToken).ConfigureAwait(false);
+                            if (objectResponse_.Object == null)
+                            {
+                                throw new ApiException("Response was null which was not expected.", status_, objectResponse_.Text, headers_, null);
+                            }
+                            throw new ApiException<SpaceDesignProblemDetails>("Bad Request", status_, objectResponse_.Text, headers_, objectResponse_.Object, null);
+                        }
+                        else
+                        if (status_ == 401)
+                        {
+                            var objectResponse_ = await ReadObjectResponseAsync<SpaceDesignProblemDetails>(response_, headers_, cancellationToken).ConfigureAwait(false);
+                            if (objectResponse_.Object == null)
+                            {
+                                throw new ApiException("Response was null which was not expected.", status_, objectResponse_.Text, headers_, null);
+                            }
+                            throw new ApiException<SpaceDesignProblemDetails>("Unauthorized", status_, objectResponse_.Text, headers_, objectResponse_.Object, null);
+                        }
+                        else
+                        if (status_ == 403)
+                        {
+                            var objectResponse_ = await ReadObjectResponseAsync<SpaceDesignProblemDetails>(response_, headers_, cancellationToken).ConfigureAwait(false);
+                            if (objectResponse_.Object == null)
+                            {
+                                throw new ApiException("Response was null which was not expected.", status_, objectResponse_.Text, headers_, null);
+                            }
+                            throw new ApiException<SpaceDesignProblemDetails>("Forbidden", status_, objectResponse_.Text, headers_, objectResponse_.Object, null);
+                        }
+                        else
+                        if (status_ == 404)
+                        {
+                            var objectResponse_ = await ReadObjectResponseAsync<SpaceDesignProblemDetails>(response_, headers_, cancellationToken).ConfigureAwait(false);
+                            if (objectResponse_.Object == null)
+                            {
+                                throw new ApiException("Response was null which was not expected.", status_, objectResponse_.Text, headers_, null);
+                            }
+                            throw new ApiException<SpaceDesignProblemDetails>("Not Found", status_, objectResponse_.Text, headers_, objectResponse_.Object, null);
+                        }
+                        else
+                        if (status_ == 409)
+                        {
+                            var objectResponse_ = await ReadObjectResponseAsync<SpaceDesignProblemDetails>(response_, headers_, cancellationToken).ConfigureAwait(false);
+                            if (objectResponse_.Object == null)
+                            {
+                                throw new ApiException("Response was null which was not expected.", status_, objectResponse_.Text, headers_, null);
+                            }
+                            throw new ApiException<SpaceDesignProblemDetails>("Conflict", status_, objectResponse_.Text, headers_, objectResponse_.Object, null);
+                        }
+                        else
+                        if (status_ == 422)
+                        {
+                            var objectResponse_ = await ReadObjectResponseAsync<SpaceDesignProblemDetails>(response_, headers_, cancellationToken).ConfigureAwait(false);
+                            if (objectResponse_.Object == null)
+                            {
+                                throw new ApiException("Response was null which was not expected.", status_, objectResponse_.Text, headers_, null);
+                            }
+                            throw new ApiException<SpaceDesignProblemDetails>("Unprocessable Content", status_, objectResponse_.Text, headers_, objectResponse_.Object, null);
+                        }
+                        else
+                        if (status_ == 500)
+                        {
+                            var objectResponse_ = await ReadObjectResponseAsync<SpaceDesignProblemDetails>(response_, headers_, cancellationToken).ConfigureAwait(false);
+                            if (objectResponse_.Object == null)
+                            {
+                                throw new ApiException("Response was null which was not expected.", status_, objectResponse_.Text, headers_, null);
+                            }
+                            throw new ApiException<SpaceDesignProblemDetails>("Internal Server Error", status_, objectResponse_.Text, headers_, objectResponse_.Object, null);
+                        }
+                        else
+                        {
+                            var responseData_ = response_.Content == null ? null : await ReadAsStringAsync(response_.Content, cancellationToken).ConfigureAwait(false);
+                            throw new ApiException("The HTTP status code of the response was not expected (" + status_ + ").", status_, responseData_, headers_, null);
+                        }
+                    }
+                    finally
+                    {
+                        if (disposeResponse_)
+                            response_.Dispose();
+                    }
+                }
+            }
+            finally
+            {
+                if (disposeClient_)
+                    client_.Dispose();
+            }
+        }
+
+        /// <returns>OK</returns>
+        /// <exception cref="ApiException">A server side error occurred.</exception>
         public virtual System.Threading.Tasks.Task<SpaceWmsRuntimeInventoryResponse> GetInventoryAsync(System.Guid siteId, System.Collections.Generic.IEnumerable<System.Guid>? locationLogicalId)
         {
             return GetInventoryAsync(siteId, locationLogicalId, System.Threading.CancellationToken.None);
@@ -13409,6 +13928,54 @@ namespace CP6.Space.Client
 
         [System.Text.Json.Serialization.JsonPropertyName("branch")]
         public SpacePlanningScenarioBranchDto Branch { get; set; } = default!;
+
+    }
+
+    [System.CodeDom.Compiler.GeneratedCode("NJsonSchema", "14.7.1.0 (NJsonSchema v11.6.1.0 (Newtonsoft.Json v13.0.0.0))")]
+    public partial class CreateSpacePlanningSimulationRunRequest
+    {
+
+        [System.Text.Json.Serialization.JsonPropertyName("name")]
+        public string? Name { get; set; } = default!;
+
+        [System.Text.Json.Serialization.JsonPropertyName("datasetId")]
+        public System.Guid DatasetId { get; set; } = default!;
+
+        [System.Text.Json.Serialization.JsonPropertyName("defaultQuantityCapacity")]
+        public double DefaultQuantityCapacity { get; set; } = default!;
+
+        [System.Text.Json.Serialization.JsonPropertyName("defaultConcurrentTaskCapacity")]
+        public int DefaultConcurrentTaskCapacity { get; set; } = default!;
+
+        [System.Text.Json.Serialization.JsonPropertyName("throughputWindowMinutes")]
+        public int ThroughputWindowMinutes { get; set; } = default!;
+
+        [System.Text.Json.Serialization.JsonPropertyName("distanceCostPerMeter")]
+        public double DistanceCostPerMeter { get; set; } = default!;
+
+        [System.Text.Json.Serialization.JsonPropertyName("laborCostPerHour")]
+        public double LaborCostPerHour { get; set; } = default!;
+
+        [System.Text.Json.Serialization.JsonPropertyName("congestionCostPerTaskHour")]
+        public double CongestionCostPerTaskHour { get; set; } = default!;
+
+        [System.Text.Json.Serialization.JsonPropertyName("currencyCode")]
+        public string? CurrencyCode { get; set; } = default!;
+
+        [System.Text.Json.Serialization.JsonPropertyName("locationCapacities")]
+        public System.Collections.Generic.ICollection<SpacePlanningSimulationLocationCapacityRequest>? LocationCapacities { get; set; } = default!;
+
+    }
+
+    [System.CodeDom.Compiler.GeneratedCode("NJsonSchema", "14.7.1.0 (NJsonSchema v11.6.1.0 (Newtonsoft.Json v13.0.0.0))")]
+    public partial class CreateSpacePlanningSimulationRunResponse
+    {
+
+        [System.Text.Json.Serialization.JsonPropertyName("outcome")]
+        public string? Outcome { get; set; } = default!;
+
+        [System.Text.Json.Serialization.JsonPropertyName("run")]
+        public SpacePlanningSimulationRunDto Run { get; set; } = default!;
 
     }
 
@@ -15862,6 +16429,360 @@ namespace CP6.Space.Client
 
         [System.Text.Json.Serialization.JsonPropertyName("isTruncated")]
         public bool IsTruncated { get; set; } = default!;
+
+    }
+
+    [System.CodeDom.Compiler.GeneratedCode("NJsonSchema", "14.7.1.0 (NJsonSchema v11.6.1.0 (Newtonsoft.Json v13.0.0.0))")]
+    public partial class SpacePlanningSimulationCapacityDto
+    {
+
+        [System.Text.Json.Serialization.JsonPropertyName("monitoredLocationCount")]
+        public int MonitoredLocationCount { get; set; } = default!;
+
+        [System.Text.Json.Serialization.JsonPropertyName("overloadedLocationCount")]
+        public int OverloadedLocationCount { get; set; } = default!;
+
+        [System.Text.Json.Serialization.JsonPropertyName("peakUtilizationPercent")]
+        public double PeakUtilizationPercent { get; set; } = default!;
+
+        [System.Text.Json.Serialization.JsonPropertyName("quantityBasis")]
+        public string? QuantityBasis { get; set; } = default!;
+
+    }
+
+    [System.CodeDom.Compiler.GeneratedCode("NJsonSchema", "14.7.1.0 (NJsonSchema v11.6.1.0 (Newtonsoft.Json v13.0.0.0))")]
+    public partial class SpacePlanningSimulationCongestionDto
+    {
+
+        [System.Text.Json.Serialization.JsonPropertyName("monitoredLocationCount")]
+        public int MonitoredLocationCount { get; set; } = default!;
+
+        [System.Text.Json.Serialization.JsonPropertyName("overloadedLocationCount")]
+        public int OverloadedLocationCount { get; set; } = default!;
+
+        [System.Text.Json.Serialization.JsonPropertyName("peakConcurrentTasks")]
+        public int PeakConcurrentTasks { get; set; } = default!;
+
+        [System.Text.Json.Serialization.JsonPropertyName("congestionSeconds")]
+        public long CongestionSeconds { get; set; } = default!;
+
+        [System.Text.Json.Serialization.JsonPropertyName("congestionTaskSeconds")]
+        public long CongestionTaskSeconds { get; set; } = default!;
+
+        [System.Text.Json.Serialization.JsonPropertyName("congestionTaskHours")]
+        public double CongestionTaskHours { get; set; } = default!;
+
+    }
+
+    [System.CodeDom.Compiler.GeneratedCode("NJsonSchema", "14.7.1.0 (NJsonSchema v11.6.1.0 (Newtonsoft.Json v13.0.0.0))")]
+    public partial class SpacePlanningSimulationCostDto
+    {
+
+        [System.Text.Json.Serialization.JsonPropertyName("currencyCode")]
+        public string? CurrencyCode { get; set; } = default!;
+
+        [System.Text.Json.Serialization.JsonPropertyName("laborHours")]
+        public double LaborHours { get; set; } = default!;
+
+        [System.Text.Json.Serialization.JsonPropertyName("distanceCost")]
+        public double DistanceCost { get; set; } = default!;
+
+        [System.Text.Json.Serialization.JsonPropertyName("laborCost")]
+        public double LaborCost { get; set; } = default!;
+
+        [System.Text.Json.Serialization.JsonPropertyName("congestionCost")]
+        public double CongestionCost { get; set; } = default!;
+
+        [System.Text.Json.Serialization.JsonPropertyName("totalCost")]
+        public double TotalCost { get; set; } = default!;
+
+        [System.Text.Json.Serialization.JsonPropertyName("laborBasis")]
+        public string? LaborBasis { get; set; } = default!;
+
+    }
+
+    [System.CodeDom.Compiler.GeneratedCode("NJsonSchema", "14.7.1.0 (NJsonSchema v11.6.1.0 (Newtonsoft.Json v13.0.0.0))")]
+    public partial class SpacePlanningSimulationDistanceDto
+    {
+
+        [System.Text.Json.Serialization.JsonPropertyName("geometryBasis")]
+        public string? GeometryBasis { get; set; } = default!;
+
+        [System.Text.Json.Serialization.JsonPropertyName("taskCount")]
+        public int TaskCount { get; set; } = default!;
+
+        [System.Text.Json.Serialization.JsonPropertyName("eligibleTaskCount")]
+        public int EligibleTaskCount { get; set; } = default!;
+
+        [System.Text.Json.Serialization.JsonPropertyName("unknownTaskCount")]
+        public int UnknownTaskCount { get; set; } = default!;
+
+        [System.Text.Json.Serialization.JsonPropertyName("coveragePercent")]
+        public double CoveragePercent { get; set; } = default!;
+
+        [System.Text.Json.Serialization.JsonPropertyName("totalDistanceMeters")]
+        public double TotalDistanceMeters { get; set; } = default!;
+
+        [System.Text.Json.Serialization.JsonPropertyName("averageEligibleTaskDistanceMeters")]
+        public double? AverageEligibleTaskDistanceMeters { get; set; } = default!;
+
+    }
+
+    [System.CodeDom.Compiler.GeneratedCode("NJsonSchema", "14.7.1.0 (NJsonSchema v11.6.1.0 (Newtonsoft.Json v13.0.0.0))")]
+    public partial class SpacePlanningSimulationLocationCapacityRequest
+    {
+
+        [System.Text.Json.Serialization.JsonPropertyName("locationLogicalId")]
+        public System.Guid LocationLogicalId { get; set; } = default!;
+
+        [System.Text.Json.Serialization.JsonPropertyName("quantityCapacity")]
+        public double QuantityCapacity { get; set; } = default!;
+
+        [System.Text.Json.Serialization.JsonPropertyName("concurrentTaskCapacity")]
+        public int ConcurrentTaskCapacity { get; set; } = default!;
+
+    }
+
+    [System.CodeDom.Compiler.GeneratedCode("NJsonSchema", "14.7.1.0 (NJsonSchema v11.6.1.0 (Newtonsoft.Json v13.0.0.0))")]
+    public partial class SpacePlanningSimulationLocationResultDto
+    {
+
+        [System.Text.Json.Serialization.JsonPropertyName("locationLogicalId")]
+        public System.Guid LocationLogicalId { get; set; } = default!;
+
+        [System.Text.Json.Serialization.JsonPropertyName("taskCount")]
+        public int TaskCount { get; set; } = default!;
+
+        [System.Text.Json.Serialization.JsonPropertyName("completedTaskCount")]
+        public int CompletedTaskCount { get; set; } = default!;
+
+        [System.Text.Json.Serialization.JsonPropertyName("totalQuantity")]
+        public double TotalQuantity { get; set; } = default!;
+
+        [System.Text.Json.Serialization.JsonPropertyName("distanceEligibleTaskCount")]
+        public int DistanceEligibleTaskCount { get; set; } = default!;
+
+        [System.Text.Json.Serialization.JsonPropertyName("totalDistanceMeters")]
+        public double TotalDistanceMeters { get; set; } = default!;
+
+        [System.Text.Json.Serialization.JsonPropertyName("quantityCapacity")]
+        public double QuantityCapacity { get; set; } = default!;
+
+        [System.Text.Json.Serialization.JsonPropertyName("concurrentTaskCapacity")]
+        public int ConcurrentTaskCapacity { get; set; } = default!;
+
+        [System.Text.Json.Serialization.JsonPropertyName("peakConcurrentTasks")]
+        public int PeakConcurrentTasks { get; set; } = default!;
+
+        [System.Text.Json.Serialization.JsonPropertyName("peakConcurrentQuantity")]
+        public double PeakConcurrentQuantity { get; set; } = default!;
+
+        [System.Text.Json.Serialization.JsonPropertyName("capacityUtilizationPercent")]
+        public double CapacityUtilizationPercent { get; set; } = default!;
+
+        [System.Text.Json.Serialization.JsonPropertyName("congestionSeconds")]
+        public long CongestionSeconds { get; set; } = default!;
+
+        [System.Text.Json.Serialization.JsonPropertyName("congestionTaskSeconds")]
+        public long CongestionTaskSeconds { get; set; } = default!;
+
+        [System.Text.Json.Serialization.JsonPropertyName("isOverloaded")]
+        public bool IsOverloaded { get; set; } = default!;
+
+    }
+
+    [System.CodeDom.Compiler.GeneratedCode("NJsonSchema", "14.7.1.0 (NJsonSchema v11.6.1.0 (Newtonsoft.Json v13.0.0.0))")]
+    public partial class SpacePlanningSimulationParametersDto
+    {
+
+        [System.Text.Json.Serialization.JsonPropertyName("defaultQuantityCapacity")]
+        public double DefaultQuantityCapacity { get; set; } = default!;
+
+        [System.Text.Json.Serialization.JsonPropertyName("defaultConcurrentTaskCapacity")]
+        public int DefaultConcurrentTaskCapacity { get; set; } = default!;
+
+        [System.Text.Json.Serialization.JsonPropertyName("throughputWindowMinutes")]
+        public int ThroughputWindowMinutes { get; set; } = default!;
+
+        [System.Text.Json.Serialization.JsonPropertyName("distanceCostPerMeter")]
+        public double DistanceCostPerMeter { get; set; } = default!;
+
+        [System.Text.Json.Serialization.JsonPropertyName("laborCostPerHour")]
+        public double LaborCostPerHour { get; set; } = default!;
+
+        [System.Text.Json.Serialization.JsonPropertyName("congestionCostPerTaskHour")]
+        public double CongestionCostPerTaskHour { get; set; } = default!;
+
+        [System.Text.Json.Serialization.JsonPropertyName("currencyCode")]
+        public string? CurrencyCode { get; set; } = default!;
+
+        [System.Text.Json.Serialization.JsonPropertyName("locationCapacityOverrideCount")]
+        public int LocationCapacityOverrideCount { get; set; } = default!;
+
+    }
+
+    [System.CodeDom.Compiler.GeneratedCode("NJsonSchema", "14.7.1.0 (NJsonSchema v11.6.1.0 (Newtonsoft.Json v13.0.0.0))")]
+    public partial class SpacePlanningSimulationRunDto
+    {
+
+        [System.Text.Json.Serialization.JsonPropertyName("runId")]
+        public System.Guid RunId { get; set; } = default!;
+
+        [System.Text.Json.Serialization.JsonPropertyName("siteId")]
+        public System.Guid SiteId { get; set; } = default!;
+
+        [System.Text.Json.Serialization.JsonPropertyName("branchId")]
+        public System.Guid BranchId { get; set; } = default!;
+
+        [System.Text.Json.Serialization.JsonPropertyName("scenarioVersionId")]
+        public System.Guid ScenarioVersionId { get; set; } = default!;
+
+        [System.Text.Json.Serialization.JsonPropertyName("scenarioContentRevision")]
+        public long ScenarioContentRevision { get; set; } = default!;
+
+        [System.Text.Json.Serialization.JsonPropertyName("datasetId")]
+        public System.Guid DatasetId { get; set; } = default!;
+
+        [System.Text.Json.Serialization.JsonPropertyName("name")]
+        public string? Name { get; set; } = default!;
+
+        [System.Text.Json.Serialization.JsonPropertyName("status")]
+        public string? Status { get; set; } = default!;
+
+        [System.Text.Json.Serialization.JsonPropertyName("definitionVersion")]
+        public string? DefinitionVersion { get; set; } = default!;
+
+        [System.Text.Json.Serialization.JsonPropertyName("datasetRequestHash")]
+        public string? DatasetRequestHash { get; set; } = default!;
+
+        [System.Text.Json.Serialization.JsonPropertyName("resultHash")]
+        public string? ResultHash { get; set; } = default!;
+
+        [System.Text.Json.Serialization.JsonPropertyName("productionWriteAllowed")]
+        public bool ProductionWriteAllowed { get; set; } = default!;
+
+        [System.Text.Json.Serialization.JsonPropertyName("highPrecisionPhysicalSimulation")]
+        public bool HighPrecisionPhysicalSimulation { get; set; } = default!;
+
+        [System.Text.Json.Serialization.JsonPropertyName("parameters")]
+        public SpacePlanningSimulationParametersDto Parameters { get; set; } = default!;
+
+        [System.Text.Json.Serialization.JsonPropertyName("distance")]
+        public SpacePlanningSimulationDistanceDto Distance { get; set; } = default!;
+
+        [System.Text.Json.Serialization.JsonPropertyName("congestion")]
+        public SpacePlanningSimulationCongestionDto Congestion { get; set; } = default!;
+
+        [System.Text.Json.Serialization.JsonPropertyName("capacity")]
+        public SpacePlanningSimulationCapacityDto Capacity { get; set; } = default!;
+
+        [System.Text.Json.Serialization.JsonPropertyName("throughput")]
+        public SpacePlanningSimulationThroughputDto Throughput { get; set; } = default!;
+
+        [System.Text.Json.Serialization.JsonPropertyName("cost")]
+        public SpacePlanningSimulationCostDto Cost { get; set; } = default!;
+
+        [System.Text.Json.Serialization.JsonPropertyName("locationResults")]
+        public System.Collections.Generic.ICollection<SpacePlanningSimulationLocationResultDto>? LocationResults { get; set; } = default!;
+
+        [System.Text.Json.Serialization.JsonPropertyName("locationResultsTruncated")]
+        public bool LocationResultsTruncated { get; set; } = default!;
+
+        [System.Text.Json.Serialization.JsonPropertyName("createdAtUtc")]
+        public System.DateTimeOffset CreatedAtUtc { get; set; } = default!;
+
+        [System.Text.Json.Serialization.JsonPropertyName("createdBy")]
+        public System.Guid CreatedBy { get; set; } = default!;
+
+        [System.Text.Json.Serialization.JsonPropertyName("limitations")]
+        public System.Collections.Generic.ICollection<string>? Limitations { get; set; } = default!;
+
+    }
+
+    [System.CodeDom.Compiler.GeneratedCode("NJsonSchema", "14.7.1.0 (NJsonSchema v11.6.1.0 (Newtonsoft.Json v13.0.0.0))")]
+    public partial class SpacePlanningSimulationRunListResponse
+    {
+
+        [System.Text.Json.Serialization.JsonPropertyName("items")]
+        public System.Collections.Generic.ICollection<SpacePlanningSimulationRunSummaryDto>? Items { get; set; } = default!;
+
+        [System.Text.Json.Serialization.JsonPropertyName("isTruncated")]
+        public bool IsTruncated { get; set; } = default!;
+
+    }
+
+    [System.CodeDom.Compiler.GeneratedCode("NJsonSchema", "14.7.1.0 (NJsonSchema v11.6.1.0 (Newtonsoft.Json v13.0.0.0))")]
+    public partial class SpacePlanningSimulationRunSummaryDto
+    {
+
+        [System.Text.Json.Serialization.JsonPropertyName("runId")]
+        public System.Guid RunId { get; set; } = default!;
+
+        [System.Text.Json.Serialization.JsonPropertyName("datasetId")]
+        public System.Guid DatasetId { get; set; } = default!;
+
+        [System.Text.Json.Serialization.JsonPropertyName("scenarioContentRevision")]
+        public long ScenarioContentRevision { get; set; } = default!;
+
+        [System.Text.Json.Serialization.JsonPropertyName("name")]
+        public string? Name { get; set; } = default!;
+
+        [System.Text.Json.Serialization.JsonPropertyName("status")]
+        public string? Status { get; set; } = default!;
+
+        [System.Text.Json.Serialization.JsonPropertyName("currencyCode")]
+        public string? CurrencyCode { get; set; } = default!;
+
+        [System.Text.Json.Serialization.JsonPropertyName("taskCount")]
+        public int TaskCount { get; set; } = default!;
+
+        [System.Text.Json.Serialization.JsonPropertyName("distanceCoveragePercent")]
+        public double DistanceCoveragePercent { get; set; } = default!;
+
+        [System.Text.Json.Serialization.JsonPropertyName("totalDistanceMeters")]
+        public double TotalDistanceMeters { get; set; } = default!;
+
+        [System.Text.Json.Serialization.JsonPropertyName("overloadedLocationCount")]
+        public int OverloadedLocationCount { get; set; } = default!;
+
+        [System.Text.Json.Serialization.JsonPropertyName("averageCompletedTasksPerHour")]
+        public double AverageCompletedTasksPerHour { get; set; } = default!;
+
+        [System.Text.Json.Serialization.JsonPropertyName("totalCost")]
+        public double TotalCost { get; set; } = default!;
+
+        [System.Text.Json.Serialization.JsonPropertyName("createdAtUtc")]
+        public System.DateTimeOffset CreatedAtUtc { get; set; } = default!;
+
+    }
+
+    [System.CodeDom.Compiler.GeneratedCode("NJsonSchema", "14.7.1.0 (NJsonSchema v11.6.1.0 (Newtonsoft.Json v13.0.0.0))")]
+    public partial class SpacePlanningSimulationThroughputDto
+    {
+
+        [System.Text.Json.Serialization.JsonPropertyName("completedTaskCount")]
+        public int CompletedTaskCount { get; set; } = default!;
+
+        [System.Text.Json.Serialization.JsonPropertyName("completedQuantity")]
+        public double CompletedQuantity { get; set; } = default!;
+
+        [System.Text.Json.Serialization.JsonPropertyName("historicalWindowHours")]
+        public double HistoricalWindowHours { get; set; } = default!;
+
+        [System.Text.Json.Serialization.JsonPropertyName("measurementWindowMinutes")]
+        public int MeasurementWindowMinutes { get; set; } = default!;
+
+        [System.Text.Json.Serialization.JsonPropertyName("averageCompletedTasksPerHour")]
+        public double AverageCompletedTasksPerHour { get; set; } = default!;
+
+        [System.Text.Json.Serialization.JsonPropertyName("peakCompletedTasksPerHour")]
+        public double PeakCompletedTasksPerHour { get; set; } = default!;
+
+        [System.Text.Json.Serialization.JsonPropertyName("averageCompletedQuantityPerHour")]
+        public double AverageCompletedQuantityPerHour { get; set; } = default!;
+
+        [System.Text.Json.Serialization.JsonPropertyName("peakCompletedQuantityPerHour")]
+        public double PeakCompletedQuantityPerHour { get; set; } = default!;
 
     }
 

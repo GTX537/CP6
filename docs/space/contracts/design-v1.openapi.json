@@ -9046,6 +9046,412 @@
         }
       }
     },
+    "/api/space/planning/v1/sites/{siteId}/scenario-branches/{branchId}/simulation-runs/{runId}": {
+      "put": {
+        "tags": [
+          "SpacePlanningSimulation"
+        ],
+        "operationId": "CreateSimulationRun",
+        "parameters": [
+          {
+            "name": "siteId",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "string",
+              "format": "uuid"
+            }
+          },
+          {
+            "name": "branchId",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "string",
+              "format": "uuid"
+            }
+          },
+          {
+            "name": "runId",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "string",
+              "format": "uuid"
+            }
+          }
+        ],
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/CP6.Space.Contracts.CreateSpacePlanningSimulationRunRequest"
+              }
+            },
+            "text/json": {
+              "schema": {
+                "$ref": "#/components/schemas/CP6.Space.Contracts.CreateSpacePlanningSimulationRunRequest"
+              }
+            },
+            "application/*+json": {
+              "schema": {
+                "$ref": "#/components/schemas/CP6.Space.Contracts.CreateSpacePlanningSimulationRunRequest"
+              }
+            }
+          }
+        },
+        "responses": {
+          "400": {
+            "description": "Bad Request",
+            "content": {
+              "application/problem+json": {
+                "schema": {
+                  "$ref": "#/components/schemas/CP6.WebApi.OpenApi.SpaceDesignProblemDetails"
+                }
+              }
+            }
+          },
+          "401": {
+            "description": "Unauthorized",
+            "content": {
+              "application/problem+json": {
+                "schema": {
+                  "$ref": "#/components/schemas/CP6.WebApi.OpenApi.SpaceDesignProblemDetails"
+                }
+              }
+            }
+          },
+          "403": {
+            "description": "Forbidden",
+            "content": {
+              "application/problem+json": {
+                "schema": {
+                  "$ref": "#/components/schemas/CP6.WebApi.OpenApi.SpaceDesignProblemDetails"
+                }
+              }
+            }
+          },
+          "404": {
+            "description": "Not Found",
+            "content": {
+              "application/problem+json": {
+                "schema": {
+                  "$ref": "#/components/schemas/CP6.WebApi.OpenApi.SpaceDesignProblemDetails"
+                }
+              }
+            }
+          },
+          "409": {
+            "description": "Conflict",
+            "content": {
+              "application/problem+json": {
+                "schema": {
+                  "$ref": "#/components/schemas/CP6.WebApi.OpenApi.SpaceDesignProblemDetails"
+                }
+              }
+            }
+          },
+          "422": {
+            "description": "Unprocessable Content",
+            "content": {
+              "application/problem+json": {
+                "schema": {
+                  "$ref": "#/components/schemas/CP6.WebApi.OpenApi.SpaceDesignProblemDetails"
+                }
+              }
+            }
+          },
+          "500": {
+            "description": "Internal Server Error",
+            "content": {
+              "application/problem+json": {
+                "schema": {
+                  "$ref": "#/components/schemas/CP6.WebApi.OpenApi.SpaceDesignProblemDetails"
+                }
+              }
+            }
+          },
+          "200": {
+            "description": "OK",
+            "content": {
+              "text/plain": {
+                "schema": {
+                  "$ref": "#/components/schemas/CP6.Space.Contracts.CreateSpacePlanningSimulationRunResponse"
+                }
+              },
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/CP6.Space.Contracts.CreateSpacePlanningSimulationRunResponse"
+                }
+              },
+              "text/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/CP6.Space.Contracts.CreateSpacePlanningSimulationRunResponse"
+                }
+              }
+            }
+          }
+        }
+      },
+      "get": {
+        "tags": [
+          "SpacePlanningSimulation"
+        ],
+        "operationId": "GetSimulationRun",
+        "parameters": [
+          {
+            "name": "siteId",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "string",
+              "format": "uuid"
+            }
+          },
+          {
+            "name": "branchId",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "string",
+              "format": "uuid"
+            }
+          },
+          {
+            "name": "runId",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "string",
+              "format": "uuid"
+            }
+          }
+        ],
+        "responses": {
+          "400": {
+            "description": "Bad Request",
+            "content": {
+              "application/problem+json": {
+                "schema": {
+                  "$ref": "#/components/schemas/CP6.WebApi.OpenApi.SpaceDesignProblemDetails"
+                }
+              }
+            }
+          },
+          "401": {
+            "description": "Unauthorized",
+            "content": {
+              "application/problem+json": {
+                "schema": {
+                  "$ref": "#/components/schemas/CP6.WebApi.OpenApi.SpaceDesignProblemDetails"
+                }
+              }
+            }
+          },
+          "403": {
+            "description": "Forbidden",
+            "content": {
+              "application/problem+json": {
+                "schema": {
+                  "$ref": "#/components/schemas/CP6.WebApi.OpenApi.SpaceDesignProblemDetails"
+                }
+              }
+            }
+          },
+          "404": {
+            "description": "Not Found",
+            "content": {
+              "application/problem+json": {
+                "schema": {
+                  "$ref": "#/components/schemas/CP6.WebApi.OpenApi.SpaceDesignProblemDetails"
+                }
+              }
+            }
+          },
+          "409": {
+            "description": "Conflict",
+            "content": {
+              "application/problem+json": {
+                "schema": {
+                  "$ref": "#/components/schemas/CP6.WebApi.OpenApi.SpaceDesignProblemDetails"
+                }
+              }
+            }
+          },
+          "422": {
+            "description": "Unprocessable Content",
+            "content": {
+              "application/problem+json": {
+                "schema": {
+                  "$ref": "#/components/schemas/CP6.WebApi.OpenApi.SpaceDesignProblemDetails"
+                }
+              }
+            }
+          },
+          "500": {
+            "description": "Internal Server Error",
+            "content": {
+              "application/problem+json": {
+                "schema": {
+                  "$ref": "#/components/schemas/CP6.WebApi.OpenApi.SpaceDesignProblemDetails"
+                }
+              }
+            }
+          },
+          "200": {
+            "description": "OK",
+            "content": {
+              "text/plain": {
+                "schema": {
+                  "$ref": "#/components/schemas/CP6.Space.Contracts.SpacePlanningSimulationRunDto"
+                }
+              },
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/CP6.Space.Contracts.SpacePlanningSimulationRunDto"
+                }
+              },
+              "text/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/CP6.Space.Contracts.SpacePlanningSimulationRunDto"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/api/space/planning/v1/sites/{siteId}/scenario-branches/{branchId}/simulation-runs": {
+      "get": {
+        "tags": [
+          "SpacePlanningSimulation"
+        ],
+        "operationId": "GetSimulationRuns",
+        "parameters": [
+          {
+            "name": "siteId",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "string",
+              "format": "uuid"
+            }
+          },
+          {
+            "name": "branchId",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "string",
+              "format": "uuid"
+            }
+          },
+          {
+            "name": "limit",
+            "in": "query",
+            "schema": {
+              "maximum": 100,
+              "minimum": 1,
+              "type": "integer",
+              "format": "int32",
+              "default": 50
+            }
+          }
+        ],
+        "responses": {
+          "400": {
+            "description": "Bad Request",
+            "content": {
+              "application/problem+json": {
+                "schema": {
+                  "$ref": "#/components/schemas/CP6.WebApi.OpenApi.SpaceDesignProblemDetails"
+                }
+              }
+            }
+          },
+          "401": {
+            "description": "Unauthorized",
+            "content": {
+              "application/problem+json": {
+                "schema": {
+                  "$ref": "#/components/schemas/CP6.WebApi.OpenApi.SpaceDesignProblemDetails"
+                }
+              }
+            }
+          },
+          "403": {
+            "description": "Forbidden",
+            "content": {
+              "application/problem+json": {
+                "schema": {
+                  "$ref": "#/components/schemas/CP6.WebApi.OpenApi.SpaceDesignProblemDetails"
+                }
+              }
+            }
+          },
+          "404": {
+            "description": "Not Found",
+            "content": {
+              "application/problem+json": {
+                "schema": {
+                  "$ref": "#/components/schemas/CP6.WebApi.OpenApi.SpaceDesignProblemDetails"
+                }
+              }
+            }
+          },
+          "409": {
+            "description": "Conflict",
+            "content": {
+              "application/problem+json": {
+                "schema": {
+                  "$ref": "#/components/schemas/CP6.WebApi.OpenApi.SpaceDesignProblemDetails"
+                }
+              }
+            }
+          },
+          "422": {
+            "description": "Unprocessable Content",
+            "content": {
+              "application/problem+json": {
+                "schema": {
+                  "$ref": "#/components/schemas/CP6.WebApi.OpenApi.SpaceDesignProblemDetails"
+                }
+              }
+            }
+          },
+          "500": {
+            "description": "Internal Server Error",
+            "content": {
+              "application/problem+json": {
+                "schema": {
+                  "$ref": "#/components/schemas/CP6.WebApi.OpenApi.SpaceDesignProblemDetails"
+                }
+              }
+            }
+          },
+          "200": {
+            "description": "OK",
+            "content": {
+              "text/plain": {
+                "schema": {
+                  "$ref": "#/components/schemas/CP6.Space.Contracts.SpacePlanningSimulationRunListResponse"
+                }
+              },
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/CP6.Space.Contracts.SpacePlanningSimulationRunListResponse"
+                }
+              },
+              "text/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/CP6.Space.Contracts.SpacePlanningSimulationRunListResponse"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
     "/api/space/design/v1/sites/{siteId}/runtime/inventory": {
       "get": {
         "tags": [
@@ -10274,6 +10680,68 @@
           },
           "branch": {
             "$ref": "#/components/schemas/CP6.Space.Contracts.SpacePlanningScenarioBranchDto"
+          }
+        },
+        "additionalProperties": false
+      },
+      "CP6.Space.Contracts.CreateSpacePlanningSimulationRunRequest": {
+        "type": "object",
+        "properties": {
+          "name": {
+            "type": "string",
+            "nullable": true
+          },
+          "datasetId": {
+            "type": "string",
+            "format": "uuid"
+          },
+          "defaultQuantityCapacity": {
+            "type": "number",
+            "format": "double"
+          },
+          "defaultConcurrentTaskCapacity": {
+            "type": "integer",
+            "format": "int32"
+          },
+          "throughputWindowMinutes": {
+            "type": "integer",
+            "format": "int32"
+          },
+          "distanceCostPerMeter": {
+            "type": "number",
+            "format": "double"
+          },
+          "laborCostPerHour": {
+            "type": "number",
+            "format": "double"
+          },
+          "congestionCostPerTaskHour": {
+            "type": "number",
+            "format": "double"
+          },
+          "currencyCode": {
+            "type": "string",
+            "nullable": true
+          },
+          "locationCapacities": {
+            "type": "array",
+            "items": {
+              "$ref": "#/components/schemas/CP6.Space.Contracts.SpacePlanningSimulationLocationCapacityRequest"
+            },
+            "nullable": true
+          }
+        },
+        "additionalProperties": false
+      },
+      "CP6.Space.Contracts.CreateSpacePlanningSimulationRunResponse": {
+        "type": "object",
+        "properties": {
+          "outcome": {
+            "type": "string",
+            "nullable": true
+          },
+          "run": {
+            "$ref": "#/components/schemas/CP6.Space.Contracts.SpacePlanningSimulationRunDto"
           }
         },
         "additionalProperties": false
@@ -13595,6 +14063,455 @@
           },
           "isTruncated": {
             "type": "boolean"
+          }
+        },
+        "additionalProperties": false
+      },
+      "CP6.Space.Contracts.SpacePlanningSimulationCapacityDto": {
+        "type": "object",
+        "properties": {
+          "monitoredLocationCount": {
+            "type": "integer",
+            "format": "int32"
+          },
+          "overloadedLocationCount": {
+            "type": "integer",
+            "format": "int32"
+          },
+          "peakUtilizationPercent": {
+            "type": "number",
+            "format": "double"
+          },
+          "quantityBasis": {
+            "type": "string",
+            "nullable": true
+          }
+        },
+        "additionalProperties": false
+      },
+      "CP6.Space.Contracts.SpacePlanningSimulationCongestionDto": {
+        "type": "object",
+        "properties": {
+          "monitoredLocationCount": {
+            "type": "integer",
+            "format": "int32"
+          },
+          "overloadedLocationCount": {
+            "type": "integer",
+            "format": "int32"
+          },
+          "peakConcurrentTasks": {
+            "type": "integer",
+            "format": "int32"
+          },
+          "congestionSeconds": {
+            "type": "integer",
+            "format": "int64"
+          },
+          "congestionTaskSeconds": {
+            "type": "integer",
+            "format": "int64"
+          },
+          "congestionTaskHours": {
+            "type": "number",
+            "format": "double"
+          }
+        },
+        "additionalProperties": false
+      },
+      "CP6.Space.Contracts.SpacePlanningSimulationCostDto": {
+        "type": "object",
+        "properties": {
+          "currencyCode": {
+            "type": "string",
+            "nullable": true
+          },
+          "laborHours": {
+            "type": "number",
+            "format": "double"
+          },
+          "distanceCost": {
+            "type": "number",
+            "format": "double"
+          },
+          "laborCost": {
+            "type": "number",
+            "format": "double"
+          },
+          "congestionCost": {
+            "type": "number",
+            "format": "double"
+          },
+          "totalCost": {
+            "type": "number",
+            "format": "double"
+          },
+          "laborBasis": {
+            "type": "string",
+            "nullable": true
+          }
+        },
+        "additionalProperties": false
+      },
+      "CP6.Space.Contracts.SpacePlanningSimulationDistanceDto": {
+        "type": "object",
+        "properties": {
+          "geometryBasis": {
+            "type": "string",
+            "nullable": true
+          },
+          "taskCount": {
+            "type": "integer",
+            "format": "int32"
+          },
+          "eligibleTaskCount": {
+            "type": "integer",
+            "format": "int32"
+          },
+          "unknownTaskCount": {
+            "type": "integer",
+            "format": "int32"
+          },
+          "coveragePercent": {
+            "type": "number",
+            "format": "double"
+          },
+          "totalDistanceMeters": {
+            "type": "number",
+            "format": "double"
+          },
+          "averageEligibleTaskDistanceMeters": {
+            "type": "number",
+            "format": "double",
+            "nullable": true
+          }
+        },
+        "additionalProperties": false
+      },
+      "CP6.Space.Contracts.SpacePlanningSimulationLocationCapacityRequest": {
+        "type": "object",
+        "properties": {
+          "locationLogicalId": {
+            "type": "string",
+            "format": "uuid"
+          },
+          "quantityCapacity": {
+            "type": "number",
+            "format": "double"
+          },
+          "concurrentTaskCapacity": {
+            "type": "integer",
+            "format": "int32"
+          }
+        },
+        "additionalProperties": false
+      },
+      "CP6.Space.Contracts.SpacePlanningSimulationLocationResultDto": {
+        "type": "object",
+        "properties": {
+          "locationLogicalId": {
+            "type": "string",
+            "format": "uuid"
+          },
+          "taskCount": {
+            "type": "integer",
+            "format": "int32"
+          },
+          "completedTaskCount": {
+            "type": "integer",
+            "format": "int32"
+          },
+          "totalQuantity": {
+            "type": "number",
+            "format": "double"
+          },
+          "distanceEligibleTaskCount": {
+            "type": "integer",
+            "format": "int32"
+          },
+          "totalDistanceMeters": {
+            "type": "number",
+            "format": "double"
+          },
+          "quantityCapacity": {
+            "type": "number",
+            "format": "double"
+          },
+          "concurrentTaskCapacity": {
+            "type": "integer",
+            "format": "int32"
+          },
+          "peakConcurrentTasks": {
+            "type": "integer",
+            "format": "int32"
+          },
+          "peakConcurrentQuantity": {
+            "type": "number",
+            "format": "double"
+          },
+          "capacityUtilizationPercent": {
+            "type": "number",
+            "format": "double"
+          },
+          "congestionSeconds": {
+            "type": "integer",
+            "format": "int64"
+          },
+          "congestionTaskSeconds": {
+            "type": "integer",
+            "format": "int64"
+          },
+          "isOverloaded": {
+            "type": "boolean"
+          }
+        },
+        "additionalProperties": false
+      },
+      "CP6.Space.Contracts.SpacePlanningSimulationParametersDto": {
+        "type": "object",
+        "properties": {
+          "defaultQuantityCapacity": {
+            "type": "number",
+            "format": "double"
+          },
+          "defaultConcurrentTaskCapacity": {
+            "type": "integer",
+            "format": "int32"
+          },
+          "throughputWindowMinutes": {
+            "type": "integer",
+            "format": "int32"
+          },
+          "distanceCostPerMeter": {
+            "type": "number",
+            "format": "double"
+          },
+          "laborCostPerHour": {
+            "type": "number",
+            "format": "double"
+          },
+          "congestionCostPerTaskHour": {
+            "type": "number",
+            "format": "double"
+          },
+          "currencyCode": {
+            "type": "string",
+            "nullable": true
+          },
+          "locationCapacityOverrideCount": {
+            "type": "integer",
+            "format": "int32"
+          }
+        },
+        "additionalProperties": false
+      },
+      "CP6.Space.Contracts.SpacePlanningSimulationRunDto": {
+        "type": "object",
+        "properties": {
+          "runId": {
+            "type": "string",
+            "format": "uuid"
+          },
+          "siteId": {
+            "type": "string",
+            "format": "uuid"
+          },
+          "branchId": {
+            "type": "string",
+            "format": "uuid"
+          },
+          "scenarioVersionId": {
+            "type": "string",
+            "format": "uuid"
+          },
+          "scenarioContentRevision": {
+            "type": "integer",
+            "format": "int64"
+          },
+          "datasetId": {
+            "type": "string",
+            "format": "uuid"
+          },
+          "name": {
+            "type": "string",
+            "nullable": true
+          },
+          "status": {
+            "type": "string",
+            "nullable": true
+          },
+          "definitionVersion": {
+            "type": "string",
+            "nullable": true
+          },
+          "datasetRequestHash": {
+            "type": "string",
+            "nullable": true
+          },
+          "resultHash": {
+            "type": "string",
+            "nullable": true
+          },
+          "productionWriteAllowed": {
+            "type": "boolean"
+          },
+          "highPrecisionPhysicalSimulation": {
+            "type": "boolean"
+          },
+          "parameters": {
+            "$ref": "#/components/schemas/CP6.Space.Contracts.SpacePlanningSimulationParametersDto"
+          },
+          "distance": {
+            "$ref": "#/components/schemas/CP6.Space.Contracts.SpacePlanningSimulationDistanceDto"
+          },
+          "congestion": {
+            "$ref": "#/components/schemas/CP6.Space.Contracts.SpacePlanningSimulationCongestionDto"
+          },
+          "capacity": {
+            "$ref": "#/components/schemas/CP6.Space.Contracts.SpacePlanningSimulationCapacityDto"
+          },
+          "throughput": {
+            "$ref": "#/components/schemas/CP6.Space.Contracts.SpacePlanningSimulationThroughputDto"
+          },
+          "cost": {
+            "$ref": "#/components/schemas/CP6.Space.Contracts.SpacePlanningSimulationCostDto"
+          },
+          "locationResults": {
+            "type": "array",
+            "items": {
+              "$ref": "#/components/schemas/CP6.Space.Contracts.SpacePlanningSimulationLocationResultDto"
+            },
+            "nullable": true
+          },
+          "locationResultsTruncated": {
+            "type": "boolean"
+          },
+          "createdAtUtc": {
+            "type": "string",
+            "format": "date-time"
+          },
+          "createdBy": {
+            "type": "string",
+            "format": "uuid"
+          },
+          "limitations": {
+            "type": "array",
+            "items": {
+              "type": "string"
+            },
+            "nullable": true
+          }
+        },
+        "additionalProperties": false
+      },
+      "CP6.Space.Contracts.SpacePlanningSimulationRunListResponse": {
+        "type": "object",
+        "properties": {
+          "items": {
+            "type": "array",
+            "items": {
+              "$ref": "#/components/schemas/CP6.Space.Contracts.SpacePlanningSimulationRunSummaryDto"
+            },
+            "nullable": true
+          },
+          "isTruncated": {
+            "type": "boolean"
+          }
+        },
+        "additionalProperties": false
+      },
+      "CP6.Space.Contracts.SpacePlanningSimulationRunSummaryDto": {
+        "type": "object",
+        "properties": {
+          "runId": {
+            "type": "string",
+            "format": "uuid"
+          },
+          "datasetId": {
+            "type": "string",
+            "format": "uuid"
+          },
+          "scenarioContentRevision": {
+            "type": "integer",
+            "format": "int64"
+          },
+          "name": {
+            "type": "string",
+            "nullable": true
+          },
+          "status": {
+            "type": "string",
+            "nullable": true
+          },
+          "currencyCode": {
+            "type": "string",
+            "nullable": true
+          },
+          "taskCount": {
+            "type": "integer",
+            "format": "int32"
+          },
+          "distanceCoveragePercent": {
+            "type": "number",
+            "format": "double"
+          },
+          "totalDistanceMeters": {
+            "type": "number",
+            "format": "double"
+          },
+          "overloadedLocationCount": {
+            "type": "integer",
+            "format": "int32"
+          },
+          "averageCompletedTasksPerHour": {
+            "type": "number",
+            "format": "double"
+          },
+          "totalCost": {
+            "type": "number",
+            "format": "double"
+          },
+          "createdAtUtc": {
+            "type": "string",
+            "format": "date-time"
+          }
+        },
+        "additionalProperties": false
+      },
+      "CP6.Space.Contracts.SpacePlanningSimulationThroughputDto": {
+        "type": "object",
+        "properties": {
+          "completedTaskCount": {
+            "type": "integer",
+            "format": "int32"
+          },
+          "completedQuantity": {
+            "type": "number",
+            "format": "double"
+          },
+          "historicalWindowHours": {
+            "type": "number",
+            "format": "double"
+          },
+          "measurementWindowMinutes": {
+            "type": "integer",
+            "format": "int32"
+          },
+          "averageCompletedTasksPerHour": {
+            "type": "number",
+            "format": "double"
+          },
+          "peakCompletedTasksPerHour": {
+            "type": "number",
+            "format": "double"
+          },
+          "averageCompletedQuantityPerHour": {
+            "type": "number",
+            "format": "double"
+          },
+          "peakCompletedQuantityPerHour": {
+            "type": "number",
+            "format": "double"
           }
         },
         "additionalProperties": false

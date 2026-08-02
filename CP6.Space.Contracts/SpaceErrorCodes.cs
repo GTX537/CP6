@@ -244,4 +244,16 @@ public static class SpaceErrorCodes
         "SPACE_PLANNING_DATASET_INVALID";
     public const string PlanningDatasetLocationInvalid =
         "SPACE_PLANNING_DATASET_LOCATION_INVALID";
+    public const string PlanningSimulationConflict =
+        "SPACE_PLANNING_SIMULATION_CONFLICT";
+    public const string PlanningSimulationNotFound =
+        "SPACE_PLANNING_SIMULATION_NOT_FOUND";
+    public const string PlanningSimulationBranchNotReady =
+        "SPACE_PLANNING_SIMULATION_BRANCH_NOT_READY";
+    public const string PlanningSimulationDatasetInvalid =
+        "SPACE_PLANNING_SIMULATION_DATASET_INVALID";
+    public const string PlanningSimulationRequestInvalid =
+        "SPACE_PLANNING_SIMULATION_REQUEST_INVALID";
+    public const string PlanningSimulationGeometryInvalid =
+        "SPACE_PLANNING_SIMULATION_GEOMETRY_INVALID";
 }
