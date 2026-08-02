@@ -53,9 +53,35 @@ public sealed class UploadSpaceUnderlayForm
 public sealed class SpaceDesignV1Controller(
     ISpaceDesignV1Service service,
     ISpaceUnderlayV1Service underlays,
-    ISpaceWmsAdoptionService wmsAdoptions) : ControllerBase
+    ISpaceWmsAdoptionService wmsAdoptions,
+    ISpaceModelingTemplateService modelingTemplates) : ControllerBase
 {
     private const long UnderlayUploadLimit = 100L * 1024L * 1024L;
+
+    [HttpGet("modeling-templates/excel/standard")]
+    [RequirePermission("space", "model:read")]
+    [ProducesResponseType(
+        typeof(FileContentResult),
+        StatusCodes.Status200OK,
+        "application/vnd.openxmlformats-officedocument.spreadsheetml.sheet")]
+    public IActionResult DownloadStandardExcelTemplate()
+    {
+        var template = modelingTemplates.CreateStandardExcelTemplate();
+        Response.Headers.CacheControl = "private, no-store";
+        Response.Headers.XContentTypeOptions = "nosniff";
+        Response.Headers.Append(
+            "X-Space-Template-Schema",
+            template.SchemaVersion);
+        Response.Headers.ContentDisposition =
+            new ContentDispositionHeaderValue("attachment")
+            {
+                FileNameStar = template.FileName,
+            }.ToString();
+        return File(
+            template.Content,
+            template.ContentType,
+            template.FileName);
+    }
 
     [HttpGet("sites/{siteId:guid}/model")]
     [RequirePermission("space", "model:read")]

@@ -53,6 +53,9 @@ public static class SpaceInfrastructureRegistration
         services.TryAddSingleton(new SpaceJobProcessorOptions());
         services.TryAddSingleton(new SpaceAiCapacityOptions());
         services.TryAddSingleton(new SpaceUnderlayCalibrationOptions());
+        services.TryAddSingleton<
+            ISpaceModelingTemplateService,
+            OpenXmlSpaceModelingTemplateService>();
         services.TryAddSingleton(
             SpaceWorkerSandboxPolicy.FileSafetyDefault);
         services.TryAddSingleton<
