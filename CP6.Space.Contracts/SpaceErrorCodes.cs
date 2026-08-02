@@ -123,4 +123,5 @@ public static class SpaceErrorCodes
         "SPACE_EXTERNAL_REFERENCE_NOT_FOUND";
     public const string ExternalAccessStateInvalid =
         "SPACE_EXTERNAL_ACCESS_STATE_INVALID";
+    public const string AuditUnavailable = "SPACE_AUDIT_UNAVAILABLE";
 }

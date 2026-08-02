@@ -1,5 +1,6 @@
 using CP6.Space.Application;
 using CP6.Space.Contracts;
+using CP6.WebApi.Filters;
 using CP6.WebApi.OpenApi;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
@@ -50,6 +51,10 @@ public sealed class SpaceExternalPortalController(
     ISpaceExternalPortalService portal) : ControllerBase
 {
     [HttpGet("organizations")]
+    [SpaceAuditOperation(
+        "space.external.portal.session",
+        "ExternalSession",
+        AuditRead = true)]
     [ProducesResponseType<IReadOnlyList<SpacePortalOrganizationDto>>(
         StatusCodes.Status200OK)]
     public Task<IReadOnlyList<SpacePortalOrganizationDto>> GetPortalOrganizations(
@@ -57,6 +62,10 @@ public sealed class SpaceExternalPortalController(
         portal.GetOrganizationsAsync(cancellationToken);
 
     [HttpGet("sites")]
+    [SpaceAuditOperation(
+        "space.external.organization.select",
+        "ExternalOrganization",
+        AuditRead = true)]
     [ProducesResponseType<IReadOnlyList<SpacePortalSiteDto>>(
         StatusCodes.Status200OK)]
     public Task<IReadOnlyList<SpacePortalSiteDto>> GetPortalSites(
@@ -64,6 +73,12 @@ public sealed class SpaceExternalPortalController(
         portal.GetSitesAsync(cancellationToken);
 
     [HttpGet("sites/{siteId:guid}/published-scene")]
+    [SpaceAuditOperation(
+        "space.external.portal.view",
+        "PublishedScene",
+        ResourceIdArgument = "siteId",
+        SiteIdArgument = "siteId",
+        AuditRead = true)]
     [ProducesResponseType<SpacePortalPublishedSceneDto>(
         StatusCodes.Status200OK)]
     public Task<SpacePortalPublishedSceneDto> GetPortalPublishedScene(
@@ -72,6 +87,12 @@ public sealed class SpaceExternalPortalController(
         portal.GetPublishedSceneAsync(siteId, cancellationToken);
 
     [HttpGet("sites/{siteId:guid}/stock")]
+    [SpaceAuditOperation(
+        "space.external.portal.view",
+        "Stock",
+        ResourceIdArgument = "siteId",
+        SiteIdArgument = "siteId",
+        AuditRead = true)]
     [ProducesResponseType<SpacePortalStockResponse>(StatusCodes.Status200OK)]
     public Task<SpacePortalStockResponse> GetPortalStock(
         Guid siteId,
@@ -79,6 +100,12 @@ public sealed class SpaceExternalPortalController(
         portal.GetStockAsync(siteId, cancellationToken);
 
     [HttpGet("sites/{siteId:guid}/tasks")]
+    [SpaceAuditOperation(
+        "space.external.portal.view",
+        "Task",
+        ResourceIdArgument = "siteId",
+        SiteIdArgument = "siteId",
+        AuditRead = true)]
     [ProducesResponseType<SpacePortalTaskResponse>(StatusCodes.Status200OK)]
     public Task<SpacePortalTaskResponse> GetPortalTasks(
         Guid siteId,

@@ -30,6 +30,8 @@ public sealed class SpaceAuditWriterTests
         using var execution = accessor.Push(UserContext());
         var writer = new SpaceAuditWriter(factory, accessor, logger);
         var floorId = Guid.NewGuid();
+        var grantId = Guid.NewGuid();
+        var policyId = Guid.NewGuid();
 
         var input = new SpaceAuditEventInput(
             Action: "space.floor.publish",
@@ -40,7 +42,14 @@ public sealed class SpaceAuditWriterTests
                 PermissionCode: "space-publish:publish",
                 AuthorizationResult: "Allowed",
                 ItemCount: 3,
-                Status: "Pending"));
+                Status: "Pending",
+                OrganizationId: Guid.Parse(
+                    "66666666-6666-6666-6666-666666666666"),
+                OrganizationSecurityStamp: 7,
+                MembershipSecurityStamp: 11,
+                AuthorizationVersion: new string('A', 64),
+                GrantIds: [grantId],
+                FieldPolicyIds: [policyId]));
 
         Assert.True(await writer.TryAppendAsync(input));
 
@@ -59,6 +68,9 @@ public sealed class SpaceAuditWriterTests
         Assert.Equal(DateTimeKind.Utc, row.OccurredAtUtc.Kind);
         Assert.Equal(DateTimeKind.Utc, row.CreateDate.Kind);
         Assert.Contains("space-publish:publish", row.AuthorizationEvidenceJson);
+        Assert.Contains(grantId.ToString(), row.AuthorizationEvidenceJson);
+        Assert.Contains(policyId.ToString(), row.AuthorizationEvidenceJson);
+        Assert.Contains(new string('A', 64), row.AuthorizationEvidenceJson);
         Assert.DoesNotContain("requestBody", row.AuthorizationEvidenceJson);
         Assert.Empty(logger.Messages);
     }

@@ -116,7 +116,9 @@ public static class SpaceInfrastructureRegistration
             ISpaceExternalGrantService,
             SpaceExternalGrantService>();
         services.AddScoped<ISpaceFieldPolicyService, SpaceFieldPolicyService>();
-        services.AddScoped<ISpaceAccessEvaluator, SpaceAccessEvaluator>();
+        services.AddScoped<SpaceAccessEvaluator>();
+        services.AddScoped<ISpaceAccessEvaluator>(provider =>
+            provider.GetRequiredService<SpaceAccessEvaluator>());
         services.AddScoped<ISpaceUnderlayV1Service, SpaceUnderlayV1Service>();
         services.AddScoped<
             ISpaceWarehouseResolver,

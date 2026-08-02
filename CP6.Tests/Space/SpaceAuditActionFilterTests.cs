@@ -1,4 +1,6 @@
 using CP6.Core.Services.Space.Observability;
+using CP6.Space.Application;
+using CP6.Space.Contracts;
 using CP6.WebApi.Filters;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
@@ -6,6 +8,7 @@ using Microsoft.AspNetCore.Mvc.Controllers;
 using Microsoft.AspNetCore.Mvc.Filters;
 using Microsoft.AspNetCore.Mvc.Infrastructure;
 using Microsoft.AspNetCore.Routing;
+using System.Reflection;
 
 namespace CP6.Tests.Space
 {
@@ -332,6 +335,168 @@ namespace CP6.Tests.Space
                 StringComparison.OrdinalIgnoreCase);
         }
 
+        [Fact]
+        public async Task Portal_view_appends_clipped_authorization_evidence_fail_open()
+        {
+            var writer = new SequenceWriter(false);
+            var filter = new SpaceAuditActionFilter(writer);
+            var siteId = Guid.NewGuid();
+            var authorizationVersion = new string('A', 64);
+            var controller = new CP6.WebApi.Controllers.Space
+                .SpaceExternalPortalController(null!);
+            var method = typeof(CP6.WebApi.Controllers.Space
+                    .SpaceExternalPortalController)
+                .GetMethod(nameof(CP6.WebApi.Controllers.Space
+                    .SpaceExternalPortalController.GetPortalPublishedScene))!;
+            var context = MakeActionContext(
+                HttpMethods.Get,
+                "SpaceExternalPortal",
+                "GetPortalPublishedScene",
+                controller: controller,
+                actionMethod: method);
+            context.ActionArguments["siteId"] = siteId;
+            var original = new ObjectResult(new SpacePortalPublishedSceneDto(
+                siteId,
+                Guid.NewGuid(),
+                authorizationVersion,
+                []));
+
+            var executed = await RunFilter(filter, context, original);
+
+            Assert.Same(original, executed.Result);
+            var audit = Assert.Single(writer.Inputs);
+            Assert.Equal("space.external.portal.view", audit.Action);
+            Assert.Equal("PublishedScene", audit.ResourceType);
+            Assert.Equal(siteId.ToString(), audit.ResourceId);
+            Assert.Equal(siteId, audit.SiteId);
+            Assert.Equal(SpaceAuditOutcome.Succeeded, audit.Outcome);
+            Assert.Equal("Allowed", audit.Evidence!.AuthorizationResult);
+            Assert.Equal(0, audit.Evidence.ItemCount);
+            Assert.Equal(
+                authorizationVersion,
+                audit.Evidence.AuthorizationVersion);
+            Assert.False(Assert.Single(writer.Tokens).CanBeCanceled);
+        }
+
+        [Fact]
+        public async Task Portal_scope_denial_is_audited_without_leaking_exception_detail()
+        {
+            var writer = new SequenceWriter(true);
+            var filter = new SpaceAuditActionFilter(writer);
+            var controller = new CP6.WebApi.Controllers.Space
+                .SpaceExternalPortalController(null!);
+            var method = typeof(CP6.WebApi.Controllers.Space
+                    .SpaceExternalPortalController)
+                .GetMethod(nameof(CP6.WebApi.Controllers.Space
+                    .SpaceExternalPortalController.GetPortalSites))!;
+            var context = MakeActionContext(
+                HttpMethods.Get,
+                "SpaceExternalPortal",
+                "GetPortalSites",
+                controller: controller,
+                actionMethod: method);
+            var error = new SpaceProblemException(
+                SpaceErrorCodes.ExternalMembershipInactive,
+                StatusCodes.Status404NotFound,
+                "Not found",
+                "secret organization detail");
+
+            var executed = await RunFilter(
+                filter,
+                context,
+                result: null,
+                exception: error);
+
+            Assert.Same(error, executed.Exception);
+            var audit = Assert.Single(writer.Inputs);
+            Assert.Equal(SpaceAuditOutcome.Denied, audit.Outcome);
+            Assert.Equal(
+                SpaceErrorCodes.ExternalMembershipInactive,
+                audit.ReasonCode);
+            Assert.Equal("Denied", audit.Evidence!.AuthorizationResult);
+            Assert.DoesNotContain(
+                "secret organization detail",
+                audit.ToString(),
+                StringComparison.OrdinalIgnoreCase);
+        }
+
+        [Fact]
+        public async Task Authorization_mutation_uses_stable_domain_action_and_safe_route_id()
+        {
+            var writer = new SequenceWriter(true, true);
+            var filter = new SpaceAuditActionFilter(writer);
+            var membershipId = Guid.NewGuid();
+            var controller = new CP6.WebApi.Controllers.Space
+                .SpaceExternalOrganizationController(null!, null!);
+            var method = typeof(CP6.WebApi.Controllers.Space
+                    .SpaceExternalOrganizationController)
+                .GetMethod(nameof(CP6.WebApi.Controllers.Space
+                    .SpaceExternalOrganizationController.UpdateMembership))!;
+            var context = MakeActionContext(
+                HttpMethods.Put,
+                "SpaceExternalOrganization",
+                "UpdateMembership",
+                controller: controller,
+                actionMethod: method);
+            context.ActionArguments["membershipId"] = membershipId;
+            context.ActionArguments["request"] = new
+            {
+                Secret = "must-not-be-audited",
+            };
+
+            await RunFilter(filter, context, new OkResult());
+
+            Assert.Equal(2, writer.Inputs.Count);
+            Assert.All(writer.Inputs, input =>
+            {
+                Assert.Equal("space.external.membership.update", input.Action);
+                Assert.Equal("ExternalMembership", input.ResourceType);
+                Assert.Equal(membershipId.ToString(), input.ResourceId);
+                Assert.Equal(
+                    "space:external:manage",
+                    input.Evidence!.PermissionCode);
+                Assert.DoesNotContain(
+                    "must-not-be-audited",
+                    input.ToString(),
+                    StringComparison.OrdinalIgnoreCase);
+            });
+        }
+
+        [Fact]
+        public void External_access_endpoints_have_complete_stable_audit_metadata()
+        {
+            var portal = typeof(CP6.WebApi.Controllers.Space
+                .SpaceExternalPortalController);
+            var organizations = typeof(CP6.WebApi.Controllers.Space
+                .SpaceExternalOrganizationController);
+            var policies = typeof(CP6.WebApi.Controllers.Space
+                .SpaceFieldPolicyController);
+            var expected = new (Type Type, string Method, string Action)[]
+            {
+                (portal, "GetPortalOrganizations", "space.external.portal.session"),
+                (portal, "GetPortalSites", "space.external.organization.select"),
+                (portal, "GetPortalPublishedScene", "space.external.portal.view"),
+                (portal, "GetPortalStock", "space.external.portal.view"),
+                (portal, "GetPortalTasks", "space.external.portal.view"),
+                (organizations, "CreateOrganization", "space.external.organization.create"),
+                (organizations, "UpdateOrganization", "space.external.organization.update"),
+                (organizations, "CreateMembership", "space.external.membership.create"),
+                (organizations, "UpdateMembership", "space.external.membership.update"),
+                (organizations, "CreateGrant", "space.external.grant.create"),
+                (organizations, "UpdateGrant", "space.external.grant.update"),
+                (policies, "CreateFieldPolicy", "space.external.field-policy.create"),
+                (policies, "UpdateFieldPolicy", "space.external.field-policy.update"),
+            };
+
+            foreach (var item in expected)
+            {
+                var attribute = item.Type.GetMethod(item.Method)!
+                    .GetCustomAttribute<SpaceAuditOperationAttribute>();
+                Assert.NotNull(attribute);
+                Assert.Equal(item.Action, attribute.Action);
+            }
+        }
+
         [Theory]
         [InlineData("GET")]
         [InlineData("HEAD")]
@@ -379,7 +544,8 @@ namespace CP6.Tests.Space
             string controllerName,
             string action,
             CancellationToken requestAborted = default,
-            object? controller = null)
+            object? controller = null,
+            MethodInfo? actionMethod = null)
         {
             var http = new DefaultHttpContext();
             http.Request.Method = method;
@@ -387,6 +553,7 @@ namespace CP6.Tests.Space
             http.RequestAborted = requestAborted;
             var descriptor = new ControllerActionDescriptor
             {
+                MethodInfo = actionMethod!,
                 RouteValues = new Dictionary<string, string?>
                 {
                     ["controller"] = controllerName,
