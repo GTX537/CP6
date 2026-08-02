@@ -59,4 +59,34 @@ describe('spaceRuntimeApi', () => {
     expect(url).toBe('/space/design/v1/sites/site-1/runtime/tasks/path')
     expect((config?.params as URLSearchParams).get('taskId')).toBe('PICK/001')
   })
+
+  it('scopes current personnel to the active floor and preserves cursor pagination', async () => {
+    await spaceRuntimeApi.currentPersonnel('site-1', 'floor-1', 500, 'next-page')
+
+    const [url, config] = vi.mocked(http.get).mock.calls[0]!
+    expect(url).toBe('/space/design/v1/sites/site-1/personnel')
+    const params = config?.params as URLSearchParams
+    expect(params.get('floorLogicalId')).toBe('floor-1')
+    expect(params.get('limit')).toBe('500')
+    expect(params.get('cursor')).toBe('next-page')
+  })
+
+  it('keeps business identities in query values and sends an explicit UTC trajectory window', async () => {
+    await spaceRuntimeApi.personnelTrajectory(
+      'site-1',
+      ' pda/01 ',
+      ' person 01/blue ',
+      '2026-08-02T15:00:00.000Z',
+      '2026-08-02T16:00:00.000Z',
+      500,
+    )
+
+    const [url, config] = vi.mocked(http.get).mock.calls[0]!
+    expect(url).toBe('/space/design/v1/sites/site-1/personnel/trajectory')
+    const params = config?.params as URLSearchParams
+    expect(params.get('sourceId')).toBe('PDA/01')
+    expect(params.get('personExternalId')).toBe('PERSON 01/BLUE')
+    expect(params.get('fromUtc')).toBe('2026-08-02T15:00:00.000Z')
+    expect(params.get('toUtc')).toBe('2026-08-02T16:00:00.000Z')
+  })
 })

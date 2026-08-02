@@ -69,6 +69,10 @@
         :show-optimized="showOptimized"
         :workload-on="workloadOn"
         :device-on="deviceOn"
+        :personnel-on="personnelOn"
+        :personnel-loading="personnelLoading"
+        :trajectory-loading="trajectoryLoading"
+        :personnel-info="personnelInfo"
         :task-source="taskSource"
         :workload-source="workloadSource"
         :device-source="deviceSource"
@@ -83,6 +87,10 @@
         @toggle-workload="onToggleWorkload"
         @apply-workload="onApplyWorkload"
         @toggle-device="onToggleDevice"
+        @toggle-personnel="onTogglePersonnel"
+        @refresh-personnel="onRefreshPersonnel"
+        @load-personnel-trajectory="onLoadPersonnelTrajectory"
+        @clear-personnel-trajectory="onClearPersonnelTrajectory"
       />
 
       <div v-if="loading" class="viewer-loading">
@@ -109,6 +117,8 @@ import type {
   SpaceRuntimeInventoryLocateHit,
   SpaceRuntimeInventoryLocateQuery,
   SpaceRuntimeInventoryLocateResponse,
+  SpacePersonnelCurrent,
+  SpacePersonnelTrajectoryPoint,
   SpaceRuntimeSource,
   SpaceRuntimeTaskItem,
   SpaceRuntimeTaskPathResponse,
@@ -127,6 +137,7 @@ import StockLegend from './StockLegend.vue'
 import { PathAnimator } from '@/space-viewer/advanced/PathAnimator'
 import { WorkloadHeatmap } from '@/space-viewer/advanced/WorkloadHeatmap'
 import { DeviceLayer } from '@/space-viewer/advanced/DeviceLayer'
+import { PersonnelLayer } from '@/space-viewer/advanced/PersonnelLayer'
 import {
   planRuntimeTaskPath,
   type RuntimeTaskPathPlan,
@@ -151,6 +162,8 @@ let overlay: StockOverlay | null = null
 let hoverTimer = 0
 let locateRequestVersion = 0
 let taskPathRequestVersion = 0
+let personnelCurrentRequestVersion = 0
+let personnelTrajectoryRequestVersion = 0
 let preserveTaskPathNavigation = false
 
 const overlayMode = ref<OverlayMode>('status')
@@ -186,6 +199,7 @@ const deviceSource = ref<SpaceDataSource>(unavailableSource('NOT_QUERIED'))
 let pathAnimator: PathAnimator | null = null
 let heatmap: WorkloadHeatmap | null = null
 let deviceLayer: DeviceLayer | null = null
+let personnelLayer: PersonnelLayer | null = null
 
 const pathLoaded = ref(false)
 const taskPathLoading = ref(false)
@@ -197,6 +211,10 @@ const showOptimized = ref(false)
 const compareInfo = ref('')
 const workloadOn = ref(false)
 const deviceOn = ref(false)
+const personnelOn = ref(false)
+const personnelLoading = ref(false)
+const trajectoryLoading = ref(false)
+const personnelInfo = ref('')
 let workloadWin = { from: new Date().toISOString().slice(0, 10), to: new Date().toISOString().slice(0, 10) }
 
 function canvasNdc(e: MouseEvent): { x: number; y: number } {
@@ -226,6 +244,13 @@ async function loadFloor(floorId: string): Promise<void> {
   compareInfo.value = ''
   deviceLayer?.clear()
   deviceOn.value = false
+  personnelCurrentRequestVersion++
+  personnelTrajectoryRequestVersion++
+  personnelLayer?.clear()
+  personnelOn.value = false
+  personnelLoading.value = false
+  trajectoryLoading.value = false
+  personnelInfo.value = ''
   heatmap?.setEnabled(false)
   workloadOn.value = false   // 切层重置热图开关，避免新层显灰但勾选仍亮的态不一致
   loading.value = true
@@ -535,6 +560,136 @@ async function onToggleDevice(): Promise<void> {
   }
 }
 
+async function onTogglePersonnel(): Promise<void> {
+  personnelOn.value = !personnelOn.value
+  if (!personnelOn.value) {
+    personnelCurrentRequestVersion++
+    personnelLayer?.clearCurrent()
+    personnelLoading.value = false
+    personnelInfo.value = t('当前人员图层已关闭')
+    return
+  }
+  await onRefreshPersonnel()
+}
+
+async function onRefreshPersonnel(): Promise<void> {
+  if (!personnelLayer || !personnelOn.value || !currentFloorId.value) return
+  const requestVersion = ++personnelCurrentRequestVersion
+  personnelLoading.value = true
+  try {
+    const items: SpacePersonnelCurrent[] = []
+    let cursor: string | undefined
+    let pageCount = 0
+    let freshnessSeconds = 0
+    do {
+      const page = await spaceRuntimeApi.currentPersonnel(
+        siteId,
+        currentFloorId.value,
+        500,
+        cursor,
+      )
+      if (requestVersion !== personnelCurrentRequestVersion) return
+      freshnessSeconds = page.freshnessThresholdSeconds
+      items.push(...page.items)
+      cursor = page.nextCursor ?? undefined
+      pageCount++
+    } while (cursor && pageCount < 10)
+
+    personnelLayer.setCurrent(items, currentFloorId.value)
+    const stale = items.filter(item => item.positionIsStale).length
+    const simulated = items.filter(item => item.isSimulated).length
+    const unplaced = items.length - personnelLayer.currentCount
+    personnelInfo.value = t('当前人员 {total}，已定位 {placed}，过期 {stale}，模拟 {simulated}，阈值 {seconds}s')
+      .replace('{total}', String(items.length))
+      .replace('{placed}', String(personnelLayer.currentCount))
+      .replace('{stale}', String(stale))
+      .replace('{simulated}', String(simulated))
+      .replace('{seconds}', String(freshnessSeconds))
+    if (unplaced > 0) {
+      personnelInfo.value += ` · ${t('{count} 条无来源 XYZ，未推断位置').replace('{count}', String(unplaced))}`
+    }
+    if (cursor) personnelInfo.value += ` · ${t('结果已达安全显示上限')}`
+  } catch {
+    if (requestVersion !== personnelCurrentRequestVersion) return
+    personnelOn.value = false
+    personnelLayer.clearCurrent()
+    personnelInfo.value = t('人员位置数据获取失败')
+    ElMessage.warning(personnelInfo.value)
+  } finally {
+    if (requestVersion === personnelCurrentRequestVersion) personnelLoading.value = false
+  }
+}
+
+async function onLoadPersonnelTrajectory(query: {
+  sourceId: string
+  personExternalId: string
+  from: string
+  to: string
+}): Promise<void> {
+  if (!personnelLayer || !query.sourceId.trim() || !query.personExternalId.trim()) {
+    ElMessage.warning(t('请输入来源 ID 与人员外部 ID'))
+    return
+  }
+  const from = new Date(query.from)
+  const to = new Date(query.to)
+  if (!Number.isFinite(from.getTime()) || !Number.isFinite(to.getTime()) || from >= to) {
+    ElMessage.warning(t('人员轨迹时间窗无效'))
+    return
+  }
+  if (to.getTime() - from.getTime() > 24 * 60 * 60 * 1000) {
+    ElMessage.warning(t('人员轨迹单次查询不能超过 24 小时'))
+    return
+  }
+
+  const requestVersion = ++personnelTrajectoryRequestVersion
+  trajectoryLoading.value = true
+  try {
+    const items: SpacePersonnelTrajectoryPoint[] = []
+    let cursor: string | undefined
+    let pageCount = 0
+    let sourceKind = ''
+    do {
+      const page = await spaceRuntimeApi.personnelTrajectory(
+        siteId,
+        query.sourceId,
+        query.personExternalId,
+        from.toISOString(),
+        to.toISOString(),
+        500,
+        cursor,
+      )
+      if (requestVersion !== personnelTrajectoryRequestVersion) return
+      sourceKind = page.sourceKind
+      items.push(...page.items)
+      cursor = page.nextCursor ?? undefined
+      pageCount++
+    } while (cursor && pageCount < 10)
+
+    personnelLayer.setTrajectory(items, currentFloorId.value)
+    personnelInfo.value = t('授权轨迹 {person} / {source}（{kind}）：{events} 个来源事件，本层 {visible} 点')
+      .replace('{person}', query.personExternalId.trim().toUpperCase())
+      .replace('{source}', query.sourceId.trim().toUpperCase())
+      .replace('{kind}', sourceKind)
+      .replace('{events}', String(items.length))
+      .replace('{visible}', String(personnelLayer.trajectoryCount))
+    if (cursor) personnelInfo.value += ` · ${t('结果已达安全显示上限')}`
+  } catch {
+    if (requestVersion !== personnelTrajectoryRequestVersion) return
+    personnelLayer.clearTrajectory()
+    personnelInfo.value = t('人员轨迹获取失败或无查看权限')
+    ElMessage.warning(personnelInfo.value)
+  } finally {
+    if (requestVersion === personnelTrajectoryRequestVersion) trajectoryLoading.value = false
+  }
+}
+
+function onClearPersonnelTrajectory(): void {
+  personnelTrajectoryRequestVersion++
+  trajectoryLoading.value = false
+  personnelLayer?.clearTrajectory()
+  personnelInfo.value = t('人员轨迹已清除')
+}
+
 onMounted(async () => {
   const canvas = canvasRef.value
   if (!canvas) return
@@ -545,6 +700,7 @@ onMounted(async () => {
   pathAnimator = new PathAnimator(vh)
   heatmap = new WorkloadHeatmap(vh)
   deviceLayer = new DeviceLayer(vh)
+  personnelLayer = new PersonnelLayer(vh)
 
   viewer.onProgress((done, total) => {
     progressText.value = `${done}/${total}`
@@ -579,6 +735,7 @@ onBeforeUnmount(() => {
   pathAnimator?.clear(); pathAnimator = null
   heatmap?.dispose(); heatmap = null
   deviceLayer?.clear(); deviceLayer = null
+  personnelLayer?.clear(); personnelLayer = null
   viewer?.dispose()
   viewer = null
   locator = null

@@ -162,3 +162,65 @@ export interface RuntimeStockItem {
   topMaterial: string | null
   productKinds: number
 }
+
+export interface SpacePersonnelCurrentPage {
+  siteId: string
+  asOfUtc: string
+  freshnessThresholdSeconds: number
+  items: SpacePersonnelCurrent[]
+  nextCursor: string | null
+}
+
+export interface SpacePersonnelCurrent {
+  sourceId: string
+  sourceKind: 'Real' | 'Simulated'
+  personExternalId: string
+  workState: 'Unknown' | 'Offline' | 'Idle' | 'Busy' | 'Break'
+  floorLogicalId: string | null
+  locationLogicalId: string | null
+  xMillimeters: number | null
+  yMillimeters: number | null
+  zMillimeters: number | null
+  accuracyMillimeters: number | null
+  positionOccurredAtUtc: string | null
+  positionReceivedAtUtc: string | null
+  positionEventId: string | null
+  positionSourceEventId: string | null
+  workStateOccurredAtUtc: string | null
+  workStateReceivedAtUtc: string | null
+  workStateEventId: string | null
+  workStateSourceEventId: string | null
+  positionAgeMilliseconds: number | null
+  workStateAgeMilliseconds: number | null
+  hasPosition: boolean
+  positionIsStale: boolean
+  workStateIsStale: boolean
+  isSimulated: boolean
+}
+
+export interface SpacePersonnelTrajectoryResponse {
+  siteId: string
+  sourceId: string
+  sourceKind: 'Real' | 'Simulated'
+  personExternalId: string
+  fromUtc: string
+  toUtc: string
+  retentionCutoffUtc: string
+  items: SpacePersonnelTrajectoryPoint[]
+  nextCursor: string | null
+}
+
+export interface SpacePersonnelTrajectoryPoint {
+  eventId: string
+  sourceEventId: string
+  floorLogicalId: string | null
+  locationLogicalId: string | null
+  xMillimeters: number | null
+  yMillimeters: number | null
+  zMillimeters: number | null
+  accuracyMillimeters: number | null
+  sourceSequence: number | null
+  occurredAtUtc: string
+  receivedAtUtc: string
+  ingestDelayMilliseconds: number
+}

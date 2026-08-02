@@ -1,4 +1,5 @@
 using CP6.Space.Application;
+using CP6.Space.Contracts;
 using CP6.Space.Domain;
 using CP6.Space.Infrastructure;
 using Microsoft.Data.SqlClient;
@@ -81,6 +82,79 @@ public sealed class SpaceSqlServerTests
                 now.AddMinutes(-1),
                 now,
                 new string(hashCharacter, 64));
+    }
+
+    [SqlServerFact]
+    public async Task Personnel_runtime_queries_translate_and_return_utc_timestamps()
+    {
+        var tenantId = Guid.NewGuid();
+        var actorId = Guid.NewGuid();
+        var siteId = Guid.NewGuid();
+        var now = new DateTime(2026, 8, 2, 16, 0, 0, DateTimeKind.Utc);
+
+        await WithDatabaseAsync(
+            async context =>
+            {
+                context.Models.Add(SpaceModel.Create(tenantId, siteId));
+                var observed = SpacePersonnelEvent.Create(
+                    tenantId,
+                    siteId,
+                    "PDA-01",
+                    SpacePersonnelSourceKind.Real,
+                    "POSITION-01",
+                    "PERSON-01",
+                    null,
+                    SpacePersonnelEventKind.PositionObserved,
+                    null,
+                    Guid.NewGuid(),
+                    null,
+                    10m,
+                    20m,
+                    0m,
+                    50m,
+                    1,
+                    now.AddMinutes(-1),
+                    now,
+                    new string('a', 64));
+                context.PersonnelEvents.Add(observed);
+                context.PersonnelStates.Add(
+                    SpacePersonnelCurrentState.Create(observed));
+                await context.SaveChangesAsync();
+                context.ChangeTracker.Clear();
+
+                var service = new SpacePersonnelRuntimeService(
+                    context,
+                    new TestExecutionContext(tenantId, actorId),
+                    new FixedClock(now),
+                    new AllowAccess(),
+                    new UnusedCursorCodec(),
+                    new SpacePersonnelRuntimeOptions());
+                var current = await service.GetCurrentAsync(
+                    siteId,
+                    "Real",
+                    null,
+                    null,
+                    100,
+                    null);
+                var trajectory = await service.GetTrajectoryAsync(
+                    siteId,
+                    "PDA-01",
+                    "PERSON-01",
+                    new DateTimeOffset(now.AddHours(-1)),
+                    new DateTimeOffset(now),
+                    100,
+                    null);
+
+                Assert.Equal(TimeSpan.Zero, current.AsOfUtc.Offset);
+                Assert.Equal(
+                    TimeSpan.Zero,
+                    Assert.Single(current.Items).PositionOccurredAtUtc!.Value.Offset);
+                Assert.Equal(
+                    TimeSpan.Zero,
+                    Assert.Single(trajectory.Items).OccurredAtUtc.Offset);
+            },
+            tenantId,
+            actorId);
     }
 
     [SqlServerFact]
@@ -796,5 +870,29 @@ public sealed class SpaceSqlServerTests
     private sealed class TestClock : ISpaceClock
     {
         public DateTime UtcNow => DateTime.UtcNow;
+    }
+
+    private sealed class FixedClock(DateTime now) : ISpaceClock
+    {
+        public DateTime UtcNow => now;
+    }
+
+    private sealed class AllowAccess : ISpaceDesignAccessEvaluator
+    {
+        public void EnsureSiteAccess(Guid siteId, bool write)
+        {
+        }
+    }
+
+    private sealed class UnusedCursorCodec : ISpaceCursorCodec
+    {
+        public string Encode(SpaceCursorState state) =>
+            throw new InvalidOperationException("A cursor was not expected.");
+
+        public SpaceCursorState Decode(
+            string cursor,
+            string expectedResource,
+            string expectedFilterHash) =>
+            throw new InvalidOperationException("A cursor was not expected.");
     }
 }

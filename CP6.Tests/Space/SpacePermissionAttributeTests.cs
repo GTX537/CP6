@@ -76,6 +76,10 @@ public class SpacePermissionAttributeTests
             ["SpaceWmsRuntimeController.LocateInventory"] = "space:model:read",
             ["SpaceWmsRuntimeController.GetTasks"] = "space:model:read",
             ["SpaceWmsRuntimeController.GetTaskPath"] = "space:model:read",
+            ["SpacePersonnelRuntimeController.GetCurrentPersonnel"] =
+                "space:model:read",
+            ["SpacePersonnelRuntimeController.GetPersonnelTrajectory"] =
+                "space-audit:read",
             ["SpaceExternalOrganizationController.GetOrganizations"] =
                 "space:external:read",
             ["SpaceExternalOrganizationController.GetOrganization"] =
@@ -138,7 +142,7 @@ public class SpacePermissionAttributeTests
     public void SpaceControllers_AreDiscovered()
     {
         // 守卫：确保反射确实扫到全部 controller（防命名空间/程序集变动导致「空扫空过」）。
-        Assert.Equal(19, SpaceControllers.Count());
+        Assert.Equal(20, SpaceControllers.Count());
     }
 
     [Fact]

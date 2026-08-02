@@ -500,6 +500,68 @@ public sealed class SpaceWmsRuntimeSchemaFilter : ISchemaFilter
                 "outcome",
                 "projectionApplied",
             ],
+            [typeof(SpacePersonnelCurrentPageDto)] =
+            [
+                "siteId",
+                "asOfUtc",
+                "freshnessThresholdSeconds",
+                "items",
+                "nextCursor",
+            ],
+            [typeof(SpacePersonnelCurrentDto)] =
+            [
+                "sourceId",
+                "sourceKind",
+                "personExternalId",
+                "workState",
+                "floorLogicalId",
+                "locationLogicalId",
+                "xMillimeters",
+                "yMillimeters",
+                "zMillimeters",
+                "accuracyMillimeters",
+                "positionOccurredAtUtc",
+                "positionReceivedAtUtc",
+                "positionEventId",
+                "positionSourceEventId",
+                "workStateOccurredAtUtc",
+                "workStateReceivedAtUtc",
+                "workStateEventId",
+                "workStateSourceEventId",
+                "positionAgeMilliseconds",
+                "workStateAgeMilliseconds",
+                "hasPosition",
+                "positionIsStale",
+                "workStateIsStale",
+                "isSimulated",
+            ],
+            [typeof(SpacePersonnelTrajectoryResponse)] =
+            [
+                "siteId",
+                "sourceId",
+                "sourceKind",
+                "personExternalId",
+                "fromUtc",
+                "toUtc",
+                "retentionCutoffUtc",
+                "items",
+                "nextCursor",
+            ],
+            [typeof(SpacePersonnelTrajectoryPointDto)] =
+            [
+                "eventId",
+                "sourceEventId",
+                "floorLogicalId",
+                "locationLogicalId",
+                "xMillimeters",
+                "yMillimeters",
+                "zMillimeters",
+                "accuracyMillimeters",
+                "sourceSequence",
+                "occurredAtUtc",
+                "receivedAtUtc",
+                "ingestDelayMilliseconds",
+            ],
             [typeof(SpacePortalOrganizationDto)] =
             [
                 "organizationId",
@@ -703,6 +765,49 @@ public sealed class SpaceWmsRuntimeSchemaFilter : ISchemaFilter
                 true,
                 "userId",
                 "workState",
+                "floorLogicalId",
+                "locationLogicalId",
+                "sourceSequence");
+            SetNumberFormat(schema, "xMillimeters", "decimal", true);
+            SetNumberFormat(schema, "yMillimeters", "decimal", true);
+            SetNumberFormat(schema, "zMillimeters", "decimal", true);
+            SetNumberFormat(schema, "accuracyMillimeters", "decimal", true);
+        }
+        else if (context.Type == typeof(SpacePersonnelCurrentPageDto))
+        {
+            SetNullable(schema, true, "nextCursor");
+        }
+        else if (context.Type == typeof(SpacePersonnelCurrentDto))
+        {
+            SetNullable(
+                schema,
+                true,
+                "floorLogicalId",
+                "locationLogicalId",
+                "positionOccurredAtUtc",
+                "positionReceivedAtUtc",
+                "positionEventId",
+                "positionSourceEventId",
+                "workStateOccurredAtUtc",
+                "workStateReceivedAtUtc",
+                "workStateEventId",
+                "workStateSourceEventId",
+                "positionAgeMilliseconds",
+                "workStateAgeMilliseconds");
+            SetNumberFormat(schema, "xMillimeters", "decimal", true);
+            SetNumberFormat(schema, "yMillimeters", "decimal", true);
+            SetNumberFormat(schema, "zMillimeters", "decimal", true);
+            SetNumberFormat(schema, "accuracyMillimeters", "decimal", true);
+        }
+        else if (context.Type == typeof(SpacePersonnelTrajectoryResponse))
+        {
+            SetNullable(schema, true, "nextCursor");
+        }
+        else if (context.Type == typeof(SpacePersonnelTrajectoryPointDto))
+        {
+            SetNullable(
+                schema,
+                true,
                 "floorLogicalId",
                 "locationLogicalId",
                 "sourceSequence");
