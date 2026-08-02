@@ -7,6 +7,10 @@ import {
   designElementsApi,
   type ElementPropertiesPayload,
 } from '@/api/space/designElements'
+import {
+  designModelingTemplateApi,
+  standardSpaceModelingTemplateFileName,
+} from '@/api/space/designModelingTemplate'
 import { designUnderlayApi } from '@/api/space/designUnderlay'
 import {
   ElementCanvasLayer,
@@ -71,6 +75,7 @@ const selectedObjects = ref<CanvasObjectRef[]>([])
 const loading = ref(true)
 const projectionMode = ref<'2d' | 'split' | '3d'>('split')
 const uploading = ref(false)
+const downloadingTemplate = ref(false)
 const savingCalibration = ref(false)
 const savingElement = ref(false)
 const calibrationMode = ref(false)
@@ -270,6 +275,26 @@ async function loadScene(): Promise<void> {
 
 function chooseFile(): void {
   fileInputRef.value?.click()
+}
+
+async function downloadStandardExcelTemplate(): Promise<void> {
+  if (downloadingTemplate.value) return
+  downloadingTemplate.value = true
+  let objectUrl: string | null = null
+  try {
+    const content = await designModelingTemplateApi.downloadStandardExcel()
+    objectUrl = URL.createObjectURL(content)
+    const link = document.createElement('a')
+    link.href = objectUrl
+    link.download = standardSpaceModelingTemplateFileName
+    link.click()
+    ElMessage.success('标准建模 Excel 模板已下载')
+  } catch {
+    ElMessage.error('标准建模 Excel 模板下载失败')
+  } finally {
+    if (objectUrl) URL.revokeObjectURL(objectUrl)
+    downloadingTemplate.value = false
+  }
 }
 
 async function onFileSelected(event: Event): Promise<void> {
@@ -863,6 +888,14 @@ function delay(milliseconds: number): Promise<void> {
       </div>
 
       <div class="controls">
+        <el-button
+          v-permission="'space:model:read'"
+          size="small"
+          :loading="downloadingTemplate"
+          @click="downloadStandardExcelTemplate"
+        >
+          下载标准 Excel
+        </el-button>
         <el-button-group size="small" aria-label="2D/3D 预览模式">
           <el-button
             :type="projectionMode === '2d' ? 'primary' : 'default'"

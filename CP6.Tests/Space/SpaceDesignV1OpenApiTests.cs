@@ -33,6 +33,7 @@ public sealed class SpaceDesignV1OpenApiTests
             "/api/space/design/v1/sites/{siteId}/runtime/tasks",
             "/api/space/design/v1/sites/{siteId}/runtime/tasks/path",
             "/api/space/design/v1/assets",
+            "/api/space/design/v1/modeling-templates/excel/standard",
             "/api/space/design/v1/versions/{versionId}",
             "/api/space/design/v1/versions/{versionId}/floors/{floorLogicalId}/commands",
             "/api/space/design/v1/versions/{versionId}/floors/{floorLogicalId}/scene",
@@ -76,9 +77,10 @@ public sealed class SpaceDesignV1OpenApiTests
             .Select(operation =>
                 operation.Value.GetProperty("operationId").GetString())
             .ToArray();
-        Assert.Equal(47, operationIds.Length);
-        Assert.Equal(47, operationIds.Distinct().Count());
+        Assert.Equal(48, operationIds.Length);
+        Assert.Equal(48, operationIds.Distinct().Count());
         Assert.Contains("GetAssets", operationIds);
+        Assert.Contains("DownloadStandardExcelTemplate", operationIds);
         Assert.Contains("CreateAsset", operationIds);
         Assert.Contains("CreateVersion", operationIds);
         Assert.Contains("CreateSource", operationIds);
@@ -129,6 +131,25 @@ public sealed class SpaceDesignV1OpenApiTests
                 parameter.GetProperty("name").GetString() == "taskId");
         Assert.True(taskIdParameter.GetProperty("required").GetBoolean());
         Assert.Equal("query", taskIdParameter.GetProperty("in").GetString());
+    }
+
+    [Fact]
+    public void Standard_modeling_template_is_a_bounded_excel_download()
+    {
+        using var document = ReadContract();
+        var operation = document.RootElement
+            .GetProperty("paths")
+            .GetProperty("/api/space/design/v1/modeling-templates/excel/standard")
+            .GetProperty("get");
+        var response = operation.GetProperty("responses").GetProperty("200");
+        var schema = response.GetProperty("content")
+            .GetProperty(
+                "application/vnd.openxmlformats-officedocument.spreadsheetml.sheet")
+            .GetProperty("schema");
+
+        Assert.Equal("string", schema.GetProperty("type").GetString());
+        Assert.Equal("binary", schema.GetProperty("format").GetString());
+        Assert.False(operation.TryGetProperty("parameters", out _));
     }
 
     [Fact]
@@ -890,6 +911,7 @@ public sealed class SpaceDesignV1OpenApiTests
                      "GetScene",
                      "ApplyElementCommands",
                      "GetAssets",
+                     "DownloadStandardExcelTemplate",
                      "CreateAsset",
                      "GetSources",
                      "CreateSource",
