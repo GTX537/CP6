@@ -168,6 +168,16 @@ describe('ParametricRenderPlan', () => {
       /geometry\.z: an integer millimeter value is required/,
     )
   })
+
+  it('does not render removed racks or their still-active child levels', () => {
+    const scene = rackScene()
+    scene.racks![0]!.revision!.lifecycleState = 'RemoveRequested'
+
+    const plan = buildParametricRenderPlan(scene)
+
+    expect(plan.primitiveCount).toBe(0)
+    expect(plan.boxes).toHaveLength(0)
+  })
 })
 
 function rackScene(): ParametricDesignSceneInput {

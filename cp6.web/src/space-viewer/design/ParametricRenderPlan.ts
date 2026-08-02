@@ -13,7 +13,18 @@ type RevisionInput = Pick<SpaceSceneRevisionDto, 'logicalId' | 'lifecycleState'>
 type RackInput = Omit<
   Pick<
     SpaceSceneRackDto,
-    'revision' | 'x' | 'y' | 'z' | 'rotationZ' | 'width' | 'depth' | 'height'
+    | 'revision'
+    | 'floorLogicalId'
+    | 'zoneLogicalId'
+    | 'aisleLogicalId'
+    | 'rackCode'
+    | 'x'
+    | 'y'
+    | 'z'
+    | 'rotationZ'
+    | 'width'
+    | 'depth'
+    | 'height'
   >,
   'revision'
 > & {
@@ -33,6 +44,7 @@ type RackLevelInput = Omit<
     | 'cellWidth'
     | 'cellDepth'
     | 'beamHeight'
+    | 'maxLoad'
   >,
   'revision'
 > & {
@@ -43,6 +55,8 @@ type ElementInput = Omit<
   Pick<
     SpaceSceneElementDto,
     | 'revision'
+    | 'floorLogicalId'
+    | 'parentLogicalId'
     | 'elementType'
     | 'geometryJson'
     | 'modelAssetId'
@@ -54,6 +68,7 @@ type ElementInput = Omit<
     | 'width'
     | 'height'
     | 'depth'
+    | 'businessCode'
   >,
   'revision'
 > & {
@@ -96,9 +111,25 @@ export interface ParametricPrimitiveIdentity {
   ownerKind: ParametricOwnerKind
   materialRole: ParametricMaterialRole
   elementType?: string
+  parentLogicalId?: string
+  businessCode?: string
+  rackLevelSpec?: ParametricRackLevelSpecification
   lifecycleState: string
   assetVersionId?: string
   assetScope?: string
+}
+
+export interface ParametricRackLevelSpecification {
+  logicalId: string
+  levelNo: number
+  bottomZ: number
+  clearHeight: number
+  binCount: number
+  depthCount: number
+  cellWidth: number
+  cellDepth: number
+  beamHeight: number
+  maxLoad: number | null
 }
 
 export interface ParametricBoxPrimitive extends ParametricPrimitiveIdentity {
@@ -155,15 +186,23 @@ export function buildParametricRenderPlan(
     )
   }
 
-  const racks = requireArray(scene.racks, 'racks')
+  const allRacks = requireArray(scene.racks, 'racks')
+  const allRackIds = new Set(
+    allRacks.map((rack) => logicalId(rack.revision, 'rack')),
+  )
+  const racks = allRacks
+    .filter(isActiveRevision)
     .slice()
     .sort((left, right) =>
       logicalId(left.revision, 'rack').localeCompare(
         logicalId(right.revision, 'rack'),
       ),
     )
-  const rackLevels = requireArray(scene.rackLevels, 'rackLevels')
+  const rackLevels = requireArray(scene.rackLevels, 'rackLevels').filter(
+    isActiveRevision,
+  )
   const elements = requireArray(scene.elements, 'elements')
+    .filter(isActiveRevision)
     .slice()
     .sort((left, right) =>
       logicalId(left.revision, 'element').localeCompare(
@@ -179,6 +218,7 @@ export function buildParametricRenderPlan(
       'rackLevel.rackLogicalId',
     )
     if (!rackIds.has(rackLogicalId)) {
+      if (allRackIds.has(rackLogicalId)) continue
       throw invalid(
         'rackLevels',
         `rack level references rack ${rackLogicalId} outside the scene`,
@@ -252,6 +292,11 @@ function addRackPrimitives(
     key: `rack:${rackLogicalId}:envelope`,
     logicalId: rackLogicalId,
     ownerKind: 'Rack',
+    parentLogicalId: optionalGuid(
+      rack.zoneLogicalId,
+      `rack.${rackLogicalId}.zoneLogicalId`,
+    ),
+    businessCode: optionalText(rack.rackCode),
     materialRole: 'rack-envelope',
     lifecycleState,
     kind: 'box',
@@ -311,6 +356,18 @@ function addRackPrimitives(
     const levelWidth = binCount * cellWidth
     const levelDepth = depthCount * cellDepth
     const levelTop = bottomZ + beamHeight + clearHeight
+    const rackLevelSpec: ParametricRackLevelSpecification = {
+      logicalId: levelLogicalId,
+      levelNo,
+      bottomZ,
+      clearHeight,
+      binCount,
+      depthCount,
+      cellWidth,
+      cellDepth,
+      beamHeight,
+      maxLoad: level.maxLoad ?? null,
+    }
 
     if (levelWidth > envelope.width || levelDepth > envelope.depth) {
       throw invalid(
@@ -342,6 +399,8 @@ function addRackPrimitives(
         key: `rack:${rackLogicalId}:level:${levelNo}:beam`,
         logicalId: levelLogicalId,
         ownerKind: 'RackLevel',
+        parentLogicalId: rackLogicalId,
+        rackLevelSpec,
         materialRole: 'rack-beam',
         lifecycleState: levelLifecycle,
         kind: 'box',
@@ -363,6 +422,8 @@ function addRackPrimitives(
           key: `rack:${rackLogicalId}:level:${levelNo}:bin:${bin}:depth:${depth}`,
           logicalId: levelLogicalId,
           ownerKind: 'RackLevel',
+          parentLogicalId: rackLogicalId,
+          rackLevelSpec,
           materialRole: 'rack-cell',
           lifecycleState: levelLifecycle,
           kind: 'box',
@@ -438,6 +499,11 @@ function addElementPrimitives(
   const identity = {
     logicalId: logicalIdValue,
     ownerKind: 'Element' as const,
+    parentLogicalId: optionalGuid(
+      element.parentLogicalId,
+      `element.${logicalIdValue}.parentLogicalId`,
+    ),
+    businessCode: optionalText(element.businessCode),
     elementType,
     lifecycleState,
     assetVersionId: modelAssetId,
@@ -663,6 +729,15 @@ function addElementPrimitives(
         `unsupported geometry kind '${String(geometry.kind)}'`,
       )
   }
+}
+
+function isActiveRevision(
+  value: { revision?: RevisionInput },
+): boolean {
+  return requireText(
+    value.revision?.lifecycleState,
+    'revision.lifecycleState',
+  ) === 'Active'
 }
 
 function requireMatchingEnvelope(

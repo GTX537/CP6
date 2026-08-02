@@ -24,6 +24,7 @@ import {
   type ParametricMaterialRole,
   type ParametricPolygonPrimitive,
   type ParametricPrimitiveIdentity,
+  type ParametricRackLevelSpecification,
   type ParametricRenderPlan,
 } from './ParametricRenderPlan'
 
@@ -38,6 +39,10 @@ export interface ParametricPickTarget {
   logicalId: string
   ownerKind: string
   elementType?: string
+  parentLogicalId?: string
+  businessCode?: string
+  materialRole: ParametricMaterialRole
+  rackLevelSpec?: ParametricRackLevelSpecification
 }
 
 export interface ParametricDesignSceneBuildResult {
@@ -202,6 +207,10 @@ function targetFor(
     logicalId: primitive.logicalId,
     ownerKind: primitive.ownerKind,
     elementType: primitive.elementType,
+    parentLogicalId: primitive.parentLogicalId,
+    businessCode: primitive.businessCode,
+    materialRole: primitive.materialRole,
+    rackLevelSpec: primitive.rackLevelSpec,
   }
 }
 

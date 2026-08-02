@@ -33,6 +33,7 @@ import {
 import DesignBatchToolsPanel from '@/modules/space-design/panels/DesignBatchToolsPanel.vue'
 import DesignElementPropertiesPanel from '@/modules/space-design/panels/DesignElementPropertiesPanel.vue'
 import DesignWmsAdoptionPanel from '@/modules/space-design/panels/DesignWmsAdoptionPanel.vue'
+import DesignScenePreview3D from '@/modules/space-design/preview3d/DesignScenePreview3D.vue'
 import {
   decodeUnderlay,
   releaseDecodedUnderlay,
@@ -68,6 +69,7 @@ const designScene = ref<ISpaceDesignSceneDto | null>(null)
 const floor = ref<ISpaceSceneFloorDto | null>(null)
 const selectedObjects = ref<CanvasObjectRef[]>([])
 const loading = ref(true)
+const projectionMode = ref<'2d' | 'split' | '3d'>('split')
 const uploading = ref(false)
 const savingCalibration = ref(false)
 const savingElement = ref(false)
@@ -861,6 +863,20 @@ function delay(milliseconds: number): Promise<void> {
       </div>
 
       <div class="controls">
+        <el-button-group size="small" aria-label="2D/3D 预览模式">
+          <el-button
+            :type="projectionMode === '2d' ? 'primary' : 'default'"
+            @click="projectionMode = '2d'"
+          >2D</el-button>
+          <el-button
+            :type="projectionMode === 'split' ? 'primary' : 'default'"
+            @click="projectionMode = 'split'"
+          >2D + 3D</el-button>
+          <el-button
+            :type="projectionMode === '3d' ? 'primary' : 'default'"
+            @click="projectionMode = '3d'"
+          >3D</el-button>
+        </el-button-group>
         <el-checkbox v-model="visible">{{ t('显示') }}</el-checkbox>
         <span>{{ t('透明度') }}</span>
         <el-slider v-model="opacity" :min="10" :max="100" class="opacity-slider" />
@@ -901,7 +917,14 @@ function delay(milliseconds: number): Promise<void> {
     />
 
     <section class="workspace">
-      <main ref="canvasRef" class="canvas" />
+      <div class="projection-surface" :class="`mode-${projectionMode}`">
+        <main v-show="projectionMode !== '3d'" ref="canvasRef" class="canvas" />
+        <DesignScenePreview3D
+          v-show="projectionMode !== '2d'"
+          :scene="designScene"
+          class="preview3d"
+        />
+      </div>
       <aside v-if="calibrationMode" class="calibration-panel">
         <div class="panel-title">{{ t('两点标定') }}</div>
         <p class="panel-help">
@@ -1031,7 +1054,8 @@ function delay(milliseconds: number): Promise<void> {
 }
 
 .canvas {
-  flex: 1;
+  width: 100%;
+  height: 100%;
   min-height: 0;
   overflow: hidden;
   background:
@@ -1039,6 +1063,27 @@ function delay(milliseconds: number): Promise<void> {
     linear-gradient(rgba(100, 116, 139, 0.08) 1px, transparent 1px),
     #f8fafc;
   background-size: 20px 20px;
+}
+
+.projection-surface {
+  display: grid;
+  min-width: 0;
+  min-height: 0;
+  flex: 1;
+  grid-template-columns: minmax(0, 1fr);
+}
+
+.projection-surface.mode-split {
+  grid-template-columns: minmax(0, 1fr) minmax(360px, 0.85fr);
+}
+
+.projection-surface.mode-split .canvas {
+  border-right: 1px solid #334155;
+}
+
+.preview3d {
+  min-width: 0;
+  min-height: 0;
 }
 
 .workspace {
@@ -1109,6 +1154,16 @@ function delay(milliseconds: number): Promise<void> {
 
   .workspace {
     flex-direction: column;
+  }
+
+  .projection-surface.mode-split {
+    grid-template-columns: minmax(0, 1fr);
+    grid-template-rows: minmax(260px, 1fr) minmax(260px, 1fr);
+  }
+
+  .projection-surface.mode-split .canvas {
+    border-right: 0;
+    border-bottom: 1px solid #334155;
   }
 
   .calibration-panel {
