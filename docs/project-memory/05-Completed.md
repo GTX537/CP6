@@ -1,5 +1,13 @@
 # 已完成能力与近期里程碑
 
+## 2026-08-02 E12-S03 距离、拥堵、容量、吞吐和成本仿真
+
+- 以 `ab21aed4` 完成确定性仿真引擎、不可变证据、迁移、API/UI/权限/SDK，并先行推送远端备份；no-ff 集成提交为 `PENDING_INTEGRATION_COMMIT`。
+- 距离、拥堵、容量、吞吐、人工和成本均有显式规划口径与未知覆盖；只读生产隔离场景和脱敏历史数据集，不读取实时运行态、不排名方案且不允许生产回写。
+- 新增 3 个 API、2 个权限、两张租户隔离证据表，OpenAPI 增至 77 operations；规划页提供容量/时间桶/币种/单价配置、五类 KPI、热点和哈希证据。41 个新增词条具备五语运行时种子，既有 i18n 欠账仍为 908。
+- 全量门禁为 Space Unit 268、默认 Space Integration 242 passed / 63 SQL-gated skipped、CP6.Tests 2771 passed / 17 environment-gated skipped、前端 122 files / 670 tests、非增量 Release 0 error / 3 条既有 warning；双 EF、SDK、TypeScript 与生产构建通过。
+- 下一张独立实施卡为 E12-S04 多场景比较与决策记录；受控集成和临时资源清理结果待补记，`main` 未修改。
+
 ## 2026-08-02 E12-S02 脱敏历史任务数据集与回放时钟
 
 - 以 `4fb6941d` / `d89919b8` / `c8ccbf56` 完成数据/时钟/迁移、API/UI/权限/SDK 与 no-ff 受控集成；最多 10,000 条历史任务可固定到克隆成功且生产隔离的场景。
