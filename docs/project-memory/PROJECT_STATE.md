@@ -10,7 +10,7 @@
 - 新增 6 个 planning API、4 个权限、四张租户隔离证据表、EF Migration/增量幂等 SQL；Design V1 从 77 增至 83 operations，C#/TypeScript SDK 已同步。规划页新增跨分支比较矩阵、风险与决策历史。
 - 47 个比较词条均有五语运行时种子，静态 i18n 欠账仍为既有 908 项，本卡净新增 0。
 - 全量门禁：Space Unit 272、默认 Space Integration 245 passed / 63 SQL-gated skipped、CP6.Tests 2775 passed / 17 environment-gated skipped、前端 123 files / 674 tests、完整 solution 非增量 Release 0 error / 10 条既有 warning；生产构建、双 EF、SDK drift 与 TypeScript strict no-emit 全部通过。证据见 `docs/space/reports/e12-s04-scenario-comparison-decision.md`。
-- 合并树与功能 tip 一致，合并态引擎 4/4、服务 3/3、权限/合同/OpenAPI/五语 66/66、前端 10/10、类型检查、双 EF、SDK 和 TypeScript 门禁通过；临时资源清理待完成后补记。下一张可独立实施 E12-S05“标准交换格式导出”，`main` 未修改。
+- 合并树与功能 tip 一致，合并态引擎 4/4、服务 3/3、权限/合同/OpenAPI/五语 66/66、前端 10/10、类型检查、双 EF、SDK 和 TypeScript 门禁通过。功能 tip 已确认进入远端集成祖先链，功能工作树、临时依赖链接及本地/远端功能分支已删除，释放 2,520,628,564 字节（约 2.348 GiB）。下一张可独立实施 E12-S05“标准交换格式导出”，`main` 未修改。
 
 ## E12-S03 完成状态（2026-08-02）
 

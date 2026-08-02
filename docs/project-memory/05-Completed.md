@@ -6,7 +6,7 @@
 - 强制 2～10 个不同生产隔离分支共享站点、模型、基础 Published 版本、历史样本和仿真口径；容量假设差异显式呈现，不计算总分、不排名、不推荐且不允许生产回写。
 - 新增 6 个 API、4 个权限、四张租户隔离证据表，OpenAPI 增至 83 operations；规划页提供跨分支证据矩阵和 Selected/Deferred/RejectedAll 决策链。47 个新增词条具备五语运行时种子，既有 i18n 欠账仍为 908。
 - 全量门禁为 Space Unit 272、默认 Space Integration 245 passed / 63 SQL-gated skipped、CP6.Tests 2775 passed / 17 environment-gated skipped、前端 123 files / 674 tests、非增量 Release 0 error / 10 条既有 warning；双 EF、SDK、TypeScript 与生产构建通过。
-- 合并态引擎 4/4、服务 3/3、权限/合同/OpenAPI/五语 66/66、前端 10/10、类型检查、双 EF、SDK 与 TypeScript 门禁通过；资源清理待完成后补记，`main` 未修改。下一张独立实施卡为 E12-S05 标准交换格式导出。
+- 合并态引擎 4/4、服务 3/3、权限/合同/OpenAPI/五语 66/66、前端 10/10、类型检查、双 EF、SDK 与 TypeScript 门禁通过。功能工作树、临时依赖链接及本地/远端功能分支已删除，释放约 2.348 GiB；`main` 未修改。下一张独立实施卡为 E12-S05 标准交换格式导出。
 
 ## 2026-08-02 E12-S03 距离、拥堵、容量、吞吐和成本仿真
 

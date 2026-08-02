@@ -1,10 +1,10 @@
 # E12-S04 多场景比较与决策记录交付报告
 
-- 状态：功能实现、全量门禁、远端备份、no-ff 受控集成与合并态复验完成，临时资源清理待本报告后续记录
+- 状态：功能实现、全量门禁、远端备份、no-ff 受控集成、合并态复验与临时资源清理全部完成
 - 起始基线：`6d13d7da0b63ae0f023724ba12a3f1a458fcb2c7`
 - 功能提交：`7b919b4b`
 - no-ff 集成提交：`577168e3`
-- 功能分支：`codex/space-e12-s04-comparison-decision`
+- 原功能分支：`codex/space-e12-s04-comparison-decision`（历史进入远端受控集成后已删除）
 - Migration：`20260802224514_SpaceE12S04PlanningComparisonDecision`
 
 ## 1. 交付结果
@@ -75,4 +75,6 @@ Design V1 OpenAPI 从 77 增至 83 个唯一 operation，C# 与 TypeScript 生�
 
 ## 7. 远端备份与资源清理
 
-功能分支最新 tip `a9298bad`（含交付文档）已推送远端备份，并以 `--no-ff` 合入受控集成，集成提交为 `577168e3`。合并树与功能 tip 文件树一致；合并态再次通过引擎 4/4、服务 3/3、权限/合同/OpenAPI/五语 66/66、前端 3 files / 10 tests、类型检查、双 EF、SDK drift、TypeScript SDK strict no-emit 与 Git 差异检查。功能工作树及本地/远端临时分支清理和实际释放空间将在完成后补记；`main` 不在本卡操作范围内。
+功能分支最新 tip `a9298bad`（含交付文档）已推送远端备份，并以 `--no-ff` 合入受控集成，集成提交为 `577168e3`。合并树与功能 tip 文件树一致；合并态再次通过引擎 4/4、服务 3/3、权限/合同/OpenAPI/五语 66/66、前端 3 files / 10 tests、类型检查、双 EF、SDK drift、TypeScript SDK strict no-emit 与 Git 差异检查。
+
+确认功能 tip 是远端集成分支祖先且两个工作树干净后，已删除功能工作树、本地功能分支和远端临时分支，并清除临时依赖 junction 与 Git 工作树元数据。本轮功能工作树实际移除 2,520,628,564 字节（约 2.348 GiB，包含本轮物理 `node_modules`、编译和测试产物）；`main` 未被本轮操作修改。
