@@ -21,6 +21,7 @@ import type {
   SubmitSpaceDispatchExecutionActionRequest,
   SpaceDispatchExecution,
   SpaceDispatchExecutionActionResponse,
+  SpaceDispatchOutcomeEvaluation,
 } from '@/types/space/runtime'
 
 export const spaceRuntimeApi = {
@@ -85,6 +86,17 @@ export const spaceRuntimeApi = {
       `/space/operations/v1/sites/${encodeURIComponent(siteId)}` +
         `/dispatch-recommendations/${encodeURIComponent(recommendationId)}` +
         `/approval-requests/${encodeURIComponent(approvalRequestId)}/execution`,
+    )
+  },
+  dispatchOutcomeEvaluation(
+    siteId: string,
+    recommendationId: string,
+    approvalRequestId: string,
+  ) {
+    return http.get<unknown, SpaceDispatchOutcomeEvaluation>(
+      `/space/operations/v1/sites/${encodeURIComponent(siteId)}` +
+        `/dispatch-recommendations/${encodeURIComponent(recommendationId)}` +
+        `/approval-requests/${encodeURIComponent(approvalRequestId)}/evaluation`,
     )
   },
   retryDispatchExecution(

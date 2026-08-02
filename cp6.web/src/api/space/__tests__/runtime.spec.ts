@@ -121,6 +121,20 @@ describe('spaceRuntimeApi', () => {
     expect(http.put).toHaveBeenNthCalledWith(2, `${base}/compensation-requests/action%2F2`, request)
   })
 
+  it('reads the outcome evaluation under the immutable approval identity', async () => {
+    await spaceRuntimeApi.dispatchOutcomeEvaluation(
+      'site/1',
+      'recommendation/1',
+      'approval/1',
+    )
+
+    expect(http.get).toHaveBeenCalledWith(
+      '/space/operations/v1/sites/site%2F1' +
+        '/dispatch-recommendations/recommendation%2F1' +
+        '/approval-requests/approval%2F1/evaluation',
+    )
+  })
+
   it('gets immutable putaway recommendation evidence by identity', async () => {
     await spaceRuntimeApi.putawayRecommendation('site/1', 'recommendation/1')
 

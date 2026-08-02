@@ -123,11 +123,15 @@
         :execution="dispatchExecution"
         :execution-loading="dispatchExecutionLoading"
         :execution-error="dispatchExecutionError"
+        :evaluation="dispatchEvaluation"
+        :evaluation-loading="dispatchEvaluationLoading"
+        :evaluation-error="dispatchEvaluationError"
         @generate="generateDispatchRecommendation"
         @submit-approval="submitDispatchApproval"
         @refresh-approval="refreshDispatchApproval"
         @cancel-approval="cancelDispatchApproval"
         @refresh-execution="refreshDispatchExecution"
+        @refresh-evaluation="refreshDispatchEvaluation"
         @retry-execution="retryDispatchExecution"
         @compensate-execution="compensateDispatchExecution"
         @locate="onSelectDispatchLocation"
@@ -227,6 +231,7 @@ import type {
   SubmitSpaceDispatchApprovalRequest,
   SpaceDispatchApprovalRequest,
   SpaceDispatchExecution,
+  SpaceDispatchOutcomeEvaluation,
   SubmitSpaceDispatchExecutionActionRequest,
 } from '@/types/space/runtime'
 import {
@@ -282,6 +287,7 @@ let putawayRecommendationRequestVersion = 0
 let dispatchRecommendationRequestVersion = 0
 let dispatchApprovalRequestVersion = 0
 let dispatchExecutionRequestVersion = 0
+let dispatchEvaluationRequestVersion = 0
 let preserveTaskPathNavigation = false
 
 const overlayMode = ref<OverlayMode>('status')
@@ -314,6 +320,9 @@ const dispatchApprovalError = ref('')
 const dispatchExecution = ref<SpaceDispatchExecution | null>(null)
 const dispatchExecutionLoading = ref(false)
 const dispatchExecutionError = ref('')
+const dispatchEvaluation = ref<SpaceDispatchOutcomeEvaluation | null>(null)
+const dispatchEvaluationLoading = ref(false)
+const dispatchEvaluationError = ref('')
 const unavailableRuntimeSource = (dataSourceId: string): SpaceRuntimeSource => ({
   kind: 'Unavailable',
   adapterId: dataSourceId,
@@ -555,9 +564,11 @@ function closeDispatchRecommendation(): void {
   dispatchRecommendationRequestVersion++
   dispatchApprovalRequestVersion++
   dispatchExecutionRequestVersion++
+  dispatchEvaluationRequestVersion++
   dispatchRecommendationLoading.value = false
   dispatchApprovalLoading.value = false
   dispatchExecutionLoading.value = false
+  dispatchEvaluationLoading.value = false
 }
 
 async function generateDispatchRecommendation(
@@ -582,6 +593,10 @@ async function generateDispatchRecommendation(
     dispatchExecution.value = null
     dispatchExecutionLoading.value = false
     dispatchExecutionError.value = ''
+    dispatchEvaluationRequestVersion++
+    dispatchEvaluation.value = null
+    dispatchEvaluationLoading.value = false
+    dispatchEvaluationError.value = ''
   } catch {
     if (requestVersion !== dispatchRecommendationRequestVersion) return
     dispatchRecommendationError.value = t('人员调度建议生成失败，保留上次成功结果')
@@ -601,6 +616,10 @@ async function submitDispatchApproval(
   const recommendationId = recommendation.recommendationId
   dispatchApprovalLoading.value = true
   dispatchApprovalError.value = ''
+  dispatchEvaluationRequestVersion++
+  dispatchEvaluation.value = null
+  dispatchEvaluationLoading.value = false
+  dispatchEvaluationError.value = ''
   try {
     const response = await spaceRuntimeApi.submitDispatchApproval(
       siteId,
@@ -611,7 +630,10 @@ async function submitDispatchApproval(
     if (requestVersion !== dispatchApprovalRequestVersion ||
       dispatchRecommendation.value?.recommendationId !== recommendationId) return
     dispatchApproval.value = response.approvalRequest
-    await refreshDispatchExecution(response.approvalRequest)
+    await Promise.all([
+      refreshDispatchExecution(response.approvalRequest),
+      refreshDispatchEvaluation(response.approvalRequest),
+    ])
   } catch {
     if (requestVersion !== dispatchApprovalRequestVersion) return
     dispatchApprovalError.value = t('调度审批提交失败，任务未修改')
@@ -636,7 +658,10 @@ async function refreshDispatchApproval(): Promise<void> {
     )
     if (requestVersion !== dispatchApprovalRequestVersion) return
     dispatchApproval.value = response
-    await refreshDispatchExecution(response)
+    await Promise.all([
+      refreshDispatchExecution(response),
+      refreshDispatchEvaluation(response),
+    ])
   } catch {
     if (requestVersion !== dispatchApprovalRequestVersion) return
     dispatchApprovalError.value = t('调度审批状态刷新失败')
@@ -667,7 +692,10 @@ async function cancelDispatchApproval(): Promise<void> {
     )
     if (requestVersion !== dispatchApprovalRequestVersion) return
     dispatchApproval.value = refreshedApproval
-    await refreshDispatchExecution(refreshedApproval)
+    await Promise.all([
+      refreshDispatchExecution(refreshedApproval),
+      refreshDispatchEvaluation(refreshedApproval),
+    ])
   } catch {
     if (requestVersion !== dispatchApprovalRequestVersion) return
     dispatchApprovalError.value = t('调度审批取消失败')
@@ -704,6 +732,36 @@ async function refreshDispatchExecution(
   } finally {
     if (requestVersion === dispatchExecutionRequestVersion) {
       dispatchExecutionLoading.value = false
+    }
+  }
+}
+
+async function refreshDispatchEvaluation(
+  approvalOverride?: SpaceDispatchApprovalRequest,
+): Promise<void> {
+  const approval = approvalOverride ?? dispatchApproval.value
+  if (!approval) return
+  const requestVersion = ++dispatchEvaluationRequestVersion
+  const recommendationId = approval.recommendationId
+  const approvalRequestId = approval.approvalRequestId
+  dispatchEvaluationLoading.value = true
+  dispatchEvaluationError.value = ''
+  try {
+    const response = await spaceRuntimeApi.dispatchOutcomeEvaluation(
+      siteId,
+      recommendationId,
+      approvalRequestId,
+    )
+    if (requestVersion !== dispatchEvaluationRequestVersion ||
+      dispatchRecommendation.value?.recommendationId !== recommendationId ||
+      dispatchApproval.value?.approvalRequestId !== approvalRequestId) return
+    dispatchEvaluation.value = response
+  } catch {
+    if (requestVersion !== dispatchEvaluationRequestVersion) return
+    dispatchEvaluationError.value = t('调度效果评估刷新失败，保留上次成功结果')
+  } finally {
+    if (requestVersion === dispatchEvaluationRequestVersion) {
+      dispatchEvaluationLoading.value = false
     }
   }
 }
@@ -752,10 +810,12 @@ async function submitDispatchExecutionAction(
       dispatchRecommendation.value?.recommendationId !== recommendationId ||
       dispatchApproval.value?.approvalRequestId !== approvalRequestId) return
     dispatchExecution.value = response.execution
-    dispatchApproval.value = {
+    const refreshedApproval: SpaceDispatchApprovalRequest = {
       ...approval,
       status: response.execution.approvalStatus,
     }
+    dispatchApproval.value = refreshedApproval
+    await refreshDispatchEvaluation(refreshedApproval)
   } catch {
     if (requestVersion !== dispatchExecutionRequestVersion) return
     dispatchExecutionError.value = action === 'retry'
@@ -1382,6 +1442,7 @@ onBeforeUnmount(() => {
   dispatchRecommendationRequestVersion++
   dispatchApprovalRequestVersion++
   dispatchExecutionRequestVersion++
+  dispatchEvaluationRequestVersion++
   overlay?.dispose()
   overlay = null
   pathAnimator?.clear(); pathAnimator = null

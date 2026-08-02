@@ -552,8 +552,11 @@ public sealed class SpaceAuditPermissionSeedTests
     {
         var rows = I18nSpaceDispatchRecommendationSeed.Items;
 
-        Assert.Equal(91, rows.Length);
+        Assert.Equal(119, rows.Length);
         Assert.Equal(rows.Length, rows.Select(row => row.LangKey).Distinct().Count());
+        Assert.Contains(rows, row => row.LangKey == "调度效果评估");
+        Assert.Contains(rows, row => row.LangKey == "计划几何比较");
+        Assert.Contains(rows, row => row.LangKey == "实际路线节省不可用");
         Assert.All(rows, row =>
         {
             Assert.False(string.IsNullOrWhiteSpace(row.LangKey));

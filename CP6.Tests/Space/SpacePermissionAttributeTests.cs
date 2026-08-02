@@ -104,6 +104,8 @@ public class SpacePermissionAttributeTests
                 "space:operations:dispatch:read",
             ["SpaceDispatchApprovalController.GetExecution"] =
                 "space:operations:dispatch:read",
+            ["SpaceDispatchApprovalController.GetEvaluation"] =
+                "space:operations:dispatch:read",
             ["SpaceExternalOrganizationController.GetOrganizations"] =
                 "space:external:read",
             ["SpaceExternalOrganizationController.GetOrganization"] =
