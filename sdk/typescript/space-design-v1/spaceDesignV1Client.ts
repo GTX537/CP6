@@ -418,6 +418,23 @@ export interface ISpaceDesignV1Client {
     getBranches(siteId: string, limit: number | undefined): Promise<SpacePlanningScenarioBranchListResponse>;
 
     /**
+     * @param body (optional)
+     * @return OK
+     */
+    createSimulationRun(siteId: string, branchId: string, runId: string, body: CreateSpacePlanningSimulationRunRequest | undefined): Promise<CreateSpacePlanningSimulationRunResponse>;
+
+    /**
+     * @return OK
+     */
+    getSimulationRun(siteId: string, branchId: string, runId: string): Promise<SpacePlanningSimulationRunDto>;
+
+    /**
+     * @param limit (optional)
+     * @return OK
+     */
+    getSimulationRuns(siteId: string, branchId: string, limit: number | undefined): Promise<SpacePlanningSimulationRunListResponse>;
+
+    /**
      * @param locationLogicalId (optional)
      * @return OK
      */
@@ -7210,6 +7227,298 @@ export class SpaceDesignV1Client implements ISpaceDesignV1Client {
     }
 
     /**
+     * @param body (optional)
+     * @return OK
+     */
+    createSimulationRun(siteId: string, branchId: string, runId: string, body: CreateSpacePlanningSimulationRunRequest | undefined): Promise<CreateSpacePlanningSimulationRunResponse> {
+        let url_ = this.baseUrl + "/api/space/planning/v1/sites/{siteId}/scenario-branches/{branchId}/simulation-runs/{runId}";
+        if (siteId === undefined || siteId === null)
+            throw new globalThis.Error("The parameter 'siteId' must be defined.");
+        url_ = url_.replace("{siteId}", encodeURIComponent("" + siteId));
+        if (branchId === undefined || branchId === null)
+            throw new globalThis.Error("The parameter 'branchId' must be defined.");
+        url_ = url_.replace("{branchId}", encodeURIComponent("" + branchId));
+        if (runId === undefined || runId === null)
+            throw new globalThis.Error("The parameter 'runId' must be defined.");
+        url_ = url_.replace("{runId}", encodeURIComponent("" + runId));
+        url_ = url_.replace(/[?&]$/, "");
+
+        const content_ = JSON.stringify(body);
+
+        let options_: RequestInit = {
+            body: content_,
+            method: "PUT",
+            headers: {
+                "Content-Type": "application/json",
+                "Accept": "application/json"
+            }
+        };
+
+        return this.http.fetch(url_, options_).then((_response: Response) => {
+            return this.processCreateSimulationRun(_response);
+        });
+    }
+
+    protected processCreateSimulationRun(response: Response): Promise<CreateSpacePlanningSimulationRunResponse> {
+        const status = response.status;
+        let _headers: any = {}; if (response.headers && response.headers.forEach) { response.headers.forEach((v: any, k: any) => _headers[k] = v); };
+        if (status === 200) {
+            return response.text().then((_responseText) => {
+            let result200: any = null;
+            let resultData200 = _responseText === "" ? null : JSON.parse(_responseText, this.jsonParseReviver);
+            result200 = CreateSpacePlanningSimulationRunResponse.fromJS(resultData200);
+            return result200;
+            });
+        } else if (status === 400) {
+            return response.text().then((_responseText) => {
+            let result400: any = null;
+            let resultData400 = _responseText === "" ? null : JSON.parse(_responseText, this.jsonParseReviver);
+            result400 = SpaceDesignProblemDetails.fromJS(resultData400);
+            return throwException("Bad Request", status, _responseText, _headers, result400);
+            });
+        } else if (status === 401) {
+            return response.text().then((_responseText) => {
+            let result401: any = null;
+            let resultData401 = _responseText === "" ? null : JSON.parse(_responseText, this.jsonParseReviver);
+            result401 = SpaceDesignProblemDetails.fromJS(resultData401);
+            return throwException("Unauthorized", status, _responseText, _headers, result401);
+            });
+        } else if (status === 403) {
+            return response.text().then((_responseText) => {
+            let result403: any = null;
+            let resultData403 = _responseText === "" ? null : JSON.parse(_responseText, this.jsonParseReviver);
+            result403 = SpaceDesignProblemDetails.fromJS(resultData403);
+            return throwException("Forbidden", status, _responseText, _headers, result403);
+            });
+        } else if (status === 404) {
+            return response.text().then((_responseText) => {
+            let result404: any = null;
+            let resultData404 = _responseText === "" ? null : JSON.parse(_responseText, this.jsonParseReviver);
+            result404 = SpaceDesignProblemDetails.fromJS(resultData404);
+            return throwException("Not Found", status, _responseText, _headers, result404);
+            });
+        } else if (status === 409) {
+            return response.text().then((_responseText) => {
+            let result409: any = null;
+            let resultData409 = _responseText === "" ? null : JSON.parse(_responseText, this.jsonParseReviver);
+            result409 = SpaceDesignProblemDetails.fromJS(resultData409);
+            return throwException("Conflict", status, _responseText, _headers, result409);
+            });
+        } else if (status === 422) {
+            return response.text().then((_responseText) => {
+            let result422: any = null;
+            let resultData422 = _responseText === "" ? null : JSON.parse(_responseText, this.jsonParseReviver);
+            result422 = SpaceDesignProblemDetails.fromJS(resultData422);
+            return throwException("Unprocessable Content", status, _responseText, _headers, result422);
+            });
+        } else if (status === 500) {
+            return response.text().then((_responseText) => {
+            let result500: any = null;
+            let resultData500 = _responseText === "" ? null : JSON.parse(_responseText, this.jsonParseReviver);
+            result500 = SpaceDesignProblemDetails.fromJS(resultData500);
+            return throwException("Internal Server Error", status, _responseText, _headers, result500);
+            });
+        } else if (status !== 200 && status !== 204) {
+            return response.text().then((_responseText) => {
+            return throwException("An unexpected server error occurred.", status, _responseText, _headers);
+            });
+        }
+        return Promise.resolve<CreateSpacePlanningSimulationRunResponse>(null as any);
+    }
+
+    /**
+     * @return OK
+     */
+    getSimulationRun(siteId: string, branchId: string, runId: string): Promise<SpacePlanningSimulationRunDto> {
+        let url_ = this.baseUrl + "/api/space/planning/v1/sites/{siteId}/scenario-branches/{branchId}/simulation-runs/{runId}";
+        if (siteId === undefined || siteId === null)
+            throw new globalThis.Error("The parameter 'siteId' must be defined.");
+        url_ = url_.replace("{siteId}", encodeURIComponent("" + siteId));
+        if (branchId === undefined || branchId === null)
+            throw new globalThis.Error("The parameter 'branchId' must be defined.");
+        url_ = url_.replace("{branchId}", encodeURIComponent("" + branchId));
+        if (runId === undefined || runId === null)
+            throw new globalThis.Error("The parameter 'runId' must be defined.");
+        url_ = url_.replace("{runId}", encodeURIComponent("" + runId));
+        url_ = url_.replace(/[?&]$/, "");
+
+        let options_: RequestInit = {
+            method: "GET",
+            headers: {
+                "Accept": "application/json"
+            }
+        };
+
+        return this.http.fetch(url_, options_).then((_response: Response) => {
+            return this.processGetSimulationRun(_response);
+        });
+    }
+
+    protected processGetSimulationRun(response: Response): Promise<SpacePlanningSimulationRunDto> {
+        const status = response.status;
+        let _headers: any = {}; if (response.headers && response.headers.forEach) { response.headers.forEach((v: any, k: any) => _headers[k] = v); };
+        if (status === 200) {
+            return response.text().then((_responseText) => {
+            let result200: any = null;
+            let resultData200 = _responseText === "" ? null : JSON.parse(_responseText, this.jsonParseReviver);
+            result200 = SpacePlanningSimulationRunDto.fromJS(resultData200);
+            return result200;
+            });
+        } else if (status === 400) {
+            return response.text().then((_responseText) => {
+            let result400: any = null;
+            let resultData400 = _responseText === "" ? null : JSON.parse(_responseText, this.jsonParseReviver);
+            result400 = SpaceDesignProblemDetails.fromJS(resultData400);
+            return throwException("Bad Request", status, _responseText, _headers, result400);
+            });
+        } else if (status === 401) {
+            return response.text().then((_responseText) => {
+            let result401: any = null;
+            let resultData401 = _responseText === "" ? null : JSON.parse(_responseText, this.jsonParseReviver);
+            result401 = SpaceDesignProblemDetails.fromJS(resultData401);
+            return throwException("Unauthorized", status, _responseText, _headers, result401);
+            });
+        } else if (status === 403) {
+            return response.text().then((_responseText) => {
+            let result403: any = null;
+            let resultData403 = _responseText === "" ? null : JSON.parse(_responseText, this.jsonParseReviver);
+            result403 = SpaceDesignProblemDetails.fromJS(resultData403);
+            return throwException("Forbidden", status, _responseText, _headers, result403);
+            });
+        } else if (status === 404) {
+            return response.text().then((_responseText) => {
+            let result404: any = null;
+            let resultData404 = _responseText === "" ? null : JSON.parse(_responseText, this.jsonParseReviver);
+            result404 = SpaceDesignProblemDetails.fromJS(resultData404);
+            return throwException("Not Found", status, _responseText, _headers, result404);
+            });
+        } else if (status === 409) {
+            return response.text().then((_responseText) => {
+            let result409: any = null;
+            let resultData409 = _responseText === "" ? null : JSON.parse(_responseText, this.jsonParseReviver);
+            result409 = SpaceDesignProblemDetails.fromJS(resultData409);
+            return throwException("Conflict", status, _responseText, _headers, result409);
+            });
+        } else if (status === 422) {
+            return response.text().then((_responseText) => {
+            let result422: any = null;
+            let resultData422 = _responseText === "" ? null : JSON.parse(_responseText, this.jsonParseReviver);
+            result422 = SpaceDesignProblemDetails.fromJS(resultData422);
+            return throwException("Unprocessable Content", status, _responseText, _headers, result422);
+            });
+        } else if (status === 500) {
+            return response.text().then((_responseText) => {
+            let result500: any = null;
+            let resultData500 = _responseText === "" ? null : JSON.parse(_responseText, this.jsonParseReviver);
+            result500 = SpaceDesignProblemDetails.fromJS(resultData500);
+            return throwException("Internal Server Error", status, _responseText, _headers, result500);
+            });
+        } else if (status !== 200 && status !== 204) {
+            return response.text().then((_responseText) => {
+            return throwException("An unexpected server error occurred.", status, _responseText, _headers);
+            });
+        }
+        return Promise.resolve<SpacePlanningSimulationRunDto>(null as any);
+    }
+
+    /**
+     * @param limit (optional)
+     * @return OK
+     */
+    getSimulationRuns(siteId: string, branchId: string, limit: number | undefined): Promise<SpacePlanningSimulationRunListResponse> {
+        let url_ = this.baseUrl + "/api/space/planning/v1/sites/{siteId}/scenario-branches/{branchId}/simulation-runs?";
+        if (siteId === undefined || siteId === null)
+            throw new globalThis.Error("The parameter 'siteId' must be defined.");
+        url_ = url_.replace("{siteId}", encodeURIComponent("" + siteId));
+        if (branchId === undefined || branchId === null)
+            throw new globalThis.Error("The parameter 'branchId' must be defined.");
+        url_ = url_.replace("{branchId}", encodeURIComponent("" + branchId));
+        if (limit === null)
+            throw new globalThis.Error("The parameter 'limit' cannot be null.");
+        else if (limit !== undefined)
+            url_ += "limit=" + encodeURIComponent("" + limit) + "&";
+        url_ = url_.replace(/[?&]$/, "");
+
+        let options_: RequestInit = {
+            method: "GET",
+            headers: {
+                "Accept": "application/json"
+            }
+        };
+
+        return this.http.fetch(url_, options_).then((_response: Response) => {
+            return this.processGetSimulationRuns(_response);
+        });
+    }
+
+    protected processGetSimulationRuns(response: Response): Promise<SpacePlanningSimulationRunListResponse> {
+        const status = response.status;
+        let _headers: any = {}; if (response.headers && response.headers.forEach) { response.headers.forEach((v: any, k: any) => _headers[k] = v); };
+        if (status === 200) {
+            return response.text().then((_responseText) => {
+            let result200: any = null;
+            let resultData200 = _responseText === "" ? null : JSON.parse(_responseText, this.jsonParseReviver);
+            result200 = SpacePlanningSimulationRunListResponse.fromJS(resultData200);
+            return result200;
+            });
+        } else if (status === 400) {
+            return response.text().then((_responseText) => {
+            let result400: any = null;
+            let resultData400 = _responseText === "" ? null : JSON.parse(_responseText, this.jsonParseReviver);
+            result400 = SpaceDesignProblemDetails.fromJS(resultData400);
+            return throwException("Bad Request", status, _responseText, _headers, result400);
+            });
+        } else if (status === 401) {
+            return response.text().then((_responseText) => {
+            let result401: any = null;
+            let resultData401 = _responseText === "" ? null : JSON.parse(_responseText, this.jsonParseReviver);
+            result401 = SpaceDesignProblemDetails.fromJS(resultData401);
+            return throwException("Unauthorized", status, _responseText, _headers, result401);
+            });
+        } else if (status === 403) {
+            return response.text().then((_responseText) => {
+            let result403: any = null;
+            let resultData403 = _responseText === "" ? null : JSON.parse(_responseText, this.jsonParseReviver);
+            result403 = SpaceDesignProblemDetails.fromJS(resultData403);
+            return throwException("Forbidden", status, _responseText, _headers, result403);
+            });
+        } else if (status === 404) {
+            return response.text().then((_responseText) => {
+            let result404: any = null;
+            let resultData404 = _responseText === "" ? null : JSON.parse(_responseText, this.jsonParseReviver);
+            result404 = SpaceDesignProblemDetails.fromJS(resultData404);
+            return throwException("Not Found", status, _responseText, _headers, result404);
+            });
+        } else if (status === 409) {
+            return response.text().then((_responseText) => {
+            let result409: any = null;
+            let resultData409 = _responseText === "" ? null : JSON.parse(_responseText, this.jsonParseReviver);
+            result409 = SpaceDesignProblemDetails.fromJS(resultData409);
+            return throwException("Conflict", status, _responseText, _headers, result409);
+            });
+        } else if (status === 422) {
+            return response.text().then((_responseText) => {
+            let result422: any = null;
+            let resultData422 = _responseText === "" ? null : JSON.parse(_responseText, this.jsonParseReviver);
+            result422 = SpaceDesignProblemDetails.fromJS(resultData422);
+            return throwException("Unprocessable Content", status, _responseText, _headers, result422);
+            });
+        } else if (status === 500) {
+            return response.text().then((_responseText) => {
+            let result500: any = null;
+            let resultData500 = _responseText === "" ? null : JSON.parse(_responseText, this.jsonParseReviver);
+            result500 = SpaceDesignProblemDetails.fromJS(resultData500);
+            return throwException("Internal Server Error", status, _responseText, _headers, result500);
+            });
+        } else if (status !== 200 && status !== 204) {
+            return response.text().then((_responseText) => {
+            return throwException("An unexpected server error occurred.", status, _responseText, _headers);
+            });
+        }
+        return Promise.resolve<SpacePlanningSimulationRunListResponse>(null as any);
+    }
+
+    /**
      * @param locationLogicalId (optional)
      * @return OK
      */
@@ -8822,6 +9131,126 @@ export class CreateSpacePlanningScenarioBranchResponse implements ICreateSpacePl
 export interface ICreateSpacePlanningScenarioBranchResponse {
     outcome?: string | undefined;
     branch?: SpacePlanningScenarioBranchDto;
+}
+
+export class CreateSpacePlanningSimulationRunRequest implements ICreateSpacePlanningSimulationRunRequest {
+    name?: string | undefined;
+    datasetId?: string;
+    defaultQuantityCapacity?: number;
+    defaultConcurrentTaskCapacity?: number;
+    throughputWindowMinutes?: number;
+    distanceCostPerMeter?: number;
+    laborCostPerHour?: number;
+    congestionCostPerTaskHour?: number;
+    currencyCode?: string | undefined;
+    locationCapacities?: SpacePlanningSimulationLocationCapacityRequest[] | undefined;
+
+    constructor(data?: ICreateSpacePlanningSimulationRunRequest) {
+        if (data) {
+            for (var property in data) {
+                if (data.hasOwnProperty(property))
+                    (this as any)[property] = (data as any)[property];
+            }
+        }
+    }
+
+    init(_data?: any) {
+        if (_data) {
+            this.name = _data["name"];
+            this.datasetId = _data["datasetId"];
+            this.defaultQuantityCapacity = _data["defaultQuantityCapacity"];
+            this.defaultConcurrentTaskCapacity = _data["defaultConcurrentTaskCapacity"];
+            this.throughputWindowMinutes = _data["throughputWindowMinutes"];
+            this.distanceCostPerMeter = _data["distanceCostPerMeter"];
+            this.laborCostPerHour = _data["laborCostPerHour"];
+            this.congestionCostPerTaskHour = _data["congestionCostPerTaskHour"];
+            this.currencyCode = _data["currencyCode"];
+            if (Array.isArray(_data["locationCapacities"])) {
+                this.locationCapacities = [] as any;
+                for (let item of _data["locationCapacities"])
+                    this.locationCapacities!.push(SpacePlanningSimulationLocationCapacityRequest.fromJS(item));
+            }
+        }
+    }
+
+    static fromJS(data: any): CreateSpacePlanningSimulationRunRequest {
+        data = typeof data === 'object' ? data : {};
+        let result = new CreateSpacePlanningSimulationRunRequest();
+        result.init(data);
+        return result;
+    }
+
+    toJSON(data?: any) {
+        data = typeof data === 'object' ? data : {};
+        data["name"] = this.name;
+        data["datasetId"] = this.datasetId;
+        data["defaultQuantityCapacity"] = this.defaultQuantityCapacity;
+        data["defaultConcurrentTaskCapacity"] = this.defaultConcurrentTaskCapacity;
+        data["throughputWindowMinutes"] = this.throughputWindowMinutes;
+        data["distanceCostPerMeter"] = this.distanceCostPerMeter;
+        data["laborCostPerHour"] = this.laborCostPerHour;
+        data["congestionCostPerTaskHour"] = this.congestionCostPerTaskHour;
+        data["currencyCode"] = this.currencyCode;
+        if (Array.isArray(this.locationCapacities)) {
+            data["locationCapacities"] = [];
+            for (let item of this.locationCapacities)
+                data["locationCapacities"].push(item ? item.toJSON() : undefined as any);
+        }
+        return data;
+    }
+}
+
+export interface ICreateSpacePlanningSimulationRunRequest {
+    name?: string | undefined;
+    datasetId?: string;
+    defaultQuantityCapacity?: number;
+    defaultConcurrentTaskCapacity?: number;
+    throughputWindowMinutes?: number;
+    distanceCostPerMeter?: number;
+    laborCostPerHour?: number;
+    congestionCostPerTaskHour?: number;
+    currencyCode?: string | undefined;
+    locationCapacities?: SpacePlanningSimulationLocationCapacityRequest[] | undefined;
+}
+
+export class CreateSpacePlanningSimulationRunResponse implements ICreateSpacePlanningSimulationRunResponse {
+    outcome?: string | undefined;
+    run?: SpacePlanningSimulationRunDto;
+
+    constructor(data?: ICreateSpacePlanningSimulationRunResponse) {
+        if (data) {
+            for (var property in data) {
+                if (data.hasOwnProperty(property))
+                    (this as any)[property] = (data as any)[property];
+            }
+        }
+    }
+
+    init(_data?: any) {
+        if (_data) {
+            this.outcome = _data["outcome"];
+            this.run = _data["run"] ? SpacePlanningSimulationRunDto.fromJS(_data["run"]) : undefined as any;
+        }
+    }
+
+    static fromJS(data: any): CreateSpacePlanningSimulationRunResponse {
+        data = typeof data === 'object' ? data : {};
+        let result = new CreateSpacePlanningSimulationRunResponse();
+        result.init(data);
+        return result;
+    }
+
+    toJSON(data?: any) {
+        data = typeof data === 'object' ? data : {};
+        data["outcome"] = this.outcome;
+        data["run"] = this.run ? this.run.toJSON() : undefined as any;
+        return data;
+    }
+}
+
+export interface ICreateSpacePlanningSimulationRunResponse {
+    outcome?: string | undefined;
+    run?: SpacePlanningSimulationRunDto;
 }
 
 export class CreateSpaceSourceRequest implements ICreateSpaceSourceRequest {
@@ -14027,6 +14456,766 @@ export class SpacePlanningScenarioBranchListResponse implements ISpacePlanningSc
 export interface ISpacePlanningScenarioBranchListResponse {
     items?: SpacePlanningScenarioBranchDto[] | undefined;
     isTruncated?: boolean;
+}
+
+export class SpacePlanningSimulationCapacityDto implements ISpacePlanningSimulationCapacityDto {
+    monitoredLocationCount?: number;
+    overloadedLocationCount?: number;
+    peakUtilizationPercent?: number;
+    quantityBasis?: string | undefined;
+
+    constructor(data?: ISpacePlanningSimulationCapacityDto) {
+        if (data) {
+            for (var property in data) {
+                if (data.hasOwnProperty(property))
+                    (this as any)[property] = (data as any)[property];
+            }
+        }
+    }
+
+    init(_data?: any) {
+        if (_data) {
+            this.monitoredLocationCount = _data["monitoredLocationCount"];
+            this.overloadedLocationCount = _data["overloadedLocationCount"];
+            this.peakUtilizationPercent = _data["peakUtilizationPercent"];
+            this.quantityBasis = _data["quantityBasis"];
+        }
+    }
+
+    static fromJS(data: any): SpacePlanningSimulationCapacityDto {
+        data = typeof data === 'object' ? data : {};
+        let result = new SpacePlanningSimulationCapacityDto();
+        result.init(data);
+        return result;
+    }
+
+    toJSON(data?: any) {
+        data = typeof data === 'object' ? data : {};
+        data["monitoredLocationCount"] = this.monitoredLocationCount;
+        data["overloadedLocationCount"] = this.overloadedLocationCount;
+        data["peakUtilizationPercent"] = this.peakUtilizationPercent;
+        data["quantityBasis"] = this.quantityBasis;
+        return data;
+    }
+}
+
+export interface ISpacePlanningSimulationCapacityDto {
+    monitoredLocationCount?: number;
+    overloadedLocationCount?: number;
+    peakUtilizationPercent?: number;
+    quantityBasis?: string | undefined;
+}
+
+export class SpacePlanningSimulationCongestionDto implements ISpacePlanningSimulationCongestionDto {
+    monitoredLocationCount?: number;
+    overloadedLocationCount?: number;
+    peakConcurrentTasks?: number;
+    congestionSeconds?: number;
+    congestionTaskSeconds?: number;
+    congestionTaskHours?: number;
+
+    constructor(data?: ISpacePlanningSimulationCongestionDto) {
+        if (data) {
+            for (var property in data) {
+                if (data.hasOwnProperty(property))
+                    (this as any)[property] = (data as any)[property];
+            }
+        }
+    }
+
+    init(_data?: any) {
+        if (_data) {
+            this.monitoredLocationCount = _data["monitoredLocationCount"];
+            this.overloadedLocationCount = _data["overloadedLocationCount"];
+            this.peakConcurrentTasks = _data["peakConcurrentTasks"];
+            this.congestionSeconds = _data["congestionSeconds"];
+            this.congestionTaskSeconds = _data["congestionTaskSeconds"];
+            this.congestionTaskHours = _data["congestionTaskHours"];
+        }
+    }
+
+    static fromJS(data: any): SpacePlanningSimulationCongestionDto {
+        data = typeof data === 'object' ? data : {};
+        let result = new SpacePlanningSimulationCongestionDto();
+        result.init(data);
+        return result;
+    }
+
+    toJSON(data?: any) {
+        data = typeof data === 'object' ? data : {};
+        data["monitoredLocationCount"] = this.monitoredLocationCount;
+        data["overloadedLocationCount"] = this.overloadedLocationCount;
+        data["peakConcurrentTasks"] = this.peakConcurrentTasks;
+        data["congestionSeconds"] = this.congestionSeconds;
+        data["congestionTaskSeconds"] = this.congestionTaskSeconds;
+        data["congestionTaskHours"] = this.congestionTaskHours;
+        return data;
+    }
+}
+
+export interface ISpacePlanningSimulationCongestionDto {
+    monitoredLocationCount?: number;
+    overloadedLocationCount?: number;
+    peakConcurrentTasks?: number;
+    congestionSeconds?: number;
+    congestionTaskSeconds?: number;
+    congestionTaskHours?: number;
+}
+
+export class SpacePlanningSimulationCostDto implements ISpacePlanningSimulationCostDto {
+    currencyCode?: string | undefined;
+    laborHours?: number;
+    distanceCost?: number;
+    laborCost?: number;
+    congestionCost?: number;
+    totalCost?: number;
+    laborBasis?: string | undefined;
+
+    constructor(data?: ISpacePlanningSimulationCostDto) {
+        if (data) {
+            for (var property in data) {
+                if (data.hasOwnProperty(property))
+                    (this as any)[property] = (data as any)[property];
+            }
+        }
+    }
+
+    init(_data?: any) {
+        if (_data) {
+            this.currencyCode = _data["currencyCode"];
+            this.laborHours = _data["laborHours"];
+            this.distanceCost = _data["distanceCost"];
+            this.laborCost = _data["laborCost"];
+            this.congestionCost = _data["congestionCost"];
+            this.totalCost = _data["totalCost"];
+            this.laborBasis = _data["laborBasis"];
+        }
+    }
+
+    static fromJS(data: any): SpacePlanningSimulationCostDto {
+        data = typeof data === 'object' ? data : {};
+        let result = new SpacePlanningSimulationCostDto();
+        result.init(data);
+        return result;
+    }
+
+    toJSON(data?: any) {
+        data = typeof data === 'object' ? data : {};
+        data["currencyCode"] = this.currencyCode;
+        data["laborHours"] = this.laborHours;
+        data["distanceCost"] = this.distanceCost;
+        data["laborCost"] = this.laborCost;
+        data["congestionCost"] = this.congestionCost;
+        data["totalCost"] = this.totalCost;
+        data["laborBasis"] = this.laborBasis;
+        return data;
+    }
+}
+
+export interface ISpacePlanningSimulationCostDto {
+    currencyCode?: string | undefined;
+    laborHours?: number;
+    distanceCost?: number;
+    laborCost?: number;
+    congestionCost?: number;
+    totalCost?: number;
+    laborBasis?: string | undefined;
+}
+
+export class SpacePlanningSimulationDistanceDto implements ISpacePlanningSimulationDistanceDto {
+    geometryBasis?: string | undefined;
+    taskCount?: number;
+    eligibleTaskCount?: number;
+    unknownTaskCount?: number;
+    coveragePercent?: number;
+    totalDistanceMeters?: number;
+    averageEligibleTaskDistanceMeters?: number | undefined;
+
+    constructor(data?: ISpacePlanningSimulationDistanceDto) {
+        if (data) {
+            for (var property in data) {
+                if (data.hasOwnProperty(property))
+                    (this as any)[property] = (data as any)[property];
+            }
+        }
+    }
+
+    init(_data?: any) {
+        if (_data) {
+            this.geometryBasis = _data["geometryBasis"];
+            this.taskCount = _data["taskCount"];
+            this.eligibleTaskCount = _data["eligibleTaskCount"];
+            this.unknownTaskCount = _data["unknownTaskCount"];
+            this.coveragePercent = _data["coveragePercent"];
+            this.totalDistanceMeters = _data["totalDistanceMeters"];
+            this.averageEligibleTaskDistanceMeters = _data["averageEligibleTaskDistanceMeters"];
+        }
+    }
+
+    static fromJS(data: any): SpacePlanningSimulationDistanceDto {
+        data = typeof data === 'object' ? data : {};
+        let result = new SpacePlanningSimulationDistanceDto();
+        result.init(data);
+        return result;
+    }
+
+    toJSON(data?: any) {
+        data = typeof data === 'object' ? data : {};
+        data["geometryBasis"] = this.geometryBasis;
+        data["taskCount"] = this.taskCount;
+        data["eligibleTaskCount"] = this.eligibleTaskCount;
+        data["unknownTaskCount"] = this.unknownTaskCount;
+        data["coveragePercent"] = this.coveragePercent;
+        data["totalDistanceMeters"] = this.totalDistanceMeters;
+        data["averageEligibleTaskDistanceMeters"] = this.averageEligibleTaskDistanceMeters;
+        return data;
+    }
+}
+
+export interface ISpacePlanningSimulationDistanceDto {
+    geometryBasis?: string | undefined;
+    taskCount?: number;
+    eligibleTaskCount?: number;
+    unknownTaskCount?: number;
+    coveragePercent?: number;
+    totalDistanceMeters?: number;
+    averageEligibleTaskDistanceMeters?: number | undefined;
+}
+
+export class SpacePlanningSimulationLocationCapacityRequest implements ISpacePlanningSimulationLocationCapacityRequest {
+    locationLogicalId?: string;
+    quantityCapacity?: number;
+    concurrentTaskCapacity?: number;
+
+    constructor(data?: ISpacePlanningSimulationLocationCapacityRequest) {
+        if (data) {
+            for (var property in data) {
+                if (data.hasOwnProperty(property))
+                    (this as any)[property] = (data as any)[property];
+            }
+        }
+    }
+
+    init(_data?: any) {
+        if (_data) {
+            this.locationLogicalId = _data["locationLogicalId"];
+            this.quantityCapacity = _data["quantityCapacity"];
+            this.concurrentTaskCapacity = _data["concurrentTaskCapacity"];
+        }
+    }
+
+    static fromJS(data: any): SpacePlanningSimulationLocationCapacityRequest {
+        data = typeof data === 'object' ? data : {};
+        let result = new SpacePlanningSimulationLocationCapacityRequest();
+        result.init(data);
+        return result;
+    }
+
+    toJSON(data?: any) {
+        data = typeof data === 'object' ? data : {};
+        data["locationLogicalId"] = this.locationLogicalId;
+        data["quantityCapacity"] = this.quantityCapacity;
+        data["concurrentTaskCapacity"] = this.concurrentTaskCapacity;
+        return data;
+    }
+}
+
+export interface ISpacePlanningSimulationLocationCapacityRequest {
+    locationLogicalId?: string;
+    quantityCapacity?: number;
+    concurrentTaskCapacity?: number;
+}
+
+export class SpacePlanningSimulationLocationResultDto implements ISpacePlanningSimulationLocationResultDto {
+    locationLogicalId?: string;
+    taskCount?: number;
+    completedTaskCount?: number;
+    totalQuantity?: number;
+    distanceEligibleTaskCount?: number;
+    totalDistanceMeters?: number;
+    quantityCapacity?: number;
+    concurrentTaskCapacity?: number;
+    peakConcurrentTasks?: number;
+    peakConcurrentQuantity?: number;
+    capacityUtilizationPercent?: number;
+    congestionSeconds?: number;
+    congestionTaskSeconds?: number;
+    isOverloaded?: boolean;
+
+    constructor(data?: ISpacePlanningSimulationLocationResultDto) {
+        if (data) {
+            for (var property in data) {
+                if (data.hasOwnProperty(property))
+                    (this as any)[property] = (data as any)[property];
+            }
+        }
+    }
+
+    init(_data?: any) {
+        if (_data) {
+            this.locationLogicalId = _data["locationLogicalId"];
+            this.taskCount = _data["taskCount"];
+            this.completedTaskCount = _data["completedTaskCount"];
+            this.totalQuantity = _data["totalQuantity"];
+            this.distanceEligibleTaskCount = _data["distanceEligibleTaskCount"];
+            this.totalDistanceMeters = _data["totalDistanceMeters"];
+            this.quantityCapacity = _data["quantityCapacity"];
+            this.concurrentTaskCapacity = _data["concurrentTaskCapacity"];
+            this.peakConcurrentTasks = _data["peakConcurrentTasks"];
+            this.peakConcurrentQuantity = _data["peakConcurrentQuantity"];
+            this.capacityUtilizationPercent = _data["capacityUtilizationPercent"];
+            this.congestionSeconds = _data["congestionSeconds"];
+            this.congestionTaskSeconds = _data["congestionTaskSeconds"];
+            this.isOverloaded = _data["isOverloaded"];
+        }
+    }
+
+    static fromJS(data: any): SpacePlanningSimulationLocationResultDto {
+        data = typeof data === 'object' ? data : {};
+        let result = new SpacePlanningSimulationLocationResultDto();
+        result.init(data);
+        return result;
+    }
+
+    toJSON(data?: any) {
+        data = typeof data === 'object' ? data : {};
+        data["locationLogicalId"] = this.locationLogicalId;
+        data["taskCount"] = this.taskCount;
+        data["completedTaskCount"] = this.completedTaskCount;
+        data["totalQuantity"] = this.totalQuantity;
+        data["distanceEligibleTaskCount"] = this.distanceEligibleTaskCount;
+        data["totalDistanceMeters"] = this.totalDistanceMeters;
+        data["quantityCapacity"] = this.quantityCapacity;
+        data["concurrentTaskCapacity"] = this.concurrentTaskCapacity;
+        data["peakConcurrentTasks"] = this.peakConcurrentTasks;
+        data["peakConcurrentQuantity"] = this.peakConcurrentQuantity;
+        data["capacityUtilizationPercent"] = this.capacityUtilizationPercent;
+        data["congestionSeconds"] = this.congestionSeconds;
+        data["congestionTaskSeconds"] = this.congestionTaskSeconds;
+        data["isOverloaded"] = this.isOverloaded;
+        return data;
+    }
+}
+
+export interface ISpacePlanningSimulationLocationResultDto {
+    locationLogicalId?: string;
+    taskCount?: number;
+    completedTaskCount?: number;
+    totalQuantity?: number;
+    distanceEligibleTaskCount?: number;
+    totalDistanceMeters?: number;
+    quantityCapacity?: number;
+    concurrentTaskCapacity?: number;
+    peakConcurrentTasks?: number;
+    peakConcurrentQuantity?: number;
+    capacityUtilizationPercent?: number;
+    congestionSeconds?: number;
+    congestionTaskSeconds?: number;
+    isOverloaded?: boolean;
+}
+
+export class SpacePlanningSimulationParametersDto implements ISpacePlanningSimulationParametersDto {
+    defaultQuantityCapacity?: number;
+    defaultConcurrentTaskCapacity?: number;
+    throughputWindowMinutes?: number;
+    distanceCostPerMeter?: number;
+    laborCostPerHour?: number;
+    congestionCostPerTaskHour?: number;
+    currencyCode?: string | undefined;
+    locationCapacityOverrideCount?: number;
+
+    constructor(data?: ISpacePlanningSimulationParametersDto) {
+        if (data) {
+            for (var property in data) {
+                if (data.hasOwnProperty(property))
+                    (this as any)[property] = (data as any)[property];
+            }
+        }
+    }
+
+    init(_data?: any) {
+        if (_data) {
+            this.defaultQuantityCapacity = _data["defaultQuantityCapacity"];
+            this.defaultConcurrentTaskCapacity = _data["defaultConcurrentTaskCapacity"];
+            this.throughputWindowMinutes = _data["throughputWindowMinutes"];
+            this.distanceCostPerMeter = _data["distanceCostPerMeter"];
+            this.laborCostPerHour = _data["laborCostPerHour"];
+            this.congestionCostPerTaskHour = _data["congestionCostPerTaskHour"];
+            this.currencyCode = _data["currencyCode"];
+            this.locationCapacityOverrideCount = _data["locationCapacityOverrideCount"];
+        }
+    }
+
+    static fromJS(data: any): SpacePlanningSimulationParametersDto {
+        data = typeof data === 'object' ? data : {};
+        let result = new SpacePlanningSimulationParametersDto();
+        result.init(data);
+        return result;
+    }
+
+    toJSON(data?: any) {
+        data = typeof data === 'object' ? data : {};
+        data["defaultQuantityCapacity"] = this.defaultQuantityCapacity;
+        data["defaultConcurrentTaskCapacity"] = this.defaultConcurrentTaskCapacity;
+        data["throughputWindowMinutes"] = this.throughputWindowMinutes;
+        data["distanceCostPerMeter"] = this.distanceCostPerMeter;
+        data["laborCostPerHour"] = this.laborCostPerHour;
+        data["congestionCostPerTaskHour"] = this.congestionCostPerTaskHour;
+        data["currencyCode"] = this.currencyCode;
+        data["locationCapacityOverrideCount"] = this.locationCapacityOverrideCount;
+        return data;
+    }
+}
+
+export interface ISpacePlanningSimulationParametersDto {
+    defaultQuantityCapacity?: number;
+    defaultConcurrentTaskCapacity?: number;
+    throughputWindowMinutes?: number;
+    distanceCostPerMeter?: number;
+    laborCostPerHour?: number;
+    congestionCostPerTaskHour?: number;
+    currencyCode?: string | undefined;
+    locationCapacityOverrideCount?: number;
+}
+
+export class SpacePlanningSimulationRunDto implements ISpacePlanningSimulationRunDto {
+    runId?: string;
+    siteId?: string;
+    branchId?: string;
+    scenarioVersionId?: string;
+    scenarioContentRevision?: number;
+    datasetId?: string;
+    name?: string | undefined;
+    status?: string | undefined;
+    definitionVersion?: string | undefined;
+    datasetRequestHash?: string | undefined;
+    resultHash?: string | undefined;
+    productionWriteAllowed?: boolean;
+    highPrecisionPhysicalSimulation?: boolean;
+    parameters?: SpacePlanningSimulationParametersDto;
+    distance?: SpacePlanningSimulationDistanceDto;
+    congestion?: SpacePlanningSimulationCongestionDto;
+    capacity?: SpacePlanningSimulationCapacityDto;
+    throughput?: SpacePlanningSimulationThroughputDto;
+    cost?: SpacePlanningSimulationCostDto;
+    locationResults?: SpacePlanningSimulationLocationResultDto[] | undefined;
+    locationResultsTruncated?: boolean;
+    createdAtUtc?: Date;
+    createdBy?: string;
+    limitations?: string[] | undefined;
+
+    constructor(data?: ISpacePlanningSimulationRunDto) {
+        if (data) {
+            for (var property in data) {
+                if (data.hasOwnProperty(property))
+                    (this as any)[property] = (data as any)[property];
+            }
+        }
+    }
+
+    init(_data?: any) {
+        if (_data) {
+            this.runId = _data["runId"];
+            this.siteId = _data["siteId"];
+            this.branchId = _data["branchId"];
+            this.scenarioVersionId = _data["scenarioVersionId"];
+            this.scenarioContentRevision = _data["scenarioContentRevision"];
+            this.datasetId = _data["datasetId"];
+            this.name = _data["name"];
+            this.status = _data["status"];
+            this.definitionVersion = _data["definitionVersion"];
+            this.datasetRequestHash = _data["datasetRequestHash"];
+            this.resultHash = _data["resultHash"];
+            this.productionWriteAllowed = _data["productionWriteAllowed"];
+            this.highPrecisionPhysicalSimulation = _data["highPrecisionPhysicalSimulation"];
+            this.parameters = _data["parameters"] ? SpacePlanningSimulationParametersDto.fromJS(_data["parameters"]) : undefined as any;
+            this.distance = _data["distance"] ? SpacePlanningSimulationDistanceDto.fromJS(_data["distance"]) : undefined as any;
+            this.congestion = _data["congestion"] ? SpacePlanningSimulationCongestionDto.fromJS(_data["congestion"]) : undefined as any;
+            this.capacity = _data["capacity"] ? SpacePlanningSimulationCapacityDto.fromJS(_data["capacity"]) : undefined as any;
+            this.throughput = _data["throughput"] ? SpacePlanningSimulationThroughputDto.fromJS(_data["throughput"]) : undefined as any;
+            this.cost = _data["cost"] ? SpacePlanningSimulationCostDto.fromJS(_data["cost"]) : undefined as any;
+            if (Array.isArray(_data["locationResults"])) {
+                this.locationResults = [] as any;
+                for (let item of _data["locationResults"])
+                    this.locationResults!.push(SpacePlanningSimulationLocationResultDto.fromJS(item));
+            }
+            this.locationResultsTruncated = _data["locationResultsTruncated"];
+            this.createdAtUtc = _data["createdAtUtc"] ? new Date(_data["createdAtUtc"].toString()) : undefined as any;
+            this.createdBy = _data["createdBy"];
+            if (Array.isArray(_data["limitations"])) {
+                this.limitations = [] as any;
+                for (let item of _data["limitations"])
+                    this.limitations!.push(item);
+            }
+        }
+    }
+
+    static fromJS(data: any): SpacePlanningSimulationRunDto {
+        data = typeof data === 'object' ? data : {};
+        let result = new SpacePlanningSimulationRunDto();
+        result.init(data);
+        return result;
+    }
+
+    toJSON(data?: any) {
+        data = typeof data === 'object' ? data : {};
+        data["runId"] = this.runId;
+        data["siteId"] = this.siteId;
+        data["branchId"] = this.branchId;
+        data["scenarioVersionId"] = this.scenarioVersionId;
+        data["scenarioContentRevision"] = this.scenarioContentRevision;
+        data["datasetId"] = this.datasetId;
+        data["name"] = this.name;
+        data["status"] = this.status;
+        data["definitionVersion"] = this.definitionVersion;
+        data["datasetRequestHash"] = this.datasetRequestHash;
+        data["resultHash"] = this.resultHash;
+        data["productionWriteAllowed"] = this.productionWriteAllowed;
+        data["highPrecisionPhysicalSimulation"] = this.highPrecisionPhysicalSimulation;
+        data["parameters"] = this.parameters ? this.parameters.toJSON() : undefined as any;
+        data["distance"] = this.distance ? this.distance.toJSON() : undefined as any;
+        data["congestion"] = this.congestion ? this.congestion.toJSON() : undefined as any;
+        data["capacity"] = this.capacity ? this.capacity.toJSON() : undefined as any;
+        data["throughput"] = this.throughput ? this.throughput.toJSON() : undefined as any;
+        data["cost"] = this.cost ? this.cost.toJSON() : undefined as any;
+        if (Array.isArray(this.locationResults)) {
+            data["locationResults"] = [];
+            for (let item of this.locationResults)
+                data["locationResults"].push(item ? item.toJSON() : undefined as any);
+        }
+        data["locationResultsTruncated"] = this.locationResultsTruncated;
+        data["createdAtUtc"] = this.createdAtUtc ? this.createdAtUtc.toISOString() : undefined as any;
+        data["createdBy"] = this.createdBy;
+        if (Array.isArray(this.limitations)) {
+            data["limitations"] = [];
+            for (let item of this.limitations)
+                data["limitations"].push(item);
+        }
+        return data;
+    }
+}
+
+export interface ISpacePlanningSimulationRunDto {
+    runId?: string;
+    siteId?: string;
+    branchId?: string;
+    scenarioVersionId?: string;
+    scenarioContentRevision?: number;
+    datasetId?: string;
+    name?: string | undefined;
+    status?: string | undefined;
+    definitionVersion?: string | undefined;
+    datasetRequestHash?: string | undefined;
+    resultHash?: string | undefined;
+    productionWriteAllowed?: boolean;
+    highPrecisionPhysicalSimulation?: boolean;
+    parameters?: SpacePlanningSimulationParametersDto;
+    distance?: SpacePlanningSimulationDistanceDto;
+    congestion?: SpacePlanningSimulationCongestionDto;
+    capacity?: SpacePlanningSimulationCapacityDto;
+    throughput?: SpacePlanningSimulationThroughputDto;
+    cost?: SpacePlanningSimulationCostDto;
+    locationResults?: SpacePlanningSimulationLocationResultDto[] | undefined;
+    locationResultsTruncated?: boolean;
+    createdAtUtc?: Date;
+    createdBy?: string;
+    limitations?: string[] | undefined;
+}
+
+export class SpacePlanningSimulationRunListResponse implements ISpacePlanningSimulationRunListResponse {
+    items?: SpacePlanningSimulationRunSummaryDto[] | undefined;
+    isTruncated?: boolean;
+
+    constructor(data?: ISpacePlanningSimulationRunListResponse) {
+        if (data) {
+            for (var property in data) {
+                if (data.hasOwnProperty(property))
+                    (this as any)[property] = (data as any)[property];
+            }
+        }
+    }
+
+    init(_data?: any) {
+        if (_data) {
+            if (Array.isArray(_data["items"])) {
+                this.items = [] as any;
+                for (let item of _data["items"])
+                    this.items!.push(SpacePlanningSimulationRunSummaryDto.fromJS(item));
+            }
+            this.isTruncated = _data["isTruncated"];
+        }
+    }
+
+    static fromJS(data: any): SpacePlanningSimulationRunListResponse {
+        data = typeof data === 'object' ? data : {};
+        let result = new SpacePlanningSimulationRunListResponse();
+        result.init(data);
+        return result;
+    }
+
+    toJSON(data?: any) {
+        data = typeof data === 'object' ? data : {};
+        if (Array.isArray(this.items)) {
+            data["items"] = [];
+            for (let item of this.items)
+                data["items"].push(item ? item.toJSON() : undefined as any);
+        }
+        data["isTruncated"] = this.isTruncated;
+        return data;
+    }
+}
+
+export interface ISpacePlanningSimulationRunListResponse {
+    items?: SpacePlanningSimulationRunSummaryDto[] | undefined;
+    isTruncated?: boolean;
+}
+
+export class SpacePlanningSimulationRunSummaryDto implements ISpacePlanningSimulationRunSummaryDto {
+    runId?: string;
+    datasetId?: string;
+    scenarioContentRevision?: number;
+    name?: string | undefined;
+    status?: string | undefined;
+    currencyCode?: string | undefined;
+    taskCount?: number;
+    distanceCoveragePercent?: number;
+    totalDistanceMeters?: number;
+    overloadedLocationCount?: number;
+    averageCompletedTasksPerHour?: number;
+    totalCost?: number;
+    createdAtUtc?: Date;
+
+    constructor(data?: ISpacePlanningSimulationRunSummaryDto) {
+        if (data) {
+            for (var property in data) {
+                if (data.hasOwnProperty(property))
+                    (this as any)[property] = (data as any)[property];
+            }
+        }
+    }
+
+    init(_data?: any) {
+        if (_data) {
+            this.runId = _data["runId"];
+            this.datasetId = _data["datasetId"];
+            this.scenarioContentRevision = _data["scenarioContentRevision"];
+            this.name = _data["name"];
+            this.status = _data["status"];
+            this.currencyCode = _data["currencyCode"];
+            this.taskCount = _data["taskCount"];
+            this.distanceCoveragePercent = _data["distanceCoveragePercent"];
+            this.totalDistanceMeters = _data["totalDistanceMeters"];
+            this.overloadedLocationCount = _data["overloadedLocationCount"];
+            this.averageCompletedTasksPerHour = _data["averageCompletedTasksPerHour"];
+            this.totalCost = _data["totalCost"];
+            this.createdAtUtc = _data["createdAtUtc"] ? new Date(_data["createdAtUtc"].toString()) : undefined as any;
+        }
+    }
+
+    static fromJS(data: any): SpacePlanningSimulationRunSummaryDto {
+        data = typeof data === 'object' ? data : {};
+        let result = new SpacePlanningSimulationRunSummaryDto();
+        result.init(data);
+        return result;
+    }
+
+    toJSON(data?: any) {
+        data = typeof data === 'object' ? data : {};
+        data["runId"] = this.runId;
+        data["datasetId"] = this.datasetId;
+        data["scenarioContentRevision"] = this.scenarioContentRevision;
+        data["name"] = this.name;
+        data["status"] = this.status;
+        data["currencyCode"] = this.currencyCode;
+        data["taskCount"] = this.taskCount;
+        data["distanceCoveragePercent"] = this.distanceCoveragePercent;
+        data["totalDistanceMeters"] = this.totalDistanceMeters;
+        data["overloadedLocationCount"] = this.overloadedLocationCount;
+        data["averageCompletedTasksPerHour"] = this.averageCompletedTasksPerHour;
+        data["totalCost"] = this.totalCost;
+        data["createdAtUtc"] = this.createdAtUtc ? this.createdAtUtc.toISOString() : undefined as any;
+        return data;
+    }
+}
+
+export interface ISpacePlanningSimulationRunSummaryDto {
+    runId?: string;
+    datasetId?: string;
+    scenarioContentRevision?: number;
+    name?: string | undefined;
+    status?: string | undefined;
+    currencyCode?: string | undefined;
+    taskCount?: number;
+    distanceCoveragePercent?: number;
+    totalDistanceMeters?: number;
+    overloadedLocationCount?: number;
+    averageCompletedTasksPerHour?: number;
+    totalCost?: number;
+    createdAtUtc?: Date;
+}
+
+export class SpacePlanningSimulationThroughputDto implements ISpacePlanningSimulationThroughputDto {
+    completedTaskCount?: number;
+    completedQuantity?: number;
+    historicalWindowHours?: number;
+    measurementWindowMinutes?: number;
+    averageCompletedTasksPerHour?: number;
+    peakCompletedTasksPerHour?: number;
+    averageCompletedQuantityPerHour?: number;
+    peakCompletedQuantityPerHour?: number;
+
+    constructor(data?: ISpacePlanningSimulationThroughputDto) {
+        if (data) {
+            for (var property in data) {
+                if (data.hasOwnProperty(property))
+                    (this as any)[property] = (data as any)[property];
+            }
+        }
+    }
+
+    init(_data?: any) {
+        if (_data) {
+            this.completedTaskCount = _data["completedTaskCount"];
+            this.completedQuantity = _data["completedQuantity"];
+            this.historicalWindowHours = _data["historicalWindowHours"];
+            this.measurementWindowMinutes = _data["measurementWindowMinutes"];
+            this.averageCompletedTasksPerHour = _data["averageCompletedTasksPerHour"];
+            this.peakCompletedTasksPerHour = _data["peakCompletedTasksPerHour"];
+            this.averageCompletedQuantityPerHour = _data["averageCompletedQuantityPerHour"];
+            this.peakCompletedQuantityPerHour = _data["peakCompletedQuantityPerHour"];
+        }
+    }
+
+    static fromJS(data: any): SpacePlanningSimulationThroughputDto {
+        data = typeof data === 'object' ? data : {};
+        let result = new SpacePlanningSimulationThroughputDto();
+        result.init(data);
+        return result;
+    }
+
+    toJSON(data?: any) {
+        data = typeof data === 'object' ? data : {};
+        data["completedTaskCount"] = this.completedTaskCount;
+        data["completedQuantity"] = this.completedQuantity;
+        data["historicalWindowHours"] = this.historicalWindowHours;
+        data["measurementWindowMinutes"] = this.measurementWindowMinutes;
+        data["averageCompletedTasksPerHour"] = this.averageCompletedTasksPerHour;
+        data["peakCompletedTasksPerHour"] = this.peakCompletedTasksPerHour;
+        data["averageCompletedQuantityPerHour"] = this.averageCompletedQuantityPerHour;
+        data["peakCompletedQuantityPerHour"] = this.peakCompletedQuantityPerHour;
+        return data;
+    }
+}
+
+export interface ISpacePlanningSimulationThroughputDto {
+    completedTaskCount?: number;
+    completedQuantity?: number;
+    historicalWindowHours?: number;
+    measurementWindowMinutes?: number;
+    averageCompletedTasksPerHour?: number;
+    peakCompletedTasksPerHour?: number;
+    averageCompletedQuantityPerHour?: number;
+    peakCompletedQuantityPerHour?: number;
 }
 
 export class SpacePortalAisleDto implements ISpacePortalAisleDto {

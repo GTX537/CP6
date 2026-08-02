@@ -115,6 +115,11 @@ public sealed class SpaceContext : DbContext
         Set<SpacePlanningHistoricalDataset>();
     public DbSet<SpacePlanningHistoricalTask> PlanningHistoricalTasks =>
         Set<SpacePlanningHistoricalTask>();
+    public DbSet<SpacePlanningSimulationRun> PlanningSimulationRuns =>
+        Set<SpacePlanningSimulationRun>();
+    public DbSet<SpacePlanningSimulationLocationResult>
+        PlanningSimulationLocationResults =>
+            Set<SpacePlanningSimulationLocationResult>();
 
     protected override void OnModelCreating(ModelBuilder modelBuilder)
     {
@@ -156,6 +161,8 @@ public sealed class SpaceContext : DbContext
         ConfigurePlanningScenarioBranch(modelBuilder);
         ConfigurePlanningHistoricalDataset(modelBuilder);
         ConfigurePlanningHistoricalTask(modelBuilder);
+        ConfigurePlanningSimulationRun(modelBuilder);
+        ConfigurePlanningSimulationLocationResult(modelBuilder);
         ConfigureFile(modelBuilder);
         ConfigureSource(modelBuilder);
         ConfigureJob(modelBuilder);
@@ -3608,6 +3615,16 @@ public sealed class SpaceContext : DbContext
         ConfigureTenantEntity(entity);
         entity.HasAlternateKey(x => new { x.TenantId, x.Id })
             .HasName("AK_Space_PlanningHistoricalDataset_Tenant_Id");
+        entity.HasAlternateKey(x => new
+            {
+                x.TenantId,
+                x.Id,
+                x.BranchId,
+                x.ModelId,
+                x.ScenarioVersionId,
+            })
+            .HasName(
+                "AK_Space_PlanningHistoricalDataset_Tenant_Id_Branch_Model_Version");
         entity.Property(x => x.Name).HasMaxLength(200).IsRequired();
         entity.Property(x => x.HistoricalFromUtc)
             .HasColumnType("datetimeoffset(7)");
@@ -3758,6 +3775,257 @@ public sealed class SpaceContext : DbContext
             x => x.TenantId == CurrentTenantId && !x.IsDeleted);
     }
 
+    private void ConfigurePlanningSimulationRun(ModelBuilder modelBuilder)
+    {
+        var entity = modelBuilder.Entity<SpacePlanningSimulationRun>();
+        entity.ToTable(
+            "Space_PlanningSimulationRun",
+            table => table.HasCheckConstraint(
+                "CK_Space_PlanningSimulationRun_Invariants",
+                "[ScenarioContentRevision] >= 0 AND " +
+                "[DefaultQuantityCapacity] > 0 AND " +
+                "[DefaultConcurrentTaskCapacity] BETWEEN 1 AND 10000 AND " +
+                "[LocationCapacityOverrideCount] BETWEEN 0 AND 10000 AND " +
+                "[ThroughputWindowMinutes] BETWEEN 1 AND 1440 AND " +
+                "[DistanceCostPerMeter] >= 0 AND [LaborCostPerHour] >= 0 AND " +
+                "[CongestionCostPerTaskHour] >= 0 AND " +
+                "[TaskCount] BETWEEN 1 AND 10000 AND " +
+                "[CompletedTaskCount] BETWEEN 0 AND [TaskCount] AND " +
+                "[CompletedQuantity] >= 0 AND " +
+                "[DistanceEligibleTaskCount] BETWEEN 0 AND [TaskCount] AND " +
+                "[TotalDistanceMeters] >= 0 AND " +
+                "[DistanceCoveragePercent] BETWEEN 0 AND 100 AND " +
+                "[PeakConcurrentTasks] >= 0 AND " +
+                "[CongestionSeconds] >= 0 AND [CongestionTaskSeconds] >= 0 AND " +
+                "[OverloadedLocationCount] >= 0 AND " +
+                "[PeakCapacityUtilizationPercent] >= 0 AND " +
+                "[AverageCompletedTasksPerHour] >= 0 AND " +
+                "[PeakCompletedTasksPerHour] >= 0 AND " +
+                "[AverageCompletedQuantityPerHour] >= 0 AND " +
+                "[PeakCompletedQuantityPerHour] >= 0 AND " +
+                "[LaborHours] >= 0 AND [DistanceCost] >= 0 AND " +
+                "[LaborCost] >= 0 AND [CongestionCost] >= 0 AND " +
+                "[TotalCost] >= 0 AND " +
+                "LEN([RequestHash]) = 64 AND " +
+                "[RequestHash] NOT LIKE '%[^0-9a-f]%' AND " +
+                "LEN([DatasetRequestHash]) = 64 AND " +
+                "[DatasetRequestHash] NOT LIKE '%[^0-9a-f]%' AND " +
+                "LEN([ResultHash]) = 64 AND " +
+                "[ResultHash] NOT LIKE '%[^0-9a-f]%' AND " +
+                "LEN([CurrencyCode]) = 3 AND " +
+                "[CurrencyCode] NOT LIKE '%[^A-Z]%' AND [IsDeleted] = 0"));
+        entity.HasKey(x => x.Id);
+        entity.Property(x => x.Id).ValueGeneratedNever();
+        ConfigureTenantEntity(entity);
+        entity.HasAlternateKey(x => new { x.TenantId, x.Id })
+            .HasName("AK_Space_PlanningSimulationRun_Tenant_Id");
+        entity.HasAlternateKey(x => new
+            {
+                x.TenantId,
+                x.Id,
+                x.ScenarioVersionId,
+            })
+            .HasName(
+                "AK_Space_PlanningSimulationRun_Tenant_Id_Version");
+        entity.Property(x => x.Name).HasMaxLength(200).IsRequired();
+        entity.Property(x => x.DefinitionVersion)
+            .HasMaxLength(100)
+            .IsUnicode(false)
+            .IsRequired();
+        entity.Property(x => x.GeometryBasis)
+            .HasMaxLength(100)
+            .IsUnicode(false)
+            .IsRequired();
+        entity.Property(x => x.CurrencyCode)
+            .HasColumnType("char(3)")
+            .IsUnicode(false)
+            .IsFixedLength()
+            .HasMaxLength(3)
+            .IsRequired();
+        foreach (var property in new[]
+                 {
+                     nameof(SpacePlanningSimulationRun.RequestHash),
+                     nameof(SpacePlanningSimulationRun.DatasetRequestHash),
+                     nameof(SpacePlanningSimulationRun.ResultHash),
+                 })
+        {
+            entity.Property(property)
+                .HasColumnType("char(64)")
+                .IsUnicode(false)
+                .IsFixedLength()
+                .HasMaxLength(64)
+                .IsRequired();
+        }
+        entity.Property(x => x.DefaultQuantityCapacity).HasPrecision(18, 4);
+        entity.Property(x => x.DistanceCostPerMeter).HasPrecision(19, 6);
+        entity.Property(x => x.LaborCostPerHour).HasPrecision(19, 6);
+        entity.Property(x => x.CongestionCostPerTaskHour).HasPrecision(19, 6);
+        entity.Property(x => x.CompletedQuantity).HasPrecision(28, 6);
+        entity.Property(x => x.TotalDistanceMeters).HasPrecision(28, 6);
+        entity.Property(x => x.DistanceCoveragePercent).HasPrecision(9, 4);
+        entity.Property(x => x.PeakCapacityUtilizationPercent)
+            .HasPrecision(38, 4);
+        entity.Property(x => x.AverageCompletedTasksPerHour)
+            .HasPrecision(28, 6);
+        entity.Property(x => x.PeakCompletedTasksPerHour)
+            .HasPrecision(28, 6);
+        entity.Property(x => x.AverageCompletedQuantityPerHour)
+            .HasPrecision(28, 6);
+        entity.Property(x => x.PeakCompletedQuantityPerHour)
+            .HasPrecision(28, 6);
+        entity.Property(x => x.LaborHours).HasPrecision(28, 6);
+        entity.Property(x => x.DistanceCost).HasPrecision(28, 6);
+        entity.Property(x => x.LaborCost).HasPrecision(28, 6);
+        entity.Property(x => x.CongestionCost).HasPrecision(28, 6);
+        entity.Property(x => x.TotalCost).HasPrecision(28, 6);
+        entity.HasIndex(x => new
+            {
+                x.TenantId,
+                x.BranchId,
+                x.CreatedAtUtc,
+            })
+            .HasDatabaseName(
+                "IX_Space_PlanningSimulationRun_Branch_Created");
+        entity.HasIndex(x => new
+            {
+                x.TenantId,
+                x.DatasetId,
+                x.CreatedAtUtc,
+            })
+            .HasDatabaseName(
+                "IX_Space_PlanningSimulationRun_Dataset_Created");
+        entity.HasOne<SpacePlanningScenarioBranch>()
+            .WithMany()
+            .HasForeignKey(x => new { x.TenantId, x.BranchId })
+            .HasPrincipalKey(x => new { x.TenantId, x.Id })
+            .OnDelete(DeleteBehavior.Restrict)
+            .HasConstraintName(
+                "FK_Space_PlanningSimulationRun_Branch_Tenant");
+        entity.HasOne<SpacePlanningHistoricalDataset>()
+            .WithMany()
+            .HasForeignKey(x => new
+            {
+                x.TenantId,
+                x.DatasetId,
+                x.BranchId,
+                x.ModelId,
+                x.ScenarioVersionId,
+            })
+            .HasPrincipalKey(x => new
+            {
+                x.TenantId,
+                x.Id,
+                x.BranchId,
+                x.ModelId,
+                x.ScenarioVersionId,
+            })
+            .OnDelete(DeleteBehavior.Restrict)
+            .HasConstraintName(
+                "FK_Space_PlanningSimulationRun_Dataset_Tenant");
+        entity.HasOne<SpaceModel>()
+            .WithMany()
+            .HasForeignKey(x => new { x.TenantId, x.ModelId })
+            .HasPrincipalKey(x => new { x.TenantId, x.Id })
+            .OnDelete(DeleteBehavior.Restrict)
+            .HasConstraintName(
+                "FK_Space_PlanningSimulationRun_Model_Tenant");
+        entity.HasOne<SpaceModelVersion>()
+            .WithMany()
+            .HasForeignKey(x => new
+            {
+                x.TenantId,
+                x.ModelId,
+                x.ScenarioVersionId,
+            })
+            .HasPrincipalKey(x => new
+            {
+                x.TenantId,
+                x.ModelId,
+                x.Id,
+            })
+            .OnDelete(DeleteBehavior.Restrict)
+            .HasConstraintName(
+                "FK_Space_PlanningSimulationRun_ScenarioVersion_Tenant");
+        entity.HasQueryFilter(
+            x => x.TenantId == CurrentTenantId && !x.IsDeleted);
+    }
+
+    private void ConfigurePlanningSimulationLocationResult(
+        ModelBuilder modelBuilder)
+    {
+        var entity =
+            modelBuilder.Entity<SpacePlanningSimulationLocationResult>();
+        entity.ToTable(
+            "Space_PlanningSimulationLocationResult",
+            table => table.HasCheckConstraint(
+                "CK_Space_PlanningSimulationLocationResult_Invariants",
+                "[TaskCount] > 0 AND " +
+                "[CompletedTaskCount] BETWEEN 0 AND [TaskCount] AND " +
+                "[TotalQuantity] > 0 AND " +
+                "[DistanceEligibleTaskCount] BETWEEN 0 AND [TaskCount] AND " +
+                "[TotalDistanceMeters] >= 0 AND [QuantityCapacity] > 0 AND " +
+                "[ConcurrentTaskCapacity] BETWEEN 1 AND 10000 AND " +
+                "[PeakConcurrentTasks] >= 0 AND " +
+                "[PeakConcurrentQuantity] >= 0 AND " +
+                "[CapacityUtilizationPercent] >= 0 AND " +
+                "[CongestionSeconds] >= 0 AND [CongestionTaskSeconds] >= 0 " +
+                "AND [IsDeleted] = 0"));
+        entity.HasKey(x => x.Id);
+        entity.Property(x => x.Id).ValueGeneratedNever();
+        ConfigureTenantEntity(entity);
+        entity.Property(x => x.TotalQuantity).HasPrecision(28, 6);
+        entity.Property(x => x.TotalDistanceMeters).HasPrecision(28, 6);
+        entity.Property(x => x.QuantityCapacity).HasPrecision(18, 4);
+        entity.Property(x => x.PeakConcurrentQuantity).HasPrecision(28, 6);
+        entity.Property(x => x.CapacityUtilizationPercent)
+            .HasPrecision(38, 4);
+        entity.HasIndex(x => new
+            {
+                x.TenantId,
+                x.RunId,
+                x.LocationLogicalId,
+            })
+            .IsUnique()
+            .HasDatabaseName(
+                "UX_Space_PlanningSimulationLocation_Run_Location");
+        entity.HasOne<SpacePlanningSimulationRun>()
+            .WithMany()
+            .HasForeignKey(x => new
+            {
+                x.TenantId,
+                x.RunId,
+                x.ScenarioVersionId,
+            })
+            .HasPrincipalKey(x => new
+            {
+                x.TenantId,
+                x.Id,
+                x.ScenarioVersionId,
+            })
+            .OnDelete(DeleteBehavior.Restrict)
+            .HasConstraintName(
+                "FK_Space_PlanningSimulationLocation_Run_Tenant");
+        entity.HasOne<SpaceLocationRevision>()
+            .WithMany()
+            .HasForeignKey(x => new
+            {
+                x.TenantId,
+                x.ScenarioVersionId,
+                x.LocationLogicalId,
+            })
+            .HasPrincipalKey(x => new
+            {
+                x.TenantId,
+                x.ModelVersionId,
+                x.LogicalId,
+            })
+            .OnDelete(DeleteBehavior.Restrict)
+            .HasConstraintName(
+                "FK_Space_PlanningSimulationLocation_Location_Tenant");
+        entity.HasQueryFilter(
+            x => x.TenantId == CurrentTenantId && !x.IsDeleted);
+    }
+
     private static void ConfigureTenantEntity<TEntity>(
         Microsoft.EntityFrameworkCore.Metadata.Builders.EntityTypeBuilder<TEntity> entity)
         where TEntity : SpaceTenantEntity
@@ -3800,6 +4068,12 @@ public sealed class SpaceContext : DbContext
                 .Any(entry => entry.State is
                     EntityState.Modified or EntityState.Deleted) ||
             ChangeTracker.Entries<SpacePlanningHistoricalTask>()
+                .Any(entry => entry.State is
+                    EntityState.Modified or EntityState.Deleted) ||
+            ChangeTracker.Entries<SpacePlanningSimulationRun>()
+                .Any(entry => entry.State is
+                    EntityState.Modified or EntityState.Deleted) ||
+            ChangeTracker.Entries<SpacePlanningSimulationLocationResult>()
                 .Any(entry => entry.State is
                     EntityState.Modified or EntityState.Deleted);
         if (changed)

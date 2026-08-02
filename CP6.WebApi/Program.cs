@@ -2298,6 +2298,7 @@ using (var scope = app.Services.CreateScope())
             .Concat(CP6.WebApi.Seed.I18nSpaceAiAdminSeed.Items) // Space E13-S16 AI 策略与用量管理
             .Concat(CP6.WebApi.Seed.I18nSpacePlanningScenarioSeed.Items) // Space E12-S01 生产隔离规划分支
             .Concat(CP6.WebApi.Seed.I18nSpacePlanningDatasetSeed.Items) // Space E12-S02 脱敏历史任务与回放时钟
+            .Concat(CP6.WebApi.Seed.I18nSpacePlanningSimulationSeed.Items) // Space E12-S03 距离/拥堵/容量/吞吐/成本仿真
             .Concat(CP6.WebApi.Seed.I18nSpaceOperationsDiagnosticsSeed.Items) // Space E11-S01 运营诊断
             .Concat(CP6.WebApi.Seed.I18nSpacePutawayRecommendationSeed.Items) // Space E11-S02 上架推荐
             .Concat(CP6.WebApi.Seed.I18nSpaceDispatchRecommendationSeed.Items) // Space E11-S03 人员/任务调度建议

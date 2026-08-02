@@ -76,6 +76,12 @@
       </CpTag>
     </div>
 
+    <PlanningSimulationPanel
+      :site-id="siteId"
+      :branch-id="branchId"
+      :datasets="datasets"
+    />
+
     <div class="import-box">
       <div class="import-head">
         <div>
@@ -133,6 +139,7 @@ import CpEmpty from '@/components/base/CpEmpty.vue'
 import CpTag from '@/components/base/CpTag.vue'
 import { planningDatasetApi } from '@/api/space/planningScenario'
 import { useTOr } from '@/i18n/tOr'
+import PlanningSimulationPanel from './PlanningSimulationPanel.vue'
 import type {
   CreateSpacePlanningHistoricalDatasetRequest,
   SpacePlanningHistoricalDataset,

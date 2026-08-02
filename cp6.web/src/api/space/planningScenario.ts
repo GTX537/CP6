@@ -126,6 +126,141 @@ export interface CreateSpacePlanningHistoricalDatasetResponse {
   dataset: SpacePlanningHistoricalDataset
 }
 
+export interface SpacePlanningSimulationLocationCapacityRequest {
+  locationLogicalId: string
+  quantityCapacity: number
+  concurrentTaskCapacity: number
+}
+
+export interface CreateSpacePlanningSimulationRunRequest {
+  name: string
+  datasetId: string
+  defaultQuantityCapacity: number
+  defaultConcurrentTaskCapacity: number
+  throughputWindowMinutes: number
+  distanceCostPerMeter: number
+  laborCostPerHour: number
+  congestionCostPerTaskHour: number
+  currencyCode: string
+  locationCapacities: SpacePlanningSimulationLocationCapacityRequest[]
+}
+
+export interface SpacePlanningSimulationRunSummary {
+  runId: string
+  datasetId: string
+  scenarioContentRevision: number
+  name: string
+  status: string
+  currencyCode: string
+  taskCount: number
+  distanceCoveragePercent: number
+  totalDistanceMeters: number
+  overloadedLocationCount: number
+  averageCompletedTasksPerHour: number
+  totalCost: number
+  createdAtUtc: string
+}
+
+export interface SpacePlanningSimulationRunList {
+  items: SpacePlanningSimulationRunSummary[]
+  isTruncated: boolean
+}
+
+export interface SpacePlanningSimulationLocationResult {
+  locationLogicalId: string
+  taskCount: number
+  completedTaskCount: number
+  totalQuantity: number
+  distanceEligibleTaskCount: number
+  totalDistanceMeters: number
+  quantityCapacity: number
+  concurrentTaskCapacity: number
+  peakConcurrentTasks: number
+  peakConcurrentQuantity: number
+  capacityUtilizationPercent: number
+  congestionSeconds: number
+  congestionTaskSeconds: number
+  isOverloaded: boolean
+}
+
+export interface SpacePlanningSimulationRun {
+  runId: string
+  siteId: string
+  branchId: string
+  scenarioVersionId: string
+  scenarioContentRevision: number
+  datasetId: string
+  name: string
+  status: string
+  definitionVersion: string
+  datasetRequestHash: string
+  resultHash: string
+  productionWriteAllowed: boolean
+  highPrecisionPhysicalSimulation: boolean
+  parameters: {
+    defaultQuantityCapacity: number
+    defaultConcurrentTaskCapacity: number
+    throughputWindowMinutes: number
+    distanceCostPerMeter: number
+    laborCostPerHour: number
+    congestionCostPerTaskHour: number
+    currencyCode: string
+    locationCapacityOverrideCount: number
+  }
+  distance: {
+    geometryBasis: string
+    taskCount: number
+    eligibleTaskCount: number
+    unknownTaskCount: number
+    coveragePercent: number
+    totalDistanceMeters: number
+    averageEligibleTaskDistanceMeters?: number | null
+  }
+  congestion: {
+    monitoredLocationCount: number
+    overloadedLocationCount: number
+    peakConcurrentTasks: number
+    congestionSeconds: number
+    congestionTaskSeconds: number
+    congestionTaskHours: number
+  }
+  capacity: {
+    monitoredLocationCount: number
+    overloadedLocationCount: number
+    peakUtilizationPercent: number
+    quantityBasis: string
+  }
+  throughput: {
+    completedTaskCount: number
+    completedQuantity: number
+    historicalWindowHours: number
+    measurementWindowMinutes: number
+    averageCompletedTasksPerHour: number
+    peakCompletedTasksPerHour: number
+    averageCompletedQuantityPerHour: number
+    peakCompletedQuantityPerHour: number
+  }
+  cost: {
+    currencyCode: string
+    laborHours: number
+    distanceCost: number
+    laborCost: number
+    congestionCost: number
+    totalCost: number
+    laborBasis: string
+  }
+  locationResults: SpacePlanningSimulationLocationResult[]
+  locationResultsTruncated: boolean
+  createdAtUtc: string
+  createdBy: string
+  limitations: string[]
+}
+
+export interface CreateSpacePlanningSimulationRunResponse {
+  outcome: 'Created' | 'Duplicate'
+  run: SpacePlanningSimulationRun
+}
+
 export const planningScenarioApi = {
   getModel(siteId: string) {
     return http.get<unknown, SpaceDesignModel>(
@@ -176,6 +311,36 @@ export const planningDatasetApi = {
   ) {
     return http.put<unknown, CreateSpacePlanningHistoricalDatasetResponse>(
       `${historicalDatasetRoot(siteId, branchId)}/${encodeURIComponent(datasetId)}`,
+      request,
+    )
+  },
+}
+
+function simulationRoot(siteId: string, branchId: string) {
+  return `${planningRoot}/sites/${encodeURIComponent(siteId)}` +
+    `/scenario-branches/${encodeURIComponent(branchId)}/simulation-runs`
+}
+
+export const planningSimulationApi = {
+  list(siteId: string, branchId: string, limit = 50) {
+    return http.get<unknown, SpacePlanningSimulationRunList>(
+      simulationRoot(siteId, branchId),
+      { params: { limit } },
+    )
+  },
+  get(siteId: string, branchId: string, runId: string) {
+    return http.get<unknown, SpacePlanningSimulationRun>(
+      `${simulationRoot(siteId, branchId)}/${encodeURIComponent(runId)}`,
+    )
+  },
+  create(
+    siteId: string,
+    branchId: string,
+    runId: string,
+    request: CreateSpacePlanningSimulationRunRequest,
+  ) {
+    return http.put<unknown, CreateSpacePlanningSimulationRunResponse>(
+      `${simulationRoot(siteId, branchId)}/${encodeURIComponent(runId)}`,
       request,
     )
   },

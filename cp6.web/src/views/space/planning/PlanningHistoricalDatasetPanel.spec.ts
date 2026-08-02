@@ -157,6 +157,7 @@ function mountPanel() {
         }),
       ],
       directives: { permission: {} },
+      stubs: { PlanningSimulationPanel: true },
     },
   })
 }
