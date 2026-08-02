@@ -33,6 +33,9 @@ public sealed class SpaceDesignV1OpenApiTests
             "/api/space/design/v1/sites/{siteId}/runtime/tasks",
             "/api/space/design/v1/sites/{siteId}/runtime/tasks/path",
             "/api/space/design/v1/assets",
+            "/api/space/design/v1/mapping-profiles/excel",
+            "/api/space/design/v1/mapping-profiles/excel/{profileId}",
+            "/api/space/design/v1/mapping-profiles/excel/preview",
             "/api/space/design/v1/modeling-templates/excel/standard",
             "/api/space/design/v1/versions/{versionId}",
             "/api/space/design/v1/versions/{versionId}/floors/{floorLogicalId}/commands",
@@ -77,10 +80,14 @@ public sealed class SpaceDesignV1OpenApiTests
             .Select(operation =>
                 operation.Value.GetProperty("operationId").GetString())
             .ToArray();
-        Assert.Equal(48, operationIds.Length);
-        Assert.Equal(48, operationIds.Distinct().Count());
+        Assert.Equal(52, operationIds.Length);
+        Assert.Equal(52, operationIds.Distinct().Count());
         Assert.Contains("GetAssets", operationIds);
         Assert.Contains("DownloadStandardExcelTemplate", operationIds);
+        Assert.Contains("GetProfiles", operationIds);
+        Assert.Contains("GetProfile", operationIds);
+        Assert.Contains("Preview", operationIds);
+        Assert.Contains("SaveProfile", operationIds);
         Assert.Contains("CreateAsset", operationIds);
         Assert.Contains("CreateVersion", operationIds);
         Assert.Contains("CreateSource", operationIds);
@@ -150,6 +157,79 @@ public sealed class SpaceDesignV1OpenApiTests
         Assert.Equal("string", schema.GetProperty("type").GetString());
         Assert.Equal("binary", schema.GetProperty("format").GetString());
         Assert.False(operation.TryGetProperty("parameters", out _));
+    }
+
+    [Fact]
+    public void Excel_mapping_contract_freezes_versioning_preview_and_idempotency()
+    {
+        using var document = ReadContract();
+        var root = document.RootElement;
+        var paths = root.GetProperty("paths");
+        var collection = paths.GetProperty(
+            "/api/space/design/v1/mapping-profiles/excel");
+        var preview = paths.GetProperty(
+            "/api/space/design/v1/mapping-profiles/excel/preview")
+            .GetProperty("post");
+        var item = paths.GetProperty(
+            "/api/space/design/v1/mapping-profiles/excel/{profileId}")
+            .GetProperty("get");
+
+        var idempotency = collection.GetProperty("post")
+            .GetProperty("parameters")
+            .EnumerateArray()
+            .Single(parameter =>
+                parameter.GetProperty("name").GetString() ==
+                "Idempotency-Key");
+        Assert.True(idempotency.GetProperty("required").GetBoolean());
+        Assert.Equal("header", idempotency.GetProperty("in").GetString());
+        var version = item.GetProperty("parameters")
+            .EnumerateArray()
+            .Single(parameter =>
+                parameter.GetProperty("name").GetString() == "version");
+        Assert.False(
+            version.TryGetProperty("required", out var required) &&
+            required.GetBoolean());
+
+        Assert.Equal(
+            "#/components/schemas/CP6.Space.Contracts.PreviewSpaceExcelMappingRequest",
+            preview.GetProperty("requestBody")
+                .GetProperty("content")
+                .GetProperty("application/json")
+                .GetProperty("schema")
+                .GetProperty("$ref")
+                .GetString());
+
+        var schemas = root.GetProperty("components").GetProperty("schemas");
+        AssertExactRequired(
+            Schema(schemas,
+                "CP6.Space.Contracts.SaveSpaceExcelMappingProfileRequest"),
+            "name",
+            "definition");
+        AssertExactRequired(
+            Schema(schemas,
+                "CP6.Space.Contracts.PreviewSpaceExcelMappingRequest"),
+            "definition",
+            "workbook");
+        AssertExactRequired(
+            Schema(schemas,
+                "CP6.Space.Contracts.SpaceExcelMappingDefinitionDto"),
+            "schemaVersion",
+            "unknownColumnPolicy",
+            "emptyValuePolicy",
+            "duplicateRowPolicy",
+            "sheets");
+        var headerSample = Schema(
+            schemas,
+            "CP6.Space.Contracts.SpaceExcelHeaderSampleDto");
+        AssertExactRequired(headerSample, "sheetName", "headers");
+        Assert.DoesNotContain(
+            "cell",
+            headerSample.GetRawText(),
+            StringComparison.OrdinalIgnoreCase);
+        Assert.DoesNotContain(
+            "file",
+            headerSample.GetRawText(),
+            StringComparison.OrdinalIgnoreCase);
     }
 
     [Fact]

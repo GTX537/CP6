@@ -259,6 +259,93 @@ public sealed class SpaceWmsRuntimeSchemaFilter : ISchemaFilter
                 "fields",
                 "createdAtUtc",
             ],
+            [typeof(SaveSpaceExcelMappingProfileRequest)] =
+            [
+                "name",
+                "definition",
+            ],
+            [typeof(SaveSpaceExcelMappingProfileResponse)] =
+            [
+                "profile",
+                "created",
+                "idempotentReplay",
+            ],
+            [typeof(PreviewSpaceExcelMappingRequest)] =
+            [
+                "definition",
+                "workbook",
+            ],
+            [typeof(SpaceExcelHeaderSampleDto)] =
+            [
+                "sheetName",
+                "headers",
+            ],
+            [typeof(SpaceExcelMappingDefinitionDto)] =
+            [
+                "schemaVersion",
+                "unknownColumnPolicy",
+                "emptyValuePolicy",
+                "duplicateRowPolicy",
+                "sheets",
+            ],
+            [typeof(SpaceExcelSheetMappingDto)] =
+            [
+                "targetSheet",
+                "sourceSheet",
+                "sheetMatchMode",
+                "headerRow",
+                "dataStartRow",
+                "columns",
+            ],
+            [typeof(SpaceExcelColumnMappingDto)] =
+            [
+                "targetField",
+                "dataType",
+                "isBusinessKey",
+            ],
+            [typeof(SpaceExcelEnumConversionDto)] =
+            [
+                "sourceValue",
+                "targetValue",
+            ],
+            [typeof(SpaceExcelMappingProfileDto)] =
+            [
+                "id",
+                "name",
+                "scope",
+                "version",
+                "isReadOnly",
+                "definitionHash",
+                "definition",
+            ],
+            [typeof(SpaceExcelMappingPreviewDto)] =
+            [
+                "canSave",
+                "normalizedDefinition",
+                "sheets",
+                "issues",
+            ],
+            [typeof(SpaceExcelSheetPreviewDto)] =
+            [
+                "targetSheet",
+                "sourceSheetPattern",
+                "status",
+                "columns",
+                "unknownHeaders",
+            ],
+            [typeof(SpaceExcelColumnPreviewDto)] =
+            [
+                "targetField",
+                "required",
+                "status",
+            ],
+            [typeof(SpaceExcelMappingIssueDto)] =
+            [
+                "code",
+                "severity",
+                "message",
+                "fixHint",
+            ],
             [typeof(SpacePortalOrganizationDto)] =
             [
                 "organizationId",

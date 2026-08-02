@@ -28,6 +28,14 @@ public static class SpaceErrorCodes
     public const string CursorScopeMismatch = "SPACE_CURSOR_SCOPE_MISMATCH";
     public const string RequestInvalid = "SPACE_REQUEST_INVALID";
     public const string ConcurrencyConflict = "SPACE_CONCURRENCY_CONFLICT";
+    public const string ExcelMappingProfileInvalid =
+        "SPACE_MAPPING_PROFILE_INVALID";
+    public const string ExcelMappingProfileNotFound =
+        "SPACE_MAPPING_PROFILE_NOT_FOUND";
+    public const string ExcelMappingProfileConflict =
+        "SPACE_MAPPING_PROFILE_CONFLICT";
+    public const string ExcelMappingProfileReadOnly =
+        "SPACE_MAPPING_PROFILE_READ_ONLY";
     public const string FileTooLarge = "SPACE_FILE_TOO_LARGE";
     public const string FileTypeMismatch = "SPACE_FILE_TYPE_MISMATCH";
     public const string FileQuarantined = "SPACE_FILE_QUARANTINED";

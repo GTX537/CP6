@@ -156,6 +156,27 @@ export interface ISpaceDesignV1Client {
     placeWmsAdoption(versionId: string, adoptionId: string, body: PlaceSpaceWmsAdoptionRequest): Promise<SpaceWmsAdoptionCommandResponse>;
 
     /**
+     * @return OK
+     */
+    getProfiles(): Promise<SpaceExcelMappingProfileDto[]>;
+
+    /**
+     * @return OK
+     */
+    saveProfile(idempotency_Key: string, body: SaveSpaceExcelMappingProfileRequest): Promise<SaveSpaceExcelMappingProfileResponse>;
+
+    /**
+     * @param version (optional)
+     * @return OK
+     */
+    getProfile(profileId: string, version: number | undefined): Promise<SpaceExcelMappingProfileDto>;
+
+    /**
+     * @return OK
+     */
+    preview(body: PreviewSpaceExcelMappingRequest): Promise<SpaceExcelMappingPreviewDto>;
+
+    /**
      * @param type (optional)
      * @param status (optional)
      * @return OK
@@ -2630,6 +2651,381 @@ export class SpaceDesignV1Client implements ISpaceDesignV1Client {
             });
         }
         return Promise.resolve<SpaceWmsAdoptionCommandResponse>(null as any);
+    }
+
+    /**
+     * @return OK
+     */
+    getProfiles(): Promise<SpaceExcelMappingProfileDto[]> {
+        let url_ = this.baseUrl + "/api/space/design/v1/mapping-profiles/excel";
+        url_ = url_.replace(/[?&]$/, "");
+
+        let options_: RequestInit = {
+            method: "GET",
+            headers: {
+                "Accept": "application/json"
+            }
+        };
+
+        return this.http.fetch(url_, options_).then((_response: Response) => {
+            return this.processGetProfiles(_response);
+        });
+    }
+
+    protected processGetProfiles(response: Response): Promise<SpaceExcelMappingProfileDto[]> {
+        const status = response.status;
+        let _headers: any = {}; if (response.headers && response.headers.forEach) { response.headers.forEach((v: any, k: any) => _headers[k] = v); };
+        if (status === 200) {
+            return response.text().then((_responseText) => {
+            let result200: any = null;
+            let resultData200 = _responseText === "" ? null : JSON.parse(_responseText, this.jsonParseReviver);
+            if (Array.isArray(resultData200)) {
+                result200 = [] as any;
+                for (let item of resultData200)
+                    result200!.push(SpaceExcelMappingProfileDto.fromJS(item));
+            }
+            else {
+                result200 = null as any;
+            }
+            return result200;
+            });
+        } else if (status === 400) {
+            return response.text().then((_responseText) => {
+            let result400: any = null;
+            let resultData400 = _responseText === "" ? null : JSON.parse(_responseText, this.jsonParseReviver);
+            result400 = SpaceDesignProblemDetails.fromJS(resultData400);
+            return throwException("Bad Request", status, _responseText, _headers, result400);
+            });
+        } else if (status === 401) {
+            return response.text().then((_responseText) => {
+            let result401: any = null;
+            let resultData401 = _responseText === "" ? null : JSON.parse(_responseText, this.jsonParseReviver);
+            result401 = SpaceDesignProblemDetails.fromJS(resultData401);
+            return throwException("Unauthorized", status, _responseText, _headers, result401);
+            });
+        } else if (status === 403) {
+            return response.text().then((_responseText) => {
+            let result403: any = null;
+            let resultData403 = _responseText === "" ? null : JSON.parse(_responseText, this.jsonParseReviver);
+            result403 = SpaceDesignProblemDetails.fromJS(resultData403);
+            return throwException("Forbidden", status, _responseText, _headers, result403);
+            });
+        } else if (status === 404) {
+            return response.text().then((_responseText) => {
+            let result404: any = null;
+            let resultData404 = _responseText === "" ? null : JSON.parse(_responseText, this.jsonParseReviver);
+            result404 = SpaceDesignProblemDetails.fromJS(resultData404);
+            return throwException("Not Found", status, _responseText, _headers, result404);
+            });
+        } else if (status === 409) {
+            return response.text().then((_responseText) => {
+            let result409: any = null;
+            let resultData409 = _responseText === "" ? null : JSON.parse(_responseText, this.jsonParseReviver);
+            result409 = SpaceDesignProblemDetails.fromJS(resultData409);
+            return throwException("Conflict", status, _responseText, _headers, result409);
+            });
+        } else if (status === 422) {
+            return response.text().then((_responseText) => {
+            let result422: any = null;
+            let resultData422 = _responseText === "" ? null : JSON.parse(_responseText, this.jsonParseReviver);
+            result422 = SpaceDesignProblemDetails.fromJS(resultData422);
+            return throwException("Unprocessable Content", status, _responseText, _headers, result422);
+            });
+        } else if (status === 500) {
+            return response.text().then((_responseText) => {
+            let result500: any = null;
+            let resultData500 = _responseText === "" ? null : JSON.parse(_responseText, this.jsonParseReviver);
+            result500 = SpaceDesignProblemDetails.fromJS(resultData500);
+            return throwException("Internal Server Error", status, _responseText, _headers, result500);
+            });
+        } else if (status !== 200 && status !== 204) {
+            return response.text().then((_responseText) => {
+            return throwException("An unexpected server error occurred.", status, _responseText, _headers);
+            });
+        }
+        return Promise.resolve<SpaceExcelMappingProfileDto[]>(null as any);
+    }
+
+    /**
+     * @return OK
+     */
+    saveProfile(idempotency_Key: string, body: SaveSpaceExcelMappingProfileRequest): Promise<SaveSpaceExcelMappingProfileResponse> {
+        let url_ = this.baseUrl + "/api/space/design/v1/mapping-profiles/excel";
+        url_ = url_.replace(/[?&]$/, "");
+
+        const content_ = JSON.stringify(body);
+
+        let options_: RequestInit = {
+            body: content_,
+            method: "POST",
+            headers: {
+                "Idempotency-Key": idempotency_Key !== undefined && idempotency_Key !== null ? "" + idempotency_Key : "",
+                "Content-Type": "application/json",
+                "Accept": "application/json"
+            }
+        };
+
+        return this.http.fetch(url_, options_).then((_response: Response) => {
+            return this.processSaveProfile(_response);
+        });
+    }
+
+    protected processSaveProfile(response: Response): Promise<SaveSpaceExcelMappingProfileResponse> {
+        const status = response.status;
+        let _headers: any = {}; if (response.headers && response.headers.forEach) { response.headers.forEach((v: any, k: any) => _headers[k] = v); };
+        if (status === 200) {
+            return response.text().then((_responseText) => {
+            let result200: any = null;
+            let resultData200 = _responseText === "" ? null : JSON.parse(_responseText, this.jsonParseReviver);
+            result200 = SaveSpaceExcelMappingProfileResponse.fromJS(resultData200);
+            return result200;
+            });
+        } else if (status === 201) {
+            return response.text().then((_responseText) => {
+            let result201: any = null;
+            let resultData201 = _responseText === "" ? null : JSON.parse(_responseText, this.jsonParseReviver);
+            result201 = SaveSpaceExcelMappingProfileResponse.fromJS(resultData201);
+            return result201;
+            });
+        } else if (status === 400) {
+            return response.text().then((_responseText) => {
+            let result400: any = null;
+            let resultData400 = _responseText === "" ? null : JSON.parse(_responseText, this.jsonParseReviver);
+            result400 = SpaceDesignProblemDetails.fromJS(resultData400);
+            return throwException("Bad Request", status, _responseText, _headers, result400);
+            });
+        } else if (status === 401) {
+            return response.text().then((_responseText) => {
+            let result401: any = null;
+            let resultData401 = _responseText === "" ? null : JSON.parse(_responseText, this.jsonParseReviver);
+            result401 = SpaceDesignProblemDetails.fromJS(resultData401);
+            return throwException("Unauthorized", status, _responseText, _headers, result401);
+            });
+        } else if (status === 403) {
+            return response.text().then((_responseText) => {
+            let result403: any = null;
+            let resultData403 = _responseText === "" ? null : JSON.parse(_responseText, this.jsonParseReviver);
+            result403 = SpaceDesignProblemDetails.fromJS(resultData403);
+            return throwException("Forbidden", status, _responseText, _headers, result403);
+            });
+        } else if (status === 404) {
+            return response.text().then((_responseText) => {
+            let result404: any = null;
+            let resultData404 = _responseText === "" ? null : JSON.parse(_responseText, this.jsonParseReviver);
+            result404 = SpaceDesignProblemDetails.fromJS(resultData404);
+            return throwException("Not Found", status, _responseText, _headers, result404);
+            });
+        } else if (status === 409) {
+            return response.text().then((_responseText) => {
+            let result409: any = null;
+            let resultData409 = _responseText === "" ? null : JSON.parse(_responseText, this.jsonParseReviver);
+            result409 = SpaceDesignProblemDetails.fromJS(resultData409);
+            return throwException("Conflict", status, _responseText, _headers, result409);
+            });
+        } else if (status === 422) {
+            return response.text().then((_responseText) => {
+            let result422: any = null;
+            let resultData422 = _responseText === "" ? null : JSON.parse(_responseText, this.jsonParseReviver);
+            result422 = SpaceDesignProblemDetails.fromJS(resultData422);
+            return throwException("Unprocessable Content", status, _responseText, _headers, result422);
+            });
+        } else if (status === 500) {
+            return response.text().then((_responseText) => {
+            let result500: any = null;
+            let resultData500 = _responseText === "" ? null : JSON.parse(_responseText, this.jsonParseReviver);
+            result500 = SpaceDesignProblemDetails.fromJS(resultData500);
+            return throwException("Internal Server Error", status, _responseText, _headers, result500);
+            });
+        } else if (status !== 200 && status !== 204) {
+            return response.text().then((_responseText) => {
+            return throwException("An unexpected server error occurred.", status, _responseText, _headers);
+            });
+        }
+        return Promise.resolve<SaveSpaceExcelMappingProfileResponse>(null as any);
+    }
+
+    /**
+     * @param version (optional)
+     * @return OK
+     */
+    getProfile(profileId: string, version: number | undefined): Promise<SpaceExcelMappingProfileDto> {
+        let url_ = this.baseUrl + "/api/space/design/v1/mapping-profiles/excel/{profileId}?";
+        if (profileId === undefined || profileId === null)
+            throw new globalThis.Error("The parameter 'profileId' must be defined.");
+        url_ = url_.replace("{profileId}", encodeURIComponent("" + profileId));
+        if (version === null)
+            throw new globalThis.Error("The parameter 'version' cannot be null.");
+        else if (version !== undefined)
+            url_ += "version=" + encodeURIComponent("" + version) + "&";
+        url_ = url_.replace(/[?&]$/, "");
+
+        let options_: RequestInit = {
+            method: "GET",
+            headers: {
+                "Accept": "application/json"
+            }
+        };
+
+        return this.http.fetch(url_, options_).then((_response: Response) => {
+            return this.processGetProfile(_response);
+        });
+    }
+
+    protected processGetProfile(response: Response): Promise<SpaceExcelMappingProfileDto> {
+        const status = response.status;
+        let _headers: any = {}; if (response.headers && response.headers.forEach) { response.headers.forEach((v: any, k: any) => _headers[k] = v); };
+        if (status === 200) {
+            return response.text().then((_responseText) => {
+            let result200: any = null;
+            let resultData200 = _responseText === "" ? null : JSON.parse(_responseText, this.jsonParseReviver);
+            result200 = SpaceExcelMappingProfileDto.fromJS(resultData200);
+            return result200;
+            });
+        } else if (status === 400) {
+            return response.text().then((_responseText) => {
+            let result400: any = null;
+            let resultData400 = _responseText === "" ? null : JSON.parse(_responseText, this.jsonParseReviver);
+            result400 = SpaceDesignProblemDetails.fromJS(resultData400);
+            return throwException("Bad Request", status, _responseText, _headers, result400);
+            });
+        } else if (status === 401) {
+            return response.text().then((_responseText) => {
+            let result401: any = null;
+            let resultData401 = _responseText === "" ? null : JSON.parse(_responseText, this.jsonParseReviver);
+            result401 = SpaceDesignProblemDetails.fromJS(resultData401);
+            return throwException("Unauthorized", status, _responseText, _headers, result401);
+            });
+        } else if (status === 403) {
+            return response.text().then((_responseText) => {
+            let result403: any = null;
+            let resultData403 = _responseText === "" ? null : JSON.parse(_responseText, this.jsonParseReviver);
+            result403 = SpaceDesignProblemDetails.fromJS(resultData403);
+            return throwException("Forbidden", status, _responseText, _headers, result403);
+            });
+        } else if (status === 404) {
+            return response.text().then((_responseText) => {
+            let result404: any = null;
+            let resultData404 = _responseText === "" ? null : JSON.parse(_responseText, this.jsonParseReviver);
+            result404 = SpaceDesignProblemDetails.fromJS(resultData404);
+            return throwException("Not Found", status, _responseText, _headers, result404);
+            });
+        } else if (status === 409) {
+            return response.text().then((_responseText) => {
+            let result409: any = null;
+            let resultData409 = _responseText === "" ? null : JSON.parse(_responseText, this.jsonParseReviver);
+            result409 = SpaceDesignProblemDetails.fromJS(resultData409);
+            return throwException("Conflict", status, _responseText, _headers, result409);
+            });
+        } else if (status === 422) {
+            return response.text().then((_responseText) => {
+            let result422: any = null;
+            let resultData422 = _responseText === "" ? null : JSON.parse(_responseText, this.jsonParseReviver);
+            result422 = SpaceDesignProblemDetails.fromJS(resultData422);
+            return throwException("Unprocessable Content", status, _responseText, _headers, result422);
+            });
+        } else if (status === 500) {
+            return response.text().then((_responseText) => {
+            let result500: any = null;
+            let resultData500 = _responseText === "" ? null : JSON.parse(_responseText, this.jsonParseReviver);
+            result500 = SpaceDesignProblemDetails.fromJS(resultData500);
+            return throwException("Internal Server Error", status, _responseText, _headers, result500);
+            });
+        } else if (status !== 200 && status !== 204) {
+            return response.text().then((_responseText) => {
+            return throwException("An unexpected server error occurred.", status, _responseText, _headers);
+            });
+        }
+        return Promise.resolve<SpaceExcelMappingProfileDto>(null as any);
+    }
+
+    /**
+     * @return OK
+     */
+    preview(body: PreviewSpaceExcelMappingRequest): Promise<SpaceExcelMappingPreviewDto> {
+        let url_ = this.baseUrl + "/api/space/design/v1/mapping-profiles/excel/preview";
+        url_ = url_.replace(/[?&]$/, "");
+
+        const content_ = JSON.stringify(body);
+
+        let options_: RequestInit = {
+            body: content_,
+            method: "POST",
+            headers: {
+                "Content-Type": "application/json",
+                "Accept": "application/json"
+            }
+        };
+
+        return this.http.fetch(url_, options_).then((_response: Response) => {
+            return this.processPreview(_response);
+        });
+    }
+
+    protected processPreview(response: Response): Promise<SpaceExcelMappingPreviewDto> {
+        const status = response.status;
+        let _headers: any = {}; if (response.headers && response.headers.forEach) { response.headers.forEach((v: any, k: any) => _headers[k] = v); };
+        if (status === 200) {
+            return response.text().then((_responseText) => {
+            let result200: any = null;
+            let resultData200 = _responseText === "" ? null : JSON.parse(_responseText, this.jsonParseReviver);
+            result200 = SpaceExcelMappingPreviewDto.fromJS(resultData200);
+            return result200;
+            });
+        } else if (status === 400) {
+            return response.text().then((_responseText) => {
+            let result400: any = null;
+            let resultData400 = _responseText === "" ? null : JSON.parse(_responseText, this.jsonParseReviver);
+            result400 = SpaceDesignProblemDetails.fromJS(resultData400);
+            return throwException("Bad Request", status, _responseText, _headers, result400);
+            });
+        } else if (status === 401) {
+            return response.text().then((_responseText) => {
+            let result401: any = null;
+            let resultData401 = _responseText === "" ? null : JSON.parse(_responseText, this.jsonParseReviver);
+            result401 = SpaceDesignProblemDetails.fromJS(resultData401);
+            return throwException("Unauthorized", status, _responseText, _headers, result401);
+            });
+        } else if (status === 403) {
+            return response.text().then((_responseText) => {
+            let result403: any = null;
+            let resultData403 = _responseText === "" ? null : JSON.parse(_responseText, this.jsonParseReviver);
+            result403 = SpaceDesignProblemDetails.fromJS(resultData403);
+            return throwException("Forbidden", status, _responseText, _headers, result403);
+            });
+        } else if (status === 404) {
+            return response.text().then((_responseText) => {
+            let result404: any = null;
+            let resultData404 = _responseText === "" ? null : JSON.parse(_responseText, this.jsonParseReviver);
+            result404 = SpaceDesignProblemDetails.fromJS(resultData404);
+            return throwException("Not Found", status, _responseText, _headers, result404);
+            });
+        } else if (status === 409) {
+            return response.text().then((_responseText) => {
+            let result409: any = null;
+            let resultData409 = _responseText === "" ? null : JSON.parse(_responseText, this.jsonParseReviver);
+            result409 = SpaceDesignProblemDetails.fromJS(resultData409);
+            return throwException("Conflict", status, _responseText, _headers, result409);
+            });
+        } else if (status === 422) {
+            return response.text().then((_responseText) => {
+            let result422: any = null;
+            let resultData422 = _responseText === "" ? null : JSON.parse(_responseText, this.jsonParseReviver);
+            result422 = SpaceDesignProblemDetails.fromJS(resultData422);
+            return throwException("Unprocessable Content", status, _responseText, _headers, result422);
+            });
+        } else if (status === 500) {
+            return response.text().then((_responseText) => {
+            let result500: any = null;
+            let resultData500 = _responseText === "" ? null : JSON.parse(_responseText, this.jsonParseReviver);
+            result500 = SpaceDesignProblemDetails.fromJS(resultData500);
+            return throwException("Internal Server Error", status, _responseText, _headers, result500);
+            });
+        } else if (status !== 200 && status !== 204) {
+            return response.text().then((_responseText) => {
+            return throwException("An unexpected server error occurred.", status, _responseText, _headers);
+            });
+        }
+        return Promise.resolve<SpaceExcelMappingPreviewDto>(null as any);
     }
 
     /**
@@ -6015,6 +6411,58 @@ export interface IPlaceSpaceWmsAdoptionRequest {
     expectedRowVersion?: string | undefined;
 }
 
+export class PreviewSpaceExcelMappingRequest implements IPreviewSpaceExcelMappingRequest {
+    definition!: SpaceExcelMappingDefinitionDto;
+    workbook!: SpaceExcelHeaderSampleDto[];
+
+    constructor(data?: IPreviewSpaceExcelMappingRequest) {
+        if (data) {
+            for (var property in data) {
+                if (data.hasOwnProperty(property))
+                    (this as any)[property] = (data as any)[property];
+            }
+        }
+        if (!data) {
+            this.definition = new SpaceExcelMappingDefinitionDto();
+            this.workbook = [];
+        }
+    }
+
+    init(_data?: any) {
+        if (_data) {
+            this.definition = _data["definition"] ? SpaceExcelMappingDefinitionDto.fromJS(_data["definition"]) : new SpaceExcelMappingDefinitionDto();
+            if (Array.isArray(_data["workbook"])) {
+                this.workbook = [] as any;
+                for (let item of _data["workbook"])
+                    this.workbook!.push(SpaceExcelHeaderSampleDto.fromJS(item));
+            }
+        }
+    }
+
+    static fromJS(data: any): PreviewSpaceExcelMappingRequest {
+        data = typeof data === 'object' ? data : {};
+        let result = new PreviewSpaceExcelMappingRequest();
+        result.init(data);
+        return result;
+    }
+
+    toJSON(data?: any) {
+        data = typeof data === 'object' ? data : {};
+        data["definition"] = this.definition ? this.definition.toJSON() : undefined as any;
+        if (Array.isArray(this.workbook)) {
+            data["workbook"] = [];
+            for (let item of this.workbook)
+                data["workbook"].push(item ? item.toJSON() : undefined as any);
+        }
+        return data;
+    }
+}
+
+export interface IPreviewSpaceExcelMappingRequest {
+    definition: SpaceExcelMappingDefinitionDto;
+    workbook: SpaceExcelHeaderSampleDto[];
+}
+
 export class RefreshSpaceWmsAdoptionResponse implements IRefreshSpaceWmsAdoptionResponse {
     siteId?: string;
     adapterId?: string | undefined;
@@ -6089,6 +6537,112 @@ export interface IRefreshSpaceWmsAdoptionResponse {
     unboundCount?: number;
     boundCount?: number;
     differenceCount?: number;
+}
+
+export class SaveSpaceExcelMappingProfileRequest implements ISaveSpaceExcelMappingProfileRequest {
+    profileId?: string | undefined;
+    name!: string;
+    definition!: SpaceExcelMappingDefinitionDto;
+    expectedRowVersion?: string | undefined;
+    copyFromProfileId?: string | undefined;
+    copyFromVersion?: number | undefined;
+
+    constructor(data?: ISaveSpaceExcelMappingProfileRequest) {
+        if (data) {
+            for (var property in data) {
+                if (data.hasOwnProperty(property))
+                    (this as any)[property] = (data as any)[property];
+            }
+        }
+        if (!data) {
+            this.definition = new SpaceExcelMappingDefinitionDto();
+        }
+    }
+
+    init(_data?: any) {
+        if (_data) {
+            this.profileId = _data["profileId"];
+            this.name = _data["name"];
+            this.definition = _data["definition"] ? SpaceExcelMappingDefinitionDto.fromJS(_data["definition"]) : new SpaceExcelMappingDefinitionDto();
+            this.expectedRowVersion = _data["expectedRowVersion"];
+            this.copyFromProfileId = _data["copyFromProfileId"];
+            this.copyFromVersion = _data["copyFromVersion"];
+        }
+    }
+
+    static fromJS(data: any): SaveSpaceExcelMappingProfileRequest {
+        data = typeof data === 'object' ? data : {};
+        let result = new SaveSpaceExcelMappingProfileRequest();
+        result.init(data);
+        return result;
+    }
+
+    toJSON(data?: any) {
+        data = typeof data === 'object' ? data : {};
+        data["profileId"] = this.profileId;
+        data["name"] = this.name;
+        data["definition"] = this.definition ? this.definition.toJSON() : undefined as any;
+        data["expectedRowVersion"] = this.expectedRowVersion;
+        data["copyFromProfileId"] = this.copyFromProfileId;
+        data["copyFromVersion"] = this.copyFromVersion;
+        return data;
+    }
+}
+
+export interface ISaveSpaceExcelMappingProfileRequest {
+    profileId?: string | undefined;
+    name: string;
+    definition: SpaceExcelMappingDefinitionDto;
+    expectedRowVersion?: string | undefined;
+    copyFromProfileId?: string | undefined;
+    copyFromVersion?: number | undefined;
+}
+
+export class SaveSpaceExcelMappingProfileResponse implements ISaveSpaceExcelMappingProfileResponse {
+    profile!: SpaceExcelMappingProfileDto;
+    created!: boolean;
+    idempotentReplay!: boolean;
+
+    constructor(data?: ISaveSpaceExcelMappingProfileResponse) {
+        if (data) {
+            for (var property in data) {
+                if (data.hasOwnProperty(property))
+                    (this as any)[property] = (data as any)[property];
+            }
+        }
+        if (!data) {
+            this.profile = new SpaceExcelMappingProfileDto();
+        }
+    }
+
+    init(_data?: any) {
+        if (_data) {
+            this.profile = _data["profile"] ? SpaceExcelMappingProfileDto.fromJS(_data["profile"]) : new SpaceExcelMappingProfileDto();
+            this.created = _data["created"];
+            this.idempotentReplay = _data["idempotentReplay"];
+        }
+    }
+
+    static fromJS(data: any): SaveSpaceExcelMappingProfileResponse {
+        data = typeof data === 'object' ? data : {};
+        let result = new SaveSpaceExcelMappingProfileResponse();
+        result.init(data);
+        return result;
+    }
+
+    toJSON(data?: any) {
+        data = typeof data === 'object' ? data : {};
+        data["profile"] = this.profile ? this.profile.toJSON() : undefined as any;
+        data["created"] = this.created;
+        data["idempotentReplay"] = this.idempotentReplay;
+        return data;
+    }
+}
+
+export interface ISaveSpaceExcelMappingProfileResponse {
+    profile: SpaceExcelMappingProfileDto;
+    created: boolean;
+    idempotentReplay: boolean;
 }
 
 export class SaveSpaceUnderlayCalibrationRequest implements ISaveSpaceUnderlayCalibrationRequest {
@@ -6657,6 +7211,647 @@ export interface ISpaceElementCommandResultDto {
     targetLogicalId?: string;
     element?: SpaceSceneElementDto;
     attributes?: SpaceSceneElementAttributeDto[] | undefined;
+}
+
+export class SpaceExcelColumnMappingDto implements ISpaceExcelColumnMappingDto {
+    targetField!: string;
+    sourceHeader?: string | undefined;
+    sourceColumn?: string | undefined;
+    dataType!: string;
+    format?: string | undefined;
+    defaultValue?: string | undefined;
+    isBusinessKey!: boolean;
+    referenceTarget?: string | undefined;
+    enumConversions?: SpaceExcelEnumConversionDto[] | undefined;
+    unitConversionMultiplier?: number | undefined;
+
+    constructor(data?: ISpaceExcelColumnMappingDto) {
+        if (data) {
+            for (var property in data) {
+                if (data.hasOwnProperty(property))
+                    (this as any)[property] = (data as any)[property];
+            }
+        }
+    }
+
+    init(_data?: any) {
+        if (_data) {
+            this.targetField = _data["targetField"];
+            this.sourceHeader = _data["sourceHeader"];
+            this.sourceColumn = _data["sourceColumn"];
+            this.dataType = _data["dataType"];
+            this.format = _data["format"];
+            this.defaultValue = _data["defaultValue"];
+            this.isBusinessKey = _data["isBusinessKey"];
+            this.referenceTarget = _data["referenceTarget"];
+            if (Array.isArray(_data["enumConversions"])) {
+                this.enumConversions = [] as any;
+                for (let item of _data["enumConversions"])
+                    this.enumConversions!.push(SpaceExcelEnumConversionDto.fromJS(item));
+            }
+            this.unitConversionMultiplier = _data["unitConversionMultiplier"];
+        }
+    }
+
+    static fromJS(data: any): SpaceExcelColumnMappingDto {
+        data = typeof data === 'object' ? data : {};
+        let result = new SpaceExcelColumnMappingDto();
+        result.init(data);
+        return result;
+    }
+
+    toJSON(data?: any) {
+        data = typeof data === 'object' ? data : {};
+        data["targetField"] = this.targetField;
+        data["sourceHeader"] = this.sourceHeader;
+        data["sourceColumn"] = this.sourceColumn;
+        data["dataType"] = this.dataType;
+        data["format"] = this.format;
+        data["defaultValue"] = this.defaultValue;
+        data["isBusinessKey"] = this.isBusinessKey;
+        data["referenceTarget"] = this.referenceTarget;
+        if (Array.isArray(this.enumConversions)) {
+            data["enumConversions"] = [];
+            for (let item of this.enumConversions)
+                data["enumConversions"].push(item ? item.toJSON() : undefined as any);
+        }
+        data["unitConversionMultiplier"] = this.unitConversionMultiplier;
+        return data;
+    }
+}
+
+export interface ISpaceExcelColumnMappingDto {
+    targetField: string;
+    sourceHeader?: string | undefined;
+    sourceColumn?: string | undefined;
+    dataType: string;
+    format?: string | undefined;
+    defaultValue?: string | undefined;
+    isBusinessKey: boolean;
+    referenceTarget?: string | undefined;
+    enumConversions?: SpaceExcelEnumConversionDto[] | undefined;
+    unitConversionMultiplier?: number | undefined;
+}
+
+export class SpaceExcelColumnPreviewDto implements ISpaceExcelColumnPreviewDto {
+    targetField!: string;
+    required!: boolean;
+    sourceHeader?: string | undefined;
+    sourceColumn?: string | undefined;
+    sourceColumnIndex?: number | undefined;
+    status!: string;
+
+    constructor(data?: ISpaceExcelColumnPreviewDto) {
+        if (data) {
+            for (var property in data) {
+                if (data.hasOwnProperty(property))
+                    (this as any)[property] = (data as any)[property];
+            }
+        }
+    }
+
+    init(_data?: any) {
+        if (_data) {
+            this.targetField = _data["targetField"];
+            this.required = _data["required"];
+            this.sourceHeader = _data["sourceHeader"];
+            this.sourceColumn = _data["sourceColumn"];
+            this.sourceColumnIndex = _data["sourceColumnIndex"];
+            this.status = _data["status"];
+        }
+    }
+
+    static fromJS(data: any): SpaceExcelColumnPreviewDto {
+        data = typeof data === 'object' ? data : {};
+        let result = new SpaceExcelColumnPreviewDto();
+        result.init(data);
+        return result;
+    }
+
+    toJSON(data?: any) {
+        data = typeof data === 'object' ? data : {};
+        data["targetField"] = this.targetField;
+        data["required"] = this.required;
+        data["sourceHeader"] = this.sourceHeader;
+        data["sourceColumn"] = this.sourceColumn;
+        data["sourceColumnIndex"] = this.sourceColumnIndex;
+        data["status"] = this.status;
+        return data;
+    }
+}
+
+export interface ISpaceExcelColumnPreviewDto {
+    targetField: string;
+    required: boolean;
+    sourceHeader?: string | undefined;
+    sourceColumn?: string | undefined;
+    sourceColumnIndex?: number | undefined;
+    status: string;
+}
+
+export class SpaceExcelEnumConversionDto implements ISpaceExcelEnumConversionDto {
+    sourceValue!: string;
+    targetValue!: string;
+
+    constructor(data?: ISpaceExcelEnumConversionDto) {
+        if (data) {
+            for (var property in data) {
+                if (data.hasOwnProperty(property))
+                    (this as any)[property] = (data as any)[property];
+            }
+        }
+    }
+
+    init(_data?: any) {
+        if (_data) {
+            this.sourceValue = _data["sourceValue"];
+            this.targetValue = _data["targetValue"];
+        }
+    }
+
+    static fromJS(data: any): SpaceExcelEnumConversionDto {
+        data = typeof data === 'object' ? data : {};
+        let result = new SpaceExcelEnumConversionDto();
+        result.init(data);
+        return result;
+    }
+
+    toJSON(data?: any) {
+        data = typeof data === 'object' ? data : {};
+        data["sourceValue"] = this.sourceValue;
+        data["targetValue"] = this.targetValue;
+        return data;
+    }
+}
+
+export interface ISpaceExcelEnumConversionDto {
+    sourceValue: string;
+    targetValue: string;
+}
+
+export class SpaceExcelHeaderSampleDto implements ISpaceExcelHeaderSampleDto {
+    sheetName!: string;
+    headers!: string[];
+
+    constructor(data?: ISpaceExcelHeaderSampleDto) {
+        if (data) {
+            for (var property in data) {
+                if (data.hasOwnProperty(property))
+                    (this as any)[property] = (data as any)[property];
+            }
+        }
+        if (!data) {
+            this.headers = [];
+        }
+    }
+
+    init(_data?: any) {
+        if (_data) {
+            this.sheetName = _data["sheetName"];
+            if (Array.isArray(_data["headers"])) {
+                this.headers = [] as any;
+                for (let item of _data["headers"])
+                    this.headers!.push(item);
+            }
+        }
+    }
+
+    static fromJS(data: any): SpaceExcelHeaderSampleDto {
+        data = typeof data === 'object' ? data : {};
+        let result = new SpaceExcelHeaderSampleDto();
+        result.init(data);
+        return result;
+    }
+
+    toJSON(data?: any) {
+        data = typeof data === 'object' ? data : {};
+        data["sheetName"] = this.sheetName;
+        if (Array.isArray(this.headers)) {
+            data["headers"] = [];
+            for (let item of this.headers)
+                data["headers"].push(item);
+        }
+        return data;
+    }
+}
+
+export interface ISpaceExcelHeaderSampleDto {
+    sheetName: string;
+    headers: string[];
+}
+
+export class SpaceExcelMappingDefinitionDto implements ISpaceExcelMappingDefinitionDto {
+    schemaVersion!: number;
+    unknownColumnPolicy!: string;
+    emptyValuePolicy!: string;
+    duplicateRowPolicy!: string;
+    sheets!: SpaceExcelSheetMappingDto[];
+
+    constructor(data?: ISpaceExcelMappingDefinitionDto) {
+        if (data) {
+            for (var property in data) {
+                if (data.hasOwnProperty(property))
+                    (this as any)[property] = (data as any)[property];
+            }
+        }
+        if (!data) {
+            this.sheets = [];
+        }
+    }
+
+    init(_data?: any) {
+        if (_data) {
+            this.schemaVersion = _data["schemaVersion"];
+            this.unknownColumnPolicy = _data["unknownColumnPolicy"];
+            this.emptyValuePolicy = _data["emptyValuePolicy"];
+            this.duplicateRowPolicy = _data["duplicateRowPolicy"];
+            if (Array.isArray(_data["sheets"])) {
+                this.sheets = [] as any;
+                for (let item of _data["sheets"])
+                    this.sheets!.push(SpaceExcelSheetMappingDto.fromJS(item));
+            }
+        }
+    }
+
+    static fromJS(data: any): SpaceExcelMappingDefinitionDto {
+        data = typeof data === 'object' ? data : {};
+        let result = new SpaceExcelMappingDefinitionDto();
+        result.init(data);
+        return result;
+    }
+
+    toJSON(data?: any) {
+        data = typeof data === 'object' ? data : {};
+        data["schemaVersion"] = this.schemaVersion;
+        data["unknownColumnPolicy"] = this.unknownColumnPolicy;
+        data["emptyValuePolicy"] = this.emptyValuePolicy;
+        data["duplicateRowPolicy"] = this.duplicateRowPolicy;
+        if (Array.isArray(this.sheets)) {
+            data["sheets"] = [];
+            for (let item of this.sheets)
+                data["sheets"].push(item ? item.toJSON() : undefined as any);
+        }
+        return data;
+    }
+}
+
+export interface ISpaceExcelMappingDefinitionDto {
+    schemaVersion: number;
+    unknownColumnPolicy: string;
+    emptyValuePolicy: string;
+    duplicateRowPolicy: string;
+    sheets: SpaceExcelSheetMappingDto[];
+}
+
+export class SpaceExcelMappingIssueDto implements ISpaceExcelMappingIssueDto {
+    code!: string;
+    severity!: string;
+    sheet?: string | undefined;
+    column?: string | undefined;
+    message!: string;
+    fixHint!: string;
+
+    constructor(data?: ISpaceExcelMappingIssueDto) {
+        if (data) {
+            for (var property in data) {
+                if (data.hasOwnProperty(property))
+                    (this as any)[property] = (data as any)[property];
+            }
+        }
+    }
+
+    init(_data?: any) {
+        if (_data) {
+            this.code = _data["code"];
+            this.severity = _data["severity"];
+            this.sheet = _data["sheet"];
+            this.column = _data["column"];
+            this.message = _data["message"];
+            this.fixHint = _data["fixHint"];
+        }
+    }
+
+    static fromJS(data: any): SpaceExcelMappingIssueDto {
+        data = typeof data === 'object' ? data : {};
+        let result = new SpaceExcelMappingIssueDto();
+        result.init(data);
+        return result;
+    }
+
+    toJSON(data?: any) {
+        data = typeof data === 'object' ? data : {};
+        data["code"] = this.code;
+        data["severity"] = this.severity;
+        data["sheet"] = this.sheet;
+        data["column"] = this.column;
+        data["message"] = this.message;
+        data["fixHint"] = this.fixHint;
+        return data;
+    }
+}
+
+export interface ISpaceExcelMappingIssueDto {
+    code: string;
+    severity: string;
+    sheet?: string | undefined;
+    column?: string | undefined;
+    message: string;
+    fixHint: string;
+}
+
+export class SpaceExcelMappingPreviewDto implements ISpaceExcelMappingPreviewDto {
+    canSave!: boolean;
+    normalizedDefinition!: SpaceExcelMappingDefinitionDto;
+    sheets!: SpaceExcelSheetPreviewDto[];
+    issues!: SpaceExcelMappingIssueDto[];
+
+    constructor(data?: ISpaceExcelMappingPreviewDto) {
+        if (data) {
+            for (var property in data) {
+                if (data.hasOwnProperty(property))
+                    (this as any)[property] = (data as any)[property];
+            }
+        }
+        if (!data) {
+            this.normalizedDefinition = new SpaceExcelMappingDefinitionDto();
+            this.sheets = [];
+            this.issues = [];
+        }
+    }
+
+    init(_data?: any) {
+        if (_data) {
+            this.canSave = _data["canSave"];
+            this.normalizedDefinition = _data["normalizedDefinition"] ? SpaceExcelMappingDefinitionDto.fromJS(_data["normalizedDefinition"]) : new SpaceExcelMappingDefinitionDto();
+            if (Array.isArray(_data["sheets"])) {
+                this.sheets = [] as any;
+                for (let item of _data["sheets"])
+                    this.sheets!.push(SpaceExcelSheetPreviewDto.fromJS(item));
+            }
+            if (Array.isArray(_data["issues"])) {
+                this.issues = [] as any;
+                for (let item of _data["issues"])
+                    this.issues!.push(SpaceExcelMappingIssueDto.fromJS(item));
+            }
+        }
+    }
+
+    static fromJS(data: any): SpaceExcelMappingPreviewDto {
+        data = typeof data === 'object' ? data : {};
+        let result = new SpaceExcelMappingPreviewDto();
+        result.init(data);
+        return result;
+    }
+
+    toJSON(data?: any) {
+        data = typeof data === 'object' ? data : {};
+        data["canSave"] = this.canSave;
+        data["normalizedDefinition"] = this.normalizedDefinition ? this.normalizedDefinition.toJSON() : undefined as any;
+        if (Array.isArray(this.sheets)) {
+            data["sheets"] = [];
+            for (let item of this.sheets)
+                data["sheets"].push(item ? item.toJSON() : undefined as any);
+        }
+        if (Array.isArray(this.issues)) {
+            data["issues"] = [];
+            for (let item of this.issues)
+                data["issues"].push(item ? item.toJSON() : undefined as any);
+        }
+        return data;
+    }
+}
+
+export interface ISpaceExcelMappingPreviewDto {
+    canSave: boolean;
+    normalizedDefinition: SpaceExcelMappingDefinitionDto;
+    sheets: SpaceExcelSheetPreviewDto[];
+    issues: SpaceExcelMappingIssueDto[];
+}
+
+export class SpaceExcelMappingProfileDto implements ISpaceExcelMappingProfileDto {
+    id!: string;
+    name!: string;
+    scope!: string;
+    version!: number;
+    isReadOnly!: boolean;
+    definitionHash!: string;
+    definition!: SpaceExcelMappingDefinitionDto;
+    basedOnProfileId?: string | undefined;
+    basedOnVersion?: number | undefined;
+    rowVersion?: string | undefined;
+    createdAtUtc?: Date | undefined;
+    createdBy?: string | undefined;
+
+    constructor(data?: ISpaceExcelMappingProfileDto) {
+        if (data) {
+            for (var property in data) {
+                if (data.hasOwnProperty(property))
+                    (this as any)[property] = (data as any)[property];
+            }
+        }
+        if (!data) {
+            this.definition = new SpaceExcelMappingDefinitionDto();
+        }
+    }
+
+    init(_data?: any) {
+        if (_data) {
+            this.id = _data["id"];
+            this.name = _data["name"];
+            this.scope = _data["scope"];
+            this.version = _data["version"];
+            this.isReadOnly = _data["isReadOnly"];
+            this.definitionHash = _data["definitionHash"];
+            this.definition = _data["definition"] ? SpaceExcelMappingDefinitionDto.fromJS(_data["definition"]) : new SpaceExcelMappingDefinitionDto();
+            this.basedOnProfileId = _data["basedOnProfileId"];
+            this.basedOnVersion = _data["basedOnVersion"];
+            this.rowVersion = _data["rowVersion"];
+            this.createdAtUtc = _data["createdAtUtc"] ? new Date(_data["createdAtUtc"].toString()) : undefined as any;
+            this.createdBy = _data["createdBy"];
+        }
+    }
+
+    static fromJS(data: any): SpaceExcelMappingProfileDto {
+        data = typeof data === 'object' ? data : {};
+        let result = new SpaceExcelMappingProfileDto();
+        result.init(data);
+        return result;
+    }
+
+    toJSON(data?: any) {
+        data = typeof data === 'object' ? data : {};
+        data["id"] = this.id;
+        data["name"] = this.name;
+        data["scope"] = this.scope;
+        data["version"] = this.version;
+        data["isReadOnly"] = this.isReadOnly;
+        data["definitionHash"] = this.definitionHash;
+        data["definition"] = this.definition ? this.definition.toJSON() : undefined as any;
+        data["basedOnProfileId"] = this.basedOnProfileId;
+        data["basedOnVersion"] = this.basedOnVersion;
+        data["rowVersion"] = this.rowVersion;
+        data["createdAtUtc"] = this.createdAtUtc ? this.createdAtUtc.toISOString() : undefined as any;
+        data["createdBy"] = this.createdBy;
+        return data;
+    }
+}
+
+export interface ISpaceExcelMappingProfileDto {
+    id: string;
+    name: string;
+    scope: string;
+    version: number;
+    isReadOnly: boolean;
+    definitionHash: string;
+    definition: SpaceExcelMappingDefinitionDto;
+    basedOnProfileId?: string | undefined;
+    basedOnVersion?: number | undefined;
+    rowVersion?: string | undefined;
+    createdAtUtc?: Date | undefined;
+    createdBy?: string | undefined;
+}
+
+export class SpaceExcelSheetMappingDto implements ISpaceExcelSheetMappingDto {
+    targetSheet!: string;
+    sourceSheet!: string;
+    sheetMatchMode!: string;
+    headerRow!: number;
+    dataStartRow!: number;
+    columns!: SpaceExcelColumnMappingDto[];
+
+    constructor(data?: ISpaceExcelSheetMappingDto) {
+        if (data) {
+            for (var property in data) {
+                if (data.hasOwnProperty(property))
+                    (this as any)[property] = (data as any)[property];
+            }
+        }
+        if (!data) {
+            this.columns = [];
+        }
+    }
+
+    init(_data?: any) {
+        if (_data) {
+            this.targetSheet = _data["targetSheet"];
+            this.sourceSheet = _data["sourceSheet"];
+            this.sheetMatchMode = _data["sheetMatchMode"];
+            this.headerRow = _data["headerRow"];
+            this.dataStartRow = _data["dataStartRow"];
+            if (Array.isArray(_data["columns"])) {
+                this.columns = [] as any;
+                for (let item of _data["columns"])
+                    this.columns!.push(SpaceExcelColumnMappingDto.fromJS(item));
+            }
+        }
+    }
+
+    static fromJS(data: any): SpaceExcelSheetMappingDto {
+        data = typeof data === 'object' ? data : {};
+        let result = new SpaceExcelSheetMappingDto();
+        result.init(data);
+        return result;
+    }
+
+    toJSON(data?: any) {
+        data = typeof data === 'object' ? data : {};
+        data["targetSheet"] = this.targetSheet;
+        data["sourceSheet"] = this.sourceSheet;
+        data["sheetMatchMode"] = this.sheetMatchMode;
+        data["headerRow"] = this.headerRow;
+        data["dataStartRow"] = this.dataStartRow;
+        if (Array.isArray(this.columns)) {
+            data["columns"] = [];
+            for (let item of this.columns)
+                data["columns"].push(item ? item.toJSON() : undefined as any);
+        }
+        return data;
+    }
+}
+
+export interface ISpaceExcelSheetMappingDto {
+    targetSheet: string;
+    sourceSheet: string;
+    sheetMatchMode: string;
+    headerRow: number;
+    dataStartRow: number;
+    columns: SpaceExcelColumnMappingDto[];
+}
+
+export class SpaceExcelSheetPreviewDto implements ISpaceExcelSheetPreviewDto {
+    targetSheet!: string;
+    sourceSheetPattern!: string;
+    matchedSourceSheet?: string | undefined;
+    status!: string;
+    columns!: SpaceExcelColumnPreviewDto[];
+    unknownHeaders!: string[];
+
+    constructor(data?: ISpaceExcelSheetPreviewDto) {
+        if (data) {
+            for (var property in data) {
+                if (data.hasOwnProperty(property))
+                    (this as any)[property] = (data as any)[property];
+            }
+        }
+        if (!data) {
+            this.columns = [];
+            this.unknownHeaders = [];
+        }
+    }
+
+    init(_data?: any) {
+        if (_data) {
+            this.targetSheet = _data["targetSheet"];
+            this.sourceSheetPattern = _data["sourceSheetPattern"];
+            this.matchedSourceSheet = _data["matchedSourceSheet"];
+            this.status = _data["status"];
+            if (Array.isArray(_data["columns"])) {
+                this.columns = [] as any;
+                for (let item of _data["columns"])
+                    this.columns!.push(SpaceExcelColumnPreviewDto.fromJS(item));
+            }
+            if (Array.isArray(_data["unknownHeaders"])) {
+                this.unknownHeaders = [] as any;
+                for (let item of _data["unknownHeaders"])
+                    this.unknownHeaders!.push(item);
+            }
+        }
+    }
+
+    static fromJS(data: any): SpaceExcelSheetPreviewDto {
+        data = typeof data === 'object' ? data : {};
+        let result = new SpaceExcelSheetPreviewDto();
+        result.init(data);
+        return result;
+    }
+
+    toJSON(data?: any) {
+        data = typeof data === 'object' ? data : {};
+        data["targetSheet"] = this.targetSheet;
+        data["sourceSheetPattern"] = this.sourceSheetPattern;
+        data["matchedSourceSheet"] = this.matchedSourceSheet;
+        data["status"] = this.status;
+        if (Array.isArray(this.columns)) {
+            data["columns"] = [];
+            for (let item of this.columns)
+                data["columns"].push(item ? item.toJSON() : undefined as any);
+        }
+        if (Array.isArray(this.unknownHeaders)) {
+            data["unknownHeaders"] = [];
+            for (let item of this.unknownHeaders)
+                data["unknownHeaders"].push(item);
+        }
+        return data;
+    }
+}
+
+export interface ISpaceExcelSheetPreviewDto {
+    targetSheet: string;
+    sourceSheetPattern: string;
+    matchedSourceSheet?: string | undefined;
+    status: string;
+    columns: SpaceExcelColumnPreviewDto[];
+    unknownHeaders: string[];
 }
 
 export class SpaceExternalGrantDto implements ISpaceExternalGrantDto {
