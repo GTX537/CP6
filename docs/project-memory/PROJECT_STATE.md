@@ -1,6 +1,17 @@
 # 项目当前状态
 
-最后更新：2026-08-01
+最后更新：2026-08-02
+
+## E09-S04 完成状态（2026-08-02）
+
+- E09-S04 跨租户越权自动化已完成并进入受控集成基线：功能提交 `f045bd6f`，no-ff 集成提交 `c82d4fae`，起始基线 `dfacbb48`。
+- 新增发布阻断矩阵，覆盖猜测 Organization/Site/Location ID、同码租户协作图、Published 场景身份、Stock/Task 运行态身份、分页游标、授权版本和字段裁剪；所有越权路径统一失败关闭，不泄露目标存在性。
+- 内存与真实 SQL 使用两个租户创建相同 User、Site/Floor/Zone LogicalId、组织码、策略名、Owner 和 Task ID，九类外部协作表的正常查询各只见本租户，审计视图可确认两套数据确实同时存在。
+- Portal 场景投影前新增 Schema/Authority/Site/PublishedVersion/Published 状态/Floor-Site 身份校验；Stock/Task 在处理条目前新增 SiteId + PublishedVersionId 校验；同码但非候选 LocationLogicalId 的运行态条目固定 404。
+- `AuthorizationVersion` 现在显式绑定 Tenant/User/Organization/Resource，并继续包含组织/成员安全戳、Grant/Policy 版本；Data Protection 游标已自动化验证 Tenant、Actor、Organization、grant version、资源和过滤哈希任一变化均不能复用。
+- 本卡无新端点、DTO、迁移或 SDK 表面变化；OpenAPI 保持 36 paths / 47 operations。功能门禁：Space Unit 231/231、Space Integration + KOUSQLSERVER 187/187、CP6.Tests 2713 passed / 17 environment-gated skipped、完整 solution 0 warning / 0 error、EF/SDK drift 与前端 106 files / 607 tests 全部通过。
+- 合并态聚焦门禁：隔离矩阵含真实 SQL 16/16、游标/执行上下文中间件 42/42、完整 solution 非增量构建 0 error / 10 条既有 warning、EF/SDK drift、TypeScript SDK strict no-emit、前端 type-check/607 tests/production build 全部通过。交付报告见 `docs/space/reports/e09-s04-cross-tenant-isolation.md`。
+- 下一张建议卡为 E09-S05：外部登录/组织选择/查看/导出/授权变化审计，以及 Membership/Grant/Policy 到期、暂停或撤销后现有会话下一次请求立即失效的证据。
 
 ## E09-S03 完成状态（2026-08-01）
 
@@ -108,6 +119,7 @@
 - Space E09 S01 功能/集成提交：`a599cfd7` / `09538ca3`
 - Space E09 S02 功能/集成提交：`cae12c7e` / `feefa9cd`
 - Space E09 S03 功能/集成提交：`88bc42d1` / `1850b2d8`
+- Space E09 S04 功能/集成提交：`f045bd6f` / `c82d4fae`
 
 - 交付分支：`main`
 - T6 通过 merge commit `d79a39c` 合入并推送；T7 冒烟修复为 `ffca422`
@@ -148,7 +160,7 @@
 | E04 S01–S04 | 已进入集成基线 | `1d57a3b5` + `e8e84853` + `20ee0af0` + `c1043d15` + `b322e84a` + `39146c38` + `9a87dc30` + `f9c7fd21`；安全底图、坐标标定、通用元素属性、货架/元素统一多选、对齐、等距、旋转、删除、阵列与补偿式撤销/重做 |
 | E07 S01–S05 | 已进入集成基线 | `d06a8bd1` + `6e67a9d1` + `74577015` + `6d751e0c` + `15ccf992` + `389bf4ec`；版本化能力合同、CP6 真实适配器、持久化幂等账本、标准模拟器、确定性标准仓与存量 WMS 采纳/绑定 |
 | E08 S01–S05 | 已进入集成基线 | `3df6b1d2` + `b2bb7a35` + `9a478c7a` + `d4cd8a82` + `8d8f7e01` + `dfb6e93b` + `9f7e38f8` + `994339a6` + `cc1d8baf` + `24464fab` + `7a05c05f` + `675e485c`；统一 Published 运行源、双身份、来源新鲜度、库存定位、任务路径与 10,000 库位性能基线 |
-| E09 S01–S03 | 已进入集成基线 | `a599cfd7` + `09538ca3` + `cae12c7e` + `feefa9cd` + `88bc42d1` + `1850b2d8`；租户权威外部组织/成员、组合 Grant、Organization Context、访问求值、字段策略/脱敏、Published-only 外部只读 Portal、真实 SQL 约束及管理 API/SDK |
+| E09 S01–S04 | 已进入集成基线 | `a599cfd7` + `09538ca3` + `cae12c7e` + `feefa9cd` + `88bc42d1` + `1850b2d8` + `f045bd6f` + `c82d4fae`；外部组织/成员、组合 Grant、字段策略/脱敏、Published-only Portal，以及猜测 ID、同码实体、游标/缓存和 Portal DTO 跨租户阻断矩阵 |
 | E13 S01–S03、S12 | 已进入集成基线 | Provider/确定性端口、可审计 Run/Proposal/Decision/Usage 模型、可恢复 Worker 控制面，以及数据库并发槽与预算账本 |
 | E05 S01–S05 | 已进入集成基线 | 通用元素、逐层货架、统一场景 DTO、版本化资产库及确定性参数化 3D 渲染 |
 | E04 S05–S06、E06、E08 S05+ 等剩余范围 | 候选证据或尚未实现 | `0d25da4d` 只作提取来源；不得以候选报告替代集成验收 |
@@ -167,6 +179,7 @@
 
 ## 最近验证基线
 
+- E09-S04 已推进至受控集成提交 `c82d4fae`：功能分支门禁为 Space Unit 231/231、Space Integration + KOUSQLSERVER 187/187 且 0 skipped、CP6.Tests 2713 passed / 17 environment-gated skipped、完整 solution 0 warning / 0 error、前端 106 files / 607 tests、EF/SDK drift 与 TypeScript SDK strict no-emit；合并态聚焦门禁为 16/16、42/42、完整 solution 0 error / 10 条既有 warning、前端 607/607 及 EF/SDK drift。
 - E09-S03 已推进至受控集成提交 `1850b2d8`：功能分支门禁为 Space Unit 231/231、Space Integration + KOUSQLSERVER 181/181 且 0 skipped、CP6.Tests 2711 passed / 17 environment-gated skipped、完整 solution build 0 error、前端 106 files / 607 tests、EF/SDK drift、C#/TypeScript SDK 编译与 S02→S03 幂等增量 SQL 双执行通过；合并态聚焦门禁为 3/3、22/22、84/84、前端 607/607 及 EF/SDK drift。
 - E09-S02 已推进至受控集成提交 `feefa9cd`：功能分支门禁为 Space Unit 228/228、Space Integration + KOUSQLSERVER 169/169 且 0 skipped、CP6.Tests 2703 passed / 17 environment-gated skipped、完整 solution build 0 error、前端 106 files / 607 tests、EF/SDK drift、C#/TypeScript SDK 编译与 S01→S02 幂等增量 SQL 双执行通过；合并态聚焦门禁为 4/4、10/10、35/35 及 EF/SDK drift。
 - E09-S01 已推进至受控集成提交 `09538ca3`：功能分支门禁为 Space Unit 224/224、Space Integration + KOUSQLSERVER 159/159 且 0 skipped、CP6.Tests 2703 passed / 17 environment-gated skipped、完整 solution build 0 error、前端 106 files / 607 tests、EF/SDK drift、TypeScript SDK 和运行时客户端表面通过；合并态聚焦门禁为 4/4、6/6、49/49 及 EF/SDK drift。
@@ -199,4 +212,4 @@
 
 ## 下一动作
 
-以 `1850b2d8` 为当前 Space 代码集成基线。E07-S05、E08-S01～S05 与 E09-S01～S03 已完成；下一张建议卡为 E09-S04 跨租户越权自动化测试，覆盖猜测 ID、同码组织/仓库/库位、分页/游标、缓存和 Portal DTO，随后执行 E09-S05 外部访问审计与有效期。E04 S05 仍等待 E02 S07，E04 S06 已具备依赖但应独立排卡；E13 S04 等待 E02 S03，E13 S05 等待 S04 与正式供应商证据；E02 S01 等待正式黄金集、授权和冻结 Worker。禁止把剩余候选整包合入。GR-VP T1–T7 已完成，不要重做。
+以 `c82d4fae` 为当前 Space 代码集成基线。E07-S05、E08-S01～S05 与 E09-S01～S04 已完成；下一张建议卡为 E09-S05 外部访问审计和有效期，覆盖登录、组织选择、查看、导出、授权/策略变化及现有会话即时失效。E04 S05 仍等待 E02 S07，E04 S06 已具备依赖但应独立排卡；E13 S04 等待 E02 S03，E13 S05 等待 S04 与正式供应商证据；E02 S01 等待正式黄金集、授权和冻结 Worker。禁止把剩余候选整包合入。GR-VP T1–T7 已完成，不要重做。
