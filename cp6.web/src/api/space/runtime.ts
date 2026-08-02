@@ -18,6 +18,9 @@ import type {
   SubmitSpaceDispatchApprovalRequest,
   SubmitSpaceDispatchApprovalResponse,
   SpaceDispatchApprovalRequest,
+  SubmitSpaceDispatchExecutionActionRequest,
+  SpaceDispatchExecution,
+  SpaceDispatchExecutionActionResponse,
 } from '@/types/space/runtime'
 
 export const spaceRuntimeApi = {
@@ -71,6 +74,47 @@ export const spaceRuntimeApi = {
       `/space/operations/v1/sites/${encodeURIComponent(siteId)}` +
         `/dispatch-recommendations/${encodeURIComponent(recommendationId)}` +
         `/approval-requests/${encodeURIComponent(approvalRequestId)}/cancel`,
+    )
+  },
+  dispatchExecution(
+    siteId: string,
+    recommendationId: string,
+    approvalRequestId: string,
+  ) {
+    return http.get<unknown, SpaceDispatchExecution>(
+      `/space/operations/v1/sites/${encodeURIComponent(siteId)}` +
+        `/dispatch-recommendations/${encodeURIComponent(recommendationId)}` +
+        `/approval-requests/${encodeURIComponent(approvalRequestId)}/execution`,
+    )
+  },
+  retryDispatchExecution(
+    siteId: string,
+    recommendationId: string,
+    approvalRequestId: string,
+    actionId: string,
+    request: SubmitSpaceDispatchExecutionActionRequest,
+  ) {
+    return http.put<unknown, SpaceDispatchExecutionActionResponse>(
+      `/space/operations/v1/sites/${encodeURIComponent(siteId)}` +
+        `/dispatch-recommendations/${encodeURIComponent(recommendationId)}` +
+        `/approval-requests/${encodeURIComponent(approvalRequestId)}` +
+        `/retry-requests/${encodeURIComponent(actionId)}`,
+      request,
+    )
+  },
+  compensateDispatchExecution(
+    siteId: string,
+    recommendationId: string,
+    approvalRequestId: string,
+    actionId: string,
+    request: SubmitSpaceDispatchExecutionActionRequest,
+  ) {
+    return http.put<unknown, SpaceDispatchExecutionActionResponse>(
+      `/space/operations/v1/sites/${encodeURIComponent(siteId)}` +
+        `/dispatch-recommendations/${encodeURIComponent(recommendationId)}` +
+        `/approval-requests/${encodeURIComponent(approvalRequestId)}` +
+        `/compensation-requests/${encodeURIComponent(actionId)}`,
+      request,
     )
   },
   generatePutawayRecommendation(

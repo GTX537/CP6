@@ -25,9 +25,10 @@ public sealed class SpaceDispatchApprovalService(
     ISpaceClock clock,
     ISpaceDesignAccessEvaluator access,
     SpacePersonnelRuntimeOptions personnelOptions)
-    : ISpaceDispatchApprovalService
+    : ISpaceDispatchApprovalService, ISpaceDispatchExecutionService
 {
     public const string ApprovalBizType = "SPACE_DISPATCH_ASSIGNMENT";
+    private const int MaxRetryAttempts = 3;
     private static readonly JsonSerializerOptions Json =
         new(JsonSerializerDefaults.Web);
 
@@ -222,14 +223,311 @@ public sealed class SpaceDispatchApprovalService(
         await taskCenter.WithdrawAsync(row.FlowInstanceId, execution.ActorId);
     }
 
+    public async Task<SpaceDispatchExecutionDto> GetExecutionAsync(
+        Guid siteId,
+        Guid recommendationId,
+        Guid approvalRequestId,
+        CancellationToken cancellationToken = default)
+    {
+        EnsureInternalExecution();
+        EnsureIdentity(siteId, "siteId");
+        EnsureIdentity(recommendationId, "recommendationId");
+        EnsureIdentity(approvalRequestId, "approvalRequestId");
+        access.EnsureSiteAccess(siteId, write: false);
+        var row = await RequiredAsync(
+            siteId,
+            recommendationId,
+            approvalRequestId,
+            tracking: false,
+            cancellationToken);
+        return await BuildExecutionAsync(row, cancellationToken);
+    }
+
+    public Task<SpaceDispatchExecutionActionResponse> RetryAsync(
+        Guid siteId,
+        Guid recommendationId,
+        Guid approvalRequestId,
+        Guid actionId,
+        SubmitSpaceDispatchExecutionActionRequest request,
+        CancellationToken cancellationToken = default) =>
+        ExecuteActionAsync(
+            siteId,
+            recommendationId,
+            approvalRequestId,
+            actionId,
+            SpaceDispatchExecutionActionType.RetryAssignment,
+            request,
+            cancellationToken);
+
+    public Task<SpaceDispatchExecutionActionResponse> CompensateAsync(
+        Guid siteId,
+        Guid recommendationId,
+        Guid approvalRequestId,
+        Guid actionId,
+        SubmitSpaceDispatchExecutionActionRequest request,
+        CancellationToken cancellationToken = default) =>
+        ExecuteActionAsync(
+            siteId,
+            recommendationId,
+            approvalRequestId,
+            actionId,
+            SpaceDispatchExecutionActionType.CompensateAssignment,
+            request,
+            cancellationToken);
+
+    private async Task<SpaceDispatchExecutionActionResponse> ExecuteActionAsync(
+        Guid siteId,
+        Guid recommendationId,
+        Guid approvalRequestId,
+        Guid actionId,
+        string actionType,
+        SubmitSpaceDispatchExecutionActionRequest request,
+        CancellationToken cancellationToken)
+    {
+        EnsureInternalExecution();
+        EnsureIdentity(siteId, "siteId");
+        EnsureIdentity(recommendationId, "recommendationId");
+        EnsureIdentity(approvalRequestId, "approvalRequestId");
+        EnsureIdentity(actionId, "actionId");
+        ArgumentNullException.ThrowIfNull(request);
+        access.EnsureSiteAccess(siteId, write: true);
+
+        var reason = NormalizeActionReason(request.Reason);
+        var payloadHash = ActionPayloadHash(
+            siteId,
+            recommendationId,
+            approvalRequestId,
+            actionType,
+            reason);
+        var existing = await core.SpaceDispatchExecutionActions.AsNoTracking()
+            .SingleOrDefaultAsync(value => value.Id == actionId,
+                cancellationToken);
+        if (existing is not null)
+        {
+            if (existing.SiteId != siteId ||
+                existing.RecommendationId != recommendationId ||
+                existing.ApprovalRequestId != approvalRequestId ||
+                !string.Equals(existing.ActionType, actionType,
+                    StringComparison.Ordinal) ||
+                !string.Equals(existing.PayloadHash, payloadHash,
+                    StringComparison.Ordinal))
+            {
+                throw ExecutionProblem(
+                    SpaceErrorCodes.DispatchExecutionConflict,
+                    409,
+                    "The dispatch execution action id is already used.",
+                    "use-a-new-action-id");
+            }
+            var replayApproval = await RequiredAsync(
+                siteId,
+                recommendationId,
+                approvalRequestId,
+                tracking: false,
+                cancellationToken);
+            return new SpaceDispatchExecutionActionResponse(
+                "Duplicate",
+                MapAction(existing),
+                await BuildExecutionAsync(replayApproval, cancellationToken));
+        }
+
+        var approval = await RequiredAsync(
+            siteId,
+            recommendationId,
+            approvalRequestId,
+            tracking: true,
+            cancellationToken);
+        return actionType == SpaceDispatchExecutionActionType.RetryAssignment
+            ? await ExecuteRetryAsync(
+                approval,
+                actionId,
+                reason,
+                payloadHash,
+                cancellationToken)
+            : await ExecuteCompensationAsync(
+                approval,
+                actionId,
+                reason,
+                payloadHash,
+                cancellationToken);
+    }
+
+    private async Task<SpaceDispatchExecutionActionResponse> ExecuteRetryAsync(
+        SpaceDispatchApprovalRequest approval,
+        Guid actionId,
+        string reason,
+        string payloadHash,
+        CancellationToken cancellationToken)
+    {
+        if (approval.Status != SpaceDispatchApprovalStatus.FailedNoEffect)
+        {
+            throw ExecutionProblem(
+                SpaceErrorCodes.DispatchExecutionRetryUnavailable,
+                409,
+                "Only a failed-no-effect dispatch assignment can be retried.",
+                "refresh-execution-status");
+        }
+        if (approval.RetryAttemptCount >= MaxRetryAttempts)
+        {
+            throw ExecutionProblem(
+                SpaceErrorCodes.DispatchExecutionRetryLimit,
+                409,
+                "The dispatch assignment retry limit has been reached.",
+                "review-failure-and-create-a-new-recommendation");
+        }
+
+        var now = UtcNow();
+        var selections = Selections(approval);
+        var action = NewAction(
+            approval,
+            actionId,
+            SpaceDispatchExecutionActionType.RetryAssignment,
+            reason,
+            payloadHash,
+            now);
+        approval.RetryAttemptCount++;
+        approval.Modifier = execution.ActorId.ToString("D");
+        approval.ModifyDate = now;
+
+        var validationFailure = await ValidateForApplicationAsync(
+            approval,
+            selections,
+            now,
+            cancellationToken);
+        if (validationFailure is not null)
+        {
+            approval.Status = SpaceDispatchApprovalStatus.Stale;
+            approval.FailureCode = validationFailure;
+            action.Status = SpaceDispatchExecutionActionStatus.RejectedNoEffect;
+            action.FailureCode = validationFailure;
+        }
+        else
+        {
+            try
+            {
+                var result = await taskAdapter.StageAssignmentsAsync(
+                    new SpaceDispatchTaskAdapterCommand(
+                        approval.Id,
+                        approval.WarehouseCode,
+                        execution.ActorId.ToString("D"),
+                        now,
+                        selections.Select(ToCommand).ToArray()),
+                    cancellationToken);
+                ValidateAssignmentResult(approval, selections, result);
+                approval.ResultJson = JsonSerializer.Serialize(result.Receipts, Json);
+                approval.Status = SpaceDispatchApprovalStatus.Applied;
+                approval.AppliedAtUtc = now;
+                approval.FailureCode = null;
+                action.Status = SpaceDispatchExecutionActionStatus.Applied;
+                action.ReceiptJson = JsonSerializer.Serialize(result.Receipts, Json);
+            }
+            catch (SpaceDispatchTaskAdapterException exception)
+            {
+                approval.Status = exception.Stale
+                    ? SpaceDispatchApprovalStatus.Stale
+                    : SpaceDispatchApprovalStatus.FailedNoEffect;
+                approval.FailureCode = exception.Code;
+                action.Status = exception.Stale
+                    ? SpaceDispatchExecutionActionStatus.RejectedNoEffect
+                    : SpaceDispatchExecutionActionStatus.FailedNoEffect;
+                action.FailureCode = exception.Code;
+            }
+        }
+
+        core.SpaceDispatchExecutionActions.Add(action);
+        await core.SaveChangesAsync(cancellationToken);
+        return new SpaceDispatchExecutionActionResponse(
+            "Executed",
+            MapAction(action),
+            await BuildExecutionAsync(approval, cancellationToken));
+    }
+
+    private async Task<SpaceDispatchExecutionActionResponse>
+        ExecuteCompensationAsync(
+            SpaceDispatchApprovalRequest approval,
+            Guid actionId,
+            string reason,
+            string payloadHash,
+            CancellationToken cancellationToken)
+    {
+        if (approval.Status != SpaceDispatchApprovalStatus.Applied)
+        {
+            throw ExecutionProblem(
+                SpaceErrorCodes.DispatchExecutionCompensationUnavailable,
+                409,
+                "Only an applied dispatch assignment can be compensated.",
+                "refresh-execution-status");
+        }
+
+        var now = UtcNow();
+        var selections = Selections(approval);
+        var action = NewAction(
+            approval,
+            actionId,
+            SpaceDispatchExecutionActionType.CompensateAssignment,
+            reason,
+            payloadHash,
+            now);
+        try
+        {
+            var result = await taskAdapter.StageCompensationAsync(
+                new SpaceDispatchTaskCompensationCommand(
+                    approval.Id,
+                    actionId,
+                    approval.WarehouseCode,
+                    execution.ActorId.ToString("D"),
+                    now,
+                    selections.Select(value => ToCompensationCommand(
+                        actionId,
+                        value)).ToArray()),
+                cancellationToken);
+            ValidateCompensationResult(actionId, approval, selections, result);
+            approval.Status = SpaceDispatchApprovalStatus.Compensated;
+            approval.CompensatedById = execution.ActorId;
+            approval.CompensatedAtUtc = now;
+            approval.CompensationReason = reason;
+            approval.FailureCode = null;
+            approval.Modifier = execution.ActorId.ToString("D");
+            approval.ModifyDate = now;
+            action.Status = SpaceDispatchExecutionActionStatus.Applied;
+            action.ReceiptJson = JsonSerializer.Serialize(result.Receipts, Json);
+        }
+        catch (SpaceDispatchTaskAdapterException exception)
+        {
+            action.Status = exception.Stale
+                ? SpaceDispatchExecutionActionStatus.RejectedNoEffect
+                : SpaceDispatchExecutionActionStatus.FailedNoEffect;
+            action.FailureCode = exception.Code;
+        }
+
+        core.SpaceDispatchExecutionActions.Add(action);
+        await core.SaveChangesAsync(cancellationToken);
+        return new SpaceDispatchExecutionActionResponse(
+            "Executed",
+            MapAction(action),
+            await BuildExecutionAsync(approval, cancellationToken));
+    }
+
     public async Task ApplyApprovedAsync(
         Guid approvalRequestId,
         ApprovalCallbackContext context,
         CancellationToken cancellationToken = default)
     {
-        var row = await RequiredPendingCallbackAsync(
+        var row = await RequiredCallbackAsync(
             approvalRequestId, context, cancellationToken);
         EnsureApproverSeparation(row, context);
+        if (row.Status != SpaceDispatchApprovalStatus.PendingApproval)
+        {
+            if (row.DecidedById == context.DecidedById &&
+                row.Status is SpaceDispatchApprovalStatus.Applied or
+                    SpaceDispatchApprovalStatus.Stale or
+                    SpaceDispatchApprovalStatus.FailedNoEffect or
+                    SpaceDispatchApprovalStatus.Compensated)
+            {
+                return;
+            }
+            throw new InvalidOperationException(
+                SpaceErrorCodes.DispatchApprovalNotPending);
+        }
         var now = UtcNow();
         row.DecidedById = context.DecidedById;
         row.DecidedAtUtc = now;
@@ -256,13 +554,7 @@ public sealed class SpaceDispatchApprovalService(
                     now,
                     selections.Select(ToCommand).ToArray()),
                 cancellationToken);
-            if (!string.Equals(result.AdapterId, row.AdapterId,
-                    StringComparison.Ordinal) ||
-                result.Receipts.Count != selections.Count)
-            {
-                throw new SpaceDispatchTaskAdapterException(
-                    "SPACE_DISPATCH_ADAPTER_RESULT_INVALID");
-            }
+            ValidateAssignmentResult(row, selections, result);
             row.ResultJson = JsonSerializer.Serialize(result.Receipts, Json);
             row.Status = SpaceDispatchApprovalStatus.Applied;
             row.AppliedAtUtc = now;
@@ -282,9 +574,19 @@ public sealed class SpaceDispatchApprovalService(
         ApprovalCallbackContext context,
         CancellationToken cancellationToken = default)
     {
-        var row = await RequiredPendingCallbackAsync(
+        var row = await RequiredCallbackAsync(
             approvalRequestId, context, cancellationToken);
         EnsureApproverSeparation(row, context);
+        if (row.Status != SpaceDispatchApprovalStatus.PendingApproval)
+        {
+            if (row.Status == SpaceDispatchApprovalStatus.Rejected &&
+                row.DecidedById == context.DecidedById)
+            {
+                return;
+            }
+            throw new InvalidOperationException(
+                SpaceErrorCodes.DispatchApprovalNotPending);
+        }
         var now = UtcNow();
         row.Status = SpaceDispatchApprovalStatus.Rejected;
         row.DecidedById = context.DecidedById;
@@ -539,7 +841,7 @@ public sealed class SpaceDispatchApprovalService(
                 "refresh-approval-request");
     }
 
-    private async Task<SpaceDispatchApprovalRequest> RequiredPendingCallbackAsync(
+    private async Task<SpaceDispatchApprovalRequest> RequiredCallbackAsync(
         Guid approvalRequestId,
         ApprovalCallbackContext callback,
         CancellationToken cancellationToken)
@@ -552,9 +854,6 @@ public sealed class SpaceDispatchApprovalService(
         if (row.FlowInstanceId != callback.InstanceId)
             throw new InvalidOperationException(
                 "SPACE_DISPATCH_APPROVAL_INSTANCE_MISMATCH");
-        if (row.Status != SpaceDispatchApprovalStatus.PendingApproval)
-            throw new InvalidOperationException(
-                SpaceErrorCodes.DispatchApprovalNotPending);
         return row;
     }
 
@@ -582,6 +881,380 @@ public sealed class SpaceDispatchApprovalService(
             value.AreaCode,
             value.AssignedTo,
             value.PersonExternalId);
+
+    private static SpaceDispatchTaskCompensationItem ToCompensationCommand(
+        Guid actionId,
+        SpaceDispatchApprovalSelectionSnapshot value) =>
+        new(
+            value.Rank,
+            value.OperationId,
+            CompensationOperationId(actionId, value.Rank),
+            value.TaskId,
+            value.TaskType,
+            value.TaskExecutionVersion,
+            value.WarehouseCode,
+            value.AreaCode,
+            value.AssignedTo,
+            value.PersonExternalId);
+
+    private static void ValidateAssignmentResult(
+        SpaceDispatchApprovalRequest approval,
+        IReadOnlyList<SpaceDispatchApprovalSelectionSnapshot> selections,
+        SpaceDispatchTaskAdapterResult result)
+    {
+        if (!string.Equals(result.AdapterId, approval.AdapterId,
+                StringComparison.Ordinal) ||
+            result.Receipts.Count != selections.Count)
+        {
+            throw new SpaceDispatchTaskAdapterException(
+                "SPACE_DISPATCH_ADAPTER_RESULT_INVALID");
+        }
+        var byRank = selections.ToDictionary(value => value.Rank);
+        if (result.Receipts.Select(value => value.Rank).Distinct().Count() !=
+            result.Receipts.Count)
+        {
+            throw new SpaceDispatchTaskAdapterException(
+                "SPACE_DISPATCH_ADAPTER_RESULT_INVALID");
+        }
+        foreach (var receipt in result.Receipts)
+        {
+            if (!byRank.TryGetValue(receipt.Rank, out var selection) ||
+                !string.Equals(receipt.TaskId, selection.TaskId,
+                    StringComparison.OrdinalIgnoreCase) ||
+                !string.Equals(receipt.PersonExternalId, selection.PersonExternalId,
+                    StringComparison.Ordinal) ||
+                receipt.OperationId != selection.OperationId ||
+                !string.Equals(receipt.Outcome, "Applied", StringComparison.Ordinal))
+            {
+                throw new SpaceDispatchTaskAdapterException(
+                    "SPACE_DISPATCH_ADAPTER_RESULT_INVALID");
+            }
+        }
+    }
+
+    private static void ValidateCompensationResult(
+        Guid actionId,
+        SpaceDispatchApprovalRequest approval,
+        IReadOnlyList<SpaceDispatchApprovalSelectionSnapshot> selections,
+        SpaceDispatchTaskAdapterResult result)
+    {
+        if (!string.Equals(result.AdapterId, approval.AdapterId,
+                StringComparison.Ordinal) ||
+            result.Receipts.Count != selections.Count)
+        {
+            throw new SpaceDispatchTaskAdapterException(
+                "SPACE_DISPATCH_COMPENSATION_RESULT_INVALID");
+        }
+        var byRank = selections.ToDictionary(value => value.Rank);
+        if (result.Receipts.Select(value => value.Rank).Distinct().Count() !=
+            result.Receipts.Count)
+        {
+            throw new SpaceDispatchTaskAdapterException(
+                "SPACE_DISPATCH_COMPENSATION_RESULT_INVALID");
+        }
+        foreach (var receipt in result.Receipts)
+        {
+            if (!byRank.TryGetValue(receipt.Rank, out var selection) ||
+                !string.Equals(receipt.TaskId, selection.TaskId,
+                    StringComparison.OrdinalIgnoreCase) ||
+                !string.Equals(receipt.PersonExternalId, selection.PersonExternalId,
+                    StringComparison.Ordinal) ||
+                receipt.OperationId != CompensationOperationId(actionId, receipt.Rank) ||
+                !string.Equals(receipt.Outcome, "Compensated",
+                    StringComparison.Ordinal))
+            {
+                throw new SpaceDispatchTaskAdapterException(
+                    "SPACE_DISPATCH_COMPENSATION_RESULT_INVALID");
+            }
+        }
+    }
+
+    private SpaceDispatchExecutionAction NewAction(
+        SpaceDispatchApprovalRequest approval,
+        Guid actionId,
+        string actionType,
+        string reason,
+        string payloadHash,
+        DateTime now) =>
+        new()
+        {
+            Id = actionId,
+            TenantId = execution.TenantId,
+            ApprovalRequestId = approval.Id,
+            SiteId = approval.SiteId,
+            RecommendationId = approval.RecommendationId,
+            ActionType = actionType,
+            PayloadHash = payloadHash,
+            Reason = reason,
+            Status = SpaceDispatchExecutionActionStatus.RejectedNoEffect,
+            RequestedById = execution.ActorId,
+            RequestedAtUtc = now,
+            AdapterId = approval.AdapterId,
+            ReceiptJson = "[]",
+            Creator = execution.ActorId.ToString("D"),
+            CreateDate = now,
+        };
+
+    private async Task<SpaceDispatchExecutionDto> BuildExecutionAsync(
+        SpaceDispatchApprovalRequest approval,
+        CancellationToken cancellationToken)
+    {
+        var observedAt = UtcNow();
+        var selections = Selections(approval).OrderBy(value => value.Rank).ToArray();
+        var taskIds = selections.Select(value => value.TaskId).ToArray();
+        var tasks = await core.MobileTasks.AsNoTracking()
+            .Where(value => !value.IsDeleted && taskIds.Contains(value.MobileTaskNo))
+            .ToArrayAsync(cancellationToken);
+        var byTask = tasks.ToDictionary(
+            value => value.MobileTaskNo,
+            StringComparer.OrdinalIgnoreCase);
+        var events = await core.MobileTaskEvents.AsNoTracking()
+            .Where(value => taskIds.Contains(value.TaskNo))
+            .OrderByDescending(value => value.OccurredAt)
+            .ThenByDescending(value => value.Id)
+            .ToArrayAsync(cancellationToken);
+        var latestEvents = events
+            .GroupBy(value => value.TaskNo, StringComparer.OrdinalIgnoreCase)
+            .ToDictionary(
+                value => value.Key,
+                value => value.First(),
+                StringComparer.OrdinalIgnoreCase);
+
+        var itemDtos = new List<SpaceDispatchExecutionTaskDto>(selections.Length);
+        var states = new List<string>(selections.Length);
+        foreach (var selection in selections)
+        {
+            byTask.TryGetValue(selection.TaskId, out var task);
+            latestEvents.TryGetValue(selection.TaskId, out var latestEvent);
+            var state = TaskExecutionState(approval.Status, selection, task);
+            states.Add(state);
+            itemDtos.Add(new SpaceDispatchExecutionTaskDto(
+                selection.Rank,
+                selection.TaskId,
+                selection.PersonSourceId,
+                selection.PersonExternalId,
+                selection.OperationId,
+                task?.Status ?? -1,
+                state,
+                task?.ExecutionVersion ?? selection.TaskExecutionVersion,
+                Offset(task?.StartedAt),
+                Offset(task?.DoneAt),
+                latestEvent?.EventType,
+                Offset(latestEvent?.OccurredAt)));
+        }
+
+        var actionRows = await core.SpaceDispatchExecutionActions.AsNoTracking()
+            .Where(value => value.ApprovalRequestId == approval.Id &&
+                value.SiteId == approval.SiteId)
+            .OrderBy(value => value.RequestedAtUtc)
+            .ThenBy(value => value.Id)
+            .ToArrayAsync(cancellationToken);
+        var assignmentReceiptsValid = await AssignmentReceiptsValidAsync(
+            selections,
+            approval.AdapterId,
+            cancellationToken);
+        var compensationBlockCode = CompensationBlockCode(
+            approval.Status,
+            states,
+            assignmentReceiptsValid);
+
+        var assignedCount = states.Count(value => value == "Assigned");
+        var executingCount = states.Count(value => value is "InProgress" or "Paused");
+        var completedCount = states.Count(value => value == "Completed");
+        var attentionCount = states.Count(IsAttentionState);
+        return new SpaceDispatchExecutionDto(
+            approval.Id,
+            approval.SiteId,
+            approval.RecommendationId,
+            approval.Status,
+            AggregateExecutionStatus(
+                approval.Status,
+                states,
+                assignedCount,
+                executingCount,
+                completedCount,
+                attentionCount),
+            Utc(observedAt),
+            states.Count,
+            assignedCount,
+            executingCount,
+            completedCount,
+            attentionCount,
+            approval.Status == SpaceDispatchApprovalStatus.FailedNoEffect &&
+                approval.RetryAttemptCount < MaxRetryAttempts,
+            approval.RetryAttemptCount,
+            Math.Max(0, MaxRetryAttempts - approval.RetryAttemptCount),
+            compensationBlockCode is null,
+            compensationBlockCode,
+            Offset(approval.CompensatedAtUtc),
+            itemDtos,
+            actionRows.Select(MapAction).ToArray());
+    }
+
+    private async Task<bool> AssignmentReceiptsValidAsync(
+        IReadOnlyList<SpaceDispatchApprovalSelectionSnapshot> selections,
+        string adapterId,
+        CancellationToken cancellationToken)
+    {
+        var operationIds = selections.Select(value => value.OperationId).ToArray();
+        var receipts = await core.TaskCommandReceipts.AsNoTracking()
+            .Where(value => operationIds.Contains(value.OperationId))
+            .ToArrayAsync(cancellationToken);
+        if (receipts.Length != selections.Count) return false;
+        var byOperation = receipts.ToDictionary(value => value.OperationId);
+        foreach (var selection in selections)
+        {
+            if (!byOperation.TryGetValue(selection.OperationId, out var receipt) ||
+                !string.Equals(receipt.TaskNo, selection.TaskId,
+                    StringComparison.OrdinalIgnoreCase) ||
+                !string.Equals(receipt.CommandName, "space-dispatch-assign",
+                    StringComparison.Ordinal))
+            {
+                return false;
+            }
+            try
+            {
+                var evidence = JsonSerializer.Deserialize<DispatchReceiptEvidence>(
+                    receipt.ResultJson,
+                    Json);
+                if (evidence is null ||
+                    !string.Equals(evidence.TaskNo, selection.TaskId,
+                        StringComparison.OrdinalIgnoreCase) ||
+                    !string.Equals(evidence.AssignedTo, selection.AssignedTo,
+                        StringComparison.OrdinalIgnoreCase) ||
+                    !string.Equals(evidence.Outcome, "Applied", StringComparison.Ordinal) ||
+                    !string.Equals(evidence.Source, adapterId,
+                        StringComparison.Ordinal))
+                {
+                    return false;
+                }
+            }
+            catch (JsonException)
+            {
+                return false;
+            }
+        }
+        return true;
+    }
+
+    private static string TaskExecutionState(
+        string approvalStatus,
+        SpaceDispatchApprovalSelectionSnapshot selection,
+        MobileTask? task)
+    {
+        if (task is null) return "Missing";
+        if (task.ExecutionVersion != selection.TaskExecutionVersion)
+            return "Diverged";
+        if (task.Status == MobileTaskStatus.Pending)
+        {
+            if (approvalStatus == SpaceDispatchApprovalStatus.Compensated &&
+                string.IsNullOrWhiteSpace(task.AssignedTo))
+                return "Compensated";
+            if (string.IsNullOrWhiteSpace(task.AssignedTo)) return "Released";
+            return string.Equals(task.AssignedTo, selection.AssignedTo,
+                StringComparison.OrdinalIgnoreCase)
+                ? "Assigned"
+                : "Diverged";
+        }
+        if (!string.Equals(task.AssignedTo, selection.AssignedTo,
+                StringComparison.OrdinalIgnoreCase))
+            return "Diverged";
+        return task.Status switch
+        {
+            MobileTaskStatus.InProgress => "InProgress",
+            MobileTaskStatus.Paused => "Paused",
+            MobileTaskStatus.Exception => "Exception",
+            MobileTaskStatus.Completed => "Completed",
+            MobileTaskStatus.PartiallyCompleted => "PartiallyCompleted",
+            MobileTaskStatus.Cancelled => "Cancelled",
+            _ => "Diverged",
+        };
+    }
+
+    private static string? CompensationBlockCode(
+        string approvalStatus,
+        IReadOnlyList<string> states,
+        bool assignmentReceiptsValid)
+    {
+        if (approvalStatus != SpaceDispatchApprovalStatus.Applied)
+            return "SPACE_DISPATCH_COMPENSATION_STATUS";
+        var unsafeState = states.FirstOrDefault(value => value != "Assigned");
+        if (unsafeState is not null)
+            return string.Concat(
+                "SPACE_DISPATCH_COMPENSATION_",
+                unsafeState.ToUpperInvariant());
+        return assignmentReceiptsValid
+            ? null
+            : "SPACE_DISPATCH_ASSIGNMENT_RECEIPT_INVALID";
+    }
+
+    private static bool IsAttentionState(string state) =>
+        state is "Missing" or "Diverged" or "Released" or "Exception" or
+            "PartiallyCompleted" or "Cancelled";
+
+    private static string AggregateExecutionStatus(
+        string approvalStatus,
+        IReadOnlyList<string> states,
+        int assignedCount,
+        int executingCount,
+        int completedCount,
+        int attentionCount)
+    {
+        if (approvalStatus == SpaceDispatchApprovalStatus.PendingApproval)
+            return "PendingApproval";
+        if (approvalStatus == SpaceDispatchApprovalStatus.Rejected)
+            return "Rejected";
+        if (approvalStatus == SpaceDispatchApprovalStatus.Cancelled)
+            return "Cancelled";
+        if (approvalStatus == SpaceDispatchApprovalStatus.Stale)
+            return "Stale";
+        if (approvalStatus == SpaceDispatchApprovalStatus.FailedNoEffect)
+            return "AssignmentFailed";
+        if (approvalStatus == SpaceDispatchApprovalStatus.Compensated)
+            return states.All(value => value == "Compensated")
+                ? "Compensated"
+                : "AttentionRequired";
+        if (approvalStatus != SpaceDispatchApprovalStatus.Applied ||
+            states.Count == 0 || attentionCount > 0)
+            return "AttentionRequired";
+        if (completedCount == states.Count) return "Completed";
+        if (executingCount > 0 || completedCount > 0) return "Executing";
+        return assignedCount == states.Count ? "Assigned" : "AttentionRequired";
+    }
+
+    private static SpaceDispatchExecutionActionDto MapAction(
+        SpaceDispatchExecutionAction action)
+    {
+        var receipts = Deserialize<SpaceDispatchTaskAdapterReceipt[]>(
+            action.ReceiptJson,
+            "execution action receipt");
+        if (receipts.Any(value => value.OperationId == Guid.Empty) ||
+            receipts.Select(value => value.OperationId).Distinct().Count() !=
+                receipts.Length ||
+            receipts.Select(value => value.Rank).Distinct().Count() != receipts.Length)
+        {
+            throw new SpaceProblemException(
+                SpaceErrorCodes.DispatchExecutionEvidenceInvalid,
+                502,
+                "The persisted dispatch execution action evidence is invalid.",
+                recoveryAction: "contact-support");
+        }
+        return new SpaceDispatchExecutionActionDto(
+            action.Id,
+            action.ActionType,
+            action.Status,
+            action.Reason,
+            action.RequestedById,
+            Utc(action.RequestedAtUtc),
+            action.AdapterId,
+            receipts.Select(value => new SpaceDispatchTaskAdaptationReceiptDto(
+                value.Rank,
+                value.TaskId,
+                value.PersonExternalId,
+                value.OperationId,
+                value.Outcome)).ToArray(),
+            action.FailureCode);
+    }
 
     private static SpaceDispatchApprovalRequestDto Map(
         SpaceDispatchApprovalRequest row)
@@ -696,6 +1369,20 @@ public sealed class SpaceDispatchApprovalService(
         return new Guid(guid);
     }
 
+    private static Guid CompensationOperationId(Guid actionId, int rank)
+    {
+        var bytes = SHA256.HashData(Encoding.UTF8.GetBytes(string.Concat(
+            "space-dispatch-compensation:",
+            actionId.ToString("D"),
+            ":",
+            rank.ToString(CultureInfo.InvariantCulture))));
+        Span<byte> guid = stackalloc byte[16];
+        bytes.AsSpan(0, 16).CopyTo(guid);
+        guid[7] = (byte)((guid[7] & 0x0f) | 0x50);
+        guid[8] = (byte)((guid[8] & 0x3f) | 0x80);
+        return new Guid(guid);
+    }
+
     private static string PayloadHash(
         Guid siteId,
         Guid recommendationId,
@@ -707,6 +1394,34 @@ public sealed class SpaceDispatchApprovalService(
             string.Join(",", request.SelectedRanks.Select(value =>
                 value.ToString(CultureInfo.InvariantCulture))),
             request.Reason)))).ToLowerInvariant();
+
+    private static string ActionPayloadHash(
+        Guid siteId,
+        Guid recommendationId,
+        Guid approvalRequestId,
+        string actionType,
+        string reason) =>
+        Convert.ToHexString(SHA256.HashData(Encoding.UTF8.GetBytes(string.Join(
+            "\n",
+            siteId.ToString("D"),
+            recommendationId.ToString("D"),
+            approvalRequestId.ToString("D"),
+            actionType,
+            reason)))).ToLowerInvariant();
+
+    private static string NormalizeActionReason(string reason)
+    {
+        var normalized = reason?.Trim() ?? string.Empty;
+        if (normalized.Length is < 1 or > 500 || normalized.Any(char.IsControl))
+        {
+            throw ExecutionProblem(
+                SpaceErrorCodes.DispatchExecutionInvalid,
+                422,
+                "A dispatch execution action reason between 1 and 500 characters is required.",
+                "review-action-reason");
+        }
+        return normalized;
+    }
 
     private static void EnsureIdentity(Guid value, string name)
     {
@@ -737,6 +1452,14 @@ public sealed class SpaceDispatchApprovalService(
         bool retryable = false) =>
         new(code, status, title, detail, recovery, retryable);
 
+    private static SpaceProblemException ExecutionProblem(
+        string code,
+        int status,
+        string title,
+        string recovery,
+        string? detail = null) =>
+        new(code, status, title, detail, recovery);
+
     private sealed record SpaceDispatchApprovalSelectionSnapshot(
         int Rank,
         Guid OperationId,
@@ -757,4 +1480,10 @@ public sealed class SpaceDispatchApprovalService(
         DateTimeOffset PositionReceivedAtUtc,
         DateTimeOffset WorkStateOccurredAtUtc,
         DateTimeOffset WorkStateReceivedAtUtc);
+
+    private sealed record DispatchReceiptEvidence(
+        string TaskNo,
+        string? AssignedTo,
+        string Outcome,
+        string Source);
 }

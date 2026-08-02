@@ -169,6 +169,74 @@
             >{{ t('取消审批') }}</button>
           </div>
         </div>
+        <section v-if="approval" class="execution-section">
+          <div class="section-title">
+            <strong>{{ t('任务执行状态') }}</strong>
+            <span v-if="execution">{{ executionStatusLabel }}</span>
+          </div>
+          <p class="approval-safety">
+            {{ t('补偿只撤销尚未开始的整批任务分派，不修改执行或库存事实') }}
+          </p>
+          <p v-if="executionError" class="dispatch-error">{{ executionError }}</p>
+          <div v-if="execution" class="execution-summary">
+            <span>{{ t('已分派') }} <strong>{{ execution.assignedCount }}</strong></span>
+            <span>{{ t('执行中') }} <strong>{{ execution.executingCount }}</strong></span>
+            <span>{{ t('已完成') }} <strong>{{ execution.completedCount }}</strong></span>
+            <span>{{ t('需关注') }} <strong>{{ execution.attentionCount }}</strong></span>
+          </div>
+          <small v-if="execution">
+            {{ t('观察时点') }} {{ formatTime(execution.observedAtUtc) }} ·
+            {{ t('剩余重试次数') }} {{ execution.retryAttemptsRemaining }}
+          </small>
+          <code v-if="execution?.compensationBlockCode">
+            {{ execution.compensationBlockCode }}
+          </code>
+          <div v-if="execution?.tasks.length" class="execution-task-list">
+            <article v-for="task in execution.tasks" :key="task.assignmentOperationId">
+              <strong>#{{ task.rank }} · {{ task.taskId }} → {{ task.personExternalId }}</strong>
+              <span>{{ executionTaskLabel(task.state) }} · WMS {{ task.wmsStatus }} · E{{ task.executionVersion }}</span>
+              <small v-if="task.startedAtUtc">{{ t('开始时点') }} {{ formatTime(task.startedAtUtc) }}</small>
+              <small v-if="task.doneAtUtc">{{ t('完成时点') }} {{ formatTime(task.doneAtUtc) }}</small>
+              <small v-if="task.lastEventType">
+                {{ t('最近事件') }} {{ task.lastEventType }} · {{ formatOptionalTime(task.lastEventAtUtc) }}
+              </small>
+            </article>
+          </div>
+          <form class="execution-action-form" @submit.prevent>
+            <label>
+              <span>{{ t('执行动作原因') }}</span>
+              <textarea
+                v-model="executionActionReason"
+                maxlength="500"
+                :disabled="executionLoading"
+                :placeholder="t('说明重试或补偿原因')"
+              />
+            </label>
+            <div class="approval-actions">
+              <button type="button" :disabled="executionLoading" @click="$emit('refresh-execution')">
+                {{ executionLoading ? t('处理中') : t('刷新执行状态') }}
+              </button>
+              <button
+                v-if="execution?.canRetry"
+                type="button"
+                :disabled="!canSubmitExecutionAction"
+                @click="submitExecutionAction('retry-execution')"
+              >{{ t('重试分派') }}</button>
+              <button
+                v-if="execution?.canCompensate"
+                type="button"
+                :disabled="!canSubmitExecutionAction"
+                @click="submitExecutionAction('compensate-execution')"
+              >{{ t('补偿未开始分派') }}</button>
+            </div>
+          </form>
+          <div v-if="execution?.actions.length" class="execution-action-list">
+            <span v-for="action in execution.actions" :key="action.actionId">
+              {{ action.actionType }} · {{ action.status }} · {{ formatTime(action.requestedAtUtc) }}
+              <code v-if="action.failureCode">{{ action.failureCode }}</code>
+            </span>
+          </div>
+        </section>
       </section>
 
       <section class="exclusion-section">
@@ -215,6 +283,9 @@ import type {
   GenerateSpaceDispatchRecommendationRequest,
   SubmitSpaceDispatchApprovalRequest,
   SpaceDispatchApprovalRequest,
+  SpaceDispatchExecution,
+  SpaceDispatchExecutionTaskState,
+  SubmitSpaceDispatchExecutionActionRequest,
   SpaceDispatchRecommendation,
 } from '@/types/space/runtime'
 
@@ -226,6 +297,9 @@ const props = defineProps<{
   approval: SpaceDispatchApprovalRequest | null
   approvalLoading: boolean
   approvalError: string
+  execution: SpaceDispatchExecution | null
+  executionLoading: boolean
+  executionError: string
 }>()
 
 const emit = defineEmits<{
@@ -233,6 +307,9 @@ const emit = defineEmits<{
   (event: 'submit-approval', request: SubmitSpaceDispatchApprovalRequest): void
   (event: 'refresh-approval'): void
   (event: 'cancel-approval'): void
+  (event: 'refresh-execution'): void
+  (event: 'retry-execution', request: SubmitSpaceDispatchExecutionActionRequest): void
+  (event: 'compensate-execution', request: SubmitSpaceDispatchExecutionActionRequest): void
   (event: 'locate', locationCode: string): void
   (event: 'close'): void
 }>()
@@ -246,6 +323,7 @@ const allowCrossFloor = ref(false)
 const includeSimulated = ref(false)
 const selectedRanks = ref<number[]>([])
 const approvalReason = ref('')
+const executionActionReason = ref('')
 
 const canSubmit = computed(() =>
   maximumAssignments.value >= 1 && maximumAssignments.value <= 100 &&
@@ -256,13 +334,20 @@ const approvalBlocksSubmission = computed(() =>
   props.approval?.status === 'PendingApproval' ||
   props.approval?.status === 'Applied' ||
   props.approval?.status === 'Stale' ||
-  props.approval?.status === 'FailedNoEffect',
+  props.approval?.status === 'FailedNoEffect' ||
+  props.approval?.status === 'Compensated',
 )
 
 const canSubmitApproval = computed(() =>
   !props.loading && !props.approvalLoading && !approvalBlocksSubmission.value &&
   selectedRanks.value.length >= 1 && selectedRanks.value.length <= 100 &&
   approvalReason.value.trim().length >= 1 && approvalReason.value.trim().length <= 500,
+)
+
+const canSubmitExecutionAction = computed(() =>
+  !!props.execution && !props.executionLoading &&
+  executionActionReason.value.trim().length >= 1 &&
+  executionActionReason.value.trim().length <= 500,
 )
 
 const approvalStatusLabel = computed(() => {
@@ -274,8 +359,26 @@ const approvalStatusLabel = computed(() => {
     Cancelled: '已取消',
     Stale: '证据已失效',
     FailedNoEffect: '执行失败且未产生影响',
+    Compensated: '已补偿',
   }
   return t(labels[props.approval.status])
+})
+
+const executionStatusLabel = computed(() => {
+  if (!props.execution) return ''
+  const labels: Record<SpaceDispatchExecution['status'], string> = {
+    PendingApproval: '待审批',
+    Rejected: '已拒绝',
+    Cancelled: '已取消',
+    Stale: '证据已失效',
+    AssignmentFailed: '分派失败',
+    Assigned: '已分派',
+    Executing: '执行中',
+    Completed: '已完成',
+    Compensated: '已补偿',
+    AttentionRequired: '需人工关注',
+  }
+  return t(labels[props.execution.status])
 })
 
 watch(
@@ -283,6 +386,7 @@ watch(
   () => {
     selectedRanks.value = []
     approvalReason.value = ''
+    executionActionReason.value = ''
   },
 )
 
@@ -332,6 +436,32 @@ function submitApproval(): void {
   })
 }
 
+function submitExecutionAction(
+  event: 'retry-execution' | 'compensate-execution',
+): void {
+  if (!canSubmitExecutionAction.value) return
+  const request = { reason: executionActionReason.value.trim() }
+  if (event === 'retry-execution') emit('retry-execution', request)
+  else emit('compensate-execution', request)
+}
+
+function executionTaskLabel(state: SpaceDispatchExecutionTaskState): string {
+  const labels: Record<SpaceDispatchExecutionTaskState, string> = {
+    Assigned: '已分派',
+    InProgress: '执行中',
+    Paused: '已暂停',
+    Exception: '异常',
+    Completed: '已完成',
+    PartiallyCompleted: '部分完成',
+    Cancelled: '已取消',
+    Compensated: '已补偿',
+    Released: '已释放',
+    Diverged: '已偏离',
+    Missing: '任务缺失',
+  }
+  return t(labels[state])
+}
+
 function optional(value: string): string | null {
   return value.trim() || null
 }
@@ -355,6 +485,10 @@ function formatNumber(value: number): string {
 function formatTime(value: string): string {
   const parsed = new Date(value)
   return Number.isNaN(parsed.getTime()) ? value : parsed.toLocaleString()
+}
+
+function formatOptionalTime(value: string | null): string {
+  return value ? formatTime(value) : '—'
 }
 </script>
 
@@ -414,6 +548,8 @@ function formatTime(value: string): string {
 .dispatch-state { padding: 24px 4px; color: #78909c; text-align: center; }
 .source-section,
 .assignment-section,
+.approval-section,
+.execution-section,
 .exclusion-section,
 .limitation-section { margin-top: 9px; padding: 10px; border-radius: 5px; background: rgba(255, 255, 255, .035); }
 .source-section p { margin: 5px 0 0; color: #90a4ae; }
@@ -460,9 +596,12 @@ function formatTime(value: string): string {
 .empty { color: #607d8b; }
 .limitation-section summary { cursor: pointer; }
 .approval-safety { color: #ffe082; }
-.approval-form { display: grid; gap: 6px; margin-top: 7px; }
-.approval-form label { display: grid; gap: 4px; color: #90a4ae; }
-.approval-form textarea {
+.approval-form,
+.execution-action-form { display: grid; gap: 6px; margin-top: 7px; }
+.approval-form label,
+.execution-action-form label { display: grid; gap: 4px; color: #90a4ae; }
+.approval-form textarea,
+.execution-action-form textarea {
   min-height: 58px;
   resize: vertical;
   padding: 6px 7px;
@@ -487,4 +626,14 @@ function formatTime(value: string): string {
 .approval-status code { color: #90a4ae; overflow-wrap: anywhere; }
 .receipt-list { display: grid; gap: 3px; color: #b2dfdb; }
 .approval-actions { display: flex; gap: 6px; }
+.execution-summary { display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 4px; margin: 7px 0; }
+.execution-summary span { display: flex; justify-content: space-between; gap: 5px; color: #b0bec5; }
+.execution-task-list,
+.execution-action-list { display: grid; gap: 5px; margin-top: 8px; }
+.execution-task-list article,
+.execution-action-list span { display: grid; gap: 2px; padding: 6px; border: 1px solid rgba(129, 212, 250, .13); border-radius: 4px; }
+.execution-task-list span,
+.execution-task-list small,
+.execution-action-list { color: #90a4ae; }
+.execution-action-list code { color: #ff8a80; overflow-wrap: anywhere; }
 </style>

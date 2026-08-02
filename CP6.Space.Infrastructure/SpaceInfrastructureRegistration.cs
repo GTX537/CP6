@@ -183,6 +183,8 @@ public static class SpaceInfrastructureRegistration
         services.AddScoped<SpaceDispatchApprovalService>();
         services.AddScoped<ISpaceDispatchApprovalService>(provider =>
             provider.GetRequiredService<SpaceDispatchApprovalService>());
+        services.AddScoped<ISpaceDispatchExecutionService>(provider =>
+            provider.GetRequiredService<SpaceDispatchApprovalService>());
         services.TryAddEnumerable(
             ServiceDescriptor.Scoped<
                 CP6.Core.Services.Wf.IApprovalCallback,

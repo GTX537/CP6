@@ -5,6 +5,7 @@ import { createI18n } from 'vue-i18n'
 import DispatchRecommendationPanel from '../DispatchRecommendationPanel.vue'
 import type {
   SpaceDispatchApprovalRequest,
+  SpaceDispatchExecution,
   SpaceDispatchRecommendation,
 } from '@/types/space/runtime'
 
@@ -66,13 +67,39 @@ describe('DispatchRecommendationPanel', () => {
     expect(wrapper.find('.approval-status').attributes('data-status')).toBe('PendingApproval')
     expect(wrapper.text()).toContain('待审批')
     expect(wrapper.text()).toContain('cp6-mobile-task-assignment-v1')
-    await wrapper.findAll('.approval-actions button')[0]!.trigger('click')
-    await wrapper.findAll('.approval-actions button')[1]!.trigger('click')
+    await wrapper.findAll('.approval-status .approval-actions button')[0]!.trigger('click')
+    await wrapper.findAll('.approval-status .approval-actions button')[1]!.trigger('click')
     expect(wrapper.emitted('refresh-approval')).toHaveLength(1)
     expect(wrapper.emitted('cancel-approval')).toHaveLength(1)
 
     await wrapper.setProps({ approval: { ...approval(), status: 'Applied' } })
-    expect(wrapper.findAll('.approval-actions button')).toHaveLength(1)
+    expect(wrapper.findAll('.approval-status .approval-actions button')).toHaveLength(1)
+  })
+
+  it('renders live execution evidence and emits explicit retry and compensation reasons', async () => {
+    const appliedApproval = { ...approval(), status: 'Applied' as const }
+    const wrapper = mountPanel(recommendation(), appliedApproval, execution())
+
+    expect(wrapper.text()).toContain('执行中')
+    expect(wrapper.text()).toContain('TASK-1 → PERSON-A')
+    expect(wrapper.text()).toContain('WMS 20 · E4')
+    expect(wrapper.text()).toContain('剩余重试次数 2')
+    expect(wrapper.text()).toContain('补偿只撤销尚未开始的整批任务分派')
+
+    await wrapper.find('.execution-action-form textarea').setValue(' Retry reviewed batch ')
+    const buttons = wrapper.findAll('.execution-action-form .approval-actions button')
+    expect(buttons).toHaveLength(3)
+    await buttons[0]!.trigger('click')
+    await buttons[1]!.trigger('click')
+    await buttons[2]!.trigger('click')
+
+    expect(wrapper.emitted('refresh-execution')).toHaveLength(1)
+    expect(wrapper.emitted('retry-execution')?.[0]?.[0]).toEqual({
+      reason: 'Retry reviewed batch',
+    })
+    expect(wrapper.emitted('compensate-execution')?.[0]?.[0]).toEqual({
+      reason: 'Retry reviewed batch',
+    })
   })
 
   it('keeps no-assignment and refresh failure states visible', async () => {
@@ -92,6 +119,7 @@ describe('DispatchRecommendationPanel', () => {
 function mountPanel(
   value: SpaceDispatchRecommendation | null,
   approvalValue: SpaceDispatchApprovalRequest | null = null,
+  executionValue: SpaceDispatchExecution | null = null,
 ) {
   const i18n = createI18n({
     legacy: false,
@@ -113,9 +141,59 @@ function mountPanel(
       approval: approvalValue,
       approvalLoading: false,
       approvalError: '',
+      execution: executionValue,
+      executionLoading: false,
+      executionError: '',
     },
     global: { plugins: [i18n] },
   })
+}
+
+function execution(): SpaceDispatchExecution {
+  return {
+    approvalRequestId: 'approval-1',
+    siteId: 'site-1',
+    recommendationId: 'recommendation-1',
+    approvalStatus: 'Applied',
+    status: 'Executing',
+    observedAtUtc: '2026-08-02T18:03:00Z',
+    totalCount: 1,
+    assignedCount: 0,
+    executingCount: 1,
+    completedCount: 0,
+    attentionCount: 0,
+    canRetry: true,
+    retryAttemptCount: 1,
+    retryAttemptsRemaining: 2,
+    canCompensate: true,
+    compensationBlockCode: null,
+    compensatedAtUtc: null,
+    tasks: [{
+      rank: 1,
+      taskId: 'TASK-1',
+      personSourceId: 'PDA-01',
+      personExternalId: 'PERSON-A',
+      assignmentOperationId: 'operation-1',
+      wmsStatus: 20,
+      state: 'InProgress',
+      executionVersion: 4,
+      startedAtUtc: '2026-08-02T18:02:00Z',
+      doneAtUtc: null,
+      lastEventType: 'TASK_STARTED',
+      lastEventAtUtc: '2026-08-02T18:02:00Z',
+    }],
+    actions: [{
+      actionId: 'action-1',
+      actionType: 'RetryAssignment',
+      status: 'Applied',
+      reason: 'Retry reviewed batch',
+      requestedBy: 'requester-1',
+      requestedAtUtc: '2026-08-02T18:01:30Z',
+      adapterId: 'cp6-mobile-task-assignment-v1',
+      receipts: [],
+      failureCode: null,
+    }],
+  }
 }
 
 function approval(): SpaceDispatchApprovalRequest {

@@ -145,6 +145,18 @@ public static class SpaceErrorCodes
         "SPACE_DISPATCH_APPROVAL_NOT_PENDING";
     public const string DispatchApprovalFlowUnavailable =
         "SPACE_DISPATCH_APPROVAL_FLOW_UNAVAILABLE";
+    public const string DispatchExecutionInvalid =
+        "SPACE_DISPATCH_EXECUTION_INVALID";
+    public const string DispatchExecutionConflict =
+        "SPACE_DISPATCH_EXECUTION_CONFLICT";
+    public const string DispatchExecutionRetryUnavailable =
+        "SPACE_DISPATCH_EXECUTION_RETRY_UNAVAILABLE";
+    public const string DispatchExecutionRetryLimit =
+        "SPACE_DISPATCH_EXECUTION_RETRY_LIMIT";
+    public const string DispatchExecutionCompensationUnavailable =
+        "SPACE_DISPATCH_EXECUTION_COMPENSATION_UNAVAILABLE";
+    public const string DispatchExecutionEvidenceInvalid =
+        "SPACE_DISPATCH_EXECUTION_EVIDENCE_INVALID";
     public const string DeviceEventInvalid =
         "SPACE_DEVICE_EVENT_INVALID";
     public const string DeviceEventConflict =

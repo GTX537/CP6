@@ -804,6 +804,7 @@ export type SpaceDispatchApprovalStatus =
   | 'Cancelled'
   | 'Stale'
   | 'FailedNoEffect'
+  | 'Compensated'
 
 export interface SubmitSpaceDispatchApprovalRequest {
   selectedRanks: number[]
@@ -852,4 +853,88 @@ export interface SpaceDispatchApprovalRequest {
 export interface SubmitSpaceDispatchApprovalResponse {
   outcome: 'Submitted' | 'Duplicate'
   approvalRequest: SpaceDispatchApprovalRequest
+}
+
+export interface SubmitSpaceDispatchExecutionActionRequest {
+  reason: string
+}
+
+export type SpaceDispatchExecutionTaskState =
+  | 'Assigned'
+  | 'InProgress'
+  | 'Paused'
+  | 'Exception'
+  | 'Completed'
+  | 'PartiallyCompleted'
+  | 'Cancelled'
+  | 'Compensated'
+  | 'Released'
+  | 'Diverged'
+  | 'Missing'
+
+export type SpaceDispatchExecutionStatus =
+  | 'PendingApproval'
+  | 'Rejected'
+  | 'Cancelled'
+  | 'Stale'
+  | 'AssignmentFailed'
+  | 'Assigned'
+  | 'Executing'
+  | 'Completed'
+  | 'Compensated'
+  | 'AttentionRequired'
+
+export interface SpaceDispatchExecutionTask {
+  rank: number
+  taskId: string
+  personSourceId: string
+  personExternalId: string
+  assignmentOperationId: string
+  wmsStatus: number
+  state: SpaceDispatchExecutionTaskState
+  executionVersion: number
+  startedAtUtc: string | null
+  doneAtUtc: string | null
+  lastEventType: string | null
+  lastEventAtUtc: string | null
+}
+
+export interface SpaceDispatchExecutionAction {
+  actionId: string
+  actionType: 'RetryAssignment' | 'CompensateAssignment'
+  status: 'Applied' | 'FailedNoEffect' | 'RejectedNoEffect'
+  reason: string
+  requestedBy: string
+  requestedAtUtc: string
+  adapterId: string
+  receipts: SpaceDispatchTaskAdaptationReceipt[]
+  failureCode: string | null
+}
+
+export interface SpaceDispatchExecution {
+  approvalRequestId: string
+  siteId: string
+  recommendationId: string
+  approvalStatus: SpaceDispatchApprovalStatus
+  status: SpaceDispatchExecutionStatus
+  observedAtUtc: string
+  totalCount: number
+  assignedCount: number
+  executingCount: number
+  completedCount: number
+  attentionCount: number
+  canRetry: boolean
+  retryAttemptCount: number
+  retryAttemptsRemaining: number
+  canCompensate: boolean
+  compensationBlockCode: string | null
+  compensatedAtUtc: string | null
+  tasks: SpaceDispatchExecutionTask[]
+  actions: SpaceDispatchExecutionAction[]
+}
+
+export interface SpaceDispatchExecutionActionResponse {
+  outcome: 'Executed' | 'Duplicate'
+  action: SpaceDispatchExecutionAction
+  execution: SpaceDispatchExecution
 }

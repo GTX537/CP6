@@ -1,3 +1,4 @@
+using System.Text.Json;
 using CP6.Core.EFDbContext;
 using CP6.Core.Services.Common;
 using CP6.Core.Services.Wms;
@@ -26,13 +27,17 @@ public sealed class Cp6SpaceDispatchTaskAdapterTests
             db,
             new FixedWmsAccessScopeProvider(WmsAccessScope.All));
 
-        var result = await adapter.StageAssignmentsAsync(Command(
+        var command = Command(
             Assignment(1, "TASK-1", "USER-1", [1, 2, 3, 4]),
-            Assignment(2, "TASK-2", "USER-2", [5, 6, 7, 8])));
+            Assignment(2, "TASK-2", "USER-2", [5, 6, 7, 8]));
+        var result = await adapter.StageAssignmentsAsync(command);
+        await db.SaveChangesAsync();
+        var replay = await adapter.StageAssignmentsAsync(command);
         await db.SaveChangesAsync();
 
         Assert.Equal(Cp6SpaceDispatchTaskAdapter.AdapterVersion, result.AdapterId);
         Assert.Equal(2, result.Receipts.Count);
+        Assert.Equal(result.Receipts, replay.Receipts);
         Assert.Equal("USER-1", (await db.MobileTasks.SingleAsync(
             value => value.MobileTaskNo == "TASK-1")).AssignedTo);
         Assert.Equal("USER-2", (await db.MobileTasks.SingleAsync(
@@ -44,6 +49,43 @@ public sealed class Cp6SpaceDispatchTaskAdapterTests
             Assert.Equal("Assigned", value.EventType);
             Assert.Equal("approver", value.UserName);
         });
+    }
+
+    [Fact]
+    public async Task Partial_assignment_receipt_fails_closed_without_task_effect()
+    {
+        await using var db = NewDb();
+        db.MobileTasks.AddRange(Task("TASK-1", [1, 2, 3, 4]),
+            Task("TASK-2", [5, 6, 7, 8]));
+        await db.SaveChangesAsync();
+        var first = Assignment(1, "TASK-1", "USER-1", [1, 2, 3, 4]);
+        var second = Assignment(2, "TASK-2", "USER-2", [5, 6, 7, 8]);
+        db.TaskCommandReceipts.Add(new TaskCommandReceipt
+        {
+            OperationId = first.OperationId,
+            TaskNo = first.TaskId,
+            CommandName = "space-dispatch-assign",
+            ResultJson = JsonSerializer.Serialize(new
+            {
+                taskNo = first.TaskId,
+                assignedTo = first.AssignedTo,
+                outcome = "Applied",
+                source = Cp6SpaceDispatchTaskAdapter.AdapterVersion,
+            }),
+            CompletedAt = Now,
+        });
+        await db.SaveChangesAsync();
+        var adapter = new Cp6SpaceDispatchTaskAdapter(
+            db,
+            new FixedWmsAccessScopeProvider(WmsAccessScope.All));
+
+        var error = await Assert.ThrowsAsync<SpaceDispatchTaskAdapterException>(() =>
+            adapter.StageAssignmentsAsync(Command(first, second)));
+
+        Assert.Equal("SPACE_DISPATCH_ADAPTER_RECEIPT_PARTIAL", error.Code);
+        Assert.All(await db.MobileTasks.ToArrayAsync(), task =>
+            Assert.Null(task.AssignedTo));
+        Assert.Empty(await db.MobileTaskEvents.ToListAsync());
     }
 
     [Fact]
