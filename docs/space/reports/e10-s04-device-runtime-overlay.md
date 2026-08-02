@@ -1,11 +1,11 @@
 # E10-S04 设备当前态与 3D 告警叠加完成报告
 
-- 状态：**Ready for controlled integration**
+- 状态：**Integrated**
 - 日期：2026-08-02
 - 功能分支：`codex/space-e10-s04-device-runtime`
 - 实现提交：`9a9802a8`
-- 文档提交：待本提交完成后记录
-- no-ff 集成提交：待受控集成
+- 文档提交：`f961d7e5`
+- no-ff 集成提交：`b4d5b81e`
 - 集成目标：`integration/space-v1-20260730`
 
 ## 1. 交付结论

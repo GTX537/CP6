@@ -2,6 +2,15 @@
 
 最后更新：2026-08-02
 
+## E10-S04 完成状态（2026-08-02）
+
+- E10-S04 已进入受控集成基线：实现 `9a9802a8`、文档 `f961d7e5`、no-ff 集成 `b4d5b81e`。新增当前设备读取 `GET /api/space/design/v1/sites/{siteId}/devices`，沿用 `space:model:read`，支持来源/设备/状态/楼层/活动告警过滤与受保护游标；外部主体在读库前拒绝。
+- `Space_DeviceState` 以独立位置/运行状态游标维护设备当前投影，`Space_DeviceAlarmState` 以设备+外部告警身份维护显式 Raise/Clear 生命周期。迟到事件继续追加台账并返回 `AcceptedStale`、`ProjectionApplied=false`，但不回退投影或重新激活已被较新 Clear 关闭的告警；台账和投影在同一 Serializable 事务中提交。
+- 当前读取包含无事件的 Unknown 映射、当前 Published 映射有效性和锚点、来源位置/状态证据、5 分钟独立新鲜度、Real/Simulated 以及活动告警严重度与事件证据。Migration `20260802144027_SpaceE10S04DeviceRuntime` 新增两个投影表、rowversion、租户复合外键、唯一索引、检查约束和身份写保护。
+- 3D Viewer 已移除旧设备演示接口调用：只绘制活动楼层，来源 XYZ 优先，缺失时仅回退当前 Published 映射元素锚点；状态色、模拟线框、过期透明度和活动告警环均显式呈现，Three.js userData 保留映射/来源/位置/状态/告警证据，切层、关闭和卸载会释放 GPU 资源。
+- Design V1 从 66 增至 67 operations，C#/TypeScript SDK 已同步。门禁：领域 2/2、设备服务 9/9、真实 SQL 本卡 2/2、权限/审计/OpenAPI 70/70、前端聚焦 14/14、前端全量 113 files / 629 tests、Space Unit 236/236、默认 Space Integration 189 passed / 60 SQL-environment skipped、CP6.Tests 2738 passed / 17 environment-gated skipped、完整 solution 0 error / 10 条既有 warning，EF/SDK/TypeScript/差异门禁通过。完整真实 SQL 矩阵 248 passed / 1 已独立基线复现的 Excel 预检种子循环依赖失败。
+- E10-S05“货主、SKU、批次和容器空间筛选”是下一张具备前置条件的 P2 卡；MQTT/OPC UA/厂商连接器、凭据、告警确认、设备控制、历史轨迹和预测分析仍未实现，也不得混入 S05。CAD/E06 主链继续等待正式黄金集、授权供应商证据和冻结 Worker 等外部输入。
+
 ## E10-S03 完成状态（2026-08-02）
 
 - E10-S03 已进入受控集成基线：实现 `10b16c51`、文档 `8ce91d41`、no-ff 集成 `88efd23d`。新增版本化 `space-device-event-v1` 合同、设备主数据映射 GET/POST/PUT 与设备事件写入；读取沿用 `space:model:read`，变更要求 `space:integration:manage` 并使用稳定审计动作。
@@ -9,7 +18,7 @@
 - 设备事件支持 PositionObserved、OperatingStateChanged、AlarmRaised、AlarmCleared 四类互斥形状，严格冻结 Real/Simulated、设备/状态/告警枚举、UTC 时间、五分钟未来偏差、非负序列、毫米 XYZ、Published 楼层/库位引用和来源事件幂等；相同载荷安全重放，不同载荷稳定冲突。
 - Migration `20260802141148_SpaceE10S03DeviceEvents` 新增 `Space_DeviceMapping` 与追加式 `Space_DeviceEvent`，含复合租户外键、唯一索引、检查约束和事件历史写保护。旧 `WmsDeviceQuery` 仍明确保持 Unavailable 空占位，不冒充真实 WCS/IoT 来源。
 - Design V1 从 62 增至 66 operations，C#/TypeScript SDK 已同步。门禁：E10-S03 服务/真实 SQL 7/7、权限/审计/OpenAPI 70/70、Space Unit 234/234、默认 Space Integration 186 passed / 60 SQL-environment skipped、CP6.Tests 2738 passed / 17 environment-gated skipped、完整 solution 0 error / 10 条既有 warning，EF/SDK/TypeScript/差异门禁通过。完整真实 SQL 矩阵 245 passed / 1 已独立基线复现的 Excel 预检种子循环依赖失败。
-- E10-S04 的当前设备投影、读取 API、AGV/输送设备实时位置、状态和告警 3D 叠加尚未实现；本卡也不包含 MQTT/OPC UA/厂商连接器、凭据、告警确认或控制写回。
+- 该节记录 E10-S03 完成时的后续边界；E10-S04 现已由上方最新状态接续完成。MQTT/OPC UA/厂商连接器、凭据、告警确认或控制写回仍未实现。
 
 ## E10-S02 完成状态（2026-08-02）
 
@@ -182,6 +191,7 @@
 - Space E10 S01 功能/文档/集成提交：`1c7aa0e2` / `1da17591` / `ec29d41f`
 - Space E10 S02 功能/文档/集成提交：`e70c2715` / `86ad63bb` / `29a69a2b`
 - Space E10 S03 功能/文档/集成提交：`10b16c51` / `8ce91d41` / `88efd23d`
+- Space E10 S04 功能/文档/集成提交：`9a9802a8` / `f961d7e5` / `b4d5b81e`
 
 - 交付分支：`main`
 - T6 通过 merge commit `d79a39c` 合入并推送；T7 冒烟修复为 `ffca422`
@@ -228,7 +238,7 @@
 | E07 S01–S05 | 已进入集成基线 | `d06a8bd1` + `6e67a9d1` + `74577015` + `6d751e0c` + `15ccf992` + `389bf4ec`；版本化能力合同、CP6 真实适配器、持久化幂等账本、标准模拟器、确定性标准仓与存量 WMS 采纳/绑定 |
 | E08 S01–S05 | 已进入集成基线 | `3df6b1d2` + `b2bb7a35` + `9a478c7a` + `d4cd8a82` + `8d8f7e01` + `dfb6e93b` + `9f7e38f8` + `994339a6` + `cc1d8baf` + `24464fab` + `7a05c05f` + `675e485c`；统一 Published 运行源、双身份、来源新鲜度、库存定位、任务路径与 10,000 库位性能基线 |
 | E09 S01–S05 | 已进入集成基线 | `a599cfd7` + `09538ca3` + `cae12c7e` + `feefa9cd` + `88bc42d1` + `1850b2d8` + `f045bd6f` + `c82d4fae` + `83798dcf` + `c658871c`；外部组织/成员、组合 Grant、字段策略/脱敏、Published-only Portal、跨租户阻断矩阵，以及访问审计和授权有效期即时重验证 |
-| E10 S01–S03 | 已进入集成基线 | `1c7aa0e2` + `1da17591` + `ec29d41f` + `e70c2715` + `86ad63bb` + `29a69a2b` + `10b16c51` + `8ce91d41` + `88efd23d`；人员事件与实时/轨迹、设备主数据映射、WCS/IoT 设备事件合同、Real/Simulated 来源边界、追加式账本、幂等和租户隔离 |
+| E10 S01–S04 | 已进入集成基线 | `1c7aa0e2` + `1da17591` + `ec29d41f` + `e70c2715` + `86ad63bb` + `29a69a2b` + `10b16c51` + `8ce91d41` + `88efd23d` + `9a9802a8` + `f961d7e5` + `b4d5b81e`；人员事件与实时/轨迹、设备主数据映射、WCS/IoT 设备事件合同、设备当前/活动告警投影，以及 AGV/输送设备 3D 叠加 |
 | E13 S01–S03、S12、S16 | 已进入集成基线 | Provider/确定性端口、可审计 Run/Proposal/Decision/Usage 模型、可恢复 Worker 控制面、数据库并发槽与预算账本，以及不暴露密钥/URL 的租户策略和用量管理 UI |
 | E05 S01–S05 | 已进入集成基线 | 通用元素、逐层货架、统一场景 DTO、版本化资产库及确定性参数化 3D 渲染 |
 | E03 S04 以后、E04 S05、E06、E13 S04～S11/S13～S15/S17～S19 等剩余范围 | 候选证据或尚未实现 | E03-S04 与 E04-S05 等待 E02-S07/CAD 语义预览；其余按依赖逐卡推进。`0d25da4d` 只作提取来源，不得以候选报告替代集成验收 |
@@ -247,6 +257,7 @@
 
 ## 最近验证基线
 
+- E10-S04 已推进至受控集成提交 `b4d5b81e`：设备当前/告警投影、读取 API 和 3D 叠加完成；领域 2/2、设备服务 9/9、本卡真实 SQL 2/2、权限/审计/OpenAPI 70/70、前端 113 files / 629 tests、Space Unit 236/236、默认 Space Integration 189 passed / 60 SQL-gated skipped、CP6.Tests 2738 passed / 17 environment-gated skipped、完整 solution 0 error / 10 条既有 warning、EF/SDK drift 与两个 TypeScript strict no-emit 通过。完整真实 SQL 矩阵 248 passed / 1 已知基线失败；合并态设备 9/9、权限/审计/OpenAPI 70/70、前端聚焦 14/14、EF/SDK drift 通过。交付证据见 `docs/space/reports/e10-s04-device-runtime-overlay.md`。
 - E04-S06 已推进至受控集成提交 `2b6ef127`：功能分支与合并态前端全量均为 108 files / 612 tests，聚焦 4 files / 13 tests、type-check 和 production build 通过；Space Unit 231/231、默认 Space Integration 140 passed / 55 SQL-gated skipped、Design Scene 真 SQL 3/3、Space Integration + KOUSQLSERVER 195/195 且 0 skipped、CP6.Tests 2720 passed / 17 environment-gated skipped、完整 solution 非增量构建 0 error / 10 条既有 warning，以及 SDK drift、TypeScript SDK strict no-emit 和差异门禁均通过。
 - E09-S05 已推进至受控集成提交 `c658871c`：审计聚焦 48/48、Portal/真 SQL 合并态 16/16、Space Unit 231/231、Space Integration + KOUSQLSERVER 195/195、CP6.Tests 2720 passed / 17 environment-gated skipped、完整 solution 非增量构建 0 error / 10 条既有 warning、前端 106 files / 607 tests、EF/SDK drift 与 TypeScript SDK strict no-emit 均通过。
 - E09-S04 已推进至受控集成提交 `c82d4fae`：功能分支门禁为 Space Unit 231/231、Space Integration + KOUSQLSERVER 187/187 且 0 skipped、CP6.Tests 2713 passed / 17 environment-gated skipped、完整 solution 0 warning / 0 error、前端 106 files / 607 tests、EF/SDK drift 与 TypeScript SDK strict no-emit；合并态聚焦门禁为 16/16、42/42、完整 solution 0 error / 10 条既有 warning、前端 607/607 及 EF/SDK drift。
@@ -284,4 +295,4 @@
 
 ## 下一动作
 
-以 `ec29d41f` 为当前 Space 代码集成基线。E03-S01～S03、E13-S16 与 E10-S01 已完成；下一步不能绕过依赖提前做 CAD/外部 Provider 链。E03-S04 与 E04-S05 继续等待 E02-S07/CAD 语义预览，E13-S04 等待 E02-S03，E13-S05 等待 S04 与正式供应商证据；E06-S01 继续等待 E02～E05 与 E13 主链。可独立推进时，E10-S02 是已具备 S01 前置条件的 P2 候选，但仍低于解除 CAD 主链外部条件；E02-S01 继续等待正式黄金集、授权和冻结 Worker，E09 的产品/QA/WMS/安全 GA 签字仍由发布治理完成。禁止把候选检查点 `0d25da4d` 整包合入，GR-VP T1–T7 不要重做。
+以 `b4d5b81e` 为当前 Space 代码集成基线。E03-S01～S03、E13-S16 与 E10-S01～S04 已完成；下一步不能绕过依赖提前做 CAD/外部 Provider 链。E03-S04 与 E04-S05 继续等待 E02-S07/CAD 语义预览，E13-S04 等待 E02-S03，E13-S05 等待 S04 与正式供应商证据；E06-S01 继续等待 E02～E05 与 E13 主链。可独立推进时，E10-S05“货主、SKU、批次和容器空间筛选”是已具备前置条件的 P2 候选，但仍低于解除 CAD 主链外部条件；E02-S01 继续等待正式黄金集、授权和冻结 Worker，E09 的产品/QA/WMS/安全 GA 签字仍由发布治理完成。禁止把候选检查点 `0d25da4d` 整包合入，GR-VP T1–T7 不要重做。
