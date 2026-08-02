@@ -87,6 +87,10 @@ public sealed class SpaceContext : DbContext
         Set<SpaceFieldPolicy>();
     public DbSet<SpaceFieldPolicyField> FieldPolicyFields =>
         Set<SpaceFieldPolicyField>();
+    public DbSet<SpaceExcelMappingProfile> ExcelMappingProfiles =>
+        Set<SpaceExcelMappingProfile>();
+    public DbSet<SpaceExcelMappingProfileVersion> ExcelMappingProfileVersions =>
+        Set<SpaceExcelMappingProfileVersion>();
 
     protected override void OnModelCreating(ModelBuilder modelBuilder)
     {
@@ -115,6 +119,8 @@ public sealed class SpaceContext : DbContext
         ConfigureExternalGrantObject(modelBuilder);
         ConfigureFieldPolicy(modelBuilder);
         ConfigureFieldPolicyField(modelBuilder);
+        ConfigureExcelMappingProfile(modelBuilder);
+        ConfigureExcelMappingProfileVersion(modelBuilder);
         ConfigureFile(modelBuilder);
         ConfigureSource(modelBuilder);
         ConfigureJob(modelBuilder);
@@ -140,6 +146,7 @@ public sealed class SpaceContext : DbContext
         ProtectAssetLibrary();
         ProtectUnderlayCalibrationHistory();
         ProtectElementCommandHistory();
+        ProtectExcelMappingVersionHistory();
         StampAndValidateTenant();
         return base.SaveChanges(acceptAllChangesOnSuccess);
     }
@@ -155,6 +162,7 @@ public sealed class SpaceContext : DbContext
         ProtectAssetLibrary();
         ProtectUnderlayCalibrationHistory();
         ProtectElementCommandHistory();
+        ProtectExcelMappingVersionHistory();
         StampAndValidateTenant();
         return base.SaveChangesAsync(acceptAllChangesOnSuccess, cancellationToken);
     }
@@ -2574,6 +2582,80 @@ public sealed class SpaceContext : DbContext
             x => x.TenantId == CurrentTenantId && !x.IsDeleted);
     }
 
+    private void ConfigureExcelMappingProfile(ModelBuilder modelBuilder)
+    {
+        var entity = modelBuilder.Entity<SpaceExcelMappingProfile>();
+        entity.ToTable(
+            "Space_ExcelMappingProfile",
+            table => table.HasCheckConstraint(
+                "CK_Space_ExcelMappingProfile_CurrentVersion",
+                "[CurrentVersion] > 0"));
+        entity.HasKey(x => x.Id);
+        entity.Property(x => x.Id).ValueGeneratedNever();
+        entity.HasAlternateKey(x => new { x.TenantId, x.Id })
+            .HasName("AK_Space_ExcelMappingProfile_TenantId_Id");
+        ConfigureTenantEntity(entity);
+        entity.Property(x => x.Name).HasMaxLength(200).IsRequired();
+        entity.Property(x => x.NormalizedName)
+            .HasMaxLength(200)
+            .IsRequired();
+        entity.Property(x => x.RowVersion).IsRowVersion();
+        entity.HasIndex(x => new { x.TenantId, x.NormalizedName })
+            .IsUnique()
+            .HasFilter("[IsDeleted] = 0")
+            .HasDatabaseName("UX_Space_ExcelMappingProfile_CurrentName");
+        entity.HasQueryFilter(
+            x => x.TenantId == CurrentTenantId && !x.IsDeleted);
+    }
+
+    private void ConfigureExcelMappingProfileVersion(ModelBuilder modelBuilder)
+    {
+        var entity = modelBuilder.Entity<SpaceExcelMappingProfileVersion>();
+        entity.ToTable(
+            "Space_ExcelMappingProfileVersion",
+            table =>
+            {
+                table.HasCheckConstraint(
+                    "CK_Space_ExcelMappingProfileVersion_Version",
+                    "[Version] > 0");
+                table.HasCheckConstraint(
+                    "CK_Space_ExcelMappingProfileVersion_Base",
+                    "([BasedOnProfileId] IS NULL AND [BasedOnVersion] IS NULL) OR " +
+                    "([BasedOnProfileId] IS NOT NULL AND [BasedOnVersion] > 0)");
+            });
+        entity.HasKey(x => x.Id);
+        entity.Property(x => x.Id).ValueGeneratedNever();
+        entity.HasAlternateKey(x => new { x.TenantId, x.Id })
+            .HasName("AK_Space_ExcelMappingProfileVersion_TenantId_Id");
+        ConfigureTenantEntity(entity);
+        entity.Property(x => x.DefinitionJson)
+            .HasColumnType("nvarchar(max)")
+            .IsRequired();
+        entity.Property(x => x.DefinitionHash)
+            .HasColumnType("char(64)")
+            .IsUnicode(false)
+            .IsFixedLength()
+            .HasMaxLength(64)
+            .IsRequired();
+        entity.HasIndex(x => new { x.TenantId, x.ProfileId, x.Version })
+            .IsUnique()
+            .HasFilter("[IsDeleted] = 0")
+            .HasDatabaseName(
+                "UX_Space_ExcelMappingProfileVersion_Profile_Version");
+        entity.HasIndex(x => new { x.TenantId, x.DefinitionHash })
+            .HasDatabaseName(
+                "IX_Space_ExcelMappingProfileVersion_DefinitionHash");
+        entity.HasOne<SpaceExcelMappingProfile>()
+            .WithMany()
+            .HasForeignKey(x => new { x.TenantId, x.ProfileId })
+            .HasPrincipalKey(x => new { x.TenantId, x.Id })
+            .OnDelete(DeleteBehavior.Restrict)
+            .HasConstraintName(
+                "FK_Space_ExcelMappingProfileVersion_Profile_Tenant");
+        entity.HasQueryFilter(
+            x => x.TenantId == CurrentTenantId && !x.IsDeleted);
+    }
+
     private static void ConfigureTenantEntity<TEntity>(
         Microsoft.EntityFrameworkCore.Metadata.Builders.EntityTypeBuilder<TEntity> entity)
         where TEntity : SpaceTenantEntity
@@ -2582,6 +2664,19 @@ public sealed class SpaceContext : DbContext
         entity.Property(x => x.CreatedAtUtc).HasColumnType("datetime2");
         entity.Property(x => x.ModifiedAtUtc).HasColumnType("datetime2");
         entity.Property(x => x.IsDeleted).HasDefaultValue(false);
+    }
+
+    private void ProtectExcelMappingVersionHistory()
+    {
+        foreach (var entry in ChangeTracker
+            .Entries<SpaceExcelMappingProfileVersion>())
+        {
+            if (entry.State is EntityState.Modified or EntityState.Deleted)
+            {
+                throw new InvalidOperationException(
+                    "Excel mapping profile versions are append-only.");
+            }
+        }
     }
 
     private void ProtectPublishedHistory()
