@@ -76,11 +76,19 @@
         </div>
         <p v-if="result.isTruncated" class="truncated">{{ t('建议结果已截断') }}</p>
         <div v-if="result.assignments.length" class="assignment-list">
-          <button
+          <article
             v-for="assignment in result.assignments"
             :key="`${assignment.taskId}:${assignment.personKey}`"
-            @click="$emit('locate', assignment.targetLocationCode)"
           >
+            <label class="assignment-select">
+              <input
+                v-model="selectedRanks"
+                type="checkbox"
+                :value="assignment.rank"
+                :disabled="approvalLoading || approvalBlocksSubmission || assignment.personSourceKind !== 'Real'"
+              />
+              <span>{{ t('选择') }}</span>
+            </label>
             <span class="assignment-heading">
               <strong>#{{ assignment.rank }} · {{ assignment.taskId }} → {{ assignment.personExternalId }}</strong>
               <em v-if="assignment.geometricDistanceMeters !== null">
@@ -101,9 +109,66 @@
               {{ t('工作状态时点') }} {{ formatTime(assignment.personWorkStateOccurredAtUtc) }}
             </small>
             <code>{{ assignment.ruleHits.join(' · ') }}</code>
-          </button>
+            <button
+              class="assignment-locate"
+              type="button"
+              @click="$emit('locate', assignment.targetLocationCode)"
+            >{{ t('定位') }}</button>
+          </article>
         </div>
         <p v-else class="empty">{{ t('当前约束下没有可解释的调度建议') }}</p>
+      </section>
+
+      <section v-if="result.assignments.length" class="approval-section">
+        <div class="section-title">
+          <strong>{{ t('调度审批') }}</strong>
+          <span>{{ t('已选择') }} {{ selectedRanks.length }}</span>
+        </div>
+        <p class="approval-safety">
+          {{ t('审批通过前不会修改任务；通过后仅整体分配所选任务') }}
+        </p>
+        <form class="approval-form" @submit.prevent="submitApproval">
+          <label>
+            <span>{{ t('审批原因') }}</span>
+            <textarea
+              v-model="approvalReason"
+              maxlength="500"
+              required
+              :disabled="approvalLoading || approvalBlocksSubmission"
+              :placeholder="t('说明为什么需要执行这些调度分配')"
+            />
+          </label>
+          <button
+            class="submit-approval"
+            type="submit"
+            :disabled="!canSubmitApproval"
+          >{{ approvalLoading ? t('处理中') : t('提交调度审批') }}</button>
+        </form>
+        <p v-if="approvalError" class="dispatch-error">{{ approvalError }}</p>
+        <div v-if="approval" class="approval-status" :data-status="approval.status">
+          <div class="section-title">
+            <strong>{{ t('审批状态') }}：{{ approvalStatusLabel }}</strong>
+            <span>{{ approval.selectedCount }}</span>
+          </div>
+          <small>{{ formatTime(approval.requestedAtUtc) }} · {{ approval.adapterId }}</small>
+          <code v-if="approval.failureCode">{{ approval.failureCode }}</code>
+          <div v-if="approval.receipts.length" class="receipt-list">
+            <span v-for="receipt in approval.receipts" :key="receipt.operationId">
+              #{{ receipt.rank }} · {{ receipt.taskId }} → {{ receipt.personExternalId }} · {{ receipt.outcome }}
+            </span>
+          </div>
+          <div class="approval-actions">
+            <button type="button" :disabled="approvalLoading" @click="$emit('refresh-approval')">
+              {{ t('刷新审批状态') }}
+            </button>
+            <button
+              v-if="approval.status === 'PendingApproval'"
+              type="button"
+              :disabled="approvalLoading"
+              @click="$emit('cancel-approval')"
+            >{{ t('取消审批') }}</button>
+          </div>
+        </div>
       </section>
 
       <section class="exclusion-section">
@@ -144,10 +209,12 @@
 </template>
 
 <script setup lang="ts">
-import { computed, ref } from 'vue'
+import { computed, ref, watch } from 'vue'
 import { useI18n } from 'vue-i18n'
 import type {
   GenerateSpaceDispatchRecommendationRequest,
+  SubmitSpaceDispatchApprovalRequest,
+  SpaceDispatchApprovalRequest,
   SpaceDispatchRecommendation,
 } from '@/types/space/runtime'
 
@@ -156,10 +223,16 @@ const props = defineProps<{
   result: SpaceDispatchRecommendation | null
   loading: boolean
   error: string
+  approval: SpaceDispatchApprovalRequest | null
+  approvalLoading: boolean
+  approvalError: string
 }>()
 
 const emit = defineEmits<{
   (event: 'generate', request: GenerateSpaceDispatchRecommendationRequest): void
+  (event: 'submit-approval', request: SubmitSpaceDispatchApprovalRequest): void
+  (event: 'refresh-approval'): void
+  (event: 'cancel-approval'): void
   (event: 'locate', locationCode: string): void
   (event: 'close'): void
 }>()
@@ -171,10 +244,46 @@ const maximumAssignments = ref(20)
 const scopeCurrentFloor = ref(true)
 const allowCrossFloor = ref(false)
 const includeSimulated = ref(false)
+const selectedRanks = ref<number[]>([])
+const approvalReason = ref('')
 
 const canSubmit = computed(() =>
   maximumAssignments.value >= 1 && maximumAssignments.value <= 100 &&
   (maximumDistance.value === null || Number(maximumDistance.value) > 0),
+)
+
+const approvalBlocksSubmission = computed(() =>
+  props.approval?.status === 'PendingApproval' ||
+  props.approval?.status === 'Applied' ||
+  props.approval?.status === 'Stale' ||
+  props.approval?.status === 'FailedNoEffect',
+)
+
+const canSubmitApproval = computed(() =>
+  !props.loading && !props.approvalLoading && !approvalBlocksSubmission.value &&
+  selectedRanks.value.length >= 1 && selectedRanks.value.length <= 100 &&
+  approvalReason.value.trim().length >= 1 && approvalReason.value.trim().length <= 500,
+)
+
+const approvalStatusLabel = computed(() => {
+  if (!props.approval) return ''
+  const labels: Record<SpaceDispatchApprovalRequest['status'], string> = {
+    PendingApproval: '待审批',
+    Applied: '已执行',
+    Rejected: '已拒绝',
+    Cancelled: '已取消',
+    Stale: '证据已失效',
+    FailedNoEffect: '执行失败且未产生影响',
+  }
+  return t(labels[props.approval.status])
+})
+
+watch(
+  () => props.result?.recommendationId,
+  () => {
+    selectedRanks.value = []
+    approvalReason.value = ''
+  },
 )
 
 const exclusionEntries = computed(() => {
@@ -212,6 +321,14 @@ function submit(): void {
     maximumTravelDistanceMeters: positive(maximumDistance.value),
     includeSimulatedPersonnel: includeSimulated.value,
     maximumAssignments: Math.trunc(maximumAssignments.value),
+  })
+}
+
+function submitApproval(): void {
+  if (!canSubmitApproval.value) return
+  emit('submit-approval', {
+    selectedRanks: [...selectedRanks.value].sort((left, right) => left - right),
+    reason: approvalReason.value.trim(),
   })
 }
 
@@ -307,7 +424,7 @@ function formatTime(value: string): string {
 .exclusion-grid span { display: flex; justify-content: space-between; gap: 5px; color: #b0bec5; }
 .assignment-list,
 .sample-list { display: grid; gap: 4px; margin-top: 7px; }
-.assignment-list button,
+.assignment-list article,
 .sample-list button {
   width: 100%;
   padding: 7px;
@@ -318,8 +435,21 @@ function formatTime(value: string): string {
   cursor: pointer;
   text-align: left;
 }
-.assignment-list button:hover,
+.assignment-list article:hover,
 .sample-list button:hover { background: rgba(3, 169, 244, .1); border-color: rgba(129, 212, 250, .38); }
+.assignment-list article { position: relative; padding-right: 72px; }
+.assignment-select { display: inline-flex; align-items: center; gap: 4px; margin-bottom: 5px; color: #b3e5fc; }
+.assignment-locate {
+  position: absolute;
+  top: 7px;
+  right: 7px;
+  padding: 3px 7px;
+  border: 1px solid rgba(129, 212, 250, .3);
+  border-radius: 4px;
+  background: rgba(3, 169, 244, .1);
+  color: #b3e5fc;
+  cursor: pointer;
+}
 .assignment-heading em { color: #80cbc4; font-style: normal; }
 .assignment-list small,
 .sample-list small,
@@ -329,4 +459,32 @@ function formatTime(value: string): string {
 .sample-block { margin-top: 9px; }
 .empty { color: #607d8b; }
 .limitation-section summary { cursor: pointer; }
+.approval-safety { color: #ffe082; }
+.approval-form { display: grid; gap: 6px; margin-top: 7px; }
+.approval-form label { display: grid; gap: 4px; color: #90a4ae; }
+.approval-form textarea {
+  min-height: 58px;
+  resize: vertical;
+  padding: 6px 7px;
+  border: 1px solid rgba(129, 212, 250, .3);
+  border-radius: 4px;
+  background: rgba(255, 255, 255, .035);
+  color: #e3f2fd;
+}
+.submit-approval,
+.approval-actions button {
+  padding: 6px 8px;
+  border: 1px solid rgba(128, 203, 196, .5);
+  border-radius: 4px;
+  background: rgba(0, 150, 136, .14);
+  color: #b2dfdb;
+  cursor: pointer;
+}
+.submit-approval:disabled,
+.approval-actions button:disabled { cursor: wait; opacity: .55; }
+.approval-status { display: grid; gap: 5px; margin-top: 9px; padding: 8px; border: 1px solid rgba(128, 203, 196, .25); border-radius: 4px; }
+.approval-status small,
+.approval-status code { color: #90a4ae; overflow-wrap: anywhere; }
+.receipt-list { display: grid; gap: 3px; color: #b2dfdb; }
+.approval-actions { display: flex; gap: 6px; }
 </style>

@@ -6,6 +6,7 @@ vi.mock('@/api/http', () => ({
   default: {
     get: vi.fn(),
     put: vi.fn(),
+    post: vi.fn(),
   },
 }))
 
@@ -14,6 +15,7 @@ describe('spaceRuntimeApi', () => {
     vi.clearAllMocks()
     vi.mocked(http.get).mockResolvedValue({})
     vi.mocked(http.put).mockResolvedValue({})
+    vi.mocked(http.post).mockResolvedValue({})
   })
 
   it('puts an idempotent putaway recommendation request under the operations API', async () => {
@@ -62,6 +64,34 @@ describe('spaceRuntimeApi', () => {
     expect(http.get).toHaveBeenCalledWith(
       '/space/operations/v1/sites/site%2F1/dispatch-recommendations/recommendation%2F1',
     )
+  })
+
+  it('submits, reads, and cancels an idempotent dispatch approval request', async () => {
+    const request = { selectedRanks: [1, 3], reason: 'Release the reviewed batch' }
+
+    await spaceRuntimeApi.submitDispatchApproval(
+      'site/1',
+      'recommendation/1',
+      'approval/1',
+      request,
+    )
+    await spaceRuntimeApi.dispatchApproval(
+      'site/1',
+      'recommendation/1',
+      'approval/1',
+    )
+    await spaceRuntimeApi.cancelDispatchApproval(
+      'site/1',
+      'recommendation/1',
+      'approval/1',
+    )
+
+    const base = '/space/operations/v1/sites/site%2F1' +
+      '/dispatch-recommendations/recommendation%2F1' +
+      '/approval-requests/approval%2F1'
+    expect(http.put).toHaveBeenCalledWith(base, request)
+    expect(http.get).toHaveBeenCalledWith(base)
+    expect(http.post).toHaveBeenCalledWith(`${base}/cancel`)
   })
 
   it('gets immutable putaway recommendation evidence by identity', async () => {

@@ -1164,6 +1164,7 @@ using (var scope = app.Services.CreateScope())
     CP6.WebApi.Seed.A5BudgetFlowSeed.Seed(db);
     CP6.WebApi.Seed.PurApprovalFlowSeed.Seed(db);   // 采购 PR/PO 审批流程 + 绑定（PUR_PR/PUR_PO）
     CP6.WebApi.Seed.WmsFeatureApprovalFlowSeed.Seed(db);
+    CP6.WebApi.Seed.SpaceDispatchApprovalFlowSeed.Seed(db);
     CP6.WebApi.Seed.OaLeaveFormSeed.Seed(db);        // OA 请假演示表单 + 流程（填單→审批闭环 out-of-box）
     await CP6.WebApi.Seed.WfTokenBackfillSeed.EnsureAsync(db);   // WFS P1：在途实例 token 回填（每启动幂等）
 

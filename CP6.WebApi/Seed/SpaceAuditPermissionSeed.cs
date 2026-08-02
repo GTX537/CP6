@@ -49,6 +49,9 @@ public static class SpaceAuditPermissionSeed
             ("operations:diagnostics:read", "查看运营诊断", 90),
             ("operations:recommendations:read", "查看运营推荐", 100),
             ("operations:recommendations:generate", "生成运营推荐", 110),
+            ("operations:dispatch:read", "查看调度审批", 120),
+            ("operations:dispatch:submit", "提交调度审批", 130),
+            ("operations:dispatch:cancel", "取消调度审批", 140),
         ];
     private static readonly (string Code, string Name, int Sort)[]
         AiAdminActions =

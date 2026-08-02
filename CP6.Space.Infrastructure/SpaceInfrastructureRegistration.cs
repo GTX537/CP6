@@ -178,6 +178,16 @@ public static class SpaceInfrastructureRegistration
             ISpaceDispatchRecommendationService,
             SpaceDispatchRecommendationService>();
         services.AddScoped<
+            ISpaceDispatchTaskAdapter,
+            Cp6SpaceDispatchTaskAdapter>();
+        services.AddScoped<SpaceDispatchApprovalService>();
+        services.AddScoped<ISpaceDispatchApprovalService>(provider =>
+            provider.GetRequiredService<SpaceDispatchApprovalService>());
+        services.TryAddEnumerable(
+            ServiceDescriptor.Scoped<
+                CP6.Core.Services.Wf.IApprovalCallback,
+                SpaceDispatchApprovalCallback>());
+        services.AddScoped<
             ISpaceDeviceEventService,
             SpaceDeviceEventService>();
         services.AddScoped<

@@ -15,6 +15,9 @@ import type {
   GenerateSpaceDispatchRecommendationRequest,
   GenerateSpaceDispatchRecommendationResponse,
   SpaceDispatchRecommendation,
+  SubmitSpaceDispatchApprovalRequest,
+  SubmitSpaceDispatchApprovalResponse,
+  SpaceDispatchApprovalRequest,
 } from '@/types/space/runtime'
 
 export const spaceRuntimeApi = {
@@ -33,6 +36,41 @@ export const spaceRuntimeApi = {
     return http.get<unknown, SpaceDispatchRecommendation>(
       `/space/operations/v1/sites/${encodeURIComponent(siteId)}` +
         `/dispatch-recommendations/${encodeURIComponent(recommendationId)}`,
+    )
+  },
+  submitDispatchApproval(
+    siteId: string,
+    recommendationId: string,
+    approvalRequestId: string,
+    request: SubmitSpaceDispatchApprovalRequest,
+  ) {
+    return http.put<unknown, SubmitSpaceDispatchApprovalResponse>(
+      `/space/operations/v1/sites/${encodeURIComponent(siteId)}` +
+        `/dispatch-recommendations/${encodeURIComponent(recommendationId)}` +
+        `/approval-requests/${encodeURIComponent(approvalRequestId)}`,
+      request,
+    )
+  },
+  dispatchApproval(
+    siteId: string,
+    recommendationId: string,
+    approvalRequestId: string,
+  ) {
+    return http.get<unknown, SpaceDispatchApprovalRequest>(
+      `/space/operations/v1/sites/${encodeURIComponent(siteId)}` +
+        `/dispatch-recommendations/${encodeURIComponent(recommendationId)}` +
+        `/approval-requests/${encodeURIComponent(approvalRequestId)}`,
+    )
+  },
+  cancelDispatchApproval(
+    siteId: string,
+    recommendationId: string,
+    approvalRequestId: string,
+  ) {
+    return http.post<unknown, void>(
+      `/space/operations/v1/sites/${encodeURIComponent(siteId)}` +
+        `/dispatch-recommendations/${encodeURIComponent(recommendationId)}` +
+        `/approval-requests/${encodeURIComponent(approvalRequestId)}/cancel`,
     )
   },
   generatePutawayRecommendation(
