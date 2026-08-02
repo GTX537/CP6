@@ -2,6 +2,14 @@
 
 最后更新：2026-08-02
 
+## E03-S01～S03 与 E13-S16 完成状态（2026-08-02）
+
+- E03-S01～S03 已连续进入受控集成基线：标准建模 Excel 模板 `033e8872` / `8521a701`，版本化字段映射 `f1310b40` / `e0cc4964`，Excel 数据预检 `9d0a59e7` / `3571f677`。当前链路已具备标准模板下载、租户私有映射、不可变版本、50 MB 隔离上传、异步预检、结构化问题清单和受保护错误报告。
+- E13-S16 已进入受控集成基线：实现 `0549a1f2`、文档 `6ec0c02a`、no-ff 集成 `ad4de0b0`。租户管理员可在 `/space/ai-admin` 管理版本化数据策略、站点、获批 Provider 别名、1～3 并发与日/月预算，并查询实际/估算/未定价用量；合同不接受或回显密钥、URL、Endpoint。
+- E13-S16 新增 `Space_AiTenantPolicy` 追加式版本表、Design V1 策略/用量 API、`space-ai-admin:read/manage` 权限、五语 seed、OpenAPI 及 C#/TypeScript SDK。外部主体显式拒绝，无策略时继续 `Disabled` 失败关闭。
+- 最新门禁：服务 5/5、权限 18/18、Space Unit 231/231、Space Integration 168 passed / 57 SQL-environment skipped、CP6.Tests 2733 passed / 17 environment-gated skipped、前端 112 files / 622 tests、type-check、production build、完整 solution 0 warning / 0 error、EF/SDK drift 与差异检查全部通过。
+- `npm run i18n:check` 保持既有 843 项存量缺口，本卡未增加缺口。E03-S04 及 E04-S05 仍等待 E02-S07/CAD 语义预览链；E13-S04 仍等待 E02-S03，不能提前启用外部 Provider、CAD IR、输出校验或 Apply。
+
 ## E04-S06 完成状态（2026-08-02）
 
 - E04-S06 2D/3D 同源预览已完成并进入受控集成基线：功能提交 `20f248bd`，no-ff 集成提交 `2b6ef127`，起始基线 `99e367f1`。
@@ -163,6 +171,10 @@
 - Space E13 S02 功能/集成提交：`cff25a25` / `94822669`
 - Space E13 S03 功能/集成提交：`cebd401a` / `dca6e19c`
 - Space E13 S12 功能/集成提交：`54456946` / `b33929fb`
+- Space E13 S16 功能/文档/集成提交：`0549a1f2` / `6ec0c02a` / `ad4de0b0`
+- Space E03 S01 功能/集成提交：`033e8872` / `8521a701`
+- Space E03 S02 功能/集成提交：`f1310b40` / `e0cc4964`
+- Space E03 S03 功能/集成提交：`9d0a59e7` / `3571f677`
 - Space E05 S01 功能/集成提交：`5bb0cdfb` / `49dbabe3`
 - Space E05 S02 功能/集成提交：`2fc03681` / `3d554852`
 - Space E05 S03 功能/集成提交：`00021f0a` / `a1edecef`
@@ -181,13 +193,14 @@
 | E00 S01–S04 | 已进入集成基线 | `539d56de`；事实清单、兼容护栏、数据源契约、审计/可观测性 |
 | E01 S01–S06 | 已进入集成基线 | `539d56de` + `85792161` + `36f534d9` + `2ccdff7a`；版本/来源文件/Job Ledger、Published→Draft Clone、Design API v1、生成 SDK、文件安全扫描与保留清理 |
 | E02 S01 | 部分进入集成基线，最终签收受阻 | `fe959066` + `3742fbff`；中立审计/压力/运行证据/preflight 已集成，正式黄金集、授权、供应商包/凭据和冻结 Worker 尚缺 |
+| E03 S01–S03 | 已进入集成基线 | `033e8872` + `8521a701` + `f1310b40` + `e0cc4964` + `9d0a59e7` + `3571f677`；标准 Excel 模板、版本化字段映射、隔离上传、异步预检、结构化问题与受保护错误报告 |
 | E04 S01–S04、S06 | 已进入集成基线 | `1d57a3b5` + `e8e84853` + `20ee0af0` + `c1043d15` + `b322e84a` + `39146c38` + `9a87dc30` + `f9c7fd21` + `20f248bd` + `2b6ef127`；安全底图、坐标标定、通用元素属性、统一批量编辑与补偿命令，以及同一 Design Scene 的 2D/3D 只读预览和实际渲染结构一致性证明 |
 | E07 S01–S05 | 已进入集成基线 | `d06a8bd1` + `6e67a9d1` + `74577015` + `6d751e0c` + `15ccf992` + `389bf4ec`；版本化能力合同、CP6 真实适配器、持久化幂等账本、标准模拟器、确定性标准仓与存量 WMS 采纳/绑定 |
 | E08 S01–S05 | 已进入集成基线 | `3df6b1d2` + `b2bb7a35` + `9a478c7a` + `d4cd8a82` + `8d8f7e01` + `dfb6e93b` + `9f7e38f8` + `994339a6` + `cc1d8baf` + `24464fab` + `7a05c05f` + `675e485c`；统一 Published 运行源、双身份、来源新鲜度、库存定位、任务路径与 10,000 库位性能基线 |
 | E09 S01–S05 | 已进入集成基线 | `a599cfd7` + `09538ca3` + `cae12c7e` + `feefa9cd` + `88bc42d1` + `1850b2d8` + `f045bd6f` + `c82d4fae` + `83798dcf` + `c658871c`；外部组织/成员、组合 Grant、字段策略/脱敏、Published-only Portal、跨租户阻断矩阵，以及访问审计和授权有效期即时重验证 |
-| E13 S01–S03、S12 | 已进入集成基线 | Provider/确定性端口、可审计 Run/Proposal/Decision/Usage 模型、可恢复 Worker 控制面，以及数据库并发槽与预算账本 |
+| E13 S01–S03、S12、S16 | 已进入集成基线 | Provider/确定性端口、可审计 Run/Proposal/Decision/Usage 模型、可恢复 Worker 控制面、数据库并发槽与预算账本，以及不暴露密钥/URL 的租户策略和用量管理 UI |
 | E05 S01–S05 | 已进入集成基线 | 通用元素、逐层货架、统一场景 DTO、版本化资产库及确定性参数化 3D 渲染 |
-| E03、E04 S05、E06、E13 S04～S11/S13～S19 等剩余范围 | 候选证据或尚未实现 | E03-S01 与 E03-S02 前置已满足；其余按依赖逐卡推进。`0d25da4d` 只作提取来源，不得以候选报告替代集成验收 |
+| E03 S04 以后、E04 S05、E06、E13 S04～S11/S13～S15/S17～S19 等剩余范围 | 候选证据或尚未实现 | E03-S04 与 E04-S05 等待 E02-S07/CAD 语义预览；其余按依赖逐卡推进。`0d25da4d` 只作提取来源，不得以候选报告替代集成验收 |
 
 ## 上一完成波：GR-VP
 
@@ -218,6 +231,7 @@
 - E07 S01–S03 已推进至 `6e67a9d1`：Release 全解构建 0 error（7 个既有测试 warning），Space Unit 73 passed，Space Integration 35 passed / 30 SQL 环境门禁 skipped，CP6 主测试 2674 passed / 17 environment-gated skipped，Client 71 passed，EF 模型与 Migration 一致；新增代码精确格式门禁通过。
 - E07 S04 已推进至 `6d751e0c`：500 货架、10,000 库位、100 SKU、5,000 库存记录、100 拣货任务和 6 个固定故障样本由同一固定种子生成；两次独立生成的 17 个文件差异为 0，干净检出后的 Manifest 16 个受管文件哈希错误为 0。合并态 Release 全解构建 0 error（10 个既有 warning），Space Unit 79 passed，Space Integration 40 passed / 30 SQL 环境门禁 skipped，CP6 主测试 2680 passed / 17 environment-gated skipped，Client 71 passed。
 - E13 S01–S03、S12 已完成 Provider 安全端口、运行审计模型、可恢复 Worker 控制面、三并发槽和日/月预算原子账本；外部 Provider、CAD IR、输出校验与 Apply 仍未提前启用。
+- E03 S01–S03 与 E13-S16 已推进至集成提交 `3571f677` 和 `ad4de0b0`；最新门禁为 CP6.Tests 2733 passed / 17 environment-gated skipped、前端 112 files / 622 tests、完整 solution 0 warning / 0 error、EF/SDK drift 通过。E13-S16 交付证据见 `docs/space/reports/e13-s16-ai-policy-budget-usage-ui.md`。
 - E05 S01–S05 已完成通用元素、非均匀逐层货架、Design Revision 权威场景、System/Tenant 版本化资产库和 `space-parametric-v1` 确定性前端渲染链；资产不加载外部 URL 或脚本。
 - E04 S01–S04 已完成 PDF/PNG/JPG 底图、安全扫描、挂接、标定、通用元素属性，以及货架/元素共享的框选、对齐、等距、旋转、删除、阵列和补偿式撤销/重做；命令继续保持 Draft/revision 失败关闭、协议幂等、整批原子性和逐命令 before/after 审计。默认扫描器继续失败关闭，多副本生产环境必须配置真实扫描引擎与共享耐久卷。
 - Space 集成前端：type-check 通过，96 files / 575 tests passed，production build 通过；仅有既有大 chunk 提示。
@@ -238,4 +252,4 @@
 
 ## 下一动作
 
-以 `2b6ef127` 为当前 Space 代码集成基线。E04-S06 已完成；下一张建议独立卡为 E03-S01“标准建模 Excel 模板”，其 E05-S02 前置已满足，先锁定货架、逐层规格、库位和映射说明的标准输入合同，再进入 E03-S02 字段映射。E09 的产品、QA、WMS 与安全正式 GA 签字仍由发布治理完成。E04-S05 继续等待 E02-S07；E06-S01 继续等待 E02～E05 与 E13 链路；E13-S04 等待 E02-S03，E13-S05 等待 S04 与正式供应商证据；E02-S01 等待正式黄金集、授权和冻结 Worker；E10 属于 P2。禁止把剩余候选整包合入。GR-VP T1–T7 已完成，不要重做。
+以 `ad4de0b0` 为当前 Space 代码集成基线。E03-S01～S03 与 E13-S16 已完成；下一步不能绕过依赖提前做 CAD/外部 Provider 链。E03-S04 与 E04-S05 继续等待 E02-S07/CAD 语义预览，E13-S04 等待 E02-S03，E13-S05 等待 S04 与正式供应商证据；E06-S01 继续等待 E02～E05 与 E13 主链。可独立推进时优先选择不依赖 CAD/正式 Provider 的剩余工程卡；E02-S01 仍等待正式黄金集、授权和冻结 Worker，E09 的产品/QA/WMS/安全 GA 签字仍由发布治理完成，E10 属于 P2。禁止把候选检查点 `0d25da4d` 整包合入，GR-VP T1–T7 不要重做。

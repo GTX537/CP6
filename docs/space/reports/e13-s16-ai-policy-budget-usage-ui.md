@@ -1,9 +1,11 @@
 # E13-S16 租户 AI 策略、预算与用量管理 UI 完成报告
 
-- 状态：**Ready for controlled integration**
+- 状态：**Integrated**
 - 日期：2026-08-02
 - 功能分支：`codex/space-e13-s16-ai-admin-ui`
 - 实现提交：`0549a1f2`
+- 文档提交：`6ec0c02a`
+- no-ff 集成提交：`ad4de0b0`
 - 集成目标：`integration/space-v1-20260730`
 
 ## 1. 交付结论

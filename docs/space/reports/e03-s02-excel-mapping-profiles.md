@@ -3,6 +3,8 @@
 - 状态：Complete
 - 日期：2026-08-02
 - 集成分支：`integration/space-v1-20260730`
+- 功能提交：`f1310b40`
+- no-ff 集成提交：`e0cc4964`
 - Migration：`20260802103430_SpaceE03S02ExcelMappingProfiles`
 - API / OpenAPI / SDK：新增 Excel 映射方案查询、版本读取、表头预览与租户方案保存端点，并同步 C#、TypeScript 客户端
 - 范围：系统标准映射、租户私有映射、不可变版本、表头预览、并发与幂等保护
