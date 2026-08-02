@@ -6,7 +6,7 @@
 - 距离、拥堵、容量、吞吐、人工和成本均有显式规划口径与未知覆盖；只读生产隔离场景和脱敏历史数据集，不读取实时运行态、不排名方案且不允许生产回写。
 - 新增 3 个 API、2 个权限、两张租户隔离证据表，OpenAPI 增至 77 operations；规划页提供容量/时间桶/币种/单价配置、五类 KPI、热点和哈希证据。41 个新增词条具备五语运行时种子，既有 i18n 欠账仍为 908。
 - 全量门禁为 Space Unit 268、默认 Space Integration 242 passed / 63 SQL-gated skipped、CP6.Tests 2771 passed / 17 environment-gated skipped、前端 122 files / 670 tests、非增量 Release 0 error / 3 条既有 warning；双 EF、SDK、TypeScript 与生产构建通过。
-- 合并态引擎 4/4、服务 3/3、权限/合同/OpenAPI/五语 65/65、前端 7/7 及 EF/SDK/TypeScript 门禁通过。下一张独立实施卡为 E12-S04 多场景比较与决策记录；临时资源清理结果待补记，`main` 未修改。
+- 合并态引擎 4/4、服务 3/3、权限/合同/OpenAPI/五语 65/65、前端 7/7 及 EF/SDK/TypeScript 门禁通过。功能工作树及本地/远端临时分支已删除，释放约 2.03 GiB；`main` 未修改。下一张独立实施卡为 E12-S04 多场景比较与决策记录。
 
 ## 2026-08-02 E12-S02 脱敏历史任务数据集与回放时钟
 

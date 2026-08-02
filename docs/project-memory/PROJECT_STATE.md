@@ -9,7 +9,7 @@
 - 新增 3 个 planning API、2 个权限、两张不可变租户隔离证据表、EF Migration/增量幂等 SQL；Design V1 从 74 增至 77 operations，C#/TypeScript SDK 已同步。规划页可配置容量、时间桶、币种和单价，并展示五类 KPI、热点、结果哈希与无生产回写护栏。
 - 41 个仿真词条均有五语运行时种子。静态 i18n 欠账仍为既有 908 项，本卡净新增 0。
 - 全量门禁：Space Unit 268、默认 Space Integration 242 passed / 63 SQL-gated skipped、CP6.Tests 2771 passed / 17 environment-gated skipped、前端 122 files / 670 tests、完整 solution 非增量 Release 0 error / 3 条既有 warning；生产构建、双 EF、SDK drift 与 TypeScript strict no-emit 全部通过。证据见 `docs/space/reports/e12-s03-planning-simulation.md`。
-- 本卡不做巷道路由、实时交通、高精度物理求解、财务实际、方案排名或生产回写。合并态引擎 4/4、服务 3/3、权限/合同/OpenAPI/五语 65/65、前端 7/7 及剩余一致性门禁通过。下一张可独立实施 E12-S04“多场景比较与决策记录”；临时资源清理结果待补记，`main` 未修改。
+- 本卡不做巷道路由、实时交通、高精度物理求解、财务实际、方案排名或生产回写。合并态引擎 4/4、服务 3/3、权限/合同/OpenAPI/五语 65/65、前端 7/7 及剩余一致性门禁通过。功能 tip 已确认进入远端集成祖先链，功能工作树及本地/远端临时分支已删除，释放 2,182,809,248 字节（约 2.03 GiB）。下一张可独立实施 E12-S04“多场景比较与决策记录”，`main` 未修改。
 
 ## E12-S02 完成状态（2026-08-02）
 

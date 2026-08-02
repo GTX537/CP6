@@ -1,10 +1,10 @@
 # E12-S03 距离、拥堵、容量、吞吐和成本仿真交付报告
 
-- 状态：功能实现、全量门禁、远端备份、no-ff 受控集成与合并态复验完成，临时资源清理待本报告后续记录
+- 状态：功能实现、全量门禁、远端备份、no-ff 受控集成、合并态复验与临时资源清理全部完成
 - 起始基线：`1650e8ba240cb7263970b376c4990f4c579224b3`
 - 功能提交：`ab21aed4`
 - no-ff 集成提交：`f2d68897`
-- 功能分支：`codex/space-e12-s03-planning-simulation`
+- 原功能分支：`codex/space-e12-s03-planning-simulation`（历史进入远端受控集成后已删除）
 - Migration：`20260802221548_SpaceE12S03PlanningSimulation`
 
 ## 1. 交付结果
@@ -69,4 +69,6 @@ Migration 新增 `Space_PlanningSimulationRun` 与 `Space_PlanningSimulationLoca
 
 ## 7. 远端备份与资源清理
 
-功能分支最新 tip `2cd1faed`（含交付文档）已推送远端备份，并以 `--no-ff` 合入受控集成，集成提交为 `f2d68897`。合并树与功能 tip 文件树一致；合并态再次通过引擎 4/4、服务 3/3、权限/合同/OpenAPI/五语 65/65、前端 3 files / 7 tests、类型检查、双 EF、SDK drift、TypeScript SDK strict no-emit 与 Git 差异检查。功能工作树及本地/远端临时分支清理和实际释放空间将在完成后补记；`main` 不在本卡操作范围内。
+功能分支最新 tip `2cd1faed`（含交付文档）已先推送远端备份，并以 `--no-ff` 合入受控集成，集成提交为 `f2d68897`。合并树与功能 tip 文件树一致；合并态再次通过引擎 4/4、服务 3/3、权限/合同/OpenAPI/五语 65/65、前端 3 files / 7 tests、类型检查、双 EF、SDK drift、TypeScript SDK strict no-emit 与 Git 差异检查。
+
+确认功能 tip 是远端集成分支祖先且工作树干净后，已删除功能工作树、本地功能分支和远端临时分支；受控集成历史完整保留。本轮移除的功能工作树占用 2,182,809,248 字节（约 2.03 GiB；不含共享 `node_modules` 连接目标），`main` 未被本轮操作修改。
