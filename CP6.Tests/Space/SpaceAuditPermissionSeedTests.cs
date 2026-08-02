@@ -99,6 +99,7 @@ public sealed class SpaceAuditPermissionSeedTests
                     "integration:manage",
                     "external:read",
                     "external:manage",
+                    "operations:diagnostics:read",
                 },
                 action =>
                 {
@@ -495,6 +496,24 @@ public sealed class SpaceAuditPermissionSeedTests
         Assert.All(rows, row =>
         {
             Assert.StartsWith("space.aiAdmin.", row.LangKey, StringComparison.Ordinal);
+            Assert.False(string.IsNullOrWhiteSpace(row.ZhCN));
+            Assert.False(string.IsNullOrWhiteSpace(row.ZhTW));
+            Assert.False(string.IsNullOrWhiteSpace(row.En));
+            Assert.False(string.IsNullOrWhiteSpace(row.Ja));
+            Assert.False(string.IsNullOrWhiteSpace(row.Ko));
+        });
+    }
+
+    [Fact]
+    public void Operations_diagnostics_screen_has_complete_five_language_text()
+    {
+        var rows = I18nSpaceOperationsDiagnosticsSeed.Items;
+
+        Assert.Equal(35, rows.Length);
+        Assert.Equal(rows.Length, rows.Select(row => row.LangKey).Distinct().Count());
+        Assert.All(rows, row =>
+        {
+            Assert.False(string.IsNullOrWhiteSpace(row.LangKey));
             Assert.False(string.IsNullOrWhiteSpace(row.ZhCN));
             Assert.False(string.IsNullOrWhiteSpace(row.ZhTW));
             Assert.False(string.IsNullOrWhiteSpace(row.En));

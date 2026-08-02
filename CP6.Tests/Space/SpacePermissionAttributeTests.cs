@@ -43,6 +43,7 @@ public class SpacePermissionAttributeTests
         "space:model:generate-ai", "space:model:review-ai",
         "space:integration:manage",
         "space:external:read", "space:external:manage",
+        "space:operations:diagnostics:read",
         "space-ai-admin:read", "space-ai-admin:manage",
     };
 
@@ -86,6 +87,8 @@ public class SpacePermissionAttributeTests
                 "space:model:read",
             ["SpaceDeviceRuntimeController.GetCurrentDevices"] =
                 "space:model:read",
+            ["SpaceOperationsDiagnosticController.Get"] =
+                "space:operations:diagnostics:read",
             ["SpaceExternalOrganizationController.GetOrganizations"] =
                 "space:external:read",
             ["SpaceExternalOrganizationController.GetOrganization"] =
@@ -148,7 +151,7 @@ public class SpacePermissionAttributeTests
     public void SpaceControllers_AreDiscovered()
     {
         // 守卫：确保反射确实扫到全部 controller（防命名空间/程序集变动导致「空扫空过」）。
-        Assert.Equal(22, SpaceControllers.Count());
+        Assert.Equal(23, SpaceControllers.Count());
     }
 
     [Fact]

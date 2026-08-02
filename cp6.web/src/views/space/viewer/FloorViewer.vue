@@ -57,6 +57,12 @@
           :title="t('仓库运行快照')"
           @click="toggleWarehouseOverview"
         >KPI</button>
+        <button
+          class="tb-btn tb-text"
+          :class="{ on: operationsDiagnosticOpen }"
+          :title="t('运营诊断')"
+          @click="toggleOperationsDiagnostic"
+        >DIAG</button>
       </div>
 
       <WarehouseOverviewPanel
@@ -68,7 +74,18 @@
         @refresh="refreshWarehouseOverview"
         @toggle-abc="onToggleAbcOverlay"
         @switch-floor="onSwitchFloor"
-        @close="warehouseOverviewOpen = false"
+        @close="closeWarehouseOverview"
+      />
+
+      <OperationsDiagnosticPanel
+        v-if="operationsDiagnosticOpen"
+        :result="operationsDiagnostic"
+        :loading="operationsDiagnosticLoading"
+        :error="operationsDiagnosticError"
+        @run="refreshOperationsDiagnostic"
+        @select-location="onSelectDiagnosticLocation"
+        @switch-floor="onSwitchFloor"
+        @close="closeOperationsDiagnostic"
       />
 
       <!-- Info card (top-right) -->
@@ -156,6 +173,7 @@ import type {
   SpaceRuntimeTaskPathResponse,
   SpaceWarehouseAbcRank,
   SpaceWarehouseOverviewResponse,
+  SpaceOperationsDiagnosticResponse,
 } from '@/types/space/runtime'
 import {
   initialRuntimeRefreshState,
@@ -179,6 +197,7 @@ import {
 } from '@/space-viewer/advanced/runtimeTaskPath'
 import AdvancedPanel from './AdvancedPanel.vue'
 import WarehouseOverviewPanel from './WarehouseOverviewPanel.vue'
+import OperationsDiagnosticPanel from './OperationsDiagnosticPanel.vue'
 
 const { t } = useI18n()
 const route = useRoute()
@@ -202,6 +221,7 @@ let deviceCurrentRequestVersion = 0
 let personnelCurrentRequestVersion = 0
 let personnelTrajectoryRequestVersion = 0
 let warehouseOverviewRequestVersion = 0
+let operationsDiagnosticRequestVersion = 0
 let preserveTaskPathNavigation = false
 
 const overlayMode = ref<OverlayMode>('status')
@@ -216,6 +236,10 @@ const warehouseOverviewOpen = ref(false)
 const warehouseOverviewLoading = ref(false)
 const warehouseOverview = ref<SpaceWarehouseOverviewResponse | null>(null)
 const abcOverlayOn = ref(false)
+const operationsDiagnosticOpen = ref(false)
+const operationsDiagnosticLoading = ref(false)
+const operationsDiagnostic = ref<SpaceOperationsDiagnosticResponse | null>(null)
+const operationsDiagnosticError = ref('')
 const unavailableRuntimeSource = (dataSourceId: string): SpaceRuntimeSource => ({
   kind: 'Unavailable',
   adapterId: dataSourceId,
@@ -334,9 +358,60 @@ function onFocusSelected(): void { viewer?.focusSelected() }
 
 async function toggleWarehouseOverview(): Promise<void> {
   warehouseOverviewOpen.value = !warehouseOverviewOpen.value
+  if (warehouseOverviewOpen.value) closeOperationsDiagnostic()
   if (warehouseOverviewOpen.value && !warehouseOverview.value) {
     await refreshWarehouseOverview(90)
   }
+}
+
+function closeWarehouseOverview(): void {
+  warehouseOverviewOpen.value = false
+  warehouseOverviewRequestVersion++
+  warehouseOverviewLoading.value = false
+}
+
+async function toggleOperationsDiagnostic(): Promise<void> {
+  operationsDiagnosticOpen.value = !operationsDiagnosticOpen.value
+  if (!operationsDiagnosticOpen.value) {
+    closeOperationsDiagnostic()
+    return
+  }
+  closeWarehouseOverview()
+  if (!operationsDiagnostic.value) await refreshOperationsDiagnostic(8)
+}
+
+function closeOperationsDiagnostic(): void {
+  operationsDiagnosticOpen.value = false
+  operationsDiagnosticRequestVersion++
+  operationsDiagnosticLoading.value = false
+}
+
+async function refreshOperationsDiagnostic(hours: number): Promise<void> {
+  const requestVersion = ++operationsDiagnosticRequestVersion
+  operationsDiagnosticLoading.value = true
+  operationsDiagnosticError.value = ''
+  const to = new Date()
+  const from = new Date(to.getTime() - hours * 60 * 60 * 1000)
+  try {
+    const response = await spaceRuntimeApi.operationsDiagnostics(
+      siteId,
+      from.toISOString(),
+      to.toISOString(),
+    )
+    if (requestVersion !== operationsDiagnosticRequestVersion) return
+    operationsDiagnostic.value = response
+  } catch {
+    if (requestVersion !== operationsDiagnosticRequestVersion) return
+    operationsDiagnosticError.value = t('运营诊断加载失败，保留上次成功结果')
+  } finally {
+    if (requestVersion === operationsDiagnosticRequestVersion) {
+      operationsDiagnosticLoading.value = false
+    }
+  }
+}
+
+async function onSelectDiagnosticLocation(locationCode: string): Promise<void> {
+  await locator?.locate(locationCode)
 }
 
 async function refreshWarehouseOverview(abcWindowDays: number): Promise<void> {
@@ -944,6 +1019,7 @@ onBeforeUnmount(() => {
   clearTimeout(hoverTimer)
   spatialFilterRequestVersion++
   warehouseOverviewRequestVersion++
+  operationsDiagnosticRequestVersion++
   overlay?.dispose()
   overlay = null
   pathAnimator?.clear(); pathAnimator = null
