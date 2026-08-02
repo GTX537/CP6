@@ -76,6 +76,12 @@ public static class SpaceErrorCodes
         "SPACE_AI_PROVIDER_UNAVAILABLE";
     public const string AiSourcePolicyDenied =
         "SPACE_AI_SOURCE_POLICY_DENIED";
+    public const string AiPolicyInvalid = "SPACE_AI_POLICY_INVALID";
+    public const string AiPolicyConflict = "SPACE_AI_POLICY_CONFLICT";
+    public const string AiProviderAliasNotApproved =
+        "SPACE_AI_PROVIDER_ALIAS_NOT_APPROVED";
+    public const string AiUsageQueryInvalid =
+        "SPACE_AI_USAGE_QUERY_INVALID";
     public const string WmsUnavailable = "SPACE_WMS_UNAVAILABLE";
     public const string WmsRuntimeContractViolation =
         "SPACE_WMS_RUNTIME_CONTRACT_VIOLATION";

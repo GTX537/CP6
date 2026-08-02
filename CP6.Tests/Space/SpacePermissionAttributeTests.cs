@@ -43,6 +43,7 @@ public class SpacePermissionAttributeTests
         "space:model:generate-ai", "space:model:review-ai",
         "space:integration:manage",
         "space:external:read", "space:external:manage",
+        "space-ai-admin:read", "space-ai-admin:manage",
     };
 
     private static readonly Dictionary<string, string> AllowedReadPermissions =
@@ -89,6 +90,10 @@ public class SpacePermissionAttributeTests
                 "space:external:read",
             ["SpaceFieldPolicyController.GetFieldPolicy"] =
                 "space:external:read",
+            ["SpaceAiAdministrationController.GetPolicy"] =
+                "space-ai-admin:read",
+            ["SpaceAiAdministrationController.GetUsage"] =
+                "space-ai-admin:read",
         };
 
     /// <summary>只读语义的 POST 豁免（Controller.Method）——按「不得带特性」校验。</summary>
@@ -133,7 +138,7 @@ public class SpacePermissionAttributeTests
     public void SpaceControllers_AreDiscovered()
     {
         // 守卫：确保反射确实扫到 13 个 controller（防命名空间/程序集变动导致「空扫空过」）。
-        Assert.Equal(17, SpaceControllers.Count());
+        Assert.Equal(18, SpaceControllers.Count());
     }
 
     [Fact]

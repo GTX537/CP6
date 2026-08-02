@@ -47,6 +47,8 @@ public sealed class SpaceContext : DbContext
         Set<SpaceTenantAiWorkSlot>();
     public DbSet<SpaceAiBudgetReservation> AiBudgetReservations =>
         Set<SpaceAiBudgetReservation>();
+    public DbSet<SpaceAiTenantPolicyConfiguration> AiTenantPolicies =>
+        Set<SpaceAiTenantPolicyConfiguration>();
     public DbSet<SpaceFloorRevision> FloorRevisions => Set<SpaceFloorRevision>();
     public DbSet<SpaceUnderlayCalibration> UnderlayCalibrations =>
         Set<SpaceUnderlayCalibration>();
@@ -135,6 +137,7 @@ public sealed class SpaceContext : DbContext
         ConfigureAiUsageRecord(modelBuilder);
         ConfigureTenantAiWorkSlot(modelBuilder);
         ConfigureAiBudgetReservation(modelBuilder);
+        ConfigureAiTenantPolicy(modelBuilder);
     }
 
     public override int SaveChanges(bool acceptAllChangesOnSuccess)
@@ -143,6 +146,7 @@ public sealed class SpaceContext : DbContext
         ProtectPublishedSnapshotWrites();
         ProtectProposalDecisionHistory();
         ProtectAiCapacityLedger();
+        ProtectAiPolicyHistory();
         ProtectAssetLibrary();
         ProtectUnderlayCalibrationHistory();
         ProtectElementCommandHistory();
@@ -159,6 +163,7 @@ public sealed class SpaceContext : DbContext
         ProtectPublishedSnapshotWrites();
         ProtectProposalDecisionHistory();
         ProtectAiCapacityLedger();
+        ProtectAiPolicyHistory();
         ProtectAssetLibrary();
         ProtectUnderlayCalibrationHistory();
         ProtectElementCommandHistory();
@@ -2120,6 +2125,61 @@ public sealed class SpaceContext : DbContext
             x => x.TenantId == CurrentTenantId && !x.IsDeleted);
     }
 
+    private void ConfigureAiTenantPolicy(ModelBuilder modelBuilder)
+    {
+        var entity = modelBuilder.Entity<SpaceAiTenantPolicyConfiguration>();
+        entity.ToTable(
+            "Space_AiTenantPolicy",
+            table =>
+            {
+                table.HasCheckConstraint(
+                    "CK_Space_AiTenantPolicy_Version",
+                    "[Version] >= 1");
+                table.HasCheckConstraint(
+                    "CK_Space_AiTenantPolicy_Concurrency",
+                    "[MaxConcurrentRuns] >= 1 AND [MaxConcurrentRuns] <= 3");
+                table.HasCheckConstraint(
+                    "CK_Space_AiTenantPolicy_Budget",
+                    "([DailyBudgetMinor] IS NULL OR [DailyBudgetMinor] >= 0) AND " +
+                    "([MonthlyBudgetMinor] IS NULL OR [MonthlyBudgetMinor] >= 0) AND " +
+                    "([DailyBudgetMinor] IS NULL OR [MonthlyBudgetMinor] IS NULL OR " +
+                    "[MonthlyBudgetMinor] >= [DailyBudgetMinor])");
+                table.HasCheckConstraint(
+                    "CK_Space_AiTenantPolicy_Currency",
+                    "([DailyBudgetMinor] IS NULL AND [MonthlyBudgetMinor] IS NULL) OR " +
+                    "[Currency] IS NOT NULL");
+            });
+        entity.HasKey(x => x.Id);
+        entity.Property(x => x.Id).ValueGeneratedNever();
+        entity.HasAlternateKey(x => new { x.TenantId, x.Id })
+            .HasName("AK_Space_AiTenantPolicy_TenantId_Id");
+        ConfigureTenantEntity(entity);
+
+        entity.Property(x => x.DataPolicy)
+            .HasMaxLength(32)
+            .IsUnicode(false)
+            .IsRequired();
+        ConfigureJson(entity.Property(x => x.AllowedSiteIdsJson));
+        ConfigureJson(entity.Property(x => x.AllowedProviderAliasesJson));
+        entity.Property(x => x.Currency)
+            .HasColumnType("char(3)")
+            .IsUnicode(false)
+            .IsFixedLength()
+            .HasMaxLength(3);
+        entity.Property(x => x.UpdatedAtUtc).HasColumnType("datetime2");
+        entity.Property(x => x.RowVersion).IsRowVersion();
+
+        entity.HasIndex(x => new { x.TenantId, x.Version })
+            .IsUnique()
+            .HasDatabaseName("UX_AiTenantPolicy_Tenant_Version");
+        entity.HasIndex(x => x.TenantId)
+            .IsUnique()
+            .HasFilter("[IsActive] = 1 AND [IsDeleted] = 0")
+            .HasDatabaseName("UX_AiTenantPolicy_Tenant_Active");
+        entity.HasQueryFilter(
+            x => x.TenantId == CurrentTenantId && !x.IsDeleted);
+    }
+
     private static void ConfigureHash(
         Microsoft.EntityFrameworkCore.Metadata.Builders
             .PropertyBuilder<string> property)
@@ -2799,6 +2859,36 @@ public sealed class SpaceContext : DbContext
             {
                 throw new SpaceAiCapacityStateException(
                     "AI budget reservations cannot be deleted.");
+            }
+        }
+    }
+
+    private void ProtectAiPolicyHistory()
+    {
+        foreach (var entry in ChangeTracker
+            .Entries<SpaceAiTenantPolicyConfiguration>())
+        {
+            if (entry.State == EntityState.Deleted)
+            {
+                throw new InvalidOperationException(
+                    "AI policy versions are append-only.");
+            }
+            if (entry.State != EntityState.Modified)
+                continue;
+
+            var active = entry.Property(x => x.IsActive);
+            var onlyDeactivation =
+                active.IsModified &&
+                active.OriginalValue &&
+                !active.CurrentValue &&
+                entry.Properties.All(property =>
+                    !property.IsModified ||
+                    property.Metadata.Name == nameof(
+                        SpaceAiTenantPolicyConfiguration.IsActive));
+            if (!onlyDeactivation)
+            {
+                throw new InvalidOperationException(
+                    "AI policy versions are immutable after creation.");
             }
         }
     }

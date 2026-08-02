@@ -33,6 +33,8 @@ public sealed class SpaceDesignV1OpenApiTests
             "/api/space/design/v1/sites/{siteId}/runtime/tasks",
             "/api/space/design/v1/sites/{siteId}/runtime/tasks/path",
             "/api/space/design/v1/assets",
+            "/api/space/design/v1/ai-policy",
+            "/api/space/design/v1/ai-usage",
             "/api/space/design/v1/mapping-profiles/excel",
             "/api/space/design/v1/mapping-profiles/excel/{profileId}",
             "/api/space/design/v1/mapping-profiles/excel/preview",
@@ -84,8 +86,11 @@ public sealed class SpaceDesignV1OpenApiTests
             .Select(operation =>
                 operation.Value.GetProperty("operationId").GetString())
             .ToArray();
-        Assert.Equal(56, operationIds.Length);
-        Assert.Equal(56, operationIds.Distinct().Count());
+        Assert.Equal(59, operationIds.Length);
+        Assert.Equal(59, operationIds.Distinct().Count());
+        Assert.Contains("GetPolicy", operationIds);
+        Assert.Contains("UpdatePolicy", operationIds);
+        Assert.Contains("GetUsage", operationIds);
         Assert.Contains("GetAssets", operationIds);
         Assert.Contains("DownloadStandardExcelTemplate", operationIds);
         Assert.Contains("GetProfiles", operationIds);
@@ -146,6 +151,54 @@ public sealed class SpaceDesignV1OpenApiTests
                 parameter.GetProperty("name").GetString() == "taskId");
         Assert.True(taskIdParameter.GetProperty("required").GetBoolean());
         Assert.Equal("query", taskIdParameter.GetProperty("in").GetString());
+    }
+
+    [Fact]
+    public void Ai_admin_contract_is_idempotent_and_never_accepts_provider_secrets()
+    {
+        using var document = ReadContract();
+        var root = document.RootElement;
+        var update = root.GetProperty("paths")
+            .GetProperty("/api/space/design/v1/ai-policy")
+            .GetProperty("put");
+        var idempotency = update.GetProperty("parameters")
+            .EnumerateArray()
+            .Single(parameter =>
+                parameter.GetProperty("name").GetString() ==
+                "Idempotency-Key");
+        Assert.True(idempotency.GetProperty("required").GetBoolean());
+        Assert.True(update.GetProperty("responses")
+            .GetProperty("200")
+            .GetProperty("headers")
+            .TryGetProperty("Idempotent-Replay", out _));
+
+        var requestProperties = root.GetProperty("components")
+            .GetProperty("schemas")
+            .GetProperty(
+                "CP6.Space.Contracts.UpdateSpaceAiPolicyRequest")
+            .GetProperty("properties")
+            .EnumerateObject()
+            .Select(property => property.Name)
+            .ToArray();
+        Assert.Equal(
+            new[]
+            {
+                "allowedProviderAliases",
+                "allowedSiteIds",
+                "currency",
+                "dailyBudgetMinor",
+                "dataPolicy",
+                "expectedVersion",
+                "externalProviderEnabled",
+                "maxConcurrentRuns",
+                "monthlyBudgetMinor",
+            },
+            requestProperties.Order());
+        Assert.DoesNotContain(requestProperties, property =>
+            property.Contains("key", StringComparison.OrdinalIgnoreCase) ||
+            property.Contains("secret", StringComparison.OrdinalIgnoreCase) ||
+            property.Contains("url", StringComparison.OrdinalIgnoreCase) ||
+            property.Contains("endpoint", StringComparison.OrdinalIgnoreCase));
     }
 
     [Fact]

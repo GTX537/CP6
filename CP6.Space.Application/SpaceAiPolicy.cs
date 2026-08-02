@@ -187,7 +187,7 @@ public sealed record WarehouseGenerationProviderRegistration
     public WarehouseGenerationProviderKind Kind { get; }
     public IWarehouseGenerationProvider Provider { get; }
 
-    internal static string NormalizeAlias(string alias)
+    public static string NormalizeAlias(string alias)
     {
         if (string.IsNullOrWhiteSpace(alias))
         {
@@ -215,6 +215,8 @@ public sealed record WarehouseGenerationProviderRegistration
 
 public interface IWarehouseGenerationProviderRegistry
 {
+    IReadOnlyList<WarehouseGenerationProviderRegistration> Registrations { get; }
+
     bool TryGet(
         string alias,
         out WarehouseGenerationProviderRegistration? registration);
@@ -246,6 +248,11 @@ public sealed class WarehouseGenerationProviderRegistry :
         }
         _providers = providers;
     }
+
+    public IReadOnlyList<WarehouseGenerationProviderRegistration>
+        Registrations => _providers.Values
+            .OrderBy(item => item.Alias, StringComparer.Ordinal)
+            .ToArray();
 
     public bool TryGet(
         string alias,

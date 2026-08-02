@@ -401,6 +401,71 @@ public sealed class SpaceWmsRuntimeSchemaFilter : ISchemaFilter
                 "messageArgsJson",
                 "createdAtUtc",
             ],
+            [typeof(SpaceAiApprovedProviderDto)] =
+            [
+                "alias",
+                "kind",
+            ],
+            [typeof(SpaceAiPolicyDto)] =
+            [
+                "version",
+                "dataPolicy",
+                "allowedSiteIds",
+                "allowedProviderAliases",
+                "maxConcurrentRuns",
+                "externalProviderEnabled",
+                "approvedProviders",
+            ],
+            [typeof(UpdateSpaceAiPolicyRequest)] =
+            [
+                "expectedVersion",
+                "dataPolicy",
+                "allowedSiteIds",
+                "allowedProviderAliases",
+                "maxConcurrentRuns",
+                "externalProviderEnabled",
+            ],
+            [typeof(UpdateSpaceAiPolicyResponse)] =
+            [
+                "policy",
+                "idempotentReplay",
+            ],
+            [typeof(SpaceAiUsageItemDto)] =
+            [
+                "id",
+                "runId",
+                "providerAlias",
+                "providerModel",
+                "inputUnits",
+                "outputUnits",
+                "estimatedCostMinor",
+                "latencyMs",
+                "outcome",
+                "recordedAtUtc",
+            ],
+            [typeof(SpaceAiBudgetBalanceDto)] =
+            [
+                "consumedMinor",
+            ],
+            [typeof(SpaceAiUsageSummaryDto)] =
+            [
+                "totalRuns",
+                "inputUnits",
+                "outputUnits",
+                "estimatedCostMinor",
+                "actualCostMinor",
+                "hasUnpricedUsage",
+                "dailyBudget",
+                "monthlyBudget",
+            ],
+            [typeof(SpaceAiUsagePageDto)] =
+            [
+                "items",
+                "total",
+                "page",
+                "pageSize",
+                "summary",
+            ],
             [typeof(SpacePortalOrganizationDto)] =
             [
                 "organizationId",
@@ -656,7 +721,8 @@ public sealed class SpaceDesignV1OperationFilter : IOperationFilter
                 "CreateSource" or
                 "CreateAsset" or
                 "AttachUnderlay" or
-                "CalibrateUnderlay"))
+                "CalibrateUnderlay" or
+                "UpdatePolicy"))
             return;
 
         var idempotencyKey = operation.Parameters.Single(
@@ -675,7 +741,8 @@ public sealed class SpaceDesignV1OperationFilter : IOperationFilter
         {
             "CreateVersion" => StatusCodes.Status202Accepted.ToString(),
             "AttachUnderlay" or
-                "CalibrateUnderlay" =>
+                "CalibrateUnderlay" or
+                "UpdatePolicy" =>
                 StatusCodes.Status200OK.ToString(),
             _ => StatusCodes.Status201Created.ToString(),
         };
