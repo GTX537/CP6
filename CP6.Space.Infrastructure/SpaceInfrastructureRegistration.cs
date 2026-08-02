@@ -165,6 +165,9 @@ public static class SpaceInfrastructureRegistration
             ISpacePersonnelRuntimeService,
             SpacePersonnelRuntimeService>();
         services.AddScoped<
+            ISpaceDeviceEventService,
+            SpaceDeviceEventService>();
+        services.AddScoped<
             ISpaceExternalPortalService,
             SpaceExternalPortalService>();
         return services;

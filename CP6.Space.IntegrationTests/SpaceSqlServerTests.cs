@@ -34,6 +34,8 @@ public sealed class SpaceSqlServerTests
             Assert.Contains("Space_ModelIssue", tables);
             Assert.Contains("Space_PersonnelEvent", tables);
             Assert.Contains("Space_PersonnelState", tables);
+            Assert.Contains("Space_DeviceMapping", tables);
+            Assert.Contains("Space_DeviceEvent", tables);
             Assert.Contains(SpaceContext.MigrationsHistoryTable, tables);
             Assert.DoesNotContain("__EFMigrationsHistory", tables);
             Assert.DoesNotContain("Space_Site", tables);
@@ -152,6 +154,107 @@ public sealed class SpaceSqlServerTests
                 Assert.Equal(
                     TimeSpan.Zero,
                     Assert.Single(trajectory.Items).OccurredAtUtc.Offset);
+            },
+            tenantId,
+            actorId);
+    }
+
+    [SqlServerFact]
+    public async Task Device_mapping_and_event_ledger_persist_with_rowversion_and_identity()
+    {
+        var tenantId = Guid.NewGuid();
+        var actorId = Guid.NewGuid();
+        var siteId = Guid.NewGuid();
+        var now = new DateTime(2026, 8, 2, 18, 0, 0, DateTimeKind.Utc);
+
+        await WithDatabaseAsync(
+            async context =>
+            {
+                var model = SpaceModel.Create(tenantId, siteId);
+                var version = SpaceModelVersion.CreateDraft(
+                    tenantId,
+                    model.Id,
+                    1,
+                    "Published");
+                var floor = SpaceFloorRevision.Create(
+                    tenantId,
+                    version.Id,
+                    Guid.NewGuid(),
+                    siteId,
+                    1,
+                    "F1",
+                    "Floor 1",
+                    0,
+                    5_000);
+                var element = SpaceElementRevision.Create(
+                    tenantId,
+                    version.Id,
+                    Guid.NewGuid(),
+                    floor.LogicalId,
+                    SpaceElementTypes.Device,
+                    """
+                    {"schemaVersion":1,"kind":"point","x":0,"y":0,"z":0}
+                    """);
+                context.AddRange(model, version, floor, element);
+                await context.SaveChangesAsync();
+                version.BeginValidation();
+                version.MarkReady(ContentHash, "space-v1", WmsHash);
+                version.BeginPublishing();
+                version.MarkPublished(actorId, now);
+                model.BeginCutover(Guid.NewGuid());
+                model.MarkFrozen();
+                model.MarkBootstrapping();
+                model.MarkVerified(version);
+                model.ActivateDesignV1();
+                await context.SaveChangesAsync();
+
+                var service = new SpaceDeviceEventService(
+                    context,
+                    new TestExecutionContext(tenantId, actorId),
+                    new FixedClock(now),
+                    new AllowAccess(),
+                    new UnusedCursorCodec());
+                var mapping = await service.CreateMappingAsync(
+                    siteId,
+                    new CreateSpaceDeviceMappingRequest(
+                        "WCS-01",
+                        "Real",
+                        "AGV-01",
+                        "Agv",
+                        element.LogicalId));
+                Assert.NotEmpty(Convert.FromBase64String(mapping.RowVersion));
+
+                var response = await service.IngestAsync(
+                    siteId,
+                    new IngestSpaceDeviceEventsRequest(
+                        SpaceDeviceEventContract.Version,
+                        "WCS-01",
+                        "Real",
+                        [
+                            new SpaceDeviceEventInput(
+                                "STATE-01",
+                                "AGV-01",
+                                "OperatingStateChanged",
+                                "Running",
+                                null,
+                                null,
+                                null,
+                                null,
+                                null,
+                                null,
+                                null,
+                                null,
+                                null,
+                                null,
+                                1,
+                                new DateTimeOffset(now.AddMinutes(-1))),
+                        ]));
+                Assert.Equal(1, response.AcceptedCount);
+                context.ChangeTracker.Clear();
+                var persisted = await context.DeviceEvents.SingleAsync();
+                Assert.Equal(mapping.Id, persisted.DeviceMappingId);
+                Assert.Equal(element.LogicalId, persisted.ElementLogicalId);
+                Assert.Equal(SpaceDeviceOperatingState.Running, persisted.OperatingState);
             },
             tenantId,
             actorId);

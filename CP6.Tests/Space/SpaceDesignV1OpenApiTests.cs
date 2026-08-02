@@ -27,6 +27,9 @@ public sealed class SpaceDesignV1OpenApiTests
         var expectedPaths = new[]
         {
             "/api/space/design/v1/sites/{siteId}/model",
+            "/api/space/design/v1/sites/{siteId}/device-events",
+            "/api/space/design/v1/sites/{siteId}/device-mappings",
+            "/api/space/design/v1/sites/{siteId}/device-mappings/{mappingId}",
             "/api/space/design/v1/sites/{siteId}/personnel-events",
             "/api/space/design/v1/sites/{siteId}/personnel",
             "/api/space/design/v1/sites/{siteId}/personnel/trajectory",
@@ -89,14 +92,18 @@ public sealed class SpaceDesignV1OpenApiTests
             .Select(operation =>
                 operation.Value.GetProperty("operationId").GetString())
             .ToArray();
-        Assert.Equal(62, operationIds.Length);
-        Assert.Equal(62, operationIds.Distinct().Count());
+        Assert.Equal(66, operationIds.Length);
+        Assert.Equal(66, operationIds.Distinct().Count());
         Assert.Contains("GetPolicy", operationIds);
         Assert.Contains("UpdatePolicy", operationIds);
         Assert.Contains("GetUsage", operationIds);
         Assert.Contains("IngestPersonnelEvents", operationIds);
         Assert.Contains("GetCurrentPersonnel", operationIds);
         Assert.Contains("GetPersonnelTrajectory", operationIds);
+        Assert.Contains("GetDeviceMappings", operationIds);
+        Assert.Contains("CreateDeviceMapping", operationIds);
+        Assert.Contains("UpdateDeviceMapping", operationIds);
+        Assert.Contains("IngestDeviceEvents", operationIds);
         Assert.Contains("GetAssets", operationIds);
         Assert.Contains("DownloadStandardExcelTemplate", operationIds);
         Assert.Contains("GetProfiles", operationIds);
@@ -317,6 +324,74 @@ public sealed class SpaceDesignV1OpenApiTests
         Assert.Contains("sourceEventId", trajectoryProperties);
         Assert.DoesNotContain(trajectoryProperties, value =>
             value.Contains("userId", StringComparison.OrdinalIgnoreCase));
+    }
+
+    [Fact]
+    public void Device_contract_freezes_mapping_and_append_only_event_shapes()
+    {
+        using var document = ReadContract();
+        var root = document.RootElement;
+        var paths = root.GetProperty("paths");
+        var mappings = paths.GetProperty(
+            "/api/space/design/v1/sites/{siteId}/device-mappings");
+        var update = paths.GetProperty(
+                "/api/space/design/v1/sites/{siteId}/device-mappings/{mappingId}")
+            .GetProperty("put");
+        var ingest = paths.GetProperty(
+                "/api/space/design/v1/sites/{siteId}/device-events")
+            .GetProperty("post");
+
+        Assert.Equal(
+            "GetDeviceMappings",
+            mappings.GetProperty("get").GetProperty("operationId").GetString());
+        Assert.Equal(
+            "CreateDeviceMapping",
+            mappings.GetProperty("post").GetProperty("operationId").GetString());
+        Assert.Equal(
+            "UpdateDeviceMapping",
+            update.GetProperty("operationId").GetString());
+        Assert.Equal(
+            "IngestDeviceEvents",
+            ingest.GetProperty("operationId").GetString());
+        Assert.True(ingest.GetProperty("responses").TryGetProperty("202", out _));
+        Assert.DoesNotContain(
+            ingest.GetProperty("parameters").EnumerateArray(),
+            value => value.GetProperty("name").GetString() == "Idempotency-Key");
+
+        var schemas = root.GetProperty("components").GetProperty("schemas");
+        AssertExactRequired(
+            Schema(schemas,
+                "CP6.Space.Contracts.CreateSpaceDeviceMappingRequest"),
+            "sourceId",
+            "sourceKind",
+            "deviceExternalId",
+            "deviceKind",
+            "elementLogicalId");
+        AssertExactRequired(
+            Schema(schemas,
+                "CP6.Space.Contracts.UpdateSpaceDeviceMappingRequest"),
+            "deviceKind",
+            "elementLogicalId",
+            "expectedRowVersion");
+        var eventSchema = Schema(
+            schemas,
+            "CP6.Space.Contracts.SpaceDeviceEventInput");
+        AssertExactRequired(
+            eventSchema,
+            "sourceEventId",
+            "deviceExternalId",
+            "eventKind",
+            "occurredAtUtc");
+        var properties = eventSchema.GetProperty("properties")
+            .EnumerateObject()
+            .Select(value => value.Name)
+            .ToArray();
+        Assert.Contains("operatingState", properties);
+        Assert.Contains("alarmExternalId", properties);
+        Assert.Contains("sourceSequence", properties);
+        Assert.DoesNotContain(properties, value =>
+            value.Contains("inferred", StringComparison.OrdinalIgnoreCase) ||
+            value.Contains("estimated", StringComparison.OrdinalIgnoreCase));
     }
 
     [Fact]

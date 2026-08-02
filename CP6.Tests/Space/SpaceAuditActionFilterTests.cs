@@ -515,6 +515,37 @@ namespace CP6.Tests.Space
             Assert.True(attribute.AuditRead);
         }
 
+        [Fact]
+        public void Device_mapping_and_ingest_have_stable_audit_metadata()
+        {
+            var controller = typeof(CP6.WebApi.Controllers.Space
+                .SpaceDeviceEventsController);
+            var expected = new[]
+            {
+                (Method: "CreateDeviceMapping",
+                    Action: "space.device-mapping.create",
+                    Resource: "DeviceMapping"),
+                (Method: "UpdateDeviceMapping",
+                    Action: "space.device-mapping.update",
+                    Resource: "DeviceMapping"),
+                (Method: "IngestDeviceEvents",
+                    Action: "space.device-events.ingest",
+                    Resource: "DeviceEventBatch"),
+            };
+
+            foreach (var item in expected)
+            {
+                var attribute = controller.GetMethod(item.Method)!
+                    .GetCustomAttribute<SpaceAuditOperationAttribute>();
+                Assert.NotNull(attribute);
+                Assert.Equal(item.Action, attribute.Action);
+                Assert.Equal(item.Resource, attribute.ResourceType);
+                Assert.Equal("siteId", attribute.SiteIdArgument);
+                Assert.Equal("space:integration:manage", attribute.PermissionCode);
+                Assert.False(attribute.AuditRead);
+            }
+        }
+
         [Theory]
         [InlineData("GET")]
         [InlineData("HEAD")]

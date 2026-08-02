@@ -562,6 +562,72 @@ public sealed class SpaceWmsRuntimeSchemaFilter : ISchemaFilter
                 "receivedAtUtc",
                 "ingestDelayMilliseconds",
             ],
+            [typeof(CreateSpaceDeviceMappingRequest)] =
+            [
+                "sourceId",
+                "sourceKind",
+                "deviceExternalId",
+                "deviceKind",
+                "elementLogicalId",
+            ],
+            [typeof(UpdateSpaceDeviceMappingRequest)] =
+            [
+                "deviceKind",
+                "elementLogicalId",
+                "expectedRowVersion",
+            ],
+            [typeof(SpaceDeviceMappingDto)] =
+            [
+                "id",
+                "siteId",
+                "sourceId",
+                "sourceKind",
+                "deviceExternalId",
+                "deviceKind",
+                "elementLogicalId",
+                "elementType",
+                "validatedModelVersionId",
+                "validatedFloorLogicalId",
+                "rowVersion",
+            ],
+            [typeof(SpaceDeviceMappingPageDto)] =
+            [
+                "items",
+                "nextCursor",
+            ],
+            [typeof(IngestSpaceDeviceEventsRequest)] =
+            [
+                "contractVersion",
+                "sourceId",
+                "sourceKind",
+                "events",
+            ],
+            [typeof(SpaceDeviceEventInput)] =
+            [
+                "sourceEventId",
+                "deviceExternalId",
+                "eventKind",
+                "occurredAtUtc",
+            ],
+            [typeof(IngestSpaceDeviceEventsResponse)] =
+            [
+                "contractVersion",
+                "siteId",
+                "sourceId",
+                "sourceKind",
+                "receivedAtUtc",
+                "receivedCount",
+                "acceptedCount",
+                "duplicateCount",
+                "receipts",
+            ],
+            [typeof(SpaceDeviceEventReceipt)] =
+            [
+                "eventId",
+                "sourceEventId",
+                "deviceExternalId",
+                "outcome",
+            ],
             [typeof(SpacePortalOrganizationDto)] =
             [
                 "organizationId",
