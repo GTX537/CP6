@@ -48,6 +48,19 @@ describe('planningScenarioApi', () => {
     )
   })
 
+  it('downloads a branch-scoped standard GLB exchange', async () => {
+    await planningScenarioApi.downloadGlb('site/1', 'branch/1')
+
+    expect(http.get).toHaveBeenCalledWith(
+      '/space/planning/v1/sites/site%2F1' +
+        '/scenario-branches/branch%2F1/exports/gltf',
+      {
+        responseType: 'blob',
+        headers: { Accept: 'model/gltf-binary' },
+      },
+    )
+  })
+
   it('uses branch-scoped caller-stable simulation run identities', async () => {
     const request = {
       name: 'Peak baseline',

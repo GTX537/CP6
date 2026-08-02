@@ -97,6 +97,22 @@
           <span v-else>—</span>
         </template>
       </el-table-column>
+      <el-table-column :label="tr('space.planningScenario.exchange', 'GLB exchange')" width="140">
+        <template #default="{ row }">
+          <el-button
+            v-if="canUseDataset(row)"
+            v-permission="'space:planning:exchange:read'"
+            data-test="download-exchange"
+            link
+            type="primary"
+            :loading="exportingBranchId === row.branchId"
+            @click="downloadExchange(row)"
+          >
+            {{ tr('space.planningScenario.downloadExchange', 'Download GLB') }}
+          </el-button>
+          <span v-else>—</span>
+        </template>
+      </el-table-column>
     </el-table>
     <CpEmpty
       v-else-if="!loading"
@@ -137,6 +153,7 @@ const branches = ref<SpacePlanningScenarioBranch[]>([])
 const name = ref('')
 const loading = ref(false)
 const creating = ref(false)
+const exportingBranchId = ref('')
 const error = ref('')
 const selectedBranch = ref<SpacePlanningScenarioBranch | null>(null)
 let loadSequence = 0
@@ -212,6 +229,38 @@ async function create() {
     )
   } finally {
     creating.value = false
+  }
+}
+
+async function downloadExchange(row: SpacePlanningScenarioBranch) {
+  if (!canUseDataset(row) || exportingBranchId.value) return
+  exportingBranchId.value = row.branchId
+  let objectUrl: string | null = null
+  try {
+    const content = await planningScenarioApi.downloadGlb(
+      props.siteId,
+      row.branchId,
+    )
+    objectUrl = URL.createObjectURL(content)
+    const link = document.createElement('a')
+    link.href = objectUrl
+    link.download = `cp6-space-${row.scenarioVersionNo}-${row.branchId}.glb`
+    link.click()
+    ElMessage.success(tr(
+      'space.planningScenario.exchangeDownloaded',
+      'GLB exchange downloaded.',
+    ))
+  } catch (cause) {
+    error.value = problemDetail(
+      cause,
+      tr(
+        'space.planningScenario.exchangeDownloadFailed',
+        'Unable to download the GLB exchange.',
+      ),
+    )
+  } finally {
+    if (objectUrl) URL.revokeObjectURL(objectUrl)
+    exportingBranchId.value = ''
   }
 }
 

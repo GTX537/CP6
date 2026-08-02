@@ -80,6 +80,7 @@ public sealed class SpaceDesignV1OpenApiTests
             "/api/space/portal/v1/sites/{siteId}/published-scene",
             "/api/space/planning/v1/sites/{siteId}/scenario-branches",
             "/api/space/planning/v1/sites/{siteId}/scenario-branches/{branchId}",
+            "/api/space/planning/v1/sites/{siteId}/scenario-branches/{branchId}/exports/gltf",
             "/api/space/planning/v1/sites/{siteId}/scenario-branches/{branchId}/historical-datasets",
             "/api/space/planning/v1/sites/{siteId}/scenario-branches/{branchId}/historical-datasets/{datasetId}",
             "/api/space/planning/v1/sites/{siteId}/scenario-branches/{branchId}/simulation-runs",
@@ -104,8 +105,8 @@ public sealed class SpaceDesignV1OpenApiTests
             .Select(operation =>
                 operation.Value.GetProperty("operationId").GetString())
             .ToArray();
-        Assert.Equal(83, operationIds.Length);
-        Assert.Equal(83, operationIds.Distinct().Count());
+        Assert.Equal(84, operationIds.Length);
+        Assert.Equal(84, operationIds.Distinct().Count());
         Assert.Contains("GetPolicy", operationIds);
         Assert.Contains("UpdatePolicy", operationIds);
         Assert.Contains("GetUsage", operationIds);
@@ -168,6 +169,7 @@ public sealed class SpaceDesignV1OpenApiTests
         Assert.Contains("CreateBranch", operationIds);
         Assert.Contains("GetBranch", operationIds);
         Assert.Contains("GetBranches", operationIds);
+        Assert.Contains("DownloadGlb", operationIds);
         Assert.Contains("CreateHistoricalDataset", operationIds);
         Assert.Contains("GetHistoricalDataset", operationIds);
         Assert.Contains("GetHistoricalDatasets", operationIds);
@@ -192,6 +194,26 @@ public sealed class SpaceDesignV1OpenApiTests
                 parameter.GetProperty("name").GetString() == "taskId");
         Assert.True(taskIdParameter.GetProperty("required").GetBoolean());
         Assert.Equal("query", taskIdParameter.GetProperty("in").GetString());
+
+        var exchange = paths.GetProperty(
+                "/api/space/planning/v1/sites/{siteId}/scenario-branches/" +
+                "{branchId}/exports/gltf")
+            .GetProperty("get");
+        var exchangeResponses = exchange.GetProperty("responses");
+        var successContent = exchangeResponses.GetProperty("200")
+            .GetProperty("content");
+        Assert.Equal(
+            new[] { "model/gltf-binary" },
+            successContent.EnumerateObject().Select(value => value.Name));
+        Assert.Equal(
+            "binary",
+            successContent.GetProperty("model/gltf-binary")
+                .GetProperty("schema")
+                .GetProperty("format")
+                .GetString());
+        Assert.True(exchangeResponses.GetProperty("409")
+            .GetProperty("content")
+            .TryGetProperty("application/problem+json", out _));
     }
 
     [Fact]
