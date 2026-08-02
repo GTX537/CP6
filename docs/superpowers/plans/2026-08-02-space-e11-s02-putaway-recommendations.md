@@ -1,6 +1,6 @@
 # Space E11-S02 上架/库位推荐候选与解释实现计划
 
-状态：执行中
+状态：功能分支门禁完成，等待受控集成
 起始基线：`3577463017ed9783128740fa198a83b0ec21fe63`
 功能分支：`codex/space-e11-s02-putaway-recommendations`
 
