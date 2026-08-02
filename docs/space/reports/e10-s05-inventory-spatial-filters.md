@@ -1,10 +1,10 @@
 # E10-S05 货主、SKU、批次和容器空间筛选交付报告
 
-- 状态：功能分支已完成，待进入 Space 受控集成分支
+- 状态：已进入 Space 受控集成分支
 - 功能分支：`codex/space-e10-s05-inventory-filters`
 - 起始基线：`c573ff2517dcff629e81ed1a0b09646d76401489`
 - 功能提交：`65c59555`
-- no-ff 集成提交：待完成
+- no-ff 集成提交：`e270c2cc`
 - Migration：无
 
 ## 1. 交付结果

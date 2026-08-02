@@ -2,6 +2,14 @@
 
 最后更新：2026-08-02
 
+## E10-S05 完成状态（2026-08-02）
+
+- E10-S05 已进入受控集成基线：实现 `65c59555`、文档 `53bea9b9`、no-ff 集成 `e270c2cc`。复用 `GET /api/space/design/v1/sites/{siteId}/runtime/inventory/locate`，新增可选货主条件；货主、SKU、批次和容器至少一个，多个条件固定精确 AND，货主在服务边界规范为大写。
+- WMS 继续是库存业务事实源；服务端重新验证适配器返回的正库存及全部筛选条件，越界结果以 502 失败关闭。CP6 适配器通过仓库、库位、SKU、批次的唯一库存业务键为容器取得货主，不向 Design Revision 复制或在浏览器猜测业务事实。
+- 3D Viewer 新增可持续库存空间筛选：命中库位琥珀色、当前层未命中库位压暗，展示本层/全站/分层数量和来源证据；筛选跨库存轮询与楼层切换保持，清除后恢复库存模式，并以请求版本阻止过期响应覆盖。库存筛选与作业热图互斥，原有一次性定位仍保留。
+- Design V1 保持 67 operations，C#/TypeScript SDK 已同步，无数据库 Migration。门禁：运行合同 2/2、Runtime/适配器 68/68、权限/OpenAPI 45/45、前端聚焦 22/22、前端全量 114 files / 632 tests、Space Unit 236/236、默认 Space Integration 190 passed / 61 SQL-environment skipped、CP6.Tests 2738 passed / 17 environment-gated skipped、完整 solution 0 error / 10 条既有 warning，EF/SDK/TypeScript/差异门禁通过；本卡真实 SQL 1/1。完整真实 SQL 矩阵 250 passed / 1 个已独立复现的 Excel 预检种子循环依赖基线失败。
+- E10-S06“仓库 KPI 快照、利用率与 ABC 口径”是下一张具备前置条件的 P2 卡。CAD/E06 主链仍等待正式黄金集、授权供应商证据和冻结 Worker 等外部输入；本卡不改变该优先级或失败关闭边界。
+
 ## E10-S04 完成状态（2026-08-02）
 
 - E10-S04 已进入受控集成基线：实现 `9a9802a8`、文档 `f961d7e5`、no-ff 集成 `b4d5b81e`。新增当前设备读取 `GET /api/space/design/v1/sites/{siteId}/devices`，沿用 `space:model:read`，支持来源/设备/状态/楼层/活动告警过滤与受保护游标；外部主体在读库前拒绝。
@@ -192,6 +200,7 @@
 - Space E10 S02 功能/文档/集成提交：`e70c2715` / `86ad63bb` / `29a69a2b`
 - Space E10 S03 功能/文档/集成提交：`10b16c51` / `8ce91d41` / `88efd23d`
 - Space E10 S04 功能/文档/集成提交：`9a9802a8` / `f961d7e5` / `b4d5b81e`
+- Space E10 S05 功能/文档/集成提交：`65c59555` / `53bea9b9` / `e270c2cc`
 
 - 交付分支：`main`
 - T6 通过 merge commit `d79a39c` 合入并推送；T7 冒烟修复为 `ffca422`
@@ -238,7 +247,7 @@
 | E07 S01–S05 | 已进入集成基线 | `d06a8bd1` + `6e67a9d1` + `74577015` + `6d751e0c` + `15ccf992` + `389bf4ec`；版本化能力合同、CP6 真实适配器、持久化幂等账本、标准模拟器、确定性标准仓与存量 WMS 采纳/绑定 |
 | E08 S01–S05 | 已进入集成基线 | `3df6b1d2` + `b2bb7a35` + `9a478c7a` + `d4cd8a82` + `8d8f7e01` + `dfb6e93b` + `9f7e38f8` + `994339a6` + `cc1d8baf` + `24464fab` + `7a05c05f` + `675e485c`；统一 Published 运行源、双身份、来源新鲜度、库存定位、任务路径与 10,000 库位性能基线 |
 | E09 S01–S05 | 已进入集成基线 | `a599cfd7` + `09538ca3` + `cae12c7e` + `feefa9cd` + `88bc42d1` + `1850b2d8` + `f045bd6f` + `c82d4fae` + `83798dcf` + `c658871c`；外部组织/成员、组合 Grant、字段策略/脱敏、Published-only Portal、跨租户阻断矩阵，以及访问审计和授权有效期即时重验证 |
-| E10 S01–S04 | 已进入集成基线 | `1c7aa0e2` + `1da17591` + `ec29d41f` + `e70c2715` + `86ad63bb` + `29a69a2b` + `10b16c51` + `8ce91d41` + `88efd23d` + `9a9802a8` + `f961d7e5` + `b4d5b81e`；人员事件与实时/轨迹、设备主数据映射、WCS/IoT 设备事件合同、设备当前/活动告警投影，以及 AGV/输送设备 3D 叠加 |
+| E10 S01–S05 | 已进入集成基线 | `1c7aa0e2` + `1da17591` + `ec29d41f` + `e70c2715` + `86ad63bb` + `29a69a2b` + `10b16c51` + `8ce91d41` + `88efd23d` + `9a9802a8` + `f961d7e5` + `b4d5b81e` + `65c59555` + `53bea9b9` + `e270c2cc`；人员事件与实时/轨迹、设备主数据映射、WCS/IoT 设备事件合同、设备当前/活动告警投影、AGV/输送设备 3D 叠加，以及货主/SKU/批次/容器库存空间筛选 |
 | E13 S01–S03、S12、S16 | 已进入集成基线 | Provider/确定性端口、可审计 Run/Proposal/Decision/Usage 模型、可恢复 Worker 控制面、数据库并发槽与预算账本，以及不暴露密钥/URL 的租户策略和用量管理 UI |
 | E05 S01–S05 | 已进入集成基线 | 通用元素、逐层货架、统一场景 DTO、版本化资产库及确定性参数化 3D 渲染 |
 | E03 S04 以后、E04 S05、E06、E13 S04～S11/S13～S15/S17～S19 等剩余范围 | 候选证据或尚未实现 | E03-S04 与 E04-S05 等待 E02-S07/CAD 语义预览；其余按依赖逐卡推进。`0d25da4d` 只作提取来源，不得以候选报告替代集成验收 |
@@ -257,6 +266,7 @@
 
 ## 最近验证基线
 
+- E10-S05 已推进至受控集成提交 `e270c2cc`：货主、SKU、批次和容器精确 AND 空间筛选完成；运行合同 2/2、Runtime/适配器 68/68、权限/OpenAPI 45/45、前端 114 files / 632 tests、Space Unit 236/236、默认 Space Integration 190 passed / 61 SQL-gated skipped、CP6.Tests 2738 passed / 17 environment-gated skipped、完整 solution 0 error / 10 条既有 warning、EF/SDK/TypeScript drift 通过，本卡真实 SQL 1/1。完整真实 SQL 矩阵 250 passed / 1 个已知基线失败。交付证据见 `docs/space/reports/e10-s05-inventory-spatial-filters.md`。
 - E10-S04 已推进至受控集成提交 `b4d5b81e`：设备当前/告警投影、读取 API 和 3D 叠加完成；领域 2/2、设备服务 9/9、本卡真实 SQL 2/2、权限/审计/OpenAPI 70/70、前端 113 files / 629 tests、Space Unit 236/236、默认 Space Integration 189 passed / 60 SQL-gated skipped、CP6.Tests 2738 passed / 17 environment-gated skipped、完整 solution 0 error / 10 条既有 warning、EF/SDK drift 与两个 TypeScript strict no-emit 通过。完整真实 SQL 矩阵 248 passed / 1 已知基线失败；合并态设备 9/9、权限/审计/OpenAPI 70/70、前端聚焦 14/14、EF/SDK drift 通过。交付证据见 `docs/space/reports/e10-s04-device-runtime-overlay.md`。
 - E04-S06 已推进至受控集成提交 `2b6ef127`：功能分支与合并态前端全量均为 108 files / 612 tests，聚焦 4 files / 13 tests、type-check 和 production build 通过；Space Unit 231/231、默认 Space Integration 140 passed / 55 SQL-gated skipped、Design Scene 真 SQL 3/3、Space Integration + KOUSQLSERVER 195/195 且 0 skipped、CP6.Tests 2720 passed / 17 environment-gated skipped、完整 solution 非增量构建 0 error / 10 条既有 warning，以及 SDK drift、TypeScript SDK strict no-emit 和差异门禁均通过。
 - E09-S05 已推进至受控集成提交 `c658871c`：审计聚焦 48/48、Portal/真 SQL 合并态 16/16、Space Unit 231/231、Space Integration + KOUSQLSERVER 195/195、CP6.Tests 2720 passed / 17 environment-gated skipped、完整 solution 非增量构建 0 error / 10 条既有 warning、前端 106 files / 607 tests、EF/SDK drift 与 TypeScript SDK strict no-emit 均通过。
@@ -295,4 +305,4 @@
 
 ## 下一动作
 
-以 `b4d5b81e` 为当前 Space 代码集成基线。E03-S01～S03、E13-S16 与 E10-S01～S04 已完成；下一步不能绕过依赖提前做 CAD/外部 Provider 链。E03-S04 与 E04-S05 继续等待 E02-S07/CAD 语义预览，E13-S04 等待 E02-S03，E13-S05 等待 S04 与正式供应商证据；E06-S01 继续等待 E02～E05 与 E13 主链。可独立推进时，E10-S05“货主、SKU、批次和容器空间筛选”是已具备前置条件的 P2 候选，但仍低于解除 CAD 主链外部条件；E02-S01 继续等待正式黄金集、授权和冻结 Worker，E09 的产品/QA/WMS/安全 GA 签字仍由发布治理完成。禁止把候选检查点 `0d25da4d` 整包合入，GR-VP T1–T7 不要重做。
+以 `e270c2cc` 为当前 Space 代码集成基线。E03-S01～S03、E13-S16 与 E10-S01～S05 已完成；下一步不能绕过依赖提前做 CAD/外部 Provider 链。E03-S04 与 E04-S05 继续等待 E02-S07/CAD 语义预览，E13-S04 等待 E02-S03，E13-S05 等待 S04 与正式供应商证据；E06-S01 继续等待 E02～E05 与 E13 主链。可独立推进时，E10-S06“仓库 KPI 快照、利用率与 ABC 口径”是已具备前置条件的 P2 候选，但仍低于解除 CAD 主链外部条件；E02-S01 继续等待正式黄金集、授权和冻结 Worker，E09 的产品/QA/WMS/安全 GA 签字仍由发布治理完成。禁止把候选检查点 `0d25da4d` 整包合入，GR-VP T1–T7 不要重做。
