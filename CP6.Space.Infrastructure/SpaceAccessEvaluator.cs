@@ -242,6 +242,9 @@ public sealed class SpaceAccessEvaluator(
             organizationRow.SecurityStamp,
             membership.SecurityStamp,
             AuthorizationVersion(
+                principal,
+                resourceType,
+                organization.OrganizationId,
                 organizationRow.SecurityStamp,
                 membership.SecurityStamp,
                 grants,
@@ -275,12 +278,23 @@ public sealed class SpaceAccessEvaluator(
             []);
 
     private static string AuthorizationVersion(
+        SpacePrincipal principal,
+        SpaceResourceType resourceType,
+        Guid organizationId,
         long organizationSecurityStamp,
         long membershipSecurityStamp,
         IReadOnlyList<SpaceExternalGrant> grants,
         IReadOnlyList<SpaceFieldPolicy> policies)
     {
         var material = new StringBuilder()
+            .Append(principal.TenantId.ToString("N"))
+            .Append(':')
+            .Append(principal.UserId.ToString("N"))
+            .Append(':')
+            .Append(organizationId.ToString("N"))
+            .Append(':')
+            .Append((int)resourceType)
+            .Append(':')
             .Append(organizationSecurityStamp)
             .Append(':')
             .Append(membershipSecurityStamp);

@@ -127,6 +127,7 @@ public sealed class SpaceExternalPortalService(
                 published.VersionId,
                 floorId,
                 cancellationToken);
+            EnsureSceneIdentity(scene, siteId, published.VersionId, floorId);
             var projected = ProjectFloor(scope, scene);
             if (projected is not null)
                 result.Add(projected);
@@ -165,7 +166,8 @@ public sealed class SpaceExternalPortalService(
             siteId,
             locations.Keys.ToArray(),
             cancellationToken);
-        if (response.PublishedVersionId != published.VersionId)
+        if (response.SiteId != siteId ||
+            response.PublishedVersionId != published.VersionId)
             throw ScopeNotFound();
 
         var items = new List<SpacePortalStockItemDto>();
@@ -234,7 +236,8 @@ public sealed class SpaceExternalPortalService(
             siteId,
             locations.Keys.ToArray(),
             cancellationToken);
-        if (response.PublishedVersionId != published.VersionId)
+        if (response.SiteId != siteId ||
+            response.PublishedVersionId != published.VersionId)
             throw ScopeNotFound();
 
         var items = new List<SpacePortalTaskItemDto>();
@@ -636,6 +639,31 @@ public sealed class SpaceExternalPortalService(
     {
         if (siteId == Guid.Empty || !HasPolicy(scope, siteId))
             throw ScopeNotFound();
+    }
+
+    private static void EnsureSceneIdentity(
+        SpaceDesignSceneDto scene,
+        Guid siteId,
+        Guid publishedVersionId,
+        Guid floorLogicalId)
+    {
+        if (scene.SchemaVersion != SpaceDesignSceneContract.SchemaVersion ||
+            !string.Equals(
+                scene.Authority,
+                SpaceDesignSceneContract.Authority,
+                StringComparison.Ordinal) ||
+            scene.RuntimeOverlayIncluded ||
+            scene.ModelVersionId != publishedVersionId ||
+            scene.SiteId != siteId ||
+            !string.Equals(
+                scene.VersionStatus,
+                "Published",
+                StringComparison.Ordinal) ||
+            scene.Floor.Revision.LogicalId != floorLogicalId ||
+            scene.Floor.SiteLogicalId != siteId)
+        {
+            throw ScopeNotFound();
+        }
     }
 
     private static SpacePortalRuntimeSourceDto Source(

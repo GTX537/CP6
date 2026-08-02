@@ -100,6 +100,83 @@ public sealed class SpaceExternalPortalServiceTests
         Assert.Equal(SpaceErrorCodes.ExternalScopeDenied, error.Code);
     }
 
+    [Fact]
+    public async Task Guessed_site_and_organization_identifiers_return_uniform_not_found()
+    {
+        await using var fixture = await Fixture.CreateAsync();
+        var guessedSite = Guid.NewGuid();
+        var guessedOrganization = fixture.CreateService(Guid.NewGuid());
+
+        await AssertScopeDeniedAsync(() =>
+            fixture.Service.GetPublishedSceneAsync(guessedSite));
+        await AssertScopeDeniedAsync(() =>
+            fixture.Service.GetStockAsync(guessedSite));
+        await AssertScopeDeniedAsync(() =>
+            fixture.Service.GetTasksAsync(guessedSite));
+        await AssertScopeDeniedAsync(() =>
+            guessedOrganization.GetSitesAsync());
+        await AssertScopeDeniedAsync(() =>
+            guessedOrganization.GetPublishedSceneAsync(fixture.SiteId));
+        await AssertScopeDeniedAsync(() =>
+            guessedOrganization.GetStockAsync(fixture.SiteId));
+        await AssertScopeDeniedAsync(() =>
+            guessedOrganization.GetTasksAsync(fixture.SiteId));
+    }
+
+    [Fact]
+    public async Task Published_scene_reader_identity_mismatch_fails_closed()
+    {
+        await using var fixture = await Fixture.CreateAsync();
+        var original = fixture.Scenes.Scene;
+
+        fixture.Scenes.Scene = original with { ModelVersionId = Guid.NewGuid() };
+        await AssertScopeDeniedAsync(() =>
+            fixture.Service.GetPublishedSceneAsync(fixture.SiteId));
+
+        fixture.Scenes.Scene = original with { SiteId = Guid.NewGuid() };
+        await AssertScopeDeniedAsync(() =>
+            fixture.Service.GetPublishedSceneAsync(fixture.SiteId));
+
+        fixture.Scenes.Scene = original with
+        {
+            Floor = original.Floor with { SiteLogicalId = Guid.NewGuid() },
+        };
+        await AssertScopeDeniedAsync(() =>
+            fixture.Service.GetPublishedSceneAsync(fixture.SiteId));
+    }
+
+    [Fact]
+    public async Task Runtime_site_version_and_location_mismatch_fail_closed()
+    {
+        await using var fixture = await Fixture.CreateAsync();
+
+        fixture.Runtime.ResponseSiteId = Guid.NewGuid();
+        await AssertScopeDeniedAsync(() =>
+            fixture.Service.GetStockAsync(fixture.SiteId));
+        fixture.Runtime.ResponseSiteId = fixture.SiteId;
+
+        fixture.Runtime.ResponsePublishedVersionId = Guid.NewGuid();
+        await AssertScopeDeniedAsync(() =>
+            fixture.Service.GetTasksAsync(fixture.SiteId));
+        fixture.Runtime.ResponsePublishedVersionId = fixture.PublishedVersionId;
+
+        fixture.Runtime.InventoryItemLocationId = Guid.NewGuid();
+        await AssertScopeDeniedAsync(() =>
+            fixture.Service.GetStockAsync(fixture.SiteId));
+        fixture.Runtime.InventoryItemLocationId = fixture.LocationId;
+
+        fixture.Runtime.TaskItemLocationId = Guid.NewGuid();
+        await AssertScopeDeniedAsync(() =>
+            fixture.Service.GetTasksAsync(fixture.SiteId));
+    }
+
+    private static async Task AssertScopeDeniedAsync(Func<Task> action)
+    {
+        var error = await Assert.ThrowsAsync<SpaceProblemException>(action);
+        Assert.Equal(404, error.StatusCode);
+        Assert.Equal(SpaceErrorCodes.ExternalScopeDenied, error.Code);
+    }
+
     private sealed class Fixture : IAsyncDisposable
     {
         public static readonly DateTime Now =
@@ -451,11 +528,13 @@ public sealed class SpaceExternalPortalServiceTests
     private sealed class SceneReader(SpaceDesignSceneDto scene) :
         ISpacePublishedSceneReader
     {
+        public SpaceDesignSceneDto Scene { get; set; } = scene;
+
         public Task<SpaceDesignSceneDto> GetSceneAsync(
             Guid versionId,
             Guid floorLogicalId,
             CancellationToken cancellationToken = default) =>
-            Task.FromResult(scene);
+            Task.FromResult(Scene);
     }
 
     private sealed class RuntimeService(
@@ -472,6 +551,10 @@ public sealed class SpaceExternalPortalServiceTests
 
         public IReadOnlyCollection<Guid>? InventoryLocationIds { get; private set; }
         public IReadOnlyCollection<Guid>? TaskLocationIds { get; private set; }
+        public Guid ResponseSiteId { get; set; } = siteId;
+        public Guid ResponsePublishedVersionId { get; set; } = versionId;
+        public Guid InventoryItemLocationId { get; set; } = locationId;
+        public Guid TaskItemLocationId { get; set; } = locationId;
 
         public Task<SpaceWmsRuntimeInventoryResponse> QueryInventoryAsync(
             Guid requestedSiteId,
@@ -480,15 +563,15 @@ public sealed class SpaceExternalPortalServiceTests
         {
             InventoryLocationIds = locationLogicalIds;
             return Task.FromResult(new SpaceWmsRuntimeInventoryResponse(
-                siteId,
-                versionId,
+                ResponseSiteId,
+                ResponsePublishedVersionId,
                 "WH1",
                 Source,
                 [
-                    new(locationId, Guid.NewGuid(), "L-001", "WMS-001", true,
+                    new(InventoryItemLocationId, Guid.NewGuid(), "L-001", "WMS-001", true,
                         floorId, "F1", "Floor 1", 1, 8, 1, "MAT-01", "LOT-1",
                         "CONT-1", "OWNER-A"),
-                    new(locationId, Guid.NewGuid(), "L-001", "WMS-001", true,
+                    new(InventoryItemLocationId, Guid.NewGuid(), "L-001", "WMS-001", true,
                         floorId, "F1", "Floor 1", 1, 3, 0, "MAT-02", null,
                         null, "OWNER-B"),
                 ]));
@@ -501,16 +584,16 @@ public sealed class SpaceExternalPortalServiceTests
         {
             TaskLocationIds = locationLogicalIds;
             return Task.FromResult(new SpaceWmsRuntimeTaskResponse(
-                siteId,
-                versionId,
+                ResponseSiteId,
+                ResponsePublishedVersionId,
                 "WH1",
                 Source,
                 [
-                    new("TASK-1", "Pick", "Released", 1, locationId,
+                    new("TASK-1", "Pick", "Released", 1, TaskItemLocationId,
                         Guid.NewGuid(), "L-001", "WMS-001", true, floorId,
                         "F1", "Floor 1", 1, zoneId, "ZONE-A", rackId, "RACK-1",
                         0, 0, 0, 2, "MAT-01"),
-                    new("TASK-2", "Pick", "Released", 2, locationId,
+                    new("TASK-2", "Pick", "Released", 2, TaskItemLocationId,
                         Guid.NewGuid(), "L-001", "WMS-001", true, floorId,
                         "F1", "Floor 1", 1, zoneId, "ZONE-A", rackId, "RACK-1",
                         0, 0, 0, 1, "MAT-02"),
