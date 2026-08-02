@@ -14,6 +14,20 @@ describe('spaceRuntimeApi', () => {
     vi.mocked(http.get).mockResolvedValue({})
   })
 
+  it('requests operations diagnostics with an explicit half-open UTC window', async () => {
+    await spaceRuntimeApi.operationsDiagnostics(
+      'site-1',
+      '2026-08-02T04:00:00.000Z',
+      '2026-08-02T12:00:00.000Z',
+    )
+
+    const [url, config] = vi.mocked(http.get).mock.calls[0]!
+    expect(url).toBe('/space/operations/v1/sites/site-1/diagnostics')
+    const params = config?.params as URLSearchParams
+    expect(params.get('fromUtc')).toBe('2026-08-02T04:00:00.000Z')
+    expect(params.get('toUtc')).toBe('2026-08-02T12:00:00.000Z')
+  })
+
   it('requests a warehouse overview with an explicit ABC window', async () => {
     await spaceRuntimeApi.warehouseOverview('site-1', 120)
 

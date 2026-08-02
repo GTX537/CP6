@@ -46,6 +46,7 @@ public static class SpaceAuditPermissionSeed
             ("integration:manage", "管理 WMS 集成", 60),
             ("external:read", "查看外部组织与成员", 70),
             ("external:manage", "管理外部组织与成员", 80),
+            ("operations:diagnostics:read", "查看运营诊断", 90),
         ];
     private static readonly (string Code, string Name, int Sort)[]
         AiAdminActions =

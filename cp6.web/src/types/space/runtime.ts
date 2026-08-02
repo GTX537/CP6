@@ -426,3 +426,140 @@ export interface SpaceDeviceActiveAlarm {
   sourceEventId: string
   ageMilliseconds: number | null
 }
+
+export interface SpaceOperationsDiagnosticThresholds {
+  maximumObservationGapSeconds: number
+  minimumBacktrackSegmentMillimeters: number
+  backtrackAngleDegrees: number
+  dwellThresholdSeconds: number
+  congestionMinimumConcurrentPeople: number
+  occupancyWatchPercent: number
+  occupancyCriticalPercent: number
+}
+
+export interface SpaceOperationsPersonnelSourceItem {
+  sourceId: string
+  sourceKind: string
+  eventCount: number
+  personCount: number
+  firstObservedAtUtc: string
+  lastObservedAtUtc: string
+  lastReceivedAtUtc: string
+}
+
+export interface SpaceOperationsPersonnelSource {
+  evidenceEventCount: number
+  eligibleRealEventCount: number
+  excludedSimulatedEventCount: number
+  excludedOutsidePublishedModelEventCount: number
+  personCount: number
+  sourceCount: number
+  firstObservedAtUtc: string | null
+  lastObservedAtUtc: string | null
+  lastReceivedAtUtc: string | null
+  sources: SpaceOperationsPersonnelSourceItem[]
+}
+
+export interface SpaceOperationsBacktrackFinding {
+  floorLogicalId: string
+  floorCode: string | null
+  locationLogicalId: string | null
+  spaceLocationCode: string | null
+  xMillimeters: number
+  yMillimeters: number
+  occurredAtUtc: string
+  turnAngleDegrees: number
+  returnSegmentMeters: number
+}
+
+export interface SpaceOperationsPathDiagnosis {
+  personCount: number
+  observedTransitionCount: number
+  knownDistanceSegmentCount: number
+  unknownDistanceSegmentCount: number
+  observedDistanceMeters: number
+  backtrackCount: number
+  backtrackDistanceMeters: number
+  backtracksTruncated: boolean
+  backtracks: SpaceOperationsBacktrackFinding[]
+}
+
+export interface SpaceOperationsDwellHotspot {
+  locationLogicalId: string
+  spaceLocationCode: string | null
+  floorLogicalId: string
+  floorCode: string | null
+  episodeCount: number
+  personCount: number
+  totalDwellSeconds: number
+  maximumDwellSeconds: number
+}
+
+export interface SpaceOperationsDwellDiagnosis {
+  episodeCount: number
+  personCount: number
+  locationCount: number
+  totalDwellSeconds: number
+  hotspotsTruncated: boolean
+  hotspots: SpaceOperationsDwellHotspot[]
+}
+
+export interface SpaceOperationsCongestionHotspot {
+  locationLogicalId: string
+  spaceLocationCode: string | null
+  floorLogicalId: string
+  floorCode: string | null
+  peakConcurrentPeople: number
+  concurrentSeconds: number
+  observedPersonCount: number
+}
+
+export interface SpaceOperationsCongestionDiagnosis {
+  locationCount: number
+  peakConcurrentPeople: number
+  concurrentSeconds: number
+  hotspotsTruncated: boolean
+  hotspots: SpaceOperationsCongestionHotspot[]
+}
+
+export interface SpaceOperationsFloorOccupancy {
+  floorLogicalId: string
+  floorCode: string
+  floorName: string
+  floorLevel: number
+  locationCount: number
+  occupiedLocationCount: number | null
+  locationOccupancyPercent: number | null
+  locationOccupancyPressure: string
+}
+
+export interface SpaceOperationsCapacityDiagnosis {
+  source: SpaceRuntimeSource | null
+  isAvailable: boolean
+  occupancyBasis: string
+  locationCount: number
+  occupiedLocationCount: number | null
+  locationOccupancyPercent: number | null
+  locationOccupancyPressure: string
+  capacityUtilizationPercent: number | null
+  capacityUtilizationStatus: string
+  capacityUtilizationReason: string
+  floors: SpaceOperationsFloorOccupancy[]
+}
+
+export interface SpaceOperationsDiagnosticResponse {
+  siteId: string
+  publishedVersionId: string
+  warehouseCode: string | null
+  windowFromUtc: string
+  windowToUtc: string
+  calculatedAtUtc: string
+  definitionVersion: string
+  thresholds: SpaceOperationsDiagnosticThresholds
+  personnelSource: SpaceOperationsPersonnelSource
+  path: SpaceOperationsPathDiagnosis
+  congestion: SpaceOperationsCongestionDiagnosis
+  dwell: SpaceOperationsDwellDiagnosis
+  capacity: SpaceOperationsCapacityDiagnosis
+  limitations: string[]
+}

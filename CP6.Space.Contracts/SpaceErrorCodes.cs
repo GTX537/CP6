@@ -107,6 +107,10 @@ public static class SpaceErrorCodes
         "SPACE_PERSONNEL_QUERY_INVALID";
     public const string PersonnelNotFound =
         "SPACE_PERSONNEL_NOT_FOUND";
+    public const string OperationsDiagnosticsInternalOnly =
+        "SPACE_OPERATIONS_DIAGNOSTICS_INTERNAL_ONLY";
+    public const string OperationsDiagnosticsEvidenceLimit =
+        "SPACE_OPERATIONS_DIAGNOSTICS_EVIDENCE_LIMIT";
     public const string DeviceEventInvalid =
         "SPACE_DEVICE_EVENT_INVALID";
     public const string DeviceEventConflict =

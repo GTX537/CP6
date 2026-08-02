@@ -165,6 +165,10 @@ public static class SpaceInfrastructureRegistration
         services.AddScoped<
             ISpacePersonnelRuntimeService,
             SpacePersonnelRuntimeService>();
+        services.TryAddSingleton<SpaceOperationsDiagnosticEngine>();
+        services.AddScoped<
+            ISpaceOperationsDiagnosticService,
+            SpaceOperationsDiagnosticService>();
         services.AddScoped<
             ISpaceDeviceEventService,
             SpaceDeviceEventService>();
