@@ -111,6 +111,10 @@ public sealed class SpaceContext : DbContext
         Set<SpaceDispatchRecommendation>();
     public DbSet<SpacePlanningScenarioBranch> PlanningScenarioBranches =>
         Set<SpacePlanningScenarioBranch>();
+    public DbSet<SpacePlanningHistoricalDataset> PlanningHistoricalDatasets =>
+        Set<SpacePlanningHistoricalDataset>();
+    public DbSet<SpacePlanningHistoricalTask> PlanningHistoricalTasks =>
+        Set<SpacePlanningHistoricalTask>();
 
     protected override void OnModelCreating(ModelBuilder modelBuilder)
     {
@@ -150,6 +154,8 @@ public sealed class SpaceContext : DbContext
         ConfigurePutawayRecommendation(modelBuilder);
         ConfigureDispatchRecommendation(modelBuilder);
         ConfigurePlanningScenarioBranch(modelBuilder);
+        ConfigurePlanningHistoricalDataset(modelBuilder);
+        ConfigurePlanningHistoricalTask(modelBuilder);
         ConfigureFile(modelBuilder);
         ConfigureSource(modelBuilder);
         ConfigureJob(modelBuilder);
@@ -3581,6 +3587,177 @@ public sealed class SpaceContext : DbContext
             x => x.TenantId == CurrentTenantId && !x.IsDeleted);
     }
 
+    private void ConfigurePlanningHistoricalDataset(ModelBuilder modelBuilder)
+    {
+        var entity = modelBuilder.Entity<SpacePlanningHistoricalDataset>();
+        entity.ToTable(
+            "Space_PlanningHistoricalDataset",
+            table => table.HasCheckConstraint(
+                "CK_Space_PlanningHistoricalDataset_Invariants",
+                "[HistoricalFromUtc] < [HistoricalToUtc] AND " +
+                "[ReplaySpeedFactor] > 0 AND " +
+                "[ReplaySpeedFactor] <= 1000 AND " +
+                "[TaskCount] BETWEEN 1 AND 10000 AND " +
+                "LEN([SourceDatasetHash]) = 64 AND " +
+                "[SourceDatasetHash] NOT LIKE '%[^0-9a-f]%' AND " +
+                "LEN([RequestHash]) = 64 AND " +
+                "[RequestHash] NOT LIKE '%[^0-9a-f]%' AND " +
+                "[IsDeleted] = 0"));
+        entity.HasKey(x => x.Id);
+        entity.Property(x => x.Id).ValueGeneratedNever();
+        ConfigureTenantEntity(entity);
+        entity.HasAlternateKey(x => new { x.TenantId, x.Id })
+            .HasName("AK_Space_PlanningHistoricalDataset_Tenant_Id");
+        entity.Property(x => x.Name).HasMaxLength(200).IsRequired();
+        entity.Property(x => x.HistoricalFromUtc)
+            .HasColumnType("datetimeoffset(7)");
+        entity.Property(x => x.HistoricalToUtc)
+            .HasColumnType("datetimeoffset(7)");
+        entity.Property(x => x.ReplayStartUtc)
+            .HasColumnType("datetimeoffset(7)");
+        entity.Property(x => x.ReplaySpeedFactor).HasPrecision(9, 4);
+        entity.Property(x => x.SourceDatasetHash)
+            .HasColumnType("char(64)")
+            .IsUnicode(false)
+            .IsFixedLength()
+            .HasMaxLength(64)
+            .IsRequired();
+        entity.Property(x => x.RequestHash)
+            .HasColumnType("char(64)")
+            .IsUnicode(false)
+            .IsFixedLength()
+            .HasMaxLength(64)
+            .IsRequired();
+        entity.Property(x => x.DefinitionVersion)
+            .HasMaxLength(100)
+            .IsUnicode(false)
+            .IsRequired();
+        entity.Property(x => x.DeidentificationVersion)
+            .HasMaxLength(100)
+            .IsUnicode(false)
+            .IsRequired();
+        entity.HasIndex(x => new
+            {
+                x.TenantId,
+                x.BranchId,
+                x.CreatedAtUtc,
+            })
+            .HasDatabaseName(
+                "IX_Space_PlanningHistoricalDataset_Branch_Created");
+        entity.HasOne<SpacePlanningScenarioBranch>()
+            .WithMany()
+            .HasForeignKey(x => new { x.TenantId, x.BranchId })
+            .HasPrincipalKey(x => new { x.TenantId, x.Id })
+            .OnDelete(DeleteBehavior.Restrict)
+            .HasConstraintName(
+                "FK_Space_PlanningHistoricalDataset_Branch_Tenant");
+        entity.HasOne<SpaceModel>()
+            .WithMany()
+            .HasForeignKey(x => new { x.TenantId, x.ModelId })
+            .HasPrincipalKey(x => new { x.TenantId, x.Id })
+            .OnDelete(DeleteBehavior.Restrict)
+            .HasConstraintName(
+                "FK_Space_PlanningHistoricalDataset_Model_Tenant");
+        entity.HasOne<SpaceModelVersion>()
+            .WithMany()
+            .HasForeignKey(x => new
+            {
+                x.TenantId,
+                x.ModelId,
+                x.ScenarioVersionId,
+            })
+            .HasPrincipalKey(x => new
+            {
+                x.TenantId,
+                x.ModelId,
+                x.Id,
+            })
+            .OnDelete(DeleteBehavior.Restrict)
+            .HasConstraintName(
+                "FK_Space_PlanningHistoricalDataset_ScenarioVersion_Tenant");
+        entity.HasQueryFilter(
+            x => x.TenantId == CurrentTenantId && !x.IsDeleted);
+    }
+
+    private void ConfigurePlanningHistoricalTask(ModelBuilder modelBuilder)
+    {
+        var entity = modelBuilder.Entity<SpacePlanningHistoricalTask>();
+        entity.ToTable(
+            "Space_PlanningHistoricalTask",
+            table => table.HasCheckConstraint(
+                "CK_Space_PlanningHistoricalTask_Invariants",
+                "[SequenceNo] > 0 AND [Quantity] > 0 AND " +
+                "[OriginalCreatedAtUtc] <= [OriginalCompletedAtUtc] AND " +
+                "[ReplayCreatedAtUtc] <= [ReplayCompletedAtUtc] AND " +
+                "[ToLocationLogicalId] <> " +
+                "'00000000-0000-0000-0000-000000000000' AND " +
+                "([FromLocationLogicalId] IS NULL OR " +
+                "[FromLocationLogicalId] <> " +
+                "'00000000-0000-0000-0000-000000000000') AND " +
+                "LEN([TaskToken]) = 64 AND " +
+                "[TaskToken] NOT LIKE '%[^0-9a-f]%' AND " +
+                "([WorkerToken] IS NULL OR (LEN([WorkerToken]) = 64 AND " +
+                "[WorkerToken] NOT LIKE '%[^0-9a-f]%')) AND " +
+                "[TaskType] BETWEEN 0 AND 4 AND " +
+                "[Outcome] BETWEEN 0 AND 2 AND [IsDeleted] = 0"));
+        entity.HasKey(x => x.Id);
+        entity.Property(x => x.Id).ValueGeneratedNever();
+        ConfigureTenantEntity(entity);
+        entity.Property(x => x.TaskToken)
+            .HasColumnType("char(64)")
+            .IsUnicode(false)
+            .IsFixedLength()
+            .HasMaxLength(64)
+            .IsRequired();
+        entity.Property(x => x.WorkerToken)
+            .HasColumnType("char(64)")
+            .IsUnicode(false)
+            .IsFixedLength()
+            .HasMaxLength(64);
+        entity.Property(x => x.TaskType)
+            .HasConversion<short>()
+            .HasColumnType("smallint");
+        entity.Property(x => x.Outcome)
+            .HasConversion<short>()
+            .HasColumnType("smallint");
+        entity.Property(x => x.OriginalCreatedAtUtc)
+            .HasColumnType("datetimeoffset(7)");
+        entity.Property(x => x.OriginalCompletedAtUtc)
+            .HasColumnType("datetimeoffset(7)");
+        entity.Property(x => x.ReplayCreatedAtUtc)
+            .HasColumnType("datetimeoffset(7)");
+        entity.Property(x => x.ReplayCompletedAtUtc)
+            .HasColumnType("datetimeoffset(7)");
+        entity.Property(x => x.Quantity).HasPrecision(18, 4);
+        entity.HasIndex(x => new
+            {
+                x.TenantId,
+                x.DatasetId,
+                x.SequenceNo,
+            })
+            .IsUnique()
+            .HasDatabaseName(
+                "UX_Space_PlanningHistoricalTask_Dataset_Sequence");
+        entity.HasIndex(x => new
+            {
+                x.TenantId,
+                x.DatasetId,
+                x.TaskToken,
+            })
+            .IsUnique()
+            .HasDatabaseName(
+                "UX_Space_PlanningHistoricalTask_Dataset_Token");
+        entity.HasOne<SpacePlanningHistoricalDataset>()
+            .WithMany()
+            .HasForeignKey(x => new { x.TenantId, x.DatasetId })
+            .HasPrincipalKey(x => new { x.TenantId, x.Id })
+            .OnDelete(DeleteBehavior.Restrict)
+            .HasConstraintName(
+                "FK_Space_PlanningHistoricalTask_Dataset_Tenant");
+        entity.HasQueryFilter(
+            x => x.TenantId == CurrentTenantId && !x.IsDeleted);
+    }
+
     private static void ConfigureTenantEntity<TEntity>(
         Microsoft.EntityFrameworkCore.Metadata.Builders.EntityTypeBuilder<TEntity> entity)
         where TEntity : SpaceTenantEntity
@@ -3615,12 +3792,21 @@ public sealed class SpaceContext : DbContext
 
     private void ProtectPlanningScenarioHistory()
     {
-        if (ChangeTracker.Entries<SpacePlanningScenarioBranch>()
-            .Any(entry =>
-                entry.State is EntityState.Modified or EntityState.Deleted))
+        var changed =
+            ChangeTracker.Entries<SpacePlanningScenarioBranch>()
+                .Any(entry => entry.State is
+                    EntityState.Modified or EntityState.Deleted) ||
+            ChangeTracker.Entries<SpacePlanningHistoricalDataset>()
+                .Any(entry => entry.State is
+                    EntityState.Modified or EntityState.Deleted) ||
+            ChangeTracker.Entries<SpacePlanningHistoricalTask>()
+                .Any(entry => entry.State is
+                    EntityState.Modified or EntityState.Deleted);
+        if (changed)
         {
             throw new InvalidOperationException(
-                "Planning scenario branches are immutable.");
+                "Planning scenario branches and historical datasets are " +
+                "immutable.");
         }
     }
 

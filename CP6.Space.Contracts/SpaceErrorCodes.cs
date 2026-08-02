@@ -232,4 +232,16 @@ public static class SpaceErrorCodes
         "SPACE_PLANNING_SCENARIO_BASE_INVALID";
     public const string PlanningScenarioProductionDenied =
         "SPACE_PLANNING_SCENARIO_PRODUCTION_DENIED";
+    public const string PlanningDatasetConflict =
+        "SPACE_PLANNING_DATASET_CONFLICT";
+    public const string PlanningDatasetNotFound =
+        "SPACE_PLANNING_DATASET_NOT_FOUND";
+    public const string PlanningDatasetBranchNotReady =
+        "SPACE_PLANNING_DATASET_BRANCH_NOT_READY";
+    public const string PlanningDatasetDeidentificationRequired =
+        "SPACE_PLANNING_DATASET_DEIDENTIFICATION_REQUIRED";
+    public const string PlanningDatasetInvalid =
+        "SPACE_PLANNING_DATASET_INVALID";
+    public const string PlanningDatasetLocationInvalid =
+        "SPACE_PLANNING_DATASET_LOCATION_INVALID";
 }
