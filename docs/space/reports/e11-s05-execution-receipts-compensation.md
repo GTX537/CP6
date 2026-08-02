@@ -1,9 +1,11 @@
 # E11-S05 执行状态、幂等回执与安全补偿交付报告
 
-- 状态：功能分支全量门禁完成，待远端备份与 Space 受控集成
+- 状态：功能分支全量门禁、远端备份、Space 受控集成与合并态复验完成，待临时资源清理
 - 起始基线：`b0231e241e881046d75c938e2de4c88527ec8725`
 - 合同提交：`139c76b5bd7eafc62bbd4468603f1dc7baa31294`
 - 功能提交：`e8df8288`
+- 文档提交：`a0b247ab`
+- no-ff 集成提交：`cf35849c`
 - 功能分支：`codex/space-e11-s05-execution-receipts-compensation`
 - Migration：`20260802192420_SpaceE11S05ExecutionReceiptsCompensation`
 
@@ -48,6 +50,8 @@ Viewer 调度面板现在展示实时聚合状态、批次计数、每项 WMS �
 | 原生客户端 OpenAPI surface | 新增执行 DTO 后哈希已审阅更新并复验同步 |
 | i18n 静态门禁 | 908 项既有欠账；本卡无新增 |
 | Git 差异检查 | passed |
+
+受控集成提交 `cf35849c` 上的合并态复验再次通过：服务/适配器 14/14、权限/合同/种子 35/35、前端 2 files / 21 tests、前端类型检查、Design V1 SDK drift、TypeScript SDK strict no-emit、EF pending model 与 Git 差异检查。
 
 全量回归曾发现新增 SQL Server `LEN()` 检查约束会阻断 SQLite 测试建库；该约束已移除，哈希仍由固定长度列、应用生成与 payload 比较保护，随后 2,757 项 CP6.Tests 全量通过。
 

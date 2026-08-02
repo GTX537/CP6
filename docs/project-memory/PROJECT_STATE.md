@@ -2,6 +2,14 @@
 
 最后更新：2026-08-02
 
+## E11-S05 完成状态（2026-08-02）
+
+- E11-S05 已进入受控集成基线：合同 `139c76b5`、功能 `e8df8288`、文档 `a0b247ab`、no-ff 集成 `cf35849c`。新增审批批次实时执行状态、持久化动作账本、调用方 UUID + payload hash 幂等、最多 3 次人工重试与整批未开始任务的安全补偿。
+- 三层重放保护覆盖 OA 回调、任务适配器回执和执行动作；精确重放返回原结果，部分/冲突回执失败关闭。重试每次重新验证 Published、不可变建议、人员实时性与空闲、内部映射、WMS 范围及任务并发事实。
+- 补偿仅在整批任务仍 Pending、仍为原分派人、执行版本未变、从未开始/完成且原始回执完整一致时撤销 `AssignedTo`；不修改执行版本或结果，不认领/启动/完成任务，不修改库存/订单，不发出 WCS/PDA 命令。Migration 为 `20260802192420_SpaceE11S05ExecutionReceiptsCompensation`。
+- Viewer 新增执行聚合状态、逐任务事实、动作历史、重试余额、补偿阻断码及显式原因输入，并阻止旧异步响应覆盖。28 行五语种子中 26 个新键使快照从 4,561 增至 4,587；i18n 仍有 908 项既有欠账，本卡净新增缺失为 0。
+- 功能分支门禁：Space Unit 249/249、默认 Space Integration 230 passed / 62 SQL-environment skipped、CP6.Tests 2757 passed / 17 environment-gated skipped、前端 118 files / 658 tests、完整 solution Release、生产构建、EF/SDK drift、TypeScript SDK strict no-emit 与差异检查通过。合并态复验：服务/适配器 14/14、权限/合同/种子 35/35、前端 21/21、类型、SDK drift、EF pending model 与差异检查通过。交付证据见 `docs/space/reports/e11-s05-execution-receipts-compensation.md`。
+
 ## E11-S04 完成状态（2026-08-02）
 
 - E11-S04 已进入受控集成基线：合同 `098fb54b`、功能 `a7298e28`、文档 `a552d05d`、no-ff 集成 `c19231db`。新增内部 PUT/GET/cancel 调度审批资源、调用方 UUID 幂等、OA BizType `SPACE_DISPATCH_ASSIGNMENT`、提交/读取/取消权限与审计；提交人与最终审批人严格分离。
@@ -238,6 +246,9 @@
 - Space E10 S06 功能/文档/集成提交：`0676ba4a` / `969e7c38` / `5f86edcb`
 - Space E11 S01 合同/功能/文档/集成提交：`66b6c17f` / `53a07d46` / `a6d7a55c` / `8d4732e2`
 - Space E11 S02 合同/功能/文档/集成提交：`3ccd2936` / `644293f1` / `034a1b1b` / `a2b47826`
+- Space E11 S03 合同/功能/文档/集成提交：`3cf42534` / `419d3f6c` / `eea62de0` / `cf7bf778`
+- Space E11 S04 合同/功能/文档/集成提交：`098fb54b` / `a7298e28` / `a552d05d` / `c19231db`
+- Space E11 S05 合同/功能/文档/集成提交：`139c76b5` / `e8df8288` / `a0b247ab` / `cf35849c`
 
 - 交付分支：`main`
 - T6 通过 merge commit `d79a39c` 合入并推送；T7 冒烟修复为 `ffca422`
@@ -287,6 +298,9 @@
 | E10 S01–S06 | 已进入集成基线 | `1c7aa0e2` + `1da17591` + `ec29d41f` + `e70c2715` + `86ad63bb` + `29a69a2b` + `10b16c51` + `8ce91d41` + `88efd23d` + `9a9802a8` + `f961d7e5` + `b4d5b81e` + `65c59555` + `53bea9b9` + `e270c2cc` + `0676ba4a` + `969e7c38` + `5f86edcb`；人员/设备事件与运行投影、3D 叠加、库存空间筛选，以及仓库 KPI、面积/占用、ABC 与异常快照 |
 | E11 S01 | 已进入集成基线 | `66b6c17f` + `53a07d46` + `a6d7a55c` + `8d4732e2`；内部只读运营诊断、路径覆盖/折返/停留/观测重叠、诚实库位占用压力、隐私边界、审计权限和 Viewer DIAG 面板 |
 | E11 S02 | 已进入集成基线 | `3ccd2936` + `644293f1` + `034a1b1b` + `a2b47826`；内部上架推荐、不可变证据、首因排除解释、精确合并与空库位候选、权限审计和 Viewer PUT 面板 |
+| E11 S03 | 已进入集成基线 | `3cf42534` + `419d3f6c` + `eea62de0` + `cf7bf778`；内部人员调度建议、真实待分配任务与人员双时点、确定性最大基数匹配、不可变证据、首因排除和 Viewer DSP 面板 |
+| E11 S04 | 已进入集成基线 | `098fb54b` + `a7298e28` + `a552d05d` + `c19231db`；OA 审批、提交/终审人分离、最终事实重验证、真实 `MobileTask` 整批分派、幂等回执与失败关闭 |
+| E11 S05 | 已进入集成基线 | `139c76b5` + `e8df8288` + `a0b247ab` + `cf35849c`；实时执行状态、三层幂等回执、受限人工重试、安全整批补偿、权限审计和 Viewer 执行治理 |
 | E13 S01–S03、S12、S16 | 已进入集成基线 | Provider/确定性端口、可审计 Run/Proposal/Decision/Usage 模型、可恢复 Worker 控制面、数据库并发槽与预算账本，以及不暴露密钥/URL 的租户策略和用量管理 UI |
 | E05 S01–S05 | 已进入集成基线 | 通用元素、逐层货架、统一场景 DTO、版本化资产库及确定性参数化 3D 渲染 |
 | E03 S04 以后、E04 S05、E06、E13 S04～S11/S13～S15/S17～S19 等剩余范围 | 候选证据或尚未实现 | E03-S04 与 E04-S05 等待 E02-S07/CAD 语义预览；其余按依赖逐卡推进。`0d25da4d` 只作提取来源，不得以候选报告替代集成验收 |
@@ -305,6 +319,7 @@
 
 ## 最近验证基线
 
+- E11-S05 已推进至受控集成提交 `cf35849c`：合同 `139c76b5`、功能 `e8df8288`、文档 `a0b247ab`。功能分支全量门禁为 Space Unit 249/249、默认 Space Integration 230 passed / 62 SQL-gated skipped、CP6.Tests 2757 passed / 17 environment-gated skipped、前端 118 files / 658 tests、完整 solution Release、生产构建、EF/SDK drift、TypeScript SDK strict no-emit 和差异检查通过；合并态服务/适配器 14/14、权限/合同/种子 35/35、前端 21/21、类型、SDK drift 与 EF pending model 通过。i18n 仍为 908 项既有欠账，本卡净新增 0。
 - E11-S04 已推进至受控集成提交 `c19231db`：合同 `098fb54b`、功能 `a7298e28`、文档 `a552d05d`。功能分支全量门禁为 Space Unit 249/249、默认 Space Integration 224 passed / 62 SQL-gated skipped、CP6.Tests 2757 passed / 17 environment-gated skipped、前端 118 files / 656 tests、完整 solution Release、生产构建、EF/SDK drift 与两个 TypeScript strict no-emit 通过；合并态审批服务/适配器 8/8、权限/合同/种子/基础设施 44/44、前端 19/19、类型、SDK drift 与 EF pending model 通过。i18n 历史欠账由 909 降至 908。
 - E11-S03 已推进至受控集成提交 `cf7bf778`：合同 `3cf42534`、功能 `419d3f6c`、文档 `eea62de0`。Space Unit 249/249、默认 Space Integration 216 passed / 62 SQL-gated skipped、CP6.Tests 2752 passed / 17 environment-gated skipped、前端 118 files / 653 tests、完整 solution Release、EF/SDK drift 与生产构建通过；合并态引擎/运行时 6/6、服务/适配器 6/6、权限/审计/API/种子 23/23、前端 16/16、类型与 SDK drift 通过。
 - E11-S02 已推进至受控集成提交 `a2b47826`：合同 `3ccd2936`、功能 `644293f1`、文档 `034a1b1b`。Space Unit 245/245、默认 Space Integration 211 passed / 62 SQL-gated skipped、CP6.Tests 2748 passed / 17 environment-gated skipped、前端 117 files / 648 tests、完整 solution 非增量构建 0 error / 10 条既有 warning、EF/SDK drift、两个 TypeScript strict no-emit、production build 与差异检查通过；合并态引擎 5/5、服务 6/6、权限/审计/契约/种子 34/34、前端 14/14 和 SDK drift 通过；i18n 欠账由 911 降至 909。
@@ -349,4 +364,4 @@
 
 ## 下一动作
 
-以 `c19231db` 为当前 Space 代码集成基线，`b317dfa5` 为清理前已核验的远端集成状态；E11-S04 已完成远端功能备份、no-ff 受控集成、合并态冒烟和临时资源清理。E03-S01～S03、E13-S16、E10-S01～S06 与 E11-S01～S04 已完成；E11-S04 不得被扩写为任务认领/启动、库存或订单修改、WCS 命令或部分批次写入。E03-S04 与 E04-S05 继续等待 E02-S07/CAD 语义预览，E13-S04 等待 E02-S03，E13-S05 等待 S04 与正式供应商证据；E06-S01 继续等待 E02～E05 与 E13 主链。下一张独立卡为 E11-S05 执行状态、幂等回执、失败重试与补偿治理；E02-S01 继续等待正式黄金集、授权和冻结 Worker，E09 的产品/QA/WMS/安全 GA 签字仍由发布治理完成。i18n 当前有 908 项显式快照债务，本卡净新增 0。禁止把候选检查点 `0d25da4d` 整包合入，GR-VP T1–T7 不要重做。
+以 `cf35849c` 为当前 Space 代码集成基线；E11-S05 已完成远端功能备份、no-ff 受控集成和合并态复验，临时资源清理正在收尾。E03-S01～S03、E13-S16、E10-S01～S06 与 E11-S01～S05 已完成；E11-S05 不得被扩写为自动重试 Worker、任务认领/启动/完成、库存或订单修改、WCS/PDA 命令或部分批次补偿。E03-S04 与 E04-S05 继续等待 E02-S07/CAD 语义预览，E13-S04 等待 E02-S03，E13-S05 等待 S04 与正式供应商证据；E06-S01 继续等待 E02～E05 与 E13 主链。下一张独立卡为 E11-S06 效果评估与闭环度量；E02-S01 继续等待正式黄金集、授权和冻结 Worker，E09 的产品/QA/WMS/安全 GA 签字仍由发布治理完成。i18n 当前有 908 项显式快照债务，本卡净新增 0。禁止把候选检查点 `0d25da4d` 整包合入，GR-VP T1–T7 不要重做。
