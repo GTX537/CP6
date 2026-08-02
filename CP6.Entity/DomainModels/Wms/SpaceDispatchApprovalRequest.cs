@@ -41,6 +41,12 @@ public sealed class SpaceDispatchApprovalRequest : BaseBizEntity
     public Guid? DecidedById { get; set; }
     public DateTime? DecidedAtUtc { get; set; }
     public DateTime? AppliedAtUtc { get; set; }
+    public int RetryAttemptCount { get; set; }
+    public Guid? CompensatedById { get; set; }
+    public DateTime? CompensatedAtUtc { get; set; }
+
+    [MaxLength(500)]
+    public string? CompensationReason { get; set; }
 
     [Required, MaxLength(100)]
     public string AdapterId { get; set; } = string.Empty;

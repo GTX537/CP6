@@ -94,6 +94,33 @@ describe('spaceRuntimeApi', () => {
     expect(http.post).toHaveBeenCalledWith(`${base}/cancel`)
   })
 
+  it('reads execution evidence and puts idempotent retry and compensation actions', async () => {
+    const request = { reason: 'Operator reviewed the whole batch' }
+    const base = '/space/operations/v1/sites/site%2F1' +
+      '/dispatch-recommendations/recommendation%2F1' +
+      '/approval-requests/approval%2F1'
+
+    await spaceRuntimeApi.dispatchExecution('site/1', 'recommendation/1', 'approval/1')
+    await spaceRuntimeApi.retryDispatchExecution(
+      'site/1',
+      'recommendation/1',
+      'approval/1',
+      'action/1',
+      request,
+    )
+    await spaceRuntimeApi.compensateDispatchExecution(
+      'site/1',
+      'recommendation/1',
+      'approval/1',
+      'action/2',
+      request,
+    )
+
+    expect(http.get).toHaveBeenCalledWith(`${base}/execution`)
+    expect(http.put).toHaveBeenNthCalledWith(1, `${base}/retry-requests/action%2F1`, request)
+    expect(http.put).toHaveBeenNthCalledWith(2, `${base}/compensation-requests/action%2F2`, request)
+  })
+
   it('gets immutable putaway recommendation evidence by identity', async () => {
     await spaceRuntimeApi.putawayRecommendation('site/1', 'recommendation/1')
 

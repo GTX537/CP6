@@ -390,6 +390,8 @@ public class CP6Context : DbContext, IDataProtectionKeyContext
     public DbSet<TaskCommandReceipt> TaskCommandReceipts => Set<TaskCommandReceipt>();
     public DbSet<SpaceDispatchApprovalRequest> SpaceDispatchApprovalRequests =>
         Set<SpaceDispatchApprovalRequest>();
+    public DbSet<SpaceDispatchExecutionAction> SpaceDispatchExecutionActions =>
+        Set<SpaceDispatchExecutionAction>();
     public DbSet<StockSerial> StockSerials => Set<StockSerial>();
     public DbSet<StockSerialTransaction> StockSerialTransactions => Set<StockSerialTransaction>();
     public DbSet<LogisticsUnit> LogisticsUnits => Set<LogisticsUnit>();
@@ -2204,6 +2206,7 @@ public class CP6Context : DbContext, IDataProtectionKeyContext
 
         modelBuilder.Entity<SpaceDispatchApprovalRequest>(e =>
         {
+            e.HasAlternateKey(x => new { x.TenantId, x.Id });
             e.HasIndex(x => new { x.TenantId, x.SiteId, x.RecommendationId })
                 .IsUnique()
                 .HasFilter("[IsDeleted] = 0 AND [Status] = 'PendingApproval'");
@@ -2219,6 +2222,41 @@ public class CP6Context : DbContext, IDataProtectionKeyContext
                 .IsFixedLength();
             e.Property(x => x.SelectionJson).HasColumnType("nvarchar(max)");
             e.Property(x => x.ResultJson).HasColumnType("nvarchar(max)");
+        });
+
+        modelBuilder.Entity<SpaceDispatchExecutionAction>(e =>
+        {
+            e.ToTable("T_SpaceDispatchExecutionAction", table =>
+            {
+                table.HasCheckConstraint(
+                    "CK_SpaceDispatchExecutionAction_Type",
+                    "[ActionType] IN ('RetryAssignment','CompensateAssignment')");
+                table.HasCheckConstraint(
+                    "CK_SpaceDispatchExecutionAction_Status",
+                    "[Status] IN ('Applied','FailedNoEffect','RejectedNoEffect')");
+            });
+            e.HasIndex(x => new
+            {
+                x.TenantId,
+                x.ApprovalRequestId,
+                x.RequestedAtUtc,
+            });
+            e.HasIndex(x => new
+            {
+                x.TenantId,
+                x.ApprovalRequestId,
+                x.ActionType,
+            });
+            e.Property(x => x.PayloadHash)
+                .HasColumnType("char(64)")
+                .IsUnicode(false)
+                .IsFixedLength();
+            e.Property(x => x.ReceiptJson).HasColumnType("nvarchar(max)");
+            e.HasOne<SpaceDispatchApprovalRequest>()
+                .WithMany()
+                .HasForeignKey(x => new { x.TenantId, x.ApprovalRequestId })
+                .HasPrincipalKey(x => new { x.TenantId, x.Id })
+                .OnDelete(DeleteBehavior.Restrict);
         });
 
         modelBuilder.Entity<StockSerial>(e =>

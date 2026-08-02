@@ -41,7 +41,8 @@ namespace CP6.WebApi.Controllers.Space;
     StatusCodes.Status503ServiceUnavailable,
     "application/problem+json")]
 public sealed class SpaceDispatchApprovalController(
-    ISpaceDispatchApprovalService service) : ControllerBase
+    ISpaceDispatchApprovalService service,
+    ISpaceDispatchExecutionService executionService) : ControllerBase
 {
     [HttpPut("{approvalRequestId:guid}")]
     [SpaceAuditOperation(
@@ -119,4 +120,85 @@ public sealed class SpaceDispatchApprovalController(
             cancellationToken);
         return NoContent();
     }
+
+    [HttpGet("{approvalRequestId:guid}/execution")]
+    [SpaceAuditOperation(
+        "space.operations.dispatch-execution.read",
+        "DispatchExecution",
+        ResourceIdArgument = "approvalRequestId",
+        SiteIdArgument = "siteId",
+        PermissionCode = "space:operations:dispatch:read",
+        AuditRead = true)]
+    [RequirePermission(
+        "space",
+        "operations:dispatch:read",
+        UseProblemDetails = true)]
+    [ProducesResponseType<SpaceDispatchExecutionDto>(
+        StatusCodes.Status200OK)]
+    public Task<SpaceDispatchExecutionDto> GetExecution(
+        Guid siteId,
+        Guid recommendationId,
+        Guid approvalRequestId,
+        CancellationToken cancellationToken = default) =>
+        executionService.GetExecutionAsync(
+            siteId,
+            recommendationId,
+            approvalRequestId,
+            cancellationToken);
+
+    [HttpPut("{approvalRequestId:guid}/retry-requests/{actionId:guid}")]
+    [SpaceAuditOperation(
+        "space.operations.dispatch-execution.retry",
+        "DispatchExecutionAction",
+        ResourceIdArgument = "actionId",
+        SiteIdArgument = "siteId",
+        PermissionCode = "space:operations:dispatch:retry")]
+    [RequirePermission(
+        "space",
+        "operations:dispatch:retry",
+        UseProblemDetails = true)]
+    [ProducesResponseType<SpaceDispatchExecutionActionResponse>(
+        StatusCodes.Status200OK)]
+    public Task<SpaceDispatchExecutionActionResponse> Retry(
+        Guid siteId,
+        Guid recommendationId,
+        Guid approvalRequestId,
+        Guid actionId,
+        [FromBody, Required] SubmitSpaceDispatchExecutionActionRequest request,
+        CancellationToken cancellationToken = default) =>
+        executionService.RetryAsync(
+            siteId,
+            recommendationId,
+            approvalRequestId,
+            actionId,
+            request,
+            cancellationToken);
+
+    [HttpPut("{approvalRequestId:guid}/compensation-requests/{actionId:guid}")]
+    [SpaceAuditOperation(
+        "space.operations.dispatch-execution.compensate",
+        "DispatchExecutionAction",
+        ResourceIdArgument = "actionId",
+        SiteIdArgument = "siteId",
+        PermissionCode = "space:operations:dispatch:compensate")]
+    [RequirePermission(
+        "space",
+        "operations:dispatch:compensate",
+        UseProblemDetails = true)]
+    [ProducesResponseType<SpaceDispatchExecutionActionResponse>(
+        StatusCodes.Status200OK)]
+    public Task<SpaceDispatchExecutionActionResponse> Compensate(
+        Guid siteId,
+        Guid recommendationId,
+        Guid approvalRequestId,
+        Guid actionId,
+        [FromBody, Required] SubmitSpaceDispatchExecutionActionRequest request,
+        CancellationToken cancellationToken = default) =>
+        executionService.CompensateAsync(
+            siteId,
+            recommendationId,
+            approvalRequestId,
+            actionId,
+            request,
+            cancellationToken);
 }

@@ -105,6 +105,8 @@ public sealed class SpaceAuditPermissionSeedTests
                     "operations:dispatch:read",
                     "operations:dispatch:submit",
                     "operations:dispatch:cancel",
+                    "operations:dispatch:retry",
+                    "operations:dispatch:compensate",
                 },
                 action =>
                 {
@@ -550,7 +552,7 @@ public sealed class SpaceAuditPermissionSeedTests
     {
         var rows = I18nSpaceDispatchRecommendationSeed.Items;
 
-        Assert.Equal(63, rows.Length);
+        Assert.Equal(91, rows.Length);
         Assert.Equal(rows.Length, rows.Select(row => row.LangKey).Distinct().Count());
         Assert.All(rows, row =>
         {

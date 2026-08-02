@@ -3,7 +3,7 @@ using CP6.Entity.DomainModels;
 namespace CP6.WebApi.Seed;
 
 /// <summary>
-/// Space E11-S03 人员/任务调度建议画面词条。由 Program.cs 按租户幂等补齐。
+/// Space E11-S03 至 E11-S05 人员调度建议、审批与执行画面词条。由 Program.cs 按租户幂等补齐。
 /// </summary>
 public static class I18nSpaceDispatchRecommendationSeed
 {
@@ -72,5 +72,33 @@ public static class I18nSpaceDispatchRecommendationSeed
         new() { LangKey = "调度审批提交失败，任务未修改", ZhCN = "调度审批提交失败，任务未修改", ZhTW = "調度審批提交失敗，任務未修改", En = "Dispatch approval submission failed; tasks were not changed", Ja = "配車承認の申請に失敗しました。タスクは変更されていません", Ko = "배차 승인 제출에 실패했으며 작업은 변경되지 않았습니다" },
         new() { LangKey = "调度审批状态刷新失败", ZhCN = "调度审批状态刷新失败", ZhTW = "調度審批狀態重新整理失敗", En = "Failed to refresh dispatch approval status", Ja = "配車承認状態の更新に失敗しました", Ko = "배차 승인 상태를 새로고침하지 못했습니다" },
         new() { LangKey = "调度审批取消失败", ZhCN = "调度审批取消失败", ZhTW = "調度審批取消失敗", En = "Failed to cancel dispatch approval", Ja = "配車承認の取消に失敗しました", Ko = "배차 승인을 취소하지 못했습니다" },
+        new() { LangKey = "任务执行状态", ZhCN = "任务执行状态", ZhTW = "任務執行狀態", En = "Task execution status", Ja = "タスク実行状態", Ko = "작업 실행 상태" },
+        new() { LangKey = "补偿只撤销尚未开始的整批任务分派，不修改执行或库存事实", ZhCN = "补偿只撤销尚未开始的整批任务分派，不修改执行或库存事实", ZhTW = "補償只撤銷整批尚未開始的任務指派，不修改執行或庫存事實", En = "Compensation only withdraws the whole batch of unstarted assignments; it does not alter execution or inventory facts", Ja = "補償は未開始の一括タスク割当のみを解除し、実行または在庫の事実は変更しません", Ko = "보상은 시작하지 않은 전체 작업 할당만 취소하며 실행 또는 재고 사실을 변경하지 않습니다" },
+        new() { LangKey = "已分派", ZhCN = "已分派", ZhTW = "已指派", En = "Assigned", Ja = "割当済み", Ko = "할당됨" },
+        new() { LangKey = "执行中", ZhCN = "执行中", ZhTW = "執行中", En = "In progress", Ja = "実行中", Ko = "실행 중" },
+        new() { LangKey = "已完成", ZhCN = "已完成", ZhTW = "已完成", En = "Completed", Ja = "完了", Ko = "완료됨" },
+        new() { LangKey = "需关注", ZhCN = "需关注", ZhTW = "需關注", En = "Needs attention", Ja = "要確認", Ko = "주의 필요" },
+        new() { LangKey = "观察时点", ZhCN = "观察时点", ZhTW = "觀察時點", En = "Observed at", Ja = "観測時刻", Ko = "관찰 시각" },
+        new() { LangKey = "剩余重试次数", ZhCN = "剩余重试次数", ZhTW = "剩餘重試次數", En = "Retries remaining", Ja = "残り再試行回数", Ko = "남은 재시도 횟수" },
+        new() { LangKey = "开始时点", ZhCN = "开始时点", ZhTW = "開始時點", En = "Started at", Ja = "開始時刻", Ko = "시작 시각" },
+        new() { LangKey = "完成时点", ZhCN = "完成时点", ZhTW = "完成時點", En = "Completed at", Ja = "完了時刻", Ko = "완료 시각" },
+        new() { LangKey = "最近事件", ZhCN = "最近事件", ZhTW = "最近事件", En = "Latest event", Ja = "最新イベント", Ko = "최근 이벤트" },
+        new() { LangKey = "执行动作原因", ZhCN = "执行动作原因", ZhTW = "執行動作原因", En = "Execution action reason", Ja = "実行アクションの理由", Ko = "실행 조치 사유" },
+        new() { LangKey = "说明重试或补偿原因", ZhCN = "说明重试或补偿原因", ZhTW = "說明重試或補償原因", En = "Explain the reason for retry or compensation", Ja = "再試行または補償の理由を入力してください", Ko = "재시도 또는 보상 사유를 입력하세요" },
+        new() { LangKey = "刷新执行状态", ZhCN = "刷新执行状态", ZhTW = "重新整理執行狀態", En = "Refresh execution status", Ja = "実行状態を更新", Ko = "실행 상태 새로고침" },
+        new() { LangKey = "重试分派", ZhCN = "重试分派", ZhTW = "重試指派", En = "Retry assignment", Ja = "割当を再試行", Ko = "할당 재시도" },
+        new() { LangKey = "补偿未开始分派", ZhCN = "补偿未开始分派", ZhTW = "補償未開始的指派", En = "Compensate unstarted assignments", Ja = "未開始の割当を補償", Ko = "미시작 할당 보상" },
+        new() { LangKey = "已补偿", ZhCN = "已补偿", ZhTW = "已補償", En = "Compensated", Ja = "補償済み", Ko = "보상됨" },
+        new() { LangKey = "分派失败", ZhCN = "分派失败", ZhTW = "指派失敗", En = "Assignment failed", Ja = "割当に失敗", Ko = "할당 실패" },
+        new() { LangKey = "需人工关注", ZhCN = "需人工关注", ZhTW = "需人工關注", En = "Manual attention required", Ja = "手動確認が必要", Ko = "수동 확인 필요" },
+        new() { LangKey = "已暂停", ZhCN = "已暂停", ZhTW = "已暫停", En = "Paused", Ja = "一時停止", Ko = "일시 중지됨" },
+        new() { LangKey = "异常", ZhCN = "异常", ZhTW = "異常", En = "Exception", Ja = "例外", Ko = "예외" },
+        new() { LangKey = "部分完成", ZhCN = "部分完成", ZhTW = "部分完成", En = "Partially completed", Ja = "一部完了", Ko = "부분 완료" },
+        new() { LangKey = "已释放", ZhCN = "已释放", ZhTW = "已釋放", En = "Released", Ja = "解放済み", Ko = "해제됨" },
+        new() { LangKey = "已偏离", ZhCN = "已偏离", ZhTW = "已偏離", En = "Diverged", Ja = "逸脱", Ko = "이탈됨" },
+        new() { LangKey = "任务缺失", ZhCN = "任务缺失", ZhTW = "任務缺失", En = "Task missing", Ja = "タスクが見つかりません", Ko = "작업 누락" },
+        new() { LangKey = "任务执行状态刷新失败", ZhCN = "任务执行状态刷新失败", ZhTW = "任務執行狀態重新整理失敗", En = "Failed to refresh task execution status", Ja = "タスク実行状態の更新に失敗しました", Ko = "작업 실행 상태를 새로고침하지 못했습니다" },
+        new() { LangKey = "任务分派重试失败，未产生额外影响", ZhCN = "任务分派重试失败，未产生额外影响", ZhTW = "任務指派重試失敗，未產生額外影響", En = "Task assignment retry failed with no additional effect", Ja = "タスク割当の再試行に失敗しました。追加の変更はありません", Ko = "작업 할당 재시도에 실패했으며 추가 영향은 없습니다" },
+        new() { LangKey = "任务分派补偿失败，未修改执行或库存事实", ZhCN = "任务分派补偿失败，未修改执行或库存事实", ZhTW = "任務指派補償失敗，未修改執行或庫存事實", En = "Task assignment compensation failed; execution and inventory facts were not changed", Ja = "タスク割当の補償に失敗しました。実行または在庫の事実は変更されていません", Ko = "작업 할당 보상에 실패했으며 실행 또는 재고 사실은 변경되지 않았습니다" },
     ];
 }

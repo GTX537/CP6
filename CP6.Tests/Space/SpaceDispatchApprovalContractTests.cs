@@ -37,6 +37,26 @@ public sealed class SpaceDispatchApprovalContractTests
             "operations:dispatch:cancel",
             "space.operations.dispatch-approval.cancel",
             auditRead: false);
+        AssertEndpoint(
+            nameof(SpaceDispatchApprovalController.GetExecution),
+            "operations:dispatch:read",
+            "space.operations.dispatch-execution.read",
+            auditRead: true,
+            resourceType: "DispatchExecution");
+        AssertEndpoint(
+            nameof(SpaceDispatchApprovalController.Retry),
+            "operations:dispatch:retry",
+            "space.operations.dispatch-execution.retry",
+            auditRead: false,
+            resourceType: "DispatchExecutionAction",
+            resourceIdArgument: "actionId");
+        AssertEndpoint(
+            nameof(SpaceDispatchApprovalController.Compensate),
+            "operations:dispatch:compensate",
+            "space.operations.dispatch-execution.compensate",
+            auditRead: false,
+            resourceType: "DispatchExecutionAction",
+            resourceIdArgument: "actionId");
     }
 
     [Fact]
@@ -59,6 +79,16 @@ public sealed class SpaceDispatchApprovalContractTests
         Assert.Contains("Receipts", approval);
         Assert.DoesNotContain("SelectionJson", approval);
         Assert.DoesNotContain("RecommendationRequestHash", approval);
+
+        Assert.Equal(
+            ["Reason"],
+            Properties<SubmitSpaceDispatchExecutionActionRequest>());
+        var executionTask = Properties<SpaceDispatchExecutionTaskDto>();
+        Assert.Contains("WmsStatus", executionTask);
+        Assert.Contains("State", executionTask);
+        Assert.DoesNotContain("AssignedTo", executionTask);
+        Assert.DoesNotContain("UserId", executionTask);
+        Assert.DoesNotContain("PersonUserId", executionTask);
     }
 
     [Fact]
@@ -67,7 +97,7 @@ public sealed class SpaceDispatchApprovalContractTests
         Assert.Equal("SPACE_DISPATCH_ASSIGNMENT", SpaceDispatchApprovalService.ApprovalBizType);
         Assert.Equal("cp6-mobile-task-assignment-v1", Cp6SpaceDispatchTaskAdapter.AdapterVersion);
         Assert.Equal(
-            ["Applied", "Cancelled", "FailedNoEffect", "PendingApproval", "Rejected", "Stale"],
+            ["Applied", "Cancelled", "Compensated", "FailedNoEffect", "PendingApproval", "Rejected", "Stale"],
             typeof(SpaceDispatchApprovalStatus)
                 .GetFields(BindingFlags.Public | BindingFlags.Static)
                 .Select(value => (string)value.GetRawConstantValue()!)
@@ -81,13 +111,23 @@ public sealed class SpaceDispatchApprovalContractTests
         Assert.Equal(
             ["CancelAsync", "GetAsync", "SubmitAsync"],
             methods.Select(value => value.Name));
+
+        var executionMethods = typeof(ISpaceDispatchExecutionService)
+            .GetMethods()
+            .OrderBy(value => value.Name)
+            .ToArray();
+        Assert.Equal(
+            ["CompensateAsync", "GetExecutionAsync", "RetryAsync"],
+            executionMethods.Select(value => value.Name));
     }
 
     private static void AssertEndpoint(
         string methodName,
         string permissionAction,
         string auditAction,
-        bool auditRead)
+        bool auditRead,
+        string resourceType = "DispatchApprovalRequest",
+        string resourceIdArgument = "approvalRequestId")
     {
         var method = typeof(SpaceDispatchApprovalController).GetMethod(methodName);
         Assert.NotNull(method);
@@ -102,8 +142,8 @@ public sealed class SpaceDispatchApprovalContractTests
 
         var audit = Assert.Single(method!.GetCustomAttributes<SpaceAuditOperationAttribute>());
         Assert.Equal(auditAction, audit.Action);
-        Assert.Equal("DispatchApprovalRequest", audit.ResourceType);
-        Assert.Equal("approvalRequestId", audit.ResourceIdArgument);
+        Assert.Equal(resourceType, audit.ResourceType);
+        Assert.Equal(resourceIdArgument, audit.ResourceIdArgument);
         Assert.Equal("siteId", audit.SiteIdArgument);
         Assert.Equal($"space:{permissionAction}", audit.PermissionCode);
         Assert.Equal(auditRead, audit.AuditRead);

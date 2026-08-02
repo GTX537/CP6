@@ -167,6 +167,213 @@ public sealed class SpaceDispatchApprovalServiceTests
         Assert.Equal(SpaceErrorCodes.DispatchApprovalNotPending, error.Code);
     }
 
+    [Fact]
+    public async Task Approved_callback_replay_is_idempotent_and_execution_is_assigned()
+    {
+        await using var fixture = await Fixture.CreateAsync();
+        var requestId = Guid.NewGuid();
+        await fixture.Service.SubmitAsync(
+            fixture.SiteId,
+            fixture.RecommendationId,
+            requestId,
+            new SubmitSpaceDispatchApprovalRequest([1], "Release approved work"));
+        var callback = fixture.Callback(fixture.ApproverId);
+
+        await fixture.Service.ApplyApprovedAsync(requestId, callback);
+        await fixture.Core.SaveChangesAsync();
+        await fixture.Service.ApplyApprovedAsync(requestId, callback);
+        await fixture.Core.SaveChangesAsync();
+
+        var execution = await fixture.Service.GetExecutionAsync(
+            fixture.SiteId,
+            fixture.RecommendationId,
+            requestId);
+        Assert.Equal("Assigned", execution.Status);
+        Assert.True(execution.CanCompensate);
+        Assert.Equal(1, execution.AssignedCount);
+        Assert.Equal("Assigned", Assert.Single(execution.Tasks).State);
+        Assert.Single(await fixture.Core.MobileTaskEvents.ToListAsync());
+        Assert.Single(await fixture.Core.TaskCommandReceipts.ToListAsync());
+    }
+
+    [Fact]
+    public async Task Failed_no_effect_can_retry_once_and_replay_action_without_duplicate_writes()
+    {
+        await using var fixture = await Fixture.CreateAsync();
+        var requestId = Guid.NewGuid();
+        await fixture.Service.SubmitAsync(
+            fixture.SiteId,
+            fixture.RecommendationId,
+            requestId,
+            new SubmitSpaceDispatchApprovalRequest([1], "Release approved work"));
+        var approval = await fixture.Core.SpaceDispatchApprovalRequests.SingleAsync();
+        approval.Status = SpaceDispatchApprovalStatus.FailedNoEffect;
+        approval.DecidedById = fixture.ApproverId;
+        approval.DecidedAtUtc = Now;
+        approval.FailureCode = "SPACE_DISPATCH_ADAPTER_TEMPORARY";
+        await fixture.Core.SaveChangesAsync();
+        var actionId = Guid.NewGuid();
+
+        var first = await fixture.Service.RetryAsync(
+            fixture.SiteId,
+            fixture.RecommendationId,
+            requestId,
+            actionId,
+            new SubmitSpaceDispatchExecutionActionRequest("Retry after review"));
+        var replay = await fixture.Service.RetryAsync(
+            fixture.SiteId,
+            fixture.RecommendationId,
+            requestId,
+            actionId,
+            new SubmitSpaceDispatchExecutionActionRequest(" Retry after review "));
+
+        Assert.Equal("Executed", first.Outcome);
+        Assert.Equal("Duplicate", replay.Outcome);
+        Assert.Equal(SpaceDispatchExecutionActionStatus.Applied, first.Action.Status);
+        Assert.Equal("Assigned", first.Execution.Status);
+        Assert.Equal(1, first.Execution.RetryAttemptCount);
+        Assert.Single(await fixture.Core.SpaceDispatchExecutionActions.ToListAsync());
+        Assert.Single(await fixture.Core.MobileTaskEvents.ToListAsync());
+        Assert.Single(await fixture.Core.TaskCommandReceipts.ToListAsync());
+        var conflict = await Assert.ThrowsAsync<SpaceProblemException>(() =>
+            fixture.Service.RetryAsync(
+                fixture.SiteId,
+                fixture.RecommendationId,
+                requestId,
+                actionId,
+                new SubmitSpaceDispatchExecutionActionRequest("Different payload")));
+        Assert.Equal(SpaceErrorCodes.DispatchExecutionConflict, conflict.Code);
+    }
+
+    [Fact]
+    public async Task Retry_limit_counts_distinct_failed_actions_but_not_replays()
+    {
+        await using var fixture = await Fixture.CreateAsync(
+            (_, _) => new AlwaysFailingAdapter());
+        var requestId = Guid.NewGuid();
+        await fixture.Service.SubmitAsync(
+            fixture.SiteId,
+            fixture.RecommendationId,
+            requestId,
+            new SubmitSpaceDispatchApprovalRequest([1], "Release approved work"));
+        var approval = await fixture.Core.SpaceDispatchApprovalRequests.SingleAsync();
+        approval.Status = SpaceDispatchApprovalStatus.FailedNoEffect;
+        approval.DecidedById = fixture.ApproverId;
+        approval.DecidedAtUtc = Now;
+        await fixture.Core.SaveChangesAsync();
+
+        for (var attempt = 1; attempt <= 3; attempt++)
+        {
+            var result = await fixture.Service.RetryAsync(
+                fixture.SiteId,
+                fixture.RecommendationId,
+                requestId,
+                Guid.NewGuid(),
+                new SubmitSpaceDispatchExecutionActionRequest($"Retry {attempt}"));
+            Assert.Equal(
+                SpaceDispatchExecutionActionStatus.FailedNoEffect,
+                result.Action.Status);
+            Assert.Equal(attempt, result.Execution.RetryAttemptCount);
+        }
+
+        var error = await Assert.ThrowsAsync<SpaceProblemException>(() =>
+            fixture.Service.RetryAsync(
+                fixture.SiteId,
+                fixture.RecommendationId,
+                requestId,
+                Guid.NewGuid(),
+                new SubmitSpaceDispatchExecutionActionRequest("Retry 4")));
+        Assert.Equal(SpaceErrorCodes.DispatchExecutionRetryLimit, error.Code);
+        Assert.Equal(3, await fixture.Core.SpaceDispatchExecutionActions.CountAsync());
+        Assert.Null((await fixture.Core.MobileTasks.SingleAsync()).AssignedTo);
+    }
+
+    [Fact]
+    public async Task Safe_compensation_is_atomic_idempotent_and_preserves_task_execution()
+    {
+        await using var fixture = await Fixture.CreateAsync();
+        var requestId = Guid.NewGuid();
+        await fixture.Service.SubmitAsync(
+            fixture.SiteId,
+            fixture.RecommendationId,
+            requestId,
+            new SubmitSpaceDispatchApprovalRequest([1], "Release approved work"));
+        await fixture.Service.ApplyApprovedAsync(
+            requestId,
+            fixture.Callback(fixture.ApproverId));
+        await fixture.Core.SaveChangesAsync();
+        var actionId = Guid.NewGuid();
+
+        var first = await fixture.Service.CompensateAsync(
+            fixture.SiteId,
+            fixture.RecommendationId,
+            requestId,
+            actionId,
+            new SubmitSpaceDispatchExecutionActionRequest("Undo unstarted assignment"));
+        var replay = await fixture.Service.CompensateAsync(
+            fixture.SiteId,
+            fixture.RecommendationId,
+            requestId,
+            actionId,
+            new SubmitSpaceDispatchExecutionActionRequest(" Undo unstarted assignment "));
+
+        Assert.Equal("Executed", first.Outcome);
+        Assert.Equal("Duplicate", replay.Outcome);
+        Assert.Equal(SpaceDispatchApprovalStatus.Compensated,
+            first.Execution.ApprovalStatus);
+        Assert.Equal("Compensated", first.Execution.Status);
+        Assert.Equal("Compensated", Assert.Single(first.Execution.Tasks).State);
+        var task = await fixture.Core.MobileTasks.SingleAsync();
+        Assert.Null(task.AssignedTo);
+        Assert.Equal(MobileTaskStatus.Pending, task.Status);
+        Assert.Equal(3, task.ExecutionVersion);
+        Assert.Equal(2, await fixture.Core.MobileTaskEvents.CountAsync());
+        Assert.Equal(2, await fixture.Core.TaskCommandReceipts.CountAsync());
+        Assert.Single(await fixture.Core.SpaceDispatchExecutionActions.ToListAsync());
+    }
+
+    [Fact]
+    public async Task Started_task_blocks_compensation_with_zero_task_effect()
+    {
+        await using var fixture = await Fixture.CreateAsync();
+        var requestId = Guid.NewGuid();
+        await fixture.Service.SubmitAsync(
+            fixture.SiteId,
+            fixture.RecommendationId,
+            requestId,
+            new SubmitSpaceDispatchApprovalRequest([1], "Release approved work"));
+        await fixture.Service.ApplyApprovedAsync(
+            requestId,
+            fixture.Callback(fixture.ApproverId));
+        await fixture.Core.SaveChangesAsync();
+        var task = await fixture.Core.MobileTasks.SingleAsync();
+        task.Status = MobileTaskStatus.InProgress;
+        task.StartedAt = Now.AddMinutes(1);
+        await fixture.Core.SaveChangesAsync();
+
+        var before = await fixture.Service.GetExecutionAsync(
+            fixture.SiteId,
+            fixture.RecommendationId,
+            requestId);
+        var result = await fixture.Service.CompensateAsync(
+            fixture.SiteId,
+            fixture.RecommendationId,
+            requestId,
+            Guid.NewGuid(),
+            new SubmitSpaceDispatchExecutionActionRequest("Attempt safe compensation"));
+
+        Assert.Equal("Executing", before.Status);
+        Assert.False(before.CanCompensate);
+        Assert.Equal(
+            SpaceDispatchExecutionActionStatus.RejectedNoEffect,
+            result.Action.Status);
+        Assert.Equal("SPACE_DISPATCH_COMPENSATION_NOT_SAFE", result.Action.FailureCode);
+        Assert.Equal("Executing", result.Execution.Status);
+        Assert.Equal("worker1", (await fixture.Core.MobileTasks.SingleAsync()).AssignedTo);
+        Assert.Equal(1, await fixture.Core.MobileTaskEvents.CountAsync());
+        Assert.Equal(1, await fixture.Core.TaskCommandReceipts.CountAsync());
+    }
+
     private sealed class Fixture : IAsyncDisposable
     {
         private Fixture(
@@ -216,7 +423,9 @@ public sealed class SpaceDispatchApprovalServiceTests
             DecidedById = decidedBy,
         };
 
-        public static async Task<Fixture> CreateAsync()
+        public static async Task<Fixture> CreateAsync(
+            Func<CP6Context, IWmsAccessScopeProvider, ISpaceDispatchTaskAdapter>?
+                adapterFactory = null)
         {
             var tenantId = Guid.NewGuid();
             var siteId = Guid.NewGuid();
@@ -250,7 +459,8 @@ public sealed class SpaceDispatchApprovalServiceTests
             var approvals = new RecordingApprovalService(core);
             var taskCenter = new RecordingTaskCenter(core);
             var scopes = new FixedWmsAccessScopeProvider(WmsAccessScope.All);
-            var adapter = new Cp6SpaceDispatchTaskAdapter(core, scopes);
+            var adapter = adapterFactory?.Invoke(core, scopes) ??
+                new Cp6SpaceDispatchTaskAdapter(core, scopes);
             var service = new SpaceDispatchApprovalService(
                 space,
                 core,
@@ -494,6 +704,23 @@ public sealed class SpaceDispatchApprovalServiceTests
     private sealed class TestClock : ISpaceClock
     {
         public DateTime UtcNow => Now;
+    }
+
+    private sealed class AlwaysFailingAdapter : ISpaceDispatchTaskAdapter
+    {
+        public string AdapterId => "test-failing-dispatch-adapter-v1";
+
+        public Task<SpaceDispatchTaskAdapterResult> StageAssignmentsAsync(
+            SpaceDispatchTaskAdapterCommand command,
+            CancellationToken cancellationToken = default) =>
+            throw new SpaceDispatchTaskAdapterException(
+                "SPACE_DISPATCH_ADAPTER_TEMPORARY");
+
+        public Task<SpaceDispatchTaskAdapterResult> StageCompensationAsync(
+            SpaceDispatchTaskCompensationCommand command,
+            CancellationToken cancellationToken = default) =>
+            throw new SpaceDispatchTaskAdapterException(
+                "SPACE_DISPATCH_ADAPTER_TEMPORARY");
     }
 
     private sealed class RecordingAccess : ISpaceDesignAccessEvaluator

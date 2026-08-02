@@ -49,6 +49,8 @@ public class SpacePermissionAttributeTests
         "space:operations:dispatch:read",
         "space:operations:dispatch:submit",
         "space:operations:dispatch:cancel",
+        "space:operations:dispatch:retry",
+        "space:operations:dispatch:compensate",
         "space-ai-admin:read", "space-ai-admin:manage",
     };
 
@@ -99,6 +101,8 @@ public class SpacePermissionAttributeTests
             ["SpaceDispatchRecommendationController.Get"] =
                 "space:operations:recommendations:read",
             ["SpaceDispatchApprovalController.Get"] =
+                "space:operations:dispatch:read",
+            ["SpaceDispatchApprovalController.GetExecution"] =
                 "space:operations:dispatch:read",
             ["SpaceExternalOrganizationController.GetOrganizations"] =
                 "space:external:read",
