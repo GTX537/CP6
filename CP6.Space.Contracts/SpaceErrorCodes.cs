@@ -268,6 +268,10 @@ public static class SpaceErrorCodes
         "SPACE_PLANNING_DECISION_CONFLICT";
     public const string PlanningDecisionNotFound =
         "SPACE_PLANNING_DECISION_NOT_FOUND";
+    public const string PlanningExchangeUnavailable =
+        "SPACE_PLANNING_EXCHANGE_UNAVAILABLE";
+    public const string PlanningExchangeGeometryInvalid =
+        "SPACE_PLANNING_EXCHANGE_GEOMETRY_INVALID";
     public const string PlanningDecisionInvalid =
         "SPACE_PLANNING_DECISION_INVALID";
 }

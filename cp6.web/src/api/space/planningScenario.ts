@@ -418,6 +418,16 @@ export const planningScenarioApi = {
       request,
     )
   },
+  downloadGlb(siteId: string, branchId: string) {
+    return http.get<unknown, Blob>(
+      `${planningRoot}/sites/${encodeURIComponent(siteId)}` +
+        `/scenario-branches/${encodeURIComponent(branchId)}/exports/gltf`,
+      {
+        responseType: 'blob',
+        headers: { Accept: 'model/gltf-binary' },
+      },
+    )
+  },
 }
 
 function historicalDatasetRoot(siteId: string, branchId: string) {

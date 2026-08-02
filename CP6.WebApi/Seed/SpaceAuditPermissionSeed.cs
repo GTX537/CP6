@@ -65,6 +65,7 @@ public static class SpaceAuditPermissionSeed
             ("planning:comparison:create", "创建规划方案对比", 240),
             ("planning:decision:read", "查看规划决策记录", 250),
             ("planning:decision:create", "记录规划决策", 260),
+            ("planning:exchange:read", "导出规划交换文件", 270),
         ];
     private static readonly (string Code, string Name, int Sort)[]
         AiAdminActions =

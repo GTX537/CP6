@@ -32,6 +32,10 @@ public static class I18nSpacePlanningScenarioSeed
         L("space.planningScenario.duplicate", "已存在相同场景分支。", "已存在相同場景分支。", "The same scenario branch already exists.", "同じシナリオブランチが既に存在します。", "동일한 시나리오 브랜치가 이미 있습니다."),
         L("space.planningScenario.created", "规划场景已进入克隆队列。", "規劃場景已進入複製佇列。", "The planning scenario has entered the clone queue.", "計画シナリオをクローンキューに追加しました。", "계획 시나리오가 복제 대기열에 추가되었습니다."),
         L("space.planningScenario.createFailed", "无法创建规划场景。", "無法建立規劃場景。", "Unable to create the planning scenario.", "計画シナリオを作成できません。", "계획 시나리오를 만들 수 없습니다."),
+        L("space.planningScenario.exchange", "GLB \u4ea4\u6362", "GLB \u4ea4\u63db", "GLB exchange", "GLB \u4ea4\u63db", "GLB \uad50\ud658"),
+        L("space.planningScenario.downloadExchange", "\u4e0b\u8f7d GLB", "\u4e0b\u8f09 GLB", "Download GLB", "GLB \u3092\u30c0\u30a6\u30f3\u30ed\u30fc\u30c9", "GLB \ub2e4\uc6b4\ub85c\ub4dc"),
+        L("space.planningScenario.exchangeDownloaded", "GLB \u4ea4\u6362\u6587\u4ef6\u5df2\u4e0b\u8f7d\u3002", "GLB \u4ea4\u63db\u6a94\u6848\u5df2\u4e0b\u8f09\u3002", "GLB exchange downloaded.", "GLB \u4ea4\u63db\u30d5\u30a1\u30a4\u30eb\u3092\u30c0\u30a6\u30f3\u30ed\u30fc\u30c9\u3057\u307e\u3057\u305f\u3002", "GLB \uad50\ud658 \ud30c\uc77c\uc744 \ub2e4\uc6b4\ub85c\ub4dc\ud588\uc2b5\ub2c8\ub2e4."),
+        L("space.planningScenario.exchangeDownloadFailed", "\u65e0\u6cd5\u4e0b\u8f7d GLB \u4ea4\u6362\u6587\u4ef6\u3002", "\u7121\u6cd5\u4e0b\u8f09 GLB \u4ea4\u63db\u6a94\u6848\u3002", "Unable to download the GLB exchange.", "GLB \u4ea4\u63db\u30d5\u30a1\u30a4\u30eb\u3092\u30c0\u30a6\u30f3\u30ed\u30fc\u30c9\u3067\u304d\u307e\u305b\u3093\u3002", "GLB \uad50\ud658 \ud30c\uc77c\uc744 \ub2e4\uc6b4\ub85c\ub4dc\ud560 \uc218 \uc5c6\uc2b5\ub2c8\ub2e4."),
     ];
 
     private static Sys_Lang L(

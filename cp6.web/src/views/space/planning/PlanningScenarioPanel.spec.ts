@@ -17,6 +17,7 @@ vi.mock('@/api/space/planningScenario', () => ({
   planningScenarioApi: {
     list: vi.fn(),
     create: vi.fn(),
+    downloadGlb: vi.fn(),
   },
   planningDatasetApi: {
     list: vi.fn(),
@@ -57,6 +58,8 @@ describe('PlanningScenarioPanel', () => {
         outcome: 'Created',
         branch,
       } satisfies CreateSpacePlanningScenarioBranchResponse)
+    vi.mocked(planningScenarioApi.downloadGlb)
+      .mockResolvedValue(new Blob(['glTF']))
     vi.mocked(planningDatasetApi.list)
       .mockResolvedValue({ items: [], isTruncated: false })
     vi.spyOn(ElMessage, 'success').mockImplementation(() => undefined as never)
@@ -117,6 +120,30 @@ describe('PlanningScenarioPanel', () => {
     expect(wrapper.find('[data-test="historical-dataset-panel"]').exists())
       .toBe(true)
     expect(planningDatasetApi.list).toHaveBeenCalledWith('site-1', 'branch-1')
+  })
+
+  it('downloads GLB only for a ready isolated branch', async () => {
+    const createObjectUrl = vi.fn(() => 'blob:exchange')
+    const revokeObjectUrl = vi.fn()
+    vi.stubGlobal('URL', {
+      createObjectURL: createObjectUrl,
+      revokeObjectURL: revokeObjectUrl,
+    })
+    const click = vi.spyOn(HTMLAnchorElement.prototype, 'click')
+      .mockImplementation(() => undefined)
+    const wrapper = mountPanel()
+    await flushPromises()
+
+    const button = wrapper.find('[data-test="download-exchange"]')
+    expect(button.exists()).toBe(true)
+    await button.trigger('click')
+    await flushPromises()
+
+    expect(planningScenarioApi.downloadGlb)
+      .toHaveBeenCalledWith('site-1', 'branch-1')
+    expect(createObjectUrl).toHaveBeenCalled()
+    expect(click).toHaveBeenCalled()
+    expect(revokeObjectUrl).toHaveBeenCalledWith('blob:exchange')
   })
 })
 

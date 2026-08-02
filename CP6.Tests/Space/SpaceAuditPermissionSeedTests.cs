@@ -126,6 +126,7 @@ public sealed class SpaceAuditPermissionSeedTests
                     "planning:comparison:create",
                     "planning:decision:read",
                     "planning:decision:create",
+                    "planning:exchange:read",
                 },
                 action =>
                 {
@@ -536,7 +537,7 @@ public sealed class SpaceAuditPermissionSeedTests
     {
         var rows = I18nSpacePlanningScenarioSeed.Items;
 
-        Assert.Equal(23, rows.Length);
+        Assert.Equal(27, rows.Length);
         Assert.Equal(rows.Length, rows.Select(row => row.LangKey).Distinct().Count());
         Assert.All(rows, row =>
         {
