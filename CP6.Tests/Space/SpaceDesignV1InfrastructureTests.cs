@@ -175,6 +175,7 @@ public sealed class SpaceDesignV1InfrastructureTests
             accessor,
             http,
             new FixedClock());
+        var organizationId = Guid.NewGuid().ToString();
 
         string cursor;
         using (accessor.Push(SpaceExecutionContext.ForUser(
@@ -182,7 +183,8 @@ public sealed class SpaceDesignV1InfrastructureTests
                    actorId.ToString(),
                    "actor",
                    Guid.NewGuid(),
-                   "0123456789abcdef0123456789abcdef")))
+                   "0123456789abcdef0123456789abcdef",
+                   organizationId)))
         {
             cursor = codec.Encode(
                 new SpaceCursorState("versions", "filter-a", 50));
@@ -201,7 +203,61 @@ public sealed class SpaceDesignV1InfrastructureTests
                    Guid.NewGuid().ToString(),
                    "other",
                    Guid.NewGuid(),
-                   "fedcba9876543210fedcba9876543210")))
+                   "fedcba9876543210fedcba9876543210",
+                   organizationId)))
+        {
+            var mismatch = Assert.Throws<SpaceProblemException>(
+                () => codec.Decode(cursor, "versions", "filter-a"));
+            Assert.Equal(
+                SpaceErrorCodes.CursorScopeMismatch,
+                mismatch.Code);
+        }
+
+        using (accessor.Push(SpaceExecutionContext.ForUser(
+                   Guid.NewGuid(),
+                   actorId.ToString(),
+                   "actor",
+                   Guid.NewGuid(),
+                   "abcdef0123456789abcdef0123456789",
+                   organizationId)))
+        {
+            var mismatch = Assert.Throws<SpaceProblemException>(
+                () => codec.Decode(cursor, "versions", "filter-a"));
+            Assert.Equal(
+                SpaceErrorCodes.CursorScopeMismatch,
+                mismatch.Code);
+        }
+
+        using (accessor.Push(SpaceExecutionContext.ForUser(
+                   tenantId,
+                   actorId.ToString(),
+                   "actor",
+                   Guid.NewGuid(),
+                   "abcdefabcdefabcdefabcdefabcdefab",
+                   Guid.NewGuid().ToString())))
+        {
+            var mismatch = Assert.Throws<SpaceProblemException>(
+                () => codec.Decode(cursor, "versions", "filter-a"));
+            Assert.Equal(
+                SpaceErrorCodes.CursorScopeMismatch,
+                mismatch.Code);
+        }
+
+        http.HttpContext.User = new System.Security.Claims.ClaimsPrincipal(
+            new System.Security.Claims.ClaimsIdentity(
+            [
+                new System.Security.Claims.Claim(
+                    "space_grant_version",
+                    "grant-2"),
+            ],
+            "test"));
+        using (accessor.Push(SpaceExecutionContext.ForUser(
+                   tenantId,
+                   actorId.ToString(),
+                   "actor",
+                   Guid.NewGuid(),
+                   "123456789abcdef0123456789abcdef0",
+                   organizationId)))
         {
             var mismatch = Assert.Throws<SpaceProblemException>(
                 () => codec.Decode(cursor, "versions", "filter-a"));

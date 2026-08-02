@@ -224,6 +224,44 @@ public sealed class SpaceAccessEvaluatorTests
         Assert.Equal([policy.Id], allowed.FieldPolicyIds);
     }
 
+    [Fact]
+    public async Task Authorization_version_is_bound_to_resource_scope()
+    {
+        var fixture = await CreateFixtureAsync();
+        await using var context = fixture.Context;
+        AddGrant(
+            context,
+            fixture,
+            fixture.SiteA,
+            Guid.NewGuid(),
+            "OWNER-A");
+        await context.SaveChangesAsync();
+        var evaluator = CreateEvaluator(context, fixture);
+        var organization = new SpaceOrganizationContext(
+            fixture.Organization.Id);
+
+        var scene = await evaluator.BuildQueryScopeAsync(
+            fixture.Principal,
+            SpaceResourceType.PublishedScene,
+            organization);
+        var stock = await evaluator.BuildQueryScopeAsync(
+            fixture.Principal,
+            SpaceResourceType.Stock,
+            organization);
+        var task = await evaluator.BuildQueryScopeAsync(
+            fixture.Principal,
+            SpaceResourceType.Task,
+            organization);
+
+        Assert.Equal(64, scene.AuthorizationVersion.Length);
+        Assert.Equal(3, new[]
+        {
+            scene.AuthorizationVersion,
+            stock.AuthorizationVersion,
+            task.AuthorizationVersion,
+        }.Distinct(StringComparer.Ordinal).Count());
+    }
+
     private static Guid grantFloor(SpaceContext context, Guid grantId) =>
         context.ExternalGrantFloors.Local
             .Single(item => item.GrantId == grantId)
