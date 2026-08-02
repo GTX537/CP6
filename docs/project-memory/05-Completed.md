@@ -1,5 +1,13 @@
 # 已完成能力与近期里程碑
 
+## 2026-08-02 E12-S01 生产隔离规划分支
+
+- 以 `c673b7ec` / `8d75e79e` / `0ac603d4` / `3d41c8d9` 完成隔离模型、功能、no-ff 集成与五语收口；内部规划人员可从当前生产 Published 快照创建多个不可变血缘的异步克隆场景。
+- `PlanningScenario` 版本不占生产 Draft/Published 指针，领域与数据库均拒绝其进入生产发布生命周期；生产后续发布不会改变已固定的场景基础快照。
+- 新增 3 个 planning API、2 个权限、动态菜单、场景工作区、Migration/幂等 SQL、OpenAPI 71 operations 与同步的 C#/TypeScript SDK。
+- 全量门禁为 Space Unit 261、默认 Space Integration 235 passed / 63 SQL-gated skipped、CP6.Tests 2763 passed / 17 environment-gated skipped、前端 120 files / 664 tests、完整 solution Release 0 error / 10 条既有 warning；EF/SDK/TypeScript/生产构建通过。20 个页面词条具备五语运行时种子，既有 i18n 静态欠账仍为 908。
+- 功能历史进入远端受控集成后已删除功能工作树及本地/远端临时分支，释放约 2.68 GiB；`main` 未修改。下一张独立实施卡为 E12-S02 脱敏历史任务数据集和回放时钟。
+
 ## 产品能力
 
 - ERP 销售主线、MES 制造执行、WMS 仓储物流及 ERP→MES→WMS 闭环已成型。
