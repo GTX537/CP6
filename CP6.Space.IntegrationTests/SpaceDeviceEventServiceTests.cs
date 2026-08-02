@@ -105,11 +105,17 @@ public sealed class SpaceDeviceEventServiceTests
 
         Assert.Equal(4, accepted.AcceptedCount);
         Assert.Equal(0, accepted.DuplicateCount);
+        Assert.Equal(0, accepted.StaleCount);
         Assert.Equal("WCS-01", accepted.SourceId);
         Assert.All(accepted.Receipts, value =>
-            Assert.Equal("AGV-01", value.DeviceExternalId));
+        {
+            Assert.Equal("AGV-01", value.DeviceExternalId);
+            Assert.True(value.ProjectionApplied);
+        });
         Assert.Equal(0, replay.AcceptedCount);
         Assert.Equal(4, replay.DuplicateCount);
+        Assert.All(replay.Receipts, value =>
+            Assert.False(value.ProjectionApplied));
         Assert.Equal(4, await fixture.Context.DeviceEvents.CountAsync());
         var events = await fixture.Context.DeviceEvents
             .OrderBy(value => value.OccurredAtUtc)
@@ -119,6 +125,126 @@ public sealed class SpaceDeviceEventServiceTests
         Assert.Equal("ALARM-01", events[2].AlarmExternalId);
         Assert.Equal(SpaceDeviceAlarmSeverity.Critical, events[2].AlarmSeverity);
         Assert.Equal(SpaceDeviceEventKind.AlarmCleared, events[3].EventKind);
+        var state = await fixture.Context.DeviceStates.SingleAsync();
+        Assert.Equal(SpaceDeviceOperatingState.Running, state.OperatingState);
+        Assert.Equal(10m, state.XMillimeters);
+        Assert.False((await fixture.Context.DeviceAlarmStates.SingleAsync()).IsActive);
+    }
+
+    [Fact]
+    public async Task Late_events_are_ledgered_without_regressing_independent_projections()
+    {
+        await using var fixture = await Fixture.CreateAsync();
+        await fixture.MapDeviceAsync();
+        await fixture.Service.IngestAsync(
+            fixture.SiteId,
+            Request(
+                Position("position-new", Now.AddMinutes(-1), 20, fixture.FloorId),
+                State("state-new", Now.AddMinutes(-1), "Running", 20),
+                AlarmRaised("alarm-new", Now.AddMinutes(-1), 20)));
+
+        var late = await fixture.Service.IngestAsync(
+            fixture.SiteId,
+            Request(
+                Position("position-old", Now.AddMinutes(-3), 10, fixture.FloorId) with
+                {
+                    XMillimeters = 999m,
+                },
+                State("state-old", Now.AddMinutes(-3), "Offline", 10),
+                AlarmCleared("alarm-clear-old", Now.AddMinutes(-3), 10)));
+
+        Assert.Equal(3, late.AcceptedCount);
+        Assert.Equal(3, late.StaleCount);
+        Assert.All(late.Receipts, value =>
+        {
+            Assert.Equal("AcceptedStale", value.Outcome);
+            Assert.False(value.ProjectionApplied);
+        });
+        Assert.Equal(6, await fixture.Context.DeviceEvents.CountAsync());
+        var state = await fixture.Context.DeviceStates.SingleAsync();
+        Assert.Equal(10m, state.XMillimeters);
+        Assert.Equal(SpaceDeviceOperatingState.Running, state.OperatingState);
+        Assert.True((await fixture.Context.DeviceAlarmStates.SingleAsync()).IsActive);
+    }
+
+    [Fact]
+    public async Task Current_read_includes_eventless_mapping_anchor_freshness_and_active_alarm()
+    {
+        await using var fixture = await Fixture.CreateAsync();
+        var mapping = await fixture.MapDeviceAsync();
+
+        var eventless = await fixture.Runtime.GetCurrentAsync(
+            fixture.SiteId,
+            null,
+            "Agv",
+            "Unknown",
+            fixture.FloorId,
+            false,
+            100,
+            null);
+        var unknown = Assert.Single(eventless.Items);
+        Assert.Equal(mapping.Id, unknown.MappingId);
+        Assert.True(unknown.MappingIsCurrent);
+        Assert.False(unknown.HasPosition);
+        Assert.True(unknown.PositionIsStale);
+        Assert.Equal("Unknown", unknown.OperatingState);
+        Assert.Equal(0m, unknown.MappedXMillimeters);
+
+        await fixture.Service.IngestAsync(
+            fixture.SiteId,
+            Request(
+                Position("position-01", Now.AddMinutes(-4), 1, fixture.FloorId),
+                State("state-01", Now.AddMinutes(-6), "Faulted", 2),
+                AlarmRaised("alarm-raised-01", Now.AddMinutes(-2), 3)));
+        var current = await fixture.Runtime.GetCurrentAsync(
+            fixture.SiteId,
+            "Real",
+            "Agv",
+            "Faulted",
+            fixture.FloorId,
+            true,
+            100,
+            null);
+
+        Assert.Equal(fixture.PublishedVersionId, current.PublishedVersionId);
+        Assert.Equal(300, current.FreshnessThresholdSeconds);
+        var item = Assert.Single(current.Items);
+        Assert.False(item.PositionIsStale);
+        Assert.True(item.OperatingStateIsStale);
+        Assert.True(item.HasActiveAlarm);
+        Assert.Equal("Critical", item.MaximumActiveAlarmSeverity);
+        Assert.Equal("ALARM-01", Assert.Single(item.ActiveAlarms).AlarmExternalId);
+        Assert.NotEqual(Guid.Empty, item.ActiveAlarms[0].EventId);
+    }
+
+    [Fact]
+    public async Task Current_read_denies_external_subject_and_numeric_enum_alias()
+    {
+        await using var external = await Fixture.CreateAsync(isExternal: true);
+        var denied = await Assert.ThrowsAsync<SpaceProblemException>(() =>
+            external.Runtime.GetCurrentAsync(
+                external.SiteId,
+                null,
+                null,
+                null,
+                null,
+                null,
+                100,
+                null));
+        Assert.Equal(SpaceErrorCodes.ExternalSubjectDenied, denied.Code);
+
+        await using var fixture = await Fixture.CreateAsync();
+        var invalid = await Assert.ThrowsAsync<SpaceProblemException>(() =>
+            fixture.Runtime.GetCurrentAsync(
+                fixture.SiteId,
+                "0",
+                null,
+                null,
+                null,
+                null,
+                100,
+                null));
+        Assert.Equal(SpaceErrorCodes.DeviceQueryInvalid, invalid.Code);
     }
 
     [Fact]
@@ -323,6 +449,7 @@ public sealed class SpaceDeviceEventServiceTests
     private sealed record Fixture(
         SpaceContext Context,
         SpaceDeviceEventService Service,
+        SpaceDeviceRuntimeService Runtime,
         Guid SiteId,
         Guid PublishedVersionId,
         Guid FloorId,
@@ -397,9 +524,17 @@ public sealed class SpaceDeviceEventServiceTests
                 new FixedClock(),
                 new AllowAccess(),
                 new TestCursorCodec());
+            var runtime = new SpaceDeviceRuntimeService(
+                context,
+                execution,
+                new FixedClock(),
+                new AllowAccess(),
+                new TestCursorCodec(),
+                new SpaceDeviceRuntimeOptions());
             return new Fixture(
                 context,
                 service,
+                runtime,
                 siteId,
                 version.Id,
                 floorId,

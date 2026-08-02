@@ -384,3 +384,281 @@ public sealed class SpaceDeviceEvent : SpaceTenantEntity
             throw new ArgumentException("The timestamp must be UTC.", parameterName);
     }
 }
+
+public sealed class SpaceDeviceCurrentState : SpaceTenantEntity
+{
+    private SpaceDeviceCurrentState()
+    {
+    }
+
+    public Guid SiteId { get; private set; }
+    public string SourceId { get; private set; } = string.Empty;
+    public SpaceDeviceSourceKind SourceKind { get; private set; }
+    public string DeviceExternalId { get; private set; } = string.Empty;
+    public Guid DeviceMappingId { get; private set; }
+
+    public Guid? FloorLogicalId { get; private set; }
+    public Guid? LocationLogicalId { get; private set; }
+    public decimal? XMillimeters { get; private set; }
+    public decimal? YMillimeters { get; private set; }
+    public decimal? ZMillimeters { get; private set; }
+    public decimal? AccuracyMillimeters { get; private set; }
+    public DateTime? PositionOccurredAtUtc { get; private set; }
+    public DateTime? PositionReceivedAtUtc { get; private set; }
+    public long? PositionSourceSequence { get; private set; }
+    public string? PositionSourceEventId { get; private set; }
+    public Guid? PositionEventId { get; private set; }
+
+    public SpaceDeviceOperatingState OperatingState { get; private set; }
+    public DateTime? OperatingStateOccurredAtUtc { get; private set; }
+    public DateTime? OperatingStateReceivedAtUtc { get; private set; }
+    public long? OperatingStateSourceSequence { get; private set; }
+    public string? OperatingStateSourceEventId { get; private set; }
+    public Guid? OperatingStateEventId { get; private set; }
+    public byte[] RowVersion { get; private set; } = [];
+
+    public static SpaceDeviceCurrentState Create(SpaceDeviceEvent firstEvent)
+    {
+        ArgumentNullException.ThrowIfNull(firstEvent);
+        if (firstEvent.EventKind is not (
+                SpaceDeviceEventKind.PositionObserved or
+                SpaceDeviceEventKind.OperatingStateChanged))
+        {
+            throw new ArgumentException(
+                "A current-state projection requires a position or operating-state event.",
+                nameof(firstEvent));
+        }
+
+        var value = new SpaceDeviceCurrentState
+        {
+            SiteId = firstEvent.SiteId,
+            SourceId = firstEvent.SourceId,
+            SourceKind = firstEvent.SourceKind,
+            DeviceExternalId = firstEvent.DeviceExternalId,
+            DeviceMappingId = firstEvent.DeviceMappingId,
+            OperatingState = SpaceDeviceOperatingState.Unknown,
+        };
+        value.SetTenant(firstEvent.TenantId);
+        value.Apply(firstEvent);
+        return value;
+    }
+
+    public bool Apply(SpaceDeviceEvent value)
+    {
+        ArgumentNullException.ThrowIfNull(value);
+        EnsureIdentity(value);
+        return value.EventKind switch
+        {
+            SpaceDeviceEventKind.PositionObserved => ApplyPosition(value),
+            SpaceDeviceEventKind.OperatingStateChanged =>
+                ApplyOperatingState(value),
+            _ => throw new ArgumentException(
+                "Alarm events do not update the device current-state projection.",
+                nameof(value)),
+        };
+    }
+
+    private bool ApplyPosition(SpaceDeviceEvent value)
+    {
+        if (!SpaceDeviceProjectionOrder.IsLater(
+                value,
+                PositionOccurredAtUtc,
+                PositionSourceSequence,
+                PositionSourceEventId))
+        {
+            return false;
+        }
+
+        FloorLogicalId = value.FloorLogicalId;
+        LocationLogicalId = value.LocationLogicalId;
+        XMillimeters = value.XMillimeters;
+        YMillimeters = value.YMillimeters;
+        ZMillimeters = value.ZMillimeters;
+        AccuracyMillimeters = value.AccuracyMillimeters;
+        PositionOccurredAtUtc = value.OccurredAtUtc;
+        PositionReceivedAtUtc = value.ReceivedAtUtc;
+        PositionSourceSequence = value.SourceSequence;
+        PositionSourceEventId = value.SourceEventId;
+        PositionEventId = value.Id;
+        return true;
+    }
+
+    private bool ApplyOperatingState(SpaceDeviceEvent value)
+    {
+        if (!SpaceDeviceProjectionOrder.IsLater(
+                value,
+                OperatingStateOccurredAtUtc,
+                OperatingStateSourceSequence,
+                OperatingStateSourceEventId))
+        {
+            return false;
+        }
+
+        OperatingState = value.OperatingState!.Value;
+        OperatingStateOccurredAtUtc = value.OccurredAtUtc;
+        OperatingStateReceivedAtUtc = value.ReceivedAtUtc;
+        OperatingStateSourceSequence = value.SourceSequence;
+        OperatingStateSourceEventId = value.SourceEventId;
+        OperatingStateEventId = value.Id;
+        return true;
+    }
+
+    private void EnsureIdentity(SpaceDeviceEvent value)
+    {
+        if (value.TenantId != TenantId || value.SiteId != SiteId ||
+            value.SourceKind != SourceKind ||
+            value.DeviceMappingId != DeviceMappingId ||
+            !string.Equals(value.SourceId, SourceId, StringComparison.Ordinal) ||
+            !string.Equals(
+                value.DeviceExternalId,
+                DeviceExternalId,
+                StringComparison.Ordinal))
+        {
+            throw new SpaceTenantScopeException(
+                "A device event does not belong to this current-state identity.");
+        }
+    }
+}
+
+public sealed class SpaceDeviceAlarmState : SpaceTenantEntity
+{
+    private SpaceDeviceAlarmState()
+    {
+    }
+
+    public Guid SiteId { get; private set; }
+    public string SourceId { get; private set; } = string.Empty;
+    public SpaceDeviceSourceKind SourceKind { get; private set; }
+    public string DeviceExternalId { get; private set; } = string.Empty;
+    public Guid DeviceMappingId { get; private set; }
+    public string AlarmExternalId { get; private set; } = string.Empty;
+    public string? AlarmCode { get; private set; }
+    public SpaceDeviceAlarmSeverity? AlarmSeverity { get; private set; }
+    public string? AlarmMessage { get; private set; }
+    public bool IsActive { get; private set; }
+    public DateTime OccurredAtUtc { get; private set; }
+    public DateTime ReceivedAtUtc { get; private set; }
+    public long? SourceSequence { get; private set; }
+    public string SourceEventId { get; private set; } = string.Empty;
+    public Guid EventId { get; private set; }
+    public byte[] RowVersion { get; private set; } = [];
+
+    public static SpaceDeviceAlarmState Create(SpaceDeviceEvent firstEvent)
+    {
+        ArgumentNullException.ThrowIfNull(firstEvent);
+        if (firstEvent.EventKind is not (
+                SpaceDeviceEventKind.AlarmRaised or
+                SpaceDeviceEventKind.AlarmCleared))
+        {
+            throw new ArgumentException(
+                "An alarm-state projection requires an alarm event.",
+                nameof(firstEvent));
+        }
+
+        var value = new SpaceDeviceAlarmState
+        {
+            SiteId = firstEvent.SiteId,
+            SourceId = firstEvent.SourceId,
+            SourceKind = firstEvent.SourceKind,
+            DeviceExternalId = firstEvent.DeviceExternalId,
+            DeviceMappingId = firstEvent.DeviceMappingId,
+            AlarmExternalId = firstEvent.AlarmExternalId!,
+        };
+        value.SetTenant(firstEvent.TenantId);
+        value.Apply(firstEvent);
+        return value;
+    }
+
+    public bool Apply(SpaceDeviceEvent value)
+    {
+        ArgumentNullException.ThrowIfNull(value);
+        EnsureIdentity(value);
+        if (value.EventKind is not (
+                SpaceDeviceEventKind.AlarmRaised or
+                SpaceDeviceEventKind.AlarmCleared))
+        {
+            throw new ArgumentException(
+                "Only alarm events update an alarm-state projection.",
+                nameof(value));
+        }
+        if (SourceEventId.Length > 0 &&
+            !SpaceDeviceProjectionOrder.IsLater(
+                value,
+                OccurredAtUtc,
+                SourceSequence,
+                SourceEventId))
+        {
+            return false;
+        }
+
+        if (value.EventKind == SpaceDeviceEventKind.AlarmRaised)
+        {
+            AlarmCode = value.AlarmCode;
+            AlarmSeverity = value.AlarmSeverity;
+            AlarmMessage = value.AlarmMessage;
+            IsActive = true;
+        }
+        else
+        {
+            IsActive = false;
+        }
+        OccurredAtUtc = value.OccurredAtUtc;
+        ReceivedAtUtc = value.ReceivedAtUtc;
+        SourceSequence = value.SourceSequence;
+        SourceEventId = value.SourceEventId;
+        EventId = value.Id;
+        return true;
+    }
+
+    private void EnsureIdentity(SpaceDeviceEvent value)
+    {
+        if (value.TenantId != TenantId || value.SiteId != SiteId ||
+            value.SourceKind != SourceKind ||
+            value.DeviceMappingId != DeviceMappingId ||
+            !string.Equals(value.SourceId, SourceId, StringComparison.Ordinal) ||
+            !string.Equals(
+                value.DeviceExternalId,
+                DeviceExternalId,
+                StringComparison.Ordinal) ||
+            !string.Equals(
+                value.AlarmExternalId,
+                AlarmExternalId,
+                StringComparison.Ordinal))
+        {
+            throw new SpaceTenantScopeException(
+                "A device alarm event does not belong to this alarm identity.");
+        }
+    }
+}
+
+internal static class SpaceDeviceProjectionOrder
+{
+    public static bool IsLater(
+        SpaceDeviceEvent value,
+        DateTime? occurredAtUtc,
+        long? sourceSequence,
+        string? sourceEventId)
+    {
+        if (!occurredAtUtc.HasValue)
+            return true;
+        var comparison = value.OccurredAtUtc.CompareTo(occurredAtUtc.Value);
+        if (comparison != 0)
+            return comparison > 0;
+
+        comparison = CompareSequence(value.SourceSequence, sourceSequence);
+        return comparison != 0
+            ? comparison > 0
+            : string.CompareOrdinal(value.SourceEventId, sourceEventId) > 0;
+    }
+
+    private static int CompareSequence(long? left, long? right)
+    {
+        if (left.HasValue && right.HasValue)
+            return left.Value.CompareTo(right.Value);
+        if (left.HasValue)
+            return 1;
+        if (right.HasValue)
+            return -1;
+        return 0;
+    }
+}

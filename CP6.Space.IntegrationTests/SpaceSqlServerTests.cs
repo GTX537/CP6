@@ -36,6 +36,8 @@ public sealed class SpaceSqlServerTests
             Assert.Contains("Space_PersonnelState", tables);
             Assert.Contains("Space_DeviceMapping", tables);
             Assert.Contains("Space_DeviceEvent", tables);
+            Assert.Contains("Space_DeviceState", tables);
+            Assert.Contains("Space_DeviceAlarmState", tables);
             Assert.Contains(SpaceContext.MigrationsHistoryTable, tables);
             Assert.DoesNotContain("__EFMigrationsHistory", tables);
             Assert.DoesNotContain("Space_Site", tables);
@@ -248,13 +250,57 @@ public sealed class SpaceSqlServerTests
                                 null,
                                 1,
                                 new DateTimeOffset(now.AddMinutes(-1))),
+                            new SpaceDeviceEventInput(
+                                "ALARM-01",
+                                "AGV-01",
+                                "AlarmRaised",
+                                null,
+                                null,
+                                null,
+                                null,
+                                null,
+                                null,
+                                null,
+                                "MOTOR-01",
+                                "MOTOR-OVERHEAT",
+                                "Critical",
+                                "Motor is above the configured threshold.",
+                                2,
+                                new DateTimeOffset(now.AddSeconds(-30))),
                         ]));
-                Assert.Equal(1, response.AcceptedCount);
+                Assert.Equal(2, response.AcceptedCount);
                 context.ChangeTracker.Clear();
-                var persisted = await context.DeviceEvents.SingleAsync();
-                Assert.Equal(mapping.Id, persisted.DeviceMappingId);
-                Assert.Equal(element.LogicalId, persisted.ElementLogicalId);
-                Assert.Equal(SpaceDeviceOperatingState.Running, persisted.OperatingState);
+                Assert.Equal(2, await context.DeviceEvents.CountAsync());
+                var state = await context.DeviceStates.SingleAsync();
+                Assert.Equal(mapping.Id, state.DeviceMappingId);
+                Assert.Equal(SpaceDeviceOperatingState.Running, state.OperatingState);
+                Assert.NotEmpty(state.RowVersion);
+                var alarm = await context.DeviceAlarmStates.SingleAsync();
+                Assert.True(alarm.IsActive);
+                Assert.Equal(SpaceDeviceAlarmSeverity.Critical, alarm.AlarmSeverity);
+                Assert.NotEmpty(alarm.RowVersion);
+
+                var runtime = new SpaceDeviceRuntimeService(
+                    context,
+                    new TestExecutionContext(tenantId, actorId),
+                    new FixedClock(now),
+                    new AllowAccess(),
+                    new UnusedCursorCodec(),
+                    new SpaceDeviceRuntimeOptions());
+                var current = await runtime.GetCurrentAsync(
+                    siteId,
+                    "Real",
+                    "Agv",
+                    "Running",
+                    floor.LogicalId,
+                    true,
+                    100,
+                    null);
+                var currentItem = Assert.Single(current.Items);
+                Assert.Equal(TimeSpan.Zero, current.AsOfUtc.Offset);
+                Assert.True(currentItem.MappingIsCurrent);
+                Assert.True(currentItem.HasActiveAlarm);
+                Assert.Equal("Critical", currentItem.MaximumActiveAlarmSeverity);
             },
             tenantId,
             actorId);

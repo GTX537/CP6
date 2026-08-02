@@ -4094,6 +4094,169 @@
         }
       }
     },
+    "/api/space/design/v1/sites/{siteId}/devices": {
+      "get": {
+        "tags": [
+          "SpaceDeviceRuntime"
+        ],
+        "operationId": "GetCurrentDevices",
+        "parameters": [
+          {
+            "name": "siteId",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "string",
+              "format": "uuid"
+            }
+          },
+          {
+            "name": "sourceKind",
+            "in": "query",
+            "schema": {
+              "type": "string"
+            }
+          },
+          {
+            "name": "deviceKind",
+            "in": "query",
+            "schema": {
+              "type": "string"
+            }
+          },
+          {
+            "name": "operatingState",
+            "in": "query",
+            "schema": {
+              "type": "string"
+            }
+          },
+          {
+            "name": "floorLogicalId",
+            "in": "query",
+            "schema": {
+              "type": "string",
+              "format": "uuid"
+            }
+          },
+          {
+            "name": "hasActiveAlarm",
+            "in": "query",
+            "schema": {
+              "type": "boolean"
+            }
+          },
+          {
+            "name": "limit",
+            "in": "query",
+            "schema": {
+              "type": "integer",
+              "format": "int32",
+              "default": 100
+            }
+          },
+          {
+            "name": "cursor",
+            "in": "query",
+            "schema": {
+              "type": "string"
+            }
+          }
+        ],
+        "responses": {
+          "400": {
+            "description": "Bad Request",
+            "content": {
+              "application/problem+json": {
+                "schema": {
+                  "$ref": "#/components/schemas/CP6.WebApi.OpenApi.SpaceDesignProblemDetails"
+                }
+              }
+            }
+          },
+          "401": {
+            "description": "Unauthorized",
+            "content": {
+              "application/problem+json": {
+                "schema": {
+                  "$ref": "#/components/schemas/CP6.WebApi.OpenApi.SpaceDesignProblemDetails"
+                }
+              }
+            }
+          },
+          "403": {
+            "description": "Forbidden",
+            "content": {
+              "application/problem+json": {
+                "schema": {
+                  "$ref": "#/components/schemas/CP6.WebApi.OpenApi.SpaceDesignProblemDetails"
+                }
+              }
+            }
+          },
+          "404": {
+            "description": "Not Found",
+            "content": {
+              "application/problem+json": {
+                "schema": {
+                  "$ref": "#/components/schemas/CP6.WebApi.OpenApi.SpaceDesignProblemDetails"
+                }
+              }
+            }
+          },
+          "409": {
+            "description": "Conflict",
+            "content": {
+              "application/problem+json": {
+                "schema": {
+                  "$ref": "#/components/schemas/CP6.WebApi.OpenApi.SpaceDesignProblemDetails"
+                }
+              }
+            }
+          },
+          "422": {
+            "description": "Unprocessable Content",
+            "content": {
+              "application/problem+json": {
+                "schema": {
+                  "$ref": "#/components/schemas/CP6.WebApi.OpenApi.SpaceDesignProblemDetails"
+                }
+              }
+            }
+          },
+          "500": {
+            "description": "Internal Server Error",
+            "content": {
+              "application/problem+json": {
+                "schema": {
+                  "$ref": "#/components/schemas/CP6.WebApi.OpenApi.SpaceDesignProblemDetails"
+                }
+              }
+            }
+          },
+          "200": {
+            "description": "OK",
+            "content": {
+              "text/plain": {
+                "schema": {
+                  "$ref": "#/components/schemas/CP6.Space.Contracts.SpaceDeviceCurrentPageDto"
+                }
+              },
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/CP6.Space.Contracts.SpaceDeviceCurrentPageDto"
+                }
+              },
+              "text/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/CP6.Space.Contracts.SpaceDeviceCurrentPageDto"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
     "/api/space/design/v1/mapping-profiles/excel": {
       "get": {
         "tags": [
@@ -9183,7 +9346,8 @@
           "receivedCount",
           "siteId",
           "sourceId",
-          "sourceKind"
+          "sourceKind",
+          "staleCount"
         ],
         "type": "object",
         "properties": {
@@ -9213,6 +9377,10 @@
             "format": "int32"
           },
           "duplicateCount": {
+            "type": "integer",
+            "format": "int32"
+          },
+          "staleCount": {
             "type": "integer",
             "format": "int32"
           },
@@ -9943,6 +10111,297 @@
         },
         "additionalProperties": false
       },
+      "CP6.Space.Contracts.SpaceDeviceActiveAlarmDto": {
+        "required": [
+          "ageMilliseconds",
+          "alarmCode",
+          "alarmExternalId",
+          "alarmMessage",
+          "alarmSeverity",
+          "eventId",
+          "occurredAtUtc",
+          "receivedAtUtc",
+          "sourceEventId"
+        ],
+        "type": "object",
+        "properties": {
+          "alarmExternalId": {
+            "type": "string"
+          },
+          "alarmCode": {
+            "type": "string"
+          },
+          "alarmSeverity": {
+            "type": "string"
+          },
+          "alarmMessage": {
+            "type": "string",
+            "nullable": true
+          },
+          "occurredAtUtc": {
+            "type": "string",
+            "format": "date-time"
+          },
+          "receivedAtUtc": {
+            "type": "string",
+            "format": "date-time"
+          },
+          "eventId": {
+            "type": "string",
+            "format": "uuid"
+          },
+          "sourceEventId": {
+            "type": "string"
+          },
+          "ageMilliseconds": {
+            "type": "integer",
+            "format": "int64",
+            "nullable": true
+          }
+        },
+        "additionalProperties": false
+      },
+      "CP6.Space.Contracts.SpaceDeviceCurrentDto": {
+        "required": [
+          "accuracyMillimeters",
+          "activeAlarmCount",
+          "activeAlarms",
+          "deviceExternalId",
+          "deviceKind",
+          "elementLogicalId",
+          "elementType",
+          "floorLogicalId",
+          "hasActiveAlarm",
+          "hasPosition",
+          "isSimulated",
+          "locationLogicalId",
+          "mappedFloorLogicalId",
+          "mappedXMillimeters",
+          "mappedYMillimeters",
+          "mappedZMillimeters",
+          "mappingId",
+          "mappingIsCurrent",
+          "maximumActiveAlarmSeverity",
+          "operatingState",
+          "operatingStateAgeMilliseconds",
+          "operatingStateEventId",
+          "operatingStateIsStale",
+          "operatingStateOccurredAtUtc",
+          "operatingStateReceivedAtUtc",
+          "operatingStateSourceEventId",
+          "positionAgeMilliseconds",
+          "positionEventId",
+          "positionIsStale",
+          "positionOccurredAtUtc",
+          "positionReceivedAtUtc",
+          "positionSourceEventId",
+          "sourceId",
+          "sourceKind",
+          "xMillimeters",
+          "yMillimeters",
+          "zMillimeters"
+        ],
+        "type": "object",
+        "properties": {
+          "mappingId": {
+            "type": "string",
+            "format": "uuid"
+          },
+          "sourceId": {
+            "type": "string"
+          },
+          "sourceKind": {
+            "type": "string"
+          },
+          "deviceExternalId": {
+            "type": "string"
+          },
+          "deviceKind": {
+            "type": "string"
+          },
+          "elementLogicalId": {
+            "type": "string",
+            "format": "uuid"
+          },
+          "elementType": {
+            "type": "string"
+          },
+          "mappingIsCurrent": {
+            "type": "boolean"
+          },
+          "mappedFloorLogicalId": {
+            "type": "string",
+            "format": "uuid",
+            "nullable": true
+          },
+          "mappedXMillimeters": {
+            "type": "number",
+            "format": "decimal",
+            "nullable": true
+          },
+          "mappedYMillimeters": {
+            "type": "number",
+            "format": "decimal",
+            "nullable": true
+          },
+          "mappedZMillimeters": {
+            "type": "number",
+            "format": "decimal",
+            "nullable": true
+          },
+          "operatingState": {
+            "type": "string"
+          },
+          "floorLogicalId": {
+            "type": "string",
+            "format": "uuid",
+            "nullable": true
+          },
+          "locationLogicalId": {
+            "type": "string",
+            "format": "uuid",
+            "nullable": true
+          },
+          "xMillimeters": {
+            "type": "number",
+            "format": "decimal",
+            "nullable": true
+          },
+          "yMillimeters": {
+            "type": "number",
+            "format": "decimal",
+            "nullable": true
+          },
+          "zMillimeters": {
+            "type": "number",
+            "format": "decimal",
+            "nullable": true
+          },
+          "accuracyMillimeters": {
+            "type": "number",
+            "format": "decimal",
+            "nullable": true
+          },
+          "positionOccurredAtUtc": {
+            "type": "string",
+            "format": "date-time",
+            "nullable": true
+          },
+          "positionReceivedAtUtc": {
+            "type": "string",
+            "format": "date-time",
+            "nullable": true
+          },
+          "positionEventId": {
+            "type": "string",
+            "format": "uuid",
+            "nullable": true
+          },
+          "positionSourceEventId": {
+            "type": "string",
+            "nullable": true
+          },
+          "operatingStateOccurredAtUtc": {
+            "type": "string",
+            "format": "date-time",
+            "nullable": true
+          },
+          "operatingStateReceivedAtUtc": {
+            "type": "string",
+            "format": "date-time",
+            "nullable": true
+          },
+          "operatingStateEventId": {
+            "type": "string",
+            "format": "uuid",
+            "nullable": true
+          },
+          "operatingStateSourceEventId": {
+            "type": "string",
+            "nullable": true
+          },
+          "positionAgeMilliseconds": {
+            "type": "integer",
+            "format": "int64",
+            "nullable": true
+          },
+          "operatingStateAgeMilliseconds": {
+            "type": "integer",
+            "format": "int64",
+            "nullable": true
+          },
+          "hasPosition": {
+            "type": "boolean"
+          },
+          "positionIsStale": {
+            "type": "boolean"
+          },
+          "operatingStateIsStale": {
+            "type": "boolean"
+          },
+          "isSimulated": {
+            "type": "boolean"
+          },
+          "hasActiveAlarm": {
+            "type": "boolean"
+          },
+          "activeAlarmCount": {
+            "type": "integer",
+            "format": "int32"
+          },
+          "maximumActiveAlarmSeverity": {
+            "type": "string",
+            "nullable": true
+          },
+          "activeAlarms": {
+            "type": "array",
+            "items": {
+              "$ref": "#/components/schemas/CP6.Space.Contracts.SpaceDeviceActiveAlarmDto"
+            }
+          }
+        },
+        "additionalProperties": false
+      },
+      "CP6.Space.Contracts.SpaceDeviceCurrentPageDto": {
+        "required": [
+          "asOfUtc",
+          "freshnessThresholdSeconds",
+          "items",
+          "nextCursor",
+          "publishedVersionId",
+          "siteId"
+        ],
+        "type": "object",
+        "properties": {
+          "siteId": {
+            "type": "string",
+            "format": "uuid"
+          },
+          "publishedVersionId": {
+            "type": "string",
+            "format": "uuid"
+          },
+          "asOfUtc": {
+            "type": "string",
+            "format": "date-time"
+          },
+          "freshnessThresholdSeconds": {
+            "type": "integer",
+            "format": "int32"
+          },
+          "items": {
+            "type": "array",
+            "items": {
+              "$ref": "#/components/schemas/CP6.Space.Contracts.SpaceDeviceCurrentDto"
+            }
+          },
+          "nextCursor": {
+            "type": "string",
+            "nullable": true
+          }
+        },
+        "additionalProperties": false
+      },
       "CP6.Space.Contracts.SpaceDeviceEventInput": {
         "required": [
           "deviceExternalId",
@@ -10028,6 +10487,7 @@
           "deviceExternalId",
           "eventId",
           "outcome",
+          "projectionApplied",
           "sourceEventId"
         ],
         "type": "object",
@@ -10044,6 +10504,9 @@
           },
           "outcome": {
             "type": "string"
+          },
+          "projectionApplied": {
+            "type": "boolean"
           }
         },
         "additionalProperties": false

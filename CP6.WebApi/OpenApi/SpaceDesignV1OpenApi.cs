@@ -619,6 +619,7 @@ public sealed class SpaceWmsRuntimeSchemaFilter : ISchemaFilter
                 "receivedCount",
                 "acceptedCount",
                 "duplicateCount",
+                "staleCount",
                 "receipts",
             ],
             [typeof(SpaceDeviceEventReceipt)] =
@@ -627,6 +628,68 @@ public sealed class SpaceWmsRuntimeSchemaFilter : ISchemaFilter
                 "sourceEventId",
                 "deviceExternalId",
                 "outcome",
+                "projectionApplied",
+            ],
+            [typeof(SpaceDeviceCurrentPageDto)] =
+            [
+                "siteId",
+                "publishedVersionId",
+                "asOfUtc",
+                "freshnessThresholdSeconds",
+                "items",
+                "nextCursor",
+            ],
+            [typeof(SpaceDeviceCurrentDto)] =
+            [
+                "mappingId",
+                "sourceId",
+                "sourceKind",
+                "deviceExternalId",
+                "deviceKind",
+                "elementLogicalId",
+                "elementType",
+                "mappingIsCurrent",
+                "mappedFloorLogicalId",
+                "mappedXMillimeters",
+                "mappedYMillimeters",
+                "mappedZMillimeters",
+                "operatingState",
+                "floorLogicalId",
+                "locationLogicalId",
+                "xMillimeters",
+                "yMillimeters",
+                "zMillimeters",
+                "accuracyMillimeters",
+                "positionOccurredAtUtc",
+                "positionReceivedAtUtc",
+                "positionEventId",
+                "positionSourceEventId",
+                "operatingStateOccurredAtUtc",
+                "operatingStateReceivedAtUtc",
+                "operatingStateEventId",
+                "operatingStateSourceEventId",
+                "positionAgeMilliseconds",
+                "operatingStateAgeMilliseconds",
+                "hasPosition",
+                "positionIsStale",
+                "operatingStateIsStale",
+                "isSimulated",
+                "hasActiveAlarm",
+                "activeAlarmCount",
+                "maximumActiveAlarmSeverity",
+                "activeAlarms",
+            ],
+            [typeof(SpaceDeviceActiveAlarmDto)] =
+            [
+                "alarmExternalId",
+                "alarmCode",
+                "alarmSeverity",
+                "alarmMessage",
+                "occurredAtUtc",
+                "receivedAtUtc",
+                "eventId",
+                "sourceEventId",
+                "ageMilliseconds",
             ],
             [typeof(SpacePortalOrganizationDto)] =
             [
@@ -881,6 +944,44 @@ public sealed class SpaceWmsRuntimeSchemaFilter : ISchemaFilter
             SetNumberFormat(schema, "yMillimeters", "decimal", true);
             SetNumberFormat(schema, "zMillimeters", "decimal", true);
             SetNumberFormat(schema, "accuracyMillimeters", "decimal", true);
+        }
+        else if (context.Type == typeof(SpaceDeviceCurrentPageDto))
+        {
+            SetNullable(schema, true, "nextCursor");
+        }
+        else if (context.Type == typeof(SpaceDeviceCurrentDto))
+        {
+            SetNullable(
+                schema,
+                true,
+                "mappedFloorLogicalId",
+                "mappedXMillimeters",
+                "mappedYMillimeters",
+                "mappedZMillimeters",
+                "floorLogicalId",
+                "locationLogicalId",
+                "positionOccurredAtUtc",
+                "positionReceivedAtUtc",
+                "positionEventId",
+                "positionSourceEventId",
+                "operatingStateOccurredAtUtc",
+                "operatingStateReceivedAtUtc",
+                "operatingStateEventId",
+                "operatingStateSourceEventId",
+                "positionAgeMilliseconds",
+                "operatingStateAgeMilliseconds",
+                "maximumActiveAlarmSeverity");
+            SetNumberFormat(schema, "mappedXMillimeters", "decimal", true);
+            SetNumberFormat(schema, "mappedYMillimeters", "decimal", true);
+            SetNumberFormat(schema, "mappedZMillimeters", "decimal", true);
+            SetNumberFormat(schema, "xMillimeters", "decimal", true);
+            SetNumberFormat(schema, "yMillimeters", "decimal", true);
+            SetNumberFormat(schema, "zMillimeters", "decimal", true);
+            SetNumberFormat(schema, "accuracyMillimeters", "decimal", true);
+        }
+        else if (context.Type == typeof(SpaceDeviceActiveAlarmDto))
+        {
+            SetNullable(schema, true, "alarmMessage", "ageMilliseconds");
         }
     }
 

@@ -1,3 +1,4 @@
+using System.Data;
 using System.Globalization;
 using System.Security.Cryptography;
 using System.Text;
@@ -5,6 +6,7 @@ using CP6.Space.Application;
 using CP6.Space.Contracts;
 using CP6.Space.Domain;
 using Microsoft.EntityFrameworkCore;
+using Microsoft.EntityFrameworkCore.Storage;
 
 namespace CP6.Space.Infrastructure;
 
@@ -264,6 +266,7 @@ public sealed class SpaceDeviceEventService : ISpaceDeviceEventService
         CancellationToken cancellationToken)
     {
         var scope = await LoadPublishedScopeAsync(siteId, cancellationToken);
+        await using var transaction = await BeginTransactionAsync(cancellationToken);
         var sourceEventIds = request.Events
             .Select(value => value.SourceEventId)
             .ToArray();
@@ -351,6 +354,35 @@ public sealed class SpaceDeviceEventService : ISpaceDeviceEventService
             newInputs,
             cancellationToken);
 
+        var states = deviceIds.Length == 0
+            ? new Dictionary<string, SpaceDeviceCurrentState>(StringComparer.Ordinal)
+            : await _context.DeviceStates
+                .Where(value =>
+                    value.SiteId == siteId &&
+                    value.SourceId == request.SourceId &&
+                    deviceIds.Contains(value.DeviceExternalId))
+                .ToDictionaryAsync(
+                    value => value.DeviceExternalId,
+                    StringComparer.Ordinal,
+                    cancellationToken);
+        var alarmIds = newInputs
+            .Where(value => value.AlarmExternalId is not null)
+            .Select(value => value.AlarmExternalId!)
+            .Distinct(StringComparer.Ordinal)
+            .ToArray();
+        var alarmStates = alarmIds.Length == 0
+            ? new Dictionary<(string DeviceExternalId, string AlarmExternalId),
+                SpaceDeviceAlarmState>()
+            : (await _context.DeviceAlarmStates
+                .Where(value =>
+                    value.SiteId == siteId &&
+                    value.SourceId == request.SourceId &&
+                    deviceIds.Contains(value.DeviceExternalId) &&
+                    alarmIds.Contains(value.AlarmExternalId))
+                .ToListAsync(cancellationToken))
+                .ToDictionary(value =>
+                    (value.DeviceExternalId, value.AlarmExternalId));
+
         var created = new Dictionary<string, SpaceDeviceEvent>(StringComparer.Ordinal);
         foreach (var item in newInputs)
         {
@@ -379,10 +411,57 @@ public sealed class SpaceDeviceEventService : ISpaceDeviceEventService
                 receivedAtUtc,
                 item.PayloadHash);
             created.Add(item.SourceEventId, value);
-            _context.DeviceEvents.Add(value);
+        }
+        var projectionApplied = new Dictionary<string, bool>(StringComparer.Ordinal);
+        foreach (var item in newInputs
+                     .OrderBy(value => value.DeviceExternalId, StringComparer.Ordinal)
+                     .ThenBy(ProjectionChannel)
+                     .ThenBy(value => value.AlarmExternalId, StringComparer.Ordinal)
+                     .ThenBy(value => value.OccurredAtUtc)
+                     .ThenBy(value => value.SourceSequence.HasValue ? 1 : 0)
+                     .ThenBy(value => value.SourceSequence)
+                     .ThenBy(value => value.SourceEventId, StringComparer.Ordinal))
+        {
+            var deviceEvent = created[item.SourceEventId];
+            if (item.EventKind is SpaceDeviceEventKind.PositionObserved or
+                SpaceDeviceEventKind.OperatingStateChanged)
+            {
+                if (!states.TryGetValue(item.DeviceExternalId, out var state))
+                {
+                    state = SpaceDeviceCurrentState.Create(deviceEvent);
+                    states.Add(item.DeviceExternalId, state);
+                    _context.DeviceStates.Add(state);
+                    projectionApplied[item.SourceEventId] = true;
+                }
+                else
+                {
+                    projectionApplied[item.SourceEventId] = state.Apply(deviceEvent);
+                }
+            }
+            else
+            {
+                var key = (item.DeviceExternalId, item.AlarmExternalId!);
+                if (!alarmStates.TryGetValue(key, out var alarmState))
+                {
+                    alarmState = SpaceDeviceAlarmState.Create(deviceEvent);
+                    alarmStates.Add(key, alarmState);
+                    _context.DeviceAlarmStates.Add(alarmState);
+                    projectionApplied[item.SourceEventId] = true;
+                }
+                else
+                {
+                    projectionApplied[item.SourceEventId] =
+                        alarmState.Apply(deviceEvent);
+                }
+            }
+            _context.DeviceEvents.Add(deviceEvent);
         }
         if (created.Count > 0)
+        {
             await _context.SaveChangesAsync(cancellationToken);
+            if (transaction is not null)
+                await transaction.CommitAsync(cancellationToken);
+        }
 
         var receipts = request.Events.Select(item =>
         {
@@ -392,14 +471,17 @@ public sealed class SpaceDeviceEventService : ISpaceDeviceEventService
                     prior.Id,
                     item.SourceEventId,
                     item.DeviceExternalId,
-                    "Duplicate");
+                    "Duplicate",
+                    false);
             }
             var accepted = created[item.SourceEventId];
+            var applied = projectionApplied[item.SourceEventId];
             return new SpaceDeviceEventReceipt(
                 accepted.Id,
                 item.SourceEventId,
                 item.DeviceExternalId,
-                "Accepted");
+                applied ? "Accepted" : "AcceptedStale",
+                applied);
         }).ToArray();
 
         return new IngestSpaceDeviceEventsResponse(
@@ -409,10 +491,19 @@ public sealed class SpaceDeviceEventService : ISpaceDeviceEventService
             request.SourceKind.ToString(),
             new DateTimeOffset(receivedAtUtc),
             request.Events.Count,
-            receipts.Count(value => value.Outcome == "Accepted"),
+            receipts.Count(value => value.Outcome != "Duplicate"),
             receipts.Count(value => value.Outcome == "Duplicate"),
+            receipts.Count(value => value.Outcome == "AcceptedStale"),
             receipts);
     }
+
+    private static int ProjectionChannel(NormalizedEvent value) =>
+        value.EventKind switch
+        {
+            SpaceDeviceEventKind.PositionObserved => 0,
+            SpaceDeviceEventKind.OperatingStateChanged => 1,
+            _ => 2,
+        };
 
     private NormalizedRequest Normalize(
         IngestSpaceDeviceEventsRequest request,
@@ -788,6 +879,14 @@ public sealed class SpaceDeviceEventService : ISpaceDeviceEventService
             throw new InvalidOperationException("The Space clock must return UTC.");
         return now;
     }
+
+    private async Task<IDbContextTransaction?> BeginTransactionAsync(
+        CancellationToken cancellationToken) =>
+        !_context.Database.IsRelational()
+            ? null
+            : await _context.Database.BeginTransactionAsync(
+                IsolationLevel.Serializable,
+                cancellationToken);
 
     private int NormalizeLimit(int limit)
     {

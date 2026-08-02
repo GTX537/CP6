@@ -106,8 +106,18 @@
     </div>
 
     <div class="ap-section">
-      <div class="ap-title">{{ t('设备示意') }}</div>
-      <label class="ap-check"><input type="checkbox" :checked="deviceOn" @change="$emit('toggle-device')" />{{ t('显示设备') }}</label>
+      <div class="ap-title">{{ t('设备当前态与告警') }}</div>
+      <div class="ap-row">
+        <label class="ap-check">
+          <input type="checkbox" :checked="deviceOn" @change="$emit('toggle-device')" />
+          {{ t('显示设备') }}
+        </label>
+        <button class="ap-btn" :disabled="deviceLoading || !deviceOn" @click="$emit('refresh-device')">
+          {{ deviceLoading ? t('查询中') : t('刷新') }}
+        </button>
+      </div>
+      <div class="ap-info">{{ t('来源 XYZ 优先；缺失时仅使用当前 Published 元素锚点，不推断轨迹') }}</div>
+      <div v-if="deviceInfo" class="ap-info">{{ deviceInfo }}</div>
     </div>
 
     <div class="ap-section">
@@ -166,6 +176,8 @@ defineProps<{
   showOptimized: boolean
   workloadOn: boolean
   deviceOn: boolean
+  deviceLoading: boolean
+  deviceInfo: string
   personnelOn: boolean
   personnelLoading: boolean
   trajectoryLoading: boolean
@@ -183,6 +195,7 @@ const emit = defineEmits<{
   (e: 'toggle-workload'): void
   (e: 'apply-workload', win: { from: string; to: string }): void
   (e: 'toggle-device'): void
+  (e: 'refresh-device'): void
   (e: 'toggle-personnel'): void
   (e: 'refresh-personnel'): void
   (e: 'load-personnel-trajectory', query: {

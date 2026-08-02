@@ -119,6 +119,10 @@ public static class SpaceErrorCodes
         "SPACE_DEVICE_MAPPING_STALE";
     public const string DeviceElementNotFound =
         "SPACE_DEVICE_ELEMENT_NOT_FOUND";
+    public const string DeviceSiteNotFound =
+        "SPACE_DEVICE_SITE_NOT_FOUND";
+    public const string DeviceQueryInvalid =
+        "SPACE_DEVICE_QUERY_INVALID";
     public const string WmsBindingCodeMismatch =
         "SPACE_WMS_BINDING_CODE_MISMATCH";
     public const string WmsLocationMissing =

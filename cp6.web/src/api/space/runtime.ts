@@ -5,6 +5,7 @@ import type {
   SpaceRuntimeInventoryResponse,
   SpacePersonnelCurrentPage,
   SpacePersonnelTrajectoryResponse,
+  SpaceDeviceCurrentPage,
   SpaceRuntimeTaskPathResponse,
 } from '@/types/space/runtime'
 
@@ -53,6 +54,22 @@ export const spaceRuntimeApi = {
     if (cursor) params.set('cursor', cursor)
     return http.get<unknown, SpacePersonnelCurrentPage>(
       `/space/design/v1/sites/${siteId}/personnel`,
+      { params },
+    )
+  },
+  currentDevices(
+    siteId: string,
+    floorLogicalId: string,
+    limit = 500,
+    cursor?: string,
+  ) {
+    const params = new URLSearchParams({
+      floorLogicalId,
+      limit: String(limit),
+    })
+    if (cursor) params.set('cursor', cursor)
+    return http.get<unknown, SpaceDeviceCurrentPage>(
+      `/space/design/v1/sites/${siteId}/devices`,
       { params },
     )
   },

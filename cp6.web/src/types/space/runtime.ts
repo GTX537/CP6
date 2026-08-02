@@ -224,3 +224,84 @@ export interface SpacePersonnelTrajectoryPoint {
   receivedAtUtc: string
   ingestDelayMilliseconds: number
 }
+
+export type SpaceDeviceSourceKind = 'Real' | 'Simulated'
+export type SpaceDeviceKind =
+  | 'Agv'
+  | 'Conveyor'
+  | 'StackerCrane'
+  | 'Lift'
+  | 'Sorter'
+  | 'Workstation'
+  | 'Sensor'
+  | 'Other'
+export type SpaceDeviceOperatingState =
+  | 'Unknown'
+  | 'Offline'
+  | 'Idle'
+  | 'Running'
+  | 'Paused'
+  | 'Faulted'
+  | 'Maintenance'
+export type SpaceDeviceAlarmSeverity = 'Info' | 'Warning' | 'Critical'
+
+export interface SpaceDeviceCurrentPage {
+  siteId: string
+  publishedVersionId: string
+  asOfUtc: string
+  freshnessThresholdSeconds: number
+  items: SpaceDeviceCurrent[]
+  nextCursor: string | null
+}
+
+export interface SpaceDeviceCurrent {
+  mappingId: string
+  sourceId: string
+  sourceKind: SpaceDeviceSourceKind
+  deviceExternalId: string
+  deviceKind: SpaceDeviceKind
+  elementLogicalId: string
+  elementType: string
+  mappingIsCurrent: boolean
+  mappedFloorLogicalId: string | null
+  mappedXMillimeters: number | null
+  mappedYMillimeters: number | null
+  mappedZMillimeters: number | null
+  operatingState: SpaceDeviceOperatingState
+  floorLogicalId: string | null
+  locationLogicalId: string | null
+  xMillimeters: number | null
+  yMillimeters: number | null
+  zMillimeters: number | null
+  accuracyMillimeters: number | null
+  positionOccurredAtUtc: string | null
+  positionReceivedAtUtc: string | null
+  positionEventId: string | null
+  positionSourceEventId: string | null
+  operatingStateOccurredAtUtc: string | null
+  operatingStateReceivedAtUtc: string | null
+  operatingStateEventId: string | null
+  operatingStateSourceEventId: string | null
+  positionAgeMilliseconds: number | null
+  operatingStateAgeMilliseconds: number | null
+  hasPosition: boolean
+  positionIsStale: boolean
+  operatingStateIsStale: boolean
+  isSimulated: boolean
+  hasActiveAlarm: boolean
+  activeAlarmCount: number
+  maximumActiveAlarmSeverity: SpaceDeviceAlarmSeverity | null
+  activeAlarms: SpaceDeviceActiveAlarm[]
+}
+
+export interface SpaceDeviceActiveAlarm {
+  alarmExternalId: string
+  alarmCode: string
+  alarmSeverity: SpaceDeviceAlarmSeverity
+  alarmMessage: string | null
+  occurredAtUtc: string
+  receivedAtUtc: string
+  eventId: string
+  sourceEventId: string
+  ageMilliseconds: number | null
+}
