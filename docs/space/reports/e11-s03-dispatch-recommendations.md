@@ -1,9 +1,11 @@
 # E11-S03 人员/任务调度建议交付报告
 
-- 状态：功能分支全量门禁已通过，待进入 Space 受控集成分支
+- 状态：已进入 Space 受控集成分支，合并态冒烟通过
 - 起始基线：`987f9fcd48b2197ae60b1e13f78785bdb5b8a967`
 - 合同提交：`3cf42534`
 - 功能提交：`419d3f6c`
+- 文档提交：`eea62de0`
+- no-ff 集成提交：`cf7bf778`
 - 功能分支：`codex/space-e11-s03-dispatch-recommendations`
 - Migration：`20260802180049_SpaceE11S03DispatchRecommendations`
 
@@ -66,6 +68,7 @@ Viewer 新增默认关闭的 `DSP` 面板，与 KPI、DIAG、PUT 面板互斥。
 | TypeScript SDK strict no-emit | passed |
 | Git 差异检查 | passed |
 | i18n 静态门禁 | 909 项既有欠账；相对基线净新增 0 |
+| 合并态冒烟 | 引擎/运行时合同 6/6、服务/适配器 6/6、权限/审计/API/种子 23/23、前端 16/16、类型与 SDK drift passed |
 
 完整 solution 首次使用 `--no-restore` 时，8 个客户端/工具项目因当前工作树缺少
 `project.assets.json` 而停止；执行一次 solution restore 后，同一非增量 Release 门禁通过。该现象属于工作树依赖准备，不是源代码失败。
@@ -74,4 +77,4 @@ Viewer 新增默认关闭的 `DSP` 面板，与 KPI、DIAG、PUT 面板互斥。
 
 本卡不包含 E11-S04 审批与任务适配、E11-S05 执行回执/重试/补偿、E11-S06 效果评估，也不实现技能、资质、班次、工时、人体工学、设备资格、拥堵预测、路线时间或 SLA 猜测。
 
-CAD/E02 外部门禁仍关闭：正式授权黄金集、格式/版本/语义覆盖、供应商 SDK/凭据和冻结 Worker 证据未满足。本卡不绕过这些门禁，也不扩展冻结的 Design v1 HTTP/SDK。功能分支远端备份、受控集成、合并态冒烟和临时分支/工作树清理完成后，再单独冻结 E11-S04；`main` 保持不变。
+CAD/E02 外部门禁仍关闭：正式授权黄金集、格式/版本/语义覆盖、供应商 SDK/凭据和冻结 Worker 证据未满足。本卡不绕过这些门禁，也不扩展冻结的 Design v1 HTTP/SDK。功能分支已先以 `eea62de0` 推送远端备份，再以 no-ff 方式合入受控集成；集成远端一致性确认及临时分支/工作树清理完成后，再单独冻结 E11-S04；`main` 保持不变。
