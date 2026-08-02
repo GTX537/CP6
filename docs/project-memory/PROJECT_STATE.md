@@ -2,6 +2,17 @@
 
 最后更新：2026-08-02
 
+## E04-S06 完成状态（2026-08-02）
+
+- E04-S06 2D/3D 同源预览已完成并进入受控集成基线：功能提交 `20f248bd`，no-ff 集成提交 `2b6ef127`，起始基线 `99e367f1`。
+- Design V1 编辑器默认提供 2D+3D 分屏以及纯 2D、纯 3D 切换；两种投影消费同一个 `ISpaceDesignSceneDto`，保存成功后使用服务端回读场景同步重建，不维护第二套模型。
+- 3D 只读预览复用参数化 SceneBuilder、InstancedMesh 与资产链，支持俯视/等轴/正视和自动适配；界面明确显示版本状态及“不含生产库存/任务”，不开放 3D 写操作。
+- 机器一致性清单分别来自编辑器实际 Konva 投影和实际 Three.js 对象树/实例矩阵/几何，统一比较数量、LogicalId、父级、业务编码、毫米位置/尺寸、旋转、逐层规格与规范 primitive，并用 SHA-256 固化；篡改实际实例矩阵会被自动化识别。
+- 生命周期边界保持失败关闭：Removed/Disabled 不渲染、移除货架不泄露遗留 Active 子层、真正孤立层仍报错；2D 路径多线段在套索选择时按 LogicalId 去重。
+- 门禁：前端聚焦 4 files / 13 tests、全量 108 files / 612 tests、type-check、production build、Space Unit 231/231、默认 Space Integration 140 passed / 55 SQL-gated skipped、Design Scene 真 SQL 3/3、Space Integration + KOUSQLSERVER 195/195、CP6.Tests 2720 passed / 17 既有环境 Skip、完整 solution 非增量构建 0 error / 10 条既有 warning、SDK drift、TypeScript SDK strict no-emit 与 `git diff --check` 全部通过。
+- 本卡无新端点、DTO、数据库模型、Migration、OpenAPI 或 SDK 表面变化。机器证据见 `docs/space/reports/e04-s06-shared-2d-3d-preview.md`。
+- 下一张建议独立卡为 E03-S01“标准建模 Excel 模板”，其 E05-S02 依赖已满足；E04-S05、E06 与 E13 后续链路继续等待各自前置条件。
+
 ## E09-S05 完成状态（2026-08-02）
 
 - E09-S05 外部访问审计与有效期已完成并进入受控集成基线：功能提交 `83798dcf`，no-ff 集成提交 `c658871c`，起始基线 `a5b53a2b`。
@@ -121,6 +132,8 @@
 
 ## Git
 
+- Space E04 S06 功能/集成提交：`20f248bd` / `2b6ef127`
+- Space E09 S05 功能/集成提交：`83798dcf` / `c658871c`
 - Space E07 S05 功能/集成提交：`15ccf992` / `389bf4ec`
 - Space E08 S01 功能/集成提交：`3df6b1d2` / `b2bb7a35`
 - Space E08 S02 功能/集成提交：`9a478c7a` / `d4cd8a82`
@@ -168,13 +181,13 @@
 | E00 S01–S04 | 已进入集成基线 | `539d56de`；事实清单、兼容护栏、数据源契约、审计/可观测性 |
 | E01 S01–S06 | 已进入集成基线 | `539d56de` + `85792161` + `36f534d9` + `2ccdff7a`；版本/来源文件/Job Ledger、Published→Draft Clone、Design API v1、生成 SDK、文件安全扫描与保留清理 |
 | E02 S01 | 部分进入集成基线，最终签收受阻 | `fe959066` + `3742fbff`；中立审计/压力/运行证据/preflight 已集成，正式黄金集、授权、供应商包/凭据和冻结 Worker 尚缺 |
-| E04 S01–S04 | 已进入集成基线 | `1d57a3b5` + `e8e84853` + `20ee0af0` + `c1043d15` + `b322e84a` + `39146c38` + `9a87dc30` + `f9c7fd21`；安全底图、坐标标定、通用元素属性、货架/元素统一多选、对齐、等距、旋转、删除、阵列与补偿式撤销/重做 |
+| E04 S01–S04、S06 | 已进入集成基线 | `1d57a3b5` + `e8e84853` + `20ee0af0` + `c1043d15` + `b322e84a` + `39146c38` + `9a87dc30` + `f9c7fd21` + `20f248bd` + `2b6ef127`；安全底图、坐标标定、通用元素属性、统一批量编辑与补偿命令，以及同一 Design Scene 的 2D/3D 只读预览和实际渲染结构一致性证明 |
 | E07 S01–S05 | 已进入集成基线 | `d06a8bd1` + `6e67a9d1` + `74577015` + `6d751e0c` + `15ccf992` + `389bf4ec`；版本化能力合同、CP6 真实适配器、持久化幂等账本、标准模拟器、确定性标准仓与存量 WMS 采纳/绑定 |
 | E08 S01–S05 | 已进入集成基线 | `3df6b1d2` + `b2bb7a35` + `9a478c7a` + `d4cd8a82` + `8d8f7e01` + `dfb6e93b` + `9f7e38f8` + `994339a6` + `cc1d8baf` + `24464fab` + `7a05c05f` + `675e485c`；统一 Published 运行源、双身份、来源新鲜度、库存定位、任务路径与 10,000 库位性能基线 |
-| E09 S01–S04 | 已进入集成基线 | `a599cfd7` + `09538ca3` + `cae12c7e` + `feefa9cd` + `88bc42d1` + `1850b2d8` + `f045bd6f` + `c82d4fae`；外部组织/成员、组合 Grant、字段策略/脱敏、Published-only Portal，以及猜测 ID、同码实体、游标/缓存和 Portal DTO 跨租户阻断矩阵 |
+| E09 S01–S05 | 已进入集成基线 | `a599cfd7` + `09538ca3` + `cae12c7e` + `feefa9cd` + `88bc42d1` + `1850b2d8` + `f045bd6f` + `c82d4fae` + `83798dcf` + `c658871c`；外部组织/成员、组合 Grant、字段策略/脱敏、Published-only Portal、跨租户阻断矩阵，以及访问审计和授权有效期即时重验证 |
 | E13 S01–S03、S12 | 已进入集成基线 | Provider/确定性端口、可审计 Run/Proposal/Decision/Usage 模型、可恢复 Worker 控制面，以及数据库并发槽与预算账本 |
 | E05 S01–S05 | 已进入集成基线 | 通用元素、逐层货架、统一场景 DTO、版本化资产库及确定性参数化 3D 渲染 |
-| E04 S05–S06、E06、E08 S05+ 等剩余范围 | 候选证据或尚未实现 | `0d25da4d` 只作提取来源；不得以候选报告替代集成验收 |
+| E03、E04 S05、E06、E13 S04～S11/S13～S19 等剩余范围 | 候选证据或尚未实现 | E03-S01 与 E03-S02 前置已满足；其余按依赖逐卡推进。`0d25da4d` 只作提取来源，不得以候选报告替代集成验收 |
 
 ## 上一完成波：GR-VP
 
@@ -190,6 +203,8 @@
 
 ## 最近验证基线
 
+- E04-S06 已推进至受控集成提交 `2b6ef127`：功能分支与合并态前端全量均为 108 files / 612 tests，聚焦 4 files / 13 tests、type-check 和 production build 通过；Space Unit 231/231、默认 Space Integration 140 passed / 55 SQL-gated skipped、Design Scene 真 SQL 3/3、Space Integration + KOUSQLSERVER 195/195 且 0 skipped、CP6.Tests 2720 passed / 17 environment-gated skipped、完整 solution 非增量构建 0 error / 10 条既有 warning，以及 SDK drift、TypeScript SDK strict no-emit 和差异门禁均通过。
+- E09-S05 已推进至受控集成提交 `c658871c`：审计聚焦 48/48、Portal/真 SQL 合并态 16/16、Space Unit 231/231、Space Integration + KOUSQLSERVER 195/195、CP6.Tests 2720 passed / 17 environment-gated skipped、完整 solution 非增量构建 0 error / 10 条既有 warning、前端 106 files / 607 tests、EF/SDK drift 与 TypeScript SDK strict no-emit 均通过。
 - E09-S04 已推进至受控集成提交 `c82d4fae`：功能分支门禁为 Space Unit 231/231、Space Integration + KOUSQLSERVER 187/187 且 0 skipped、CP6.Tests 2713 passed / 17 environment-gated skipped、完整 solution 0 warning / 0 error、前端 106 files / 607 tests、EF/SDK drift 与 TypeScript SDK strict no-emit；合并态聚焦门禁为 16/16、42/42、完整 solution 0 error / 10 条既有 warning、前端 607/607 及 EF/SDK drift。
 - E09-S03 已推进至受控集成提交 `1850b2d8`：功能分支门禁为 Space Unit 231/231、Space Integration + KOUSQLSERVER 181/181 且 0 skipped、CP6.Tests 2711 passed / 17 environment-gated skipped、完整 solution build 0 error、前端 106 files / 607 tests、EF/SDK drift、C#/TypeScript SDK 编译与 S02→S03 幂等增量 SQL 双执行通过；合并态聚焦门禁为 3/3、22/22、84/84、前端 607/607 及 EF/SDK drift。
 - E09-S02 已推进至受控集成提交 `feefa9cd`：功能分支门禁为 Space Unit 228/228、Space Integration + KOUSQLSERVER 169/169 且 0 skipped、CP6.Tests 2703 passed / 17 environment-gated skipped、完整 solution build 0 error、前端 106 files / 607 tests、EF/SDK drift、C#/TypeScript SDK 编译与 S01→S02 幂等增量 SQL 双执行通过；合并态聚焦门禁为 4/4、10/10、35/35 及 EF/SDK drift。
@@ -223,4 +238,4 @@
 
 ## 下一动作
 
-以 `c658871c` 为当前 Space 代码集成基线。E07-S05、E08-S01～S05 与 E09-S01～S05 已完成；下一张建议独立卡为 E04-S06“2D/3D 同源预览”，其 E04-S03、E05-S03 依赖已满足。E09 的产品、QA、WMS 与安全正式 GA 签字仍由发布治理完成。E04-S05 继续等待 E02-S07；E13-S04 等待 E02-S03，E13-S05 等待 S04 与正式供应商证据；E02-S01 等待正式黄金集、授权和冻结 Worker；E10 属于 P2。禁止把剩余候选整包合入。GR-VP T1–T7 已完成，不要重做。
+以 `2b6ef127` 为当前 Space 代码集成基线。E04-S06 已完成；下一张建议独立卡为 E03-S01“标准建模 Excel 模板”，其 E05-S02 前置已满足，先锁定货架、逐层规格、库位和映射说明的标准输入合同，再进入 E03-S02 字段映射。E09 的产品、QA、WMS 与安全正式 GA 签字仍由发布治理完成。E04-S05 继续等待 E02-S07；E06-S01 继续等待 E02～E05 与 E13 链路；E13-S04 等待 E02-S03，E13-S05 等待 S04 与正式供应商证据；E02-S01 等待正式黄金集、授权和冻结 Worker；E10 属于 P2。禁止把剩余候选整包合入。GR-VP T1–T7 已完成，不要重做。
