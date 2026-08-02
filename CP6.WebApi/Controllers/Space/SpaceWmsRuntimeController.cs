@@ -90,6 +90,22 @@ public sealed class SpaceWmsRuntimeController(
                 ownerId),
             cancellationToken);
 
+    [HttpGet("overview")]
+    [RequirePermission(
+        "space",
+        "model:read",
+        UseProblemDetails = true)]
+    [ProducesResponseType<SpaceWmsRuntimeWarehouseOverviewResponse>(
+        StatusCodes.Status200OK)]
+    public Task<SpaceWmsRuntimeWarehouseOverviewResponse> GetWarehouseOverview(
+        Guid siteId,
+        [FromQuery] int abcWindowDays = 90,
+        CancellationToken cancellationToken = default) =>
+        runtime.GetWarehouseOverviewAsync(
+            siteId,
+            abcWindowDays,
+            cancellationToken);
+
     [HttpGet("tasks")]
     [RequirePermission(
         "space",

@@ -7,9 +7,17 @@ import type {
   SpacePersonnelTrajectoryResponse,
   SpaceDeviceCurrentPage,
   SpaceRuntimeTaskPathResponse,
+  SpaceWarehouseOverviewResponse,
 } from '@/types/space/runtime'
 
 export const spaceRuntimeApi = {
+  warehouseOverview(siteId: string, abcWindowDays = 90) {
+    const params = new URLSearchParams({ abcWindowDays: String(abcWindowDays) })
+    return http.get<unknown, SpaceWarehouseOverviewResponse>(
+      `/space/design/v1/sites/${siteId}/runtime/overview`,
+      { params },
+    )
+  },
   inventory(siteId: string, locationLogicalIds: readonly string[]) {
     const params = new URLSearchParams()
     for (const locationLogicalId of new Set(locationLogicalIds)) {

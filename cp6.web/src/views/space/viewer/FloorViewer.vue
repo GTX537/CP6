@@ -50,7 +50,26 @@
         <button class="tb-btn" :title="t('聚焦选中')" @click="onFocusSelected()">⊕</button>
         <div class="tb-sep" />
         <button class="tb-btn" :title="t('切换投影')" @click="toggleProjection()">⟳</button>
+        <div class="tb-sep" />
+        <button
+          class="tb-btn tb-text"
+          :class="{ on: warehouseOverviewOpen }"
+          :title="t('仓库运行快照')"
+          @click="toggleWarehouseOverview"
+        >KPI</button>
       </div>
+
+      <WarehouseOverviewPanel
+        v-if="warehouseOverviewOpen"
+        :loading="warehouseOverviewLoading"
+        :response="warehouseOverview"
+        :abc-overlay-on="abcOverlayOn"
+        :current-floor-id="currentFloorId"
+        @refresh="refreshWarehouseOverview"
+        @toggle-abc="onToggleAbcOverlay"
+        @switch-floor="onSwitchFloor"
+        @close="warehouseOverviewOpen = false"
+      />
 
       <!-- Info card (top-right) -->
       <InfoCard :location-id="selectedId" :stock="selectedStock" @close="selectedId = null" />
@@ -135,6 +154,8 @@ import type {
   SpaceRuntimeSource,
   SpaceRuntimeTaskItem,
   SpaceRuntimeTaskPathResponse,
+  SpaceWarehouseAbcRank,
+  SpaceWarehouseOverviewResponse,
 } from '@/types/space/runtime'
 import {
   initialRuntimeRefreshState,
@@ -157,6 +178,7 @@ import {
   type RuntimeTaskPathPlan,
 } from '@/space-viewer/advanced/runtimeTaskPath'
 import AdvancedPanel from './AdvancedPanel.vue'
+import WarehouseOverviewPanel from './WarehouseOverviewPanel.vue'
 
 const { t } = useI18n()
 const route = useRoute()
@@ -179,6 +201,7 @@ let taskPathRequestVersion = 0
 let deviceCurrentRequestVersion = 0
 let personnelCurrentRequestVersion = 0
 let personnelTrajectoryRequestVersion = 0
+let warehouseOverviewRequestVersion = 0
 let preserveTaskPathNavigation = false
 
 const overlayMode = ref<OverlayMode>('status')
@@ -189,6 +212,10 @@ const locateLoading = ref(false)
 const locateResult = ref<SpaceRuntimeInventoryLocateResponse | null>(null)
 const spatialFilterLoading = ref(false)
 const spatialFilterResponse = ref<SpaceRuntimeInventoryLocateResponse | null>(null)
+const warehouseOverviewOpen = ref(false)
+const warehouseOverviewLoading = ref(false)
+const warehouseOverview = ref<SpaceWarehouseOverviewResponse | null>(null)
+const abcOverlayOn = ref(false)
 const unavailableRuntimeSource = (dataSourceId: string): SpaceRuntimeSource => ({
   kind: 'Unavailable',
   adapterId: dataSourceId,
@@ -305,6 +332,73 @@ function onHome(): void { viewer?.home() }
 function onOverview(): void { viewer?.overview() }
 function onFocusSelected(): void { viewer?.focusSelected() }
 
+async function toggleWarehouseOverview(): Promise<void> {
+  warehouseOverviewOpen.value = !warehouseOverviewOpen.value
+  if (warehouseOverviewOpen.value && !warehouseOverview.value) {
+    await refreshWarehouseOverview(90)
+  }
+}
+
+async function refreshWarehouseOverview(abcWindowDays: number): Promise<void> {
+  const requestVersion = ++warehouseOverviewRequestVersion
+  warehouseOverviewLoading.value = true
+  try {
+    const response = await spaceRuntimeApi.warehouseOverview(siteId, abcWindowDays)
+    if (requestVersion !== warehouseOverviewRequestVersion) return
+    warehouseOverview.value = response
+    if (abcOverlayOn.value) {
+      if (response.abc.spatialMappingAvailable) {
+        applyAbcOverlay(response)
+      } else {
+        await onToggleAbcOverlay(false)
+        ElMessage.warning(t('ABC 空间映射不可用，已关闭叠加'))
+      }
+    }
+  } catch {
+    if (requestVersion !== warehouseOverviewRequestVersion) return
+    ElMessage.warning(t('仓库快照获取失败，保留上次成功快照'))
+  } finally {
+    if (requestVersion === warehouseOverviewRequestVersion) {
+      warehouseOverviewLoading.value = false
+    }
+  }
+}
+
+function applyAbcOverlay(response: SpaceWarehouseOverviewResponse): void {
+  if (!overlay) return
+  const ranks = new Map<string, SpaceWarehouseAbcRank>(
+    response.abc.locations.map((location) => [location.locationLogicalId, location.rank]),
+  )
+  overlay.setAbcOverlay(ranks)
+}
+
+async function onToggleAbcOverlay(enabled: boolean): Promise<void> {
+  if (!overlay || !viewer) return
+  if (enabled) {
+    const response = warehouseOverview.value
+    if (!response?.abc.spatialMappingAvailable) {
+      ElMessage.warning(t('ABC 空间映射不可用'))
+      return
+    }
+    if (workloadOn.value) await onToggleWorkload()
+    spatialFilterRequestVersion++
+    spatialFilterLoading.value = false
+    spatialFilterResponse.value = null
+    overlay.clearSpatialFilter()
+    abcOverlayOn.value = true
+    applyAbcOverlay(response)
+    return
+  }
+
+  abcOverlayOn.value = false
+  overlay.clearAbcOverlay()
+  if (overlay.mode === 'off' && currentFloorId.value) {
+    await viewer.load(currentFloorId.value)
+  } else {
+    overlay.apply()
+  }
+}
+
 function onMouseMove(e: MouseEvent): void {
   clearTimeout(hoverTimer)
   hoverTimer = window.setTimeout(() => {
@@ -412,6 +506,7 @@ async function onApplySpatialFilter(
   spatialFilterLoading.value = true
   try {
     if (workloadOn.value) await onToggleWorkload()
+    if (abcOverlayOn.value) await onToggleAbcOverlay(false)
     const response = await spaceRuntimeApi.locateInventory(siteId, criteria)
     if (requestVersion !== spatialFilterRequestVersion) return
     spatialFilterResponse.value = response
@@ -563,6 +658,7 @@ let prevOverlayMode: OverlayMode = 'status'   // 热图开启前的 07 着色模
 
 async function onToggleWorkload(): Promise<void> {
   if (!heatmap || !viewer) return
+  if (!workloadOn.value && abcOverlayOn.value) await onToggleAbcOverlay(false)
   workloadOn.value = !workloadOn.value
   if (workloadOn.value) {
     // 与 07 着色互斥：记住当前模式、把 StockOverlay 实际 _mode 也置 off（否则 07 轮询计时器
@@ -847,6 +943,7 @@ onMounted(async () => {
 onBeforeUnmount(() => {
   clearTimeout(hoverTimer)
   spatialFilterRequestVersion++
+  warehouseOverviewRequestVersion++
   overlay?.dispose()
   overlay = null
   pathAnimator?.clear(); pathAnimator = null
@@ -949,6 +1046,8 @@ onBeforeUnmount(() => {
   transition: background 0.15s;
 }
 .tb-btn:hover { background: rgba(79, 195, 247, 0.15); color: #e0f7fa; }
+.tb-btn.on { background: rgba(79, 195, 247, 0.22); color: #e0f7fa; }
+.tb-text { font-size: 11px; font-weight: 700; letter-spacing: .04em; }
 
 .tb-sep {
   width: 1px;

@@ -172,6 +172,31 @@ public sealed class StandardSpaceWmsSimulatorTests
     }
 
     [Fact]
+    public async Task Abc_query_aggregates_positive_seeded_outbound_movements_in_window()
+    {
+        var simulator = new StandardSpaceWmsSimulator();
+        var end = new DateOnly(2026, 8, 1);
+        simulator.SeedOutboundMovements(
+            Context(),
+            [
+                new("OUT-1", "SKU-A", end.AddDays(-2), 8),
+                new("OUT-2", "SKU-A", end.AddDays(-1), 2),
+                new("OUT-3", "SKU-B", end.AddDays(-3), 4),
+                new("OUT-OLD", "SKU-C", end.AddDays(-100), 99),
+            ]);
+
+        var result = await simulator.QueryAbcAsync(
+            new SpaceWmsAbcQuery(Context(), end.AddDays(-30), end));
+
+        Assert.True(result.Source.IsSimulated);
+        Assert.Equal(["SKU-A", "SKU-B"],
+            result.Items.Select(value => value.MaterialNumber));
+        Assert.Equal(2, result.Items[0].OutboundMovementCount);
+        Assert.Equal(10, result.Items[0].OutboundQuantity);
+        Assert.Equal(4, result.Items[1].OutboundQuantity);
+    }
+
+    [Fact]
     public async Task Portal_scope_filters_owner_and_task_before_results_return()
     {
         var simulator = new StandardSpaceWmsSimulator();

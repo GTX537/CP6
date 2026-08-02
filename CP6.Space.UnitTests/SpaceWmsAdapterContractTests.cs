@@ -698,6 +698,11 @@ public sealed class SpaceWmsAdapterContractTests
             CancellationToken ct = default) =>
             Task.FromResult(new SpaceWmsTaskResult(Source(), []));
 
+        public Task<SpaceWmsAbcResult> QueryAbcAsync(
+            SpaceWmsAbcQuery request,
+            CancellationToken ct = default) =>
+            Task.FromResult(new SpaceWmsAbcResult(Source(), []));
+
         private SpaceWmsSourceMetadata Source() =>
             new(sourceKind, adapterId, DateTimeOffset.UtcNow);
 

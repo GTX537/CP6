@@ -7,6 +7,7 @@ import type {
   RuntimeStockItem,
   SpaceRuntimeInventoryResponse,
   SpaceRuntimeSource,
+  SpaceWarehouseAbcRank,
 } from '@/types/space/runtime'
 
 vi.mock('@/api/space/runtime', () => ({
@@ -115,6 +116,76 @@ describe('StockOverlay', () => {
     ])
     overlay.clearSpatialFilter()
     expect(overlay.spatialFilterActive).toBe(false)
+  })
+
+  it('applies ABC ranks and keeps empty locations visually neutral', () => {
+    const viewer = fakeViewer()
+    const overlay = new StockOverlay(viewer as never)
+    overlay.setSnapshot([
+      dto('location-1', 'A-01', 1),
+      dto('location-2', 'A-02', 1),
+      dto('location-3', 'A-03', 0),
+    ], real)
+    const ranks = new Map<string, SpaceWarehouseAbcRank>([
+      ['location-1', 'A'],
+      ['location-2', 'C'],
+    ])
+
+    overlay.setAbcOverlay(ranks)
+
+    expect(overlay.abcOverlayActive).toBe(true)
+    expect(viewer.setInstanceColors).toHaveBeenLastCalledWith([
+      { locationId: 'location-1', hex: StockOverlay.ABC_COLORS.A },
+      { locationId: 'location-2', hex: StockOverlay.ABC_COLORS.C },
+      { locationId: 'location-3', hex: StockOverlay.ABC_EMPTY_HEX },
+    ])
+  })
+
+  it('gives the spatial filter precedence over ABC until the filter is cleared', () => {
+    const viewer = fakeViewer()
+    const overlay = new StockOverlay(viewer as never)
+    overlay.setSnapshot([
+      dto('location-1', 'A-01', 1),
+      dto('location-2', 'A-02', 1),
+    ], real)
+    overlay.setAbcOverlay(new Map([['location-1', 'A' as const]]))
+
+    overlay.setSpatialFilter(['location-2'])
+    expect(viewer.setInstanceColors).toHaveBeenLastCalledWith([
+      { locationId: 'location-1', hex: StockOverlay.FILTER_EXCLUDED_HEX },
+      { locationId: 'location-2', hex: StockOverlay.FILTER_MATCH_HEX },
+    ])
+
+    overlay.clearSpatialFilter()
+    overlay.apply()
+    expect(viewer.setInstanceColors).toHaveBeenLastCalledWith([
+      { locationId: 'location-1', hex: StockOverlay.ABC_COLORS.A },
+      { locationId: 'location-2', hex: StockOverlay.ABC_EMPTY_HEX },
+    ])
+  })
+
+  it('keeps ABC ranks across stock refreshes until explicitly cleared', async () => {
+    const viewer = fakeViewer()
+    const overlay = new StockOverlay(viewer as never)
+    overlay.setSnapshot([dto('location-1', 'A-01', 1)], real)
+    overlay.setAbcOverlay(new Map([['location-1', 'B' as const]]))
+    vi.mocked(spaceRuntimeApi.inventory).mockResolvedValueOnce({
+      siteId: 'site-1',
+      publishedVersionId: 'version-1',
+      warehouseCode: 'WH1',
+      source: real,
+      items: [],
+    })
+
+    await overlay.refresh('site-1', [
+      { locationLogicalId: 'location-1', locationCode: 'A-01' },
+    ])
+
+    expect(viewer.setInstanceColors).toHaveBeenLastCalledWith([
+      { locationId: 'location-1', hex: StockOverlay.ABC_COLORS.B },
+    ])
+    overlay.clearAbcOverlay()
+    expect(overlay.abcOverlayActive).toBe(false)
   })
 
   it('gets selected stock by logical identity', () => {

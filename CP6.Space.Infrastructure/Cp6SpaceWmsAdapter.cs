@@ -656,6 +656,51 @@ public sealed class Cp6SpaceWmsAdapter : ISpaceWmsAdapter
                 row.ProductCd)).ToArray());
     }
 
+    public async Task<SpaceWmsAbcResult> QueryAbcAsync(
+        SpaceWmsAbcQuery request,
+        CancellationToken ct = default)
+    {
+        ArgumentNullException.ThrowIfNull(request);
+        EnsureScope(request.Context);
+        if (request.FromDateInclusive == default ||
+            request.ToDateExclusive == default ||
+            request.FromDateInclusive >= request.ToDateExclusive)
+        {
+            throw new ArgumentException(
+                "A valid half-open ABC analysis date window is required.",
+                nameof(request));
+        }
+
+        var from = request.FromDateInclusive.ToDateTime(TimeOnly.MinValue);
+        var to = request.ToDateExclusive.ToDateTime(TimeOnly.MinValue);
+        var rows = await _db.StockTransactions
+            .AsNoTracking()
+            .Where(value =>
+                !value.IsDeleted &&
+                value.WarehouseCd == request.Context.WarehouseCode &&
+                value.TxnType == WmsTxnType.OUT &&
+                value.Qty > 0 &&
+                value.TxnDateTime >= from &&
+                value.TxnDateTime < to)
+            .GroupBy(value => value.ProductCd)
+            .Select(group => new
+            {
+                MaterialNumber = group.Key,
+                OutboundMovementCount = group.Count(),
+                OutboundQuantity = group.Sum(value => value.Qty),
+            })
+            .OrderByDescending(value => value.OutboundQuantity)
+            .ThenBy(value => value.MaterialNumber)
+            .ToArrayAsync(ct);
+        var items = rows
+            .Select(value => new SpaceWmsAbcAggregate(
+                value.MaterialNumber,
+                value.OutboundMovementCount,
+                value.OutboundQuantity))
+            .ToArray();
+        return new SpaceWmsAbcResult(Source(), items);
+    }
+
     private async Task<SpaceWmsBatchResult> ApplyNewOperationAsync(
         SpaceWmsBatch batch,
         CancellationToken ct)

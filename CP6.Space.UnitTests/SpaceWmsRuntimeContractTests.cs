@@ -7,7 +7,7 @@ namespace CP6.Space.UnitTests;
 public sealed class SpaceWmsRuntimeContractTests
 {
     [Fact]
-    public void Public_runtime_contracts_expose_source_inventory_and_task_shapes()
+    public void Public_runtime_contracts_expose_source_inventory_task_and_overview_shapes()
     {
         AssertPropertyOrder<SpaceWmsRuntimeSourceDto>(
             "Kind",
@@ -141,6 +141,102 @@ public sealed class SpaceWmsRuntimeContractTests
             "Floors",
             "Workloads",
             "Aisles");
+        AssertPropertyOrder<SpaceWmsRuntimeWarehouseModelKpiDto>(
+            "FloorCount",
+            "AreaAvailableFloorCount",
+            "AreaMissingFloorCount",
+            "TotalFloorAreaSquareMeters",
+            "ZoneCount",
+            "RackCount",
+            "RackFootprintSquareMeters",
+            "RackFootprintRatePercent",
+            "ActiveLocationCount");
+        AssertPropertyOrder<SpaceWmsRuntimeWarehouseInventoryKpiDto>(
+            "Source",
+            "InventoryLineCount",
+            "OccupiedLocationCount",
+            "UnoccupiedLocationCount",
+            "OccupiedLocationRatePercent",
+            "OccupiedLocationRateMethod",
+            "CapacityUtilizationPercent",
+            "CapacityUtilizationStatus",
+            "CapacityUtilizationReason",
+            "DistinctOwnerCount",
+            "DistinctMaterialCount",
+            "DistinctLotCount",
+            "DistinctContainerCount");
+        AssertPropertyOrder<SpaceWmsRuntimeWarehouseTaskKpiDto>(
+            "Source",
+            "ActiveTaskCount",
+            "ActiveTaskStopCount");
+        AssertPropertyOrder<SpaceWmsRuntimeWarehouseAnomalyKpiDto>(
+            "ActiveDeviceAlarmCount",
+            "CriticalDeviceAlarmCount",
+            "CodeMismatchLocationCount",
+            "OverAllocatedInventoryLineCount",
+            "AreaMissingFloorCount",
+            "UnclassifiedAbcMaterialCount");
+        AssertPropertyOrder<SpaceWmsRuntimeWarehouseAbcMaterialDto>(
+            "MaterialNumber",
+            "OutboundMovementCount",
+            "OutboundQuantity",
+            "PreviousCumulativeSharePercent",
+            "CumulativeSharePercent",
+            "Rank",
+            "OccupiedLocationCount",
+            "FloorCount");
+        AssertPropertyOrder<SpaceWmsRuntimeWarehouseAbcLocationMaterialDto>(
+            "MaterialNumber",
+            "Rank");
+        AssertPropertyOrder<SpaceWmsRuntimeWarehouseAbcLocationDto>(
+            "LocationLogicalId",
+            "SpaceLocationCode",
+            "FloorLogicalId",
+            "FloorCode",
+            "Rank",
+            "Materials");
+        AssertPropertyOrder<SpaceWmsRuntimeWarehouseAbcDto>(
+            "Source",
+            "WindowDays",
+            "WindowStartDate",
+            "WindowEndDateExclusive",
+            "TransactionTimeBasis",
+            "RankingMethod",
+            "AThresholdPercent",
+            "BThresholdPercent",
+            "SpatialMappingAvailable",
+            "MaterialCount",
+            "ACount",
+            "BCount",
+            "CCount",
+            "UnclassifiedCount",
+            "Materials",
+            "Locations");
+        AssertPropertyOrder<SpaceWmsRuntimeWarehouseFloorKpiDto>(
+            "FloorLogicalId",
+            "FloorCode",
+            "FloorName",
+            "FloorLevel",
+            "AreaSquareMeters",
+            "ActiveLocationCount",
+            "OccupiedLocationCount",
+            "OccupiedLocationRatePercent",
+            "ALocationCount",
+            "BLocationCount",
+            "CLocationCount",
+            "UnclassifiedLocationCount");
+        AssertPropertyOrder<SpaceWmsRuntimeWarehouseOverviewResponse>(
+            "SiteId",
+            "PublishedVersionId",
+            "WarehouseCode",
+            "CapturedAtUtc",
+            "IsRuntimeComplete",
+            "Model",
+            "Inventory",
+            "Tasks",
+            "Anomalies",
+            "Abc",
+            "Floors");
     }
 
     [Fact]
@@ -148,7 +244,7 @@ public sealed class SpaceWmsRuntimeContractTests
     {
         var methods = typeof(ISpaceWmsRuntimeService).GetMethods();
 
-        Assert.Equal(4, methods.Length);
+        Assert.Equal(5, methods.Length);
         var inventory = Assert.Single(
             methods,
             method => method.Name == "QueryInventoryAsync");
@@ -188,6 +284,29 @@ public sealed class SpaceWmsRuntimeContractTests
             typeof(Task<SpaceWmsRuntimeTaskResponse>),
             tasks.ReturnType);
         AssertQueryParameters(tasks);
+
+        var overview = Assert.Single(
+            methods,
+            method => method.Name == "GetWarehouseOverviewAsync");
+        Assert.Equal(
+            typeof(Task<SpaceWmsRuntimeWarehouseOverviewResponse>),
+            overview.ReturnType);
+        Assert.Collection(
+            overview.GetParameters(),
+            parameter =>
+            {
+                Assert.Equal("siteId", parameter.Name);
+                Assert.Equal(typeof(Guid), parameter.ParameterType);
+                Assert.False(parameter.IsOptional);
+            },
+            parameter =>
+            {
+                Assert.Equal("abcWindowDays", parameter.Name);
+                Assert.Equal(typeof(int), parameter.ParameterType);
+                Assert.True(parameter.IsOptional);
+                Assert.Equal(90, parameter.DefaultValue);
+            },
+            AssertCancellationParameter);
 
         var taskPath = Assert.Single(
             methods,

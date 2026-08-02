@@ -628,6 +628,15 @@ namespace CP6.Space.Client
 
         /// <returns>OK</returns>
         /// <exception cref="ApiException">A server side error occurred.</exception>
+        System.Threading.Tasks.Task<SpaceWmsRuntimeWarehouseOverviewResponse> GetWarehouseOverviewAsync(System.Guid siteId, int? abcWindowDays);
+
+        /// <param name="cancellationToken">A cancellation token that can be used by other objects or threads to receive notice of cancellation.</param>
+        /// <returns>OK</returns>
+        /// <exception cref="ApiException">A server side error occurred.</exception>
+        System.Threading.Tasks.Task<SpaceWmsRuntimeWarehouseOverviewResponse> GetWarehouseOverviewAsync(System.Guid siteId, int? abcWindowDays, System.Threading.CancellationToken cancellationToken);
+
+        /// <returns>OK</returns>
+        /// <exception cref="ApiException">A server side error occurred.</exception>
         System.Threading.Tasks.Task<SpaceWmsRuntimeTaskResponse> GetTasksAsync(System.Guid siteId, System.Collections.Generic.IEnumerable<System.Guid>? locationLogicalId);
 
         /// <param name="cancellationToken">A cancellation token that can be used by other objects or threads to receive notice of cancellation.</param>
@@ -11328,6 +11337,185 @@ namespace CP6.Space.Client
 
         /// <returns>OK</returns>
         /// <exception cref="ApiException">A server side error occurred.</exception>
+        public virtual System.Threading.Tasks.Task<SpaceWmsRuntimeWarehouseOverviewResponse> GetWarehouseOverviewAsync(System.Guid siteId, int? abcWindowDays)
+        {
+            return GetWarehouseOverviewAsync(siteId, abcWindowDays, System.Threading.CancellationToken.None);
+        }
+
+        /// <param name="cancellationToken">A cancellation token that can be used by other objects or threads to receive notice of cancellation.</param>
+        /// <returns>OK</returns>
+        /// <exception cref="ApiException">A server side error occurred.</exception>
+        public virtual async System.Threading.Tasks.Task<SpaceWmsRuntimeWarehouseOverviewResponse> GetWarehouseOverviewAsync(System.Guid siteId, int? abcWindowDays, System.Threading.CancellationToken cancellationToken)
+        {
+            if (siteId == null)
+                throw new System.ArgumentNullException("siteId");
+
+            var client_ = _httpClient;
+            var disposeClient_ = false;
+            try
+            {
+                using (var request_ = new System.Net.Http.HttpRequestMessage())
+                {
+                    request_.Method = new System.Net.Http.HttpMethod("GET");
+                    request_.Headers.Accept.Add(System.Net.Http.Headers.MediaTypeWithQualityHeaderValue.Parse("application/json"));
+
+                    var urlBuilder_ = new System.Text.StringBuilder();
+
+                    // Operation Path: "api/space/design/v1/sites/{siteId}/runtime/overview"
+                    urlBuilder_.Append("api/space/design/v1/sites/");
+                    urlBuilder_.Append(System.Uri.EscapeDataString(ConvertToString(siteId, System.Globalization.CultureInfo.InvariantCulture)));
+                    urlBuilder_.Append("/runtime/overview");
+                    urlBuilder_.Append('?');
+                    if (abcWindowDays != null)
+                    {
+                        urlBuilder_.Append(System.Uri.EscapeDataString("abcWindowDays")).Append('=').Append(System.Uri.EscapeDataString(ConvertToString(abcWindowDays, System.Globalization.CultureInfo.InvariantCulture))).Append('&');
+                    }
+                    urlBuilder_.Length--;
+
+                    PrepareRequest(client_, request_, urlBuilder_);
+
+                    var url_ = urlBuilder_.ToString();
+                    request_.RequestUri = new System.Uri(url_, System.UriKind.RelativeOrAbsolute);
+
+                    PrepareRequest(client_, request_, url_);
+
+                    var response_ = await client_.SendAsync(request_, System.Net.Http.HttpCompletionOption.ResponseHeadersRead, cancellationToken).ConfigureAwait(false);
+                    var disposeResponse_ = true;
+                    try
+                    {
+                        var headers_ = new System.Collections.Generic.Dictionary<string, System.Collections.Generic.IEnumerable<string>>();
+                        foreach (var item_ in response_.Headers)
+                            headers_[item_.Key] = item_.Value;
+                        if (response_.Content != null && response_.Content.Headers != null)
+                        {
+                            foreach (var item_ in response_.Content.Headers)
+                                headers_[item_.Key] = item_.Value;
+                        }
+
+                        ProcessResponse(client_, response_);
+
+                        var status_ = (int)response_.StatusCode;
+                        if (status_ == 200)
+                        {
+                            var objectResponse_ = await ReadObjectResponseAsync<SpaceWmsRuntimeWarehouseOverviewResponse>(response_, headers_, cancellationToken).ConfigureAwait(false);
+                            if (objectResponse_.Object == null)
+                            {
+                                throw new ApiException("Response was null which was not expected.", status_, objectResponse_.Text, headers_, null);
+                            }
+                            return objectResponse_.Object;
+                        }
+                        else
+                        if (status_ == 400)
+                        {
+                            var objectResponse_ = await ReadObjectResponseAsync<SpaceDesignProblemDetails>(response_, headers_, cancellationToken).ConfigureAwait(false);
+                            if (objectResponse_.Object == null)
+                            {
+                                throw new ApiException("Response was null which was not expected.", status_, objectResponse_.Text, headers_, null);
+                            }
+                            throw new ApiException<SpaceDesignProblemDetails>("Bad Request", status_, objectResponse_.Text, headers_, objectResponse_.Object, null);
+                        }
+                        else
+                        if (status_ == 401)
+                        {
+                            var objectResponse_ = await ReadObjectResponseAsync<SpaceDesignProblemDetails>(response_, headers_, cancellationToken).ConfigureAwait(false);
+                            if (objectResponse_.Object == null)
+                            {
+                                throw new ApiException("Response was null which was not expected.", status_, objectResponse_.Text, headers_, null);
+                            }
+                            throw new ApiException<SpaceDesignProblemDetails>("Unauthorized", status_, objectResponse_.Text, headers_, objectResponse_.Object, null);
+                        }
+                        else
+                        if (status_ == 403)
+                        {
+                            var objectResponse_ = await ReadObjectResponseAsync<SpaceDesignProblemDetails>(response_, headers_, cancellationToken).ConfigureAwait(false);
+                            if (objectResponse_.Object == null)
+                            {
+                                throw new ApiException("Response was null which was not expected.", status_, objectResponse_.Text, headers_, null);
+                            }
+                            throw new ApiException<SpaceDesignProblemDetails>("Forbidden", status_, objectResponse_.Text, headers_, objectResponse_.Object, null);
+                        }
+                        else
+                        if (status_ == 404)
+                        {
+                            var objectResponse_ = await ReadObjectResponseAsync<SpaceDesignProblemDetails>(response_, headers_, cancellationToken).ConfigureAwait(false);
+                            if (objectResponse_.Object == null)
+                            {
+                                throw new ApiException("Response was null which was not expected.", status_, objectResponse_.Text, headers_, null);
+                            }
+                            throw new ApiException<SpaceDesignProblemDetails>("Not Found", status_, objectResponse_.Text, headers_, objectResponse_.Object, null);
+                        }
+                        else
+                        if (status_ == 409)
+                        {
+                            var objectResponse_ = await ReadObjectResponseAsync<SpaceDesignProblemDetails>(response_, headers_, cancellationToken).ConfigureAwait(false);
+                            if (objectResponse_.Object == null)
+                            {
+                                throw new ApiException("Response was null which was not expected.", status_, objectResponse_.Text, headers_, null);
+                            }
+                            throw new ApiException<SpaceDesignProblemDetails>("Conflict", status_, objectResponse_.Text, headers_, objectResponse_.Object, null);
+                        }
+                        else
+                        if (status_ == 422)
+                        {
+                            var objectResponse_ = await ReadObjectResponseAsync<SpaceDesignProblemDetails>(response_, headers_, cancellationToken).ConfigureAwait(false);
+                            if (objectResponse_.Object == null)
+                            {
+                                throw new ApiException("Response was null which was not expected.", status_, objectResponse_.Text, headers_, null);
+                            }
+                            throw new ApiException<SpaceDesignProblemDetails>("Unprocessable Content", status_, objectResponse_.Text, headers_, objectResponse_.Object, null);
+                        }
+                        else
+                        if (status_ == 500)
+                        {
+                            var objectResponse_ = await ReadObjectResponseAsync<SpaceDesignProblemDetails>(response_, headers_, cancellationToken).ConfigureAwait(false);
+                            if (objectResponse_.Object == null)
+                            {
+                                throw new ApiException("Response was null which was not expected.", status_, objectResponse_.Text, headers_, null);
+                            }
+                            throw new ApiException<SpaceDesignProblemDetails>("Internal Server Error", status_, objectResponse_.Text, headers_, objectResponse_.Object, null);
+                        }
+                        else
+                        if (status_ == 502)
+                        {
+                            var objectResponse_ = await ReadObjectResponseAsync<SpaceDesignProblemDetails>(response_, headers_, cancellationToken).ConfigureAwait(false);
+                            if (objectResponse_.Object == null)
+                            {
+                                throw new ApiException("Response was null which was not expected.", status_, objectResponse_.Text, headers_, null);
+                            }
+                            throw new ApiException<SpaceDesignProblemDetails>("Bad Gateway", status_, objectResponse_.Text, headers_, objectResponse_.Object, null);
+                        }
+                        else
+                        if (status_ == 503)
+                        {
+                            var objectResponse_ = await ReadObjectResponseAsync<SpaceDesignProblemDetails>(response_, headers_, cancellationToken).ConfigureAwait(false);
+                            if (objectResponse_.Object == null)
+                            {
+                                throw new ApiException("Response was null which was not expected.", status_, objectResponse_.Text, headers_, null);
+                            }
+                            throw new ApiException<SpaceDesignProblemDetails>("Service Unavailable", status_, objectResponse_.Text, headers_, objectResponse_.Object, null);
+                        }
+                        else
+                        {
+                            var responseData_ = response_.Content == null ? null : await ReadAsStringAsync(response_.Content, cancellationToken).ConfigureAwait(false);
+                            throw new ApiException("The HTTP status code of the response was not expected (" + status_ + ").", status_, responseData_, headers_, null);
+                        }
+                    }
+                    finally
+                    {
+                        if (disposeResponse_)
+                            response_.Dispose();
+                    }
+                }
+            }
+            finally
+            {
+                if (disposeClient_)
+                    client_.Dispose();
+            }
+        }
+
+        /// <returns>OK</returns>
+        /// <exception cref="ApiException">A server side error occurred.</exception>
         public virtual System.Threading.Tasks.Task<SpaceWmsRuntimeTaskResponse> GetTasksAsync(System.Guid siteId, System.Collections.Generic.IEnumerable<System.Guid>? locationLogicalId)
         {
             return GetTasksAsync(siteId, locationLogicalId, System.Threading.CancellationToken.None);
@@ -16010,6 +16198,359 @@ namespace CP6.Space.Client
 
         [System.Text.Json.Serialization.JsonPropertyName("totalQuantity")]
         public decimal TotalQuantity { get; set; } = default!;
+
+    }
+
+    [System.CodeDom.Compiler.GeneratedCode("NJsonSchema", "14.7.1.0 (NJsonSchema v11.6.1.0 (Newtonsoft.Json v13.0.0.0))")]
+    public partial class SpaceWmsRuntimeWarehouseAbcDto
+    {
+
+        [System.Text.Json.Serialization.JsonPropertyName("source")]
+        [System.ComponentModel.DataAnnotations.Required]
+        public SpaceWmsRuntimeSourceDto Source { get; set; } = new SpaceWmsRuntimeSourceDto();
+
+        [System.Text.Json.Serialization.JsonPropertyName("windowDays")]
+        public int WindowDays { get; set; } = default!;
+
+        [System.Text.Json.Serialization.JsonPropertyName("windowStartDate")]
+        [System.ComponentModel.DataAnnotations.Required(AllowEmptyStrings = true)]
+        public string WindowStartDate { get; set; } = default!;
+
+        [System.Text.Json.Serialization.JsonPropertyName("windowEndDateExclusive")]
+        [System.ComponentModel.DataAnnotations.Required(AllowEmptyStrings = true)]
+        public string WindowEndDateExclusive { get; set; } = default!;
+
+        [System.Text.Json.Serialization.JsonPropertyName("transactionTimeBasis")]
+        [System.ComponentModel.DataAnnotations.Required(AllowEmptyStrings = true)]
+        public string TransactionTimeBasis { get; set; } = default!;
+
+        [System.Text.Json.Serialization.JsonPropertyName("rankingMethod")]
+        [System.ComponentModel.DataAnnotations.Required(AllowEmptyStrings = true)]
+        public string RankingMethod { get; set; } = default!;
+
+        [System.Text.Json.Serialization.JsonPropertyName("aThresholdPercent")]
+        public decimal AThresholdPercent { get; set; } = default!;
+
+        [System.Text.Json.Serialization.JsonPropertyName("bThresholdPercent")]
+        public decimal BThresholdPercent { get; set; } = default!;
+
+        [System.Text.Json.Serialization.JsonPropertyName("spatialMappingAvailable")]
+        public bool SpatialMappingAvailable { get; set; } = default!;
+
+        [System.Text.Json.Serialization.JsonPropertyName("materialCount")]
+        public int? MaterialCount { get; set; } = default!;
+
+        [System.Text.Json.Serialization.JsonPropertyName("aCount")]
+        public int? ACount { get; set; } = default!;
+
+        [System.Text.Json.Serialization.JsonPropertyName("bCount")]
+        public int? BCount { get; set; } = default!;
+
+        [System.Text.Json.Serialization.JsonPropertyName("cCount")]
+        public int? CCount { get; set; } = default!;
+
+        [System.Text.Json.Serialization.JsonPropertyName("unclassifiedCount")]
+        public int? UnclassifiedCount { get; set; } = default!;
+
+        [System.Text.Json.Serialization.JsonPropertyName("materials")]
+        [System.ComponentModel.DataAnnotations.Required]
+        public System.Collections.Generic.ICollection<SpaceWmsRuntimeWarehouseAbcMaterialDto> Materials { get; set; } = new System.Collections.ObjectModel.Collection<SpaceWmsRuntimeWarehouseAbcMaterialDto>();
+
+        [System.Text.Json.Serialization.JsonPropertyName("locations")]
+        [System.ComponentModel.DataAnnotations.Required]
+        public System.Collections.Generic.ICollection<SpaceWmsRuntimeWarehouseAbcLocationDto> Locations { get; set; } = new System.Collections.ObjectModel.Collection<SpaceWmsRuntimeWarehouseAbcLocationDto>();
+
+    }
+
+    [System.CodeDom.Compiler.GeneratedCode("NJsonSchema", "14.7.1.0 (NJsonSchema v11.6.1.0 (Newtonsoft.Json v13.0.0.0))")]
+    public partial class SpaceWmsRuntimeWarehouseAbcLocationDto
+    {
+
+        [System.Text.Json.Serialization.JsonPropertyName("locationLogicalId")]
+        [System.ComponentModel.DataAnnotations.Required(AllowEmptyStrings = true)]
+        public System.Guid LocationLogicalId { get; set; } = default!;
+
+        [System.Text.Json.Serialization.JsonPropertyName("spaceLocationCode")]
+        [System.ComponentModel.DataAnnotations.Required(AllowEmptyStrings = true)]
+        public string SpaceLocationCode { get; set; } = default!;
+
+        [System.Text.Json.Serialization.JsonPropertyName("floorLogicalId")]
+        [System.ComponentModel.DataAnnotations.Required(AllowEmptyStrings = true)]
+        public System.Guid FloorLogicalId { get; set; } = default!;
+
+        [System.Text.Json.Serialization.JsonPropertyName("floorCode")]
+        [System.ComponentModel.DataAnnotations.Required(AllowEmptyStrings = true)]
+        public string FloorCode { get; set; } = default!;
+
+        [System.Text.Json.Serialization.JsonPropertyName("rank")]
+        [System.ComponentModel.DataAnnotations.Required(AllowEmptyStrings = true)]
+        public string Rank { get; set; } = default!;
+
+        [System.Text.Json.Serialization.JsonPropertyName("materials")]
+        [System.ComponentModel.DataAnnotations.Required]
+        public System.Collections.Generic.ICollection<SpaceWmsRuntimeWarehouseAbcLocationMaterialDto> Materials { get; set; } = new System.Collections.ObjectModel.Collection<SpaceWmsRuntimeWarehouseAbcLocationMaterialDto>();
+
+    }
+
+    [System.CodeDom.Compiler.GeneratedCode("NJsonSchema", "14.7.1.0 (NJsonSchema v11.6.1.0 (Newtonsoft.Json v13.0.0.0))")]
+    public partial class SpaceWmsRuntimeWarehouseAbcLocationMaterialDto
+    {
+
+        [System.Text.Json.Serialization.JsonPropertyName("materialNumber")]
+        [System.ComponentModel.DataAnnotations.Required(AllowEmptyStrings = true)]
+        public string MaterialNumber { get; set; } = default!;
+
+        [System.Text.Json.Serialization.JsonPropertyName("rank")]
+        [System.ComponentModel.DataAnnotations.Required(AllowEmptyStrings = true)]
+        public string Rank { get; set; } = default!;
+
+    }
+
+    [System.CodeDom.Compiler.GeneratedCode("NJsonSchema", "14.7.1.0 (NJsonSchema v11.6.1.0 (Newtonsoft.Json v13.0.0.0))")]
+    public partial class SpaceWmsRuntimeWarehouseAbcMaterialDto
+    {
+
+        [System.Text.Json.Serialization.JsonPropertyName("materialNumber")]
+        [System.ComponentModel.DataAnnotations.Required(AllowEmptyStrings = true)]
+        public string MaterialNumber { get; set; } = default!;
+
+        [System.Text.Json.Serialization.JsonPropertyName("outboundMovementCount")]
+        public int OutboundMovementCount { get; set; } = default!;
+
+        [System.Text.Json.Serialization.JsonPropertyName("outboundQuantity")]
+        public decimal OutboundQuantity { get; set; } = default!;
+
+        [System.Text.Json.Serialization.JsonPropertyName("previousCumulativeSharePercent")]
+        public decimal? PreviousCumulativeSharePercent { get; set; } = default!;
+
+        [System.Text.Json.Serialization.JsonPropertyName("cumulativeSharePercent")]
+        public decimal? CumulativeSharePercent { get; set; } = default!;
+
+        [System.Text.Json.Serialization.JsonPropertyName("rank")]
+        [System.ComponentModel.DataAnnotations.Required(AllowEmptyStrings = true)]
+        public string Rank { get; set; } = default!;
+
+        [System.Text.Json.Serialization.JsonPropertyName("occupiedLocationCount")]
+        public int OccupiedLocationCount { get; set; } = default!;
+
+        [System.Text.Json.Serialization.JsonPropertyName("floorCount")]
+        public int FloorCount { get; set; } = default!;
+
+    }
+
+    [System.CodeDom.Compiler.GeneratedCode("NJsonSchema", "14.7.1.0 (NJsonSchema v11.6.1.0 (Newtonsoft.Json v13.0.0.0))")]
+    public partial class SpaceWmsRuntimeWarehouseAnomalyKpiDto
+    {
+
+        [System.Text.Json.Serialization.JsonPropertyName("activeDeviceAlarmCount")]
+        public int ActiveDeviceAlarmCount { get; set; } = default!;
+
+        [System.Text.Json.Serialization.JsonPropertyName("criticalDeviceAlarmCount")]
+        public int CriticalDeviceAlarmCount { get; set; } = default!;
+
+        [System.Text.Json.Serialization.JsonPropertyName("codeMismatchLocationCount")]
+        public int? CodeMismatchLocationCount { get; set; } = default!;
+
+        [System.Text.Json.Serialization.JsonPropertyName("overAllocatedInventoryLineCount")]
+        public int? OverAllocatedInventoryLineCount { get; set; } = default!;
+
+        [System.Text.Json.Serialization.JsonPropertyName("areaMissingFloorCount")]
+        public int AreaMissingFloorCount { get; set; } = default!;
+
+        [System.Text.Json.Serialization.JsonPropertyName("unclassifiedAbcMaterialCount")]
+        public int? UnclassifiedAbcMaterialCount { get; set; } = default!;
+
+    }
+
+    [System.CodeDom.Compiler.GeneratedCode("NJsonSchema", "14.7.1.0 (NJsonSchema v11.6.1.0 (Newtonsoft.Json v13.0.0.0))")]
+    public partial class SpaceWmsRuntimeWarehouseFloorKpiDto
+    {
+
+        [System.Text.Json.Serialization.JsonPropertyName("floorLogicalId")]
+        [System.ComponentModel.DataAnnotations.Required(AllowEmptyStrings = true)]
+        public System.Guid FloorLogicalId { get; set; } = default!;
+
+        [System.Text.Json.Serialization.JsonPropertyName("floorCode")]
+        [System.ComponentModel.DataAnnotations.Required(AllowEmptyStrings = true)]
+        public string FloorCode { get; set; } = default!;
+
+        [System.Text.Json.Serialization.JsonPropertyName("floorName")]
+        [System.ComponentModel.DataAnnotations.Required(AllowEmptyStrings = true)]
+        public string FloorName { get; set; } = default!;
+
+        [System.Text.Json.Serialization.JsonPropertyName("floorLevel")]
+        public int FloorLevel { get; set; } = default!;
+
+        [System.Text.Json.Serialization.JsonPropertyName("areaSquareMeters")]
+        public decimal? AreaSquareMeters { get; set; } = default!;
+
+        [System.Text.Json.Serialization.JsonPropertyName("activeLocationCount")]
+        public int ActiveLocationCount { get; set; } = default!;
+
+        [System.Text.Json.Serialization.JsonPropertyName("occupiedLocationCount")]
+        public int? OccupiedLocationCount { get; set; } = default!;
+
+        [System.Text.Json.Serialization.JsonPropertyName("occupiedLocationRatePercent")]
+        public decimal? OccupiedLocationRatePercent { get; set; } = default!;
+
+        [System.Text.Json.Serialization.JsonPropertyName("aLocationCount")]
+        public int? ALocationCount { get; set; } = default!;
+
+        [System.Text.Json.Serialization.JsonPropertyName("bLocationCount")]
+        public int? BLocationCount { get; set; } = default!;
+
+        [System.Text.Json.Serialization.JsonPropertyName("cLocationCount")]
+        public int? CLocationCount { get; set; } = default!;
+
+        [System.Text.Json.Serialization.JsonPropertyName("unclassifiedLocationCount")]
+        public int? UnclassifiedLocationCount { get; set; } = default!;
+
+    }
+
+    [System.CodeDom.Compiler.GeneratedCode("NJsonSchema", "14.7.1.0 (NJsonSchema v11.6.1.0 (Newtonsoft.Json v13.0.0.0))")]
+    public partial class SpaceWmsRuntimeWarehouseInventoryKpiDto
+    {
+
+        [System.Text.Json.Serialization.JsonPropertyName("source")]
+        [System.ComponentModel.DataAnnotations.Required]
+        public SpaceWmsRuntimeSourceDto Source { get; set; } = new SpaceWmsRuntimeSourceDto();
+
+        [System.Text.Json.Serialization.JsonPropertyName("inventoryLineCount")]
+        public int? InventoryLineCount { get; set; } = default!;
+
+        [System.Text.Json.Serialization.JsonPropertyName("occupiedLocationCount")]
+        public int? OccupiedLocationCount { get; set; } = default!;
+
+        [System.Text.Json.Serialization.JsonPropertyName("unoccupiedLocationCount")]
+        public int? UnoccupiedLocationCount { get; set; } = default!;
+
+        [System.Text.Json.Serialization.JsonPropertyName("occupiedLocationRatePercent")]
+        public decimal? OccupiedLocationRatePercent { get; set; } = default!;
+
+        [System.Text.Json.Serialization.JsonPropertyName("occupiedLocationRateMethod")]
+        [System.ComponentModel.DataAnnotations.Required(AllowEmptyStrings = true)]
+        public string OccupiedLocationRateMethod { get; set; } = default!;
+
+        [System.Text.Json.Serialization.JsonPropertyName("capacityUtilizationPercent")]
+        public decimal? CapacityUtilizationPercent { get; set; } = default!;
+
+        [System.Text.Json.Serialization.JsonPropertyName("capacityUtilizationStatus")]
+        [System.ComponentModel.DataAnnotations.Required(AllowEmptyStrings = true)]
+        public string CapacityUtilizationStatus { get; set; } = default!;
+
+        [System.Text.Json.Serialization.JsonPropertyName("capacityUtilizationReason")]
+        [System.ComponentModel.DataAnnotations.Required(AllowEmptyStrings = true)]
+        public string CapacityUtilizationReason { get; set; } = default!;
+
+        [System.Text.Json.Serialization.JsonPropertyName("distinctOwnerCount")]
+        public int? DistinctOwnerCount { get; set; } = default!;
+
+        [System.Text.Json.Serialization.JsonPropertyName("distinctMaterialCount")]
+        public int? DistinctMaterialCount { get; set; } = default!;
+
+        [System.Text.Json.Serialization.JsonPropertyName("distinctLotCount")]
+        public int? DistinctLotCount { get; set; } = default!;
+
+        [System.Text.Json.Serialization.JsonPropertyName("distinctContainerCount")]
+        public int? DistinctContainerCount { get; set; } = default!;
+
+    }
+
+    [System.CodeDom.Compiler.GeneratedCode("NJsonSchema", "14.7.1.0 (NJsonSchema v11.6.1.0 (Newtonsoft.Json v13.0.0.0))")]
+    public partial class SpaceWmsRuntimeWarehouseModelKpiDto
+    {
+
+        [System.Text.Json.Serialization.JsonPropertyName("floorCount")]
+        public int FloorCount { get; set; } = default!;
+
+        [System.Text.Json.Serialization.JsonPropertyName("areaAvailableFloorCount")]
+        public int AreaAvailableFloorCount { get; set; } = default!;
+
+        [System.Text.Json.Serialization.JsonPropertyName("areaMissingFloorCount")]
+        public int AreaMissingFloorCount { get; set; } = default!;
+
+        [System.Text.Json.Serialization.JsonPropertyName("totalFloorAreaSquareMeters")]
+        public decimal? TotalFloorAreaSquareMeters { get; set; } = default!;
+
+        [System.Text.Json.Serialization.JsonPropertyName("zoneCount")]
+        public int ZoneCount { get; set; } = default!;
+
+        [System.Text.Json.Serialization.JsonPropertyName("rackCount")]
+        public int RackCount { get; set; } = default!;
+
+        [System.Text.Json.Serialization.JsonPropertyName("rackFootprintSquareMeters")]
+        public decimal RackFootprintSquareMeters { get; set; } = default!;
+
+        [System.Text.Json.Serialization.JsonPropertyName("rackFootprintRatePercent")]
+        public decimal? RackFootprintRatePercent { get; set; } = default!;
+
+        [System.Text.Json.Serialization.JsonPropertyName("activeLocationCount")]
+        public int ActiveLocationCount { get; set; } = default!;
+
+    }
+
+    [System.CodeDom.Compiler.GeneratedCode("NJsonSchema", "14.7.1.0 (NJsonSchema v11.6.1.0 (Newtonsoft.Json v13.0.0.0))")]
+    public partial class SpaceWmsRuntimeWarehouseOverviewResponse
+    {
+
+        [System.Text.Json.Serialization.JsonPropertyName("siteId")]
+        [System.ComponentModel.DataAnnotations.Required(AllowEmptyStrings = true)]
+        public System.Guid SiteId { get; set; } = default!;
+
+        [System.Text.Json.Serialization.JsonPropertyName("publishedVersionId")]
+        [System.ComponentModel.DataAnnotations.Required(AllowEmptyStrings = true)]
+        public System.Guid PublishedVersionId { get; set; } = default!;
+
+        [System.Text.Json.Serialization.JsonPropertyName("warehouseCode")]
+        [System.ComponentModel.DataAnnotations.Required(AllowEmptyStrings = true)]
+        public string WarehouseCode { get; set; } = default!;
+
+        [System.Text.Json.Serialization.JsonPropertyName("capturedAtUtc")]
+        [System.ComponentModel.DataAnnotations.Required(AllowEmptyStrings = true)]
+        public System.DateTimeOffset CapturedAtUtc { get; set; } = default!;
+
+        [System.Text.Json.Serialization.JsonPropertyName("isRuntimeComplete")]
+        public bool IsRuntimeComplete { get; set; } = default!;
+
+        [System.Text.Json.Serialization.JsonPropertyName("model")]
+        [System.ComponentModel.DataAnnotations.Required]
+        public SpaceWmsRuntimeWarehouseModelKpiDto Model { get; set; } = new SpaceWmsRuntimeWarehouseModelKpiDto();
+
+        [System.Text.Json.Serialization.JsonPropertyName("inventory")]
+        [System.ComponentModel.DataAnnotations.Required]
+        public SpaceWmsRuntimeWarehouseInventoryKpiDto Inventory { get; set; } = new SpaceWmsRuntimeWarehouseInventoryKpiDto();
+
+        [System.Text.Json.Serialization.JsonPropertyName("tasks")]
+        [System.ComponentModel.DataAnnotations.Required]
+        public SpaceWmsRuntimeWarehouseTaskKpiDto Tasks { get; set; } = new SpaceWmsRuntimeWarehouseTaskKpiDto();
+
+        [System.Text.Json.Serialization.JsonPropertyName("anomalies")]
+        [System.ComponentModel.DataAnnotations.Required]
+        public SpaceWmsRuntimeWarehouseAnomalyKpiDto Anomalies { get; set; } = new SpaceWmsRuntimeWarehouseAnomalyKpiDto();
+
+        [System.Text.Json.Serialization.JsonPropertyName("abc")]
+        [System.ComponentModel.DataAnnotations.Required]
+        public SpaceWmsRuntimeWarehouseAbcDto Abc { get; set; } = new SpaceWmsRuntimeWarehouseAbcDto();
+
+        [System.Text.Json.Serialization.JsonPropertyName("floors")]
+        [System.ComponentModel.DataAnnotations.Required]
+        public System.Collections.Generic.ICollection<SpaceWmsRuntimeWarehouseFloorKpiDto> Floors { get; set; } = new System.Collections.ObjectModel.Collection<SpaceWmsRuntimeWarehouseFloorKpiDto>();
+
+    }
+
+    [System.CodeDom.Compiler.GeneratedCode("NJsonSchema", "14.7.1.0 (NJsonSchema v11.6.1.0 (Newtonsoft.Json v13.0.0.0))")]
+    public partial class SpaceWmsRuntimeWarehouseTaskKpiDto
+    {
+
+        [System.Text.Json.Serialization.JsonPropertyName("source")]
+        [System.ComponentModel.DataAnnotations.Required]
+        public SpaceWmsRuntimeSourceDto Source { get; set; } = new SpaceWmsRuntimeSourceDto();
+
+        [System.Text.Json.Serialization.JsonPropertyName("activeTaskCount")]
+        public int? ActiveTaskCount { get; set; } = default!;
+
+        [System.Text.Json.Serialization.JsonPropertyName("activeTaskStopCount")]
+        public int? ActiveTaskStopCount { get; set; } = default!;
 
     }
 

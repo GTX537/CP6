@@ -73,6 +73,157 @@ public sealed class SpaceWmsRuntimeServiceTests
     }
 
     [Fact]
+    public async Task Warehouse_overview_exposes_exact_occupancy_area_workload_and_abc_rules()
+    {
+        await using var fixture = await RuntimeFixture.CreateAsync("L-001", "L-002");
+        fixture.Source.InventoryItems =
+        [
+            new(fixture.LocationIds[0], "L-001", 10, 12,
+                "SKU-A", "LOT-A", "CONT-A", "OWNER-A"),
+            new(fixture.LocationIds[1], "L-002", 5, 1,
+                "SKU-B", "LOT-B", null, "OWNER-B"),
+            new(fixture.LocationIds[1], "L-002", 2, 0,
+                "SKU-U", null, null, "OWNER-B"),
+        ];
+        fixture.Source.TaskItems =
+        [
+            new("TASK-1", "Pick", "Released", 1,
+                fixture.LocationIds[0], "L-001", 2, "SKU-A"),
+            new("TASK-1", "Pick", "Released", 2,
+                fixture.LocationIds[1], "L-002", 1, "SKU-B"),
+        ];
+        fixture.Source.AbcItems =
+        [
+            new("SKU-A", 8, 80),
+            new("SKU-B", 3, 15),
+            new("SKU-C", 1, 5),
+        ];
+
+        var response = await fixture.Service.GetWarehouseOverviewAsync(
+            fixture.SiteId,
+            abcWindowDays: 90);
+
+        Assert.True(response.IsRuntimeComplete);
+        Assert.Equal(new DateTimeOffset(Now), response.CapturedAtUtc);
+        Assert.Equal(1, response.Model.FloorCount);
+        Assert.Equal(100m, response.Model.TotalFloorAreaSquareMeters);
+        Assert.Equal(2.2m, response.Model.RackFootprintSquareMeters);
+        Assert.Equal(2.2m, response.Model.RackFootprintRatePercent);
+        Assert.Equal(2, response.Model.ActiveLocationCount);
+        Assert.Equal(3, response.Inventory.InventoryLineCount);
+        Assert.Equal(2, response.Inventory.OccupiedLocationCount);
+        Assert.Equal(0, response.Inventory.UnoccupiedLocationCount);
+        Assert.Equal(100m, response.Inventory.OccupiedLocationRatePercent);
+        Assert.Null(response.Inventory.CapacityUtilizationPercent);
+        Assert.Equal(
+            "WMS_LOCATION_CAPACITY_NOT_AVAILABLE",
+            response.Inventory.CapacityUtilizationReason);
+        Assert.Equal(2, response.Inventory.DistinctOwnerCount);
+        Assert.Equal(3, response.Inventory.DistinctMaterialCount);
+        Assert.Equal(1, response.Tasks.ActiveTaskCount);
+        Assert.Equal(2, response.Tasks.ActiveTaskStopCount);
+        Assert.Equal(1, response.Anomalies.OverAllocatedInventoryLineCount);
+        Assert.Equal(1, response.Anomalies.UnclassifiedAbcMaterialCount);
+        Assert.Equal("2026-07-31", response.Abc.WindowEndDateExclusive);
+        Assert.Equal("OutboundQuantityPreviousCumulativeShare", response.Abc.RankingMethod);
+        Assert.Equal(1, response.Abc.ACount);
+        Assert.Equal(1, response.Abc.BCount);
+        Assert.Equal(0, response.Abc.CCount);
+        Assert.Equal(1, response.Abc.UnclassifiedCount);
+        Assert.Equal(
+            ["A", "B", "Unclassified"],
+            response.Abc.Materials.Select(value => value.Rank));
+        Assert.Equal("A", response.Abc.Materials[0].Rank);
+        Assert.Equal(0m, response.Abc.Materials[0].PreviousCumulativeSharePercent);
+        Assert.Equal(80m, response.Abc.Materials[0].CumulativeSharePercent);
+        Assert.Equal("B", response.Abc.Materials[1].Rank);
+        Assert.Equal(80m, response.Abc.Materials[1].PreviousCumulativeSharePercent);
+        Assert.Equal(2, response.Abc.Locations.Count);
+        Assert.Equal("A", response.Abc.Locations[0].Rank);
+        Assert.Equal("B", response.Abc.Locations[1].Rank);
+        Assert.Single(response.Floors);
+        Assert.Equal(2, response.Floors[0].OccupiedLocationCount);
+    }
+
+    [Fact]
+    public async Task Warehouse_overview_keeps_model_metrics_and_marks_runtime_components_unavailable()
+    {
+        await using var fixture = await RuntimeFixture.CreateAsync("L-001");
+        fixture.Source.DeclaredKind = SpaceWmsDataSourceKind.Unavailable;
+
+        var response = await fixture.Service.GetWarehouseOverviewAsync(
+            fixture.SiteId);
+
+        Assert.False(response.IsRuntimeComplete);
+        Assert.Equal(100m, response.Model.TotalFloorAreaSquareMeters);
+        Assert.Equal("Unavailable", response.Inventory.Source.Kind);
+        Assert.Null(response.Inventory.InventoryLineCount);
+        Assert.Null(response.Inventory.OccupiedLocationCount);
+        Assert.Null(response.Inventory.OccupiedLocationRatePercent);
+        Assert.Equal("Unavailable", response.Tasks.Source.Kind);
+        Assert.Null(response.Tasks.ActiveTaskCount);
+        Assert.Equal("Unavailable", response.Abc.Source.Kind);
+        Assert.False(response.Abc.SpatialMappingAvailable);
+        Assert.Null(response.Abc.MaterialCount);
+        Assert.Empty(response.Abc.Materials);
+        Assert.Empty(response.Abc.Locations);
+    }
+
+    [Fact]
+    public async Task Warehouse_overview_marks_missing_floor_area_as_an_explicit_partial_snapshot()
+    {
+        await using var fixture = await RuntimeFixture.CreateWithBoundaryAsync(
+            "{}",
+            "L-001");
+
+        var response = await fixture.Service.GetWarehouseOverviewAsync(
+            fixture.SiteId);
+
+        Assert.False(response.IsRuntimeComplete);
+        Assert.Equal(1, response.Model.AreaMissingFloorCount);
+        Assert.Null(response.Model.TotalFloorAreaSquareMeters);
+        Assert.Null(response.Model.RackFootprintRatePercent);
+        Assert.Equal(1, response.Anomalies.AreaMissingFloorCount);
+        Assert.Null(Assert.Single(response.Floors).AreaSquareMeters);
+    }
+
+    [Theory]
+    [InlineData(0)]
+    [InlineData(366)]
+    public async Task Warehouse_overview_rejects_abc_window_outside_safe_bounds(
+        int days)
+    {
+        await using var fixture = await RuntimeFixture.CreateAsync("L-001");
+
+        var error = await Assert.ThrowsAsync<SpaceProblemException>(() =>
+            fixture.Service.GetWarehouseOverviewAsync(fixture.SiteId, days));
+
+        Assert.Equal(400, error.StatusCode);
+        Assert.Equal(SpaceErrorCodes.RequestInvalid, error.Code);
+    }
+
+    [Fact]
+    public async Task Warehouse_overview_fails_closed_for_duplicate_abc_materials()
+    {
+        await using var fixture = await RuntimeFixture.CreateAsync("L-001");
+        fixture.Source.InventoryItems =
+        [
+            new(fixture.LocationIds[0], "L-001", 1, 0,
+                "SKU-A", null, null),
+        ];
+        fixture.Source.AbcItems =
+        [
+            new("SKU-A", 1, 10),
+            new("SKU-A", 1, 5),
+        ];
+
+        var error = await Assert.ThrowsAsync<SpaceProblemException>(() =>
+            fixture.Service.GetWarehouseOverviewAsync(fixture.SiteId));
+
+        AssertContractViolation(error);
+    }
+
+    [Fact]
     public async Task Task_path_filters_at_source_and_explains_actual_cross_floor_workload()
     {
         var execution = Execution();
@@ -898,14 +1049,29 @@ public sealed class SpaceWmsRuntimeServiceTests
         public IReadOnlyList<Guid> LocationIds { get; }
 
         public static async Task<RuntimeFixture> CreateAsync(
-            params string[] locationCodes)
+            params string[] locationCodes) =>
+            await CreateCoreAsync(null, locationCodes);
+
+        public static async Task<RuntimeFixture> CreateWithBoundaryAsync(
+            string boundaryJson,
+            params string[] locationCodes) =>
+            await CreateCoreAsync(boundaryJson, locationCodes);
+
+        private static async Task<RuntimeFixture> CreateCoreAsync(
+            string? boundaryJson,
+            IReadOnlyList<string> locationCodes)
         {
             var execution = Execution();
             var clock = new TestClock();
             var context = NewContext(execution, clock);
             try
             {
-                var seeded = await SeedPublishedAsync(context, locationCodes);
+                var seeded = await SeedPublishedAsync(
+                    context,
+                    locationCodes
+                        .Select(value => new SeedLocation(Guid.NewGuid(), value))
+                        .ToArray(),
+                    boundaryJson);
                 var source = new RecordingRuntimeSource();
                 var service = CreateService(
                     context,
@@ -959,6 +1125,11 @@ public sealed class SpaceWmsRuntimeServiceTests
         string Code,
         int FloorLevel = 1);
 
+    private const string ValidFloorBoundary =
+        """
+        {"schemaVersion":1,"kind":"polygon","points":[[0,0],[10000,0],[10000,10000],[0,10000]]}
+        """;
+
     private static async Task<SeededPublished> SeedPublishedAsync(
         SpaceContext context,
         params string[] locationCodes) =>
@@ -970,7 +1141,8 @@ public sealed class SpaceWmsRuntimeServiceTests
 
     private static async Task<SeededPublished> SeedPublishedAsync(
         SpaceContext context,
-        IReadOnlyList<SeedLocation> seededLocations)
+        IReadOnlyList<SeedLocation> seededLocations,
+        string? boundaryJson = null)
     {
         var tenantId = context.CurrentTenantId;
         var siteId = Guid.NewGuid();
@@ -995,6 +1167,9 @@ public sealed class SpaceWmsRuntimeServiceTests
                 $"Floor {floorGroup.Key}",
                 elevation: (floorGroup.Key - 1) * 5_000,
                 height: 5_000);
+            floor.ConfigureBoundary(
+                boundaryJson ?? ValidFloorBoundary,
+                "RH_Z_UP_MM");
             var zone = SpaceZoneRevision.Create(
                 tenantId,
                 version.Id,
@@ -1152,6 +1327,7 @@ public sealed class SpaceWmsRuntimeServiceTests
         public List<IReadOnlyList<string>?> TaskFilters { get; } = [];
         public IReadOnlyList<SpaceWmsInventoryItem> InventoryItems { get; set; } = [];
         public IReadOnlyList<SpaceWmsTaskItem> TaskItems { get; set; } = [];
+        public IReadOnlyList<SpaceWmsAbcAggregate> AbcItems { get; set; } = [];
 
         public void ResetCalls()
         {
@@ -1242,6 +1418,18 @@ public sealed class SpaceWmsRuntimeServiceTests
             return Task.FromResult(new SpaceWmsTaskResult(
                 source,
                 items!));
+        }
+
+        public Task<SpaceWmsAbcResult> QueryAbcAsync(
+            SpaceWmsAbcQuery request,
+            CancellationToken ct = default)
+        {
+            ct.ThrowIfCancellationRequested();
+            if (QueryException is not null)
+                throw QueryException;
+            return Task.FromResult(new SpaceWmsAbcResult(
+                NextSource(),
+                AbcItems));
         }
 
         private SpaceWmsSourceMetadata NextSource()

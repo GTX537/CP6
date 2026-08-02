@@ -226,6 +226,122 @@ public sealed class SpaceWmsRuntimeSchemaFilter : ISchemaFilter
                 "aisleCode",
                 "centerlineJson",
             ],
+            [typeof(SpaceWmsRuntimeWarehouseOverviewResponse)] =
+            [
+                "siteId",
+                "publishedVersionId",
+                "warehouseCode",
+                "capturedAtUtc",
+                "isRuntimeComplete",
+                "model",
+                "inventory",
+                "tasks",
+                "anomalies",
+                "abc",
+                "floors",
+            ],
+            [typeof(SpaceWmsRuntimeWarehouseModelKpiDto)] =
+            [
+                "floorCount",
+                "areaAvailableFloorCount",
+                "areaMissingFloorCount",
+                "totalFloorAreaSquareMeters",
+                "zoneCount",
+                "rackCount",
+                "rackFootprintSquareMeters",
+                "rackFootprintRatePercent",
+                "activeLocationCount",
+            ],
+            [typeof(SpaceWmsRuntimeWarehouseInventoryKpiDto)] =
+            [
+                "source",
+                "inventoryLineCount",
+                "occupiedLocationCount",
+                "unoccupiedLocationCount",
+                "occupiedLocationRatePercent",
+                "occupiedLocationRateMethod",
+                "capacityUtilizationPercent",
+                "capacityUtilizationStatus",
+                "capacityUtilizationReason",
+                "distinctOwnerCount",
+                "distinctMaterialCount",
+                "distinctLotCount",
+                "distinctContainerCount",
+            ],
+            [typeof(SpaceWmsRuntimeWarehouseTaskKpiDto)] =
+            [
+                "source",
+                "activeTaskCount",
+                "activeTaskStopCount",
+            ],
+            [typeof(SpaceWmsRuntimeWarehouseAnomalyKpiDto)] =
+            [
+                "activeDeviceAlarmCount",
+                "criticalDeviceAlarmCount",
+                "codeMismatchLocationCount",
+                "overAllocatedInventoryLineCount",
+                "areaMissingFloorCount",
+                "unclassifiedAbcMaterialCount",
+            ],
+            [typeof(SpaceWmsRuntimeWarehouseAbcMaterialDto)] =
+            [
+                "materialNumber",
+                "outboundMovementCount",
+                "outboundQuantity",
+                "previousCumulativeSharePercent",
+                "cumulativeSharePercent",
+                "rank",
+                "occupiedLocationCount",
+                "floorCount",
+            ],
+            [typeof(SpaceWmsRuntimeWarehouseAbcLocationMaterialDto)] =
+            [
+                "materialNumber",
+                "rank",
+            ],
+            [typeof(SpaceWmsRuntimeWarehouseAbcLocationDto)] =
+            [
+                "locationLogicalId",
+                "spaceLocationCode",
+                "floorLogicalId",
+                "floorCode",
+                "rank",
+                "materials",
+            ],
+            [typeof(SpaceWmsRuntimeWarehouseAbcDto)] =
+            [
+                "source",
+                "windowDays",
+                "windowStartDate",
+                "windowEndDateExclusive",
+                "transactionTimeBasis",
+                "rankingMethod",
+                "aThresholdPercent",
+                "bThresholdPercent",
+                "spatialMappingAvailable",
+                "materialCount",
+                "aCount",
+                "bCount",
+                "cCount",
+                "unclassifiedCount",
+                "materials",
+                "locations",
+            ],
+            [typeof(SpaceWmsRuntimeWarehouseFloorKpiDto)] =
+            [
+                "floorLogicalId",
+                "floorCode",
+                "floorName",
+                "floorLevel",
+                "areaSquareMeters",
+                "activeLocationCount",
+                "occupiedLocationCount",
+                "occupiedLocationRatePercent",
+                "aLocationCount",
+                "bLocationCount",
+                "cLocationCount",
+                "unclassifiedLocationCount",
+            ],
             [typeof(CreateSpaceFieldPolicyRequest)] =
             [
                 "name",
@@ -867,6 +983,86 @@ public sealed class SpaceWmsRuntimeSchemaFilter : ISchemaFilter
         {
             SetNullable(schema, true, "zoneLogicalId", "zoneCode");
             SetNumberFormat(schema, "totalQuantity", "decimal", false);
+        }
+        else if (context.Type == typeof(SpaceWmsRuntimeWarehouseModelKpiDto))
+        {
+            SetNullable(
+                schema,
+                true,
+                "totalFloorAreaSquareMeters",
+                "rackFootprintRatePercent");
+            SetNumberFormat(schema, "totalFloorAreaSquareMeters", "decimal", true);
+            SetNumberFormat(schema, "rackFootprintSquareMeters", "decimal", false);
+            SetNumberFormat(schema, "rackFootprintRatePercent", "decimal", true);
+        }
+        else if (context.Type == typeof(SpaceWmsRuntimeWarehouseInventoryKpiDto))
+        {
+            SetNullable(
+                schema,
+                true,
+                "inventoryLineCount",
+                "occupiedLocationCount",
+                "unoccupiedLocationCount",
+                "occupiedLocationRatePercent",
+                "capacityUtilizationPercent",
+                "distinctOwnerCount",
+                "distinctMaterialCount",
+                "distinctLotCount",
+                "distinctContainerCount");
+            SetNumberFormat(schema, "occupiedLocationRatePercent", "decimal", true);
+            SetNumberFormat(schema, "capacityUtilizationPercent", "decimal", true);
+        }
+        else if (context.Type == typeof(SpaceWmsRuntimeWarehouseTaskKpiDto))
+        {
+            SetNullable(schema, true, "activeTaskCount", "activeTaskStopCount");
+        }
+        else if (context.Type == typeof(SpaceWmsRuntimeWarehouseAnomalyKpiDto))
+        {
+            SetNullable(
+                schema,
+                true,
+                "codeMismatchLocationCount",
+                "overAllocatedInventoryLineCount",
+                "unclassifiedAbcMaterialCount");
+        }
+        else if (context.Type == typeof(SpaceWmsRuntimeWarehouseAbcMaterialDto))
+        {
+            SetNullable(
+                schema,
+                true,
+                "previousCumulativeSharePercent",
+                "cumulativeSharePercent");
+            SetNumberFormat(schema, "outboundQuantity", "decimal", false);
+            SetNumberFormat(schema, "previousCumulativeSharePercent", "decimal", true);
+            SetNumberFormat(schema, "cumulativeSharePercent", "decimal", true);
+        }
+        else if (context.Type == typeof(SpaceWmsRuntimeWarehouseAbcDto))
+        {
+            SetNullable(
+                schema,
+                true,
+                "materialCount",
+                "aCount",
+                "bCount",
+                "cCount",
+                "unclassifiedCount");
+            SetNumberFormat(schema, "aThresholdPercent", "decimal", false);
+            SetNumberFormat(schema, "bThresholdPercent", "decimal", false);
+        }
+        else if (context.Type == typeof(SpaceWmsRuntimeWarehouseFloorKpiDto))
+        {
+            SetNullable(
+                schema,
+                true,
+                "areaSquareMeters",
+                "occupiedLocationCount",
+                "occupiedLocationRatePercent",
+                "aLocationCount",
+                "bLocationCount",
+                "cLocationCount",
+                "unclassifiedLocationCount");
+            SetNumberFormat(schema, "areaSquareMeters", "decimal", true);
+            SetNumberFormat(schema, "occupiedLocationRatePercent", "decimal", true);
         }
         else if (context.Type == typeof(SpacePortalRackDto))
         {

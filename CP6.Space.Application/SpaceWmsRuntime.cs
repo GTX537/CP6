@@ -23,4 +23,9 @@ public interface ISpaceWmsRuntimeService
         Guid siteId,
         string taskId,
         CancellationToken cancellationToken = default);
+
+    Task<SpaceWmsRuntimeWarehouseOverviewResponse> GetWarehouseOverviewAsync(
+        Guid siteId,
+        int abcWindowDays = 90,
+        CancellationToken cancellationToken = default);
 }

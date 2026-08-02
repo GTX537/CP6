@@ -25,6 +25,9 @@ public sealed class StandardSpaceWarehouseDatasetLoaderTests
             new SpaceWmsInventoryQuery(Context, []));
         var tasks = await simulator.QueryTasksAsync(
             new SpaceWmsTaskQuery(Context, []));
+        var today = DateOnly.FromDateTime(DateTime.UtcNow);
+        var abc = await simulator.QueryAbcAsync(
+            new SpaceWmsAbcQuery(Context, today.AddDays(-90), today));
 
         Assert.Equal(10, result.BatchCount);
         Assert.Equal(10_000, result.LocationCount);
@@ -36,6 +39,8 @@ public sealed class StandardSpaceWarehouseDatasetLoaderTests
         Assert.Equal(10_000, locations.Items.Count);
         Assert.Equal(5_000, inventory.Items.Count);
         Assert.Equal(200, tasks.Items.Count);
+        Assert.Equal(100, abc.Items.Count);
+        Assert.True(abc.Source.IsSimulated);
         Assert.Equal(
             100,
             tasks.Items.Select(item => item.TaskId).Distinct().Count());

@@ -354,6 +354,47 @@ public sealed class Cp6SpaceWmsAdapterTests
     }
 
     [Fact]
+    public async Task Abc_query_uses_positive_out_transactions_for_current_warehouse_and_window()
+    {
+        await using var db = NewDb();
+        var windowStart = new DateTime(2026, 7, 1, 0, 0, 0, DateTimeKind.Utc);
+        db.StockTransactions.AddRange(
+            Transaction("TX-001", WmsTxnType.OUT, "WH-01", "SKU-A", 8, windowStart.AddDays(1)),
+            Transaction("TX-002", WmsTxnType.OUT, "WH-01", "SKU-A", 2, windowStart.AddDays(2)),
+            Transaction("TX-003", WmsTxnType.OUT, "WH-01", "SKU-B", 4, windowStart.AddDays(2)),
+            Transaction("TX-004", WmsTxnType.IN, "WH-01", "SKU-C", 20, windowStart.AddDays(2)),
+            Transaction("TX-005", WmsTxnType.OUT, "WH-02", "SKU-D", 30, windowStart.AddDays(2)),
+            Transaction("TX-006", WmsTxnType.OUT, "WH-01", "SKU-E", 40, windowStart.AddDays(-1)),
+            Transaction("TX-007", WmsTxnType.OUT, "WH-01", "SKU-F", 0, windowStart.AddDays(2)),
+            Transaction("TX-008", WmsTxnType.OUT, "WH-01", "SKU-G", -1, windowStart.AddDays(2)));
+        await db.SaveChangesAsync();
+        var adapter = new Cp6SpaceWmsAdapter(db);
+
+        var result = await adapter.QueryAbcAsync(
+            new SpaceWmsAbcQuery(
+                Context(),
+                DateOnly.FromDateTime(windowStart),
+                DateOnly.FromDateTime(windowStart.AddDays(4))));
+
+        Assert.Equal(SpaceWmsDataSourceKind.Real, result.Source.Kind);
+        Assert.Equal(Cp6SpaceWmsAdapter.DataSourceId, result.Source.DataSourceId);
+        Assert.Collection(
+            result.Items.OrderBy(item => item.MaterialNumber, StringComparer.Ordinal),
+            item =>
+            {
+                Assert.Equal("SKU-A", item.MaterialNumber);
+                Assert.Equal(2, item.OutboundMovementCount);
+                Assert.Equal(10, item.OutboundQuantity);
+            },
+            item =>
+            {
+                Assert.Equal("SKU-B", item.MaterialNumber);
+                Assert.Equal(1, item.OutboundMovementCount);
+                Assert.Equal(4, item.OutboundQuantity);
+            });
+    }
+
+    [Fact]
     public async Task Tenant_mismatch_is_rejected_before_any_wms_query()
     {
         await using var db = NewDb();
@@ -437,6 +478,26 @@ public sealed class Cp6SpaceWmsAdapterTests
 
     private static SpaceWmsContext Context() =>
         new(TenantId, SiteId, "WH-01", CorrelationId);
+
+    private static StockTransaction Transaction(
+        string transactionNumber,
+        string transactionType,
+        string warehouseCode,
+        string productCode,
+        decimal quantity,
+        DateTime transactionTimeUtc) =>
+        new()
+        {
+            Id = Guid.NewGuid(),
+            TxnNo = transactionNumber,
+            TxnType = transactionType,
+            TxnDateTime = transactionTimeUtc,
+            WarehouseCd = warehouseCode,
+            LocationCd = "A-01",
+            ProductCd = productCode,
+            LotNo = "LOT-01",
+            Qty = quantity,
+        };
 
     private static SpaceWmsBatch Batch(
         params SpaceWmsLocationMutation[] items) =>

@@ -368,6 +368,40 @@ public sealed class StandardSpaceWmsSimulator :
         }
     }
 
+    public async Task<SpaceWmsAbcResult> QueryAbcAsync(
+        SpaceWmsAbcQuery request,
+        CancellationToken ct = default)
+    {
+        ArgumentNullException.ThrowIfNull(request);
+        if (request.FromDateInclusive == default ||
+            request.ToDateExclusive == default ||
+            request.FromDateInclusive >= request.ToDateExclusive)
+        {
+            throw new ArgumentException(
+                "A valid half-open ABC analysis date window is required.",
+                nameof(request));
+        }
+        var state = State(request.Context);
+        await ThrowForTransportFaultAsync(Fault(state), ct);
+        lock (state.Gate)
+        {
+            var items = state.OutboundMovements
+                .Where(value =>
+                    value.OccurredOn >= request.FromDateInclusive &&
+                    value.OccurredOn < request.ToDateExclusive &&
+                    value.Quantity > 0)
+                .GroupBy(value => value.MaterialNumber, StringComparer.Ordinal)
+                .Select(group => new SpaceWmsAbcAggregate(
+                    group.Key,
+                    group.Count(),
+                    group.Sum(value => value.Quantity)))
+                .OrderByDescending(value => value.OutboundQuantity)
+                .ThenBy(value => value.MaterialNumber, StringComparer.Ordinal)
+                .ToArray();
+            return new SpaceWmsAbcResult(Source(), items);
+        }
+    }
+
     public void ConfigureFault(
         SpaceWmsContext context,
         SpaceWmsSimulatorFaultProfile profile)
@@ -408,6 +442,32 @@ public sealed class StandardSpaceWmsSimulator :
         {
             state.Tasks.Clear();
             state.Tasks.AddRange(items);
+        }
+    }
+
+    public void SeedOutboundMovements(
+        SpaceWmsContext context,
+        IReadOnlyCollection<SpaceWmsOutboundMovement> items)
+    {
+        ArgumentNullException.ThrowIfNull(items);
+        if (items.Any(value =>
+                value is null ||
+                string.IsNullOrWhiteSpace(value.MovementId) ||
+                string.IsNullOrWhiteSpace(value.MaterialNumber) ||
+                value.OccurredOn == default ||
+                value.Quantity <= 0) ||
+            items.GroupBy(value => value.MovementId, StringComparer.Ordinal)
+                .Any(group => group.Count() > 1))
+        {
+            throw new ArgumentException(
+                "Simulated outbound movements must be positive and uniquely identified.",
+                nameof(items));
+        }
+        var state = State(context);
+        lock (state.Gate)
+        {
+            state.OutboundMovements.Clear();
+            state.OutboundMovements.AddRange(items);
         }
     }
 
@@ -754,6 +814,7 @@ public sealed class StandardSpaceWmsSimulator :
             new(StringComparer.Ordinal);
         public List<SpaceWmsInventoryItem> Inventory { get; } = [];
         public List<SpaceWmsTaskItem> Tasks { get; } = [];
+        public List<SpaceWmsOutboundMovement> OutboundMovements { get; } = [];
         public SpaceWmsSimulatorFaultProfile Fault { get; set; } =
             SpaceWmsSimulatorFaultProfile.None;
     }

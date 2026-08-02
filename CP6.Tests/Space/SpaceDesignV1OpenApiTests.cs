@@ -37,6 +37,7 @@ public sealed class SpaceDesignV1OpenApiTests
             "/api/space/design/v1/sites/{siteId}/versions",
             "/api/space/design/v1/sites/{siteId}/runtime/inventory",
             "/api/space/design/v1/sites/{siteId}/runtime/inventory/locate",
+            "/api/space/design/v1/sites/{siteId}/runtime/overview",
             "/api/space/design/v1/sites/{siteId}/runtime/tasks",
             "/api/space/design/v1/sites/{siteId}/runtime/tasks/path",
             "/api/space/design/v1/assets",
@@ -93,8 +94,8 @@ public sealed class SpaceDesignV1OpenApiTests
             .Select(operation =>
                 operation.Value.GetProperty("operationId").GetString())
             .ToArray();
-        Assert.Equal(67, operationIds.Length);
-        Assert.Equal(67, operationIds.Distinct().Count());
+        Assert.Equal(68, operationIds.Length);
+        Assert.Equal(68, operationIds.Distinct().Count());
         Assert.Contains("GetPolicy", operationIds);
         Assert.Contains("UpdatePolicy", operationIds);
         Assert.Contains("GetUsage", operationIds);
@@ -133,6 +134,7 @@ public sealed class SpaceDesignV1OpenApiTests
         Assert.Contains("PlaceWmsAdoption", operationIds);
         Assert.Contains("GetInventory", operationIds);
         Assert.Contains("LocateInventory", operationIds);
+        Assert.Contains("GetWarehouseOverview", operationIds);
         Assert.Contains("GetTasks", operationIds);
         Assert.Contains("GetTaskPath", operationIds);
         Assert.Contains("GetOrganizations", operationIds);
@@ -744,6 +746,9 @@ public sealed class SpaceDesignV1OpenApiTests
             "/api/space/design/v1/sites/{siteId}/runtime/inventory/locate",
             out _));
         Assert.True(paths.TryGetProperty(
+            "/api/space/design/v1/sites/{siteId}/runtime/overview",
+            out var overviewPath));
+        Assert.True(paths.TryGetProperty(
             "/api/space/design/v1/sites/{siteId}/runtime/tasks",
             out _));
         Assert.True(paths.TryGetProperty(
@@ -772,6 +777,45 @@ public sealed class SpaceDesignV1OpenApiTests
             "wmsLogicalId",
             out _));
         Assert.True(inventoryProperties.TryGetProperty("codeMatches", out _));
+
+        var overview = overviewPath.GetProperty("get");
+        Assert.Equal(
+            "GetWarehouseOverview",
+            overview.GetProperty("operationId").GetString());
+        var windowParameter = overview.GetProperty("parameters")
+            .EnumerateArray()
+            .Single(parameter =>
+                parameter.GetProperty("name").GetString() == "abcWindowDays");
+        Assert.False(
+            windowParameter.TryGetProperty("required", out var required) &&
+            required.GetBoolean());
+        Assert.Equal(
+            90,
+            windowParameter.GetProperty("schema")
+                .GetProperty("default")
+                .GetInt32());
+
+        var overviewSchema = schemas.GetProperty(
+            "CP6.Space.Contracts.SpaceWmsRuntimeWarehouseOverviewResponse");
+        AssertExactRequired(
+            overviewSchema,
+            "siteId",
+            "publishedVersionId",
+            "warehouseCode",
+            "capturedAtUtc",
+            "isRuntimeComplete",
+            "model",
+            "inventory",
+            "tasks",
+            "anomalies",
+            "abc",
+            "floors");
+        var inventoryKpi = schemas.GetProperty(
+            "CP6.Space.Contracts.SpaceWmsRuntimeWarehouseInventoryKpiDto");
+        AssertNullable(
+            inventoryKpi,
+            "occupiedLocationRatePercent",
+            "capacityUtilizationPercent");
     }
 
     [Fact]
@@ -1040,7 +1084,13 @@ public sealed class SpaceDesignV1OpenApiTests
             .ToArray();
 
         Assert.Equal(
-            ["GetInventory", "GetTaskPath", "GetTasks", "LocateInventory"],
+            [
+                "GetInventory",
+                "GetTaskPath",
+                "GetTasks",
+                "GetWarehouseOverview",
+                "LocateInventory",
+            ],
             actions.Select(action => action.ActionName));
         Assert.All(
             actions,
@@ -1377,6 +1427,7 @@ public sealed class SpaceDesignV1OpenApiTests
                      "PlaceWmsAdoption",
                      "GetInventory",
                      "LocateInventory",
+                     "GetWarehouseOverview",
                      "GetTasks",
                      "IngestPersonnelEvents",
                      "GetCurrentPersonnel",
@@ -1441,6 +1492,12 @@ public sealed class SpaceDesignV1OpenApiTests
         var csharpSource = ExtractTypeBlock(
             csharp,
             "public partial class SpaceWmsRuntimeSourceDto");
+        var csharpWarehouseInventory = ExtractTypeBlock(
+            csharp,
+            "public partial class SpaceWmsRuntimeWarehouseInventoryKpiDto");
+        var csharpWarehouseModel = ExtractTypeBlock(
+            csharp,
+            "public partial class SpaceWmsRuntimeWarehouseModelKpiDto");
         Assert.Contains(
             "public string AdapterId { get; set; }",
             csharpSource,
@@ -1484,6 +1541,14 @@ public sealed class SpaceDesignV1OpenApiTests
         Assert.Contains(
             "public string? ZoneCode { get; set; }",
             csharpTask,
+            StringComparison.Ordinal);
+        Assert.Contains(
+            "public decimal? CapacityUtilizationPercent { get; set; }",
+            csharpWarehouseInventory,
+            StringComparison.Ordinal);
+        Assert.Contains(
+            "public decimal RackFootprintSquareMeters { get; set; }",
+            csharpWarehouseModel,
             StringComparison.Ordinal);
 
         var inventoryResponse = ExtractTypeBlock(
@@ -1598,6 +1663,34 @@ public sealed class SpaceDesignV1OpenApiTests
         Assert.Contains(
             "zoneCode?: string | null | undefined;",
             taskItem,
+            StringComparison.Ordinal);
+
+        var warehouseOverview = ExtractTypeBlock(
+            typescript,
+            "export interface ISpaceWmsRuntimeWarehouseOverviewResponse");
+        AssertRequiredTypeScriptProperties(
+            warehouseOverview,
+            "siteId",
+            "publishedVersionId",
+            "warehouseCode",
+            "capturedAtUtc",
+            "isRuntimeComplete",
+            "model",
+            "inventory",
+            "tasks",
+            "anomalies",
+            "abc",
+            "floors");
+        var warehouseInventory = ExtractTypeBlock(
+            typescript,
+            "export interface ISpaceWmsRuntimeWarehouseInventoryKpiDto");
+        Assert.Contains(
+            "capacityUtilizationPercent: number | null | undefined;",
+            warehouseInventory,
+            StringComparison.Ordinal);
+        Assert.Contains(
+            "occupiedLocationRatePercent: number | null | undefined;",
+            warehouseInventory,
             StringComparison.Ordinal);
     }
 

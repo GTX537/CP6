@@ -399,6 +399,12 @@ export interface ISpaceDesignV1Client {
     locateInventory(siteId: string, materialNumber: string | undefined, lotNumber: string | undefined, containerNumber: string | undefined, ownerId: string | undefined): Promise<SpaceWmsRuntimeInventoryLocateResponse>;
 
     /**
+     * @param abcWindowDays (optional)
+     * @return OK
+     */
+    getWarehouseOverview(siteId: string, abcWindowDays: number | undefined): Promise<SpaceWmsRuntimeWarehouseOverviewResponse>;
+
+    /**
      * @param locationLogicalId (optional)
      * @return OK
      */
@@ -6823,6 +6829,114 @@ export class SpaceDesignV1Client implements ISpaceDesignV1Client {
             });
         }
         return Promise.resolve<SpaceWmsRuntimeInventoryLocateResponse>(null as any);
+    }
+
+    /**
+     * @param abcWindowDays (optional)
+     * @return OK
+     */
+    getWarehouseOverview(siteId: string, abcWindowDays: number | undefined): Promise<SpaceWmsRuntimeWarehouseOverviewResponse> {
+        let url_ = this.baseUrl + "/api/space/design/v1/sites/{siteId}/runtime/overview?";
+        if (siteId === undefined || siteId === null)
+            throw new globalThis.Error("The parameter 'siteId' must be defined.");
+        url_ = url_.replace("{siteId}", encodeURIComponent("" + siteId));
+        if (abcWindowDays === null)
+            throw new globalThis.Error("The parameter 'abcWindowDays' cannot be null.");
+        else if (abcWindowDays !== undefined)
+            url_ += "abcWindowDays=" + encodeURIComponent("" + abcWindowDays) + "&";
+        url_ = url_.replace(/[?&]$/, "");
+
+        let options_: RequestInit = {
+            method: "GET",
+            headers: {
+                "Accept": "application/json"
+            }
+        };
+
+        return this.http.fetch(url_, options_).then((_response: Response) => {
+            return this.processGetWarehouseOverview(_response);
+        });
+    }
+
+    protected processGetWarehouseOverview(response: Response): Promise<SpaceWmsRuntimeWarehouseOverviewResponse> {
+        const status = response.status;
+        let _headers: any = {}; if (response.headers && response.headers.forEach) { response.headers.forEach((v: any, k: any) => _headers[k] = v); };
+        if (status === 200) {
+            return response.text().then((_responseText) => {
+            let result200: any = null;
+            let resultData200 = _responseText === "" ? null : JSON.parse(_responseText, this.jsonParseReviver);
+            result200 = SpaceWmsRuntimeWarehouseOverviewResponse.fromJS(resultData200);
+            return result200;
+            });
+        } else if (status === 400) {
+            return response.text().then((_responseText) => {
+            let result400: any = null;
+            let resultData400 = _responseText === "" ? null : JSON.parse(_responseText, this.jsonParseReviver);
+            result400 = SpaceDesignProblemDetails.fromJS(resultData400);
+            return throwException("Bad Request", status, _responseText, _headers, result400);
+            });
+        } else if (status === 401) {
+            return response.text().then((_responseText) => {
+            let result401: any = null;
+            let resultData401 = _responseText === "" ? null : JSON.parse(_responseText, this.jsonParseReviver);
+            result401 = SpaceDesignProblemDetails.fromJS(resultData401);
+            return throwException("Unauthorized", status, _responseText, _headers, result401);
+            });
+        } else if (status === 403) {
+            return response.text().then((_responseText) => {
+            let result403: any = null;
+            let resultData403 = _responseText === "" ? null : JSON.parse(_responseText, this.jsonParseReviver);
+            result403 = SpaceDesignProblemDetails.fromJS(resultData403);
+            return throwException("Forbidden", status, _responseText, _headers, result403);
+            });
+        } else if (status === 404) {
+            return response.text().then((_responseText) => {
+            let result404: any = null;
+            let resultData404 = _responseText === "" ? null : JSON.parse(_responseText, this.jsonParseReviver);
+            result404 = SpaceDesignProblemDetails.fromJS(resultData404);
+            return throwException("Not Found", status, _responseText, _headers, result404);
+            });
+        } else if (status === 409) {
+            return response.text().then((_responseText) => {
+            let result409: any = null;
+            let resultData409 = _responseText === "" ? null : JSON.parse(_responseText, this.jsonParseReviver);
+            result409 = SpaceDesignProblemDetails.fromJS(resultData409);
+            return throwException("Conflict", status, _responseText, _headers, result409);
+            });
+        } else if (status === 422) {
+            return response.text().then((_responseText) => {
+            let result422: any = null;
+            let resultData422 = _responseText === "" ? null : JSON.parse(_responseText, this.jsonParseReviver);
+            result422 = SpaceDesignProblemDetails.fromJS(resultData422);
+            return throwException("Unprocessable Content", status, _responseText, _headers, result422);
+            });
+        } else if (status === 500) {
+            return response.text().then((_responseText) => {
+            let result500: any = null;
+            let resultData500 = _responseText === "" ? null : JSON.parse(_responseText, this.jsonParseReviver);
+            result500 = SpaceDesignProblemDetails.fromJS(resultData500);
+            return throwException("Internal Server Error", status, _responseText, _headers, result500);
+            });
+        } else if (status === 502) {
+            return response.text().then((_responseText) => {
+            let result502: any = null;
+            let resultData502 = _responseText === "" ? null : JSON.parse(_responseText, this.jsonParseReviver);
+            result502 = SpaceDesignProblemDetails.fromJS(resultData502);
+            return throwException("Bad Gateway", status, _responseText, _headers, result502);
+            });
+        } else if (status === 503) {
+            return response.text().then((_responseText) => {
+            let result503: any = null;
+            let resultData503 = _responseText === "" ? null : JSON.parse(_responseText, this.jsonParseReviver);
+            result503 = SpaceDesignProblemDetails.fromJS(resultData503);
+            return throwException("Service Unavailable", status, _responseText, _headers, result503);
+            });
+        } else if (status !== 200 && status !== 204) {
+            return response.text().then((_responseText) => {
+            return throwException("An unexpected server error occurred.", status, _responseText, _headers);
+            });
+        }
+        return Promise.resolve<SpaceWmsRuntimeWarehouseOverviewResponse>(null as any);
     }
 
     /**
@@ -15901,6 +16015,724 @@ export interface ISpaceWmsRuntimeTaskWorkloadDto {
     zoneCode?: string | null | undefined;
     stopCount: number;
     totalQuantity: number;
+}
+
+export class SpaceWmsRuntimeWarehouseAbcDto implements ISpaceWmsRuntimeWarehouseAbcDto {
+    source!: SpaceWmsRuntimeSourceDto;
+    windowDays!: number;
+    windowStartDate!: string;
+    windowEndDateExclusive!: string;
+    transactionTimeBasis!: string;
+    rankingMethod!: string;
+    aThresholdPercent!: number;
+    bThresholdPercent!: number;
+    spatialMappingAvailable!: boolean;
+    materialCount!: number | null | undefined;
+    aCount!: number | null | undefined;
+    bCount!: number | null | undefined;
+    cCount!: number | null | undefined;
+    unclassifiedCount!: number | null | undefined;
+    materials!: SpaceWmsRuntimeWarehouseAbcMaterialDto[];
+    locations!: SpaceWmsRuntimeWarehouseAbcLocationDto[];
+
+    constructor(data?: ISpaceWmsRuntimeWarehouseAbcDto) {
+        if (data) {
+            for (var property in data) {
+                if (data.hasOwnProperty(property))
+                    (this as any)[property] = (data as any)[property];
+            }
+        }
+        if (!data) {
+            this.source = new SpaceWmsRuntimeSourceDto();
+            this.materials = [];
+            this.locations = [];
+        }
+    }
+
+    init(_data?: any) {
+        if (_data) {
+            this.source = _data["source"] ? SpaceWmsRuntimeSourceDto.fromJS(_data["source"]) : new SpaceWmsRuntimeSourceDto();
+            this.windowDays = _data["windowDays"];
+            this.windowStartDate = _data["windowStartDate"];
+            this.windowEndDateExclusive = _data["windowEndDateExclusive"];
+            this.transactionTimeBasis = _data["transactionTimeBasis"];
+            this.rankingMethod = _data["rankingMethod"];
+            this.aThresholdPercent = _data["aThresholdPercent"];
+            this.bThresholdPercent = _data["bThresholdPercent"];
+            this.spatialMappingAvailable = _data["spatialMappingAvailable"];
+            this.materialCount = _data["materialCount"];
+            this.aCount = _data["aCount"];
+            this.bCount = _data["bCount"];
+            this.cCount = _data["cCount"];
+            this.unclassifiedCount = _data["unclassifiedCount"];
+            if (Array.isArray(_data["materials"])) {
+                this.materials = [] as any;
+                for (let item of _data["materials"])
+                    this.materials!.push(SpaceWmsRuntimeWarehouseAbcMaterialDto.fromJS(item));
+            }
+            if (Array.isArray(_data["locations"])) {
+                this.locations = [] as any;
+                for (let item of _data["locations"])
+                    this.locations!.push(SpaceWmsRuntimeWarehouseAbcLocationDto.fromJS(item));
+            }
+        }
+    }
+
+    static fromJS(data: any): SpaceWmsRuntimeWarehouseAbcDto {
+        data = typeof data === 'object' ? data : {};
+        let result = new SpaceWmsRuntimeWarehouseAbcDto();
+        result.init(data);
+        return result;
+    }
+
+    toJSON(data?: any) {
+        data = typeof data === 'object' ? data : {};
+        data["source"] = this.source ? this.source.toJSON() : undefined as any;
+        data["windowDays"] = this.windowDays;
+        data["windowStartDate"] = this.windowStartDate;
+        data["windowEndDateExclusive"] = this.windowEndDateExclusive;
+        data["transactionTimeBasis"] = this.transactionTimeBasis;
+        data["rankingMethod"] = this.rankingMethod;
+        data["aThresholdPercent"] = this.aThresholdPercent;
+        data["bThresholdPercent"] = this.bThresholdPercent;
+        data["spatialMappingAvailable"] = this.spatialMappingAvailable;
+        data["materialCount"] = this.materialCount;
+        data["aCount"] = this.aCount;
+        data["bCount"] = this.bCount;
+        data["cCount"] = this.cCount;
+        data["unclassifiedCount"] = this.unclassifiedCount;
+        if (Array.isArray(this.materials)) {
+            data["materials"] = [];
+            for (let item of this.materials)
+                data["materials"].push(item ? item.toJSON() : undefined as any);
+        }
+        if (Array.isArray(this.locations)) {
+            data["locations"] = [];
+            for (let item of this.locations)
+                data["locations"].push(item ? item.toJSON() : undefined as any);
+        }
+        return data;
+    }
+}
+
+export interface ISpaceWmsRuntimeWarehouseAbcDto {
+    source: SpaceWmsRuntimeSourceDto;
+    windowDays: number;
+    windowStartDate: string;
+    windowEndDateExclusive: string;
+    transactionTimeBasis: string;
+    rankingMethod: string;
+    aThresholdPercent: number;
+    bThresholdPercent: number;
+    spatialMappingAvailable: boolean;
+    materialCount: number | null | undefined;
+    aCount: number | null | undefined;
+    bCount: number | null | undefined;
+    cCount: number | null | undefined;
+    unclassifiedCount: number | null | undefined;
+    materials: SpaceWmsRuntimeWarehouseAbcMaterialDto[];
+    locations: SpaceWmsRuntimeWarehouseAbcLocationDto[];
+}
+
+export class SpaceWmsRuntimeWarehouseAbcLocationDto implements ISpaceWmsRuntimeWarehouseAbcLocationDto {
+    locationLogicalId!: string;
+    spaceLocationCode!: string;
+    floorLogicalId!: string;
+    floorCode!: string;
+    rank!: string;
+    materials!: SpaceWmsRuntimeWarehouseAbcLocationMaterialDto[];
+
+    constructor(data?: ISpaceWmsRuntimeWarehouseAbcLocationDto) {
+        if (data) {
+            for (var property in data) {
+                if (data.hasOwnProperty(property))
+                    (this as any)[property] = (data as any)[property];
+            }
+        }
+        if (!data) {
+            this.materials = [];
+        }
+    }
+
+    init(_data?: any) {
+        if (_data) {
+            this.locationLogicalId = _data["locationLogicalId"];
+            this.spaceLocationCode = _data["spaceLocationCode"];
+            this.floorLogicalId = _data["floorLogicalId"];
+            this.floorCode = _data["floorCode"];
+            this.rank = _data["rank"];
+            if (Array.isArray(_data["materials"])) {
+                this.materials = [] as any;
+                for (let item of _data["materials"])
+                    this.materials!.push(SpaceWmsRuntimeWarehouseAbcLocationMaterialDto.fromJS(item));
+            }
+        }
+    }
+
+    static fromJS(data: any): SpaceWmsRuntimeWarehouseAbcLocationDto {
+        data = typeof data === 'object' ? data : {};
+        let result = new SpaceWmsRuntimeWarehouseAbcLocationDto();
+        result.init(data);
+        return result;
+    }
+
+    toJSON(data?: any) {
+        data = typeof data === 'object' ? data : {};
+        data["locationLogicalId"] = this.locationLogicalId;
+        data["spaceLocationCode"] = this.spaceLocationCode;
+        data["floorLogicalId"] = this.floorLogicalId;
+        data["floorCode"] = this.floorCode;
+        data["rank"] = this.rank;
+        if (Array.isArray(this.materials)) {
+            data["materials"] = [];
+            for (let item of this.materials)
+                data["materials"].push(item ? item.toJSON() : undefined as any);
+        }
+        return data;
+    }
+}
+
+export interface ISpaceWmsRuntimeWarehouseAbcLocationDto {
+    locationLogicalId: string;
+    spaceLocationCode: string;
+    floorLogicalId: string;
+    floorCode: string;
+    rank: string;
+    materials: SpaceWmsRuntimeWarehouseAbcLocationMaterialDto[];
+}
+
+export class SpaceWmsRuntimeWarehouseAbcLocationMaterialDto implements ISpaceWmsRuntimeWarehouseAbcLocationMaterialDto {
+    materialNumber!: string;
+    rank!: string;
+
+    constructor(data?: ISpaceWmsRuntimeWarehouseAbcLocationMaterialDto) {
+        if (data) {
+            for (var property in data) {
+                if (data.hasOwnProperty(property))
+                    (this as any)[property] = (data as any)[property];
+            }
+        }
+    }
+
+    init(_data?: any) {
+        if (_data) {
+            this.materialNumber = _data["materialNumber"];
+            this.rank = _data["rank"];
+        }
+    }
+
+    static fromJS(data: any): SpaceWmsRuntimeWarehouseAbcLocationMaterialDto {
+        data = typeof data === 'object' ? data : {};
+        let result = new SpaceWmsRuntimeWarehouseAbcLocationMaterialDto();
+        result.init(data);
+        return result;
+    }
+
+    toJSON(data?: any) {
+        data = typeof data === 'object' ? data : {};
+        data["materialNumber"] = this.materialNumber;
+        data["rank"] = this.rank;
+        return data;
+    }
+}
+
+export interface ISpaceWmsRuntimeWarehouseAbcLocationMaterialDto {
+    materialNumber: string;
+    rank: string;
+}
+
+export class SpaceWmsRuntimeWarehouseAbcMaterialDto implements ISpaceWmsRuntimeWarehouseAbcMaterialDto {
+    materialNumber!: string;
+    outboundMovementCount!: number;
+    outboundQuantity!: number;
+    previousCumulativeSharePercent!: number | null | undefined;
+    cumulativeSharePercent!: number | null | undefined;
+    rank!: string;
+    occupiedLocationCount!: number;
+    floorCount!: number;
+
+    constructor(data?: ISpaceWmsRuntimeWarehouseAbcMaterialDto) {
+        if (data) {
+            for (var property in data) {
+                if (data.hasOwnProperty(property))
+                    (this as any)[property] = (data as any)[property];
+            }
+        }
+    }
+
+    init(_data?: any) {
+        if (_data) {
+            this.materialNumber = _data["materialNumber"];
+            this.outboundMovementCount = _data["outboundMovementCount"];
+            this.outboundQuantity = _data["outboundQuantity"];
+            this.previousCumulativeSharePercent = _data["previousCumulativeSharePercent"];
+            this.cumulativeSharePercent = _data["cumulativeSharePercent"];
+            this.rank = _data["rank"];
+            this.occupiedLocationCount = _data["occupiedLocationCount"];
+            this.floorCount = _data["floorCount"];
+        }
+    }
+
+    static fromJS(data: any): SpaceWmsRuntimeWarehouseAbcMaterialDto {
+        data = typeof data === 'object' ? data : {};
+        let result = new SpaceWmsRuntimeWarehouseAbcMaterialDto();
+        result.init(data);
+        return result;
+    }
+
+    toJSON(data?: any) {
+        data = typeof data === 'object' ? data : {};
+        data["materialNumber"] = this.materialNumber;
+        data["outboundMovementCount"] = this.outboundMovementCount;
+        data["outboundQuantity"] = this.outboundQuantity;
+        data["previousCumulativeSharePercent"] = this.previousCumulativeSharePercent;
+        data["cumulativeSharePercent"] = this.cumulativeSharePercent;
+        data["rank"] = this.rank;
+        data["occupiedLocationCount"] = this.occupiedLocationCount;
+        data["floorCount"] = this.floorCount;
+        return data;
+    }
+}
+
+export interface ISpaceWmsRuntimeWarehouseAbcMaterialDto {
+    materialNumber: string;
+    outboundMovementCount: number;
+    outboundQuantity: number;
+    previousCumulativeSharePercent: number | null | undefined;
+    cumulativeSharePercent: number | null | undefined;
+    rank: string;
+    occupiedLocationCount: number;
+    floorCount: number;
+}
+
+export class SpaceWmsRuntimeWarehouseAnomalyKpiDto implements ISpaceWmsRuntimeWarehouseAnomalyKpiDto {
+    activeDeviceAlarmCount!: number;
+    criticalDeviceAlarmCount!: number;
+    codeMismatchLocationCount!: number | null | undefined;
+    overAllocatedInventoryLineCount!: number | null | undefined;
+    areaMissingFloorCount!: number;
+    unclassifiedAbcMaterialCount!: number | null | undefined;
+
+    constructor(data?: ISpaceWmsRuntimeWarehouseAnomalyKpiDto) {
+        if (data) {
+            for (var property in data) {
+                if (data.hasOwnProperty(property))
+                    (this as any)[property] = (data as any)[property];
+            }
+        }
+    }
+
+    init(_data?: any) {
+        if (_data) {
+            this.activeDeviceAlarmCount = _data["activeDeviceAlarmCount"];
+            this.criticalDeviceAlarmCount = _data["criticalDeviceAlarmCount"];
+            this.codeMismatchLocationCount = _data["codeMismatchLocationCount"];
+            this.overAllocatedInventoryLineCount = _data["overAllocatedInventoryLineCount"];
+            this.areaMissingFloorCount = _data["areaMissingFloorCount"];
+            this.unclassifiedAbcMaterialCount = _data["unclassifiedAbcMaterialCount"];
+        }
+    }
+
+    static fromJS(data: any): SpaceWmsRuntimeWarehouseAnomalyKpiDto {
+        data = typeof data === 'object' ? data : {};
+        let result = new SpaceWmsRuntimeWarehouseAnomalyKpiDto();
+        result.init(data);
+        return result;
+    }
+
+    toJSON(data?: any) {
+        data = typeof data === 'object' ? data : {};
+        data["activeDeviceAlarmCount"] = this.activeDeviceAlarmCount;
+        data["criticalDeviceAlarmCount"] = this.criticalDeviceAlarmCount;
+        data["codeMismatchLocationCount"] = this.codeMismatchLocationCount;
+        data["overAllocatedInventoryLineCount"] = this.overAllocatedInventoryLineCount;
+        data["areaMissingFloorCount"] = this.areaMissingFloorCount;
+        data["unclassifiedAbcMaterialCount"] = this.unclassifiedAbcMaterialCount;
+        return data;
+    }
+}
+
+export interface ISpaceWmsRuntimeWarehouseAnomalyKpiDto {
+    activeDeviceAlarmCount: number;
+    criticalDeviceAlarmCount: number;
+    codeMismatchLocationCount: number | null | undefined;
+    overAllocatedInventoryLineCount: number | null | undefined;
+    areaMissingFloorCount: number;
+    unclassifiedAbcMaterialCount: number | null | undefined;
+}
+
+export class SpaceWmsRuntimeWarehouseFloorKpiDto implements ISpaceWmsRuntimeWarehouseFloorKpiDto {
+    floorLogicalId!: string;
+    floorCode!: string;
+    floorName!: string;
+    floorLevel!: number;
+    areaSquareMeters!: number | null | undefined;
+    activeLocationCount!: number;
+    occupiedLocationCount!: number | null | undefined;
+    occupiedLocationRatePercent!: number | null | undefined;
+    aLocationCount!: number | null | undefined;
+    bLocationCount!: number | null | undefined;
+    cLocationCount!: number | null | undefined;
+    unclassifiedLocationCount!: number | null | undefined;
+
+    constructor(data?: ISpaceWmsRuntimeWarehouseFloorKpiDto) {
+        if (data) {
+            for (var property in data) {
+                if (data.hasOwnProperty(property))
+                    (this as any)[property] = (data as any)[property];
+            }
+        }
+    }
+
+    init(_data?: any) {
+        if (_data) {
+            this.floorLogicalId = _data["floorLogicalId"];
+            this.floorCode = _data["floorCode"];
+            this.floorName = _data["floorName"];
+            this.floorLevel = _data["floorLevel"];
+            this.areaSquareMeters = _data["areaSquareMeters"];
+            this.activeLocationCount = _data["activeLocationCount"];
+            this.occupiedLocationCount = _data["occupiedLocationCount"];
+            this.occupiedLocationRatePercent = _data["occupiedLocationRatePercent"];
+            this.aLocationCount = _data["aLocationCount"];
+            this.bLocationCount = _data["bLocationCount"];
+            this.cLocationCount = _data["cLocationCount"];
+            this.unclassifiedLocationCount = _data["unclassifiedLocationCount"];
+        }
+    }
+
+    static fromJS(data: any): SpaceWmsRuntimeWarehouseFloorKpiDto {
+        data = typeof data === 'object' ? data : {};
+        let result = new SpaceWmsRuntimeWarehouseFloorKpiDto();
+        result.init(data);
+        return result;
+    }
+
+    toJSON(data?: any) {
+        data = typeof data === 'object' ? data : {};
+        data["floorLogicalId"] = this.floorLogicalId;
+        data["floorCode"] = this.floorCode;
+        data["floorName"] = this.floorName;
+        data["floorLevel"] = this.floorLevel;
+        data["areaSquareMeters"] = this.areaSquareMeters;
+        data["activeLocationCount"] = this.activeLocationCount;
+        data["occupiedLocationCount"] = this.occupiedLocationCount;
+        data["occupiedLocationRatePercent"] = this.occupiedLocationRatePercent;
+        data["aLocationCount"] = this.aLocationCount;
+        data["bLocationCount"] = this.bLocationCount;
+        data["cLocationCount"] = this.cLocationCount;
+        data["unclassifiedLocationCount"] = this.unclassifiedLocationCount;
+        return data;
+    }
+}
+
+export interface ISpaceWmsRuntimeWarehouseFloorKpiDto {
+    floorLogicalId: string;
+    floorCode: string;
+    floorName: string;
+    floorLevel: number;
+    areaSquareMeters: number | null | undefined;
+    activeLocationCount: number;
+    occupiedLocationCount: number | null | undefined;
+    occupiedLocationRatePercent: number | null | undefined;
+    aLocationCount: number | null | undefined;
+    bLocationCount: number | null | undefined;
+    cLocationCount: number | null | undefined;
+    unclassifiedLocationCount: number | null | undefined;
+}
+
+export class SpaceWmsRuntimeWarehouseInventoryKpiDto implements ISpaceWmsRuntimeWarehouseInventoryKpiDto {
+    source!: SpaceWmsRuntimeSourceDto;
+    inventoryLineCount!: number | null | undefined;
+    occupiedLocationCount!: number | null | undefined;
+    unoccupiedLocationCount!: number | null | undefined;
+    occupiedLocationRatePercent!: number | null | undefined;
+    occupiedLocationRateMethod!: string;
+    capacityUtilizationPercent!: number | null | undefined;
+    capacityUtilizationStatus!: string;
+    capacityUtilizationReason!: string;
+    distinctOwnerCount!: number | null | undefined;
+    distinctMaterialCount!: number | null | undefined;
+    distinctLotCount!: number | null | undefined;
+    distinctContainerCount!: number | null | undefined;
+
+    constructor(data?: ISpaceWmsRuntimeWarehouseInventoryKpiDto) {
+        if (data) {
+            for (var property in data) {
+                if (data.hasOwnProperty(property))
+                    (this as any)[property] = (data as any)[property];
+            }
+        }
+        if (!data) {
+            this.source = new SpaceWmsRuntimeSourceDto();
+        }
+    }
+
+    init(_data?: any) {
+        if (_data) {
+            this.source = _data["source"] ? SpaceWmsRuntimeSourceDto.fromJS(_data["source"]) : new SpaceWmsRuntimeSourceDto();
+            this.inventoryLineCount = _data["inventoryLineCount"];
+            this.occupiedLocationCount = _data["occupiedLocationCount"];
+            this.unoccupiedLocationCount = _data["unoccupiedLocationCount"];
+            this.occupiedLocationRatePercent = _data["occupiedLocationRatePercent"];
+            this.occupiedLocationRateMethod = _data["occupiedLocationRateMethod"];
+            this.capacityUtilizationPercent = _data["capacityUtilizationPercent"];
+            this.capacityUtilizationStatus = _data["capacityUtilizationStatus"];
+            this.capacityUtilizationReason = _data["capacityUtilizationReason"];
+            this.distinctOwnerCount = _data["distinctOwnerCount"];
+            this.distinctMaterialCount = _data["distinctMaterialCount"];
+            this.distinctLotCount = _data["distinctLotCount"];
+            this.distinctContainerCount = _data["distinctContainerCount"];
+        }
+    }
+
+    static fromJS(data: any): SpaceWmsRuntimeWarehouseInventoryKpiDto {
+        data = typeof data === 'object' ? data : {};
+        let result = new SpaceWmsRuntimeWarehouseInventoryKpiDto();
+        result.init(data);
+        return result;
+    }
+
+    toJSON(data?: any) {
+        data = typeof data === 'object' ? data : {};
+        data["source"] = this.source ? this.source.toJSON() : undefined as any;
+        data["inventoryLineCount"] = this.inventoryLineCount;
+        data["occupiedLocationCount"] = this.occupiedLocationCount;
+        data["unoccupiedLocationCount"] = this.unoccupiedLocationCount;
+        data["occupiedLocationRatePercent"] = this.occupiedLocationRatePercent;
+        data["occupiedLocationRateMethod"] = this.occupiedLocationRateMethod;
+        data["capacityUtilizationPercent"] = this.capacityUtilizationPercent;
+        data["capacityUtilizationStatus"] = this.capacityUtilizationStatus;
+        data["capacityUtilizationReason"] = this.capacityUtilizationReason;
+        data["distinctOwnerCount"] = this.distinctOwnerCount;
+        data["distinctMaterialCount"] = this.distinctMaterialCount;
+        data["distinctLotCount"] = this.distinctLotCount;
+        data["distinctContainerCount"] = this.distinctContainerCount;
+        return data;
+    }
+}
+
+export interface ISpaceWmsRuntimeWarehouseInventoryKpiDto {
+    source: SpaceWmsRuntimeSourceDto;
+    inventoryLineCount: number | null | undefined;
+    occupiedLocationCount: number | null | undefined;
+    unoccupiedLocationCount: number | null | undefined;
+    occupiedLocationRatePercent: number | null | undefined;
+    occupiedLocationRateMethod: string;
+    capacityUtilizationPercent: number | null | undefined;
+    capacityUtilizationStatus: string;
+    capacityUtilizationReason: string;
+    distinctOwnerCount: number | null | undefined;
+    distinctMaterialCount: number | null | undefined;
+    distinctLotCount: number | null | undefined;
+    distinctContainerCount: number | null | undefined;
+}
+
+export class SpaceWmsRuntimeWarehouseModelKpiDto implements ISpaceWmsRuntimeWarehouseModelKpiDto {
+    floorCount!: number;
+    areaAvailableFloorCount!: number;
+    areaMissingFloorCount!: number;
+    totalFloorAreaSquareMeters!: number | null | undefined;
+    zoneCount!: number;
+    rackCount!: number;
+    rackFootprintSquareMeters!: number;
+    rackFootprintRatePercent!: number | null | undefined;
+    activeLocationCount!: number;
+
+    constructor(data?: ISpaceWmsRuntimeWarehouseModelKpiDto) {
+        if (data) {
+            for (var property in data) {
+                if (data.hasOwnProperty(property))
+                    (this as any)[property] = (data as any)[property];
+            }
+        }
+    }
+
+    init(_data?: any) {
+        if (_data) {
+            this.floorCount = _data["floorCount"];
+            this.areaAvailableFloorCount = _data["areaAvailableFloorCount"];
+            this.areaMissingFloorCount = _data["areaMissingFloorCount"];
+            this.totalFloorAreaSquareMeters = _data["totalFloorAreaSquareMeters"];
+            this.zoneCount = _data["zoneCount"];
+            this.rackCount = _data["rackCount"];
+            this.rackFootprintSquareMeters = _data["rackFootprintSquareMeters"];
+            this.rackFootprintRatePercent = _data["rackFootprintRatePercent"];
+            this.activeLocationCount = _data["activeLocationCount"];
+        }
+    }
+
+    static fromJS(data: any): SpaceWmsRuntimeWarehouseModelKpiDto {
+        data = typeof data === 'object' ? data : {};
+        let result = new SpaceWmsRuntimeWarehouseModelKpiDto();
+        result.init(data);
+        return result;
+    }
+
+    toJSON(data?: any) {
+        data = typeof data === 'object' ? data : {};
+        data["floorCount"] = this.floorCount;
+        data["areaAvailableFloorCount"] = this.areaAvailableFloorCount;
+        data["areaMissingFloorCount"] = this.areaMissingFloorCount;
+        data["totalFloorAreaSquareMeters"] = this.totalFloorAreaSquareMeters;
+        data["zoneCount"] = this.zoneCount;
+        data["rackCount"] = this.rackCount;
+        data["rackFootprintSquareMeters"] = this.rackFootprintSquareMeters;
+        data["rackFootprintRatePercent"] = this.rackFootprintRatePercent;
+        data["activeLocationCount"] = this.activeLocationCount;
+        return data;
+    }
+}
+
+export interface ISpaceWmsRuntimeWarehouseModelKpiDto {
+    floorCount: number;
+    areaAvailableFloorCount: number;
+    areaMissingFloorCount: number;
+    totalFloorAreaSquareMeters: number | null | undefined;
+    zoneCount: number;
+    rackCount: number;
+    rackFootprintSquareMeters: number;
+    rackFootprintRatePercent: number | null | undefined;
+    activeLocationCount: number;
+}
+
+export class SpaceWmsRuntimeWarehouseOverviewResponse implements ISpaceWmsRuntimeWarehouseOverviewResponse {
+    siteId!: string;
+    publishedVersionId!: string;
+    warehouseCode!: string;
+    capturedAtUtc!: Date;
+    isRuntimeComplete!: boolean;
+    model!: SpaceWmsRuntimeWarehouseModelKpiDto;
+    inventory!: SpaceWmsRuntimeWarehouseInventoryKpiDto;
+    tasks!: SpaceWmsRuntimeWarehouseTaskKpiDto;
+    anomalies!: SpaceWmsRuntimeWarehouseAnomalyKpiDto;
+    abc!: SpaceWmsRuntimeWarehouseAbcDto;
+    floors!: SpaceWmsRuntimeWarehouseFloorKpiDto[];
+
+    constructor(data?: ISpaceWmsRuntimeWarehouseOverviewResponse) {
+        if (data) {
+            for (var property in data) {
+                if (data.hasOwnProperty(property))
+                    (this as any)[property] = (data as any)[property];
+            }
+        }
+        if (!data) {
+            this.model = new SpaceWmsRuntimeWarehouseModelKpiDto();
+            this.inventory = new SpaceWmsRuntimeWarehouseInventoryKpiDto();
+            this.tasks = new SpaceWmsRuntimeWarehouseTaskKpiDto();
+            this.anomalies = new SpaceWmsRuntimeWarehouseAnomalyKpiDto();
+            this.abc = new SpaceWmsRuntimeWarehouseAbcDto();
+            this.floors = [];
+        }
+    }
+
+    init(_data?: any) {
+        if (_data) {
+            this.siteId = _data["siteId"];
+            this.publishedVersionId = _data["publishedVersionId"];
+            this.warehouseCode = _data["warehouseCode"];
+            this.capturedAtUtc = _data["capturedAtUtc"] ? new Date(_data["capturedAtUtc"].toString()) : undefined as any;
+            this.isRuntimeComplete = _data["isRuntimeComplete"];
+            this.model = _data["model"] ? SpaceWmsRuntimeWarehouseModelKpiDto.fromJS(_data["model"]) : new SpaceWmsRuntimeWarehouseModelKpiDto();
+            this.inventory = _data["inventory"] ? SpaceWmsRuntimeWarehouseInventoryKpiDto.fromJS(_data["inventory"]) : new SpaceWmsRuntimeWarehouseInventoryKpiDto();
+            this.tasks = _data["tasks"] ? SpaceWmsRuntimeWarehouseTaskKpiDto.fromJS(_data["tasks"]) : new SpaceWmsRuntimeWarehouseTaskKpiDto();
+            this.anomalies = _data["anomalies"] ? SpaceWmsRuntimeWarehouseAnomalyKpiDto.fromJS(_data["anomalies"]) : new SpaceWmsRuntimeWarehouseAnomalyKpiDto();
+            this.abc = _data["abc"] ? SpaceWmsRuntimeWarehouseAbcDto.fromJS(_data["abc"]) : new SpaceWmsRuntimeWarehouseAbcDto();
+            if (Array.isArray(_data["floors"])) {
+                this.floors = [] as any;
+                for (let item of _data["floors"])
+                    this.floors!.push(SpaceWmsRuntimeWarehouseFloorKpiDto.fromJS(item));
+            }
+        }
+    }
+
+    static fromJS(data: any): SpaceWmsRuntimeWarehouseOverviewResponse {
+        data = typeof data === 'object' ? data : {};
+        let result = new SpaceWmsRuntimeWarehouseOverviewResponse();
+        result.init(data);
+        return result;
+    }
+
+    toJSON(data?: any) {
+        data = typeof data === 'object' ? data : {};
+        data["siteId"] = this.siteId;
+        data["publishedVersionId"] = this.publishedVersionId;
+        data["warehouseCode"] = this.warehouseCode;
+        data["capturedAtUtc"] = this.capturedAtUtc ? this.capturedAtUtc.toISOString() : undefined as any;
+        data["isRuntimeComplete"] = this.isRuntimeComplete;
+        data["model"] = this.model ? this.model.toJSON() : undefined as any;
+        data["inventory"] = this.inventory ? this.inventory.toJSON() : undefined as any;
+        data["tasks"] = this.tasks ? this.tasks.toJSON() : undefined as any;
+        data["anomalies"] = this.anomalies ? this.anomalies.toJSON() : undefined as any;
+        data["abc"] = this.abc ? this.abc.toJSON() : undefined as any;
+        if (Array.isArray(this.floors)) {
+            data["floors"] = [];
+            for (let item of this.floors)
+                data["floors"].push(item ? item.toJSON() : undefined as any);
+        }
+        return data;
+    }
+}
+
+export interface ISpaceWmsRuntimeWarehouseOverviewResponse {
+    siteId: string;
+    publishedVersionId: string;
+    warehouseCode: string;
+    capturedAtUtc: Date;
+    isRuntimeComplete: boolean;
+    model: SpaceWmsRuntimeWarehouseModelKpiDto;
+    inventory: SpaceWmsRuntimeWarehouseInventoryKpiDto;
+    tasks: SpaceWmsRuntimeWarehouseTaskKpiDto;
+    anomalies: SpaceWmsRuntimeWarehouseAnomalyKpiDto;
+    abc: SpaceWmsRuntimeWarehouseAbcDto;
+    floors: SpaceWmsRuntimeWarehouseFloorKpiDto[];
+}
+
+export class SpaceWmsRuntimeWarehouseTaskKpiDto implements ISpaceWmsRuntimeWarehouseTaskKpiDto {
+    source!: SpaceWmsRuntimeSourceDto;
+    activeTaskCount!: number | null | undefined;
+    activeTaskStopCount!: number | null | undefined;
+
+    constructor(data?: ISpaceWmsRuntimeWarehouseTaskKpiDto) {
+        if (data) {
+            for (var property in data) {
+                if (data.hasOwnProperty(property))
+                    (this as any)[property] = (data as any)[property];
+            }
+        }
+        if (!data) {
+            this.source = new SpaceWmsRuntimeSourceDto();
+        }
+    }
+
+    init(_data?: any) {
+        if (_data) {
+            this.source = _data["source"] ? SpaceWmsRuntimeSourceDto.fromJS(_data["source"]) : new SpaceWmsRuntimeSourceDto();
+            this.activeTaskCount = _data["activeTaskCount"];
+            this.activeTaskStopCount = _data["activeTaskStopCount"];
+        }
+    }
+
+    static fromJS(data: any): SpaceWmsRuntimeWarehouseTaskKpiDto {
+        data = typeof data === 'object' ? data : {};
+        let result = new SpaceWmsRuntimeWarehouseTaskKpiDto();
+        result.init(data);
+        return result;
+    }
+
+    toJSON(data?: any) {
+        data = typeof data === 'object' ? data : {};
+        data["source"] = this.source ? this.source.toJSON() : undefined as any;
+        data["activeTaskCount"] = this.activeTaskCount;
+        data["activeTaskStopCount"] = this.activeTaskStopCount;
+        return data;
+    }
+}
+
+export interface ISpaceWmsRuntimeWarehouseTaskKpiDto {
+    source: SpaceWmsRuntimeSourceDto;
+    activeTaskCount: number | null | undefined;
+    activeTaskStopCount: number | null | undefined;
 }
 
 export class StartSpaceExcelPreflightRequest implements IStartSpaceExcelPreflightRequest {

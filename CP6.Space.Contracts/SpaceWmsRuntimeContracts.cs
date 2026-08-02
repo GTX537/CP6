@@ -143,3 +143,109 @@ public sealed record SpaceWmsRuntimeTaskPathResponse(
     IReadOnlyList<SpaceWmsRuntimeTaskFloorDto> Floors,
     IReadOnlyList<SpaceWmsRuntimeTaskWorkloadDto> Workloads,
     IReadOnlyList<SpaceWmsRuntimeTaskAisleDto> Aisles);
+
+public sealed record SpaceWmsRuntimeWarehouseModelKpiDto(
+    int FloorCount,
+    int AreaAvailableFloorCount,
+    int AreaMissingFloorCount,
+    decimal? TotalFloorAreaSquareMeters,
+    int ZoneCount,
+    int RackCount,
+    decimal RackFootprintSquareMeters,
+    decimal? RackFootprintRatePercent,
+    int ActiveLocationCount);
+
+public sealed record SpaceWmsRuntimeWarehouseInventoryKpiDto(
+    SpaceWmsRuntimeSourceDto Source,
+    int? InventoryLineCount,
+    int? OccupiedLocationCount,
+    int? UnoccupiedLocationCount,
+    decimal? OccupiedLocationRatePercent,
+    string OccupiedLocationRateMethod,
+    decimal? CapacityUtilizationPercent,
+    string CapacityUtilizationStatus,
+    string CapacityUtilizationReason,
+    int? DistinctOwnerCount,
+    int? DistinctMaterialCount,
+    int? DistinctLotCount,
+    int? DistinctContainerCount);
+
+public sealed record SpaceWmsRuntimeWarehouseTaskKpiDto(
+    SpaceWmsRuntimeSourceDto Source,
+    int? ActiveTaskCount,
+    int? ActiveTaskStopCount);
+
+public sealed record SpaceWmsRuntimeWarehouseAnomalyKpiDto(
+    int ActiveDeviceAlarmCount,
+    int CriticalDeviceAlarmCount,
+    int? CodeMismatchLocationCount,
+    int? OverAllocatedInventoryLineCount,
+    int AreaMissingFloorCount,
+    int? UnclassifiedAbcMaterialCount);
+
+public sealed record SpaceWmsRuntimeWarehouseAbcMaterialDto(
+    string MaterialNumber,
+    int OutboundMovementCount,
+    decimal OutboundQuantity,
+    decimal? PreviousCumulativeSharePercent,
+    decimal? CumulativeSharePercent,
+    string Rank,
+    int OccupiedLocationCount,
+    int FloorCount);
+
+public sealed record SpaceWmsRuntimeWarehouseAbcLocationMaterialDto(
+    string MaterialNumber,
+    string Rank);
+
+public sealed record SpaceWmsRuntimeWarehouseAbcLocationDto(
+    Guid LocationLogicalId,
+    string SpaceLocationCode,
+    Guid FloorLogicalId,
+    string FloorCode,
+    string Rank,
+    IReadOnlyList<SpaceWmsRuntimeWarehouseAbcLocationMaterialDto> Materials);
+
+public sealed record SpaceWmsRuntimeWarehouseAbcDto(
+    SpaceWmsRuntimeSourceDto Source,
+    int WindowDays,
+    string WindowStartDate,
+    string WindowEndDateExclusive,
+    string TransactionTimeBasis,
+    string RankingMethod,
+    decimal AThresholdPercent,
+    decimal BThresholdPercent,
+    bool SpatialMappingAvailable,
+    int? MaterialCount,
+    int? ACount,
+    int? BCount,
+    int? CCount,
+    int? UnclassifiedCount,
+    IReadOnlyList<SpaceWmsRuntimeWarehouseAbcMaterialDto> Materials,
+    IReadOnlyList<SpaceWmsRuntimeWarehouseAbcLocationDto> Locations);
+
+public sealed record SpaceWmsRuntimeWarehouseFloorKpiDto(
+    Guid FloorLogicalId,
+    string FloorCode,
+    string FloorName,
+    int FloorLevel,
+    decimal? AreaSquareMeters,
+    int ActiveLocationCount,
+    int? OccupiedLocationCount,
+    decimal? OccupiedLocationRatePercent,
+    int? ALocationCount,
+    int? BLocationCount,
+    int? CLocationCount,
+    int? UnclassifiedLocationCount);
+
+public sealed record SpaceWmsRuntimeWarehouseOverviewResponse(
+    Guid SiteId,
+    Guid PublishedVersionId,
+    string WarehouseCode,
+    DateTimeOffset CapturedAtUtc,
+    bool IsRuntimeComplete,
+    SpaceWmsRuntimeWarehouseModelKpiDto Model,
+    SpaceWmsRuntimeWarehouseInventoryKpiDto Inventory,
+    SpaceWmsRuntimeWarehouseTaskKpiDto Tasks,
+    SpaceWmsRuntimeWarehouseAnomalyKpiDto Anomalies,
+    SpaceWmsRuntimeWarehouseAbcDto Abc,
+    IReadOnlyList<SpaceWmsRuntimeWarehouseFloorKpiDto> Floors);
