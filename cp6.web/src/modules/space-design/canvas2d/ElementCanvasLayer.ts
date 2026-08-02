@@ -152,7 +152,7 @@ export class ElementCanvasLayer {
     width: number
     height: number
   }): CanvasObjectRef[] {
-    return this.layer
+    const matches = this.layer
       .find('.design-element')
       .filter((node) =>
         Konva.Util.haveIntersection(
@@ -164,6 +164,9 @@ export class ElementCanvasLayer {
         logicalId: String(node.getAttr('logicalId')),
         ownerKind: node.getAttr('ownerKind') as 'Element' | 'Rack',
       }))
+    return [
+      ...new Map(matches.map((item) => [item.logicalId, item])).values(),
+    ]
   }
 
   private createRect(
