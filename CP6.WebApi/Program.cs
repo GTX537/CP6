@@ -2296,6 +2296,7 @@ using (var scope = app.Services.CreateScope())
             .Concat(CP6.WebApi.Seed.I18nOaFlowTriggerScreenSeed.Items)  // WFS 波③ 事件触发 oa.flowtrigger.* + oa.flowadmin.tab.flows + E-WF-022/023/024
             .Concat(CP6.WebApi.Seed.I18nSpaceScreenSeed.Items)   // Space 波4 E-SPACE-*/W-SPACE-* 错误码
             .Concat(CP6.WebApi.Seed.I18nSpaceAiAdminSeed.Items) // Space E13-S16 AI 策略与用量管理
+            .Concat(CP6.WebApi.Seed.I18nSpacePlanningScenarioSeed.Items) // Space E12-S01 生产隔离规划分支
             .Concat(CP6.WebApi.Seed.I18nSpaceOperationsDiagnosticsSeed.Items) // Space E11-S01 运营诊断
             .Concat(CP6.WebApi.Seed.I18nSpacePutawayRecommendationSeed.Items) // Space E11-S02 上架推荐
             .Concat(CP6.WebApi.Seed.I18nSpaceDispatchRecommendationSeed.Items) // Space E11-S03 人员/任务调度建议

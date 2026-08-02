@@ -524,6 +524,27 @@ public sealed class SpaceAuditPermissionSeedTests
     }
 
     [Fact]
+    public void Planning_scenario_screen_has_complete_five_language_text()
+    {
+        var rows = I18nSpacePlanningScenarioSeed.Items;
+
+        Assert.Equal(20, rows.Length);
+        Assert.Equal(rows.Length, rows.Select(row => row.LangKey).Distinct().Count());
+        Assert.All(rows, row =>
+        {
+            Assert.StartsWith(
+                "space.planningScenario.",
+                row.LangKey,
+                StringComparison.Ordinal);
+            Assert.False(string.IsNullOrWhiteSpace(row.ZhCN));
+            Assert.False(string.IsNullOrWhiteSpace(row.ZhTW));
+            Assert.False(string.IsNullOrWhiteSpace(row.En));
+            Assert.False(string.IsNullOrWhiteSpace(row.Ja));
+            Assert.False(string.IsNullOrWhiteSpace(row.Ko));
+        });
+    }
+
+    [Fact]
     public void Operations_diagnostics_screen_has_complete_five_language_text()
     {
         var rows = I18nSpaceOperationsDiagnosticsSeed.Items;
