@@ -1,9 +1,11 @@
 # E10-S03 WCS/IoT 设备事件契约与设备主数据映射完成报告
 
-- 状态：**Feature complete / pending controlled integration**
+- 状态：**Integrated**
 - 日期：2026-08-02
 - 功能分支：`codex/space-e10-s03-device-events`
 - 实现提交：`10b16c51`
+- 文档提交：`8ce91d41`
+- no-ff 集成提交：`88efd23d`
 - 集成目标：`integration/space-v1-20260730`
 
 ## 1. 交付结论
