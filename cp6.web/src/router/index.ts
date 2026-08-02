@@ -182,6 +182,7 @@ const viewModules: Record<string, () => Promise<any>> = {
   '/space/publish': () => import('@/views/space/lifecycle/SpacePublishView.vue'),
   '/space/events': () => import('@/views/space/lifecycle/SpaceEventsView.vue'),
   '/space/ai-admin': () => import('@/views/space/admin/SpaceAiAdminView.vue'),
+  '/space/planning': () => import('@/views/space/planning/SpacePlanningScenarioView.vue'),
 }
 
 // 静态路由：登录页 / Layout壳子 / 独立窗口

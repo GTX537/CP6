@@ -77,7 +77,9 @@ public sealed class SpaceDesignV1Service : ISpaceDesignV1Service
 
         var query = _context.Versions
             .AsNoTracking()
-            .Where(version => version.ModelId == model.Id);
+            .Where(version =>
+                version.ModelId == model.Id &&
+                version.Purpose == SpaceModelVersionPurpose.Production);
         if (parsedStatus.HasValue)
             query = query.Where(version => version.Status == parsedStatus.Value);
 
@@ -2445,7 +2447,8 @@ public sealed class SpaceDesignV1Service : ISpaceDesignV1Service
             version.ContentHash,
             version.ValidatedHash,
             version.PublishedAtUtc,
-            RowVersion(version.RowVersion));
+            RowVersion(version.RowVersion),
+            version.Purpose.ToString());
 
     private static SpaceSourceDto ToDto(SpaceModelSource source) =>
         new(

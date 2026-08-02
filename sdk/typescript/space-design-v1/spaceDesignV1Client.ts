@@ -384,6 +384,23 @@ export interface ISpaceDesignV1Client {
     getPersonnelTrajectory(siteId: string, personExternalId: string, sourceId: string, fromUtc: Date, toUtc: Date, limit: number | undefined, cursor: string | undefined): Promise<SpacePersonnelTrajectoryResponse>;
 
     /**
+     * @param body (optional)
+     * @return OK
+     */
+    createBranch(siteId: string, branchId: string, body: CreateSpacePlanningScenarioBranchRequest | undefined): Promise<CreateSpacePlanningScenarioBranchResponse>;
+
+    /**
+     * @return OK
+     */
+    getBranch(siteId: string, branchId: string): Promise<SpacePlanningScenarioBranchDto>;
+
+    /**
+     * @param limit (optional)
+     * @return OK
+     */
+    getBranches(siteId: string, limit: number | undefined): Promise<SpacePlanningScenarioBranchListResponse>;
+
+    /**
      * @param locationLogicalId (optional)
      * @return OK
      */
@@ -6601,6 +6618,289 @@ export class SpaceDesignV1Client implements ISpaceDesignV1Client {
     }
 
     /**
+     * @param body (optional)
+     * @return OK
+     */
+    createBranch(siteId: string, branchId: string, body: CreateSpacePlanningScenarioBranchRequest | undefined): Promise<CreateSpacePlanningScenarioBranchResponse> {
+        let url_ = this.baseUrl + "/api/space/planning/v1/sites/{siteId}/scenario-branches/{branchId}";
+        if (siteId === undefined || siteId === null)
+            throw new globalThis.Error("The parameter 'siteId' must be defined.");
+        url_ = url_.replace("{siteId}", encodeURIComponent("" + siteId));
+        if (branchId === undefined || branchId === null)
+            throw new globalThis.Error("The parameter 'branchId' must be defined.");
+        url_ = url_.replace("{branchId}", encodeURIComponent("" + branchId));
+        url_ = url_.replace(/[?&]$/, "");
+
+        const content_ = JSON.stringify(body);
+
+        let options_: RequestInit = {
+            body: content_,
+            method: "PUT",
+            headers: {
+                "Content-Type": "application/json",
+                "Accept": "application/json"
+            }
+        };
+
+        return this.http.fetch(url_, options_).then((_response: Response) => {
+            return this.processCreateBranch(_response);
+        });
+    }
+
+    protected processCreateBranch(response: Response): Promise<CreateSpacePlanningScenarioBranchResponse> {
+        const status = response.status;
+        let _headers: any = {}; if (response.headers && response.headers.forEach) { response.headers.forEach((v: any, k: any) => _headers[k] = v); };
+        if (status === 200) {
+            return response.text().then((_responseText) => {
+            let result200: any = null;
+            let resultData200 = _responseText === "" ? null : JSON.parse(_responseText, this.jsonParseReviver);
+            result200 = CreateSpacePlanningScenarioBranchResponse.fromJS(resultData200);
+            return result200;
+            });
+        } else if (status === 400) {
+            return response.text().then((_responseText) => {
+            let result400: any = null;
+            let resultData400 = _responseText === "" ? null : JSON.parse(_responseText, this.jsonParseReviver);
+            result400 = SpaceDesignProblemDetails.fromJS(resultData400);
+            return throwException("Bad Request", status, _responseText, _headers, result400);
+            });
+        } else if (status === 401) {
+            return response.text().then((_responseText) => {
+            let result401: any = null;
+            let resultData401 = _responseText === "" ? null : JSON.parse(_responseText, this.jsonParseReviver);
+            result401 = SpaceDesignProblemDetails.fromJS(resultData401);
+            return throwException("Unauthorized", status, _responseText, _headers, result401);
+            });
+        } else if (status === 403) {
+            return response.text().then((_responseText) => {
+            let result403: any = null;
+            let resultData403 = _responseText === "" ? null : JSON.parse(_responseText, this.jsonParseReviver);
+            result403 = SpaceDesignProblemDetails.fromJS(resultData403);
+            return throwException("Forbidden", status, _responseText, _headers, result403);
+            });
+        } else if (status === 404) {
+            return response.text().then((_responseText) => {
+            let result404: any = null;
+            let resultData404 = _responseText === "" ? null : JSON.parse(_responseText, this.jsonParseReviver);
+            result404 = SpaceDesignProblemDetails.fromJS(resultData404);
+            return throwException("Not Found", status, _responseText, _headers, result404);
+            });
+        } else if (status === 409) {
+            return response.text().then((_responseText) => {
+            let result409: any = null;
+            let resultData409 = _responseText === "" ? null : JSON.parse(_responseText, this.jsonParseReviver);
+            result409 = SpaceDesignProblemDetails.fromJS(resultData409);
+            return throwException("Conflict", status, _responseText, _headers, result409);
+            });
+        } else if (status === 422) {
+            return response.text().then((_responseText) => {
+            let result422: any = null;
+            let resultData422 = _responseText === "" ? null : JSON.parse(_responseText, this.jsonParseReviver);
+            result422 = SpaceDesignProblemDetails.fromJS(resultData422);
+            return throwException("Unprocessable Content", status, _responseText, _headers, result422);
+            });
+        } else if (status === 500) {
+            return response.text().then((_responseText) => {
+            let result500: any = null;
+            let resultData500 = _responseText === "" ? null : JSON.parse(_responseText, this.jsonParseReviver);
+            result500 = SpaceDesignProblemDetails.fromJS(resultData500);
+            return throwException("Internal Server Error", status, _responseText, _headers, result500);
+            });
+        } else if (status !== 200 && status !== 204) {
+            return response.text().then((_responseText) => {
+            return throwException("An unexpected server error occurred.", status, _responseText, _headers);
+            });
+        }
+        return Promise.resolve<CreateSpacePlanningScenarioBranchResponse>(null as any);
+    }
+
+    /**
+     * @return OK
+     */
+    getBranch(siteId: string, branchId: string): Promise<SpacePlanningScenarioBranchDto> {
+        let url_ = this.baseUrl + "/api/space/planning/v1/sites/{siteId}/scenario-branches/{branchId}";
+        if (siteId === undefined || siteId === null)
+            throw new globalThis.Error("The parameter 'siteId' must be defined.");
+        url_ = url_.replace("{siteId}", encodeURIComponent("" + siteId));
+        if (branchId === undefined || branchId === null)
+            throw new globalThis.Error("The parameter 'branchId' must be defined.");
+        url_ = url_.replace("{branchId}", encodeURIComponent("" + branchId));
+        url_ = url_.replace(/[?&]$/, "");
+
+        let options_: RequestInit = {
+            method: "GET",
+            headers: {
+                "Accept": "application/json"
+            }
+        };
+
+        return this.http.fetch(url_, options_).then((_response: Response) => {
+            return this.processGetBranch(_response);
+        });
+    }
+
+    protected processGetBranch(response: Response): Promise<SpacePlanningScenarioBranchDto> {
+        const status = response.status;
+        let _headers: any = {}; if (response.headers && response.headers.forEach) { response.headers.forEach((v: any, k: any) => _headers[k] = v); };
+        if (status === 200) {
+            return response.text().then((_responseText) => {
+            let result200: any = null;
+            let resultData200 = _responseText === "" ? null : JSON.parse(_responseText, this.jsonParseReviver);
+            result200 = SpacePlanningScenarioBranchDto.fromJS(resultData200);
+            return result200;
+            });
+        } else if (status === 400) {
+            return response.text().then((_responseText) => {
+            let result400: any = null;
+            let resultData400 = _responseText === "" ? null : JSON.parse(_responseText, this.jsonParseReviver);
+            result400 = SpaceDesignProblemDetails.fromJS(resultData400);
+            return throwException("Bad Request", status, _responseText, _headers, result400);
+            });
+        } else if (status === 401) {
+            return response.text().then((_responseText) => {
+            let result401: any = null;
+            let resultData401 = _responseText === "" ? null : JSON.parse(_responseText, this.jsonParseReviver);
+            result401 = SpaceDesignProblemDetails.fromJS(resultData401);
+            return throwException("Unauthorized", status, _responseText, _headers, result401);
+            });
+        } else if (status === 403) {
+            return response.text().then((_responseText) => {
+            let result403: any = null;
+            let resultData403 = _responseText === "" ? null : JSON.parse(_responseText, this.jsonParseReviver);
+            result403 = SpaceDesignProblemDetails.fromJS(resultData403);
+            return throwException("Forbidden", status, _responseText, _headers, result403);
+            });
+        } else if (status === 404) {
+            return response.text().then((_responseText) => {
+            let result404: any = null;
+            let resultData404 = _responseText === "" ? null : JSON.parse(_responseText, this.jsonParseReviver);
+            result404 = SpaceDesignProblemDetails.fromJS(resultData404);
+            return throwException("Not Found", status, _responseText, _headers, result404);
+            });
+        } else if (status === 409) {
+            return response.text().then((_responseText) => {
+            let result409: any = null;
+            let resultData409 = _responseText === "" ? null : JSON.parse(_responseText, this.jsonParseReviver);
+            result409 = SpaceDesignProblemDetails.fromJS(resultData409);
+            return throwException("Conflict", status, _responseText, _headers, result409);
+            });
+        } else if (status === 422) {
+            return response.text().then((_responseText) => {
+            let result422: any = null;
+            let resultData422 = _responseText === "" ? null : JSON.parse(_responseText, this.jsonParseReviver);
+            result422 = SpaceDesignProblemDetails.fromJS(resultData422);
+            return throwException("Unprocessable Content", status, _responseText, _headers, result422);
+            });
+        } else if (status === 500) {
+            return response.text().then((_responseText) => {
+            let result500: any = null;
+            let resultData500 = _responseText === "" ? null : JSON.parse(_responseText, this.jsonParseReviver);
+            result500 = SpaceDesignProblemDetails.fromJS(resultData500);
+            return throwException("Internal Server Error", status, _responseText, _headers, result500);
+            });
+        } else if (status !== 200 && status !== 204) {
+            return response.text().then((_responseText) => {
+            return throwException("An unexpected server error occurred.", status, _responseText, _headers);
+            });
+        }
+        return Promise.resolve<SpacePlanningScenarioBranchDto>(null as any);
+    }
+
+    /**
+     * @param limit (optional)
+     * @return OK
+     */
+    getBranches(siteId: string, limit: number | undefined): Promise<SpacePlanningScenarioBranchListResponse> {
+        let url_ = this.baseUrl + "/api/space/planning/v1/sites/{siteId}/scenario-branches?";
+        if (siteId === undefined || siteId === null)
+            throw new globalThis.Error("The parameter 'siteId' must be defined.");
+        url_ = url_.replace("{siteId}", encodeURIComponent("" + siteId));
+        if (limit === null)
+            throw new globalThis.Error("The parameter 'limit' cannot be null.");
+        else if (limit !== undefined)
+            url_ += "limit=" + encodeURIComponent("" + limit) + "&";
+        url_ = url_.replace(/[?&]$/, "");
+
+        let options_: RequestInit = {
+            method: "GET",
+            headers: {
+                "Accept": "application/json"
+            }
+        };
+
+        return this.http.fetch(url_, options_).then((_response: Response) => {
+            return this.processGetBranches(_response);
+        });
+    }
+
+    protected processGetBranches(response: Response): Promise<SpacePlanningScenarioBranchListResponse> {
+        const status = response.status;
+        let _headers: any = {}; if (response.headers && response.headers.forEach) { response.headers.forEach((v: any, k: any) => _headers[k] = v); };
+        if (status === 200) {
+            return response.text().then((_responseText) => {
+            let result200: any = null;
+            let resultData200 = _responseText === "" ? null : JSON.parse(_responseText, this.jsonParseReviver);
+            result200 = SpacePlanningScenarioBranchListResponse.fromJS(resultData200);
+            return result200;
+            });
+        } else if (status === 400) {
+            return response.text().then((_responseText) => {
+            let result400: any = null;
+            let resultData400 = _responseText === "" ? null : JSON.parse(_responseText, this.jsonParseReviver);
+            result400 = SpaceDesignProblemDetails.fromJS(resultData400);
+            return throwException("Bad Request", status, _responseText, _headers, result400);
+            });
+        } else if (status === 401) {
+            return response.text().then((_responseText) => {
+            let result401: any = null;
+            let resultData401 = _responseText === "" ? null : JSON.parse(_responseText, this.jsonParseReviver);
+            result401 = SpaceDesignProblemDetails.fromJS(resultData401);
+            return throwException("Unauthorized", status, _responseText, _headers, result401);
+            });
+        } else if (status === 403) {
+            return response.text().then((_responseText) => {
+            let result403: any = null;
+            let resultData403 = _responseText === "" ? null : JSON.parse(_responseText, this.jsonParseReviver);
+            result403 = SpaceDesignProblemDetails.fromJS(resultData403);
+            return throwException("Forbidden", status, _responseText, _headers, result403);
+            });
+        } else if (status === 404) {
+            return response.text().then((_responseText) => {
+            let result404: any = null;
+            let resultData404 = _responseText === "" ? null : JSON.parse(_responseText, this.jsonParseReviver);
+            result404 = SpaceDesignProblemDetails.fromJS(resultData404);
+            return throwException("Not Found", status, _responseText, _headers, result404);
+            });
+        } else if (status === 409) {
+            return response.text().then((_responseText) => {
+            let result409: any = null;
+            let resultData409 = _responseText === "" ? null : JSON.parse(_responseText, this.jsonParseReviver);
+            result409 = SpaceDesignProblemDetails.fromJS(resultData409);
+            return throwException("Conflict", status, _responseText, _headers, result409);
+            });
+        } else if (status === 422) {
+            return response.text().then((_responseText) => {
+            let result422: any = null;
+            let resultData422 = _responseText === "" ? null : JSON.parse(_responseText, this.jsonParseReviver);
+            result422 = SpaceDesignProblemDetails.fromJS(resultData422);
+            return throwException("Unprocessable Content", status, _responseText, _headers, result422);
+            });
+        } else if (status === 500) {
+            return response.text().then((_responseText) => {
+            let result500: any = null;
+            let resultData500 = _responseText === "" ? null : JSON.parse(_responseText, this.jsonParseReviver);
+            result500 = SpaceDesignProblemDetails.fromJS(resultData500);
+            return throwException("Internal Server Error", status, _responseText, _headers, result500);
+            });
+        } else if (status !== 200 && status !== 204) {
+            return response.text().then((_responseText) => {
+            return throwException("An unexpected server error occurred.", status, _responseText, _headers);
+            });
+        }
+        return Promise.resolve<SpacePlanningScenarioBranchListResponse>(null as any);
+    }
+
+    /**
      * @param locationLogicalId (optional)
      * @return OK
      */
@@ -7953,6 +8253,86 @@ export interface ICreateSpaceFieldPolicyRequest {
     audienceType: string;
     fields: SpaceFieldPolicyFieldRequest[];
     canExport?: boolean;
+}
+
+export class CreateSpacePlanningScenarioBranchRequest implements ICreateSpacePlanningScenarioBranchRequest {
+    basePublishedVersionId?: string;
+    name?: string | undefined;
+
+    constructor(data?: ICreateSpacePlanningScenarioBranchRequest) {
+        if (data) {
+            for (var property in data) {
+                if (data.hasOwnProperty(property))
+                    (this as any)[property] = (data as any)[property];
+            }
+        }
+    }
+
+    init(_data?: any) {
+        if (_data) {
+            this.basePublishedVersionId = _data["basePublishedVersionId"];
+            this.name = _data["name"];
+        }
+    }
+
+    static fromJS(data: any): CreateSpacePlanningScenarioBranchRequest {
+        data = typeof data === 'object' ? data : {};
+        let result = new CreateSpacePlanningScenarioBranchRequest();
+        result.init(data);
+        return result;
+    }
+
+    toJSON(data?: any) {
+        data = typeof data === 'object' ? data : {};
+        data["basePublishedVersionId"] = this.basePublishedVersionId;
+        data["name"] = this.name;
+        return data;
+    }
+}
+
+export interface ICreateSpacePlanningScenarioBranchRequest {
+    basePublishedVersionId?: string;
+    name?: string | undefined;
+}
+
+export class CreateSpacePlanningScenarioBranchResponse implements ICreateSpacePlanningScenarioBranchResponse {
+    outcome?: string | undefined;
+    branch?: SpacePlanningScenarioBranchDto;
+
+    constructor(data?: ICreateSpacePlanningScenarioBranchResponse) {
+        if (data) {
+            for (var property in data) {
+                if (data.hasOwnProperty(property))
+                    (this as any)[property] = (data as any)[property];
+            }
+        }
+    }
+
+    init(_data?: any) {
+        if (_data) {
+            this.outcome = _data["outcome"];
+            this.branch = _data["branch"] ? SpacePlanningScenarioBranchDto.fromJS(_data["branch"]) : undefined as any;
+        }
+    }
+
+    static fromJS(data: any): CreateSpacePlanningScenarioBranchResponse {
+        data = typeof data === 'object' ? data : {};
+        let result = new CreateSpacePlanningScenarioBranchResponse();
+        result.init(data);
+        return result;
+    }
+
+    toJSON(data?: any) {
+        data = typeof data === 'object' ? data : {};
+        data["outcome"] = this.outcome;
+        data["branch"] = this.branch ? this.branch.toJSON() : undefined as any;
+        return data;
+    }
+}
+
+export interface ICreateSpacePlanningScenarioBranchResponse {
+    outcome?: string | undefined;
+    branch?: SpacePlanningScenarioBranchDto;
 }
 
 export class CreateSpaceSourceRequest implements ICreateSpaceSourceRequest {
@@ -12628,6 +13008,162 @@ export interface ISpacePersonnelTrajectoryResponse {
     nextCursor: string | undefined;
 }
 
+export class SpacePlanningScenarioBranchDto implements ISpacePlanningScenarioBranchDto {
+    branchId?: string;
+    siteId?: string;
+    modelId?: string;
+    basePublishedVersionId?: string;
+    baseVersionNo?: string | undefined;
+    scenarioVersionId?: string;
+    scenarioVersionNo?: string | undefined;
+    name?: string | undefined;
+    branchStatus?: string | undefined;
+    scenarioVersionStatus?: string | undefined;
+    cloneJobId?: string;
+    cloneJobStatus?: string | undefined;
+    createdAtUtc?: Date;
+    createdBy?: string;
+    definitionVersion?: string | undefined;
+    productionIsolated?: boolean;
+    limitations?: string[] | undefined;
+
+    constructor(data?: ISpacePlanningScenarioBranchDto) {
+        if (data) {
+            for (var property in data) {
+                if (data.hasOwnProperty(property))
+                    (this as any)[property] = (data as any)[property];
+            }
+        }
+    }
+
+    init(_data?: any) {
+        if (_data) {
+            this.branchId = _data["branchId"];
+            this.siteId = _data["siteId"];
+            this.modelId = _data["modelId"];
+            this.basePublishedVersionId = _data["basePublishedVersionId"];
+            this.baseVersionNo = _data["baseVersionNo"];
+            this.scenarioVersionId = _data["scenarioVersionId"];
+            this.scenarioVersionNo = _data["scenarioVersionNo"];
+            this.name = _data["name"];
+            this.branchStatus = _data["branchStatus"];
+            this.scenarioVersionStatus = _data["scenarioVersionStatus"];
+            this.cloneJobId = _data["cloneJobId"];
+            this.cloneJobStatus = _data["cloneJobStatus"];
+            this.createdAtUtc = _data["createdAtUtc"] ? new Date(_data["createdAtUtc"].toString()) : undefined as any;
+            this.createdBy = _data["createdBy"];
+            this.definitionVersion = _data["definitionVersion"];
+            this.productionIsolated = _data["productionIsolated"];
+            if (Array.isArray(_data["limitations"])) {
+                this.limitations = [] as any;
+                for (let item of _data["limitations"])
+                    this.limitations!.push(item);
+            }
+        }
+    }
+
+    static fromJS(data: any): SpacePlanningScenarioBranchDto {
+        data = typeof data === 'object' ? data : {};
+        let result = new SpacePlanningScenarioBranchDto();
+        result.init(data);
+        return result;
+    }
+
+    toJSON(data?: any) {
+        data = typeof data === 'object' ? data : {};
+        data["branchId"] = this.branchId;
+        data["siteId"] = this.siteId;
+        data["modelId"] = this.modelId;
+        data["basePublishedVersionId"] = this.basePublishedVersionId;
+        data["baseVersionNo"] = this.baseVersionNo;
+        data["scenarioVersionId"] = this.scenarioVersionId;
+        data["scenarioVersionNo"] = this.scenarioVersionNo;
+        data["name"] = this.name;
+        data["branchStatus"] = this.branchStatus;
+        data["scenarioVersionStatus"] = this.scenarioVersionStatus;
+        data["cloneJobId"] = this.cloneJobId;
+        data["cloneJobStatus"] = this.cloneJobStatus;
+        data["createdAtUtc"] = this.createdAtUtc ? this.createdAtUtc.toISOString() : undefined as any;
+        data["createdBy"] = this.createdBy;
+        data["definitionVersion"] = this.definitionVersion;
+        data["productionIsolated"] = this.productionIsolated;
+        if (Array.isArray(this.limitations)) {
+            data["limitations"] = [];
+            for (let item of this.limitations)
+                data["limitations"].push(item);
+        }
+        return data;
+    }
+}
+
+export interface ISpacePlanningScenarioBranchDto {
+    branchId?: string;
+    siteId?: string;
+    modelId?: string;
+    basePublishedVersionId?: string;
+    baseVersionNo?: string | undefined;
+    scenarioVersionId?: string;
+    scenarioVersionNo?: string | undefined;
+    name?: string | undefined;
+    branchStatus?: string | undefined;
+    scenarioVersionStatus?: string | undefined;
+    cloneJobId?: string;
+    cloneJobStatus?: string | undefined;
+    createdAtUtc?: Date;
+    createdBy?: string;
+    definitionVersion?: string | undefined;
+    productionIsolated?: boolean;
+    limitations?: string[] | undefined;
+}
+
+export class SpacePlanningScenarioBranchListResponse implements ISpacePlanningScenarioBranchListResponse {
+    items?: SpacePlanningScenarioBranchDto[] | undefined;
+    isTruncated?: boolean;
+
+    constructor(data?: ISpacePlanningScenarioBranchListResponse) {
+        if (data) {
+            for (var property in data) {
+                if (data.hasOwnProperty(property))
+                    (this as any)[property] = (data as any)[property];
+            }
+        }
+    }
+
+    init(_data?: any) {
+        if (_data) {
+            if (Array.isArray(_data["items"])) {
+                this.items = [] as any;
+                for (let item of _data["items"])
+                    this.items!.push(SpacePlanningScenarioBranchDto.fromJS(item));
+            }
+            this.isTruncated = _data["isTruncated"];
+        }
+    }
+
+    static fromJS(data: any): SpacePlanningScenarioBranchListResponse {
+        data = typeof data === 'object' ? data : {};
+        let result = new SpacePlanningScenarioBranchListResponse();
+        result.init(data);
+        return result;
+    }
+
+    toJSON(data?: any) {
+        data = typeof data === 'object' ? data : {};
+        if (Array.isArray(this.items)) {
+            data["items"] = [];
+            for (let item of this.items)
+                data["items"].push(item ? item.toJSON() : undefined as any);
+        }
+        data["isTruncated"] = this.isTruncated;
+        return data;
+    }
+}
+
+export interface ISpacePlanningScenarioBranchListResponse {
+    items?: SpacePlanningScenarioBranchDto[] | undefined;
+    isTruncated?: boolean;
+}
+
 export class SpacePortalAisleDto implements ISpacePortalAisleDto {
     logicalId!: string;
     zoneLogicalId!: string;
@@ -14804,6 +15340,7 @@ export class SpaceVersionDto implements ISpaceVersionDto {
     validatedHash?: string | undefined;
     publishedAtUtc?: Date | undefined;
     rowVersion?: string | undefined;
+    purpose?: string | undefined;
 
     constructor(data?: ISpaceVersionDto) {
         if (data) {
@@ -14828,6 +15365,7 @@ export class SpaceVersionDto implements ISpaceVersionDto {
             this.validatedHash = _data["validatedHash"];
             this.publishedAtUtc = _data["publishedAtUtc"] ? new Date(_data["publishedAtUtc"].toString()) : undefined as any;
             this.rowVersion = _data["rowVersion"];
+            this.purpose = _data["purpose"];
         }
     }
 
@@ -14852,6 +15390,7 @@ export class SpaceVersionDto implements ISpaceVersionDto {
         data["validatedHash"] = this.validatedHash;
         data["publishedAtUtc"] = this.publishedAtUtc ? this.publishedAtUtc.toISOString() : undefined as any;
         data["rowVersion"] = this.rowVersion;
+        data["purpose"] = this.purpose;
         return data;
     }
 }
@@ -14869,6 +15408,7 @@ export interface ISpaceVersionDto {
     validatedHash?: string | undefined;
     publishedAtUtc?: Date | undefined;
     rowVersion?: string | undefined;
+    purpose?: string | undefined;
 }
 
 export class SpaceWmsAdoptionCommandResponse implements ISpaceWmsAdoptionCommandResponse {

@@ -48,6 +48,10 @@ public sealed class SpaceAuditPermissionSeedTests
         Assert.Equal("space-ai-admin", aiAdmin.MenuKey);
         Assert.Equal("/space/ai-admin", aiAdmin.RoutePath);
         Assert.Equal(900, aiAdmin.ParentId);
+        var planning = db.Sys_Menus.Single(x => x.MenuId == 908);
+        Assert.Equal("space-planning", planning.MenuKey);
+        Assert.Equal("/space/planning", planning.RoutePath);
+        Assert.Equal(900, planning.ParentId);
 
         Assert.All(new[] { TenantA, TenantB }, tenant =>
         {
@@ -66,6 +70,11 @@ public sealed class SpaceAuditPermissionSeedTests
                     x.TenantId == tenant &&
                     x.RoleId == 1 &&
                     x.MenuId == 907));
+            Assert.True(db.Sys_RoleMenus.IgnoreQueryFilters().Any(
+                x =>
+                    x.TenantId == tenant &&
+                    x.RoleId == 1 &&
+                    x.MenuId == 908));
             Assert.True(db.Sys_MenuActions.IgnoreQueryFilters().Any(
                 x =>
                     x.TenantId == tenant &&
@@ -107,6 +116,8 @@ public sealed class SpaceAuditPermissionSeedTests
                     "operations:dispatch:cancel",
                     "operations:dispatch:retry",
                     "operations:dispatch:compensate",
+                    "planning:scenario:read",
+                    "planning:scenario:create",
                 },
                 action =>
                 {
@@ -154,7 +165,7 @@ public sealed class SpaceAuditPermissionSeedTests
         SpaceAuditPermissionSeed.EnsureSeeded(db);
 
         Assert.Equal(first, Counts(db));
-        Assert.Equal((3, 6, 2, 2), first);
+        Assert.Equal((4, 8, 2, 2), first);
     }
 
     [Fact]
@@ -446,15 +457,16 @@ public sealed class SpaceAuditPermissionSeedTests
             SpaceAuditPermissionSeed.EnsureSeededAsync(second));
 
         await using var assertion = new CP6Context(options);
-        Assert.Equal((3, 6, 2, 2), Counts(assertion));
+        Assert.Equal((4, 8, 2, 2), Counts(assertion));
         Assert.Equal(
-            6,
+            8,
             await assertion.Sys_RoleMenus
                 .IgnoreQueryFilters()
                 .Where(x =>
                     x.MenuId == 900 ||
                     x.MenuId == 906 ||
-                    x.MenuId == 907)
+                    x.MenuId == 907 ||
+                    x.MenuId == 908)
                 .Select(x => new
                 {
                     x.TenantId,
@@ -605,9 +617,11 @@ public sealed class SpaceAuditPermissionSeedTests
         int RoleActions) Counts(CP6Context db) =>
         (
             db.Sys_Menus.Count(
-                x => x.MenuId == 900 || x.MenuId == 906 || x.MenuId == 907),
+                x => x.MenuId == 900 || x.MenuId == 906 ||
+                     x.MenuId == 907 || x.MenuId == 908),
             db.Sys_RoleMenus.IgnoreQueryFilters().Count(
-                x => x.MenuId == 900 || x.MenuId == 906 || x.MenuId == 907),
+                x => x.MenuId == 900 || x.MenuId == 906 ||
+                     x.MenuId == 907 || x.MenuId == 908),
             db.Sys_MenuActions.IgnoreQueryFilters().Count(
                 x => x.MenuId == 906 && x.ActionCode == "read"),
             db.Sys_RoleActions.IgnoreQueryFilters().Count(

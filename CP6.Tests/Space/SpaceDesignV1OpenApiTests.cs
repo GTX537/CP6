@@ -78,6 +78,8 @@ public sealed class SpaceDesignV1OpenApiTests
             "/api/space/portal/v1/organizations",
             "/api/space/portal/v1/sites",
             "/api/space/portal/v1/sites/{siteId}/published-scene",
+            "/api/space/planning/v1/sites/{siteId}/scenario-branches",
+            "/api/space/planning/v1/sites/{siteId}/scenario-branches/{branchId}",
             "/api/space/portal/v1/sites/{siteId}/stock",
             "/api/space/portal/v1/sites/{siteId}/tasks",
         };
@@ -94,8 +96,8 @@ public sealed class SpaceDesignV1OpenApiTests
             .Select(operation =>
                 operation.Value.GetProperty("operationId").GetString())
             .ToArray();
-        Assert.Equal(68, operationIds.Length);
-        Assert.Equal(68, operationIds.Distinct().Count());
+        Assert.Equal(71, operationIds.Length);
+        Assert.Equal(71, operationIds.Distinct().Count());
         Assert.Contains("GetPolicy", operationIds);
         Assert.Contains("UpdatePolicy", operationIds);
         Assert.Contains("GetUsage", operationIds);
@@ -155,6 +157,9 @@ public sealed class SpaceDesignV1OpenApiTests
         Assert.Contains("GetPortalOrganizations", operationIds);
         Assert.Contains("GetPortalSites", operationIds);
         Assert.Contains("GetPortalPublishedScene", operationIds);
+        Assert.Contains("CreateBranch", operationIds);
+        Assert.Contains("GetBranch", operationIds);
+        Assert.Contains("GetBranches", operationIds);
         Assert.Contains("GetPortalStock", operationIds);
         Assert.Contains("GetPortalTasks", operationIds);
 
