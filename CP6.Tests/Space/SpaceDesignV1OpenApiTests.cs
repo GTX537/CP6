@@ -42,8 +42,12 @@ public sealed class SpaceDesignV1OpenApiTests
             "/api/space/design/v1/versions/{versionId}/floors/{floorLogicalId}/scene",
             "/api/space/design/v1/versions/{versionId}/floors/{floorLogicalId}/underlay",
             "/api/space/design/v1/versions/{versionId}/files/{fileId}",
+            "/api/space/design/v1/versions/{versionId}/excel-sources",
             "/api/space/design/v1/versions/{versionId}/sources",
             "/api/space/design/v1/versions/{versionId}/sources/{sourceId}/content",
+            "/api/space/design/v1/versions/{versionId}/sources/{sourceId}/excel-preflights",
+            "/api/space/design/v1/versions/{versionId}/sources/{sourceId}/excel-preflights/{jobId}",
+            "/api/space/design/v1/versions/{versionId}/sources/{sourceId}/excel-preflights/{jobId}/report",
             "/api/space/design/v1/versions/{versionId}/sources/{sourceId}/underlay-calibration",
             "/api/space/design/v1/versions/{versionId}/underlay-sources",
             "/api/space/design/v1/jobs/{jobId}",
@@ -80,14 +84,18 @@ public sealed class SpaceDesignV1OpenApiTests
             .Select(operation =>
                 operation.Value.GetProperty("operationId").GetString())
             .ToArray();
-        Assert.Equal(52, operationIds.Length);
-        Assert.Equal(52, operationIds.Distinct().Count());
+        Assert.Equal(56, operationIds.Length);
+        Assert.Equal(56, operationIds.Distinct().Count());
         Assert.Contains("GetAssets", operationIds);
         Assert.Contains("DownloadStandardExcelTemplate", operationIds);
         Assert.Contains("GetProfiles", operationIds);
         Assert.Contains("GetProfile", operationIds);
         Assert.Contains("Preview", operationIds);
         Assert.Contains("SaveProfile", operationIds);
+        Assert.Contains("UploadExcelSource", operationIds);
+        Assert.Contains("StartPreflight", operationIds);
+        Assert.Contains("GetPreflight", operationIds);
+        Assert.Contains("DownloadErrorReport", operationIds);
         Assert.Contains("CreateAsset", operationIds);
         Assert.Contains("CreateVersion", operationIds);
         Assert.Contains("CreateSource", operationIds);
@@ -229,6 +237,85 @@ public sealed class SpaceDesignV1OpenApiTests
         Assert.DoesNotContain(
             "file",
             headerSample.GetRawText(),
+            StringComparison.OrdinalIgnoreCase);
+    }
+
+    [Fact]
+    public void Excel_preflight_contract_freezes_upload_job_result_and_report()
+    {
+        using var document = ReadContract();
+        var root = document.RootElement;
+        var paths = root.GetProperty("paths");
+        var upload = paths.GetProperty(
+                "/api/space/design/v1/versions/{versionId}/excel-sources")
+            .GetProperty("post");
+        var start = paths.GetProperty(
+                "/api/space/design/v1/versions/{versionId}/sources/{sourceId}/excel-preflights")
+            .GetProperty("post");
+        var report = paths.GetProperty(
+                "/api/space/design/v1/versions/{versionId}/sources/{sourceId}/excel-preflights/{jobId}/report")
+            .GetProperty("get");
+
+        var multipart = upload.GetProperty("requestBody")
+            .GetProperty("content")
+            .GetProperty("multipart/form-data")
+            .GetProperty("schema");
+        AssertExactRequired(multipart, "File");
+        var idempotency = start.GetProperty("parameters")
+            .EnumerateArray()
+            .Single(parameter =>
+                parameter.GetProperty("name").GetString() ==
+                "Idempotency-Key");
+        Assert.True(idempotency.GetProperty("required").GetBoolean());
+        Assert.Equal("header", idempotency.GetProperty("in").GetString());
+        Assert.Equal(
+            "#/components/schemas/CP6.Space.Contracts.StartSpaceExcelPreflightRequest",
+            start.GetProperty("requestBody")
+                .GetProperty("content")
+                .GetProperty("application/json")
+                .GetProperty("schema")
+                .GetProperty("$ref")
+                .GetString());
+        var reportSchema = report.GetProperty("responses")
+            .GetProperty("200")
+            .GetProperty("content")
+            .GetProperty("text/csv")
+            .GetProperty("schema");
+        Assert.Equal("string", reportSchema.GetProperty("type").GetString());
+        Assert.Equal("binary", reportSchema.GetProperty("format").GetString());
+
+        var schemas = root.GetProperty("components").GetProperty("schemas");
+        AssertExactRequired(
+            Schema(schemas,
+                "CP6.Space.Contracts.StartSpaceExcelPreflightRequest"),
+            "mappingProfileId",
+            "mappingProfileVersion");
+        AssertExactRequired(
+            Schema(schemas,
+                "CP6.Space.Contracts.StartSpaceExcelPreflightResponse"),
+            "jobId",
+            "jobStatus",
+            "jobStatusUrl",
+            "previewUrl",
+            "errorReportUrl",
+            "mappingProfileId",
+            "mappingProfileVersion",
+            "mappingDefinitionHash",
+            "source",
+            "idempotentReplay");
+        var issue = Schema(
+            schemas,
+            "CP6.Space.Contracts.SpaceExcelPreflightIssueDto");
+        AssertExactRequired(
+            issue,
+            "id",
+            "severity",
+            "code",
+            "messageArgsJson",
+            "createdAtUtc");
+        Assert.DoesNotContain(
+            "cellValue",
+            issue.GetRawText(),
             StringComparison.OrdinalIgnoreCase);
     }
 
@@ -995,6 +1082,10 @@ public sealed class SpaceDesignV1OpenApiTests
                      "CreateAsset",
                      "GetSources",
                      "CreateSource",
+                     "UploadExcelSource",
+                     "StartPreflight",
+                     "GetPreflight",
+                     "DownloadErrorReport",
                      "UploadUnderlay",
                      "GetFile",
                      "GetUnderlayContent",

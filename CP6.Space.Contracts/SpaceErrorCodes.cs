@@ -36,6 +36,12 @@ public static class SpaceErrorCodes
         "SPACE_MAPPING_PROFILE_CONFLICT";
     public const string ExcelMappingProfileReadOnly =
         "SPACE_MAPPING_PROFILE_READ_ONLY";
+    public const string ExcelPreflightInvalid =
+        "SPACE_EXCEL_PREFLIGHT_INVALID";
+    public const string ExcelPreflightNotFound =
+        "SPACE_EXCEL_PREFLIGHT_NOT_FOUND";
+    public const string ExcelWorkbookInvalid =
+        "SPACE_EXCEL_WORKBOOK_INVALID";
     public const string FileTooLarge = "SPACE_FILE_TOO_LARGE";
     public const string FileTypeMismatch = "SPACE_FILE_TYPE_MISMATCH";
     public const string FileQuarantined = "SPACE_FILE_QUARANTINED";

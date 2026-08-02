@@ -18,7 +18,7 @@ public sealed class SpaceJobProcessorPersistenceTests
         new(2026, 7, 30, 20, 30, 0, DateTimeKind.Utc);
 
     [Fact]
-    public void Default_registration_exposes_two_explicit_fail_closed_processors()
+    public void Default_registration_exposes_three_explicit_processors()
     {
         var services = new ServiceCollection();
         services.AddScoped<ISpaceExecutionContext>(
@@ -36,9 +36,10 @@ public sealed class SpaceJobProcessorPersistenceTests
             .OrderBy(processor => processor.JobType)
             .ToArray();
 
-        Assert.Equal(2, processors.Length);
-        Assert.IsType<SpaceImportJobProcessor>(processors[0]);
-        Assert.IsType<SpaceBuildSceneJobProcessor>(processors[1]);
+        Assert.Equal(3, processors.Length);
+        Assert.IsType<SpaceExcelPreflightJobProcessor>(processors[0]);
+        Assert.IsType<SpaceImportJobProcessor>(processors[1]);
+        Assert.IsType<SpaceBuildSceneJobProcessor>(processors[2]);
         Assert.IsType<UnavailableSpaceImportJobStepExecutor>(
             scope.ServiceProvider.GetRequiredService<
                 ISpaceImportJobStepExecutor>());

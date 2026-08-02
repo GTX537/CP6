@@ -98,6 +98,8 @@ public sealed class SpaceJobProcessorOptions
         TimeSpan.FromMinutes(30);
     public TimeSpan BuildSceneTimeout { get; init; } =
         TimeSpan.FromMinutes(30);
+    public TimeSpan ExcelPreviewTimeout { get; init; } =
+        TimeSpan.FromMinutes(15);
 
     public void Validate()
     {
@@ -117,11 +119,17 @@ public sealed class SpaceJobProcessorOptions
             throw new ArgumentOutOfRangeException(
                 nameof(BuildSceneTimeout));
         }
+        if (ExcelPreviewTimeout <= TimeSpan.Zero)
+        {
+            throw new ArgumentOutOfRangeException(
+                nameof(ExcelPreviewTimeout));
+        }
     }
 
     internal TimeSpan TimeoutFor(SpaceJobType jobType) =>
         jobType switch
         {
+            SpaceJobType.ExcelPreview => ExcelPreviewTimeout,
             SpaceJobType.Import => ImportTimeout,
             SpaceJobType.BuildScene => BuildSceneTimeout,
             _ => throw new ArgumentOutOfRangeException(nameof(jobType)),
@@ -554,6 +562,7 @@ public sealed class SpaceJobProcessorRunner : ISpaceJobProcessorRunner
     private ISpaceJobProcessor RequireProcessor(SpaceJobType jobType)
     {
         if (jobType is not (
+                SpaceJobType.ExcelPreview or
                 SpaceJobType.Import or
                 SpaceJobType.BuildScene) ||
             !_processors.TryGetValue(jobType, out var processor))

@@ -3671,6 +3671,546 @@
         }
       }
     },
+    "/api/space/design/v1/versions/{versionId}/excel-sources": {
+      "post": {
+        "tags": [
+          "SpaceExcelPreflight"
+        ],
+        "operationId": "UploadExcelSource",
+        "parameters": [
+          {
+            "name": "versionId",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "string",
+              "format": "uuid"
+            }
+          }
+        ],
+        "requestBody": {
+          "content": {
+            "multipart/form-data": {
+              "schema": {
+                "required": [
+                  "File"
+                ],
+                "type": "object",
+                "properties": {
+                  "File": {
+                    "type": "string",
+                    "format": "binary"
+                  }
+                }
+              },
+              "encoding": {
+                "File": {
+                  "style": "form"
+                }
+              }
+            }
+          }
+        },
+        "responses": {
+          "400": {
+            "description": "Bad Request",
+            "content": {
+              "application/problem+json": {
+                "schema": {
+                  "$ref": "#/components/schemas/CP6.WebApi.OpenApi.SpaceDesignProblemDetails"
+                }
+              }
+            }
+          },
+          "401": {
+            "description": "Unauthorized",
+            "content": {
+              "application/problem+json": {
+                "schema": {
+                  "$ref": "#/components/schemas/CP6.WebApi.OpenApi.SpaceDesignProblemDetails"
+                }
+              }
+            }
+          },
+          "403": {
+            "description": "Forbidden",
+            "content": {
+              "application/problem+json": {
+                "schema": {
+                  "$ref": "#/components/schemas/CP6.WebApi.OpenApi.SpaceDesignProblemDetails"
+                }
+              }
+            }
+          },
+          "404": {
+            "description": "Not Found",
+            "content": {
+              "application/problem+json": {
+                "schema": {
+                  "$ref": "#/components/schemas/CP6.WebApi.OpenApi.SpaceDesignProblemDetails"
+                }
+              }
+            }
+          },
+          "409": {
+            "description": "Conflict",
+            "content": {
+              "application/problem+json": {
+                "schema": {
+                  "$ref": "#/components/schemas/CP6.WebApi.OpenApi.SpaceDesignProblemDetails"
+                }
+              }
+            }
+          },
+          "422": {
+            "description": "Unprocessable Content",
+            "content": {
+              "application/problem+json": {
+                "schema": {
+                  "$ref": "#/components/schemas/CP6.WebApi.OpenApi.SpaceDesignProblemDetails"
+                }
+              }
+            }
+          },
+          "500": {
+            "description": "Internal Server Error",
+            "content": {
+              "application/problem+json": {
+                "schema": {
+                  "$ref": "#/components/schemas/CP6.WebApi.OpenApi.SpaceDesignProblemDetails"
+                }
+              }
+            }
+          },
+          "202": {
+            "description": "Accepted",
+            "content": {
+              "text/plain": {
+                "schema": {
+                  "$ref": "#/components/schemas/CP6.Space.Contracts.UploadSpaceExcelSourceResponse"
+                }
+              },
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/CP6.Space.Contracts.UploadSpaceExcelSourceResponse"
+                }
+              },
+              "text/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/CP6.Space.Contracts.UploadSpaceExcelSourceResponse"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/api/space/design/v1/versions/{versionId}/sources/{sourceId}/excel-preflights": {
+      "post": {
+        "tags": [
+          "SpaceExcelPreflight"
+        ],
+        "operationId": "StartPreflight",
+        "parameters": [
+          {
+            "name": "versionId",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "string",
+              "format": "uuid"
+            }
+          },
+          {
+            "name": "sourceId",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "string",
+              "format": "uuid"
+            }
+          },
+          {
+            "name": "Idempotency-Key",
+            "in": "header",
+            "required": true,
+            "schema": {
+              "type": "string"
+            }
+          }
+        ],
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/CP6.Space.Contracts.StartSpaceExcelPreflightRequest"
+              }
+            },
+            "text/json": {
+              "schema": {
+                "$ref": "#/components/schemas/CP6.Space.Contracts.StartSpaceExcelPreflightRequest"
+              }
+            },
+            "application/*+json": {
+              "schema": {
+                "$ref": "#/components/schemas/CP6.Space.Contracts.StartSpaceExcelPreflightRequest"
+              }
+            }
+          },
+          "required": true
+        },
+        "responses": {
+          "400": {
+            "description": "Bad Request",
+            "content": {
+              "application/problem+json": {
+                "schema": {
+                  "$ref": "#/components/schemas/CP6.WebApi.OpenApi.SpaceDesignProblemDetails"
+                }
+              }
+            }
+          },
+          "401": {
+            "description": "Unauthorized",
+            "content": {
+              "application/problem+json": {
+                "schema": {
+                  "$ref": "#/components/schemas/CP6.WebApi.OpenApi.SpaceDesignProblemDetails"
+                }
+              }
+            }
+          },
+          "403": {
+            "description": "Forbidden",
+            "content": {
+              "application/problem+json": {
+                "schema": {
+                  "$ref": "#/components/schemas/CP6.WebApi.OpenApi.SpaceDesignProblemDetails"
+                }
+              }
+            }
+          },
+          "404": {
+            "description": "Not Found",
+            "content": {
+              "application/problem+json": {
+                "schema": {
+                  "$ref": "#/components/schemas/CP6.WebApi.OpenApi.SpaceDesignProblemDetails"
+                }
+              }
+            }
+          },
+          "409": {
+            "description": "Conflict",
+            "content": {
+              "application/problem+json": {
+                "schema": {
+                  "$ref": "#/components/schemas/CP6.WebApi.OpenApi.SpaceDesignProblemDetails"
+                }
+              }
+            }
+          },
+          "422": {
+            "description": "Unprocessable Content",
+            "content": {
+              "application/problem+json": {
+                "schema": {
+                  "$ref": "#/components/schemas/CP6.WebApi.OpenApi.SpaceDesignProblemDetails"
+                }
+              }
+            }
+          },
+          "500": {
+            "description": "Internal Server Error",
+            "content": {
+              "application/problem+json": {
+                "schema": {
+                  "$ref": "#/components/schemas/CP6.WebApi.OpenApi.SpaceDesignProblemDetails"
+                }
+              }
+            }
+          },
+          "202": {
+            "description": "Accepted",
+            "content": {
+              "text/plain": {
+                "schema": {
+                  "$ref": "#/components/schemas/CP6.Space.Contracts.StartSpaceExcelPreflightResponse"
+                }
+              },
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/CP6.Space.Contracts.StartSpaceExcelPreflightResponse"
+                }
+              },
+              "text/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/CP6.Space.Contracts.StartSpaceExcelPreflightResponse"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/api/space/design/v1/versions/{versionId}/sources/{sourceId}/excel-preflights/{jobId}": {
+      "get": {
+        "tags": [
+          "SpaceExcelPreflight"
+        ],
+        "operationId": "GetPreflight",
+        "parameters": [
+          {
+            "name": "versionId",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "string",
+              "format": "uuid"
+            }
+          },
+          {
+            "name": "sourceId",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "string",
+              "format": "uuid"
+            }
+          },
+          {
+            "name": "jobId",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "string",
+              "format": "uuid"
+            }
+          },
+          {
+            "name": "issueLimit",
+            "in": "query",
+            "schema": {
+              "type": "integer",
+              "format": "int32",
+              "default": 200
+            }
+          }
+        ],
+        "responses": {
+          "400": {
+            "description": "Bad Request",
+            "content": {
+              "application/problem+json": {
+                "schema": {
+                  "$ref": "#/components/schemas/CP6.WebApi.OpenApi.SpaceDesignProblemDetails"
+                }
+              }
+            }
+          },
+          "401": {
+            "description": "Unauthorized",
+            "content": {
+              "application/problem+json": {
+                "schema": {
+                  "$ref": "#/components/schemas/CP6.WebApi.OpenApi.SpaceDesignProblemDetails"
+                }
+              }
+            }
+          },
+          "403": {
+            "description": "Forbidden",
+            "content": {
+              "application/problem+json": {
+                "schema": {
+                  "$ref": "#/components/schemas/CP6.WebApi.OpenApi.SpaceDesignProblemDetails"
+                }
+              }
+            }
+          },
+          "404": {
+            "description": "Not Found",
+            "content": {
+              "application/problem+json": {
+                "schema": {
+                  "$ref": "#/components/schemas/CP6.WebApi.OpenApi.SpaceDesignProblemDetails"
+                }
+              }
+            }
+          },
+          "409": {
+            "description": "Conflict",
+            "content": {
+              "application/problem+json": {
+                "schema": {
+                  "$ref": "#/components/schemas/CP6.WebApi.OpenApi.SpaceDesignProblemDetails"
+                }
+              }
+            }
+          },
+          "422": {
+            "description": "Unprocessable Content",
+            "content": {
+              "application/problem+json": {
+                "schema": {
+                  "$ref": "#/components/schemas/CP6.WebApi.OpenApi.SpaceDesignProblemDetails"
+                }
+              }
+            }
+          },
+          "500": {
+            "description": "Internal Server Error",
+            "content": {
+              "application/problem+json": {
+                "schema": {
+                  "$ref": "#/components/schemas/CP6.WebApi.OpenApi.SpaceDesignProblemDetails"
+                }
+              }
+            }
+          },
+          "200": {
+            "description": "OK",
+            "content": {
+              "text/plain": {
+                "schema": {
+                  "$ref": "#/components/schemas/CP6.Space.Contracts.SpaceExcelPreflightDto"
+                }
+              },
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/CP6.Space.Contracts.SpaceExcelPreflightDto"
+                }
+              },
+              "text/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/CP6.Space.Contracts.SpaceExcelPreflightDto"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/api/space/design/v1/versions/{versionId}/sources/{sourceId}/excel-preflights/{jobId}/report": {
+      "get": {
+        "tags": [
+          "SpaceExcelPreflight"
+        ],
+        "operationId": "DownloadErrorReport",
+        "parameters": [
+          {
+            "name": "versionId",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "string",
+              "format": "uuid"
+            }
+          },
+          {
+            "name": "sourceId",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "string",
+              "format": "uuid"
+            }
+          },
+          {
+            "name": "jobId",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "string",
+              "format": "uuid"
+            }
+          }
+        ],
+        "responses": {
+          "400": {
+            "description": "Bad Request",
+            "content": {
+              "application/problem+json": {
+                "schema": {
+                  "$ref": "#/components/schemas/CP6.WebApi.OpenApi.SpaceDesignProblemDetails"
+                }
+              }
+            }
+          },
+          "401": {
+            "description": "Unauthorized",
+            "content": {
+              "application/problem+json": {
+                "schema": {
+                  "$ref": "#/components/schemas/CP6.WebApi.OpenApi.SpaceDesignProblemDetails"
+                }
+              }
+            }
+          },
+          "403": {
+            "description": "Forbidden",
+            "content": {
+              "application/problem+json": {
+                "schema": {
+                  "$ref": "#/components/schemas/CP6.WebApi.OpenApi.SpaceDesignProblemDetails"
+                }
+              }
+            }
+          },
+          "404": {
+            "description": "Not Found",
+            "content": {
+              "application/problem+json": {
+                "schema": {
+                  "$ref": "#/components/schemas/CP6.WebApi.OpenApi.SpaceDesignProblemDetails"
+                }
+              }
+            }
+          },
+          "409": {
+            "description": "Conflict",
+            "content": {
+              "application/problem+json": {
+                "schema": {
+                  "$ref": "#/components/schemas/CP6.WebApi.OpenApi.SpaceDesignProblemDetails"
+                }
+              }
+            }
+          },
+          "422": {
+            "description": "Unprocessable Content",
+            "content": {
+              "application/problem+json": {
+                "schema": {
+                  "$ref": "#/components/schemas/CP6.WebApi.OpenApi.SpaceDesignProblemDetails"
+                }
+              }
+            }
+          },
+          "500": {
+            "description": "Internal Server Error",
+            "content": {
+              "application/problem+json": {
+                "schema": {
+                  "$ref": "#/components/schemas/CP6.WebApi.OpenApi.SpaceDesignProblemDetails"
+                }
+              }
+            }
+          },
+          "200": {
+            "description": "OK",
+            "content": {
+              "text/csv": {
+                "schema": {
+                  "type": "string",
+                  "format": "binary"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
     "/api/space/external-organization": {
       "get": {
         "tags": [
@@ -7953,6 +8493,160 @@
         },
         "additionalProperties": false
       },
+      "CP6.Space.Contracts.SpaceExcelPreflightDto": {
+        "required": [
+          "blockingCount",
+          "canConfirm",
+          "dataRowCount",
+          "errorReportUrl",
+          "infoCount",
+          "issues",
+          "issuesTruncated",
+          "jobId",
+          "mappingDefinitionHash",
+          "mappingProfileId",
+          "mappingProfileVersion",
+          "modelVersionId",
+          "parserVersion",
+          "returnedIssueCount",
+          "sheetCount",
+          "sourceId",
+          "sourceState",
+          "status",
+          "validRowCount",
+          "warningCount"
+        ],
+        "type": "object",
+        "properties": {
+          "jobId": {
+            "type": "string",
+            "format": "uuid"
+          },
+          "modelVersionId": {
+            "type": "string",
+            "format": "uuid"
+          },
+          "sourceId": {
+            "type": "string",
+            "format": "uuid"
+          },
+          "status": {
+            "type": "string"
+          },
+          "sourceState": {
+            "type": "string"
+          },
+          "mappingProfileId": {
+            "type": "string",
+            "format": "uuid"
+          },
+          "mappingProfileVersion": {
+            "type": "integer",
+            "format": "int32"
+          },
+          "mappingDefinitionHash": {
+            "type": "string"
+          },
+          "parserVersion": {
+            "type": "string"
+          },
+          "canConfirm": {
+            "type": "boolean"
+          },
+          "infoCount": {
+            "type": "integer",
+            "format": "int32"
+          },
+          "warningCount": {
+            "type": "integer",
+            "format": "int32"
+          },
+          "blockingCount": {
+            "type": "integer",
+            "format": "int32"
+          },
+          "sheetCount": {
+            "type": "integer",
+            "format": "int32"
+          },
+          "dataRowCount": {
+            "type": "integer",
+            "format": "int32"
+          },
+          "validRowCount": {
+            "type": "integer",
+            "format": "int32"
+          },
+          "returnedIssueCount": {
+            "type": "integer",
+            "format": "int32"
+          },
+          "issuesTruncated": {
+            "type": "boolean"
+          },
+          "errorReportUrl": {
+            "type": "string"
+          },
+          "issues": {
+            "type": "array",
+            "items": {
+              "$ref": "#/components/schemas/CP6.Space.Contracts.SpaceExcelPreflightIssueDto"
+            }
+          }
+        },
+        "additionalProperties": false
+      },
+      "CP6.Space.Contracts.SpaceExcelPreflightIssueDto": {
+        "required": [
+          "code",
+          "createdAtUtc",
+          "id",
+          "messageArgsJson",
+          "severity"
+        ],
+        "type": "object",
+        "properties": {
+          "id": {
+            "type": "string",
+            "format": "uuid"
+          },
+          "severity": {
+            "type": "string"
+          },
+          "code": {
+            "type": "string"
+          },
+          "sheet": {
+            "type": "string",
+            "nullable": true
+          },
+          "row": {
+            "type": "integer",
+            "format": "int32",
+            "nullable": true
+          },
+          "column": {
+            "type": "string",
+            "nullable": true
+          },
+          "targetField": {
+            "type": "string",
+            "nullable": true
+          },
+          "messageArgsJson": {
+            "type": "string"
+          },
+          "fixHint": {
+            "type": "string",
+            "nullable": true
+          },
+          "createdAtUtc": {
+            "type": "string",
+            "format": "date-time"
+          }
+        },
+        "additionalProperties": false
+      },
       "CP6.Space.Contracts.SpaceExcelSheetMappingDto": {
         "required": [
           "columns",
@@ -10971,6 +11665,75 @@
         },
         "additionalProperties": false
       },
+      "CP6.Space.Contracts.StartSpaceExcelPreflightRequest": {
+        "required": [
+          "mappingProfileId",
+          "mappingProfileVersion"
+        ],
+        "type": "object",
+        "properties": {
+          "mappingProfileId": {
+            "type": "string",
+            "format": "uuid"
+          },
+          "mappingProfileVersion": {
+            "type": "integer",
+            "format": "int32"
+          }
+        },
+        "additionalProperties": false
+      },
+      "CP6.Space.Contracts.StartSpaceExcelPreflightResponse": {
+        "required": [
+          "errorReportUrl",
+          "idempotentReplay",
+          "jobId",
+          "jobStatus",
+          "jobStatusUrl",
+          "mappingDefinitionHash",
+          "mappingProfileId",
+          "mappingProfileVersion",
+          "previewUrl",
+          "source"
+        ],
+        "type": "object",
+        "properties": {
+          "jobId": {
+            "type": "string",
+            "format": "uuid"
+          },
+          "jobStatus": {
+            "type": "string"
+          },
+          "jobStatusUrl": {
+            "type": "string"
+          },
+          "previewUrl": {
+            "type": "string"
+          },
+          "errorReportUrl": {
+            "type": "string"
+          },
+          "mappingProfileId": {
+            "type": "string",
+            "format": "uuid"
+          },
+          "mappingProfileVersion": {
+            "type": "integer",
+            "format": "int32"
+          },
+          "mappingDefinitionHash": {
+            "type": "string"
+          },
+          "source": {
+            "$ref": "#/components/schemas/CP6.Space.Contracts.SpaceSourceDto"
+          },
+          "idempotentReplay": {
+            "type": "boolean"
+          }
+        },
+        "additionalProperties": false
+      },
       "CP6.Space.Contracts.UpdateSpaceExternalGrantRequest": {
         "type": "object",
         "properties": {
@@ -11105,6 +11868,35 @@
           },
           "status": {
             "type": "string"
+          }
+        },
+        "additionalProperties": false
+      },
+      "CP6.Space.Contracts.UploadSpaceExcelSourceResponse": {
+        "required": [
+          "file",
+          "reused",
+          "source"
+        ],
+        "type": "object",
+        "properties": {
+          "file": {
+            "$ref": "#/components/schemas/CP6.Space.Contracts.SpaceFileDto"
+          },
+          "source": {
+            "$ref": "#/components/schemas/CP6.Space.Contracts.SpaceSourceDto"
+          },
+          "scanJobId": {
+            "type": "string",
+            "format": "uuid",
+            "nullable": true
+          },
+          "jobStatusUrl": {
+            "type": "string",
+            "nullable": true
+          },
+          "reused": {
+            "type": "boolean"
           }
         },
         "additionalProperties": false

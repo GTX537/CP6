@@ -346,6 +346,61 @@ public sealed class SpaceWmsRuntimeSchemaFilter : ISchemaFilter
                 "message",
                 "fixHint",
             ],
+            [typeof(UploadSpaceExcelSourceResponse)] =
+            [
+                "file",
+                "source",
+                "reused",
+            ],
+            [typeof(StartSpaceExcelPreflightRequest)] =
+            [
+                "mappingProfileId",
+                "mappingProfileVersion",
+            ],
+            [typeof(StartSpaceExcelPreflightResponse)] =
+            [
+                "jobId",
+                "jobStatus",
+                "jobStatusUrl",
+                "previewUrl",
+                "errorReportUrl",
+                "mappingProfileId",
+                "mappingProfileVersion",
+                "mappingDefinitionHash",
+                "source",
+                "idempotentReplay",
+            ],
+            [typeof(SpaceExcelPreflightDto)] =
+            [
+                "jobId",
+                "modelVersionId",
+                "sourceId",
+                "status",
+                "sourceState",
+                "mappingProfileId",
+                "mappingProfileVersion",
+                "mappingDefinitionHash",
+                "parserVersion",
+                "canConfirm",
+                "infoCount",
+                "warningCount",
+                "blockingCount",
+                "sheetCount",
+                "dataRowCount",
+                "validRowCount",
+                "returnedIssueCount",
+                "issuesTruncated",
+                "errorReportUrl",
+                "issues",
+            ],
+            [typeof(SpaceExcelPreflightIssueDto)] =
+            [
+                "id",
+                "severity",
+                "code",
+                "messageArgsJson",
+                "createdAtUtc",
+            ],
             [typeof(SpacePortalOrganizationDto)] =
             [
                 "organizationId",
