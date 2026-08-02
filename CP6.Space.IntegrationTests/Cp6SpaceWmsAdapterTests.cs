@@ -240,6 +240,104 @@ public sealed class Cp6SpaceWmsAdapterTests
     }
 
     [Fact]
+    public async Task Dispatch_query_reads_mobile_task_assignment_and_concurrency_facts()
+    {
+        await using var db = NewDb();
+        var sourceId = LocationId(1);
+        var destinationId = LocationId(2);
+        db.WmsBins.AddRange(
+            new WmsBin
+            {
+                Id = sourceId,
+                LocationCode = "A-01",
+                WarehouseCd = "WH-01",
+                Version = 1,
+                IsActive = true,
+            },
+            new WmsBin
+            {
+                Id = destinationId,
+                LocationCode = "A-02",
+                WarehouseCd = "WH-01",
+                Version = 1,
+                IsActive = true,
+            });
+        db.MobileTasks.AddRange(
+            new MobileTask
+            {
+                Id = Guid.NewGuid(),
+                MobileTaskNo = "TASK-PENDING",
+                TaskType = MobileTaskType.Pick,
+                WarehouseCd = "WH-01",
+                FromLocationCd = "A-01",
+                ToLocationCd = "A-02",
+                Status = MobileTaskStatus.Pending,
+                Priority = 1,
+                ContractVersion = 2,
+                ExecutionVersion = 3,
+                Qty = 4,
+                ProductCd = "SKU-01",
+                RowVersion = [1, 2, 3, 4],
+            },
+            new MobileTask
+            {
+                Id = Guid.NewGuid(),
+                MobileTaskNo = "TASK-ASSIGNED",
+                TaskType = MobileTaskType.Putaway,
+                WarehouseCd = "WH-01",
+                ToLocationCd = "A-02",
+                Status = MobileTaskStatus.InProgress,
+                AssignedTo = "USER-01",
+                Priority = 2,
+                ContractVersion = 1,
+                ExecutionVersion = 1,
+                Qty = 2,
+                RowVersion = [5, 6, 7, 8],
+            },
+            new MobileTask
+            {
+                Id = Guid.NewGuid(),
+                MobileTaskNo = "TASK-COMPLETED",
+                TaskType = MobileTaskType.Pick,
+                WarehouseCd = "WH-01",
+                FromLocationCd = "A-01",
+                Status = MobileTaskStatus.Completed,
+                Priority = 2,
+                ContractVersion = 1,
+                Qty = 1,
+                RowVersion = [9, 10, 11, 12],
+            });
+        await db.SaveChangesAsync();
+
+        var result = await new Cp6SpaceWmsAdapter(db)
+            .QueryDispatchTasksAsync(new SpaceWmsDispatchTaskQuery(Context()));
+
+        Assert.Equal(SpaceWmsDataSourceKind.Real, result.Source.Kind);
+        Assert.Collection(
+            result.Items,
+            assigned =>
+            {
+                Assert.Equal("TASK-ASSIGNED", assigned.TaskId);
+                Assert.Equal("InProgress", assigned.Status);
+                Assert.Equal("USER-01", assigned.AssignedTo);
+                Assert.Equal("Destination", assigned.LocationRole);
+                Assert.Equal(destinationId, assigned.LogicalId);
+                Assert.Equal("BQYHCA==", assigned.RowVersion);
+            },
+            pending =>
+            {
+                Assert.Equal("TASK-PENDING", pending.TaskId);
+                Assert.Equal("Pending", pending.Status);
+                Assert.Null(pending.AssignedTo);
+                Assert.Equal("Source", pending.LocationRole);
+                Assert.Equal(sourceId, pending.LogicalId);
+                Assert.Equal(2, pending.ContractVersion);
+                Assert.Equal(3, pending.ExecutionVersion);
+                Assert.Equal("AQIDBA==", pending.RowVersion);
+            });
+    }
+
+    [Fact]
     public async Task Inventory_locate_filters_stock_and_active_container_with_and_semantics()
     {
         await using var db = NewDb();

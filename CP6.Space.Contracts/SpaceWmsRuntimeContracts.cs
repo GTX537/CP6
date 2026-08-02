@@ -99,6 +99,43 @@ public sealed record SpaceWmsRuntimeTaskResponse(
     SpaceWmsRuntimeSourceDto Source,
     IReadOnlyList<SpaceWmsRuntimeTaskItemDto> Items);
 
+public sealed record SpaceWmsRuntimeDispatchTaskItemDto(
+    string TaskId,
+    string TaskType,
+    string Status,
+    string? AssignedTo,
+    int Priority,
+    int ContractVersion,
+    int ExecutionVersion,
+    string RowVersion,
+    string TargetLocationRole,
+    string? WmsLocationCode,
+    bool TargetLocationResolved,
+    Guid? LocationLogicalId,
+    Guid? WmsLogicalId,
+    string? SpaceLocationCode,
+    bool CodeMatches,
+    Guid? FloorLogicalId,
+    string? FloorCode,
+    string? FloorName,
+    int? FloorLevel,
+    Guid? ZoneLogicalId,
+    string? ZoneCode,
+    Guid? RackLogicalId,
+    string? RackCode,
+    double? AnchorXMillimeters,
+    double? AnchorYMillimeters,
+    double? AnchorZMillimeters,
+    decimal Quantity,
+    string? MaterialNumber);
+
+public sealed record SpaceWmsRuntimeDispatchTaskResponse(
+    Guid SiteId,
+    Guid PublishedVersionId,
+    string WarehouseCode,
+    SpaceWmsRuntimeSourceDto Source,
+    IReadOnlyList<SpaceWmsRuntimeDispatchTaskItemDto> Items);
+
 public sealed record SpaceWmsRuntimeTaskFloorDto(
     Guid FloorLogicalId,
     string FloorCode,

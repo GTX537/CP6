@@ -12,9 +12,29 @@ import type {
   GenerateSpacePutawayRecommendationRequest,
   GenerateSpacePutawayRecommendationResponse,
   SpacePutawayRecommendation,
+  GenerateSpaceDispatchRecommendationRequest,
+  GenerateSpaceDispatchRecommendationResponse,
+  SpaceDispatchRecommendation,
 } from '@/types/space/runtime'
 
 export const spaceRuntimeApi = {
+  generateDispatchRecommendation(
+    siteId: string,
+    recommendationId: string,
+    request: GenerateSpaceDispatchRecommendationRequest,
+  ) {
+    return http.put<unknown, GenerateSpaceDispatchRecommendationResponse>(
+      `/space/operations/v1/sites/${encodeURIComponent(siteId)}` +
+        `/dispatch-recommendations/${encodeURIComponent(recommendationId)}`,
+      request,
+    )
+  },
+  dispatchRecommendation(siteId: string, recommendationId: string) {
+    return http.get<unknown, SpaceDispatchRecommendation>(
+      `/space/operations/v1/sites/${encodeURIComponent(siteId)}` +
+        `/dispatch-recommendations/${encodeURIComponent(recommendationId)}`,
+    )
+  },
   generatePutawayRecommendation(
     siteId: string,
     recommendationId: string,

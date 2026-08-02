@@ -660,3 +660,139 @@ export interface GenerateSpacePutawayRecommendationResponse {
   outcome: 'Generated' | 'Duplicate'
   recommendation: SpacePutawayRecommendation
 }
+
+export interface GenerateSpaceDispatchRecommendationRequest {
+  taskType?: string | null
+  taskFloorLogicalId?: string | null
+  taskZoneLogicalId?: string | null
+  allowCrossFloor: boolean
+  maximumTravelDistanceMeters?: number | null
+  includeSimulatedPersonnel: boolean
+  maximumAssignments: number
+}
+
+export interface SpaceDispatchPersonnelSourceItem {
+  sourceId: string
+  sourceKind: string
+  currentStateCount: number
+  latestPositionOccurredAtUtc: string | null
+  latestPositionReceivedAtUtc: string | null
+  latestWorkStateOccurredAtUtc: string | null
+  latestWorkStateReceivedAtUtc: string | null
+}
+
+export interface SpaceDispatchPersonnelSource {
+  asOfUtc: string
+  freshnessThresholdSeconds: number
+  currentStateCount: number
+  realStateCount: number
+  simulatedStateCount: number
+  sourcesTruncated: boolean
+  sources: SpaceDispatchPersonnelSourceItem[]
+}
+
+export interface SpaceDispatchRecommendationSources {
+  dispatchTasks: SpaceRuntimeSource
+  personnel: SpaceDispatchPersonnelSource
+}
+
+export interface SpaceDispatchRecommendationExclusions {
+  tasksOutsideRequestedScope: number
+  tasksNotPending: number
+  tasksAlreadyAssigned: number
+  invalidTasks: number
+  taskTargetOutsidePublishedModel: number
+  taskLocationCodeMismatch: number
+  eligibleTasksWithoutAssignment: number
+  peoplePositionStale: number
+  peopleWorkStateStale: number
+  peopleNotIdle: number
+  peopleSimulatedExcluded: number
+  peopleWithoutResolvablePosition: number
+  eligiblePeopleWithoutAssignment: number
+  crossFloorPairsRejected: number
+  distanceUnverifiablePairsRejected: number
+  distanceExceededPairsRejected: number
+}
+
+export interface SpaceDispatchRecommendationExclusionSample {
+  subject: string
+  reason: string
+  taskId: string | null
+  personKey: string | null
+  locationCode: string | null
+  floorLogicalId: string | null
+  floorCode: string | null
+  zoneLogicalId: string | null
+  zoneCode: string | null
+}
+
+export interface SpaceDispatchRecommendationAssignment {
+  rank: number
+  taskId: string
+  taskType: string
+  taskStatus: string
+  taskPriority: number
+  taskContractVersion: number
+  taskExecutionVersion: number
+  taskRowVersion: string
+  targetLocationRole: string
+  targetLocationLogicalId: string
+  targetLocationCode: string
+  targetFloorLogicalId: string
+  targetFloorCode: string
+  targetFloorName: string
+  targetFloorLevel: number
+  targetZoneLogicalId: string | null
+  targetZoneCode: string | null
+  targetRackLogicalId: string | null
+  targetRackCode: string | null
+  taskQuantity: number
+  taskMaterialNumber: string | null
+  personKey: string
+  personSourceId: string
+  personSourceKind: string
+  personExternalId: string
+  personLocationLogicalId: string | null
+  personFloorLogicalId: string
+  personZoneLogicalId: string | null
+  personPositionOccurredAtUtc: string
+  personPositionReceivedAtUtc: string
+  personWorkStateOccurredAtUtc: string
+  personWorkStateReceivedAtUtc: string
+  sameFloor: boolean
+  sameZone: boolean
+  geometricDistanceMeters: number | null
+  ruleHits: string[]
+}
+
+export interface SpaceDispatchRecommendation {
+  recommendationId: string
+  siteId: string
+  publishedVersionId: string
+  warehouseCode: string
+  generatedAtUtc: string
+  generatedBy: string
+  definitionVersion: string
+  outcome: string
+  request: GenerateSpaceDispatchRecommendationRequest
+  sources: SpaceDispatchRecommendationSources
+  examinedTaskCount: number
+  eligibleTaskCount: number
+  examinedPersonCount: number
+  eligiblePersonCount: number
+  eligiblePairCount: number
+  matchableAssignmentCount: number
+  returnedAssignmentCount: number
+  isTruncated: boolean
+  exclusions: SpaceDispatchRecommendationExclusions
+  exclusionSamplesTruncated: boolean
+  exclusionSamples: SpaceDispatchRecommendationExclusionSample[]
+  assignments: SpaceDispatchRecommendationAssignment[]
+  limitations: string[]
+}
+
+export interface GenerateSpaceDispatchRecommendationResponse {
+  outcome: 'Generated' | 'Duplicate'
+  recommendation: SpaceDispatchRecommendation
+}

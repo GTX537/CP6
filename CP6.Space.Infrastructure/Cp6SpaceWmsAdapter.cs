@@ -656,6 +656,88 @@ public sealed class Cp6SpaceWmsAdapter : ISpaceWmsAdapter
                 row.ProductCd)).ToArray());
     }
 
+    public async Task<SpaceWmsDispatchTaskResult> QueryDispatchTasksAsync(
+        SpaceWmsDispatchTaskQuery request,
+        CancellationToken ct = default)
+    {
+        ArgumentNullException.ThrowIfNull(request);
+        EnsureScope(request.Context);
+        var rows = await _db.MobileTasks
+            .AsNoTracking()
+            .Where(value =>
+                !value.IsDeleted &&
+                value.WarehouseCd == request.Context.WarehouseCode &&
+                value.Status != MobileTaskStatus.Completed &&
+                value.Status != MobileTaskStatus.Cancelled)
+            .OrderBy(value => value.MobileTaskNo)
+            .ThenBy(value => value.Id)
+            .Take(10_001)
+            .Select(value => new
+            {
+                value.MobileTaskNo,
+                value.TaskType,
+                value.Status,
+                value.AssignedTo,
+                value.Priority,
+                value.ContractVersion,
+                value.ExecutionVersion,
+                value.RowVersion,
+                value.FromLocationCd,
+                value.ToLocationCd,
+                value.Qty,
+                value.ProductCd,
+            })
+            .ToArrayAsync(ct);
+        var bins = await _db.WmsBins
+            .AsNoTracking()
+            .Where(value =>
+                value.WarehouseCd == request.Context.WarehouseCode)
+            .Select(value => new
+            {
+                value.Id,
+                value.LocationCode,
+            })
+            .ToArrayAsync(ct);
+        var binByCode = bins
+            .GroupBy(value => value.LocationCode, StringComparer.Ordinal)
+            .ToDictionary(
+                group => group.Key,
+                group => group.Select(value => value.Id).ToArray(),
+                StringComparer.Ordinal);
+
+        var items = rows.Select(value =>
+        {
+            var from = value.FromLocationCd?.Trim();
+            var to = value.ToLocationCd?.Trim();
+            var locationCode = string.IsNullOrWhiteSpace(from) ? to : from;
+            var role = string.IsNullOrWhiteSpace(from)
+                ? "Destination"
+                : "Source";
+            Guid? logicalId = null;
+            if (!string.IsNullOrWhiteSpace(locationCode) &&
+                binByCode.TryGetValue(locationCode, out var matches) &&
+                matches.Length == 1)
+            {
+                logicalId = matches[0];
+            }
+            return new SpaceWmsDispatchTaskItem(
+                value.MobileTaskNo,
+                value.TaskType,
+                DispatchStatus(value.Status),
+                value.AssignedTo,
+                value.Priority,
+                value.ContractVersion,
+                value.ExecutionVersion,
+                Convert.ToBase64String(value.RowVersion ?? []),
+                logicalId,
+                locationCode,
+                role,
+                value.Qty,
+                value.ProductCd);
+        }).ToArray();
+        return new SpaceWmsDispatchTaskResult(Source(), items);
+    }
+
     public async Task<SpaceWmsAbcResult> QueryAbcAsync(
         SpaceWmsAbcQuery request,
         CancellationToken ct = default)
@@ -1118,6 +1200,19 @@ public sealed class Cp6SpaceWmsAdapter : ISpaceWmsAdapter
             SpaceWmsDataSourceKind.Real,
             DataSourceId,
             DateTimeOffset.UtcNow);
+
+    private static string DispatchStatus(int value) =>
+        value switch
+        {
+            MobileTaskStatus.Pending => "Pending",
+            MobileTaskStatus.InProgress => "InProgress",
+            MobileTaskStatus.Completed => "Completed",
+            MobileTaskStatus.PartiallyCompleted => "PartiallyCompleted",
+            MobileTaskStatus.Paused => "Paused",
+            MobileTaskStatus.Exception => "Exception",
+            MobileTaskStatus.Cancelled => "Cancelled",
+            _ => $"Unknown:{value.ToString(CultureInfo.InvariantCulture)}",
+        };
 
     private static SpaceWmsCapabilitySnapshot CapabilitySnapshot() =>
         SpaceWmsCapabilitySnapshot.Create(

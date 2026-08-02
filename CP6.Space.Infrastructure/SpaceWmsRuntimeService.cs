@@ -499,6 +499,105 @@ public sealed class SpaceWmsRuntimeService : ISpaceWmsRuntimeService
             taskIds: null,
             cancellationToken);
 
+    public async Task<SpaceWmsRuntimeDispatchTaskResponse>
+        QueryDispatchTasksAsync(
+            Guid siteId,
+            CancellationToken cancellationToken = default)
+    {
+        var scope = await LoadScopeAsync(
+            siteId,
+            locationLogicalIds: null,
+            cancellationToken);
+        SpaceWmsDispatchTaskResult result;
+        try
+        {
+            result = await _source.QueryDispatchTasksAsync(
+                new SpaceWmsDispatchTaskQuery(scope.WmsContext),
+                cancellationToken);
+        }
+        catch (OperationCanceledException) when (
+            cancellationToken.IsCancellationRequested)
+        {
+            throw;
+        }
+        catch (Exception)
+        {
+            throw Unavailable();
+        }
+
+        result = ValidateDispatchTaskResult(result);
+        ValidateSource(result.Source);
+        if (result.Source.Kind == SpaceWmsDataSourceKind.Unavailable)
+        {
+            if (result.Items.Count != 0)
+            {
+                throw ContractViolation(
+                    "An unavailable dispatch-task source returned items.");
+            }
+            return new SpaceWmsRuntimeDispatchTaskResponse(
+                siteId,
+                scope.PublishedVersionId,
+                scope.WarehouseCode,
+                ToDto(result.Source),
+                []);
+        }
+
+        ValidateDispatchTaskItems(result.Items);
+        var items = result.Items
+            .Select(value =>
+            {
+                RuntimeLocation? location = null;
+                if (value.LogicalId.HasValue)
+                {
+                    scope.LocationByWmsLogicalId.TryGetValue(
+                        value.LogicalId.Value,
+                        out location);
+                }
+                var codeMatches = location is not null &&
+                    string.Equals(
+                        location.SpaceLocationCode,
+                        value.LocationCode,
+                        StringComparison.Ordinal);
+                return new SpaceWmsRuntimeDispatchTaskItemDto(
+                    value.TaskId,
+                    value.TaskType,
+                    value.Status,
+                    value.AssignedTo,
+                    value.Priority,
+                    value.ContractVersion,
+                    value.ExecutionVersion,
+                    value.RowVersion,
+                    value.LocationRole,
+                    value.LocationCode,
+                    location is not null,
+                    location?.SpaceLogicalId,
+                    value.LogicalId,
+                    location?.SpaceLocationCode,
+                    codeMatches,
+                    location?.FloorLogicalId,
+                    location?.FloorCode,
+                    location?.FloorName,
+                    location?.FloorLevel,
+                    location?.ZoneLogicalId,
+                    location?.ZoneCode,
+                    location?.RackLogicalId,
+                    location?.RackCode,
+                    location?.AnchorXMillimeters,
+                    location?.AnchorYMillimeters,
+                    location?.AnchorZMillimeters,
+                    value.Quantity,
+                    value.MaterialNumber);
+            })
+            .OrderBy(value => value.TaskId, StringComparer.Ordinal)
+            .ToArray();
+        return new SpaceWmsRuntimeDispatchTaskResponse(
+            siteId,
+            scope.PublishedVersionId,
+            scope.WarehouseCode,
+            ToDto(result.Source),
+            items);
+    }
+
     public async Task<SpaceWmsRuntimeTaskPathResponse> GetTaskPathAsync(
         Guid siteId,
         string taskId,
@@ -1448,6 +1547,23 @@ public sealed class SpaceWmsRuntimeService : ISpaceWmsRuntimeService
         return result;
     }
 
+    private static SpaceWmsDispatchTaskResult ValidateDispatchTaskResult(
+        SpaceWmsDispatchTaskResult? result)
+    {
+        if (result is null)
+            throw ContractViolation("The WMS dispatch-task result is missing.");
+        if (result.Source is null)
+            throw ContractViolation("The WMS dispatch-task source is missing.");
+        if (result.Items is null)
+            throw ContractViolation("The WMS dispatch-task collection is missing.");
+        if (result.Items.Any(item => item is null))
+        {
+            throw ContractViolation(
+                "The WMS dispatch-task collection contains a null item.");
+        }
+        return result;
+    }
+
     private static void ValidateInventoryItems(
         IReadOnlyList<SpaceWmsInventoryItem> items,
         RuntimeScope scope,
@@ -1507,6 +1623,60 @@ public sealed class SpaceWmsRuntimeService : ISpaceWmsRuntimeService
             {
                 throw ContractViolation("A returned WMS task is invalid.");
             }
+        }
+    }
+
+    private static void ValidateDispatchTaskItems(
+        IReadOnlyList<SpaceWmsDispatchTaskItem> items)
+    {
+        if (items
+            .GroupBy(value => value.TaskId, StringComparer.OrdinalIgnoreCase)
+            .Any(group => group.Count() > 1))
+        {
+            throw ContractViolation(
+                "The WMS dispatch-task source returned duplicate task identities.");
+        }
+        foreach (var item in items)
+        {
+            if (!Bounded(item.TaskId, 100) ||
+                !Bounded(item.TaskType, 100) ||
+                !Bounded(item.Status, 50) ||
+                item.AssignedTo is not null &&
+                !Bounded(item.AssignedTo, 200) ||
+                item.Priority is < 1 or > 4 ||
+                item.ContractVersion < 1 ||
+                item.ExecutionVersion < 0 ||
+                !ValidRowVersion(item.RowVersion) ||
+                item.LogicalId == Guid.Empty ||
+                item.LocationCode is not null &&
+                !Bounded(item.LocationCode, 100) ||
+                item.LocationRole is not ("Source" or "Destination") ||
+                item.Quantity < 0 ||
+                item.MaterialNumber is not null &&
+                !Bounded(item.MaterialNumber, 200))
+            {
+                throw ContractViolation(
+                    "A returned WMS dispatch task is invalid.");
+            }
+        }
+    }
+
+    private static bool Bounded(string? value, int maximumLength) =>
+        !string.IsNullOrWhiteSpace(value) &&
+        value.Length <= maximumLength &&
+        !value.Any(char.IsControl);
+
+    private static bool ValidRowVersion(string value)
+    {
+        if (string.IsNullOrWhiteSpace(value) || value.Length > 256)
+            return false;
+        try
+        {
+            return Convert.FromBase64String(value).Length > 0;
+        }
+        catch (FormatException)
+        {
+            return false;
         }
     }
 

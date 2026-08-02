@@ -368,6 +368,44 @@ public sealed class StandardSpaceWmsSimulator :
         }
     }
 
+    public async Task<SpaceWmsDispatchTaskResult> QueryDispatchTasksAsync(
+        SpaceWmsDispatchTaskQuery request,
+        CancellationToken ct = default)
+    {
+        ArgumentNullException.ThrowIfNull(request);
+        var state = State(request.Context);
+        await ThrowForTransportFaultAsync(Fault(state), ct);
+        lock (state.Gate)
+        {
+            var items = state.Tasks
+                .GroupBy(value => value.TaskId, StringComparer.Ordinal)
+                .Select(group => group
+                    .OrderBy(value => value.SequenceNo)
+                    .ThenBy(value => value.LogicalId)
+                    .First())
+                .Where(value => IsActiveTask(value.Status))
+                .OrderBy(value => value.TaskId, StringComparer.Ordinal)
+                .Select(value => new SpaceWmsDispatchTaskItem(
+                    value.TaskId,
+                    value.TaskType,
+                    "Pending",
+                    null,
+                    2,
+                    1,
+                    0,
+                    Convert.ToBase64String(
+                        SHA256.HashData(
+                            Encoding.UTF8.GetBytes(value.TaskId)))[..8],
+                    value.LogicalId,
+                    value.LocationCode,
+                    "Source",
+                    value.Quantity ?? 0,
+                    value.MaterialNumber))
+                .ToArray();
+            return new SpaceWmsDispatchTaskResult(Source(), items);
+        }
+    }
+
     public async Task<SpaceWmsAbcResult> QueryAbcAsync(
         SpaceWmsAbcQuery request,
         CancellationToken ct = default)

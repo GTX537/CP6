@@ -542,6 +542,24 @@ public sealed class SpaceAuditPermissionSeedTests
         });
     }
 
+    [Fact]
+    public void Dispatch_recommendation_screen_has_complete_five_language_text()
+    {
+        var rows = I18nSpaceDispatchRecommendationSeed.Items;
+
+        Assert.Equal(42, rows.Length);
+        Assert.Equal(rows.Length, rows.Select(row => row.LangKey).Distinct().Count());
+        Assert.All(rows, row =>
+        {
+            Assert.False(string.IsNullOrWhiteSpace(row.LangKey));
+            Assert.False(string.IsNullOrWhiteSpace(row.ZhCN));
+            Assert.False(string.IsNullOrWhiteSpace(row.ZhTW));
+            Assert.False(string.IsNullOrWhiteSpace(row.En));
+            Assert.False(string.IsNullOrWhiteSpace(row.Ja));
+            Assert.False(string.IsNullOrWhiteSpace(row.Ko));
+        });
+    }
+
     private static CP6Context NewDb()
     {
         var options = new DbContextOptionsBuilder<CP6Context>()
