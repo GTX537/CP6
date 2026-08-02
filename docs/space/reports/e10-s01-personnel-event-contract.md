@@ -1,9 +1,11 @@
 # E10-S01 PDA/定位人员事件契约、状态与时间语义完成报告
 
-- 状态：**Ready for controlled integration**
+- 状态：**Integrated**
 - 日期：2026-08-02
 - 功能分支：`codex/space-e10-s01-personnel-events`
 - 实现提交：`1c7aa0e2`
+- 文档提交：`1da17591`
+- no-ff 集成提交：`ec29d41f`
 - 集成目标：`integration/space-v1-20260730`
 
 ## 1. 交付结论
