@@ -5,6 +5,7 @@ import { spaceRuntimeApi } from '../runtime'
 vi.mock('@/api/http', () => ({
   default: {
     get: vi.fn(),
+    put: vi.fn(),
   },
 }))
 
@@ -12,6 +13,35 @@ describe('spaceRuntimeApi', () => {
   beforeEach(() => {
     vi.clearAllMocks()
     vi.mocked(http.get).mockResolvedValue({})
+    vi.mocked(http.put).mockResolvedValue({})
+  })
+
+  it('puts an idempotent putaway recommendation request under the operations API', async () => {
+    const request = {
+      materialNumber: 'SKU-01',
+      inboundQuantity: 5,
+      allowExactStockConsolidation: true,
+      maximumCandidates: 10,
+    }
+
+    await spaceRuntimeApi.generatePutawayRecommendation(
+      'site/1',
+      'recommendation/1',
+      request,
+    )
+
+    expect(http.put).toHaveBeenCalledWith(
+      '/space/operations/v1/sites/site%2F1/putaway-recommendations/recommendation%2F1',
+      request,
+    )
+  })
+
+  it('gets immutable putaway recommendation evidence by identity', async () => {
+    await spaceRuntimeApi.putawayRecommendation('site/1', 'recommendation/1')
+
+    expect(http.get).toHaveBeenCalledWith(
+      '/space/operations/v1/sites/site%2F1/putaway-recommendations/recommendation%2F1',
+    )
   })
 
   it('requests operations diagnostics with an explicit half-open UTC window', async () => {

@@ -563,3 +563,100 @@ export interface SpaceOperationsDiagnosticResponse {
   capacity: SpaceOperationsCapacityDiagnosis
   limitations: string[]
 }
+
+export interface GenerateSpacePutawayRecommendationRequest {
+  materialNumber: string
+  ownerId?: string | null
+  lotNumber?: string | null
+  inboundQuantity: number
+  floorLogicalId?: string | null
+  zoneLogicalId?: string | null
+  requiredWidthMillimeters?: number | null
+  requiredHeightMillimeters?: number | null
+  requiredDepthMillimeters?: number | null
+  requiredMaxLoad?: number | null
+  allowExactStockConsolidation: boolean
+  maximumCandidates: number
+}
+
+export interface SpacePutawayRecommendationSources {
+  inventory: SpaceRuntimeSource
+  activeTasks: SpaceRuntimeSource
+}
+
+export interface SpacePutawayRecommendationExclusions {
+  missingSpatialMetadata: number
+  outsideRequestedScope: number
+  activeTask: number
+  invalidInventory: number
+  locationCodeMismatch: number
+  occupiedIncompatible: number
+  dimensionTooSmall: number
+  loadUnverifiable: number
+  loadInsufficient: number
+}
+
+export interface SpacePutawayRecommendationExclusionSample {
+  locationLogicalId: string
+  spaceLocationCode: string | null
+  floorLogicalId: string
+  floorCode: string | null
+  zoneLogicalId: string | null
+  zoneCode: string | null
+  reason: string
+}
+
+export interface SpacePutawayRecommendationCandidate {
+  rank: number
+  category: string
+  locationLogicalId: string
+  spaceLocationCode: string
+  floorLogicalId: string
+  floorCode: string
+  floorName: string
+  floorLevel: number
+  zoneLogicalId: string | null
+  zoneCode: string | null
+  rackLogicalId: string | null
+  rackCode: string | null
+  columnNo: number
+  levelNo: number
+  depthNo: number
+  widthMillimeters: number
+  heightMillimeters: number
+  depthMillimeters: number
+  maxLoad: number | null
+  currentPhysicalQuantity: number
+  currentAllocatedQuantity: number
+  sameFloorAsExistingStock: boolean
+  sameZoneAsExistingStock: boolean
+  distanceToMatchingStockMeters: number | null
+  ruleHits: string[]
+}
+
+export interface SpacePutawayRecommendation {
+  recommendationId: string
+  siteId: string
+  publishedVersionId: string
+  warehouseCode: string
+  generatedAtUtc: string
+  generatedBy: string
+  definitionVersion: string
+  outcome: string
+  request: GenerateSpacePutawayRecommendationRequest
+  sources: SpacePutawayRecommendationSources
+  examinedLocationCount: number
+  eligibleCandidateCount: number
+  returnedCandidateCount: number
+  isTruncated: boolean
+  exclusions: SpacePutawayRecommendationExclusions
+  exclusionSamplesTruncated: boolean
+  exclusionSamples: SpacePutawayRecommendationExclusionSample[]
+  candidates: SpacePutawayRecommendationCandidate[]
+  limitations: string[]
+}
+
+export interface GenerateSpacePutawayRecommendationResponse {
+  outcome: 'Generated' | 'Duplicate'
+  recommendation: SpacePutawayRecommendation
+}

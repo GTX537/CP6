@@ -105,6 +105,8 @@ public sealed class SpaceContext : DbContext
         Set<SpaceExcelMappingProfile>();
     public DbSet<SpaceExcelMappingProfileVersion> ExcelMappingProfileVersions =>
         Set<SpaceExcelMappingProfileVersion>();
+    public DbSet<SpacePutawayRecommendation> PutawayRecommendations =>
+        Set<SpacePutawayRecommendation>();
 
     protected override void OnModelCreating(ModelBuilder modelBuilder)
     {
@@ -141,6 +143,7 @@ public sealed class SpaceContext : DbContext
         ConfigureFieldPolicyField(modelBuilder);
         ConfigureExcelMappingProfile(modelBuilder);
         ConfigureExcelMappingProfileVersion(modelBuilder);
+        ConfigurePutawayRecommendation(modelBuilder);
         ConfigureFile(modelBuilder);
         ConfigureSource(modelBuilder);
         ConfigureJob(modelBuilder);
@@ -171,6 +174,7 @@ public sealed class SpaceContext : DbContext
         ProtectExcelMappingVersionHistory();
         ProtectPersonnelEventHistory();
         ProtectDeviceEventHistory();
+        ProtectPutawayRecommendationHistory();
         StampAndValidateTenant();
         return base.SaveChanges(acceptAllChangesOnSuccess);
     }
@@ -190,6 +194,7 @@ public sealed class SpaceContext : DbContext
         ProtectExcelMappingVersionHistory();
         ProtectPersonnelEventHistory();
         ProtectDeviceEventHistory();
+        ProtectPutawayRecommendationHistory();
         StampAndValidateTenant();
         return base.SaveChangesAsync(acceptAllChangesOnSuccess, cancellationToken);
     }
@@ -3278,6 +3283,101 @@ public sealed class SpaceContext : DbContext
             x => x.TenantId == CurrentTenantId && !x.IsDeleted);
     }
 
+    private void ConfigurePutawayRecommendation(ModelBuilder modelBuilder)
+    {
+        var entity = modelBuilder.Entity<SpacePutawayRecommendation>();
+        entity.ToTable(
+            "Space_PutawayRecommendation",
+            table =>
+            {
+                table.HasCheckConstraint(
+                    "CK_Space_PutawayRecommendation_Counts",
+                    "[ExaminedLocationCount] >= 0 AND " +
+                    "[EligibleCandidateCount] >= 0 AND " +
+                    "[ReturnedCandidateCount] >= 0 AND " +
+                    "[EligibleCandidateCount] <= [ExaminedLocationCount] AND " +
+                    "[ReturnedCandidateCount] <= [EligibleCandidateCount] AND " +
+                    "(([IsTruncated] = 1 AND " +
+                    "[ReturnedCandidateCount] < [EligibleCandidateCount]) OR " +
+                    "([IsTruncated] = 0 AND " +
+                    "[ReturnedCandidateCount] = [EligibleCandidateCount]))");
+                table.HasCheckConstraint(
+                    "CK_Space_PutawayRecommendation_Evidence",
+                    "[Outcome] IN ('NoCandidate', 'CandidatesGenerated') AND " +
+                    "ISJSON([RequestJson]) = 1 AND " +
+                    "ISJSON([SourcesJson]) = 1 AND " +
+                    "ISJSON([ExclusionsJson]) = 1 AND " +
+                    "ISJSON([ExclusionSamplesJson]) = 1 AND " +
+                    "ISJSON([CandidatesJson]) = 1 AND " +
+                    "ISJSON([LimitationsJson]) = 1");
+                table.HasCheckConstraint(
+                    "CK_Space_PutawayRecommendation_Immutable",
+                    "LEN([RequestHash]) = 64 AND " +
+                    "[RequestHash] NOT LIKE '%[^0-9a-f]%' AND " +
+                    "[IsDeleted] = 0");
+            });
+        entity.HasKey(x => x.Id);
+        entity.Property(x => x.Id).ValueGeneratedNever();
+        ConfigureTenantEntity(entity);
+        entity.HasAlternateKey(x => new { x.TenantId, x.Id })
+            .HasName("AK_Space_PutawayRecommendation_Tenant_Id");
+        entity.Property(x => x.WarehouseCode)
+            .HasMaxLength(100)
+            .IsUnicode(false)
+            .IsRequired();
+        entity.Property(x => x.GeneratedAtUtc).HasColumnType("datetime2");
+        entity.Property(x => x.DefinitionVersion)
+            .HasMaxLength(50)
+            .IsUnicode(false)
+            .IsRequired();
+        entity.Property(x => x.Outcome)
+            .HasMaxLength(30)
+            .IsUnicode(false)
+            .IsRequired();
+        entity.Property(x => x.RequestJson)
+            .HasColumnType("nvarchar(max)")
+            .IsRequired();
+        entity.Property(x => x.SourcesJson)
+            .HasColumnType("nvarchar(max)")
+            .IsRequired();
+        entity.Property(x => x.ExclusionsJson)
+            .HasColumnType("nvarchar(max)")
+            .IsRequired();
+        entity.Property(x => x.ExclusionSamplesJson)
+            .HasColumnType("nvarchar(max)")
+            .IsRequired();
+        entity.Property(x => x.CandidatesJson)
+            .HasColumnType("nvarchar(max)")
+            .IsRequired();
+        entity.Property(x => x.LimitationsJson)
+            .HasColumnType("nvarchar(max)")
+            .IsRequired();
+        entity.Property(x => x.RequestHash)
+            .HasColumnType("char(64)")
+            .IsUnicode(false)
+            .IsFixedLength()
+            .HasMaxLength(64)
+            .IsRequired();
+        entity.HasIndex(x => new
+            {
+                x.TenantId,
+                x.SiteId,
+                x.GeneratedAtUtc,
+                x.Id,
+            })
+            .HasDatabaseName(
+                "IX_Space_PutawayRecommendation_Tenant_Site_Generated");
+        entity.HasOne<SpaceModelVersion>()
+            .WithMany()
+            .HasForeignKey(x => new { x.TenantId, x.PublishedVersionId })
+            .HasPrincipalKey(x => new { x.TenantId, x.Id })
+            .OnDelete(DeleteBehavior.Restrict)
+            .HasConstraintName(
+                "FK_Space_PutawayRecommendation_Version_Tenant");
+        entity.HasQueryFilter(
+            x => x.TenantId == CurrentTenantId && !x.IsDeleted);
+    }
+
     private static void ConfigureTenantEntity<TEntity>(
         Microsoft.EntityFrameworkCore.Metadata.Builders.EntityTypeBuilder<TEntity> entity)
         where TEntity : SpaceTenantEntity
@@ -3286,6 +3386,17 @@ public sealed class SpaceContext : DbContext
         entity.Property(x => x.CreatedAtUtc).HasColumnType("datetime2");
         entity.Property(x => x.ModifiedAtUtc).HasColumnType("datetime2");
         entity.Property(x => x.IsDeleted).HasDefaultValue(false);
+    }
+
+    private void ProtectPutawayRecommendationHistory()
+    {
+        if (ChangeTracker.Entries<SpacePutawayRecommendation>()
+            .Any(entry =>
+                entry.State is EntityState.Modified or EntityState.Deleted))
+        {
+            throw new InvalidOperationException(
+                "Putaway recommendations are immutable.");
+        }
     }
 
     private void ProtectPersonnelEventHistory()
