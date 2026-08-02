@@ -435,6 +435,9 @@ builder.Services.AddScoped<
     CP6.WebApi.Services.DataProtectionSpaceCursorCodec>();
 builder.Services.AddScoped<ISpaceAuditDbContextFactory, SpaceAuditDbContextFactory>();
 builder.Services.AddScoped<ISpaceAuditWriter, SpaceAuditWriter>();
+builder.Services.AddScoped<
+    ISpaceAccessEvaluator,
+    CP6.WebApi.Services.AuditedSpaceAccessEvaluator>();
 builder.Services.AddScoped<ISpaceRetryFinalizer, SpaceRetryFinalizer>();
 builder.Services.AddScoped<ISpaceAuditQueryService, SpaceAuditQueryService>();
 builder.Services.AddScoped<

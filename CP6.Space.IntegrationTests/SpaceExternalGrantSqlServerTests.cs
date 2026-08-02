@@ -1,4 +1,5 @@
 using CP6.Space.Application;
+using CP6.Space.Contracts;
 using CP6.Space.Domain;
 using CP6.Space.Infrastructure;
 using Microsoft.Data.SqlClient;
@@ -174,6 +175,133 @@ public sealed class SpaceExternalGrantSqlServerTests
         });
     }
 
+    [SqlServerFact]
+    public async Task Sql_access_scope_revalidates_expiry_and_policy_on_every_request()
+    {
+        await WithDatabaseAsync(async connectionString =>
+        {
+            var tenantId = Guid.NewGuid();
+            var actorId = Guid.NewGuid();
+            var siteId = Guid.NewGuid();
+            var organization = SpaceExternalOrganization.Create(
+                tenantId,
+                SpaceExternalOrganizationType.Customer,
+                "CUST-VALIDITY",
+                "Customer Validity");
+            var execution = new ExternalExecutionContext(
+                tenantId,
+                actorId,
+                organization.Id);
+            var clock = new MutableClock(Now);
+            await using var context = CreateContext(
+                connectionString,
+                execution,
+                clock);
+            var membership = SpaceExternalMembership.Create(
+                tenantId,
+                organization.Id,
+                actorId,
+                SpaceExternalMembershipRole.Viewer,
+                Now.AddDays(-1),
+                Now.AddMinutes(1),
+                SpaceExternalMembershipStatus.Active,
+                null,
+                Now);
+            var policy = SpaceFieldPolicy.Create(
+                tenantId,
+                "Stock export",
+                SpaceExternalOrganizationType.Customer,
+                canExport: true);
+            var grant = SpaceExternalGrant.Create(
+                tenantId,
+                organization.Id,
+                siteId,
+                policy.Id,
+                canExport: true,
+                Now.AddDays(-1),
+                Now.AddMinutes(1),
+                SpaceExternalGrantStatus.Active);
+            context.AddRange(organization, membership, policy, grant);
+            await context.SaveChangesAsync();
+
+            var evaluator = new SpaceAccessEvaluator(context, execution, clock);
+            var principal = new SpacePrincipal(
+                tenantId,
+                actorId,
+                true,
+                organization.Id);
+            var resource = new SpaceResource(
+                tenantId,
+                SpaceResourceType.Stock,
+                siteId);
+            var initial = await evaluator.EvaluateAsync(
+                principal,
+                SpaceAccessAction.Export,
+                resource);
+            Assert.True(initial.Allowed);
+
+            clock.UtcNow = Now.AddMinutes(2);
+            var expiredMembership = await evaluator.EvaluateAsync(
+                principal,
+                SpaceAccessAction.Export,
+                resource);
+            Assert.False(expiredMembership.Allowed);
+            Assert.Equal(
+                SpaceErrorCodes.ExternalMembershipInactive,
+                expiredMembership.ReasonCode);
+
+            membership.Update(
+                membership.Role,
+                membership.ValidFromUtc,
+                null,
+                SpaceExternalMembershipStatus.Active,
+                clock.UtcNow);
+            organization.TouchMembershipSecurityStamp();
+            await context.SaveChangesAsync();
+            var expiredGrant = await evaluator.EvaluateAsync(
+                principal,
+                SpaceAccessAction.Export,
+                resource);
+            Assert.False(expiredGrant.Allowed);
+            Assert.Equal(
+                SpaceErrorCodes.ExternalGrantInactive,
+                expiredGrant.ReasonCode);
+
+            grant.Update(
+                grant.SiteId,
+                grant.FieldPolicyId,
+                grant.CanExport,
+                grant.ValidFromUtc,
+                null,
+                SpaceExternalGrantStatus.Active);
+            organization.TouchAuthorizationSecurityStamp();
+            await context.SaveChangesAsync();
+            var renewed = await evaluator.EvaluateAsync(
+                principal,
+                SpaceAccessAction.Export,
+                resource);
+            Assert.True(renewed.Allowed);
+            Assert.NotEqual(
+                initial.Scope.AuthorizationVersion,
+                renewed.Scope.AuthorizationVersion);
+
+            policy.Update(
+                policy.Name,
+                policy.CanExport,
+                SpaceFieldPolicyStatus.Retired);
+            organization.TouchAuthorizationSecurityStamp();
+            await context.SaveChangesAsync();
+            var retiredPolicy = await evaluator.EvaluateAsync(
+                principal,
+                SpaceAccessAction.Export,
+                resource);
+            Assert.False(retiredPolicy.Allowed);
+            Assert.Equal(
+                SpaceErrorCodes.ExternalScopeDenied,
+                retiredPolicy.ReasonCode);
+        });
+    }
+
     private static async Task WithDatabaseAsync(Func<string, Task> action)
     {
         var baseConnection = Environment.GetEnvironmentVariable(
@@ -206,6 +334,12 @@ public sealed class SpaceExternalGrantSqlServerTests
     private static SpaceContext CreateContext(
         string connectionString,
         TestExecutionContext execution) =>
+        CreateContext(connectionString, execution, new FixedClock());
+
+    private static SpaceContext CreateContext(
+        string connectionString,
+        ISpaceExecutionContext execution,
+        ISpaceClock clock) =>
         new(
             new DbContextOptionsBuilder<SpaceContext>()
                 .UseSqlServer(
@@ -214,13 +348,26 @@ public sealed class SpaceExternalGrantSqlServerTests
                         SpaceContext.MigrationsHistoryTable))
                 .Options,
             execution,
-            new FixedClock());
+            clock);
 
     private sealed record TestExecutionContext(Guid TenantId, Guid ActorId) :
         ISpaceExecutionContext;
 
+    private sealed record ExternalExecutionContext(
+        Guid TenantId,
+        Guid ActorId,
+        Guid? OrganizationContextId) : ISpaceExecutionContext
+    {
+        public bool IsExternal => true;
+    }
+
     private sealed class FixedClock : ISpaceClock
     {
         public DateTime UtcNow => Now;
+    }
+
+    private sealed class MutableClock(DateTime now) : ISpaceClock
+    {
+        public DateTime UtcNow { get; set; } = now;
     }
 }

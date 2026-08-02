@@ -87,6 +87,7 @@ public sealed class SpaceExternalPortalServiceTests
     public async Task Retired_policy_removes_portal_capability_fail_closed()
     {
         await using var fixture = await Fixture.CreateAsync();
+        _ = await fixture.Service.GetPublishedSceneAsync(fixture.SiteId);
         fixture.ScenePolicy.Update(
             fixture.ScenePolicy.Name,
             fixture.ScenePolicy.CanExport,
@@ -98,6 +99,108 @@ public sealed class SpaceExternalPortalServiceTests
 
         Assert.Equal(404, error.StatusCode);
         Assert.Equal(SpaceErrorCodes.ExternalScopeDenied, error.Code);
+    }
+
+    [Fact]
+    public async Task Membership_expiry_invalidates_existing_session_on_next_request()
+    {
+        await using var fixture = await Fixture.CreateAsync();
+        var membership = await fixture.Context.ExternalMemberships.SingleAsync();
+        membership.Update(
+            membership.Role,
+            Fixture.Now.AddDays(-1),
+            Fixture.Now.AddMinutes(1),
+            SpaceExternalMembershipStatus.Active,
+            Fixture.Now);
+        await fixture.Context.SaveChangesAsync();
+
+        _ = await fixture.Service.GetPublishedSceneAsync(fixture.SiteId);
+        fixture.Clock.UtcNow = Fixture.Now.AddMinutes(2);
+
+        await AssertScopeDeniedAsync(() =>
+            fixture.Service.GetPublishedSceneAsync(fixture.SiteId));
+    }
+
+    [Theory]
+    [InlineData(SpaceExternalMembershipStatus.Suspended)]
+    [InlineData(SpaceExternalMembershipStatus.Revoked)]
+    public async Task Membership_state_change_invalidates_existing_session_on_next_request(
+        SpaceExternalMembershipStatus status)
+    {
+        await using var fixture = await Fixture.CreateAsync();
+        _ = await fixture.Service.GetPublishedSceneAsync(fixture.SiteId);
+        var membership = await fixture.Context.ExternalMemberships.SingleAsync();
+        membership.Update(
+            membership.Role,
+            membership.ValidFromUtc,
+            membership.ValidToUtc,
+            status,
+            Fixture.Now);
+        await fixture.Context.SaveChangesAsync();
+
+        await AssertScopeDeniedAsync(() =>
+            fixture.Service.GetPublishedSceneAsync(fixture.SiteId));
+    }
+
+    [Fact]
+    public async Task Grant_expiry_invalidates_existing_session_on_next_request()
+    {
+        await using var fixture = await Fixture.CreateAsync();
+        var grant = await fixture.Context.ExternalGrants.SingleAsync(item =>
+            item.FieldPolicyId == fixture.ScenePolicy.Id);
+        grant.Update(
+            grant.SiteId,
+            grant.FieldPolicyId,
+            grant.CanExport,
+            Fixture.Now.AddDays(-1),
+            Fixture.Now.AddMinutes(1),
+            SpaceExternalGrantStatus.Active);
+        await fixture.Context.SaveChangesAsync();
+
+        _ = await fixture.Service.GetPublishedSceneAsync(fixture.SiteId);
+        fixture.Clock.UtcNow = Fixture.Now.AddMinutes(2);
+
+        await AssertScopeDeniedAsync(() =>
+            fixture.Service.GetPublishedSceneAsync(fixture.SiteId));
+    }
+
+    [Theory]
+    [InlineData(SpaceExternalGrantStatus.Suspended)]
+    [InlineData(SpaceExternalGrantStatus.Revoked)]
+    public async Task Grant_state_change_invalidates_existing_session_on_next_request(
+        SpaceExternalGrantStatus status)
+    {
+        await using var fixture = await Fixture.CreateAsync();
+        _ = await fixture.Service.GetPublishedSceneAsync(fixture.SiteId);
+        var grant = await fixture.Context.ExternalGrants.SingleAsync(item =>
+            item.FieldPolicyId == fixture.ScenePolicy.Id);
+        grant.Update(
+            grant.SiteId,
+            grant.FieldPolicyId,
+            grant.CanExport,
+            grant.ValidFromUtc,
+            grant.ValidToUtc,
+            status);
+        await fixture.Context.SaveChangesAsync();
+
+        await AssertScopeDeniedAsync(() =>
+            fixture.Service.GetPublishedSceneAsync(fixture.SiteId));
+    }
+
+    [Fact]
+    public async Task Active_policy_version_change_is_visible_on_next_request()
+    {
+        await using var fixture = await Fixture.CreateAsync();
+        var before = await fixture.Service.GetPublishedSceneAsync(fixture.SiteId);
+        fixture.ScenePolicy.Update(
+            fixture.ScenePolicy.Name,
+            fixture.ScenePolicy.CanExport,
+            SpaceFieldPolicyStatus.Active);
+        await fixture.Context.SaveChangesAsync();
+
+        var after = await fixture.Service.GetPublishedSceneAsync(fixture.SiteId);
+
+        Assert.NotEqual(before.AuthorizationVersion, after.AuthorizationVersion);
     }
 
     [Fact]
@@ -522,7 +625,7 @@ public sealed class SpaceExternalPortalServiceTests
 
     private sealed class FixedClock(DateTime now) : ISpaceClock
     {
-        public DateTime UtcNow { get; } = now;
+        public DateTime UtcNow { get; set; } = now;
     }
 
     private sealed class SceneReader(SpaceDesignSceneDto scene) :

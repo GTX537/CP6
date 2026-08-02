@@ -2,6 +2,7 @@ using System.ComponentModel.DataAnnotations;
 using CP6.Core.Auth;
 using CP6.Space.Application;
 using CP6.Space.Contracts;
+using CP6.WebApi.Filters;
 using CP6.WebApi.OpenApi;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
@@ -70,6 +71,10 @@ public sealed class SpaceExternalOrganizationController(
         service.GetOrganizationAsync(organizationId, cancellationToken);
 
     [HttpPost]
+    [SpaceAuditOperation(
+        "space.external.organization.create",
+        "ExternalOrganization",
+        PermissionCode = "space:external:manage")]
     [RequirePermission(
         "space",
         "external:manage",
@@ -90,6 +95,11 @@ public sealed class SpaceExternalOrganizationController(
     }
 
     [HttpPut("{organizationId:guid}")]
+    [SpaceAuditOperation(
+        "space.external.organization.update",
+        "ExternalOrganization",
+        ResourceIdArgument = "organizationId",
+        PermissionCode = "space:external:manage")]
     [RequirePermission(
         "space",
         "external:manage",
@@ -122,6 +132,11 @@ public sealed class SpaceExternalOrganizationController(
             cancellationToken);
 
     [HttpPost("{organizationId:guid}/membership")]
+    [SpaceAuditOperation(
+        "space.external.membership.create",
+        "ExternalMembership",
+        ResourceIdArgument = "organizationId",
+        PermissionCode = "space:external:manage")]
     [RequirePermission(
         "space",
         "external:manage",
@@ -141,6 +156,11 @@ public sealed class SpaceExternalOrganizationController(
     }
 
     [HttpPut("{organizationId:guid}/membership/{membershipId:guid}")]
+    [SpaceAuditOperation(
+        "space.external.membership.update",
+        "ExternalMembership",
+        ResourceIdArgument = "membershipId",
+        PermissionCode = "space:external:manage")]
     [RequirePermission(
         "space",
         "external:manage",
@@ -191,6 +211,11 @@ public sealed class SpaceExternalOrganizationController(
             cancellationToken);
 
     [HttpPost("{organizationId:guid}/grant")]
+    [SpaceAuditOperation(
+        "space.external.grant.create",
+        "ExternalGrant",
+        ResourceIdArgument = "organizationId",
+        PermissionCode = "space:external:manage")]
     [RequirePermission(
         "space",
         "external:manage",
@@ -217,6 +242,11 @@ public sealed class SpaceExternalOrganizationController(
     }
 
     [HttpPut("{organizationId:guid}/grant/{grantId:guid}")]
+    [SpaceAuditOperation(
+        "space.external.grant.update",
+        "ExternalGrant",
+        ResourceIdArgument = "grantId",
+        PermissionCode = "space:external:manage")]
     [RequirePermission(
         "space",
         "external:manage",

@@ -19,7 +19,13 @@ public sealed record SpaceAuditEvidence(
     int? ItemCount = null,
     string? Status = null,
     string? ExceptionType = null,
-    string? ErrorFingerprint = null);
+    string? ErrorFingerprint = null,
+    Guid? OrganizationId = null,
+    long? OrganizationSecurityStamp = null,
+    long? MembershipSecurityStamp = null,
+    string? AuthorizationVersion = null,
+    IReadOnlyList<Guid>? GrantIds = null,
+    IReadOnlyList<Guid>? FieldPolicyIds = null);
 
 public sealed record SpaceAuditEventInput(
     string Action,
