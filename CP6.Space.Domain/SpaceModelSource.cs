@@ -137,7 +137,13 @@ public sealed class SpaceModelSource : SpaceTenantEntity
 
     public void BeginParsing()
     {
-        RequireState(SpaceSourceState.Ready);
+        if (State is not (
+                SpaceSourceState.Ready or
+                SpaceSourceState.PreviewReady))
+        {
+            throw new SpaceFileStateException(
+                "Only a ready or preview-ready source can begin parsing.");
+        }
         State = SpaceSourceState.Parsing;
     }
 

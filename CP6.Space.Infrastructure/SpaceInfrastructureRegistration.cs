@@ -56,6 +56,10 @@ public static class SpaceInfrastructureRegistration
         services.TryAddSingleton<
             ISpaceModelingTemplateService,
             OpenXmlSpaceModelingTemplateService>();
+        services.TryAddSingleton<
+            ISpaceExcelWorkbookReader,
+            OpenXmlSpaceExcelWorkbookReader>();
+        services.TryAddSingleton<SpaceExcelPreflightValidator>();
         services.TryAddSingleton(
             SpaceWorkerSandboxPolicy.FileSafetyDefault);
         services.TryAddSingleton<
@@ -91,6 +95,10 @@ public static class SpaceInfrastructureRegistration
         services.TryAddEnumerable(
             ServiceDescriptor.Scoped<
                 ISpaceJobProcessor,
+                SpaceExcelPreflightJobProcessor>());
+        services.TryAddEnumerable(
+            ServiceDescriptor.Scoped<
+                ISpaceJobProcessor,
                 SpaceBuildSceneJobProcessor>());
         services.AddScoped<
             ISpaceJobProcessorRunner,
@@ -109,6 +117,12 @@ public static class SpaceInfrastructureRegistration
         services.AddScoped<SpaceSourceCoordinator>();
         services.AddScoped<ISpaceDesignV1Service, SpaceDesignV1Service>();
         services.AddScoped<ISpaceExcelMappingService, SpaceExcelMappingService>();
+        services.AddScoped<
+            ISpaceExcelPreflightJobStepExecutor,
+            SpaceExcelPreflightJobStepExecutor>();
+        services.AddScoped<
+            ISpaceExcelPreflightService,
+            SpaceExcelPreflightService>();
         services.AddScoped<ISpacePublishedSceneReader, SpacePublishedSceneReader>();
         services.AddScoped<
             ISpaceExternalReferenceValidator,

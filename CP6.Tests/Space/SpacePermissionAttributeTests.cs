@@ -63,6 +63,9 @@ public class SpacePermissionAttributeTests
                 "space:model:read",
             ["SpaceExcelMappingController.GetProfiles"] = "space:model:read",
             ["SpaceExcelMappingController.GetProfile"] = "space:model:read",
+            ["SpaceExcelPreflightController.GetPreflight"] = "space:model:read",
+            ["SpaceExcelPreflightController.DownloadErrorReport"] =
+                "space:model:read",
             ["SpaceDesignV1Controller.GetUnderlayCalibration"] = "space:model:read",
             ["SpaceDesignV1Controller.GetJob"] = "space:model:read",
             ["SpaceDesignV1Controller.GetIssues"] = "space:model:read",
@@ -130,7 +133,7 @@ public class SpacePermissionAttributeTests
     public void SpaceControllers_AreDiscovered()
     {
         // 守卫：确保反射确实扫到 13 个 controller（防命名空间/程序集变动导致「空扫空过」）。
-        Assert.Equal(16, SpaceControllers.Count());
+        Assert.Equal(17, SpaceControllers.Count());
     }
 
     [Fact]
@@ -207,6 +210,32 @@ public class SpacePermissionAttributeTests
         string methodName)
     {
         var method = typeof(SpaceDesignV1Controller)
+            .GetMethod(methodName);
+        Assert.NotNull(method);
+
+        var permissions = CustomAttributeData
+            .GetCustomAttributes(method!)
+            .Where(data =>
+                data.AttributeType == typeof(RequirePermissionAttribute))
+            .Select(data =>
+                $"{data.ConstructorArguments[0].Value}:" +
+                $"{data.ConstructorArguments[1].Value}")
+            .ToHashSet();
+
+        Assert.True(permissions.SetEquals(
+        [
+            "space:source:upload",
+            "space:model:edit",
+        ]));
+    }
+
+    [Theory]
+    [InlineData(nameof(SpaceExcelPreflightController.UploadExcelSource))]
+    [InlineData(nameof(SpaceExcelPreflightController.StartPreflight))]
+    public void Excel_preflight_mutations_require_upload_and_model_edit(
+        string methodName)
+    {
+        var method = typeof(SpaceExcelPreflightController)
             .GetMethod(methodName);
         Assert.NotNull(method);
 
