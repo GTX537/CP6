@@ -1,9 +1,11 @@
 # E11-S02 上架/库位推荐候选交付报告
 
-- 状态：功能分支门禁完成，等待进入 Space 受控集成分支
+- 状态：已进入 Space 受控集成分支
 - 起始基线：`3577463017ed9783128740fa198a83b0ec21fe63`
 - 合同提交：`3ccd2936`
 - 功能提交：`644293f1`
+- 文档提交：`034a1b1b`
+- no-ff 集成提交：`a2b47826`
 - 功能分支：`codex/space-e11-s02-putaway-recommendations`
 - Migration：`20260802172258_SpaceE11S02PutawayRecommendations`
 
@@ -69,11 +71,16 @@ Viewer 新增默认折叠的 `PUT` 面板，只有用户提交表单才生成记
 | TypeScript SDK strict no-emit | passed |
 | Git 差异检查 | passed |
 | i18n 静态门禁 | 909 项既有欠账；比 911 基线减少 2，净新增 0 |
+| 合并态冒烟 | 引擎 5/5、服务 6/6、权限/审计/契约/种子 34/34、前端 14/14、两套 TypeScript strict no-emit 与 SDK drift passed |
 
 首次把四组全量测试并行运行时，既有
 `Worker_backfill_reloader_cannot_overwrite_another_workers_future_claim` 在高负载下发生一次
 31 秒取消；该测试隔离复跑通过，随后主测试集串行完整复跑 2748/2748 通过，因此不构成
 E11-S02 回归。
+
+合并态首次并行启动三组 .NET 测试时，两个进程同时编译共享 `obj` 目录造成 SourceLink/
+编译产物文件锁；服务组仍为 6/6。将引擎与合同组串行重跑后分别为 5/5 和 34/34，
+证明该现象是测试编排资源争用，不是源码或合并回归。
 
 ## 5. 当前路线与明确不做
 
