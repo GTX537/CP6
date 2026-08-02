@@ -3,7 +3,10 @@ import { beforeEach, describe, expect, it, vi } from 'vitest'
 import { flushPromises, mount } from '@vue/test-utils'
 import { createI18n } from 'vue-i18n'
 import ElementPlus, { ElMessage } from 'element-plus'
-import { planningScenarioApi } from '@/api/space/planningScenario'
+import {
+  planningDatasetApi,
+  planningScenarioApi,
+} from '@/api/space/planningScenario'
 import PlanningScenarioPanel from './PlanningScenarioPanel.vue'
 import type {
   CreateSpacePlanningScenarioBranchResponse,
@@ -13,6 +16,11 @@ import type {
 vi.mock('@/api/space/planningScenario', () => ({
   planningScenarioApi: {
     list: vi.fn(),
+    create: vi.fn(),
+  },
+  planningDatasetApi: {
+    list: vi.fn(),
+    get: vi.fn(),
     create: vi.fn(),
   },
 }))
@@ -49,6 +57,8 @@ describe('PlanningScenarioPanel', () => {
         outcome: 'Created',
         branch,
       } satisfies CreateSpacePlanningScenarioBranchResponse)
+    vi.mocked(planningDatasetApi.list)
+      .mockResolvedValue({ items: [], isTruncated: false })
     vi.spyOn(ElMessage, 'success').mockImplementation(() => undefined as never)
   })
 
@@ -81,6 +91,32 @@ describe('PlanningScenarioPanel', () => {
         name: 'Automation option',
       },
     )
+  })
+
+  it('opens historical imports only for a ready isolated clone', async () => {
+    vi.mocked(planningScenarioApi.list).mockResolvedValue({
+      items: [
+        branch,
+        {
+          ...branch,
+          branchId: 'branch-pending',
+          branchStatus: 'Cloning',
+          cloneJobStatus: 'Running',
+        },
+      ],
+      isTruncated: false,
+    })
+    const wrapper = mountPanel()
+    await flushPromises()
+
+    const buttons = wrapper.findAll('[data-test="open-datasets"]')
+    expect(buttons).toHaveLength(1)
+    await buttons[0]!.trigger('click')
+    await flushPromises()
+
+    expect(wrapper.find('[data-test="historical-dataset-panel"]').exists())
+      .toBe(true)
+    expect(planningDatasetApi.list).toHaveBeenCalledWith('site-1', 'branch-1')
   })
 })
 
