@@ -35,16 +35,6 @@ export interface FloorWorkload {
   source: SpaceDataSource
 }
 
-export interface DeviceDto {
-  deviceId: string
-  type: string
-  status: number
-  locationCode: string | null
-  absX: number | null
-  absY: number | null
-  absZ: number | null
-}
-
 export interface SiteFloorVO { floorId: string; floorCode: string; level: number; height: number; z: number }
 export interface SitePickStopVO { seq: number; locationCode: string; qty: number; materialNo: string | null; floorId: string | null; absX: number | null; absY: number | null; absZ: number | null }
 export interface SiteAisleVO { floorId: string; aisleCode: string; centerline: string }

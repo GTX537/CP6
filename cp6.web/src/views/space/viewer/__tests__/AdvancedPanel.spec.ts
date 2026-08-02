@@ -57,6 +57,12 @@ describe('AdvancedPanel runtime task acceptance', () => {
         showOptimized: false,
         workloadOn: false,
         deviceOn: false,
+        deviceLoading: false,
+        deviceInfo: '',
+        personnelOn: false,
+        personnelLoading: false,
+        trajectoryLoading: false,
+        personnelInfo: '',
         taskSource: source,
         workloadSource: source,
         deviceSource: source,
@@ -84,6 +90,8 @@ describe('AdvancedPanel runtime task acceptance', () => {
     const common = {
       pathLoaded: false, pathLoading: false, pathInfo: '', compareInfo: '',
       optimizedStops: [], showOptimized: false, workloadOn: false, deviceOn: false,
+      deviceLoading: false, deviceInfo: '', personnelOn: false,
+      personnelLoading: false, trajectoryLoading: false, personnelInfo: '',
       taskSource: source, workloadSource: source, deviceSource: source,
     }
     const empty = mount(AdvancedPanel, {
@@ -117,5 +125,26 @@ describe('AdvancedPanel runtime task acceptance', () => {
     })
     expect(unavailable.text()).toContain('任务数据源不可用，不能判定任务是否存在')
     expect(unavailable.text()).not.toContain('可用数据源中没有找到该任务')
+  })
+
+  it('explains device position provenance and emits a bounded refresh', async () => {
+    const wrapper = mount(AdvancedPanel, {
+      props: {
+        pathLoaded: false, pathLoading: false, pathInfo: '', compareInfo: '',
+        taskPath: null, optimizedStops: [], showOptimized: false,
+        workloadOn: false, deviceOn: true, deviceLoading: false,
+        deviceInfo: '当前设备 2，来源 XYZ 1 / Published 锚点 1',
+        personnelOn: false, personnelLoading: false, trajectoryLoading: false,
+        personnelInfo: '', taskSource: source, workloadSource: source,
+        deviceSource: source,
+      },
+    })
+
+    expect(wrapper.text()).toContain('来源 XYZ 优先')
+    expect(wrapper.text()).toContain('Published 元素锚点')
+    const refresh = wrapper.findAll('button').find(button => button.text() === '刷新')
+    expect(refresh).toBeDefined()
+    await refresh!.trigger('click')
+    expect(wrapper.emitted('refresh-device')).toHaveLength(1)
   })
 })

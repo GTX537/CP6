@@ -54,6 +54,7 @@ public static class SpaceInfrastructureRegistration
         services.TryAddSingleton(new SpaceAiCapacityOptions());
         services.TryAddSingleton(new SpaceUnderlayCalibrationOptions());
         services.TryAddSingleton(new SpacePersonnelRuntimeOptions());
+        services.TryAddSingleton(new SpaceDeviceRuntimeOptions());
         services.TryAddSingleton<
             ISpaceModelingTemplateService,
             OpenXmlSpaceModelingTemplateService>();
@@ -167,6 +168,9 @@ public static class SpaceInfrastructureRegistration
         services.AddScoped<
             ISpaceDeviceEventService,
             SpaceDeviceEventService>();
+        services.AddScoped<
+            ISpaceDeviceRuntimeService,
+            SpaceDeviceRuntimeService>();
         services.AddScoped<
             ISpaceExternalPortalService,
             SpaceExternalPortalService>();

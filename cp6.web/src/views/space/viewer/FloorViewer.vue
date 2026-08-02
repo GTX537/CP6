@@ -69,6 +69,8 @@
         :show-optimized="showOptimized"
         :workload-on="workloadOn"
         :device-on="deviceOn"
+        :device-loading="deviceLoading"
+        :device-info="deviceInfo"
         :personnel-on="personnelOn"
         :personnel-loading="personnelLoading"
         :trajectory-loading="trajectoryLoading"
@@ -87,6 +89,7 @@
         @toggle-workload="onToggleWorkload"
         @apply-workload="onApplyWorkload"
         @toggle-device="onToggleDevice"
+        @refresh-device="onRefreshDevice"
         @toggle-personnel="onTogglePersonnel"
         @refresh-personnel="onRefreshPersonnel"
         @load-personnel-trajectory="onLoadPersonnelTrajectory"
@@ -119,6 +122,7 @@ import type {
   SpaceRuntimeInventoryLocateResponse,
   SpacePersonnelCurrent,
   SpacePersonnelTrajectoryPoint,
+  SpaceDeviceCurrent,
   SpaceRuntimeSource,
   SpaceRuntimeTaskItem,
   SpaceRuntimeTaskPathResponse,
@@ -142,7 +146,6 @@ import {
   planRuntimeTaskPath,
   type RuntimeTaskPathPlan,
 } from '@/space-viewer/advanced/runtimeTaskPath'
-import { advancedApi } from '@/api/space/advanced'
 import AdvancedPanel from './AdvancedPanel.vue'
 
 const { t } = useI18n()
@@ -162,6 +165,7 @@ let overlay: StockOverlay | null = null
 let hoverTimer = 0
 let locateRequestVersion = 0
 let taskPathRequestVersion = 0
+let deviceCurrentRequestVersion = 0
 let personnelCurrentRequestVersion = 0
 let personnelTrajectoryRequestVersion = 0
 let preserveTaskPathNavigation = false
@@ -211,6 +215,8 @@ const showOptimized = ref(false)
 const compareInfo = ref('')
 const workloadOn = ref(false)
 const deviceOn = ref(false)
+const deviceLoading = ref(false)
+const deviceInfo = ref('')
 const personnelOn = ref(false)
 const personnelLoading = ref(false)
 const trajectoryLoading = ref(false)
@@ -243,7 +249,11 @@ async function loadFloor(floorId: string): Promise<void> {
   showOptimized.value = false
   compareInfo.value = ''
   deviceLayer?.clear()
+  deviceCurrentRequestVersion++
   deviceOn.value = false
+  deviceLoading.value = false
+  deviceInfo.value = ''
+  deviceSource.value = unavailableSource('NOT_QUERIED')
   personnelCurrentRequestVersion++
   personnelTrajectoryRequestVersion++
   personnelLayer?.clear()
@@ -538,25 +548,74 @@ async function onApplyWorkload(win: { from: string; to: string }): Promise<void>
 }
 
 async function onToggleDevice(): Promise<void> {
-  if (!deviceLayer) return
   deviceOn.value = !deviceOn.value
-  if (deviceOn.value) {
-    try {
-      const env = await advancedApi.devices(currentFloorId.value)
-      deviceSource.value = env.data.source
-      if (!isUsableDataSource(deviceSource.value)) {
-        deviceOn.value = false
-        deviceLayer.clear()
-        ElMessage.warning(t('璁惧鏁版嵁婧愪笉鍙敤'))
-        return
-      }
-      deviceLayer.setDevices(env.data.items)
-      ElMessage.info(t('设备联动为演示示意（未接实时）'))   // I-SPACE-803
-    } catch {
-      ElMessage.warning(t('高级可视化数据获取失败'))
+  if (!deviceOn.value) {
+    deviceCurrentRequestVersion++
+    deviceLayer?.clear()
+    deviceLoading.value = false
+    deviceInfo.value = t('当前设备图层已关闭')
+    return
+  }
+  await onRefreshDevice()
+}
+
+async function onRefreshDevice(): Promise<void> {
+  if (!deviceLayer || !deviceOn.value || !currentFloorId.value) return
+  const requestVersion = ++deviceCurrentRequestVersion
+  deviceLoading.value = true
+  try {
+    const items: SpaceDeviceCurrent[] = []
+    let cursor: string | undefined
+    let pageCount = 0
+    let freshnessSeconds = 0
+    let observedAtUtc = ''
+    do {
+      const page = await spaceRuntimeApi.currentDevices(
+        siteId,
+        currentFloorId.value,
+        500,
+        cursor,
+      )
+      if (requestVersion !== deviceCurrentRequestVersion) return
+      freshnessSeconds = page.freshnessThresholdSeconds
+      observedAtUtc = page.asOfUtc
+      items.push(...page.items)
+      cursor = page.nextCursor ?? undefined
+      pageCount++
+    } while (cursor && pageCount < 10)
+
+    deviceLayer.setDevices(items, currentFloorId.value)
+    const simulated = items.filter(item => item.isSimulated).length
+    deviceSource.value = {
+      kind: items.length > 0 && simulated === items.length ? 'Simulated' : 'Real',
+      dataSourceId: 'SPACE_DEVICE_CURRENT',
+      observedAtUtc,
+      isSimulated: items.length > 0 && simulated === items.length,
+      isAvailable: true,
     }
-  } else {
+    const unplaced = items.length - deviceLayer.count
+    deviceInfo.value = t('当前设备 {total}，已显示 {placed}（来源 XYZ {runtime} / Published 锚点 {mapped}），活动告警 {alarms}，过期 {stale}，模拟 {simulated}，阈值 {seconds}s')
+      .replace('{total}', String(items.length))
+      .replace('{placed}', String(deviceLayer.count))
+      .replace('{runtime}', String(deviceLayer.runtimeCount))
+      .replace('{mapped}', String(deviceLayer.mappedAnchorCount))
+      .replace('{alarms}', String(deviceLayer.alarmCount))
+      .replace('{stale}', String(deviceLayer.staleCount))
+      .replace('{simulated}', String(simulated))
+      .replace('{seconds}', String(freshnessSeconds))
+    if (unplaced > 0) {
+      deviceInfo.value += ` · ${t('{count} 条既无来源 XYZ，也无当前 Published 映射锚点').replace('{count}', String(unplaced))}`
+    }
+    if (cursor) deviceInfo.value += ` · ${t('结果已达安全显示上限')}`
+  } catch {
+    if (requestVersion !== deviceCurrentRequestVersion) return
+    deviceOn.value = false
     deviceLayer.clear()
+    deviceSource.value = unavailableSource('DEVICE_QUERY_FAILED')
+    deviceInfo.value = t('设备当前态数据获取失败')
+    ElMessage.warning(deviceInfo.value)
+  } finally {
+    if (requestVersion === deviceCurrentRequestVersion) deviceLoading.value = false
   }
 }
 
@@ -734,6 +793,7 @@ onBeforeUnmount(() => {
   overlay = null
   pathAnimator?.clear(); pathAnimator = null
   heatmap?.dispose(); heatmap = null
+  deviceCurrentRequestVersion++
   deviceLayer?.clear(); deviceLayer = null
   personnelLayer?.clear(); personnelLayer = null
   viewer?.dispose()

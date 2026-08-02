@@ -201,6 +201,18 @@ export interface ISpaceDesignV1Client {
     ingestDeviceEvents(siteId: string, body: IngestSpaceDeviceEventsRequest): Promise<IngestSpaceDeviceEventsResponse>;
 
     /**
+     * @param sourceKind (optional)
+     * @param deviceKind (optional)
+     * @param operatingState (optional)
+     * @param floorLogicalId (optional)
+     * @param hasActiveAlarm (optional)
+     * @param limit (optional)
+     * @param cursor (optional)
+     * @return OK
+     */
+    getCurrentDevices(siteId: string, sourceKind: string | undefined, deviceKind: string | undefined, operatingState: string | undefined, floorLogicalId: string | undefined, hasActiveAlarm: boolean | undefined, limit: number | undefined, cursor: string | undefined): Promise<SpaceDeviceCurrentPageDto>;
+
+    /**
      * @return OK
      */
     getProfiles(): Promise<SpaceExcelMappingProfileDto[]>;
@@ -3420,6 +3432,130 @@ export class SpaceDesignV1Client implements ISpaceDesignV1Client {
             });
         }
         return Promise.resolve<IngestSpaceDeviceEventsResponse>(null as any);
+    }
+
+    /**
+     * @param sourceKind (optional)
+     * @param deviceKind (optional)
+     * @param operatingState (optional)
+     * @param floorLogicalId (optional)
+     * @param hasActiveAlarm (optional)
+     * @param limit (optional)
+     * @param cursor (optional)
+     * @return OK
+     */
+    getCurrentDevices(siteId: string, sourceKind: string | undefined, deviceKind: string | undefined, operatingState: string | undefined, floorLogicalId: string | undefined, hasActiveAlarm: boolean | undefined, limit: number | undefined, cursor: string | undefined): Promise<SpaceDeviceCurrentPageDto> {
+        let url_ = this.baseUrl + "/api/space/design/v1/sites/{siteId}/devices?";
+        if (siteId === undefined || siteId === null)
+            throw new globalThis.Error("The parameter 'siteId' must be defined.");
+        url_ = url_.replace("{siteId}", encodeURIComponent("" + siteId));
+        if (sourceKind === null)
+            throw new globalThis.Error("The parameter 'sourceKind' cannot be null.");
+        else if (sourceKind !== undefined)
+            url_ += "sourceKind=" + encodeURIComponent("" + sourceKind) + "&";
+        if (deviceKind === null)
+            throw new globalThis.Error("The parameter 'deviceKind' cannot be null.");
+        else if (deviceKind !== undefined)
+            url_ += "deviceKind=" + encodeURIComponent("" + deviceKind) + "&";
+        if (operatingState === null)
+            throw new globalThis.Error("The parameter 'operatingState' cannot be null.");
+        else if (operatingState !== undefined)
+            url_ += "operatingState=" + encodeURIComponent("" + operatingState) + "&";
+        if (floorLogicalId === null)
+            throw new globalThis.Error("The parameter 'floorLogicalId' cannot be null.");
+        else if (floorLogicalId !== undefined)
+            url_ += "floorLogicalId=" + encodeURIComponent("" + floorLogicalId) + "&";
+        if (hasActiveAlarm === null)
+            throw new globalThis.Error("The parameter 'hasActiveAlarm' cannot be null.");
+        else if (hasActiveAlarm !== undefined)
+            url_ += "hasActiveAlarm=" + encodeURIComponent("" + hasActiveAlarm) + "&";
+        if (limit === null)
+            throw new globalThis.Error("The parameter 'limit' cannot be null.");
+        else if (limit !== undefined)
+            url_ += "limit=" + encodeURIComponent("" + limit) + "&";
+        if (cursor === null)
+            throw new globalThis.Error("The parameter 'cursor' cannot be null.");
+        else if (cursor !== undefined)
+            url_ += "cursor=" + encodeURIComponent("" + cursor) + "&";
+        url_ = url_.replace(/[?&]$/, "");
+
+        let options_: RequestInit = {
+            method: "GET",
+            headers: {
+                "Accept": "application/json"
+            }
+        };
+
+        return this.http.fetch(url_, options_).then((_response: Response) => {
+            return this.processGetCurrentDevices(_response);
+        });
+    }
+
+    protected processGetCurrentDevices(response: Response): Promise<SpaceDeviceCurrentPageDto> {
+        const status = response.status;
+        let _headers: any = {}; if (response.headers && response.headers.forEach) { response.headers.forEach((v: any, k: any) => _headers[k] = v); };
+        if (status === 200) {
+            return response.text().then((_responseText) => {
+            let result200: any = null;
+            let resultData200 = _responseText === "" ? null : JSON.parse(_responseText, this.jsonParseReviver);
+            result200 = SpaceDeviceCurrentPageDto.fromJS(resultData200);
+            return result200;
+            });
+        } else if (status === 400) {
+            return response.text().then((_responseText) => {
+            let result400: any = null;
+            let resultData400 = _responseText === "" ? null : JSON.parse(_responseText, this.jsonParseReviver);
+            result400 = SpaceDesignProblemDetails.fromJS(resultData400);
+            return throwException("Bad Request", status, _responseText, _headers, result400);
+            });
+        } else if (status === 401) {
+            return response.text().then((_responseText) => {
+            let result401: any = null;
+            let resultData401 = _responseText === "" ? null : JSON.parse(_responseText, this.jsonParseReviver);
+            result401 = SpaceDesignProblemDetails.fromJS(resultData401);
+            return throwException("Unauthorized", status, _responseText, _headers, result401);
+            });
+        } else if (status === 403) {
+            return response.text().then((_responseText) => {
+            let result403: any = null;
+            let resultData403 = _responseText === "" ? null : JSON.parse(_responseText, this.jsonParseReviver);
+            result403 = SpaceDesignProblemDetails.fromJS(resultData403);
+            return throwException("Forbidden", status, _responseText, _headers, result403);
+            });
+        } else if (status === 404) {
+            return response.text().then((_responseText) => {
+            let result404: any = null;
+            let resultData404 = _responseText === "" ? null : JSON.parse(_responseText, this.jsonParseReviver);
+            result404 = SpaceDesignProblemDetails.fromJS(resultData404);
+            return throwException("Not Found", status, _responseText, _headers, result404);
+            });
+        } else if (status === 409) {
+            return response.text().then((_responseText) => {
+            let result409: any = null;
+            let resultData409 = _responseText === "" ? null : JSON.parse(_responseText, this.jsonParseReviver);
+            result409 = SpaceDesignProblemDetails.fromJS(resultData409);
+            return throwException("Conflict", status, _responseText, _headers, result409);
+            });
+        } else if (status === 422) {
+            return response.text().then((_responseText) => {
+            let result422: any = null;
+            let resultData422 = _responseText === "" ? null : JSON.parse(_responseText, this.jsonParseReviver);
+            result422 = SpaceDesignProblemDetails.fromJS(resultData422);
+            return throwException("Unprocessable Content", status, _responseText, _headers, result422);
+            });
+        } else if (status === 500) {
+            return response.text().then((_responseText) => {
+            let result500: any = null;
+            let resultData500 = _responseText === "" ? null : JSON.parse(_responseText, this.jsonParseReviver);
+            result500 = SpaceDesignProblemDetails.fromJS(resultData500);
+            return throwException("Internal Server Error", status, _responseText, _headers, result500);
+            });
+        } else if (status !== 200 && status !== 204) {
+            return response.text().then((_responseText) => {
+            return throwException("An unexpected server error occurred.", status, _responseText, _headers);
+            });
+        }
+        return Promise.resolve<SpaceDeviceCurrentPageDto>(null as any);
     }
 
     /**
@@ -7959,6 +8095,7 @@ export class IngestSpaceDeviceEventsResponse implements IIngestSpaceDeviceEvents
     receivedCount!: number;
     acceptedCount!: number;
     duplicateCount!: number;
+    staleCount!: number;
     receipts!: SpaceDeviceEventReceipt[];
 
     constructor(data?: IIngestSpaceDeviceEventsResponse) {
@@ -7983,6 +8120,7 @@ export class IngestSpaceDeviceEventsResponse implements IIngestSpaceDeviceEvents
             this.receivedCount = _data["receivedCount"];
             this.acceptedCount = _data["acceptedCount"];
             this.duplicateCount = _data["duplicateCount"];
+            this.staleCount = _data["staleCount"];
             if (Array.isArray(_data["receipts"])) {
                 this.receipts = [] as any;
                 for (let item of _data["receipts"])
@@ -8008,6 +8146,7 @@ export class IngestSpaceDeviceEventsResponse implements IIngestSpaceDeviceEvents
         data["receivedCount"] = this.receivedCount;
         data["acceptedCount"] = this.acceptedCount;
         data["duplicateCount"] = this.duplicateCount;
+        data["staleCount"] = this.staleCount;
         if (Array.isArray(this.receipts)) {
             data["receipts"] = [];
             for (let item of this.receipts)
@@ -8026,6 +8165,7 @@ export interface IIngestSpaceDeviceEventsResponse {
     receivedCount: number;
     acceptedCount: number;
     duplicateCount: number;
+    staleCount: number;
     receipts: SpaceDeviceEventReceipt[];
 }
 
@@ -9266,6 +9406,332 @@ export interface ISpaceDesignSceneDto {
     elementAttributes?: SpaceSceneElementAttributeDto[] | undefined;
 }
 
+export class SpaceDeviceActiveAlarmDto implements ISpaceDeviceActiveAlarmDto {
+    alarmExternalId!: string;
+    alarmCode!: string;
+    alarmSeverity!: string;
+    alarmMessage!: string | undefined;
+    occurredAtUtc!: Date;
+    receivedAtUtc!: Date;
+    eventId!: string;
+    sourceEventId!: string;
+    ageMilliseconds!: number | undefined;
+
+    constructor(data?: ISpaceDeviceActiveAlarmDto) {
+        if (data) {
+            for (var property in data) {
+                if (data.hasOwnProperty(property))
+                    (this as any)[property] = (data as any)[property];
+            }
+        }
+    }
+
+    init(_data?: any) {
+        if (_data) {
+            this.alarmExternalId = _data["alarmExternalId"];
+            this.alarmCode = _data["alarmCode"];
+            this.alarmSeverity = _data["alarmSeverity"];
+            this.alarmMessage = _data["alarmMessage"];
+            this.occurredAtUtc = _data["occurredAtUtc"] ? new Date(_data["occurredAtUtc"].toString()) : undefined as any;
+            this.receivedAtUtc = _data["receivedAtUtc"] ? new Date(_data["receivedAtUtc"].toString()) : undefined as any;
+            this.eventId = _data["eventId"];
+            this.sourceEventId = _data["sourceEventId"];
+            this.ageMilliseconds = _data["ageMilliseconds"];
+        }
+    }
+
+    static fromJS(data: any): SpaceDeviceActiveAlarmDto {
+        data = typeof data === 'object' ? data : {};
+        let result = new SpaceDeviceActiveAlarmDto();
+        result.init(data);
+        return result;
+    }
+
+    toJSON(data?: any) {
+        data = typeof data === 'object' ? data : {};
+        data["alarmExternalId"] = this.alarmExternalId;
+        data["alarmCode"] = this.alarmCode;
+        data["alarmSeverity"] = this.alarmSeverity;
+        data["alarmMessage"] = this.alarmMessage;
+        data["occurredAtUtc"] = this.occurredAtUtc ? this.occurredAtUtc.toISOString() : undefined as any;
+        data["receivedAtUtc"] = this.receivedAtUtc ? this.receivedAtUtc.toISOString() : undefined as any;
+        data["eventId"] = this.eventId;
+        data["sourceEventId"] = this.sourceEventId;
+        data["ageMilliseconds"] = this.ageMilliseconds;
+        return data;
+    }
+}
+
+export interface ISpaceDeviceActiveAlarmDto {
+    alarmExternalId: string;
+    alarmCode: string;
+    alarmSeverity: string;
+    alarmMessage: string | undefined;
+    occurredAtUtc: Date;
+    receivedAtUtc: Date;
+    eventId: string;
+    sourceEventId: string;
+    ageMilliseconds: number | undefined;
+}
+
+export class SpaceDeviceCurrentDto implements ISpaceDeviceCurrentDto {
+    mappingId!: string;
+    sourceId!: string;
+    sourceKind!: string;
+    deviceExternalId!: string;
+    deviceKind!: string;
+    elementLogicalId!: string;
+    elementType!: string;
+    mappingIsCurrent!: boolean;
+    mappedFloorLogicalId!: string | undefined;
+    mappedXMillimeters!: number | undefined;
+    mappedYMillimeters!: number | undefined;
+    mappedZMillimeters!: number | undefined;
+    operatingState!: string;
+    floorLogicalId!: string | undefined;
+    locationLogicalId!: string | undefined;
+    xMillimeters!: number | undefined;
+    yMillimeters!: number | undefined;
+    zMillimeters!: number | undefined;
+    accuracyMillimeters!: number | undefined;
+    positionOccurredAtUtc!: Date | undefined;
+    positionReceivedAtUtc!: Date | undefined;
+    positionEventId!: string | undefined;
+    positionSourceEventId!: string | undefined;
+    operatingStateOccurredAtUtc!: Date | undefined;
+    operatingStateReceivedAtUtc!: Date | undefined;
+    operatingStateEventId!: string | undefined;
+    operatingStateSourceEventId!: string | undefined;
+    positionAgeMilliseconds!: number | undefined;
+    operatingStateAgeMilliseconds!: number | undefined;
+    hasPosition!: boolean;
+    positionIsStale!: boolean;
+    operatingStateIsStale!: boolean;
+    isSimulated!: boolean;
+    hasActiveAlarm!: boolean;
+    activeAlarmCount!: number;
+    maximumActiveAlarmSeverity!: string | undefined;
+    activeAlarms!: SpaceDeviceActiveAlarmDto[];
+
+    constructor(data?: ISpaceDeviceCurrentDto) {
+        if (data) {
+            for (var property in data) {
+                if (data.hasOwnProperty(property))
+                    (this as any)[property] = (data as any)[property];
+            }
+        }
+        if (!data) {
+            this.activeAlarms = [];
+        }
+    }
+
+    init(_data?: any) {
+        if (_data) {
+            this.mappingId = _data["mappingId"];
+            this.sourceId = _data["sourceId"];
+            this.sourceKind = _data["sourceKind"];
+            this.deviceExternalId = _data["deviceExternalId"];
+            this.deviceKind = _data["deviceKind"];
+            this.elementLogicalId = _data["elementLogicalId"];
+            this.elementType = _data["elementType"];
+            this.mappingIsCurrent = _data["mappingIsCurrent"];
+            this.mappedFloorLogicalId = _data["mappedFloorLogicalId"];
+            this.mappedXMillimeters = _data["mappedXMillimeters"];
+            this.mappedYMillimeters = _data["mappedYMillimeters"];
+            this.mappedZMillimeters = _data["mappedZMillimeters"];
+            this.operatingState = _data["operatingState"];
+            this.floorLogicalId = _data["floorLogicalId"];
+            this.locationLogicalId = _data["locationLogicalId"];
+            this.xMillimeters = _data["xMillimeters"];
+            this.yMillimeters = _data["yMillimeters"];
+            this.zMillimeters = _data["zMillimeters"];
+            this.accuracyMillimeters = _data["accuracyMillimeters"];
+            this.positionOccurredAtUtc = _data["positionOccurredAtUtc"] ? new Date(_data["positionOccurredAtUtc"].toString()) : undefined as any;
+            this.positionReceivedAtUtc = _data["positionReceivedAtUtc"] ? new Date(_data["positionReceivedAtUtc"].toString()) : undefined as any;
+            this.positionEventId = _data["positionEventId"];
+            this.positionSourceEventId = _data["positionSourceEventId"];
+            this.operatingStateOccurredAtUtc = _data["operatingStateOccurredAtUtc"] ? new Date(_data["operatingStateOccurredAtUtc"].toString()) : undefined as any;
+            this.operatingStateReceivedAtUtc = _data["operatingStateReceivedAtUtc"] ? new Date(_data["operatingStateReceivedAtUtc"].toString()) : undefined as any;
+            this.operatingStateEventId = _data["operatingStateEventId"];
+            this.operatingStateSourceEventId = _data["operatingStateSourceEventId"];
+            this.positionAgeMilliseconds = _data["positionAgeMilliseconds"];
+            this.operatingStateAgeMilliseconds = _data["operatingStateAgeMilliseconds"];
+            this.hasPosition = _data["hasPosition"];
+            this.positionIsStale = _data["positionIsStale"];
+            this.operatingStateIsStale = _data["operatingStateIsStale"];
+            this.isSimulated = _data["isSimulated"];
+            this.hasActiveAlarm = _data["hasActiveAlarm"];
+            this.activeAlarmCount = _data["activeAlarmCount"];
+            this.maximumActiveAlarmSeverity = _data["maximumActiveAlarmSeverity"];
+            if (Array.isArray(_data["activeAlarms"])) {
+                this.activeAlarms = [] as any;
+                for (let item of _data["activeAlarms"])
+                    this.activeAlarms!.push(SpaceDeviceActiveAlarmDto.fromJS(item));
+            }
+        }
+    }
+
+    static fromJS(data: any): SpaceDeviceCurrentDto {
+        data = typeof data === 'object' ? data : {};
+        let result = new SpaceDeviceCurrentDto();
+        result.init(data);
+        return result;
+    }
+
+    toJSON(data?: any) {
+        data = typeof data === 'object' ? data : {};
+        data["mappingId"] = this.mappingId;
+        data["sourceId"] = this.sourceId;
+        data["sourceKind"] = this.sourceKind;
+        data["deviceExternalId"] = this.deviceExternalId;
+        data["deviceKind"] = this.deviceKind;
+        data["elementLogicalId"] = this.elementLogicalId;
+        data["elementType"] = this.elementType;
+        data["mappingIsCurrent"] = this.mappingIsCurrent;
+        data["mappedFloorLogicalId"] = this.mappedFloorLogicalId;
+        data["mappedXMillimeters"] = this.mappedXMillimeters;
+        data["mappedYMillimeters"] = this.mappedYMillimeters;
+        data["mappedZMillimeters"] = this.mappedZMillimeters;
+        data["operatingState"] = this.operatingState;
+        data["floorLogicalId"] = this.floorLogicalId;
+        data["locationLogicalId"] = this.locationLogicalId;
+        data["xMillimeters"] = this.xMillimeters;
+        data["yMillimeters"] = this.yMillimeters;
+        data["zMillimeters"] = this.zMillimeters;
+        data["accuracyMillimeters"] = this.accuracyMillimeters;
+        data["positionOccurredAtUtc"] = this.positionOccurredAtUtc ? this.positionOccurredAtUtc.toISOString() : undefined as any;
+        data["positionReceivedAtUtc"] = this.positionReceivedAtUtc ? this.positionReceivedAtUtc.toISOString() : undefined as any;
+        data["positionEventId"] = this.positionEventId;
+        data["positionSourceEventId"] = this.positionSourceEventId;
+        data["operatingStateOccurredAtUtc"] = this.operatingStateOccurredAtUtc ? this.operatingStateOccurredAtUtc.toISOString() : undefined as any;
+        data["operatingStateReceivedAtUtc"] = this.operatingStateReceivedAtUtc ? this.operatingStateReceivedAtUtc.toISOString() : undefined as any;
+        data["operatingStateEventId"] = this.operatingStateEventId;
+        data["operatingStateSourceEventId"] = this.operatingStateSourceEventId;
+        data["positionAgeMilliseconds"] = this.positionAgeMilliseconds;
+        data["operatingStateAgeMilliseconds"] = this.operatingStateAgeMilliseconds;
+        data["hasPosition"] = this.hasPosition;
+        data["positionIsStale"] = this.positionIsStale;
+        data["operatingStateIsStale"] = this.operatingStateIsStale;
+        data["isSimulated"] = this.isSimulated;
+        data["hasActiveAlarm"] = this.hasActiveAlarm;
+        data["activeAlarmCount"] = this.activeAlarmCount;
+        data["maximumActiveAlarmSeverity"] = this.maximumActiveAlarmSeverity;
+        if (Array.isArray(this.activeAlarms)) {
+            data["activeAlarms"] = [];
+            for (let item of this.activeAlarms)
+                data["activeAlarms"].push(item ? item.toJSON() : undefined as any);
+        }
+        return data;
+    }
+}
+
+export interface ISpaceDeviceCurrentDto {
+    mappingId: string;
+    sourceId: string;
+    sourceKind: string;
+    deviceExternalId: string;
+    deviceKind: string;
+    elementLogicalId: string;
+    elementType: string;
+    mappingIsCurrent: boolean;
+    mappedFloorLogicalId: string | undefined;
+    mappedXMillimeters: number | undefined;
+    mappedYMillimeters: number | undefined;
+    mappedZMillimeters: number | undefined;
+    operatingState: string;
+    floorLogicalId: string | undefined;
+    locationLogicalId: string | undefined;
+    xMillimeters: number | undefined;
+    yMillimeters: number | undefined;
+    zMillimeters: number | undefined;
+    accuracyMillimeters: number | undefined;
+    positionOccurredAtUtc: Date | undefined;
+    positionReceivedAtUtc: Date | undefined;
+    positionEventId: string | undefined;
+    positionSourceEventId: string | undefined;
+    operatingStateOccurredAtUtc: Date | undefined;
+    operatingStateReceivedAtUtc: Date | undefined;
+    operatingStateEventId: string | undefined;
+    operatingStateSourceEventId: string | undefined;
+    positionAgeMilliseconds: number | undefined;
+    operatingStateAgeMilliseconds: number | undefined;
+    hasPosition: boolean;
+    positionIsStale: boolean;
+    operatingStateIsStale: boolean;
+    isSimulated: boolean;
+    hasActiveAlarm: boolean;
+    activeAlarmCount: number;
+    maximumActiveAlarmSeverity: string | undefined;
+    activeAlarms: SpaceDeviceActiveAlarmDto[];
+}
+
+export class SpaceDeviceCurrentPageDto implements ISpaceDeviceCurrentPageDto {
+    siteId!: string;
+    publishedVersionId!: string;
+    asOfUtc!: Date;
+    freshnessThresholdSeconds!: number;
+    items!: SpaceDeviceCurrentDto[];
+    nextCursor!: string | undefined;
+
+    constructor(data?: ISpaceDeviceCurrentPageDto) {
+        if (data) {
+            for (var property in data) {
+                if (data.hasOwnProperty(property))
+                    (this as any)[property] = (data as any)[property];
+            }
+        }
+        if (!data) {
+            this.items = [];
+        }
+    }
+
+    init(_data?: any) {
+        if (_data) {
+            this.siteId = _data["siteId"];
+            this.publishedVersionId = _data["publishedVersionId"];
+            this.asOfUtc = _data["asOfUtc"] ? new Date(_data["asOfUtc"].toString()) : undefined as any;
+            this.freshnessThresholdSeconds = _data["freshnessThresholdSeconds"];
+            if (Array.isArray(_data["items"])) {
+                this.items = [] as any;
+                for (let item of _data["items"])
+                    this.items!.push(SpaceDeviceCurrentDto.fromJS(item));
+            }
+            this.nextCursor = _data["nextCursor"];
+        }
+    }
+
+    static fromJS(data: any): SpaceDeviceCurrentPageDto {
+        data = typeof data === 'object' ? data : {};
+        let result = new SpaceDeviceCurrentPageDto();
+        result.init(data);
+        return result;
+    }
+
+    toJSON(data?: any) {
+        data = typeof data === 'object' ? data : {};
+        data["siteId"] = this.siteId;
+        data["publishedVersionId"] = this.publishedVersionId;
+        data["asOfUtc"] = this.asOfUtc ? this.asOfUtc.toISOString() : undefined as any;
+        data["freshnessThresholdSeconds"] = this.freshnessThresholdSeconds;
+        if (Array.isArray(this.items)) {
+            data["items"] = [];
+            for (let item of this.items)
+                data["items"].push(item ? item.toJSON() : undefined as any);
+        }
+        data["nextCursor"] = this.nextCursor;
+        return data;
+    }
+}
+
+export interface ISpaceDeviceCurrentPageDto {
+    siteId: string;
+    publishedVersionId: string;
+    asOfUtc: Date;
+    freshnessThresholdSeconds: number;
+    items: SpaceDeviceCurrentDto[];
+    nextCursor: string | undefined;
+}
+
 export class SpaceDeviceEventInput implements ISpaceDeviceEventInput {
     sourceEventId!: string;
     deviceExternalId!: string;
@@ -9367,6 +9833,7 @@ export class SpaceDeviceEventReceipt implements ISpaceDeviceEventReceipt {
     sourceEventId!: string;
     deviceExternalId!: string;
     outcome!: string;
+    projectionApplied!: boolean;
 
     constructor(data?: ISpaceDeviceEventReceipt) {
         if (data) {
@@ -9383,6 +9850,7 @@ export class SpaceDeviceEventReceipt implements ISpaceDeviceEventReceipt {
             this.sourceEventId = _data["sourceEventId"];
             this.deviceExternalId = _data["deviceExternalId"];
             this.outcome = _data["outcome"];
+            this.projectionApplied = _data["projectionApplied"];
         }
     }
 
@@ -9399,6 +9867,7 @@ export class SpaceDeviceEventReceipt implements ISpaceDeviceEventReceipt {
         data["sourceEventId"] = this.sourceEventId;
         data["deviceExternalId"] = this.deviceExternalId;
         data["outcome"] = this.outcome;
+        data["projectionApplied"] = this.projectionApplied;
         return data;
     }
 }
@@ -9408,6 +9877,7 @@ export interface ISpaceDeviceEventReceipt {
     sourceEventId: string;
     deviceExternalId: string;
     outcome: string;
+    projectionApplied: boolean;
 }
 
 export class SpaceDeviceMappingDto implements ISpaceDeviceMappingDto {

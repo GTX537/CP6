@@ -71,6 +71,17 @@ describe('spaceRuntimeApi', () => {
     expect(params.get('cursor')).toBe('next-page')
   })
 
+  it('scopes current devices to the active floor and preserves cursor pagination', async () => {
+    await spaceRuntimeApi.currentDevices('site-1', 'floor-1', 500, 'next-page')
+
+    const [url, config] = vi.mocked(http.get).mock.calls[0]!
+    expect(url).toBe('/space/design/v1/sites/site-1/devices')
+    const params = config?.params as URLSearchParams
+    expect(params.get('floorLogicalId')).toBe('floor-1')
+    expect(params.get('limit')).toBe('500')
+    expect(params.get('cursor')).toBe('next-page')
+  })
+
   it('keeps business identities in query values and sends an explicit UTC trajectory window', async () => {
     await spaceRuntimeApi.personnelTrajectory(
       'site-1',

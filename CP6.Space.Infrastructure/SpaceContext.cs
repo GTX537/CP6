@@ -79,6 +79,10 @@ public sealed class SpaceContext : DbContext
         Set<SpaceDeviceMapping>();
     public DbSet<SpaceDeviceEvent> DeviceEvents =>
         Set<SpaceDeviceEvent>();
+    public DbSet<SpaceDeviceCurrentState> DeviceStates =>
+        Set<SpaceDeviceCurrentState>();
+    public DbSet<SpaceDeviceAlarmState> DeviceAlarmStates =>
+        Set<SpaceDeviceAlarmState>();
     public DbSet<SpaceExternalOrganization> ExternalOrganizations =>
         Set<SpaceExternalOrganization>();
     public DbSet<SpaceExternalMembership> ExternalMemberships =>
@@ -124,6 +128,8 @@ public sealed class SpaceContext : DbContext
         ConfigurePersonnelState(modelBuilder);
         ConfigureDeviceMapping(modelBuilder);
         ConfigureDeviceEvent(modelBuilder);
+        ConfigureDeviceState(modelBuilder);
+        ConfigureDeviceAlarmState(modelBuilder);
         ConfigureExternalOrganization(modelBuilder);
         ConfigureExternalMembership(modelBuilder);
         ConfigureExternalGrant(modelBuilder);
@@ -1157,6 +1163,165 @@ public sealed class SpaceContext : DbContext
             .OnDelete(DeleteBehavior.Restrict)
             .HasConstraintName(
                 "FK_Space_DeviceEvent_Mapping_Tenant");
+        entity.HasQueryFilter(
+            x => x.TenantId == CurrentTenantId && !x.IsDeleted);
+    }
+
+    private void ConfigureDeviceState(ModelBuilder modelBuilder)
+    {
+        var entity = modelBuilder.Entity<SpaceDeviceCurrentState>();
+        entity.ToTable(
+            "Space_DeviceState",
+            table =>
+            {
+                table.HasCheckConstraint(
+                    "CK_Space_DeviceState_SourceKind",
+                    "[SourceKind] IN (0, 1)");
+                table.HasCheckConstraint(
+                    "CK_Space_DeviceState_OperatingState",
+                    "[OperatingState] BETWEEN 0 AND 6");
+                table.HasCheckConstraint(
+                    "CK_Space_DeviceState_CoordinateTriple",
+                    "([XMillimeters] IS NULL AND [YMillimeters] IS NULL AND [ZMillimeters] IS NULL) OR " +
+                    "([XMillimeters] IS NOT NULL AND [YMillimeters] IS NOT NULL AND [ZMillimeters] IS NOT NULL)");
+                table.HasCheckConstraint(
+                    "CK_Space_DeviceState_Accuracy",
+                    "[AccuracyMillimeters] IS NULL OR " +
+                    "([AccuracyMillimeters] >= 0 AND [XMillimeters] IS NOT NULL)");
+            });
+        entity.HasKey(x => x.Id);
+        entity.Property(x => x.Id).ValueGeneratedNever();
+        entity.HasAlternateKey(x => new { x.TenantId, x.Id })
+            .HasName("AK_Space_DeviceState_TenantId_Id");
+        ConfigureTenantEntity(entity);
+
+        entity.Property(x => x.SourceId).HasMaxLength(100).IsRequired();
+        entity.Property(x => x.SourceKind)
+            .HasConversion<short>()
+            .HasColumnType("smallint");
+        entity.Property(x => x.DeviceExternalId)
+            .HasMaxLength(200)
+            .IsRequired();
+        entity.Property(x => x.XMillimeters).HasColumnType("decimal(18,3)");
+        entity.Property(x => x.YMillimeters).HasColumnType("decimal(18,3)");
+        entity.Property(x => x.ZMillimeters).HasColumnType("decimal(18,3)");
+        entity.Property(x => x.AccuracyMillimeters)
+            .HasColumnType("decimal(18,3)");
+        entity.Property(x => x.PositionOccurredAtUtc).HasColumnType("datetime2");
+        entity.Property(x => x.PositionReceivedAtUtc).HasColumnType("datetime2");
+        entity.Property(x => x.PositionSourceEventId).HasMaxLength(200);
+        entity.Property(x => x.OperatingState)
+            .HasConversion<short>()
+            .HasColumnType("smallint");
+        entity.Property(x => x.OperatingStateOccurredAtUtc)
+            .HasColumnType("datetime2");
+        entity.Property(x => x.OperatingStateReceivedAtUtc)
+            .HasColumnType("datetime2");
+        entity.Property(x => x.OperatingStateSourceEventId).HasMaxLength(200);
+        entity.Property(x => x.RowVersion).IsRowVersion();
+
+        entity.HasIndex(x => new
+        {
+            x.TenantId,
+            x.SiteId,
+            x.SourceId,
+            x.DeviceExternalId,
+        })
+            .IsUnique()
+            .HasDatabaseName(
+                "UX_Space_DeviceState_Tenant_Site_Source_Device");
+        entity.HasIndex(x => new
+        {
+            x.TenantId,
+            x.SiteId,
+            x.OperatingState,
+            x.OperatingStateOccurredAtUtc,
+        })
+            .HasDatabaseName(
+                "IX_Space_DeviceState_Tenant_Site_State_Time");
+        entity.HasOne<SpaceDeviceMapping>()
+            .WithMany()
+            .HasForeignKey(x => new { x.TenantId, x.DeviceMappingId })
+            .HasPrincipalKey(x => new { x.TenantId, x.Id })
+            .OnDelete(DeleteBehavior.Restrict)
+            .HasConstraintName("FK_Space_DeviceState_Mapping_Tenant");
+        entity.HasQueryFilter(
+            x => x.TenantId == CurrentTenantId && !x.IsDeleted);
+    }
+
+    private void ConfigureDeviceAlarmState(ModelBuilder modelBuilder)
+    {
+        var entity = modelBuilder.Entity<SpaceDeviceAlarmState>();
+        entity.ToTable(
+            "Space_DeviceAlarmState",
+            table =>
+            {
+                table.HasCheckConstraint(
+                    "CK_Space_DeviceAlarmState_SourceKind",
+                    "[SourceKind] IN (0, 1)");
+                table.HasCheckConstraint(
+                    "CK_Space_DeviceAlarmState_Severity",
+                    "[AlarmSeverity] IS NULL OR [AlarmSeverity] BETWEEN 0 AND 2");
+                table.HasCheckConstraint(
+                    "CK_Space_DeviceAlarmState_SourceSequence",
+                    "[SourceSequence] IS NULL OR [SourceSequence] >= 0");
+                table.HasCheckConstraint(
+                    "CK_Space_DeviceAlarmState_ActiveShape",
+                    "[IsActive] = 0 OR ([AlarmCode] IS NOT NULL AND [AlarmSeverity] IS NOT NULL)");
+            });
+        entity.HasKey(x => x.Id);
+        entity.Property(x => x.Id).ValueGeneratedNever();
+        entity.HasAlternateKey(x => new { x.TenantId, x.Id })
+            .HasName("AK_Space_DeviceAlarmState_TenantId_Id");
+        ConfigureTenantEntity(entity);
+
+        entity.Property(x => x.SourceId).HasMaxLength(100).IsRequired();
+        entity.Property(x => x.SourceKind)
+            .HasConversion<short>()
+            .HasColumnType("smallint");
+        entity.Property(x => x.DeviceExternalId)
+            .HasMaxLength(200)
+            .IsRequired();
+        entity.Property(x => x.AlarmExternalId)
+            .HasMaxLength(200)
+            .IsRequired();
+        entity.Property(x => x.AlarmCode).HasMaxLength(100);
+        entity.Property(x => x.AlarmSeverity)
+            .HasConversion<short?>()
+            .HasColumnType("smallint");
+        entity.Property(x => x.AlarmMessage).HasMaxLength(500);
+        entity.Property(x => x.OccurredAtUtc).HasColumnType("datetime2");
+        entity.Property(x => x.ReceivedAtUtc).HasColumnType("datetime2");
+        entity.Property(x => x.SourceEventId).HasMaxLength(200).IsRequired();
+        entity.Property(x => x.RowVersion).IsRowVersion();
+
+        entity.HasIndex(x => new
+        {
+            x.TenantId,
+            x.SiteId,
+            x.SourceId,
+            x.DeviceExternalId,
+            x.AlarmExternalId,
+        })
+            .IsUnique()
+            .HasDatabaseName(
+                "UX_Space_DeviceAlarmState_Tenant_Site_Source_Device_Alarm");
+        entity.HasIndex(x => new
+        {
+            x.TenantId,
+            x.SiteId,
+            x.IsActive,
+            x.AlarmSeverity,
+            x.OccurredAtUtc,
+        })
+            .HasDatabaseName(
+                "IX_Space_DeviceAlarmState_Tenant_Site_Active_Severity_Time");
+        entity.HasOne<SpaceDeviceMapping>()
+            .WithMany()
+            .HasForeignKey(x => new { x.TenantId, x.DeviceMappingId })
+            .HasPrincipalKey(x => new { x.TenantId, x.Id })
+            .OnDelete(DeleteBehavior.Restrict)
+            .HasConstraintName("FK_Space_DeviceAlarmState_Mapping_Tenant");
         entity.HasQueryFilter(
             x => x.TenantId == CurrentTenantId && !x.IsDeleted);
     }
@@ -3189,6 +3354,54 @@ public sealed class SpaceContext : DbContext
             {
                 throw new InvalidOperationException(
                     "Device mapping source identity cannot be reassigned or deleted.");
+            }
+        }
+
+        var immutableStateProperties = new HashSet<string>(StringComparer.Ordinal)
+        {
+            nameof(SpaceDeviceCurrentState.TenantId),
+            nameof(SpaceDeviceCurrentState.SiteId),
+            nameof(SpaceDeviceCurrentState.SourceId),
+            nameof(SpaceDeviceCurrentState.SourceKind),
+            nameof(SpaceDeviceCurrentState.DeviceExternalId),
+            nameof(SpaceDeviceCurrentState.DeviceMappingId),
+            nameof(SpaceDeviceCurrentState.IsDeleted),
+        };
+        foreach (var entry in ChangeTracker
+                     .Entries<SpaceDeviceCurrentState>())
+        {
+            if (entry.State == EntityState.Deleted ||
+                entry.State == EntityState.Modified &&
+                entry.Properties.Any(property =>
+                    property.IsModified &&
+                    immutableStateProperties.Contains(property.Metadata.Name)))
+            {
+                throw new InvalidOperationException(
+                    "Device current-state identity cannot be reassigned or deleted.");
+            }
+        }
+
+        var immutableAlarmProperties = new HashSet<string>(StringComparer.Ordinal)
+        {
+            nameof(SpaceDeviceAlarmState.TenantId),
+            nameof(SpaceDeviceAlarmState.SiteId),
+            nameof(SpaceDeviceAlarmState.SourceId),
+            nameof(SpaceDeviceAlarmState.SourceKind),
+            nameof(SpaceDeviceAlarmState.DeviceExternalId),
+            nameof(SpaceDeviceAlarmState.DeviceMappingId),
+            nameof(SpaceDeviceAlarmState.AlarmExternalId),
+            nameof(SpaceDeviceAlarmState.IsDeleted),
+        };
+        foreach (var entry in ChangeTracker.Entries<SpaceDeviceAlarmState>())
+        {
+            if (entry.State == EntityState.Deleted ||
+                entry.State == EntityState.Modified &&
+                entry.Properties.Any(property =>
+                    property.IsModified &&
+                    immutableAlarmProperties.Contains(property.Metadata.Name)))
+            {
+                throw new InvalidOperationException(
+                    "Device alarm-state identity cannot be reassigned or deleted.");
             }
         }
     }

@@ -28,6 +28,7 @@ public sealed class SpaceDesignV1OpenApiTests
         {
             "/api/space/design/v1/sites/{siteId}/model",
             "/api/space/design/v1/sites/{siteId}/device-events",
+            "/api/space/design/v1/sites/{siteId}/devices",
             "/api/space/design/v1/sites/{siteId}/device-mappings",
             "/api/space/design/v1/sites/{siteId}/device-mappings/{mappingId}",
             "/api/space/design/v1/sites/{siteId}/personnel-events",
@@ -92,8 +93,8 @@ public sealed class SpaceDesignV1OpenApiTests
             .Select(operation =>
                 operation.Value.GetProperty("operationId").GetString())
             .ToArray();
-        Assert.Equal(66, operationIds.Length);
-        Assert.Equal(66, operationIds.Distinct().Count());
+        Assert.Equal(67, operationIds.Length);
+        Assert.Equal(67, operationIds.Distinct().Count());
         Assert.Contains("GetPolicy", operationIds);
         Assert.Contains("UpdatePolicy", operationIds);
         Assert.Contains("GetUsage", operationIds);
@@ -340,6 +341,9 @@ public sealed class SpaceDesignV1OpenApiTests
         var ingest = paths.GetProperty(
                 "/api/space/design/v1/sites/{siteId}/device-events")
             .GetProperty("post");
+        var current = paths.GetProperty(
+                "/api/space/design/v1/sites/{siteId}/devices")
+            .GetProperty("get");
 
         Assert.Equal(
             "GetDeviceMappings",
@@ -353,6 +357,9 @@ public sealed class SpaceDesignV1OpenApiTests
         Assert.Equal(
             "IngestDeviceEvents",
             ingest.GetProperty("operationId").GetString());
+        Assert.Equal(
+            "GetCurrentDevices",
+            current.GetProperty("operationId").GetString());
         Assert.True(ingest.GetProperty("responses").TryGetProperty("202", out _));
         Assert.DoesNotContain(
             ingest.GetProperty("parameters").EnumerateArray(),
@@ -392,6 +399,25 @@ public sealed class SpaceDesignV1OpenApiTests
         Assert.DoesNotContain(properties, value =>
             value.Contains("inferred", StringComparison.OrdinalIgnoreCase) ||
             value.Contains("estimated", StringComparison.OrdinalIgnoreCase));
+
+        var currentProperties = Schema(
+                schemas,
+                "CP6.Space.Contracts.SpaceDeviceCurrentDto")
+            .GetProperty("properties")
+            .EnumerateObject()
+            .Select(value => value.Name)
+            .ToArray();
+        Assert.Contains("mappingIsCurrent", currentProperties);
+        Assert.Contains("mappedXMillimeters", currentProperties);
+        Assert.Contains("positionSourceEventId", currentProperties);
+        Assert.Contains("operatingStateSourceEventId", currentProperties);
+        Assert.Contains("positionIsStale", currentProperties);
+        Assert.Contains("isSimulated", currentProperties);
+        Assert.Contains("activeAlarms", currentProperties);
+        Assert.DoesNotContain(currentProperties, value =>
+            value.Contains("credential", StringComparison.OrdinalIgnoreCase) ||
+            value.Contains("command", StringComparison.OrdinalIgnoreCase) ||
+            value.Contains("acknowledge", StringComparison.OrdinalIgnoreCase));
     }
 
     [Fact]

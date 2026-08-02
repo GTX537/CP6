@@ -67,10 +67,12 @@ public sealed record IngestSpaceDeviceEventsResponse(
     int ReceivedCount,
     int AcceptedCount,
     int DuplicateCount,
+    int StaleCount,
     IReadOnlyList<SpaceDeviceEventReceipt> Receipts);
 
 public sealed record SpaceDeviceEventReceipt(
     Guid EventId,
     string SourceEventId,
     string DeviceExternalId,
-    string Outcome);
+    string Outcome,
+    bool ProjectionApplied);
