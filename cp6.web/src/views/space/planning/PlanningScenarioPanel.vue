@@ -102,6 +102,11 @@
       v-else-if="!loading"
       :text="tr('space.planningScenario.empty', '尚未创建规划场景。')"
     />
+    <PlanningComparisonPanel
+      v-if="branches.length"
+      :site-id="siteId"
+      :branches="branches"
+    />
     <PlanningHistoricalDatasetPanel
       v-if="selectedBranch"
       :site-id="siteId"
@@ -120,6 +125,7 @@ import { planningScenarioApi } from '@/api/space/planningScenario'
 import { useTOr } from '@/i18n/tOr'
 import type { SpacePlanningScenarioBranch } from '@/api/space/planningScenario'
 import PlanningHistoricalDatasetPanel from './PlanningHistoricalDatasetPanel.vue'
+import PlanningComparisonPanel from './PlanningComparisonPanel.vue'
 
 const props = defineProps<{
   siteId: string

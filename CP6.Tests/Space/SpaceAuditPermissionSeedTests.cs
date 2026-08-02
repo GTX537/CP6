@@ -122,6 +122,10 @@ public sealed class SpaceAuditPermissionSeedTests
                     "planning:dataset:create",
                     "planning:simulation:read",
                     "planning:simulation:create",
+                    "planning:comparison:read",
+                    "planning:comparison:create",
+                    "planning:decision:read",
+                    "planning:decision:create",
                 },
                 action =>
                 {
@@ -580,6 +584,27 @@ public sealed class SpaceAuditPermissionSeedTests
         {
             Assert.StartsWith(
                 "space.planningSimulation.",
+                row.LangKey,
+                StringComparison.Ordinal);
+            Assert.False(string.IsNullOrWhiteSpace(row.ZhCN));
+            Assert.False(string.IsNullOrWhiteSpace(row.ZhTW));
+            Assert.False(string.IsNullOrWhiteSpace(row.En));
+            Assert.False(string.IsNullOrWhiteSpace(row.Ja));
+            Assert.False(string.IsNullOrWhiteSpace(row.Ko));
+        });
+    }
+
+    [Fact]
+    public void Planning_comparison_screen_has_complete_five_language_text()
+    {
+        var rows = I18nSpacePlanningComparisonSeed.Items;
+
+        Assert.Equal(47, rows.Length);
+        Assert.Equal(rows.Length, rows.Select(row => row.LangKey).Distinct().Count());
+        Assert.All(rows, row =>
+        {
+            Assert.StartsWith(
+                "space.planningComparison.",
                 row.LangKey,
                 StringComparison.Ordinal);
             Assert.False(string.IsNullOrWhiteSpace(row.ZhCN));

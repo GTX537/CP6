@@ -1,6 +1,10 @@
 import { beforeEach, describe, expect, it, vi } from 'vitest'
 import http from '@/api/http'
-import { planningScenarioApi, planningSimulationApi } from '../planningScenario'
+import {
+  planningComparisonApi,
+  planningScenarioApi,
+  planningSimulationApi,
+} from '../planningScenario'
 
 vi.mock('@/api/http', () => ({
   default: {
@@ -76,5 +80,66 @@ describe('planningScenarioApi', () => {
     )
     expect(http.get).toHaveBeenNthCalledWith(2, `${root}/run%2F1`)
     expect(http.put).toHaveBeenCalledWith(`${root}/run%2F1`, request)
+  })
+
+  it('uses site-scoped comparison and append-only decision identities', async () => {
+    const comparisonRequest = {
+      name: 'Peak options',
+      baselineRunId: 'run-1',
+      runIds: ['run-1', 'run-2'],
+      minimumDistanceCoveragePercent: 95,
+      maximumPeakCapacityUtilizationPercent: 100,
+      maximumCongestionTaskHours: 1,
+      maximumTotalCost: 10_000,
+    }
+    const decisionRequest = {
+      outcome: 'Selected' as const,
+      selectedRunId: 'run-2',
+      rationale: 'Lower congestion within accepted cost.',
+      supersedesDecisionId: 'decision-0',
+    }
+    const root = '/space/planning/v1/sites/site%2F1/comparisons'
+
+    await planningComparisonApi.list('site/1', 25)
+    await planningComparisonApi.get('site/1', 'comparison/1')
+    await planningComparisonApi.create(
+      'site/1',
+      'comparison/1',
+      comparisonRequest,
+    )
+    await planningComparisonApi.listDecisions('site/1', 'comparison/1', 20)
+    await planningComparisonApi.getDecision(
+      'site/1',
+      'comparison/1',
+      'decision/1',
+    )
+    await planningComparisonApi.createDecision(
+      'site/1',
+      'comparison/1',
+      'decision/1',
+      decisionRequest,
+    )
+
+    expect(http.get).toHaveBeenNthCalledWith(1, root, { params: { limit: 25 } })
+    expect(http.get).toHaveBeenNthCalledWith(2, `${root}/comparison%2F1`)
+    expect(http.put).toHaveBeenNthCalledWith(
+      1,
+      `${root}/comparison%2F1`,
+      comparisonRequest,
+    )
+    expect(http.get).toHaveBeenNthCalledWith(
+      3,
+      `${root}/comparison%2F1/decisions`,
+      { params: { limit: 20 } },
+    )
+    expect(http.get).toHaveBeenNthCalledWith(
+      4,
+      `${root}/comparison%2F1/decisions/decision%2F1`,
+    )
+    expect(http.put).toHaveBeenNthCalledWith(
+      2,
+      `${root}/comparison%2F1/decisions/decision%2F1`,
+      decisionRequest,
+    )
   })
 })

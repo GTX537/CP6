@@ -127,6 +127,9 @@ public static class SpaceInfrastructureRegistration
         services.AddScoped<
             ISpacePlanningSimulationService,
             SpacePlanningSimulationService>();
+        services.AddScoped<
+            ISpacePlanningComparisonService,
+            SpacePlanningComparisonService>();
         services.AddScoped<SpaceSourceCoordinator>();
         services.AddScoped<ISpaceDesignV1Service, SpaceDesignV1Service>();
         services.AddScoped<ISpaceExcelMappingService, SpaceExcelMappingService>();

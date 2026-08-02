@@ -120,6 +120,14 @@ public sealed class SpaceContext : DbContext
     public DbSet<SpacePlanningSimulationLocationResult>
         PlanningSimulationLocationResults =>
             Set<SpacePlanningSimulationLocationResult>();
+    public DbSet<SpacePlanningComparison> PlanningComparisons =>
+        Set<SpacePlanningComparison>();
+    public DbSet<SpacePlanningComparisonEntry> PlanningComparisonEntries =>
+        Set<SpacePlanningComparisonEntry>();
+    public DbSet<SpacePlanningComparisonRisk> PlanningComparisonRisks =>
+        Set<SpacePlanningComparisonRisk>();
+    public DbSet<SpacePlanningDecisionRecord> PlanningDecisionRecords =>
+        Set<SpacePlanningDecisionRecord>();
 
     protected override void OnModelCreating(ModelBuilder modelBuilder)
     {
@@ -163,6 +171,10 @@ public sealed class SpaceContext : DbContext
         ConfigurePlanningHistoricalTask(modelBuilder);
         ConfigurePlanningSimulationRun(modelBuilder);
         ConfigurePlanningSimulationLocationResult(modelBuilder);
+        ConfigurePlanningComparison(modelBuilder);
+        ConfigurePlanningComparisonEntry(modelBuilder);
+        ConfigurePlanningComparisonRisk(modelBuilder);
+        ConfigurePlanningDecisionRecord(modelBuilder);
         ConfigureFile(modelBuilder);
         ConfigureSource(modelBuilder);
         ConfigureJob(modelBuilder);
@@ -3819,6 +3831,17 @@ public sealed class SpaceContext : DbContext
         ConfigureTenantEntity(entity);
         entity.HasAlternateKey(x => new { x.TenantId, x.Id })
             .HasName("AK_Space_PlanningSimulationRun_Tenant_Id");
+        entity.HasAlternateKey(x => new { x.TenantId, x.Id, x.SiteId })
+            .HasName("AK_Space_PlanningSimulationRun_Tenant_Id_Site");
+        entity.HasAlternateKey(x => new
+            {
+                x.TenantId,
+                x.Id,
+                x.BranchId,
+                x.ScenarioVersionId,
+            })
+            .HasName(
+                "AK_Space_PlanningSimulationRun_Tenant_Id_Branch_Version");
         entity.HasAlternateKey(x => new
             {
                 x.TenantId,
@@ -4026,6 +4049,392 @@ public sealed class SpaceContext : DbContext
             x => x.TenantId == CurrentTenantId && !x.IsDeleted);
     }
 
+    private void ConfigurePlanningComparison(ModelBuilder modelBuilder)
+    {
+        var entity = modelBuilder.Entity<SpacePlanningComparison>();
+        entity.ToTable(
+            "Space_PlanningComparison",
+            table => table.HasCheckConstraint(
+                "CK_Space_PlanningComparison_Invariants",
+                "[RunCount] BETWEEN 2 AND 10 AND " +
+                "[HistoricalFromUtc] < [HistoricalToUtc] AND " +
+                "[MinimumDistanceCoveragePercent] BETWEEN 0 AND 100 AND " +
+                "[MaximumPeakCapacityUtilizationPercent] >= 0 AND " +
+                "[MaximumCongestionTaskHours] >= 0 AND " +
+                "([MaximumTotalCost] IS NULL OR [MaximumTotalCost] >= 0) AND " +
+                "LEN([RequestHash]) = 64 AND " +
+                "[RequestHash] NOT LIKE '%[^0-9a-f]%' AND " +
+                "LEN([ComparisonHash]) = 64 AND " +
+                "[ComparisonHash] NOT LIKE '%[^0-9a-f]%' AND " +
+                "LEN([SourceDatasetHash]) = 64 AND " +
+                "[SourceDatasetHash] NOT LIKE '%[^0-9a-f]%' AND " +
+                "LEN([CurrencyCode]) = 3 AND " +
+                "[CurrencyCode] NOT LIKE '%[^A-Z]%' AND [IsDeleted] = 0"));
+        entity.HasKey(x => x.Id);
+        entity.Property(x => x.Id).ValueGeneratedNever();
+        ConfigureTenantEntity(entity);
+        entity.HasAlternateKey(x => new { x.TenantId, x.Id, x.SiteId })
+            .HasName("AK_Space_PlanningComparison_Tenant_Id_Site");
+        entity.Property(x => x.Name).HasMaxLength(200).IsRequired();
+        entity.Property(x => x.DefinitionVersion)
+            .HasMaxLength(100)
+            .IsUnicode(false)
+            .IsRequired();
+        foreach (var property in new[]
+                 {
+                     nameof(SpacePlanningComparison.RequestHash),
+                     nameof(SpacePlanningComparison.ComparisonHash),
+                     nameof(SpacePlanningComparison.SourceDatasetHash),
+                 })
+        {
+            entity.Property(property)
+                .HasColumnType("char(64)")
+                .IsUnicode(false)
+                .IsFixedLength()
+                .HasMaxLength(64)
+                .IsRequired();
+        }
+        entity.Property(x => x.CurrencyCode)
+            .HasColumnType("char(3)")
+            .IsUnicode(false)
+            .IsFixedLength()
+            .HasMaxLength(3)
+            .IsRequired();
+        entity.Property(x => x.HistoricalFromUtc)
+            .HasColumnType("datetimeoffset(7)");
+        entity.Property(x => x.HistoricalToUtc)
+            .HasColumnType("datetimeoffset(7)");
+        entity.Property(x => x.MinimumDistanceCoveragePercent)
+            .HasPrecision(9, 4);
+        entity.Property(x => x.MaximumPeakCapacityUtilizationPercent)
+            .HasPrecision(38, 4);
+        entity.Property(x => x.MaximumCongestionTaskHours)
+            .HasPrecision(28, 6);
+        entity.Property(x => x.MaximumTotalCost).HasPrecision(28, 6);
+        entity.HasIndex(x => new
+            {
+                x.TenantId,
+                x.SiteId,
+                x.CreatedAtUtc,
+            })
+            .HasDatabaseName("IX_Space_PlanningComparison_Site_Created");
+        entity.HasOne<SpaceModel>()
+            .WithMany()
+            .HasForeignKey(x => new { x.TenantId, x.ModelId })
+            .HasPrincipalKey(x => new { x.TenantId, x.Id })
+            .OnDelete(DeleteBehavior.Restrict)
+            .HasConstraintName("FK_Space_PlanningComparison_Model_Tenant");
+        entity.HasOne<SpaceModelVersion>()
+            .WithMany()
+            .HasForeignKey(x => new
+            {
+                x.TenantId,
+                x.ModelId,
+                x.BasePublishedVersionId,
+            })
+            .HasPrincipalKey(x => new
+            {
+                x.TenantId,
+                x.ModelId,
+                x.Id,
+            })
+            .OnDelete(DeleteBehavior.Restrict)
+            .HasConstraintName(
+                "FK_Space_PlanningComparison_BaseVersion_Tenant");
+        entity.HasOne<SpacePlanningSimulationRun>()
+            .WithMany()
+            .HasForeignKey(x => new
+            {
+                x.TenantId,
+                x.BaselineRunId,
+                x.SiteId,
+            })
+            .HasPrincipalKey(x => new { x.TenantId, x.Id, x.SiteId })
+            .OnDelete(DeleteBehavior.Restrict)
+            .HasConstraintName(
+                "FK_Space_PlanningComparison_BaselineRun_Tenant");
+        entity.HasQueryFilter(
+            x => x.TenantId == CurrentTenantId && !x.IsDeleted);
+    }
+
+    private void ConfigurePlanningComparisonEntry(ModelBuilder modelBuilder)
+    {
+        var entity = modelBuilder.Entity<SpacePlanningComparisonEntry>();
+        entity.ToTable(
+            "Space_PlanningComparisonEntry",
+            table => table.HasCheckConstraint(
+                "CK_Space_PlanningComparisonEntry_Invariants",
+                "[SequenceNo] BETWEEN 1 AND 10 AND " +
+                "[ScenarioContentRevision] >= 0 AND " +
+                "[DistanceCoveragePercent] BETWEEN 0 AND 100 AND " +
+                "[TotalDistanceMeters] >= 0 AND " +
+                "[CongestionTaskSeconds] >= 0 AND " +
+                "[OverloadedLocationCount] >= 0 AND " +
+                "[PeakCapacityUtilizationPercent] >= 0 AND " +
+                "[AverageCompletedTasksPerHour] >= 0 AND " +
+                "[PeakCompletedTasksPerHour] >= 0 AND " +
+                "[TotalCost] >= 0 AND [RiskCount] BETWEEN 0 AND 10 AND " +
+                "LEN([RunResultHash]) = 64 AND " +
+                "[RunResultHash] NOT LIKE '%[^0-9a-f]%' AND " +
+                "[IsDeleted] = 0"));
+        entity.HasKey(x => x.Id);
+        entity.Property(x => x.Id).ValueGeneratedNever();
+        ConfigureTenantEntity(entity);
+        entity.HasAlternateKey(x => new
+            {
+                x.TenantId,
+                x.ComparisonId,
+                x.RunId,
+            })
+            .HasName(
+                "AK_Space_PlanningComparisonEntry_Comparison_Run");
+        entity.HasAlternateKey(x => new
+            {
+                x.TenantId,
+                x.ComparisonId,
+                x.Id,
+                x.RunId,
+            })
+            .HasName(
+                "AK_Space_PlanningComparisonEntry_Comparison_Id_Run");
+        entity.Property(x => x.RunName).HasMaxLength(200).IsRequired();
+        entity.Property(x => x.RunResultHash)
+            .HasColumnType("char(64)")
+            .IsUnicode(false)
+            .IsFixedLength()
+            .HasMaxLength(64)
+            .IsRequired();
+        entity.Property(x => x.DistanceCoveragePercent).HasPrecision(9, 4);
+        entity.Property(x => x.TotalDistanceMeters).HasPrecision(28, 6);
+        entity.Property(x => x.PeakCapacityUtilizationPercent)
+            .HasPrecision(38, 4);
+        entity.Property(x => x.AverageCompletedTasksPerHour)
+            .HasPrecision(28, 6);
+        entity.Property(x => x.PeakCompletedTasksPerHour)
+            .HasPrecision(28, 6);
+        entity.Property(x => x.TotalCost).HasPrecision(28, 6);
+        entity.Property(x => x.DistanceDeltaMeters).HasPrecision(28, 6);
+        entity.Property(x => x.PeakCapacityUtilizationDeltaPercentagePoints)
+            .HasPrecision(38, 4);
+        entity.Property(x => x.AverageCompletedTasksPerHourDelta)
+            .HasPrecision(28, 6);
+        entity.Property(x => x.TotalCostDelta).HasPrecision(28, 6);
+        entity.HasIndex(x => new
+            {
+                x.TenantId,
+                x.ComparisonId,
+                x.SequenceNo,
+            })
+            .IsUnique()
+            .HasDatabaseName(
+                "UX_Space_PlanningComparisonEntry_Comparison_Sequence");
+        entity.HasIndex(x => new
+            {
+                x.TenantId,
+                x.ComparisonId,
+                x.IsBaseline,
+            })
+            .HasFilter("[IsBaseline] = 1")
+            .IsUnique()
+            .HasDatabaseName(
+                "UX_Space_PlanningComparisonEntry_Comparison_Baseline");
+        entity.HasOne<SpacePlanningComparison>()
+            .WithMany()
+            .HasForeignKey(x => new
+            {
+                x.TenantId,
+                x.ComparisonId,
+                x.SiteId,
+            })
+            .HasPrincipalKey(x => new { x.TenantId, x.Id, x.SiteId })
+            .OnDelete(DeleteBehavior.Restrict)
+            .HasConstraintName(
+                "FK_Space_PlanningComparisonEntry_Comparison_Tenant");
+        entity.HasOne<SpacePlanningSimulationRun>()
+            .WithMany()
+            .HasForeignKey(x => new
+            {
+                x.TenantId,
+                x.RunId,
+                x.BranchId,
+                x.ScenarioVersionId,
+            })
+            .HasPrincipalKey(x => new
+            {
+                x.TenantId,
+                x.Id,
+                x.BranchId,
+                x.ScenarioVersionId,
+            })
+            .OnDelete(DeleteBehavior.Restrict)
+            .HasConstraintName(
+                "FK_Space_PlanningComparisonEntry_Run_Tenant");
+        entity.HasQueryFilter(
+            x => x.TenantId == CurrentTenantId && !x.IsDeleted);
+    }
+
+    private void ConfigurePlanningComparisonRisk(ModelBuilder modelBuilder)
+    {
+        var entity = modelBuilder.Entity<SpacePlanningComparisonRisk>();
+        entity.ToTable(
+            "Space_PlanningComparisonRisk",
+            table => table.HasCheckConstraint(
+                "CK_Space_PlanningComparisonRisk_Invariants",
+                "[Severity] BETWEEN 1 AND 3 AND " +
+                "LEN([Code]) BETWEEN 1 AND 100 AND [IsDeleted] = 0"));
+        entity.HasKey(x => x.Id);
+        entity.Property(x => x.Id).ValueGeneratedNever();
+        ConfigureTenantEntity(entity);
+        entity.Property(x => x.Code)
+            .HasMaxLength(100)
+            .IsUnicode(false)
+            .IsRequired();
+        entity.HasIndex(x => new
+            {
+                x.TenantId,
+                x.EntryId,
+                x.Code,
+            })
+            .IsUnique()
+            .HasDatabaseName(
+                "UX_Space_PlanningComparisonRisk_Entry_Code");
+        entity.HasOne<SpacePlanningComparisonEntry>()
+            .WithMany()
+            .HasForeignKey(x => new
+            {
+                x.TenantId,
+                x.ComparisonId,
+                x.EntryId,
+                x.RunId,
+            })
+            .HasPrincipalKey(x => new
+            {
+                x.TenantId,
+                x.ComparisonId,
+                x.Id,
+                x.RunId,
+            })
+            .OnDelete(DeleteBehavior.Restrict)
+            .HasConstraintName(
+                "FK_Space_PlanningComparisonRisk_Entry_Tenant");
+        entity.HasQueryFilter(
+            x => x.TenantId == CurrentTenantId && !x.IsDeleted);
+    }
+
+    private void ConfigurePlanningDecisionRecord(ModelBuilder modelBuilder)
+    {
+        var entity = modelBuilder.Entity<SpacePlanningDecisionRecord>();
+        entity.ToTable(
+            "Space_PlanningDecisionRecord",
+            table => table.HasCheckConstraint(
+                "CK_Space_PlanningDecisionRecord_Invariants",
+                "[Outcome] BETWEEN 1 AND 3 AND " +
+                "(([Outcome] = 1 AND [SelectedRunId] IS NOT NULL) OR " +
+                "([Outcome] IN (2, 3) AND [SelectedRunId] IS NULL)) AND " +
+                "([SupersedesDecisionId] IS NULL OR " +
+                "[SupersedesDecisionId] <> [Id]) AND " +
+                "LEN([Rationale]) BETWEEN 1 AND 2000 AND " +
+                "LEN([ComparisonHash]) = 64 AND " +
+                "[ComparisonHash] NOT LIKE '%[^0-9a-f]%' AND " +
+                "LEN([RequestHash]) = 64 AND " +
+                "[RequestHash] NOT LIKE '%[^0-9a-f]%' AND [IsDeleted] = 0"));
+        entity.HasKey(x => x.Id);
+        entity.Property(x => x.Id).ValueGeneratedNever();
+        ConfigureTenantEntity(entity);
+        entity.HasAlternateKey(x => new
+            {
+                x.TenantId,
+                x.ComparisonId,
+                x.Id,
+            })
+            .HasName(
+                "AK_Space_PlanningDecisionRecord_Comparison_Id");
+        entity.Property(x => x.Rationale).HasMaxLength(2_000).IsRequired();
+        entity.Property(x => x.DefinitionVersion)
+            .HasMaxLength(100)
+            .IsUnicode(false)
+            .IsRequired();
+        foreach (var property in new[]
+                 {
+                     nameof(SpacePlanningDecisionRecord.ComparisonHash),
+                     nameof(SpacePlanningDecisionRecord.RequestHash),
+                 })
+        {
+            entity.Property(property)
+                .HasColumnType("char(64)")
+                .IsUnicode(false)
+                .IsFixedLength()
+                .HasMaxLength(64)
+                .IsRequired();
+        }
+        entity.HasIndex(x => new
+            {
+                x.TenantId,
+                x.ComparisonId,
+                x.CreatedAtUtc,
+            })
+            .HasDatabaseName(
+                "IX_Space_PlanningDecisionRecord_Comparison_Created");
+        entity.HasIndex(x => new
+            {
+                x.TenantId,
+                x.ComparisonId,
+                x.SupersedesDecisionId,
+            })
+            .HasFilter("[SupersedesDecisionId] IS NOT NULL")
+            .IsUnique()
+            .HasDatabaseName(
+                "UX_Space_PlanningDecisionRecord_Supersedes");
+        entity.HasOne<SpacePlanningComparison>()
+            .WithMany()
+            .HasForeignKey(x => new
+            {
+                x.TenantId,
+                x.ComparisonId,
+                x.SiteId,
+            })
+            .HasPrincipalKey(x => new { x.TenantId, x.Id, x.SiteId })
+            .OnDelete(DeleteBehavior.Restrict)
+            .HasConstraintName(
+                "FK_Space_PlanningDecisionRecord_Comparison_Tenant");
+        entity.HasOne<SpacePlanningComparisonEntry>()
+            .WithMany()
+            .HasForeignKey(x => new
+            {
+                x.TenantId,
+                x.ComparisonId,
+                x.SelectedRunId,
+            })
+            .HasPrincipalKey(x => new
+            {
+                x.TenantId,
+                x.ComparisonId,
+                x.RunId,
+            })
+            .OnDelete(DeleteBehavior.Restrict)
+            .HasConstraintName(
+                "FK_Space_PlanningDecisionRecord_SelectedRun_Tenant");
+        entity.HasOne<SpacePlanningDecisionRecord>()
+            .WithMany()
+            .HasForeignKey(x => new
+            {
+                x.TenantId,
+                x.ComparisonId,
+                x.SupersedesDecisionId,
+            })
+            .HasPrincipalKey(x => new
+            {
+                x.TenantId,
+                x.ComparisonId,
+                x.Id,
+            })
+            .OnDelete(DeleteBehavior.Restrict)
+            .HasConstraintName(
+                "FK_Space_PlanningDecisionRecord_Supersedes_Tenant");
+        entity.HasQueryFilter(
+            x => x.TenantId == CurrentTenantId && !x.IsDeleted);
+    }
+
     private static void ConfigureTenantEntity<TEntity>(
         Microsoft.EntityFrameworkCore.Metadata.Builders.EntityTypeBuilder<TEntity> entity)
         where TEntity : SpaceTenantEntity
@@ -4075,12 +4484,24 @@ public sealed class SpaceContext : DbContext
                     EntityState.Modified or EntityState.Deleted) ||
             ChangeTracker.Entries<SpacePlanningSimulationLocationResult>()
                 .Any(entry => entry.State is
+                    EntityState.Modified or EntityState.Deleted) ||
+            ChangeTracker.Entries<SpacePlanningComparison>()
+                .Any(entry => entry.State is
+                    EntityState.Modified or EntityState.Deleted) ||
+            ChangeTracker.Entries<SpacePlanningComparisonEntry>()
+                .Any(entry => entry.State is
+                    EntityState.Modified or EntityState.Deleted) ||
+            ChangeTracker.Entries<SpacePlanningComparisonRisk>()
+                .Any(entry => entry.State is
+                    EntityState.Modified or EntityState.Deleted) ||
+            ChangeTracker.Entries<SpacePlanningDecisionRecord>()
+                .Any(entry => entry.State is
                     EntityState.Modified or EntityState.Deleted);
         if (changed)
         {
             throw new InvalidOperationException(
-                "Planning scenario branches and historical datasets are " +
-                "immutable.");
+                "Planning scenario, simulation, comparison and decision " +
+                "evidence is immutable.");
         }
     }
 
