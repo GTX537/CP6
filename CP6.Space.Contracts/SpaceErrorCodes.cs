@@ -107,6 +107,18 @@ public static class SpaceErrorCodes
         "SPACE_PERSONNEL_QUERY_INVALID";
     public const string PersonnelNotFound =
         "SPACE_PERSONNEL_NOT_FOUND";
+    public const string DeviceEventInvalid =
+        "SPACE_DEVICE_EVENT_INVALID";
+    public const string DeviceEventConflict =
+        "SPACE_DEVICE_EVENT_CONFLICT";
+    public const string DeviceMappingNotFound =
+        "SPACE_DEVICE_MAPPING_NOT_FOUND";
+    public const string DeviceMappingConflict =
+        "SPACE_DEVICE_MAPPING_CONFLICT";
+    public const string DeviceMappingStale =
+        "SPACE_DEVICE_MAPPING_STALE";
+    public const string DeviceElementNotFound =
+        "SPACE_DEVICE_ELEMENT_NOT_FOUND";
     public const string WmsBindingCodeMismatch =
         "SPACE_WMS_BINDING_CODE_MISMATCH";
     public const string WmsLocationMissing =

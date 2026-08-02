@@ -178,6 +178,29 @@ export interface ISpaceDesignV1Client {
     placeWmsAdoption(versionId: string, adoptionId: string, body: PlaceSpaceWmsAdoptionRequest): Promise<SpaceWmsAdoptionCommandResponse>;
 
     /**
+     * @param sourceId (optional)
+     * @param limit (optional)
+     * @param cursor (optional)
+     * @return OK
+     */
+    getDeviceMappings(siteId: string, sourceId: string | undefined, limit: number | undefined, cursor: string | undefined): Promise<SpaceDeviceMappingPageDto>;
+
+    /**
+     * @return Created
+     */
+    createDeviceMapping(siteId: string, body: CreateSpaceDeviceMappingRequest): Promise<SpaceDeviceMappingDto>;
+
+    /**
+     * @return OK
+     */
+    updateDeviceMapping(siteId: string, mappingId: string, body: UpdateSpaceDeviceMappingRequest): Promise<SpaceDeviceMappingDto>;
+
+    /**
+     * @return Accepted
+     */
+    ingestDeviceEvents(siteId: string, body: IngestSpaceDeviceEventsRequest): Promise<IngestSpaceDeviceEventsResponse>;
+
+    /**
      * @return OK
      */
     getProfiles(): Promise<SpaceExcelMappingProfileDto[]>;
@@ -3011,6 +3034,392 @@ export class SpaceDesignV1Client implements ISpaceDesignV1Client {
             });
         }
         return Promise.resolve<SpaceWmsAdoptionCommandResponse>(null as any);
+    }
+
+    /**
+     * @param sourceId (optional)
+     * @param limit (optional)
+     * @param cursor (optional)
+     * @return OK
+     */
+    getDeviceMappings(siteId: string, sourceId: string | undefined, limit: number | undefined, cursor: string | undefined): Promise<SpaceDeviceMappingPageDto> {
+        let url_ = this.baseUrl + "/api/space/design/v1/sites/{siteId}/device-mappings?";
+        if (siteId === undefined || siteId === null)
+            throw new globalThis.Error("The parameter 'siteId' must be defined.");
+        url_ = url_.replace("{siteId}", encodeURIComponent("" + siteId));
+        if (sourceId === null)
+            throw new globalThis.Error("The parameter 'sourceId' cannot be null.");
+        else if (sourceId !== undefined)
+            url_ += "sourceId=" + encodeURIComponent("" + sourceId) + "&";
+        if (limit === null)
+            throw new globalThis.Error("The parameter 'limit' cannot be null.");
+        else if (limit !== undefined)
+            url_ += "limit=" + encodeURIComponent("" + limit) + "&";
+        if (cursor === null)
+            throw new globalThis.Error("The parameter 'cursor' cannot be null.");
+        else if (cursor !== undefined)
+            url_ += "cursor=" + encodeURIComponent("" + cursor) + "&";
+        url_ = url_.replace(/[?&]$/, "");
+
+        let options_: RequestInit = {
+            method: "GET",
+            headers: {
+                "Accept": "application/json"
+            }
+        };
+
+        return this.http.fetch(url_, options_).then((_response: Response) => {
+            return this.processGetDeviceMappings(_response);
+        });
+    }
+
+    protected processGetDeviceMappings(response: Response): Promise<SpaceDeviceMappingPageDto> {
+        const status = response.status;
+        let _headers: any = {}; if (response.headers && response.headers.forEach) { response.headers.forEach((v: any, k: any) => _headers[k] = v); };
+        if (status === 200) {
+            return response.text().then((_responseText) => {
+            let result200: any = null;
+            let resultData200 = _responseText === "" ? null : JSON.parse(_responseText, this.jsonParseReviver);
+            result200 = SpaceDeviceMappingPageDto.fromJS(resultData200);
+            return result200;
+            });
+        } else if (status === 400) {
+            return response.text().then((_responseText) => {
+            let result400: any = null;
+            let resultData400 = _responseText === "" ? null : JSON.parse(_responseText, this.jsonParseReviver);
+            result400 = SpaceDesignProblemDetails.fromJS(resultData400);
+            return throwException("Bad Request", status, _responseText, _headers, result400);
+            });
+        } else if (status === 401) {
+            return response.text().then((_responseText) => {
+            let result401: any = null;
+            let resultData401 = _responseText === "" ? null : JSON.parse(_responseText, this.jsonParseReviver);
+            result401 = SpaceDesignProblemDetails.fromJS(resultData401);
+            return throwException("Unauthorized", status, _responseText, _headers, result401);
+            });
+        } else if (status === 403) {
+            return response.text().then((_responseText) => {
+            let result403: any = null;
+            let resultData403 = _responseText === "" ? null : JSON.parse(_responseText, this.jsonParseReviver);
+            result403 = SpaceDesignProblemDetails.fromJS(resultData403);
+            return throwException("Forbidden", status, _responseText, _headers, result403);
+            });
+        } else if (status === 404) {
+            return response.text().then((_responseText) => {
+            let result404: any = null;
+            let resultData404 = _responseText === "" ? null : JSON.parse(_responseText, this.jsonParseReviver);
+            result404 = SpaceDesignProblemDetails.fromJS(resultData404);
+            return throwException("Not Found", status, _responseText, _headers, result404);
+            });
+        } else if (status === 409) {
+            return response.text().then((_responseText) => {
+            let result409: any = null;
+            let resultData409 = _responseText === "" ? null : JSON.parse(_responseText, this.jsonParseReviver);
+            result409 = SpaceDesignProblemDetails.fromJS(resultData409);
+            return throwException("Conflict", status, _responseText, _headers, result409);
+            });
+        } else if (status === 422) {
+            return response.text().then((_responseText) => {
+            let result422: any = null;
+            let resultData422 = _responseText === "" ? null : JSON.parse(_responseText, this.jsonParseReviver);
+            result422 = SpaceDesignProblemDetails.fromJS(resultData422);
+            return throwException("Unprocessable Content", status, _responseText, _headers, result422);
+            });
+        } else if (status === 500) {
+            return response.text().then((_responseText) => {
+            let result500: any = null;
+            let resultData500 = _responseText === "" ? null : JSON.parse(_responseText, this.jsonParseReviver);
+            result500 = SpaceDesignProblemDetails.fromJS(resultData500);
+            return throwException("Internal Server Error", status, _responseText, _headers, result500);
+            });
+        } else if (status !== 200 && status !== 204) {
+            return response.text().then((_responseText) => {
+            return throwException("An unexpected server error occurred.", status, _responseText, _headers);
+            });
+        }
+        return Promise.resolve<SpaceDeviceMappingPageDto>(null as any);
+    }
+
+    /**
+     * @return Created
+     */
+    createDeviceMapping(siteId: string, body: CreateSpaceDeviceMappingRequest): Promise<SpaceDeviceMappingDto> {
+        let url_ = this.baseUrl + "/api/space/design/v1/sites/{siteId}/device-mappings";
+        if (siteId === undefined || siteId === null)
+            throw new globalThis.Error("The parameter 'siteId' must be defined.");
+        url_ = url_.replace("{siteId}", encodeURIComponent("" + siteId));
+        url_ = url_.replace(/[?&]$/, "");
+
+        const content_ = JSON.stringify(body);
+
+        let options_: RequestInit = {
+            body: content_,
+            method: "POST",
+            headers: {
+                "Content-Type": "application/json",
+                "Accept": "application/json"
+            }
+        };
+
+        return this.http.fetch(url_, options_).then((_response: Response) => {
+            return this.processCreateDeviceMapping(_response);
+        });
+    }
+
+    protected processCreateDeviceMapping(response: Response): Promise<SpaceDeviceMappingDto> {
+        const status = response.status;
+        let _headers: any = {}; if (response.headers && response.headers.forEach) { response.headers.forEach((v: any, k: any) => _headers[k] = v); };
+        if (status === 201) {
+            return response.text().then((_responseText) => {
+            let result201: any = null;
+            let resultData201 = _responseText === "" ? null : JSON.parse(_responseText, this.jsonParseReviver);
+            result201 = SpaceDeviceMappingDto.fromJS(resultData201);
+            return result201;
+            });
+        } else if (status === 400) {
+            return response.text().then((_responseText) => {
+            let result400: any = null;
+            let resultData400 = _responseText === "" ? null : JSON.parse(_responseText, this.jsonParseReviver);
+            result400 = SpaceDesignProblemDetails.fromJS(resultData400);
+            return throwException("Bad Request", status, _responseText, _headers, result400);
+            });
+        } else if (status === 401) {
+            return response.text().then((_responseText) => {
+            let result401: any = null;
+            let resultData401 = _responseText === "" ? null : JSON.parse(_responseText, this.jsonParseReviver);
+            result401 = SpaceDesignProblemDetails.fromJS(resultData401);
+            return throwException("Unauthorized", status, _responseText, _headers, result401);
+            });
+        } else if (status === 403) {
+            return response.text().then((_responseText) => {
+            let result403: any = null;
+            let resultData403 = _responseText === "" ? null : JSON.parse(_responseText, this.jsonParseReviver);
+            result403 = SpaceDesignProblemDetails.fromJS(resultData403);
+            return throwException("Forbidden", status, _responseText, _headers, result403);
+            });
+        } else if (status === 404) {
+            return response.text().then((_responseText) => {
+            let result404: any = null;
+            let resultData404 = _responseText === "" ? null : JSON.parse(_responseText, this.jsonParseReviver);
+            result404 = SpaceDesignProblemDetails.fromJS(resultData404);
+            return throwException("Not Found", status, _responseText, _headers, result404);
+            });
+        } else if (status === 409) {
+            return response.text().then((_responseText) => {
+            let result409: any = null;
+            let resultData409 = _responseText === "" ? null : JSON.parse(_responseText, this.jsonParseReviver);
+            result409 = SpaceDesignProblemDetails.fromJS(resultData409);
+            return throwException("Conflict", status, _responseText, _headers, result409);
+            });
+        } else if (status === 422) {
+            return response.text().then((_responseText) => {
+            let result422: any = null;
+            let resultData422 = _responseText === "" ? null : JSON.parse(_responseText, this.jsonParseReviver);
+            result422 = SpaceDesignProblemDetails.fromJS(resultData422);
+            return throwException("Unprocessable Content", status, _responseText, _headers, result422);
+            });
+        } else if (status === 500) {
+            return response.text().then((_responseText) => {
+            let result500: any = null;
+            let resultData500 = _responseText === "" ? null : JSON.parse(_responseText, this.jsonParseReviver);
+            result500 = SpaceDesignProblemDetails.fromJS(resultData500);
+            return throwException("Internal Server Error", status, _responseText, _headers, result500);
+            });
+        } else if (status !== 200 && status !== 204) {
+            return response.text().then((_responseText) => {
+            return throwException("An unexpected server error occurred.", status, _responseText, _headers);
+            });
+        }
+        return Promise.resolve<SpaceDeviceMappingDto>(null as any);
+    }
+
+    /**
+     * @return OK
+     */
+    updateDeviceMapping(siteId: string, mappingId: string, body: UpdateSpaceDeviceMappingRequest): Promise<SpaceDeviceMappingDto> {
+        let url_ = this.baseUrl + "/api/space/design/v1/sites/{siteId}/device-mappings/{mappingId}";
+        if (siteId === undefined || siteId === null)
+            throw new globalThis.Error("The parameter 'siteId' must be defined.");
+        url_ = url_.replace("{siteId}", encodeURIComponent("" + siteId));
+        if (mappingId === undefined || mappingId === null)
+            throw new globalThis.Error("The parameter 'mappingId' must be defined.");
+        url_ = url_.replace("{mappingId}", encodeURIComponent("" + mappingId));
+        url_ = url_.replace(/[?&]$/, "");
+
+        const content_ = JSON.stringify(body);
+
+        let options_: RequestInit = {
+            body: content_,
+            method: "PUT",
+            headers: {
+                "Content-Type": "application/json",
+                "Accept": "application/json"
+            }
+        };
+
+        return this.http.fetch(url_, options_).then((_response: Response) => {
+            return this.processUpdateDeviceMapping(_response);
+        });
+    }
+
+    protected processUpdateDeviceMapping(response: Response): Promise<SpaceDeviceMappingDto> {
+        const status = response.status;
+        let _headers: any = {}; if (response.headers && response.headers.forEach) { response.headers.forEach((v: any, k: any) => _headers[k] = v); };
+        if (status === 200) {
+            return response.text().then((_responseText) => {
+            let result200: any = null;
+            let resultData200 = _responseText === "" ? null : JSON.parse(_responseText, this.jsonParseReviver);
+            result200 = SpaceDeviceMappingDto.fromJS(resultData200);
+            return result200;
+            });
+        } else if (status === 400) {
+            return response.text().then((_responseText) => {
+            let result400: any = null;
+            let resultData400 = _responseText === "" ? null : JSON.parse(_responseText, this.jsonParseReviver);
+            result400 = SpaceDesignProblemDetails.fromJS(resultData400);
+            return throwException("Bad Request", status, _responseText, _headers, result400);
+            });
+        } else if (status === 401) {
+            return response.text().then((_responseText) => {
+            let result401: any = null;
+            let resultData401 = _responseText === "" ? null : JSON.parse(_responseText, this.jsonParseReviver);
+            result401 = SpaceDesignProblemDetails.fromJS(resultData401);
+            return throwException("Unauthorized", status, _responseText, _headers, result401);
+            });
+        } else if (status === 403) {
+            return response.text().then((_responseText) => {
+            let result403: any = null;
+            let resultData403 = _responseText === "" ? null : JSON.parse(_responseText, this.jsonParseReviver);
+            result403 = SpaceDesignProblemDetails.fromJS(resultData403);
+            return throwException("Forbidden", status, _responseText, _headers, result403);
+            });
+        } else if (status === 404) {
+            return response.text().then((_responseText) => {
+            let result404: any = null;
+            let resultData404 = _responseText === "" ? null : JSON.parse(_responseText, this.jsonParseReviver);
+            result404 = SpaceDesignProblemDetails.fromJS(resultData404);
+            return throwException("Not Found", status, _responseText, _headers, result404);
+            });
+        } else if (status === 409) {
+            return response.text().then((_responseText) => {
+            let result409: any = null;
+            let resultData409 = _responseText === "" ? null : JSON.parse(_responseText, this.jsonParseReviver);
+            result409 = SpaceDesignProblemDetails.fromJS(resultData409);
+            return throwException("Conflict", status, _responseText, _headers, result409);
+            });
+        } else if (status === 422) {
+            return response.text().then((_responseText) => {
+            let result422: any = null;
+            let resultData422 = _responseText === "" ? null : JSON.parse(_responseText, this.jsonParseReviver);
+            result422 = SpaceDesignProblemDetails.fromJS(resultData422);
+            return throwException("Unprocessable Content", status, _responseText, _headers, result422);
+            });
+        } else if (status === 500) {
+            return response.text().then((_responseText) => {
+            let result500: any = null;
+            let resultData500 = _responseText === "" ? null : JSON.parse(_responseText, this.jsonParseReviver);
+            result500 = SpaceDesignProblemDetails.fromJS(resultData500);
+            return throwException("Internal Server Error", status, _responseText, _headers, result500);
+            });
+        } else if (status !== 200 && status !== 204) {
+            return response.text().then((_responseText) => {
+            return throwException("An unexpected server error occurred.", status, _responseText, _headers);
+            });
+        }
+        return Promise.resolve<SpaceDeviceMappingDto>(null as any);
+    }
+
+    /**
+     * @return Accepted
+     */
+    ingestDeviceEvents(siteId: string, body: IngestSpaceDeviceEventsRequest): Promise<IngestSpaceDeviceEventsResponse> {
+        let url_ = this.baseUrl + "/api/space/design/v1/sites/{siteId}/device-events";
+        if (siteId === undefined || siteId === null)
+            throw new globalThis.Error("The parameter 'siteId' must be defined.");
+        url_ = url_.replace("{siteId}", encodeURIComponent("" + siteId));
+        url_ = url_.replace(/[?&]$/, "");
+
+        const content_ = JSON.stringify(body);
+
+        let options_: RequestInit = {
+            body: content_,
+            method: "POST",
+            headers: {
+                "Content-Type": "application/json",
+                "Accept": "application/json"
+            }
+        };
+
+        return this.http.fetch(url_, options_).then((_response: Response) => {
+            return this.processIngestDeviceEvents(_response);
+        });
+    }
+
+    protected processIngestDeviceEvents(response: Response): Promise<IngestSpaceDeviceEventsResponse> {
+        const status = response.status;
+        let _headers: any = {}; if (response.headers && response.headers.forEach) { response.headers.forEach((v: any, k: any) => _headers[k] = v); };
+        if (status === 202) {
+            return response.text().then((_responseText) => {
+            let result202: any = null;
+            let resultData202 = _responseText === "" ? null : JSON.parse(_responseText, this.jsonParseReviver);
+            result202 = IngestSpaceDeviceEventsResponse.fromJS(resultData202);
+            return result202;
+            });
+        } else if (status === 400) {
+            return response.text().then((_responseText) => {
+            let result400: any = null;
+            let resultData400 = _responseText === "" ? null : JSON.parse(_responseText, this.jsonParseReviver);
+            result400 = SpaceDesignProblemDetails.fromJS(resultData400);
+            return throwException("Bad Request", status, _responseText, _headers, result400);
+            });
+        } else if (status === 401) {
+            return response.text().then((_responseText) => {
+            let result401: any = null;
+            let resultData401 = _responseText === "" ? null : JSON.parse(_responseText, this.jsonParseReviver);
+            result401 = SpaceDesignProblemDetails.fromJS(resultData401);
+            return throwException("Unauthorized", status, _responseText, _headers, result401);
+            });
+        } else if (status === 403) {
+            return response.text().then((_responseText) => {
+            let result403: any = null;
+            let resultData403 = _responseText === "" ? null : JSON.parse(_responseText, this.jsonParseReviver);
+            result403 = SpaceDesignProblemDetails.fromJS(resultData403);
+            return throwException("Forbidden", status, _responseText, _headers, result403);
+            });
+        } else if (status === 404) {
+            return response.text().then((_responseText) => {
+            let result404: any = null;
+            let resultData404 = _responseText === "" ? null : JSON.parse(_responseText, this.jsonParseReviver);
+            result404 = SpaceDesignProblemDetails.fromJS(resultData404);
+            return throwException("Not Found", status, _responseText, _headers, result404);
+            });
+        } else if (status === 409) {
+            return response.text().then((_responseText) => {
+            let result409: any = null;
+            let resultData409 = _responseText === "" ? null : JSON.parse(_responseText, this.jsonParseReviver);
+            result409 = SpaceDesignProblemDetails.fromJS(resultData409);
+            return throwException("Conflict", status, _responseText, _headers, result409);
+            });
+        } else if (status === 422) {
+            return response.text().then((_responseText) => {
+            let result422: any = null;
+            let resultData422 = _responseText === "" ? null : JSON.parse(_responseText, this.jsonParseReviver);
+            result422 = SpaceDesignProblemDetails.fromJS(resultData422);
+            return throwException("Unprocessable Content", status, _responseText, _headers, result422);
+            });
+        } else if (status === 500) {
+            return response.text().then((_responseText) => {
+            let result500: any = null;
+            let resultData500 = _responseText === "" ? null : JSON.parse(_responseText, this.jsonParseReviver);
+            result500 = SpaceDesignProblemDetails.fromJS(resultData500);
+            return throwException("Internal Server Error", status, _responseText, _headers, result500);
+            });
+        } else if (status !== 200 && status !== 204) {
+            return response.text().then((_responseText) => {
+            return throwException("An unexpected server error occurred.", status, _responseText, _headers);
+            });
+        }
+        return Promise.resolve<IngestSpaceDeviceEventsResponse>(null as any);
     }
 
     /**
@@ -6967,6 +7376,58 @@ export interface ICreateSpaceAssetResponse {
     idempotentReplay?: boolean;
 }
 
+export class CreateSpaceDeviceMappingRequest implements ICreateSpaceDeviceMappingRequest {
+    sourceId!: string;
+    sourceKind!: string;
+    deviceExternalId!: string;
+    deviceKind!: string;
+    elementLogicalId!: string;
+
+    constructor(data?: ICreateSpaceDeviceMappingRequest) {
+        if (data) {
+            for (var property in data) {
+                if (data.hasOwnProperty(property))
+                    (this as any)[property] = (data as any)[property];
+            }
+        }
+    }
+
+    init(_data?: any) {
+        if (_data) {
+            this.sourceId = _data["sourceId"];
+            this.sourceKind = _data["sourceKind"];
+            this.deviceExternalId = _data["deviceExternalId"];
+            this.deviceKind = _data["deviceKind"];
+            this.elementLogicalId = _data["elementLogicalId"];
+        }
+    }
+
+    static fromJS(data: any): CreateSpaceDeviceMappingRequest {
+        data = typeof data === 'object' ? data : {};
+        let result = new CreateSpaceDeviceMappingRequest();
+        result.init(data);
+        return result;
+    }
+
+    toJSON(data?: any) {
+        data = typeof data === 'object' ? data : {};
+        data["sourceId"] = this.sourceId;
+        data["sourceKind"] = this.sourceKind;
+        data["deviceExternalId"] = this.deviceExternalId;
+        data["deviceKind"] = this.deviceKind;
+        data["elementLogicalId"] = this.elementLogicalId;
+        return data;
+    }
+}
+
+export interface ICreateSpaceDeviceMappingRequest {
+    sourceId: string;
+    sourceKind: string;
+    deviceExternalId: string;
+    deviceKind: string;
+    elementLogicalId: string;
+}
+
 export class CreateSpaceExternalGrantRequest implements ICreateSpaceExternalGrantRequest {
     siteId?: string;
     floorLogicalIds?: string[] | undefined;
@@ -7428,6 +7889,144 @@ export interface ICreateSpaceVersionResponse {
     jobId?: string;
     jobStatusUrl?: string | undefined;
     idempotentReplay?: boolean;
+}
+
+export class IngestSpaceDeviceEventsRequest implements IIngestSpaceDeviceEventsRequest {
+    contractVersion!: string;
+    sourceId!: string;
+    sourceKind!: string;
+    events!: SpaceDeviceEventInput[];
+
+    constructor(data?: IIngestSpaceDeviceEventsRequest) {
+        if (data) {
+            for (var property in data) {
+                if (data.hasOwnProperty(property))
+                    (this as any)[property] = (data as any)[property];
+            }
+        }
+        if (!data) {
+            this.events = [];
+        }
+    }
+
+    init(_data?: any) {
+        if (_data) {
+            this.contractVersion = _data["contractVersion"];
+            this.sourceId = _data["sourceId"];
+            this.sourceKind = _data["sourceKind"];
+            if (Array.isArray(_data["events"])) {
+                this.events = [] as any;
+                for (let item of _data["events"])
+                    this.events!.push(SpaceDeviceEventInput.fromJS(item));
+            }
+        }
+    }
+
+    static fromJS(data: any): IngestSpaceDeviceEventsRequest {
+        data = typeof data === 'object' ? data : {};
+        let result = new IngestSpaceDeviceEventsRequest();
+        result.init(data);
+        return result;
+    }
+
+    toJSON(data?: any) {
+        data = typeof data === 'object' ? data : {};
+        data["contractVersion"] = this.contractVersion;
+        data["sourceId"] = this.sourceId;
+        data["sourceKind"] = this.sourceKind;
+        if (Array.isArray(this.events)) {
+            data["events"] = [];
+            for (let item of this.events)
+                data["events"].push(item ? item.toJSON() : undefined as any);
+        }
+        return data;
+    }
+}
+
+export interface IIngestSpaceDeviceEventsRequest {
+    contractVersion: string;
+    sourceId: string;
+    sourceKind: string;
+    events: SpaceDeviceEventInput[];
+}
+
+export class IngestSpaceDeviceEventsResponse implements IIngestSpaceDeviceEventsResponse {
+    contractVersion!: string;
+    siteId!: string;
+    sourceId!: string;
+    sourceKind!: string;
+    receivedAtUtc!: Date;
+    receivedCount!: number;
+    acceptedCount!: number;
+    duplicateCount!: number;
+    receipts!: SpaceDeviceEventReceipt[];
+
+    constructor(data?: IIngestSpaceDeviceEventsResponse) {
+        if (data) {
+            for (var property in data) {
+                if (data.hasOwnProperty(property))
+                    (this as any)[property] = (data as any)[property];
+            }
+        }
+        if (!data) {
+            this.receipts = [];
+        }
+    }
+
+    init(_data?: any) {
+        if (_data) {
+            this.contractVersion = _data["contractVersion"];
+            this.siteId = _data["siteId"];
+            this.sourceId = _data["sourceId"];
+            this.sourceKind = _data["sourceKind"];
+            this.receivedAtUtc = _data["receivedAtUtc"] ? new Date(_data["receivedAtUtc"].toString()) : undefined as any;
+            this.receivedCount = _data["receivedCount"];
+            this.acceptedCount = _data["acceptedCount"];
+            this.duplicateCount = _data["duplicateCount"];
+            if (Array.isArray(_data["receipts"])) {
+                this.receipts = [] as any;
+                for (let item of _data["receipts"])
+                    this.receipts!.push(SpaceDeviceEventReceipt.fromJS(item));
+            }
+        }
+    }
+
+    static fromJS(data: any): IngestSpaceDeviceEventsResponse {
+        data = typeof data === 'object' ? data : {};
+        let result = new IngestSpaceDeviceEventsResponse();
+        result.init(data);
+        return result;
+    }
+
+    toJSON(data?: any) {
+        data = typeof data === 'object' ? data : {};
+        data["contractVersion"] = this.contractVersion;
+        data["siteId"] = this.siteId;
+        data["sourceId"] = this.sourceId;
+        data["sourceKind"] = this.sourceKind;
+        data["receivedAtUtc"] = this.receivedAtUtc ? this.receivedAtUtc.toISOString() : undefined as any;
+        data["receivedCount"] = this.receivedCount;
+        data["acceptedCount"] = this.acceptedCount;
+        data["duplicateCount"] = this.duplicateCount;
+        if (Array.isArray(this.receipts)) {
+            data["receipts"] = [];
+            for (let item of this.receipts)
+                data["receipts"].push(item ? item.toJSON() : undefined as any);
+        }
+        return data;
+    }
+}
+
+export interface IIngestSpaceDeviceEventsResponse {
+    contractVersion: string;
+    siteId: string;
+    sourceId: string;
+    sourceKind: string;
+    receivedAtUtc: Date;
+    receivedCount: number;
+    acceptedCount: number;
+    duplicateCount: number;
+    receipts: SpaceDeviceEventReceipt[];
 }
 
 export class IngestSpacePersonnelEventsRequest implements IIngestSpacePersonnelEventsRequest {
@@ -8665,6 +9264,277 @@ export interface ISpaceDesignSceneDto {
     locations?: SpaceSceneLocationDto[] | undefined;
     elements?: SpaceSceneElementDto[] | undefined;
     elementAttributes?: SpaceSceneElementAttributeDto[] | undefined;
+}
+
+export class SpaceDeviceEventInput implements ISpaceDeviceEventInput {
+    sourceEventId!: string;
+    deviceExternalId!: string;
+    eventKind!: string;
+    operatingState?: string | undefined;
+    floorLogicalId?: string | undefined;
+    locationLogicalId?: string | undefined;
+    xMillimeters?: number | undefined;
+    yMillimeters?: number | undefined;
+    zMillimeters?: number | undefined;
+    accuracyMillimeters?: number | undefined;
+    alarmExternalId?: string | undefined;
+    alarmCode?: string | undefined;
+    alarmSeverity?: string | undefined;
+    alarmMessage?: string | undefined;
+    sourceSequence?: number | undefined;
+    occurredAtUtc!: Date;
+
+    constructor(data?: ISpaceDeviceEventInput) {
+        if (data) {
+            for (var property in data) {
+                if (data.hasOwnProperty(property))
+                    (this as any)[property] = (data as any)[property];
+            }
+        }
+    }
+
+    init(_data?: any) {
+        if (_data) {
+            this.sourceEventId = _data["sourceEventId"];
+            this.deviceExternalId = _data["deviceExternalId"];
+            this.eventKind = _data["eventKind"];
+            this.operatingState = _data["operatingState"];
+            this.floorLogicalId = _data["floorLogicalId"];
+            this.locationLogicalId = _data["locationLogicalId"];
+            this.xMillimeters = _data["xMillimeters"];
+            this.yMillimeters = _data["yMillimeters"];
+            this.zMillimeters = _data["zMillimeters"];
+            this.accuracyMillimeters = _data["accuracyMillimeters"];
+            this.alarmExternalId = _data["alarmExternalId"];
+            this.alarmCode = _data["alarmCode"];
+            this.alarmSeverity = _data["alarmSeverity"];
+            this.alarmMessage = _data["alarmMessage"];
+            this.sourceSequence = _data["sourceSequence"];
+            this.occurredAtUtc = _data["occurredAtUtc"] ? new Date(_data["occurredAtUtc"].toString()) : undefined as any;
+        }
+    }
+
+    static fromJS(data: any): SpaceDeviceEventInput {
+        data = typeof data === 'object' ? data : {};
+        let result = new SpaceDeviceEventInput();
+        result.init(data);
+        return result;
+    }
+
+    toJSON(data?: any) {
+        data = typeof data === 'object' ? data : {};
+        data["sourceEventId"] = this.sourceEventId;
+        data["deviceExternalId"] = this.deviceExternalId;
+        data["eventKind"] = this.eventKind;
+        data["operatingState"] = this.operatingState;
+        data["floorLogicalId"] = this.floorLogicalId;
+        data["locationLogicalId"] = this.locationLogicalId;
+        data["xMillimeters"] = this.xMillimeters;
+        data["yMillimeters"] = this.yMillimeters;
+        data["zMillimeters"] = this.zMillimeters;
+        data["accuracyMillimeters"] = this.accuracyMillimeters;
+        data["alarmExternalId"] = this.alarmExternalId;
+        data["alarmCode"] = this.alarmCode;
+        data["alarmSeverity"] = this.alarmSeverity;
+        data["alarmMessage"] = this.alarmMessage;
+        data["sourceSequence"] = this.sourceSequence;
+        data["occurredAtUtc"] = this.occurredAtUtc ? this.occurredAtUtc.toISOString() : undefined as any;
+        return data;
+    }
+}
+
+export interface ISpaceDeviceEventInput {
+    sourceEventId: string;
+    deviceExternalId: string;
+    eventKind: string;
+    operatingState?: string | undefined;
+    floorLogicalId?: string | undefined;
+    locationLogicalId?: string | undefined;
+    xMillimeters?: number | undefined;
+    yMillimeters?: number | undefined;
+    zMillimeters?: number | undefined;
+    accuracyMillimeters?: number | undefined;
+    alarmExternalId?: string | undefined;
+    alarmCode?: string | undefined;
+    alarmSeverity?: string | undefined;
+    alarmMessage?: string | undefined;
+    sourceSequence?: number | undefined;
+    occurredAtUtc: Date;
+}
+
+export class SpaceDeviceEventReceipt implements ISpaceDeviceEventReceipt {
+    eventId!: string;
+    sourceEventId!: string;
+    deviceExternalId!: string;
+    outcome!: string;
+
+    constructor(data?: ISpaceDeviceEventReceipt) {
+        if (data) {
+            for (var property in data) {
+                if (data.hasOwnProperty(property))
+                    (this as any)[property] = (data as any)[property];
+            }
+        }
+    }
+
+    init(_data?: any) {
+        if (_data) {
+            this.eventId = _data["eventId"];
+            this.sourceEventId = _data["sourceEventId"];
+            this.deviceExternalId = _data["deviceExternalId"];
+            this.outcome = _data["outcome"];
+        }
+    }
+
+    static fromJS(data: any): SpaceDeviceEventReceipt {
+        data = typeof data === 'object' ? data : {};
+        let result = new SpaceDeviceEventReceipt();
+        result.init(data);
+        return result;
+    }
+
+    toJSON(data?: any) {
+        data = typeof data === 'object' ? data : {};
+        data["eventId"] = this.eventId;
+        data["sourceEventId"] = this.sourceEventId;
+        data["deviceExternalId"] = this.deviceExternalId;
+        data["outcome"] = this.outcome;
+        return data;
+    }
+}
+
+export interface ISpaceDeviceEventReceipt {
+    eventId: string;
+    sourceEventId: string;
+    deviceExternalId: string;
+    outcome: string;
+}
+
+export class SpaceDeviceMappingDto implements ISpaceDeviceMappingDto {
+    id!: string;
+    siteId!: string;
+    sourceId!: string;
+    sourceKind!: string;
+    deviceExternalId!: string;
+    deviceKind!: string;
+    elementLogicalId!: string;
+    elementType!: string;
+    validatedModelVersionId!: string;
+    validatedFloorLogicalId!: string;
+    rowVersion!: string;
+
+    constructor(data?: ISpaceDeviceMappingDto) {
+        if (data) {
+            for (var property in data) {
+                if (data.hasOwnProperty(property))
+                    (this as any)[property] = (data as any)[property];
+            }
+        }
+    }
+
+    init(_data?: any) {
+        if (_data) {
+            this.id = _data["id"];
+            this.siteId = _data["siteId"];
+            this.sourceId = _data["sourceId"];
+            this.sourceKind = _data["sourceKind"];
+            this.deviceExternalId = _data["deviceExternalId"];
+            this.deviceKind = _data["deviceKind"];
+            this.elementLogicalId = _data["elementLogicalId"];
+            this.elementType = _data["elementType"];
+            this.validatedModelVersionId = _data["validatedModelVersionId"];
+            this.validatedFloorLogicalId = _data["validatedFloorLogicalId"];
+            this.rowVersion = _data["rowVersion"];
+        }
+    }
+
+    static fromJS(data: any): SpaceDeviceMappingDto {
+        data = typeof data === 'object' ? data : {};
+        let result = new SpaceDeviceMappingDto();
+        result.init(data);
+        return result;
+    }
+
+    toJSON(data?: any) {
+        data = typeof data === 'object' ? data : {};
+        data["id"] = this.id;
+        data["siteId"] = this.siteId;
+        data["sourceId"] = this.sourceId;
+        data["sourceKind"] = this.sourceKind;
+        data["deviceExternalId"] = this.deviceExternalId;
+        data["deviceKind"] = this.deviceKind;
+        data["elementLogicalId"] = this.elementLogicalId;
+        data["elementType"] = this.elementType;
+        data["validatedModelVersionId"] = this.validatedModelVersionId;
+        data["validatedFloorLogicalId"] = this.validatedFloorLogicalId;
+        data["rowVersion"] = this.rowVersion;
+        return data;
+    }
+}
+
+export interface ISpaceDeviceMappingDto {
+    id: string;
+    siteId: string;
+    sourceId: string;
+    sourceKind: string;
+    deviceExternalId: string;
+    deviceKind: string;
+    elementLogicalId: string;
+    elementType: string;
+    validatedModelVersionId: string;
+    validatedFloorLogicalId: string;
+    rowVersion: string;
+}
+
+export class SpaceDeviceMappingPageDto implements ISpaceDeviceMappingPageDto {
+    items!: SpaceDeviceMappingDto[];
+    nextCursor!: string;
+
+    constructor(data?: ISpaceDeviceMappingPageDto) {
+        if (data) {
+            for (var property in data) {
+                if (data.hasOwnProperty(property))
+                    (this as any)[property] = (data as any)[property];
+            }
+        }
+        if (!data) {
+            this.items = [];
+        }
+    }
+
+    init(_data?: any) {
+        if (_data) {
+            if (Array.isArray(_data["items"])) {
+                this.items = [] as any;
+                for (let item of _data["items"])
+                    this.items!.push(SpaceDeviceMappingDto.fromJS(item));
+            }
+            this.nextCursor = _data["nextCursor"];
+        }
+    }
+
+    static fromJS(data: any): SpaceDeviceMappingPageDto {
+        data = typeof data === 'object' ? data : {};
+        let result = new SpaceDeviceMappingPageDto();
+        result.init(data);
+        return result;
+    }
+
+    toJSON(data?: any) {
+        data = typeof data === 'object' ? data : {};
+        if (Array.isArray(this.items)) {
+            data["items"] = [];
+            for (let item of this.items)
+                data["items"].push(item ? item.toJSON() : undefined as any);
+        }
+        data["nextCursor"] = this.nextCursor;
+        return data;
+    }
+}
+
+export interface ISpaceDeviceMappingPageDto {
+    items: SpaceDeviceMappingDto[];
+    nextCursor: string;
 }
 
 export class SpaceElementAttributeWriteDto implements ISpaceElementAttributeWriteDto {
@@ -14784,6 +15654,50 @@ export class UpdateSpaceAiPolicyResponse implements IUpdateSpaceAiPolicyResponse
 export interface IUpdateSpaceAiPolicyResponse {
     policy: SpaceAiPolicyDto;
     idempotentReplay: boolean;
+}
+
+export class UpdateSpaceDeviceMappingRequest implements IUpdateSpaceDeviceMappingRequest {
+    deviceKind!: string;
+    elementLogicalId!: string;
+    expectedRowVersion!: string;
+
+    constructor(data?: IUpdateSpaceDeviceMappingRequest) {
+        if (data) {
+            for (var property in data) {
+                if (data.hasOwnProperty(property))
+                    (this as any)[property] = (data as any)[property];
+            }
+        }
+    }
+
+    init(_data?: any) {
+        if (_data) {
+            this.deviceKind = _data["deviceKind"];
+            this.elementLogicalId = _data["elementLogicalId"];
+            this.expectedRowVersion = _data["expectedRowVersion"];
+        }
+    }
+
+    static fromJS(data: any): UpdateSpaceDeviceMappingRequest {
+        data = typeof data === 'object' ? data : {};
+        let result = new UpdateSpaceDeviceMappingRequest();
+        result.init(data);
+        return result;
+    }
+
+    toJSON(data?: any) {
+        data = typeof data === 'object' ? data : {};
+        data["deviceKind"] = this.deviceKind;
+        data["elementLogicalId"] = this.elementLogicalId;
+        data["expectedRowVersion"] = this.expectedRowVersion;
+        return data;
+    }
+}
+
+export interface IUpdateSpaceDeviceMappingRequest {
+    deviceKind: string;
+    elementLogicalId: string;
+    expectedRowVersion: string;
 }
 
 export class UpdateSpaceExternalGrantRequest implements IUpdateSpaceExternalGrantRequest {

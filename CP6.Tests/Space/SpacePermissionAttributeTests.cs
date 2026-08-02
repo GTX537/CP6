@@ -80,6 +80,8 @@ public class SpacePermissionAttributeTests
                 "space:model:read",
             ["SpacePersonnelRuntimeController.GetPersonnelTrajectory"] =
                 "space-audit:read",
+            ["SpaceDeviceEventsController.GetDeviceMappings"] =
+                "space:model:read",
             ["SpaceExternalOrganizationController.GetOrganizations"] =
                 "space:external:read",
             ["SpaceExternalOrganizationController.GetOrganization"] =
@@ -142,7 +144,7 @@ public class SpacePermissionAttributeTests
     public void SpaceControllers_AreDiscovered()
     {
         // 守卫：确保反射确实扫到全部 controller（防命名空间/程序集变动导致「空扫空过」）。
-        Assert.Equal(20, SpaceControllers.Count());
+        Assert.Equal(21, SpaceControllers.Count());
     }
 
     [Fact]
