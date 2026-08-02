@@ -15,6 +15,7 @@ public sealed class SpaceDesignProblemDetailsMiddleware(
     ILogger<SpaceDesignProblemDetailsMiddleware> logger)
 {
     private const string DesignPath = "/api/space/design/v1";
+    private const string OperationsPath = "/api/space/operations/v1";
     private const string ExternalOrganizationPath =
         "/api/space/external-organization";
     private const string FieldPolicyPath = "/api/space/field-policy";
@@ -25,6 +26,7 @@ public sealed class SpaceDesignProblemDetailsMiddleware(
     public async Task InvokeAsync(HttpContext context)
     {
         if (!context.Request.Path.StartsWithSegments(DesignPath) &&
+            !context.Request.Path.StartsWithSegments(OperationsPath) &&
             !context.Request.Path.StartsWithSegments(
                 ExternalOrganizationPath) &&
             !context.Request.Path.StartsWithSegments(FieldPolicyPath) &&

@@ -3,7 +3,10 @@ import { describe, expect, it } from 'vitest'
 import { mount } from '@vue/test-utils'
 import { createI18n } from 'vue-i18n'
 import DispatchRecommendationPanel from '../DispatchRecommendationPanel.vue'
-import type { SpaceDispatchRecommendation } from '@/types/space/runtime'
+import type {
+  SpaceDispatchApprovalRequest,
+  SpaceDispatchRecommendation,
+} from '@/types/space/runtime'
 
 describe('DispatchRecommendationPanel', () => {
   it('emits explicit floor, distance, source, and result caps', async () => {
@@ -42,6 +45,36 @@ describe('DispatchRecommendationPanel', () => {
     expect(wrapper.emitted('locate')?.[0]).toEqual(['F1-L01'])
   })
 
+  it('requires an explicit real-person selection and reason before approval submission', async () => {
+    const wrapper = mountPanel(recommendation())
+    const checkboxes = wrapper.findAll('.assignment-select input')
+    expect(checkboxes).toHaveLength(2)
+    await checkboxes[1]!.setValue(true)
+    await checkboxes[0]!.setValue(true)
+    await wrapper.find('.approval-form textarea').setValue(' Release reviewed batch ')
+    await wrapper.find('.approval-form').trigger('submit')
+
+    expect(wrapper.emitted('submit-approval')?.[0]?.[0]).toEqual({
+      selectedRanks: [1, 2],
+      reason: 'Release reviewed batch',
+    })
+  })
+
+  it('renders durable approval evidence and exposes refresh and pending cancel only', async () => {
+    const wrapper = mountPanel(recommendation(), approval())
+
+    expect(wrapper.find('.approval-status').attributes('data-status')).toBe('PendingApproval')
+    expect(wrapper.text()).toContain('待审批')
+    expect(wrapper.text()).toContain('cp6-mobile-task-assignment-v1')
+    await wrapper.findAll('.approval-actions button')[0]!.trigger('click')
+    await wrapper.findAll('.approval-actions button')[1]!.trigger('click')
+    expect(wrapper.emitted('refresh-approval')).toHaveLength(1)
+    expect(wrapper.emitted('cancel-approval')).toHaveLength(1)
+
+    await wrapper.setProps({ approval: { ...approval(), status: 'Applied' } })
+    expect(wrapper.findAll('.approval-actions button')).toHaveLength(1)
+  })
+
   it('keeps no-assignment and refresh failure states visible', async () => {
     const value = recommendation()
     value.outcome = 'NoAssignment'
@@ -56,7 +89,10 @@ describe('DispatchRecommendationPanel', () => {
   })
 })
 
-function mountPanel(value: SpaceDispatchRecommendation | null) {
+function mountPanel(
+  value: SpaceDispatchRecommendation | null,
+  approvalValue: SpaceDispatchApprovalRequest | null = null,
+) {
   const i18n = createI18n({
     legacy: false,
     locale: 'zh-CN',
@@ -74,9 +110,43 @@ function mountPanel(value: SpaceDispatchRecommendation | null) {
       result: value,
       loading: false,
       error: '',
+      approval: approvalValue,
+      approvalLoading: false,
+      approvalError: '',
     },
     global: { plugins: [i18n] },
   })
+}
+
+function approval(): SpaceDispatchApprovalRequest {
+  return {
+    approvalRequestId: 'approval-1',
+    siteId: 'site-1',
+    recommendationId: 'recommendation-1',
+    publishedVersionId: 'version-1',
+    warehouseCode: 'WH-01',
+    recommendationDefinitionVersion: 'space-dispatch-v1',
+    status: 'PendingApproval',
+    reason: 'Release reviewed batch',
+    requestedBy: 'requester-1',
+    requestedAtUtc: '2026-08-02T18:01:00Z',
+    flowInstanceId: 'flow-1',
+    decidedBy: null,
+    decidedAtUtc: null,
+    appliedAtUtc: null,
+    adapterId: 'cp6-mobile-task-assignment-v1',
+    selectedCount: 1,
+    selections: [{
+      rank: 1,
+      taskId: 'TASK-1',
+      taskType: 'Pick',
+      personSourceId: 'PDA-01',
+      personExternalId: 'PERSON-A',
+      targetLocationCode: 'F1-L01',
+    }],
+    receipts: [],
+    failureCode: null,
+  }
 }
 
 function recommendation(): SpaceDispatchRecommendation {

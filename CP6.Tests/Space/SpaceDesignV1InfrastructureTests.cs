@@ -92,7 +92,8 @@ public sealed class SpaceDesignV1InfrastructureTests
     [Theory]
     [InlineData("/api/space/field-policy/test")]
     [InlineData("/api/space/portal/v1/sites")]
-    public async Task External_policy_and_portal_paths_use_safe_problem_details(
+    [InlineData("/api/space/operations/v1/sites/test/dispatch-recommendations")]
+    public async Task Covered_space_paths_use_safe_problem_details(
         string path)
     {
         var context = new DefaultHttpContext();

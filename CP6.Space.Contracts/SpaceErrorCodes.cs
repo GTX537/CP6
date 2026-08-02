@@ -129,6 +129,22 @@ public static class SpaceErrorCodes
         "SPACE_DISPATCH_RECOMMENDATION_EVIDENCE_LIMIT";
     public const string DispatchRecommendationPairLimit =
         "SPACE_DISPATCH_RECOMMENDATION_PAIR_LIMIT";
+    public const string DispatchApprovalInternalOnly =
+        "SPACE_DISPATCH_APPROVAL_INTERNAL_ONLY";
+    public const string DispatchApprovalInvalid =
+        "SPACE_DISPATCH_APPROVAL_INVALID";
+    public const string DispatchApprovalConflict =
+        "SPACE_DISPATCH_APPROVAL_CONFLICT";
+    public const string DispatchApprovalActive =
+        "SPACE_DISPATCH_APPROVAL_ACTIVE";
+    public const string DispatchApprovalNotFound =
+        "SPACE_DISPATCH_APPROVAL_NOT_FOUND";
+    public const string DispatchApprovalCancelForbidden =
+        "SPACE_DISPATCH_APPROVAL_CANCEL_FORBIDDEN";
+    public const string DispatchApprovalNotPending =
+        "SPACE_DISPATCH_APPROVAL_NOT_PENDING";
+    public const string DispatchApprovalFlowUnavailable =
+        "SPACE_DISPATCH_APPROVAL_FLOW_UNAVAILABLE";
     public const string DeviceEventInvalid =
         "SPACE_DEVICE_EVENT_INVALID";
     public const string DeviceEventConflict =

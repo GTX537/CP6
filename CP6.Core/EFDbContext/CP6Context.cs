@@ -388,6 +388,8 @@ public class CP6Context : DbContext, IDataProtectionKeyContext
     public DbSet<MobileTaskEvent> MobileTaskEvents => Set<MobileTaskEvent>();
     public DbSet<MobileTaskScanLog> MobileTaskScanLogs => Set<MobileTaskScanLog>();
     public DbSet<TaskCommandReceipt> TaskCommandReceipts => Set<TaskCommandReceipt>();
+    public DbSet<SpaceDispatchApprovalRequest> SpaceDispatchApprovalRequests =>
+        Set<SpaceDispatchApprovalRequest>();
     public DbSet<StockSerial> StockSerials => Set<StockSerial>();
     public DbSet<StockSerialTransaction> StockSerialTransactions => Set<StockSerialTransaction>();
     public DbSet<LogisticsUnit> LogisticsUnits => Set<LogisticsUnit>();
@@ -2197,6 +2199,25 @@ public class CP6Context : DbContext, IDataProtectionKeyContext
         {
             e.HasIndex(x => x.OperationId).IsUnique();
             e.HasIndex(x => new { x.TaskNo, x.CommandName });
+            e.Property(x => x.ResultJson).HasColumnType("nvarchar(max)");
+        });
+
+        modelBuilder.Entity<SpaceDispatchApprovalRequest>(e =>
+        {
+            e.HasIndex(x => new { x.TenantId, x.SiteId, x.RecommendationId })
+                .IsUnique()
+                .HasFilter("[IsDeleted] = 0 AND [Status] = 'PendingApproval'");
+            e.HasIndex(x => new { x.TenantId, x.SiteId, x.RequestedAtUtc });
+            e.HasIndex(x => new { x.TenantId, x.FlowInstanceId }).IsUnique();
+            e.Property(x => x.RecommendationRequestHash)
+                .HasColumnType("char(64)")
+                .IsUnicode(false)
+                .IsFixedLength();
+            e.Property(x => x.PayloadHash)
+                .HasColumnType("char(64)")
+                .IsUnicode(false)
+                .IsFixedLength();
+            e.Property(x => x.SelectionJson).HasColumnType("nvarchar(max)");
             e.Property(x => x.ResultJson).HasColumnType("nvarchar(max)");
         });
 

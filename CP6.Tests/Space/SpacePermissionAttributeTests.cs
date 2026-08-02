@@ -46,6 +46,9 @@ public class SpacePermissionAttributeTests
         "space:operations:diagnostics:read",
         "space:operations:recommendations:read",
         "space:operations:recommendations:generate",
+        "space:operations:dispatch:read",
+        "space:operations:dispatch:submit",
+        "space:operations:dispatch:cancel",
         "space-ai-admin:read", "space-ai-admin:manage",
     };
 
@@ -95,6 +98,8 @@ public class SpacePermissionAttributeTests
                 "space:operations:recommendations:read",
             ["SpaceDispatchRecommendationController.Get"] =
                 "space:operations:recommendations:read",
+            ["SpaceDispatchApprovalController.Get"] =
+                "space:operations:dispatch:read",
             ["SpaceExternalOrganizationController.GetOrganizations"] =
                 "space:external:read",
             ["SpaceExternalOrganizationController.GetOrganization"] =
@@ -157,7 +162,7 @@ public class SpacePermissionAttributeTests
     public void SpaceControllers_AreDiscovered()
     {
         // 守卫：确保反射确实扫到全部 controller（防命名空间/程序集变动导致「空扫空过」）。
-        Assert.Equal(25, SpaceControllers.Count());
+        Assert.Equal(26, SpaceControllers.Count());
     }
 
     [Fact]

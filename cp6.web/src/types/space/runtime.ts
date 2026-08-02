@@ -796,3 +796,60 @@ export interface GenerateSpaceDispatchRecommendationResponse {
   outcome: 'Generated' | 'Duplicate'
   recommendation: SpaceDispatchRecommendation
 }
+
+export type SpaceDispatchApprovalStatus =
+  | 'PendingApproval'
+  | 'Applied'
+  | 'Rejected'
+  | 'Cancelled'
+  | 'Stale'
+  | 'FailedNoEffect'
+
+export interface SubmitSpaceDispatchApprovalRequest {
+  selectedRanks: number[]
+  reason: string
+}
+
+export interface SpaceDispatchApprovalSelection {
+  rank: number
+  taskId: string
+  taskType: string
+  personSourceId: string
+  personExternalId: string
+  targetLocationCode: string
+}
+
+export interface SpaceDispatchTaskAdaptationReceipt {
+  rank: number
+  taskId: string
+  personExternalId: string
+  operationId: string
+  outcome: string
+}
+
+export interface SpaceDispatchApprovalRequest {
+  approvalRequestId: string
+  siteId: string
+  recommendationId: string
+  publishedVersionId: string
+  warehouseCode: string
+  recommendationDefinitionVersion: string
+  status: SpaceDispatchApprovalStatus
+  reason: string
+  requestedBy: string
+  requestedAtUtc: string
+  flowInstanceId: string
+  decidedBy: string | null
+  decidedAtUtc: string | null
+  appliedAtUtc: string | null
+  adapterId: string
+  selectedCount: number
+  selections: SpaceDispatchApprovalSelection[]
+  receipts: SpaceDispatchTaskAdaptationReceipt[]
+  failureCode: string | null
+}
+
+export interface SubmitSpaceDispatchApprovalResponse {
+  outcome: 'Submitted' | 'Duplicate'
+  approvalRequest: SpaceDispatchApprovalRequest
+}
