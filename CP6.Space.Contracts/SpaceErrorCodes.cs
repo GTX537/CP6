@@ -97,6 +97,12 @@ public static class SpaceErrorCodes
         "SPACE_WMS_LOCATION_CODE_DUPLICATE";
     public const string WmsBindingGeometryMissing =
         "SPACE_WMS_BINDING_GEOMETRY_MISSING";
+    public const string PersonnelEventInvalid =
+        "SPACE_PERSONNEL_EVENT_INVALID";
+    public const string PersonnelEventConflict =
+        "SPACE_PERSONNEL_EVENT_CONFLICT";
+    public const string PersonnelSiteNotFound =
+        "SPACE_PERSONNEL_SITE_NOT_FOUND";
     public const string WmsBindingCodeMismatch =
         "SPACE_WMS_BINDING_CODE_MISMATCH";
     public const string WmsLocationMissing =

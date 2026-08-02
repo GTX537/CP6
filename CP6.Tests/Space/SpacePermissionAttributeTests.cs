@@ -137,8 +137,8 @@ public class SpacePermissionAttributeTests
     [Fact]
     public void SpaceControllers_AreDiscovered()
     {
-        // 守卫：确保反射确实扫到 13 个 controller（防命名空间/程序集变动导致「空扫空过」）。
-        Assert.Equal(18, SpaceControllers.Count());
+        // 守卫：确保反射确实扫到全部 controller（防命名空间/程序集变动导致「空扫空过」）。
+        Assert.Equal(19, SpaceControllers.Count());
     }
 
     [Fact]

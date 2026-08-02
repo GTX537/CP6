@@ -27,6 +27,7 @@ public sealed class SpaceDesignV1OpenApiTests
         var expectedPaths = new[]
         {
             "/api/space/design/v1/sites/{siteId}/model",
+            "/api/space/design/v1/sites/{siteId}/personnel-events",
             "/api/space/design/v1/sites/{siteId}/versions",
             "/api/space/design/v1/sites/{siteId}/runtime/inventory",
             "/api/space/design/v1/sites/{siteId}/runtime/inventory/locate",
@@ -86,11 +87,12 @@ public sealed class SpaceDesignV1OpenApiTests
             .Select(operation =>
                 operation.Value.GetProperty("operationId").GetString())
             .ToArray();
-        Assert.Equal(59, operationIds.Length);
-        Assert.Equal(59, operationIds.Distinct().Count());
+        Assert.Equal(60, operationIds.Length);
+        Assert.Equal(60, operationIds.Distinct().Count());
         Assert.Contains("GetPolicy", operationIds);
         Assert.Contains("UpdatePolicy", operationIds);
         Assert.Contains("GetUsage", operationIds);
+        Assert.Contains("IngestPersonnelEvents", operationIds);
         Assert.Contains("GetAssets", operationIds);
         Assert.Contains("DownloadStandardExcelTemplate", operationIds);
         Assert.Contains("GetProfiles", operationIds);
@@ -199,6 +201,59 @@ public sealed class SpaceDesignV1OpenApiTests
             property.Contains("secret", StringComparison.OrdinalIgnoreCase) ||
             property.Contains("url", StringComparison.OrdinalIgnoreCase) ||
             property.Contains("endpoint", StringComparison.OrdinalIgnoreCase));
+    }
+
+    [Fact]
+    public void Personnel_ingest_contract_is_explicit_idempotent_and_never_infers_location()
+    {
+        using var document = ReadContract();
+        var root = document.RootElement;
+        var operation = root.GetProperty("paths")
+            .GetProperty(
+                "/api/space/design/v1/sites/{siteId}/personnel-events")
+            .GetProperty("post");
+        Assert.Equal(
+            "IngestPersonnelEvents",
+            operation.GetProperty("operationId").GetString());
+        Assert.True(operation.GetProperty("requestBody")
+            .GetProperty("required")
+            .GetBoolean());
+        Assert.True(operation.GetProperty("responses").TryGetProperty("202", out _));
+
+        var schemas = root.GetProperty("components").GetProperty("schemas");
+        var requestRequired = schemas
+            .GetProperty(
+                "CP6.Space.Contracts.IngestSpacePersonnelEventsRequest")
+            .GetProperty("required")
+            .EnumerateArray()
+            .Select(value => value.GetString())
+            .ToArray();
+        Assert.Equal(
+            new[] { "contractVersion", "events", "sourceId", "sourceKind" },
+            requestRequired.Order());
+
+        var eventSchema = schemas.GetProperty(
+            "CP6.Space.Contracts.SpacePersonnelEventInput");
+        Assert.Equal(
+            new[]
+            {
+                "eventKind", "occurredAtUtc", "personExternalId", "sourceEventId",
+            },
+            eventSchema.GetProperty("required")
+                .EnumerateArray()
+                .Select(value => value.GetString())
+                .Order());
+        var properties = eventSchema.GetProperty("properties")
+            .EnumerateObject()
+            .Select(value => value.Name)
+            .ToArray();
+        Assert.DoesNotContain(properties, value =>
+            value.Contains("inferred", StringComparison.OrdinalIgnoreCase) ||
+            value.Contains("displayName", StringComparison.OrdinalIgnoreCase) ||
+            value.Contains("estimated", StringComparison.OrdinalIgnoreCase));
+        Assert.DoesNotContain(
+            operation.GetProperty("parameters").EnumerateArray(),
+            value => value.GetProperty("name").GetString() == "Idempotency-Key");
     }
 
     [Fact]
@@ -1155,6 +1210,7 @@ public sealed class SpaceDesignV1OpenApiTests
                      "GetInventory",
                      "LocateInventory",
                      "GetTasks",
+                     "IngestPersonnelEvents",
                      "GetOrganizations",
                      "GetOrganization",
                      "CreateOrganization",
