@@ -33,6 +33,7 @@ public sealed class SpaceModel : SpaceTenantEntity
     public void ReserveDraft(SpaceModelVersion version)
     {
         EnsureOwnVersion(version);
+        EnsureProductionVersion(version);
         if (version.Status is not (
                 SpaceVersionStatus.Draft or SpaceVersionStatus.Initializing))
         {
@@ -76,6 +77,7 @@ public sealed class SpaceModel : SpaceTenantEntity
     public void SetPublishedVersion(SpaceModelVersion version, string materializedHash)
     {
         EnsureOwnVersion(version);
+        EnsureProductionVersion(version);
         if (version.Status != SpaceVersionStatus.Published)
             throw new SpaceVersionStateException("Only a Published version can become the runtime source.");
 
@@ -112,6 +114,7 @@ public sealed class SpaceModel : SpaceTenantEntity
     {
         RequireCutoverState(SpaceModelCutoverState.Bootstrapping);
         EnsureOwnVersion(bootstrapVersion);
+        EnsureProductionVersion(bootstrapVersion);
         if (bootstrapVersion.Status != SpaceVersionStatus.Published)
             throw new SpaceVersionStateException("Bootstrap verification requires a Published version.");
 
@@ -154,6 +157,16 @@ public sealed class SpaceModel : SpaceTenantEntity
             throw new SpaceTenantScopeException("The version belongs to another tenant.");
         if (version.ModelId != Id)
             throw new SpaceVersionConflictException("The version belongs to another model.");
+    }
+
+    private static void EnsureProductionVersion(SpaceModelVersion version)
+    {
+        if (version.Purpose != SpaceModelVersionPurpose.Production)
+        {
+            throw new SpaceVersionStateException(
+                "A planning scenario version cannot occupy a production " +
+                "model pointer.");
+        }
     }
 
     private void RequireCutoverState(SpaceModelCutoverState expected)

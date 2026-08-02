@@ -10,6 +10,7 @@ public sealed class SpaceModelVersion : SpaceTenantEntity
     public long VersionNo { get; private set; }
     public string Name { get; private set; } = string.Empty;
     public SpaceVersionStatus Status { get; private set; }
+    public SpaceModelVersionPurpose Purpose { get; private set; }
     public Guid? BasedOnVersionId { get; private set; }
     public Guid? CloneOperationId { get; private set; }
     public long ContentRevision { get; private set; }
@@ -39,6 +40,7 @@ public sealed class SpaceModelVersion : SpaceTenantEntity
             VersionNo = versionNo,
             Name = RequireName(name),
             Status = SpaceVersionStatus.Draft,
+            Purpose = SpaceModelVersionPurpose.Production,
             BasedOnVersionId = basedOnVersionId,
         };
         version.SetTenant(tenantId);
@@ -68,10 +70,30 @@ public sealed class SpaceModelVersion : SpaceTenantEntity
             VersionNo = versionNo,
             Name = RequireName(name),
             Status = SpaceVersionStatus.Initializing,
+            Purpose = SpaceModelVersionPurpose.Production,
             BasedOnVersionId = basedOnVersionId,
             CloneOperationId = cloneOperationId,
         };
         version.SetTenant(tenantId);
+        return version;
+    }
+
+    public static SpaceModelVersion CreateInitializingPlanningScenario(
+        Guid tenantId,
+        Guid modelId,
+        long versionNo,
+        string name,
+        Guid basedOnVersionId,
+        Guid cloneOperationId)
+    {
+        var version = CreateInitializingClone(
+            tenantId,
+            modelId,
+            versionNo,
+            name,
+            basedOnVersionId,
+            cloneOperationId);
+        version.Purpose = SpaceModelVersionPurpose.PlanningScenario;
         return version;
     }
 
@@ -139,6 +161,7 @@ public sealed class SpaceModelVersion : SpaceTenantEntity
 
     public void BeginPublishing()
     {
+        EnsureProductionPurpose();
         RequireStatus(SpaceVersionStatus.Ready);
         if (ContentHash is null ||
             ValidatedHash != ContentHash ||
@@ -171,6 +194,7 @@ public sealed class SpaceModelVersion : SpaceTenantEntity
 
     public void MarkPublished(Guid actorId, DateTime nowUtc)
     {
+        EnsureProductionPurpose();
         RequireStatus(SpaceVersionStatus.Publishing);
         if (actorId == Guid.Empty)
             throw new ArgumentException("Publisher is required.", nameof(actorId));
@@ -184,6 +208,7 @@ public sealed class SpaceModelVersion : SpaceTenantEntity
 
     public void MarkSuperseded()
     {
+        EnsureProductionPurpose();
         RequireStatus(SpaceVersionStatus.Published);
         Status = SpaceVersionStatus.Superseded;
     }
@@ -192,6 +217,16 @@ public sealed class SpaceModelVersion : SpaceTenantEntity
     {
         if (Status is not (SpaceVersionStatus.Draft or SpaceVersionStatus.Ready))
             throw new SpaceVersionStateException("Only Draft or Ready versions can be edited.");
+    }
+
+    private void EnsureProductionPurpose()
+    {
+        if (Purpose != SpaceModelVersionPurpose.Production)
+        {
+            throw new SpaceVersionStateException(
+                "Planning scenario versions cannot enter the production " +
+                "publish lifecycle.");
+        }
     }
 
     private void RequireStatus(SpaceVersionStatus expected)

@@ -109,6 +109,8 @@ public sealed class SpaceContext : DbContext
         Set<SpacePutawayRecommendation>();
     public DbSet<SpaceDispatchRecommendation> DispatchRecommendations =>
         Set<SpaceDispatchRecommendation>();
+    public DbSet<SpacePlanningScenarioBranch> PlanningScenarioBranches =>
+        Set<SpacePlanningScenarioBranch>();
 
     protected override void OnModelCreating(ModelBuilder modelBuilder)
     {
@@ -147,6 +149,7 @@ public sealed class SpaceContext : DbContext
         ConfigureExcelMappingProfileVersion(modelBuilder);
         ConfigurePutawayRecommendation(modelBuilder);
         ConfigureDispatchRecommendation(modelBuilder);
+        ConfigurePlanningScenarioBranch(modelBuilder);
         ConfigureFile(modelBuilder);
         ConfigureSource(modelBuilder);
         ConfigureJob(modelBuilder);
@@ -179,6 +182,7 @@ public sealed class SpaceContext : DbContext
         ProtectDeviceEventHistory();
         ProtectPutawayRecommendationHistory();
         ProtectDispatchRecommendationHistory();
+        ProtectPlanningScenarioHistory();
         StampAndValidateTenant();
         return base.SaveChanges(acceptAllChangesOnSuccess);
     }
@@ -200,6 +204,7 @@ public sealed class SpaceContext : DbContext
         ProtectDeviceEventHistory();
         ProtectPutawayRecommendationHistory();
         ProtectDispatchRecommendationHistory();
+        ProtectPlanningScenarioHistory();
         StampAndValidateTenant();
         return base.SaveChangesAsync(acceptAllChangesOnSuccess, cancellationToken);
     }
@@ -259,7 +264,14 @@ public sealed class SpaceContext : DbContext
     private void ConfigureVersion(ModelBuilder modelBuilder)
     {
         var entity = modelBuilder.Entity<SpaceModelVersion>();
-        entity.ToTable("Space_ModelVersion");
+        entity.ToTable(
+            "Space_ModelVersion",
+            table => table.HasCheckConstraint(
+                "CK_Space_ModelVersion_Purpose",
+                "[Purpose] IN (0, 1) AND " +
+                "([Purpose] = 0 OR (" +
+                "[Status] NOT IN (3, 4, 5, 6) AND " +
+                "[PublishedAtUtc] IS NULL AND [PublishedBy] IS NULL))"));
         entity.HasKey(x => x.Id);
         entity.Property(x => x.Id).ValueGeneratedNever();
         entity.HasAlternateKey(x => new { x.TenantId, x.ModelId, x.Id })
@@ -272,6 +284,10 @@ public sealed class SpaceContext : DbContext
         entity.Property(x => x.Status)
             .HasConversion<short>()
             .HasColumnType("smallint");
+        entity.Property(x => x.Purpose)
+            .HasConversion<short>()
+            .HasColumnType("smallint")
+            .HasDefaultValue(SpaceModelVersionPurpose.Production);
         entity.Property(x => x.ContentHash)
             .HasColumnType("char(64)")
             .IsUnicode(false)
@@ -3486,6 +3502,85 @@ public sealed class SpaceContext : DbContext
             x => x.TenantId == CurrentTenantId && !x.IsDeleted);
     }
 
+    private void ConfigurePlanningScenarioBranch(ModelBuilder modelBuilder)
+    {
+        var entity = modelBuilder.Entity<SpacePlanningScenarioBranch>();
+        entity.ToTable(
+            "Space_PlanningScenarioBranch",
+            table => table.HasCheckConstraint(
+                "CK_Space_PlanningScenarioBranch_Immutable",
+                "[BasePublishedVersionId] <> [ScenarioVersionId] AND " +
+                "LEN([RequestHash]) = 64 AND " +
+                "[RequestHash] NOT LIKE '%[^0-9a-f]%' AND " +
+                "[IsDeleted] = 0"));
+        entity.HasKey(x => x.Id);
+        entity.Property(x => x.Id).ValueGeneratedNever();
+        ConfigureTenantEntity(entity);
+        entity.HasAlternateKey(x => new { x.TenantId, x.Id })
+            .HasName("AK_Space_PlanningScenarioBranch_Tenant_Id");
+        entity.Property(x => x.Name).HasMaxLength(200).IsRequired();
+        entity.Property(x => x.DefinitionVersion)
+            .HasMaxLength(100)
+            .IsUnicode(false)
+            .IsRequired();
+        entity.Property(x => x.RequestHash)
+            .HasColumnType("char(64)")
+            .IsUnicode(false)
+            .IsFixedLength()
+            .HasMaxLength(64)
+            .IsRequired();
+        entity.HasIndex(x => new { x.TenantId, x.SiteId, x.CreatedAtUtc })
+            .HasDatabaseName(
+                "IX_Space_PlanningScenarioBranch_Site_Created");
+        entity.HasIndex(x => new { x.TenantId, x.ScenarioVersionId })
+            .IsUnique()
+            .HasDatabaseName(
+                "UX_Space_PlanningScenarioBranch_ScenarioVersion");
+        entity.HasIndex(x => new { x.TenantId, x.CloneJobId })
+            .IsUnique()
+            .HasDatabaseName("UX_Space_PlanningScenarioBranch_CloneJob");
+        entity.HasOne<SpaceModel>()
+            .WithMany()
+            .HasForeignKey(x => new { x.TenantId, x.ModelId })
+            .HasPrincipalKey(x => new { x.TenantId, x.Id })
+            .OnDelete(DeleteBehavior.Restrict)
+            .HasConstraintName(
+                "FK_Space_PlanningScenarioBranch_Model_Tenant");
+        entity.HasOne<SpaceModelVersion>()
+            .WithMany()
+            .HasForeignKey(x => new
+            {
+                x.TenantId,
+                x.ModelId,
+                x.BasePublishedVersionId,
+            })
+            .HasPrincipalKey(x => new { x.TenantId, x.ModelId, x.Id })
+            .OnDelete(DeleteBehavior.Restrict)
+            .HasConstraintName(
+                "FK_Space_PlanningScenarioBranch_BaseVersion_Tenant");
+        entity.HasOne<SpaceModelVersion>()
+            .WithMany()
+            .HasForeignKey(x => new
+            {
+                x.TenantId,
+                x.ModelId,
+                x.ScenarioVersionId,
+            })
+            .HasPrincipalKey(x => new { x.TenantId, x.ModelId, x.Id })
+            .OnDelete(DeleteBehavior.Restrict)
+            .HasConstraintName(
+                "FK_Space_PlanningScenarioBranch_ScenarioVersion_Tenant");
+        entity.HasOne<SpaceJob>()
+            .WithMany()
+            .HasForeignKey(x => new { x.TenantId, x.CloneJobId })
+            .HasPrincipalKey(x => new { x.TenantId, x.Id })
+            .OnDelete(DeleteBehavior.Restrict)
+            .HasConstraintName(
+                "FK_Space_PlanningScenarioBranch_CloneJob_Tenant");
+        entity.HasQueryFilter(
+            x => x.TenantId == CurrentTenantId && !x.IsDeleted);
+    }
+
     private static void ConfigureTenantEntity<TEntity>(
         Microsoft.EntityFrameworkCore.Metadata.Builders.EntityTypeBuilder<TEntity> entity)
         where TEntity : SpaceTenantEntity
@@ -3515,6 +3610,17 @@ public sealed class SpaceContext : DbContext
         {
             throw new InvalidOperationException(
                 "Dispatch recommendations are immutable.");
+        }
+    }
+
+    private void ProtectPlanningScenarioHistory()
+    {
+        if (ChangeTracker.Entries<SpacePlanningScenarioBranch>()
+            .Any(entry =>
+                entry.State is EntityState.Modified or EntityState.Deleted))
+        {
+            throw new InvalidOperationException(
+                "Planning scenario branches are immutable.");
         }
     }
 

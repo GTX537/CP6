@@ -31,6 +31,12 @@ public enum SpaceVersionStatus : short
     Abandoned = 9,
 }
 
+public enum SpaceModelVersionPurpose : short
+{
+    Production = 0,
+    PlanningScenario = 1,
+}
+
 public enum SpaceLifecycleState : short
 {
     Active = 0,
