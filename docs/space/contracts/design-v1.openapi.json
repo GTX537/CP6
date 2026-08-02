@@ -8261,6 +8261,385 @@
         }
       }
     },
+    "/api/space/planning/v1/sites/{siteId}/scenario-branches/{branchId}": {
+      "put": {
+        "tags": [
+          "SpacePlanningScenario"
+        ],
+        "operationId": "CreateBranch",
+        "parameters": [
+          {
+            "name": "siteId",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "string",
+              "format": "uuid"
+            }
+          },
+          {
+            "name": "branchId",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "string",
+              "format": "uuid"
+            }
+          }
+        ],
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/CP6.Space.Contracts.CreateSpacePlanningScenarioBranchRequest"
+              }
+            },
+            "text/json": {
+              "schema": {
+                "$ref": "#/components/schemas/CP6.Space.Contracts.CreateSpacePlanningScenarioBranchRequest"
+              }
+            },
+            "application/*+json": {
+              "schema": {
+                "$ref": "#/components/schemas/CP6.Space.Contracts.CreateSpacePlanningScenarioBranchRequest"
+              }
+            }
+          }
+        },
+        "responses": {
+          "400": {
+            "description": "Bad Request",
+            "content": {
+              "application/problem+json": {
+                "schema": {
+                  "$ref": "#/components/schemas/CP6.WebApi.OpenApi.SpaceDesignProblemDetails"
+                }
+              }
+            }
+          },
+          "401": {
+            "description": "Unauthorized",
+            "content": {
+              "application/problem+json": {
+                "schema": {
+                  "$ref": "#/components/schemas/CP6.WebApi.OpenApi.SpaceDesignProblemDetails"
+                }
+              }
+            }
+          },
+          "403": {
+            "description": "Forbidden",
+            "content": {
+              "application/problem+json": {
+                "schema": {
+                  "$ref": "#/components/schemas/CP6.WebApi.OpenApi.SpaceDesignProblemDetails"
+                }
+              }
+            }
+          },
+          "404": {
+            "description": "Not Found",
+            "content": {
+              "application/problem+json": {
+                "schema": {
+                  "$ref": "#/components/schemas/CP6.WebApi.OpenApi.SpaceDesignProblemDetails"
+                }
+              }
+            }
+          },
+          "409": {
+            "description": "Conflict",
+            "content": {
+              "application/problem+json": {
+                "schema": {
+                  "$ref": "#/components/schemas/CP6.WebApi.OpenApi.SpaceDesignProblemDetails"
+                }
+              }
+            }
+          },
+          "422": {
+            "description": "Unprocessable Content",
+            "content": {
+              "application/problem+json": {
+                "schema": {
+                  "$ref": "#/components/schemas/CP6.WebApi.OpenApi.SpaceDesignProblemDetails"
+                }
+              }
+            }
+          },
+          "500": {
+            "description": "Internal Server Error",
+            "content": {
+              "application/problem+json": {
+                "schema": {
+                  "$ref": "#/components/schemas/CP6.WebApi.OpenApi.SpaceDesignProblemDetails"
+                }
+              }
+            }
+          },
+          "200": {
+            "description": "OK",
+            "content": {
+              "text/plain": {
+                "schema": {
+                  "$ref": "#/components/schemas/CP6.Space.Contracts.CreateSpacePlanningScenarioBranchResponse"
+                }
+              },
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/CP6.Space.Contracts.CreateSpacePlanningScenarioBranchResponse"
+                }
+              },
+              "text/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/CP6.Space.Contracts.CreateSpacePlanningScenarioBranchResponse"
+                }
+              }
+            }
+          }
+        }
+      },
+      "get": {
+        "tags": [
+          "SpacePlanningScenario"
+        ],
+        "operationId": "GetBranch",
+        "parameters": [
+          {
+            "name": "siteId",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "string",
+              "format": "uuid"
+            }
+          },
+          {
+            "name": "branchId",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "string",
+              "format": "uuid"
+            }
+          }
+        ],
+        "responses": {
+          "400": {
+            "description": "Bad Request",
+            "content": {
+              "application/problem+json": {
+                "schema": {
+                  "$ref": "#/components/schemas/CP6.WebApi.OpenApi.SpaceDesignProblemDetails"
+                }
+              }
+            }
+          },
+          "401": {
+            "description": "Unauthorized",
+            "content": {
+              "application/problem+json": {
+                "schema": {
+                  "$ref": "#/components/schemas/CP6.WebApi.OpenApi.SpaceDesignProblemDetails"
+                }
+              }
+            }
+          },
+          "403": {
+            "description": "Forbidden",
+            "content": {
+              "application/problem+json": {
+                "schema": {
+                  "$ref": "#/components/schemas/CP6.WebApi.OpenApi.SpaceDesignProblemDetails"
+                }
+              }
+            }
+          },
+          "404": {
+            "description": "Not Found",
+            "content": {
+              "application/problem+json": {
+                "schema": {
+                  "$ref": "#/components/schemas/CP6.WebApi.OpenApi.SpaceDesignProblemDetails"
+                }
+              }
+            }
+          },
+          "409": {
+            "description": "Conflict",
+            "content": {
+              "application/problem+json": {
+                "schema": {
+                  "$ref": "#/components/schemas/CP6.WebApi.OpenApi.SpaceDesignProblemDetails"
+                }
+              }
+            }
+          },
+          "422": {
+            "description": "Unprocessable Content",
+            "content": {
+              "application/problem+json": {
+                "schema": {
+                  "$ref": "#/components/schemas/CP6.WebApi.OpenApi.SpaceDesignProblemDetails"
+                }
+              }
+            }
+          },
+          "500": {
+            "description": "Internal Server Error",
+            "content": {
+              "application/problem+json": {
+                "schema": {
+                  "$ref": "#/components/schemas/CP6.WebApi.OpenApi.SpaceDesignProblemDetails"
+                }
+              }
+            }
+          },
+          "200": {
+            "description": "OK",
+            "content": {
+              "text/plain": {
+                "schema": {
+                  "$ref": "#/components/schemas/CP6.Space.Contracts.SpacePlanningScenarioBranchDto"
+                }
+              },
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/CP6.Space.Contracts.SpacePlanningScenarioBranchDto"
+                }
+              },
+              "text/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/CP6.Space.Contracts.SpacePlanningScenarioBranchDto"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/api/space/planning/v1/sites/{siteId}/scenario-branches": {
+      "get": {
+        "tags": [
+          "SpacePlanningScenario"
+        ],
+        "operationId": "GetBranches",
+        "parameters": [
+          {
+            "name": "siteId",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "string",
+              "format": "uuid"
+            }
+          },
+          {
+            "name": "limit",
+            "in": "query",
+            "schema": {
+              "maximum": 100,
+              "minimum": 1,
+              "type": "integer",
+              "format": "int32",
+              "default": 50
+            }
+          }
+        ],
+        "responses": {
+          "400": {
+            "description": "Bad Request",
+            "content": {
+              "application/problem+json": {
+                "schema": {
+                  "$ref": "#/components/schemas/CP6.WebApi.OpenApi.SpaceDesignProblemDetails"
+                }
+              }
+            }
+          },
+          "401": {
+            "description": "Unauthorized",
+            "content": {
+              "application/problem+json": {
+                "schema": {
+                  "$ref": "#/components/schemas/CP6.WebApi.OpenApi.SpaceDesignProblemDetails"
+                }
+              }
+            }
+          },
+          "403": {
+            "description": "Forbidden",
+            "content": {
+              "application/problem+json": {
+                "schema": {
+                  "$ref": "#/components/schemas/CP6.WebApi.OpenApi.SpaceDesignProblemDetails"
+                }
+              }
+            }
+          },
+          "404": {
+            "description": "Not Found",
+            "content": {
+              "application/problem+json": {
+                "schema": {
+                  "$ref": "#/components/schemas/CP6.WebApi.OpenApi.SpaceDesignProblemDetails"
+                }
+              }
+            }
+          },
+          "409": {
+            "description": "Conflict",
+            "content": {
+              "application/problem+json": {
+                "schema": {
+                  "$ref": "#/components/schemas/CP6.WebApi.OpenApi.SpaceDesignProblemDetails"
+                }
+              }
+            }
+          },
+          "422": {
+            "description": "Unprocessable Content",
+            "content": {
+              "application/problem+json": {
+                "schema": {
+                  "$ref": "#/components/schemas/CP6.WebApi.OpenApi.SpaceDesignProblemDetails"
+                }
+              }
+            }
+          },
+          "500": {
+            "description": "Internal Server Error",
+            "content": {
+              "application/problem+json": {
+                "schema": {
+                  "$ref": "#/components/schemas/CP6.WebApi.OpenApi.SpaceDesignProblemDetails"
+                }
+              }
+            }
+          },
+          "200": {
+            "description": "OK",
+            "content": {
+              "text/plain": {
+                "schema": {
+                  "$ref": "#/components/schemas/CP6.Space.Contracts.SpacePlanningScenarioBranchListResponse"
+                }
+              },
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/CP6.Space.Contracts.SpacePlanningScenarioBranchListResponse"
+                }
+              },
+              "text/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/CP6.Space.Contracts.SpacePlanningScenarioBranchListResponse"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
     "/api/space/design/v1/sites/{siteId}/runtime/inventory": {
       "get": {
         "tags": [
@@ -9366,6 +9745,33 @@
           },
           "canExport": {
             "type": "boolean"
+          }
+        },
+        "additionalProperties": false
+      },
+      "CP6.Space.Contracts.CreateSpacePlanningScenarioBranchRequest": {
+        "type": "object",
+        "properties": {
+          "basePublishedVersionId": {
+            "type": "string",
+            "format": "uuid"
+          },
+          "name": {
+            "type": "string",
+            "nullable": true
+          }
+        },
+        "additionalProperties": false
+      },
+      "CP6.Space.Contracts.CreateSpacePlanningScenarioBranchResponse": {
+        "type": "object",
+        "properties": {
+          "outcome": {
+            "type": "string",
+            "nullable": true
+          },
+          "branch": {
+            "$ref": "#/components/schemas/CP6.Space.Contracts.SpacePlanningScenarioBranchDto"
           }
         },
         "additionalProperties": false
@@ -12371,6 +12777,98 @@
         },
         "additionalProperties": false
       },
+      "CP6.Space.Contracts.SpacePlanningScenarioBranchDto": {
+        "type": "object",
+        "properties": {
+          "branchId": {
+            "type": "string",
+            "format": "uuid"
+          },
+          "siteId": {
+            "type": "string",
+            "format": "uuid"
+          },
+          "modelId": {
+            "type": "string",
+            "format": "uuid"
+          },
+          "basePublishedVersionId": {
+            "type": "string",
+            "format": "uuid"
+          },
+          "baseVersionNo": {
+            "type": "string",
+            "nullable": true
+          },
+          "scenarioVersionId": {
+            "type": "string",
+            "format": "uuid"
+          },
+          "scenarioVersionNo": {
+            "type": "string",
+            "nullable": true
+          },
+          "name": {
+            "type": "string",
+            "nullable": true
+          },
+          "branchStatus": {
+            "type": "string",
+            "nullable": true
+          },
+          "scenarioVersionStatus": {
+            "type": "string",
+            "nullable": true
+          },
+          "cloneJobId": {
+            "type": "string",
+            "format": "uuid"
+          },
+          "cloneJobStatus": {
+            "type": "string",
+            "nullable": true
+          },
+          "createdAtUtc": {
+            "type": "string",
+            "format": "date-time"
+          },
+          "createdBy": {
+            "type": "string",
+            "format": "uuid"
+          },
+          "definitionVersion": {
+            "type": "string",
+            "nullable": true
+          },
+          "productionIsolated": {
+            "type": "boolean"
+          },
+          "limitations": {
+            "type": "array",
+            "items": {
+              "type": "string"
+            },
+            "nullable": true
+          }
+        },
+        "additionalProperties": false
+      },
+      "CP6.Space.Contracts.SpacePlanningScenarioBranchListResponse": {
+        "type": "object",
+        "properties": {
+          "items": {
+            "type": "array",
+            "items": {
+              "$ref": "#/components/schemas/CP6.Space.Contracts.SpacePlanningScenarioBranchDto"
+            },
+            "nullable": true
+          },
+          "isTruncated": {
+            "type": "boolean"
+          }
+        },
+        "additionalProperties": false
+      },
       "CP6.Space.Contracts.SpacePortalAisleDto": {
         "required": [
           "logicalId",
@@ -13879,6 +14377,10 @@
             "nullable": true
           },
           "rowVersion": {
+            "type": "string",
+            "nullable": true
+          },
+          "purpose": {
             "type": "string",
             "nullable": true
           }

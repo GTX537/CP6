@@ -118,6 +118,9 @@ public static class SpaceInfrastructureRegistration
         services.AddScoped<ISpaceFileScanProcessor, SpaceFileScanProcessor>();
         services.AddScoped<ISpaceVersionCloneStore, EfSpaceVersionCloneStore>();
         services.AddScoped<SpaceVersionCloneCoordinator>();
+        services.AddScoped<
+            ISpacePlanningScenarioService,
+            SpacePlanningScenarioService>();
         services.AddScoped<SpaceSourceCoordinator>();
         services.AddScoped<ISpaceDesignV1Service, SpaceDesignV1Service>();
         services.AddScoped<ISpaceExcelMappingService, SpaceExcelMappingService>();

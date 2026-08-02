@@ -16,6 +16,7 @@ public sealed class SpaceDesignProblemDetailsMiddleware(
 {
     private const string DesignPath = "/api/space/design/v1";
     private const string OperationsPath = "/api/space/operations/v1";
+    private const string PlanningPath = "/api/space/planning/v1";
     private const string ExternalOrganizationPath =
         "/api/space/external-organization";
     private const string FieldPolicyPath = "/api/space/field-policy";
@@ -27,6 +28,7 @@ public sealed class SpaceDesignProblemDetailsMiddleware(
     {
         if (!context.Request.Path.StartsWithSegments(DesignPath) &&
             !context.Request.Path.StartsWithSegments(OperationsPath) &&
+            !context.Request.Path.StartsWithSegments(PlanningPath) &&
             !context.Request.Path.StartsWithSegments(
                 ExternalOrganizationPath) &&
             !context.Request.Path.StartsWithSegments(FieldPolicyPath) &&

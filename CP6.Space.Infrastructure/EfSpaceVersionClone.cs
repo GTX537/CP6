@@ -403,6 +403,14 @@ public sealed class EfSpaceVersionCloneProcessor : ISpaceVersionCloneProcessor
             var model = await _context.Models.SingleAsync(
                 candidate => candidate.Id == payload.ModelId,
                 cancellationToken);
+            var planningBranch =
+                payload.PlanningScenarioBranchId.HasValue
+                    ? await _context.PlanningScenarioBranches.SingleAsync(
+                        candidate =>
+                            candidate.Id ==
+                            payload.PlanningScenarioBranchId.Value,
+                        cancellationToken)
+                    : null;
 
             if (job.CancellationRequestedAtUtc.HasValue)
             {
@@ -416,13 +424,24 @@ public sealed class EfSpaceVersionCloneProcessor : ISpaceVersionCloneProcessor
                 return EmptyCounts();
             }
 
-            ValidateReservation(payload, model, target);
+            ValidateReservation(
+                payload,
+                model,
+                target,
+                planningBranch,
+                job.Id);
             var source = await _context.Versions
                 .AsNoTracking()
                 .SingleAsync(
                     version => version.Id == payload.SourceVersionId,
                     cancellationToken);
-            if (source.Status != SpaceVersionStatus.Published ||
+            var sourceStatusValid = planningBranch is not null
+                ? source.Status is
+                    SpaceVersionStatus.Published or
+                    SpaceVersionStatus.Superseded
+                : source.Status == SpaceVersionStatus.Published;
+            if (source.Purpose != SpaceModelVersionPurpose.Production ||
+                !sourceStatusValid ||
                 string.IsNullOrWhiteSpace(source.ContentHash))
             {
                 throw new SpaceVersionStateException(
@@ -481,17 +500,44 @@ public sealed class EfSpaceVersionCloneProcessor : ISpaceVersionCloneProcessor
     private static void ValidateReservation(
         SpaceVersionClonePayload payload,
         SpaceModel model,
-        SpaceModelVersion target)
+        SpaceModelVersion target,
+        SpacePlanningScenarioBranch? planningBranch,
+        Guid cloneJobId)
     {
         if (target.ModelId != model.Id ||
             target.Status != SpaceVersionStatus.Initializing ||
             target.BasedOnVersionId != payload.SourceVersionId ||
-            target.CloneOperationId != payload.OperationId ||
+            target.CloneOperationId != payload.OperationId)
+        {
+            throw new SpaceVersionStateException(
+                "The clone reservation no longer matches the model pointers.");
+        }
+
+        if (planningBranch is not null)
+        {
+            if (target.Purpose != SpaceModelVersionPurpose.PlanningScenario ||
+                model.ActiveDraftVersionId == target.Id ||
+                planningBranch.TenantId != target.TenantId ||
+                planningBranch.ModelId != model.Id ||
+                planningBranch.SiteId != model.SiteId ||
+                planningBranch.BasePublishedVersionId !=
+                    payload.SourceVersionId ||
+                planningBranch.ScenarioVersionId != target.Id ||
+                planningBranch.CloneJobId != cloneJobId ||
+                planningBranch.Id != payload.PlanningScenarioBranchId)
+            {
+                throw new SpaceVersionStateException(
+                    "The planning scenario clone binding is invalid.");
+            }
+            return;
+        }
+
+        if (target.Purpose != SpaceModelVersionPurpose.Production ||
             model.ActiveDraftVersionId != target.Id ||
             model.CurrentPublishedVersionId != payload.SourceVersionId)
         {
             throw new SpaceVersionStateException(
-                "The clone reservation no longer matches the model pointers.");
+                "The production clone no longer matches the model pointers.");
         }
     }
 

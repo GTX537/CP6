@@ -25,7 +25,8 @@ public sealed record SpaceVersionDto(
     string? ContentHash,
     string? ValidatedHash,
     DateTime? PublishedAtUtc,
-    string RowVersion);
+    string RowVersion,
+    string Purpose = "Production");
 
 public sealed record CreateSpaceVersionRequest(
     string Name,

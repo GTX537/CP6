@@ -19,7 +19,8 @@ public sealed record SpaceVersionClonePayload(
     Guid ModelId,
     Guid SourceVersionId,
     Guid TargetVersionId,
-    Guid OperationId);
+    Guid OperationId,
+    Guid? PlanningScenarioBranchId = null);
 
 public sealed record SpaceVersionCloneCounts(
     int Sources,

@@ -33,6 +33,7 @@ public static class SpaceAuditPermissionSeed
     private const int SpaceMenuId = 900;
     private const int AuditMenuId = 906;
     private const int AiAdminMenuId = 907;
+    private const int PlanningMenuId = 908;
     private const int AdministratorRoleId = 1;
     private static readonly SemaphoreSlim NonSqlGate = new(1, 1);
     private static readonly (string Code, string Name, int Sort)[]
@@ -54,6 +55,8 @@ public static class SpaceAuditPermissionSeed
             ("operations:dispatch:cancel", "取消调度审批", 140),
             ("operations:dispatch:retry", "重试调度分派", 150),
             ("operations:dispatch:compensate", "补偿调度分派", 160),
+            ("planning:scenario:read", "查看规划方案", 170),
+            ("planning:scenario:create", "创建规划方案", 180),
         ];
     private static readonly (string Code, string Name, int Sort)[]
         AiAdminActions =
@@ -251,6 +254,33 @@ public static class SpaceAuditPermissionSeed
             changed = true;
         }
 
+        var planningMenu = await db.Sys_Menus.SingleOrDefaultAsync(
+            x => x.MenuId == PlanningMenuId,
+            ct);
+        if (planningMenu is null)
+        {
+            db.Sys_Menus.Add(new Sys_Menu
+            {
+                MenuId = PlanningMenuId,
+                MenuName = "规划方案",
+                MenuKey = "space-planning",
+                RoutePath = "/space/planning",
+                Icon = "DataAnalysis",
+                ParentId = SpaceMenuId,
+                OrderNo = PlanningMenuId,
+                Enable = true,
+            });
+            changed = true;
+        }
+        else if (!string.Equals(
+                     planningMenu.MenuKey,
+                     "space-planning",
+                     StringComparison.Ordinal))
+        {
+            planningMenu.MenuKey = "space-planning";
+            changed = true;
+        }
+
         var tenantIds = await db.Sys_Tenants
             .Select(x => x.Id)
             .ToListAsync(ct);
@@ -270,6 +300,11 @@ public static class SpaceAuditPermissionSeed
                 db,
                 tenantId,
                 AiAdminMenuId,
+                ct);
+            changed |= await EnsureRoleMenuAsync(
+                db,
+                tenantId,
+                PlanningMenuId,
                 ct);
 
             foreach (var action in DesignActions)
@@ -455,6 +490,11 @@ public static class SpaceAuditPermissionSeed
                 x =>
                     x.MenuId == AiAdminMenuId &&
                     x.MenuKey == "space-ai-admin",
+                ct) ||
+            !await db.Sys_Menus.AnyAsync(
+                x =>
+                    x.MenuId == PlanningMenuId &&
+                    x.MenuKey == "space-planning",
                 ct))
         {
             return false;
@@ -485,6 +525,14 @@ public static class SpaceAuditPermissionSeed
                         x.TenantId == tenantId &&
                         x.RoleId == AdministratorRoleId &&
                         x.MenuId == AiAdminMenuId,
+                    ct);
+            var hasPlanningMenu = await db.Sys_RoleMenus
+                .IgnoreQueryFilters()
+                .AnyAsync(
+                    x =>
+                        x.TenantId == tenantId &&
+                        x.RoleId == AdministratorRoleId &&
+                        x.MenuId == PlanningMenuId,
                     ct);
             var hasAction = await db.Sys_MenuActions
                 .IgnoreQueryFilters()
@@ -550,6 +598,7 @@ public static class SpaceAuditPermissionSeed
             if (!hasSpaceMenu ||
                 !hasAuditMenu ||
                 !hasAiAdminMenu ||
+                !hasPlanningMenu ||
                 !hasAction ||
                 !hasGrant ||
                 !hasDesignActions ||

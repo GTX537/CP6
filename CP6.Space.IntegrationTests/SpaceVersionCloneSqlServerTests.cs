@@ -1,4 +1,5 @@
 using CP6.Space.Application;
+using CP6.Space.Contracts;
 using CP6.Space.Domain;
 using CP6.Space.Infrastructure;
 using Microsoft.Data.SqlClient;
@@ -294,6 +295,78 @@ public sealed class SpaceVersionCloneSqlServerTests
         });
     }
 
+    [SqlServerFact]
+    public async Task Planning_scenario_clones_pinned_history_without_taking_production_pointers()
+    {
+        await WithDatabaseAsync(async (context, execution, clock) =>
+        {
+            var (model, originalPublished) = await SeedPublishedAsync(
+                context,
+                execution.ActorId,
+                includeSnapshot: true);
+            var service = new SpacePlanningScenarioService(
+                context,
+                execution,
+                clock,
+                new TestAccess(model.SiteId));
+            var branch = await service.CreateBranchAsync(
+                model.SiteId,
+                Guid.NewGuid(),
+                new CreateSpacePlanningScenarioBranchRequest(
+                    originalPublished.Id,
+                    "Peak season"));
+
+            var replacement = SpaceModelVersion.CreateDraft(
+                execution.TenantId,
+                model.Id,
+                3,
+                "Production v2");
+            replacement.BeginValidation();
+            replacement.MarkReady(ContentHash, "space-v1", WmsHash);
+            replacement.BeginPublishing();
+            replacement.MarkPublished(execution.ActorId, clock.UtcNow);
+            originalPublished.MarkSuperseded();
+            model.SetPublishedVersion(replacement, ContentHash);
+            context.Versions.Add(replacement);
+            await context.SaveChangesAsync();
+
+            var leaseStore = new EfSpaceJobLeaseStore(context, clock);
+            var processor = new EfSpaceVersionCloneProcessor(
+                context,
+                clock,
+                leaseStore);
+            var lease = await leaseStore.TryClaimNextAsync(
+                "scenario-clone-worker",
+                "space-clone-v1",
+                TimeSpan.FromMinutes(2));
+            Assert.NotNull(lease);
+            await processor.ProcessAsync(lease!);
+
+            context.ChangeTracker.Clear();
+            var scenario = await context.Versions.SingleAsync(
+                value => value.Id == branch.Branch.ScenarioVersionId);
+            var reloadedModel = await context.Models.SingleAsync(
+                value => value.Id == model.Id);
+            var result = await service.GetBranchAsync(
+                model.SiteId,
+                branch.Branch.BranchId);
+
+            Assert.Equal(
+                SpaceModelVersionPurpose.PlanningScenario,
+                scenario.Purpose);
+            Assert.Equal(SpaceVersionStatus.Draft, scenario.Status);
+            Assert.Equal(originalPublished.Id, scenario.BasedOnVersionId);
+            Assert.Equal("Ready", result.BranchStatus);
+            Assert.Null(reloadedModel.ActiveDraftVersionId);
+            Assert.Equal(
+                replacement.Id,
+                reloadedModel.CurrentPublishedVersionId);
+            Assert.Single(await context.FloorRevisions
+                .Where(value => value.ModelVersionId == scenario.Id)
+                .ToArrayAsync());
+        });
+    }
+
     private static async Task<(
         SpaceVersionCloneStartResult Result,
         SpaceVersionCloneCounts Counts)> StartAndProcessAsync(
@@ -579,6 +652,13 @@ public sealed class SpaceVersionCloneSqlServerTests
         Guid ActorId,
         Guid CorrelationId)
         : ISpaceExecutionContext, ISpaceCorrelationContext;
+
+    private sealed class TestAccess(Guid expectedSiteId)
+        : ISpaceDesignAccessEvaluator
+    {
+        public void EnsureSiteAccess(Guid siteId, bool write) =>
+            Assert.Equal(expectedSiteId, siteId);
+    }
 
     private sealed class TestClock : ISpaceClock
     {

@@ -222,4 +222,14 @@ public static class SpaceErrorCodes
     public const string ExternalAccessStateInvalid =
         "SPACE_EXTERNAL_ACCESS_STATE_INVALID";
     public const string AuditUnavailable = "SPACE_AUDIT_UNAVAILABLE";
+    public const string PlanningScenarioInternalOnly =
+        "SPACE_PLANNING_SCENARIO_INTERNAL_ONLY";
+    public const string PlanningScenarioConflict =
+        "SPACE_PLANNING_SCENARIO_CONFLICT";
+    public const string PlanningScenarioNotFound =
+        "SPACE_PLANNING_SCENARIO_NOT_FOUND";
+    public const string PlanningScenarioBaseInvalid =
+        "SPACE_PLANNING_SCENARIO_BASE_INVALID";
+    public const string PlanningScenarioProductionDenied =
+        "SPACE_PLANNING_SCENARIO_PRODUCTION_DENIED";
 }
