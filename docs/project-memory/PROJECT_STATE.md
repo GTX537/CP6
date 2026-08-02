@@ -2,6 +2,14 @@
 
 最后更新：2026-08-02
 
+## E11-S03 功能完成状态（2026-08-02）
+
+- E11-S03 合同 `3cf42534`、功能 `419d3f6c` 已完成并通过功能分支门禁，待远端备份与受控集成。新增内部 PUT/GET 人员调度建议资源、调用方 UUID 幂等、不可变推荐证据和 `space-dispatch-v1` 定义；不审批、不分配、不认领、不启动、不修改任务或人员，也不向 WMS/WCS/PDA 写入。
+- 任务只来自当前 CP6 `MobileTask` 的 Pending 且未分配事实，首个可行动位置固定优先 From、缺失时 To，并携带 ContractVersion/ExecutionVersion/RowVersion。人员必须同时具备新鲜位置与工作状态、严格 Idle，默认排除 Simulated；所有任务、人员和 Published 身份越界均失败关闭。
+- 匹配先用 Hopcroft–Karp 保证最大基数，再做确定性最小成本；配对乘积上限 100,000，返回上限 100。证据分别保存任务/人员/配对首因排除、最多 100 个样例、匹配容量、截断和限制说明；几何距离不冒充通道路线、时间或 SLA。
+- Migration `20260802180049_SpaceE11S03DispatchRecommendations` 新增租户隔离的不可变证据表、Published 复合外键、计数/JSON/哈希约束和索引。Viewer 新增手动 `DSP` 面板，与 KPI/DIAG/PUT 互斥，展示来源、任务并发、人员双时点、建议与排除证据，并支持任务首端定位。
+- 功能分支门禁：Space Unit 249/249、默认 Space Integration 216 passed / 62 SQL-environment skipped、CP6.Tests 2752 passed / 17 environment-gated skipped、前端 118 files / 653 tests、完整 solution 非增量 Release 0 error / 10 条既有 warning、EF/SDK drift、两套 TypeScript strict no-emit、生产构建和差异检查通过。42 个五语键使快照到 4,542；i18n 历史缺失仍为 909，本卡净新增 0。交付证据见 `docs/space/reports/e11-s03-dispatch-recommendations.md`。
+
 ## E11-S02 完成状态（2026-08-02）
 
 - E11-S02 已进入受控集成基线：合同 `3ccd2936`、功能 `644293f1`、文档 `034a1b1b`、no-ff 集成 `a2b47826`。新增内部 PUT/GET 上架推荐资源、调用方 UUID 幂等、不可变推荐证据和 `space-putaway-v1` 定义；不预留、不移动库存、不创建任务，也不向 WMS/WCS/PDA 写入。
@@ -329,4 +337,4 @@
 
 ## 下一动作
 
-以 `a2b47826` 为当前 Space 代码集成基线。E03-S01～S03、E13-S16、E10-S01～S06 与 E11-S01～S02 已完成；E11-S02 不得被扩写为调度、审批或执行写回。E03-S04 与 E04-S05 继续等待 E02-S07/CAD 语义预览，E13-S04 等待 E02-S03，E13-S05 等待 S04 与正式供应商证据；E06-S01 继续等待 E02～E05 与 E13 主链。下一步可单独冻结 E11-S03 人员/任务调度建议合同；E02-S01 继续等待正式黄金集、授权和冻结 Worker，E09 的产品/QA/WMS/安全 GA 签字仍由发布治理完成。i18n 当前有 909 项显式快照债务，本卡净新增 0。禁止把候选检查点 `0d25da4d` 整包合入，GR-VP T1–T7 不要重做。
+以 `987f9fcd` 为当前 Space 远端受控集成基线；E11-S03 功能已完成，待远端备份、no-ff 受控集成、合并态冒烟和临时工作树清理。E03-S01～S03、E13-S16、E10-S01～S06 与 E11-S01～S03 已完成；E11-S03 不得被扩写为审批、任务分配或执行写回。E03-S04 与 E04-S05 继续等待 E02-S07/CAD 语义预览，E13-S04 等待 E02-S03，E13-S05 等待 S04 与正式供应商证据；E06-S01 继续等待 E02～E05 与 E13 主链。集成后下一步可单独冻结 E11-S04 审批与任务适配合同；E02-S01 继续等待正式黄金集、授权和冻结 Worker，E09 的产品/QA/WMS/安全 GA 签字仍由发布治理完成。i18n 当前有 909 项显式快照债务，本卡净新增 0。禁止把候选检查点 `0d25da4d` 整包合入，GR-VP T1–T7 不要重做。
