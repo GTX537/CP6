@@ -44,6 +44,12 @@ public sealed class SpaceDispatchApprovalContractTests
             auditRead: true,
             resourceType: "DispatchExecution");
         AssertEndpoint(
+            nameof(SpaceDispatchApprovalController.GetEvaluation),
+            "operations:dispatch:read",
+            "space.operations.dispatch-evaluation.read",
+            auditRead: true,
+            resourceType: "DispatchOutcomeEvaluation");
+        AssertEndpoint(
             nameof(SpaceDispatchApprovalController.Retry),
             "operations:dispatch:retry",
             "space.operations.dispatch-execution.retry",

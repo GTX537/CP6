@@ -157,6 +157,8 @@ public static class SpaceErrorCodes
         "SPACE_DISPATCH_EXECUTION_COMPENSATION_UNAVAILABLE";
     public const string DispatchExecutionEvidenceInvalid =
         "SPACE_DISPATCH_EXECUTION_EVIDENCE_INVALID";
+    public const string DispatchEvaluationEvidenceInvalid =
+        "SPACE_DISPATCH_EVALUATION_EVIDENCE_INVALID";
     public const string DeviceEventInvalid =
         "SPACE_DEVICE_EVENT_INVALID";
     public const string DeviceEventConflict =

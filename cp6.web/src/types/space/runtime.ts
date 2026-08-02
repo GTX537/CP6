@@ -938,3 +938,77 @@ export interface SpaceDispatchExecutionActionResponse {
   action: SpaceDispatchExecutionAction
   execution: SpaceDispatchExecution
 }
+
+export interface SpaceDispatchEvaluationEvidence {
+  recommendationGeneratedAtUtc: string
+  approvalRequestedAtUtc: string
+  approvalDecidedAtUtc: string | null
+  assignmentAppliedAtUtc: string | null
+  executionObservedAtUtc: string
+  recommendationDefinitionVersion: string
+  evaluationDefinitionVersion: string
+  adapterId: string
+}
+
+export interface SpaceDispatchEvaluationFunnel {
+  recommendedCount: number
+  selectedCount: number
+  assignmentReceiptCount: number
+  startedCount: number
+  completedCount: number
+  attentionCount: number
+  compensatedCount: number
+  selectionRatePercent: number
+  assignmentSuccessRatePercent: number
+  startRatePercent: number
+  completionRatePercent: number
+}
+
+export interface SpaceDispatchEvaluationTiming {
+  approvalLeadTimeSeconds: number | null
+  assignmentLeadTimeSeconds: number | null
+  assignmentToStartSampleCount: number
+  averageAssignmentToStartSeconds: number | null
+  executionSampleCount: number
+  averageExecutionSeconds: number | null
+  assignmentToCompletionSampleCount: number
+  averageAssignmentToCompletionSeconds: number | null
+}
+
+export interface SpaceDispatchPlannedDistanceComparison {
+  status: 'Available' | 'Unavailable'
+  basis: 'SELECTED_COHORT_STABLE_ORDER_PUBLISHED_GEOMETRY'
+  cohortCount: number
+  stableOrderBaselineMeters: number | null
+  optimizedMeters: number | null
+  differenceMeters: number | null
+  differencePercent: number | null
+  outcome: 'Improved' | 'Neutral' | 'Regressed' | null
+  unavailableReason: string | null
+}
+
+export interface SpaceDispatchBenefitBoundary {
+  actualTravelDistanceAvailable: boolean
+  actualTravelDistanceReason: string
+  throughputUpliftAvailable: boolean
+  throughputUpliftReason: string
+  monetaryBenefitAvailable: boolean
+  monetaryBenefitReason: string
+}
+
+export interface SpaceDispatchOutcomeEvaluation {
+  approvalRequestId: string
+  siteId: string
+  recommendationId: string
+  publishedVersionId: string
+  warehouseCode: string
+  approvalStatus: SpaceDispatchApprovalStatus
+  executionStatus: SpaceDispatchExecutionStatus
+  evaluatedAtUtc: string
+  evidence: SpaceDispatchEvaluationEvidence
+  funnel: SpaceDispatchEvaluationFunnel
+  timing: SpaceDispatchEvaluationTiming
+  plannedDistance: SpaceDispatchPlannedDistanceComparison
+  benefitBoundary: SpaceDispatchBenefitBoundary
+  limitations: string[]
+}

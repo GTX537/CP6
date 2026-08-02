@@ -6,6 +6,7 @@ import DispatchRecommendationPanel from '../DispatchRecommendationPanel.vue'
 import type {
   SpaceDispatchApprovalRequest,
   SpaceDispatchExecution,
+  SpaceDispatchOutcomeEvaluation,
   SpaceDispatchRecommendation,
 } from '@/types/space/runtime'
 
@@ -102,6 +103,28 @@ describe('DispatchRecommendationPanel', () => {
     })
   })
 
+  it('renders evidence-bounded outcome evaluation and emits refresh', async () => {
+    const appliedApproval = { ...approval(), status: 'Applied' as const }
+    const wrapper = mountPanel(
+      recommendation(),
+      appliedApproval,
+      execution(),
+      evaluation(),
+    )
+
+    expect(wrapper.text()).toContain('调度效果评估')
+    expect(wrapper.text()).toContain('2.000 m')
+    expect(wrapper.text()).toContain('1.000 m')
+    expect(wrapper.text()).toContain('+50.0%')
+    expect(wrapper.text()).toContain('TASK_LINKED_ROUTE_TRAJECTORY_NOT_AVAILABLE')
+    expect(wrapper.text()).toContain('COMPARABLE_HISTORICAL_CONTROL_WINDOW_NOT_AVAILABLE')
+    expect(wrapper.text()).toContain('LABOR_DEVICE_COST_AND_ATTRIBUTION_BASELINE_NOT_AVAILABLE')
+    expect(wrapper.text()).toContain('稳定顺序反事实')
+
+    await wrapper.find('.evaluation-section .approval-actions button').trigger('click')
+    expect(wrapper.emitted('refresh-evaluation')).toHaveLength(1)
+  })
+
   it('keeps no-assignment and refresh failure states visible', async () => {
     const value = recommendation()
     value.outcome = 'NoAssignment'
@@ -120,6 +143,7 @@ function mountPanel(
   value: SpaceDispatchRecommendation | null,
   approvalValue: SpaceDispatchApprovalRequest | null = null,
   executionValue: SpaceDispatchExecution | null = null,
+  evaluationValue: SpaceDispatchOutcomeEvaluation | null = null,
 ) {
   const i18n = createI18n({
     legacy: false,
@@ -144,9 +168,78 @@ function mountPanel(
       execution: executionValue,
       executionLoading: false,
       executionError: '',
+      evaluation: evaluationValue,
+      evaluationLoading: false,
+      evaluationError: '',
     },
     global: { plugins: [i18n] },
   })
+}
+
+function evaluation(): SpaceDispatchOutcomeEvaluation {
+  return {
+    approvalRequestId: 'approval-1',
+    siteId: 'site-1',
+    recommendationId: 'recommendation-1',
+    publishedVersionId: 'version-1',
+    warehouseCode: 'WH-01',
+    approvalStatus: 'Applied',
+    executionStatus: 'Executing',
+    evaluatedAtUtc: '2026-08-02T18:03:00Z',
+    evidence: {
+      recommendationGeneratedAtUtc: '2026-08-02T18:00:00Z',
+      approvalRequestedAtUtc: '2026-08-02T18:01:00Z',
+      approvalDecidedAtUtc: '2026-08-02T18:01:30Z',
+      assignmentAppliedAtUtc: '2026-08-02T18:02:00Z',
+      executionObservedAtUtc: '2026-08-02T18:03:00Z',
+      recommendationDefinitionVersion: 'space-dispatch-v1',
+      evaluationDefinitionVersion: 'space-dispatch-outcome-evaluation-v1',
+      adapterId: 'cp6-mobile-task-assignment-v1',
+    },
+    funnel: {
+      recommendedCount: 2,
+      selectedCount: 1,
+      assignmentReceiptCount: 1,
+      startedCount: 1,
+      completedCount: 0,
+      attentionCount: 0,
+      compensatedCount: 0,
+      selectionRatePercent: 50,
+      assignmentSuccessRatePercent: 100,
+      startRatePercent: 100,
+      completionRatePercent: 0,
+    },
+    timing: {
+      approvalLeadTimeSeconds: 30,
+      assignmentLeadTimeSeconds: 60,
+      assignmentToStartSampleCount: 1,
+      averageAssignmentToStartSeconds: 10,
+      executionSampleCount: 0,
+      averageExecutionSeconds: null,
+      assignmentToCompletionSampleCount: 0,
+      averageAssignmentToCompletionSeconds: null,
+    },
+    plannedDistance: {
+      status: 'Available',
+      basis: 'SELECTED_COHORT_STABLE_ORDER_PUBLISHED_GEOMETRY',
+      cohortCount: 2,
+      stableOrderBaselineMeters: 2,
+      optimizedMeters: 1,
+      differenceMeters: 1,
+      differencePercent: 50,
+      outcome: 'Improved',
+      unavailableReason: null,
+    },
+    benefitBoundary: {
+      actualTravelDistanceAvailable: false,
+      actualTravelDistanceReason: 'TASK_LINKED_ROUTE_TRAJECTORY_NOT_AVAILABLE',
+      throughputUpliftAvailable: false,
+      throughputUpliftReason: 'COMPARABLE_HISTORICAL_CONTROL_WINDOW_NOT_AVAILABLE',
+      monetaryBenefitAvailable: false,
+      monetaryBenefitReason: 'LABOR_DEVICE_COST_AND_ATTRIBUTION_BASELINE_NOT_AVAILABLE',
+    },
+    limitations: ['PLANNED_DISTANCE_IS_PUBLISHED_GEOMETRY_NOT_ACTUAL_ROUTE'],
+  }
 }
 
 function execution(): SpaceDispatchExecution {

@@ -237,6 +237,85 @@
             </span>
           </div>
         </section>
+        <section v-if="approval" class="evaluation-section">
+          <div class="section-title">
+            <strong>{{ t('调度效果评估') }}</strong>
+            <span v-if="evaluation">{{ executionStatusLabel }}</span>
+          </div>
+          <p class="approval-safety">
+            {{ t('计划几何比较是同一队列的稳定顺序反事实，不代表实际路线或财务收益') }}
+          </p>
+          <div class="approval-actions">
+            <button
+              type="button"
+              :disabled="evaluationLoading"
+              @click="$emit('refresh-evaluation')"
+            >{{ evaluationLoading ? t('处理中') : t('刷新效果评估') }}</button>
+          </div>
+          <p v-if="evaluationError" class="dispatch-error">{{ evaluationError }}</p>
+          <template v-if="evaluation">
+            <small>
+              {{ t('评估时点') }} {{ formatTime(evaluation.evaluatedAtUtc) }} ·
+              {{ evaluation.evidence.evaluationDefinitionVersion }}
+            </small>
+            <div class="evaluation-funnel">
+              <span>{{ t('推荐') }} <strong>{{ evaluation.funnel.recommendedCount }}</strong></span>
+              <span>{{ t('已选择') }} <strong>{{ evaluation.funnel.selectedCount }}</strong></span>
+              <span>{{ t('分派回执') }} <strong>{{ evaluation.funnel.assignmentReceiptCount }}</strong></span>
+              <span>{{ t('已开始') }} <strong>{{ evaluation.funnel.startedCount }}</strong></span>
+              <span>{{ t('已完成') }} <strong>{{ evaluation.funnel.completedCount }}</strong></span>
+              <span>{{ t('需关注') }} <strong>{{ evaluation.funnel.attentionCount }}</strong></span>
+            </div>
+            <div class="evaluation-rates">
+              <span>{{ t('选择率') }} <strong>{{ formatPercent(evaluation.funnel.selectionRatePercent) }}</strong></span>
+              <span>{{ t('分派成功率') }} <strong>{{ formatPercent(evaluation.funnel.assignmentSuccessRatePercent) }}</strong></span>
+              <span>{{ t('开始率') }} <strong>{{ formatPercent(evaluation.funnel.startRatePercent) }}</strong></span>
+              <span>{{ t('完成率') }} <strong>{{ formatPercent(evaluation.funnel.completionRatePercent) }}</strong></span>
+            </div>
+            <div class="evaluation-timing">
+              <span>{{ t('审批耗时') }} <strong>{{ formatSeconds(evaluation.timing.approvalLeadTimeSeconds) }}</strong></span>
+              <span>{{ t('分派耗时') }} <strong>{{ formatSeconds(evaluation.timing.assignmentLeadTimeSeconds) }}</strong></span>
+              <span>
+                {{ t('平均分派到开始') }}
+                <strong>{{ formatSeconds(evaluation.timing.averageAssignmentToStartSeconds) }}</strong>
+                <small>n={{ evaluation.timing.assignmentToStartSampleCount }}</small>
+              </span>
+              <span>
+                {{ t('平均执行耗时') }}
+                <strong>{{ formatSeconds(evaluation.timing.averageExecutionSeconds) }}</strong>
+                <small>n={{ evaluation.timing.executionSampleCount }}</small>
+              </span>
+              <span>
+                {{ t('平均分派到完成') }}
+                <strong>{{ formatSeconds(evaluation.timing.averageAssignmentToCompletionSeconds) }}</strong>
+                <small>n={{ evaluation.timing.assignmentToCompletionSampleCount }}</small>
+              </span>
+            </div>
+            <div class="planned-distance" :data-status="evaluation.plannedDistance.status">
+              <strong>{{ t('计划几何比较') }}</strong>
+              <template v-if="evaluation.plannedDistance.status === 'Available'">
+                <span>{{ t('稳定顺序基线') }} {{ formatMeters(evaluation.plannedDistance.stableOrderBaselineMeters) }}</span>
+                <span>{{ t('推荐配对') }} {{ formatMeters(evaluation.plannedDistance.optimizedMeters) }}</span>
+                <span>
+                  {{ distanceOutcomeLabel }} ·
+                  {{ formatSignedMeters(evaluation.plannedDistance.differenceMeters) }} ·
+                  {{ formatSignedPercent(evaluation.plannedDistance.differencePercent) }}
+                </span>
+              </template>
+              <code v-else>{{ evaluation.plannedDistance.unavailableReason }}</code>
+            </div>
+            <div class="benefit-boundaries">
+              <strong>{{ t('收益声明边界') }}</strong>
+              <span>{{ t('实际路线节省不可用') }} <code>{{ evaluation.benefitBoundary.actualTravelDistanceReason }}</code></span>
+              <span>{{ t('吞吐提升不可用') }} <code>{{ evaluation.benefitBoundary.throughputUpliftReason }}</code></span>
+              <span>{{ t('货币收益不可用') }} <code>{{ evaluation.benefitBoundary.monetaryBenefitReason }}</code></span>
+            </div>
+            <details v-if="evaluation.limitations.length" class="evaluation-limitations">
+              <summary>{{ t('评估限制') }} ({{ evaluation.limitations.length }})</summary>
+              <code v-for="item in evaluation.limitations" :key="item">{{ item }}</code>
+            </details>
+          </template>
+        </section>
       </section>
 
       <section class="exclusion-section">
@@ -285,6 +364,7 @@ import type {
   SpaceDispatchApprovalRequest,
   SpaceDispatchExecution,
   SpaceDispatchExecutionTaskState,
+  SpaceDispatchOutcomeEvaluation,
   SubmitSpaceDispatchExecutionActionRequest,
   SpaceDispatchRecommendation,
 } from '@/types/space/runtime'
@@ -300,6 +380,9 @@ const props = defineProps<{
   execution: SpaceDispatchExecution | null
   executionLoading: boolean
   executionError: string
+  evaluation: SpaceDispatchOutcomeEvaluation | null
+  evaluationLoading: boolean
+  evaluationError: string
 }>()
 
 const emit = defineEmits<{
@@ -308,6 +391,7 @@ const emit = defineEmits<{
   (event: 'refresh-approval'): void
   (event: 'cancel-approval'): void
   (event: 'refresh-execution'): void
+  (event: 'refresh-evaluation'): void
   (event: 'retry-execution', request: SubmitSpaceDispatchExecutionActionRequest): void
   (event: 'compensate-execution', request: SubmitSpaceDispatchExecutionActionRequest): void
   (event: 'locate', locationCode: string): void
@@ -379,6 +463,12 @@ const executionStatusLabel = computed(() => {
     AttentionRequired: '需人工关注',
   }
   return t(labels[props.execution.status])
+})
+
+const distanceOutcomeLabel = computed(() => {
+  const outcome = props.evaluation?.plannedDistance.outcome
+  if (!outcome) return ''
+  return t({ Improved: '计划几何改善', Neutral: '计划几何持平', Regressed: '计划几何回退' }[outcome])
 })
 
 watch(
@@ -478,6 +568,28 @@ function shortKey(value: string | null): string {
   return value ? value.slice(0, 12) : ''
 }
 
+function formatPercent(value: number): string {
+  return `${Number(value).toFixed(1)}%`
+}
+
+function formatSignedPercent(value: number | null): string {
+  if (value === null) return '—'
+  return `${value > 0 ? '+' : ''}${Number(value).toFixed(1)}%`
+}
+
+function formatSeconds(value: number | null): string {
+  return value === null ? '—' : `${Number(value).toFixed(1)} s`
+}
+
+function formatMeters(value: number | null): string {
+  return value === null ? '—' : `${Number(value).toFixed(3)} m`
+}
+
+function formatSignedMeters(value: number | null): string {
+  if (value === null) return '—'
+  return `${value > 0 ? '+' : ''}${Number(value).toFixed(3)} m`
+}
+
 function formatNumber(value: number): string {
   return value.toLocaleString(undefined, { maximumFractionDigits: 3 })
 }
@@ -550,6 +662,7 @@ function formatOptionalTime(value: string | null): string {
 .assignment-section,
 .approval-section,
 .execution-section,
+.evaluation-section,
 .exclusion-section,
 .limitation-section { margin-top: 9px; padding: 10px; border-radius: 5px; background: rgba(255, 255, 255, .035); }
 .source-section p { margin: 5px 0 0; color: #90a4ae; }
@@ -636,4 +749,22 @@ function formatOptionalTime(value: string | null): string {
 .execution-task-list small,
 .execution-action-list { color: #90a4ae; }
 .execution-action-list code { color: #ff8a80; overflow-wrap: anywhere; }
+.evaluation-funnel,
+.evaluation-rates,
+.evaluation-timing { display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 4px; margin-top: 7px; }
+.evaluation-funnel span,
+.evaluation-rates span,
+.evaluation-timing > span { display: flex; justify-content: space-between; gap: 5px; color: #b0bec5; }
+.evaluation-timing > span { flex-wrap: wrap; }
+.evaluation-timing small { color: #78909c; }
+.planned-distance,
+.benefit-boundaries { display: grid; gap: 4px; margin-top: 8px; padding: 7px; border: 1px solid rgba(129, 212, 250, .16); border-radius: 4px; color: #b0bec5; }
+.planned-distance[data-status='Available'] { border-color: rgba(128, 203, 196, .35); }
+.planned-distance code,
+.benefit-boundaries code,
+.evaluation-limitations code { color: #90a4ae; overflow-wrap: anywhere; }
+.benefit-boundaries span { display: grid; gap: 2px; }
+.evaluation-limitations { margin-top: 8px; }
+.evaluation-limitations summary { cursor: pointer; color: #90a4ae; }
+.evaluation-limitations code { display: block; margin-top: 3px; }
 </style>

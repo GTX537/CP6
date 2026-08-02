@@ -3,7 +3,7 @@ using CP6.Entity.DomainModels;
 namespace CP6.WebApi.Seed;
 
 /// <summary>
-/// Space E11-S03 至 E11-S05 人员调度建议、审批与执行画面词条。由 Program.cs 按租户幂等补齐。
+/// Space E11-S03 至 E11-S06 人员调度建议、审批、执行与评估画面词条。由 Program.cs 按租户幂等补齐。
 /// </summary>
 public static class I18nSpaceDispatchRecommendationSeed
 {
@@ -100,5 +100,33 @@ public static class I18nSpaceDispatchRecommendationSeed
         new() { LangKey = "任务执行状态刷新失败", ZhCN = "任务执行状态刷新失败", ZhTW = "任務執行狀態重新整理失敗", En = "Failed to refresh task execution status", Ja = "タスク実行状態の更新に失敗しました", Ko = "작업 실행 상태를 새로고침하지 못했습니다" },
         new() { LangKey = "任务分派重试失败，未产生额外影响", ZhCN = "任务分派重试失败，未产生额外影响", ZhTW = "任務指派重試失敗，未產生額外影響", En = "Task assignment retry failed with no additional effect", Ja = "タスク割当の再試行に失敗しました。追加の変更はありません", Ko = "작업 할당 재시도에 실패했으며 추가 영향은 없습니다" },
         new() { LangKey = "任务分派补偿失败，未修改执行或库存事实", ZhCN = "任务分派补偿失败，未修改执行或库存事实", ZhTW = "任務指派補償失敗，未修改執行或庫存事實", En = "Task assignment compensation failed; execution and inventory facts were not changed", Ja = "タスク割当の補償に失敗しました。実行または在庫の事実は変更されていません", Ko = "작업 할당 보상에 실패했으며 실행 또는 재고 사실은 변경되지 않았습니다" },
+        new() { LangKey = "调度效果评估", ZhCN = "调度效果评估", ZhTW = "調度效果評估", En = "Dispatch outcome evaluation", Ja = "配車効果評価", Ko = "배차 효과 평가" },
+        new() { LangKey = "计划几何比较是同一队列的稳定顺序反事实，不代表实际路线或财务收益", ZhCN = "计划几何比较是同一队列的稳定顺序反事实，不代表实际路线或财务收益", ZhTW = "計畫幾何比較是同一佇列的穩定順序反事實，不代表實際路線或財務收益", En = "The planned geometry comparison is a stable-order counterfactual for the same cohort, not actual routing or financial benefit", Ja = "計画ジオメトリ比較は同一コホートの安定順序による反実仮想であり、実際の経路や財務効果ではありません", Ko = "계획 기하 비교는 동일 집단의 안정 순서 반사실이며 실제 경로나 재무 이익이 아닙니다" },
+        new() { LangKey = "刷新效果评估", ZhCN = "刷新效果评估", ZhTW = "重新整理效果評估", En = "Refresh outcome evaluation", Ja = "効果評価を更新", Ko = "효과 평가 새로고침" },
+        new() { LangKey = "评估时点", ZhCN = "评估时点", ZhTW = "評估時點", En = "Evaluated at", Ja = "評価時刻", Ko = "평가 시각" },
+        new() { LangKey = "推荐", ZhCN = "推荐", ZhTW = "建議", En = "Recommended", Ja = "推奨", Ko = "추천" },
+        new() { LangKey = "分派回执", ZhCN = "分派回执", ZhTW = "指派回執", En = "Assignment receipts", Ja = "割当レシート", Ko = "할당 영수증" },
+        new() { LangKey = "已开始", ZhCN = "已开始", ZhTW = "已開始", En = "Started", Ja = "開始済み", Ko = "시작됨" },
+        new() { LangKey = "选择率", ZhCN = "选择率", ZhTW = "選擇率", En = "Selection rate", Ja = "選択率", Ko = "선택률" },
+        new() { LangKey = "分派成功率", ZhCN = "分派成功率", ZhTW = "指派成功率", En = "Assignment success rate", Ja = "割当成功率", Ko = "할당 성공률" },
+        new() { LangKey = "开始率", ZhCN = "开始率", ZhTW = "開始率", En = "Start rate", Ja = "開始率", Ko = "시작률" },
+        new() { LangKey = "完成率", ZhCN = "完成率", ZhTW = "完成率", En = "Completion rate", Ja = "完了率", Ko = "완료율" },
+        new() { LangKey = "审批耗时", ZhCN = "审批耗时", ZhTW = "審批耗時", En = "Approval lead time", Ja = "承認所要時間", Ko = "승인 소요 시간" },
+        new() { LangKey = "分派耗时", ZhCN = "分派耗时", ZhTW = "指派耗時", En = "Assignment lead time", Ja = "割当所要時間", Ko = "할당 소요 시간" },
+        new() { LangKey = "平均分派到开始", ZhCN = "平均分派到开始", ZhTW = "平均指派至開始", En = "Average assignment to start", Ja = "割当から開始までの平均", Ko = "평균 할당-시작 시간" },
+        new() { LangKey = "平均执行耗时", ZhCN = "平均执行耗时", ZhTW = "平均執行耗時", En = "Average execution time", Ja = "平均実行時間", Ko = "평균 실행 시간" },
+        new() { LangKey = "平均分派到完成", ZhCN = "平均分派到完成", ZhTW = "平均指派至完成", En = "Average assignment to completion", Ja = "割当から完了までの平均", Ko = "평균 할당-완료 시간" },
+        new() { LangKey = "计划几何比较", ZhCN = "计划几何比较", ZhTW = "計畫幾何比較", En = "Planned geometry comparison", Ja = "計画ジオメトリ比較", Ko = "계획 기하 비교" },
+        new() { LangKey = "稳定顺序基线", ZhCN = "稳定顺序基线", ZhTW = "穩定順序基線", En = "Stable-order baseline", Ja = "安定順序ベースライン", Ko = "안정 순서 기준선" },
+        new() { LangKey = "推荐配对", ZhCN = "推荐配对", ZhTW = "建議配對", En = "Recommended pairing", Ja = "推奨ペアリング", Ko = "추천 매칭" },
+        new() { LangKey = "计划几何改善", ZhCN = "计划几何改善", ZhTW = "計畫幾何改善", En = "Planned geometry improved", Ja = "計画ジオメトリが改善", Ko = "계획 기하 개선" },
+        new() { LangKey = "计划几何持平", ZhCN = "计划几何持平", ZhTW = "計畫幾何持平", En = "Planned geometry unchanged", Ja = "計画ジオメトリは同等", Ko = "계획 기하 동일" },
+        new() { LangKey = "计划几何回退", ZhCN = "计划几何回退", ZhTW = "計畫幾何退步", En = "Planned geometry regressed", Ja = "計画ジオメトリが悪化", Ko = "계획 기하 악화" },
+        new() { LangKey = "收益声明边界", ZhCN = "收益声明边界", ZhTW = "收益聲明邊界", En = "Benefit claim boundaries", Ja = "効果主張の境界", Ko = "이익 주장 경계" },
+        new() { LangKey = "实际路线节省不可用", ZhCN = "实际路线节省不可用", ZhTW = "實際路線節省不可用", En = "Actual route savings unavailable", Ja = "実経路の削減量は利用不可", Ko = "실제 경로 절감 사용 불가" },
+        new() { LangKey = "吞吐提升不可用", ZhCN = "吞吐提升不可用", ZhTW = "吞吐提升不可用", En = "Throughput uplift unavailable", Ja = "スループット向上は利用不可", Ko = "처리량 향상 사용 불가" },
+        new() { LangKey = "货币收益不可用", ZhCN = "货币收益不可用", ZhTW = "貨幣收益不可用", En = "Monetary benefit unavailable", Ja = "金銭的効果は利用不可", Ko = "금전적 이익 사용 불가" },
+        new() { LangKey = "评估限制", ZhCN = "评估限制", ZhTW = "評估限制", En = "Evaluation limitations", Ja = "評価上の制限", Ko = "평가 제한" },
+        new() { LangKey = "调度效果评估刷新失败，保留上次成功结果", ZhCN = "调度效果评估刷新失败，保留上次成功结果", ZhTW = "調度效果評估重新整理失敗，保留上次成功結果", En = "Failed to refresh the dispatch outcome evaluation; keeping the last successful result", Ja = "配車効果評価の更新に失敗しました。前回成功した結果を保持します", Ko = "배차 효과 평가를 새로고침하지 못해 마지막 성공 결과를 유지합니다" },
     ];
 }

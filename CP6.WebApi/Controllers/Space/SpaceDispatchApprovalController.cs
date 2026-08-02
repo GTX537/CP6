@@ -42,7 +42,8 @@ namespace CP6.WebApi.Controllers.Space;
     "application/problem+json")]
 public sealed class SpaceDispatchApprovalController(
     ISpaceDispatchApprovalService service,
-    ISpaceDispatchExecutionService executionService) : ControllerBase
+    ISpaceDispatchExecutionService executionService,
+    ISpaceDispatchOutcomeEvaluationService evaluationService) : ControllerBase
 {
     [HttpPut("{approvalRequestId:guid}")]
     [SpaceAuditOperation(
@@ -141,6 +142,31 @@ public sealed class SpaceDispatchApprovalController(
         Guid approvalRequestId,
         CancellationToken cancellationToken = default) =>
         executionService.GetExecutionAsync(
+            siteId,
+            recommendationId,
+            approvalRequestId,
+            cancellationToken);
+
+    [HttpGet("{approvalRequestId:guid}/evaluation")]
+    [SpaceAuditOperation(
+        "space.operations.dispatch-evaluation.read",
+        "DispatchOutcomeEvaluation",
+        ResourceIdArgument = "approvalRequestId",
+        SiteIdArgument = "siteId",
+        PermissionCode = "space:operations:dispatch:read",
+        AuditRead = true)]
+    [RequirePermission(
+        "space",
+        "operations:dispatch:read",
+        UseProblemDetails = true)]
+    [ProducesResponseType<SpaceDispatchOutcomeEvaluationDto>(
+        StatusCodes.Status200OK)]
+    public Task<SpaceDispatchOutcomeEvaluationDto> GetEvaluation(
+        Guid siteId,
+        Guid recommendationId,
+        Guid approvalRequestId,
+        CancellationToken cancellationToken = default) =>
+        evaluationService.GetAsync(
             siteId,
             recommendationId,
             approvalRequestId,
