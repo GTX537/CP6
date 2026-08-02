@@ -2,6 +2,14 @@
 
 最后更新：2026-08-02
 
+## E11-S04 完成状态（2026-08-02）
+
+- E11-S04 已进入受控集成基线：合同 `098fb54b`、功能 `a7298e28`、文档 `a552d05d`、no-ff 集成 `c19231db`。新增内部 PUT/GET/cancel 调度审批资源、调用方 UUID 幂等、OA BizType `SPACE_DISPATCH_ASSIGNMENT`、提交/读取/取消权限与审计；提交人与最终审批人严格分离。
+- 审批请求冻结 E11-S03 建议哈希、Published/仓库、选中 rank、任务并发、人员真实身份与双时点以及内部用户映射；对外不返回人员姓名、邮箱或内部人员 `UserId`。最终通过前重新验证全部事实，任一漂移整批进入 `Stale` 或 `FailedNoEffect`，不产生部分写入。
+- `cp6-mobile-task-assignment-v1` 只分配现有 Pending 且未分派的真实 `MobileTask`，完整预检、任务分配、事件和回执在同一工作单元中提交；不认领、不启动、不修改库存/订单、不伪造 WCS，也不另建 PDA 事实源。Migration 为 `20260802184419_SpaceE11S04DispatchApproval`。
+- Viewer 新增显式选择、理由、提交、刷新、取消、状态与回执，并以请求版本阻止旧响应覆盖。21 行五语种子使唯一键快照从 4,542 增至 4,561；i18n 历史缺失由 909 降至 908，本卡没有新增缺失键。
+- 功能分支门禁：Space Unit 249/249、默认 Space Integration 224 passed / 62 SQL-environment skipped、CP6.Tests 2757 passed / 17 environment-gated skipped、前端 118 files / 656 tests、完整 solution Release 与前端生产构建、EF/SDK drift、两个 TypeScript strict no-emit 和差异检查通过。合并态冒烟：审批服务/适配器 8/8、权限/合同/种子/基础设施 44/44、前端 19/19、类型、SDK drift 与 EF pending model 通过。交付证据见 `docs/space/reports/e11-s04-dispatch-approval-adapter.md`。
+
 ## E11-S03 完成状态（2026-08-02）
 
 - E11-S03 已进入受控集成基线：合同 `3cf42534`、功能 `419d3f6c`、文档 `eea62de0`、no-ff 集成 `cf7bf778`。新增内部 PUT/GET 人员调度建议资源、调用方 UUID 幂等、不可变推荐证据和 `space-dispatch-v1` 定义；不审批、不分配、不认领、不启动、不修改任务或人员，也不向 WMS/WCS/PDA 写入。
@@ -296,6 +304,8 @@
 
 ## 最近验证基线
 
+- E11-S04 已推进至受控集成提交 `c19231db`：合同 `098fb54b`、功能 `a7298e28`、文档 `a552d05d`。功能分支全量门禁为 Space Unit 249/249、默认 Space Integration 224 passed / 62 SQL-gated skipped、CP6.Tests 2757 passed / 17 environment-gated skipped、前端 118 files / 656 tests、完整 solution Release、生产构建、EF/SDK drift 与两个 TypeScript strict no-emit 通过；合并态审批服务/适配器 8/8、权限/合同/种子/基础设施 44/44、前端 19/19、类型、SDK drift 与 EF pending model 通过。i18n 历史欠账由 909 降至 908。
+- E11-S03 已推进至受控集成提交 `cf7bf778`：合同 `3cf42534`、功能 `419d3f6c`、文档 `eea62de0`。Space Unit 249/249、默认 Space Integration 216 passed / 62 SQL-gated skipped、CP6.Tests 2752 passed / 17 environment-gated skipped、前端 118 files / 653 tests、完整 solution Release、EF/SDK drift 与生产构建通过；合并态引擎/运行时 6/6、服务/适配器 6/6、权限/审计/API/种子 23/23、前端 16/16、类型与 SDK drift 通过。
 - E11-S02 已推进至受控集成提交 `a2b47826`：合同 `3ccd2936`、功能 `644293f1`、文档 `034a1b1b`。Space Unit 245/245、默认 Space Integration 211 passed / 62 SQL-gated skipped、CP6.Tests 2748 passed / 17 environment-gated skipped、前端 117 files / 648 tests、完整 solution 非增量构建 0 error / 10 条既有 warning、EF/SDK drift、两个 TypeScript strict no-emit、production build 与差异检查通过；合并态引擎 5/5、服务 6/6、权限/审计/契约/种子 34/34、前端 14/14 和 SDK drift 通过；i18n 欠账由 911 降至 909。
 - E11-S01 已推进至受控集成提交 `8d4732e2`：只读运营诊断、Real-only 人员证据、路径/折返/停留/观测重叠、当前库位占用压力与真实容量不可用边界完成；Space Unit 240/240、默认 Space Integration 205 passed / 62 SQL-gated skipped、CP6.Tests 2744 passed / 17 environment-gated skipped、前端 116 files / 643 tests、完整 solution 0 error / 10 条既有 warning、EF/SDK drift 通过。合并态引擎 4/4、服务 7/7、权限/审计/契约/种子 59/59、前端 12/12 和严格类型检查通过。35 个新界面键均有五语种子，i18n 欠账保持基线 911 项。交付证据见 `docs/space/reports/e11-s01-operations-diagnostics.md`。
 - E10-S06 已推进至受控集成提交 `5f86edcb`：仓库 KPI、面积/占用口径、独立来源部分快照、ABC 分类和 Viewer 互斥覆盖完成；Space Unit 236/236、默认 Space Integration 198 passed / 62 SQL-gated skipped、本卡真实 SQL 3/3、CP6.Tests 2739 passed / 17 environment-gated skipped、前端 115 files / 639 tests、完整 solution 0 error / 10 条既有 warning、EF/SDK drift 通过。合并态合同 23/23、Runtime/适配器 81/81、权限/OpenAPI 46/46、前端 25/25、类型检查和 SDK drift 通过。i18n 保留 881 项基线债务和本卡新增 30 项。交付证据见 `docs/space/reports/e10-s06-warehouse-overview.md`。
@@ -338,4 +348,4 @@
 
 ## 下一动作
 
-以 `cf7bf778` 为当前 Space 代码集成基线，`7e627624` 为已推送的 E11-S03 集成状态；E11-S03 已完成远端功能备份、no-ff 受控集成、合并态冒烟和临时资源清理。E03-S01～S03、E13-S16、E10-S01～S06 与 E11-S01～S03 已完成；E11-S03 不得被扩写为审批、任务分配或执行写回。E03-S04 与 E04-S05 继续等待 E02-S07/CAD 语义预览，E13-S04 等待 E02-S03，E13-S05 等待 S04 与正式供应商证据；E06-S01 继续等待 E02～E05 与 E13 主链。下一步可单独冻结 E11-S04 审批与任务适配合同；E02-S01 继续等待正式黄金集、授权和冻结 Worker，E09 的产品/QA/WMS/安全 GA 签字仍由发布治理完成。i18n 当前有 909 项显式快照债务，本卡净新增 0。禁止把候选检查点 `0d25da4d` 整包合入，GR-VP T1–T7 不要重做。
+以 `c19231db` 为当前 Space 代码集成基线；E11-S04 已完成远端功能备份、no-ff 受控集成和合并态冒烟，待远端集成一致性确认后清理临时资源。E03-S01～S03、E13-S16、E10-S01～S06 与 E11-S01～S04 已完成；E11-S04 不得被扩写为任务认领/启动、库存或订单修改、WCS 命令或部分批次写入。E03-S04 与 E04-S05 继续等待 E02-S07/CAD 语义预览，E13-S04 等待 E02-S03，E13-S05 等待 S04 与正式供应商证据；E06-S01 继续等待 E02～E05 与 E13 主链。下一张独立卡为 E11-S05 执行状态、幂等回执、失败重试与补偿治理；E02-S01 继续等待正式黄金集、授权和冻结 Worker，E09 的产品/QA/WMS/安全 GA 签字仍由发布治理完成。i18n 当前有 908 项显式快照债务，本卡净新增 0。禁止把候选检查点 `0d25da4d` 整包合入，GR-VP T1–T7 不要重做。

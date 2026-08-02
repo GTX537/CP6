@@ -1,6 +1,6 @@
 # Space E11-S04 建议审批与任务适配实现计划
 
-状态：合同冻结，进入实现  
+状态：实现与合并态验证完成，已进入受控集成
 起始基线：`bf1bf4ca5f5cdcd4c8bc4f4a15939e694353eec4`  
 功能分支：`codex/space-e11-s04-dispatch-approval-adapter`
 
