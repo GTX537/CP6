@@ -103,6 +103,10 @@ public static class SpaceErrorCodes
         "SPACE_PERSONNEL_EVENT_CONFLICT";
     public const string PersonnelSiteNotFound =
         "SPACE_PERSONNEL_SITE_NOT_FOUND";
+    public const string PersonnelQueryInvalid =
+        "SPACE_PERSONNEL_QUERY_INVALID";
+    public const string PersonnelNotFound =
+        "SPACE_PERSONNEL_NOT_FOUND";
     public const string WmsBindingCodeMismatch =
         "SPACE_WMS_BINDING_CODE_MISMATCH";
     public const string WmsLocationMissing =

@@ -28,6 +28,8 @@ public sealed class SpaceDesignV1OpenApiTests
         {
             "/api/space/design/v1/sites/{siteId}/model",
             "/api/space/design/v1/sites/{siteId}/personnel-events",
+            "/api/space/design/v1/sites/{siteId}/personnel",
+            "/api/space/design/v1/sites/{siteId}/personnel/trajectory",
             "/api/space/design/v1/sites/{siteId}/versions",
             "/api/space/design/v1/sites/{siteId}/runtime/inventory",
             "/api/space/design/v1/sites/{siteId}/runtime/inventory/locate",
@@ -87,12 +89,14 @@ public sealed class SpaceDesignV1OpenApiTests
             .Select(operation =>
                 operation.Value.GetProperty("operationId").GetString())
             .ToArray();
-        Assert.Equal(60, operationIds.Length);
-        Assert.Equal(60, operationIds.Distinct().Count());
+        Assert.Equal(62, operationIds.Length);
+        Assert.Equal(62, operationIds.Distinct().Count());
         Assert.Contains("GetPolicy", operationIds);
         Assert.Contains("UpdatePolicy", operationIds);
         Assert.Contains("GetUsage", operationIds);
         Assert.Contains("IngestPersonnelEvents", operationIds);
+        Assert.Contains("GetCurrentPersonnel", operationIds);
+        Assert.Contains("GetPersonnelTrajectory", operationIds);
         Assert.Contains("GetAssets", operationIds);
         Assert.Contains("DownloadStandardExcelTemplate", operationIds);
         Assert.Contains("GetProfiles", operationIds);
@@ -254,6 +258,65 @@ public sealed class SpaceDesignV1OpenApiTests
         Assert.DoesNotContain(
             operation.GetProperty("parameters").EnumerateArray(),
             value => value.GetProperty("name").GetString() == "Idempotency-Key");
+    }
+
+    [Fact]
+    public void Personnel_runtime_contract_is_bounded_traceable_and_privacy_minimal()
+    {
+        using var document = ReadContract();
+        var root = document.RootElement;
+        var paths = root.GetProperty("paths");
+        var current = paths
+            .GetProperty("/api/space/design/v1/sites/{siteId}/personnel")
+            .GetProperty("get");
+        var trajectory = paths
+            .GetProperty(
+                "/api/space/design/v1/sites/{siteId}/personnel/trajectory")
+            .GetProperty("get");
+
+        Assert.Equal(
+            "GetCurrentPersonnel",
+            current.GetProperty("operationId").GetString());
+        Assert.Equal(
+            "GetPersonnelTrajectory",
+            trajectory.GetProperty("operationId").GetString());
+        foreach (var requiredQuery in new[]
+                 {
+                     "personExternalId", "sourceId", "fromUtc", "toUtc",
+                 })
+        {
+            var parameter = trajectory.GetProperty("parameters")
+                .EnumerateArray()
+                .Single(value =>
+                    value.GetProperty("name").GetString() == requiredQuery);
+            Assert.True(parameter.GetProperty("required").GetBoolean());
+        }
+
+        var schemas = root.GetProperty("components").GetProperty("schemas");
+        var currentProperties = schemas
+            .GetProperty("CP6.Space.Contracts.SpacePersonnelCurrentDto")
+            .GetProperty("properties")
+            .EnumerateObject()
+            .Select(value => value.Name)
+            .ToArray();
+        Assert.Contains("positionSourceEventId", currentProperties);
+        Assert.Contains("positionIsStale", currentProperties);
+        Assert.Contains("isSimulated", currentProperties);
+        Assert.DoesNotContain(currentProperties, value =>
+            value.Contains("name", StringComparison.OrdinalIgnoreCase) ||
+            value.Contains("userId", StringComparison.OrdinalIgnoreCase) ||
+            value.Contains("email", StringComparison.OrdinalIgnoreCase));
+
+        var trajectoryProperties = schemas
+            .GetProperty("CP6.Space.Contracts.SpacePersonnelTrajectoryPointDto")
+            .GetProperty("properties")
+            .EnumerateObject()
+            .Select(value => value.Name)
+            .ToArray();
+        Assert.Contains("eventId", trajectoryProperties);
+        Assert.Contains("sourceEventId", trajectoryProperties);
+        Assert.DoesNotContain(trajectoryProperties, value =>
+            value.Contains("userId", StringComparison.OrdinalIgnoreCase));
     }
 
     [Fact]
@@ -1211,6 +1274,8 @@ public sealed class SpaceDesignV1OpenApiTests
                      "LocateInventory",
                      "GetTasks",
                      "IngestPersonnelEvents",
+                     "GetCurrentPersonnel",
+                     "GetPersonnelTrajectory",
                      "GetOrganizations",
                      "GetOrganization",
                      "CreateOrganization",

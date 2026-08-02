@@ -3,6 +3,8 @@ import type {
   SpaceRuntimeInventoryLocateQuery,
   SpaceRuntimeInventoryLocateResponse,
   SpaceRuntimeInventoryResponse,
+  SpacePersonnelCurrentPage,
+  SpacePersonnelTrajectoryResponse,
   SpaceRuntimeTaskPathResponse,
 } from '@/types/space/runtime'
 
@@ -35,6 +37,46 @@ export const spaceRuntimeApi = {
     const params = new URLSearchParams({ taskId: normalized })
     return http.get<unknown, SpaceRuntimeTaskPathResponse>(
       `/space/design/v1/sites/${siteId}/runtime/tasks/path`,
+      { params },
+    )
+  },
+  currentPersonnel(
+    siteId: string,
+    floorLogicalId: string,
+    limit = 500,
+    cursor?: string,
+  ) {
+    const params = new URLSearchParams({
+      floorLogicalId,
+      limit: String(limit),
+    })
+    if (cursor) params.set('cursor', cursor)
+    return http.get<unknown, SpacePersonnelCurrentPage>(
+      `/space/design/v1/sites/${siteId}/personnel`,
+      { params },
+    )
+  },
+  personnelTrajectory(
+    siteId: string,
+    sourceId: string,
+    personExternalId: string,
+    fromUtc: string,
+    toUtc: string,
+    limit = 500,
+    cursor?: string,
+  ) {
+    const normalizedSourceId = sourceId.trim().toUpperCase()
+    const normalizedPersonId = personExternalId.trim().toUpperCase()
+    const params = new URLSearchParams({
+      sourceId: normalizedSourceId,
+      personExternalId: normalizedPersonId,
+      fromUtc,
+      toUtc,
+      limit: String(limit),
+    })
+    if (cursor) params.set('cursor', cursor)
+    return http.get<unknown, SpacePersonnelTrajectoryResponse>(
+      `/space/design/v1/sites/${siteId}/personnel/trajectory`,
       { params },
     )
   },

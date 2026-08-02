@@ -497,6 +497,24 @@ namespace CP6.Tests.Space
             }
         }
 
+        [Fact]
+        public void Personnel_trajectory_read_has_sensitive_read_audit_metadata()
+        {
+            var method = typeof(CP6.WebApi.Controllers.Space
+                    .SpacePersonnelRuntimeController)
+                .GetMethod("GetPersonnelTrajectory")!;
+            var attribute = method
+                .GetCustomAttribute<SpaceAuditOperationAttribute>();
+
+            Assert.NotNull(attribute);
+            Assert.Equal("space.personnel.trajectory.read", attribute.Action);
+            Assert.Equal("PersonnelTrajectory", attribute.ResourceType);
+            Assert.Equal("personExternalId", attribute.ResourceIdArgument);
+            Assert.Equal("siteId", attribute.SiteIdArgument);
+            Assert.Equal("space-audit:read", attribute.PermissionCode);
+            Assert.True(attribute.AuditRead);
+        }
+
         [Theory]
         [InlineData("GET")]
         [InlineData("HEAD")]

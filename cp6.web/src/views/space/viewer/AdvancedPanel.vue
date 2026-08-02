@@ -109,6 +109,43 @@
       <div class="ap-title">{{ t('设备示意') }}</div>
       <label class="ap-check"><input type="checkbox" :checked="deviceOn" @change="$emit('toggle-device')" />{{ t('显示设备') }}</label>
     </div>
+
+    <div class="ap-section">
+      <div class="ap-title">{{ t('人员位置与轨迹') }}</div>
+      <div class="ap-row">
+        <label class="ap-check">
+          <input type="checkbox" :checked="personnelOn" @change="$emit('toggle-personnel')" />
+          {{ t('显示当前人员') }}
+        </label>
+        <button class="ap-btn" :disabled="personnelLoading || !personnelOn" @click="$emit('refresh-personnel')">
+          {{ personnelLoading ? t('查询中') : t('刷新') }}
+        </button>
+      </div>
+      <div class="ap-row">
+        <input v-model="personnelSourceId" class="ap-input ap-input-wide" :placeholder="t('来源 ID')" />
+        <input v-model="personExternalId" class="ap-input ap-input-wide" :placeholder="t('人员外部 ID')" />
+      </div>
+      <div class="ap-row">
+        <input v-model="trajectoryFrom" type="datetime-local" class="ap-input ap-input-time" />
+        <input v-model="trajectoryTo" type="datetime-local" class="ap-input ap-input-time" />
+      </div>
+      <div class="ap-row">
+        <button
+          class="ap-btn"
+          :disabled="trajectoryLoading"
+          @click="$emit('load-personnel-trajectory', {
+            sourceId: personnelSourceId,
+            personExternalId,
+            from: trajectoryFrom,
+            to: trajectoryTo,
+          })"
+        >
+          {{ trajectoryLoading ? t('查询中') : t('加载授权轨迹') }}
+        </button>
+        <button class="ap-btn" @click="$emit('clear-personnel-trajectory')">{{ t('清除轨迹') }}</button>
+      </div>
+      <div v-if="personnelInfo" class="ap-info">{{ personnelInfo }}</div>
+    </div>
   </div>
 </template>
 
@@ -129,6 +166,10 @@ defineProps<{
   showOptimized: boolean
   workloadOn: boolean
   deviceOn: boolean
+  personnelOn: boolean
+  personnelLoading: boolean
+  trajectoryLoading: boolean
+  personnelInfo: string
   taskSource: SpaceDataSource
   workloadSource: SpaceDataSource
   deviceSource: SpaceDataSource
@@ -142,11 +183,30 @@ const emit = defineEmits<{
   (e: 'toggle-workload'): void
   (e: 'apply-workload', win: { from: string; to: string }): void
   (e: 'toggle-device'): void
+  (e: 'toggle-personnel'): void
+  (e: 'refresh-personnel'): void
+  (e: 'load-personnel-trajectory', query: {
+    sourceId: string
+    personExternalId: string
+    from: string
+    to: string
+  }): void
+  (e: 'clear-personnel-trajectory'): void
 }>()
 const taskNo = ref('')
 const today = new Date().toISOString().slice(0, 10)
 const from = ref(today)
 const to = ref(today)
+const trajectoryNow = new Date()
+const trajectoryFromDate = new Date(trajectoryNow.getTime() - 60 * 60 * 1000)
+const toLocalDateTime = (value: Date): string => {
+  const local = new Date(value.getTime() - value.getTimezoneOffset() * 60_000)
+  return local.toISOString().slice(0, 16)
+}
+const personnelSourceId = ref('')
+const personExternalId = ref('')
+const trajectoryFrom = ref(toLocalDateTime(trajectoryFromDate))
+const trajectoryTo = ref(toLocalDateTime(trajectoryNow))
 function formatQuantity(value: number | null): string {
   return value == null ? '—' : new Intl.NumberFormat(undefined, { maximumFractionDigits: 3 }).format(value)
 }
@@ -162,6 +222,8 @@ function onSpeed(ev: Event): void {
 .ap-title { color: #b39ddb; font-weight: 600; margin-bottom: 4px; }
 .ap-row { display: flex; align-items: center; gap: 4px; flex-wrap: wrap; margin-bottom: 4px; }
 .ap-input { background: #1a1a2e; color: #e0e0e0; border: 1px solid #37474f; border-radius: 4px; padding: 2px 4px; width: 70px; }
+.ap-input-wide { width: 145px; }
+.ap-input-time { width: 150px; }
 .ap-btn { background: transparent; color: #b39ddb; border: 1px solid #5e35b1; border-radius: 4px; cursor: pointer; padding: 2px 6px; }
 .ap-btn:hover { background: rgba(126,87,194,.2); }
 .ap-btn:disabled { opacity: .55; cursor: wait; }

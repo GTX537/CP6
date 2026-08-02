@@ -332,6 +332,23 @@ export interface ISpaceDesignV1Client {
     ingestPersonnelEvents(siteId: string, body: IngestSpacePersonnelEventsRequest): Promise<IngestSpacePersonnelEventsResponse>;
 
     /**
+     * @param sourceKind (optional)
+     * @param workState (optional)
+     * @param floorLogicalId (optional)
+     * @param limit (optional)
+     * @param cursor (optional)
+     * @return OK
+     */
+    getCurrentPersonnel(siteId: string, sourceKind: string | undefined, workState: string | undefined, floorLogicalId: string | undefined, limit: number | undefined, cursor: string | undefined): Promise<SpacePersonnelCurrentPageDto>;
+
+    /**
+     * @param limit (optional)
+     * @param cursor (optional)
+     * @return OK
+     */
+    getPersonnelTrajectory(siteId: string, personExternalId: string, sourceId: string, fromUtc: Date, toUtc: Date, limit: number | undefined, cursor: string | undefined): Promise<SpacePersonnelTrajectoryResponse>;
+
+    /**
      * @param locationLogicalId (optional)
      * @return OK
      */
@@ -5803,6 +5820,235 @@ export class SpaceDesignV1Client implements ISpaceDesignV1Client {
     }
 
     /**
+     * @param sourceKind (optional)
+     * @param workState (optional)
+     * @param floorLogicalId (optional)
+     * @param limit (optional)
+     * @param cursor (optional)
+     * @return OK
+     */
+    getCurrentPersonnel(siteId: string, sourceKind: string | undefined, workState: string | undefined, floorLogicalId: string | undefined, limit: number | undefined, cursor: string | undefined): Promise<SpacePersonnelCurrentPageDto> {
+        let url_ = this.baseUrl + "/api/space/design/v1/sites/{siteId}/personnel?";
+        if (siteId === undefined || siteId === null)
+            throw new globalThis.Error("The parameter 'siteId' must be defined.");
+        url_ = url_.replace("{siteId}", encodeURIComponent("" + siteId));
+        if (sourceKind === null)
+            throw new globalThis.Error("The parameter 'sourceKind' cannot be null.");
+        else if (sourceKind !== undefined)
+            url_ += "sourceKind=" + encodeURIComponent("" + sourceKind) + "&";
+        if (workState === null)
+            throw new globalThis.Error("The parameter 'workState' cannot be null.");
+        else if (workState !== undefined)
+            url_ += "workState=" + encodeURIComponent("" + workState) + "&";
+        if (floorLogicalId === null)
+            throw new globalThis.Error("The parameter 'floorLogicalId' cannot be null.");
+        else if (floorLogicalId !== undefined)
+            url_ += "floorLogicalId=" + encodeURIComponent("" + floorLogicalId) + "&";
+        if (limit === null)
+            throw new globalThis.Error("The parameter 'limit' cannot be null.");
+        else if (limit !== undefined)
+            url_ += "limit=" + encodeURIComponent("" + limit) + "&";
+        if (cursor === null)
+            throw new globalThis.Error("The parameter 'cursor' cannot be null.");
+        else if (cursor !== undefined)
+            url_ += "cursor=" + encodeURIComponent("" + cursor) + "&";
+        url_ = url_.replace(/[?&]$/, "");
+
+        let options_: RequestInit = {
+            method: "GET",
+            headers: {
+                "Accept": "application/json"
+            }
+        };
+
+        return this.http.fetch(url_, options_).then((_response: Response) => {
+            return this.processGetCurrentPersonnel(_response);
+        });
+    }
+
+    protected processGetCurrentPersonnel(response: Response): Promise<SpacePersonnelCurrentPageDto> {
+        const status = response.status;
+        let _headers: any = {}; if (response.headers && response.headers.forEach) { response.headers.forEach((v: any, k: any) => _headers[k] = v); };
+        if (status === 200) {
+            return response.text().then((_responseText) => {
+            let result200: any = null;
+            let resultData200 = _responseText === "" ? null : JSON.parse(_responseText, this.jsonParseReviver);
+            result200 = SpacePersonnelCurrentPageDto.fromJS(resultData200);
+            return result200;
+            });
+        } else if (status === 400) {
+            return response.text().then((_responseText) => {
+            let result400: any = null;
+            let resultData400 = _responseText === "" ? null : JSON.parse(_responseText, this.jsonParseReviver);
+            result400 = SpaceDesignProblemDetails.fromJS(resultData400);
+            return throwException("Bad Request", status, _responseText, _headers, result400);
+            });
+        } else if (status === 401) {
+            return response.text().then((_responseText) => {
+            let result401: any = null;
+            let resultData401 = _responseText === "" ? null : JSON.parse(_responseText, this.jsonParseReviver);
+            result401 = SpaceDesignProblemDetails.fromJS(resultData401);
+            return throwException("Unauthorized", status, _responseText, _headers, result401);
+            });
+        } else if (status === 403) {
+            return response.text().then((_responseText) => {
+            let result403: any = null;
+            let resultData403 = _responseText === "" ? null : JSON.parse(_responseText, this.jsonParseReviver);
+            result403 = SpaceDesignProblemDetails.fromJS(resultData403);
+            return throwException("Forbidden", status, _responseText, _headers, result403);
+            });
+        } else if (status === 404) {
+            return response.text().then((_responseText) => {
+            let result404: any = null;
+            let resultData404 = _responseText === "" ? null : JSON.parse(_responseText, this.jsonParseReviver);
+            result404 = SpaceDesignProblemDetails.fromJS(resultData404);
+            return throwException("Not Found", status, _responseText, _headers, result404);
+            });
+        } else if (status === 409) {
+            return response.text().then((_responseText) => {
+            let result409: any = null;
+            let resultData409 = _responseText === "" ? null : JSON.parse(_responseText, this.jsonParseReviver);
+            result409 = SpaceDesignProblemDetails.fromJS(resultData409);
+            return throwException("Conflict", status, _responseText, _headers, result409);
+            });
+        } else if (status === 422) {
+            return response.text().then((_responseText) => {
+            let result422: any = null;
+            let resultData422 = _responseText === "" ? null : JSON.parse(_responseText, this.jsonParseReviver);
+            result422 = SpaceDesignProblemDetails.fromJS(resultData422);
+            return throwException("Unprocessable Content", status, _responseText, _headers, result422);
+            });
+        } else if (status === 500) {
+            return response.text().then((_responseText) => {
+            let result500: any = null;
+            let resultData500 = _responseText === "" ? null : JSON.parse(_responseText, this.jsonParseReviver);
+            result500 = SpaceDesignProblemDetails.fromJS(resultData500);
+            return throwException("Internal Server Error", status, _responseText, _headers, result500);
+            });
+        } else if (status !== 200 && status !== 204) {
+            return response.text().then((_responseText) => {
+            return throwException("An unexpected server error occurred.", status, _responseText, _headers);
+            });
+        }
+        return Promise.resolve<SpacePersonnelCurrentPageDto>(null as any);
+    }
+
+    /**
+     * @param limit (optional)
+     * @param cursor (optional)
+     * @return OK
+     */
+    getPersonnelTrajectory(siteId: string, personExternalId: string, sourceId: string, fromUtc: Date, toUtc: Date, limit: number | undefined, cursor: string | undefined): Promise<SpacePersonnelTrajectoryResponse> {
+        let url_ = this.baseUrl + "/api/space/design/v1/sites/{siteId}/personnel/trajectory?";
+        if (siteId === undefined || siteId === null)
+            throw new globalThis.Error("The parameter 'siteId' must be defined.");
+        url_ = url_.replace("{siteId}", encodeURIComponent("" + siteId));
+        if (personExternalId === undefined || personExternalId === null)
+            throw new globalThis.Error("The parameter 'personExternalId' must be defined and cannot be null.");
+        else
+            url_ += "personExternalId=" + encodeURIComponent("" + personExternalId) + "&";
+        if (sourceId === undefined || sourceId === null)
+            throw new globalThis.Error("The parameter 'sourceId' must be defined and cannot be null.");
+        else
+            url_ += "sourceId=" + encodeURIComponent("" + sourceId) + "&";
+        if (fromUtc === undefined || fromUtc === null)
+            throw new globalThis.Error("The parameter 'fromUtc' must be defined and cannot be null.");
+        else
+            url_ += "fromUtc=" + encodeURIComponent(fromUtc ? "" + fromUtc.toISOString() : "") + "&";
+        if (toUtc === undefined || toUtc === null)
+            throw new globalThis.Error("The parameter 'toUtc' must be defined and cannot be null.");
+        else
+            url_ += "toUtc=" + encodeURIComponent(toUtc ? "" + toUtc.toISOString() : "") + "&";
+        if (limit === null)
+            throw new globalThis.Error("The parameter 'limit' cannot be null.");
+        else if (limit !== undefined)
+            url_ += "limit=" + encodeURIComponent("" + limit) + "&";
+        if (cursor === null)
+            throw new globalThis.Error("The parameter 'cursor' cannot be null.");
+        else if (cursor !== undefined)
+            url_ += "cursor=" + encodeURIComponent("" + cursor) + "&";
+        url_ = url_.replace(/[?&]$/, "");
+
+        let options_: RequestInit = {
+            method: "GET",
+            headers: {
+                "Accept": "application/json"
+            }
+        };
+
+        return this.http.fetch(url_, options_).then((_response: Response) => {
+            return this.processGetPersonnelTrajectory(_response);
+        });
+    }
+
+    protected processGetPersonnelTrajectory(response: Response): Promise<SpacePersonnelTrajectoryResponse> {
+        const status = response.status;
+        let _headers: any = {}; if (response.headers && response.headers.forEach) { response.headers.forEach((v: any, k: any) => _headers[k] = v); };
+        if (status === 200) {
+            return response.text().then((_responseText) => {
+            let result200: any = null;
+            let resultData200 = _responseText === "" ? null : JSON.parse(_responseText, this.jsonParseReviver);
+            result200 = SpacePersonnelTrajectoryResponse.fromJS(resultData200);
+            return result200;
+            });
+        } else if (status === 400) {
+            return response.text().then((_responseText) => {
+            let result400: any = null;
+            let resultData400 = _responseText === "" ? null : JSON.parse(_responseText, this.jsonParseReviver);
+            result400 = SpaceDesignProblemDetails.fromJS(resultData400);
+            return throwException("Bad Request", status, _responseText, _headers, result400);
+            });
+        } else if (status === 401) {
+            return response.text().then((_responseText) => {
+            let result401: any = null;
+            let resultData401 = _responseText === "" ? null : JSON.parse(_responseText, this.jsonParseReviver);
+            result401 = SpaceDesignProblemDetails.fromJS(resultData401);
+            return throwException("Unauthorized", status, _responseText, _headers, result401);
+            });
+        } else if (status === 403) {
+            return response.text().then((_responseText) => {
+            let result403: any = null;
+            let resultData403 = _responseText === "" ? null : JSON.parse(_responseText, this.jsonParseReviver);
+            result403 = SpaceDesignProblemDetails.fromJS(resultData403);
+            return throwException("Forbidden", status, _responseText, _headers, result403);
+            });
+        } else if (status === 404) {
+            return response.text().then((_responseText) => {
+            let result404: any = null;
+            let resultData404 = _responseText === "" ? null : JSON.parse(_responseText, this.jsonParseReviver);
+            result404 = SpaceDesignProblemDetails.fromJS(resultData404);
+            return throwException("Not Found", status, _responseText, _headers, result404);
+            });
+        } else if (status === 409) {
+            return response.text().then((_responseText) => {
+            let result409: any = null;
+            let resultData409 = _responseText === "" ? null : JSON.parse(_responseText, this.jsonParseReviver);
+            result409 = SpaceDesignProblemDetails.fromJS(resultData409);
+            return throwException("Conflict", status, _responseText, _headers, result409);
+            });
+        } else if (status === 422) {
+            return response.text().then((_responseText) => {
+            let result422: any = null;
+            let resultData422 = _responseText === "" ? null : JSON.parse(_responseText, this.jsonParseReviver);
+            result422 = SpaceDesignProblemDetails.fromJS(resultData422);
+            return throwException("Unprocessable Content", status, _responseText, _headers, result422);
+            });
+        } else if (status === 500) {
+            return response.text().then((_responseText) => {
+            let result500: any = null;
+            let resultData500 = _responseText === "" ? null : JSON.parse(_responseText, this.jsonParseReviver);
+            result500 = SpaceDesignProblemDetails.fromJS(resultData500);
+            return throwException("Internal Server Error", status, _responseText, _headers, result500);
+            });
+        } else if (status !== 200 && status !== 204) {
+            return response.text().then((_responseText) => {
+            return throwException("An unexpected server error occurred.", status, _responseText, _headers);
+            });
+        }
+        return Promise.resolve<SpacePersonnelTrajectoryResponse>(null as any);
+    }
+
+    /**
      * @param locationLogicalId (optional)
      * @return OK
      */
@@ -10440,6 +10686,197 @@ export interface ISpaceMoveObjectDto {
     z?: number;
 }
 
+export class SpacePersonnelCurrentDto implements ISpacePersonnelCurrentDto {
+    sourceId!: string;
+    sourceKind!: string;
+    personExternalId!: string;
+    workState!: string;
+    floorLogicalId!: string | undefined;
+    locationLogicalId!: string | undefined;
+    xMillimeters!: number | undefined;
+    yMillimeters!: number | undefined;
+    zMillimeters!: number | undefined;
+    accuracyMillimeters!: number | undefined;
+    positionOccurredAtUtc!: Date | undefined;
+    positionReceivedAtUtc!: Date | undefined;
+    positionEventId!: string | undefined;
+    positionSourceEventId!: string | undefined;
+    workStateOccurredAtUtc!: Date | undefined;
+    workStateReceivedAtUtc!: Date | undefined;
+    workStateEventId!: string | undefined;
+    workStateSourceEventId!: string | undefined;
+    positionAgeMilliseconds!: number | undefined;
+    workStateAgeMilliseconds!: number | undefined;
+    hasPosition!: boolean;
+    positionIsStale!: boolean;
+    workStateIsStale!: boolean;
+    isSimulated!: boolean;
+
+    constructor(data?: ISpacePersonnelCurrentDto) {
+        if (data) {
+            for (var property in data) {
+                if (data.hasOwnProperty(property))
+                    (this as any)[property] = (data as any)[property];
+            }
+        }
+    }
+
+    init(_data?: any) {
+        if (_data) {
+            this.sourceId = _data["sourceId"];
+            this.sourceKind = _data["sourceKind"];
+            this.personExternalId = _data["personExternalId"];
+            this.workState = _data["workState"];
+            this.floorLogicalId = _data["floorLogicalId"];
+            this.locationLogicalId = _data["locationLogicalId"];
+            this.xMillimeters = _data["xMillimeters"];
+            this.yMillimeters = _data["yMillimeters"];
+            this.zMillimeters = _data["zMillimeters"];
+            this.accuracyMillimeters = _data["accuracyMillimeters"];
+            this.positionOccurredAtUtc = _data["positionOccurredAtUtc"] ? new Date(_data["positionOccurredAtUtc"].toString()) : undefined as any;
+            this.positionReceivedAtUtc = _data["positionReceivedAtUtc"] ? new Date(_data["positionReceivedAtUtc"].toString()) : undefined as any;
+            this.positionEventId = _data["positionEventId"];
+            this.positionSourceEventId = _data["positionSourceEventId"];
+            this.workStateOccurredAtUtc = _data["workStateOccurredAtUtc"] ? new Date(_data["workStateOccurredAtUtc"].toString()) : undefined as any;
+            this.workStateReceivedAtUtc = _data["workStateReceivedAtUtc"] ? new Date(_data["workStateReceivedAtUtc"].toString()) : undefined as any;
+            this.workStateEventId = _data["workStateEventId"];
+            this.workStateSourceEventId = _data["workStateSourceEventId"];
+            this.positionAgeMilliseconds = _data["positionAgeMilliseconds"];
+            this.workStateAgeMilliseconds = _data["workStateAgeMilliseconds"];
+            this.hasPosition = _data["hasPosition"];
+            this.positionIsStale = _data["positionIsStale"];
+            this.workStateIsStale = _data["workStateIsStale"];
+            this.isSimulated = _data["isSimulated"];
+        }
+    }
+
+    static fromJS(data: any): SpacePersonnelCurrentDto {
+        data = typeof data === 'object' ? data : {};
+        let result = new SpacePersonnelCurrentDto();
+        result.init(data);
+        return result;
+    }
+
+    toJSON(data?: any) {
+        data = typeof data === 'object' ? data : {};
+        data["sourceId"] = this.sourceId;
+        data["sourceKind"] = this.sourceKind;
+        data["personExternalId"] = this.personExternalId;
+        data["workState"] = this.workState;
+        data["floorLogicalId"] = this.floorLogicalId;
+        data["locationLogicalId"] = this.locationLogicalId;
+        data["xMillimeters"] = this.xMillimeters;
+        data["yMillimeters"] = this.yMillimeters;
+        data["zMillimeters"] = this.zMillimeters;
+        data["accuracyMillimeters"] = this.accuracyMillimeters;
+        data["positionOccurredAtUtc"] = this.positionOccurredAtUtc ? this.positionOccurredAtUtc.toISOString() : undefined as any;
+        data["positionReceivedAtUtc"] = this.positionReceivedAtUtc ? this.positionReceivedAtUtc.toISOString() : undefined as any;
+        data["positionEventId"] = this.positionEventId;
+        data["positionSourceEventId"] = this.positionSourceEventId;
+        data["workStateOccurredAtUtc"] = this.workStateOccurredAtUtc ? this.workStateOccurredAtUtc.toISOString() : undefined as any;
+        data["workStateReceivedAtUtc"] = this.workStateReceivedAtUtc ? this.workStateReceivedAtUtc.toISOString() : undefined as any;
+        data["workStateEventId"] = this.workStateEventId;
+        data["workStateSourceEventId"] = this.workStateSourceEventId;
+        data["positionAgeMilliseconds"] = this.positionAgeMilliseconds;
+        data["workStateAgeMilliseconds"] = this.workStateAgeMilliseconds;
+        data["hasPosition"] = this.hasPosition;
+        data["positionIsStale"] = this.positionIsStale;
+        data["workStateIsStale"] = this.workStateIsStale;
+        data["isSimulated"] = this.isSimulated;
+        return data;
+    }
+}
+
+export interface ISpacePersonnelCurrentDto {
+    sourceId: string;
+    sourceKind: string;
+    personExternalId: string;
+    workState: string;
+    floorLogicalId: string | undefined;
+    locationLogicalId: string | undefined;
+    xMillimeters: number | undefined;
+    yMillimeters: number | undefined;
+    zMillimeters: number | undefined;
+    accuracyMillimeters: number | undefined;
+    positionOccurredAtUtc: Date | undefined;
+    positionReceivedAtUtc: Date | undefined;
+    positionEventId: string | undefined;
+    positionSourceEventId: string | undefined;
+    workStateOccurredAtUtc: Date | undefined;
+    workStateReceivedAtUtc: Date | undefined;
+    workStateEventId: string | undefined;
+    workStateSourceEventId: string | undefined;
+    positionAgeMilliseconds: number | undefined;
+    workStateAgeMilliseconds: number | undefined;
+    hasPosition: boolean;
+    positionIsStale: boolean;
+    workStateIsStale: boolean;
+    isSimulated: boolean;
+}
+
+export class SpacePersonnelCurrentPageDto implements ISpacePersonnelCurrentPageDto {
+    siteId!: string;
+    asOfUtc!: Date;
+    freshnessThresholdSeconds!: number;
+    items!: SpacePersonnelCurrentDto[];
+    nextCursor!: string | undefined;
+
+    constructor(data?: ISpacePersonnelCurrentPageDto) {
+        if (data) {
+            for (var property in data) {
+                if (data.hasOwnProperty(property))
+                    (this as any)[property] = (data as any)[property];
+            }
+        }
+        if (!data) {
+            this.items = [];
+        }
+    }
+
+    init(_data?: any) {
+        if (_data) {
+            this.siteId = _data["siteId"];
+            this.asOfUtc = _data["asOfUtc"] ? new Date(_data["asOfUtc"].toString()) : undefined as any;
+            this.freshnessThresholdSeconds = _data["freshnessThresholdSeconds"];
+            if (Array.isArray(_data["items"])) {
+                this.items = [] as any;
+                for (let item of _data["items"])
+                    this.items!.push(SpacePersonnelCurrentDto.fromJS(item));
+            }
+            this.nextCursor = _data["nextCursor"];
+        }
+    }
+
+    static fromJS(data: any): SpacePersonnelCurrentPageDto {
+        data = typeof data === 'object' ? data : {};
+        let result = new SpacePersonnelCurrentPageDto();
+        result.init(data);
+        return result;
+    }
+
+    toJSON(data?: any) {
+        data = typeof data === 'object' ? data : {};
+        data["siteId"] = this.siteId;
+        data["asOfUtc"] = this.asOfUtc ? this.asOfUtc.toISOString() : undefined as any;
+        data["freshnessThresholdSeconds"] = this.freshnessThresholdSeconds;
+        if (Array.isArray(this.items)) {
+            data["items"] = [];
+            for (let item of this.items)
+                data["items"].push(item ? item.toJSON() : undefined as any);
+        }
+        data["nextCursor"] = this.nextCursor;
+        return data;
+    }
+}
+
+export interface ISpacePersonnelCurrentPageDto {
+    siteId: string;
+    asOfUtc: Date;
+    freshnessThresholdSeconds: number;
+    items: SpacePersonnelCurrentDto[];
+    nextCursor: string | undefined;
+}
+
 export class SpacePersonnelEventInput implements ISpacePersonnelEventInput {
     sourceEventId!: string;
     personExternalId!: string;
@@ -10570,6 +11007,165 @@ export interface ISpacePersonnelEventReceipt {
     sourceEventId: string;
     outcome: string;
     projectionApplied: boolean;
+}
+
+export class SpacePersonnelTrajectoryPointDto implements ISpacePersonnelTrajectoryPointDto {
+    eventId!: string;
+    sourceEventId!: string;
+    floorLogicalId!: string | undefined;
+    locationLogicalId!: string | undefined;
+    xMillimeters!: number | undefined;
+    yMillimeters!: number | undefined;
+    zMillimeters!: number | undefined;
+    accuracyMillimeters!: number | undefined;
+    sourceSequence!: number | undefined;
+    occurredAtUtc!: Date;
+    receivedAtUtc!: Date;
+    ingestDelayMilliseconds!: number;
+
+    constructor(data?: ISpacePersonnelTrajectoryPointDto) {
+        if (data) {
+            for (var property in data) {
+                if (data.hasOwnProperty(property))
+                    (this as any)[property] = (data as any)[property];
+            }
+        }
+    }
+
+    init(_data?: any) {
+        if (_data) {
+            this.eventId = _data["eventId"];
+            this.sourceEventId = _data["sourceEventId"];
+            this.floorLogicalId = _data["floorLogicalId"];
+            this.locationLogicalId = _data["locationLogicalId"];
+            this.xMillimeters = _data["xMillimeters"];
+            this.yMillimeters = _data["yMillimeters"];
+            this.zMillimeters = _data["zMillimeters"];
+            this.accuracyMillimeters = _data["accuracyMillimeters"];
+            this.sourceSequence = _data["sourceSequence"];
+            this.occurredAtUtc = _data["occurredAtUtc"] ? new Date(_data["occurredAtUtc"].toString()) : undefined as any;
+            this.receivedAtUtc = _data["receivedAtUtc"] ? new Date(_data["receivedAtUtc"].toString()) : undefined as any;
+            this.ingestDelayMilliseconds = _data["ingestDelayMilliseconds"];
+        }
+    }
+
+    static fromJS(data: any): SpacePersonnelTrajectoryPointDto {
+        data = typeof data === 'object' ? data : {};
+        let result = new SpacePersonnelTrajectoryPointDto();
+        result.init(data);
+        return result;
+    }
+
+    toJSON(data?: any) {
+        data = typeof data === 'object' ? data : {};
+        data["eventId"] = this.eventId;
+        data["sourceEventId"] = this.sourceEventId;
+        data["floorLogicalId"] = this.floorLogicalId;
+        data["locationLogicalId"] = this.locationLogicalId;
+        data["xMillimeters"] = this.xMillimeters;
+        data["yMillimeters"] = this.yMillimeters;
+        data["zMillimeters"] = this.zMillimeters;
+        data["accuracyMillimeters"] = this.accuracyMillimeters;
+        data["sourceSequence"] = this.sourceSequence;
+        data["occurredAtUtc"] = this.occurredAtUtc ? this.occurredAtUtc.toISOString() : undefined as any;
+        data["receivedAtUtc"] = this.receivedAtUtc ? this.receivedAtUtc.toISOString() : undefined as any;
+        data["ingestDelayMilliseconds"] = this.ingestDelayMilliseconds;
+        return data;
+    }
+}
+
+export interface ISpacePersonnelTrajectoryPointDto {
+    eventId: string;
+    sourceEventId: string;
+    floorLogicalId: string | undefined;
+    locationLogicalId: string | undefined;
+    xMillimeters: number | undefined;
+    yMillimeters: number | undefined;
+    zMillimeters: number | undefined;
+    accuracyMillimeters: number | undefined;
+    sourceSequence: number | undefined;
+    occurredAtUtc: Date;
+    receivedAtUtc: Date;
+    ingestDelayMilliseconds: number;
+}
+
+export class SpacePersonnelTrajectoryResponse implements ISpacePersonnelTrajectoryResponse {
+    siteId!: string;
+    sourceId!: string;
+    sourceKind!: string;
+    personExternalId!: string;
+    fromUtc!: Date;
+    toUtc!: Date;
+    retentionCutoffUtc!: Date;
+    items!: SpacePersonnelTrajectoryPointDto[];
+    nextCursor!: string | undefined;
+
+    constructor(data?: ISpacePersonnelTrajectoryResponse) {
+        if (data) {
+            for (var property in data) {
+                if (data.hasOwnProperty(property))
+                    (this as any)[property] = (data as any)[property];
+            }
+        }
+        if (!data) {
+            this.items = [];
+        }
+    }
+
+    init(_data?: any) {
+        if (_data) {
+            this.siteId = _data["siteId"];
+            this.sourceId = _data["sourceId"];
+            this.sourceKind = _data["sourceKind"];
+            this.personExternalId = _data["personExternalId"];
+            this.fromUtc = _data["fromUtc"] ? new Date(_data["fromUtc"].toString()) : undefined as any;
+            this.toUtc = _data["toUtc"] ? new Date(_data["toUtc"].toString()) : undefined as any;
+            this.retentionCutoffUtc = _data["retentionCutoffUtc"] ? new Date(_data["retentionCutoffUtc"].toString()) : undefined as any;
+            if (Array.isArray(_data["items"])) {
+                this.items = [] as any;
+                for (let item of _data["items"])
+                    this.items!.push(SpacePersonnelTrajectoryPointDto.fromJS(item));
+            }
+            this.nextCursor = _data["nextCursor"];
+        }
+    }
+
+    static fromJS(data: any): SpacePersonnelTrajectoryResponse {
+        data = typeof data === 'object' ? data : {};
+        let result = new SpacePersonnelTrajectoryResponse();
+        result.init(data);
+        return result;
+    }
+
+    toJSON(data?: any) {
+        data = typeof data === 'object' ? data : {};
+        data["siteId"] = this.siteId;
+        data["sourceId"] = this.sourceId;
+        data["sourceKind"] = this.sourceKind;
+        data["personExternalId"] = this.personExternalId;
+        data["fromUtc"] = this.fromUtc ? this.fromUtc.toISOString() : undefined as any;
+        data["toUtc"] = this.toUtc ? this.toUtc.toISOString() : undefined as any;
+        data["retentionCutoffUtc"] = this.retentionCutoffUtc ? this.retentionCutoffUtc.toISOString() : undefined as any;
+        if (Array.isArray(this.items)) {
+            data["items"] = [];
+            for (let item of this.items)
+                data["items"].push(item ? item.toJSON() : undefined as any);
+        }
+        data["nextCursor"] = this.nextCursor;
+        return data;
+    }
+}
+
+export interface ISpacePersonnelTrajectoryResponse {
+    siteId: string;
+    sourceId: string;
+    sourceKind: string;
+    personExternalId: string;
+    fromUtc: Date;
+    toUtc: Date;
+    retentionCutoffUtc: Date;
+    items: SpacePersonnelTrajectoryPointDto[];
+    nextCursor: string | undefined;
 }
 
 export class SpacePortalAisleDto implements ISpacePortalAisleDto {
