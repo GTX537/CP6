@@ -2,6 +2,8 @@ using CP6.Space.Application;
 using CP6.Space.Contracts;
 using CP6.Space.Domain;
 using Microsoft.EntityFrameworkCore;
+using System.Globalization;
+using System.Text.Json;
 
 namespace CP6.Space.Infrastructure;
 
@@ -9,6 +11,15 @@ public sealed class SpaceWmsRuntimeService : ISpaceWmsRuntimeService
 {
     private const int QueryChunkSize = 500;
     private const int MaxLocationCount = 10_000;
+    private const int MaxAbcMaterialCount = 10_000;
+    private const string OccupiedLocationRateMethod =
+        "PositivePhysicalInventoryLocations/ActivePublishedLocations";
+    private const string CapacityUnavailableReason =
+        "WMS_LOCATION_CAPACITY_NOT_AVAILABLE";
+    private const string AbcTransactionTimeBasis =
+        "CP6_WMS_TRANSACTION_DATE_COMPLETE_DAYS";
+    private const string AbcRankingMethod =
+        "OutboundQuantityPreviousCumulativeShare";
 
     private readonly SpaceContext _context;
     private readonly ISpaceExecutionContext _execution;
@@ -139,6 +150,271 @@ public sealed class SpaceWmsRuntimeService : ISpaceWmsRuntimeService
             hits.Length,
             hits.Select(value => value.FloorLogicalId).Distinct().Count(),
             hits);
+    }
+
+    public async Task<SpaceWmsRuntimeWarehouseOverviewResponse>
+        GetWarehouseOverviewAsync(
+            Guid siteId,
+            int abcWindowDays = 90,
+            CancellationToken cancellationToken = default)
+    {
+        if (abcWindowDays is < 1 or > 365)
+        {
+            throw Invalid(
+                "abcWindowDays",
+                "The ABC analysis window must be between 1 and 365 days.");
+        }
+
+        var capturedAtUtc = ReceiveTime();
+        var windowEndDateExclusive = DateOnly.FromDateTime(
+            capturedAtUtc.UtcDateTime);
+        var windowStartDate = windowEndDateExclusive.AddDays(-abcWindowDays);
+        var scope = await LoadScopeAsync(
+            siteId,
+            locationLogicalIds: null,
+            cancellationToken);
+
+        SpaceWmsRuntimeInventoryResponse inventory;
+        try
+        {
+            inventory = await QueryInventoryAsync(
+                siteId,
+                locationLogicalIds: null,
+                cancellationToken);
+        }
+        catch (SpaceProblemException problem) when (
+            problem.Code == SpaceErrorCodes.WmsUnavailable)
+        {
+            inventory = new SpaceWmsRuntimeInventoryResponse(
+                siteId,
+                scope.PublishedVersionId,
+                scope.WarehouseCode,
+                UnavailableSourceDto(capturedAtUtc),
+                []);
+        }
+
+        SpaceWmsRuntimeTaskResponse tasks;
+        try
+        {
+            tasks = await QueryTasksAsync(
+                siteId,
+                locationLogicalIds: null,
+                cancellationToken);
+        }
+        catch (SpaceProblemException problem) when (
+            problem.Code == SpaceErrorCodes.WmsUnavailable)
+        {
+            tasks = new SpaceWmsRuntimeTaskResponse(
+                siteId,
+                scope.PublishedVersionId,
+                scope.WarehouseCode,
+                UnavailableSourceDto(capturedAtUtc),
+                []);
+        }
+
+        var abc = await QueryAbcForOverviewAsync(
+            scope,
+            windowStartDate,
+            windowEndDateExclusive,
+            capturedAtUtc,
+            cancellationToken);
+        var floorMetrics = scope.Floors
+            .Select(floor => new RuntimeFloorMetric(
+                floor,
+                FloorAreaSquareMeters(floor)))
+            .OrderBy(value => value.Floor.Level)
+            .ThenBy(value => value.Floor.Code, StringComparer.Ordinal)
+            .ThenBy(value => value.Floor.LogicalId)
+            .ToArray();
+        var areaAvailableFloorCount = floorMetrics.Count(value =>
+            value.AreaSquareMeters.HasValue);
+        decimal? totalFloorAreaSquareMeters =
+            floorMetrics.Length > 0 &&
+            areaAvailableFloorCount == floorMetrics.Length
+                ? floorMetrics.Sum(value => value.AreaSquareMeters!.Value)
+                : null;
+        var rackFootprintSquareMeters = RoundMetric(scope.Racks.Sum(value =>
+            (decimal)value.WidthMillimeters * value.DepthMillimeters /
+            1_000_000m));
+        var rackFootprintRatePercent = totalFloorAreaSquareMeters > 0
+            ? Percent(rackFootprintSquareMeters, totalFloorAreaSquareMeters.Value)
+            : null;
+
+        var inventoryAvailable = inventory.Source.IsAvailable;
+        var taskAvailable = tasks.Source.IsAvailable;
+        var abcAvailable = abc.Source.IsAvailable;
+        var positiveInventory = inventoryAvailable
+            ? inventory.Items.Where(value => value.PhysicalQuantity > 0).ToArray()
+            : [];
+        var occupiedLocationIds = positiveInventory
+            .Select(value => value.LocationLogicalId)
+            .Distinct()
+            .ToHashSet();
+        var activeLocationCount = scope.Locations.Count;
+        var occupiedLocationCount = inventoryAvailable
+            ? occupiedLocationIds.Count
+            : (int?)null;
+        var materialNumbers = positiveInventory
+            .Where(value => !string.IsNullOrWhiteSpace(value.MaterialNumber))
+            .Select(value => value.MaterialNumber!)
+            .Distinct(StringComparer.Ordinal)
+            .OrderBy(value => value, StringComparer.Ordinal)
+            .ToArray();
+
+        var rankedAbc = abcAvailable
+            ? RankAbc(abc.Items)
+            : new Dictionary<string, RuntimeAbcRank>(StringComparer.Ordinal);
+        var abcMaterialRows = inventoryAvailable && abcAvailable
+            ? BuildAbcMaterialRows(
+                materialNumbers,
+                positiveInventory,
+                rankedAbc)
+            : [];
+        var abcLocations = inventoryAvailable && abcAvailable
+            ? BuildAbcLocations(positiveInventory, rankedAbc)
+            : [];
+        var rankCounts = abcMaterialRows
+            .GroupBy(value => value.Rank, StringComparer.Ordinal)
+            .ToDictionary(group => group.Key, group => group.Count(), StringComparer.Ordinal);
+
+        var activeAlarms = await _context.DeviceAlarmStates
+            .AsNoTracking()
+            .Where(value => value.SiteId == siteId && value.IsActive)
+            .Select(value => value.AlarmSeverity)
+            .ToListAsync(cancellationToken);
+        var codeMismatchLocationCount = inventoryAvailable && taskAvailable
+            ? inventory.Items
+                .Where(value => !value.CodeMatches)
+                .Select(value => value.LocationLogicalId)
+                .Concat(tasks.Items
+                    .Where(value => !value.CodeMatches)
+                    .Select(value => value.LocationLogicalId))
+                .Distinct()
+                .Count()
+            : (int?)null;
+        var overAllocatedInventoryLineCount = inventoryAvailable
+            ? inventory.Items.Count(value =>
+                value.AllocatedQuantity > value.PhysicalQuantity)
+            : (int?)null;
+        var areaMissingFloorCount = floorMetrics.Length - areaAvailableFloorCount;
+        var unclassifiedMaterialCount = inventoryAvailable && abcAvailable
+            ? rankCounts.GetValueOrDefault("Unclassified")
+            : (int?)null;
+
+        var floorRows = floorMetrics.Select(metric =>
+        {
+            var floorLocationIds = scope.Locations
+                .Where(value => value.FloorLogicalId == metric.Floor.LogicalId)
+                .Select(value => value.SpaceLogicalId)
+                .ToHashSet();
+            var floorOccupiedCount = inventoryAvailable
+                ? floorLocationIds.Count(occupiedLocationIds.Contains)
+                : (int?)null;
+            var locationRanks = inventoryAvailable && abcAvailable
+                ? abcLocations.Where(value =>
+                    value.FloorLogicalId == metric.Floor.LogicalId).ToArray()
+                : [];
+            return new SpaceWmsRuntimeWarehouseFloorKpiDto(
+                metric.Floor.LogicalId,
+                metric.Floor.Code,
+                metric.Floor.Name,
+                metric.Floor.Level,
+                metric.AreaSquareMeters,
+                floorLocationIds.Count,
+                floorOccupiedCount,
+                floorOccupiedCount.HasValue
+                    ? Percent(floorOccupiedCount.Value, floorLocationIds.Count)
+                    : null,
+                inventoryAvailable && abcAvailable
+                    ? locationRanks.Count(value => value.Rank == "A")
+                    : null,
+                inventoryAvailable && abcAvailable
+                    ? locationRanks.Count(value => value.Rank == "B")
+                    : null,
+                inventoryAvailable && abcAvailable
+                    ? locationRanks.Count(value => value.Rank == "C")
+                    : null,
+                inventoryAvailable && abcAvailable
+                    ? locationRanks.Count(value => value.Rank == "Unclassified")
+                    : null);
+        }).ToArray();
+
+        return new SpaceWmsRuntimeWarehouseOverviewResponse(
+            siteId,
+            scope.PublishedVersionId,
+            scope.WarehouseCode,
+            capturedAtUtc,
+            inventoryAvailable && taskAvailable && abcAvailable &&
+            areaMissingFloorCount == 0,
+            new SpaceWmsRuntimeWarehouseModelKpiDto(
+                floorMetrics.Length,
+                areaAvailableFloorCount,
+                areaMissingFloorCount,
+                totalFloorAreaSquareMeters,
+                scope.ZoneCount,
+                scope.Racks.Count,
+                rackFootprintSquareMeters,
+                rackFootprintRatePercent,
+                activeLocationCount),
+            new SpaceWmsRuntimeWarehouseInventoryKpiDto(
+                inventory.Source,
+                inventoryAvailable ? inventory.Items.Count : null,
+                occupiedLocationCount,
+                inventoryAvailable
+                    ? activeLocationCount - occupiedLocationIds.Count
+                    : null,
+                occupiedLocationCount.HasValue
+                    ? Percent(occupiedLocationCount.Value, activeLocationCount)
+                    : null,
+                OccupiedLocationRateMethod,
+                null,
+                "Unavailable",
+                CapacityUnavailableReason,
+                inventoryAvailable
+                    ? DistinctFacts(inventory.Items.Select(value => value.OwnerId))
+                    : null,
+                inventoryAvailable
+                    ? DistinctFacts(inventory.Items.Select(value => value.MaterialNumber))
+                    : null,
+                inventoryAvailable
+                    ? DistinctFacts(inventory.Items.Select(value => value.LotNumber))
+                    : null,
+                inventoryAvailable
+                    ? DistinctFacts(inventory.Items.Select(value => value.ContainerNumber))
+                    : null),
+            new SpaceWmsRuntimeWarehouseTaskKpiDto(
+                tasks.Source,
+                taskAvailable
+                    ? tasks.Items.Select(value => value.TaskId)
+                        .Distinct(StringComparer.Ordinal).Count()
+                    : null,
+                taskAvailable ? tasks.Items.Count : null),
+            new SpaceWmsRuntimeWarehouseAnomalyKpiDto(
+                activeAlarms.Count,
+                activeAlarms.Count(value =>
+                    value == SpaceDeviceAlarmSeverity.Critical),
+                codeMismatchLocationCount,
+                overAllocatedInventoryLineCount,
+                areaMissingFloorCount,
+                unclassifiedMaterialCount),
+            new SpaceWmsRuntimeWarehouseAbcDto(
+                ToDto(abc.Source),
+                abcWindowDays,
+                windowStartDate.ToString("yyyy-MM-dd", CultureInfo.InvariantCulture),
+                windowEndDateExclusive.ToString("yyyy-MM-dd", CultureInfo.InvariantCulture),
+                AbcTransactionTimeBasis,
+                AbcRankingMethod,
+                80m,
+                95m,
+                inventoryAvailable && abcAvailable,
+                inventoryAvailable && abcAvailable ? materialNumbers.Length : null,
+                inventoryAvailable && abcAvailable ? rankCounts.GetValueOrDefault("A") : null,
+                inventoryAvailable && abcAvailable ? rankCounts.GetValueOrDefault("B") : null,
+                inventoryAvailable && abcAvailable ? rankCounts.GetValueOrDefault("C") : null,
+                unclassifiedMaterialCount,
+                abcMaterialRows,
+                abcLocations),
+            floorRows);
     }
 
     private async Task<RuntimeInventoryResult> QueryInventorySourceAsync(
@@ -780,8 +1056,279 @@ public sealed class SpaceWmsRuntimeService : ISpaceWmsRuntimeService
             wmsContext,
             locations,
             wmsLogicalIds,
-            locations.ToDictionary(value => value.WmsLogicalId));
+            locations.ToDictionary(value => value.WmsLogicalId),
+            floors.Select(value => new RuntimeFloor(
+                value.LogicalId,
+                value.FloorCode,
+                value.Name,
+                value.Level,
+                value.BoundaryJson,
+                value.CoordinateSystem)).ToArray(),
+            zones.Count,
+            racks.Select(value => new RuntimeRack(
+                value.Width,
+                value.Depth)).ToArray());
     }
+
+    private async Task<SpaceWmsAbcResult> QueryAbcForOverviewAsync(
+        RuntimeScope scope,
+        DateOnly fromDateInclusive,
+        DateOnly toDateExclusive,
+        DateTimeOffset capturedAtUtc,
+        CancellationToken cancellationToken)
+    {
+        SpaceWmsAbcResult result;
+        try
+        {
+            result = await _source.QueryAbcAsync(
+                new SpaceWmsAbcQuery(
+                    scope.WmsContext,
+                    fromDateInclusive,
+                    toDateExclusive),
+                cancellationToken);
+        }
+        catch (OperationCanceledException) when (
+            cancellationToken.IsCancellationRequested)
+        {
+            throw;
+        }
+        catch
+        {
+            return new SpaceWmsAbcResult(
+                new SpaceWmsSourceMetadata(
+                    SpaceWmsDataSourceKind.Unavailable,
+                    _source.RuntimeDataSourceId,
+                    capturedAtUtc),
+                []);
+        }
+
+        if (result is null || result.Source is null || result.Items is null ||
+            result.Items.Any(value => value is null))
+        {
+            throw ContractViolation("The WMS ABC result is incomplete.");
+        }
+        var source = MergeSource(null, result.Source);
+        if (!source.IsAvailable)
+            return new SpaceWmsAbcResult(source, []);
+        if (result.Items.Count > MaxAbcMaterialCount)
+        {
+            throw ContractViolation(
+                $"The WMS ABC result exceeds {MaxAbcMaterialCount} materials.");
+        }
+        if (result.Items.Any(value =>
+                string.IsNullOrWhiteSpace(value.MaterialNumber) ||
+                value.MaterialNumber.Length > 100 ||
+                value.OutboundMovementCount < 1 ||
+                value.OutboundQuantity <= 0) ||
+            result.Items
+                .GroupBy(value => value.MaterialNumber, StringComparer.Ordinal)
+                .Any(group => group.Count() > 1))
+        {
+            throw ContractViolation(
+                "The WMS ABC aggregates contain invalid or duplicate materials.");
+        }
+        return new SpaceWmsAbcResult(source, result.Items);
+    }
+
+    private static IReadOnlyDictionary<string, RuntimeAbcRank> RankAbc(
+        IReadOnlyList<SpaceWmsAbcAggregate> aggregates)
+    {
+        var ordered = aggregates
+            .OrderByDescending(value => value.OutboundQuantity)
+            .ThenBy(value => value.MaterialNumber, StringComparer.Ordinal)
+            .ToArray();
+        var total = ordered.Sum(value => value.OutboundQuantity);
+        if (total <= 0)
+            return new Dictionary<string, RuntimeAbcRank>(StringComparer.Ordinal);
+
+        var cumulative = 0m;
+        var result = new Dictionary<string, RuntimeAbcRank>(StringComparer.Ordinal);
+        foreach (var aggregate in ordered)
+        {
+            var previousShare = Percent(cumulative, total) ?? 0m;
+            var rank = previousShare < 80m
+                ? "A"
+                : previousShare < 95m
+                    ? "B"
+                    : "C";
+            cumulative += aggregate.OutboundQuantity;
+            result.Add(
+                aggregate.MaterialNumber,
+                new RuntimeAbcRank(
+                    aggregate.OutboundMovementCount,
+                    aggregate.OutboundQuantity,
+                    previousShare,
+                    Percent(cumulative, total) ?? 0m,
+                    rank));
+        }
+        return result;
+    }
+
+    private static IReadOnlyList<SpaceWmsRuntimeWarehouseAbcMaterialDto>
+        BuildAbcMaterialRows(
+            IReadOnlyList<string> materialNumbers,
+            IReadOnlyList<SpaceWmsRuntimeInventoryItemDto> inventory,
+            IReadOnlyDictionary<string, RuntimeAbcRank> ranked)
+    {
+        return materialNumbers.Select(materialNumber =>
+        {
+            var rows = inventory.Where(value => string.Equals(
+                value.MaterialNumber,
+                materialNumber,
+                StringComparison.Ordinal)).ToArray();
+            if (!ranked.TryGetValue(materialNumber, out var rank))
+            {
+                return new SpaceWmsRuntimeWarehouseAbcMaterialDto(
+                    materialNumber,
+                    0,
+                    0,
+                    null,
+                    null,
+                    "Unclassified",
+                    rows.Select(value => value.LocationLogicalId).Distinct().Count(),
+                    rows.Select(value => value.FloorLogicalId).Distinct().Count());
+            }
+            return new SpaceWmsRuntimeWarehouseAbcMaterialDto(
+                materialNumber,
+                rank.OutboundMovementCount,
+                rank.OutboundQuantity,
+                rank.PreviousCumulativeSharePercent,
+                rank.CumulativeSharePercent,
+                rank.Rank,
+                rows.Select(value => value.LocationLogicalId).Distinct().Count(),
+                rows.Select(value => value.FloorLogicalId).Distinct().Count());
+        })
+        .OrderBy(value => AbcRankOrder(value.Rank))
+        .ThenByDescending(value => value.OutboundQuantity)
+        .ThenBy(value => value.MaterialNumber, StringComparer.Ordinal)
+        .ToArray();
+    }
+
+    private static IReadOnlyList<SpaceWmsRuntimeWarehouseAbcLocationDto>
+        BuildAbcLocations(
+            IReadOnlyList<SpaceWmsRuntimeInventoryItemDto> inventory,
+            IReadOnlyDictionary<string, RuntimeAbcRank> ranked)
+    {
+        return inventory
+            .GroupBy(value => value.LocationLogicalId)
+            .Select(group =>
+            {
+                var first = group.First();
+                var materials = group
+                    .Where(value => !string.IsNullOrWhiteSpace(value.MaterialNumber))
+                    .Select(value => value.MaterialNumber!)
+                    .Distinct(StringComparer.Ordinal)
+                    .Select(materialNumber =>
+                        new SpaceWmsRuntimeWarehouseAbcLocationMaterialDto(
+                            materialNumber,
+                            ranked.TryGetValue(materialNumber, out var materialRank)
+                                ? materialRank.Rank
+                                : "Unclassified"))
+                    .OrderBy(value => AbcRankOrder(value.Rank))
+                    .ThenBy(value => value.MaterialNumber, StringComparer.Ordinal)
+                    .ToArray();
+                var locationRank = materials.Length == 0
+                    ? "Unclassified"
+                    : materials.OrderBy(value => AbcRankOrder(value.Rank))
+                        .First().Rank;
+                return new SpaceWmsRuntimeWarehouseAbcLocationDto(
+                    first.LocationLogicalId,
+                    first.SpaceLocationCode,
+                    first.FloorLogicalId,
+                    first.FloorCode,
+                    locationRank,
+                    materials);
+            })
+            .OrderBy(value => value.FloorCode, StringComparer.Ordinal)
+            .ThenBy(value => value.SpaceLocationCode, StringComparer.Ordinal)
+            .ThenBy(value => value.LocationLogicalId)
+            .ToArray();
+    }
+
+    private static int AbcRankOrder(string rank) => rank switch
+    {
+        "A" => 0,
+        "B" => 1,
+        "C" => 2,
+        _ => 3,
+    };
+
+    private static decimal? FloorAreaSquareMeters(RuntimeFloor floor)
+    {
+        if (string.IsNullOrWhiteSpace(floor.CoordinateSystem) ||
+            !floor.CoordinateSystem.Contains("MM", StringComparison.OrdinalIgnoreCase))
+        {
+            return null;
+        }
+        try
+        {
+            using var document = JsonDocument.Parse(floor.BoundaryJson);
+            if (document.RootElement.ValueKind != JsonValueKind.Object ||
+                !document.RootElement.TryGetProperty("points", out var points) ||
+                points.ValueKind != JsonValueKind.Array)
+            {
+                return null;
+            }
+            var coordinates = points.EnumerateArray()
+                .Select(point =>
+                {
+                    if (point.ValueKind != JsonValueKind.Array ||
+                        point.GetArrayLength() < 2)
+                    {
+                        throw new JsonException("A floor boundary point is invalid.");
+                    }
+                    return (
+                        X: point[0].GetDecimal(),
+                        Y: point[1].GetDecimal());
+                })
+                .ToArray();
+            if (coordinates.Length < 3)
+                return null;
+            var twiceArea = 0m;
+            for (var index = 0; index < coordinates.Length; index++)
+            {
+                var current = coordinates[index];
+                var next = coordinates[(index + 1) % coordinates.Length];
+                twiceArea += current.X * next.Y - next.X * current.Y;
+            }
+            var area = Math.Abs(twiceArea) / 2m / 1_000_000m;
+            return area > 0 ? RoundMetric(area) : null;
+        }
+        catch (JsonException)
+        {
+            return null;
+        }
+        catch (InvalidOperationException)
+        {
+            return null;
+        }
+        catch (FormatException)
+        {
+            return null;
+        }
+    }
+
+    private static int DistinctFacts(IEnumerable<string?> values) =>
+        values
+            .Where(value => !string.IsNullOrWhiteSpace(value))
+            .Select(value => value!)
+            .Distinct(StringComparer.Ordinal)
+            .Count();
+
+    private static decimal? Percent(decimal numerator, decimal denominator) =>
+        denominator > 0
+            ? RoundMetric(numerator / denominator * 100m)
+            : null;
+
+    private static decimal RoundMetric(decimal value) =>
+        Math.Round(value, 2, MidpointRounding.AwayFromZero);
+
+    private SpaceWmsRuntimeSourceDto UnavailableSourceDto(
+        DateTimeOffset observedAtUtc) =>
+        ToDto(new SpaceWmsSourceMetadata(
+            SpaceWmsDataSourceKind.Unavailable,
+            _source.RuntimeDataSourceId,
+            observedAtUtc));
 
     private void EnsureExecutionContext()
     {
@@ -1123,5 +1670,31 @@ public sealed class SpaceWmsRuntimeService : ISpaceWmsRuntimeService
         SpaceWmsContext WmsContext,
         IReadOnlyList<RuntimeLocation> Locations,
         IReadOnlyList<Guid> WmsLogicalIds,
-        IReadOnlyDictionary<Guid, RuntimeLocation> LocationByWmsLogicalId);
+        IReadOnlyDictionary<Guid, RuntimeLocation> LocationByWmsLogicalId,
+        IReadOnlyList<RuntimeFloor> Floors,
+        int ZoneCount,
+        IReadOnlyList<RuntimeRack> Racks);
+
+    private sealed record RuntimeFloor(
+        Guid LogicalId,
+        string Code,
+        string Name,
+        int Level,
+        string BoundaryJson,
+        string CoordinateSystem);
+
+    private sealed record RuntimeRack(
+        int WidthMillimeters,
+        int DepthMillimeters);
+
+    private sealed record RuntimeFloorMetric(
+        RuntimeFloor Floor,
+        decimal? AreaSquareMeters);
+
+    private sealed record RuntimeAbcRank(
+        int OutboundMovementCount,
+        decimal OutboundQuantity,
+        decimal PreviousCumulativeSharePercent,
+        decimal CumulativeSharePercent,
+        string Rank);
 }

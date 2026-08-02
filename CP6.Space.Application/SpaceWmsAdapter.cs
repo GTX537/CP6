@@ -526,6 +526,20 @@ public sealed record SpaceWmsTaskResult(
     SpaceWmsSourceMetadata Source,
     IReadOnlyList<SpaceWmsTaskItem> Items);
 
+public sealed record SpaceWmsAbcQuery(
+    SpaceWmsContext Context,
+    DateOnly FromDateInclusive,
+    DateOnly ToDateExclusive);
+
+public sealed record SpaceWmsAbcAggregate(
+    string MaterialNumber,
+    int OutboundMovementCount,
+    decimal OutboundQuantity);
+
+public sealed record SpaceWmsAbcResult(
+    SpaceWmsSourceMetadata Source,
+    IReadOnlyList<SpaceWmsAbcAggregate> Items);
+
 /// <summary>
 /// Read-only WMS runtime boundary shared by production adapters and
 /// simulators. Runtime consumers depend on this surface rather than the
@@ -543,6 +557,10 @@ public interface ISpaceWmsRuntimeSource
 
     Task<SpaceWmsTaskResult> QueryTasksAsync(
         SpaceWmsTaskQuery request,
+        CancellationToken ct = default);
+
+    Task<SpaceWmsAbcResult> QueryAbcAsync(
+        SpaceWmsAbcQuery request,
         CancellationToken ct = default);
 }
 

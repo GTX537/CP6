@@ -20,6 +20,12 @@ public sealed record SpaceWmsSimulatorFaultProfile(
         new(SpaceWmsSimulatorFaultMode.None);
 }
 
+public sealed record SpaceWmsOutboundMovement(
+    string MovementId,
+    string MaterialNumber,
+    DateOnly OccurredOn,
+    decimal Quantity);
+
 /// <summary>
 /// Test/demo control plane for the standard in-memory WMS simulator.
 /// It is intentionally separate from ISpaceWmsAdapter so production
@@ -38,6 +44,10 @@ public interface ISpaceWmsSimulatorControl
     void SeedTasks(
         SpaceWmsContext context,
         IReadOnlyCollection<SpaceWmsTaskItem> items);
+
+    void SeedOutboundMovements(
+        SpaceWmsContext context,
+        IReadOnlyCollection<SpaceWmsOutboundMovement> items);
 
     void Reset(SpaceWmsContext context);
 }

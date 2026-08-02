@@ -8562,6 +8562,146 @@
         }
       }
     },
+    "/api/space/design/v1/sites/{siteId}/runtime/overview": {
+      "get": {
+        "tags": [
+          "SpaceWmsRuntime"
+        ],
+        "operationId": "GetWarehouseOverview",
+        "parameters": [
+          {
+            "name": "siteId",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "string",
+              "format": "uuid"
+            }
+          },
+          {
+            "name": "abcWindowDays",
+            "in": "query",
+            "schema": {
+              "type": "integer",
+              "format": "int32",
+              "default": 90
+            }
+          }
+        ],
+        "responses": {
+          "400": {
+            "description": "Bad Request",
+            "content": {
+              "application/problem+json": {
+                "schema": {
+                  "$ref": "#/components/schemas/CP6.WebApi.OpenApi.SpaceDesignProblemDetails"
+                }
+              }
+            }
+          },
+          "401": {
+            "description": "Unauthorized",
+            "content": {
+              "application/problem+json": {
+                "schema": {
+                  "$ref": "#/components/schemas/CP6.WebApi.OpenApi.SpaceDesignProblemDetails"
+                }
+              }
+            }
+          },
+          "403": {
+            "description": "Forbidden",
+            "content": {
+              "application/problem+json": {
+                "schema": {
+                  "$ref": "#/components/schemas/CP6.WebApi.OpenApi.SpaceDesignProblemDetails"
+                }
+              }
+            }
+          },
+          "404": {
+            "description": "Not Found",
+            "content": {
+              "application/problem+json": {
+                "schema": {
+                  "$ref": "#/components/schemas/CP6.WebApi.OpenApi.SpaceDesignProblemDetails"
+                }
+              }
+            }
+          },
+          "409": {
+            "description": "Conflict",
+            "content": {
+              "application/problem+json": {
+                "schema": {
+                  "$ref": "#/components/schemas/CP6.WebApi.OpenApi.SpaceDesignProblemDetails"
+                }
+              }
+            }
+          },
+          "422": {
+            "description": "Unprocessable Content",
+            "content": {
+              "application/problem+json": {
+                "schema": {
+                  "$ref": "#/components/schemas/CP6.WebApi.OpenApi.SpaceDesignProblemDetails"
+                }
+              }
+            }
+          },
+          "500": {
+            "description": "Internal Server Error",
+            "content": {
+              "application/problem+json": {
+                "schema": {
+                  "$ref": "#/components/schemas/CP6.WebApi.OpenApi.SpaceDesignProblemDetails"
+                }
+              }
+            }
+          },
+          "502": {
+            "description": "Bad Gateway",
+            "content": {
+              "application/problem+json": {
+                "schema": {
+                  "$ref": "#/components/schemas/CP6.WebApi.OpenApi.SpaceDesignProblemDetails"
+                }
+              }
+            }
+          },
+          "503": {
+            "description": "Service Unavailable",
+            "content": {
+              "application/problem+json": {
+                "schema": {
+                  "$ref": "#/components/schemas/CP6.WebApi.OpenApi.SpaceDesignProblemDetails"
+                }
+              }
+            }
+          },
+          "200": {
+            "description": "OK",
+            "content": {
+              "text/plain": {
+                "schema": {
+                  "$ref": "#/components/schemas/CP6.Space.Contracts.SpaceWmsRuntimeWarehouseOverviewResponse"
+                }
+              },
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/CP6.Space.Contracts.SpaceWmsRuntimeWarehouseOverviewResponse"
+                }
+              },
+              "text/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/CP6.Space.Contracts.SpaceWmsRuntimeWarehouseOverviewResponse"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
     "/api/space/design/v1/sites/{siteId}/runtime/tasks": {
       "get": {
         "tags": [
@@ -14523,6 +14663,527 @@
           "totalQuantity": {
             "type": "number",
             "format": "decimal"
+          }
+        },
+        "additionalProperties": false
+      },
+      "CP6.Space.Contracts.SpaceWmsRuntimeWarehouseAbcDto": {
+        "required": [
+          "aCount",
+          "aThresholdPercent",
+          "bCount",
+          "bThresholdPercent",
+          "cCount",
+          "locations",
+          "materialCount",
+          "materials",
+          "rankingMethod",
+          "source",
+          "spatialMappingAvailable",
+          "transactionTimeBasis",
+          "unclassifiedCount",
+          "windowDays",
+          "windowEndDateExclusive",
+          "windowStartDate"
+        ],
+        "type": "object",
+        "properties": {
+          "source": {
+            "$ref": "#/components/schemas/CP6.Space.Contracts.SpaceWmsRuntimeSourceDto"
+          },
+          "windowDays": {
+            "type": "integer",
+            "format": "int32"
+          },
+          "windowStartDate": {
+            "type": "string"
+          },
+          "windowEndDateExclusive": {
+            "type": "string"
+          },
+          "transactionTimeBasis": {
+            "type": "string"
+          },
+          "rankingMethod": {
+            "type": "string"
+          },
+          "aThresholdPercent": {
+            "type": "number",
+            "format": "decimal"
+          },
+          "bThresholdPercent": {
+            "type": "number",
+            "format": "decimal"
+          },
+          "spatialMappingAvailable": {
+            "type": "boolean"
+          },
+          "materialCount": {
+            "type": "integer",
+            "format": "int32",
+            "nullable": true
+          },
+          "aCount": {
+            "type": "integer",
+            "format": "int32",
+            "nullable": true
+          },
+          "bCount": {
+            "type": "integer",
+            "format": "int32",
+            "nullable": true
+          },
+          "cCount": {
+            "type": "integer",
+            "format": "int32",
+            "nullable": true
+          },
+          "unclassifiedCount": {
+            "type": "integer",
+            "format": "int32",
+            "nullable": true
+          },
+          "materials": {
+            "type": "array",
+            "items": {
+              "$ref": "#/components/schemas/CP6.Space.Contracts.SpaceWmsRuntimeWarehouseAbcMaterialDto"
+            }
+          },
+          "locations": {
+            "type": "array",
+            "items": {
+              "$ref": "#/components/schemas/CP6.Space.Contracts.SpaceWmsRuntimeWarehouseAbcLocationDto"
+            }
+          }
+        },
+        "additionalProperties": false
+      },
+      "CP6.Space.Contracts.SpaceWmsRuntimeWarehouseAbcLocationDto": {
+        "required": [
+          "floorCode",
+          "floorLogicalId",
+          "locationLogicalId",
+          "materials",
+          "rank",
+          "spaceLocationCode"
+        ],
+        "type": "object",
+        "properties": {
+          "locationLogicalId": {
+            "type": "string",
+            "format": "uuid"
+          },
+          "spaceLocationCode": {
+            "type": "string"
+          },
+          "floorLogicalId": {
+            "type": "string",
+            "format": "uuid"
+          },
+          "floorCode": {
+            "type": "string"
+          },
+          "rank": {
+            "type": "string"
+          },
+          "materials": {
+            "type": "array",
+            "items": {
+              "$ref": "#/components/schemas/CP6.Space.Contracts.SpaceWmsRuntimeWarehouseAbcLocationMaterialDto"
+            }
+          }
+        },
+        "additionalProperties": false
+      },
+      "CP6.Space.Contracts.SpaceWmsRuntimeWarehouseAbcLocationMaterialDto": {
+        "required": [
+          "materialNumber",
+          "rank"
+        ],
+        "type": "object",
+        "properties": {
+          "materialNumber": {
+            "type": "string"
+          },
+          "rank": {
+            "type": "string"
+          }
+        },
+        "additionalProperties": false
+      },
+      "CP6.Space.Contracts.SpaceWmsRuntimeWarehouseAbcMaterialDto": {
+        "required": [
+          "cumulativeSharePercent",
+          "floorCount",
+          "materialNumber",
+          "occupiedLocationCount",
+          "outboundMovementCount",
+          "outboundQuantity",
+          "previousCumulativeSharePercent",
+          "rank"
+        ],
+        "type": "object",
+        "properties": {
+          "materialNumber": {
+            "type": "string"
+          },
+          "outboundMovementCount": {
+            "type": "integer",
+            "format": "int32"
+          },
+          "outboundQuantity": {
+            "type": "number",
+            "format": "decimal"
+          },
+          "previousCumulativeSharePercent": {
+            "type": "number",
+            "format": "decimal",
+            "nullable": true
+          },
+          "cumulativeSharePercent": {
+            "type": "number",
+            "format": "decimal",
+            "nullable": true
+          },
+          "rank": {
+            "type": "string"
+          },
+          "occupiedLocationCount": {
+            "type": "integer",
+            "format": "int32"
+          },
+          "floorCount": {
+            "type": "integer",
+            "format": "int32"
+          }
+        },
+        "additionalProperties": false
+      },
+      "CP6.Space.Contracts.SpaceWmsRuntimeWarehouseAnomalyKpiDto": {
+        "required": [
+          "activeDeviceAlarmCount",
+          "areaMissingFloorCount",
+          "codeMismatchLocationCount",
+          "criticalDeviceAlarmCount",
+          "overAllocatedInventoryLineCount",
+          "unclassifiedAbcMaterialCount"
+        ],
+        "type": "object",
+        "properties": {
+          "activeDeviceAlarmCount": {
+            "type": "integer",
+            "format": "int32"
+          },
+          "criticalDeviceAlarmCount": {
+            "type": "integer",
+            "format": "int32"
+          },
+          "codeMismatchLocationCount": {
+            "type": "integer",
+            "format": "int32",
+            "nullable": true
+          },
+          "overAllocatedInventoryLineCount": {
+            "type": "integer",
+            "format": "int32",
+            "nullable": true
+          },
+          "areaMissingFloorCount": {
+            "type": "integer",
+            "format": "int32"
+          },
+          "unclassifiedAbcMaterialCount": {
+            "type": "integer",
+            "format": "int32",
+            "nullable": true
+          }
+        },
+        "additionalProperties": false
+      },
+      "CP6.Space.Contracts.SpaceWmsRuntimeWarehouseFloorKpiDto": {
+        "required": [
+          "activeLocationCount",
+          "aLocationCount",
+          "areaSquareMeters",
+          "bLocationCount",
+          "cLocationCount",
+          "floorCode",
+          "floorLevel",
+          "floorLogicalId",
+          "floorName",
+          "occupiedLocationCount",
+          "occupiedLocationRatePercent",
+          "unclassifiedLocationCount"
+        ],
+        "type": "object",
+        "properties": {
+          "floorLogicalId": {
+            "type": "string",
+            "format": "uuid"
+          },
+          "floorCode": {
+            "type": "string"
+          },
+          "floorName": {
+            "type": "string"
+          },
+          "floorLevel": {
+            "type": "integer",
+            "format": "int32"
+          },
+          "areaSquareMeters": {
+            "type": "number",
+            "format": "decimal",
+            "nullable": true
+          },
+          "activeLocationCount": {
+            "type": "integer",
+            "format": "int32"
+          },
+          "occupiedLocationCount": {
+            "type": "integer",
+            "format": "int32",
+            "nullable": true
+          },
+          "occupiedLocationRatePercent": {
+            "type": "number",
+            "format": "decimal",
+            "nullable": true
+          },
+          "aLocationCount": {
+            "type": "integer",
+            "format": "int32",
+            "nullable": true
+          },
+          "bLocationCount": {
+            "type": "integer",
+            "format": "int32",
+            "nullable": true
+          },
+          "cLocationCount": {
+            "type": "integer",
+            "format": "int32",
+            "nullable": true
+          },
+          "unclassifiedLocationCount": {
+            "type": "integer",
+            "format": "int32",
+            "nullable": true
+          }
+        },
+        "additionalProperties": false
+      },
+      "CP6.Space.Contracts.SpaceWmsRuntimeWarehouseInventoryKpiDto": {
+        "required": [
+          "capacityUtilizationPercent",
+          "capacityUtilizationReason",
+          "capacityUtilizationStatus",
+          "distinctContainerCount",
+          "distinctLotCount",
+          "distinctMaterialCount",
+          "distinctOwnerCount",
+          "inventoryLineCount",
+          "occupiedLocationCount",
+          "occupiedLocationRateMethod",
+          "occupiedLocationRatePercent",
+          "source",
+          "unoccupiedLocationCount"
+        ],
+        "type": "object",
+        "properties": {
+          "source": {
+            "$ref": "#/components/schemas/CP6.Space.Contracts.SpaceWmsRuntimeSourceDto"
+          },
+          "inventoryLineCount": {
+            "type": "integer",
+            "format": "int32",
+            "nullable": true
+          },
+          "occupiedLocationCount": {
+            "type": "integer",
+            "format": "int32",
+            "nullable": true
+          },
+          "unoccupiedLocationCount": {
+            "type": "integer",
+            "format": "int32",
+            "nullable": true
+          },
+          "occupiedLocationRatePercent": {
+            "type": "number",
+            "format": "decimal",
+            "nullable": true
+          },
+          "occupiedLocationRateMethod": {
+            "type": "string"
+          },
+          "capacityUtilizationPercent": {
+            "type": "number",
+            "format": "decimal",
+            "nullable": true
+          },
+          "capacityUtilizationStatus": {
+            "type": "string"
+          },
+          "capacityUtilizationReason": {
+            "type": "string"
+          },
+          "distinctOwnerCount": {
+            "type": "integer",
+            "format": "int32",
+            "nullable": true
+          },
+          "distinctMaterialCount": {
+            "type": "integer",
+            "format": "int32",
+            "nullable": true
+          },
+          "distinctLotCount": {
+            "type": "integer",
+            "format": "int32",
+            "nullable": true
+          },
+          "distinctContainerCount": {
+            "type": "integer",
+            "format": "int32",
+            "nullable": true
+          }
+        },
+        "additionalProperties": false
+      },
+      "CP6.Space.Contracts.SpaceWmsRuntimeWarehouseModelKpiDto": {
+        "required": [
+          "activeLocationCount",
+          "areaAvailableFloorCount",
+          "areaMissingFloorCount",
+          "floorCount",
+          "rackCount",
+          "rackFootprintRatePercent",
+          "rackFootprintSquareMeters",
+          "totalFloorAreaSquareMeters",
+          "zoneCount"
+        ],
+        "type": "object",
+        "properties": {
+          "floorCount": {
+            "type": "integer",
+            "format": "int32"
+          },
+          "areaAvailableFloorCount": {
+            "type": "integer",
+            "format": "int32"
+          },
+          "areaMissingFloorCount": {
+            "type": "integer",
+            "format": "int32"
+          },
+          "totalFloorAreaSquareMeters": {
+            "type": "number",
+            "format": "decimal",
+            "nullable": true
+          },
+          "zoneCount": {
+            "type": "integer",
+            "format": "int32"
+          },
+          "rackCount": {
+            "type": "integer",
+            "format": "int32"
+          },
+          "rackFootprintSquareMeters": {
+            "type": "number",
+            "format": "decimal"
+          },
+          "rackFootprintRatePercent": {
+            "type": "number",
+            "format": "decimal",
+            "nullable": true
+          },
+          "activeLocationCount": {
+            "type": "integer",
+            "format": "int32"
+          }
+        },
+        "additionalProperties": false
+      },
+      "CP6.Space.Contracts.SpaceWmsRuntimeWarehouseOverviewResponse": {
+        "required": [
+          "abc",
+          "anomalies",
+          "capturedAtUtc",
+          "floors",
+          "inventory",
+          "isRuntimeComplete",
+          "model",
+          "publishedVersionId",
+          "siteId",
+          "tasks",
+          "warehouseCode"
+        ],
+        "type": "object",
+        "properties": {
+          "siteId": {
+            "type": "string",
+            "format": "uuid"
+          },
+          "publishedVersionId": {
+            "type": "string",
+            "format": "uuid"
+          },
+          "warehouseCode": {
+            "type": "string"
+          },
+          "capturedAtUtc": {
+            "type": "string",
+            "format": "date-time"
+          },
+          "isRuntimeComplete": {
+            "type": "boolean"
+          },
+          "model": {
+            "$ref": "#/components/schemas/CP6.Space.Contracts.SpaceWmsRuntimeWarehouseModelKpiDto"
+          },
+          "inventory": {
+            "$ref": "#/components/schemas/CP6.Space.Contracts.SpaceWmsRuntimeWarehouseInventoryKpiDto"
+          },
+          "tasks": {
+            "$ref": "#/components/schemas/CP6.Space.Contracts.SpaceWmsRuntimeWarehouseTaskKpiDto"
+          },
+          "anomalies": {
+            "$ref": "#/components/schemas/CP6.Space.Contracts.SpaceWmsRuntimeWarehouseAnomalyKpiDto"
+          },
+          "abc": {
+            "$ref": "#/components/schemas/CP6.Space.Contracts.SpaceWmsRuntimeWarehouseAbcDto"
+          },
+          "floors": {
+            "type": "array",
+            "items": {
+              "$ref": "#/components/schemas/CP6.Space.Contracts.SpaceWmsRuntimeWarehouseFloorKpiDto"
+            }
+          }
+        },
+        "additionalProperties": false
+      },
+      "CP6.Space.Contracts.SpaceWmsRuntimeWarehouseTaskKpiDto": {
+        "required": [
+          "activeTaskCount",
+          "activeTaskStopCount",
+          "source"
+        ],
+        "type": "object",
+        "properties": {
+          "source": {
+            "$ref": "#/components/schemas/CP6.Space.Contracts.SpaceWmsRuntimeSourceDto"
+          },
+          "activeTaskCount": {
+            "type": "integer",
+            "format": "int32",
+            "nullable": true
+          },
+          "activeTaskStopCount": {
+            "type": "integer",
+            "format": "int32",
+            "nullable": true
           }
         },
         "additionalProperties": false

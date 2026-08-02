@@ -128,6 +128,78 @@ function Set-SpaceRuntimeTypeScriptNullableTypes {
                 @('containerNumber', 'string'),
                 @('ownerId', 'string')
             )
+        },
+        @{
+            Start = 'export class SpaceWmsRuntimeWarehouseAbcDto'
+            End = 'export class SpaceWmsRuntimeWarehouseAbcLocationDto'
+            Properties = @(
+                @('materialCount', 'number'),
+                @('aCount', 'number'),
+                @('bCount', 'number'),
+                @('cCount', 'number'),
+                @('unclassifiedCount', 'number')
+            )
+        },
+        @{
+            Start = 'export class SpaceWmsRuntimeWarehouseAbcMaterialDto'
+            End = 'export class SpaceWmsRuntimeWarehouseAnomalyKpiDto'
+            Properties = @(
+                @('previousCumulativeSharePercent', 'number'),
+                @('cumulativeSharePercent', 'number')
+            )
+        },
+        @{
+            Start = 'export class SpaceWmsRuntimeWarehouseAnomalyKpiDto'
+            End = 'export class SpaceWmsRuntimeWarehouseFloorKpiDto'
+            Properties = @(
+                @('codeMismatchLocationCount', 'number'),
+                @('overAllocatedInventoryLineCount', 'number'),
+                @('unclassifiedAbcMaterialCount', 'number')
+            )
+        },
+        @{
+            Start = 'export class SpaceWmsRuntimeWarehouseFloorKpiDto'
+            End = 'export class SpaceWmsRuntimeWarehouseInventoryKpiDto'
+            Properties = @(
+                @('areaSquareMeters', 'number'),
+                @('occupiedLocationCount', 'number'),
+                @('occupiedLocationRatePercent', 'number'),
+                @('aLocationCount', 'number'),
+                @('bLocationCount', 'number'),
+                @('cLocationCount', 'number'),
+                @('unclassifiedLocationCount', 'number')
+            )
+        },
+        @{
+            Start = 'export class SpaceWmsRuntimeWarehouseInventoryKpiDto'
+            End = 'export class SpaceWmsRuntimeWarehouseModelKpiDto'
+            Properties = @(
+                @('inventoryLineCount', 'number'),
+                @('unoccupiedLocationCount', 'number'),
+                @('occupiedLocationCount', 'number'),
+                @('occupiedLocationRatePercent', 'number'),
+                @('capacityUtilizationPercent', 'number'),
+                @('distinctOwnerCount', 'number'),
+                @('distinctMaterialCount', 'number'),
+                @('distinctLotCount', 'number'),
+                @('distinctContainerCount', 'number')
+            )
+        },
+        @{
+            Start = 'export class SpaceWmsRuntimeWarehouseModelKpiDto'
+            End = 'export class SpaceWmsRuntimeWarehouseOverviewResponse'
+            Properties = @(
+                @('totalFloorAreaSquareMeters', 'number'),
+                @('rackFootprintRatePercent', 'number')
+            )
+        },
+        @{
+            Start = 'export class SpaceWmsRuntimeWarehouseTaskKpiDto'
+            End = 'export class StartSpaceExcelPreflightRequest'
+            Properties = @(
+                @('activeTaskCount', 'number'),
+                @('activeTaskStopCount', 'number')
+            )
         }
     )
     foreach ($block in $requiredNullableBlocks) {

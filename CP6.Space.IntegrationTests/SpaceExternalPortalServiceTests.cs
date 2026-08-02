@@ -714,5 +714,12 @@ public sealed class SpaceExternalPortalServiceTests
             string taskId,
             CancellationToken cancellationToken = default) =>
             throw new NotSupportedException();
+
+        public Task<SpaceWmsRuntimeWarehouseOverviewResponse>
+            GetWarehouseOverviewAsync(
+                Guid requestedSiteId,
+                int abcWindowDays = 90,
+                CancellationToken cancellationToken = default) =>
+            throw new NotSupportedException();
     }
 }

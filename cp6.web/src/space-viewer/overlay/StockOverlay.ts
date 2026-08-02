@@ -5,6 +5,7 @@ import { spaceRuntimeApi } from '@/api/space/runtime'
 import type {
   RuntimeLocationRef,
   RuntimeStockItem,
+  SpaceWarehouseAbcRank,
   SpaceRuntimeInventoryResponse,
   SpaceRuntimeSource,
 } from '@/types/space/runtime'
@@ -14,6 +15,13 @@ import { aggregateRuntimeStock } from './runtimeStockModel'
 export class StockOverlay {
   static readonly FILTER_MATCH_HEX = 0xffc107
   static readonly FILTER_EXCLUDED_HEX = 0x263238
+  static readonly ABC_COLORS: Readonly<Record<SpaceWarehouseAbcRank, number>> = {
+    A: 0xef5350,
+    B: 0xffb74d,
+    C: 0x42a5f5,
+    Unclassified: 0x455a64,
+  }
+  static readonly ABC_EMPTY_HEX = 0x263238
 
   private _viewer: ViewerHandle
   private _mode: OverlayMode = 'status'
@@ -34,6 +42,7 @@ export class StockOverlay {
   private _minIntervalMs = 5000
   private _refreshVersion = 0
   private _spatialFilterIds: Set<string> | null = null
+  private _abcRanks: Map<string, SpaceWarehouseAbcRank> | null = null
 
   constructor(viewer: ViewerHandle) { this._viewer = viewer }
 
@@ -53,6 +62,17 @@ export class StockOverlay {
   }
 
   get spatialFilterActive(): boolean { return this._spatialFilterIds !== null }
+
+  setAbcOverlay(ranks: ReadonlyMap<string, SpaceWarehouseAbcRank>): void {
+    this._abcRanks = new Map(ranks)
+    this.apply()
+  }
+
+  clearAbcOverlay(): void {
+    this._abcRanks = null
+  }
+
+  get abcOverlayActive(): boolean { return this._abcRanks !== null }
 
   setSnapshot(items: RuntimeStockItem[], source: SpaceRuntimeSource): void {
     this._source = source
@@ -74,12 +94,16 @@ export class StockOverlay {
         ? this._spatialFilterIds.has(locationLogicalId)
           ? StockOverlay.FILTER_MATCH_HEX
           : StockOverlay.FILTER_EXCLUDED_HEX
-        : this._mode === 'utilization'
-          ? utilizationToHex(locationUtilization(stock))
-          : binStatusToHex(stock.binStatus)
+        : this._abcRanks !== null
+          ? this._abcRanks.has(locationLogicalId)
+            ? StockOverlay.ABC_COLORS[this._abcRanks.get(locationLogicalId)!]
+            : StockOverlay.ABC_EMPTY_HEX
+          : this._mode === 'utilization'
+            ? utilizationToHex(locationUtilization(stock))
+            : binStatusToHex(stock.binStatus)
       colors.push({ locationId: locationLogicalId, hex })
     }
-    if (this._spatialFilterIds === null && this._mode === 'off') return
+    if (this._spatialFilterIds === null && this._abcRanks === null && this._mode === 'off') return
     if (this._viewer.setInstanceColors) {
       this._viewer.setInstanceColors(colors)
     } else {
@@ -141,5 +165,7 @@ export class StockOverlay {
     this.invalidateRefreshes()
     this.stopPolling()
     this._byId.clear()
+    this._spatialFilterIds = null
+    this._abcRanks = null
   }
 }

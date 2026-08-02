@@ -14,6 +14,14 @@ describe('spaceRuntimeApi', () => {
     vi.mocked(http.get).mockResolvedValue({})
   })
 
+  it('requests a warehouse overview with an explicit ABC window', async () => {
+    await spaceRuntimeApi.warehouseOverview('site-1', 120)
+
+    const [url, config] = vi.mocked(http.get).mock.calls[0]!
+    expect(url).toBe('/space/design/v1/sites/site-1/runtime/overview')
+    expect((config?.params as URLSearchParams).get('abcWindowDays')).toBe('120')
+  })
+
   it('serializes the current floor scope as repeated logical-id parameters', async () => {
     await spaceRuntimeApi.inventory('site-1', ['location-1', 'location-2', 'location-1'])
 

@@ -199,6 +199,47 @@ public sealed class Cp6SpaceWmsAdapterSqlServerTests
         });
     }
 
+    [SqlServerFact]
+    public async Task Abc_query_translates_and_enforces_warehouse_and_half_open_window()
+    {
+        await WithDatabaseAsync(async connectionString =>
+        {
+            await using var context = CreateContext(connectionString);
+            var windowStart = new DateTime(2026, 7, 1, 0, 0, 0, DateTimeKind.Utc);
+            context.StockTransactions.AddRange(
+                Transaction("TX-ABC-001", WmsTxnType.OUT, "WH-01", "SKU-A", 8, windowStart.AddDays(1)),
+                Transaction("TX-ABC-002", WmsTxnType.OUT, "WH-01", "SKU-A", 2, windowStart.AddDays(2)),
+                Transaction("TX-ABC-003", WmsTxnType.OUT, "WH-01", "SKU-B", 4, windowStart.AddDays(2)),
+                Transaction("TX-ABC-004", WmsTxnType.IN, "WH-01", "SKU-C", 20, windowStart.AddDays(2)),
+                Transaction("TX-ABC-005", WmsTxnType.OUT, "WH-02", "SKU-D", 30, windowStart.AddDays(2)),
+                Transaction("TX-ABC-006", WmsTxnType.OUT, "WH-01", "SKU-E", 40, windowStart.AddDays(4)));
+            await context.SaveChangesAsync();
+            var adapter = new Cp6SpaceWmsAdapter(context);
+
+            var result = await adapter.QueryAbcAsync(
+                new SpaceWmsAbcQuery(
+                    Context(),
+                    DateOnly.FromDateTime(windowStart),
+                    DateOnly.FromDateTime(windowStart.AddDays(4))));
+
+            Assert.Equal(SpaceWmsDataSourceKind.Real, result.Source.Kind);
+            Assert.Collection(
+                result.Items,
+                item =>
+                {
+                    Assert.Equal("SKU-A", item.MaterialNumber);
+                    Assert.Equal(2, item.OutboundMovementCount);
+                    Assert.Equal(10, item.OutboundQuantity);
+                },
+                item =>
+                {
+                    Assert.Equal("SKU-B", item.MaterialNumber);
+                    Assert.Equal(1, item.OutboundMovementCount);
+                    Assert.Equal(4, item.OutboundQuantity);
+                });
+        });
+    }
+
     private static async Task WithDatabaseAsync(
         Func<string, Task> action)
     {
@@ -235,6 +276,26 @@ public sealed class Cp6SpaceWmsAdapterSqlServerTests
 
     private static SpaceWmsContext Context() =>
         new(TenantId, SiteId, "WH-01", CorrelationId);
+
+    private static StockTransaction Transaction(
+        string transactionNumber,
+        string transactionType,
+        string warehouseCode,
+        string productCode,
+        decimal quantity,
+        DateTime transactionTimeUtc) =>
+        new()
+        {
+            Id = Guid.NewGuid(),
+            TxnNo = transactionNumber,
+            TxnType = transactionType,
+            TxnDateTime = transactionTimeUtc,
+            WarehouseCd = warehouseCode,
+            LocationCd = "A-01",
+            ProductCd = productCode,
+            LotNo = "LOT-01",
+            Qty = quantity,
+        };
 
     private static SpaceWmsBatch Batch(
         int batchNo,

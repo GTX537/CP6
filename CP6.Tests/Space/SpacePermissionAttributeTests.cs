@@ -74,6 +74,8 @@ public class SpacePermissionAttributeTests
                 "space:model:read",
             ["SpaceWmsRuntimeController.GetInventory"] = "space:model:read",
             ["SpaceWmsRuntimeController.LocateInventory"] = "space:model:read",
+            ["SpaceWmsRuntimeController.GetWarehouseOverview"] =
+                "space:model:read",
             ["SpaceWmsRuntimeController.GetTasks"] = "space:model:read",
             ["SpaceWmsRuntimeController.GetTaskPath"] = "space:model:read",
             ["SpacePersonnelRuntimeController.GetCurrentPersonnel"] =
@@ -349,6 +351,7 @@ public class SpacePermissionAttributeTests
 
     [Theory]
     [InlineData(nameof(SpaceWmsRuntimeController.GetInventory))]
+    [InlineData(nameof(SpaceWmsRuntimeController.GetWarehouseOverview))]
     [InlineData(nameof(SpaceWmsRuntimeController.GetTasks))]
     public void Runtime_reads_opt_in_to_problem_details(string methodName)
     {

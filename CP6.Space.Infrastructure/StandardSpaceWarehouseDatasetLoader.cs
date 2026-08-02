@@ -117,6 +117,9 @@ public sealed class StandardSpaceWarehouseDatasetLoader(
 
             simulator.SeedInventory(context, dataset.Inventory);
             simulator.SeedTasks(context, dataset.TaskLines);
+            simulator.SeedOutboundMovements(
+                context,
+                CreateOutboundMovements(dataset));
             return new SpaceStandardWarehouseLoadResult(
                 dataset.DatasetVersion,
                 dataset.ContentSha256,
@@ -131,5 +134,26 @@ public sealed class StandardSpaceWarehouseDatasetLoader(
             simulator.Reset(context);
             throw;
         }
+    }
+
+    private static IReadOnlyList<SpaceWmsOutboundMovement> CreateOutboundMovements(
+        SpaceStandardWarehouseDataset dataset)
+    {
+        var lastCompleteDay = DateOnly.FromDateTime(DateTime.UtcNow).AddDays(-1);
+        var movements = new List<SpaceWmsOutboundMovement>();
+        for (var index = 0; index < dataset.Skus.Count; index++)
+        {
+            var sku = dataset.Skus[index];
+            var movementCount = 1 + (index % 3);
+            for (var movement = 0; movement < movementCount; movement++)
+            {
+                movements.Add(new SpaceWmsOutboundMovement(
+                    $"STD-OUT-{index + 1:0000}-{movement + 1:00}",
+                    sku.MaterialNumber,
+                    lastCompleteDay.AddDays(-((index * 7 + movement) % 89)),
+                    (dataset.Skus.Count - index) * (movement + 1)));
+            }
+        }
+        return movements;
     }
 }

@@ -76,6 +76,124 @@ export interface SpaceRuntimeInventoryLocateResponse {
   items: SpaceRuntimeInventoryLocateHit[]
 }
 
+export type SpaceWarehouseAbcRank = 'A' | 'B' | 'C' | 'Unclassified'
+
+export interface SpaceWarehouseModelKpi {
+  floorCount: number
+  areaAvailableFloorCount: number
+  areaMissingFloorCount: number
+  totalFloorAreaSquareMeters: number | null
+  zoneCount: number
+  rackCount: number
+  rackFootprintSquareMeters: number
+  rackFootprintRatePercent: number | null
+  activeLocationCount: number
+}
+
+export interface SpaceWarehouseInventoryKpi {
+  source: SpaceRuntimeSource
+  inventoryLineCount: number | null
+  occupiedLocationCount: number | null
+  unoccupiedLocationCount: number | null
+  occupiedLocationRatePercent: number | null
+  occupiedLocationRateMethod: string
+  capacityUtilizationPercent: number | null
+  capacityUtilizationStatus: string
+  capacityUtilizationReason: string
+  distinctOwnerCount: number | null
+  distinctMaterialCount: number | null
+  distinctLotCount: number | null
+  distinctContainerCount: number | null
+}
+
+export interface SpaceWarehouseTaskKpi {
+  source: SpaceRuntimeSource
+  activeTaskCount: number | null
+  activeTaskStopCount: number | null
+}
+
+export interface SpaceWarehouseAnomalyKpi {
+  activeDeviceAlarmCount: number
+  criticalDeviceAlarmCount: number
+  codeMismatchLocationCount: number | null
+  overAllocatedInventoryLineCount: number | null
+  areaMissingFloorCount: number
+  unclassifiedAbcMaterialCount: number | null
+}
+
+export interface SpaceWarehouseAbcMaterial {
+  materialNumber: string
+  outboundMovementCount: number
+  outboundQuantity: number
+  previousCumulativeSharePercent: number | null
+  cumulativeSharePercent: number | null
+  rank: SpaceWarehouseAbcRank
+  occupiedLocationCount: number
+  floorCount: number
+}
+
+export interface SpaceWarehouseAbcLocationMaterial {
+  materialNumber: string
+  rank: SpaceWarehouseAbcRank
+}
+
+export interface SpaceWarehouseAbcLocation {
+  locationLogicalId: string
+  spaceLocationCode: string
+  floorLogicalId: string
+  floorCode: string
+  rank: SpaceWarehouseAbcRank
+  materials: SpaceWarehouseAbcLocationMaterial[]
+}
+
+export interface SpaceWarehouseAbc {
+  source: SpaceRuntimeSource
+  windowDays: number
+  windowStartDate: string
+  windowEndDateExclusive: string
+  transactionTimeBasis: string
+  rankingMethod: string
+  aThresholdPercent: number
+  bThresholdPercent: number
+  spatialMappingAvailable: boolean
+  materialCount: number | null
+  aCount: number | null
+  bCount: number | null
+  cCount: number | null
+  unclassifiedCount: number | null
+  materials: SpaceWarehouseAbcMaterial[]
+  locations: SpaceWarehouseAbcLocation[]
+}
+
+export interface SpaceWarehouseFloorKpi {
+  floorLogicalId: string
+  floorCode: string
+  floorName: string
+  floorLevel: number
+  areaSquareMeters: number | null
+  activeLocationCount: number
+  occupiedLocationCount: number | null
+  occupiedLocationRatePercent: number | null
+  aLocationCount: number | null
+  bLocationCount: number | null
+  cLocationCount: number | null
+  unclassifiedLocationCount: number | null
+}
+
+export interface SpaceWarehouseOverviewResponse {
+  siteId: string
+  publishedVersionId: string
+  warehouseCode: string
+  capturedAtUtc: string
+  isRuntimeComplete: boolean
+  model: SpaceWarehouseModelKpi
+  inventory: SpaceWarehouseInventoryKpi
+  tasks: SpaceWarehouseTaskKpi
+  anomalies: SpaceWarehouseAnomalyKpi
+  abc: SpaceWarehouseAbc
+  floors: SpaceWarehouseFloorKpi[]
+}
+
 export interface SpaceRuntimeTaskItem {
   taskId: string
   taskType: string
