@@ -7123,6 +7123,137 @@
         }
       }
     },
+    "/api/space/design/v1/sites/{siteId}/personnel-events": {
+      "post": {
+        "tags": [
+          "SpacePersonnelEvents"
+        ],
+        "operationId": "IngestPersonnelEvents",
+        "parameters": [
+          {
+            "name": "siteId",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "string",
+              "format": "uuid"
+            }
+          }
+        ],
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/CP6.Space.Contracts.IngestSpacePersonnelEventsRequest"
+              }
+            },
+            "text/json": {
+              "schema": {
+                "$ref": "#/components/schemas/CP6.Space.Contracts.IngestSpacePersonnelEventsRequest"
+              }
+            },
+            "application/*+json": {
+              "schema": {
+                "$ref": "#/components/schemas/CP6.Space.Contracts.IngestSpacePersonnelEventsRequest"
+              }
+            }
+          },
+          "required": true
+        },
+        "responses": {
+          "400": {
+            "description": "Bad Request",
+            "content": {
+              "application/problem+json": {
+                "schema": {
+                  "$ref": "#/components/schemas/CP6.WebApi.OpenApi.SpaceDesignProblemDetails"
+                }
+              }
+            }
+          },
+          "401": {
+            "description": "Unauthorized",
+            "content": {
+              "application/problem+json": {
+                "schema": {
+                  "$ref": "#/components/schemas/CP6.WebApi.OpenApi.SpaceDesignProblemDetails"
+                }
+              }
+            }
+          },
+          "403": {
+            "description": "Forbidden",
+            "content": {
+              "application/problem+json": {
+                "schema": {
+                  "$ref": "#/components/schemas/CP6.WebApi.OpenApi.SpaceDesignProblemDetails"
+                }
+              }
+            }
+          },
+          "404": {
+            "description": "Not Found",
+            "content": {
+              "application/problem+json": {
+                "schema": {
+                  "$ref": "#/components/schemas/CP6.WebApi.OpenApi.SpaceDesignProblemDetails"
+                }
+              }
+            }
+          },
+          "409": {
+            "description": "Conflict",
+            "content": {
+              "application/problem+json": {
+                "schema": {
+                  "$ref": "#/components/schemas/CP6.WebApi.OpenApi.SpaceDesignProblemDetails"
+                }
+              }
+            }
+          },
+          "422": {
+            "description": "Unprocessable Content",
+            "content": {
+              "application/problem+json": {
+                "schema": {
+                  "$ref": "#/components/schemas/CP6.WebApi.OpenApi.SpaceDesignProblemDetails"
+                }
+              }
+            }
+          },
+          "500": {
+            "description": "Internal Server Error",
+            "content": {
+              "application/problem+json": {
+                "schema": {
+                  "$ref": "#/components/schemas/CP6.WebApi.OpenApi.SpaceDesignProblemDetails"
+                }
+              }
+            }
+          },
+          "202": {
+            "description": "Accepted",
+            "content": {
+              "text/plain": {
+                "schema": {
+                  "$ref": "#/components/schemas/CP6.Space.Contracts.IngestSpacePersonnelEventsResponse"
+                }
+              },
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/CP6.Space.Contracts.IngestSpacePersonnelEventsResponse"
+                }
+              },
+              "text/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/CP6.Space.Contracts.IngestSpacePersonnelEventsResponse"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
     "/api/space/design/v1/sites/{siteId}/runtime/inventory": {
       "get": {
         "tags": [
@@ -8138,6 +8269,90 @@
           },
           "idempotentReplay": {
             "type": "boolean"
+          }
+        },
+        "additionalProperties": false
+      },
+      "CP6.Space.Contracts.IngestSpacePersonnelEventsRequest": {
+        "required": [
+          "contractVersion",
+          "events",
+          "sourceId",
+          "sourceKind"
+        ],
+        "type": "object",
+        "properties": {
+          "contractVersion": {
+            "type": "string"
+          },
+          "sourceId": {
+            "type": "string"
+          },
+          "sourceKind": {
+            "type": "string"
+          },
+          "events": {
+            "type": "array",
+            "items": {
+              "$ref": "#/components/schemas/CP6.Space.Contracts.SpacePersonnelEventInput"
+            }
+          }
+        },
+        "additionalProperties": false
+      },
+      "CP6.Space.Contracts.IngestSpacePersonnelEventsResponse": {
+        "required": [
+          "acceptedCount",
+          "contractVersion",
+          "duplicateCount",
+          "receipts",
+          "receivedAtUtc",
+          "receivedCount",
+          "siteId",
+          "sourceId",
+          "sourceKind",
+          "staleCount"
+        ],
+        "type": "object",
+        "properties": {
+          "contractVersion": {
+            "type": "string"
+          },
+          "siteId": {
+            "type": "string",
+            "format": "uuid"
+          },
+          "sourceId": {
+            "type": "string"
+          },
+          "sourceKind": {
+            "type": "string"
+          },
+          "receivedAtUtc": {
+            "type": "string",
+            "format": "date-time"
+          },
+          "receivedCount": {
+            "type": "integer",
+            "format": "int32"
+          },
+          "acceptedCount": {
+            "type": "integer",
+            "format": "int32"
+          },
+          "duplicateCount": {
+            "type": "integer",
+            "format": "int32"
+          },
+          "staleCount": {
+            "type": "integer",
+            "format": "int32"
+          },
+          "receipts": {
+            "type": "array",
+            "items": {
+              "$ref": "#/components/schemas/CP6.Space.Contracts.SpacePersonnelEventReceipt"
+            }
           }
         },
         "additionalProperties": false
@@ -10020,6 +10235,100 @@
           "z": {
             "type": "integer",
             "format": "int32"
+          }
+        },
+        "additionalProperties": false
+      },
+      "CP6.Space.Contracts.SpacePersonnelEventInput": {
+        "required": [
+          "eventKind",
+          "occurredAtUtc",
+          "personExternalId",
+          "sourceEventId"
+        ],
+        "type": "object",
+        "properties": {
+          "sourceEventId": {
+            "type": "string"
+          },
+          "personExternalId": {
+            "type": "string"
+          },
+          "userId": {
+            "type": "string",
+            "format": "uuid",
+            "nullable": true
+          },
+          "eventKind": {
+            "type": "string"
+          },
+          "workState": {
+            "type": "string",
+            "nullable": true
+          },
+          "floorLogicalId": {
+            "type": "string",
+            "format": "uuid",
+            "nullable": true
+          },
+          "locationLogicalId": {
+            "type": "string",
+            "format": "uuid",
+            "nullable": true
+          },
+          "xMillimeters": {
+            "type": "number",
+            "format": "decimal",
+            "nullable": true
+          },
+          "yMillimeters": {
+            "type": "number",
+            "format": "decimal",
+            "nullable": true
+          },
+          "zMillimeters": {
+            "type": "number",
+            "format": "decimal",
+            "nullable": true
+          },
+          "accuracyMillimeters": {
+            "type": "number",
+            "format": "decimal",
+            "nullable": true
+          },
+          "sourceSequence": {
+            "type": "integer",
+            "format": "int64",
+            "nullable": true
+          },
+          "occurredAtUtc": {
+            "type": "string",
+            "format": "date-time"
+          }
+        },
+        "additionalProperties": false
+      },
+      "CP6.Space.Contracts.SpacePersonnelEventReceipt": {
+        "required": [
+          "eventId",
+          "outcome",
+          "projectionApplied",
+          "sourceEventId"
+        ],
+        "type": "object",
+        "properties": {
+          "eventId": {
+            "type": "string",
+            "format": "uuid"
+          },
+          "sourceEventId": {
+            "type": "string"
+          },
+          "outcome": {
+            "type": "string"
+          },
+          "projectionApplied": {
+            "type": "boolean"
           }
         },
         "additionalProperties": false

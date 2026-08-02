@@ -327,6 +327,11 @@ export interface ISpaceDesignV1Client {
     updateFieldPolicy(policyId: string, body: UpdateSpaceFieldPolicyRequest): Promise<SpaceFieldPolicyDto>;
 
     /**
+     * @return Accepted
+     */
+    ingestPersonnelEvents(siteId: string, body: IngestSpacePersonnelEventsRequest): Promise<IngestSpacePersonnelEventsResponse>;
+
+    /**
      * @param locationLogicalId (optional)
      * @return OK
      */
@@ -5705,6 +5710,99 @@ export class SpaceDesignV1Client implements ISpaceDesignV1Client {
     }
 
     /**
+     * @return Accepted
+     */
+    ingestPersonnelEvents(siteId: string, body: IngestSpacePersonnelEventsRequest): Promise<IngestSpacePersonnelEventsResponse> {
+        let url_ = this.baseUrl + "/api/space/design/v1/sites/{siteId}/personnel-events";
+        if (siteId === undefined || siteId === null)
+            throw new globalThis.Error("The parameter 'siteId' must be defined.");
+        url_ = url_.replace("{siteId}", encodeURIComponent("" + siteId));
+        url_ = url_.replace(/[?&]$/, "");
+
+        const content_ = JSON.stringify(body);
+
+        let options_: RequestInit = {
+            body: content_,
+            method: "POST",
+            headers: {
+                "Content-Type": "application/json",
+                "Accept": "application/json"
+            }
+        };
+
+        return this.http.fetch(url_, options_).then((_response: Response) => {
+            return this.processIngestPersonnelEvents(_response);
+        });
+    }
+
+    protected processIngestPersonnelEvents(response: Response): Promise<IngestSpacePersonnelEventsResponse> {
+        const status = response.status;
+        let _headers: any = {}; if (response.headers && response.headers.forEach) { response.headers.forEach((v: any, k: any) => _headers[k] = v); };
+        if (status === 202) {
+            return response.text().then((_responseText) => {
+            let result202: any = null;
+            let resultData202 = _responseText === "" ? null : JSON.parse(_responseText, this.jsonParseReviver);
+            result202 = IngestSpacePersonnelEventsResponse.fromJS(resultData202);
+            return result202;
+            });
+        } else if (status === 400) {
+            return response.text().then((_responseText) => {
+            let result400: any = null;
+            let resultData400 = _responseText === "" ? null : JSON.parse(_responseText, this.jsonParseReviver);
+            result400 = SpaceDesignProblemDetails.fromJS(resultData400);
+            return throwException("Bad Request", status, _responseText, _headers, result400);
+            });
+        } else if (status === 401) {
+            return response.text().then((_responseText) => {
+            let result401: any = null;
+            let resultData401 = _responseText === "" ? null : JSON.parse(_responseText, this.jsonParseReviver);
+            result401 = SpaceDesignProblemDetails.fromJS(resultData401);
+            return throwException("Unauthorized", status, _responseText, _headers, result401);
+            });
+        } else if (status === 403) {
+            return response.text().then((_responseText) => {
+            let result403: any = null;
+            let resultData403 = _responseText === "" ? null : JSON.parse(_responseText, this.jsonParseReviver);
+            result403 = SpaceDesignProblemDetails.fromJS(resultData403);
+            return throwException("Forbidden", status, _responseText, _headers, result403);
+            });
+        } else if (status === 404) {
+            return response.text().then((_responseText) => {
+            let result404: any = null;
+            let resultData404 = _responseText === "" ? null : JSON.parse(_responseText, this.jsonParseReviver);
+            result404 = SpaceDesignProblemDetails.fromJS(resultData404);
+            return throwException("Not Found", status, _responseText, _headers, result404);
+            });
+        } else if (status === 409) {
+            return response.text().then((_responseText) => {
+            let result409: any = null;
+            let resultData409 = _responseText === "" ? null : JSON.parse(_responseText, this.jsonParseReviver);
+            result409 = SpaceDesignProblemDetails.fromJS(resultData409);
+            return throwException("Conflict", status, _responseText, _headers, result409);
+            });
+        } else if (status === 422) {
+            return response.text().then((_responseText) => {
+            let result422: any = null;
+            let resultData422 = _responseText === "" ? null : JSON.parse(_responseText, this.jsonParseReviver);
+            result422 = SpaceDesignProblemDetails.fromJS(resultData422);
+            return throwException("Unprocessable Content", status, _responseText, _headers, result422);
+            });
+        } else if (status === 500) {
+            return response.text().then((_responseText) => {
+            let result500: any = null;
+            let resultData500 = _responseText === "" ? null : JSON.parse(_responseText, this.jsonParseReviver);
+            result500 = SpaceDesignProblemDetails.fromJS(resultData500);
+            return throwException("Internal Server Error", status, _responseText, _headers, result500);
+            });
+        } else if (status !== 200 && status !== 204) {
+            return response.text().then((_responseText) => {
+            return throwException("An unexpected server error occurred.", status, _responseText, _headers);
+            });
+        }
+        return Promise.resolve<IngestSpacePersonnelEventsResponse>(null as any);
+    }
+
+    /**
      * @param locationLogicalId (optional)
      * @return OK
      */
@@ -7084,6 +7182,148 @@ export interface ICreateSpaceVersionResponse {
     jobId?: string;
     jobStatusUrl?: string | undefined;
     idempotentReplay?: boolean;
+}
+
+export class IngestSpacePersonnelEventsRequest implements IIngestSpacePersonnelEventsRequest {
+    contractVersion!: string;
+    sourceId!: string;
+    sourceKind!: string;
+    events!: SpacePersonnelEventInput[];
+
+    constructor(data?: IIngestSpacePersonnelEventsRequest) {
+        if (data) {
+            for (var property in data) {
+                if (data.hasOwnProperty(property))
+                    (this as any)[property] = (data as any)[property];
+            }
+        }
+        if (!data) {
+            this.events = [];
+        }
+    }
+
+    init(_data?: any) {
+        if (_data) {
+            this.contractVersion = _data["contractVersion"];
+            this.sourceId = _data["sourceId"];
+            this.sourceKind = _data["sourceKind"];
+            if (Array.isArray(_data["events"])) {
+                this.events = [] as any;
+                for (let item of _data["events"])
+                    this.events!.push(SpacePersonnelEventInput.fromJS(item));
+            }
+        }
+    }
+
+    static fromJS(data: any): IngestSpacePersonnelEventsRequest {
+        data = typeof data === 'object' ? data : {};
+        let result = new IngestSpacePersonnelEventsRequest();
+        result.init(data);
+        return result;
+    }
+
+    toJSON(data?: any) {
+        data = typeof data === 'object' ? data : {};
+        data["contractVersion"] = this.contractVersion;
+        data["sourceId"] = this.sourceId;
+        data["sourceKind"] = this.sourceKind;
+        if (Array.isArray(this.events)) {
+            data["events"] = [];
+            for (let item of this.events)
+                data["events"].push(item ? item.toJSON() : undefined as any);
+        }
+        return data;
+    }
+}
+
+export interface IIngestSpacePersonnelEventsRequest {
+    contractVersion: string;
+    sourceId: string;
+    sourceKind: string;
+    events: SpacePersonnelEventInput[];
+}
+
+export class IngestSpacePersonnelEventsResponse implements IIngestSpacePersonnelEventsResponse {
+    contractVersion!: string;
+    siteId!: string;
+    sourceId!: string;
+    sourceKind!: string;
+    receivedAtUtc!: Date;
+    receivedCount!: number;
+    acceptedCount!: number;
+    duplicateCount!: number;
+    staleCount!: number;
+    receipts!: SpacePersonnelEventReceipt[];
+
+    constructor(data?: IIngestSpacePersonnelEventsResponse) {
+        if (data) {
+            for (var property in data) {
+                if (data.hasOwnProperty(property))
+                    (this as any)[property] = (data as any)[property];
+            }
+        }
+        if (!data) {
+            this.receipts = [];
+        }
+    }
+
+    init(_data?: any) {
+        if (_data) {
+            this.contractVersion = _data["contractVersion"];
+            this.siteId = _data["siteId"];
+            this.sourceId = _data["sourceId"];
+            this.sourceKind = _data["sourceKind"];
+            this.receivedAtUtc = _data["receivedAtUtc"] ? new Date(_data["receivedAtUtc"].toString()) : undefined as any;
+            this.receivedCount = _data["receivedCount"];
+            this.acceptedCount = _data["acceptedCount"];
+            this.duplicateCount = _data["duplicateCount"];
+            this.staleCount = _data["staleCount"];
+            if (Array.isArray(_data["receipts"])) {
+                this.receipts = [] as any;
+                for (let item of _data["receipts"])
+                    this.receipts!.push(SpacePersonnelEventReceipt.fromJS(item));
+            }
+        }
+    }
+
+    static fromJS(data: any): IngestSpacePersonnelEventsResponse {
+        data = typeof data === 'object' ? data : {};
+        let result = new IngestSpacePersonnelEventsResponse();
+        result.init(data);
+        return result;
+    }
+
+    toJSON(data?: any) {
+        data = typeof data === 'object' ? data : {};
+        data["contractVersion"] = this.contractVersion;
+        data["siteId"] = this.siteId;
+        data["sourceId"] = this.sourceId;
+        data["sourceKind"] = this.sourceKind;
+        data["receivedAtUtc"] = this.receivedAtUtc ? this.receivedAtUtc.toISOString() : undefined as any;
+        data["receivedCount"] = this.receivedCount;
+        data["acceptedCount"] = this.acceptedCount;
+        data["duplicateCount"] = this.duplicateCount;
+        data["staleCount"] = this.staleCount;
+        if (Array.isArray(this.receipts)) {
+            data["receipts"] = [];
+            for (let item of this.receipts)
+                data["receipts"].push(item ? item.toJSON() : undefined as any);
+        }
+        return data;
+    }
+}
+
+export interface IIngestSpacePersonnelEventsResponse {
+    contractVersion: string;
+    siteId: string;
+    sourceId: string;
+    sourceKind: string;
+    receivedAtUtc: Date;
+    receivedCount: number;
+    acceptedCount: number;
+    duplicateCount: number;
+    staleCount: number;
+    receipts: SpacePersonnelEventReceipt[];
 }
 
 export class PlaceSpaceWmsAdoptionRequest implements IPlaceSpaceWmsAdoptionRequest {
@@ -10198,6 +10438,138 @@ export interface ISpaceMoveObjectDto {
     x?: number;
     y?: number;
     z?: number;
+}
+
+export class SpacePersonnelEventInput implements ISpacePersonnelEventInput {
+    sourceEventId!: string;
+    personExternalId!: string;
+    userId?: string | undefined;
+    eventKind!: string;
+    workState?: string | undefined;
+    floorLogicalId?: string | undefined;
+    locationLogicalId?: string | undefined;
+    xMillimeters?: number | undefined;
+    yMillimeters?: number | undefined;
+    zMillimeters?: number | undefined;
+    accuracyMillimeters?: number | undefined;
+    sourceSequence?: number | undefined;
+    occurredAtUtc!: Date;
+
+    constructor(data?: ISpacePersonnelEventInput) {
+        if (data) {
+            for (var property in data) {
+                if (data.hasOwnProperty(property))
+                    (this as any)[property] = (data as any)[property];
+            }
+        }
+    }
+
+    init(_data?: any) {
+        if (_data) {
+            this.sourceEventId = _data["sourceEventId"];
+            this.personExternalId = _data["personExternalId"];
+            this.userId = _data["userId"];
+            this.eventKind = _data["eventKind"];
+            this.workState = _data["workState"];
+            this.floorLogicalId = _data["floorLogicalId"];
+            this.locationLogicalId = _data["locationLogicalId"];
+            this.xMillimeters = _data["xMillimeters"];
+            this.yMillimeters = _data["yMillimeters"];
+            this.zMillimeters = _data["zMillimeters"];
+            this.accuracyMillimeters = _data["accuracyMillimeters"];
+            this.sourceSequence = _data["sourceSequence"];
+            this.occurredAtUtc = _data["occurredAtUtc"] ? new Date(_data["occurredAtUtc"].toString()) : undefined as any;
+        }
+    }
+
+    static fromJS(data: any): SpacePersonnelEventInput {
+        data = typeof data === 'object' ? data : {};
+        let result = new SpacePersonnelEventInput();
+        result.init(data);
+        return result;
+    }
+
+    toJSON(data?: any) {
+        data = typeof data === 'object' ? data : {};
+        data["sourceEventId"] = this.sourceEventId;
+        data["personExternalId"] = this.personExternalId;
+        data["userId"] = this.userId;
+        data["eventKind"] = this.eventKind;
+        data["workState"] = this.workState;
+        data["floorLogicalId"] = this.floorLogicalId;
+        data["locationLogicalId"] = this.locationLogicalId;
+        data["xMillimeters"] = this.xMillimeters;
+        data["yMillimeters"] = this.yMillimeters;
+        data["zMillimeters"] = this.zMillimeters;
+        data["accuracyMillimeters"] = this.accuracyMillimeters;
+        data["sourceSequence"] = this.sourceSequence;
+        data["occurredAtUtc"] = this.occurredAtUtc ? this.occurredAtUtc.toISOString() : undefined as any;
+        return data;
+    }
+}
+
+export interface ISpacePersonnelEventInput {
+    sourceEventId: string;
+    personExternalId: string;
+    userId?: string | undefined;
+    eventKind: string;
+    workState?: string | undefined;
+    floorLogicalId?: string | undefined;
+    locationLogicalId?: string | undefined;
+    xMillimeters?: number | undefined;
+    yMillimeters?: number | undefined;
+    zMillimeters?: number | undefined;
+    accuracyMillimeters?: number | undefined;
+    sourceSequence?: number | undefined;
+    occurredAtUtc: Date;
+}
+
+export class SpacePersonnelEventReceipt implements ISpacePersonnelEventReceipt {
+    eventId!: string;
+    sourceEventId!: string;
+    outcome!: string;
+    projectionApplied!: boolean;
+
+    constructor(data?: ISpacePersonnelEventReceipt) {
+        if (data) {
+            for (var property in data) {
+                if (data.hasOwnProperty(property))
+                    (this as any)[property] = (data as any)[property];
+            }
+        }
+    }
+
+    init(_data?: any) {
+        if (_data) {
+            this.eventId = _data["eventId"];
+            this.sourceEventId = _data["sourceEventId"];
+            this.outcome = _data["outcome"];
+            this.projectionApplied = _data["projectionApplied"];
+        }
+    }
+
+    static fromJS(data: any): SpacePersonnelEventReceipt {
+        data = typeof data === 'object' ? data : {};
+        let result = new SpacePersonnelEventReceipt();
+        result.init(data);
+        return result;
+    }
+
+    toJSON(data?: any) {
+        data = typeof data === 'object' ? data : {};
+        data["eventId"] = this.eventId;
+        data["sourceEventId"] = this.sourceEventId;
+        data["outcome"] = this.outcome;
+        data["projectionApplied"] = this.projectionApplied;
+        return data;
+    }
+}
+
+export interface ISpacePersonnelEventReceipt {
+    eventId: string;
+    sourceEventId: string;
+    outcome: string;
+    projectionApplied: boolean;
 }
 
 export class SpacePortalAisleDto implements ISpacePortalAisleDto {

@@ -71,6 +71,10 @@ public sealed class SpaceContext : DbContext
         Set<SpaceElementCommandRecord>();
     public DbSet<SpaceWmsAdoption> WmsAdoptions =>
         Set<SpaceWmsAdoption>();
+    public DbSet<SpacePersonnelEvent> PersonnelEvents =>
+        Set<SpacePersonnelEvent>();
+    public DbSet<SpacePersonnelCurrentState> PersonnelStates =>
+        Set<SpacePersonnelCurrentState>();
     public DbSet<SpaceExternalOrganization> ExternalOrganizations =>
         Set<SpaceExternalOrganization>();
     public DbSet<SpaceExternalMembership> ExternalMemberships =>
@@ -112,6 +116,8 @@ public sealed class SpaceContext : DbContext
         ConfigureElementCommandBatch(modelBuilder);
         ConfigureElementCommandRecord(modelBuilder);
         ConfigureWmsAdoption(modelBuilder);
+        ConfigurePersonnelEvent(modelBuilder);
+        ConfigurePersonnelState(modelBuilder);
         ConfigureExternalOrganization(modelBuilder);
         ConfigureExternalMembership(modelBuilder);
         ConfigureExternalGrant(modelBuilder);
@@ -151,6 +157,7 @@ public sealed class SpaceContext : DbContext
         ProtectUnderlayCalibrationHistory();
         ProtectElementCommandHistory();
         ProtectExcelMappingVersionHistory();
+        ProtectPersonnelEventHistory();
         StampAndValidateTenant();
         return base.SaveChanges(acceptAllChangesOnSuccess);
     }
@@ -168,6 +175,7 @@ public sealed class SpaceContext : DbContext
         ProtectUnderlayCalibrationHistory();
         ProtectElementCommandHistory();
         ProtectExcelMappingVersionHistory();
+        ProtectPersonnelEventHistory();
         StampAndValidateTenant();
         return base.SaveChangesAsync(acceptAllChangesOnSuccess, cancellationToken);
     }
@@ -760,6 +768,163 @@ public sealed class SpaceContext : DbContext
             .OnDelete(DeleteBehavior.Restrict)
             .HasConstraintName(
                 "FK_Space_WmsAdoption_ModelVersion_Tenant");
+        entity.HasQueryFilter(
+            x => x.TenantId == CurrentTenantId && !x.IsDeleted);
+    }
+
+    private void ConfigurePersonnelEvent(ModelBuilder modelBuilder)
+    {
+        var entity = modelBuilder.Entity<SpacePersonnelEvent>();
+        entity.ToTable(
+            "Space_PersonnelEvent",
+            table =>
+            {
+                table.HasCheckConstraint(
+                    "CK_Space_PersonnelEvent_SourceSequence",
+                    "[SourceSequence] IS NULL OR [SourceSequence] >= 0");
+                table.HasCheckConstraint(
+                    "CK_Space_PersonnelEvent_Accuracy",
+                    "[AccuracyMillimeters] IS NULL OR " +
+                    "([AccuracyMillimeters] >= 0 AND " +
+                    "[XMillimeters] IS NOT NULL AND [YMillimeters] IS NOT NULL AND " +
+                    "[ZMillimeters] IS NOT NULL)");
+                table.HasCheckConstraint(
+                    "CK_Space_PersonnelEvent_SourceKind",
+                    "[SourceKind] IN (0, 1)");
+                table.HasCheckConstraint(
+                    "CK_Space_PersonnelEvent_Kind",
+                    "[EventKind] IN (0, 1)");
+                table.HasCheckConstraint(
+                    "CK_Space_PersonnelEvent_WorkState",
+                    "[WorkState] IS NULL OR [WorkState] BETWEEN 0 AND 4");
+                table.HasCheckConstraint(
+                    "CK_Space_PersonnelEvent_Shape",
+                    "([EventKind] = 0 AND [WorkState] IS NULL AND " +
+                    "([LocationLogicalId] IS NOT NULL OR " +
+                    "([FloorLogicalId] IS NOT NULL AND " +
+                    "[XMillimeters] IS NOT NULL AND [YMillimeters] IS NOT NULL AND " +
+                    "[ZMillimeters] IS NOT NULL))) OR " +
+                    "([EventKind] = 1 AND [WorkState] IS NOT NULL AND " +
+                    "[FloorLogicalId] IS NULL AND [LocationLogicalId] IS NULL AND " +
+                    "[XMillimeters] IS NULL AND [YMillimeters] IS NULL AND " +
+                    "[ZMillimeters] IS NULL AND [AccuracyMillimeters] IS NULL)");
+            });
+        entity.HasKey(x => x.Id);
+        entity.Property(x => x.Id).ValueGeneratedNever();
+        entity.HasAlternateKey(x => new { x.TenantId, x.Id })
+            .HasName("AK_Space_PersonnelEvent_TenantId_Id");
+        ConfigureTenantEntity(entity);
+
+        entity.Property(x => x.SourceId).HasMaxLength(100).IsRequired();
+        entity.Property(x => x.SourceKind)
+            .HasConversion<short>()
+            .HasColumnType("smallint");
+        entity.Property(x => x.SourceEventId).HasMaxLength(200).IsRequired();
+        entity.Property(x => x.PersonExternalId).HasMaxLength(200).IsRequired();
+        entity.Property(x => x.EventKind)
+            .HasConversion<short>()
+            .HasColumnType("smallint");
+        entity.Property(x => x.WorkState)
+            .HasConversion<short?>()
+            .HasColumnType("smallint");
+        entity.Property(x => x.XMillimeters).HasColumnType("decimal(18,3)");
+        entity.Property(x => x.YMillimeters).HasColumnType("decimal(18,3)");
+        entity.Property(x => x.ZMillimeters).HasColumnType("decimal(18,3)");
+        entity.Property(x => x.AccuracyMillimeters)
+            .HasColumnType("decimal(18,3)");
+        entity.Property(x => x.OccurredAtUtc).HasColumnType("datetime2");
+        entity.Property(x => x.ReceivedAtUtc).HasColumnType("datetime2");
+        entity.Property(x => x.PayloadHash)
+            .HasColumnType("char(64)")
+            .IsUnicode(false)
+            .IsFixedLength()
+            .HasMaxLength(64)
+            .IsRequired();
+
+        entity.HasIndex(x => new
+        {
+            x.TenantId,
+            x.SiteId,
+            x.SourceId,
+            x.SourceEventId,
+        })
+            .IsUnique()
+            .HasDatabaseName(
+                "UX_Space_PersonnelEvent_Tenant_Site_Source_Event");
+        entity.HasIndex(x => new
+        {
+            x.TenantId,
+            x.SiteId,
+            x.SourceId,
+            x.PersonExternalId,
+            x.OccurredAtUtc,
+        })
+            .HasDatabaseName(
+                "IX_Space_PersonnelEvent_Tenant_Site_Source_Person_Time");
+        entity.HasQueryFilter(
+            x => x.TenantId == CurrentTenantId && !x.IsDeleted);
+    }
+
+    private void ConfigurePersonnelState(ModelBuilder modelBuilder)
+    {
+        var entity = modelBuilder.Entity<SpacePersonnelCurrentState>();
+        entity.ToTable(
+            "Space_PersonnelState",
+            table =>
+            {
+                table.HasCheckConstraint(
+                    "CK_Space_PersonnelState_SourceKind",
+                    "[SourceKind] IN (0, 1)");
+                table.HasCheckConstraint(
+                    "CK_Space_PersonnelState_WorkState",
+                    "[WorkState] BETWEEN 0 AND 4");
+            });
+        entity.HasKey(x => x.Id);
+        entity.Property(x => x.Id).ValueGeneratedNever();
+        entity.HasAlternateKey(x => new { x.TenantId, x.Id })
+            .HasName("AK_Space_PersonnelState_TenantId_Id");
+        ConfigureTenantEntity(entity);
+
+        entity.Property(x => x.SourceId).HasMaxLength(100).IsRequired();
+        entity.Property(x => x.SourceKind)
+            .HasConversion<short>()
+            .HasColumnType("smallint");
+        entity.Property(x => x.PersonExternalId).HasMaxLength(200).IsRequired();
+        entity.Property(x => x.XMillimeters).HasColumnType("decimal(18,3)");
+        entity.Property(x => x.YMillimeters).HasColumnType("decimal(18,3)");
+        entity.Property(x => x.ZMillimeters).HasColumnType("decimal(18,3)");
+        entity.Property(x => x.AccuracyMillimeters)
+            .HasColumnType("decimal(18,3)");
+        entity.Property(x => x.PositionOccurredAtUtc).HasColumnType("datetime2");
+        entity.Property(x => x.PositionReceivedAtUtc).HasColumnType("datetime2");
+        entity.Property(x => x.PositionSourceEventId).HasMaxLength(200);
+        entity.Property(x => x.WorkState)
+            .HasConversion<short>()
+            .HasColumnType("smallint");
+        entity.Property(x => x.WorkStateOccurredAtUtc).HasColumnType("datetime2");
+        entity.Property(x => x.WorkStateReceivedAtUtc).HasColumnType("datetime2");
+        entity.Property(x => x.WorkStateSourceEventId).HasMaxLength(200);
+        entity.Property(x => x.RowVersion).IsRowVersion();
+
+        entity.HasIndex(x => new
+        {
+            x.TenantId,
+            x.SiteId,
+            x.SourceId,
+            x.PersonExternalId,
+        })
+            .IsUnique()
+            .HasDatabaseName(
+                "UX_Space_PersonnelState_Tenant_Site_Source_Person");
+        entity.HasIndex(x => new
+        {
+            x.TenantId,
+            x.SiteId,
+            x.WorkState,
+            x.WorkStateOccurredAtUtc,
+        })
+            .HasDatabaseName(
+                "IX_Space_PersonnelState_Tenant_Site_WorkState_Time");
         entity.HasQueryFilter(
             x => x.TenantId == CurrentTenantId && !x.IsDeleted);
     }
@@ -2724,6 +2889,42 @@ public sealed class SpaceContext : DbContext
         entity.Property(x => x.CreatedAtUtc).HasColumnType("datetime2");
         entity.Property(x => x.ModifiedAtUtc).HasColumnType("datetime2");
         entity.Property(x => x.IsDeleted).HasDefaultValue(false);
+    }
+
+    private void ProtectPersonnelEventHistory()
+    {
+        foreach (var entry in ChangeTracker.Entries<SpacePersonnelEvent>())
+        {
+            if (entry.State is EntityState.Modified or EntityState.Deleted)
+            {
+                throw new InvalidOperationException(
+                    "Personnel events are append-only.");
+            }
+        }
+
+        var identityProperties = new HashSet<string>(StringComparer.Ordinal)
+        {
+            nameof(SpacePersonnelCurrentState.TenantId),
+            nameof(SpacePersonnelCurrentState.SiteId),
+            nameof(SpacePersonnelCurrentState.SourceId),
+            nameof(SpacePersonnelCurrentState.SourceKind),
+            nameof(SpacePersonnelCurrentState.PersonExternalId),
+            nameof(SpacePersonnelCurrentState.IsDeleted),
+        };
+        foreach (var entry in ChangeTracker
+                     .Entries<SpacePersonnelCurrentState>()
+                     .Where(value => value.State == EntityState.Modified))
+        {
+            if (entry.Properties.Any(property =>
+                    property.IsModified &&
+                    identityProperties.Contains(property.Metadata.Name)) ||
+                entry.Property(x => x.UserId).IsModified &&
+                entry.Property(x => x.UserId).OriginalValue.HasValue)
+            {
+                throw new InvalidOperationException(
+                    "Personnel current-state identity cannot be reassigned.");
+            }
+        }
     }
 
     private void ProtectExcelMappingVersionHistory()

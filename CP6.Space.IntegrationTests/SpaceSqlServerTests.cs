@@ -31,10 +31,56 @@ public sealed class SpaceSqlServerTests
             Assert.Contains("Space_JobAttempt", tables);
             Assert.Contains("Space_JobStep", tables);
             Assert.Contains("Space_ModelIssue", tables);
+            Assert.Contains("Space_PersonnelEvent", tables);
+            Assert.Contains("Space_PersonnelState", tables);
             Assert.Contains(SpaceContext.MigrationsHistoryTable, tables);
             Assert.DoesNotContain("__EFMigrationsHistory", tables);
             Assert.DoesNotContain("Space_Site", tables);
         });
+    }
+
+    [SqlServerFact]
+    public async Task Personnel_source_event_identity_is_unique_per_tenant_site_source()
+    {
+        var tenantId = Guid.NewGuid();
+        var siteId = Guid.NewGuid();
+        var now = new DateTime(2026, 8, 2, 16, 0, 0, DateTimeKind.Utc);
+
+        await WithDatabaseAsync(
+            async context =>
+            {
+                context.Models.Add(SpaceModel.Create(tenantId, siteId));
+                context.PersonnelEvents.Add(NewPersonnelEvent('a'));
+                await context.SaveChangesAsync();
+
+                context.PersonnelEvents.Add(NewPersonnelEvent('b'));
+                await Assert.ThrowsAsync<DbUpdateException>(
+                    () => context.SaveChangesAsync());
+            },
+            tenantId,
+            Guid.NewGuid());
+
+        SpacePersonnelEvent NewPersonnelEvent(char hashCharacter) =>
+            SpacePersonnelEvent.Create(
+                tenantId,
+                siteId,
+                "PDA-01",
+                SpacePersonnelSourceKind.Real,
+                "EVENT-01",
+                "PERSON-01",
+                null,
+                SpacePersonnelEventKind.WorkStateChanged,
+                SpacePersonnelWorkState.Idle,
+                null,
+                null,
+                null,
+                null,
+                null,
+                null,
+                1,
+                now.AddMinutes(-1),
+                now,
+                new string(hashCharacter, 64));
     }
 
     [SqlServerFact]

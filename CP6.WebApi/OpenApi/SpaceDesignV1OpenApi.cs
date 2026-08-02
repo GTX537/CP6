@@ -466,6 +466,40 @@ public sealed class SpaceWmsRuntimeSchemaFilter : ISchemaFilter
                 "pageSize",
                 "summary",
             ],
+            [typeof(IngestSpacePersonnelEventsRequest)] =
+            [
+                "contractVersion",
+                "sourceId",
+                "sourceKind",
+                "events",
+            ],
+            [typeof(SpacePersonnelEventInput)] =
+            [
+                "sourceEventId",
+                "personExternalId",
+                "eventKind",
+                "occurredAtUtc",
+            ],
+            [typeof(IngestSpacePersonnelEventsResponse)] =
+            [
+                "contractVersion",
+                "siteId",
+                "sourceId",
+                "sourceKind",
+                "receivedAtUtc",
+                "receivedCount",
+                "acceptedCount",
+                "duplicateCount",
+                "staleCount",
+                "receipts",
+            ],
+            [typeof(SpacePersonnelEventReceipt)] =
+            [
+                "eventId",
+                "sourceEventId",
+                "outcome",
+                "projectionApplied",
+            ],
             [typeof(SpacePortalOrganizationDto)] =
             [
                 "organizationId",
@@ -661,6 +695,21 @@ public sealed class SpaceWmsRuntimeSchemaFilter : ISchemaFilter
         {
             SetNullable(schema, true, "zoneLogicalId");
             SetNumberFormat(schema, "quantity", "decimal", true);
+        }
+        else if (context.Type == typeof(SpacePersonnelEventInput))
+        {
+            SetNullable(
+                schema,
+                true,
+                "userId",
+                "workState",
+                "floorLogicalId",
+                "locationLogicalId",
+                "sourceSequence");
+            SetNumberFormat(schema, "xMillimeters", "decimal", true);
+            SetNumberFormat(schema, "yMillimeters", "decimal", true);
+            SetNumberFormat(schema, "zMillimeters", "decimal", true);
+            SetNumberFormat(schema, "accuracyMillimeters", "decimal", true);
         }
     }
 

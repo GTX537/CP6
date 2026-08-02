@@ -158,6 +158,9 @@ public static class SpaceInfrastructureRegistration
             provider => provider.GetRequiredService<ISpaceWmsAdapter>());
         services.AddScoped<ISpaceWmsRuntimeService, SpaceWmsRuntimeService>();
         services.AddScoped<
+            ISpacePersonnelEventService,
+            SpacePersonnelEventService>();
+        services.AddScoped<
             ISpaceExternalPortalService,
             SpaceExternalPortalService>();
         return services;
