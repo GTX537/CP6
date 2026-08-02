@@ -6,7 +6,7 @@
 - 合同只接受不可逆 SHA-256 task/worker token 和显式脱敏确认，位置必须存在于场景快照；数据集、任务与回放证据不可变且不允许生产回写。
 - 新增 3 个 API、2 个权限、两张租户隔离表、Migration/幂等 SQL，OpenAPI 增至 74 operations；规划页提供 Ready 场景导入、列表和确定性回放证据。
 - 全量门禁为 Space Unit 264、默认 Space Integration 239 passed / 63 SQL-gated skipped、CP6.Tests 2767 passed / 17 environment-gated skipped、前端 121 files / 667 tests、非增量 Release 0 error / 10 条既有 warning；双 EF、SDK、TypeScript、生产构建和合并态复验通过。28 个新增页面词条具备五语运行时种子，既有 i18n 欠账仍为 908。
-- 功能历史已备份并进入远端受控集成，`main` 未修改。下一张独立实施卡为 E12-S03 距离、拥堵、容量、吞吐和成本仿真。
+- 功能历史已备份并进入远端受控集成；功能工作树及本地/远端临时分支已删除，释放约 2.03 GiB，`main` 未修改。下一张独立实施卡为 E12-S03 距离、拥堵、容量、吞吐和成本仿真。
 
 ## 2026-08-02 E12-S01 生产隔离规划分支
 

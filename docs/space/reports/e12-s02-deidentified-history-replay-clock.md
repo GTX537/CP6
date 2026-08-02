@@ -1,11 +1,11 @@
 # E12-S02 脱敏历史任务数据集与回放时钟交付报告
 
-- 状态：功能分支全量门禁、远端备份、no-ff 受控集成与合并态复验完成
+- 状态：功能分支全量门禁、远端备份、no-ff 受控集成、合并态复验与临时资源清理全部完成
 - 起始基线：`6d837d08a0e71b098774f8b5bd96a89095137565`
 - 数据/时钟/迁移提交：`4fb6941d`
 - API/UI/权限/SDK 提交：`d89919b8`
 - no-ff 集成提交：`c8ccbf56`
-- 功能分支：`codex/space-e12-s02-historical-replay`
+- 原功能分支：`codex/space-e12-s02-historical-replay`（历史进入远端受控集成后已删除）
 - Migration：`20260802212845_SpaceE12S02HistoricalReplayDataset`
 
 ## 1. 交付结果
@@ -68,4 +68,4 @@ Migration 新增 `Space_PlanningHistoricalDataset` 与 `Space_PlanningHistorical
 
 ## 7. 远端备份与资源清理
 
-功能 tip `d89919b8` 已先推送远端备份，再以 `--no-ff` 合入并推送 `integration/space-v1-20260730`，集成提交为 `c8ccbf56`。功能 tip 已确认是远端集成分支祖先；临时功能分支和工作树将在本报告进入远端集成历史后删除，`main` 未被本轮操作修改。
+功能 tip `d89919b8` 已先推送远端备份，再以 `--no-ff` 合入并推送 `integration/space-v1-20260730`，集成提交为 `c8ccbf56`。确认功能 tip 是远端集成分支祖先且工作树干净后，已删除远端功能分支、本地功能分支和功能工作树；受控集成历史完整保留。本轮移除的功能工作树占用 2,177,363,070 字节（约 2.03 GiB），`main` 未被本轮操作修改。
