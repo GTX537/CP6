@@ -1,0 +1,76 @@
+{
+  "document": {
+    "schemaVersion": 1,
+    "sourceSha256": "aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa",
+    "sourceFormat": "Dxf",
+    "cadVersion": "AC1032",
+    "unit": "Millimeter",
+    "scaleToMillimeters": 1,
+    "coordinateSystem": "FloorLocal-ZUp",
+    "bounds": {
+      "minX": 0,
+      "minY": 0,
+      "maxX": 1000,
+      "maxY": 1000
+    },
+    "converterId": "contract-example",
+    "converterVersion": "1.0.0"
+  },
+  "layers": [
+    {
+      "layerId": "WALL",
+      "name": "WALL",
+      "entityCount": 1
+    }
+  ],
+  "blocks": [],
+  "entities": [
+    {
+      "sourceRef": "H:100",
+      "type": "Line",
+      "rawType": "LINE",
+      "layerId": "WALL",
+      "blockName": null,
+      "points": [
+        { "x": 0, "y": 0, "z": 0 },
+        { "x": 1000, "y": 1000, "z": 0 }
+      ],
+      "radius": null,
+      "startAngleDegrees": null,
+      "endAngleDegrees": null,
+      "transform": {
+        "m11": 1,
+        "m12": 0,
+        "m21": 0,
+        "m22": 1,
+        "offsetX": 0,
+        "offsetY": 0,
+        "offsetZ": 0
+      },
+      "bounds": {
+        "minX": 0,
+        "minY": 0,
+        "maxX": 1000,
+        "maxY": 1000
+      },
+      "isClosed": false,
+      "isSupported": true,
+      "attributes": {}
+    }
+  ],
+  "issues": [],
+  "summary": {
+    "layerCount": 1,
+    "blockCount": 0,
+    "entityCount": 1,
+    "supportedEntityCount": 1,
+    "unsupportedEntityCount": 0,
+    "missingSourceRefCount": 0,
+    "bounds": {
+      "minX": 0,
+      "minY": 0,
+      "maxX": 1000,
+      "maxY": 1000
+    }
+  }
+}
