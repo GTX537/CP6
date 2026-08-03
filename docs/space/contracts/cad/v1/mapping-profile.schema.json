@@ -1,0 +1,75 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://cp6.local/contracts/space/cad/v1/mapping-profile.schema.json",
+  "title": "CP6 Space CAD mapping profile draft or sealed profile v1",
+  "type": "object",
+  "additionalProperties": false,
+  "required": [
+    "schemaVersion", "profileId", "version", "name", "scope", "isEnabled", "rules"
+  ],
+  "properties": {
+    "schemaVersion": { "const": 1 },
+    "profileId": { "type": "string", "format": "uuid" },
+    "version": { "type": "integer", "minimum": 1 },
+    "name": { "type": "string", "minLength": 1, "maxLength": 200 },
+    "scope": { "enum": ["System", "Tenant"] },
+    "tenantId": { "type": ["string", "null"], "format": "uuid" },
+    "isEnabled": { "type": "boolean" },
+    "basedOnProfileId": { "type": ["string", "null"], "format": "uuid" },
+    "basedOnVersion": { "type": ["integer", "null"], "minimum": 1 },
+    "rules": {
+      "type": "array",
+      "minItems": 1,
+      "maxItems": 500,
+      "items": { "$ref": "#/$defs/rule" }
+    },
+    "definitionSha256": { "$ref": "#/$defs/sha256" }
+  },
+  "$defs": {
+    "sha256": { "type": "string", "pattern": "^[0-9a-f]{64}$" },
+    "token": { "type": "string", "minLength": 1, "maxLength": 128 },
+    "rule": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": [
+        "ruleId", "priority", "sourceKind", "matchKind", "pattern", "target",
+        "geometryRule", "confidenceWeight", "isRequired"
+      ],
+      "properties": {
+        "ruleId": { "$ref": "#/$defs/token" },
+        "priority": { "type": "integer", "minimum": 0, "maximum": 10000 },
+        "sourceKind": { "enum": ["Layer", "Block"] },
+        "matchKind": { "enum": ["Exact", "Glob", "Regex"] },
+        "pattern": { "$ref": "#/$defs/token" },
+        "attributeName": { "type": ["string", "null"], "minLength": 1, "maxLength": 128 },
+        "attributeMatchKind": { "enum": ["Exact", "Glob", "Regex", null] },
+        "attributePattern": { "type": ["string", "null"], "minLength": 1, "maxLength": 512 },
+        "target": {
+          "enum": [
+            "Wall", "Column", "Door", "Dock", "Zone", "Aisle", "Rack",
+            "Equipment", "VerticalCirculation", "Annotation", "Guide", "RestrictedArea"
+          ]
+        },
+        "targetSubtype": { "type": ["string", "null"], "minLength": 1, "maxLength": 128 },
+        "geometryRule": {
+          "enum": [
+            "DirectGeometry", "Centerline", "ClosedBoundary", "BlockFootprint",
+            "InsertionPoint"
+          ]
+        },
+        "defaultHeightMillimeters": {
+          "type": ["number", "null"],
+          "exclusiveMinimum": 0,
+          "maximum": 1000000
+        },
+        "defaultThicknessMillimeters": {
+          "type": ["number", "null"],
+          "exclusiveMinimum": 0,
+          "maximum": 1000000
+        },
+        "confidenceWeight": { "type": "number", "minimum": 0, "maximum": 1 },
+        "isRequired": { "type": "boolean" }
+      }
+    }
+  }
+}

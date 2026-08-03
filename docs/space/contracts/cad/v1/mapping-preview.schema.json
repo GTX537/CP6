@@ -1,0 +1,134 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://cp6.local/contracts/space/cad/v1/mapping-preview.schema.json",
+  "title": "CP6 Space CAD mapping preview v1",
+  "type": "object",
+  "additionalProperties": false,
+  "required": [
+    "schemaVersion", "tenantId", "profileId", "profileVersion",
+    "profileDefinitionSha256", "sourceSha256", "inventorySha256",
+    "sourceStructureSha256", "reuseKeySha256", "layerOverrides", "decisions",
+    "issues", "summary", "readyForSemanticParsing", "previewSha256"
+  ],
+  "properties": {
+    "schemaVersion": { "const": 1 },
+    "tenantId": { "type": "string", "format": "uuid" },
+    "profileId": { "type": "string", "format": "uuid" },
+    "profileVersion": { "type": "integer", "minimum": 1 },
+    "profileDefinitionSha256": { "$ref": "#/$defs/sha256" },
+    "sourceSha256": { "$ref": "#/$defs/sha256" },
+    "inventorySha256": { "$ref": "#/$defs/sha256" },
+    "sourceStructureSha256": { "$ref": "#/$defs/sha256" },
+    "reuseKeySha256": { "$ref": "#/$defs/sha256" },
+    "layerOverrides": {
+      "type": "array",
+      "maxItems": 5000,
+      "items": { "$ref": "#/$defs/layerOverride" }
+    },
+    "decisions": { "type": "array", "items": { "$ref": "#/$defs/decision" } },
+    "issues": { "type": "array", "items": { "$ref": "#/$defs/issue" } },
+    "summary": { "$ref": "#/$defs/summary" },
+    "readyForSemanticParsing": { "type": "boolean" },
+    "previewSha256": { "$ref": "#/$defs/sha256" }
+  },
+  "$defs": {
+    "sha256": { "type": "string", "pattern": "^[0-9a-f]{64}$" },
+    "token": { "type": "string", "minLength": 1, "maxLength": 128 },
+    "target": {
+      "enum": [
+        "Wall", "Column", "Door", "Dock", "Zone", "Aisle", "Rack",
+        "Equipment", "VerticalCirculation", "Annotation", "Guide", "RestrictedArea"
+      ]
+    },
+    "geometry": {
+      "enum": [
+        "DirectGeometry", "Centerline", "ClosedBoundary", "BlockFootprint",
+        "InsertionPoint"
+      ]
+    },
+    "layerOverride": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["layerId", "ignore"],
+      "properties": {
+        "layerId": { "$ref": "#/$defs/token" },
+        "ignore": { "type": "boolean" },
+        "target": { "oneOf": [{ "$ref": "#/$defs/target" }, { "type": "null" }] },
+        "targetSubtype": { "type": ["string", "null"], "minLength": 1, "maxLength": 128 },
+        "geometryRule": { "oneOf": [{ "$ref": "#/$defs/geometry" }, { "type": "null" }] },
+        "defaultHeightMillimeters": {
+          "type": ["number", "null"],
+          "exclusiveMinimum": 0,
+          "maximum": 1000000
+        },
+        "defaultThicknessMillimeters": {
+          "type": ["number", "null"],
+          "exclusiveMinimum": 0,
+          "maximum": 1000000
+        },
+        "confidenceWeight": { "type": ["number", "null"], "minimum": 0, "maximum": 1 }
+      }
+    },
+    "decision": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": [
+        "sourceKind", "sourceKey", "objectCount", "status", "decisionSource"
+      ],
+      "properties": {
+        "sourceKind": { "enum": ["Layer", "Block"] },
+        "sourceKey": { "$ref": "#/$defs/token" },
+        "layerId": { "type": ["string", "null"], "minLength": 1, "maxLength": 128 },
+        "objectCount": { "type": "integer", "minimum": 0 },
+        "status": { "enum": ["Mapped", "Unmapped", "Ignored", "Conflict"] },
+        "decisionSource": { "enum": ["ProfileRule", "LayerOverride", "None"] },
+        "ruleId": { "type": ["string", "null"], "minLength": 1, "maxLength": 128 },
+        "target": { "oneOf": [{ "$ref": "#/$defs/target" }, { "type": "null" }] },
+        "targetSubtype": { "type": ["string", "null"], "minLength": 1, "maxLength": 128 },
+        "geometryRule": { "oneOf": [{ "$ref": "#/$defs/geometry" }, { "type": "null" }] },
+        "defaultHeightMillimeters": { "type": ["number", "null"] },
+        "defaultThicknessMillimeters": { "type": ["number", "null"] },
+        "confidenceWeight": { "type": ["number", "null"], "minimum": 0, "maximum": 1 }
+      }
+    },
+    "issue": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["code", "severity"],
+      "properties": {
+        "code": { "$ref": "#/$defs/token" },
+        "severity": { "enum": ["Info", "Warning", "Blocking"] },
+        "sourceKind": { "enum": ["Layer", "Block", null] },
+        "sourceKey": { "type": ["string", "null"], "minLength": 1, "maxLength": 128 },
+        "ruleId": { "type": ["string", "null"], "minLength": 1, "maxLength": 128 },
+        "detailToken": { "type": ["string", "null"], "maxLength": 128 }
+      }
+    },
+    "summary": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": [
+        "layerCount", "mappedLayerCount", "unmappedLayerCount", "ignoredLayerCount",
+        "conflictLayerCount", "blockCount", "mappedBlockCount", "unmappedBlockCount",
+        "conflictBlockCount", "mappedLayerEntityCount", "mappedBlockReferenceCount",
+        "infoCount", "warningCount", "blockingCount"
+      ],
+      "properties": {
+        "layerCount": { "type": "integer", "minimum": 0 },
+        "mappedLayerCount": { "type": "integer", "minimum": 0 },
+        "unmappedLayerCount": { "type": "integer", "minimum": 0 },
+        "ignoredLayerCount": { "type": "integer", "minimum": 0 },
+        "conflictLayerCount": { "type": "integer", "minimum": 0 },
+        "blockCount": { "type": "integer", "minimum": 0 },
+        "mappedBlockCount": { "type": "integer", "minimum": 0 },
+        "unmappedBlockCount": { "type": "integer", "minimum": 0 },
+        "conflictBlockCount": { "type": "integer", "minimum": 0 },
+        "mappedLayerEntityCount": { "type": "integer", "minimum": 0 },
+        "mappedBlockReferenceCount": { "type": "integer", "minimum": 0 },
+        "infoCount": { "type": "integer", "minimum": 0 },
+        "warningCount": { "type": "integer", "minimum": 0 },
+        "blockingCount": { "type": "integer", "minimum": 0 }
+      }
+    }
+  }
+}

@@ -2,6 +2,15 @@
 
 最后更新：2026-08-03
 
+## E02-S05 CAD 图层映射方案开发切片（2026-08-03）
+
+- 在 E02-S04 集成基线 `f4b596f0` 上完成功能提交 `2736427c`：新增 Definition SHA-256 封装的不可变 CAD Mapping Profile；System 方案无租户、租户侧只读，租户复制记录 System 基线，后续修改创建新版本。Tenant Profile 跨租户失败关闭。
+- Layer/Block 规则支持 Exact、Glob、受限 NonBacktracking Regex 和 Block 属性条件，冻结目标语义、几何规则、默认高度/厚度、置信度、优先级和必需标记。逐层 Override 优先；同优先级/特异性多命中 Blocking；必需来源缺失或为空 Blocking；空/未知来源仍完整列出。
+- Preview 绑定 Tenant、Profile/Version/Definition、Source、Inventory、源结构、Override、Reuse Key 和 Preview SHA-256；复用键排除 Floor/坐标 Transform，因此同一 CAD 换楼层仍复用，但不同租户/方案/来源/覆盖不会串用。新命令 `seal-dev-mapping-profile`、`preview-dev-mapping` 不写 Draft，无 Migration/API/外部 AI。
+- 样例 13：Profile `732eef8a...de59d1`，Structure `9636bd72...0911ab`，Reuse `014cdc75...1c879b`，Preview `98a0a315...8009ca`；15 图层中 10 mapped / 5 unmapped，1/1 块 mapped，覆盖 21 个图层对象和 8 个块引用，4 Info / 1 Warning / 0 Blocking，可进入开发侧语义解析。
+- 门禁：E02-S05 聚焦 12/12、20/20 合成 CAD 标准方案预览、CAD 工具 23/23、Space Unit 316/316、完整 solution Release 非增量构建 0 error / 10 条既有 warning、JSON/CLI/差异检查通过。证据见 `docs/space/reports/e02-s05-cad-mapping-development.md`。
+- 这是开发切片而非正式 E02-S05 验收；仍等待授权原生适配器、正式持久化清单/方案、并发、API/权限/审计/UI 和真实图纸证据。E05-S01 已完成，等待期间可继续 E02-S06 开发侧只读语义提案，不得直接写 Draft。
+
 ## E02-S04 CAD 图层与块清单开发切片（2026-08-03）
 
 - 在 E02-S03 集成基线 `01a59696` 上完成功能提交 `b77faf96`、证据提交 `324c8755`，并以 no-ff 提交 `be639d07` 集成到 `integration/space-v1-20260730`：CAD IR v1 向后兼容增加图层颜色、线型和可见性；开发 DXF 转换器保留完整 `TABLES/LAYER` 和空图层，未声明图层显式合成并产生 Warning，不再只列出有对象图层。

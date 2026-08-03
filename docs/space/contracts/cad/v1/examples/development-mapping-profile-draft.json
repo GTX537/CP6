@@ -1,0 +1,139 @@
+{
+  "schemaVersion": 1,
+  "profileId": "88888888-8888-8888-8888-888888888888",
+  "version": 1,
+  "name": "CP6 synthetic standard warehouse mapping",
+  "scope": "System",
+  "tenantId": null,
+  "isEnabled": true,
+  "basedOnProfileId": null,
+  "basedOnVersion": null,
+  "rules": [
+    {
+      "ruleId": "B-RACK-UNIT",
+      "priority": 100,
+      "sourceKind": "Block",
+      "matchKind": "Exact",
+      "pattern": "RACK_UNIT",
+      "target": "Rack",
+      "geometryRule": "BlockFootprint",
+      "confidenceWeight": 0.95,
+      "isRequired": false
+    },
+    {
+      "ruleId": "L-A01-WALL",
+      "priority": 110,
+      "sourceKind": "Layer",
+      "matchKind": "Exact",
+      "pattern": "A01",
+      "target": "Wall",
+      "geometryRule": "Centerline",
+      "defaultHeightMillimeters": 3000,
+      "defaultThicknessMillimeters": 200,
+      "confidenceWeight": 0.9,
+      "isRequired": false
+    },
+    {
+      "ruleId": "L-AISLE",
+      "priority": 100,
+      "sourceKind": "Layer",
+      "matchKind": "Glob",
+      "pattern": "*AISLE*",
+      "target": "Aisle",
+      "geometryRule": "DirectGeometry",
+      "confidenceWeight": 0.95,
+      "isRequired": false
+    },
+    {
+      "ruleId": "L-COLUMN",
+      "priority": 100,
+      "sourceKind": "Layer",
+      "matchKind": "Exact",
+      "pattern": "COLUMN",
+      "target": "Column",
+      "geometryRule": "DirectGeometry",
+      "confidenceWeight": 0.95,
+      "isRequired": false
+    },
+    {
+      "ruleId": "L-DOCK",
+      "priority": 100,
+      "sourceKind": "Layer",
+      "matchKind": "Exact",
+      "pattern": "DOCK",
+      "target": "Dock",
+      "geometryRule": "ClosedBoundary",
+      "confidenceWeight": 0.95,
+      "isRequired": false
+    },
+    {
+      "ruleId": "L-DOOR",
+      "priority": 100,
+      "sourceKind": "Layer",
+      "matchKind": "Exact",
+      "pattern": "DOOR",
+      "target": "Door",
+      "geometryRule": "DirectGeometry",
+      "confidenceWeight": 0.95,
+      "isRequired": false
+    },
+    {
+      "ruleId": "L-EQUIPMENT",
+      "priority": 100,
+      "sourceKind": "Layer",
+      "matchKind": "Glob",
+      "pattern": "EQUIP_*",
+      "target": "Equipment",
+      "geometryRule": "ClosedBoundary",
+      "confidenceWeight": 0.9,
+      "isRequired": false
+    },
+    {
+      "ruleId": "L-RACK",
+      "priority": 100,
+      "sourceKind": "Layer",
+      "matchKind": "Glob",
+      "pattern": "*RACK*",
+      "target": "Rack",
+      "geometryRule": "DirectGeometry",
+      "confidenceWeight": 0.95,
+      "isRequired": false
+    },
+    {
+      "ruleId": "L-STAIR",
+      "priority": 100,
+      "sourceKind": "Layer",
+      "matchKind": "Exact",
+      "pattern": "STAIR",
+      "target": "VerticalCirculation",
+      "targetSubtype": "Stair",
+      "geometryRule": "DirectGeometry",
+      "confidenceWeight": 0.9,
+      "isRequired": false
+    },
+    {
+      "ruleId": "L-WALL",
+      "priority": 100,
+      "sourceKind": "Layer",
+      "matchKind": "Glob",
+      "pattern": "*WALL",
+      "target": "Wall",
+      "geometryRule": "Centerline",
+      "defaultHeightMillimeters": 3000,
+      "defaultThicknessMillimeters": 200,
+      "confidenceWeight": 0.95,
+      "isRequired": false
+    },
+    {
+      "ruleId": "L-ZONE",
+      "priority": 100,
+      "sourceKind": "Layer",
+      "matchKind": "Exact",
+      "pattern": "ZONE",
+      "target": "Zone",
+      "geometryRule": "ClosedBoundary",
+      "confidenceWeight": 0.9,
+      "isRequired": false
+    }
+  ]
+}
