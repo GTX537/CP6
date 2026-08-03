@@ -3,7 +3,7 @@
 This experiment-only tool captures reproducible E02-S01 evidence without
 coupling a production Worker to a CAD vendor SDK.
 
-It provides seven capabilities:
+It provides eight capabilities:
 
 - `audit`: verifies dataset metadata, companion answers, SHA-256 values,
   DXF framing, DWG version headers, formal split/family distribution and
@@ -15,6 +15,8 @@ It provides seven capabilities:
   expectations and an explicit non-release asset statement.
 - `convert-dev-ir`: converts a bounded development DXF into the versioned,
   vendor-neutral CAD IR contract and writes a deterministic JSON fixture.
+- `prepare-dev-coordinate`: applies an explicit unit, origin, rotation and
+  target-floor confirmation to a development CAD IR package.
 - `run`: invokes a candidate adapter as a child process without a shell and
   records timeout, cancellation, process-tree termination, exit status, peak
   working set, diagnostics and observation hash.
@@ -94,6 +96,24 @@ explicit issues, validates the package contract and prints the source and IR
 hashes. It is intentionally limited to UTF-8/ASCII DXF files up to 25 MiB and
 uses an in-memory JSON sink for development fixtures only. Production-sized
 artifacts require the isolated streaming Worker sink selected after E02-S01.
+
+## Confirm coordinates and assign a target floor
+
+```powershell
+dotnet run --project tools\CP6.Space.CadExperiment -c Release -- `
+  prepare-dev-coordinate `
+  --input tmp\e02-s02\13-automated-warehouse.cad-ir.json `
+  --confirmation docs\space\contracts\cad\v1\examples\development-coordinate-confirmation.json `
+  --output tmp\e02-s03\13-automated-warehouse.prepared.json
+```
+
+The confirmation is bound to the exact source SHA-256. The command corrects a
+detected unit when the confirmed unit differs, applies the source origin,
+floor-local origin and counterclockwise Z rotation, rounds output geometry to
+integer millimeters and records a deterministic transform hash. It returns exit
+code `3` after writing evidence when the extent is implausible or geometry lies
+outside the assigned floor boundary. This is E02-S03 development evidence, not
+a production parsing authorization.
 
 ## Run an adapter
 

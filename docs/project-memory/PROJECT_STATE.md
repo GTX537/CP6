@@ -1,6 +1,15 @@
 # 项目当前状态
 
-最后更新：2026-08-02
+最后更新：2026-08-03
+
+## E02-S03 CAD 坐标确认开发切片（2026-08-03）
+
+- 在 E02-S02 开发 CAD IR 集成基线 `97d6871f` 上完成功能提交 `09b26b87`：分析阶段分别给出源单位范围和建议毫米范围；已识别单位仍必须明确确认，未知单位不猜测，确认记录绑定来源 SHA-256。
+- 确认合同冻结源原点、目标 Floor 原点、逆时针 Z 旋转、Floor LogicalId/Code/Level/Elevation、边界与 `LOCAL_MM_Z_UP`。变换可纠正错误检测比例，点、半径、偏移和边界按 AwayFromZero 量化为整数毫米；普通图元保持 Identity，块引用复合实例矩阵；同一输入产生稳定 Transform SHA-256。
+- 默认图纸单边 1 m～5 km；边界缺失、范围异常、未确认单位、错误来源哈希、非法楼层坐标系或超出楼层边界 50 mm 均失败关闭。DWG/DXF `SpaceModelSource` 缺少规范坐标元数据时不能进入 Parsing；既有 Excel/底图/编辑器路径不受影响，无 Migration。
+- 20/20 合成 DXF 完成转换、分析、确认和楼层准备。样例 13 归属 F01，22 图元、0 问题，范围 `(0,-1200)～(36000,24000)` mm，Transform SHA-256 为 `b1223a8f...353cfba`。
+- 门禁：E02-S03 聚焦 13/13、CAD 工具 20/20、Space Unit 294/294、完整 solution Release 0 error / 10 条既有 warning，最终 SDK 可访问增量构建 0 warning / 0 error，JSON/CLI/差异检查通过。证据见 `docs/space/reports/e02-s03-cad-coordinate-development.md`。
+- 这是开发切片而非正式 E02-S03 验收；仍等待授权原生 DWG/DXF 适配器、冻结 Worker、正式黄金集和同租户/同版本持久化服务链。等待期间可继续 E02-S04 开发侧图层/块清单。
 
 ## E02-S02 CAD IR 开发契约（2026-08-02）
 

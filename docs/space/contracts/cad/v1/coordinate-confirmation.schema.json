@@ -1,0 +1,87 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://cp6.local/contracts/space/cad/v1/coordinate-confirmation.schema.json",
+  "title": "CP6 Space CAD coordinate confirmation v1",
+  "type": "object",
+  "additionalProperties": false,
+  "required": [
+    "sourceSha256",
+    "unitConfirmed",
+    "confirmedUnit",
+    "sourceOriginInSourceUnits",
+    "floorOriginMillimeters",
+    "rotationZDegrees",
+    "targetFloor"
+  ],
+  "properties": {
+    "sourceSha256": {
+      "type": "string",
+      "pattern": "^[0-9a-f]{64}$"
+    },
+    "unitConfirmed": { "const": true },
+    "confirmedUnit": {
+      "enum": ["Millimeter", "Centimeter", "Meter", "Inch", "Foot"]
+    },
+    "sourceOriginInSourceUnits": { "$ref": "#/$defs/sourcePoint" },
+    "floorOriginMillimeters": { "$ref": "#/$defs/millimeterPoint" },
+    "rotationZDegrees": {
+      "type": "number",
+      "minimum": -360,
+      "maximum": 360
+    },
+    "targetFloor": { "$ref": "#/$defs/targetFloor" }
+  },
+  "$defs": {
+    "sourcePoint": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["x", "y", "z"],
+      "properties": {
+        "x": { "type": "number" },
+        "y": { "type": "number" },
+        "z": { "type": "number" }
+      }
+    },
+    "millimeterPoint": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["x", "y", "z"],
+      "properties": {
+        "x": { "type": "integer" },
+        "y": { "type": "integer" },
+        "z": { "type": "integer" }
+      }
+    },
+    "bounds": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["minX", "minY", "maxX", "maxY"],
+      "properties": {
+        "minX": { "type": "number" },
+        "minY": { "type": "number" },
+        "maxX": { "type": "number" },
+        "maxY": { "type": "number" }
+      }
+    },
+    "targetFloor": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": [
+        "floorLogicalId",
+        "floorCode",
+        "level",
+        "elevationMillimeters",
+        "coordinateSystem",
+        "boundaryBounds"
+      ],
+      "properties": {
+        "floorLogicalId": { "type": "string", "format": "uuid" },
+        "floorCode": { "type": "string", "minLength": 1, "maxLength": 128 },
+        "level": { "type": "integer" },
+        "elevationMillimeters": { "type": "integer" },
+        "coordinateSystem": { "const": "LOCAL_MM_Z_UP" },
+        "boundaryBounds": { "$ref": "#/$defs/bounds" }
+      }
+    }
+  }
+}

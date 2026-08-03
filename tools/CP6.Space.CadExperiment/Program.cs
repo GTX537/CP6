@@ -1,4 +1,6 @@
 using System.Text.Json;
+using CP6.Space.Application;
+using CP6.Space.Contracts;
 
 namespace CP6.Space.CadExperiment;
 
@@ -25,6 +27,9 @@ public static class Program
                     commandLine,
                     cancellation.Token),
                 "convert-dev-ir" => await ConvertDevelopmentIrAsync(
+                    commandLine,
+                    cancellation.Token),
+                "prepare-dev-coordinate" => await PrepareDevelopmentCoordinateAsync(
                     commandLine,
                     cancellation.Token),
                 "run" => await RunAsync(commandLine, cancellation.Token),
@@ -151,6 +156,64 @@ public static class Program
         return 0;
     }
 
+    private static async Task<int> PrepareDevelopmentCoordinateAsync(
+        CommandLine commandLine,
+        CancellationToken cancellationToken)
+    {
+        var input = Path.GetFullPath(commandLine.Required("--input"));
+        var confirmationPath = Path.GetFullPath(commandLine.Required("--confirmation"));
+        var output = Path.GetFullPath(commandLine.Required("--output"));
+        SpaceCadIrPackageV1 package;
+        SpaceCadCoordinateConfirmationV1 confirmation;
+        await using (var inputStream = File.OpenRead(input))
+        {
+            package = await JsonSerializer.DeserializeAsync<SpaceCadIrPackageV1>(
+                          inputStream,
+                          CadExperimentJson.Options,
+                          cancellationToken)
+                      ?? throw new InvalidDataException("The CAD IR package is empty.");
+        }
+        await using (var confirmationStream = File.OpenRead(confirmationPath))
+        {
+            confirmation = await JsonSerializer.DeserializeAsync<SpaceCadCoordinateConfirmationV1>(
+                               confirmationStream,
+                               CadExperimentJson.Options,
+                               cancellationToken)
+                           ?? throw new InvalidDataException(
+                               "The CAD coordinate confirmation is empty.");
+        }
+
+        var request = new SpaceCadConversionRequest(
+            Guid.Parse("11111111-1111-1111-1111-111111111111"),
+            Guid.Parse("22222222-2222-2222-2222-222222222222"),
+            Guid.Parse("33333333-3333-3333-3333-333333333333"),
+            package.Document.SourceSha256,
+            package.Document.SourceFormat,
+            package.Document.ConverterId,
+            package.Document.ConverterVersion);
+        var analysis = SpaceCadCoordinatePreparation.Analyze(request, package);
+        var prepared = SpaceCadCoordinatePreparation.Prepare(
+            request,
+            package,
+            confirmation);
+        await CadExperimentJson.WriteAsync(output, prepared, cancellationToken);
+        Console.WriteLine(JsonSerializer.Serialize(
+            new
+            {
+                analysis.SuggestedUnit,
+                analysis.SuggestedScaleToMillimeters,
+                analysis.IsSuggestedExtentPlausible,
+                prepared.ReadyForParsing,
+                prepared.Metadata.TargetFloor.FloorLogicalId,
+                prepared.Metadata.TargetFloor.FloorCode,
+                prepared.Metadata.TransformSha256,
+                prepared.Metadata.PreparedBounds,
+                IssueCount = prepared.Issues.Count,
+            },
+            CadExperimentJson.Options));
+        return prepared.ReadyForParsing ? 0 : 3;
+    }
+
     private static async Task<int> RunAsync(
         CommandLine commandLine,
         CancellationToken cancellationToken)
@@ -220,6 +283,9 @@ public static class Program
               generate-stress --kind <50mb|million> --output <path>
               generate-dev-corpus --output <directory>
               convert-dev-ir --input <dxf-path> --output <cad-ir-json-path>
+              prepare-dev-coordinate --input <cad-ir-json-path>
+                  --confirmation <confirmation-json-path>
+                  --output <prepared-cad-ir-json-path>
               run --candidate <id> --candidate-version <version> --adapter <path>
                   [--adapter-arg <value>]... --input <path> [--input <path>]...
                   --output <directory> [--runs <n>] [--timeout-seconds <n>]
