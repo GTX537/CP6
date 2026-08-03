@@ -1,5 +1,13 @@
 # 已完成能力与近期里程碑
 
+## 2026-08-02 E12-S05 标准 GLB 交换格式导出
+
+- 以 `dd505f6f` / `c4b139ab` 完成 glTF 2.0 单文件 GLB 导出与 no-ff 受控集成；仅 Ready/Succeeded/Production Isolated 的内部规划分支可下载，生产指针和运行态保持只读隔离。
+- 导出覆盖楼层、区域、巷道、货架、货架层、库位和通用元素；共享带面法线盒体网格，CP6 毫米 Z-up 坐标确定性转换为 glTF 米制 Y-up，语义进入 `extras.cp6`。总数据节点上限 50,000，Serializable 快照、稳定排序、SHA-256 与失败关闭边界已落实。
+- 新增 1 个 API、1 个权限和四个五语页面词条，OpenAPI 增至 84 operations；C#/TypeScript SDK、Blob 下载入口、完整性响应头和 no-store/nosniff 护栏已同步。该能力不是 DWG 回写、CAD authoring、运行态快照或生产发布。
+- 全量门禁为 Space Unit 272、默认 Space Integration 247 passed / 63 SQL-gated skipped、CP6.Tests 2777 passed / 17 environment-gated skipped、前端 123 files / 676 tests、非增量 Release 0 error / 10 条既有 warning；双 EF、SDK、TypeScript 与生产构建通过。
+- 合并态 GLB 2/2、权限/API/OpenAPI 65/65、同树前端 9/9 及双 EF/SDK 通过。功能工作树及本地/远端临时分支已删除，释放约 2.672 GiB；`main` 未修改。E12-S06 继续等待正式样本、DWG SDK/供应商授权和可审计试验环境。
+
 ## 2026-08-02 E12-S04 多场景比较与决策记录
 
 - 以 `7b919b4b` / `a9298bad` / `577168e3` 完成同源不可变仿真证据比较、交付文档与 no-ff 受控集成；显式基线/阈值、基线差值、风险标记和追加式人工决策均已进入远端集成历史。
