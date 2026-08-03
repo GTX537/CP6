@@ -19,6 +19,7 @@ public sealed class DevelopmentDxfCadConverterTests
         long totalDeclaredLayers = 0;
         long totalEmptyLayers = 0;
         long totalMappingDecisions = 0;
+        long totalSemanticItems = 0;
         SpaceCadMappingProfileDraftV1 standardMappingDraft;
         await using (var mappingStream = File.OpenRead(RepositoryFile(
                          "docs",
@@ -94,7 +95,7 @@ public sealed class DevelopmentDxfCadConverterTests
             Assert.DoesNotContain(inventory.Blocks, block => !block.IsDefined);
             Assert.Matches("^[0-9a-f]{64}$", inventory.InventorySha256);
             var mappingPreview = SpaceCadMapping.Preview(
-                Guid.Parse("55555555-5555-5555-5555-555555555555"),
+                request.TenantId,
                 inventory,
                 mappingProfile);
             Assert.True(mappingPreview.ReadyForSemanticParsing);
@@ -103,12 +104,24 @@ public sealed class DevelopmentDxfCadConverterTests
                 mappingPreview.Decisions.Count);
             Assert.Equal(0, mappingPreview.Summary.BlockingCount);
             Assert.Matches("^[0-9a-f]{64}$", mappingPreview.ReuseKeySha256);
+            var semanticPreview = SpaceCadSemanticParser.Parse(
+                request,
+                prepared,
+                inventory,
+                mappingProfile,
+                mappingPreview);
+            Assert.Equal(
+                prepared.Package.Entities.Count,
+                semanticPreview.Summary.SourceEntityCount);
+            Assert.Equal(mappingPreview.PreviewSha256, semanticPreview.MappingPreviewSha256);
+            Assert.Matches("^[0-9a-f]{64}$", semanticPreview.SemanticPreviewSha256);
             Assert.NotEmpty(sink.Package.Entities);
             totalEntities += result.Summary.EntityCount;
             unsupportedEntities += result.Summary.UnsupportedEntityCount;
             totalDeclaredLayers += inventory.Summary.LayerCount;
             totalEmptyLayers += inventory.Summary.EmptyLayerCount;
             totalMappingDecisions += mappingPreview.Decisions.Count;
+            totalSemanticItems += semanticPreview.Items.Count;
         }
 
         Assert.True(totalEntities >= 250);
@@ -116,6 +129,7 @@ public sealed class DevelopmentDxfCadConverterTests
         Assert.True(totalDeclaredLayers >= 300);
         Assert.True(totalEmptyLayers >= 100);
         Assert.True(totalMappingDecisions >= 320);
+        Assert.True(totalSemanticItems >= 100);
     }
 
     [Fact]
@@ -369,6 +383,24 @@ public sealed class DevelopmentDxfCadConverterTests
         Assert.Equal(1, preview.Summary.MappedLayerCount);
         Assert.Equal(0, preview.Summary.BlockingCount);
         SpaceCadMapping.ValidatePreview(preview);
+
+        var semanticPath = Path.Combine(fixture.Path, "semantic-preview.json");
+        Assert.Equal(0, await Program.Main(
+        [
+            "parse-dev-semantic", "--prepared", preparedPath,
+            "--inventory", inventoryPath,
+            "--profile", profilePath,
+            "--mapping", previewPath,
+            "--output", semanticPath,
+        ]));
+        await using var semanticStream = File.OpenRead(semanticPath);
+        var semantic = await JsonSerializer.DeserializeAsync<SpaceCadSemanticPreviewV1>(
+            semanticStream,
+            CadExperimentJson.Options);
+        Assert.True(semantic!.IsReadOnlyPreview);
+        Assert.True(semantic.ReadyForConfirmation);
+        Assert.Equal(SpaceCadSemanticTarget.Guide, Assert.Single(semantic.Items).Target);
+        SpaceCadSemanticParser.Validate(semantic);
     }
 
     private static SpaceCadConversionRequest Request(string sourceSha256) =>
@@ -433,7 +465,7 @@ public sealed class DevelopmentDxfCadConverterTests
                     SpaceCadGeometryRule.InsertionPoint,
                     DefaultHeightMillimeters: null,
                     DefaultThicknessMillimeters: null,
-                    ConfidenceWeight: 0.5m,
+                    ConfidenceWeight: 0.9m,
                     IsRequired: false),
                 new SpaceCadMappingRuleV1(
                     "LAYER-ALL",
@@ -449,7 +481,7 @@ public sealed class DevelopmentDxfCadConverterTests
                     SpaceCadGeometryRule.DirectGeometry,
                     DefaultHeightMillimeters: null,
                     DefaultThicknessMillimeters: null,
-                    ConfidenceWeight: 0.5m,
+                    ConfidenceWeight: 0.9m,
                     IsRequired: false),
             ]);
 
