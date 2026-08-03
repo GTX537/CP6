@@ -1,3 +1,4 @@
+using System.Text.Json;
 using CP6.Space.Application;
 using CP6.Space.Contracts;
 
@@ -5,6 +6,17 @@ namespace CP6.Space.UnitTests;
 
 public sealed class SpaceCadConversionContractTests
 {
+    [Fact]
+    public void Layer_contract_keeps_visible_default_for_pre_inventory_v1_json()
+    {
+        var layer = JsonSerializer.Deserialize<SpaceCadIrLayerV1>(
+            """{"LayerId":"WALL","Name":"WALL","EntityCount":1}""");
+
+        Assert.True(layer!.IsVisible);
+        Assert.Null(layer.Color);
+        Assert.Null(layer.LineType);
+    }
+
     [Theory]
     [InlineData(SpaceCadSourceFormat.Dxf)]
     [InlineData(SpaceCadSourceFormat.Dwg)]

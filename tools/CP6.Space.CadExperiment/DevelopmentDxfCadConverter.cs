@@ -57,11 +57,8 @@ public sealed class DevelopmentDxfCadConverter : ICadConverter
         var blocks = BuildBlocks(blockRecords);
         var entityRecords = RecordsInSection(pairs, "ENTITIES");
         var entities = BuildEntities(entityRecords, scale, issues);
-        var layerCounts = entities
-            .GroupBy(entity => entity.LayerId, StringComparer.Ordinal)
-            .OrderBy(group => group.Key, StringComparer.Ordinal)
-            .Select(group => new SpaceCadIrLayerV1(group.Key, group.Key, group.LongCount()))
-            .ToArray();
+        var tableRecords = RecordsInSection(pairs, "TABLES");
+        var layers = BuildLayers(tableRecords, entities, issues);
         var bounds = UnionBounds(entities.Select(entity => entity.Bounds));
         var document = new SpaceCadIrDocumentV1(
             SpaceCadIrVersions.SchemaVersion,
@@ -75,7 +72,7 @@ public sealed class DevelopmentDxfCadConverter : ICadConverter
             ConverterId,
             ConverterVersion);
         var summary = new SpaceCadIrSummaryV1(
-            layerCounts.LongLength,
+            layers.LongLength,
             blocks.LongLength,
             entities.LongLength,
             entities.LongCount(entity => entity.IsSupported),
@@ -85,7 +82,7 @@ public sealed class DevelopmentDxfCadConverter : ICadConverter
 
         SpaceCadConversionContract.ValidateDocument(request, document);
         await sink.WriteDocumentAsync(document, cancellationToken);
-        foreach (var layer in layerCounts)
+        foreach (var layer in layers)
             await sink.WriteLayerAsync(layer, cancellationToken);
         foreach (var block in blocks)
             await sink.WriteBlockAsync(block, cancellationToken);
@@ -268,6 +265,51 @@ public sealed class DevelopmentDxfCadConverter : ICadConverter
             index = cursor;
         }
         return blocks.OrderBy(block => block.BlockId, StringComparer.Ordinal).ToArray();
+    }
+
+    private static SpaceCadIrLayerV1[] BuildLayers(
+        IReadOnlyList<DxfRecord> tableRecords,
+        IReadOnlyList<SpaceCadIrEntityV1> entities,
+        ICollection<SpaceCadConversionIssueV1> issues)
+    {
+        var counts = entities
+            .GroupBy(entity => entity.LayerId, StringComparer.Ordinal)
+            .ToDictionary(group => group.Key, group => group.LongCount(), StringComparer.Ordinal);
+        var layers = new Dictionary<string, SpaceCadIrLayerV1>(StringComparer.Ordinal);
+        foreach (var record in tableRecords.Where(record => record.Type == "LAYER"))
+        {
+            var name = BoundedToken(record.First(2) ?? "0");
+            var colorIndex = record.Int(62);
+            var trueColor = record.Int(420);
+            var color = trueColor is { } rgb
+                ? $"RGB:#{rgb & 0x00ff_ffff:X6}"
+                : colorIndex is { } aci
+                    ? $"ACI:{Math.Abs(aci)}"
+                    : null;
+            var layer = new SpaceCadIrLayerV1(
+                name,
+                name,
+                counts.GetValueOrDefault(name),
+                color,
+                record.First(6) is { } lineType ? BoundedToken(lineType) : null,
+                IsVisible: colorIndex is null or >= 0);
+            if (!layers.TryAdd(name, layer))
+                throw new InvalidDataException($"Duplicate DXF layer table entry '{name}'.");
+        }
+
+        foreach (var (name, count) in counts)
+        {
+            if (layers.ContainsKey(name))
+                continue;
+            layers.Add(name, new SpaceCadIrLayerV1(name, name, count));
+            issues.Add(new SpaceCadConversionIssueV1(
+                "SPACE_CAD_LAYER_METADATA_MISSING",
+                SpaceCadIssueSeverity.Warning,
+                DetailToken: name));
+        }
+        return layers.Values
+            .OrderBy(layer => layer.LayerId, StringComparer.Ordinal)
+            .ToArray();
     }
 
     private static SpaceCadIrEntityV1[] BuildEntities(

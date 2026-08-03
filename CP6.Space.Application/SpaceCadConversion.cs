@@ -194,6 +194,17 @@ public static partial class SpaceCadConversionContract
         {
             RequireBoundedText(layer.LayerId, MaximumIdentifierLength, nameof(layer.LayerId));
             RequireBoundedText(layer.Name, MaximumIdentifierLength, nameof(layer.Name));
+            if (layer.Color is not null)
+            {
+                RequireBoundedText(layer.Color, MaximumIdentifierLength, nameof(layer.Color));
+            }
+            if (layer.LineType is not null)
+            {
+                RequireBoundedText(
+                    layer.LineType,
+                    MaximumIdentifierLength,
+                    nameof(layer.LineType));
+            }
             if (layer.EntityCount < 0 || !layerIds.Add(layer.LayerId))
             {
                 throw new InvalidDataException(

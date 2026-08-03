@@ -90,7 +90,10 @@ public sealed record SpaceCadIrDocumentV1(
 public sealed record SpaceCadIrLayerV1(
     string LayerId,
     string Name,
-    long EntityCount);
+    long EntityCount,
+    string? Color = null,
+    string? LineType = null,
+    bool IsVisible = true);
 
 public sealed record SpaceCadIrBlockV1(
     string BlockId,

@@ -78,7 +78,10 @@
       "properties": {
         "layerId": { "$ref": "#/$defs/identifier" },
         "name": { "$ref": "#/$defs/identifier" },
-        "entityCount": { "type": "integer", "minimum": 0 }
+        "entityCount": { "type": "integer", "minimum": 0 },
+        "color": { "type": ["string", "null"], "minLength": 1, "maxLength": 128 },
+        "lineType": { "type": ["string", "null"], "minLength": 1, "maxLength": 128 },
+        "isVisible": { "type": "boolean" }
       }
     },
     "block": {
