@@ -24,6 +24,9 @@ public static class Program
                 "generate-dev-corpus" => await GenerateDevelopmentCorpusAsync(
                     commandLine,
                     cancellation.Token),
+                "convert-dev-ir" => await ConvertDevelopmentIrAsync(
+                    commandLine,
+                    cancellation.Token),
                 "run" => await RunAsync(commandLine, cancellation.Token),
                 "inspect" => await ProbeAdapterAsync(commandLine, cancellation.Token),
                 "probe-adapter" => await ProbeAdapterAsync(commandLine, cancellation.Token),
@@ -116,6 +119,38 @@ public static class Program
         return 0;
     }
 
+    private static async Task<int> ConvertDevelopmentIrAsync(
+        CommandLine commandLine,
+        CancellationToken cancellationToken)
+    {
+        var input = Path.GetFullPath(commandLine.Required("--input"));
+        if (!Path.GetExtension(input).Equals(".dxf", StringComparison.OrdinalIgnoreCase))
+        {
+            throw new ArgumentException(
+                "The development CAD IR converter accepts .dxf files only.");
+        }
+        var output = Path.GetFullPath(commandLine.Required("--output"));
+        var sourceHash = await DatasetAuditor.ComputeSha256Async(input, cancellationToken);
+        var request = new CP6.Space.Application.SpaceCadConversionRequest(
+            Guid.Parse("11111111-1111-1111-1111-111111111111"),
+            Guid.Parse("22222222-2222-2222-2222-222222222222"),
+            Guid.Parse("33333333-3333-3333-3333-333333333333"),
+            sourceHash,
+            CP6.Space.Contracts.SpaceCadSourceFormat.Dxf,
+            DevelopmentDxfCadConverter.ConverterId,
+            DevelopmentDxfCadConverter.ConverterVersion);
+        await using var source = File.OpenRead(input);
+        var sink = new DevelopmentCadIrFileSink(request, output);
+        var converter = new DevelopmentDxfCadConverter();
+        var result = await converter.ConvertAsync(
+            request,
+            source,
+            sink,
+            cancellationToken);
+        Console.WriteLine(JsonSerializer.Serialize(result, CadExperimentJson.Options));
+        return 0;
+    }
+
     private static async Task<int> RunAsync(
         CommandLine commandLine,
         CancellationToken cancellationToken)
@@ -184,6 +219,7 @@ public static class Program
               preflight --config <path> [--output <path>]
               generate-stress --kind <50mb|million> --output <path>
               generate-dev-corpus --output <directory>
+              convert-dev-ir --input <dxf-path> --output <cad-ir-json-path>
               run --candidate <id> --candidate-version <version> --adapter <path>
                   [--adapter-arg <value>]... --input <path> [--input <path>]...
                   --output <directory> [--runs <n>] [--timeout-seconds <n>]
