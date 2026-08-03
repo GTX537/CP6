@@ -5,7 +5,7 @@
 
 ## 交付结论
 
-CP6 已在合成 CAD 图纸基线 `08fe896a` 上完成第一段可执行的 CAD IR 链路，功能提交为 `89759cec`。现在可以把开发用 DXF 转换为版本化、供应商中立且可验证的 CAD IR，不需要在开发电脑安装 AutoCAD。
+CP6 已在合成 CAD 图纸基线 `08fe896a` 上完成第一段可执行的 CAD IR 链路，功能提交为 `89759cec`，验证文档提交为 `8f3e9252`，no-ff 受控集成为 `9e8cf4af`。现在可以把开发用 DXF 转换为版本化、供应商中立且可验证的 CAD IR，不需要在开发电脑安装 AutoCAD。
 
 本交付解决的是“在正式供应商选择前，如何继续开发并冻结下游边界”。它没有解除 E02-S01 的原生 DWG、商业授权、隔离 Worker 和正式黄金集门禁，因此不把 E02-S02 标记为正式完成。
 
@@ -47,7 +47,7 @@ dotnet run --project tools\CP6.Space.CadExperiment -c Release -- `
 - 英寸、英尺、厘米、米四种非毫米输入的坐标和比例归一化通过；
 - `CP6.Space.CadExperiment.Tests`：19 passed / 0 failed / 0 skipped；
 - `CP6.Space.UnitTests`：281 passed / 0 failed / 0 skipped，其中 CAD IR 契约聚焦门禁 9/9；
-- `dotnet build CP6.slnx -c Release --no-restore`：0 warning / 0 error；
+- `dotnet build CP6.slnx -c Release --no-restore`：0 error / 10 条既有 warning；
 - `git diff --check`：通过。
 
 ## 尚未解除的正式门禁

@@ -4,10 +4,10 @@
 
 ## E02-S02 CAD IR 开发契约（2026-08-02）
 
-- 在合成 CAD 图纸集成基线 `08fe896a` 上完成第一段可执行 CAD IR 链路，功能提交 `89759cec`：Contracts 定义供应商中立的 CAD IR v1，Application 定义 `ICadConverter`、只写 streaming sink 接口和失败关闭契约验证器；WebApi、Draft 仓储和供应商 SDK 类型不跨越该边界。
+- 在合成 CAD 图纸集成基线 `08fe896a` 上完成第一段可执行 CAD IR 链路：功能提交 `89759cec`、验证文档 `8f3e9252`、no-ff 受控集成 `9e8cf4af`。Contracts 定义供应商中立的 CAD IR v1，Application 定义 `ICadConverter`、只写 streaming sink 接口和失败关闭契约验证器；WebApi、Draft 仓储和供应商 SDK 类型不跨越该边界。
 - 新增开发命令 `convert-dev-ir`，可把 UTF-8/ASCII DXF 转换为确定性 JSON IR；验证精确来源 SHA-256、稳定 sourceRef、图层/块/图元计数、坐标边界和转换器身份，支持毫米/厘米/米/英寸/英尺归一化，未知单位 Blocking，不支持图元显式保留并报问题，XRef 原始路径不出边界。
 - 20/20 合成图纸转换通过：130 个图层记录、23 个块、292 个图元，其中 278 个受支持、14 个不支持且全部有显式问题、缺失 sourceRef 为 0。样例 13 产生 8 层、1 块、22 图元，IR SHA-256 为 `f080ac0c...20a9ba`。
-- 门禁：CAD 实验工具 19/19、CAD IR 契约聚焦 9/9、Space Unit 281/281、完整 solution Release 0 warning / 0 error、`git diff --check` 通过。证据见 `docs/space/reports/e02-s02-cad-ir-development-contract.md`。
+- 门禁：CAD 实验工具 19/19、CAD IR 契约聚焦 9/9、Space Unit 281/281、完整 solution Release 0 error / 10 条既有 warning、`git diff --check` 通过。证据见 `docs/space/reports/e02-s02-cad-ir-development-contract.md`。
 - 这是 E02-S02 开发切片，不是正式验收：仍等待 E02-S01 的原生 DWG 适配器/商业授权、冻结隔离 Worker、独立正式黄金集和生产规模 streaming/压力证据；完成供应商选择后再接同一契约并进入 E02-S03。
 
 ## E02 合成开发 CAD 图纸包（2026-08-02）
