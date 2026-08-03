@@ -1,0 +1,675 @@
+{
+  "schemaVersion": 1,
+  "generatorVersion": "1.0.0",
+  "samples": [
+    {
+      "sampleId": "L1-DEV-001",
+      "layoutFamily": "L1-RegularRectangular",
+      "title": "Small regular warehouse",
+      "cadVersion": "AC1009",
+      "sourceFile": "seeds/01-regular-small-racks.dxf",
+      "sourceSha256": "a1a37099030483b9c4707375f55dfce67e14ab47eba527860a768025d801192c",
+      "sizeBytes": 2183,
+      "entityCount": 23,
+      "entityTypes": {
+        "POLYLINE": 2,
+        "VERTEX": 8,
+        "SEQEND": 2,
+        "LINE": 2,
+        "INSERT": 8,
+        "TEXT": 1
+      },
+      "layers": {
+        "WALL": 6,
+        "DOOR": 1,
+        "DOCK": 6,
+        "RACK": 8,
+        "AISLE": 1,
+        "ANNOTATION": 1
+      },
+      "developmentFocus": [
+        "boundary",
+        "rack-grid",
+        "door",
+        "dock",
+        "aisle"
+      ]
+    },
+    {
+      "sampleId": "L1-DEV-002",
+      "layoutFamily": "L1-RegularRectangular",
+      "title": "Wide warehouse with loading docks",
+      "cadVersion": "AC1015",
+      "sourceFile": "seeds/02-regular-wide-docks.dxf",
+      "sourceSha256": "5c6e86c0f60464b7e4c9ad3f34a7bfd6740482c2949f8fd75539587516658d88",
+      "sizeBytes": 1983,
+      "entityCount": 13,
+      "entityTypes": {
+        "LWPOLYLINE": 2,
+        "LINE": 2,
+        "INSERT": 8,
+        "TEXT": 1
+      },
+      "layers": {
+        "WALL": 1,
+        "DOOR": 1,
+        "DOCK": 1,
+        "RACK": 8,
+        "AISLE": 1,
+        "ANNOTATION": 1
+      },
+      "developmentFocus": [
+        "boundary",
+        "rack-grid",
+        "door",
+        "dock",
+        "aisle"
+      ]
+    },
+    {
+      "sampleId": "L1-DEV-003",
+      "layoutFamily": "L1-RegularRectangular",
+      "title": "Compact dense storage",
+      "cadVersion": "AC1027",
+      "sourceFile": "seeds/03-regular-compact-storage.dxf",
+      "sourceSha256": "8b9e27793432d712405f9fd0e3d3173e34cfc1c159580cf246b7ee3ae68200df",
+      "sizeBytes": 2009,
+      "entityCount": 15,
+      "entityTypes": {
+        "LWPOLYLINE": 2,
+        "LINE": 2,
+        "INSERT": 10,
+        "TEXT": 1
+      },
+      "layers": {
+        "WALL": 1,
+        "DOOR": 1,
+        "DOCK": 1,
+        "RACK": 10,
+        "AISLE": 1,
+        "ANNOTATION": 1
+      },
+      "developmentFocus": [
+        "boundary",
+        "rack-grid",
+        "door",
+        "dock",
+        "aisle"
+      ]
+    },
+    {
+      "sampleId": "L1-DEV-004",
+      "layoutFamily": "L1-RegularRectangular",
+      "title": "Regular warehouse with cross aisle",
+      "cadVersion": "AC1032",
+      "sourceFile": "seeds/04-regular-cross-aisle.dxf",
+      "sourceSha256": "bfc1d7dce9e4c01879187d66146148e77e1659ea62efdf741f8c6bbdb7c5b02e",
+      "sizeBytes": 2075,
+      "entityCount": 16,
+      "entityTypes": {
+        "LWPOLYLINE": 2,
+        "LINE": 3,
+        "INSERT": 10,
+        "TEXT": 1
+      },
+      "layers": {
+        "WALL": 1,
+        "DOOR": 1,
+        "DOCK": 1,
+        "RACK": 10,
+        "AISLE": 2,
+        "ANNOTATION": 1
+      },
+      "developmentFocus": [
+        "boundary",
+        "rack-grid",
+        "door",
+        "dock",
+        "aisle"
+      ]
+    },
+    {
+      "sampleId": "L2-DEV-001",
+      "layoutFamily": "L2-MultiFloor",
+      "title": "Two floors sharing coordinates",
+      "cadVersion": "AC1015",
+      "sourceFile": "seeds/05-two-floor-overlap.dxf",
+      "sourceSha256": "b641a67ffef254853d762afac351c41f5ecca90fff4a23faf2290c33eb7c38c5",
+      "sizeBytes": 2414,
+      "entityCount": 13,
+      "entityTypes": {
+        "LWPOLYLINE": 8,
+        "TEXT": 3,
+        "LINE": 1,
+        "CIRCLE": 1
+      },
+      "layers": {
+        "F01_WALL": 2,
+        "F01_RACK": 3,
+        "F02_WALL": 2,
+        "F02_RACK": 3,
+        "STAIR": 1,
+        "COLUMN": 1,
+        "ANNOTATION": 1
+      },
+      "developmentFocus": [
+        "floor-layer",
+        "elevation",
+        "multi-floor",
+        "stairs"
+      ]
+    },
+    {
+      "sampleId": "L2-DEV-002",
+      "layoutFamily": "L2-MultiFloor",
+      "title": "Warehouse with storage mezzanine",
+      "cadVersion": "AC1021",
+      "sourceFile": "seeds/06-mezzanine-storage.dxf",
+      "sourceSha256": "0098c7310adadc7030e27582d439eb261128c51a15fb38941d4aef67f78b6798",
+      "sizeBytes": 2500,
+      "entityCount": 13,
+      "entityTypes": {
+        "LWPOLYLINE": 8,
+        "TEXT": 3,
+        "LINE": 1,
+        "CIRCLE": 1
+      },
+      "layers": {
+        "F01_WALL": 2,
+        "F01_RACK": 3,
+        "F02_WALL": 2,
+        "F02_RACK": 3,
+        "STAIR": 1,
+        "COLUMN": 1,
+        "ANNOTATION": 1
+      },
+      "developmentFocus": [
+        "floor-layer",
+        "elevation",
+        "multi-floor",
+        "stairs"
+      ]
+    },
+    {
+      "sampleId": "L2-DEV-003",
+      "layoutFamily": "L2-MultiFloor",
+      "title": "Split-level logistics layout",
+      "cadVersion": "AC1027",
+      "sourceFile": "seeds/07-split-level-layout.dxf",
+      "sourceSha256": "e851a6c3038ed65d47849e30cc4d556b97331e8ff01b4ce098792f6e57b75f08",
+      "sizeBytes": 2414,
+      "entityCount": 13,
+      "entityTypes": {
+        "LWPOLYLINE": 8,
+        "TEXT": 3,
+        "LINE": 1,
+        "CIRCLE": 1
+      },
+      "layers": {
+        "F01_WALL": 2,
+        "F01_RACK": 3,
+        "F02_WALL": 2,
+        "F02_RACK": 3,
+        "STAIR": 1,
+        "COLUMN": 1,
+        "ANNOTATION": 1
+      },
+      "developmentFocus": [
+        "floor-layer",
+        "elevation",
+        "multi-floor",
+        "stairs"
+      ]
+    },
+    {
+      "sampleId": "L2-DEV-004",
+      "layoutFamily": "L2-MultiFloor",
+      "title": "Three-floor warehouse layout",
+      "cadVersion": "AC1032",
+      "sourceFile": "seeds/08-three-floor-layout.dxf",
+      "sourceSha256": "019a6064a9d21fa184e10867562bc105f949a97ca66c6c3a142b1efef8ce90bf",
+      "sizeBytes": 3014,
+      "entityCount": 18,
+      "entityTypes": {
+        "LWPOLYLINE": 12,
+        "TEXT": 4,
+        "LINE": 1,
+        "CIRCLE": 1
+      },
+      "layers": {
+        "F01_WALL": 2,
+        "F01_RACK": 3,
+        "F02_WALL": 2,
+        "F02_RACK": 3,
+        "F03_WALL": 2,
+        "F03_RACK": 3,
+        "STAIR": 1,
+        "COLUMN": 1,
+        "ANNOTATION": 1
+      },
+      "developmentFocus": [
+        "floor-layer",
+        "elevation",
+        "multi-floor",
+        "stairs"
+      ]
+    },
+    {
+      "sampleId": "L3-DEV-001",
+      "layoutFamily": "L3-NonOrthogonal",
+      "title": "Angled rack field",
+      "cadVersion": "AC1009",
+      "sourceFile": "seeds/09-angled-rack-layout.dxf",
+      "sourceSha256": "221f8d2df0fd8b2317df03d6759caea5c36446a2a4aa571ff48db103f287bc2a",
+      "sizeBytes": 1938,
+      "entityCount": 16,
+      "entityTypes": {
+        "POLYLINE": 1,
+        "VERTEX": 4,
+        "SEQEND": 1,
+        "INSERT": 6,
+        "LINE": 2,
+        "ARC": 1,
+        "TEXT": 1
+      },
+      "layers": {
+        "WALL": 6,
+        "RACK": 6,
+        "AISLE": 2,
+        "DOOR": 1,
+        "ANNOTATION": 1
+      },
+      "developmentFocus": [
+        "non-orthogonal-boundary",
+        "rotation",
+        "diagonal-aisle",
+        "arc"
+      ]
+    },
+    {
+      "sampleId": "L3-DEV-002",
+      "layoutFamily": "L3-NonOrthogonal",
+      "title": "L-shaped warehouse",
+      "cadVersion": "AC1021",
+      "sourceFile": "seeds/10-l-shaped-building.dxf",
+      "sourceSha256": "6d855e68642e856753ab64d524fa5f5c827685c6d181a747e49c13febd5ef1e8",
+      "sizeBytes": 1912,
+      "entityCount": 11,
+      "entityTypes": {
+        "LWPOLYLINE": 1,
+        "INSERT": 6,
+        "LINE": 2,
+        "ARC": 1,
+        "TEXT": 1
+      },
+      "layers": {
+        "WALL": 1,
+        "RACK": 6,
+        "AISLE": 2,
+        "DOOR": 1,
+        "ANNOTATION": 1
+      },
+      "developmentFocus": [
+        "non-orthogonal-boundary",
+        "rotation",
+        "diagonal-aisle",
+        "arc"
+      ]
+    },
+    {
+      "sampleId": "L3-DEV-003",
+      "layoutFamily": "L3-NonOrthogonal",
+      "title": "Trapezoid site layout",
+      "cadVersion": "AC1027",
+      "sourceFile": "seeds/11-trapezoid-site.dxf",
+      "sourceSha256": "a6a7e08b5a688b65a8c8041abf1f4b00328cb61d7f11487e8566ffd08a86d450",
+      "sizeBytes": 1798,
+      "entityCount": 11,
+      "entityTypes": {
+        "LWPOLYLINE": 1,
+        "INSERT": 6,
+        "LINE": 2,
+        "ARC": 1,
+        "TEXT": 1
+      },
+      "layers": {
+        "WALL": 1,
+        "RACK": 6,
+        "AISLE": 2,
+        "DOOR": 1,
+        "ANNOTATION": 1
+      },
+      "developmentFocus": [
+        "non-orthogonal-boundary",
+        "rotation",
+        "diagonal-aisle",
+        "arc"
+      ]
+    },
+    {
+      "sampleId": "L3-DEV-004",
+      "layoutFamily": "L3-NonOrthogonal",
+      "title": "Diagonal aisle network",
+      "cadVersion": "AC1032",
+      "sourceFile": "seeds/12-diagonal-aisles.dxf",
+      "sourceSha256": "3f6aa5ae1e9083680c243e9fbfa3964aabf105c3a8615a4e1ccba33d271dbb0e",
+      "sizeBytes": 1798,
+      "entityCount": 11,
+      "entityTypes": {
+        "LWPOLYLINE": 1,
+        "INSERT": 6,
+        "LINE": 2,
+        "ARC": 1,
+        "TEXT": 1
+      },
+      "layers": {
+        "WALL": 1,
+        "RACK": 6,
+        "AISLE": 2,
+        "DOOR": 1,
+        "ANNOTATION": 1
+      },
+      "developmentFocus": [
+        "non-orthogonal-boundary",
+        "rotation",
+        "diagonal-aisle",
+        "arc"
+      ]
+    },
+    {
+      "sampleId": "L4-DEV-001",
+      "layoutFamily": "L4-Comprehensive",
+      "title": "Automated warehouse",
+      "cadVersion": "AC1015",
+      "sourceFile": "seeds/13-automated-warehouse.dxf",
+      "sourceSha256": "aa573f04e39345b4e03bfce9304f0916a973da47f1ab19b8e17645bc731fb106",
+      "sizeBytes": 3396,
+      "entityCount": 38,
+      "entityTypes": {
+        "LWPOLYLINE": 4,
+        "CIRCLE": 8,
+        "INSERT": 8,
+        "ATTRIB": 8,
+        "SEQEND": 8,
+        "LINE": 1,
+        "TEXT": 1
+      },
+      "layers": {
+        "WALL": 1,
+        "COLUMN": 8,
+        "RACK": 24,
+        "EQUIP_CONVEYOR": 1,
+        "EQUIP_CHARGER": 1,
+        "DOCK": 1,
+        "DOOR": 1,
+        "ANNOTATION": 1
+      },
+      "developmentFocus": [
+        "blocks",
+        "attributes",
+        "equipment",
+        "columns",
+        "zones",
+        "curves"
+      ]
+    },
+    {
+      "sampleId": "L4-DEV-002",
+      "layoutFamily": "L4-Comprehensive",
+      "title": "Cold storage zones",
+      "cadVersion": "AC1021",
+      "sourceFile": "seeds/14-cold-storage-zones.dxf",
+      "sourceSha256": "4a9387a5f4a650d6fbc0e45c06a8f8df85383dd29edece6997ec066de56bf950",
+      "sizeBytes": 3581,
+      "entityCount": 39,
+      "entityTypes": {
+        "LWPOLYLINE": 4,
+        "CIRCLE": 8,
+        "INSERT": 8,
+        "ATTRIB": 8,
+        "SEQEND": 8,
+        "LINE": 1,
+        "HATCH": 1,
+        "TEXT": 1
+      },
+      "layers": {
+        "WALL": 1,
+        "COLUMN": 8,
+        "RACK": 24,
+        "EQUIP_CONVEYOR": 1,
+        "EQUIP_CHARGER": 1,
+        "DOCK": 1,
+        "DOOR": 1,
+        "ZONE": 1,
+        "ANNOTATION": 1
+      },
+      "developmentFocus": [
+        "blocks",
+        "attributes",
+        "equipment",
+        "columns",
+        "zones",
+        "curves"
+      ]
+    },
+    {
+      "sampleId": "L4-DEV-003",
+      "layoutFamily": "L4-Comprehensive",
+      "title": "Mixed-use fulfillment center",
+      "cadVersion": "AC1027",
+      "sourceFile": "seeds/15-mixed-use-fulfillment.dxf",
+      "sourceSha256": "243ffec18cb2aeb21d93f32a02c10c14d5ce8b699e496d3e58a4109eeba9d956",
+      "sizeBytes": 3679,
+      "entityCount": 40,
+      "entityTypes": {
+        "LWPOLYLINE": 4,
+        "CIRCLE": 8,
+        "INSERT": 8,
+        "ATTRIB": 8,
+        "SEQEND": 8,
+        "LINE": 1,
+        "HATCH": 1,
+        "ELLIPSE": 1,
+        "TEXT": 1
+      },
+      "layers": {
+        "WALL": 1,
+        "COLUMN": 8,
+        "RACK": 24,
+        "EQUIP_CONVEYOR": 1,
+        "EQUIP_CHARGER": 1,
+        "DOCK": 1,
+        "DOOR": 1,
+        "ZONE": 1,
+        "SAFETY": 1,
+        "ANNOTATION": 1
+      },
+      "developmentFocus": [
+        "blocks",
+        "attributes",
+        "equipment",
+        "columns",
+        "zones",
+        "curves"
+      ]
+    },
+    {
+      "sampleId": "L4-DEV-004",
+      "layoutFamily": "L4-Comprehensive",
+      "title": "High-bay warehouse",
+      "cadVersion": "AC1032",
+      "sourceFile": "seeds/16-high-bay-layout.dxf",
+      "sourceSha256": "e7549d2d787aa294665d0db15988cc8728a1ec4522f9d9a0d77aa55244f4fb6f",
+      "sizeBytes": 3876,
+      "entityCount": 41,
+      "entityTypes": {
+        "LWPOLYLINE": 4,
+        "CIRCLE": 8,
+        "INSERT": 8,
+        "ATTRIB": 8,
+        "SEQEND": 8,
+        "LINE": 1,
+        "HATCH": 1,
+        "ELLIPSE": 1,
+        "SPLINE": 1,
+        "TEXT": 1
+      },
+      "layers": {
+        "WALL": 1,
+        "COLUMN": 8,
+        "RACK": 24,
+        "EQUIP_CONVEYOR": 1,
+        "EQUIP_CHARGER": 1,
+        "DOCK": 1,
+        "DOOR": 1,
+        "ZONE": 1,
+        "SAFETY": 1,
+        "ROUTE": 1,
+        "ANNOTATION": 1
+      },
+      "developmentFocus": [
+        "blocks",
+        "attributes",
+        "equipment",
+        "columns",
+        "zones",
+        "curves"
+      ]
+    },
+    {
+      "sampleId": "L5-DEV-001",
+      "layoutFamily": "L5-NoisyNonStandard",
+      "title": "Noisy and unknown layers",
+      "cadVersion": "AC1015",
+      "sourceFile": "seeds/17-noisy-layer-names.dxf",
+      "sourceSha256": "f99a10dc89a332ae8ed4089df8b0ed17c08ecc3718487aa55041adca2ffc58f3",
+      "sizeBytes": 1638,
+      "entityCount": 6,
+      "entityTypes": {
+        "LWPOLYLINE": 1,
+        "INSERT": 2,
+        "LINE": 1,
+        "TEXT": 2
+      },
+      "layers": {
+        "A01": 2,
+        "RACKS_old_FINAL": 1,
+        "X-NOISE": 2,
+        "ANNOTATION": 1
+      },
+      "developmentFocus": [
+        "unknown-layer",
+        "text-noise",
+        "missing-attribute",
+        "xref",
+        "unsupported-entity"
+      ]
+    },
+    {
+      "sampleId": "L5-DEV-002",
+      "layoutFamily": "L5-NoisyNonStandard",
+      "title": "Block attribute edge cases",
+      "cadVersion": "AC1021",
+      "sourceFile": "seeds/18-block-attribute-edge-cases.dxf",
+      "sourceSha256": "82a9b7581155e12bf582763f4161261b37754dbfb0fece686539b508d60f51d3",
+      "sizeBytes": 2150,
+      "entityCount": 12,
+      "entityTypes": {
+        "LWPOLYLINE": 1,
+        "INSERT": 3,
+        "ATTRIB": 2,
+        "SEQEND": 2,
+        "LINE": 1,
+        "TEXT": 2,
+        "MTEXT": 1
+      },
+      "layers": {
+        "A01": 2,
+        "RACKS_old_FINAL": 6,
+        "X-NOISE": 3,
+        "ANNOTATION": 1
+      },
+      "developmentFocus": [
+        "unknown-layer",
+        "text-noise",
+        "missing-attribute",
+        "xref",
+        "unsupported-entity"
+      ]
+    },
+    {
+      "sampleId": "L5-DEV-003",
+      "layoutFamily": "L5-NoisyNonStandard",
+      "title": "Curves, hatch and dimensions",
+      "cadVersion": "AC1027",
+      "sourceFile": "seeds/19-curves-hatch-dimension.dxf",
+      "sourceSha256": "83a30398e345379d1d949188c577f2815d73dd3fad95568c4851e28615ff5d1f",
+      "sizeBytes": 2685,
+      "entityCount": 14,
+      "entityTypes": {
+        "LWPOLYLINE": 1,
+        "INSERT": 3,
+        "LINE": 1,
+        "TEXT": 2,
+        "ATTRIB": 1,
+        "SEQEND": 1,
+        "MTEXT": 1,
+        "ELLIPSE": 1,
+        "SPLINE": 1,
+        "HATCH": 1,
+        "DIMENSION": 1
+      },
+      "layers": {
+        "A01": 2,
+        "RACKS_old_FINAL": 4,
+        "X-NOISE": 6,
+        "DIMENSION": 1,
+        "ANNOTATION": 1
+      },
+      "developmentFocus": [
+        "unknown-layer",
+        "text-noise",
+        "missing-attribute",
+        "xref",
+        "unsupported-entity"
+      ]
+    },
+    {
+      "sampleId": "L5-DEV-004",
+      "layoutFamily": "L5-NoisyNonStandard",
+      "title": "XRef and text noise",
+      "cadVersion": "AC1032",
+      "sourceFile": "seeds/20-xref-and-text-noise.dxf",
+      "sourceSha256": "650d32d0300bde77f2f449b0bc71dea17bd9922bbf35dc01292d30cbf9d8d997",
+      "sizeBytes": 2940,
+      "entityCount": 16,
+      "entityTypes": {
+        "LWPOLYLINE": 1,
+        "INSERT": 4,
+        "LINE": 1,
+        "TEXT": 3,
+        "ATTRIB": 1,
+        "SEQEND": 1,
+        "MTEXT": 1,
+        "ELLIPSE": 1,
+        "SPLINE": 1,
+        "HATCH": 1,
+        "DIMENSION": 1
+      },
+      "layers": {
+        "A01": 2,
+        "RACKS_old_FINAL": 4,
+        "X-NOISE": 8,
+        "DIMENSION": 1,
+        "ANNOTATION": 1
+      },
+      "developmentFocus": [
+        "unknown-layer",
+        "text-noise",
+        "missing-attribute",
+        "xref",
+        "unsupported-entity"
+      ]
+    }
+  ]
+}

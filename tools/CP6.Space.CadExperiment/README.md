@@ -3,13 +3,16 @@
 This experiment-only tool captures reproducible E02-S01 evidence without
 coupling a production Worker to a CAD vendor SDK.
 
-It provides five capabilities:
+It provides six capabilities:
 
 - `audit`: verifies dataset metadata, companion answers, SHA-256 values,
   DXF framing, DWG version headers, formal split/family distribution and
   separate E02 readiness gates.
 - `generate-stress`: deterministically creates a DXF of at least 50 MiB or
   exactly 1,000,000 `LINE` entities. Generated assets belong under `tmp`.
+- `generate-dev-corpus`: deterministically creates 20 synthetic development
+  DXF drawings across L1-L5, with hashes, expected-answer companions, issue
+  expectations and an explicit non-release asset statement.
 - `run`: invokes a candidate adapter as a child process without a shell and
   records timeout, cancellation, process-tree termination, exit status, peak
   working set, diagnostics and observation hash.
@@ -59,6 +62,19 @@ dotnet run --project tools\CP6.Space.CadExperiment -c Release -- `
 
 Each output receives a `.cad-stress.json` sidecar. Stress assets exercise
 capacity only and never replace the 20-file golden set.
+
+## Generate the synthetic development corpus
+
+```powershell
+dotnet run --project tools\CP6.Space.CadExperiment -c Release -- `
+  generate-dev-corpus `
+  --output docs\space\acceptance\development-v2.0.0
+```
+
+The generated package is safe for CP6 parser, mapping, issue, UI, regression
+and demo development because all drawings are synthetic. Its manifest always
+sets `purpose=DevelopmentSeed` and `countsTowardReleaseGate=false`; it must not
+be represented as the licensed native-DWG golden dataset required by E02-S01.
 
 ## Run an adapter
 

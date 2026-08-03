@@ -21,6 +21,9 @@ public static class Program
                 "audit" => await AuditAsync(commandLine, cancellation.Token),
                 "preflight" => await PreflightAsync(commandLine, cancellation.Token),
                 "generate-stress" => await GenerateStressAsync(commandLine, cancellation.Token),
+                "generate-dev-corpus" => await GenerateDevelopmentCorpusAsync(
+                    commandLine,
+                    cancellation.Token),
                 "run" => await RunAsync(commandLine, cancellation.Token),
                 "inspect" => await ProbeAdapterAsync(commandLine, cancellation.Token),
                 "probe-adapter" => await ProbeAdapterAsync(commandLine, cancellation.Token),
@@ -102,6 +105,17 @@ public static class Program
         return 0;
     }
 
+    private static async Task<int> GenerateDevelopmentCorpusAsync(
+        CommandLine commandLine,
+        CancellationToken cancellationToken)
+    {
+        var report = await DevelopmentDxfCorpusGenerator.GenerateAsync(
+            commandLine.Required("--output"),
+            cancellationToken);
+        Console.WriteLine(JsonSerializer.Serialize(report, CadExperimentJson.Options));
+        return 0;
+    }
+
     private static async Task<int> RunAsync(
         CommandLine commandLine,
         CancellationToken cancellationToken)
@@ -169,6 +183,7 @@ public static class Program
                     [--require-e02-ready]
               preflight --config <path> [--output <path>]
               generate-stress --kind <50mb|million> --output <path>
+              generate-dev-corpus --output <directory>
               run --candidate <id> --candidate-version <version> --adapter <path>
                   [--adapter-arg <value>]... --input <path> [--input <path>]...
                   --output <directory> [--runs <n>] [--timeout-seconds <n>]

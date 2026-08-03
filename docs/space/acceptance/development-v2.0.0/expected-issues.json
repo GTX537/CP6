@@ -1,0 +1,139 @@
+{
+  "schemaVersion": 1,
+  "samples": [
+    {
+      "sampleId": "L1-DEV-001",
+      "issues": []
+    },
+    {
+      "sampleId": "L1-DEV-002",
+      "issues": []
+    },
+    {
+      "sampleId": "L1-DEV-003",
+      "issues": []
+    },
+    {
+      "sampleId": "L1-DEV-004",
+      "issues": []
+    },
+    {
+      "sampleId": "L2-DEV-001",
+      "issues": []
+    },
+    {
+      "sampleId": "L2-DEV-002",
+      "issues": []
+    },
+    {
+      "sampleId": "L2-DEV-003",
+      "issues": []
+    },
+    {
+      "sampleId": "L2-DEV-004",
+      "issues": []
+    },
+    {
+      "sampleId": "L3-DEV-001",
+      "issues": []
+    },
+    {
+      "sampleId": "L3-DEV-002",
+      "issues": []
+    },
+    {
+      "sampleId": "L3-DEV-003",
+      "issues": []
+    },
+    {
+      "sampleId": "L3-DEV-004",
+      "issues": []
+    },
+    {
+      "sampleId": "L4-DEV-001",
+      "issues": []
+    },
+    {
+      "sampleId": "L4-DEV-002",
+      "issues": []
+    },
+    {
+      "sampleId": "L4-DEV-003",
+      "issues": []
+    },
+    {
+      "sampleId": "L4-DEV-004",
+      "issues": []
+    },
+    {
+      "sampleId": "L5-DEV-001",
+      "issues": [
+        {
+          "severity": "Warning",
+          "code": "SPACE_CAD_UNKNOWN_LAYER",
+          "sourceLayer": "X-NOISE",
+          "minimumCount": 1
+        },
+        {
+          "severity": "Info",
+          "code": "SPACE_CAD_SYNTHETIC_NOISE",
+          "minimumCount": 1
+        }
+      ]
+    },
+    {
+      "sampleId": "L5-DEV-002",
+      "issues": [
+        {
+          "severity": "Warning",
+          "code": "SPACE_CAD_UNKNOWN_LAYER",
+          "sourceLayer": "X-NOISE",
+          "minimumCount": 1
+        },
+        {
+          "severity": "Info",
+          "code": "SPACE_CAD_SYNTHETIC_NOISE",
+          "minimumCount": 1
+        }
+      ]
+    },
+    {
+      "sampleId": "L5-DEV-003",
+      "issues": [
+        {
+          "severity": "Warning",
+          "code": "SPACE_CAD_UNKNOWN_LAYER",
+          "sourceLayer": "X-NOISE",
+          "minimumCount": 1
+        },
+        {
+          "severity": "Info",
+          "code": "SPACE_CAD_SYNTHETIC_NOISE",
+          "minimumCount": 1
+        }
+      ]
+    },
+    {
+      "sampleId": "L5-DEV-004",
+      "issues": [
+        {
+          "severity": "Warning",
+          "code": "SPACE_CAD_UNKNOWN_LAYER",
+          "sourceLayer": "X-NOISE",
+          "minimumCount": 1
+        },
+        {
+          "severity": "Info",
+          "code": "SPACE_CAD_SYNTHETIC_NOISE",
+          "minimumCount": 1
+        },
+        {
+          "severity": "Warning",
+          "code": "SPACE_CAD_UNRESOLVED_XREF",
+          "sourceBlock": "SYNTHETIC_XREF",
+          "expectedCount": 1
+        }
+      ]
+    }
+  ]
+}
