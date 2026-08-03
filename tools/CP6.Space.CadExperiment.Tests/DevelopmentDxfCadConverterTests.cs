@@ -16,6 +16,8 @@ public sealed class DevelopmentDxfCadConverterTests
         var converter = new DevelopmentDxfCadConverter();
         long totalEntities = 0;
         long unsupportedEntities = 0;
+        long totalDeclaredLayers = 0;
+        long totalEmptyLayers = 0;
 
         foreach (var sample in manifest.Samples)
         {
@@ -58,13 +60,31 @@ public sealed class DevelopmentDxfCadConverterTests
             Assert.Equal(
                 SpaceCadCoordinateVersions.TargetCoordinateSystem,
                 prepared.Metadata.TargetFloor.CoordinateSystem);
+            var inventory = SpaceCadInventory.Build(request, prepared);
+            Assert.Equal(sink.Package.Layers.Count, inventory.Layers.Count);
+            Assert.Equal(sink.Package.Entities.Count, inventory.Summary.EntityCount);
+            Assert.Equal(
+                sink.Package.Entities.Count(entity => entity.Type == SpaceCadIrEntityType.BlockReference),
+                inventory.Summary.BlockReferenceCount);
+            Assert.All(sink.Package.Layers, layer =>
+            {
+                Assert.NotNull(layer.Color);
+                Assert.Equal("CONTINUOUS", layer.LineType);
+            });
+            Assert.Contains(inventory.Layers, layer => layer.EntityCount == 0);
+            Assert.DoesNotContain(inventory.Blocks, block => !block.IsDefined);
+            Assert.Matches("^[0-9a-f]{64}$", inventory.InventorySha256);
             Assert.NotEmpty(sink.Package.Entities);
             totalEntities += result.Summary.EntityCount;
             unsupportedEntities += result.Summary.UnsupportedEntityCount;
+            totalDeclaredLayers += inventory.Summary.LayerCount;
+            totalEmptyLayers += inventory.Summary.EmptyLayerCount;
         }
 
         Assert.True(totalEntities >= 250);
         Assert.True(unsupportedEntities >= 10);
+        Assert.True(totalDeclaredLayers >= 300);
+        Assert.True(totalEmptyLayers >= 100);
     }
 
     [Fact]
@@ -177,6 +197,94 @@ public sealed class DevelopmentDxfCadConverterTests
         Assert.Equal("F01", prepared.Metadata.TargetFloor.FloorCode);
     }
 
+    [Fact]
+    public async Task Converter_preserves_declared_layer_color_line_type_and_visibility()
+    {
+        using var fixture = new TemporaryDirectory();
+        var input = fixture.Write("layer.dxf", LayerMetadataDxf);
+        var request = Request(await DatasetAuditor.ComputeSha256Async(input));
+        var sink = new DevelopmentCadIrFileSink(
+            request,
+            Path.Combine(fixture.Path, "layer.json"));
+        await using var stream = File.OpenRead(input);
+
+        await new DevelopmentDxfCadConverter().ConvertAsync(request, stream, sink);
+
+        var layer = Assert.Single(sink.Package!.Layers);
+        Assert.Equal("WALL", layer.Name);
+        Assert.Equal("ACI:2", layer.Color);
+        Assert.Equal("DASHED", layer.LineType);
+        Assert.False(layer.IsVisible);
+        Assert.Equal(1, layer.EntityCount);
+        Assert.DoesNotContain(
+            sink.Package.Issues,
+            issue => issue.Code == "SPACE_CAD_LAYER_METADATA_MISSING");
+    }
+
+    [Fact]
+    public async Task Inventory_commands_build_and_query_a_coordinate_bound_artifact()
+    {
+        using var fixture = new TemporaryDirectory();
+        var input = fixture.Write("sample.dxf", ValidDxf);
+        var sourceHash = await DatasetAuditor.ComputeSha256Async(input);
+        var request = Request(sourceHash);
+        var irPath = Path.Combine(fixture.Path, "sample.cad-ir.json");
+        await using (var stream = File.OpenRead(input))
+        {
+            await new DevelopmentDxfCadConverter().ConvertAsync(
+                request,
+                stream,
+                new DevelopmentCadIrFileSink(request, irPath));
+        }
+        var confirmationPath = Path.Combine(fixture.Path, "confirmation.json");
+        await CadExperimentJson.WriteAsync(
+            confirmationPath,
+            CoordinateConfirmation(sourceHash));
+        var preparedPath = Path.Combine(fixture.Path, "prepared.json");
+        Assert.Equal(0, await Program.Main(
+        [
+            "prepare-dev-coordinate",
+            "--input", irPath,
+            "--confirmation", confirmationPath,
+            "--output", preparedPath,
+        ]));
+
+        var inventoryPath = Path.Combine(fixture.Path, "inventory.json");
+        Assert.Equal(0, await Program.Main(
+        [
+            "build-dev-inventory",
+            "--input", preparedPath,
+            "--output", inventoryPath,
+        ]));
+        var queryPath = Path.Combine(fixture.Path, "layers.json");
+        Assert.Equal(0, await Program.Main(
+        [
+            "query-dev-inventory",
+            "--input", inventoryPath,
+            "--kind", "layer",
+            "--search", "wall",
+            "--exclude-empty",
+            "--limit", "10",
+            "--output", queryPath,
+        ]));
+
+        await using (var inventoryStream = File.OpenRead(inventoryPath))
+        {
+            var inventory = await JsonSerializer.DeserializeAsync<SpaceCadInventoryV1>(
+                inventoryStream,
+                CadExperimentJson.Options);
+            Assert.Equal(sourceHash, inventory!.SourceSha256);
+            SpaceCadInventory.Validate(inventory);
+        }
+        await using var queryStream = File.OpenRead(queryPath);
+        var page = await JsonSerializer.DeserializeAsync<
+            SpaceCadInventoryPageV1<SpaceCadLayerInventoryV1>>(
+            queryStream,
+            CadExperimentJson.Options);
+        Assert.Equal(1, page!.TotalCount);
+        Assert.Equal("WALL", Assert.Single(page.Items).LayerId);
+    }
+
     private static SpaceCadConversionRequest Request(string sourceSha256) =>
         new(
             Guid.Parse("11111111-1111-1111-1111-111111111111"),
@@ -216,6 +324,17 @@ public sealed class DevelopmentDxfCadConverterTests
     private const string ValidDxf =
         "0\nSECTION\n2\nHEADER\n9\n$ACADVER\n1\nAC1032\n"
         + "9\n$INSUNITS\n70\n4\n0\nENDSEC\n"
+        + "0\nSECTION\n2\nBLOCKS\n0\nENDSEC\n"
+        + "0\nSECTION\n2\nENTITIES\n"
+        + "0\nLINE\n5\n100\n8\nWALL\n10\n0\n20\n0\n30\n0\n"
+        + "11\n1000\n21\n1000\n31\n0\n0\nENDSEC\n0\nEOF\n";
+
+    private const string LayerMetadataDxf =
+        "0\nSECTION\n2\nHEADER\n9\n$ACADVER\n1\nAC1032\n"
+        + "9\n$INSUNITS\n70\n4\n0\nENDSEC\n"
+        + "0\nSECTION\n2\nTABLES\n0\nTABLE\n2\nLAYER\n70\n1\n"
+        + "0\nLAYER\n2\nWALL\n70\n0\n62\n-2\n6\nDASHED\n"
+        + "0\nENDTAB\n0\nENDSEC\n"
         + "0\nSECTION\n2\nBLOCKS\n0\nENDSEC\n"
         + "0\nSECTION\n2\nENTITIES\n"
         + "0\nLINE\n5\n100\n8\nWALL\n10\n0\n20\n0\n30\n0\n"

@@ -3,7 +3,7 @@
 This experiment-only tool captures reproducible E02-S01 evidence without
 coupling a production Worker to a CAD vendor SDK.
 
-It provides eight capabilities:
+It provides ten capabilities:
 
 - `audit`: verifies dataset metadata, companion answers, SHA-256 values,
   DXF framing, DWG version headers, formal split/family distribution and
@@ -17,6 +17,10 @@ It provides eight capabilities:
   vendor-neutral CAD IR contract and writes a deterministic JSON fixture.
 - `prepare-dev-coordinate`: applies an explicit unit, origin, rotation and
   target-floor confirmation to a development CAD IR package.
+- `build-dev-inventory`: creates a source/transform-bound layer, block and
+  block-reference inventory from a ready coordinate preparation.
+- `query-dev-inventory`: runs capped, deterministic layer, block or reference
+  queries against an inventory artifact.
 - `run`: invokes a candidate adapter as a child process without a shell and
   records timeout, cancellation, process-tree termination, exit status, peak
   working set, diagnostics and observation hash.
@@ -114,6 +118,28 @@ integer millimeters and records a deterministic transform hash. It returns exit
 code `3` after writing evidence when the extent is implausible or geometry lies
 outside the assigned floor boundary. This is E02-S03 development evidence, not
 a production parsing authorization.
+
+## Build and query the layer/block inventory
+
+```powershell
+dotnet run --project tools\CP6.Space.CadExperiment -c Release -- `
+  build-dev-inventory `
+  --input tmp\e02-s03\13-automated-warehouse.prepared.json `
+  --output tmp\e02-s04\13-automated-warehouse.inventory.json
+
+dotnet run --project tools\CP6.Space.CadExperiment -c Release -- `
+  query-dev-inventory `
+  --input tmp\e02-s04\13-automated-warehouse.inventory.json `
+  --kind reference --layer RACK --attribute RACK_ID --value R-01-01 `
+  --limit 50 --output tmp\e02-s04\13-rack-reference-query.json
+```
+
+The inventory includes declared empty layers, color, line type, visibility,
+per-type and supported/unsupported counts, bounds, block definitions,
+references and controlled attributes. It is bound to the source hash,
+coordinate transform and target floor by a deterministic SHA-256. Query pages
+are limited to 200 records. This is E02-S04 development evidence only; it does
+not add production persistence, tenant authorization or a licensed DWG adapter.
 
 ## Run an adapter
 

@@ -32,6 +32,12 @@ public static class Program
                 "prepare-dev-coordinate" => await PrepareDevelopmentCoordinateAsync(
                     commandLine,
                     cancellation.Token),
+                "build-dev-inventory" => await BuildDevelopmentInventoryAsync(
+                    commandLine,
+                    cancellation.Token),
+                "query-dev-inventory" => await QueryDevelopmentInventoryAsync(
+                    commandLine,
+                    cancellation.Token),
                 "run" => await RunAsync(commandLine, cancellation.Token),
                 "inspect" => await ProbeAdapterAsync(commandLine, cancellation.Token),
                 "probe-adapter" => await ProbeAdapterAsync(commandLine, cancellation.Token),
@@ -214,6 +220,128 @@ public static class Program
         return prepared.ReadyForParsing ? 0 : 3;
     }
 
+    private static async Task<int> BuildDevelopmentInventoryAsync(
+        CommandLine commandLine,
+        CancellationToken cancellationToken)
+    {
+        var input = Path.GetFullPath(commandLine.Required("--input"));
+        var output = Path.GetFullPath(commandLine.Required("--output"));
+        SpaceCadCoordinatePreparationV1 preparation;
+        await using (var inputStream = File.OpenRead(input))
+        {
+            preparation = await JsonSerializer.DeserializeAsync<SpaceCadCoordinatePreparationV1>(
+                              inputStream,
+                              CadExperimentJson.Options,
+                              cancellationToken)
+                          ?? throw new InvalidDataException(
+                              "The prepared CAD IR package is empty.");
+        }
+
+        var package = preparation.Package;
+        var request = new SpaceCadConversionRequest(
+            Guid.Parse("11111111-1111-1111-1111-111111111111"),
+            Guid.Parse("22222222-2222-2222-2222-222222222222"),
+            Guid.Parse("33333333-3333-3333-3333-333333333333"),
+            package.Document.SourceSha256,
+            package.Document.SourceFormat,
+            package.Document.ConverterId,
+            package.Document.ConverterVersion);
+        var inventory = SpaceCadInventory.Build(request, preparation);
+        await CadExperimentJson.WriteAsync(output, inventory, cancellationToken);
+        Console.WriteLine(JsonSerializer.Serialize(
+            new
+            {
+                inventory.SourceSha256,
+                inventory.CoordinateTransformSha256,
+                inventory.FloorLogicalId,
+                inventory.FloorCode,
+                inventory.InventorySha256,
+                inventory.Summary,
+            },
+            CadExperimentJson.Options));
+        return 0;
+    }
+
+    private static async Task<int> QueryDevelopmentInventoryAsync(
+        CommandLine commandLine,
+        CancellationToken cancellationToken)
+    {
+        var input = Path.GetFullPath(commandLine.Required("--input"));
+        SpaceCadInventoryV1 inventory;
+        await using (var inputStream = File.OpenRead(input))
+        {
+            inventory = await JsonSerializer.DeserializeAsync<SpaceCadInventoryV1>(
+                            inputStream,
+                            CadExperimentJson.Options,
+                            cancellationToken)
+                        ?? throw new InvalidDataException("The CAD inventory is empty.");
+        }
+        SpaceCadInventory.Validate(inventory);
+
+        var offset = commandLine.Integer("--offset", 0);
+        var limit = commandLine.Integer(
+            "--limit",
+            SpaceCadInventoryVersions.DefaultPageSize);
+        object page = commandLine.Required("--kind").ToLowerInvariant() switch
+        {
+            "layer" or "layers" => SpaceCadInventory.QueryLayers(
+                inventory,
+                new SpaceCadLayerInventoryQueryV1(
+                    commandLine.Optional("--search"),
+                    OptionalBoolean(commandLine, "--visible"),
+                    OptionalEnum<SpaceCadIrEntityType>(commandLine, "--entity-type"),
+                    IncludeEmpty: !commandLine.HasFlag("--exclude-empty"),
+                    offset,
+                    limit)),
+            "block" or "blocks" => SpaceCadInventory.QueryBlocks(
+                inventory,
+                new SpaceCadBlockInventoryQueryV1(
+                    commandLine.Optional("--search"),
+                    OptionalBoolean(commandLine, "--external"),
+                    commandLine.Optional("--attribute"),
+                    offset,
+                    limit)),
+            "reference" or "references" => SpaceCadInventory.QueryBlockReferences(
+                inventory,
+                new SpaceCadBlockReferenceInventoryQueryV1(
+                    commandLine.Optional("--layer"),
+                    commandLine.Optional("--block"),
+                    commandLine.Optional("--attribute"),
+                    commandLine.Optional("--value"),
+                    offset,
+                    limit)),
+            var kind => throw new ArgumentException(
+                $"Unknown CAD inventory query kind '{kind}'.")
+        };
+
+        var output = commandLine.Optional("--output");
+        if (output is not null)
+            await CadExperimentJson.WriteAsync(output, page, cancellationToken);
+        Console.WriteLine(JsonSerializer.Serialize(page, CadExperimentJson.Options));
+        return 0;
+    }
+
+    private static bool? OptionalBoolean(CommandLine commandLine, string name)
+    {
+        var value = commandLine.Optional(name);
+        if (value is null)
+            return null;
+        return bool.TryParse(value, out var parsed)
+            ? parsed
+            : throw new ArgumentException($"Option '{name}' must be true or false.");
+    }
+
+    private static T? OptionalEnum<T>(CommandLine commandLine, string name)
+        where T : struct, Enum
+    {
+        var value = commandLine.Optional(name);
+        if (value is null)
+            return null;
+        return Enum.TryParse<T>(value, ignoreCase: true, out var parsed)
+            ? parsed
+            : throw new ArgumentException($"Option '{name}' is invalid.");
+    }
+
     private static async Task<int> RunAsync(
         CommandLine commandLine,
         CancellationToken cancellationToken)
@@ -286,6 +414,14 @@ public static class Program
               prepare-dev-coordinate --input <cad-ir-json-path>
                   --confirmation <confirmation-json-path>
                   --output <prepared-cad-ir-json-path>
+              build-dev-inventory --input <prepared-cad-ir-json-path>
+                  --output <inventory-json-path>
+              query-dev-inventory --input <inventory-json-path>
+                  --kind <layer|block|reference> [--search <text>]
+                  [--visible <true|false>] [--entity-type <type>]
+                  [--external <true|false>] [--layer <id>] [--block <name>]
+                  [--attribute <name>] [--value <value>] [--exclude-empty]
+                  [--offset <n>] [--limit <n>] [--output <json-path>]
               run --candidate <id> --candidate-version <version> --adapter <path>
                   [--adapter-arg <value>]... --input <path> [--input <path>]...
                   --output <directory> [--runs <n>] [--timeout-seconds <n>]

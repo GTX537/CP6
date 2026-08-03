@@ -2,6 +2,15 @@
 
 最后更新：2026-08-03
 
+## E02-S04 CAD 图层与块清单开发切片（2026-08-03）
+
+- 在 E02-S03 集成基线 `01a59696` 上完成功能提交 `b77faf96`：CAD IR v1 向后兼容增加图层颜色、线型和可见性；开发 DXF 转换器保留完整 `TABLES/LAYER` 和空图层，未声明图层显式合成并产生 Warning，不再只列出有对象图层。
+- 新增来源/坐标 Transform/Floor/Inventory SHA-256 绑定的确定性清单：图层对象/支持/不支持/类型/块引用/属性数与范围，块定义/XRef/引用/属性摘要，以及每个块引用的稳定 SourceRef、受控属性值和范围。非 Ready、Blocking、来源/楼层/范围或坐标元数据不一致均失败关闭，无 Migration/WebApi/Draft 写入。
+- 图层、块和引用支持受限分页查询，覆盖名称/ID、显隐、图元类型、XRef、图层、块名和属性键值；单页最多 200。开发工具新增 `build-dev-inventory` 与 `query-dev-inventory`，合同见 `docs/space/contracts/cad/v1/inventory.schema.json`。
+- 样例 13：Source `aa573f04...1fb106`，新 CAD IR `b6aa6501...614310`，Transform `b1223a8f...353cfba`，Inventory `63432958...9697a9`；F01 范围 `(0,-1200)～(36000,24000)` mm，15 图层/7 空层、1 块、8 个带属性块引用、22 supported 对象；`RACK_ID=R-01-01` 精确查询返回 `H:110`。
+- 门禁：E02-S04 聚焦 10/10、20/20 合成 DXF 清单链、CAD 工具 22/22、Space Unit 304/304、完整 solution Release 非增量构建 0 error / 10 条既有 warning、JSON/CLI/差异检查通过。证据见 `docs/space/reports/e02-s04-cad-inventory-development.md`。
+- 这是开发切片而非正式 E02-S04 验收；仍等待授权原生适配器、冻结 Worker、正式黄金集、生产 streaming/持久化/API/权限/UI 与真实复杂图纸证据。等待期间可继续 E02-S05 开发侧图层映射方案。
+
 ## E02-S03 CAD 坐标确认开发切片（2026-08-03）
 
 - 在 E02-S02 开发 CAD IR 集成基线 `97d6871f` 上完成功能提交 `09b26b87`、证据提交 `d78b3b09`，并以 no-ff 提交 `7741da61` 集成到 `integration/space-v1-20260730`：分析阶段分别给出源单位范围和建议毫米范围；已识别单位仍必须明确确认，未知单位不猜测，确认记录绑定来源 SHA-256。
