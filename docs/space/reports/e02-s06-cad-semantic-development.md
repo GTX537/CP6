@@ -4,7 +4,7 @@
 
 ## 交付结论
 
-CP6 已在 E02-S05 集成基线 `b3c45a8f` 上完成 E02-S06 开发侧只读语义提案链，功能提交为 `c8e2ae87`。Prepared CAD IR、E02-S04 Inventory、不可变 Mapping Profile 与 E02-S05 Mapping Preview 现在可以经过同一条失败关闭链，生成带临时 `previewObjectId`、规范几何、来源、采用规则、默认值、置信度和选择状态的统一语义预览。
+CP6 已在 E02-S05 集成基线 `b3c45a8f` 上完成 E02-S06 开发侧只读语义提案链，功能提交为 `c8e2ae87`，证据提交为 `be32c9a7`，并以 no-ff 提交 `fdb210b4` 集成到 `integration/space-v1-20260730`。Prepared CAD IR、E02-S04 Inventory、不可变 Mapping Profile 与 E02-S05 Mapping Preview 现在可以经过同一条失败关闭链，生成带临时 `previewObjectId`、规范几何、来源、采用规则、默认值、置信度和选择状态的统一语义预览。
 
 该产物明确是 `IsReadOnlyPreview=true` 的临时提案，不创建永久 LogicalId，不调用 `SpaceContext`、仓储或 `SaveChanges`，也不写 Draft。本切片不是正式 E02-S06 验收。
 

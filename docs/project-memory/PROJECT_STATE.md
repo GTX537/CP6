@@ -2,6 +2,15 @@
 
 最后更新：2026-08-03
 
+## E02-S06 CAD 基础语义解析器开发切片（2026-08-03）
+
+- 在 E02-S05 集成基线 `b3c45a8f` 上完成功能提交 `c8e2ae87`、证据提交 `be32c9a7`，并以 no-ff 提交 `fdb210b4` 集成到 `integration/space-v1-20260730`：Prepared IR、Inventory、封存 Profile 与 Mapping Preview 现在形成同租户、全哈希绑定的失败关闭链，输出确定性只读语义提案，不创建永久 LogicalId，不写 Draft。
+- 每个对象保留临时 `previewObjectId`、SourceRef/图层/块/属性、目标类型、采用规则、默认高度/厚度、整数毫米规范几何、置信度与选择状态；统一区分 Element/Zone/Aisle/Rack，覆盖 Wall、Column、Door、Dock、Zone、Aisle、Rack。零长度、零面积和不支持图元显式 Rejected，不静默丢弃。
+- Block 规则逐引用检查属性，命中时优先于 Layer 且不重复；无真实块轮廓时保留 BlockInstance 仿射变换、置信度封顶 0.69 并告警，不伪造货架尺寸。阈值固定为 `>=0.90` 自动选中、`0.70–0.89` Warning 待确认、`<0.70` 候选展示；必需来源只有拒绝几何时 Blocking。
+- 样例 13：Semantic Preview `e398d192...befc866`，JSON 文件 `75845d12...7202ea`；22 源对象中 21 提案、13 AutoAccepted / 8 Candidate / 0 Rejected、13 Confirmable / 13 Selected、8 Info / 8 Warning / 0 Blocking，重复运行字节完全相同。
+- 门禁：E02-S06 聚焦 6/6、20/20 合成 CAD 完成语义链、CAD 工具 23/23、Space Unit 322/322、完整 solution Release 非增量构建 0 error / 10 条既有 warning、格式/Schema/差异检查通过。证据见 `docs/space/reports/e02-s06-cad-semantic-development.md`。
+- 这是开发切片而非正式 E02-S06 验收；仍等待授权原生适配器、冻结 Worker、正式黄金集、生产 Artifact/持久化、复杂块/曲线证据和受权 Draft Apply。等待期间可继续 E02-S07 开发侧问题定位与锁定修正预览，不得提前声称正式 CAD 验收。
+
 ## E02-S05 CAD 图层映射方案开发切片（2026-08-03）
 
 - 在 E02-S04 集成基线 `f4b596f0` 上完成功能提交 `2736427c`、证据提交 `29118c19`，并以 no-ff 提交 `b6d58a1e` 集成到 `integration/space-v1-20260730`：新增 Definition SHA-256 封装的不可变 CAD Mapping Profile；System 方案无租户、租户侧只读，租户复制记录 System 基线，后续修改创建新版本。Tenant Profile 跨租户失败关闭。
