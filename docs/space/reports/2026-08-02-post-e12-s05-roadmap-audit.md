@@ -45,6 +45,8 @@ E04-S06 已基于统一 Design Revision 完成 2D/3D 同源预览，但它不解
 
 输入到位后应先复用 `docs/space/experiments/e02-s01` 的严格 audit/preflight 和中立 observation 契约，完成 E02-S01 最终签收；然后按 E02-S02→S07 解锁 E03-S04、E04-S05、E13-S04 与 E12-S06。若授权范围只允许读取、不允许写入，E12-S06 必须继续保持 Blocked，不能用 GLB 导出替代其验收。
 
+2026-08-02 再次只读探测当前环境：`docs/space/acceptance/v1.0.0/manifest.json` 仍只有 5 份 Development Seed，`countsTowardReleaseGate=false`；正式验收与实验目录没有 `.dwg`；E02-S01 目录只有 ODA/APS 示例 preflight，没有已批准配置；`CP6_SPACE_ODA_LICENSE_PATH`、`CP6_SPACE_APS_CLIENT_ID`、`CP6_SPACE_APS_CLIENT_SECRET` 三个环境变量均未配置。探测只记录是否存在，没有读取 Secret 值。因此相同外部阻断仍然成立。
+
 ## 残留工作树与存储审计
 
 E12-S05 清理后继续检查了其余 Space 相关工作树。下列提交头都已是远端 `integration/space-v1-20260730` 的祖先，且对应远端临时分支不存在；但工作目录包含未提交内容，提交祖先关系不能证明这些内容已备份，因此全部保留：
