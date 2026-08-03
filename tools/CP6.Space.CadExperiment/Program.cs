@@ -44,6 +44,9 @@ public static class Program
                 "preview-dev-mapping" => await PreviewDevelopmentMappingAsync(
                     commandLine,
                     cancellation.Token),
+                "parse-dev-semantic" => await ParseDevelopmentSemanticAsync(
+                    commandLine,
+                    cancellation.Token),
                 "run" => await RunAsync(commandLine, cancellation.Token),
                 "inspect" => await ProbeAdapterAsync(commandLine, cancellation.Token),
                 "probe-adapter" => await ProbeAdapterAsync(commandLine, cancellation.Token),
@@ -419,6 +422,87 @@ public static class Program
         return preview.ReadyForSemanticParsing ? 0 : 3;
     }
 
+    private static async Task<int> ParseDevelopmentSemanticAsync(
+        CommandLine commandLine,
+        CancellationToken cancellationToken)
+    {
+        var preparedPath = Path.GetFullPath(commandLine.Required("--prepared"));
+        var inventoryPath = Path.GetFullPath(commandLine.Required("--inventory"));
+        var profilePath = Path.GetFullPath(commandLine.Required("--profile"));
+        var mappingPath = Path.GetFullPath(commandLine.Required("--mapping"));
+        var output = Path.GetFullPath(commandLine.Required("--output"));
+        SpaceCadCoordinatePreparationV1 preparation;
+        SpaceCadInventoryV1 inventory;
+        SpaceCadMappingProfileV1 profile;
+        SpaceCadMappingPreviewV1 mappingPreview;
+        await using (var stream = File.OpenRead(preparedPath))
+        {
+            preparation = await JsonSerializer.DeserializeAsync<SpaceCadCoordinatePreparationV1>(
+                              stream,
+                              CadExperimentJson.Options,
+                              cancellationToken)
+                          ?? throw new InvalidDataException(
+                              "The prepared CAD IR package is empty.");
+        }
+        await using (var stream = File.OpenRead(inventoryPath))
+        {
+            inventory = await JsonSerializer.DeserializeAsync<SpaceCadInventoryV1>(
+                            stream,
+                            CadExperimentJson.Options,
+                            cancellationToken)
+                        ?? throw new InvalidDataException("The CAD inventory is empty.");
+        }
+        await using (var stream = File.OpenRead(profilePath))
+        {
+            profile = await JsonSerializer.DeserializeAsync<SpaceCadMappingProfileV1>(
+                          stream,
+                          CadExperimentJson.Options,
+                          cancellationToken)
+                      ?? throw new InvalidDataException(
+                          "The sealed CAD mapping profile is empty.");
+        }
+        await using (var stream = File.OpenRead(mappingPath))
+        {
+            mappingPreview = await JsonSerializer.DeserializeAsync<SpaceCadMappingPreviewV1>(
+                                 stream,
+                                 CadExperimentJson.Options,
+                                 cancellationToken)
+                             ?? throw new InvalidDataException(
+                                 "The CAD mapping preview is empty.");
+        }
+
+        var package = preparation.Package;
+        var request = new SpaceCadConversionRequest(
+            mappingPreview.TenantId,
+            Guid.Parse("22222222-2222-2222-2222-222222222222"),
+            Guid.Parse("33333333-3333-3333-3333-333333333333"),
+            package.Document.SourceSha256,
+            package.Document.SourceFormat,
+            package.Document.ConverterId,
+            package.Document.ConverterVersion);
+        var semanticPreview = SpaceCadSemanticParser.Parse(
+            request,
+            preparation,
+            inventory,
+            profile,
+            mappingPreview);
+        await CadExperimentJson.WriteAsync(output, semanticPreview, cancellationToken);
+        Console.WriteLine(JsonSerializer.Serialize(
+            new
+            {
+                semanticPreview.TenantId,
+                semanticPreview.FloorLogicalId,
+                semanticPreview.FloorCode,
+                semanticPreview.SourceSha256,
+                semanticPreview.MappingPreviewSha256,
+                semanticPreview.SemanticPreviewSha256,
+                semanticPreview.ReadyForConfirmation,
+                semanticPreview.Summary,
+            },
+            CadExperimentJson.Options));
+        return semanticPreview.ReadyForConfirmation ? 0 : 3;
+    }
+
     private static bool? OptionalBoolean(CommandLine commandLine, string name)
     {
         var value = commandLine.Optional(name);
@@ -525,6 +609,11 @@ public static class Program
               preview-dev-mapping --inventory <inventory-json-path>
                   --profile <sealed-profile-json-path> --tenant-id <guid>
                   [--overrides <override-json-path>] --output <preview-json-path>
+              parse-dev-semantic --prepared <prepared-cad-ir-json-path>
+                  --inventory <inventory-json-path>
+                  --profile <sealed-profile-json-path>
+                  --mapping <mapping-preview-json-path>
+                  --output <semantic-preview-json-path>
               run --candidate <id> --candidate-version <version> --adapter <path>
                   [--adapter-arg <value>]... --input <path> [--input <path>]...
                   --output <directory> [--runs <n>] [--timeout-seconds <n>]

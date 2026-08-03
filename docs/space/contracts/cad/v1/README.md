@@ -43,6 +43,14 @@ contract; SDK-specific objects may not cross the converter boundary.
   explicit layer overrides win. Required sources fail closed when absent or empty.
 - Mapping previews retain unmapped and empty sources, bind the profile, inventory,
   structural reuse key and overrides by SHA-256, and do not write semantic objects.
+- Semantic parsing consumes the exact prepared IR, inventory, sealed profile and
+  mapping preview chain. It emits deterministic temporary `previewObjectId` values,
+  integer-millimeter geometry, source/rule/default provenance and confidence bands;
+  the artifact is explicitly read-only and never creates a permanent LogicalId.
+- Block rules are evaluated for each block reference and override a layer rule only
+  for references that satisfy their attribute condition. A missing real block
+  footprint retains the block instance transform as a sub-0.70 candidate with a
+  warning; the parser does not invent rack dimensions.
 
 ## Current delivery boundary
 
@@ -54,8 +62,10 @@ confirmation and preparation without claiming formal acceptance. The E02-S04
 development slice adds a deterministic, queryable layer/block inventory without
 production persistence or authorization claims. The E02-S05 development slice adds
 mapping profile sealing, tenant-safe copy/version semantics and deterministic preview
-resolution without database or semantic parser writes. Formal E02-S02 through E02-S05
-acceptance still waits for E02-S01 vendor selection.
+resolution without database writes. The E02-S06 development slice adds the pure,
+read-only semantic proposal parser and confidence selection boundary without Draft
+writes. Formal E02-S02 through E02-S06 acceptance still waits for E02-S01 vendor
+selection and the production conversion/persistence chain.
 
 Files:
 
@@ -64,6 +74,7 @@ Files:
 - `inventory.schema.json`: query-source layer, block and block-reference inventory.
 - `mapping-profile.schema.json`: draft/sealed system or tenant mapping profile.
 - `mapping-preview.schema.json`: deterministic layer/block mapping preview.
+- `semantic-preview.schema.json`: deterministic read-only semantic proposal preview.
 - `examples/minimal-wall.json`: minimal valid IR package.
 - `examples/development-coordinate-confirmation.json`: confirmation for synthetic sample 13.
 - `examples/development-mapping-profile-draft.json`: system profile draft for the synthetic corpus.
