@@ -14,10 +14,13 @@
 | `v1.0.0/expected-issues.json` | 非标准/噪声样本期望问题 | 技术试验 |
 | `v1.0.0/provider-ir.jsonl` | 可发送 Provider 的最小化 IR 示例 | AI 安全契约 |
 | `v1.0.0/layer-mapping.json` | 图层语义映射基线 | CAD/AI 试验 |
+| [`development-v2.0.0/manifest.json`](./development-v2.0.0/manifest.json) | 20 份可重复生成的 L1～L5 合成 DXF 及哈希清单 | 扩展开发语料，不计发布指标 |
+| [`development-v2.0.0/case-index.json`](./development-v2.0.0/case-index.json) | 版本、图元、图层和开发场景索引 | CAD 解析/映射/问题/UI 回归 |
 
 ## 2. 种子与正式黄金集的区别
 
-- 五份 Seed 是合成开发资产，每类布局一份。
+- `v1.0.0` 的五份 Seed 是最小合成开发资产，每类布局一份。
+- `development-v2.0.0` 扩展为 20 份合成 DXF，每类布局四份，并覆盖 AC1009、AC1015、AC1021、AC1027、AC1032 文件头。
 - Seed 可以用于解析器、规则、Provider 和测试代码开发。
 - Seed 不得计入 AI 发布门禁的覆盖率、准确率或高置信度精确率。
 - Beta 前必须另建至少 20 份黄金 CAD，每类至少 4 份，并分成：

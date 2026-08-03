@@ -1,0 +1,184 @@
+{
+  "datasetName": "CP6 Space Synthetic Development CAD Corpus",
+  "datasetVersion": "2.0.0",
+  "schemaVersion": 1,
+  "createdAtUtc": "2026-08-02T00:00:00Z",
+  "generator": "CP6.Space.CadExperiment/1.0.0",
+  "purpose": "DevelopmentSeed",
+  "countsTowardReleaseGate": false,
+  "unit": "Millimeter",
+  "coordinateSystem": "FloorLocal-ZUp",
+  "mappingProfileVersion": "space-cad-mapping-v1",
+  "ruleSetVersion": "space-v1",
+  "expectedAnswerVersion": "2.0.0",
+  "license": "CP6-Synthetic-Development-Only",
+  "samples": [
+    {
+      "sampleId": "L1-DEV-001",
+      "layoutFamily": "L1-RegularRectangular",
+      "split": "DevelopmentSeed",
+      "sourceFile": "seeds/01-regular-small-racks.dxf",
+      "sourceSha256": "a1a37099030483b9c4707375f55dfce67e14ab47eba527860a768025d801192c",
+      "expectedTargetCount": 1
+    },
+    {
+      "sampleId": "L1-DEV-002",
+      "layoutFamily": "L1-RegularRectangular",
+      "split": "DevelopmentSeed",
+      "sourceFile": "seeds/02-regular-wide-docks.dxf",
+      "sourceSha256": "5c6e86c0f60464b7e4c9ad3f34a7bfd6740482c2949f8fd75539587516658d88",
+      "expectedTargetCount": 1
+    },
+    {
+      "sampleId": "L1-DEV-003",
+      "layoutFamily": "L1-RegularRectangular",
+      "split": "DevelopmentSeed",
+      "sourceFile": "seeds/03-regular-compact-storage.dxf",
+      "sourceSha256": "8b9e27793432d712405f9fd0e3d3173e34cfc1c159580cf246b7ee3ae68200df",
+      "expectedTargetCount": 1
+    },
+    {
+      "sampleId": "L1-DEV-004",
+      "layoutFamily": "L1-RegularRectangular",
+      "split": "DevelopmentSeed",
+      "sourceFile": "seeds/04-regular-cross-aisle.dxf",
+      "sourceSha256": "bfc1d7dce9e4c01879187d66146148e77e1659ea62efdf741f8c6bbdb7c5b02e",
+      "expectedTargetCount": 1
+    },
+    {
+      "sampleId": "L2-DEV-001",
+      "layoutFamily": "L2-MultiFloor",
+      "split": "DevelopmentSeed",
+      "sourceFile": "seeds/05-two-floor-overlap.dxf",
+      "sourceSha256": "b641a67ffef254853d762afac351c41f5ecca90fff4a23faf2290c33eb7c38c5",
+      "expectedTargetCount": 1
+    },
+    {
+      "sampleId": "L2-DEV-002",
+      "layoutFamily": "L2-MultiFloor",
+      "split": "DevelopmentSeed",
+      "sourceFile": "seeds/06-mezzanine-storage.dxf",
+      "sourceSha256": "0098c7310adadc7030e27582d439eb261128c51a15fb38941d4aef67f78b6798",
+      "expectedTargetCount": 1
+    },
+    {
+      "sampleId": "L2-DEV-003",
+      "layoutFamily": "L2-MultiFloor",
+      "split": "DevelopmentSeed",
+      "sourceFile": "seeds/07-split-level-layout.dxf",
+      "sourceSha256": "e851a6c3038ed65d47849e30cc4d556b97331e8ff01b4ce098792f6e57b75f08",
+      "expectedTargetCount": 1
+    },
+    {
+      "sampleId": "L2-DEV-004",
+      "layoutFamily": "L2-MultiFloor",
+      "split": "DevelopmentSeed",
+      "sourceFile": "seeds/08-three-floor-layout.dxf",
+      "sourceSha256": "019a6064a9d21fa184e10867562bc105f949a97ca66c6c3a142b1efef8ce90bf",
+      "expectedTargetCount": 1
+    },
+    {
+      "sampleId": "L3-DEV-001",
+      "layoutFamily": "L3-NonOrthogonal",
+      "split": "DevelopmentSeed",
+      "sourceFile": "seeds/09-angled-rack-layout.dxf",
+      "sourceSha256": "221f8d2df0fd8b2317df03d6759caea5c36446a2a4aa571ff48db103f287bc2a",
+      "expectedTargetCount": 1
+    },
+    {
+      "sampleId": "L3-DEV-002",
+      "layoutFamily": "L3-NonOrthogonal",
+      "split": "DevelopmentSeed",
+      "sourceFile": "seeds/10-l-shaped-building.dxf",
+      "sourceSha256": "6d855e68642e856753ab64d524fa5f5c827685c6d181a747e49c13febd5ef1e8",
+      "expectedTargetCount": 1
+    },
+    {
+      "sampleId": "L3-DEV-003",
+      "layoutFamily": "L3-NonOrthogonal",
+      "split": "DevelopmentSeed",
+      "sourceFile": "seeds/11-trapezoid-site.dxf",
+      "sourceSha256": "a6a7e08b5a688b65a8c8041abf1f4b00328cb61d7f11487e8566ffd08a86d450",
+      "expectedTargetCount": 1
+    },
+    {
+      "sampleId": "L3-DEV-004",
+      "layoutFamily": "L3-NonOrthogonal",
+      "split": "DevelopmentSeed",
+      "sourceFile": "seeds/12-diagonal-aisles.dxf",
+      "sourceSha256": "3f6aa5ae1e9083680c243e9fbfa3964aabf105c3a8615a4e1ccba33d271dbb0e",
+      "expectedTargetCount": 1
+    },
+    {
+      "sampleId": "L4-DEV-001",
+      "layoutFamily": "L4-Comprehensive",
+      "split": "DevelopmentSeed",
+      "sourceFile": "seeds/13-automated-warehouse.dxf",
+      "sourceSha256": "aa573f04e39345b4e03bfce9304f0916a973da47f1ab19b8e17645bc731fb106",
+      "expectedTargetCount": 1
+    },
+    {
+      "sampleId": "L4-DEV-002",
+      "layoutFamily": "L4-Comprehensive",
+      "split": "DevelopmentSeed",
+      "sourceFile": "seeds/14-cold-storage-zones.dxf",
+      "sourceSha256": "4a9387a5f4a650d6fbc0e45c06a8f8df85383dd29edece6997ec066de56bf950",
+      "expectedTargetCount": 1
+    },
+    {
+      "sampleId": "L4-DEV-003",
+      "layoutFamily": "L4-Comprehensive",
+      "split": "DevelopmentSeed",
+      "sourceFile": "seeds/15-mixed-use-fulfillment.dxf",
+      "sourceSha256": "243ffec18cb2aeb21d93f32a02c10c14d5ce8b699e496d3e58a4109eeba9d956",
+      "expectedTargetCount": 1
+    },
+    {
+      "sampleId": "L4-DEV-004",
+      "layoutFamily": "L4-Comprehensive",
+      "split": "DevelopmentSeed",
+      "sourceFile": "seeds/16-high-bay-layout.dxf",
+      "sourceSha256": "e7549d2d787aa294665d0db15988cc8728a1ec4522f9d9a0d77aa55244f4fb6f",
+      "expectedTargetCount": 1
+    },
+    {
+      "sampleId": "L5-DEV-001",
+      "layoutFamily": "L5-NoisyNonStandard",
+      "split": "DevelopmentSeed",
+      "sourceFile": "seeds/17-noisy-layer-names.dxf",
+      "sourceSha256": "f99a10dc89a332ae8ed4089df8b0ed17c08ecc3718487aa55041adca2ffc58f3",
+      "expectedTargetCount": 1
+    },
+    {
+      "sampleId": "L5-DEV-002",
+      "layoutFamily": "L5-NoisyNonStandard",
+      "split": "DevelopmentSeed",
+      "sourceFile": "seeds/18-block-attribute-edge-cases.dxf",
+      "sourceSha256": "82a9b7581155e12bf582763f4161261b37754dbfb0fece686539b508d60f51d3",
+      "expectedTargetCount": 1
+    },
+    {
+      "sampleId": "L5-DEV-003",
+      "layoutFamily": "L5-NoisyNonStandard",
+      "split": "DevelopmentSeed",
+      "sourceFile": "seeds/19-curves-hatch-dimension.dxf",
+      "sourceSha256": "83a30398e345379d1d949188c577f2815d73dd3fad95568c4851e28615ff5d1f",
+      "expectedTargetCount": 1
+    },
+    {
+      "sampleId": "L5-DEV-004",
+      "layoutFamily": "L5-NoisyNonStandard",
+      "split": "DevelopmentSeed",
+      "sourceFile": "seeds/20-xref-and-text-noise.dxf",
+      "sourceSha256": "650d32d0300bde77f2f449b0bc71dea17bd9922bbf35dc01292d30cbf9d8d997",
+      "expectedTargetCount": 1
+    }
+  ],
+  "files": {
+    "expectedElements": "expected-elements.jsonl",
+    "expectedIssues": "expected-issues.json",
+    "providerIr": "provider-ir.jsonl",
+    "layerMapping": "layer-mapping.json",
+    "license": "LICENSE.md"
+  }
+}

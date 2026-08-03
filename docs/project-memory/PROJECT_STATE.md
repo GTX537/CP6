@@ -2,6 +2,13 @@
 
 最后更新：2026-08-02
 
+## E02 合成开发 CAD 图纸包（2026-08-02）
+
+- 新增 `docs/space/acceptance/development-v2.0.0`：20 份仓库内可重复生成的合成 DXF，L1～L5 各 4 份，覆盖 AC1009/AC1015/AC1021/AC1027/AC1032 文件头以及规则、多楼层、非正交、综合和噪声场景。
+- 新命令 `generate-dev-corpus` 同步生成 SHA-256 清单、场景索引、最小期望答案、期望问题、Provider IR、图层映射和开发使用声明。全部资产不含真实客户、供应商、地址、人员、标题栏或设备序列号数据。
+- CAD 实验工具测试 12/12；20/20 文件完整性、哈希、成对 DXF 行、EOF、唯一 Handle、五类布局与 DXF 文件头矩阵通过。
+- 该数据包明确为 `DevelopmentSeed` 且 `countsTowardReleaseGate=false`：可推进解析、映射、问题、IR、UI 和回归开发，但不替代原生 DWG、ODA/APS 授权、冻结 Worker 和独立正式黄金集。证据见 `docs/space/reports/e02-synthetic-development-cad-corpus.md`。
+
 ## E12-S05 完成状态（2026-08-02）
 
 - E12-S05 已完成实现、全量门禁、远端备份、no-ff 受控集成和临时资源清理：起始基线 `ad77540d`，功能提交 `dd505f6f`，集成提交 `c4b139ab`。内部规划人员可从 Ready/Succeeded/Production Isolated 场景下载 glTF 2.0 单文件 `.glb`。
@@ -345,7 +352,7 @@
 |---|---|---|
 | E00 S01–S04 | 已进入集成基线 | `539d56de`；事实清单、兼容护栏、数据源契约、审计/可观测性 |
 | E01 S01–S06 | 已进入集成基线 | `539d56de` + `85792161` + `36f534d9` + `2ccdff7a`；版本/来源文件/Job Ledger、Published→Draft Clone、Design API v1、生成 SDK、文件安全扫描与保留清理 |
-| E02 S01 | 部分进入集成基线，最终签收受阻 | `fe959066` + `3742fbff`；中立审计/压力/运行证据/preflight 已集成，正式黄金集、授权、供应商包/凭据和冻结 Worker 尚缺 |
+| E02 S01 | 部分进入集成基线，最终签收受阻 | `fe959066` + `3742fbff`；中立审计/压力/运行证据/preflight 已集成；另有 20 份可重复生成的合成开发 DXF（L1～L5 各 4 份，五种 DXF 文件头），但正式 DWG 黄金集、授权、供应商包/凭据和冻结 Worker 尚缺 |
 | E03 S01–S03 | 已进入集成基线 | `033e8872` + `8521a701` + `f1310b40` + `e0cc4964` + `9d0a59e7` + `3571f677`；标准 Excel 模板、版本化字段映射、隔离上传、异步预检、结构化问题与受保护错误报告 |
 | E04 S01–S04、S06 | 已进入集成基线 | `1d57a3b5` + `e8e84853` + `20ee0af0` + `c1043d15` + `b322e84a` + `39146c38` + `9a87dc30` + `f9c7fd21` + `20f248bd` + `2b6ef127`；安全底图、坐标标定、通用元素属性、统一批量编辑与补偿命令，以及同一 Design Scene 的 2D/3D 只读预览和实际渲染结构一致性证明 |
 | E07 S01–S05 | 已进入集成基线 | `d06a8bd1` + `6e67a9d1` + `74577015` + `6d751e0c` + `15ccf992` + `389bf4ec`；版本化能力合同、CP6 真实适配器、持久化幂等账本、标准模拟器、确定性标准仓与存量 WMS 采纳/绑定 |
@@ -395,6 +402,7 @@
 - E08-S01 已推进至受控集成提交 `b2bb7a35`：功能分支全量门禁为 Space Unit 220、默认 Space Integration 94 passed / 48 SQL-gated skipped、OpenAPI/权限/数据源合同 45、完整 solution build 0 error / 10 个既有 warning、EF/SDK drift 均通过；合并态聚焦门禁为 23/23、56/56、34/34 和 SDK 无 drift。
 - 历史 E04-S04 验证快照：当时集成代码提交为 `f9c7fd21`。合并态完整 solution 构建 0 error / 10 个既有 warning；Space Unit 213 passed，默认 Space Integration 48 passed / 45 SQL-gated skipped，Design Scene 真实 SQL 3/3 passed；OpenAPI/权限 25/25 passed；前端 96 files / 575 tests、type-check、production build 通过；EF 无待迁移模型变化，SDK drift 通过。
 - E02 S01 实验门禁已推进至 `3742fbff`：中立工具 10/10 测试通过，Aspose 隔离实验适配器构建 0 warning / 0 error；5 个冻结 Seed 完整性通过，50MiB 与 100 万实体压力资产生成通过。严格 readiness 按预期退出 `3`，ODA/APS 模板 preflight 按预期退出 `4`，表明外部签收条件仍未满足。
+- E02 合成开发语料新增 `development-v2.0.0`：仓库内生成器可重复生成 20 份 DXF，L1～L5 各 4 份，覆盖 AC1009/AC1015/AC1021/AC1027/AC1032 以及块/属性/填充/样条/椭圆/标注/XRef 等开发场景。工具测试 12/12、数据包完整性、哈希、句柄和 DXF 文件头矩阵通过；清单明确 `countsTowardReleaseGate=false`，不替代原生 DWG、供应商授权和正式黄金集。交付证据见 `docs/space/reports/e02-synthetic-development-cad-corpus.md`。
 - E07 S01–S03 已推进至 `6e67a9d1`：Release 全解构建 0 error（7 个既有测试 warning），Space Unit 73 passed，Space Integration 35 passed / 30 SQL 环境门禁 skipped，CP6 主测试 2674 passed / 17 environment-gated skipped，Client 71 passed，EF 模型与 Migration 一致；新增代码精确格式门禁通过。
 - E07 S04 已推进至 `6d751e0c`：500 货架、10,000 库位、100 SKU、5,000 库存记录、100 拣货任务和 6 个固定故障样本由同一固定种子生成；两次独立生成的 17 个文件差异为 0，干净检出后的 Manifest 16 个受管文件哈希错误为 0。合并态 Release 全解构建 0 error（10 个既有 warning），Space Unit 79 passed，Space Integration 40 passed / 30 SQL 环境门禁 skipped，CP6 主测试 2680 passed / 17 environment-gated skipped，Client 71 passed。
 - E13 S01–S03、S12 已完成 Provider 安全端口、运行审计模型、可恢复 Worker 控制面、三并发槽和日/月预算原子账本；外部 Provider、CAD IR、输出校验与 Apply 仍未提前启用。
@@ -420,4 +428,4 @@
 
 ## 下一动作
 
-以 `624c1511` 为本次路线图审计起点，其中 E12-S05 no-ff 功能集成为 `c4b139ab`。E12-S05 已完成 glTF 2.0 GLB 标准交换导出、远端功能备份、受控集成、合并态复验、五语入口和临时资源清理。E03-S01～S03、E10-S01～S06、E11-S01～S06、E12-S01～S05，以及 E13-S01～S03、S12、S16 已完成。后续可执行性审计见 `docs/space/reports/2026-08-02-post-e12-s05-roadmap-audit.md`：当前没有一张满足全部前置与正式输入的未完成实现卡。E12-S06 和 E02-S01 主链等待正式黄金样本、明确 DWG SDK/供应商授权和冻结试验 Worker；E02-S02～S08、E03-S04～S05、E04-S05、E13 CAD/Apply 后续与 E06-S01～S06 均被该链直接或传递阻断。E09 技术 S01～S05 已完成，跨职能 GA 签字仍由发布治理完成；发布 SQL 环境跳过项也不得记作通过。i18n 当前有 908 项显式快照债务，本卡净新增 0。下一步是接收并审计解阻包，或由产品负责人明确调整路线图；在此之前不创建新的 CAD/DWG 实现分支。禁止把候选检查点 `0d25da4d` 整包合入，GR-VP T1–T7 不要重做。
+以 `624c1511` 为本次路线图审计起点，其中 E12-S05 no-ff 功能集成为 `c4b139ab`。E12-S05 已完成 glTF 2.0 GLB 标准交换导出、远端功能备份、受控集成、合并态复验、五语入口和临时资源清理。E03-S01～S03、E10-S01～S06、E11-S01～S06、E12-S01～S05，以及 E13-S01～S03、S12、S16 已完成。后续可执行性审计见 `docs/space/reports/2026-08-02-post-e12-s05-roadmap-audit.md`：当前没有一张满足全部前置与正式输入的未完成实现卡。开发侧现已有 20 份完全合成的 DXF 语料，可继续解析器、映射、问题、IR、UI 和回归开发；它们不计发布门禁。E12-S06 和 E02-S01 最终签收仍等待独立正式黄金样本、原生 DWG、明确 SDK/供应商授权和冻结试验 Worker；E02-S02～S08、E03-S04～S05、E04-S05、E13 CAD/Apply 后续与 E06-S01～S06 均被该链直接或传递阻断。E09 技术 S01～S05 已完成，跨职能 GA 签字仍由发布治理完成；发布 SQL 环境跳过项也不得记作通过。i18n 当前有 908 项显式快照债务，本卡净新增 0。下一步可先用 `development-v2.0.0` 进行不依赖供应商的开发准备，同时接收并审计正式解阻包；在授权前不创建生产 CAD/DWG 适配器。禁止把候选检查点 `0d25da4d` 整包合入，GR-VP T1–T7 不要重做。
