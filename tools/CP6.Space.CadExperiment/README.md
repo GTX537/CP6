@@ -3,7 +3,7 @@
 This experiment-only tool captures reproducible E02-S01 evidence without
 coupling a production Worker to a CAD vendor SDK.
 
-It provides ten capabilities:
+It provides twelve capabilities:
 
 - `audit`: verifies dataset metadata, companion answers, SHA-256 values,
   DXF framing, DWG version headers, formal split/family distribution and
@@ -21,6 +21,10 @@ It provides ten capabilities:
   block-reference inventory from a ready coordinate preparation.
 - `query-dev-inventory`: runs capped, deterministic layer, block or reference
   queries against an inventory artifact.
+- `seal-dev-mapping-profile`: validates and hash-seals an immutable development
+  mapping profile version.
+- `preview-dev-mapping`: applies a system or same-tenant profile plus optional
+  per-layer overrides and writes a deterministic, non-writing preview.
 - `run`: invokes a candidate adapter as a child process without a shell and
   records timeout, cancellation, process-tree termination, exit status, peak
   working set, diagnostics and observation hash.
@@ -140,6 +144,30 @@ references and controlled attributes. It is bound to the source hash,
 coordinate transform and target floor by a deterministic SHA-256. Query pages
 are limited to 200 records. This is E02-S04 development evidence only; it does
 not add production persistence, tenant authorization or a licensed DWG adapter.
+
+## Seal and preview a CAD mapping profile
+
+```powershell
+dotnet run --project tools\CP6.Space.CadExperiment -c Release -- `
+  seal-dev-mapping-profile `
+  --input docs\space\contracts\cad\v1\examples\development-mapping-profile-draft.json `
+  --output tmp\e02-s05\development-mapping-profile.json
+
+dotnet run --project tools\CP6.Space.CadExperiment -c Release -- `
+  preview-dev-mapping `
+  --inventory tmp\e02-s04\13-automated-warehouse.inventory.json `
+  --profile tmp\e02-s05\development-mapping-profile.json `
+  --tenant-id 55555555-5555-5555-5555-555555555555 `
+  --output tmp\e02-s05\13-mapping-preview.json
+```
+
+The profile version is immutable and bound by `definitionSha256`. System profiles
+are tenant-neutral; tenant profiles are accepted only for their owning tenant and
+must be created as copies/new versions. Exact, glob and safe regex precedence,
+block attribute conditions, absent/empty required-source failures and explicit layer overrides
+are resolved without creating Draft elements. Exit code `3` means the preview was
+written but contains a Blocking conflict or missing required source. This remains
+E02-S05 development evidence, not production mapping persistence or semantic parsing.
 
 ## Run an adapter
 

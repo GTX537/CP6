@@ -18,6 +18,25 @@ public sealed class DevelopmentDxfCadConverterTests
         long unsupportedEntities = 0;
         long totalDeclaredLayers = 0;
         long totalEmptyLayers = 0;
+        long totalMappingDecisions = 0;
+        SpaceCadMappingProfileDraftV1 standardMappingDraft;
+        await using (var mappingStream = File.OpenRead(RepositoryFile(
+                         "docs",
+                         "space",
+                         "contracts",
+                         "cad",
+                         "v1",
+                         "examples",
+                         "development-mapping-profile-draft.json")))
+        {
+            standardMappingDraft = await JsonSerializer.DeserializeAsync<
+                                       SpaceCadMappingProfileDraftV1>(
+                                       mappingStream,
+                                       CadExperimentJson.Options)
+                                   ?? throw new InvalidDataException(
+                                       "The standard development mapping draft is empty.");
+        }
+        var mappingProfile = SpaceCadMapping.Seal(standardMappingDraft);
 
         foreach (var sample in manifest.Samples)
         {
@@ -74,17 +93,29 @@ public sealed class DevelopmentDxfCadConverterTests
             Assert.Contains(inventory.Layers, layer => layer.EntityCount == 0);
             Assert.DoesNotContain(inventory.Blocks, block => !block.IsDefined);
             Assert.Matches("^[0-9a-f]{64}$", inventory.InventorySha256);
+            var mappingPreview = SpaceCadMapping.Preview(
+                Guid.Parse("55555555-5555-5555-5555-555555555555"),
+                inventory,
+                mappingProfile);
+            Assert.True(mappingPreview.ReadyForSemanticParsing);
+            Assert.Equal(
+                inventory.Layers.Count + inventory.Blocks.Count,
+                mappingPreview.Decisions.Count);
+            Assert.Equal(0, mappingPreview.Summary.BlockingCount);
+            Assert.Matches("^[0-9a-f]{64}$", mappingPreview.ReuseKeySha256);
             Assert.NotEmpty(sink.Package.Entities);
             totalEntities += result.Summary.EntityCount;
             unsupportedEntities += result.Summary.UnsupportedEntityCount;
             totalDeclaredLayers += inventory.Summary.LayerCount;
             totalEmptyLayers += inventory.Summary.EmptyLayerCount;
+            totalMappingDecisions += mappingPreview.Decisions.Count;
         }
 
         Assert.True(totalEntities >= 250);
         Assert.True(unsupportedEntities >= 10);
         Assert.True(totalDeclaredLayers >= 300);
         Assert.True(totalEmptyLayers >= 100);
+        Assert.True(totalMappingDecisions >= 320);
     }
 
     [Fact]
@@ -285,6 +316,61 @@ public sealed class DevelopmentDxfCadConverterTests
         Assert.Equal("WALL", Assert.Single(page.Items).LayerId);
     }
 
+    [Fact]
+    public async Task Mapping_commands_seal_a_profile_and_write_a_ready_preview()
+    {
+        using var fixture = new TemporaryDirectory();
+        var input = fixture.Write("sample.dxf", ValidDxf);
+        var sourceHash = await DatasetAuditor.ComputeSha256Async(input);
+        var request = Request(sourceHash);
+        var irPath = Path.Combine(fixture.Path, "sample.cad-ir.json");
+        await using (var stream = File.OpenRead(input))
+        {
+            await new DevelopmentDxfCadConverter().ConvertAsync(
+                request,
+                stream,
+                new DevelopmentCadIrFileSink(request, irPath));
+        }
+        var confirmationPath = Path.Combine(fixture.Path, "confirmation.json");
+        await CadExperimentJson.WriteAsync(confirmationPath, CoordinateConfirmation(sourceHash));
+        var preparedPath = Path.Combine(fixture.Path, "prepared.json");
+        Assert.Equal(0, await Program.Main(
+        [
+            "prepare-dev-coordinate", "--input", irPath,
+            "--confirmation", confirmationPath, "--output", preparedPath,
+        ]));
+        var inventoryPath = Path.Combine(fixture.Path, "inventory.json");
+        Assert.Equal(0, await Program.Main(
+        [
+            "build-dev-inventory", "--input", preparedPath, "--output", inventoryPath,
+        ]));
+
+        var draftPath = Path.Combine(fixture.Path, "mapping-draft.json");
+        await CadExperimentJson.WriteAsync(draftPath, MappingDraft());
+        var profilePath = Path.Combine(fixture.Path, "mapping-profile.json");
+        Assert.Equal(0, await Program.Main(
+        [
+            "seal-dev-mapping-profile", "--input", draftPath, "--output", profilePath,
+        ]));
+        var previewPath = Path.Combine(fixture.Path, "mapping-preview.json");
+        Assert.Equal(0, await Program.Main(
+        [
+            "preview-dev-mapping", "--inventory", inventoryPath,
+            "--profile", profilePath,
+            "--tenant-id", "55555555-5555-5555-5555-555555555555",
+            "--output", previewPath,
+        ]));
+
+        await using var previewStream = File.OpenRead(previewPath);
+        var preview = await JsonSerializer.DeserializeAsync<SpaceCadMappingPreviewV1>(
+            previewStream,
+            CadExperimentJson.Options);
+        Assert.True(preview!.ReadyForSemanticParsing);
+        Assert.Equal(1, preview.Summary.MappedLayerCount);
+        Assert.Equal(0, preview.Summary.BlockingCount);
+        SpaceCadMapping.ValidatePreview(preview);
+    }
+
     private static SpaceCadConversionRequest Request(string sourceSha256) =>
         new(
             Guid.Parse("11111111-1111-1111-1111-111111111111"),
@@ -319,6 +405,66 @@ public sealed class DevelopmentDxfCadConverterTests
                    stream,
                    CadExperimentJson.Options)
                ?? throw new InvalidDataException("Generated manifest is empty.");
+    }
+
+    private static SpaceCadMappingProfileDraftV1 MappingDraft() =>
+        new(
+            SpaceCadMappingVersions.SchemaVersion,
+            Guid.Parse("88888888-8888-8888-8888-888888888888"),
+            Version: 1,
+            "Development catch-all mapping",
+            SpaceCadMappingScope.System,
+            TenantId: null,
+            IsEnabled: true,
+            BasedOnProfileId: null,
+            BasedOnVersion: null,
+            [
+                new SpaceCadMappingRuleV1(
+                    "BLOCK-ALL",
+                    1,
+                    SpaceCadMappingSourceKind.Block,
+                    SpaceCadMappingMatchKind.Regex,
+                    ".*",
+                    AttributeName: null,
+                    AttributeMatchKind: null,
+                    AttributePattern: null,
+                    SpaceCadSemanticTarget.Rack,
+                    TargetSubtype: null,
+                    SpaceCadGeometryRule.InsertionPoint,
+                    DefaultHeightMillimeters: null,
+                    DefaultThicknessMillimeters: null,
+                    ConfidenceWeight: 0.5m,
+                    IsRequired: false),
+                new SpaceCadMappingRuleV1(
+                    "LAYER-ALL",
+                    1,
+                    SpaceCadMappingSourceKind.Layer,
+                    SpaceCadMappingMatchKind.Regex,
+                    ".*",
+                    AttributeName: null,
+                    AttributeMatchKind: null,
+                    AttributePattern: null,
+                    SpaceCadSemanticTarget.Guide,
+                    TargetSubtype: null,
+                    SpaceCadGeometryRule.DirectGeometry,
+                    DefaultHeightMillimeters: null,
+                    DefaultThicknessMillimeters: null,
+                    ConfidenceWeight: 0.5m,
+                    IsRequired: false),
+            ]);
+
+    private static string RepositoryFile(params string[] segments)
+    {
+        var directory = new DirectoryInfo(AppContext.BaseDirectory);
+        while (directory is not null)
+        {
+            var candidate = Path.Combine([directory.FullName, .. segments]);
+            if (File.Exists(candidate))
+                return candidate;
+            directory = directory.Parent;
+        }
+        throw new FileNotFoundException(
+            $"Repository file '{Path.Combine(segments)}' was not found.");
     }
 
     private const string ValidDxf =

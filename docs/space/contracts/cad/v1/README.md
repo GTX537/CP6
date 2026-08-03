@@ -34,6 +34,15 @@ contract; SDK-specific objects may not cross the converter boundary.
   coordinate transform, target floor, layer/type counts, block definitions,
   references, attribute summaries/values and bounds are bound by a deterministic
   SHA-256. Layer, block and block-reference queries are capped at 200 records per page.
+- Mapping profiles are immutable, hash-sealed snapshots. System profiles have no
+  tenant owner and are read-only to tenants; a tenant copy records its system base
+  and subsequent edits create a new version. A tenant profile cannot cross tenants.
+- Mapping rules target either layers or blocks and use exact, glob or bounded
+  non-backtracking regular-expression matching. Block rules may add controlled
+  attribute conditions. Equal priority/specificity matches are Blocking conflicts;
+  explicit layer overrides win. Required sources fail closed when absent or empty.
+- Mapping previews retain unmapped and empty sources, bind the profile, inventory,
+  structural reuse key and overrides by SHA-256, and do not write semantic objects.
 
 ## Current delivery boundary
 
@@ -43,7 +52,9 @@ exists. Synthetic DXF conversion and corpus evidence are developed against this
 contract. The E02-S03 development slice also supplies coordinate analysis,
 confirmation and preparation without claiming formal acceptance. The E02-S04
 development slice adds a deterministic, queryable layer/block inventory without
-production persistence or authorization claims. Formal E02-S02 through E02-S04
+production persistence or authorization claims. The E02-S05 development slice adds
+mapping profile sealing, tenant-safe copy/version semantics and deterministic preview
+resolution without database or semantic parser writes. Formal E02-S02 through E02-S05
 acceptance still waits for E02-S01 vendor selection.
 
 Files:
@@ -51,5 +62,8 @@ Files:
 - `cad-ir.schema.json`: logical package schema.
 - `coordinate-confirmation.schema.json`: explicit unit/origin/rotation/floor input.
 - `inventory.schema.json`: query-source layer, block and block-reference inventory.
+- `mapping-profile.schema.json`: draft/sealed system or tenant mapping profile.
+- `mapping-preview.schema.json`: deterministic layer/block mapping preview.
 - `examples/minimal-wall.json`: minimal valid IR package.
 - `examples/development-coordinate-confirmation.json`: confirmation for synthetic sample 13.
+- `examples/development-mapping-profile-draft.json`: system profile draft for the synthetic corpus.

@@ -165,14 +165,17 @@ public sealed class SpaceCadInventoryTests
             new SpaceCadBlockReferenceInventoryQueryV1(AttributeValue: "R-001")));
     }
 
-    private static SpaceCadInventoryV1 Inventory()
+    internal static SpaceCadInventoryV1 Inventory(
+        SpaceCadMillimeterPointV1? floorOrigin = null)
     {
-        var (request, preparation) = PreparedPackage();
+        var (request, preparation) = PreparedPackage(floorOrigin);
         return SpaceCadInventory.Build(request, preparation);
     }
 
-    private static (SpaceCadConversionRequest Request, SpaceCadCoordinatePreparationV1 Preparation)
-        PreparedPackage()
+    internal static (
+        SpaceCadConversionRequest Request,
+        SpaceCadCoordinatePreparationV1 Preparation) PreparedPackage(
+            SpaceCadMillimeterPointV1? floorOrigin = null)
     {
         var request = new SpaceCadConversionRequest(
             Guid.Parse("11111111-1111-1111-1111-111111111111"),
@@ -250,7 +253,7 @@ public sealed class SpaceCadInventoryTests
             UnitConfirmed: true,
             SpaceCadUnit.Millimeter,
             new SpaceCadPointV1(0, 0),
-            new SpaceCadMillimeterPointV1(0, 0),
+            floorOrigin ?? new SpaceCadMillimeterPointV1(0, 0),
             RotationZDegrees: 0,
             new SpaceCadFloorAssignmentV1(
                 Guid.Parse("44444444-4444-4444-4444-444444444444"),

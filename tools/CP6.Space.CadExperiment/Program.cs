@@ -38,6 +38,12 @@ public static class Program
                 "query-dev-inventory" => await QueryDevelopmentInventoryAsync(
                     commandLine,
                     cancellation.Token),
+                "seal-dev-mapping-profile" => await SealDevelopmentMappingProfileAsync(
+                    commandLine,
+                    cancellation.Token),
+                "preview-dev-mapping" => await PreviewDevelopmentMappingAsync(
+                    commandLine,
+                    cancellation.Token),
                 "run" => await RunAsync(commandLine, cancellation.Token),
                 "inspect" => await ProbeAdapterAsync(commandLine, cancellation.Token),
                 "probe-adapter" => await ProbeAdapterAsync(commandLine, cancellation.Token),
@@ -54,6 +60,7 @@ public static class Program
         catch (Exception exception) when (
             exception is ArgumentException
                 or InvalidDataException
+                or InvalidOperationException
                 or IOException
                 or UnauthorizedAccessException
                 or JsonException)
@@ -321,6 +328,97 @@ public static class Program
         return 0;
     }
 
+    private static async Task<int> SealDevelopmentMappingProfileAsync(
+        CommandLine commandLine,
+        CancellationToken cancellationToken)
+    {
+        var input = Path.GetFullPath(commandLine.Required("--input"));
+        var output = Path.GetFullPath(commandLine.Required("--output"));
+        SpaceCadMappingProfileDraftV1 draft;
+        await using (var inputStream = File.OpenRead(input))
+        {
+            draft = await JsonSerializer.DeserializeAsync<SpaceCadMappingProfileDraftV1>(
+                        inputStream,
+                        CadExperimentJson.Options,
+                        cancellationToken)
+                    ?? throw new InvalidDataException("The CAD mapping profile draft is empty.");
+        }
+        var profile = SpaceCadMapping.Seal(draft);
+        await CadExperimentJson.WriteAsync(output, profile, cancellationToken);
+        Console.WriteLine(JsonSerializer.Serialize(
+            new
+            {
+                profile.ProfileId,
+                profile.Version,
+                profile.Scope,
+                profile.TenantId,
+                RuleCount = profile.Rules.Count,
+                profile.DefinitionSha256,
+            },
+            CadExperimentJson.Options));
+        return 0;
+    }
+
+    private static async Task<int> PreviewDevelopmentMappingAsync(
+        CommandLine commandLine,
+        CancellationToken cancellationToken)
+    {
+        var inventoryPath = Path.GetFullPath(commandLine.Required("--inventory"));
+        var profilePath = Path.GetFullPath(commandLine.Required("--profile"));
+        var output = Path.GetFullPath(commandLine.Required("--output"));
+        var tenantId = Guid.TryParse(commandLine.Required("--tenant-id"), out var parsedTenantId)
+                       && parsedTenantId != Guid.Empty
+            ? parsedTenantId
+            : throw new ArgumentException("Option '--tenant-id' must be a non-empty GUID.");
+        SpaceCadInventoryV1 inventory;
+        SpaceCadMappingProfileV1 profile;
+        await using (var inventoryStream = File.OpenRead(inventoryPath))
+        {
+            inventory = await JsonSerializer.DeserializeAsync<SpaceCadInventoryV1>(
+                            inventoryStream,
+                            CadExperimentJson.Options,
+                            cancellationToken)
+                        ?? throw new InvalidDataException("The CAD inventory is empty.");
+        }
+        await using (var profileStream = File.OpenRead(profilePath))
+        {
+            profile = await JsonSerializer.DeserializeAsync<SpaceCadMappingProfileV1>(
+                          profileStream,
+                          CadExperimentJson.Options,
+                          cancellationToken)
+                      ?? throw new InvalidDataException("The CAD mapping profile is empty.");
+        }
+        IReadOnlyList<SpaceCadLayerMappingOverrideV1> overrides = [];
+        if (commandLine.Optional("--overrides") is { } overridePath)
+        {
+            await using var overrideStream = File.OpenRead(Path.GetFullPath(overridePath));
+            overrides = await JsonSerializer.DeserializeAsync<SpaceCadLayerMappingOverrideV1[]>(
+                            overrideStream,
+                            CadExperimentJson.Options,
+                            cancellationToken)
+                        ?? throw new InvalidDataException("The CAD layer override list is empty.");
+        }
+
+        var preview = SpaceCadMapping.Preview(tenantId, inventory, profile, overrides);
+        await CadExperimentJson.WriteAsync(output, preview, cancellationToken);
+        Console.WriteLine(JsonSerializer.Serialize(
+            new
+            {
+                preview.ProfileId,
+                preview.ProfileVersion,
+                preview.ProfileDefinitionSha256,
+                preview.SourceSha256,
+                preview.InventorySha256,
+                preview.SourceStructureSha256,
+                preview.ReuseKeySha256,
+                preview.PreviewSha256,
+                preview.ReadyForSemanticParsing,
+                preview.Summary,
+            },
+            CadExperimentJson.Options));
+        return preview.ReadyForSemanticParsing ? 0 : 3;
+    }
+
     private static bool? OptionalBoolean(CommandLine commandLine, string name)
     {
         var value = commandLine.Optional(name);
@@ -422,6 +520,11 @@ public static class Program
                   [--external <true|false>] [--layer <id>] [--block <name>]
                   [--attribute <name>] [--value <value>] [--exclude-empty]
                   [--offset <n>] [--limit <n>] [--output <json-path>]
+              seal-dev-mapping-profile --input <profile-draft-json-path>
+                  --output <sealed-profile-json-path>
+              preview-dev-mapping --inventory <inventory-json-path>
+                  --profile <sealed-profile-json-path> --tenant-id <guid>
+                  [--overrides <override-json-path>] --output <preview-json-path>
               run --candidate <id> --candidate-version <version> --adapter <path>
                   [--adapter-arg <value>]... --input <path> [--input <path>]...
                   --output <directory> [--runs <n>] [--timeout-seconds <n>]
