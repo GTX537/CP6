@@ -1,3 +1,5 @@
+using System.Text.Json;
+
 namespace CP6.Space.Domain;
 
 public sealed class SpaceModelSource : SpaceTenantEntity
@@ -126,6 +128,13 @@ public sealed class SpaceModelSource : SpaceTenantEntity
             throw new ArgumentOutOfRangeException(nameof(mappingProfileVersion));
         if (scaleToMillimeters <= 0)
             throw new ArgumentOutOfRangeException(nameof(scaleToMillimeters));
+        if (SourceType is SpaceSourceType.Dwg or SpaceSourceType.Dxf)
+        {
+            ValidateCadCoordinateMetadata(
+                unit,
+                scaleToMillimeters,
+                transformJson);
+        }
 
         ParserVersion = RequireText(parserVersion, 100, nameof(parserVersion));
         MappingProfileId = mappingProfileId;
@@ -143,6 +152,14 @@ public sealed class SpaceModelSource : SpaceTenantEntity
         {
             throw new SpaceFileStateException(
                 "Only a ready or preview-ready source can begin parsing.");
+        }
+        if (SourceType is SpaceSourceType.Dwg or SpaceSourceType.Dxf
+            && (string.IsNullOrWhiteSpace(Unit)
+                || ScaleToMillimeters is null or <= 0
+                || string.IsNullOrWhiteSpace(TransformJson)))
+        {
+            throw new SpaceFileStateException(
+                "CAD parsing requires confirmed units, scale, transform and target floor metadata.");
         }
         State = SpaceSourceState.Parsing;
     }
@@ -264,5 +281,61 @@ public sealed class SpaceModelSource : SpaceTenantEntity
         if (string.IsNullOrWhiteSpace(value))
             return null;
         return RequireText(value, maxLength, parameterName);
+    }
+
+    private void ValidateCadCoordinateMetadata(
+        string? unit,
+        decimal? scaleToMillimeters,
+        string? transformJson)
+    {
+        if (string.IsNullOrWhiteSpace(unit)
+            || scaleToMillimeters is null or <= 0
+            || string.IsNullOrWhiteSpace(transformJson))
+        {
+            throw new ArgumentException(
+                "CAD import requires confirmed units, scale and coordinate metadata.");
+        }
+
+        try
+        {
+            using var document = JsonDocument.Parse(transformJson);
+            var root = document.RootElement;
+            var schemaVersion = root.GetProperty("schemaVersion").GetInt32();
+            var sourceSha256 = root.GetProperty("sourceSha256").GetString();
+            var unitConfirmed = root.GetProperty("unitConfirmed").GetBoolean();
+            var confirmedUnit = root.GetProperty("confirmedUnit").GetString();
+            var confirmedScale = root.GetProperty("confirmedScaleToMillimeters").GetDecimal();
+            var transformSha256 = root.GetProperty("transformSha256").GetString();
+            var targetFloor = root.GetProperty("targetFloor");
+            var floorLogicalId = targetFloor.GetProperty("floorLogicalId").GetGuid();
+            var coordinateSystem = targetFloor.GetProperty("coordinateSystem").GetString();
+            if (schemaVersion != 1
+                || !unitConfirmed
+                || !Sha256.Equals(sourceSha256, StringComparison.Ordinal)
+                || !unit.Equals(confirmedUnit, StringComparison.Ordinal)
+                || scaleToMillimeters != confirmedScale
+                || floorLogicalId == Guid.Empty
+                || !"LOCAL_MM_Z_UP".Equals(coordinateSystem, StringComparison.Ordinal)
+                || transformSha256 is null
+                || transformSha256.Length != 64
+                || transformSha256.Any(character =>
+                    !Uri.IsHexDigit(character) || char.IsUpper(character)))
+            {
+                throw new ArgumentException(
+                    "CAD coordinate metadata does not match the source confirmation.",
+                    nameof(transformJson));
+            }
+        }
+        catch (Exception exception) when (
+            exception is JsonException
+                or KeyNotFoundException
+                or InvalidOperationException
+                or FormatException)
+        {
+            throw new ArgumentException(
+                "CAD coordinate metadata is invalid.",
+                nameof(transformJson),
+                exception);
+        }
     }
 }

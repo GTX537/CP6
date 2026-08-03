@@ -45,6 +45,19 @@ public sealed class DevelopmentDxfCadConverterTests
             Assert.All(
                 sink.Package.Entities.Where(entity => !entity.IsSupported),
                 entity => Assert.Contains(entity.SourceRef, unsupportedIssueRefs));
+            var coordinateAnalysis = SpaceCadCoordinatePreparation.Analyze(
+                request,
+                sink.Package);
+            Assert.True(coordinateAnalysis.IsSuggestedExtentPlausible);
+            var prepared = SpaceCadCoordinatePreparation.Prepare(
+                request,
+                sink.Package,
+                CoordinateConfirmation(request.SourceSha256));
+            Assert.True(prepared.ReadyForParsing);
+            Assert.Matches("^[0-9a-f]{64}$", prepared.Metadata.TransformSha256);
+            Assert.Equal(
+                SpaceCadCoordinateVersions.TargetCoordinateSystem,
+                prepared.Metadata.TargetFloor.CoordinateSystem);
             Assert.NotEmpty(sink.Package.Entities);
             totalEntities += result.Summary.EntityCount;
             unsupportedEntities += result.Summary.UnsupportedEntityCount;
@@ -125,6 +138,45 @@ public sealed class DevelopmentDxfCadConverterTests
         Assert.Equal(decimal.Parse(expectedX), sink.Package.Entities[0].Points[1].X);
     }
 
+    [Fact]
+    public async Task Coordinate_command_writes_a_ready_source_bound_preparation_artifact()
+    {
+        using var fixture = new TemporaryDirectory();
+        var input = fixture.Write("sample.dxf", ValidDxf);
+        var sourceHash = await DatasetAuditor.ComputeSha256Async(input);
+        var request = Request(sourceHash);
+        var irPath = Path.Combine(fixture.Path, "sample.cad-ir.json");
+        await using (var stream = File.OpenRead(input))
+        {
+            await new DevelopmentDxfCadConverter().ConvertAsync(
+                request,
+                stream,
+                new DevelopmentCadIrFileSink(request, irPath));
+        }
+        var confirmationPath = Path.Combine(fixture.Path, "confirmation.json");
+        await CadExperimentJson.WriteAsync(
+            confirmationPath,
+            CoordinateConfirmation(sourceHash));
+        var outputPath = Path.Combine(fixture.Path, "prepared.json");
+
+        var exitCode = await Program.Main(
+        [
+            "prepare-dev-coordinate",
+            "--input", irPath,
+            "--confirmation", confirmationPath,
+            "--output", outputPath,
+        ]);
+
+        Assert.Equal(0, exitCode);
+        await using var output = File.OpenRead(outputPath);
+        var prepared = await JsonSerializer.DeserializeAsync<SpaceCadCoordinatePreparationV1>(
+            output,
+            CadExperimentJson.Options);
+        Assert.True(prepared!.ReadyForParsing);
+        Assert.Equal(sourceHash, prepared.Metadata.SourceSha256);
+        Assert.Equal("F01", prepared.Metadata.TargetFloor.FloorCode);
+    }
+
     private static SpaceCadConversionRequest Request(string sourceSha256) =>
         new(
             Guid.Parse("11111111-1111-1111-1111-111111111111"),
@@ -134,6 +186,23 @@ public sealed class DevelopmentDxfCadConverterTests
             SpaceCadSourceFormat.Dxf,
             DevelopmentDxfCadConverter.ConverterId,
             DevelopmentDxfCadConverter.ConverterVersion);
+
+    private static SpaceCadCoordinateConfirmationV1 CoordinateConfirmation(
+        string sourceSha256) =>
+        new(
+            sourceSha256,
+            UnitConfirmed: true,
+            SpaceCadUnit.Millimeter,
+            new SpaceCadPointV1(0, 0),
+            new SpaceCadMillimeterPointV1(0, 0),
+            RotationZDegrees: 0,
+            new SpaceCadFloorAssignmentV1(
+                Guid.Parse("44444444-4444-4444-4444-444444444444"),
+                "F01",
+                1,
+                0,
+                SpaceCadCoordinateVersions.TargetCoordinateSystem,
+                new SpaceCadBoundsV1(-1_000_000, -1_000_000, 1_000_000, 1_000_000)));
 
     private static async Task<CadDatasetManifest> LoadManifestAsync(string path)
     {
