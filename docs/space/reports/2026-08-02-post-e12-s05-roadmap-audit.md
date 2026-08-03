@@ -45,6 +45,18 @@ E04-S06 已基于统一 Design Revision 完成 2D/3D 同源预览，但它不解
 
 输入到位后应先复用 `docs/space/experiments/e02-s01` 的严格 audit/preflight 和中立 observation 契约，完成 E02-S01 最终签收；然后按 E02-S02→S07 解锁 E03-S04、E04-S05、E13-S04 与 E12-S06。若授权范围只允许读取、不允许写入，E12-S06 必须继续保持 Blocked，不能用 GLB 导出替代其验收。
 
+## 残留工作树与存储审计
+
+E12-S05 清理后继续检查了其余 Space 相关工作树。下列提交头都已是远端 `integration/space-v1-20260730` 的祖先，且对应远端临时分支不存在；但工作目录包含未提交内容，提交祖先关系不能证明这些内容已备份，因此全部保留：
+
+| 工作树 | 占用 | 未提交内容 | 处理 |
+|---|---:|---|---|
+| `tmp/worktrees/space-e04-s01-underlay` | 851,954,347 bytes / 0.793 GiB | 3 份 `migration/database/*.bak` 修改 | 保留；数据库备份不得未经范围与敏感性确认推送远端 |
+| `tmp/worktrees/space-volume1` | 580,113,093 bytes / 0.540 GiB | 多个 Space 项目、SDK、工具和合同文件未跟踪，另有 4 个已跟踪文件修改 | 保留；可能是唯一工作副本 |
+| `D:/CP6-space-backend` | 964,579,891 bytes / 0.898 GiB | `cp6.web/src/space-viewer/advanced/cost.spec.ts` 未跟踪 | 保留；可能是用户测试草稿 |
+
+`main-space-p25-integration`、仓库根工作树以及 OA/WFS 工作树不是本轮 Space 临时清理目标，也没有被改动。可证明“干净、已远端集成、可删除”的 E12-S05 功能工作树已释放约 2.672 GiB；本轮未为追求更多空间而删除任何脏工作目录，也未把数据库备份或未审查源码擅自上传。
+
 ## 当前安全停点
 
 - 受控集成审计起点：`624c1511`。
