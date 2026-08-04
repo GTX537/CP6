@@ -1,0 +1,238 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://cp6.local/schemas/space/cad/v1/excel-cad-match-preview.schema.json",
+  "title": "CP6 Space Excel/CAD Match Preview v1",
+  "type": "object",
+  "additionalProperties": false,
+  "required": [
+    "schemaVersion",
+    "isReadOnlyPreview",
+    "tenantId",
+    "modelVersionId",
+    "excelSourceId",
+    "preflightJobId",
+    "mappingProfileId",
+    "mappingProfileVersion",
+    "mappingDefinitionSha256",
+    "workbookProjectionSha256",
+    "floorLogicalId",
+    "floorCode",
+    "semanticPreviewSha256",
+    "diagnosticIndexSha256",
+    "cadReadyForConfirmation",
+    "cadBlockingCount",
+    "excelBlockingFindingCount",
+    "editorContentRevision",
+    "editorSnapshotSha256",
+    "rows",
+    "summary",
+    "canConfirm",
+    "matchPreviewSha256"
+  ],
+  "properties": {
+    "schemaVersion": { "const": 1 },
+    "isReadOnlyPreview": { "const": true },
+    "tenantId": { "$ref": "#/$defs/guid" },
+    "modelVersionId": { "$ref": "#/$defs/guid" },
+    "excelSourceId": { "$ref": "#/$defs/guid" },
+    "preflightJobId": { "$ref": "#/$defs/guid" },
+    "mappingProfileId": { "$ref": "#/$defs/guid" },
+    "mappingProfileVersion": { "type": "integer", "minimum": 1 },
+    "mappingDefinitionSha256": { "$ref": "#/$defs/sha256" },
+    "workbookProjectionSha256": { "$ref": "#/$defs/sha256" },
+    "floorLogicalId": { "$ref": "#/$defs/guid" },
+    "floorCode": { "$ref": "#/$defs/token" },
+    "semanticPreviewSha256": { "$ref": "#/$defs/sha256" },
+    "diagnosticIndexSha256": { "$ref": "#/$defs/sha256" },
+    "cadReadyForConfirmation": { "type": "boolean" },
+    "cadBlockingCount": { "type": "integer", "minimum": 0 },
+    "excelBlockingFindingCount": { "type": "integer", "minimum": 0 },
+    "editorContentRevision": { "type": "integer", "minimum": 0 },
+    "editorContentHash": { "$ref": "#/$defs/sha256" },
+    "editorSnapshotSha256": { "$ref": "#/$defs/sha256" },
+    "rows": {
+      "type": "array",
+      "items": { "$ref": "#/$defs/matchRow" }
+    },
+    "summary": { "$ref": "#/$defs/summary" },
+    "canConfirm": { "type": "boolean" },
+    "matchPreviewSha256": { "$ref": "#/$defs/sha256" }
+  },
+  "$defs": {
+    "guid": {
+      "type": "string",
+      "format": "uuid"
+    },
+    "sha256": {
+      "type": "string",
+      "pattern": "^[0-9a-f]{64}$"
+    },
+    "token": {
+      "type": "string",
+      "minLength": 1,
+      "maxLength": 128,
+      "pattern": "^\\S(?:.*\\S)?$"
+    },
+    "matchRow": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": [
+        "excelRowId",
+        "sourceSheet",
+        "rowNumber",
+        "values",
+        "disposition",
+        "keyEvidence",
+        "differenceFields",
+        "errorCodes",
+        "matchEvidenceSha256"
+      ],
+      "properties": {
+        "excelRowId": { "$ref": "#/$defs/token" },
+        "sourceSheet": { "$ref": "#/$defs/token" },
+        "rowNumber": { "type": "integer", "minimum": 1 },
+        "values": { "$ref": "#/$defs/rackValues" },
+        "disposition": {
+          "enum": ["New", "Update", "Unchanged", "Unmatched", "Conflict", "Error"]
+        },
+        "cadPreviewObjectId": { "$ref": "#/$defs/token" },
+        "editorLogicalId": { "$ref": "#/$defs/guid" },
+        "matchedSourceRef": { "$ref": "#/$defs/token" },
+        "cadConfidence": { "type": "number", "minimum": 0, "maximum": 1 },
+        "cadConfidenceBand": { "enum": ["High", "Review", "Low", "Rejected"] },
+        "keyEvidence": {
+          "type": "array",
+          "items": { "$ref": "#/$defs/keyEvidence" }
+        },
+        "differenceFields": {
+          "type": "array",
+          "items": { "$ref": "#/$defs/token" },
+          "uniqueItems": true
+        },
+        "errorCodes": {
+          "type": "array",
+          "items": { "$ref": "#/$defs/token" },
+          "uniqueItems": true
+        },
+        "location": { "$ref": "#/$defs/location" },
+        "matchEvidenceSha256": { "$ref": "#/$defs/sha256" }
+      },
+      "allOf": [
+        {
+          "if": { "properties": { "disposition": { "const": "Error" } } },
+          "then": { "properties": { "errorCodes": { "minItems": 1 } } },
+          "else": { "properties": { "errorCodes": { "maxItems": 0 } } }
+        },
+        {
+          "if": { "properties": { "disposition": { "const": "New" } } },
+          "then": { "required": ["cadPreviewObjectId"] }
+        },
+        {
+          "if": {
+            "properties": {
+              "disposition": { "enum": ["Update", "Unchanged"] }
+            }
+          },
+          "then": { "required": ["editorLogicalId"] }
+        }
+      ]
+    },
+    "rackValues": {
+      "type": "object",
+      "additionalProperties": false,
+      "properties": {
+        "floorCode": { "$ref": "#/$defs/token" },
+        "zoneCode": { "$ref": "#/$defs/token" },
+        "rackCode": { "$ref": "#/$defs/token" },
+        "xMillimeters": { "type": "number" },
+        "yMillimeters": { "type": "number" },
+        "zMillimeters": { "type": "number" },
+        "widthMillimeters": { "type": "number", "exclusiveMinimum": 0 },
+        "depthMillimeters": { "type": "number", "exclusiveMinimum": 0 },
+        "heightMillimeters": { "type": "number", "exclusiveMinimum": 0 },
+        "rotationZDegrees": { "type": "number" },
+        "rackTemplateCode": { "$ref": "#/$defs/token" },
+        "lifecycleStatus": { "$ref": "#/$defs/token" }
+      }
+    },
+    "keyEvidence": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["kind", "value", "candidateId"],
+      "properties": {
+        "kind": {
+          "enum": ["CadSourceRef", "CadRackCode", "EditorSourceRef", "EditorRackCode"]
+        },
+        "value": { "$ref": "#/$defs/token" },
+        "candidateId": { "$ref": "#/$defs/token" }
+      }
+    },
+    "location": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": [
+        "kind",
+        "floorLogicalId",
+        "suggestedPaddingMillimeters",
+        "canFocusCanvas"
+      ],
+      "properties": {
+        "kind": { "enum": ["Document", "Layer", "Block", "Entity"] },
+        "floorLogicalId": { "$ref": "#/$defs/guid" },
+        "layerId": { "$ref": "#/$defs/token" },
+        "blockName": { "$ref": "#/$defs/token" },
+        "sourceRef": { "$ref": "#/$defs/token" },
+        "previewObjectId": { "$ref": "#/$defs/token" },
+        "bounds": { "$ref": "#/$defs/bounds" },
+        "anchor": { "$ref": "#/$defs/point" },
+        "suggestedPaddingMillimeters": { "type": "integer", "minimum": 0 },
+        "canFocusCanvas": { "type": "boolean" }
+      }
+    },
+    "bounds": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["minX", "minY", "maxX", "maxY"],
+      "properties": {
+        "minX": { "type": "integer" },
+        "minY": { "type": "integer" },
+        "maxX": { "type": "integer" },
+        "maxY": { "type": "integer" }
+      }
+    },
+    "point": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["x", "y", "z"],
+      "properties": {
+        "x": { "type": "integer" },
+        "y": { "type": "integer" },
+        "z": { "type": "integer" }
+      }
+    },
+    "summary": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": [
+        "excelRackRowCount",
+        "newCount",
+        "updateCount",
+        "unchangedCount",
+        "unmatchedCount",
+        "conflictCount",
+        "errorCount",
+        "locatableCount"
+      ],
+      "properties": {
+        "excelRackRowCount": { "type": "integer", "minimum": 0 },
+        "newCount": { "type": "integer", "minimum": 0 },
+        "updateCount": { "type": "integer", "minimum": 0 },
+        "unchangedCount": { "type": "integer", "minimum": 0 },
+        "unmatchedCount": { "type": "integer", "minimum": 0 },
+        "conflictCount": { "type": "integer", "minimum": 0 },
+        "errorCount": { "type": "integer", "minimum": 0 },
+        "locatableCount": { "type": "integer", "minimum": 0 }
+      }
+    }
+  }
+}

@@ -58,6 +58,14 @@ contract; SDK-specific objects may not cross the converter boundary.
 - Evidence and diagnostic queries are deterministic and capped at 200 rows. This
   read-only index enables later Excel matching and editor problem navigation but does
   not implement correction commands, field locks or Draft persistence.
+- Excel/CAD matching consumes canonical E03-S03 rows, the exact semantic/diagnostic
+  chain and a hash-sealed editor rack snapshot. Rack rows associate through an exact
+  CAD/editor SourceRef or a controlled rack-code key; multiple candidates, CAD/editor
+  source disagreement and two Excel rows claiming one target remain explicit conflicts.
+- Match output classifies every rack row as New, Update, Unchanged, Unmatched,
+  Conflict or Error, keeps unmatched rows independently queryable, and records key,
+  CAD confidence, changed fields, canvas location and per-row SHA-256 evidence. It is
+  a read-only preview and does not apply Excel values to Draft.
 
 ## Current delivery boundary
 
@@ -74,7 +82,10 @@ read-only semantic proposal parser and confidence selection boundary without Dra
 writes. The E02-S07 development slice adds the provenance and spatial diagnostic
 index needed by later matching and editor UI. Formal E02-S02 through E02-S07
 acceptance still waits for E02-S01 vendor selection and the production
-conversion/persistence chain.
+conversion/persistence chain. The E03-S04 development slice consumes these artifacts
+for deterministic Excel rack matching, but formal E03-S04 still waits for that same
+production source/preflight persistence chain; confirmation and idempotent Draft writes
+remain E03-S05.
 
 Files:
 
@@ -85,6 +96,7 @@ Files:
 - `mapping-preview.schema.json`: deterministic layer/block mapping preview.
 - `semantic-preview.schema.json`: deterministic read-only semantic proposal preview.
 - `semantic-diagnostics.schema.json`: proposal evidence and spatial issue index.
+- `excel-cad-match-preview.schema.json`: read-only Excel rack association preview.
 - `examples/minimal-wall.json`: minimal valid IR package.
 - `examples/development-coordinate-confirmation.json`: confirmation for synthetic sample 13.
 - `examples/development-mapping-profile-draft.json`: system profile draft for the synthetic corpus.
