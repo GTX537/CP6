@@ -4,7 +4,7 @@
 
 ## 交付结论
 
-CP6 已在 E02-S06 集成基线 `68d59562` 上完成功能提交 `19b6c443`：把只读 Semantic Preview 进一步冻结为可验证的“逐提案证据 + 问题空间索引”。每个自动提案都可回答“来自哪个 CAD 对象、命中了哪条规则、置信度为何、在楼层画布哪里”，映射与语义问题也可按严重度、来源、代码、图层、SourceRef 和是否可定位进行确定性查询。
+CP6 已在 E02-S06 集成基线 `68d59562` 上完成功能提交 `19b6c443`、证据提交 `2eee2081`，并以 no-ff 提交 `c792ea8c` 集成到 `integration/space-v1-20260730`：把只读 Semantic Preview 进一步冻结为可验证的“逐提案证据 + 问题空间索引”。每个自动提案都可回答“来自哪个 CAD 对象、命中了哪条规则、置信度为何、在楼层画布哪里”，映射与语义问题也可按严重度、来源、代码、图层、SourceRef 和是否可定位进行确定性查询。
 
 该产物明确是 `IsReadOnlyIndex=true` 的开发诊断工件，不修改 Semantic Preview，不创建永久 LogicalId，不写 Draft、数据库或编辑器状态。本切片不是正式 E02-S07 验收。
 
@@ -39,7 +39,7 @@ CP6 已在 E02-S06 集成基线 `68d59562` 上完成功能提交 `19b6c443`：�
 - E02-S07 聚焦：6 passed / 0 failed / 0 skipped；覆盖逐提案来源/规则/置信度/位置、映射图层与语义实体定位、筛选和分页上限、确定性、来源链与篡改阻断、空图层不伪造范围；
 - CAD 实验工具完整测试：23 passed / 0 failed / 0 skipped；
 - Space Unit 完整测试：328 passed / 0 failed / 0 skipped；
-- 完整 solution Release 非增量构建：0 error / 10 条既有 warning；
+- 合并后完整 solution Release 非增量单线程构建：0 error / 10 条既有 warning；首次并行重试曾由 Android 原生 AOT 工具随机崩溃，关闭残留 MSBuild 节点后保持 Desktop/Android AOT 强度通过；
 - 受影响 C# 文件 `dotnet format --verify-no-changes`、两个 Schema JSON 语法解析和 `git diff --check` 通过；全仓格式检查仍会命中与本切片无关的既有 Client/Core/MES 缩进债务，本次未扩大修改范围。
 
 ## 正式边界与下一步

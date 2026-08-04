@@ -1,6 +1,14 @@
 # 项目当前状态
 
-最后更新：2026-08-03
+最后更新：2026-08-04
+
+## E02-S07 CAD 语义证据与问题定位开发切片（2026-08-04）
+
+- 在 E02-S06 集成基线 `68d59562` 上完成功能提交 `19b6c443`、证据提交 `2eee2081`，并以 no-ff 提交 `c792ea8c` 集成到 `integration/space-v1-20260730`：每个只读语义提案现在都带 SourceRef、采用规则、置信度分段、独立证据哈希和整数毫米画布位置；Mapping/Semantic 问题形成稳定、可筛选的空间索引。
+- 诊断工件绑定 Tenant/Floor 及 Source、Transform、Inventory、Profile、Mapping、Semantic 全链 SHA-256；构建时重算语义链，错配与篡改失败关闭。Document/Layer/Block/Entity 四级定位显式区分可聚焦与不可聚焦，空图层保留 ID 但不伪造范围。
+- 样例 13：Diagnostic Index `f0d18f95...17209448b`，JSON 文件 `aa04fc74...70eacdc0c`（46,892 bytes）；21 条提案证据为 High 13 / Review 0 / Low 8 / Rejected 0，21 条问题为 12 Info / 9 Warning / 0 Blocking，其中 17 条可聚焦、4 条真实空图层不可聚焦，重复运行字节完全相同。
+- 门禁：E02-S07 聚焦 6/6、Space Unit 328/328、CAD 工具 23/23、合并后完整 solution Release 非增量单线程构建 0 error / 10 条既有 warning，受影响文件格式、Schema JSON 与差异检查通过。并行 Android AOT 曾瞬时崩溃，关闭残留构建节点后在不降低 AOT 强度的条件下通过。
+- 这是开发切片而非正式 E02-S07 验收；尚无问题列表 UI/画布点击高亮、人工删除/合并/拆分、字段锁定或修正重放，也未写 Draft/数据库。正式验收仍等待授权原生 CAD 适配器、冻结 Worker、独立真实黄金集、生产持久化/API/权限/审计与精度/覆盖率证据。下一开发主线优先 E03-S04 Excel 行与 CAD/编辑器元素候选匹配，随后 E04-S05 消费本索引实现问题列表和画布定位。证据见 `docs/space/reports/e02-s07-cad-semantic-diagnostics-development.md`。
 
 ## E02-S06 CAD 基础语义解析器开发切片（2026-08-03）
 
