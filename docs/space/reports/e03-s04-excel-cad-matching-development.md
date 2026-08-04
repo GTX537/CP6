@@ -4,7 +4,7 @@
 
 ## 交付结论
 
-CP6 已在 E02-S07 集成基线 `4d945b5d` 上完成功能提交 `2da39667`：把 E03-S03 的规范化 Excel 货架行与 E02-S06/S07 的 CAD 语义提案、诊断位置及只读编辑器货架快照组合为确定性匹配预览，显式区分 New、Update、Unchanged、Unmatched、Conflict 和 Error，并提供独立未匹配清单与画布可定位查询。
+CP6 已在 E02-S07 集成基线 `4d945b5d` 上完成功能提交 `2da39667`、证据提交 `02cdbcff`，并以 no-ff 提交 `b2a2320c` 集成到 `integration/space-v1-20260730`：把 E03-S03 的规范化 Excel 货架行与 E02-S06/S07 的 CAD 语义提案、诊断位置及只读编辑器货架快照组合为确定性匹配预览，显式区分 New、Update、Unchanged、Unmatched、Conflict 和 Error，并提供独立未匹配清单与画布可定位查询。
 
 该产物固定为 `IsReadOnlyPreview=true`。构建、验证和查询均不创建永久 LogicalId，不写 Draft、数据库或编辑器状态，也不推进模型内容修订号；因此这是开发切片，不是正式 E03-S04 验收，也不提前实施 E03-S05 的用户确认与幂等写入。
 
@@ -44,7 +44,7 @@ CP6 已在 E02-S07 集成基线 `4d945b5d` 上完成功能提交 `2da39667`：�
 - E03-S03 预检回归：6 passed / 0 failed / 0 skipped；
 - Space Unit 全量：336 passed / 0 failed / 0 skipped；
 - CAD 实验工具全量：23 passed / 0 failed / 0 skipped；
-- 完整 solution Release 非增量单线程构建：0 error / 10 条既有 warning，Desktop 与 Android 原生 AOT 强度保持不变；
+- 功能树与 no-ff 合并树的完整 solution Release 非增量单线程构建均为 0 error / 10 条既有 warning，Desktop 与 Android 原生 AOT 强度保持不变；合并态再次通过 Space Unit 336/336、CAD 工具 23/23 与预检回归 6/6；
 - 受影响 C# 文件 `dotnet format --verify-no-changes`、CAD v1 全部 Schema JSON 语法、生成工件的类型反序列化/应用验证、空字段省略检查与 `git diff --check` 通过。
 
 ## 正式边界与下一步

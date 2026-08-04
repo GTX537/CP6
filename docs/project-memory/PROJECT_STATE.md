@@ -2,6 +2,14 @@
 
 最后更新：2026-08-04
 
+## E03-S04 Excel/CAD 元素匹配开发切片（2026-08-04）
+
+- 在 E02-S07 集成基线 `4d945b5d` 上完成功能提交 `2da39667`、证据提交 `02cdbcff`，并以 no-ff 提交 `b2a2320c` 集成到 `integration/space-v1-20260730`：E03-S03 规范化 Excel 货架行现在可与 CAD 语义提案和只读编辑器快照进行确定性匹配，显式给出 New/Update/Unchanged/Unmatched/Conflict/Error 及独立未匹配查询。
+- 匹配只接受 CAD/编辑器 SourceRef 或受控货架码属性；多候选、来源不一致、跨楼层和多 Excel 行争用同一目标均失败为 Conflict。每行保留采用键、候选、差异、错误码、CAD 置信度、画布位置和独立证据 SHA；Tenant/ModelVersion/Floor、Excel 映射与工作簿投影、Semantic、Diagnostic、编辑器修订和顶层预览形成完整哈希链。
+- 样例 13 的 10 行结果为 New 8 / Unmatched 1 / Error 1，8 条 New 全部可聚焦；Match Preview `c6ca3640...72a4c107`，JSON 文件 `369372e1...67acd951`（15,732 bytes），两次运行字节完全一致。未匹配、新建可定位和错误查询分别返回 1、8、1 条；因未匹配、错误和 Low CAD 候选，`CanConfirm=false`。
+- 门禁：E03-S04 聚焦 8/8、E03-S03 预检回归 6/6、Space Unit 336/336、CAD 工具 23/23；功能树和 no-ff 合并树的完整 solution Release 非增量单线程构建均为 0 error / 10 条既有 warning，格式、Schema、类型验证、空字段省略和差异检查通过。
+- 这是只读开发切片，不创建永久 LogicalId，不写 Draft/数据库/编辑器，不替代正式 CAD 适配器、生产 Artifact/持久化、权威编辑器快照服务、API/权限/审计、授权真实图纸或 UI 验收。E03-S05 继续负责用户确认和幂等 Draft 写入；生产链等待期间下一独立开发切片优先 E04-S05 问题/未匹配列表与画布聚焦。证据见 `docs/space/reports/e03-s04-excel-cad-matching-development.md`。
+
 ## E02-S07 CAD 语义证据与问题定位开发切片（2026-08-04）
 
 - 在 E02-S06 集成基线 `68d59562` 上完成功能提交 `19b6c443`、证据提交 `2eee2081`，并以 no-ff 提交 `c792ea8c` 集成到 `integration/space-v1-20260730`：每个只读语义提案现在都带 SourceRef、采用规则、置信度分段、独立证据哈希和整数毫米画布位置；Mapping/Semantic 问题形成稳定、可筛选的空间索引。
