@@ -456,6 +456,61 @@ public sealed class DevelopmentDxfCadConverterTests
             CadExperimentJson.Options);
         Assert.Equal(1, evidence!.TotalCount);
         Assert.Equal(SpaceCadConfidenceBand.High, Assert.Single(evidence.Items).ConfidenceBand);
+
+        var excelProfilePath = Path.Combine(fixture.Path, "excel-profile.json");
+        var workbookPath = Path.Combine(fixture.Path, "excel-workbook.json");
+        var editorPath = Path.Combine(fixture.Path, "editor-snapshot.json");
+        var matchPath = Path.Combine(fixture.Path, "excel-cad-match.json");
+        var unmatchedPath = Path.Combine(fixture.Path, "unmatched.json");
+        var modelVersionId = Guid.Parse("aaaaaaaa-1111-2222-3333-444444444444");
+        await CadExperimentJson.WriteAsync(excelProfilePath, ExcelProfile());
+        await CadExperimentJson.WriteAsync(workbookPath, ExcelWorkbook());
+        await CadExperimentJson.WriteAsync(
+            editorPath,
+            SpaceExcelCadMatching.SealEditorSnapshot(
+                semantic.TenantId,
+                modelVersionId,
+                semantic.FloorLogicalId,
+                semantic.FloorCode,
+                0,
+                null,
+                []));
+        Assert.Equal(3, await Program.Main(
+        [
+            "match-dev-excel-cad",
+            "--mapping", excelProfilePath,
+            "--workbook", workbookPath,
+            "--semantic", semanticPath,
+            "--diagnostics", diagnosticPath,
+            "--editor", editorPath,
+            "--tenant-id", "55555555-5555-5555-5555-555555555555",
+            "--model-version-id", modelVersionId.ToString(),
+            "--excel-source-id", "bbbbbbbb-1111-2222-3333-444444444444",
+            "--preflight-job-id", "cccccccc-1111-2222-3333-444444444444",
+            "--output", matchPath,
+        ]));
+        Assert.Equal(0, await Program.Main(
+        [
+            "query-dev-excel-cad-match",
+            "--input", matchPath,
+            "--disposition", "Unmatched",
+            "--output", unmatchedPath,
+        ]));
+        await using (var matchStream = File.OpenRead(matchPath))
+        {
+            var match = await JsonSerializer.DeserializeAsync<SpaceExcelCadMatchPreviewV1>(
+                matchStream,
+                CadExperimentJson.Options);
+            SpaceExcelCadMatching.Validate(match!);
+            Assert.Equal(1, match!.Summary.UnmatchedCount);
+            Assert.False(match.CanConfirm);
+        }
+        await using var unmatchedStream = File.OpenRead(unmatchedPath);
+        var unmatched = await JsonSerializer.DeserializeAsync<SpaceExcelCadMatchPageV1>(
+            unmatchedStream,
+            CadExperimentJson.Options);
+        Assert.Equal(1, unmatched!.TotalCount);
+        Assert.Equal("R-CLI-001", Assert.Single(unmatched.Items).Values.RackCode);
     }
 
     private static SpaceCadConversionRequest Request(string sourceSha256) =>
@@ -539,6 +594,99 @@ public sealed class DevelopmentDxfCadConverterTests
                     ConfidenceWeight: 0.9m,
                     IsRequired: false),
             ]);
+
+    private static SpaceExcelMappingProfileDto ExcelProfile()
+    {
+        var definition = new SpaceExcelMappingDefinitionDto(
+            SpaceExcelTargetCatalog.MappingSchemaVersion,
+            "Ignore",
+            "Reject",
+            "Reject",
+            [
+                new SpaceExcelSheetMappingDto(
+                    "Racks",
+                    "Racks",
+                    "Exact",
+                    1,
+                    2,
+                    SpaceExcelTargetCatalog.ForSheet("Racks")
+                        .Select(field => new SpaceExcelColumnMappingDto(
+                            field.Field,
+                            field.Field,
+                            null,
+                            field.DataType,
+                            null,
+                            null,
+                            field.IsBusinessKey,
+                            field.ReferenceTarget,
+                            [],
+                            null))
+                        .ToArray()),
+            ]);
+        return new SpaceExcelMappingProfileDto(
+            Guid.Parse("ffffffff-1111-2222-3333-444444444444"),
+            "CLI Excel profile",
+            "Tenant",
+            1,
+            false,
+            new string('a', 64),
+            definition,
+            null,
+            null,
+            null,
+            null,
+            null);
+    }
+
+    private static SpaceExcelWorkbookData ExcelWorkbook()
+    {
+        var fields = SpaceExcelTargetCatalog.ForSheet("Racks");
+        var values = new Dictionary<string, string?>(StringComparer.Ordinal)
+        {
+            ["FloorCode"] = "F01",
+            ["ZoneCode"] = "Z1",
+            ["RackCode"] = "R-CLI-001",
+            ["XMm"] = "1000",
+            ["YMm"] = "2000",
+            ["ZMm"] = "0",
+            ["WidthMm"] = "1000",
+            ["DepthMm"] = "1200",
+            ["HeightMm"] = "5000",
+            ["RotationZDeg"] = "0",
+            ["LifecycleStatus"] = "Active",
+        };
+        var header = new SpaceExcelWorkbookRow(
+            1,
+            fields.Select((field, index) => new SpaceExcelWorkbookCell(
+                    index + 1,
+                    ExcelColumnName(index + 1),
+                    field.Field,
+                    false))
+                .ToDictionary(cell => cell.ColumnIndex));
+        var row = new SpaceExcelWorkbookRow(
+            2,
+            fields.Select((field, index) => new SpaceExcelWorkbookCell(
+                    index + 1,
+                    ExcelColumnName(index + 1),
+                    values.GetValueOrDefault(field.Field),
+                    false))
+                .ToDictionary(cell => cell.ColumnIndex));
+        return new SpaceExcelWorkbookData(
+            [new SpaceExcelWorkbookSheet("Racks", [header, row])]);
+    }
+
+    private static string ExcelColumnName(int index)
+    {
+        var value = index;
+        var result = string.Empty;
+        while (value > 0)
+        {
+            value--;
+            result = (char)('A' + value % 26) + result;
+            value /= 26;
+        }
+        return result;
+    }
 
     private static string RepositoryFile(params string[] segments)
     {

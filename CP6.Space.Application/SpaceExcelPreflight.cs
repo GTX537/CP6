@@ -54,6 +54,17 @@ public sealed record SpaceExcelPreflightValidationResult(
     int ValidRowCount,
     IReadOnlyList<SpaceExcelPreflightFinding> Findings);
 
+public sealed record SpaceExcelCanonicalRow(
+    string TargetSheet,
+    string SourceSheet,
+    int RowNumber,
+    IReadOnlyDictionary<string, string?> Values,
+    IReadOnlyDictionary<string, string?> Columns);
+
+public sealed record SpaceExcelPreflightInspection(
+    SpaceExcelPreflightValidationResult Validation,
+    IReadOnlyList<SpaceExcelCanonicalRow> Rows);
+
 public sealed record SpaceExcelPreflightJobPayload(
     int SchemaVersion,
     Guid ModelVersionId,
@@ -137,12 +148,16 @@ public sealed class SpaceExcelPreflightValidator
 
     public SpaceExcelPreflightValidationResult Validate(
         SpaceExcelMappingDefinitionDto definition,
+        SpaceExcelWorkbookData workbook) => Inspect(definition, workbook).Validation;
+
+    public SpaceExcelPreflightInspection Inspect(
+        SpaceExcelMappingDefinitionDto definition,
         SpaceExcelWorkbookData workbook)
     {
         ArgumentNullException.ThrowIfNull(definition);
         ArgumentNullException.ThrowIfNull(workbook);
         var findings = new FindingCollector(MaximumFindings);
-        var rows = new List<CanonicalRow>();
+        var rows = new List<SpaceExcelCanonicalRow>();
         var matchedSheetCount = 0;
         var dataRowCount = 0;
 
@@ -250,11 +265,13 @@ public sealed class SpaceExcelPreflightValidator
             .ToHashSet();
         var validRows = rows.Count(row =>
             !blockingRows.Contains((row.SourceSheet, row.RowNumber)));
-        return new SpaceExcelPreflightValidationResult(
-            matchedSheetCount,
-            dataRowCount,
-            validRows,
-            findings.Complete());
+        return new SpaceExcelPreflightInspection(
+            new SpaceExcelPreflightValidationResult(
+                matchedSheetCount,
+                dataRowCount,
+                validRows,
+                findings.Complete()),
+            rows);
     }
 
     private static IReadOnlyDictionary<string, ResolvedColumn> ResolveColumns(
@@ -360,7 +377,7 @@ public sealed class SpaceExcelPreflightValidator
         }
     }
 
-    private static CanonicalRow ValidateRow(
+    private static SpaceExcelCanonicalRow ValidateRow(
         SpaceExcelMappingDefinitionDto definition,
         SpaceExcelSheetMappingDto mapping,
         string sheetName,
@@ -520,7 +537,7 @@ public sealed class SpaceExcelPreflightValidator
             values[target.Field] = canonical;
         }
 
-        return new CanonicalRow(
+        return new SpaceExcelCanonicalRow(
             mapping.TargetSheet,
             sheetName,
             sourceRow.RowNumber,
@@ -530,7 +547,7 @@ public sealed class SpaceExcelPreflightValidator
 
     private static void ValidateDuplicates(
         SpaceExcelMappingDefinitionDto definition,
-        IReadOnlyList<CanonicalRow> rows,
+        IReadOnlyList<SpaceExcelCanonicalRow> rows,
         FindingCollector findings)
     {
         foreach (var sheetRows in rows.GroupBy(row => row.TargetSheet))
@@ -578,7 +595,7 @@ public sealed class SpaceExcelPreflightValidator
     }
 
     private static void ValidateReferences(
-        IReadOnlyList<CanonicalRow> rows,
+        IReadOnlyList<SpaceExcelCanonicalRow> rows,
         FindingCollector findings)
     {
         var racks = Values(rows, "Racks", "RackCode");
@@ -650,9 +667,9 @@ public sealed class SpaceExcelPreflightValidator
     }
 
     private static void ValidateLocationCapacity(
-        CanonicalRow location,
+        SpaceExcelCanonicalRow location,
         string locationField,
-        CanonicalRow level,
+        SpaceExcelCanonicalRow level,
         string capacityField,
         FindingCollector findings)
     {
@@ -681,7 +698,7 @@ public sealed class SpaceExcelPreflightValidator
     }
 
     private static void RequireReference(
-        CanonicalRow row,
+        SpaceExcelCanonicalRow row,
         string field,
         IReadOnlySet<string> targets,
         FindingCollector findings)
@@ -692,7 +709,7 @@ public sealed class SpaceExcelPreflightValidator
     }
 
     private static void AddReferenceFinding(
-        CanonicalRow row,
+        SpaceExcelCanonicalRow row,
         string field,
         FindingCollector findings) =>
         findings.Add(Finding(
@@ -705,7 +722,7 @@ public sealed class SpaceExcelPreflightValidator
             "add-or-correct-referenced-row"));
 
     private static HashSet<string> Values(
-        IReadOnlyList<CanonicalRow> rows,
+        IReadOnlyList<SpaceExcelCanonicalRow> rows,
         string sheet,
         string field) =>
         rows.Where(row => row.TargetSheet == sheet)
@@ -715,7 +732,7 @@ public sealed class SpaceExcelPreflightValidator
             .ToHashSet(StringComparer.OrdinalIgnoreCase);
 
     private static string? TryBusinessKey(
-        CanonicalRow row,
+        SpaceExcelCanonicalRow row,
         IReadOnlyList<string> fields)
     {
         var values = fields.Select(field => Value(row, field)).ToArray();
@@ -724,7 +741,7 @@ public sealed class SpaceExcelPreflightValidator
             : string.Join('\u001f', values);
     }
 
-    private static string? Value(CanonicalRow row, string field) =>
+    private static string? Value(SpaceExcelCanonicalRow row, string field) =>
         row.Values.GetValueOrDefault(field);
 
     private static string Composite(string left, string right) =>
@@ -875,13 +892,6 @@ public sealed class SpaceExcelPreflightValidator
         SpaceExcelColumnMappingDto Mapping,
         int? ColumnIndex,
         string? ColumnName);
-
-    private sealed record CanonicalRow(
-        string TargetSheet,
-        string SourceSheet,
-        int RowNumber,
-        IReadOnlyDictionary<string, string?> Values,
-        IReadOnlyDictionary<string, string?> Columns);
 
     private sealed record NumericRule(
         decimal? Minimum,

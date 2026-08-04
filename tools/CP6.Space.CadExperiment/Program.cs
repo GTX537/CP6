@@ -55,6 +55,17 @@ public static class Program
                     await QueryDevelopmentSemanticDiagnosticsAsync(
                         commandLine,
                         cancellation.Token),
+                "match-dev-excel-cad" => await MatchDevelopmentExcelCadAsync(
+                    commandLine,
+                    cancellation.Token),
+                "seal-dev-editor-rack-snapshot" =>
+                    await SealDevelopmentEditorRackSnapshotAsync(
+                        commandLine,
+                        cancellation.Token),
+                "query-dev-excel-cad-match" =>
+                    await QueryDevelopmentExcelCadMatchAsync(
+                        commandLine,
+                        cancellation.Token),
                 "run" => await RunAsync(commandLine, cancellation.Token),
                 "inspect" => await ProbeAdapterAsync(commandLine, cancellation.Token),
                 "probe-adapter" => await ProbeAdapterAsync(commandLine, cancellation.Token),
@@ -658,6 +669,144 @@ public static class Program
         return 0;
     }
 
+    private static async Task<int> MatchDevelopmentExcelCadAsync(
+        CommandLine commandLine,
+        CancellationToken cancellationToken)
+    {
+        var mappingProfile = await ReadRequiredJsonAsync<SpaceExcelMappingProfileDto>(
+            commandLine.Required("--mapping"),
+            "The Excel mapping profile is empty.",
+            cancellationToken);
+        var workbook = await ReadRequiredJsonAsync<SpaceExcelWorkbookData>(
+            commandLine.Required("--workbook"),
+            "The canonical Excel workbook input is empty.",
+            cancellationToken);
+        var semanticPreview = await ReadRequiredJsonAsync<SpaceCadSemanticPreviewV1>(
+            commandLine.Required("--semantic"),
+            "The CAD semantic preview is empty.",
+            cancellationToken);
+        var diagnosticIndex =
+            await ReadRequiredJsonAsync<SpaceCadSemanticDiagnosticIndexV1>(
+                commandLine.Required("--diagnostics"),
+                "The CAD semantic diagnostic index is empty.",
+                cancellationToken);
+        var editorSnapshot = await ReadRequiredJsonAsync<SpaceExcelEditorSnapshotV1>(
+            commandLine.Required("--editor"),
+            "The editor rack snapshot is empty.",
+            cancellationToken);
+        var preview = SpaceExcelCadMatching.Build(
+            RequiredGuid(commandLine, "--tenant-id"),
+            RequiredGuid(commandLine, "--model-version-id"),
+            RequiredGuid(commandLine, "--excel-source-id"),
+            RequiredGuid(commandLine, "--preflight-job-id"),
+            mappingProfile,
+            workbook,
+            semanticPreview,
+            diagnosticIndex,
+            editorSnapshot);
+        await CadExperimentJson.WriteAsync(
+            commandLine.Required("--output"),
+            preview,
+            cancellationToken);
+        Console.WriteLine(JsonSerializer.Serialize(
+            new
+            {
+                preview.TenantId,
+                preview.ModelVersionId,
+                preview.ExcelSourceId,
+                preview.FloorLogicalId,
+                preview.WorkbookProjectionSha256,
+                preview.SemanticPreviewSha256,
+                preview.DiagnosticIndexSha256,
+                preview.EditorSnapshotSha256,
+                preview.MatchPreviewSha256,
+                preview.Summary,
+                preview.CanConfirm,
+            },
+            CadExperimentJson.Options));
+        return preview.CanConfirm ? 0 : 3;
+    }
+
+    private static async Task<int> SealDevelopmentEditorRackSnapshotAsync(
+        CommandLine commandLine,
+        CancellationToken cancellationToken)
+    {
+        var draft = await ReadRequiredJsonAsync<SpaceExcelEditorSnapshotV1>(
+            commandLine.Required("--input"),
+            "The editor rack snapshot draft is empty.",
+            cancellationToken);
+        var snapshot = SpaceExcelCadMatching.SealEditorSnapshot(
+            draft.TenantId,
+            draft.ModelVersionId,
+            draft.FloorLogicalId,
+            draft.FloorCode,
+            draft.ContentRevision,
+            draft.ContentHash,
+            draft.Racks);
+        await CadExperimentJson.WriteAsync(
+            commandLine.Required("--output"),
+            snapshot,
+            cancellationToken);
+        Console.WriteLine(JsonSerializer.Serialize(
+            new
+            {
+                snapshot.ModelVersionId,
+                snapshot.FloorLogicalId,
+                snapshot.FloorCode,
+                snapshot.ContentRevision,
+                RackCount = snapshot.Racks.Count,
+                snapshot.SnapshotSha256,
+            },
+            CadExperimentJson.Options));
+        return 0;
+    }
+
+    private static async Task<int> QueryDevelopmentExcelCadMatchAsync(
+        CommandLine commandLine,
+        CancellationToken cancellationToken)
+    {
+        var preview = await ReadRequiredJsonAsync<SpaceExcelCadMatchPreviewV1>(
+            commandLine.Required("--input"),
+            "The Excel/CAD match preview is empty.",
+            cancellationToken);
+        var page = SpaceExcelCadMatching.Query(
+            preview,
+            new SpaceExcelCadMatchQueryV1(
+                OptionalEnum<SpaceExcelCadMatchDisposition>(
+                    commandLine,
+                    "--disposition"),
+                commandLine.Optional("--rack-code"),
+                commandLine.Optional("--source"),
+                commandLine.HasFlag("--locatable"),
+                commandLine.Integer("--offset", 0),
+                commandLine.Integer(
+                    "--limit",
+                    SpaceExcelCadMatchVersions.DefaultPageSize)));
+        var output = commandLine.Optional("--output");
+        if (output is not null)
+            await CadExperimentJson.WriteAsync(output, page, cancellationToken);
+        Console.WriteLine(JsonSerializer.Serialize(page, CadExperimentJson.Options));
+        return 0;
+    }
+
+    private static async Task<T> ReadRequiredJsonAsync<T>(
+        string path,
+        string emptyMessage,
+        CancellationToken cancellationToken)
+    {
+        await using var stream = File.OpenRead(Path.GetFullPath(path));
+        return await JsonSerializer.DeserializeAsync<T>(
+                   stream,
+                   CadExperimentJson.Options,
+                   cancellationToken)
+               ?? throw new InvalidDataException(emptyMessage);
+    }
+
+    private static Guid RequiredGuid(CommandLine commandLine, string name) =>
+        Guid.TryParse(commandLine.Required(name), out var value) && value != Guid.Empty
+            ? value
+            : throw new ArgumentException($"Option '{name}' must be a non-empty GUID.");
+
     private static bool? OptionalBoolean(CommandLine commandLine, string name)
     {
         var value = commandLine.Optional(name);
@@ -780,6 +929,19 @@ public static class Program
                   [--severity <severity>] [--origin <origin>] [--code <code>]
                   [--layer <id>] [--source <source-ref>] [--with-diagnostics]
                   [--locatable] [--offset <n>] [--limit <n>] [--output <json-path>]
+              match-dev-excel-cad --mapping <excel-mapping-profile-json-path>
+                  --workbook <canonical-workbook-json-path>
+                  --semantic <semantic-preview-json-path>
+                  --diagnostics <diagnostic-index-json-path>
+                  --editor <editor-snapshot-json-path> --tenant-id <guid>
+                  --model-version-id <guid> --excel-source-id <guid>
+                  --preflight-job-id <guid> --output <match-preview-json-path>
+              seal-dev-editor-rack-snapshot --input <snapshot-draft-json-path>
+                  --output <sealed-editor-snapshot-json-path>
+              query-dev-excel-cad-match --input <match-preview-json-path>
+                  [--disposition <disposition>] [--rack-code <code>]
+                  [--source <source-ref>] [--locatable]
+                  [--offset <n>] [--limit <n>] [--output <json-path>]
               run --candidate <id> --candidate-version <version> --adapter <path>
                   [--adapter-arg <value>]... --input <path> [--input <path>]...
                   --output <directory> [--runs <n>] [--timeout-seconds <n>]
