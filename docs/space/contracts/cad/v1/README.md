@@ -51,6 +51,13 @@ contract; SDK-specific objects may not cross the converter boundary.
   for references that satisfy their attribute condition. A missing real block
   footprint retains the block instance transform as a sub-0.70 candidate with a
   warning; the parser does not invent rack dimensions.
+- The semantic diagnostic index binds every proposal to a hash-sealed evidence row
+  containing SourceRef, target, applied rule and confidence band. Mapping and semantic
+  issues receive stable IDs, recovery codes and Entity/Layer/Block/Document locations;
+  a location says explicitly when no canvas bounds exist instead of inventing them.
+- Evidence and diagnostic queries are deterministic and capped at 200 rows. This
+  read-only index enables later Excel matching and editor problem navigation but does
+  not implement correction commands, field locks or Draft persistence.
 
 ## Current delivery boundary
 
@@ -64,8 +71,10 @@ production persistence or authorization claims. The E02-S05 development slice ad
 mapping profile sealing, tenant-safe copy/version semantics and deterministic preview
 resolution without database writes. The E02-S06 development slice adds the pure,
 read-only semantic proposal parser and confidence selection boundary without Draft
-writes. Formal E02-S02 through E02-S06 acceptance still waits for E02-S01 vendor
-selection and the production conversion/persistence chain.
+writes. The E02-S07 development slice adds the provenance and spatial diagnostic
+index needed by later matching and editor UI. Formal E02-S02 through E02-S07
+acceptance still waits for E02-S01 vendor selection and the production
+conversion/persistence chain.
 
 Files:
 
@@ -75,6 +84,7 @@ Files:
 - `mapping-profile.schema.json`: draft/sealed system or tenant mapping profile.
 - `mapping-preview.schema.json`: deterministic layer/block mapping preview.
 - `semantic-preview.schema.json`: deterministic read-only semantic proposal preview.
+- `semantic-diagnostics.schema.json`: proposal evidence and spatial issue index.
 - `examples/minimal-wall.json`: minimal valid IR package.
 - `examples/development-coordinate-confirmation.json`: confirmation for synthetic sample 13.
 - `examples/development-mapping-profile-draft.json`: system profile draft for the synthetic corpus.

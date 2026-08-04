@@ -20,6 +20,7 @@ public sealed class DevelopmentDxfCadConverterTests
         long totalEmptyLayers = 0;
         long totalMappingDecisions = 0;
         long totalSemanticItems = 0;
+        long totalSemanticDiagnostics = 0;
         SpaceCadMappingProfileDraftV1 standardMappingDraft;
         await using (var mappingStream = File.OpenRead(RepositoryFile(
                          "docs",
@@ -115,6 +116,23 @@ public sealed class DevelopmentDxfCadConverterTests
                 semanticPreview.Summary.SourceEntityCount);
             Assert.Equal(mappingPreview.PreviewSha256, semanticPreview.MappingPreviewSha256);
             Assert.Matches("^[0-9a-f]{64}$", semanticPreview.SemanticPreviewSha256);
+            var diagnosticIndex = SpaceCadSemanticDiagnostics.Build(
+                request,
+                prepared,
+                inventory,
+                mappingProfile,
+                mappingPreview,
+                semanticPreview);
+            Assert.Equal(semanticPreview.Items.Count, diagnosticIndex.Evidence.Count);
+            Assert.Equal(
+                mappingPreview.Issues.Count + semanticPreview.Issues.Count,
+                diagnosticIndex.Diagnostics.Count);
+            Assert.All(
+                diagnosticIndex.Diagnostics,
+                diagnostic => Assert.Equal(
+                    inventory.FloorLogicalId,
+                    diagnostic.Location.FloorLogicalId));
+            Assert.Matches("^[0-9a-f]{64}$", diagnosticIndex.DiagnosticIndexSha256);
             Assert.NotEmpty(sink.Package.Entities);
             totalEntities += result.Summary.EntityCount;
             unsupportedEntities += result.Summary.UnsupportedEntityCount;
@@ -122,6 +140,7 @@ public sealed class DevelopmentDxfCadConverterTests
             totalEmptyLayers += inventory.Summary.EmptyLayerCount;
             totalMappingDecisions += mappingPreview.Decisions.Count;
             totalSemanticItems += semanticPreview.Items.Count;
+            totalSemanticDiagnostics += diagnosticIndex.Diagnostics.Count;
         }
 
         Assert.True(totalEntities >= 250);
@@ -130,6 +149,7 @@ public sealed class DevelopmentDxfCadConverterTests
         Assert.True(totalEmptyLayers >= 100);
         Assert.True(totalMappingDecisions >= 320);
         Assert.True(totalSemanticItems >= 100);
+        Assert.True(totalSemanticDiagnostics >= 20);
     }
 
     [Fact]
@@ -401,6 +421,41 @@ public sealed class DevelopmentDxfCadConverterTests
         Assert.True(semantic.ReadyForConfirmation);
         Assert.Equal(SpaceCadSemanticTarget.Guide, Assert.Single(semantic.Items).Target);
         SpaceCadSemanticParser.Validate(semantic);
+
+        var diagnosticPath = Path.Combine(fixture.Path, "semantic-diagnostics.json");
+        Assert.Equal(0, await Program.Main(
+        [
+            "build-dev-semantic-diagnostics", "--prepared", preparedPath,
+            "--inventory", inventoryPath,
+            "--profile", profilePath,
+            "--mapping", previewPath,
+            "--semantic", semanticPath,
+            "--output", diagnosticPath,
+        ]));
+        var evidencePath = Path.Combine(fixture.Path, "semantic-evidence.json");
+        Assert.Equal(0, await Program.Main(
+        [
+            "query-dev-semantic-diagnostics", "--input", diagnosticPath,
+            "--kind", "evidence", "--band", "High",
+            "--output", evidencePath,
+        ]));
+        await using (var diagnosticStream = File.OpenRead(diagnosticPath))
+        {
+            var diagnostics = await JsonSerializer.DeserializeAsync<
+                SpaceCadSemanticDiagnosticIndexV1>(
+                diagnosticStream,
+                CadExperimentJson.Options);
+            Assert.Single(diagnostics!.Evidence);
+            Assert.Empty(diagnostics.Diagnostics);
+            SpaceCadSemanticDiagnostics.Validate(diagnostics);
+        }
+        await using var evidenceStream = File.OpenRead(evidencePath);
+        var evidence = await JsonSerializer.DeserializeAsync<
+            SpaceCadSemanticPageV1<SpaceCadSemanticEvidenceV1>>(
+            evidenceStream,
+            CadExperimentJson.Options);
+        Assert.Equal(1, evidence!.TotalCount);
+        Assert.Equal(SpaceCadConfidenceBand.High, Assert.Single(evidence.Items).ConfidenceBand);
     }
 
     private static SpaceCadConversionRequest Request(string sourceSha256) =>

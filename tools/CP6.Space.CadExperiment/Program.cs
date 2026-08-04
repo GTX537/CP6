@@ -47,6 +47,14 @@ public static class Program
                 "parse-dev-semantic" => await ParseDevelopmentSemanticAsync(
                     commandLine,
                     cancellation.Token),
+                "build-dev-semantic-diagnostics" =>
+                    await BuildDevelopmentSemanticDiagnosticsAsync(
+                        commandLine,
+                        cancellation.Token),
+                "query-dev-semantic-diagnostics" =>
+                    await QueryDevelopmentSemanticDiagnosticsAsync(
+                        commandLine,
+                        cancellation.Token),
                 "run" => await RunAsync(commandLine, cancellation.Token),
                 "inspect" => await ProbeAdapterAsync(commandLine, cancellation.Token),
                 "probe-adapter" => await ProbeAdapterAsync(commandLine, cancellation.Token),
@@ -503,6 +511,153 @@ public static class Program
         return semanticPreview.ReadyForConfirmation ? 0 : 3;
     }
 
+    private static async Task<int> BuildDevelopmentSemanticDiagnosticsAsync(
+        CommandLine commandLine,
+        CancellationToken cancellationToken)
+    {
+        var preparedPath = Path.GetFullPath(commandLine.Required("--prepared"));
+        var inventoryPath = Path.GetFullPath(commandLine.Required("--inventory"));
+        var profilePath = Path.GetFullPath(commandLine.Required("--profile"));
+        var mappingPath = Path.GetFullPath(commandLine.Required("--mapping"));
+        var semanticPath = Path.GetFullPath(commandLine.Required("--semantic"));
+        var output = Path.GetFullPath(commandLine.Required("--output"));
+        SpaceCadCoordinatePreparationV1 preparation;
+        SpaceCadInventoryV1 inventory;
+        SpaceCadMappingProfileV1 profile;
+        SpaceCadMappingPreviewV1 mappingPreview;
+        SpaceCadSemanticPreviewV1 semanticPreview;
+        await using (var stream = File.OpenRead(preparedPath))
+        {
+            preparation = await JsonSerializer.DeserializeAsync<SpaceCadCoordinatePreparationV1>(
+                              stream,
+                              CadExperimentJson.Options,
+                              cancellationToken)
+                          ?? throw new InvalidDataException(
+                              "The prepared CAD IR package is empty.");
+        }
+        await using (var stream = File.OpenRead(inventoryPath))
+        {
+            inventory = await JsonSerializer.DeserializeAsync<SpaceCadInventoryV1>(
+                            stream,
+                            CadExperimentJson.Options,
+                            cancellationToken)
+                        ?? throw new InvalidDataException("The CAD inventory is empty.");
+        }
+        await using (var stream = File.OpenRead(profilePath))
+        {
+            profile = await JsonSerializer.DeserializeAsync<SpaceCadMappingProfileV1>(
+                          stream,
+                          CadExperimentJson.Options,
+                          cancellationToken)
+                      ?? throw new InvalidDataException(
+                          "The sealed CAD mapping profile is empty.");
+        }
+        await using (var stream = File.OpenRead(mappingPath))
+        {
+            mappingPreview = await JsonSerializer.DeserializeAsync<SpaceCadMappingPreviewV1>(
+                                 stream,
+                                 CadExperimentJson.Options,
+                                 cancellationToken)
+                             ?? throw new InvalidDataException(
+                                 "The CAD mapping preview is empty.");
+        }
+        await using (var stream = File.OpenRead(semanticPath))
+        {
+            semanticPreview = await JsonSerializer.DeserializeAsync<SpaceCadSemanticPreviewV1>(
+                                  stream,
+                                  CadExperimentJson.Options,
+                                  cancellationToken)
+                              ?? throw new InvalidDataException(
+                                  "The CAD semantic preview is empty.");
+        }
+
+        var package = preparation.Package;
+        var request = new SpaceCadConversionRequest(
+            mappingPreview.TenantId,
+            Guid.Parse("22222222-2222-2222-2222-222222222222"),
+            Guid.Parse("33333333-3333-3333-3333-333333333333"),
+            package.Document.SourceSha256,
+            package.Document.SourceFormat,
+            package.Document.ConverterId,
+            package.Document.ConverterVersion);
+        var index = SpaceCadSemanticDiagnostics.Build(
+            request,
+            preparation,
+            inventory,
+            profile,
+            mappingPreview,
+            semanticPreview);
+        await CadExperimentJson.WriteAsync(output, index, cancellationToken);
+        Console.WriteLine(JsonSerializer.Serialize(
+            new
+            {
+                index.TenantId,
+                index.FloorLogicalId,
+                index.FloorCode,
+                index.SourceSha256,
+                index.SemanticPreviewSha256,
+                index.DiagnosticIndexSha256,
+                index.Summary,
+            },
+            CadExperimentJson.Options));
+        return index.Summary.BlockingCount == 0 ? 0 : 3;
+    }
+
+    private static async Task<int> QueryDevelopmentSemanticDiagnosticsAsync(
+        CommandLine commandLine,
+        CancellationToken cancellationToken)
+    {
+        var input = Path.GetFullPath(commandLine.Required("--input"));
+        SpaceCadSemanticDiagnosticIndexV1 index;
+        await using (var stream = File.OpenRead(input))
+        {
+            index = await JsonSerializer.DeserializeAsync<SpaceCadSemanticDiagnosticIndexV1>(
+                        stream,
+                        CadExperimentJson.Options,
+                        cancellationToken)
+                    ?? throw new InvalidDataException(
+                        "The CAD semantic diagnostic index is empty.");
+        }
+        SpaceCadSemanticDiagnostics.Validate(index);
+        var offset = commandLine.Integer("--offset", 0);
+        var limit = commandLine.Integer(
+            "--limit",
+            SpaceCadSemanticDiagnosticVersions.DefaultPageSize);
+        object page = commandLine.Required("--kind").ToLowerInvariant() switch
+        {
+            "evidence" or "proposal" or "proposals" =>
+                SpaceCadSemanticDiagnostics.QueryEvidence(
+                    index,
+                    new SpaceCadSemanticEvidenceQueryV1(
+                        OptionalEnum<SpaceCadConfidenceBand>(commandLine, "--band"),
+                        OptionalEnum<SpaceCadSemanticTarget>(commandLine, "--target"),
+                        commandLine.Optional("--layer"),
+                        commandLine.Optional("--source"),
+                        commandLine.HasFlag("--with-diagnostics"),
+                        offset,
+                        limit)),
+            "diagnostic" or "diagnostics" or "issue" or "issues" =>
+                SpaceCadSemanticDiagnostics.QueryDiagnostics(
+                    index,
+                    new SpaceCadSemanticDiagnosticQueryV1(
+                        OptionalEnum<SpaceCadIssueSeverity>(commandLine, "--severity"),
+                        OptionalEnum<SpaceCadDiagnosticOrigin>(commandLine, "--origin"),
+                        commandLine.Optional("--code"),
+                        commandLine.Optional("--layer"),
+                        commandLine.Optional("--source"),
+                        commandLine.HasFlag("--locatable"),
+                        offset,
+                        limit)),
+            var kind => throw new ArgumentException(
+                $"Unknown CAD semantic diagnostic query kind '{kind}'.")
+        };
+        var output = commandLine.Optional("--output");
+        if (output is not null)
+            await CadExperimentJson.WriteAsync(output, page, cancellationToken);
+        Console.WriteLine(JsonSerializer.Serialize(page, CadExperimentJson.Options));
+        return 0;
+    }
+
     private static bool? OptionalBoolean(CommandLine commandLine, string name)
     {
         var value = commandLine.Optional(name);
@@ -614,6 +769,17 @@ public static class Program
                   --profile <sealed-profile-json-path>
                   --mapping <mapping-preview-json-path>
                   --output <semantic-preview-json-path>
+              build-dev-semantic-diagnostics --prepared <prepared-cad-ir-json-path>
+                  --inventory <inventory-json-path>
+                  --profile <sealed-profile-json-path>
+                  --mapping <mapping-preview-json-path>
+                  --semantic <semantic-preview-json-path>
+                  --output <diagnostic-index-json-path>
+              query-dev-semantic-diagnostics --input <diagnostic-index-json-path>
+                  --kind <evidence|diagnostic> [--band <band>] [--target <target>]
+                  [--severity <severity>] [--origin <origin>] [--code <code>]
+                  [--layer <id>] [--source <source-ref>] [--with-diagnostics]
+                  [--locatable] [--offset <n>] [--limit <n>] [--output <json-path>]
               run --candidate <id> --candidate-version <version> --adapter <path>
                   [--adapter-arg <value>]... --input <path> [--input <path>]...
                   --output <directory> [--runs <n>] [--timeout-seconds <n>]

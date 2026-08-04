@@ -239,7 +239,7 @@ public sealed class SpaceCadSemanticParserTests
         SpaceCadSemanticPreviewV1 preview,
         string sourceRef) => preview.Items.Single(item => item.Source.SourceRef == sourceRef);
 
-    private static SemanticScenario Scenario(
+    internal static SemanticScenario Scenario(
         bool conditionalBlockRule = false,
         bool requiredUnsupported = false)
     {
@@ -491,7 +491,7 @@ public sealed class SpaceCadSemanticParserTests
         new(minX, maxY),
     ];
 
-    private sealed record SemanticScenario(
+    internal sealed record SemanticScenario(
         SpaceCadConversionRequest Request,
         SpaceCadCoordinatePreparationV1 Preparation,
         SpaceCadInventoryV1 Inventory,

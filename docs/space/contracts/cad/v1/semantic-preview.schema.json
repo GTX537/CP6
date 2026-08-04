@@ -78,8 +78,7 @@
       "type": "object",
       "additionalProperties": false,
       "required": [
-        "kind", "points", "radiusMillimeters", "startAngleDegrees",
-        "endAngleDegrees", "isClosed", "transform", "bounds"
+        "kind", "points", "isClosed", "bounds"
       ],
       "properties": {
         "kind": { "enum": ["Point", "Path", "Polygon", "Circle", "Arc", "BlockInstance"] },
@@ -95,7 +94,7 @@
     "source": {
       "type": "object",
       "additionalProperties": false,
-      "required": ["sourceRef", "rawType", "layerId", "blockName", "attributes"],
+      "required": ["sourceRef", "rawType", "layerId", "attributes"],
       "properties": {
         "sourceRef": { "$ref": "#/$defs/sourceRef" },
         "rawType": { "$ref": "#/$defs/token" },
@@ -111,8 +110,7 @@
       "type": "object",
       "additionalProperties": false,
       "required": [
-        "sourceKind", "sourceKey", "decisionSource", "ruleId", "geometryRule",
-        "defaultHeightMillimeters", "defaultThicknessMillimeters"
+        "sourceKind", "sourceKey", "decisionSource", "geometryRule"
       ],
       "properties": {
         "sourceKind": { "enum": ["Layer", "Block"] },
@@ -130,8 +128,8 @@
       "type": "object",
       "additionalProperties": false,
       "required": [
-        "previewObjectId", "draftObjectKind", "target", "targetSubtype", "source",
-        "appliedMapping", "geometry", "confidence", "disposition", "isConfirmable", "isSelected"
+        "previewObjectId", "draftObjectKind", "target", "source", "appliedMapping",
+        "confidence", "disposition", "isConfirmable", "isSelected"
       ],
       "properties": {
         "previewObjectId": { "$ref": "#/$defs/token" },
@@ -150,10 +148,7 @@
     "issue": {
       "type": "object",
       "additionalProperties": false,
-      "required": [
-        "code", "severity", "sourceRef", "previewObjectId", "sourceKind",
-        "sourceKey", "ruleId", "detailToken"
-      ],
+      "required": ["code", "severity"],
       "properties": {
         "code": { "$ref": "#/$defs/token" },
         "severity": { "enum": ["Info", "Warning", "Blocking"] },
