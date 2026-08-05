@@ -11,6 +11,7 @@
 - 样例 13 的 22 个最小化特征产生 Mock 22 条、Local 21 条以及三类降级各 21 条建议；5 份结果共 106 条建议，未知输入/关系引用与范围违规均为 0，38 个敏感候选命中 0。Mock、Local、Timeout 降级重复运行均字节一致，全部运行报告 external=false、draft=false。
 - 门禁：Provider 实现 + SPI 27/27、Space Unit 359/359、CAD 工具 25/25；完整 solution Release 非增量单线程、禁用节点复用构建 0 error / 10 条既有 warning，Desktop/Android AOT 强度不变。首轮恰逢 Visual Studio 更新导致旧 iOS 26.2 SDK 目录缺失；工作负载自动恢复到 iOS 26.5 后同一命令无代码修改通过。格式和差异检查通过，本切片无数据库、Migration、WebApi、前端、OpenAPI 或 SDK 变化。
 - 这是开发切片，不是正式 E13-S05 完成：首个外部适配器仍等待供应商/合同、区域与数据驻留、端点别名、SecretReference、租户外发授权、生产输入输出校验和计费证据。下一独立切片可先做 E13-S06 本地不可信输出校验，但不能借此启用外部 Provider 或应用建议。完整证据见 `docs/space/reports/e13-s05-provider-development.md`。
+- 功能 tip `e55b49aa` 已确认进入远端集成祖先链，本地/远端临时功能分支均已删除；可重建的 `tmp/e13-s05` 共 13 个文件、125,056 bytes（包含开发 HMAC key）已删除，源码、报告和远端 Git 历史保留，`main` 未修改。
 
 ## E13-S04 CAD IR 特征最小化与脱敏开发切片（2026-08-05）
 
