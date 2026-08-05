@@ -11,6 +11,7 @@
 - 样例 13 的 22 个输入特征产生 21 条 Local 建议和 1 条诊断；原始文件 SHA `5e57cce3...6f7e23`，Canonical SHA `913e99b4...84767c`，独立重复运行字节一致。未知建议/关系引用为 0，39 个身份/哈希/SourceRef/属性值敏感候选命中 0，全部命令报告 external=false、draft=false。
 - 恶意矩阵覆盖 9 类原始 JSON、16 类 typed 语义以及字节上限、稳定 SHA、Gateway 租约和 CLI 篡改。门禁：Provider/验证器/Gateway 55/55、Space Unit 387/387、CAD 工具 25/25、默认 DI 1/1；完整 solution Release 非增量单线程、禁用节点复用构建 0 error / 10 条既有 warning，Desktop/Android AOT 强度不变；格式、Schema JSON 和差异检查通过。
 - 这是开发切片，不是正式 E13-S06 端到端签收：仍依赖 E13-S05 首个外部适配器在传输层限流/限长、映射厂商原生响应并调用同一验证器，还需供应商/模型/区域/SecretReference/租户策略、真实非法响应故障注入和 Run/Artifact 审计。完整证据见 `docs/space/reports/e13-s06-provider-output-validation-development.md`。
+- 功能 tip `1b297a91` 已确认进入远端集成祖先链，本地/远端临时功能分支均已删除；可重建的 `tmp/e13-s06` 共 7 个文件、71,099 bytes（包含开发 HMAC key）已删除，源码、Schema、报告和远端 Git 历史保留，`main` 未修改。
 
 ## E13-S05 Mock/本地 Provider 与故障降级开发切片（2026-08-05）
 
