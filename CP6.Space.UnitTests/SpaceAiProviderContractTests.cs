@@ -337,6 +337,28 @@ public sealed class SpaceAiProviderContractTests
     }
 
     [Fact]
+    public async Task Invalid_provider_output_is_rejected_and_releases_the_quota_lease()
+    {
+        var provider = new RecordingProvider
+        {
+            Output = Result() with { SchemaVersion = "9.0" },
+        };
+        var quota = new RecordingQuotaLeaseManager(grant: true);
+        var gateway = Gateway(
+            EnabledPolicy(),
+            quota,
+            Registry(WarehouseGenerationProviderKind.Local, provider));
+
+        var error = await Assert.ThrowsAsync<SpaceProblemException>(() =>
+            gateway.GenerateAsync(SiteId, "approved-v1", Input()));
+
+        Assert.Equal(SpaceErrorCodes.AiOutputInvalid, error.Code);
+        Assert.Equal(502, error.StatusCode);
+        Assert.False(error.Retryable);
+        Assert.True(quota.Lease!.Disposed);
+    }
+
+    [Fact]
     public async Task Approved_but_unregistered_provider_is_unavailable()
     {
         var gateway = Gateway(
@@ -410,7 +432,8 @@ public sealed class SpaceAiProviderContractTests
             new ExecutionContext(TenantId),
             policySource,
             quota,
-            registry);
+            registry,
+            new WarehouseGenerationOutputValidator());
 
     private static SpaceAiGenerationGateway Gateway(
         SpaceAiTenantPolicy policy,
@@ -512,6 +535,7 @@ public sealed class SpaceAiProviderContractTests
         public WarehouseGenerationInput? Input { get; private set; }
         public CancellationToken Token { get; private set; }
         public Exception? Failure { get; init; }
+        public WarehouseGenerationResult? Output { get; init; }
 
         public Task<WarehouseGenerationResult> GenerateAsync(
             WarehouseGenerationInput input,
@@ -522,7 +546,7 @@ public sealed class SpaceAiProviderContractTests
             Token = cancellationToken;
             if (Failure is not null)
                 return Task.FromException<WarehouseGenerationResult>(Failure);
-            return Task.FromResult(Result());
+            return Task.FromResult(Output ?? Result());
         }
     }
 

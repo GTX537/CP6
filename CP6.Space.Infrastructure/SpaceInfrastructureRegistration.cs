@@ -70,6 +70,11 @@ public static class SpaceInfrastructureRegistration
         services.TryAddSingleton<
             IWarehouseGenerationProviderRegistry,
             WarehouseGenerationProviderRegistry>();
+        services.TryAddSingleton(
+            new WarehouseGenerationOutputValidationLimits());
+        services.TryAddSingleton<
+            IWarehouseGenerationOutputValidator,
+            WarehouseGenerationOutputValidator>();
         services.AddScoped<SpaceAiGenerationGateway>();
         services.AddScoped<SpaceAiAdministrationService>();
         services.AddScoped<ISpaceAiAdministrationService>(provider =>

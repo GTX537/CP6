@@ -24,6 +24,8 @@ public sealed class SpaceAiDefaultRegistrationTests
             provider.GetRequiredService<ISpaceAiQuotaLeaseManager>();
         var registry = provider.GetRequiredService<
             IWarehouseGenerationProviderRegistry>();
+        var outputValidator = provider.GetRequiredService<
+            IWarehouseGenerationOutputValidator>();
         var tenantId =
             Guid.Parse("11111111-1111-1111-1111-111111111111");
 
@@ -35,6 +37,7 @@ public sealed class SpaceAiDefaultRegistrationTests
             provider.GetRequiredService<ISpaceAiAdministrationService>());
         Assert.IsType<ClosedSpaceAiQuotaLeaseManager>(quota);
         Assert.IsType<WarehouseGenerationProviderRegistry>(registry);
+        Assert.IsType<WarehouseGenerationOutputValidator>(outputValidator);
         Assert.Null(lease);
         Assert.False(registry.TryGet("external-v1", out _));
         Assert.Empty(registry.Registrations);

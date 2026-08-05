@@ -23,7 +23,10 @@ It provides a set of bounded development capabilities:
   StructuredFeatures payload plus a separate local-only SourceRef map, without
   invoking a Provider or writing Draft data.
 - `run-dev-ai-provider`: runs the deterministic Mock, local heuristic or a
-  simulated retryable-failure-to-local fallback through the same Provider SPI.
+  simulated retryable-failure-to-local fallback through the same Provider SPI,
+  then validates its typed Canonical Envelope before writing it.
+- `validate-dev-ai-provider-output`: treats a raw CP6 Canonical Envelope as
+  untrusted JSON and validates its schema, limits, references and semantics.
 - `query-dev-inventory`: runs capped, deterministic layer, block or reference
   queries against an inventory artifact.
 - `seal-dev-mapping-profile`: validates and hash-seals an immutable development
@@ -201,14 +204,27 @@ dotnet run --project tools\CP6.Space.CadExperiment -c Release -- `
   --provider fallback-local `
   --failure timeout `
   --output tmp\e13-s05\timeout-fallback-output.json
+
+dotnet run --project tools\CP6.Space.CadExperiment -c Release -- `
+  validate-dev-ai-provider-output `
+  --input tmp\e13-s04\provider-input.json `
+  --provider-output tmp\e13-s05\local-output.json
 ```
 
 `mock` and `local` are deterministic, network-free Provider implementations.
 `fallback-local` injects only a declared unavailable, timeout or rate-limit
 failure and then calls the local implementation through the same SPI. User
-cancellation and contract violations never fallback. This command does not
-register a production Provider, resolve credentials, call a network endpoint,
-validate untrusted external output, persist Run/Usage data or write Draft.
+cancellation and contract violations never fallback. The raw validation command
+rejects invalid JSON, unknown or duplicate properties, non-string enums, unsafe
+control characters, excessive arrays, unknown/duplicate SourceKeys, invalid or
+self relations, range violations, duplicate evidence, invalid diagnostic
+references and incompatible type-specific attributes. Both commands enforce a
+64 MiB development Canonical Envelope cap and print only stable evidence.
+
+These commands do not register a production Provider, resolve credentials, call
+a network endpoint, map a vendor-native response, persist Run/Usage data or write
+Draft. External adapters must still cap the HTTP/SDK response before mapping it
+to the CP6 Canonical Envelope and then invoke the same validator.
 
 ## Seal and preview a CAD mapping profile
 

@@ -524,6 +524,28 @@ public sealed class DevelopmentDxfCadConverterTests
         Assert.DoesNotContain("http", outputs, StringComparison.OrdinalIgnoreCase);
         Assert.DoesNotContain("apiKey", outputs, StringComparison.OrdinalIgnoreCase);
 
+        Assert.Equal(0, await Program.Main(
+        [
+            "validate-dev-ai-provider-output",
+            "--input", inputPath,
+            "--provider-output", localPath,
+        ]));
+        var invalidProviderOutputPath = Path.Combine(
+            fixture.Path,
+            "invalid-provider-output.json");
+        await File.WriteAllTextAsync(
+            invalidProviderOutputPath,
+            (await File.ReadAllTextAsync(localPath)).Replace(
+                "source-rack",
+                "source-not-in-input",
+                StringComparison.Ordinal));
+        Assert.Equal(2, await Program.Main(
+        [
+            "validate-dev-ai-provider-output",
+            "--input", inputPath,
+            "--provider-output", invalidProviderOutputPath,
+        ]));
+
         var externalPath = Path.Combine(fixture.Path, "external-output.json");
         Assert.Equal(2, await Program.Main(
         [

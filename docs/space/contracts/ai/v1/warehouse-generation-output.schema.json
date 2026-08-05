@@ -19,12 +19,14 @@
     "providerRequestId": {
       "type": "string",
       "minLength": 1,
-      "maxLength": 256
+      "maxLength": 256,
+      "pattern": "^[^\\u0000-\\u001F\\u007F-\\u009F]*$"
     },
     "providerModel": {
       "type": "string",
       "minLength": 1,
-      "maxLength": 128
+      "maxLength": 128,
+      "pattern": "^[^\\u0000-\\u001F\\u007F-\\u009F]*$"
     },
     "usage": {
       "type": "object",
@@ -64,7 +66,7 @@
       "type": "string",
       "minLength": 1,
       "maxLength": 256,
-      "pattern": "^[^\\u0000-\\u001F\\u007F]*$"
+      "pattern": "^[^\\u0000-\\u001F\\u007F-\\u009F]*$"
     },
     "spaceType": {
       "enum": [
@@ -211,7 +213,119 @@
             ]
           }
         }
-      }
+      },
+      "allOf": [
+        {
+          "if": {
+            "properties": {
+              "suggestedType": {
+                "not": {
+                  "const": "Zone"
+                }
+              }
+            }
+          },
+          "then": {
+            "properties": {
+              "attributes": {
+                "not": {
+                  "required": [
+                    "zonePurpose"
+                  ]
+                }
+              }
+            }
+          }
+        },
+        {
+          "if": {
+            "properties": {
+              "suggestedType": {
+                "not": {
+                  "const": "Rack"
+                }
+              }
+            }
+          },
+          "then": {
+            "properties": {
+              "attributes": {
+                "not": {
+                  "required": [
+                    "rackType"
+                  ]
+                }
+              }
+            }
+          }
+        },
+        {
+          "if": {
+            "properties": {
+              "suggestedType": {
+                "not": {
+                  "const": "Door"
+                }
+              }
+            }
+          },
+          "then": {
+            "properties": {
+              "attributes": {
+                "not": {
+                  "required": [
+                    "doorType"
+                  ]
+                }
+              }
+            }
+          }
+        },
+        {
+          "if": {
+            "properties": {
+              "suggestedType": {
+                "not": {
+                  "const": "Dock"
+                }
+              }
+            }
+          },
+          "then": {
+            "properties": {
+              "attributes": {
+                "not": {
+                  "required": [
+                    "dockType"
+                  ]
+                }
+              }
+            }
+          }
+        },
+        {
+          "if": {
+            "properties": {
+              "suggestedType": {
+                "not": {
+                  "const": "StaticEquipment"
+                }
+              }
+            }
+          },
+          "then": {
+            "properties": {
+              "attributes": {
+                "not": {
+                  "required": [
+                    "equipmentType"
+                  ]
+                }
+              }
+            }
+          }
+        }
+      ]
     },
     "diagnostic": {
       "type": "object",
