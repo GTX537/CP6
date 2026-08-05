@@ -10,6 +10,7 @@
 - 样例 13 产生 29 项 Open：Info 12 / Warning 17 / Blocking 0，25 项可定位、4 项不可定位，Workspace `3a296228...17288eb`，JSON `29ff0014...3f6eeb3`（34,843 bytes），两次运行字节完全一致且无 `null` 字段。Low+locatable 返回 8 项，Open+Warning+locatable 返回 17 项。
 - 门禁：E04-S05 应用 5/5、前端聚焦 15/15、Space Unit 341/341、CAD 工具 23/23、前端全量 126 files / 685 tests、类型检查和生产构建通过；功能树与 no-ff 合并树的完整 solution Release 非增量单线程构建均为 0 error / 10 条既有 warning，Desktop/Android AOT 强度不变。i18n 仍为既有 908 项缺失快照 key，本切片净新增 0。
 - 这是开发切片，不是正式 E04-S05 验收：本地 JSON 导入不替代生产 CAD Artifact/Issue API、权限/审计、服务端权威签发、授权真实图纸或真实编辑器验收，也不写 Draft。E03-S05 的用户确认与幂等 Draft 写入仍受生产 CAD 链和并发修订门禁约束。证据见 `docs/space/reports/e04-s05-cad-review-workspace-development.md`。
+- 功能 tip 已确认进入远端集成祖先链，本地/远端临时功能分支已删除；可重复生成的 `tmp/e04-s05` 与本工作树 `cp6.web/node_modules` 共清理 22,369 个文件、332,663,196 bytes（约 317.3 MiB），锁文件和源码保留，`main` 未修改。
 
 ## E03-S04 Excel/CAD 元素匹配开发切片（2026-08-04）
 
