@@ -66,6 +66,14 @@ public static class Program
                     await QueryDevelopmentExcelCadMatchAsync(
                         commandLine,
                         cancellation.Token),
+                "build-dev-cad-review-workspace" =>
+                    await BuildDevelopmentCadReviewWorkspaceAsync(
+                        commandLine,
+                        cancellation.Token),
+                "query-dev-cad-review-workspace" =>
+                    await QueryDevelopmentCadReviewWorkspaceAsync(
+                        commandLine,
+                        cancellation.Token),
                 "run" => await RunAsync(commandLine, cancellation.Token),
                 "inspect" => await ProbeAdapterAsync(commandLine, cancellation.Token),
                 "probe-adapter" => await ProbeAdapterAsync(commandLine, cancellation.Token),
@@ -789,6 +797,89 @@ public static class Program
         return 0;
     }
 
+    private static async Task<int> BuildDevelopmentCadReviewWorkspaceAsync(
+        CommandLine commandLine,
+        CancellationToken cancellationToken)
+    {
+        var diagnostics =
+            await ReadRequiredJsonAsync<SpaceCadSemanticDiagnosticIndexV1>(
+                commandLine.Required("--diagnostics"),
+                "The CAD semantic diagnostic index is empty.",
+                cancellationToken);
+        var editor = await ReadRequiredJsonAsync<SpaceExcelEditorSnapshotV1>(
+            commandLine.Required("--editor"),
+            "The editor rack snapshot is empty.",
+            cancellationToken);
+        SpaceExcelCadMatchPreviewV1? matches = null;
+        if (commandLine.Optional("--matches") is { } matchPath)
+        {
+            matches = await ReadRequiredJsonAsync<SpaceExcelCadMatchPreviewV1>(
+                matchPath,
+                "The Excel/CAD match preview is empty.",
+                cancellationToken);
+        }
+        SpaceCadReviewWorkspaceV1? previous = null;
+        if (commandLine.Optional("--previous") is { } previousPath)
+        {
+            previous = await ReadRequiredJsonAsync<SpaceCadReviewWorkspaceV1>(
+                previousPath,
+                "The previous CAD review workspace is empty.",
+                cancellationToken);
+        }
+        var workspace = SpaceCadReviewWorkspace.Build(
+            diagnostics,
+            editor,
+            matches,
+            previous);
+        await CadExperimentJson.WriteAsync(
+            commandLine.Required("--output"),
+            workspace,
+            cancellationToken);
+        Console.WriteLine(JsonSerializer.Serialize(
+            new
+            {
+                workspace.TenantId,
+                workspace.ModelVersionId,
+                workspace.FloorLogicalId,
+                workspace.DiagnosticIndexSha256,
+                workspace.MatchPreviewSha256,
+                workspace.EditorContentRevision,
+                workspace.PreviousWorkspaceSha256,
+                workspace.WorkspaceSha256,
+                workspace.Summary,
+            },
+            CadExperimentJson.Options));
+        return 0;
+    }
+
+    private static async Task<int> QueryDevelopmentCadReviewWorkspaceAsync(
+        CommandLine commandLine,
+        CancellationToken cancellationToken)
+    {
+        var workspace = await ReadRequiredJsonAsync<SpaceCadReviewWorkspaceV1>(
+            commandLine.Required("--input"),
+            "The CAD review workspace is empty.",
+            cancellationToken);
+        var page = SpaceCadReviewWorkspace.Query(
+            workspace,
+            new SpaceCadReviewWorkspaceQueryV1(
+                OptionalEnum<SpaceCadReviewItemStatus>(commandLine, "--status"),
+                OptionalEnum<SpaceCadIssueSeverity>(commandLine, "--severity"),
+                OptionalEnum<SpaceCadReviewItemKind>(commandLine, "--review-kind"),
+                commandLine.Optional("--source"),
+                commandLine.Optional("--search"),
+                commandLine.HasFlag("--locatable"),
+                commandLine.Integer("--offset", 0),
+                commandLine.Integer(
+                    "--limit",
+                    SpaceCadReviewWorkspaceVersions.DefaultPageSize)));
+        var output = commandLine.Optional("--output");
+        if (output is not null)
+            await CadExperimentJson.WriteAsync(output, page, cancellationToken);
+        Console.WriteLine(JsonSerializer.Serialize(page, CadExperimentJson.Options));
+        return 0;
+    }
+
     private static async Task<T> ReadRequiredJsonAsync<T>(
         string path,
         string emptyMessage,
@@ -941,6 +1032,16 @@ public static class Program
               query-dev-excel-cad-match --input <match-preview-json-path>
                   [--disposition <disposition>] [--rack-code <code>]
                   [--source <source-ref>] [--locatable]
+                  [--offset <n>] [--limit <n>] [--output <json-path>]
+              build-dev-cad-review-workspace --diagnostics <diagnostic-index-json-path>
+                  --editor <editor-snapshot-json-path>
+                  [--matches <match-preview-json-path>]
+                  [--previous <previous-workspace-json-path>]
+                  --output <review-workspace-json-path>
+              query-dev-cad-review-workspace --input <review-workspace-json-path>
+                  [--status <status>] [--severity <severity>]
+                  [--review-kind <kind>] [--source <source-ref>]
+                  [--search <text>] [--locatable]
                   [--offset <n>] [--limit <n>] [--output <json-path>]
               run --candidate <id> --candidate-version <version> --adapter <path>
                   [--adapter-arg <value>]... --input <path> [--input <path>]...

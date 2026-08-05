@@ -38,6 +38,15 @@ import DesignBatchToolsPanel from '@/modules/space-design/panels/DesignBatchTool
 import DesignElementPropertiesPanel from '@/modules/space-design/panels/DesignElementPropertiesPanel.vue'
 import DesignWmsAdoptionPanel from '@/modules/space-design/panels/DesignWmsAdoptionPanel.vue'
 import DesignScenePreview3D from '@/modules/space-design/preview3d/DesignScenePreview3D.vue'
+import { CadIssueOverlayLayer } from '@/modules/space-design/cad-review/CadIssueOverlayLayer'
+import DesignCadIssuePanel from '@/modules/space-design/cad-review/DesignCadIssuePanel.vue'
+import {
+  cadReviewFreshness,
+  parseCadReviewWorkspace,
+  resolveCadReviewCanvasObject,
+  type CadReviewItem,
+  type CadReviewWorkspace,
+} from '@/modules/space-design/cad-review/cadReviewWorkspace'
 import {
   decodeUnderlay,
   releaseDecodedUnderlay,
@@ -51,6 +60,7 @@ import {
   UnderlayStage,
   type UnderlayLayerState,
 } from '@/space-editor/underlay/UnderlayStage'
+import type { ViewState } from '@/space-editor/coords'
 import type {
   ISpaceDesignSceneDto,
   ISpaceSceneElementDto,
@@ -60,8 +70,14 @@ import type {
 } from '../../../../../sdk/typescript/space-design-v1/spaceDesignV1Client'
 
 const maxUploadBytes = 100 * 1024 * 1024
+const maxCadReviewArtifactBytes = 20 * 1024 * 1024
 const pollAttempts = 30
 const pollDelayMs = 2000
+const defaultCanvasViewport: Pick<ViewState, 'panX' | 'panY' | 'zoom'> = {
+  panX: 0,
+  panY: 0,
+  zoom: 0.05,
+}
 
 const { t } = useI18n()
 const route = useRoute()
@@ -69,9 +85,13 @@ const versionId = computed(() => String(route.params.versionId ?? ''))
 const floorLogicalId = computed(() => String(route.params.floorLogicalId ?? ''))
 const canvasRef = ref<HTMLDivElement>()
 const fileInputRef = ref<HTMLInputElement>()
+const cadReviewFileInputRef = ref<HTMLInputElement>()
 const designScene = ref<ISpaceDesignSceneDto | null>(null)
 const floor = ref<ISpaceSceneFloorDto | null>(null)
 const selectedObjects = ref<CanvasObjectRef[]>([])
+const cadReviewWorkspace = ref<CadReviewWorkspace | null>(null)
+const cadReviewPanelVisible = ref(false)
+const activeCadReviewItemId = ref('')
 const loading = ref(true)
 const projectionMode = ref<'2d' | 'split' | '3d'>('split')
 const uploading = ref(false)
@@ -90,6 +110,7 @@ const calibrationPoints = ref([
 ])
 let stage: UnderlayStage | null = null
 let elementLayer: ElementCanvasLayer | null = null
+let cadIssueOverlay: CadIssueOverlayLayer | null = null
 let resizeObserver: ResizeObserver | null = null
 let disposed = false
 const clientInstanceId = crypto.randomUUID()
@@ -99,6 +120,20 @@ const historyRevision = ref(0)
 const calibrated = computed(() => Boolean(floor.value?.underlayCalibrationId))
 const hasUnderlay = computed(() => Boolean(floor.value?.underlaySourceId))
 const readonlyScene = computed(() => designScene.value?.versionStatus !== 'Draft')
+const cadReviewWorkspaceFreshness = computed(() => {
+  const workspace = cadReviewWorkspace.value
+  const scene = designScene.value
+  if (!workspace || !scene) return null
+  return cadReviewFreshness(workspace, {
+    modelVersionId: String(scene.modelVersionId ?? versionId.value),
+    floorLogicalId: floorLogicalId.value,
+    contentRevision: Number(scene.contentRevision ?? 0),
+    contentHash: scene.contentHash,
+  })
+})
+const cadReviewWorkspaceStale = computed(
+  () => cadReviewWorkspaceFreshness.value?.fresh === false,
+)
 const activeElements = computed(() =>
   (designScene.value?.elements ?? []).filter(
     (element) => element.revision?.lifecycleState === 'Active',
@@ -200,11 +235,13 @@ onMounted(async () => {
   if (!canvasRef.value) return
   stage = new UnderlayStage(canvasRef.value)
   elementLayer = new ElementCanvasLayer(stage.stage, selectObjects)
+  cadIssueOverlay = new CadIssueOverlayLayer(stage.stage)
   resizeObserver = new ResizeObserver((entries) => {
     const size = entries[0]?.contentRect
     if (size) {
       stage?.resize(size.width, size.height)
       elementLayer?.resize()
+      cadIssueOverlay?.resize()
     }
   })
   resizeObserver.observe(canvasRef.value)
@@ -216,6 +253,8 @@ onBeforeUnmount(() => {
   resizeObserver?.disconnect()
   elementLayer?.destroy()
   elementLayer = null
+  cadIssueOverlay?.destroy()
+  cadIssueOverlay = null
   stage?.destroy()
   stage = null
 })
@@ -266,11 +305,118 @@ async function loadScene(): Promise<void> {
     } else {
       stage?.setContent(null, scene.floor)
     }
+    if (cadReviewWorkspaceStale.value) {
+      activeCadReviewItemId.value = ''
+      cadIssueOverlay?.clear()
+    }
   } catch {
     ElMessage.error(t('底图场景加载失败'))
   } finally {
     loading.value = false
   }
+}
+
+function chooseCadReviewArtifact(): void {
+  cadReviewFileInputRef.value?.click()
+}
+
+async function onCadReviewArtifactSelected(event: Event): Promise<void> {
+  const input = event.target as HTMLInputElement
+  const file = input.files?.[0]
+  input.value = ''
+  if (!file) return
+  if (file.size > maxCadReviewArtifactBytes) {
+    ElMessage.error('CAD 问题工件不能超过 20MB')
+    return
+  }
+  try {
+    const workspace = parseCadReviewWorkspace(await file.text())
+    cadReviewWorkspace.value = workspace
+    cadReviewPanelVisible.value = true
+    activeCadReviewItemId.value = ''
+    cadIssueOverlay?.clear()
+    await nextTick()
+    if (cadReviewWorkspaceStale.value) {
+      ElMessage.warning('CAD 问题工件与当前模型修订不一致，已禁用定位')
+    } else {
+      ElMessage.success(`已加载 ${workspace.summary.totalCount} 条 CAD 审查项`)
+    }
+  } catch {
+    ElMessage.error('CAD 问题工件无效或已损坏')
+  }
+}
+
+function focusCadReviewItem(item: CadReviewItem): void {
+  if (cadReviewWorkspaceStale.value) {
+    ElMessage.warning('CAD 问题工件已过期，请重新生成后定位')
+    return
+  }
+  activeCadReviewItemId.value = item.reviewItemId
+  if (projectionMode.value === '3d') projectionMode.value = 'split'
+
+  const object = resolveCadReviewCanvasObject(
+    item,
+    activeRacks.value,
+    activeElements.value,
+  )
+  selectObjects(object ? [object] : [], 'replace')
+  const viewport = viewportForCadReviewItem(item)
+  if (viewport) applyCanvasViewport(viewport)
+  if (!cadIssueOverlay?.focus(item)) {
+    ElMessage.warning('该问题没有可用的画布范围')
+  }
+}
+
+function viewportForCadReviewItem(
+  item: CadReviewItem,
+): Pick<ViewState, 'panX' | 'panY' | 'zoom'> | null {
+  const canvasStage = stage?.stage
+  const bounds = item.location.bounds
+  const anchor = item.location.anchor
+  if (!item.location.canFocusCanvas || !canvasStage || (!bounds && !anchor)) {
+    return null
+  }
+  const centerX = anchor?.x ?? ((bounds?.minX ?? 0) + (bounds?.maxX ?? 0)) / 2
+  const centerY = anchor?.y ?? ((bounds?.minY ?? 0) + (bounds?.maxY ?? 0)) / 2
+  const rawWidth = bounds ? bounds.maxX - bounds.minX : 0
+  const rawHeight = bounds ? bounds.maxY - bounds.minY : 0
+  const padding = item.location.suggestedPaddingMillimeters * 2
+  const hasArea = rawWidth > 0 || rawHeight > 0
+  const zoom = hasArea
+    ? Math.min(
+        0.2,
+        Math.max(
+          0.01,
+          Math.min(
+            (canvasStage.width() - 100) / Math.max(1, rawWidth + padding),
+            (canvasStage.height() - 100) / Math.max(1, rawHeight + padding),
+          ),
+        ),
+      )
+    : defaultCanvasViewport.zoom
+  return {
+    zoom,
+    panX: centerX - canvasStage.width() / (2 * zoom),
+    panY: centerY - canvasStage.height() / (2 * zoom),
+  }
+}
+
+function applyCanvasViewport(
+  viewport: Pick<ViewState, 'panX' | 'panY' | 'zoom'>,
+): void {
+  stage?.setViewport(viewport)
+  elementLayer?.setViewport(viewport)
+  cadIssueOverlay?.setViewport(viewport)
+}
+
+function resetCanvasViewport(): void {
+  applyCanvasViewport(defaultCanvasViewport)
+}
+
+function closeCadReviewPanel(): void {
+  cadReviewPanelVisible.value = false
+  activeCadReviewItemId.value = ''
+  cadIssueOverlay?.clear()
 }
 
 function chooseFile(): void {
@@ -896,6 +1042,20 @@ function delay(milliseconds: number): Promise<void> {
         >
           下载标准 Excel
         </el-button>
+        <el-button
+          v-permission="'space:model:read'"
+          size="small"
+          :type="cadReviewPanelVisible ? 'warning' : 'default'"
+          @click="chooseCadReviewArtifact"
+        >
+          加载/更新 CAD 问题工件
+          <template v-if="cadReviewWorkspace">
+            ({{ cadReviewWorkspace.summary.openCount }})
+          </template>
+        </el-button>
+        <el-button size="small" @click="resetCanvasViewport">
+          重置视图
+        </el-button>
         <el-button-group size="small" aria-label="2D/3D 预览模式">
           <el-button
             :type="projectionMode === '2d' ? 'primary' : 'default'"
@@ -1012,6 +1172,14 @@ function delay(milliseconds: number): Promise<void> {
           </el-button>
         </div>
       </aside>
+      <DesignCadIssuePanel
+        v-else-if="cadReviewPanelVisible && cadReviewWorkspace"
+        :workspace="cadReviewWorkspace"
+        :active-item-id="activeCadReviewItemId"
+        :stale="cadReviewWorkspaceStale"
+        @select="focusCadReviewItem"
+        @close="closeCadReviewPanel"
+      />
       <DesignElementPropertiesPanel
         v-else-if="selectedElement"
         :element="selectedElement"
@@ -1038,6 +1206,13 @@ function delay(milliseconds: number): Promise<void> {
       accept=".pdf,.png,.jpg,.jpeg,application/pdf,image/png,image/jpeg"
       hidden
       @change="onFileSelected"
+    />
+    <input
+      ref="cadReviewFileInputRef"
+      type="file"
+      accept=".json,application/json"
+      hidden
+      @change="onCadReviewArtifactSelected"
     />
   </div>
 </template>
