@@ -158,7 +158,9 @@ public sealed record WarehouseGenerationFeature(
     [property: JsonPropertyName("attributeKeyTokens")]
     IReadOnlyList<string> AttributeKeyTokens,
     [property: JsonPropertyName("relationSourceKeys")]
-    IReadOnlyList<string> RelationSourceKeys);
+    IReadOnlyList<string> RelationSourceKeys,
+    [property: JsonPropertyName("aspectRatioBucket")]
+    int? AspectRatioBucket = null);
 
 public sealed record WarehouseGenerationMappingHint(
     [property: JsonPropertyName("token")] string Token,
@@ -192,7 +194,7 @@ public sealed class WarehouseGenerationInput
                 "Run correlation key must be an opaque 32-128 character value.",
                 nameof(runCorrelationKey));
         }
-        if (policy == SpaceAiDataPolicy.Disabled)
+        if (!Enum.IsDefined(policy) || policy == SpaceAiDataPolicy.Disabled)
         {
             throw new ArgumentOutOfRangeException(
                 nameof(policy),
@@ -217,9 +219,9 @@ public sealed class WarehouseGenerationInput
         Policy = policy;
         WarehouseKind = GeneralRackWarehouse;
         Limits = limits;
-        Features = Copy(features, nameof(features));
-        MappingHints = Copy(mappingHints, nameof(mappingHints));
-        LockedFacts = Copy(lockedFacts, nameof(lockedFacts));
+        Features = ValidateFeatures(features, policy);
+        MappingHints = ValidateMappingHints(mappingHints);
+        LockedFacts = ValidateLockedFacts(lockedFacts, Features, policy);
     }
 
     [JsonPropertyName("schemaVersion")]
@@ -246,13 +248,137 @@ public sealed class WarehouseGenerationInput
     [JsonPropertyName("lockedFacts")]
     public IReadOnlyList<WarehouseGenerationLockedFact> LockedFacts { get; }
 
-    private static IReadOnlyList<T> Copy<T>(
-        IReadOnlyList<T> source,
-        string parameterName)
+    private static IReadOnlyList<WarehouseGenerationFeature> ValidateFeatures(
+        IReadOnlyList<WarehouseGenerationFeature> source,
+        SpaceAiDataPolicy policy)
     {
-        ArgumentNullException.ThrowIfNull(source, parameterName);
-        return source.ToArray();
+        ArgumentNullException.ThrowIfNull(source);
+        if (source.Count > 1_000_000)
+            throw new ArgumentOutOfRangeException(nameof(source));
+
+        var items = source.ToArray();
+        var sourceKeys = new HashSet<string>(StringComparer.Ordinal);
+        foreach (var item in items)
+        {
+            ArgumentNullException.ThrowIfNull(item);
+            ArgumentNullException.ThrowIfNull(item.AttributeKeyTokens);
+            ArgumentNullException.ThrowIfNull(item.RelationSourceKeys);
+            if (!IsToken(item.SourceKey)
+                || !sourceKeys.Add(item.SourceKey)
+                || !Enum.IsDefined(item.CadEntityType)
+                || !IsToken(item.LayerToken)
+                || item.BlockToken is not null && !IsToken(item.BlockToken)
+                || item.EntityCount is < 1 or > 1_000_000
+                || item.NormalizedBounds is { } bounds && !IsBounds(bounds)
+                || item.AngleBucket is < 0 or > 35
+                || item.AspectRatioBucket is < 0 or > 8
+                || item.RepetitionGroup is not null
+                    && !IsToken(item.RepetitionGroup)
+                || item.AttributeKeyTokens.Count > 64
+                || !IsUniqueTokens(item.AttributeKeyTokens)
+                || item.RelationSourceKeys.Count > 32
+                || !IsUniqueTokens(item.RelationSourceKeys)
+                || policy == SpaceAiDataPolicy.MetadataOnly
+                    && (item.NormalizedBounds is not null
+                        || item.RelationSourceKeys.Count > 0))
+            {
+                throw new ArgumentException(
+                    "Provider feature shape is invalid.",
+                    nameof(source));
+            }
+        }
+        foreach (var item in items)
+        {
+            if (item.RelationSourceKeys.Any(key =>
+                    key.Equals(item.SourceKey, StringComparison.Ordinal)
+                    || !sourceKeys.Contains(key)))
+            {
+                throw new ArgumentException(
+                    "Provider feature relations must reference another input feature.",
+                    nameof(source));
+            }
+        }
+        return items;
     }
+
+    private static IReadOnlyList<WarehouseGenerationMappingHint>
+        ValidateMappingHints(IReadOnlyList<WarehouseGenerationMappingHint> source)
+    {
+        ArgumentNullException.ThrowIfNull(source);
+        if (source.Count > 10_000)
+            throw new ArgumentOutOfRangeException(nameof(source));
+        var items = source.ToArray();
+        var identities = new HashSet<string>(StringComparer.Ordinal);
+        foreach (var item in items)
+        {
+            ArgumentNullException.ThrowIfNull(item);
+            if (!IsToken(item.Token)
+                || !Enum.IsDefined(item.TargetType)
+                || item.Strength is < 0 or > 1
+                || !identities.Add($"{item.Token}\n{item.TargetType}"))
+            {
+                throw new ArgumentException(
+                    "Provider mapping hint shape is invalid.",
+                    nameof(source));
+            }
+        }
+        return items;
+    }
+
+    private static IReadOnlyList<WarehouseGenerationLockedFact>
+        ValidateLockedFacts(
+            IReadOnlyList<WarehouseGenerationLockedFact> source,
+            IReadOnlyList<WarehouseGenerationFeature> features,
+            SpaceAiDataPolicy policy)
+    {
+        ArgumentNullException.ThrowIfNull(source);
+        if (policy == SpaceAiDataPolicy.MetadataOnly && source.Count > 0)
+        {
+            throw new ArgumentException(
+                "Metadata-only input cannot carry object-level locked facts.",
+                nameof(source));
+        }
+        if (source.Count > 1_000_000)
+            throw new ArgumentOutOfRangeException(nameof(source));
+        var sourceKeys = features
+            .Select(item => item.SourceKey)
+            .ToHashSet(StringComparer.Ordinal);
+        var identities = new HashSet<string>(StringComparer.Ordinal);
+        var items = source.ToArray();
+        foreach (var item in items)
+        {
+            ArgumentNullException.ThrowIfNull(item);
+            if (!sourceKeys.Contains(item.SourceKey)
+                || !IsToken(item.FieldPath)
+                || !IsToken(item.ValueToken)
+                || !identities.Add($"{item.SourceKey}\n{item.FieldPath}"))
+            {
+                throw new ArgumentException(
+                    "Provider locked fact shape is invalid.",
+                    nameof(source));
+            }
+        }
+        return items;
+    }
+
+    private static bool IsBounds(WarehouseNormalizedBounds bounds) =>
+        bounds.X is >= 0 and <= 1
+        && bounds.Y is >= 0 and <= 1
+        && bounds.Width is > 0 and <= 1
+        && bounds.Height is > 0 and <= 1
+        && bounds.X + bounds.Width <= 1
+        && bounds.Y + bounds.Height <= 1;
+
+    private static bool IsUniqueTokens(IReadOnlyList<string> values)
+    {
+        var unique = new HashSet<string>(StringComparer.Ordinal);
+        return values.All(value => IsToken(value) && unique.Add(value));
+    }
+
+    private static bool IsToken(string? value) =>
+        value is { Length: > 0 and <= 256 }
+        && value.Equals(value.Trim(), StringComparison.Ordinal)
+        && value.All(character => character >= ' ' && character != '\u007f');
 }
 
 public sealed record WarehouseGenerationUsage(

@@ -75,6 +75,39 @@
       }
     }
   },
+  "allOf": [
+    {
+      "if": {
+        "properties": {
+          "policy": {
+            "const": "MetadataOnly"
+          }
+        },
+        "required": [
+          "policy"
+        ]
+      },
+      "then": {
+        "properties": {
+          "features": {
+            "items": {
+              "properties": {
+                "normalizedBounds": {
+                  "type": "null"
+                },
+                "relationSourceKeys": {
+                  "maxItems": 0
+                }
+              }
+            }
+          },
+          "lockedFacts": {
+            "maxItems": 0
+          }
+        }
+      }
+    }
+  ],
   "$defs": {
     "token": {
       "type": "string",
@@ -91,8 +124,11 @@
         "layerToken",
         "blockToken",
         "entityCount",
+        "normalizedBounds",
         "angleBucket",
+        "aspectRatioBucket",
         "repetitionGroup",
+        "attributeKeyTokens",
         "relationSourceKeys"
       ],
       "properties": {
@@ -168,6 +204,15 @@
           "type": "integer",
           "minimum": 0,
           "maximum": 35
+        },
+        "aspectRatioBucket": {
+          "type": [
+            "integer",
+            "null"
+          ],
+          "minimum": 0,
+          "maximum": 8,
+          "description": "Dimensionless floor(log2(long-side/short-side)) bucket, capped at 8; null for degenerate bounds."
         },
         "repetitionGroup": {
           "anyOf": [

@@ -1,3 +1,5 @@
+using System.Security.Cryptography;
+using System.Text;
 using System.Text.Json;
 using CP6.Space.Application;
 using CP6.Space.Contracts;
@@ -35,6 +37,10 @@ public static class Program
                 "build-dev-inventory" => await BuildDevelopmentInventoryAsync(
                     commandLine,
                     cancellation.Token),
+                "minimize-dev-ai-cad-features" =>
+                    await MinimizeDevelopmentAiCadFeaturesAsync(
+                        commandLine,
+                        cancellation.Token),
                 "query-dev-inventory" => await QueryDevelopmentInventoryAsync(
                     commandLine,
                     cancellation.Token),
@@ -297,6 +303,135 @@ public static class Program
             },
             CadExperimentJson.Options));
         return 0;
+    }
+
+    private static async Task<int> MinimizeDevelopmentAiCadFeaturesAsync(
+        CommandLine commandLine,
+        CancellationToken cancellationToken)
+    {
+        var input = Path.GetFullPath(commandLine.Required("--input"));
+        var keyPath = Path.GetFullPath(commandLine.Required("--hmac-key-file"));
+        var providerOutput = Path.GetFullPath(
+            commandLine.Required("--provider-output"));
+        var sourceMapOutput = Path.GetFullPath(
+            commandLine.Required("--source-map-output"));
+        EnsureDistinctPaths(
+            input,
+            keyPath,
+            providerOutput,
+            sourceMapOutput);
+
+        SpaceCadCoordinatePreparationV1 preparation;
+        await using (var inputStream = File.OpenRead(input))
+        {
+            preparation = await JsonSerializer.DeserializeAsync<
+                              SpaceCadCoordinatePreparationV1>(
+                              inputStream,
+                              CadExperimentJson.Options,
+                              cancellationToken)
+                          ?? throw new InvalidDataException(
+                              "The prepared CAD IR package is empty.");
+        }
+
+        if (!Enum.TryParse<SpaceAiDataPolicy>(
+                commandLine.Required("--policy"),
+                ignoreCase: false,
+                out var policy)
+            || policy == SpaceAiDataPolicy.Disabled)
+        {
+            throw new ArgumentException(
+                "Option '--policy' must be MetadataOnly or StructuredFeatures.");
+        }
+        var package = preparation.Package;
+        var request = new SpaceCadConversionRequest(
+            ParseRequiredGuid(commandLine, "--tenant-id"),
+            Guid.Parse("22222222-2222-2222-2222-222222222222"),
+            Guid.Parse("33333333-3333-3333-3333-333333333333"),
+            package.Document.SourceSha256,
+            package.Document.SourceFormat,
+            package.Document.ConverterId,
+            package.Document.ConverterVersion);
+        var siteId = ParseRequiredGuid(commandLine, "--site-id");
+        var modelVersionId = ParseRequiredGuid(commandLine, "--model-version-id");
+        var runId = ParseRequiredGuid(commandLine, "--run-id");
+        var hmacKey = await File.ReadAllBytesAsync(keyPath, cancellationToken);
+        try
+        {
+            var result = SpaceAiCadFeatureMinimizer.Minimize(
+                request,
+                preparation,
+                policy,
+                hmacKey,
+                siteId,
+                modelVersionId,
+                runId,
+                new WarehouseGenerationLimits(
+                    commandLine.Integer("--max-suggestions", 1_000),
+                    commandLine.Integer("--max-relations", 8)));
+            await WriteCanonicalJsonAsync(
+                providerOutput,
+                SpaceAiCadFeatureMinimizer.SerializeProviderInput(result),
+                cancellationToken);
+            await WriteCanonicalJsonAsync(
+                sourceMapOutput,
+                SpaceAiCadFeatureMinimizer.SerializeLocalSourceMap(result),
+                cancellationToken);
+            Console.WriteLine(JsonSerializer.Serialize(
+                new
+                {
+                    result.ProviderInput.Policy,
+                    FeatureCount = result.ProviderInput.Features.Count,
+                    result.LocalSourceMap.MappedSourceCount,
+                    result.LocalSourceMap.ProviderInputSha256,
+                    result.LocalSourceMap.SourceMapSha256,
+                    ExternalProviderInvoked = false,
+                    DraftWritten = false,
+                },
+                CadExperimentJson.Options));
+        }
+        finally
+        {
+            CryptographicOperations.ZeroMemory(hmacKey);
+        }
+        return 0;
+    }
+
+    private static Guid ParseRequiredGuid(
+        CommandLine commandLine,
+        string option)
+    {
+        var value = commandLine.Required(option);
+        return Guid.TryParseExact(value, "D", out var parsed)
+            && parsed != Guid.Empty
+                ? parsed
+                : throw new ArgumentException(
+                    $"Option '{option}' must be a non-empty D-format GUID.");
+    }
+
+    private static void EnsureDistinctPaths(params string[] paths)
+    {
+        if (paths.Distinct(StringComparer.OrdinalIgnoreCase).Count()
+            != paths.Length)
+        {
+            throw new ArgumentException(
+                "Input, HMAC key, provider output and local source-map paths must differ.");
+        }
+    }
+
+    private static async Task WriteCanonicalJsonAsync(
+        string path,
+        string json,
+        CancellationToken cancellationToken)
+    {
+        Directory.CreateDirectory(
+            Path.GetDirectoryName(path)
+            ?? throw new InvalidOperationException(
+                "The output directory is invalid."));
+        await File.WriteAllTextAsync(
+            path,
+            json,
+            new UTF8Encoding(encoderShouldEmitUTF8Identifier: false),
+            cancellationToken);
     }
 
     private static async Task<int> QueryDevelopmentInventoryAsync(
@@ -993,6 +1128,14 @@ public static class Program
                   --output <prepared-cad-ir-json-path>
               build-dev-inventory --input <prepared-cad-ir-json-path>
                   --output <inventory-json-path>
+              minimize-dev-ai-cad-features --input <prepared-cad-ir-json-path>
+                  --policy <MetadataOnly|StructuredFeatures>
+                  --hmac-key-file <32-to-128-byte-binary-key-path>
+                  --tenant-id <guid> --site-id <guid>
+                  --model-version-id <guid> --run-id <guid>
+                  --provider-output <provider-input-json-path>
+                  --source-map-output <local-only-source-map-json-path>
+                  [--max-suggestions <n>] [--max-relations <n>]
               query-dev-inventory --input <inventory-json-path>
                   --kind <layer|block|reference> [--search <text>]
                   [--visible <true|false>] [--entity-type <type>]

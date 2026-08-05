@@ -351,6 +351,97 @@ public sealed class DevelopmentDxfCadConverterTests
     }
 
     [Fact]
+    public async Task Ai_feature_command_writes_deterministic_provider_and_local_only_artifacts()
+    {
+        using var fixture = new TemporaryDirectory();
+        var input = fixture.Write("sample.dxf", ValidDxf);
+        var sourceHash = await DatasetAuditor.ComputeSha256Async(input);
+        var request = Request(sourceHash);
+        var irPath = Path.Combine(fixture.Path, "sample.cad-ir.json");
+        await using (var stream = File.OpenRead(input))
+        {
+            await new DevelopmentDxfCadConverter().ConvertAsync(
+                request,
+                stream,
+                new DevelopmentCadIrFileSink(request, irPath));
+        }
+        var confirmationPath = Path.Combine(fixture.Path, "confirmation.json");
+        await CadExperimentJson.WriteAsync(
+            confirmationPath,
+            CoordinateConfirmation(sourceHash));
+        var preparedPath = Path.Combine(fixture.Path, "prepared.json");
+        Assert.Equal(0, await Program.Main(
+        [
+            "prepare-dev-coordinate",
+            "--input", irPath,
+            "--confirmation", confirmationPath,
+            "--output", preparedPath,
+        ]));
+
+        var keyPath = Path.Combine(fixture.Path, "hmac.key");
+        await File.WriteAllBytesAsync(
+            keyPath,
+            Enumerable.Range(1, 32).Select(value => (byte)value).ToArray());
+        var providerPath = Path.Combine(fixture.Path, "provider-input.json");
+        var sourceMapPath = Path.Combine(fixture.Path, "source-map.json");
+        var arguments = new[]
+        {
+            "minimize-dev-ai-cad-features",
+            "--input", preparedPath,
+            "--policy", "StructuredFeatures",
+            "--hmac-key-file", keyPath,
+            "--tenant-id", "55555555-5555-5555-5555-555555555555",
+            "--site-id", "66666666-6666-6666-6666-666666666666",
+            "--model-version-id", "77777777-7777-7777-7777-777777777777",
+            "--run-id", "88888888-8888-8888-8888-888888888888",
+            "--provider-output", providerPath,
+            "--source-map-output", sourceMapPath,
+        };
+
+        Assert.Equal(0, await Program.Main(arguments));
+        var providerJson = await File.ReadAllTextAsync(providerPath);
+        await using var sourceMapStream = File.OpenRead(sourceMapPath);
+        var sourceMap = await JsonSerializer.DeserializeAsync<
+            SpaceAiCadFeatureSourceMapV1>(
+            sourceMapStream,
+            CadExperimentJson.Options);
+
+        Assert.NotNull(sourceMap);
+        Assert.True(sourceMap.IsLocalOnly);
+        Assert.Equal(
+            sourceMap.ProviderInputSha256,
+            await DatasetAuditor.ComputeSha256Async(providerPath));
+        Assert.Equal(1, sourceMap.FeatureCount);
+        Assert.Equal(1, sourceMap.MappedSourceCount);
+        Assert.Single(Assert.Single(sourceMap.Entries).SourceRefs);
+        Assert.DoesNotContain(sourceHash, providerJson, StringComparison.Ordinal);
+        Assert.DoesNotContain(
+            "55555555-5555-5555-5555-555555555555",
+            providerJson,
+            StringComparison.Ordinal);
+        Assert.DoesNotContain(
+            sourceMap.Entries[0].SourceRefs[0],
+            providerJson,
+            StringComparison.Ordinal);
+
+        var repeatedProviderPath = Path.Combine(
+            fixture.Path,
+            "provider-input-repeat.json");
+        var repeatedSourceMapPath = Path.Combine(
+            fixture.Path,
+            "source-map-repeat.json");
+        arguments[^3] = repeatedProviderPath;
+        arguments[^1] = repeatedSourceMapPath;
+        Assert.Equal(0, await Program.Main(arguments));
+        Assert.Equal(
+            await File.ReadAllBytesAsync(providerPath),
+            await File.ReadAllBytesAsync(repeatedProviderPath));
+        Assert.Equal(
+            await File.ReadAllBytesAsync(sourceMapPath),
+            await File.ReadAllBytesAsync(repeatedSourceMapPath));
+    }
+
+    [Fact]
     public async Task Mapping_commands_seal_a_profile_and_write_a_ready_preview()
     {
         using var fixture = new TemporaryDirectory();
