@@ -2,6 +2,16 @@
 
 最后更新：2026-08-05
 
+## E13-S05 Mock/本地 Provider 与故障降级开发切片（2026-08-05）
+
+- 在 E13-S04 集成基线 `454c521c` 上完成功能提交 `e519942b`、证据提交 `e55b49aa`，并以 no-ff 提交 `6bb43fc5` 集成到 `integration/space-v1-20260730`：新增确定性、无网络的 Mock、本地启发式和可重试故障降级实现，三者统一通过既有 `IWarehouseGenerationProvider` SPI。
+- Mock 按稳定 SourceKey 和上限生成固定类型/0.5 置信度建议；Local 只读取 E13-S04 允许的脱敏 Layer/Block 分类令牌，确定性识别 Rack/Aisle/Wall/Column/Door/Dock/StaticEquipment/Zone/Floor，未命中显式诊断，不读取原始 CAD、属性值、SourceRef、路径或租户身份。
+- 只有 Unavailable、Timeout、RateLimited 可降级到 Local，并追加稳定 Warning；ContractViolation 和用户取消不降级。异常不携带端点、凭据、响应体或内部异常；建议、关系和诊断继续受合同上限约束。
+- 开发 CLI 支持 `mock|local|fallback-local`，在反序列化前拒绝未知 Schema/WarehouseKind，明确拒绝 `external`；生产 Registry 未注册开发 Provider，也没有凭据、网络、Run/Usage 持久化或 Draft 写入。
+- 样例 13 的 22 个最小化特征产生 Mock 22 条、Local 21 条以及三类降级各 21 条建议；5 份结果共 106 条建议，未知输入/关系引用与范围违规均为 0，38 个敏感候选命中 0。Mock、Local、Timeout 降级重复运行均字节一致，全部运行报告 external=false、draft=false。
+- 门禁：Provider 实现 + SPI 27/27、Space Unit 359/359、CAD 工具 25/25；完整 solution Release 非增量单线程、禁用节点复用构建 0 error / 10 条既有 warning，Desktop/Android AOT 强度不变。首轮恰逢 Visual Studio 更新导致旧 iOS 26.2 SDK 目录缺失；工作负载自动恢复到 iOS 26.5 后同一命令无代码修改通过。格式和差异检查通过，本切片无数据库、Migration、WebApi、前端、OpenAPI 或 SDK 变化。
+- 这是开发切片，不是正式 E13-S05 完成：首个外部适配器仍等待供应商/合同、区域与数据驻留、端点别名、SecretReference、租户外发授权、生产输入输出校验和计费证据。下一独立切片可先做 E13-S06 本地不可信输出校验，但不能借此启用外部 Provider 或应用建议。完整证据见 `docs/space/reports/e13-s05-provider-development.md`。
+
 ## E13-S04 CAD IR 特征最小化与脱敏开发切片（2026-08-05）
 
 - 在 E04-S05 集成基线 `f5f0c9e8` 上完成功能提交 `8fffdf07`、证据提交 `d635796e`，并以 no-ff 提交 `8bc1114d` 集成到 `integration/space-v1-20260730`：parsing-ready CAD Coordinate Preparation 现在可确定性投影为 `MetadataOnly` 或 `StructuredFeatures` Provider 输入，并生成独立 local-only SourceRef 映射。
@@ -509,4 +519,4 @@
 
 ## 下一动作
 
-以 `624c1511` 为路线图审计起点，其中 E12-S05 no-ff 功能集成为 `c4b139ab`。E03-S01～S04、E04-S05 开发切片、E10-S01～S06、E11-S01～S06、E12-S01～S05，以及 E13-S01～S04 开发切片、S12、S16 现已推进到受控集成基线。E13-S04 已冻结两档 CAD 特征最小化、HMAC 脱敏、Provider/local-map 双工件边界和不外发敏感字段的连续证据，但正式生产验收仍等待生产 CAD Artifact、租户/Run/策略/SecretReference 绑定、权限审计和授权真实图纸。E12-S06 与 E02-S01 最终签收仍等待独立正式黄金样本、原生 DWG、明确 SDK/供应商授权和冻结试验 Worker；各 CAD 开发切片不得计入发布门禁。E09 技术 S01～S05 已完成，跨职能 GA 签字仍由发布治理完成；发布 SQL 环境跳过项也不得记作通过。i18n 当前有 908 项显式快照债务，本切片无前端净新增。下一张可独立推进的开发切片优先 E13-S05 Mock/本地 Provider 与故障降级合同；外部 Provider 继续默认禁用，未取得策略、凭据和生产外发授权前不得调用或伪装完成外部适配器。并行继续接收并审计正式 CAD 解阻包，不创建未授权生产 CAD/DWG 适配器。禁止把候选检查点 `0d25da4d` 整包合入，GR-VP T1–T7 不要重做。
+以 `624c1511` 为路线图审计起点，其中 E12-S05 no-ff 功能集成为 `c4b139ab`。E03-S01～S04、E04-S05 开发切片、E10-S01～S06、E11-S01～S06、E12-S01～S05，以及 E13-S01～S05 开发切片、S12、S16 现已推进到受控集成基线。E13-S05 开发侧已具备同端口的 Mock、本地启发式和三类可重试故障降级，但正式卡仍缺首个外部 Provider 适配器及其供应商/合同、区域、端点、SecretReference、租户外发授权、生产校验和计费证据；这些条件满足前 External 继续默认禁用，不得调用或伪装完成。E12-S06 与 E02-S01 最终签收仍等待独立正式黄金样本、原生 DWG、明确 SDK/供应商授权和冻结试验 Worker；各 CAD 开发切片不得计入发布门禁。E09 技术 S01～S05 已完成，跨职能 GA 签字仍由发布治理完成；发布 SQL 环境跳过项也不得记作通过。i18n 当前有 908 项显式快照债务，本切片无前端净新增。下一张可独立推进的开发切片优先 E13-S06：把 Mock/Local 输出按不可信数据执行 Schema、枚举、范围、数量、引用、属性组合和安全字符串校验，但仍不注册外部 Provider、不写 Draft。并行继续接收并审计正式 CAD 解阻包，不创建未授权生产 CAD/DWG 适配器。禁止把候选检查点 `0d25da4d` 整包合入，GR-VP T1–T7 不要重做。
