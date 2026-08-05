@@ -44,6 +44,10 @@ public static class Program
                 "run-dev-ai-provider" => await RunDevelopmentAiProviderAsync(
                     commandLine,
                     cancellation.Token),
+                "validate-dev-ai-provider-output" =>
+                    await ValidateDevelopmentAiProviderOutputAsync(
+                        commandLine,
+                        cancellation.Token),
                 "query-dev-inventory" => await QueryDevelopmentInventoryAsync(
                     commandLine,
                     cancellation.Token),
@@ -102,7 +106,8 @@ public static class Program
                 or InvalidOperationException
                 or IOException
                 or UnauthorizedAccessException
-                or JsonException)
+                or JsonException
+                or SpaceProblemException)
         {
             Console.Error.WriteLine(exception.Message);
             PrintUsage();
@@ -422,31 +427,9 @@ public static class Program
             throw new ArgumentException(
                 "Provider input and output paths must differ.");
         }
-        WarehouseGenerationInput input;
-        await using (var inputStream = File.OpenRead(inputPath))
-        {
-            using var document = await JsonDocument.ParseAsync(
-                inputStream,
-                cancellationToken: cancellationToken);
-            if (!document.RootElement.TryGetProperty(
-                    "schemaVersion",
-                    out var schemaVersion)
-                || schemaVersion.GetString()
-                    != WarehouseGenerationInput.CurrentSchemaVersion
-                || !document.RootElement.TryGetProperty(
-                    "warehouseKind",
-                    out var warehouseKind)
-                || warehouseKind.GetString()
-                    != WarehouseGenerationInput.GeneralRackWarehouse)
-            {
-                throw new InvalidDataException(
-                    "The minimized AI provider input schema is unsupported.");
-            }
-            input = document.RootElement.Deserialize<WarehouseGenerationInput>(
-                        CadExperimentJson.Options)
-                    ?? throw new InvalidDataException(
-                        "The minimized AI provider input is empty.");
-        }
+        var input = await LoadDevelopmentAiProviderInputAsync(
+            inputPath,
+            cancellationToken);
 
         var providerName = commandLine.Required("--provider");
         IWarehouseGenerationProvider provider = providerName switch
@@ -461,6 +444,9 @@ public static class Program
                 "Option '--provider' must be mock, local or fallback-local."),
         };
         var result = await provider.GenerateAsync(input, cancellationToken);
+        var validated = new WarehouseGenerationOutputValidator()
+            .Validate(input, result);
+        result = validated.Output;
         await CadExperimentJson.WriteAsync(outputPath, result, cancellationToken);
         Console.WriteLine(JsonSerializer.Serialize(
             new
@@ -469,6 +455,7 @@ public static class Program
                 result.ProviderModel,
                 SuggestionCount = result.Suggestions.Count,
                 DiagnosticCount = result.Diagnostics.Count,
+                validated.CanonicalSha256,
                 Degraded = result.Diagnostics.Any(item =>
                     item.Code.EndsWith("_FALLBACK", StringComparison.Ordinal)),
                 ExternalProviderInvoked = false,
@@ -476,6 +463,95 @@ public static class Program
             },
             CadExperimentJson.Options));
         return 0;
+    }
+
+    private static async Task<int> ValidateDevelopmentAiProviderOutputAsync(
+        CommandLine commandLine,
+        CancellationToken cancellationToken)
+    {
+        var inputPath = Path.GetFullPath(commandLine.Required("--input"));
+        var providerOutputPath = Path.GetFullPath(
+            commandLine.Required("--provider-output"));
+        if (inputPath.Equals(
+                providerOutputPath,
+                StringComparison.OrdinalIgnoreCase))
+        {
+            throw new ArgumentException(
+                "Provider input and output paths must differ.");
+        }
+
+        var input = await LoadDevelopmentAiProviderInputAsync(
+            inputPath,
+            cancellationToken);
+        var limits = new WarehouseGenerationOutputValidationLimits().Validate();
+        var file = new FileInfo(providerOutputPath);
+        if (!file.Exists
+            || file.Length is < 1
+            || file.Length > limits.MaxCanonicalJsonBytes)
+        {
+            throw new SpaceProblemException(
+                SpaceErrorCodes.AiOutputInvalid,
+                502,
+                "The warehouse generation provider output is invalid.",
+                "Provider output failed validation (OUTPUT_JSON_SIZE_INVALID).",
+                "change-ai-provider-or-model");
+        }
+
+        var bytes = await File.ReadAllBytesAsync(
+            providerOutputPath,
+            cancellationToken);
+        try
+        {
+            var validated = new WarehouseGenerationOutputValidator(limits)
+                .ValidateJson(input, bytes);
+            Console.WriteLine(JsonSerializer.Serialize(
+                new
+                {
+                    Validated = true,
+                    validated.Output.SchemaVersion,
+                    validated.Output.ProviderModel,
+                    SuggestionCount = validated.Output.Suggestions.Count,
+                    DiagnosticCount = validated.Output.Diagnostics.Count,
+                    validated.CanonicalSha256,
+                    ExternalProviderInvoked = false,
+                    DraftWritten = false,
+                },
+                CadExperimentJson.Options));
+        }
+        finally
+        {
+            CryptographicOperations.ZeroMemory(bytes);
+        }
+        return 0;
+    }
+
+    private static async Task<WarehouseGenerationInput>
+        LoadDevelopmentAiProviderInputAsync(
+            string inputPath,
+            CancellationToken cancellationToken)
+    {
+        await using var inputStream = File.OpenRead(inputPath);
+        using var document = await JsonDocument.ParseAsync(
+            inputStream,
+            cancellationToken: cancellationToken);
+        if (!document.RootElement.TryGetProperty(
+                "schemaVersion",
+                out var schemaVersion)
+            || schemaVersion.GetString()
+                != WarehouseGenerationInput.CurrentSchemaVersion
+            || !document.RootElement.TryGetProperty(
+                "warehouseKind",
+                out var warehouseKind)
+            || warehouseKind.GetString()
+                != WarehouseGenerationInput.GeneralRackWarehouse)
+        {
+            throw new InvalidDataException(
+                "The minimized AI provider input schema is unsupported.");
+        }
+        return document.RootElement.Deserialize<WarehouseGenerationInput>(
+                   CadExperimentJson.Options)
+               ?? throw new InvalidDataException(
+                   "The minimized AI provider input is empty.");
     }
 
     private static WarehouseGenerationProviderFailureKind ParseDevelopmentFailure(
@@ -1220,6 +1296,8 @@ public static class Program
               run-dev-ai-provider --input <provider-input-json-path>
                   --provider <mock|local|fallback-local> --output <json-path>
                   [--failure <unavailable|timeout|rate-limited>]
+              validate-dev-ai-provider-output --input <provider-input-json-path>
+                  --provider-output <canonical-provider-output-json-path>
               query-dev-inventory --input <inventory-json-path>
                   --kind <layer|block|reference> [--search <text>]
                   [--visible <true|false>] [--entity-type <type>]

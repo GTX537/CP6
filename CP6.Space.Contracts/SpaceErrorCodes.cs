@@ -74,6 +74,8 @@ public static class SpaceErrorCodes
     public const string AiQuotaExceeded = "SPACE_AI_QUOTA_EXCEEDED";
     public const string AiProviderUnavailable =
         "SPACE_AI_PROVIDER_UNAVAILABLE";
+    public const string AiOutputInvalid =
+        "SPACE_AI_OUTPUT_INVALID";
     public const string AiSourcePolicyDenied =
         "SPACE_AI_SOURCE_POLICY_DENIED";
     public const string AiPolicyInvalid = "SPACE_AI_POLICY_INVALID";

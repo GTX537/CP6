@@ -269,7 +269,8 @@ public sealed class SpaceAiGenerationGateway(
     ISpaceExecutionContext executionContext,
     ISpaceAiTenantPolicySource policySource,
     ISpaceAiQuotaLeaseManager quotaLeaseManager,
-    IWarehouseGenerationProviderRegistry providerRegistry)
+    IWarehouseGenerationProviderRegistry providerRegistry,
+    IWarehouseGenerationOutputValidator outputValidator)
 {
     public async Task<WarehouseGenerationResult> GenerateAsync(
         Guid siteId,
@@ -316,9 +317,10 @@ public sealed class SpaceAiGenerationGateway(
         if (lease is null)
             throw QuotaExceeded();
 
-        return await registration.Provider.GenerateAsync(
+        var output = await registration.Provider.GenerateAsync(
             input,
             cancellationToken);
+        return outputValidator.Validate(input, output).Output;
     }
 
     private static SpaceProblemException Disabled() =>
