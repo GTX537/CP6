@@ -115,3 +115,7 @@ CLI 的固定 FileId/SourceId 与本地 key 文件不能用于生产。
 E13-S05 才负责 Mock/本地 Provider 与首个外部适配器及故障降级；E13-S06 才负责把
 Provider 输出作为不可信数据执行 Schema、枚举、范围、数量和引用校验。本切片既没有
 绕过外部 Provider 门禁，也没有把建议应用到 Draft、Published 或 WMS。
+
+远端集成完成后已确认功能 tip `d635796e` 位于远端集成祖先链，并删除本地/远端临时
+功能分支。可重复生成的 `tmp/e13-s04` 共 9 个文件、68,361 bytes（含开发 HMAC key）
+已删除；源码、Schema、报告和远端 Git 历史保留，`main` 未修改。

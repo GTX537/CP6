@@ -10,6 +10,7 @@
 - 合成样例 13 的 22 个 SourceRef 在 MetadataOnly 下形成 8 个统计特征，在 StructuredFeatures 下形成 22 个特征、12 个相对包围盒和 14 条关系；38 个非空敏感候选外发命中 0，越界包围盒 0。Provider SHA 分别为 `c5fbdcf2...7d697efa` 与 `164020fa...8bc2b65`，Structured Provider/local map 重复运行均字节一致。
 - 门禁：minimizer + Provider SPI 聚焦 27/27，功能树与 no-ff 合并树的 Space Unit 350/350、CAD 工具 24/24；两棵树完整 solution Release 非增量单线程构建最终均为 0 error / 10 条既有 warning，Desktop/Android AOT 强度不变。合并态首轮在第三方 Kotlin 协程程序集的 Android x64 AOT 汇编器处瞬时失败，关闭 build server、禁用节点复用后原强度重跑通过，未修改代码或关闭 AOT；格式、两份 AI Schema JSON、工件哈希/反序列化/应用验证和差异检查通过。本切片无前端、数据库、API 或 SDK 变化。
 - 这是开发切片，不是正式 E13-S04 生产验收：仍需生产 E02-S03 CAD Artifact、Tenant/Run/Policy/SecretReference 绑定、Artifact 保留、权限/审计和授权真实 CAD 覆盖。E13-S05 才调用 Provider/实现降级，E13-S06 才校验不可信输出；本切片不应用建议。完整证据见 `docs/space/reports/e13-s04-cad-feature-minimization-development.md`。
+- 功能 tip `d635796e` 已确认进入远端集成祖先链，本地/远端临时功能分支均已删除；可重建的 `tmp/e13-s04` 共 9 个文件、68,361 bytes（包含开发 HMAC key）已删除，源码、Schema、报告和远端历史保留，`main` 未修改。
 
 ## E04-S05 CAD 问题列表与画布定位开发切片（2026-08-05）
 
