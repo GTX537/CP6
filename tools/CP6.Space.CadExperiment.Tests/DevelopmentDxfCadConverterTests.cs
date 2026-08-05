@@ -646,6 +646,63 @@ public sealed class DevelopmentDxfCadConverterTests
         Assert.Equal(SpaceCadSemanticTarget.Guide, Assert.Single(semantic.Items).Target);
         SpaceCadSemanticParser.Validate(semantic);
 
+        var synthesisKeyPath = Path.Combine(fixture.Path, "synthesis-hmac.key");
+        await File.WriteAllBytesAsync(
+            synthesisKeyPath,
+            Enumerable.Range(1, 32).Select(value => (byte)value).ToArray());
+        var synthesisInputPath = Path.Combine(fixture.Path, "synthesis-input.json");
+        var synthesisMapPath = Path.Combine(fixture.Path, "synthesis-map.json");
+        Assert.Equal(0, await Program.Main(
+        [
+            "minimize-dev-ai-cad-features",
+            "--input", preparedPath,
+            "--policy", "StructuredFeatures",
+            "--hmac-key-file", synthesisKeyPath,
+            "--tenant-id", "55555555-5555-5555-5555-555555555555",
+            "--site-id", "66666666-6666-6666-6666-666666666666",
+            "--model-version-id", "77777777-7777-7777-7777-777777777777",
+            "--run-id", "88888888-8888-8888-8888-888888888888",
+            "--provider-output", synthesisInputPath,
+            "--source-map-output", synthesisMapPath,
+        ]));
+        var synthesisProviderPath = Path.Combine(
+            fixture.Path,
+            "synthesis-provider.json");
+        Assert.Equal(0, await Program.Main(
+        [
+            "run-dev-ai-provider",
+            "--input", synthesisInputPath,
+            "--provider", "mock",
+            "--output", synthesisProviderPath,
+        ]));
+        var synthesisPath = Path.Combine(fixture.Path, "synthesis.json");
+        Assert.Equal(3, await Program.Main(
+        [
+            "synthesize-dev-ai-proposals",
+            "--input", synthesisInputPath,
+            "--source-map", synthesisMapPath,
+            "--semantic", semanticPath,
+            "--provider-output", synthesisProviderPath,
+            "--model-version-id", "77777777-7777-7777-7777-777777777777",
+            "--rule-version", "rules-e02-s06-v1",
+            "--output", synthesisPath,
+        ]));
+        await using (var synthesisStream = File.OpenRead(synthesisPath))
+        {
+            var synthesis = await JsonSerializer.DeserializeAsync<
+                WarehouseDraftProposalSetV1>(
+                    synthesisStream,
+                    CadExperimentJson.Options);
+            Assert.NotNull(synthesis);
+            Assert.True(synthesis.IsReadOnlyPreview);
+            Assert.False(synthesis.DraftWritten);
+            Assert.Empty(synthesis.Proposals);
+            Assert.Contains(synthesis.Issues, issue =>
+                issue.Code == "AI_GEOMETRY_RULE_REQUIRED"
+                && issue.Severity == WarehouseProposalIssueSeverity.Blocking);
+            _ = WarehouseDraftSynthesizer.Serialize(synthesis);
+        }
+
         var diagnosticPath = Path.Combine(fixture.Path, "semantic-diagnostics.json");
         Assert.Equal(0, await Program.Main(
         [

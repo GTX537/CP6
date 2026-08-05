@@ -26,6 +26,8 @@ public sealed class SpaceAiDefaultRegistrationTests
             IWarehouseGenerationProviderRegistry>();
         var outputValidator = provider.GetRequiredService<
             IWarehouseGenerationOutputValidator>();
+        var synthesizer = provider.GetRequiredService<
+            IWarehouseDraftSynthesizer>();
         var tenantId =
             Guid.Parse("11111111-1111-1111-1111-111111111111");
 
@@ -38,6 +40,7 @@ public sealed class SpaceAiDefaultRegistrationTests
         Assert.IsType<ClosedSpaceAiQuotaLeaseManager>(quota);
         Assert.IsType<WarehouseGenerationProviderRegistry>(registry);
         Assert.IsType<WarehouseGenerationOutputValidator>(outputValidator);
+        Assert.IsType<WarehouseDraftSynthesizer>(synthesizer);
         Assert.Null(lease);
         Assert.False(registry.TryGet("external-v1", out _));
         Assert.Empty(registry.Registrations);
