@@ -2,6 +2,17 @@
 
 最后更新：2026-08-05
 
+## E13-S07 规则/AI 融合与确定性生成开发切片（2026-08-05）
+
+- 在 E13-S06 集成基线 `44c87a26` 上完成功能提交 `8be8b20f`、证据提交 `d81119f5`，并以 no-ff 提交 `7d5c8aa0` 集成到 `integration/space-v1-20260730`：新增 `IWarehouseDraftSynthesizer`、只读提案合同、确定性合成器和 RFC 4122 UUIDv5 身份生成器。
+- 合成器重新核验 Provider Output Canonical SHA，并绑定 ModelVersion/RuleVersion、Tenant/Floor、Source/Transform、Semantic Preview、Provider Input、local Source Map 和 locked-fact 快照；任一身份或快照错配整体失败，不返回部分提案。反序列化提案还会深验规范顺序、证据胜者、关系、LogicalId、货架派生、摘要和自身 SHA。
+- 字段固定 `HumanLocked > DeterministicRule > AI > TemplateDefault`：锁定/规则/AI 冲突保留双方证据与稳定问题码；强规则保留 High，软规则冲突降为 Medium/Low。AI 只补 allowlisted 语义属性；无确定性规则几何的 AI 建议、类型不兼容锁定属性、未解析父目标和父关系环均 Blocking，不能创建隐式对象。
+- 提案几何只能来自 E02-S06 的整数毫米 `CadIrDeterministicRule`；对象、RackLevel、Location 分别用 ModelVersion+SourceHash+SourceKey、Rack+层号、Rack+层/列/深位生成 UUIDv5。货架方案固定 HumanLocked > ExcelMapping > ExplicitSelected；缺方案报 `SPACE_RACK_PROFILE_REQUIRED`，不使用隐式尺寸。
+- 样例 13：22 个特征/21 条 Local 建议生成 21 个唯一只读提案，High 13 / Medium 0 / Low 8；8 Rack 按显式开发方案派生 24 层、192 库位，0 Blocking；ProposalSet `fba6c44c...cf31a288`、40,424 bytes，重复运行字节一致；全部 geometrySource=Rule，external=false、draft=false、readyForApply=false。
+- 门禁：E13-S07 聚焦 10/10、Space Unit 397/397、CAD 工具 25/25、默认 DI 1/1；完整 solution Release 非增量单线程、禁用节点复用/共享编译构建 0 error / 10 条既有 warning，Desktop/Android AOT 强度不变；格式与差异检查通过。无数据库、Migration、公开 API、前端、OpenAPI 或 SDK 变化。
+- 这是开发切片，不是正式 E13-S07 生产签收：仍缺持久化/授权/版本冻结的 RackGenerationProfile 与 Excel/人工方案选择链、现有编码服务的 Application 层只读纯预检端口、完整 Floor/Draft 边界/碰撞/父归属/现有码冲突证据，以及 Worker/Run Artifact/审计接线。E13-S05/S06 外部 Provider 正式门禁也不因此解除。完整证据见 `docs/space/reports/e13-s07-rule-ai-fusion-development.md`。
+- 当前提案合同可作为 E13-S08 分页、差异预览和审查工作台的只读输入；E13-S08 不得写 Draft 或绕过上述正式缺口。`main` 未修改。
+
 ## E13-S06 Provider 输出 Schema 与不可信输入校验开发切片（2026-08-05）
 
 - 在 E13-S05 集成基线 `0c59cc34` 上完成功能提交 `7b95c29e`、证据提交 `1b297a91`，并以 no-ff 提交 `551ad8d4` 集成到 `integration/space-v1-20260730`：新增 `IWarehouseGenerationOutputValidator`、确定性验证器和带 Canonical SHA-256 的 `ValidatedSemanticResult`。
@@ -531,4 +542,4 @@
 
 ## 下一动作
 
-以 `624c1511` 为路线图审计起点，其中 E12-S05 no-ff 功能集成为 `c4b139ab`。E03-S01～S04、E04-S05 开发切片、E10-S01～S06、E11-S01～S06、E12-S01～S05，以及 E13-S01～S06 开发切片、S12、S16 现已推进到受控集成基线。E13-S05/S06 开发侧已具备同端口 Mock/Local/降级和双层不可信输出校验，但正式卡仍缺首个外部 Provider 适配器及其供应商/合同、区域、端点、SecretReference、租户外发授权、传输限流限长、真实非法响应和计费/审计证据；这些条件满足前 External 继续默认禁用，不得调用或伪装完成。E12-S06 与 E02-S01 最终签收仍等待独立正式黄金样本、原生 DWG、明确 SDK/供应商授权和冻结试验 Worker；各 CAD 开发切片不得计入发布门禁。E09 技术 S01～S05 已完成，跨职能 GA 签字仍由发布治理完成；发布 SQL 环境跳过项也不得记作通过。i18n 当前有 908 项显式快照债务，本切片无前端净新增。下一张可独立推进的开发切片优先 E13-S07：只消费 `ValidatedSemanticResult`，实现 `HumanLocked > Rule > AI > Default` 的确定性融合、证据与冲突输出；几何/编码只能由代码生成只读提案，仍不注册外部 Provider、不写 Draft。并行继续接收并审计正式 CAD 解阻包，不创建未授权生产 CAD/DWG 适配器。禁止把候选检查点 `0d25da4d` 整包合入，GR-VP T1–T7 不要重做。
+以 `624c1511` 为路线图审计起点，其中 E12-S05 no-ff 功能集成为 `c4b139ab`。E03-S01～S04、E04-S05 开发切片、E10-S01～S06、E11-S01～S06、E12-S01～S05，以及 E13-S01～S07 开发切片、S12、S16 现已推进到受控集成基线。E13-S05/S06 开发侧已具备同端口 Mock/Local/降级和双层不可信输出校验，但正式卡仍缺首个外部 Provider 适配器及其供应商/合同、区域、端点、SecretReference、租户外发授权、传输限流限长、真实非法响应和计费/审计证据；这些条件满足前 External 继续默认禁用，不得调用或伪装完成。E13-S07 开发侧已具备四级确定性融合、规则几何、UUIDv5 派生和显式方案阻断，但正式签收仍缺持久化 RackGenerationProfile/Excel/人工方案链、现有编码服务只读纯预检、完整 Draft 场景边界/碰撞/父归属/现有码冲突以及 Worker/Artifact 审计证据。E12-S06 与 E02-S01 最终签收仍等待独立正式黄金样本、原生 DWG、明确 SDK/供应商授权和冻结试验 Worker；各 CAD 开发切片不得计入发布门禁。E09 技术 S01～S05 已完成，跨职能 GA 签字仍由发布治理完成；发布 SQL 环境跳过项也不得记作通过。i18n 当前有 908 项显式快照债务，本切片无前端净新增。下一张可独立推进的开发切片优先 E13-S08：消费 E13-S07 的只读提案集，实现受限分页、差异预览、证据/问题筛选和审查工作台，不写 Draft、不提前实现 Decision/Apply；同时保留 E13-S07 正式缺口并继续接收审计 CAD/外部 Provider 解阻包。禁止创建未授权生产 CAD/DWG/外部 AI 适配器，禁止把候选检查点 `0d25da4d` 整包合入，GR-VP T1–T7 不要重做。
