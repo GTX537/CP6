@@ -41,6 +41,9 @@ public static class Program
                     await MinimizeDevelopmentAiCadFeaturesAsync(
                         commandLine,
                         cancellation.Token),
+                "run-dev-ai-provider" => await RunDevelopmentAiProviderAsync(
+                    commandLine,
+                    cancellation.Token),
                 "query-dev-inventory" => await QueryDevelopmentInventoryAsync(
                     commandLine,
                     cancellation.Token),
@@ -407,6 +410,84 @@ public static class Program
                 : throw new ArgumentException(
                     $"Option '{option}' must be a non-empty D-format GUID.");
     }
+
+    private static async Task<int> RunDevelopmentAiProviderAsync(
+        CommandLine commandLine,
+        CancellationToken cancellationToken)
+    {
+        var inputPath = Path.GetFullPath(commandLine.Required("--input"));
+        var outputPath = Path.GetFullPath(commandLine.Required("--output"));
+        if (inputPath.Equals(outputPath, StringComparison.OrdinalIgnoreCase))
+        {
+            throw new ArgumentException(
+                "Provider input and output paths must differ.");
+        }
+        WarehouseGenerationInput input;
+        await using (var inputStream = File.OpenRead(inputPath))
+        {
+            using var document = await JsonDocument.ParseAsync(
+                inputStream,
+                cancellationToken: cancellationToken);
+            if (!document.RootElement.TryGetProperty(
+                    "schemaVersion",
+                    out var schemaVersion)
+                || schemaVersion.GetString()
+                    != WarehouseGenerationInput.CurrentSchemaVersion
+                || !document.RootElement.TryGetProperty(
+                    "warehouseKind",
+                    out var warehouseKind)
+                || warehouseKind.GetString()
+                    != WarehouseGenerationInput.GeneralRackWarehouse)
+            {
+                throw new InvalidDataException(
+                    "The minimized AI provider input schema is unsupported.");
+            }
+            input = document.RootElement.Deserialize<WarehouseGenerationInput>(
+                        CadExperimentJson.Options)
+                    ?? throw new InvalidDataException(
+                        "The minimized AI provider input is empty.");
+        }
+
+        var providerName = commandLine.Required("--provider");
+        IWarehouseGenerationProvider provider = providerName switch
+        {
+            "mock" => new MockWarehouseGenerationProvider(),
+            "local" => new LocalHeuristicWarehouseGenerationProvider(),
+            "fallback-local" => new FallbackWarehouseGenerationProvider(
+                new DevelopmentFailureProvider(ParseDevelopmentFailure(
+                    commandLine.Optional("--failure") ?? "unavailable")),
+                new LocalHeuristicWarehouseGenerationProvider()),
+            _ => throw new ArgumentException(
+                "Option '--provider' must be mock, local or fallback-local."),
+        };
+        var result = await provider.GenerateAsync(input, cancellationToken);
+        await CadExperimentJson.WriteAsync(outputPath, result, cancellationToken);
+        Console.WriteLine(JsonSerializer.Serialize(
+            new
+            {
+                Provider = providerName,
+                result.ProviderModel,
+                SuggestionCount = result.Suggestions.Count,
+                DiagnosticCount = result.Diagnostics.Count,
+                Degraded = result.Diagnostics.Any(item =>
+                    item.Code.EndsWith("_FALLBACK", StringComparison.Ordinal)),
+                ExternalProviderInvoked = false,
+                DraftWritten = false,
+            },
+            CadExperimentJson.Options));
+        return 0;
+    }
+
+    private static WarehouseGenerationProviderFailureKind ParseDevelopmentFailure(
+        string value) =>
+        value switch
+        {
+            "unavailable" => WarehouseGenerationProviderFailureKind.Unavailable,
+            "timeout" => WarehouseGenerationProviderFailureKind.Timeout,
+            "rate-limited" => WarehouseGenerationProviderFailureKind.RateLimited,
+            _ => throw new ArgumentException(
+                "Option '--failure' must be unavailable, timeout or rate-limited."),
+        };
 
     private static void EnsureDistinctPaths(params string[] paths)
     {
@@ -1136,6 +1217,9 @@ public static class Program
                   --provider-output <provider-input-json-path>
                   --source-map-output <local-only-source-map-json-path>
                   [--max-suggestions <n>] [--max-relations <n>]
+              run-dev-ai-provider --input <provider-input-json-path>
+                  --provider <mock|local|fallback-local> --output <json-path>
+                  [--failure <unavailable|timeout|rate-limited>]
               query-dev-inventory --input <inventory-json-path>
                   --kind <layer|block|reference> [--search <text>]
                   [--visible <true|false>] [--entity-type <type>]
@@ -1193,5 +1277,15 @@ public static class Program
             Internal calibration adapter:
               inspect --input <dxf> --output <json> --candidate-version <version>
             """);
+    }
+
+    private sealed class DevelopmentFailureProvider(
+        WarehouseGenerationProviderFailureKind failureKind) :
+        IWarehouseGenerationProvider
+    {
+        public Task<WarehouseGenerationResult> GenerateAsync(
+            WarehouseGenerationInput input,
+            CancellationToken cancellationToken) =>
+            throw new WarehouseGenerationProviderException(failureKind);
     }
 }

@@ -22,6 +22,8 @@ It provides a set of bounded development capabilities:
 - `minimize-dev-ai-cad-features`: writes a provider-safe MetadataOnly or
   StructuredFeatures payload plus a separate local-only SourceRef map, without
   invoking a Provider or writing Draft data.
+- `run-dev-ai-provider`: runs the deterministic Mock, local heuristic or a
+  simulated retryable-failure-to-local fallback through the same Provider SPI.
 - `query-dev-inventory`: runs capped, deterministic layer, block or reference
   queries against an inventory artifact.
 - `seal-dev-mapping-profile`: validates and hash-seals an immutable development
@@ -183,6 +185,30 @@ attribute values or storage details. The second file is explicitly local-only
 because it restores `SourceKey` to raw SourceRef. The command never calls an
 external Provider and never writes a model Draft. Use an environment secret
 reference rather than this development key-file mechanism in production.
+
+Run the minimized input through a development Provider:
+
+```powershell
+dotnet run --project tools\CP6.Space.CadExperiment -c Release -- `
+  run-dev-ai-provider `
+  --input tmp\e13-s04\provider-input.json `
+  --provider local `
+  --output tmp\e13-s05\local-output.json
+
+dotnet run --project tools\CP6.Space.CadExperiment -c Release -- `
+  run-dev-ai-provider `
+  --input tmp\e13-s04\provider-input.json `
+  --provider fallback-local `
+  --failure timeout `
+  --output tmp\e13-s05\timeout-fallback-output.json
+```
+
+`mock` and `local` are deterministic, network-free Provider implementations.
+`fallback-local` injects only a declared unavailable, timeout or rate-limit
+failure and then calls the local implementation through the same SPI. User
+cancellation and contract violations never fallback. This command does not
+register a production Provider, resolve credentials, call a network endpoint,
+validate untrusted external output, persist Run/Usage data or write Draft.
 
 ## Seal and preview a CAD mapping profile
 

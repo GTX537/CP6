@@ -442,6 +442,117 @@ public sealed class DevelopmentDxfCadConverterTests
     }
 
     [Fact]
+    public async Task Ai_provider_command_runs_mock_local_and_deterministic_fallback_without_external_calls()
+    {
+        using var fixture = new TemporaryDirectory();
+        var inputPath = Path.Combine(fixture.Path, "provider-input.json");
+        var input = new WarehouseGenerationInput(
+            new string('a', 64),
+            SpaceAiDataPolicy.StructuredFeatures,
+            new WarehouseGenerationLimits(10, 4),
+            [
+                new WarehouseGenerationFeature(
+                    "source-rack",
+                    WarehouseCadEntityType.BlockReference,
+                    "layer-generic-111111111111111111111111",
+                    "block-rack-222222222222222222222222",
+                    1,
+                    new WarehouseNormalizedBounds(0, 0, 0.5m, 0.5m),
+                    0,
+                    null,
+                    [],
+                    [],
+                    0),
+            ],
+            [],
+            []);
+        await CadExperimentJson.WriteAsync(inputPath, input);
+
+        var mockPath = Path.Combine(fixture.Path, "mock-output.json");
+        Assert.Equal(0, await Program.Main(
+        [
+            "run-dev-ai-provider",
+            "--input", inputPath,
+            "--provider", "mock",
+            "--output", mockPath,
+        ]));
+        var localPath = Path.Combine(fixture.Path, "local-output.json");
+        Assert.Equal(0, await Program.Main(
+        [
+            "run-dev-ai-provider",
+            "--input", inputPath,
+            "--provider", "local",
+            "--output", localPath,
+        ]));
+        var fallbackPath = Path.Combine(fixture.Path, "fallback-output.json");
+        Assert.Equal(0, await Program.Main(
+        [
+            "run-dev-ai-provider",
+            "--input", inputPath,
+            "--provider", "fallback-local",
+            "--failure", "timeout",
+            "--output", fallbackPath,
+        ]));
+        var repeatPath = Path.Combine(fixture.Path, "fallback-repeat.json");
+        Assert.Equal(0, await Program.Main(
+        [
+            "run-dev-ai-provider",
+            "--input", inputPath,
+            "--provider", "fallback-local",
+            "--failure", "timeout",
+            "--output", repeatPath,
+        ]));
+
+        var mock = await LoadProviderResultAsync(mockPath);
+        var local = await LoadProviderResultAsync(localPath);
+        var fallback = await LoadProviderResultAsync(fallbackPath);
+        Assert.Equal("cp6-mock-v1", mock.ProviderModel);
+        Assert.Equal("cp6-local-heuristic-v1", local.ProviderModel);
+        Assert.Equal("cp6-local-heuristic-v1", fallback.ProviderModel);
+        Assert.Equal(WarehouseSpaceType.Rack, Assert.Single(local.Suggestions).SuggestedType);
+        Assert.Contains(
+            fallback.Diagnostics,
+            item => item.Code == "AI_PROVIDER_TIMEOUT_FALLBACK");
+        Assert.Equal(
+            await File.ReadAllBytesAsync(fallbackPath),
+            await File.ReadAllBytesAsync(repeatPath));
+        var outputs = string.Join(
+            '\n',
+            await File.ReadAllTextAsync(mockPath),
+            await File.ReadAllTextAsync(localPath),
+            await File.ReadAllTextAsync(fallbackPath));
+        Assert.DoesNotContain("http", outputs, StringComparison.OrdinalIgnoreCase);
+        Assert.DoesNotContain("apiKey", outputs, StringComparison.OrdinalIgnoreCase);
+
+        var externalPath = Path.Combine(fixture.Path, "external-output.json");
+        Assert.Equal(2, await Program.Main(
+        [
+            "run-dev-ai-provider",
+            "--input", inputPath,
+            "--provider", "external",
+            "--output", externalPath,
+        ]));
+        Assert.False(File.Exists(externalPath));
+
+        var invalidInputPath = Path.Combine(fixture.Path, "invalid-input.json");
+        await File.WriteAllTextAsync(
+            invalidInputPath,
+            (await File.ReadAllTextAsync(inputPath)).Replace(
+                "\"schemaVersion\": \"1.0\"",
+                "\"schemaVersion\": \"9.0\"",
+                StringComparison.Ordinal));
+        var invalidOutputPath = Path.Combine(fixture.Path, "invalid-output.json");
+        Assert.Equal(2, await Program.Main(
+        [
+            "run-dev-ai-provider",
+            "--input", invalidInputPath,
+            "--provider", "local",
+            "--output", invalidOutputPath,
+        ]));
+        Assert.False(File.Exists(invalidOutputPath));
+    }
+
+    [Fact]
     public async Task Mapping_commands_seal_a_profile_and_write_a_ready_preview()
     {
         using var fixture = new TemporaryDirectory();
@@ -814,6 +925,17 @@ public sealed class DevelopmentDxfCadConverterTests
             value /= 26;
         }
         return result;
+    }
+
+    private static async Task<WarehouseGenerationResult> LoadProviderResultAsync(
+        string path)
+    {
+        await using var stream = File.OpenRead(path);
+        return await JsonSerializer.DeserializeAsync<WarehouseGenerationResult>(
+                   stream,
+                   CadExperimentJson.Options)
+               ?? throw new InvalidDataException(
+                   "The development provider output is empty.");
     }
 
     private static string RepositoryFile(params string[] segments)
