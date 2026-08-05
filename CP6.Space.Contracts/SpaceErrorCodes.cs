@@ -76,6 +76,8 @@ public static class SpaceErrorCodes
         "SPACE_AI_PROVIDER_UNAVAILABLE";
     public const string AiOutputInvalid =
         "SPACE_AI_OUTPUT_INVALID";
+    public const string RackProfileRequired =
+        "SPACE_RACK_PROFILE_REQUIRED";
     public const string AiSourcePolicyDenied =
         "SPACE_AI_SOURCE_POLICY_DENIED";
     public const string AiPolicyInvalid = "SPACE_AI_POLICY_INVALID";

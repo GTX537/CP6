@@ -27,6 +27,12 @@ It provides a set of bounded development capabilities:
   then validates its typed Canonical Envelope before writing it.
 - `validate-dev-ai-provider-output`: treats a raw CP6 Canonical Envelope as
   untrusted JSON and validates its schema, limits, references and semantics.
+- `synthesize-dev-ai-proposals`: binds a validated Provider envelope back to
+  the local-only source map and E02 semantic preview, applies
+  `HumanLocked > DeterministicRule > AI > TemplateDefault`, and writes a
+  deterministic read-only proposal set. Geometry remains rule-generated;
+  rack derivation requires explicit profiles and location codes remain pending
+  the existing code-service precheck. It never writes a Design Draft.
 - `query-dev-inventory`: runs capped, deterministic layer, block or reference
   queries against an inventory artifact.
 - `seal-dev-mapping-profile`: validates and hash-seals an immutable development

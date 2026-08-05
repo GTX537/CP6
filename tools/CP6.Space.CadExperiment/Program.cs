@@ -48,6 +48,10 @@ public static class Program
                     await ValidateDevelopmentAiProviderOutputAsync(
                         commandLine,
                         cancellation.Token),
+                "synthesize-dev-ai-proposals" =>
+                    await SynthesizeDevelopmentAiProposalsAsync(
+                        commandLine,
+                        cancellation.Token),
                 "query-dev-inventory" => await QueryDevelopmentInventoryAsync(
                     commandLine,
                     cancellation.Token),
@@ -552,6 +556,109 @@ public static class Program
                    CadExperimentJson.Options)
                ?? throw new InvalidDataException(
                    "The minimized AI provider input is empty.");
+    }
+
+    private static async Task<int> SynthesizeDevelopmentAiProposalsAsync(
+        CommandLine commandLine,
+        CancellationToken cancellationToken)
+    {
+        var inputPath = Path.GetFullPath(commandLine.Required("--input"));
+        var sourceMapPath = Path.GetFullPath(commandLine.Required("--source-map"));
+        var semanticPath = Path.GetFullPath(commandLine.Required("--semantic"));
+        var providerOutputPath = Path.GetFullPath(
+            commandLine.Required("--provider-output"));
+        var outputPath = Path.GetFullPath(commandLine.Required("--output"));
+        EnsureDistinctPaths(
+            inputPath,
+            sourceMapPath,
+            semanticPath,
+            providerOutputPath,
+            outputPath);
+
+        var input = await LoadDevelopmentAiProviderInputAsync(
+            inputPath,
+            cancellationToken);
+        var sourceMap = await ReadRequiredJsonAsync<
+            SpaceAiCadFeatureSourceMapV1>(
+                sourceMapPath,
+                "The local CAD feature source map is empty.",
+                cancellationToken);
+        var semantic = await ReadRequiredJsonAsync<SpaceCadSemanticPreviewV1>(
+            semanticPath,
+            "The CAD semantic preview is empty.",
+            cancellationToken);
+        var lockedFacts = commandLine.Optional("--locked-facts") is { } lockedPath
+            ? await ReadRequiredJsonAsync<SpaceAiCadLockedFactV1[]>(
+                lockedPath,
+                "The locked fact artifact is empty.",
+                cancellationToken)
+            : [];
+        var defaults = commandLine.Optional("--template-defaults") is { } defaultPath
+            ? await ReadRequiredJsonAsync<WarehouseTemplateDefaultFactV1[]>(
+                defaultPath,
+                "The template default artifact is empty.",
+                cancellationToken)
+            : [];
+        var rackProfiles = commandLine.Optional("--rack-profiles") is { } profilePath
+            ? await ReadRequiredJsonAsync<WarehouseRackProfileBindingV1[]>(
+                profilePath,
+                "The rack profile binding artifact is empty.",
+                cancellationToken)
+            : [];
+
+        var limits = new WarehouseGenerationOutputValidationLimits().Validate();
+        var providerFile = new FileInfo(providerOutputPath);
+        if (!providerFile.Exists
+            || providerFile.Length is < 1
+            || providerFile.Length > limits.MaxCanonicalJsonBytes)
+        {
+            throw new SpaceProblemException(
+                SpaceErrorCodes.AiOutputInvalid,
+                502,
+                "The warehouse generation provider output is invalid.",
+                "Provider output failed validation (OUTPUT_JSON_SIZE_INVALID).",
+                "change-ai-provider-or-model");
+        }
+        var bytes = await File.ReadAllBytesAsync(
+            providerOutputPath,
+            cancellationToken);
+        try
+        {
+            var validated = new WarehouseGenerationOutputValidator(limits)
+                .ValidateJson(input, bytes);
+            var proposalSet = await new WarehouseDraftSynthesizer()
+                .SynthesizeAsync(
+                    new WarehouseDraftSynthesisRequestV1(
+                        ParseRequiredGuid(commandLine, "--model-version-id"),
+                        commandLine.Required("--rule-version"),
+                        new SpaceAiCadFeatureMinimizationV1(input, sourceMap),
+                        semantic,
+                        validated,
+                        lockedFacts,
+                        defaults,
+                        rackProfiles),
+                    cancellationToken);
+            await WriteCanonicalJsonAsync(
+                outputPath,
+                WarehouseDraftSynthesizer.Serialize(proposalSet),
+                cancellationToken);
+            Console.WriteLine(JsonSerializer.Serialize(
+                new
+                {
+                    proposalSet.ModelVersionId,
+                    proposalSet.FloorLogicalId,
+                    proposalSet.ProposalSetSha256,
+                    proposalSet.Summary,
+                    ExternalProviderInvoked = false,
+                    proposalSet.DraftWritten,
+                },
+                CadExperimentJson.Options));
+            return proposalSet.Summary.BlockingCount == 0 ? 0 : 3;
+        }
+        finally
+        {
+            CryptographicOperations.ZeroMemory(bytes);
+        }
     }
 
     private static WarehouseGenerationProviderFailureKind ParseDevelopmentFailure(
@@ -1298,6 +1405,15 @@ public static class Program
                   [--failure <unavailable|timeout|rate-limited>]
               validate-dev-ai-provider-output --input <provider-input-json-path>
                   --provider-output <canonical-provider-output-json-path>
+              synthesize-dev-ai-proposals --input <provider-input-json-path>
+                  --source-map <local-only-source-map-json-path>
+                  --semantic <semantic-preview-json-path>
+                  --provider-output <canonical-provider-output-json-path>
+                  --model-version-id <guid> --rule-version <token>
+                  --output <read-only-proposal-set-json-path>
+                  [--locked-facts <json-path>]
+                  [--template-defaults <json-path>]
+                  [--rack-profiles <json-path>]
               query-dev-inventory --input <inventory-json-path>
                   --kind <layer|block|reference> [--search <text>]
                   [--visible <true|false>] [--entity-type <type>]

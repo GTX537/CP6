@@ -75,6 +75,9 @@ public static class SpaceInfrastructureRegistration
         services.TryAddSingleton<
             IWarehouseGenerationOutputValidator,
             WarehouseGenerationOutputValidator>();
+        services.TryAddSingleton<
+            IWarehouseDraftSynthesizer,
+            WarehouseDraftSynthesizer>();
         services.AddScoped<SpaceAiGenerationGateway>();
         services.AddScoped<SpaceAiAdministrationService>();
         services.AddScoped<ISpaceAiAdministrationService>(provider =>
