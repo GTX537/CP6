@@ -2,6 +2,16 @@
 
 最后更新：2026-08-05
 
+## E13-S06 Provider 输出 Schema 与不可信输入校验开发切片（2026-08-05）
+
+- 在 E13-S05 集成基线 `0c59cc34` 上完成功能提交 `7b95c29e`、证据提交 `1b297a91`，并以 no-ff 提交 `551ad8d4` 集成到 `integration/space-v1-20260730`：新增 `IWarehouseGenerationOutputValidator`、确定性验证器和带 Canonical SHA-256 的 `ValidatedSemanticResult`。
+- 原始 Canonical JSON 在反序列化前执行 64 MiB/深度/严格 JSON、必填/未知/重复字段、字符串枚举、非负 Usage、0～1 decimal、数组上限和 C0/C1 控制字符门禁；权威输出 Schema 同步收紧安全字符串并表达五类专属属性组合。
+- typed 语义门禁拒绝未知/重复 Suggestion SourceKey、自引用/未知/重复/超量关系、非法枚举/范围、空或重复 Evidence、未知 Diagnostic SourceKey 和 Zone/Rack/Door/Dock/StaticEquipment 属性错配。成功输出生成稳定 Canonical SHA；失败统一为非重试 `SPACE_AI_OUTPUT_INVALID`/502，只暴露稳定违规码。
+- `SpaceAiGenerationGateway` 在 Provider 返回后、配额租约释放前强制验证，失败不返回部分对象且租约正常释放；默认 DI 注册验证器，但 Provider Registry 继续为空。开发 CLI 可验证原始 Canonical 文件，成功只打印 Schema/模型/计数/SHA，读取缓冲区清零；无网络、持久化或 Draft 写入。
+- 样例 13 的 22 个输入特征产生 21 条 Local 建议和 1 条诊断；原始文件 SHA `5e57cce3...6f7e23`，Canonical SHA `913e99b4...84767c`，独立重复运行字节一致。未知建议/关系引用为 0，39 个身份/哈希/SourceRef/属性值敏感候选命中 0，全部命令报告 external=false、draft=false。
+- 恶意矩阵覆盖 9 类原始 JSON、16 类 typed 语义以及字节上限、稳定 SHA、Gateway 租约和 CLI 篡改。门禁：Provider/验证器/Gateway 55/55、Space Unit 387/387、CAD 工具 25/25、默认 DI 1/1；完整 solution Release 非增量单线程、禁用节点复用构建 0 error / 10 条既有 warning，Desktop/Android AOT 强度不变；格式、Schema JSON 和差异检查通过。
+- 这是开发切片，不是正式 E13-S06 端到端签收：仍依赖 E13-S05 首个外部适配器在传输层限流/限长、映射厂商原生响应并调用同一验证器，还需供应商/模型/区域/SecretReference/租户策略、真实非法响应故障注入和 Run/Artifact 审计。完整证据见 `docs/space/reports/e13-s06-provider-output-validation-development.md`。
+
 ## E13-S05 Mock/本地 Provider 与故障降级开发切片（2026-08-05）
 
 - 在 E13-S04 集成基线 `454c521c` 上完成功能提交 `e519942b`、证据提交 `e55b49aa`，并以 no-ff 提交 `6bb43fc5` 集成到 `integration/space-v1-20260730`：新增确定性、无网络的 Mock、本地启发式和可重试故障降级实现，三者统一通过既有 `IWarehouseGenerationProvider` SPI。
@@ -520,4 +530,4 @@
 
 ## 下一动作
 
-以 `624c1511` 为路线图审计起点，其中 E12-S05 no-ff 功能集成为 `c4b139ab`。E03-S01～S04、E04-S05 开发切片、E10-S01～S06、E11-S01～S06、E12-S01～S05，以及 E13-S01～S05 开发切片、S12、S16 现已推进到受控集成基线。E13-S05 开发侧已具备同端口的 Mock、本地启发式和三类可重试故障降级，但正式卡仍缺首个外部 Provider 适配器及其供应商/合同、区域、端点、SecretReference、租户外发授权、生产校验和计费证据；这些条件满足前 External 继续默认禁用，不得调用或伪装完成。E12-S06 与 E02-S01 最终签收仍等待独立正式黄金样本、原生 DWG、明确 SDK/供应商授权和冻结试验 Worker；各 CAD 开发切片不得计入发布门禁。E09 技术 S01～S05 已完成，跨职能 GA 签字仍由发布治理完成；发布 SQL 环境跳过项也不得记作通过。i18n 当前有 908 项显式快照债务，本切片无前端净新增。下一张可独立推进的开发切片优先 E13-S06：把 Mock/Local 输出按不可信数据执行 Schema、枚举、范围、数量、引用、属性组合和安全字符串校验，但仍不注册外部 Provider、不写 Draft。并行继续接收并审计正式 CAD 解阻包，不创建未授权生产 CAD/DWG 适配器。禁止把候选检查点 `0d25da4d` 整包合入，GR-VP T1–T7 不要重做。
+以 `624c1511` 为路线图审计起点，其中 E12-S05 no-ff 功能集成为 `c4b139ab`。E03-S01～S04、E04-S05 开发切片、E10-S01～S06、E11-S01～S06、E12-S01～S05，以及 E13-S01～S06 开发切片、S12、S16 现已推进到受控集成基线。E13-S05/S06 开发侧已具备同端口 Mock/Local/降级和双层不可信输出校验，但正式卡仍缺首个外部 Provider 适配器及其供应商/合同、区域、端点、SecretReference、租户外发授权、传输限流限长、真实非法响应和计费/审计证据；这些条件满足前 External 继续默认禁用，不得调用或伪装完成。E12-S06 与 E02-S01 最终签收仍等待独立正式黄金样本、原生 DWG、明确 SDK/供应商授权和冻结试验 Worker；各 CAD 开发切片不得计入发布门禁。E09 技术 S01～S05 已完成，跨职能 GA 签字仍由发布治理完成；发布 SQL 环境跳过项也不得记作通过。i18n 当前有 908 项显式快照债务，本切片无前端净新增。下一张可独立推进的开发切片优先 E13-S07：只消费 `ValidatedSemanticResult`，实现 `HumanLocked > Rule > AI > Default` 的确定性融合、证据与冲突输出；几何/编码只能由代码生成只读提案，仍不注册外部 Provider、不写 Draft。并行继续接收并审计正式 CAD 解阻包，不创建未授权生产 CAD/DWG 适配器。禁止把候选检查点 `0d25da4d` 整包合入，GR-VP T1–T7 不要重做。
