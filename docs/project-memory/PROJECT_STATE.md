@@ -2,6 +2,15 @@
 
 最后更新：2026-08-05
 
+## E13-S04 CAD IR 特征最小化与脱敏开发切片（2026-08-05）
+
+- 在 E04-S05 集成基线 `f5f0c9e8` 上完成功能提交 `8fffdf07`、证据提交 `d635796e`，并以 no-ff 提交 `8bc1114d` 集成到 `integration/space-v1-20260730`：parsing-ready CAD Coordinate Preparation 现在可确定性投影为 `MetadataOnly` 或 `StructuredFeatures` Provider 输入，并生成独立 local-only SourceRef 映射。
+- MetadataOnly 只发送 HMAC SourceKey/图层/块/属性/重复/映射提示令牌、实体枚举/计数、10 度角度桶和无量纲长宽比桶；坐标、关系和 object-level locked facts 均禁止。StructuredFeatures 才允许四位小数的 0～1 相对包围盒、有界重复关系和声明枚举锁定事实；绝对坐标、属性值、CAD Text、身份/文件/存储信息始终不发送。
+- Run correlation 与全部可识别令牌按 Run、domain 和 32～128 byte HMAC key 隔离；Layer/Block 只暴露仓库领域白名单分类，其余原文只进入 HMAC。Provider 输入不含 Tenant/Site/ModelVersion/Run/File/Source/Floor/SourceRef/源哈希；local map 明确 `isLocalOnly=true` 并以 Provider 文件 SHA 和自身规范 SHA 防篡改。开发 CLI 从二进制 key 文件读取，使用后清零，不调用 Provider、不写 Draft。
+- 合成样例 13 的 22 个 SourceRef 在 MetadataOnly 下形成 8 个统计特征，在 StructuredFeatures 下形成 22 个特征、12 个相对包围盒和 14 条关系；38 个非空敏感候选外发命中 0，越界包围盒 0。Provider SHA 分别为 `c5fbdcf2...7d697efa` 与 `164020fa...8bc2b65`，Structured Provider/local map 重复运行均字节一致。
+- 门禁：minimizer + Provider SPI 聚焦 27/27，功能树与 no-ff 合并树的 Space Unit 350/350、CAD 工具 24/24；两棵树完整 solution Release 非增量单线程构建最终均为 0 error / 10 条既有 warning，Desktop/Android AOT 强度不变。合并态首轮在第三方 Kotlin 协程程序集的 Android x64 AOT 汇编器处瞬时失败，关闭 build server、禁用节点复用后原强度重跑通过，未修改代码或关闭 AOT；格式、两份 AI Schema JSON、工件哈希/反序列化/应用验证和差异检查通过。本切片无前端、数据库、API 或 SDK 变化。
+- 这是开发切片，不是正式 E13-S04 生产验收：仍需生产 E02-S03 CAD Artifact、Tenant/Run/Policy/SecretReference 绑定、Artifact 保留、权限/审计和授权真实 CAD 覆盖。E13-S05 才调用 Provider/实现降级，E13-S06 才校验不可信输出；本切片不应用建议。完整证据见 `docs/space/reports/e13-s04-cad-feature-minimization-development.md`。
+
 ## E04-S05 CAD 问题列表与画布定位开发切片（2026-08-05）
 
 - 在 E03-S04 集成基线 `3300d01b` 上完成功能提交 `2ac9472f`、证据提交 `5114307e`，并以 no-ff 提交 `bd4ab90a` 集成到 `integration/space-v1-20260730`：E02-S07 的 CAD diagnostics、Low/Rejected proposals 和可选 E03-S04 Excel Unmatched/Conflict/Error 行现在形成确定性、只读的 CAD Review Workspace。
@@ -424,6 +433,7 @@
 | E01 S01–S06 | 已进入集成基线 | `539d56de` + `85792161` + `36f534d9` + `2ccdff7a`；版本/来源文件/Job Ledger、Published→Draft Clone、Design API v1、生成 SDK、文件安全扫描与保留清理 |
 | E02 S01 | 部分进入集成基线，最终签收受阻 | `fe959066` + `3742fbff`；中立审计/压力/运行证据/preflight 已集成；另有 20 份可重复生成的合成开发 DXF（L1～L5 各 4 份，五种 DXF 文件头），但正式 DWG 黄金集、授权、供应商包/凭据和冻结 Worker 尚缺 |
 | E03 S01–S03 | 已进入集成基线 | `033e8872` + `8521a701` + `f1310b40` + `e0cc4964` + `9d0a59e7` + `3571f677`；标准 Excel 模板、版本化字段映射、隔离上传、异步预检、结构化问题与受保护错误报告 |
+| E02 S02–S07、E03 S04、E04 S05、E13 S04 | 开发切片已进入集成，正式签收受阻 | 合成 DXF 已贯通中立 CAD IR、坐标、Inventory、Mapping、语义、问题定位、Excel/CAD 匹配、Review Workspace 和 AI 外发最小化；均不写 Draft、不替代授权适配器/生产 Artifact/权限审计/真实黄金集验收。E13-S04 no-ff 为 `8bc1114d` |
 | E04 S01–S04、S06 | 已进入集成基线 | `1d57a3b5` + `e8e84853` + `20ee0af0` + `c1043d15` + `b322e84a` + `39146c38` + `9a87dc30` + `f9c7fd21` + `20f248bd` + `2b6ef127`；安全底图、坐标标定、通用元素属性、统一批量编辑与补偿命令，以及同一 Design Scene 的 2D/3D 只读预览和实际渲染结构一致性证明 |
 | E07 S01–S05 | 已进入集成基线 | `d06a8bd1` + `6e67a9d1` + `74577015` + `6d751e0c` + `15ccf992` + `389bf4ec`；版本化能力合同、CP6 真实适配器、持久化幂等账本、标准模拟器、确定性标准仓与存量 WMS 采纳/绑定 |
 | E08 S01–S05 | 已进入集成基线 | `3df6b1d2` + `b2bb7a35` + `9a478c7a` + `d4cd8a82` + `8d8f7e01` + `dfb6e93b` + `9f7e38f8` + `994339a6` + `cc1d8baf` + `24464fab` + `7a05c05f` + `675e485c`；统一 Published 运行源、双身份、来源新鲜度、库存定位、任务路径与 10,000 库位性能基线 |
@@ -436,7 +446,7 @@
 | E11 S05 | 已进入集成基线 | `139c76b5` + `e8df8288` + `a0b247ab` + `cf35849c`；实时执行状态、三层幂等回执、受限人工重试、安全整批补偿、权限审计和 Viewer 执行治理 |
 | E13 S01–S03、S12、S16 | 已进入集成基线 | Provider/确定性端口、可审计 Run/Proposal/Decision/Usage 模型、可恢复 Worker 控制面、数据库并发槽与预算账本，以及不暴露密钥/URL 的租户策略和用量管理 UI |
 | E05 S01–S05 | 已进入集成基线 | 通用元素、逐层货架、统一场景 DTO、版本化资产库及确定性参数化 3D 渲染 |
-| E03 S04 以后、E04 S05、E06、E13 S04～S11/S13～S15/S17～S19 等剩余范围 | 候选证据或尚未实现 | E03-S04 与 E04-S05 等待 E02-S07/CAD 语义预览；其余按依赖逐卡推进。`0d25da4d` 只作提取来源，不得以候选报告替代集成验收 |
+| E02 S02–S08 正式签收、E03 S05、E06、E13 S05～S11/S13～S15/S17～S19 等剩余范围 | 候选证据或尚未实现 | 生产 CAD 链、正式输入与外部 Provider/Apply 依赖仍需逐卡解除；`0d25da4d` 只作提取来源，不得以候选报告或开发切片替代正式集成验收 |
 
 ## 上一完成波：GR-VP
 
@@ -498,4 +508,4 @@
 
 ## 下一动作
 
-以 `624c1511` 为本次路线图审计起点，其中 E12-S05 no-ff 功能集成为 `c4b139ab`。E12-S05 已完成 glTF 2.0 GLB 标准交换导出、远端功能备份、受控集成、合并态复验、五语入口和临时资源清理。E03-S01～S03、E10-S01～S06、E11-S01～S06、E12-S01～S05，以及 E13-S01～S03、S12、S16 已完成。后续可执行性审计见 `docs/space/reports/2026-08-02-post-e12-s05-roadmap-audit.md`：当前没有一张满足全部前置与正式输入的未完成实现卡。开发侧现已有 20 份完全合成的 DXF 语料，可继续解析器、映射、问题、IR、UI 和回归开发；它们不计发布门禁。E12-S06 和 E02-S01 最终签收仍等待独立正式黄金样本、原生 DWG、明确 SDK/供应商授权和冻结试验 Worker；E02-S02～S08、E03-S04～S05、E04-S05、E13 CAD/Apply 后续与 E06-S01～S06 均被该链直接或传递阻断。E09 技术 S01～S05 已完成，跨职能 GA 签字仍由发布治理完成；发布 SQL 环境跳过项也不得记作通过。i18n 当前有 908 项显式快照债务，本卡净新增 0。下一步可先用 `development-v2.0.0` 进行不依赖供应商的开发准备，同时接收并审计正式解阻包；在授权前不创建生产 CAD/DWG 适配器。禁止把候选检查点 `0d25da4d` 整包合入，GR-VP T1–T7 不要重做。
+以 `624c1511` 为路线图审计起点，其中 E12-S05 no-ff 功能集成为 `c4b139ab`。E03-S01～S04、E04-S05 开发切片、E10-S01～S06、E11-S01～S06、E12-S01～S05，以及 E13-S01～S04 开发切片、S12、S16 现已推进到受控集成基线。E13-S04 已冻结两档 CAD 特征最小化、HMAC 脱敏、Provider/local-map 双工件边界和不外发敏感字段的连续证据，但正式生产验收仍等待生产 CAD Artifact、租户/Run/策略/SecretReference 绑定、权限审计和授权真实图纸。E12-S06 与 E02-S01 最终签收仍等待独立正式黄金样本、原生 DWG、明确 SDK/供应商授权和冻结试验 Worker；各 CAD 开发切片不得计入发布门禁。E09 技术 S01～S05 已完成，跨职能 GA 签字仍由发布治理完成；发布 SQL 环境跳过项也不得记作通过。i18n 当前有 908 项显式快照债务，本切片无前端净新增。下一张可独立推进的开发切片优先 E13-S05 Mock/本地 Provider 与故障降级合同；外部 Provider 继续默认禁用，未取得策略、凭据和生产外发授权前不得调用或伪装完成外部适配器。并行继续接收并审计正式 CAD 解阻包，不创建未授权生产 CAD/DWG 适配器。禁止把候选检查点 `0d25da4d` 整包合入，GR-VP T1–T7 不要重做。

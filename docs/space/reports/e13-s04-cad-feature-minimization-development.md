@@ -98,6 +98,10 @@ Provider，不持久化 Run/Artifact，也不写 Design Draft。它用于提前�
   Provider 文件哈希绑定、本地可逆映射和两次运行字节一致性。
 - 完整 solution Release 非增量单线程构建：0 error / 10 条既有 warning；Desktop
   和 Android 原生 AOT 强度保持不变。
+- no-ff 合并态的 Space Unit 350/350、CAD 工具 24/24 再次通过。完整构建首轮在
+  第三方 Kotlin 协程程序集的 Android x64 AOT 汇编器处瞬时失败；关闭 build
+  server、禁用节点复用后以相同 Release/非增量/单线程/AOT 强度重跑为 0 error /
+  10 条既有 warning，未修改代码或关闭 AOT。
 - 受影响 C# 文件 `dotnet format --verify-no-changes`、两份 AI JSON Schema
   语法解析、Provider/Local 工件反序列化与应用验证、`git diff --check` 均通过。
 - 本切片没有前端代码、数据库模型、迁移、API 或 SDK 变化。
