@@ -4,11 +4,12 @@
 
 ## 交付结论
 
-CP6 已在 E03-S04 集成基线 `3300d01b` 上完成功能提交 `2ac9472f`：把
-E02-S07 的 CAD 诊断位置、低置信度/拒绝提案和可选的 E03-S04 Excel/CAD
-异常匹配行，组合成确定性、只读的 CAD Review Workspace；Design V1 编辑器可
-本地加载该开发工件，按状态、严重度、类型、关键字和是否可定位筛选，并在点击
-问题后同步聚焦底图、已应用设计对象与 CAD 问题覆盖层。
+CP6 已在 E03-S04 集成基线 `3300d01b` 上完成功能提交 `2ac9472f`、证据提交
+`5114307e`，并以 no-ff 提交 `bd4ab90a` 集成到
+`integration/space-v1-20260730`：把 E02-S07 的 CAD 诊断位置、低置信度/拒绝
+提案和可选的 E03-S04 Excel/CAD 异常匹配行，组合成确定性、只读的 CAD Review
+Workspace；Design V1 编辑器可本地加载该开发工件，按状态、严重度、类型、关键字
+和是否可定位筛选，并在点击问题后同步聚焦底图、已应用设计对象与 CAD 问题覆盖层。
 
 该实现不建立生产问题 API，不修改诊断、匹配预览或 Draft，不执行自动修复，也不
 把本地 JSON 文件视为授权图纸或生产审计证据。因此这是解除后续 UI/交互风险的开发
@@ -70,8 +71,9 @@ locatable 查询返回 17 项。当前 CLI 已重新反序列化、完整验证�
 - Space Unit 全量：341 passed / 0 failed / 0 skipped；
 - CAD 实验工具全量：23 passed / 0 failed / 0 skipped；
 - 前端全量：126 files / 685 tests passed；`vue-tsc --build` 与 Vite production build 通过；
-- 完整 solution Release 非增量单线程构建：0 error / 10 条既有 warning，Desktop 与
-  Android 原生 AOT 强度保持不变；
+- 功能树与 no-ff 合并树的完整 solution Release 非增量单线程构建均为 0 error /
+  10 条既有 warning，Desktop 与 Android 原生 AOT 强度保持不变；合并态再次通过
+  Space Unit 341/341、CAD 工具 23/23、前端聚焦 15/15 和类型检查；
 - 受影响 C# 文件 `dotnet format --verify-no-changes`、Schema JSON 语法、生成工件的类型
   反序列化/应用验证、空字段省略和 `git diff --check` 通过；
 - `i18n:check` 仍报告仓库既有 908 个缺失快照 key，与本切片前基线一致；本切片没有

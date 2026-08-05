@@ -1,6 +1,15 @@
 # 项目当前状态
 
-最后更新：2026-08-04
+最后更新：2026-08-05
+
+## E04-S05 CAD 问题列表与画布定位开发切片（2026-08-05）
+
+- 在 E03-S04 集成基线 `3300d01b` 上完成功能提交 `2ac9472f`、证据提交 `5114307e`，并以 no-ff 提交 `bd4ab90a` 集成到 `integration/space-v1-20260730`：E02-S07 的 CAD diagnostics、Low/Rejected proposals 和可选 E03-S04 Excel Unmatched/Conflict/Error 行现在形成确定性、只读的 CAD Review Workspace。
+- Workspace 绑定 Tenant、ModelVersion、Floor、Diagnostic/可选 Match、编辑器修订/内容/快照、Previous Workspace 与自身 SHA。跨身份、旧修订、同修订不同内容哈希、篡改、重复身份和非法位置失败关闭；消失的稳定 TrackingKey 标为 Resolved，返回时重新 Open，不改写上游事实。
+- Design V1 可本地加载开发工件，按状态、严重度、类型、关键字和可定位性筛选；点击后优先按 LogicalId、其次按精确 SourceRef 选中对象，并让底图、设计对象层与问题覆盖层共享 pan/zoom 自动居中。零面积 CAD 实体仍有 18px 可见锚点；过期工件禁用定位。
+- 样例 13 产生 29 项 Open：Info 12 / Warning 17 / Blocking 0，25 项可定位、4 项不可定位，Workspace `3a296228...17288eb`，JSON `29ff0014...3f6eeb3`（34,843 bytes），两次运行字节完全一致且无 `null` 字段。Low+locatable 返回 8 项，Open+Warning+locatable 返回 17 项。
+- 门禁：E04-S05 应用 5/5、前端聚焦 15/15、Space Unit 341/341、CAD 工具 23/23、前端全量 126 files / 685 tests、类型检查和生产构建通过；功能树与 no-ff 合并树的完整 solution Release 非增量单线程构建均为 0 error / 10 条既有 warning，Desktop/Android AOT 强度不变。i18n 仍为既有 908 项缺失快照 key，本切片净新增 0。
+- 这是开发切片，不是正式 E04-S05 验收：本地 JSON 导入不替代生产 CAD Artifact/Issue API、权限/审计、服务端权威签发、授权真实图纸或真实编辑器验收，也不写 Draft。E03-S05 的用户确认与幂等 Draft 写入仍受生产 CAD 链和并发修订门禁约束。证据见 `docs/space/reports/e04-s05-cad-review-workspace-development.md`。
 
 ## E03-S04 Excel/CAD 元素匹配开发切片（2026-08-04）
 
