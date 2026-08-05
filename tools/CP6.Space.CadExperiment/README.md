@@ -3,7 +3,7 @@
 This experiment-only tool captures reproducible E02-S01 evidence without
 coupling a production Worker to a CAD vendor SDK.
 
-It provides twelve capabilities:
+It provides a set of bounded development capabilities:
 
 - `audit`: verifies dataset metadata, companion answers, SHA-256 values,
   DXF framing, DWG version headers, formal split/family distribution and
@@ -19,6 +19,9 @@ It provides twelve capabilities:
   target-floor confirmation to a development CAD IR package.
 - `build-dev-inventory`: creates a source/transform-bound layer, block and
   block-reference inventory from a ready coordinate preparation.
+- `minimize-dev-ai-cad-features`: writes a provider-safe MetadataOnly or
+  StructuredFeatures payload plus a separate local-only SourceRef map, without
+  invoking a Provider or writing Draft data.
 - `query-dev-inventory`: runs capped, deterministic layer, block or reference
   queries against an inventory artifact.
 - `seal-dev-mapping-profile`: validates and hash-seals an immutable development
@@ -144,6 +147,42 @@ references and controlled attributes. It is bound to the source hash,
 coordinate transform and target floor by a deterministic SHA-256. Query pages
 are limited to 200 records. This is E02-S04 development evidence only; it does
 not add production persistence, tenant authorization or a licensed DWG adapter.
+
+## Minimize and redact CAD features for AI development
+
+Create a short-lived 32-byte binary HMAC key outside tracked source files:
+
+```powershell
+$keyBytes = New-Object byte[] 32
+[Security.Cryptography.RandomNumberGenerator]::Fill($keyBytes)
+[IO.Directory]::CreateDirectory("tmp\e13-s04") | Out-Null
+[IO.File]::WriteAllBytes("tmp\e13-s04\dev-hmac.key", $keyBytes)
+[Array]::Clear($keyBytes, 0, $keyBytes.Length)
+```
+
+Then project a parsing-ready coordinate package:
+
+```powershell
+dotnet run --project tools\CP6.Space.CadExperiment -c Release -- `
+  minimize-dev-ai-cad-features `
+  --input tmp\e02-s03\13-automated-warehouse.prepared.json `
+  --policy StructuredFeatures `
+  --hmac-key-file tmp\e13-s04\dev-hmac.key `
+  --tenant-id 11111111-1111-1111-1111-111111111111 `
+  --site-id 55555555-5555-5555-5555-555555555555 `
+  --model-version-id 66666666-6666-6666-6666-666666666666 `
+  --run-id 77777777-7777-7777-7777-777777777777 `
+  --provider-output tmp\e13-s04\provider-input.json `
+  --source-map-output tmp\e13-s04\local-source-map.json
+```
+
+The provider file contains only allowlisted enums, counts, buckets, HMAC tokens
+and—under `StructuredFeatures`—0–1 relative bounds and bounded relations. It
+never contains raw files, absolute coordinates, tenant/site IDs, SourceRef,
+attribute values or storage details. The second file is explicitly local-only
+because it restores `SourceKey` to raw SourceRef. The command never calls an
+external Provider and never writes a model Draft. Use an environment secret
+reference rather than this development key-file mechanism in production.
 
 ## Seal and preview a CAD mapping profile
 

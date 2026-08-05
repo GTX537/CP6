@@ -452,11 +452,13 @@ public sealed class SpaceAiProviderContractTests
                     "layer-token-1",
                     "block-token-1",
                     4,
-                    new WarehouseNormalizedBounds(
-                        0.1m,
-                        0.2m,
-                        0.3m,
-                        0.4m),
+                    policy == SpaceAiDataPolicy.StructuredFeatures
+                        ? new WarehouseNormalizedBounds(
+                            0.1m,
+                            0.2m,
+                            0.3m,
+                            0.4m)
+                        : null,
                     0,
                     "repeat-1",
                     ["attribute-token"],
@@ -468,12 +470,15 @@ public sealed class SpaceAiProviderContractTests
                     WarehouseSpaceType.Rack,
                     0.9m),
             ],
-            [
-                new WarehouseGenerationLockedFact(
-                    "feature-1",
-                    "type",
-                    "Rack"),
-            ]);
+            policy == SpaceAiDataPolicy.StructuredFeatures
+                ?
+                [
+                    new WarehouseGenerationLockedFact(
+                        "feature-1",
+                        "type",
+                        "Rack"),
+                ]
+                : []);
 
     private static WarehouseGenerationResult Result() =>
         new(
