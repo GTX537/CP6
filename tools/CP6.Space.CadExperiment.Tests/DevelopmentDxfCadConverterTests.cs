@@ -462,6 +462,8 @@ public sealed class DevelopmentDxfCadConverterTests
         var editorPath = Path.Combine(fixture.Path, "editor-snapshot.json");
         var matchPath = Path.Combine(fixture.Path, "excel-cad-match.json");
         var unmatchedPath = Path.Combine(fixture.Path, "unmatched.json");
+        var reviewPath = Path.Combine(fixture.Path, "cad-review-workspace.json");
+        var reviewQueryPath = Path.Combine(fixture.Path, "cad-review-unmatched.json");
         var modelVersionId = Guid.Parse("aaaaaaaa-1111-2222-3333-444444444444");
         await CadExperimentJson.WriteAsync(excelProfilePath, ExcelProfile());
         await CadExperimentJson.WriteAsync(workbookPath, ExcelWorkbook());
@@ -511,6 +513,41 @@ public sealed class DevelopmentDxfCadConverterTests
             CadExperimentJson.Options);
         Assert.Equal(1, unmatched!.TotalCount);
         Assert.Equal("R-CLI-001", Assert.Single(unmatched.Items).Values.RackCode);
+
+        Assert.Equal(0, await Program.Main(
+        [
+            "build-dev-cad-review-workspace",
+            "--diagnostics", diagnosticPath,
+            "--editor", editorPath,
+            "--matches", matchPath,
+            "--output", reviewPath,
+        ]));
+        Assert.Equal(0, await Program.Main(
+        [
+            "query-dev-cad-review-workspace",
+            "--input", reviewPath,
+            "--review-kind", "ExcelUnmatched",
+            "--search", "R-CLI-001",
+            "--output", reviewQueryPath,
+        ]));
+        await using (var reviewStream = File.OpenRead(reviewPath))
+        {
+            var review =
+                await JsonSerializer.DeserializeAsync<SpaceCadReviewWorkspaceV1>(
+                    reviewStream,
+                    CadExperimentJson.Options);
+            SpaceCadReviewWorkspace.Validate(review!);
+            Assert.Equal(1, review!.Summary.ExcelReviewCount);
+        }
+        await using var reviewQueryStream = File.OpenRead(reviewQueryPath);
+        var reviewQuery =
+            await JsonSerializer.DeserializeAsync<SpaceCadReviewWorkspacePageV1>(
+                reviewQueryStream,
+                CadExperimentJson.Options);
+        Assert.Equal(1, reviewQuery!.TotalCount);
+        Assert.Equal(
+            SpaceCadReviewItemKind.ExcelUnmatched,
+            Assert.Single(reviewQuery.Items).Kind);
     }
 
     private static SpaceCadConversionRequest Request(string sourceSha256) =>

@@ -1,12 +1,10 @@
 import Konva from 'konva'
 import type { ISpaceDesignSceneDto } from '../../../../../sdk/typescript/space-design-v1/spaceDesignV1Client'
-import { worldToScreen } from '@/space-editor/coords'
+import { worldToScreen, type ViewState } from '@/space-editor/coords'
 import {
   buildElementCanvasPlan,
   type ElementCanvasDrawable,
 } from './elementCanvasPlan'
-
-const zoom = 0.05
 
 export interface CanvasObjectRef {
   logicalId: string
@@ -22,6 +20,11 @@ export class ElementCanvasLayer {
   private enabled = true
   private lassoStart: { x: number; y: number } | null = null
   private lasso: Konva.Rect | null = null
+  private viewport: Pick<ViewState, 'panX' | 'panY' | 'zoom'> = {
+    panX: 0,
+    panY: 0,
+    zoom: 0.05,
+  }
 
   constructor(
     private readonly stage: Konva.Stage,
@@ -87,6 +90,20 @@ export class ElementCanvasLayer {
   setEnabled(enabled: boolean): void {
     this.enabled = enabled
     this.layer.listening(enabled)
+    this.render()
+  }
+
+  setViewport(viewport: Pick<ViewState, 'panX' | 'panY' | 'zoom'>): void {
+    if (
+      !Number.isFinite(viewport.panX)
+      || !Number.isFinite(viewport.panY)
+      || !Number.isFinite(viewport.zoom)
+      || viewport.zoom <= 0
+      || viewport.zoom > 1
+    ) {
+      throw new Error('Element canvas viewport is invalid')
+    }
+    this.viewport = { ...viewport }
     this.render()
   }
 
@@ -176,9 +193,7 @@ export class ElementCanvasLayer {
     const center = worldToScreen(
       { x: drawable.centerX, y: drawable.centerY },
       {
-        panX: 0,
-        panY: 0,
-        zoom,
+        ...this.viewport,
         height: this.stage.height(),
       },
     )
@@ -186,10 +201,10 @@ export class ElementCanvasLayer {
       ...common,
       x: center.x,
       y: center.y,
-      width: drawable.width * zoom,
-      height: drawable.depth * zoom,
-      offsetX: (drawable.width * zoom) / 2,
-      offsetY: (drawable.depth * zoom) / 2,
+      width: drawable.width * this.viewport.zoom,
+      height: drawable.depth * this.viewport.zoom,
+      offsetX: (drawable.width * this.viewport.zoom) / 2,
+      offsetY: (drawable.depth * this.viewport.zoom) / 2,
       rotation: -drawable.rotationZ,
     })
   }
@@ -200,9 +215,7 @@ export class ElementCanvasLayer {
   ): Konva.Line {
     const points = drawable.points.flatMap((point) => {
       const screen = worldToScreen(point, {
-        panX: 0,
-        panY: 0,
-        zoom,
+        ...this.viewport,
         height: this.stage.height(),
       })
       return [screen.x, screen.y]

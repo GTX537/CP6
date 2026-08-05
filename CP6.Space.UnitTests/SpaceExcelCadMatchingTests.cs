@@ -188,7 +188,7 @@ public sealed class SpaceExcelCadMatchingTests
                 Limit: SpaceExcelCadMatchVersions.MaximumPageSize + 1)));
     }
 
-    private static SpaceExcelCadMatchPreviewV1 Build(MatchContext context) =>
+    internal static SpaceExcelCadMatchPreviewV1 Build(MatchContext context) =>
         SpaceExcelCadMatching.Build(
             context.Scenario.Request.TenantId,
             ModelVersionId,
@@ -200,7 +200,7 @@ public sealed class SpaceExcelCadMatchingTests
             context.Diagnostics,
             context.Editor);
 
-    private static MatchContext Context(
+    internal static MatchContext Context(
         IReadOnlyList<RowValues> racks,
         IReadOnlyList<SpaceExcelEditorRackSnapshotV1>? editorRacks = null)
     {
@@ -300,7 +300,7 @@ public sealed class SpaceExcelCadMatchingTests
             [new SpaceExcelWorkbookSheet("Racks", [header, .. data])]);
     }
 
-    private static RowValues Rack(
+    internal static RowValues Rack(
         string rackCode,
         int row = 2,
         string x = "3000",
@@ -353,11 +353,11 @@ public sealed class SpaceExcelCadMatchingTests
         return result;
     }
 
-    private sealed record RowValues(
+    internal sealed record RowValues(
         int Row,
         IReadOnlyDictionary<string, string?> Values);
 
-    private sealed record MatchContext(
+    internal sealed record MatchContext(
         SpaceCadSemanticParserTests.SemanticScenario Scenario,
         SpaceCadSemanticPreviewV1 Semantic,
         SpaceCadSemanticDiagnosticIndexV1 Diagnostics,

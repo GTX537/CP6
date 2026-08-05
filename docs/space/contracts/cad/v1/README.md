@@ -66,6 +66,15 @@ contract; SDK-specific objects may not cross the converter boundary.
   Conflict or Error, keeps unmatched rows independently queryable, and records key,
   CAD confidence, changed fields, canvas location and per-row SHA-256 evidence. It is
   a read-only preview and does not apply Excel values to Draft.
+- The CAD review workspace combines the exact diagnostic index, a tenant/model/floor
+  bound editor snapshot and an optional Excel/CAD match preview. It lists diagnostics,
+  low/rejected proposals and exceptional Excel rows with stable tracking keys and
+  spatial locations. A successor linked to the previous workspace marks disappeared
+  tracking keys Resolved and reopens keys that return; it never mutates upstream facts.
+- Review queries are deterministic and capped at 200 items. Open/resolved transitions,
+  locatable counts and every input/workspace SHA are validated before the editor may
+  display or focus an item. The development UI imports this artifact locally; loading
+  it is not a production API, correction command or Draft write.
 
 ## Current delivery boundary
 
@@ -86,6 +95,10 @@ conversion/persistence chain. The E03-S04 development slice consumes these artif
 for deterministic Excel rack matching, but formal E03-S04 still waits for that same
 production source/preflight persistence chain; confirmation and idempotent Draft writes
 remain E03-S05.
+The E04-S05 development slice consumes the diagnostic and optional match artifacts as
+a read-only review workspace and canvas overlay. Formal E04-S05 still waits for the
+production CAD artifact/issue API, authorization/audit policy and real editor workflow;
+local development-artifact import does not satisfy those gates.
 
 Files:
 
@@ -97,6 +110,7 @@ Files:
 - `semantic-preview.schema.json`: deterministic read-only semantic proposal preview.
 - `semantic-diagnostics.schema.json`: proposal evidence and spatial issue index.
 - `excel-cad-match-preview.schema.json`: read-only Excel rack association preview.
+- `cad-review-workspace.schema.json`: read-only problem/unmatched list and focus workspace.
 - `examples/minimal-wall.json`: minimal valid IR package.
 - `examples/development-coordinate-confirmation.json`: confirmation for synthetic sample 13.
 - `examples/development-mapping-profile-draft.json`: system profile draft for the synthetic corpus.

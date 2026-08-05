@@ -6,6 +6,7 @@ import {
 } from './decodeUnderlay'
 import { buildUnderlayRenderPlan } from './underlayPlan'
 import type { UnderlayPixelPoint } from './underlayCalibration'
+import type { ViewState } from '@/space-editor/coords'
 
 export interface UnderlayLayerState {
   visible: boolean
@@ -28,6 +29,11 @@ export class UnderlayStage {
     visible: true,
     opacity: 0.55,
     locked: true,
+  }
+  private viewport: Pick<ViewState, 'panX' | 'panY' | 'zoom'> = {
+    panX: 0,
+    panY: 0,
+    zoom: 0.05,
   }
 
   constructor(container: HTMLDivElement) {
@@ -96,6 +102,20 @@ export class UnderlayStage {
     this.render()
   }
 
+  setViewport(viewport: Pick<ViewState, 'panX' | 'panY' | 'zoom'>): void {
+    if (
+      !Number.isFinite(viewport.panX)
+      || !Number.isFinite(viewport.panY)
+      || !Number.isFinite(viewport.zoom)
+      || viewport.zoom <= 0
+      || viewport.zoom > 1
+    ) {
+      throw new Error('Underlay viewport is invalid')
+    }
+    this.viewport = { ...viewport }
+    this.render()
+  }
+
   setCalibrationSelection(
     enabled: boolean,
     points: UnderlayPixelPoint[],
@@ -147,9 +167,7 @@ export class UnderlayStage {
       {
         width: this.stage.width(),
         height: this.stage.height(),
-        zoom: 0.05,
-        panX: 0,
-        panY: 0,
+        ...this.viewport,
       },
     )
     const group = new Konva.Group({
