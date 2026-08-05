@@ -232,6 +232,50 @@ a network endpoint, map a vendor-native response, persist Run/Usage data or writ
 Draft. External adapters must still cap the HTTP/SDK response before mapping it
 to the CP6 Canonical Envelope and then invoke the same validator.
 
+## Build and query the read-only AI proposal review workspace
+
+After `synthesize-dev-ai-proposals` has produced a validated proposal set, seal a
+complete floor projection exported from the current Draft and build the review
+workspace:
+
+```powershell
+dotnet run --project tools\CP6.Space.CadExperiment -c Release -- `
+  seal-dev-ai-review-baseline `
+  --input tmp\e13-s08\baseline-draft.json `
+  --output tmp\e13-s08\baseline.json
+
+dotnet run --project tools\CP6.Space.CadExperiment -c Release -- `
+  build-dev-ai-review-workspace `
+  --proposals tmp\e13-s08\proposals.json `
+  --baseline tmp\e13-s08\baseline.json `
+  --output tmp\e13-s08\review-workspace.json
+
+dotnet run --project tools\CP6.Space.CadExperiment -c Release -- `
+  query-dev-ai-review-workspace `
+  --input tmp\e13-s08\review-workspace.json `
+  --cursor-key-file tmp\e13-s08\dev-hmac.key `
+  --band High --winning-source DeterministicRule --locatable `
+  --limit 50 --output tmp\e13-s08\high-rule-page.json
+
+dotnet run --project tools\CP6.Space.CadExperiment -c Release -- `
+  preview-dev-ai-review-batch `
+  --input tmp\e13-s08\review-workspace.json `
+  --action Accept --band High `
+  --output tmp\e13-s08\accept-preview.json
+```
+
+The baseline must declare `IsCompleteFloorProjection=true` and is bound to the
+Tenant, ModelVersion, Floor, ContentRevision and optional ContentHash. The
+workspace shows Added/Modified/Unchanged geometry, fields and rack capacity,
+preserves source/evidence/issues, orders proposals by confidence band, object
+type and stable identity, and uses an HMAC-protected development cursor with a
+50/200 page bound. Batch preview accepts either explicit IDs or one filter and
+caps the match set at 1,000; it always reports
+`requiresServerRevalidation=true`, `decisionWritten=false` and
+`draftWritten=false`. The cursor key is short-lived local development material
+and must never be committed. Production endpoints use the existing
+Data Protection cursor binding to tenant, actor, grant version and expiry.
+
 ## Seal and preview a CAD mapping profile
 
 ```powershell

@@ -47,6 +47,13 @@ import {
   type CadReviewItem,
   type CadReviewWorkspace,
 } from '@/modules/space-design/cad-review/cadReviewWorkspace'
+import DesignAiProposalReviewPanel from '@/modules/space-design/ai-review/DesignAiProposalReviewPanel.vue'
+import {
+  aiReviewFreshness,
+  parseAiProposalReviewWorkspace,
+  type AiProposalReviewWorkspace,
+  type AiReviewItem,
+} from '@/modules/space-design/ai-review/aiProposalReviewWorkspace'
 import {
   decodeUnderlay,
   releaseDecodedUnderlay,
@@ -71,6 +78,7 @@ import type {
 
 const maxUploadBytes = 100 * 1024 * 1024
 const maxCadReviewArtifactBytes = 20 * 1024 * 1024
+const maxAiReviewArtifactBytes = 50 * 1024 * 1024
 const pollAttempts = 30
 const pollDelayMs = 2000
 const defaultCanvasViewport: Pick<ViewState, 'panX' | 'panY' | 'zoom'> = {
@@ -86,12 +94,16 @@ const floorLogicalId = computed(() => String(route.params.floorLogicalId ?? ''))
 const canvasRef = ref<HTMLDivElement>()
 const fileInputRef = ref<HTMLInputElement>()
 const cadReviewFileInputRef = ref<HTMLInputElement>()
+const aiReviewFileInputRef = ref<HTMLInputElement>()
 const designScene = ref<ISpaceDesignSceneDto | null>(null)
 const floor = ref<ISpaceSceneFloorDto | null>(null)
 const selectedObjects = ref<CanvasObjectRef[]>([])
 const cadReviewWorkspace = ref<CadReviewWorkspace | null>(null)
 const cadReviewPanelVisible = ref(false)
 const activeCadReviewItemId = ref('')
+const aiReviewWorkspace = ref<AiProposalReviewWorkspace | null>(null)
+const aiReviewPanelVisible = ref(false)
+const activeAiReviewItemId = ref('')
 const loading = ref(true)
 const projectionMode = ref<'2d' | 'split' | '3d'>('split')
 const uploading = ref(false)
@@ -133,6 +145,20 @@ const cadReviewWorkspaceFreshness = computed(() => {
 })
 const cadReviewWorkspaceStale = computed(
   () => cadReviewWorkspaceFreshness.value?.fresh === false,
+)
+const aiReviewWorkspaceFreshness = computed(() => {
+  const workspace = aiReviewWorkspace.value
+  const scene = designScene.value
+  if (!workspace || !scene) return null
+  return aiReviewFreshness(workspace, {
+    modelVersionId: String(scene.modelVersionId ?? versionId.value),
+    floorLogicalId: floorLogicalId.value,
+    contentRevision: Number(scene.contentRevision ?? 0),
+    contentHash: scene.contentHash,
+  })
+})
+const aiReviewWorkspaceStale = computed(
+  () => aiReviewWorkspaceFreshness.value?.fresh === false,
 )
 const activeElements = computed(() =>
   (designScene.value?.elements ?? []).filter(
@@ -309,6 +335,10 @@ async function loadScene(): Promise<void> {
       activeCadReviewItemId.value = ''
       cadIssueOverlay?.clear()
     }
+    if (aiReviewWorkspaceStale.value) {
+      activeAiReviewItemId.value = ''
+      cadIssueOverlay?.clear()
+    }
   } catch {
     ElMessage.error(t('底图场景加载失败'))
   } finally {
@@ -333,7 +363,9 @@ async function onCadReviewArtifactSelected(event: Event): Promise<void> {
     const workspace = parseCadReviewWorkspace(await file.text())
     cadReviewWorkspace.value = workspace
     cadReviewPanelVisible.value = true
+    aiReviewPanelVisible.value = false
     activeCadReviewItemId.value = ''
+    activeAiReviewItemId.value = ''
     cadIssueOverlay?.clear()
     await nextTick()
     if (cadReviewWorkspaceStale.value) {
@@ -416,6 +448,97 @@ function resetCanvasViewport(): void {
 function closeCadReviewPanel(): void {
   cadReviewPanelVisible.value = false
   activeCadReviewItemId.value = ''
+  cadIssueOverlay?.clear()
+}
+
+function chooseAiReviewArtifact(): void {
+  aiReviewFileInputRef.value?.click()
+}
+
+async function onAiReviewArtifactSelected(event: Event): Promise<void> {
+  const input = event.target as HTMLInputElement
+  const file = input.files?.[0]
+  input.value = ''
+  if (!file) return
+  if (file.size > maxAiReviewArtifactBytes) {
+    ElMessage.error('AI 提案审查工件不能超过 50MB')
+    return
+  }
+  try {
+    const workspace = parseAiProposalReviewWorkspace(await file.text())
+    aiReviewWorkspace.value = workspace
+    aiReviewPanelVisible.value = true
+    cadReviewPanelVisible.value = false
+    activeAiReviewItemId.value = ''
+    activeCadReviewItemId.value = ''
+    cadIssueOverlay?.clear()
+    await nextTick()
+    if (aiReviewWorkspaceStale.value) {
+      ElMessage.warning('AI 提案基线与当前模型修订不一致，已禁用定位和圈选')
+    } else {
+      ElMessage.success(`已加载 ${workspace.summary.totalCount} 条 AI 仓库提案`)
+    }
+  } catch {
+    ElMessage.error('AI 提案审查工件无效或已损坏')
+  }
+}
+
+function focusAiReviewItem(item: AiReviewItem): void {
+  if (aiReviewWorkspaceStale.value) {
+    ElMessage.warning('AI 提案基线已过期，请重新生成后定位')
+    return
+  }
+  activeAiReviewItemId.value = item.reviewItemId
+  if (projectionMode.value === '3d') projectionMode.value = 'split'
+  const overlayItem = aiReviewAsCadReviewItem(item)
+  const object = resolveCadReviewCanvasObject(
+    overlayItem,
+    activeRacks.value,
+    activeElements.value,
+  )
+  selectObjects(object ? [object] : [], 'replace')
+  const viewport = viewportForCadReviewItem(overlayItem)
+  if (viewport) applyCanvasViewport(viewport)
+  if (!cadIssueOverlay?.focus(overlayItem)) {
+    ElMessage.warning('该提案没有可用的规则几何范围')
+  }
+}
+
+function aiReviewAsCadReviewItem(item: AiReviewItem): CadReviewItem {
+  const severity: CadReviewItem['severity'] = item.hasBlockingIssue
+    ? 'Blocking'
+    : item.readiness === 'NeedsReview' ? 'Warning' : 'Info'
+  return {
+    reviewItemId: item.reviewItemId,
+    trackingKey: item.sourceKey,
+    kind: 'LowConfidenceProposal',
+    severity,
+    status: 'Open',
+    code: `AI_${item.objectType.toUpperCase()}_${item.difference.kind.toUpperCase()}`,
+    relatedCodes: item.issues.map(issue => issue.code),
+    suggestedActionCode: 'review-ai-proposal',
+    sourceRef: item.sourceRef,
+    targetLogicalId: item.logicalId,
+    confidenceBand: item.confidenceBand === 'Medium'
+      ? 'Review'
+      : item.confidenceBand,
+    location: {
+      kind: 'Entity',
+      floorLogicalId: item.location.floorLogicalId,
+      sourceRef: item.location.sourceRef,
+      bounds: item.location.bounds,
+      anchor: item.location.anchor,
+      suggestedPaddingMillimeters: item.location.suggestedPaddingMillimeters,
+      canFocusCanvas: item.location.canFocusCanvas,
+    },
+    upstreamEvidenceSha256: aiReviewWorkspace.value?.proposalSetSha256
+      ?? '0'.repeat(64),
+  }
+}
+
+function closeAiReviewPanel(): void {
+  aiReviewPanelVisible.value = false
+  activeAiReviewItemId.value = ''
   cadIssueOverlay?.clear()
 }
 
@@ -1053,6 +1176,17 @@ function delay(milliseconds: number): Promise<void> {
             ({{ cadReviewWorkspace.summary.openCount }})
           </template>
         </el-button>
+        <el-button
+          v-permission="'space:model:read'"
+          size="small"
+          :type="aiReviewPanelVisible ? 'primary' : 'default'"
+          @click="chooseAiReviewArtifact"
+        >
+          加载/更新 AI 提案工件
+          <template v-if="aiReviewWorkspace">
+            ({{ aiReviewWorkspace.summary.totalCount }})
+          </template>
+        </el-button>
         <el-button size="small" @click="resetCanvasViewport">
           重置视图
         </el-button>
@@ -1172,6 +1306,14 @@ function delay(milliseconds: number): Promise<void> {
           </el-button>
         </div>
       </aside>
+      <DesignAiProposalReviewPanel
+        v-else-if="aiReviewPanelVisible && aiReviewWorkspace"
+        :workspace="aiReviewWorkspace"
+        :active-item-id="activeAiReviewItemId"
+        :stale="aiReviewWorkspaceStale"
+        @select="focusAiReviewItem"
+        @close="closeAiReviewPanel"
+      />
       <DesignCadIssuePanel
         v-else-if="cadReviewPanelVisible && cadReviewWorkspace"
         :workspace="cadReviewWorkspace"
@@ -1213,6 +1355,13 @@ function delay(milliseconds: number): Promise<void> {
       accept=".json,application/json"
       hidden
       @change="onCadReviewArtifactSelected"
+    />
+    <input
+      ref="aiReviewFileInputRef"
+      type="file"
+      accept=".json,application/json"
+      hidden
+      @change="onAiReviewArtifactSelected"
     />
   </div>
 </template>

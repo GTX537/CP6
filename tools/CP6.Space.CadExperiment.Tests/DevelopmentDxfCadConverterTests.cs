@@ -702,6 +702,56 @@ public sealed class DevelopmentDxfCadConverterTests
                 && issue.Severity == WarehouseProposalIssueSeverity.Blocking);
             _ = WarehouseDraftSynthesizer.Serialize(synthesis);
         }
+        var aiBaselineDraftPath = Path.Combine(
+            fixture.Path,
+            "ai-review-baseline-draft.json");
+        var aiBaselinePath = Path.Combine(fixture.Path, "ai-review-baseline.json");
+        var aiReviewPath = Path.Combine(fixture.Path, "ai-review-workspace.json");
+        var aiReviewPagePath = Path.Combine(fixture.Path, "ai-review-page.json");
+        await CadExperimentJson.WriteAsync(
+            aiBaselineDraftPath,
+            new WarehouseProposalReviewBaselineSnapshotV1(
+                WarehouseProposalReviewVersions.SchemaVersion,
+                IsReadOnlySnapshot: true,
+                IsCompleteFloorProjection: true,
+                Guid.Parse("55555555-5555-5555-5555-555555555555"),
+                Guid.Parse("77777777-7777-7777-7777-777777777777"),
+                Guid.Parse("44444444-4444-4444-4444-444444444444"),
+                ContentRevision: 0,
+                ContentHash: null,
+                Objects: [],
+                SnapshotSha256: string.Empty));
+        Assert.Equal(0, await Program.Main(
+        [
+            "seal-dev-ai-review-baseline",
+            "--input", aiBaselineDraftPath,
+            "--output", aiBaselinePath,
+        ]));
+        Assert.Equal(0, await Program.Main(
+        [
+            "build-dev-ai-review-workspace",
+            "--proposals", synthesisPath,
+            "--baseline", aiBaselinePath,
+            "--output", aiReviewPath,
+        ]));
+        Assert.Equal(0, await Program.Main(
+        [
+            "query-dev-ai-review-workspace",
+            "--input", aiReviewPath,
+            "--cursor-key-file", synthesisKeyPath,
+            "--limit", "1",
+            "--output", aiReviewPagePath,
+        ]));
+        var aiReview = await ReadJsonAsync<WarehouseProposalReviewWorkspaceV1>(
+            aiReviewPath);
+        var aiReviewPage = await ReadJsonAsync<WarehouseProposalReviewPageV1>(
+            aiReviewPagePath);
+        Assert.True(aiReview.IsReadOnlyWorkspace);
+        Assert.False(aiReview.DecisionWritten);
+        Assert.False(aiReview.DraftWritten);
+        Assert.Empty(aiReview.Items);
+        Assert.Equal(0, aiReviewPage.TotalCount);
+        Assert.Null(aiReviewPage.NextCursor);
 
         var diagnosticPath = Path.Combine(fixture.Path, "semantic-diagnostics.json");
         Assert.Equal(0, await Program.Main(
@@ -1015,6 +1065,16 @@ public sealed class DevelopmentDxfCadConverterTests
                    CadExperimentJson.Options)
                ?? throw new InvalidDataException(
                    "The development provider output is empty.");
+    }
+
+    private static async Task<T> ReadJsonAsync<T>(string path)
+    {
+        await using var stream = File.OpenRead(path);
+        return await JsonSerializer.DeserializeAsync<T>(
+                   stream,
+                   CadExperimentJson.Options)
+               ?? throw new InvalidDataException(
+                   $"The development artifact '{typeof(T).Name}' is empty.");
     }
 
     private static string RepositoryFile(params string[] segments)
