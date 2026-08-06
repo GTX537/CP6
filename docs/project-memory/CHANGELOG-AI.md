@@ -2,6 +2,14 @@
 
 > 依据 Git log 汇总，不替代完整 Git 历史。重点记录影响接手判断的里程碑。
 
+## 2026-08-06：Space V1 E13-S10 原子 AI Apply
+
+- `43dc5534` / `fbc59fb3` / `5be724cf` / `0c587d4c`：实现、纠偏、记录并 no-ff 集成 Staging + ApplyPlan、ApplyGeneration Worker、原子 Draft 写入、Run/Apply Design V1 API、OpenAPI/SDK 和前端轮询刷新。
+- Apply 支持新增和更新既有审核基线；Zone/Aisle/Rack/Element 原位更新，RackLevel/Location 确定性协调。跨类型/跨楼层/资产 Element 冲突、WMS 绑定库位移除、陈旧 revision/review、引用/边界/碰撞失败均保持零部分 Draft。
+- Queue 使用 Serializable + tenant/run `sp_getapplock`；最终事务固定锁序并只推进一个 Floor Revision/ContentRevision，记录唯一 CommandBatch 与 before/after。Published、WMS 和设备控制数据保持隔离。
+- 验证为真实 SQL 7/7、Space Unit 413/413、默认 Space Integration 248 passed / 71 SQL-gated skipped、CP6.Client 71/71、CP6.Tests 2783 passed / 17 environment-gated skipped、前端 129 files / 694 tests；完整 solution、EF/SQL/SDK drift、type-check、production build 与 diff check 通过。
+- 功能分支已推送远端备份，`main` 未修改；下一张独立卡为 E13-S11 取消、重试、降级和 Stale 恢复产品化。
+
 ## 2026-08-05：Space V1 E13 S04–S09 受控开发链
 
 - E13-S04～S08 已依次交付 CAD IR 最小化与脱敏、本地/Mock Provider 与失败降级、不可信输出校验、规则/AI 确定性融合及只读提案审核工作台；各切片均以独立功能/证据提交 no-ff 进入唯一 Space 集成分支。

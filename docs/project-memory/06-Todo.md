@@ -2,14 +2,14 @@
 
 ## P0：Space V1 下一批受控实现
 
-- 当前受控集成检查点为 `396ee38b`。E07 S01–S05、E13 S01–S09/S12 及其报告均已进入 `integration/space-v1-20260730`，不要按旧计划重复实现；`main` 仍不承接这批开发切片。
-- 下一张建议卡为 E13-S10 Staging + 原子 Apply：锁定 Model/Version/Run 后重验 Proposal、Issue、Draft revision、唯一性、引用、碰撞与边界，以单事务只增加一个 ContentRevision；任一 409 或校验失败都必须保持 Draft 零部分写入。
-- E13-S09 的 Decision 与同源锁定事实可以作为 S10 输入，但真实 Worker `LoadLockedFacts` 自动接线、不同 SourceHash 的确定性几何建议继承和人工确认仍未完成，不能用猜测匹配绕过失败关闭。
+- 当前功能集成检查点为 `0c587d4c`。E07 S01–S05、E13 S01–S10/S12 及其报告均已进入 `integration/space-v1-20260730`，不要按旧计划重复实现；`main` 仍不承接这批开发切片。
+- 下一张建议卡为 E13-S11 取消、重试、降级和 Stale 恢复：补齐用户可见的取消安全点、可重试分类、提交结果不确定恢复、Stale 重建/重新审核入口和运维演练；不得弱化 S10 的单事务零部分写入边界。
+- E13-S10 已消费 E13-S09 Decision 并原子写入 Draft，但真实 Worker `LoadLockedFacts` 自动接线、不同 SourceHash 的确定性几何建议继承和人工确认仍未完成，不能用猜测匹配绕过失败关闭。
 - 继续保持批量 High Accept 默认关闭、原始 CAD 不外发、外部 Provider 默认关闭、配额失败关闭、规则路径不依赖 Provider，以及 Draft/Published/WMS/设备边界隔离。
 - E02 S01 中立实验工具已集成，但最终签收仍需数据/QA 提供正式 20 文件黄金集（Calibration 10 / Validation 5 / Holdout 5、L1–L5 各至少 4）及 DWG/DXF 版本/实体矩阵。
 - 法务/采购需确认 ODA 正式 Web/SaaS 授权；工程需获得校验过的 ODA Windows/Linux SDK 包。APS 备试需批准区域、DPA、删除/保留证据和非生产凭据。平台/安全需提供 8 vCPU / 32GiB 的冻结隔离 Worker。
 - 外部输入齐全后，在同一冻结环境对 ODA 与 APS 各黄金样本 5 次、50MiB/100 万实体/200MiB 上限、超时/取消/并发进行评分；低于 ADR-0001 的 80 分硬门槛不得主选，若都失败则继续阻断 DWG Beta。
-- 本机 `KOUSQLSERVER` 的 Windows 集成认证已用于 E13-S09 全量真实 SQL 复验，结果 312/312、0 skipped；默认门禁仍保留环境隔离 skip 语义，不能把未启动的 SQL-gated 测试写成通过。
+- 本机 `KOUSQLSERVER` 已用于 E13-S10 原子 Apply 聚焦复验，结果 7/7、0 skipped；默认 Space Integration 为 248 passed / 71 SQL-gated skipped，不能把未启动的环境门禁写成通过。
 - `0d25da4d` 中 E05–E12 是候选证据，不得整包 merge/cherry-pick；必须重新核对依赖、迁移链和产品冻结范围。
 - P2.5 不混入本轮 Space 基线，待 E01 基线稳定后另行评估。
 

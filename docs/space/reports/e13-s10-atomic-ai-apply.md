@@ -1,11 +1,13 @@
 # E13-S10 Staging 与原子 AI Apply 开发报告
 
-- 状态：Ready for integration
+- 状态：Integrated
 - 日期：2026-08-06
 - 起始集成基线：`b663c4ae`
 - 功能分支：`codex/space-e13-s10-atomic-apply`
 - 功能提交：`43dc5534`
 - 基线更新纠偏提交：`fbc59fb3`
+- 证据提交：`5be724cf`
+- no-ff 集成提交：`0c587d4c`
 - 目标分支：`integration/space-v1-20260730`
 
 ## 1. 交付结论

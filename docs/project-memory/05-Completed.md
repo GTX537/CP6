@@ -1,5 +1,13 @@
 # 已完成能力与近期里程碑
 
+## 2026-08-06 E13-S10 Staging 与原子 AI Apply
+
+- 以 `43dc5534` / `fbc59fb3` / `5be724cf` 完成功能、既有审核基线更新纠偏和证据记录，并以 no-ff 提交 `0c587d4c` 进入受控 Space 集成分支；新增 Staging、ApplyPlanHash、ApplyGeneration Worker、Design V1 Apply/Run API、OpenAPI/SDK 与前端轮询刷新闭环。
+- Apply 同时支持 Added 与同逻辑身份的 Modified/Unchanged：Zone/Aisle/Rack/Element 原位更新，RackLevel/Location 确定性协调；跨类型/跨楼层/资产 Element 冲突和 WMS 绑定库位移除均失败关闭。成功只推进一次 Floor Revision 与 ContentRevision，Published/WMS/设备状态不变。
+- Serializable Queue、租户 + Run `sp_getapplock`、固定锁序、双重 revision/review/唯一/引用/边界/碰撞校验、不可变 Staging/ApplyPlan、CommandBatch before/after 审计和故障回滚已落实；同键并发只创建一个 Job。
+- 门禁为 E13-S10 真实 SQL 7/7、Space Unit 413/413、默认 Space Integration 248 passed / 71 SQL-gated skipped、CP6.Client 71/71、CP6.Tests 2783 passed / 17 environment-gated skipped、前端 129 files / 694 tests；完整 solution、EF、幂等 SQL、OpenAPI/C#/TypeScript SDK、type-check、production build 与 diff check 均通过。
+- 功能分支已推送远端备份；验证依赖清理回收约 0.31 GB，`main` 未修改。下一张独立卡为 E13-S11 取消、重试、降级和 Stale 恢复产品化。
+
 ## 2026-08-05 E13-S09 决策与人工锁定修正
 
 - 以 `c87289f2` / `382d5722` / `396ee38b` 完成追加式 Accept/Reject/Modify 决策、并发与幂等控制、问题解决血缘、同源人工锁定继承、Migration、Design V1 API/OpenAPI/SDK 和实时审核面板，并 no-ff 进入远端受控集成。

@@ -1,6 +1,15 @@
 # 项目当前状态
 
-最后更新：2026-08-05
+最后更新：2026-08-06
+
+## E13-S10 Staging 与原子 AI Apply 开发切片（2026-08-06）
+
+- 在 E13-S09 集成状态基线 `b663c4ae` 上完成功能提交 `43dc5534`、既有审核基线更新纠偏 `fbc59fb3`、证据提交 `5be724cf`，并以 no-ff 提交 `0c587d4c` 集成到 `integration/space-v1-20260730`。
+- 新增 `Space_GenerationStagingElement`、冻结 ApplyPlanHash、ApplyGeneration Job/Worker、Run 状态查询和原子 Apply API。POST 同步重验 ContentRevision、Run rowversion、ReviewEtag、权限、租户/Site 与幂等键；Worker 在短 SQL 事务内按 Run→Version→Model 加锁并再次验证 Proposal/Issue/Revision/唯一/引用/边界/碰撞。
+- Added 提案创建 Zone/Aisle/Rack/RackLevel/Location/Element；Modified/Unchanged 按同类型、同 Floor LogicalId 原位更新。Rack 派生项按确定性 ID 复用/补齐/停用，WMS 绑定 Location 不可被派生缩减移除；跨类型、跨楼层和资产库 Element 冲突失败关闭。CommandRecord 保存权威 before/after。
+- Queue 使用 Serializable 与租户 + Run 的 transaction-scoped `sp_getapplock`；同键双连接只产生一个 Job/幂等记录。成功只增加一个 Floor Revision 与 ContentRevision；故障注入、Stale、409 和校验失败均保持 Draft 零部分写入，Published/WMS/设备状态不变。
+- 门禁：E13-S10 真实 SQL 7/7、Space Unit 413/413、默认 Space Integration 248 passed / 71 SQL-gated skipped、CP6.Client 71/71、CP6.Tests 2783 passed / 17 environment-gated skipped、前端 129 files / 694 tests；完整 solution、type-check、production build、OpenAPI/C#/TypeScript SDK drift、EF/Migration/幂等 SQL drift 与 `git diff --check` 通过。完整证据见 `docs/space/reports/e13-s10-atomic-ai-apply.md`。
+- 下一张独立卡是 E13-S11 取消、重试、降级和 Stale 恢复产品化。真实 Worker `LoadLockedFacts` 自动接线、异源几何建议继承、外部 Provider、授权真实 CAD、正式黄金集和发布晋级证据仍是独立缺口。功能分支已远端备份，前端依赖清理回收约 0.31 GB；`main` 未修改。
 
 ## E13-S09 决策与人工锁定修正开发切片（2026-08-05）
 
