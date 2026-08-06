@@ -94,6 +94,8 @@ public static class SpaceErrorCodes
     public const string AiReviewConflict = "SPACE_AI_REVIEW_CONFLICT";
     public const string AiApplyInvalid = "SPACE_AI_APPLY_INVALID";
     public const string AiApplyFailed = "SPACE_AI_APPLY_FAILED";
+    public const string AiApplyResultUnknown =
+        "SPACE_AI_APPLY_RESULT_UNKNOWN";
     public const string AiDecisionInvalid = "SPACE_AI_DECISION_INVALID";
     public const string AiPatchPathDenied = "SPACE_AI_PATCH_PATH_DENIED";
     public const string AiBatchSelectionInvalid =

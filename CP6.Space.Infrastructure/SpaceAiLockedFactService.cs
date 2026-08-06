@@ -188,7 +188,8 @@ public sealed class SpaceAiLockedFactService(
     private async Task<IDbContextTransaction?> BeginTransactionAsync(
         CancellationToken cancellationToken)
     {
-        if (!context.Database.IsRelational())
+        if (!context.Database.IsRelational() ||
+            context.Database.CurrentTransaction is not null)
             return null;
         return await context.Database.BeginTransactionAsync(
             IsolationLevel.Serializable,

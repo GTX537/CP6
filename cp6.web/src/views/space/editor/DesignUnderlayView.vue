@@ -1,6 +1,6 @@
 <script setup lang="ts">
 import { computed, nextTick, onBeforeUnmount, onMounted, ref, watch } from 'vue'
-import { useRoute } from 'vue-router'
+import { useRoute, useRouter } from 'vue-router'
 import { useI18n } from 'vue-i18n'
 import { ElMessage, ElMessageBox } from 'element-plus'
 import {
@@ -90,6 +90,7 @@ const defaultCanvasViewport: Pick<ViewState, 'panX' | 'panY' | 'zoom'> = {
 
 const { t } = useI18n()
 const route = useRoute()
+const router = useRouter()
 const versionId = computed(() => String(route.params.versionId ?? ''))
 const floorLogicalId = computed(() => String(route.params.floorLogicalId ?? ''))
 const generationRunId = computed(() => String(route.query.generationRunId ?? ''))
@@ -570,6 +571,17 @@ function onAiReviewCompleted(): void {
 
 async function onAiProposalsApplied(): Promise<void> {
   await loadScene()
+}
+
+async function onAiRunRecovered(runId: string): Promise<void> {
+  aiDecisionPanelVisible.value = false
+  await router.replace({
+    query: {
+      ...route.query,
+      generationRunId: runId,
+    },
+  })
+  ElMessage.success('恢复 Run 已创建；待生成完成后重新进入审查')
 }
 
 function chooseFile(): void {
@@ -1348,9 +1360,11 @@ function delay(milliseconds: number): Promise<void> {
       <DesignAiProposalDecisionPanel
         v-if="aiDecisionPanelVisible && generationRunId"
         :run-id="generationRunId"
+        :current-content-revision="designScene?.contentRevision"
         @close="closeAiDecisionPanel"
         @completed="onAiReviewCompleted"
         @applied="onAiProposalsApplied"
+        @recovered="onAiRunRecovered"
       />
       <DesignAiProposalReviewPanel
         v-else-if="aiReviewPanelVisible && aiReviewWorkspace"

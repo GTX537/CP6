@@ -315,6 +315,22 @@ public sealed class SpaceJob : SpaceTenantEntity
             Id);
     }
 
+    public void RequeueSameInput(DateTime requestedAtUtc)
+    {
+        RequireUtc(requestedAtUtc, nameof(requestedAtUtc));
+        SpaceJobRetryPolicy.EnsureSameInputRetryAllowed(this);
+        if (AttemptCount >= MaxAttempts)
+            MaxAttempts = checked(AttemptCount + 1);
+
+        Status = SpaceJobStatus.Queued;
+        NextAttemptAtUtc = requestedAtUtc;
+        ProgressStage = "ManualRetryScheduled";
+        FinishedAtUtc = null;
+        CancellationRequestedAtUtc = null;
+        CancellationRequestedBy = null;
+        ClearLease();
+    }
+
     public void EnsureLease(
         Guid attemptId,
         string workerId,

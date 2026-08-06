@@ -1,5 +1,6 @@
 using System.Data;
 using CP6.Space.Application;
+using CP6.Space.Contracts;
 using CP6.Space.Domain;
 using Microsoft.EntityFrameworkCore;
 
@@ -157,6 +158,9 @@ public sealed class EfSpaceJobLeaseStore : ISpaceJobLeaseStore
                         "The final worker lease expired.",
                         cancellationToken);
                     exhausted.DeadLetterExpiredLease(now);
+                    await SyncTerminalGenerationRunAsync(
+                        exhausted,
+                        cancellationToken);
                     await SpaceCloneReservationCleanup.ReleaseIfTerminalAsync(
                         _context,
                         exhausted,
@@ -475,6 +479,12 @@ public sealed class EfSpaceJobLeaseStore : ISpaceJobLeaseStore
             sanitizedError,
             decision,
             now);
+        if (job.IsTerminal)
+        {
+            await SyncTerminalGenerationRunAsync(
+                job,
+                cancellationToken);
+        }
         attempt.Fail(
             failureKind,
             errorCode,
@@ -496,6 +506,7 @@ public sealed class EfSpaceJobLeaseStore : ISpaceJobLeaseStore
             lease.AttemptId,
             lease.WorkerId,
             now);
+        await SyncCancelledGenerationRunAsync(job, now, cancellationToken);
         attempt.Cancel(now);
         await SaveLeaseChangesAsync(cancellationToken);
     }
@@ -544,6 +555,65 @@ public sealed class EfSpaceJobLeaseStore : ISpaceJobLeaseStore
                 attempt.Outcome == SpaceJobAttemptOutcome.Running,
             cancellationToken);
         previous?.Abandon(nowUtc, reason);
+    }
+
+    private async Task SyncTerminalGenerationRunAsync(
+        SpaceJob job,
+        CancellationToken cancellationToken)
+    {
+        if (job.JobType is not (
+            SpaceJobType.BuildScene or SpaceJobType.ApplyGeneration))
+        {
+            return;
+        }
+        var run = await _context.GenerationRuns.SingleOrDefaultAsync(
+            item => item.JobId == job.Id || item.ApplyJobId == job.Id,
+            cancellationToken);
+        if (run is null || run.Status is not (
+            SpaceGenerationRunStatus.Queued or
+            SpaceGenerationRunStatus.Preparing or
+            SpaceGenerationRunStatus.Inferring or
+            SpaceGenerationRunStatus.Validating or
+            SpaceGenerationRunStatus.Applying))
+        {
+            return;
+        }
+        run.MarkFailed(
+            job.LastErrorCode ?? SpaceErrorCodes.JobProcessorFailed,
+            job.LastErrorSummary ??
+                "The generation Job failed without changing Draft.");
+    }
+
+    private async Task SyncCancelledGenerationRunAsync(
+        SpaceJob job,
+        DateTime nowUtc,
+        CancellationToken cancellationToken)
+    {
+        if (job.JobType is not (
+            SpaceJobType.BuildScene or SpaceJobType.ApplyGeneration))
+        {
+            return;
+        }
+        var run = await _context.GenerationRuns.SingleOrDefaultAsync(
+            item => item.JobId == job.Id || item.ApplyJobId == job.Id,
+            cancellationToken);
+        if (run is null || run.CancelRequestedAtUtc is null ||
+            run.Status is SpaceGenerationRunStatus.Succeeded or
+            SpaceGenerationRunStatus.Cancelled)
+        {
+            return;
+        }
+        run.CompleteCancellation(nowUtc);
+        var proposals = await _context.GenerationProposals
+            .Where(item => item.RunId == run.Id)
+            .ToArrayAsync(cancellationToken);
+        foreach (var proposal in proposals.Where(item =>
+                     item.Status is not (
+                         SpaceGenerationProposalStatus.Applied or
+                         SpaceGenerationProposalStatus.Obsolete)))
+        {
+            proposal.MarkObsolete();
+        }
     }
 
     private async Task SaveLeaseChangesAsync(

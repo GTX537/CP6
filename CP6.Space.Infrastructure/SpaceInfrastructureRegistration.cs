@@ -92,6 +92,9 @@ public static class SpaceInfrastructureRegistration
         services.AddScoped<
             ISpaceAiAtomicApplyService,
             SpaceAiAtomicApplyService>();
+        services.AddScoped<
+            ISpaceAiRunRecoveryService,
+            SpaceAiRunRecoveryService>();
         services.AddScoped<SpaceAiAdministrationService>();
         services.AddScoped<ISpaceAiAdministrationService>(provider =>
             provider.GetRequiredService<SpaceAiAdministrationService>());

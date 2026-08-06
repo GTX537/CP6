@@ -45,6 +45,10 @@ public sealed class SpaceDesignV1OpenApiTests
             "/api/space/design/v1/ai-usage",
             "/api/space/design/v1/generation-runs/{runId}",
             "/api/space/design/v1/generation-runs/{runId}/apply",
+            "/api/space/design/v1/generation-runs/{runId}/cancel",
+            "/api/space/design/v1/generation-runs/{runId}/retry",
+            "/api/space/design/v1/generation-runs/{runId}/discard",
+            "/api/space/design/v1/generation-runs/{runId}/reconcile",
             "/api/space/design/v1/generation-runs/{runId}/review",
             "/api/space/design/v1/generation-runs/{runId}/proposals",
             "/api/space/design/v1/generation-runs/{runId}/issues",
@@ -55,6 +59,7 @@ public sealed class SpaceDesignV1OpenApiTests
             "/api/space/design/v1/mapping-profiles/excel/preview",
             "/api/space/design/v1/modeling-templates/excel/standard",
             "/api/space/design/v1/versions/{versionId}",
+            "/api/space/design/v1/versions/{versionId}/generation-runs",
             "/api/space/design/v1/versions/{versionId}/floors/{floorLogicalId}/commands",
             "/api/space/design/v1/versions/{versionId}/floors/{floorLogicalId}/scene",
             "/api/space/design/v1/versions/{versionId}/floors/{floorLogicalId}/underlay",
@@ -112,14 +117,19 @@ public sealed class SpaceDesignV1OpenApiTests
             .Select(operation =>
                 operation.Value.GetProperty("operationId").GetString())
             .ToArray();
-        Assert.Equal(92, operationIds.Length);
-        Assert.Equal(92, operationIds.Distinct().Count());
+        Assert.Equal(97, operationIds.Length);
+        Assert.Equal(97, operationIds.Distinct().Count());
         Assert.Contains("GetPolicy", operationIds);
         Assert.Contains("UpdatePolicy", operationIds);
         Assert.Contains("GetUsage", operationIds);
         Assert.Contains("GetProposalReview", operationIds);
         Assert.Contains("GetGenerationRun", operationIds);
         Assert.Contains("ApplyGenerationProposals", operationIds);
+        Assert.Contains("CancelGenerationRun", operationIds);
+        Assert.Contains("RetryGenerationRun", operationIds);
+        Assert.Contains("DiscardGenerationRun", operationIds);
+        Assert.Contains("ReconcileGenerationRun", operationIds);
+        Assert.Contains("RecoverGenerationRun", operationIds);
         Assert.Contains("GetGenerationProposals", operationIds);
         Assert.Contains("GetGenerationProposalIssues", operationIds);
         Assert.Contains("GetProposalDecisions", operationIds);

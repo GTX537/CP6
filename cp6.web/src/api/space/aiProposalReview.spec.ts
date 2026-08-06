@@ -62,6 +62,37 @@ describe('aiProposalReviewApi', () => {
     )
   })
 
+  it('uses idempotent lifecycle and stale recovery endpoints', async () => {
+    const action = { expectedRunRowVersion: 'run-row-version' }
+    await aiProposalReviewApi.cancel('run-1', action, 'cancel-key')
+    await aiProposalReviewApi.retry('run-1', action, 'retry-key')
+    await aiProposalReviewApi.discard('run-1', action, 'discard-key')
+    await aiProposalReviewApi.reconcile('run-1', action, 'reconcile-key')
+    await aiProposalReviewApi.recover(
+      'version-1',
+      {
+        basedOnRunId: 'run-1',
+        expectedContentRevision: 43,
+        expectedBasedOnRunRowVersion: 'run-row-version',
+        mode: 'RuleOnly',
+      },
+      'recover-key',
+    )
+
+    expect(http.post).toHaveBeenNthCalledWith(
+      1,
+      '/space/design/v1/generation-runs/run-1/cancel',
+      action,
+      { headers: { 'Idempotency-Key': 'cancel-key' } },
+    )
+    expect(http.post).toHaveBeenNthCalledWith(
+      5,
+      '/space/design/v1/versions/version-1/generation-runs',
+      expect.objectContaining({ mode: 'RuleOnly', expectedContentRevision: 43 }),
+      { headers: { 'Idempotency-Key': 'recover-key' } },
+    )
+  })
+
   it('sends row-version decisions with Idempotency-Key', async () => {
     await aiProposalReviewApi.decide(
       'run-1',

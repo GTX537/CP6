@@ -17,7 +17,8 @@ public sealed record SpaceGenerationRunDefinition(
     Guid? ProviderConfigVersionId,
     string InputSchemaVersion,
     Guid JobId,
-    Guid? TargetFloorLogicalId = null);
+    Guid? TargetFloorLogicalId = null,
+    Guid? RunId = null);
 
 public sealed class SpaceGenerationRun : SpaceTenantEntity
 {
@@ -113,6 +114,12 @@ public sealed class SpaceGenerationRun : SpaceTenantEntity
                 "Target floor logical identity cannot be empty.",
                 nameof(definition.TargetFloorLogicalId));
         }
+        if (definition.RunId == Guid.Empty)
+        {
+            throw new ArgumentException(
+                "Run identity cannot be empty.",
+                nameof(definition.RunId));
+        }
         if (!Enum.IsDefined(definition.PolicySnapshot))
         {
             throw new ArgumentOutOfRangeException(
@@ -171,6 +178,8 @@ public sealed class SpaceGenerationRun : SpaceTenantEntity
             TargetFloorLogicalId = definition.TargetFloorLogicalId,
         };
         run.SetTenant(definition.TenantId);
+        if (definition.RunId.HasValue)
+            run.SetId(definition.RunId.Value);
         return run;
     }
 
@@ -253,6 +262,26 @@ public sealed class SpaceGenerationRun : SpaceTenantEntity
         string appliedCountsJson)
     {
         RequireStatus(SpaceGenerationRunStatus.Applying);
+        CompleteSuccess(appliedContentRevision, appliedCountsJson);
+    }
+
+    public void ReconcileSucceeded(
+        long appliedContentRevision,
+        string appliedCountsJson)
+    {
+        if (Status is not (
+            SpaceGenerationRunStatus.Applying or
+            SpaceGenerationRunStatus.Failed))
+        {
+            throw StateError("be reconciled as succeeded");
+        }
+        CompleteSuccess(appliedContentRevision, appliedCountsJson);
+    }
+
+    private void CompleteSuccess(
+        long appliedContentRevision,
+        string appliedCountsJson)
+    {
         if (appliedContentRevision <= BaseContentRevision)
         {
             throw new ArgumentOutOfRangeException(
@@ -264,6 +293,11 @@ public sealed class SpaceGenerationRun : SpaceTenantEntity
         AppliedCountsJson = RequireJson(
             appliedCountsJson,
             nameof(appliedCountsJson));
+        FailureCode = null;
+        FailureSummary = null;
+        CancelRequestedAtUtc = null;
+        CancelPending = false;
+        CancelledAtUtc = null;
         Progress = 100;
         Status = SpaceGenerationRunStatus.Succeeded;
         IsCurrent = false;
@@ -385,6 +419,23 @@ public sealed class SpaceGenerationRun : SpaceTenantEntity
         Status = SpaceGenerationRunStatus.Queued;
     }
 
+    public void RetryApply()
+    {
+        RequireStatus(SpaceGenerationRunStatus.Failed);
+        if (ApplyJobId is null || ApplyCommandBatchId is null)
+        {
+            throw new SpaceGenerationStateException(
+                "A failed generation Apply must retain its Job and command batch.");
+        }
+
+        FailureCode = null;
+        FailureSummary = null;
+        CancelRequestedAtUtc = null;
+        CancelPending = false;
+        CancelledAtUtc = null;
+        Status = SpaceGenerationRunStatus.Applying;
+    }
+
     public void MarkStale()
     {
         if (Status is not (
@@ -406,7 +457,8 @@ public sealed class SpaceGenerationRun : SpaceTenantEntity
             SpaceGenerationRunStatus.Queued or
             SpaceGenerationRunStatus.Preparing or
             SpaceGenerationRunStatus.Inferring or
-            SpaceGenerationRunStatus.Validating))
+            SpaceGenerationRunStatus.Validating or
+            SpaceGenerationRunStatus.Applying))
         {
             throw StateError("request cancellation");
         }
@@ -429,7 +481,8 @@ public sealed class SpaceGenerationRun : SpaceTenantEntity
             SpaceGenerationRunStatus.Queued or
             SpaceGenerationRunStatus.Preparing or
             SpaceGenerationRunStatus.Inferring or
-            SpaceGenerationRunStatus.Validating))
+            SpaceGenerationRunStatus.Validating or
+            SpaceGenerationRunStatus.Applying))
         {
             throw StateError("complete cancellation");
         }

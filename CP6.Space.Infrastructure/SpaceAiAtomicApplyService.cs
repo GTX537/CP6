@@ -209,12 +209,21 @@ public sealed class SpaceAiAtomicApplyService(
         CancellationToken cancellationToken = default)
     {
         var run = await LoadRunAsync(runId, write: false, cancellationToken);
-        var jobStatusValue = run.ApplyJobId is null
+        var job = run.ApplyJobId is null
             ? null
             : await context.Jobs.AsNoTracking()
                 .Where(item => item.Id == run.ApplyJobId)
-                .Select(item => (SpaceJobStatus?)item.Status)
                 .SingleOrDefaultAsync(cancellationToken);
+        var committed = run.ApplyCommandBatchId is not null &&
+            await context.ElementCommandBatches.AsNoTracking().AnyAsync(
+                item => item.Id == run.ApplyCommandBatchId &&
+                        item.ResultVersionContentRevision != null &&
+                        item.ResponseJson != null,
+                cancellationToken);
+        var recovery = SpaceAiRunRecoveryClassifier.Classify(
+            run,
+            job,
+            committed);
         return new SpaceAiGenerationRunDto(
             SpaceAiAtomicApplyContract.SchemaVersion,
             run.Id,
@@ -226,13 +235,19 @@ public sealed class SpaceAiAtomicApplyService(
             run.BaseContentRevision,
             run.AppliedContentRevision,
             run.ApplyJobId,
-            jobStatusValue?.ToString(),
+            job?.Status.ToString(),
             run.ApplyPlanHash,
             run.AppliedCountsJson is null
                 ? null
                 : Parse(run.AppliedCountsJson),
             run.FailureCode,
             run.FailureSummary,
+            run.BasedOnRunId,
+            run.DegradedReason,
+            run.CancelPending,
+            recovery.Retryable,
+            recovery.RecoveryAction,
+            recovery.ApplyCommitState,
             Convert.ToBase64String(run.RowVersion));
     }
 

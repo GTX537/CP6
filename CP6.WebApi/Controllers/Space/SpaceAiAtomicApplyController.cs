@@ -42,7 +42,8 @@ namespace CP6.WebApi.Controllers.Space;
     StatusCodes.Status500InternalServerError,
     "application/problem+json")]
 public sealed class SpaceAiAtomicApplyController(
-    ISpaceAiAtomicApplyService service) : ControllerBase
+    ISpaceAiAtomicApplyService service,
+    ISpaceAiRunRecoveryService recoveryService) : ControllerBase
 {
     [HttpGet]
     [SpaceAuditOperation(
@@ -88,4 +89,115 @@ public sealed class SpaceAiAtomicApplyController(
             new { runId },
             response);
     }
+
+    [HttpPost("cancel")]
+    [SpaceAuditOperation(
+        "space.ai-generation-run.cancel",
+        "GenerationRun",
+        ResourceIdArgument = "runId",
+        PermissionCode = "space:model:generate-ai")]
+    [RequirePermission("space", "model:generate-ai", UseProblemDetails = true)]
+    [ProducesResponseType<SpaceAiGenerationRunActionDto>(
+        StatusCodes.Status200OK)]
+    public async Task<ActionResult<SpaceAiGenerationRunActionDto>>
+        CancelGenerationRun(
+            Guid runId,
+            [FromHeader(Name = "Idempotency-Key"), Required]
+            string idempotencyKey,
+            [FromBody, Required] SpaceAiRunActionRequest request,
+            CancellationToken cancellationToken)
+    {
+        var response = await recoveryService.CancelAsync(
+            runId,
+            request,
+            idempotencyKey,
+            cancellationToken);
+        SetReplayHeader(response.IdempotentReplay);
+        return Ok(response);
+    }
+
+    [HttpPost("retry")]
+    [SpaceAuditOperation(
+        "space.ai-generation-run.retry",
+        "GenerationRun",
+        ResourceIdArgument = "runId",
+        PermissionCode = "space:model:generate-ai")]
+    [RequirePermission("space", "model:generate-ai", UseProblemDetails = true)]
+    [ProducesResponseType<SpaceAiGenerationRunActionDto>(
+        StatusCodes.Status202Accepted)]
+    public async Task<ActionResult<SpaceAiGenerationRunActionDto>>
+        RetryGenerationRun(
+            Guid runId,
+            [FromHeader(Name = "Idempotency-Key"), Required]
+            string idempotencyKey,
+            [FromBody, Required] SpaceAiRunActionRequest request,
+            CancellationToken cancellationToken)
+    {
+        var response = await recoveryService.RetryAsync(
+            runId,
+            request,
+            idempotencyKey,
+            cancellationToken);
+        SetReplayHeader(response.IdempotentReplay);
+        return AcceptedAtAction(
+            nameof(GetGenerationRun),
+            new { runId },
+            response);
+    }
+
+    [HttpPost("discard")]
+    [SpaceAuditOperation(
+        "space.ai-generation-run.discard",
+        "GenerationRun",
+        ResourceIdArgument = "runId",
+        PermissionCode = "space:model:generate-ai")]
+    [RequirePermission("space", "model:generate-ai", UseProblemDetails = true)]
+    [ProducesResponseType<SpaceAiGenerationRunActionDto>(
+        StatusCodes.Status200OK)]
+    public async Task<ActionResult<SpaceAiGenerationRunActionDto>>
+        DiscardGenerationRun(
+            Guid runId,
+            [FromHeader(Name = "Idempotency-Key"), Required]
+            string idempotencyKey,
+            [FromBody, Required] SpaceAiRunActionRequest request,
+            CancellationToken cancellationToken)
+    {
+        var response = await recoveryService.DiscardAsync(
+            runId,
+            request,
+            idempotencyKey,
+            cancellationToken);
+        SetReplayHeader(response.IdempotentReplay);
+        return Ok(response);
+    }
+
+    [HttpPost("reconcile")]
+    [SpaceAuditOperation(
+        "space.ai-generation-run.reconcile",
+        "GenerationRun",
+        ResourceIdArgument = "runId",
+        PermissionCode = "space:model:review-ai")]
+    [RequirePermission("space", "model:review-ai", UseProblemDetails = true)]
+    [RequirePermission("space", "model:edit", UseProblemDetails = true)]
+    [ProducesResponseType<SpaceAiGenerationRunActionDto>(
+        StatusCodes.Status200OK)]
+    public async Task<ActionResult<SpaceAiGenerationRunActionDto>>
+        ReconcileGenerationRun(
+            Guid runId,
+            [FromHeader(Name = "Idempotency-Key"), Required]
+            string idempotencyKey,
+            [FromBody, Required] SpaceAiRunActionRequest request,
+            CancellationToken cancellationToken)
+    {
+        var response = await recoveryService.ReconcileAsync(
+            runId,
+            request,
+            idempotencyKey,
+            cancellationToken);
+        SetReplayHeader(response.IdempotentReplay);
+        return Ok(response);
+    }
+
+    private void SetReplayHeader(bool replay) =>
+        Response.Headers["Idempotent-Replay"] = replay ? "true" : "false";
 }

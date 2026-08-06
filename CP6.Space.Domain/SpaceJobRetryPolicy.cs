@@ -64,6 +64,26 @@ public static class SpaceJobRetryPolicy
         }
     }
 
+    public static bool CanRetrySameInput(SpaceJob original)
+    {
+        ArgumentNullException.ThrowIfNull(original);
+        return (original.Status is SpaceJobStatus.Failed or
+                    SpaceJobStatus.DeadLetter) &&
+               (original.LastFailureKind is SpaceJobFailureKind.Transient or
+                    SpaceJobFailureKind.Resource or
+                    SpaceJobFailureKind.Bug) &&
+               original.AttemptCount < 20;
+    }
+
+    public static void EnsureSameInputRetryAllowed(SpaceJob original)
+    {
+        if (!CanRetrySameInput(original))
+        {
+            throw new SpaceJobNotRetryableException(
+                "The Job failure is not safe to retry with the same input.");
+        }
+    }
+
     private static void RequireUtc(DateTime value)
     {
         if (value.Kind != DateTimeKind.Utc)
