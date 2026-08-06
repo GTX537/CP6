@@ -45,6 +45,11 @@ public sealed class SpaceAiAdministrationController(
     ISpaceAiAdministrationService service) : ControllerBase
 {
     [HttpGet("ai-policy")]
+    [SpaceAuditOperation(
+        "space.ai-policy.read",
+        "AiTenantPolicy",
+        PermissionCode = "space-ai-admin:read",
+        AuditRead = true)]
     [RequirePermission("space-ai-admin", "read", UseProblemDetails = true)]
     [ProducesResponseType<SpaceAiPolicyDto>(StatusCodes.Status200OK)]
     public Task<SpaceAiPolicyDto> GetPolicy(
@@ -74,6 +79,11 @@ public sealed class SpaceAiAdministrationController(
     }
 
     [HttpGet("ai-usage")]
+    [SpaceAuditOperation(
+        "space.ai-usage.list",
+        "AiUsage",
+        PermissionCode = "space-ai-admin:read",
+        AuditRead = true)]
     [RequirePermission("space-ai-admin", "read", UseProblemDetails = true)]
     [ProducesResponseType<SpaceAiUsagePageDto>(StatusCodes.Status200OK)]
     public Task<SpaceAiUsagePageDto> GetUsage(
