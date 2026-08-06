@@ -1,4 +1,5 @@
 using CP6.Space.Contracts;
+using CP6.Space.Domain;
 
 namespace CP6.Space.Application;
 
@@ -278,11 +279,11 @@ public sealed class SpaceAiGenerationGateway(
         WarehouseGenerationInput input,
         CancellationToken cancellationToken = default)
     {
+        var tenantId = RequireInternalExecution();
         if (siteId == Guid.Empty)
             throw new ArgumentException("Site id is required.", nameof(siteId));
         ArgumentNullException.ThrowIfNull(input);
 
-        var tenantId = executionContext.TenantId;
         var policy = await policySource.GetPolicyAsync(
             tenantId,
             cancellationToken);
@@ -309,6 +310,8 @@ public sealed class SpaceAiGenerationGateway(
         {
             throw SourcePolicyDenied();
         }
+        if (registration.Kind == WarehouseGenerationProviderKind.External)
+            SpaceAiExternalProviderRequestGate.EnsureSafe(input);
 
         await using var lease = await quotaLeaseManager.TryAcquireAsync(
             tenantId,
@@ -321,6 +324,25 @@ public sealed class SpaceAiGenerationGateway(
             input,
             cancellationToken);
         return outputValidator.Validate(input, output).Output;
+    }
+
+    private Guid RequireInternalExecution()
+    {
+        if (executionContext.IsExternal)
+        {
+            throw new SpaceProblemException(
+                SpaceErrorCodes.ExternalSubjectDenied,
+                403,
+                "External principals cannot invoke AI generation providers.",
+                recoveryAction: "use-internal-space-editor");
+        }
+        if (executionContext.TenantId == Guid.Empty ||
+            executionContext.ActorId == Guid.Empty)
+        {
+            throw new SpaceTenantScopeException(
+                "A verified internal Space tenant context is required.");
+        }
+        return executionContext.TenantId;
     }
 
     private static SpaceProblemException Disabled() =>

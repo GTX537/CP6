@@ -56,6 +56,8 @@ Provider 不得：
 - 修改 Draft 或 Published。
 - 决定单位、坐标、拓扑、碰撞和编码。
 
+外部 Provider 适配器调用前还必须经过运行时出站门禁：请求对象及其所有嵌套对象只能包含冻结 JSON 字段白名单；Run、Source、Layer、Block、Attribute、Mapping Hint 等关联值必须符合本地最小化器生成的 HMAC Token 格式；任一额外字段、原始名称、任意文本或非白名单锁定字段均以 `SPACE_AI_OUTBOUND_PAYLOAD_DENIED` 失败关闭，且不得先占用配额或调用 Provider。
+
 ## 5. 评分规则
 
 通过硬门槛后按 100 分评分：
