@@ -233,6 +233,21 @@ public sealed class SpaceZoneRevision : SpaceRevisionEntity
         CapabilityFlags =
             SpaceRevisionValue.OptionalText(capabilityFlags, 1000, nameof(capabilityFlags));
     }
+
+    public void UpdateDefinition(
+        Guid floorLogicalId,
+        string zoneCode,
+        short zoneType,
+        string? name = null)
+    {
+        SpaceRevisionValue.RequireIdentity(floorLogicalId, nameof(floorLogicalId));
+        FloorLogicalId = floorLogicalId;
+        ZoneCode = SpaceRevisionValue.RequiredText(zoneCode, 100, nameof(zoneCode));
+        Name = SpaceRevisionValue.OptionalText(name, 200, nameof(name))
+            ?? ZoneCode;
+        ZoneType = zoneType;
+        ChangeLifecycle(SpaceLifecycleState.Active);
+    }
 }
 
 public sealed class SpaceAisleRevision : SpaceRevisionEntity
@@ -274,6 +289,24 @@ public sealed class SpaceAisleRevision : SpaceRevisionEntity
     {
         PolygonJson = SpaceRevisionValue.Json(polygonJson, nameof(polygonJson));
         CenterlineJson = SpaceRevisionValue.Json(centerlineJson, nameof(centerlineJson));
+    }
+
+    public void UpdateDefinition(
+        Guid zoneLogicalId,
+        string aisleCode,
+        short direction,
+        string? name = null)
+    {
+        SpaceRevisionValue.RequireIdentity(zoneLogicalId, nameof(zoneLogicalId));
+        ZoneLogicalId = zoneLogicalId;
+        AisleCode = SpaceRevisionValue.RequiredText(
+            aisleCode,
+            100,
+            nameof(aisleCode));
+        Name = SpaceRevisionValue.OptionalText(name, 200, nameof(name))
+            ?? AisleCode;
+        Direction = direction;
+        ChangeLifecycle(SpaceLifecycleState.Active);
     }
 }
 
@@ -361,6 +394,33 @@ public sealed class SpaceRackRevision : SpaceRevisionEntity
         Depth = depth;
         Height = height;
         TemplateVersionId = templateVersionId;
+    }
+
+    public void UpdateDefinition(
+        Guid floorLogicalId,
+        Guid zoneLogicalId,
+        string rackCode,
+        Guid? aisleLogicalId = null,
+        string? name = null,
+        string? rackType = null)
+    {
+        SpaceRevisionValue.RequireIdentity(floorLogicalId, nameof(floorLogicalId));
+        SpaceRevisionValue.RequireIdentity(zoneLogicalId, nameof(zoneLogicalId));
+        if (aisleLogicalId == Guid.Empty)
+        {
+            throw new ArgumentException(
+                "Aisle logical identity cannot be empty.",
+                nameof(aisleLogicalId));
+        }
+
+        FloorLogicalId = floorLogicalId;
+        ZoneLogicalId = zoneLogicalId;
+        AisleLogicalId = aisleLogicalId;
+        RackCode = SpaceRevisionValue.RequiredText(rackCode, 100, nameof(rackCode));
+        Name = SpaceRevisionValue.OptionalText(name, 200, nameof(name))
+            ?? RackCode;
+        RackType = SpaceRevisionValue.OptionalText(rackType, 64, nameof(rackType));
+        ChangeLifecycle(SpaceLifecycleState.Active);
     }
 }
 
@@ -451,6 +511,11 @@ public sealed class SpaceRackLevelRevision : SpaceRevisionEntity
         CellDepth = cellDepth;
         BeamHeight = beamHeight;
         MaxLoad = maxLoad;
+    }
+
+    public void Restore()
+    {
+        ChangeLifecycle(SpaceLifecycleState.Active);
     }
 
     private static void RequirePositive(int value, string parameterName)
@@ -570,6 +635,41 @@ public sealed class SpaceLocationRevision : SpaceRevisionEntity
         CodeOrigin = SpaceLocationCodeOrigin.Adopted;
         ExternalBindingState = SpaceExternalBindingState.Bound;
     }
+
+    public void UpdateGeneratedSpecification(
+        Guid floorLogicalId,
+        Guid rackLogicalId,
+        int columnNo,
+        int levelNo,
+        int depthNo,
+        int width,
+        int height,
+        int depth,
+        decimal? maxLoad = null)
+    {
+        SpaceRevisionValue.RequireIdentity(floorLogicalId, nameof(floorLogicalId));
+        SpaceRevisionValue.RequireIdentity(rackLogicalId, nameof(rackLogicalId));
+        if (columnNo <= 0 || levelNo <= 0 || depthNo <= 0)
+        {
+            throw new ArgumentOutOfRangeException(
+                nameof(columnNo),
+                "Location coordinates must be positive.");
+        }
+        SpaceRevisionValue.RequireDimensions(width, height, depth);
+        if (maxLoad < 0)
+            throw new ArgumentOutOfRangeException(nameof(maxLoad));
+
+        FloorLogicalId = floorLogicalId;
+        RackLogicalId = rackLogicalId;
+        ColumnNo = columnNo;
+        LevelNo = levelNo;
+        DepthNo = depthNo;
+        Width = width;
+        Height = height;
+        Depth = depth;
+        MaxLoad = maxLoad;
+        ChangeLifecycle(SpaceLifecycleState.Active);
+    }
 }
 
 public sealed class SpaceElementRevision : SpaceRevisionEntity
@@ -649,6 +749,38 @@ public sealed class SpaceElementRevision : SpaceRevisionEntity
         }
 
         GeometryJson = validated;
+    }
+
+    public void UpdateDefinition(
+        Guid floorLogicalId,
+        string elementType,
+        string geometryJson,
+        Guid? parentLogicalId = null)
+    {
+        SpaceRevisionValue.RequireIdentity(floorLogicalId, nameof(floorLogicalId));
+        if (parentLogicalId == Guid.Empty)
+        {
+            throw new ArgumentException(
+                "Parent logical identity cannot be empty.",
+                nameof(parentLogicalId));
+        }
+        if (parentLogicalId == LogicalId)
+        {
+            throw new ArgumentException(
+                "An element cannot be its own parent.",
+                nameof(parentLogicalId));
+        }
+        if (ModelAssetId.HasValue)
+        {
+            throw new InvalidOperationException(
+                "AI Apply cannot replace an asset-backed element.");
+        }
+
+        FloorLogicalId = floorLogicalId;
+        ParentLogicalId = parentLogicalId;
+        ElementType = SpaceElementTypes.Normalize(elementType, nameof(elementType));
+        UpdateGeometry(geometryJson);
+        ChangeLifecycle(SpaceLifecycleState.Active);
     }
 
     public void ConfigurePlacement(

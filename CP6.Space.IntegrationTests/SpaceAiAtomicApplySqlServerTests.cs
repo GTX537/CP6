@@ -338,6 +338,232 @@ public sealed class SpaceAiAtomicApplySqlServerTests
         });
     }
 
+    [SqlServerFact]
+    public async Task Apply_updates_existing_baseline_and_reconciles_rack_derivation()
+    {
+        await WithDatabaseAsync(async (context, execution, clock) =>
+        {
+            var graph = await SeedReviewedZoneAsync(context, execution);
+            var floor = await context.FloorRevisions.SingleAsync();
+            var zoneLogicalId = WarehouseDeterministicIdentity.CreateObjectLogicalId(
+                graph.VersionId,
+                SourceHash,
+                "zone-ai-1");
+            var rackLogicalId = WarehouseDeterministicIdentity.CreateObjectLogicalId(
+                graph.VersionId,
+                SourceHash,
+                "rack-ai-1");
+            var aisleLogicalId = WarehouseDeterministicIdentity.CreateObjectLogicalId(
+                graph.VersionId,
+                SourceHash,
+                "aisle-ai-1");
+            var wallLogicalId = WarehouseDeterministicIdentity.CreateObjectLogicalId(
+                graph.VersionId,
+                SourceHash,
+                "wall-ai-1");
+            var zone = SpaceZoneRevision.Create(
+                execution.TenantId,
+                graph.VersionId,
+                zoneLogicalId,
+                floor.LogicalId,
+                "OLD-ZONE",
+                0,
+                "Old Zone");
+            zone.ConfigureShape(
+                """
+                {"schemaVersion":1,"kind":"polygon","points":[[500,500],[3500,500],[3500,2500],[500,2500]]}
+                """);
+            var aisle = SpaceAisleRevision.Create(
+                execution.TenantId,
+                graph.VersionId,
+                aisleLogicalId,
+                zoneLogicalId,
+                "OLD-AISLE",
+                0,
+                "Old Aisle");
+            aisle.ConfigureShape("[]", "[[500,3500],[8000,3500]]");
+            var rack = SpaceRackRevision.Create(
+                execution.TenantId,
+                graph.VersionId,
+                rackLogicalId,
+                floor.LogicalId,
+                zoneLogicalId,
+                "OLD-RACK",
+                name: "Old Rack");
+            rack.ConfigureGeometry(1200, 5100, 0, 0, 1800, 900, 2500);
+            var retainedLevel = SpaceRackLevelRevision.Create(
+                execution.TenantId,
+                graph.VersionId,
+                WarehouseDeterministicIdentity.CreateRackLevelLogicalId(
+                    rackLogicalId,
+                    1),
+                rackLogicalId,
+                1,
+                0,
+                900,
+                1,
+                1,
+                900,
+                900);
+            var obsoleteLevel = SpaceRackLevelRevision.Create(
+                execution.TenantId,
+                graph.VersionId,
+                WarehouseDeterministicIdentity.CreateRackLevelLogicalId(
+                    rackLogicalId,
+                    3),
+                rackLogicalId,
+                3,
+                2100,
+                500,
+                1,
+                1,
+                900,
+                900);
+            var retainedLocation = SpaceLocationRevision.Create(
+                execution.TenantId,
+                graph.VersionId,
+                WarehouseDeterministicIdentity.CreateLocationLogicalId(
+                    rackLogicalId,
+                    1,
+                    1,
+                    1),
+                floor.LogicalId,
+                rackLogicalId,
+                null,
+                1,
+                1,
+                1,
+                900,
+                900,
+                900);
+            var obsoleteLocation = SpaceLocationRevision.Create(
+                execution.TenantId,
+                graph.VersionId,
+                WarehouseDeterministicIdentity.CreateLocationLogicalId(
+                    rackLogicalId,
+                    3,
+                    1,
+                    1),
+                floor.LogicalId,
+                rackLogicalId,
+                null,
+                1,
+                3,
+                1,
+                900,
+                500,
+                900);
+            var wall = SpaceElementRevision.Create(
+                execution.TenantId,
+                graph.VersionId,
+                wallLogicalId,
+                floor.LogicalId,
+                "Wall",
+                """
+                {"schemaVersion":1,"kind":"box","width":1000,"height":1000,"depth":100}
+                """);
+            wall.ConfigurePlacement(500, 500, 0, 0, 1000, 1000, 100);
+            context.AddRange(
+                zone,
+                aisle,
+                rack,
+                retainedLevel,
+                obsoleteLevel,
+                retainedLocation,
+                obsoleteLocation,
+                wall);
+            await context.SaveChangesAsync();
+
+            await AddAcceptedProposalAsync(
+                context,
+                execution,
+                graph,
+                "aisle-ai-1",
+                "Aisle",
+                """
+                {"kind":"Path","points":[{"x":500,"y":3500,"z":0},{"x":9500,"y":4500,"z":0}]}
+                """,
+                """
+                {"name":"AI Aisle","aisleCode":"AI-AISLE-1","direction":"TwoWay","widthMillimeters":1000,"heightMillimeters":3000}
+                """,
+                """{"zoneSourceKey":"zone-ai-1"}""");
+            var profileVersionId = Guid.NewGuid();
+            await AddAcceptedProposalAsync(
+                context,
+                execution,
+                graph,
+                "rack-ai-1",
+                "Rack",
+                """
+                {"kind":"Polygon","points":[{"x":1000,"y":5000,"z":0},{"x":3000,"y":5000,"z":0},{"x":3000,"y":6000,"z":0},{"x":1000,"y":6000,"z":0}]}
+                """,
+                $$$"""
+                {"name":"AI Rack","rackCode":"AI-RACK-1","rackType":"Selective","rackDerivation":{"profileVersionId":"{{{profileVersionId:D}}}","rackWidthMillimeters":2000,"rackDepthMillimeters":1000,"rackHeightMillimeters":3000,"levels":[{"levelNo":1,"bottomZMillimeters":0,"clearHeightMillimeters":1200,"binCount":2,"depthCount":1,"cellWidthMillimeters":1000,"cellDepthMillimeters":1000,"beamHeightMillimeters":100,"maxLoadKilograms":500},{"levelNo":2,"bottomZMillimeters":1400,"clearHeightMillimeters":1200,"binCount":2,"depthCount":1,"cellWidthMillimeters":1000,"cellDepthMillimeters":1000,"beamHeightMillimeters":100,"maxLoadKilograms":400}]}}
+                """,
+                """{"zoneSourceKey":"zone-ai-1"}""");
+            await AddAcceptedProposalAsync(
+                context,
+                execution,
+                graph,
+                "wall-ai-1",
+                "Wall",
+                """
+                {"kind":"Path","points":[{"x":500,"y":500,"z":0},{"x":9500,"y":600,"z":0}]}
+                """,
+                """
+                {"name":"AI Safety Wall","thicknessMillimeters":100,"heightMillimeters":3000,"wallType":"Safety"}
+                """,
+                "{}");
+
+            var queued = await QueueAsync(
+                context,
+                execution,
+                clock,
+                graph,
+                "apply-update-baseline-1");
+            var runner = Runner(
+                context,
+                execution,
+                clock,
+                new NoOpSpaceAiApplyFaultInjector());
+            Assert.True(await runner.RunNextAsync(
+                SpaceJobType.ApplyGeneration,
+                "update-worker"));
+
+            context.ChangeTracker.Clear();
+            var updatedZone = await context.ZoneRevisions.SingleAsync();
+            var updatedAisle = await context.AisleRevisions.SingleAsync();
+            var updatedRack = await context.RackRevisions.SingleAsync();
+            var updatedWall = await context.ElementRevisions.SingleAsync();
+            Assert.Equal(zone.Id, updatedZone.Id);
+            Assert.Equal("AI-ZONE-1", updatedZone.ZoneCode);
+            Assert.Equal("AI Storage Zone", updatedZone.Name);
+            Assert.Equal(aisle.Id, updatedAisle.Id);
+            Assert.Equal("AI-AISLE-1", updatedAisle.AisleCode);
+            Assert.Equal("AI Aisle", updatedAisle.Name);
+            Assert.Equal(rack.Id, updatedRack.Id);
+            Assert.Equal("AI-RACK-1", updatedRack.RackCode);
+            Assert.Equal("Selective", updatedRack.RackType);
+            Assert.Equal(wall.Id, updatedWall.Id);
+            Assert.Equal("Wall", updatedWall.ElementType);
+            Assert.Equal(3000, updatedWall.Height);
+            Assert.Equal(2, await context.RackLevelRevisions.CountAsync(item =>
+                item.LifecycleState == SpaceLifecycleState.Active));
+            Assert.Equal(1, await context.RackLevelRevisions.CountAsync(item =>
+                item.LifecycleState == SpaceLifecycleState.Disabled));
+            Assert.Equal(4, await context.LocationRevisions.CountAsync(item =>
+                item.LifecycleState == SpaceLifecycleState.Active));
+            Assert.Equal(1, await context.LocationRevisions.CountAsync(item =>
+                item.LifecycleState == SpaceLifecycleState.Disabled));
+            Assert.Equal(1, (await context.Versions.SingleAsync()).ContentRevision);
+            Assert.All(
+                await context.ElementCommandRecords.ToListAsync(),
+                command => Assert.NotEqual("null", command.BeforeJson));
+            Assert.Equal(4, await context.ElementCommandRecords.CountAsync());
+            Assert.Equal(queued.JobId, (await context.GenerationRuns.SingleAsync()).ApplyJobId);
+        });
+    }
+
     [Fact]
     public async Task External_principal_is_denied_before_generation_data_access()
     {

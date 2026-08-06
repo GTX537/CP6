@@ -383,7 +383,14 @@ public sealed class SpaceGenerationApplyStepExecutor(
             {
                 var stage = stages[index];
                 var payload = payloads[index];
-                ApplyPayload(payload, source);
+                var beforeJson = await ReadBeforeJsonAsync(
+                    source.ModelVersionId,
+                    payload,
+                    CancellationToken.None);
+                await ApplyPayloadAsync(
+                    payload,
+                    source,
+                    CancellationToken.None);
                 proposalById[stage.ProposalId].MarkApplied(payload.LogicalId);
                 context.ElementCommandRecords.Add(
                     SpaceElementCommandRecord.Create(
@@ -394,7 +401,7 @@ public sealed class SpaceGenerationApplyStepExecutor(
                         "ApplyGenerationProposal",
                         payload.LogicalId,
                         stage.NormalizedPayloadJson,
-                        "null",
+                        beforeJson,
                         stage.NormalizedPayloadJson));
                 faultInjector.ThrowIfRequested(
                     $"commit-after-proposal-{index + 1}");
@@ -621,23 +628,156 @@ public sealed class SpaceGenerationApplyStepExecutor(
         }
 
         var ids = payloads.Select(item => item.LogicalId).ToArray();
+        var stagedZoneIds = payloads
+            .Where(item => item.ProposalType == "Zone")
+            .Select(item => item.LogicalId)
+            .ToHashSet();
+        var stagedAisleIds = payloads
+            .Where(item => item.ProposalType == "Aisle")
+            .Select(item => item.LogicalId)
+            .ToHashSet();
+        var stagedRackIds = payloads
+            .Where(item => item.ProposalType == "Rack")
+            .Select(item => item.LogicalId)
+            .ToHashSet();
+        var stagedElementIds = payloads
+            .Where(item => item.ProposalType is not ("Zone" or "Aisle" or "Rack"))
+            .Select(item => item.LogicalId)
+            .ToHashSet();
         if (await context.FloorRevisions.AnyAsync(item =>
                 item.ModelVersionId == run.ModelVersionId &&
                 ids.Contains(item.LogicalId), cancellationToken) ||
-            await context.ZoneRevisions.AnyAsync(item =>
+            (await context.ZoneRevisions.AsNoTracking()
+                .Where(item =>
+                    item.ModelVersionId == run.ModelVersionId &&
+                    ids.Contains(item.LogicalId))
+                .Select(item => new { item.LogicalId, item.FloorLogicalId })
+                .ToArrayAsync(cancellationToken))
+                .Any(item =>
+                    !stagedZoneIds.Contains(item.LogicalId) ||
+                    item.FloorLogicalId != run.TargetFloorLogicalId) ||
+            (await context.AisleRevisions.AsNoTracking()
+                .Where(item =>
+                    item.ModelVersionId == run.ModelVersionId &&
+                    ids.Contains(item.LogicalId))
+                .Select(item => item.LogicalId)
+                .ToArrayAsync(cancellationToken))
+                .Any(item => !stagedAisleIds.Contains(item)) ||
+            (await context.RackRevisions.AsNoTracking()
+                .Where(item =>
+                    item.ModelVersionId == run.ModelVersionId &&
+                    ids.Contains(item.LogicalId))
+                .Select(item => new { item.LogicalId, item.FloorLogicalId })
+                .ToArrayAsync(cancellationToken))
+                .Any(item =>
+                    !stagedRackIds.Contains(item.LogicalId) ||
+                    item.FloorLogicalId != run.TargetFloorLogicalId) ||
+            (await context.ElementRevisions.AsNoTracking()
+                .Where(item =>
+                    item.ModelVersionId == run.ModelVersionId &&
+                    ids.Contains(item.LogicalId))
+                .Select(item => new
+                {
+                    item.LogicalId,
+                    item.FloorLogicalId,
+                    item.ModelAssetId,
+                })
+                .ToArrayAsync(cancellationToken))
+                .Any(item =>
+                    !stagedElementIds.Contains(item.LogicalId) ||
+                    item.FloorLogicalId != run.TargetFloorLogicalId ||
+                    item.ModelAssetId.HasValue) ||
+            await context.RackLevelRevisions.AnyAsync(item =>
                 item.ModelVersionId == run.ModelVersionId &&
                 ids.Contains(item.LogicalId), cancellationToken) ||
-            await context.AisleRevisions.AnyAsync(item =>
-                item.ModelVersionId == run.ModelVersionId &&
-                ids.Contains(item.LogicalId), cancellationToken) ||
-            await context.RackRevisions.AnyAsync(item =>
-                item.ModelVersionId == run.ModelVersionId &&
-                ids.Contains(item.LogicalId), cancellationToken) ||
-            await context.ElementRevisions.AnyAsync(item =>
+            await context.LocationRevisions.AnyAsync(item =>
                 item.ModelVersionId == run.ModelVersionId &&
                 ids.Contains(item.LogicalId), cancellationToken))
         {
-            throw Invalid("AI Apply would collide with an existing logical identity.");
+            throw Invalid(
+                "AI Apply logical identity collides with another Draft object type or an asset-backed element.");
+        }
+
+        var derivedLevels = payloads
+            .SelectMany(payload => payload.RackLevels.Select(item =>
+                new { item.LogicalId, RackLogicalId = payload.LogicalId }))
+            .ToArray();
+        var derivedLocations = payloads
+            .SelectMany(payload => payload.Locations.Select(item =>
+                new { item.LogicalId, RackLogicalId = payload.LogicalId }))
+            .ToArray();
+        if (derivedLevels.Select(item => item.LogicalId).Distinct().Count() !=
+                derivedLevels.Length ||
+            derivedLocations.Select(item => item.LogicalId).Distinct().Count() !=
+                derivedLocations.Length)
+        {
+            throw Invalid("AI Apply derived logical identities are not unique.");
+        }
+        var derivedLevelOwners = derivedLevels.ToDictionary(
+            item => item.LogicalId,
+            item => item.RackLogicalId);
+        var derivedLocationOwners = derivedLocations.ToDictionary(
+            item => item.LogicalId,
+            item => item.RackLogicalId);
+        var derivedIds = derivedLevels.Select(item => item.LogicalId)
+            .Concat(derivedLocations.Select(item => item.LogicalId))
+            .ToArray();
+        if (derivedIds.Distinct().Count() != derivedIds.Length ||
+            derivedIds.Intersect(ids).Any() ||
+            await context.FloorRevisions.AnyAsync(item =>
+                item.ModelVersionId == run.ModelVersionId &&
+                derivedIds.Contains(item.LogicalId), cancellationToken) ||
+            await context.ZoneRevisions.AnyAsync(item =>
+                item.ModelVersionId == run.ModelVersionId &&
+                derivedIds.Contains(item.LogicalId), cancellationToken) ||
+            await context.AisleRevisions.AnyAsync(item =>
+                item.ModelVersionId == run.ModelVersionId &&
+                derivedIds.Contains(item.LogicalId), cancellationToken) ||
+            await context.RackRevisions.AnyAsync(item =>
+                item.ModelVersionId == run.ModelVersionId &&
+                derivedIds.Contains(item.LogicalId), cancellationToken) ||
+            await context.ElementRevisions.AnyAsync(item =>
+                item.ModelVersionId == run.ModelVersionId &&
+                derivedIds.Contains(item.LogicalId), cancellationToken) ||
+            (await context.RackLevelRevisions.AsNoTracking()
+                .Where(item =>
+                    item.ModelVersionId == run.ModelVersionId &&
+                    derivedIds.Contains(item.LogicalId))
+                .Select(item => new { item.LogicalId, item.RackLogicalId })
+                .ToArrayAsync(cancellationToken))
+                .Any(item =>
+                    !derivedLevelOwners.TryGetValue(item.LogicalId, out var owner) ||
+                    owner != item.RackLogicalId) ||
+            (await context.LocationRevisions.AsNoTracking()
+                .Where(item =>
+                    item.ModelVersionId == run.ModelVersionId &&
+                    derivedIds.Contains(item.LogicalId))
+                .Select(item => new
+                {
+                    item.LogicalId,
+                    item.FloorLogicalId,
+                    item.RackLogicalId,
+                })
+                .ToArrayAsync(cancellationToken))
+                .Any(item =>
+                    !derivedLocationOwners.TryGetValue(item.LogicalId, out var owner) ||
+                    owner != item.RackLogicalId ||
+                    item.FloorLogicalId != run.TargetFloorLogicalId))
+        {
+            throw Invalid(
+                "AI Apply derived logical identity collides with another Draft object.");
+        }
+        var derivedLocationIds = derivedLocationOwners.Keys.ToArray();
+        if (await context.LocationRevisions.AnyAsync(item =>
+                item.ModelVersionId == run.ModelVersionId &&
+                item.RackLogicalId.HasValue &&
+                stagedRackIds.Contains(item.RackLogicalId.Value) &&
+                !derivedLocationIds.Contains(item.LogicalId) &&
+                item.ExternalBindingState != SpaceExternalBindingState.Unbound,
+                cancellationToken))
+        {
+            throw Invalid(
+                "AI Apply cannot remove a WMS-bound Location from a Rack derivation.");
         }
 
         var zones = payloads.Where(item => item.ProposalType == "Zone")
@@ -655,12 +795,14 @@ public sealed class SpaceGenerationApplyStepExecutor(
         var existingZones = await context.ZoneRevisions.AsNoTracking()
             .Where(item =>
                 item.ModelVersionId == run.ModelVersionId &&
+                item.LifecycleState == SpaceLifecycleState.Active &&
                 zoneIds.Contains(item.LogicalId))
             .Select(item => item.LogicalId)
             .ToArrayAsync(cancellationToken);
         var existingAisles = await context.AisleRevisions.AsNoTracking()
             .Where(item =>
                 item.ModelVersionId == run.ModelVersionId &&
+                item.LifecycleState == SpaceLifecycleState.Active &&
                 aisleIds.Contains(item.LogicalId))
             .Select(item => new { item.LogicalId, item.ZoneLogicalId })
             .ToArrayAsync(cancellationToken);
@@ -710,24 +852,51 @@ public sealed class SpaceGenerationApplyStepExecutor(
                 throw Invalid($"AI Apply contains duplicate {label} codes.");
             }
         }
-        var zoneCodes = payloads.Where(item => item.ProposalType == "Zone")
-            .Select(item => item.Code!).ToArray();
-        var aisleCodes = payloads.Where(item => item.ProposalType == "Aisle")
-            .Select(item => item.Code!).ToArray();
-        var rackCodes = payloads.Where(item => item.ProposalType == "Rack")
-            .Select(item => item.Code!).ToArray();
+        var zones = payloads.Where(item => item.ProposalType == "Zone")
+            .ToArray();
+        var aisles = payloads.Where(item => item.ProposalType == "Aisle")
+            .ToArray();
+        var racks = payloads.Where(item => item.ProposalType == "Rack")
+            .ToArray();
+        var zoneCodes = zones.Select(item => item.Code!).ToArray();
+        var aisleCodes = aisles.Select(item => item.Code!).ToArray();
+        var rackCodes = racks.Select(item => item.Code!).ToArray();
         EnsureUnique(zoneCodes, "Zone");
         EnsureUnique(aisleCodes, "Aisle");
         EnsureUnique(rackCodes, "Rack");
-        if (await context.ZoneRevisions.AnyAsync(item =>
+        var zoneOwners = zones.ToDictionary(
+            item => item.Code!,
+            item => item.LogicalId,
+            StringComparer.OrdinalIgnoreCase);
+        var aisleOwners = aisles.ToDictionary(
+            item => item.Code!,
+            item => item.LogicalId,
+            StringComparer.OrdinalIgnoreCase);
+        var rackOwners = racks.ToDictionary(
+            item => item.Code!,
+            item => item.LogicalId,
+            StringComparer.OrdinalIgnoreCase);
+        var existingZones = await context.ZoneRevisions.AsNoTracking()
+            .Where(item =>
                 item.ModelVersionId == versionId &&
-                zoneCodes.Contains(item.ZoneCode), cancellationToken) ||
-            await context.AisleRevisions.AnyAsync(item =>
+                zoneCodes.Contains(item.ZoneCode))
+            .Select(item => new { item.LogicalId, Code = item.ZoneCode })
+            .ToArrayAsync(cancellationToken);
+        var existingAisles = await context.AisleRevisions.AsNoTracking()
+            .Where(item =>
                 item.ModelVersionId == versionId &&
-                aisleCodes.Contains(item.AisleCode), cancellationToken) ||
-            await context.RackRevisions.AnyAsync(item =>
+                aisleCodes.Contains(item.AisleCode))
+            .Select(item => new { item.LogicalId, Code = item.AisleCode })
+            .ToArrayAsync(cancellationToken);
+        var existingRacks = await context.RackRevisions.AsNoTracking()
+            .Where(item =>
                 item.ModelVersionId == versionId &&
-                rackCodes.Contains(item.RackCode), cancellationToken))
+                rackCodes.Contains(item.RackCode))
+            .Select(item => new { item.LogicalId, Code = item.RackCode })
+            .ToArrayAsync(cancellationToken);
+        if (existingZones.Any(item => zoneOwners[item.Code] != item.LogicalId) ||
+            existingAisles.Any(item => aisleOwners[item.Code] != item.LogicalId) ||
+            existingRacks.Any(item => rackOwners[item.Code] != item.LogicalId))
         {
             throw Invalid("AI Apply code preflight found an existing code.");
         }
@@ -776,12 +945,17 @@ public sealed class SpaceGenerationApplyStepExecutor(
         CancellationToken cancellationToken)
     {
         var staged = payloads.Where(item => item.ProposalType == "Rack")
-            .Select(item => new Box(item.X, item.Y, item.Width, item.Depth))
+            .Select(item => new
+            {
+                item.LogicalId,
+                Bounds = new Box(item.X, item.Y, item.Width, item.Depth),
+            })
             .ToArray();
+        var stagedIds = staged.Select(item => item.LogicalId).ToArray();
         for (var left = 0; left < staged.Length; left++)
         for (var right = left + 1; right < staged.Length; right++)
         {
-            if (Overlaps(staged[left], staged[right]))
+            if (Overlaps(staged[left].Bounds, staged[right].Bounds))
                 throw Invalid("AI Apply contains colliding staged Racks.");
         }
         if (staged.Length == 0)
@@ -789,58 +963,177 @@ public sealed class SpaceGenerationApplyStepExecutor(
         var existing = await context.RackRevisions.AsNoTracking()
             .Where(item =>
                 item.ModelVersionId == versionId &&
-                item.LifecycleState == SpaceLifecycleState.Active)
+                item.LifecycleState == SpaceLifecycleState.Active &&
+                !stagedIds.Contains(item.LogicalId))
             .Select(item => new Box(item.X, item.Y, item.Width, item.Depth))
             .ToArrayAsync(cancellationToken);
-        if (staged.Any(candidate => existing.Any(item => Overlaps(candidate, item))))
+        if (staged.Any(candidate =>
+                existing.Any(item => Overlaps(candidate.Bounds, item))))
             throw Invalid("AI Apply Rack geometry collides with the Draft.");
     }
 
-    private void ApplyPayload(
+    private async Task<string> ReadBeforeJsonAsync(
+        Guid modelVersionId,
         SpaceAiStagedElementPayloadV1 payload,
-        SpaceModelSource source)
+        CancellationToken cancellationToken)
     {
         switch (payload.ProposalType)
         {
             case "Zone":
-                var zone = SpaceZoneRevision.Create(
-                    execution.TenantId,
-                    source.ModelVersionId,
-                    payload.LogicalId,
-                    payload.FloorLogicalId,
-                    payload.Code!,
-                    payload.KindCode!.Value,
-                    payload.Name);
+                var zone = await context.ZoneRevisions.AsNoTracking()
+                    .SingleOrDefaultAsync(item =>
+                        item.ModelVersionId == modelVersionId &&
+                        item.LogicalId == payload.LogicalId,
+                        cancellationToken);
+                return zone is null ? "null" : Serialize(zone);
+            case "Aisle":
+                var aisle = await context.AisleRevisions.AsNoTracking()
+                    .SingleOrDefaultAsync(item =>
+                        item.ModelVersionId == modelVersionId &&
+                        item.LogicalId == payload.LogicalId,
+                        cancellationToken);
+                return aisle is null ? "null" : Serialize(aisle);
+            case "Rack":
+                var rack = await context.RackRevisions.AsNoTracking()
+                    .SingleOrDefaultAsync(item =>
+                        item.ModelVersionId == modelVersionId &&
+                        item.LogicalId == payload.LogicalId,
+                        cancellationToken);
+                if (rack is null)
+                    return "null";
+                var levels = await context.RackLevelRevisions.AsNoTracking()
+                    .Where(item =>
+                        item.ModelVersionId == modelVersionId &&
+                        item.RackLogicalId == payload.LogicalId)
+                    .OrderBy(item => item.LevelNo)
+                    .ThenBy(item => item.LogicalId)
+                    .ToArrayAsync(cancellationToken);
+                var locations = await context.LocationRevisions.AsNoTracking()
+                    .Where(item =>
+                        item.ModelVersionId == modelVersionId &&
+                        item.RackLogicalId == payload.LogicalId)
+                    .OrderBy(item => item.LevelNo)
+                    .ThenBy(item => item.ColumnNo)
+                    .ThenBy(item => item.DepthNo)
+                    .ThenBy(item => item.LogicalId)
+                    .ToArrayAsync(cancellationToken);
+                return Serialize(new { rack, levels, locations });
+            default:
+                var element = await context.ElementRevisions.AsNoTracking()
+                    .SingleOrDefaultAsync(item =>
+                        item.ModelVersionId == modelVersionId &&
+                        item.LogicalId == payload.LogicalId,
+                        cancellationToken);
+                if (element is null)
+                    return "null";
+                var attributes = await context.ElementAttributes.AsNoTracking()
+                    .Where(item =>
+                        item.ModelVersionId == modelVersionId &&
+                        item.ElementRevisionId == element.Id)
+                    .OrderBy(item => item.Namespace)
+                    .ThenBy(item => item.Key)
+                    .ToArrayAsync(cancellationToken);
+                return Serialize(new { element, attributes });
+        }
+    }
+
+    private async Task ApplyPayloadAsync(
+        SpaceAiStagedElementPayloadV1 payload,
+        SpaceModelSource source,
+        CancellationToken cancellationToken)
+    {
+        switch (payload.ProposalType)
+        {
+            case "Zone":
+                var zone = await context.ZoneRevisions.SingleOrDefaultAsync(
+                    item =>
+                        item.ModelVersionId == source.ModelVersionId &&
+                        item.LogicalId == payload.LogicalId,
+                    cancellationToken);
+                if (zone is null)
+                {
+                    zone = SpaceZoneRevision.Create(
+                        execution.TenantId,
+                        source.ModelVersionId,
+                        payload.LogicalId,
+                        payload.FloorLogicalId,
+                        payload.Code!,
+                        payload.KindCode!.Value,
+                        payload.Name);
+                    context.ZoneRevisions.Add(zone);
+                }
+                else
+                {
+                    zone.UpdateDefinition(
+                        payload.FloorLogicalId,
+                        payload.Code!,
+                        payload.KindCode!.Value,
+                        payload.Name);
+                }
                 zone.ConfigureShape(payload.PrimaryGeometryJson);
                 zone.AttachSource(source, payload.SourceKey);
-                context.ZoneRevisions.Add(zone);
                 break;
             case "Aisle":
-                var aisle = SpaceAisleRevision.Create(
-                    execution.TenantId,
-                    source.ModelVersionId,
-                    payload.LogicalId,
-                    payload.ZoneLogicalId!.Value,
-                    payload.Code!,
-                    payload.KindCode!.Value,
-                    payload.Name);
+                var aisle = await context.AisleRevisions.SingleOrDefaultAsync(
+                    item =>
+                        item.ModelVersionId == source.ModelVersionId &&
+                        item.LogicalId == payload.LogicalId,
+                    cancellationToken);
+                if (aisle is null)
+                {
+                    aisle = SpaceAisleRevision.Create(
+                        execution.TenantId,
+                        source.ModelVersionId,
+                        payload.LogicalId,
+                        payload.ZoneLogicalId!.Value,
+                        payload.Code!,
+                        payload.KindCode!.Value,
+                        payload.Name);
+                    context.AisleRevisions.Add(aisle);
+                }
+                else
+                {
+                    aisle.UpdateDefinition(
+                        payload.ZoneLogicalId!.Value,
+                        payload.Code!,
+                        payload.KindCode!.Value,
+                        payload.Name);
+                }
                 aisle.ConfigureShape(
                     payload.PrimaryGeometryJson,
                     payload.SecondaryGeometryJson!);
                 aisle.AttachSource(source, payload.SourceKey);
-                context.AisleRevisions.Add(aisle);
                 break;
             case "Rack":
-                var rack = SpaceRackRevision.Create(
-                    execution.TenantId,
-                    source.ModelVersionId,
-                    payload.LogicalId,
-                    payload.FloorLogicalId,
-                    payload.ZoneLogicalId!.Value,
-                    payload.Code!,
-                    payload.AisleLogicalId,
-                    payload.Name,
-                    payload.RackType);
+                var rack = await context.RackRevisions.SingleOrDefaultAsync(
+                    item =>
+                        item.ModelVersionId == source.ModelVersionId &&
+                        item.LogicalId == payload.LogicalId,
+                    cancellationToken);
+                if (rack is null)
+                {
+                    rack = SpaceRackRevision.Create(
+                        execution.TenantId,
+                        source.ModelVersionId,
+                        payload.LogicalId,
+                        payload.FloorLogicalId,
+                        payload.ZoneLogicalId!.Value,
+                        payload.Code!,
+                        payload.AisleLogicalId,
+                        payload.Name,
+                        payload.RackType);
+                    context.RackRevisions.Add(rack);
+                }
+                else
+                {
+                    rack.UpdateDefinition(
+                        payload.FloorLogicalId,
+                        payload.ZoneLogicalId!.Value,
+                        payload.Code!,
+                        payload.AisleLogicalId,
+                        payload.Name,
+                        payload.RackType);
+                }
                 rack.ConfigureGeometry(
                     payload.X,
                     payload.Y,
@@ -851,55 +1144,137 @@ public sealed class SpaceGenerationApplyStepExecutor(
                     payload.Height,
                     payload.RackProfileVersionId);
                 rack.AttachSource(source, payload.SourceKey);
-                context.RackRevisions.Add(rack);
+                var existingLevels = await context.RackLevelRevisions
+                    .Where(item =>
+                        item.ModelVersionId == source.ModelVersionId &&
+                        item.RackLogicalId == payload.LogicalId)
+                    .ToDictionaryAsync(item => item.LogicalId, cancellationToken);
+                var expectedLevelIds = payload.RackLevels
+                    .Select(item => item.LogicalId)
+                    .ToHashSet();
                 foreach (var item in payload.RackLevels)
                 {
-                    var level = SpaceRackLevelRevision.Create(
-                        execution.TenantId,
-                        source.ModelVersionId,
-                        item.LogicalId,
-                        payload.LogicalId,
-                        item.LevelNo,
-                        item.BottomZ,
-                        item.ClearHeight,
-                        item.BinCount,
-                        item.DepthCount,
-                        item.CellWidth,
-                        item.CellDepth,
-                        item.MaxLoad,
-                        item.BeamHeight);
+                    if (!existingLevels.TryGetValue(item.LogicalId, out var level))
+                    {
+                        level = SpaceRackLevelRevision.Create(
+                            execution.TenantId,
+                            source.ModelVersionId,
+                            item.LogicalId,
+                            payload.LogicalId,
+                            item.LevelNo,
+                            item.BottomZ,
+                            item.ClearHeight,
+                            item.BinCount,
+                            item.DepthCount,
+                            item.CellWidth,
+                            item.CellDepth,
+                            item.MaxLoad,
+                            item.BeamHeight);
+                        context.RackLevelRevisions.Add(level);
+                    }
+                    else
+                    {
+                        level.UpdateSpecification(
+                            item.LevelNo,
+                            item.BottomZ,
+                            item.ClearHeight,
+                            item.BinCount,
+                            item.DepthCount,
+                            item.CellWidth,
+                            item.CellDepth,
+                            item.MaxLoad,
+                            item.BeamHeight);
+                        level.Restore();
+                    }
                     level.AttachSource(source, payload.SourceKey);
-                    context.RackLevelRevisions.Add(level);
                 }
+                foreach (var obsolete in existingLevels.Values.Where(item =>
+                             !expectedLevelIds.Contains(item.LogicalId)))
+                    obsolete.ChangeLifecycle(SpaceLifecycleState.Disabled);
+
+                var existingLocations = await context.LocationRevisions
+                    .Where(item =>
+                        item.ModelVersionId == source.ModelVersionId &&
+                        item.RackLogicalId == payload.LogicalId)
+                    .ToDictionaryAsync(item => item.LogicalId, cancellationToken);
+                var expectedLocationIds = payload.Locations
+                    .Select(item => item.LogicalId)
+                    .ToHashSet();
                 foreach (var item in payload.Locations)
                 {
-                    var location = SpaceLocationRevision.Create(
-                        execution.TenantId,
-                        source.ModelVersionId,
-                        item.LogicalId,
-                        payload.FloorLogicalId,
-                        payload.LogicalId,
-                        null,
-                        item.ColumnNo,
-                        item.LevelNo,
-                        item.DepthNo,
-                        item.Width,
-                        item.Height,
-                        item.Depth,
-                        item.MaxLoad);
+                    if (!existingLocations.TryGetValue(
+                            item.LogicalId,
+                            out var location))
+                    {
+                        location = SpaceLocationRevision.Create(
+                            execution.TenantId,
+                            source.ModelVersionId,
+                            item.LogicalId,
+                            payload.FloorLogicalId,
+                            payload.LogicalId,
+                            null,
+                            item.ColumnNo,
+                            item.LevelNo,
+                            item.DepthNo,
+                            item.Width,
+                            item.Height,
+                            item.Depth,
+                            item.MaxLoad);
+                        context.LocationRevisions.Add(location);
+                    }
+                    else
+                    {
+                        location.UpdateGeneratedSpecification(
+                            payload.FloorLogicalId,
+                            payload.LogicalId,
+                            item.ColumnNo,
+                            item.LevelNo,
+                            item.DepthNo,
+                            item.Width,
+                            item.Height,
+                            item.Depth,
+                            item.MaxLoad);
+                    }
                     location.AttachSource(source, payload.SourceKey);
-                    context.LocationRevisions.Add(location);
+                }
+                foreach (var obsolete in existingLocations.Values.Where(item =>
+                             !expectedLocationIds.Contains(item.LogicalId)))
+                {
+                    if (obsolete.ExternalBindingState !=
+                        SpaceExternalBindingState.Unbound)
+                    {
+                        throw Invalid(
+                            "AI Apply cannot remove a WMS-bound Location from a Rack derivation.");
+                    }
+                    obsolete.ChangeLifecycle(SpaceLifecycleState.Disabled);
                 }
                 break;
             default:
-                var element = SpaceElementRevision.Create(
-                    execution.TenantId,
-                    source.ModelVersionId,
-                    payload.LogicalId,
-                    payload.FloorLogicalId,
-                    payload.ProposalType,
-                    payload.PrimaryGeometryJson,
-                    payload.ParentLogicalId);
+                var element = await context.ElementRevisions.SingleOrDefaultAsync(
+                    item =>
+                        item.ModelVersionId == source.ModelVersionId &&
+                        item.LogicalId == payload.LogicalId,
+                    cancellationToken);
+                if (element is null)
+                {
+                    element = SpaceElementRevision.Create(
+                        execution.TenantId,
+                        source.ModelVersionId,
+                        payload.LogicalId,
+                        payload.FloorLogicalId,
+                        payload.ProposalType,
+                        payload.PrimaryGeometryJson,
+                        payload.ParentLogicalId);
+                    context.ElementRevisions.Add(element);
+                }
+                else
+                {
+                    element.UpdateDefinition(
+                        payload.FloorLogicalId,
+                        payload.ProposalType,
+                        payload.PrimaryGeometryJson,
+                        payload.ParentLogicalId);
+                }
                 element.ConfigurePlacement(
                     payload.X,
                     payload.Y,
@@ -909,18 +1284,41 @@ public sealed class SpaceGenerationApplyStepExecutor(
                     payload.Height,
                     payload.Depth);
                 element.AttachSource(source, payload.SourceKey);
-                context.ElementRevisions.Add(element);
+                var existingAttributeRows = await context.ElementAttributes
+                    .Where(item =>
+                        item.ModelVersionId == source.ModelVersionId &&
+                        item.ElementRevisionId == element.Id &&
+                        item.Namespace == SpaceElementAttributeNamespaces.Design)
+                    .ToArrayAsync(cancellationToken);
+                var existingAttributes = existingAttributeRows.ToDictionary(
+                    item => item.Key,
+                    StringComparer.OrdinalIgnoreCase);
+                var expectedAttributeKeys = payload.SemanticAttributes.Keys
+                    .ToHashSet(StringComparer.OrdinalIgnoreCase);
                 foreach (var attribute in payload.SemanticAttributes)
                 {
-                    context.ElementAttributes.Add(
-                        SpaceElementAttribute.Create(
+                    if (existingAttributes.TryGetValue(
+                            attribute.Key,
+                            out var existingAttribute))
+                    {
+                        existingAttribute.UpdateValue(
+                            SpaceElementAttributeValueTypes.String,
+                            attribute.Value);
+                    }
+                    else
+                    {
+                        context.ElementAttributes.Add(SpaceElementAttribute.Create(
                             execution.TenantId,
                             element,
                             SpaceElementAttributeNamespaces.Design,
                             attribute.Key,
                             SpaceElementAttributeValueTypes.String,
                             attribute.Value));
+                    }
                 }
+                foreach (var obsolete in existingAttributes.Values.Where(item =>
+                             !expectedAttributeKeys.Contains(item.Key)))
+                    obsolete.Remove();
                 break;
         }
     }
