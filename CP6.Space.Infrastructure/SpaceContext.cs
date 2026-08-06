@@ -43,6 +43,8 @@ public sealed class SpaceContext : DbContext
         Set<SpaceProposalDecision>();
     public DbSet<SpaceGenerationLockedFact> GenerationLockedFacts =>
         Set<SpaceGenerationLockedFact>();
+    public DbSet<SpaceGenerationStagingElement> GenerationStagingElements =>
+        Set<SpaceGenerationStagingElement>();
     public DbSet<SpaceAiUsageRecord> AiUsageRecords =>
         Set<SpaceAiUsageRecord>();
     public DbSet<SpaceTenantAiWorkSlot> TenantAiWorkSlots =>
@@ -189,6 +191,7 @@ public sealed class SpaceContext : DbContext
         ConfigureGenerationProposal(modelBuilder);
         ConfigureProposalDecision(modelBuilder);
         ConfigureGenerationLockedFact(modelBuilder);
+        ConfigureGenerationStagingElement(modelBuilder);
         ConfigureAiUsageRecord(modelBuilder);
         ConfigureTenantAiWorkSlot(modelBuilder);
         ConfigureAiBudgetReservation(modelBuilder);
@@ -499,6 +502,7 @@ public sealed class SpaceContext : DbContext
             modelBuilder,
             "Space_ZoneRevision");
         entity.Property(x => x.ZoneCode).HasMaxLength(100).IsRequired();
+        entity.Property(x => x.Name).HasMaxLength(200).IsRequired();
         entity.Property(x => x.ZoneType).HasColumnType("smallint");
         entity.Property(x => x.PolygonJson).HasColumnType("nvarchar(max)").IsRequired();
         entity.Property(x => x.Color).HasMaxLength(50);
@@ -539,6 +543,7 @@ public sealed class SpaceContext : DbContext
             modelBuilder,
             "Space_AisleRevision");
         entity.Property(x => x.AisleCode).HasMaxLength(100).IsRequired();
+        entity.Property(x => x.Name).HasMaxLength(200).IsRequired();
         entity.Property(x => x.PolygonJson).HasColumnType("nvarchar(max)").IsRequired();
         entity.Property(x => x.CenterlineJson).HasColumnType("nvarchar(max)").IsRequired();
         entity.Property(x => x.Direction).HasColumnType("smallint");
@@ -583,6 +588,8 @@ public sealed class SpaceContext : DbContext
                 "CK_Space_RackRevision_Geometry",
                 "[RotationZ] >= 0 AND [RotationZ] < 360 AND [Width] >= 0 AND [Depth] >= 0 AND [Height] >= 0"));
         entity.Property(x => x.RackCode).HasMaxLength(100).IsRequired();
+        entity.Property(x => x.Name).HasMaxLength(200).IsRequired();
+        entity.Property(x => x.RackType).HasMaxLength(64);
         entity.Property(x => x.RotationZ).HasColumnType("decimal(9,4)");
 
         entity.HasIndex(
@@ -2355,6 +2362,22 @@ public sealed class SpaceContext : DbContext
             .HasColumnType("datetime2");
         entity.Property(x => x.ReviewCompletedAtUtc)
             .HasColumnType("datetime2");
+        entity.Property(x => x.ApplyReviewEtag)
+            .HasColumnType("char(64)")
+            .IsUnicode(false)
+            .IsFixedLength()
+            .HasMaxLength(64);
+        entity.Property(x => x.ApplyExpectedRunRowVersion)
+            .HasMaxLength(128);
+        entity.Property(x => x.ApplyPlanHash)
+            .HasColumnType("char(64)")
+            .IsUnicode(false)
+            .IsFixedLength()
+            .HasMaxLength(64);
+        entity.Property(x => x.ApplyPreparedAtUtc)
+            .HasColumnType("datetime2");
+        entity.Property(x => x.AppliedCountsJson)
+            .HasColumnType("nvarchar(max)");
         entity.Property(x => x.RowVersion).IsRowVersion();
 
         entity.HasIndex(x => new { x.TenantId, x.BusinessKeyHash })
@@ -2418,6 +2441,32 @@ public sealed class SpaceContext : DbContext
             .OnDelete(DeleteBehavior.Restrict)
             .HasConstraintName(
                 "FK_Space_GenerationRun_Job_Tenant");
+        entity.HasOne<SpaceJob>()
+            .WithMany()
+            .HasForeignKey(x => new { x.TenantId, x.ApplyJobId })
+            .HasPrincipalKey(x => new { x.TenantId, x.Id })
+            .OnDelete(DeleteBehavior.Restrict)
+            .HasConstraintName(
+                "FK_Space_GenerationRun_ApplyJob_Tenant");
+        entity.HasOne<SpaceFloorRevision>()
+            .WithMany()
+            .HasForeignKey(
+                x => new
+                {
+                    x.TenantId,
+                    x.ModelVersionId,
+                    LogicalId = x.TargetFloorLogicalId,
+                })
+            .HasPrincipalKey(
+                x => new
+                {
+                    x.TenantId,
+                    x.ModelVersionId,
+                    x.LogicalId,
+                })
+            .OnDelete(DeleteBehavior.Restrict)
+            .HasConstraintName(
+                "FK_Space_GenerationRun_TargetFloor_Tenant_Version");
         entity.HasOne<SpaceGenerationRun>()
             .WithMany()
             .HasForeignKey(x => new { x.TenantId, x.BasedOnRunId })
@@ -2672,6 +2721,91 @@ public sealed class SpaceContext : DbContext
             .HasConstraintName(
                 "FK_Space_GenerationLockedFact_Decision_Tenant");
 
+        entity.HasQueryFilter(
+            x => x.TenantId == CurrentTenantId && !x.IsDeleted);
+    }
+
+    private void ConfigureGenerationStagingElement(ModelBuilder modelBuilder)
+    {
+        var entity = modelBuilder.Entity<SpaceGenerationStagingElement>();
+        entity.ToTable(
+            "Space_GenerationStagingElement",
+            table => table.HasCheckConstraint(
+                "CK_Space_GenerationStagingElement_Validation",
+                "([ValidationStatus] = 0 AND [ValidationHash] IS NULL) OR " +
+                "([ValidationStatus] = 1 AND [ValidationHash] IS NOT NULL)"));
+        entity.HasKey(x => x.Id);
+        entity.Property(x => x.Id).ValueGeneratedNever();
+        entity.HasAlternateKey(x => new { x.TenantId, x.Id })
+            .HasName(
+                "AK_Space_GenerationStagingElement_TenantId_Id");
+        ConfigureTenantEntity(entity);
+
+        entity.Property(x => x.ElementType)
+            .HasMaxLength(64)
+            .IsRequired();
+        ConfigureJson(entity.Property(x => x.NormalizedPayloadJson));
+        entity.Property(x => x.ValidationStatus)
+            .HasConversion<short>()
+            .HasColumnType("smallint");
+        entity.Property(x => x.ValidationHash)
+            .HasColumnType("char(64)")
+            .IsUnicode(false)
+            .IsFixedLength()
+            .HasMaxLength(64);
+        entity.Property(x => x.RowVersion).IsRowVersion();
+
+        entity.HasIndex(x => new { x.TenantId, x.RunId, x.ProposalId })
+            .IsUnique()
+            .HasFilter("[IsDeleted] = 0")
+            .HasDatabaseName(
+                "UX_GenerationStaging_Tenant_Run_Proposal");
+        entity.HasIndex(x => new { x.TenantId, x.RunId, x.SequenceNo })
+            .IsUnique()
+            .HasFilter("[IsDeleted] = 0")
+            .HasDatabaseName(
+                "UX_GenerationStaging_Tenant_Run_Sequence");
+        entity.HasIndex(x => new { x.TenantId, x.RunId, x.LogicalId })
+            .IsUnique()
+            .HasFilter("[IsDeleted] = 0")
+            .HasDatabaseName(
+                "UX_GenerationStaging_Tenant_Run_Logical");
+
+        entity.HasOne<SpaceGenerationRun>()
+            .WithMany()
+            .HasForeignKey(x => new { x.TenantId, x.RunId })
+            .HasPrincipalKey(x => new { x.TenantId, x.Id })
+            .OnDelete(DeleteBehavior.Restrict)
+            .HasConstraintName(
+                "FK_Space_GenerationStaging_Run_Tenant");
+        entity.HasOne<SpaceGenerationProposal>()
+            .WithMany()
+            .HasForeignKey(
+                x => new { x.TenantId, x.RunId, x.ProposalId })
+            .HasPrincipalKey(
+                x => new { x.TenantId, x.RunId, x.Id })
+            .OnDelete(DeleteBehavior.Restrict)
+            .HasConstraintName(
+                "FK_Space_GenerationStaging_Proposal_Tenant_Run");
+        entity.HasOne<SpaceFloorRevision>()
+            .WithMany()
+            .HasForeignKey(
+                x => new
+                {
+                    x.TenantId,
+                    x.ModelVersionId,
+                    LogicalId = x.FloorLogicalId,
+                })
+            .HasPrincipalKey(
+                x => new
+                {
+                    x.TenantId,
+                    x.ModelVersionId,
+                    x.LogicalId,
+                })
+            .OnDelete(DeleteBehavior.Restrict)
+            .HasConstraintName(
+                "FK_Space_GenerationStaging_Floor_Tenant_Version");
         entity.HasQueryFilter(
             x => x.TenantId == CurrentTenantId && !x.IsDeleted);
     }

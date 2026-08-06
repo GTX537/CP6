@@ -2,7 +2,10 @@ import http from '../http'
 import type {
   ICreateSpaceAiProposalBatchDecisionRequest,
   ICreateSpaceAiProposalDecisionRequest,
+  ICreateSpaceAiAtomicApplyRequest,
+  ISpaceAiAtomicApplyAcceptedDto,
   ISpaceAiGenerationReviewDto,
+  ISpaceAiGenerationRunDto,
   ISpaceAiProposalDecisionResponse,
   ISpaceAiProposalIssuePageDto,
   ISpaceAiProposalPageDto,
@@ -20,6 +23,12 @@ export interface SpaceAiProposalListQuery {
 }
 
 export const aiProposalReviewApi = {
+  getRun(runId: string) {
+    return http.get<unknown, ISpaceAiGenerationRunDto>(
+      `${root}/${runId}`,
+    )
+  },
+
   getReview(runId: string) {
     return http.get<unknown, ISpaceAiGenerationReviewDto>(
       `${root}/${runId}/review`,
@@ -59,6 +68,18 @@ export const aiProposalReviewApi = {
   ) {
     return http.post<unknown, ISpaceAiProposalDecisionResponse>(
       `${root}/${runId}/decisions:batch`,
+      request,
+      { headers: { 'Idempotency-Key': idempotencyKey } },
+    )
+  },
+
+  apply(
+    runId: string,
+    request: ICreateSpaceAiAtomicApplyRequest,
+    idempotencyKey: string = crypto.randomUUID(),
+  ) {
+    return http.post<unknown, ISpaceAiAtomicApplyAcceptedDto>(
+      `${root}/${runId}/apply`,
       request,
       { headers: { 'Idempotency-Key': idempotencyKey } },
     )

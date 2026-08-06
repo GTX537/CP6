@@ -391,6 +391,265 @@
         }
       }
     },
+    "/api/space/design/v1/generation-runs/{runId}": {
+      "get": {
+        "tags": [
+          "SpaceAiAtomicApply"
+        ],
+        "operationId": "GetGenerationRun",
+        "parameters": [
+          {
+            "name": "runId",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "string",
+              "format": "uuid"
+            }
+          }
+        ],
+        "responses": {
+          "400": {
+            "description": "Bad Request",
+            "content": {
+              "application/problem+json": {
+                "schema": {
+                  "$ref": "#/components/schemas/CP6.WebApi.OpenApi.SpaceDesignProblemDetails"
+                }
+              }
+            }
+          },
+          "401": {
+            "description": "Unauthorized",
+            "content": {
+              "application/problem+json": {
+                "schema": {
+                  "$ref": "#/components/schemas/CP6.WebApi.OpenApi.SpaceDesignProblemDetails"
+                }
+              }
+            }
+          },
+          "403": {
+            "description": "Forbidden",
+            "content": {
+              "application/problem+json": {
+                "schema": {
+                  "$ref": "#/components/schemas/CP6.WebApi.OpenApi.SpaceDesignProblemDetails"
+                }
+              }
+            }
+          },
+          "404": {
+            "description": "Not Found",
+            "content": {
+              "application/problem+json": {
+                "schema": {
+                  "$ref": "#/components/schemas/CP6.WebApi.OpenApi.SpaceDesignProblemDetails"
+                }
+              }
+            }
+          },
+          "409": {
+            "description": "Conflict",
+            "content": {
+              "application/problem+json": {
+                "schema": {
+                  "$ref": "#/components/schemas/CP6.WebApi.OpenApi.SpaceDesignProblemDetails"
+                }
+              }
+            }
+          },
+          "422": {
+            "description": "Unprocessable Content",
+            "content": {
+              "application/problem+json": {
+                "schema": {
+                  "$ref": "#/components/schemas/CP6.WebApi.OpenApi.SpaceDesignProblemDetails"
+                }
+              }
+            }
+          },
+          "500": {
+            "description": "Internal Server Error",
+            "content": {
+              "application/problem+json": {
+                "schema": {
+                  "$ref": "#/components/schemas/CP6.WebApi.OpenApi.SpaceDesignProblemDetails"
+                }
+              }
+            }
+          },
+          "200": {
+            "description": "OK",
+            "content": {
+              "text/plain": {
+                "schema": {
+                  "$ref": "#/components/schemas/CP6.Space.Contracts.SpaceAiGenerationRunDto"
+                }
+              },
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/CP6.Space.Contracts.SpaceAiGenerationRunDto"
+                }
+              },
+              "text/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/CP6.Space.Contracts.SpaceAiGenerationRunDto"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/api/space/design/v1/generation-runs/{runId}/apply": {
+      "post": {
+        "tags": [
+          "SpaceAiAtomicApply"
+        ],
+        "operationId": "ApplyGenerationProposals",
+        "parameters": [
+          {
+            "name": "runId",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "string",
+              "format": "uuid"
+            }
+          },
+          {
+            "name": "Idempotency-Key",
+            "in": "header",
+            "description": "Opaque caller key; 1-128 UTF-8 bytes. Reuse with a different request returns SPACE_IDEMPOTENCY_KEY_REUSED.",
+            "required": true,
+            "schema": {
+              "type": "string"
+            }
+          }
+        ],
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/CP6.Space.Contracts.CreateSpaceAiAtomicApplyRequest"
+              }
+            },
+            "text/json": {
+              "schema": {
+                "$ref": "#/components/schemas/CP6.Space.Contracts.CreateSpaceAiAtomicApplyRequest"
+              }
+            },
+            "application/*+json": {
+              "schema": {
+                "$ref": "#/components/schemas/CP6.Space.Contracts.CreateSpaceAiAtomicApplyRequest"
+              }
+            }
+          },
+          "required": true
+        },
+        "responses": {
+          "400": {
+            "description": "Bad Request",
+            "content": {
+              "application/problem+json": {
+                "schema": {
+                  "$ref": "#/components/schemas/CP6.WebApi.OpenApi.SpaceDesignProblemDetails"
+                }
+              }
+            }
+          },
+          "401": {
+            "description": "Unauthorized",
+            "content": {
+              "application/problem+json": {
+                "schema": {
+                  "$ref": "#/components/schemas/CP6.WebApi.OpenApi.SpaceDesignProblemDetails"
+                }
+              }
+            }
+          },
+          "403": {
+            "description": "Forbidden",
+            "content": {
+              "application/problem+json": {
+                "schema": {
+                  "$ref": "#/components/schemas/CP6.WebApi.OpenApi.SpaceDesignProblemDetails"
+                }
+              }
+            }
+          },
+          "404": {
+            "description": "Not Found",
+            "content": {
+              "application/problem+json": {
+                "schema": {
+                  "$ref": "#/components/schemas/CP6.WebApi.OpenApi.SpaceDesignProblemDetails"
+                }
+              }
+            }
+          },
+          "409": {
+            "description": "Conflict",
+            "content": {
+              "application/problem+json": {
+                "schema": {
+                  "$ref": "#/components/schemas/CP6.WebApi.OpenApi.SpaceDesignProblemDetails"
+                }
+              }
+            }
+          },
+          "422": {
+            "description": "Unprocessable Content",
+            "content": {
+              "application/problem+json": {
+                "schema": {
+                  "$ref": "#/components/schemas/CP6.WebApi.OpenApi.SpaceDesignProblemDetails"
+                }
+              }
+            }
+          },
+          "500": {
+            "description": "Internal Server Error",
+            "content": {
+              "application/problem+json": {
+                "schema": {
+                  "$ref": "#/components/schemas/CP6.WebApi.OpenApi.SpaceDesignProblemDetails"
+                }
+              }
+            }
+          },
+          "202": {
+            "description": "Accepted",
+            "headers": {
+              "Idempotent-Replay": {
+                "description": "True when this response replays a stored result.",
+                "schema": {
+                  "type": "boolean"
+                }
+              }
+            },
+            "content": {
+              "text/plain": {
+                "schema": {
+                  "$ref": "#/components/schemas/CP6.Space.Contracts.SpaceAiAtomicApplyAcceptedDto"
+                }
+              },
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/CP6.Space.Contracts.SpaceAiAtomicApplyAcceptedDto"
+                }
+              },
+              "text/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/CP6.Space.Contracts.SpaceAiAtomicApplyAcceptedDto"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
     "/api/space/design/v1/generation-runs/{runId}/review": {
       "get": {
         "tags": [
@@ -12049,6 +12308,27 @@
         },
         "additionalProperties": false
       },
+      "CP6.Space.Contracts.CreateSpaceAiAtomicApplyRequest": {
+        "required": [
+          "expectedContentRevision",
+          "expectedRunRowVersion",
+          "reviewEtag"
+        ],
+        "type": "object",
+        "properties": {
+          "expectedContentRevision": {
+            "type": "integer",
+            "format": "int64"
+          },
+          "expectedRunRowVersion": {
+            "type": "string"
+          },
+          "reviewEtag": {
+            "type": "string"
+          }
+        },
+        "additionalProperties": false
+      },
       "CP6.Space.Contracts.CreateSpaceAiProposalBatchDecisionRequest": {
         "type": "object",
         "properties": {
@@ -13104,6 +13384,46 @@
         },
         "additionalProperties": false
       },
+      "CP6.Space.Contracts.SpaceAiAtomicApplyAcceptedDto": {
+        "required": [
+          "expectedContentRevision",
+          "idempotentReplay",
+          "jobId",
+          "reviewEtag",
+          "runId",
+          "schemaVersion",
+          "status"
+        ],
+        "type": "object",
+        "properties": {
+          "schemaVersion": {
+            "type": "integer",
+            "format": "int32"
+          },
+          "runId": {
+            "type": "string",
+            "format": "uuid"
+          },
+          "jobId": {
+            "type": "string",
+            "format": "uuid"
+          },
+          "status": {
+            "type": "string"
+          },
+          "expectedContentRevision": {
+            "type": "integer",
+            "format": "int64"
+          },
+          "reviewEtag": {
+            "type": "string"
+          },
+          "idempotentReplay": {
+            "type": "boolean"
+          }
+        },
+        "additionalProperties": false
+      },
       "CP6.Space.Contracts.SpaceAiBudgetBalanceDto": {
         "required": [
           "consumedMinor"
@@ -13221,6 +13541,86 @@
           "openProposalBlockingIssueCount": {
             "type": "integer",
             "format": "int64"
+          }
+        },
+        "additionalProperties": false
+      },
+      "CP6.Space.Contracts.SpaceAiGenerationRunDto": {
+        "required": [
+          "baseContentRevision",
+          "modelVersionId",
+          "progress",
+          "rowVersion",
+          "runId",
+          "schemaVersion",
+          "siteId",
+          "status"
+        ],
+        "type": "object",
+        "properties": {
+          "schemaVersion": {
+            "type": "integer",
+            "format": "int32"
+          },
+          "runId": {
+            "type": "string",
+            "format": "uuid"
+          },
+          "siteId": {
+            "type": "string",
+            "format": "uuid"
+          },
+          "modelVersionId": {
+            "type": "string",
+            "format": "uuid"
+          },
+          "targetFloorLogicalId": {
+            "type": "string",
+            "format": "uuid",
+            "nullable": true
+          },
+          "status": {
+            "type": "string"
+          },
+          "progress": {
+            "type": "integer",
+            "format": "int32"
+          },
+          "baseContentRevision": {
+            "type": "integer",
+            "format": "int64"
+          },
+          "appliedContentRevision": {
+            "type": "integer",
+            "format": "int64",
+            "nullable": true
+          },
+          "applyJobId": {
+            "type": "string",
+            "format": "uuid",
+            "nullable": true
+          },
+          "applyJobStatus": {
+            "type": "string",
+            "nullable": true
+          },
+          "applyPlanHash": {
+            "type": "string",
+            "nullable": true
+          },
+          "appliedCounts": {
+            "nullable": true
+          },
+          "failureCode": {
+            "type": "string",
+            "nullable": true
+          },
+          "failureSummary": {
+            "type": "string",
+            "nullable": true
+          },
+          "rowVersion": {
+            "type": "string"
           }
         },
         "additionalProperties": false
@@ -18025,6 +18425,10 @@
             "type": "string",
             "nullable": true
           },
+          "name": {
+            "type": "string",
+            "nullable": true
+          },
           "polygonJson": {
             "type": "string",
             "nullable": true
@@ -18304,6 +18708,14 @@
             "type": "string",
             "nullable": true
           },
+          "name": {
+            "type": "string",
+            "nullable": true
+          },
+          "rackType": {
+            "type": "string",
+            "nullable": true
+          },
           "templateVersionId": {
             "type": "string",
             "format": "uuid",
@@ -18432,6 +18844,10 @@
             "format": "uuid"
           },
           "zoneCode": {
+            "type": "string",
+            "nullable": true
+          },
+          "name": {
             "type": "string",
             "nullable": true
           },

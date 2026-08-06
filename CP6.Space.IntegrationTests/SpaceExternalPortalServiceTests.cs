@@ -598,10 +598,11 @@ public sealed class SpaceExternalPortalServiceTests
                     Revision(floorId), siteId, 1, "F1", "Floor 1", 0, 5_000,
                     "[]", "LOCAL", Guid.NewGuid(), Guid.NewGuid(), 1, 0, 0, 0, 8),
                 [new SpaceSceneZoneDto(
-                    Revision(zoneId), floorId, "ZONE-A", 1, "[]", "#fff", "all")],
+                    Revision(zoneId), floorId, "ZONE-A", "Zone A", 1, "[]", "#fff", "all")],
                 [],
                 [new SpaceSceneRackDto(
-                    Revision(rackId), floorId, zoneId, null, "RACK-1", null,
+                    Revision(rackId), floorId, zoneId, null, "RACK-1", "Rack 1",
+                    "Selective", null,
                     0, 0, 0, 0, 1_000, 1_000, 2_000)],
                 [],
                 [new SpaceSceneLocationDto(

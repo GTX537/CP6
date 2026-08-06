@@ -548,6 +548,44 @@ public sealed class SpaceWmsRuntimeSchemaFilter : ISchemaFilter
                 "policy",
                 "idempotentReplay",
             ],
+            [typeof(CreateSpaceAiAtomicApplyRequest)] =
+            [
+                "expectedContentRevision",
+                "expectedRunRowVersion",
+                "reviewEtag",
+            ],
+            [typeof(SpaceAiAtomicApplyAcceptedDto)] =
+            [
+                "schemaVersion",
+                "runId",
+                "jobId",
+                "status",
+                "expectedContentRevision",
+                "reviewEtag",
+                "idempotentReplay",
+            ],
+            [typeof(SpaceAiGenerationRunDto)] =
+            [
+                "schemaVersion",
+                "runId",
+                "siteId",
+                "modelVersionId",
+                "status",
+                "progress",
+                "baseContentRevision",
+                "rowVersion",
+            ],
+            [typeof(SpaceAiAppliedCountsDto)] =
+            [
+                "floors",
+                "zones",
+                "aisles",
+                "racks",
+                "rackLevels",
+                "locations",
+                "elements",
+                "proposals",
+            ],
             [typeof(SpaceAiUsageItemDto)] =
             [
                 "id",
@@ -1242,7 +1280,8 @@ public sealed class SpaceDesignV1OperationFilter : IOperationFilter
                 "CreateAsset" or
                 "AttachUnderlay" or
                 "CalibrateUnderlay" or
-                "UpdatePolicy"))
+                "UpdatePolicy" or
+                "ApplyGenerationProposals"))
             return;
 
         var idempotencyKey = operation.Parameters.Single(
@@ -1259,7 +1298,9 @@ public sealed class SpaceDesignV1OperationFilter : IOperationFilter
 
         var successStatus = operation.OperationId switch
         {
-            "CreateVersion" => StatusCodes.Status202Accepted.ToString(),
+            "CreateVersion" or
+                "ApplyGenerationProposals" =>
+                StatusCodes.Status202Accepted.ToString(),
             "AttachUnderlay" or
                 "CalibrateUnderlay" or
                 "UpdatePolicy" =>

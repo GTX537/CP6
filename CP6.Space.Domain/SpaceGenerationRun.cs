@@ -16,7 +16,8 @@ public sealed record SpaceGenerationRunDefinition(
     SpaceAiPolicySnapshot PolicySnapshot,
     Guid? ProviderConfigVersionId,
     string InputSchemaVersion,
-    Guid JobId);
+    Guid JobId,
+    Guid? TargetFloorLogicalId = null);
 
 public sealed class SpaceGenerationRun : SpaceTenantEntity
 {
@@ -45,6 +46,7 @@ public sealed class SpaceGenerationRun : SpaceTenantEntity
     public string InputSchemaVersion { get; private set; } = string.Empty;
     public string? OutputSchemaVersion { get; private set; }
     public Guid JobId { get; private set; }
+    public Guid? TargetFloorLogicalId { get; private set; }
     public string? FailureCode { get; private set; }
     public string? FailureSummary { get; private set; }
     public string? DegradedReason { get; private set; }
@@ -53,6 +55,13 @@ public sealed class SpaceGenerationRun : SpaceTenantEntity
     public DateTime? CancelledAtUtc { get; private set; }
     public DateTime? ReviewCompletedAtUtc { get; private set; }
     public long? AppliedContentRevision { get; private set; }
+    public Guid? ApplyJobId { get; private set; }
+    public Guid? ApplyCommandBatchId { get; private set; }
+    public string? ApplyReviewEtag { get; private set; }
+    public string? ApplyExpectedRunRowVersion { get; private set; }
+    public string? ApplyPlanHash { get; private set; }
+    public DateTime? ApplyPreparedAtUtc { get; private set; }
+    public string? AppliedCountsJson { get; private set; }
     public byte[] RowVersion { get; private set; } = [];
 
     public bool IsTerminal =>
@@ -97,6 +106,12 @@ public sealed class SpaceGenerationRun : SpaceTenantEntity
             throw new ArgumentException(
                 "Provider config version cannot be empty.",
                 nameof(definition.ProviderConfigVersionId));
+        }
+        if (definition.TargetFloorLogicalId == Guid.Empty)
+        {
+            throw new ArgumentException(
+                "Target floor logical identity cannot be empty.",
+                nameof(definition.TargetFloorLogicalId));
         }
         if (!Enum.IsDefined(definition.PolicySnapshot))
         {
@@ -153,6 +168,7 @@ public sealed class SpaceGenerationRun : SpaceTenantEntity
                 32,
                 nameof(definition.InputSchemaVersion)),
             JobId = definition.JobId,
+            TargetFloorLogicalId = definition.TargetFloorLogicalId,
         };
         run.SetTenant(definition.TenantId);
         return run;
@@ -190,9 +206,14 @@ public sealed class SpaceGenerationRun : SpaceTenantEntity
         ReviewCompletedAtUtc = reviewCompletedAtUtc;
     }
 
-    public void BeginApplying(DateTime reviewCompletedAtUtc)
+    public void BeginApplying(
+        Guid applyJobId,
+        Guid applyCommandBatchId,
+        string reviewEtag,
+        string expectedRunRowVersion)
     {
-        RequireUtc(reviewCompletedAtUtc, nameof(reviewCompletedAtUtc));
+        RequireId(applyJobId, nameof(applyJobId));
+        RequireId(applyCommandBatchId, nameof(applyCommandBatchId));
         if (ReviewCompletedAtUtc is null)
         {
             throw new SpaceGenerationStateException(
@@ -201,9 +222,35 @@ public sealed class SpaceGenerationRun : SpaceTenantEntity
         Transition(
             SpaceGenerationRunStatus.AwaitingReview,
             SpaceGenerationRunStatus.Applying);
+        ApplyJobId = applyJobId;
+        ApplyCommandBatchId = applyCommandBatchId;
+        ApplyReviewEtag = RequireHash(reviewEtag, nameof(reviewEtag));
+        ApplyExpectedRunRowVersion = RequireText(
+            expectedRunRowVersion,
+            128,
+            nameof(expectedRunRowVersion));
     }
 
-    public void MarkSucceeded(long appliedContentRevision)
+    public void RecordApplyPlan(
+        string applyPlanHash,
+        DateTime preparedAtUtc)
+    {
+        RequireStatus(SpaceGenerationRunStatus.Applying);
+        RequireUtc(preparedAtUtc, nameof(preparedAtUtc));
+        var normalized = RequireHash(applyPlanHash, nameof(applyPlanHash));
+        if (ApplyPlanHash is not null && ApplyPlanHash != normalized)
+        {
+            throw new SpaceGenerationStateException(
+                "The generation Apply plan is immutable once prepared.");
+        }
+
+        ApplyPlanHash = normalized;
+        ApplyPreparedAtUtc ??= preparedAtUtc;
+    }
+
+    public void MarkSucceeded(
+        long appliedContentRevision,
+        string appliedCountsJson)
     {
         RequireStatus(SpaceGenerationRunStatus.Applying);
         if (appliedContentRevision <= BaseContentRevision)
@@ -214,9 +261,36 @@ public sealed class SpaceGenerationRun : SpaceTenantEntity
         }
 
         AppliedContentRevision = appliedContentRevision;
+        AppliedCountsJson = RequireJson(
+            appliedCountsJson,
+            nameof(appliedCountsJson));
         Progress = 100;
         Status = SpaceGenerationRunStatus.Succeeded;
         IsCurrent = false;
+    }
+
+    private static string RequireJson(
+        string value,
+        string parameterName)
+    {
+        if (string.IsNullOrWhiteSpace(value))
+        {
+            throw new ArgumentException(
+                "Canonical JSON is required.",
+                parameterName);
+        }
+        try
+        {
+            using var _ = System.Text.Json.JsonDocument.Parse(value);
+        }
+        catch (System.Text.Json.JsonException exception)
+        {
+            throw new ArgumentException(
+                "Valid JSON is required.",
+                parameterName,
+                exception);
+        }
+        return value;
     }
 
     public void RecordProviderResult(

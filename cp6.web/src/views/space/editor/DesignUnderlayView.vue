@@ -568,6 +568,10 @@ function onAiReviewCompleted(): void {
   ElMessage.success('本次 AI 提案审查已全部完成，可以进入 Apply 阶段')
 }
 
+async function onAiProposalsApplied(): Promise<void> {
+  await loadScene()
+}
+
 function chooseFile(): void {
   fileInputRef.value?.click()
 }
@@ -1346,6 +1350,7 @@ function delay(milliseconds: number): Promise<void> {
         :run-id="generationRunId"
         @close="closeAiDecisionPanel"
         @completed="onAiReviewCompleted"
+        @applied="onAiProposalsApplied"
       />
       <DesignAiProposalReviewPanel
         v-else-if="aiReviewPanelVisible && aiReviewWorkspace"

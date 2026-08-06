@@ -195,6 +195,7 @@ public sealed class SpaceZoneRevision : SpaceRevisionEntity
 
     public Guid FloorLogicalId { get; private set; }
     public string ZoneCode { get; private set; } = string.Empty;
+    public string Name { get; private set; } = string.Empty;
     public short ZoneType { get; private set; }
     public string PolygonJson { get; private set; } = "[]";
     public string? Color { get; private set; }
@@ -206,13 +207,16 @@ public sealed class SpaceZoneRevision : SpaceRevisionEntity
         Guid logicalId,
         Guid floorLogicalId,
         string zoneCode,
-        short zoneType)
+        short zoneType,
+        string? name = null)
     {
         SpaceRevisionValue.RequireIdentity(floorLogicalId, nameof(floorLogicalId));
         var revision = new SpaceZoneRevision
         {
             FloorLogicalId = floorLogicalId,
             ZoneCode = SpaceRevisionValue.RequiredText(zoneCode, 100, nameof(zoneCode)),
+            Name = SpaceRevisionValue.OptionalText(name, 200, nameof(name))
+                ?? SpaceRevisionValue.RequiredText(zoneCode, 100, nameof(zoneCode)),
             ZoneType = zoneType,
         };
         revision.InitializeRevision(tenantId, modelVersionId, logicalId);
@@ -239,6 +243,7 @@ public sealed class SpaceAisleRevision : SpaceRevisionEntity
 
     public Guid ZoneLogicalId { get; private set; }
     public string AisleCode { get; private set; } = string.Empty;
+    public string Name { get; private set; } = string.Empty;
     public string PolygonJson { get; private set; } = "[]";
     public string CenterlineJson { get; private set; } = "[]";
     public short Direction { get; private set; }
@@ -249,13 +254,16 @@ public sealed class SpaceAisleRevision : SpaceRevisionEntity
         Guid logicalId,
         Guid zoneLogicalId,
         string aisleCode,
-        short direction)
+        short direction,
+        string? name = null)
     {
         SpaceRevisionValue.RequireIdentity(zoneLogicalId, nameof(zoneLogicalId));
         var revision = new SpaceAisleRevision
         {
             ZoneLogicalId = zoneLogicalId,
             AisleCode = SpaceRevisionValue.RequiredText(aisleCode, 100, nameof(aisleCode)),
+            Name = SpaceRevisionValue.OptionalText(name, 200, nameof(name))
+                ?? SpaceRevisionValue.RequiredText(aisleCode, 100, nameof(aisleCode)),
             Direction = direction,
         };
         revision.InitializeRevision(tenantId, modelVersionId, logicalId);
@@ -279,6 +287,8 @@ public sealed class SpaceRackRevision : SpaceRevisionEntity
     public Guid ZoneLogicalId { get; private set; }
     public Guid? AisleLogicalId { get; private set; }
     public string RackCode { get; private set; } = string.Empty;
+    public string Name { get; private set; } = string.Empty;
+    public string? RackType { get; private set; }
     public Guid? TemplateVersionId { get; private set; }
     public int X { get; private set; }
     public int Y { get; private set; }
@@ -295,7 +305,9 @@ public sealed class SpaceRackRevision : SpaceRevisionEntity
         Guid floorLogicalId,
         Guid zoneLogicalId,
         string rackCode,
-        Guid? aisleLogicalId = null)
+        Guid? aisleLogicalId = null,
+        string? name = null,
+        string? rackType = null)
     {
         SpaceRevisionValue.RequireIdentity(floorLogicalId, nameof(floorLogicalId));
         SpaceRevisionValue.RequireIdentity(zoneLogicalId, nameof(zoneLogicalId));
@@ -312,6 +324,12 @@ public sealed class SpaceRackRevision : SpaceRevisionEntity
             ZoneLogicalId = zoneLogicalId,
             AisleLogicalId = aisleLogicalId,
             RackCode = SpaceRevisionValue.RequiredText(rackCode, 100, nameof(rackCode)),
+            Name = SpaceRevisionValue.OptionalText(name, 200, nameof(name))
+                ?? SpaceRevisionValue.RequiredText(rackCode, 100, nameof(rackCode)),
+            RackType = SpaceRevisionValue.OptionalText(
+                rackType,
+                64,
+                nameof(rackType)),
         };
         revision.InitializeRevision(tenantId, modelVersionId, logicalId);
         return revision;

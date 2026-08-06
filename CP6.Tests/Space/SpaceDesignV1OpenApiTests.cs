@@ -43,6 +43,8 @@ public sealed class SpaceDesignV1OpenApiTests
             "/api/space/design/v1/assets",
             "/api/space/design/v1/ai-policy",
             "/api/space/design/v1/ai-usage",
+            "/api/space/design/v1/generation-runs/{runId}",
+            "/api/space/design/v1/generation-runs/{runId}/apply",
             "/api/space/design/v1/generation-runs/{runId}/review",
             "/api/space/design/v1/generation-runs/{runId}/proposals",
             "/api/space/design/v1/generation-runs/{runId}/issues",
@@ -110,12 +112,14 @@ public sealed class SpaceDesignV1OpenApiTests
             .Select(operation =>
                 operation.Value.GetProperty("operationId").GetString())
             .ToArray();
-        Assert.Equal(90, operationIds.Length);
-        Assert.Equal(90, operationIds.Distinct().Count());
+        Assert.Equal(92, operationIds.Length);
+        Assert.Equal(92, operationIds.Distinct().Count());
         Assert.Contains("GetPolicy", operationIds);
         Assert.Contains("UpdatePolicy", operationIds);
         Assert.Contains("GetUsage", operationIds);
         Assert.Contains("GetProposalReview", operationIds);
+        Assert.Contains("GetGenerationRun", operationIds);
+        Assert.Contains("ApplyGenerationProposals", operationIds);
         Assert.Contains("GetGenerationProposals", operationIds);
         Assert.Contains("GetGenerationProposalIssues", operationIds);
         Assert.Contains("GetProposalDecisions", operationIds);
@@ -273,6 +277,50 @@ public sealed class SpaceDesignV1OpenApiTests
             property.Contains("secret", StringComparison.OrdinalIgnoreCase) ||
             property.Contains("url", StringComparison.OrdinalIgnoreCase) ||
             property.Contains("endpoint", StringComparison.OrdinalIgnoreCase));
+    }
+
+    [Fact]
+    public void Ai_apply_contract_is_async_idempotent_and_pins_review_state()
+    {
+        using var document = ReadContract();
+        var root = document.RootElement;
+        var apply = root.GetProperty("paths")
+            .GetProperty(
+                "/api/space/design/v1/generation-runs/{runId}/apply")
+            .GetProperty("post");
+
+        Assert.Equal(
+            "ApplyGenerationProposals",
+            apply.GetProperty("operationId").GetString());
+        var idempotency = apply.GetProperty("parameters")
+            .EnumerateArray()
+            .Single(parameter =>
+                parameter.GetProperty("name").GetString() ==
+                "Idempotency-Key");
+        Assert.True(idempotency.GetProperty("required").GetBoolean());
+        var responses = apply.GetProperty("responses");
+        Assert.False(responses.TryGetProperty("200", out _));
+        Assert.True(responses.GetProperty("202")
+            .GetProperty("headers")
+            .TryGetProperty("Idempotent-Replay", out _));
+
+        var required = root.GetProperty("components")
+            .GetProperty("schemas")
+            .GetProperty(
+                "CP6.Space.Contracts.CreateSpaceAiAtomicApplyRequest")
+            .GetProperty("required")
+            .EnumerateArray()
+            .Select(value => value.GetString())
+            .Order()
+            .ToArray();
+        Assert.Equal(
+            new[]
+            {
+                "expectedContentRevision",
+                "expectedRunRowVersion",
+                "reviewEtag",
+            },
+            required);
     }
 
     [Fact]

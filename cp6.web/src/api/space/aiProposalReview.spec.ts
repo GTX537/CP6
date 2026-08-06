@@ -17,6 +17,7 @@ describe('aiProposalReviewApi', () => {
   })
 
   it('loads a review and a bounded proposal page', async () => {
+    await aiProposalReviewApi.getRun('run-1')
     await aiProposalReviewApi.getReview('run-1')
     await aiProposalReviewApi.getProposals('run-1', {
       status: 'Proposed',
@@ -26,12 +27,38 @@ describe('aiProposalReviewApi', () => {
 
     expect(http.get).toHaveBeenNthCalledWith(
       1,
-      '/space/design/v1/generation-runs/run-1/review',
+      '/space/design/v1/generation-runs/run-1',
     )
     expect(http.get).toHaveBeenNthCalledWith(
       2,
+      '/space/design/v1/generation-runs/run-1/review',
+    )
+    expect(http.get).toHaveBeenNthCalledWith(
+      3,
       '/space/design/v1/generation-runs/run-1/proposals',
       { params: { status: 'Proposed', confidenceBand: 'High', limit: 200 } },
+    )
+  })
+
+  it('queues an atomic apply with the frozen review preconditions', async () => {
+    await aiProposalReviewApi.apply(
+      'run-1',
+      {
+        expectedContentRevision: 42,
+        expectedRunRowVersion: 'run-row-version',
+        reviewEtag: 'review-etag',
+      },
+      'apply-key',
+    )
+
+    expect(http.post).toHaveBeenCalledWith(
+      '/space/design/v1/generation-runs/run-1/apply',
+      {
+        expectedContentRevision: 42,
+        expectedRunRowVersion: 'run-row-version',
+        reviewEtag: 'review-etag',
+      },
+      { headers: { 'Idempotency-Key': 'apply-key' } },
     )
   })
 

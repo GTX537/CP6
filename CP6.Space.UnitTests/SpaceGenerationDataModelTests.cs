@@ -14,6 +14,8 @@ public sealed class SpaceGenerationDataModelTests
         Guid.Parse("44444444-4444-4444-4444-444444444444");
     private static readonly Guid JobId =
         Guid.Parse("55555555-5555-5555-5555-555555555555");
+    private static readonly Guid TargetFloorLogicalId =
+        Guid.Parse("77777777-7777-7777-7777-777777777777");
     private static readonly DateTime Now =
         new(2026, 7, 30, 18, 0, 0, DateTimeKind.Utc);
 
@@ -37,6 +39,7 @@ public sealed class SpaceGenerationDataModelTests
         Assert.Equal(0, run.Progress);
         Assert.True(run.IsCurrent);
         Assert.Equal(JobId, run.JobId);
+        Assert.Equal(TargetFloorLogicalId, run.TargetFloorLogicalId);
     }
 
     [Fact]
@@ -53,8 +56,9 @@ public sealed class SpaceGenerationDataModelTests
         run.BeginValidating();
         run.MarkAwaitingReview();
         run.MarkReviewCompleted(Now);
-        run.BeginApplying(Now);
-        run.MarkSucceeded(8);
+        BeginApplying(run);
+        run.RecordApplyPlan(new string('f', 64), Now.AddSeconds(1));
+        run.MarkSucceeded(8, "{\"proposals\":1}");
 
         Assert.Equal(SpaceGenerationRunStatus.Succeeded, run.Status);
         Assert.Equal(100, run.Progress);
@@ -63,6 +67,7 @@ public sealed class SpaceGenerationDataModelTests
         Assert.Equal("1.0", run.OutputSchemaVersion);
         Assert.Equal(Now, run.ReviewCompletedAtUtc);
         Assert.Equal(8, run.AppliedContentRevision);
+        Assert.Equal("{\"proposals\":1}", run.AppliedCountsJson);
         Assert.False(run.IsCurrent);
         Assert.Throws<SpaceGenerationStateException>(
             () => run.ReportProgress(100));
@@ -191,7 +196,7 @@ public sealed class SpaceGenerationDataModelTests
         var run = RunAt(SpaceGenerationRunStatus.AwaitingReview);
 
         Assert.Throws<SpaceGenerationStateException>(
-            () => run.BeginApplying(Now));
+            () => BeginApplying(run));
         run.MarkReviewCompleted(Now);
         Assert.Equal(Now, run.ReviewCompletedAtUtc);
         Assert.Throws<SpaceGenerationStateException>(
@@ -404,8 +409,16 @@ public sealed class SpaceGenerationDataModelTests
                 policySnapshot,
                 pinnedProviderConfigVersionId,
                 "1.0",
-                JobId));
+                JobId,
+                TargetFloorLogicalId));
     }
+
+    private static void BeginApplying(SpaceGenerationRun run) =>
+        run.BeginApplying(
+            Guid.NewGuid(),
+            Guid.NewGuid(),
+            new string('e', 64),
+            Convert.ToBase64String([1, 2, 3, 4]));
 
     private static SpaceGenerationRun RunAt(
         SpaceGenerationRunStatus status)
