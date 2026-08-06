@@ -206,6 +206,14 @@ public enum SpaceIssueStatus : short
     Acknowledged = 2,
 }
 
+public enum SpaceIssueResolutionKind : short
+{
+    None = 0,
+    CommandBatch = 1,
+    ProposalDecision = 2,
+    ProposalRejection = 3,
+}
+
 public enum SpaceAiPolicySnapshot : short
 {
     Disabled = 0,
@@ -242,6 +250,11 @@ public enum SpaceProposalDecisionType : short
     Accept = 1,
     Reject = 2,
     Modify = 3,
+}
+
+public enum SpaceLockedFactMatchMethod : short
+{
+    SameSourceIdentity = 1,
 }
 
 public enum SpaceConfidenceBand : short

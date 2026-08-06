@@ -129,16 +129,20 @@ public sealed class SpaceGenerationProposal : SpaceTenantEntity
 
     public void Modify(
         string humanPatchJson,
-        string lockedFieldsJson)
+        string lockedFieldsJson,
+        bool resolvesBlockingIssues = false)
     {
         RequireStatus(SpaceGenerationProposalStatus.Proposed);
-        EnsureNotBlocking();
+        if (HasBlockingIssue && !resolvesBlockingIssues)
+            EnsureNotBlocking();
         HumanPatchJson = RequireJson(
             humanPatchJson,
             nameof(humanPatchJson));
         LockedFieldsJson = RequireJson(
             lockedFieldsJson,
             nameof(lockedFieldsJson));
+        if (resolvesBlockingIssues)
+            HasBlockingIssue = false;
         Status = SpaceGenerationProposalStatus.Modified;
     }
 

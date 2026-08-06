@@ -41,6 +41,8 @@ public sealed class SpaceContext : DbContext
         Set<SpaceGenerationProposal>();
     public DbSet<SpaceProposalDecision> ProposalDecisions =>
         Set<SpaceProposalDecision>();
+    public DbSet<SpaceGenerationLockedFact> GenerationLockedFacts =>
+        Set<SpaceGenerationLockedFact>();
     public DbSet<SpaceAiUsageRecord> AiUsageRecords =>
         Set<SpaceAiUsageRecord>();
     public DbSet<SpaceTenantAiWorkSlot> TenantAiWorkSlots =>
@@ -186,6 +188,7 @@ public sealed class SpaceContext : DbContext
         ConfigureGenerationRun(modelBuilder);
         ConfigureGenerationProposal(modelBuilder);
         ConfigureProposalDecision(modelBuilder);
+        ConfigureGenerationLockedFact(modelBuilder);
         ConfigureAiUsageRecord(modelBuilder);
         ConfigureTenantAiWorkSlot(modelBuilder);
         ConfigureAiBudgetReservation(modelBuilder);
@@ -197,6 +200,7 @@ public sealed class SpaceContext : DbContext
         ProtectPublishedHistory();
         ProtectPublishedSnapshotWrites();
         ProtectProposalDecisionHistory();
+        ProtectGenerationLockedFactHistory();
         ProtectAiCapacityLedger();
         ProtectAiPolicyHistory();
         ProtectAssetLibrary();
@@ -219,6 +223,7 @@ public sealed class SpaceContext : DbContext
         ProtectPublishedHistory();
         ProtectPublishedSnapshotWrites();
         ProtectProposalDecisionHistory();
+        ProtectGenerationLockedFactHistory();
         ProtectAiCapacityLedger();
         ProtectAiPolicyHistory();
         ProtectAssetLibrary();
@@ -2150,6 +2155,18 @@ public sealed class SpaceContext : DbContext
                 table.HasCheckConstraint(
                     "CK_Space_ModelIssue_SourceVersion",
                     "[SourceId] IS NULL OR [ModelVersionId] IS NOT NULL");
+                table.HasCheckConstraint(
+                    "CK_Space_ModelIssue_GenerationScope",
+                    "([GenerationProposalId] IS NULL OR [GenerationRunId] IS NOT NULL) AND " +
+                    "([ResolutionDecisionId] IS NULL OR [GenerationProposalId] IS NOT NULL)");
+                table.HasCheckConstraint(
+                    "CK_Space_ModelIssue_Resolution",
+                    "([Status] <> 1 AND [ResolutionKind] = 0 AND " +
+                    "[ResolutionCommandBatchId] IS NULL AND [ResolutionDecisionId] IS NULL) OR " +
+                    "([Status] = 1 AND (([ResolutionKind] = 1 AND " +
+                    "[ResolutionCommandBatchId] IS NOT NULL AND [ResolutionDecisionId] IS NULL) OR " +
+                    "([ResolutionKind] IN (2, 3) AND [ResolutionCommandBatchId] IS NULL AND " +
+                    "[ResolutionDecisionId] IS NOT NULL)))");
             });
         entity.HasKey(x => x.Id);
         entity.Property(x => x.Id).ValueGeneratedNever();
@@ -2163,6 +2180,9 @@ public sealed class SpaceContext : DbContext
         entity.Property(x => x.MessageArgsJson).HasColumnType("nvarchar(max)");
         entity.Property(x => x.SuggestedActionCode).HasMaxLength(100);
         entity.Property(x => x.Status)
+            .HasConversion<short>()
+            .HasColumnType("smallint");
+        entity.Property(x => x.ResolutionKind)
             .HasConversion<short>()
             .HasColumnType("smallint");
         entity.Property(x => x.AcknowledgementReason).HasMaxLength(1000);
@@ -2180,6 +2200,18 @@ public sealed class SpaceContext : DbContext
         entity.HasIndex(x => new { x.TenantId, x.JobId, x.Status })
             .HasFilter("[JobId] IS NOT NULL AND [IsDeleted] = 0")
             .HasDatabaseName("IX_Space_ModelIssue_Tenant_Job_Status");
+        entity.HasIndex(
+                x => new
+                {
+                    x.TenantId,
+                    x.GenerationRunId,
+                    x.GenerationProposalId,
+                    x.Status,
+                    x.Severity,
+                })
+            .HasFilter("[GenerationRunId] IS NOT NULL AND [IsDeleted] = 0")
+            .HasDatabaseName(
+                "IX_Space_ModelIssue_Tenant_Run_Proposal_Status");
 
         entity.HasOne<SpaceModelVersion>()
             .WithMany()
@@ -2199,6 +2231,38 @@ public sealed class SpaceContext : DbContext
             .HasPrincipalKey(x => new { x.TenantId, x.Id })
             .OnDelete(DeleteBehavior.Restrict)
             .HasConstraintName("FK_Space_ModelIssue_Job_Tenant");
+        entity.HasOne<SpaceGenerationRun>()
+            .WithMany()
+            .HasForeignKey(x => new { x.TenantId, x.GenerationRunId })
+            .HasPrincipalKey(x => new { x.TenantId, x.Id })
+            .OnDelete(DeleteBehavior.Restrict)
+            .HasConstraintName("FK_Space_ModelIssue_GenerationRun_Tenant");
+        entity.HasOne<SpaceGenerationProposal>()
+            .WithMany()
+            .HasForeignKey(
+                x => new
+                {
+                    x.TenantId,
+                    x.GenerationRunId,
+                    x.GenerationProposalId,
+                })
+            .HasPrincipalKey(
+                x => new
+                {
+                    x.TenantId,
+                    x.RunId,
+                    x.Id,
+                })
+            .OnDelete(DeleteBehavior.Restrict)
+            .HasConstraintName(
+                "FK_Space_ModelIssue_Proposal_Tenant_Run");
+        entity.HasOne<SpaceProposalDecision>()
+            .WithMany()
+            .HasForeignKey(x => new { x.TenantId, x.ResolutionDecisionId })
+            .HasPrincipalKey(x => new { x.TenantId, x.Id })
+            .OnDelete(DeleteBehavior.Restrict)
+            .HasConstraintName(
+                "FK_Space_ModelIssue_ResolutionDecision_Tenant");
 
         entity.HasQueryFilter(x => x.TenantId == CurrentTenantId && !x.IsDeleted);
     }
@@ -2524,6 +2588,89 @@ public sealed class SpaceContext : DbContext
             .OnDelete(DeleteBehavior.Restrict)
             .HasConstraintName(
                 "FK_Space_ProposalDecision_Proposal_Tenant_Run");
+
+        entity.HasQueryFilter(
+            x => x.TenantId == CurrentTenantId && !x.IsDeleted);
+    }
+
+    private void ConfigureGenerationLockedFact(ModelBuilder modelBuilder)
+    {
+        var entity = modelBuilder.Entity<SpaceGenerationLockedFact>();
+        entity.ToTable(
+            "Space_GenerationLockedFact",
+            table => table.HasCheckConstraint(
+                "CK_Space_GenerationLockedFact_Match",
+                "[MatchScore] >= 0 AND [MatchScore] <= 1 AND [RunId] <> [BasedOnRunId]"));
+        entity.HasKey(x => x.Id);
+        entity.Property(x => x.Id).ValueGeneratedNever();
+        entity.HasAlternateKey(x => new { x.TenantId, x.Id })
+            .HasName("AK_Space_GenerationLockedFact_TenantId_Id");
+        ConfigureTenantEntity(entity);
+
+        ConfigureHash(entity.Property(x => x.SourceHash));
+        entity.Property(x => x.SourceKey).HasMaxLength(256).IsRequired();
+        entity.Property(x => x.ProposalType).HasMaxLength(64).IsRequired();
+        entity.Property(x => x.FieldPath).HasMaxLength(256).IsRequired();
+        ConfigureJson(entity.Property(x => x.ValueJson));
+        entity.Property(x => x.MatchMethod)
+            .HasConversion<short>()
+            .HasColumnType("smallint");
+        entity.Property(x => x.MatchScore).HasColumnType("decimal(6,5)");
+        entity.Property(x => x.RowVersion).IsRowVersion();
+
+        entity.HasIndex(
+                x => new
+                {
+                    x.TenantId,
+                    x.RunId,
+                    x.SourceKey,
+                    x.ProposalType,
+                    x.FieldPath,
+                })
+            .IsUnique()
+            .HasFilter("[IsDeleted] = 0")
+            .HasDatabaseName(
+                "UX_GenerationLockedFact_Tenant_Run_Source_Type_Field");
+        entity.HasIndex(
+                x => new { x.TenantId, x.SourceDecisionId, x.RunId })
+            .HasDatabaseName(
+                "IX_GenerationLockedFact_Tenant_Decision_Run");
+
+        entity.HasOne<SpaceGenerationRun>()
+            .WithMany()
+            .HasForeignKey(x => new { x.TenantId, x.RunId })
+            .HasPrincipalKey(x => new { x.TenantId, x.Id })
+            .OnDelete(DeleteBehavior.Restrict)
+            .HasConstraintName(
+                "FK_Space_GenerationLockedFact_Run_Tenant");
+        entity.HasOne<SpaceGenerationRun>()
+            .WithMany()
+            .HasForeignKey(x => new { x.TenantId, x.BasedOnRunId })
+            .HasPrincipalKey(x => new { x.TenantId, x.Id })
+            .OnDelete(DeleteBehavior.Restrict)
+            .HasConstraintName(
+                "FK_Space_GenerationLockedFact_BasedOnRun_Tenant");
+        entity.HasOne<SpaceGenerationProposal>()
+            .WithMany()
+            .HasForeignKey(
+                x => new
+                {
+                    x.TenantId,
+                    x.BasedOnRunId,
+                    x.SourceProposalId,
+                })
+            .HasPrincipalKey(
+                x => new { x.TenantId, x.RunId, x.Id })
+            .OnDelete(DeleteBehavior.Restrict)
+            .HasConstraintName(
+                "FK_Space_GenerationLockedFact_Proposal_Tenant_Run");
+        entity.HasOne<SpaceProposalDecision>()
+            .WithMany()
+            .HasForeignKey(x => new { x.TenantId, x.SourceDecisionId })
+            .HasPrincipalKey(x => new { x.TenantId, x.Id })
+            .OnDelete(DeleteBehavior.Restrict)
+            .HasConstraintName(
+                "FK_Space_GenerationLockedFact_Decision_Tenant");
 
         entity.HasQueryFilter(
             x => x.TenantId == CurrentTenantId && !x.IsDeleted);
@@ -4721,6 +4868,18 @@ public sealed class SpaceContext : DbContext
             {
                 throw new SpaceProposalStateException(
                     "Proposal decisions are append-only.");
+            }
+        }
+    }
+
+    private void ProtectGenerationLockedFactHistory()
+    {
+        foreach (var entry in ChangeTracker.Entries<SpaceGenerationLockedFact>())
+        {
+            if (entry.State is EntityState.Modified or EntityState.Deleted)
+            {
+                throw new SpaceProposalStateException(
+                    "Generation locked facts are immutable.");
             }
         }
     }

@@ -290,22 +290,43 @@ public sealed class SpaceAssetLibrarySqlServerTests
                 .MigrateAsync(
                     "20260731001924_SpaceE05S02RackLevelSpecification");
 
-            var model = SpaceModel.Create(
-                execution.TenantId,
-                Guid.NewGuid());
-            var version = SpaceModelVersion.CreateDraft(
-                execution.TenantId,
-                model.Id,
-                1,
-                "Legacy asset reference");
-            context.AddRange(model, version);
-            await context.SaveChangesAsync();
+            var modelId = Guid.NewGuid();
+            var siteId = Guid.NewGuid();
+            var versionId = Guid.NewGuid();
+            // Seed through the historical schema rather than the current EF
+            // model: later migrations add columns such as Purpose.
+            await context.Database.ExecuteSqlInterpolatedAsync(
+                $$"""
+                INSERT INTO [Space_Model]
+                    ([Id], [ActiveDraftVersionId], [CreatedAtUtc], [CreatedBy],
+                     [CurrentPublishedVersionId], [CutoverOperationId],
+                     [CutoverState], [IsDeleted], [LastMaterializedHash], [Mode],
+                     [ModifiedAtUtc], [ModifiedBy], [SiteId], [TenantId])
+                VALUES
+                    ({{modelId}}, NULL, {{clock.UtcNow}}, {{execution.ActorId}},
+                     NULL, NULL, 0, 0, NULL, 0, NULL, NULL, {{siteId}},
+                     {{execution.TenantId}});
+                """);
+            await context.Database.ExecuteSqlInterpolatedAsync(
+                $$"""
+                INSERT INTO [Space_ModelVersion]
+                    ([Id], [BasedOnVersionId], [CloneOperationId], [ContentHash],
+                     [ContentRevision], [CreatedAtUtc], [CreatedBy], [IsDeleted],
+                     [ModelId], [ModifiedAtUtc], [ModifiedBy], [Name],
+                     [PublishedAtUtc], [PublishedBy], [RuleSetVersion], [Status],
+                     [TenantId], [ValidatedHash], [VersionNo], [WmsCapabilityHash])
+                VALUES
+                    ({{versionId}}, NULL, NULL, NULL, 0, {{clock.UtcNow}},
+                     {{execution.ActorId}}, 0, {{modelId}}, NULL, NULL,
+                     N'Legacy asset reference', NULL, NULL, NULL, 0,
+                     {{execution.TenantId}}, NULL, 1, NULL);
+                """);
 
             var floor = SpaceFloorRevision.Create(
                 execution.TenantId,
-                version.Id,
+                versionId,
                 Guid.NewGuid(),
-                model.SiteId,
+                siteId,
                 1,
                 "F1",
                 "Floor 1");
@@ -325,8 +346,8 @@ public sealed class SpaceAssetLibrarySqlServerTests
                 VALUES
                     ({{floor.Id}}, N'[]', N'Local', {{clock.UtcNow}},
                      {{execution.ActorId}}, 0, N'F1', 0, 0, 1, 0,
-                     {{floor.LogicalId}}, {{version.Id}}, NULL, NULL, N'Floor 1',
-                     1, {{model.SiteId}}, NULL, NULL, {{execution.TenantId}},
+                     {{floor.LogicalId}}, {{versionId}}, NULL, NULL, N'Floor 1',
+                     1, {{siteId}}, NULL, NULL, {{execution.TenantId}},
                      0, 0, 0, NULL, NULL);
                 """);
 
@@ -341,7 +362,7 @@ public sealed class SpaceAssetLibrarySqlServerTests
                      [LinkedLogicalId], [TenantId], [CreatedAtUtc],
                      [CreatedBy], [ModifiedAtUtc], [ModifiedBy], [IsDeleted])
                 VALUES
-                    ({{Guid.NewGuid()}}, {{version.Id}}, {{Guid.NewGuid()}}, NULL,
+                    ({{Guid.NewGuid()}}, {{versionId}}, {{Guid.NewGuid()}}, NULL,
                      NULL, 0, {{floor.LogicalId}}, NULL, N'Column',
                      N'{"schemaVersion":1,"kind":"box","width":1,"height":1,"depth":1}',
                      {{Guid.NewGuid()}}, 0, 0, 0, 0, 1, 1, 1, NULL, NULL, NULL,

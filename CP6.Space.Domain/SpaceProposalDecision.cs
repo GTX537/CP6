@@ -1,9 +1,18 @@
 using System.Text.Json;
+using System.Text.RegularExpressions;
 
 namespace CP6.Space.Domain;
 
 public sealed class SpaceProposalDecision : SpaceTenantEntity
 {
+    private static readonly Regex ReasonCodePattern = new(
+        "^[A-Z][A-Z0-9_]{0,63}$",
+        RegexOptions.CultureInvariant);
+
+    private static readonly Regex SensitiveCommentPattern = new(
+        "(?i)(authorization\\s*:\\s*bearer|api[_-]?key\\s*[:=]|password\\s*[:=]|secret\\s*[:=])",
+        RegexOptions.CultureInvariant);
+
     private SpaceProposalDecision()
     {
     }
@@ -59,6 +68,23 @@ public sealed class SpaceProposalDecision : SpaceTenantEntity
                 "Reject decisions cannot carry a final value.",
                 nameof(afterJson));
         }
+        var normalizedLockedFields = OptionalJson(
+            lockedFieldsJson,
+            nameof(lockedFieldsJson));
+        if (decisionType == SpaceProposalDecisionType.Modify &&
+            normalizedLockedFields is null)
+        {
+            throw new ArgumentException(
+                "Modify decisions require locked fields.",
+                nameof(lockedFieldsJson));
+        }
+        if (decisionType != SpaceProposalDecisionType.Modify &&
+            normalizedLockedFields is not null)
+        {
+            throw new ArgumentException(
+                "Only Modify decisions can carry locked fields.",
+                nameof(lockedFieldsJson));
+        }
 
         var decision = new SpaceProposalDecision
         {
@@ -67,14 +93,11 @@ public sealed class SpaceProposalDecision : SpaceTenantEntity
             DecisionType = decisionType,
             BeforeJson = normalizedBefore,
             AfterJson = normalizedAfter,
-            LockedFieldsJson = OptionalJson(
-                lockedFieldsJson,
-                nameof(lockedFieldsJson)),
-            ReasonCode = OptionalText(
+            LockedFieldsJson = normalizedLockedFields,
+            ReasonCode = OptionalReasonCode(
                 reasonCode,
-                64,
                 nameof(reasonCode)),
-            Comment = OptionalText(comment, 512, nameof(comment)),
+            Comment = OptionalSafeComment(comment, nameof(comment)),
             DecisionBatchId = decisionBatchId,
         };
         decision.SetTenant(tenantId);
@@ -124,6 +147,36 @@ public sealed class SpaceProposalDecision : SpaceTenantEntity
         {
             throw new ArgumentException(
                 $"A value up to {maxLength} characters is required.",
+                parameterName);
+        }
+        return normalized;
+    }
+
+    private static string? OptionalReasonCode(
+        string? value,
+        string parameterName)
+    {
+        var normalized = OptionalText(value, 64, parameterName);
+        if (normalized is not null && !ReasonCodePattern.IsMatch(normalized))
+        {
+            throw new ArgumentException(
+                "Reason code must be an uppercase machine-readable token.",
+                parameterName);
+        }
+        return normalized;
+    }
+
+    private static string? OptionalSafeComment(
+        string? value,
+        string parameterName)
+    {
+        var normalized = OptionalText(value, 512, parameterName);
+        if (normalized is not null &&
+            (normalized.Any(char.IsControl) ||
+             SensitiveCommentPattern.IsMatch(normalized)))
+        {
+            throw new ArgumentException(
+                "Comments cannot contain control characters or credential-like content.",
                 parameterName);
         }
         return normalized;

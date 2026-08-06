@@ -1,4 +1,5 @@
 using CP6.Space.Application;
+using CP6.Space.Contracts;
 using CP6.Space.Domain;
 using CP6.Space.Infrastructure;
 using Microsoft.Data.SqlClient;
@@ -197,6 +198,198 @@ public sealed class SpaceGenerationPersistenceTests
         Assert.Equal(
             3,
             usage.GetCheckConstraints().Count());
+
+        var issue = designModel.FindEntityType(typeof(SpaceModelIssue))!;
+        Assert.Contains(
+            issue.GetCheckConstraints(),
+            constraint => constraint.Name ==
+                "CK_Space_ModelIssue_GenerationScope");
+        Assert.Contains(
+            issue.GetCheckConstraints(),
+            constraint => constraint.Name ==
+                "CK_Space_ModelIssue_Resolution");
+        Assert.Contains(
+            issue.GetIndexes(),
+            index => index.GetDatabaseName() ==
+                "IX_Space_ModelIssue_Tenant_Run_Proposal_Status");
+
+        var lockedFact = designModel.FindEntityType(
+            typeof(SpaceGenerationLockedFact))!;
+        Assert.Equal("Space_GenerationLockedFact", lockedFact.GetTableName());
+        Assert.NotNull(lockedFact.GetQueryFilter());
+        Assert.True(lockedFact.FindProperty("RowVersion")!.IsConcurrencyToken);
+        Assert.Contains(
+            lockedFact.GetIndexes(),
+            index => index.IsUnique && index.GetDatabaseName() ==
+                "UX_GenerationLockedFact_Tenant_Run_Source_Type_Field");
+    }
+
+    [SqlServerFact]
+    public async Task Decision_service_accepts_once_completes_review_and_replays()
+    {
+        var tenantId = Guid.NewGuid();
+        var actorId = Guid.NewGuid();
+
+        await WithDatabaseAsync(
+            tenantId,
+            async context =>
+            {
+                var graph = NewGraph(tenantId);
+                graph.Run.BeginPreparing();
+                graph.Run.BeginInferring();
+                graph.Run.BeginValidating();
+                graph.Run.MarkAwaitingReview();
+                context.AddRange(
+                    graph.Model,
+                    graph.Version,
+                    graph.Source,
+                    graph.Job,
+                    graph.Run,
+                    graph.Proposal);
+                await context.SaveChangesAsync();
+
+                var execution = new TestExecutionContext(tenantId, actorId);
+                var service = new SpaceAiProposalDecisionService(
+                    context,
+                    execution,
+                    new AllowAccess(),
+                    new TestCursorCodec(),
+                    new FixedClock(),
+                    new SpaceAiProposalReviewOptions());
+                var request = new CreateSpaceAiProposalDecisionRequest(
+                    graph.Proposal.Id,
+                    "Accept",
+                    Convert.ToBase64String(graph.Proposal.RowVersion),
+                    null,
+                    null,
+                    "REVIEWED",
+                    "Checked against the normalized source.");
+
+                var first = await service.CreateDecisionAsync(
+                    graph.Run.Id,
+                    request,
+                    "accept-rack-1");
+                var replay = await service.CreateDecisionAsync(
+                    graph.Run.Id,
+                    request,
+                    "accept-rack-1");
+
+                Assert.False(first.IdempotentReplay);
+                Assert.True(first.Review.ReviewCompleted);
+                Assert.Equal("review-completed", first.Outcome);
+                Assert.True(replay.IdempotentReplay);
+                Assert.Equal(first.DecisionBatchId, replay.DecisionBatchId);
+                Assert.Single(await context.ProposalDecisions.ToListAsync());
+                Assert.Equal(
+                    SpaceGenerationProposalStatus.Accepted,
+                    (await context.GenerationProposals.SingleAsync()).Status);
+                Assert.NotNull(
+                    (await context.GenerationRuns.SingleAsync())
+                    .ReviewCompletedAtUtc);
+            });
+    }
+
+    [SqlServerFact]
+    public async Task Modified_values_materialize_once_for_a_same_source_rerun()
+    {
+        var tenantId = Guid.NewGuid();
+        var actorId = Guid.NewGuid();
+
+        await WithDatabaseAsync(
+            tenantId,
+            async context =>
+            {
+                var graph = NewGraph(tenantId, proposalBlocking: true);
+                graph.Run.BeginPreparing();
+                graph.Run.BeginInferring();
+                graph.Run.BeginValidating();
+                graph.Run.MarkAwaitingReview();
+                var blockingIssue = SpaceModelIssue.Create(
+                    tenantId,
+                    graph.Version.Id,
+                    graph.Source.Id,
+                    graph.Job.Id,
+                    SpaceIssueSeverity.Blocking,
+                    "AI_BUSINESS_ENUM_INVALID",
+                    sourceRef: "rack-1",
+                    generationRunId: graph.Run.Id,
+                    generationProposalId: graph.Proposal.Id);
+                context.AddRange(
+                    graph.Model,
+                    graph.Version,
+                    graph.Source,
+                    graph.Job,
+                    graph.Run,
+                    graph.Proposal,
+                    blockingIssue);
+                await context.SaveChangesAsync();
+
+                using var value = System.Text.Json.JsonDocument.Parse(
+                    "\"DriveIn\"");
+                var execution = new TestExecutionContext(tenantId, actorId);
+                var decisions = new SpaceAiProposalDecisionService(
+                    context,
+                    execution,
+                    new AllowAccess(),
+                    new TestCursorCodec(),
+                    new FixedClock(),
+                    new SpaceAiProposalReviewOptions());
+                var response = await decisions.CreateDecisionAsync(
+                    graph.Run.Id,
+                    new CreateSpaceAiProposalDecisionRequest(
+                        graph.Proposal.Id,
+                        "Modify",
+                        Convert.ToBase64String(graph.Proposal.RowVersion),
+                        [new SpaceAiProposalPatchOperationDto(
+                            "replace",
+                            "/attributes/rackType",
+                            value.RootElement.Clone())],
+                        ["/attributes/rackType"],
+                        "HUMAN_CORRECTION",
+                        "Verified rack family."),
+                    "modify-rack-1");
+
+                var nextJob = NewJob(
+                    tenantId,
+                    graph.Version.Id,
+                    new string('9', 64));
+                var nextRun = NewRun(
+                    tenantId,
+                    graph.Model.SiteId,
+                    graph.Version.Id,
+                    graph.Source.Id,
+                    nextJob.Id,
+                    new string('8', 64),
+                    new string('7', 64),
+                    basedOnRunId: graph.Run.Id);
+                context.AddRange(nextJob, nextRun);
+                await context.SaveChangesAsync();
+
+                var lockedFacts = new SpaceAiLockedFactService(
+                    context,
+                    execution,
+                    new AllowAccess());
+                var first = await lockedFacts.MaterializeAsync(nextRun.Id);
+                var replay = await lockedFacts.MaterializeAsync(nextRun.Id);
+
+                var fact = Assert.Single(first);
+                Assert.Single(replay);
+                Assert.Equal(response.Decisions.Single().DecisionId,
+                    fact.SourceDecisionId);
+                Assert.Equal("/attributes/rackType", fact.FieldPath);
+                Assert.Equal("DriveIn", fact.Value.GetString());
+                Assert.Equal("SameSourceIdentity", fact.MatchMethod);
+                Assert.True(fact.IsConfirmed);
+                Assert.Single(await context.GenerationLockedFacts.ToListAsync());
+                var resolvedIssue = await context.Issues.SingleAsync();
+                Assert.Equal(SpaceIssueStatus.Resolved, resolvedIssue.Status);
+                Assert.Equal(
+                    SpaceIssueResolutionKind.ProposalDecision,
+                    resolvedIssue.ResolutionKind);
+                Assert.Equal(
+                    response.Decisions.Single().DecisionId,
+                    resolvedIssue.ResolutionDecisionId);
+            });
     }
 
     [SqlServerFact]
@@ -245,7 +438,9 @@ public sealed class SpaceGenerationPersistenceTests
             });
     }
 
-    private static GenerationGraph NewGraph(Guid tenantId)
+    private static GenerationGraph NewGraph(
+        Guid tenantId,
+        bool proposalBlocking = false)
     {
         var model = SpaceModel.Create(tenantId, Guid.NewGuid());
         var version = SpaceModelVersion.CreateDraft(
@@ -271,7 +466,8 @@ public sealed class SpaceGenerationPersistenceTests
         var proposal = NewProposal(
             tenantId,
             run.Id,
-            version.Id);
+            version.Id,
+            proposalBlocking);
         var decision = SpaceProposalDecision.Create(
             tenantId,
             run.Id,
@@ -320,7 +516,8 @@ public sealed class SpaceGenerationPersistenceTests
         Guid sourceId,
         Guid jobId,
         string idempotencyHash,
-        string businessHash) =>
+        string businessHash,
+        Guid? basedOnRunId = null) =>
         SpaceGenerationRun.Create(
             new SpaceGenerationRunDefinition(
                 tenantId,
@@ -331,7 +528,7 @@ public sealed class SpaceGenerationPersistenceTests
                 0,
                 idempotencyHash,
                 businessHash,
-                null,
+                basedOnRunId,
                 Guid.NewGuid(),
                 Guid.NewGuid(),
                 "rules-1",
@@ -343,7 +540,8 @@ public sealed class SpaceGenerationPersistenceTests
     private static SpaceGenerationProposal NewProposal(
         Guid tenantId,
         Guid runId,
-        Guid versionId) =>
+        Guid versionId,
+        bool hasBlockingIssue = false) =>
         SpaceGenerationProposal.Create(
             new SpaceGenerationProposalDefinition(
                 tenantId,
@@ -354,14 +552,14 @@ public sealed class SpaceGenerationPersistenceTests
                 "layer:racks/block:standard",
                 "Rack",
                 "{}",
-                """{"type":"Rack"}""",
-                "[]",
+                """{"name":"AI Rack","rackType":"Selective"}""",
+                """{"zoneSourceKey":"zone-1","aisleSourceKey":"aisle-1"}""",
                 "[]",
                 "[]",
                 "{}",
                 0.95m,
                 SpaceConfidenceBand.High,
-                false));
+                hasBlockingIssue));
 
     private static SpaceAiUsageRecord NewUsage(
         Guid tenantId,
@@ -470,5 +668,25 @@ public sealed class SpaceGenerationPersistenceTests
     private sealed class FixedClock : ISpaceClock
     {
         public DateTime UtcNow => Now;
+    }
+
+    private sealed class AllowAccess : ISpaceDesignAccessEvaluator
+    {
+        public void EnsureSiteAccess(Guid siteId, bool write)
+        {
+        }
+    }
+
+    private sealed class TestCursorCodec : ISpaceCursorCodec
+    {
+        public string Encode(SpaceCursorState state) =>
+            Convert.ToBase64String(System.Text.Encoding.UTF8.GetBytes(
+                $"{state.Resource}|{state.FilterHash}|{state.Offset}"));
+
+        public SpaceCursorState Decode(
+            string cursor,
+            string expectedResource,
+            string expectedFilterHash) =>
+            throw new NotSupportedException();
     }
 }

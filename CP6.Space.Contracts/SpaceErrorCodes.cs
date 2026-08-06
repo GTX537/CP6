@@ -86,6 +86,18 @@ public static class SpaceErrorCodes
         "SPACE_AI_PROVIDER_ALIAS_NOT_APPROVED";
     public const string AiUsageQueryInvalid =
         "SPACE_AI_USAGE_QUERY_INVALID";
+    public const string AiRunNotFound = "SPACE_AI_RUN_NOT_FOUND";
+    public const string AiProposalNotFound = "SPACE_AI_PROPOSAL_NOT_FOUND";
+    public const string AiRunStateInvalid = "SPACE_AI_RUN_STATE_INVALID";
+    public const string AiRunStale = "SPACE_AI_RUN_STALE";
+    public const string AiReviewIncomplete = "SPACE_AI_REVIEW_INCOMPLETE";
+    public const string AiReviewConflict = "SPACE_AI_REVIEW_CONFLICT";
+    public const string AiDecisionInvalid = "SPACE_AI_DECISION_INVALID";
+    public const string AiPatchPathDenied = "SPACE_AI_PATCH_PATH_DENIED";
+    public const string AiBatchSelectionInvalid =
+        "SPACE_AI_BATCH_SELECTION_INVALID";
+    public const string AiBatchAcceptDisabled =
+        "SPACE_AI_BATCH_ACCEPT_DISABLED";
     public const string WmsUnavailable = "SPACE_WMS_UNAVAILABLE";
     public const string WmsRuntimeContractViolation =
         "SPACE_WMS_RUNTIME_CONTRACT_VIOLATION";

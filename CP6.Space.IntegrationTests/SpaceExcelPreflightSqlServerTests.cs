@@ -81,6 +81,9 @@ public sealed class SpaceExcelPreflightSqlServerTests
         var model = SpaceModel.Create(
             fixture.Execution.TenantId,
             Guid.NewGuid());
+        fixture.Context.Add(model);
+        await fixture.Context.SaveChangesAsync();
+
         var published = SpaceModelVersion.CreateDraft(
             fixture.Execution.TenantId,
             model.Id,
@@ -93,18 +96,28 @@ public sealed class SpaceExcelPreflightSqlServerTests
             new string('b', 64));
         published.BeginPublishing();
         published.MarkPublished(fixture.Execution.ActorId, Now);
+        fixture.Context.Add(published);
+        await fixture.Context.SaveChangesAsync();
+
         model.BeginCutover(Guid.NewGuid());
         model.MarkFrozen();
         model.MarkBootstrapping();
         model.MarkVerified(published);
         model.ActivateDesignV1();
+        await fixture.Context.SaveChangesAsync();
+
         var draft = SpaceModelVersion.CreateDraft(
             fixture.Execution.TenantId,
             model.Id,
             2,
             "Draft",
             published.Id);
+        fixture.Context.Add(draft);
+        await fixture.Context.SaveChangesAsync();
+
         model.ReserveDraft(draft);
+        await fixture.Context.SaveChangesAsync();
+
         var file = SpaceFile.CreateUploading(
             Guid.NewGuid(),
             fixture.Execution.TenantId,
@@ -119,13 +132,16 @@ public sealed class SpaceExcelPreflightSqlServerTests
             new string('c', 64));
         file.BeginScanning();
         file.MarkClean("test", "v1");
+        fixture.Context.Add(file);
+        await fixture.Context.SaveChangesAsync();
+
         var source = SpaceModelSource.CreateFileSource(
             fixture.Execution.TenantId,
             draft.Id,
             SpaceSourceType.Excel,
             file,
             file.OriginalName);
-        fixture.Context.AddRange(model, published, draft, file, source);
+        fixture.Context.Add(source);
         await fixture.Context.SaveChangesAsync();
         return (draft.Id, source.Id);
     }
