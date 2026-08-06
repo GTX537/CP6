@@ -1,5 +1,12 @@
 # 已完成能力与近期里程碑
 
+## 2026-08-06 E13-S13 外部用户拒绝与数据外发门禁
+
+- 以 `37bf5c37` / `e1682efc` 完成功能和 no-ff 受控集成；Gateway 在读取策略、申请配额和调用 Provider 前再次拒绝外部主体，真实 External Provider 发送前还必须通过精确字段白名单与最小化 Token 语法门禁。
+- 4 个 AI 控制器的 16 个端点均具备显式审计元数据，7 个 GET 均启用读审计；Customer、Supplier、3PL × 16 操作形成 48 条稳定 403 拒绝断言，并验证无数据访问和持久化副作用。
+- 门禁为 Space Unit 424/424、Provider/最小化 34/34、外部/管理 8/8、审计/OpenAPI/权限 87/87、非 SQL 10/10、KOUSQLSERVER 21/21；Application Debug/Release 0 warning/0 error，WebApi Release 仅保留 3 条既存 Core nullable warning。
+- CSO 范围审计未确认当前可利用漏洞；生产 BuildScene、真实 External Provider、网络端到端、正式数据/供应商/影子运行证据仍失败关闭或待办。`main` 未修改，下一张建议卡为 E13-S17。
+
 ## 2026-08-06 E13-S11 Generation Run 恢复产品化
 
 - 以 `dcbbfca8` / `c695850f` / `d3c2da75` 完成功能、证据和 no-ff 受控集成；交付取消、同输入重试、废弃、CommandBatch 对账、Failed/Stale 新 Run 与 RuleOnly 降级，并同步 Design V1 OpenAPI、C#/TypeScript SDK 和前端操作面。

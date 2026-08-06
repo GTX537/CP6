@@ -2,6 +2,14 @@
 
 最后更新：2026-08-06
 
+## E13-S13 外部用户拒绝与数据外发门禁（2026-08-06）
+
+- 在 E13-S11 后续集成基线 `d2a96be4` 上完成功能提交 `37bf5c37`，并以 no-ff 提交 `e1682efc` 集成到 `integration/space-v1-20260730`；`main` 未修改。
+- Provider Gateway 在策略、配额和 Provider 前再次拒绝外部主体并要求有效内部 Tenant/Actor。External Provider 发送前执行冻结 JSON 字段白名单和最小化 HMAC Token 语法门禁；原始名称、任意 Prompt、路径、URL、额外字段或非白名单锁定事实以 `SPACE_AI_OUTBOUND_PAYLOAD_DENIED/403` 失败关闭。
+- 4 个 AI 控制器的 16 个端点均有显式审计元数据，7 个 GET 均启用读审计。Customer、Supplier、3PL × 16 操作形成 48 条稳定 `SPACE_EXTERNAL_SUBJECT_DENIED/403` 断言，并证明拒绝发生在数据访问和写入前。
+- 验证：Space Unit 424/424，Provider/最小化 34/34，外部主体与 AI 管理 8/8，审计/OpenAPI/权限 87/87，非 SQL 管理/注册/矩阵 10/10，KOUSQLSERVER Apply/恢复/配额/外部矩阵 21/21；Application Debug/Release 0 warning/0 error，WebApi Release 仅有 3 条既存 Core nullable warning。证据见 `docs/space/reports/e13-s13-external-ai-security.md`。
+- CSO 范围审计没有确认当前可利用漏洞：生产仍无 Gateway 调用方、External Provider 注册为空且配额失败关闭。本卡是未来接入真实 Provider 前的安全封口，不是网络端到端签收。下一张建议卡为不依赖外部 CAD/Provider 的 E13-S17 迁移、前向修复与保留清理。
+
 ## E13-S11 Generation Run 恢复产品化开发切片（2026-08-06）
 
 - 在 E13-S10 集成状态基线 `c1efea2b` 上完成功能提交 `dcbbfca8`、证据提交 `c695850f`，并以 no-ff 提交 `d3c2da75` 集成到 `integration/space-v1-20260730`。
@@ -517,9 +525,9 @@
 | E11 S03 | 已进入集成基线 | `3cf42534` + `419d3f6c` + `eea62de0` + `cf7bf778`；内部人员调度建议、真实待分配任务与人员双时点、确定性最大基数匹配、不可变证据、首因排除和 Viewer DSP 面板 |
 | E11 S04 | 已进入集成基线 | `098fb54b` + `a7298e28` + `a552d05d` + `c19231db`；OA 审批、提交/终审人分离、最终事实重验证、真实 `MobileTask` 整批分派、幂等回执与失败关闭 |
 | E11 S05 | 已进入集成基线 | `139c76b5` + `e8df8288` + `a0b247ab` + `cf35849c`；实时执行状态、三层幂等回执、受限人工重试、安全整批补偿、权限审计和 Viewer 执行治理 |
-| E13 S01–S03、S12、S16 | 已进入集成基线 | Provider/确定性端口、可审计 Run/Proposal/Decision/Usage 模型、可恢复 Worker 控制面、数据库并发槽与预算账本，以及不暴露密钥/URL 的租户策略和用量管理 UI |
+| E13 S01–S13、S16 | 已进入集成基线；真实外部 Provider 仍关闭 | Provider/确定性端口、Run/Proposal/Decision/Usage、可恢复 Worker、最小化/本地生成/输出校验/融合/审核/决策/原子 Apply/恢复、外部主体与外发门禁，以及数据库配额和策略/用量 UI |
 | E05 S01–S05 | 已进入集成基线 | 通用元素、逐层货架、统一场景 DTO、版本化资产库及确定性参数化 3D 渲染 |
-| E02 S02–S08 正式签收、E03 S05、E06、E13 S05～S11/S13～S15/S17～S19 等剩余范围 | 候选证据或尚未实现 | 生产 CAD 链、正式输入与外部 Provider/Apply 依赖仍需逐卡解除；`0d25da4d` 只作提取来源，不得以候选报告或开发切片替代正式集成验收 |
+| E02 S02–S08 正式签收、E03 S05、E06、E13 S05～S11 正式外部链验收、S14～S15/S17～S19 等剩余范围 | 候选证据或尚未实现 | 生产 CAD 链、正式输入与真实外部 Provider/发布证据仍需逐卡解除；`0d25da4d` 只作提取来源，不得以候选报告或开发切片替代正式集成验收 |
 
 ## 上一完成波：GR-VP
 

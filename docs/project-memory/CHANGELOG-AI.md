@@ -2,6 +2,13 @@
 
 > 依据 Git log 汇总，不替代完整 Git 历史。重点记录影响接手判断的里程碑。
 
+## 2026-08-06：Space V1 E13-S13 外部 AI 安全门禁
+
+- `37bf5c37` / `e1682efc`：实现并 no-ff 集成外部主体 Gateway 拒绝、External Provider 冻结字段与最小化 Token 出站门禁、AI 读取审计补齐和跨角色操作矩阵。
+- 4 个 AI 控制器共 16 个端点均有唯一审计动作，7 个 GET 均启用读审计；Customer/Supplier/3PL × 16 操作稳定返回 `SPACE_EXTERNAL_SUBJECT_DENIED/403` 且不进入数据访问或产生写入。非最小化 Payload 在配额和 Provider 前返回 `SPACE_AI_OUTBOUND_PAYLOAD_DENIED/403`。
+- 验证为 Space Unit 424/424、Provider/最小化 34/34、外部/管理 8/8、审计/OpenAPI/权限 87/87、非 SQL 10/10、KOUSQLSERVER 21/21，以及 Application Debug/Release 和 WebApi Release build 通过。
+- CSO 范围审计为 0 个确认的当前漏洞；两个候选因生产无 Gateway 调用方、External Provider 空注册和配额失败关闭被独立复核排除。本卡是未来外接前安全封口，不代替真实网络、供应商合规、正式数据和独立渗透测试。`main` 未修改，下一张建议卡为 E13-S17。
+
 ## 2026-08-06：Space V1 E13-S11 Generation Run 恢复产品化
 
 - `dcbbfca8` / `c695850f` / `d3c2da75`：实现、记录并 no-ff 集成取消、同输入安全重试、废弃、Apply CommandBatch 对账、Failed/Stale replacement Run、RuleOnly 降级、OpenAPI/SDK 与前端恢复操作面。

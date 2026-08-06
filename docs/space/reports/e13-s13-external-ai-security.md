@@ -1,8 +1,9 @@
 # E13-S13 外部用户拒绝与数据外发门禁
 
-- 状态：Implemented，待集成
+- 状态：已实现并进入受控集成
 - 基线：`d2a96be4704dae2fc3d9c738e56e58c07eb1072c`
 - 分支：`codex/space-e13-s13-external-ai-security`
+- 功能/集成提交：`37bf5c37` / `e1682efc`
 - 日期：2026-08-06
 
 ## 1. 交付结论
