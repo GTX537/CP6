@@ -346,7 +346,7 @@ public sealed class SpaceAiWarehouseSynthesisTests
                 cancellation.Token));
     }
 
-    private static FixtureData Fixture(
+    internal static FixtureData Fixture(
         IReadOnlyList<SpaceAiCadLockedFactV1>? lockedFacts = null,
         bool strongWallRule = false)
     {
@@ -397,7 +397,7 @@ public sealed class SpaceAiWarehouseSynthesisTests
             lockedFacts ?? []);
     }
 
-    private static WarehouseDraftSynthesisRequestV1 Request(
+    internal static WarehouseDraftSynthesisRequestV1 Request(
         FixtureData fixture,
         IReadOnlyList<WarehouseGenerationSuggestion> suggestions,
         IReadOnlyList<WarehouseTemplateDefaultFactV1>? defaults = null,
@@ -449,7 +449,7 @@ public sealed class SpaceAiWarehouseSynthesisTests
         fixture.SourceKey(targetSourceRef),
         0.90m);
 
-    private static WarehouseRackGenerationProfileV1 Profile(string id) => new(
+    internal static WarehouseRackGenerationProfileV1 Profile(string id) => new(
         Guid.Parse(id),
         RackWidthMillimeters: 3_000,
         RackDepthMillimeters: 2_000,
@@ -482,7 +482,7 @@ public sealed class SpaceAiWarehouseSynthesisTests
         string sourceRef) => result.Proposals.Single(item =>
             item.SourceRef == sourceRef);
 
-    private sealed record FixtureData(
+    internal sealed record FixtureData(
         SpaceCadSemanticPreviewV1 Preview,
         SpaceAiCadFeatureMinimizationV1 FeaturePackage,
         IReadOnlyList<SpaceAiCadLockedFactV1> LockedFacts)

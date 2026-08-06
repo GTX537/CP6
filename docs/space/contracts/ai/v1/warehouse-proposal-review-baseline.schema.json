@@ -1,0 +1,76 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://cp6.local/contracts/space/ai/v1/warehouse-proposal-review-baseline.schema.json",
+  "title": "CP6 Space Warehouse Proposal Review Baseline v1",
+  "type": "object",
+  "additionalProperties": false,
+  "required": [
+    "schemaVersion", "isReadOnlySnapshot", "isCompleteFloorProjection",
+    "tenantId", "modelVersionId", "floorLogicalId", "contentRevision",
+    "objects", "snapshotSha256"
+  ],
+  "properties": {
+    "schemaVersion": { "const": 1 },
+    "isReadOnlySnapshot": { "const": true },
+    "isCompleteFloorProjection": { "const": true },
+    "tenantId": { "$ref": "#/$defs/uuid" },
+    "modelVersionId": { "$ref": "#/$defs/uuid" },
+    "floorLogicalId": { "$ref": "#/$defs/uuid" },
+    "contentRevision": { "type": "integer", "minimum": 0 },
+    "contentHash": { "$ref": "#/$defs/sha256" },
+    "objects": {
+      "type": "array",
+      "maxItems": 100000,
+      "items": { "$ref": "#/$defs/object" }
+    },
+    "snapshotSha256": { "$ref": "#/$defs/sha256" }
+  },
+  "$defs": {
+    "uuid": {
+      "type": "string",
+      "format": "uuid",
+      "not": { "const": "00000000-0000-0000-0000-000000000000" }
+    },
+    "sha256": { "type": "string", "pattern": "^[0-9a-f]{64}$" },
+    "bounds": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["minX", "minY", "maxX", "maxY"],
+      "properties": {
+        "minX": { "type": "integer" },
+        "minY": { "type": "integer" },
+        "maxX": { "type": "integer" },
+        "maxY": { "type": "integer" }
+      }
+    },
+    "field": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["fieldPath", "valueToken"],
+      "properties": {
+        "fieldPath": { "type": "string", "minLength": 1, "maxLength": 128 },
+        "valueToken": { "type": "string", "minLength": 1, "maxLength": 512 }
+      }
+    },
+    "object": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": [
+        "logicalId", "objectType", "geometrySha256", "geometryBounds",
+        "fields", "rackLevelCount", "locationCount"
+      ],
+      "properties": {
+        "logicalId": { "$ref": "#/$defs/uuid" },
+        "objectType": { "type": "string", "minLength": 1, "maxLength": 64 },
+        "geometrySha256": { "$ref": "#/$defs/sha256" },
+        "geometryBounds": { "$ref": "#/$defs/bounds" },
+        "fields": {
+          "type": "array",
+          "items": { "$ref": "#/$defs/field" }
+        },
+        "rackLevelCount": { "type": "integer", "minimum": 0 },
+        "locationCount": { "type": "integer", "minimum": 0 }
+      }
+    }
+  }
+}

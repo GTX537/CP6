@@ -52,6 +52,22 @@ public static class Program
                     await SynthesizeDevelopmentAiProposalsAsync(
                         commandLine,
                         cancellation.Token),
+                "seal-dev-ai-review-baseline" =>
+                    await SealDevelopmentAiReviewBaselineAsync(
+                        commandLine,
+                        cancellation.Token),
+                "build-dev-ai-review-workspace" =>
+                    await BuildDevelopmentAiReviewWorkspaceAsync(
+                        commandLine,
+                        cancellation.Token),
+                "query-dev-ai-review-workspace" =>
+                    await QueryDevelopmentAiReviewWorkspaceAsync(
+                        commandLine,
+                        cancellation.Token),
+                "preview-dev-ai-review-batch" =>
+                    await PreviewDevelopmentAiReviewBatchAsync(
+                        commandLine,
+                        cancellation.Token),
                 "query-dev-inventory" => await QueryDevelopmentInventoryAsync(
                     commandLine,
                     cancellation.Token),
@@ -659,6 +675,168 @@ public static class Program
         {
             CryptographicOperations.ZeroMemory(bytes);
         }
+    }
+
+    private static async Task<int> SealDevelopmentAiReviewBaselineAsync(
+        CommandLine commandLine,
+        CancellationToken cancellationToken)
+    {
+        var draft = await ReadRequiredJsonAsync<
+            WarehouseProposalReviewBaselineSnapshotV1>(
+                commandLine.Required("--input"),
+                "The AI review baseline draft is empty.",
+                cancellationToken);
+        var baseline = WarehouseProposalReviewWorkbench.SealBaseline(
+            draft.TenantId,
+            draft.ModelVersionId,
+            draft.FloorLogicalId,
+            draft.ContentRevision,
+            draft.ContentHash,
+            draft.Objects);
+        await WriteCanonicalJsonAsync(
+            Path.GetFullPath(commandLine.Required("--output")),
+            WarehouseProposalReviewWorkbench.SerializeBaseline(baseline),
+            cancellationToken);
+        Console.WriteLine(JsonSerializer.Serialize(
+            new
+            {
+                baseline.ModelVersionId,
+                baseline.FloorLogicalId,
+                baseline.ContentRevision,
+                ObjectCount = baseline.Objects.Count,
+                baseline.SnapshotSha256,
+            },
+            CadExperimentJson.Options));
+        return 0;
+    }
+
+    private static async Task<int> BuildDevelopmentAiReviewWorkspaceAsync(
+        CommandLine commandLine,
+        CancellationToken cancellationToken)
+    {
+        var proposalSet = await ReadRequiredJsonAsync<WarehouseDraftProposalSetV1>(
+            commandLine.Required("--proposals"),
+            "The warehouse proposal set is empty.",
+            cancellationToken);
+        var baseline = await ReadRequiredJsonAsync<
+            WarehouseProposalReviewBaselineSnapshotV1>(
+                commandLine.Required("--baseline"),
+                "The AI review baseline is empty.",
+                cancellationToken);
+        var workspace = WarehouseProposalReviewWorkbench.Build(proposalSet, baseline);
+        await WriteCanonicalJsonAsync(
+            Path.GetFullPath(commandLine.Required("--output")),
+            WarehouseProposalReviewWorkbench.Serialize(workspace),
+            cancellationToken);
+        Console.WriteLine(JsonSerializer.Serialize(
+            new
+            {
+                workspace.ModelVersionId,
+                workspace.FloorLogicalId,
+                workspace.ProposalSetSha256,
+                workspace.BaselineSnapshotSha256,
+                workspace.ReviewEtag,
+                workspace.WorkspaceSha256,
+                workspace.Summary,
+                workspace.DecisionWritten,
+                workspace.DraftWritten,
+            },
+            CadExperimentJson.Options));
+        return 0;
+    }
+
+    private static async Task<int> QueryDevelopmentAiReviewWorkspaceAsync(
+        CommandLine commandLine,
+        CancellationToken cancellationToken)
+    {
+        var workspace = await ReadRequiredJsonAsync<
+            WarehouseProposalReviewWorkspaceV1>(
+                commandLine.Required("--input"),
+                "The AI review workspace is empty.",
+                cancellationToken);
+        var key = await ReadDevelopmentCursorKeyAsync(commandLine, cancellationToken);
+        try
+        {
+            using var codec = new HmacDevelopmentCursorCodec(key);
+            var page = WarehouseProposalReviewWorkbench.Query(
+                workspace,
+                new WarehouseProposalReviewQueryV1(
+                    DevelopmentReviewFilter(commandLine),
+                    commandLine.Optional("--cursor"),
+                    commandLine.Integer(
+                        "--limit",
+                        WarehouseProposalReviewVersions.DefaultPageSize)),
+                codec);
+            var output = commandLine.Optional("--output");
+            if (output is not null)
+                await CadExperimentJson.WriteAsync(output, page, cancellationToken);
+            Console.WriteLine(JsonSerializer.Serialize(page, CadExperimentJson.Options));
+            return 0;
+        }
+        finally
+        {
+            CryptographicOperations.ZeroMemory(key);
+        }
+    }
+
+    private static async Task<int> PreviewDevelopmentAiReviewBatchAsync(
+        CommandLine commandLine,
+        CancellationToken cancellationToken)
+    {
+        var workspace = await ReadRequiredJsonAsync<
+            WarehouseProposalReviewWorkspaceV1>(
+                commandLine.Required("--input"),
+                "The AI review workspace is empty.",
+                cancellationToken);
+        var ids = commandLine.All("--review-id");
+        var preview = WarehouseProposalReviewWorkbench.PreviewBatchSelection(
+            workspace,
+            new WarehouseProposalBatchSelectionRequestV1(
+                Enum.TryParse<WarehouseProposalBatchAction>(
+                    commandLine.Required("--action"),
+                    ignoreCase: true,
+                    out var action)
+                    ? action
+                    : throw new ArgumentException(
+                        "Option '--action' must be Accept or Reject."),
+                workspace.ReviewEtag,
+                ids.Count > 0 ? ids : null,
+                ids.Count == 0 ? DevelopmentReviewFilter(commandLine) : null));
+        var output = commandLine.Optional("--output");
+        if (output is not null)
+            await CadExperimentJson.WriteAsync(output, preview, cancellationToken);
+        Console.WriteLine(JsonSerializer.Serialize(preview, CadExperimentJson.Options));
+        return 0;
+    }
+
+    private static WarehouseProposalReviewFilterV1 DevelopmentReviewFilter(
+        CommandLine commandLine) => new(
+        OptionalEnum<WarehouseFusionConfidenceBand>(commandLine, "--band"),
+        OptionalEnum<WarehouseSpaceType>(commandLine, "--object-type"),
+        OptionalEnum<WarehouseProposalReviewReadiness>(commandLine, "--readiness"),
+        OptionalEnum<WarehouseProposalDifferenceKind>(commandLine, "--difference"),
+        OptionalEnum<WarehouseProposalIssueSeverity>(commandLine, "--issue-severity"),
+        commandLine.Optional("--issue-code"),
+        OptionalEnum<WarehouseFusionSource>(commandLine, "--winning-source"),
+        commandLine.Optional("--evidence-code"),
+        commandLine.Optional("--source"),
+        commandLine.Optional("--search"),
+        commandLine.HasFlag("--locatable"));
+
+    private static async Task<byte[]> ReadDevelopmentCursorKeyAsync(
+        CommandLine commandLine,
+        CancellationToken cancellationToken)
+    {
+        var key = await File.ReadAllBytesAsync(
+            Path.GetFullPath(commandLine.Required("--cursor-key-file")),
+            cancellationToken);
+        if (key.Length is < 32 or > 128)
+        {
+            CryptographicOperations.ZeroMemory(key);
+            throw new ArgumentException(
+                "The development cursor key must contain 32 to 128 binary bytes.");
+        }
+        return key;
     }
 
     private static WarehouseGenerationProviderFailureKind ParseDevelopmentFailure(
@@ -1414,6 +1592,29 @@ public static class Program
                   [--locked-facts <json-path>]
                   [--template-defaults <json-path>]
                   [--rack-profiles <json-path>]
+              seal-dev-ai-review-baseline --input <baseline-draft-json-path>
+                  --output <sealed-baseline-json-path>
+              build-dev-ai-review-workspace --proposals <proposal-set-json-path>
+                  --baseline <sealed-baseline-json-path>
+                  --output <read-only-review-workspace-json-path>
+              query-dev-ai-review-workspace --input <review-workspace-json-path>
+                  --cursor-key-file <32-to-128-byte-binary-key-path>
+                  [--band <band>] [--object-type <type>]
+                  [--readiness <readiness>] [--difference <kind>]
+                  [--issue-severity <severity>] [--issue-code <code>]
+                  [--winning-source <source>] [--evidence-code <code>]
+                  [--source <source-ref>] [--search <text>] [--locatable]
+                  [--cursor <opaque-cursor>] [--limit <n>]
+                  [--output <json-path>]
+              preview-dev-ai-review-batch --input <review-workspace-json-path>
+                  --action <Accept|Reject>
+                  [--review-id <id>]...
+                  [--band <band>] [--object-type <type>]
+                  [--readiness <readiness>] [--difference <kind>]
+                  [--issue-severity <severity>] [--issue-code <code>]
+                  [--winning-source <source>] [--evidence-code <code>]
+                  [--source <source-ref>] [--search <text>] [--locatable]
+                  [--output <json-path>]
               query-dev-inventory --input <inventory-json-path>
                   --kind <layer|block|reference> [--search <text>]
                   [--visible <true|false>] [--entity-type <type>]
@@ -1471,6 +1672,97 @@ public static class Program
             Internal calibration adapter:
               inspect --input <dxf> --output <json> --candidate-version <version>
             """);
+    }
+
+    private sealed class HmacDevelopmentCursorCodec : ISpaceCursorCodec, IDisposable
+    {
+        private readonly byte[] _key;
+
+        public HmacDevelopmentCursorCodec(byte[] key)
+        {
+            ArgumentNullException.ThrowIfNull(key);
+            _key = key.ToArray();
+        }
+
+        public string Encode(SpaceCursorState state)
+        {
+            ArgumentNullException.ThrowIfNull(state);
+            var payload = JsonSerializer.SerializeToUtf8Bytes(
+                state,
+                CadExperimentJson.Options);
+            var signature = HMACSHA256.HashData(_key, payload);
+            try
+            {
+                return $"{Base64Url(payload)}.{Base64Url(signature)}";
+            }
+            finally
+            {
+                CryptographicOperations.ZeroMemory(payload);
+                CryptographicOperations.ZeroMemory(signature);
+            }
+        }
+
+        public SpaceCursorState Decode(
+            string cursor,
+            string expectedResource,
+            string expectedFilterHash)
+        {
+            try
+            {
+                var parts = cursor.Split('.');
+                if (parts.Length != 2)
+                    throw new InvalidDataException();
+                var payload = FromBase64Url(parts[0]);
+                var provided = FromBase64Url(parts[1]);
+                var expected = HMACSHA256.HashData(_key, payload);
+                try
+                {
+                    if (!CryptographicOperations.FixedTimeEquals(provided, expected))
+                        throw new InvalidDataException();
+                    var state = JsonSerializer.Deserialize<SpaceCursorState>(
+                                    payload,
+                                    CadExperimentJson.Options)
+                                ?? throw new InvalidDataException();
+                    if (!state.Resource.Equals(expectedResource, StringComparison.Ordinal)
+                        || !state.FilterHash.Equals(
+                            expectedFilterHash,
+                            StringComparison.Ordinal)
+                        || state.Offset < 0)
+                    {
+                        throw new InvalidDataException();
+                    }
+                    return state;
+                }
+                finally
+                {
+                    CryptographicOperations.ZeroMemory(payload);
+                    CryptographicOperations.ZeroMemory(provided);
+                    CryptographicOperations.ZeroMemory(expected);
+                }
+            }
+            catch (Exception exception) when (
+                exception is FormatException or JsonException)
+            {
+                throw new InvalidDataException(
+                    "The development AI review cursor is invalid.",
+                    exception);
+            }
+        }
+
+        public void Dispose() => CryptographicOperations.ZeroMemory(_key);
+
+        private static string Base64Url(byte[] value) =>
+            Convert.ToBase64String(value)
+                .TrimEnd('=')
+                .Replace('+', '-')
+                .Replace('/', '_');
+
+        private static byte[] FromBase64Url(string value)
+        {
+            var padded = value.Replace('-', '+').Replace('_', '/');
+            padded += new string('=', (4 - padded.Length % 4) % 4);
+            return Convert.FromBase64String(padded);
+        }
     }
 
     private sealed class DevelopmentFailureProvider(
