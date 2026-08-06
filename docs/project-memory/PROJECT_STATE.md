@@ -2,6 +2,16 @@
 
 最后更新：2026-08-05
 
+## E13-S08 AI 提案审核工作台开发切片（2026-08-05）
+
+- 在 E13-S07 集成基线 `d100a956` 上完成功能提交 `b1ab93f6`、证据提交 `5c2e0605`，并以 no-ff 提交 `fbf4596e` 集成到 `integration/space-v1-20260730`：新增只读完整 Draft 基线、审核工作区合同、确定性差异投影、受保护游标分页、批量选择资格预检、开发 CLI 和 Design V1 本地审核面板。
+- 工作区绑定 Tenant、ModelVersion、Floor、ProposalSet SHA、Baseline SHA、ContentRevision/Hash、ReviewEtag 和 Workspace SHA；反序列化会深验只读/未写入标记、规范排序、唯一身份、摘要、差异和哈希。默认页长 50、最大 200，工作区最多 100,000 项，批量选择最多 1,000 项；游标同时绑定工作区与筛选，陈旧 ETag、未知/重复 ID、空或超量筛选失败关闭。
+- 每项保留字段胜者/evidence、关系、问题、整数毫米几何和画布位置，并给出 Added/Modified/Unchanged、字段 Added/Removed/Changed、RackLevel/Location 容量 before/after。前端支持筛选、分页、详情、选择和画布定位；Model/Floor/Revision/Hash 过期时禁用定位与选择；没有 API mutation、Accept/Reject 写按钮或 Draft 写入口。
+- Accept 资格只允许 Ready + High + 提案允许批量接受且无 Blocking；Reject 也只生成资格预检。所有预检固定 `RequiresServerRevalidation=true`、`DecisionWritten=false`、`DraftWritten=false`。开发 CLI 使用 32～128 byte HMAC 游标 key 并清零；生产必须复用既有 Data Protection 租户/主体/授权/时效绑定。
+- Sample13 本轮生成 21 项（High 13 / Low 8、Ready 0 / NeedsReview 21 / Blocked 0），空楼层开发基线使 21 项诚实标为 Added；Workspace `2fc473e4...c5530efd`、58,645 bytes，重复生成字节一致。两页各 5 项且无交集；High+Rule+locatable 返回 13；Accept 预检 13 项全部因需要单项审核而不可用，Reject 预检 21/21 可选，两者均没有写入。空基线不冒充真实 Draft 对比，Modified/Unchanged 由单元测试覆盖。
+- 门禁：E13-S08 后端 4/4、Space Unit 401/401、CAD 工具 25/25、前端聚焦 4/4、前端全量 127 files / 689 tests、type-check 和 production build 通过；完整 solution Release 非增量单线程、禁用节点复用/共享编译构建 0 error / 10 条既有 warning，Desktop/Android AOT 强度不变；合并态后端 4/4、CAD 25/25、前端 4/4 和 type-check 复验通过。完整证据见 `docs/space/reports/e13-s08-proposal-review-workbench-development.md`。
+- 这是开发切片，不是正式生产签收：仍缺 Proposal/Review 持久化、Migration、租户授权/审计、公共 API/OpenAPI/SDK、权威 Draft 基线服务、真实项目性能/差异证据及 Worker/Run/Artifact 接线；E13-S05～S07 正式缺口不解除。下一张独立卡是 E13-S09：追加式单条/批量 Decision、rowversion/ReviewEtag 并发控制、服务端资格复验、补丁白名单和审核完成状态；仍不得提前 Apply，High 自动批量接受继续关闭。`main` 未由本任务修改。
+
 ## E13-S07 规则/AI 融合与确定性生成开发切片（2026-08-05）
 
 - 在 E13-S06 集成基线 `44c87a26` 上完成功能提交 `8be8b20f`、证据提交 `d81119f5`，并以 no-ff 提交 `7d5c8aa0` 集成到 `integration/space-v1-20260730`：新增 `IWarehouseDraftSynthesizer`、只读提案合同、确定性合成器和 RFC 4122 UUIDv5 身份生成器。
