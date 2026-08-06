@@ -9,15 +9,20 @@ import type {
   ISpaceAiProposalDto,
 } from '../../../../../sdk/typescript/space-design-v1/spaceDesignV1Client'
 
-const props = defineProps<{ runId: string }>()
+const props = defineProps<{
+  runId: string
+  currentContentRevision?: number
+}>()
 const emit = defineEmits<{
   close: []
   completed: []
   applied: [run: ISpaceAiGenerationRunDto]
+  recovered: [runId: string]
 }>()
 
 const loading = ref(false)
 const applyBusy = ref(false)
+const recoveryBusy = ref('')
 const busyProposalId = ref('')
 const review = ref<ISpaceAiGenerationReviewDto | null>(null)
 const generationRun = ref<ISpaceAiGenerationRunDto | null>(null)
@@ -56,16 +61,34 @@ const applyStatusType = computed(() => {
   }
   return 'warning'
 })
+const canCancel = computed(() => [
+  'Queued', 'Preparing', 'Inferring', 'Validating', 'Applying',
+].includes(generationRun.value?.status ?? ''))
+const canDiscard = computed(() => [
+  'AwaitingReview', 'Failed', 'Stale',
+].includes(generationRun.value?.status ?? ''))
+const canRetry = computed(() => Boolean(
+  generationRun.value?.status === 'Failed' && generationRun.value.retryable,
+))
+const canReconcile = computed(() =>
+  generationRun.value?.recoveryAction === 'reconcile-apply-result')
+const canRecover = computed(() => Boolean(
+  ['Failed', 'Stale'].includes(generationRun.value?.status ?? '') &&
+  generationRun.value?.modelVersionId &&
+  Number.isInteger(props.currentContentRevision),
+))
 
 let applyPollTimer: ReturnType<typeof setTimeout> | undefined
 let applyTerminalNotified = false
 let applyIdempotencyKey = ''
+const recoveryIdempotencyKeys: Record<string, string> = {}
 
 watch([status, confidenceBand, proposalType], () => void load())
 watch(() => props.runId, () => {
   stopApplyPolling()
   applyTerminalNotified = false
   applyIdempotencyKey = ''
+  Object.keys(recoveryIdempotencyKeys).forEach(key => delete recoveryIdempotencyKeys[key])
   void load()
 })
 onMounted(() => void load())
@@ -139,6 +162,87 @@ async function applyAcceptedProposals(): Promise<void> {
     }
   } finally {
     applyBusy.value = false
+  }
+}
+
+async function runAction(
+  action: 'cancel' | 'retry' | 'discard' | 'reconcile',
+): Promise<void> {
+  const run = generationRun.value
+  if (!run?.rowVersion) return
+  const copy = {
+    cancel: ['确认取消当前生成任务？运行中的步骤会在安全点停止，原子提交不会留下部分 Draft。', '取消生成任务'],
+    retry: ['确认使用相同冻结输入安全重试？已验证的检查点会复用。', '重试生成任务'],
+    discard: ['确认废弃当前 Run？旧 Decision 与审计会保留，未应用提案将变为 Obsolete。', '废弃生成任务'],
+    reconcile: ['确认使用权威 CommandBatch 对账 Apply 结果？不会猜测提交成功。', '对账 Apply 结果'],
+  } as const
+  await ElMessageBox.confirm(copy[action][0], copy[action][1], {
+    type: 'warning',
+    confirmButtonText: '确认',
+    cancelButtonText: '返回',
+  })
+  recoveryBusy.value = action
+  recoveryIdempotencyKeys[action] ||= crypto.randomUUID()
+  try {
+    const response = await aiProposalReviewApi[action](
+      props.runId,
+      { expectedRunRowVersion: run.rowVersion },
+      recoveryIdempotencyKeys[action],
+    )
+    ElMessage.success({
+      cancel: response.cancellationPending ? '取消请求已记录，正在等待安全点' : '生成任务已取消',
+      retry: '安全重试已排队',
+      discard: '生成任务已废弃，历史审计已保留',
+      reconcile: response.status === 'Succeeded' ? 'Apply 已确认提交' : 'Apply 对账已完成',
+    }[action])
+    if (action === 'discard') emit('close')
+    else await load()
+  } catch (error) {
+    if (isAxiosError(error) && error.response && [409, 422].includes(error.response.status)) {
+      delete recoveryIdempotencyKeys[action]
+      await load(true)
+    }
+  } finally {
+    recoveryBusy.value = ''
+  }
+}
+
+async function recoverRun(mode: 'SamePolicy' | 'RuleOnly'): Promise<void> {
+  const run = generationRun.value
+  if (!canRecover.value || !run?.modelVersionId || !run.rowVersion ||
+    !Number.isInteger(props.currentContentRevision)) return
+  await ElMessageBox.confirm(
+    mode === 'RuleOnly'
+      ? '确认基于最新 Draft 创建规则降级 Run？不会调用 Provider，旧提案和 Decision 历史会保留。'
+      : '确认基于最新 Draft 重建 Run？Stale Run 不会被原地 rebase。',
+    mode === 'RuleOnly' ? '规则降级重建' : '基于最新 Draft 重建',
+    { type: 'warning', confirmButtonText: '创建新 Run', cancelButtonText: '返回' },
+  )
+  const action = `recover-${mode}`
+  recoveryBusy.value = action
+  recoveryIdempotencyKeys[action] ||= crypto.randomUUID()
+  try {
+    const response = await aiProposalReviewApi.recover(
+      run.modelVersionId,
+      {
+        basedOnRunId: props.runId,
+        expectedContentRevision: props.currentContentRevision!,
+        expectedBasedOnRunRowVersion: run.rowVersion,
+        mode,
+      },
+      recoveryIdempotencyKeys[action],
+    )
+    if (response.replacementRunId) {
+      ElMessage.success('新的恢复 Run 已排队；完成后需要重新审查差异')
+      emit('recovered', response.replacementRunId)
+    }
+  } catch (error) {
+    if (isAxiosError(error) && error.response && [409, 422].includes(error.response.status)) {
+      delete recoveryIdempotencyKeys[action]
+      await load(true)
+    }
+  } finally {
+    recoveryBusy.value = ''
   }
 }
 
@@ -383,8 +487,62 @@ function readPath(item: ISpaceAiProposalDto, path: string): string {
       >
         应用已审查提案
       </el-button>
+      <div class="recovery-actions">
+        <el-button
+          v-if="canCancel"
+          v-permission="'space:model:generate-ai'"
+          size="small"
+          :loading="recoveryBusy === 'cancel'"
+          @click="runAction('cancel')"
+        >取消</el-button>
+        <el-button
+          v-if="canRetry"
+          v-permission="'space:model:generate-ai'"
+          size="small"
+          type="primary"
+          plain
+          :loading="recoveryBusy === 'retry'"
+          @click="runAction('retry')"
+        >安全重试</el-button>
+        <el-button
+          v-if="canReconcile"
+          v-permission="'space:model:edit'"
+          size="small"
+          :loading="recoveryBusy === 'reconcile'"
+          @click="runAction('reconcile')"
+        >对账结果</el-button>
+        <el-button
+          v-if="canRecover && (generationRun?.status === 'Stale' ||
+            (generationRun?.status === 'Failed' && !generationRun?.retryable &&
+              generationRun?.recoveryAction !== 'use-rule-only-or-retry-later'))"
+          v-permission="'space:model:generate-ai'"
+          size="small"
+          :loading="recoveryBusy === 'recover-SamePolicy'"
+          @click="recoverRun('SamePolicy')"
+        >重建最新 Draft</el-button>
+        <el-button
+          v-if="canRecover && generationRun?.status === 'Failed' &&
+            generationRun?.recoveryAction === 'use-rule-only-or-retry-later'"
+          v-permission="'space:model:generate-ai'"
+          size="small"
+          :loading="recoveryBusy === 'recover-RuleOnly'"
+          @click="recoverRun('RuleOnly')"
+        >规则降级重建</el-button>
+        <el-button
+          v-if="canDiscard"
+          v-permission="'space:model:generate-ai'"
+          size="small"
+          type="danger"
+          plain
+          :loading="recoveryBusy === 'discard'"
+          @click="runAction('discard')"
+        >废弃</el-button>
+      </div>
       <small v-if="generationRun?.failureCode" class="apply-failure">
         {{ generationRun.failureCode }} · {{ generationRun.failureSummary }}
+      </small>
+      <small v-if="generationRun?.degradedReason" class="apply-degraded">
+        降级：{{ generationRun.degradedReason }}
       </small>
     </section>
 
@@ -534,6 +692,8 @@ header p, small { margin: 4px 0 0; color: #667085; font-size: 12px; overflow-wra
 .apply-card { display: flex; flex-wrap: wrap; align-items: center; justify-content: space-between; gap: 8px; margin: 12px 0; padding: 10px; border: 1px solid #c4b5fd; border-radius: 7px; background: #f5f3ff; }
 .apply-card p { margin: 3px 0 0; color: #667085; font-size: 12px; }
 .apply-failure { flex-basis: 100%; color: #b42318; }
+.apply-degraded { flex-basis: 100%; color: #92400e; }
+.recovery-actions { display: flex; flex-wrap: wrap; justify-content: flex-end; gap: 6px; }
 .filters { display: grid; grid-template-columns: 1fr 1fr; margin-bottom: 10px; }
 .proposal-list { display: grid; gap: 8px; }
 .proposal { display: grid; grid-template-columns: auto 1fr; gap: 8px; padding: 10px; border: 1px solid #e2e8f0; border-radius: 7px; background: #f8fafc; }

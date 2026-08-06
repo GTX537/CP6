@@ -243,6 +243,53 @@ public sealed class SpaceJobLedgerTests
     }
 
     [Fact]
+    public void Same_input_manual_retry_reuses_job_and_extends_exhausted_attempt_cap()
+    {
+        var job = NewJob(maxAttempts: 1);
+        var first = job.Claim(
+            "worker-a",
+            "parser-v1",
+            Now,
+            TimeSpan.FromMinutes(1));
+        job.Fail(
+            first.Id,
+            "worker-a",
+            SpaceJobFailureKind.Transient,
+            "PROVIDER_TIMEOUT",
+            "The provider timed out.",
+            SpaceJobRetryPolicy.DecideAutomatic(
+                SpaceJobFailureKind.Transient,
+                1,
+                1,
+                Now.AddSeconds(1)),
+            Now.AddSeconds(1));
+        var jobId = job.Id;
+
+        job.RequeueSameInput(Now.AddMinutes(1));
+        var second = job.Claim(
+            "worker-b",
+            "parser-v1",
+            Now.AddMinutes(1),
+            TimeSpan.FromMinutes(1));
+
+        Assert.Equal(jobId, job.Id);
+        Assert.Equal(2, job.MaxAttempts);
+        Assert.Equal(2, second.AttemptNo);
+        Assert.Equal("ManualRetryScheduled", job.ProgressStage);
+    }
+
+    [Fact]
+    public void Same_input_manual_retry_rejects_input_and_security_failures()
+    {
+        Assert.Throws<SpaceJobNotRetryableException>(() =>
+            FailTerminal(SpaceJobFailureKind.Input)
+                .RequeueSameInput(Now.AddMinutes(1)));
+        Assert.Throws<SpaceJobNotRetryableException>(() =>
+            FailTerminal(SpaceJobFailureKind.Security)
+                .RequeueSameInput(Now.AddMinutes(1)));
+    }
+
+    [Fact]
     public void Warning_acknowledgement_records_actor_and_reason_but_blocking_fails_closed()
     {
         var warning = SpaceModelIssue.Create(

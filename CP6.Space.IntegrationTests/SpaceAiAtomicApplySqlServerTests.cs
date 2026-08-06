@@ -237,6 +237,343 @@ public sealed class SpaceAiAtomicApplySqlServerTests
     }
 
     [SqlServerFact]
+    public async Task Queued_apply_cancels_idempotently_without_draft_writes()
+    {
+        await WithDatabaseAsync(async (context, execution, clock) =>
+        {
+            var graph = await SeedReviewedZoneAsync(context, execution);
+            var queued = await QueueAsync(context, execution, clock, graph);
+            context.ChangeTracker.Clear();
+            var run = await context.GenerationRuns.SingleAsync(
+                item => item.Id == graph.RunId);
+            var request = new SpaceAiRunActionRequest(
+                Convert.ToBase64String(run.RowVersion));
+            var service = RecoveryService(context, execution, clock);
+
+            var cancelled = await service.CancelAsync(
+                run.Id,
+                request,
+                "cancel-queued-apply");
+            var replay = await service.CancelAsync(
+                run.Id,
+                request,
+                "cancel-queued-apply");
+
+            Assert.Equal("Cancelled", cancelled.Status);
+            Assert.False(cancelled.IdempotentReplay);
+            Assert.True(replay.IdempotentReplay);
+            context.ChangeTracker.Clear();
+            Assert.Equal(
+                SpaceGenerationRunStatus.Cancelled,
+                (await context.GenerationRuns.SingleAsync()).Status);
+            Assert.Equal(
+                SpaceJobStatus.Cancelled,
+                (await context.Jobs.SingleAsync(
+                    item => item.Id == queued.JobId)).Status);
+            Assert.Equal(
+                SpaceGenerationProposalStatus.Obsolete,
+                (await context.GenerationProposals.SingleAsync()).Status);
+            Assert.Equal(0, (await context.Versions.SingleAsync()).ContentRevision);
+            Assert.Empty(await context.ElementCommandBatches.ToArrayAsync());
+            Assert.Null((await context.Models.SingleAsync())
+                .CurrentPublishedVersionId);
+        });
+    }
+
+    [SqlServerFact]
+    public async Task Concurrent_cancel_same_key_replays_after_row_version_changes()
+    {
+        await WithDatabaseAsync(async (context, execution, clock) =>
+        {
+            var graph = await SeedReviewedZoneAsync(context, execution);
+            _ = await QueueAsync(context, execution, clock, graph);
+            context.ChangeTracker.Clear();
+            var run = await context.GenerationRuns.SingleAsync(
+                item => item.Id == graph.RunId);
+            var request = new SpaceAiRunActionRequest(
+                Convert.ToBase64String(run.RowVersion));
+            var connectionString = context.Database.GetConnectionString()!;
+            await using var firstContext = CreateContext(
+                connectionString,
+                execution,
+                clock);
+            await using var secondContext = CreateContext(
+                connectionString,
+                execution,
+                clock);
+            var gate = new TaskCompletionSource(
+                TaskCreationOptions.RunContinuationsAsynchronously);
+
+            async Task<SpaceAiGenerationRunActionDto> CancelAsync(
+                SpaceContext serviceContext)
+            {
+                await gate.Task;
+                return await RecoveryService(
+                    serviceContext,
+                    execution,
+                    clock).CancelAsync(
+                        graph.RunId,
+                        request,
+                        "concurrent-cancel-apply");
+            }
+
+            var first = CancelAsync(firstContext);
+            var second = CancelAsync(secondContext);
+            gate.SetResult();
+            var responses = await Task.WhenAll(first, second);
+
+            Assert.Single(responses, response => !response.IdempotentReplay);
+            Assert.Single(responses, response => response.IdempotentReplay);
+            Assert.All(responses, response =>
+                Assert.Equal("Cancelled", response.Status));
+            context.ChangeTracker.Clear();
+            Assert.Single(await context.IdempotencyRecords.Where(item =>
+                item.Operation ==
+                    "space.ai-generation-run.cancel").ToArrayAsync());
+            Assert.Equal(
+                SpaceGenerationRunStatus.Cancelled,
+                (await context.GenerationRuns.SingleAsync()).Status);
+        });
+    }
+
+    [SqlServerFact]
+    public async Task Running_apply_acknowledges_cancel_at_worker_safe_point()
+    {
+        await WithDatabaseAsync(async (context, execution, clock) =>
+        {
+            var graph = await SeedReviewedZoneAsync(context, execution);
+            await QueueAsync(context, execution, clock, graph);
+            var store = new EfSpaceJobLeaseStore(context, clock);
+            var lease = Assert.IsType<SpaceJobLease>(
+                await store.TryClaimNextAsync(
+                    "cancel-worker",
+                    SpaceGenerationApplyJobProcessor.Version,
+                    TimeSpan.FromMinutes(1),
+                    [SpaceJobType.ApplyGeneration]));
+            context.ChangeTracker.Clear();
+            var run = await context.GenerationRuns.SingleAsync(
+                item => item.Id == graph.RunId);
+
+            var response = await RecoveryService(context, execution, clock)
+                .CancelAsync(
+                    run.Id,
+                    new SpaceAiRunActionRequest(
+                        Convert.ToBase64String(run.RowVersion)),
+                    "cancel-running-apply");
+
+            Assert.True(response.CancellationPending);
+            await Runner(
+                    context,
+                    execution,
+                    clock,
+                    new NoOpSpaceAiApplyFaultInjector())
+                .RunClaimedAsync(lease);
+            context.ChangeTracker.Clear();
+            Assert.Equal(
+                SpaceGenerationRunStatus.Cancelled,
+                (await context.GenerationRuns.SingleAsync()).Status);
+            Assert.Equal(
+                SpaceJobStatus.Cancelled,
+                (await context.Jobs.SingleAsync(
+                    item => item.Id == lease.JobId)).Status);
+            Assert.Empty(await context.GenerationStagingElements.ToArrayAsync());
+            Assert.Empty(await context.ElementCommandBatches.ToArrayAsync());
+        });
+    }
+
+    [SqlServerFact]
+    public async Task Resource_failure_retries_same_apply_job_and_frozen_run()
+    {
+        await WithDatabaseAsync(async (context, execution, clock) =>
+        {
+            var graph = await SeedReviewedZoneAsync(context, execution);
+            var queued = await QueueAsync(context, execution, clock, graph);
+            var store = new EfSpaceJobLeaseStore(context, clock);
+            var lease = Assert.IsType<SpaceJobLease>(
+                await store.TryClaimNextAsync(
+                    "failure-worker",
+                    SpaceGenerationApplyJobProcessor.Version,
+                    TimeSpan.FromMinutes(1),
+                    [SpaceJobType.ApplyGeneration]));
+            await store.FailJobAsync(
+                lease,
+                SpaceJobFailureKind.Resource,
+                SpaceErrorCodes.AiProviderUnavailable,
+                "The configured Apply resource is temporarily unavailable.");
+            context.ChangeTracker.Clear();
+            var failed = await context.GenerationRuns.SingleAsync(
+                item => item.Id == graph.RunId);
+            Assert.Equal(SpaceGenerationRunStatus.Failed, failed.Status);
+
+            var response = await RecoveryService(context, execution, clock)
+                .RetryAsync(
+                    failed.Id,
+                    new SpaceAiRunActionRequest(
+                        Convert.ToBase64String(failed.RowVersion)),
+                    "retry-resource-apply");
+
+            Assert.Equal(queued.JobId, response.JobId);
+            context.ChangeTracker.Clear();
+            var retriedRun = await context.GenerationRuns.SingleAsync();
+            var retriedJob = await context.Jobs.SingleAsync(
+                item => item.Id == queued.JobId);
+            Assert.Equal(SpaceGenerationRunStatus.Applying, retriedRun.Status);
+            Assert.Equal(SpaceJobStatus.Queued, retriedJob.Status);
+            Assert.Equal("ManualRetryScheduled", retriedJob.ProgressStage);
+            Assert.Equal(1, retriedJob.AttemptCount);
+        });
+    }
+
+    [SqlServerFact]
+    public async Task Failed_recovery_retires_current_run_before_replacement()
+    {
+        await WithDatabaseAsync(async (context, execution, clock) =>
+        {
+            var graph = await SeedReviewedZoneAsync(context, execution);
+            _ = await QueueAsync(context, execution, clock, graph);
+            var store = new EfSpaceJobLeaseStore(context, clock);
+            var lease = Assert.IsType<SpaceJobLease>(
+                await store.TryClaimNextAsync(
+                    "failed-recovery-worker",
+                    SpaceGenerationApplyJobProcessor.Version,
+                    TimeSpan.FromMinutes(1),
+                    [SpaceJobType.ApplyGeneration]));
+            await store.FailJobAsync(
+                lease,
+                SpaceJobFailureKind.Resource,
+                SpaceErrorCodes.AiProviderUnavailable,
+                "The configured Apply resource is temporarily unavailable.");
+            context.ChangeTracker.Clear();
+            var failed = await context.GenerationRuns.SingleAsync(
+                item => item.Id == graph.RunId);
+            Assert.True(failed.IsCurrent);
+
+            var response = await RecoveryService(context, execution, clock)
+                .RecoverAsync(
+                    graph.VersionId,
+                    new CreateSpaceAiGenerationRecoveryRequest(
+                        failed.Id,
+                        0,
+                        Convert.ToBase64String(failed.RowVersion),
+                        SpaceAiRunRecoveryContract.SamePolicyMode),
+                    "recover-failed-same-policy");
+
+            context.ChangeTracker.Clear();
+            var source = await context.GenerationRuns.SingleAsync(
+                item => item.Id == failed.Id);
+            var replacement = await context.GenerationRuns.SingleAsync(
+                item => item.Id == response.ReplacementRunId);
+            Assert.Equal(SpaceGenerationRunStatus.Cancelled, source.Status);
+            Assert.False(source.IsCurrent);
+            Assert.Equal(SpaceGenerationRunStatus.Queued, replacement.Status);
+            Assert.True(replacement.IsCurrent);
+            Assert.Equal(source.PolicySnapshot, replacement.PolicySnapshot);
+            Assert.Equal(
+                source.ProviderConfigVersionId,
+                replacement.ProviderConfigVersionId);
+            Assert.Equal(
+                SpaceGenerationProposalStatus.Obsolete,
+                (await context.GenerationProposals.SingleAsync()).Status);
+        });
+    }
+
+    [SqlServerFact]
+    public async Task Reconcile_repairs_run_from_authoritative_committed_batch()
+    {
+        await WithDatabaseAsync(async (context, execution, clock) =>
+        {
+            var graph = await SeedReviewedZoneAsync(context, execution);
+            _ = await QueueAsync(context, execution, clock, graph);
+            Assert.True(await Runner(
+                context,
+                execution,
+                clock,
+                new NoOpSpaceAiApplyFaultInjector()).RunNextAsync(
+                    SpaceJobType.ApplyGeneration,
+                    "reconcile-worker"));
+            context.ChangeTracker.Clear();
+            var committed = await context.GenerationRuns.SingleAsync(
+                item => item.Id == graph.RunId);
+            Assert.Equal(SpaceGenerationRunStatus.Succeeded, committed.Status);
+            Assert.Equal(1, committed.AppliedContentRevision);
+
+            const string failureCode =
+                SpaceErrorCodes.AiApplyResultUnknown;
+            const string failureSummary =
+                "Simulated post-commit status uncertainty.";
+            var failedStatus = (short)SpaceGenerationRunStatus.Failed;
+            _ = await context.Database.ExecuteSqlInterpolatedAsync(
+                $"UPDATE [Space_GenerationRun] SET [Status] = {failedStatus}, [FailureCode] = {failureCode}, [FailureSummary] = {failureSummary} WHERE [Id] = {graph.RunId}");
+            context.ChangeTracker.Clear();
+            var uncertain = await context.GenerationRuns.SingleAsync(
+                item => item.Id == graph.RunId);
+
+            var response = await RecoveryService(context, execution, clock)
+                .ReconcileAsync(
+                    uncertain.Id,
+                    new SpaceAiRunActionRequest(
+                        Convert.ToBase64String(uncertain.RowVersion)),
+                    "reconcile-committed-apply");
+
+            Assert.Equal("Succeeded", response.Status);
+            context.ChangeTracker.Clear();
+            var reconciled = await context.GenerationRuns.SingleAsync(
+                item => item.Id == graph.RunId);
+            Assert.Equal(SpaceGenerationRunStatus.Succeeded, reconciled.Status);
+            Assert.Equal(1, reconciled.AppliedContentRevision);
+            Assert.Null(reconciled.FailureCode);
+            Assert.Single(await context.ElementCommandBatches.ToArrayAsync());
+            Assert.Equal(
+                1,
+                (await context.Versions.SingleAsync(
+                    item => item.Id == graph.VersionId)).ContentRevision);
+        });
+    }
+
+    [SqlServerFact]
+    public async Task Stale_recovery_creates_new_run_and_obsoletes_old_proposals()
+    {
+        await WithDatabaseAsync(async (context, execution, clock) =>
+        {
+            var graph = await SeedReviewedZoneAsync(context, execution);
+            var stale = await context.GenerationRuns.SingleAsync(
+                item => item.Id == graph.RunId);
+            stale.MarkStale();
+            await context.SaveChangesAsync();
+            context.ChangeTracker.Clear();
+            stale = await context.GenerationRuns.SingleAsync(
+                item => item.Id == graph.RunId);
+
+            var response = await RecoveryService(context, execution, clock)
+                .RecoverAsync(
+                    graph.VersionId,
+                    new CreateSpaceAiGenerationRecoveryRequest(
+                        stale.Id,
+                        0,
+                        Convert.ToBase64String(stale.RowVersion),
+                        SpaceAiRunRecoveryContract.RuleOnlyMode),
+                    "recover-stale-rule-only");
+
+            Assert.NotNull(response.ReplacementRunId);
+            context.ChangeTracker.Clear();
+            var replacement = await context.GenerationRuns.SingleAsync(
+                item => item.Id == response.ReplacementRunId);
+            Assert.Equal(stale.Id, replacement.BasedOnRunId);
+            Assert.Equal(SpaceGenerationRunStatus.Queued, replacement.Status);
+            Assert.Equal(SpaceAiPolicySnapshot.Disabled, replacement.PolicySnapshot);
+            Assert.Null(replacement.ProviderConfigVersionId);
+            Assert.Equal(
+                SpaceGenerationProposalStatus.Obsolete,
+                (await context.GenerationProposals.SingleAsync()).Status);
+            Assert.Equal(
+                SpaceJobType.BuildScene,
+                (await context.Jobs.SingleAsync(
+                    item => item.Id == replacement.JobId)).JobType);
+            Assert.Empty(await context.ElementCommandBatches.ToArrayAsync());
+        });
+    }
+
+    [SqlServerFact]
     public async Task Apply_materializes_hierarchy_rack_derivation_and_element()
     {
         await WithDatabaseAsync(async (context, execution, clock) =>
@@ -810,6 +1147,20 @@ public sealed class SpaceAiAtomicApplySqlServerTests
                         clock,
                         faultInjector)),
             ]);
+
+    private static SpaceAiRunRecoveryService RecoveryService(
+        SpaceContext context,
+        TestExecutionContext execution,
+        MutableClock clock)
+    {
+        var access = new AllowAccess();
+        return new SpaceAiRunRecoveryService(
+            context,
+            execution,
+            access,
+            clock,
+            new SpaceAiLockedFactService(context, execution, access));
+    }
 
     private static async Task WithDatabaseAsync(
         Func<SpaceContext, TestExecutionContext, MutableClock, Task> action)

@@ -17,6 +17,11 @@ vi.mock('@/api/space/aiProposalReview', () => ({
     decide: vi.fn(),
     decideBatch: vi.fn(),
     apply: vi.fn(),
+    cancel: vi.fn(),
+    retry: vi.fn(),
+    discard: vi.fn(),
+    reconcile: vi.fn(),
+    recover: vi.fn(),
   },
 }))
 
@@ -64,6 +69,10 @@ describe('DesignAiProposalDecisionPanel atomic apply', () => {
         status: 'AwaitingReview',
         progress: 90,
         baseContentRevision: 42,
+        cancellationPending: false,
+        retryable: false,
+        recoveryAction: 'complete-review-or-discard',
+        applyCommitState: 'NotStarted',
         rowVersion: 'run-row-version',
       })
       .mockResolvedValueOnce({
@@ -76,6 +85,10 @@ describe('DesignAiProposalDecisionPanel atomic apply', () => {
         baseContentRevision: 42,
         appliedContentRevision: 43,
         applyJobStatus: 'Succeeded',
+        cancellationPending: false,
+        retryable: false,
+        recoveryAction: 'open-updated-draft',
+        applyCommitState: 'Committed',
         rowVersion: 'applied-row-version',
       })
     vi.mocked(aiProposalReviewApi.apply).mockResolvedValue({

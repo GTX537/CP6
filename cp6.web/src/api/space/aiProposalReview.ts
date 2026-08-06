@@ -1,14 +1,17 @@
 import http from '../http'
 import type {
+  ICreateSpaceAiGenerationRecoveryRequest,
   ICreateSpaceAiProposalBatchDecisionRequest,
   ICreateSpaceAiProposalDecisionRequest,
   ICreateSpaceAiAtomicApplyRequest,
   ISpaceAiAtomicApplyAcceptedDto,
   ISpaceAiGenerationReviewDto,
   ISpaceAiGenerationRunDto,
+  ISpaceAiGenerationRunActionDto,
   ISpaceAiProposalDecisionResponse,
   ISpaceAiProposalIssuePageDto,
   ISpaceAiProposalPageDto,
+  ISpaceAiRunActionRequest,
 } from '../../../../sdk/typescript/space-design-v1/spaceDesignV1Client'
 
 const root = '/space/design/v1/generation-runs'
@@ -80,6 +83,66 @@ export const aiProposalReviewApi = {
   ) {
     return http.post<unknown, ISpaceAiAtomicApplyAcceptedDto>(
       `${root}/${runId}/apply`,
+      request,
+      { headers: { 'Idempotency-Key': idempotencyKey } },
+    )
+  },
+
+  cancel(
+    runId: string,
+    request: ISpaceAiRunActionRequest,
+    idempotencyKey: string = crypto.randomUUID(),
+  ) {
+    return http.post<unknown, ISpaceAiGenerationRunActionDto>(
+      `${root}/${runId}/cancel`,
+      request,
+      { headers: { 'Idempotency-Key': idempotencyKey } },
+    )
+  },
+
+  retry(
+    runId: string,
+    request: ISpaceAiRunActionRequest,
+    idempotencyKey: string = crypto.randomUUID(),
+  ) {
+    return http.post<unknown, ISpaceAiGenerationRunActionDto>(
+      `${root}/${runId}/retry`,
+      request,
+      { headers: { 'Idempotency-Key': idempotencyKey } },
+    )
+  },
+
+  discard(
+    runId: string,
+    request: ISpaceAiRunActionRequest,
+    idempotencyKey: string = crypto.randomUUID(),
+  ) {
+    return http.post<unknown, ISpaceAiGenerationRunActionDto>(
+      `${root}/${runId}/discard`,
+      request,
+      { headers: { 'Idempotency-Key': idempotencyKey } },
+    )
+  },
+
+  reconcile(
+    runId: string,
+    request: ISpaceAiRunActionRequest,
+    idempotencyKey: string = crypto.randomUUID(),
+  ) {
+    return http.post<unknown, ISpaceAiGenerationRunActionDto>(
+      `${root}/${runId}/reconcile`,
+      request,
+      { headers: { 'Idempotency-Key': idempotencyKey } },
+    )
+  },
+
+  recover(
+    versionId: string,
+    request: ICreateSpaceAiGenerationRecoveryRequest,
+    idempotencyKey: string = crypto.randomUUID(),
+  ) {
+    return http.post<unknown, ISpaceAiGenerationRunActionDto>(
+      `/space/design/v1/versions/${versionId}/generation-runs`,
       request,
       { headers: { 'Idempotency-Key': idempotencyKey } },
     )

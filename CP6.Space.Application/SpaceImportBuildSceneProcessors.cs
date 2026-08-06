@@ -440,6 +440,18 @@ public sealed class SpaceJobProcessorRunner : ISpaceJobProcessorRunner
                     executionToken);
             }
 
+            lease = await _store.RenewAsync(
+                lease,
+                _options.LeaseDuration,
+                executionToken);
+            if (lease.CancellationRequested)
+            {
+                await _store.AcknowledgeCancellationAsync(
+                    lease,
+                    CancellationToken.None);
+                return;
+            }
+
             var summary = JsonSerializer.Serialize(
                 new
                 {

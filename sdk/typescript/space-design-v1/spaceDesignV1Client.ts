@@ -43,6 +43,36 @@ export interface ISpaceDesignV1Client {
     applyGenerationProposals(runId: string, idempotency_Key: string, body: CreateSpaceAiAtomicApplyRequest): Promise<SpaceAiAtomicApplyAcceptedDto>;
 
     /**
+     * @param idempotency_Key Opaque caller key; 1-128 UTF-8 bytes. Reuse with a different request returns SPACE_IDEMPOTENCY_KEY_REUSED.
+     * @return OK
+     */
+    cancelGenerationRun(runId: string, idempotency_Key: string, body: SpaceAiRunActionRequest): Promise<SpaceAiGenerationRunActionDto>;
+
+    /**
+     * @param idempotency_Key Opaque caller key; 1-128 UTF-8 bytes. Reuse with a different request returns SPACE_IDEMPOTENCY_KEY_REUSED.
+     * @return Accepted
+     */
+    retryGenerationRun(runId: string, idempotency_Key: string, body: SpaceAiRunActionRequest): Promise<SpaceAiGenerationRunActionDto>;
+
+    /**
+     * @param idempotency_Key Opaque caller key; 1-128 UTF-8 bytes. Reuse with a different request returns SPACE_IDEMPOTENCY_KEY_REUSED.
+     * @return OK
+     */
+    discardGenerationRun(runId: string, idempotency_Key: string, body: SpaceAiRunActionRequest): Promise<SpaceAiGenerationRunActionDto>;
+
+    /**
+     * @param idempotency_Key Opaque caller key; 1-128 UTF-8 bytes. Reuse with a different request returns SPACE_IDEMPOTENCY_KEY_REUSED.
+     * @return OK
+     */
+    reconcileGenerationRun(runId: string, idempotency_Key: string, body: SpaceAiRunActionRequest): Promise<SpaceAiGenerationRunActionDto>;
+
+    /**
+     * @param idempotency_Key Opaque caller key; 1-128 UTF-8 bytes. Reuse with a different request returns SPACE_IDEMPOTENCY_KEY_REUSED.
+     * @return Accepted
+     */
+    recoverGenerationRun(versionId: string, idempotency_Key: string, body: CreateSpaceAiGenerationRecoveryRequest): Promise<SpaceAiGenerationRunActionDto>;
+
+    /**
      * @return OK
      */
     getProposalReview(runId: string): Promise<SpaceAiGenerationReviewDto>;
@@ -1048,6 +1078,481 @@ export class SpaceDesignV1Client implements ISpaceDesignV1Client {
             });
         }
         return Promise.resolve<SpaceAiAtomicApplyAcceptedDto>(null as any);
+    }
+
+    /**
+     * @param idempotency_Key Opaque caller key; 1-128 UTF-8 bytes. Reuse with a different request returns SPACE_IDEMPOTENCY_KEY_REUSED.
+     * @return OK
+     */
+    cancelGenerationRun(runId: string, idempotency_Key: string, body: SpaceAiRunActionRequest): Promise<SpaceAiGenerationRunActionDto> {
+        let url_ = this.baseUrl + "/api/space/design/v1/generation-runs/{runId}/cancel";
+        if (runId === undefined || runId === null)
+            throw new globalThis.Error("The parameter 'runId' must be defined.");
+        url_ = url_.replace("{runId}", encodeURIComponent("" + runId));
+        url_ = url_.replace(/[?&]$/, "");
+
+        const content_ = JSON.stringify(body);
+
+        let options_: RequestInit = {
+            body: content_,
+            method: "POST",
+            headers: {
+                "Idempotency-Key": idempotency_Key !== undefined && idempotency_Key !== null ? "" + idempotency_Key : "",
+                "Content-Type": "application/json",
+                "Accept": "application/json"
+            }
+        };
+
+        return this.http.fetch(url_, options_).then((_response: Response) => {
+            return this.processCancelGenerationRun(_response);
+        });
+    }
+
+    protected processCancelGenerationRun(response: Response): Promise<SpaceAiGenerationRunActionDto> {
+        const status = response.status;
+        let _headers: any = {}; if (response.headers && response.headers.forEach) { response.headers.forEach((v: any, k: any) => _headers[k] = v); };
+        if (status === 200) {
+            return response.text().then((_responseText) => {
+            let result200: any = null;
+            let resultData200 = _responseText === "" ? null : JSON.parse(_responseText, this.jsonParseReviver);
+            result200 = SpaceAiGenerationRunActionDto.fromJS(resultData200);
+            return result200;
+            });
+        } else if (status === 400) {
+            return response.text().then((_responseText) => {
+            let result400: any = null;
+            let resultData400 = _responseText === "" ? null : JSON.parse(_responseText, this.jsonParseReviver);
+            result400 = SpaceDesignProblemDetails.fromJS(resultData400);
+            return throwException("Bad Request", status, _responseText, _headers, result400);
+            });
+        } else if (status === 401) {
+            return response.text().then((_responseText) => {
+            let result401: any = null;
+            let resultData401 = _responseText === "" ? null : JSON.parse(_responseText, this.jsonParseReviver);
+            result401 = SpaceDesignProblemDetails.fromJS(resultData401);
+            return throwException("Unauthorized", status, _responseText, _headers, result401);
+            });
+        } else if (status === 403) {
+            return response.text().then((_responseText) => {
+            let result403: any = null;
+            let resultData403 = _responseText === "" ? null : JSON.parse(_responseText, this.jsonParseReviver);
+            result403 = SpaceDesignProblemDetails.fromJS(resultData403);
+            return throwException("Forbidden", status, _responseText, _headers, result403);
+            });
+        } else if (status === 404) {
+            return response.text().then((_responseText) => {
+            let result404: any = null;
+            let resultData404 = _responseText === "" ? null : JSON.parse(_responseText, this.jsonParseReviver);
+            result404 = SpaceDesignProblemDetails.fromJS(resultData404);
+            return throwException("Not Found", status, _responseText, _headers, result404);
+            });
+        } else if (status === 409) {
+            return response.text().then((_responseText) => {
+            let result409: any = null;
+            let resultData409 = _responseText === "" ? null : JSON.parse(_responseText, this.jsonParseReviver);
+            result409 = SpaceDesignProblemDetails.fromJS(resultData409);
+            return throwException("Conflict", status, _responseText, _headers, result409);
+            });
+        } else if (status === 422) {
+            return response.text().then((_responseText) => {
+            let result422: any = null;
+            let resultData422 = _responseText === "" ? null : JSON.parse(_responseText, this.jsonParseReviver);
+            result422 = SpaceDesignProblemDetails.fromJS(resultData422);
+            return throwException("Unprocessable Content", status, _responseText, _headers, result422);
+            });
+        } else if (status === 500) {
+            return response.text().then((_responseText) => {
+            let result500: any = null;
+            let resultData500 = _responseText === "" ? null : JSON.parse(_responseText, this.jsonParseReviver);
+            result500 = SpaceDesignProblemDetails.fromJS(resultData500);
+            return throwException("Internal Server Error", status, _responseText, _headers, result500);
+            });
+        } else if (status !== 200 && status !== 204) {
+            return response.text().then((_responseText) => {
+            return throwException("An unexpected server error occurred.", status, _responseText, _headers);
+            });
+        }
+        return Promise.resolve<SpaceAiGenerationRunActionDto>(null as any);
+    }
+
+    /**
+     * @param idempotency_Key Opaque caller key; 1-128 UTF-8 bytes. Reuse with a different request returns SPACE_IDEMPOTENCY_KEY_REUSED.
+     * @return Accepted
+     */
+    retryGenerationRun(runId: string, idempotency_Key: string, body: SpaceAiRunActionRequest): Promise<SpaceAiGenerationRunActionDto> {
+        let url_ = this.baseUrl + "/api/space/design/v1/generation-runs/{runId}/retry";
+        if (runId === undefined || runId === null)
+            throw new globalThis.Error("The parameter 'runId' must be defined.");
+        url_ = url_.replace("{runId}", encodeURIComponent("" + runId));
+        url_ = url_.replace(/[?&]$/, "");
+
+        const content_ = JSON.stringify(body);
+
+        let options_: RequestInit = {
+            body: content_,
+            method: "POST",
+            headers: {
+                "Idempotency-Key": idempotency_Key !== undefined && idempotency_Key !== null ? "" + idempotency_Key : "",
+                "Content-Type": "application/json",
+                "Accept": "application/json"
+            }
+        };
+
+        return this.http.fetch(url_, options_).then((_response: Response) => {
+            return this.processRetryGenerationRun(_response);
+        });
+    }
+
+    protected processRetryGenerationRun(response: Response): Promise<SpaceAiGenerationRunActionDto> {
+        const status = response.status;
+        let _headers: any = {}; if (response.headers && response.headers.forEach) { response.headers.forEach((v: any, k: any) => _headers[k] = v); };
+        if (status === 202) {
+            return response.text().then((_responseText) => {
+            let result202: any = null;
+            let resultData202 = _responseText === "" ? null : JSON.parse(_responseText, this.jsonParseReviver);
+            result202 = SpaceAiGenerationRunActionDto.fromJS(resultData202);
+            return result202;
+            });
+        } else if (status === 400) {
+            return response.text().then((_responseText) => {
+            let result400: any = null;
+            let resultData400 = _responseText === "" ? null : JSON.parse(_responseText, this.jsonParseReviver);
+            result400 = SpaceDesignProblemDetails.fromJS(resultData400);
+            return throwException("Bad Request", status, _responseText, _headers, result400);
+            });
+        } else if (status === 401) {
+            return response.text().then((_responseText) => {
+            let result401: any = null;
+            let resultData401 = _responseText === "" ? null : JSON.parse(_responseText, this.jsonParseReviver);
+            result401 = SpaceDesignProblemDetails.fromJS(resultData401);
+            return throwException("Unauthorized", status, _responseText, _headers, result401);
+            });
+        } else if (status === 403) {
+            return response.text().then((_responseText) => {
+            let result403: any = null;
+            let resultData403 = _responseText === "" ? null : JSON.parse(_responseText, this.jsonParseReviver);
+            result403 = SpaceDesignProblemDetails.fromJS(resultData403);
+            return throwException("Forbidden", status, _responseText, _headers, result403);
+            });
+        } else if (status === 404) {
+            return response.text().then((_responseText) => {
+            let result404: any = null;
+            let resultData404 = _responseText === "" ? null : JSON.parse(_responseText, this.jsonParseReviver);
+            result404 = SpaceDesignProblemDetails.fromJS(resultData404);
+            return throwException("Not Found", status, _responseText, _headers, result404);
+            });
+        } else if (status === 409) {
+            return response.text().then((_responseText) => {
+            let result409: any = null;
+            let resultData409 = _responseText === "" ? null : JSON.parse(_responseText, this.jsonParseReviver);
+            result409 = SpaceDesignProblemDetails.fromJS(resultData409);
+            return throwException("Conflict", status, _responseText, _headers, result409);
+            });
+        } else if (status === 422) {
+            return response.text().then((_responseText) => {
+            let result422: any = null;
+            let resultData422 = _responseText === "" ? null : JSON.parse(_responseText, this.jsonParseReviver);
+            result422 = SpaceDesignProblemDetails.fromJS(resultData422);
+            return throwException("Unprocessable Content", status, _responseText, _headers, result422);
+            });
+        } else if (status === 500) {
+            return response.text().then((_responseText) => {
+            let result500: any = null;
+            let resultData500 = _responseText === "" ? null : JSON.parse(_responseText, this.jsonParseReviver);
+            result500 = SpaceDesignProblemDetails.fromJS(resultData500);
+            return throwException("Internal Server Error", status, _responseText, _headers, result500);
+            });
+        } else if (status !== 200 && status !== 204) {
+            return response.text().then((_responseText) => {
+            return throwException("An unexpected server error occurred.", status, _responseText, _headers);
+            });
+        }
+        return Promise.resolve<SpaceAiGenerationRunActionDto>(null as any);
+    }
+
+    /**
+     * @param idempotency_Key Opaque caller key; 1-128 UTF-8 bytes. Reuse with a different request returns SPACE_IDEMPOTENCY_KEY_REUSED.
+     * @return OK
+     */
+    discardGenerationRun(runId: string, idempotency_Key: string, body: SpaceAiRunActionRequest): Promise<SpaceAiGenerationRunActionDto> {
+        let url_ = this.baseUrl + "/api/space/design/v1/generation-runs/{runId}/discard";
+        if (runId === undefined || runId === null)
+            throw new globalThis.Error("The parameter 'runId' must be defined.");
+        url_ = url_.replace("{runId}", encodeURIComponent("" + runId));
+        url_ = url_.replace(/[?&]$/, "");
+
+        const content_ = JSON.stringify(body);
+
+        let options_: RequestInit = {
+            body: content_,
+            method: "POST",
+            headers: {
+                "Idempotency-Key": idempotency_Key !== undefined && idempotency_Key !== null ? "" + idempotency_Key : "",
+                "Content-Type": "application/json",
+                "Accept": "application/json"
+            }
+        };
+
+        return this.http.fetch(url_, options_).then((_response: Response) => {
+            return this.processDiscardGenerationRun(_response);
+        });
+    }
+
+    protected processDiscardGenerationRun(response: Response): Promise<SpaceAiGenerationRunActionDto> {
+        const status = response.status;
+        let _headers: any = {}; if (response.headers && response.headers.forEach) { response.headers.forEach((v: any, k: any) => _headers[k] = v); };
+        if (status === 200) {
+            return response.text().then((_responseText) => {
+            let result200: any = null;
+            let resultData200 = _responseText === "" ? null : JSON.parse(_responseText, this.jsonParseReviver);
+            result200 = SpaceAiGenerationRunActionDto.fromJS(resultData200);
+            return result200;
+            });
+        } else if (status === 400) {
+            return response.text().then((_responseText) => {
+            let result400: any = null;
+            let resultData400 = _responseText === "" ? null : JSON.parse(_responseText, this.jsonParseReviver);
+            result400 = SpaceDesignProblemDetails.fromJS(resultData400);
+            return throwException("Bad Request", status, _responseText, _headers, result400);
+            });
+        } else if (status === 401) {
+            return response.text().then((_responseText) => {
+            let result401: any = null;
+            let resultData401 = _responseText === "" ? null : JSON.parse(_responseText, this.jsonParseReviver);
+            result401 = SpaceDesignProblemDetails.fromJS(resultData401);
+            return throwException("Unauthorized", status, _responseText, _headers, result401);
+            });
+        } else if (status === 403) {
+            return response.text().then((_responseText) => {
+            let result403: any = null;
+            let resultData403 = _responseText === "" ? null : JSON.parse(_responseText, this.jsonParseReviver);
+            result403 = SpaceDesignProblemDetails.fromJS(resultData403);
+            return throwException("Forbidden", status, _responseText, _headers, result403);
+            });
+        } else if (status === 404) {
+            return response.text().then((_responseText) => {
+            let result404: any = null;
+            let resultData404 = _responseText === "" ? null : JSON.parse(_responseText, this.jsonParseReviver);
+            result404 = SpaceDesignProblemDetails.fromJS(resultData404);
+            return throwException("Not Found", status, _responseText, _headers, result404);
+            });
+        } else if (status === 409) {
+            return response.text().then((_responseText) => {
+            let result409: any = null;
+            let resultData409 = _responseText === "" ? null : JSON.parse(_responseText, this.jsonParseReviver);
+            result409 = SpaceDesignProblemDetails.fromJS(resultData409);
+            return throwException("Conflict", status, _responseText, _headers, result409);
+            });
+        } else if (status === 422) {
+            return response.text().then((_responseText) => {
+            let result422: any = null;
+            let resultData422 = _responseText === "" ? null : JSON.parse(_responseText, this.jsonParseReviver);
+            result422 = SpaceDesignProblemDetails.fromJS(resultData422);
+            return throwException("Unprocessable Content", status, _responseText, _headers, result422);
+            });
+        } else if (status === 500) {
+            return response.text().then((_responseText) => {
+            let result500: any = null;
+            let resultData500 = _responseText === "" ? null : JSON.parse(_responseText, this.jsonParseReviver);
+            result500 = SpaceDesignProblemDetails.fromJS(resultData500);
+            return throwException("Internal Server Error", status, _responseText, _headers, result500);
+            });
+        } else if (status !== 200 && status !== 204) {
+            return response.text().then((_responseText) => {
+            return throwException("An unexpected server error occurred.", status, _responseText, _headers);
+            });
+        }
+        return Promise.resolve<SpaceAiGenerationRunActionDto>(null as any);
+    }
+
+    /**
+     * @param idempotency_Key Opaque caller key; 1-128 UTF-8 bytes. Reuse with a different request returns SPACE_IDEMPOTENCY_KEY_REUSED.
+     * @return OK
+     */
+    reconcileGenerationRun(runId: string, idempotency_Key: string, body: SpaceAiRunActionRequest): Promise<SpaceAiGenerationRunActionDto> {
+        let url_ = this.baseUrl + "/api/space/design/v1/generation-runs/{runId}/reconcile";
+        if (runId === undefined || runId === null)
+            throw new globalThis.Error("The parameter 'runId' must be defined.");
+        url_ = url_.replace("{runId}", encodeURIComponent("" + runId));
+        url_ = url_.replace(/[?&]$/, "");
+
+        const content_ = JSON.stringify(body);
+
+        let options_: RequestInit = {
+            body: content_,
+            method: "POST",
+            headers: {
+                "Idempotency-Key": idempotency_Key !== undefined && idempotency_Key !== null ? "" + idempotency_Key : "",
+                "Content-Type": "application/json",
+                "Accept": "application/json"
+            }
+        };
+
+        return this.http.fetch(url_, options_).then((_response: Response) => {
+            return this.processReconcileGenerationRun(_response);
+        });
+    }
+
+    protected processReconcileGenerationRun(response: Response): Promise<SpaceAiGenerationRunActionDto> {
+        const status = response.status;
+        let _headers: any = {}; if (response.headers && response.headers.forEach) { response.headers.forEach((v: any, k: any) => _headers[k] = v); };
+        if (status === 200) {
+            return response.text().then((_responseText) => {
+            let result200: any = null;
+            let resultData200 = _responseText === "" ? null : JSON.parse(_responseText, this.jsonParseReviver);
+            result200 = SpaceAiGenerationRunActionDto.fromJS(resultData200);
+            return result200;
+            });
+        } else if (status === 400) {
+            return response.text().then((_responseText) => {
+            let result400: any = null;
+            let resultData400 = _responseText === "" ? null : JSON.parse(_responseText, this.jsonParseReviver);
+            result400 = SpaceDesignProblemDetails.fromJS(resultData400);
+            return throwException("Bad Request", status, _responseText, _headers, result400);
+            });
+        } else if (status === 401) {
+            return response.text().then((_responseText) => {
+            let result401: any = null;
+            let resultData401 = _responseText === "" ? null : JSON.parse(_responseText, this.jsonParseReviver);
+            result401 = SpaceDesignProblemDetails.fromJS(resultData401);
+            return throwException("Unauthorized", status, _responseText, _headers, result401);
+            });
+        } else if (status === 403) {
+            return response.text().then((_responseText) => {
+            let result403: any = null;
+            let resultData403 = _responseText === "" ? null : JSON.parse(_responseText, this.jsonParseReviver);
+            result403 = SpaceDesignProblemDetails.fromJS(resultData403);
+            return throwException("Forbidden", status, _responseText, _headers, result403);
+            });
+        } else if (status === 404) {
+            return response.text().then((_responseText) => {
+            let result404: any = null;
+            let resultData404 = _responseText === "" ? null : JSON.parse(_responseText, this.jsonParseReviver);
+            result404 = SpaceDesignProblemDetails.fromJS(resultData404);
+            return throwException("Not Found", status, _responseText, _headers, result404);
+            });
+        } else if (status === 409) {
+            return response.text().then((_responseText) => {
+            let result409: any = null;
+            let resultData409 = _responseText === "" ? null : JSON.parse(_responseText, this.jsonParseReviver);
+            result409 = SpaceDesignProblemDetails.fromJS(resultData409);
+            return throwException("Conflict", status, _responseText, _headers, result409);
+            });
+        } else if (status === 422) {
+            return response.text().then((_responseText) => {
+            let result422: any = null;
+            let resultData422 = _responseText === "" ? null : JSON.parse(_responseText, this.jsonParseReviver);
+            result422 = SpaceDesignProblemDetails.fromJS(resultData422);
+            return throwException("Unprocessable Content", status, _responseText, _headers, result422);
+            });
+        } else if (status === 500) {
+            return response.text().then((_responseText) => {
+            let result500: any = null;
+            let resultData500 = _responseText === "" ? null : JSON.parse(_responseText, this.jsonParseReviver);
+            result500 = SpaceDesignProblemDetails.fromJS(resultData500);
+            return throwException("Internal Server Error", status, _responseText, _headers, result500);
+            });
+        } else if (status !== 200 && status !== 204) {
+            return response.text().then((_responseText) => {
+            return throwException("An unexpected server error occurred.", status, _responseText, _headers);
+            });
+        }
+        return Promise.resolve<SpaceAiGenerationRunActionDto>(null as any);
+    }
+
+    /**
+     * @param idempotency_Key Opaque caller key; 1-128 UTF-8 bytes. Reuse with a different request returns SPACE_IDEMPOTENCY_KEY_REUSED.
+     * @return Accepted
+     */
+    recoverGenerationRun(versionId: string, idempotency_Key: string, body: CreateSpaceAiGenerationRecoveryRequest): Promise<SpaceAiGenerationRunActionDto> {
+        let url_ = this.baseUrl + "/api/space/design/v1/versions/{versionId}/generation-runs";
+        if (versionId === undefined || versionId === null)
+            throw new globalThis.Error("The parameter 'versionId' must be defined.");
+        url_ = url_.replace("{versionId}", encodeURIComponent("" + versionId));
+        url_ = url_.replace(/[?&]$/, "");
+
+        const content_ = JSON.stringify(body);
+
+        let options_: RequestInit = {
+            body: content_,
+            method: "POST",
+            headers: {
+                "Idempotency-Key": idempotency_Key !== undefined && idempotency_Key !== null ? "" + idempotency_Key : "",
+                "Content-Type": "application/json",
+                "Accept": "application/json"
+            }
+        };
+
+        return this.http.fetch(url_, options_).then((_response: Response) => {
+            return this.processRecoverGenerationRun(_response);
+        });
+    }
+
+    protected processRecoverGenerationRun(response: Response): Promise<SpaceAiGenerationRunActionDto> {
+        const status = response.status;
+        let _headers: any = {}; if (response.headers && response.headers.forEach) { response.headers.forEach((v: any, k: any) => _headers[k] = v); };
+        if (status === 202) {
+            return response.text().then((_responseText) => {
+            let result202: any = null;
+            let resultData202 = _responseText === "" ? null : JSON.parse(_responseText, this.jsonParseReviver);
+            result202 = SpaceAiGenerationRunActionDto.fromJS(resultData202);
+            return result202;
+            });
+        } else if (status === 400) {
+            return response.text().then((_responseText) => {
+            let result400: any = null;
+            let resultData400 = _responseText === "" ? null : JSON.parse(_responseText, this.jsonParseReviver);
+            result400 = SpaceDesignProblemDetails.fromJS(resultData400);
+            return throwException("Bad Request", status, _responseText, _headers, result400);
+            });
+        } else if (status === 401) {
+            return response.text().then((_responseText) => {
+            let result401: any = null;
+            let resultData401 = _responseText === "" ? null : JSON.parse(_responseText, this.jsonParseReviver);
+            result401 = SpaceDesignProblemDetails.fromJS(resultData401);
+            return throwException("Unauthorized", status, _responseText, _headers, result401);
+            });
+        } else if (status === 403) {
+            return response.text().then((_responseText) => {
+            let result403: any = null;
+            let resultData403 = _responseText === "" ? null : JSON.parse(_responseText, this.jsonParseReviver);
+            result403 = SpaceDesignProblemDetails.fromJS(resultData403);
+            return throwException("Forbidden", status, _responseText, _headers, result403);
+            });
+        } else if (status === 404) {
+            return response.text().then((_responseText) => {
+            let result404: any = null;
+            let resultData404 = _responseText === "" ? null : JSON.parse(_responseText, this.jsonParseReviver);
+            result404 = SpaceDesignProblemDetails.fromJS(resultData404);
+            return throwException("Not Found", status, _responseText, _headers, result404);
+            });
+        } else if (status === 409) {
+            return response.text().then((_responseText) => {
+            let result409: any = null;
+            let resultData409 = _responseText === "" ? null : JSON.parse(_responseText, this.jsonParseReviver);
+            result409 = SpaceDesignProblemDetails.fromJS(resultData409);
+            return throwException("Conflict", status, _responseText, _headers, result409);
+            });
+        } else if (status === 422) {
+            return response.text().then((_responseText) => {
+            let result422: any = null;
+            let resultData422 = _responseText === "" ? null : JSON.parse(_responseText, this.jsonParseReviver);
+            result422 = SpaceDesignProblemDetails.fromJS(resultData422);
+            return throwException("Unprocessable Content", status, _responseText, _headers, result422);
+            });
+        } else if (status === 500) {
+            return response.text().then((_responseText) => {
+            let result500: any = null;
+            let resultData500 = _responseText === "" ? null : JSON.parse(_responseText, this.jsonParseReviver);
+            result500 = SpaceDesignProblemDetails.fromJS(resultData500);
+            return throwException("Internal Server Error", status, _responseText, _headers, result500);
+            });
+        } else if (status !== 200 && status !== 204) {
+            return response.text().then((_responseText) => {
+            return throwException("An unexpected server error occurred.", status, _responseText, _headers);
+            });
+        }
+        return Promise.resolve<SpaceAiGenerationRunActionDto>(null as any);
     }
 
     /**
@@ -10045,6 +10550,54 @@ export interface ICreateSpaceAiAtomicApplyRequest {
     reviewEtag: string;
 }
 
+export class CreateSpaceAiGenerationRecoveryRequest implements ICreateSpaceAiGenerationRecoveryRequest {
+    basedOnRunId!: string;
+    expectedContentRevision!: number;
+    expectedBasedOnRunRowVersion!: string;
+    mode!: string;
+
+    constructor(data?: ICreateSpaceAiGenerationRecoveryRequest) {
+        if (data) {
+            for (var property in data) {
+                if (data.hasOwnProperty(property))
+                    (this as any)[property] = (data as any)[property];
+            }
+        }
+    }
+
+    init(_data?: any) {
+        if (_data) {
+            this.basedOnRunId = _data["basedOnRunId"];
+            this.expectedContentRevision = _data["expectedContentRevision"];
+            this.expectedBasedOnRunRowVersion = _data["expectedBasedOnRunRowVersion"];
+            this.mode = _data["mode"];
+        }
+    }
+
+    static fromJS(data: any): CreateSpaceAiGenerationRecoveryRequest {
+        data = typeof data === 'object' ? data : {};
+        let result = new CreateSpaceAiGenerationRecoveryRequest();
+        result.init(data);
+        return result;
+    }
+
+    toJSON(data?: any) {
+        data = typeof data === 'object' ? data : {};
+        data["basedOnRunId"] = this.basedOnRunId;
+        data["expectedContentRevision"] = this.expectedContentRevision;
+        data["expectedBasedOnRunRowVersion"] = this.expectedBasedOnRunRowVersion;
+        data["mode"] = this.mode;
+        return data;
+    }
+}
+
+export interface ICreateSpaceAiGenerationRecoveryRequest {
+    basedOnRunId: string;
+    expectedContentRevision: number;
+    expectedBasedOnRunRowVersion: string;
+    mode: string;
+}
+
 export class CreateSpaceAiProposalBatchDecisionRequest implements ICreateSpaceAiProposalBatchDecisionRequest {
     proposalIds?: string[] | undefined;
     selection?: SpaceAiProposalBatchSelectionDto;
@@ -12366,6 +12919,74 @@ export interface ISpaceAiGenerationReviewSummaryDto {
     openProposalBlockingIssueCount?: number;
 }
 
+export class SpaceAiGenerationRunActionDto implements ISpaceAiGenerationRunActionDto {
+    schemaVersion!: number;
+    runId!: string;
+    replacementRunId?: string | undefined;
+    jobId?: string | undefined;
+    status!: string;
+    recoveryAction!: string;
+    retryable!: boolean;
+    cancellationPending!: boolean;
+    idempotentReplay!: boolean;
+
+    constructor(data?: ISpaceAiGenerationRunActionDto) {
+        if (data) {
+            for (var property in data) {
+                if (data.hasOwnProperty(property))
+                    (this as any)[property] = (data as any)[property];
+            }
+        }
+    }
+
+    init(_data?: any) {
+        if (_data) {
+            this.schemaVersion = _data["schemaVersion"];
+            this.runId = _data["runId"];
+            this.replacementRunId = _data["replacementRunId"];
+            this.jobId = _data["jobId"];
+            this.status = _data["status"];
+            this.recoveryAction = _data["recoveryAction"];
+            this.retryable = _data["retryable"];
+            this.cancellationPending = _data["cancellationPending"];
+            this.idempotentReplay = _data["idempotentReplay"];
+        }
+    }
+
+    static fromJS(data: any): SpaceAiGenerationRunActionDto {
+        data = typeof data === 'object' ? data : {};
+        let result = new SpaceAiGenerationRunActionDto();
+        result.init(data);
+        return result;
+    }
+
+    toJSON(data?: any) {
+        data = typeof data === 'object' ? data : {};
+        data["schemaVersion"] = this.schemaVersion;
+        data["runId"] = this.runId;
+        data["replacementRunId"] = this.replacementRunId;
+        data["jobId"] = this.jobId;
+        data["status"] = this.status;
+        data["recoveryAction"] = this.recoveryAction;
+        data["retryable"] = this.retryable;
+        data["cancellationPending"] = this.cancellationPending;
+        data["idempotentReplay"] = this.idempotentReplay;
+        return data;
+    }
+}
+
+export interface ISpaceAiGenerationRunActionDto {
+    schemaVersion: number;
+    runId: string;
+    replacementRunId?: string | undefined;
+    jobId?: string | undefined;
+    status: string;
+    recoveryAction: string;
+    retryable: boolean;
+    cancellationPending: boolean;
+    idempotentReplay: boolean;
+}
+
 export class SpaceAiGenerationRunDto implements ISpaceAiGenerationRunDto {
     schemaVersion!: number;
     runId!: string;
@@ -12382,6 +13003,12 @@ export class SpaceAiGenerationRunDto implements ISpaceAiGenerationRunDto {
     appliedCounts?: any | undefined;
     failureCode?: string | undefined;
     failureSummary?: string | undefined;
+    basedOnRunId?: string | undefined;
+    degradedReason?: string | undefined;
+    cancellationPending!: boolean;
+    retryable!: boolean;
+    recoveryAction!: string;
+    applyCommitState!: string;
     rowVersion!: string;
 
     constructor(data?: ISpaceAiGenerationRunDto) {
@@ -12410,6 +13037,12 @@ export class SpaceAiGenerationRunDto implements ISpaceAiGenerationRunDto {
             this.appliedCounts = _data["appliedCounts"];
             this.failureCode = _data["failureCode"];
             this.failureSummary = _data["failureSummary"];
+            this.basedOnRunId = _data["basedOnRunId"];
+            this.degradedReason = _data["degradedReason"];
+            this.cancellationPending = _data["cancellationPending"];
+            this.retryable = _data["retryable"];
+            this.recoveryAction = _data["recoveryAction"];
+            this.applyCommitState = _data["applyCommitState"];
             this.rowVersion = _data["rowVersion"];
         }
     }
@@ -12438,6 +13071,12 @@ export class SpaceAiGenerationRunDto implements ISpaceAiGenerationRunDto {
         data["appliedCounts"] = this.appliedCounts;
         data["failureCode"] = this.failureCode;
         data["failureSummary"] = this.failureSummary;
+        data["basedOnRunId"] = this.basedOnRunId;
+        data["degradedReason"] = this.degradedReason;
+        data["cancellationPending"] = this.cancellationPending;
+        data["retryable"] = this.retryable;
+        data["recoveryAction"] = this.recoveryAction;
+        data["applyCommitState"] = this.applyCommitState;
         data["rowVersion"] = this.rowVersion;
         return data;
     }
@@ -12459,6 +13098,12 @@ export interface ISpaceAiGenerationRunDto {
     appliedCounts?: any | undefined;
     failureCode?: string | undefined;
     failureSummary?: string | undefined;
+    basedOnRunId?: string | undefined;
+    degradedReason?: string | undefined;
+    cancellationPending: boolean;
+    retryable: boolean;
+    recoveryAction: string;
+    applyCommitState: string;
     rowVersion: string;
 }
 
@@ -13213,6 +13858,42 @@ export interface ISpaceAiProposalPatchOperationDto {
     op?: string | undefined;
     path?: string | undefined;
     value?: any;
+}
+
+export class SpaceAiRunActionRequest implements ISpaceAiRunActionRequest {
+    expectedRunRowVersion!: string;
+
+    constructor(data?: ISpaceAiRunActionRequest) {
+        if (data) {
+            for (var property in data) {
+                if (data.hasOwnProperty(property))
+                    (this as any)[property] = (data as any)[property];
+            }
+        }
+    }
+
+    init(_data?: any) {
+        if (_data) {
+            this.expectedRunRowVersion = _data["expectedRunRowVersion"];
+        }
+    }
+
+    static fromJS(data: any): SpaceAiRunActionRequest {
+        data = typeof data === 'object' ? data : {};
+        let result = new SpaceAiRunActionRequest();
+        result.init(data);
+        return result;
+    }
+
+    toJSON(data?: any) {
+        data = typeof data === 'object' ? data : {};
+        data["expectedRunRowVersion"] = this.expectedRunRowVersion;
+        return data;
+    }
+}
+
+export interface ISpaceAiRunActionRequest {
+    expectedRunRowVersion: string;
 }
 
 export class SpaceAiUsageItemDto implements ISpaceAiUsageItemDto {

@@ -1,3 +1,5 @@
+using CP6.Space.Application;
+using CP6.Space.Contracts;
 using CP6.Space.Domain;
 
 namespace CP6.Space.UnitTests;
@@ -126,6 +128,40 @@ public sealed class SpaceGenerationDataModelTests
         Assert.Equal(SpaceGenerationRunStatus.Cancelled, run.Status);
         Assert.False(run.CancelPending);
         Assert.False(run.IsCurrent);
+    }
+
+    [Fact]
+    public void Applying_run_cancels_only_after_a_worker_safe_point()
+    {
+        var run = RunAt(SpaceGenerationRunStatus.AwaitingReview);
+        run.MarkReviewCompleted(Now);
+        BeginApplying(run);
+
+        run.RequestCancellation(Now.AddSeconds(1), providerResponsePending: true);
+
+        Assert.Equal(SpaceGenerationRunStatus.Applying, run.Status);
+        Assert.True(run.CancelPending);
+        run.CompleteCancellation(Now.AddSeconds(2));
+        Assert.Equal(SpaceGenerationRunStatus.Cancelled, run.Status);
+        Assert.False(run.CancelPending);
+        Assert.False(run.IsCurrent);
+    }
+
+    [Fact]
+    public void Failed_apply_can_retry_without_changing_the_frozen_plan()
+    {
+        var run = RunAt(SpaceGenerationRunStatus.AwaitingReview);
+        run.MarkReviewCompleted(Now);
+        BeginApplying(run);
+        var planHash = new string('f', 64);
+        run.RecordApplyPlan(planHash, Now.AddSeconds(1));
+        run.MarkFailed("SPACE_AI_APPLY_FAILED", "Rolled back.");
+
+        run.RetryApply();
+
+        Assert.Equal(SpaceGenerationRunStatus.Applying, run.Status);
+        Assert.Equal(planHash, run.ApplyPlanHash);
+        Assert.Null(run.FailureCode);
     }
 
     [Theory]
@@ -375,6 +411,31 @@ public sealed class SpaceGenerationDataModelTests
             () => NewRun(pinProviderConfig: false));
     }
 
+    [Fact]
+    public void Rule_only_recovery_is_only_suggested_for_provider_generation()
+    {
+        var buildRun = NewRun();
+        buildRun.MarkFailed(
+            SpaceErrorCodes.AiProviderUnavailable,
+            "The provider is unavailable.");
+        var applyRun = NewRun();
+        applyRun.MarkFailed(
+            SpaceErrorCodes.AiProviderUnavailable,
+            "The Apply resource is unavailable.");
+
+        var buildState = SpaceAiRunRecoveryClassifier.Classify(
+            buildRun,
+            NewJob(SpaceJobType.BuildScene),
+            commandBatchCommitted: false);
+        var applyState = SpaceAiRunRecoveryClassifier.Classify(
+            applyRun,
+            NewJob(SpaceJobType.ApplyGeneration),
+            commandBatchCommitted: false);
+
+        Assert.Equal("use-rule-only-or-retry-later", buildState.RecoveryAction);
+        Assert.Equal("create-new-generation-run", applyState.RecoveryAction);
+    }
+
     private static SpaceGenerationRun NewRun(
         string? sourceHash = null,
         SpaceAiPolicySnapshot policySnapshot =
@@ -412,6 +473,20 @@ public sealed class SpaceGenerationDataModelTests
                 JobId,
                 TargetFloorLogicalId));
     }
+
+    private static SpaceJob NewJob(SpaceJobType jobType) =>
+        SpaceJob.CreateQueued(
+            TenantId,
+            jobType,
+            SpaceJobSubjectType.ModelVersion,
+            ModelVersionId,
+            new string('e', 64),
+            new string('f', 64),
+            50,
+            3,
+            Guid.NewGuid(),
+            Now,
+            Guid.NewGuid());
 
     private static void BeginApplying(SpaceGenerationRun run) =>
         run.BeginApplying(

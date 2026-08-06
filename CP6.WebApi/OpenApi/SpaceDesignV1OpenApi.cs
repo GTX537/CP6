@@ -554,6 +554,27 @@ public sealed class SpaceWmsRuntimeSchemaFilter : ISchemaFilter
                 "expectedRunRowVersion",
                 "reviewEtag",
             ],
+            [typeof(SpaceAiRunActionRequest)] =
+            [
+                "expectedRunRowVersion",
+            ],
+            [typeof(CreateSpaceAiGenerationRecoveryRequest)] =
+            [
+                "basedOnRunId",
+                "expectedContentRevision",
+                "expectedBasedOnRunRowVersion",
+                "mode",
+            ],
+            [typeof(SpaceAiGenerationRunActionDto)] =
+            [
+                "schemaVersion",
+                "runId",
+                "status",
+                "recoveryAction",
+                "retryable",
+                "cancellationPending",
+                "idempotentReplay",
+            ],
             [typeof(SpaceAiAtomicApplyAcceptedDto)] =
             [
                 "schemaVersion",
@@ -573,6 +594,10 @@ public sealed class SpaceWmsRuntimeSchemaFilter : ISchemaFilter
                 "status",
                 "progress",
                 "baseContentRevision",
+                "cancellationPending",
+                "retryable",
+                "recoveryAction",
+                "applyCommitState",
                 "rowVersion",
             ],
             [typeof(SpaceAiAppliedCountsDto)] =
@@ -1281,7 +1306,12 @@ public sealed class SpaceDesignV1OperationFilter : IOperationFilter
                 "AttachUnderlay" or
                 "CalibrateUnderlay" or
                 "UpdatePolicy" or
-                "ApplyGenerationProposals"))
+                "ApplyGenerationProposals" or
+                "CancelGenerationRun" or
+                "RetryGenerationRun" or
+                "DiscardGenerationRun" or
+                "ReconcileGenerationRun" or
+                "RecoverGenerationRun"))
             return;
 
         var idempotencyKey = operation.Parameters.Single(
@@ -1299,11 +1329,16 @@ public sealed class SpaceDesignV1OperationFilter : IOperationFilter
         var successStatus = operation.OperationId switch
         {
             "CreateVersion" or
-                "ApplyGenerationProposals" =>
+                "ApplyGenerationProposals" or
+                "RetryGenerationRun" or
+                "RecoverGenerationRun" =>
                 StatusCodes.Status202Accepted.ToString(),
             "AttachUnderlay" or
                 "CalibrateUnderlay" or
-                "UpdatePolicy" =>
+                "UpdatePolicy" or
+                "CancelGenerationRun" or
+                "DiscardGenerationRun" or
+                "ReconcileGenerationRun" =>
                 StatusCodes.Status200OK.ToString(),
             _ => StatusCodes.Status201Created.ToString(),
         };
