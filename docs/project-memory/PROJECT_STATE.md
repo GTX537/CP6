@@ -8,7 +8,7 @@
 - Provider Gateway 在策略、配额和 Provider 前再次拒绝外部主体并要求有效内部 Tenant/Actor。External Provider 发送前执行冻结 JSON 字段白名单和最小化 HMAC Token 语法门禁；原始名称、任意 Prompt、路径、URL、额外字段或非白名单锁定事实以 `SPACE_AI_OUTBOUND_PAYLOAD_DENIED/403` 失败关闭。
 - 4 个 AI 控制器的 16 个端点均有显式审计元数据，7 个 GET 均启用读审计。Customer、Supplier、3PL × 16 操作形成 48 条稳定 `SPACE_EXTERNAL_SUBJECT_DENIED/403` 断言，并证明拒绝发生在数据访问和写入前。
 - 验证：Space Unit 424/424，Provider/最小化 34/34，外部主体与 AI 管理 8/8，审计/OpenAPI/权限 87/87，非 SQL 管理/注册/矩阵 10/10，KOUSQLSERVER Apply/恢复/配额/外部矩阵 21/21；Application Debug/Release 0 warning/0 error，WebApi Release 仅有 3 条既存 Core nullable warning。证据见 `docs/space/reports/e13-s13-external-ai-security.md`。
-- CSO 范围审计没有确认当前可利用漏洞：生产仍无 Gateway 调用方、External Provider 注册为空且配额失败关闭。本卡是未来接入真实 Provider 前的安全封口，不是网络端到端签收。下一张建议卡为不依赖外部 CAD/Provider 的 E13-S17 迁移、前向修复与保留清理。
+- CSO 范围审计没有确认当前可利用漏洞：生产仍无 Gateway 调用方、External Provider 注册为空且配额失败关闭。本卡是未来接入真实 Provider 前的安全封口，不是网络端到端签收。验证后清理 28 个可重建 `bin/obj` 目录，回收 1,062,306,204 bytes（约 0.989 GiB）；下一张建议卡为不依赖外部 CAD/Provider 的 E13-S17 迁移、前向修复与保留清理。
 
 ## E13-S11 Generation Run 恢复产品化开发切片（2026-08-06）
 
