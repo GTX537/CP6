@@ -2,6 +2,14 @@
 
 > 依据 Git log 汇总，不替代完整 Git 历史。重点记录影响接手判断的里程碑。
 
+## 2026-08-05：Space V1 E13 S04–S09 受控开发链
+
+- E13-S04～S08 已依次交付 CAD IR 最小化与脱敏、本地/Mock Provider 与失败降级、不可信输出校验、规则/AI 确定性融合及只读提案审核工作台；各切片均以独立功能/证据提交 no-ff 进入唯一 Space 集成分支。
+- `c87289f2` / `382d5722` / `396ee38b`：实现、记录并 no-ff 集成 E13-S09 追加式 Accept/Reject/Modify 决策、单条/批量 API、rowversion/ReviewEtag 并发、幂等账本、问题解决血缘、同源人工锁定继承、Migration、OpenAPI/C#/TypeScript SDK 和实时前端决策面板。
+- S09 继续关闭批量 High 自动 Accept，不写 Draft、Published、WMS 或设备状态；异源建议继承、真实 Worker 接线、外部 Provider、授权真实 CAD 与正式黄金集未被提前宣称完成。下一张独立卡为 E13-S10 Staging + 原子 Apply。
+- S09 验证：Space Unit 413/413、Space Integration + KOUSQLSERVER 312/312、CP6.Tests 2779 passed / 17 environment-gated skipped、CAD 25/25、前端 128 files / 692 tests，完整 solution Release 0 error / 10 条既有 warning；EF/迁移/幂等 SQL、SDK drift、type-check 和 production build 通过。
+- 功能 tip 已进入远端集成祖先链，本地/远端临时功能分支已删除；清理 38 个可重建目录并回收约 1.42 GiB。`main` 未修改。
+
 ## 2026-07-31：Space V1 E04 S04 受控集成
 
 - `9a87dc30` / `f9c7fd21`：实现并 no-ff 集成货架/通用元素统一多选、套索、对齐、等距、旋转、批量删除、货架阵列与保存后补偿式撤销/重做。

@@ -2,6 +2,16 @@
 
 最后更新：2026-08-05
 
+## E13-S09 决策与人工锁定修正开发切片（2026-08-05）
+
+- 在 E13-S08 集成状态基线 `e469c6ca` 上完成功能提交 `c87289f2`、证据提交 `382d5722`，并以 no-ff 提交 `396ee38b` 集成到 `integration/space-v1-20260730`：交付追加式 Accept/Reject/Modify 决策、单条/批量 API、权威审核读取、问题解决血缘、人工锁定事实、Migration、OpenAPI/C#/TypeScript SDK 和实时前端决策面板。
+- 单条写入同时复核 Proposal rowversion 与 ReviewEtag；受保护游标绑定租户、Run、审核状态和筛选，Serializable 事务原子提交 Proposal、Decision、Issue、审核完成时间和 24 小时幂等记录。批量上限 1,000，批量 Accept 默认关闭；服务端始终重验资格。
+- Modify 仅允许 RFC 6902 `replace` 精确白名单，单次可修改并锁定 1～32 个唯一字段；关系、业务枚举、理由码和评论均失败关闭校验。Decision、锁定事实和审计均追加写；`ReviewCompletedAtUtc` 只由服务端在全部有效提案已决策且无 Open Blocking Issue 时写入。
+- 新增不可变 `Space_GenerationLockedFact`：相同 SourceHash 按 `SourceKey + ProposalType + FieldPath` 自动继承人工终值；不同 SourceHash 不猜测、不自动继承。内部审核 API 受 `space:model:review-ai` / `space:model:edit`、租户/Site 和 external-principal 闸保护；本切片不写 Draft、Published、WMS 或设备控制数据。
+- 门禁：E13-S09 真实 SQL 3/3、Space Unit 413/413、Space Integration + KOUSQLSERVER 312/312、CP6.Tests 2779 passed / 17 environment-gated skipped、CAD 工具 25/25、前端聚焦 2 files / 7 tests、前端全量 128 files / 692 tests；type-check、production build、OpenAPI/C#/TypeScript SDK drift、EF/Migration/幂等 SQL drift 均通过。完整 solution Release 非增量单线程构建 0 error / 10 条既有 warning，Desktop/Android AOT 强度不变。完整证据见 `docs/space/reports/e13-s09-proposal-decisions-human-locks.md`。
+- 下一张独立卡是 E13-S10：Staging + 原子 Apply；任何冲突或校验失败都不得产生部分 Draft。真实 Worker 的 `LoadLockedFacts` 自动接线、异源几何“建议继承 + 人工确认”、外部 Provider、授权真实 CAD 和正式黄金集仍是独立缺口，不因本切片解除。`main` 未由本任务修改。
+- 功能 tip `382d5722` 已确认进入远端集成祖先链，本地/远端临时功能分支均已删除；本工作树已清理 `node_modules`、前端 `dist` 及本轮 Release `bin/obj` 共 38 个目录，回收 1,522,981,317 bytes（约 1.42 GiB）。Debug 缓存、源码、锁文件、报告和远端 Git 历史保留。
+
 ## E13-S08 AI 提案审核工作台开发切片（2026-08-05）
 
 - 在 E13-S07 集成基线 `d100a956` 上完成功能提交 `b1ab93f6`、证据提交 `5c2e0605`，并以 no-ff 提交 `fbf4596e` 集成到 `integration/space-v1-20260730`：新增只读完整 Draft 基线、审核工作区合同、确定性差异投影、受保护游标分页、批量选择资格预检、开发 CLI 和 Design V1 本地审核面板。

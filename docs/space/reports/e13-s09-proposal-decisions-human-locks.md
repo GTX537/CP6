@@ -1,10 +1,12 @@
 # E13-S09 决策与人工锁定修正开发切片
 
-- 状态：Ready for controlled integration
+- 状态：Integrated
 - 日期：2026-08-05
 - 起始集成基线：`e469c6ca`
 - 功能分支：`codex/space-e13-s09-proposal-decisions`
 - 功能提交：`c87289f2`
+- 证据提交：`382d5722`
+- no-ff 集成提交：`396ee38b`
 - 目标分支：`integration/space-v1-20260730`
 
 ## 1. 交付结论

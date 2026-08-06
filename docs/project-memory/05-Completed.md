@@ -1,5 +1,12 @@
 # 已完成能力与近期里程碑
 
+## 2026-08-05 E13-S09 决策与人工锁定修正
+
+- 以 `c87289f2` / `382d5722` / `396ee38b` 完成追加式 Accept/Reject/Modify 决策、并发与幂等控制、问题解决血缘、同源人工锁定继承、Migration、Design V1 API/OpenAPI/SDK 和实时审核面板，并 no-ff 进入远端受控集成。
+- 批量上限 1,000 且 High 自动批量 Accept 默认关闭；Modify 只接受 RFC 6902 `replace` 精确白名单和 1～32 个唯一锁定字段。所有写入服务端重验租户、Site、Run、Draft revision、Proposal rowversion 与 ReviewEtag；不写 Draft、Published、WMS 或设备控制数据。
+- 全量门禁为 Space Unit 413/413、Space Integration + KOUSQLSERVER 312/312、CP6.Tests 2779 passed / 17 environment-gated skipped、CAD 25/25、前端 128 files / 692 tests、完整 solution Release 0 error / 10 条既有 warning；EF、Migration/幂等 SQL、OpenAPI/C#/TypeScript SDK、type-check 与 production build 均通过。
+- 功能历史已备份并进入远端集成祖先链；本地/远端临时功能分支已删除，清理 38 个可重建目录并回收约 1.42 GiB，`main` 未修改。下一张独立实施卡为 E13-S10 Staging + 原子 Apply。
+
 ## 2026-08-02 E12-S05 标准 GLB 交换格式导出
 
 - 以 `dd505f6f` / `c4b139ab` 完成 glTF 2.0 单文件 GLB 导出与 no-ff 受控集成；仅 Ready/Succeeded/Production Isolated 的内部规划分支可下载，生产指针和运行态保持只读隔离。
