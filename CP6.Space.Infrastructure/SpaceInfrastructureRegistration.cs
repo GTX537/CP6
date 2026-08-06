@@ -74,6 +74,9 @@ public static class SpaceInfrastructureRegistration
         services.TryAddSingleton(
             new WarehouseGenerationOutputValidationLimits());
         services.TryAddSingleton<
+            ISpaceAiApplyFaultInjector,
+            NoOpSpaceAiApplyFaultInjector>();
+        services.TryAddSingleton<
             IWarehouseGenerationOutputValidator,
             WarehouseGenerationOutputValidator>();
         services.TryAddSingleton<
@@ -86,6 +89,9 @@ public static class SpaceInfrastructureRegistration
         services.AddScoped<
             ISpaceAiLockedFactService,
             SpaceAiLockedFactService>();
+        services.AddScoped<
+            ISpaceAiAtomicApplyService,
+            SpaceAiAtomicApplyService>();
         services.AddScoped<SpaceAiAdministrationService>();
         services.AddScoped<ISpaceAiAdministrationService>(provider =>
             provider.GetRequiredService<SpaceAiAdministrationService>());
@@ -107,6 +113,9 @@ public static class SpaceInfrastructureRegistration
         services.TryAddScoped<
             ISpaceBuildSceneJobStepExecutor,
             UnavailableSpaceBuildSceneJobStepExecutor>();
+        services.AddScoped<
+            ISpaceGenerationApplyStepExecutor,
+            SpaceGenerationApplyStepExecutor>();
         services.TryAddEnumerable(
             ServiceDescriptor.Scoped<
                 ISpaceJobProcessor,
@@ -119,6 +128,10 @@ public static class SpaceInfrastructureRegistration
             ServiceDescriptor.Scoped<
                 ISpaceJobProcessor,
                 SpaceBuildSceneJobProcessor>());
+        services.TryAddEnumerable(
+            ServiceDescriptor.Scoped<
+                ISpaceJobProcessor,
+                SpaceGenerationApplyJobProcessor>());
         services.AddScoped<
             ISpaceJobProcessorRunner,
             SpaceJobProcessorRunner>();

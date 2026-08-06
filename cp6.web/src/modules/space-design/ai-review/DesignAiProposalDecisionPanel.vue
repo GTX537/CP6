@@ -1,19 +1,26 @@
 <script setup lang="ts">
-import { computed, onMounted, reactive, ref, watch } from 'vue'
+import { computed, onBeforeUnmount, onMounted, reactive, ref, watch } from 'vue'
 import { ElMessage, ElMessageBox } from 'element-plus'
 import { isAxiosError } from 'axios'
 import { aiProposalReviewApi } from '@/api/space/aiProposalReview'
 import type {
   ISpaceAiGenerationReviewDto,
+  ISpaceAiGenerationRunDto,
   ISpaceAiProposalDto,
 } from '../../../../../sdk/typescript/space-design-v1/spaceDesignV1Client'
 
 const props = defineProps<{ runId: string }>()
-const emit = defineEmits<{ close: []; completed: [] }>()
+const emit = defineEmits<{
+  close: []
+  completed: []
+  applied: [run: ISpaceAiGenerationRunDto]
+}>()
 
 const loading = ref(false)
+const applyBusy = ref(false)
 const busyProposalId = ref('')
 const review = ref<ISpaceAiGenerationReviewDto | null>(null)
+const generationRun = ref<ISpaceAiGenerationRunDto | null>(null)
 const proposals = ref<ISpaceAiProposalDto[]>([])
 const selectedIds = ref<string[]>([])
 const status = ref('Proposed')
@@ -34,16 +41,42 @@ const proposalTypes = computed(() => Array.from(new Set(
 const selectedProposedIds = computed(() => selectedIds.value.filter(id =>
   proposals.value.some(item => item.proposalId === id && item.status === 'Proposed'),
 ))
+const canApply = computed(() => Boolean(
+  review.value?.reviewCompleted &&
+  review.value.status === 'AwaitingReview' &&
+  generationRun.value?.status === 'AwaitingReview' &&
+  review.value.reviewEtag &&
+  review.value.runRowVersion &&
+  Number.isInteger(review.value.baseContentRevision),
+))
+const applyStatusType = computed(() => {
+  if (generationRun.value?.status === 'Succeeded') return 'success'
+  if (['Failed', 'Stale', 'Cancelled'].includes(generationRun.value?.status ?? '')) {
+    return 'danger'
+  }
+  return 'warning'
+})
+
+let applyPollTimer: ReturnType<typeof setTimeout> | undefined
+let applyTerminalNotified = false
+let applyIdempotencyKey = ''
 
 watch([status, confidenceBand, proposalType], () => void load())
-watch(() => props.runId, () => void load())
+watch(() => props.runId, () => {
+  stopApplyPolling()
+  applyTerminalNotified = false
+  applyIdempotencyKey = ''
+  void load()
+})
 onMounted(() => void load())
+onBeforeUnmount(stopApplyPolling)
 
 async function load(conflict = false): Promise<void> {
   if (!props.runId) return
   loading.value = true
   try {
-    const [nextReview, page] = await Promise.all([
+    const [nextRun, nextReview, page] = await Promise.all([
+      aiProposalReviewApi.getRun(props.runId),
       aiProposalReviewApi.getReview(props.runId),
       aiProposalReviewApi.getProposals(props.runId, {
         status: status.value || undefined,
@@ -52,14 +85,99 @@ async function load(conflict = false): Promise<void> {
         limit: 200,
       }),
     ])
+    generationRun.value = nextRun
     review.value = nextReview
     proposals.value = page.items ?? []
     selectedIds.value = selectedIds.value.filter(id =>
       proposals.value.some(item => item.proposalId === id && item.status === 'Proposed'),
     )
     if (conflict) ElMessage.warning('审查已被其他操作更新，已加载最新状态')
+    if (nextRun.status === 'Applying') startApplyPolling()
   } finally {
     loading.value = false
+  }
+}
+
+async function applyAcceptedProposals(): Promise<void> {
+  const currentReview = review.value
+  if (!canApply.value || !currentReview?.reviewEtag ||
+    !currentReview.runRowVersion ||
+    !Number.isInteger(currentReview.baseContentRevision)) return
+
+  await ElMessageBox.confirm(
+    '确认把已接受和已修正的 AI 提案原子应用到当前 Draft？应用成功后只产生一个内容修订。',
+    '应用 AI 提案',
+    {
+      type: 'warning',
+      confirmButtonText: '排队应用',
+      cancelButtonText: '取消',
+    },
+  )
+
+  applyBusy.value = true
+  applyIdempotencyKey ||= crypto.randomUUID()
+  try {
+    const accepted = await aiProposalReviewApi.apply(
+      props.runId,
+      {
+        expectedContentRevision: currentReview.baseContentRevision!,
+        expectedRunRowVersion: currentReview.runRowVersion,
+        reviewEtag: currentReview.reviewEtag,
+      },
+      applyIdempotencyKey,
+    )
+    ElMessage.success(
+      accepted.idempotentReplay
+        ? '已恢复同一次应用任务，正在继续处理'
+        : 'AI 提案应用任务已排队',
+    )
+    await refreshApplyStatus()
+  } catch (error) {
+    if (isAxiosError(error) && error.response) {
+      applyIdempotencyKey = ''
+      if ([409, 422].includes(error.response.status)) await load(true)
+    }
+  } finally {
+    applyBusy.value = false
+  }
+}
+
+function startApplyPolling(): void {
+  stopApplyPolling()
+  applyPollTimer = setTimeout(() => void refreshApplyStatus(), 1_500)
+}
+
+function stopApplyPolling(): void {
+  if (applyPollTimer !== undefined) clearTimeout(applyPollTimer)
+  applyPollTimer = undefined
+}
+
+async function refreshApplyStatus(): Promise<void> {
+  stopApplyPolling()
+  try {
+    const nextRun = await aiProposalReviewApi.getRun(props.runId)
+    generationRun.value = nextRun
+    if (nextRun.status === 'Applying') {
+      startApplyPolling()
+      return
+    }
+    if (nextRun.status === 'Succeeded' && !applyTerminalNotified) {
+      applyTerminalNotified = true
+      ElMessage.success(
+        `AI 提案已原子应用到 Draft 修订 ${nextRun.appliedContentRevision ?? ''}`,
+      )
+      emit('applied', nextRun)
+      return
+    }
+    if (['Failed', 'Stale', 'Cancelled'].includes(nextRun.status ?? '') &&
+      !applyTerminalNotified) {
+      applyTerminalNotified = true
+      ElMessage.error(
+        nextRun.failureSummary || `AI 提案应用未完成：${nextRun.status}`,
+      )
+    }
+  } catch {
+    startApplyPolling()
   }
 }
 
@@ -239,6 +357,37 @@ function readPath(item: ISpaceAiProposalDto, path: string): string {
       </el-tag>
     </div>
 
+    <section class="apply-card" data-test="ai-proposal-apply">
+      <div>
+        <strong>原子应用到 Draft</strong>
+        <p>
+          状态：{{ generationRun?.status ?? review?.status ?? 'Unknown' }}
+          <template v-if="generationRun?.applyJobStatus">
+            · Job {{ generationRun.applyJobStatus }}
+          </template>
+        </p>
+      </div>
+      <el-tag
+        v-if="generationRun?.status === 'Applying' || generationRun?.status === 'Succeeded' || generationRun?.failureCode"
+        :type="applyStatusType"
+      >
+        {{ generationRun?.status }}
+      </el-tag>
+      <el-button
+        v-else
+        v-permission="'space:model:edit'"
+        type="primary"
+        :loading="applyBusy"
+        :disabled="!canApply"
+        @click="applyAcceptedProposals"
+      >
+        应用已审查提案
+      </el-button>
+      <small v-if="generationRun?.failureCode" class="apply-failure">
+        {{ generationRun.failureCode }} · {{ generationRun.failureSummary }}
+      </small>
+    </section>
+
     <div class="filters">
       <el-select v-model="status" aria-label="提案状态">
         <el-option label="待决" value="Proposed" />
@@ -382,6 +531,9 @@ header { justify-content: space-between; align-items: flex-start; }
 h2 { margin: 0; font-size: 16px; }
 header p, small { margin: 4px 0 0; color: #667085; font-size: 12px; overflow-wrap: anywhere; }
 .summary, .batch-bar { flex-wrap: wrap; margin: 12px 0; }
+.apply-card { display: flex; flex-wrap: wrap; align-items: center; justify-content: space-between; gap: 8px; margin: 12px 0; padding: 10px; border: 1px solid #c4b5fd; border-radius: 7px; background: #f5f3ff; }
+.apply-card p { margin: 3px 0 0; color: #667085; font-size: 12px; }
+.apply-failure { flex-basis: 100%; color: #b42318; }
 .filters { display: grid; grid-template-columns: 1fr 1fr; margin-bottom: 10px; }
 .proposal-list { display: grid; gap: 8px; }
 .proposal { display: grid; grid-template-columns: auto 1fr; gap: 8px; padding: 10px; border: 1px solid #e2e8f0; border-radius: 7px; background: #f8fafc; }

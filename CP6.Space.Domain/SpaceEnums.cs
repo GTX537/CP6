@@ -146,6 +146,7 @@ public enum SpaceJobType : short
     Publish = 7,
     Reconcile = 8,
     CloneVersion = 9,
+    ApplyGeneration = 10,
 }
 
 public enum SpaceJobSubjectType : short
@@ -154,6 +155,7 @@ public enum SpaceJobSubjectType : short
     ModelSource = 1,
     ModelVersion = 2,
     PublishAttempt = 3,
+    GenerationRun = 4,
 }
 
 public enum SpaceJobStatus : short
@@ -243,6 +245,12 @@ public enum SpaceGenerationProposalStatus : short
     Modified = 3,
     Applied = 4,
     Obsolete = 5,
+}
+
+public enum SpaceGenerationStagingValidationStatus : short
+{
+    Prepared = 0,
+    Validated = 1,
 }
 
 public enum SpaceProposalDecisionType : short
