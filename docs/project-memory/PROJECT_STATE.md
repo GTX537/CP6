@@ -11,6 +11,7 @@
 - Sample13 本轮生成 21 项（High 13 / Low 8、Ready 0 / NeedsReview 21 / Blocked 0），空楼层开发基线使 21 项诚实标为 Added；Workspace `2fc473e4...c5530efd`、58,645 bytes，重复生成字节一致。两页各 5 项且无交集；High+Rule+locatable 返回 13；Accept 预检 13 项全部因需要单项审核而不可用，Reject 预检 21/21 可选，两者均没有写入。空基线不冒充真实 Draft 对比，Modified/Unchanged 由单元测试覆盖。
 - 门禁：E13-S08 后端 4/4、Space Unit 401/401、CAD 工具 25/25、前端聚焦 4/4、前端全量 127 files / 689 tests、type-check 和 production build 通过；完整 solution Release 非增量单线程、禁用节点复用/共享编译构建 0 error / 10 条既有 warning，Desktop/Android AOT 强度不变；合并态后端 4/4、CAD 25/25、前端 4/4 和 type-check 复验通过。完整证据见 `docs/space/reports/e13-s08-proposal-review-workbench-development.md`。
 - 这是开发切片，不是正式生产签收：仍缺 Proposal/Review 持久化、Migration、租户授权/审计、公共 API/OpenAPI/SDK、权威 Draft 基线服务、真实项目性能/差异证据及 Worker/Run/Artifact 接线；E13-S05～S07 正式缺口不解除。下一张独立卡是 E13-S09：追加式单条/批量 Decision、rowversion/ReviewEtag 并发控制、服务端资格复验、补丁白名单和审核完成状态；仍不得提前 Apply，High 自动批量接受继续关闭。`main` 未由本任务修改。
+- 功能 tip `5c2e0605` 已确认进入远端集成祖先链，本地/远端临时功能分支均已删除；本工作树的 `node_modules`、前端 `dist`、`tmp/e13-s08`（含开发 HMAC key）及本轮 Release/AOT `bin/obj` 已清理，共回收 1,653,860,578 bytes（约 1.54 GiB）。Debug 缓存、源码、锁文件、Schema、报告和远端 Git 历史保留。
 
 ## E13-S07 规则/AI 融合与确定性生成开发切片（2026-08-05）
 
