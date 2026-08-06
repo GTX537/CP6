@@ -1,5 +1,13 @@
 # 已完成能力与近期里程碑
 
+## 2026-08-06 E13-S11 Generation Run 恢复产品化
+
+- 以 `dcbbfca8` / `c695850f` / `d3c2da75` 完成功能、证据和 no-ff 受控集成；交付取消、同输入重试、废弃、CommandBatch 对账、Failed/Stale 新 Run 与 RuleOnly 降级，并同步 Design V1 OpenAPI、C#/TypeScript SDK 和前端操作面。
+- 运行中取消由 Worker 安全点确认，不拆分原子 Apply；安全重试沿用同一 Job/Run/输入/检查点/ApplyPlan 且只接受 Transient/Resource/Bug。未知 Apply 结果只以当前 revision 和冻结计划匹配的已提交 CommandBatch 为权威。
+- replacement Run 保留 lineage 与冻结输入，旧 Decision/审计不删除；Failed current 源先退役后插入 replacement，同键并发只执行一次。规则降级仅对 BuildScene Provider 故障提示，普通 Apply 资源失败不会误导为关闭 Provider 重建。
+- 门禁为状态机/分类 42/42、OpenAPI/权限 52/52、AI Apply/Recovery 真实 SQL 14/14、前端 129 files/695 tests、聚焦 6/6、type-check、production build、SDK 生成与 WebApi build 全绿。
+- 功能分支已推送远端备份并进入集成祖先链；34 个可重建目录已清理，回收约 0.939 GiB，`main` 未修改。真实 BuildScene/Provider/CAD/黄金集与发布证据仍是独立缺口。
+
 ## 2026-08-06 E13-S10 Staging 与原子 AI Apply
 
 - 以 `43dc5534` / `fbc59fb3` / `5be724cf` 完成功能、既有审核基线更新纠偏和证据记录，并以 no-ff 提交 `0c587d4c` 进入受控 Space 集成分支；新增 Staging、ApplyPlanHash、ApplyGeneration Worker、Design V1 Apply/Run API、OpenAPI/SDK 与前端轮询刷新闭环。

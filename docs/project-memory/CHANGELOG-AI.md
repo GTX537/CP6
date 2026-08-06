@@ -2,6 +2,14 @@
 
 > 依据 Git log 汇总，不替代完整 Git 历史。重点记录影响接手判断的里程碑。
 
+## 2026-08-06：Space V1 E13-S11 Generation Run 恢复产品化
+
+- `dcbbfca8` / `c695850f` / `d3c2da75`：实现、记录并 no-ff 集成取消、同输入安全重试、废弃、Apply CommandBatch 对账、Failed/Stale replacement Run、RuleOnly 降级、OpenAPI/SDK 与前端恢复操作面。
+- 取消由 Worker 安全点确认且不拆分 S10 原子事务；重试沿用同一 Job/Run/冻结输入/检查点/ApplyPlan，仅接受 Transient/Resource/Bug。对账只信任匹配当前 Draft revision、RunId 和计划哈希的已提交 CommandBatch。
+- replacement 保留 basedOnRunId、源/映射/货架/规则/策略快照与 Decision 审计，旧 Run 不原地 rebase。Failed current 源在同一事务中先退役，同键并发正确 replay；RuleOnly 只对 BuildScene Provider 故障建议。
+- 验证为状态机/分类 42/42、OpenAPI/权限 52/52、真实 SQL 14/14、前端 129 files/695 tests、聚焦 6/6、type-check、production build、SDK 生成和 WebApi build 通过。
+- 清理 34 个可重建目录并回收约 0.939 GiB；`main` 未修改。生产 BuildScene executor、外部 Provider、真实 CAD/黄金集与发布证据继续失败关闭/待办。
+
 ## 2026-08-06：Space V1 E13-S10 原子 AI Apply
 
 - `43dc5534` / `fbc59fb3` / `5be724cf` / `0c587d4c`：实现、纠偏、记录并 no-ff 集成 Staging + ApplyPlan、ApplyGeneration Worker、原子 Draft 写入、Run/Apply Design V1 API、OpenAPI/SDK 和前端轮询刷新。

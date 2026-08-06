@@ -2,6 +2,15 @@
 
 最后更新：2026-08-06
 
+## E13-S11 Generation Run 恢复产品化开发切片（2026-08-06）
+
+- 在 E13-S10 集成状态基线 `c1efea2b` 上完成功能提交 `dcbbfca8`、证据提交 `c695850f`，并以 no-ff 提交 `d3c2da75` 集成到 `integration/space-v1-20260730`。
+- 新增取消、同输入安全重试、废弃、权威 Apply 结果对账、Failed/Stale replacement Run 与 RuleOnly 降级 API；全部 mutation 要求内部主体、租户/Site、精确 rowversion、幂等键和审计。OpenAPI、C#/TypeScript SDK 与前端审核面板已同步。
+- 取消在 Worker 安全点确认，不拆分 S10 原子 Apply；同输入重试只允许 Transient/Resource/Bug 且沿用同一 Job/Run/检查点/ApplyPlan。对账只信任匹配当前 revision、RunId 和 ApplyPlanHash 的已提交 CommandBatch，不根据 Job 文本猜测成功。
+- Failed/Stale 恢复创建新 Run/BuildScene Job 并保留 basedOnRunId、冻结输入、Decision 与审计；旧 Run 不原地 rebase。Failed current 源先在同一事务中退役再插入 replacement；同键并发锁内优先重放，避免旧 rowversion 误报 409。只有 BuildScene Provider 不可用才提示 RuleOnly。
+- 门禁：WebApi build 0 warning/0 error、状态机与分类 42/42、OpenAPI/权限 52/52、AI Apply/Recovery 真实 SQL 14/14、前端聚焦 2 files/6 tests、前端全量 129 files/695 tests、type-check、production build、SDK 生成与 `git diff --check` 全部通过。完整证据见 `docs/space/reports/e13-s11-generation-run-recovery.md`。
+- 生产默认 BuildScene executor 仍失败关闭；真实全阶段 `LoadLockedFacts` 自动接线、异源几何建议继承与人工确认、外部 Provider、授权真实 CAD、正式黄金集、性能/试点和发布证据仍未完成。已清理 34 个可重建目录并回收 1,008,090,267 bytes（约 0.939 GiB）；`main` 未修改。下一张建议卡为 E13-S13 外部用户拒绝与数据外发门禁，E13-S17 迁移/保留清理也已独立解除依赖。
+
 ## E13-S10 Staging 与原子 AI Apply 开发切片（2026-08-06）
 
 - 在 E13-S09 集成状态基线 `b663c4ae` 上完成功能提交 `43dc5534`、既有审核基线更新纠偏 `fbc59fb3`、证据提交 `5be724cf`，并以 no-ff 提交 `0c587d4c` 集成到 `integration/space-v1-20260730`。

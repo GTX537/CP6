@@ -1,12 +1,12 @@
 # E13-S11 Generation Run 取消、重试、降级与 Stale 恢复开发报告
 
-- 状态：Ready for integration
+- 状态：Integrated
 - 日期：2026-08-06
 - 起始集成基线：`c1efea2b`
 - 功能分支：`codex/space-e13-s11-recovery`
 - 功能提交：`dcbbfca8`
-- 证据提交：待提交
-- no-ff 集成提交：待集成
+- 证据提交：`c695850f`
+- no-ff 集成提交：`d3c2da75`
 - 目标分支：`integration/space-v1-20260730`
 
 ## 1. 交付结论
@@ -109,7 +109,8 @@ replacement、CommandBatch 对账和并发相同取消键重放。测试使用�
 
 ## 8. 清理、回滚与剩余边界
 
-前端依赖与 production `dist` 仅为验证临时恢复，集成后删除；依赖可由 lockfile 重建。运行回滚可
+前端依赖、production `dist` 与顶层 .NET `bin/obj` 已在集成后删除，共清理 34 个可重建目录并
+回收 1,008,090,267 bytes（约 0.939 GiB）；依赖和产物可由 lockfile/源码重建。运行回滚可
 关闭新 UI/API 权限并停止领取恢复后 BuildScene Job；已有 Run、Proposal、Decision、CommandBatch
 和幂等记录保留，数据库不需要破坏性回滚。
 
