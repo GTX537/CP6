@@ -135,6 +135,14 @@ public class SpacePermissionAttributeTests
                 "space-ai-admin:read",
             ["SpaceAiAdministrationController.GetUsage"] =
                 "space-ai-admin:read",
+            ["SpaceAiProposalDecisionController.GetProposalReview"] =
+                "space:model:review-ai",
+            ["SpaceAiProposalDecisionController.GetGenerationProposals"] =
+                "space:model:review-ai",
+            ["SpaceAiProposalDecisionController.GetGenerationProposalIssues"] =
+                "space:model:review-ai",
+            ["SpaceAiProposalDecisionController.GetProposalDecisions"] =
+                "space:model:review-ai",
             ["SpacePlanningScenarioController.GetBranch"] =
                 "space:planning:scenario:read",
             ["SpacePlanningScenarioController.GetBranches"] =
@@ -201,7 +209,7 @@ public class SpacePermissionAttributeTests
     public void SpaceControllers_AreDiscovered()
     {
         // 守卫：确保反射确实扫到全部 controller（防命名空间/程序集变动导致「空扫空过」）。
-        Assert.Equal(31, SpaceControllers.Count());
+        Assert.Equal(32, SpaceControllers.Count());
     }
 
     [Fact]
@@ -342,6 +350,32 @@ public class SpacePermissionAttributeTests
         Assert.True(permissions.SetEquals(
         [
             "space:integration:manage",
+            "space:model:edit",
+        ]));
+    }
+
+    [Theory]
+    [InlineData(nameof(SpaceAiProposalDecisionController.CreateProposalDecision))]
+    [InlineData(nameof(SpaceAiProposalDecisionController.CreateProposalBatchDecision))]
+    public void Ai_proposal_decisions_require_review_and_model_edit(
+        string methodName)
+    {
+        var method = typeof(SpaceAiProposalDecisionController)
+            .GetMethod(methodName);
+        Assert.NotNull(method);
+
+        var permissions = CustomAttributeData
+            .GetCustomAttributes(method!)
+            .Where(data =>
+                data.AttributeType == typeof(RequirePermissionAttribute))
+            .Select(data =>
+                $"{data.ConstructorArguments[0].Value}:" +
+                $"{data.ConstructorArguments[1].Value}")
+            .ToHashSet();
+
+        Assert.True(permissions.SetEquals(
+        [
+            "space:model:review-ai",
             "space:model:edit",
         ]));
     }

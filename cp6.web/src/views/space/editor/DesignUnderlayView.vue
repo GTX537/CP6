@@ -48,6 +48,7 @@ import {
   type CadReviewWorkspace,
 } from '@/modules/space-design/cad-review/cadReviewWorkspace'
 import DesignAiProposalReviewPanel from '@/modules/space-design/ai-review/DesignAiProposalReviewPanel.vue'
+import DesignAiProposalDecisionPanel from '@/modules/space-design/ai-review/DesignAiProposalDecisionPanel.vue'
 import {
   aiReviewFreshness,
   parseAiProposalReviewWorkspace,
@@ -91,6 +92,7 @@ const { t } = useI18n()
 const route = useRoute()
 const versionId = computed(() => String(route.params.versionId ?? ''))
 const floorLogicalId = computed(() => String(route.params.floorLogicalId ?? ''))
+const generationRunId = computed(() => String(route.query.generationRunId ?? ''))
 const canvasRef = ref<HTMLDivElement>()
 const fileInputRef = ref<HTMLInputElement>()
 const cadReviewFileInputRef = ref<HTMLInputElement>()
@@ -103,6 +105,7 @@ const cadReviewPanelVisible = ref(false)
 const activeCadReviewItemId = ref('')
 const aiReviewWorkspace = ref<AiProposalReviewWorkspace | null>(null)
 const aiReviewPanelVisible = ref(false)
+const aiDecisionPanelVisible = ref(false)
 const activeAiReviewItemId = ref('')
 const loading = ref(true)
 const projectionMode = ref<'2d' | 'split' | '3d'>('split')
@@ -364,6 +367,7 @@ async function onCadReviewArtifactSelected(event: Event): Promise<void> {
     cadReviewWorkspace.value = workspace
     cadReviewPanelVisible.value = true
     aiReviewPanelVisible.value = false
+    aiDecisionPanelVisible.value = false
     activeCadReviewItemId.value = ''
     activeAiReviewItemId.value = ''
     cadIssueOverlay?.clear()
@@ -468,6 +472,7 @@ async function onAiReviewArtifactSelected(event: Event): Promise<void> {
     const workspace = parseAiProposalReviewWorkspace(await file.text())
     aiReviewWorkspace.value = workspace
     aiReviewPanelVisible.value = true
+    aiDecisionPanelVisible.value = false
     cadReviewPanelVisible.value = false
     activeAiReviewItemId.value = ''
     activeCadReviewItemId.value = ''
@@ -540,6 +545,27 @@ function closeAiReviewPanel(): void {
   aiReviewPanelVisible.value = false
   activeAiReviewItemId.value = ''
   cadIssueOverlay?.clear()
+}
+
+function openAiDecisionPanel(): void {
+  if (!generationRunId.value) {
+    ElMessage.warning('请从生成任务携带 generationRunId 进入编辑器')
+    return
+  }
+  aiDecisionPanelVisible.value = true
+  aiReviewPanelVisible.value = false
+  cadReviewPanelVisible.value = false
+  activeAiReviewItemId.value = ''
+  activeCadReviewItemId.value = ''
+  cadIssueOverlay?.clear()
+}
+
+function closeAiDecisionPanel(): void {
+  aiDecisionPanelVisible.value = false
+}
+
+function onAiReviewCompleted(): void {
+  ElMessage.success('本次 AI 提案审查已全部完成，可以进入 Apply 阶段')
 }
 
 function chooseFile(): void {
@@ -1166,6 +1192,15 @@ function delay(milliseconds: number): Promise<void> {
           下载标准 Excel
         </el-button>
         <el-button
+          v-if="generationRunId"
+          v-permission="'space:model:review-ai'"
+          size="small"
+          :type="aiDecisionPanelVisible ? 'success' : 'default'"
+          @click="openAiDecisionPanel"
+        >
+          AI 提案决策
+        </el-button>
+        <el-button
           v-permission="'space:model:read'"
           size="small"
           :type="cadReviewPanelVisible ? 'warning' : 'default'"
@@ -1306,6 +1341,12 @@ function delay(milliseconds: number): Promise<void> {
           </el-button>
         </div>
       </aside>
+      <DesignAiProposalDecisionPanel
+        v-if="aiDecisionPanelVisible && generationRunId"
+        :run-id="generationRunId"
+        @close="closeAiDecisionPanel"
+        @completed="onAiReviewCompleted"
+      />
       <DesignAiProposalReviewPanel
         v-else-if="aiReviewPanelVisible && aiReviewWorkspace"
         :workspace="aiReviewWorkspace"

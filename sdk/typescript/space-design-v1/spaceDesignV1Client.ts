@@ -34,6 +34,50 @@ export interface ISpaceDesignV1Client {
     /**
      * @return OK
      */
+    getProposalReview(runId: string): Promise<SpaceAiGenerationReviewDto>;
+
+    /**
+     * @param status (optional)
+     * @param confidenceBand (optional)
+     * @param proposalType (optional)
+     * @param hasBlockingIssue (optional)
+     * @param cursor (optional)
+     * @param limit (optional)
+     * @return OK
+     */
+    getGenerationProposals(runId: string, status: string | undefined, confidenceBand: string | undefined, proposalType: string | undefined, hasBlockingIssue: boolean | undefined, cursor: string | undefined, limit: number | undefined): Promise<SpaceAiProposalPageDto>;
+
+    /**
+     * @param proposalId (optional)
+     * @param severity (optional)
+     * @param status (optional)
+     * @param issueCode (optional)
+     * @param cursor (optional)
+     * @param limit (optional)
+     * @return OK
+     */
+    getGenerationProposalIssues(runId: string, proposalId: string | undefined, severity: string | undefined, status: string | undefined, issueCode: string | undefined, cursor: string | undefined, limit: number | undefined): Promise<SpaceAiProposalIssuePageDto>;
+
+    /**
+     * @param proposalId (optional)
+     * @param limit (optional)
+     * @return OK
+     */
+    getProposalDecisions(runId: string, proposalId: string | undefined, limit: number | undefined): Promise<SpaceAiProposalDecisionHistoryDto>;
+
+    /**
+     * @return OK
+     */
+    createProposalDecision(runId: string, idempotency_Key: string, body: CreateSpaceAiProposalDecisionRequest): Promise<SpaceAiProposalDecisionResponse>;
+
+    /**
+     * @return OK
+     */
+    createProposalBatchDecision(runId: string, idempotency_Key: string, body: CreateSpaceAiProposalBatchDecisionRequest): Promise<SpaceAiProposalDecisionResponse>;
+
+    /**
+     * @return OK
+     */
     downloadStandardExcelTemplate(): Promise<FileResponse>;
 
     /**
@@ -809,6 +853,620 @@ export class SpaceDesignV1Client implements ISpaceDesignV1Client {
             });
         }
         return Promise.resolve<SpaceAiUsagePageDto>(null as any);
+    }
+
+    /**
+     * @return OK
+     */
+    getProposalReview(runId: string): Promise<SpaceAiGenerationReviewDto> {
+        let url_ = this.baseUrl + "/api/space/design/v1/generation-runs/{runId}/review";
+        if (runId === undefined || runId === null)
+            throw new globalThis.Error("The parameter 'runId' must be defined.");
+        url_ = url_.replace("{runId}", encodeURIComponent("" + runId));
+        url_ = url_.replace(/[?&]$/, "");
+
+        let options_: RequestInit = {
+            method: "GET",
+            headers: {
+                "Accept": "application/json"
+            }
+        };
+
+        return this.http.fetch(url_, options_).then((_response: Response) => {
+            return this.processGetProposalReview(_response);
+        });
+    }
+
+    protected processGetProposalReview(response: Response): Promise<SpaceAiGenerationReviewDto> {
+        const status = response.status;
+        let _headers: any = {}; if (response.headers && response.headers.forEach) { response.headers.forEach((v: any, k: any) => _headers[k] = v); };
+        if (status === 200) {
+            return response.text().then((_responseText) => {
+            let result200: any = null;
+            let resultData200 = _responseText === "" ? null : JSON.parse(_responseText, this.jsonParseReviver);
+            result200 = SpaceAiGenerationReviewDto.fromJS(resultData200);
+            return result200;
+            });
+        } else if (status === 400) {
+            return response.text().then((_responseText) => {
+            let result400: any = null;
+            let resultData400 = _responseText === "" ? null : JSON.parse(_responseText, this.jsonParseReviver);
+            result400 = SpaceDesignProblemDetails.fromJS(resultData400);
+            return throwException("Bad Request", status, _responseText, _headers, result400);
+            });
+        } else if (status === 401) {
+            return response.text().then((_responseText) => {
+            let result401: any = null;
+            let resultData401 = _responseText === "" ? null : JSON.parse(_responseText, this.jsonParseReviver);
+            result401 = SpaceDesignProblemDetails.fromJS(resultData401);
+            return throwException("Unauthorized", status, _responseText, _headers, result401);
+            });
+        } else if (status === 403) {
+            return response.text().then((_responseText) => {
+            let result403: any = null;
+            let resultData403 = _responseText === "" ? null : JSON.parse(_responseText, this.jsonParseReviver);
+            result403 = SpaceDesignProblemDetails.fromJS(resultData403);
+            return throwException("Forbidden", status, _responseText, _headers, result403);
+            });
+        } else if (status === 404) {
+            return response.text().then((_responseText) => {
+            let result404: any = null;
+            let resultData404 = _responseText === "" ? null : JSON.parse(_responseText, this.jsonParseReviver);
+            result404 = SpaceDesignProblemDetails.fromJS(resultData404);
+            return throwException("Not Found", status, _responseText, _headers, result404);
+            });
+        } else if (status === 409) {
+            return response.text().then((_responseText) => {
+            let result409: any = null;
+            let resultData409 = _responseText === "" ? null : JSON.parse(_responseText, this.jsonParseReviver);
+            result409 = SpaceDesignProblemDetails.fromJS(resultData409);
+            return throwException("Conflict", status, _responseText, _headers, result409);
+            });
+        } else if (status === 422) {
+            return response.text().then((_responseText) => {
+            let result422: any = null;
+            let resultData422 = _responseText === "" ? null : JSON.parse(_responseText, this.jsonParseReviver);
+            result422 = SpaceDesignProblemDetails.fromJS(resultData422);
+            return throwException("Unprocessable Content", status, _responseText, _headers, result422);
+            });
+        } else if (status === 500) {
+            return response.text().then((_responseText) => {
+            let result500: any = null;
+            let resultData500 = _responseText === "" ? null : JSON.parse(_responseText, this.jsonParseReviver);
+            result500 = SpaceDesignProblemDetails.fromJS(resultData500);
+            return throwException("Internal Server Error", status, _responseText, _headers, result500);
+            });
+        } else if (status !== 200 && status !== 204) {
+            return response.text().then((_responseText) => {
+            return throwException("An unexpected server error occurred.", status, _responseText, _headers);
+            });
+        }
+        return Promise.resolve<SpaceAiGenerationReviewDto>(null as any);
+    }
+
+    /**
+     * @param status (optional)
+     * @param confidenceBand (optional)
+     * @param proposalType (optional)
+     * @param hasBlockingIssue (optional)
+     * @param cursor (optional)
+     * @param limit (optional)
+     * @return OK
+     */
+    getGenerationProposals(runId: string, status: string | undefined, confidenceBand: string | undefined, proposalType: string | undefined, hasBlockingIssue: boolean | undefined, cursor: string | undefined, limit: number | undefined): Promise<SpaceAiProposalPageDto> {
+        let url_ = this.baseUrl + "/api/space/design/v1/generation-runs/{runId}/proposals?";
+        if (runId === undefined || runId === null)
+            throw new globalThis.Error("The parameter 'runId' must be defined.");
+        url_ = url_.replace("{runId}", encodeURIComponent("" + runId));
+        if (status === null)
+            throw new globalThis.Error("The parameter 'status' cannot be null.");
+        else if (status !== undefined)
+            url_ += "Status=" + encodeURIComponent("" + status) + "&";
+        if (confidenceBand === null)
+            throw new globalThis.Error("The parameter 'confidenceBand' cannot be null.");
+        else if (confidenceBand !== undefined)
+            url_ += "ConfidenceBand=" + encodeURIComponent("" + confidenceBand) + "&";
+        if (proposalType === null)
+            throw new globalThis.Error("The parameter 'proposalType' cannot be null.");
+        else if (proposalType !== undefined)
+            url_ += "ProposalType=" + encodeURIComponent("" + proposalType) + "&";
+        if (hasBlockingIssue === null)
+            throw new globalThis.Error("The parameter 'hasBlockingIssue' cannot be null.");
+        else if (hasBlockingIssue !== undefined)
+            url_ += "HasBlockingIssue=" + encodeURIComponent("" + hasBlockingIssue) + "&";
+        if (cursor === null)
+            throw new globalThis.Error("The parameter 'cursor' cannot be null.");
+        else if (cursor !== undefined)
+            url_ += "Cursor=" + encodeURIComponent("" + cursor) + "&";
+        if (limit === null)
+            throw new globalThis.Error("The parameter 'limit' cannot be null.");
+        else if (limit !== undefined)
+            url_ += "Limit=" + encodeURIComponent("" + limit) + "&";
+        url_ = url_.replace(/[?&]$/, "");
+
+        let options_: RequestInit = {
+            method: "GET",
+            headers: {
+                "Accept": "application/json"
+            }
+        };
+
+        return this.http.fetch(url_, options_).then((_response: Response) => {
+            return this.processGetGenerationProposals(_response);
+        });
+    }
+
+    protected processGetGenerationProposals(response: Response): Promise<SpaceAiProposalPageDto> {
+        const status = response.status;
+        let _headers: any = {}; if (response.headers && response.headers.forEach) { response.headers.forEach((v: any, k: any) => _headers[k] = v); };
+        if (status === 200) {
+            return response.text().then((_responseText) => {
+            let result200: any = null;
+            let resultData200 = _responseText === "" ? null : JSON.parse(_responseText, this.jsonParseReviver);
+            result200 = SpaceAiProposalPageDto.fromJS(resultData200);
+            return result200;
+            });
+        } else if (status === 400) {
+            return response.text().then((_responseText) => {
+            let result400: any = null;
+            let resultData400 = _responseText === "" ? null : JSON.parse(_responseText, this.jsonParseReviver);
+            result400 = SpaceDesignProblemDetails.fromJS(resultData400);
+            return throwException("Bad Request", status, _responseText, _headers, result400);
+            });
+        } else if (status === 401) {
+            return response.text().then((_responseText) => {
+            let result401: any = null;
+            let resultData401 = _responseText === "" ? null : JSON.parse(_responseText, this.jsonParseReviver);
+            result401 = SpaceDesignProblemDetails.fromJS(resultData401);
+            return throwException("Unauthorized", status, _responseText, _headers, result401);
+            });
+        } else if (status === 403) {
+            return response.text().then((_responseText) => {
+            let result403: any = null;
+            let resultData403 = _responseText === "" ? null : JSON.parse(_responseText, this.jsonParseReviver);
+            result403 = SpaceDesignProblemDetails.fromJS(resultData403);
+            return throwException("Forbidden", status, _responseText, _headers, result403);
+            });
+        } else if (status === 404) {
+            return response.text().then((_responseText) => {
+            let result404: any = null;
+            let resultData404 = _responseText === "" ? null : JSON.parse(_responseText, this.jsonParseReviver);
+            result404 = SpaceDesignProblemDetails.fromJS(resultData404);
+            return throwException("Not Found", status, _responseText, _headers, result404);
+            });
+        } else if (status === 409) {
+            return response.text().then((_responseText) => {
+            let result409: any = null;
+            let resultData409 = _responseText === "" ? null : JSON.parse(_responseText, this.jsonParseReviver);
+            result409 = SpaceDesignProblemDetails.fromJS(resultData409);
+            return throwException("Conflict", status, _responseText, _headers, result409);
+            });
+        } else if (status === 422) {
+            return response.text().then((_responseText) => {
+            let result422: any = null;
+            let resultData422 = _responseText === "" ? null : JSON.parse(_responseText, this.jsonParseReviver);
+            result422 = SpaceDesignProblemDetails.fromJS(resultData422);
+            return throwException("Unprocessable Content", status, _responseText, _headers, result422);
+            });
+        } else if (status === 500) {
+            return response.text().then((_responseText) => {
+            let result500: any = null;
+            let resultData500 = _responseText === "" ? null : JSON.parse(_responseText, this.jsonParseReviver);
+            result500 = SpaceDesignProblemDetails.fromJS(resultData500);
+            return throwException("Internal Server Error", status, _responseText, _headers, result500);
+            });
+        } else if (status !== 200 && status !== 204) {
+            return response.text().then((_responseText) => {
+            return throwException("An unexpected server error occurred.", status, _responseText, _headers);
+            });
+        }
+        return Promise.resolve<SpaceAiProposalPageDto>(null as any);
+    }
+
+    /**
+     * @param proposalId (optional)
+     * @param severity (optional)
+     * @param status (optional)
+     * @param issueCode (optional)
+     * @param cursor (optional)
+     * @param limit (optional)
+     * @return OK
+     */
+    getGenerationProposalIssues(runId: string, proposalId: string | undefined, severity: string | undefined, status: string | undefined, issueCode: string | undefined, cursor: string | undefined, limit: number | undefined): Promise<SpaceAiProposalIssuePageDto> {
+        let url_ = this.baseUrl + "/api/space/design/v1/generation-runs/{runId}/issues?";
+        if (runId === undefined || runId === null)
+            throw new globalThis.Error("The parameter 'runId' must be defined.");
+        url_ = url_.replace("{runId}", encodeURIComponent("" + runId));
+        if (proposalId === null)
+            throw new globalThis.Error("The parameter 'proposalId' cannot be null.");
+        else if (proposalId !== undefined)
+            url_ += "ProposalId=" + encodeURIComponent("" + proposalId) + "&";
+        if (severity === null)
+            throw new globalThis.Error("The parameter 'severity' cannot be null.");
+        else if (severity !== undefined)
+            url_ += "Severity=" + encodeURIComponent("" + severity) + "&";
+        if (status === null)
+            throw new globalThis.Error("The parameter 'status' cannot be null.");
+        else if (status !== undefined)
+            url_ += "Status=" + encodeURIComponent("" + status) + "&";
+        if (issueCode === null)
+            throw new globalThis.Error("The parameter 'issueCode' cannot be null.");
+        else if (issueCode !== undefined)
+            url_ += "IssueCode=" + encodeURIComponent("" + issueCode) + "&";
+        if (cursor === null)
+            throw new globalThis.Error("The parameter 'cursor' cannot be null.");
+        else if (cursor !== undefined)
+            url_ += "Cursor=" + encodeURIComponent("" + cursor) + "&";
+        if (limit === null)
+            throw new globalThis.Error("The parameter 'limit' cannot be null.");
+        else if (limit !== undefined)
+            url_ += "Limit=" + encodeURIComponent("" + limit) + "&";
+        url_ = url_.replace(/[?&]$/, "");
+
+        let options_: RequestInit = {
+            method: "GET",
+            headers: {
+                "Accept": "application/json"
+            }
+        };
+
+        return this.http.fetch(url_, options_).then((_response: Response) => {
+            return this.processGetGenerationProposalIssues(_response);
+        });
+    }
+
+    protected processGetGenerationProposalIssues(response: Response): Promise<SpaceAiProposalIssuePageDto> {
+        const status = response.status;
+        let _headers: any = {}; if (response.headers && response.headers.forEach) { response.headers.forEach((v: any, k: any) => _headers[k] = v); };
+        if (status === 200) {
+            return response.text().then((_responseText) => {
+            let result200: any = null;
+            let resultData200 = _responseText === "" ? null : JSON.parse(_responseText, this.jsonParseReviver);
+            result200 = SpaceAiProposalIssuePageDto.fromJS(resultData200);
+            return result200;
+            });
+        } else if (status === 400) {
+            return response.text().then((_responseText) => {
+            let result400: any = null;
+            let resultData400 = _responseText === "" ? null : JSON.parse(_responseText, this.jsonParseReviver);
+            result400 = SpaceDesignProblemDetails.fromJS(resultData400);
+            return throwException("Bad Request", status, _responseText, _headers, result400);
+            });
+        } else if (status === 401) {
+            return response.text().then((_responseText) => {
+            let result401: any = null;
+            let resultData401 = _responseText === "" ? null : JSON.parse(_responseText, this.jsonParseReviver);
+            result401 = SpaceDesignProblemDetails.fromJS(resultData401);
+            return throwException("Unauthorized", status, _responseText, _headers, result401);
+            });
+        } else if (status === 403) {
+            return response.text().then((_responseText) => {
+            let result403: any = null;
+            let resultData403 = _responseText === "" ? null : JSON.parse(_responseText, this.jsonParseReviver);
+            result403 = SpaceDesignProblemDetails.fromJS(resultData403);
+            return throwException("Forbidden", status, _responseText, _headers, result403);
+            });
+        } else if (status === 404) {
+            return response.text().then((_responseText) => {
+            let result404: any = null;
+            let resultData404 = _responseText === "" ? null : JSON.parse(_responseText, this.jsonParseReviver);
+            result404 = SpaceDesignProblemDetails.fromJS(resultData404);
+            return throwException("Not Found", status, _responseText, _headers, result404);
+            });
+        } else if (status === 409) {
+            return response.text().then((_responseText) => {
+            let result409: any = null;
+            let resultData409 = _responseText === "" ? null : JSON.parse(_responseText, this.jsonParseReviver);
+            result409 = SpaceDesignProblemDetails.fromJS(resultData409);
+            return throwException("Conflict", status, _responseText, _headers, result409);
+            });
+        } else if (status === 422) {
+            return response.text().then((_responseText) => {
+            let result422: any = null;
+            let resultData422 = _responseText === "" ? null : JSON.parse(_responseText, this.jsonParseReviver);
+            result422 = SpaceDesignProblemDetails.fromJS(resultData422);
+            return throwException("Unprocessable Content", status, _responseText, _headers, result422);
+            });
+        } else if (status === 500) {
+            return response.text().then((_responseText) => {
+            let result500: any = null;
+            let resultData500 = _responseText === "" ? null : JSON.parse(_responseText, this.jsonParseReviver);
+            result500 = SpaceDesignProblemDetails.fromJS(resultData500);
+            return throwException("Internal Server Error", status, _responseText, _headers, result500);
+            });
+        } else if (status !== 200 && status !== 204) {
+            return response.text().then((_responseText) => {
+            return throwException("An unexpected server error occurred.", status, _responseText, _headers);
+            });
+        }
+        return Promise.resolve<SpaceAiProposalIssuePageDto>(null as any);
+    }
+
+    /**
+     * @param proposalId (optional)
+     * @param limit (optional)
+     * @return OK
+     */
+    getProposalDecisions(runId: string, proposalId: string | undefined, limit: number | undefined): Promise<SpaceAiProposalDecisionHistoryDto> {
+        let url_ = this.baseUrl + "/api/space/design/v1/generation-runs/{runId}/decisions?";
+        if (runId === undefined || runId === null)
+            throw new globalThis.Error("The parameter 'runId' must be defined.");
+        url_ = url_.replace("{runId}", encodeURIComponent("" + runId));
+        if (proposalId === null)
+            throw new globalThis.Error("The parameter 'proposalId' cannot be null.");
+        else if (proposalId !== undefined)
+            url_ += "proposalId=" + encodeURIComponent("" + proposalId) + "&";
+        if (limit === null)
+            throw new globalThis.Error("The parameter 'limit' cannot be null.");
+        else if (limit !== undefined)
+            url_ += "limit=" + encodeURIComponent("" + limit) + "&";
+        url_ = url_.replace(/[?&]$/, "");
+
+        let options_: RequestInit = {
+            method: "GET",
+            headers: {
+                "Accept": "application/json"
+            }
+        };
+
+        return this.http.fetch(url_, options_).then((_response: Response) => {
+            return this.processGetProposalDecisions(_response);
+        });
+    }
+
+    protected processGetProposalDecisions(response: Response): Promise<SpaceAiProposalDecisionHistoryDto> {
+        const status = response.status;
+        let _headers: any = {}; if (response.headers && response.headers.forEach) { response.headers.forEach((v: any, k: any) => _headers[k] = v); };
+        if (status === 200) {
+            return response.text().then((_responseText) => {
+            let result200: any = null;
+            let resultData200 = _responseText === "" ? null : JSON.parse(_responseText, this.jsonParseReviver);
+            result200 = SpaceAiProposalDecisionHistoryDto.fromJS(resultData200);
+            return result200;
+            });
+        } else if (status === 400) {
+            return response.text().then((_responseText) => {
+            let result400: any = null;
+            let resultData400 = _responseText === "" ? null : JSON.parse(_responseText, this.jsonParseReviver);
+            result400 = SpaceDesignProblemDetails.fromJS(resultData400);
+            return throwException("Bad Request", status, _responseText, _headers, result400);
+            });
+        } else if (status === 401) {
+            return response.text().then((_responseText) => {
+            let result401: any = null;
+            let resultData401 = _responseText === "" ? null : JSON.parse(_responseText, this.jsonParseReviver);
+            result401 = SpaceDesignProblemDetails.fromJS(resultData401);
+            return throwException("Unauthorized", status, _responseText, _headers, result401);
+            });
+        } else if (status === 403) {
+            return response.text().then((_responseText) => {
+            let result403: any = null;
+            let resultData403 = _responseText === "" ? null : JSON.parse(_responseText, this.jsonParseReviver);
+            result403 = SpaceDesignProblemDetails.fromJS(resultData403);
+            return throwException("Forbidden", status, _responseText, _headers, result403);
+            });
+        } else if (status === 404) {
+            return response.text().then((_responseText) => {
+            let result404: any = null;
+            let resultData404 = _responseText === "" ? null : JSON.parse(_responseText, this.jsonParseReviver);
+            result404 = SpaceDesignProblemDetails.fromJS(resultData404);
+            return throwException("Not Found", status, _responseText, _headers, result404);
+            });
+        } else if (status === 409) {
+            return response.text().then((_responseText) => {
+            let result409: any = null;
+            let resultData409 = _responseText === "" ? null : JSON.parse(_responseText, this.jsonParseReviver);
+            result409 = SpaceDesignProblemDetails.fromJS(resultData409);
+            return throwException("Conflict", status, _responseText, _headers, result409);
+            });
+        } else if (status === 422) {
+            return response.text().then((_responseText) => {
+            let result422: any = null;
+            let resultData422 = _responseText === "" ? null : JSON.parse(_responseText, this.jsonParseReviver);
+            result422 = SpaceDesignProblemDetails.fromJS(resultData422);
+            return throwException("Unprocessable Content", status, _responseText, _headers, result422);
+            });
+        } else if (status === 500) {
+            return response.text().then((_responseText) => {
+            let result500: any = null;
+            let resultData500 = _responseText === "" ? null : JSON.parse(_responseText, this.jsonParseReviver);
+            result500 = SpaceDesignProblemDetails.fromJS(resultData500);
+            return throwException("Internal Server Error", status, _responseText, _headers, result500);
+            });
+        } else if (status !== 200 && status !== 204) {
+            return response.text().then((_responseText) => {
+            return throwException("An unexpected server error occurred.", status, _responseText, _headers);
+            });
+        }
+        return Promise.resolve<SpaceAiProposalDecisionHistoryDto>(null as any);
+    }
+
+    /**
+     * @return OK
+     */
+    createProposalDecision(runId: string, idempotency_Key: string, body: CreateSpaceAiProposalDecisionRequest): Promise<SpaceAiProposalDecisionResponse> {
+        let url_ = this.baseUrl + "/api/space/design/v1/generation-runs/{runId}/decisions";
+        if (runId === undefined || runId === null)
+            throw new globalThis.Error("The parameter 'runId' must be defined.");
+        url_ = url_.replace("{runId}", encodeURIComponent("" + runId));
+        url_ = url_.replace(/[?&]$/, "");
+
+        const content_ = JSON.stringify(body);
+
+        let options_: RequestInit = {
+            body: content_,
+            method: "POST",
+            headers: {
+                "Idempotency-Key": idempotency_Key !== undefined && idempotency_Key !== null ? "" + idempotency_Key : "",
+                "Content-Type": "application/json",
+                "Accept": "application/json"
+            }
+        };
+
+        return this.http.fetch(url_, options_).then((_response: Response) => {
+            return this.processCreateProposalDecision(_response);
+        });
+    }
+
+    protected processCreateProposalDecision(response: Response): Promise<SpaceAiProposalDecisionResponse> {
+        const status = response.status;
+        let _headers: any = {}; if (response.headers && response.headers.forEach) { response.headers.forEach((v: any, k: any) => _headers[k] = v); };
+        if (status === 200) {
+            return response.text().then((_responseText) => {
+            let result200: any = null;
+            let resultData200 = _responseText === "" ? null : JSON.parse(_responseText, this.jsonParseReviver);
+            result200 = SpaceAiProposalDecisionResponse.fromJS(resultData200);
+            return result200;
+            });
+        } else if (status === 400) {
+            return response.text().then((_responseText) => {
+            let result400: any = null;
+            let resultData400 = _responseText === "" ? null : JSON.parse(_responseText, this.jsonParseReviver);
+            result400 = SpaceDesignProblemDetails.fromJS(resultData400);
+            return throwException("Bad Request", status, _responseText, _headers, result400);
+            });
+        } else if (status === 401) {
+            return response.text().then((_responseText) => {
+            let result401: any = null;
+            let resultData401 = _responseText === "" ? null : JSON.parse(_responseText, this.jsonParseReviver);
+            result401 = SpaceDesignProblemDetails.fromJS(resultData401);
+            return throwException("Unauthorized", status, _responseText, _headers, result401);
+            });
+        } else if (status === 403) {
+            return response.text().then((_responseText) => {
+            let result403: any = null;
+            let resultData403 = _responseText === "" ? null : JSON.parse(_responseText, this.jsonParseReviver);
+            result403 = SpaceDesignProblemDetails.fromJS(resultData403);
+            return throwException("Forbidden", status, _responseText, _headers, result403);
+            });
+        } else if (status === 404) {
+            return response.text().then((_responseText) => {
+            let result404: any = null;
+            let resultData404 = _responseText === "" ? null : JSON.parse(_responseText, this.jsonParseReviver);
+            result404 = SpaceDesignProblemDetails.fromJS(resultData404);
+            return throwException("Not Found", status, _responseText, _headers, result404);
+            });
+        } else if (status === 409) {
+            return response.text().then((_responseText) => {
+            let result409: any = null;
+            let resultData409 = _responseText === "" ? null : JSON.parse(_responseText, this.jsonParseReviver);
+            result409 = SpaceDesignProblemDetails.fromJS(resultData409);
+            return throwException("Conflict", status, _responseText, _headers, result409);
+            });
+        } else if (status === 422) {
+            return response.text().then((_responseText) => {
+            let result422: any = null;
+            let resultData422 = _responseText === "" ? null : JSON.parse(_responseText, this.jsonParseReviver);
+            result422 = SpaceDesignProblemDetails.fromJS(resultData422);
+            return throwException("Unprocessable Content", status, _responseText, _headers, result422);
+            });
+        } else if (status === 500) {
+            return response.text().then((_responseText) => {
+            let result500: any = null;
+            let resultData500 = _responseText === "" ? null : JSON.parse(_responseText, this.jsonParseReviver);
+            result500 = SpaceDesignProblemDetails.fromJS(resultData500);
+            return throwException("Internal Server Error", status, _responseText, _headers, result500);
+            });
+        } else if (status !== 200 && status !== 204) {
+            return response.text().then((_responseText) => {
+            return throwException("An unexpected server error occurred.", status, _responseText, _headers);
+            });
+        }
+        return Promise.resolve<SpaceAiProposalDecisionResponse>(null as any);
+    }
+
+    /**
+     * @return OK
+     */
+    createProposalBatchDecision(runId: string, idempotency_Key: string, body: CreateSpaceAiProposalBatchDecisionRequest): Promise<SpaceAiProposalDecisionResponse> {
+        let url_ = this.baseUrl + "/api/space/design/v1/generation-runs/{runId}/decisions:batch";
+        if (runId === undefined || runId === null)
+            throw new globalThis.Error("The parameter 'runId' must be defined.");
+        url_ = url_.replace("{runId}", encodeURIComponent("" + runId));
+        url_ = url_.replace(/[?&]$/, "");
+
+        const content_ = JSON.stringify(body);
+
+        let options_: RequestInit = {
+            body: content_,
+            method: "POST",
+            headers: {
+                "Idempotency-Key": idempotency_Key !== undefined && idempotency_Key !== null ? "" + idempotency_Key : "",
+                "Content-Type": "application/json",
+                "Accept": "application/json"
+            }
+        };
+
+        return this.http.fetch(url_, options_).then((_response: Response) => {
+            return this.processCreateProposalBatchDecision(_response);
+        });
+    }
+
+    protected processCreateProposalBatchDecision(response: Response): Promise<SpaceAiProposalDecisionResponse> {
+        const status = response.status;
+        let _headers: any = {}; if (response.headers && response.headers.forEach) { response.headers.forEach((v: any, k: any) => _headers[k] = v); };
+        if (status === 200) {
+            return response.text().then((_responseText) => {
+            let result200: any = null;
+            let resultData200 = _responseText === "" ? null : JSON.parse(_responseText, this.jsonParseReviver);
+            result200 = SpaceAiProposalDecisionResponse.fromJS(resultData200);
+            return result200;
+            });
+        } else if (status === 400) {
+            return response.text().then((_responseText) => {
+            let result400: any = null;
+            let resultData400 = _responseText === "" ? null : JSON.parse(_responseText, this.jsonParseReviver);
+            result400 = SpaceDesignProblemDetails.fromJS(resultData400);
+            return throwException("Bad Request", status, _responseText, _headers, result400);
+            });
+        } else if (status === 401) {
+            return response.text().then((_responseText) => {
+            let result401: any = null;
+            let resultData401 = _responseText === "" ? null : JSON.parse(_responseText, this.jsonParseReviver);
+            result401 = SpaceDesignProblemDetails.fromJS(resultData401);
+            return throwException("Unauthorized", status, _responseText, _headers, result401);
+            });
+        } else if (status === 403) {
+            return response.text().then((_responseText) => {
+            let result403: any = null;
+            let resultData403 = _responseText === "" ? null : JSON.parse(_responseText, this.jsonParseReviver);
+            result403 = SpaceDesignProblemDetails.fromJS(resultData403);
+            return throwException("Forbidden", status, _responseText, _headers, result403);
+            });
+        } else if (status === 404) {
+            return response.text().then((_responseText) => {
+            let result404: any = null;
+            let resultData404 = _responseText === "" ? null : JSON.parse(_responseText, this.jsonParseReviver);
+            result404 = SpaceDesignProblemDetails.fromJS(resultData404);
+            return throwException("Not Found", status, _responseText, _headers, result404);
+            });
+        } else if (status === 409) {
+            return response.text().then((_responseText) => {
+            let result409: any = null;
+            let resultData409 = _responseText === "" ? null : JSON.parse(_responseText, this.jsonParseReviver);
+            result409 = SpaceDesignProblemDetails.fromJS(resultData409);
+            return throwException("Conflict", status, _responseText, _headers, result409);
+            });
+        } else if (status === 422) {
+            return response.text().then((_responseText) => {
+            let result422: any = null;
+            let resultData422 = _responseText === "" ? null : JSON.parse(_responseText, this.jsonParseReviver);
+            result422 = SpaceDesignProblemDetails.fromJS(resultData422);
+            return throwException("Unprocessable Content", status, _responseText, _headers, result422);
+            });
+        } else if (status === 500) {
+            return response.text().then((_responseText) => {
+            let result500: any = null;
+            let resultData500 = _responseText === "" ? null : JSON.parse(_responseText, this.jsonParseReviver);
+            result500 = SpaceDesignProblemDetails.fromJS(resultData500);
+            return throwException("Internal Server Error", status, _responseText, _headers, result500);
+            });
+        } else if (status !== 200 && status !== 204) {
+            return response.text().then((_responseText) => {
+            return throwException("An unexpected server error occurred.", status, _responseText, _headers);
+            });
+        }
+        return Promise.resolve<SpaceAiProposalDecisionResponse>(null as any);
     }
 
     /**
@@ -9148,6 +9806,146 @@ export interface IBindSpaceWmsAdoptionRequest {
     expectedRowVersion?: string | undefined;
 }
 
+export class CreateSpaceAiProposalBatchDecisionRequest implements ICreateSpaceAiProposalBatchDecisionRequest {
+    proposalIds?: string[] | undefined;
+    selection?: SpaceAiProposalBatchSelectionDto;
+    decision?: string | undefined;
+    reviewEtag?: string | undefined;
+    reasonCode?: string | undefined;
+    comment?: string | undefined;
+
+    constructor(data?: ICreateSpaceAiProposalBatchDecisionRequest) {
+        if (data) {
+            for (var property in data) {
+                if (data.hasOwnProperty(property))
+                    (this as any)[property] = (data as any)[property];
+            }
+        }
+    }
+
+    init(_data?: any) {
+        if (_data) {
+            if (Array.isArray(_data["proposalIds"])) {
+                this.proposalIds = [] as any;
+                for (let item of _data["proposalIds"])
+                    this.proposalIds!.push(item);
+            }
+            this.selection = _data["selection"] ? SpaceAiProposalBatchSelectionDto.fromJS(_data["selection"]) : undefined as any;
+            this.decision = _data["decision"];
+            this.reviewEtag = _data["reviewEtag"];
+            this.reasonCode = _data["reasonCode"];
+            this.comment = _data["comment"];
+        }
+    }
+
+    static fromJS(data: any): CreateSpaceAiProposalBatchDecisionRequest {
+        data = typeof data === 'object' ? data : {};
+        let result = new CreateSpaceAiProposalBatchDecisionRequest();
+        result.init(data);
+        return result;
+    }
+
+    toJSON(data?: any) {
+        data = typeof data === 'object' ? data : {};
+        if (Array.isArray(this.proposalIds)) {
+            data["proposalIds"] = [];
+            for (let item of this.proposalIds)
+                data["proposalIds"].push(item);
+        }
+        data["selection"] = this.selection ? this.selection.toJSON() : undefined as any;
+        data["decision"] = this.decision;
+        data["reviewEtag"] = this.reviewEtag;
+        data["reasonCode"] = this.reasonCode;
+        data["comment"] = this.comment;
+        return data;
+    }
+}
+
+export interface ICreateSpaceAiProposalBatchDecisionRequest {
+    proposalIds?: string[] | undefined;
+    selection?: SpaceAiProposalBatchSelectionDto;
+    decision?: string | undefined;
+    reviewEtag?: string | undefined;
+    reasonCode?: string | undefined;
+    comment?: string | undefined;
+}
+
+export class CreateSpaceAiProposalDecisionRequest implements ICreateSpaceAiProposalDecisionRequest {
+    proposalId?: string;
+    decision?: string | undefined;
+    expectedProposalRowVersion?: string | undefined;
+    patch?: SpaceAiProposalPatchOperationDto[] | undefined;
+    lockedFields?: string[] | undefined;
+    reasonCode?: string | undefined;
+    comment?: string | undefined;
+
+    constructor(data?: ICreateSpaceAiProposalDecisionRequest) {
+        if (data) {
+            for (var property in data) {
+                if (data.hasOwnProperty(property))
+                    (this as any)[property] = (data as any)[property];
+            }
+        }
+    }
+
+    init(_data?: any) {
+        if (_data) {
+            this.proposalId = _data["proposalId"];
+            this.decision = _data["decision"];
+            this.expectedProposalRowVersion = _data["expectedProposalRowVersion"];
+            if (Array.isArray(_data["patch"])) {
+                this.patch = [] as any;
+                for (let item of _data["patch"])
+                    this.patch!.push(SpaceAiProposalPatchOperationDto.fromJS(item));
+            }
+            if (Array.isArray(_data["lockedFields"])) {
+                this.lockedFields = [] as any;
+                for (let item of _data["lockedFields"])
+                    this.lockedFields!.push(item);
+            }
+            this.reasonCode = _data["reasonCode"];
+            this.comment = _data["comment"];
+        }
+    }
+
+    static fromJS(data: any): CreateSpaceAiProposalDecisionRequest {
+        data = typeof data === 'object' ? data : {};
+        let result = new CreateSpaceAiProposalDecisionRequest();
+        result.init(data);
+        return result;
+    }
+
+    toJSON(data?: any) {
+        data = typeof data === 'object' ? data : {};
+        data["proposalId"] = this.proposalId;
+        data["decision"] = this.decision;
+        data["expectedProposalRowVersion"] = this.expectedProposalRowVersion;
+        if (Array.isArray(this.patch)) {
+            data["patch"] = [];
+            for (let item of this.patch)
+                data["patch"].push(item ? item.toJSON() : undefined as any);
+        }
+        if (Array.isArray(this.lockedFields)) {
+            data["lockedFields"] = [];
+            for (let item of this.lockedFields)
+                data["lockedFields"].push(item);
+        }
+        data["reasonCode"] = this.reasonCode;
+        data["comment"] = this.comment;
+        return data;
+    }
+}
+
+export interface ICreateSpaceAiProposalDecisionRequest {
+    proposalId?: string;
+    decision?: string | undefined;
+    expectedProposalRowVersion?: string | undefined;
+    patch?: SpaceAiProposalPatchOperationDto[] | undefined;
+    lockedFields?: string[] | undefined;
+    reasonCode?: string | undefined;
+    comment?: string | undefined;
+}
+
 export class CreateSpaceAssetRequest implements ICreateSpaceAssetRequest {
     assetCode?: string | undefined;
     name?: string | undefined;
@@ -11121,6 +11919,154 @@ export interface ISpaceAiBudgetBalanceDto {
     currency?: string | undefined;
 }
 
+export class SpaceAiGenerationReviewDto implements ISpaceAiGenerationReviewDto {
+    schemaVersion?: number;
+    runId?: string;
+    siteId?: string;
+    modelVersionId?: string;
+    baseContentRevision?: number;
+    status?: string | undefined;
+    runRowVersion?: string | undefined;
+    reviewEtag?: string | undefined;
+    reviewCompletedAtUtc?: Date | undefined;
+    reviewCompleted?: boolean;
+    batchAcceptEnabled?: boolean;
+    summary?: SpaceAiGenerationReviewSummaryDto;
+
+    constructor(data?: ISpaceAiGenerationReviewDto) {
+        if (data) {
+            for (var property in data) {
+                if (data.hasOwnProperty(property))
+                    (this as any)[property] = (data as any)[property];
+            }
+        }
+    }
+
+    init(_data?: any) {
+        if (_data) {
+            this.schemaVersion = _data["schemaVersion"];
+            this.runId = _data["runId"];
+            this.siteId = _data["siteId"];
+            this.modelVersionId = _data["modelVersionId"];
+            this.baseContentRevision = _data["baseContentRevision"];
+            this.status = _data["status"];
+            this.runRowVersion = _data["runRowVersion"];
+            this.reviewEtag = _data["reviewEtag"];
+            this.reviewCompletedAtUtc = _data["reviewCompletedAtUtc"] ? new Date(_data["reviewCompletedAtUtc"].toString()) : undefined as any;
+            this.reviewCompleted = _data["reviewCompleted"];
+            this.batchAcceptEnabled = _data["batchAcceptEnabled"];
+            this.summary = _data["summary"] ? SpaceAiGenerationReviewSummaryDto.fromJS(_data["summary"]) : undefined as any;
+        }
+    }
+
+    static fromJS(data: any): SpaceAiGenerationReviewDto {
+        data = typeof data === 'object' ? data : {};
+        let result = new SpaceAiGenerationReviewDto();
+        result.init(data);
+        return result;
+    }
+
+    toJSON(data?: any) {
+        data = typeof data === 'object' ? data : {};
+        data["schemaVersion"] = this.schemaVersion;
+        data["runId"] = this.runId;
+        data["siteId"] = this.siteId;
+        data["modelVersionId"] = this.modelVersionId;
+        data["baseContentRevision"] = this.baseContentRevision;
+        data["status"] = this.status;
+        data["runRowVersion"] = this.runRowVersion;
+        data["reviewEtag"] = this.reviewEtag;
+        data["reviewCompletedAtUtc"] = this.reviewCompletedAtUtc ? this.reviewCompletedAtUtc.toISOString() : undefined as any;
+        data["reviewCompleted"] = this.reviewCompleted;
+        data["batchAcceptEnabled"] = this.batchAcceptEnabled;
+        data["summary"] = this.summary ? this.summary.toJSON() : undefined as any;
+        return data;
+    }
+}
+
+export interface ISpaceAiGenerationReviewDto {
+    schemaVersion?: number;
+    runId?: string;
+    siteId?: string;
+    modelVersionId?: string;
+    baseContentRevision?: number;
+    status?: string | undefined;
+    runRowVersion?: string | undefined;
+    reviewEtag?: string | undefined;
+    reviewCompletedAtUtc?: Date | undefined;
+    reviewCompleted?: boolean;
+    batchAcceptEnabled?: boolean;
+    summary?: SpaceAiGenerationReviewSummaryDto;
+}
+
+export class SpaceAiGenerationReviewSummaryDto implements ISpaceAiGenerationReviewSummaryDto {
+    totalCount?: number;
+    proposedCount?: number;
+    acceptedCount?: number;
+    rejectedCount?: number;
+    modifiedCount?: number;
+    obsoleteCount?: number;
+    blockingProposalCount?: number;
+    openRunBlockingIssueCount?: number;
+    openProposalBlockingIssueCount?: number;
+
+    constructor(data?: ISpaceAiGenerationReviewSummaryDto) {
+        if (data) {
+            for (var property in data) {
+                if (data.hasOwnProperty(property))
+                    (this as any)[property] = (data as any)[property];
+            }
+        }
+    }
+
+    init(_data?: any) {
+        if (_data) {
+            this.totalCount = _data["totalCount"];
+            this.proposedCount = _data["proposedCount"];
+            this.acceptedCount = _data["acceptedCount"];
+            this.rejectedCount = _data["rejectedCount"];
+            this.modifiedCount = _data["modifiedCount"];
+            this.obsoleteCount = _data["obsoleteCount"];
+            this.blockingProposalCount = _data["blockingProposalCount"];
+            this.openRunBlockingIssueCount = _data["openRunBlockingIssueCount"];
+            this.openProposalBlockingIssueCount = _data["openProposalBlockingIssueCount"];
+        }
+    }
+
+    static fromJS(data: any): SpaceAiGenerationReviewSummaryDto {
+        data = typeof data === 'object' ? data : {};
+        let result = new SpaceAiGenerationReviewSummaryDto();
+        result.init(data);
+        return result;
+    }
+
+    toJSON(data?: any) {
+        data = typeof data === 'object' ? data : {};
+        data["totalCount"] = this.totalCount;
+        data["proposedCount"] = this.proposedCount;
+        data["acceptedCount"] = this.acceptedCount;
+        data["rejectedCount"] = this.rejectedCount;
+        data["modifiedCount"] = this.modifiedCount;
+        data["obsoleteCount"] = this.obsoleteCount;
+        data["blockingProposalCount"] = this.blockingProposalCount;
+        data["openRunBlockingIssueCount"] = this.openRunBlockingIssueCount;
+        data["openProposalBlockingIssueCount"] = this.openProposalBlockingIssueCount;
+        return data;
+    }
+}
+
+export interface ISpaceAiGenerationReviewSummaryDto {
+    totalCount?: number;
+    proposedCount?: number;
+    acceptedCount?: number;
+    rejectedCount?: number;
+    modifiedCount?: number;
+    obsoleteCount?: number;
+    blockingProposalCount?: number;
+    openRunBlockingIssueCount?: number;
+    openProposalBlockingIssueCount?: number;
+}
+
 export class SpaceAiPolicyDto implements ISpaceAiPolicyDto {
     version!: number;
     dataPolicy!: string;
@@ -11228,6 +12174,650 @@ export interface ISpaceAiPolicyDto {
     approvedProviders: SpaceAiApprovedProviderDto[];
     updatedAtUtc?: Date | undefined;
     updatedBy?: string | undefined;
+}
+
+export class SpaceAiProposalBatchSelectionDto implements ISpaceAiProposalBatchSelectionDto {
+    status?: string | undefined;
+    confidenceBand?: string | undefined;
+    proposalTypes?: string[] | undefined;
+    hasBlockingIssue?: boolean | undefined;
+
+    constructor(data?: ISpaceAiProposalBatchSelectionDto) {
+        if (data) {
+            for (var property in data) {
+                if (data.hasOwnProperty(property))
+                    (this as any)[property] = (data as any)[property];
+            }
+        }
+    }
+
+    init(_data?: any) {
+        if (_data) {
+            this.status = _data["status"];
+            this.confidenceBand = _data["confidenceBand"];
+            if (Array.isArray(_data["proposalTypes"])) {
+                this.proposalTypes = [] as any;
+                for (let item of _data["proposalTypes"])
+                    this.proposalTypes!.push(item);
+            }
+            this.hasBlockingIssue = _data["hasBlockingIssue"];
+        }
+    }
+
+    static fromJS(data: any): SpaceAiProposalBatchSelectionDto {
+        data = typeof data === 'object' ? data : {};
+        let result = new SpaceAiProposalBatchSelectionDto();
+        result.init(data);
+        return result;
+    }
+
+    toJSON(data?: any) {
+        data = typeof data === 'object' ? data : {};
+        data["status"] = this.status;
+        data["confidenceBand"] = this.confidenceBand;
+        if (Array.isArray(this.proposalTypes)) {
+            data["proposalTypes"] = [];
+            for (let item of this.proposalTypes)
+                data["proposalTypes"].push(item);
+        }
+        data["hasBlockingIssue"] = this.hasBlockingIssue;
+        return data;
+    }
+}
+
+export interface ISpaceAiProposalBatchSelectionDto {
+    status?: string | undefined;
+    confidenceBand?: string | undefined;
+    proposalTypes?: string[] | undefined;
+    hasBlockingIssue?: boolean | undefined;
+}
+
+export class SpaceAiProposalDecisionDto implements ISpaceAiProposalDecisionDto {
+    decisionId?: string;
+    decisionBatchId?: string;
+    runId?: string;
+    proposalId?: string;
+    decision?: string | undefined;
+    before?: any;
+    after?: any | undefined;
+    lockedFields?: string[] | undefined;
+    reasonCode?: string | undefined;
+    comment?: string | undefined;
+    createdAtUtc?: Date;
+    createdBy?: string | undefined;
+
+    constructor(data?: ISpaceAiProposalDecisionDto) {
+        if (data) {
+            for (var property in data) {
+                if (data.hasOwnProperty(property))
+                    (this as any)[property] = (data as any)[property];
+            }
+        }
+    }
+
+    init(_data?: any) {
+        if (_data) {
+            this.decisionId = _data["decisionId"];
+            this.decisionBatchId = _data["decisionBatchId"];
+            this.runId = _data["runId"];
+            this.proposalId = _data["proposalId"];
+            this.decision = _data["decision"];
+            this.before = _data["before"];
+            this.after = _data["after"];
+            if (Array.isArray(_data["lockedFields"])) {
+                this.lockedFields = [] as any;
+                for (let item of _data["lockedFields"])
+                    this.lockedFields!.push(item);
+            }
+            this.reasonCode = _data["reasonCode"];
+            this.comment = _data["comment"];
+            this.createdAtUtc = _data["createdAtUtc"] ? new Date(_data["createdAtUtc"].toString()) : undefined as any;
+            this.createdBy = _data["createdBy"];
+        }
+    }
+
+    static fromJS(data: any): SpaceAiProposalDecisionDto {
+        data = typeof data === 'object' ? data : {};
+        let result = new SpaceAiProposalDecisionDto();
+        result.init(data);
+        return result;
+    }
+
+    toJSON(data?: any) {
+        data = typeof data === 'object' ? data : {};
+        data["decisionId"] = this.decisionId;
+        data["decisionBatchId"] = this.decisionBatchId;
+        data["runId"] = this.runId;
+        data["proposalId"] = this.proposalId;
+        data["decision"] = this.decision;
+        data["before"] = this.before;
+        data["after"] = this.after;
+        if (Array.isArray(this.lockedFields)) {
+            data["lockedFields"] = [];
+            for (let item of this.lockedFields)
+                data["lockedFields"].push(item);
+        }
+        data["reasonCode"] = this.reasonCode;
+        data["comment"] = this.comment;
+        data["createdAtUtc"] = this.createdAtUtc ? this.createdAtUtc.toISOString() : undefined as any;
+        data["createdBy"] = this.createdBy;
+        return data;
+    }
+}
+
+export interface ISpaceAiProposalDecisionDto {
+    decisionId?: string;
+    decisionBatchId?: string;
+    runId?: string;
+    proposalId?: string;
+    decision?: string | undefined;
+    before?: any;
+    after?: any | undefined;
+    lockedFields?: string[] | undefined;
+    reasonCode?: string | undefined;
+    comment?: string | undefined;
+    createdAtUtc?: Date;
+    createdBy?: string | undefined;
+}
+
+export class SpaceAiProposalDecisionHistoryDto implements ISpaceAiProposalDecisionHistoryDto {
+    items?: SpaceAiProposalDecisionDto[] | undefined;
+    isTruncated?: boolean;
+    reviewEtag?: string | undefined;
+
+    constructor(data?: ISpaceAiProposalDecisionHistoryDto) {
+        if (data) {
+            for (var property in data) {
+                if (data.hasOwnProperty(property))
+                    (this as any)[property] = (data as any)[property];
+            }
+        }
+    }
+
+    init(_data?: any) {
+        if (_data) {
+            if (Array.isArray(_data["items"])) {
+                this.items = [] as any;
+                for (let item of _data["items"])
+                    this.items!.push(SpaceAiProposalDecisionDto.fromJS(item));
+            }
+            this.isTruncated = _data["isTruncated"];
+            this.reviewEtag = _data["reviewEtag"];
+        }
+    }
+
+    static fromJS(data: any): SpaceAiProposalDecisionHistoryDto {
+        data = typeof data === 'object' ? data : {};
+        let result = new SpaceAiProposalDecisionHistoryDto();
+        result.init(data);
+        return result;
+    }
+
+    toJSON(data?: any) {
+        data = typeof data === 'object' ? data : {};
+        if (Array.isArray(this.items)) {
+            data["items"] = [];
+            for (let item of this.items)
+                data["items"].push(item ? item.toJSON() : undefined as any);
+        }
+        data["isTruncated"] = this.isTruncated;
+        data["reviewEtag"] = this.reviewEtag;
+        return data;
+    }
+}
+
+export interface ISpaceAiProposalDecisionHistoryDto {
+    items?: SpaceAiProposalDecisionDto[] | undefined;
+    isTruncated?: boolean;
+    reviewEtag?: string | undefined;
+}
+
+export class SpaceAiProposalDecisionResponse implements ISpaceAiProposalDecisionResponse {
+    outcome?: string | undefined;
+    decisionBatchId?: string;
+    decisions?: SpaceAiProposalDecisionDto[] | undefined;
+    review?: SpaceAiGenerationReviewDto;
+    idempotentReplay?: boolean;
+
+    constructor(data?: ISpaceAiProposalDecisionResponse) {
+        if (data) {
+            for (var property in data) {
+                if (data.hasOwnProperty(property))
+                    (this as any)[property] = (data as any)[property];
+            }
+        }
+    }
+
+    init(_data?: any) {
+        if (_data) {
+            this.outcome = _data["outcome"];
+            this.decisionBatchId = _data["decisionBatchId"];
+            if (Array.isArray(_data["decisions"])) {
+                this.decisions = [] as any;
+                for (let item of _data["decisions"])
+                    this.decisions!.push(SpaceAiProposalDecisionDto.fromJS(item));
+            }
+            this.review = _data["review"] ? SpaceAiGenerationReviewDto.fromJS(_data["review"]) : undefined as any;
+            this.idempotentReplay = _data["idempotentReplay"];
+        }
+    }
+
+    static fromJS(data: any): SpaceAiProposalDecisionResponse {
+        data = typeof data === 'object' ? data : {};
+        let result = new SpaceAiProposalDecisionResponse();
+        result.init(data);
+        return result;
+    }
+
+    toJSON(data?: any) {
+        data = typeof data === 'object' ? data : {};
+        data["outcome"] = this.outcome;
+        data["decisionBatchId"] = this.decisionBatchId;
+        if (Array.isArray(this.decisions)) {
+            data["decisions"] = [];
+            for (let item of this.decisions)
+                data["decisions"].push(item ? item.toJSON() : undefined as any);
+        }
+        data["review"] = this.review ? this.review.toJSON() : undefined as any;
+        data["idempotentReplay"] = this.idempotentReplay;
+        return data;
+    }
+}
+
+export interface ISpaceAiProposalDecisionResponse {
+    outcome?: string | undefined;
+    decisionBatchId?: string;
+    decisions?: SpaceAiProposalDecisionDto[] | undefined;
+    review?: SpaceAiGenerationReviewDto;
+    idempotentReplay?: boolean;
+}
+
+export class SpaceAiProposalDto implements ISpaceAiProposalDto {
+    proposalId?: string;
+    runId?: string;
+    modelVersionId?: string;
+    baseContentRevision?: number;
+    sourceHash?: string | undefined;
+    sourceKey?: string | undefined;
+    proposalType?: string | undefined;
+    suggestedGeometry?: any;
+    suggestedAttributes?: any;
+    suggestedRelations?: any;
+    sourceRefs?: any;
+    evidence?: any;
+    fieldProvenance?: any;
+    confidenceScore?: number;
+    confidenceBand?: string | undefined;
+    status?: string | undefined;
+    hasBlockingIssue?: boolean;
+    humanPatch?: any | undefined;
+    lockedFields?: string[] | undefined;
+    appliedLogicalId?: string | undefined;
+    rowVersion?: string | undefined;
+    allowedPatchPaths?: string[] | undefined;
+
+    constructor(data?: ISpaceAiProposalDto) {
+        if (data) {
+            for (var property in data) {
+                if (data.hasOwnProperty(property))
+                    (this as any)[property] = (data as any)[property];
+            }
+        }
+    }
+
+    init(_data?: any) {
+        if (_data) {
+            this.proposalId = _data["proposalId"];
+            this.runId = _data["runId"];
+            this.modelVersionId = _data["modelVersionId"];
+            this.baseContentRevision = _data["baseContentRevision"];
+            this.sourceHash = _data["sourceHash"];
+            this.sourceKey = _data["sourceKey"];
+            this.proposalType = _data["proposalType"];
+            this.suggestedGeometry = _data["suggestedGeometry"];
+            this.suggestedAttributes = _data["suggestedAttributes"];
+            this.suggestedRelations = _data["suggestedRelations"];
+            this.sourceRefs = _data["sourceRefs"];
+            this.evidence = _data["evidence"];
+            this.fieldProvenance = _data["fieldProvenance"];
+            this.confidenceScore = _data["confidenceScore"];
+            this.confidenceBand = _data["confidenceBand"];
+            this.status = _data["status"];
+            this.hasBlockingIssue = _data["hasBlockingIssue"];
+            this.humanPatch = _data["humanPatch"];
+            if (Array.isArray(_data["lockedFields"])) {
+                this.lockedFields = [] as any;
+                for (let item of _data["lockedFields"])
+                    this.lockedFields!.push(item);
+            }
+            this.appliedLogicalId = _data["appliedLogicalId"];
+            this.rowVersion = _data["rowVersion"];
+            if (Array.isArray(_data["allowedPatchPaths"])) {
+                this.allowedPatchPaths = [] as any;
+                for (let item of _data["allowedPatchPaths"])
+                    this.allowedPatchPaths!.push(item);
+            }
+        }
+    }
+
+    static fromJS(data: any): SpaceAiProposalDto {
+        data = typeof data === 'object' ? data : {};
+        let result = new SpaceAiProposalDto();
+        result.init(data);
+        return result;
+    }
+
+    toJSON(data?: any) {
+        data = typeof data === 'object' ? data : {};
+        data["proposalId"] = this.proposalId;
+        data["runId"] = this.runId;
+        data["modelVersionId"] = this.modelVersionId;
+        data["baseContentRevision"] = this.baseContentRevision;
+        data["sourceHash"] = this.sourceHash;
+        data["sourceKey"] = this.sourceKey;
+        data["proposalType"] = this.proposalType;
+        data["suggestedGeometry"] = this.suggestedGeometry;
+        data["suggestedAttributes"] = this.suggestedAttributes;
+        data["suggestedRelations"] = this.suggestedRelations;
+        data["sourceRefs"] = this.sourceRefs;
+        data["evidence"] = this.evidence;
+        data["fieldProvenance"] = this.fieldProvenance;
+        data["confidenceScore"] = this.confidenceScore;
+        data["confidenceBand"] = this.confidenceBand;
+        data["status"] = this.status;
+        data["hasBlockingIssue"] = this.hasBlockingIssue;
+        data["humanPatch"] = this.humanPatch;
+        if (Array.isArray(this.lockedFields)) {
+            data["lockedFields"] = [];
+            for (let item of this.lockedFields)
+                data["lockedFields"].push(item);
+        }
+        data["appliedLogicalId"] = this.appliedLogicalId;
+        data["rowVersion"] = this.rowVersion;
+        if (Array.isArray(this.allowedPatchPaths)) {
+            data["allowedPatchPaths"] = [];
+            for (let item of this.allowedPatchPaths)
+                data["allowedPatchPaths"].push(item);
+        }
+        return data;
+    }
+}
+
+export interface ISpaceAiProposalDto {
+    proposalId?: string;
+    runId?: string;
+    modelVersionId?: string;
+    baseContentRevision?: number;
+    sourceHash?: string | undefined;
+    sourceKey?: string | undefined;
+    proposalType?: string | undefined;
+    suggestedGeometry?: any;
+    suggestedAttributes?: any;
+    suggestedRelations?: any;
+    sourceRefs?: any;
+    evidence?: any;
+    fieldProvenance?: any;
+    confidenceScore?: number;
+    confidenceBand?: string | undefined;
+    status?: string | undefined;
+    hasBlockingIssue?: boolean;
+    humanPatch?: any | undefined;
+    lockedFields?: string[] | undefined;
+    appliedLogicalId?: string | undefined;
+    rowVersion?: string | undefined;
+    allowedPatchPaths?: string[] | undefined;
+}
+
+export class SpaceAiProposalIssueDto implements ISpaceAiProposalIssueDto {
+    issueId?: string;
+    runId?: string;
+    proposalId?: string | undefined;
+    severity?: string | undefined;
+    code?: string | undefined;
+    sourceRef?: string | undefined;
+    status?: string | undefined;
+    resolutionKind?: string | undefined;
+    resolutionDecisionId?: string | undefined;
+    messageArgs?: any;
+    suggestedActionCode?: string | undefined;
+    createdAtUtc?: Date;
+
+    constructor(data?: ISpaceAiProposalIssueDto) {
+        if (data) {
+            for (var property in data) {
+                if (data.hasOwnProperty(property))
+                    (this as any)[property] = (data as any)[property];
+            }
+        }
+    }
+
+    init(_data?: any) {
+        if (_data) {
+            this.issueId = _data["issueId"];
+            this.runId = _data["runId"];
+            this.proposalId = _data["proposalId"];
+            this.severity = _data["severity"];
+            this.code = _data["code"];
+            this.sourceRef = _data["sourceRef"];
+            this.status = _data["status"];
+            this.resolutionKind = _data["resolutionKind"];
+            this.resolutionDecisionId = _data["resolutionDecisionId"];
+            this.messageArgs = _data["messageArgs"];
+            this.suggestedActionCode = _data["suggestedActionCode"];
+            this.createdAtUtc = _data["createdAtUtc"] ? new Date(_data["createdAtUtc"].toString()) : undefined as any;
+        }
+    }
+
+    static fromJS(data: any): SpaceAiProposalIssueDto {
+        data = typeof data === 'object' ? data : {};
+        let result = new SpaceAiProposalIssueDto();
+        result.init(data);
+        return result;
+    }
+
+    toJSON(data?: any) {
+        data = typeof data === 'object' ? data : {};
+        data["issueId"] = this.issueId;
+        data["runId"] = this.runId;
+        data["proposalId"] = this.proposalId;
+        data["severity"] = this.severity;
+        data["code"] = this.code;
+        data["sourceRef"] = this.sourceRef;
+        data["status"] = this.status;
+        data["resolutionKind"] = this.resolutionKind;
+        data["resolutionDecisionId"] = this.resolutionDecisionId;
+        data["messageArgs"] = this.messageArgs;
+        data["suggestedActionCode"] = this.suggestedActionCode;
+        data["createdAtUtc"] = this.createdAtUtc ? this.createdAtUtc.toISOString() : undefined as any;
+        return data;
+    }
+}
+
+export interface ISpaceAiProposalIssueDto {
+    issueId?: string;
+    runId?: string;
+    proposalId?: string | undefined;
+    severity?: string | undefined;
+    code?: string | undefined;
+    sourceRef?: string | undefined;
+    status?: string | undefined;
+    resolutionKind?: string | undefined;
+    resolutionDecisionId?: string | undefined;
+    messageArgs?: any;
+    suggestedActionCode?: string | undefined;
+    createdAtUtc?: Date;
+}
+
+export class SpaceAiProposalIssuePageDto implements ISpaceAiProposalIssuePageDto {
+    items?: SpaceAiProposalIssueDto[] | undefined;
+    totalCount?: number;
+    limit?: number;
+    reviewEtag?: string | undefined;
+    filterHash?: string | undefined;
+    nextCursor?: string | undefined;
+
+    constructor(data?: ISpaceAiProposalIssuePageDto) {
+        if (data) {
+            for (var property in data) {
+                if (data.hasOwnProperty(property))
+                    (this as any)[property] = (data as any)[property];
+            }
+        }
+    }
+
+    init(_data?: any) {
+        if (_data) {
+            if (Array.isArray(_data["items"])) {
+                this.items = [] as any;
+                for (let item of _data["items"])
+                    this.items!.push(SpaceAiProposalIssueDto.fromJS(item));
+            }
+            this.totalCount = _data["totalCount"];
+            this.limit = _data["limit"];
+            this.reviewEtag = _data["reviewEtag"];
+            this.filterHash = _data["filterHash"];
+            this.nextCursor = _data["nextCursor"];
+        }
+    }
+
+    static fromJS(data: any): SpaceAiProposalIssuePageDto {
+        data = typeof data === 'object' ? data : {};
+        let result = new SpaceAiProposalIssuePageDto();
+        result.init(data);
+        return result;
+    }
+
+    toJSON(data?: any) {
+        data = typeof data === 'object' ? data : {};
+        if (Array.isArray(this.items)) {
+            data["items"] = [];
+            for (let item of this.items)
+                data["items"].push(item ? item.toJSON() : undefined as any);
+        }
+        data["totalCount"] = this.totalCount;
+        data["limit"] = this.limit;
+        data["reviewEtag"] = this.reviewEtag;
+        data["filterHash"] = this.filterHash;
+        data["nextCursor"] = this.nextCursor;
+        return data;
+    }
+}
+
+export interface ISpaceAiProposalIssuePageDto {
+    items?: SpaceAiProposalIssueDto[] | undefined;
+    totalCount?: number;
+    limit?: number;
+    reviewEtag?: string | undefined;
+    filterHash?: string | undefined;
+    nextCursor?: string | undefined;
+}
+
+export class SpaceAiProposalPageDto implements ISpaceAiProposalPageDto {
+    items?: SpaceAiProposalDto[] | undefined;
+    totalCount?: number;
+    limit?: number;
+    reviewEtag?: string | undefined;
+    filterHash?: string | undefined;
+    nextCursor?: string | undefined;
+
+    constructor(data?: ISpaceAiProposalPageDto) {
+        if (data) {
+            for (var property in data) {
+                if (data.hasOwnProperty(property))
+                    (this as any)[property] = (data as any)[property];
+            }
+        }
+    }
+
+    init(_data?: any) {
+        if (_data) {
+            if (Array.isArray(_data["items"])) {
+                this.items = [] as any;
+                for (let item of _data["items"])
+                    this.items!.push(SpaceAiProposalDto.fromJS(item));
+            }
+            this.totalCount = _data["totalCount"];
+            this.limit = _data["limit"];
+            this.reviewEtag = _data["reviewEtag"];
+            this.filterHash = _data["filterHash"];
+            this.nextCursor = _data["nextCursor"];
+        }
+    }
+
+    static fromJS(data: any): SpaceAiProposalPageDto {
+        data = typeof data === 'object' ? data : {};
+        let result = new SpaceAiProposalPageDto();
+        result.init(data);
+        return result;
+    }
+
+    toJSON(data?: any) {
+        data = typeof data === 'object' ? data : {};
+        if (Array.isArray(this.items)) {
+            data["items"] = [];
+            for (let item of this.items)
+                data["items"].push(item ? item.toJSON() : undefined as any);
+        }
+        data["totalCount"] = this.totalCount;
+        data["limit"] = this.limit;
+        data["reviewEtag"] = this.reviewEtag;
+        data["filterHash"] = this.filterHash;
+        data["nextCursor"] = this.nextCursor;
+        return data;
+    }
+}
+
+export interface ISpaceAiProposalPageDto {
+    items?: SpaceAiProposalDto[] | undefined;
+    totalCount?: number;
+    limit?: number;
+    reviewEtag?: string | undefined;
+    filterHash?: string | undefined;
+    nextCursor?: string | undefined;
+}
+
+export class SpaceAiProposalPatchOperationDto implements ISpaceAiProposalPatchOperationDto {
+    op?: string | undefined;
+    path?: string | undefined;
+    value?: any;
+
+    constructor(data?: ISpaceAiProposalPatchOperationDto) {
+        if (data) {
+            for (var property in data) {
+                if (data.hasOwnProperty(property))
+                    (this as any)[property] = (data as any)[property];
+            }
+        }
+    }
+
+    init(_data?: any) {
+        if (_data) {
+            this.op = _data["op"];
+            this.path = _data["path"];
+            this.value = _data["value"];
+        }
+    }
+
+    static fromJS(data: any): SpaceAiProposalPatchOperationDto {
+        data = typeof data === 'object' ? data : {};
+        let result = new SpaceAiProposalPatchOperationDto();
+        result.init(data);
+        return result;
+    }
+
+    toJSON(data?: any) {
+        data = typeof data === 'object' ? data : {};
+        data["op"] = this.op;
+        data["path"] = this.path;
+        data["value"] = this.value;
+        return data;
+    }
+}
+
+export interface ISpaceAiProposalPatchOperationDto {
+    op?: string | undefined;
+    path?: string | undefined;
+    value?: any;
 }
 
 export class SpaceAiUsageItemDto implements ISpaceAiUsageItemDto {

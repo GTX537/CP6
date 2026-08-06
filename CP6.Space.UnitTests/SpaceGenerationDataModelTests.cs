@@ -52,6 +52,7 @@ public sealed class SpaceGenerationDataModelTests
         run.ReportProgress(50);
         run.BeginValidating();
         run.MarkAwaitingReview();
+        run.MarkReviewCompleted(Now);
         run.BeginApplying(Now);
         run.MarkSucceeded(8);
 
@@ -185,6 +186,33 @@ public sealed class SpaceGenerationDataModelTests
     }
 
     [Fact]
+    public void Review_completion_is_server_owned_and_recorded_once()
+    {
+        var run = RunAt(SpaceGenerationRunStatus.AwaitingReview);
+
+        Assert.Throws<SpaceGenerationStateException>(
+            () => run.BeginApplying(Now));
+        run.MarkReviewCompleted(Now);
+        Assert.Equal(Now, run.ReviewCompletedAtUtc);
+        Assert.Throws<SpaceGenerationStateException>(
+            () => run.MarkReviewCompleted(Now.AddSeconds(1)));
+    }
+
+    [Fact]
+    public void Allowlisted_repair_can_clear_a_blocking_proposal()
+    {
+        var proposal = NewProposal(hasBlockingIssue: true);
+
+        proposal.Modify(
+            """[{"op":"replace","path":"/attributes/name","value":"Rack A"}]""",
+            """["/attributes/name"]""",
+            resolvesBlockingIssues: true);
+
+        Assert.False(proposal.HasBlockingIssue);
+        Assert.Equal(SpaceGenerationProposalStatus.Modified, proposal.Status);
+    }
+
+    [Fact]
     public void Modified_proposal_preserves_original_and_human_final_values()
     {
         var proposal = NewProposal();
@@ -237,6 +265,69 @@ public sealed class SpaceGenerationDataModelTests
         Assert.Equal("""{"kind":"zone"}""", decision.BeforeJson);
         Assert.Equal("""{"kind":"rack"}""", decision.AfterJson);
         Assert.Equal("reviewed", decision.Comment);
+    }
+
+    [Theory]
+    [InlineData("human reviewed", "reviewed")]
+    [InlineData("HUMAN_REVIEWED", "password=do-not-store")]
+    [InlineData("HUMAN_REVIEWED", "authorization: Bearer token")]
+    [InlineData("HUMAN_REVIEWED", "line\nbreak")]
+    public void Decision_rejects_unstable_reason_codes_and_sensitive_comments(
+        string reasonCode,
+        string comment)
+    {
+        Assert.Throws<ArgumentException>(
+            () => SpaceProposalDecision.Create(
+                TenantId,
+                Guid.NewGuid(),
+                Guid.NewGuid(),
+                SpaceProposalDecisionType.Modify,
+                """{"kind":"zone"}""",
+                """{"kind":"rack"}""",
+                """["/kind"]""",
+                reasonCode,
+                comment,
+                Guid.NewGuid()));
+    }
+
+    [Fact]
+    public void Same_source_locked_fact_preserves_decision_lineage()
+    {
+        var runId = Guid.NewGuid();
+        var basedOnRunId = Guid.NewGuid();
+        var proposalId = Guid.NewGuid();
+        var decisionId = Guid.NewGuid();
+
+        var fact = SpaceGenerationLockedFact.CreateSameSource(
+            TenantId,
+            runId,
+            basedOnRunId,
+            proposalId,
+            decisionId,
+            SourceHash,
+            "rack-1",
+            "Rack",
+            "/attributes/rackType",
+            "\"DriveIn\"");
+
+        Assert.Equal(runId, fact.RunId);
+        Assert.Equal(basedOnRunId, fact.BasedOnRunId);
+        Assert.Equal(decisionId, fact.SourceDecisionId);
+        Assert.Equal(SpaceLockedFactMatchMethod.SameSourceIdentity, fact.MatchMethod);
+        Assert.Equal(1m, fact.MatchScore);
+        Assert.True(fact.IsConfirmed);
+        Assert.Throws<ArgumentException>(() =>
+            SpaceGenerationLockedFact.CreateSameSource(
+                TenantId,
+                runId,
+                basedOnRunId,
+                proposalId,
+                decisionId,
+                SourceHash,
+                "rack-1",
+                "Rack",
+                "/geometry/x",
+                "1"));
     }
 
     [Fact]

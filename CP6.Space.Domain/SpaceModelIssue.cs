@@ -11,6 +11,8 @@ public sealed class SpaceModelIssue : SpaceTenantEntity
     public Guid? ModelVersionId { get; private set; }
     public Guid? SourceId { get; private set; }
     public Guid? JobId { get; private set; }
+    public Guid? GenerationRunId { get; private set; }
+    public Guid? GenerationProposalId { get; private set; }
     public SpaceIssueSeverity Severity { get; private set; }
     public string Code { get; private set; } = string.Empty;
     public string? SourceRef { get; private set; }
@@ -19,6 +21,8 @@ public sealed class SpaceModelIssue : SpaceTenantEntity
     public string? SuggestedActionCode { get; private set; }
     public SpaceIssueStatus Status { get; private set; }
     public Guid? ResolutionCommandBatchId { get; private set; }
+    public SpaceIssueResolutionKind ResolutionKind { get; private set; }
+    public Guid? ResolutionDecisionId { get; private set; }
     public Guid? AcknowledgedBy { get; private set; }
     public DateTime? AcknowledgedAtUtc { get; private set; }
     public string? AcknowledgementReason { get; private set; }
@@ -33,7 +37,9 @@ public sealed class SpaceModelIssue : SpaceTenantEntity
         string? sourceRef = null,
         Guid? targetLogicalId = null,
         string messageArgsJson = "{}",
-        string? suggestedActionCode = null)
+        string? suggestedActionCode = null,
+        Guid? generationRunId = null,
+        Guid? generationProposalId = null)
     {
         if (!modelVersionId.HasValue && !sourceId.HasValue && !jobId.HasValue)
             throw new ArgumentException("At least one Issue context is required.");
@@ -44,12 +50,22 @@ public sealed class SpaceModelIssue : SpaceTenantEntity
         EnsureOptionalId(sourceId, nameof(sourceId));
         EnsureOptionalId(jobId, nameof(jobId));
         EnsureOptionalId(targetLogicalId, nameof(targetLogicalId));
+        EnsureOptionalId(generationRunId, nameof(generationRunId));
+        EnsureOptionalId(generationProposalId, nameof(generationProposalId));
+        if (generationProposalId.HasValue && !generationRunId.HasValue)
+        {
+            throw new ArgumentException(
+                "A proposal Issue must also identify its generation run.",
+                nameof(generationProposalId));
+        }
 
         var issue = new SpaceModelIssue
         {
             ModelVersionId = modelVersionId,
             SourceId = sourceId,
             JobId = jobId,
+            GenerationRunId = generationRunId,
+            GenerationProposalId = generationProposalId,
             Severity = severity,
             Code = RequireText(code, 100, nameof(code)),
             SourceRef = OptionalText(sourceRef, 500, nameof(sourceRef)),
@@ -60,6 +76,7 @@ public sealed class SpaceModelIssue : SpaceTenantEntity
                 100,
                 nameof(suggestedActionCode)),
             Status = SpaceIssueStatus.Open,
+            ResolutionKind = SpaceIssueResolutionKind.None,
         };
         issue.SetTenant(tenantId);
         return issue;
@@ -93,6 +110,31 @@ public sealed class SpaceModelIssue : SpaceTenantEntity
                 nameof(commandBatchId));
 
         ResolutionCommandBatchId = commandBatchId;
+        ResolutionKind = SpaceIssueResolutionKind.CommandBatch;
+        Status = SpaceIssueStatus.Resolved;
+    }
+
+    public void ResolveByProposalDecision(
+        Guid decisionId,
+        bool proposalRejected)
+    {
+        RequireOpen();
+        if (decisionId == Guid.Empty)
+        {
+            throw new ArgumentException(
+                "Resolution decision is required.",
+                nameof(decisionId));
+        }
+        if (!GenerationRunId.HasValue || !GenerationProposalId.HasValue)
+        {
+            throw new SpaceJobStateException(
+                "Only proposal-scoped Issues can be resolved by a decision.");
+        }
+
+        ResolutionDecisionId = decisionId;
+        ResolutionKind = proposalRejected
+            ? SpaceIssueResolutionKind.ProposalRejection
+            : SpaceIssueResolutionKind.ProposalDecision;
         Status = SpaceIssueStatus.Resolved;
     }
 

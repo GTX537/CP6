@@ -43,6 +43,11 @@ public sealed class SpaceDesignV1OpenApiTests
             "/api/space/design/v1/assets",
             "/api/space/design/v1/ai-policy",
             "/api/space/design/v1/ai-usage",
+            "/api/space/design/v1/generation-runs/{runId}/review",
+            "/api/space/design/v1/generation-runs/{runId}/proposals",
+            "/api/space/design/v1/generation-runs/{runId}/issues",
+            "/api/space/design/v1/generation-runs/{runId}/decisions",
+            "/api/space/design/v1/generation-runs/{runId}/decisions:batch",
             "/api/space/design/v1/mapping-profiles/excel",
             "/api/space/design/v1/mapping-profiles/excel/{profileId}",
             "/api/space/design/v1/mapping-profiles/excel/preview",
@@ -105,11 +110,17 @@ public sealed class SpaceDesignV1OpenApiTests
             .Select(operation =>
                 operation.Value.GetProperty("operationId").GetString())
             .ToArray();
-        Assert.Equal(84, operationIds.Length);
-        Assert.Equal(84, operationIds.Distinct().Count());
+        Assert.Equal(90, operationIds.Length);
+        Assert.Equal(90, operationIds.Distinct().Count());
         Assert.Contains("GetPolicy", operationIds);
         Assert.Contains("UpdatePolicy", operationIds);
         Assert.Contains("GetUsage", operationIds);
+        Assert.Contains("GetProposalReview", operationIds);
+        Assert.Contains("GetGenerationProposals", operationIds);
+        Assert.Contains("GetGenerationProposalIssues", operationIds);
+        Assert.Contains("GetProposalDecisions", operationIds);
+        Assert.Contains("CreateProposalDecision", operationIds);
+        Assert.Contains("CreateProposalBatchDecision", operationIds);
         Assert.Contains("IngestPersonnelEvents", operationIds);
         Assert.Contains("GetCurrentPersonnel", operationIds);
         Assert.Contains("GetPersonnelTrajectory", operationIds);
@@ -1467,6 +1478,12 @@ public sealed class SpaceDesignV1OpenApiTests
                      "CalibrateUnderlay",
                      "GetJob",
                      "GetIssues",
+                     "GetProposalReview",
+                     "GetGenerationProposals",
+                     "GetGenerationProposalIssues",
+                     "GetProposalDecisions",
+                     "CreateProposalDecision",
+                     "CreateProposalBatchDecision",
                      "RefreshWmsAdoption",
                      "GetWmsAdoptionLocations",
                      "BindWmsAdoption",

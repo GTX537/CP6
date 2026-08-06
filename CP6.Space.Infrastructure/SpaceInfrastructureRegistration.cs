@@ -52,6 +52,7 @@ public static class SpaceInfrastructureRegistration
         services.TryAddSingleton(new SpaceFileRetentionOptions());
         services.TryAddSingleton(new SpaceJobProcessorOptions());
         services.TryAddSingleton(new SpaceAiCapacityOptions());
+        services.TryAddSingleton(new SpaceAiProposalReviewOptions());
         services.TryAddSingleton(new SpaceUnderlayCalibrationOptions());
         services.TryAddSingleton(new SpacePersonnelRuntimeOptions());
         services.TryAddSingleton(new SpaceDeviceRuntimeOptions());
@@ -79,6 +80,12 @@ public static class SpaceInfrastructureRegistration
             IWarehouseDraftSynthesizer,
             WarehouseDraftSynthesizer>();
         services.AddScoped<SpaceAiGenerationGateway>();
+        services.AddScoped<
+            ISpaceAiProposalDecisionService,
+            SpaceAiProposalDecisionService>();
+        services.AddScoped<
+            ISpaceAiLockedFactService,
+            SpaceAiLockedFactService>();
         services.AddScoped<SpaceAiAdministrationService>();
         services.AddScoped<ISpaceAiAdministrationService>(provider =>
             provider.GetRequiredService<SpaceAiAdministrationService>());

@@ -178,13 +178,29 @@ public sealed class SpaceGenerationRun : SpaceTenantEntity
             SpaceGenerationRunStatus.Validating,
             SpaceGenerationRunStatus.AwaitingReview);
 
+    public void MarkReviewCompleted(DateTime reviewCompletedAtUtc)
+    {
+        RequireUtc(reviewCompletedAtUtc, nameof(reviewCompletedAtUtc));
+        RequireStatus(SpaceGenerationRunStatus.AwaitingReview);
+        if (ReviewCompletedAtUtc is not null)
+        {
+            throw new SpaceGenerationStateException(
+                "Generation review is already complete.");
+        }
+        ReviewCompletedAtUtc = reviewCompletedAtUtc;
+    }
+
     public void BeginApplying(DateTime reviewCompletedAtUtc)
     {
         RequireUtc(reviewCompletedAtUtc, nameof(reviewCompletedAtUtc));
+        if (ReviewCompletedAtUtc is null)
+        {
+            throw new SpaceGenerationStateException(
+                "Generation review must complete before apply can begin.");
+        }
         Transition(
             SpaceGenerationRunStatus.AwaitingReview,
             SpaceGenerationRunStatus.Applying);
-        ReviewCompletedAtUtc = reviewCompletedAtUtc;
     }
 
     public void MarkSucceeded(long appliedContentRevision)
