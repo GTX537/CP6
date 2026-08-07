@@ -18,7 +18,10 @@ public sealed class SpaceAiUsageRecord : SpaceTenantEntity
     public long LatencyMs { get; private set; }
     public SpaceAiUsageOutcome Outcome { get; private set; }
     public DateTime RecordedAtUtc { get; private set; }
+    public DateTime? ArchivedAtUtc { get; private set; }
     public byte[] RowVersion { get; private set; } = [];
+
+    public static TimeSpan MinimumRetention { get; } = TimeSpan.FromDays(365);
 
     public static SpaceAiUsageRecord Create(
         Guid tenantId,
@@ -90,6 +93,22 @@ public sealed class SpaceAiUsageRecord : SpaceTenantEntity
         };
         usage.SetTenant(tenantId);
         return usage;
+    }
+
+    public bool ArchiveForRetention(DateTime archivedAtUtc)
+    {
+        SpaceGenerationRun.RequireUtc(
+            archivedAtUtc,
+            nameof(archivedAtUtc));
+        if (ArchivedAtUtc.HasValue)
+            return false;
+        if (archivedAtUtc < RecordedAtUtc.Add(MinimumRetention))
+        {
+            throw new SpaceAiCapacityStateException(
+                "AI usage cannot be archived before its minimum retention expires.");
+        }
+        ArchivedAtUtc = archivedAtUtc;
+        return true;
     }
 
     private static string? NormalizeCurrency(string? currency)

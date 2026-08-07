@@ -45,6 +45,7 @@ public sealed class SpaceGenerationProposal : SpaceTenantEntity
     public string? HumanPatchJson { get; private set; }
     public string? LockedFieldsJson { get; private set; }
     public Guid? AppliedLogicalId { get; private set; }
+    public DateTime? PayloadPurgedAtUtc { get; private set; }
     public byte[] RowVersion { get; private set; } = [];
 
     public static SpaceGenerationProposal Create(
@@ -172,6 +173,24 @@ public sealed class SpaceGenerationProposal : SpaceTenantEntity
                 "Proposal is already obsolete.");
         }
         Status = SpaceGenerationProposalStatus.Obsolete;
+    }
+
+    public bool PurgeRetainedPayload(DateTime purgedAtUtc)
+    {
+        SpaceGenerationRun.RequireUtc(purgedAtUtc, nameof(purgedAtUtc));
+        if (PayloadPurgedAtUtc.HasValue)
+            return false;
+
+        SuggestedGeometryJson = "{}";
+        SuggestedAttributesJson = "{}";
+        SuggestedRelationsJson = "[]";
+        SourceRefsJson = "[]";
+        EvidenceJson = "[]";
+        FieldProvenanceJson = "{}";
+        HumanPatchJson = null;
+        LockedFieldsJson = null;
+        PayloadPurgedAtUtc = purgedAtUtc;
+        return true;
     }
 
     private void EnsureNotBlocking()

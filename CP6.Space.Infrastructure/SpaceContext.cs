@@ -2193,6 +2193,8 @@ public sealed class SpaceContext : DbContext
             .HasConversion<short>()
             .HasColumnType("smallint");
         entity.Property(x => x.AcknowledgementReason).HasMaxLength(1000);
+        entity.Property(x => x.PayloadPurgedAtUtc)
+            .HasColumnType("datetime2");
 
         entity.HasIndex(
                 x => new
@@ -2219,6 +2221,17 @@ public sealed class SpaceContext : DbContext
             .HasFilter("[GenerationRunId] IS NOT NULL AND [IsDeleted] = 0")
             .HasDatabaseName(
                 "IX_Space_ModelIssue_Tenant_Run_Proposal_Status");
+        entity.HasIndex(
+                x => new
+                {
+                    x.TenantId,
+                    x.PayloadPurgedAtUtc,
+                    x.GenerationRunId,
+                    x.Id,
+                })
+            .HasFilter("[GenerationRunId] IS NOT NULL AND [IsDeleted] = 0")
+            .HasDatabaseName(
+                "IX_ModelIssue_Tenant_Purge_Run");
 
         entity.HasOne<SpaceModelVersion>()
             .WithMany()
@@ -2378,6 +2391,10 @@ public sealed class SpaceContext : DbContext
             .HasColumnType("datetime2");
         entity.Property(x => x.AppliedCountsJson)
             .HasColumnType("nvarchar(max)");
+        entity.Property(x => x.RetentionHoldUntilUtc)
+            .HasColumnType("datetime2");
+        entity.Property(x => x.PayloadPurgedAtUtc)
+            .HasColumnType("datetime2");
         entity.Property(x => x.RowVersion).IsRowVersion();
 
         entity.HasIndex(x => new { x.TenantId, x.BusinessKeyHash })
@@ -2407,6 +2424,19 @@ public sealed class SpaceContext : DbContext
                 })
             .HasDatabaseName(
                 "IX_GenerationRun_Tenant_Version_Current");
+        entity.HasIndex(
+                x => new
+                {
+                    x.TenantId,
+                    x.PayloadPurgedAtUtc,
+                    x.IsCurrent,
+                    x.Status,
+                    x.CreatedAtUtc,
+                    x.Id,
+                })
+            .HasFilter("[IsDeleted] = 0")
+            .HasDatabaseName(
+                "IX_GenerationRun_Tenant_Retention");
 
         entity.HasOne<SpaceModelVersion>()
             .WithMany()
@@ -2523,6 +2553,8 @@ public sealed class SpaceContext : DbContext
         entity.Property(x => x.Status)
             .HasConversion<short>()
             .HasColumnType("smallint");
+        entity.Property(x => x.PayloadPurgedAtUtc)
+            .HasColumnType("datetime2");
         entity.Property(x => x.RowVersion).IsRowVersion();
 
         entity.HasIndex(
@@ -2549,6 +2581,17 @@ public sealed class SpaceContext : DbContext
                 })
             .HasDatabaseName(
                 "IX_Proposal_Tenant_Run_Status_Band_Type");
+        entity.HasIndex(
+                x => new
+                {
+                    x.TenantId,
+                    x.PayloadPurgedAtUtc,
+                    x.RunId,
+                    x.Id,
+                })
+            .HasFilter("[IsDeleted] = 0")
+            .HasDatabaseName(
+                "IX_Proposal_Tenant_Purge_Run");
 
         entity.HasOne<SpaceGenerationRun>()
             .WithMany()
@@ -2851,6 +2894,8 @@ public sealed class SpaceContext : DbContext
             .HasColumnType("smallint");
         entity.Property(x => x.RecordedAtUtc)
             .HasColumnType("datetime2");
+        entity.Property(x => x.ArchivedAtUtc)
+            .HasColumnType("datetime2");
         entity.Property(x => x.RowVersion).IsRowVersion();
 
         entity.HasIndex(
@@ -2872,6 +2917,17 @@ public sealed class SpaceContext : DbContext
                 })
             .HasDatabaseName(
                 "IX_AiUsage_Tenant_Run_Recorded");
+        entity.HasIndex(
+                x => new
+                {
+                    x.TenantId,
+                    x.ArchivedAtUtc,
+                    x.RecordedAtUtc,
+                    x.Id,
+                })
+            .HasFilter("[IsDeleted] = 0")
+            .HasDatabaseName(
+                "IX_AiUsage_Tenant_Retention");
 
         entity.HasOne<SpaceGenerationRun>()
             .WithMany()
@@ -2882,7 +2938,9 @@ public sealed class SpaceContext : DbContext
                 "FK_Space_AiUsageRecord_Run_Tenant");
 
         entity.HasQueryFilter(
-            x => x.TenantId == CurrentTenantId && !x.IsDeleted);
+            x => x.TenantId == CurrentTenantId &&
+                 !x.IsDeleted &&
+                 !x.ArchivedAtUtc.HasValue);
     }
 
     private void ConfigureTenantAiWorkSlot(ModelBuilder modelBuilder)

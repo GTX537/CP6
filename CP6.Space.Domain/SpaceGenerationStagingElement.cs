@@ -80,6 +80,15 @@ public sealed class SpaceGenerationStagingElement : SpaceTenantEntity
             SpaceGenerationStagingValidationStatus.Validated;
     }
 
+    public bool RetireForRetention()
+    {
+        if (IsDeleted)
+            return false;
+        NormalizedPayloadJson = "{}";
+        MarkEntityDeleted();
+        return true;
+    }
+
     private static string RequireJson(
         string value,
         string parameterName)

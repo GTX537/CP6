@@ -82,6 +82,8 @@ public static class SpaceErrorCodes
         "SPACE_AI_SOURCE_POLICY_DENIED";
     public const string AiOutboundPayloadDenied =
         "SPACE_AI_OUTBOUND_PAYLOAD_DENIED";
+    public const string AiRetentionBusy = "SPACE_AI_RETENTION_BUSY";
+    public const string AiRetentionInvalid = "SPACE_AI_RETENTION_INVALID";
     public const string AiPolicyInvalid = "SPACE_AI_POLICY_INVALID";
     public const string AiPolicyConflict = "SPACE_AI_POLICY_CONFLICT";
     public const string AiProviderAliasNotApproved =
