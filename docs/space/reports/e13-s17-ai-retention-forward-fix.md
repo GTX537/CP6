@@ -113,3 +113,6 @@ Job 重试/下一轮继续处理；只有 Proposal、Issue 和 Staging 全部完
 本卡完成的是迁移与保留清理开发闭环，不等于生产定时器已启用或 AI 已可发布。E13-S14/S15/S19 仍需
 正式黄金集、供应商/区域/DPA、影子运行、试点和跨职能签字；E13-S18 依赖 S15，当前仍不能提前签收。
 生产 BuildScene executor 和 External Provider 继续默认失败关闭。
+
+集成和远端祖先链验证完成后，已删除当前集成 worktree 内 16 个可重建 `bin/obj` 目录，回收
+523,868,809 bytes（约 0.488 GiB）；源码、Migration、SQL、报告、测试和远端 Git 历史均保留。

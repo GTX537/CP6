@@ -10,6 +10,7 @@
 - Migration `20260806160931` 只新增 5 个 nullable 列与 4 个索引；幂等 SQL 连续执行两次通过。`Down` 以 `THROW 51017` 禁止破坏性回滚，失败必须通过更高版本 forward-fix Migration 修复。
 - 门禁：E13-S17 unit 6/6、内存/迁移 4/4、KOUSQLSERVER 3/3、Space Unit 430/430、默认 Integration 255 passed / 81 SQL-gated skipped、Release build 0 error、EF 无漂移、diff check 通过。完整证据见 `docs/space/reports/e13-s17-ai-retention-forward-fix.md`。
 - 全量真实 SQL 的两个 Version Clone 失败已在起始提交独立复现，属于既有 clone SQL 缺少 Zone/Aisle/Rack `Name` 的基线问题，已登记 Known Issue。E13-S14/S15/S19 仍等待外部证据；E13-S18 依赖 S15，不能提前签收。
+- 远端集成已推进到 `1659b333` 并确认包含功能提交；临时功能分支已在本地/远端删除。清理 16 个可重建 `bin/obj` 目录，回收 523,868,809 bytes（约 0.488 GiB）。
 
 ## E13-S13 外部用户拒绝与数据外发门禁（2026-08-06）
 

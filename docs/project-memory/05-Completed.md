@@ -6,6 +6,7 @@
 - Published/Superseded/Publishing/Reconciliation、Decision、Locked Fact、CommandBatch、预算与审计不删除；Staging 只清空临时大 JSON 并软删除，重复执行零副作用。
 - Migration 只增加 5 列和 4 索引，幂等 SQL 双执行通过；`Down` 失败关闭并要求更高版本 forward-fix，禁止破坏性回滚审计数据。
 - 门禁为本卡 unit 6/6、内存/迁移 4/4、KOUSQLSERVER 3/3、Space Unit 430/430、默认 Integration 255 passed / 81 SQL-gated skipped、Release 0 error、EF 无漂移。E13-S14/S15/S19 与依赖 S15 的 S18 继续等待正式外部证据。
+- 远端集成祖先链已验证，临时功能分支已删除；16 个可重建 `bin/obj` 目录已清理并回收约 0.488 GiB，`main` 未修改。
 
 ## 2026-08-06 E13-S13 外部用户拒绝与数据外发门禁
 
