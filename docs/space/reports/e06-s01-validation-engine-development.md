@@ -1,9 +1,11 @@
 # E06-S01 版本权威校验引擎开发报告
 
 日期：2026-08-07
-状态：功能分支已验证，待 no-ff 集成
+状态：已 no-ff 集成
 集成基线：`022cb9376eec393cf9d1901c4e650092f7fd165b`
 功能分支：`codex/space-e06-s01-validation-engine-v2`
+功能提交：`c17242c3`
+no-ff 集成提交：`76c70230`
 
 ## 1. 本卡边界
 
@@ -86,6 +88,9 @@ ValidationRun、Issue、Job 和版本状态闭环。它不包含 E06-S02～S06 �
 
 本机 `KOUSQLSERVER` 的 Windows 集成身份在最终复验时出现 SSPI 环境错误；测试改用同机健康的
 `cp6-db` SQL Server 容器，并使用容器自身的开发凭据完成真实 SQL 门禁。密码未写入日志、源码或文档。
+
+验证及合并后删除受控工作树内 36 个可重建 `bin/obj` 目录，共 7,159 个文件、
+1,974,302,339 bytes（约 1.839 GiB）；源码、Migration、SDK、报告和 Git 历史均保留。
 
 ## 7. 尚未完成与下一步
 
