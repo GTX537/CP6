@@ -586,6 +586,18 @@ export interface ISpaceDesignV1Client {
     getSimulationRuns(siteId: string, branchId: string, limit: number | undefined): Promise<SpacePlanningSimulationRunListResponse>;
 
     /**
+     * @param floorLogicalId (optional)
+     * @param objectType (optional)
+     * @param action (optional)
+     * @param impactCode (optional)
+     * @param includeNoOp (optional)
+     * @param limit (optional)
+     * @param cursor (optional)
+     * @return OK
+     */
+    getPublishPreview(versionId: string, floorLogicalId: string | undefined, objectType: string | undefined, action: string | undefined, impactCode: string | undefined, includeNoOp: boolean | undefined, limit: number | undefined, cursor: string | undefined): Promise<SpacePublishPreviewDto>;
+
+    /**
      * @return Accepted
      */
     createValidation(versionId: string): Promise<CreateSpaceValidationResponse>;
@@ -10106,6 +10118,130 @@ export class SpaceDesignV1Client implements ISpaceDesignV1Client {
             });
         }
         return Promise.resolve<SpacePlanningSimulationRunListResponse>(null as any);
+    }
+
+    /**
+     * @param floorLogicalId (optional)
+     * @param objectType (optional)
+     * @param action (optional)
+     * @param impactCode (optional)
+     * @param includeNoOp (optional)
+     * @param limit (optional)
+     * @param cursor (optional)
+     * @return OK
+     */
+    getPublishPreview(versionId: string, floorLogicalId: string | undefined, objectType: string | undefined, action: string | undefined, impactCode: string | undefined, includeNoOp: boolean | undefined, limit: number | undefined, cursor: string | undefined): Promise<SpacePublishPreviewDto> {
+        let url_ = this.baseUrl + "/api/space/design/v1/versions/{versionId}/publish-preview?";
+        if (versionId === undefined || versionId === null)
+            throw new globalThis.Error("The parameter 'versionId' must be defined.");
+        url_ = url_.replace("{versionId}", encodeURIComponent("" + versionId));
+        if (floorLogicalId === null)
+            throw new globalThis.Error("The parameter 'floorLogicalId' cannot be null.");
+        else if (floorLogicalId !== undefined)
+            url_ += "floorLogicalId=" + encodeURIComponent("" + floorLogicalId) + "&";
+        if (objectType === null)
+            throw new globalThis.Error("The parameter 'objectType' cannot be null.");
+        else if (objectType !== undefined)
+            url_ += "objectType=" + encodeURIComponent("" + objectType) + "&";
+        if (action === null)
+            throw new globalThis.Error("The parameter 'action' cannot be null.");
+        else if (action !== undefined)
+            url_ += "action=" + encodeURIComponent("" + action) + "&";
+        if (impactCode === null)
+            throw new globalThis.Error("The parameter 'impactCode' cannot be null.");
+        else if (impactCode !== undefined)
+            url_ += "impactCode=" + encodeURIComponent("" + impactCode) + "&";
+        if (includeNoOp === null)
+            throw new globalThis.Error("The parameter 'includeNoOp' cannot be null.");
+        else if (includeNoOp !== undefined)
+            url_ += "includeNoOp=" + encodeURIComponent("" + includeNoOp) + "&";
+        if (limit === null)
+            throw new globalThis.Error("The parameter 'limit' cannot be null.");
+        else if (limit !== undefined)
+            url_ += "limit=" + encodeURIComponent("" + limit) + "&";
+        if (cursor === null)
+            throw new globalThis.Error("The parameter 'cursor' cannot be null.");
+        else if (cursor !== undefined)
+            url_ += "cursor=" + encodeURIComponent("" + cursor) + "&";
+        url_ = url_.replace(/[?&]$/, "");
+
+        let options_: RequestInit = {
+            method: "GET",
+            headers: {
+                "Accept": "application/json"
+            }
+        };
+
+        return this.http.fetch(url_, options_).then((_response: Response) => {
+            return this.processGetPublishPreview(_response);
+        });
+    }
+
+    protected processGetPublishPreview(response: Response): Promise<SpacePublishPreviewDto> {
+        const status = response.status;
+        let _headers: any = {}; if (response.headers && response.headers.forEach) { response.headers.forEach((v: any, k: any) => _headers[k] = v); };
+        if (status === 200) {
+            return response.text().then((_responseText) => {
+            let result200: any = null;
+            let resultData200 = _responseText === "" ? null : JSON.parse(_responseText, this.jsonParseReviver);
+            result200 = SpacePublishPreviewDto.fromJS(resultData200);
+            return result200;
+            });
+        } else if (status === 400) {
+            return response.text().then((_responseText) => {
+            let result400: any = null;
+            let resultData400 = _responseText === "" ? null : JSON.parse(_responseText, this.jsonParseReviver);
+            result400 = SpaceDesignProblemDetails.fromJS(resultData400);
+            return throwException("Bad Request", status, _responseText, _headers, result400);
+            });
+        } else if (status === 401) {
+            return response.text().then((_responseText) => {
+            let result401: any = null;
+            let resultData401 = _responseText === "" ? null : JSON.parse(_responseText, this.jsonParseReviver);
+            result401 = SpaceDesignProblemDetails.fromJS(resultData401);
+            return throwException("Unauthorized", status, _responseText, _headers, result401);
+            });
+        } else if (status === 403) {
+            return response.text().then((_responseText) => {
+            let result403: any = null;
+            let resultData403 = _responseText === "" ? null : JSON.parse(_responseText, this.jsonParseReviver);
+            result403 = SpaceDesignProblemDetails.fromJS(resultData403);
+            return throwException("Forbidden", status, _responseText, _headers, result403);
+            });
+        } else if (status === 404) {
+            return response.text().then((_responseText) => {
+            let result404: any = null;
+            let resultData404 = _responseText === "" ? null : JSON.parse(_responseText, this.jsonParseReviver);
+            result404 = SpaceDesignProblemDetails.fromJS(resultData404);
+            return throwException("Not Found", status, _responseText, _headers, result404);
+            });
+        } else if (status === 409) {
+            return response.text().then((_responseText) => {
+            let result409: any = null;
+            let resultData409 = _responseText === "" ? null : JSON.parse(_responseText, this.jsonParseReviver);
+            result409 = SpaceDesignProblemDetails.fromJS(resultData409);
+            return throwException("Conflict", status, _responseText, _headers, result409);
+            });
+        } else if (status === 422) {
+            return response.text().then((_responseText) => {
+            let result422: any = null;
+            let resultData422 = _responseText === "" ? null : JSON.parse(_responseText, this.jsonParseReviver);
+            result422 = SpaceDesignProblemDetails.fromJS(resultData422);
+            return throwException("Unprocessable Content", status, _responseText, _headers, result422);
+            });
+        } else if (status === 500) {
+            return response.text().then((_responseText) => {
+            let result500: any = null;
+            let resultData500 = _responseText === "" ? null : JSON.parse(_responseText, this.jsonParseReviver);
+            result500 = SpaceDesignProblemDetails.fromJS(resultData500);
+            return throwException("Internal Server Error", status, _responseText, _headers, result500);
+            });
+        } else if (status !== 200 && status !== 204) {
+            return response.text().then((_responseText) => {
+            return throwException("An unexpected server error occurred.", status, _responseText, _headers);
+            });
+        }
+        return Promise.resolve<SpacePublishPreviewDto>(null as any);
     }
 
     /**
@@ -21556,6 +21692,334 @@ export interface ISpacePortalZoneDto {
     polygonJson?: string | undefined;
     color?: string | undefined;
     capabilityFlags?: string | undefined;
+}
+
+export class SpacePublishChangeSummaryDto implements ISpacePublishChangeSummaryDto {
+    createCount?: number;
+    updateMasterCount?: number;
+    updateGeometryOnlyCount?: number;
+    disableCount?: number;
+    restoreCount?: number;
+    noOpCount?: number;
+
+    constructor(data?: ISpacePublishChangeSummaryDto) {
+        if (data) {
+            for (var property in data) {
+                if (data.hasOwnProperty(property))
+                    (this as any)[property] = (data as any)[property];
+            }
+        }
+    }
+
+    init(_data?: any) {
+        if (_data) {
+            this.createCount = _data["createCount"];
+            this.updateMasterCount = _data["updateMasterCount"];
+            this.updateGeometryOnlyCount = _data["updateGeometryOnlyCount"];
+            this.disableCount = _data["disableCount"];
+            this.restoreCount = _data["restoreCount"];
+            this.noOpCount = _data["noOpCount"];
+        }
+    }
+
+    static fromJS(data: any): SpacePublishChangeSummaryDto {
+        data = typeof data === 'object' ? data : {};
+        let result = new SpacePublishChangeSummaryDto();
+        result.init(data);
+        return result;
+    }
+
+    toJSON(data?: any) {
+        data = typeof data === 'object' ? data : {};
+        data["createCount"] = this.createCount;
+        data["updateMasterCount"] = this.updateMasterCount;
+        data["updateGeometryOnlyCount"] = this.updateGeometryOnlyCount;
+        data["disableCount"] = this.disableCount;
+        data["restoreCount"] = this.restoreCount;
+        data["noOpCount"] = this.noOpCount;
+        return data;
+    }
+}
+
+export interface ISpacePublishChangeSummaryDto {
+    createCount?: number;
+    updateMasterCount?: number;
+    updateGeometryOnlyCount?: number;
+    disableCount?: number;
+    restoreCount?: number;
+    noOpCount?: number;
+}
+
+export class SpacePublishImpactSummaryDto implements ISpacePublishImpactSummaryDto {
+    wmsCreateCount?: number;
+    wmsUpdateCount?: number;
+    wmsDisableCount?: number;
+    wmsRestoreCount?: number;
+    wmsNoOpCount?: number;
+    runtimeOnlyCount?: number;
+    blockingCount?: number;
+
+    constructor(data?: ISpacePublishImpactSummaryDto) {
+        if (data) {
+            for (var property in data) {
+                if (data.hasOwnProperty(property))
+                    (this as any)[property] = (data as any)[property];
+            }
+        }
+    }
+
+    init(_data?: any) {
+        if (_data) {
+            this.wmsCreateCount = _data["wmsCreateCount"];
+            this.wmsUpdateCount = _data["wmsUpdateCount"];
+            this.wmsDisableCount = _data["wmsDisableCount"];
+            this.wmsRestoreCount = _data["wmsRestoreCount"];
+            this.wmsNoOpCount = _data["wmsNoOpCount"];
+            this.runtimeOnlyCount = _data["runtimeOnlyCount"];
+            this.blockingCount = _data["blockingCount"];
+        }
+    }
+
+    static fromJS(data: any): SpacePublishImpactSummaryDto {
+        data = typeof data === 'object' ? data : {};
+        let result = new SpacePublishImpactSummaryDto();
+        result.init(data);
+        return result;
+    }
+
+    toJSON(data?: any) {
+        data = typeof data === 'object' ? data : {};
+        data["wmsCreateCount"] = this.wmsCreateCount;
+        data["wmsUpdateCount"] = this.wmsUpdateCount;
+        data["wmsDisableCount"] = this.wmsDisableCount;
+        data["wmsRestoreCount"] = this.wmsRestoreCount;
+        data["wmsNoOpCount"] = this.wmsNoOpCount;
+        data["runtimeOnlyCount"] = this.runtimeOnlyCount;
+        data["blockingCount"] = this.blockingCount;
+        return data;
+    }
+}
+
+export interface ISpacePublishImpactSummaryDto {
+    wmsCreateCount?: number;
+    wmsUpdateCount?: number;
+    wmsDisableCount?: number;
+    wmsRestoreCount?: number;
+    wmsNoOpCount?: number;
+    runtimeOnlyCount?: number;
+    blockingCount?: number;
+}
+
+export class SpacePublishPreviewDto implements ISpacePublishPreviewDto {
+    targetVersionId?: string;
+    baseVersionId?: string | undefined;
+    validationRunId?: string;
+    validationStatus?: string | undefined;
+    validationBlockingCount?: number;
+    contentHash?: string | undefined;
+    planRuleSetVersion?: string | undefined;
+    adapterId?: string | undefined;
+    capabilityHash?: string | undefined;
+    planHash?: string | undefined;
+    publishable?: boolean;
+    itemCount?: number;
+    changeCount?: number;
+    matchedItemCount?: number;
+    changes?: SpacePublishChangeSummaryDto;
+    wmsImpact?: SpacePublishImpactSummaryDto;
+    items?: SpacePublishPreviewItemDto[] | undefined;
+    nextCursor?: string | undefined;
+
+    constructor(data?: ISpacePublishPreviewDto) {
+        if (data) {
+            for (var property in data) {
+                if (data.hasOwnProperty(property))
+                    (this as any)[property] = (data as any)[property];
+            }
+        }
+    }
+
+    init(_data?: any) {
+        if (_data) {
+            this.targetVersionId = _data["targetVersionId"];
+            this.baseVersionId = _data["baseVersionId"];
+            this.validationRunId = _data["validationRunId"];
+            this.validationStatus = _data["validationStatus"];
+            this.validationBlockingCount = _data["validationBlockingCount"];
+            this.contentHash = _data["contentHash"];
+            this.planRuleSetVersion = _data["planRuleSetVersion"];
+            this.adapterId = _data["adapterId"];
+            this.capabilityHash = _data["capabilityHash"];
+            this.planHash = _data["planHash"];
+            this.publishable = _data["publishable"];
+            this.itemCount = _data["itemCount"];
+            this.changeCount = _data["changeCount"];
+            this.matchedItemCount = _data["matchedItemCount"];
+            this.changes = _data["changes"] ? SpacePublishChangeSummaryDto.fromJS(_data["changes"]) : undefined as any;
+            this.wmsImpact = _data["wmsImpact"] ? SpacePublishImpactSummaryDto.fromJS(_data["wmsImpact"]) : undefined as any;
+            if (Array.isArray(_data["items"])) {
+                this.items = [] as any;
+                for (let item of _data["items"])
+                    this.items!.push(SpacePublishPreviewItemDto.fromJS(item));
+            }
+            this.nextCursor = _data["nextCursor"];
+        }
+    }
+
+    static fromJS(data: any): SpacePublishPreviewDto {
+        data = typeof data === 'object' ? data : {};
+        let result = new SpacePublishPreviewDto();
+        result.init(data);
+        return result;
+    }
+
+    toJSON(data?: any) {
+        data = typeof data === 'object' ? data : {};
+        data["targetVersionId"] = this.targetVersionId;
+        data["baseVersionId"] = this.baseVersionId;
+        data["validationRunId"] = this.validationRunId;
+        data["validationStatus"] = this.validationStatus;
+        data["validationBlockingCount"] = this.validationBlockingCount;
+        data["contentHash"] = this.contentHash;
+        data["planRuleSetVersion"] = this.planRuleSetVersion;
+        data["adapterId"] = this.adapterId;
+        data["capabilityHash"] = this.capabilityHash;
+        data["planHash"] = this.planHash;
+        data["publishable"] = this.publishable;
+        data["itemCount"] = this.itemCount;
+        data["changeCount"] = this.changeCount;
+        data["matchedItemCount"] = this.matchedItemCount;
+        data["changes"] = this.changes ? this.changes.toJSON() : undefined as any;
+        data["wmsImpact"] = this.wmsImpact ? this.wmsImpact.toJSON() : undefined as any;
+        if (Array.isArray(this.items)) {
+            data["items"] = [];
+            for (let item of this.items)
+                data["items"].push(item ? item.toJSON() : undefined as any);
+        }
+        data["nextCursor"] = this.nextCursor;
+        return data;
+    }
+}
+
+export interface ISpacePublishPreviewDto {
+    targetVersionId?: string;
+    baseVersionId?: string | undefined;
+    validationRunId?: string;
+    validationStatus?: string | undefined;
+    validationBlockingCount?: number;
+    contentHash?: string | undefined;
+    planRuleSetVersion?: string | undefined;
+    adapterId?: string | undefined;
+    capabilityHash?: string | undefined;
+    planHash?: string | undefined;
+    publishable?: boolean;
+    itemCount?: number;
+    changeCount?: number;
+    matchedItemCount?: number;
+    changes?: SpacePublishChangeSummaryDto;
+    wmsImpact?: SpacePublishImpactSummaryDto;
+    items?: SpacePublishPreviewItemDto[] | undefined;
+    nextCursor?: string | undefined;
+}
+
+export class SpacePublishPreviewItemDto implements ISpacePublishPreviewItemDto {
+    sequenceNo?: number;
+    objectType?: string | undefined;
+    logicalId?: string;
+    floorLogicalId?: string | undefined;
+    action?: string | undefined;
+    beforeHash?: string | undefined;
+    afterHash?: string | undefined;
+    beforeCode?: string | undefined;
+    afterCode?: string | undefined;
+    externalBindingId?: string | undefined;
+    payloadHash?: string | undefined;
+    impactCode?: string | undefined;
+    masterChanged?: boolean;
+    geometryChanged?: boolean;
+    provenanceChanged?: boolean;
+    wmsChanged?: boolean;
+    blocking?: boolean;
+
+    constructor(data?: ISpacePublishPreviewItemDto) {
+        if (data) {
+            for (var property in data) {
+                if (data.hasOwnProperty(property))
+                    (this as any)[property] = (data as any)[property];
+            }
+        }
+    }
+
+    init(_data?: any) {
+        if (_data) {
+            this.sequenceNo = _data["sequenceNo"];
+            this.objectType = _data["objectType"];
+            this.logicalId = _data["logicalId"];
+            this.floorLogicalId = _data["floorLogicalId"];
+            this.action = _data["action"];
+            this.beforeHash = _data["beforeHash"];
+            this.afterHash = _data["afterHash"];
+            this.beforeCode = _data["beforeCode"];
+            this.afterCode = _data["afterCode"];
+            this.externalBindingId = _data["externalBindingId"];
+            this.payloadHash = _data["payloadHash"];
+            this.impactCode = _data["impactCode"];
+            this.masterChanged = _data["masterChanged"];
+            this.geometryChanged = _data["geometryChanged"];
+            this.provenanceChanged = _data["provenanceChanged"];
+            this.wmsChanged = _data["wmsChanged"];
+            this.blocking = _data["blocking"];
+        }
+    }
+
+    static fromJS(data: any): SpacePublishPreviewItemDto {
+        data = typeof data === 'object' ? data : {};
+        let result = new SpacePublishPreviewItemDto();
+        result.init(data);
+        return result;
+    }
+
+    toJSON(data?: any) {
+        data = typeof data === 'object' ? data : {};
+        data["sequenceNo"] = this.sequenceNo;
+        data["objectType"] = this.objectType;
+        data["logicalId"] = this.logicalId;
+        data["floorLogicalId"] = this.floorLogicalId;
+        data["action"] = this.action;
+        data["beforeHash"] = this.beforeHash;
+        data["afterHash"] = this.afterHash;
+        data["beforeCode"] = this.beforeCode;
+        data["afterCode"] = this.afterCode;
+        data["externalBindingId"] = this.externalBindingId;
+        data["payloadHash"] = this.payloadHash;
+        data["impactCode"] = this.impactCode;
+        data["masterChanged"] = this.masterChanged;
+        data["geometryChanged"] = this.geometryChanged;
+        data["provenanceChanged"] = this.provenanceChanged;
+        data["wmsChanged"] = this.wmsChanged;
+        data["blocking"] = this.blocking;
+        return data;
+    }
+}
+
+export interface ISpacePublishPreviewItemDto {
+    sequenceNo?: number;
+    objectType?: string | undefined;
+    logicalId?: string;
+    floorLogicalId?: string | undefined;
+    action?: string | undefined;
+    beforeHash?: string | undefined;
+    afterHash?: string | undefined;
+    beforeCode?: string | undefined;
+    afterCode?: string | undefined;
+    externalBindingId?: string | undefined;
+    payloadHash?: string | undefined;
+    impactCode?: string | undefined;
+    masterChanged?: boolean;
+    geometryChanged?: boolean;
+    provenanceChanged?: boolean;
+    wmsChanged?: boolean;
+    blocking?: boolean;
 }
 
 export class SpaceRotateObjectDto implements ISpaceRotateObjectDto {

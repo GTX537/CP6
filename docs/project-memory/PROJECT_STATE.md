@@ -2,6 +2,14 @@
 
 最后更新：2026-08-07
 
+## E06-S02 版本差异与影响预览开发切片（2026-08-07）
+
+- 在集成基线 `05c1df86` 上完成只读发布预览功能，当前位于 `codex/space-e06-s02-publish-preview`，待功能提交与 no-ff 集成；`main` 未修改。新增 `GET /api/space/design/v1/versions/{versionId}/publish-preview`、`space:model:read`、读审计、标准 Problem Details、OpenAPI 及 C#/TypeScript SDK。
+- 预览只读取服务端权威目标版本、当前 Published 指针、匹配的终态 ValidationRun 和实时 WMS 能力；按 LogicalId 稳定生成 Create/UpdateMaster/UpdateGeometryOnly/Disable/Restore/NoOp、WMS 影响与阻断项。稳定 PlanHash 绑定版本、ContentHash、ValidationRun、规则/适配器/能力和全部有序计划项；Location 改码失败关闭，已采纳库位不重复创建。
+- 支持楼层/对象/动作/影响/NoOp 筛选及绑定计划和筛选条件的受保护游标。`Publishable` 只在 Passed、Ready、零校验阻断且零计划阻断时为 true。本卡无 WMS 调用、无发布指针切换、无 PublishPlan 持久化、无 Migration；这些属于 E06-S03 及后续卡。
+- E06-S01 来源规则同时前向修正：Editor/Template 内建来源的合法终态 Ready 可参与发布；DWG/DXF 等文件来源继续要求 PreviewReady/Imported。门禁：引擎聚焦 17/17、API/权限/OpenAPI 55/55、真实 SQL 3/3、Space Unit 448/448、CP6.Tests 2794 passed / 17 skipped、默认 Space Integration 259 passed / 89 SQL-gated skipped、完整 solution 双架构 AOT Release 0 warning/0 error，EF/SDK/diff 门禁通过。证据见 `docs/space/reports/e06-s02-publish-preview-development.md`。
+- 这不是完整 E06/Beta/GA 签收。下一张为 E06-S03 仓库级发布编排：必须持久化不可变计划并以可恢复 Saga 执行，只有 WMS 成功并回读验证后才能激活运行态；生产 Hosted Worker、正式 CAD Provider/授权黄金集、E03-S04/S05 权威匹配写入链等缺口仍保留。
+
 ## E06-S01 版本权威校验引擎开发切片（2026-08-07）
 
 - 在集成基线 `022cb937` 上以功能提交 `c17242c3`、no-ff 提交 `76c70230` 进入 `integration/space-v1-20260730`；`main` 未修改。校验只读取服务端权威 ModelVersion 快照，冻结 ContentRevision/Hash、规则集、WMS Adapter/CapabilityHash、Job 和 Correlation，不接受客户端自报校验结果。

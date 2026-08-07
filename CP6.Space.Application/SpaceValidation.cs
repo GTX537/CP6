@@ -809,9 +809,13 @@ public sealed class SpaceValidationEngine
         string? sourceRef,
         ICollection<SpaceValidationIssueCandidate> issues)
     {
-        if (source.State is not (
-                SpaceSourceState.PreviewReady or
-                SpaceSourceState.Imported))
+        var isReady =
+            source.State is SpaceSourceState.PreviewReady or
+                SpaceSourceState.Imported ||
+            source.State == SpaceSourceState.Ready &&
+            source.SourceType is SpaceSourceType.Editor or
+                SpaceSourceType.Template;
+        if (!isReady)
         {
             Add(
                 issues,

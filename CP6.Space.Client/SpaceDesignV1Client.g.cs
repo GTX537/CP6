@@ -926,6 +926,15 @@ namespace CP6.Space.Client
         /// <exception cref="ApiException">A server side error occurred.</exception>
         System.Threading.Tasks.Task<SpacePlanningSimulationRunListResponse> GetSimulationRunsAsync(System.Guid siteId, System.Guid branchId, int? limit, System.Threading.CancellationToken cancellationToken);
 
+        /// <returns>OK</returns>
+        /// <exception cref="ApiException">A server side error occurred.</exception>
+        System.Threading.Tasks.Task<SpacePublishPreviewDto> GetPublishPreviewAsync(System.Guid versionId, System.Guid? floorLogicalId, string? objectType, string? action, string? impactCode, bool? includeNoOp, int? limit, string? cursor);
+
+        /// <param name="cancellationToken">A cancellation token that can be used by other objects or threads to receive notice of cancellation.</param>
+        /// <returns>OK</returns>
+        /// <exception cref="ApiException">A server side error occurred.</exception>
+        System.Threading.Tasks.Task<SpacePublishPreviewDto> GetPublishPreviewAsync(System.Guid versionId, System.Guid? floorLogicalId, string? objectType, string? action, string? impactCode, bool? includeNoOp, int? limit, string? cursor, System.Threading.CancellationToken cancellationToken);
+
         /// <returns>Accepted</returns>
         /// <exception cref="ApiException">A server side error occurred.</exception>
         System.Threading.Tasks.Task<CreateSpaceValidationResponse> CreateValidationAsync(System.Guid versionId);
@@ -16875,6 +16884,189 @@ namespace CP6.Space.Client
             }
         }
 
+        /// <returns>OK</returns>
+        /// <exception cref="ApiException">A server side error occurred.</exception>
+        public virtual System.Threading.Tasks.Task<SpacePublishPreviewDto> GetPublishPreviewAsync(System.Guid versionId, System.Guid? floorLogicalId, string? objectType, string? action, string? impactCode, bool? includeNoOp, int? limit, string? cursor)
+        {
+            return GetPublishPreviewAsync(versionId, floorLogicalId, objectType, action, impactCode, includeNoOp, limit, cursor, System.Threading.CancellationToken.None);
+        }
+
+        /// <param name="cancellationToken">A cancellation token that can be used by other objects or threads to receive notice of cancellation.</param>
+        /// <returns>OK</returns>
+        /// <exception cref="ApiException">A server side error occurred.</exception>
+        public virtual async System.Threading.Tasks.Task<SpacePublishPreviewDto> GetPublishPreviewAsync(System.Guid versionId, System.Guid? floorLogicalId, string? objectType, string? action, string? impactCode, bool? includeNoOp, int? limit, string? cursor, System.Threading.CancellationToken cancellationToken)
+        {
+            if (versionId == null)
+                throw new System.ArgumentNullException("versionId");
+
+            var client_ = _httpClient;
+            var disposeClient_ = false;
+            try
+            {
+                using (var request_ = new System.Net.Http.HttpRequestMessage())
+                {
+                    request_.Method = new System.Net.Http.HttpMethod("GET");
+                    request_.Headers.Accept.Add(System.Net.Http.Headers.MediaTypeWithQualityHeaderValue.Parse("application/json"));
+
+                    var urlBuilder_ = new System.Text.StringBuilder();
+
+                    // Operation Path: "api/space/design/v1/versions/{versionId}/publish-preview"
+                    urlBuilder_.Append("api/space/design/v1/versions/");
+                    urlBuilder_.Append(System.Uri.EscapeDataString(ConvertToString(versionId, System.Globalization.CultureInfo.InvariantCulture)));
+                    urlBuilder_.Append("/publish-preview");
+                    urlBuilder_.Append('?');
+                    if (floorLogicalId != null)
+                    {
+                        urlBuilder_.Append(System.Uri.EscapeDataString("floorLogicalId")).Append('=').Append(System.Uri.EscapeDataString(ConvertToString(floorLogicalId, System.Globalization.CultureInfo.InvariantCulture))).Append('&');
+                    }
+                    if (objectType != null)
+                    {
+                        urlBuilder_.Append(System.Uri.EscapeDataString("objectType")).Append('=').Append(System.Uri.EscapeDataString(ConvertToString(objectType, System.Globalization.CultureInfo.InvariantCulture))).Append('&');
+                    }
+                    if (action != null)
+                    {
+                        urlBuilder_.Append(System.Uri.EscapeDataString("action")).Append('=').Append(System.Uri.EscapeDataString(ConvertToString(action, System.Globalization.CultureInfo.InvariantCulture))).Append('&');
+                    }
+                    if (impactCode != null)
+                    {
+                        urlBuilder_.Append(System.Uri.EscapeDataString("impactCode")).Append('=').Append(System.Uri.EscapeDataString(ConvertToString(impactCode, System.Globalization.CultureInfo.InvariantCulture))).Append('&');
+                    }
+                    if (includeNoOp != null)
+                    {
+                        urlBuilder_.Append(System.Uri.EscapeDataString("includeNoOp")).Append('=').Append(System.Uri.EscapeDataString(ConvertToString(includeNoOp, System.Globalization.CultureInfo.InvariantCulture))).Append('&');
+                    }
+                    if (limit != null)
+                    {
+                        urlBuilder_.Append(System.Uri.EscapeDataString("limit")).Append('=').Append(System.Uri.EscapeDataString(ConvertToString(limit, System.Globalization.CultureInfo.InvariantCulture))).Append('&');
+                    }
+                    if (cursor != null)
+                    {
+                        urlBuilder_.Append(System.Uri.EscapeDataString("cursor")).Append('=').Append(System.Uri.EscapeDataString(ConvertToString(cursor, System.Globalization.CultureInfo.InvariantCulture))).Append('&');
+                    }
+                    urlBuilder_.Length--;
+
+                    PrepareRequest(client_, request_, urlBuilder_);
+
+                    var url_ = urlBuilder_.ToString();
+                    request_.RequestUri = new System.Uri(url_, System.UriKind.RelativeOrAbsolute);
+
+                    PrepareRequest(client_, request_, url_);
+
+                    var response_ = await client_.SendAsync(request_, System.Net.Http.HttpCompletionOption.ResponseHeadersRead, cancellationToken).ConfigureAwait(false);
+                    var disposeResponse_ = true;
+                    try
+                    {
+                        var headers_ = new System.Collections.Generic.Dictionary<string, System.Collections.Generic.IEnumerable<string>>();
+                        foreach (var item_ in response_.Headers)
+                            headers_[item_.Key] = item_.Value;
+                        if (response_.Content != null && response_.Content.Headers != null)
+                        {
+                            foreach (var item_ in response_.Content.Headers)
+                                headers_[item_.Key] = item_.Value;
+                        }
+
+                        ProcessResponse(client_, response_);
+
+                        var status_ = (int)response_.StatusCode;
+                        if (status_ == 200)
+                        {
+                            var objectResponse_ = await ReadObjectResponseAsync<SpacePublishPreviewDto>(response_, headers_, cancellationToken).ConfigureAwait(false);
+                            if (objectResponse_.Object == null)
+                            {
+                                throw new ApiException("Response was null which was not expected.", status_, objectResponse_.Text, headers_, null);
+                            }
+                            return objectResponse_.Object;
+                        }
+                        else
+                        if (status_ == 400)
+                        {
+                            var objectResponse_ = await ReadObjectResponseAsync<SpaceDesignProblemDetails>(response_, headers_, cancellationToken).ConfigureAwait(false);
+                            if (objectResponse_.Object == null)
+                            {
+                                throw new ApiException("Response was null which was not expected.", status_, objectResponse_.Text, headers_, null);
+                            }
+                            throw new ApiException<SpaceDesignProblemDetails>("Bad Request", status_, objectResponse_.Text, headers_, objectResponse_.Object, null);
+                        }
+                        else
+                        if (status_ == 401)
+                        {
+                            var objectResponse_ = await ReadObjectResponseAsync<SpaceDesignProblemDetails>(response_, headers_, cancellationToken).ConfigureAwait(false);
+                            if (objectResponse_.Object == null)
+                            {
+                                throw new ApiException("Response was null which was not expected.", status_, objectResponse_.Text, headers_, null);
+                            }
+                            throw new ApiException<SpaceDesignProblemDetails>("Unauthorized", status_, objectResponse_.Text, headers_, objectResponse_.Object, null);
+                        }
+                        else
+                        if (status_ == 403)
+                        {
+                            var objectResponse_ = await ReadObjectResponseAsync<SpaceDesignProblemDetails>(response_, headers_, cancellationToken).ConfigureAwait(false);
+                            if (objectResponse_.Object == null)
+                            {
+                                throw new ApiException("Response was null which was not expected.", status_, objectResponse_.Text, headers_, null);
+                            }
+                            throw new ApiException<SpaceDesignProblemDetails>("Forbidden", status_, objectResponse_.Text, headers_, objectResponse_.Object, null);
+                        }
+                        else
+                        if (status_ == 404)
+                        {
+                            var objectResponse_ = await ReadObjectResponseAsync<SpaceDesignProblemDetails>(response_, headers_, cancellationToken).ConfigureAwait(false);
+                            if (objectResponse_.Object == null)
+                            {
+                                throw new ApiException("Response was null which was not expected.", status_, objectResponse_.Text, headers_, null);
+                            }
+                            throw new ApiException<SpaceDesignProblemDetails>("Not Found", status_, objectResponse_.Text, headers_, objectResponse_.Object, null);
+                        }
+                        else
+                        if (status_ == 409)
+                        {
+                            var objectResponse_ = await ReadObjectResponseAsync<SpaceDesignProblemDetails>(response_, headers_, cancellationToken).ConfigureAwait(false);
+                            if (objectResponse_.Object == null)
+                            {
+                                throw new ApiException("Response was null which was not expected.", status_, objectResponse_.Text, headers_, null);
+                            }
+                            throw new ApiException<SpaceDesignProblemDetails>("Conflict", status_, objectResponse_.Text, headers_, objectResponse_.Object, null);
+                        }
+                        else
+                        if (status_ == 422)
+                        {
+                            var objectResponse_ = await ReadObjectResponseAsync<SpaceDesignProblemDetails>(response_, headers_, cancellationToken).ConfigureAwait(false);
+                            if (objectResponse_.Object == null)
+                            {
+                                throw new ApiException("Response was null which was not expected.", status_, objectResponse_.Text, headers_, null);
+                            }
+                            throw new ApiException<SpaceDesignProblemDetails>("Unprocessable Content", status_, objectResponse_.Text, headers_, objectResponse_.Object, null);
+                        }
+                        else
+                        if (status_ == 500)
+                        {
+                            var objectResponse_ = await ReadObjectResponseAsync<SpaceDesignProblemDetails>(response_, headers_, cancellationToken).ConfigureAwait(false);
+                            if (objectResponse_.Object == null)
+                            {
+                                throw new ApiException("Response was null which was not expected.", status_, objectResponse_.Text, headers_, null);
+                            }
+                            throw new ApiException<SpaceDesignProblemDetails>("Internal Server Error", status_, objectResponse_.Text, headers_, objectResponse_.Object, null);
+                        }
+                        else
+                        {
+                            var responseData_ = response_.Content == null ? null : await ReadAsStringAsync(response_.Content, cancellationToken).ConfigureAwait(false);
+                            throw new ApiException("The HTTP status code of the response was not expected (" + status_ + ").", status_, responseData_, headers_, null);
+                        }
+                    }
+                    finally
+                    {
+                        if (disposeResponse_)
+                            response_.Dispose();
+                    }
+                }
+            }
+            finally
+            {
+                if (disposeClient_)
+                    client_.Dispose();
+            }
+        }
+
         /// <returns>Accepted</returns>
         /// <exception cref="ApiException">A server side error occurred.</exception>
         public virtual System.Threading.Tasks.Task<CreateSpaceValidationResponse> CreateValidationAsync(System.Guid versionId)
@@ -23110,6 +23302,174 @@ namespace CP6.Space.Client
 
         [System.Text.Json.Serialization.JsonPropertyName("capabilityFlags")]
         public string? CapabilityFlags { get; set; } = default!;
+
+    }
+
+    [System.CodeDom.Compiler.GeneratedCode("NJsonSchema", "14.7.1.0 (NJsonSchema v11.6.1.0 (Newtonsoft.Json v13.0.0.0))")]
+    public partial class SpacePublishChangeSummaryDto
+    {
+
+        [System.Text.Json.Serialization.JsonPropertyName("createCount")]
+        public int CreateCount { get; set; } = default!;
+
+        [System.Text.Json.Serialization.JsonPropertyName("updateMasterCount")]
+        public int UpdateMasterCount { get; set; } = default!;
+
+        [System.Text.Json.Serialization.JsonPropertyName("updateGeometryOnlyCount")]
+        public int UpdateGeometryOnlyCount { get; set; } = default!;
+
+        [System.Text.Json.Serialization.JsonPropertyName("disableCount")]
+        public int DisableCount { get; set; } = default!;
+
+        [System.Text.Json.Serialization.JsonPropertyName("restoreCount")]
+        public int RestoreCount { get; set; } = default!;
+
+        [System.Text.Json.Serialization.JsonPropertyName("noOpCount")]
+        public int NoOpCount { get; set; } = default!;
+
+    }
+
+    [System.CodeDom.Compiler.GeneratedCode("NJsonSchema", "14.7.1.0 (NJsonSchema v11.6.1.0 (Newtonsoft.Json v13.0.0.0))")]
+    public partial class SpacePublishImpactSummaryDto
+    {
+
+        [System.Text.Json.Serialization.JsonPropertyName("wmsCreateCount")]
+        public int WmsCreateCount { get; set; } = default!;
+
+        [System.Text.Json.Serialization.JsonPropertyName("wmsUpdateCount")]
+        public int WmsUpdateCount { get; set; } = default!;
+
+        [System.Text.Json.Serialization.JsonPropertyName("wmsDisableCount")]
+        public int WmsDisableCount { get; set; } = default!;
+
+        [System.Text.Json.Serialization.JsonPropertyName("wmsRestoreCount")]
+        public int WmsRestoreCount { get; set; } = default!;
+
+        [System.Text.Json.Serialization.JsonPropertyName("wmsNoOpCount")]
+        public int WmsNoOpCount { get; set; } = default!;
+
+        [System.Text.Json.Serialization.JsonPropertyName("runtimeOnlyCount")]
+        public int RuntimeOnlyCount { get; set; } = default!;
+
+        [System.Text.Json.Serialization.JsonPropertyName("blockingCount")]
+        public int BlockingCount { get; set; } = default!;
+
+    }
+
+    [System.CodeDom.Compiler.GeneratedCode("NJsonSchema", "14.7.1.0 (NJsonSchema v11.6.1.0 (Newtonsoft.Json v13.0.0.0))")]
+    public partial class SpacePublishPreviewDto
+    {
+
+        [System.Text.Json.Serialization.JsonPropertyName("targetVersionId")]
+        public System.Guid TargetVersionId { get; set; } = default!;
+
+        [System.Text.Json.Serialization.JsonPropertyName("baseVersionId")]
+        public System.Guid? BaseVersionId { get; set; } = default!;
+
+        [System.Text.Json.Serialization.JsonPropertyName("validationRunId")]
+        public System.Guid ValidationRunId { get; set; } = default!;
+
+        [System.Text.Json.Serialization.JsonPropertyName("validationStatus")]
+        public string? ValidationStatus { get; set; } = default!;
+
+        [System.Text.Json.Serialization.JsonPropertyName("validationBlockingCount")]
+        public int ValidationBlockingCount { get; set; } = default!;
+
+        [System.Text.Json.Serialization.JsonPropertyName("contentHash")]
+        public string? ContentHash { get; set; } = default!;
+
+        [System.Text.Json.Serialization.JsonPropertyName("planRuleSetVersion")]
+        public string? PlanRuleSetVersion { get; set; } = default!;
+
+        [System.Text.Json.Serialization.JsonPropertyName("adapterId")]
+        public string? AdapterId { get; set; } = default!;
+
+        [System.Text.Json.Serialization.JsonPropertyName("capabilityHash")]
+        public string? CapabilityHash { get; set; } = default!;
+
+        [System.Text.Json.Serialization.JsonPropertyName("planHash")]
+        public string? PlanHash { get; set; } = default!;
+
+        [System.Text.Json.Serialization.JsonPropertyName("publishable")]
+        public bool Publishable { get; set; } = default!;
+
+        [System.Text.Json.Serialization.JsonPropertyName("itemCount")]
+        public int ItemCount { get; set; } = default!;
+
+        [System.Text.Json.Serialization.JsonPropertyName("changeCount")]
+        public int ChangeCount { get; set; } = default!;
+
+        [System.Text.Json.Serialization.JsonPropertyName("matchedItemCount")]
+        public int MatchedItemCount { get; set; } = default!;
+
+        [System.Text.Json.Serialization.JsonPropertyName("changes")]
+        public SpacePublishChangeSummaryDto Changes { get; set; } = default!;
+
+        [System.Text.Json.Serialization.JsonPropertyName("wmsImpact")]
+        public SpacePublishImpactSummaryDto WmsImpact { get; set; } = default!;
+
+        [System.Text.Json.Serialization.JsonPropertyName("items")]
+        public System.Collections.Generic.ICollection<SpacePublishPreviewItemDto>? Items { get; set; } = default!;
+
+        [System.Text.Json.Serialization.JsonPropertyName("nextCursor")]
+        public string? NextCursor { get; set; } = default!;
+
+    }
+
+    [System.CodeDom.Compiler.GeneratedCode("NJsonSchema", "14.7.1.0 (NJsonSchema v11.6.1.0 (Newtonsoft.Json v13.0.0.0))")]
+    public partial class SpacePublishPreviewItemDto
+    {
+
+        [System.Text.Json.Serialization.JsonPropertyName("sequenceNo")]
+        public int SequenceNo { get; set; } = default!;
+
+        [System.Text.Json.Serialization.JsonPropertyName("objectType")]
+        public string? ObjectType { get; set; } = default!;
+
+        [System.Text.Json.Serialization.JsonPropertyName("logicalId")]
+        public System.Guid LogicalId { get; set; } = default!;
+
+        [System.Text.Json.Serialization.JsonPropertyName("floorLogicalId")]
+        public System.Guid? FloorLogicalId { get; set; } = default!;
+
+        [System.Text.Json.Serialization.JsonPropertyName("action")]
+        public string? Action { get; set; } = default!;
+
+        [System.Text.Json.Serialization.JsonPropertyName("beforeHash")]
+        public string? BeforeHash { get; set; } = default!;
+
+        [System.Text.Json.Serialization.JsonPropertyName("afterHash")]
+        public string? AfterHash { get; set; } = default!;
+
+        [System.Text.Json.Serialization.JsonPropertyName("beforeCode")]
+        public string? BeforeCode { get; set; } = default!;
+
+        [System.Text.Json.Serialization.JsonPropertyName("afterCode")]
+        public string? AfterCode { get; set; } = default!;
+
+        [System.Text.Json.Serialization.JsonPropertyName("externalBindingId")]
+        public string? ExternalBindingId { get; set; } = default!;
+
+        [System.Text.Json.Serialization.JsonPropertyName("payloadHash")]
+        public string? PayloadHash { get; set; } = default!;
+
+        [System.Text.Json.Serialization.JsonPropertyName("impactCode")]
+        public string? ImpactCode { get; set; } = default!;
+
+        [System.Text.Json.Serialization.JsonPropertyName("masterChanged")]
+        public bool MasterChanged { get; set; } = default!;
+
+        [System.Text.Json.Serialization.JsonPropertyName("geometryChanged")]
+        public bool GeometryChanged { get; set; } = default!;
+
+        [System.Text.Json.Serialization.JsonPropertyName("provenanceChanged")]
+        public bool ProvenanceChanged { get; set; } = default!;
+
+        [System.Text.Json.Serialization.JsonPropertyName("wmsChanged")]
+        public bool WmsChanged { get; set; } = default!;
+
+        [System.Text.Json.Serialization.JsonPropertyName("blocking")]
+        public bool Blocking { get; set; } = default!;
 
     }
 

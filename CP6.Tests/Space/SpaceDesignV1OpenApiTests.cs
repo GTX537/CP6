@@ -85,6 +85,7 @@ public sealed class SpaceDesignV1OpenApiTests
             "/api/space/design/v1/versions/{versionId}/wms-adoption/bindings:batch",
             "/api/space/design/v1/versions/{versionId}/wms-adoption/locations/{adoptionId}/place",
             "/api/space/design/v1/versions/{versionId}/validations",
+            "/api/space/design/v1/versions/{versionId}/publish-preview",
             "/api/space/design/v1/validations/{validationId}",
             "/api/space/external-organization",
             "/api/space/external-organization/{organizationId}",
@@ -124,8 +125,8 @@ public sealed class SpaceDesignV1OpenApiTests
             .Select(operation =>
                 operation.Value.GetProperty("operationId").GetString())
             .ToArray();
-        Assert.Equal(104, operationIds.Length);
-        Assert.Equal(104, operationIds.Distinct().Count());
+        Assert.Equal(105, operationIds.Length);
+        Assert.Equal(105, operationIds.Distinct().Count());
         Assert.Contains("GetPolicy", operationIds);
         Assert.Contains("UpdatePolicy", operationIds);
         Assert.Contains("GetUsage", operationIds);
@@ -164,6 +165,7 @@ public sealed class SpaceDesignV1OpenApiTests
         Assert.Contains("RetryParse", operationIds);
         Assert.Contains("CreateValidation", operationIds);
         Assert.Contains("GetValidation", operationIds);
+        Assert.Contains("GetPublishPreview", operationIds);
         Assert.Contains("GetPreflight", operationIds);
         Assert.Contains("DownloadErrorReport", operationIds);
         Assert.Contains("CreateAsset", operationIds);
@@ -1550,6 +1552,7 @@ public sealed class SpaceDesignV1OpenApiTests
                      "CalibrateUnderlay",
                      "GetJob",
                      "GetIssues",
+                     "GetPublishPreview",
                      "GetProposalReview",
                      "GetGenerationProposals",
                      "GetGenerationProposalIssues",

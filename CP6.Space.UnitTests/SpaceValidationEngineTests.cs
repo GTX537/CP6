@@ -424,6 +424,53 @@ public sealed class SpaceValidationEngineTests
                 SpaceValidationIssueCodes.SourceMetadataInvalid);
     }
 
+    [Theory]
+    [InlineData(SpaceSourceType.Editor)]
+    [InlineData(SpaceSourceType.Template)]
+    public void Ready_inline_source_is_publishable(
+        SpaceSourceType sourceType)
+    {
+        var sourceId = Guid.NewGuid();
+        var snapshot = ValidSnapshot();
+        snapshot = snapshot with
+        {
+            Floors =
+            [
+                snapshot.Floors[0] with
+                {
+                    Revision = new SpaceValidationRevisionRef(
+                        FloorId,
+                        sourceId,
+                        "inline:floor",
+                        SpaceLifecycleState.Active),
+                },
+            ],
+            Sources =
+            [
+                new SpaceValidationSource(
+                    sourceId,
+                    sourceType,
+                    new string('a', 64),
+                    SpaceSourceState.Ready,
+                    null,
+                    null),
+            ],
+        };
+
+        var result = new SpaceValidationEngine().Validate(
+            snapshot,
+            SpaceValidationProfile.Create(
+                "test",
+                30,
+                "^[A-Z0-9-]+$",
+                100_000));
+
+        Assert.DoesNotContain(
+            result.Issues,
+            issue =>
+                issue.Code == SpaceValidationIssueCodes.SourceNotReady);
+    }
+
     private static SpaceValidationSnapshot ValidSnapshot()
     {
         var floor = new SpaceValidationFloor(
