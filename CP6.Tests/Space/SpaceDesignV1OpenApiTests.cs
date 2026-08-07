@@ -65,11 +65,16 @@ public sealed class SpaceDesignV1OpenApiTests
             "/api/space/design/v1/versions/{versionId}/floors/{floorLogicalId}/underlay",
             "/api/space/design/v1/versions/{versionId}/files/{fileId}",
             "/api/space/design/v1/versions/{versionId}/excel-sources",
+            "/api/space/design/v1/versions/{versionId}/cad-sources",
             "/api/space/design/v1/versions/{versionId}/sources",
             "/api/space/design/v1/versions/{versionId}/sources/{sourceId}/content",
             "/api/space/design/v1/versions/{versionId}/sources/{sourceId}/excel-preflights",
             "/api/space/design/v1/versions/{versionId}/sources/{sourceId}/excel-preflights/{jobId}",
             "/api/space/design/v1/versions/{versionId}/sources/{sourceId}/excel-preflights/{jobId}/report",
+            "/api/space/design/v1/versions/{versionId}/sources/{sourceId}/cad-parses",
+            "/api/space/design/v1/versions/{versionId}/sources/{sourceId}/cad-parses/{jobId}",
+            "/api/space/design/v1/versions/{versionId}/sources/{sourceId}/cad-parses/{jobId}:cancel",
+            "/api/space/design/v1/versions/{versionId}/sources/{sourceId}/cad-parses/{jobId}:retry",
             "/api/space/design/v1/versions/{versionId}/sources/{sourceId}/underlay-calibration",
             "/api/space/design/v1/versions/{versionId}/underlay-sources",
             "/api/space/design/v1/jobs/{jobId}",
@@ -79,6 +84,8 @@ public sealed class SpaceDesignV1OpenApiTests
             "/api/space/design/v1/versions/{versionId}/wms-adoption/locations/{adoptionId}/bind",
             "/api/space/design/v1/versions/{versionId}/wms-adoption/bindings:batch",
             "/api/space/design/v1/versions/{versionId}/wms-adoption/locations/{adoptionId}/place",
+            "/api/space/design/v1/versions/{versionId}/validations",
+            "/api/space/design/v1/validations/{validationId}",
             "/api/space/external-organization",
             "/api/space/external-organization/{organizationId}",
             "/api/space/external-organization/{organizationId}/membership",
@@ -117,8 +124,8 @@ public sealed class SpaceDesignV1OpenApiTests
             .Select(operation =>
                 operation.Value.GetProperty("operationId").GetString())
             .ToArray();
-        Assert.Equal(97, operationIds.Length);
-        Assert.Equal(97, operationIds.Distinct().Count());
+        Assert.Equal(104, operationIds.Length);
+        Assert.Equal(104, operationIds.Distinct().Count());
         Assert.Contains("GetPolicy", operationIds);
         Assert.Contains("UpdatePolicy", operationIds);
         Assert.Contains("GetUsage", operationIds);
@@ -150,6 +157,13 @@ public sealed class SpaceDesignV1OpenApiTests
         Assert.Contains("SaveProfile", operationIds);
         Assert.Contains("UploadExcelSource", operationIds);
         Assert.Contains("StartPreflight", operationIds);
+        Assert.Contains("UploadCadSource", operationIds);
+        Assert.Contains("StartParse", operationIds);
+        Assert.Contains("GetParse", operationIds);
+        Assert.Contains("CancelParse", operationIds);
+        Assert.Contains("RetryParse", operationIds);
+        Assert.Contains("CreateValidation", operationIds);
+        Assert.Contains("GetValidation", operationIds);
         Assert.Contains("GetPreflight", operationIds);
         Assert.Contains("DownloadErrorReport", operationIds);
         Assert.Contains("CreateAsset", operationIds);

@@ -210,6 +210,15 @@ public enum SpaceIssueStatus : short
     Acknowledged = 2,
 }
 
+public enum SpaceValidationStatus : short
+{
+    Queued = 0,
+    Running = 1,
+    Passed = 2,
+    Blocked = 3,
+    Failed = 4,
+}
+
 public enum SpaceIssueResolutionKind : short
 {
     None = 0,

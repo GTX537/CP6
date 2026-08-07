@@ -13,6 +13,10 @@ public sealed class SpaceModelIssue : SpaceTenantEntity
     public Guid? JobId { get; private set; }
     public Guid? GenerationRunId { get; private set; }
     public Guid? GenerationProposalId { get; private set; }
+    public Guid? ValidationRunId { get; private set; }
+    public string? Category { get; private set; }
+    public string? FieldPath { get; private set; }
+    public string EvidenceJson { get; private set; } = "{}";
     public SpaceIssueSeverity Severity { get; private set; }
     public string Code { get; private set; } = string.Empty;
     public string? SourceRef { get; private set; }
@@ -40,7 +44,11 @@ public sealed class SpaceModelIssue : SpaceTenantEntity
         string messageArgsJson = "{}",
         string? suggestedActionCode = null,
         Guid? generationRunId = null,
-        Guid? generationProposalId = null)
+        Guid? generationProposalId = null,
+        Guid? validationRunId = null,
+        string? category = null,
+        string? fieldPath = null,
+        string evidenceJson = "{}")
     {
         if (!modelVersionId.HasValue && !sourceId.HasValue && !jobId.HasValue)
             throw new ArgumentException("At least one Issue context is required.");
@@ -53,6 +61,7 @@ public sealed class SpaceModelIssue : SpaceTenantEntity
         EnsureOptionalId(targetLogicalId, nameof(targetLogicalId));
         EnsureOptionalId(generationRunId, nameof(generationRunId));
         EnsureOptionalId(generationProposalId, nameof(generationProposalId));
+        EnsureOptionalId(validationRunId, nameof(validationRunId));
         if (generationProposalId.HasValue && !generationRunId.HasValue)
         {
             throw new ArgumentException(
@@ -67,6 +76,10 @@ public sealed class SpaceModelIssue : SpaceTenantEntity
             JobId = jobId,
             GenerationRunId = generationRunId,
             GenerationProposalId = generationProposalId,
+            ValidationRunId = validationRunId,
+            Category = OptionalText(category, 50, nameof(category)),
+            FieldPath = OptionalText(fieldPath, 500, nameof(fieldPath)),
+            EvidenceJson = RequireJson(evidenceJson, nameof(evidenceJson)),
             Severity = severity,
             Code = RequireText(code, 100, nameof(code)),
             SourceRef = OptionalText(sourceRef, 500, nameof(sourceRef)),

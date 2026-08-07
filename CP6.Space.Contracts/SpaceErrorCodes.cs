@@ -69,6 +69,8 @@ public static class SpaceErrorCodes
     public const string JobProcessorFailed =
         "SPACE_JOB_PROCESSOR_FAILED";
     public const string JobTimeout = "SPACE_JOB_TIMEOUT";
+    public const string ValidationNotFound = "SPACE_VALIDATION_NOT_FOUND";
+    public const string ValidationStale = "SPACE_VALIDATION_STALE";
     public const string ParseFailed = "SPACE_PARSE_FAILED";
     public const string CadParseInvalid = "SPACE_CAD_PARSE_INVALID";
     public const string CadParseNotFound = "SPACE_CAD_PARSE_NOT_FOUND";

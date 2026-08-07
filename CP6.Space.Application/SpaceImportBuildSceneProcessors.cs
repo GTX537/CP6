@@ -102,6 +102,8 @@ public sealed class SpaceJobProcessorOptions
         TimeSpan.FromMinutes(15);
     public TimeSpan CadParseTimeout { get; init; } =
         TimeSpan.FromMinutes(30);
+    public TimeSpan ValidationTimeout { get; init; } =
+        TimeSpan.FromMinutes(30);
     public TimeSpan ApplyGenerationTimeout { get; init; } =
         TimeSpan.FromMinutes(10);
     public TimeSpan AiRetentionCleanupTimeout { get; init; } =
@@ -135,6 +137,11 @@ public sealed class SpaceJobProcessorOptions
             throw new ArgumentOutOfRangeException(
                 nameof(CadParseTimeout));
         }
+        if (ValidationTimeout <= TimeSpan.Zero)
+        {
+            throw new ArgumentOutOfRangeException(
+                nameof(ValidationTimeout));
+        }
         if (ApplyGenerationTimeout <= TimeSpan.Zero)
         {
             throw new ArgumentOutOfRangeException(
@@ -151,6 +158,7 @@ public sealed class SpaceJobProcessorOptions
         jobType switch
         {
             SpaceJobType.CadParse => CadParseTimeout,
+            SpaceJobType.Validate => ValidationTimeout,
             SpaceJobType.ExcelPreview => ExcelPreviewTimeout,
             SpaceJobType.Import => ImportTimeout,
             SpaceJobType.BuildScene => BuildSceneTimeout,
@@ -601,6 +609,7 @@ public sealed class SpaceJobProcessorRunner : ISpaceJobProcessorRunner
                 SpaceJobType.CadParse or
                 SpaceJobType.ExcelPreview or
                 SpaceJobType.Import or
+                SpaceJobType.Validate or
                 SpaceJobType.BuildScene or
                 SpaceJobType.ApplyGeneration or
                 SpaceJobType.AiRetentionCleanup) ||

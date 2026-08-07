@@ -33,6 +33,8 @@ public sealed class SpaceContext : DbContext
     public DbSet<SpaceJobAttempt> JobAttempts => Set<SpaceJobAttempt>();
     public DbSet<SpaceJobStep> JobSteps => Set<SpaceJobStep>();
     public DbSet<SpaceModelIssue> Issues => Set<SpaceModelIssue>();
+    public DbSet<SpaceValidationRun> ValidationRuns =>
+        Set<SpaceValidationRun>();
     public DbSet<SpaceIdempotencyRecord> IdempotencyRecords =>
         Set<SpaceIdempotencyRecord>();
     public DbSet<SpaceGenerationRun> GenerationRuns =>
@@ -186,6 +188,7 @@ public sealed class SpaceContext : DbContext
         ConfigureJobStep(modelBuilder);
         ConfigureArtifact(modelBuilder);
         ConfigureIssue(modelBuilder);
+        ConfigureValidationRun(modelBuilder);
         ConfigureIdempotencyRecord(modelBuilder);
         ConfigureGenerationRun(modelBuilder);
         ConfigureGenerationProposal(modelBuilder);
@@ -2149,6 +2152,101 @@ public sealed class SpaceContext : DbContext
         entity.HasQueryFilter(x => x.TenantId == CurrentTenantId && !x.IsDeleted);
     }
 
+    private void ConfigureValidationRun(ModelBuilder modelBuilder)
+    {
+        var entity = modelBuilder.Entity<SpaceValidationRun>();
+        entity.ToTable(
+            "Space_ValidationRun",
+            table =>
+            {
+                table.HasCheckConstraint(
+                    "CK_Space_ValidationRun_StatusTime",
+                    "([Status] = 0 AND [StartedAtUtc] IS NULL AND [FinishedAtUtc] IS NULL) OR " +
+                    "([Status] = 1 AND [StartedAtUtc] IS NOT NULL AND [FinishedAtUtc] IS NULL) OR " +
+                    "([Status] IN (2, 3, 4) AND [FinishedAtUtc] IS NOT NULL)");
+                table.HasCheckConstraint(
+                    "CK_Space_ValidationRun_Counts",
+                    "[BlockingCount] >= 0 AND [WarningCount] >= 0 AND [InfoCount] >= 0 AND " +
+                    "([Status] <> 2 OR [BlockingCount] = 0) AND " +
+                    "([Status] <> 3 OR [BlockingCount] > 0)");
+            });
+        entity.HasKey(x => x.Id);
+        entity.Property(x => x.Id).ValueGeneratedNever();
+        entity.HasAlternateKey(x => new { x.TenantId, x.Id })
+            .HasName("AK_Space_ValidationRun_TenantId_Id");
+        ConfigureTenantEntity(entity);
+
+        entity.Property(x => x.ContentHash)
+            .HasColumnType("char(64)")
+            .IsUnicode(false)
+            .IsFixedLength()
+            .HasMaxLength(64)
+            .IsRequired();
+        entity.Property(x => x.RuleSetVersion).HasMaxLength(50).IsRequired();
+        entity.Property(x => x.AdapterId).HasMaxLength(100).IsRequired();
+        entity.Property(x => x.CapabilityHash)
+            .HasColumnType("char(64)")
+            .IsUnicode(false)
+            .IsFixedLength()
+            .HasMaxLength(64)
+            .IsRequired();
+        entity.Property(x => x.Status)
+            .HasConversion<short>()
+            .HasColumnType("smallint");
+        entity.Property(x => x.RequestedAtUtc).HasColumnType("datetime2");
+        entity.Property(x => x.StartedAtUtc).HasColumnType("datetime2");
+        entity.Property(x => x.FinishedAtUtc).HasColumnType("datetime2");
+        entity.Property(x => x.FailureCode).HasMaxLength(100);
+        entity.Property(x => x.FailureSummary).HasMaxLength(1000);
+        entity.Property(x => x.RowVersion).IsRowVersion();
+
+        entity.HasIndex(
+                x => new
+                {
+                    x.TenantId,
+                    x.ModelVersionId,
+                    x.ContentHash,
+                    x.RuleSetVersion,
+                    x.AdapterId,
+                    x.CapabilityHash,
+                })
+            .IsUnique()
+            .HasFilter("[Status] <> 4 AND [IsDeleted] = 0")
+            .HasDatabaseName(
+                "UX_Space_ValidationRun_Tenant_Input_ActiveOrReusable");
+        entity.HasIndex(
+                x => new
+                {
+                    x.TenantId,
+                    x.ModelVersionId,
+                    x.RequestedAtUtc,
+                    x.Id,
+                })
+            .HasDatabaseName(
+                "IX_Space_ValidationRun_Tenant_Version_Requested");
+        entity.HasIndex(x => new { x.TenantId, x.JobId })
+            .IsUnique()
+            .HasDatabaseName("UX_Space_ValidationRun_Tenant_Job");
+
+        entity.HasOne<SpaceModelVersion>()
+            .WithMany()
+            .HasForeignKey(x => new { x.TenantId, x.ModelVersionId })
+            .HasPrincipalKey(x => new { x.TenantId, x.Id })
+            .OnDelete(DeleteBehavior.Restrict)
+            .HasConstraintName(
+                "FK_Space_ValidationRun_Version_Tenant");
+        entity.HasOne<SpaceJob>()
+            .WithMany()
+            .HasForeignKey(x => new { x.TenantId, x.JobId })
+            .HasPrincipalKey(x => new { x.TenantId, x.Id })
+            .OnDelete(DeleteBehavior.Restrict)
+            .HasConstraintName(
+                "FK_Space_ValidationRun_Job_Tenant");
+
+        entity.HasQueryFilter(
+            x => x.TenantId == CurrentTenantId && !x.IsDeleted);
+    }
+
     private void ConfigureIssue(ModelBuilder modelBuilder)
     {
         var entity = modelBuilder.Entity<SpaceModelIssue>();
@@ -2174,6 +2272,10 @@ public sealed class SpaceContext : DbContext
                     "[ResolutionCommandBatchId] IS NOT NULL AND [ResolutionDecisionId] IS NULL) OR " +
                     "([ResolutionKind] IN (2, 3) AND [ResolutionCommandBatchId] IS NULL AND " +
                     "[ResolutionDecisionId] IS NOT NULL)))");
+                table.HasCheckConstraint(
+                    "CK_Space_ModelIssue_ValidationScope",
+                    "[ValidationRunId] IS NULL OR " +
+                    "([ModelVersionId] IS NOT NULL AND [JobId] IS NOT NULL)");
             });
         entity.HasKey(x => x.Id);
         entity.Property(x => x.Id).ValueGeneratedNever();
@@ -2186,6 +2288,12 @@ public sealed class SpaceContext : DbContext
         entity.Property(x => x.SourceRef).HasMaxLength(500);
         entity.Property(x => x.MessageArgsJson).HasColumnType("nvarchar(max)");
         entity.Property(x => x.SuggestedActionCode).HasMaxLength(100);
+        entity.Property(x => x.Category).HasMaxLength(50);
+        entity.Property(x => x.FieldPath).HasMaxLength(500);
+        entity.Property(x => x.EvidenceJson)
+            .HasColumnType("nvarchar(max)")
+            .HasDefaultValue("{}")
+            .IsRequired();
         entity.Property(x => x.Status)
             .HasConversion<short>()
             .HasColumnType("smallint");
@@ -2209,6 +2317,19 @@ public sealed class SpaceContext : DbContext
         entity.HasIndex(x => new { x.TenantId, x.JobId, x.Status })
             .HasFilter("[JobId] IS NOT NULL AND [IsDeleted] = 0")
             .HasDatabaseName("IX_Space_ModelIssue_Tenant_Job_Status");
+        entity.HasIndex(
+                x => new
+                {
+                    x.TenantId,
+                    x.ValidationRunId,
+                    x.Severity,
+                    x.Code,
+                    x.Id,
+                })
+            .HasFilter(
+                "[ValidationRunId] IS NOT NULL AND [IsDeleted] = 0")
+            .HasDatabaseName(
+                "IX_Space_ModelIssue_Tenant_Validation_Severity_Code");
         entity.HasIndex(
                 x => new
                 {
@@ -2257,6 +2378,13 @@ public sealed class SpaceContext : DbContext
             .HasPrincipalKey(x => new { x.TenantId, x.Id })
             .OnDelete(DeleteBehavior.Restrict)
             .HasConstraintName("FK_Space_ModelIssue_GenerationRun_Tenant");
+        entity.HasOne<SpaceValidationRun>()
+            .WithMany()
+            .HasForeignKey(x => new { x.TenantId, x.ValidationRunId })
+            .HasPrincipalKey(x => new { x.TenantId, x.Id })
+            .OnDelete(DeleteBehavior.Restrict)
+            .HasConstraintName(
+                "FK_Space_ModelIssue_ValidationRun_Tenant");
         entity.HasOne<SpaceGenerationProposal>()
             .WithMany()
             .HasForeignKey(
