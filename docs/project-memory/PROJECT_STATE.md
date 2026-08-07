@@ -4,11 +4,11 @@
 
 ## E06-S03 仓库级发布编排开发切片（2026-08-07）
 
-- 在集成基线 `0bde7bc9` 上完成功能提交 `48082680`，当前等待 no-ff 进入 `integration/space-v1-20260730`；`main` 未修改。新增创建/读取发布尝试 API、`space:model:publish` 权限、写/读审计、OpenAPI 及 C#/TypeScript SDK。
+- 在集成基线 `0bde7bc9` 上以功能提交 `48082680`、no-ff 提交 `5b9b95ab` 进入 `integration/space-v1-20260730`；`main` 未修改。新增创建/读取发布尝试 API、`space:model:publish` 权限、写/读审计、OpenAPI 及 C#/TypeScript SDK。
 - 发布入口重新构建并验证 E06-S02 权威计划，绑定 Published 指针、ValidationRun、PlanHash、ContentRevision 和实时 WMS 能力。Serializable 仓库槽位事务持久化不可变 PublishPlan，同租户/Site 只允许一个活动发布；同幂等键同请求稳定重放，同键异请求冲突。
 - 请求内 Saga 依次执行 WMS 预检、稳定分批 apply、异常状态查询、回执保存和逐项回读。外部写入可能开始后不随 HTTP 取消丢失证据。只有全部 WMS 回读一致，才在 SpaceContext/CP6Context 同一 SQL 事务中物化运行态、校验投影哈希并原子切换 Published 指针。
 - 零影响预检失败退回 Ready 并释放槽位；部分/未知/矛盾回执、回读不一致或运行态失败保留旧 Published，将目标置为 ReconciliationRequired 并保存问题与证据。新增 6 张发布/回执/对账/运行态表，Migration `20260807135544` 的 Down 失败关闭。
-- 门禁：领域聚焦 4/4、API/权限/审计/OpenAPI 58/58、真实 SQL 1/1 fact（覆盖成功激活和部分 WMS 对账）、Space Unit 452/452、CP6.Tests 2798 passed / 17 skipped、默认 Space Integration 259 passed / 90 SQL-gated skipped；Infrastructure/WebApi Release 0 warning/0 error，完整 solution 双架构 AOT 0 error / 10 条既有 warning，EF/SDK/幂等 SQL/diff 门禁通过。证据见 `docs/space/reports/e06-s03-publish-orchestration-development.md`。
+- 门禁：领域聚焦 4/4、API/权限/审计/OpenAPI 58/58、真实 SQL 1/1 fact（覆盖成功激活和部分 WMS 对账）、Space Unit 452/452、CP6.Tests 2798 passed / 17 skipped、默认 Space Integration 259 passed / 90 SQL-gated skipped；Infrastructure/WebApi Release 0 warning/0 error，完整 solution 双架构 AOT 0 error / 10 条既有 warning，EF/SDK/幂等 SQL/diff 门禁通过。合并后清理 36 个可重建目录、6,566 个文件、1,625,959,672 bytes（约 1.514 GiB）。证据见 `docs/space/reports/e06-s03-publish-orchestration-development.md`。
 - 本卡没有实现 E06-S04 队列/超时/重试/人工对账审计、E06-S05 历史再发布回退或 E06-S06 UI。生产 Hosted Worker、正式 CAD Provider/授权黄金集、E03-S04/S05 权威匹配写入链及 Beta/GA 证据仍未完成；下一张为 E06-S04。
 
 ## E06-S02 版本差异与影响预览开发切片（2026-08-07）
