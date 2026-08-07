@@ -1,5 +1,12 @@
 # 已完成能力与近期里程碑
 
+## 2026-08-06 Version Clone 必填字段前向修复
+
+- 以 `0564afad` / `01eba1b7` 完成功能和 no-ff 受控集成；Zone/Aisle/Rack 的 `Name` 与 Rack `RackType` 现在随 Published → Draft 快照保真复制。
+- 缺陷已在 `ac9c977c` 独立基线复现：非空 `Name` 遗漏先阻断三类父记录插入，再连锁触发 RackLevel/Location 外键失败；修复只补齐 SQL 映射，无 Migration。
+- 回归测试先失败后通过；Version Clone 7/7、Space Unit 430/430、真实 SQL Space Integration 336/336 且 0 skipped，Unit/Integration Release build 均 0 warning / 0 error。
+- 功能分支已推送远端备份，`main` 未修改；完整证据见 `docs/space/reports/version-clone-required-fields-forward-fix.md`。
+
 ## 2026-08-06 E13-S17 迁移、前向修复与保留清理
 
 - 以 `12db5531` / `e7720df4` 完成功能与 no-ff 受控集成；交付 Tenant 级可恢复保留 Job、90 天生成载荷净化、365 天 Usage 逻辑归档、Run 保留锁和 SQL 同租户并发租约。

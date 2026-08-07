@@ -2,6 +2,13 @@
 
 > 依据 Git log 汇总，不替代完整 Git 历史。重点记录影响接手判断的里程碑。
 
+## 2026-08-06：Space Version Clone 必填字段前向修复
+
+- `0564afad` / `01eba1b7`：补齐 Zone/Aisle/Rack `Name` 和 Rack `RackType` 的 Published → Draft 快照 SQL 映射；无 Schema/Migration 变化。
+- 根因已在 `ac9c977c` 独立基线复现：非空 `Name` 遗漏导致父记录插入失败并连锁触发 RackLevel/Location 外键错误，`RackType` 遗漏则会静默丢失。
+- 回归使用不同于编码的业务名称和非空 RackType，验证 RowId 重映射、LogicalId/层级关系和字段保真；修复前 1/1 失败、修复后 1/1 通过。
+- 验证为 Version Clone 7/7、Space Unit 430/430、Space Integration + KOUSQLSERVER 336/336 且 0 skipped，Unit/Integration Release build 均 0 warning / 0 error；`main` 未修改。
+
 ## 2026-08-06：Space V1 E13-S17 保留清理与前向修复
 
 - `12db5531` / `e7720df4`：实现并 no-ff 集成 Tenant 级 AI retention Job、90 天生成载荷净化、365 天 Usage 逻辑归档、Run 保留锁和同租户 `sp_getapplock`。

@@ -2,7 +2,7 @@
 
 ## P0：Space V1 下一批受控实现
 
-- 当前功能集成检查点为 `e7720df4`。E07 S01–S05、E13 S01–S13/S16/S17 及其报告均已进入 `integration/space-v1-20260730`，不要按旧计划重复实现；`main` 仍不承接这批开发切片。
+- 当前功能集成检查点为 `01eba1b7`。E07 S01–S05、E13 S01–S13/S16/S17 及其报告、Version Clone 必填字段修复均已进入 `integration/space-v1-20260730`，不要按旧计划重复实现；`main` 仍不承接这批开发切片。
 - E13-S11 已完成用户可见取消安全点、同输入重试分类、权威 CommandBatch 对账、Failed/Stale replacement Run、RuleOnly 降级和真库运维演练；继续保持 S10 单事务零部分 Draft 写入边界。生产 BuildScene executor 仍失败关闭，不能把 replacement 已排队描述成真实 Provider 端到端完成。
 - E13-S13 已完成外部主体在 16 个 AI 操作及 Gateway 的稳定 403 拒绝、External Provider 字段/Token 外发白名单、7 个 GET 读审计和 Customer/Supplier/3PL 矩阵；生产没有真实外部 Provider，不能把门禁实现描述成网络端到端签收。
 - E13-S17 已完成加法 Migration、幂等 SQL、Tenant 清理 Job、90/365 天保留、保留锁、同租户并发租约和 forward-fix 操作说明；生产定时器仍需受控 Worker 配置专用 service principal。E13-S14/S15/S19 继续等待正式数据、供应商合规、影子运行和试点证据；E13-S18 依赖 S15，不能提前实施为已签收。
@@ -11,7 +11,7 @@
 - E02 S01 中立实验工具已集成，但最终签收仍需数据/QA 提供正式 20 文件黄金集（Calibration 10 / Validation 5 / Holdout 5、L1–L5 各至少 4）及 DWG/DXF 版本/实体矩阵。
 - 法务/采购需确认 ODA 正式 Web/SaaS 授权；工程需获得校验过的 ODA Windows/Linux SDK 包。APS 备试需批准区域、DPA、删除/保留证据和非生产凭据。平台/安全需提供 8 vCPU / 32GiB 的冻结隔离 Worker。
 - 外部输入齐全后，在同一冻结环境对 ODA 与 APS 各黄金样本 5 次、50MiB/100 万实体/200MiB 上限、超时/取消/并发进行评分；低于 ADR-0001 的 80 分硬门槛不得主选，若都失败则继续阻断 DWG Beta。
-- 本机 `KOUSQLSERVER` 已用于 E13-S17 的迁移、重复清理、并发租约和幂等 SQL 双执行，结果 3/3、0 skipped；默认 Space Integration 为 255 passed / 81 SQL-gated skipped。全量真实 SQL 的两个 Clone 失败已在 `ac9c977c` 基线复现，修复前不得把 336 项描述成全绿。
+- 本机 `KOUSQLSERVER` 已用于 E13-S17 的迁移、重复清理、并发租约和幂等 SQL 双执行，结果 3/3、0 skipped；随后 Version Clone 缺失的 Zone/Aisle/Rack `Name` 与 Rack `RackType` 映射已修复，完整 Space Integration 现为 336/336 passed、0 skipped。该项不再是待办。
 - `0d25da4d` 中 E05–E12 是候选证据，不得整包 merge/cherry-pick；必须重新核对依赖、迁移链和产品冻结范围。
 - P2.5 不混入本轮 Space 基线，待 E01 基线稳定后另行评估。
 
