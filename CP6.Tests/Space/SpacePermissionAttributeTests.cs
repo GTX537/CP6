@@ -41,6 +41,7 @@ public class SpacePermissionAttributeTests
         "space-publish:publish", "space-publish:deactivate", "space-publish:adopt",
         "space-audit:read",
         "space:model:read", "space:model:edit", "space:model:validate",
+        "space:model:publish",
         "space:source:upload",
         "space:model:generate-ai", "space:model:review-ai",
         "space:integration:manage",
@@ -91,6 +92,8 @@ public class SpacePermissionAttributeTests
             ["SpaceValidationController.GetValidation"] =
                 "space:model:read",
             ["SpacePublishPreviewController.GetPublishPreview"] =
+                "space:model:read",
+            ["SpacePublishController.GetPublishAttempt"] =
                 "space:model:read",
             ["SpaceDesignV1Controller.GetUnderlayCalibration"] = "space:model:read",
             ["SpaceDesignV1Controller.GetJob"] = "space:model:read",
@@ -217,7 +220,7 @@ public class SpacePermissionAttributeTests
     public void SpaceControllers_AreDiscovered()
     {
         // 守卫：确保反射确实扫到全部 controller（防命名空间/程序集变动导致「空扫空过」）。
-        Assert.Equal(37, SpaceControllers.Count());
+        Assert.Equal(38, SpaceControllers.Count());
     }
 
     [Fact]
@@ -394,6 +397,40 @@ public class SpacePermissionAttributeTests
 
         var audit = Assert.Single(
             method.GetCustomAttributes<SpaceAuditOperationAttribute>());
+        Assert.Equal(action, audit.Action);
+        Assert.Equal(permissionCode, audit.PermissionCode);
+        Assert.Equal(auditRead, audit.AuditRead);
+    }
+
+    [Theory]
+    [InlineData(
+        nameof(SpacePublishController.CreatePublishAttempt),
+        "space:model:publish",
+        "space.publish.start",
+        false)]
+    [InlineData(
+        nameof(SpacePublishController.GetPublishAttempt),
+        "space:model:read",
+        "space.publish.read",
+        true)]
+    public void Publish_endpoints_have_stable_permission_and_audit_metadata(
+        string methodName,
+        string permissionCode,
+        string action,
+        bool auditRead)
+    {
+        var method = typeof(SpacePublishController).GetMethod(methodName);
+        Assert.NotNull(method);
+        var permission = Assert.Single(
+            CustomAttributeData.GetCustomAttributes(method!),
+            value => value.AttributeType == typeof(RequirePermissionAttribute));
+        Assert.Equal(
+            permissionCode,
+            $"{permission.ConstructorArguments[0].Value}:" +
+            $"{permission.ConstructorArguments[1].Value}");
+
+        var audit = Assert.Single(
+            method!.GetCustomAttributes<SpaceAuditOperationAttribute>());
         Assert.Equal(action, audit.Action);
         Assert.Equal(permissionCode, audit.PermissionCode);
         Assert.Equal(auditRead, audit.AuditRead);

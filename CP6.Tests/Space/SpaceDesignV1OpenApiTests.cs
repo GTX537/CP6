@@ -58,6 +58,7 @@ public sealed class SpaceDesignV1OpenApiTests
             "/api/space/design/v1/mapping-profiles/excel/{profileId}",
             "/api/space/design/v1/mapping-profiles/excel/preview",
             "/api/space/design/v1/modeling-templates/excel/standard",
+            "/api/space/design/v1/publish-attempts/{attemptId}",
             "/api/space/design/v1/versions/{versionId}",
             "/api/space/design/v1/versions/{versionId}/generation-runs",
             "/api/space/design/v1/versions/{versionId}/floors/{floorLogicalId}/commands",
@@ -86,6 +87,7 @@ public sealed class SpaceDesignV1OpenApiTests
             "/api/space/design/v1/versions/{versionId}/wms-adoption/locations/{adoptionId}/place",
             "/api/space/design/v1/versions/{versionId}/validations",
             "/api/space/design/v1/versions/{versionId}/publish-preview",
+            "/api/space/design/v1/versions/{versionId}/publish-attempts",
             "/api/space/design/v1/validations/{validationId}",
             "/api/space/external-organization",
             "/api/space/external-organization/{organizationId}",
@@ -125,8 +127,8 @@ public sealed class SpaceDesignV1OpenApiTests
             .Select(operation =>
                 operation.Value.GetProperty("operationId").GetString())
             .ToArray();
-        Assert.Equal(105, operationIds.Length);
-        Assert.Equal(105, operationIds.Distinct().Count());
+        Assert.Equal(107, operationIds.Length);
+        Assert.Equal(107, operationIds.Distinct().Count());
         Assert.Contains("GetPolicy", operationIds);
         Assert.Contains("UpdatePolicy", operationIds);
         Assert.Contains("GetUsage", operationIds);
@@ -166,6 +168,8 @@ public sealed class SpaceDesignV1OpenApiTests
         Assert.Contains("CreateValidation", operationIds);
         Assert.Contains("GetValidation", operationIds);
         Assert.Contains("GetPublishPreview", operationIds);
+        Assert.Contains("CreatePublishAttempt", operationIds);
+        Assert.Contains("GetPublishAttempt", operationIds);
         Assert.Contains("GetPreflight", operationIds);
         Assert.Contains("DownloadErrorReport", operationIds);
         Assert.Contains("CreateAsset", operationIds);
