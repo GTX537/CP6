@@ -26,6 +26,7 @@ public sealed class SpaceModelIssue : SpaceTenantEntity
     public Guid? AcknowledgedBy { get; private set; }
     public DateTime? AcknowledgedAtUtc { get; private set; }
     public string? AcknowledgementReason { get; private set; }
+    public DateTime? PayloadPurgedAtUtc { get; private set; }
 
     public static SpaceModelIssue Create(
         Guid tenantId,
@@ -136,6 +137,24 @@ public sealed class SpaceModelIssue : SpaceTenantEntity
             ? SpaceIssueResolutionKind.ProposalRejection
             : SpaceIssueResolutionKind.ProposalDecision;
         Status = SpaceIssueStatus.Resolved;
+    }
+
+    public bool PurgeRetainedPayload(DateTime purgedAtUtc)
+    {
+        RequireUtc(purgedAtUtc, nameof(purgedAtUtc));
+        if (PayloadPurgedAtUtc.HasValue)
+            return false;
+        if (!GenerationRunId.HasValue)
+        {
+            throw new SpaceJobStateException(
+                "Only a generation-scoped Issue can purge retained payloads.");
+        }
+
+        SourceRef = null;
+        MessageArgsJson = "{}";
+        AcknowledgementReason = null;
+        PayloadPurgedAtUtc = purgedAtUtc;
+        return true;
     }
 
     private void RequireOpen()

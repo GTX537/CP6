@@ -52,6 +52,7 @@ public static class SpaceInfrastructureRegistration
         services.TryAddSingleton(new SpaceFileRetentionOptions());
         services.TryAddSingleton(new SpaceJobProcessorOptions());
         services.TryAddSingleton(new SpaceAiCapacityOptions());
+        services.TryAddSingleton(new SpaceAiRetentionOptions());
         services.TryAddSingleton(new SpaceAiProposalReviewOptions());
         services.TryAddSingleton(new SpaceUnderlayCalibrationOptions());
         services.TryAddSingleton(new SpacePersonnelRuntimeOptions());
@@ -76,6 +77,9 @@ public static class SpaceInfrastructureRegistration
         services.TryAddSingleton<
             ISpaceAiApplyFaultInjector,
             NoOpSpaceAiApplyFaultInjector>();
+        services.TryAddSingleton<
+            ISpaceAiRetentionAuthorization,
+            ClosedSpaceAiRetentionAuthorization>();
         services.TryAddSingleton<
             IWarehouseGenerationOutputValidator,
             WarehouseGenerationOutputValidator>();
@@ -104,11 +108,19 @@ public static class SpaceInfrastructureRegistration
         services.AddScoped<ISpaceSourceCatalog, EfSpaceSourceCatalog>();
         services.AddScoped<SpaceFileUploadService>();
         services.AddScoped<ISpaceJobQueue, EfSpaceJobQueue>();
+        services.AddScoped<SpaceJobCoordinator>();
         services.AddScoped<ISpaceJobLeaseStore, EfSpaceJobLeaseStore>();
         services.AddScoped<ISpaceJobProgressReader, EfSpaceJobProgressReader>();
         services.AddScoped<
             ISpaceAiCapacityLedger,
             EfSpaceAiCapacityLedger>();
+        services.AddScoped<
+            ISpaceAiRetentionStore,
+            EfSpaceAiRetentionStore>();
+        services.AddScoped<
+            ISpaceAiRetentionJobStepExecutor,
+            SpaceAiRetentionJobStepExecutor>();
+        services.AddScoped<SpaceAiRetentionCoordinator>();
         services.AddScoped<SpaceAiCapacityCoordinator>();
         services.TryAddScoped<
             ISpaceImportJobStepExecutor,
@@ -135,6 +147,10 @@ public static class SpaceInfrastructureRegistration
             ServiceDescriptor.Scoped<
                 ISpaceJobProcessor,
                 SpaceGenerationApplyJobProcessor>());
+        services.TryAddEnumerable(
+            ServiceDescriptor.Scoped<
+                ISpaceJobProcessor,
+                SpaceAiRetentionJobProcessor>());
         services.AddScoped<
             ISpaceJobProcessorRunner,
             SpaceJobProcessorRunner>();

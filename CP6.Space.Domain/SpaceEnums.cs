@@ -147,6 +147,7 @@ public enum SpaceJobType : short
     Reconcile = 8,
     CloneVersion = 9,
     ApplyGeneration = 10,
+    AiRetentionCleanup = 11,
 }
 
 public enum SpaceJobSubjectType : short
@@ -156,6 +157,7 @@ public enum SpaceJobSubjectType : short
     ModelVersion = 2,
     PublishAttempt = 3,
     GenerationRun = 4,
+    Tenant = 5,
 }
 
 public enum SpaceJobStatus : short

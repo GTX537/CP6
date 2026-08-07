@@ -102,6 +102,8 @@ public sealed class SpaceJobProcessorOptions
         TimeSpan.FromMinutes(15);
     public TimeSpan ApplyGenerationTimeout { get; init; } =
         TimeSpan.FromMinutes(10);
+    public TimeSpan AiRetentionCleanupTimeout { get; init; } =
+        TimeSpan.FromMinutes(10);
 
     public void Validate()
     {
@@ -131,6 +133,11 @@ public sealed class SpaceJobProcessorOptions
             throw new ArgumentOutOfRangeException(
                 nameof(ApplyGenerationTimeout));
         }
+        if (AiRetentionCleanupTimeout <= TimeSpan.Zero)
+        {
+            throw new ArgumentOutOfRangeException(
+                nameof(AiRetentionCleanupTimeout));
+        }
     }
 
     internal TimeSpan TimeoutFor(SpaceJobType jobType) =>
@@ -140,6 +147,7 @@ public sealed class SpaceJobProcessorOptions
             SpaceJobType.Import => ImportTimeout,
             SpaceJobType.BuildScene => BuildSceneTimeout,
             SpaceJobType.ApplyGeneration => ApplyGenerationTimeout,
+            SpaceJobType.AiRetentionCleanup => AiRetentionCleanupTimeout,
             _ => throw new ArgumentOutOfRangeException(nameof(jobType)),
         };
 }
@@ -585,7 +593,8 @@ public sealed class SpaceJobProcessorRunner : ISpaceJobProcessorRunner
                 SpaceJobType.ExcelPreview or
                 SpaceJobType.Import or
                 SpaceJobType.BuildScene or
-                SpaceJobType.ApplyGeneration) ||
+                SpaceJobType.ApplyGeneration or
+                SpaceJobType.AiRetentionCleanup) ||
             !_processors.TryGetValue(jobType, out var processor))
         {
             throw new InvalidOperationException(

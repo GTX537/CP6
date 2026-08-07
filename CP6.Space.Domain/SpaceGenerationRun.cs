@@ -63,6 +63,8 @@ public sealed class SpaceGenerationRun : SpaceTenantEntity
     public string? ApplyPlanHash { get; private set; }
     public DateTime? ApplyPreparedAtUtc { get; private set; }
     public string? AppliedCountsJson { get; private set; }
+    public DateTime? RetentionHoldUntilUtc { get; private set; }
+    public DateTime? PayloadPurgedAtUtc { get; private set; }
     public byte[] RowVersion { get; private set; } = [];
 
     public bool IsTerminal =>
@@ -509,6 +511,46 @@ public sealed class SpaceGenerationRun : SpaceTenantEntity
         CancelPending = false;
         Status = SpaceGenerationRunStatus.Cancelled;
         IsCurrent = false;
+    }
+
+    public void ExtendRetentionHold(DateTime holdUntilUtc)
+    {
+        RequireUtc(holdUntilUtc, nameof(holdUntilUtc));
+        if (RetentionHoldUntilUtc.HasValue &&
+            holdUntilUtc <= RetentionHoldUntilUtc.Value)
+        {
+            throw new SpaceGenerationStateException(
+                "A generation retention hold can only be extended.");
+        }
+        RetentionHoldUntilUtc = holdUntilUtc;
+    }
+
+    public bool PurgeRetainedPayload(DateTime purgedAtUtc)
+    {
+        RequireUtc(purgedAtUtc, nameof(purgedAtUtc));
+        if (PayloadPurgedAtUtc.HasValue)
+            return false;
+        if (IsCurrent || Status is not (
+                SpaceGenerationRunStatus.Succeeded or
+                SpaceGenerationRunStatus.Failed or
+                SpaceGenerationRunStatus.Stale or
+                SpaceGenerationRunStatus.Cancelled))
+        {
+            throw new SpaceGenerationStateException(
+                "Only a non-current terminal generation run can purge payloads.");
+        }
+        if (RetentionHoldUntilUtc > purgedAtUtc)
+        {
+            throw new SpaceGenerationStateException(
+                "The generation run is protected by a retention hold.");
+        }
+
+        FailureSummary = null;
+        DegradedReason = null;
+        ApplyExpectedRunRowVersion = null;
+        AppliedCountsJson = null;
+        PayloadPurgedAtUtc = purgedAtUtc;
+        return true;
     }
 
     private void Transition(
