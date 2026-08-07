@@ -4,10 +4,10 @@
 
 ## E06-S02 版本差异与影响预览开发切片（2026-08-07）
 
-- 在集成基线 `05c1df86` 上完成只读发布预览功能，当前位于 `codex/space-e06-s02-publish-preview`，待功能提交与 no-ff 集成；`main` 未修改。新增 `GET /api/space/design/v1/versions/{versionId}/publish-preview`、`space:model:read`、读审计、标准 Problem Details、OpenAPI 及 C#/TypeScript SDK。
+- 在集成基线 `05c1df86` 上以功能提交 `a174f7cc`、no-ff 提交 `5bd2c616` 进入 `integration/space-v1-20260730`；`main` 未修改。新增 `GET /api/space/design/v1/versions/{versionId}/publish-preview`、`space:model:read`、读审计、标准 Problem Details、OpenAPI 及 C#/TypeScript SDK。
 - 预览只读取服务端权威目标版本、当前 Published 指针、匹配的终态 ValidationRun 和实时 WMS 能力；按 LogicalId 稳定生成 Create/UpdateMaster/UpdateGeometryOnly/Disable/Restore/NoOp、WMS 影响与阻断项。稳定 PlanHash 绑定版本、ContentHash、ValidationRun、规则/适配器/能力和全部有序计划项；Location 改码失败关闭，已采纳库位不重复创建。
 - 支持楼层/对象/动作/影响/NoOp 筛选及绑定计划和筛选条件的受保护游标。`Publishable` 只在 Passed、Ready、零校验阻断且零计划阻断时为 true。本卡无 WMS 调用、无发布指针切换、无 PublishPlan 持久化、无 Migration；这些属于 E06-S03 及后续卡。
-- E06-S01 来源规则同时前向修正：Editor/Template 内建来源的合法终态 Ready 可参与发布；DWG/DXF 等文件来源继续要求 PreviewReady/Imported。门禁：引擎聚焦 17/17、API/权限/OpenAPI 55/55、真实 SQL 3/3、Space Unit 448/448、CP6.Tests 2794 passed / 17 skipped、默认 Space Integration 259 passed / 89 SQL-gated skipped、完整 solution 双架构 AOT Release 0 warning/0 error，EF/SDK/diff 门禁通过。证据见 `docs/space/reports/e06-s02-publish-preview-development.md`。
+- E06-S01 来源规则同时前向修正：Editor/Template 内建来源的合法终态 Ready 可参与发布；DWG/DXF 等文件来源继续要求 PreviewReady/Imported。门禁：引擎聚焦 17/17、API/权限/OpenAPI 55/55、真实 SQL 3/3、Space Unit 448/448、CP6.Tests 2794 passed / 17 skipped、默认 Space Integration 259 passed / 89 SQL-gated skipped、完整 solution 双架构 AOT Release 0 warning/0 error，EF/SDK/diff 门禁通过。合并后清理 36 个可重建目录、6,578 个文件、1,621,278,419 bytes（约 1.51 GiB）。证据见 `docs/space/reports/e06-s02-publish-preview-development.md`。
 - 这不是完整 E06/Beta/GA 签收。下一张为 E06-S03 仓库级发布编排：必须持久化不可变计划并以可恢复 Saga 执行，只有 WMS 成功并回读验证后才能激活运行态；生产 Hosted Worker、正式 CAD Provider/授权黄金集、E03-S04/S05 权威匹配写入链等缺口仍保留。
 
 ## E06-S01 版本权威校验引擎开发切片（2026-08-07）
@@ -569,8 +569,8 @@
 | E11 S05 | 已进入集成基线 | `139c76b5` + `e8df8288` + `a0b247ab` + `cf35849c`；实时执行状态、三层幂等回执、受限人工重试、安全整批补偿、权限审计和 Viewer 执行治理 |
 | E13 S01–S13、S16 | 已进入集成基线；真实外部 Provider 仍关闭 | Provider/确定性端口、Run/Proposal/Decision/Usage、可恢复 Worker、最小化/本地生成/输出校验/融合/审核/决策/原子 Apply/恢复、外部主体与外发门禁，以及数据库配额和策略/用量 UI |
 | E05 S01–S05 | 已进入集成基线 | 通用元素、逐层货架、统一场景 DTO、版本化资产库及确定性参数化 3D 渲染 |
-| E06 S01 | 已进入集成基线 | `c17242c3` + `76c70230`；服务端权威快照、冻结规则/WMS 能力、ValidationRun/Issue/Job、Passed/Blocked/Failed 状态机、权限审计与 SDK；真实 SQL 3/3、完整 Release 与漂移门禁通过 |
-| E02 S02–S08 正式签收、E03 S05、E06 S02–S06、E13 S05～S11 正式外部链验收、S14～S15/S17～S19 等剩余范围 | 候选证据或尚未实现 | 生产 CAD 链、正式输入、Hosted Worker、权威 Match Artifact、版本差异/发布和真实外部 Provider 证据仍需逐卡解除；`0d25da4d` 只作提取来源，不得以候选报告或开发切片替代正式集成验收 |
+| E06 S01–S02 | 已进入集成基线 | `c17242c3` + `76c70230` + `a174f7cc` + `5bd2c616`；权威 ValidationRun 与来源/规则/WMS 能力冻结、确定性版本差异/WMS 影响预览、稳定 PlanHash、权限审计和 SDK；两卡真实 SQL 各 3/3、完整 Release 与漂移门禁通过 |
+| E02 S02–S08 正式签收、E03 S05、E06 S03–S06、E13 S05～S11 正式外部链验收、S14～S15/S17～S19 等剩余范围 | 候选证据或尚未实现 | 生产 CAD 链、正式输入、Hosted Worker、权威 Match Artifact、持久化发布编排/重试/回退/UI 和真实外部 Provider 证据仍需逐卡解除；`0d25da4d` 只作提取来源，不得以候选报告或开发切片替代正式集成验收 |
 
 ## 上一完成波：GR-VP
 
@@ -586,6 +586,7 @@
 
 ## 最近验证基线
 
+- E06-S02 已推进至受控集成提交 `5bd2c616`：功能提交 `a174f7cc`；引擎聚焦 17/17、API/权限/OpenAPI 55/55、Space Unit 448/448、CP6.Tests 2794 passed / 17 environment-gated skipped、默认 Space Integration 259 passed / 89 SQL-gated skipped、本卡真实 SQL 3/3、完整 solution 双架构 AOT Release 0 warning / 0 error、EF/SDK drift 和差异检查均通过。
 - E06-S01 已推进至受控集成提交 `76c70230`：功能提交 `c17242c3`；Space Unit 440/440、CP6.Tests 2793 passed / 17 environment-gated skipped、默认 Space Integration 259 passed / 86 SQL-gated skipped、本卡真实 SQL 3/3、完整 solution Release 0 warning / 0 error、EF/SDK drift、幂等增量 SQL 双执行和差异检查均通过。
 - E11-S05 已推进至受控集成提交 `cf35849c`：合同 `139c76b5`、功能 `e8df8288`、文档 `a0b247ab`。功能分支全量门禁为 Space Unit 249/249、默认 Space Integration 230 passed / 62 SQL-gated skipped、CP6.Tests 2757 passed / 17 environment-gated skipped、前端 118 files / 658 tests、完整 solution Release、生产构建、EF/SDK drift、TypeScript SDK strict no-emit 和差异检查通过；合并态服务/适配器 14/14、权限/合同/种子 35/35、前端 21/21、类型、SDK drift 与 EF pending model 通过。i18n 仍为 908 项既有欠账，本卡净新增 0。
 - E11-S04 已推进至受控集成提交 `c19231db`：合同 `098fb54b`、功能 `a7298e28`、文档 `a552d05d`。功能分支全量门禁为 Space Unit 249/249、默认 Space Integration 224 passed / 62 SQL-gated skipped、CP6.Tests 2757 passed / 17 environment-gated skipped、前端 118 files / 656 tests、完整 solution Release、生产构建、EF/SDK drift 与两个 TypeScript strict no-emit 通过；合并态审批服务/适配器 8/8、权限/合同/种子/基础设施 44/44、前端 19/19、类型、SDK drift 与 EF pending model 通过。i18n 历史欠账由 909 降至 908。
@@ -633,4 +634,4 @@
 
 ## 下一动作
 
-E06-S01 已完成服务端权威校验并进入受控集成，下一张可独立推进 E06-S02：基于冻结 ValidationRun/ContentHash 实现版本差异与影响预览 API；它不得提前执行发布或 WMS 激活。E03-S05 继续等待服务端权威 E03-S04 Match Artifact、持久化、API、权限和审计，不能把客户端离线预览直接写入 Draft。E02/CAD 正式签收继续等待获授权的原生 DWG/DXF Provider、组织有权使用的黄金集、生产 Hosted Worker 以及真实大文件/故障/性能证据；合成 DXF 与开发切片不计入发布门禁。E13 外部 Provider、E12-S06 和跨职能 Beta/GA 证据也仍需独立解除。禁止创建未授权生产 CAD/DWG/外部 AI 适配器，禁止把候选检查点 `0d25da4d` 整包合入，GR-VP T1–T7 不要重做。
+E06-S01～S02 已完成权威校验与只读差异/影响预览并进入受控集成。下一张可独立推进 E06-S03 仓库级发布编排：必须持久化不可变 PublishPlan，以 PlanHash、ValidationRun、ContentHash、当前 Published 指针和 WMS CapabilityHash 再次失败关闭，并通过可恢复 Saga 执行；只有 WMS 成功且回读验证一致后才能激活运行态，部分或不确定结果进入对账。E03-S05 继续等待服务端权威 E03-S04 Match Artifact、持久化、API、权限和审计，不能把客户端离线预览直接写入 Draft。E02/CAD 正式签收继续等待获授权的原生 DWG/DXF Provider、组织有权使用的黄金集、生产 Hosted Worker 以及真实大文件/故障/性能证据；合成 DXF 与开发切片不计入发布门禁。E13 外部 Provider、E12-S06 和跨职能 Beta/GA 证据也仍需独立解除。禁止创建未授权生产 CAD/DWG/外部 AI 适配器，禁止把候选检查点 `0d25da4d` 整包合入，GR-VP T1–T7 不要重做。
