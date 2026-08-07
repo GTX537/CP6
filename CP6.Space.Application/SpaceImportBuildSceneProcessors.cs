@@ -100,6 +100,8 @@ public sealed class SpaceJobProcessorOptions
         TimeSpan.FromMinutes(30);
     public TimeSpan ExcelPreviewTimeout { get; init; } =
         TimeSpan.FromMinutes(15);
+    public TimeSpan CadParseTimeout { get; init; } =
+        TimeSpan.FromMinutes(30);
     public TimeSpan ApplyGenerationTimeout { get; init; } =
         TimeSpan.FromMinutes(10);
     public TimeSpan AiRetentionCleanupTimeout { get; init; } =
@@ -128,6 +130,11 @@ public sealed class SpaceJobProcessorOptions
             throw new ArgumentOutOfRangeException(
                 nameof(ExcelPreviewTimeout));
         }
+        if (CadParseTimeout <= TimeSpan.Zero)
+        {
+            throw new ArgumentOutOfRangeException(
+                nameof(CadParseTimeout));
+        }
         if (ApplyGenerationTimeout <= TimeSpan.Zero)
         {
             throw new ArgumentOutOfRangeException(
@@ -143,6 +150,7 @@ public sealed class SpaceJobProcessorOptions
     internal TimeSpan TimeoutFor(SpaceJobType jobType) =>
         jobType switch
         {
+            SpaceJobType.CadParse => CadParseTimeout,
             SpaceJobType.ExcelPreview => ExcelPreviewTimeout,
             SpaceJobType.Import => ImportTimeout,
             SpaceJobType.BuildScene => BuildSceneTimeout,
@@ -590,6 +598,7 @@ public sealed class SpaceJobProcessorRunner : ISpaceJobProcessorRunner
     private ISpaceJobProcessor RequireProcessor(SpaceJobType jobType)
     {
         if (jobType is not (
+                SpaceJobType.CadParse or
                 SpaceJobType.ExcelPreview or
                 SpaceJobType.Import or
                 SpaceJobType.BuildScene or
@@ -598,7 +607,7 @@ public sealed class SpaceJobProcessorRunner : ISpaceJobProcessorRunner
             !_processors.TryGetValue(jobType, out var processor))
         {
             throw new InvalidOperationException(
-                $"Space Job type {jobType} has no registered E13 processor.");
+                $"Space Job type {jobType} has no registered processor.");
         }
         return processor;
     }

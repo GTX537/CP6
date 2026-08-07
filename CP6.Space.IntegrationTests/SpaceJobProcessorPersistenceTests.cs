@@ -18,7 +18,7 @@ public sealed class SpaceJobProcessorPersistenceTests
         new(2026, 7, 30, 20, 30, 0, DateTimeKind.Utc);
 
     [Fact]
-    public void Default_registration_exposes_five_explicit_processors()
+    public void Default_registration_exposes_six_explicit_processors()
     {
         var services = new ServiceCollection();
         services.AddScoped<ISpaceExecutionContext>(
@@ -36,12 +36,18 @@ public sealed class SpaceJobProcessorPersistenceTests
             .OrderBy(processor => processor.JobType)
             .ToArray();
 
-        Assert.Equal(5, processors.Length);
-        Assert.IsType<SpaceExcelPreflightJobProcessor>(processors[0]);
-        Assert.IsType<SpaceImportJobProcessor>(processors[1]);
-        Assert.IsType<SpaceBuildSceneJobProcessor>(processors[2]);
-        Assert.IsType<SpaceGenerationApplyJobProcessor>(processors[3]);
-        Assert.IsType<SpaceAiRetentionJobProcessor>(processors[4]);
+        Assert.Equal(6, processors.Length);
+        Assert.IsType<SpaceCadParseJobProcessor>(processors[0]);
+        Assert.IsType<SpaceExcelPreflightJobProcessor>(processors[1]);
+        Assert.IsType<SpaceImportJobProcessor>(processors[2]);
+        Assert.IsType<SpaceBuildSceneJobProcessor>(processors[3]);
+        Assert.IsType<SpaceGenerationApplyJobProcessor>(processors[4]);
+        Assert.IsType<SpaceAiRetentionJobProcessor>(processors[5]);
+        Assert.IsType<UnavailableSpaceCadParseProvider>(
+            scope.ServiceProvider.GetRequiredService<ISpaceCadParseProvider>());
+        Assert.IsType<SpaceCadParseJobStepExecutor>(
+            scope.ServiceProvider.GetRequiredService<
+                ISpaceCadParseJobStepExecutor>());
         Assert.IsType<UnavailableSpaceImportJobStepExecutor>(
             scope.ServiceProvider.GetRequiredService<
                 ISpaceImportJobStepExecutor>());
@@ -264,6 +270,78 @@ public sealed class SpaceJobProcessorPersistenceTests
                     succeeding.StepCodes);
                 Assert.Contains(
                     SpaceImportJobSteps.ParseCadIr,
+                    succeeding.StepCodes);
+            });
+    }
+
+    [SqlServerFact]
+    public async Task Explicit_retry_reuses_matching_checkpoints_from_retry_lineage()
+    {
+        var tenantId = Guid.NewGuid();
+        var actorId = Guid.NewGuid();
+        var clock = new MutableClock(Now);
+
+        await WithDatabaseAsync(
+            tenantId,
+            clock,
+            async context =>
+            {
+                var original = NewJob(
+                    tenantId,
+                    SpaceJobType.Import,
+                    SpaceJobSubjectType.ModelSource,
+                    'e');
+                context.Jobs.Add(original);
+                await context.SaveChangesAsync();
+                var failing = new RecordingExecutor
+                {
+                    Handler = (execution, _) =>
+                        execution.StepCode == SpaceImportJobSteps.ParseCadIr
+                            ? throw new SpaceJobProcessingException(
+                                SpaceJobFailureKind.Resource,
+                                SpaceErrorCodes.JobProcessorUnavailable,
+                                "The converter is temporarily unavailable.")
+                            : Task.FromResult(Output(execution.StepCode)),
+                };
+                await Runner(context, clock, failing).RunNextAsync(
+                    SpaceJobType.Import,
+                    "worker-original");
+
+                context.ChangeTracker.Clear();
+                original = await context.Jobs.SingleAsync();
+                Assert.Equal(SpaceJobStatus.Failed, original.Status);
+                var retry = original.CreateExplicitRetry(
+                    original.BusinessKey,
+                    original.InputHash,
+                    actorId,
+                    Now.AddMinutes(1),
+                    Guid.NewGuid(),
+                    original.PayloadJson);
+                context.Jobs.Add(retry);
+                await context.SaveChangesAsync();
+
+                clock.UtcNow = Now.AddMinutes(1);
+                var succeeding = new RecordingExecutor();
+                await Runner(context, clock, succeeding).RunNextAsync(
+                    SpaceJobType.Import,
+                    "worker-retry");
+
+                context.ChangeTracker.Clear();
+                retry = await context.Jobs.SingleAsync(job => job.Id == retry.Id);
+                Assert.Equal(SpaceJobStatus.Succeeded, retry.Status);
+                var retryAttempt = await context.JobAttempts.SingleAsync(
+                    attempt => attempt.JobId == retry.Id);
+                var retrySteps = await context.JobSteps
+                    .Where(step => step.AttemptId == retryAttempt.Id)
+                    .OrderBy(step => step.StepNo)
+                    .ToListAsync();
+                Assert.Equal(SpaceJobStepStatus.Reused, retrySteps[0].Status);
+                Assert.Equal(SpaceJobStepStatus.Reused, retrySteps[1].Status);
+                Assert.DoesNotContain(
+                    SpaceImportJobSteps.VerifySourceSafe,
+                    succeeding.StepCodes);
+                Assert.DoesNotContain(
+                    SpaceImportJobSteps.ConvertCad,
                     succeeding.StepCodes);
             });
     }
