@@ -1,4 +1,5 @@
 using System.Data;
+using System.Text.Json;
 using CP6.Space.Application;
 using CP6.Space.Contracts;
 using CP6.Space.Domain;
@@ -70,19 +71,41 @@ public sealed class EfSpaceJobQueue : ISpaceJobQueue
     }
 }
 
-public sealed class EfSpaceJobLeaseStore : ISpaceJobLeaseStore
+public sealed class EfSpaceJobLeaseStore :
+    ISpaceJobLeaseStore,
+    IDisposable,
+    IAsyncDisposable
 {
     private const int ClaimConflictRetries = 5;
 
     private readonly SpaceContext _context;
     private readonly ISpaceClock _clock;
+    private readonly bool _ownsContext;
 
     public EfSpaceJobLeaseStore(
         SpaceContext context,
         ISpaceClock clock)
+        : this(context, clock, ownsContext: false)
+    {
+    }
+
+    internal EfSpaceJobLeaseStore(
+        SpaceContext context,
+        ISpaceClock clock,
+        bool ownsContext)
     {
         _context = context;
         _clock = clock;
+        _ownsContext = ownsContext;
+    }
+
+    public ValueTask DisposeAsync() =>
+        _ownsContext ? _context.DisposeAsync() : ValueTask.CompletedTask;
+
+    public void Dispose()
+    {
+        if (_ownsContext)
+            _context.Dispose();
     }
 
     public Task<SpaceJobLease?> TryClaimNextAsync(
@@ -158,6 +181,16 @@ public sealed class EfSpaceJobLeaseStore : ISpaceJobLeaseStore
                         "The final worker lease expired.",
                         cancellationToken);
                     exhausted.DeadLetterExpiredLease(now);
+                    await SyncPublishFailureAsync(
+                        exhausted,
+                        new SpaceJobRetryDecision(
+                            SpaceJobStatus.DeadLetter,
+                            NextAttemptAtUtc: null),
+                        exhausted.LastErrorCode ?? "SPACE_JOB_LEASE_LOST",
+                        exhausted.LastErrorSummary ??
+                        "The final publish worker lease expired.",
+                        now,
+                        cancellationToken);
                     await SyncTerminalGenerationRunAsync(
                         exhausted,
                         cancellationToken);
@@ -483,6 +516,13 @@ public sealed class EfSpaceJobLeaseStore : ISpaceJobLeaseStore
             sanitizedError,
             decision,
             now);
+        await SyncPublishFailureAsync(
+            job,
+            decision,
+            errorCode,
+            sanitizedError,
+            now,
+            cancellationToken);
         if (job.IsTerminal)
         {
             await SyncTerminalGenerationRunAsync(
@@ -586,6 +626,84 @@ public sealed class EfSpaceJobLeaseStore : ISpaceJobLeaseStore
             job.LastErrorCode ?? SpaceErrorCodes.JobProcessorFailed,
             job.LastErrorSummary ??
                 "The generation Job failed without changing Draft.");
+    }
+
+    private async Task SyncPublishFailureAsync(
+        SpaceJob job,
+        SpaceJobRetryDecision decision,
+        string errorCode,
+        string summary,
+        DateTime nowUtc,
+        CancellationToken cancellationToken)
+    {
+        if (job.JobType is not (SpaceJobType.Publish or SpaceJobType.Reconcile))
+            return;
+        var publish = await _context.PublishAttempts.SingleOrDefaultAsync(
+            value => value.Id == job.SubjectId && value.JobId == job.Id,
+            cancellationToken);
+        if (publish is null || publish.Status is (
+                SpacePublishAttemptStatus.Completed or
+                SpacePublishAttemptStatus.FailedNoEffect or
+                SpacePublishAttemptStatus.ReconciliationRequired))
+        {
+            return;
+        }
+
+        var eventType = decision.WillRetry
+            ? SpacePublishAuditEventType.RetryScheduled
+            : SpacePublishAuditEventType.ManualInterventionRequired;
+        if (decision.WillRetry)
+        {
+            var step = publish.CurrentStep is (
+                SpacePublishStep.Requested or SpacePublishStep.Complete)
+                ? SpacePublishStep.Preflight
+                : publish.CurrentStep;
+            publish.WaitForRetry(step, errorCode, summary);
+        }
+        else
+        {
+            publish.RequireManualIntervention(errorCode, summary);
+        }
+
+        var dedupe = $"job:{job.Id:D}:attempt:{job.AttemptCount}:disposition";
+        var exists = await _context.PublishAuditEvents.AnyAsync(
+            value =>
+                value.AttemptId == publish.Id &&
+                value.DeduplicationKey == dedupe,
+            cancellationToken);
+        if (exists)
+            return;
+        var previous = await _context.PublishAuditEvents
+            .Where(value => value.AttemptId == publish.Id)
+            .OrderByDescending(value => value.EventNo)
+            .FirstOrDefaultAsync(cancellationToken);
+        _context.PublishAuditEvents.Add(
+            SpacePublishAuditEvent.Create(
+                publish.TenantId,
+                publish.Id,
+                job.Id,
+                batchId: null,
+                (previous?.EventNo ?? 0) + 1,
+                eventType,
+                publish.Status,
+                publish.CurrentStep,
+                job.RequestedBy,
+                job.CorrelationId,
+                nowUtc,
+                dedupe,
+                decision.WillRetry
+                    ? "The publish Job scheduled an automatic retry."
+                    : "Automatic retries were exhausted; operator intervention is required.",
+                errorCode,
+                JsonSerializer.Serialize(
+                    new
+                    {
+                        job.AttemptCount,
+                        job.MaxAttempts,
+                        decision.NextAttemptAtUtc,
+                        job.LastFailureKind,
+                    }),
+                previous?.EventHash));
     }
 
     private async Task SyncCancelledGenerationRunAsync(

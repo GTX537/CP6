@@ -196,7 +196,9 @@ public enum SpacePublishAttemptStatus : short
     ActivatingRuntime = 4,
     Completed = 5,
     FailedNoEffect = 6,
+    WaitingRetry = 7,
     ReconciliationRequired = 8,
+    ManualIntervention = 9,
 }
 
 public enum SpacePublishStep : short
@@ -242,6 +244,25 @@ public enum SpaceReconciliationStatus : short
     Investigating = 1,
     Resolved = 2,
     Escalated = 3,
+}
+
+public enum SpacePublishAuditEventType : short
+{
+    Queued = 0,
+    ProcessingStarted = 1,
+    PreflightPassed = 2,
+    WmsApplyStarted = 3,
+    WmsApplyObserved = 4,
+    WmsVerified = 5,
+    RuntimeActivationStarted = 6,
+    Completed = 7,
+    FailedNoEffect = 8,
+    RetryScheduled = 9,
+    ManualRetryRequested = 10,
+    ReconciliationRequired = 11,
+    ManualInterventionRequired = 12,
+    ReconciliationResolved = 13,
+    RetryableFailureObserved = 14,
 }
 
 public enum SpaceJobFailureKind : short

@@ -13105,6 +13105,143 @@
         }
       }
     },
+    "/api/space/design/v1/publish-attempts/{attemptId}/retry": {
+      "post": {
+        "tags": [
+          "SpacePublish"
+        ],
+        "operationId": "RetryPublishAttempt",
+        "parameters": [
+          {
+            "name": "attemptId",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "string",
+              "format": "uuid"
+            }
+          },
+          {
+            "name": "Idempotency-Key",
+            "in": "header",
+            "schema": {
+              "type": "string"
+            }
+          }
+        ],
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/CP6.Space.Contracts.RetrySpacePublishAttemptRequest"
+              }
+            },
+            "text/json": {
+              "schema": {
+                "$ref": "#/components/schemas/CP6.Space.Contracts.RetrySpacePublishAttemptRequest"
+              }
+            },
+            "application/*+json": {
+              "schema": {
+                "$ref": "#/components/schemas/CP6.Space.Contracts.RetrySpacePublishAttemptRequest"
+              }
+            }
+          }
+        },
+        "responses": {
+          "400": {
+            "description": "Bad Request",
+            "content": {
+              "application/problem+json": {
+                "schema": {
+                  "$ref": "#/components/schemas/CP6.WebApi.OpenApi.SpaceDesignProblemDetails"
+                }
+              }
+            }
+          },
+          "401": {
+            "description": "Unauthorized",
+            "content": {
+              "application/problem+json": {
+                "schema": {
+                  "$ref": "#/components/schemas/CP6.WebApi.OpenApi.SpaceDesignProblemDetails"
+                }
+              }
+            }
+          },
+          "403": {
+            "description": "Forbidden",
+            "content": {
+              "application/problem+json": {
+                "schema": {
+                  "$ref": "#/components/schemas/CP6.WebApi.OpenApi.SpaceDesignProblemDetails"
+                }
+              }
+            }
+          },
+          "404": {
+            "description": "Not Found",
+            "content": {
+              "application/problem+json": {
+                "schema": {
+                  "$ref": "#/components/schemas/CP6.WebApi.OpenApi.SpaceDesignProblemDetails"
+                }
+              }
+            }
+          },
+          "409": {
+            "description": "Conflict",
+            "content": {
+              "application/problem+json": {
+                "schema": {
+                  "$ref": "#/components/schemas/CP6.WebApi.OpenApi.SpaceDesignProblemDetails"
+                }
+              }
+            }
+          },
+          "422": {
+            "description": "Unprocessable Content",
+            "content": {
+              "application/problem+json": {
+                "schema": {
+                  "$ref": "#/components/schemas/CP6.WebApi.OpenApi.SpaceDesignProblemDetails"
+                }
+              }
+            }
+          },
+          "500": {
+            "description": "Internal Server Error",
+            "content": {
+              "application/problem+json": {
+                "schema": {
+                  "$ref": "#/components/schemas/CP6.WebApi.OpenApi.SpaceDesignProblemDetails"
+                }
+              }
+            }
+          },
+          "202": {
+            "description": "Accepted",
+            "content": {
+              "text/plain": {
+                "schema": {
+                  "$ref": "#/components/schemas/CP6.Space.Contracts.RetrySpacePublishAttemptResponse"
+                }
+              },
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/CP6.Space.Contracts.RetrySpacePublishAttemptResponse"
+                }
+              },
+              "text/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/CP6.Space.Contracts.RetrySpacePublishAttemptResponse"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
     "/api/space/design/v1/versions/{versionId}/publish-preview": {
       "get": {
         "tags": [
@@ -15390,6 +15527,32 @@
           "differenceCount": {
             "type": "integer",
             "format": "int32"
+          }
+        },
+        "additionalProperties": false
+      },
+      "CP6.Space.Contracts.RetrySpacePublishAttemptRequest": {
+        "type": "object",
+        "properties": {
+          "reason": {
+            "type": "string",
+            "nullable": true
+          },
+          "resolution": {
+            "type": "string",
+            "nullable": true
+          }
+        },
+        "additionalProperties": false
+      },
+      "CP6.Space.Contracts.RetrySpacePublishAttemptResponse": {
+        "type": "object",
+        "properties": {
+          "attempt": {
+            "$ref": "#/components/schemas/CP6.Space.Contracts.SpacePublishAttemptDto"
+          },
+          "idempotentReplay": {
+            "type": "boolean"
           }
         },
         "additionalProperties": false
@@ -20844,6 +21007,51 @@
             "type": "string",
             "format": "uuid"
           },
+          "jobId": {
+            "type": "string",
+            "format": "uuid",
+            "nullable": true
+          },
+          "jobType": {
+            "type": "string",
+            "nullable": true
+          },
+          "jobStatus": {
+            "type": "string",
+            "nullable": true
+          },
+          "jobAttemptCount": {
+            "type": "integer",
+            "format": "int32"
+          },
+          "jobMaxAttempts": {
+            "type": "integer",
+            "format": "int32"
+          },
+          "nextAttemptAtUtc": {
+            "type": "string",
+            "format": "date-time",
+            "nullable": true
+          },
+          "lockExpiresAtUtc": {
+            "type": "string",
+            "format": "date-time",
+            "nullable": true
+          },
+          "manualRetryCount": {
+            "type": "integer",
+            "format": "int32"
+          },
+          "lastRetriedAtUtc": {
+            "type": "string",
+            "format": "date-time",
+            "nullable": true
+          },
+          "lastRetriedBy": {
+            "type": "string",
+            "format": "uuid",
+            "nullable": true
+          },
           "openReconciliationIssueCount": {
             "type": "integer",
             "format": "int32"
@@ -20853,6 +21061,80 @@
             "items": {
               "$ref": "#/components/schemas/CP6.Space.Contracts.SpacePublishBatchDto"
             },
+            "nullable": true
+          },
+          "auditEvents": {
+            "type": "array",
+            "items": {
+              "$ref": "#/components/schemas/CP6.Space.Contracts.SpacePublishAuditEventDto"
+            },
+            "nullable": true
+          }
+        },
+        "additionalProperties": false
+      },
+      "CP6.Space.Contracts.SpacePublishAuditEventDto": {
+        "type": "object",
+        "properties": {
+          "id": {
+            "type": "string",
+            "format": "uuid"
+          },
+          "eventNo": {
+            "type": "integer",
+            "format": "int32"
+          },
+          "eventType": {
+            "type": "string",
+            "nullable": true
+          },
+          "attemptStatus": {
+            "type": "string",
+            "nullable": true
+          },
+          "step": {
+            "type": "string",
+            "nullable": true
+          },
+          "jobId": {
+            "type": "string",
+            "format": "uuid"
+          },
+          "batchId": {
+            "type": "string",
+            "format": "uuid",
+            "nullable": true
+          },
+          "actorId": {
+            "type": "string",
+            "format": "uuid"
+          },
+          "correlationId": {
+            "type": "string",
+            "format": "uuid"
+          },
+          "occurredAtUtc": {
+            "type": "string",
+            "format": "date-time"
+          },
+          "summary": {
+            "type": "string",
+            "nullable": true
+          },
+          "errorCode": {
+            "type": "string",
+            "nullable": true
+          },
+          "evidenceHash": {
+            "type": "string",
+            "nullable": true
+          },
+          "previousEventHash": {
+            "type": "string",
+            "nullable": true
+          },
+          "eventHash": {
+            "type": "string",
             "nullable": true
           }
         },
@@ -20882,6 +21164,10 @@
             "nullable": true
           },
           "attemptCount": {
+            "type": "integer",
+            "format": "int32"
+          },
+          "batchAttemptNo": {
             "type": "integer",
             "format": "int32"
           },

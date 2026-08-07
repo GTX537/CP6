@@ -16,6 +16,116 @@ namespace CP6.Space.IntegrationTests;
 public sealed class SpacePublishOrchestratorSqlServerTests
 {
     [SqlServerFact]
+    public async Task Wms_timeout_keeps_production_and_automatic_retry_completes()
+    {
+        await WithDatabaseAsync(
+            async (connectionString, execution, clock) =>
+            {
+                SeededVersions seeded;
+                await using (var cp6 = CreateCp6Context(
+                                 connectionString,
+                                 execution.TenantId))
+                {
+                    seeded = await SeedCp6AndDesignAsync(
+                        connectionString,
+                        cp6,
+                        execution,
+                        clock);
+                }
+
+                ValidationEvidence evidence;
+                await using (var cp6 = CreateCp6Context(
+                                 connectionString,
+                                 execution.TenantId))
+                {
+                    evidence = await ValidateAndPreviewAsync(
+                        connectionString,
+                        execution,
+                        clock,
+                        cp6,
+                        seeded.SiteId,
+                        seeded.TargetVersionId);
+                }
+
+                await using var space = CreateSpaceContext(
+                    connectionString,
+                    execution,
+                    clock);
+                await using var ledger = CreateSpaceContext(
+                    connectionString,
+                    execution,
+                    clock);
+                await using var cp6Context = CreateCp6Context(
+                    connectionString,
+                    execution.TenantId);
+                var realAdapter = new Cp6SpaceWmsAdapter(cp6Context);
+                var adapter = new TimeoutOnceAdapter(realAdapter);
+                var orchestrator = new SpacePublishOrchestrator(
+                    space,
+                    execution,
+                    clock,
+                    new TestAccessEvaluator(seeded.SiteId),
+                    new Cp6SpaceWarehouseResolver(cp6Context),
+                    adapter,
+                    new Cp6SpaceRuntimeMaterializer(
+                        space,
+                        execution,
+                        clock),
+                    new SpacePublishPlanEngine());
+                var queued = await orchestrator.StartAsync(
+                    seeded.TargetVersionId,
+                    new CreateSpacePublishAttemptRequest(
+                        seeded.BaseVersionId,
+                        evidence.ValidationRunId,
+                        evidence.PlanHash,
+                        ApprovalReference: null),
+                    "publish-timeout-retry");
+                var executor = new CapturingPublishExecutor(orchestrator);
+                var runner = PublishRunner(ledger, clock, executor);
+
+                Assert.True(await runner.RunNextAsync(
+                    SpaceJobType.Publish,
+                    "test-timeout-worker"));
+                Assert.IsType<SpaceJobProcessingException>(executor.Failure);
+                space.ChangeTracker.Clear();
+                var waiting = await orchestrator.GetAsync(queued.Attempt.Id);
+                Assert.Equal("WaitingRetry", waiting.Status);
+                Assert.Equal("Queued", waiting.JobStatus);
+                Assert.Equal(1, waiting.JobAttemptCount);
+                Assert.NotNull(waiting.NextAttemptAtUtc);
+                var unchanged = await space.Models.AsNoTracking().SingleAsync(
+                    value => value.Id == seeded.ModelId);
+                Assert.Equal(
+                    seeded.BaseVersionId,
+                    unchanged.CurrentPublishedVersionId);
+
+                adapter.Recovered = true;
+                executor.ClearFailure();
+                clock.Advance(TimeSpan.FromHours(1));
+                Assert.True(await runner.RunNextAsync(
+                    SpaceJobType.Publish,
+                    "test-timeout-worker"));
+                Assert.Null(executor.Failure);
+                space.ChangeTracker.Clear();
+                var completed = await orchestrator.GetAsync(queued.Attempt.Id);
+                Assert.Equal("Completed", completed.Status);
+                Assert.Equal("Succeeded", completed.JobStatus);
+                Assert.Equal(2, completed.JobAttemptCount);
+                Assert.Contains(
+                    completed.AuditEvents,
+                    value => value.EventType == "RetryableFailureObserved");
+                Assert.Contains(
+                    completed.AuditEvents,
+                    value => value.EventType == "RetryScheduled");
+                var switched = await space.Models.AsNoTracking().SingleAsync(
+                    value => value.Id == seeded.ModelId);
+                Assert.Equal(
+                    seeded.TargetVersionId,
+                    switched.CurrentPublishedVersionId);
+            });
+    }
+
+    [SqlServerFact]
     public async Task Success_activates_runtime_and_partial_requires_reconciliation()
     {
         await WithDatabaseAsync(
@@ -83,10 +193,30 @@ public sealed class SpacePublishOrchestratorSqlServerTests
                         seeded.TargetVersionId,
                         request,
                         "publish-success");
+                    Assert.Equal("Requested", queued.Attempt.Status);
+                    Assert.Equal("Queued", queued.Attempt.JobStatus);
+                    Assert.Empty(queued.Attempt.Batches);
+                    await using var ledger = CreateSpaceContext(
+                        connectionString,
+                        execution,
+                        clock);
+                    var executor = new CapturingPublishExecutor(orchestrator);
+                    var runner = PublishRunner(ledger, clock, executor);
+                    Assert.True(await runner.RunNextAsync(
+                        SpaceJobType.Publish,
+                        "test-publish-worker"));
+                    Assert.True(
+                        executor.Failure is null,
+                        executor.Failure?.ToString());
+                    space.ChangeTracker.Clear();
                     var result = await orchestrator.GetAsync(
                         queued.Attempt.Id);
 
-                    Assert.Equal("Completed", result.Status);
+                    Assert.True(
+                        result.Status == "Completed",
+                        $"status={result.Status}; job={result.JobStatus}; " +
+                        $"error={result.LastErrorCode}; summary={result.Summary}; " +
+                        $"audit={string.Join(" | ", result.AuditEvents.Select(value => $"{value.EventType}:{value.ErrorCode}:{value.Summary}"))}");
                     Assert.False(queued.IdempotentReplay);
                     Assert.True(replay.IdempotentReplay);
                     Assert.Equal(
@@ -153,6 +283,24 @@ public sealed class SpacePublishOrchestratorSqlServerTests
                             secondEvidence.PlanHash,
                             ApprovalReference: null),
                         "publish-partial");
+                    Assert.Equal("Requested", queued.Attempt.Status);
+                    Assert.Equal("Queued", queued.Attempt.JobStatus);
+                    await using var ledger = CreateSpaceContext(
+                        connectionString,
+                        execution,
+                        clock);
+                    var executor = new CapturingPublishExecutor(orchestrator);
+                    Assert.True(await PublishRunner(
+                            ledger,
+                            clock,
+                            executor)
+                        .RunNextAsync(
+                            SpaceJobType.Publish,
+                            "test-partial-worker"));
+                    Assert.True(
+                        executor.Failure is null,
+                        executor.Failure?.ToString());
+                    space.ChangeTracker.Clear();
                     var result = await orchestrator.GetAsync(
                         queued.Attempt.Id);
 
@@ -163,6 +311,29 @@ public sealed class SpacePublishOrchestratorSqlServerTests
                     Assert.True(
                         result.OpenReconciliationIssueCount > 0);
                     Assert.False(noActivation.Called);
+
+                    var retry = await orchestrator.RetryAsync(
+                        result.Id,
+                        new RetrySpacePublishAttemptRequest(
+                            "Operator reviewed the partial WMS receipt.",
+                            "Keep the production pointer unchanged and reconcile the operation."),
+                        "publish-partial-retry");
+                    var retryReplay = await orchestrator.RetryAsync(
+                        result.Id,
+                        new RetrySpacePublishAttemptRequest(
+                            "Operator reviewed the partial WMS receipt.",
+                            "Keep the production pointer unchanged and reconcile the operation."),
+                        "publish-partial-retry");
+
+                    Assert.False(retry.IdempotentReplay);
+                    Assert.True(retryReplay.IdempotentReplay);
+                    Assert.Equal("Reconcile", retry.Attempt.JobType);
+                    Assert.Equal("Queued", retry.Attempt.JobStatus);
+                    Assert.Equal("WaitingRetry", retry.Attempt.Status);
+                    Assert.Equal(1, retry.Attempt.ManualRetryCount);
+                    Assert.Contains(
+                        retry.Attempt.AuditEvents,
+                        value => value.EventType == "ManualRetryRequested");
                 }
 
                 await using var verify = CreateSpaceContext(
@@ -180,6 +351,40 @@ public sealed class SpacePublishOrchestratorSqlServerTests
                     SpaceVersionStatus.ReconciliationRequired,
                     third.Status);
             });
+    }
+
+    private static SpaceJobProcessorRunner PublishRunner(
+        SpaceContext context,
+        TestClock clock,
+        ISpacePublishJobExecutor executor) =>
+        new(
+            new EfSpaceJobLeaseStore(context, clock),
+            [
+                new SpacePublishJobProcessor(executor),
+                new SpacePublishReconciliationJobProcessor(executor),
+            ]);
+
+    private sealed class CapturingPublishExecutor(
+        ISpacePublishJobExecutor inner) : ISpacePublishJobExecutor
+    {
+        public Exception? Failure { get; private set; }
+
+        public void ClearFailure() => Failure = null;
+
+        public async Task<SpaceJobStepOutput> ExecuteAsync(
+            SpaceJobStepExecution execution,
+            CancellationToken cancellationToken = default)
+        {
+            try
+            {
+                return await inner.ExecuteAsync(execution, cancellationToken);
+            }
+            catch (Exception exception)
+            {
+                Failure = exception;
+                throw;
+            }
+        }
     }
 
     private static async Task<SeededVersions> SeedCp6AndDesignAsync(
@@ -857,6 +1062,74 @@ public sealed class SpacePublishOrchestratorSqlServerTests
             CancellationToken ct = default) =>
             throw new InvalidOperationException(
                 "Partial results must not enter readback verification.");
+
+        public Task<SpaceWmsBlockingReferences>
+            GetBlockingReferencesAsync(
+                SpaceWmsBlockingReferencesRequest request,
+                CancellationToken ct = default) =>
+            inner.GetBlockingReferencesAsync(request, ct);
+
+        public Task<SpaceWmsLocationResult> QueryLocationsAsync(
+            SpaceWmsLocationQuery request,
+            CancellationToken ct = default) =>
+            inner.QueryLocationsAsync(request, ct);
+
+        public Task<SpaceWmsInventoryResult> QueryInventoryAsync(
+            SpaceWmsInventoryQuery request,
+            CancellationToken ct = default) =>
+            inner.QueryInventoryAsync(request, ct);
+
+        public Task<SpaceWmsTaskResult> QueryTasksAsync(
+            SpaceWmsTaskQuery request,
+            CancellationToken ct = default) =>
+            inner.QueryTasksAsync(request, ct);
+
+        public Task<SpaceWmsAbcResult> QueryAbcAsync(
+            SpaceWmsAbcQuery request,
+            CancellationToken ct = default) =>
+            inner.QueryAbcAsync(request, ct);
+    }
+
+    private sealed class TimeoutOnceAdapter(ISpaceWmsAdapter inner) :
+        ISpaceWmsAdapter
+    {
+        public bool Recovered { get; set; }
+        public string RuntimeAdapterId => inner.RuntimeAdapterId;
+        public string RuntimeDataSourceId => inner.RuntimeDataSourceId;
+        public SpaceWmsDataSourceKind RuntimeDataSourceKind =>
+            inner.RuntimeDataSourceKind;
+
+        public Task<SpaceWmsCapabilitySnapshot> GetCapabilitiesAsync(
+            SpaceWmsContext context,
+            CancellationToken ct = default) =>
+            inner.GetCapabilitiesAsync(context, ct);
+
+        public Task<SpaceWmsHealth> CheckHealthAsync(
+            SpaceWmsContext context,
+            CancellationToken ct = default) =>
+            Recovered
+                ? inner.CheckHealthAsync(context, ct)
+                : throw new TimeoutException("Injected WMS health timeout.");
+
+        public Task<SpaceWmsPreflightResult> PreflightAsync(
+            SpaceWmsPreflightRequest request,
+            CancellationToken ct = default) =>
+            inner.PreflightAsync(request, ct);
+
+        public Task<SpaceWmsBatchResult> ApplyBatchAsync(
+            SpaceWmsBatch batch,
+            CancellationToken ct = default) =>
+            inner.ApplyBatchAsync(batch, ct);
+
+        public Task<SpaceWmsOperationStatus> GetOperationStatusAsync(
+            SpaceWmsOperationQuery request,
+            CancellationToken ct = default) =>
+            inner.GetOperationStatusAsync(request, ct);
+
+        public Task<SpaceWmsReadBackResult> ReadBackAsync(
+            SpaceWmsReadBackRequest request,
+            CancellationToken ct = default) =>
+            inner.ReadBackAsync(request, ct);
 
         public Task<SpaceWmsBlockingReferences>
             GetBlockingReferencesAsync(

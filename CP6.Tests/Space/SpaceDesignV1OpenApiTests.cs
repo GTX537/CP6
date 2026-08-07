@@ -59,6 +59,7 @@ public sealed class SpaceDesignV1OpenApiTests
             "/api/space/design/v1/mapping-profiles/excel/preview",
             "/api/space/design/v1/modeling-templates/excel/standard",
             "/api/space/design/v1/publish-attempts/{attemptId}",
+            "/api/space/design/v1/publish-attempts/{attemptId}/retry",
             "/api/space/design/v1/versions/{versionId}",
             "/api/space/design/v1/versions/{versionId}/generation-runs",
             "/api/space/design/v1/versions/{versionId}/floors/{floorLogicalId}/commands",
@@ -127,8 +128,8 @@ public sealed class SpaceDesignV1OpenApiTests
             .Select(operation =>
                 operation.Value.GetProperty("operationId").GetString())
             .ToArray();
-        Assert.Equal(107, operationIds.Length);
-        Assert.Equal(107, operationIds.Distinct().Count());
+        Assert.Equal(108, operationIds.Length);
+        Assert.Equal(108, operationIds.Distinct().Count());
         Assert.Contains("GetPolicy", operationIds);
         Assert.Contains("UpdatePolicy", operationIds);
         Assert.Contains("GetUsage", operationIds);
@@ -170,6 +171,7 @@ public sealed class SpaceDesignV1OpenApiTests
         Assert.Contains("GetPublishPreview", operationIds);
         Assert.Contains("CreatePublishAttempt", operationIds);
         Assert.Contains("GetPublishAttempt", operationIds);
+        Assert.Contains("RetryPublishAttempt", operationIds);
         Assert.Contains("GetPreflight", operationIds);
         Assert.Contains("DownloadErrorReport", operationIds);
         Assert.Contains("CreateAsset", operationIds);

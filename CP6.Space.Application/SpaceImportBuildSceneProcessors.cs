@@ -108,6 +108,10 @@ public sealed class SpaceJobProcessorOptions
         TimeSpan.FromMinutes(10);
     public TimeSpan AiRetentionCleanupTimeout { get; init; } =
         TimeSpan.FromMinutes(10);
+    public TimeSpan PublishTimeout { get; init; } =
+        TimeSpan.FromMinutes(30);
+    public TimeSpan ReconcileTimeout { get; init; } =
+        TimeSpan.FromMinutes(30);
 
     public void Validate()
     {
@@ -152,6 +156,10 @@ public sealed class SpaceJobProcessorOptions
             throw new ArgumentOutOfRangeException(
                 nameof(AiRetentionCleanupTimeout));
         }
+        if (PublishTimeout <= TimeSpan.Zero)
+            throw new ArgumentOutOfRangeException(nameof(PublishTimeout));
+        if (ReconcileTimeout <= TimeSpan.Zero)
+            throw new ArgumentOutOfRangeException(nameof(ReconcileTimeout));
     }
 
     internal TimeSpan TimeoutFor(SpaceJobType jobType) =>
@@ -164,6 +172,8 @@ public sealed class SpaceJobProcessorOptions
             SpaceJobType.BuildScene => BuildSceneTimeout,
             SpaceJobType.ApplyGeneration => ApplyGenerationTimeout,
             SpaceJobType.AiRetentionCleanup => AiRetentionCleanupTimeout,
+            SpaceJobType.Publish => PublishTimeout,
+            SpaceJobType.Reconcile => ReconcileTimeout,
             _ => throw new ArgumentOutOfRangeException(nameof(jobType)),
         };
 }
@@ -502,7 +512,9 @@ public sealed class SpaceJobProcessorRunner : ISpaceJobProcessorRunner
             await FailAsync(
                 lease,
                 runningStepId,
-                SpaceJobFailureKind.Resource,
+                lease.JobType is SpaceJobType.Publish or SpaceJobType.Reconcile
+                    ? SpaceJobFailureKind.Transient
+                    : SpaceJobFailureKind.Resource,
                 SpaceErrorCodes.JobTimeout,
                 "The Space Job exceeded its processing timeout.");
         }
@@ -612,7 +624,9 @@ public sealed class SpaceJobProcessorRunner : ISpaceJobProcessorRunner
                 SpaceJobType.Validate or
                 SpaceJobType.BuildScene or
                 SpaceJobType.ApplyGeneration or
-                SpaceJobType.AiRetentionCleanup) ||
+                SpaceJobType.AiRetentionCleanup or
+                SpaceJobType.Publish or
+                SpaceJobType.Reconcile) ||
             !_processors.TryGetValue(jobType, out var processor))
         {
             throw new InvalidOperationException(

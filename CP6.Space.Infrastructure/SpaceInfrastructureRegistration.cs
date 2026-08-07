@@ -123,10 +123,26 @@ public static class SpaceInfrastructureRegistration
         services.AddScoped<
             ISpaceRuntimeMaterializer,
             Cp6SpaceRuntimeMaterializer>();
-        services.AddScoped<
-            ISpacePublishOrchestrator,
-            SpacePublishOrchestrator>();
-        services.AddScoped<ISpaceJobLeaseStore, EfSpaceJobLeaseStore>();
+        services.AddScoped<SpacePublishOrchestrator>();
+        services.AddScoped<ISpacePublishOrchestrator>(provider =>
+            provider.GetRequiredService<SpacePublishOrchestrator>());
+        services.AddScoped<ISpacePublishJobExecutor>(provider =>
+            provider.GetRequiredService<SpacePublishOrchestrator>());
+        // Lease heartbeats run concurrently with processor work. Give the
+        // ledger its own DbContext so a long-running processor never performs
+        // concurrent EF operations on the processor's scoped context.
+        services.AddScoped<ISpaceJobLeaseStore>(provider =>
+        {
+            var clock = provider.GetRequiredService<ISpaceClock>();
+            var ledgerContext = new SpaceContext(
+                provider.GetRequiredService<DbContextOptions<SpaceContext>>(),
+                provider.GetRequiredService<ISpaceExecutionContext>(),
+                clock);
+            return new EfSpaceJobLeaseStore(
+                ledgerContext,
+                clock,
+                ownsContext: true);
+        });
         services.AddScoped<ISpaceJobProgressReader, EfSpaceJobProgressReader>();
         services.AddScoped<
             ISpaceAiCapacityLedger,
@@ -176,6 +192,14 @@ public static class SpaceInfrastructureRegistration
             ServiceDescriptor.Scoped<
                 ISpaceJobProcessor,
                 SpaceValidationJobProcessor>());
+        services.TryAddEnumerable(
+            ServiceDescriptor.Scoped<
+                ISpaceJobProcessor,
+                SpacePublishJobProcessor>());
+        services.TryAddEnumerable(
+            ServiceDescriptor.Scoped<
+                ISpaceJobProcessor,
+                SpacePublishReconciliationJobProcessor>());
         services.AddScoped<
             ISpaceJobProcessorRunner,
             SpaceJobProcessorRunner>();

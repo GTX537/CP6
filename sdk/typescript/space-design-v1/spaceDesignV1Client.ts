@@ -598,6 +598,13 @@ export interface ISpaceDesignV1Client {
     getPublishAttempt(attemptId: string): Promise<SpacePublishAttemptDto>;
 
     /**
+     * @param idempotency_Key (optional)
+     * @param body (optional)
+     * @return Accepted
+     */
+    retryPublishAttempt(attemptId: string, idempotency_Key: string | undefined, body: RetrySpacePublishAttemptRequest | undefined): Promise<RetrySpacePublishAttemptResponse>;
+
+    /**
      * @param floorLogicalId (optional)
      * @param objectType (optional)
      * @param action (optional)
@@ -10318,6 +10325,102 @@ export class SpaceDesignV1Client implements ISpaceDesignV1Client {
     }
 
     /**
+     * @param idempotency_Key (optional)
+     * @param body (optional)
+     * @return Accepted
+     */
+    retryPublishAttempt(attemptId: string, idempotency_Key: string | undefined, body: RetrySpacePublishAttemptRequest | undefined): Promise<RetrySpacePublishAttemptResponse> {
+        let url_ = this.baseUrl + "/api/space/design/v1/publish-attempts/{attemptId}/retry";
+        if (attemptId === undefined || attemptId === null)
+            throw new globalThis.Error("The parameter 'attemptId' must be defined.");
+        url_ = url_.replace("{attemptId}", encodeURIComponent("" + attemptId));
+        url_ = url_.replace(/[?&]$/, "");
+
+        const content_ = JSON.stringify(body);
+
+        let options_: RequestInit = {
+            body: content_,
+            method: "POST",
+            headers: {
+                "Idempotency-Key": idempotency_Key !== undefined && idempotency_Key !== null ? "" + idempotency_Key : "",
+                "Content-Type": "application/json",
+                "Accept": "application/json"
+            }
+        };
+
+        return this.http.fetch(url_, options_).then((_response: Response) => {
+            return this.processRetryPublishAttempt(_response);
+        });
+    }
+
+    protected processRetryPublishAttempt(response: Response): Promise<RetrySpacePublishAttemptResponse> {
+        const status = response.status;
+        let _headers: any = {}; if (response.headers && response.headers.forEach) { response.headers.forEach((v: any, k: any) => _headers[k] = v); };
+        if (status === 202) {
+            return response.text().then((_responseText) => {
+            let result202: any = null;
+            let resultData202 = _responseText === "" ? null : JSON.parse(_responseText, this.jsonParseReviver);
+            result202 = RetrySpacePublishAttemptResponse.fromJS(resultData202);
+            return result202;
+            });
+        } else if (status === 400) {
+            return response.text().then((_responseText) => {
+            let result400: any = null;
+            let resultData400 = _responseText === "" ? null : JSON.parse(_responseText, this.jsonParseReviver);
+            result400 = SpaceDesignProblemDetails.fromJS(resultData400);
+            return throwException("Bad Request", status, _responseText, _headers, result400);
+            });
+        } else if (status === 401) {
+            return response.text().then((_responseText) => {
+            let result401: any = null;
+            let resultData401 = _responseText === "" ? null : JSON.parse(_responseText, this.jsonParseReviver);
+            result401 = SpaceDesignProblemDetails.fromJS(resultData401);
+            return throwException("Unauthorized", status, _responseText, _headers, result401);
+            });
+        } else if (status === 403) {
+            return response.text().then((_responseText) => {
+            let result403: any = null;
+            let resultData403 = _responseText === "" ? null : JSON.parse(_responseText, this.jsonParseReviver);
+            result403 = SpaceDesignProblemDetails.fromJS(resultData403);
+            return throwException("Forbidden", status, _responseText, _headers, result403);
+            });
+        } else if (status === 404) {
+            return response.text().then((_responseText) => {
+            let result404: any = null;
+            let resultData404 = _responseText === "" ? null : JSON.parse(_responseText, this.jsonParseReviver);
+            result404 = SpaceDesignProblemDetails.fromJS(resultData404);
+            return throwException("Not Found", status, _responseText, _headers, result404);
+            });
+        } else if (status === 409) {
+            return response.text().then((_responseText) => {
+            let result409: any = null;
+            let resultData409 = _responseText === "" ? null : JSON.parse(_responseText, this.jsonParseReviver);
+            result409 = SpaceDesignProblemDetails.fromJS(resultData409);
+            return throwException("Conflict", status, _responseText, _headers, result409);
+            });
+        } else if (status === 422) {
+            return response.text().then((_responseText) => {
+            let result422: any = null;
+            let resultData422 = _responseText === "" ? null : JSON.parse(_responseText, this.jsonParseReviver);
+            result422 = SpaceDesignProblemDetails.fromJS(resultData422);
+            return throwException("Unprocessable Content", status, _responseText, _headers, result422);
+            });
+        } else if (status === 500) {
+            return response.text().then((_responseText) => {
+            let result500: any = null;
+            let resultData500 = _responseText === "" ? null : JSON.parse(_responseText, this.jsonParseReviver);
+            result500 = SpaceDesignProblemDetails.fromJS(resultData500);
+            return throwException("Internal Server Error", status, _responseText, _headers, result500);
+            });
+        } else if (status !== 200 && status !== 204) {
+            return response.text().then((_responseText) => {
+            return throwException("An unexpected server error occurred.", status, _responseText, _headers);
+            });
+        }
+        return Promise.resolve<RetrySpacePublishAttemptResponse>(null as any);
+    }
+
+    /**
      * @param floorLogicalId (optional)
      * @param objectType (optional)
      * @param action (optional)
@@ -13568,6 +13671,86 @@ export interface IRefreshSpaceWmsAdoptionResponse {
     unboundCount?: number;
     boundCount?: number;
     differenceCount?: number;
+}
+
+export class RetrySpacePublishAttemptRequest implements IRetrySpacePublishAttemptRequest {
+    reason?: string | undefined;
+    resolution?: string | undefined;
+
+    constructor(data?: IRetrySpacePublishAttemptRequest) {
+        if (data) {
+            for (var property in data) {
+                if (data.hasOwnProperty(property))
+                    (this as any)[property] = (data as any)[property];
+            }
+        }
+    }
+
+    init(_data?: any) {
+        if (_data) {
+            this.reason = _data["reason"];
+            this.resolution = _data["resolution"];
+        }
+    }
+
+    static fromJS(data: any): RetrySpacePublishAttemptRequest {
+        data = typeof data === 'object' ? data : {};
+        let result = new RetrySpacePublishAttemptRequest();
+        result.init(data);
+        return result;
+    }
+
+    toJSON(data?: any) {
+        data = typeof data === 'object' ? data : {};
+        data["reason"] = this.reason;
+        data["resolution"] = this.resolution;
+        return data;
+    }
+}
+
+export interface IRetrySpacePublishAttemptRequest {
+    reason?: string | undefined;
+    resolution?: string | undefined;
+}
+
+export class RetrySpacePublishAttemptResponse implements IRetrySpacePublishAttemptResponse {
+    attempt?: SpacePublishAttemptDto;
+    idempotentReplay?: boolean;
+
+    constructor(data?: IRetrySpacePublishAttemptResponse) {
+        if (data) {
+            for (var property in data) {
+                if (data.hasOwnProperty(property))
+                    (this as any)[property] = (data as any)[property];
+            }
+        }
+    }
+
+    init(_data?: any) {
+        if (_data) {
+            this.attempt = _data["attempt"] ? SpacePublishAttemptDto.fromJS(_data["attempt"]) : undefined as any;
+            this.idempotentReplay = _data["idempotentReplay"];
+        }
+    }
+
+    static fromJS(data: any): RetrySpacePublishAttemptResponse {
+        data = typeof data === 'object' ? data : {};
+        let result = new RetrySpacePublishAttemptResponse();
+        result.init(data);
+        return result;
+    }
+
+    toJSON(data?: any) {
+        data = typeof data === 'object' ? data : {};
+        data["attempt"] = this.attempt ? this.attempt.toJSON() : undefined as any;
+        data["idempotentReplay"] = this.idempotentReplay;
+        return data;
+    }
+}
+
+export interface IRetrySpacePublishAttemptResponse {
+    attempt?: SpacePublishAttemptDto;
+    idempotentReplay?: boolean;
 }
 
 export class SaveSpaceExcelMappingProfileRequest implements ISaveSpaceExcelMappingProfileRequest {
@@ -21999,8 +22182,19 @@ export class SpacePublishAttemptDto implements ISpacePublishAttemptDto {
     lastErrorCode?: string | undefined;
     summary?: string | undefined;
     correlationId?: string;
+    jobId?: string | undefined;
+    jobType?: string | undefined;
+    jobStatus?: string | undefined;
+    jobAttemptCount?: number;
+    jobMaxAttempts?: number;
+    nextAttemptAtUtc?: Date | undefined;
+    lockExpiresAtUtc?: Date | undefined;
+    manualRetryCount?: number;
+    lastRetriedAtUtc?: Date | undefined;
+    lastRetriedBy?: string | undefined;
     openReconciliationIssueCount?: number;
     batches?: SpacePublishBatchDto[] | undefined;
+    auditEvents?: SpacePublishAuditEventDto[] | undefined;
 
     constructor(data?: ISpacePublishAttemptDto) {
         if (data) {
@@ -22032,11 +22226,26 @@ export class SpacePublishAttemptDto implements ISpacePublishAttemptDto {
             this.lastErrorCode = _data["lastErrorCode"];
             this.summary = _data["summary"];
             this.correlationId = _data["correlationId"];
+            this.jobId = _data["jobId"];
+            this.jobType = _data["jobType"];
+            this.jobStatus = _data["jobStatus"];
+            this.jobAttemptCount = _data["jobAttemptCount"];
+            this.jobMaxAttempts = _data["jobMaxAttempts"];
+            this.nextAttemptAtUtc = _data["nextAttemptAtUtc"] ? new Date(_data["nextAttemptAtUtc"].toString()) : undefined as any;
+            this.lockExpiresAtUtc = _data["lockExpiresAtUtc"] ? new Date(_data["lockExpiresAtUtc"].toString()) : undefined as any;
+            this.manualRetryCount = _data["manualRetryCount"];
+            this.lastRetriedAtUtc = _data["lastRetriedAtUtc"] ? new Date(_data["lastRetriedAtUtc"].toString()) : undefined as any;
+            this.lastRetriedBy = _data["lastRetriedBy"];
             this.openReconciliationIssueCount = _data["openReconciliationIssueCount"];
             if (Array.isArray(_data["batches"])) {
                 this.batches = [] as any;
                 for (let item of _data["batches"])
                     this.batches!.push(SpacePublishBatchDto.fromJS(item));
+            }
+            if (Array.isArray(_data["auditEvents"])) {
+                this.auditEvents = [] as any;
+                for (let item of _data["auditEvents"])
+                    this.auditEvents!.push(SpacePublishAuditEventDto.fromJS(item));
             }
         }
     }
@@ -22069,11 +22278,26 @@ export class SpacePublishAttemptDto implements ISpacePublishAttemptDto {
         data["lastErrorCode"] = this.lastErrorCode;
         data["summary"] = this.summary;
         data["correlationId"] = this.correlationId;
+        data["jobId"] = this.jobId;
+        data["jobType"] = this.jobType;
+        data["jobStatus"] = this.jobStatus;
+        data["jobAttemptCount"] = this.jobAttemptCount;
+        data["jobMaxAttempts"] = this.jobMaxAttempts;
+        data["nextAttemptAtUtc"] = this.nextAttemptAtUtc ? this.nextAttemptAtUtc.toISOString() : undefined as any;
+        data["lockExpiresAtUtc"] = this.lockExpiresAtUtc ? this.lockExpiresAtUtc.toISOString() : undefined as any;
+        data["manualRetryCount"] = this.manualRetryCount;
+        data["lastRetriedAtUtc"] = this.lastRetriedAtUtc ? this.lastRetriedAtUtc.toISOString() : undefined as any;
+        data["lastRetriedBy"] = this.lastRetriedBy;
         data["openReconciliationIssueCount"] = this.openReconciliationIssueCount;
         if (Array.isArray(this.batches)) {
             data["batches"] = [];
             for (let item of this.batches)
                 data["batches"].push(item ? item.toJSON() : undefined as any);
+        }
+        if (Array.isArray(this.auditEvents)) {
+            data["auditEvents"] = [];
+            for (let item of this.auditEvents)
+                data["auditEvents"].push(item ? item.toJSON() : undefined as any);
         }
         return data;
     }
@@ -22099,8 +22323,111 @@ export interface ISpacePublishAttemptDto {
     lastErrorCode?: string | undefined;
     summary?: string | undefined;
     correlationId?: string;
+    jobId?: string | undefined;
+    jobType?: string | undefined;
+    jobStatus?: string | undefined;
+    jobAttemptCount?: number;
+    jobMaxAttempts?: number;
+    nextAttemptAtUtc?: Date | undefined;
+    lockExpiresAtUtc?: Date | undefined;
+    manualRetryCount?: number;
+    lastRetriedAtUtc?: Date | undefined;
+    lastRetriedBy?: string | undefined;
     openReconciliationIssueCount?: number;
     batches?: SpacePublishBatchDto[] | undefined;
+    auditEvents?: SpacePublishAuditEventDto[] | undefined;
+}
+
+export class SpacePublishAuditEventDto implements ISpacePublishAuditEventDto {
+    id?: string;
+    eventNo?: number;
+    eventType?: string | undefined;
+    attemptStatus?: string | undefined;
+    step?: string | undefined;
+    jobId?: string;
+    batchId?: string | undefined;
+    actorId?: string;
+    correlationId?: string;
+    occurredAtUtc?: Date;
+    summary?: string | undefined;
+    errorCode?: string | undefined;
+    evidenceHash?: string | undefined;
+    previousEventHash?: string | undefined;
+    eventHash?: string | undefined;
+
+    constructor(data?: ISpacePublishAuditEventDto) {
+        if (data) {
+            for (var property in data) {
+                if (data.hasOwnProperty(property))
+                    (this as any)[property] = (data as any)[property];
+            }
+        }
+    }
+
+    init(_data?: any) {
+        if (_data) {
+            this.id = _data["id"];
+            this.eventNo = _data["eventNo"];
+            this.eventType = _data["eventType"];
+            this.attemptStatus = _data["attemptStatus"];
+            this.step = _data["step"];
+            this.jobId = _data["jobId"];
+            this.batchId = _data["batchId"];
+            this.actorId = _data["actorId"];
+            this.correlationId = _data["correlationId"];
+            this.occurredAtUtc = _data["occurredAtUtc"] ? new Date(_data["occurredAtUtc"].toString()) : undefined as any;
+            this.summary = _data["summary"];
+            this.errorCode = _data["errorCode"];
+            this.evidenceHash = _data["evidenceHash"];
+            this.previousEventHash = _data["previousEventHash"];
+            this.eventHash = _data["eventHash"];
+        }
+    }
+
+    static fromJS(data: any): SpacePublishAuditEventDto {
+        data = typeof data === 'object' ? data : {};
+        let result = new SpacePublishAuditEventDto();
+        result.init(data);
+        return result;
+    }
+
+    toJSON(data?: any) {
+        data = typeof data === 'object' ? data : {};
+        data["id"] = this.id;
+        data["eventNo"] = this.eventNo;
+        data["eventType"] = this.eventType;
+        data["attemptStatus"] = this.attemptStatus;
+        data["step"] = this.step;
+        data["jobId"] = this.jobId;
+        data["batchId"] = this.batchId;
+        data["actorId"] = this.actorId;
+        data["correlationId"] = this.correlationId;
+        data["occurredAtUtc"] = this.occurredAtUtc ? this.occurredAtUtc.toISOString() : undefined as any;
+        data["summary"] = this.summary;
+        data["errorCode"] = this.errorCode;
+        data["evidenceHash"] = this.evidenceHash;
+        data["previousEventHash"] = this.previousEventHash;
+        data["eventHash"] = this.eventHash;
+        return data;
+    }
+}
+
+export interface ISpacePublishAuditEventDto {
+    id?: string;
+    eventNo?: number;
+    eventType?: string | undefined;
+    attemptStatus?: string | undefined;
+    step?: string | undefined;
+    jobId?: string;
+    batchId?: string | undefined;
+    actorId?: string;
+    correlationId?: string;
+    occurredAtUtc?: Date;
+    summary?: string | undefined;
+    errorCode?: string | undefined;
+    evidenceHash?: string | undefined;
+    previousEventHash?: string | undefined;
+    eventHash?: string | undefined;
 }
 
 export class SpacePublishBatchDto implements ISpacePublishBatchDto {
@@ -22110,6 +22437,7 @@ export class SpacePublishBatchDto implements ISpacePublishBatchDto {
     payloadHash?: string | undefined;
     status?: string | undefined;
     attemptCount?: number;
+    batchAttemptNo?: number;
     externalOperationId?: string | undefined;
     observedAtUtc?: Date | undefined;
     receipts?: SpacePublishReceiptDto[] | undefined;
@@ -22131,6 +22459,7 @@ export class SpacePublishBatchDto implements ISpacePublishBatchDto {
             this.payloadHash = _data["payloadHash"];
             this.status = _data["status"];
             this.attemptCount = _data["attemptCount"];
+            this.batchAttemptNo = _data["batchAttemptNo"];
             this.externalOperationId = _data["externalOperationId"];
             this.observedAtUtc = _data["observedAtUtc"] ? new Date(_data["observedAtUtc"].toString()) : undefined as any;
             if (Array.isArray(_data["receipts"])) {
@@ -22156,6 +22485,7 @@ export class SpacePublishBatchDto implements ISpacePublishBatchDto {
         data["payloadHash"] = this.payloadHash;
         data["status"] = this.status;
         data["attemptCount"] = this.attemptCount;
+        data["batchAttemptNo"] = this.batchAttemptNo;
         data["externalOperationId"] = this.externalOperationId;
         data["observedAtUtc"] = this.observedAtUtc ? this.observedAtUtc.toISOString() : undefined as any;
         if (Array.isArray(this.receipts)) {
@@ -22174,6 +22504,7 @@ export interface ISpacePublishBatchDto {
     payloadHash?: string | undefined;
     status?: string | undefined;
     attemptCount?: number;
+    batchAttemptNo?: number;
     externalOperationId?: string | undefined;
     observedAtUtc?: Date | undefined;
     receipts?: SpacePublishReceiptDto[] | undefined;

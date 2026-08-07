@@ -88,4 +88,35 @@ public sealed class SpacePublishController(
         Guid attemptId,
         CancellationToken cancellationToken) =>
         orchestrator.GetAsync(attemptId, cancellationToken);
+
+    [HttpPost("publish-attempts/{attemptId:guid}/retry")]
+    [SpaceAuditOperation(
+        "space.publish.retry",
+        "PublishAttempt",
+        ResourceIdArgument = "attemptId",
+        PermissionCode = "space:model:publish")]
+    [RequirePermission(
+        "space",
+        "model:publish",
+        UseProblemDetails = true)]
+    [ProducesResponseType<RetrySpacePublishAttemptResponse>(
+        StatusCodes.Status202Accepted)]
+    public async Task<IActionResult> RetryPublishAttempt(
+        Guid attemptId,
+        [FromBody] RetrySpacePublishAttemptRequest request,
+        [FromHeader(Name = "Idempotency-Key")] string? idempotencyKey,
+        CancellationToken cancellationToken)
+    {
+        var result = await orchestrator.RetryAsync(
+            attemptId,
+            request,
+            idempotencyKey ?? string.Empty,
+            cancellationToken);
+        Response.Headers["Idempotent-Replay"] =
+            result.IdempotentReplay ? "true" : "false";
+        return AcceptedAtAction(
+            nameof(GetPublishAttempt),
+            new { attemptId = result.Attempt.Id },
+            result);
+    }
 }
