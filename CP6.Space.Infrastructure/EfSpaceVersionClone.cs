@@ -729,13 +729,13 @@ public sealed class EfSpaceVersionCloneProcessor : ISpaceVersionCloneProcessor
 
              INSERT INTO [Space_ZoneRevision]
                  ([Id], [ModelVersionId], [LogicalId], [SourceId], [SourceRef],
-                  [LifecycleState], [FloorLogicalId], [ZoneCode], [ZoneType],
-                  [PolygonJson], [Color], [CapabilityFlags], [TenantId],
+                  [LifecycleState], [FloorLogicalId], [ZoneCode], [Name],
+                  [ZoneType], [PolygonJson], [Color], [CapabilityFlags], [TenantId],
                   [CreatedAtUtc], [CreatedBy], [ModifiedAtUtc], [ModifiedBy],
                   [IsDeleted])
              SELECT NEWID(), {targetVersionId}, r.[LogicalId], sm.[NewId],
                     r.[SourceRef], r.[LifecycleState], r.[FloorLogicalId],
-                    r.[ZoneCode], r.[ZoneType], r.[PolygonJson], r.[Color],
+                    r.[ZoneCode], r.[Name], r.[ZoneType], r.[PolygonJson], r.[Color],
                     r.[CapabilityFlags], {tenantId}, {nowUtc}, {actorId},
                     NULL, NULL, 0
              FROM [Space_ZoneRevision] r
@@ -746,12 +746,12 @@ public sealed class EfSpaceVersionCloneProcessor : ISpaceVersionCloneProcessor
 
              INSERT INTO [Space_AisleRevision]
                  ([Id], [ModelVersionId], [LogicalId], [SourceId], [SourceRef],
-                  [LifecycleState], [ZoneLogicalId], [AisleCode], [PolygonJson],
-                  [CenterlineJson], [Direction], [TenantId], [CreatedAtUtc],
+                  [LifecycleState], [ZoneLogicalId], [AisleCode], [Name],
+                  [PolygonJson], [CenterlineJson], [Direction], [TenantId], [CreatedAtUtc],
                   [CreatedBy], [ModifiedAtUtc], [ModifiedBy], [IsDeleted])
              SELECT NEWID(), {targetVersionId}, r.[LogicalId], sm.[NewId],
                     r.[SourceRef], r.[LifecycleState], r.[ZoneLogicalId],
-                    r.[AisleCode], r.[PolygonJson], r.[CenterlineJson],
+                    r.[AisleCode], r.[Name], r.[PolygonJson], r.[CenterlineJson],
                     r.[Direction], {tenantId}, {nowUtc}, {actorId}, NULL, NULL, 0
              FROM [Space_AisleRevision] r
              LEFT JOIN @SourceMap sm ON sm.[OldId] = r.[SourceId]
@@ -762,14 +762,16 @@ public sealed class EfSpaceVersionCloneProcessor : ISpaceVersionCloneProcessor
              INSERT INTO [Space_RackRevision]
                  ([Id], [ModelVersionId], [LogicalId], [SourceId], [SourceRef],
                   [LifecycleState], [FloorLogicalId], [ZoneLogicalId],
-                  [AisleLogicalId], [RackCode], [TemplateVersionId], [X], [Y],
-                  [Z], [RotationZ], [Width], [Depth], [Height], [TenantId],
+                  [AisleLogicalId], [RackCode], [Name], [RackType],
+                  [TemplateVersionId], [X], [Y], [Z], [RotationZ], [Width],
+                  [Depth], [Height], [TenantId],
                   [CreatedAtUtc], [CreatedBy], [ModifiedAtUtc], [ModifiedBy],
                   [IsDeleted])
              SELECT NEWID(), {targetVersionId}, r.[LogicalId], sm.[NewId],
                     r.[SourceRef], r.[LifecycleState], r.[FloorLogicalId],
                     r.[ZoneLogicalId], r.[AisleLogicalId], r.[RackCode],
-                    r.[TemplateVersionId], r.[X], r.[Y], r.[Z], r.[RotationZ],
+                    r.[Name], r.[RackType], r.[TemplateVersionId], r.[X], r.[Y],
+                    r.[Z], r.[RotationZ],
                     r.[Width], r.[Depth], r.[Height], {tenantId}, {nowUtc},
                     {actorId}, NULL, NULL, 0
              FROM [Space_RackRevision] r

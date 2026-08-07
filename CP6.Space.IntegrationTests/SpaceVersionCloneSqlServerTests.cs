@@ -181,6 +181,15 @@ public sealed class SpaceVersionCloneSqlServerTests
             var sourceFloor = await context.FloorRevisions
                 .AsNoTracking()
                 .SingleAsync(row => row.ModelVersionId == published.Id);
+            var sourceZone = await context.ZoneRevisions
+                .AsNoTracking()
+                .SingleAsync(row => row.ModelVersionId == published.Id);
+            var sourceAisle = await context.AisleRevisions
+                .AsNoTracking()
+                .SingleAsync(row => row.ModelVersionId == published.Id);
+            var sourceRack = await context.RackRevisions
+                .AsNoTracking()
+                .SingleAsync(row => row.ModelVersionId == published.Id);
             var sourceElement = await context.ElementRevisions
                 .AsNoTracking()
                 .SingleAsync(row => row.ModelVersionId == published.Id);
@@ -222,6 +231,12 @@ public sealed class SpaceVersionCloneSqlServerTests
                         started.Result.ModelVersionId);
             var targetFloor = await context.FloorRevisions.SingleAsync(
                 row => row.ModelVersionId == started.Result.ModelVersionId);
+            var targetZone = await context.ZoneRevisions.SingleAsync(
+                row => row.ModelVersionId == started.Result.ModelVersionId);
+            var targetAisle = await context.AisleRevisions.SingleAsync(
+                row => row.ModelVersionId == started.Result.ModelVersionId);
+            var targetRack = await context.RackRevisions.SingleAsync(
+                row => row.ModelVersionId == started.Result.ModelVersionId);
             var targetElement = await context.ElementRevisions.SingleAsync(
                 row => row.ModelVersionId == started.Result.ModelVersionId);
             var targetRackLevel = await context.RackLevelRevisions.SingleAsync(
@@ -249,6 +264,21 @@ public sealed class SpaceVersionCloneSqlServerTests
             Assert.Equal(
                 sourceCalibration.ValidationErrorMillimeters,
                 targetCalibration.ValidationErrorMillimeters);
+            Assert.NotEqual(sourceZone.Id, targetZone.Id);
+            Assert.Equal(sourceZone.LogicalId, targetZone.LogicalId);
+            Assert.Equal(sourceZone.FloorLogicalId, targetZone.FloorLogicalId);
+            Assert.Equal(sourceZone.Name, targetZone.Name);
+            Assert.NotEqual(sourceAisle.Id, targetAisle.Id);
+            Assert.Equal(sourceAisle.LogicalId, targetAisle.LogicalId);
+            Assert.Equal(sourceAisle.ZoneLogicalId, targetAisle.ZoneLogicalId);
+            Assert.Equal(sourceAisle.Name, targetAisle.Name);
+            Assert.NotEqual(sourceRack.Id, targetRack.Id);
+            Assert.Equal(sourceRack.LogicalId, targetRack.LogicalId);
+            Assert.Equal(sourceRack.FloorLogicalId, targetRack.FloorLogicalId);
+            Assert.Equal(sourceRack.ZoneLogicalId, targetRack.ZoneLogicalId);
+            Assert.Equal(sourceRack.AisleLogicalId, targetRack.AisleLogicalId);
+            Assert.Equal(sourceRack.Name, targetRack.Name);
+            Assert.Equal(sourceRack.RackType, targetRack.RackType);
             Assert.NotEqual(sourceElement.Id, targetElement.Id);
             Assert.Equal(sourceElement.LogicalId, targetElement.LogicalId);
             Assert.Equal(sourceElement.ModelAssetId, targetElement.ModelAssetId);
@@ -470,14 +500,16 @@ public sealed class SpaceVersionCloneSqlServerTests
                 Guid.NewGuid(),
                 floor.LogicalId,
                 "Z1",
-                0);
+                0,
+                "Picking zone");
             var aisle = SpaceAisleRevision.Create(
                 tenantId,
                 version.Id,
                 Guid.NewGuid(),
                 zone.LogicalId,
                 "A1",
-                0);
+                0,
+                "Main aisle");
             var rack = SpaceRackRevision.Create(
                 tenantId,
                 version.Id,
@@ -485,7 +517,9 @@ public sealed class SpaceVersionCloneSqlServerTests
                 floor.LogicalId,
                 zone.LogicalId,
                 "R1",
-                aisle.LogicalId);
+                aisle.LogicalId,
+                "Primary rack",
+                "Selective");
             rack.ConfigureGeometry(100, 200, 0, 90, 1000, 800, 5000);
             var rackLevel = SpaceRackLevelRevision.Create(
                 tenantId,
