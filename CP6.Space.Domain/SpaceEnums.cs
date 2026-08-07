@@ -187,6 +187,63 @@ public enum SpaceJobStepStatus : short
     Reused = 3,
 }
 
+public enum SpacePublishAttemptStatus : short
+{
+    Requested = 0,
+    Preflighting = 1,
+    ApplyingWms = 2,
+    VerifyingWms = 3,
+    ActivatingRuntime = 4,
+    Completed = 5,
+    FailedNoEffect = 6,
+    ReconciliationRequired = 8,
+}
+
+public enum SpacePublishStep : short
+{
+    Requested = 0,
+    Preflight = 1,
+    ApplyWms = 2,
+    VerifyWms = 3,
+    ActivateRuntime = 4,
+    Complete = 5,
+    Reconcile = 6,
+}
+
+public enum SpacePublishBatchStatus : short
+{
+    Pending = 0,
+    Applying = 1,
+    Applied = 2,
+    FailedNoEffect = 3,
+    Partial = 4,
+    Uncertain = 5,
+    Verified = 6,
+}
+
+public enum SpaceWmsReceiptOutcome : short
+{
+    Applied = 0,
+    NotApplied = 1,
+    Unknown = 2,
+}
+
+public enum SpaceReconciliationClassification : short
+{
+    WmsPartial = 0,
+    WmsUncertain = 1,
+    WmsReadBackMismatch = 2,
+    RuntimeActivationFailed = 3,
+}
+
+public enum SpaceReconciliationStatus : short
+{
+    Open = 0,
+    Investigating = 1,
+    Resolved = 2,
+    Escalated = 3,
+}
+
 public enum SpaceJobFailureKind : short
 {
     Transient = 0,

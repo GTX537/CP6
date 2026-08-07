@@ -71,6 +71,7 @@ public static class SpaceErrorCodes
     public const string JobTimeout = "SPACE_JOB_TIMEOUT";
     public const string ValidationNotFound = "SPACE_VALIDATION_NOT_FOUND";
     public const string ValidationStale = "SPACE_VALIDATION_STALE";
+    public const string ValidationBlocked = "SPACE_VALIDATION_BLOCKED";
     public const string ParseFailed = "SPACE_PARSE_FAILED";
     public const string CadParseInvalid = "SPACE_CAD_PARSE_INVALID";
     public const string CadParseNotFound = "SPACE_CAD_PARSE_NOT_FOUND";
@@ -113,6 +114,18 @@ public static class SpaceErrorCodes
     public const string AiBatchAcceptDisabled =
         "SPACE_AI_BATCH_ACCEPT_DISABLED";
     public const string WmsUnavailable = "SPACE_WMS_UNAVAILABLE";
+    public const string WmsCapabilityMissing =
+        "SPACE_WMS_CAPABILITY_MISSING";
+    public const string WmsPartialResult = "SPACE_WMS_PARTIAL_RESULT";
+    public const string WmsResultUncertain =
+        "SPACE_WMS_RESULT_UNCERTAIN";
+    public const string PublishAttemptNotFound =
+        "SPACE_PUBLISH_ATTEMPT_NOT_FOUND";
+    public const string PublishedVersionChanged =
+        "SPACE_PUBLISHED_VERSION_CHANGED";
+    public const string PublishSlotBusy = "SPACE_PUBLISH_SLOT_BUSY";
+    public const string RuntimeActivationFailed =
+        "SPACE_RUNTIME_ACTIVATION_FAILED";
     public const string WmsRuntimeContractViolation =
         "SPACE_WMS_RUNTIME_CONTRACT_VIOLATION";
     public const string WmsAdoptionNotFound =

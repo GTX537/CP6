@@ -120,6 +120,12 @@ public static class SpaceInfrastructureRegistration
         services.AddScoped<
             ISpacePublishPreviewService,
             SpacePublishPreviewService>();
+        services.AddScoped<
+            ISpaceRuntimeMaterializer,
+            Cp6SpaceRuntimeMaterializer>();
+        services.AddScoped<
+            ISpacePublishOrchestrator,
+            SpacePublishOrchestrator>();
         services.AddScoped<ISpaceJobLeaseStore, EfSpaceJobLeaseStore>();
         services.AddScoped<ISpaceJobProgressReader, EfSpaceJobProgressReader>();
         services.AddScoped<
