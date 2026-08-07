@@ -10,7 +10,9 @@ using Microsoft.EntityFrameworkCore;
 
 namespace CP6.Space.Infrastructure;
 
-public sealed partial class SpacePublishOrchestrator : ISpacePublishOrchestrator
+public sealed partial class SpacePublishOrchestrator :
+    ISpacePublishOrchestrator,
+    ISpacePublishJobExecutor
 {
     private static readonly JsonSerializerOptions Json =
         new(JsonSerializerDefaults.Web);
@@ -56,6 +58,7 @@ public sealed partial class SpacePublishOrchestrator : ISpacePublishOrchestrator
         ValidateStart(versionId, request);
         var normalizedKey = RequireIdempotencyKey(idempotencyKey);
         var requestHash = RequestHash(versionId, request);
+        var correlationId = CorrelationId();
 
         var replay = await _context.PublishAttempts
             .AsNoTracking()
@@ -109,21 +112,16 @@ public sealed partial class SpacePublishOrchestrator : ISpacePublishOrchestrator
             _execution.TenantId,
             model.SiteId,
             warehouse.WarehouseCode,
-            CorrelationId());
+            correlationId);
         var capabilities = await _adapter.GetCapabilitiesAsync(
             wmsContext,
             cancellationToken);
-        var health = await _adapter.CheckHealthAsync(
-            wmsContext,
-            cancellationToken);
-        if (!SpaceWmsContract.CanPublish(capabilities, health))
+        if (!capabilities.SupportsProductionPublishing)
         {
             throw Unprocessable(
-                health.IsPublishAvailable
-                    ? SpaceErrorCodes.WmsCapabilityMissing
-                    : SpaceErrorCodes.WmsUnavailable,
-                "The selected WMS adapter is not certified and healthy " +
-                "for production publishing.",
+                SpaceErrorCodes.WmsCapabilityMissing,
+                "The selected WMS adapter is not certified for " +
+                "production publishing.",
                 "verify-wms-adapter");
         }
 
@@ -181,44 +179,9 @@ public sealed partial class SpacePublishOrchestrator : ISpacePublishOrchestrator
                 "resolve-publish-blockers");
         }
 
-        var bindingMap = await LoadWmsBindingsAsync(
-            model.SiteId,
-            capabilities.AdapterId,
-            plan.Items
-                .Where(IsWmsMutation)
-                .Select(value => value.LogicalId)
-                .ToArray(),
-            cancellationToken);
-        var wmsLogicalIds = plan.Items
-            .Where(IsWmsMutation)
-            .Select(value =>
-                bindingMap.TryGetValue(value.LogicalId, out var binding)
-                    ? binding.WmsLogicalId
-                    : value.LogicalId)
-            .Distinct()
-            .ToArray();
-        var currentWms = wmsLogicalIds.Length == 0
-            ? new Dictionary<Guid, SpaceWmsLocationState>()
-            : (await _adapter.QueryLocationsAsync(
-                    new SpaceWmsLocationQuery(
-                        wmsContext,
-                        wmsLogicalIds),
-                    cancellationToken))
-                .Items
-                .ToDictionary(value => value.LogicalId);
-        var mutations = await BuildMutationsAsync(
-            target,
-            model.CurrentPublishedVersionId,
-            warehouse.SiteCode,
-            plan,
-            currentWms,
-            bindingMap,
-            cancellationToken);
         var plannedContentRevision = target.ContentRevision;
 
         SpacePublishAttempt attempt;
-        IReadOnlyList<(SpacePublishBatch Entity, SpaceWmsBatch Request)>
-            batches;
         await using (var transaction =
                      await _context.Database.BeginTransactionAsync(
                          IsolationLevel.Serializable,
@@ -316,33 +279,248 @@ public sealed partial class SpacePublishOrchestrator : ISpacePublishOrchestrator
                 _execution.ActorId,
                 approvedBy: null,
                 request.ApprovalReference,
+                JsonSerializer.Serialize(request, Json),
                 RequireUtcNow(),
-                CorrelationId());
-            _context.PublishAttempts.Add(attempt);
-            batches = CreateBatches(
-                attempt,
-                wmsContext,
+                correlationId);
+            var jobRequest = new SpaceJobEnqueueRequest(
+                SpaceJobType.Publish,
+                SpaceJobSubjectType.PublishAttempt,
+                attempt.Id,
                 plan.PlanHash,
-                mutations,
-                capabilities.Capabilities.BatchMaxSize);
-            _context.PublishBatches.AddRange(
-                batches.Select(value => value.Entity));
+                SpacePublishJobProcessor.Version,
+                VariantKey: attempt.Id.ToString("D"),
+                Priority: 50,
+                MaxAttempts: 5,
+                PayloadJson: JsonSerializer.Serialize(
+                    new
+                    {
+                        publishAttemptId = attempt.Id,
+                        publishPlanId = persistedPlan.Id,
+                        targetVersionId = target.Id,
+                        siteId = model.SiteId,
+                        requestHash,
+                    },
+                    Json));
+            var job = SpaceJob.CreateQueued(
+                _execution.TenantId,
+                jobRequest.JobType,
+                jobRequest.SubjectType,
+                jobRequest.SubjectId,
+                SpaceJobBusinessKey.Create(jobRequest),
+                jobRequest.InputHash,
+                jobRequest.Priority,
+                jobRequest.MaxAttempts,
+                _execution.ActorId,
+                RequireUtcNow(),
+                correlationId,
+                jobRequest.PayloadJson);
+            attempt.BindInitialJob(job.Id);
+            _context.Jobs.Add(job);
+            _context.PublishAttempts.Add(attempt);
+            _context.PublishAuditEvents.Add(
+                SpacePublishAuditEvent.Create(
+                    _execution.TenantId,
+                    attempt.Id,
+                    job.Id,
+                    batchId: null,
+                    eventNo: 1,
+                    SpacePublishAuditEventType.Queued,
+                    attempt.Status,
+                    attempt.CurrentStep,
+                    _execution.ActorId,
+                    correlationId,
+                    RequireUtcNow(),
+                    "initial-queue",
+                    "The warehouse publish Job was queued.",
+                    errorCode: null,
+                    JsonSerializer.Serialize(
+                        new
+                        {
+                            plan.PlanHash,
+                            persistedPlan.ValidationRunId,
+                            persistedPlan.ContentHash,
+                            persistedPlan.CapabilityHash,
+                        },
+                        Json),
+                    previousEventHash: null));
             target.BeginPublishing();
             await _context.SaveChangesAsync(cancellationToken);
             await transaction.CommitAsync(cancellationToken);
         }
 
-        await ExecuteAsync(
-            attempt,
-            target,
-            model,
-            wmsContext,
-            capabilities,
-            plan.PlanHash,
-            batches,
-            cancellationToken);
-
         return new CreateSpacePublishAttemptResponse(
+            await ToDtoAsync(attempt.Id, cancellationToken),
+            IdempotentReplay: false);
+    }
+
+    public async Task<RetrySpacePublishAttemptResponse> RetryAsync(
+        Guid attemptId,
+        RetrySpacePublishAttemptRequest request,
+        string idempotencyKey,
+        CancellationToken cancellationToken = default)
+    {
+        EnsureExecutionContext();
+        if (attemptId == Guid.Empty)
+            throw Invalid("A non-empty attemptId is required.");
+        ArgumentNullException.ThrowIfNull(request);
+        var reason = request.Reason?.Trim();
+        if (string.IsNullOrWhiteSpace(reason) || reason.Length > 1000)
+            throw Invalid("A retry reason between 1 and 1000 characters is required.");
+        var normalizedKey = RequireIdempotencyKey(idempotencyKey);
+        var deduplicationKey = "manual-retry:" + Hash(normalizedKey);
+
+        var visible = await _context.PublishAttempts
+                          .AsNoTracking()
+                          .SingleOrDefaultAsync(
+                              value => value.Id == attemptId,
+                              cancellationToken)
+                      ?? throw NotFound(
+                          SpaceErrorCodes.PublishAttemptNotFound,
+                          "The publish attempt was not found.");
+        _access.EnsureSiteAccess(visible.SiteId, write: true);
+
+        await using var transaction =
+            await _context.Database.BeginTransactionAsync(
+                IsolationLevel.Serializable,
+                cancellationToken);
+        var replay = await _context.PublishAuditEvents
+            .AsNoTracking()
+            .SingleOrDefaultAsync(
+                value =>
+                    value.AttemptId == attemptId &&
+                    value.DeduplicationKey == deduplicationKey,
+                cancellationToken);
+        if (replay is not null)
+        {
+            await transaction.CommitAsync(cancellationToken);
+            return new RetrySpacePublishAttemptResponse(
+                await ToDtoAsync(attemptId, cancellationToken),
+                IdempotentReplay: true);
+        }
+
+        var attempt = await _context.PublishAttempts.SingleAsync(
+            value => value.Id == attemptId,
+            cancellationToken);
+        var previousJob = attempt.JobId.HasValue
+            ? await _context.Jobs.SingleOrDefaultAsync(
+                value => value.Id == attempt.JobId.Value,
+                cancellationToken)
+            : null;
+        if (previousJob is not null && !previousJob.IsTerminal)
+        {
+            throw Conflict(
+                SpaceErrorCodes.PublishRetryNotAllowed,
+                "The current publish Job is still queued or running.",
+                "wait-for-current-publish-job");
+        }
+        if (attempt.Status is not (
+                SpacePublishAttemptStatus.ReconciliationRequired or
+                SpacePublishAttemptStatus.ManualIntervention or
+                SpacePublishAttemptStatus.WaitingRetry))
+        {
+            throw Conflict(
+                SpaceErrorCodes.PublishRetryNotAllowed,
+                "The publish attempt is not in a recoverable failed state.",
+                "view-publish-attempt");
+        }
+
+        var hasOpenReconciliation = await _context.ReconciliationIssues.AnyAsync(
+            value =>
+                value.AttemptId == attempt.Id &&
+                value.Status != SpaceReconciliationStatus.Resolved,
+            cancellationToken);
+        var reconciliation =
+            attempt.Status == SpacePublishAttemptStatus.ReconciliationRequired ||
+            attempt.CurrentStep == SpacePublishStep.Reconcile ||
+            hasOpenReconciliation;
+        var resolution = request.Resolution?.Trim();
+        if (reconciliation && string.IsNullOrWhiteSpace(resolution))
+        {
+            throw Invalid(
+                "A reconciliation resolution note is required for this retry.");
+        }
+
+        var jobType = reconciliation
+            ? SpaceJobType.Reconcile
+            : SpaceJobType.Publish;
+        var processorVersion = reconciliation
+            ? SpacePublishReconciliationJobProcessor.Version
+            : SpacePublishJobProcessor.Version;
+        var inputHash = Hash(string.Join(
+            "\n",
+            attempt.RequestHash,
+            deduplicationKey,
+            ((short)jobType).ToString(CultureInfo.InvariantCulture)));
+        var jobRequest = new SpaceJobEnqueueRequest(
+            jobType,
+            SpaceJobSubjectType.PublishAttempt,
+            attempt.Id,
+            inputHash,
+            processorVersion,
+            VariantKey: deduplicationKey,
+            Priority: 80,
+            MaxAttempts: 5,
+            PayloadJson: JsonSerializer.Serialize(
+                new
+                {
+                    publishAttemptId = attempt.Id,
+                    retryOfJobId = previousJob?.Id,
+                    reason,
+                    resolution,
+                },
+                Json));
+        var now = RequireUtcNow();
+        var retryJob = SpaceJob.CreateQueued(
+            _execution.TenantId,
+            jobRequest.JobType,
+            jobRequest.SubjectType,
+            jobRequest.SubjectId,
+            SpaceJobBusinessKey.Create(jobRequest),
+            jobRequest.InputHash,
+            jobRequest.Priority,
+            jobRequest.MaxAttempts,
+            _execution.ActorId,
+            now,
+            CorrelationId(),
+            jobRequest.PayloadJson,
+            previousJob?.Id);
+        _context.Jobs.Add(retryJob);
+        attempt.ScheduleManualRetry(
+            retryJob.Id,
+            _execution.ActorId,
+            now,
+            reconciliation);
+        if (reconciliation)
+        {
+            var issues = await _context.ReconciliationIssues
+                .Where(value =>
+                    value.AttemptId == attempt.Id &&
+                    value.Status != SpaceReconciliationStatus.Resolved)
+                .ToArrayAsync(cancellationToken);
+            foreach (var issue in issues)
+                issue.BeginInvestigation(resolution!);
+        }
+        await AppendAuditAsync(
+            attempt,
+            retryJob.Id,
+            batchId: null,
+            SpacePublishAuditEventType.ManualRetryRequested,
+            deduplicationKey,
+            "A manual publish recovery Job was requested.",
+            errorCode: null,
+            JsonSerializer.Serialize(
+                new
+                {
+                    reason,
+                    resolution,
+                    retryOfJobId = previousJob?.Id,
+                    jobType = jobType.ToString(),
+                },
+                Json),
+            cancellationToken);
+        await _context.SaveChangesAsync(cancellationToken);
+        await transaction.CommitAsync(cancellationToken);
+        return new RetrySpacePublishAttemptResponse(
             await ToDtoAsync(attempt.Id, cancellationToken),
             IdempotentReplay: false);
     }
@@ -385,10 +563,14 @@ public sealed partial class SpacePublishOrchestrator : ISpacePublishOrchestrator
         }
     }
 
-    private void AddReceipts(
+    private async Task AddReceiptsAsync(
         SpacePublishBatch batch,
-        SpaceWmsBatchResult result)
+        SpaceWmsBatchResult result,
+        CancellationToken cancellationToken)
     {
+        var existing = await _context.WmsReceipts
+            .Where(value => value.BatchId == batch.Id)
+            .ToDictionaryAsync(value => value.LogicalId, cancellationToken);
         foreach (var receipt in result.Items)
         {
             var outcome = receipt.Outcome switch
@@ -400,19 +582,36 @@ public sealed partial class SpacePublishOrchestrator : ISpacePublishOrchestrator
                     SpaceWmsReceiptOutcome.Unknown,
                 _ => SpaceWmsReceiptOutcome.NotApplied,
             };
-            _context.WmsReceipts.Add(
-                SpaceWmsReceipt.Create(
-                    _execution.TenantId,
-                    batch.Id,
-                    receipt.LogicalId,
-                    receipt.LocationCode,
-                    (short)receipt.Action,
-                    outcome,
-                    receipt.ExternalLocationId,
-                    receipt.ExternalVersion,
-                    receipt.ResponseHash,
-                    receipt.ErrorCode,
-                    result.ObservedAtUtc.UtcDateTime));
+            if (existing.TryGetValue(receipt.LogicalId, out var saved))
+            {
+                if (saved.Outcome != outcome ||
+                    !string.Equals(saved.LocationCode, receipt.LocationCode, StringComparison.Ordinal) ||
+                    !string.Equals(saved.ExternalLocationId, receipt.ExternalLocationId, StringComparison.Ordinal) ||
+                    !string.Equals(saved.ExternalVersion, receipt.ExternalVersion, StringComparison.Ordinal) ||
+                    !string.Equals(saved.ResponseHash, receipt.ResponseHash, StringComparison.OrdinalIgnoreCase) ||
+                    !string.Equals(saved.ErrorCode, receipt.ErrorCode, StringComparison.Ordinal))
+                {
+                    throw Processing(
+                        SpaceJobFailureKind.Security,
+                        SpaceErrorCodes.WmsResultUncertain,
+                        "An idempotent WMS replay returned different receipt evidence.");
+                }
+                continue;
+            }
+            var created = SpaceWmsReceipt.Create(
+                _execution.TenantId,
+                batch.Id,
+                receipt.LogicalId,
+                receipt.LocationCode,
+                (short)receipt.Action,
+                outcome,
+                receipt.ExternalLocationId,
+                receipt.ExternalVersion,
+                receipt.ResponseHash,
+                receipt.ErrorCode,
+                result.ObservedAtUtc.UtcDateTime);
+            _context.WmsReceipts.Add(created);
+            existing.Add(receipt.LogicalId, created);
         }
     }
 
@@ -478,16 +677,42 @@ public sealed partial class SpacePublishOrchestrator : ISpacePublishOrchestrator
     {
         attempt.RequireReconciliation(errorCode, summary);
         target.MarkReconciliationRequired();
-        _context.ReconciliationIssues.Add(
-            SpaceReconciliationIssue.Create(
-                _execution.TenantId,
-                attempt.Id,
-                logicalId: null,
-                expectedStateHash: null,
-                wmsStateHash: null,
-                runtimeStateHash: null,
-                classification,
-                summary));
+        var duplicate = await _context.ReconciliationIssues.AnyAsync(
+            value =>
+                value.AttemptId == attempt.Id &&
+                value.Classification == classification &&
+                value.Status != SpaceReconciliationStatus.Resolved &&
+                value.Summary == summary,
+            cancellationToken);
+        if (!duplicate)
+        {
+            _context.ReconciliationIssues.Add(
+                SpaceReconciliationIssue.Create(
+                    _execution.TenantId,
+                    attempt.Id,
+                    logicalId: null,
+                    expectedStateHash: null,
+                    wmsStateHash: null,
+                    runtimeStateHash: null,
+                    classification,
+                    summary));
+        }
+        var jobId = attempt.JobId ?? throw Processing(
+            SpaceJobFailureKind.Bug,
+            SpaceErrorCodes.PublishJobMismatch,
+            "The active publish attempt has no recovery Job identity.");
+        await AppendAuditAsync(
+            attempt,
+            jobId,
+            batchId: null,
+            SpacePublishAuditEventType.ReconciliationRequired,
+            $"job:{jobId:D}:reconciliation:{errorCode}",
+            summary,
+            errorCode,
+            JsonSerializer.Serialize(
+                new { classification = classification.ToString() },
+                Json),
+            cancellationToken);
         await _context.SaveChangesAsync(cancellationToken);
     }
 
@@ -713,7 +938,10 @@ public sealed partial class SpacePublishOrchestrator : ISpacePublishOrchestrator
                     attempt.Id,
                     request.BatchNo,
                     request.OperationKey,
-                    request.PayloadHash),
+                    request.PayloadHash,
+                    JsonSerializer.Serialize(
+                        new PersistedBatchRequest(request.Items),
+                        Json)),
                 request));
         }
         return result;
@@ -756,6 +984,18 @@ public sealed partial class SpacePublishOrchestrator : ISpacePublishOrchestrator
                     value.AttemptId == attempt.Id &&
                     value.Status != SpaceReconciliationStatus.Resolved,
                 cancellationToken);
+        var job = attempt.JobId.HasValue
+            ? await _context.Jobs
+                .AsNoTracking()
+                .SingleOrDefaultAsync(
+                    value => value.Id == attempt.JobId.Value,
+                    cancellationToken)
+            : null;
+        var auditEvents = await _context.PublishAuditEvents
+            .AsNoTracking()
+            .Where(value => value.AttemptId == attempt.Id)
+            .OrderBy(value => value.EventNo)
+            .ToArrayAsync(cancellationToken);
         return new SpacePublishAttemptDto(
             attempt.Id,
             attempt.SiteId,
@@ -776,6 +1016,18 @@ public sealed partial class SpacePublishOrchestrator : ISpacePublishOrchestrator
             attempt.LastErrorCode,
             attempt.Summary,
             attempt.CorrelationId,
+            attempt.JobId,
+            job?.JobType.ToString() ?? "LegacySynchronous",
+            job?.Status.ToString() ?? attempt.Status.ToString(),
+            job?.AttemptCount ?? 0,
+            job?.MaxAttempts ?? 0,
+            job?.Status == SpaceJobStatus.Queued
+                ? job.NextAttemptAtUtc
+                : null,
+            job?.LockExpiresAtUtc,
+            attempt.ManualRetryCount,
+            attempt.LastRetriedAtUtc,
+            attempt.LastRetriedBy,
             openIssueCount,
             batches.Select(value => new SpacePublishBatchDto(
                 value.Id,
@@ -784,6 +1036,7 @@ public sealed partial class SpacePublishOrchestrator : ISpacePublishOrchestrator
                 value.PayloadHash,
                 value.Status.ToString(),
                 value.AttemptCount,
+                value.BatchAttemptNo,
                 value.ExternalOperationId,
                 value.ObservedAtUtc,
                 receiptLookup.GetValueOrDefault(value.Id, [])
@@ -798,7 +1051,83 @@ public sealed partial class SpacePublishOrchestrator : ISpacePublishOrchestrator
                         receipt.ErrorCode,
                         receipt.ReceivedAtUtc))
                     .ToArray()))
+                .ToArray(),
+            auditEvents.Select(value => new SpacePublishAuditEventDto(
+                    value.Id,
+                    value.EventNo,
+                    value.EventType.ToString(),
+                    value.AttemptStatus.ToString(),
+                    value.Step.ToString(),
+                    value.JobId,
+                    value.BatchId,
+                    value.ActorId,
+                    value.CorrelationId,
+                    value.OccurredAtUtc,
+                    value.Summary,
+                    value.ErrorCode,
+                    value.EvidenceHash,
+                    value.PreviousEventHash,
+                    value.EventHash))
                 .ToArray());
+    }
+
+    private async Task<SpacePublishAuditEvent> AppendAuditAsync(
+        SpacePublishAttempt attempt,
+        Guid jobId,
+        Guid? batchId,
+        SpacePublishAuditEventType eventType,
+        string deduplicationKey,
+        string summary,
+        string? errorCode,
+        string evidenceJson,
+        CancellationToken cancellationToken)
+    {
+        var localExisting = _context.PublishAuditEvents.Local
+            .SingleOrDefault(value =>
+                value.AttemptId == attempt.Id &&
+                value.DeduplicationKey == deduplicationKey);
+        if (localExisting is not null)
+            return localExisting;
+        var existing = await _context.PublishAuditEvents
+            .SingleOrDefaultAsync(
+                value =>
+                    value.AttemptId == attempt.Id &&
+                    value.DeduplicationKey == deduplicationKey,
+                cancellationToken);
+        if (existing is not null)
+            return existing;
+        var persistedPrevious = await _context.PublishAuditEvents
+            .Where(value => value.AttemptId == attempt.Id)
+            .OrderByDescending(value => value.EventNo)
+            .FirstOrDefaultAsync(cancellationToken);
+        var localPrevious = _context.PublishAuditEvents.Local
+            .Where(value => value.AttemptId == attempt.Id)
+            .OrderByDescending(value => value.EventNo)
+            .FirstOrDefault();
+        var previous = localPrevious is not null &&
+                       (persistedPrevious is null ||
+                        localPrevious.EventNo >= persistedPrevious.EventNo)
+            ? localPrevious
+            : persistedPrevious;
+        var result = SpacePublishAuditEvent.Create(
+            attempt.TenantId,
+            attempt.Id,
+            jobId,
+            batchId,
+            (previous?.EventNo ?? 0) + 1,
+            eventType,
+            attempt.Status,
+            attempt.CurrentStep,
+            _execution.ActorId,
+            CorrelationId(),
+            RequireUtcNow(),
+            deduplicationKey,
+            summary,
+            errorCode,
+            evidenceJson,
+            previous?.EventHash);
+        _context.PublishAuditEvents.Add(result);
+        return result;
     }
 
     private static void EnsureValidation(

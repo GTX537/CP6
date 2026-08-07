@@ -72,6 +72,44 @@ public sealed class SpacePublishControllerTests
         service.VerifyAll();
     }
 
+    [Fact]
+    public async Task Retry_forwards_reason_and_idempotency_key()
+    {
+        var attemptId = Guid.NewGuid();
+        var request = new RetrySpacePublishAttemptRequest(
+            "Operator verified the WMS incident.",
+            "Operation status is safe to query again.");
+        var response = new RetrySpacePublishAttemptResponse(
+            Attempt(attemptId),
+            IdempotentReplay: false);
+        var service = new Mock<ISpacePublishOrchestrator>();
+        service.Setup(value => value.RetryAsync(
+                attemptId,
+                request,
+                "retry-key",
+                It.IsAny<CancellationToken>()))
+            .ReturnsAsync(response);
+        var controller = new SpacePublishController(service.Object)
+        {
+            ControllerContext = new ControllerContext
+            {
+                HttpContext = new DefaultHttpContext(),
+            },
+        };
+
+        var result = await controller.RetryPublishAttempt(
+            attemptId,
+            request,
+            "retry-key",
+            CancellationToken.None);
+
+        var accepted = Assert.IsType<AcceptedAtActionResult>(result);
+        Assert.Equal(attemptId, accepted.RouteValues!["attemptId"]);
+        Assert.Equal("false", controller.Response.Headers["Idempotent-Replay"]);
+        Assert.Same(response, accepted.Value);
+        service.VerifyAll();
+    }
+
     private static SpacePublishAttemptDto Attempt(Guid id) =>
         new(
             id,
@@ -93,6 +131,17 @@ public sealed class SpacePublishControllerTests
             null,
             "Published.",
             Guid.NewGuid(),
+            Guid.NewGuid(),
+            "Publish",
+            "Succeeded",
+            1,
+            5,
+            null,
+            null,
             0,
+            null,
+            null,
+            0,
+            [],
             []);
 }

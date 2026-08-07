@@ -15,7 +15,7 @@ public sealed class SpaceJobProcessorTests
         new(2026, 7, 30, 20, 0, 0, DateTimeKind.Utc);
 
     [Fact]
-    public void Frozen_step_catalogs_match_the_import_and_build_scene_design()
+    public void Frozen_step_catalogs_match_the_import_build_and_publish_design()
     {
         Assert.Equal(
             [
@@ -43,6 +43,34 @@ public sealed class SpaceJobProcessorTests
                 "AwaitReview",
             ],
             SpaceBuildSceneJobSteps.All);
+        Assert.Equal(
+            [SpacePublishJobSteps.ExecutePublishSaga],
+            new SpacePublishJobProcessor(new RecordingExecutor()).StepCodes);
+        Assert.Equal(
+            [SpacePublishJobSteps.ReconcilePublishSaga],
+            new SpacePublishReconciliationJobProcessor(
+                new RecordingExecutor()).StepCodes);
+    }
+
+    [Theory]
+    [InlineData(SpaceJobType.Publish, "ExecutePublishSaga")]
+    [InlineData(SpaceJobType.Reconcile, "ReconcilePublishSaga")]
+    public async Task Publish_runners_complete_the_single_resumable_saga_step(
+        SpaceJobType jobType,
+        string expectedStep)
+    {
+        var store = new FakeLeaseStore(
+            Lease(jobType, SpaceJobSubjectType.PublishAttempt));
+        var executor = new RecordingExecutor();
+
+        var ran = await Runner(store, executor).RunNextAsync(
+            jobType,
+            "worker-publish");
+
+        Assert.True(ran);
+        Assert.Equal([jobType], store.SupportedJobTypes);
+        Assert.Equal([expectedStep], store.CompletedSteps);
+        Assert.True(store.JobCompleted);
     }
 
     [Fact]
@@ -381,6 +409,38 @@ public sealed class SpaceJobProcessorTests
     }
 
     [Fact]
+    public async Task Publish_timeout_is_transient_so_the_job_can_retry()
+    {
+        var store = new FakeLeaseStore(
+            Lease(
+                SpaceJobType.Publish,
+                SpaceJobSubjectType.PublishAttempt));
+        var executor = new RecordingExecutor
+        {
+            Handler = async (_, token) =>
+            {
+                await Task.Delay(Timeout.InfiniteTimeSpan, token);
+                return Output("never");
+            },
+        };
+
+        await Runner(
+                store,
+                executor,
+                Options(
+                    heartbeat: TimeSpan.FromMilliseconds(100),
+                    lease: TimeSpan.FromMilliseconds(200),
+                    publishTimeout: TimeSpan.FromMilliseconds(20)))
+            .RunNextAsync(SpaceJobType.Publish, "worker-publish");
+
+        Assert.Equal(SpaceJobFailureKind.Transient, store.FailureKind);
+        Assert.Equal(SpaceErrorCodes.JobTimeout, store.ErrorCode);
+        Assert.Equal(
+            [SpacePublishJobSteps.ExecutePublishSaga],
+            store.FailedSteps);
+    }
+
+    [Fact]
     public async Task Invalid_subject_or_unsupported_type_is_never_processed()
     {
         var invalidSubject = new FakeLeaseStore(
@@ -439,6 +499,8 @@ public sealed class SpaceJobProcessorTests
                 new SpaceCadParseJobProcessor(executor),
                 new SpaceImportJobProcessor(executor),
                 new SpaceBuildSceneJobProcessor(executor),
+                new SpacePublishJobProcessor(executor),
+                new SpacePublishReconciliationJobProcessor(executor),
             ],
             options ?? Options());
 
@@ -446,7 +508,8 @@ public sealed class SpaceJobProcessorTests
         TimeSpan? heartbeat = null,
         TimeSpan? lease = null,
         TimeSpan? importTimeout = null,
-        TimeSpan? buildSceneTimeout = null) =>
+        TimeSpan? buildSceneTimeout = null,
+        TimeSpan? publishTimeout = null) =>
         new()
         {
             HeartbeatInterval =
@@ -455,6 +518,8 @@ public sealed class SpaceJobProcessorTests
             ImportTimeout = importTimeout ?? TimeSpan.FromSeconds(5),
             BuildSceneTimeout =
                 buildSceneTimeout ?? TimeSpan.FromSeconds(5),
+            PublishTimeout =
+                publishTimeout ?? TimeSpan.FromSeconds(5),
         };
 
     private static SpaceJobLease Lease(
@@ -482,8 +547,9 @@ public sealed class SpaceJobProcessorTests
 
     private sealed class RecordingExecutor
         : ISpaceImportJobStepExecutor,
-          ISpaceBuildSceneJobStepExecutor,
-          ISpaceCadParseJobStepExecutor
+           ISpaceBuildSceneJobStepExecutor,
+           ISpaceCadParseJobStepExecutor,
+           ISpacePublishJobExecutor
     {
         public Func<
             SpaceJobStepExecution,

@@ -43,6 +43,8 @@ public sealed class SpaceContext : DbContext
     public DbSet<SpaceWmsReceipt> WmsReceipts => Set<SpaceWmsReceipt>();
     public DbSet<SpaceReconciliationIssue> ReconciliationIssues =>
         Set<SpaceReconciliationIssue>();
+    public DbSet<SpacePublishAuditEvent> PublishAuditEvents =>
+        Set<SpacePublishAuditEvent>();
     public DbSet<SpaceRuntimeElement> RuntimeElements =>
         Set<SpaceRuntimeElement>();
     public DbSet<SpaceIdempotencyRecord> IdempotencyRecords =>
@@ -204,6 +206,7 @@ public sealed class SpaceContext : DbContext
         ConfigurePublishBatch(modelBuilder);
         ConfigureWmsReceipt(modelBuilder);
         ConfigureReconciliationIssue(modelBuilder);
+        ConfigurePublishAuditEvent(modelBuilder);
         ConfigureRuntimeElement(modelBuilder);
         ConfigureIdempotencyRecord(modelBuilder);
         ConfigureGenerationRun(modelBuilder);
@@ -283,6 +286,15 @@ public sealed class SpaceContext : DbContext
             }
         }
 
+        foreach (var entry in ChangeTracker.Entries<SpacePublishAuditEvent>())
+        {
+            if (entry.State is EntityState.Modified or EntityState.Deleted)
+            {
+                throw new InvalidOperationException(
+                    "Publish audit events are append-only evidence.");
+            }
+        }
+
         var immutableBatchProperties = new HashSet<string>(StringComparer.Ordinal)
         {
             nameof(SpacePublishBatch.TenantId),
@@ -290,6 +302,7 @@ public sealed class SpaceContext : DbContext
             nameof(SpacePublishBatch.BatchNo),
             nameof(SpacePublishBatch.OperationKey),
             nameof(SpacePublishBatch.PayloadHash),
+            nameof(SpacePublishBatch.RequestJson),
         };
         foreach (var entry in ChangeTracker.Entries<SpacePublishBatch>())
         {
@@ -301,6 +314,35 @@ public sealed class SpaceContext : DbContext
             {
                 throw new InvalidOperationException(
                     "Publish batch identity is immutable.");
+            }
+        }
+
+
+        var immutableAttemptProperties = new HashSet<string>(StringComparer.Ordinal)
+        {
+            nameof(SpacePublishAttempt.TenantId),
+            nameof(SpacePublishAttempt.SiteId),
+            nameof(SpacePublishAttempt.PublishPlanId),
+            nameof(SpacePublishAttempt.TargetVersionId),
+            nameof(SpacePublishAttempt.BaseVersionId),
+            nameof(SpacePublishAttempt.AdapterId),
+            nameof(SpacePublishAttempt.BusinessIdempotencyKey),
+            nameof(SpacePublishAttempt.RequestHash),
+            nameof(SpacePublishAttempt.RequestJson),
+            nameof(SpacePublishAttempt.RequestedBy),
+            nameof(SpacePublishAttempt.CorrelationId),
+            nameof(SpacePublishAttempt.QueuedAtUtc),
+        };
+        foreach (var entry in ChangeTracker.Entries<SpacePublishAttempt>())
+        {
+            if (entry.State == EntityState.Deleted ||
+                entry.State == EntityState.Modified &&
+                entry.Properties.Any(property =>
+                    property.IsModified &&
+                    immutableAttemptProperties.Contains(property.Metadata.Name)))
+            {
+                throw new InvalidOperationException(
+                    "Publish attempt request identity is immutable.");
             }
         }
     }
@@ -871,9 +913,17 @@ public sealed class SpaceContext : DbContext
         var entity = modelBuilder.Entity<SpacePublishAttempt>();
         entity.ToTable(
             "Space_PublishAttempt",
-            table => table.HasCheckConstraint(
-                "CK_Space_PublishAttempt_Slot",
-                "([OwnsPublishSlot] = 1 AND [FinishedAtUtc] IS NULL) OR ([OwnsPublishSlot] = 0)"));
+            table =>
+            {
+                table.HasCheckConstraint(
+                    "CK_Space_PublishAttempt_Slot",
+                    "([OwnsPublishSlot] = 1 AND [FinishedAtUtc] IS NULL) OR ([OwnsPublishSlot] = 0)");
+                table.HasCheckConstraint(
+                    "CK_Space_PublishAttempt_Recovery",
+                    "[ManualRetryCount] >= 0 AND ISJSON([RequestJson]) = 1 AND " +
+                    "(([ManualRetryCount] = 0 AND [LastRetriedAtUtc] IS NULL AND [LastRetriedBy] IS NULL) OR " +
+                    "([ManualRetryCount] > 0 AND [LastRetriedAtUtc] IS NOT NULL AND [LastRetriedBy] IS NOT NULL))");
+            });
         entity.HasKey(x => x.Id);
         entity.Property(x => x.Id).ValueGeneratedNever();
         entity.HasAlternateKey(x => new { x.TenantId, x.Id })
@@ -891,6 +941,9 @@ public sealed class SpaceContext : DbContext
         entity.Property(x => x.ApprovalReference).HasMaxLength(500);
         entity.Property(x => x.LastErrorCode).HasMaxLength(100);
         entity.Property(x => x.Summary).HasMaxLength(2000);
+        entity.Property(x => x.RequestJson).HasColumnType("nvarchar(max)").IsRequired();
+        entity.Property(x => x.QueuedAtUtc).HasColumnType("datetime2");
+        entity.Property(x => x.LastRetriedAtUtc).HasColumnType("datetime2");
         entity.Property(x => x.RowVersion).IsRowVersion();
         entity.HasIndex(x => new { x.TenantId, x.BusinessIdempotencyKey })
             .IsUnique()
@@ -907,13 +960,23 @@ public sealed class SpaceContext : DbContext
             .HasPrincipalKey(x => new { x.TenantId, x.Id })
             .OnDelete(DeleteBehavior.Restrict)
             .HasConstraintName("FK_Space_PublishAttempt_Plan_Tenant");
+        entity.HasOne<SpaceJob>()
+            .WithMany()
+            .HasForeignKey(x => new { x.TenantId, x.JobId })
+            .HasPrincipalKey(x => new { x.TenantId, x.Id })
+            .OnDelete(DeleteBehavior.Restrict)
+            .HasConstraintName("FK_Space_PublishAttempt_Job_Tenant");
         entity.HasQueryFilter(x => x.TenantId == CurrentTenantId && !x.IsDeleted);
     }
 
     private void ConfigurePublishBatch(ModelBuilder modelBuilder)
     {
         var entity = modelBuilder.Entity<SpacePublishBatch>();
-        entity.ToTable("Space_PublishBatch");
+        entity.ToTable(
+            "Space_PublishBatch",
+            table => table.HasCheckConstraint(
+                "CK_Space_PublishBatch_Recovery",
+                "[AttemptCount] >= 0 AND [BatchAttemptNo] >= 0 AND ISJSON([RequestJson]) = 1"));
         entity.HasKey(x => x.Id);
         entity.Property(x => x.Id).ValueGeneratedNever();
         entity.HasAlternateKey(x => new { x.TenantId, x.Id })
@@ -924,6 +987,7 @@ public sealed class SpaceContext : DbContext
         entity.Property(x => x.Status).HasConversion<short>().HasColumnType("smallint");
         entity.Property(x => x.ExternalOperationId).HasMaxLength(200);
         entity.Property(x => x.ResultJson).HasColumnType("nvarchar(max)");
+        entity.Property(x => x.RequestJson).HasColumnType("nvarchar(max)").IsRequired();
         entity.Property(x => x.ObservedAtUtc).HasColumnType("datetime2");
         entity.HasIndex(x => new { x.TenantId, x.AttemptId, x.BatchNo })
             .IsUnique()
@@ -989,6 +1053,55 @@ public sealed class SpaceContext : DbContext
             .HasPrincipalKey(x => new { x.TenantId, x.Id })
             .OnDelete(DeleteBehavior.Restrict)
             .HasConstraintName("FK_Space_ReconciliationIssue_Attempt_Tenant");
+        entity.HasQueryFilter(x => x.TenantId == CurrentTenantId && !x.IsDeleted);
+    }
+
+    private void ConfigurePublishAuditEvent(ModelBuilder modelBuilder)
+    {
+        var entity = modelBuilder.Entity<SpacePublishAuditEvent>();
+        entity.ToTable(
+            "Space_PublishAuditEvent",
+            table => table.HasCheckConstraint(
+                "CK_Space_PublishAuditEvent_Invariants",
+                "[EventNo] > 0 AND ISJSON([EvidenceJson]) = 1 AND " +
+                "LEN([EvidenceHash]) = 64 AND [EvidenceHash] NOT LIKE '%[^0-9a-f]%' AND " +
+                "LEN([EventHash]) = 64 AND [EventHash] NOT LIKE '%[^0-9a-f]%' AND " +
+                "([PreviousEventHash] IS NULL OR (LEN([PreviousEventHash]) = 64 AND " +
+                "[PreviousEventHash] NOT LIKE '%[^0-9a-f]%'))"));
+        entity.HasKey(x => x.Id);
+        entity.Property(x => x.Id).ValueGeneratedNever();
+        ConfigureTenantEntity(entity);
+        entity.Property(x => x.EventType).HasConversion<short>().HasColumnType("smallint");
+        entity.Property(x => x.AttemptStatus).HasConversion<short>().HasColumnType("smallint");
+        entity.Property(x => x.Step).HasConversion<short>().HasColumnType("smallint");
+        entity.Property(x => x.OccurredAtUtc).HasColumnType("datetime2");
+        entity.Property(x => x.DeduplicationKey).HasMaxLength(300).IsRequired();
+        entity.Property(x => x.Summary).HasMaxLength(2000).IsRequired();
+        entity.Property(x => x.ErrorCode).HasMaxLength(100);
+        entity.Property(x => x.EvidenceJson).HasColumnType("nvarchar(max)").IsRequired();
+        ConfigureHash(entity.Property(x => x.EvidenceHash));
+        ConfigureOptionalHash(entity.Property(x => x.PreviousEventHash));
+        ConfigureHash(entity.Property(x => x.EventHash));
+        entity.HasIndex(x => new { x.TenantId, x.AttemptId, x.EventNo })
+            .IsUnique()
+            .HasDatabaseName("UX_Space_PublishAuditEvent_Tenant_Attempt_EventNo");
+        entity.HasIndex(x => new { x.TenantId, x.AttemptId, x.DeduplicationKey })
+            .IsUnique()
+            .HasDatabaseName("UX_Space_PublishAuditEvent_Tenant_Attempt_Dedupe");
+        entity.HasIndex(x => new { x.TenantId, x.JobId, x.OccurredAtUtc })
+            .HasDatabaseName("IX_Space_PublishAuditEvent_Tenant_Job_Occurred");
+        entity.HasOne<SpacePublishAttempt>()
+            .WithMany()
+            .HasForeignKey(x => new { x.TenantId, x.AttemptId })
+            .HasPrincipalKey(x => new { x.TenantId, x.Id })
+            .OnDelete(DeleteBehavior.Restrict)
+            .HasConstraintName("FK_Space_PublishAuditEvent_Attempt_Tenant");
+        entity.HasOne<SpaceJob>()
+            .WithMany()
+            .HasForeignKey(x => new { x.TenantId, x.JobId })
+            .HasPrincipalKey(x => new { x.TenantId, x.Id })
+            .OnDelete(DeleteBehavior.Restrict)
+            .HasConstraintName("FK_Space_PublishAuditEvent_Job_Tenant");
         entity.HasQueryFilter(x => x.TenantId == CurrentTenantId && !x.IsDeleted);
     }
 

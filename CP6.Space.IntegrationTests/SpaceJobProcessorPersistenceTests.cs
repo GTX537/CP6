@@ -18,7 +18,7 @@ public sealed class SpaceJobProcessorPersistenceTests
         new(2026, 7, 30, 20, 30, 0, DateTimeKind.Utc);
 
     [Fact]
-    public void Default_registration_exposes_seven_explicit_processors()
+    public void Default_registration_exposes_nine_explicit_processors()
     {
         var services = new ServiceCollection();
         services.AddScoped<ISpaceExecutionContext>(
@@ -28,6 +28,7 @@ public sealed class SpaceJobProcessorPersistenceTests
         services.AddSpaceDesignV1Persistence(
             "Server=(localdb)\\MSSQLLocalDB;Database=unused;" +
             "Trusted_Connection=True;TrustServerCertificate=True");
+        services.AddScoped<ISpacePublishJobExecutor, RecordingExecutor>();
 
         using var provider = services.BuildServiceProvider();
         using var scope = provider.CreateScope();
@@ -36,14 +37,16 @@ public sealed class SpaceJobProcessorPersistenceTests
             .OrderBy(processor => processor.JobType)
             .ToArray();
 
-        Assert.Equal(7, processors.Length);
+        Assert.Equal(9, processors.Length);
         Assert.IsType<SpaceCadParseJobProcessor>(processors[0]);
         Assert.IsType<SpaceExcelPreflightJobProcessor>(processors[1]);
         Assert.IsType<SpaceImportJobProcessor>(processors[2]);
         Assert.IsType<SpaceValidationJobProcessor>(processors[3]);
         Assert.IsType<SpaceBuildSceneJobProcessor>(processors[4]);
-        Assert.IsType<SpaceGenerationApplyJobProcessor>(processors[5]);
-        Assert.IsType<SpaceAiRetentionJobProcessor>(processors[6]);
+        Assert.IsType<SpacePublishJobProcessor>(processors[5]);
+        Assert.IsType<SpacePublishReconciliationJobProcessor>(processors[6]);
+        Assert.IsType<SpaceGenerationApplyJobProcessor>(processors[7]);
+        Assert.IsType<SpaceAiRetentionJobProcessor>(processors[8]);
         Assert.IsType<UnavailableSpaceCadParseProvider>(
             scope.ServiceProvider.GetRequiredService<ISpaceCadParseProvider>());
         Assert.IsType<SpaceCadParseJobStepExecutor>(
@@ -418,7 +421,8 @@ public sealed class SpaceJobProcessorPersistenceTests
 
     private sealed class RecordingExecutor
         : ISpaceImportJobStepExecutor,
-          ISpaceBuildSceneJobStepExecutor
+          ISpaceBuildSceneJobStepExecutor,
+          ISpacePublishJobExecutor
     {
         public Func<
             SpaceJobStepExecution,

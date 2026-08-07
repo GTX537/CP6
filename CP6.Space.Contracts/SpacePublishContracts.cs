@@ -24,6 +24,7 @@ public sealed record SpacePublishBatchDto(
     string PayloadHash,
     string Status,
     int AttemptCount,
+    int BatchAttemptNo,
     string? ExternalOperationId,
     DateTime? ObservedAtUtc,
     IReadOnlyList<SpacePublishReceiptDto> Receipts);
@@ -48,9 +49,45 @@ public sealed record SpacePublishAttemptDto(
     string? LastErrorCode,
     string? Summary,
     Guid CorrelationId,
+    Guid? JobId,
+    string JobType,
+    string JobStatus,
+    int JobAttemptCount,
+    int JobMaxAttempts,
+    DateTime? NextAttemptAtUtc,
+    DateTime? LockExpiresAtUtc,
+    int ManualRetryCount,
+    DateTime? LastRetriedAtUtc,
+    Guid? LastRetriedBy,
     int OpenReconciliationIssueCount,
-    IReadOnlyList<SpacePublishBatchDto> Batches);
+    IReadOnlyList<SpacePublishBatchDto> Batches,
+    IReadOnlyList<SpacePublishAuditEventDto> AuditEvents);
+
+public sealed record SpacePublishAuditEventDto(
+    Guid Id,
+    int EventNo,
+    string EventType,
+    string AttemptStatus,
+    string Step,
+    Guid JobId,
+    Guid? BatchId,
+    Guid ActorId,
+    Guid CorrelationId,
+    DateTime OccurredAtUtc,
+    string Summary,
+    string? ErrorCode,
+    string EvidenceHash,
+    string? PreviousEventHash,
+    string EventHash);
 
 public sealed record CreateSpacePublishAttemptResponse(
+    SpacePublishAttemptDto Attempt,
+    bool IdempotentReplay);
+
+public sealed record RetrySpacePublishAttemptRequest(
+    string Reason,
+    string? Resolution);
+
+public sealed record RetrySpacePublishAttemptResponse(
     SpacePublishAttemptDto Attempt,
     bool IdempotentReplay);
