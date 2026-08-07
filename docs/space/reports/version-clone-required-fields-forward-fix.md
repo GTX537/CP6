@@ -42,3 +42,9 @@ Version Clone 已恢复真实 SQL Server 全路径可用。Zone、Aisle、Rack �
 - E13-S17 报告中对当时基线失败的描述仍是历史事实；本报告记录其后续修复与全量复验。
 - 正式 CAD 黄金集、真实 External Provider、影子运行和生产发布证据仍是独立外部门禁，本修复不改变这些状态。
 - `main` 未修改。
+
+## 集成与清理
+
+- 远端 `integration/space-v1-20260730` 已推进到证据提交 `08e3fe40`，并验证包含功能提交 `0564afad` 和 no-ff 提交 `01eba1b7`。
+- 已合并的 `codex/space-clone-name-forward-fix` 在本地和远端删除；后续需要修改时从受控集成祖先链重新开分支。
+- 验证后删除当前 worktree 内 16 个可重建 `bin/obj` 目录，回收 513,840,161 bytes（约 0.479 GiB），剩余目标 0。

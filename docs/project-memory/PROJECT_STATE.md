@@ -8,6 +8,7 @@
 - 根因为手写快照 SQL 漏复制 Zone/Aisle/Rack 非空 `Name`，导致三类父记录插入失败并连锁触发 RackLevel/Location 外键错误；Rack 的可空 `RackType` 也存在静默丢失。该问题已在 `ac9c977c` 独立基线复现，确认不由 E13-S17 retention Migration 引入。
 - 修复仅补齐 `Name` 与 `RackType` 列映射，无 Schema/Migration 变化；回归覆盖不同于编码的名称、非空 RackType、RowId 重映射、LogicalId 和层级关系保真。
 - 门禁：新增回归修复前 1/1 失败、修复后 1/1 通过；Version Clone 7/7、Space Unit 430/430、Space Integration + KOUSQLSERVER 336/336 且 0 skipped；Unit/Integration Release build 均 0 warning / 0 error，diff check 通过。证据见 `docs/space/reports/version-clone-required-fields-forward-fix.md`。
+- 远端集成已推进到 `08e3fe40` 并确认祖先链；临时功能分支已在本地/远端删除。清理 16 个可重建 `bin/obj` 目录，回收 513,840,161 bytes（约 0.479 GiB）。
 
 ## E13-S17 迁移、前向修复与保留清理（2026-08-06）
 

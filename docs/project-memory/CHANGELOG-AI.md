@@ -8,6 +8,7 @@
 - 根因已在 `ac9c977c` 独立基线复现：非空 `Name` 遗漏导致父记录插入失败并连锁触发 RackLevel/Location 外键错误，`RackType` 遗漏则会静默丢失。
 - 回归使用不同于编码的业务名称和非空 RackType，验证 RowId 重映射、LogicalId/层级关系和字段保真；修复前 1/1 失败、修复后 1/1 通过。
 - 验证为 Version Clone 7/7、Space Unit 430/430、Space Integration + KOUSQLSERVER 336/336 且 0 skipped，Unit/Integration Release build 均 0 warning / 0 error；`main` 未修改。
+- 远端集成推进到 `08e3fe40` 后验证功能与 no-ff 祖先链，删除本地/远端临时功能分支；清理 16 个可重建目录并回收 513,840,161 bytes。
 
 ## 2026-08-06：Space V1 E13-S17 保留清理与前向修复
 
