@@ -2,6 +2,14 @@
 
 最后更新：2026-08-07
 
+## E06-S04 发布队列与恢复开发切片（2026-08-07）
+
+- 在集成基线 `0c416d44` 上以功能提交 `0f1ee6a9`、no-ff 提交 `0c1e75ff` 进入 `integration/space-v1-20260730`；`main` 未修改。E06-S03 请求内 Saga 已改为持久化 Publish/Reconcile 作业，WebApi Hosted Worker 按 Tenant 执行，租约心跳使用独立 SpaceContext。
+- PublishAttempt/Batch 冻结 Job、请求、步骤、退避和批次恢复信息。30 分钟步骤超时、Job Ledger 指数退避、显式人工 retry、未解决问题优先 Reconcile，共同支持进程退出、WMS 超时、部分结果和运行态结果不确定后的安全恢复；恢复完成前旧 Published 指针保持不变。
+- 新增哈希链式追加审计，区分失败观察、重试调度、人工介入、对账请求/解决和最终完成；审计事件数据库禁止更新/删除。Migration `20260807144532` 对旧活动发布失败关闭，幂等脚本双执行通过。人工 retry API、OpenAPI 和 C#/TypeScript SDK 已同步，OpenAPI path 数为 108。
+- 门禁：Space Unit 458/458、API/权限/OpenAPI 聚焦 59/59、CP6.Tests 2799 passed / 17 skipped、默认 Space Integration 259 passed / 93 SQL-gated skipped、E06-S04 真实 SQL 4/4；完整 solution Release（含 Desktop/Android AOT）0 error / 7 条既有 warning，EF/SDK/diff 门禁通过。证据见 `docs/space/reports/e06-s04-publish-recovery-development.md`。
+- 本卡没有实现 E06-S05 历史再发布回退或 E06-S06 管理 UI。生产等价 WMS 演练、正式 CAD Provider/授权黄金集、E03-S05 权威 Match Artifact 写入链及 Beta/GA 证据仍未完成；下一张为 E06-S05。
+
 ## E06-S03 仓库级发布编排开发切片（2026-08-07）
 
 - 在集成基线 `0bde7bc9` 上以功能提交 `48082680`、no-ff 提交 `5b9b95ab` 进入 `integration/space-v1-20260730`；`main` 未修改。新增创建/读取发布尝试 API、`space:model:publish` 权限、写/读审计、OpenAPI 及 C#/TypeScript SDK。
