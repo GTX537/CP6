@@ -12857,6 +12857,170 @@
         }
       }
     },
+    "/api/space/design/v1/versions/{versionId}/publish-preview": {
+      "get": {
+        "tags": [
+          "SpacePublishPreview"
+        ],
+        "operationId": "GetPublishPreview",
+        "parameters": [
+          {
+            "name": "versionId",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "string",
+              "format": "uuid"
+            }
+          },
+          {
+            "name": "floorLogicalId",
+            "in": "query",
+            "schema": {
+              "type": "string",
+              "format": "uuid"
+            }
+          },
+          {
+            "name": "objectType",
+            "in": "query",
+            "schema": {
+              "type": "string"
+            }
+          },
+          {
+            "name": "action",
+            "in": "query",
+            "schema": {
+              "type": "string"
+            }
+          },
+          {
+            "name": "impactCode",
+            "in": "query",
+            "schema": {
+              "type": "string"
+            }
+          },
+          {
+            "name": "includeNoOp",
+            "in": "query",
+            "schema": {
+              "type": "boolean",
+              "default": false
+            }
+          },
+          {
+            "name": "limit",
+            "in": "query",
+            "schema": {
+              "type": "integer",
+              "format": "int32",
+              "default": 100
+            }
+          },
+          {
+            "name": "cursor",
+            "in": "query",
+            "schema": {
+              "type": "string"
+            }
+          }
+        ],
+        "responses": {
+          "400": {
+            "description": "Bad Request",
+            "content": {
+              "application/problem+json": {
+                "schema": {
+                  "$ref": "#/components/schemas/CP6.WebApi.OpenApi.SpaceDesignProblemDetails"
+                }
+              }
+            }
+          },
+          "401": {
+            "description": "Unauthorized",
+            "content": {
+              "application/problem+json": {
+                "schema": {
+                  "$ref": "#/components/schemas/CP6.WebApi.OpenApi.SpaceDesignProblemDetails"
+                }
+              }
+            }
+          },
+          "403": {
+            "description": "Forbidden",
+            "content": {
+              "application/problem+json": {
+                "schema": {
+                  "$ref": "#/components/schemas/CP6.WebApi.OpenApi.SpaceDesignProblemDetails"
+                }
+              }
+            }
+          },
+          "404": {
+            "description": "Not Found",
+            "content": {
+              "application/problem+json": {
+                "schema": {
+                  "$ref": "#/components/schemas/CP6.WebApi.OpenApi.SpaceDesignProblemDetails"
+                }
+              }
+            }
+          },
+          "409": {
+            "description": "Conflict",
+            "content": {
+              "application/problem+json": {
+                "schema": {
+                  "$ref": "#/components/schemas/CP6.WebApi.OpenApi.SpaceDesignProblemDetails"
+                }
+              }
+            }
+          },
+          "422": {
+            "description": "Unprocessable Content",
+            "content": {
+              "application/problem+json": {
+                "schema": {
+                  "$ref": "#/components/schemas/CP6.WebApi.OpenApi.SpaceDesignProblemDetails"
+                }
+              }
+            }
+          },
+          "500": {
+            "description": "Internal Server Error",
+            "content": {
+              "application/problem+json": {
+                "schema": {
+                  "$ref": "#/components/schemas/CP6.WebApi.OpenApi.SpaceDesignProblemDetails"
+                }
+              }
+            }
+          },
+          "200": {
+            "description": "OK",
+            "content": {
+              "text/plain": {
+                "schema": {
+                  "$ref": "#/components/schemas/CP6.Space.Contracts.SpacePublishPreviewDto"
+                }
+              },
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/CP6.Space.Contracts.SpacePublishPreviewDto"
+                }
+              },
+              "text/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/CP6.Space.Contracts.SpacePublishPreviewDto"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
     "/api/space/design/v1/versions/{versionId}/validations": {
       "post": {
         "tags": [
@@ -20309,6 +20473,219 @@
           "capabilityFlags": {
             "type": "string",
             "nullable": true
+          }
+        },
+        "additionalProperties": false
+      },
+      "CP6.Space.Contracts.SpacePublishChangeSummaryDto": {
+        "type": "object",
+        "properties": {
+          "createCount": {
+            "type": "integer",
+            "format": "int32"
+          },
+          "updateMasterCount": {
+            "type": "integer",
+            "format": "int32"
+          },
+          "updateGeometryOnlyCount": {
+            "type": "integer",
+            "format": "int32"
+          },
+          "disableCount": {
+            "type": "integer",
+            "format": "int32"
+          },
+          "restoreCount": {
+            "type": "integer",
+            "format": "int32"
+          },
+          "noOpCount": {
+            "type": "integer",
+            "format": "int32"
+          }
+        },
+        "additionalProperties": false
+      },
+      "CP6.Space.Contracts.SpacePublishImpactSummaryDto": {
+        "type": "object",
+        "properties": {
+          "wmsCreateCount": {
+            "type": "integer",
+            "format": "int32"
+          },
+          "wmsUpdateCount": {
+            "type": "integer",
+            "format": "int32"
+          },
+          "wmsDisableCount": {
+            "type": "integer",
+            "format": "int32"
+          },
+          "wmsRestoreCount": {
+            "type": "integer",
+            "format": "int32"
+          },
+          "wmsNoOpCount": {
+            "type": "integer",
+            "format": "int32"
+          },
+          "runtimeOnlyCount": {
+            "type": "integer",
+            "format": "int32"
+          },
+          "blockingCount": {
+            "type": "integer",
+            "format": "int32"
+          }
+        },
+        "additionalProperties": false
+      },
+      "CP6.Space.Contracts.SpacePublishPreviewDto": {
+        "type": "object",
+        "properties": {
+          "targetVersionId": {
+            "type": "string",
+            "format": "uuid"
+          },
+          "baseVersionId": {
+            "type": "string",
+            "format": "uuid",
+            "nullable": true
+          },
+          "validationRunId": {
+            "type": "string",
+            "format": "uuid"
+          },
+          "validationStatus": {
+            "type": "string",
+            "nullable": true
+          },
+          "validationBlockingCount": {
+            "type": "integer",
+            "format": "int32"
+          },
+          "contentHash": {
+            "type": "string",
+            "nullable": true
+          },
+          "planRuleSetVersion": {
+            "type": "string",
+            "nullable": true
+          },
+          "adapterId": {
+            "type": "string",
+            "nullable": true
+          },
+          "capabilityHash": {
+            "type": "string",
+            "nullable": true
+          },
+          "planHash": {
+            "type": "string",
+            "nullable": true
+          },
+          "publishable": {
+            "type": "boolean"
+          },
+          "itemCount": {
+            "type": "integer",
+            "format": "int32"
+          },
+          "changeCount": {
+            "type": "integer",
+            "format": "int32"
+          },
+          "matchedItemCount": {
+            "type": "integer",
+            "format": "int32"
+          },
+          "changes": {
+            "$ref": "#/components/schemas/CP6.Space.Contracts.SpacePublishChangeSummaryDto"
+          },
+          "wmsImpact": {
+            "$ref": "#/components/schemas/CP6.Space.Contracts.SpacePublishImpactSummaryDto"
+          },
+          "items": {
+            "type": "array",
+            "items": {
+              "$ref": "#/components/schemas/CP6.Space.Contracts.SpacePublishPreviewItemDto"
+            },
+            "nullable": true
+          },
+          "nextCursor": {
+            "type": "string",
+            "nullable": true
+          }
+        },
+        "additionalProperties": false
+      },
+      "CP6.Space.Contracts.SpacePublishPreviewItemDto": {
+        "type": "object",
+        "properties": {
+          "sequenceNo": {
+            "type": "integer",
+            "format": "int32"
+          },
+          "objectType": {
+            "type": "string",
+            "nullable": true
+          },
+          "logicalId": {
+            "type": "string",
+            "format": "uuid"
+          },
+          "floorLogicalId": {
+            "type": "string",
+            "format": "uuid",
+            "nullable": true
+          },
+          "action": {
+            "type": "string",
+            "nullable": true
+          },
+          "beforeHash": {
+            "type": "string",
+            "nullable": true
+          },
+          "afterHash": {
+            "type": "string",
+            "nullable": true
+          },
+          "beforeCode": {
+            "type": "string",
+            "nullable": true
+          },
+          "afterCode": {
+            "type": "string",
+            "nullable": true
+          },
+          "externalBindingId": {
+            "type": "string",
+            "nullable": true
+          },
+          "payloadHash": {
+            "type": "string",
+            "nullable": true
+          },
+          "impactCode": {
+            "type": "string",
+            "nullable": true
+          },
+          "masterChanged": {
+            "type": "boolean"
+          },
+          "geometryChanged": {
+            "type": "boolean"
+          },
+          "provenanceChanged": {
+            "type": "boolean"
+          },
+          "wmsChanged": {
+            "type": "boolean"
+          },
+          "blocking": {
+            "type": "boolean"
           }
         },
         "additionalProperties": false

@@ -90,6 +90,8 @@ public class SpacePermissionAttributeTests
                 "space:model:read",
             ["SpaceValidationController.GetValidation"] =
                 "space:model:read",
+            ["SpacePublishPreviewController.GetPublishPreview"] =
+                "space:model:read",
             ["SpaceDesignV1Controller.GetUnderlayCalibration"] = "space:model:read",
             ["SpaceDesignV1Controller.GetJob"] = "space:model:read",
             ["SpaceDesignV1Controller.GetIssues"] = "space:model:read",
@@ -215,7 +217,7 @@ public class SpacePermissionAttributeTests
     public void SpaceControllers_AreDiscovered()
     {
         // 守卫：确保反射确实扫到全部 controller（防命名空间/程序集变动导致「空扫空过」）。
-        Assert.Equal(36, SpaceControllers.Count());
+        Assert.Equal(37, SpaceControllers.Count());
     }
 
     [Fact]

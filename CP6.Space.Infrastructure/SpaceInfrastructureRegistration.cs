@@ -110,12 +110,16 @@ public static class SpaceInfrastructureRegistration
         services.AddScoped<ISpaceJobQueue, EfSpaceJobQueue>();
         services.AddScoped<SpaceJobCoordinator>();
         services.AddScoped<SpaceValidationEngine>();
+        services.AddScoped<SpacePublishPlanEngine>();
         services.AddScoped<
             ISpaceValidationProfileProvider,
             DefaultSpaceValidationProfileProvider>();
         services.AddScoped<
             ISpaceValidationService,
             SpaceValidationService>();
+        services.AddScoped<
+            ISpacePublishPreviewService,
+            SpacePublishPreviewService>();
         services.AddScoped<ISpaceJobLeaseStore, EfSpaceJobLeaseStore>();
         services.AddScoped<ISpaceJobProgressReader, EfSpaceJobProgressReader>();
         services.AddScoped<
