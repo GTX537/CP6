@@ -1,5 +1,12 @@
 # 已完成能力与近期里程碑
 
+## 2026-08-06 E13-S17 迁移、前向修复与保留清理
+
+- 以 `12db5531` / `e7720df4` 完成功能与 no-ff 受控集成；交付 Tenant 级可恢复保留 Job、90 天生成载荷净化、365 天 Usage 逻辑归档、Run 保留锁和 SQL 同租户并发租约。
+- Published/Superseded/Publishing/Reconciliation、Decision、Locked Fact、CommandBatch、预算与审计不删除；Staging 只清空临时大 JSON 并软删除，重复执行零副作用。
+- Migration 只增加 5 列和 4 索引，幂等 SQL 双执行通过；`Down` 失败关闭并要求更高版本 forward-fix，禁止破坏性回滚审计数据。
+- 门禁为本卡 unit 6/6、内存/迁移 4/4、KOUSQLSERVER 3/3、Space Unit 430/430、默认 Integration 255 passed / 81 SQL-gated skipped、Release 0 error、EF 无漂移。E13-S14/S15/S19 与依赖 S15 的 S18 继续等待正式外部证据。
+
 ## 2026-08-06 E13-S13 外部用户拒绝与数据外发门禁
 
 - 以 `37bf5c37` / `e1682efc` 完成功能和 no-ff 受控集成；Gateway 在读取策略、申请配额和调用 Provider 前再次拒绝外部主体，真实 External Provider 发送前还必须通过精确字段白名单与最小化 Token 语法门禁。

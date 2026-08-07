@@ -2,6 +2,13 @@
 
 > 依据 Git log 汇总，不替代完整 Git 历史。重点记录影响接手判断的里程碑。
 
+## 2026-08-06：Space V1 E13-S17 保留清理与前向修复
+
+- `12db5531` / `e7720df4`：实现并 no-ff 集成 Tenant 级 AI retention Job、90 天生成载荷净化、365 天 Usage 逻辑归档、Run 保留锁和同租户 `sp_getapplock`。
+- Published/Superseded/Publishing/Reconciliation、Decision、Locked Fact、CommandBatch、预算账本与审计不删除；Staging 清空临时 JSON 后软删除，批次和重复执行均安全。
+- Migration `20260806160931` 只增加 5 列与 4 索引，幂等脚本在 KOUSQLSERVER 连续执行两次通过；`Down` 以 `THROW 51017` 禁止破坏性回滚，故障按更高版本 forward-fix 处理。
+- 验证为本卡 unit 6/6、内存/迁移 4/4、真实 SQL 3/3、Space Unit 430/430、默认 Integration 255 passed / 81 SQL-gated skipped、Release 0 error、EF/SQL/diff 门禁通过。两个既有 Version Clone 真实 SQL 失败已在 `ac9c977c` 基线复现并登记。
+
 ## 2026-08-06：Space V1 E13-S13 外部 AI 安全门禁
 
 - `37bf5c37` / `e1682efc`：实现并 no-ff 集成外部主体 Gateway 拒绝、External Provider 冻结字段与最小化 Token 出站门禁、AI 读取审计补齐和跨角色操作矩阵。

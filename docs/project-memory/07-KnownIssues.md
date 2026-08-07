@@ -15,6 +15,7 @@
 
 ## 代码层已知项
 
+- Space Version Clone 的快照 SQL 未写 `Space_ZoneRevision`、`Space_AisleRevision`、`Space_RackRevision` 新增的非空 `Name`；真实 SQL 的完整快照克隆和 Planning Scenario 克隆因此失败，并连锁触发 RackLevel/Location 外键错误。该问题已在 E13-S17 起始基线 `ac9c977c` 独立复现，不由保留迁移引入；修复时必须同时补齐三类 clone 列映射和 SQL 回归。
 - WF SignalR 通知当前广播后由客户端按用户过滤，隐私与效率均不如定向推送。
 - Space rackSeq 大规则集排序仍是最小实现。
 - FIN BudgetLine 缺版本级并发控制。

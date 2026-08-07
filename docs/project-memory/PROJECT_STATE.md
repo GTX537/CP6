@@ -2,6 +2,15 @@
 
 最后更新：2026-08-06
 
+## E13-S17 迁移、前向修复与保留清理（2026-08-06）
+
+- 在 `ac9c977c` 基线上以功能提交 `12db5531`、no-ff 提交 `e7720df4` 进入 `integration/space-v1-20260730`；`main` 未修改。
+- 新增 Tenant 级 `AiRetentionCleanup` Job、严格每日冻结 payload、5 次安全重试、Step checkpoint 与 SQL Server transaction-owned `sp_getapplock`。外部主体和非专用 service principal 在排队前失败关闭，公共 HTTP 未暴露清理入口。
+- Draft/Failed/Abandoned 的非 current 终态 Run 默认 90 天后净化大载荷；Usage 至少 365 天后逻辑归档；Staging 清空临时 JSON 后软删除。Published/Superseded/Publishing/Reconciliation、有效保留锁、Decision、Locked Fact、CommandBatch、预算账本和审计历史不清理。
+- Migration `20260806160931` 只新增 5 个 nullable 列与 4 个索引；幂等 SQL 连续执行两次通过。`Down` 以 `THROW 51017` 禁止破坏性回滚，失败必须通过更高版本 forward-fix Migration 修复。
+- 门禁：E13-S17 unit 6/6、内存/迁移 4/4、KOUSQLSERVER 3/3、Space Unit 430/430、默认 Integration 255 passed / 81 SQL-gated skipped、Release build 0 error、EF 无漂移、diff check 通过。完整证据见 `docs/space/reports/e13-s17-ai-retention-forward-fix.md`。
+- 全量真实 SQL 的两个 Version Clone 失败已在起始提交独立复现，属于既有 clone SQL 缺少 Zone/Aisle/Rack `Name` 的基线问题，已登记 Known Issue。E13-S14/S15/S19 仍等待外部证据；E13-S18 依赖 S15，不能提前签收。
+
 ## E13-S13 外部用户拒绝与数据外发门禁（2026-08-06）
 
 - 在 E13-S11 后续集成基线 `d2a96be4` 上完成功能提交 `37bf5c37`，并以 no-ff 提交 `e1682efc` 集成到 `integration/space-v1-20260730`；`main` 未修改。
