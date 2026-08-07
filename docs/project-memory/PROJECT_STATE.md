@@ -4,11 +4,11 @@
 
 ## E02-S08 CAD 解析作业安全开发切片（2026-08-06）
 
-- E02-S08 功能提交 `20ade7e7` 已验证，待 no-ff 进入 `integration/space-v1-20260730`；`main` 未修改。新增 CAD Source 上传、CadParse 排队/查询/取消/显式重试、Artifact 持久化和 PreviewReady 收口，全部复用现有 Job Ledger、Attempt、Step、租约与 checkpoint。
+- E02-S08 已以功能提交 `20ade7e7`、证据提交 `29667831` 和 no-ff 提交 `feaf29fb` 进入 `integration/space-v1-20260730`；`main` 未修改。新增 CAD Source 上传、CadParse 排队/查询/取消/显式重试、Artifact 持久化和 PreviewReady 收口，全部复用现有 Job Ledger、Attempt、Step、租约与 checkpoint。
 - 排队/运行期间 Source 保持 Ready；取消、Provider 失败或进程中断不会留下 Parsing 污染。只有 CadIr、LayerInventory、PreviewSet 三类 Artifact 的引用、大小和 SHA 全部复验通过，最终事务才执行 Ready → Parsing → PreviewReady；全路径不写 Draft。
 - 同 Job 重放复用自身 Artifact；显式 Retry 只在输入哈希和 `space-cad-parse-v1` processor version 相同时复用直接父 Job checkpoint。SQL Server 同一 Tenant/Source 以 transaction-owned application lock 串行化启动和重试，并验证双连接同键只产生一个 Retry Job。生产 Provider 默认失败关闭，未配置文件存储时只在实际执行步骤时失败，不阻止 WebApi composition。
 - 门禁：Space Unit 431/431；默认 Space Integration 259 passed / 83 SQL-gated skipped；本卡内存 4/4、processor 5/5、controller 3/3、权限 27/27；KOUSQLSERVER 血缘与跨 Retry checkpoint 各 1/1；CP6.Tests 2788 passed / 17 environment-gated skipped；Release build、EF 无漂移通过。完整真实 SQL 全量曾因长时间无输出人工终止，不记为通过。
-- 这是开发闭环，不是正式 CAD 签收。仍缺生产原生 DWG/DXF Provider、组织有权使用的黄金集、production Worker host 自动接线和真实大文件/故障/性能证据；合成 DXF 不能替代发布门禁。证据见 `docs/space/reports/e02-s08-cad-parse-job-safety-development.md`。
+- 这是开发闭环，不是正式 CAD 签收。仍缺生产原生 DWG/DXF Provider、组织有权使用的黄金集、production Worker host 自动接线和真实大文件/故障/性能证据；合成 DXF 不能替代发布门禁。合并后清理 21 个可重建目录、996 个文件、623,921,427 bytes（约 0.581 GiB）。证据见 `docs/space/reports/e02-s08-cad-parse-job-safety-development.md`。
 
 ## Version Clone 必填字段前向修复（2026-08-06）
 
