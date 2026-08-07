@@ -97,6 +97,29 @@ public sealed class SpaceJobProcessorTests
     }
 
     [Fact]
+    public async Task Cad_parse_runner_completes_frozen_artifact_and_finalize_steps()
+    {
+        var store = new FakeLeaseStore(
+            Lease(
+                SpaceJobType.CadParse,
+                SpaceJobSubjectType.ModelSource));
+        var executor = new RecordingExecutor();
+
+        await Runner(store, executor).RunNextAsync(
+            SpaceJobType.CadParse,
+            "worker-cad");
+
+        Assert.Equal(
+            [
+                SpaceCadParseJobProcessor.GenerateArtifacts,
+                SpaceCadParseJobProcessor.FinalizePreview,
+            ],
+            executor.StepCodes);
+        Assert.Equal(executor.StepCodes, store.CompletedSteps);
+        Assert.True(store.JobCompleted);
+    }
+
+    [Fact]
     public async Task Matching_checkpoint_is_audited_as_reused_without_execution()
     {
         var store = new FakeLeaseStore(
@@ -413,6 +436,7 @@ public sealed class SpaceJobProcessorTests
         new(
             store,
             [
+                new SpaceCadParseJobProcessor(executor),
                 new SpaceImportJobProcessor(executor),
                 new SpaceBuildSceneJobProcessor(executor),
             ],
@@ -458,7 +482,8 @@ public sealed class SpaceJobProcessorTests
 
     private sealed class RecordingExecutor
         : ISpaceImportJobStepExecutor,
-          ISpaceBuildSceneJobStepExecutor
+          ISpaceBuildSceneJobStepExecutor,
+          ISpaceCadParseJobStepExecutor
     {
         public Func<
             SpaceJobStepExecution,

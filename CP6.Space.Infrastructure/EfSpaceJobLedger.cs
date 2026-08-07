@@ -418,7 +418,9 @@ public sealed class EfSpaceJobLeaseStore : ISpaceJobLeaseStore
                 join attempt in _context.JobAttempts.AsNoTracking()
                     on new { step.TenantId, Id = step.AttemptId }
                     equals new { attempt.TenantId, attempt.Id }
-                where attempt.JobId == job.Id &&
+                where (attempt.JobId == job.Id ||
+                       (job.RetryOfJobId.HasValue &&
+                        attempt.JobId == job.RetryOfJobId.Value)) &&
                       attempt.Id != activeAttempt.Id &&
                       attempt.InputHash == activeAttempt.InputHash &&
                       attempt.ProcessorVersion == activeAttempt.ProcessorVersion &&
@@ -427,7 +429,9 @@ public sealed class EfSpaceJobLeaseStore : ISpaceJobLeaseStore
                        step.Status == SpaceJobStepStatus.Reused) &&
                       step.CheckpointJson != null &&
                       step.OutputHash != null
-                orderby attempt.AttemptNo descending, step.StepNo descending
+                orderby (attempt.JobId == job.Id) descending,
+                    attempt.AttemptNo descending,
+                    step.StepNo descending
                 select new SpaceReusableCheckpoint(
                     step.Id,
                     attempt.Id,

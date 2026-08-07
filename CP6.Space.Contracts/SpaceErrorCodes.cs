@@ -70,6 +70,10 @@ public static class SpaceErrorCodes
         "SPACE_JOB_PROCESSOR_FAILED";
     public const string JobTimeout = "SPACE_JOB_TIMEOUT";
     public const string ParseFailed = "SPACE_PARSE_FAILED";
+    public const string CadParseInvalid = "SPACE_CAD_PARSE_INVALID";
+    public const string CadParseNotFound = "SPACE_CAD_PARSE_NOT_FOUND";
+    public const string CadParseArtifactInvalid =
+        "SPACE_CAD_PARSE_ARTIFACT_INVALID";
     public const string AiDisabled = "SPACE_AI_DISABLED";
     public const string AiQuotaExceeded = "SPACE_AI_QUOTA_EXCEEDED";
     public const string AiProviderUnavailable =
