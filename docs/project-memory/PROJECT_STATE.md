@@ -1,6 +1,14 @@
 # 项目当前状态
 
-最后更新：2026-08-06
+最后更新：2026-08-07
+
+## E06-S01 版本权威校验引擎开发切片（2026-08-07）
+
+- 在集成基线 `022cb937` 上完成 E06-S01 功能分支验证，等待 no-ff 进入 `integration/space-v1-20260730`；`main` 未修改。校验只读取服务端权威 ModelVersion 快照，冻结 ContentRevision/Hash、规则集、WMS Adapter/CapabilityHash、Job 和 Correlation，不接受客户端自报校验结果。
+- 新增 ValidationRun、统一 Issue 血缘和 Validate Job Processor；覆盖编码、几何、层级、绑定、来源、AI provenance、已发布身份冻结及既有问题。无 Blocking 时 Passed/Ready，有 Blocking 时 Blocked/Draft，权威输入或能力漂移时 Failed/Draft。相同输入在 SQL transaction app lock 与唯一索引下只生成一个 Run/Job；发布态在复用前失败关闭。
+- 新增 POST 创建/复用校验和 GET 查询接口、`space:model:validate` 权限、写/读审计、OpenAPI 及 C#/TypeScript SDK。Migration `20260807105256` 与幂等 SQL 双执行通过，Down 失败关闭以保留审计证据。
+- 门禁：校验引擎 9/9、API/权限/审计/OpenAPI 74/74、Space Unit 440/440、CP6.Tests 2793 passed / 17 skipped、默认 Space Integration 259 passed / 86 SQL-gated skipped、E06-S01 真实 SQL 3/3；完整 solution Release 0 warning/0 error，EF/SDK/幂等 SQL/diff 门禁通过。证据见 `docs/space/reports/e06-s01-validation-engine-development.md`。
+- 这不是完整 E06/Beta/GA 签收。E06-S02～S06、生产 Hosted Worker、E03-S04 权威 Match Artifact/E03-S05 写入链，以及正式 CAD Provider/授权黄金集仍未完成；下一张可独立推进 E06-S02 版本差异与影响预览 API。
 
 ## E02-S08 CAD 解析作业安全开发切片（2026-08-06）
 
@@ -540,7 +548,7 @@
 | E01 S01–S06 | 已进入集成基线 | `539d56de` + `85792161` + `36f534d9` + `2ccdff7a`；版本/来源文件/Job Ledger、Published→Draft Clone、Design API v1、生成 SDK、文件安全扫描与保留清理 |
 | E02 S01 | 部分进入集成基线，最终签收受阻 | `fe959066` + `3742fbff`；中立审计/压力/运行证据/preflight 已集成；另有 20 份可重复生成的合成开发 DXF（L1～L5 各 4 份，五种 DXF 文件头），但正式 DWG 黄金集、授权、供应商包/凭据和冻结 Worker 尚缺 |
 | E03 S01–S03 | 已进入集成基线 | `033e8872` + `8521a701` + `f1310b40` + `e0cc4964` + `9d0a59e7` + `3571f677`；标准 Excel 模板、版本化字段映射、隔离上传、异步预检、结构化问题与受保护错误报告 |
-| E02 S02–S07、E03 S04、E04 S05、E13 S04 | 开发切片已进入集成，正式签收受阻 | 合成 DXF 已贯通中立 CAD IR、坐标、Inventory、Mapping、语义、问题定位、Excel/CAD 匹配、Review Workspace 和 AI 外发最小化；均不写 Draft、不替代授权适配器/生产 Artifact/权限审计/真实黄金集验收。E13-S04 no-ff 为 `8bc1114d` |
+| E02 S02–S08、E03 S04、E04 S05、E13 S04 | 开发切片已进入集成或已验证，正式签收受阻 | 合成 DXF 已贯通中立 CAD IR、坐标、Inventory、Mapping、语义、问题定位、Excel/CAD 匹配、Review Workspace、CAD Parse 作业安全和 AI 外发最小化；均不替代授权适配器/生产 Artifact/权限审计/真实黄金集验收。E13-S04 no-ff 为 `8bc1114d` |
 | E04 S01–S04、S06 | 已进入集成基线 | `1d57a3b5` + `e8e84853` + `20ee0af0` + `c1043d15` + `b322e84a` + `39146c38` + `9a87dc30` + `f9c7fd21` + `20f248bd` + `2b6ef127`；安全底图、坐标标定、通用元素属性、统一批量编辑与补偿命令，以及同一 Design Scene 的 2D/3D 只读预览和实际渲染结构一致性证明 |
 | E07 S01–S05 | 已进入集成基线 | `d06a8bd1` + `6e67a9d1` + `74577015` + `6d751e0c` + `15ccf992` + `389bf4ec`；版本化能力合同、CP6 真实适配器、持久化幂等账本、标准模拟器、确定性标准仓与存量 WMS 采纳/绑定 |
 | E08 S01–S05 | 已进入集成基线 | `3df6b1d2` + `b2bb7a35` + `9a478c7a` + `d4cd8a82` + `8d8f7e01` + `dfb6e93b` + `9f7e38f8` + `994339a6` + `cc1d8baf` + `24464fab` + `7a05c05f` + `675e485c`；统一 Published 运行源、双身份、来源新鲜度、库存定位、任务路径与 10,000 库位性能基线 |
@@ -553,7 +561,8 @@
 | E11 S05 | 已进入集成基线 | `139c76b5` + `e8df8288` + `a0b247ab` + `cf35849c`；实时执行状态、三层幂等回执、受限人工重试、安全整批补偿、权限审计和 Viewer 执行治理 |
 | E13 S01–S13、S16 | 已进入集成基线；真实外部 Provider 仍关闭 | Provider/确定性端口、Run/Proposal/Decision/Usage、可恢复 Worker、最小化/本地生成/输出校验/融合/审核/决策/原子 Apply/恢复、外部主体与外发门禁，以及数据库配额和策略/用量 UI |
 | E05 S01–S05 | 已进入集成基线 | 通用元素、逐层货架、统一场景 DTO、版本化资产库及确定性参数化 3D 渲染 |
-| E02 S02–S08 正式签收、E03 S05、E06、E13 S05～S11 正式外部链验收、S14～S15/S17～S19 等剩余范围 | 候选证据或尚未实现 | 生产 CAD 链、正式输入与真实外部 Provider/发布证据仍需逐卡解除；`0d25da4d` 只作提取来源，不得以候选报告或开发切片替代正式集成验收 |
+| E06 S01 | 功能分支已验证，待 no-ff 集成 | 服务端权威快照、冻结规则/WMS 能力、ValidationRun/Issue/Job、Passed/Blocked/Failed 状态机、权限审计与 SDK；真实 SQL 3/3、完整 Release 与漂移门禁通过 |
+| E02 S02–S08 正式签收、E03 S05、E06 S02–S06、E13 S05～S11 正式外部链验收、S14～S15/S17～S19 等剩余范围 | 候选证据或尚未实现 | 生产 CAD 链、正式输入、Hosted Worker、权威 Match Artifact、版本差异/发布和真实外部 Provider 证据仍需逐卡解除；`0d25da4d` 只作提取来源，不得以候选报告或开发切片替代正式集成验收 |
 
 ## 上一完成波：GR-VP
 
@@ -569,6 +578,7 @@
 
 ## 最近验证基线
 
+- E06-S01 功能分支已完成验证：Space Unit 440/440、CP6.Tests 2793 passed / 17 environment-gated skipped、默认 Space Integration 259 passed / 86 SQL-gated skipped、本卡真实 SQL 3/3、完整 solution Release 0 warning / 0 error、EF/SDK drift、幂等增量 SQL 双执行和差异检查均通过。待 no-ff 集成后补充最终提交号。
 - E11-S05 已推进至受控集成提交 `cf35849c`：合同 `139c76b5`、功能 `e8df8288`、文档 `a0b247ab`。功能分支全量门禁为 Space Unit 249/249、默认 Space Integration 230 passed / 62 SQL-gated skipped、CP6.Tests 2757 passed / 17 environment-gated skipped、前端 118 files / 658 tests、完整 solution Release、生产构建、EF/SDK drift、TypeScript SDK strict no-emit 和差异检查通过；合并态服务/适配器 14/14、权限/合同/种子 35/35、前端 21/21、类型、SDK drift 与 EF pending model 通过。i18n 仍为 908 项既有欠账，本卡净新增 0。
 - E11-S04 已推进至受控集成提交 `c19231db`：合同 `098fb54b`、功能 `a7298e28`、文档 `a552d05d`。功能分支全量门禁为 Space Unit 249/249、默认 Space Integration 224 passed / 62 SQL-gated skipped、CP6.Tests 2757 passed / 17 environment-gated skipped、前端 118 files / 656 tests、完整 solution Release、生产构建、EF/SDK drift 与两个 TypeScript strict no-emit 通过；合并态审批服务/适配器 8/8、权限/合同/种子/基础设施 44/44、前端 19/19、类型、SDK drift 与 EF pending model 通过。i18n 历史欠账由 909 降至 908。
 - E11-S03 已推进至受控集成提交 `cf7bf778`：合同 `3cf42534`、功能 `419d3f6c`、文档 `eea62de0`。Space Unit 249/249、默认 Space Integration 216 passed / 62 SQL-gated skipped、CP6.Tests 2752 passed / 17 environment-gated skipped、前端 118 files / 653 tests、完整 solution Release、EF/SDK drift 与生产构建通过；合并态引擎/运行时 6/6、服务/适配器 6/6、权限/审计/API/种子 23/23、前端 16/16、类型与 SDK drift 通过。
@@ -615,4 +625,4 @@
 
 ## 下一动作
 
-以 `624c1511` 为路线图审计起点，其中 E12-S05 no-ff 功能集成为 `c4b139ab`。E03-S01～S04、E04-S05 开发切片、E10-S01～S06、E11-S01～S06、E12-S01～S05，以及 E13-S01～S07 开发切片、S12、S16 现已推进到受控集成基线。E13-S05/S06 开发侧已具备同端口 Mock/Local/降级和双层不可信输出校验，但正式卡仍缺首个外部 Provider 适配器及其供应商/合同、区域、端点、SecretReference、租户外发授权、传输限流限长、真实非法响应和计费/审计证据；这些条件满足前 External 继续默认禁用，不得调用或伪装完成。E13-S07 开发侧已具备四级确定性融合、规则几何、UUIDv5 派生和显式方案阻断，但正式签收仍缺持久化 RackGenerationProfile/Excel/人工方案链、现有编码服务只读纯预检、完整 Draft 场景边界/碰撞/父归属/现有码冲突以及 Worker/Artifact 审计证据。E12-S06 与 E02-S01 最终签收仍等待独立正式黄金样本、原生 DWG、明确 SDK/供应商授权和冻结试验 Worker；各 CAD 开发切片不得计入发布门禁。E09 技术 S01～S05 已完成，跨职能 GA 签字仍由发布治理完成；发布 SQL 环境跳过项也不得记作通过。i18n 当前有 908 项显式快照债务，本切片无前端净新增。下一张可独立推进的开发切片优先 E13-S08：消费 E13-S07 的只读提案集，实现受限分页、差异预览、证据/问题筛选和审查工作台，不写 Draft、不提前实现 Decision/Apply；同时保留 E13-S07 正式缺口并继续接收审计 CAD/外部 Provider 解阻包。禁止创建未授权生产 CAD/DWG/外部 AI 适配器，禁止把候选检查点 `0d25da4d` 整包合入，GR-VP T1–T7 不要重做。
+E06-S01 已完成服务端权威校验功能分支和全部门禁，下一张可独立推进 E06-S02：基于冻结 ValidationRun/ContentHash 实现版本差异与影响预览 API；它不得提前执行发布或 WMS 激活。E03-S05 继续等待服务端权威 E03-S04 Match Artifact、持久化、API、权限和审计，不能把客户端离线预览直接写入 Draft。E02/CAD 正式签收继续等待获授权的原生 DWG/DXF Provider、组织有权使用的黄金集、生产 Hosted Worker 以及真实大文件/故障/性能证据；合成 DXF 与开发切片不计入发布门禁。E13 外部 Provider、E12-S06 和跨职能 Beta/GA 证据也仍需独立解除。禁止创建未授权生产 CAD/DWG/外部 AI 适配器，禁止把候选检查点 `0d25da4d` 整包合入，GR-VP T1–T7 不要重做。

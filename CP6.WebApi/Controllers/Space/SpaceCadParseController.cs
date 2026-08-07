@@ -46,6 +46,10 @@ public sealed class UploadSpaceCadSourceForm
     typeof(SpaceDesignProblemDetails),
     StatusCodes.Status422UnprocessableEntity,
     "application/problem+json")]
+[ProducesResponseType(
+    typeof(SpaceDesignProblemDetails),
+    StatusCodes.Status500InternalServerError,
+    "application/problem+json")]
 public sealed class SpaceCadParseController(
     ISpaceCadParseService service) : ControllerBase
 {

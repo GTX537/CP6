@@ -138,7 +138,12 @@ public sealed class SpaceModelVersion : SpaceTenantEntity
 
     public void BeginValidation()
     {
-        RequireStatus(SpaceVersionStatus.Draft);
+        if (Status is not (SpaceVersionStatus.Draft or SpaceVersionStatus.Ready))
+        {
+            throw new SpaceVersionStateException(
+                $"Version state must be Draft or Ready, but was {Status}.");
+        }
+        ClearValidationBinding();
         Status = SpaceVersionStatus.Validating;
     }
 

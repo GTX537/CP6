@@ -18,7 +18,7 @@ public sealed class SpaceJobProcessorPersistenceTests
         new(2026, 7, 30, 20, 30, 0, DateTimeKind.Utc);
 
     [Fact]
-    public void Default_registration_exposes_six_explicit_processors()
+    public void Default_registration_exposes_seven_explicit_processors()
     {
         var services = new ServiceCollection();
         services.AddScoped<ISpaceExecutionContext>(
@@ -36,13 +36,14 @@ public sealed class SpaceJobProcessorPersistenceTests
             .OrderBy(processor => processor.JobType)
             .ToArray();
 
-        Assert.Equal(6, processors.Length);
+        Assert.Equal(7, processors.Length);
         Assert.IsType<SpaceCadParseJobProcessor>(processors[0]);
         Assert.IsType<SpaceExcelPreflightJobProcessor>(processors[1]);
         Assert.IsType<SpaceImportJobProcessor>(processors[2]);
-        Assert.IsType<SpaceBuildSceneJobProcessor>(processors[3]);
-        Assert.IsType<SpaceGenerationApplyJobProcessor>(processors[4]);
-        Assert.IsType<SpaceAiRetentionJobProcessor>(processors[5]);
+        Assert.IsType<SpaceValidationJobProcessor>(processors[3]);
+        Assert.IsType<SpaceBuildSceneJobProcessor>(processors[4]);
+        Assert.IsType<SpaceGenerationApplyJobProcessor>(processors[5]);
+        Assert.IsType<SpaceAiRetentionJobProcessor>(processors[6]);
         Assert.IsType<UnavailableSpaceCadParseProvider>(
             scope.ServiceProvider.GetRequiredService<ISpaceCadParseProvider>());
         Assert.IsType<SpaceCadParseJobStepExecutor>(

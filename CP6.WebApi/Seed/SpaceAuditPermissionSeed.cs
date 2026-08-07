@@ -41,6 +41,7 @@ public static class SpaceAuditPermissionSeed
         [
             ("model:read", "查看设计模型", 10),
             ("model:edit", "编辑设计模型", 20),
+            ("model:validate", "校验设计模型", 25),
             ("source:upload", "关联安全来源", 30),
             ("model:generate-ai", "创建 AI 生成任务", 40),
             ("model:review-ai", "审查 AI 提案", 50),

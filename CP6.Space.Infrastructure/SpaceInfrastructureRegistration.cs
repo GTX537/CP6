@@ -109,6 +109,13 @@ public static class SpaceInfrastructureRegistration
         services.AddScoped<SpaceFileUploadService>();
         services.AddScoped<ISpaceJobQueue, EfSpaceJobQueue>();
         services.AddScoped<SpaceJobCoordinator>();
+        services.AddScoped<SpaceValidationEngine>();
+        services.AddScoped<
+            ISpaceValidationProfileProvider,
+            DefaultSpaceValidationProfileProvider>();
+        services.AddScoped<
+            ISpaceValidationService,
+            SpaceValidationService>();
         services.AddScoped<ISpaceJobLeaseStore, EfSpaceJobLeaseStore>();
         services.AddScoped<ISpaceJobProgressReader, EfSpaceJobProgressReader>();
         services.AddScoped<
@@ -155,6 +162,10 @@ public static class SpaceInfrastructureRegistration
             ServiceDescriptor.Scoped<
                 ISpaceJobProcessor,
                 SpaceAiRetentionJobProcessor>());
+        services.TryAddEnumerable(
+            ServiceDescriptor.Scoped<
+                ISpaceJobProcessor,
+                SpaceValidationJobProcessor>());
         services.AddScoped<
             ISpaceJobProcessorRunner,
             SpaceJobProcessorRunner>();

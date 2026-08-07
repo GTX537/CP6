@@ -103,6 +103,7 @@ public sealed class SpaceAuditPermissionSeedTests
             Assert.All(
                 new[]
                 {
+                    "model:validate",
                     "model:generate-ai",
                     "model:review-ai",
                     "integration:manage",
