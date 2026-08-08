@@ -14,6 +14,7 @@ import type {
   ISpacePageOfSpaceSourceDto,
   ISpaceVersionDto,
   ISpaceAiRunActionRequest,
+  ISpacePageOfSpaceRackGenerationProfileDto,
 } from '../../../../sdk/typescript/space-design-v1/spaceDesignV1Client'
 
 const root = '/space/design/v1/generation-runs'
@@ -47,6 +48,13 @@ export const aiProposalReviewApi = {
   getSources(versionId: string, limit = 200) {
     return http.get<unknown, ISpacePageOfSpaceSourceDto>(
       `/space/design/v1/versions/${versionId}/sources`,
+      { params: { limit } },
+    )
+  },
+
+  getRackGenerationProfiles(limit = 200) {
+    return http.get<unknown, ISpacePageOfSpaceRackGenerationProfileDto>(
+      '/space/design/v1/rack-generation-profiles',
       { params: { limit } },
     )
   },

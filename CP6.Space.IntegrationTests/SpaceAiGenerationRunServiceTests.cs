@@ -199,7 +199,7 @@ public sealed class SpaceAiGenerationRunServiceTests
     }
 
     [Fact]
-    public async Task Unverified_rack_profile_is_not_frozen_into_initial_run()
+    public async Task Unknown_rack_profile_is_not_frozen_into_initial_run()
     {
         await using var fixture = await CreateFixtureAsync();
 
@@ -213,8 +213,50 @@ public sealed class SpaceAiGenerationRunServiceTests
                 Convert.ToBase64String(fixture.Version.RowVersion),
                 "create-run-rack"));
 
-        Assert.Equal(SpaceErrorCodes.RackProfileRequired, error.Code);
+        Assert.Equal(
+            SpaceErrorCodes.RackGenerationProfileNotFound,
+            error.Code);
         Assert.Empty(await fixture.Context.GenerationRuns.ToArrayAsync());
+    }
+
+    [Fact]
+    public async Task Authoritative_rack_profile_version_is_frozen_into_run()
+    {
+        await using var fixture = await CreateFixtureAsync();
+        var actorId = Guid.NewGuid();
+        var profile = SpaceRackGenerationProfile.CreateTenant(
+            fixture.Context.CurrentTenantId,
+            "STANDARD-RACK",
+            "Standard rack",
+            null,
+            actorId,
+            Now);
+        var profileVersion = SpaceRackGenerationProfileVersion.CreateReady(
+            profile,
+            1,
+            2400,
+            1000,
+            5000,
+            [new(1, 0, 2200, 4, 2, 600, 500, 100)],
+            actorId,
+            Now);
+        fixture.Context.AddRange(profile, profileVersion);
+        await fixture.Context.SaveChangesAsync();
+
+        var created = await fixture.Service.CreateAsync(
+            fixture.Version.Id,
+            Request(fixture) with
+            {
+                RackGenerationProfileVersionId = profileVersion.Id,
+            },
+            Convert.ToBase64String(fixture.Version.RowVersion),
+            "create-run-profile");
+
+        var run = await fixture.Context.GenerationRuns.SingleAsync(item =>
+            item.Id == created.RunId);
+        Assert.Equal(
+            profileVersion.Id,
+            run.RackGenerationProfileVersionId);
     }
 
     [Fact]

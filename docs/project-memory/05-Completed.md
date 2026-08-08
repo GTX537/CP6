@@ -1,5 +1,12 @@
 # 已完成能力与近期里程碑
 
+## 2026-08-08 E13 RackGenerationProfile 权威版本链
+
+- `19d32650` 交付独立的 System/Tenant 方案头、不可变版本、规范化层定义与 SHA-256、Tenant-only 幂等创建、列表/精确读取、复合外键和真实 SQL 幂等迁移。
+- Generation Run 只冻结已验证的 Active/Ready 精确版本；RuleOnly Worker 以 `ExplicitSelected` 消费并派生 RackLevel/Location。Web 显式可选、绝不自动选择；空选择继续 Blocking。
+- 三条 API 的权限、读写审计、统一 Problem Details、OpenAPI 118 operations 与 C#/TypeScript SDK 已同步。真实 SQL 1/1、前端 711/711、Space Unit 487/487、Integration 288 passed / 95 skipped、CP6.Tests 2816 passed / 17 skipped、完整 Release/AOT 0 warning / 0 error。
+- 无外部 Provider、网络、Secret、Usage、High Accept 或 Draft 自动写入。完整证据见 `docs/space/reports/e13-rack-generation-profile-authority.md`。
+
 ## 2026-08-08 E13 Generation Run 建模 Web 入口
 
 - `52bb3a29` / `282d4e54` / `2871df1b` 完成功能、报告与 no-ff 受控集成；编辑器接入统一 `CreateGenerationRun`，从已确认 DWG/DXF Preview 启动 RuleOnly Run，显示排队/进度后进入审核与原子 Apply；Failed/Stale 恢复也改用同一并发、幂等和 BasedOn 合同。

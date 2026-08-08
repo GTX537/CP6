@@ -3,6 +3,8 @@ import { beforeEach, describe, expect, it, vi } from 'vitest'
 import { aiProposalReviewApi } from '@/api/space/aiProposalReview'
 import {
   SpaceAiGenerationRunLinksDto,
+  SpaceRackGenerationProfileDto,
+  SpaceRackGenerationProfileVersionDto,
   SpaceSourceDto,
 } from '../../../../../sdk/typescript/space-design-v1/spaceDesignV1Client'
 import DesignAiGenerationLauncherPanel from './DesignAiGenerationLauncherPanel.vue'
@@ -16,6 +18,7 @@ vi.mock('@/api/space/aiProposalReview', () => ({
   aiProposalReviewApi: {
     getVersion: vi.fn(),
     getSources: vi.fn(),
+    getRackGenerationProfiles: vi.fn(),
     createGenerationRun: vi.fn(),
   },
 }))
@@ -63,6 +66,30 @@ describe('DesignAiGenerationLauncherPanel', () => {
         sha256: 'a'.repeat(64),
       })],
     })
+    vi.mocked(aiProposalReviewApi.getRackGenerationProfiles).mockResolvedValue({
+      items: [new SpaceRackGenerationProfileDto({
+        id: 'profile-1',
+        scope: 'Tenant',
+        profileCode: 'STANDARD-RACK',
+        name: '标准货架',
+        status: 'Active',
+        rowVersion: 'profile-row-version',
+        latestVersion: new SpaceRackGenerationProfileVersionDto({
+          id: 'profile-version-1',
+          profileId: 'profile-1',
+          scope: 'Tenant',
+          versionNo: 1,
+          rackWidthMillimeters: 2400,
+          rackDepthMillimeters: 1000,
+          rackHeightMillimeters: 5000,
+          levels: [],
+          locationCount: 8,
+          contentHash: 'c'.repeat(64),
+          status: 'Ready',
+          rowVersion: 'profile-version-row-version',
+        }),
+      })],
+    })
     vi.mocked(aiProposalReviewApi.createGenerationRun).mockResolvedValue({
       schemaVersion: 1,
       runId: 'run-1',
@@ -80,6 +107,28 @@ describe('DesignAiGenerationLauncherPanel', () => {
       reused: false,
       idempotentReplay: false,
     })
+  })
+
+  it('pins an explicitly selected authoritative rack profile version', async () => {
+    const wrapper = mount(DesignAiGenerationLauncherPanel, {
+      props: { versionId: 'version-1', currentContentRevision: 42 },
+      global,
+    })
+    await flushPromises()
+
+    ;(wrapper.vm as unknown as { selectedRackProfileVersionId: string })
+      .selectedRackProfileVersionId = 'profile-version-1'
+    await wrapper.get('[data-test="create-rule-only-run"]').trigger('click')
+    await flushPromises()
+
+    expect(aiProposalReviewApi.createGenerationRun).toHaveBeenCalledWith(
+      'version-1',
+      expect.objectContaining({
+        rackGenerationProfileVersionId: 'profile-version-1',
+      }),
+      'version-row-version',
+      expect.any(String),
+    )
   })
 
   it('creates a RuleOnly run with frozen Draft and CAD preconditions', async () => {

@@ -664,6 +664,25 @@ export interface ISpaceDesignV1Client {
     getPublishPreview(versionId: string, floorLogicalId: string | undefined, objectType: string | undefined, action: string | undefined, impactCode: string | undefined, includeNoOp: boolean | undefined, limit: number | undefined, cursor: string | undefined): Promise<SpacePublishPreviewDto>;
 
     /**
+     * @param scope (optional)
+     * @param limit (optional)
+     * @param cursor (optional)
+     * @return OK
+     */
+    getRackGenerationProfiles(scope: string | undefined, limit: number | undefined, cursor: string | undefined): Promise<SpacePageOfSpaceRackGenerationProfileDto>;
+
+    /**
+     * @param idempotency_Key Opaque caller key; 1-128 UTF-8 bytes. Reuse with a different request returns SPACE_IDEMPOTENCY_KEY_REUSED.
+     * @return Created
+     */
+    createRackGenerationProfile(idempotency_Key: string, body: CreateSpaceRackGenerationProfileRequest): Promise<CreateSpaceRackGenerationProfileResponse>;
+
+    /**
+     * @return OK
+     */
+    getRackGenerationProfileVersion(versionId: string): Promise<SpaceRackGenerationProfileVersionDto>;
+
+    /**
      * @return Accepted
      */
     createValidation(versionId: string): Promise<CreateSpaceValidationResponse>;
@@ -11319,6 +11338,288 @@ export class SpaceDesignV1Client implements ISpaceDesignV1Client {
     }
 
     /**
+     * @param scope (optional)
+     * @param limit (optional)
+     * @param cursor (optional)
+     * @return OK
+     */
+    getRackGenerationProfiles(scope: string | undefined, limit: number | undefined, cursor: string | undefined): Promise<SpacePageOfSpaceRackGenerationProfileDto> {
+        let url_ = this.baseUrl + "/api/space/design/v1/rack-generation-profiles?";
+        if (scope === null)
+            throw new globalThis.Error("The parameter 'scope' cannot be null.");
+        else if (scope !== undefined)
+            url_ += "scope=" + encodeURIComponent("" + scope) + "&";
+        if (limit === null)
+            throw new globalThis.Error("The parameter 'limit' cannot be null.");
+        else if (limit !== undefined)
+            url_ += "limit=" + encodeURIComponent("" + limit) + "&";
+        if (cursor === null)
+            throw new globalThis.Error("The parameter 'cursor' cannot be null.");
+        else if (cursor !== undefined)
+            url_ += "cursor=" + encodeURIComponent("" + cursor) + "&";
+        url_ = url_.replace(/[?&]$/, "");
+
+        let options_: RequestInit = {
+            method: "GET",
+            headers: {
+                "Accept": "application/json"
+            }
+        };
+
+        return this.http.fetch(url_, options_).then((_response: Response) => {
+            return this.processGetRackGenerationProfiles(_response);
+        });
+    }
+
+    protected processGetRackGenerationProfiles(response: Response): Promise<SpacePageOfSpaceRackGenerationProfileDto> {
+        const status = response.status;
+        let _headers: any = {}; if (response.headers && response.headers.forEach) { response.headers.forEach((v: any, k: any) => _headers[k] = v); };
+        if (status === 200) {
+            return response.text().then((_responseText) => {
+            let result200: any = null;
+            let resultData200 = _responseText === "" ? null : JSON.parse(_responseText, this.jsonParseReviver);
+            result200 = SpacePageOfSpaceRackGenerationProfileDto.fromJS(resultData200);
+            return result200;
+            });
+        } else if (status === 400) {
+            return response.text().then((_responseText) => {
+            let result400: any = null;
+            let resultData400 = _responseText === "" ? null : JSON.parse(_responseText, this.jsonParseReviver);
+            result400 = SpaceDesignProblemDetails.fromJS(resultData400);
+            return throwException("Bad Request", status, _responseText, _headers, result400);
+            });
+        } else if (status === 401) {
+            return response.text().then((_responseText) => {
+            let result401: any = null;
+            let resultData401 = _responseText === "" ? null : JSON.parse(_responseText, this.jsonParseReviver);
+            result401 = SpaceDesignProblemDetails.fromJS(resultData401);
+            return throwException("Unauthorized", status, _responseText, _headers, result401);
+            });
+        } else if (status === 403) {
+            return response.text().then((_responseText) => {
+            let result403: any = null;
+            let resultData403 = _responseText === "" ? null : JSON.parse(_responseText, this.jsonParseReviver);
+            result403 = SpaceDesignProblemDetails.fromJS(resultData403);
+            return throwException("Forbidden", status, _responseText, _headers, result403);
+            });
+        } else if (status === 404) {
+            return response.text().then((_responseText) => {
+            let result404: any = null;
+            let resultData404 = _responseText === "" ? null : JSON.parse(_responseText, this.jsonParseReviver);
+            result404 = SpaceDesignProblemDetails.fromJS(resultData404);
+            return throwException("Not Found", status, _responseText, _headers, result404);
+            });
+        } else if (status === 409) {
+            return response.text().then((_responseText) => {
+            let result409: any = null;
+            let resultData409 = _responseText === "" ? null : JSON.parse(_responseText, this.jsonParseReviver);
+            result409 = SpaceDesignProblemDetails.fromJS(resultData409);
+            return throwException("Conflict", status, _responseText, _headers, result409);
+            });
+        } else if (status === 422) {
+            return response.text().then((_responseText) => {
+            let result422: any = null;
+            let resultData422 = _responseText === "" ? null : JSON.parse(_responseText, this.jsonParseReviver);
+            result422 = SpaceDesignProblemDetails.fromJS(resultData422);
+            return throwException("Unprocessable Content", status, _responseText, _headers, result422);
+            });
+        } else if (status === 500) {
+            return response.text().then((_responseText) => {
+            let result500: any = null;
+            let resultData500 = _responseText === "" ? null : JSON.parse(_responseText, this.jsonParseReviver);
+            result500 = SpaceDesignProblemDetails.fromJS(resultData500);
+            return throwException("Internal Server Error", status, _responseText, _headers, result500);
+            });
+        } else if (status !== 200 && status !== 204) {
+            return response.text().then((_responseText) => {
+            return throwException("An unexpected server error occurred.", status, _responseText, _headers);
+            });
+        }
+        return Promise.resolve<SpacePageOfSpaceRackGenerationProfileDto>(null as any);
+    }
+
+    /**
+     * @param idempotency_Key Opaque caller key; 1-128 UTF-8 bytes. Reuse with a different request returns SPACE_IDEMPOTENCY_KEY_REUSED.
+     * @return Created
+     */
+    createRackGenerationProfile(idempotency_Key: string, body: CreateSpaceRackGenerationProfileRequest): Promise<CreateSpaceRackGenerationProfileResponse> {
+        let url_ = this.baseUrl + "/api/space/design/v1/rack-generation-profiles";
+        url_ = url_.replace(/[?&]$/, "");
+
+        const content_ = JSON.stringify(body);
+
+        let options_: RequestInit = {
+            body: content_,
+            method: "POST",
+            headers: {
+                "Idempotency-Key": idempotency_Key !== undefined && idempotency_Key !== null ? "" + idempotency_Key : "",
+                "Content-Type": "application/json",
+                "Accept": "application/json"
+            }
+        };
+
+        return this.http.fetch(url_, options_).then((_response: Response) => {
+            return this.processCreateRackGenerationProfile(_response);
+        });
+    }
+
+    protected processCreateRackGenerationProfile(response: Response): Promise<CreateSpaceRackGenerationProfileResponse> {
+        const status = response.status;
+        let _headers: any = {}; if (response.headers && response.headers.forEach) { response.headers.forEach((v: any, k: any) => _headers[k] = v); };
+        if (status === 201) {
+            return response.text().then((_responseText) => {
+            let result201: any = null;
+            let resultData201 = _responseText === "" ? null : JSON.parse(_responseText, this.jsonParseReviver);
+            result201 = CreateSpaceRackGenerationProfileResponse.fromJS(resultData201);
+            return result201;
+            });
+        } else if (status === 400) {
+            return response.text().then((_responseText) => {
+            let result400: any = null;
+            let resultData400 = _responseText === "" ? null : JSON.parse(_responseText, this.jsonParseReviver);
+            result400 = SpaceDesignProblemDetails.fromJS(resultData400);
+            return throwException("Bad Request", status, _responseText, _headers, result400);
+            });
+        } else if (status === 401) {
+            return response.text().then((_responseText) => {
+            let result401: any = null;
+            let resultData401 = _responseText === "" ? null : JSON.parse(_responseText, this.jsonParseReviver);
+            result401 = SpaceDesignProblemDetails.fromJS(resultData401);
+            return throwException("Unauthorized", status, _responseText, _headers, result401);
+            });
+        } else if (status === 403) {
+            return response.text().then((_responseText) => {
+            let result403: any = null;
+            let resultData403 = _responseText === "" ? null : JSON.parse(_responseText, this.jsonParseReviver);
+            result403 = SpaceDesignProblemDetails.fromJS(resultData403);
+            return throwException("Forbidden", status, _responseText, _headers, result403);
+            });
+        } else if (status === 404) {
+            return response.text().then((_responseText) => {
+            let result404: any = null;
+            let resultData404 = _responseText === "" ? null : JSON.parse(_responseText, this.jsonParseReviver);
+            result404 = SpaceDesignProblemDetails.fromJS(resultData404);
+            return throwException("Not Found", status, _responseText, _headers, result404);
+            });
+        } else if (status === 409) {
+            return response.text().then((_responseText) => {
+            let result409: any = null;
+            let resultData409 = _responseText === "" ? null : JSON.parse(_responseText, this.jsonParseReviver);
+            result409 = SpaceDesignProblemDetails.fromJS(resultData409);
+            return throwException("Conflict", status, _responseText, _headers, result409);
+            });
+        } else if (status === 422) {
+            return response.text().then((_responseText) => {
+            let result422: any = null;
+            let resultData422 = _responseText === "" ? null : JSON.parse(_responseText, this.jsonParseReviver);
+            result422 = SpaceDesignProblemDetails.fromJS(resultData422);
+            return throwException("Unprocessable Content", status, _responseText, _headers, result422);
+            });
+        } else if (status === 500) {
+            return response.text().then((_responseText) => {
+            let result500: any = null;
+            let resultData500 = _responseText === "" ? null : JSON.parse(_responseText, this.jsonParseReviver);
+            result500 = SpaceDesignProblemDetails.fromJS(resultData500);
+            return throwException("Internal Server Error", status, _responseText, _headers, result500);
+            });
+        } else if (status !== 200 && status !== 204) {
+            return response.text().then((_responseText) => {
+            return throwException("An unexpected server error occurred.", status, _responseText, _headers);
+            });
+        }
+        return Promise.resolve<CreateSpaceRackGenerationProfileResponse>(null as any);
+    }
+
+    /**
+     * @return OK
+     */
+    getRackGenerationProfileVersion(versionId: string): Promise<SpaceRackGenerationProfileVersionDto> {
+        let url_ = this.baseUrl + "/api/space/design/v1/rack-generation-profile-versions/{versionId}";
+        if (versionId === undefined || versionId === null)
+            throw new globalThis.Error("The parameter 'versionId' must be defined.");
+        url_ = url_.replace("{versionId}", encodeURIComponent("" + versionId));
+        url_ = url_.replace(/[?&]$/, "");
+
+        let options_: RequestInit = {
+            method: "GET",
+            headers: {
+                "Accept": "application/json"
+            }
+        };
+
+        return this.http.fetch(url_, options_).then((_response: Response) => {
+            return this.processGetRackGenerationProfileVersion(_response);
+        });
+    }
+
+    protected processGetRackGenerationProfileVersion(response: Response): Promise<SpaceRackGenerationProfileVersionDto> {
+        const status = response.status;
+        let _headers: any = {}; if (response.headers && response.headers.forEach) { response.headers.forEach((v: any, k: any) => _headers[k] = v); };
+        if (status === 200) {
+            return response.text().then((_responseText) => {
+            let result200: any = null;
+            let resultData200 = _responseText === "" ? null : JSON.parse(_responseText, this.jsonParseReviver);
+            result200 = SpaceRackGenerationProfileVersionDto.fromJS(resultData200);
+            return result200;
+            });
+        } else if (status === 400) {
+            return response.text().then((_responseText) => {
+            let result400: any = null;
+            let resultData400 = _responseText === "" ? null : JSON.parse(_responseText, this.jsonParseReviver);
+            result400 = SpaceDesignProblemDetails.fromJS(resultData400);
+            return throwException("Bad Request", status, _responseText, _headers, result400);
+            });
+        } else if (status === 401) {
+            return response.text().then((_responseText) => {
+            let result401: any = null;
+            let resultData401 = _responseText === "" ? null : JSON.parse(_responseText, this.jsonParseReviver);
+            result401 = SpaceDesignProblemDetails.fromJS(resultData401);
+            return throwException("Unauthorized", status, _responseText, _headers, result401);
+            });
+        } else if (status === 403) {
+            return response.text().then((_responseText) => {
+            let result403: any = null;
+            let resultData403 = _responseText === "" ? null : JSON.parse(_responseText, this.jsonParseReviver);
+            result403 = SpaceDesignProblemDetails.fromJS(resultData403);
+            return throwException("Forbidden", status, _responseText, _headers, result403);
+            });
+        } else if (status === 404) {
+            return response.text().then((_responseText) => {
+            let result404: any = null;
+            let resultData404 = _responseText === "" ? null : JSON.parse(_responseText, this.jsonParseReviver);
+            result404 = SpaceDesignProblemDetails.fromJS(resultData404);
+            return throwException("Not Found", status, _responseText, _headers, result404);
+            });
+        } else if (status === 409) {
+            return response.text().then((_responseText) => {
+            let result409: any = null;
+            let resultData409 = _responseText === "" ? null : JSON.parse(_responseText, this.jsonParseReviver);
+            result409 = SpaceDesignProblemDetails.fromJS(resultData409);
+            return throwException("Conflict", status, _responseText, _headers, result409);
+            });
+        } else if (status === 422) {
+            return response.text().then((_responseText) => {
+            let result422: any = null;
+            let resultData422 = _responseText === "" ? null : JSON.parse(_responseText, this.jsonParseReviver);
+            result422 = SpaceDesignProblemDetails.fromJS(resultData422);
+            return throwException("Unprocessable Content", status, _responseText, _headers, result422);
+            });
+        } else if (status === 500) {
+            return response.text().then((_responseText) => {
+            let result500: any = null;
+            let resultData500 = _responseText === "" ? null : JSON.parse(_responseText, this.jsonParseReviver);
+            result500 = SpaceDesignProblemDetails.fromJS(resultData500);
+            return throwException("Internal Server Error", status, _responseText, _headers, result500);
+            });
+        } else if (status !== 200 && status !== 204) {
+            return response.text().then((_responseText) => {
+            return throwException("An unexpected server error occurred.", status, _responseText, _headers);
+            });
+        }
+        return Promise.resolve<SpaceRackGenerationProfileVersionDto>(null as any);
+    }
+
+    /**
      * @return Accepted
      */
     createValidation(versionId: string): Promise<CreateSpaceValidationResponse> {
@@ -13861,6 +14162,124 @@ export class CreateSpacePublishAttemptResponse implements ICreateSpacePublishAtt
 export interface ICreateSpacePublishAttemptResponse {
     attempt?: SpacePublishAttemptDto;
     idempotentReplay?: boolean;
+}
+
+export class CreateSpaceRackGenerationProfileRequest implements ICreateSpaceRackGenerationProfileRequest {
+    profileCode!: string;
+    name!: string;
+    rackWidthMillimeters!: number;
+    rackDepthMillimeters!: number;
+    rackHeightMillimeters!: number;
+    levels!: SpaceRackGenerationProfileLevelDto[];
+    description?: string | undefined;
+    scope?: string | undefined;
+
+    constructor(data?: ICreateSpaceRackGenerationProfileRequest) {
+        if (data) {
+            for (var property in data) {
+                if (data.hasOwnProperty(property))
+                    (this as any)[property] = (data as any)[property];
+            }
+        }
+        if (!data) {
+            this.levels = [];
+        }
+    }
+
+    init(_data?: any) {
+        if (_data) {
+            this.profileCode = _data["profileCode"];
+            this.name = _data["name"];
+            this.rackWidthMillimeters = _data["rackWidthMillimeters"];
+            this.rackDepthMillimeters = _data["rackDepthMillimeters"];
+            this.rackHeightMillimeters = _data["rackHeightMillimeters"];
+            if (Array.isArray(_data["levels"])) {
+                this.levels = [] as any;
+                for (let item of _data["levels"])
+                    this.levels!.push(SpaceRackGenerationProfileLevelDto.fromJS(item));
+            }
+            this.description = _data["description"];
+            this.scope = _data["scope"];
+        }
+    }
+
+    static fromJS(data: any): CreateSpaceRackGenerationProfileRequest {
+        data = typeof data === 'object' ? data : {};
+        let result = new CreateSpaceRackGenerationProfileRequest();
+        result.init(data);
+        return result;
+    }
+
+    toJSON(data?: any) {
+        data = typeof data === 'object' ? data : {};
+        data["profileCode"] = this.profileCode;
+        data["name"] = this.name;
+        data["rackWidthMillimeters"] = this.rackWidthMillimeters;
+        data["rackDepthMillimeters"] = this.rackDepthMillimeters;
+        data["rackHeightMillimeters"] = this.rackHeightMillimeters;
+        if (Array.isArray(this.levels)) {
+            data["levels"] = [];
+            for (let item of this.levels)
+                data["levels"].push(item ? item.toJSON() : undefined as any);
+        }
+        data["description"] = this.description;
+        data["scope"] = this.scope;
+        return data;
+    }
+}
+
+export interface ICreateSpaceRackGenerationProfileRequest {
+    profileCode: string;
+    name: string;
+    rackWidthMillimeters: number;
+    rackDepthMillimeters: number;
+    rackHeightMillimeters: number;
+    levels: SpaceRackGenerationProfileLevelDto[];
+    description?: string | undefined;
+    scope?: string | undefined;
+}
+
+export class CreateSpaceRackGenerationProfileResponse implements ICreateSpaceRackGenerationProfileResponse {
+    profile!: SpaceRackGenerationProfileDto;
+    idempotentReplay!: boolean;
+
+    constructor(data?: ICreateSpaceRackGenerationProfileResponse) {
+        if (data) {
+            for (var property in data) {
+                if (data.hasOwnProperty(property))
+                    (this as any)[property] = (data as any)[property];
+            }
+        }
+        if (!data) {
+            this.profile = new SpaceRackGenerationProfileDto();
+        }
+    }
+
+    init(_data?: any) {
+        if (_data) {
+            this.profile = _data["profile"] ? SpaceRackGenerationProfileDto.fromJS(_data["profile"]) : new SpaceRackGenerationProfileDto();
+            this.idempotentReplay = _data["idempotentReplay"];
+        }
+    }
+
+    static fromJS(data: any): CreateSpaceRackGenerationProfileResponse {
+        data = typeof data === 'object' ? data : {};
+        let result = new CreateSpaceRackGenerationProfileResponse();
+        result.init(data);
+        return result;
+    }
+
+    toJSON(data?: any) {
+        data = typeof data === 'object' ? data : {};
+        data["profile"] = this.profile ? this.profile.toJSON() : undefined as any;
+        data["idempotentReplay"] = this.idempotentReplay;
+        return data;
+    }
+}
+
+export interface ICreateSpaceRackGenerationProfileResponse {
+    profile: SpaceRackGenerationProfileDto;
+    idempotentReplay: boolean;
 }
 
 export class CreateSpaceSourceRequest implements ICreateSpaceSourceRequest {
@@ -24981,6 +25400,232 @@ export interface ISpacePublishReceiptDto {
     receivedAtUtc?: Date;
 }
 
+export class SpaceRackGenerationProfileDto implements ISpaceRackGenerationProfileDto {
+    id!: string;
+    scope!: string;
+    profileCode!: string;
+    name!: string;
+    description?: string | undefined;
+    status!: string;
+    latestVersion!: SpaceRackGenerationProfileVersionDto;
+    rowVersion!: string;
+
+    constructor(data?: ISpaceRackGenerationProfileDto) {
+        if (data) {
+            for (var property in data) {
+                if (data.hasOwnProperty(property))
+                    (this as any)[property] = (data as any)[property];
+            }
+        }
+        if (!data) {
+            this.latestVersion = new SpaceRackGenerationProfileVersionDto();
+        }
+    }
+
+    init(_data?: any) {
+        if (_data) {
+            this.id = _data["id"];
+            this.scope = _data["scope"];
+            this.profileCode = _data["profileCode"];
+            this.name = _data["name"];
+            this.description = _data["description"];
+            this.status = _data["status"];
+            this.latestVersion = _data["latestVersion"] ? SpaceRackGenerationProfileVersionDto.fromJS(_data["latestVersion"]) : new SpaceRackGenerationProfileVersionDto();
+            this.rowVersion = _data["rowVersion"];
+        }
+    }
+
+    static fromJS(data: any): SpaceRackGenerationProfileDto {
+        data = typeof data === 'object' ? data : {};
+        let result = new SpaceRackGenerationProfileDto();
+        result.init(data);
+        return result;
+    }
+
+    toJSON(data?: any) {
+        data = typeof data === 'object' ? data : {};
+        data["id"] = this.id;
+        data["scope"] = this.scope;
+        data["profileCode"] = this.profileCode;
+        data["name"] = this.name;
+        data["description"] = this.description;
+        data["status"] = this.status;
+        data["latestVersion"] = this.latestVersion ? this.latestVersion.toJSON() : undefined as any;
+        data["rowVersion"] = this.rowVersion;
+        return data;
+    }
+}
+
+export interface ISpaceRackGenerationProfileDto {
+    id: string;
+    scope: string;
+    profileCode: string;
+    name: string;
+    description?: string | undefined;
+    status: string;
+    latestVersion: SpaceRackGenerationProfileVersionDto;
+    rowVersion: string;
+}
+
+export class SpaceRackGenerationProfileLevelDto implements ISpaceRackGenerationProfileLevelDto {
+    levelNo!: number;
+    bottomZMillimeters!: number;
+    clearHeightMillimeters!: number;
+    binCount!: number;
+    depthCount!: number;
+    cellWidthMillimeters!: number;
+    cellDepthMillimeters!: number;
+    beamHeightMillimeters?: number;
+    maxLoadKilograms?: number | undefined;
+
+    constructor(data?: ISpaceRackGenerationProfileLevelDto) {
+        if (data) {
+            for (var property in data) {
+                if (data.hasOwnProperty(property))
+                    (this as any)[property] = (data as any)[property];
+            }
+        }
+    }
+
+    init(_data?: any) {
+        if (_data) {
+            this.levelNo = _data["levelNo"];
+            this.bottomZMillimeters = _data["bottomZMillimeters"];
+            this.clearHeightMillimeters = _data["clearHeightMillimeters"];
+            this.binCount = _data["binCount"];
+            this.depthCount = _data["depthCount"];
+            this.cellWidthMillimeters = _data["cellWidthMillimeters"];
+            this.cellDepthMillimeters = _data["cellDepthMillimeters"];
+            this.beamHeightMillimeters = _data["beamHeightMillimeters"];
+            this.maxLoadKilograms = _data["maxLoadKilograms"];
+        }
+    }
+
+    static fromJS(data: any): SpaceRackGenerationProfileLevelDto {
+        data = typeof data === 'object' ? data : {};
+        let result = new SpaceRackGenerationProfileLevelDto();
+        result.init(data);
+        return result;
+    }
+
+    toJSON(data?: any) {
+        data = typeof data === 'object' ? data : {};
+        data["levelNo"] = this.levelNo;
+        data["bottomZMillimeters"] = this.bottomZMillimeters;
+        data["clearHeightMillimeters"] = this.clearHeightMillimeters;
+        data["binCount"] = this.binCount;
+        data["depthCount"] = this.depthCount;
+        data["cellWidthMillimeters"] = this.cellWidthMillimeters;
+        data["cellDepthMillimeters"] = this.cellDepthMillimeters;
+        data["beamHeightMillimeters"] = this.beamHeightMillimeters;
+        data["maxLoadKilograms"] = this.maxLoadKilograms;
+        return data;
+    }
+}
+
+export interface ISpaceRackGenerationProfileLevelDto {
+    levelNo: number;
+    bottomZMillimeters: number;
+    clearHeightMillimeters: number;
+    binCount: number;
+    depthCount: number;
+    cellWidthMillimeters: number;
+    cellDepthMillimeters: number;
+    beamHeightMillimeters?: number;
+    maxLoadKilograms?: number | undefined;
+}
+
+export class SpaceRackGenerationProfileVersionDto implements ISpaceRackGenerationProfileVersionDto {
+    id!: string;
+    profileId!: string;
+    scope!: string;
+    versionNo!: number;
+    rackWidthMillimeters!: number;
+    rackDepthMillimeters!: number;
+    rackHeightMillimeters!: number;
+    levels!: SpaceRackGenerationProfileLevelDto[];
+    locationCount!: number;
+    contentHash!: string;
+    status!: string;
+    rowVersion!: string;
+
+    constructor(data?: ISpaceRackGenerationProfileVersionDto) {
+        if (data) {
+            for (var property in data) {
+                if (data.hasOwnProperty(property))
+                    (this as any)[property] = (data as any)[property];
+            }
+        }
+        if (!data) {
+            this.levels = [];
+        }
+    }
+
+    init(_data?: any) {
+        if (_data) {
+            this.id = _data["id"];
+            this.profileId = _data["profileId"];
+            this.scope = _data["scope"];
+            this.versionNo = _data["versionNo"];
+            this.rackWidthMillimeters = _data["rackWidthMillimeters"];
+            this.rackDepthMillimeters = _data["rackDepthMillimeters"];
+            this.rackHeightMillimeters = _data["rackHeightMillimeters"];
+            if (Array.isArray(_data["levels"])) {
+                this.levels = [] as any;
+                for (let item of _data["levels"])
+                    this.levels!.push(SpaceRackGenerationProfileLevelDto.fromJS(item));
+            }
+            this.locationCount = _data["locationCount"];
+            this.contentHash = _data["contentHash"];
+            this.status = _data["status"];
+            this.rowVersion = _data["rowVersion"];
+        }
+    }
+
+    static fromJS(data: any): SpaceRackGenerationProfileVersionDto {
+        data = typeof data === 'object' ? data : {};
+        let result = new SpaceRackGenerationProfileVersionDto();
+        result.init(data);
+        return result;
+    }
+
+    toJSON(data?: any) {
+        data = typeof data === 'object' ? data : {};
+        data["id"] = this.id;
+        data["profileId"] = this.profileId;
+        data["scope"] = this.scope;
+        data["versionNo"] = this.versionNo;
+        data["rackWidthMillimeters"] = this.rackWidthMillimeters;
+        data["rackDepthMillimeters"] = this.rackDepthMillimeters;
+        data["rackHeightMillimeters"] = this.rackHeightMillimeters;
+        if (Array.isArray(this.levels)) {
+            data["levels"] = [];
+            for (let item of this.levels)
+                data["levels"].push(item ? item.toJSON() : undefined as any);
+        }
+        data["locationCount"] = this.locationCount;
+        data["contentHash"] = this.contentHash;
+        data["status"] = this.status;
+        data["rowVersion"] = this.rowVersion;
+        return data;
+    }
+}
+
+export interface ISpaceRackGenerationProfileVersionDto {
+    id: string;
+    profileId: string;
+    scope: string;
+    versionNo: number;
+    rackWidthMillimeters: number;
+    rackDepthMillimeters: number;
+    rackHeightMillimeters: number;
+    levels: SpaceRackGenerationProfileLevelDto[];
+    locationCount: number;
+    contentHash: string;
+    status: string;
+    rowVersion: string;
+}
+
 export class SpaceRotateObjectDto implements ISpaceRotateObjectDto {
     rotationZ?: number;
 
@@ -29633,6 +30278,54 @@ export class SpacePageOfSpacePublishAttemptSummaryDto implements ISpacePageOfSpa
 
 export interface ISpacePageOfSpacePublishAttemptSummaryDto {
     items?: SpacePublishAttemptSummaryDto[] | undefined;
+    nextCursor?: string | undefined;
+}
+
+export class SpacePageOfSpaceRackGenerationProfileDto implements ISpacePageOfSpaceRackGenerationProfileDto {
+    items?: SpaceRackGenerationProfileDto[] | undefined;
+    nextCursor?: string | undefined;
+
+    constructor(data?: ISpacePageOfSpaceRackGenerationProfileDto) {
+        if (data) {
+            for (var property in data) {
+                if (data.hasOwnProperty(property))
+                    (this as any)[property] = (data as any)[property];
+            }
+        }
+    }
+
+    init(_data?: any) {
+        if (_data) {
+            if (Array.isArray(_data["items"])) {
+                this.items = [] as any;
+                for (let item of _data["items"])
+                    this.items!.push(SpaceRackGenerationProfileDto.fromJS(item));
+            }
+            this.nextCursor = _data["nextCursor"];
+        }
+    }
+
+    static fromJS(data: any): SpacePageOfSpaceRackGenerationProfileDto {
+        data = typeof data === 'object' ? data : {};
+        let result = new SpacePageOfSpaceRackGenerationProfileDto();
+        result.init(data);
+        return result;
+    }
+
+    toJSON(data?: any) {
+        data = typeof data === 'object' ? data : {};
+        if (Array.isArray(this.items)) {
+            data["items"] = [];
+            for (let item of this.items)
+                data["items"].push(item ? item.toJSON() : undefined as any);
+        }
+        data["nextCursor"] = this.nextCursor;
+        return data;
+    }
+}
+
+export interface ISpacePageOfSpaceRackGenerationProfileDto {
+    items?: SpaceRackGenerationProfileDto[] | undefined;
     nextCursor?: string | undefined;
 }
 

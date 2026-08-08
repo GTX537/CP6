@@ -85,6 +85,55 @@ public sealed class SpaceWmsRuntimeSchemaFilter : ISchemaFilter
     private static readonly IReadOnlyDictionary<Type, string[]>
         RequiredProperties = new Dictionary<Type, string[]>
         {
+            [typeof(SpaceRackGenerationProfileLevelDto)] =
+            [
+                "levelNo",
+                "bottomZMillimeters",
+                "clearHeightMillimeters",
+                "binCount",
+                "depthCount",
+                "cellWidthMillimeters",
+                "cellDepthMillimeters",
+            ],
+            [typeof(SpaceRackGenerationProfileVersionDto)] =
+            [
+                "id",
+                "profileId",
+                "scope",
+                "versionNo",
+                "rackWidthMillimeters",
+                "rackDepthMillimeters",
+                "rackHeightMillimeters",
+                "levels",
+                "locationCount",
+                "contentHash",
+                "status",
+                "rowVersion",
+            ],
+            [typeof(SpaceRackGenerationProfileDto)] =
+            [
+                "id",
+                "scope",
+                "profileCode",
+                "name",
+                "status",
+                "latestVersion",
+                "rowVersion",
+            ],
+            [typeof(CreateSpaceRackGenerationProfileRequest)] =
+            [
+                "profileCode",
+                "name",
+                "rackWidthMillimeters",
+                "rackDepthMillimeters",
+                "rackHeightMillimeters",
+                "levels",
+            ],
+            [typeof(CreateSpaceRackGenerationProfileResponse)] =
+            [
+                "profile",
+                "idempotentReplay",
+            ],
             [typeof(SpaceWmsRuntimeInventoryResponse)] =
             [
                 "siteId",
@@ -1340,7 +1389,8 @@ public sealed class SpaceDesignV1OperationFilter : IOperationFilter
                 "RetryGenerationRun" or
                 "DiscardGenerationRun" or
                 "ReconcileGenerationRun" or
-                "CreateGenerationRun"))
+                "CreateGenerationRun" or
+                "CreateRackGenerationProfile"))
             return;
 
         var idempotencyKey = operation.Parameters.Single(

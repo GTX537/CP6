@@ -403,14 +403,31 @@ public sealed class SpaceAiGenerationRunService(
                 "The mapping profile does not match the confirmed CAD Preview.",
                 "reconfirm-cad-mapping");
         }
+        Guid? rackGenerationProfileVersionId = null;
         if (!request.BasedOnRunId.HasValue &&
             request.RackGenerationProfileVersionId.HasValue)
         {
-            throw Problem(
-                SpaceErrorCodes.RackProfileRequired,
-                422,
-                "A requested RackGenerationProfile cannot be pinned until its authoritative version store is available.",
-                "omit-unverified-rack-profile");
+            rackGenerationProfileVersionId = await (
+                    from profileVersion in context
+                        .RackGenerationProfileVersions.AsNoTracking()
+                    join profile in context.RackGenerationProfiles.AsNoTracking()
+                        on profileVersion.ProfileId equals profile.Id
+                    where profileVersion.Id ==
+                          request.RackGenerationProfileVersionId.Value &&
+                          profileVersion.Status ==
+                          SpaceRackGenerationProfileVersionStatus.Ready &&
+                          profile.Status ==
+                          SpaceRackGenerationProfileStatus.Active
+                    select (Guid?)profileVersion.Id)
+                .SingleOrDefaultAsync(cancellationToken);
+            if (!rackGenerationProfileVersionId.HasValue)
+            {
+                throw Problem(
+                    SpaceErrorCodes.RackGenerationProfileNotFound,
+                    404,
+                    "The selected rack generation profile version is not available to this tenant.",
+                    "select-rack-generation-profile");
+            }
         }
 
         var targetFloorLogicalId = ParseTargetFloor(source);
@@ -461,7 +478,7 @@ public sealed class SpaceAiGenerationRunService(
             model.SiteId,
             targetFloorLogicalId,
             mappingProfileVersionId,
-            RackGenerationProfileVersionId: null,
+            rackGenerationProfileVersionId,
             preview);
     }
 

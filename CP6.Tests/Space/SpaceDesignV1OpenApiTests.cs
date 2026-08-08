@@ -44,6 +44,8 @@ public sealed class SpaceDesignV1OpenApiTests
             "/api/space/design/v1/assets",
             "/api/space/design/v1/ai-policy",
             "/api/space/design/v1/ai-usage",
+            "/api/space/design/v1/rack-generation-profiles",
+            "/api/space/design/v1/rack-generation-profile-versions/{versionId}",
             "/api/space/design/v1/generation-runs/{runId}",
             "/api/space/design/v1/generation-runs/{runId}/apply",
             "/api/space/design/v1/generation-runs/{runId}/cancel",
@@ -135,8 +137,8 @@ public sealed class SpaceDesignV1OpenApiTests
             .Select(operation =>
                 operation.Value.GetProperty("operationId").GetString())
             .ToArray();
-        Assert.Equal(115, operationIds.Length);
-        Assert.Equal(115, operationIds.Distinct().Count());
+        Assert.Equal(118, operationIds.Length);
+        Assert.Equal(118, operationIds.Distinct().Count());
         Assert.Contains("GetPolicy", operationIds);
         Assert.Contains("UpdatePolicy", operationIds);
         Assert.Contains("GetUsage", operationIds);
@@ -153,6 +155,9 @@ public sealed class SpaceDesignV1OpenApiTests
         Assert.Contains("GetProposalDecisions", operationIds);
         Assert.Contains("CreateProposalDecision", operationIds);
         Assert.Contains("CreateProposalBatchDecision", operationIds);
+        Assert.Contains("GetRackGenerationProfiles", operationIds);
+        Assert.Contains("GetRackGenerationProfileVersion", operationIds);
+        Assert.Contains("CreateRackGenerationProfile", operationIds);
         Assert.Contains("IngestPersonnelEvents", operationIds);
         Assert.Contains("GetCurrentPersonnel", operationIds);
         Assert.Contains("GetPersonnelTrajectory", operationIds);
@@ -1420,6 +1425,74 @@ public sealed class SpaceDesignV1OpenApiTests
     }
 
     [Fact]
+    public void Rack_generation_profiles_use_immutable_version_contracts()
+    {
+        using var document = ReadContract();
+        var root = document.RootElement;
+        var paths = root.GetProperty("paths");
+        var create = paths
+            .GetProperty("/api/space/design/v1/rack-generation-profiles")
+            .GetProperty("post");
+
+        Assert.Equal(
+            "CreateRackGenerationProfile",
+            create.GetProperty("operationId").GetString());
+        Assert.True(
+            create.GetProperty("requestBody").GetProperty("required")
+                .GetBoolean());
+        var idempotency = create.GetProperty("parameters")
+            .EnumerateArray()
+            .Single(parameter =>
+                parameter.GetProperty("name").GetString() ==
+                "Idempotency-Key");
+        Assert.True(idempotency.GetProperty("required").GetBoolean());
+        Assert.True(
+            create.GetProperty("responses")
+                .GetProperty("201")
+                .GetProperty("headers")
+                .TryGetProperty("Idempotent-Replay", out _));
+
+        var schemas = root.GetProperty("components").GetProperty("schemas");
+        AssertExactRequired(
+            Schema(
+                schemas,
+                "CP6.Space.Contracts.CreateSpaceRackGenerationProfileRequest"),
+            "profileCode",
+            "name",
+            "rackWidthMillimeters",
+            "rackDepthMillimeters",
+            "rackHeightMillimeters",
+            "levels");
+        AssertExactRequired(
+            Schema(
+                schemas,
+                "CP6.Space.Contracts.SpaceRackGenerationProfileLevelDto"),
+            "levelNo",
+            "bottomZMillimeters",
+            "clearHeightMillimeters",
+            "binCount",
+            "depthCount",
+            "cellWidthMillimeters",
+            "cellDepthMillimeters");
+        AssertExactRequired(
+            Schema(
+                schemas,
+                "CP6.Space.Contracts.SpaceRackGenerationProfileVersionDto"),
+            "id",
+            "profileId",
+            "scope",
+            "versionNo",
+            "rackWidthMillimeters",
+            "rackDepthMillimeters",
+            "rackHeightMillimeters",
+            "levels",
+            "locationCount",
+            "contentHash",
+            "status",
+            "rowVersion");
+    }
+
+    [Fact]
     public void Underlay_upload_and_content_use_bounded_binary_contracts()
     {
         using var document = ReadContract();
@@ -1646,6 +1719,9 @@ public sealed class SpaceDesignV1OpenApiTests
                      "GetProposalDecisions",
                      "CreateProposalDecision",
                      "CreateProposalBatchDecision",
+                     "GetRackGenerationProfiles",
+                     "GetRackGenerationProfileVersion",
+                     "CreateRackGenerationProfile",
                      "RefreshWmsAdoption",
                      "GetWmsAdoptionLocations",
                      "BindWmsAdoption",

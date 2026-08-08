@@ -43,6 +43,7 @@ describe('aiProposalReviewApi', () => {
   it('loads the Draft precondition and bounded source candidates', async () => {
     await aiProposalReviewApi.getVersion('version-1')
     await aiProposalReviewApi.getSources('version-1')
+    await aiProposalReviewApi.getRackGenerationProfiles()
 
     expect(http.get).toHaveBeenNthCalledWith(
       1,
@@ -51,6 +52,11 @@ describe('aiProposalReviewApi', () => {
     expect(http.get).toHaveBeenNthCalledWith(
       2,
       '/space/design/v1/versions/version-1/sources',
+      { params: { limit: 200 } },
+    )
+    expect(http.get).toHaveBeenNthCalledWith(
+      3,
+      '/space/design/v1/rack-generation-profiles',
       { params: { limit: 200 } },
     )
   })

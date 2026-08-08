@@ -99,6 +99,14 @@ public static class SpaceErrorCodes
         "SPACE_AI_OUTPUT_INVALID";
     public const string RackProfileRequired =
         "SPACE_RACK_PROFILE_REQUIRED";
+    public const string RackGenerationProfileNotFound =
+        "SPACE_RACK_GENERATION_PROFILE_NOT_FOUND";
+    public const string RackGenerationProfileConflict =
+        "SPACE_RACK_GENERATION_PROFILE_CONFLICT";
+    public const string RackGenerationProfileInvalid =
+        "SPACE_RACK_GENERATION_PROFILE_INVALID";
+    public const string RackGenerationProfileScopeDenied =
+        "SPACE_RACK_GENERATION_PROFILE_SCOPE_DENIED";
     public const string AiSourcePolicyDenied =
         "SPACE_AI_SOURCE_POLICY_DENIED";
     public const string AiOutboundPayloadDenied =

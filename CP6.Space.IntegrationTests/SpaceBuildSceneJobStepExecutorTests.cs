@@ -130,8 +130,54 @@ public sealed class SpaceBuildSceneJobStepExecutorTests
             item.RunId == fixture.TargetRunId).ToListAsync());
     }
 
+    [Fact]
+    public async Task Rule_only_pipeline_consumes_frozen_rack_profile_version()
+    {
+        await using var fixture = await CreateFixtureAsync(withRackProfile: true);
+        var executor = new SpaceBuildSceneJobStepExecutor(
+            fixture.Context,
+            fixture.Execution,
+            new FileServiceProvider(fixture.Files),
+            new WarehouseGenerationOutputValidator(),
+            new WarehouseDraftSynthesizer());
+        var lease = await ClaimAsync(fixture);
+        var attempt = fixture.Context.JobAttempts.Local.Single(item =>
+            item.Id == lease.AttemptId);
+        for (var index = 0; index < SpaceBuildSceneJobSteps.All.Count; index++)
+        {
+            var step = SpaceJobStep.Start(
+                fixture.Execution.TenantId,
+                attempt.Id,
+                index + 1,
+                SpaceBuildSceneJobSteps.All[index],
+                Now);
+            fixture.Context.JobSteps.Add(step);
+            await fixture.Context.SaveChangesAsync();
+            var output = await executor.ExecuteAsync(new SpaceJobStepExecution(
+                lease,
+                index + 1,
+                SpaceBuildSceneJobSteps.All[index]));
+            step.Complete(output.CheckpointJson, output.OutputHash, Now);
+            await fixture.Context.SaveChangesAsync();
+        }
+
+        fixture.Context.ChangeTracker.Clear();
+        var proposal = await fixture.Context.GenerationProposals.SingleAsync(
+            item => item.RunId == fixture.TargetRunId);
+        Assert.Equal("Rack", proposal.ProposalType);
+        Assert.Contains(
+            fixture.RackProfileVersionId!.Value.ToString(),
+            proposal.SuggestedAttributesJson,
+            StringComparison.OrdinalIgnoreCase);
+        Assert.DoesNotContain(
+            await fixture.Context.Issues.Where(item =>
+                item.GenerationRunId == fixture.TargetRunId).ToArrayAsync(),
+            item => item.Code == SpaceErrorCodes.RackProfileRequired);
+    }
+
     private static async Task<Fixture> CreateFixtureAsync(
-        bool providerBacked = false)
+        bool providerBacked = false,
+        bool withRackProfile = false)
     {
         var tenantId = Guid.NewGuid();
         var execution = new TestExecutionContext(tenantId, Guid.NewGuid());
@@ -177,11 +223,13 @@ public sealed class SpaceBuildSceneJobStepExecutorTests
             SpaceCadSourceFormat.Dxf,
             "test-converter",
             "1.0.0");
+        var sourceRef = withRackProfile ? "H:RACK-1" : "H:ZONE-1";
+        var layerName = withRackProfile ? "RACK" : "ZONE";
         var entity = new SpaceCadIrEntityV1(
-            "H:ZONE-1",
+            sourceRef,
             SpaceCadIrEntityType.ClosedPolyline,
             "LWPOLYLINE",
-            "ZONE",
+            layerName,
             null,
             [
                 new(0, 0),
@@ -209,7 +257,12 @@ public sealed class SpaceBuildSceneJobStepExecutorTests
                 new SpaceCadBoundsV1(0, 0, 10_000, 8_000),
                 "test-converter",
                 "1.0.0"),
-            [new SpaceCadIrLayerV1("ZONE", "ZONE", 1, "ACI:7", "CONTINUOUS")],
+            [new SpaceCadIrLayerV1(
+                layerName,
+                layerName,
+                1,
+                "ACI:7",
+                "CONTINUOUS")],
             [],
             [entity],
             [],
@@ -250,15 +303,17 @@ public sealed class SpaceBuildSceneJobStepExecutorTests
             null,
             null,
             [new SpaceCadMappingRuleV1(
-                "L-ZONE",
+                withRackProfile ? "L-RACK" : "L-ZONE",
                 100,
                 SpaceCadMappingSourceKind.Layer,
                 SpaceCadMappingMatchKind.Exact,
-                "ZONE",
+                layerName,
                 null,
                 null,
                 null,
-                SpaceCadSemanticTarget.Zone,
+                withRackProfile
+                    ? SpaceCadSemanticTarget.Rack
+                    : SpaceCadSemanticTarget.Zone,
                 null,
                 SpaceCadGeometryRule.ClosedBoundary,
                 null,
@@ -337,6 +392,28 @@ public sealed class SpaceBuildSceneJobStepExecutorTests
             SpaceCadPreviewSetVersions.ArtifactSchema);
         artifact.AttachToJob(parseJob);
 
+        SpaceRackGenerationProfile? rackProfile = null;
+        SpaceRackGenerationProfileVersion? rackProfileVersion = null;
+        if (withRackProfile)
+        {
+            rackProfile = SpaceRackGenerationProfile.CreateTenant(
+                tenantId,
+                "STANDARD-RACK",
+                "Standard rack",
+                null,
+                execution.ActorId,
+                Now);
+            rackProfileVersion = SpaceRackGenerationProfileVersion.CreateReady(
+                rackProfile,
+                1,
+                2400,
+                1000,
+                5000,
+                [new(1, 0, 2200, 4, 2, 600, 500, 100, 1000)],
+                execution.ActorId,
+                Now);
+        }
+
         var sourceRunJob = SpaceJob.CreateQueued(
             tenantId,
             SpaceJobType.BuildScene,
@@ -360,7 +437,7 @@ public sealed class SpaceBuildSceneJobStepExecutorTests
             new string('4', 64),
             null,
             null,
-            null,
+            rackProfileVersion?.Id,
             "rules-test-v1",
             SpaceAiPolicySnapshot.Disabled,
             null,
@@ -375,11 +452,11 @@ public sealed class SpaceBuildSceneJobStepExecutorTests
                 version.ContentRevision,
                 sourceHash,
                 "legacy-zone-key",
-                "Zone",
+                withRackProfile ? "Rack" : "Zone",
                 JsonSerializer.Serialize(semantic.Items.Single().Geometry, JsonOptions),
                 "{\"name\":\"Original Zone\"}",
                 "{}",
-                "[\"H:ZONE-1\"]",
+                JsonSerializer.Serialize(new[] { sourceRef }, JsonOptions),
                 "[]",
                 "{}",
                 0.95m,
@@ -394,12 +471,12 @@ public sealed class SpaceBuildSceneJobStepExecutorTests
             sourceProposal.Id,
             SpaceProposalDecisionType.Modify,
             SpaceAiProposalPatchPolicyV1.BuildSnapshot(
-                "Zone",
+                withRackProfile ? "Rack" : "Zone",
                 sourceProposal.SuggestedGeometryJson,
                 "{\"name\":\"Original Zone\"}",
                 "{}"),
             SpaceAiProposalPatchPolicyV1.BuildSnapshot(
-                "Zone",
+                withRackProfile ? "Rack" : "Zone",
                 sourceProposal.SuggestedGeometryJson,
                 "{\"name\":\"Locked Zone\"}",
                 "{}"),
@@ -443,7 +520,7 @@ public sealed class SpaceBuildSceneJobStepExecutorTests
             new string('2', 64),
             sourceRun.Id,
             null,
-            null,
+            rackProfileVersion?.Id,
             "rules-test-v1",
             providerBacked
                 ? SpaceAiPolicySnapshot.MetadataOnly
@@ -464,7 +541,8 @@ public sealed class SpaceBuildSceneJobStepExecutorTests
             sourceProposal.ProposalType,
             "/attributes/name",
             "\"Locked Zone\"");
-        context.AddRange(
+        var entities = new List<object>
+        {
             model,
             version,
             sourceFile,
@@ -478,7 +556,14 @@ public sealed class SpaceBuildSceneJobStepExecutorTests
             sourceDecision,
             buildJob,
             run,
-            lockedFact);
+            lockedFact,
+        };
+        if (rackProfile is not null && rackProfileVersion is not null)
+        {
+            entities.Add(rackProfile);
+            entities.Add(rackProfileVersion);
+        }
+        context.AddRange(entities);
         await context.SaveChangesAsync();
         var files = new MemoryFileStore();
         files.Seed(previewStorageKey, previewBytes);
@@ -488,7 +573,8 @@ public sealed class SpaceBuildSceneJobStepExecutorTests
             source,
             buildJob,
             run.Id,
-            files);
+            files,
+            rackProfileVersion?.Id);
     }
 
     private static SpaceFile CleanFile(
@@ -612,7 +698,8 @@ public sealed class SpaceBuildSceneJobStepExecutorTests
         SpaceModelSource Source,
         SpaceJob BuildJob,
         Guid TargetRunId,
-        MemoryFileStore Files) : IAsyncDisposable
+        MemoryFileStore Files,
+        Guid? RackProfileVersionId) : IAsyncDisposable
     {
         public ValueTask DisposeAsync() => Context.DisposeAsync();
     }
