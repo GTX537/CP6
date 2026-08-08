@@ -7,7 +7,7 @@
 - 在集成基线 `27d3989b` 上完成功能提交 `4db2d0d0`、验证报告提交 `93f65a33`，并以 no-ff 提交 `3ee23655` 进入 `integration/space-v1-20260730`；`main` 未修改。
 - 新增服务端权威 `ExcelCadMatch` Job 与私有 `ExcelCadMatchPreview` Artifact。HTTP 只冻结 Excel Preflight、CAD Parse/PreviewSet、映射方案和 Draft ContentRevision 后排队；Worker 重新打开私有 Excel、校验 Job/Artifact/Schema/SHA/血缘并直接读取数据库 Floor/Zone/Rack 权威快照，客户端不能提交匹配结果或哈希。
 - 新增创建/查询 API、`space:model:edit/read` 权限、写/读审计、外部主体拒绝、受保护游标筛选分页和编辑器权威审阅/画布定位。Draft 修订漂移时保留只读历史证据但关闭 `CanConfirm`；重试只复用唯一且完整校验通过的 Artifact。OpenAPI 操作数为 113，C#/TypeScript SDK 已同步，无 Migration。
-- 门禁：Space Unit 464/464；默认 Space Integration 267 passed / 94 SQL-gated skipped；CP6.Tests 2806 passed / 17 environment-gated skipped；前端 132 files / 702 tests；完整 solution Release（含 Desktop/Android AOT）0 error / 10 条既有 warning；类型检查、生产构建、SDK drift、受影响文件格式和 diff 检查通过。完整证据见 `docs/space/reports/e03-s04-authoritative-match-artifact.md`。
+- 门禁：Space Unit 464/464；默认 Space Integration 267 passed / 94 SQL-gated skipped；CP6.Tests 2806 passed / 17 environment-gated skipped；前端 132 files / 702 tests；完整 solution Release（含 Desktop/Android AOT）0 error / 10 条既有 warning；类型检查、生产构建、SDK drift、受影响文件格式和 diff 检查通过。合并后清理 39 个可重建目录、32,452 个文件、2,475,932,206 bytes（约 2.306 GiB）。完整证据见 `docs/space/reports/e03-s04-authoritative-match-artifact.md`。
 - E03-S05 的人工确认与原子 Draft 写入现已解除应用内前置依赖，但仍必须只消费本卡权威 Artifact，精确校验 ContentRevision 并失败关闭。正式 CAD Provider、组织授权 DWG/DXF 黄金集、生产 Excel/CAD Worker 部署和真实大文件/故障/性能证据仍未完成，因此本卡不是生产 CAD 正式签收。
 
 ## E06-S06 版本发布管理 UI 开发切片（2026-08-08）

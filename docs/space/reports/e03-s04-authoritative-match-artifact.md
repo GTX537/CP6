@@ -41,6 +41,7 @@ E03-S04 已从离线只读匹配预览补齐为服务端权威、可持久化、
 - 前端：132 files / 702 tests passed，TypeScript 类型检查和 production build 通过；
 - 完整 `CP6.slnx` Release 非增量单线程构建：0 error / 10 条既有 warning，含 Desktop 与 Android AOT；
 - OpenAPI/C#/TypeScript SDK generation drift、受影响 C# whitespace、`git diff --check` 全部通过。
+- 集成并推送后清理 39 个可重建 `bin/obj/node_modules/dist` 目录、32,452 个文件、2,475,932,206 bytes（约 2.306 GiB）；源码与 Git 历史不受影响。
 
 ## 尚未解除的外部边界
 
