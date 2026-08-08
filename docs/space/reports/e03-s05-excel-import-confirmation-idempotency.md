@@ -66,3 +66,5 @@ E03 的五张应用内开发卡现已形成“模板/映射/预检 → 权威匹
 
 上述“仅 Racks”是本报告对应原始提交的历史边界。后续功能提交 `cb802cf6` 已在不改变确认、Artifact、CommandBatch 和修订语义的前提下支持标准工作簿的 RackLevels、Locations 与 RackTemplateCode；详细规则、失败关闭范围和验证证据见 `e03-s05-hierarchy-template-apply.md`。标准模板没有 Zone/Aisle 工作表，因此没有新增或伪造对应导入格式。
 
+后续功能提交 `b5aa87b2` 又为 Bindings、Attributes 与 LocationType 建立版本化持久合同，将标准模板的剩余字段纳入同一原子 Apply、克隆、验证、发布和场景读取链；详细语义见 `e03-s05-binding-attribute-location-type-apply.md`。两次扩展都不把设计声明冒充 WMS Adoption，也不改变原始提交的历史范围。
+
