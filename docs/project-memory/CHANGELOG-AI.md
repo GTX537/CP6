@@ -9,6 +9,7 @@
 - 正式门禁要求 20 资产、L1～L5、10/5/5、唯一 CAD hash、授权/脱敏、冻结版本、独立标注仲裁、验收日期、不可变和 hash-sealed 完整性审计；DevelopmentSeed 永远不能通过发布门禁。
 - 新增 `evaluate-ai-offline` 命令和现有 Draft Proposal 适配。验证为核心 11/11、命令 1/1、CAD 工具 26/26、Space Unit 482/482、默认 Integration 275 passed / 94 skipped、CP6.Tests 2811 passed / 17 skipped、完整 Release 0 warning / 0 error。
 - 本提交只完成 E13-S14 工程切片；正式黄金数据、真实 Provider/人工操作实测与审批仍待外部输入，S15/S18/S19 不提前签收，`main` 未修改。
+- 远端集成祖先链核验后删除本地/远端临时功能分支；清理 41 个可重建目录、6,982 个文件并回收 1,380,171,591 bytes（约 1.29 GiB）。
 
 ## 2026-08-06：Space Version Clone 必填字段前向修复
 

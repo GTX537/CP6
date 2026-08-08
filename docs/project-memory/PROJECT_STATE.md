@@ -8,6 +8,7 @@
 - 正式清单硬门禁覆盖 20 资产、L1～L5、10/5/5、唯一 CAD hash、授权/脱敏、应用/Parser/Provider/Model/规则/映射/答案版本、独立标注仲裁、验收日期、不可变和完整性审计。DevelopmentSeed 即使指标全绿也不能成为发布证据。
 - `evaluate-ai-offline` 命令支持开发测量与 `--require-release-eligible` 失败关闭；无 Provider 调用、Draft 写入、Migration、HTTP/OpenAPI 或 SDK 变化。门禁为核心 11/11、命令 1/1、CAD 工具 26/26、Space Unit 482/482、默认 Integration 275 passed / 94 skipped、CP6.Tests 2811 passed / 17 skipped、完整 solution Release 0 warning / 0 error。
 - 本切片是 E13-S14 工程能力，不是正式 S14 签收；仍需获授权黄金 CAD、独立标注/QA、真实版本冻结、Provider 输出、人工操作实测和签字。完整边界见 `docs/space/reports/e13-s14-offline-evaluation-gate-development.md`。
+- 功能和报告已进入并推送远端集成祖先链，临时本地/远端分支已删除；清理 41 个可重建 `bin/obj` 目录、6,982 个文件，释放 1,380,171,591 bytes（约 1.29 GiB）。`main` 未修改。
 
 ## E03-S05 Excel 设计元数据权威 Apply 扩展（2026-08-08）
 
