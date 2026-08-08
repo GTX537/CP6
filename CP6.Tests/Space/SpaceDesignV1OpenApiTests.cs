@@ -72,6 +72,8 @@ public sealed class SpaceDesignV1OpenApiTests
             "/api/space/design/v1/versions/{versionId}/excel-sources",
             "/api/space/design/v1/versions/{versionId}/excel-cad-matches",
             "/api/space/design/v1/versions/{versionId}/excel-cad-matches/{jobId}",
+            "/api/space/design/v1/versions/{versionId}/excel-cad-matches/{matchJobId}/confirmations",
+            "/api/space/design/v1/versions/{versionId}/excel-cad-matches/{matchJobId}/confirmations/{applyJobId}",
             "/api/space/design/v1/versions/{versionId}/cad-sources",
             "/api/space/design/v1/versions/{versionId}/sources",
             "/api/space/design/v1/versions/{versionId}/sources/{sourceId}/content",
@@ -133,8 +135,8 @@ public sealed class SpaceDesignV1OpenApiTests
             .Select(operation =>
                 operation.Value.GetProperty("operationId").GetString())
             .ToArray();
-        Assert.Equal(113, operationIds.Length);
-        Assert.Equal(113, operationIds.Distinct().Count());
+        Assert.Equal(115, operationIds.Length);
+        Assert.Equal(115, operationIds.Distinct().Count());
         Assert.Contains("GetPolicy", operationIds);
         Assert.Contains("UpdatePolicy", operationIds);
         Assert.Contains("GetUsage", operationIds);
@@ -168,6 +170,8 @@ public sealed class SpaceDesignV1OpenApiTests
         Assert.Contains("StartPreflight", operationIds);
         Assert.Contains("StartMatch", operationIds);
         Assert.Contains("GetMatch", operationIds);
+        Assert.Contains("ConfirmMatch", operationIds);
+        Assert.Contains("GetConfirmation", operationIds);
         Assert.Contains("UploadCadSource", operationIds);
         Assert.Contains("StartParse", operationIds);
         Assert.Contains("GetParse", operationIds);

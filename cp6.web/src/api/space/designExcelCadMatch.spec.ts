@@ -53,4 +53,38 @@ describe('designExcelCadMatchApi', () => {
       },
     )
   })
+
+  it('confirms an exact authoritative artifact with an idempotency key', async () => {
+    const request = {
+      confirmed: true,
+      artifactId: 'artifact-1',
+      artifactPayloadSha256: 'a'.repeat(64),
+      expectedContentRevision: 7,
+    }
+
+    await designExcelCadMatchApi.confirm(
+      'version-1',
+      'match-1',
+      request,
+      'apply-1',
+    )
+
+    expect(http.post).toHaveBeenCalledWith(
+      '/space/design/v1/versions/version-1/excel-cad-matches/match-1/confirmations',
+      request,
+      { headers: { 'Idempotency-Key': 'apply-1' } },
+    )
+  })
+
+  it('reads typed confirmation status from the protected match chain', async () => {
+    await designExcelCadMatchApi.getConfirmation(
+      'version-1',
+      'match-1',
+      'apply-1',
+    )
+
+    expect(http.get).toHaveBeenCalledWith(
+      '/space/design/v1/versions/version-1/excel-cad-matches/match-1/confirmations/apply-1',
+    )
+  })
 })

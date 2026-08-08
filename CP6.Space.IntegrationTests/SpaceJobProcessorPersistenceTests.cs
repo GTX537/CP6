@@ -18,7 +18,7 @@ public sealed class SpaceJobProcessorPersistenceTests
         new(2026, 7, 30, 20, 30, 0, DateTimeKind.Utc);
 
     [Fact]
-    public void Default_registration_exposes_eleven_explicit_processors()
+    public void Default_registration_exposes_twelve_explicit_processors()
     {
         var services = new ServiceCollection();
         services.AddScoped<ISpaceExecutionContext>(
@@ -36,6 +36,10 @@ public sealed class SpaceJobProcessorPersistenceTests
             services,
             descriptor => descriptor.ServiceType ==
                 typeof(ISpaceExcelCadMatchService));
+        Assert.Contains(
+            services,
+            descriptor => descriptor.ServiceType ==
+                typeof(ISpaceExcelCadApplyService));
 
         using var provider = services.BuildServiceProvider();
         using var scope = provider.CreateScope();
@@ -44,7 +48,7 @@ public sealed class SpaceJobProcessorPersistenceTests
             .OrderBy(processor => processor.JobType)
             .ToArray();
 
-        Assert.Equal(11, processors.Length);
+        Assert.Equal(12, processors.Length);
         Assert.IsType<SpaceCadParseJobProcessor>(processors[0]);
         Assert.IsType<SpaceExcelPreflightJobProcessor>(processors[1]);
         Assert.IsType<SpaceImportJobProcessor>(processors[2]);
@@ -56,6 +60,7 @@ public sealed class SpaceJobProcessorPersistenceTests
         Assert.IsType<SpaceAiRetentionJobProcessor>(processors[8]);
         Assert.IsType<SpaceHistoricalRepublishJobProcessor>(processors[9]);
         Assert.IsType<SpaceExcelCadMatchJobProcessor>(processors[10]);
+        Assert.IsType<SpaceExcelCadApplyJobProcessor>(processors[11]);
         Assert.IsType<UnavailableSpaceCadParseProvider>(
             scope.ServiceProvider.GetRequiredService<ISpaceCadParseProvider>());
         Assert.IsType<SpaceCadParseJobStepExecutor>(
@@ -64,6 +69,9 @@ public sealed class SpaceJobProcessorPersistenceTests
         Assert.IsType<SpaceExcelCadMatchJobStepExecutor>(
             scope.ServiceProvider.GetRequiredService<
                 ISpaceExcelCadMatchJobStepExecutor>());
+        Assert.IsType<SpaceExcelCadApplyJobStepExecutor>(
+            scope.ServiceProvider.GetRequiredService<
+                ISpaceExcelCadApplyJobStepExecutor>());
         Assert.IsType<UnavailableSpaceImportJobStepExecutor>(
             scope.ServiceProvider.GetRequiredService<
                 ISpaceImportJobStepExecutor>());

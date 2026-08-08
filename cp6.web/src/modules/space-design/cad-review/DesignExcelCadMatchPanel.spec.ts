@@ -8,6 +8,8 @@ import DesignExcelCadMatchPanel from './DesignExcelCadMatchPanel.vue'
 vi.mock('@/api/space/designExcelCadMatch', () => ({
   designExcelCadMatchApi: {
     get: vi.fn(),
+    confirm: vi.fn(),
+    getConfirmation: vi.fn(),
   },
 }))
 
@@ -62,6 +64,22 @@ describe('DesignExcelCadMatchPanel', () => {
   beforeEach(() => {
     vi.clearAllMocks()
     vi.mocked(designExcelCadMatchApi.get).mockResolvedValue(response as never)
+    vi.mocked(designExcelCadMatchApi.confirm).mockResolvedValue({
+      matchJobId: 'job-1',
+      applyJobId: 'apply-1',
+      commandBatchId: 'batch-1',
+      jobStatus: 'Queued',
+      jobStatusUrl: '/apply-1',
+      idempotentReplay: false,
+    } as never)
+    vi.mocked(designExcelCadMatchApi.getConfirmation).mockResolvedValue({
+      matchJobId: 'job-1',
+      applyJobId: 'apply-1',
+      commandBatchId: 'batch-1',
+      jobStatus: 'Succeeded',
+      expectedContentRevision: 7,
+      idempotentReplay: false,
+    } as never)
   })
 
   it('loads only server-authoritative rows and emits a locate intent', async () => {
@@ -113,5 +131,40 @@ describe('DesignExcelCadMatchPanel', () => {
     expect(wrapper.get('[data-test="match-row"]').attributes('disabled'))
       .toBeDefined()
     expect(wrapper.text()).toContain('当前仅可审阅')
+  })
+
+  it('requires an explicit click and confirms the exact artifact identity', async () => {
+    const wrapper = mount(DesignExcelCadMatchPanel, {
+      props: {
+        versionId: 'version-1',
+        jobId: 'job-1',
+        currentContentRevision: 7,
+      },
+      global: { plugins: [ElementPlus] },
+    })
+    await flushPromises()
+
+    expect(designExcelCadMatchApi.confirm).not.toHaveBeenCalled()
+    await wrapper.get('[data-test="confirm-match"]').trigger('click')
+    await flushPromises()
+
+    expect(designExcelCadMatchApi.confirm).toHaveBeenCalledWith(
+      'version-1',
+      'job-1',
+      {
+        confirmed: true,
+        artifactId: 'artifact-1',
+        artifactPayloadSha256: 'a'.repeat(64),
+        expectedContentRevision: 7,
+      },
+      `excel-cad-apply:job-1:${'a'.repeat(64)}`,
+    )
+    expect(designExcelCadMatchApi.getConfirmation).toHaveBeenCalledWith(
+      'version-1',
+      'job-1',
+      'apply-1',
+    )
+    expect(wrapper.get('[data-test="confirmation-succeeded"]').text())
+      .toContain('重复确认不会重复创建货架')
   })
 })

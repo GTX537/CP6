@@ -8,6 +8,11 @@ using CP6.Space.Domain;
 
 namespace CP6.Space.Application;
 
+public sealed record SpaceExcelWorkbookProjectionV1(
+    SpaceExcelPreflightInspection Inspection,
+    IReadOnlyList<SpaceExcelCanonicalRow> CanonicalRows,
+    string WorkbookProjectionSha256);
+
 public static class SpaceExcelCadMatching
 {
     private static readonly JsonSerializerOptions CanonicalJsonOptions = new()
@@ -101,16 +106,10 @@ public static class SpaceExcelCadMatching
                 "Excel/CAD matching inputs do not belong to one tenant, model and floor chain.");
         }
 
-        var inspection = new SpaceExcelPreflightValidator().Inspect(
-            mappingProfile.Definition,
-            workbook);
-        var canonicalRows = CanonicalRows(inspection.Rows);
-        var workbookProjectionSha256 = ComputeSha256(CanonicalJson(new
-        {
-            mappingProfile.DefinitionHash,
-            Rows = canonicalRows.Select(Projection).ToArray(),
-            Findings = CanonicalFindings(inspection.Validation.Findings),
-        }));
+        var projection = ProjectWorkbook(mappingProfile, workbook);
+        var inspection = projection.Inspection;
+        var canonicalRows = projection.CanonicalRows;
+        var workbookProjectionSha256 = projection.WorkbookProjectionSha256;
         var blockingByRow = inspection.Validation.Findings
             .Where(item => item.Severity == SpaceIssueSeverity.Blocking
                            && item.Row.HasValue)
@@ -206,6 +205,35 @@ public static class SpaceExcelCadMatching
         };
         Validate(preview);
         return preview;
+    }
+
+    public static SpaceExcelWorkbookProjectionV1 ProjectWorkbook(
+        SpaceExcelMappingProfileDto mappingProfile,
+        SpaceExcelWorkbookData workbook)
+    {
+        ArgumentNullException.ThrowIfNull(mappingProfile);
+        ArgumentNullException.ThrowIfNull(workbook);
+        if (mappingProfile.Id == Guid.Empty || mappingProfile.Version <= 0
+            || !IsSha256(mappingProfile.DefinitionHash))
+        {
+            throw new InvalidDataException(
+                "The Excel mapping profile identity is invalid.");
+        }
+
+        var inspection = new SpaceExcelPreflightValidator().Inspect(
+            mappingProfile.Definition,
+            workbook);
+        var canonicalRows = CanonicalRows(inspection.Rows);
+        var workbookProjectionSha256 = ComputeSha256(CanonicalJson(new
+        {
+            mappingProfile.DefinitionHash,
+            Rows = canonicalRows.Select(Projection).ToArray(),
+            Findings = CanonicalFindings(inspection.Validation.Findings),
+        }));
+        return new SpaceExcelWorkbookProjectionV1(
+            inspection,
+            canonicalRows,
+            workbookProjectionSha256);
     }
 
     public static string Serialize(SpaceExcelCadMatchPreviewV1 preview)

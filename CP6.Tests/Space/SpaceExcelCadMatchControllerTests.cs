@@ -97,8 +97,91 @@ public sealed class SpaceExcelCadMatchControllerTests
         service.VerifyAll();
     }
 
+    [Fact]
+    public async Task Confirm_returns_apply_job_location_and_replay_header()
+    {
+        var versionId = Guid.NewGuid();
+        var matchJobId = Guid.NewGuid();
+        var request = new ConfirmSpaceExcelCadMatchRequest(
+            true,
+            Guid.NewGuid(),
+            new string('a', 64),
+            7);
+        var response = new ConfirmSpaceExcelCadMatchResponse(
+            matchJobId,
+            Guid.NewGuid(),
+            Guid.NewGuid(),
+            "Queued",
+            "/confirmation-status",
+            IdempotentReplay: true);
+        var apply = new Mock<ISpaceExcelCadApplyService>();
+        apply.Setup(item => item.ConfirmAsync(
+                versionId,
+                matchJobId,
+                request,
+                "confirm-key",
+                It.IsAny<CancellationToken>()))
+            .ReturnsAsync(response);
+        var controller = NewController(
+            new Mock<ISpaceExcelCadMatchService>().Object,
+            apply.Object);
+
+        var result = await controller.ConfirmMatch(
+            versionId,
+            matchJobId,
+            "confirm-key",
+            request,
+            CancellationToken.None);
+
+        var accepted = Assert.IsType<AcceptedResult>(result);
+        Assert.Equal(response.JobStatusUrl, accepted.Location);
+        Assert.Same(response, accepted.Value);
+        Assert.Equal("true", controller.Response.Headers["Idempotent-Replay"]);
+        apply.VerifyAll();
+    }
+
+    [Fact]
+    public async Task Get_confirmation_returns_typed_apply_status()
+    {
+        var versionId = Guid.NewGuid();
+        var matchJobId = Guid.NewGuid();
+        var applyJobId = Guid.NewGuid();
+        var response = new SpaceExcelCadApplyDto(
+            matchJobId,
+            applyJobId,
+            Guid.NewGuid(),
+            "Running",
+            7,
+            null,
+            false,
+            null,
+            null);
+        var apply = new Mock<ISpaceExcelCadApplyService>();
+        apply.Setup(item => item.GetAsync(
+                versionId,
+                matchJobId,
+                applyJobId,
+                It.IsAny<CancellationToken>()))
+            .ReturnsAsync(response);
+        var controller = NewController(
+            new Mock<ISpaceExcelCadMatchService>().Object,
+            apply.Object);
+
+        var result = await controller.GetConfirmation(
+            versionId,
+            matchJobId,
+            applyJobId,
+            CancellationToken.None);
+
+        Assert.Same(response, result);
+        apply.VerifyAll();
+    }
+
     private static SpaceExcelCadMatchController NewController(
-        ISpaceExcelCadMatchService service) => new(service)
+        ISpaceExcelCadMatchService service,
+        ISpaceExcelCadApplyService? applyService = null) => new(
+            service,
+            applyService ?? new Mock<ISpaceExcelCadApplyService>().Object)
         {
             ControllerContext = new ControllerContext
             {

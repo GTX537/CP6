@@ -92,6 +92,8 @@ public class SpacePermissionAttributeTests
                 "space:model:read",
             ["SpaceExcelCadMatchController.GetMatch"] =
                 "space:model:read",
+            ["SpaceExcelCadMatchController.GetConfirmation"] =
+                "space:model:read",
             ["SpaceValidationController.GetValidation"] =
                 "space:model:read",
             ["SpacePublishPreviewController.GetPublishPreview"] =

@@ -1,0 +1,53 @@
+namespace CP6.Space.Contracts;
+
+public static class SpaceExcelCadApplyVersions
+{
+    public const int SchemaVersion = 1;
+}
+
+public sealed record ConfirmSpaceExcelCadMatchRequest(
+    bool Confirmed,
+    Guid ArtifactId,
+    string ArtifactPayloadSha256,
+    long ExpectedContentRevision);
+
+public sealed record ConfirmSpaceExcelCadMatchResponse(
+    Guid MatchJobId,
+    Guid ApplyJobId,
+    Guid CommandBatchId,
+    string JobStatus,
+    string JobStatusUrl,
+    bool IdempotentReplay);
+
+public sealed record SpaceExcelCadApplyResultV1(
+    int SchemaVersion,
+    Guid MatchJobId,
+    Guid ApplyJobId,
+    Guid ArtifactId,
+    string ArtifactPayloadSha256,
+    Guid ModelVersionId,
+    Guid ExcelSourceId,
+    Guid FloorLogicalId,
+    Guid CommandBatchId,
+    long ExpectedFloorRevision,
+    long ResultFloorRevision,
+    long ExpectedContentRevision,
+    long ResultContentRevision,
+    long CreatedRackCount,
+    long UpdatedRackCount,
+    long UnchangedRackCount,
+    Guid ConfirmedBy,
+    DateTime ConfirmedAtUtc,
+    DateTime AppliedAtUtc,
+    string ApplyPlanSha256);
+
+public sealed record SpaceExcelCadApplyDto(
+    Guid MatchJobId,
+    Guid ApplyJobId,
+    Guid CommandBatchId,
+    string JobStatus,
+    long ExpectedContentRevision,
+    SpaceExcelCadApplyResultV1? Result,
+    bool IdempotentReplay,
+    string? LastErrorCode,
+    string? LastErrorSummary);

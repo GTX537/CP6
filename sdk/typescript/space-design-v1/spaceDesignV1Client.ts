@@ -341,6 +341,16 @@ export interface ISpaceDesignV1Client {
     getMatch(versionId: string, jobId: string, disposition: string | undefined, rackCode: string | undefined, sourceRef: string | undefined, onlyLocatable: boolean | undefined, limit: number | undefined, cursor: string | undefined): Promise<SpaceExcelCadMatchDto>;
 
     /**
+     * @return Accepted
+     */
+    confirmMatch(versionId: string, matchJobId: string, idempotency_Key: string, body: ConfirmSpaceExcelCadMatchRequest): Promise<ConfirmSpaceExcelCadMatchResponse>;
+
+    /**
+     * @return OK
+     */
+    getConfirmation(versionId: string, matchJobId: string, applyJobId: string): Promise<SpaceExcelCadApplyDto>;
+
+    /**
      * @return OK
      */
     getProfiles(): Promise<SpaceExcelMappingProfileDto[]>;
@@ -5830,6 +5840,212 @@ export class SpaceDesignV1Client implements ISpaceDesignV1Client {
             });
         }
         return Promise.resolve<SpaceExcelCadMatchDto>(null as any);
+    }
+
+    /**
+     * @return Accepted
+     */
+    confirmMatch(versionId: string, matchJobId: string, idempotency_Key: string, body: ConfirmSpaceExcelCadMatchRequest): Promise<ConfirmSpaceExcelCadMatchResponse> {
+        let url_ = this.baseUrl + "/api/space/design/v1/versions/{versionId}/excel-cad-matches/{matchJobId}/confirmations";
+        if (versionId === undefined || versionId === null)
+            throw new globalThis.Error("The parameter 'versionId' must be defined.");
+        url_ = url_.replace("{versionId}", encodeURIComponent("" + versionId));
+        if (matchJobId === undefined || matchJobId === null)
+            throw new globalThis.Error("The parameter 'matchJobId' must be defined.");
+        url_ = url_.replace("{matchJobId}", encodeURIComponent("" + matchJobId));
+        url_ = url_.replace(/[?&]$/, "");
+
+        const content_ = JSON.stringify(body);
+
+        let options_: RequestInit = {
+            body: content_,
+            method: "POST",
+            headers: {
+                "Idempotency-Key": idempotency_Key !== undefined && idempotency_Key !== null ? "" + idempotency_Key : "",
+                "Content-Type": "application/json",
+                "Accept": "application/json"
+            }
+        };
+
+        return this.http.fetch(url_, options_).then((_response: Response) => {
+            return this.processConfirmMatch(_response);
+        });
+    }
+
+    protected processConfirmMatch(response: Response): Promise<ConfirmSpaceExcelCadMatchResponse> {
+        const status = response.status;
+        let _headers: any = {}; if (response.headers && response.headers.forEach) { response.headers.forEach((v: any, k: any) => _headers[k] = v); };
+        if (status === 202) {
+            return response.text().then((_responseText) => {
+            let result202: any = null;
+            let resultData202 = _responseText === "" ? null : JSON.parse(_responseText, this.jsonParseReviver);
+            result202 = ConfirmSpaceExcelCadMatchResponse.fromJS(resultData202);
+            return result202;
+            });
+        } else if (status === 400) {
+            return response.text().then((_responseText) => {
+            let result400: any = null;
+            let resultData400 = _responseText === "" ? null : JSON.parse(_responseText, this.jsonParseReviver);
+            result400 = SpaceDesignProblemDetails.fromJS(resultData400);
+            return throwException("Bad Request", status, _responseText, _headers, result400);
+            });
+        } else if (status === 401) {
+            return response.text().then((_responseText) => {
+            let result401: any = null;
+            let resultData401 = _responseText === "" ? null : JSON.parse(_responseText, this.jsonParseReviver);
+            result401 = SpaceDesignProblemDetails.fromJS(resultData401);
+            return throwException("Unauthorized", status, _responseText, _headers, result401);
+            });
+        } else if (status === 403) {
+            return response.text().then((_responseText) => {
+            let result403: any = null;
+            let resultData403 = _responseText === "" ? null : JSON.parse(_responseText, this.jsonParseReviver);
+            result403 = SpaceDesignProblemDetails.fromJS(resultData403);
+            return throwException("Forbidden", status, _responseText, _headers, result403);
+            });
+        } else if (status === 404) {
+            return response.text().then((_responseText) => {
+            let result404: any = null;
+            let resultData404 = _responseText === "" ? null : JSON.parse(_responseText, this.jsonParseReviver);
+            result404 = SpaceDesignProblemDetails.fromJS(resultData404);
+            return throwException("Not Found", status, _responseText, _headers, result404);
+            });
+        } else if (status === 409) {
+            return response.text().then((_responseText) => {
+            let result409: any = null;
+            let resultData409 = _responseText === "" ? null : JSON.parse(_responseText, this.jsonParseReviver);
+            result409 = SpaceDesignProblemDetails.fromJS(resultData409);
+            return throwException("Conflict", status, _responseText, _headers, result409);
+            });
+        } else if (status === 422) {
+            return response.text().then((_responseText) => {
+            let result422: any = null;
+            let resultData422 = _responseText === "" ? null : JSON.parse(_responseText, this.jsonParseReviver);
+            result422 = SpaceDesignProblemDetails.fromJS(resultData422);
+            return throwException("Unprocessable Content", status, _responseText, _headers, result422);
+            });
+        } else if (status === 500) {
+            return response.text().then((_responseText) => {
+            let result500: any = null;
+            let resultData500 = _responseText === "" ? null : JSON.parse(_responseText, this.jsonParseReviver);
+            result500 = SpaceDesignProblemDetails.fromJS(resultData500);
+            return throwException("Internal Server Error", status, _responseText, _headers, result500);
+            });
+        } else if (status === 503) {
+            return response.text().then((_responseText) => {
+            let result503: any = null;
+            let resultData503 = _responseText === "" ? null : JSON.parse(_responseText, this.jsonParseReviver);
+            result503 = SpaceDesignProblemDetails.fromJS(resultData503);
+            return throwException("Service Unavailable", status, _responseText, _headers, result503);
+            });
+        } else if (status !== 200 && status !== 204) {
+            return response.text().then((_responseText) => {
+            return throwException("An unexpected server error occurred.", status, _responseText, _headers);
+            });
+        }
+        return Promise.resolve<ConfirmSpaceExcelCadMatchResponse>(null as any);
+    }
+
+    /**
+     * @return OK
+     */
+    getConfirmation(versionId: string, matchJobId: string, applyJobId: string): Promise<SpaceExcelCadApplyDto> {
+        let url_ = this.baseUrl + "/api/space/design/v1/versions/{versionId}/excel-cad-matches/{matchJobId}/confirmations/{applyJobId}";
+        if (versionId === undefined || versionId === null)
+            throw new globalThis.Error("The parameter 'versionId' must be defined.");
+        url_ = url_.replace("{versionId}", encodeURIComponent("" + versionId));
+        if (matchJobId === undefined || matchJobId === null)
+            throw new globalThis.Error("The parameter 'matchJobId' must be defined.");
+        url_ = url_.replace("{matchJobId}", encodeURIComponent("" + matchJobId));
+        if (applyJobId === undefined || applyJobId === null)
+            throw new globalThis.Error("The parameter 'applyJobId' must be defined.");
+        url_ = url_.replace("{applyJobId}", encodeURIComponent("" + applyJobId));
+        url_ = url_.replace(/[?&]$/, "");
+
+        let options_: RequestInit = {
+            method: "GET",
+            headers: {
+                "Accept": "application/json"
+            }
+        };
+
+        return this.http.fetch(url_, options_).then((_response: Response) => {
+            return this.processGetConfirmation(_response);
+        });
+    }
+
+    protected processGetConfirmation(response: Response): Promise<SpaceExcelCadApplyDto> {
+        const status = response.status;
+        let _headers: any = {}; if (response.headers && response.headers.forEach) { response.headers.forEach((v: any, k: any) => _headers[k] = v); };
+        if (status === 200) {
+            return response.text().then((_responseText) => {
+            let result200: any = null;
+            let resultData200 = _responseText === "" ? null : JSON.parse(_responseText, this.jsonParseReviver);
+            result200 = SpaceExcelCadApplyDto.fromJS(resultData200);
+            return result200;
+            });
+        } else if (status === 400) {
+            return response.text().then((_responseText) => {
+            let result400: any = null;
+            let resultData400 = _responseText === "" ? null : JSON.parse(_responseText, this.jsonParseReviver);
+            result400 = SpaceDesignProblemDetails.fromJS(resultData400);
+            return throwException("Bad Request", status, _responseText, _headers, result400);
+            });
+        } else if (status === 401) {
+            return response.text().then((_responseText) => {
+            let result401: any = null;
+            let resultData401 = _responseText === "" ? null : JSON.parse(_responseText, this.jsonParseReviver);
+            result401 = SpaceDesignProblemDetails.fromJS(resultData401);
+            return throwException("Unauthorized", status, _responseText, _headers, result401);
+            });
+        } else if (status === 403) {
+            return response.text().then((_responseText) => {
+            let result403: any = null;
+            let resultData403 = _responseText === "" ? null : JSON.parse(_responseText, this.jsonParseReviver);
+            result403 = SpaceDesignProblemDetails.fromJS(resultData403);
+            return throwException("Forbidden", status, _responseText, _headers, result403);
+            });
+        } else if (status === 404) {
+            return response.text().then((_responseText) => {
+            let result404: any = null;
+            let resultData404 = _responseText === "" ? null : JSON.parse(_responseText, this.jsonParseReviver);
+            result404 = SpaceDesignProblemDetails.fromJS(resultData404);
+            return throwException("Not Found", status, _responseText, _headers, result404);
+            });
+        } else if (status === 409) {
+            return response.text().then((_responseText) => {
+            let result409: any = null;
+            let resultData409 = _responseText === "" ? null : JSON.parse(_responseText, this.jsonParseReviver);
+            result409 = SpaceDesignProblemDetails.fromJS(resultData409);
+            return throwException("Conflict", status, _responseText, _headers, result409);
+            });
+        } else if (status === 422) {
+            return response.text().then((_responseText) => {
+            let result422: any = null;
+            let resultData422 = _responseText === "" ? null : JSON.parse(_responseText, this.jsonParseReviver);
+            result422 = SpaceDesignProblemDetails.fromJS(resultData422);
+            return throwException("Unprocessable Content", status, _responseText, _headers, result422);
+            });
+        } else if (status === 500) {
+            return response.text().then((_responseText) => {
+            let result500: any = null;
+            let resultData500 = _responseText === "" ? null : JSON.parse(_responseText, this.jsonParseReviver);
+            result500 = SpaceDesignProblemDetails.fromJS(resultData500);
+            return throwException("Internal Server Error", status, _responseText, _headers, result500);
+            });
+        } else if (status === 503) {
+            return response.text().then((_responseText) => {
+            let result503: any = null;
+            let resultData503 = _responseText === "" ? null : JSON.parse(_responseText, this.jsonParseReviver);
+            result503 = SpaceDesignProblemDetails.fromJS(resultData503);
+            return throwException("Service Unavailable", status, _responseText, _headers, result503);
+            });
+        } else if (status !== 200 && status !== 204) {
+            return response.text().then((_responseText) => {
+            return throwException("An unexpected server error occurred.", status, _responseText, _headers);
+            });
+        }
+        return Promise.resolve<SpaceExcelCadApplyDto>(null as any);
     }
 
     /**
@@ -12197,6 +12413,110 @@ export interface IBindSpaceWmsAdoptionRequest {
     expectedRowVersion?: string | undefined;
 }
 
+export class ConfirmSpaceExcelCadMatchRequest implements IConfirmSpaceExcelCadMatchRequest {
+    confirmed?: boolean;
+    artifactId?: string;
+    artifactPayloadSha256?: string | undefined;
+    expectedContentRevision?: number;
+
+    constructor(data?: IConfirmSpaceExcelCadMatchRequest) {
+        if (data) {
+            for (var property in data) {
+                if (data.hasOwnProperty(property))
+                    (this as any)[property] = (data as any)[property];
+            }
+        }
+    }
+
+    init(_data?: any) {
+        if (_data) {
+            this.confirmed = _data["confirmed"];
+            this.artifactId = _data["artifactId"];
+            this.artifactPayloadSha256 = _data["artifactPayloadSha256"];
+            this.expectedContentRevision = _data["expectedContentRevision"];
+        }
+    }
+
+    static fromJS(data: any): ConfirmSpaceExcelCadMatchRequest {
+        data = typeof data === 'object' ? data : {};
+        let result = new ConfirmSpaceExcelCadMatchRequest();
+        result.init(data);
+        return result;
+    }
+
+    toJSON(data?: any) {
+        data = typeof data === 'object' ? data : {};
+        data["confirmed"] = this.confirmed;
+        data["artifactId"] = this.artifactId;
+        data["artifactPayloadSha256"] = this.artifactPayloadSha256;
+        data["expectedContentRevision"] = this.expectedContentRevision;
+        return data;
+    }
+}
+
+export interface IConfirmSpaceExcelCadMatchRequest {
+    confirmed?: boolean;
+    artifactId?: string;
+    artifactPayloadSha256?: string | undefined;
+    expectedContentRevision?: number;
+}
+
+export class ConfirmSpaceExcelCadMatchResponse implements IConfirmSpaceExcelCadMatchResponse {
+    matchJobId?: string;
+    applyJobId?: string;
+    commandBatchId?: string;
+    jobStatus?: string | undefined;
+    jobStatusUrl?: string | undefined;
+    idempotentReplay?: boolean;
+
+    constructor(data?: IConfirmSpaceExcelCadMatchResponse) {
+        if (data) {
+            for (var property in data) {
+                if (data.hasOwnProperty(property))
+                    (this as any)[property] = (data as any)[property];
+            }
+        }
+    }
+
+    init(_data?: any) {
+        if (_data) {
+            this.matchJobId = _data["matchJobId"];
+            this.applyJobId = _data["applyJobId"];
+            this.commandBatchId = _data["commandBatchId"];
+            this.jobStatus = _data["jobStatus"];
+            this.jobStatusUrl = _data["jobStatusUrl"];
+            this.idempotentReplay = _data["idempotentReplay"];
+        }
+    }
+
+    static fromJS(data: any): ConfirmSpaceExcelCadMatchResponse {
+        data = typeof data === 'object' ? data : {};
+        let result = new ConfirmSpaceExcelCadMatchResponse();
+        result.init(data);
+        return result;
+    }
+
+    toJSON(data?: any) {
+        data = typeof data === 'object' ? data : {};
+        data["matchJobId"] = this.matchJobId;
+        data["applyJobId"] = this.applyJobId;
+        data["commandBatchId"] = this.commandBatchId;
+        data["jobStatus"] = this.jobStatus;
+        data["jobStatusUrl"] = this.jobStatusUrl;
+        data["idempotentReplay"] = this.idempotentReplay;
+        return data;
+    }
+}
+
+export interface IConfirmSpaceExcelCadMatchResponse {
+    matchJobId?: string;
+    applyJobId?: string;
+    commandBatchId?: string;
+    jobStatus?: string | undefined;
+    jobStatusUrl?: string | undefined;
+    idempotentReplay?: boolean;
+}
+
 export class CreateSpaceAiAtomicApplyRequest implements ICreateSpaceAiAtomicApplyRequest {
     expectedContentRevision!: number;
     expectedRunRowVersion!: string;
@@ -17469,6 +17789,186 @@ export interface ISpaceElementCommandResultDto {
     targetLogicalId?: string;
     element?: SpaceSceneElementDto;
     attributes?: SpaceSceneElementAttributeDto[] | undefined;
+}
+
+export class SpaceExcelCadApplyDto implements ISpaceExcelCadApplyDto {
+    matchJobId?: string;
+    applyJobId?: string;
+    commandBatchId?: string;
+    jobStatus?: string | undefined;
+    expectedContentRevision?: number;
+    result?: SpaceExcelCadApplyResultV1;
+    idempotentReplay?: boolean;
+    lastErrorCode?: string | undefined;
+    lastErrorSummary?: string | undefined;
+
+    constructor(data?: ISpaceExcelCadApplyDto) {
+        if (data) {
+            for (var property in data) {
+                if (data.hasOwnProperty(property))
+                    (this as any)[property] = (data as any)[property];
+            }
+        }
+    }
+
+    init(_data?: any) {
+        if (_data) {
+            this.matchJobId = _data["matchJobId"];
+            this.applyJobId = _data["applyJobId"];
+            this.commandBatchId = _data["commandBatchId"];
+            this.jobStatus = _data["jobStatus"];
+            this.expectedContentRevision = _data["expectedContentRevision"];
+            this.result = _data["result"] ? SpaceExcelCadApplyResultV1.fromJS(_data["result"]) : undefined as any;
+            this.idempotentReplay = _data["idempotentReplay"];
+            this.lastErrorCode = _data["lastErrorCode"];
+            this.lastErrorSummary = _data["lastErrorSummary"];
+        }
+    }
+
+    static fromJS(data: any): SpaceExcelCadApplyDto {
+        data = typeof data === 'object' ? data : {};
+        let result = new SpaceExcelCadApplyDto();
+        result.init(data);
+        return result;
+    }
+
+    toJSON(data?: any) {
+        data = typeof data === 'object' ? data : {};
+        data["matchJobId"] = this.matchJobId;
+        data["applyJobId"] = this.applyJobId;
+        data["commandBatchId"] = this.commandBatchId;
+        data["jobStatus"] = this.jobStatus;
+        data["expectedContentRevision"] = this.expectedContentRevision;
+        data["result"] = this.result ? this.result.toJSON() : undefined as any;
+        data["idempotentReplay"] = this.idempotentReplay;
+        data["lastErrorCode"] = this.lastErrorCode;
+        data["lastErrorSummary"] = this.lastErrorSummary;
+        return data;
+    }
+}
+
+export interface ISpaceExcelCadApplyDto {
+    matchJobId?: string;
+    applyJobId?: string;
+    commandBatchId?: string;
+    jobStatus?: string | undefined;
+    expectedContentRevision?: number;
+    result?: SpaceExcelCadApplyResultV1;
+    idempotentReplay?: boolean;
+    lastErrorCode?: string | undefined;
+    lastErrorSummary?: string | undefined;
+}
+
+export class SpaceExcelCadApplyResultV1 implements ISpaceExcelCadApplyResultV1 {
+    schemaVersion?: number;
+    matchJobId?: string;
+    applyJobId?: string;
+    artifactId?: string;
+    artifactPayloadSha256?: string | undefined;
+    modelVersionId?: string;
+    excelSourceId?: string;
+    floorLogicalId?: string;
+    commandBatchId?: string;
+    expectedFloorRevision?: number;
+    resultFloorRevision?: number;
+    expectedContentRevision?: number;
+    resultContentRevision?: number;
+    createdRackCount?: number;
+    updatedRackCount?: number;
+    unchangedRackCount?: number;
+    confirmedBy?: string;
+    confirmedAtUtc?: Date;
+    appliedAtUtc?: Date;
+    applyPlanSha256?: string | undefined;
+
+    constructor(data?: ISpaceExcelCadApplyResultV1) {
+        if (data) {
+            for (var property in data) {
+                if (data.hasOwnProperty(property))
+                    (this as any)[property] = (data as any)[property];
+            }
+        }
+    }
+
+    init(_data?: any) {
+        if (_data) {
+            this.schemaVersion = _data["schemaVersion"];
+            this.matchJobId = _data["matchJobId"];
+            this.applyJobId = _data["applyJobId"];
+            this.artifactId = _data["artifactId"];
+            this.artifactPayloadSha256 = _data["artifactPayloadSha256"];
+            this.modelVersionId = _data["modelVersionId"];
+            this.excelSourceId = _data["excelSourceId"];
+            this.floorLogicalId = _data["floorLogicalId"];
+            this.commandBatchId = _data["commandBatchId"];
+            this.expectedFloorRevision = _data["expectedFloorRevision"];
+            this.resultFloorRevision = _data["resultFloorRevision"];
+            this.expectedContentRevision = _data["expectedContentRevision"];
+            this.resultContentRevision = _data["resultContentRevision"];
+            this.createdRackCount = _data["createdRackCount"];
+            this.updatedRackCount = _data["updatedRackCount"];
+            this.unchangedRackCount = _data["unchangedRackCount"];
+            this.confirmedBy = _data["confirmedBy"];
+            this.confirmedAtUtc = _data["confirmedAtUtc"] ? new Date(_data["confirmedAtUtc"].toString()) : undefined as any;
+            this.appliedAtUtc = _data["appliedAtUtc"] ? new Date(_data["appliedAtUtc"].toString()) : undefined as any;
+            this.applyPlanSha256 = _data["applyPlanSha256"];
+        }
+    }
+
+    static fromJS(data: any): SpaceExcelCadApplyResultV1 {
+        data = typeof data === 'object' ? data : {};
+        let result = new SpaceExcelCadApplyResultV1();
+        result.init(data);
+        return result;
+    }
+
+    toJSON(data?: any) {
+        data = typeof data === 'object' ? data : {};
+        data["schemaVersion"] = this.schemaVersion;
+        data["matchJobId"] = this.matchJobId;
+        data["applyJobId"] = this.applyJobId;
+        data["artifactId"] = this.artifactId;
+        data["artifactPayloadSha256"] = this.artifactPayloadSha256;
+        data["modelVersionId"] = this.modelVersionId;
+        data["excelSourceId"] = this.excelSourceId;
+        data["floorLogicalId"] = this.floorLogicalId;
+        data["commandBatchId"] = this.commandBatchId;
+        data["expectedFloorRevision"] = this.expectedFloorRevision;
+        data["resultFloorRevision"] = this.resultFloorRevision;
+        data["expectedContentRevision"] = this.expectedContentRevision;
+        data["resultContentRevision"] = this.resultContentRevision;
+        data["createdRackCount"] = this.createdRackCount;
+        data["updatedRackCount"] = this.updatedRackCount;
+        data["unchangedRackCount"] = this.unchangedRackCount;
+        data["confirmedBy"] = this.confirmedBy;
+        data["confirmedAtUtc"] = this.confirmedAtUtc ? this.confirmedAtUtc.toISOString() : undefined as any;
+        data["appliedAtUtc"] = this.appliedAtUtc ? this.appliedAtUtc.toISOString() : undefined as any;
+        data["applyPlanSha256"] = this.applyPlanSha256;
+        return data;
+    }
+}
+
+export interface ISpaceExcelCadApplyResultV1 {
+    schemaVersion?: number;
+    matchJobId?: string;
+    applyJobId?: string;
+    artifactId?: string;
+    artifactPayloadSha256?: string | undefined;
+    modelVersionId?: string;
+    excelSourceId?: string;
+    floorLogicalId?: string;
+    commandBatchId?: string;
+    expectedFloorRevision?: number;
+    resultFloorRevision?: number;
+    expectedContentRevision?: number;
+    resultContentRevision?: number;
+    createdRackCount?: number;
+    updatedRackCount?: number;
+    unchangedRackCount?: number;
+    confirmedBy?: string;
+    confirmedAtUtc?: Date;
+    appliedAtUtc?: Date;
+    applyPlanSha256?: string | undefined;
 }
 
 export enum SpaceExcelCadMatchDisposition {

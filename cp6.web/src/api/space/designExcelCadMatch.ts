@@ -1,5 +1,8 @@
 import http from '../http'
 import type {
+  IConfirmSpaceExcelCadMatchRequest,
+  IConfirmSpaceExcelCadMatchResponse,
+  ISpaceExcelCadApplyDto,
   ISpaceExcelCadMatchDto,
   IStartSpaceExcelCadMatchRequest,
   IStartSpaceExcelCadMatchResponse,
@@ -37,6 +40,30 @@ export const designExcelCadMatchApi = {
     return http.get<unknown, ISpaceExcelCadMatchDto>(
       `${root}/versions/${versionId}/excel-cad-matches/${jobId}`,
       { params: filters },
+    )
+  },
+
+  confirm(
+    versionId: string,
+    matchJobId: string,
+    request: IConfirmSpaceExcelCadMatchRequest,
+    idempotencyKey: string,
+  ) {
+    return http.post<unknown, IConfirmSpaceExcelCadMatchResponse>(
+      `${root}/versions/${versionId}/excel-cad-matches/${matchJobId}/confirmations`,
+      request,
+      { headers: { 'Idempotency-Key': idempotencyKey } },
+    )
+  },
+
+  getConfirmation(
+    versionId: string,
+    matchJobId: string,
+    applyJobId: string,
+  ) {
+    return http.get<unknown, ISpaceExcelCadApplyDto>(
+      `${root}/versions/${versionId}/excel-cad-matches/${matchJobId}`
+      + `/confirmations/${applyJobId}`,
     )
   },
 }
