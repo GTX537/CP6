@@ -1,11 +1,11 @@
 # E06-S06 版本发布管理 UI 开发报告
 
-日期：2026-08-08  
-状态：功能分支门禁通过，待 no-ff 集成  
-集成基线：`088648b7e8051e59bcf01a0df607c41a9e257cc2`  
-功能分支：`codex/space-e06-s06-publish-management-ui`  
-功能提交：`69a8b77a`  
-no-ff 集成提交：待集成后回填
+日期：2026-08-08
+状态：已 no-ff 集成
+集成基线：`088648b7e8051e59bcf01a0df607c41a9e257cc2`
+功能分支：`codex/space-e06-s06-publish-management-ui`
+功能提交：`69a8b77a`
+no-ff 集成提交：`0d61f3dc99c55ac38e14731d0aef4d874af1e9e7`
 
 ## 1. 本卡边界
 

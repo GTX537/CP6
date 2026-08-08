@@ -2,6 +2,14 @@
 
 最后更新：2026-08-08
 
+## E06-S06 版本发布管理 UI 开发切片（2026-08-08）
+
+- 在集成基线 `088648b7e` 上以功能提交 `69a8b77a`、验证报告提交 `3fefe0ef` 和 no-ff 提交 `0d61f3dc` 进入 `integration/space-v1-20260730`；`main` 未修改。`/space/publish` 现提供验证、权威差异/WMS 影响预览、外部审批引用确认、发布进度/失败恢复/人工重试、审计时间线和历史版本重新发布入口；原库位发布工具保留在 `/space/location-publish`。
+- 页面严格复用 E06-S01 至 E06-S05 的服务端权威链：按 `space:model:validate/publish/rollback` 分权，保留不确定失败期间的稳定幂等键，409/422 失败关闭，历史回退创建新版本和新尝试而不改写旧证据。桌面 1440 px 与手机 390 px 实际浏览器检查均无横向溢出，四阶段流程完整可见。
+- 新增只读 `GET /api/space/design/v1/sites/{siteId}/publish-attempts`，聚合发布尝试、版本、Job、未解决对账问题和 HistoricalRepublish 血缘，带 Tenant/内部主体/Site 范围、受保护游标、标准 Problem Details 和读审计；OpenAPI 操作数为 111，C#/TypeScript SDK 已同步并通过漂移检查，无 Migration。
+- 门禁：Space Unit 462/462；CP6.Tests 2804 passed / 17 environment-gated skipped；默认 Space Integration 263 passed / 94 SQL-gated skipped；前端 130 files / 698 tests；类型检查、生产构建、WebApi/C# SDK Release、SDK drift、桌面/手机视觉和 diff 检查通过。完整证据见 `docs/space/reports/e06-s06-publish-management-ui-development.md`。
+- E06 本地开发主链现已有管理入口，但仍不是生产签收：生产等价 WMS 外部写入/恢复/告警/人工对账演练、正式 CAD Provider 与组织授权 DWG/DXF 黄金集、E03-S05 权威 Match Artifact 写入链，以及 Beta/GA 的跨职能、容量、SLO、灾备和安全证据仍未完成。
+
 ## E06-S05 历史版本重新发布回退开发切片（2026-08-08）
 
 - 在集成基线 `bf9c07d8` 上以功能提交 `ea16ce67`、no-ff 提交 `85e039f8` 进入 `integration/space-v1-20260730`；`main` 未修改。新增 `space:model:rollback`、创建/查询历史重新发布 API、OpenAPI 及 C#/TypeScript SDK，OpenAPI 操作数为 110。
