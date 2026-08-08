@@ -32,10 +32,10 @@ public sealed class SpacePlanningExchangeService(
 
     private static readonly JsonSerializerOptions Json =
         new(JsonSerializerDefaults.Web)
-    {
-        WriteIndented = false,
-        TypeInfoResolver = new DefaultJsonTypeInfoResolver(),
-    };
+        {
+            WriteIndented = false,
+            TypeInfoResolver = new DefaultJsonTypeInfoResolver(),
+        };
 
     public async Task<SpacePlanningExchangeFile> ExportGlbAsync(
         Guid siteId,
@@ -202,6 +202,7 @@ public sealed class SpacePlanningExchangeService(
                 value.Height,
                 value.Depth,
                 value.MaxLoad,
+                value.LocationType,
                 value.CodeOrigin,
                 value.ExternalBindingState))
             .ToArrayAsync(cancellationToken);
@@ -366,6 +367,7 @@ public sealed class SpacePlanningExchangeService(
                 ("levelNo", location.LevelNo),
                 ("depthNo", location.DepthNo),
                 ("maxLoad", location.MaxLoad),
+                ("locationType", location.LocationType),
                 ("codeOrigin", location.CodeOrigin.ToString()),
                 ("externalBindingState", location.ExternalBindingState.ToString()));
             if (!location.RackLogicalId.HasValue)
@@ -1006,6 +1008,7 @@ public sealed class SpacePlanningExchangeService(
         int Height,
         int Depth,
         decimal? MaxLoad,
+        string? LocationType,
         SpaceLocationCodeOrigin CodeOrigin,
         SpaceExternalBindingState ExternalBindingState);
 

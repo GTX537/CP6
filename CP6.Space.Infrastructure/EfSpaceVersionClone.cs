@@ -10,7 +10,6 @@ namespace CP6.Space.Infrastructure;
 
 public sealed class EfSpaceVersionCloneStore : ISpaceVersionCloneStore
 {
-    private const string ProcessorVersion = "space-clone-v1";
     private const int StartRetries = 3;
 
     private static readonly JsonSerializerOptions JsonOptions =
@@ -155,7 +154,7 @@ public sealed class EfSpaceVersionCloneStore : ISpaceVersionCloneStore
                     SpaceJobSubjectType.ModelVersion,
                     target.Id,
                     inputHash,
-                    ProcessorVersion,
+                    SpaceVersionCloneContract.ProcessorVersion,
                     request.OperationId.ToString("N")));
             var job = SpaceJob.CreateQueued(
                 _execution.TenantId,
@@ -665,6 +664,12 @@ public sealed class EfSpaceVersionCloneProcessor :
             cancellationToken) ||
         await _context.ElementAttributes.AnyAsync(
             row => row.ModelVersionId == targetVersionId,
+            cancellationToken) ||
+        await _context.LocationExternalBindings.AnyAsync(
+            row => row.ModelVersionId == targetVersionId,
+            cancellationToken) ||
+        await _context.DesignAttributes.AnyAsync(
+            row => row.ModelVersionId == targetVersionId,
             cancellationToken);
 
     private async Task<SpaceVersionCloneCounts> CountSnapshotAsync(
@@ -696,6 +701,12 @@ public sealed class EfSpaceVersionCloneProcessor :
                 row => row.ModelVersionId == targetVersionId,
                 cancellationToken),
             await _context.ElementAttributes.CountAsync(
+                row => row.ModelVersionId == targetVersionId,
+                cancellationToken),
+            await _context.LocationExternalBindings.CountAsync(
+                row => row.ModelVersionId == targetVersionId,
+                cancellationToken),
+            await _context.DesignAttributes.CountAsync(
                 row => row.ModelVersionId == targetVersionId,
                 cancellationToken));
 
@@ -881,20 +892,51 @@ public sealed class EfSpaceVersionCloneProcessor :
                  ([Id], [ModelVersionId], [LogicalId], [SourceId], [SourceRef],
                   [LifecycleState], [FloorLogicalId], [RackLogicalId],
                   [LocationCode], [ColumnNo], [LevelNo], [DepthNo], [Width],
-                  [Height], [Depth], [MaxLoad], [CodeOrigin],
+                  [Height], [Depth], [MaxLoad], [LocationType], [CodeOrigin],
                   [ExternalBindingState], [TenantId], [CreatedAtUtc],
                   [CreatedBy], [ModifiedAtUtc], [ModifiedBy], [IsDeleted])
              SELECT NEWID(), {targetVersionId}, r.[LogicalId], sm.[NewId],
                     r.[SourceRef], r.[LifecycleState], r.[FloorLogicalId],
                     r.[RackLogicalId], r.[LocationCode], r.[ColumnNo],
                     r.[LevelNo], r.[DepthNo], r.[Width], r.[Height], r.[Depth],
-                    r.[MaxLoad], r.[CodeOrigin], r.[ExternalBindingState],
+                    r.[MaxLoad], r.[LocationType], r.[CodeOrigin],
+                    r.[ExternalBindingState],
                     {tenantId}, {nowUtc}, {actorId}, NULL, NULL, 0
              FROM [Space_LocationRevision] r
              LEFT JOIN @SourceMap sm ON sm.[OldId] = r.[SourceId]
              WHERE r.[TenantId] = {tenantId}
                AND r.[ModelVersionId] = {sourceVersionId}
                AND r.[IsDeleted] = 0;
+
+             INSERT INTO [Space_LocationExternalBinding]
+                 ([Id], [ModelVersionId], [LocationLogicalId], [AdapterId],
+                  [WarehouseCode], [ExternalLocationId], [BindingMode],
+                  [SourceId], [SourceRef], [TenantId], [CreatedAtUtc],
+                  [CreatedBy], [ModifiedAtUtc], [ModifiedBy], [IsDeleted])
+             SELECT NEWID(), {targetVersionId}, b.[LocationLogicalId],
+                    b.[AdapterId], b.[WarehouseCode], b.[ExternalLocationId],
+                    b.[BindingMode], sm.[NewId], b.[SourceRef], {tenantId},
+                    {nowUtc}, {actorId}, NULL, NULL, 0
+             FROM [Space_LocationExternalBinding] b
+             INNER JOIN @SourceMap sm ON sm.[OldId] = b.[SourceId]
+             WHERE b.[TenantId] = {tenantId}
+               AND b.[ModelVersionId] = {sourceVersionId}
+               AND b.[IsDeleted] = 0;
+
+             INSERT INTO [Space_DesignAttribute]
+                 ([Id], [ModelVersionId], [ObjectType], [ObjectLogicalId],
+                  [Namespace], [Key], [Value], [Unit], [SourceId], [SourceRef],
+                  [TenantId], [CreatedAtUtc], [CreatedBy], [ModifiedAtUtc],
+                  [ModifiedBy], [IsDeleted])
+             SELECT NEWID(), {targetVersionId}, a.[ObjectType],
+                    a.[ObjectLogicalId], a.[Namespace], a.[Key], a.[Value],
+                    a.[Unit], sm.[NewId], a.[SourceRef], {tenantId}, {nowUtc},
+                    {actorId}, NULL, NULL, 0
+             FROM [Space_DesignAttribute] a
+             INNER JOIN @SourceMap sm ON sm.[OldId] = a.[SourceId]
+             WHERE a.[TenantId] = {tenantId}
+               AND a.[ModelVersionId] = {sourceVersionId}
+               AND a.[IsDeleted] = 0;
 
              DECLARE @ElementMap TABLE
              (

@@ -75,6 +75,12 @@ public enum SpaceExternalBindingState : short
     PendingRemoval = 2,
 }
 
+public enum SpaceLocationBindingMode : short
+{
+    WmsPrimary = 0,
+    WmsAlias = 1,
+}
+
 public enum SpaceWmsAdoptionStatus : short
 {
     Unbound = 0,

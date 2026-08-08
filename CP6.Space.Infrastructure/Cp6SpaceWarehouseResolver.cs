@@ -35,3 +35,30 @@ public sealed class Cp6SpaceWarehouseResolver : ISpaceWarehouseResolver
                     : site.WarehouseCd);
     }
 }
+
+public sealed class SpaceExcelBindingAuthorityResolver(
+    ISpaceWarehouseResolver warehouses,
+    ISpaceWmsRuntimeSource runtimeSource) :
+    ISpaceExcelBindingAuthorityResolver
+{
+    public async Task<SpaceExcelBindingAuthority?> ResolveAsync(
+        Guid siteId,
+        CancellationToken cancellationToken = default)
+    {
+        var warehouse = await warehouses.ResolveAsync(siteId, cancellationToken);
+        if (warehouse is null)
+            return null;
+        if (string.IsNullOrWhiteSpace(runtimeSource.RuntimeAdapterId) ||
+            runtimeSource.RuntimeAdapterId.Length > 100 ||
+            string.IsNullOrWhiteSpace(warehouse.WarehouseCode) ||
+            warehouse.WarehouseCode.Length > 100)
+        {
+            throw new InvalidOperationException(
+                "The active WMS adapter or warehouse identity is invalid.");
+        }
+        return new SpaceExcelBindingAuthority(
+            siteId,
+            runtimeSource.RuntimeAdapterId.Trim(),
+            warehouse.WarehouseCode.Trim());
+    }
+}

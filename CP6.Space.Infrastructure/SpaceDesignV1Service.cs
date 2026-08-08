@@ -230,6 +230,37 @@ public sealed class SpaceDesignV1Service : ISpaceDesignV1Service
                 .ThenBy(candidate => candidate.Namespace)
                 .ThenBy(candidate => candidate.Key)
                 .ToArrayAsync(cancellationToken);
+        var locationLogicalIds = locations
+            .Select(candidate => candidate.LogicalId)
+            .ToArray();
+        var locationExternalBindings = locationLogicalIds.Length == 0
+            ? []
+            : await _context.LocationExternalBindings
+                .AsNoTracking()
+                .Where(candidate =>
+                    candidate.ModelVersionId == versionId &&
+                    locationLogicalIds.Contains(candidate.LocationLogicalId))
+                .OrderBy(candidate => candidate.LocationLogicalId)
+                .ThenBy(candidate => candidate.BindingMode)
+                .ThenBy(candidate => candidate.ExternalLocationId)
+                .ToArrayAsync(cancellationToken);
+        var designTargetIds = rackLogicalIds
+            .Concat(rackLevels.Select(candidate => candidate.LogicalId))
+            .Concat(locationLogicalIds)
+            .Distinct()
+            .ToArray();
+        var designAttributes = designTargetIds.Length == 0
+            ? []
+            : await _context.DesignAttributes
+                .AsNoTracking()
+                .Where(candidate =>
+                    candidate.ModelVersionId == versionId &&
+                    designTargetIds.Contains(candidate.ObjectLogicalId))
+                .OrderBy(candidate => candidate.ObjectType)
+                .ThenBy(candidate => candidate.ObjectLogicalId)
+                .ThenBy(candidate => candidate.Namespace)
+                .ThenBy(candidate => candidate.Key)
+                .ToArrayAsync(cancellationToken);
 
         return new SpaceDesignSceneDto(
             SpaceDesignSceneContract.SchemaVersion,
@@ -247,7 +278,9 @@ public sealed class SpaceDesignV1Service : ISpaceDesignV1Service
             rackLevels.Select(ToSceneDto).ToArray(),
             locations.Select(ToSceneDto).ToArray(),
             elements.Select(ToSceneDto).ToArray(),
-            attributes.Select(ToSceneDto).ToArray());
+            attributes.Select(ToSceneDto).ToArray(),
+            locationExternalBindings.Select(ToSceneDto).ToArray(),
+            designAttributes.Select(ToSceneDto).ToArray());
     }
 
     public async Task<ApplySpaceElementCommandBatchResponse>
@@ -1403,9 +1436,9 @@ public sealed class SpaceDesignV1Service : ISpaceDesignV1Service
         return Deserialize<ApplySpaceElementCommandBatchResponse>(
                 batch.ResponseJson)
             with
-            {
-                IdempotentReplay = true,
-            };
+        {
+            IdempotentReplay = true,
+        };
     }
 
     private static void ValidateCommandTargets(
@@ -2369,7 +2402,33 @@ public sealed class SpaceDesignV1Service : ISpaceDesignV1Service
             location.Depth,
             location.MaxLoad,
             location.CodeOrigin.ToString(),
-            location.ExternalBindingState.ToString());
+            location.ExternalBindingState.ToString(),
+            location.LocationType);
+
+    private static SpaceSceneLocationExternalBindingDto ToSceneDto(
+        SpaceLocationExternalBinding binding) =>
+        new(
+            binding.Id,
+            binding.LocationLogicalId,
+            binding.AdapterId,
+            binding.WarehouseCode,
+            binding.ExternalLocationId,
+            binding.BindingMode.ToString(),
+            binding.SourceId,
+            binding.SourceRef);
+
+    private static SpaceSceneDesignAttributeDto ToSceneDto(
+        SpaceDesignAttribute attribute) =>
+        new(
+            attribute.Id,
+            attribute.ObjectType,
+            attribute.ObjectLogicalId,
+            attribute.Namespace,
+            attribute.Key,
+            attribute.Value,
+            attribute.Unit,
+            attribute.SourceId,
+            attribute.SourceRef);
 
     private static SpaceSceneElementDto ToSceneDto(
         SpaceElementRevision element) =>

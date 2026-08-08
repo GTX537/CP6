@@ -316,6 +316,9 @@ public static class SpaceInfrastructureRegistration
         services.AddScoped<ISpaceWmsAdapter, Cp6SpaceWmsAdapter>();
         services.AddScoped<ISpaceWmsRuntimeSource>(
             provider => provider.GetRequiredService<ISpaceWmsAdapter>());
+        services.AddScoped<
+            ISpaceExcelBindingAuthorityResolver,
+            SpaceExcelBindingAuthorityResolver>();
         services.AddScoped<ISpaceWmsRuntimeService, SpaceWmsRuntimeService>();
         services.AddScoped<
             ISpacePersonnelEventService,

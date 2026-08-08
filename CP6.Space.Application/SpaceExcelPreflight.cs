@@ -609,6 +609,11 @@ public sealed class SpaceExcelPreflightValidator
                 StringComparer.OrdinalIgnoreCase)
             .ToDictionary(group => group.Key, group => group.First(),
                 StringComparer.OrdinalIgnoreCase);
+        var levelBusinessKeys = levels.Values
+            .Select(row => RackLevelBusinessKey(
+                Value(row, "RackCode")!,
+                Value(row, "LevelNo")!))
+            .ToHashSet(StringComparer.OrdinalIgnoreCase);
 
         foreach (var row in rows)
         {
@@ -652,12 +657,29 @@ public sealed class SpaceExcelPreflightValidator
             {
                 var objectType = Value(row, "ObjectType");
                 var businessKey = Value(row, "BusinessKey");
-                if (objectType == "Rack" && businessKey is not null &&
+                if (string.Equals(
+                        objectType,
+                        "Rack",
+                        StringComparison.OrdinalIgnoreCase) &&
+                    businessKey is not null &&
                     !racks.Contains(businessKey))
                 {
                     AddReferenceFinding(row, "BusinessKey", findings);
                 }
-                else if (objectType == "Location" && businessKey is not null &&
+                else if (string.Equals(
+                             objectType,
+                             "RackLevel",
+                             StringComparison.OrdinalIgnoreCase) &&
+                         businessKey is not null &&
+                         !levelBusinessKeys.Contains(businessKey))
+                {
+                    AddReferenceFinding(row, "BusinessKey", findings);
+                }
+                else if (string.Equals(
+                             objectType,
+                             "Location",
+                             StringComparison.OrdinalIgnoreCase) &&
+                         businessKey is not null &&
                          !locations.Contains(businessKey))
                 {
                     AddReferenceFinding(row, "BusinessKey", findings);
@@ -746,6 +768,9 @@ public sealed class SpaceExcelPreflightValidator
 
     private static string Composite(string left, string right) =>
         $"{left}|{right}";
+
+    private static string RackLevelBusinessKey(string rackCode, string levelNo) =>
+        $"{rackCode}/{levelNo}";
 
     private static bool HasMappedInput(
         SpaceExcelWorkbookRow row,

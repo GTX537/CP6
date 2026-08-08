@@ -62,7 +62,7 @@ public sealed class OpenXmlSpaceModelingTemplateService
             ]),
         new(
             "Bindings",
-            "WMS 业务映射：外部仓库与外部货位标识映射到标准 LocationCode。",
+            "WMS 版本化映射声明：WmsWarehouseCode 必须等于当前 Site 权威仓库；每个有映射的 Location 必须恰有一个 WmsPrimary，可另加 WmsAlias。",
             [
                 Field.RequiredText("WmsWarehouseCode", "WMS 仓库编码"),
                 Field.RequiredText("ExternalLocationId", "WMS 外部货位标识"),
@@ -71,7 +71,7 @@ public sealed class OpenXmlSpaceModelingTemplateService
             ]),
         new(
             "Attributes",
-            "可扩展业务属性：对象类型 + 业务键 + 命名空间 + Key 必须唯一。",
+            "可扩展设计属性：对象类型 + 业务键 + 命名空间 + Key 必须唯一；RackLevel 的 BusinessKey 固定为 RackCode/LevelNo。",
             [
                 Field.RequiredList("ObjectType", "目标对象类型", "ObjectTypes"),
                 Field.RequiredText("BusinessKey", "目标对象业务编码"),
@@ -185,7 +185,7 @@ public sealed class OpenXmlSpaceModelingTemplateService
         AddRow(sheetData, 15, 42,
             Text(
                 "A15",
-                "Owner、Batch、Container、Manufacturing 等扩展字段统一写入 Attributes：ObjectType 指向 Rack / RackLevel / Location，BusinessKey 填目标业务编码，Namespace 选择业务域，Key/Value 保存属性。运行时库存仍由 WMS 读取。",
+                "Owner、Batch、Container、Manufacturing 等扩展字段统一写入 Attributes：ObjectType 指向 Rack / RackLevel / Location；Rack 和 Location 的 BusinessKey 填业务编码，RackLevel 固定填 RackCode/LevelNo。Bindings 的仓库编码必须等于当前 Site 权威仓库，每个被映射 Location 必须恰有一个 WmsPrimary；这些是版本化设计声明，不冒充 WMS 已观测 Adoption。运行时库存仍由 WMS 读取。",
                 4));
 
         AddRow(sheetData, 17, 24,

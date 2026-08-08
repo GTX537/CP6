@@ -79,6 +79,10 @@ public sealed class SpaceContext : DbContext
         Set<SpaceRackLevelRevision>();
     public DbSet<SpaceLocationRevision> LocationRevisions =>
         Set<SpaceLocationRevision>();
+    public DbSet<SpaceLocationExternalBinding> LocationExternalBindings =>
+        Set<SpaceLocationExternalBinding>();
+    public DbSet<SpaceDesignAttribute> DesignAttributes =>
+        Set<SpaceDesignAttribute>();
     public DbSet<SpaceAsset> Assets => Set<SpaceAsset>();
     public DbSet<SpaceAssetVersion> AssetVersions => Set<SpaceAssetVersion>();
     public DbSet<SpaceElementRevision> ElementRevisions =>
@@ -160,6 +164,8 @@ public sealed class SpaceContext : DbContext
         ConfigureRackRevision(modelBuilder);
         ConfigureRackLevelRevision(modelBuilder);
         ConfigureLocationRevision(modelBuilder);
+        ConfigureLocationExternalBinding(modelBuilder);
+        ConfigureDesignAttribute(modelBuilder);
         ConfigureAsset(modelBuilder);
         ConfigureAssetVersion(modelBuilder);
         ConfigureElementRevision(modelBuilder);
@@ -572,13 +578,13 @@ public sealed class SpaceContext : DbContext
         entity.HasKey(x => x.Id);
         entity.Property(x => x.Id).ValueGeneratedNever();
         entity.HasAlternateKey(x => new
-            {
-                x.TenantId,
-                x.ModelVersionId,
-                x.FloorLogicalId,
-                x.SourceId,
-                x.Id,
-            })
+        {
+            x.TenantId,
+            x.ModelVersionId,
+            x.FloorLogicalId,
+            x.SourceId,
+            x.Id,
+        })
             .HasName(
                 "AK_Space_UnderlayCalibration_Tenant_Version_Floor_Source_Id");
         ConfigureTenantEntity(entity);
@@ -598,20 +604,20 @@ public sealed class SpaceContext : DbContext
             .HasColumnType("decimal(18,4)");
 
         entity.HasIndex(x => new
-            {
-                x.TenantId,
-                x.ModelVersionId,
-                x.FloorLogicalId,
-                x.CreatedAtUtc,
-            })
+        {
+            x.TenantId,
+            x.ModelVersionId,
+            x.FloorLogicalId,
+            x.CreatedAtUtc,
+        })
             .HasDatabaseName(
                 "IX_Space_UnderlayCalibration_Version_Floor_Created");
         entity.HasIndex(x => new
-            {
-                x.TenantId,
-                x.ModelVersionId,
-                x.SourceId,
-            })
+        {
+            x.TenantId,
+            x.ModelVersionId,
+            x.SourceId,
+        })
             .HasDatabaseName(
                 "IX_Space_UnderlayCalibration_Version_Source");
         entity.HasOne<SpaceModelSource>()
@@ -845,6 +851,7 @@ public sealed class SpaceContext : DbContext
                 "CK_Space_LocationRevision_Dimensions",
                 "[ColumnNo] > 0 AND [LevelNo] > 0 AND [DepthNo] > 0 AND [Width] > 0 AND [Height] > 0 AND [Depth] > 0 AND ([MaxLoad] IS NULL OR [MaxLoad] >= 0)"));
         entity.Property(x => x.LocationCode).HasMaxLength(200);
+        entity.Property(x => x.LocationType).HasMaxLength(20);
         entity.Property(x => x.MaxLoad).HasColumnType("decimal(18,4)");
         entity.Property(x => x.CodeOrigin)
             .HasConversion<short>()
@@ -903,6 +910,163 @@ public sealed class SpaceContext : DbContext
             .HasConstraintName("FK_Space_LocationRevision_Rack_Tenant_Version_Logical");
     }
 
+    private void ConfigureLocationExternalBinding(ModelBuilder modelBuilder)
+    {
+        var entity = modelBuilder.Entity<SpaceLocationExternalBinding>();
+        entity.ToTable(
+            "Space_LocationExternalBinding",
+            table => table.HasCheckConstraint(
+                "CK_Space_LocationExternalBinding_Mode",
+                "[BindingMode] IN (0, 1)"));
+        entity.HasKey(x => x.Id);
+        entity.Property(x => x.Id).ValueGeneratedNever();
+        entity.HasAlternateKey(x => new
+        {
+            x.TenantId,
+            x.ModelVersionId,
+            x.Id,
+        });
+        ConfigureTenantEntity(entity);
+        entity.Property(x => x.AdapterId).HasMaxLength(100).IsRequired();
+        entity.Property(x => x.WarehouseCode).HasMaxLength(100).IsRequired();
+        entity.Property(x => x.ExternalLocationId)
+            .HasMaxLength(200)
+            .IsRequired();
+        entity.Property(x => x.BindingMode)
+            .HasConversion<short>()
+            .HasColumnType("smallint");
+        entity.Property(x => x.SourceRef).HasMaxLength(500).IsRequired();
+
+        entity.HasIndex(x => new
+        {
+            x.TenantId,
+            x.ModelVersionId,
+            x.AdapterId,
+            x.WarehouseCode,
+            x.ExternalLocationId,
+        })
+            .IsUnique()
+            .HasFilter("[IsDeleted] = 0")
+            .HasDatabaseName(
+                "UX_Space_LocationExternalBinding_External_Active");
+        entity.HasIndex(x => new
+        {
+            x.TenantId,
+            x.ModelVersionId,
+            x.LocationLogicalId,
+        })
+            .IsUnique()
+            .HasFilter("[BindingMode] = 0 AND [IsDeleted] = 0")
+            .HasDatabaseName(
+                "UX_Space_LocationExternalBinding_Primary_Active");
+        entity.HasOne<SpaceModelVersion>()
+            .WithMany()
+            .HasForeignKey(x => new { x.TenantId, x.ModelVersionId })
+            .HasPrincipalKey(x => new { x.TenantId, x.Id })
+            .OnDelete(DeleteBehavior.Restrict)
+            .HasConstraintName(
+                "FK_Space_LocationExternalBinding_Version_Tenant");
+        entity.HasOne<SpaceLocationRevision>()
+            .WithMany()
+            .HasForeignKey(x => new
+            {
+                x.TenantId,
+                x.ModelVersionId,
+                x.LocationLogicalId,
+            })
+            .HasPrincipalKey(x => new
+            {
+                x.TenantId,
+                x.ModelVersionId,
+                x.LogicalId,
+            })
+            .OnDelete(DeleteBehavior.Restrict)
+            .HasConstraintName(
+                "FK_Space_LocationExternalBinding_Location_Tenant_Version_Logical");
+        entity.HasOne<SpaceModelSource>()
+            .WithMany()
+            .HasForeignKey(x => new
+            {
+                x.TenantId,
+                x.ModelVersionId,
+                x.SourceId,
+            })
+            .HasPrincipalKey(x => new
+            {
+                x.TenantId,
+                x.ModelVersionId,
+                x.Id,
+            })
+            .OnDelete(DeleteBehavior.Restrict)
+            .HasConstraintName(
+                "FK_Space_LocationExternalBinding_Source_Tenant_Version");
+        entity.HasQueryFilter(
+            x => x.TenantId == CurrentTenantId && !x.IsDeleted);
+    }
+
+    private void ConfigureDesignAttribute(ModelBuilder modelBuilder)
+    {
+        var entity = modelBuilder.Entity<SpaceDesignAttribute>();
+        entity.ToTable(
+            "Space_DesignAttribute",
+            table => table.HasCheckConstraint(
+                "CK_Space_DesignAttribute_ObjectType",
+                "[ObjectType] IN ('Rack', 'RackLevel', 'Location')"));
+        entity.HasKey(x => x.Id);
+        entity.Property(x => x.Id).ValueGeneratedNever();
+        entity.HasAlternateKey(x => new
+        {
+            x.TenantId,
+            x.ModelVersionId,
+            x.Id,
+        });
+        ConfigureTenantEntity(entity);
+        entity.Property(x => x.ObjectType).HasMaxLength(20).IsRequired();
+        entity.Property(x => x.Namespace).HasMaxLength(100).IsRequired();
+        entity.Property(x => x.Key).HasMaxLength(100).IsRequired();
+        entity.Property(x => x.Value).HasMaxLength(4000).IsRequired();
+        entity.Property(x => x.Unit).HasMaxLength(50);
+        entity.Property(x => x.SourceRef).HasMaxLength(500).IsRequired();
+
+        entity.HasIndex(x => new
+        {
+            x.TenantId,
+            x.ModelVersionId,
+            x.ObjectType,
+            x.ObjectLogicalId,
+            x.Namespace,
+            x.Key,
+        })
+            .IsUnique()
+            .HasFilter("[IsDeleted] = 0")
+            .HasDatabaseName("UX_Space_DesignAttribute_Target_Key_Active");
+        entity.HasOne<SpaceModelVersion>()
+            .WithMany()
+            .HasForeignKey(x => new { x.TenantId, x.ModelVersionId })
+            .HasPrincipalKey(x => new { x.TenantId, x.Id })
+            .OnDelete(DeleteBehavior.Restrict)
+            .HasConstraintName("FK_Space_DesignAttribute_Version_Tenant");
+        entity.HasOne<SpaceModelSource>()
+            .WithMany()
+            .HasForeignKey(x => new
+            {
+                x.TenantId,
+                x.ModelVersionId,
+                x.SourceId,
+            })
+            .HasPrincipalKey(x => new
+            {
+                x.TenantId,
+                x.ModelVersionId,
+                x.Id,
+            })
+            .OnDelete(DeleteBehavior.Restrict)
+            .HasConstraintName(
+                "FK_Space_DesignAttribute_Source_Tenant_Version");
+        entity.HasQueryFilter(
+            x => x.TenantId == CurrentTenantId && !x.IsDeleted);
+    }
+
     private void ConfigurePublishPlan(ModelBuilder modelBuilder)
     {
         var entity = modelBuilder.Entity<SpacePublishPlan>();
@@ -921,12 +1085,12 @@ public sealed class SpaceContext : DbContext
             .IsUnique()
             .HasDatabaseName("UX_Space_PublishPlan_Tenant_PlanHash");
         entity.HasIndex(x => new
-            {
-                x.TenantId,
-                x.SiteId,
-                x.TargetVersionId,
-                x.CreatedAtUtc,
-            })
+        {
+            x.TenantId,
+            x.SiteId,
+            x.TargetVersionId,
+            x.CreatedAtUtc,
+        })
             .HasDatabaseName("IX_Space_PublishPlan_Tenant_Site_Target_Created");
         entity.HasOne<SpaceModelVersion>()
             .WithMany()
@@ -1169,11 +1333,11 @@ public sealed class SpaceContext : DbContext
             .HasDatabaseName(
                 "UX_Space_HistoricalRepublish_Tenant_Idempotency");
         entity.HasIndex(x => new
-            {
-                x.TenantId,
-                x.SiteId,
-                x.RequestedAtUtc,
-            })
+        {
+            x.TenantId,
+            x.SiteId,
+            x.RequestedAtUtc,
+        })
             .HasDatabaseName(
                 "IX_Space_HistoricalRepublish_Tenant_Site_Requested");
         entity.HasIndex(x => new { x.TenantId, x.PublishAttemptId })
@@ -2183,12 +2347,12 @@ public sealed class SpaceContext : DbContext
         entity.Property(x => x.AppliedAtUtc).HasColumnType("datetime2");
 
         entity.HasIndex(x => new
-            {
-                x.TenantId,
-                x.ModelVersionId,
-                x.FloorLogicalId,
-                x.AppliedAtUtc,
-            })
+        {
+            x.TenantId,
+            x.ModelVersionId,
+            x.FloorLogicalId,
+            x.AppliedAtUtc,
+        })
             .HasDatabaseName("IX_Space_ElementCommandBatch_Floor_Applied");
         entity.HasOne<SpaceModelVersion>()
             .WithMany()
@@ -2231,11 +2395,11 @@ public sealed class SpaceContext : DbContext
         entity.Property(x => x.AfterJson).HasColumnType("nvarchar(max)").IsRequired();
 
         entity.HasIndex(x => new
-            {
-                x.TenantId,
-                x.CommandBatchId,
-                x.SequenceNo,
-            })
+        {
+            x.TenantId,
+            x.CommandBatchId,
+            x.SequenceNo,
+        })
             .IsUnique()
             .HasDatabaseName("UX_Space_ElementCommandRecord_Batch_Sequence");
         entity.HasOne<SpaceElementCommandBatch>()
@@ -3836,22 +4000,22 @@ public sealed class SpaceContext : DbContext
         entity.Property(x => x.RowVersion).IsRowVersion();
 
         entity.HasIndex(x => new
-            {
-                x.TenantId,
-                x.Type,
-                x.NormalizedCode,
-            })
+        {
+            x.TenantId,
+            x.Type,
+            x.NormalizedCode,
+        })
             .IsUnique()
             .HasFilter("[IsDeleted] = 0")
             .HasDatabaseName(
                 "UX_Space_ExternalOrganization_Tenant_Type_Code");
         entity.HasIndex(x => new
-            {
-                x.TenantId,
-                x.Type,
-                x.BusinessPartnerType,
-                x.BusinessPartnerId,
-            })
+        {
+            x.TenantId,
+            x.Type,
+            x.BusinessPartnerType,
+            x.BusinessPartnerId,
+        })
             .IsUnique()
             .HasFilter(
                 "[BusinessPartnerId] IS NOT NULL AND [IsDeleted] = 0")
@@ -3905,23 +4069,23 @@ public sealed class SpaceContext : DbContext
         entity.Property(x => x.RowVersion).IsRowVersion();
 
         entity.HasIndex(x => new
-            {
-                x.TenantId,
-                x.OrganizationId,
-                x.UserId,
-            })
+        {
+            x.TenantId,
+            x.OrganizationId,
+            x.UserId,
+        })
             .IsUnique()
             .HasFilter("[Status] <> 3 AND [IsDeleted] = 0")
             .HasDatabaseName(
                 "UX_Space_ExternalMembership_Tenant_Organization_User_Current");
         entity.HasIndex(x => new
-            {
-                x.TenantId,
-                x.UserId,
-                x.Status,
-                x.ValidFromUtc,
-                x.ValidToUtc,
-            })
+        {
+            x.TenantId,
+            x.UserId,
+            x.Status,
+            x.ValidFromUtc,
+            x.ValidToUtc,
+        })
             .HasDatabaseName(
                 "IX_Space_ExternalMembership_Tenant_User_Status_Validity");
 
@@ -3983,22 +4147,22 @@ public sealed class SpaceContext : DbContext
             .HasConstraintName(
                 "FK_Space_ExternalGrant_FieldPolicy_Tenant");
         entity.HasIndex(x => new
-            {
-                x.TenantId,
-                x.OrganizationId,
-                x.Status,
-                x.ValidFromUtc,
-                x.ValidToUtc,
-            })
+        {
+            x.TenantId,
+            x.OrganizationId,
+            x.Status,
+            x.ValidFromUtc,
+            x.ValidToUtc,
+        })
             .HasDatabaseName(
                 "IX_Space_ExternalGrant_Organization_Status_Validity");
         entity.HasIndex(x => new
-            {
-                x.TenantId,
-                x.OrganizationId,
-                x.SiteId,
-                x.Status,
-            })
+        {
+            x.TenantId,
+            x.OrganizationId,
+            x.SiteId,
+            x.Status,
+        })
             .HasDatabaseName(
                 "IX_Space_ExternalGrant_Organization_Site_Status");
         entity.HasQueryFilter(
@@ -4021,11 +4185,11 @@ public sealed class SpaceContext : DbContext
             .OnDelete(DeleteBehavior.Restrict)
             .HasConstraintName("FK_Space_ExternalGrantFloor_Grant_Tenant");
         entity.HasIndex(x => new
-            {
-                x.TenantId,
-                x.GrantId,
-                x.FloorLogicalId,
-            })
+        {
+            x.TenantId,
+            x.GrantId,
+            x.FloorLogicalId,
+        })
             .IsUnique()
             .HasFilter("[IsDeleted] = 0")
             .HasDatabaseName("UX_Space_ExternalGrantFloor_Current");
@@ -4049,11 +4213,11 @@ public sealed class SpaceContext : DbContext
             .OnDelete(DeleteBehavior.Restrict)
             .HasConstraintName("FK_Space_ExternalGrantZone_Grant_Tenant");
         entity.HasIndex(x => new
-            {
-                x.TenantId,
-                x.GrantId,
-                x.ZoneLogicalId,
-            })
+        {
+            x.TenantId,
+            x.GrantId,
+            x.ZoneLogicalId,
+        })
             .IsUnique()
             .HasFilter("[IsDeleted] = 0")
             .HasDatabaseName("UX_Space_ExternalGrantZone_Current");
@@ -4082,11 +4246,11 @@ public sealed class SpaceContext : DbContext
             .OnDelete(DeleteBehavior.Restrict)
             .HasConstraintName("FK_Space_ExternalGrantOwner_Grant_Tenant");
         entity.HasIndex(x => new
-            {
-                x.TenantId,
-                x.GrantId,
-                x.NormalizedOwnerId,
-            })
+        {
+            x.TenantId,
+            x.GrantId,
+            x.NormalizedOwnerId,
+        })
             .IsUnique()
             .HasFilter("[IsDeleted] = 0")
             .HasDatabaseName("UX_Space_ExternalGrantOwner_Current");
@@ -4124,12 +4288,12 @@ public sealed class SpaceContext : DbContext
             .OnDelete(DeleteBehavior.Restrict)
             .HasConstraintName("FK_Space_ExternalGrantObject_Grant_Tenant");
         entity.HasIndex(x => new
-            {
-                x.TenantId,
-                x.GrantId,
-                x.NormalizedBusinessObjectType,
-                x.NormalizedBusinessObjectId,
-            })
+        {
+            x.TenantId,
+            x.GrantId,
+            x.NormalizedBusinessObjectType,
+            x.NormalizedBusinessObjectId,
+        })
             .IsUnique()
             .HasFilter("[IsDeleted] = 0")
             .HasDatabaseName("UX_Space_ExternalGrantObject_Current");
@@ -4172,11 +4336,11 @@ public sealed class SpaceContext : DbContext
         entity.Property(x => x.PolicyVersion).HasColumnType("bigint");
         entity.Property(x => x.RowVersion).IsRowVersion();
         entity.HasIndex(x => new
-            {
-                x.TenantId,
-                x.AudienceType,
-                x.NormalizedName,
-            })
+        {
+            x.TenantId,
+            x.AudienceType,
+            x.NormalizedName,
+        })
             .IsUnique()
             .HasFilter("[IsDeleted] = 0")
             .HasDatabaseName("UX_Space_FieldPolicy_CurrentName");
@@ -4220,12 +4384,12 @@ public sealed class SpaceContext : DbContext
             .OnDelete(DeleteBehavior.Restrict)
             .HasConstraintName("FK_Space_FieldPolicyField_Policy_Tenant");
         entity.HasIndex(x => new
-            {
-                x.TenantId,
-                x.PolicyId,
-                x.ResourceType,
-                x.NormalizedFieldName,
-            })
+        {
+            x.TenantId,
+            x.PolicyId,
+            x.ResourceType,
+            x.NormalizedFieldName,
+        })
             .IsUnique()
             .HasFilter("[IsDeleted] = 0")
             .HasDatabaseName("UX_Space_FieldPolicyField_Current");
@@ -4383,12 +4547,12 @@ public sealed class SpaceContext : DbContext
             .HasMaxLength(64)
             .IsRequired();
         entity.HasIndex(x => new
-            {
-                x.TenantId,
-                x.SiteId,
-                x.GeneratedAtUtc,
-                x.Id,
-            })
+        {
+            x.TenantId,
+            x.SiteId,
+            x.GeneratedAtUtc,
+            x.Id,
+        })
             .HasDatabaseName(
                 "IX_Space_PutawayRecommendation_Tenant_Site_Generated");
         entity.HasOne<SpaceModelVersion>()
@@ -4486,12 +4650,12 @@ public sealed class SpaceContext : DbContext
             .HasMaxLength(64)
             .IsRequired();
         entity.HasIndex(x => new
-            {
-                x.TenantId,
-                x.SiteId,
-                x.GeneratedAtUtc,
-                x.Id,
-            })
+        {
+            x.TenantId,
+            x.SiteId,
+            x.GeneratedAtUtc,
+            x.Id,
+        })
             .HasDatabaseName(
                 "IX_Space_DispatchRecommendation_Tenant_Site_Generated");
         entity.HasOne<SpaceModelVersion>()
@@ -4606,13 +4770,13 @@ public sealed class SpaceContext : DbContext
         entity.HasAlternateKey(x => new { x.TenantId, x.Id })
             .HasName("AK_Space_PlanningHistoricalDataset_Tenant_Id");
         entity.HasAlternateKey(x => new
-            {
-                x.TenantId,
-                x.Id,
-                x.BranchId,
-                x.ModelId,
-                x.ScenarioVersionId,
-            })
+        {
+            x.TenantId,
+            x.Id,
+            x.BranchId,
+            x.ModelId,
+            x.ScenarioVersionId,
+        })
             .HasName(
                 "AK_Space_PlanningHistoricalDataset_Tenant_Id_Branch_Model_Version");
         entity.Property(x => x.Name).HasMaxLength(200).IsRequired();
@@ -4644,11 +4808,11 @@ public sealed class SpaceContext : DbContext
             .IsUnicode(false)
             .IsRequired();
         entity.HasIndex(x => new
-            {
-                x.TenantId,
-                x.BranchId,
-                x.CreatedAtUtc,
-            })
+        {
+            x.TenantId,
+            x.BranchId,
+            x.CreatedAtUtc,
+        })
             .HasDatabaseName(
                 "IX_Space_PlanningHistoricalDataset_Branch_Created");
         entity.HasOne<SpacePlanningScenarioBranch>()
@@ -4737,20 +4901,20 @@ public sealed class SpaceContext : DbContext
             .HasColumnType("datetimeoffset(7)");
         entity.Property(x => x.Quantity).HasPrecision(18, 4);
         entity.HasIndex(x => new
-            {
-                x.TenantId,
-                x.DatasetId,
-                x.SequenceNo,
-            })
+        {
+            x.TenantId,
+            x.DatasetId,
+            x.SequenceNo,
+        })
             .IsUnique()
             .HasDatabaseName(
                 "UX_Space_PlanningHistoricalTask_Dataset_Sequence");
         entity.HasIndex(x => new
-            {
-                x.TenantId,
-                x.DatasetId,
-                x.TaskToken,
-            })
+        {
+            x.TenantId,
+            x.DatasetId,
+            x.TaskToken,
+        })
             .IsUnique()
             .HasDatabaseName(
                 "UX_Space_PlanningHistoricalTask_Dataset_Token");
@@ -4812,20 +4976,20 @@ public sealed class SpaceContext : DbContext
         entity.HasAlternateKey(x => new { x.TenantId, x.Id, x.SiteId })
             .HasName("AK_Space_PlanningSimulationRun_Tenant_Id_Site");
         entity.HasAlternateKey(x => new
-            {
-                x.TenantId,
-                x.Id,
-                x.BranchId,
-                x.ScenarioVersionId,
-            })
+        {
+            x.TenantId,
+            x.Id,
+            x.BranchId,
+            x.ScenarioVersionId,
+        })
             .HasName(
                 "AK_Space_PlanningSimulationRun_Tenant_Id_Branch_Version");
         entity.HasAlternateKey(x => new
-            {
-                x.TenantId,
-                x.Id,
-                x.ScenarioVersionId,
-            })
+        {
+            x.TenantId,
+            x.Id,
+            x.ScenarioVersionId,
+        })
             .HasName(
                 "AK_Space_PlanningSimulationRun_Tenant_Id_Version");
         entity.Property(x => x.Name).HasMaxLength(200).IsRequired();
@@ -4880,19 +5044,19 @@ public sealed class SpaceContext : DbContext
         entity.Property(x => x.CongestionCost).HasPrecision(28, 6);
         entity.Property(x => x.TotalCost).HasPrecision(28, 6);
         entity.HasIndex(x => new
-            {
-                x.TenantId,
-                x.BranchId,
-                x.CreatedAtUtc,
-            })
+        {
+            x.TenantId,
+            x.BranchId,
+            x.CreatedAtUtc,
+        })
             .HasDatabaseName(
                 "IX_Space_PlanningSimulationRun_Branch_Created");
         entity.HasIndex(x => new
-            {
-                x.TenantId,
-                x.DatasetId,
-                x.CreatedAtUtc,
-            })
+        {
+            x.TenantId,
+            x.DatasetId,
+            x.CreatedAtUtc,
+        })
             .HasDatabaseName(
                 "IX_Space_PlanningSimulationRun_Dataset_Created");
         entity.HasOne<SpacePlanningScenarioBranch>()
@@ -4981,11 +5145,11 @@ public sealed class SpaceContext : DbContext
         entity.Property(x => x.CapacityUtilizationPercent)
             .HasPrecision(38, 4);
         entity.HasIndex(x => new
-            {
-                x.TenantId,
-                x.RunId,
-                x.LocationLogicalId,
-            })
+        {
+            x.TenantId,
+            x.RunId,
+            x.LocationLogicalId,
+        })
             .IsUnique()
             .HasDatabaseName(
                 "UX_Space_PlanningSimulationLocation_Run_Location");
@@ -5090,11 +5254,11 @@ public sealed class SpaceContext : DbContext
             .HasPrecision(28, 6);
         entity.Property(x => x.MaximumTotalCost).HasPrecision(28, 6);
         entity.HasIndex(x => new
-            {
-                x.TenantId,
-                x.SiteId,
-                x.CreatedAtUtc,
-            })
+        {
+            x.TenantId,
+            x.SiteId,
+            x.CreatedAtUtc,
+        })
             .HasDatabaseName("IX_Space_PlanningComparison_Site_Created");
         entity.HasOne<SpaceModel>()
             .WithMany()
@@ -5159,20 +5323,20 @@ public sealed class SpaceContext : DbContext
         entity.Property(x => x.Id).ValueGeneratedNever();
         ConfigureTenantEntity(entity);
         entity.HasAlternateKey(x => new
-            {
-                x.TenantId,
-                x.ComparisonId,
-                x.RunId,
-            })
+        {
+            x.TenantId,
+            x.ComparisonId,
+            x.RunId,
+        })
             .HasName(
                 "AK_Space_PlanningComparisonEntry_Comparison_Run");
         entity.HasAlternateKey(x => new
-            {
-                x.TenantId,
-                x.ComparisonId,
-                x.Id,
-                x.RunId,
-            })
+        {
+            x.TenantId,
+            x.ComparisonId,
+            x.Id,
+            x.RunId,
+        })
             .HasName(
                 "AK_Space_PlanningComparisonEntry_Comparison_Id_Run");
         entity.Property(x => x.RunName).HasMaxLength(200).IsRequired();
@@ -5198,20 +5362,20 @@ public sealed class SpaceContext : DbContext
             .HasPrecision(28, 6);
         entity.Property(x => x.TotalCostDelta).HasPrecision(28, 6);
         entity.HasIndex(x => new
-            {
-                x.TenantId,
-                x.ComparisonId,
-                x.SequenceNo,
-            })
+        {
+            x.TenantId,
+            x.ComparisonId,
+            x.SequenceNo,
+        })
             .IsUnique()
             .HasDatabaseName(
                 "UX_Space_PlanningComparisonEntry_Comparison_Sequence");
         entity.HasIndex(x => new
-            {
-                x.TenantId,
-                x.ComparisonId,
-                x.IsBaseline,
-            })
+        {
+            x.TenantId,
+            x.ComparisonId,
+            x.IsBaseline,
+        })
             .HasFilter("[IsBaseline] = 1")
             .IsUnique()
             .HasDatabaseName(
@@ -5268,11 +5432,11 @@ public sealed class SpaceContext : DbContext
             .IsUnicode(false)
             .IsRequired();
         entity.HasIndex(x => new
-            {
-                x.TenantId,
-                x.EntryId,
-                x.Code,
-            })
+        {
+            x.TenantId,
+            x.EntryId,
+            x.Code,
+        })
             .IsUnique()
             .HasDatabaseName(
                 "UX_Space_PlanningComparisonRisk_Entry_Code");
@@ -5320,11 +5484,11 @@ public sealed class SpaceContext : DbContext
         entity.Property(x => x.Id).ValueGeneratedNever();
         ConfigureTenantEntity(entity);
         entity.HasAlternateKey(x => new
-            {
-                x.TenantId,
-                x.ComparisonId,
-                x.Id,
-            })
+        {
+            x.TenantId,
+            x.ComparisonId,
+            x.Id,
+        })
             .HasName(
                 "AK_Space_PlanningDecisionRecord_Comparison_Id");
         entity.Property(x => x.Rationale).HasMaxLength(2_000).IsRequired();
@@ -5346,19 +5510,19 @@ public sealed class SpaceContext : DbContext
                 .IsRequired();
         }
         entity.HasIndex(x => new
-            {
-                x.TenantId,
-                x.ComparisonId,
-                x.CreatedAtUtc,
-            })
+        {
+            x.TenantId,
+            x.ComparisonId,
+            x.CreatedAtUtc,
+        })
             .HasDatabaseName(
                 "IX_Space_PlanningDecisionRecord_Comparison_Created");
         entity.HasIndex(x => new
-            {
-                x.TenantId,
-                x.ComparisonId,
-                x.SupersedesDecisionId,
-            })
+        {
+            x.TenantId,
+            x.ComparisonId,
+            x.SupersedesDecisionId,
+        })
             .HasFilter("[SupersedesDecisionId] IS NOT NULL")
             .IsUnique()
             .HasDatabaseName(
@@ -5648,6 +5812,8 @@ public sealed class SpaceContext : DbContext
             {
                 SpaceRevisionEntity revision => revision.ModelVersionId,
                 SpaceElementAttribute attribute => attribute.ModelVersionId,
+                SpaceLocationExternalBinding binding => binding.ModelVersionId,
+                SpaceDesignAttribute attribute => attribute.ModelVersionId,
                 SpaceModelSource source => source.ModelVersionId,
                 SpaceUnderlayCalibration calibration =>
                     calibration.ModelVersionId,

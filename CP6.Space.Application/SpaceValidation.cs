@@ -117,8 +117,8 @@ public interface ISpaceValidationService
 
 public static class SpaceValidationRuleSet
 {
-    public const string Version = "space-validation-v1";
-    public const string ProcessorVersion = "space-validation-processor-v1";
+    public const string Version = "space-validation-v2";
+    public const string ProcessorVersion = "space-validation-processor-v2";
 }
 
 public static class SpaceValidationCategories
@@ -233,7 +233,23 @@ public sealed record SpaceValidationLocation(
     int Height,
     int Depth,
     SpaceLocationCodeOrigin CodeOrigin,
-    SpaceExternalBindingState ExternalBindingState);
+    SpaceExternalBindingState ExternalBindingState,
+    string? LocationType = null);
+
+public sealed record SpaceValidationLocationBinding(
+    Guid LocationLogicalId,
+    string AdapterId,
+    string WarehouseCode,
+    string ExternalLocationId,
+    SpaceLocationBindingMode BindingMode);
+
+public sealed record SpaceValidationDesignAttribute(
+    string ObjectType,
+    Guid ObjectLogicalId,
+    string Namespace,
+    string Key,
+    string Value,
+    string? Unit);
 
 public sealed record SpaceValidationElementAttribute(
     string Namespace,
@@ -312,7 +328,9 @@ public sealed record SpaceValidationSnapshot(
     IReadOnlyList<SpaceValidationSource> Sources,
     IReadOnlyList<SpaceValidationAssetVersion> AssetVersions,
     IReadOnlyList<SpaceValidationPublishedLocation> PublishedLocations,
-    IReadOnlyList<SpaceValidationExistingIssue> ExistingIssues);
+    IReadOnlyList<SpaceValidationExistingIssue> ExistingIssues,
+    IReadOnlyList<SpaceValidationLocationBinding>? LocationBindings = null,
+    IReadOnlyList<SpaceValidationDesignAttribute>? DesignAttributes = null);
 
 public sealed record SpaceValidationIssueCandidate(
     SpaceIssueSeverity Severity,
@@ -363,6 +381,17 @@ public sealed class SpaceValidationEngine
                 .ThenBy(Key)
                 .ToArray(),
             Locations = snapshot.Locations.OrderBy(Key).ToArray(),
+            LocationBindings = (snapshot.LocationBindings ?? [])
+                .OrderBy(value => value.AdapterId, StringComparer.Ordinal)
+                .ThenBy(value => value.WarehouseCode, StringComparer.Ordinal)
+                .ThenBy(value => value.ExternalLocationId, StringComparer.Ordinal)
+                .ToArray(),
+            DesignAttributes = (snapshot.DesignAttributes ?? [])
+                .OrderBy(value => value.ObjectType, StringComparer.Ordinal)
+                .ThenBy(value => value.ObjectLogicalId)
+                .ThenBy(value => value.Namespace, StringComparer.Ordinal)
+                .ThenBy(value => value.Key, StringComparer.Ordinal)
+                .ToArray(),
             Elements = snapshot.Elements
                 .OrderBy(Key)
                 .Select(element => element with
@@ -457,6 +486,7 @@ public sealed class SpaceValidationEngine
             snapshot.AssetVersions,
             elements,
             issues);
+        ValidateDesignMetadata(snapshot, profile, issues);
         ValidatePublishedLocationIdentity(
             snapshot.PublishedLocations,
             locations,
@@ -478,6 +508,79 @@ public sealed class SpaceValidationEngine
         return new SpaceValidationEngineResult(
             ComputeContentHash(snapshot),
             ordered);
+    }
+
+    private static void ValidateDesignMetadata(
+        SpaceValidationSnapshot snapshot,
+        SpaceValidationProfile profile,
+        ICollection<SpaceValidationIssueCandidate> issues)
+    {
+        var racks = snapshot.Racks.Select(Key).ToHashSet();
+        var rackLevels = snapshot.RackLevels.Select(Key).ToHashSet();
+        var locations = snapshot.Locations.Select(Key).ToHashSet();
+        foreach (var binding in snapshot.LocationBindings ?? [])
+        {
+            if (!locations.Contains(binding.LocationLogicalId) ||
+                !binding.AdapterId.Equals(
+                    profile.AdapterId,
+                    StringComparison.Ordinal))
+            {
+                Add(
+                    issues,
+                    SpaceIssueSeverity.Blocking,
+                    SpaceValidationCategories.Binding,
+                    SpaceValidationIssueCodes.InternalBindingMissing,
+                    new { binding.ExternalLocationId },
+                    targetLogicalId: binding.LocationLogicalId,
+                    suggestedActionCode: "repair-external-binding-target");
+            }
+        }
+        foreach (var group in (snapshot.LocationBindings ?? [])
+                     .GroupBy(value => value.LocationLogicalId))
+        {
+            if (group.Count(value =>
+                    value.BindingMode ==
+                    SpaceLocationBindingMode.WmsPrimary) != 1)
+            {
+                Add(
+                    issues,
+                    SpaceIssueSeverity.Blocking,
+                    SpaceValidationCategories.Binding,
+                    SpaceValidationIssueCodes.InternalBindingMissing,
+                    new { reason = "exactly-one-primary-binding-required" },
+                    targetLogicalId: group.Key,
+                    suggestedActionCode: "select-primary-external-binding");
+            }
+        }
+        foreach (var attribute in snapshot.DesignAttributes ?? [])
+        {
+            var exists = attribute.ObjectType switch
+            {
+                SpaceDesignAttributeObjectTypes.Rack =>
+                    racks.Contains(attribute.ObjectLogicalId),
+                SpaceDesignAttributeObjectTypes.RackLevel =>
+                    rackLevels.Contains(attribute.ObjectLogicalId),
+                SpaceDesignAttributeObjectTypes.Location =>
+                    locations.Contains(attribute.ObjectLogicalId),
+                _ => false,
+            };
+            if (!exists)
+            {
+                Add(
+                    issues,
+                    SpaceIssueSeverity.Blocking,
+                    SpaceValidationCategories.Binding,
+                    SpaceValidationIssueCodes.InternalBindingMissing,
+                    new
+                    {
+                        attribute.ObjectType,
+                        attribute.Namespace,
+                        attribute.Key,
+                    },
+                    targetLogicalId: attribute.ObjectLogicalId,
+                    suggestedActionCode: "repair-design-attribute-target");
+            }
+        }
     }
 
     private static void ValidateObjectLimit(

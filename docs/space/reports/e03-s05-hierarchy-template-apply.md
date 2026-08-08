@@ -64,3 +64,7 @@ Excel 中的显式 Rack 尺寸和 RackLevels 行仍是本次导入的几何权�
 ## 剩余边界与下一步
 
 生产 Processing Worker 已能认领 ExcelCadApply，但正式 CAD/Excel 签收仍等待获授权的原生 DWG/DXF Provider、组织黄金集，以及真实大文件、故障和性能证据。下一项可在本地继续的是为 Bindings、Attributes 与 LocationType 建立不含歧义的版本化持久合同；在合同完成前继续失败关闭。
+
+## 2026-08-08 后续扩展
+
+上述 Bindings、Attributes 与 LocationType 失败关闭边界已由后续功能提交 `b5aa87b2` 解除。新合同把它们纳入同一版本快照、Serializable CommandBatch、克隆、验证、发布和场景读取链；详细语义与验证证据见 `e03-s05-binding-attribute-location-type-apply.md`。本报告保留原提交当时的历史边界，不据此改写旧提交范围。

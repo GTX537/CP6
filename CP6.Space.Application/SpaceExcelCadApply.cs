@@ -41,7 +41,7 @@ public interface ISpaceExcelCadApplyService
 public sealed class SpaceExcelCadApplyJobProcessor(
     ISpaceExcelCadApplyJobStepExecutor executor) : ISpaceJobProcessor
 {
-    public const string Version = "space-excel-cad-apply-v1";
+    public const string Version = "space-excel-cad-apply-v2";
     public const string ApplyConfirmedArtifact = nameof(ApplyConfirmedArtifact);
 
     public SpaceJobType JobType => SpaceJobType.ExcelCadApply;

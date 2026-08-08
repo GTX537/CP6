@@ -22269,6 +22269,12 @@ namespace CP6.Space.Client
         [System.Text.Json.Serialization.JsonPropertyName("elementAttributes")]
         public System.Collections.Generic.ICollection<SpaceSceneElementAttributeDto>? ElementAttributes { get; set; } = default!;
 
+        [System.Text.Json.Serialization.JsonPropertyName("locationExternalBindings")]
+        public System.Collections.Generic.ICollection<SpaceSceneLocationExternalBindingDto>? LocationExternalBindings { get; set; } = default!;
+
+        [System.Text.Json.Serialization.JsonPropertyName("designAttributes")]
+        public System.Collections.Generic.ICollection<SpaceSceneDesignAttributeDto>? DesignAttributes { get; set; } = default!;
+
     }
 
     [System.CodeDom.Compiler.GeneratedCode("NJsonSchema", "14.7.1.0 (NJsonSchema v11.6.1.0 (Newtonsoft.Json v13.0.0.0))")]
@@ -26173,6 +26179,39 @@ namespace CP6.Space.Client
     }
 
     [System.CodeDom.Compiler.GeneratedCode("NJsonSchema", "14.7.1.0 (NJsonSchema v11.6.1.0 (Newtonsoft.Json v13.0.0.0))")]
+    public partial class SpaceSceneDesignAttributeDto
+    {
+
+        [System.Text.Json.Serialization.JsonPropertyName("id")]
+        public System.Guid Id { get; set; } = default!;
+
+        [System.Text.Json.Serialization.JsonPropertyName("objectType")]
+        public string? ObjectType { get; set; } = default!;
+
+        [System.Text.Json.Serialization.JsonPropertyName("objectLogicalId")]
+        public System.Guid ObjectLogicalId { get; set; } = default!;
+
+        [System.Text.Json.Serialization.JsonPropertyName("namespace")]
+        public string? Namespace { get; set; } = default!;
+
+        [System.Text.Json.Serialization.JsonPropertyName("key")]
+        public string? Key { get; set; } = default!;
+
+        [System.Text.Json.Serialization.JsonPropertyName("value")]
+        public string? Value { get; set; } = default!;
+
+        [System.Text.Json.Serialization.JsonPropertyName("unit")]
+        public string? Unit { get; set; } = default!;
+
+        [System.Text.Json.Serialization.JsonPropertyName("sourceId")]
+        public System.Guid SourceId { get; set; } = default!;
+
+        [System.Text.Json.Serialization.JsonPropertyName("sourceRef")]
+        public string? SourceRef { get; set; } = default!;
+
+    }
+
+    [System.CodeDom.Compiler.GeneratedCode("NJsonSchema", "14.7.1.0 (NJsonSchema v11.6.1.0 (Newtonsoft.Json v13.0.0.0))")]
     public partial class SpaceSceneElementAttributeDto
     {
 
@@ -26352,6 +26391,39 @@ namespace CP6.Space.Client
 
         [System.Text.Json.Serialization.JsonPropertyName("externalBindingState")]
         public string? ExternalBindingState { get; set; } = default!;
+
+        [System.Text.Json.Serialization.JsonPropertyName("locationType")]
+        public string? LocationType { get; set; } = default!;
+
+    }
+
+    [System.CodeDom.Compiler.GeneratedCode("NJsonSchema", "14.7.1.0 (NJsonSchema v11.6.1.0 (Newtonsoft.Json v13.0.0.0))")]
+    public partial class SpaceSceneLocationExternalBindingDto
+    {
+
+        [System.Text.Json.Serialization.JsonPropertyName("id")]
+        public System.Guid Id { get; set; } = default!;
+
+        [System.Text.Json.Serialization.JsonPropertyName("locationLogicalId")]
+        public System.Guid LocationLogicalId { get; set; } = default!;
+
+        [System.Text.Json.Serialization.JsonPropertyName("adapterId")]
+        public string? AdapterId { get; set; } = default!;
+
+        [System.Text.Json.Serialization.JsonPropertyName("warehouseCode")]
+        public string? WarehouseCode { get; set; } = default!;
+
+        [System.Text.Json.Serialization.JsonPropertyName("externalLocationId")]
+        public string? ExternalLocationId { get; set; } = default!;
+
+        [System.Text.Json.Serialization.JsonPropertyName("bindingMode")]
+        public string? BindingMode { get; set; } = default!;
+
+        [System.Text.Json.Serialization.JsonPropertyName("sourceId")]
+        public System.Guid SourceId { get; set; } = default!;
+
+        [System.Text.Json.Serialization.JsonPropertyName("sourceRef")]
+        public string? SourceRef { get; set; } = default!;
 
     }
 

@@ -2,6 +2,15 @@
 
 最后更新：2026-08-08
 
+## E03-S05 Excel 设计元数据权威 Apply 扩展（2026-08-08）
+
+- 在集成基线 `0cff2123` 上以功能提交 `b5aa87b2` 关闭标准 Excel 的最后三个已知失败关闭字段：`Bindings` 成为 ModelVersion 内的设计声明，Site 权威 WarehouseCode 必须逐字符一致，AdapterId 固定自当前运行源；每个有绑定行的 Location 恰有一个 WmsPrimary，并可带 WmsAlias。Excel 声明不冒充 WMS Adoption。
+- 新增版本化 `Space_LocationExternalBinding`、`Space_DesignAttribute` 和 `Space_LocationRevision.LocationType`。Attributes 只归属 Rack、`RackCode/LevelNo` 标识的 RackLevel 或 Location，Namespace 限 Owner/Batch/Container/Manufacturing/Custom；LocationType 限 Storage/Staging/Picking/Buffer。权威遗漏软删除并追加确定性命令，Primary/Alias 互换使用事务内两阶段更新。
+- 同一 Serializable CommandBatch 现在覆盖 Rack/RackLevel/Location/Binding/Attribute；Apply 处理器与层级计划升级 v2。普通 Draft 和 Planning Scenario 克隆统一 v2，内容哈希/Validation v2、发布预览、Design Scene、Planning Exchange、OpenAPI 与 C#/TypeScript SDK 均包含新增数据。
+- EF Migration `20260808131619_SpaceE03S05ExcelDesignMetadata` 与增量 SQL 已验证：脚本在临时 SQL Server 库连续执行两次后为 1 条历史、2 张新表、1 个 LocationType 列；EF model drift clean。
+- 门禁：元数据/Validation 15/15、Match/Apply 12/12、Space Unit 471/471、默认 Space Integration 275 passed / 94 SQL-gated skipped、场景与 Clone/Migration 真实 SQL 10/10、CP6.Tests 2811 passed / 17 environment-gated skipped；完整 solution Release 0 error / 7 个未改动测试文件既有 warning，SDK drift、TypeScript strict、C# whitespace 与 diff 检查通过。完整证据见 `docs/space/reports/e03-s05-binding-attribute-location-type-apply.md`。
+- 当前仍在功能分支等待 no-ff 合并与远端备份；`main` 未修改。正式 CAD/Excel 签收仍等待获授权 DWG/DXF Provider、组织黄金集、真实大文件/故障/性能证据，以及生产镜像部署、备份迁移和 WMS 发布/恢复演练。
+
 ## E03-S05 Excel 层级与 RackTemplate 权威 Apply 扩展（2026-08-08）
 
 - 在集成基线 `677f8df5` 上以功能提交 `cb802cf6` 扩展 E03-S05：同一 Serializable CommandBatch 现在按 `Racks → RackLevels → Locations` 写入，子对象按稳定业务键更新或按冻结行身份生成确定性 LogicalId/CommandId；整批只提升一次 Floor Revision 与 ContentRevision，重放不重复创建。
@@ -702,4 +711,4 @@
 
 ## 下一动作
 
-E03-S01～S05、E13-S16、E06-S01～S06、生产 Processing Worker，以及 E03-S05 的 Rack/RackLevel/Location/RackTemplate 权威写入均已进入受控集成，不再重复这些卡。下一项不依赖外部条件的 MVP 工作是为标准 Excel 的 `Bindings`、`Attributes` 与 `LocationType` 建立无歧义的版本化持久合同：先明确 WmsWarehouseCode 到 Site/Adapter 的权威解析、Rack/RackLevel/Location 属性归属及 LocationType 字段，再扩展同一 CommandBatch；合同完成前继续失败关闭。标准工作簿没有 Zone/Aisle 表，不得伪造导入格式。E02/CAD 正式签收仍等待获授权的原生 DWG/DXF Provider、组织黄金集和真实大文件/故障/性能证据；生产部署需发布包含 Processing Worker 与本扩展的新镜像。E06 生产等价 WMS 演练、E13 外部 Provider/S14～S15/S18～S19、E12-S06 和跨职能 Beta/GA 证据仍是独立缺口。禁止创建未授权生产 CAD/DWG/外部 AI 适配器，禁止把候选检查点 `0d25da4d` 整包合入，GR-VP T1–T7 不要重做。
+E03-S01～S05、生产 Processing Worker、Rack/RackLevel/Location/RackTemplate，以及标准 Excel 的 Bindings/Attributes/LocationType 版本化权威写入均已在本地完成，不再重复这些卡；标准工作簿没有 Zone/Aisle 表，不得伪造格式。当前下一动作是完成 `b5aa87b2` 的 no-ff 集成、远端备份和可重建产物清理，然后重新做剩余路线盘点。已知未关闭项主要依赖外部或生产条件：E02/CAD 正式签收需要获授权原生 DWG/DXF Provider、组织黄金集和真实大文件/故障/性能证据；生产需部署包含 Processing Worker、本 Migration 与本扩展的新镜像并完成备份迁移和 E06 WMS 发布/恢复演练；E13 外部 Provider/S14～S15/S18～S19、E12-S06 和跨职能 Beta/GA 证据仍独立存在。禁止创建未授权生产 CAD/DWG/外部 AI 适配器，禁止把候选检查点 `0d25da4d` 整包合入，GR-VP T1–T7 不要重做。

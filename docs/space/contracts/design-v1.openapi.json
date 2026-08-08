@@ -18024,6 +18024,20 @@
               "$ref": "#/components/schemas/CP6.Space.Contracts.SpaceSceneElementAttributeDto"
             },
             "nullable": true
+          },
+          "locationExternalBindings": {
+            "type": "array",
+            "items": {
+              "$ref": "#/components/schemas/CP6.Space.Contracts.SpaceSceneLocationExternalBindingDto"
+            },
+            "nullable": true
+          },
+          "designAttributes": {
+            "type": "array",
+            "items": {
+              "$ref": "#/components/schemas/CP6.Space.Contracts.SpaceSceneDesignAttributeDto"
+            },
+            "nullable": true
           }
         },
         "additionalProperties": false
@@ -23244,6 +23258,48 @@
         },
         "additionalProperties": false
       },
+      "CP6.Space.Contracts.SpaceSceneDesignAttributeDto": {
+        "type": "object",
+        "properties": {
+          "id": {
+            "type": "string",
+            "format": "uuid"
+          },
+          "objectType": {
+            "type": "string",
+            "nullable": true
+          },
+          "objectLogicalId": {
+            "type": "string",
+            "format": "uuid"
+          },
+          "namespace": {
+            "type": "string",
+            "nullable": true
+          },
+          "key": {
+            "type": "string",
+            "nullable": true
+          },
+          "value": {
+            "type": "string",
+            "nullable": true
+          },
+          "unit": {
+            "type": "string",
+            "nullable": true
+          },
+          "sourceId": {
+            "type": "string",
+            "format": "uuid"
+          },
+          "sourceRef": {
+            "type": "string",
+            "nullable": true
+          }
+        },
+        "additionalProperties": false
+      },
       "CP6.Space.Contracts.SpaceSceneElementAttributeDto": {
         "type": "object",
         "properties": {
@@ -23479,6 +23535,48 @@
             "nullable": true
           },
           "externalBindingState": {
+            "type": "string",
+            "nullable": true
+          },
+          "locationType": {
+            "type": "string",
+            "nullable": true
+          }
+        },
+        "additionalProperties": false
+      },
+      "CP6.Space.Contracts.SpaceSceneLocationExternalBindingDto": {
+        "type": "object",
+        "properties": {
+          "id": {
+            "type": "string",
+            "format": "uuid"
+          },
+          "locationLogicalId": {
+            "type": "string",
+            "format": "uuid"
+          },
+          "adapterId": {
+            "type": "string",
+            "nullable": true
+          },
+          "warehouseCode": {
+            "type": "string",
+            "nullable": true
+          },
+          "externalLocationId": {
+            "type": "string",
+            "nullable": true
+          },
+          "bindingMode": {
+            "type": "string",
+            "nullable": true
+          },
+          "sourceId": {
+            "type": "string",
+            "format": "uuid"
+          },
+          "sourceRef": {
             "type": "string",
             "nullable": true
           }

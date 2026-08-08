@@ -555,6 +555,7 @@ public sealed class SpaceLocationRevision : SpaceRevisionEntity
     public int Height { get; private set; }
     public int Depth { get; private set; }
     public decimal? MaxLoad { get; private set; }
+    public string? LocationType { get; private set; }
     public SpaceLocationCodeOrigin CodeOrigin { get; private set; }
     public SpaceExternalBindingState ExternalBindingState { get; private set; }
 
@@ -574,7 +575,8 @@ public sealed class SpaceLocationRevision : SpaceRevisionEntity
         decimal? maxLoad = null,
         SpaceLocationCodeOrigin codeOrigin = SpaceLocationCodeOrigin.Generated,
         SpaceExternalBindingState externalBindingState =
-            SpaceExternalBindingState.Unbound)
+            SpaceExternalBindingState.Unbound,
+        string? locationType = null)
     {
         SpaceRevisionValue.RequireIdentity(floorLogicalId, nameof(floorLogicalId));
         if (rackLogicalId == Guid.Empty)
@@ -608,6 +610,7 @@ public sealed class SpaceLocationRevision : SpaceRevisionEntity
             Height = height,
             Depth = depth,
             MaxLoad = maxLoad,
+            LocationType = SpaceLocationTypes.NormalizeOptional(locationType),
             CodeOrigin = codeOrigin,
             ExternalBindingState = externalBindingState,
         };
@@ -681,7 +684,8 @@ public sealed class SpaceLocationRevision : SpaceRevisionEntity
         int width,
         int height,
         int depth,
-        decimal? maxLoad = null)
+        decimal? maxLoad = null,
+        string? locationType = null)
     {
         var normalizedCode = SpaceRevisionValue.RequiredText(
             locationCode,
@@ -708,6 +712,7 @@ public sealed class SpaceLocationRevision : SpaceRevisionEntity
             depth,
             maxLoad);
         LocationCode = normalizedCode;
+        LocationType = SpaceLocationTypes.NormalizeOptional(locationType);
         if (ExternalBindingState == SpaceExternalBindingState.Unbound)
             CodeOrigin = SpaceLocationCodeOrigin.Imported;
     }
