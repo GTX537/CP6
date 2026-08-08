@@ -132,6 +132,7 @@ public enum SpaceArtifactType : short
     ExcelErrorReport = 4,
     CanonicalSnapshot = 5,
     SceneChunk = 6,
+    ExcelCadMatchPreview = 7,
 }
 
 public enum SpaceJobType : short
@@ -149,6 +150,7 @@ public enum SpaceJobType : short
     ApplyGeneration = 10,
     AiRetentionCleanup = 11,
     HistoricalRepublish = 12,
+    ExcelCadMatch = 13,
 }
 
 public enum SpaceJobSubjectType : short

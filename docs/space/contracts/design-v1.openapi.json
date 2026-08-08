@@ -6766,6 +6766,330 @@
         }
       }
     },
+    "/api/space/design/v1/versions/{versionId}/excel-cad-matches": {
+      "post": {
+        "tags": [
+          "SpaceExcelCadMatch"
+        ],
+        "operationId": "StartMatch",
+        "parameters": [
+          {
+            "name": "versionId",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "string",
+              "format": "uuid"
+            }
+          },
+          {
+            "name": "Idempotency-Key",
+            "in": "header",
+            "required": true,
+            "schema": {
+              "type": "string"
+            }
+          }
+        ],
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/CP6.Space.Contracts.StartSpaceExcelCadMatchRequest"
+              }
+            },
+            "text/json": {
+              "schema": {
+                "$ref": "#/components/schemas/CP6.Space.Contracts.StartSpaceExcelCadMatchRequest"
+              }
+            },
+            "application/*+json": {
+              "schema": {
+                "$ref": "#/components/schemas/CP6.Space.Contracts.StartSpaceExcelCadMatchRequest"
+              }
+            }
+          },
+          "required": true
+        },
+        "responses": {
+          "400": {
+            "description": "Bad Request",
+            "content": {
+              "application/problem+json": {
+                "schema": {
+                  "$ref": "#/components/schemas/CP6.WebApi.OpenApi.SpaceDesignProblemDetails"
+                }
+              }
+            }
+          },
+          "401": {
+            "description": "Unauthorized",
+            "content": {
+              "application/problem+json": {
+                "schema": {
+                  "$ref": "#/components/schemas/CP6.WebApi.OpenApi.SpaceDesignProblemDetails"
+                }
+              }
+            }
+          },
+          "403": {
+            "description": "Forbidden",
+            "content": {
+              "application/problem+json": {
+                "schema": {
+                  "$ref": "#/components/schemas/CP6.WebApi.OpenApi.SpaceDesignProblemDetails"
+                }
+              }
+            }
+          },
+          "404": {
+            "description": "Not Found",
+            "content": {
+              "application/problem+json": {
+                "schema": {
+                  "$ref": "#/components/schemas/CP6.WebApi.OpenApi.SpaceDesignProblemDetails"
+                }
+              }
+            }
+          },
+          "409": {
+            "description": "Conflict",
+            "content": {
+              "application/problem+json": {
+                "schema": {
+                  "$ref": "#/components/schemas/CP6.WebApi.OpenApi.SpaceDesignProblemDetails"
+                }
+              }
+            }
+          },
+          "422": {
+            "description": "Unprocessable Content",
+            "content": {
+              "application/problem+json": {
+                "schema": {
+                  "$ref": "#/components/schemas/CP6.WebApi.OpenApi.SpaceDesignProblemDetails"
+                }
+              }
+            }
+          },
+          "503": {
+            "description": "Service Unavailable",
+            "content": {
+              "application/problem+json": {
+                "schema": {
+                  "$ref": "#/components/schemas/CP6.WebApi.OpenApi.SpaceDesignProblemDetails"
+                }
+              }
+            }
+          },
+          "500": {
+            "description": "Internal Server Error",
+            "content": {
+              "application/problem+json": {
+                "schema": {
+                  "$ref": "#/components/schemas/CP6.WebApi.OpenApi.SpaceDesignProblemDetails"
+                }
+              }
+            }
+          },
+          "202": {
+            "description": "Accepted",
+            "content": {
+              "text/plain": {
+                "schema": {
+                  "$ref": "#/components/schemas/CP6.Space.Contracts.StartSpaceExcelCadMatchResponse"
+                }
+              },
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/CP6.Space.Contracts.StartSpaceExcelCadMatchResponse"
+                }
+              },
+              "text/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/CP6.Space.Contracts.StartSpaceExcelCadMatchResponse"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/api/space/design/v1/versions/{versionId}/excel-cad-matches/{jobId}": {
+      "get": {
+        "tags": [
+          "SpaceExcelCadMatch"
+        ],
+        "operationId": "GetMatch",
+        "parameters": [
+          {
+            "name": "versionId",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "string",
+              "format": "uuid"
+            }
+          },
+          {
+            "name": "jobId",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "string",
+              "format": "uuid"
+            }
+          },
+          {
+            "name": "disposition",
+            "in": "query",
+            "schema": {
+              "type": "string"
+            }
+          },
+          {
+            "name": "rackCode",
+            "in": "query",
+            "schema": {
+              "type": "string"
+            }
+          },
+          {
+            "name": "sourceRef",
+            "in": "query",
+            "schema": {
+              "type": "string"
+            }
+          },
+          {
+            "name": "onlyLocatable",
+            "in": "query",
+            "schema": {
+              "type": "boolean",
+              "default": false
+            }
+          },
+          {
+            "name": "limit",
+            "in": "query",
+            "schema": {
+              "type": "integer",
+              "format": "int32",
+              "default": 0
+            }
+          },
+          {
+            "name": "cursor",
+            "in": "query",
+            "schema": {
+              "type": "string"
+            }
+          }
+        ],
+        "responses": {
+          "400": {
+            "description": "Bad Request",
+            "content": {
+              "application/problem+json": {
+                "schema": {
+                  "$ref": "#/components/schemas/CP6.WebApi.OpenApi.SpaceDesignProblemDetails"
+                }
+              }
+            }
+          },
+          "401": {
+            "description": "Unauthorized",
+            "content": {
+              "application/problem+json": {
+                "schema": {
+                  "$ref": "#/components/schemas/CP6.WebApi.OpenApi.SpaceDesignProblemDetails"
+                }
+              }
+            }
+          },
+          "403": {
+            "description": "Forbidden",
+            "content": {
+              "application/problem+json": {
+                "schema": {
+                  "$ref": "#/components/schemas/CP6.WebApi.OpenApi.SpaceDesignProblemDetails"
+                }
+              }
+            }
+          },
+          "404": {
+            "description": "Not Found",
+            "content": {
+              "application/problem+json": {
+                "schema": {
+                  "$ref": "#/components/schemas/CP6.WebApi.OpenApi.SpaceDesignProblemDetails"
+                }
+              }
+            }
+          },
+          "409": {
+            "description": "Conflict",
+            "content": {
+              "application/problem+json": {
+                "schema": {
+                  "$ref": "#/components/schemas/CP6.WebApi.OpenApi.SpaceDesignProblemDetails"
+                }
+              }
+            }
+          },
+          "422": {
+            "description": "Unprocessable Content",
+            "content": {
+              "application/problem+json": {
+                "schema": {
+                  "$ref": "#/components/schemas/CP6.WebApi.OpenApi.SpaceDesignProblemDetails"
+                }
+              }
+            }
+          },
+          "503": {
+            "description": "Service Unavailable",
+            "content": {
+              "application/problem+json": {
+                "schema": {
+                  "$ref": "#/components/schemas/CP6.WebApi.OpenApi.SpaceDesignProblemDetails"
+                }
+              }
+            }
+          },
+          "500": {
+            "description": "Internal Server Error",
+            "content": {
+              "application/problem+json": {
+                "schema": {
+                  "$ref": "#/components/schemas/CP6.WebApi.OpenApi.SpaceDesignProblemDetails"
+                }
+              }
+            }
+          },
+          "200": {
+            "description": "OK",
+            "content": {
+              "text/plain": {
+                "schema": {
+                  "$ref": "#/components/schemas/CP6.Space.Contracts.SpaceExcelCadMatchDto"
+                }
+              },
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/CP6.Space.Contracts.SpaceExcelCadMatchDto"
+                }
+              },
+              "text/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/CP6.Space.Contracts.SpaceExcelCadMatchDto"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
     "/api/space/design/v1/mapping-profiles/excel": {
       "get": {
         "tags": [
@@ -17025,6 +17349,106 @@
         },
         "additionalProperties": false
       },
+      "CP6.Space.Contracts.SpaceCadConfidenceBand": {
+        "enum": [
+          "High",
+          "Review",
+          "Low",
+          "Rejected"
+        ],
+        "type": "string"
+      },
+      "CP6.Space.Contracts.SpaceCadDiagnosticLocationKind": {
+        "enum": [
+          "Document",
+          "Layer",
+          "Block",
+          "Entity"
+        ],
+        "type": "string"
+      },
+      "CP6.Space.Contracts.SpaceCadDiagnosticLocationV1": {
+        "type": "object",
+        "properties": {
+          "kind": {
+            "$ref": "#/components/schemas/CP6.Space.Contracts.SpaceCadDiagnosticLocationKind"
+          },
+          "floorLogicalId": {
+            "type": "string",
+            "format": "uuid"
+          },
+          "layerId": {
+            "type": "string",
+            "nullable": true
+          },
+          "blockName": {
+            "type": "string",
+            "nullable": true
+          },
+          "sourceRef": {
+            "type": "string",
+            "nullable": true
+          },
+          "previewObjectId": {
+            "type": "string",
+            "nullable": true
+          },
+          "bounds": {
+            "$ref": "#/components/schemas/CP6.Space.Contracts.SpaceCadMillimeterBoundsV1"
+          },
+          "anchor": {
+            "$ref": "#/components/schemas/CP6.Space.Contracts.SpaceCadMillimeterPointV1"
+          },
+          "suggestedPaddingMillimeters": {
+            "type": "integer",
+            "format": "int32"
+          },
+          "canFocusCanvas": {
+            "type": "boolean"
+          }
+        },
+        "additionalProperties": false
+      },
+      "CP6.Space.Contracts.SpaceCadMillimeterBoundsV1": {
+        "type": "object",
+        "properties": {
+          "minX": {
+            "type": "integer",
+            "format": "int32"
+          },
+          "minY": {
+            "type": "integer",
+            "format": "int32"
+          },
+          "maxX": {
+            "type": "integer",
+            "format": "int32"
+          },
+          "maxY": {
+            "type": "integer",
+            "format": "int32"
+          }
+        },
+        "additionalProperties": false
+      },
+      "CP6.Space.Contracts.SpaceCadMillimeterPointV1": {
+        "type": "object",
+        "properties": {
+          "x": {
+            "type": "integer",
+            "format": "int32"
+          },
+          "y": {
+            "type": "integer",
+            "format": "int32"
+          },
+          "z": {
+            "type": "integer",
+            "format": "int32"
+          }
+        },
+        "additionalProperties": false
+      },
       "CP6.Space.Contracts.SpaceCadParseActionResponse": {
         "type": "object",
         "properties": {
@@ -17817,6 +18241,246 @@
         },
         "additionalProperties": false
       },
+      "CP6.Space.Contracts.SpaceExcelCadMatchDisposition": {
+        "enum": [
+          "New",
+          "Update",
+          "Unchanged",
+          "Unmatched",
+          "Conflict",
+          "Error"
+        ],
+        "type": "string"
+      },
+      "CP6.Space.Contracts.SpaceExcelCadMatchDto": {
+        "type": "object",
+        "properties": {
+          "jobId": {
+            "type": "string",
+            "format": "uuid"
+          },
+          "modelVersionId": {
+            "type": "string",
+            "format": "uuid"
+          },
+          "jobStatus": {
+            "type": "string",
+            "nullable": true
+          },
+          "processorVersion": {
+            "type": "string",
+            "nullable": true
+          },
+          "excelSourceId": {
+            "type": "string",
+            "format": "uuid"
+          },
+          "preflightJobId": {
+            "type": "string",
+            "format": "uuid"
+          },
+          "cadSourceId": {
+            "type": "string",
+            "format": "uuid"
+          },
+          "cadParseJobId": {
+            "type": "string",
+            "format": "uuid"
+          },
+          "floorLogicalId": {
+            "type": "string",
+            "format": "uuid"
+          },
+          "expectedContentRevision": {
+            "type": "integer",
+            "format": "int64"
+          },
+          "artifactId": {
+            "type": "string",
+            "format": "uuid",
+            "nullable": true
+          },
+          "artifactPayloadSha256": {
+            "type": "string",
+            "nullable": true
+          },
+          "fileSha256": {
+            "type": "string",
+            "nullable": true
+          },
+          "canConfirm": {
+            "type": "boolean"
+          },
+          "summary": {
+            "$ref": "#/components/schemas/CP6.Space.Contracts.SpaceExcelCadMatchSummaryV1"
+          },
+          "totalRowCount": {
+            "type": "integer",
+            "format": "int64"
+          },
+          "returnedRowCount": {
+            "type": "integer",
+            "format": "int32"
+          },
+          "nextCursor": {
+            "type": "string",
+            "nullable": true
+          },
+          "rows": {
+            "type": "array",
+            "items": {
+              "$ref": "#/components/schemas/CP6.Space.Contracts.SpaceExcelCadRackMatchV1"
+            },
+            "nullable": true
+          },
+          "lastErrorCode": {
+            "type": "string",
+            "nullable": true
+          },
+          "lastErrorSummary": {
+            "type": "string",
+            "nullable": true
+          }
+        },
+        "additionalProperties": false
+      },
+      "CP6.Space.Contracts.SpaceExcelCadMatchKeyEvidenceV1": {
+        "type": "object",
+        "properties": {
+          "kind": {
+            "$ref": "#/components/schemas/CP6.Space.Contracts.SpaceExcelCadMatchKeyKind"
+          },
+          "value": {
+            "type": "string",
+            "nullable": true
+          },
+          "candidateId": {
+            "type": "string",
+            "nullable": true
+          }
+        },
+        "additionalProperties": false
+      },
+      "CP6.Space.Contracts.SpaceExcelCadMatchKeyKind": {
+        "enum": [
+          "CadSourceRef",
+          "CadRackCode",
+          "EditorSourceRef",
+          "EditorRackCode"
+        ],
+        "type": "string"
+      },
+      "CP6.Space.Contracts.SpaceExcelCadMatchSummaryV1": {
+        "type": "object",
+        "properties": {
+          "excelRackRowCount": {
+            "type": "integer",
+            "format": "int64"
+          },
+          "newCount": {
+            "type": "integer",
+            "format": "int64"
+          },
+          "updateCount": {
+            "type": "integer",
+            "format": "int64"
+          },
+          "unchangedCount": {
+            "type": "integer",
+            "format": "int64"
+          },
+          "unmatchedCount": {
+            "type": "integer",
+            "format": "int64"
+          },
+          "conflictCount": {
+            "type": "integer",
+            "format": "int64"
+          },
+          "errorCount": {
+            "type": "integer",
+            "format": "int64"
+          },
+          "locatableCount": {
+            "type": "integer",
+            "format": "int64"
+          }
+        },
+        "additionalProperties": false
+      },
+      "CP6.Space.Contracts.SpaceExcelCadRackMatchV1": {
+        "type": "object",
+        "properties": {
+          "excelRowId": {
+            "type": "string",
+            "nullable": true
+          },
+          "sourceSheet": {
+            "type": "string",
+            "nullable": true
+          },
+          "rowNumber": {
+            "type": "integer",
+            "format": "int32"
+          },
+          "values": {
+            "$ref": "#/components/schemas/CP6.Space.Contracts.SpaceExcelRackValuesV1"
+          },
+          "disposition": {
+            "$ref": "#/components/schemas/CP6.Space.Contracts.SpaceExcelCadMatchDisposition"
+          },
+          "cadPreviewObjectId": {
+            "type": "string",
+            "nullable": true
+          },
+          "editorLogicalId": {
+            "type": "string",
+            "format": "uuid",
+            "nullable": true
+          },
+          "matchedSourceRef": {
+            "type": "string",
+            "nullable": true
+          },
+          "cadConfidence": {
+            "type": "number",
+            "format": "double",
+            "nullable": true
+          },
+          "cadConfidenceBand": {
+            "$ref": "#/components/schemas/CP6.Space.Contracts.SpaceCadConfidenceBand"
+          },
+          "keyEvidence": {
+            "type": "array",
+            "items": {
+              "$ref": "#/components/schemas/CP6.Space.Contracts.SpaceExcelCadMatchKeyEvidenceV1"
+            },
+            "nullable": true
+          },
+          "differenceFields": {
+            "type": "array",
+            "items": {
+              "type": "string"
+            },
+            "nullable": true
+          },
+          "errorCodes": {
+            "type": "array",
+            "items": {
+              "type": "string"
+            },
+            "nullable": true
+          },
+          "location": {
+            "$ref": "#/components/schemas/CP6.Space.Contracts.SpaceCadDiagnosticLocationV1"
+          },
+          "matchEvidenceSha256": {
+            "type": "string",
+            "nullable": true
+          }
+        },
+        "additionalProperties": false
+      },
       "CP6.Space.Contracts.SpaceExcelColumnMappingDto": {
         "required": [
           "dataType",
@@ -18243,6 +18907,67 @@
           "createdAtUtc": {
             "type": "string",
             "format": "date-time"
+          }
+        },
+        "additionalProperties": false
+      },
+      "CP6.Space.Contracts.SpaceExcelRackValuesV1": {
+        "type": "object",
+        "properties": {
+          "floorCode": {
+            "type": "string",
+            "nullable": true
+          },
+          "zoneCode": {
+            "type": "string",
+            "nullable": true
+          },
+          "rackCode": {
+            "type": "string",
+            "nullable": true
+          },
+          "xMillimeters": {
+            "type": "number",
+            "format": "double",
+            "nullable": true
+          },
+          "yMillimeters": {
+            "type": "number",
+            "format": "double",
+            "nullable": true
+          },
+          "zMillimeters": {
+            "type": "number",
+            "format": "double",
+            "nullable": true
+          },
+          "widthMillimeters": {
+            "type": "number",
+            "format": "double",
+            "nullable": true
+          },
+          "depthMillimeters": {
+            "type": "number",
+            "format": "double",
+            "nullable": true
+          },
+          "heightMillimeters": {
+            "type": "number",
+            "format": "double",
+            "nullable": true
+          },
+          "rotationZDegrees": {
+            "type": "number",
+            "format": "double",
+            "nullable": true
+          },
+          "rackTemplateCode": {
+            "type": "string",
+            "nullable": true
+          },
+          "lifecycleStatus": {
+            "type": "string",
+            "nullable": true
           }
         },
         "additionalProperties": false
@@ -24280,6 +25005,57 @@
           },
           "source": {
             "$ref": "#/components/schemas/CP6.Space.Contracts.SpaceSourceDto"
+          },
+          "idempotentReplay": {
+            "type": "boolean"
+          }
+        },
+        "additionalProperties": false
+      },
+      "CP6.Space.Contracts.StartSpaceExcelCadMatchRequest": {
+        "type": "object",
+        "properties": {
+          "excelSourceId": {
+            "type": "string",
+            "format": "uuid"
+          },
+          "preflightJobId": {
+            "type": "string",
+            "format": "uuid"
+          },
+          "cadSourceId": {
+            "type": "string",
+            "format": "uuid"
+          },
+          "cadParseJobId": {
+            "type": "string",
+            "format": "uuid"
+          },
+          "floorLogicalId": {
+            "type": "string",
+            "format": "uuid"
+          },
+          "expectedContentRevision": {
+            "type": "integer",
+            "format": "int64"
+          }
+        },
+        "additionalProperties": false
+      },
+      "CP6.Space.Contracts.StartSpaceExcelCadMatchResponse": {
+        "type": "object",
+        "properties": {
+          "jobId": {
+            "type": "string",
+            "format": "uuid"
+          },
+          "jobStatus": {
+            "type": "string",
+            "nullable": true
+          },
+          "jobStatusUrl": {
+            "type": "string",
+            "nullable": true
           },
           "idempotentReplay": {
             "type": "boolean"

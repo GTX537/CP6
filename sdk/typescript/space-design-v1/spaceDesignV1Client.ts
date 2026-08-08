@@ -325,6 +325,22 @@ export interface ISpaceDesignV1Client {
     getCurrentDevices(siteId: string, sourceKind: string | undefined, deviceKind: string | undefined, operatingState: string | undefined, floorLogicalId: string | undefined, hasActiveAlarm: boolean | undefined, limit: number | undefined, cursor: string | undefined): Promise<SpaceDeviceCurrentPageDto>;
 
     /**
+     * @return Accepted
+     */
+    startMatch(versionId: string, idempotency_Key: string, body: StartSpaceExcelCadMatchRequest): Promise<StartSpaceExcelCadMatchResponse>;
+
+    /**
+     * @param disposition (optional)
+     * @param rackCode (optional)
+     * @param sourceRef (optional)
+     * @param onlyLocatable (optional)
+     * @param limit (optional)
+     * @param cursor (optional)
+     * @return OK
+     */
+    getMatch(versionId: string, jobId: string, disposition: string | undefined, rackCode: string | undefined, sourceRef: string | undefined, onlyLocatable: boolean | undefined, limit: number | undefined, cursor: string | undefined): Promise<SpaceExcelCadMatchDto>;
+
+    /**
      * @return OK
      */
     getProfiles(): Promise<SpaceExcelMappingProfileDto[]>;
@@ -5584,6 +5600,236 @@ export class SpaceDesignV1Client implements ISpaceDesignV1Client {
             });
         }
         return Promise.resolve<SpaceDeviceCurrentPageDto>(null as any);
+    }
+
+    /**
+     * @return Accepted
+     */
+    startMatch(versionId: string, idempotency_Key: string, body: StartSpaceExcelCadMatchRequest): Promise<StartSpaceExcelCadMatchResponse> {
+        let url_ = this.baseUrl + "/api/space/design/v1/versions/{versionId}/excel-cad-matches";
+        if (versionId === undefined || versionId === null)
+            throw new globalThis.Error("The parameter 'versionId' must be defined.");
+        url_ = url_.replace("{versionId}", encodeURIComponent("" + versionId));
+        url_ = url_.replace(/[?&]$/, "");
+
+        const content_ = JSON.stringify(body);
+
+        let options_: RequestInit = {
+            body: content_,
+            method: "POST",
+            headers: {
+                "Idempotency-Key": idempotency_Key !== undefined && idempotency_Key !== null ? "" + idempotency_Key : "",
+                "Content-Type": "application/json",
+                "Accept": "application/json"
+            }
+        };
+
+        return this.http.fetch(url_, options_).then((_response: Response) => {
+            return this.processStartMatch(_response);
+        });
+    }
+
+    protected processStartMatch(response: Response): Promise<StartSpaceExcelCadMatchResponse> {
+        const status = response.status;
+        let _headers: any = {}; if (response.headers && response.headers.forEach) { response.headers.forEach((v: any, k: any) => _headers[k] = v); };
+        if (status === 202) {
+            return response.text().then((_responseText) => {
+            let result202: any = null;
+            let resultData202 = _responseText === "" ? null : JSON.parse(_responseText, this.jsonParseReviver);
+            result202 = StartSpaceExcelCadMatchResponse.fromJS(resultData202);
+            return result202;
+            });
+        } else if (status === 400) {
+            return response.text().then((_responseText) => {
+            let result400: any = null;
+            let resultData400 = _responseText === "" ? null : JSON.parse(_responseText, this.jsonParseReviver);
+            result400 = SpaceDesignProblemDetails.fromJS(resultData400);
+            return throwException("Bad Request", status, _responseText, _headers, result400);
+            });
+        } else if (status === 401) {
+            return response.text().then((_responseText) => {
+            let result401: any = null;
+            let resultData401 = _responseText === "" ? null : JSON.parse(_responseText, this.jsonParseReviver);
+            result401 = SpaceDesignProblemDetails.fromJS(resultData401);
+            return throwException("Unauthorized", status, _responseText, _headers, result401);
+            });
+        } else if (status === 403) {
+            return response.text().then((_responseText) => {
+            let result403: any = null;
+            let resultData403 = _responseText === "" ? null : JSON.parse(_responseText, this.jsonParseReviver);
+            result403 = SpaceDesignProblemDetails.fromJS(resultData403);
+            return throwException("Forbidden", status, _responseText, _headers, result403);
+            });
+        } else if (status === 404) {
+            return response.text().then((_responseText) => {
+            let result404: any = null;
+            let resultData404 = _responseText === "" ? null : JSON.parse(_responseText, this.jsonParseReviver);
+            result404 = SpaceDesignProblemDetails.fromJS(resultData404);
+            return throwException("Not Found", status, _responseText, _headers, result404);
+            });
+        } else if (status === 409) {
+            return response.text().then((_responseText) => {
+            let result409: any = null;
+            let resultData409 = _responseText === "" ? null : JSON.parse(_responseText, this.jsonParseReviver);
+            result409 = SpaceDesignProblemDetails.fromJS(resultData409);
+            return throwException("Conflict", status, _responseText, _headers, result409);
+            });
+        } else if (status === 422) {
+            return response.text().then((_responseText) => {
+            let result422: any = null;
+            let resultData422 = _responseText === "" ? null : JSON.parse(_responseText, this.jsonParseReviver);
+            result422 = SpaceDesignProblemDetails.fromJS(resultData422);
+            return throwException("Unprocessable Content", status, _responseText, _headers, result422);
+            });
+        } else if (status === 500) {
+            return response.text().then((_responseText) => {
+            let result500: any = null;
+            let resultData500 = _responseText === "" ? null : JSON.parse(_responseText, this.jsonParseReviver);
+            result500 = SpaceDesignProblemDetails.fromJS(resultData500);
+            return throwException("Internal Server Error", status, _responseText, _headers, result500);
+            });
+        } else if (status === 503) {
+            return response.text().then((_responseText) => {
+            let result503: any = null;
+            let resultData503 = _responseText === "" ? null : JSON.parse(_responseText, this.jsonParseReviver);
+            result503 = SpaceDesignProblemDetails.fromJS(resultData503);
+            return throwException("Service Unavailable", status, _responseText, _headers, result503);
+            });
+        } else if (status !== 200 && status !== 204) {
+            return response.text().then((_responseText) => {
+            return throwException("An unexpected server error occurred.", status, _responseText, _headers);
+            });
+        }
+        return Promise.resolve<StartSpaceExcelCadMatchResponse>(null as any);
+    }
+
+    /**
+     * @param disposition (optional)
+     * @param rackCode (optional)
+     * @param sourceRef (optional)
+     * @param onlyLocatable (optional)
+     * @param limit (optional)
+     * @param cursor (optional)
+     * @return OK
+     */
+    getMatch(versionId: string, jobId: string, disposition: string | undefined, rackCode: string | undefined, sourceRef: string | undefined, onlyLocatable: boolean | undefined, limit: number | undefined, cursor: string | undefined): Promise<SpaceExcelCadMatchDto> {
+        let url_ = this.baseUrl + "/api/space/design/v1/versions/{versionId}/excel-cad-matches/{jobId}?";
+        if (versionId === undefined || versionId === null)
+            throw new globalThis.Error("The parameter 'versionId' must be defined.");
+        url_ = url_.replace("{versionId}", encodeURIComponent("" + versionId));
+        if (jobId === undefined || jobId === null)
+            throw new globalThis.Error("The parameter 'jobId' must be defined.");
+        url_ = url_.replace("{jobId}", encodeURIComponent("" + jobId));
+        if (disposition === null)
+            throw new globalThis.Error("The parameter 'disposition' cannot be null.");
+        else if (disposition !== undefined)
+            url_ += "disposition=" + encodeURIComponent("" + disposition) + "&";
+        if (rackCode === null)
+            throw new globalThis.Error("The parameter 'rackCode' cannot be null.");
+        else if (rackCode !== undefined)
+            url_ += "rackCode=" + encodeURIComponent("" + rackCode) + "&";
+        if (sourceRef === null)
+            throw new globalThis.Error("The parameter 'sourceRef' cannot be null.");
+        else if (sourceRef !== undefined)
+            url_ += "sourceRef=" + encodeURIComponent("" + sourceRef) + "&";
+        if (onlyLocatable === null)
+            throw new globalThis.Error("The parameter 'onlyLocatable' cannot be null.");
+        else if (onlyLocatable !== undefined)
+            url_ += "onlyLocatable=" + encodeURIComponent("" + onlyLocatable) + "&";
+        if (limit === null)
+            throw new globalThis.Error("The parameter 'limit' cannot be null.");
+        else if (limit !== undefined)
+            url_ += "limit=" + encodeURIComponent("" + limit) + "&";
+        if (cursor === null)
+            throw new globalThis.Error("The parameter 'cursor' cannot be null.");
+        else if (cursor !== undefined)
+            url_ += "cursor=" + encodeURIComponent("" + cursor) + "&";
+        url_ = url_.replace(/[?&]$/, "");
+
+        let options_: RequestInit = {
+            method: "GET",
+            headers: {
+                "Accept": "application/json"
+            }
+        };
+
+        return this.http.fetch(url_, options_).then((_response: Response) => {
+            return this.processGetMatch(_response);
+        });
+    }
+
+    protected processGetMatch(response: Response): Promise<SpaceExcelCadMatchDto> {
+        const status = response.status;
+        let _headers: any = {}; if (response.headers && response.headers.forEach) { response.headers.forEach((v: any, k: any) => _headers[k] = v); };
+        if (status === 200) {
+            return response.text().then((_responseText) => {
+            let result200: any = null;
+            let resultData200 = _responseText === "" ? null : JSON.parse(_responseText, this.jsonParseReviver);
+            result200 = SpaceExcelCadMatchDto.fromJS(resultData200);
+            return result200;
+            });
+        } else if (status === 400) {
+            return response.text().then((_responseText) => {
+            let result400: any = null;
+            let resultData400 = _responseText === "" ? null : JSON.parse(_responseText, this.jsonParseReviver);
+            result400 = SpaceDesignProblemDetails.fromJS(resultData400);
+            return throwException("Bad Request", status, _responseText, _headers, result400);
+            });
+        } else if (status === 401) {
+            return response.text().then((_responseText) => {
+            let result401: any = null;
+            let resultData401 = _responseText === "" ? null : JSON.parse(_responseText, this.jsonParseReviver);
+            result401 = SpaceDesignProblemDetails.fromJS(resultData401);
+            return throwException("Unauthorized", status, _responseText, _headers, result401);
+            });
+        } else if (status === 403) {
+            return response.text().then((_responseText) => {
+            let result403: any = null;
+            let resultData403 = _responseText === "" ? null : JSON.parse(_responseText, this.jsonParseReviver);
+            result403 = SpaceDesignProblemDetails.fromJS(resultData403);
+            return throwException("Forbidden", status, _responseText, _headers, result403);
+            });
+        } else if (status === 404) {
+            return response.text().then((_responseText) => {
+            let result404: any = null;
+            let resultData404 = _responseText === "" ? null : JSON.parse(_responseText, this.jsonParseReviver);
+            result404 = SpaceDesignProblemDetails.fromJS(resultData404);
+            return throwException("Not Found", status, _responseText, _headers, result404);
+            });
+        } else if (status === 409) {
+            return response.text().then((_responseText) => {
+            let result409: any = null;
+            let resultData409 = _responseText === "" ? null : JSON.parse(_responseText, this.jsonParseReviver);
+            result409 = SpaceDesignProblemDetails.fromJS(resultData409);
+            return throwException("Conflict", status, _responseText, _headers, result409);
+            });
+        } else if (status === 422) {
+            return response.text().then((_responseText) => {
+            let result422: any = null;
+            let resultData422 = _responseText === "" ? null : JSON.parse(_responseText, this.jsonParseReviver);
+            result422 = SpaceDesignProblemDetails.fromJS(resultData422);
+            return throwException("Unprocessable Content", status, _responseText, _headers, result422);
+            });
+        } else if (status === 500) {
+            return response.text().then((_responseText) => {
+            let result500: any = null;
+            let resultData500 = _responseText === "" ? null : JSON.parse(_responseText, this.jsonParseReviver);
+            result500 = SpaceDesignProblemDetails.fromJS(resultData500);
+            return throwException("Internal Server Error", status, _responseText, _headers, result500);
+            });
+        } else if (status === 503) {
+            return response.text().then((_responseText) => {
+            let result503: any = null;
+            let resultData503 = _responseText === "" ? null : JSON.parse(_responseText, this.jsonParseReviver);
+            result503 = SpaceDesignProblemDetails.fromJS(resultData503);
+            return throwException("Service Unavailable", status, _responseText, _headers, result503);
+            });
+        } else if (status !== 200 && status !== 204) {
+            return response.text().then((_responseText) => {
+            return throwException("An unexpected server error occurred.", status, _responseText, _headers);
+            });
+        }
+        return Promise.resolve<SpaceExcelCadMatchDto>(null as any);
     }
 
     /**
@@ -15897,6 +16143,184 @@ export interface ISpaceAssetVersionDto {
     rowVersion?: string | undefined;
 }
 
+export enum SpaceCadConfidenceBand {
+    High = "High",
+    Review = "Review",
+    Low = "Low",
+    Rejected = "Rejected",
+}
+
+export enum SpaceCadDiagnosticLocationKind {
+    Document = "Document",
+    Layer = "Layer",
+    Block = "Block",
+    Entity = "Entity",
+}
+
+export class SpaceCadDiagnosticLocationV1 implements ISpaceCadDiagnosticLocationV1 {
+    kind?: SpaceCadDiagnosticLocationKind;
+    floorLogicalId?: string;
+    layerId?: string | undefined;
+    blockName?: string | undefined;
+    sourceRef?: string | undefined;
+    previewObjectId?: string | undefined;
+    bounds?: SpaceCadMillimeterBoundsV1;
+    anchor?: SpaceCadMillimeterPointV1;
+    suggestedPaddingMillimeters?: number;
+    canFocusCanvas?: boolean;
+
+    constructor(data?: ISpaceCadDiagnosticLocationV1) {
+        if (data) {
+            for (var property in data) {
+                if (data.hasOwnProperty(property))
+                    (this as any)[property] = (data as any)[property];
+            }
+        }
+    }
+
+    init(_data?: any) {
+        if (_data) {
+            this.kind = _data["kind"];
+            this.floorLogicalId = _data["floorLogicalId"];
+            this.layerId = _data["layerId"];
+            this.blockName = _data["blockName"];
+            this.sourceRef = _data["sourceRef"];
+            this.previewObjectId = _data["previewObjectId"];
+            this.bounds = _data["bounds"] ? SpaceCadMillimeterBoundsV1.fromJS(_data["bounds"]) : undefined as any;
+            this.anchor = _data["anchor"] ? SpaceCadMillimeterPointV1.fromJS(_data["anchor"]) : undefined as any;
+            this.suggestedPaddingMillimeters = _data["suggestedPaddingMillimeters"];
+            this.canFocusCanvas = _data["canFocusCanvas"];
+        }
+    }
+
+    static fromJS(data: any): SpaceCadDiagnosticLocationV1 {
+        data = typeof data === 'object' ? data : {};
+        let result = new SpaceCadDiagnosticLocationV1();
+        result.init(data);
+        return result;
+    }
+
+    toJSON(data?: any) {
+        data = typeof data === 'object' ? data : {};
+        data["kind"] = this.kind;
+        data["floorLogicalId"] = this.floorLogicalId;
+        data["layerId"] = this.layerId;
+        data["blockName"] = this.blockName;
+        data["sourceRef"] = this.sourceRef;
+        data["previewObjectId"] = this.previewObjectId;
+        data["bounds"] = this.bounds ? this.bounds.toJSON() : undefined as any;
+        data["anchor"] = this.anchor ? this.anchor.toJSON() : undefined as any;
+        data["suggestedPaddingMillimeters"] = this.suggestedPaddingMillimeters;
+        data["canFocusCanvas"] = this.canFocusCanvas;
+        return data;
+    }
+}
+
+export interface ISpaceCadDiagnosticLocationV1 {
+    kind?: SpaceCadDiagnosticLocationKind;
+    floorLogicalId?: string;
+    layerId?: string | undefined;
+    blockName?: string | undefined;
+    sourceRef?: string | undefined;
+    previewObjectId?: string | undefined;
+    bounds?: SpaceCadMillimeterBoundsV1;
+    anchor?: SpaceCadMillimeterPointV1;
+    suggestedPaddingMillimeters?: number;
+    canFocusCanvas?: boolean;
+}
+
+export class SpaceCadMillimeterBoundsV1 implements ISpaceCadMillimeterBoundsV1 {
+    minX?: number;
+    minY?: number;
+    maxX?: number;
+    maxY?: number;
+
+    constructor(data?: ISpaceCadMillimeterBoundsV1) {
+        if (data) {
+            for (var property in data) {
+                if (data.hasOwnProperty(property))
+                    (this as any)[property] = (data as any)[property];
+            }
+        }
+    }
+
+    init(_data?: any) {
+        if (_data) {
+            this.minX = _data["minX"];
+            this.minY = _data["minY"];
+            this.maxX = _data["maxX"];
+            this.maxY = _data["maxY"];
+        }
+    }
+
+    static fromJS(data: any): SpaceCadMillimeterBoundsV1 {
+        data = typeof data === 'object' ? data : {};
+        let result = new SpaceCadMillimeterBoundsV1();
+        result.init(data);
+        return result;
+    }
+
+    toJSON(data?: any) {
+        data = typeof data === 'object' ? data : {};
+        data["minX"] = this.minX;
+        data["minY"] = this.minY;
+        data["maxX"] = this.maxX;
+        data["maxY"] = this.maxY;
+        return data;
+    }
+}
+
+export interface ISpaceCadMillimeterBoundsV1 {
+    minX?: number;
+    minY?: number;
+    maxX?: number;
+    maxY?: number;
+}
+
+export class SpaceCadMillimeterPointV1 implements ISpaceCadMillimeterPointV1 {
+    x?: number;
+    y?: number;
+    z?: number;
+
+    constructor(data?: ISpaceCadMillimeterPointV1) {
+        if (data) {
+            for (var property in data) {
+                if (data.hasOwnProperty(property))
+                    (this as any)[property] = (data as any)[property];
+            }
+        }
+    }
+
+    init(_data?: any) {
+        if (_data) {
+            this.x = _data["x"];
+            this.y = _data["y"];
+            this.z = _data["z"];
+        }
+    }
+
+    static fromJS(data: any): SpaceCadMillimeterPointV1 {
+        data = typeof data === 'object' ? data : {};
+        let result = new SpaceCadMillimeterPointV1();
+        result.init(data);
+        return result;
+    }
+
+    toJSON(data?: any) {
+        data = typeof data === 'object' ? data : {};
+        data["x"] = this.x;
+        data["y"] = this.y;
+        data["z"] = this.z;
+        return data;
+    }
+}
+
+export interface ISpaceCadMillimeterPointV1 {
+    x?: number;
+    y?: number;
+    z?: number;
+}
+
 export class SpaceCadParseActionResponse implements ISpaceCadParseActionResponse {
     jobId?: string;
     status?: string | undefined;
@@ -17047,6 +17471,370 @@ export interface ISpaceElementCommandResultDto {
     attributes?: SpaceSceneElementAttributeDto[] | undefined;
 }
 
+export enum SpaceExcelCadMatchDisposition {
+    New = "New",
+    Update = "Update",
+    Unchanged = "Unchanged",
+    Unmatched = "Unmatched",
+    Conflict = "Conflict",
+    Error = "Error",
+}
+
+export class SpaceExcelCadMatchDto implements ISpaceExcelCadMatchDto {
+    jobId?: string;
+    modelVersionId?: string;
+    jobStatus?: string | undefined;
+    processorVersion?: string | undefined;
+    excelSourceId?: string;
+    preflightJobId?: string;
+    cadSourceId?: string;
+    cadParseJobId?: string;
+    floorLogicalId?: string;
+    expectedContentRevision?: number;
+    artifactId?: string | undefined;
+    artifactPayloadSha256?: string | undefined;
+    fileSha256?: string | undefined;
+    canConfirm?: boolean;
+    summary?: SpaceExcelCadMatchSummaryV1;
+    totalRowCount?: number;
+    returnedRowCount?: number;
+    nextCursor?: string | undefined;
+    rows?: SpaceExcelCadRackMatchV1[] | undefined;
+    lastErrorCode?: string | undefined;
+    lastErrorSummary?: string | undefined;
+
+    constructor(data?: ISpaceExcelCadMatchDto) {
+        if (data) {
+            for (var property in data) {
+                if (data.hasOwnProperty(property))
+                    (this as any)[property] = (data as any)[property];
+            }
+        }
+    }
+
+    init(_data?: any) {
+        if (_data) {
+            this.jobId = _data["jobId"];
+            this.modelVersionId = _data["modelVersionId"];
+            this.jobStatus = _data["jobStatus"];
+            this.processorVersion = _data["processorVersion"];
+            this.excelSourceId = _data["excelSourceId"];
+            this.preflightJobId = _data["preflightJobId"];
+            this.cadSourceId = _data["cadSourceId"];
+            this.cadParseJobId = _data["cadParseJobId"];
+            this.floorLogicalId = _data["floorLogicalId"];
+            this.expectedContentRevision = _data["expectedContentRevision"];
+            this.artifactId = _data["artifactId"];
+            this.artifactPayloadSha256 = _data["artifactPayloadSha256"];
+            this.fileSha256 = _data["fileSha256"];
+            this.canConfirm = _data["canConfirm"];
+            this.summary = _data["summary"] ? SpaceExcelCadMatchSummaryV1.fromJS(_data["summary"]) : undefined as any;
+            this.totalRowCount = _data["totalRowCount"];
+            this.returnedRowCount = _data["returnedRowCount"];
+            this.nextCursor = _data["nextCursor"];
+            if (Array.isArray(_data["rows"])) {
+                this.rows = [] as any;
+                for (let item of _data["rows"])
+                    this.rows!.push(SpaceExcelCadRackMatchV1.fromJS(item));
+            }
+            this.lastErrorCode = _data["lastErrorCode"];
+            this.lastErrorSummary = _data["lastErrorSummary"];
+        }
+    }
+
+    static fromJS(data: any): SpaceExcelCadMatchDto {
+        data = typeof data === 'object' ? data : {};
+        let result = new SpaceExcelCadMatchDto();
+        result.init(data);
+        return result;
+    }
+
+    toJSON(data?: any) {
+        data = typeof data === 'object' ? data : {};
+        data["jobId"] = this.jobId;
+        data["modelVersionId"] = this.modelVersionId;
+        data["jobStatus"] = this.jobStatus;
+        data["processorVersion"] = this.processorVersion;
+        data["excelSourceId"] = this.excelSourceId;
+        data["preflightJobId"] = this.preflightJobId;
+        data["cadSourceId"] = this.cadSourceId;
+        data["cadParseJobId"] = this.cadParseJobId;
+        data["floorLogicalId"] = this.floorLogicalId;
+        data["expectedContentRevision"] = this.expectedContentRevision;
+        data["artifactId"] = this.artifactId;
+        data["artifactPayloadSha256"] = this.artifactPayloadSha256;
+        data["fileSha256"] = this.fileSha256;
+        data["canConfirm"] = this.canConfirm;
+        data["summary"] = this.summary ? this.summary.toJSON() : undefined as any;
+        data["totalRowCount"] = this.totalRowCount;
+        data["returnedRowCount"] = this.returnedRowCount;
+        data["nextCursor"] = this.nextCursor;
+        if (Array.isArray(this.rows)) {
+            data["rows"] = [];
+            for (let item of this.rows)
+                data["rows"].push(item ? item.toJSON() : undefined as any);
+        }
+        data["lastErrorCode"] = this.lastErrorCode;
+        data["lastErrorSummary"] = this.lastErrorSummary;
+        return data;
+    }
+}
+
+export interface ISpaceExcelCadMatchDto {
+    jobId?: string;
+    modelVersionId?: string;
+    jobStatus?: string | undefined;
+    processorVersion?: string | undefined;
+    excelSourceId?: string;
+    preflightJobId?: string;
+    cadSourceId?: string;
+    cadParseJobId?: string;
+    floorLogicalId?: string;
+    expectedContentRevision?: number;
+    artifactId?: string | undefined;
+    artifactPayloadSha256?: string | undefined;
+    fileSha256?: string | undefined;
+    canConfirm?: boolean;
+    summary?: SpaceExcelCadMatchSummaryV1;
+    totalRowCount?: number;
+    returnedRowCount?: number;
+    nextCursor?: string | undefined;
+    rows?: SpaceExcelCadRackMatchV1[] | undefined;
+    lastErrorCode?: string | undefined;
+    lastErrorSummary?: string | undefined;
+}
+
+export class SpaceExcelCadMatchKeyEvidenceV1 implements ISpaceExcelCadMatchKeyEvidenceV1 {
+    kind?: SpaceExcelCadMatchKeyKind;
+    value?: string | undefined;
+    candidateId?: string | undefined;
+
+    constructor(data?: ISpaceExcelCadMatchKeyEvidenceV1) {
+        if (data) {
+            for (var property in data) {
+                if (data.hasOwnProperty(property))
+                    (this as any)[property] = (data as any)[property];
+            }
+        }
+    }
+
+    init(_data?: any) {
+        if (_data) {
+            this.kind = _data["kind"];
+            this.value = _data["value"];
+            this.candidateId = _data["candidateId"];
+        }
+    }
+
+    static fromJS(data: any): SpaceExcelCadMatchKeyEvidenceV1 {
+        data = typeof data === 'object' ? data : {};
+        let result = new SpaceExcelCadMatchKeyEvidenceV1();
+        result.init(data);
+        return result;
+    }
+
+    toJSON(data?: any) {
+        data = typeof data === 'object' ? data : {};
+        data["kind"] = this.kind;
+        data["value"] = this.value;
+        data["candidateId"] = this.candidateId;
+        return data;
+    }
+}
+
+export interface ISpaceExcelCadMatchKeyEvidenceV1 {
+    kind?: SpaceExcelCadMatchKeyKind;
+    value?: string | undefined;
+    candidateId?: string | undefined;
+}
+
+export enum SpaceExcelCadMatchKeyKind {
+    CadSourceRef = "CadSourceRef",
+    CadRackCode = "CadRackCode",
+    EditorSourceRef = "EditorSourceRef",
+    EditorRackCode = "EditorRackCode",
+}
+
+export class SpaceExcelCadMatchSummaryV1 implements ISpaceExcelCadMatchSummaryV1 {
+    excelRackRowCount?: number;
+    newCount?: number;
+    updateCount?: number;
+    unchangedCount?: number;
+    unmatchedCount?: number;
+    conflictCount?: number;
+    errorCount?: number;
+    locatableCount?: number;
+
+    constructor(data?: ISpaceExcelCadMatchSummaryV1) {
+        if (data) {
+            for (var property in data) {
+                if (data.hasOwnProperty(property))
+                    (this as any)[property] = (data as any)[property];
+            }
+        }
+    }
+
+    init(_data?: any) {
+        if (_data) {
+            this.excelRackRowCount = _data["excelRackRowCount"];
+            this.newCount = _data["newCount"];
+            this.updateCount = _data["updateCount"];
+            this.unchangedCount = _data["unchangedCount"];
+            this.unmatchedCount = _data["unmatchedCount"];
+            this.conflictCount = _data["conflictCount"];
+            this.errorCount = _data["errorCount"];
+            this.locatableCount = _data["locatableCount"];
+        }
+    }
+
+    static fromJS(data: any): SpaceExcelCadMatchSummaryV1 {
+        data = typeof data === 'object' ? data : {};
+        let result = new SpaceExcelCadMatchSummaryV1();
+        result.init(data);
+        return result;
+    }
+
+    toJSON(data?: any) {
+        data = typeof data === 'object' ? data : {};
+        data["excelRackRowCount"] = this.excelRackRowCount;
+        data["newCount"] = this.newCount;
+        data["updateCount"] = this.updateCount;
+        data["unchangedCount"] = this.unchangedCount;
+        data["unmatchedCount"] = this.unmatchedCount;
+        data["conflictCount"] = this.conflictCount;
+        data["errorCount"] = this.errorCount;
+        data["locatableCount"] = this.locatableCount;
+        return data;
+    }
+}
+
+export interface ISpaceExcelCadMatchSummaryV1 {
+    excelRackRowCount?: number;
+    newCount?: number;
+    updateCount?: number;
+    unchangedCount?: number;
+    unmatchedCount?: number;
+    conflictCount?: number;
+    errorCount?: number;
+    locatableCount?: number;
+}
+
+export class SpaceExcelCadRackMatchV1 implements ISpaceExcelCadRackMatchV1 {
+    excelRowId?: string | undefined;
+    sourceSheet?: string | undefined;
+    rowNumber?: number;
+    values?: SpaceExcelRackValuesV1;
+    disposition?: SpaceExcelCadMatchDisposition;
+    cadPreviewObjectId?: string | undefined;
+    editorLogicalId?: string | undefined;
+    matchedSourceRef?: string | undefined;
+    cadConfidence?: number | undefined;
+    cadConfidenceBand?: SpaceCadConfidenceBand;
+    keyEvidence?: SpaceExcelCadMatchKeyEvidenceV1[] | undefined;
+    differenceFields?: string[] | undefined;
+    errorCodes?: string[] | undefined;
+    location?: SpaceCadDiagnosticLocationV1;
+    matchEvidenceSha256?: string | undefined;
+
+    constructor(data?: ISpaceExcelCadRackMatchV1) {
+        if (data) {
+            for (var property in data) {
+                if (data.hasOwnProperty(property))
+                    (this as any)[property] = (data as any)[property];
+            }
+        }
+    }
+
+    init(_data?: any) {
+        if (_data) {
+            this.excelRowId = _data["excelRowId"];
+            this.sourceSheet = _data["sourceSheet"];
+            this.rowNumber = _data["rowNumber"];
+            this.values = _data["values"] ? SpaceExcelRackValuesV1.fromJS(_data["values"]) : undefined as any;
+            this.disposition = _data["disposition"];
+            this.cadPreviewObjectId = _data["cadPreviewObjectId"];
+            this.editorLogicalId = _data["editorLogicalId"];
+            this.matchedSourceRef = _data["matchedSourceRef"];
+            this.cadConfidence = _data["cadConfidence"];
+            this.cadConfidenceBand = _data["cadConfidenceBand"];
+            if (Array.isArray(_data["keyEvidence"])) {
+                this.keyEvidence = [] as any;
+                for (let item of _data["keyEvidence"])
+                    this.keyEvidence!.push(SpaceExcelCadMatchKeyEvidenceV1.fromJS(item));
+            }
+            if (Array.isArray(_data["differenceFields"])) {
+                this.differenceFields = [] as any;
+                for (let item of _data["differenceFields"])
+                    this.differenceFields!.push(item);
+            }
+            if (Array.isArray(_data["errorCodes"])) {
+                this.errorCodes = [] as any;
+                for (let item of _data["errorCodes"])
+                    this.errorCodes!.push(item);
+            }
+            this.location = _data["location"] ? SpaceCadDiagnosticLocationV1.fromJS(_data["location"]) : undefined as any;
+            this.matchEvidenceSha256 = _data["matchEvidenceSha256"];
+        }
+    }
+
+    static fromJS(data: any): SpaceExcelCadRackMatchV1 {
+        data = typeof data === 'object' ? data : {};
+        let result = new SpaceExcelCadRackMatchV1();
+        result.init(data);
+        return result;
+    }
+
+    toJSON(data?: any) {
+        data = typeof data === 'object' ? data : {};
+        data["excelRowId"] = this.excelRowId;
+        data["sourceSheet"] = this.sourceSheet;
+        data["rowNumber"] = this.rowNumber;
+        data["values"] = this.values ? this.values.toJSON() : undefined as any;
+        data["disposition"] = this.disposition;
+        data["cadPreviewObjectId"] = this.cadPreviewObjectId;
+        data["editorLogicalId"] = this.editorLogicalId;
+        data["matchedSourceRef"] = this.matchedSourceRef;
+        data["cadConfidence"] = this.cadConfidence;
+        data["cadConfidenceBand"] = this.cadConfidenceBand;
+        if (Array.isArray(this.keyEvidence)) {
+            data["keyEvidence"] = [];
+            for (let item of this.keyEvidence)
+                data["keyEvidence"].push(item ? item.toJSON() : undefined as any);
+        }
+        if (Array.isArray(this.differenceFields)) {
+            data["differenceFields"] = [];
+            for (let item of this.differenceFields)
+                data["differenceFields"].push(item);
+        }
+        if (Array.isArray(this.errorCodes)) {
+            data["errorCodes"] = [];
+            for (let item of this.errorCodes)
+                data["errorCodes"].push(item);
+        }
+        data["location"] = this.location ? this.location.toJSON() : undefined as any;
+        data["matchEvidenceSha256"] = this.matchEvidenceSha256;
+        return data;
+    }
+}
+
+export interface ISpaceExcelCadRackMatchV1 {
+    excelRowId?: string | undefined;
+    sourceSheet?: string | undefined;
+    rowNumber?: number;
+    values?: SpaceExcelRackValuesV1;
+    disposition?: SpaceExcelCadMatchDisposition;
+    cadPreviewObjectId?: string | undefined;
+    editorLogicalId?: string | undefined;
+    matchedSourceRef?: string | undefined;
+    cadConfidence?: number | undefined;
+    cadConfidenceBand?: SpaceCadConfidenceBand;
+    keyEvidence?: SpaceExcelCadMatchKeyEvidenceV1[] | undefined;
+    differenceFields?: string[] | undefined;
+    errorCodes?: string[] | undefined;
+    location?: SpaceCadDiagnosticLocationV1;
+    matchEvidenceSha256?: string | undefined;
+}
+
 export class SpaceExcelColumnMappingDto implements ISpaceExcelColumnMappingDto {
     targetField!: string;
     sourceHeader?: string | undefined;
@@ -17738,6 +18526,86 @@ export interface ISpaceExcelPreflightIssueDto {
     messageArgsJson: string;
     fixHint?: string | undefined;
     createdAtUtc: Date;
+}
+
+export class SpaceExcelRackValuesV1 implements ISpaceExcelRackValuesV1 {
+    floorCode?: string | undefined;
+    zoneCode?: string | undefined;
+    rackCode?: string | undefined;
+    xMillimeters?: number | undefined;
+    yMillimeters?: number | undefined;
+    zMillimeters?: number | undefined;
+    widthMillimeters?: number | undefined;
+    depthMillimeters?: number | undefined;
+    heightMillimeters?: number | undefined;
+    rotationZDegrees?: number | undefined;
+    rackTemplateCode?: string | undefined;
+    lifecycleStatus?: string | undefined;
+
+    constructor(data?: ISpaceExcelRackValuesV1) {
+        if (data) {
+            for (var property in data) {
+                if (data.hasOwnProperty(property))
+                    (this as any)[property] = (data as any)[property];
+            }
+        }
+    }
+
+    init(_data?: any) {
+        if (_data) {
+            this.floorCode = _data["floorCode"];
+            this.zoneCode = _data["zoneCode"];
+            this.rackCode = _data["rackCode"];
+            this.xMillimeters = _data["xMillimeters"];
+            this.yMillimeters = _data["yMillimeters"];
+            this.zMillimeters = _data["zMillimeters"];
+            this.widthMillimeters = _data["widthMillimeters"];
+            this.depthMillimeters = _data["depthMillimeters"];
+            this.heightMillimeters = _data["heightMillimeters"];
+            this.rotationZDegrees = _data["rotationZDegrees"];
+            this.rackTemplateCode = _data["rackTemplateCode"];
+            this.lifecycleStatus = _data["lifecycleStatus"];
+        }
+    }
+
+    static fromJS(data: any): SpaceExcelRackValuesV1 {
+        data = typeof data === 'object' ? data : {};
+        let result = new SpaceExcelRackValuesV1();
+        result.init(data);
+        return result;
+    }
+
+    toJSON(data?: any) {
+        data = typeof data === 'object' ? data : {};
+        data["floorCode"] = this.floorCode;
+        data["zoneCode"] = this.zoneCode;
+        data["rackCode"] = this.rackCode;
+        data["xMillimeters"] = this.xMillimeters;
+        data["yMillimeters"] = this.yMillimeters;
+        data["zMillimeters"] = this.zMillimeters;
+        data["widthMillimeters"] = this.widthMillimeters;
+        data["depthMillimeters"] = this.depthMillimeters;
+        data["heightMillimeters"] = this.heightMillimeters;
+        data["rotationZDegrees"] = this.rotationZDegrees;
+        data["rackTemplateCode"] = this.rackTemplateCode;
+        data["lifecycleStatus"] = this.lifecycleStatus;
+        return data;
+    }
+}
+
+export interface ISpaceExcelRackValuesV1 {
+    floorCode?: string | undefined;
+    zoneCode?: string | undefined;
+    rackCode?: string | undefined;
+    xMillimeters?: number | undefined;
+    yMillimeters?: number | undefined;
+    zMillimeters?: number | undefined;
+    widthMillimeters?: number | undefined;
+    depthMillimeters?: number | undefined;
+    heightMillimeters?: number | undefined;
+    rotationZDegrees?: number | undefined;
+    rackTemplateCode?: string | undefined;
+    lifecycleStatus?: string | undefined;
 }
 
 export class SpaceExcelSheetMappingDto implements ISpaceExcelSheetMappingDto {
@@ -26768,6 +27636,110 @@ export interface IStartSpaceCadParseResponse {
     jobStatusUrl?: string | undefined;
     parseStatusUrl?: string | undefined;
     source?: SpaceSourceDto;
+    idempotentReplay?: boolean;
+}
+
+export class StartSpaceExcelCadMatchRequest implements IStartSpaceExcelCadMatchRequest {
+    excelSourceId?: string;
+    preflightJobId?: string;
+    cadSourceId?: string;
+    cadParseJobId?: string;
+    floorLogicalId?: string;
+    expectedContentRevision?: number;
+
+    constructor(data?: IStartSpaceExcelCadMatchRequest) {
+        if (data) {
+            for (var property in data) {
+                if (data.hasOwnProperty(property))
+                    (this as any)[property] = (data as any)[property];
+            }
+        }
+    }
+
+    init(_data?: any) {
+        if (_data) {
+            this.excelSourceId = _data["excelSourceId"];
+            this.preflightJobId = _data["preflightJobId"];
+            this.cadSourceId = _data["cadSourceId"];
+            this.cadParseJobId = _data["cadParseJobId"];
+            this.floorLogicalId = _data["floorLogicalId"];
+            this.expectedContentRevision = _data["expectedContentRevision"];
+        }
+    }
+
+    static fromJS(data: any): StartSpaceExcelCadMatchRequest {
+        data = typeof data === 'object' ? data : {};
+        let result = new StartSpaceExcelCadMatchRequest();
+        result.init(data);
+        return result;
+    }
+
+    toJSON(data?: any) {
+        data = typeof data === 'object' ? data : {};
+        data["excelSourceId"] = this.excelSourceId;
+        data["preflightJobId"] = this.preflightJobId;
+        data["cadSourceId"] = this.cadSourceId;
+        data["cadParseJobId"] = this.cadParseJobId;
+        data["floorLogicalId"] = this.floorLogicalId;
+        data["expectedContentRevision"] = this.expectedContentRevision;
+        return data;
+    }
+}
+
+export interface IStartSpaceExcelCadMatchRequest {
+    excelSourceId?: string;
+    preflightJobId?: string;
+    cadSourceId?: string;
+    cadParseJobId?: string;
+    floorLogicalId?: string;
+    expectedContentRevision?: number;
+}
+
+export class StartSpaceExcelCadMatchResponse implements IStartSpaceExcelCadMatchResponse {
+    jobId?: string;
+    jobStatus?: string | undefined;
+    jobStatusUrl?: string | undefined;
+    idempotentReplay?: boolean;
+
+    constructor(data?: IStartSpaceExcelCadMatchResponse) {
+        if (data) {
+            for (var property in data) {
+                if (data.hasOwnProperty(property))
+                    (this as any)[property] = (data as any)[property];
+            }
+        }
+    }
+
+    init(_data?: any) {
+        if (_data) {
+            this.jobId = _data["jobId"];
+            this.jobStatus = _data["jobStatus"];
+            this.jobStatusUrl = _data["jobStatusUrl"];
+            this.idempotentReplay = _data["idempotentReplay"];
+        }
+    }
+
+    static fromJS(data: any): StartSpaceExcelCadMatchResponse {
+        data = typeof data === 'object' ? data : {};
+        let result = new StartSpaceExcelCadMatchResponse();
+        result.init(data);
+        return result;
+    }
+
+    toJSON(data?: any) {
+        data = typeof data === 'object' ? data : {};
+        data["jobId"] = this.jobId;
+        data["jobStatus"] = this.jobStatus;
+        data["jobStatusUrl"] = this.jobStatusUrl;
+        data["idempotentReplay"] = this.idempotentReplay;
+        return data;
+    }
+}
+
+export interface IStartSpaceExcelCadMatchResponse {
+    jobId?: string;
+    jobStatus?: string | undefined;
+    jobStatusUrl?: string | undefined;
     idempotentReplay?: boolean;
 }
 
