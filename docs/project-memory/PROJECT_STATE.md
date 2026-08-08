@@ -4,12 +4,14 @@
 
 ## E13 首次 Generation Run 创建入口（2026-08-08）
 
+- 功能提交 `770bdc96`、验证报告提交 `bbcaf6fe` 已通过 no-ff 提交 `9d0971f4` 进入 `integration/space-v1-20260730`；合并后聚焦 9/9、OpenAPI/审计 31/31 复验通过，`main` 未修改。
 - 在集成基线 `54f1cda7` 上以功能提交 `770bdc96` 把 `POST /versions/{versionId}/generation-runs` 收敛为统一 `CreateGenerationRun`：无 BasedOn 首次创建，有 BasedOn 保留 Failed/Stale replacement Run；必须提交 `If-Match`、ContentRevision 与 Idempotency-Key，继续使用 `space:model:generate-ai` 和显式审计。
 - 首建只放行 RuleOnly；Tenant Disabled 的 AiAssisted 返回 `SPACE_AI_DISABLED`，已启用但生产 Provider-backed BuildScene 未配置时返回 `SPACE_AI_PROVIDER_UNAVAILABLE`。创建过程零 Provider、零 Usage、零 Draft 写入，不注册 Mock/Local Provider 冒充生产能力。
 - Version/Source/Clean file/SourceHash/坐标/Floor/Mapping/PreviewSet 全部重新校验；业务键固定 Preview Artifact ID 与文件 SHA，Worker 和后续 replacement Run 精确消费同一 Preview。未经权威存储验证的 RackGenerationProfile GUID 拒绝进入 Run。
 - 公开 create 幂等域覆盖首次与恢复：同键同请求重放、同键不同请求冲突、不同键相同业务输入复用 Current Run。OpenAPI 与 C#/TypeScript SDK 已同步，operation 总数仍为 115。
 - 门禁：聚焦 9/9、OpenAPI/审计 31/31、Space Unit 484/484、默认 Integration 283 passed / 94 skipped、CP6.Tests 2812 passed / 17 skipped、C# SDK 与 TypeScript strict、SDK drift、完整 solution Release（含 Desktop/Android AOT）全部通过；最终构建 0 error / 7 条未改动测试文件既有 warning，C# SDK 为 0 warning / 0 error。无 Migration。
 - 下一个内部缺口优先补权威 RackGenerationProfile 版本存储/读取，或把本 API 接入建模 Web UI；无锁父关系推导、不同 SourceHash 人工确认、外部 Provider 与正式 CAD/黄金集证据仍独立存在。完整边界见 `docs/space/reports/e13-generation-run-create-production.md`。
+- 合并后清理当前隔离工作区 36 个可重建 `bin/obj` 目录、8,622 个文件，共 1,666,117,627 bytes（约 1.55 GiB）；临时功能分支待远端祖先链确认后删除。
 
 ## E13 纯规则 BuildScene 生产执行链接线（2026-08-08）
 

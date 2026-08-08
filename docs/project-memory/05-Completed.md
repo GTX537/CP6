@@ -2,10 +2,11 @@
 
 ## 2026-08-08 E13 首次 Generation Run 创建入口
 
-- `770bdc96` 实现统一 `CreateGenerationRun`：首次 RuleOnly 与 BasedOn recovery 共享版本并发、权限、审计和公开幂等域；同键冲突、业务复用和 replacement Run 均失败关闭。
+- `770bdc96` / `bbcaf6fe` / `9d0971f4` 完成功能、报告与 no-ff 受控集成；统一 `CreateGenerationRun` 让首次 RuleOnly 与 BasedOn recovery 共享版本并发、权限、审计和公开幂等域，同键冲突、业务复用和 replacement Run 均失败关闭。
 - Version、DWG/DXF Clean Source、SourceHash、坐标、活动 Floor、Mapping 与成功 PreviewSet 重新校验；Job 固定 Preview Artifact ID/SHA，恢复继承固定点。未经权威存储验证的 RackProfile 不进入 Run。
 - OpenAPI、C# 与 TypeScript SDK 已同步；聚焦 9/9、合同 31/31、Space Unit 484/484、Integration 283 passed / 94 skipped、CP6.Tests 2812 passed / 17 skipped、SDK strict/drift 与完整 Release/AOT 通过；最终构建 0 error / 7 条未改动测试文件既有 warning，C# SDK 0 warning / 0 error。
 - AiAssisted 与外部 Provider 继续失败关闭；无 Migration、Provider、Secret、网络、Usage 或 Draft 自动写入。完整证据见 `docs/space/reports/e13-generation-run-create-production.md`。
+- 合并后聚焦 9/9、OpenAPI/审计 31/31 复验通过；清理 36 个可重建目录、8,622 个文件，释放 1,666,117,627 bytes（约 1.55 GiB），`main` 未修改。
 
 ## 2026-08-08 E13 纯规则 BuildScene 生产执行链接线
 

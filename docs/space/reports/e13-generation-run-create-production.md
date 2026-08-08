@@ -1,10 +1,12 @@
 # E13 首次 Generation Run 创建入口生产链接线报告
 
-- 状态：工程切片已完成验证；等待受控集成
+- 状态：已进入受控集成分支；外部 Provider 与未经验证 RackProfile 继续失败关闭
 - 日期：2026-08-08
 - 起始集成基线：`54f1cda7`
 - 功能分支：`codex/space-generation-run-create`
 - 功能提交：`770bdc96`
+- 验证报告提交：`bbcaf6fe`
+- no-ff 集成提交：`9d0971f4`
 - 目标分支：`integration/space-v1-20260730`
 
 ## 1. 交付结论
@@ -86,3 +88,10 @@ RuleOnly 首建和恢复都不调用 Provider、不创建 AI Usage、不写 Draf
 - 建模 Web UI 的“从 CAD Preview 创建 Run”交互、正式 CAD/黄金集、S14～S15/S18/S19 证据仍独立存在。
 
 因此，本报告证明内部建模主体可通过权威 API 从已确认 CAD Preview 首次排队 RuleOnly Generation Run，并可沿既有 Worker 到达 AwaitingReview；不证明外部 AI、未经验证 RackProfile、正式 CAD 或 GA 签收。
+
+## 7. 受控集成与清理
+
+功能提交 `770bdc96` 和验证报告提交 `bbcaf6fe` 已通过 no-ff 提交 `9d0971f4` 进入
+`integration/space-v1-20260730`；合并后首建/恢复/BuildScene/注册 9/9 与 OpenAPI/审计 31/31 复验通过。
+远端集成推送前清理当前隔离工作区内 36 个可重建 `bin/obj` 目录、8,622 个文件，释放
+1,666,117,627 bytes（1,588.93 MiB，约 1.55 GiB）。`main` 未修改。

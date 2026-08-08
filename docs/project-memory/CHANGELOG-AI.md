@@ -4,11 +4,12 @@
 
 ## 2026-08-08：Space E13 首次 Generation Run 创建入口
 
-- `770bdc96`：把版本级 generation-runs 路由从 recovery-only 收敛为统一 `CreateGenerationRun`，新增首次 RuleOnly 创建，保留 BasedOn replacement Run，并冻结 `If-Match`、ContentRevision、权限、审计与幂等合同。
+- `770bdc96` / `bbcaf6fe` / `9d0971f4`：实现、记录并 no-ff 集成版本级统一 `CreateGenerationRun`；新增首次 RuleOnly 创建，保留 BasedOn replacement Run，并冻结 `If-Match`、ContentRevision、权限、审计与幂等合同。
 - 首建重新验证 Draft/CAD Source/Clean file/SourceHash/坐标/Floor/Mapping/Preview；BusinessKey 和 Job 固定 Preview Artifact ID/SHA，Worker 与恢复 Run 不再漂移到另一个最新 Preview。
 - 同一公开 create 幂等域覆盖首次与恢复；同键不同请求冲突、不同键相同业务输入复用。OpenAPI/C#/TypeScript SDK 已同步，旧公开 `RecoverGenerationRun` operation 替换为 `CreateGenerationRun`。
 - 验证为聚焦 9/9、合同 31/31、Space Unit 484/484、Integration 283 passed / 94 skipped、CP6.Tests 2812 passed / 17 skipped、SDK strict/drift 和完整 Release/AOT 通过；最终构建 0 error / 7 条未改动测试文件既有 warning，C# SDK 0 warning / 0 error。
 - 仅 RuleOnly 首建可用；AiAssisted、未经验证 RackProfile、外部 Provider、Web UI 与正式 CAD/黄金集仍失败关闭或待办。无 Migration、外部网络、Usage 或 Draft 自动写入，`main` 未修改。
+- 合并后聚焦 9/9、OpenAPI/审计 31/31 复验通过；清理 36 个可重建目录、8,622 个文件，回收 1,666,117,627 bytes（约 1.55 GiB）。
 
 ## 2026-08-08：Space E13 纯规则 BuildScene 生产执行链
 
