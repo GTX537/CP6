@@ -6,6 +6,7 @@ param(
 
 $ErrorActionPreference = "Stop"
 $projectRoot = Split-Path -Parent (Split-Path -Parent $PSScriptRoot)
+$apiWorkingDirectory = Join-Path $projectRoot "CP6.WebApi"
 $apiDll = Join-Path $projectRoot "CP6.WebApi\bin\$Configuration\net8.0\CP6.WebApi.dll"
 if (-not (Test-Path -LiteralPath $apiDll)) {
     throw "Web API build output was not found: $apiDll"
@@ -24,10 +25,12 @@ $env:Space__Files__RootPath = Join-Path $projectRoot "tmp\space-openapi-files"
 
 $api = $null
 try {
-    $api = Start-Process dotnet -ArgumentList @(
-        $apiDll,
-        "--urls", $Url
-    ) -WindowStyle Hidden -PassThru
+    $api = Start-Process dotnet `
+        -WorkingDirectory $apiWorkingDirectory `
+        -ArgumentList @(
+            $apiDll,
+            "--urls", $Url
+        ) -WindowStyle Hidden -PassThru
     $swaggerUrl = "$($Url.TrimEnd('/'))/swagger/v1/swagger.json"
     for ($attempt = 0; $attempt -lt 40; $attempt++) {
         try {

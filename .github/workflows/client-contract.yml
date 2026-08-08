@@ -43,10 +43,12 @@ jobs:
           $env:ASPNETCORE_ENVIRONMENT = "Development"
           $env:Startup__SkipDatabaseInitialization = "true"
           $env:Startup__SkipHostedServices = "true"
-          $api = Start-Process dotnet -ArgumentList @(
-            "CP6.WebApi/bin/Debug/net8.0/CP6.WebApi.dll",
-            "--urls", "http://127.0.0.1:5080"
-          ) -WindowStyle Hidden -PassThru
+          $api = Start-Process dotnet `
+            -WorkingDirectory "CP6.WebApi" `
+            -ArgumentList @(
+              "bin/Debug/net8.0/CP6.WebApi.dll",
+              "--urls", "http://127.0.0.1:5080"
+            ) -WindowStyle Hidden -PassThru
           try {
             for ($i = 0; $i -lt 30; $i++) {
               try {
