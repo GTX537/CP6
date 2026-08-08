@@ -321,4 +321,8 @@ public static class SpaceErrorCodes
         "SPACE_PLANNING_EXCHANGE_GEOMETRY_INVALID";
     public const string PlanningDecisionInvalid =
         "SPACE_PLANNING_DECISION_INVALID";
+    public const string HistoricalRepublishNotFound =
+        "SPACE_HISTORICAL_REPUBLISH_NOT_FOUND";
+    public const string HistoricalVersionNotEligible =
+        "SPACE_HISTORICAL_VERSION_NOT_ELIGIBLE";
 }

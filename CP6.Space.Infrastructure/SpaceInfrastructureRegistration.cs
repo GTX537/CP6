@@ -126,8 +126,21 @@ public static class SpaceInfrastructureRegistration
         services.AddScoped<SpacePublishOrchestrator>();
         services.AddScoped<ISpacePublishOrchestrator>(provider =>
             provider.GetRequiredService<SpacePublishOrchestrator>());
+        services.AddScoped<ISpaceHistoricalRepublishPublishStarter>(provider =>
+            provider.GetRequiredService<SpacePublishOrchestrator>());
         services.AddScoped<ISpacePublishJobExecutor>(provider =>
             provider.GetRequiredService<SpacePublishOrchestrator>());
+        services.AddScoped<
+            ISpaceHistoricalRepublishService,
+            SpaceHistoricalRepublishService>();
+        services.AddScoped<
+            ISpaceHistoricalRepublishJobExecutor,
+            SpaceHistoricalRepublishJobExecutor>();
+        services.AddScoped<EfSpaceVersionCloneProcessor>();
+        services.AddScoped<ISpaceVersionCloneProcessor>(provider =>
+            provider.GetRequiredService<EfSpaceVersionCloneProcessor>());
+        services.AddScoped<ISpaceVersionSnapshotCloner>(provider =>
+            provider.GetRequiredService<EfSpaceVersionCloneProcessor>());
         // Lease heartbeats run concurrently with processor work. Give the
         // ledger its own DbContext so a long-running processor never performs
         // concurrent EF operations on the processor's scoped context.
@@ -200,6 +213,10 @@ public static class SpaceInfrastructureRegistration
             ServiceDescriptor.Scoped<
                 ISpaceJobProcessor,
                 SpacePublishReconciliationJobProcessor>());
+        services.TryAddEnumerable(
+            ServiceDescriptor.Scoped<
+                ISpaceJobProcessor,
+                SpaceHistoricalRepublishJobProcessor>());
         services.AddScoped<
             ISpaceJobProcessorRunner,
             SpaceJobProcessorRunner>();

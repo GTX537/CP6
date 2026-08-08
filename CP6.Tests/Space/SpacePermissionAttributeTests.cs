@@ -41,7 +41,7 @@ public class SpacePermissionAttributeTests
         "space-publish:publish", "space-publish:deactivate", "space-publish:adopt",
         "space-audit:read",
         "space:model:read", "space:model:edit", "space:model:validate",
-        "space:model:publish",
+        "space:model:publish", "space:model:rollback",
         "space:source:upload",
         "space:model:generate-ai", "space:model:review-ai",
         "space:integration:manage",
@@ -82,6 +82,7 @@ public class SpacePermissionAttributeTests
             ["SpaceDesignV1Controller.GetSources"] = "space:model:read",
             ["SpaceDesignV1Controller.GetFile"] = "space:model:read",
             ["SpaceDesignV1Controller.GetUnderlayContent"] = "space:model:read",
+            ["SpacePublishController.GetHistoricalRepublish"] = "space:model:read",
             ["SpaceDesignV1Controller.DownloadStandardExcelTemplate"] =
                 "space:model:read",
             ["SpaceExcelMappingController.GetProfiles"] = "space:model:read",
@@ -403,6 +404,16 @@ public class SpacePermissionAttributeTests
     }
 
     [Theory]
+    [InlineData(
+        nameof(SpacePublishController.StartHistoricalRepublish),
+        "space:model:rollback",
+        "space.publish.republish",
+        false)]
+    [InlineData(
+        nameof(SpacePublishController.GetHistoricalRepublish),
+        "space:model:read",
+        "space.publish.republish.read",
+        true)]
     [InlineData(
         nameof(SpacePublishController.CreatePublishAttempt),
         "space:model:publish",

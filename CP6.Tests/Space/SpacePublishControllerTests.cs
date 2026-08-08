@@ -29,7 +29,9 @@ public sealed class SpacePublishControllerTests
                 "publish-key",
                 It.IsAny<CancellationToken>()))
             .ReturnsAsync(response);
-        var controller = new SpacePublishController(service.Object)
+        var controller = new SpacePublishController(
+            service.Object,
+            Mock.Of<ISpaceHistoricalRepublishService>())
         {
             ControllerContext = new ControllerContext
             {
@@ -62,7 +64,9 @@ public sealed class SpacePublishControllerTests
                 attempt.Id,
                 It.IsAny<CancellationToken>()))
             .ReturnsAsync(attempt);
-        var controller = new SpacePublishController(service.Object);
+        var controller = new SpacePublishController(
+            service.Object,
+            Mock.Of<ISpaceHistoricalRepublishService>());
 
         var result = await controller.GetPublishAttempt(
             attempt.Id,
@@ -89,7 +93,9 @@ public sealed class SpacePublishControllerTests
                 "retry-key",
                 It.IsAny<CancellationToken>()))
             .ReturnsAsync(response);
-        var controller = new SpacePublishController(service.Object)
+        var controller = new SpacePublishController(
+            service.Object,
+            Mock.Of<ISpaceHistoricalRepublishService>())
         {
             ControllerContext = new ControllerContext
             {
@@ -108,6 +114,73 @@ public sealed class SpacePublishControllerTests
         Assert.Equal("false", controller.Response.Headers["Idempotent-Replay"]);
         Assert.Same(response, accepted.Value);
         service.VerifyAll();
+    }
+
+    [Fact]
+    public async Task Historical_republish_forwards_key_and_returns_operation_location()
+    {
+        var historicalVersionId = Guid.NewGuid();
+        var request = new StartSpaceHistoricalRepublishRequest(
+            Guid.NewGuid(),
+            "Restore the last verified warehouse layout.",
+            "CAB-42",
+            "Restored layout");
+        var republish = HistoricalRepublish(Guid.NewGuid(), historicalVersionId);
+        var response = new StartSpaceHistoricalRepublishResponse(
+            republish,
+            IdempotentReplay: false);
+        var history = new Mock<ISpaceHistoricalRepublishService>();
+        history.Setup(value => value.StartAsync(
+                historicalVersionId,
+                request,
+                "rollback-key",
+                It.IsAny<CancellationToken>()))
+            .ReturnsAsync(response);
+        var controller = new SpacePublishController(
+            Mock.Of<ISpacePublishOrchestrator>(),
+            history.Object)
+        {
+            ControllerContext = new ControllerContext
+            {
+                HttpContext = new DefaultHttpContext(),
+            },
+        };
+
+        var result = await controller.StartHistoricalRepublish(
+            historicalVersionId,
+            request,
+            "rollback-key",
+            CancellationToken.None);
+
+        var accepted = Assert.IsType<AcceptedAtActionResult>(result);
+        Assert.Equal(
+            nameof(SpacePublishController.GetHistoricalRepublish),
+            accepted.ActionName);
+        Assert.Equal(republish.Id, accepted.RouteValues!["republishId"]);
+        Assert.Equal("false", controller.Response.Headers["Idempotent-Replay"]);
+        Assert.Same(response, accepted.Value);
+        history.VerifyAll();
+    }
+
+    [Fact]
+    public async Task Get_historical_republish_returns_persisted_operation()
+    {
+        var republish = HistoricalRepublish(Guid.NewGuid(), Guid.NewGuid());
+        var history = new Mock<ISpaceHistoricalRepublishService>();
+        history.Setup(value => value.GetAsync(
+                republish.Id,
+                It.IsAny<CancellationToken>()))
+            .ReturnsAsync(republish);
+        var controller = new SpacePublishController(
+            Mock.Of<ISpacePublishOrchestrator>(),
+            history.Object);
+
+        var result = await controller.GetHistoricalRepublish(
+            republish.Id,
+            CancellationToken.None);
+
+        Assert.Same(republish, result);
+        history.VerifyAll();
     }
 
     private static SpacePublishAttemptDto Attempt(Guid id) =>
@@ -144,4 +217,27 @@ public sealed class SpacePublishControllerTests
             0,
             [],
             []);
+
+    private static SpaceHistoricalRepublishDto HistoricalRepublish(
+        Guid id,
+        Guid historicalVersionId) =>
+        new(
+            id,
+            Guid.NewGuid(),
+            historicalVersionId,
+            Guid.NewGuid(),
+            Guid.NewGuid(),
+            "P0007",
+            "Initializing",
+            "Requested",
+            "Restore the last verified warehouse layout.",
+            "CAB-42",
+            Guid.NewGuid(),
+            DateTime.UtcNow,
+            Guid.NewGuid(),
+            Guid.NewGuid(),
+            "Queued",
+            null,
+            null,
+            null);
 }

@@ -45,6 +45,8 @@ public sealed class SpaceContext : DbContext
         Set<SpaceReconciliationIssue>();
     public DbSet<SpacePublishAuditEvent> PublishAuditEvents =>
         Set<SpacePublishAuditEvent>();
+    public DbSet<SpaceHistoricalRepublish> HistoricalRepublishes =>
+        Set<SpaceHistoricalRepublish>();
     public DbSet<SpaceRuntimeElement> RuntimeElements =>
         Set<SpaceRuntimeElement>();
     public DbSet<SpaceIdempotencyRecord> IdempotencyRecords =>
@@ -207,6 +209,7 @@ public sealed class SpaceContext : DbContext
         ConfigureWmsReceipt(modelBuilder);
         ConfigureReconciliationIssue(modelBuilder);
         ConfigurePublishAuditEvent(modelBuilder);
+        ConfigureHistoricalRepublish(modelBuilder);
         ConfigureRuntimeElement(modelBuilder);
         ConfigureIdempotencyRecord(modelBuilder);
         ConfigureGenerationRun(modelBuilder);
@@ -292,6 +295,38 @@ public sealed class SpaceContext : DbContext
             {
                 throw new InvalidOperationException(
                     "Publish audit events are append-only evidence.");
+            }
+        }
+
+        var immutableRepublishProperties = new HashSet<string>(
+            StringComparer.Ordinal)
+        {
+            nameof(SpaceHistoricalRepublish.TenantId),
+            nameof(SpaceHistoricalRepublish.SiteId),
+            nameof(SpaceHistoricalRepublish.ModelId),
+            nameof(SpaceHistoricalRepublish.HistoricalVersionId),
+            nameof(SpaceHistoricalRepublish.ExpectedPublishedVersionId),
+            nameof(SpaceHistoricalRepublish.TargetVersionId),
+            nameof(SpaceHistoricalRepublish.JobId),
+            nameof(SpaceHistoricalRepublish.BusinessIdempotencyKey),
+            nameof(SpaceHistoricalRepublish.RequestHash),
+            nameof(SpaceHistoricalRepublish.Reason),
+            nameof(SpaceHistoricalRepublish.ApprovalReference),
+            nameof(SpaceHistoricalRepublish.RequestedBy),
+            nameof(SpaceHistoricalRepublish.RequestedAtUtc),
+            nameof(SpaceHistoricalRepublish.CorrelationId),
+        };
+        foreach (var entry in ChangeTracker.Entries<SpaceHistoricalRepublish>())
+        {
+            if (entry.State == EntityState.Deleted ||
+                entry.State == EntityState.Modified &&
+                entry.Properties.Any(property =>
+                    property.IsModified &&
+                    immutableRepublishProperties.Contains(
+                        property.Metadata.Name)))
+            {
+                throw new InvalidOperationException(
+                    "Historical republish identity and evidence are immutable.");
             }
         }
 
@@ -1103,6 +1138,115 @@ public sealed class SpaceContext : DbContext
             .OnDelete(DeleteBehavior.Restrict)
             .HasConstraintName("FK_Space_PublishAuditEvent_Job_Tenant");
         entity.HasQueryFilter(x => x.TenantId == CurrentTenantId && !x.IsDeleted);
+    }
+
+    private void ConfigureHistoricalRepublish(ModelBuilder modelBuilder)
+    {
+        var entity = modelBuilder.Entity<SpaceHistoricalRepublish>();
+        entity.ToTable(
+            "Space_HistoricalRepublish",
+            table => table.HasCheckConstraint(
+                "CK_Space_HistoricalRepublish_Status",
+                "[Status] IN (0, 1, 2, 3, 4)"));
+        entity.HasKey(x => x.Id);
+        entity.Property(x => x.Id).ValueGeneratedNever();
+        entity.HasAlternateKey(x => new { x.TenantId, x.Id })
+            .HasName("AK_Space_HistoricalRepublish_TenantId_Id");
+        ConfigureTenantEntity(entity);
+        entity.Property(x => x.Status)
+            .HasConversion<short>()
+            .HasColumnType("smallint");
+        entity.Property(x => x.BusinessIdempotencyKey)
+            .HasMaxLength(128)
+            .IsRequired();
+        ConfigureHash(entity.Property(x => x.RequestHash));
+        entity.Property(x => x.Reason).HasMaxLength(1000).IsRequired();
+        entity.Property(x => x.ApprovalReference).HasMaxLength(500);
+        entity.Property(x => x.RequestedAtUtc).HasColumnType("datetime2");
+        entity.Property(x => x.RowVersion).IsRowVersion();
+        entity.HasIndex(x => new { x.TenantId, x.BusinessIdempotencyKey })
+            .IsUnique()
+            .HasDatabaseName(
+                "UX_Space_HistoricalRepublish_Tenant_Idempotency");
+        entity.HasIndex(x => new
+            {
+                x.TenantId,
+                x.SiteId,
+                x.RequestedAtUtc,
+            })
+            .HasDatabaseName(
+                "IX_Space_HistoricalRepublish_Tenant_Site_Requested");
+        entity.HasIndex(x => new { x.TenantId, x.PublishAttemptId })
+            .IsUnique()
+            .HasFilter("[PublishAttemptId] IS NOT NULL")
+            .HasDatabaseName(
+                "UX_Space_HistoricalRepublish_Tenant_PublishAttempt");
+        entity.HasOne<SpaceModel>()
+            .WithMany()
+            .HasForeignKey(x => new { x.TenantId, x.ModelId })
+            .HasPrincipalKey(x => new { x.TenantId, x.Id })
+            .OnDelete(DeleteBehavior.Restrict)
+            .HasConstraintName(
+                "FK_Space_HistoricalRepublish_Model_Tenant");
+        entity.HasOne<SpaceModelVersion>()
+            .WithMany()
+            .HasForeignKey(x => new
+            {
+                x.TenantId,
+                x.ModelId,
+                x.HistoricalVersionId,
+            })
+            .HasPrincipalKey(x => new { x.TenantId, x.ModelId, x.Id })
+            .OnDelete(DeleteBehavior.Restrict)
+            .HasConstraintName(
+                "FK_Space_HistoricalRepublish_HistoricalVersion_Tenant");
+        entity.HasOne<SpaceModelVersion>()
+            .WithMany()
+            .HasForeignKey(x => new
+            {
+                x.TenantId,
+                x.ModelId,
+                x.ExpectedPublishedVersionId,
+            })
+            .HasPrincipalKey(x => new { x.TenantId, x.ModelId, x.Id })
+            .OnDelete(DeleteBehavior.Restrict)
+            .HasConstraintName(
+                "FK_Space_HistoricalRepublish_ExpectedVersion_Tenant");
+        entity.HasOne<SpaceModelVersion>()
+            .WithMany()
+            .HasForeignKey(x => new
+            {
+                x.TenantId,
+                x.ModelId,
+                x.TargetVersionId,
+            })
+            .HasPrincipalKey(x => new { x.TenantId, x.ModelId, x.Id })
+            .OnDelete(DeleteBehavior.Restrict)
+            .HasConstraintName(
+                "FK_Space_HistoricalRepublish_TargetVersion_Tenant");
+        entity.HasOne<SpaceJob>()
+            .WithMany()
+            .HasForeignKey(x => new { x.TenantId, x.JobId })
+            .HasPrincipalKey(x => new { x.TenantId, x.Id })
+            .OnDelete(DeleteBehavior.Restrict)
+            .HasConstraintName(
+                "FK_Space_HistoricalRepublish_Job_Tenant");
+        entity.HasOne<SpaceValidationRun>()
+            .WithMany()
+            .HasForeignKey(x => new { x.TenantId, x.ValidationRunId })
+            .HasPrincipalKey(x => new { x.TenantId, x.Id })
+            .OnDelete(DeleteBehavior.Restrict)
+            .HasConstraintName(
+                "FK_Space_HistoricalRepublish_Validation_Tenant");
+        entity.HasOne<SpacePublishAttempt>()
+            .WithMany()
+            .HasForeignKey(x => new { x.TenantId, x.PublishAttemptId })
+            .HasPrincipalKey(x => new { x.TenantId, x.Id })
+            .OnDelete(DeleteBehavior.Restrict)
+            .HasConstraintName(
+                "FK_Space_HistoricalRepublish_PublishAttempt_Tenant");
+        entity.HasQueryFilter(
+            x => x.TenantId == CurrentTenantId && !x.IsDeleted);
     }
 
     private void ConfigureRuntimeElement(ModelBuilder modelBuilder)

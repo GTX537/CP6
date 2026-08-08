@@ -7,9 +7,10 @@ using CP6.Space.Domain;
 namespace CP6.WebApi.BackgroundServices;
 
 /// <summary>
-/// Claims tenant-scoped warehouse publish and reconciliation Jobs. Each Job
-/// is fenced by the shared Space Job lease ledger; a stopped host leaves an
-/// expiring lease that another worker can safely recover.
+/// Claims tenant-scoped historical republish, warehouse publish, and
+/// reconciliation Jobs. Each Job is fenced by the shared Space Job lease
+/// ledger; a stopped host leaves an expiring lease that another worker can
+/// safely recover.
 /// </summary>
 public sealed class SpacePublishJobWorker(
     IServiceScopeFactory scopeFactory,
@@ -63,6 +64,7 @@ public sealed class SpacePublishJobWorker(
                 var processedForTenant = 0;
                 foreach (var jobType in new[]
                          {
+                             SpaceJobType.HistoricalRepublish,
                              SpaceJobType.Reconcile,
                              SpaceJobType.Publish,
                          })

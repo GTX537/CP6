@@ -91,3 +91,33 @@ public sealed record RetrySpacePublishAttemptRequest(
 public sealed record RetrySpacePublishAttemptResponse(
     SpacePublishAttemptDto Attempt,
     bool IdempotentReplay);
+
+public sealed record StartSpaceHistoricalRepublishRequest(
+    Guid ExpectedPublishedVersionId,
+    string Reason,
+    string? ApprovalReference,
+    string? NewVersionName);
+
+public sealed record SpaceHistoricalRepublishDto(
+    Guid Id,
+    Guid SiteId,
+    Guid HistoricalVersionId,
+    Guid ExpectedPublishedVersionId,
+    Guid TargetVersionId,
+    string TargetVersionNo,
+    string TargetVersionStatus,
+    string Status,
+    string Reason,
+    string? ApprovalReference,
+    Guid RequestedBy,
+    DateTime RequestedAtUtc,
+    Guid CorrelationId,
+    Guid JobId,
+    string JobStatus,
+    Guid? ValidationRunId,
+    Guid? PublishAttemptId,
+    string? PublishAttemptStatus);
+
+public sealed record StartSpaceHistoricalRepublishResponse(
+    SpaceHistoricalRepublishDto Republish,
+    bool IdempotentReplay);

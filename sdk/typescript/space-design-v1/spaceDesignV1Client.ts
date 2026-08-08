@@ -590,6 +590,18 @@ export interface ISpaceDesignV1Client {
      * @param body (optional)
      * @return Accepted
      */
+    startHistoricalRepublish(historicalVersionId: string, idempotency_Key: string | undefined, body: StartSpaceHistoricalRepublishRequest | undefined): Promise<StartSpaceHistoricalRepublishResponse>;
+
+    /**
+     * @return OK
+     */
+    getHistoricalRepublish(republishId: string): Promise<SpaceHistoricalRepublishDto>;
+
+    /**
+     * @param idempotency_Key (optional)
+     * @param body (optional)
+     * @return Accepted
+     */
     createPublishAttempt(versionId: string, idempotency_Key: string | undefined, body: CreateSpacePublishAttemptRequest | undefined): Promise<CreateSpacePublishAttemptResponse>;
 
     /**
@@ -10144,6 +10156,191 @@ export class SpaceDesignV1Client implements ISpaceDesignV1Client {
      * @param body (optional)
      * @return Accepted
      */
+    startHistoricalRepublish(historicalVersionId: string, idempotency_Key: string | undefined, body: StartSpaceHistoricalRepublishRequest | undefined): Promise<StartSpaceHistoricalRepublishResponse> {
+        let url_ = this.baseUrl + "/api/space/design/v1/versions/{historicalVersionId}/republish";
+        if (historicalVersionId === undefined || historicalVersionId === null)
+            throw new globalThis.Error("The parameter 'historicalVersionId' must be defined.");
+        url_ = url_.replace("{historicalVersionId}", encodeURIComponent("" + historicalVersionId));
+        url_ = url_.replace(/[?&]$/, "");
+
+        const content_ = JSON.stringify(body);
+
+        let options_: RequestInit = {
+            body: content_,
+            method: "POST",
+            headers: {
+                "Idempotency-Key": idempotency_Key !== undefined && idempotency_Key !== null ? "" + idempotency_Key : "",
+                "Content-Type": "application/json",
+                "Accept": "application/json"
+            }
+        };
+
+        return this.http.fetch(url_, options_).then((_response: Response) => {
+            return this.processStartHistoricalRepublish(_response);
+        });
+    }
+
+    protected processStartHistoricalRepublish(response: Response): Promise<StartSpaceHistoricalRepublishResponse> {
+        const status = response.status;
+        let _headers: any = {}; if (response.headers && response.headers.forEach) { response.headers.forEach((v: any, k: any) => _headers[k] = v); };
+        if (status === 202) {
+            return response.text().then((_responseText) => {
+            let result202: any = null;
+            let resultData202 = _responseText === "" ? null : JSON.parse(_responseText, this.jsonParseReviver);
+            result202 = StartSpaceHistoricalRepublishResponse.fromJS(resultData202);
+            return result202;
+            });
+        } else if (status === 400) {
+            return response.text().then((_responseText) => {
+            let result400: any = null;
+            let resultData400 = _responseText === "" ? null : JSON.parse(_responseText, this.jsonParseReviver);
+            result400 = SpaceDesignProblemDetails.fromJS(resultData400);
+            return throwException("Bad Request", status, _responseText, _headers, result400);
+            });
+        } else if (status === 401) {
+            return response.text().then((_responseText) => {
+            let result401: any = null;
+            let resultData401 = _responseText === "" ? null : JSON.parse(_responseText, this.jsonParseReviver);
+            result401 = SpaceDesignProblemDetails.fromJS(resultData401);
+            return throwException("Unauthorized", status, _responseText, _headers, result401);
+            });
+        } else if (status === 403) {
+            return response.text().then((_responseText) => {
+            let result403: any = null;
+            let resultData403 = _responseText === "" ? null : JSON.parse(_responseText, this.jsonParseReviver);
+            result403 = SpaceDesignProblemDetails.fromJS(resultData403);
+            return throwException("Forbidden", status, _responseText, _headers, result403);
+            });
+        } else if (status === 404) {
+            return response.text().then((_responseText) => {
+            let result404: any = null;
+            let resultData404 = _responseText === "" ? null : JSON.parse(_responseText, this.jsonParseReviver);
+            result404 = SpaceDesignProblemDetails.fromJS(resultData404);
+            return throwException("Not Found", status, _responseText, _headers, result404);
+            });
+        } else if (status === 409) {
+            return response.text().then((_responseText) => {
+            let result409: any = null;
+            let resultData409 = _responseText === "" ? null : JSON.parse(_responseText, this.jsonParseReviver);
+            result409 = SpaceDesignProblemDetails.fromJS(resultData409);
+            return throwException("Conflict", status, _responseText, _headers, result409);
+            });
+        } else if (status === 422) {
+            return response.text().then((_responseText) => {
+            let result422: any = null;
+            let resultData422 = _responseText === "" ? null : JSON.parse(_responseText, this.jsonParseReviver);
+            result422 = SpaceDesignProblemDetails.fromJS(resultData422);
+            return throwException("Unprocessable Content", status, _responseText, _headers, result422);
+            });
+        } else if (status === 500) {
+            return response.text().then((_responseText) => {
+            let result500: any = null;
+            let resultData500 = _responseText === "" ? null : JSON.parse(_responseText, this.jsonParseReviver);
+            result500 = SpaceDesignProblemDetails.fromJS(resultData500);
+            return throwException("Internal Server Error", status, _responseText, _headers, result500);
+            });
+        } else if (status !== 200 && status !== 204) {
+            return response.text().then((_responseText) => {
+            return throwException("An unexpected server error occurred.", status, _responseText, _headers);
+            });
+        }
+        return Promise.resolve<StartSpaceHistoricalRepublishResponse>(null as any);
+    }
+
+    /**
+     * @return OK
+     */
+    getHistoricalRepublish(republishId: string): Promise<SpaceHistoricalRepublishDto> {
+        let url_ = this.baseUrl + "/api/space/design/v1/republishes/{republishId}";
+        if (republishId === undefined || republishId === null)
+            throw new globalThis.Error("The parameter 'republishId' must be defined.");
+        url_ = url_.replace("{republishId}", encodeURIComponent("" + republishId));
+        url_ = url_.replace(/[?&]$/, "");
+
+        let options_: RequestInit = {
+            method: "GET",
+            headers: {
+                "Accept": "application/json"
+            }
+        };
+
+        return this.http.fetch(url_, options_).then((_response: Response) => {
+            return this.processGetHistoricalRepublish(_response);
+        });
+    }
+
+    protected processGetHistoricalRepublish(response: Response): Promise<SpaceHistoricalRepublishDto> {
+        const status = response.status;
+        let _headers: any = {}; if (response.headers && response.headers.forEach) { response.headers.forEach((v: any, k: any) => _headers[k] = v); };
+        if (status === 200) {
+            return response.text().then((_responseText) => {
+            let result200: any = null;
+            let resultData200 = _responseText === "" ? null : JSON.parse(_responseText, this.jsonParseReviver);
+            result200 = SpaceHistoricalRepublishDto.fromJS(resultData200);
+            return result200;
+            });
+        } else if (status === 400) {
+            return response.text().then((_responseText) => {
+            let result400: any = null;
+            let resultData400 = _responseText === "" ? null : JSON.parse(_responseText, this.jsonParseReviver);
+            result400 = SpaceDesignProblemDetails.fromJS(resultData400);
+            return throwException("Bad Request", status, _responseText, _headers, result400);
+            });
+        } else if (status === 401) {
+            return response.text().then((_responseText) => {
+            let result401: any = null;
+            let resultData401 = _responseText === "" ? null : JSON.parse(_responseText, this.jsonParseReviver);
+            result401 = SpaceDesignProblemDetails.fromJS(resultData401);
+            return throwException("Unauthorized", status, _responseText, _headers, result401);
+            });
+        } else if (status === 403) {
+            return response.text().then((_responseText) => {
+            let result403: any = null;
+            let resultData403 = _responseText === "" ? null : JSON.parse(_responseText, this.jsonParseReviver);
+            result403 = SpaceDesignProblemDetails.fromJS(resultData403);
+            return throwException("Forbidden", status, _responseText, _headers, result403);
+            });
+        } else if (status === 404) {
+            return response.text().then((_responseText) => {
+            let result404: any = null;
+            let resultData404 = _responseText === "" ? null : JSON.parse(_responseText, this.jsonParseReviver);
+            result404 = SpaceDesignProblemDetails.fromJS(resultData404);
+            return throwException("Not Found", status, _responseText, _headers, result404);
+            });
+        } else if (status === 409) {
+            return response.text().then((_responseText) => {
+            let result409: any = null;
+            let resultData409 = _responseText === "" ? null : JSON.parse(_responseText, this.jsonParseReviver);
+            result409 = SpaceDesignProblemDetails.fromJS(resultData409);
+            return throwException("Conflict", status, _responseText, _headers, result409);
+            });
+        } else if (status === 422) {
+            return response.text().then((_responseText) => {
+            let result422: any = null;
+            let resultData422 = _responseText === "" ? null : JSON.parse(_responseText, this.jsonParseReviver);
+            result422 = SpaceDesignProblemDetails.fromJS(resultData422);
+            return throwException("Unprocessable Content", status, _responseText, _headers, result422);
+            });
+        } else if (status === 500) {
+            return response.text().then((_responseText) => {
+            let result500: any = null;
+            let resultData500 = _responseText === "" ? null : JSON.parse(_responseText, this.jsonParseReviver);
+            result500 = SpaceDesignProblemDetails.fromJS(resultData500);
+            return throwException("Internal Server Error", status, _responseText, _headers, result500);
+            });
+        } else if (status !== 200 && status !== 204) {
+            return response.text().then((_responseText) => {
+            return throwException("An unexpected server error occurred.", status, _responseText, _headers);
+            });
+        }
+        return Promise.resolve<SpaceHistoricalRepublishDto>(null as any);
+    }
+
+    /**
+     * @param idempotency_Key (optional)
+     * @param body (optional)
+     * @return Accepted
+     */
     createPublishAttempt(versionId: string, idempotency_Key: string | undefined, body: CreateSpacePublishAttemptRequest | undefined): Promise<CreateSpacePublishAttemptResponse> {
         let url_ = this.baseUrl + "/api/space/design/v1/versions/{versionId}/publish-attempts";
         if (versionId === undefined || versionId === null)
@@ -18261,6 +18458,110 @@ export interface ISpaceGenerateRackArrayDto {
     codeDigits?: number;
 }
 
+export class SpaceHistoricalRepublishDto implements ISpaceHistoricalRepublishDto {
+    id?: string;
+    siteId?: string;
+    historicalVersionId?: string;
+    expectedPublishedVersionId?: string;
+    targetVersionId?: string;
+    targetVersionNo?: string | undefined;
+    targetVersionStatus?: string | undefined;
+    status?: string | undefined;
+    reason?: string | undefined;
+    approvalReference?: string | undefined;
+    requestedBy?: string;
+    requestedAtUtc?: Date;
+    correlationId?: string;
+    jobId?: string;
+    jobStatus?: string | undefined;
+    validationRunId?: string | undefined;
+    publishAttemptId?: string | undefined;
+    publishAttemptStatus?: string | undefined;
+
+    constructor(data?: ISpaceHistoricalRepublishDto) {
+        if (data) {
+            for (var property in data) {
+                if (data.hasOwnProperty(property))
+                    (this as any)[property] = (data as any)[property];
+            }
+        }
+    }
+
+    init(_data?: any) {
+        if (_data) {
+            this.id = _data["id"];
+            this.siteId = _data["siteId"];
+            this.historicalVersionId = _data["historicalVersionId"];
+            this.expectedPublishedVersionId = _data["expectedPublishedVersionId"];
+            this.targetVersionId = _data["targetVersionId"];
+            this.targetVersionNo = _data["targetVersionNo"];
+            this.targetVersionStatus = _data["targetVersionStatus"];
+            this.status = _data["status"];
+            this.reason = _data["reason"];
+            this.approvalReference = _data["approvalReference"];
+            this.requestedBy = _data["requestedBy"];
+            this.requestedAtUtc = _data["requestedAtUtc"] ? new Date(_data["requestedAtUtc"].toString()) : undefined as any;
+            this.correlationId = _data["correlationId"];
+            this.jobId = _data["jobId"];
+            this.jobStatus = _data["jobStatus"];
+            this.validationRunId = _data["validationRunId"];
+            this.publishAttemptId = _data["publishAttemptId"];
+            this.publishAttemptStatus = _data["publishAttemptStatus"];
+        }
+    }
+
+    static fromJS(data: any): SpaceHistoricalRepublishDto {
+        data = typeof data === 'object' ? data : {};
+        let result = new SpaceHistoricalRepublishDto();
+        result.init(data);
+        return result;
+    }
+
+    toJSON(data?: any) {
+        data = typeof data === 'object' ? data : {};
+        data["id"] = this.id;
+        data["siteId"] = this.siteId;
+        data["historicalVersionId"] = this.historicalVersionId;
+        data["expectedPublishedVersionId"] = this.expectedPublishedVersionId;
+        data["targetVersionId"] = this.targetVersionId;
+        data["targetVersionNo"] = this.targetVersionNo;
+        data["targetVersionStatus"] = this.targetVersionStatus;
+        data["status"] = this.status;
+        data["reason"] = this.reason;
+        data["approvalReference"] = this.approvalReference;
+        data["requestedBy"] = this.requestedBy;
+        data["requestedAtUtc"] = this.requestedAtUtc ? this.requestedAtUtc.toISOString() : undefined as any;
+        data["correlationId"] = this.correlationId;
+        data["jobId"] = this.jobId;
+        data["jobStatus"] = this.jobStatus;
+        data["validationRunId"] = this.validationRunId;
+        data["publishAttemptId"] = this.publishAttemptId;
+        data["publishAttemptStatus"] = this.publishAttemptStatus;
+        return data;
+    }
+}
+
+export interface ISpaceHistoricalRepublishDto {
+    id?: string;
+    siteId?: string;
+    historicalVersionId?: string;
+    expectedPublishedVersionId?: string;
+    targetVersionId?: string;
+    targetVersionNo?: string | undefined;
+    targetVersionStatus?: string | undefined;
+    status?: string | undefined;
+    reason?: string | undefined;
+    approvalReference?: string | undefined;
+    requestedBy?: string;
+    requestedAtUtc?: Date;
+    correlationId?: string;
+    jobId?: string;
+    jobStatus?: string | undefined;
+    validationRunId?: string | undefined;
+    publishAttemptId?: string | undefined;
+    publishAttemptStatus?: string | undefined;
+}
+
 export class SpaceIssueDto implements ISpaceIssueDto {
     id?: string;
     modelVersionId?: string | undefined;
@@ -26355,6 +26656,94 @@ export interface IStartSpaceExcelPreflightResponse {
     mappingDefinitionHash: string;
     source: SpaceSourceDto;
     idempotentReplay: boolean;
+}
+
+export class StartSpaceHistoricalRepublishRequest implements IStartSpaceHistoricalRepublishRequest {
+    expectedPublishedVersionId?: string;
+    reason?: string | undefined;
+    approvalReference?: string | undefined;
+    newVersionName?: string | undefined;
+
+    constructor(data?: IStartSpaceHistoricalRepublishRequest) {
+        if (data) {
+            for (var property in data) {
+                if (data.hasOwnProperty(property))
+                    (this as any)[property] = (data as any)[property];
+            }
+        }
+    }
+
+    init(_data?: any) {
+        if (_data) {
+            this.expectedPublishedVersionId = _data["expectedPublishedVersionId"];
+            this.reason = _data["reason"];
+            this.approvalReference = _data["approvalReference"];
+            this.newVersionName = _data["newVersionName"];
+        }
+    }
+
+    static fromJS(data: any): StartSpaceHistoricalRepublishRequest {
+        data = typeof data === 'object' ? data : {};
+        let result = new StartSpaceHistoricalRepublishRequest();
+        result.init(data);
+        return result;
+    }
+
+    toJSON(data?: any) {
+        data = typeof data === 'object' ? data : {};
+        data["expectedPublishedVersionId"] = this.expectedPublishedVersionId;
+        data["reason"] = this.reason;
+        data["approvalReference"] = this.approvalReference;
+        data["newVersionName"] = this.newVersionName;
+        return data;
+    }
+}
+
+export interface IStartSpaceHistoricalRepublishRequest {
+    expectedPublishedVersionId?: string;
+    reason?: string | undefined;
+    approvalReference?: string | undefined;
+    newVersionName?: string | undefined;
+}
+
+export class StartSpaceHistoricalRepublishResponse implements IStartSpaceHistoricalRepublishResponse {
+    republish?: SpaceHistoricalRepublishDto;
+    idempotentReplay?: boolean;
+
+    constructor(data?: IStartSpaceHistoricalRepublishResponse) {
+        if (data) {
+            for (var property in data) {
+                if (data.hasOwnProperty(property))
+                    (this as any)[property] = (data as any)[property];
+            }
+        }
+    }
+
+    init(_data?: any) {
+        if (_data) {
+            this.republish = _data["republish"] ? SpaceHistoricalRepublishDto.fromJS(_data["republish"]) : undefined as any;
+            this.idempotentReplay = _data["idempotentReplay"];
+        }
+    }
+
+    static fromJS(data: any): StartSpaceHistoricalRepublishResponse {
+        data = typeof data === 'object' ? data : {};
+        let result = new StartSpaceHistoricalRepublishResponse();
+        result.init(data);
+        return result;
+    }
+
+    toJSON(data?: any) {
+        data = typeof data === 'object' ? data : {};
+        data["republish"] = this.republish ? this.republish.toJSON() : undefined as any;
+        data["idempotentReplay"] = this.idempotentReplay;
+        return data;
+    }
+}
+
+export interface IStartSpaceHistoricalRepublishResponse {
+    republish?: SpaceHistoricalRepublishDto;
+    idempotentReplay?: boolean;
 }
 
 export class UpdateSpaceAiPolicyRequest implements IUpdateSpaceAiPolicyRequest {

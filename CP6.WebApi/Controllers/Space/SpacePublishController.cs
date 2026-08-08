@@ -41,8 +41,55 @@ namespace CP6.WebApi.Controllers.Space;
     StatusCodes.Status500InternalServerError,
     "application/problem+json")]
 public sealed class SpacePublishController(
-    ISpacePublishOrchestrator orchestrator) : ControllerBase
+    ISpacePublishOrchestrator orchestrator,
+    ISpaceHistoricalRepublishService historicalRepublishes) : ControllerBase
 {
+    [HttpPost("versions/{historicalVersionId:guid}/republish")]
+    [SpaceAuditOperation(
+        "space.publish.republish",
+        "ModelVersion",
+        ResourceIdArgument = "historicalVersionId",
+        PermissionCode = "space:model:rollback")]
+    [RequirePermission(
+        "space",
+        "model:rollback",
+        UseProblemDetails = true)]
+    [ProducesResponseType<StartSpaceHistoricalRepublishResponse>(
+        StatusCodes.Status202Accepted)]
+    public async Task<IActionResult> StartHistoricalRepublish(
+        Guid historicalVersionId,
+        [FromBody] StartSpaceHistoricalRepublishRequest request,
+        [FromHeader(Name = "Idempotency-Key")] string? idempotencyKey,
+        CancellationToken cancellationToken)
+    {
+        var result = await historicalRepublishes.StartAsync(
+            historicalVersionId,
+            request,
+            idempotencyKey ?? string.Empty,
+            cancellationToken);
+        Response.Headers["Idempotent-Replay"] =
+            result.IdempotentReplay ? "true" : "false";
+        return AcceptedAtAction(
+            nameof(GetHistoricalRepublish),
+            new { republishId = result.Republish.Id },
+            result);
+    }
+
+    [HttpGet("republishes/{republishId:guid}")]
+    [SpaceAuditOperation(
+        "space.publish.republish.read",
+        "HistoricalRepublish",
+        ResourceIdArgument = "republishId",
+        PermissionCode = "space:model:read",
+        AuditRead = true)]
+    [RequirePermission("space", "model:read", UseProblemDetails = true)]
+    [ProducesResponseType<SpaceHistoricalRepublishDto>(
+        StatusCodes.Status200OK)]
+    public Task<SpaceHistoricalRepublishDto> GetHistoricalRepublish(
+        Guid republishId,
+        CancellationToken cancellationToken) =>
+        historicalRepublishes.GetAsync(republishId, cancellationToken);
+
     [HttpPost("versions/{versionId:guid}/publish-attempts")]
     [SpaceAuditOperation(
         "space.publish.start",

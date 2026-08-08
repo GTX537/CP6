@@ -108,6 +108,8 @@ public sealed class SpaceJobProcessorOptions
         TimeSpan.FromMinutes(10);
     public TimeSpan AiRetentionCleanupTimeout { get; init; } =
         TimeSpan.FromMinutes(10);
+    public TimeSpan HistoricalRepublishTimeout { get; init; } =
+        TimeSpan.FromMinutes(30);
     public TimeSpan PublishTimeout { get; init; } =
         TimeSpan.FromMinutes(30);
     public TimeSpan ReconcileTimeout { get; init; } =
@@ -156,6 +158,11 @@ public sealed class SpaceJobProcessorOptions
             throw new ArgumentOutOfRangeException(
                 nameof(AiRetentionCleanupTimeout));
         }
+        if (HistoricalRepublishTimeout <= TimeSpan.Zero)
+        {
+            throw new ArgumentOutOfRangeException(
+                nameof(HistoricalRepublishTimeout));
+        }
         if (PublishTimeout <= TimeSpan.Zero)
             throw new ArgumentOutOfRangeException(nameof(PublishTimeout));
         if (ReconcileTimeout <= TimeSpan.Zero)
@@ -172,6 +179,7 @@ public sealed class SpaceJobProcessorOptions
             SpaceJobType.BuildScene => BuildSceneTimeout,
             SpaceJobType.ApplyGeneration => ApplyGenerationTimeout,
             SpaceJobType.AiRetentionCleanup => AiRetentionCleanupTimeout,
+            SpaceJobType.HistoricalRepublish => HistoricalRepublishTimeout,
             SpaceJobType.Publish => PublishTimeout,
             SpaceJobType.Reconcile => ReconcileTimeout,
             _ => throw new ArgumentOutOfRangeException(nameof(jobType)),
@@ -625,6 +633,7 @@ public sealed class SpaceJobProcessorRunner : ISpaceJobProcessorRunner
                 SpaceJobType.BuildScene or
                 SpaceJobType.ApplyGeneration or
                 SpaceJobType.AiRetentionCleanup or
+                SpaceJobType.HistoricalRepublish or
                 SpaceJobType.Publish or
                 SpaceJobType.Reconcile) ||
             !_processors.TryGetValue(jobType, out var processor))

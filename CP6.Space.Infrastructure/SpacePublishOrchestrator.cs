@@ -12,6 +12,7 @@ namespace CP6.Space.Infrastructure;
 
 public sealed partial class SpacePublishOrchestrator :
     ISpacePublishOrchestrator,
+    ISpaceHistoricalRepublishPublishStarter,
     ISpacePublishJobExecutor
 {
     private static readonly JsonSerializerOptions Json =
@@ -48,17 +49,47 @@ public sealed partial class SpacePublishOrchestrator :
         _snapshots = new EfSpacePublishSnapshotReader(context);
     }
 
-    public async Task<CreateSpacePublishAttemptResponse> StartAsync(
+    public Task<CreateSpacePublishAttemptResponse> StartAsync(
         Guid versionId,
         CreateSpacePublishAttemptRequest request,
         string idempotencyKey,
+        CancellationToken cancellationToken = default) =>
+        StartCoreAsync(
+            versionId,
+            request,
+            idempotencyKey,
+            historicalContext: null,
+            cancellationToken);
+
+    public Task<CreateSpacePublishAttemptResponse> StartHistoricalRepublishAsync(
+        Guid versionId,
+        CreateSpacePublishAttemptRequest request,
+        string idempotencyKey,
+        SpaceHistoricalRepublishPublishContext context,
         CancellationToken cancellationToken = default)
+    {
+        ArgumentNullException.ThrowIfNull(context);
+        return StartCoreAsync(
+            versionId,
+            request,
+            idempotencyKey,
+            context,
+            cancellationToken);
+    }
+
+    private async Task<CreateSpacePublishAttemptResponse> StartCoreAsync(
+        Guid versionId,
+        CreateSpacePublishAttemptRequest request,
+        string idempotencyKey,
+        SpaceHistoricalRepublishPublishContext? historicalContext,
+        CancellationToken cancellationToken)
     {
         EnsureExecutionContext();
         ValidateStart(versionId, request);
         var normalizedKey = RequireIdempotencyKey(idempotencyKey);
         var requestHash = RequestHash(versionId, request);
         var correlationId = CorrelationId();
+        var requestedBy = historicalContext?.RequestedBy ?? _execution.ActorId;
 
         var replay = await _context.PublishAttempts
             .AsNoTracking()
@@ -78,6 +109,15 @@ public sealed partial class SpacePublishOrchestrator :
                     "The Idempotency-Key was already used for another " +
                     "publish request.",
                     "use-new-idempotency-key");
+            }
+            if (historicalContext is not null)
+            {
+                await EnsureHistoricalReplayAsync(
+                    replay,
+                    historicalContext,
+                    versionId,
+                    request,
+                    cancellationToken);
             }
             _access.EnsureSiteAccess(replay.SiteId, write: false);
             return new CreateSpacePublishAttemptResponse(
@@ -137,6 +177,26 @@ public sealed partial class SpacePublishOrchestrator :
                              "The selected ValidationRun was not found.");
         EnsureValidation(target, validation, capabilities);
         EnsureBase(model, request.ExpectedPublishedVersionId);
+
+        SpaceHistoricalRepublish? historicalRepublish = null;
+        if (historicalContext is not null)
+        {
+            historicalRepublish = await _context.HistoricalRepublishes
+                                      .SingleOrDefaultAsync(
+                                          value =>
+                                              value.Id == historicalContext.RepublishId,
+                                          cancellationToken)
+                                  ?? throw NotFound(
+                                      SpaceErrorCodes.HistoricalRepublishNotFound,
+                                      "The historical republish operation was not found.");
+            EnsureHistoricalContext(
+                historicalRepublish,
+                historicalContext,
+                model,
+                target,
+                validation,
+                request);
+        }
 
         var baseObjects = model.CurrentPublishedVersionId.HasValue
             ? await _snapshots.ReadAsync(
@@ -205,6 +265,15 @@ public sealed partial class SpacePublishOrchestrator :
                         "another request.",
                         "use-new-idempotency-key");
                 }
+                if (historicalContext is not null)
+                {
+                    await EnsureHistoricalReplayAsync(
+                        concurrentReplay,
+                        historicalContext,
+                        versionId,
+                        request,
+                        cancellationToken);
+                }
                 await transaction.CommitAsync(cancellationToken);
                 return new CreateSpacePublishAttemptResponse(
                     await ToDtoAsync(
@@ -230,6 +299,8 @@ public sealed partial class SpacePublishOrchestrator :
 
             await _context.Entry(model).ReloadAsync(cancellationToken);
             await _context.Entry(target).ReloadAsync(cancellationToken);
+            if (historicalRepublish is not null)
+                await _context.Entry(historicalRepublish).ReloadAsync(cancellationToken);
             EnsureBase(model, request.ExpectedPublishedVersionId);
             EnsureProductionTarget(target);
             var persistedValidation = await _context.ValidationRuns
@@ -238,6 +309,16 @@ public sealed partial class SpacePublishOrchestrator :
                     value => value.Id == validation.Id,
                     cancellationToken);
             EnsureValidation(target, persistedValidation, capabilities);
+            if (historicalRepublish is not null && historicalContext is not null)
+            {
+                EnsureHistoricalContext(
+                    historicalRepublish,
+                    historicalContext,
+                    model,
+                    target,
+                    persistedValidation,
+                    request);
+            }
             if (target.ContentRevision != plannedContentRevision)
             {
                 throw Conflict(
@@ -276,7 +357,7 @@ public sealed partial class SpacePublishOrchestrator :
                 capabilities.AdapterId,
                 normalizedKey,
                 requestHash,
-                _execution.ActorId,
+                requestedBy,
                 approvedBy: null,
                 request.ApprovalReference,
                 JsonSerializer.Serialize(request, Json),
@@ -310,15 +391,14 @@ public sealed partial class SpacePublishOrchestrator :
                 jobRequest.InputHash,
                 jobRequest.Priority,
                 jobRequest.MaxAttempts,
-                _execution.ActorId,
+                requestedBy,
                 RequireUtcNow(),
                 correlationId,
                 jobRequest.PayloadJson);
             attempt.BindInitialJob(job.Id);
             _context.Jobs.Add(job);
             _context.PublishAttempts.Add(attempt);
-            _context.PublishAuditEvents.Add(
-                SpacePublishAuditEvent.Create(
+            var queuedAudit = SpacePublishAuditEvent.Create(
                     _execution.TenantId,
                     attempt.Id,
                     job.Id,
@@ -327,7 +407,7 @@ public sealed partial class SpacePublishOrchestrator :
                     SpacePublishAuditEventType.Queued,
                     attempt.Status,
                     attempt.CurrentStep,
-                    _execution.ActorId,
+                    requestedBy,
                     correlationId,
                     RequireUtcNow(),
                     "initial-queue",
@@ -342,7 +422,39 @@ public sealed partial class SpacePublishOrchestrator :
                             persistedPlan.CapabilityHash,
                         },
                         Json),
-                    previousEventHash: null));
+                    previousEventHash: null);
+            _context.PublishAuditEvents.Add(queuedAudit);
+            if (historicalRepublish is not null && historicalContext is not null)
+            {
+                _context.PublishAuditEvents.Add(
+                    SpacePublishAuditEvent.Create(
+                        _execution.TenantId,
+                        attempt.Id,
+                        job.Id,
+                        batchId: null,
+                        eventNo: 2,
+                        SpacePublishAuditEventType.HistoricalRepublishQueued,
+                        attempt.Status,
+                        attempt.CurrentStep,
+                        requestedBy,
+                        correlationId,
+                        RequireUtcNow(),
+                        "historical-republish-queue",
+                        "A historical production snapshot was queued as a new publish attempt.",
+                        errorCode: null,
+                        JsonSerializer.Serialize(
+                            new
+                            {
+                                republishId = historicalRepublish.Id,
+                                historicalVersionId = historicalContext.HistoricalVersionId,
+                                expectedPublishedVersionId = request.ExpectedPublishedVersionId,
+                                targetVersionId = target.Id,
+                                validationRunId = validation.Id,
+                                historicalContext.Reason,
+                            },
+                            Json),
+                        queuedAudit.EventHash));
+            }
             target.BeginPublishing();
             await _context.SaveChangesAsync(cancellationToken);
             await transaction.CommitAsync(cancellationToken);
@@ -351,6 +463,70 @@ public sealed partial class SpacePublishOrchestrator :
         return new CreateSpacePublishAttemptResponse(
             await ToDtoAsync(attempt.Id, cancellationToken),
             IdempotentReplay: false);
+    }
+
+    private async Task EnsureHistoricalReplayAsync(
+        SpacePublishAttempt replay,
+        SpaceHistoricalRepublishPublishContext context,
+        Guid versionId,
+        CreateSpacePublishAttemptRequest request,
+        CancellationToken cancellationToken)
+    {
+        var operation = await _context.HistoricalRepublishes
+                            .AsNoTracking()
+                            .SingleOrDefaultAsync(
+                                value => value.Id == context.RepublishId,
+                                cancellationToken)
+                        ?? throw NotFound(
+                            SpaceErrorCodes.HistoricalRepublishNotFound,
+                            "The historical republish operation was not found.");
+        if (replay.TargetVersionId != versionId ||
+            replay.RequestedBy != context.RequestedBy ||
+            operation.TargetVersionId != versionId ||
+            operation.HistoricalVersionId != context.HistoricalVersionId ||
+            operation.ExpectedPublishedVersionId !=
+            request.ExpectedPublishedVersionId ||
+            operation.Status is not (
+                SpaceHistoricalRepublishStatus.ValidationPassed or
+                SpaceHistoricalRepublishStatus.PublishQueued) ||
+            operation.PublishAttemptId.HasValue &&
+            operation.PublishAttemptId.Value != replay.Id ||
+            operation.RequestedBy != context.RequestedBy ||
+            !string.Equals(operation.Reason, context.Reason, StringComparison.Ordinal))
+        {
+            throw Conflict(
+                SpaceErrorCodes.IdempotencyConflict,
+                "The historical republish replay does not match its immutable lineage.",
+                "inspect-historical-republish");
+        }
+    }
+
+    private static void EnsureHistoricalContext(
+        SpaceHistoricalRepublish operation,
+        SpaceHistoricalRepublishPublishContext context,
+        SpaceModel model,
+        SpaceModelVersion target,
+        SpaceValidationRun validation,
+        CreateSpacePublishAttemptRequest request)
+    {
+        if (operation.Id != context.RepublishId ||
+            operation.ModelId != model.Id ||
+            operation.TargetVersionId != target.Id ||
+            operation.HistoricalVersionId != context.HistoricalVersionId ||
+            operation.ExpectedPublishedVersionId !=
+            request.ExpectedPublishedVersionId ||
+            operation.ValidationRunId != validation.Id ||
+            operation.Status != SpaceHistoricalRepublishStatus.ValidationPassed ||
+            operation.RequestedBy != context.RequestedBy ||
+            !string.Equals(operation.Reason, context.Reason, StringComparison.Ordinal) ||
+            target.BasedOnVersionId != operation.HistoricalVersionId ||
+            target.CloneOperationId != operation.Id)
+        {
+            throw Conflict(
+                SpaceErrorCodes.VersionConflict,
+                "The historical republish lineage or validation state changed.",
+                "inspect-historical-republish");
+        }
     }
 
     public async Task<RetrySpacePublishAttemptResponse> RetryAsync(

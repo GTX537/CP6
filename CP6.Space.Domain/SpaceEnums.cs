@@ -148,6 +148,7 @@ public enum SpaceJobType : short
     CloneVersion = 9,
     ApplyGeneration = 10,
     AiRetentionCleanup = 11,
+    HistoricalRepublish = 12,
 }
 
 public enum SpaceJobSubjectType : short
@@ -158,6 +159,7 @@ public enum SpaceJobSubjectType : short
     PublishAttempt = 3,
     GenerationRun = 4,
     Tenant = 5,
+    HistoricalRepublish = 6,
 }
 
 public enum SpaceJobStatus : short
@@ -263,6 +265,16 @@ public enum SpacePublishAuditEventType : short
     ManualInterventionRequired = 12,
     ReconciliationResolved = 13,
     RetryableFailureObserved = 14,
+    HistoricalRepublishQueued = 15,
+}
+
+public enum SpaceHistoricalRepublishStatus : short
+{
+    Requested = 0,
+    SnapshotCloned = 1,
+    ValidationPassed = 2,
+    ValidationBlocked = 3,
+    PublishQueued = 4,
 }
 
 public enum SpaceJobFailureKind : short
