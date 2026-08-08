@@ -526,6 +526,331 @@ public sealed class SpaceExcelCadMatchServiceTests
     }
 
     [Fact]
+    public async Task Confirmed_apply_persists_location_types_bindings_and_design_attributes()
+    {
+        var original = await CreateFixtureAsync();
+        await using var fixture = original with
+        {
+            Profile = original.Profile with
+            {
+                Definition = ExcelDefinition(
+                    "Racks",
+                    "RackLevels",
+                    "Locations",
+                    "Bindings",
+                    "Attributes"),
+            },
+            Workbook = MetadataExcelWorkbook(),
+        };
+        var match = await ProduceSucceededMatchAsync(
+            fixture,
+            "metadata-match");
+        var confirmed = await fixture.ApplyService.ConfirmAsync(
+            fixture.Version.Id,
+            match.JobId,
+            new ConfirmSpaceExcelCadMatchRequest(
+                true,
+                match.ArtifactId,
+                match.Artifact.ArtifactPayloadSha256,
+                fixture.Version.ContentRevision),
+            "metadata-confirm");
+        var lease = await ClaimAsync(
+            fixture,
+            confirmed.ApplyJobId,
+            SpaceExcelCadApplyJobProcessor.Version,
+            "metadata-worker");
+        var executor = new SpaceExcelCadApplyJobStepExecutor(
+            fixture.Context,
+            new FileServiceProvider(
+                fixture.Files,
+                new FixedBindingAuthorityResolver(
+                    "cp6-wms-v1",
+                    "WH-01")),
+            new FixedWorkbookReader(fixture.Workbook),
+            new FixedMappingService(fixture.Profile),
+            new FixedClock());
+        var execution = new SpaceJobStepExecution(
+            lease,
+            1,
+            SpaceExcelCadApplyJobProcessor.ApplyConfirmedArtifact);
+
+        var first = await executor.ExecuteAsync(execution);
+        var replay = await executor.ExecuteAsync(execution);
+
+        Assert.Equal(first, replay);
+        var locations = await fixture.Context.LocationRevisions
+            .OrderBy(item => item.LocationCode)
+            .ToArrayAsync();
+        Assert.Equal(SpaceLocationTypes.Storage, locations[0].LocationType);
+        Assert.Equal(SpaceLocationTypes.Picking, locations[1].LocationType);
+        var bindings = await fixture.Context.LocationExternalBindings
+            .OrderBy(item => item.BindingMode)
+            .ToArrayAsync();
+        Assert.Equal(2, bindings.Length);
+        Assert.Equal("cp6-wms-v1", bindings[0].AdapterId);
+        Assert.Equal("WH-01", bindings[0].WarehouseCode);
+        Assert.Equal(SpaceLocationBindingMode.WmsPrimary,
+            bindings[0].BindingMode);
+        Assert.Equal(SpaceLocationBindingMode.WmsAlias,
+            bindings[1].BindingMode);
+        Assert.Equal(bindings[0].LocationLogicalId,
+            bindings[1].LocationLogicalId);
+        var attributes = await fixture.Context.DesignAttributes
+            .OrderBy(item => item.ObjectType)
+            .ThenBy(item => item.Key)
+            .ToArrayAsync();
+        Assert.Equal(3, attributes.Length);
+        Assert.Contains(attributes, item =>
+            item.ObjectType == SpaceDesignAttributeObjectTypes.Rack &&
+            item.Namespace == SpaceDesignAttributeNamespaces.Owner &&
+            item.Value == "OWNER-01");
+        Assert.Contains(attributes, item =>
+            item.ObjectType == SpaceDesignAttributeObjectTypes.RackLevel &&
+            item.ObjectLogicalId != Guid.Empty);
+        Assert.Contains(attributes, item =>
+            item.ObjectType == SpaceDesignAttributeObjectTypes.Location &&
+            item.Unit == "C");
+        var commands = await fixture.Context.ElementCommandRecords
+            .OrderBy(item => item.SequenceNo)
+            .ToArrayAsync();
+        Assert.Equal(10, commands.Length);
+        Assert.Equal(Enumerable.Range(0, 10),
+            commands.Select(item => item.SequenceNo));
+    }
+
+    [Fact]
+    public async Task Confirmed_apply_updates_and_removes_omitted_metadata_rows()
+    {
+        var original = await CreateFixtureAsync();
+        await using var fixture = original with
+        {
+            Profile = original.Profile with
+            {
+                Definition = ExcelDefinition(
+                    "Racks",
+                    "RackLevels",
+                    "Locations",
+                    "Bindings",
+                    "Attributes"),
+            },
+            Workbook = SingleMetadataExcelWorkbook(),
+        };
+        var tenantId = fixture.Context.CurrentTenantId;
+        var floor = await fixture.Context.FloorRevisions.SingleAsync();
+        var zone = await fixture.Context.ZoneRevisions.SingleAsync();
+        var source = await fixture.Context.Sources.SingleAsync(item =>
+            item.Id == fixture.Request.ExcelSourceId);
+        var rack = SpaceRackRevision.Create(
+            tenantId,
+            fixture.Version.Id,
+            Guid.NewGuid(),
+            floor.LogicalId,
+            zone.LogicalId,
+            "R-001");
+        rack.ConfigureGeometry(0, 0, 0, 0, 1000, 1200, 5000);
+        var level = SpaceRackLevelRevision.Create(
+            tenantId,
+            fixture.Version.Id,
+            Guid.NewGuid(),
+            rack.LogicalId,
+            1,
+            0,
+            900,
+            1,
+            1,
+            1000,
+            1200);
+        var location = SpaceLocationRevision.Create(
+            tenantId,
+            fixture.Version.Id,
+            Guid.NewGuid(),
+            floor.LogicalId,
+            rack.LogicalId,
+            "L-001",
+            1,
+            1,
+            1,
+            1000,
+            900,
+            1200,
+            locationType: SpaceLocationTypes.Buffer);
+        var primary = SpaceLocationExternalBinding.Create(
+            tenantId,
+            Guid.NewGuid(),
+            location,
+            "cp6-wms-v1",
+            "WH-01",
+            "EXT-001",
+            SpaceLocationBindingMode.WmsAlias,
+            source,
+            "Bindings!2");
+        var omittedBinding = SpaceLocationExternalBinding.Create(
+            tenantId,
+            Guid.NewGuid(),
+            location,
+            "cp6-wms-v1",
+            "WH-01",
+            "EXT-OLD",
+            SpaceLocationBindingMode.WmsPrimary,
+            source,
+            "Bindings!3");
+        var retainedAttribute = SpaceDesignAttribute.Create(
+            tenantId,
+            Guid.NewGuid(),
+            fixture.Version.Id,
+            SpaceDesignAttributeObjectTypes.Location,
+            location.LogicalId,
+            SpaceDesignAttributeNamespaces.Custom,
+            "TargetTemperature",
+            "12",
+            "C",
+            source,
+            "Attributes!2");
+        var omittedAttribute = SpaceDesignAttribute.Create(
+            tenantId,
+            Guid.NewGuid(),
+            fixture.Version.Id,
+            SpaceDesignAttributeObjectTypes.Location,
+            location.LogicalId,
+            SpaceDesignAttributeNamespaces.Owner,
+            "LegacyOwner",
+            "OLD",
+            null,
+            source,
+            "Attributes!3");
+        fixture.Context.AddRange(
+            rack,
+            level,
+            location,
+            primary,
+            omittedBinding,
+            retainedAttribute,
+            omittedAttribute);
+        await fixture.Context.SaveChangesAsync();
+
+        var match = await ProduceSucceededMatchAsync(
+            fixture,
+            "metadata-update-match");
+        var confirmed = await fixture.ApplyService.ConfirmAsync(
+            fixture.Version.Id,
+            match.JobId,
+            new ConfirmSpaceExcelCadMatchRequest(
+                true,
+                match.ArtifactId,
+                match.Artifact.ArtifactPayloadSha256,
+                fixture.Version.ContentRevision),
+            "metadata-update-confirm");
+        var lease = await ClaimAsync(
+            fixture,
+            confirmed.ApplyJobId,
+            SpaceExcelCadApplyJobProcessor.Version,
+            "metadata-update-worker");
+        var executor = new SpaceExcelCadApplyJobStepExecutor(
+            fixture.Context,
+            new FileServiceProvider(
+                fixture.Files,
+                new FixedBindingAuthorityResolver(
+                    "cp6-wms-v1",
+                    "WH-01")),
+            new FixedWorkbookReader(fixture.Workbook),
+            new FixedMappingService(fixture.Profile),
+            new FixedClock());
+
+        await executor.ExecuteAsync(new SpaceJobStepExecution(
+            lease,
+            1,
+            SpaceExcelCadApplyJobProcessor.ApplyConfirmedArtifact));
+
+        var appliedLocation = await fixture.Context.LocationRevisions
+            .SingleAsync(item => item.LogicalId == location.LogicalId);
+        Assert.Equal(SpaceLocationTypes.Staging,
+            appliedLocation.LocationType);
+        var activeBindings = await fixture.Context.LocationExternalBindings
+            .ToArrayAsync();
+        Assert.Single(activeBindings);
+        Assert.Equal(primary.Id, activeBindings[0].Id);
+        Assert.Equal(SpaceLocationBindingMode.WmsPrimary,
+            activeBindings[0].BindingMode);
+        var allBindings = await fixture.Context.LocationExternalBindings
+            .IgnoreQueryFilters()
+            .Where(item => item.TenantId == tenantId)
+            .ToArrayAsync();
+        Assert.True(allBindings.Single(item => item.Id == omittedBinding.Id)
+            .IsDeleted);
+        var activeAttributes = await fixture.Context.DesignAttributes
+            .ToArrayAsync();
+        Assert.Single(activeAttributes);
+        Assert.Equal("18", activeAttributes[0].Value);
+        var allAttributes = await fixture.Context.DesignAttributes
+            .IgnoreQueryFilters()
+            .Where(item => item.TenantId == tenantId)
+            .ToArrayAsync();
+        Assert.True(allAttributes.Single(item => item.Id == omittedAttribute.Id)
+            .IsDeleted);
+        Assert.Equal(7,
+            await fixture.Context.ElementCommandRecords.CountAsync());
+    }
+
+    [Fact]
+    public async Task Confirmed_apply_rejects_non_authoritative_warehouse_binding()
+    {
+        var original = await CreateFixtureAsync();
+        await using var fixture = original with
+        {
+            Profile = original.Profile with
+            {
+                Definition = ExcelDefinition(
+                    "Racks",
+                    "RackLevels",
+                    "Locations",
+                    "Bindings",
+                    "Attributes"),
+            },
+            Workbook = MetadataExcelWorkbook(),
+        };
+        var match = await ProduceSucceededMatchAsync(
+            fixture,
+            "wrong-warehouse-match");
+        var confirmed = await fixture.ApplyService.ConfirmAsync(
+            fixture.Version.Id,
+            match.JobId,
+            new ConfirmSpaceExcelCadMatchRequest(
+                true,
+                match.ArtifactId,
+                match.Artifact.ArtifactPayloadSha256,
+                fixture.Version.ContentRevision),
+            "wrong-warehouse-confirm");
+        var lease = await ClaimAsync(
+            fixture,
+            confirmed.ApplyJobId,
+            SpaceExcelCadApplyJobProcessor.Version,
+            "wrong-warehouse-worker");
+        var executor = new SpaceExcelCadApplyJobStepExecutor(
+            fixture.Context,
+            new FileServiceProvider(
+                fixture.Files,
+                new FixedBindingAuthorityResolver(
+                    "cp6-wms-v1",
+                    "OTHER-WAREHOUSE")),
+            new FixedWorkbookReader(fixture.Workbook),
+            new FixedMappingService(fixture.Profile),
+            new FixedClock());
+
+        var error = await Assert.ThrowsAsync<SpaceJobProcessingException>(() =>
+            executor.ExecuteAsync(new SpaceJobStepExecution(
+                lease,
+                1,
+                SpaceExcelCadApplyJobProcessor.ApplyConfirmedArtifact)));
+
+        Assert.Equal(SpaceErrorCodes.ExcelCadApplyArtifactInvalid,
+            error.ErrorCode);
+        Assert.Empty(await fixture.Context.RackRevisions.ToArrayAsync());
+        Assert.Empty(await fixture.Context.LocationExternalBindings
+            .ToArrayAsync());
+        Assert.Empty(await fixture.Context.ElementCommandRecords.ToArrayAsync());
+    }
+
+    [Fact]
     public async Task Revision_drift_fails_before_any_apply_write()
     {
         await using var fixture = await CreateFixtureAsync();
@@ -1205,6 +1530,141 @@ public sealed class SpaceExcelCadMatchServiceTests
             .ToArray());
     }
 
+    private static SpaceExcelWorkbookData MetadataExcelWorkbook()
+    {
+        var hierarchy = HierarchyExcelWorkbook(withTemplate: false);
+        return new SpaceExcelWorkbookData(
+        [
+            hierarchy.Sheets[0],
+            hierarchy.Sheets[1],
+            Sheet("Locations",
+                new Dictionary<string, string?>
+                {
+                    ["LocationCode"] = "L-001",
+                    ["RackCode"] = "R-001",
+                    ["ColumnNo"] = "1",
+                    ["LevelNo"] = "1",
+                    ["DepthNo"] = "1",
+                    ["LifecycleStatus"] = "Active",
+                    ["LocationType"] = "Storage",
+                },
+                new Dictionary<string, string?>
+                {
+                    ["LocationCode"] = "L-002",
+                    ["RackCode"] = "R-001",
+                    ["ColumnNo"] = "2",
+                    ["LevelNo"] = "1",
+                    ["DepthNo"] = "2",
+                    ["LifecycleStatus"] = "Active",
+                    ["LocationType"] = "Picking",
+                }),
+            Sheet("Bindings",
+                new Dictionary<string, string?>
+                {
+                    ["WmsWarehouseCode"] = "WH-01",
+                    ["ExternalLocationId"] = "EXT-001",
+                    ["LocationCode"] = "L-001",
+                    ["BindingMode"] = "WmsPrimary",
+                },
+                new Dictionary<string, string?>
+                {
+                    ["WmsWarehouseCode"] = "WH-01",
+                    ["ExternalLocationId"] = "EXT-001-ALIAS",
+                    ["LocationCode"] = "L-001",
+                    ["BindingMode"] = "WmsAlias",
+                }),
+            Sheet("Attributes",
+                new Dictionary<string, string?>
+                {
+                    ["ObjectType"] = "Rack",
+                    ["BusinessKey"] = "R-001",
+                    ["Namespace"] = "Owner",
+                    ["Key"] = "OwnerCode",
+                    ["Value"] = "OWNER-01",
+                    ["Unit"] = null,
+                },
+                new Dictionary<string, string?>
+                {
+                    ["ObjectType"] = "RackLevel",
+                    ["BusinessKey"] = "R-001/1",
+                    ["Namespace"] = "Manufacturing",
+                    ["Key"] = "BeamProfile",
+                    ["Value"] = "B-100",
+                    ["Unit"] = "mm",
+                },
+                new Dictionary<string, string?>
+                {
+                    ["ObjectType"] = "Location",
+                    ["BusinessKey"] = "L-001",
+                    ["Namespace"] = "Custom",
+                    ["Key"] = "TargetTemperature",
+                    ["Value"] = "18",
+                    ["Unit"] = "C",
+                }),
+        ]);
+    }
+
+    private static SpaceExcelWorkbookData SingleMetadataExcelWorkbook() => new(
+    [
+        Sheet("Racks",
+            new Dictionary<string, string?>
+            {
+                ["FloorCode"] = "F01",
+                ["ZoneCode"] = "Z1",
+                ["RackCode"] = "R-001",
+                ["XMm"] = "0",
+                ["YMm"] = "0",
+                ["ZMm"] = "0",
+                ["WidthMm"] = "1000",
+                ["DepthMm"] = "1200",
+                ["HeightMm"] = "5000",
+                ["RotationZDeg"] = "0",
+                ["RackTemplateCode"] = null,
+                ["LifecycleStatus"] = "Active",
+            }),
+        Sheet("RackLevels",
+            new Dictionary<string, string?>
+            {
+                ["RackCode"] = "R-001",
+                ["LevelNo"] = "1",
+                ["BottomZMm"] = "0",
+                ["ClearHeightMm"] = "1000",
+                ["BinCount"] = "2",
+                ["DepthCount"] = "2",
+                ["LoadCapacityKg"] = "1000",
+                ["LifecycleStatus"] = "Active",
+            }),
+        Sheet("Locations",
+            new Dictionary<string, string?>
+            {
+                ["LocationCode"] = "L-001",
+                ["RackCode"] = "R-001",
+                ["ColumnNo"] = "1",
+                ["LevelNo"] = "1",
+                ["DepthNo"] = "1",
+                ["LifecycleStatus"] = "Active",
+                ["LocationType"] = "Staging",
+            }),
+        Sheet("Bindings",
+            new Dictionary<string, string?>
+            {
+                ["WmsWarehouseCode"] = "WH-01",
+                ["ExternalLocationId"] = "EXT-001",
+                ["LocationCode"] = "L-001",
+                ["BindingMode"] = "WmsPrimary",
+            }),
+        Sheet("Attributes",
+            new Dictionary<string, string?>
+            {
+                ["ObjectType"] = "Location",
+                ["BusinessKey"] = "L-001",
+                ["Namespace"] = "Custom",
+                ["Key"] = "TargetTemperature",
+                ["Value"] = "18",
+                ["Unit"] = "C",
+            }),
+    ]);
+
     private static SpaceExcelWorkbookSheet Sheet(
         string name,
         params IReadOnlyDictionary<string, string?>[] values)
@@ -1379,13 +1839,30 @@ public sealed class SpaceExcelCadMatchServiceTests
         }
     }
 
-    private sealed class FileServiceProvider(MemoryFileStore files) :
+    private sealed class FixedBindingAuthorityResolver(
+        string adapterId,
+        string warehouseCode) : ISpaceExcelBindingAuthorityResolver
+    {
+        public Task<SpaceExcelBindingAuthority?> ResolveAsync(
+            Guid siteId,
+            CancellationToken cancellationToken = default) =>
+            Task.FromResult<SpaceExcelBindingAuthority?>(new(
+                siteId,
+                adapterId,
+                warehouseCode));
+    }
+
+    private sealed class FileServiceProvider(
+        MemoryFileStore files,
+        ISpaceExcelBindingAuthorityResolver? bindingAuthority = null) :
         IServiceProvider
     {
         public object? GetService(Type serviceType) =>
             serviceType == typeof(ISpaceFileStore) ||
             serviceType == typeof(ISpaceQuarantineStore)
                 ? files
+                : serviceType == typeof(ISpaceExcelBindingAuthorityResolver)
+                    ? bindingAuthority
                 : null;
     }
 

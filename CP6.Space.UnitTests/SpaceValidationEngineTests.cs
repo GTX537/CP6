@@ -49,6 +49,56 @@ public sealed class SpaceValidationEngineTests
     }
 
     [Fact]
+    public void Excel_metadata_is_validated_and_participates_in_content_hash()
+    {
+        var snapshot = ValidSnapshot();
+        snapshot = snapshot with
+        {
+            Locations =
+            [
+                snapshot.Locations[0] with
+                {
+                    LocationType = SpaceLocationTypes.Storage,
+                },
+                snapshot.Locations[1],
+            ],
+            LocationBindings =
+            [
+                new SpaceValidationLocationBinding(
+                    LocationOneId,
+                    "test-wms",
+                    "WH-01",
+                    "EXT-01",
+                    SpaceLocationBindingMode.WmsPrimary),
+            ],
+            DesignAttributes =
+            [
+                new SpaceValidationDesignAttribute(
+                    SpaceDesignAttributeObjectTypes.Location,
+                    LocationOneId,
+                    SpaceDesignAttributeNamespaces.Custom,
+                    "TemperatureClass",
+                    "Ambient",
+                    null),
+            ],
+        };
+        var changed = snapshot with
+        {
+            DesignAttributes =
+            [
+                snapshot.DesignAttributes![0] with { Value = "Cold" },
+            ],
+        };
+
+        var result = _engine.Validate(snapshot, _profile);
+
+        Assert.Empty(result.Issues);
+        Assert.NotEqual(
+            result.ContentHash,
+            _engine.ComputeContentHash(changed));
+    }
+
+    [Fact]
     public void Hierarchy_codes_and_rack_slots_are_reported_together()
     {
         var snapshot = ValidSnapshot();

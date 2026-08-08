@@ -709,6 +709,14 @@ internal sealed class EfSpaceValidationSnapshotReader
             .AsNoTracking()
             .Where(value => value.ModelVersionId == version.Id)
             .ToArrayAsync(cancellationToken);
+        var locationBindings = await _context.LocationExternalBindings
+            .AsNoTracking()
+            .Where(value => value.ModelVersionId == version.Id)
+            .ToArrayAsync(cancellationToken);
+        var designAttributes = await _context.DesignAttributes
+            .AsNoTracking()
+            .Where(value => value.ModelVersionId == version.Id)
+            .ToArrayAsync(cancellationToken);
         var elements = await _context.ElementRevisions
             .AsNoTracking()
             .Where(value => value.ModelVersionId == version.Id)
@@ -836,7 +844,8 @@ internal sealed class EfSpaceValidationSnapshotReader
                     value.Height,
                     value.Depth,
                     value.CodeOrigin,
-                    value.ExternalBindingState))
+                    value.ExternalBindingState,
+                    value.LocationType))
                 .ToArray(),
             elements.Select(value => new SpaceValidationElement(
                     Ref(value),
@@ -892,6 +901,23 @@ internal sealed class EfSpaceValidationSnapshotReader
                     value.GenerationRunId,
                     value.GenerationProposalId,
                     value.EvidenceJson))
+                .ToArray(),
+            locationBindings.Select(value =>
+                    new SpaceValidationLocationBinding(
+                        value.LocationLogicalId,
+                        value.AdapterId,
+                        value.WarehouseCode,
+                        value.ExternalLocationId,
+                        value.BindingMode))
+                .ToArray(),
+            designAttributes.Select(value =>
+                    new SpaceValidationDesignAttribute(
+                        value.ObjectType,
+                        value.ObjectLogicalId,
+                        value.Namespace,
+                        value.Key,
+                        value.Value,
+                        value.Unit))
                 .ToArray());
     }
 

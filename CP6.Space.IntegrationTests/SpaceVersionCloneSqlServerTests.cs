@@ -107,6 +107,8 @@ public sealed class SpaceVersionCloneSqlServerTests
             Assert.Contains("Space_AssetVersion", tableNames);
             Assert.Contains("Space_ElementRevision", tableNames);
             Assert.Contains("Space_ElementAttribute", tableNames);
+            Assert.Contains("Space_LocationExternalBinding", tableNames);
+            Assert.Contains("Space_DesignAttribute", tableNames);
             Assert.Contains("Space_UnderlayCalibration", tableNames);
 
             var cloneColumn = await context.Database
@@ -130,6 +132,17 @@ public sealed class SpaceVersionCloneSqlServerTests
                     """)
                 .SingleAsync();
             Assert.Equal("UnderlayCalibrationId", calibrationColumn);
+
+            var locationTypeColumn = await context.Database
+                .SqlQueryRaw<string>(
+                    """
+                    SELECT [name] AS [Value]
+                    FROM sys.columns
+                    WHERE [object_id] = OBJECT_ID('Space_LocationRevision')
+                      AND [name] = 'LocationType'
+                    """)
+                .SingleAsync();
+            Assert.Equal("LocationType", locationTypeColumn);
         });
     }
 
@@ -196,6 +209,15 @@ public sealed class SpaceVersionCloneSqlServerTests
             var sourceRackLevel = await context.RackLevelRevisions
                 .AsNoTracking()
                 .SingleAsync(row => row.ModelVersionId == published.Id);
+            var sourceLocation = await context.LocationRevisions
+                .AsNoTracking()
+                .SingleAsync(row => row.ModelVersionId == published.Id);
+            var sourceBinding = await context.LocationExternalBindings
+                .AsNoTracking()
+                .SingleAsync(row => row.ModelVersionId == published.Id);
+            var sourceDesignAttribute = await context.DesignAttributes
+                .AsNoTracking()
+                .SingleAsync(row => row.ModelVersionId == published.Id);
             var sourceSource = await context.Sources
                 .AsNoTracking()
                 .SingleAsync(row =>
@@ -243,8 +265,16 @@ public sealed class SpaceVersionCloneSqlServerTests
                 row => row.ModelVersionId == started.Result.ModelVersionId);
             var targetAttribute = await context.ElementAttributes.SingleAsync(
                 row => row.ModelVersionId == started.Result.ModelVersionId);
+            var targetLocation = await context.LocationRevisions.SingleAsync(
+                row => row.ModelVersionId == started.Result.ModelVersionId);
+            var targetBinding = await context.LocationExternalBindings
+                .SingleAsync(
+                    row => row.ModelVersionId == started.Result.ModelVersionId);
+            var targetDesignAttribute = await context.DesignAttributes
+                .SingleAsync(
+                    row => row.ModelVersionId == started.Result.ModelVersionId);
 
-            Assert.Equal(10, started.Counts.Total);
+            Assert.Equal(12, started.Counts.Total);
             Assert.NotEqual(sourceSource.Id, targetSource.Id);
             Assert.Equal(sourceSource.Sha256, targetSource.Sha256);
             Assert.NotEqual(sourceFloor.Id, targetFloor.Id);
@@ -292,6 +322,23 @@ public sealed class SpaceVersionCloneSqlServerTests
             Assert.Equal(sourceRackLevel.BeamHeight, targetRackLevel.BeamHeight);
             Assert.Equal(sourceRackLevel.MaxLoad, targetRackLevel.MaxLoad);
             Assert.Equal(targetElement.Id, targetAttribute.ElementRevisionId);
+            Assert.NotEqual(sourceLocation.Id, targetLocation.Id);
+            Assert.Equal(sourceLocation.LogicalId, targetLocation.LogicalId);
+            Assert.Equal(SpaceLocationTypes.Storage,
+                targetLocation.LocationType);
+            Assert.NotEqual(sourceBinding.Id, targetBinding.Id);
+            Assert.Equal(sourceBinding.LocationLogicalId,
+                targetBinding.LocationLogicalId);
+            Assert.Equal(targetSource.Id, targetBinding.SourceId);
+            Assert.Equal(sourceBinding.ExternalLocationId,
+                targetBinding.ExternalLocationId);
+            Assert.NotEqual(sourceDesignAttribute.Id,
+                targetDesignAttribute.Id);
+            Assert.Equal(sourceDesignAttribute.ObjectLogicalId,
+                targetDesignAttribute.ObjectLogicalId);
+            Assert.Equal(targetSource.Id, targetDesignAttribute.SourceId);
+            Assert.Equal(sourceDesignAttribute.Value,
+                targetDesignAttribute.Value);
         });
     }
 
@@ -367,7 +414,7 @@ public sealed class SpaceVersionCloneSqlServerTests
                 leaseStore);
             var lease = await leaseStore.TryClaimNextAsync(
                 "scenario-clone-worker",
-                "space-clone-v1",
+                SpaceVersionCloneContract.ProcessorVersion,
                 TimeSpan.FromMinutes(2));
             Assert.NotNull(lease);
             await processor.ProcessAsync(lease!);
@@ -412,7 +459,7 @@ public sealed class SpaceVersionCloneSqlServerTests
         var leaseStore = new EfSpaceJobLeaseStore(context, clock);
         var lease = await leaseStore.TryClaimNextAsync(
             "clone-worker",
-            "space-clone-v1",
+            SpaceVersionCloneContract.ProcessorVersion,
             TimeSpan.FromMinutes(2));
         var counts = await new EfSpaceVersionCloneProcessor(
                 context,
@@ -547,7 +594,30 @@ public sealed class SpaceVersionCloneSqlServerTests
                 1,
                 1000,
                 1000,
-                800);
+                800,
+                locationType: SpaceLocationTypes.Storage);
+            var locationBinding = SpaceLocationExternalBinding.Create(
+                tenantId,
+                Guid.NewGuid(),
+                location,
+                "cp6-wms-v1",
+                "WH-01",
+                "EXT-F1-R1-01",
+                SpaceLocationBindingMode.WmsPrimary,
+                source,
+                "Bindings!2");
+            var designAttribute = SpaceDesignAttribute.Create(
+                tenantId,
+                Guid.NewGuid(),
+                version.Id,
+                SpaceDesignAttributeObjectTypes.Location,
+                location.LogicalId,
+                SpaceDesignAttributeNamespaces.Custom,
+                "TemperatureClass",
+                "Ambient",
+                null,
+                source,
+                "Attributes!2");
             var element = SpaceElementRevision.Create(
                 tenantId,
                 version.Id,
@@ -592,6 +662,8 @@ public sealed class SpaceVersionCloneSqlServerTests
                 rack,
                 rackLevel,
                 location,
+                locationBinding,
+                designAttribute,
                 asset,
                 assetVersion,
                 element,

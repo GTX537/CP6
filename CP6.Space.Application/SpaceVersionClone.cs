@@ -2,6 +2,11 @@ using CP6.Space.Domain;
 
 namespace CP6.Space.Application;
 
+public static class SpaceVersionCloneContract
+{
+    public const string ProcessorVersion = "space-clone-v2";
+}
+
 public sealed record SpaceVersionCloneRequest(
     Guid ModelId,
     string Name,
@@ -31,7 +36,9 @@ public sealed record SpaceVersionCloneCounts(
     int RackLevels,
     int Locations,
     int Elements,
-    int ElementAttributes)
+    int ElementAttributes,
+    int LocationExternalBindings = 0,
+    int DesignAttributes = 0)
 {
     public long Total =>
         (long)Sources +
@@ -42,7 +49,9 @@ public sealed record SpaceVersionCloneCounts(
         RackLevels +
         Locations +
         Elements +
-        ElementAttributes;
+        ElementAttributes +
+        LocationExternalBindings +
+        DesignAttributes;
 }
 
 public interface ISpaceVersionCloneStore

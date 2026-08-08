@@ -22,7 +22,10 @@ public sealed record SpaceDesignSceneDto(
     IReadOnlyList<SpaceSceneRackLevelDto> RackLevels,
     IReadOnlyList<SpaceSceneLocationDto> Locations,
     IReadOnlyList<SpaceSceneElementDto> Elements,
-    IReadOnlyList<SpaceSceneElementAttributeDto> ElementAttributes);
+    IReadOnlyList<SpaceSceneElementAttributeDto> ElementAttributes,
+    IReadOnlyList<SpaceSceneLocationExternalBindingDto>?
+        LocationExternalBindings = null,
+    IReadOnlyList<SpaceSceneDesignAttributeDto>? DesignAttributes = null);
 
 public sealed record SpaceSceneRevisionDto(
     Guid RevisionId,
@@ -112,7 +115,29 @@ public sealed record SpaceSceneLocationDto(
     int Depth,
     decimal? MaxLoad,
     string CodeOrigin,
-    string ExternalBindingState);
+    string ExternalBindingState,
+    string? LocationType = null);
+
+public sealed record SpaceSceneLocationExternalBindingDto(
+    Guid Id,
+    Guid LocationLogicalId,
+    string AdapterId,
+    string WarehouseCode,
+    string ExternalLocationId,
+    string BindingMode,
+    Guid SourceId,
+    string SourceRef);
+
+public sealed record SpaceSceneDesignAttributeDto(
+    Guid Id,
+    string ObjectType,
+    Guid ObjectLogicalId,
+    string Namespace,
+    string Key,
+    string Value,
+    string? Unit,
+    Guid SourceId,
+    string SourceRef);
 
 public sealed record SpaceSceneElementDto(
     SpaceSceneRevisionDto Revision,

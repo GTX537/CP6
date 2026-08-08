@@ -17,7 +17,8 @@ public sealed class SpacePlanningScenarioService(
     : ISpacePlanningScenarioService
 {
     public const string DefinitionVersion = "space-planning-scenario-v1";
-    public const string CloneProcessorVersion = "space-clone-v1";
+    public const string CloneProcessorVersion =
+        SpaceVersionCloneContract.ProcessorVersion;
     public const int MaximumListItems = 100;
 
     private static readonly JsonSerializerOptions Json =

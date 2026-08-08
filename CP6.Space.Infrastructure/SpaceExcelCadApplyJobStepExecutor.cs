@@ -94,28 +94,6 @@ public sealed class SpaceExcelCadApplyJobStepExecutor(
                 SpaceErrorCodes.ExcelCadApplyArtifactInvalid,
                 "The authoritative Excel workbook projection changed or is now blocked.");
         }
-        var unsupportedSheets = projection.CanonicalRows
-            .Where(item => item.TargetSheet is "Bindings" or "Attributes")
-            .Select(item => item.TargetSheet)
-            .Distinct(StringComparer.Ordinal)
-            .OrderBy(item => item, StringComparer.Ordinal)
-            .ToArray();
-        if (unsupportedSheets.Length != 0)
-        {
-            throw Failure(
-                SpaceJobFailureKind.Input,
-                SpaceErrorCodes.ExcelCadApplyScopeUnsupported,
-                $"The populated {string.Join(", ", unsupportedSheets)} sheet is not safely resolvable by this Apply contract.");
-        }
-        if (projection.CanonicalRows.Any(item =>
-                item.TargetSheet == "Locations" &&
-                !string.IsNullOrWhiteSpace(Value(item, "LocationType"))))
-        {
-            throw Failure(
-                SpaceJobFailureKind.Input,
-                SpaceErrorCodes.ExcelCadApplyScopeUnsupported,
-                "LocationType is populated but the versioned Location model has no authoritative persistence field.");
-        }
         if (projection.CanonicalRows.Any(item => item.TargetSheet is not (
                 "Racks" or "RackLevels" or "Locations" or
                 "Bindings" or "Attributes")))
@@ -253,12 +231,13 @@ public sealed class SpaceExcelCadApplyJobStepExecutor(
                         JsonSerializer.Serialize(after, JsonOptions)));
             }
 
-            ApplyHierarchy(
+            await ApplyHierarchyAsync(
                 execution.Lease.TenantId,
                 input,
                 batch,
                 hierarchy,
-                applyRows.Count);
+                applyRows.Count,
+                cancellationToken);
 
             state.Floor.AdvanceRevision(input.Payload.ExpectedFloorRevision);
             state.Version.TouchContent();
@@ -483,7 +462,7 @@ public sealed class SpaceExcelCadApplyJobStepExecutor(
         SpaceExcelWorkbookProjectionV1 projection) => new
         {
             schemaVersion = SpaceExcelCadApplyVersions.SchemaVersion,
-            hierarchySchemaVersion = 1,
+            hierarchySchemaVersion = 2,
             input.Payload.ModelVersionId,
             input.Payload.MatchJobId,
             input.Payload.ArtifactId,
@@ -524,6 +503,9 @@ public sealed class SpaceExcelCadApplyJobStepExecutor(
         var version = await context.Versions.SingleOrDefaultAsync(
             item => item.Id == input.Payload.ModelVersionId,
             cancellationToken) ?? throw Missing("The Draft version was not found.");
+        var model = await context.Models.SingleOrDefaultAsync(
+            item => item.Id == version.ModelId,
+            cancellationToken) ?? throw Missing("The target model was not found.");
         var floor = await context.FloorRevisions.SingleOrDefaultAsync(
             item => item.ModelVersionId == input.Payload.ModelVersionId &&
                     item.LogicalId == input.Payload.FloorLogicalId,
@@ -560,16 +542,40 @@ public sealed class SpaceExcelCadApplyJobStepExecutor(
             .Where(item =>
                 item.ModelVersionId == input.Payload.ModelVersionId)
             .ToArrayAsync(cancellationToken);
+        var locationBindings = await context.LocationExternalBindings
+            .Where(item => item.ModelVersionId == input.Payload.ModelVersionId)
+            .ToArrayAsync(cancellationToken);
+        var designAttributes = await context.DesignAttributes
+            .Where(item => item.ModelVersionId == input.Payload.ModelVersionId)
+            .ToArrayAsync(cancellationToken);
+        SpaceExcelBindingAuthority? bindingAuthority = null;
+        if (projection.CanonicalRows.Any(item => item.TargetSheet == "Bindings"))
+        {
+            var resolver = services.GetService(
+                    typeof(ISpaceExcelBindingAuthorityResolver)) as
+                ISpaceExcelBindingAuthorityResolver ?? throw Failure(
+                    SpaceJobFailureKind.Resource,
+                    SpaceErrorCodes.JobProcessorUnavailable,
+                    "The Excel binding authority resolver is not configured.");
+            bindingAuthority = await resolver.ResolveAsync(
+                model.SiteId,
+                cancellationToken) ?? throw Invalid(
+                "The target Site has no authoritative WMS warehouse identity.");
+        }
         var templateVersions = await ResolveTemplateVersionsAsync(
             projection,
             cancellationToken);
         return new WritableState(
+            model,
             version,
             floor,
             zones,
             racks,
             levels,
             locations,
+            locationBindings,
+            designAttributes,
+            bindingAuthority,
             templateVersions);
     }
 
@@ -767,6 +773,10 @@ public sealed class SpaceExcelCadApplyJobStepExecutor(
             item.TargetSheet.Equals("RackLevels", StringComparison.Ordinal));
         var locationsAreAuthoritative = profile.Definition.Sheets.Any(item =>
             item.TargetSheet.Equals("Locations", StringComparison.Ordinal));
+        var bindingsAreAuthoritative = profile.Definition.Sheets.Any(item =>
+            item.TargetSheet.Equals("Bindings", StringComparison.Ordinal));
+        var attributesAreAuthoritative = profile.Definition.Sheets.Any(item =>
+            item.TargetSheet.Equals("Attributes", StringComparison.Ordinal));
         var rackByCode = racks.ToDictionary(
             item => item.RackCode,
             StringComparer.OrdinalIgnoreCase);
@@ -873,6 +883,8 @@ public sealed class SpaceExcelCadApplyJobStepExecutor(
                 level.ClearHeight,
                 level.CellDepth,
                 level.MaxLoad,
+                SpaceLocationTypes.NormalizeOptional(
+                    Value(row, "LocationType")),
                 Lifecycle(Value(row, "LifecycleStatus"))));
         }
         if (locations.Select(item => item.LogicalId).Distinct().Count() !=
@@ -906,7 +918,9 @@ public sealed class SpaceExcelCadApplyJobStepExecutor(
                 .ToArray()
             : [];
         if (obsoleteLocations.Any(item =>
-                item.ExternalBindingState != SpaceExternalBindingState.Unbound))
+                item.ExternalBindingState != SpaceExternalBindingState.Unbound ||
+                state.LocationBindings.Any(binding =>
+                    binding.LocationLogicalId == item.LogicalId)))
         {
             throw Invalid(
                 "Apply cannot disable a WMS-bound Location omitted from the authoritative workbook.");
@@ -921,11 +935,179 @@ public sealed class SpaceExcelCadApplyJobStepExecutor(
                 "Apply cannot disable a RackLevel while Locations are outside workbook authority.");
         }
 
+        var locationByCode = locations.ToDictionary(
+            item => item.LocationCode,
+            StringComparer.OrdinalIgnoreCase);
+        var existingBindingByExternalKey = state.LocationBindings
+            .GroupBy(
+                item => ExternalBindingKey(
+                    item.AdapterId,
+                    item.WarehouseCode,
+                    item.ExternalLocationId),
+                StringComparer.OrdinalIgnoreCase)
+            .ToDictionary(
+                item => item.Key,
+                item => item.Single(),
+                StringComparer.OrdinalIgnoreCase);
+        var bindings = new List<BindingApply>();
+        foreach (var row in projection.CanonicalRows
+                     .Where(item => item.TargetSheet == "Bindings")
+                     .OrderBy(item => item.SourceSheet, StringComparer.Ordinal)
+                     .ThenBy(item => item.RowNumber))
+        {
+            var authority = state.BindingAuthority ?? throw Invalid(
+                "The target Site has no authoritative WMS binding authority.");
+            var warehouseCode = RequiredValue(row, "WmsWarehouseCode");
+            if (!warehouseCode.Equals(
+                    authority.WarehouseCode,
+                    StringComparison.Ordinal))
+            {
+                throw Invalid(
+                    $"WmsWarehouseCode '{warehouseCode}' does not equal the authoritative Site warehouse '{authority.WarehouseCode}'.");
+            }
+            var locationCode = RequiredValue(row, "LocationCode");
+            if (!locationByCode.TryGetValue(locationCode, out var location))
+                throw Invalid("A Binding row targets an unapplied Location.");
+            var externalLocationId = RequiredValue(row, "ExternalLocationId");
+            var mode = ParseBindingMode(Value(row, "BindingMode"));
+            var key = ExternalBindingKey(
+                authority.AdapterId,
+                warehouseCode,
+                externalLocationId);
+            existingBindingByExternalKey.TryGetValue(key, out var existing);
+            bindings.Add(new BindingApply(
+                row,
+                existing,
+                existing?.Id ?? SpaceExcelCadApplyService.DeterministicGuid(
+                    "space-excel-cad-apply-location-binding-v1",
+                    input.Payload.CommandBatchId,
+                    CanonicalIdentity(row)),
+                location.LogicalId,
+                authority.AdapterId,
+                warehouseCode,
+                externalLocationId,
+                mode));
+        }
+        foreach (var group in bindings.GroupBy(item => item.LocationLogicalId))
+        {
+            if (group.Count(item =>
+                    item.BindingMode ==
+                    SpaceLocationBindingMode.WmsPrimary) != 1)
+            {
+                throw Invalid(
+                    "Every Location with Excel bindings requires exactly one WmsPrimary row; aliases are optional.");
+            }
+        }
+        var expectedBindingIds = bindings.Select(item => item.Id).ToHashSet();
+        var appliedLocationIds = locations
+            .Select(item => item.LogicalId)
+            .ToHashSet();
+        var obsoleteBindings = bindingsAreAuthoritative
+            ? state.LocationBindings
+                .Where(item =>
+                    appliedLocationIds.Contains(item.LocationLogicalId) &&
+                    !expectedBindingIds.Contains(item.Id))
+                .OrderBy(item => item.Id)
+                .ToArray()
+            : [];
+
+        var rackLevelByBusinessKey = levels.ToDictionary(
+            item => RackLevelAttributeBusinessKey(
+                racks.Single(rack =>
+                    rack.LogicalId == item.RackLogicalId).RackCode,
+                item.LevelNo),
+            StringComparer.OrdinalIgnoreCase);
+        var existingAttributeByKey = state.DesignAttributes
+            .GroupBy(
+                item => DesignAttributeKey(
+                    item.ObjectType,
+                    item.ObjectLogicalId,
+                    item.Namespace,
+                    item.Key),
+                StringComparer.OrdinalIgnoreCase)
+            .ToDictionary(
+                item => item.Key,
+                item => item.Single(),
+                StringComparer.OrdinalIgnoreCase);
+        var attributes = new List<AttributeApply>();
+        foreach (var row in projection.CanonicalRows
+                     .Where(item => item.TargetSheet == "Attributes")
+                     .OrderBy(item => item.SourceSheet, StringComparer.Ordinal)
+                     .ThenBy(item => item.RowNumber))
+        {
+            var objectType = SpaceDesignAttributeObjectTypes.Normalize(
+                RequiredValue(row, "ObjectType"));
+            var businessKey = RequiredValue(row, "BusinessKey");
+            var objectLogicalId = objectType switch
+            {
+                SpaceDesignAttributeObjectTypes.Rack when
+                    rackByCode.TryGetValue(businessKey, out var rack) =>
+                    rack.LogicalId,
+                SpaceDesignAttributeObjectTypes.RackLevel when
+                    rackLevelByBusinessKey.TryGetValue(
+                        businessKey,
+                        out var rackLevel) => rackLevel.LogicalId,
+                SpaceDesignAttributeObjectTypes.Location when
+                    locationByCode.TryGetValue(businessKey, out var location) =>
+                    location.LogicalId,
+                _ => throw Invalid(
+                    "An Attribute row targets an unapplied design object."),
+            };
+            var attributeNamespace =
+                SpaceDesignAttributeNamespaces.Normalize(
+                    RequiredValue(row, "Namespace"));
+            var attributeKey = RequiredValue(row, "Key");
+            var key = DesignAttributeKey(
+                objectType,
+                objectLogicalId,
+                attributeNamespace,
+                attributeKey);
+            existingAttributeByKey.TryGetValue(key, out var existing);
+            attributes.Add(new AttributeApply(
+                row,
+                existing,
+                existing?.Id ?? SpaceExcelCadApplyService.DeterministicGuid(
+                    "space-excel-cad-apply-design-attribute-v1",
+                    input.Payload.CommandBatchId,
+                    CanonicalIdentity(row)),
+                objectType,
+                objectLogicalId,
+                attributeNamespace,
+                attributeKey,
+                RequiredValue(row, "Value"),
+                Value(row, "Unit")));
+        }
+        var expectedAttributeIds = attributes.Select(item => item.Id).ToHashSet();
+        var appliedTargets = racks.Select(item => (
+                SpaceDesignAttributeObjectTypes.Rack,
+                item.LogicalId))
+            .Concat(levels.Select(item => (
+                SpaceDesignAttributeObjectTypes.RackLevel,
+                item.LogicalId)))
+            .Concat(locations.Select(item => (
+                SpaceDesignAttributeObjectTypes.Location,
+                item.LogicalId)))
+            .ToHashSet();
+        var obsoleteAttributes = attributesAreAuthoritative
+            ? state.DesignAttributes
+                .Where(item =>
+                    appliedTargets.Contains((
+                        item.ObjectType,
+                        item.ObjectLogicalId)) &&
+                    !expectedAttributeIds.Contains(item.Id))
+                .OrderBy(item => item.Id)
+                .ToArray()
+            : [];
+
         return new HierarchyApply(
             levels,
             obsoleteLevels,
             locations,
-            obsoleteLocations);
+            obsoleteLocations,
+            bindings,
+            obsoleteBindings,
+            attributes,
+            obsoleteAttributes);
     }
 
     private static void ValidateFinalRackKeys(
@@ -965,13 +1147,48 @@ public sealed class SpaceExcelCadApplyJobStepExecutor(
         }
     }
 
-    private void ApplyHierarchy(
+    private async Task ApplyHierarchyAsync(
         Guid tenantId,
         ImmutableInput input,
         SpaceElementCommandBatch batch,
         HierarchyApply hierarchy,
-        int sequence)
+        int sequence,
+        CancellationToken cancellationToken)
     {
+        var existingBindings = hierarchy.Bindings
+            .Where(item => item.Existing is not null)
+            .Select(item => item.Existing!)
+            .Concat(hierarchy.ObsoleteBindings)
+            .GroupBy(item => item.Id)
+            .Select(group => group.Single())
+            .ToArray();
+        var bindingBeforeById = existingBindings.ToDictionary(
+            item => item.Id,
+            BindingSnapshot);
+        if (context.Database.IsRelational())
+        {
+            var retainedPrimaryIds = hierarchy.Bindings
+                .Where(item =>
+                    item.Existing is not null &&
+                    item.Existing.BindingMode ==
+                    SpaceLocationBindingMode.WmsPrimary &&
+                    item.BindingMode == SpaceLocationBindingMode.WmsPrimary &&
+                    item.Existing.LocationLogicalId == item.LocationLogicalId)
+                .Select(item => item.Id)
+                .ToHashSet();
+            var primariesToRelease = existingBindings
+                .Where(item =>
+                    item.BindingMode ==
+                    SpaceLocationBindingMode.WmsPrimary &&
+                    !retainedPrimaryIds.Contains(item.Id))
+                .ToArray();
+            foreach (var binding in primariesToRelease)
+                binding.ChangeBindingMode(SpaceLocationBindingMode.WmsAlias);
+            if (primariesToRelease.Length != 0)
+                await context.SaveChangesAsync(cancellationToken);
+        }
+
+        var locationTargets = new Dictionary<Guid, SpaceLocationRevision>();
         foreach (var item in hierarchy.Levels)
         {
             var level = item.Existing;
@@ -1049,7 +1266,8 @@ public sealed class SpaceExcelCadApplyJobStepExecutor(
                     item.Depth,
                     item.MaxLoad,
                     SpaceLocationCodeOrigin.Imported,
-                    SpaceExternalBindingState.Unbound);
+                    SpaceExternalBindingState.Unbound,
+                    item.LocationType);
                 context.LocationRevisions.Add(location);
                 action = "Create";
             }
@@ -1066,11 +1284,13 @@ public sealed class SpaceExcelCadApplyJobStepExecutor(
                     item.Width,
                     item.Height,
                     item.Depth,
-                    item.MaxLoad);
+                    item.MaxLoad,
+                    item.LocationType);
                 action = "Update";
             }
             location.ChangeLifecycle(item.LifecycleState);
             location.AttachSource(input.ExcelSource, SourceRef(item.Row));
+            locationTargets[item.LogicalId] = location;
             AddCommand(
                 tenantId,
                 input,
@@ -1119,6 +1339,141 @@ public sealed class SpaceExcelCadApplyJobStepExecutor(
                 new { reason = "omitted-from-authoritative-workbook" },
                 before,
                 LevelSnapshot(level));
+        }
+
+        foreach (var item in hierarchy.Bindings)
+        {
+            if (!locationTargets.TryGetValue(
+                    item.LocationLogicalId,
+                    out var location))
+            {
+                throw Invalid("A Binding target was not applied in this batch.");
+            }
+            var binding = item.Existing;
+            object before;
+            string action;
+            if (binding is null)
+            {
+                before = new { exists = false };
+                binding = SpaceLocationExternalBinding.Create(
+                    tenantId,
+                    item.Id,
+                    location,
+                    item.AdapterId,
+                    item.WarehouseCode,
+                    item.ExternalLocationId,
+                    item.BindingMode,
+                    input.ExcelSource,
+                    SourceRef(item.Row));
+                context.LocationExternalBindings.Add(binding);
+                action = "Create";
+            }
+            else
+            {
+                before = bindingBeforeById[binding.Id];
+                binding.UpdateTarget(
+                    tenantId,
+                    location,
+                    item.BindingMode,
+                    input.ExcelSource,
+                    SourceRef(item.Row));
+                action = "Update";
+            }
+            AddCommand(
+                tenantId,
+                input,
+                batch,
+                sequence++,
+                "space-excel-cad-apply-location-binding-command-v1",
+                CanonicalIdentity(item.Row),
+                $"ExcelCadApplyLocationBinding{action}",
+                item.LocationLogicalId,
+                item.Row,
+                before,
+                BindingSnapshot(binding));
+        }
+
+        foreach (var binding in hierarchy.ObsoleteBindings)
+        {
+            var before = bindingBeforeById[binding.Id];
+            binding.Remove();
+            AddCommand(
+                tenantId,
+                input,
+                batch,
+                sequence++,
+                "space-excel-cad-apply-location-binding-remove-command-v1",
+                binding.Id.ToString("N"),
+                "ExcelCadApplyLocationBindingRemove",
+                binding.LocationLogicalId,
+                new { reason = "omitted-from-authoritative-workbook" },
+                before,
+                BindingSnapshot(binding));
+        }
+
+        foreach (var item in hierarchy.Attributes)
+        {
+            var attribute = item.Existing;
+            object before;
+            string action;
+            if (attribute is null)
+            {
+                before = new { exists = false };
+                attribute = SpaceDesignAttribute.Create(
+                    tenantId,
+                    item.Id,
+                    input.Payload.ModelVersionId,
+                    item.ObjectType,
+                    item.ObjectLogicalId,
+                    item.Namespace,
+                    item.Key,
+                    item.Value,
+                    item.Unit,
+                    input.ExcelSource,
+                    SourceRef(item.Row));
+                context.DesignAttributes.Add(attribute);
+                action = "Create";
+            }
+            else
+            {
+                before = AttributeSnapshot(attribute);
+                attribute.UpdateValue(
+                    item.Value,
+                    item.Unit,
+                    input.ExcelSource,
+                    SourceRef(item.Row));
+                action = "Update";
+            }
+            AddCommand(
+                tenantId,
+                input,
+                batch,
+                sequence++,
+                "space-excel-cad-apply-design-attribute-command-v1",
+                CanonicalIdentity(item.Row),
+                $"ExcelCadApplyDesignAttribute{action}",
+                item.ObjectLogicalId,
+                item.Row,
+                before,
+                AttributeSnapshot(attribute));
+        }
+
+        foreach (var attribute in hierarchy.ObsoleteAttributes)
+        {
+            var before = AttributeSnapshot(attribute);
+            attribute.Remove();
+            AddCommand(
+                tenantId,
+                input,
+                batch,
+                sequence++,
+                "space-excel-cad-apply-design-attribute-remove-command-v1",
+                attribute.Id.ToString("N"),
+                "ExcelCadApplyDesignAttributeRemove",
+                attribute.ObjectLogicalId,
+                new { reason = "omitted-from-authoritative-workbook" },
+                before,
+                AttributeSnapshot(attribute));
         }
     }
 
@@ -1266,6 +1621,7 @@ public sealed class SpaceExcelCadApplyJobStepExecutor(
         location.Height,
         location.Depth,
         location.MaxLoad,
+        location.LocationType,
         codeOrigin = location.CodeOrigin.ToString(),
         externalBindingState = location.ExternalBindingState.ToString(),
         location.SourceId,
@@ -1273,11 +1629,60 @@ public sealed class SpaceExcelCadApplyJobStepExecutor(
         lifecycleState = location.LifecycleState.ToString(),
     };
 
+    private static object BindingSnapshot(
+        SpaceLocationExternalBinding binding) => new
+        {
+            exists = true,
+            binding.Id,
+            binding.ModelVersionId,
+            binding.LocationLogicalId,
+            binding.AdapterId,
+            binding.WarehouseCode,
+            binding.ExternalLocationId,
+            bindingMode = binding.BindingMode.ToString(),
+            binding.SourceId,
+            binding.SourceRef,
+            binding.IsDeleted,
+        };
+
+    private static object AttributeSnapshot(SpaceDesignAttribute attribute) => new
+    {
+        exists = true,
+        attribute.Id,
+        attribute.ModelVersionId,
+        attribute.ObjectType,
+        attribute.ObjectLogicalId,
+        attribute.Namespace,
+        attribute.Key,
+        attribute.Value,
+        attribute.Unit,
+        attribute.SourceId,
+        attribute.SourceRef,
+        attribute.IsDeleted,
+    };
+
     private static string LevelKey(Guid rackLogicalId, int levelNo) =>
         $"{rackLogicalId:N}\u001f{levelNo}";
 
     private static string LevelBusinessKey(string rackCode, int levelNo) =>
         $"{rackCode}\u001f{levelNo}";
+
+    private static string RackLevelAttributeBusinessKey(
+        string rackCode,
+        int levelNo) => $"{rackCode}/{levelNo}";
+
+    private static string ExternalBindingKey(
+        string adapterId,
+        string warehouseCode,
+        string externalLocationId) =>
+        $"{adapterId}\u001f{warehouseCode}\u001f{externalLocationId}";
+
+    private static string DesignAttributeKey(
+        string objectType,
+        Guid objectLogicalId,
+        string attributeNamespace,
+        string key) =>
+        $"{objectType}\u001f{objectLogicalId:N}\u001f{attributeNamespace}\u001f{key}";
 
     private static string CanonicalIdentity(SpaceExcelCanonicalRow row) =>
         $"{row.TargetSheet}\n{row.SourceSheet}\n{row.RowNumber}";
@@ -1376,6 +1781,22 @@ public sealed class SpaceExcelCadApplyJobStepExecutor(
         }
         throw new InvalidDataException(
             "LifecycleStatus must be Active or Disabled.");
+    }
+
+    private static SpaceLocationBindingMode ParseBindingMode(string? value)
+    {
+        if (string.IsNullOrWhiteSpace(value))
+            return SpaceLocationBindingMode.WmsPrimary;
+        if (Enum.TryParse<SpaceLocationBindingMode>(
+                value.Trim(),
+                ignoreCase: true,
+                out var parsed) &&
+            Enum.IsDefined(parsed))
+        {
+            return parsed;
+        }
+        throw new InvalidDataException(
+            "BindingMode must be WmsPrimary or WmsAlias.");
     }
 
     private DateTime RequireUtcNow()
@@ -1490,12 +1911,16 @@ public sealed class SpaceExcelCadApplyJobStepExecutor(
         SpaceExcelPreflightJobPayload PreflightPayload);
 
     private sealed record WritableState(
+        SpaceModel Model,
         SpaceModelVersion Version,
         SpaceFloorRevision Floor,
         IReadOnlyList<SpaceZoneRevision> Zones,
         IReadOnlyList<SpaceRackRevision> Racks,
         IReadOnlyList<SpaceRackLevelRevision> Levels,
         IReadOnlyList<SpaceLocationRevision> Locations,
+        IReadOnlyList<SpaceLocationExternalBinding> LocationBindings,
+        IReadOnlyList<SpaceDesignAttribute> DesignAttributes,
+        SpaceExcelBindingAuthority? BindingAuthority,
         IReadOnlyDictionary<string, Guid> TemplateVersions);
 
     private sealed record ApplyRow(
@@ -1541,11 +1966,37 @@ public sealed class SpaceExcelCadApplyJobStepExecutor(
         int Height,
         int Depth,
         decimal? MaxLoad,
+        string? LocationType,
         SpaceLifecycleState LifecycleState);
+
+    private sealed record BindingApply(
+        SpaceExcelCanonicalRow Row,
+        SpaceLocationExternalBinding? Existing,
+        Guid Id,
+        Guid LocationLogicalId,
+        string AdapterId,
+        string WarehouseCode,
+        string ExternalLocationId,
+        SpaceLocationBindingMode BindingMode);
+
+    private sealed record AttributeApply(
+        SpaceExcelCanonicalRow Row,
+        SpaceDesignAttribute? Existing,
+        Guid Id,
+        string ObjectType,
+        Guid ObjectLogicalId,
+        string Namespace,
+        string Key,
+        string Value,
+        string? Unit);
 
     private sealed record HierarchyApply(
         IReadOnlyList<LevelApply> Levels,
         IReadOnlyList<SpaceRackLevelRevision> ObsoleteLevels,
         IReadOnlyList<LocationApply> Locations,
-        IReadOnlyList<SpaceLocationRevision> ObsoleteLocations);
+        IReadOnlyList<SpaceLocationRevision> ObsoleteLocations,
+        IReadOnlyList<BindingApply> Bindings,
+        IReadOnlyList<SpaceLocationExternalBinding> ObsoleteBindings,
+        IReadOnlyList<AttributeApply> Attributes,
+        IReadOnlyList<SpaceDesignAttribute> ObsoleteAttributes);
 }

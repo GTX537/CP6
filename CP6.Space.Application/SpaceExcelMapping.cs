@@ -10,6 +10,18 @@ public sealed record SpaceExcelTargetFieldDefinition(
     bool IsBusinessKey,
     string? ReferenceTarget = null);
 
+public sealed record SpaceExcelBindingAuthority(
+    Guid SiteId,
+    string AdapterId,
+    string WarehouseCode);
+
+public interface ISpaceExcelBindingAuthorityResolver
+{
+    Task<SpaceExcelBindingAuthority?> ResolveAsync(
+        Guid siteId,
+        CancellationToken cancellationToken = default);
+}
+
 public static class SpaceExcelTargetCatalog
 {
     public const int MappingSchemaVersion = 1;

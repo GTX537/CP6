@@ -483,6 +483,14 @@ internal sealed class EfSpacePublishSnapshotReader
             .AsNoTracking()
             .Where(value => value.ModelVersionId == versionId)
             .ToArrayAsync(cancellationToken);
+        var declaredBindings = await _context.LocationExternalBindings
+            .AsNoTracking()
+            .Where(value => value.ModelVersionId == versionId)
+            .ToArrayAsync(cancellationToken);
+        var designAttributes = await _context.DesignAttributes
+            .AsNoTracking()
+            .Where(value => value.ModelVersionId == versionId)
+            .ToArrayAsync(cancellationToken);
         var elements = await _context.ElementRevisions
             .AsNoTracking()
             .Where(value => value.ModelVersionId == versionId)
@@ -516,6 +524,42 @@ internal sealed class EfSpacePublishSnapshotReader
                         value.Unit,
                     })
                     .ToArray());
+        var designAttributesByTarget = designAttributes
+            .GroupBy(value => (value.ObjectType, value.ObjectLogicalId))
+            .ToDictionary(
+                group => group.Key,
+                group => group
+                    .OrderBy(value => value.Namespace, StringComparer.Ordinal)
+                    .ThenBy(value => value.Key, StringComparer.Ordinal)
+                    .Select(value => new
+                    {
+                        value.Namespace,
+                        value.Key,
+                        value.Value,
+                        value.Unit,
+                    })
+                    .ToArray());
+        var bindingsByLocation = declaredBindings
+            .GroupBy(value => value.LocationLogicalId)
+            .ToDictionary(
+                group => group.Key,
+                group => group
+                    .OrderBy(value => value.BindingMode)
+                    .ThenBy(value => value.ExternalLocationId,
+                        StringComparer.Ordinal)
+                    .Select(value => new
+                    {
+                        value.AdapterId,
+                        value.WarehouseCode,
+                        value.ExternalLocationId,
+                        bindingMode = value.BindingMode.ToString(),
+                    })
+                    .ToArray());
+        var primaryBindings = declaredBindings
+            .Where(value =>
+                value.AdapterId == adapterId &&
+                value.BindingMode == SpaceLocationBindingMode.WmsPrimary)
+            .ToDictionary(value => value.LocationLogicalId);
         var zoneFloors = zones.ToDictionary(
             value => value.LogicalId,
             value => value.FloorLogicalId);
@@ -616,6 +660,9 @@ internal sealed class EfSpacePublishSnapshotReader
                     value.AisleLogicalId,
                     value.RackCode,
                     value.TemplateVersionId,
+                    Attributes = designAttributesByTarget.GetValueOrDefault((
+                        SpaceDesignAttributeObjectTypes.Rack,
+                        value.LogicalId)) ?? [],
                 }),
                 Json(new
                 {
@@ -654,6 +701,9 @@ internal sealed class EfSpacePublishSnapshotReader
                     value.CellDepth,
                     value.BeamHeight,
                     value.MaxLoad,
+                    Attributes = designAttributesByTarget.GetValueOrDefault((
+                        SpaceDesignAttributeObjectTypes.RackLevel,
+                        value.LogicalId)) ?? [],
                 }),
                 EmptyJson(),
                 Json(new
@@ -668,9 +718,11 @@ internal sealed class EfSpacePublishSnapshotReader
         result.AddRange(locations.Select(value =>
         {
             adoptions.TryGetValue(value.LogicalId, out var adoption);
+            primaryBindings.TryGetValue(value.LogicalId, out var declaredPrimary);
             var externalBindingId =
                 adoption?.ExternalLocationId ??
                 adoption?.WmsLogicalId.ToString("D") ??
+                declaredPrimary?.ExternalLocationId ??
                 (value.ExternalBindingState ==
                  SpaceExternalBindingState.Bound
                     ? value.LogicalId.ToString("D")
@@ -693,8 +745,14 @@ internal sealed class EfSpacePublishSnapshotReader
                     value.Height,
                     value.Depth,
                     value.MaxLoad,
+                    value.LocationType,
                     value.CodeOrigin,
                     value.ExternalBindingState,
+                    ExternalBindings = bindingsByLocation.GetValueOrDefault(
+                        value.LogicalId) ?? [],
+                    Attributes = designAttributesByTarget.GetValueOrDefault((
+                        SpaceDesignAttributeObjectTypes.Location,
+                        value.LogicalId)) ?? [],
                 }),
                 EmptyJson(),
                 Json(new
@@ -709,6 +767,7 @@ internal sealed class EfSpacePublishSnapshotReader
                     value.Height,
                     value.Depth,
                     value.MaxLoad,
+                    value.LocationType,
                 }),
                 Provenance(value, sources),
                 externalBindingId);

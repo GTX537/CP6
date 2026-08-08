@@ -16883,6 +16883,8 @@ export class SpaceDesignSceneDto implements ISpaceDesignSceneDto {
     locations?: SpaceSceneLocationDto[] | undefined;
     elements?: SpaceSceneElementDto[] | undefined;
     elementAttributes?: SpaceSceneElementAttributeDto[] | undefined;
+    locationExternalBindings?: SpaceSceneLocationExternalBindingDto[] | undefined;
+    designAttributes?: SpaceSceneDesignAttributeDto[] | undefined;
 
     constructor(data?: ISpaceDesignSceneDto) {
         if (data) {
@@ -16938,6 +16940,16 @@ export class SpaceDesignSceneDto implements ISpaceDesignSceneDto {
                 this.elementAttributes = [] as any;
                 for (let item of _data["elementAttributes"])
                     this.elementAttributes!.push(SpaceSceneElementAttributeDto.fromJS(item));
+            }
+            if (Array.isArray(_data["locationExternalBindings"])) {
+                this.locationExternalBindings = [] as any;
+                for (let item of _data["locationExternalBindings"])
+                    this.locationExternalBindings!.push(SpaceSceneLocationExternalBindingDto.fromJS(item));
+            }
+            if (Array.isArray(_data["designAttributes"])) {
+                this.designAttributes = [] as any;
+                for (let item of _data["designAttributes"])
+                    this.designAttributes!.push(SpaceSceneDesignAttributeDto.fromJS(item));
             }
         }
     }
@@ -16995,6 +17007,16 @@ export class SpaceDesignSceneDto implements ISpaceDesignSceneDto {
             for (let item of this.elementAttributes)
                 data["elementAttributes"].push(item ? item.toJSON() : undefined as any);
         }
+        if (Array.isArray(this.locationExternalBindings)) {
+            data["locationExternalBindings"] = [];
+            for (let item of this.locationExternalBindings)
+                data["locationExternalBindings"].push(item ? item.toJSON() : undefined as any);
+        }
+        if (Array.isArray(this.designAttributes)) {
+            data["designAttributes"] = [];
+            for (let item of this.designAttributes)
+                data["designAttributes"].push(item ? item.toJSON() : undefined as any);
+        }
         return data;
     }
 }
@@ -17016,6 +17038,8 @@ export interface ISpaceDesignSceneDto {
     locations?: SpaceSceneLocationDto[] | undefined;
     elements?: SpaceSceneElementDto[] | undefined;
     elementAttributes?: SpaceSceneElementAttributeDto[] | undefined;
+    locationExternalBindings?: SpaceSceneLocationExternalBindingDto[] | undefined;
+    designAttributes?: SpaceSceneDesignAttributeDto[] | undefined;
 }
 
 export class SpaceDeviceActiveAlarmDto implements ISpaceDeviceActiveAlarmDto {
@@ -24899,6 +24923,74 @@ export interface ISpaceSceneAisleDto {
     direction?: number;
 }
 
+export class SpaceSceneDesignAttributeDto implements ISpaceSceneDesignAttributeDto {
+    id?: string;
+    objectType?: string | undefined;
+    objectLogicalId?: string;
+    namespace?: string | undefined;
+    key?: string | undefined;
+    value?: string | undefined;
+    unit?: string | undefined;
+    sourceId?: string;
+    sourceRef?: string | undefined;
+
+    constructor(data?: ISpaceSceneDesignAttributeDto) {
+        if (data) {
+            for (var property in data) {
+                if (data.hasOwnProperty(property))
+                    (this as any)[property] = (data as any)[property];
+            }
+        }
+    }
+
+    init(_data?: any) {
+        if (_data) {
+            this.id = _data["id"];
+            this.objectType = _data["objectType"];
+            this.objectLogicalId = _data["objectLogicalId"];
+            this.namespace = _data["namespace"];
+            this.key = _data["key"];
+            this.value = _data["value"];
+            this.unit = _data["unit"];
+            this.sourceId = _data["sourceId"];
+            this.sourceRef = _data["sourceRef"];
+        }
+    }
+
+    static fromJS(data: any): SpaceSceneDesignAttributeDto {
+        data = typeof data === 'object' ? data : {};
+        let result = new SpaceSceneDesignAttributeDto();
+        result.init(data);
+        return result;
+    }
+
+    toJSON(data?: any) {
+        data = typeof data === 'object' ? data : {};
+        data["id"] = this.id;
+        data["objectType"] = this.objectType;
+        data["objectLogicalId"] = this.objectLogicalId;
+        data["namespace"] = this.namespace;
+        data["key"] = this.key;
+        data["value"] = this.value;
+        data["unit"] = this.unit;
+        data["sourceId"] = this.sourceId;
+        data["sourceRef"] = this.sourceRef;
+        return data;
+    }
+}
+
+export interface ISpaceSceneDesignAttributeDto {
+    id?: string;
+    objectType?: string | undefined;
+    objectLogicalId?: string;
+    namespace?: string | undefined;
+    key?: string | undefined;
+    value?: string | undefined;
+    unit?: string | undefined;
+    sourceId?: string;
+    sourceRef?: string | undefined;
+}
+
 export class SpaceSceneElementAttributeDto implements ISpaceSceneElementAttributeDto {
     id?: string;
     elementRevisionId?: string;
@@ -25169,6 +25261,7 @@ export class SpaceSceneLocationDto implements ISpaceSceneLocationDto {
     maxLoad?: number | undefined;
     codeOrigin?: string | undefined;
     externalBindingState?: string | undefined;
+    locationType?: string | undefined;
 
     constructor(data?: ISpaceSceneLocationDto) {
         if (data) {
@@ -25194,6 +25287,7 @@ export class SpaceSceneLocationDto implements ISpaceSceneLocationDto {
             this.maxLoad = _data["maxLoad"];
             this.codeOrigin = _data["codeOrigin"];
             this.externalBindingState = _data["externalBindingState"];
+            this.locationType = _data["locationType"];
         }
     }
 
@@ -25219,6 +25313,7 @@ export class SpaceSceneLocationDto implements ISpaceSceneLocationDto {
         data["maxLoad"] = this.maxLoad;
         data["codeOrigin"] = this.codeOrigin;
         data["externalBindingState"] = this.externalBindingState;
+        data["locationType"] = this.locationType;
         return data;
     }
 }
@@ -25237,6 +25332,71 @@ export interface ISpaceSceneLocationDto {
     maxLoad?: number | undefined;
     codeOrigin?: string | undefined;
     externalBindingState?: string | undefined;
+    locationType?: string | undefined;
+}
+
+export class SpaceSceneLocationExternalBindingDto implements ISpaceSceneLocationExternalBindingDto {
+    id?: string;
+    locationLogicalId?: string;
+    adapterId?: string | undefined;
+    warehouseCode?: string | undefined;
+    externalLocationId?: string | undefined;
+    bindingMode?: string | undefined;
+    sourceId?: string;
+    sourceRef?: string | undefined;
+
+    constructor(data?: ISpaceSceneLocationExternalBindingDto) {
+        if (data) {
+            for (var property in data) {
+                if (data.hasOwnProperty(property))
+                    (this as any)[property] = (data as any)[property];
+            }
+        }
+    }
+
+    init(_data?: any) {
+        if (_data) {
+            this.id = _data["id"];
+            this.locationLogicalId = _data["locationLogicalId"];
+            this.adapterId = _data["adapterId"];
+            this.warehouseCode = _data["warehouseCode"];
+            this.externalLocationId = _data["externalLocationId"];
+            this.bindingMode = _data["bindingMode"];
+            this.sourceId = _data["sourceId"];
+            this.sourceRef = _data["sourceRef"];
+        }
+    }
+
+    static fromJS(data: any): SpaceSceneLocationExternalBindingDto {
+        data = typeof data === 'object' ? data : {};
+        let result = new SpaceSceneLocationExternalBindingDto();
+        result.init(data);
+        return result;
+    }
+
+    toJSON(data?: any) {
+        data = typeof data === 'object' ? data : {};
+        data["id"] = this.id;
+        data["locationLogicalId"] = this.locationLogicalId;
+        data["adapterId"] = this.adapterId;
+        data["warehouseCode"] = this.warehouseCode;
+        data["externalLocationId"] = this.externalLocationId;
+        data["bindingMode"] = this.bindingMode;
+        data["sourceId"] = this.sourceId;
+        data["sourceRef"] = this.sourceRef;
+        return data;
+    }
+}
+
+export interface ISpaceSceneLocationExternalBindingDto {
+    id?: string;
+    locationLogicalId?: string;
+    adapterId?: string | undefined;
+    warehouseCode?: string | undefined;
+    externalLocationId?: string | undefined;
+    bindingMode?: string | undefined;
+    sourceId?: string;
+    sourceRef?: string | undefined;
 }
 
 export class SpaceSceneRackDto implements ISpaceSceneRackDto {

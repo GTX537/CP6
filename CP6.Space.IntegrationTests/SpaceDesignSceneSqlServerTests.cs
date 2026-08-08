@@ -141,7 +141,36 @@ public sealed class SpaceDesignSceneSqlServerTests
                     width: 1000,
                     height: 1200,
                     depth: 900,
-                    maxLoad: 1500m);
+                    maxLoad: 1500m,
+                    locationType: SpaceLocationTypes.Picking);
+                var excelSource = SpaceModelSource.CreateInlineSource(
+                    execution.TenantId,
+                    draft.Id,
+                    SpaceSourceType.Editor,
+                    "Scene metadata fixture",
+                    new string('e', 64));
+                var locationBinding = SpaceLocationExternalBinding.Create(
+                    execution.TenantId,
+                    Guid.NewGuid(),
+                    location,
+                    "wms-adapter",
+                    "WH-001",
+                    "EXT-F1-R1-01-01",
+                    SpaceLocationBindingMode.WmsPrimary,
+                    excelSource,
+                    "Bindings!2");
+                var rackAttribute = SpaceDesignAttribute.Create(
+                    execution.TenantId,
+                    Guid.NewGuid(),
+                    draft.Id,
+                    SpaceDesignAttributeObjectTypes.Rack,
+                    rack.LogicalId,
+                    SpaceDesignAttributeNamespaces.Custom,
+                    "temperatureClass",
+                    "Ambient",
+                    null,
+                    excelSource,
+                    "Attributes!2");
                 var element = SpaceElementRevision.Create(
                     execution.TenantId,
                     draft.Id,
@@ -194,6 +223,9 @@ public sealed class SpaceDesignSceneSqlServerTests
                     lower,
                     upper,
                     location,
+                    excelSource,
+                    locationBinding,
+                    rackAttribute,
                     modelAsset,
                     modelAssetVersion,
                     element,
@@ -244,6 +276,21 @@ public sealed class SpaceDesignSceneSqlServerTests
                         Assert.Equal(750m, level.MaxLoad);
                     });
                 Assert.Single(scene.Locations);
+                Assert.Equal(
+                    SpaceLocationTypes.Picking,
+                    scene.Locations[0].LocationType);
+                var binding = Assert.Single(scene.LocationExternalBindings!);
+                Assert.Equal(location.LogicalId, binding.LocationLogicalId);
+                Assert.Equal("wms-adapter", binding.AdapterId);
+                Assert.Equal("EXT-F1-R1-01-01", binding.ExternalLocationId);
+                Assert.Equal("WmsPrimary", binding.BindingMode);
+                var designAttribute = Assert.Single(scene.DesignAttributes!);
+                Assert.Equal(
+                    SpaceDesignAttributeObjectTypes.Rack,
+                    designAttribute.ObjectType);
+                Assert.Equal(rack.LogicalId, designAttribute.ObjectLogicalId);
+                Assert.Equal("temperatureClass", designAttribute.Key);
+                Assert.Equal("Ambient", designAttribute.Value);
                 Assert.Single(scene.Elements);
                 Assert.Equal(
                     SpaceElementTypes.Column,
