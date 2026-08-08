@@ -2,6 +2,14 @@
 
 > 依据 Git log 汇总，不替代完整 Git 历史。重点记录影响接手判断的里程碑。
 
+## 2026-08-08：Space V1 E13-S14 离线评估工程能力
+
+- `e69b3bca`：实现最终融合提案离线评估、Calibration-only 阈值选择、Validation+ReleaseHoldout 样本外门禁、95% Wilson 下界、人工操作下降率和防篡改报告。
+- 按 SampleId+稳定 SourceKey 一对一匹配；重复预测计 False Positive，类型、关键属性和精确关系必须正确，关系不能跨样本、自引用或指向不存在对象。
+- 正式门禁要求 20 资产、L1～L5、10/5/5、唯一 CAD hash、授权/脱敏、冻结版本、独立标注仲裁、验收日期、不可变和 hash-sealed 完整性审计；DevelopmentSeed 永远不能通过发布门禁。
+- 新增 `evaluate-ai-offline` 命令和现有 Draft Proposal 适配。验证为核心 11/11、命令 1/1、CAD 工具 26/26、Space Unit 482/482、默认 Integration 275 passed / 94 skipped、CP6.Tests 2811 passed / 17 skipped、完整 Release 0 warning / 0 error。
+- 本提交只完成 E13-S14 工程切片；正式黄金数据、真实 Provider/人工操作实测与审批仍待外部输入，S15/S18/S19 不提前签收，`main` 未修改。
+
 ## 2026-08-06：Space Version Clone 必填字段前向修复
 
 - `0564afad` / `01eba1b7`：补齐 Zone/Aisle/Rack `Name` 和 Rack `RackType` 的 Published → Draft 快照 SQL 映射；无 Schema/Migration 变化。
