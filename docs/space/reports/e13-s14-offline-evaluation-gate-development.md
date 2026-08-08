@@ -1,10 +1,12 @@
 # E13-S14 离线评估与阈值校准开发报告
 
-- 状态：Engineering slice validated；正式黄金集签收待外部证据
+- 状态：Engineering slice integrated；正式黄金集签收待外部证据
 - 日期：2026-08-08
 - 起始集成基线：`6c99b0fe`
 - 功能分支：`codex/space-e13-s14-offline-evaluation`
 - 功能提交：`e69b3bca`
+- 验证报告提交：`9261d59a`
+- no-ff 集成提交：`292a26ed`
 - 目标分支：`integration/space-v1-20260730`
 
 ## 1. 交付结论

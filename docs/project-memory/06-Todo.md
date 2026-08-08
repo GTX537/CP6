@@ -2,7 +2,7 @@
 
 ## P0：Space V1 下一批受控实现
 
-- 当前起始集成检查点为 `6c99b0fe`；E13-S14 离线评估工程能力的功能提交为 `e69b3bca`。E07 S01–S05、E13 S01–S13/S16/S17、E03 S01–S05 及其报告均已存在，不要按旧计划重复实现；`main` 仍不承接这批开发切片。
+- 当前功能集成检查点为 `292a26ed`；E13-S14 离线评估工程能力已以 `e69b3bca` / `9261d59a` / `292a26ed` 进入集成历史。E07 S01–S05、E13 S01–S13/S16/S17、E03 S01–S05 及其报告均已存在，不要按旧计划重复实现；`main` 仍不承接这批开发切片。
 - E13-S11 已完成用户可见取消安全点、同输入重试分类、权威 CommandBatch 对账、Failed/Stale replacement Run、RuleOnly 降级和真库运维演练；继续保持 S10 单事务零部分 Draft 写入边界。生产 BuildScene executor 仍失败关闭，不能把 replacement 已排队描述成真实 Provider 端到端完成。
 - E13-S13 已完成外部主体在 16 个 AI 操作及 Gateway 的稳定 403 拒绝、External Provider 字段/Token 外发白名单、7 个 GET 读审计和 Customer/Supplier/3PL 矩阵；生产没有真实外部 Provider，不能把门禁实现描述成网络端到端签收。
 - E13-S17 已完成加法 Migration、幂等 SQL、Tenant 清理 Job、90/365 天保留、保留锁、同租户并发租约和 forward-fix 操作说明；生产定时器仍需受控 Worker 配置专用 service principal。
