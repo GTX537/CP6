@@ -6,7 +6,7 @@
 
 - 远端 `main` 停在 `adbe7bcd`（2026-07-19），远端集成 tip 为 `f8c3bae8`；双方分叉为 main-only 3 / integration-only 390，不能直接 fast-forward 或逐提交摘取。
 - 已从 `origin/main` 创建隔离候选 `codex/main-sync-20260808`；5 个预期冲突均已解决。OA 两处采用集成侧权威 SFS 提交实现；三份项目记忆人工汇总 GR-VP、Space 与本轮主线门禁，unmerged 集合为空。
-- 本地 Docker 修复 `9ffbf8f4` 可在冲突验证后独立带入；P2.5 `9b48ffbb` / `dd6637ea` 继续排除。源码候选不代表正式 CAD/Provider/S14/S15/S18/S19 或 R2 生产启用。
+- merge candidate `79fa0301` 已形成；本地 Docker 修复 `9ffbf8f4` 已独立摘取为 `0fc6f529`。P2.5 `9b48ffbb` / `dd6637ea` 均不是候选祖先。源码候选不代表正式 CAD/Provider/S14/S15/S18/S19 或 R2 生产启用。
 - OA 2/2、前端 711、CP6.Tests 2816、Space Unit 487、默认 Integration 288、客户端 71 与心跳重复 50、EF drift、完整 Release/AOT 0 warning / 0 error 均通过。14 个 Core + 36 个 Space 幂等迁移已从 main 基线在 LocalDB 双执行，51083/51000/51020 失败关闭通过；正式生产仍需备份恢复副本演练。完整评估见 `docs/space/reports/2026-08-08-main-merge-readiness.md`。
 
 ## E13 RackGenerationProfile 权威版本链（2026-08-08）

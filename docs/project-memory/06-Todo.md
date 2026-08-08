@@ -4,10 +4,10 @@
 
 - 候选分支 `codex/main-sync-20260808` 基于 `origin/main@adbe7bcd`，整体合入 `origin/integration/space-v1-20260730@f8c3bae8`；不要直接使用包含 P2.5 的本地 `main`，也不要逐个摘取 390 个依赖提交。
 - 原始 5 个冲突已按权威边界解决：OA 两个文件采用集成侧 `formApi.submit` 实现并删除旧 `flowApi` 导入；`06-Todo.md`、`CHANGELOG-AI.md`、`PROJECT_STATE.md` 已人工汇总，unmerged 集合为空。
-- 可独立保留本地 Docker Cookie 修复 `9ffbf8f4`；继续排除 Analytics Control Tower `9b48ffbb` / `dd6637ea`，待 P2.5 独立评估。
+- Docker Cookie 修复 `9ffbf8f4` 已独立摘取为候选提交 `0fc6f529`；Analytics Control Tower `9b48ffbb` / `dd6637ea` 仍被排除，待 P2.5 独立评估。
 - 客户端心跳时序断言已稳定：测试周期与“事件立即唤醒”解耦，定向 50/50、客户端全量 71/71；生产心跳实现未修改。
 - `deploy/production/sql/main-sync-20260808` 已包含 14 个 Core + 36 个 Space 幂等迁移、preflight/postflight；LocalDB 从远端 main 基线双执行 2/2，history 14/36，51083/51000/51020 失败关闭通过。仍需在生产备份恢复副本重复同一演练。
-- 本地完整门禁已通过。下一步先提交 merge candidate，再独立带入 Docker 修复 `9ffbf8f4`；随后推送 PR，跑 GitHub 门禁并人工复核。PR 批准后才允许合并 `main`，标签、R2 候选和生产部署另行审批。
+- 本地完整门禁已通过，merge candidate `79fa0301` 与 Docker 修复 `0fc6f529` 已形成。下一步推送候选备份并创建受保护 PR，跑 GitHub 门禁和人工复核。PR 批准后才允许合并 `main`，标签、R2 候选和生产部署另行审批。
 - 完整依据：`docs/space/reports/2026-08-08-main-merge-readiness.md`。
 
 ## P0：Space V1 下一批受控实现

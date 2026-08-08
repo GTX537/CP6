@@ -5,6 +5,7 @@
 - 从 `origin/main@adbe7bcd` 创建 `codex/main-sync-20260808` 并整体合入集成 tip `f8c3bae8`；2 个 OA 与 3 个项目记忆冲突已按权威边界人工解决，unmerged 集合和冲突标记均为空。
 - OA 采用集成侧 `formApi.submit`；客户端心跳时序测试改为隔离周期语义，定向重复 50/50、完整客户端 71/71。另清理 10 条确定性的空值/xUnit warning。
 - 生成 `CP6Context` 14 个和 `SpaceContext` 36 个候选幂等迁移包，加入 preflight/postflight；从远端 main 基线在 LocalDB 连续双执行通过，失败关闭 51083/51000/51020 也已验证。
+- 候选 merge commit 为 `79fa0301`；Docker HTTP Cookie 修复 `9ffbf8f4` 已独立摘取为 `0fc6f529`。集成 tip 是候选祖先，P2.5 `9b48ffbb` / `dd6637ea` 均不是候选祖先。
 - 完整门禁为 Release/AOT 0 warning / 0 error、前端 711、CP6.Tests 2816、Space Unit 487、默认 Integration 288、EF drift clean。P2.5 未进入候选，远端 `main` 尚未修改或推送。完整证据见 `docs/space/reports/2026-08-08-main-merge-readiness.md`。
 
 ## 2026-08-08 E13 RackGenerationProfile 权威版本链
