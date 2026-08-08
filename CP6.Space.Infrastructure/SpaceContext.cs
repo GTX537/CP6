@@ -85,6 +85,11 @@ public sealed class SpaceContext : DbContext
         Set<SpaceDesignAttribute>();
     public DbSet<SpaceAsset> Assets => Set<SpaceAsset>();
     public DbSet<SpaceAssetVersion> AssetVersions => Set<SpaceAssetVersion>();
+    public DbSet<SpaceRackGenerationProfile> RackGenerationProfiles =>
+        Set<SpaceRackGenerationProfile>();
+    public DbSet<SpaceRackGenerationProfileVersion>
+        RackGenerationProfileVersions =>
+            Set<SpaceRackGenerationProfileVersion>();
     public DbSet<SpaceElementRevision> ElementRevisions =>
         Set<SpaceElementRevision>();
     public DbSet<SpaceElementAttribute> ElementAttributes =>
@@ -168,6 +173,8 @@ public sealed class SpaceContext : DbContext
         ConfigureDesignAttribute(modelBuilder);
         ConfigureAsset(modelBuilder);
         ConfigureAssetVersion(modelBuilder);
+        ConfigureRackGenerationProfile(modelBuilder);
+        ConfigureRackGenerationProfileVersion(modelBuilder);
         ConfigureElementRevision(modelBuilder);
         ConfigureElementAttribute(modelBuilder);
         ConfigureElementCommandBatch(modelBuilder);
@@ -239,6 +246,7 @@ public sealed class SpaceContext : DbContext
         ProtectAiCapacityLedger();
         ProtectAiPolicyHistory();
         ProtectAssetLibrary();
+        ProtectRackGenerationProfiles();
         ProtectUnderlayCalibrationHistory();
         ProtectElementCommandHistory();
         ProtectExcelMappingVersionHistory();
@@ -263,6 +271,7 @@ public sealed class SpaceContext : DbContext
         ProtectAiCapacityLedger();
         ProtectAiPolicyHistory();
         ProtectAssetLibrary();
+        ProtectRackGenerationProfiles();
         ProtectUnderlayCalibrationHistory();
         ProtectElementCommandHistory();
         ProtectExcelMappingVersionHistory();
@@ -2187,6 +2196,130 @@ public sealed class SpaceContext : DbContext
 
         entity.HasQueryFilter(
             x => x.Scope == SpaceAssetScope.System ||
+                 x.OwnerTenantId == CurrentTenantId);
+    }
+
+    private void ConfigureRackGenerationProfile(ModelBuilder modelBuilder)
+    {
+        var entity = modelBuilder.Entity<SpaceRackGenerationProfile>();
+        entity.ToTable(
+            "Space_RackGenerationProfile",
+            table => table.HasCheckConstraint(
+                "CK_Space_RackGenerationProfile_ScopeOwner",
+                "([Scope] = 0 AND [OwnerTenantId] = '00000000-0000-0000-0000-000000000000') OR " +
+                "([Scope] = 1 AND [OwnerTenantId] <> '00000000-0000-0000-0000-000000000000')"));
+        entity.HasKey(x => x.Id);
+        entity.Property(x => x.Id).ValueGeneratedNever();
+        entity.HasAlternateKey(x => new
+        {
+            x.Scope,
+            x.OwnerTenantId,
+            x.Id,
+        }).HasName("AK_Space_RackGenerationProfile_Scope_Owner_Id");
+        entity.Property(x => x.Scope)
+            .HasConversion<short>()
+            .HasColumnType("smallint");
+        entity.Property(x => x.ProfileCode).HasMaxLength(100).IsRequired();
+        entity.Property(x => x.Name).HasMaxLength(200).IsRequired();
+        entity.Property(x => x.Description).HasMaxLength(1000);
+        entity.Property(x => x.Status)
+            .HasConversion<short>()
+            .HasColumnType("smallint");
+        entity.Property(x => x.CreatedAtUtc).HasColumnType("datetime2");
+        entity.Property(x => x.RowVersion).IsRowVersion();
+        entity.HasIndex(x => new
+        {
+            x.Scope,
+            x.OwnerTenantId,
+            x.ProfileCode,
+        })
+            .IsUnique()
+            .HasFilter("[IsDeleted] = 0")
+            .HasDatabaseName(
+                "UX_Space_RackGenerationProfile_Scope_Owner_Code_Active");
+        entity.HasQueryFilter(
+            x => !x.IsDeleted &&
+                 (x.Scope == SpaceRackGenerationProfileScope.System ||
+                  x.OwnerTenantId == CurrentTenantId));
+    }
+
+    private void ConfigureRackGenerationProfileVersion(
+        ModelBuilder modelBuilder)
+    {
+        var entity = modelBuilder.Entity<SpaceRackGenerationProfileVersion>();
+        entity.ToTable(
+            "Space_RackGenerationProfileVersion",
+            table =>
+            {
+                table.HasCheckConstraint(
+                    "CK_Space_RackGenerationProfileVersion_ScopeOwner",
+                    "([Scope] = 0 AND [OwnerTenantId] = '00000000-0000-0000-0000-000000000000') OR " +
+                    "([Scope] = 1 AND [OwnerTenantId] <> '00000000-0000-0000-0000-000000000000')");
+                table.HasCheckConstraint(
+                    "CK_Space_RackGenerationProfileVersion_VersionNo",
+                    "[VersionNo] > 0");
+                table.HasCheckConstraint(
+                    "CK_Space_RackGenerationProfileVersion_Dimensions",
+                    "[RackWidthMillimeters] > 0 AND [RackDepthMillimeters] > 0 AND [RackHeightMillimeters] > 0");
+                table.HasCheckConstraint(
+                    "CK_Space_RackGenerationProfileVersion_LocationCount",
+                    "[LocationCount] > 0 AND [LocationCount] <= 10000000");
+            });
+        entity.HasKey(x => x.Id);
+        entity.Property(x => x.Id).ValueGeneratedNever();
+        entity.HasAlternateKey(x => new
+        {
+            x.Scope,
+            x.OwnerTenantId,
+            x.Id,
+        }).HasName(
+            "AK_Space_RackGenerationProfileVersion_Scope_Owner_Id");
+        entity.Property(x => x.Scope)
+            .HasConversion<short>()
+            .HasColumnType("smallint");
+        entity.Property(x => x.LevelsJson)
+            .HasColumnType("nvarchar(max)")
+            .IsRequired();
+        entity.Property(x => x.ContentHash)
+            .HasColumnType("char(64)")
+            .IsUnicode(false)
+            .IsFixedLength()
+            .HasMaxLength(64)
+            .IsRequired();
+        entity.Property(x => x.Status)
+            .HasConversion<short>()
+            .HasColumnType("smallint");
+        entity.Property(x => x.CreatedAtUtc).HasColumnType("datetime2");
+        entity.Property(x => x.RowVersion).IsRowVersion();
+        entity.HasIndex(x => new
+        {
+            x.Scope,
+            x.OwnerTenantId,
+            x.ProfileId,
+            x.VersionNo,
+        })
+            .IsUnique()
+            .HasDatabaseName(
+                "UX_Space_RackGenerationProfileVersion_Scope_Owner_Profile_VersionNo");
+        entity.HasOne<SpaceRackGenerationProfile>()
+            .WithMany()
+            .HasForeignKey(x => new
+            {
+                x.Scope,
+                x.OwnerTenantId,
+                x.ProfileId,
+            })
+            .HasPrincipalKey(x => new
+            {
+                x.Scope,
+                x.OwnerTenantId,
+                x.Id,
+            })
+            .OnDelete(DeleteBehavior.Restrict)
+            .HasConstraintName(
+                "FK_Space_RackGenerationProfileVersion_Profile_Scope_Owner");
+        entity.HasQueryFilter(
+            x => x.Scope == SpaceRackGenerationProfileScope.System ||
                  x.OwnerTenantId == CurrentTenantId);
     }
 
@@ -6008,6 +6141,48 @@ public sealed class SpaceContext : DbContext
         }
     }
 
+    private void ProtectRackGenerationProfiles()
+    {
+        foreach (var entry in ChangeTracker
+            .Entries<SpaceRackGenerationProfile>())
+        {
+            if (entry.State == EntityState.Deleted)
+            {
+                throw new InvalidOperationException(
+                    "Rack generation profiles cannot be physically deleted.");
+            }
+            if (entry.State is not (
+                    EntityState.Added or EntityState.Modified))
+            {
+                continue;
+            }
+            EnsureRackGenerationProfileOwner(
+                entry.Entity.Scope,
+                entry.Entity.OwnerTenantId);
+            if (entry.State == EntityState.Modified)
+            {
+                throw new InvalidOperationException(
+                    "Rack generation profile heads are immutable in Design V1.");
+            }
+        }
+
+        foreach (var entry in ChangeTracker
+            .Entries<SpaceRackGenerationProfileVersion>())
+        {
+            if (entry.State is EntityState.Deleted or EntityState.Modified)
+            {
+                throw new InvalidOperationException(
+                    "Rack generation profile versions are immutable.");
+            }
+            if (entry.State == EntityState.Added)
+            {
+                EnsureRackGenerationProfileOwner(
+                    entry.Entity.Scope,
+                    entry.Entity.OwnerTenantId);
+            }
+        }
+    }
+
     private void ProtectElementCommandHistory()
     {
         foreach (var entry in ChangeTracker
@@ -6065,6 +6240,24 @@ public sealed class SpaceContext : DbContext
 
         throw new SpaceTenantScopeException(
             "A cross-tenant Space asset write was rejected.");
+    }
+
+    private void EnsureRackGenerationProfileOwner(
+        SpaceRackGenerationProfileScope scope,
+        Guid ownerTenantId)
+    {
+        if (scope == SpaceRackGenerationProfileScope.System &&
+            ownerTenantId == Guid.Empty)
+        {
+            return;
+        }
+        if (scope == SpaceRackGenerationProfileScope.Tenant &&
+            ownerTenantId == CurrentTenantId)
+        {
+            return;
+        }
+        throw new SpaceTenantScopeException(
+            "A cross-tenant rack generation profile write was rejected.");
     }
 
     private void StampAndValidateTenant()

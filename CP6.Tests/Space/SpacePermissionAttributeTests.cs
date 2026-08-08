@@ -96,6 +96,10 @@ public class SpacePermissionAttributeTests
                 "space:model:read",
             ["SpaceValidationController.GetValidation"] =
                 "space:model:read",
+            ["SpaceRackGenerationProfileController.GetRackGenerationProfiles"] =
+                "space:model:read",
+            ["SpaceRackGenerationProfileController.GetRackGenerationProfileVersion"] =
+                "space:model:read",
             ["SpacePublishPreviewController.GetPublishPreview"] =
                 "space:model:read",
             ["SpacePublishController.GetPublishAttempt"] =
@@ -227,7 +231,7 @@ public class SpacePermissionAttributeTests
     public void SpaceControllers_AreDiscovered()
     {
         // 守卫：确保反射确实扫到全部 controller（防命名空间/程序集变动导致「空扫空过」）。
-        Assert.Equal(40, SpaceControllers.Count());
+        Assert.Equal(41, SpaceControllers.Count());
     }
 
     [Fact]
@@ -401,6 +405,50 @@ public class SpacePermissionAttributeTests
             permissionCode,
             $"{data.ConstructorArguments[0].Value}:" +
             $"{data.ConstructorArguments[1].Value}");
+
+        var audit = Assert.Single(
+            method.GetCustomAttributes<SpaceAuditOperationAttribute>());
+        Assert.Equal(action, audit.Action);
+        Assert.Equal(permissionCode, audit.PermissionCode);
+        Assert.Equal(auditRead, audit.AuditRead);
+    }
+
+    [Theory]
+    [InlineData(
+        nameof(SpaceRackGenerationProfileController.GetRackGenerationProfiles),
+        "space:model:read",
+        "space.rack-generation-profile.list",
+        true)]
+    [InlineData(
+        nameof(SpaceRackGenerationProfileController.GetRackGenerationProfileVersion),
+        "space:model:read",
+        "space.rack-generation-profile-version.read",
+        true)]
+    [InlineData(
+        nameof(SpaceRackGenerationProfileController.CreateRackGenerationProfile),
+        "space:model:edit",
+        "space.rack-generation-profile.create",
+        false)]
+    public void Rack_generation_profile_endpoints_have_stable_security_metadata(
+        string methodName,
+        string permissionCode,
+        string action,
+        bool auditRead)
+    {
+        var method = typeof(SpaceRackGenerationProfileController)
+            .GetMethod(methodName);
+        Assert.NotNull(method);
+        var permission = Assert.Single(
+            method!.GetCustomAttributes<RequirePermissionAttribute>());
+        var permissionData = Assert.Single(
+            CustomAttributeData.GetCustomAttributes(method),
+            value =>
+                value.AttributeType == typeof(RequirePermissionAttribute));
+        Assert.Equal(
+            permissionCode,
+            $"{permissionData.ConstructorArguments[0].Value}:" +
+            $"{permissionData.ConstructorArguments[1].Value}");
+        Assert.True(permission.UseProblemDetails);
 
         var audit = Assert.Single(
             method.GetCustomAttributes<SpaceAuditOperationAttribute>());

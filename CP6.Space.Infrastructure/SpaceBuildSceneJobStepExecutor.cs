@@ -169,6 +169,7 @@ public sealed class SpaceBuildSceneJobStepExecutor(
             input.Run.SourceHash,
             input.Run.BaseContentRevision,
             input.Run.TargetFloorLogicalId,
+            input.Run.RackGenerationProfileVersionId,
             input.PreviewArtifactId,
             input.Preview.PreviewSetSha256,
             input.Preview.SemanticPreview.SemanticPreviewSha256,
@@ -293,6 +294,9 @@ public sealed class SpaceBuildSceneJobStepExecutor(
         var validated = outputValidator.Validate(
             snapshot.ProviderInput,
             EmptyRuleOnlyResult(input.Run));
+        var rackProfiles = await LoadRackProfileBindingsAsync(
+            input,
+            cancellationToken);
         var proposalSet = await synthesizer.SynthesizeAsync(
             new WarehouseDraftSynthesisRequestV1(
                 input.Run.ModelVersionId,
@@ -302,12 +306,63 @@ public sealed class SpaceBuildSceneJobStepExecutor(
                 validated,
                 facts,
                 [],
-                []),
+                rackProfiles),
             cancellationToken);
         await AdvanceRunAsync(input.Run, RunStage.Validating, 67, cancellationToken);
         return new SpaceJobStepOutput(
             WarehouseDraftSynthesizer.Serialize(proposalSet),
             proposalSet.ProposalSetSha256);
+    }
+
+    private async Task<IReadOnlyList<WarehouseRackProfileBindingV1>>
+        LoadRackProfileBindingsAsync(
+            BuildInput input,
+            CancellationToken cancellationToken)
+    {
+        if (!input.Run.RackGenerationProfileVersionId.HasValue)
+            return [];
+        var version = await context.RackGenerationProfileVersions
+            .AsNoTracking()
+            .SingleOrDefaultAsync(
+                item => item.Id ==
+                    input.Run.RackGenerationProfileVersionId.Value &&
+                    item.Status ==
+                    SpaceRackGenerationProfileVersionStatus.Ready,
+                cancellationToken);
+        if (version is null)
+        {
+            throw Failure(
+                SpaceJobFailureKind.Input,
+                SpaceErrorCodes.RackGenerationProfileNotFound,
+                "The frozen rack generation profile version is unavailable.");
+        }
+        var profile = new WarehouseRackGenerationProfileV1(
+            version.Id,
+            version.RackWidthMillimeters,
+            version.RackDepthMillimeters,
+            version.RackHeightMillimeters,
+            version.ReadLevels().Select(level =>
+                new WarehouseRackLevelProfileV1(
+                    level.LevelNo,
+                    level.BottomZMillimeters,
+                    level.ClearHeightMillimeters,
+                    level.BinCount,
+                    level.DepthCount,
+                    level.CellWidthMillimeters,
+                    level.CellDepthMillimeters,
+                    level.BeamHeightMillimeters,
+                    level.MaxLoadKilograms)).ToArray());
+        return input.Preview.SemanticPreview.Items
+            .Where(item =>
+                item.DraftObjectKind == SpaceCadSemanticDraftObjectKind.Rack &&
+                item.Disposition != SpaceCadSemanticDisposition.Rejected &&
+                item.Geometry is not null)
+            .OrderBy(item => item.Source.SourceRef, StringComparer.Ordinal)
+            .Select(item => new WarehouseRackProfileBindingV1(
+                item.Source.SourceRef,
+                WarehouseRackProfileSource.ExplicitSelected,
+                profile))
+            .ToArray();
     }
 
     private async Task<SpaceJobStepOutput> VerifyProposalSetAsync(

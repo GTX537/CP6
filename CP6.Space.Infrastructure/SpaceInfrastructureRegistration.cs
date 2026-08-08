@@ -262,6 +262,9 @@ public static class SpaceInfrastructureRegistration
             SpacePlanningExchangeService>();
         services.AddScoped<SpaceSourceCoordinator>();
         services.AddScoped<ISpaceDesignV1Service, SpaceDesignV1Service>();
+        services.AddScoped<
+            ISpaceRackGenerationProfileService,
+            SpaceRackGenerationProfileService>();
         services.TryAddScoped<
             ISpaceCadParseProvider,
             UnavailableSpaceCadParseProvider>();

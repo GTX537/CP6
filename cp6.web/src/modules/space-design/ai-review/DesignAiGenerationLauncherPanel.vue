@@ -6,6 +6,7 @@ import { aiProposalReviewApi } from '@/api/space/aiProposalReview'
 import type {
   ISpaceSourceDto,
   ISpaceVersionDto,
+  ISpaceRackGenerationProfileDto,
 } from '../../../../../sdk/typescript/space-design-v1/spaceDesignV1Client'
 
 const props = defineProps<{
@@ -21,7 +22,9 @@ const loading = ref(false)
 const submitting = ref(false)
 const version = ref<ISpaceVersionDto | null>(null)
 const sources = ref<ISpaceSourceDto[]>([])
+const rackProfiles = ref<ISpaceRackGenerationProfileDto[]>([])
 const selectedSourceId = ref('')
+const selectedRackProfileVersionId = ref('')
 let idempotencyKey = ''
 
 const eligibleSources = computed(() => sources.value.filter((source) =>
@@ -35,6 +38,9 @@ const eligibleSources = computed(() => sources.value.filter((source) =>
 ))
 const selectedSource = computed(() => eligibleSources.value.find(
   source => source.id === selectedSourceId.value,
+))
+const selectedRackProfile = computed(() => rackProfiles.value.find(
+  profile => profile.latestVersion?.id === selectedRackProfileVersionId.value,
 ))
 const versionIsCurrent = computed(() => Boolean(
   version.value?.status === 'Draft'
@@ -50,12 +56,22 @@ onMounted(() => void load())
 async function load(): Promise<void> {
   loading.value = true
   try {
-    const [nextVersion, page] = await Promise.all([
+    const [nextVersion, page, profilePage] = await Promise.all([
       aiProposalReviewApi.getVersion(props.versionId),
       aiProposalReviewApi.getSources(props.versionId),
+      aiProposalReviewApi.getRackGenerationProfiles(),
     ])
     version.value = nextVersion
     sources.value = page.items ?? []
+    rackProfiles.value = (profilePage.items ?? []).filter(profile =>
+      profile.status === 'Active'
+      && profile.latestVersion?.status === 'Ready'
+      && Boolean(profile.latestVersion.id),
+    )
+    if (!rackProfiles.value.some(profile =>
+      profile.latestVersion?.id === selectedRackProfileVersionId.value)) {
+      selectedRackProfileVersionId.value = ''
+    }
     if (!eligibleSources.value.some(source => source.id === selectedSourceId.value)) {
       selectedSourceId.value = eligibleSources.value.length === 1
         ? eligibleSources.value[0]?.id ?? ''
@@ -72,7 +88,7 @@ async function createRun(): Promise<void> {
   if (!canCreate.value || !currentVersion?.rowVersion || !source?.id) return
 
   await ElMessageBox.confirm(
-    `确认基于 CAD 来源“${source.displayName ?? source.id}”启动规则生成？不会调用外部 AI Provider，也不会自动写入 Draft。`,
+    `确认基于 CAD 来源“${source.displayName ?? source.id}”启动规则生成？${selectedRackProfile.value ? `将固定货架方案“${selectedRackProfile.value.name}”。` : '未选择货架方案时，Rack 提案会保留阻断问题。'}不会调用外部 AI Provider，也不会自动写入 Draft。`,
     '启动规则生成',
     {
       type: 'warning',
@@ -89,7 +105,8 @@ async function createRun(): Promise<void> {
       {
         sourceId: source.id,
         mappingProfileVersionId: source.mappingProfileId ?? null,
-        rackGenerationProfileVersionId: null,
+        rackGenerationProfileVersionId:
+          selectedRackProfileVersionId.value || null,
         mode: 'RuleOnly',
         expectedContentRevision: props.currentContentRevision,
       },
@@ -158,12 +175,34 @@ async function createRun(): Promise<void> {
           />
         </el-select>
       </el-form-item>
+      <el-form-item label="货架生成方案（可选）">
+        <el-select
+          v-model="selectedRackProfileVersionId"
+          clearable
+          data-test="rack-generation-profile"
+          placeholder="不选择：Rack 保持 Blocking"
+          :disabled="!versionIsCurrent"
+        >
+          <el-option
+            v-for="profile in rackProfiles"
+            :key="profile.latestVersion?.id"
+            :label="`${profile.name} · ${profile.scope} · v${profile.latestVersion?.versionNo}`"
+            :value="profile.latestVersion?.id"
+          />
+        </el-select>
+      </el-form-item>
     </el-form>
 
     <dl v-if="selectedSource" class="source-evidence">
       <div><dt>来源状态</dt><dd>{{ selectedSource.state }}</dd></div>
       <div><dt>坐标单位</dt><dd>{{ selectedSource.unit ?? '由后端校验' }}</dd></div>
       <div><dt>内容指纹</dt><dd>{{ selectedSource.sha256?.slice(0, 16) }}…</dd></div>
+    </dl>
+
+    <dl v-if="selectedRackProfile?.latestVersion" class="source-evidence">
+      <div><dt>货架尺寸</dt><dd>{{ selectedRackProfile.latestVersion.rackWidthMillimeters }} × {{ selectedRackProfile.latestVersion.rackDepthMillimeters }} × {{ selectedRackProfile.latestVersion.rackHeightMillimeters }} mm</dd></div>
+      <div><dt>层数 / 库位数</dt><dd>{{ selectedRackProfile.latestVersion.levels?.length ?? 0 }} / {{ selectedRackProfile.latestVersion.locationCount }}</dd></div>
+      <div><dt>方案指纹</dt><dd>{{ selectedRackProfile.latestVersion.contentHash?.slice(0, 16) }}…</dd></div>
     </dl>
 
     <footer>
