@@ -112,7 +112,7 @@ import { ref, reactive, computed } from 'vue'
 import { ElMessage, ElMessageBox, type FormRules } from 'element-plus'
 import { useI18n } from 'vue-i18n'
 import CpPageShell from '@/components/templates/CpPageShell.vue'
-import CpListPage, { type ListColumn, type ListFetch } from '@/components/templates/CpListPage.vue'
+import CpListPage, { type ListColumn, type ListFetch, type ListPageExpose } from '@/components/templates/CpListPage.vue'
 import { type FilterField } from '@/components/templates/CpFilterBar.vue'
 import CpFormDialog from '@/components/templates/CpFormDialog.vue'
 import { type Tone } from '@/components/base/CpTag.vue'
@@ -123,7 +123,7 @@ import { formatQty as fmtQty } from '@/utils/format'
 const { t } = useI18n()
 
 const total = ref<number>()
-const listRef = ref<InstanceType<typeof CpListPage> | null>(null)
+const listRef = ref<ListPageExpose | null>(null)
 function reloadList() { listRef.value?.reload() }
 
 const matTypeMap = computed<Record<string, string>>(() => ({
@@ -149,7 +149,7 @@ function formatQty(n: number | undefined | null) {
   return fmtQty(n, 4)
 }
 
-const columns = computed<ListColumn[]>(() => [
+const columns = computed<ListColumn<RemnantMaterial>[]>(() => [
   { prop: 'remnantNo', label: t('wms.remnant.fld.no'), kind: 'mono', width: 180 },
   { prop: 'status', label: t('wms.common.status'), width: 100, kind: 'tag',
     map: (v) => ({ label: codeLabel(statusMap.value, v), tone: statusTone(v as number) }) },
@@ -189,7 +189,7 @@ const searchFields = computed<FilterField[]>(() => [
   { key: 'sourceWorkOrderNo', label: t('wms.remnant.fld.sourceWO'), type: 'text' },
 ])
 
-const fetchList: ListFetch = async ({ filters }) => {
+const fetchList: ListFetch<RemnantMaterial> = async ({ filters }) => {
   const f = filters as Record<string, unknown>
   const q: RemnantSearchQuery = { pageSize: 1000 }
   if (f.remnantNo) q.remnantNo = String(f.remnantNo)

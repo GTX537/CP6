@@ -13,6 +13,7 @@
     <PackageReference Include="Microsoft.EntityFrameworkCore.Sqlite" Version="8.0.12" />
     <PackageReference Include="Microsoft.NET.Test.Sdk" Version="17.14.1" />
     <PackageReference Include="Moq" Version="4.20.72" />
+    <PackageReference Include="SQLitePCLRaw.bundle_e_sqlite3" Version="2.1.12" />
     <PackageReference Include="xunit" Version="2.9.3" />
     <PackageReference Include="xunit.runner.visualstudio" Version="3.1.4" />
   </ItemGroup>
@@ -25,6 +26,8 @@
     <ProjectReference Include="..\CP6.WebApi\CP6.WebApi.csproj" />
     <ProjectReference Include="..\CP6.Core\CP6.Core.csproj" />
     <ProjectReference Include="..\CP6.Entity\CP6.Entity.csproj" />
+    <ProjectReference Include="..\CP6.Space.Application\CP6.Space.Application.csproj" />
+    <ProjectReference Include="..\CP6.Space.Contracts\CP6.Space.Contracts.csproj" />
   </ItemGroup>
 
 </Project>

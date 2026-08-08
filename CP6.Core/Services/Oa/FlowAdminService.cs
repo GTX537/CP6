@@ -10,12 +10,22 @@ public class FlowAdminService : IFlowAdminService
 
     public async Task<IReadOnlyList<FlowAdminItem>> ListFlowsAsync() =>
         await _db.Wf_FlowDefs.OrderBy(d => d.FormKey).ThenBy(d => d.FlowKey)
-            .Select(d => new FlowAdminItem(d.FlowKey, d.FlowName, d.FormKey, d.Version, d.Enable))
+            .Select(d => new FlowAdminItem(
+                d.FlowKey,
+                d.FlowName,
+                d.FormKey ?? string.Empty,
+                d.Version,
+                d.Enable))
             .ToListAsync();
 
     public async Task<FlowAdminItem?> GetFlowAsync(string flowKey) =>
         await _db.Wf_FlowDefs.Where(d => d.FlowKey == flowKey)
-            .Select(d => new FlowAdminItem(d.FlowKey, d.FlowName, d.FormKey, d.Version, d.Enable))
+            .Select(d => new FlowAdminItem(
+                d.FlowKey,
+                d.FlowName,
+                d.FormKey ?? string.Empty,
+                d.Version,
+                d.Enable))
             .FirstOrDefaultAsync();
 
     public async Task SetEnabledAsync(string flowKey, bool enabled)

@@ -98,7 +98,7 @@ function codeLabel(m: Record<number, string>, v: unknown): string {
   return m[v as number] || (v == null ? '' : String(v))
 }
 
-const columns = computed<ListColumn[]>(() => [
+const columns = computed<ListColumn<StockTake>[]>(() => [
   { prop: 'stockTakeNo', label: t('wms.stocktake.fld.no'), kind: 'mono', width: 180 },
   { prop: 'stockTakeType', label: t('wms.common.type'), width: 100,
     map: (v) => ({ label: codeLabel(typeMap.value, v) }) },
@@ -131,7 +131,7 @@ const searchFields = computed<FilterField[]>(() => [
   { key: 'targetWarehouseCd', label: t('wms.common.warehouse'), type: 'text' },
 ])
 
-const fetchList: ListFetch = async ({ page, size, filters }) => {
+const fetchList: ListFetch<StockTake> = async ({ page, size, filters }) => {
   const f = filters as Record<string, unknown>
   const q: StockTakeSearchQuery = { pageSize: 100 }
   if (f.stockTakeNo) q.stockTakeNo = String(f.stockTakeNo)

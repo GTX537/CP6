@@ -1,0 +1,367 @@
+{
+  "schemaVersion": "1.0",
+  "title": "Space MVP Scope Baseline v1.0 and E00/E01 handoff",
+  "contracts": [
+    {
+      "id": "LEGACY-SPACE",
+      "name": "Legacy model, API, editor, and viewer",
+      "rationale": "The frozen baseline already has the operational Legacy Space surface.",
+      "completeStatus": "Implemented",
+      "evidence": [
+        {
+          "id": "legacy-domain",
+          "source": "baseline",
+          "glob": "CP6.Entity/DomainModels/Space/*.cs",
+          "description": "Legacy Space domain entities"
+        },
+        {
+          "id": "legacy-api",
+          "source": "baseline",
+          "glob": "CP6.WebApi/Controllers/Space/*Controller.cs",
+          "description": "Legacy Space controllers"
+        },
+        {
+          "id": "legacy-editor",
+          "source": "baseline",
+          "glob": "cp6.web/src/space-editor/*.ts",
+          "description": "Legacy map editor"
+        },
+        {
+          "id": "legacy-viewer",
+          "source": "baseline",
+          "glob": "cp6.web/src/space-viewer/*.ts",
+          "description": "Legacy Three.js viewer"
+        }
+      ]
+    },
+    {
+      "id": "DESIGN-V1-API",
+      "name": "Design V1 API and client contract",
+      "rationale": "The candidate has an API shell and clients, but it is uncommitted and not the formal implementation.",
+      "completeStatus": "Partial",
+      "evidence": [
+        {
+          "id": "design-controller",
+          "source": "candidate",
+          "glob": "CP6.WebApi/Controllers/Space/SpaceDesignV1Controller.cs",
+          "description": "Design V1 controller"
+        },
+        {
+          "id": "design-contracts",
+          "source": "candidate",
+          "glob": "CP6.Space.Contracts/*.cs",
+          "description": "Design V1 C# contracts"
+        },
+        {
+          "id": "design-typescript-client",
+          "source": "candidate",
+          "glob": "sdk/typescript/space-design-v1/src/*.ts",
+          "description": "Design V1 TypeScript client"
+        }
+      ]
+    },
+    {
+      "id": "MODEL-VERSION",
+      "name": "Space model, version, and immutable Published state",
+      "rationale": "Candidate domain and migrations contain the core state model, pending formal integration.",
+      "completeStatus": "Partial",
+      "evidence": [
+        {
+          "id": "model-aggregate",
+          "source": "candidate",
+          "glob": "CP6.Space.Domain/SpaceModel.cs",
+          "description": "Space model aggregate"
+        },
+        {
+          "id": "version-aggregate",
+          "source": "candidate",
+          "glob": "CP6.Space.Domain/SpaceModelVersion.cs",
+          "description": "Space version aggregate"
+        },
+        {
+          "id": "model-migration",
+          "source": "candidate",
+          "glob": "CP6.Space.Infrastructure/Migrations/*.cs",
+          "regex": "Space_Model|SpaceModel",
+          "description": "Model/version migration"
+        }
+      ]
+    },
+    {
+      "id": "SOURCE-LINEAGE",
+      "name": "Source files, artifacts, hashes, and lineage",
+      "rationale": "The frozen E01-S02 source/file/lineage contract needs dedicated entities and storage behavior.",
+      "completeStatus": "Partial",
+      "evidence": [
+        {
+          "id": "model-source",
+          "source": "candidate",
+          "glob": "CP6.Space.Domain/*.cs",
+          "regex": "class\\s+SpaceModelSource\\b",
+          "description": "Space_ModelSource entity"
+        },
+        {
+          "id": "space-file",
+          "source": "candidate",
+          "glob": "CP6.Space.Domain/*.cs",
+          "regex": "class\\s+SpaceFile\\b",
+          "description": "Space_File entity"
+        },
+        {
+          "id": "source-hash-query",
+          "source": "candidate",
+          "glob": "CP6.Space.*/*.cs",
+          "regex": "SourceHash",
+          "description": "SourceHash query contract"
+        }
+      ]
+    },
+    {
+      "id": "JOB-LEDGER",
+      "name": "Unified Job ledger, attempts, leases, and retries",
+      "rationale": "Candidate job entities and runner are useful input but remain outside the formal baseline.",
+      "completeStatus": "Partial",
+      "evidence": [
+        {
+          "id": "job-entity",
+          "source": "candidate",
+          "glob": "CP6.Space.Domain/*.cs",
+          "regex": "class\\s+SpaceJob\\b"
+          ,
+          "description": "SpaceJob entity"
+        },
+        {
+          "id": "job-attempt",
+          "source": "candidate",
+          "glob": "CP6.Space.Domain/*.cs",
+          "regex": "class\\s+SpaceJobAttempt\\b",
+          "description": "SpaceJobAttempt entity"
+        },
+        {
+          "id": "job-runner",
+          "source": "candidate",
+          "glob": "CP6.Space.Infrastructure/SpaceJobRunner.cs",
+          "description": "Job runner and retry loop"
+        }
+      ]
+    },
+    {
+      "id": "IMPORT-BUILD-SCENE",
+      "name": "Import and BuildScene job processing",
+      "rationale": "Enums exist in the candidate, but E00 evidence must prove the worker actually dispatches both job types.",
+      "completeStatus": "Partial",
+      "evidence": [
+        {
+          "id": "import-build-enums",
+          "source": "candidate",
+          "glob": "CP6.Space.Domain/SpaceEnums.cs",
+          "regex": "BuildScene[\\s\\S]*Import",
+          "description": "Import and BuildScene job types"
+        },
+        {
+          "id": "build-scene-dispatch",
+          "source": "candidate",
+          "glob": "CP6.Space.Infrastructure/SpaceJobRunner.cs",
+          "regex": "case\\s+SpaceJobType\\.BuildScene",
+          "description": "BuildScene worker dispatch"
+        },
+        {
+          "id": "import-dispatch",
+          "source": "candidate",
+          "glob": "CP6.Space.Infrastructure/SpaceJobRunner.cs",
+          "regex": "case\\s+SpaceJobType\\.Import",
+          "description": "Import worker dispatch"
+        }
+      ]
+    },
+    {
+      "id": "CUTOVER-GUARD",
+      "name": "Tenant/Site cutover state and Legacy write guard",
+      "rationale": "Candidate state and interceptor cover part of E00-S02 but have not been integrated or proven.",
+      "completeStatus": "Partial",
+      "evidence": [
+        {
+          "id": "cutover-state",
+          "source": "candidate",
+          "glob": "CP6.Space.Domain/SpaceEnums.cs",
+          "regex": "enum\\s+SpaceCutoverState",
+          "description": "Site cutover state"
+        },
+        {
+          "id": "legacy-write-guard",
+          "source": "candidate",
+          "glob": "CP6.Space.Infrastructure/LegacySpaceWriteGuardInterceptor.cs",
+          "description": "Legacy write guard"
+        },
+        {
+          "id": "site-mode",
+          "source": "candidate",
+          "glob": "CP6.Space.Domain/SpaceModel.cs",
+          "regex": "SiteId[\\s\\S]*SpaceModelMode",
+          "description": "Tenant/Site model mode"
+        }
+      ]
+    },
+    {
+      "id": "DESIGN-PERMISSIONS",
+      "name": "Frozen Design V1 permission vocabulary",
+      "rationale": "Design V1 must use the frozen space:model/source/integration/audit permissions instead of the Legacy space-floor tuple.",
+      "completeStatus": "Partial",
+      "evidence": [
+        {
+          "id": "model-permissions",
+          "source": "candidate",
+          "glob": "CP6.WebApi/Controllers/Space/SpaceDesignV1Controller.cs",
+          "regex": "space:model:(read|edit|validate|publish|rollback)",
+          "description": "space:model:* permissions"
+        },
+        {
+          "id": "source-permission",
+          "source": "candidate",
+          "glob": "CP6.WebApi/Controllers/Space/SpaceDesignV1Controller.cs",
+          "regex": "space:source:upload",
+          "description": "space:source:upload permission"
+        },
+        {
+          "id": "controller-permission-gate",
+          "source": "candidate",
+          "glob": "CP6.WebApi/Controllers/Space/SpaceDesignV1Controller.cs",
+          "regex": "RequirePermission",
+          "description": "Action-level permission gate"
+        }
+      ]
+    },
+    {
+      "id": "VALIDATE-PUBLISH",
+      "name": "Validation and atomic publish loop",
+      "rationale": "Candidate has validation/publish executors and API endpoints, pending formal adoption and rollback evidence.",
+      "completeStatus": "Partial",
+      "evidence": [
+        {
+          "id": "validation-executor",
+          "source": "candidate",
+          "glob": "CP6.Space.Infrastructure/SpaceValidationExecutor.cs",
+          "description": "Validation executor"
+        },
+        {
+          "id": "publish-executor",
+          "source": "candidate",
+          "glob": "CP6.Space.Infrastructure/SpacePublishExecutor.cs",
+          "description": "Publish executor"
+        },
+        {
+          "id": "publication-api",
+          "source": "candidate",
+          "glob": "CP6.WebApi/Controllers/Space/SpaceDesignV1Controller.cs",
+          "regex": "publications",
+          "description": "Publication API"
+        }
+      ]
+    },
+    {
+      "id": "WMS-RUNTIME",
+      "name": "Published runtime and WMS stock overlay",
+      "rationale": "The Legacy runtime already serves scene and stock overlay behavior.",
+      "completeStatus": "Implemented",
+      "evidence": [
+        {
+          "id": "stock-api",
+          "source": "baseline",
+          "glob": "CP6.WebApi/Controllers/Space/SpaceStockController.cs",
+          "description": "Stock overlay API"
+        },
+        {
+          "id": "stock-overlay",
+          "source": "baseline",
+          "glob": "cp6.web/src/space-viewer/overlay/StockOverlay.ts",
+          "description": "Stock overlay renderer"
+        },
+        {
+          "id": "scene-api",
+          "source": "baseline",
+          "glob": "CP6.WebApi/Controllers/Space/SceneController.cs",
+          "description": "Published scene API"
+        }
+      ]
+    },
+    {
+      "id": "AI-PROPOSALS",
+      "name": "AI generation run, proposal review, and Draft apply",
+      "rationale": "AI may only produce reviewable proposals and atomically apply them to Draft.",
+      "completeStatus": "Partial",
+      "evidence": [
+        {
+          "id": "generation-run",
+          "source": "candidate",
+          "glob": "CP6.Space.*/*.cs",
+          "regex": "GenerationRun|SpaceGenerationRun",
+          "description": "Generation Run model"
+        },
+        {
+          "id": "proposal-review",
+          "source": "candidate",
+          "glob": "CP6.Space.*/*.cs",
+          "regex": "ProposalReview|SpaceProposal",
+          "description": "Proposal review model"
+        },
+        {
+          "id": "draft-apply",
+          "source": "candidate",
+          "glob": "CP6.Space.*/*.cs",
+          "regex": "ApplyProposal|ProposalPatch",
+          "description": "Atomic proposal apply to Draft"
+        }
+      ]
+    },
+    {
+      "id": "AI-PROVIDER",
+      "name": "Provider-neutral CAD IR and deterministic engine boundary",
+      "rationale": "The external provider must only receive minimized CAD IR and cannot own deterministic geometry or publishing.",
+      "completeStatus": "Partial",
+      "evidence": [
+        {
+          "id": "provider-port",
+          "source": "candidate",
+          "glob": "CP6.Space.*/*.cs",
+          "regex": "ISpace.*Provider|ISpaceGenerationProvider",
+          "description": "Provider-neutral port"
+        },
+        {
+          "id": "cad-ir",
+          "source": "candidate",
+          "glob": "CP6.Space.*/*.cs",
+          "regex": "CadIr|CAD IR",
+          "description": "Minimal CAD IR contract"
+        },
+        {
+          "id": "deterministic-engine",
+          "source": "candidate",
+          "glob": "CP6.Space.*/*.cs",
+          "regex": "Deterministic.*(Geometry|Topology|Layout)",
+          "description": "Deterministic geometry/topology engine"
+        }
+      ]
+    },
+    {
+      "id": "EXTERNAL-PORTAL",
+      "name": "Published-only external collaboration portal",
+      "rationale": "External customers, suppliers, and 3PL actors must never access Draft, source, AI, prompt, cost, or internal logs.",
+      "completeStatus": "Partial",
+      "evidence": [
+        {
+          "id": "external-controller",
+          "source": "candidate",
+          "glob": "CP6.WebApi/Controllers/Space/*External*Controller.cs",
+          "description": "External published-only controller"
+        },
+        {
+          "id": "external-policy",
+          "source": "candidate",
+          "glob": "CP6.Space.*/*.cs",
+          "regex": "PublishedOnly|ExternalSpace",
+          "description": "Published-only external access policy"
+        }
+      ]
+    }
+  ]
+}

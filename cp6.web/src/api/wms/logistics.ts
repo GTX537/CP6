@@ -33,11 +33,14 @@ export const replenishApi = {
   create(dto: ReplenishOrder) {
     return http.post<any, WmsApi<{ replenishNo: string }>>('/wms/replenish', dto)
   },
+  update(no: string, dto: ReplenishOrder) {
+    return http.put<any, WmsApi<void>>(`/wms/replenish/${encodeURIComponent(no)}`, dto)
+  },
   generateBatch(warehouseCd: string, minQty: number) {
     return http.post<any, WmsApi<{ generated: number }>>('/wms/replenish/generate-batch', { warehouseCd, minQty })
   },
   execute(no: string) {
-    return http.post<any, WmsApi<void>>(`/wms/replenish/${encodeURIComponent(no)}/execute`)
+    return http.post<any, WmsApi<{ taskNo: string }>>(`/wms/replenish/${encodeURIComponent(no)}/execute`)
   },
   cancel(no: string) {
     return http.post<any, WmsApi<void>>(`/wms/replenish/${encodeURIComponent(no)}/cancel`)
@@ -55,7 +58,7 @@ export const slottingApi = {
     return http.post<any, WmsApi<{ slottingPlanNo: string }>>('/wms/slotting/analyze', { warehouseCd, analysisDays })
   },
   approve(no: string) {
-    return http.post<any, WmsApi<void>>(`/wms/slotting/${encodeURIComponent(no)}/approve`)
+    return http.post<any, WmsApi<{ generated: number }>>(`/wms/slotting/${encodeURIComponent(no)}/approve`)
   },
   cancel(no: string) {
     return http.post<any, WmsApi<void>>(`/wms/slotting/${encodeURIComponent(no)}/cancel`)

@@ -1,0 +1,773 @@
+using CP6.Space.Application;
+using CP6.Space.Contracts;
+using CP6.Space.Domain;
+using CP6.Space.Infrastructure;
+using Microsoft.Data.SqlClient;
+using Microsoft.EntityFrameworkCore;
+using Microsoft.EntityFrameworkCore.Storage;
+
+namespace CP6.Space.IntegrationTests;
+
+[Collection(SpaceSqlServerCollection.Name)]
+public sealed class SpaceVersionCloneSqlServerTests
+{
+    private const string ContentHash =
+        "aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa";
+
+    private const string WmsHash =
+        "bbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbb";
+
+    [Fact]
+    public async Task Queued_clone_cancellation_releases_the_reserved_draft()
+    {
+        var tenantId = Guid.NewGuid();
+        var actorId = Guid.NewGuid();
+        var clock = new TestClock();
+        await using var context = CreateInMemoryContext(tenantId, actorId, clock);
+        var model = SpaceModel.Create(tenantId, Guid.NewGuid());
+        var target = SpaceModelVersion.CreateInitializingClone(
+            tenantId,
+            model.Id,
+            2,
+            "Cancelled clone",
+            Guid.NewGuid(),
+            Guid.NewGuid());
+        model.ReserveDraft(target);
+        var job = SpaceJob.CreateQueued(
+            tenantId,
+            SpaceJobType.CloneVersion,
+            SpaceJobSubjectType.ModelVersion,
+            target.Id,
+            new string('c', 64),
+            new string('d', 64),
+            50,
+            3,
+            actorId,
+            clock.UtcNow,
+            Guid.NewGuid());
+        context.AddRange(model, target, job);
+        await context.SaveChangesAsync();
+
+        job.RequestCancellation(actorId, clock.UtcNow);
+        await new EfSpaceJobQueue(context).SaveChangesAsync();
+
+        Assert.Equal(SpaceJobStatus.Cancelled, job.Status);
+        Assert.Equal(SpaceVersionStatus.Abandoned, target.Status);
+        Assert.Null(model.ActiveDraftVersionId);
+    }
+
+    [Fact]
+    public async Task Published_snapshot_rows_are_immutable_in_the_context()
+    {
+        var tenantId = Guid.NewGuid();
+        var actorId = Guid.NewGuid();
+        var clock = new TestClock();
+        await using var context = CreateInMemoryContext(tenantId, actorId, clock);
+        var model = SpaceModel.Create(tenantId, Guid.NewGuid());
+        var published = SpaceModelVersion.CreateDraft(
+            tenantId,
+            model.Id,
+            1,
+            "Published");
+        context.AddRange(model, published);
+        await context.SaveChangesAsync();
+        published.BeginValidation();
+        published.MarkReady(ContentHash, "space-v1", WmsHash);
+        published.BeginPublishing();
+        published.MarkPublished(actorId, clock.UtcNow);
+        await context.SaveChangesAsync();
+
+        context.FloorRevisions.Add(
+            SpaceFloorRevision.Create(
+                tenantId,
+                published.Id,
+                Guid.NewGuid(),
+                model.SiteId,
+                1,
+                "F1",
+                "Floor 1"));
+
+        await Assert.ThrowsAsync<SpaceVersionStateException>(
+            () => context.SaveChangesAsync());
+    }
+
+    [SqlServerFact]
+    public async Task Migration_creates_clone_snapshot_tables_and_column()
+    {
+        await WithDatabaseAsync(async (context, _, _) =>
+        {
+            var tableNames = await ReadTableNamesAsync(context);
+            Assert.Contains("Space_FloorRevision", tableNames);
+            Assert.Contains("Space_ZoneRevision", tableNames);
+            Assert.Contains("Space_AisleRevision", tableNames);
+            Assert.Contains("Space_RackRevision", tableNames);
+            Assert.Contains("Space_RackLevelRevision", tableNames);
+            Assert.Contains("Space_LocationRevision", tableNames);
+            Assert.Contains("Space_Asset", tableNames);
+            Assert.Contains("Space_AssetVersion", tableNames);
+            Assert.Contains("Space_ElementRevision", tableNames);
+            Assert.Contains("Space_ElementAttribute", tableNames);
+            Assert.Contains("Space_LocationExternalBinding", tableNames);
+            Assert.Contains("Space_DesignAttribute", tableNames);
+            Assert.Contains("Space_UnderlayCalibration", tableNames);
+
+            var cloneColumn = await context.Database
+                .SqlQueryRaw<string>(
+                    """
+                    SELECT [name] AS [Value]
+                    FROM sys.columns
+                    WHERE [object_id] = OBJECT_ID('Space_ModelVersion')
+                      AND [name] = 'CloneOperationId'
+                    """)
+                .SingleAsync();
+            Assert.Equal("CloneOperationId", cloneColumn);
+
+            var calibrationColumn = await context.Database
+                .SqlQueryRaw<string>(
+                    """
+                    SELECT [name] AS [Value]
+                    FROM sys.columns
+                    WHERE [object_id] = OBJECT_ID('Space_FloorRevision')
+                      AND [name] = 'UnderlayCalibrationId'
+                    """)
+                .SingleAsync();
+            Assert.Equal("UnderlayCalibrationId", calibrationColumn);
+
+            var locationTypeColumn = await context.Database
+                .SqlQueryRaw<string>(
+                    """
+                    SELECT [name] AS [Value]
+                    FROM sys.columns
+                    WHERE [object_id] = OBJECT_ID('Space_LocationRevision')
+                      AND [name] = 'LocationType'
+                    """)
+                .SingleAsync();
+            Assert.Equal("LocationType", locationTypeColumn);
+        });
+    }
+
+    [SqlServerFact]
+    public async Task Empty_published_warehouse_clones_to_an_empty_draft()
+    {
+        await WithDatabaseAsync(async (context, execution, clock) =>
+        {
+            var (model, published) = await SeedPublishedAsync(
+                context,
+                execution.ActorId,
+                includeSnapshot: false);
+            var started = await StartAndProcessAsync(
+                context,
+                execution,
+                clock,
+                model.Id,
+                "Empty clone");
+
+            context.ChangeTracker.Clear();
+            var target = await context.Versions.SingleAsync(
+                version => version.Id == started.Result.ModelVersionId);
+            var reloadedModel = await context.Models.SingleAsync(
+                candidate => candidate.Id == model.Id);
+            var source = await context.Versions.SingleAsync(
+                version => version.Id == published.Id);
+            var job = await context.Jobs.SingleAsync(
+                candidate => candidate.Id == started.Result.JobId);
+
+            Assert.Equal(0, started.Counts.Total);
+            Assert.Equal(SpaceVersionStatus.Draft, target.Status);
+            Assert.Equal(published.Id, target.BasedOnVersionId);
+            Assert.Equal(target.Id, reloadedModel.ActiveDraftVersionId);
+            Assert.Equal(published.Id, reloadedModel.CurrentPublishedVersionId);
+            Assert.Equal(SpaceVersionStatus.Published, source.Status);
+            Assert.Equal(SpaceJobStatus.Succeeded, job.Status);
+        });
+    }
+
+    [SqlServerFact]
+    public async Task Clone_remaps_row_ids_and_preserves_logical_identity()
+    {
+        await WithDatabaseAsync(async (context, execution, clock) =>
+        {
+            var (model, published) = await SeedPublishedAsync(
+                context,
+                execution.ActorId,
+                includeSnapshot: true);
+            var sourceFloor = await context.FloorRevisions
+                .AsNoTracking()
+                .SingleAsync(row => row.ModelVersionId == published.Id);
+            var sourceZone = await context.ZoneRevisions
+                .AsNoTracking()
+                .SingleAsync(row => row.ModelVersionId == published.Id);
+            var sourceAisle = await context.AisleRevisions
+                .AsNoTracking()
+                .SingleAsync(row => row.ModelVersionId == published.Id);
+            var sourceRack = await context.RackRevisions
+                .AsNoTracking()
+                .SingleAsync(row => row.ModelVersionId == published.Id);
+            var sourceElement = await context.ElementRevisions
+                .AsNoTracking()
+                .SingleAsync(row => row.ModelVersionId == published.Id);
+            var sourceRackLevel = await context.RackLevelRevisions
+                .AsNoTracking()
+                .SingleAsync(row => row.ModelVersionId == published.Id);
+            var sourceLocation = await context.LocationRevisions
+                .AsNoTracking()
+                .SingleAsync(row => row.ModelVersionId == published.Id);
+            var sourceBinding = await context.LocationExternalBindings
+                .AsNoTracking()
+                .SingleAsync(row => row.ModelVersionId == published.Id);
+            var sourceDesignAttribute = await context.DesignAttributes
+                .AsNoTracking()
+                .SingleAsync(row => row.ModelVersionId == published.Id);
+            var sourceSource = await context.Sources
+                .AsNoTracking()
+                .SingleAsync(row =>
+                    row.ModelVersionId == published.Id &&
+                    row.SourceType == SpaceSourceType.Editor);
+            var sourceUnderlay = await context.Sources
+                .AsNoTracking()
+                .SingleAsync(row =>
+                    row.ModelVersionId == published.Id &&
+                    row.SourceType == SpaceSourceType.Pdf);
+            var sourceCalibration = await context.UnderlayCalibrations
+                .AsNoTracking()
+                .SingleAsync(row => row.ModelVersionId == published.Id);
+
+            var started = await StartAndProcessAsync(
+                context,
+                execution,
+                clock,
+                model.Id,
+                "Full clone");
+            context.ChangeTracker.Clear();
+
+            var targetSource = await context.Sources.SingleAsync(row =>
+                row.ModelVersionId == started.Result.ModelVersionId &&
+                row.SourceType == SpaceSourceType.Editor);
+            var targetUnderlay = await context.Sources.SingleAsync(row =>
+                row.ModelVersionId == started.Result.ModelVersionId &&
+                row.SourceType == SpaceSourceType.Pdf);
+            var targetCalibration =
+                await context.UnderlayCalibrations.SingleAsync(
+                    row =>
+                        row.ModelVersionId ==
+                        started.Result.ModelVersionId);
+            var targetFloor = await context.FloorRevisions.SingleAsync(
+                row => row.ModelVersionId == started.Result.ModelVersionId);
+            var targetZone = await context.ZoneRevisions.SingleAsync(
+                row => row.ModelVersionId == started.Result.ModelVersionId);
+            var targetAisle = await context.AisleRevisions.SingleAsync(
+                row => row.ModelVersionId == started.Result.ModelVersionId);
+            var targetRack = await context.RackRevisions.SingleAsync(
+                row => row.ModelVersionId == started.Result.ModelVersionId);
+            var targetElement = await context.ElementRevisions.SingleAsync(
+                row => row.ModelVersionId == started.Result.ModelVersionId);
+            var targetRackLevel = await context.RackLevelRevisions.SingleAsync(
+                row => row.ModelVersionId == started.Result.ModelVersionId);
+            var targetAttribute = await context.ElementAttributes.SingleAsync(
+                row => row.ModelVersionId == started.Result.ModelVersionId);
+            var targetLocation = await context.LocationRevisions.SingleAsync(
+                row => row.ModelVersionId == started.Result.ModelVersionId);
+            var targetBinding = await context.LocationExternalBindings
+                .SingleAsync(
+                    row => row.ModelVersionId == started.Result.ModelVersionId);
+            var targetDesignAttribute = await context.DesignAttributes
+                .SingleAsync(
+                    row => row.ModelVersionId == started.Result.ModelVersionId);
+
+            Assert.Equal(12, started.Counts.Total);
+            Assert.NotEqual(sourceSource.Id, targetSource.Id);
+            Assert.Equal(sourceSource.Sha256, targetSource.Sha256);
+            Assert.NotEqual(sourceFloor.Id, targetFloor.Id);
+            Assert.Equal(sourceFloor.LogicalId, targetFloor.LogicalId);
+            Assert.Equal(targetSource.Id, targetFloor.SourceId);
+            Assert.NotEqual(sourceUnderlay.Id, targetUnderlay.Id);
+            Assert.Equal(targetUnderlay.Id, targetFloor.UnderlaySourceId);
+            Assert.NotEqual(
+                sourceCalibration.Id,
+                targetCalibration.Id);
+            Assert.Equal(
+                targetCalibration.Id,
+                targetFloor.UnderlayCalibrationId);
+            Assert.Equal(
+                targetUnderlay.Id,
+                targetCalibration.SourceId);
+            Assert.Equal(
+                sourceCalibration.ValidationErrorMillimeters,
+                targetCalibration.ValidationErrorMillimeters);
+            Assert.NotEqual(sourceZone.Id, targetZone.Id);
+            Assert.Equal(sourceZone.LogicalId, targetZone.LogicalId);
+            Assert.Equal(sourceZone.FloorLogicalId, targetZone.FloorLogicalId);
+            Assert.Equal(sourceZone.Name, targetZone.Name);
+            Assert.NotEqual(sourceAisle.Id, targetAisle.Id);
+            Assert.Equal(sourceAisle.LogicalId, targetAisle.LogicalId);
+            Assert.Equal(sourceAisle.ZoneLogicalId, targetAisle.ZoneLogicalId);
+            Assert.Equal(sourceAisle.Name, targetAisle.Name);
+            Assert.NotEqual(sourceRack.Id, targetRack.Id);
+            Assert.Equal(sourceRack.LogicalId, targetRack.LogicalId);
+            Assert.Equal(sourceRack.FloorLogicalId, targetRack.FloorLogicalId);
+            Assert.Equal(sourceRack.ZoneLogicalId, targetRack.ZoneLogicalId);
+            Assert.Equal(sourceRack.AisleLogicalId, targetRack.AisleLogicalId);
+            Assert.Equal(sourceRack.Name, targetRack.Name);
+            Assert.Equal(sourceRack.RackType, targetRack.RackType);
+            Assert.NotEqual(sourceElement.Id, targetElement.Id);
+            Assert.Equal(sourceElement.LogicalId, targetElement.LogicalId);
+            Assert.Equal(sourceElement.ModelAssetId, targetElement.ModelAssetId);
+            Assert.Equal(
+                sourceElement.ModelAssetScope,
+                targetElement.ModelAssetScope);
+            Assert.Equal(
+                sourceElement.ModelAssetOwnerTenantId,
+                targetElement.ModelAssetOwnerTenantId);
+            Assert.Equal(sourceRackLevel.LogicalId, targetRackLevel.LogicalId);
+            Assert.Equal(sourceRackLevel.BeamHeight, targetRackLevel.BeamHeight);
+            Assert.Equal(sourceRackLevel.MaxLoad, targetRackLevel.MaxLoad);
+            Assert.Equal(targetElement.Id, targetAttribute.ElementRevisionId);
+            Assert.NotEqual(sourceLocation.Id, targetLocation.Id);
+            Assert.Equal(sourceLocation.LogicalId, targetLocation.LogicalId);
+            Assert.Equal(SpaceLocationTypes.Storage,
+                targetLocation.LocationType);
+            Assert.NotEqual(sourceBinding.Id, targetBinding.Id);
+            Assert.Equal(sourceBinding.LocationLogicalId,
+                targetBinding.LocationLogicalId);
+            Assert.Equal(targetSource.Id, targetBinding.SourceId);
+            Assert.Equal(sourceBinding.ExternalLocationId,
+                targetBinding.ExternalLocationId);
+            Assert.NotEqual(sourceDesignAttribute.Id,
+                targetDesignAttribute.Id);
+            Assert.Equal(sourceDesignAttribute.ObjectLogicalId,
+                targetDesignAttribute.ObjectLogicalId);
+            Assert.Equal(targetSource.Id, targetDesignAttribute.SourceId);
+            Assert.Equal(sourceDesignAttribute.Value,
+                targetDesignAttribute.Value);
+        });
+    }
+
+    [SqlServerFact]
+    public async Task Duplicate_operation_returns_the_same_reservation_and_job()
+    {
+        await WithDatabaseAsync(async (context, execution, clock) =>
+        {
+            var (model, _) = await SeedPublishedAsync(
+                context,
+                execution.ActorId,
+                includeSnapshot: false);
+            var operationId = Guid.NewGuid();
+            var store = new EfSpaceVersionCloneStore(context, execution, clock);
+            var request = new SpaceVersionCloneRequest(
+                model.Id,
+                "Idempotent clone",
+                operationId);
+
+            var first = await store.StartAsync(request);
+            var duplicate = await store.StartAsync(request);
+
+            Assert.False(first.Reused);
+            Assert.True(duplicate.Reused);
+            Assert.Equal(first.ModelVersionId, duplicate.ModelVersionId);
+            Assert.Equal(first.JobId, duplicate.JobId);
+            Assert.Single(await context.Versions.Where(
+                version => version.CloneOperationId == operationId).ToListAsync());
+            await Assert.ThrowsAsync<SpaceVersionConflictException>(() =>
+                store.StartAsync(request with { Name = "Different input" }));
+        });
+    }
+
+    [SqlServerFact]
+    public async Task Planning_scenario_clones_pinned_history_without_taking_production_pointers()
+    {
+        await WithDatabaseAsync(async (context, execution, clock) =>
+        {
+            var (model, originalPublished) = await SeedPublishedAsync(
+                context,
+                execution.ActorId,
+                includeSnapshot: true);
+            var service = new SpacePlanningScenarioService(
+                context,
+                execution,
+                clock,
+                new TestAccess(model.SiteId));
+            var branch = await service.CreateBranchAsync(
+                model.SiteId,
+                Guid.NewGuid(),
+                new CreateSpacePlanningScenarioBranchRequest(
+                    originalPublished.Id,
+                    "Peak season"));
+
+            var replacement = SpaceModelVersion.CreateDraft(
+                execution.TenantId,
+                model.Id,
+                3,
+                "Production v2");
+            replacement.BeginValidation();
+            replacement.MarkReady(ContentHash, "space-v1", WmsHash);
+            replacement.BeginPublishing();
+            replacement.MarkPublished(execution.ActorId, clock.UtcNow);
+            originalPublished.MarkSuperseded();
+            model.SetPublishedVersion(replacement, ContentHash);
+            context.Versions.Add(replacement);
+            await context.SaveChangesAsync();
+
+            var leaseStore = new EfSpaceJobLeaseStore(context, clock);
+            var processor = new EfSpaceVersionCloneProcessor(
+                context,
+                clock,
+                leaseStore);
+            var lease = await leaseStore.TryClaimNextAsync(
+                "scenario-clone-worker",
+                SpaceVersionCloneContract.ProcessorVersion,
+                TimeSpan.FromMinutes(2));
+            Assert.NotNull(lease);
+            await processor.ProcessAsync(lease!);
+
+            context.ChangeTracker.Clear();
+            var scenario = await context.Versions.SingleAsync(
+                value => value.Id == branch.Branch.ScenarioVersionId);
+            var reloadedModel = await context.Models.SingleAsync(
+                value => value.Id == model.Id);
+            var result = await service.GetBranchAsync(
+                model.SiteId,
+                branch.Branch.BranchId);
+
+            Assert.Equal(
+                SpaceModelVersionPurpose.PlanningScenario,
+                scenario.Purpose);
+            Assert.Equal(SpaceVersionStatus.Draft, scenario.Status);
+            Assert.Equal(originalPublished.Id, scenario.BasedOnVersionId);
+            Assert.Equal("Ready", result.BranchStatus);
+            Assert.Null(reloadedModel.ActiveDraftVersionId);
+            Assert.Equal(
+                replacement.Id,
+                reloadedModel.CurrentPublishedVersionId);
+            Assert.Single(await context.FloorRevisions
+                .Where(value => value.ModelVersionId == scenario.Id)
+                .ToArrayAsync());
+        });
+    }
+
+    private static async Task<(
+        SpaceVersionCloneStartResult Result,
+        SpaceVersionCloneCounts Counts)> StartAndProcessAsync(
+        SpaceContext context,
+        TestExecutionContext execution,
+        TestClock clock,
+        Guid modelId,
+        string name)
+    {
+        var result = await new EfSpaceVersionCloneStore(context, execution, clock)
+            .StartAsync(
+                new SpaceVersionCloneRequest(modelId, name, Guid.NewGuid()));
+        var leaseStore = new EfSpaceJobLeaseStore(context, clock);
+        var lease = await leaseStore.TryClaimNextAsync(
+            "clone-worker",
+            SpaceVersionCloneContract.ProcessorVersion,
+            TimeSpan.FromMinutes(2));
+        var counts = await new EfSpaceVersionCloneProcessor(
+                context,
+                clock,
+                leaseStore)
+            .ProcessAsync(lease!);
+        return (result, counts);
+    }
+
+    private static async Task<(SpaceModel Model, SpaceModelVersion Published)>
+        SeedPublishedAsync(
+            SpaceContext context,
+            Guid actorId,
+            bool includeSnapshot)
+    {
+        var tenantId = context.CurrentTenantId;
+        var model = SpaceModel.Create(tenantId, Guid.NewGuid());
+        context.Models.Add(model);
+        await context.SaveChangesAsync();
+        var version = SpaceModelVersion.CreateDraft(
+            tenantId,
+            model.Id,
+            1,
+            "Published");
+        context.Versions.Add(version);
+
+        if (includeSnapshot)
+        {
+            var source = SpaceModelSource.CreateInlineSource(
+                tenantId,
+                version.Id,
+                SpaceSourceType.Editor,
+                "Editor",
+                new string('c', 64));
+            var floor = SpaceFloorRevision.Create(
+                tenantId,
+                version.Id,
+                Guid.NewGuid(),
+                model.SiteId,
+                1,
+                "F1",
+                "Floor 1");
+            floor.AttachSource(source, "editor:floor-1");
+            var underlayFile = SpaceFile.CreateUploading(
+                Guid.NewGuid(),
+                tenantId,
+                $"quarantine/{Guid.NewGuid():N}",
+                "underlay.pdf",
+                "application/pdf",
+                SpaceFileRetentionClass.Source,
+                DateTime.UtcNow.AddDays(30));
+            underlayFile.CompleteQuarantine(
+                "application/pdf",
+                ".pdf",
+                128,
+                new string('d', 64));
+            underlayFile.BeginScanning();
+            underlayFile.MarkClean("test-av", "v1");
+            var underlaySource = SpaceModelSource.CreateFileSource(
+                tenantId,
+                version.Id,
+                SpaceSourceType.Pdf,
+                underlayFile,
+                "Underlay");
+            floor.AttachUnderlay(underlaySource);
+            var calibration = SpaceUnderlayCalibration.Create(
+                tenantId,
+                version.Id,
+                floor.LogicalId,
+                underlaySource.Id,
+                pageNumber: 1,
+                pixelWidth: 1_000,
+                pixelHeight: 500,
+                new SpaceCalibrationPoint(0, 500, 1_000, 2_000),
+                new SpaceCalibrationPoint(100, 500, 2_000, 2_000),
+                new SpaceCalibrationPoint(0, 400, 1_000, 3_000),
+                minimumErrorThresholdMillimeters: 50,
+                relativeErrorTolerance: 0.002m);
+            floor.ApplyUnderlayCalibration(
+                underlaySource,
+                calibration);
+            var zone = SpaceZoneRevision.Create(
+                tenantId,
+                version.Id,
+                Guid.NewGuid(),
+                floor.LogicalId,
+                "Z1",
+                0,
+                "Picking zone");
+            var aisle = SpaceAisleRevision.Create(
+                tenantId,
+                version.Id,
+                Guid.NewGuid(),
+                zone.LogicalId,
+                "A1",
+                0,
+                "Main aisle");
+            var rack = SpaceRackRevision.Create(
+                tenantId,
+                version.Id,
+                Guid.NewGuid(),
+                floor.LogicalId,
+                zone.LogicalId,
+                "R1",
+                aisle.LogicalId,
+                "Primary rack",
+                "Selective");
+            rack.ConfigureGeometry(100, 200, 0, 90, 1000, 800, 5000);
+            var rackLevel = SpaceRackLevelRevision.Create(
+                tenantId,
+                version.Id,
+                Guid.NewGuid(),
+                rack.LogicalId,
+                1,
+                0,
+                1000,
+                1,
+                1,
+                1000,
+                800,
+                maxLoad: 1250.5m,
+                beamHeight: 100);
+            var location = SpaceLocationRevision.Create(
+                tenantId,
+                version.Id,
+                Guid.NewGuid(),
+                floor.LogicalId,
+                rack.LogicalId,
+                "F1-R1-01",
+                1,
+                1,
+                1,
+                1000,
+                1000,
+                800,
+                locationType: SpaceLocationTypes.Storage);
+            var locationBinding = SpaceLocationExternalBinding.Create(
+                tenantId,
+                Guid.NewGuid(),
+                location,
+                "cp6-wms-v1",
+                "WH-01",
+                "EXT-F1-R1-01",
+                SpaceLocationBindingMode.WmsPrimary,
+                source,
+                "Bindings!2");
+            var designAttribute = SpaceDesignAttribute.Create(
+                tenantId,
+                Guid.NewGuid(),
+                version.Id,
+                SpaceDesignAttributeObjectTypes.Location,
+                location.LogicalId,
+                SpaceDesignAttributeNamespaces.Custom,
+                "TemperatureClass",
+                "Ambient",
+                null,
+                source,
+                "Attributes!2");
+            var element = SpaceElementRevision.Create(
+                tenantId,
+                version.Id,
+                Guid.NewGuid(),
+                floor.LogicalId,
+                "Column",
+                """{"schemaVersion":1,"kind":"box","width":200,"height":3000,"depth":200}""");
+            var asset = SpaceAsset.CreateSystem(
+                "SYS-COLUMN",
+                "System Column",
+                "Structure",
+                null,
+                actorId,
+                DateTime.UtcNow);
+            var assetVersion = SpaceAssetVersion.CreateReady(
+                asset,
+                1,
+                SpaceAssetFormat.Glb,
+                "{}",
+                "assets/column.png",
+                "assets/column.glb",
+                new string('c', 64),
+                actorId,
+                DateTime.UtcNow);
+            element.AttachAsset(assetVersion);
+            element.ConfigurePlacement(0, 0, 0, 0, 200, 3000, 200);
+            var attribute = SpaceElementAttribute.Create(
+                tenantId,
+                element,
+                "warehouse",
+                "fireRating",
+                "String",
+                "2h");
+            context.AddRange(
+                source,
+                underlayFile,
+                underlaySource,
+                calibration,
+                floor,
+                zone,
+                aisle,
+                rack,
+                rackLevel,
+                location,
+                locationBinding,
+                designAttribute,
+                asset,
+                assetVersion,
+                element,
+                attribute);
+        }
+
+        await context.SaveChangesAsync();
+        version.BeginValidation();
+        version.MarkReady(ContentHash, "space-v1", WmsHash);
+        version.BeginPublishing();
+        version.MarkPublished(actorId, DateTime.UtcNow);
+        await context.SaveChangesAsync();
+        model.SetPublishedVersion(version, ContentHash);
+        await context.SaveChangesAsync();
+        return (model, version);
+    }
+
+    private static async Task<IReadOnlyList<string>> ReadTableNamesAsync(
+        SpaceContext context)
+    {
+        await context.Database.OpenConnectionAsync();
+        await using var command = context.Database.GetDbConnection().CreateCommand();
+        command.CommandText = "SELECT [name] FROM sys.tables ORDER BY [name]";
+        var result = new List<string>();
+        await using var reader = await command.ExecuteReaderAsync();
+        while (await reader.ReadAsync())
+            result.Add(reader.GetString(0));
+        return result;
+    }
+
+    private static async Task WithDatabaseAsync(
+        Func<SpaceContext, TestExecutionContext, TestClock, Task> action)
+    {
+        var baseConnection = Environment.GetEnvironmentVariable(
+            SqlServerFactAttribute.EnvVar)!;
+        var connectionString = new SqlConnectionStringBuilder(baseConnection)
+        {
+            InitialCatalog = $"CP6SpaceClone_{Guid.NewGuid():N}",
+            TrustServerCertificate = true,
+        }.ConnectionString;
+        var execution = new TestExecutionContext(
+            Guid.NewGuid(),
+            Guid.NewGuid(),
+            Guid.NewGuid());
+        var clock = new TestClock();
+        await using var context = CreateContext(
+            connectionString,
+            execution,
+            clock);
+        try
+        {
+            await context.Database.MigrateAsync();
+            await action(context, execution, clock);
+        }
+        finally
+        {
+            await context.Database.EnsureDeletedAsync();
+        }
+    }
+
+    private static SpaceContext CreateContext(
+        string connectionString,
+        TestExecutionContext execution,
+        TestClock clock)
+    {
+        var options = new DbContextOptionsBuilder<SpaceContext>()
+            .UseSqlServer(
+                connectionString,
+                sql => sql.MigrationsHistoryTable(SpaceContext.MigrationsHistoryTable))
+            .Options;
+        return new SpaceContext(options, execution, clock);
+    }
+
+    private static SpaceContext CreateInMemoryContext(
+        Guid tenantId,
+        Guid actorId,
+        TestClock clock)
+    {
+        var options = new DbContextOptionsBuilder<SpaceContext>()
+            .UseInMemoryDatabase(
+                Guid.NewGuid().ToString("N"),
+                SpaceTestDatabaseRoots.InMemory)
+            .Options;
+        return new SpaceContext(
+            options,
+            new TestExecutionContext(tenantId, actorId, Guid.NewGuid()),
+            clock);
+    }
+
+    private sealed record TestExecutionContext(
+        Guid TenantId,
+        Guid ActorId,
+        Guid CorrelationId)
+        : ISpaceExecutionContext, ISpaceCorrelationContext;
+
+    private sealed class TestAccess(Guid expectedSiteId)
+        : ISpaceDesignAccessEvaluator
+    {
+        public void EnsureSiteAccess(Guid siteId, bool write) =>
+            Assert.Equal(expectedSiteId, siteId);
+    }
+
+    private sealed class TestClock : ISpaceClock
+    {
+        public DateTime UtcNow { get; } = DateTime.UtcNow;
+    }
+}

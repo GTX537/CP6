@@ -1,0 +1,70 @@
+name: cp6-r2
+
+services:
+  db-init:
+    image: ${CP6_API_IMAGE:?Set CP6_API_IMAGE to repository@sha256:digest}
+    env_file:
+      - ${CP6_ENV_FILE:?Set CP6_ENV_FILE to a runner-rendered secret file}
+    environment:
+      ASPNETCORE_ENVIRONMENT: Production
+      Startup__Mode: DatabaseInit
+      Startup__SkipDatabaseInitialization: "false"
+      Startup__SkipHostedServices: "true"
+      Release__Version: ${CP6_RELEASE_VERSION:?Set CP6_RELEASE_VERSION}
+      Release__GitSha: ${CP6_GIT_SHA:?Set CP6_GIT_SHA}
+      Release__ApiImageDigest: ${CP6_API_DIGEST:?Set CP6_API_DIGEST}
+      Release__WebImageDigest: ${CP6_WEB_DIGEST:?Set CP6_WEB_DIGEST}
+    restart: "no"
+
+  api:
+    image: ${CP6_API_IMAGE:?Set CP6_API_IMAGE to repository@sha256:digest}
+    env_file:
+      - ${CP6_ENV_FILE:?Set CP6_ENV_FILE to a runner-rendered secret file}
+    environment:
+      ASPNETCORE_ENVIRONMENT: Production
+      Startup__Mode: Api
+      Startup__SkipDatabaseInitialization: "true"
+      Startup__SkipHostedServices: "false"
+      Release__Version: ${CP6_RELEASE_VERSION:?Set CP6_RELEASE_VERSION}
+      Release__GitSha: ${CP6_GIT_SHA:?Set CP6_GIT_SHA}
+      Release__ApiImageDigest: ${CP6_API_DIGEST:?Set CP6_API_DIGEST}
+      Release__WebImageDigest: ${CP6_WEB_DIGEST:?Set CP6_WEB_DIGEST}
+    ports:
+      - "${CP6_API_BIND_ADDRESS:-127.0.0.1}:${CP6_API_PORT:-9991}:5000"
+    networks:
+      default:
+        aliases:
+          - cp6-api
+    healthcheck:
+      test:
+        - CMD
+        - curl
+        - --fail
+        - --silent
+        - --show-error
+        - http://127.0.0.1:5000/health/ready
+      interval: 10s
+      timeout: 5s
+      retries: 12
+      start_period: 30s
+    restart: unless-stopped
+
+  web:
+    image: ${CP6_WEB_IMAGE:?Set CP6_WEB_IMAGE to repository@sha256:digest}
+    ports:
+      - "${CP6_WEB_BIND_ADDRESS:-127.0.0.1}:${CP6_WEB_PORT:-8080}:80"
+    depends_on:
+      api:
+        condition: service_healthy
+    healthcheck:
+      test:
+        - CMD
+        - wget
+        - --quiet
+        - --spider
+        - http://127.0.0.1/release.json
+      interval: 10s
+      timeout: 5s
+      retries: 12
+      start_period: 15s
+    restart: unless-stopped

@@ -12,6 +12,11 @@ export const inboxApi = {
   markCcRead:   (id: string) => http.post('/oa/inbox/cc/read', { id }),
   batch: (taskIds: string[], approve: boolean, comment?: string) =>
     http.post('/oa/inbox/batch', { taskIds, approve, comment }),
+  decide: (taskId: string, decision: 'approve' | 'reject', comment: string | undefined,
+    dataPatch: Record<string, unknown>, expectedFormDataRowVersion?: string) =>
+    http.post(`/oa/tasks/${taskId}/decision`, {
+      decision, comment, dataPatch, expectedFormDataRowVersion,
+    }),
   sendBack: (taskId: string, kind: 'prevStage' | 'starter' | 'node', nodeId?: string, comment?: string) =>
     http.post('/oa/inbox/sendback', { taskId, kind, nodeId, comment }),
   batchTransfer: (p: BatchTransferReq) => http.post('/oa/inbox/batch-transfer', p),

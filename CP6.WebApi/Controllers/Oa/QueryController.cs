@@ -13,10 +13,15 @@ namespace CP6.WebApi.Controllers.Oa;
 public class QueryController : LocalizedControllerBase
 {
     private readonly IInboxService _inbox;
+    private readonly CP6.Core.Services.Sys.ICurrentPermissionContext _context;
+    private readonly IDelegateService _delegates;
 
-    public QueryController(IInboxService inbox)
+    public QueryController(IInboxService inbox, CP6.Core.Services.Sys.ICurrentPermissionContext context,
+        IDelegateService delegates)
     {
         _inbox = inbox;
+        _context = context;
+        _delegates = delegates;
     }
 
     private IActionResult Ok2(object? data = null) => Ok(new { code = 0, message = "OK", data });
@@ -29,7 +34,15 @@ public class QueryController : LocalizedControllerBase
     {
         try
         {
-            return Ok2(await _inbox.QueryAsync(filter));
+            var actual = (await _context.GetAsync()).UserId;
+            var effective = actual;
+            var header = Request.Headers["X-Acting-As"].ToString();
+            if (Guid.TryParse(header, out var actingAs) && actingAs != Guid.Empty && actingAs != actual)
+            {
+                await _delegates.AssertActiveGrantAsync(actual, actingAs);
+                effective = actingAs;
+            }
+            return Ok2(await _inbox.QueryAsync(effective, filter));
         }
         catch (InvalidOperationException e) { return Err(e); }
     }

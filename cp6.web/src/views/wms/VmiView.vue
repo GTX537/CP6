@@ -93,19 +93,19 @@
 import { ref, reactive, computed } from 'vue'
 import { ElMessage, ElMessageBox, type FormRules } from 'element-plus'
 import { useI18n } from 'vue-i18n'
-import CpListPage, { type ListColumn, type ListFetch } from '@/components/templates/CpListPage.vue'
+import CpListPage, { type ListColumn, type ListFetch, type ListPageExpose } from '@/components/templates/CpListPage.vue'
 import { type FilterField } from '@/components/templates/CpFilterBar.vue'
 import CpFormDialog from '@/components/templates/CpFormDialog.vue'
 import { vmiApi } from '@/api/wms/paperIndustry'
-import type { VmiBilling } from '@/types/wms/wms'
+import type { VmiBilling, VmiCustomerSummary, VmiStockDetail } from '@/types/wms/wms'
 import { formatQty as fmtQty, formatCurrency } from '@/utils/format'
 
 const { t } = useI18n()
 const activeTab = ref<'customers' | 'details' | 'billings'>('customers')
 
-const customersRef = ref<InstanceType<typeof CpListPage> | null>(null)
-const detailsRef = ref<InstanceType<typeof CpListPage> | null>(null)
-const billingsRef = ref<InstanceType<typeof CpListPage> | null>(null)
+const customersRef = ref<ListPageExpose | null>(null)
+const detailsRef = ref<ListPageExpose | null>(null)
+const billingsRef = ref<ListPageExpose | null>(null)
 
 const selectedCustomer = ref('')
 
@@ -131,7 +131,7 @@ const filterLabels = computed(() => ({
 }))
 
 // ───── 客户汇总 ─────
-const customerColumns = computed<ListColumn[]>(() => [
+const customerColumns = computed<ListColumn<VmiCustomerSummary>[]>(() => [
   { prop: 'customerCd', label: t('wms.vmi.fld.customerCd'), width: 140 },
   { prop: 'customerName', label: t('wms.vmi.fld.customerName'), minWidth: 180 },
   { prop: 'skuCount', label: t('wms.vmi.fld.skuCount'), width: 100, kind: 'num' },
@@ -144,7 +144,7 @@ const customerColumns = computed<ListColumn[]>(() => [
 const customerSearchFields = computed<FilterField[]>(() => [
   { key: 'customerCd', label: t('wms.vmi.fld.customerCd'), type: 'text' },
 ])
-const fetchCustomers: ListFetch = async ({ filters }) => {
+const fetchCustomers: ListFetch<VmiCustomerSummary> = async ({ filters }) => {
   const cd = filters.customerCd ? String(filters.customerCd) : undefined
   const all = (await vmiApi.customers(cd)).data || []
   return { rows: all, total: all.length }
@@ -157,7 +157,7 @@ async function openDetails(cd: string) {
 }
 
 // ───── 明细 ─────
-const detailColumns = computed<ListColumn[]>(() => [
+const detailColumns = computed<ListColumn<VmiStockDetail>[]>(() => [
   { prop: 'productCd', label: t('wms.common.product'), width: 140 },
   { prop: 'lotNo', label: t('wms.common.lot'), width: 140 },
   { prop: 'warehouseCd', label: t('wms.common.warehouse'), width: 100 },
@@ -167,7 +167,7 @@ const detailColumns = computed<ListColumn[]>(() => [
   { prop: 'receiveDate', label: t('wms.vmi.fld.receiveDate'), width: 120 },
   { prop: 'expiryDate', label: t('wms.common.expiryDate'), width: 120 },
 ])
-const fetchDetails: ListFetch = async () => {
+const fetchDetails: ListFetch<VmiStockDetail> = async () => {
   if (!selectedCustomer.value) return { rows: [], total: 0 }
   const all = (await vmiApi.details(selectedCustomer.value)).data || []
   return { rows: all, total: all.length }
@@ -175,7 +175,7 @@ const fetchDetails: ListFetch = async () => {
 function reloadDetails() { detailsRef.value?.reload() }
 
 // ───── 保管料 ─────
-const billingColumns = computed<ListColumn[]>(() => [
+const billingColumns = computed<ListColumn<VmiBilling>[]>(() => [
   { prop: 'billingNo', label: t('wms.vmi.fld.billingNo'), width: 200 },
   { prop: 'customerCd', label: t('wms.vmi.fld.customerCd'), width: 120 },
   { prop: 'customerName', label: t('wms.vmi.fld.customerName'), minWidth: 160, overflowTooltip: true },
@@ -201,7 +201,7 @@ const billingSearchFields = computed<FilterField[]>(() => [
     ],
   },
 ])
-const fetchBillings: ListFetch = async ({ filters }) => {
+const fetchBillings: ListFetch<VmiBilling> = async ({ filters }) => {
   const cd = filters.customerCd ? String(filters.customerCd) : undefined
   const ym = filters.yearMonth ? String(filters.yearMonth) : undefined
   const confirmed = filters.confirmed === undefined || filters.confirmed === '' ? undefined : Boolean(filters.confirmed)

@@ -228,9 +228,10 @@ public static class CrossDockStatus
 /// </summary>
 public static class ReplenishStatus
 {
-    public const int Pending = 0;    // 未実行
-    public const int Executed = 1;   // 実行済
-    public const int Cancelled = 9;  // 取消
+    public const int Pending = 0;     // 未発行
+    public const int Executed = 1;    // MOVE 完了済（既存データとの互換値）
+    public const int TaskIssued = 2;  // v2 MOVE タスク発行済
+    public const int Cancelled = 9;   // 取消
 }
 
 /// <summary>
@@ -442,6 +443,9 @@ public static class MobileTaskStatus
     public const int Pending    = 0;  // 未着手
     public const int InProgress = 1;  // 進行中
     public const int Completed  = 2;  // 完了
+    public const int PartiallyCompleted = 3;
+    public const int Paused = 4;
+    public const int Exception = 5;
     public const int Cancelled  = 9;  // 取消
 }
 

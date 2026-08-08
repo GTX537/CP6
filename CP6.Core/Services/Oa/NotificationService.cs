@@ -18,7 +18,7 @@ public class NotificationService : INotificationService
     public async Task<IReadOnlyList<NotificationItem>> ListAsync(
         Guid userId, bool unreadOnly, int page, int pageSize)
     {
-        var q = _db.Wf_Notifications.Where(n => n.UserId == userId);
+        var q = _db.Wf_Notifications.Where(n => n.UserId == userId && n.InAppRequested);
         if (unreadOnly) q = q.Where(n => !n.IsRead);
 
         var rows = await q
@@ -36,7 +36,7 @@ public class NotificationService : INotificationService
     // ── UnreadCount ───────────────────────────────────────────────────
 
     public Task<int> UnreadCountAsync(Guid userId) =>
-        _db.Wf_Notifications.CountAsync(n => n.UserId == userId && !n.IsRead);
+        _db.Wf_Notifications.CountAsync(n => n.UserId == userId && n.InAppRequested && !n.IsRead);
 
     // ── MarkRead ──────────────────────────────────────────────────────
 
@@ -80,8 +80,17 @@ public class NotificationService : INotificationService
     /// 调用方（PersistentWfNotifier）持有同一 CP6Context，随引擎事务一起落库。
     /// </summary>
     public Task CreateAsync(Guid userId, int type, string title, string body,
-        Guid? instanceId, Guid? taskId, string? flowKey)
+        Guid? instanceId, Guid? taskId, string? flowKey) =>
+        CreateOutboxAsync(userId, type, title, body, instanceId, taskId, flowKey,
+            Guid.NewGuid().ToString("N"), inAppRequested: true, emailRequested: false);
+
+    public async Task CreateOutboxAsync(Guid userId, int type, string title, string body,
+        Guid? instanceId, Guid? taskId, string? flowKey,
+        string eventKey, bool inAppRequested, bool emailRequested)
     {
+        if (_db.Wf_Notifications.Local.Any(x => x.EventKey == eventKey) ||
+            await _db.Wf_Notifications.AnyAsync(x => x.EventKey == eventKey))
+            return;
         _db.Wf_Notifications.Add(new Wf_Notification
         {
             Id         = Guid.NewGuid(),
@@ -93,7 +102,11 @@ public class NotificationService : INotificationService
             TaskId     = taskId,
             FlowKey    = flowKey,
             IsRead     = false,
+            EventKey = eventKey,
+            InAppRequested = inAppRequested,
+            EmailRequested = emailRequested,
+            DispatchStatus = 0,
+            NextAttemptAtUtc = DateTime.UtcNow,
         });
-        return Task.CompletedTask;
     }
 }

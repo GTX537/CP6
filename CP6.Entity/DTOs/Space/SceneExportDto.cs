@@ -3,6 +3,7 @@ namespace CP6.Entity.DTOs.Space;
 /// <summary>场景导出载荷（ch01 §G-3）。仅含几何数据，不含 TenantId/AbsXYZ/LocationCode/Status/RowVersion。</summary>
 public class SceneExportDto
 {
+    public SpaceDataSourceDto Source { get; set; } = SpaceDataSourceDto.Runtime();
     public SceneExportMeta Meta { get; set; } = new();
     public List<ZoneExportDto> Zones { get; set; } = new();
     public List<AisleExportDto> Aisles { get; set; } = new();

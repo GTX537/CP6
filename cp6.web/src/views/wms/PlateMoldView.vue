@@ -128,7 +128,7 @@ import { ref, computed } from 'vue'
 import { ElMessage, ElMessageBox } from 'element-plus'
 import { useI18n } from 'vue-i18n'
 import CpPageShell from '@/components/templates/CpPageShell.vue'
-import CpListPage, { type ListColumn, type ListFetch } from '@/components/templates/CpListPage.vue'
+import CpListPage, { type ListColumn, type ListFetch, type ListPageExpose } from '@/components/templates/CpListPage.vue'
 import { type FilterField } from '@/components/templates/CpFilterBar.vue'
 import CpTag, { type Tone } from '@/components/base/CpTag.vue'
 import { plateMoldApi } from '@/api/wms/paperIndustry2'
@@ -138,7 +138,7 @@ import { formatQty } from '@/utils/format'
 const { t } = useI18n()
 const total = ref<number>()
 const saving = ref(false)
-const listRef = ref<InstanceType<typeof CpListPage> | null>(null)
+const listRef = ref<ListPageExpose | null>(null)
 
 const createDialog = ref(false)
 const editing = ref<any>(null)
@@ -186,7 +186,7 @@ const filterLabels = computed(() => ({
   reset: t('wms.common.clear'),
 }))
 
-const columns = computed<ListColumn[]>(() => [
+const columns = computed<ListColumn<PlateMoldStock>[]>(() => [
   { prop: 'plateNo', label: t('wms.plate.fld.no'), kind: 'mono', width: 160 },
   { prop: 'status', label: t('wms.common.status'), width: 110, kind: 'tag',
     map: (v) => ({ label: statusMap.value[v as number] ?? '', tone: statusTone(v as number) }) },
@@ -217,7 +217,7 @@ const searchFields = computed<FilterField[]>(() => [
   },
 ])
 
-const fetchList: ListFetch = async ({ filters }) => {
+const fetchList: ListFetch<PlateMoldStock> = async ({ filters }) => {
   const f = filters as Record<string, unknown>
   const q: PlateMoldSearchQuery = { pageSize: 500 }
   if (f.plateNo) q.plateNo = String(f.plateNo)

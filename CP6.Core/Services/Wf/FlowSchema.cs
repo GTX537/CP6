@@ -108,11 +108,24 @@ public class FlowNode
 
 public class FlowEdge
 {
+    /// <summary>设计器稳定边 Id。仅用于编辑与选中，引擎不依赖。</summary>
+    public string? Id { get; set; }
+
     public string From { get; set; } = string.Empty;
     public string To { get; set; } = string.Empty;
 
+    /// <summary>设计器显示名称，引擎不依赖。</summary>
+    public string? Name { get; set; }
+
     /// <summary>流转条件表达式（空 = 无条件直达）。C-3 用 ConditionEvaluator 求值，多条件边按声明序取首个为真</summary>
     public string? Condition { get; set; }
+
+    /// <summary>同一来源节点的判断顺序，数字越小越先执行；空值保持旧版声明顺序。</summary>
+    public int? Priority { get; set; }
+
+    /// <summary>设计器四向连接点。仅影响画布走线，不影响执行。</summary>
+    public string? SourceHandle { get; set; }
+    public string? TargetHandle { get; set; }
 
     /// <summary>路径抄送人（token 经此转移时抄送，对齐 Delta 知会人员）。</summary>
     public List<Guid>? CcUsers { get; set; }

@@ -362,6 +362,8 @@ export interface OrderListItemDto {
   deliveryNote?: string
   webOrderNo: string
   webOrderDetailNo: number
+  currencyCd?: string
+  fxRate?: number
 }
 
 // ─────────────────── PA090 単価訂正 ───────────────────

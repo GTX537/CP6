@@ -104,7 +104,7 @@ function codeLabel(m: Record<number, string>, v: unknown): string {
 }
 
 // —— 列定义 ——（種別/状態/優先度 走 map 声明式映射；計画出庫日 走 kind:'date'；操作 走具名插槽） ——
-const columns = computed<ListColumn[]>(() => [
+const columns = computed<ListColumn<OutboundOrder>[]>(() => [
   { prop: 'outboundNo', label: t('wms.outbound.fld.no'), kind: 'mono', width: 180 },
   { prop: 'outboundType', label: t('wms.common.type'), width: 90, kind: 'tag',
     map: (v) => ({ label: codeLabel(typeMap.value, v), tone: v === 1 ? 'info' : 'warn' }) },
@@ -144,7 +144,7 @@ const searchFields = computed<FilterField[]>(() => [
 
 // —— 取数：包装 outboundOrderApi.search；后端返回扁平数组且无 total → 客户端分页 ——
 const PAGE_CAP = 500
-const fetchList: ListFetch = async ({ page, size, filters }) => {
+const fetchList: ListFetch<OutboundOrder> = async ({ page, size, filters }) => {
   const f = filters as Record<string, unknown>
   const q: OutboundOrderSearchQuery = { pageSize: PAGE_CAP }
   if (f.outboundNo) q.outboundNo = String(f.outboundNo)

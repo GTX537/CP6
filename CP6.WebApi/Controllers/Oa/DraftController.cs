@@ -1,3 +1,4 @@
+using System.Text.Json;
 using CP6.Core.Auth;
 using CP6.Core.Services.Oa;
 using CP6.Core.Services.Sys;
@@ -6,98 +7,99 @@ using Microsoft.AspNetCore.Mvc;
 
 namespace CP6.WebApi.Controllers.Oa;
 
-/// <summary>
-/// 草稿（暂存）REST（Phase B）。/api/oa/draft — 新建/更新/列表/删除/提交草稿。
-/// 草稿 = Wf_FlowInstance.Status=Draft；提交后经 L0 引擎推进。
-/// </summary>
 [ApiController]
-[Route("api/oa/draft")]
+[Route("api/oa")]
 [Authorize]
-public class DraftController : LocalizedControllerBase
+public sealed class DraftController : ControllerBase
 {
-    private readonly IDraftService _draft;
-    private readonly ICurrentPermissionContext _ctx;
+    private readonly IDraftService _drafts;
+    private readonly ICurrentPermissionContext _permission;
 
-    public DraftController(IDraftService draft, ICurrentPermissionContext ctx)
+    public DraftController(IDraftService drafts, ICurrentPermissionContext permission)
     {
-        _draft = draft;
-        _ctx = ctx;
+        _drafts = drafts;
+        _permission = permission;
     }
 
-    private async Task<Guid> CurrentUserIdAsync() => (await _ctx.GetAsync()).UserId;
-    private IActionResult Ok2(object? data = null) => Ok(new { code = 0, message = "OK", data });
-    private IActionResult Err(InvalidOperationException e) => BadRequest(new { code = 400, message = e.Message });
-
-    // ── 列表 ──
-
-    [HttpGet("list")]
-    public async Task<IActionResult> List()
-    {
-        var me = await CurrentUserIdAsync();
-        return Ok2(await _draft.ListDraftsAsync(me));
-    }
-
-    // ── 新建草稿 ──
-
-    [HttpPost("save")]
+    [HttpPost("forms/{formKey}/drafts")]
     [RequirePermission("oa-form-catalog", "add")]
-    public async Task<IActionResult> Save([FromBody] SaveDraftReq r)
-    {
-        try
-        {
-            var me = await CurrentUserIdAsync();
-            var id = await _draft.SaveDraftAsync(me, r.FlowKey, r.VarsJson ?? "{}");
-            return Ok2(new { id });
-        }
-        catch (InvalidOperationException e) { return Err(e); }
-    }
+    [RequestSizeLimit(1024 * 1024)]
+    public async Task<IActionResult> Create(
+        string formKey, [FromBody] CreateDraftRequest request, CancellationToken ct) =>
+        await Execute(() => _drafts.CreateAsync(UserId(), formKey, request.Data, request.Title, ct));
 
-    // ── 更新草稿 ──
+    [HttpGet("drafts")]
+    public async Task<IActionResult> List([FromQuery] int page = 1, [FromQuery] int pageSize = 20,
+        CancellationToken ct = default) =>
+        await Execute(() => _drafts.ListAsync(UserId(), page, pageSize, ct));
 
-    [HttpPost("update")]
+    [HttpGet("drafts/{draftId:guid}")]
+    public async Task<IActionResult> Get(Guid draftId, CancellationToken ct) =>
+        await Execute(() => _drafts.GetAsync(UserId(), draftId, ct));
+
+    [HttpPut("drafts/{draftId:guid}")]
     [RequirePermission("oa-form-catalog", "edit")]
-    public async Task<IActionResult> Update([FromBody] UpdateDraftReq r)
-    {
-        try
-        {
-            var me = await CurrentUserIdAsync();
-            await _draft.UpdateDraftAsync(me, r.Id, r.VarsJson ?? "{}");
-            return Ok2();
-        }
-        catch (InvalidOperationException e) { return Err(e); }
-    }
+    [RequestSizeLimit(1024 * 1024)]
+    public async Task<IActionResult> Update(
+        Guid draftId, [FromBody] UpdateDraftRequest request, CancellationToken ct) =>
+        await Execute(() => _drafts.UpdateAsync(
+            UserId(), draftId, request.Data, request.Title, Decode(request.RowVersion), ct));
 
-    // ── 提交草稿 ──
+    [HttpPost("drafts/{draftId:guid}/rebase")]
+    [RequirePermission("oa-form-catalog", "edit")]
+    public async Task<IActionResult> Rebase(
+        Guid draftId, [FromBody] RebaseDraftRequest request, CancellationToken ct) =>
+        await Execute(() => _drafts.RebaseAsync(UserId(), draftId, request.TargetVersion,
+            request.ConfirmRemovedValues, Decode(request.RowVersion), ct));
 
-    [HttpPost("submit")]
+    [HttpPost("drafts/{draftId:guid}/submit")]
     [RequirePermission("oa-form-catalog", "submit")]
-    public async Task<IActionResult> Submit([FromBody] IdReq r)
+    public async Task<IActionResult> Submit(
+        Guid draftId, [FromBody] SubmitDraftRequest request, CancellationToken ct)
     {
-        try
-        {
-            var me = await CurrentUserIdAsync();
-            await _draft.SubmitDraftAsync(me, r.Id);
-            return Ok2();
-        }
-        catch (InvalidOperationException e) { return Err(e); }
+        if (!Request.Headers.TryGetValue("Idempotency-Key", out var keys) ||
+            string.IsNullOrWhiteSpace(keys.FirstOrDefault()))
+            return BadRequest(new { code = "E-WF-044", message = "E-WF-044" });
+        return await Execute(() => _drafts.SubmitAsync(
+            UserId(), draftId, keys.First()!, Decode(request.RowVersion), ct));
     }
 
-    // ── 删除草稿 ──
-
-    [HttpPost("delete")]
+    [HttpDelete("drafts/{draftId:guid}")]
     [RequirePermission("oa-form-catalog", "del")]
-    public async Task<IActionResult> Delete([FromBody] IdReq r)
-    {
-        try
+    public async Task<IActionResult> Delete(Guid draftId, CancellationToken ct) =>
+        await Execute(async () =>
         {
-            var me = await CurrentUserIdAsync();
-            await _draft.DeleteDraftAsync(me, r.Id);
-            return Ok2();
+            await _drafts.DeleteAsync(UserId(), draftId, ct);
+            return true;
+        });
+
+    private Guid UserId() => _permission.GetAsync().GetAwaiter().GetResult().UserId;
+
+    private async Task<IActionResult> Execute<T>(Func<Task<T>> action)
+    {
+        try { return Ok(new { code = 0, message = "OK", data = await action() }); }
+        catch (UnauthorizedAccessException) { return Forbid(); }
+        catch (DraftRebaseConfirmationException ex)
+        {
+            return Conflict(new { code = "E-WF-048", message = "E-WF-048", removedFields = ex.RemovedFields });
         }
-        catch (InvalidOperationException e) { return Err(e); }
+        catch (InvalidOperationException ex)
+        {
+            var code = ex.Message.Split(':')[0];
+            var status = code is "E-WF-040" or "E-WF-041" or "E-WF-048" or "E-WF-044" ? 409 : 400;
+            return StatusCode(status, new { code, message = ex.Message });
+        }
     }
 
-    public record IdReq(Guid Id);
-    public record SaveDraftReq(string FlowKey, string? VarsJson);
-    public record UpdateDraftReq(Guid Id, string? VarsJson);
+    private static byte[]? Decode(string? value)
+    {
+        if (string.IsNullOrWhiteSpace(value)) return null;
+        try { return Convert.FromBase64String(value); }
+        catch (FormatException) { throw new InvalidOperationException("E-WF-041"); }
+    }
+
+    public sealed record CreateDraftRequest(JsonElement Data, string? Title);
+    public sealed record UpdateDraftRequest(JsonElement Data, string? Title, string? RowVersion);
+    public sealed record RebaseDraftRequest(int TargetVersion, bool ConfirmRemovedValues, string? RowVersion);
+    public sealed record SubmitDraftRequest(string? RowVersion);
 }

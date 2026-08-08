@@ -44,7 +44,14 @@
           @row-click="onReviewRowClick"
         >
           <el-table-column type="selection" width="46" />
-          <el-table-column prop="flowName" :label="t('oa.col.flowName')" min-width="160" />
+          <el-table-column prop="flowName" :label="t('oa.col.flowName')" min-width="160">
+            <template #default="{ row }">
+              <span
+                data-testid="inbox-review-row"
+                :data-detail-route="row.detailRoute"
+              >{{ row.flowName }}</span>
+            </template>
+          </el-table-column>
           <el-table-column prop="starterName" :label="t('oa.col.starter')" width="120" />
           <el-table-column :label="t('oa.col.sentAt')" width="170">
             <template #default="{ row }">{{ formatTime(row.sentAt) }}</template>
@@ -65,7 +72,11 @@
                 @click.stop
                 @change="toggleMobileSelect(row)"
               />
-              <span class="mobile-flow">{{ row.flowName }}</span>
+              <span
+                class="mobile-flow"
+                data-testid="inbox-review-row"
+                :data-detail-route="row.detailRoute"
+              >{{ row.flowName }}</span>
               <CpTag tone="info">{{ row.stageName || row.nodeId }}</CpTag>
             </div>
             <div class="mobile-meta">
@@ -126,7 +137,6 @@ import { nextTick, onMounted, ref, watch } from 'vue'
 import { useI18n } from 'vue-i18n'
 import { ElMessage } from 'element-plus'
 import { Refresh } from '@element-plus/icons-vue'
-import type { ElTable } from 'element-plus'
 import { inboxApi } from '@/api/oa/inbox'
 import { prefApi } from '@/api/oa/pref'
 import { parseRowMode } from '@/views/oa/inbox/inboxModel'
@@ -134,8 +144,10 @@ import CpTag from '@/components/base/CpTag.vue'
 import CpEmpty from '@/components/base/CpEmpty.vue'
 import type { PendingItem, CcItem, BatchResultItem } from '@/types/oa/inbox'
 import { useBreakpoint } from '@/composables/useBreakpoint'
+import { useRouter } from 'vue-router'
 
 const { t } = useI18n()
+const router = useRouter()
 const emit = defineEmits<{ 'open-detail': [id: string] }>()
 const { isMobile } = useBreakpoint()
 
@@ -160,7 +172,7 @@ function onTabChange(name: string | number) {
 // ── Review tab ──────────────────────────────────────────────────
 const reviewRows = ref<PendingItem[]>([])
 const reviewLoading = ref(false)
-const reviewTableRef = ref<InstanceType<typeof ElTable> | null>(null)
+const reviewTableRef = ref<any>(null)
 const selected = ref<PendingItem[]>([])
 const batchComment = ref('')
 const batchActing = ref(false)
@@ -228,7 +240,11 @@ async function onReviewRowClick(row: PendingItem) {
   } catch {
     // ignore mark-read errors
   }
-  emit('open-detail', row.instanceId)
+  if (row.detailRoute?.startsWith('/') && !row.detailRoute.startsWith('//')) {
+    await router.push(row.detailRoute)
+  } else {
+    emit('open-detail', row.instanceId)
+  }
 }
 
 async function doBatch(approve: boolean) {

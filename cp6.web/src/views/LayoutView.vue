@@ -1,42 +1,60 @@
 <template>
   <el-container class="layout-root" :class="{ 'is-entering': enterFromLogin }">
     <!-- 桌面端：左侧菜单常驻 -->
-    <el-aside
+    <div
       v-if="!isMobile"
-      width="238px"
-      class="layout-aside cp-menu"
+      class="layout-sidebar-shell"
+      :style="{ '--sidebar-width': `${sidebarWidth}px` }"
     >
-      <div class="cp-brand">
-        <span class="cp-brand-logo">CP</span>
-        <div><b>{{ $t('app.title') }}</b><small>MANUFACTURING</small></div>
-      </div>
-      <el-menu
-        :default-active="currentRoute"
-        router
-      >
-        <menu-tree-item
-          v-for="menu in menuTree"
-          :key="menu.id"
-          :node="menu"
-        />
-        <!-- 多租户合规 #5（T9）带外平台区入口：仅平台超管 + 非 impersonation 期显示（UX 闸；真闸在后端） -->
-        <el-sub-menu v-if="showPlatformEntry" index="__platform__">
-          <template #title>
-            <el-icon><OfficeBuilding /></el-icon>
-            <span>{{ $t('platform.title') }}</span>
-          </template>
-          <el-menu-item
-            v-for="item in platformLinks"
-            :key="item.path"
-            :index="item.path"
-            @click="goPlatform(item.path)"
-          >
-            {{ $t(item.label) }}
-          </el-menu-item>
-        </el-sub-menu>
-      </el-menu>
-      <div class="cp-env"><i />{{ $t('app.title') }} · v2.4</div>
-    </el-aside>
+      <el-aside width="100%" class="layout-aside cp-menu">
+        <div class="cp-brand">
+          <span class="cp-brand-logo">CP</span>
+          <div><b>{{ $t('app.title') }}</b><small>MANUFACTURING</small></div>
+        </div>
+        <el-menu
+          :default-active="currentRoute"
+          @select="handleMenuSelect"
+        >
+          <menu-tree-item
+            v-for="menu in menuTree"
+            :key="menu.id"
+            :node="menu"
+          />
+          <!-- 多租户合规 #5（T9）带外平台区入口：仅平台超管 + 非 impersonation 期显示（UX 闸；真闸在后端） -->
+          <el-sub-menu v-if="showPlatformEntry" index="__platform__">
+            <template #title>
+              <el-icon><OfficeBuilding /></el-icon>
+              <span>{{ $t('platform.title') }}</span>
+            </template>
+            <el-menu-item
+              v-for="item in platformLinks"
+              :key="item.path"
+              :index="item.path"
+            >
+              {{ $t(item.label) }}
+            </el-menu-item>
+          </el-sub-menu>
+        </el-menu>
+        <div class="cp-env"><i />{{ $t('app.title') }} · v2.4</div>
+      </el-aside>
+      <div
+        class="sidebar-resize-handle"
+        :class="{ 'is-resizing': resizingSidebar }"
+        role="separator"
+        tabindex="0"
+        aria-label="调整侧边栏宽度"
+        aria-orientation="vertical"
+        :aria-valuemin="SIDEBAR_MIN_WIDTH"
+        :aria-valuemax="SIDEBAR_MAX_WIDTH"
+        :aria-valuenow="sidebarWidth"
+        title="拖动调整侧边栏宽度，双击恢复默认"
+        @pointerdown="startSidebarResize"
+        @keydown.left.prevent="resizeSidebarBy(-16)"
+        @keydown.right.prevent="resizeSidebarBy(16)"
+        @keydown.home.prevent="resetSidebarWidth"
+        @dblclick="resetSidebarWidth"
+      />
+    </div>
 
     <!-- 手机端：抽屉式菜单 -->
     <el-drawer
@@ -61,8 +79,7 @@
         <div class="drawer-menu-wrap cp-menu">
           <el-menu
             :default-active="currentRoute"
-            router
-            @select="drawerOpen = false"
+            @select="handleMenuSelect"
           >
             <menu-tree-item
               v-for="menu in menuTree"
@@ -79,7 +96,6 @@
                 v-for="item in platformLinks"
                 :key="item.path"
                 :index="item.path"
-                @click="goPlatform(item.path)"
               >
                 {{ $t(item.label) }}
               </el-menu-item>
@@ -116,7 +132,7 @@
     </el-drawer>
 
     <!-- 右侧内容 -->
-    <el-container>
+    <el-container class="layout-content">
       <el-header class="layout-header" :class="{ 'is-mobile': isMobile }">
         <!-- 手机端：左上汉堡菜单 -->
         <el-button
@@ -153,7 +169,7 @@
       </el-header>
       <!-- 多租户合规 #5（T9）impersonation 全局横幅（带倒计时，R8）。imp 期间常驻顶部。 -->
       <ImpersonationBanner />
-      <el-main class="layout-main">
+      <el-main class="layout-main" :class="{ 'is-workspace': isWorkspaceRoute }">
         <RouterView v-slot="{ Component }">
           <Transition :name="enterFromLogin ? 'route-enter' : 'fade'" mode="out-in">
             <component :is="Component" v-if="Component" />
@@ -165,7 +181,7 @@
 </template>
 
 <script setup lang="ts">
-import { ref, computed, onMounted, watch } from 'vue'
+import { ref, computed, onMounted, onBeforeUnmount, watch } from 'vue'
 import { useRoute, useRouter, RouterView } from 'vue-router'
 import { useI18n } from 'vue-i18n'
 import { Menu, User, SwitchButton, OfficeBuilding } from '@element-plus/icons-vue'
@@ -177,6 +193,7 @@ import MenuTreeItem from '@/components/MenuTreeItem.vue'
 import ImpersonationBanner from '@/components/ImpersonationBanner.vue'
 import NotificationBell from '@/views/oa/notification/NotificationBell.vue'
 import { usePlatformStore } from '@/stores/platform'
+import { detachedWorkspaceTarget, isDetachedWorkspacePath } from '@/utils/workspaceNavigation'
 
 const { locale, t, te } = useI18n()
 const route = useRoute()
@@ -193,16 +210,75 @@ const platformLinks = [
   { path: '/platform/audit', label: 'platform.audit.title' },
   { path: '/platform/gdpr', label: 'platform.gdpr.title' }
 ]
-function goPlatform(path: string) {
+function handleMenuSelect(path: string) {
   drawerOpen.value = false
-  router.push(path)
+  if (!path || path.startsWith('__')) return
+  const detachedTarget = detachedWorkspaceTarget(path)
+  if (detachedTarget) {
+    window.open(router.resolve(detachedTarget).href, '_blank', 'noopener,noreferrer')
+    return
+  }
+  void router.push(path)
 }
 const currentRoute = computed(() => route.path)
+const isWorkspaceRoute = computed(() => isDetachedWorkspacePath(route.path))
 const nickName = ref(localStorage.getItem('nickName') || '')
 const menuTree = ref<any[]>([])
 const currentLang = ref(locale.value)
 const drawerOpen = ref(false)
 const enterFromLogin = ref(false)
+const SIDEBAR_DEFAULT_WIDTH = 238
+const SIDEBAR_MIN_WIDTH = 220
+const SIDEBAR_MAX_WIDTH = 420
+const SIDEBAR_WIDTH_STORAGE_KEY = 'cp6_sidebar_width'
+const sidebarWidth = ref(SIDEBAR_DEFAULT_WIDTH)
+const resizingSidebar = ref(false)
+let resizeStartX = 0
+let resizeStartWidth = SIDEBAR_DEFAULT_WIDTH
+
+function clampSidebarWidth(width: number) {
+  return Math.min(SIDEBAR_MAX_WIDTH, Math.max(SIDEBAR_MIN_WIDTH, Math.round(width)))
+}
+
+function persistSidebarWidth() {
+  localStorage.setItem(SIDEBAR_WIDTH_STORAGE_KEY, String(sidebarWidth.value))
+}
+
+function handleSidebarResize(event: PointerEvent) {
+  sidebarWidth.value = clampSidebarWidth(resizeStartWidth + event.clientX - resizeStartX)
+}
+
+function stopSidebarResize() {
+  if (!resizingSidebar.value) return
+  resizingSidebar.value = false
+  document.body.classList.remove('is-resizing-sidebar')
+  window.removeEventListener('pointermove', handleSidebarResize)
+  window.removeEventListener('pointerup', stopSidebarResize)
+  window.removeEventListener('pointercancel', stopSidebarResize)
+  persistSidebarWidth()
+}
+
+function startSidebarResize(event: PointerEvent) {
+  if (event.button !== 0) return
+  event.preventDefault()
+  resizeStartX = event.clientX
+  resizeStartWidth = sidebarWidth.value
+  resizingSidebar.value = true
+  document.body.classList.add('is-resizing-sidebar')
+  window.addEventListener('pointermove', handleSidebarResize)
+  window.addEventListener('pointerup', stopSidebarResize)
+  window.addEventListener('pointercancel', stopSidebarResize)
+}
+
+function resizeSidebarBy(delta: number) {
+  sidebarWidth.value = clampSidebarWidth(sidebarWidth.value + delta)
+  persistSidebarWidth()
+}
+
+function resetSidebarWidth() {
+  sidebarWidth.value = SIDEBAR_DEFAULT_WIDTH
+  persistSidebarWidth()
+}
 
 // 从路由找出页面标题，手机端 header 显示
 const pageTitle = computed(() => {
@@ -242,12 +318,23 @@ function buildTree(list: any[], parentId: number | null = null): any[] {
     .filter((item) => item.routePath || item.children?.length)
 }
 
-onMounted(() => {
+function loadMenuTreeFromStorage() {
   const menusStr = localStorage.getItem('menus')
-  if (menusStr) {
-    const menus = JSON.parse(menusStr)
-    menuTree.value = buildTree(menus)
+  if (!menusStr) {
+    menuTree.value = []
+    return
   }
+  menuTree.value = buildTree(JSON.parse(menusStr))
+}
+
+onMounted(() => {
+  const storedSidebarWidth = Number(localStorage.getItem(SIDEBAR_WIDTH_STORAGE_KEY))
+  if (Number.isFinite(storedSidebarWidth) && storedSidebarWidth > 0) {
+    sidebarWidth.value = clampSidebarWidth(storedSidebarWidth)
+  }
+
+  loadMenuTreeFromStorage()
+  window.addEventListener('cp6-menu-updated', loadMenuTreeFromStorage)
 
   if (sessionStorage.getItem('cp6-login-transition') === 'pending') {
     enterFromLogin.value = true
@@ -256,6 +343,11 @@ onMounted(() => {
       sessionStorage.removeItem('cp6-login-transition')
     }, 1100)
   }
+})
+
+onBeforeUnmount(() => {
+  stopSidebarResize()
+  window.removeEventListener('cp6-menu-updated', loadMenuTreeFromStorage)
 })
 
 async function handleLogout() {
@@ -283,13 +375,61 @@ async function handleLogout() {
 }
 
 /* ===== 桌面侧栏：悬浮式浅色 ===== */
+.layout-sidebar-shell {
+  position: relative;
+  flex: 0 0 var(--sidebar-width);
+  width: var(--sidebar-width);
+  height: 100%;
+  min-width: 0;
+}
 .layout-aside {
   display: flex;
   flex-direction: column;
+  width: 100%;
+  height: 100%;
   padding: 12px 10px;
+  overflow-x: hidden;
+  overflow-y: auto;
+  scrollbar-gutter: stable;
   background: transparent;
   box-shadow: none;
   transition: transform 0.65s cubic-bezier(0.22, 1, 0.36, 1), opacity 0.65s ease;
+}
+.layout-content {
+  min-width: 0;
+}
+.sidebar-resize-handle {
+  position: absolute;
+  z-index: 20;
+  top: 0;
+  right: -5px;
+  width: 10px;
+  height: 100%;
+  cursor: col-resize;
+  touch-action: none;
+  outline: none;
+}
+.sidebar-resize-handle::after {
+  position: absolute;
+  top: 12px;
+  bottom: 12px;
+  left: 4px;
+  width: 2px;
+  border-radius: 1px;
+  background: var(--cp-brand);
+  content: '';
+  opacity: 0;
+  transition: opacity .16s ease, box-shadow .16s ease;
+}
+.sidebar-resize-handle:hover::after,
+.sidebar-resize-handle:focus-visible::after,
+.sidebar-resize-handle.is-resizing::after {
+  opacity: .72;
+  box-shadow: 0 0 8px rgba(20, 184, 196, .32);
+}
+:global(body.is-resizing-sidebar) {
+  cursor: col-resize;
+  user-select: none;
 }
 .cp-brand {
   display: flex;
@@ -350,9 +490,9 @@ async function handleLogout() {
 .cp-menu :deep(.el-menu) {
   background: transparent;
   border-right: none;
-  flex: 1;
-  overflow-y: auto;
-  min-height: 0;
+  flex: none;
+  min-height: auto;
+  overflow: visible;
 }
 .cp-menu :deep(.el-menu-item),
 .cp-menu :deep(.el-sub-menu__title) {
@@ -481,6 +621,11 @@ async function handleLogout() {
     radial-gradient(circle at top right, rgba(20, 184, 196, .12), transparent 24%),
     linear-gradient(180deg, var(--cp-bg), var(--cp-bg-hover));
   transition: transform 0.7s cubic-bezier(0.22, 1, 0.36, 1), opacity 0.7s ease, filter 0.7s ease;
+}
+.layout-main.is-workspace {
+  min-height: 0;
+  padding: 0 !important;
+  overflow: hidden;
 }
 
 .layout-root.is-entering .layout-aside {

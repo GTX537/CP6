@@ -1,7 +1,7 @@
 // OA 章09 §5 设计时校验。过不了不让坏 schema 进库（漏必填/重复 key/断头节点/审批人不完整）。
 // 返回中文诊断串（瞬时提示，不走 i18n key）。纯函数，便于 vitest。
 import type { FormSchema, FlowDesignSchema } from '@/types/wf/wf'
-import { isOptionType } from './controlLibrary'
+import { isOptionType, TABLE_COLUMN_TYPES } from './controlLibrary'
 import { reachableEndIds } from './flowGraph'
 
 /** 校验表单 schema：字段标识非空且不重复、选项类控件至少 1 个选项。返回错误清单（空=通过）。 */
@@ -19,6 +19,49 @@ export function validateFormSchema(schema: FormSchema): string[] {
     }
     if (isOptionType(f.type) && !(f.options && f.options.length > 0)) {
       errors.push(`${f.label || name} 缺少选项`)
+    }
+    if (f.maxLength !== undefined &&
+        (!Number.isInteger(f.maxLength) || f.maxLength < 1 || f.maxLength > 10_000)) {
+      errors.push(`${f.label || name} 的最大长度必须为 1-10000`)
+    }
+    if (f.pattern) {
+      try { new RegExp(f.pattern) } catch { errors.push(`${f.label || name} 的校验正则无效`) }
+    }
+    if (f.type === 'table') {
+      const label = f.label || name
+      const columns = f.columns || []
+      if (!columns.length) errors.push(`${label} 至少需要 1 列`)
+      if (columns.length > 50) errors.push(`${label} 最多允许 50 列`)
+      const columnNames = new Set<string>()
+      for (const column of columns) {
+        const columnName = (column.name || '').trim()
+        if (!columnName) {
+          errors.push(`${label} 存在未命名列`)
+        } else if (columnNames.has(columnName)) {
+          errors.push(`${label} 列标识重复：${columnName}`)
+        } else {
+          columnNames.add(columnName)
+        }
+        if (!TABLE_COLUMN_TYPES.some((type) => type.type === column.type)) {
+          errors.push(`${label}.${column.label || columnName} 的列类型不受支持`)
+        }
+        if (column.type === 'select' && !(column.options && column.options.length > 0)) {
+          errors.push(`${label}.${column.label || columnName} 缺少选项`)
+        }
+        if (column.maxLength !== undefined &&
+            (!Number.isInteger(column.maxLength) || column.maxLength < 1 || column.maxLength > 10_000)) {
+          errors.push(`${label}.${column.label || columnName} 的最大长度必须为 1-10000`)
+        }
+        if (column.pattern) {
+          try { new RegExp(column.pattern) } catch { errors.push(`${label}.${column.label || columnName} 的校验正则无效`) }
+        }
+      }
+      const minRows = f.minRows ?? 0
+      const maxRows = f.maxRows ?? 100
+      if (!Number.isInteger(minRows) || !Number.isInteger(maxRows) ||
+          minRows < 0 || maxRows < 1 || maxRows > 200 || minRows > maxRows) {
+        errors.push(`${label} 的行数范围无效`)
+      }
     }
   }
   return errors

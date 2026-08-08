@@ -2,6 +2,7 @@ using CP6.Core.EFDbContext;
 using CP6.WebApi.Localization;
 using CP6.Core.Services.Integration;
 using CP6.Core.Services.Space;
+using CP6.Core.Services.Space.Observability;
 using CP6.Entity.DomainModels.Space;
 using CP6.Entity.DTOs.Space;
 using Microsoft.EntityFrameworkCore;
@@ -28,10 +29,21 @@ public class SpaceMasterServiceTests
         var db = new CP6Context(new DbContextOptionsBuilder<CP6Context>()
             .UseInMemoryDatabase(Guid.NewGuid().ToString()).Options);
         var geo = new LocationGeometryService(db);
+        var execution = new SpaceExecutionContextAccessor();
+        execution.Push(SpaceExecutionContext.ForUser(
+            TenantContext.DefaultTenant,
+            "test-user",
+            "Test User",
+            Guid.NewGuid(),
+            Guid.NewGuid().ToString("N")));
         // publish 依赖组装同 SceneServiceTests.Make()（Task 2 已升级）——删巷道放行路径/改挂 re-publish 需要
         var publish = new LocationPublishService(db, new TenantContext(), new CodeEngineService(db),
-            new SpaceBridgeHook(db, NullLogger<SpaceBridgeHook>.Instance, new NoOpWmsLocationConsumer()),
-            new StubWmsStockQuery(), new CP6.Core.Services.Wms.WmsBinDeactivator(db), new NoOpSpaceNotifier());
+            new SpaceBridgeHook(db, NullLogger<SpaceBridgeHook>.Instance, new NoOpWmsLocationConsumer(), execution, execution),
+            new CP6.Core.Services.Wms.WmsStockQuery(db),
+            new CP6.Core.Services.Wms.WmsBinDeactivator(db),
+            new NoOpSpaceNotifier(),
+            execution,
+            execution);
         return (db, new SpaceMasterService(db, geo, publish));
     }
 

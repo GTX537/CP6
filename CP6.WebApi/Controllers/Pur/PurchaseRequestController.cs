@@ -1,5 +1,6 @@
 using CP6.Core.Auth;
 using CP6.Core.Services.Pur;
+using CP6.Core.Services.Sys;
 using CP6.Entity.DomainModels.Pur;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
@@ -13,21 +14,51 @@ namespace CP6.WebApi.Controllers.Pur;
 public class PurchaseRequestController : ControllerBase
 {
     private readonly IPurchaseRequestService _svc;
-    public PurchaseRequestController(IPurchaseRequestService svc) => _svc = svc;
+    private readonly ICurrentPermissionContext _permission;
+    public PurchaseRequestController(IPurchaseRequestService svc, ICurrentPermissionContext permission)
+    {
+        _svc = svc;
+        _permission = permission;
+    }
 
     private string? CurrentUser => User?.Identity?.Name;
     private IActionResult Ok2(object? data = null) => Ok(new { code = 0, message = "OK", data });
     private IActionResult Err(InvalidOperationException e) => BadRequest(new { code = 400, message = e.Message });
+    private static void RequireQuery(UserPermissionContext permission)
+    {
+        if (!permission.ActionKeys.Contains("pur-pr:query"))
+            throw new UnauthorizedAccessException("E-PUR-059");
+    }
 
     [HttpGet]
     public async Task<IActionResult> List([FromQuery] PrStatus? status, [FromQuery] string? source)
-        => Ok2(await _svc.ListAsync(status, source));
+    {
+        try
+        {
+            var permission = await _permission.GetAsync();
+            RequireQuery(permission);
+            return Ok2(await _svc.ListAsync(status, source, permission));
+        }
+        catch (UnauthorizedAccessException e)
+        {
+            return StatusCode(StatusCodes.Status403Forbidden, new { code = e.Message, message = e.Message });
+        }
+    }
 
     [HttpGet("{prNo}")]
     public async Task<IActionResult> Get(string prNo)
     {
-        var pr = await _svc.GetAsync(prNo);
-        return pr == null ? Err(new InvalidOperationException("E-PUR-056")) : Ok2(pr);
+        try
+        {
+            var permission = await _permission.GetAsync();
+            RequireQuery(permission);
+            var pr = await _svc.GetAsync(prNo, permission);
+            return pr == null ? Err(new InvalidOperationException("E-PUR-056")) : Ok2(pr);
+        }
+        catch (UnauthorizedAccessException e)
+        {
+            return StatusCode(StatusCodes.Status403Forbidden, new { code = e.Message, message = e.Message });
+        }
     }
 
     [HttpPost]
@@ -43,7 +74,16 @@ public class PurchaseRequestController : ControllerBase
     [RequirePermission("pur-pr", "submit")]
     public async Task<IActionResult> Submit(string prNo)
     {
-        try { return Ok2(await _svc.SubmitForApprovalAsync(prNo, CurrentUser)); }
+        try
+        {
+            var permission = await _permission.GetAsync();
+            return Ok2(await _svc.SubmitForApprovalAsync(
+                prNo, permission.UserId, permission.UserName, permission, HttpContext.RequestAborted));
+        }
+        catch (UnauthorizedAccessException e)
+        {
+            return StatusCode(StatusCodes.Status403Forbidden, new { code = e.Message, message = e.Message });
+        }
         catch (InvalidOperationException e) { return Err(e); }
     }
 

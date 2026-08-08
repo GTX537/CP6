@@ -139,6 +139,16 @@
         </el-table-column>
       </el-table>
       <CpEmpty v-if="!searching && rows.length === 0" text="暂无数据，请输入条件后查询" />
+      <el-pagination
+        v-if="total > 0"
+        v-model:current-page="filter.page"
+        v-model:page-size="filter.pageSize"
+        :total="total"
+        :page-sizes="[20, 50, 100]"
+        layout="total, sizes, prev, pager, next"
+        @current-change="onSearch"
+        @size-change="onPageSizeChange"
+      />
     </el-card>
 
     <!-- 详情抽屉 -->
@@ -182,6 +192,8 @@ const filter = reactive<FormQueryFilter>({
   status:    undefined,
   from:      undefined,
   to:        undefined,
+  page:      1,
+  pageSize:  20,
 })
 
 /** daterange picker 双向绑定 [from, to] */
@@ -234,6 +246,7 @@ onMounted(async () => {
 
 // ── 查询 ──────────────────────────────────────────────────────────
 const rows = ref<FormQueryItem[]>([])
+const total = ref(0)
 const searching = ref(false)
 
 async function onSearch() {
@@ -244,7 +257,9 @@ async function onSearch() {
   searching.value = true
   try {
     const res = await queryApi.search(filter)
-    rows.value = ((res as any).data as FormQueryItem[]) || []
+    const page = (res as any).data as { items?: FormQueryItem[]; total?: number }
+    rows.value = page?.items ?? []
+    total.value = page?.total ?? 0
   } catch { /* HTTP interceptor toasts */ } finally { searching.value = false }
 }
 
@@ -260,6 +275,12 @@ function onReset() {
   starterOptions.value = []
   handlerOptions.value = []
   rows.value = []
+  total.value = 0
+}
+
+function onPageSizeChange() {
+  filter.page = 1
+  void onSearch()
 }
 
 // ── 详情抽屉 ──────────────────────────────────────────────────────

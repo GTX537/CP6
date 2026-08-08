@@ -47,7 +47,7 @@ public static class PurPermissionSeed
         // 704 pur-match — 三单匹配（既有）
         (704, "add", "匹配建票"), (704, "release", "放行"), (704, "reject", "拒绝"),
         // 706 pur-pr — 采购申请（新增）
-        (706, "add", "建单"), (706, "submit", "送审"), (706, "convert", "转PO"),
+        (706, "query", "查看"), (706, "add", "建单"), (706, "submit", "送审"), (706, "convert", "转PO"),
         // 705 pur-rfq — 询价比价（新增）
         (705, "add", "发起询价"), (705, "invite", "邀请供应商"), (705, "quote", "收报价"),
         (705, "rank", "比价排名"), (705, "select", "选定"), (705, "writeback", "回写价表"),

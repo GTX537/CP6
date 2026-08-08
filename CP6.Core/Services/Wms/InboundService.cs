@@ -366,7 +366,7 @@ public class InboundService : IInboundService
                 RefOrderLineNo = d.RefOrderLineNo,
                 ProductCd = d.ProductCd,
                 ProductName = d.ProductName,
-                LotNo = d.LotNo,
+                LotNo = d.LotNo ?? string.Empty,
                 ReceivedQty = d.ReceivedQty,
                 UnitCd = d.UnitCd,
                 LocationCd = d.LocationCd,

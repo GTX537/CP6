@@ -1,0 +1,110 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: cp6-api
+  namespace: CP6_NAMESPACE
+spec:
+  replicas: 2
+  strategy:
+    type: RollingUpdate
+    rollingUpdate:
+      maxUnavailable: 0
+      maxSurge: 1
+  selector:
+    matchLabels:
+      app.kubernetes.io/name: cp6-api
+  template:
+    metadata:
+      labels:
+        app.kubernetes.io/name: cp6-api
+        app.kubernetes.io/version: CP6_RELEASE_VERSION
+    spec:
+      terminationGracePeriodSeconds: 30
+      topologySpreadConstraints:
+        - maxSkew: 1
+          topologyKey: kubernetes.io/hostname
+          whenUnsatisfiable: ScheduleAnyway
+          labelSelector:
+            matchLabels:
+              app.kubernetes.io/name: cp6-api
+      containers:
+        - name: api
+          image: CP6_API_IMAGE
+          imagePullPolicy: IfNotPresent
+          ports:
+            - name: http
+              containerPort: 5000
+          envFrom:
+            - configMapRef:
+                name: cp6-runtime
+            - secretRef:
+                name: cp6-runtime-secrets
+          env:
+            - name: ASPNETCORE_ENVIRONMENT
+              value: Production
+            - name: Startup__Mode
+              value: Api
+            - name: Startup__SkipDatabaseInitialization
+              value: "true"
+            - name: Startup__SkipHostedServices
+              value: "false"
+            - name: Release__Version
+              value: CP6_RELEASE_VERSION
+            - name: Release__GitSha
+              value: CP6_GIT_SHA
+            - name: Release__ApiImageDigest
+              value: CP6_API_DIGEST
+            - name: Release__WebImageDigest
+              value: CP6_WEB_DIGEST
+          readinessProbe:
+            httpGet:
+              path: /health/ready
+              port: http
+            periodSeconds: 10
+            timeoutSeconds: 5
+            failureThreshold: 6
+          livenessProbe:
+            httpGet:
+              path: /health/live
+              port: http
+            periodSeconds: 15
+            timeoutSeconds: 5
+            failureThreshold: 4
+          startupProbe:
+            httpGet:
+              path: /health/live
+              port: http
+            periodSeconds: 5
+            failureThreshold: 24
+          resources:
+            requests:
+              cpu: 250m
+              memory: 512Mi
+            limits:
+              cpu: "2"
+              memory: 2Gi
+---
+apiVersion: v1
+kind: Service
+metadata:
+  name: cp6-api
+  namespace: CP6_NAMESPACE
+spec:
+  sessionAffinity: ClientIP
+  selector:
+    app.kubernetes.io/name: cp6-api
+  ports:
+    - name: http
+      port: 5000
+      targetPort: http
+---
+apiVersion: policy/v1
+kind: PodDisruptionBudget
+metadata:
+  name: cp6-api
+  namespace: CP6_NAMESPACE
+spec:
+  minAvailable: 1
+  selector:
+    matchLabels:
+      app.kubernetes.io/name: cp6-api

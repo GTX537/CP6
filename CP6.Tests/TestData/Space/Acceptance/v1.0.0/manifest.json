@@ -1,0 +1,123 @@
+{
+  "schemaVersion": 1,
+  "datasetName": "CP6 Space Standard Warehouse",
+  "datasetVersion": "1.0.0",
+  "compatibleSpecVersion": "1.0",
+  "generatedAtUtc": "2026-07-27T00:00:00+00:00",
+  "maintainerRole": "Space QA",
+  "purpose": "DevelopmentSeed",
+  "countsTowardReleaseGate": false,
+  "license": "Synthetic",
+  "dataSource": "Simulated",
+  "counts": {
+    "floors": 2,
+    "zones": 7,
+    "aisles": 20,
+    "racks": 500,
+    "locations": 10000,
+    "skus": 100,
+    "stockRecords": 5000,
+    "pickTasks": 100,
+    "pickTaskLines": 200,
+    "faultCases": 6
+  },
+  "generator": {
+    "version": "space-standard-warehouse-generator-v1",
+    "randomSeed": "cp6-space-standard-warehouse-seed-v1",
+    "contentSha256": "d1891a4b334b70aae3d0926896127f6e73add4e4b7bc9bd7001a861302241e53",
+    "usesUnfixedRandomness": false
+  },
+  "readiness": {
+    "dxf": "Ready",
+    "pngUnderlays": "Ready",
+    "pdfUnderlay": "Ready",
+    "wmsSeed": "Ready",
+    "faultCases": "Ready",
+    "dwg": "BlockedByE02S01LicensedConverterDecision"
+  },
+  "missingRequiredArtifacts": [
+    "warehouse-standard.dwg"
+  ],
+  "files": [
+    {
+      "path": "LICENSE.md",
+      "sha256": "c3c39d96240f7af83d62690a7c22330e08138e0e166981851b97e3019c35c306",
+      "bytes": 321
+    },
+    {
+      "path": "README.md",
+      "sha256": "4f77e9b56e18f57653d2f5120422524b067a55880d4a7ebb6ce932e2ba431f43",
+      "bytes": 508
+    },
+    {
+      "path": "expected-elements.jsonl",
+      "sha256": "3841c53181667cb7e98e252321ff441b16e4b6e2b7bc12de08a00bc5e0aa9ee5",
+      "bytes": 6282841
+    },
+    {
+      "path": "expected-locations.csv",
+      "sha256": "9043d175c867d1e91c530767459f91703d8bc2522c7d9575c8847af47cce3dc4",
+      "bytes": 1904548
+    },
+    {
+      "path": "fault-cases/coordinate-out-of-bounds.json",
+      "sha256": "df60acd5b5767f48e3aed003d3e7abe7e66826aca09bf755270356730fd7f1d1",
+      "bytes": 351
+    },
+    {
+      "path": "fault-cases/corrupt-input.dxf",
+      "sha256": "2c44cc0fdb1b0368e405ba0f9f1f4b6482c0b5e4aa1177dd1e6fe420fcb6677b",
+      "bytes": 51
+    },
+    {
+      "path": "fault-cases/duplicate-location-code.csv",
+      "sha256": "617c15a97743682dd3bc65540967a931f09dbe5575e617250993623bd6c0fc92",
+      "bytes": 186
+    },
+    {
+      "path": "fault-cases/missing-location-code.csv",
+      "sha256": "acf4d311c40ea509c34f186303d1ead930ea3d0c00214abf3770b223167b0f86",
+      "bytes": 77
+    },
+    {
+      "path": "fault-cases/unknown-layer.dxf",
+      "sha256": "f45c7b8da590ceb438182fe618817cc16e733ad30cba4f65a698fe6c1a2350d1",
+      "bytes": 148
+    },
+    {
+      "path": "fault-cases/wms-timeout.json",
+      "sha256": "0078fb38f9be26331665aa9ce6a2ca40e43bebffd578c26b18d57297d2bf9c7c",
+      "bytes": 174
+    },
+    {
+      "path": "floor-1.png",
+      "sha256": "dea1ad2e84900a93b8c395da258202c8de92fe48f0d99bff963f6a50202d1472",
+      "bytes": 17252
+    },
+    {
+      "path": "floor-2.png",
+      "sha256": "a01169b310632c83f5e2bae20dbd8b2f5318258a816634779870faaf7727ebcb",
+      "bytes": 17253
+    },
+    {
+      "path": "floor-maps.pdf",
+      "sha256": "47bb87d7e3679470aa9b9610c6080effe437c16a56f658b7a2fcc7120bc14603",
+      "bytes": 1462
+    },
+    {
+      "path": "metadata.json",
+      "sha256": "f4e01fba765588fc2ea04892b3d89127c778628c84d3b9c43c0a289de677d3e3",
+      "bytes": 481
+    },
+    {
+      "path": "warehouse-standard.dxf",
+      "sha256": "248810cb54d2f69fef74dc023850742f9f528e8365c88e4f8868d7b63fe21086",
+      "bytes": 613170
+    },
+    {
+      "path": "wms-seed.json",
+      "sha256": "5fdd1debfd317beab98fcc4af36deda24120f2a307b869450897e8e75d05f0d4",
+      "bytes": 1698808
+    }
+  ]
+}

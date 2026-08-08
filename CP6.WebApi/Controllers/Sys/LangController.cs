@@ -101,19 +101,19 @@ public class LangController : ControllerBase
     /// <summary>i18n 优化 P4 发布模式：当前已发布版本指针（未发布过返回 version=null）。前端拉它再取版本化静态包。</summary>
     [HttpGet("manifest")]
     [AllowAnonymous]
-    public IActionResult GetManifest()
+    public async Task<IActionResult> GetManifest()
     {
         Response.Headers.CacheControl = "no-cache";   // 版本指针必须实时
-        var m = _publish.GetManifest();
+        var m = await _publish.GetManifestAsync();
         return Ok(m ?? new LangManifest { Version = "" });
     }
 
     /// <summary>i18n 优化 P4 发布模式：取某版本某语言的已发布静态包（不可变长缓存，便于浏览器/CDN 缓存）。</summary>
     [HttpGet("published/{version}/{lang}")]
     [AllowAnonymous]
-    public IActionResult GetPublished(string version, string lang)
+    public async Task<IActionResult> GetPublished(string version, string lang)
     {
-        var json = _publish.ReadPublished(version, lang);
+        var json = await _publish.ReadPublishedAsync(version, lang);
         if (json == null) return NotFound();
         Response.Headers.CacheControl = "public, max-age=31536000, immutable";   // 版本化 URL → 永久缓存
         return Content(json, "application/json; charset=utf-8");
@@ -133,9 +133,9 @@ public class LangController : ControllerBase
     [HttpPost("publish/rollback")]
     [Authorize]
     [RequirePermission("lang", "publish")]
-    public IActionResult Rollback([FromBody] RollbackRequest req)
+    public async Task<IActionResult> Rollback([FromBody] RollbackRequest req)
     {
-        var ok = _publish.Rollback(req.Version, User?.Identity?.Name, DateTime.Now);
+        var ok = await _publish.RollbackAsync(req.Version, User?.Identity?.Name, DateTime.Now);
         return ok ? Ok(new { code = 0, message = "OK", data = new { version = req.Version } })
                   : BadRequest(new { code = 400, message = "version not found" });
     }

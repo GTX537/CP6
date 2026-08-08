@@ -43,6 +43,7 @@ public class PermissionChainIntegrationTests
         var services = new ServiceCollection();
         services.AddSingleton(db);                       // 同一 InMemory 实例
         services.AddMemoryCache();
+        services.AddDistributedMemoryCache();
         services.AddSingleton<IHttpContextAccessor, HttpContextAccessor>();
         services.AddScoped<IPermissionAggregator, PermissionAggregator>();
         services.AddScoped<ICurrentPermissionContext, CurrentPermissionContext>();

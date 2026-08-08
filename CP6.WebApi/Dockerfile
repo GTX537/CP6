@@ -10,6 +10,8 @@
 # ===== Stage 1: Build =====
 FROM mcr.microsoft.com/dotnet/sdk:8.0 AS build
 WORKDIR /src
+ARG RELEASE_VERSION=0.0.0-dev
+ARG GIT_SHA=unknown
 
 # 先复制项目文件，还原依赖（利用 Docker 层缓存）
 COPY CP6.Entity/CP6.Entity.csproj CP6.Entity/
@@ -19,11 +21,16 @@ RUN dotnet restore CP6.WebApi/CP6.WebApi.csproj
 
 # 再复制全部源码，编译发布
 COPY . .
-RUN dotnet publish CP6.WebApi/CP6.WebApi.csproj -c Release -o /app/publish --no-restore
+RUN dotnet publish CP6.WebApi/CP6.WebApi.csproj -c Release -o /app/publish --no-restore \
+    -p:Version=${RELEASE_VERSION} \
+    -p:InformationalVersion=${RELEASE_VERSION}+${GIT_SHA}
 
 # ===== Stage 2: Runtime =====
 FROM mcr.microsoft.com/dotnet/aspnet:8.0 AS runtime
 WORKDIR /app
+RUN apt-get update \
+    && apt-get install -y --no-install-recommends curl \
+    && rm -rf /var/lib/apt/lists/*
 
 # 从构建阶段复制编译产物
 COPY --from=build /app/publish .

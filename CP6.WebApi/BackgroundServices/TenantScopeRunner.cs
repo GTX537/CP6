@@ -26,17 +26,20 @@ public static class TenantScopeRunner
             tenants = await enumScope.ServiceProvider
                 .GetRequiredService<ITenantEnumerator>().ListActiveAsync(ct);
         }
+        ct.ThrowIfCancellationRequested();
 
         foreach (var tenantId in tenants)
         {
-            if (ct.IsCancellationRequested) break;
+            ct.ThrowIfCancellationRequested();
 
             using var scope = scopeFactory.CreateScope();
             // 在跑 body（及其解析的 CP6Context）之前设当前租户——同 scope 内同一份 ITenantContext
             scope.ServiceProvider.GetRequiredService<ITenantContext>().CurrentTenantId = tenantId;
             try
             {
+                ct.ThrowIfCancellationRequested();
                 await body(scope.ServiceProvider, tenantId, ct);
+                ct.ThrowIfCancellationRequested();
             }
             catch (OperationCanceledException) when (ct.IsCancellationRequested)
             {
@@ -44,8 +47,10 @@ public static class TenantScopeRunner
             }
             catch (Exception ex)
             {
+                ct.ThrowIfCancellationRequested();
                 logger?.LogError(ex, "后台任务在租户 {Tenant} 执行异常（跳过该租户，继续其余）", tenantId);
             }
         }
+        ct.ThrowIfCancellationRequested();
     }
 }

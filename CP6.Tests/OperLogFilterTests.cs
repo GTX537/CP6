@@ -8,6 +8,8 @@ using Microsoft.AspNetCore.Mvc.Abstractions;
 using Microsoft.AspNetCore.Mvc.Filters;
 using Microsoft.AspNetCore.Routing;
 using Microsoft.Extensions.Configuration;
+using Microsoft.EntityFrameworkCore;
+using Microsoft.EntityFrameworkCore.Diagnostics;
 using Moq;
 
 namespace CP6.Tests;
@@ -307,5 +309,255 @@ public class OperLogFilterTests
         // Assert
         Assert.Equal(1, context.Sys_OperLogs.Count());
         Assert.Null(context.Sys_OperLogs.First().ImpersonatorId);
+    }
+
+    [Theory]
+    [InlineData("POST")]
+    [InlineData("PUT")]
+    [InlineData("PATCH")]
+    [InlineData("DELETE")]
+    public async Task Space_mutation_never_serializes_action_arguments(string method)
+    {
+        var context = TestHelper.CreateInMemoryContext();
+        var transport = CreateCapturingTransport(out var published);
+        var filter = new OperLogFilter(context, transport.Object, BuildConfig());
+        var (executing, next) = CreateMockContext(
+            method: method,
+            path: "/api/space/floor/11111111-1111-1111-1111-111111111111/publish");
+        executing.ActionArguments["request"] = new
+        {
+            Secret = "request-body-secret",
+            Authorization = "bearer-token",
+        };
+
+        await filter.OnActionExecutionAsync(executing, next);
+
+        var log = Assert.IsType<Sys_OperLog>(published());
+        Assert.Null(log.RequestBody);
+    }
+
+    [Fact]
+    public async Task Space_kafka_failure_console_output_contains_only_sanitized_error()
+    {
+        const string secret = "space-kafka-secret-response-body";
+        var context = TestHelper.CreateInMemoryContext();
+        var transport = CreateMockTransport(isConnected: true);
+        transport
+            .Setup(x => x.PublishAsync(It.IsAny<Sys_OperLog>()))
+            .ThrowsAsync(new InvalidOperationException(secret));
+        var filter = new OperLogFilter(context, transport.Object, BuildConfig());
+        var (executing, next) = CreateMockContext(
+            method: "POST",
+            path: "/api/space/floor/publish");
+
+        var output = await CaptureConsoleAsync(
+            () => filter.OnActionExecutionAsync(executing, next));
+
+        Assert.DoesNotContain(secret, output, StringComparison.OrdinalIgnoreCase);
+        Assert.Contains("SPACE_OPERLOG_TRANSPORT_FAILED", output);
+        Assert.Contains(nameof(InvalidOperationException), output);
+        Assert.Matches("[0-9A-F]{64}", output);
+        Assert.Equal(1, context.Sys_OperLogs.Count());
+    }
+
+    [Fact]
+    public async Task Space_db_fallback_failure_console_output_contains_only_sanitized_error()
+    {
+        const string secret = "space-db-secret-request-body";
+        var options = new DbContextOptionsBuilder<CP6Context>()
+            .UseInMemoryDatabase(Guid.NewGuid().ToString())
+            .AddInterceptors(new ThrowingSaveInterceptor(secret))
+            .Options;
+        await using var context = new CP6Context(
+            options,
+            new TenantContext
+            {
+                CurrentTenantId = TenantContext.DefaultTenant,
+            });
+        var transport = CreateMockTransport(isConnected: false);
+        var filter = new OperLogFilter(context, transport.Object, BuildConfig());
+        var (executing, next) = CreateMockContext(
+            method: "PATCH",
+            path: "/api/space/floor/patch");
+
+        var output = await CaptureConsoleAsync(
+            () => filter.OnActionExecutionAsync(executing, next));
+
+        Assert.DoesNotContain(secret, output, StringComparison.OrdinalIgnoreCase);
+        Assert.Contains("SPACE_OPERLOG_DB_FALLBACK_FAILED", output);
+        Assert.Contains(nameof(InvalidOperationException), output);
+        Assert.Matches("[0-9A-F]{64}", output);
+    }
+
+    [Fact]
+    public async Task Non_space_kafka_failure_keeps_existing_message_output()
+    {
+        const string legacyMessage = "legacy-operlog-error-detail";
+        var context = TestHelper.CreateInMemoryContext();
+        var transport = CreateMockTransport(isConnected: true);
+        transport
+            .Setup(x => x.PublishAsync(It.IsAny<Sys_OperLog>()))
+            .ThrowsAsync(new InvalidOperationException(legacyMessage));
+        var filter = new OperLogFilter(context, transport.Object, BuildConfig());
+        var (executing, next) = CreateMockContext(
+            method: "POST",
+            path: "/api/dict/addType");
+
+        var output = await CaptureConsoleAsync(
+            () => filter.OnActionExecutionAsync(executing, next));
+
+        Assert.Contains(legacyMessage, output);
+    }
+
+    [Theory]
+    [InlineData("StatusCodeResult", 418)]
+    [InlineData("NoContentResult", StatusCodes.Status204NoContent)]
+    public async Task OperLog_uses_status_code_result_interface(
+        string resultType,
+        int expectedStatus)
+    {
+        var context = TestHelper.CreateInMemoryContext();
+        var transport = CreateCapturingTransport(out var published);
+        var filter = new OperLogFilter(context, transport.Object, BuildConfig());
+        var (executing, _) = CreateMockContext();
+        IActionResult result = resultType == "StatusCodeResult"
+            ? new StatusCodeResult(expectedStatus)
+            : new NoContentResult();
+
+        await filter.OnActionExecutionAsync(
+            executing,
+            Execution(executing, result));
+
+        Assert.Equal(expectedStatus, published()!.StatusCode);
+    }
+
+    [Theory]
+    [InlineData("Forbid", StatusCodes.Status403Forbidden)]
+    [InlineData("Challenge", StatusCodes.Status401Unauthorized)]
+    public async Task OperLog_maps_authentication_results(
+        string resultType,
+        int expectedStatus)
+    {
+        var context = TestHelper.CreateInMemoryContext();
+        var transport = CreateCapturingTransport(out var published);
+        var filter = new OperLogFilter(context, transport.Object, BuildConfig());
+        var (executing, _) = CreateMockContext();
+        IActionResult result = resultType == "Forbid"
+            ? new ForbidResult()
+            : new ChallengeResult();
+
+        await filter.OnActionExecutionAsync(
+            executing,
+            Execution(executing, result));
+
+        Assert.Equal(expectedStatus, published()!.StatusCode);
+    }
+
+    [Fact]
+    public async Task OperLog_falls_back_to_response_status_for_untyped_result()
+    {
+        var context = TestHelper.CreateInMemoryContext();
+        var transport = CreateCapturingTransport(out var published);
+        var filter = new OperLogFilter(context, transport.Object, BuildConfig());
+        var (executing, _) = CreateMockContext();
+        executing.HttpContext.Response.StatusCode =
+            StatusCodes.Status422UnprocessableEntity;
+
+        await filter.OnActionExecutionAsync(
+            executing,
+            Execution(executing, new EmptyResult()));
+
+        Assert.Equal(
+            StatusCodes.Status422UnprocessableEntity,
+            published()!.StatusCode);
+    }
+
+    [Fact]
+    public async Task OperLog_exception_status_is_500_even_without_result()
+    {
+        var context = TestHelper.CreateInMemoryContext();
+        var transport = CreateCapturingTransport(out var published);
+        var filter = new OperLogFilter(context, transport.Object, BuildConfig());
+        var (executing, _) = CreateMockContext();
+
+        await filter.OnActionExecutionAsync(
+            executing,
+            Execution(
+                executing,
+                result: null,
+                exception: new InvalidOperationException("secret payload")));
+
+        Assert.Equal(
+            StatusCodes.Status500InternalServerError,
+            published()!.StatusCode);
+    }
+
+    [Theory]
+    [InlineData(StatusCodes.Status403Forbidden)]
+    [InlineData(StatusCodes.Status422UnprocessableEntity)]
+    public async Task Space_operlog_uses_same_response_status_without_serializing_body(
+        int responseStatus)
+    {
+        var context = TestHelper.CreateInMemoryContext();
+        var transport = CreateCapturingTransport(out var published);
+        var filter = new OperLogFilter(context, transport.Object, BuildConfig());
+        var (executing, _) = CreateMockContext(
+            method: "PoSt",
+            path: "/api/space/floor/publish");
+        executing.HttpContext.Response.StatusCode = responseStatus;
+        executing.ActionArguments["request"] =
+            new { Secret = "request-body-secret" };
+
+        await filter.OnActionExecutionAsync(
+            executing,
+            Execution(executing, new EmptyResult()));
+
+        var log = published()!;
+        Assert.Equal(responseStatus, log.StatusCode);
+        Assert.Null(log.RequestBody);
+    }
+
+    private static ActionExecutionDelegate Execution(
+        ActionExecutingContext context,
+        IActionResult? result,
+        Exception? exception = null) =>
+        () => Task.FromResult(
+            new ActionExecutedContext(
+                context,
+                new List<IFilterMetadata>(),
+                context.Controller)
+            {
+                Result = result,
+                Exception = exception,
+            });
+
+    private static async Task<string> CaptureConsoleAsync(Func<Task> action)
+    {
+        var original = Console.Out;
+        using var output = new StringWriter();
+        try
+        {
+            Console.SetOut(output);
+            await action();
+            return output.ToString();
+        }
+        finally
+        {
+            Console.SetOut(original);
+        }
+    }
+
+    private sealed class ThrowingSaveInterceptor : SaveChangesInterceptor
+    {
+        private readonly string _message;
+
+        public ThrowingSaveInterceptor(string message) => _message = message;
+
+        public override ValueTask<InterceptionResult<int>> SavingChangesAsync(
+            DbContextEventData eventData,
+            InterceptionResult<int> result,
+            CancellationToken cancellationToken = default) =>
+            ValueTask.FromException<InterceptionResult<int>>(
+                new InvalidOperationException(_message));
     }
 }

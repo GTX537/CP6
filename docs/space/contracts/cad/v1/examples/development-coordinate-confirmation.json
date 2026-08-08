@@ -1,0 +1,29 @@
+{
+  "sourceSha256": "aa573f04e39345b4e03bfce9304f0916a973da47f1ab19b8e17645bc731fb106",
+  "unitConfirmed": true,
+  "confirmedUnit": "Millimeter",
+  "sourceOriginInSourceUnits": {
+    "x": 0,
+    "y": 0,
+    "z": 0
+  },
+  "floorOriginMillimeters": {
+    "x": 0,
+    "y": 0,
+    "z": 0
+  },
+  "rotationZDegrees": 0,
+  "targetFloor": {
+    "floorLogicalId": "44444444-4444-4444-4444-444444444444",
+    "floorCode": "F01",
+    "level": 1,
+    "elevationMillimeters": 0,
+    "coordinateSystem": "LOCAL_MM_Z_UP",
+    "boundaryBounds": {
+      "minX": -5000,
+      "minY": -5000,
+      "maxX": 50000,
+      "maxY": 30000
+    }
+  }
+}

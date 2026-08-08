@@ -57,7 +57,7 @@ import { useI18n } from 'vue-i18n'
 import { ElMessage } from 'element-plus'
 import { Refresh } from '@element-plus/icons-vue'
 import CpPageShell from '@/components/templates/CpPageShell.vue'
-import CpListPage, { type ListColumn, type ListFetch } from '@/components/templates/CpListPage.vue'
+import CpListPage, { type ListColumn, type ListFetch, type ListPageExpose } from '@/components/templates/CpListPage.vue'
 import FlowTriggerPanel from './FlowTriggerPanel.vue'
 import WfConnectorPanel from './WfConnectorPanel.vue'
 import BatchTransferDialog from './BatchTransferDialog.vue'
@@ -69,7 +69,7 @@ const { t } = useI18n()
 const activeTab = ref<'flows' | 'triggers' | 'connectors'>('flows')
 const batchTransferVisible = ref(false)
 const total = ref<number>()
-const listRef = ref<InstanceType<typeof CpListPage> | null>(null)
+const listRef = ref<ListPageExpose | null>(null)
 const refreshing = ref(false)
 // per-row guard: flowKeys currently being toggled — prevents races and double-clicks
 const toggling = reactive(new Set<string>())

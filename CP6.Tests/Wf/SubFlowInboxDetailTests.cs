@@ -25,12 +25,13 @@ public class SubFlowInboxDetailTests
         SeedDef(db, "child", ChildSchema(ca));
         SeedDef(db, "parent", ParentSchema(pa, "child", collectionVar: "items"));
         await db.SaveChangesAsync();
-        var pid = await Engine(db).SubmitAsync("parent", Guid.NewGuid(), "{\"items\":[1,2]}");
+        var starter = Guid.NewGuid();
+        var pid = await Engine(db).SubmitAsync("parent", starter, "{\"items\":[1,2]}");
         var kids = await db.Wf_FlowInstances.Where(i => i.ParentInstanceId == pid).OrderBy(i => i.SubIndex).ToListAsync();
 
         var svc = Inbox(db);
 
-        var parentDetail = await svc.DetailAsync(pid);
+        var parentDetail = await svc.DetailAsync(starter, starter, pid);
         Assert.NotNull(parentDetail);
         Assert.Null(parentDetail!.SubFlowParent);                      // 顶层实例无父链
         Assert.NotNull(parentDetail.SubFlows);
@@ -39,7 +40,7 @@ public class SubFlowInboxDetailTests
         Assert.All(parentDetail.SubFlows, s => Assert.Equal("sub", s.NodeId));
         Assert.All(parentDetail.SubFlows, s => Assert.Equal("child", s.FlowKey));
 
-        var childDetail = await svc.DetailAsync(kids[0].Id);
+        var childDetail = await svc.DetailAsync(starter, starter, kids[0].Id);
         Assert.NotNull(childDetail!.SubFlowParent);
         Assert.Equal(pid, childDetail.SubFlowParent!.InstanceId);
         Assert.Equal("parent", childDetail.SubFlowParent.FlowKey);
@@ -52,10 +53,30 @@ public class SubFlowInboxDetailTests
         Guid ca = Guid.NewGuid();
         SeedDef(db, "plain", ChildSchema(ca));
         await db.SaveChangesAsync();
-        var id = await Engine(db).SubmitAsync("plain", Guid.NewGuid(), "{}");
+        var starter = Guid.NewGuid();
+        var id = await Engine(db).SubmitAsync("plain", starter, "{}");
         var svc = Inbox(db);
-        var d = await svc.DetailAsync(id);
+        var d = await svc.DetailAsync(starter, starter, id);
         Assert.Null(d!.SubFlowParent);
         Assert.True(d.SubFlows is null || d.SubFlows.Count == 0);
+    }
+
+    [Fact]
+    public async Task Detail_omits_parent_link_when_parent_is_not_independently_authorized()
+    {
+        using var db = NewDb();
+        var parentApprover = Guid.NewGuid();
+        var childApprover = Guid.NewGuid();
+        SeedDef(db, "child", ChildSchema(childApprover));
+        SeedDef(db, "parent", ParentSchema(parentApprover, "child"));
+        await db.SaveChangesAsync();
+        var parentId = await Engine(db).SubmitAsync("parent", Guid.NewGuid(), "{}");
+        var child = await db.Wf_FlowInstances.SingleAsync(x => x.ParentInstanceId == parentId);
+        child.StarterId = Guid.NewGuid();
+        await db.SaveChangesAsync();
+
+        var detail = await Inbox(db).DetailAsync(childApprover, childApprover, child.Id);
+
+        Assert.Null(detail!.SubFlowParent);
     }
 }

@@ -34,8 +34,10 @@ public class PrApprovalCallback : IApprovalCallback
     public string BizType => "PUR_PR";
 
     public async Task OnApprovedAsync(ApprovalCallbackContext ctx)
-        => await _sp.GetRequiredService<IPurchaseRequestService>().ApproveFromApprovalAsync(ctx.BizId, ctx.DecidedById?.ToString() ?? "OA");
+        => await _sp.GetRequiredService<IPurchaseRequestService>().ApproveFromApprovalAsync(
+            ctx.BizId, ctx.InstanceId, ctx.DecidedById?.ToString() ?? "OA");
 
     public async Task OnRejectedAsync(ApprovalCallbackContext ctx)
-        => await _sp.GetRequiredService<IPurchaseRequestService>().RejectFromApprovalAsync(ctx.BizId, ctx.Reason ?? "审批驳回");
+        => await _sp.GetRequiredService<IPurchaseRequestService>().RejectFromApprovalAsync(
+            ctx.BizId, ctx.InstanceId, ctx.Reason ?? "审批驳回");
 }

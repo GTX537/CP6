@@ -5,6 +5,7 @@ using CP6.WebApi.BackgroundServices;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Diagnostics;
 using Microsoft.Extensions.DependencyInjection;
+using Microsoft.Extensions.Logging;
 
 namespace CP6.Tests.Tenant;
 
@@ -92,5 +93,82 @@ public class TenantScopeRunnerTests
             });
 
         Assert.Equal(new[] { tB }, completed);
+    }
+
+    [Fact]
+    public async Task ForEachTenant_BodyCancelsAndReturns_ThrowsCancellationEvenForLastTenant()
+    {
+        using var provider = BuildProvider(Guid.NewGuid().ToString());
+        await SeedActiveTenantAsync(provider);
+        using var cancellation = new CancellationTokenSource();
+
+        await Assert.ThrowsAnyAsync<OperationCanceledException>(
+            () => TenantScopeRunner.ForEachTenantAsync(
+                provider.GetRequiredService<IServiceScopeFactory>(),
+                (sp, tenantId, ct) =>
+                {
+                    cancellation.Cancel();
+                    return Task.CompletedTask;
+                },
+                ct: cancellation.Token));
+    }
+
+    [Fact]
+    public async Task ForEachTenant_BodyCancelsAndThrowsOrdinaryException_PrefersCancellationWithoutLoggingException()
+    {
+        using var provider = BuildProvider(Guid.NewGuid().ToString());
+        await SeedActiveTenantAsync(provider);
+        using var cancellation = new CancellationTokenSource();
+        var logger = new CapturingLogger();
+
+        await Assert.ThrowsAnyAsync<OperationCanceledException>(
+            () => TenantScopeRunner.ForEachTenantAsync(
+                provider.GetRequiredService<IServiceScopeFactory>(),
+                (sp, tenantId, ct) =>
+                {
+                    cancellation.Cancel();
+                    throw new InvalidOperationException(
+                        "raw tenant body exception");
+                },
+                logger,
+                cancellation.Token));
+
+        Assert.Empty(logger.Entries);
+    }
+
+    private static async Task<Guid> SeedActiveTenantAsync(
+        ServiceProvider provider)
+    {
+        var tenantId = Guid.NewGuid();
+        using var scope = provider.CreateScope();
+        var db = scope.ServiceProvider.GetRequiredService<CP6Context>();
+        db.Sys_Tenants.Add(new Sys_Tenant
+        {
+            Id = tenantId,
+            TenantCode = "ONLY",
+            TenantName = "Only tenant",
+            Enable = true,
+        });
+        await db.SaveChangesAsync();
+        return tenantId;
+    }
+
+    private sealed class CapturingLogger : ILogger
+    {
+        public List<(Exception? Exception, string Message)> Entries { get; } = [];
+
+        public IDisposable? BeginScope<TState>(TState state)
+            where TState : notnull
+            => null;
+
+        public bool IsEnabled(LogLevel logLevel) => true;
+
+        public void Log<TState>(
+            LogLevel logLevel,
+            EventId eventId,
+            TState state,
+            Exception? exception,
+            Func<TState, Exception?, string> formatter)
+            => Entries.Add((exception, formatter(state, exception)));
     }
 }

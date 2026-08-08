@@ -1,0 +1,101 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://cp6.local/contracts/space/ai/v1/cad-feature-source-map.schema.json",
+  "title": "CP6 Local-only CAD Feature Source Map v1",
+  "description": "Local trust-boundary artifact containing raw CAD SourceRef values. It must never be embedded in or sent with a provider request.",
+  "type": "object",
+  "additionalProperties": false,
+  "required": [
+    "schemaVersion",
+    "isLocalOnly",
+    "sourceSha256",
+    "coordinateTransformSha256",
+    "floorLogicalId",
+    "policy",
+    "providerInputSha256",
+    "featureCount",
+    "mappedSourceCount",
+    "entries",
+    "sourceMapSha256"
+  ],
+  "properties": {
+    "schemaVersion": {
+      "const": 1
+    },
+    "isLocalOnly": {
+      "const": true
+    },
+    "sourceSha256": {
+      "$ref": "#/$defs/sha256"
+    },
+    "coordinateTransformSha256": {
+      "$ref": "#/$defs/sha256"
+    },
+    "floorLogicalId": {
+      "type": "string",
+      "format": "uuid"
+    },
+    "policy": {
+      "enum": [
+        "MetadataOnly",
+        "StructuredFeatures"
+      ]
+    },
+    "providerInputSha256": {
+      "$ref": "#/$defs/sha256"
+    },
+    "featureCount": {
+      "type": "integer",
+      "minimum": 0,
+      "maximum": 1000000
+    },
+    "mappedSourceCount": {
+      "type": "integer",
+      "minimum": 0,
+      "maximum": 1000000
+    },
+    "entries": {
+      "type": "array",
+      "maxItems": 1000000,
+      "items": {
+        "type": "object",
+        "additionalProperties": false,
+        "required": [
+          "sourceKey",
+          "sourceRefs"
+        ],
+        "properties": {
+          "sourceKey": {
+            "$ref": "#/$defs/token"
+          },
+          "sourceRefs": {
+            "type": "array",
+            "minItems": 1,
+            "maxItems": 1000000,
+            "uniqueItems": true,
+            "items": {
+              "type": "string",
+              "minLength": 1,
+              "maxLength": 512
+            }
+          }
+        }
+      }
+    },
+    "sourceMapSha256": {
+      "$ref": "#/$defs/sha256"
+    }
+  },
+  "$defs": {
+    "sha256": {
+      "type": "string",
+      "pattern": "^[0-9a-f]{64}$"
+    },
+    "token": {
+      "type": "string",
+      "minLength": 1,
+      "maxLength": 256,
+      "pattern": "^[^\\u0000-\\u001F\\u007F]*$"
+    }
+  }
+}

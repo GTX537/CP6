@@ -12,7 +12,7 @@
  *   ├ 903 フロア管理       /space/floor       ← 波2
  *   ├ 904 コード規則       /space/code-rule   ← 本ファイル（波3）
  *   ├ 905 発行センター     /space/publish     ← 本ファイル（波3）
- *   └ 906 連携イベント     /space/events      ← 本ファイル（波3）
+ *   └ 906 イベント・監査   /space/events      ← 本ファイル（E00-S04: space-audit）
  *
  * ★ 実行前に必ず下記で 904~906 段が空いていることを複核すること:
  *     SELECT MenuId FROM Sys_Menus WHERE MenuId BETWEEN 900 AND 919;
@@ -48,6 +48,13 @@ BEGIN TRANSACTION;
 PRINT '=== Space メニュー シード第2弾 開始 ===';
 
 /* ------------------------------------------------------------
+ * 0. Space 親メニュー 900（C# SpaceAuditPermissionSeed と同じ補完規則）
+ * ------------------------------------------------------------ */
+IF NOT EXISTS (SELECT 1 FROM Sys_Menus WHERE MenuId = 900)
+    INSERT INTO Sys_Menus (MenuId, MenuName, RoutePath, MenuKey, Icon, ParentId, OrderNo, Enable, CreateDate)
+    VALUES (900, N'空间数字底座', NULL, N'space', N'OfficeBuilding', NULL, 900, 1, SYSDATETIME());
+
+/* ------------------------------------------------------------
  * 1. 子メニュー  MenuId 904~906（親 900 配下）
  * ------------------------------------------------------------ */
 IF NOT EXISTS (SELECT 1 FROM Sys_Menus WHERE MenuId = 904)
@@ -58,19 +65,23 @@ IF NOT EXISTS (SELECT 1 FROM Sys_Menus WHERE MenuId = 905)
     VALUES (905, N'発行センター', N'/space/publish', N'space-publish', N'Promotion', 900, 905, 1, SYSDATETIME());
 IF NOT EXISTS (SELECT 1 FROM Sys_Menus WHERE MenuId = 906)
     INSERT INTO Sys_Menus (MenuId, MenuName, RoutePath, MenuKey, Icon, ParentId, OrderNo, Enable, CreateDate)
-    VALUES (906, N'連携イベント', N'/space/events', N'space-events', N'List', 900, 906, 1, SYSDATETIME());
+    VALUES (906, N'事件与审计', N'/space/events', N'space-audit', N'DocumentChecked', 900, 906, 1, SYSDATETIME());
+ELSE IF ISNULL((SELECT MenuKey FROM Sys_Menus WHERE MenuId = 906), N'') <> N'space-audit'
+    -- 既存行は安定キーだけを収束し、RoutePath/名称/Icon/親/順序/Enable は変更しない。
+    UPDATE Sys_Menus SET MenuKey = N'space-audit' WHERE MenuId = 906;
 
 /* ------------------------------------------------------------
  * 2. 管理者ロール (RoleId=1) に全 Space メニューを付与（900~919 幂等）
  *    波2 種子と同款：実行時点で存在する未授権行のみを補填する。
  * ------------------------------------------------------------ */
-INSERT INTO Sys_RoleMenus (RoleId, MenuId)
-SELECT 1, m.MenuId
+INSERT INTO Sys_RoleMenus (TenantId, RoleId, MenuId)
+SELECT t.Id, 1, m.MenuId
 FROM Sys_Menus m
+CROSS JOIN (SELECT Id FROM Sys_Tenants) t
 WHERE m.MenuId BETWEEN 900 AND 919
   AND NOT EXISTS (
       SELECT 1 FROM Sys_RoleMenus rm
-      WHERE rm.RoleId = 1 AND rm.MenuId = m.MenuId
+      WHERE rm.TenantId = t.Id AND rm.RoleId = 1 AND rm.MenuId = m.MenuId
   );
 
 /* ------------------------------------------------------------

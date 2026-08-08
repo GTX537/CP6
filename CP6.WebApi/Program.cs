@@ -11,8 +11,13 @@ using System.Data;
 using Microsoft.Data.SqlClient;
 using CP6.Core.Utilities;
 using CP6.WebApi.Filters;
+using CP6.WebApi.BackgroundServices;
 using CP6.WebApi.Hubs;
 using Prometheus;
+using CP6.Core.Services.Space.Compatibility;
+using CP6.Core.Services.Space.Observability;
+using CP6.Space.Application;
+using CP6.Space.Infrastructure;
 
 var builder = WebApplication.CreateBuilder(args);
 
@@ -39,34 +44,151 @@ else
     builder.Configuration.Sources.Add(localJsonSource);                 // 兜底（理论不达）
 
 // 1. 注册控制器（全局注册 OperLogFilter）
+if (builder.Environment.IsProduction())
+    CP6.WebApi.Configuration.ProductionConfigurationValidator.Validate(builder.Configuration);
+
 builder.Services.AddScoped<OperLogFilter>();
+builder.Services.AddScoped<SpaceAuditActionFilter>();
 builder.Services.AddControllers(options =>
 {
     options.Filters.AddService<OperLogFilter>();
+    options.Filters.AddService<SpaceAuditActionFilter>();
 });
+builder.Services.Configure<Microsoft.AspNetCore.Mvc.ApiBehaviorOptions>(
+    options =>
+    {
+        var legacyFactory = options.InvalidModelStateResponseFactory;
+        options.InvalidModelStateResponseFactory = context =>
+        {
+            if (!context.HttpContext.Request.Path.StartsWithSegments(
+                    "/api/space/design/v1"))
+            {
+                return legacyFactory(context);
+            }
 
-// 1.1 注册 SignalR
-builder.Services.AddSignalR();
+            var detail = string.Join(
+                "; ",
+                context.ModelState
+                    .SelectMany(entry => entry.Value?.Errors
+                        .Select(error =>
+                            $"{entry.Key}: {error.ErrorMessage}")
+                        ?? [])
+                    .Where(value => !string.IsNullOrWhiteSpace(value)));
+            return CP6.WebApi.Middleware
+                .SpaceDesignProblemDetailsMiddleware.CreateResult(
+                    context.HttpContext,
+                    StatusCodes.Status400BadRequest,
+                    CP6.Space.Contracts.SpaceErrorCodes.RequestInvalid,
+                    "The request is invalid.",
+                    detail,
+                    "correct-request");
+        };
+    });
+builder.Services.AddSingleton(TimeProvider.System);
+builder.Services.AddHealthChecks()
+    .AddCheck(
+        "self",
+        () => Microsoft.Extensions.Diagnostics.HealthChecks.HealthCheckResult.Healthy(),
+        tags: ["live"])
+    .AddCheck<CP6.WebApi.Health.DatabaseReadinessHealthCheck>(
+        "sqlserver",
+        failureStatus: Microsoft.Extensions.Diagnostics.HealthChecks.HealthStatus.Unhealthy,
+        tags: ["ready"])
+    .AddCheck<CP6.WebApi.Health.DistributedCacheReadinessHealthCheck>(
+        "redis",
+        failureStatus: Microsoft.Extensions.Diagnostics.HealthChecks.HealthStatus.Unhealthy,
+        tags: ["ready"]);
+
+// 1.1 SignalR. Production Redis uses TLS through the validated connection string.
+var redisConn = builder.Configuration.GetConnectionString("Redis");
+var signalR = builder.Services.AddSignalR();
+if (!string.IsNullOrWhiteSpace(redisConn))
+{
+    signalR.AddStackExchangeRedis(redisConn, options =>
+    {
+        options.Configuration.ChannelPrefix =
+            StackExchange.Redis.RedisChannel.Literal("CP6:SignalR");
+    });
+}
 
 // 2. 注册 Swagger
 builder.Services.AddEndpointsApiExplorer();
 builder.Services.AddSwaggerGen(c =>
 {
-    // 完全修飾名で schemaId を一意化（入れ子型 DeleteRequest 等の衝突回避）
-    c.CustomSchemaIds(t => (t.FullName ?? t.Name).Replace("+", "."));
+    CP6.WebApi.OpenApi.SpaceDesignV1OpenApi.Configure(c);
+    c.AddSecurityDefinition("Bearer", new Microsoft.OpenApi.Models.OpenApiSecurityScheme
+    {
+        Name = "Authorization",
+        Type = Microsoft.OpenApi.Models.SecuritySchemeType.Http,
+        Scheme = "bearer",
+        BearerFormat = "JWT",
+        In = Microsoft.OpenApi.Models.ParameterLocation.Header,
+        Description = "原生客户端使用 Authorization: Bearer {accessToken}"
+    });
+    c.AddSecurityRequirement(new Microsoft.OpenApi.Models.OpenApiSecurityRequirement
+    {
+        [new Microsoft.OpenApi.Models.OpenApiSecurityScheme
+        {
+            Reference = new Microsoft.OpenApi.Models.OpenApiReference
+            {
+                Type = Microsoft.OpenApi.Models.ReferenceType.SecurityScheme,
+                Id = "Bearer"
+            }
+        }] = Array.Empty<string>()
+    });
 });
 
 // 3. 注册数据库上下文
-builder.Services.AddDbContext<CP6Context>(options =>
+// Space E00: configuration-backed Tenant+Site compatibility gate.
+// E01 replaces only the resolver with SpaceContext; the legacy write guard remains.
+builder.Services.AddSingleton<
+    Microsoft.Extensions.Options.IValidateOptions<SpaceCompatibilityOptions>,
+    SpaceCompatibilityOptionsValidator>();
+builder.Services.AddOptions<SpaceCompatibilityOptions>()
+    .Bind(builder.Configuration.GetSection(SpaceCompatibilityOptions.SectionName))
+    .ValidateOnStart();
+builder.Services.AddScoped<ISpaceCompatibilityGate, SpaceCompatibilityGate>();
+builder.Services.AddScoped<LegacySpaceWriteGuardInterceptor>();
+builder.Services.Configure<SpaceObservabilityOptions>(
+    builder.Configuration.GetSection(
+        SpaceObservabilityOptions.SectionName));
+
+builder.Services.AddDbContext<CP6Context>((services, options) =>
     options
-        .UseSqlServer(builder.Configuration.GetConnectionString("DefaultConnection")));
+        .UseSqlServer(builder.Configuration.GetConnectionString("DefaultConnection"))
+        .AddInterceptors(services.GetRequiredService<LegacySpaceWriteGuardInterceptor>()));
+builder.Services.AddSingleton(
+    new SpaceUnderlayCalibrationOptions
+    {
+        MinimumValidationErrorMillimeters =
+            builder.Configuration.GetValue<decimal?>(
+                "Space:UnderlayCalibration:MinimumValidationErrorMillimeters")
+            ?? 50m,
+        RelativeValidationErrorTolerance =
+            builder.Configuration.GetValue<decimal?>(
+                "Space:UnderlayCalibration:RelativeValidationErrorTolerance")
+            ?? 0.002m,
+    });
+builder.Services.AddSpaceDesignV1Persistence(
+    builder.Configuration.GetConnectionString("DefaultConnection")
+    ?? throw new InvalidOperationException(
+        "DefaultConnection is required for Space Design v1."));
+var spaceFileRoot = builder.Configuration["Space:Files:RootPath"];
+if (string.IsNullOrWhiteSpace(spaceFileRoot))
+{
+    throw new InvalidOperationException(
+        "Space:Files:RootPath is required for quarantined Space files.");
+}
+builder.Services.AddSpaceFileSystemStorage(
+    Path.IsPathRooted(spaceFileRoot)
+        ? spaceFileRoot
+        : Path.Combine(builder.Environment.ContentRootPath, spaceFileRoot));
 
 // 3.1 注册 Dapper 用的 IDbConnection（每次请求新建连接）
 builder.Services.AddScoped<IDbConnection>(_ =>
     new SqlConnection(builder.Configuration.GetConnectionString("DefaultConnection")));
 
-// 3.2 注册缓存（开发用 Memory，生产切 Redis 只需改这里）
-var redisConn = builder.Configuration.GetConnectionString("Redis");
+// 3.2 分布式缓存：生产 Redis 供权限、认证和跨副本失效共用；开发使用进程内实现。
 if (!string.IsNullOrEmpty(redisConn))
 {
     // 生产模式：Redis（配置了连接字符串就用 Redis）
@@ -75,11 +197,18 @@ if (!string.IsNullOrEmpty(redisConn))
         options.Configuration = redisConn;
         options.InstanceName = "CP6:";  // Key 前缀，区分不同应用
     });
+    builder.Services.AddSingleton<CP6.WebApi.Services.INativeSsoGrantCache>(
+        _ => new CP6.WebApi.Services.RedisNativeSsoGrantCache(
+            redisConn,
+            "CP6:"));
 }
 else
 {
     // 开发模式：内存缓存（零配置，行为和 Redis 一致）
     builder.Services.AddDistributedMemoryCache();
+    builder.Services.AddSingleton<
+        CP6.WebApi.Services.INativeSsoGrantCache,
+        CP6.WebApi.Services.MemoryNativeSsoGrantCache>();
 }
 builder.Services.AddSingleton<CacheService>();
 
@@ -104,6 +233,7 @@ builder.Services.AddHostedService<CP6.WebApi.BackgroundServices.KafkaOperLogCons
 
 // 操作日志保留期清理（默认 7 天，OperLog:RetentionDays 可配置）
 builder.Services.AddHostedService<CP6.WebApi.BackgroundServices.OperLogCleanupService>();
+builder.Services.AddHostedService<CP6.WebApi.BackgroundServices.WmsScanRetentionCleanupService>();
 
 // 3.4 RabbitMQ = 业务事件通知/告警 专任（低频・确实配信・可路由可重试）
 //  - RabbitMQService 实现 INotificationPublisher（出荷完了・棚卸差異 等业务事件）。
@@ -123,6 +253,9 @@ builder.Services.AddScoped<CP6.Core.Services.Wf.IApproverResolver, CP6.Core.Serv
 builder.Services.AddScoped<CP6.Core.Services.Wf.IApprovalStagePlanner, CP6.Core.Services.Wf.ApprovalStagePlanner>(); // 串簽 T2 档展平服务
 builder.Services.AddScoped<CP6.Core.Services.Wf.IApproverMapService, CP6.Core.Services.Wf.ApproverMapService>(); // ②b 审批人映射维护
 builder.Services.AddScoped<CP6.Core.Services.Wf.IFormService, CP6.Core.Services.Wf.FormService>();           // 章02 表单引擎（JSON 列 + 服务端 schema 复核）
+builder.Services.AddScoped<CP6.Core.Services.Wf.IDefinitionVersionResolver, CP6.Core.Services.Wf.DefinitionVersionResolver>();
+builder.Services.AddScoped<CP6.Core.Services.Wf.IFlowFormCompatibilityValidator, CP6.Core.Services.Wf.FlowFormCompatibilityValidator>();
+builder.Services.AddScoped<CP6.Core.Services.Wf.IFormSubmissionService, CP6.Core.Services.Wf.FormSubmissionService>();
 builder.Services.AddScoped<CP6.Core.Services.Wf.FlowEngine>();                                                // 章03 流程引擎状态机（会签/条件/幂等）；WfServiceJobService ctor 注入具体类型（internal Resume/FailServiceTokenAsync 不在接口上）
 builder.Services.AddScoped<CP6.Core.Services.Wf.IFlowEngine>(sp => sp.GetRequiredService<CP6.Core.Services.Wf.FlowEngine>()); // 接口与具体类共享同一 scoped 实例
 builder.Services.AddScoped<CP6.Core.Services.Wf.IFlowTriggerService, CP6.Core.Services.Wf.FlowTriggerService>(); // 事件触发 start：三入口单一出口（D2）
@@ -139,6 +272,7 @@ builder.Services.AddScoped<CP6.Core.Services.Wf.INodeHandler>(sp => new CP6.Core
     sp.GetRequiredService<IConfiguration>().GetValue<int?>("Wfs:SubFlowMaxInstances")));   // 子流程 B-T1 节点处理器（N 上限可配，缺省 100）
 builder.Services.AddScoped<CP6.Core.Services.Wf.IFlowDefService, CP6.Core.Services.Wf.FlowDefService>();     // 章03/04 流程定义 + 实例详情查询
 builder.Services.AddScoped<CP6.Core.Services.Wf.IWfNotifier, CP6.WebApi.Services.PersistentWfNotifier>();     // Phase D-1 N-T4 复合通知器（持久化+SignalR+邮件；替换 SignalRWfNotifier）
+builder.Services.AddHostedService<CP6.WebApi.BackgroundServices.WfNotificationDispatchWorker>();
 builder.Services.AddScoped<CP6.Core.Services.Wf.ITaskCenterService, CP6.Core.Services.Wf.TaskCenterService>(); // 章04 待办中心（待办/我的申请/撤回）
 
 // 4.0b OA(Wf) 阶段2 集成（章05 ★）：业务接入 OA 的同步回调
@@ -148,6 +282,7 @@ builder.Services.AddScoped<CP6.Core.Services.Wf.IApprovalCallback, CP6.Core.Serv
 builder.Services.AddScoped<CP6.Core.Services.Wf.IApprovalCallback, CP6.Core.Services.Fin.BudgetApprovalCallback>(); // A5 §8 预算版本审批回调（通过→自动激活/驳回→可重编）
 builder.Services.AddScoped<CP6.Core.Services.Wf.IApprovalCallback, CP6.Core.Services.Pur.PoApprovalCallback>(); // 采购 PO 审批回调（通过→Confirmed/驳回→Draft）
 builder.Services.AddScoped<CP6.Core.Services.Wf.IApprovalCallback, CP6.Core.Services.Pur.PrApprovalCallback>(); // 采购 PR 审批回调（通过→Approved/驳回→Draft）
+builder.Services.AddScoped<CP6.Core.Services.Wf.IApprovalCallback, CP6.Core.Services.Wms.WmsFeatureFlagApprovalCallback>();
 builder.Services.AddScoped<CP6.Core.Services.Fin.IBudgetService, CP6.Core.Services.Fin.BudgetService>();            // A5 预算方案/版本 CRUD + 送审 + OA 回调
 builder.Services.AddScoped<CP6.Core.Services.Fin.IBudgetLineService, CP6.Core.Services.Fin.BudgetLineService>();    // A5 预算行 Upsert/Delete + Excel 导入
 builder.Services.AddScoped<CP6.Core.Services.Fin.IBudgetReportService, CP6.Core.Services.Fin.BudgetReportService>(); // A5 预算 vs 实际报告 + 预控预检
@@ -193,6 +328,12 @@ builder.Services.AddScoped<CP6.Core.Services.Wf.IWorkCalendarService, CP6.Core.S
 builder.Services.AddScoped<CP6.Core.Services.Oa.IForecastService, CP6.Core.Services.Oa.ForecastService>();
 builder.Services.AddScoped<CP6.Core.Services.Oa.IInboxService, CP6.Core.Services.Oa.InboxService>();
 builder.Services.AddScoped<CP6.Core.Services.Oa.IDraftService, CP6.Core.Services.Oa.DraftService>();
+builder.Services.AddScoped<CP6.Core.Services.Oa.IOaInstanceAccessService, CP6.Core.Services.Oa.OaInstanceAccessService>();
+builder.Services.AddScoped<CP6.Core.Services.Oa.IFormFieldProjectionService, CP6.Core.Services.Oa.FormFieldProjectionService>();
+builder.Services.AddScoped<CP6.Core.Services.Oa.ITaskDecisionService, CP6.Core.Services.Oa.TaskDecisionService>();
+builder.Services.AddScoped<CP6.Core.Services.Oa.IApprovalPanelService, CP6.Core.Services.Oa.ApprovalPanelService>();
+builder.Services.AddScoped<CP6.Core.Services.Oa.IApprovalBusinessAccessAuthorizer, CP6.Core.Services.Pur.PurchaseRequestApprovalAccessAuthorizer>();
+builder.Services.AddScoped<CP6.Core.Services.Oa.IOaP0MigrationService, CP6.Core.Services.Oa.OaP0MigrationService>();
 builder.Services.AddScoped<CP6.Core.Services.Oa.IFlowAdminService, CP6.Core.Services.Oa.FlowAdminService>();
 
 // 4.0e OA 信箱进阶（Phase C）
@@ -275,10 +416,34 @@ builder.Services.AddScoped<CP6.Core.Services.Pur.IPurReconcileService, CP6.Core.
 //   ⑤ IApprovalService(Pur.Contracts) → StubApprovalService（桩=即时通过；PO/PR 送审，OA 引擎接真实流程后换适配器）
 
 // 4.0.1 PUB 章01 权限引擎地基（多角色聚合 + 请求级上下文缓存）
-builder.Services.AddMemoryCache();                 // 权限上下文存活对象缓存（单机；多实例转 Redis）
+builder.Services.AddMemoryCache();                 // 其余仅需本机生命周期的缓存。
 builder.Services.AddHttpContextAccessor();          // 解析当前请求登录用户
 builder.Services.AddScoped<CP6.Core.Services.Common.ITenantContext, CP6.Core.Services.Common.TenantContext>(); // 章10 当前租户上下文（TenantMiddleware 写入，CP6Context 过滤/盖章读取）
 builder.Services.AddScoped<CP6.Core.Services.Common.ITenantEnumerator, CP6.Core.Services.Common.TenantEnumerator>(); // 章10 活跃租户枚举（后台 Worker 按租户循环用）
+builder.Services.AddScoped<CP6.Core.Services.Space.Observability.SpaceExecutionContextAccessor>();
+builder.Services.AddScoped<CP6.Core.Services.Space.Observability.ISpaceExecutionContextAccessor>(
+    sp => sp.GetRequiredService<CP6.Core.Services.Space.Observability.SpaceExecutionContextAccessor>());
+builder.Services.AddScoped<CP6.Core.Services.Space.Observability.ISpaceExecutionContextManager>(
+    sp => sp.GetRequiredService<CP6.Core.Services.Space.Observability.SpaceExecutionContextAccessor>());
+builder.Services.AddScoped<
+    CP6.Space.Application.ISpaceExecutionContext,
+    CP6.WebApi.Services.HttpSpaceApplicationExecutionContext>();
+builder.Services.AddScoped<
+    ISpaceDesignAccessEvaluator,
+    CP6.WebApi.Services.CompatibilitySpaceDesignAccessEvaluator>();
+builder.Services.AddScoped<
+    ISpaceCursorCodec,
+    CP6.WebApi.Services.DataProtectionSpaceCursorCodec>();
+builder.Services.AddScoped<ISpaceAuditDbContextFactory, SpaceAuditDbContextFactory>();
+builder.Services.AddScoped<ISpaceAuditWriter, SpaceAuditWriter>();
+builder.Services.AddScoped<
+    ISpaceAccessEvaluator,
+    CP6.WebApi.Services.AuditedSpaceAccessEvaluator>();
+builder.Services.AddScoped<ISpaceRetryFinalizer, SpaceRetryFinalizer>();
+builder.Services.AddScoped<ISpaceAuditQueryService, SpaceAuditQueryService>();
+builder.Services.AddScoped<
+    ISpaceAuditMetricsSnapshotProvider,
+    SpaceAuditMetricsSnapshotProvider>();
 builder.Services.AddScoped<CP6.Core.Services.Sys.IPermissionAggregator, CP6.Core.Services.Sys.PermissionAggregator>();
 builder.Services.AddScoped<CP6.Core.Services.Sys.ICurrentPermissionContext, CP6.Core.Services.Sys.CurrentPermissionContext>();
 builder.Services.AddScoped<CP6.Core.Services.Sys.IUserRoleService, CP6.Core.Services.Sys.UserRoleService>();
@@ -286,9 +451,37 @@ builder.Services.AddScoped<CP6.Core.Services.Sys.IDictService, CP6.Core.Services
 builder.Services.AddScoped<CP6.Core.Services.Pub.ISeqService, CP6.Core.Services.Pub.SeqService>();     // PUB 章05 富采番
 builder.Services.AddScoped<CP6.Core.Services.Pub.IExcelService, CP6.Core.Services.Pub.ExcelService>(); // PUB 章07 Excel 导入导出
 builder.Services.AddSingleton<CP6.Core.Services.Pub.CodeGenService>();                                 // PUB 章08 代码生成（无状态）
-// PUB 章06 附件存储（v1 本地盘；Storage:Provider 预留 OSS/MinIO）
+// Shared object storage keeps API replicas stateless in production.
 builder.Services.AddSingleton<CP6.Core.Services.Pub.IFileStore>(_ =>
 {
+    var provider = builder.Configuration["Storage:Provider"] ?? "Local";
+    if (provider.Equals("S3", StringComparison.OrdinalIgnoreCase))
+    {
+        var endpoint = builder.Configuration["Storage:S3:Endpoint"]
+                       ?? throw new InvalidOperationException("Storage:S3:Endpoint is required");
+        var accessKey = builder.Configuration["Storage:S3:AccessKey"]
+                        ?? throw new InvalidOperationException("Storage:S3:AccessKey is required");
+        var secretKey = builder.Configuration["Storage:S3:SecretKey"]
+                        ?? throw new InvalidOperationException("Storage:S3:SecretKey is required");
+        var bucket = builder.Configuration["Storage:S3:Bucket"]
+                     ?? throw new InvalidOperationException("Storage:S3:Bucket is required");
+        var client = new Amazon.S3.AmazonS3Client(
+            new Amazon.Runtime.BasicAWSCredentials(accessKey, secretKey),
+            new Amazon.S3.AmazonS3Config
+            {
+                ServiceURL = endpoint,
+                ForcePathStyle = builder.Configuration.GetValue(
+                    "Storage:S3:ForcePathStyle",
+                    true),
+            });
+        return new CP6.Core.Services.Pub.S3FileStore(
+            client,
+            bucket,
+            builder.Configuration["Storage:S3:Prefix"],
+            builder.Configuration["Storage:S3:ServerSideEncryption"] ?? "AES256",
+            builder.Configuration["Storage:S3:KmsKeyId"]);
+    }
+
     var root = builder.Configuration["Storage:LocalRoot"]
         ?? Path.Combine(builder.Environment.ContentRootPath, "App_Data", "uploads");
     return new CP6.Core.Services.Pub.LocalFileStore(root);
@@ -309,6 +502,7 @@ builder.Services.AddScoped<CP6.Core.Services.Sys.IFieldPermService, CP6.Core.Ser
 // 章03 数据权限资源注册（业务实体接 IDataScoped 后即生效；范围 1本人/2本部门/3及下级/4自定义/5全部）
 CP6.Core.Services.Sys.DataScopeRegistry.Register("order", "受注", new[] { 1, 2, 3, 4, 5 }, 2);
 CP6.Core.Services.Sys.DataScopeRegistry.Register("product", "製品", new[] { 1, 2, 3, 4, 5 }, 5);
+CP6.Core.Services.Sys.DataScopeRegistry.Register("pur-pr", "采购申请", new[] { 1, 2, 3, 4, 5 }, 1);
 // 章04 字段权限资源/字段注册（业务返回 DTO 贴 [FieldMask] 后即生效）
 CP6.Core.Services.Sys.FieldRegistry.Register("order",
     new CP6.Core.Services.Sys.FieldRegistry.Field("UnitPrice", "単価"),
@@ -476,6 +670,18 @@ builder.Services.AddScoped<CP6.Core.Services.Wms.IIotService, CP6.Core.Services.
 
 // 4.22 MSBBWM300 モバイル作業指示（RFハンディ）
 builder.Services.AddScoped<CP6.Core.Services.Wms.IMobileService, CP6.Core.Services.Wms.MobileService>();
+builder.Services.AddScoped<CP6.Core.Services.Wms.IMobileTaskV1Service, CP6.Core.Services.Wms.MobileTaskV1Service>();
+builder.Services.AddScoped<CP6.Core.Services.Wms.IWmsAccessScopeProvider, CP6.Core.Services.Wms.WmsAccessScopeProvider>();
+builder.Services.AddScoped<CP6.Core.Services.Wms.IWmsRoleScopeService, CP6.Core.Services.Wms.WmsRoleScopeService>();
+builder.Services.AddScoped<CP6.Core.Services.Wms.IWmsFeatureFlagChangeService, CP6.Core.Services.Wms.WmsFeatureFlagChangeService>();
+builder.Services.AddScoped<CP6.Core.Services.Wms.IMobileTaskV2Service, CP6.Core.Services.Wms.MobileTaskV2Service>();
+builder.Services.AddScoped<CP6.Core.Services.Wms.IBarcodeAliasService, CP6.Core.Services.Wms.BarcodeAliasService>();
+builder.Services.AddScoped<CP6.Core.Services.Wms.IClientDeviceService, CP6.Core.Services.Wms.ClientDeviceService>();
+builder.Services.AddScoped<CP6.Core.Services.Wms.ISerialInventoryService, CP6.Core.Services.Wms.SerialInventoryService>();
+builder.Services.AddScoped<CP6.Core.Services.Wms.ILpnService, CP6.Core.Services.Wms.LpnService>();
+builder.Services.AddScoped<CP6.Core.Services.Wms.IBarcodeProfileService, CP6.Core.Services.Wms.BarcodeProfileService>();
+builder.Services.AddScoped<CP6.Core.Services.Wms.ILabelJobService, CP6.Core.Services.Wms.LabelJobService>();
+builder.Services.AddScoped<CP6.Core.Services.Wms.IMobileTaskNotifier, CP6.WebApi.Services.SignalRMobileTaskNotifier>();
 
 // 4.12 WM-3.5 WMS 自動展開フック（MES IssueAsync / PA CreateAsync 後に自動発火）
 // appsettings.json の WmsBridge:Enabled で切替（既定 true）。false の場合は no-op に置換。
@@ -547,7 +753,11 @@ builder.Services.Configure<CP6.Core.Options.IntegrationEventOptions>(
 builder.Services.AddScoped<CP6.Core.Services.Integration.IIntegrationEventDispatcher, CP6.Core.Services.Integration.IntegrationEventDispatcher>();
 
 // 4.15.4 DeadLetter 通知（SignalR + Sys_OperLog 双通知）
-builder.Services.AddScoped<CP6.Core.Services.Integration.IDeadLetterNotifier, CP6.Core.Services.Integration.DeadLetterNotifier>();
+builder.Services.AddScoped<CP6.Core.Services.Integration.DeadLetterNotifier>();
+builder.Services.AddScoped<CP6.Core.Services.Integration.IDeadLetterNotifier>(
+    sp => sp.GetRequiredService<CP6.Core.Services.Integration.DeadLetterNotifier>());
+builder.Services.AddScoped<CP6.Core.Services.Integration.ISpaceDeadLetterNotifier>(
+    sp => sp.GetRequiredService<CP6.Core.Services.Integration.DeadLetterNotifier>());
 
 // 4.15.5 Retry Worker — 60s ごとに Failed + NextRetryAt 到期 のイベントをリトライ
 builder.Services.AddHostedService<CP6.WebApi.BackgroundServices.IntegrationEventRetryWorker>();
@@ -556,6 +766,7 @@ builder.Services.AddHostedService<CP6.WebApi.BackgroundServices.IntegrationEvent
 builder.Services.AddHostedService<CP6.WebApi.BackgroundServices.FinReconciliationWorker>();
 // Space 库位对账 worker（波5）：每日扫已发布库位(Status=1)↔WMS bin 停用漂移，只读告警不自愈
 builder.Services.AddHostedService<CP6.WebApi.BackgroundServices.SpaceBinReconciliationWorker>();
+builder.Services.AddSpaceJobWorkers();
 builder.Services.AddHostedService<CP6.WebApi.BackgroundServices.AssetDepreciationWorker>(); // A3 §6.2 月末折旧 Worker（备草稿不过账）
 
 // 4.15.6 T15 / Gap 2.3 — Prometheus /metrics（ブリッジ業務指標）
@@ -563,9 +774,13 @@ builder.Services.AddHostedService<CP6.WebApi.BackgroundServices.AssetDepreciatio
 //  - Collector は prometheus-net BeforeCollect への薄いアダプタ（Singleton）。
 builder.Services.AddScoped<CP6.Core.Services.Integration.IBridgeMetricsSnapshotProvider, CP6.Core.Services.Integration.BridgeMetricsSnapshotProvider>();
 builder.Services.AddSingleton<CP6.WebApi.Observability.BridgeMetricsCollector>();
+builder.Services.AddSingleton<
+    CP6.WebApi.Observability.SpaceAuditMetricsCollector>();
 
 // S 类认证加固（T1）：Security 配置 + BCrypt 密码哈希服务
 builder.Services.Configure<CP6.Core.Services.Sys.SecurityOptions>(builder.Configuration.GetSection("Security"));
+builder.Services.AddScoped<CP6.WebApi.Services.IAuthSessionService, CP6.WebApi.Services.AuthSessionService>();
+builder.Services.AddScoped<CP6.WebApi.Services.INativeSsoGrantStore, CP6.WebApi.Services.NativeSsoGrantStore>();
 // 工厂注册显式选 IOptions 构造器：BCryptPasswordHasher 有 (int=11) 与 (IOptions) 两个公共构造器，
 // 内置容器无法择一（Development 下 ValidateOnBuild + EF 设计时构建都会报 ambiguous）。工厂绕开构造器选择。
 builder.Services.AddScoped<CP6.Core.Services.Sys.IPasswordHasher>(sp =>
@@ -694,7 +909,37 @@ builder.Services.AddCors(options =>
               .AllowCredentials());
 });
 
+// OpenAPI/contract CI can build the complete HTTP pipeline without starting
+// database-backed workers or requiring external infrastructure.
+if (builder.Configuration.GetValue<bool>("Startup:SkipHostedServices"))
+{
+    var hosted = builder.Services
+        .Where(x => x.ServiceType == typeof(IHostedService))
+        .ToList();
+    foreach (var descriptor in hosted) builder.Services.Remove(descriptor);
+}
+
 var app = builder.Build();
+
+if (args.Contains("--oa-p0-preflight", StringComparer.OrdinalIgnoreCase) ||
+    args.Contains("--oa-p0-backfill", StringComparer.OrdinalIgnoreCase))
+{
+    using var oaP0Scope = app.Services.CreateScope();
+    var migration = oaP0Scope.ServiceProvider.GetRequiredService<CP6.Core.Services.Oa.IOaP0MigrationService>();
+    if (args.Contains("--oa-p0-preflight", StringComparer.OrdinalIgnoreCase))
+    {
+        var report = await migration.PreflightAsync();
+        Console.WriteLine(System.Text.Json.JsonSerializer.Serialize(report));
+        Environment.ExitCode = report.SafeToBackfill ? 0 : 2;
+    }
+    else
+    {
+        var report = await migration.BackfillAsync();
+        Console.WriteLine(System.Text.Json.JsonSerializer.Serialize(report));
+        Environment.ExitCode = 0;
+    }
+    return;
+}
 
 // 票3：启动期校验已注册连接器的单次调用上界 < 服务任务租约（防长调用被 reaper 重投→重复外呼）。
 using (var _leaseScope = app.Services.CreateScope())
@@ -710,12 +955,43 @@ if (app.Environment.IsDevelopment())
 }
 
 // 7. 初始化种子数据（首次启动时自动创建）
+var databaseInitializationOnly = string.Equals(
+    app.Configuration["Startup:Mode"],
+    "DatabaseInit",
+    StringComparison.OrdinalIgnoreCase);
+var runDatabaseInitialization = databaseInitializationOnly
+                                || !app.Configuration.GetValue<bool>(
+                                    "Startup:SkipDatabaseInitialization");
+if (runDatabaseInitialization)
+{
 using (var scope = app.Services.CreateScope())
 {
     var db = scope.ServiceProvider.GetRequiredService<CP6Context>();
 
     // Docker 环境下自动创建数据库并应用所有迁移
     db.Database.Migrate();
+    var spaceDb = scope.ServiceProvider
+        .GetRequiredService<CP6.Space.Infrastructure.SpaceContext>();
+    spaceDb.Database.Migrate();
+
+    // SPACE observability must have one canonical UTC ordering column before
+    // any seed, background worker, or request can query integration history.
+    // Historical server-local rows require an explicit deployment time zone.
+    var spaceObservabilityOptions = scope.ServiceProvider
+        .GetRequiredService<
+            Microsoft.Extensions.Options.IOptions<
+                SpaceObservabilityOptions>>()
+        .Value;
+    var occurredAtBackfillLogger = scope.ServiceProvider
+        .GetRequiredService<ILoggerFactory>()
+        .CreateLogger(
+            "SpaceIntegrationEventOccurredAtUtcBackfill");
+    await CP6.WebApi.BackgroundServices
+        .SpaceIntegrationEventOccurredAtUtcBackfill
+        .RunAsync(
+            db,
+            spaceObservabilityOptions,
+            occurredAtBackfillLogger);
 
     // 章10 默认租户种子（幂等，按 Id 判存）——登记进 Sys_Tenant 注册表供枚举/登录/管理用
     CP6.Core.Services.Common.TenantSeed.EnsureSeeded(db);
@@ -889,8 +1165,14 @@ using (var scope = app.Services.CreateScope())
     // 置于 admin 账号 seed 之后，确保首次启动时 admin 已落库，seed 内部可解析到真实 UserId。
     CP6.WebApi.Seed.A5BudgetFlowSeed.Seed(db);
     CP6.WebApi.Seed.PurApprovalFlowSeed.Seed(db);   // 采购 PR/PO 审批流程 + 绑定（PUR_PR/PUR_PO）
+    CP6.WebApi.Seed.WmsFeatureApprovalFlowSeed.Seed(db);
+    CP6.WebApi.Seed.SpaceDispatchApprovalFlowSeed.Seed(db);
     CP6.WebApi.Seed.OaLeaveFormSeed.Seed(db);        // OA 请假演示表单 + 流程（填單→审批闭环 out-of-box）
     await CP6.WebApi.Seed.WfTokenBackfillSeed.EnsureAsync(db);   // WFS P1：在途实例 token 回填（每启动幂等）
+
+    // Space E00-S04：900/906 菜单 + space-audit:read 按租户仅授管理员。
+    // TenantSeed 和基础菜单块均已完成；显式 TenantId + IgnoreQueryFilters 保证跨租户幂等。
+    await CP6.WebApi.Seed.SpaceAuditPermissionSeed.EnsureSeededAsync(db);
 
     // M-WMS 横切接线 Task 2：WMS 400 段菜单启动幂等种子（洁净部署自动可达）+ 30 权限键锚定行显式 MenuKey。
     // ★须置于下方「无 MenuKey 菜单 RoutePath 自动回填」块之前：同一启动内非锚定 WMS 内容页(null key)获派生键，
@@ -914,6 +1196,7 @@ using (var scope = app.Services.CreateScope())
     // Task 3a 贴了 [RequirePermission] 但 PermissionService 无 admin 旁路——不种 RoleAction 则 admin 也 403。
     // 须置于 WmsMenuSeed 之后（RoleAction 挂锚定 MenuId，菜单行须先在）。逐租户显式 TenantId + IgnoreQueryFilters 幂等。
     CP6.WebApi.Seed.WmsPermissionSeed.EnsureSeeded(db);
+    CP6.WebApi.Seed.WmsStandardRoleSeed.EnsureSeeded(db);
 
     // M-MES 横切接线 Task 2：MES 300 段菜单锚定 MenuKey（mes-*）。
     // ★须置于下方「无 MenuKey 菜单 RoutePath 自动回填」块（:894）之前：既有 300–315 由 Program.cs（本文件 :1511+）
@@ -2014,6 +2297,14 @@ using (var scope = app.Services.CreateScope())
             .Concat(CP6.WebApi.Seed.I18nOaKernelHardeningScreenSeed.Items)  // 内核 hardening oa.designer.gw.* + errInclusive*/errBranchReject + E-WF-019/020/021
             .Concat(CP6.WebApi.Seed.I18nOaFlowTriggerScreenSeed.Items)  // WFS 波③ 事件触发 oa.flowtrigger.* + oa.flowadmin.tab.flows + E-WF-022/023/024
             .Concat(CP6.WebApi.Seed.I18nSpaceScreenSeed.Items)   // Space 波4 E-SPACE-*/W-SPACE-* 错误码
+            .Concat(CP6.WebApi.Seed.I18nSpaceAiAdminSeed.Items) // Space E13-S16 AI 策略与用量管理
+            .Concat(CP6.WebApi.Seed.I18nSpacePlanningScenarioSeed.Items) // Space E12-S01 生产隔离规划分支
+            .Concat(CP6.WebApi.Seed.I18nSpacePlanningDatasetSeed.Items) // Space E12-S02 脱敏历史任务与回放时钟
+            .Concat(CP6.WebApi.Seed.I18nSpacePlanningSimulationSeed.Items) // Space E12-S03 距离/拥堵/容量/吞吐/成本仿真
+            .Concat(CP6.WebApi.Seed.I18nSpacePlanningComparisonSeed.Items) // Space E12-S04 多场景比较与决策记录
+            .Concat(CP6.WebApi.Seed.I18nSpaceOperationsDiagnosticsSeed.Items) // Space E11-S01 运营诊断
+            .Concat(CP6.WebApi.Seed.I18nSpacePutawayRecommendationSeed.Items) // Space E11-S02 上架推荐
+            .Concat(CP6.WebApi.Seed.I18nSpaceDispatchRecommendationSeed.Items) // Space E11-S03 人员/任务调度建议
             .Concat(CP6.WebApi.Seed.I18nOaInboxUxScreenSeed.Items)  // WFS 波④ 信箱体验：通知矩阵/批量改派/rowMode/移动端 oa.notify.matrix.*/oa.notify.type.*/oa.bt.*/oa.inbox.rowMode.*/oa.inbox.mobileFilter/oa.pref.errBadJson
             .Concat(CP6.WebApi.Seed.I18nOaEngineInfraScreenSeed.Items)  // WFS 波⑤ 引擎基建：年历 oa.workcal.*+nav.743 / 连接器 oa.connector.* / 设计器新键 oa.designer.svc.httpMethod|timeoutSec|delayMode.workdays·timeout.errorEdge·err* / E-WF-027/028
             .Concat(CP6.WebApi.Seed.I18nOaSubFlowScreenSeed.Items)  // WFS 波⑥ 子流程 oa.designer.subflow.* + oa.designer.errSubFlowConfig + oa.detail.parentFlow/subFlows + E-WF-025/026
@@ -2675,6 +2966,14 @@ using (var scope = app.Services.CreateScope())
         db.SaveChanges();
     }
 }
+}
+
+if (databaseInitializationOnly)
+{
+    app.Logger.LogInformation(
+        "Database initialization completed; the one-shot process will exit.");
+    return;
+}
 
 app.UseCors("AllowAll");
 
@@ -2707,6 +3006,9 @@ app.UseMiddleware<CP6.WebApi.Middleware.TenantMiddleware>();
 
 // i18n 优化 P1：BizException → 本地化消息（须在 UseRequestLocalization 之后）。
 app.UseMiddleware<CP6.WebApi.Middleware.BizExceptionMiddleware>();
+app.UseMiddleware<
+    CP6.WebApi.Middleware.SpaceDesignProblemDetailsMiddleware>();
+app.UseMiddleware<CP6.WebApi.Middleware.SpaceExecutionContextMiddleware>();
 
 // S 类认证加固（T6）：CSRF 双提交校验 + 强制改密拦截。须在 BizExceptionMiddleware 下游
 // （抛 BizException 被其捕获本地化）、UseAuthorization 上游、UseAuthentication 已在更上游（User 已填充）。
@@ -2715,8 +3017,48 @@ app.UseMiddleware<CP6.WebApi.Middleware.MustChangePasswordMiddleware>();
 
 app.UseAuthorization();
 app.MapControllers();
+app.MapHealthChecks(
+        "/health/live",
+        new Microsoft.AspNetCore.Diagnostics.HealthChecks.HealthCheckOptions
+        {
+            Predicate = registration => registration.Tags.Contains("live"),
+            ResponseWriter = CP6.WebApi.Health.HealthResponseWriter.WriteAsync
+        })
+    .AllowAnonymous();
+app.MapHealthChecks(
+        "/health/ready",
+        new Microsoft.AspNetCore.Diagnostics.HealthChecks.HealthCheckOptions
+        {
+            Predicate = registration => registration.Tags.Contains("ready"),
+            ResponseWriter = CP6.WebApi.Health.HealthResponseWriter.WriteAsync
+        })
+    .AllowAnonymous();
 
 // SignalR Hub 路由
+app.MapGet(
+        "/health/release",
+        async (
+            HttpContext http,
+            CP6.Core.EFDbContext.CP6Context db,
+            IConfiguration configuration) =>
+        {
+            http.Response.Headers.CacheControl = "no-store";
+            var migrations = await db.Database.GetAppliedMigrationsAsync(
+                http.RequestAborted);
+            var assembly = System.Reflection.Assembly.GetEntryAssembly();
+            return Results.Ok(new
+            {
+                version = configuration["Release:Version"]
+                          ?? assembly?.GetName().Version?.ToString()
+                          ?? "unknown",
+                gitSha = configuration["Release:GitSha"] ?? "unknown",
+                apiImageDigest = configuration["Release:ApiImageDigest"] ?? "unknown",
+                webImageDigest = configuration["Release:WebImageDigest"] ?? "unknown",
+                latestMigration = migrations.LastOrDefault(),
+            });
+        })
+    .AllowAnonymous();
+
 app.MapHub<NotifyHub>("/hubs/notify");
 app.MapHub<CP6.WebApi.Hubs.MesHub>("/hubs/mes");
 app.MapHub<CP6.WebApi.Hubs.WmsHub>("/hubs/wms");
@@ -2725,5 +3067,9 @@ app.MapHub<CP6.WebApi.Hubs.SpaceHub>("/hubs/space");
 // T15 / Gap 2.3 — Prometheus 公開エンドポイント /metrics ＋ ブリッジ業務指標コレクタ起動
 app.MapMetrics();   // GET /metrics（Prometheus テキスト形式）
 app.Services.GetRequiredService<CP6.WebApi.Observability.BridgeMetricsCollector>().Register();
+CP6.WebApi.Observability.SpaceAuditMetricsRegistration.RegisterIfEnabled(
+    app.Configuration.GetValue<bool?>(
+        "SpaceObservability:MetricsEnabled") ?? true,
+    app.Services);
 
 app.Run();

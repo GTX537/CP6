@@ -27,6 +27,19 @@ public static class ExpressionEvaluator
         return ok && ToBool(val);
     }
 
+    public static bool TryEvaluate(
+        string? expression, IReadOnlyDictionary<string, object?> vars, out bool result)
+    {
+        if (string.IsNullOrWhiteSpace(expression))
+        {
+            result = true;
+            return true;
+        }
+        var (ok, value) = TryEval(expression, vars);
+        result = ok && ToBool(value);
+        return ok;
+    }
+
     /// <summary>取值求值（表单 compute 计算回写）。空表达式/任何错误→null（不写回，不抛）。</summary>
     public static object? Compute(string? expression, string? varsJson)
         => Compute(expression, ParseVars(varsJson));

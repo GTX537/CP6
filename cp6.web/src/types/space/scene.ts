@@ -1,5 +1,7 @@
 // Space 编辑器 VO 类型 — 镜像后端 DTOs（ch01 §E-1）
 
+import type { SpaceDataSource } from './dataSource'
+
 export interface SiteVO {
   id?: string
   siteCode: string
@@ -98,12 +100,21 @@ export interface MarkerVO {
 }
 
 export interface EditorScene {
+  source: SpaceDataSource
   floor: FloorVO
   zones: ZoneVO[]
   aisles: AisleVO[]
   racks: RackVO[]
   locations: LocationVO[]
   markers: MarkerVO[]
+}
+
+export interface SceneExport {
+  source: SpaceDataSource
+  meta: Record<string, unknown>
+  zones: unknown[]
+  aisles: unknown[]
+  racks: unknown[]
 }
 
 export interface TemplateVO {
@@ -192,5 +203,8 @@ export interface SpaceEventVO {
   status: string
   attempts: number
   createDate: string
-  lastError?: string | null
+  correlationId: string
+  jobId?: string | null
+  publishAttemptId?: string | null
+  safeErrorCode?: string | null
 }

@@ -1,7 +1,6 @@
 using System.Text.Encodings.Web;
 using System.Text.Json;
 using System.Text.Json.Nodes;
-using System.Text.RegularExpressions;
 using CP6.Core.EFDbContext;
 using CP6.Entity.DomainModels.Wf;
 using Microsoft.EntityFrameworkCore;
@@ -23,51 +22,170 @@ public class FormService : IFormService
 
     public async Task<Guid> SaveDefAsync(string formKey, string formName, string schemaJson, string? user = null)
     {
-        if (string.IsNullOrWhiteSpace(formKey)) throw new InvalidOperationException("FormKey 不能为空");
+        var draft = await SaveDraftAsync(formKey, formName, schemaJson, null, user);
+        await PublishAsync(formKey, draft.RowVersion, Guid.Empty);
+        return draft.DefinitionId;
+    }
 
-        var def = await _db.Wf_FormDefs.FirstOrDefaultAsync(x => x.FormKey == formKey);
-        if (def == null)
+    public async Task<Wf_FormDef?> GetDefAsync(string formKey)
+    {
+        var head = await _db.Wf_FormDefs.AsNoTracking().FirstOrDefaultAsync(x => x.FormKey == formKey);
+        if (head == null) return null;
+        var published = await _db.Wf_FormDefVersions.AsNoTracking()
+            .Where(x => x.FormDefId == head.Id && x.Status == WfDefinitionVersionStatus.Published)
+            .OrderByDescending(x => x.Version).FirstOrDefaultAsync();
+        if (published != null)
         {
-            def = new Wf_FormDef
+            head.FormName = published.FormNameSnapshot;
+            head.SchemaJson = published.SchemaJson;
+            head.Version = published.Version;
+        }
+        return head;
+    }
+
+    public async Task<DefinitionDraftDto?> GetDraftAsync(string formKey, bool createIfMissing = true, string? user = null)
+    {
+        var head = await _db.Wf_FormDefs.FirstOrDefaultAsync(x => x.FormKey == formKey);
+        if (head == null) return null;
+        var draft = await _db.Wf_FormDefVersions
+            .SingleOrDefaultAsync(x => x.FormDefId == head.Id && x.Status == WfDefinitionVersionStatus.Draft);
+        if (draft == null && createIfMissing)
+        {
+            var latest = await _db.Wf_FormDefVersions.AsNoTracking()
+                .Where(x => x.FormDefId == head.Id && x.Status == WfDefinitionVersionStatus.Published)
+                .OrderByDescending(x => x.Version).FirstOrDefaultAsync();
+            draft = new Wf_FormDefVersion
             {
-                Id = Guid.NewGuid(),
-                FormKey = formKey,
-                FormName = formName,
-                SchemaJson = schemaJson,
-                Version = 1,
-                Creator = user,
+                Id = Guid.NewGuid(), FormDefId = head.Id, Version = (latest?.Version ?? 0) + 1,
+                Status = WfDefinitionVersionStatus.Draft,
+                FormNameSnapshot = latest?.FormNameSnapshot ?? head.FormName,
+                SchemaJson = latest?.SchemaJson ?? head.SchemaJson, Creator = user
             };
-            _db.Wf_FormDefs.Add(def);
+            _db.Wf_FormDefVersions.Add(draft);
+            await _db.SaveChangesAsync();
+        }
+        return draft == null ? null : ToDraft(head.Id, draft);
+    }
+
+    public async Task<DefinitionDraftDto> SaveDraftAsync(
+        string formKey, string formName, string schemaJson, byte[]? rowVersion, string? user = null)
+    {
+        if (string.IsNullOrWhiteSpace(formKey)) throw new InvalidOperationException("FormKey 不能为空");
+        var head = await _db.Wf_FormDefs.FirstOrDefaultAsync(x => x.FormKey == formKey);
+        if (head == null)
+        {
+            head = new Wf_FormDef
+            {
+                Id = Guid.NewGuid(), FormKey = formKey, FormName = formName,
+                SchemaJson = schemaJson, Version = 1, Creator = user
+            };
+            _db.Wf_FormDefs.Add(head);
         }
         else
         {
-            if (def.SchemaJson != schemaJson) def.Version++;   // 仅 schema 变更才升版
-            def.FormName = formName;
-            def.SchemaJson = schemaJson;
-            def.Modifier = user;
-            def.ModifyDate = DateTime.Now;
+            head.FormName = formName;
+            head.Modifier = user;
+            head.ModifyDate = DateTime.UtcNow;
         }
-        await _db.SaveChangesAsync();
-        return def.Id;
+
+        var draft = await _db.Wf_FormDefVersions
+            .SingleOrDefaultAsync(x => x.FormDefId == head.Id && x.Status == WfDefinitionVersionStatus.Draft);
+        if (draft == null)
+        {
+            var maxVersion = await _db.Wf_FormDefVersions.Where(x => x.FormDefId == head.Id)
+                .Select(x => (int?)x.Version).MaxAsync() ?? 0;
+            draft = new Wf_FormDefVersion
+            {
+                Id = Guid.NewGuid(), FormDefId = head.Id, Version = maxVersion + 1,
+                Status = WfDefinitionVersionStatus.Draft, FormNameSnapshot = formName,
+                SchemaJson = schemaJson, Creator = user
+            };
+            _db.Wf_FormDefVersions.Add(draft);
+        }
+        else
+        {
+            EnsureRowVersion(draft.RowVersion, rowVersion);
+            if (rowVersion != null) _db.Entry(draft).Property(x => x.RowVersion).OriginalValue = rowVersion;
+            draft.FormNameSnapshot = formName;
+            draft.SchemaJson = schemaJson;
+            draft.Modifier = user;
+            draft.ModifyDate = DateTime.UtcNow;
+        }
+        try { await _db.SaveChangesAsync(); }
+        catch (DbUpdateConcurrencyException) { throw new InvalidOperationException("E-WF-045"); }
+        return ToDraft(head.Id, draft);
     }
 
-    public Task<Wf_FormDef?> GetDefAsync(string formKey) =>
-        _db.Wf_FormDefs.FirstOrDefaultAsync(x => x.FormKey == formKey);
+    public async Task<DefinitionPublishResult> PublishAsync(
+        string formKey, byte[]? rowVersion, Guid publishedBy, CancellationToken ct = default)
+    {
+        var head = await _db.Wf_FormDefs.SingleOrDefaultAsync(x => x.FormKey == formKey, ct)
+                   ?? throw new InvalidOperationException("E-WF-036");
+        var draft = await _db.Wf_FormDefVersions
+            .SingleOrDefaultAsync(x => x.FormDefId == head.Id && x.Status == WfDefinitionVersionStatus.Draft, ct)
+                    ?? throw new InvalidOperationException("E-WF-036");
+        EnsureRowVersion(draft.RowVersion, rowVersion);
+        if (rowVersion != null) _db.Entry(draft).Property(x => x.RowVersion).OriginalValue = rowVersion;
+
+        FormSchema? schema;
+        try { schema = JsonSerializer.Deserialize<FormSchema>(draft.SchemaJson, JsonOpts); }
+        catch (JsonException) { throw new InvalidOperationException("E-WF-036"); }
+        if (schema == null || FormDataValidator.ValidateSchema(schema).Count > 0)
+            throw new InvalidOperationException("E-WF-036");
+        await new FlowFormCompatibilityValidator(_db).ValidateFormPublishAsync(head.Id, draft.SchemaJson, ct);
+
+        var at = DateTime.UtcNow;
+        draft.Status = WfDefinitionVersionStatus.Published;
+        draft.PublishedAtUtc = at;
+        draft.PublishedBy = publishedBy;
+        head.FormName = draft.FormNameSnapshot;
+        head.SchemaJson = draft.SchemaJson;
+        head.Version = draft.Version;
+        try { await _db.SaveChangesAsync(ct); }
+        catch (DbUpdateConcurrencyException) { throw new InvalidOperationException("E-WF-045"); }
+        return new(head.Id, draft.Id, draft.Version, at);
+    }
+
+    public async Task<IReadOnlyList<DefinitionVersionItem>> ListVersionsAsync(string formKey, CancellationToken ct = default)
+    {
+        var headId = await _db.Wf_FormDefs.Where(x => x.FormKey == formKey)
+            .Select(x => (Guid?)x.Id).SingleOrDefaultAsync(ct);
+        if (headId == null) return Array.Empty<DefinitionVersionItem>();
+        return await _db.Wf_FormDefVersions.AsNoTracking().Where(x => x.FormDefId == headId)
+            .OrderByDescending(x => x.Version)
+            .Select(x => new DefinitionVersionItem(x.Id, x.Version, x.Status, x.FormNameSnapshot, x.PublishedAtUtc))
+            .ToListAsync(ct);
+    }
+
+    public async Task<DefinitionVersionDto?> GetVersionAsync(string formKey, int version, CancellationToken ct = default)
+    {
+        var row = await (from head in _db.Wf_FormDefs.AsNoTracking()
+                         join item in _db.Wf_FormDefVersions.AsNoTracking() on head.Id equals item.FormDefId
+                         where head.FormKey == formKey && item.Version == version
+                         select new { head.Id, Item = item }).SingleOrDefaultAsync(ct);
+        return row == null ? null : new(row.Id, row.Item.Id, row.Item.Version, row.Item.Status,
+            row.Item.FormNameSnapshot, row.Item.SchemaJson, row.Item.PublishedAtUtc);
+    }
 
     public async Task<Guid> SubmitDataAsync(string formKey, string? bizId, string dataJson, string? user = null)
     {
         var def = await _db.Wf_FormDefs.FirstOrDefaultAsync(x => x.FormKey == formKey && x.Enable)
                   ?? throw new InvalidOperationException($"表单定义不存在或已停用：{formKey}");
+        var version = await _db.Wf_FormDefVersions
+            .Where(x => x.FormDefId == def.Id && x.Status == WfDefinitionVersionStatus.Published)
+            .OrderByDescending(x => x.Version).FirstOrDefaultAsync()
+            ?? throw new InvalidOperationException("E-WF-036");
 
         // 服务端复算（章06 §6 铁律：前端体验、后端为准）——按 rules 重算 compute、按生效 required/可见复核
-        var (recomputed, errors) = RecomputeAndValidate(def.SchemaJson, dataJson);
+        var (recomputed, errors) = RecomputeAndValidate(version.SchemaJson, dataJson);
         if (errors.Count > 0) throw new InvalidOperationException("表单校验失败：" + string.Join("；", errors));
 
         var data = new Wf_FormData
         {
             Id = Guid.NewGuid(),
+            FormDefVersionId = version.Id,
             FormKey = formKey,
-            FormVersion = def.Version,
+            FormVersion = version.Version,
             BizId = bizId,
             DataJson = recomputed,   // 存服务端复算后的数据（compute 以后端为准）
             Creator = user,
@@ -92,7 +210,7 @@ public class FormService : IFormService
         }
         catch (JsonException) { return new[] { "表单数据解析失败" }; }
 
-        return ValidateFields(schema, data, requiredOverride: null, hidden: null);
+        return FormDataValidator.ValidateFields(schema, data, requiredOverride: null, hidden: null);
     }
 
     /// <summary>
@@ -138,7 +256,7 @@ public class FormService : IFormService
 
         JsonElement data;
         using (var doc = JsonDocument.Parse(obj.ToJsonString())) data = doc.RootElement.Clone();
-        var errors = ValidateFields(schema, data, required, hidden);
+        var errors = FormDataValidator.ValidateFields(schema, data, required, hidden);
         return (obj.ToJsonString(WriteOpts), errors);   // 保留中文不转义
     }
 
@@ -150,44 +268,12 @@ public class FormService : IFormService
         _ => null,
     };
 
-    /// <summary>字段静态复核（required/类型/长度/正则）。<paramref name="requiredOverride"/> 覆盖字段必填，
-    /// <paramref name="hidden"/> 中字段全部跳过（隐藏字段免校验）。</summary>
-    private static List<string> ValidateFields(FormSchema schema, JsonElement data,
-        IReadOnlyDictionary<string, bool>? requiredOverride, IReadOnlySet<string>? hidden)
+    private static DefinitionDraftDto ToDraft(Guid defId, Wf_FormDefVersion draft) =>
+        new(defId, draft.Id, draft.Version, draft.FormNameSnapshot, draft.SchemaJson, draft.RowVersion, draft.Status);
+
+    private static void EnsureRowVersion(byte[]? current, byte[]? expected)
     {
-        var errors = new List<string>();
-        foreach (var f in schema.Fields)
-        {
-            if (hidden is not null && hidden.Contains(f.Name)) continue;   // 隐藏字段免校验
-
-            JsonElement v = default;
-            bool has = data.ValueKind == JsonValueKind.Object && data.TryGetProperty(f.Name, out v);
-            bool empty = !has
-                         || v.ValueKind is JsonValueKind.Null or JsonValueKind.Undefined
-                         || (v.ValueKind == JsonValueKind.String && string.IsNullOrEmpty(v.GetString()));
-
-            bool req = requiredOverride is not null && requiredOverride.TryGetValue(f.Name, out var r) ? r : f.Required;
-            var label = string.IsNullOrEmpty(f.Label) ? f.Name : f.Label;
-            if (req && empty) { errors.Add($"{label} 必填"); continue; }
-            if (empty) continue;   // 非必填且空 → 跳过类型校验
-
-            switch (f.Type)
-            {
-                case "number":
-                    if (v.ValueKind != JsonValueKind.Number) errors.Add($"{label} 必须是数字");
-                    break;
-                case "checkbox":
-                    break;   // 允许 bool / 数组，阶段1 不深校
-                default:
-                    if (v.ValueKind == JsonValueKind.String)
-                    {
-                        var s = v.GetString() ?? string.Empty;
-                        if (f.MaxLength is int max && s.Length > max) errors.Add($"{label} 超出最大长度 {max}");
-                        if (!string.IsNullOrEmpty(f.Pattern) && !Regex.IsMatch(s, f.Pattern)) errors.Add($"{label} 格式不符");
-                    }
-                    break;
-            }
-        }
-        return errors;
+        if (expected != null && current != null && !current.SequenceEqual(expected))
+            throw new InvalidOperationException("E-WF-045");
     }
 }

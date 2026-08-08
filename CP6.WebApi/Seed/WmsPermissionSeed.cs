@@ -98,8 +98,15 @@ public static class WmsPermissionSeed
         (447, "add", "新建"), (447, "edit", "编辑"), (447, "lend", "出借"),
         (447, "return", "返却"), (447, "expire", "失效"), (447, "del", "删除"),
         // 461 wms-mobile — モバイル作業指示
-        (461, "add", "新建"), (461, "start", "开始"), (461, "scan", "扫描"),
+        (461, "view", "查看"), (461, "add", "新建"), (461, "assign", "分配"),
+        (461, "claim", "领取"), (461, "start", "开始"), (461, "scan", "扫描"),
         (461, "complete", "完了"), (461, "cancel", "取消"),
+        (461, "pause", "暂停"), (461, "release", "释放"),
+        (461, "takeover", "接管"), (461, "exception", "异常处理"),
+        (461, "barcode-manage", "条码维护"), (461, "device-manage", "设备管理"),
+        (461, "analytics", "效率分析"),
+        (461, "serial-manage", "序列号管理"), (461, "lpn-manage", "LPN管理"),
+        (461, "label-manage", "标签模板管理"), (461, "label-print", "标签打印"),
         // 462 wms-wcs-task — WCS/自動倉庫連携
         (462, "add", "新建"), (462, "dispatch", "派发"), (462, "start", "开始"),
         (462, "complete", "完了"), (462, "fail", "失败"), (462, "del", "删除"),

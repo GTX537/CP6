@@ -168,6 +168,39 @@ public class FlowEngineTests
     }
 
     [Fact]
+    public async Task NextNode_UsesExplicitPriority_BeforeUnconditionalFallback()
+    {
+        using var db = NewDb();
+        var firstApprover = Guid.NewGuid();
+        var routedApprover = Guid.NewGuid();
+        await SeedFlowAsync(db, "priority-route", new FlowSchema
+        {
+            Nodes =
+            {
+                new FlowNode { Id = "n1", Type = "approval", ApproverStrategy = "Specified", ApproverUserId = firstApprover },
+                new FlowNode { Id = "n2", Type = "approval", ApproverStrategy = "Specified", ApproverUserId = routedApprover },
+                new FlowNode { Id = "end", Type = "end" },
+            },
+            Edges =
+            {
+                // 兜底故意写在前面；新版设计器的 Priority 必须让条件路径先判断。
+                new FlowEdge { Id = "fallback", From = "n1", To = "end", Priority = 2 },
+                new FlowEdge { Id = "condition", From = "n1", To = "n2", Condition = "days > 3", Priority = 1 },
+                new FlowEdge { Id = "finish", From = "n2", To = "end", Priority = 1 },
+            },
+        });
+
+        await Engine(db).SubmitAsync("priority-route", Guid.NewGuid(), """{"days":5}""");
+        var task = await db.Wf_FlowTasks.SingleAsync(x => x.NodeId == "n1");
+        await Engine(db).ActAsync(task.Id, firstApprover, approve: true);
+
+        var instance = await db.Wf_FlowInstances.SingleAsync();
+        Assert.Equal(FlowInstanceStatus.Running, instance.Status);
+        Assert.Equal("n2", instance.CurrentNode);
+        Assert.Equal(1, await db.Wf_FlowTasks.CountAsync(x => x.NodeId == "n2" && x.AssigneeId == routedApprover));
+    }
+
+    [Fact]
     public async Task Countersign_All_OneReject_RejectsInstance_CancelsOthers()
     {
         using var db = NewDb();

@@ -20,7 +20,7 @@ public interface ISlottingService
     Task<List<SlottingPlan>> SearchAsync(string? warehouseCd, int? status);
     Task<SlottingPlanResult?> GetAsync(string planNo);
     Task<string> AnalyzeAsync(string warehouseCd, int analysisDays, string? userName);
-    Task ApproveAsync(string planNo, string? userName);
+    Task<int> ApproveAsync(string planNo, string? userName);
     Task CancelAsync(string planNo, string? userName);
 }
 
@@ -42,4 +42,12 @@ public class SlottingRecommendation
     public string? RecommendedLocationPattern { get; set; }
     /// <summary>推奨と異なる場合に true（移動候補）</summary>
     public bool NeedsRelocation { get; set; }
+    /// <summary>承認時に選択された実移動先。</summary>
+    public string? TargetLocationCd { get; set; }
+    /// <summary>承認時に予約された移動数量。</summary>
+    public decimal? MoveQty { get; set; }
+    /// <summary>承認によって生成された v2 MOVE タスク。</summary>
+    public string? MobileTaskNo { get; set; }
+    /// <summary>候補をタスク化できなかった場合の安定エラーコード。</summary>
+    public string? GenerationErrorCode { get; set; }
 }

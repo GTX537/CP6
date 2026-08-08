@@ -102,6 +102,6 @@ public class BudgetVsActualTests
         var ub = rep.Rows.First(r => r.IsUnbudgeted && r.AccountCode == "6603");
         Assert.Equal(0m, ub.Budget);
         Assert.Equal(50m, ub.Actual);
-        Assert.True(rep.Rows.Any(r => r.IsUnbudgeted));
+        Assert.Contains(rep.Rows, r => r.IsUnbudgeted);
     }
 }

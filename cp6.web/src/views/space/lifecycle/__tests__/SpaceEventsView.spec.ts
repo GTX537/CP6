@@ -20,10 +20,15 @@ vi.mock('@/utils/spaceHub', () => ({
 }))
 
 function ev(over: Partial<SpaceEventVO>): SpaceEventVO {
-  return {
+  const base: SpaceEventVO = {
     id: 'e', hookName: 'wms.location.sync', sourceNo: 'PUB-001', targetModule: 'WMS',
-    status: 'SUCCESS', attempts: 1, createDate: '2026-07-06T10:00:00', lastError: null, ...over,
+    status: 'SUCCESS', attempts: 1, createDate: '2026-07-06T10:00:00Z',
+    correlationId: '11111111-1111-1111-1111-111111111111',
+    jobId: null,
+    publishAttemptId: '22222222-2222-2222-2222-222222222222',
+    safeErrorCode: null,
   }
+  return { ...base, ...over }
 }
 
 // flatJson:true 匹配生产 i18n；仅给带插值的 key 供文案，其余缺失 key 原样返回（断言用 key 名）
@@ -50,10 +55,24 @@ describe('SpaceEventsView', () => {
 
   // ① 两行事件 → 状态 tag（tone 映射）与行渲染
   it('渲染事件行并按状态映射 tag 色调', async () => {
+    const rawSecret = 'raw LastError password=do-not-render'
+    const failed = {
+      ...ev({
+        id: 'e2',
+        sourceNo: 'PUB-002',
+        status: 'FAILED',
+        safeErrorCode: 'SPACE_ADAPTER_FAILURE',
+        correlationId: 'aaaaaaaa-aaaa-aaaa-aaaa-aaaaaaaaaaaa',
+        publishAttemptId: 'bbbbbbbb-bbbb-bbbb-bbbb-bbbbbbbbbbbb',
+      }),
+      // Runtime defense: a stale/hostile response may still carry an extra
+      // legacy property, but the page contract must never consume it.
+      lastError: rawSecret,
+    } as unknown as SpaceEventVO
     vi.mocked(publishApi.events).mockResolvedValue({
       code: 0, message: '', data: [
         ev({ id: 'e1', sourceNo: 'PUB-001', status: 'SUCCESS' }),
-        ev({ id: 'e2', sourceNo: 'PUB-002', status: 'FAILED', lastError: 'boom' }),
+        failed,
       ],
     })
     const w = mountView()
@@ -64,6 +83,18 @@ describe('SpaceEventsView', () => {
     expect(tones).toContain('warn') // FAILED
     expect(w.text()).toContain('PUB-001')
     expect(w.text()).toContain('PUB-002')
+    expect(w.text()).toContain('SPACE_ADAPTER_FAILURE')
+    expect(w.text()).toContain('aaaaaaaa-aaaa-aaaa-aaaa-aaaaaaaaaaaa')
+    expect(w.text()).toContain('bbbbbbbb-bbbb-bbbb-bbbb-bbbbbbbbbbbb')
+    expect(w.find('[data-testid="raw-error-detail"]').exists()).toBe(false)
+    expect(w.text()).not.toContain(rawSecret)
+    expect(document.body.textContent).not.toContain('raw LastError')
+    expect(w.findAll('.cp-mono').map((node) => node.text())).toEqual(
+      expect.arrayContaining([
+        'aaaaaaaa-aaaa-aaaa-aaaa-aaaaaaaaaaaa',
+        'bbbbbbbb-bbbb-bbbb-bbbb-bbbbbbbbbbbb',
+      ]),
+    )
   })
 
   // ② 满页 50 行 → 次页按钮启用；点击后二次调用 page=2

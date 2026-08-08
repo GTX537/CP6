@@ -543,7 +543,11 @@ public class SpaceMasterService : ISpaceMasterService
 
     public async Task<SceneDto> GetSceneAsync(Guid floorId)
     {
-        var scene = new SceneDto { FloorId = floorId };
+        var scene = new SceneDto
+        {
+            FloorId = floorId,
+            Source = SpaceDataSourceDto.Runtime(),
+        };
 
         // 楼层对象（编辑器底图标定 + 局部系原点需要；viewer 也可用，不需亦无害）
         scene.Floor = await _db.Space_Floors

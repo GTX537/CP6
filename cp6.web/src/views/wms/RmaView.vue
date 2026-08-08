@@ -188,7 +188,7 @@ const filterLabels = computed(() => ({
   reset: t('wms.common.clear'),
 }))
 
-const columns = computed<ListColumn[]>(() => [
+const columns = computed<ListColumn<RmaHeader>[]>(() => [
   { prop: 'rmaNo', label: t('wms.rma.fld.no'), kind: 'mono', width: 180 },
   { prop: 'status', label: t('wms.common.status'), width: 120, kind: 'tag',
     map: (v) => ({ label: statusMap.value[v as number] ?? '', tone: statusTone(v as number) }) },
@@ -211,7 +211,7 @@ const searchFields = computed<FilterField[]>(() => [
   },
 ])
 
-const fetchList: ListFetch = async ({ filters }) => {
+const fetchList: ListFetch<RmaHeader> = async ({ filters }) => {
   const f = filters as Record<string, unknown>
   const q: RmaSearchQuery = { ...query }
   q.rmaNo = f.rmaNo ? String(f.rmaNo) : undefined
@@ -233,7 +233,8 @@ function openCreate() {
   mode.value = 'detail'
 }
 
-async function openDetail(no: string) {
+async function openDetail(no?: string) {
+  if (!no) return
   const res = await rmaApi.get(no)
   current.value = res.data
   mode.value = 'detail'

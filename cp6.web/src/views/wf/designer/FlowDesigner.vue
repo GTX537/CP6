@@ -17,7 +17,8 @@
         <el-divider direction="vertical" />
         <el-button size="small" :disabled="!canUndo" @click="undo">{{ t('撤销') }}</el-button>
         <el-button size="small" :disabled="!canRedo" @click="redo">{{ t('重做') }}</el-button>
-        <el-button v-permission="'oa-designer:edit'" type="primary" size="small" @click="save">{{ t('保存') }}</el-button>
+        <el-button v-permission="'oa-designer:edit'" size="small" @click="save">{{ t('保存草稿') }}</el-button>
+        <el-button v-permission="'oa-designer:publish'" type="primary" size="small" @click="publish">{{ t('发布') }}</el-button>
       </el-space>
     </el-card>
 
@@ -285,12 +286,13 @@ function onMove(ev: MouseEvent) {
 function onUp() { dragIdx.value = null }
 
 // ── 加载 / 保存 ──
+const draftRowVersion = ref<string>()
 async function load() {
   if (!flowKey.value.trim()) { ElMessage.warning(t('请输入流程标识')); return }
-  const res = await flowApi.getDef(flowKey.value.trim())
+  const res = await flowApi.getDraft(flowKey.value.trim())
   if (!res.data) { ElMessage.info(t('该流程尚未定义')); return }
-  flowName.value = res.data.flowName || ''
-  formKey.value = res.data.formKey || ''
+  flowName.value = res.data.name || ''
+  draftRowVersion.value = res.data.rowVersion
   const parsed: FlowDesignSchema = JSON.parse(res.data.schemaJson || '{"nodes":[],"edges":[]}')
   // 无坐标的旧 schema：给个网格布局兜底
   ;(parsed.nodes || []).forEach((n, i) => { if (typeof n.x !== 'number') n.x = 40 + (i % 4) * 150; if (typeof n.y !== 'number') n.y = 40 + Math.floor(i / 4) * 90 })
@@ -303,13 +305,20 @@ async function save() {
   if (!flowKey.value.trim() || !flowName.value.trim()) { ElMessage.warning(t('请填写流程标识与名称')); return }
   const errors = validateFlowSchema(schema)
   if (errors.length) { ElMessage.error(errors[0]); return }
-  await flowApi.saveDef({
-    flowKey: flowKey.value.trim(),
-    flowName: flowName.value.trim(),
+  const res = await flowApi.saveDraft(flowKey.value.trim(), {
+    name: flowName.value.trim(),
     formKey: formKey.value.trim(),
     schemaJson: JSON.stringify({ start: schema.start, nodes: schema.nodes, edges: schema.edges }),
+    rowVersion: draftRowVersion.value,
   })
+  draftRowVersion.value = res.data.rowVersion
   ElMessage.success(t('保存成功'))
+}
+async function publish() {
+  if (!draftRowVersion.value) { ElMessage.warning(t('请先保存草稿')); return }
+  await flowApi.publish(flowKey.value.trim(), draftRowVersion.value)
+  ElMessage.success(t('发布成功'))
+  await load()
 }
 </script>
 

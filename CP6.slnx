@@ -1,6 +1,20 @@
 <Solution>
   <Project Path="CP6.Core/CP6.Core.csproj" />
+  <Project Path="CP6.Client.Api/CP6.Client.Api.csproj" />
+  <Project Path="CP6.Client.Core/CP6.Client.Core.csproj" />
+  <Project Path="CP6.Client.Tests/CP6.Client.Tests.csproj" />
+  <Project Path="CP6.Desktop/CP6.Desktop.csproj" />
   <Project Path="CP6.Entity/CP6.Entity.csproj" />
+  <Project Path="CP6.Mobile/CP6.Mobile.csproj" />
+  <Project Path="CP6.Space.Application/CP6.Space.Application.csproj" />
+  <Project Path="CP6.Space.Client/CP6.Space.Client.csproj" />
+  <Project Path="CP6.Space.Contracts/CP6.Space.Contracts.csproj" />
+  <Project Path="CP6.Space.Domain/CP6.Space.Domain.csproj" />
+  <Project Path="CP6.Space.Infrastructure/CP6.Space.Infrastructure.csproj" />
+  <Project Path="CP6.Space.IntegrationTests/CP6.Space.IntegrationTests.csproj" />
+  <Project Path="CP6.Space.UnitTests/CP6.Space.UnitTests.csproj" />
   <Project Path="CP6.Tests/CP6.Tests.csproj" />
   <Project Path="CP6.WebApi/CP6.WebApi.csproj" />
+  <Project Path="tools/CP6.Space.OpenApiGenerator/CP6.Space.OpenApiGenerator.csproj" />
+  <Project Path="tools/CP6.Space.StandardWarehouseGenerator/CP6.Space.StandardWarehouseGenerator.csproj" />
 </Solution>

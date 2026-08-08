@@ -24,12 +24,23 @@ export const CONTROL_LIBRARY: ControlDef[] = [
   { type: 'user', label: '人员', icon: 'User' },
   { type: 'dept', label: '部门', icon: 'OfficeBuilding' },
   { type: 'upload', label: '附件', icon: 'Paperclip' },
+  { type: 'table', label: '子表', icon: 'Grid' },
 ]
 
 /** 选项类控件（带 options） */
 export function isOptionType(type: string): boolean {
   return type === 'select' || type === 'radio' || type === 'checkbox'
 }
+
+/** P1 子表列保持扁平，不允许人员、部门、附件或嵌套子表。 */
+export const TABLE_COLUMN_TYPES: ControlDef[] = [
+  { type: 'input', label: '单行文本', icon: 'EditPen' },
+  { type: 'textarea', label: '多行文本', icon: 'Document' },
+  { type: 'number', label: '数字', icon: 'Histogram' },
+  { type: 'select', label: '下拉选择', icon: 'ArrowDown' },
+  { type: 'date', label: '日期', icon: 'Calendar' },
+  { type: 'datetime', label: '日期时间', icon: 'Clock' },
+]
 
 /**
  * 造一个控件的默认字段 schema。<paramref name="existing"/> 用于生成不重复的 name。
@@ -51,6 +62,13 @@ export function defaultFieldOf(type: string, existing: ReadonlyArray<{ name: str
     field.options = [
       { label: '选项1', value: '1' },
       { label: '选项2', value: '2' },
+    ]
+  }
+  if (type === 'table') {
+    field.minRows = 0
+    field.maxRows = 20
+    field.columns = [
+      { name: 'column1', label: '列1', type: 'input', required: false },
     ]
   }
   return field

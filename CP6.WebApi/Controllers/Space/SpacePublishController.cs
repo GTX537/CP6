@@ -1,0 +1,169 @@
+using CP6.Core.Auth;
+using CP6.Space.Application;
+using CP6.Space.Contracts;
+using CP6.WebApi.Filters;
+using CP6.WebApi.OpenApi;
+using Microsoft.AspNetCore.Authorization;
+using Microsoft.AspNetCore.Mvc;
+
+namespace CP6.WebApi.Controllers.Space;
+
+[ApiController]
+[Authorize]
+[SpaceDesignV1Contract]
+[Route("api/space/design/v1")]
+[ProducesResponseType(
+    typeof(SpaceDesignProblemDetails),
+    StatusCodes.Status400BadRequest,
+    "application/problem+json")]
+[ProducesResponseType(
+    typeof(SpaceDesignProblemDetails),
+    StatusCodes.Status401Unauthorized,
+    "application/problem+json")]
+[ProducesResponseType(
+    typeof(SpaceDesignProblemDetails),
+    StatusCodes.Status403Forbidden,
+    "application/problem+json")]
+[ProducesResponseType(
+    typeof(SpaceDesignProblemDetails),
+    StatusCodes.Status404NotFound,
+    "application/problem+json")]
+[ProducesResponseType(
+    typeof(SpaceDesignProblemDetails),
+    StatusCodes.Status409Conflict,
+    "application/problem+json")]
+[ProducesResponseType(
+    typeof(SpaceDesignProblemDetails),
+    StatusCodes.Status422UnprocessableEntity,
+    "application/problem+json")]
+[ProducesResponseType(
+    typeof(SpaceDesignProblemDetails),
+    StatusCodes.Status500InternalServerError,
+    "application/problem+json")]
+public sealed class SpacePublishController(
+    ISpacePublishOrchestrator orchestrator,
+    ISpaceHistoricalRepublishService historicalRepublishes) : ControllerBase
+{
+    [HttpPost("versions/{historicalVersionId:guid}/republish")]
+    [SpaceAuditOperation(
+        "space.publish.republish",
+        "ModelVersion",
+        ResourceIdArgument = "historicalVersionId",
+        PermissionCode = "space:model:rollback")]
+    [RequirePermission(
+        "space",
+        "model:rollback",
+        UseProblemDetails = true)]
+    [ProducesResponseType<StartSpaceHistoricalRepublishResponse>(
+        StatusCodes.Status202Accepted)]
+    public async Task<IActionResult> StartHistoricalRepublish(
+        Guid historicalVersionId,
+        [FromBody] StartSpaceHistoricalRepublishRequest request,
+        [FromHeader(Name = "Idempotency-Key")] string? idempotencyKey,
+        CancellationToken cancellationToken)
+    {
+        var result = await historicalRepublishes.StartAsync(
+            historicalVersionId,
+            request,
+            idempotencyKey ?? string.Empty,
+            cancellationToken);
+        Response.Headers["Idempotent-Replay"] =
+            result.IdempotentReplay ? "true" : "false";
+        return AcceptedAtAction(
+            nameof(GetHistoricalRepublish),
+            new { republishId = result.Republish.Id },
+            result);
+    }
+
+    [HttpGet("republishes/{republishId:guid}")]
+    [SpaceAuditOperation(
+        "space.publish.republish.read",
+        "HistoricalRepublish",
+        ResourceIdArgument = "republishId",
+        PermissionCode = "space:model:read",
+        AuditRead = true)]
+    [RequirePermission("space", "model:read", UseProblemDetails = true)]
+    [ProducesResponseType<SpaceHistoricalRepublishDto>(
+        StatusCodes.Status200OK)]
+    public Task<SpaceHistoricalRepublishDto> GetHistoricalRepublish(
+        Guid republishId,
+        CancellationToken cancellationToken) =>
+        historicalRepublishes.GetAsync(republishId, cancellationToken);
+
+    [HttpPost("versions/{versionId:guid}/publish-attempts")]
+    [SpaceAuditOperation(
+        "space.publish.start",
+        "ModelVersion",
+        ResourceIdArgument = "versionId",
+        PermissionCode = "space:model:publish")]
+    [RequirePermission(
+        "space",
+        "model:publish",
+        UseProblemDetails = true)]
+    [ProducesResponseType<CreateSpacePublishAttemptResponse>(
+        StatusCodes.Status202Accepted)]
+    public async Task<IActionResult> CreatePublishAttempt(
+        Guid versionId,
+        [FromBody] CreateSpacePublishAttemptRequest request,
+        [FromHeader(Name = "Idempotency-Key")] string? idempotencyKey,
+        CancellationToken cancellationToken)
+    {
+        var result = await orchestrator.StartAsync(
+            versionId,
+            request,
+            idempotencyKey ?? string.Empty,
+            cancellationToken);
+        Response.Headers["Idempotent-Replay"] =
+            result.IdempotentReplay ? "true" : "false";
+        return AcceptedAtAction(
+            nameof(GetPublishAttempt),
+            new { attemptId = result.Attempt.Id },
+            result);
+    }
+
+    [HttpGet("publish-attempts/{attemptId:guid}")]
+    [SpaceAuditOperation(
+        "space.publish.read",
+        "PublishAttempt",
+        ResourceIdArgument = "attemptId",
+        PermissionCode = "space:model:read",
+        AuditRead = true)]
+    [RequirePermission("space", "model:read", UseProblemDetails = true)]
+    [ProducesResponseType<SpacePublishAttemptDto>(
+        StatusCodes.Status200OK)]
+    public Task<SpacePublishAttemptDto> GetPublishAttempt(
+        Guid attemptId,
+        CancellationToken cancellationToken) =>
+        orchestrator.GetAsync(attemptId, cancellationToken);
+
+    [HttpPost("publish-attempts/{attemptId:guid}/retry")]
+    [SpaceAuditOperation(
+        "space.publish.retry",
+        "PublishAttempt",
+        ResourceIdArgument = "attemptId",
+        PermissionCode = "space:model:publish")]
+    [RequirePermission(
+        "space",
+        "model:publish",
+        UseProblemDetails = true)]
+    [ProducesResponseType<RetrySpacePublishAttemptResponse>(
+        StatusCodes.Status202Accepted)]
+    public async Task<IActionResult> RetryPublishAttempt(
+        Guid attemptId,
+        [FromBody] RetrySpacePublishAttemptRequest request,
+        [FromHeader(Name = "Idempotency-Key")] string? idempotencyKey,
+        CancellationToken cancellationToken)
+    {
+        var result = await orchestrator.RetryAsync(
+            attemptId,
+            request,
+            idempotencyKey ?? string.Empty,
+            cancellationToken);
+        Response.Headers["Idempotent-Replay"] =
+            result.IdempotentReplay ? "true" : "false";
+        return AcceptedAtAction(
+            nameof(GetPublishAttempt),
+            new { attemptId = result.Attempt.Id },
+            result);
+    }
+}

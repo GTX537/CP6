@@ -10,13 +10,15 @@ namespace CP6.Core.Services.Wms;
 /// GenerateAsync：指定倉庫の "ピッキング棚（接頭辞 PIK-）" 在庫を一覧取得、
 /// MinQty を割っているものに対して "保管棚（接頭辞 RES-）" から補充する指示を一括生成。
 /// 第一版は接頭辞ベースの簡易実装（後で T_Location に LocationKind 列を追加して厳密化可）。
-/// ExecuteAsync：保管棚 OUT + ピッキング棚 IN（MOVE ペア）。
+/// ExecuteAsync：v2 MOVE タスクを発行して源在庫と先容量を予約する。
+/// 実在庫の OUT/IN は現場タスク完了時だけ実行する。
 /// </remarks>
 public interface IReplenishService
 {
     Task<List<ReplenishOrder>> SearchAsync(ReplenishSearchQuery q);
     Task<ReplenishOrder?> GetAsync(string replenishNo);
     Task<string> CreateAsync(ReplenishOrderDto dto, string? userName);
+    Task UpdateAsync(string replenishNo, ReplenishOrderDto dto, string? userName);
 
     /// <summary>
     /// 指定倉庫の補充必要 SKU を一括生成（バッチ）。
@@ -25,7 +27,7 @@ public interface IReplenishService
     /// </summary>
     Task<int> GenerateBatchAsync(string warehouseCd, decimal minQty, string? userName);
 
-    Task ExecuteAsync(string replenishNo, string? userName);
+    Task<string> ExecuteAsync(string replenishNo, string? userName);
     Task CancelAsync(string replenishNo, string? userName);
 }
 

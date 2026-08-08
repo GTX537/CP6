@@ -13,6 +13,7 @@ public record CatalogSub(string SubCategory, IReadOnlyList<FormCard> Forms);
 
 // ── 表單查詢 ──
 public record FormQueryFilter(Guid? StarterId, Guid? HandlerId, string? FlowKey, string? Keyword,
-    int? Status, DateTime? From, DateTime? To);
+    int? Status, DateTime? From, DateTime? To, int Page = 1, int PageSize = 20);
 public record FormQueryItem(Guid InstanceId, string FlowKey, string? FlowName, Guid StarterId, string StarterName,
     int Status, string CurrentNode, DateTime CreateDate);
+public record FormQueryPage(IReadOnlyList<FormQueryItem> Items, int Total, int Page, int PageSize);

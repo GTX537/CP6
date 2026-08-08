@@ -60,6 +60,8 @@ public class PersistentWfNotifier : IWfNotifier
 
         const string title = "您有新的待办";
         var body = $"您有新的待办：{flowKey}";
+        if (await EnqueueAsync(assigneeId, WfNotificationType.TodoCreated, title, body,
+                instanceId, taskId, flowKey, inApp, email)) return;
 
         if (inApp)
         {
@@ -103,6 +105,8 @@ public class PersistentWfNotifier : IWfNotifier
 
         const string title = "您的申请已通过";
         var body = $"您的申请已通过：{flowKey}";
+        if (await EnqueueAsync(starterId, WfNotificationType.FlowApproved, title, body,
+                instanceId, null, flowKey, inApp, email)) return;
 
         if (inApp)
         {
@@ -145,6 +149,8 @@ public class PersistentWfNotifier : IWfNotifier
         var body = string.IsNullOrWhiteSpace(comment)
             ? $"您的申请被驳回：{flowKey}"
             : $"您的申请被驳回：{flowKey}（{comment}）";
+        if (await EnqueueAsync(starterId, WfNotificationType.FlowRejected, title, body,
+                instanceId, null, flowKey, inApp, email)) return;
 
         if (inApp)
         {
@@ -188,6 +194,8 @@ public class PersistentWfNotifier : IWfNotifier
         var body = string.IsNullOrWhiteSpace(comment)
             ? $"流程 {flowKey} 的分支 {nodeId} 被驳回剪除，其余分支继续审批"
             : $"流程 {flowKey} 的分支 {nodeId} 被驳回剪除（{comment}），其余分支继续审批";
+        if (await EnqueueAsync(starterId, WfNotificationType.BranchPruned, title, body,
+                instanceId, null, flowKey, inApp, email, nodeId)) return;
 
         if (inApp)
         {
@@ -218,6 +226,17 @@ public class PersistentWfNotifier : IWfNotifier
     }
 
     // ── Private helpers ─────────────────────────────────────────────────
+
+    private async Task<bool> EnqueueAsync(
+        Guid userId, int type, string title, string body, Guid? instanceId, Guid? taskId,
+        string? flowKey, bool inApp, bool email, string? suffix = null)
+    {
+        var eventKey = string.Join(":", type, instanceId?.ToString("N") ?? "-",
+            taskId?.ToString("N") ?? "-", userId.ToString("N"), suffix ?? "-");
+        await _notif.CreateOutboxAsync(userId, type, title, body, instanceId, taskId, flowKey,
+            eventKey, inApp, email);
+        return true; // external delivery is exclusively performed by the post-commit worker
+    }
 
     /// <summary>
     /// 查用户邮箱并发送，全 best-effort：任何异常吞掉+记 Warning，不冒泡。

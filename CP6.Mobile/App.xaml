@@ -1,0 +1,17 @@
+<Application x:Class="CP6.Mobile.App"
+             xmlns="http://schemas.microsoft.com/dotnet/2021/maui"
+             xmlns:x="http://schemas.microsoft.com/winfx/2009/xaml">
+  <Application.Resources>
+    <Color x:Key="Primary">#2457D6</Color>
+    <Style TargetType="Button">
+      <Setter Property="BackgroundColor" Value="{StaticResource Primary}" />
+      <Setter Property="TextColor" Value="White" />
+      <Setter Property="CornerRadius" Value="10" />
+      <Setter Property="Padding" Value="16,12" />
+    </Style>
+    <Style TargetType="Entry">
+      <Setter Property="BackgroundColor" Value="#F5F7FB" />
+      <Setter Property="Margin" Value="0,4" />
+    </Style>
+  </Application.Resources>
+</Application>

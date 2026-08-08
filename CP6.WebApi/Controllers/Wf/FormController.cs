@@ -23,7 +23,11 @@ public class FormController : LocalizedControllerBase
     [RequirePermission("oa-designer", "form-save")]
     public async Task<IActionResult> SaveDef([FromBody] FormDefReq r)
     {
-        try { return Ok2(new { id = await _svc.SaveDefAsync(r.FormKey, r.FormName, r.SchemaJson, CurrentUser) }); }
+        try
+        {
+            var draft = await _svc.SaveDraftAsync(r.FormKey, r.FormName, r.SchemaJson, null, CurrentUser);
+            return Ok2(new { id = draft.DefinitionId, versionId = draft.VersionId, status = "draft" });
+        }
         catch (InvalidOperationException e) { return Err(e); }
     }
 
@@ -38,8 +42,9 @@ public class FormController : LocalizedControllerBase
     [RequirePermission("oa-form-catalog", "submit")]
     public async Task<IActionResult> SubmitData([FromBody] FormDataReq r)
     {
-        try { return Ok2(new { id = await _svc.SubmitDataAsync(r.FormKey, r.BizId, r.DataJson, CurrentUser) }); }
-        catch (InvalidOperationException e) { return Err(e); }
+        await Task.CompletedTask;
+        return StatusCode(StatusCodes.Status410Gone,
+            new { code = 410, message = "Use /api/oa/forms/{formKey}/submissions." });
     }
 
     public record FormDefReq(string FormKey, string FormName, string SchemaJson);

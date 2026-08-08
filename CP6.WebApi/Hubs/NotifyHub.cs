@@ -1,3 +1,4 @@
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.SignalR;
 
 namespace CP6.WebApi.Hubs;
@@ -14,6 +15,7 @@ namespace CP6.WebApi.Hubs;
 /// 3. Clients.All.SendAsync() = 广播给所有连接的客户端
 /// 4. MOM 系统场景：设备状态变化 → SignalR 推送 → 大屏实时刷新
 /// </summary>
+[Authorize]
 public class NotifyHub : Hub
 {
     private readonly ILogger<NotifyHub> _logger;

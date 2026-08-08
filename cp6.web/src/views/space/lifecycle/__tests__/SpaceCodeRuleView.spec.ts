@@ -1,6 +1,6 @@
 // @vitest-environment jsdom
-import { describe, it, expect, vi, beforeEach } from 'vitest'
-import { mount, flushPromises } from '@vue/test-utils'
+import { describe, it, expect, vi, beforeEach, afterEach } from 'vitest'
+import { mount, flushPromises, enableAutoUnmount } from '@vue/test-utils'
 import { createI18n } from 'vue-i18n'
 import ElementPlus from 'element-plus'
 import { codeRuleApi } from '@/api/space/codeRule'
@@ -12,6 +12,8 @@ import SegmentsEditor from '../SegmentsEditor.vue'
 import { newSegment } from '../codeRuleValidate'
 import { permission } from '@/directives/permission'
 import type { CodeRuleVO, CodeSegmentDef, CodePreviewResp, SiteVO, FloorVO } from '@/types/space/scene'
+
+enableAutoUnmount(afterEach)
 
 // v-permission store：默认全授权；单测内翻转 permHas.fn 隐藏指定键
 const { permHas } = vi.hoisted(() => ({ permHas: { fn: (_k: string) => true } }))
@@ -52,7 +54,14 @@ function i18nPlugin() {
   return createI18n({ legacy: false, locale: 'ja', missingWarn: false, fallbackWarn: false, messages: {} })
 }
 function mountView(opts: Record<string, unknown> = {}) {
-  return mount(SpaceCodeRuleView, { global: { plugins: [i18nPlugin()], directives: { permission }, ...(opts.global as object || {}) } })
+  return mount(SpaceCodeRuleView, {
+    global: {
+      plugins: [i18nPlugin()],
+      directives: { permission },
+      stubs: { ElPagination: true },
+      ...(opts.global as object || {}),
+    },
+  })
 }
 
 describe('SpaceCodeRuleView', () => {
@@ -79,7 +88,7 @@ describe('SpaceCodeRuleView', () => {
 
   // ③ preview mock → samples 文本渲染
   it('点行「预览」后渲染 preview samples 文本', async () => {
-    const w = mountView({ global: { plugins: [i18nPlugin()], stubs: { teleport: true } } })
+    const w = mountView({ global: { plugins: [i18nPlugin()], stubs: { ElPagination: true, teleport: true } } })
     await flushPromises()
     const pvBtns = w.findAll('el-button').filter((b) => b.text() === 'space.rule.preview')
     expect(pvBtns.length).toBeGreaterThan(0)

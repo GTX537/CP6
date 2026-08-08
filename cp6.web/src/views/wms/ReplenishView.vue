@@ -21,8 +21,9 @@
       @total-change="total = $event"
     >
       <template #col-_action="{ row }">
-        <template v-if="row.status === 0">
-          <el-button v-permission="'wms-replenish:execute'" link type="success" size="small" @click="onExecute(row)">{{ t('wms.kit.btn.execute') }}</el-button>
+        <template v-if="row.status === 0 || row.status === 2">
+          <el-button v-permission="'wms-replenish:add'" link type="primary" size="small" @click="openEdit(row)">{{ t('wms.common.edit') }}</el-button>
+          <el-button v-if="row.status === 0" v-permission="'wms-replenish:execute'" link type="success" size="small" @click="onExecute(row)">{{ t('wms.kit.btn.execute') }}</el-button>
           <el-button link type="danger" size="small" @click="onCancel(row)">{{ t('wms.outbound.btn.cancel') }}</el-button>
         </template>
         <span v-else class="cp-dash">—</span>
@@ -32,7 +33,7 @@
     <!-- 新規作成 -->
     <CpFormDialog
       v-model="dialogVisible"
-      :title="t('wms.replenish.dlg.create')"
+      :title="editingNo ? t('wms.common.edit') : t('wms.replenish.dlg.create')"
       width="500"
       :form="createForm"
       :rules="createRules"
@@ -93,7 +94,7 @@ import { ref, reactive, computed } from 'vue'
 import { ElMessage, ElMessageBox, type FormRules } from 'element-plus'
 import { useI18n } from 'vue-i18n'
 import CpPageShell from '@/components/templates/CpPageShell.vue'
-import CpListPage, { type ListColumn, type ListFetch } from '@/components/templates/CpListPage.vue'
+import CpListPage, { type ListColumn, type ListFetch, type ListPageExpose } from '@/components/templates/CpListPage.vue'
 import { type FilterField } from '@/components/templates/CpFilterBar.vue'
 import CpFormDialog from '@/components/templates/CpFormDialog.vue'
 import { type Tone } from '@/components/base/CpTag.vue'
@@ -105,13 +106,14 @@ const { t } = useI18n()
 
 // —— 头部计数 pill ——
 const total = ref<number>()
-const listRef = ref<InstanceType<typeof CpListPage>>()
+const listRef = ref<ListPageExpose>()
 function onReload() { listRef.value?.reload() }
 
 // —— 码值映射（i18n 反应式） ——
 const statusMap = computed<Record<number, string>>(() => ({
   0: t('wms.replenish.status.pending'),
   1: t('wms.replenish.status.executed'),
+  2: t('wms.outbound.status.allocated'),
   9: t('wms.replenish.status.cancelled'),
 }))
 const priorityMap = computed<Record<number, string>>(() => ({
@@ -126,7 +128,7 @@ const triggerMap = computed<Record<string, string>>(() => ({
 
 // —— EP type → 共享 Tone（保色：info→muted / success→ok / danger→danger / warning→warn） ——
 function statusTone(s: number): Tone {
-  return ({ 0: 'muted', 1: 'ok', 9: 'danger' } as const)[s as 0] || 'muted'
+  return ({ 0: 'muted', 1: 'ok', 2: 'info', 9: 'danger' } as const)[s as 0] || 'muted'
 }
 function triggerTone(v: string): Tone {
   return v === 'BATCH' ? 'ok' : v === 'ALERT' ? 'warn' : 'muted'
@@ -136,7 +138,7 @@ function codeLabel(m: Record<string, string> | Record<number, string>, v: unknow
 }
 
 // —— 列定义 ——
-const columns = computed<ListColumn[]>(() => [
+const columns = computed<ListColumn<ReplenishOrder>[]>(() => [
   { prop: 'replenishNo', label: t('wms.replenish.fld.no'), kind: 'mono', width: 180 },
   { prop: 'status', label: t('wms.common.status'), width: 100, kind: 'tag',
     map: (v) => ({ label: codeLabel(statusMap.value, v), tone: statusTone(v as number) }) },
@@ -151,7 +153,7 @@ const columns = computed<ListColumn[]>(() => [
   { prop: 'qty', label: t('wms.common.qty'), width: 100, kind: 'num', map: (v) => ({ label: formatQty(v as number) }) },
   { prop: 'executedAt', label: t('wms.kit.fld.executedAt'), width: 160,
     map: (v) => ({ label: v ? String(v).replace('T', ' ').slice(0, 16) : '—' }) },
-  { prop: '_action', label: t('wms.common.action'), width: 160, fixed: 'right' },
+  { prop: '_action', label: t('wms.common.action'), width: 220, fixed: 'right' },
 ])
 
 const filterLabels = computed(() => ({ search: t('wms.common.search'), reset: t('wms.common.clear') }))
@@ -168,7 +170,7 @@ const searchFields = computed<FilterField[]>(() => [
 
 // —— 取数：包装 replenishApi.search；扁平数组无 total → 客户端分页 ——
 const PAGE_CAP = 500
-const fetchList: ListFetch = async ({ page, size, filters }) => {
+const fetchList: ListFetch<ReplenishOrder> = async ({ page, size, filters }) => {
   const f = filters as Record<string, unknown>
   const q: ReplenishSearchQuery = { pageSize: PAGE_CAP }
   if (f.replenishNo) q.replenishNo = String(f.replenishNo)
@@ -183,6 +185,8 @@ const fetchList: ListFetch = async ({ page, size, filters }) => {
 
 // —— 新規作成弹窗 ——
 const dialogVisible = ref(false)
+const editingNo = ref<string>()
+const editingRow = ref<ReplenishOrder>()
 const createForm = reactive({
   priority: 2, productCd: '', warehouseCd: '', fromLocationCd: '', toLocationCd: '', lotNo: '', qty: 0,
 })
@@ -194,11 +198,34 @@ const createRules = computed<FormRules>(() => ({
   qty: [{ required: true, message: t('wms.common.required'), trigger: 'change' }],
 }))
 function openCreate() {
+  editingNo.value = undefined
+  editingRow.value = undefined
   Object.assign(createForm, { priority: 2, productCd: '', warehouseCd: '', fromLocationCd: '', toLocationCd: '', lotNo: '', qty: 0 })
   dialogVisible.value = true
 }
+function openEdit(row: ReplenishOrder) {
+  editingNo.value = row.replenishNo
+  editingRow.value = row
+  Object.assign(createForm, {
+    priority: row.priority,
+    productCd: row.productCd,
+    warehouseCd: row.warehouseCd,
+    fromLocationCd: row.fromLocationCd,
+    toLocationCd: row.toLocationCd,
+    lotNo: row.lotNo,
+    qty: row.qty,
+  })
+  dialogVisible.value = true
+}
 async function submitCreate() {
-  const dto: ReplenishOrder = { ...createForm, triggerType: 'MANUAL', status: 0 }
+  const dto: ReplenishOrder = editingRow.value
+    ? { ...editingRow.value, ...createForm }
+    : { ...createForm, triggerType: 'MANUAL', status: 0 }
+  if (editingNo.value) {
+    await replenishApi.update(editingNo.value, dto)
+    ElMessage.success(t('wms.common.success'))
+    return
+  }
   const res = await replenishApi.create(dto)
   ElMessage.success(`${t('wms.common.success')}: ${res.data.replenishNo}`)
 }
@@ -218,8 +245,8 @@ async function submitBatch() {
 async function onExecute(row: ReplenishOrder) {
   try {
     await ElMessageBox.confirm(t('wms.replenish.msg.executeAsk'), t('wms.common.confirm'), { type: 'warning' })
-    await replenishApi.execute(row.replenishNo!)
-    ElMessage.success(t('wms.common.success'))
+    const res = await replenishApi.execute(row.replenishNo!)
+    ElMessage.success(`${t('wms.common.success')}: ${res.data.taskNo}`)
     onReload()
   } catch { /* */ }
 }

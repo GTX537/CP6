@@ -489,18 +489,19 @@ public class RfqServiceTests
     private static async Task<(RfqService svc, string rfqNo)> BuildQuotedRfqAsync(CP6Context db, DateTime asOf)
     {
         var svc = NewSvc(db);
+        var validUntil = DateTime.MaxValue.Date;
         var prNo = await CreatePrAsync(db, (Item1, 10m, null), (Item2, 20m, null));
         var rfq = await svc.CreateFromPrAsync(prNo, "buyer1");
         await svc.AddSuppliersAsync(rfq.RfqNo, new[] { SupA, SupB }, "buyer1");
         await svc.RecordQuoteAsync(rfq.RfqNo, SupA, new[]
         {
-            new RfqQuoteLineDto { LineNo = 1, QuotedPrice = 5m, ValidUntil = new DateTime(2026, 7, 31) },
-            new RfqQuoteLineDto { LineNo = 2, QuotedPrice = 99m, ValidUntil = new DateTime(2026, 7, 31) },
+            new RfqQuoteLineDto { LineNo = 1, QuotedPrice = 5m, ValidUntil = validUntil },
+            new RfqQuoteLineDto { LineNo = 2, QuotedPrice = 99m, ValidUntil = validUntil },
         }, "buyer1");
         await svc.RecordQuoteAsync(rfq.RfqNo, SupB, new[]
         {
-            new RfqQuoteLineDto { LineNo = 1, QuotedPrice = 7m, ValidUntil = new DateTime(2026, 7, 31) },
-            new RfqQuoteLineDto { LineNo = 2, QuotedPrice = 12m, ValidUntil = new DateTime(2026, 7, 31) },
+            new RfqQuoteLineDto { LineNo = 1, QuotedPrice = 7m, ValidUntil = validUntil },
+            new RfqQuoteLineDto { LineNo = 2, QuotedPrice = 12m, ValidUntil = validUntil },
         }, "buyer1");
         await svc.RankQuotesAsync(rfq.RfqNo, asOf, "buyer1");
         return (svc, rfq.RfqNo);
@@ -624,7 +625,7 @@ public class RfqServiceTests
         Assert.Equal(Item1, a1.ItemId);
         Assert.Equal(5m, a1.Price);
         Assert.Equal("rfq", a1.Source);
-        Assert.Equal(new DateTime(2026, 7, 31), a1.ValidTo);
+        Assert.Equal(DateTime.MaxValue.Date, a1.ValidTo);
 
         var b2 = Assert.Single(bPrices);
         Assert.Equal(Item2, b2.ItemId);

@@ -50,7 +50,7 @@ public class FormField
     /// <summary>显示标签（报错文案用）</summary>
     public string? Label { get; set; }
 
-    /// <summary>控件类型：input/textarea/number/select/radio/checkbox/date/datetime/user/dept/upload</summary>
+    /// <summary>控件类型：input/textarea/number/select/radio/checkbox/date/datetime/user/dept/upload/table</summary>
     public string Type { get; set; } = "input";
 
     /// <summary>是否必填</summary>
@@ -60,5 +60,39 @@ public class FormField
     public int? MaxLength { get; set; }
 
     /// <summary>正则校验（仅文本类；schema 由管理员配置，视为可信）</summary>
+    public string? Pattern { get; set; }
+
+    /// <summary>子表列定义（Type=table）。子表随表单版本固化，数据仍保存在当前字段的 JSON 数组中。</summary>
+    public List<FormTableColumn> Columns { get; set; } = new();
+
+    /// <summary>子表最少行数（Type=table，默认 0）。</summary>
+    public int? MinRows { get; set; }
+
+    /// <summary>子表最多行数（Type=table，默认 100，硬上限 200）。</summary>
+    public int? MaxRows { get; set; }
+}
+
+/// <summary>
+/// 子表列定义。P1 支持文本、多行文本、数字、下拉、日期和日期时间；
+/// 复杂对象（人员、部门、附件、嵌套子表）留给后续能力，避免数据形态失控。
+/// </summary>
+public class FormTableColumn
+{
+    /// <summary>列标识（行对象的 key）。</summary>
+    public string Name { get; set; } = string.Empty;
+
+    /// <summary>列标题。</summary>
+    public string? Label { get; set; }
+
+    /// <summary>列控件类型：input/textarea/number/select/date/datetime。</summary>
+    public string Type { get; set; } = "input";
+
+    /// <summary>是否必填（草稿可暂缺，正式提交时复核）。</summary>
+    public bool Required { get; set; }
+
+    /// <summary>字符串最大长度。</summary>
+    public int? MaxLength { get; set; }
+
+    /// <summary>字符串正则校验。</summary>
     public string? Pattern { get; set; }
 }

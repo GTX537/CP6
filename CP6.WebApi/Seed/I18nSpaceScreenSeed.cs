@@ -46,6 +46,18 @@ public static class I18nSpaceScreenSeed
         // ── 定位（06 章）──
         new Sys_Lang { LangKey = "E-SPACE-601", ZhCN = "未找到该编码对应的库位", ZhTW = "未找到該編碼對應的庫位", En = "No location found for this code", Ja = "このコードに該当するロケーションが見つかりません", Ko = "이 코드에 해당하는 로케이션을 찾을 수 없습니다" },
 
+        // ── E00-S04 执行边界 / 审计查询稳定错误码 ──
+        new Sys_Lang { LangKey = "SPACE_AUTHENTICATION_REQUIRED", ZhCN = "请先登录后访问空间功能", ZhTW = "請先登入後存取空間功能", En = "Authentication is required to access Space", Ja = "Space へのアクセスにはログインが必要です", Ko = "Space에 접근하려면 로그인이 필요합니다" },
+        new Sys_Lang { LangKey = "SPACE_ACTOR_CONTEXT_REQUIRED", ZhCN = "当前用户上下文不可用", ZhTW = "目前使用者上下文不可用", En = "The current user context is unavailable", Ja = "現在のユーザーコンテキストを利用できません", Ko = "현재 사용자 컨텍스트를 사용할 수 없습니다" },
+        new Sys_Lang { LangKey = "SPACE_TENANT_CONTEXT_REQUIRED", ZhCN = "当前租户上下文不可用", ZhTW = "目前租戶上下文不可用", En = "The current tenant context is unavailable", Ja = "現在のテナントコンテキストを利用できません", Ko = "현재 테넌트 컨텍스트를 사용할 수 없습니다" },
+        new Sys_Lang { LangKey = "SPACE_EXTERNAL_SUBJECT_DENIED", ZhCN = "此外部身份不可访问空间功能", ZhTW = "此外部身分不可存取空間功能", En = "This external identity cannot access Space", Ja = "この外部 ID は Space にアクセスできません", Ko = "이 외부 ID는 Space에 접근할 수 없습니다" },
+        new Sys_Lang { LangKey = "SPACE_AUDIT_READ_FORBIDDEN", ZhCN = "没有查看空间审计记录的权限", ZhTW = "沒有檢視空間稽核記錄的權限", En = "Permission to view Space audit records is required", Ja = "Space 監査記録を表示する権限がありません", Ko = "Space 감사 기록을 볼 권한이 없습니다" },
+        new Sys_Lang { LangKey = "SPACE_CORRELATION_ID_INVALID", ZhCN = "关联编号格式无效", ZhTW = "關聯編號格式無效", En = "The correlation identifier is invalid", Ja = "相関 ID の形式が無効です", Ko = "상관관계 ID 형식이 올바르지 않습니다" },
+        new Sys_Lang { LangKey = "SPACE_AUDIT_UNAVAILABLE", ZhCN = "空间审计服务暂时不可用", ZhTW = "空間稽核服務暫時無法使用", En = "The Space audit service is temporarily unavailable", Ja = "Space 監査サービスは一時的に利用できません", Ko = "Space 감사 서비스를 일시적으로 사용할 수 없습니다" },
+        new Sys_Lang { LangKey = "SPACE_OPERATION_OUTCOME_UNKNOWN", ZhCN = "操作结果暂时无法确认，请使用关联编号查询", ZhTW = "操作結果暫時無法確認，請使用關聯編號查詢", En = "The operation result cannot be confirmed; use the correlation identifier to check", Ja = "操作結果を確認できません。相関 ID で確認してください", Ko = "작업 결과를 확인할 수 없습니다. 상관관계 ID로 확인하세요" },
+        new Sys_Lang { LangKey = "SPACE_AUDIT_QUERY_RANGE_INVALID", ZhCN = "审计查询时间范围无效", ZhTW = "稽核查詢時間範圍無效", En = "The audit query time range is invalid", Ja = "監査照会の期間が無効です", Ko = "감사 조회 기간이 올바르지 않습니다" },
+        new Sys_Lang { LangKey = "SPACE_AUDIT_QUERY_DISABLED", ZhCN = "空间审计查询当前未开放", ZhTW = "空間稽核查詢目前未開放", En = "Space audit queries are currently unavailable", Ja = "Space 監査照会は現在利用できません", Ko = "Space 감사 조회는 현재 사용할 수 없습니다" },
+
         // ── 警告类：WMS 同步停用未生效（04 章 §11，v1.1）──
         new Sys_Lang { LangKey = "W-SPACE-404", ZhCN = "停用未生效：WMS 侧仍有库存", ZhTW = "停用未生效：WMS 側仍有庫存", En = "Deactivation not applied: WMS still has stock", Ja = "無効化は未反映：WMS 側に在庫が残っています", Ko = "비활성화 미적용: WMS에 재고가 남아 있습니다" },
     };

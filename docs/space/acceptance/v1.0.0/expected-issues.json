@@ -1,0 +1,50 @@
+{
+  "schemaVersion": 1,
+  "samples": [
+    {
+      "sampleId": "L1-SEED-001",
+      "issues": []
+    },
+    {
+      "sampleId": "L2-SEED-001",
+      "issues": [
+        {
+          "severity": "Info",
+          "code": "SPACE_CAD_MULTIFLOOR_LAYER_MAPPING_REQUIRED",
+          "expectedCount": 1
+        }
+      ]
+    },
+    {
+      "sampleId": "L3-SEED-001",
+      "issues": []
+    },
+    {
+      "sampleId": "L4-SEED-001",
+      "issues": []
+    },
+    {
+      "sampleId": "L5-SEED-001",
+      "issues": [
+        {
+          "severity": "Warning",
+          "code": "SPACE_CAD_UNKNOWN_LAYER",
+          "sourceLayer": "X-NOISE",
+          "minimumCount": 1
+        },
+        {
+          "severity": "Warning",
+          "code": "SPACE_CAD_BLOCK_ATTRIBUTE_MISSING",
+          "sourceBlock": "B1",
+          "expectedCount": 2
+        },
+        {
+          "severity": "Info",
+          "code": "SPACE_CAD_NOISE_IGNORED",
+          "minimumCount": 1
+        }
+      ]
+    }
+  ]
+}
+

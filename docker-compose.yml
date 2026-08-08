@@ -1,3 +1,6 @@
+# DEVELOPMENT ONLY. This root stack includes local infrastructure and MUST NOT
+# be used as an R2 production input. Use deploy/production/compose/compose.yaml
+# through scripts/deploy-r2.ps1 for the hardened pilot deployment.
 services:
   cp6-db:
     image: mcr.microsoft.com/mssql/server:2022-latest

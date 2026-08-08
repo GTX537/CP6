@@ -1,7 +1,6 @@
 using CP6.Core.Auth;
-using CP6.Core.EFDbContext;
 using CP6.Core.Services.Space;
-using CP6.Entity.DomainModels;
+using CP6.Core.Services.Space.Observability;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
@@ -11,7 +10,7 @@ namespace CP6.WebApi.Controllers.Space;
 /// <summary>
 /// 库位发布、停用、采纳、事件查询 Web API（ch04）。
 /// 路由前缀 /api/space；租户隔离由 TenantMiddleware + CP6Context 全局查询过滤自动施加。
-/// 权限约定（波4）：变更端点（POST/PUT/DELETE）贴 [RequirePermission]，GET（events）只 [Authorize]。
+/// 权限约定：变更端点使用业务精确权限，事件读取使用 space:audit:read。
 /// </summary>
 [ApiController]
 [Route("api/space")]
@@ -19,12 +18,17 @@ namespace CP6.WebApi.Controllers.Space;
 public class LocationPublishController : ControllerBase
 {
     private readonly ILocationPublishService _svc;
-    private readonly CP6Context _db;
+    private readonly ISpaceAuditQueryService _auditQuery;
+    private readonly ISpaceAuditWriter _auditWriter;
 
-    public LocationPublishController(ILocationPublishService svc, CP6Context db)
+    public LocationPublishController(
+        ILocationPublishService svc,
+        ISpaceAuditQueryService auditQuery,
+        ISpaceAuditWriter auditWriter)
     {
         _svc = svc;
-        _db = db;
+        _auditQuery = auditQuery;
+        _auditWriter = auditWriter;
     }
 
     private string? CurrentUser => User?.Identity?.Name;
@@ -93,26 +97,38 @@ public class LocationPublishController : ControllerBase
 
     /// <summary>列出 SPACE→WMS 集成事件（ch04 §2）。</summary>
     [HttpGet("publish/events")]
-    public async Task<IActionResult> ListEvents([FromQuery] int page = 1, [FromQuery] int pageSize = 50)
+    [RequirePermission("space-audit", "read")]
+    public async Task<IActionResult> ListEvents(
+        [FromQuery] int page = 1,
+        [FromQuery] int pageSize = 50,
+        CancellationToken ct = default)
     {
-        var events = await _db.IntegrationEvents
-            .Where(e => e.SourceModule == "SPACE")
-            .OrderByDescending(e => e.CreateDate)
-            .Skip((page - 1) * pageSize)
-            .Take(pageSize)
-            .Select(e => new
-            {
-                e.Id,
-                e.HookName,
-                e.SourceNo,
-                e.TargetModule,
-                e.Status,
-                e.Attempts,
-                e.CreateDate,
-                e.LastError
-            })
-            .ToListAsync();
-        return Ok2(events);
+        var data = await _auditQuery.GetPublishEventsAsync(
+            page,
+            pageSize,
+            ct);
+        try
+        {
+            await _auditWriter.TryAppendAsync(
+                new SpaceAuditEventInput(
+                    "space.integration-event.read",
+                    "IntegrationEvent",
+                    null,
+                    SpaceAuditOutcome.Succeeded,
+                    Evidence: new SpaceAuditEvidence(
+                        PermissionCode: "space-audit:read",
+                        AuthorizationResult: "Allowed",
+                        ItemCount: data.Count),
+                    ClientType: "Web"),
+                ct);
+        }
+        catch
+        {
+            // Authorized read results are already safe DTOs. Audit storage
+            // failure must not turn this compatibility route into an outage.
+        }
+
+        return Ok2(data);
     }
 }
 

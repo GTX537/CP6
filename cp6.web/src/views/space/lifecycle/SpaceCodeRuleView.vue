@@ -137,7 +137,7 @@ import { ref, reactive, computed, watch, nextTick } from 'vue'
 import { ElMessage, ElMessageBox, type FormRules } from 'element-plus'
 import { useI18n } from 'vue-i18n'
 import CpPageShell from '@/components/templates/CpPageShell.vue'
-import CpListPage, { type ListColumn, type ListFetch } from '@/components/templates/CpListPage.vue'
+import CpListPage, { type ListColumn, type ListFetch, type ListPageExpose } from '@/components/templates/CpListPage.vue'
 import CpFormDialog from '@/components/templates/CpFormDialog.vue'
 import type { Tone } from '@/components/base/CpTag.vue'
 import SegmentsEditor from './SegmentsEditor.vue'
@@ -150,7 +150,7 @@ import type { CodeRuleVO, CodeSegmentDef, CodePreviewResp, SiteVO, FloorVO, Zone
 const { t } = useI18n()
 
 const total = ref<number>()
-const listRef = ref<InstanceType<typeof CpListPage> | null>(null)
+const listRef = ref<ListPageExpose | null>(null)
 function reloadList() { listRef.value?.reload() }
 
 // —— 作用域显示名解析（list 后并发建索引；反查回填编辑级联）——
@@ -209,7 +209,7 @@ const scopeTypeOptions = computed(() => [
 ])
 const scopeTone = (v: number): Tone => (v === 1 ? 'info' : v === 2 ? 'warn' : 'muted')
 
-const columns = computed<ListColumn[]>(() => [
+const columns = computed<ListColumn<CodeRuleVO>[]>(() => [
   { prop: 'ruleName', label: t('space.rule.fld.ruleName'), minWidth: 200 },
   { prop: 'scopeType', label: t('space.rule.fld.scopeType'), width: 130, kind: 'tag',
     map: (v) => ({ label: t(`space.rule.scope.${v as number}`), tone: scopeTone(v as number) }) },
@@ -224,7 +224,7 @@ const columns = computed<ListColumn[]>(() => [
 ])
 
 // list 端点无分页 → 前端切片；并发触发显示名解析（fire-and-forget）
-const fetchList: ListFetch = async ({ page, size }) => {
+const fetchList: ListFetch<CodeRuleVO> = async ({ page, size }) => {
   const res = await codeRuleApi.list()
   const all = res.data || []
   void resolveScopeNames(all)

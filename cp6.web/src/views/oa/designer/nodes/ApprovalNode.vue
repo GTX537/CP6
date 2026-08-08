@@ -1,6 +1,6 @@
 <script setup lang="ts">
-import { Handle, Position } from '@vue-flow/core'
 import type { NodeProps } from '@vue-flow/core'
+import FourWayHandles from './FourWayHandles.vue'
 
 const props = defineProps<NodeProps>()
 
@@ -12,12 +12,11 @@ type NodeData = {
 
 <template>
   <div :class="['vf-node-approval', { 'vf-node--selected': props.selected }]">
-    <Handle type="target" :position="Position.Top" />
+    <FourWayHandles />
     <div class="node-label">{{ (props.data as NodeData)?.name || '審批' }}</div>
     <div v-if="(props.data as NodeData)?.approverStrategy" class="node-strategy">
       {{ (props.data as NodeData).approverStrategy }}
     </div>
-    <Handle type="source" :position="Position.Bottom" />
   </div>
 </template>
 

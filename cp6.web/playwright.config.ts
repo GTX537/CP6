@@ -29,6 +29,13 @@ export default defineConfig({
     video: 'retain-on-failure',
   },
 
+  webServer: {
+    command: 'npm run dev -- --host 127.0.0.1',
+    url: 'http://localhost:5173',
+    reuseExistingServer: !process.env.CI,
+    timeout: 120_000,
+  },
+
   projects: [
     // 1) 先登录一次，保存会话（token + 菜单）到 storageState
     { name: 'setup', testMatch: /auth\.setup\.ts/ },
@@ -36,9 +43,19 @@ export default defineConfig({
     {
       name: 'chromium',
       dependencies: ['setup'],
+      testIgnore: /wms-production-console\.spec\.ts/,
       use: {
         ...devices['Desktop Chrome'],
         storageState: 'e2e/.auth/admin.json',
+      },
+    },
+    // WMS production acceptance uses deterministic API fixtures and owns its auth state.
+    {
+      name: 'wms-production-mocked',
+      testMatch: /wms-production-console\.spec\.ts/,
+      use: {
+        ...devices['Desktop Chrome'],
+        channel: process.env.CI ? undefined : 'chrome',
       },
     },
   ],

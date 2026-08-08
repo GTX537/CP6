@@ -7,6 +7,7 @@ using CP6.Core.Utilities;
 using CP6.Entity.DomainModels.Sys;
 using CP6.Entity.DTOs;
 using CP6.WebApi.Localization;
+using CP6.WebApi.Services;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
@@ -40,8 +41,9 @@ public class AuthController : LocalizedControllerBase
     private readonly ISsoService _sso;
     private readonly ITwoFactorService _2fa;
     private readonly IPendingTokenStore _pending;
+    private readonly IAuthSessionService _session;
 
-    public AuthController(CP6Context context, IConfiguration config, ICurrentPermissionContext perm, ITenantContext tenant, IPasswordHasher hasher, IPasswordPolicyService policy, ILoginSecurityService login, ISecurityAuditService audit, IRefreshTokenService refresh, ITokenBlacklistService blacklist, IAuthCookieWriter cookies, IOptions<SecurityOptions> sec, ITenantSsoConfigService ssoConfig, ISsoService sso, ITwoFactorService twoFa, IPendingTokenStore pending)
+    public AuthController(CP6Context context, IConfiguration config, ICurrentPermissionContext perm, ITenantContext tenant, IPasswordHasher hasher, IPasswordPolicyService policy, ILoginSecurityService login, ISecurityAuditService audit, IRefreshTokenService refresh, ITokenBlacklistService blacklist, IAuthCookieWriter cookies, IOptions<SecurityOptions> sec, ITenantSsoConfigService ssoConfig, ISsoService sso, ITwoFactorService twoFa, IPendingTokenStore pending, IAuthSessionService? session = null)
     {
         _context = context;
         _config = config;
@@ -59,25 +61,8 @@ public class AuthController : LocalizedControllerBase
         _sso = sso;
         _2fa = twoFa;
         _pending = pending;
-    }
-
-    /// <summary>签发 access JWT（短寿命，带 jti + must_change_password）。登录/刷新复用。
-    /// S 类 #5 T1：正常登录/刷新传 user.IsPlatformAdmin（平台超管令牌带 is_platform_admin claim）；
-    /// impersonation 流程不复用此方法（自带身份切换、单独签发，§T5）。</summary>
-    private string BuildAccessToken(Sys_User user, string jti, bool mustChange, bool isPlatformAdmin = false)
-    {
-        var jwt = _config.GetSection("JWT");
-        return JwtHelper.GenerateToken(
-            userId: user.Id.ToString(),
-            userName: user.UserName,
-            secret: jwt["Secret"]!,
-            issuer: jwt["Issuer"]!,
-            audience: jwt["Audience"]!,
-            expireMinutes: _sec.Token.AccessTokenMinutes,
-            tenantId: user.TenantId,
-            jti: jti,
-            mustChangePassword: mustChange,
-            isPlatformAdmin: isPlatformAdmin);
+        // session 可选仅为保持既有直构控制器单测的源兼容；运行时由 DI 注入共享实现。
+        _session = session ?? new AuthSessionService(config, perm, context, sec);
     }
 
     private string? ClientIp => HttpContext.Connection.RemoteIpAddress?.ToString();
@@ -203,11 +188,11 @@ public class AuthController : LocalizedControllerBase
         //    SecurityOptions.Token.AccessTokenMinutes（短令牌 + 刷新令牌轮换，替代旧 120min 长令牌）。
         var jti = Guid.NewGuid().ToString();
         var mustChange = user.MustChangePassword || _policy.IsExpired(user);
-        var token = BuildAccessToken(user, jti, mustChange, isPlatformAdmin: user.IsPlatformAdmin);
+        var token = _session.BuildAccessToken(user, jti, mustChange, isPlatformAdmin: user.IsPlatformAdmin);
 
         // 4. 登录聚合（PUB 章09）：预热权限上下文 + 菜单按全部角色聚合（多角色 RBAC 并集）。
         //    放在记成功画像之前，避免聚合抛错时"已记成功但请求失败"的不一致。
-        var profile = await BuildProfileAsync(user, mustChange);
+        var profile = await _session.BuildProfileAsync(user, mustChange);
 
         // 5. 登录确实成功（含预热/菜单均就绪）后才记成功画像 + 审计。
         await _login.RecordSuccessAsync(user, ClientIp);
@@ -221,37 +206,6 @@ public class AuthController : LocalizedControllerBase
 
         // 7. 返回用户信息和菜单权限（不含 token；mustChangePassword 供前端守卫跳改密页）
         return Ok(profile);
-    }
-
-    /// <summary>
-    /// 登录态画像：预热权限上下文 + 按全部角色聚合菜单（并集）→ 返 { userName, nickName, roleId, menus, mustChangePassword }。
-    /// 密码 Login 与 SSO 落地 profile 端点共用，保证两路返回结构一致。
-    /// </summary>
-    private async Task<object> BuildProfileAsync(Sys_User user, bool mustChange)
-    {
-        var ctx = await _perm.PrewarmAsync(user.Id);
-        var roleIds = ctx.RoleIds;
-        var menuIds = await _context.Sys_RoleMenus
-            .Where(rm => roleIds.Contains(rm.RoleId))
-            .Select(rm => rm.MenuId)
-            .Distinct()
-            .ToListAsync();
-
-        var menus = await _context.Sys_Menus
-            .Where(m => menuIds.Contains(m.MenuId) && m.Enable)
-            .OrderBy(m => m.OrderNo)
-            .Select(m => new { id = m.MenuId, m.MenuName, m.RoutePath, m.Icon, m.ParentId, m.OrderNo } as object)
-            .ToListAsync();
-
-        return new
-        {
-            userName = user.UserName,
-            nickName = user.NickName,
-            roleId = user.RoleId,
-            menus,
-            mustChangePassword = mustChange,
-            isPlatformAdmin = user.IsPlatformAdmin   // T9 #5：带外平台区入口标志（前端存 cp6_isPlatformAdmin）
-        };
     }
 
     /// <summary>SSO 回调 redirect_uri：authorize/callback 同源计算（PublicBaseUrl 优先，否则本请求 scheme+host），防 open-redirect 且保两端 redirect_uri 字节一致。</summary>
@@ -300,7 +254,7 @@ public class AuthController : LocalizedControllerBase
             _tenant.CurrentTenantId = user.TenantId;   // HandleCallback 已设，防御再设
 
             var jti = Guid.NewGuid().ToString();
-            var token = BuildAccessToken(user, jti, mustChange: false, isPlatformAdmin: user.IsPlatformAdmin);   // SSO 用户不走密码过期/强制改密
+            var token = _session.BuildAccessToken(user, jti, mustChange: false, isPlatformAdmin: user.IsPlatformAdmin);   // SSO 用户不走密码过期/强制改密
             await _login.RecordSuccessAsync(user, ClientIp);
             await _audit.LogAsync(SecurityEventType.SsoLoginSuccess, user.Id, user.UserName, null, ClientIp, ClientUa);
 
@@ -327,7 +281,7 @@ public class AuthController : LocalizedControllerBase
         var uid = (await _perm.GetAsync()).UserId;
         var user = await _context.Sys_Users.FirstAsync(u => u.Id == uid);
         var mustChange = user.MustChangePassword || _policy.IsExpired(user);
-        return Ok(await BuildProfileAsync(user, mustChange));
+        return Ok(await _session.BuildProfileAsync(user, mustChange));
     }
 
     // ───────── #2 2FA（T6）：4 端点 + ReadPending 守卫 ─────────
@@ -380,8 +334,8 @@ public class AuthController : LocalizedControllerBase
         _pending.Consume(pendingJti);
         var jti = Guid.NewGuid().ToString();
         var mustChange = user.MustChangePassword || _policy.IsExpired(user);
-        var token = BuildAccessToken(user, jti, mustChange, isPlatformAdmin: user.IsPlatformAdmin);
-        var profile = await BuildProfileAsync(user, mustChange);
+        var token = _session.BuildAccessToken(user, jti, mustChange, isPlatformAdmin: user.IsPlatformAdmin);
+        var profile = await _session.BuildProfileAsync(user, mustChange);
         await _login.RecordSuccessAsync(user, ClientIp);
         await _audit.LogAsync(SecurityEventType.LoginSuccess, user.Id, user.UserName, null, ClientIp, ClientUa, "2fa");
         var rawRt = await _refresh.IssueAsync(user, ClientIp, ClientUa);
@@ -596,7 +550,7 @@ public class AuthController : LocalizedControllerBase
             var (newRaw, user) = await _refresh.RotateAsync(raw, ClientIp, ClientUa);
             var jti = Guid.NewGuid().ToString();
             var mustChange = user.MustChangePassword || _policy.IsExpired(user);
-            var token = BuildAccessToken(user, jti, mustChange, isPlatformAdmin: user.IsPlatformAdmin);
+            var token = _session.BuildAccessToken(user, jti, mustChange, isPlatformAdmin: user.IsPlatformAdmin);
             var csrf = AuthCookieWriter.NewCsrfToken();
             _cookies.WriteAuthCookies(Response, token, newRaw, csrf);
             await _audit.LogAsync(SecurityEventType.TokenRefreshed, user.Id, user.UserName, null, ClientIp, ClientUa);

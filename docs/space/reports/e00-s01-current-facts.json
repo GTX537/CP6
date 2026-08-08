@@ -1,0 +1,3157 @@
+{
+  "checks": {
+    "allPassed": true,
+    "endpointDiscovery": [
+      {
+        "httpAttributeCount": 59,
+        "parsedEndpointCount": 59,
+        "passed": true,
+        "scope": "baseline"
+      },
+      {
+        "httpAttributeCount": 17,
+        "parsedEndpointCount": 17,
+        "passed": true,
+        "scope": "candidate"
+      }
+    ],
+    "endpointOwnership": [
+      {
+        "duplicates": [],
+        "endpointCount": 59,
+        "passed": true,
+        "scope": "baseline"
+      },
+      {
+        "duplicates": [],
+        "endpointCount": 17,
+        "passed": true,
+        "scope": "candidate"
+      },
+      {
+        "duplicates": [],
+        "endpointCount": 76,
+        "passed": true,
+        "scope": "combined"
+      }
+    ],
+    "nonGetEndpointsWithoutExplicitPermission": [
+      "POST /api/space/code-rule/preview (CP6.WebApi/Controllers/Space/CodeRuleController.cs#Preview)"
+    ],
+    "privacy": {
+      "passed": true,
+      "policy": "The report contains repository-relative paths and source symbols only. It does not emit source bodies, credentials, environment values, or customer data."
+    }
+  },
+  "contracts": [
+    {
+      "evidence": [
+        {
+          "description": "Legacy Space domain entities",
+          "id": "legacy-domain",
+          "matched": true,
+          "matches": [
+            "CP6.Entity/DomainModels/Space/Space_Aisle.cs",
+            "CP6.Entity/DomainModels/Space/Space_CodeRule.cs",
+            "CP6.Entity/DomainModels/Space/Space_Connector.cs",
+            "CP6.Entity/DomainModels/Space/Space_ConnectorStop.cs",
+            "CP6.Entity/DomainModels/Space/Space_Floor.cs",
+            "CP6.Entity/DomainModels/Space/Space_Location.cs",
+            "CP6.Entity/DomainModels/Space/Space_Marker.cs",
+            "CP6.Entity/DomainModels/Space/Space_Rack.cs",
+            "CP6.Entity/DomainModels/Space/Space_Site.cs",
+            "CP6.Entity/DomainModels/Space/Space_Template.cs",
+            "CP6.Entity/DomainModels/Space/Space_Zone.cs"
+          ]
+        },
+        {
+          "description": "Legacy Space controllers",
+          "id": "legacy-api",
+          "matched": true,
+          "matches": [
+            "CP6.WebApi/Controllers/Space/CodeRuleController.cs",
+            "CP6.WebApi/Controllers/Space/ConnectorController.cs",
+            "CP6.WebApi/Controllers/Space/LocationPublishController.cs",
+            "CP6.WebApi/Controllers/Space/SceneController.cs",
+            "CP6.WebApi/Controllers/Space/SpaceAdvancedController.cs",
+            "CP6.WebApi/Controllers/Space/SpaceLocateController.cs",
+            "CP6.WebApi/Controllers/Space/SpaceMasterController.cs",
+            "CP6.WebApi/Controllers/Space/SpaceStockController.cs",
+            "CP6.WebApi/Controllers/Space/TemplateController.cs"
+          ]
+        },
+        {
+          "description": "Legacy map editor",
+          "id": "legacy-editor",
+          "matched": true,
+          "matches": [
+            "cp6.web/src/space-editor/SceneStage.ts",
+            "cp6.web/src/space-editor/command/Command.ts",
+            "cp6.web/src/space-editor/command/CommandStack.spec.ts",
+            "cp6.web/src/space-editor/command/CommandStack.ts",
+            "cp6.web/src/space-editor/command/commands.spec.ts",
+            "cp6.web/src/space-editor/command/commands/AddMarkerCmd.ts",
+            "cp6.web/src/space-editor/command/commands/AddZoneCmd.ts",
+            "cp6.web/src/space-editor/command/commands/BatchCmd.ts",
+            "cp6.web/src/space-editor/command/commands/DeleteCmd.ts",
+            "cp6.web/src/space-editor/command/commands/EditMarkerCmd.ts",
+            "cp6.web/src/space-editor/command/commands/EditZoneCmd.ts",
+            "cp6.web/src/space-editor/command/commands/MoveMarkerCmd.ts",
+            "cp6.web/src/space-editor/command/commands/MoveRackCmd.ts",
+            "cp6.web/src/space-editor/command/commands/RotateRackCmd.ts",
+            "cp6.web/src/space-editor/coords.spec.ts",
+            "cp6.web/src/space-editor/coords.ts",
+            "cp6.web/src/space-editor/generate/arrayFootprint.spec.ts",
+            "cp6.web/src/space-editor/generate/arrayFootprint.ts",
+            "cp6.web/src/space-editor/generate/bindMatch.spec.ts",
+            "cp6.web/src/space-editor/generate/bindMatch.ts",
+            "cp6.web/src/space-editor/generate/genRack.spec.ts",
+            "cp6.web/src/space-editor/generate/genRack.ts",
+            "cp6.web/src/space-editor/generate/genZoneArray.ts",
+            "cp6.web/src/space-editor/interact/InteractionManager.ts",
+            "cp6.web/src/space-editor/interact/collide/CollisionHint.spec.ts",
+            "cp6.web/src/space-editor/interact/collide/CollisionHint.ts",
+            "cp6.web/src/space-editor/interact/rotate/rotateGeometry.spec.ts",
+            "cp6.web/src/space-editor/interact/rotate/rotateGeometry.ts",
+            "cp6.web/src/space-editor/interact/select/lassoHit.spec.ts",
+            "cp6.web/src/space-editor/interact/select/lassoHit.ts",
+            "cp6.web/src/space-editor/interact/snap/SnapEngine.spec.ts",
+            "cp6.web/src/space-editor/interact/snap/SnapEngine.ts",
+            "cp6.web/src/space-editor/interact/tools/DragTool.ts",
+            "cp6.web/src/space-editor/interact/tools/MarkerTool.ts",
+            "cp6.web/src/space-editor/interact/tools/RotateTool.ts",
+            "cp6.web/src/space-editor/interact/tools/SelectTool.ts",
+            "cp6.web/src/space-editor/interact/tools/ZoneTool.ts",
+            "cp6.web/src/space-editor/interact/tools/zoneGeom.spec.ts",
+            "cp6.web/src/space-editor/interact/tools/zoneGeom.ts"
+          ]
+        },
+        {
+          "description": "Legacy Three.js viewer",
+          "id": "legacy-viewer",
+          "matched": true,
+          "matches": [
+            "cp6.web/src/space-viewer/SpaceViewer.ts",
+            "cp6.web/src/space-viewer/advanced/DeviceLayer.spec.ts",
+            "cp6.web/src/space-viewer/advanced/DeviceLayer.ts",
+            "cp6.web/src/space-viewer/advanced/PathAnimator.spec.ts",
+            "cp6.web/src/space-viewer/advanced/PathAnimator.ts",
+            "cp6.web/src/space-viewer/advanced/PickPathPlanner.spec.ts",
+            "cp6.web/src/space-viewer/advanced/PickPathPlanner.ts",
+            "cp6.web/src/space-viewer/advanced/WorkloadHeatmap.spec.ts",
+            "cp6.web/src/space-viewer/advanced/WorkloadHeatmap.ts",
+            "cp6.web/src/space-viewer/advanced/cost.spec.ts",
+            "cp6.web/src/space-viewer/advanced/cost.ts",
+            "cp6.web/src/space-viewer/advanced/multiFloor.spec.ts",
+            "cp6.web/src/space-viewer/advanced/multiFloor.ts",
+            "cp6.web/src/space-viewer/advanced/pathModel.spec.ts",
+            "cp6.web/src/space-viewer/advanced/pathModel.ts",
+            "cp6.web/src/space-viewer/advanced/planMultiFloor.spec.ts",
+            "cp6.web/src/space-viewer/advanced/planMultiFloor.ts",
+            "cp6.web/src/space-viewer/advanced/routeOptimize.spec.ts",
+            "cp6.web/src/space-viewer/advanced/routeOptimize.ts",
+            "cp6.web/src/space-viewer/advanced/segmentIntersect.spec.ts",
+            "cp6.web/src/space-viewer/advanced/segmentIntersect.ts",
+            "cp6.web/src/space-viewer/advanced/workloadModel.spec.ts",
+            "cp6.web/src/space-viewer/advanced/workloadModel.ts",
+            "cp6.web/src/space-viewer/api/ViewerHandle.ts",
+            "cp6.web/src/space-viewer/build/BoxFactory.ts",
+            "cp6.web/src/space-viewer/build/InstancedBuckets.spec.ts",
+            "cp6.web/src/space-viewer/build/InstancedBuckets.ts",
+            "cp6.web/src/space-viewer/build/SceneBuilder.ts",
+            "cp6.web/src/space-viewer/core/Loop.ts",
+            "cp6.web/src/space-viewer/core/Renderer.ts",
+            "cp6.web/src/space-viewer/core/SceneRoot.spec.ts",
+            "cp6.web/src/space-viewer/core/SceneRoot.ts",
+            "cp6.web/src/space-viewer/cull/FrustumCuller.spec.ts",
+            "cp6.web/src/space-viewer/cull/FrustumCuller.ts",
+            "cp6.web/src/space-viewer/cull/LodController.spec.ts",
+            "cp6.web/src/space-viewer/cull/LodController.ts",
+            "cp6.web/src/space-viewer/labels/LabelVirtualizer.spec.ts",
+            "cp6.web/src/space-viewer/labels/LabelVirtualizer.ts",
+            "cp6.web/src/space-viewer/navigate/CameraController.spec.ts",
+            "cp6.web/src/space-viewer/navigate/CameraController.ts",
+            "cp6.web/src/space-viewer/navigate/Highlighter.ts",
+            "cp6.web/src/space-viewer/navigate/Locator.ts",
+            "cp6.web/src/space-viewer/navigate/Picker.spec.ts",
+            "cp6.web/src/space-viewer/navigate/Picker.ts",
+            "cp6.web/src/space-viewer/overlay/StockOverlay.spec.ts",
+            "cp6.web/src/space-viewer/overlay/StockOverlay.ts",
+            "cp6.web/src/space-viewer/overlay/stockModel.spec.ts",
+            "cp6.web/src/space-viewer/overlay/stockModel.ts",
+            "cp6.web/src/space-viewer/stacked/StackedViewer.spec.ts",
+            "cp6.web/src/space-viewer/stacked/StackedViewer.ts"
+          ]
+        }
+      ],
+      "id": "LEGACY-SPACE",
+      "missingEvidence": [],
+      "name": "Legacy model, API, editor, and viewer",
+      "rationale": "The frozen baseline already has the operational Legacy Space surface.",
+      "status": "Implemented"
+    },
+    {
+      "evidence": [
+        {
+          "description": "Design V1 controller",
+          "id": "design-controller",
+          "matched": true,
+          "matches": [
+            "CP6.WebApi/Controllers/Space/SpaceDesignV1Controller.cs"
+          ]
+        },
+        {
+          "description": "Design V1 C# contracts",
+          "id": "design-contracts",
+          "matched": true,
+          "matches": [
+            "CP6.Space.Contracts/Commands.cs",
+            "CP6.Space.Contracts/Models.cs",
+            "CP6.Space.Contracts/SpaceErrors.cs"
+          ]
+        },
+        {
+          "description": "Design V1 TypeScript client",
+          "id": "design-typescript-client",
+          "matched": true,
+          "matches": [
+            "sdk/typescript/space-design-v1/src/contracts.ts",
+            "sdk/typescript/space-design-v1/src/index.ts",
+            "sdk/typescript/space-design-v1/src/spaceDesignClient.ts"
+          ]
+        }
+      ],
+      "id": "DESIGN-V1-API",
+      "missingEvidence": [],
+      "name": "Design V1 API and client contract",
+      "rationale": "The candidate has an API shell and clients, but it is uncommitted and not the formal implementation.",
+      "status": "Partial"
+    },
+    {
+      "evidence": [
+        {
+          "description": "Space model aggregate",
+          "id": "model-aggregate",
+          "matched": true,
+          "matches": [
+            "CP6.Space.Domain/SpaceModel.cs"
+          ]
+        },
+        {
+          "description": "Space version aggregate",
+          "id": "version-aggregate",
+          "matched": true,
+          "matches": [
+            "CP6.Space.Domain/SpaceModelVersion.cs"
+          ]
+        },
+        {
+          "description": "Model/version migration",
+          "id": "model-migration",
+          "matched": true,
+          "matches": [
+            "CP6.Space.Infrastructure/Migrations/20260724005335_SpaceVolume1Initial.Designer.cs",
+            "CP6.Space.Infrastructure/Migrations/20260724005335_SpaceVolume1Initial.cs",
+            "CP6.Space.Infrastructure/Migrations/20260724005826_SpaceVolume1IntegrityIndexes.Designer.cs",
+            "CP6.Space.Infrastructure/Migrations/20260724010202_SpaceVolume1ValidationPublishing.Designer.cs",
+            "CP6.Space.Infrastructure/Migrations/20260724010503_SpaceVolume1TopologyIndexes.Designer.cs",
+            "CP6.Space.Infrastructure/Migrations/SpaceContextModelSnapshot.cs"
+          ]
+        }
+      ],
+      "id": "MODEL-VERSION",
+      "missingEvidence": [],
+      "name": "Space model, version, and immutable Published state",
+      "rationale": "Candidate domain and migrations contain the core state model, pending formal integration.",
+      "status": "Partial"
+    },
+    {
+      "evidence": [
+        {
+          "description": "Space_ModelSource entity",
+          "id": "model-source",
+          "matched": false,
+          "matches": []
+        },
+        {
+          "description": "Space_File entity",
+          "id": "space-file",
+          "matched": false,
+          "matches": []
+        },
+        {
+          "description": "SourceHash query contract",
+          "id": "source-hash-query",
+          "matched": true,
+          "matches": [
+            "CP6.Space.Infrastructure/LegacySpaceBootstrapExecutor.cs"
+          ]
+        }
+      ],
+      "id": "SOURCE-LINEAGE",
+      "missingEvidence": [
+        "Space_ModelSource entity",
+        "Space_File entity"
+      ],
+      "name": "Source files, artifacts, hashes, and lineage",
+      "rationale": "The frozen E01-S02 source/file/lineage contract needs dedicated entities and storage behavior.",
+      "status": "Partial"
+    },
+    {
+      "evidence": [
+        {
+          "description": "SpaceJob entity",
+          "id": "job-entity",
+          "matched": true,
+          "matches": [
+            "CP6.Space.Domain/Operations.cs"
+          ]
+        },
+        {
+          "description": "SpaceJobAttempt entity",
+          "id": "job-attempt",
+          "matched": true,
+          "matches": [
+            "CP6.Space.Domain/Operations.cs"
+          ]
+        },
+        {
+          "description": "Job runner and retry loop",
+          "id": "job-runner",
+          "matched": true,
+          "matches": [
+            "CP6.Space.Infrastructure/SpaceJobRunner.cs"
+          ]
+        }
+      ],
+      "id": "JOB-LEDGER",
+      "missingEvidence": [],
+      "name": "Unified Job ledger, attempts, leases, and retries",
+      "rationale": "Candidate job entities and runner are useful input but remain outside the formal baseline.",
+      "status": "Partial"
+    },
+    {
+      "evidence": [
+        {
+          "description": "Import and BuildScene job types",
+          "id": "import-build-enums",
+          "matched": true,
+          "matches": [
+            "CP6.Space.Domain/SpaceEnums.cs"
+          ]
+        },
+        {
+          "description": "BuildScene worker dispatch",
+          "id": "build-scene-dispatch",
+          "matched": false,
+          "matches": []
+        },
+        {
+          "description": "Import worker dispatch",
+          "id": "import-dispatch",
+          "matched": false,
+          "matches": []
+        }
+      ],
+      "id": "IMPORT-BUILD-SCENE",
+      "missingEvidence": [
+        "BuildScene worker dispatch",
+        "Import worker dispatch"
+      ],
+      "name": "Import and BuildScene job processing",
+      "rationale": "Enums exist in the candidate, but E00 evidence must prove the worker actually dispatches both job types.",
+      "status": "Partial"
+    },
+    {
+      "evidence": [
+        {
+          "description": "Site cutover state",
+          "id": "cutover-state",
+          "matched": true,
+          "matches": [
+            "CP6.Space.Domain/SpaceEnums.cs"
+          ]
+        },
+        {
+          "description": "Legacy write guard",
+          "id": "legacy-write-guard",
+          "matched": true,
+          "matches": [
+            "CP6.Space.Infrastructure/LegacySpaceWriteGuardInterceptor.cs"
+          ]
+        },
+        {
+          "description": "Tenant/Site model mode",
+          "id": "site-mode",
+          "matched": true,
+          "matches": [
+            "CP6.Space.Domain/SpaceModel.cs"
+          ]
+        }
+      ],
+      "id": "CUTOVER-GUARD",
+      "missingEvidence": [],
+      "name": "Tenant/Site cutover state and Legacy write guard",
+      "rationale": "Candidate state and interceptor cover part of E00-S02 but have not been integrated or proven.",
+      "status": "Partial"
+    },
+    {
+      "evidence": [
+        {
+          "description": "space:model:* permissions",
+          "id": "model-permissions",
+          "matched": false,
+          "matches": []
+        },
+        {
+          "description": "space:source:upload permission",
+          "id": "source-permission",
+          "matched": false,
+          "matches": []
+        },
+        {
+          "description": "Action-level permission gate",
+          "id": "controller-permission-gate",
+          "matched": true,
+          "matches": [
+            "CP6.WebApi/Controllers/Space/SpaceDesignV1Controller.cs"
+          ]
+        }
+      ],
+      "id": "DESIGN-PERMISSIONS",
+      "missingEvidence": [
+        "space:model:* permissions",
+        "space:source:upload permission"
+      ],
+      "name": "Frozen Design V1 permission vocabulary",
+      "rationale": "Design V1 must use the frozen space:model/source/integration/audit permissions instead of the Legacy space-floor tuple.",
+      "status": "Partial"
+    },
+    {
+      "evidence": [
+        {
+          "description": "Validation executor",
+          "id": "validation-executor",
+          "matched": true,
+          "matches": [
+            "CP6.Space.Infrastructure/SpaceValidationExecutor.cs"
+          ]
+        },
+        {
+          "description": "Publish executor",
+          "id": "publish-executor",
+          "matched": true,
+          "matches": [
+            "CP6.Space.Infrastructure/SpacePublishExecutor.cs"
+          ]
+        },
+        {
+          "description": "Publication API",
+          "id": "publication-api",
+          "matched": true,
+          "matches": [
+            "CP6.WebApi/Controllers/Space/SpaceDesignV1Controller.cs"
+          ]
+        }
+      ],
+      "id": "VALIDATE-PUBLISH",
+      "missingEvidence": [],
+      "name": "Validation and atomic publish loop",
+      "rationale": "Candidate has validation/publish executors and API endpoints, pending formal adoption and rollback evidence.",
+      "status": "Partial"
+    },
+    {
+      "evidence": [
+        {
+          "description": "Stock overlay API",
+          "id": "stock-api",
+          "matched": true,
+          "matches": [
+            "CP6.WebApi/Controllers/Space/SpaceStockController.cs"
+          ]
+        },
+        {
+          "description": "Stock overlay renderer",
+          "id": "stock-overlay",
+          "matched": true,
+          "matches": [
+            "cp6.web/src/space-viewer/overlay/StockOverlay.ts"
+          ]
+        },
+        {
+          "description": "Published scene API",
+          "id": "scene-api",
+          "matched": true,
+          "matches": [
+            "CP6.WebApi/Controllers/Space/SceneController.cs"
+          ]
+        }
+      ],
+      "id": "WMS-RUNTIME",
+      "missingEvidence": [],
+      "name": "Published runtime and WMS stock overlay",
+      "rationale": "The Legacy runtime already serves scene and stock overlay behavior.",
+      "status": "Implemented"
+    },
+    {
+      "evidence": [
+        {
+          "description": "Generation Run model",
+          "id": "generation-run",
+          "matched": false,
+          "matches": []
+        },
+        {
+          "description": "Proposal review model",
+          "id": "proposal-review",
+          "matched": false,
+          "matches": []
+        },
+        {
+          "description": "Atomic proposal apply to Draft",
+          "id": "draft-apply",
+          "matched": false,
+          "matches": []
+        }
+      ],
+      "id": "AI-PROPOSALS",
+      "missingEvidence": [
+        "Generation Run model",
+        "Proposal review model",
+        "Atomic proposal apply to Draft"
+      ],
+      "name": "AI generation run, proposal review, and Draft apply",
+      "rationale": "AI may only produce reviewable proposals and atomically apply them to Draft.",
+      "status": "NotStarted"
+    },
+    {
+      "evidence": [
+        {
+          "description": "Provider-neutral port",
+          "id": "provider-port",
+          "matched": false,
+          "matches": []
+        },
+        {
+          "description": "Minimal CAD IR contract",
+          "id": "cad-ir",
+          "matched": false,
+          "matches": []
+        },
+        {
+          "description": "Deterministic geometry/topology engine",
+          "id": "deterministic-engine",
+          "matched": false,
+          "matches": []
+        }
+      ],
+      "id": "AI-PROVIDER",
+      "missingEvidence": [
+        "Provider-neutral port",
+        "Minimal CAD IR contract",
+        "Deterministic geometry/topology engine"
+      ],
+      "name": "Provider-neutral CAD IR and deterministic engine boundary",
+      "rationale": "The external provider must only receive minimized CAD IR and cannot own deterministic geometry or publishing.",
+      "status": "NotStarted"
+    },
+    {
+      "evidence": [
+        {
+          "description": "External published-only controller",
+          "id": "external-controller",
+          "matched": false,
+          "matches": []
+        },
+        {
+          "description": "Published-only external access policy",
+          "id": "external-policy",
+          "matched": false,
+          "matches": []
+        }
+      ],
+      "id": "EXTERNAL-PORTAL",
+      "missingEvidence": [
+        "External published-only controller",
+        "Published-only external access policy"
+      ],
+      "name": "Published-only external collaboration portal",
+      "rationale": "External customers, suppliers, and 3PL actors must never access Draft, source, AI, prompt, cost, or internal logs.",
+      "status": "NotStarted"
+    }
+  ],
+  "inventory": {
+    "baselineEndpoints": [
+      {
+        "authorized": true,
+        "implementationStatus": "Implemented",
+        "method": "GET",
+        "owner": "CP6.WebApi/Controllers/Space/SpaceMasterController.cs#ListAisles",
+        "permission": null,
+        "route": "/api/space/aisle",
+        "source": "baseline"
+      },
+      {
+        "authorized": true,
+        "implementationStatus": "Implemented",
+        "method": "POST",
+        "owner": "CP6.WebApi/Controllers/Space/SpaceMasterController.cs#CreateAisle",
+        "permission": "space-floor:edit",
+        "route": "/api/space/aisle",
+        "source": "baseline"
+      },
+      {
+        "authorized": true,
+        "implementationStatus": "Implemented",
+        "method": "DELETE",
+        "owner": "CP6.WebApi/Controllers/Space/SpaceMasterController.cs#DeleteAisle",
+        "permission": "space-floor:edit",
+        "route": "/api/space/aisle/{id:guid}",
+        "source": "baseline"
+      },
+      {
+        "authorized": true,
+        "implementationStatus": "Implemented",
+        "method": "PUT",
+        "owner": "CP6.WebApi/Controllers/Space/SpaceMasterController.cs#UpdateAisle",
+        "permission": "space-floor:edit",
+        "route": "/api/space/aisle/{id:guid}",
+        "source": "baseline"
+      },
+      {
+        "authorized": true,
+        "implementationStatus": "Implemented",
+        "method": "GET",
+        "owner": "CP6.WebApi/Controllers/Space/CodeRuleController.cs#ListRules",
+        "permission": null,
+        "route": "/api/space/code-rule",
+        "source": "baseline"
+      },
+      {
+        "authorized": true,
+        "implementationStatus": "Implemented",
+        "method": "POST",
+        "owner": "CP6.WebApi/Controllers/Space/CodeRuleController.cs#CreateRule",
+        "permission": "space-code-rule:add",
+        "route": "/api/space/code-rule",
+        "source": "baseline"
+      },
+      {
+        "authorized": true,
+        "implementationStatus": "Implemented",
+        "method": "POST",
+        "owner": "CP6.WebApi/Controllers/Space/CodeRuleController.cs#Preview",
+        "permission": null,
+        "route": "/api/space/code-rule/preview",
+        "source": "baseline"
+      },
+      {
+        "authorized": true,
+        "implementationStatus": "Implemented",
+        "method": "DELETE",
+        "owner": "CP6.WebApi/Controllers/Space/CodeRuleController.cs#DeleteRule",
+        "permission": "space-code-rule:delete",
+        "route": "/api/space/code-rule/{id:guid}",
+        "source": "baseline"
+      },
+      {
+        "authorized": true,
+        "implementationStatus": "Implemented",
+        "method": "PUT",
+        "owner": "CP6.WebApi/Controllers/Space/CodeRuleController.cs#UpdateRule",
+        "permission": "space-code-rule:edit",
+        "route": "/api/space/code-rule/{id:guid}",
+        "source": "baseline"
+      },
+      {
+        "authorized": true,
+        "implementationStatus": "Implemented",
+        "method": "POST",
+        "owner": "CP6.WebApi/Controllers/Space/ConnectorController.cs#Create",
+        "permission": "space-floor:edit",
+        "route": "/api/space/connector",
+        "source": "baseline"
+      },
+      {
+        "authorized": true,
+        "implementationStatus": "Implemented",
+        "method": "DELETE",
+        "owner": "CP6.WebApi/Controllers/Space/ConnectorController.cs#Delete",
+        "permission": "space-floor:edit",
+        "route": "/api/space/connector/{id:guid}",
+        "source": "baseline"
+      },
+      {
+        "authorized": true,
+        "implementationStatus": "Implemented",
+        "method": "PUT",
+        "owner": "CP6.WebApi/Controllers/Space/ConnectorController.cs#Update",
+        "permission": "space-floor:edit",
+        "route": "/api/space/connector/{id:guid}",
+        "source": "baseline"
+      },
+      {
+        "authorized": true,
+        "implementationStatus": "Implemented",
+        "method": "PUT",
+        "owner": "CP6.WebApi/Controllers/Space/ConnectorController.cs#UpsertStop",
+        "permission": "space-floor:edit",
+        "route": "/api/space/connector/{id:guid}/stop",
+        "source": "baseline"
+      },
+      {
+        "authorized": true,
+        "implementationStatus": "Implemented",
+        "method": "DELETE",
+        "owner": "CP6.WebApi/Controllers/Space/ConnectorController.cs#DeleteStop",
+        "permission": "space-floor:edit",
+        "route": "/api/space/connector/{id:guid}/stop/{floorId:guid}",
+        "source": "baseline"
+      },
+      {
+        "authorized": true,
+        "implementationStatus": "Implemented",
+        "method": "GET",
+        "owner": "CP6.WebApi/Controllers/Space/SpaceMasterController.cs#ListFloors",
+        "permission": null,
+        "route": "/api/space/floor",
+        "source": "baseline"
+      },
+      {
+        "authorized": true,
+        "implementationStatus": "Implemented",
+        "method": "POST",
+        "owner": "CP6.WebApi/Controllers/Space/SpaceMasterController.cs#CreateFloor",
+        "permission": "space-floor:add",
+        "route": "/api/space/floor",
+        "source": "baseline"
+      },
+      {
+        "authorized": true,
+        "implementationStatus": "Implemented",
+        "method": "GET",
+        "owner": "CP6.WebApi/Controllers/Space/SpaceAdvancedController.cs#Devices",
+        "permission": null,
+        "route": "/api/space/floor/{floorId:guid}/devices",
+        "source": "baseline"
+      },
+      {
+        "authorized": true,
+        "implementationStatus": "Implemented",
+        "method": "GET",
+        "owner": "CP6.WebApi/Controllers/Space/SpaceAdvancedController.cs#PickPath",
+        "permission": null,
+        "route": "/api/space/floor/{floorId:guid}/pick-path",
+        "source": "baseline"
+      },
+      {
+        "authorized": true,
+        "implementationStatus": "Implemented",
+        "method": "GET",
+        "owner": "CP6.WebApi/Controllers/Space/SpaceStockController.cs#FloorStock",
+        "permission": null,
+        "route": "/api/space/floor/{floorId:guid}/stock",
+        "source": "baseline"
+      },
+      {
+        "authorized": true,
+        "implementationStatus": "Implemented",
+        "method": "GET",
+        "owner": "CP6.WebApi/Controllers/Space/SpaceAdvancedController.cs#Workload",
+        "permission": null,
+        "route": "/api/space/floor/{floorId:guid}/workload",
+        "source": "baseline"
+      },
+      {
+        "authorized": true,
+        "implementationStatus": "Implemented",
+        "method": "DELETE",
+        "owner": "CP6.WebApi/Controllers/Space/SpaceMasterController.cs#DeleteFloor",
+        "permission": "space-floor:delete",
+        "route": "/api/space/floor/{id:guid}",
+        "source": "baseline"
+      },
+      {
+        "authorized": true,
+        "implementationStatus": "Implemented",
+        "method": "PUT",
+        "owner": "CP6.WebApi/Controllers/Space/SpaceMasterController.cs#UpdateFloor",
+        "permission": "space-floor:edit",
+        "route": "/api/space/floor/{id:guid}",
+        "source": "baseline"
+      },
+      {
+        "authorized": true,
+        "implementationStatus": "Implemented",
+        "method": "GET",
+        "owner": "CP6.WebApi/Controllers/Space/CodeRuleController.cs#CodePrecheck",
+        "permission": null,
+        "route": "/api/space/floor/{id:guid}/code-precheck",
+        "source": "baseline"
+      },
+      {
+        "authorized": true,
+        "implementationStatus": "Implemented",
+        "method": "GET",
+        "owner": "CP6.WebApi/Controllers/Space/SceneController.cs#Export",
+        "permission": null,
+        "route": "/api/space/floor/{id:guid}/export",
+        "source": "baseline"
+      },
+      {
+        "authorized": true,
+        "implementationStatus": "Implemented",
+        "method": "POST",
+        "owner": "CP6.WebApi/Controllers/Space/CodeRuleController.cs#GenerateCodes",
+        "permission": "space-code-rule:generate",
+        "route": "/api/space/floor/{id:guid}/generate-codes",
+        "source": "baseline"
+      },
+      {
+        "authorized": true,
+        "implementationStatus": "Implemented",
+        "method": "POST",
+        "owner": "CP6.WebApi/Controllers/Space/LocationPublishController.cs#PublishFloor",
+        "permission": "space-publish:publish",
+        "route": "/api/space/floor/{id:guid}/publish",
+        "source": "baseline"
+      },
+      {
+        "authorized": true,
+        "implementationStatus": "Implemented",
+        "method": "GET",
+        "owner": "CP6.WebApi/Controllers/Space/SpaceMasterController.cs#Scene",
+        "permission": null,
+        "route": "/api/space/floor/{id:guid}/scene",
+        "source": "baseline"
+      },
+      {
+        "authorized": true,
+        "implementationStatus": "Implemented",
+        "method": "POST",
+        "owner": "CP6.WebApi/Controllers/Space/SceneController.cs#SaveScene",
+        "permission": "space-floor:edit",
+        "route": "/api/space/floor/{id:guid}/scene",
+        "source": "baseline"
+      },
+      {
+        "authorized": true,
+        "implementationStatus": "Implemented",
+        "method": "GET",
+        "owner": "CP6.WebApi/Controllers/Space/SpaceMasterController.cs#Locations",
+        "permission": null,
+        "route": "/api/space/location",
+        "source": "baseline"
+      },
+      {
+        "authorized": true,
+        "implementationStatus": "Implemented",
+        "method": "POST",
+        "owner": "CP6.WebApi/Controllers/Space/LocationPublishController.cs#Adopt",
+        "permission": "space-publish:adopt",
+        "route": "/api/space/location/adopt",
+        "source": "baseline"
+      },
+      {
+        "authorized": true,
+        "implementationStatus": "Implemented",
+        "method": "GET",
+        "owner": "CP6.WebApi/Controllers/Space/SpaceLocateController.cs#Locate",
+        "permission": null,
+        "route": "/api/space/location/locate",
+        "source": "baseline"
+      },
+      {
+        "authorized": true,
+        "implementationStatus": "Implemented",
+        "method": "GET",
+        "owner": "CP6.WebApi/Controllers/Space/SpaceLocateController.cs#Search",
+        "permission": null,
+        "route": "/api/space/location/search",
+        "source": "baseline"
+      },
+      {
+        "authorized": true,
+        "implementationStatus": "Implemented",
+        "method": "GET",
+        "owner": "CP6.WebApi/Controllers/Space/SpaceMasterController.cs#Unplaced",
+        "permission": null,
+        "route": "/api/space/location/unplaced",
+        "source": "baseline"
+      },
+      {
+        "authorized": true,
+        "implementationStatus": "Implemented",
+        "method": "PUT",
+        "owner": "CP6.WebApi/Controllers/Space/LocationPublishController.cs#Deactivate",
+        "permission": "space-publish:deactivate",
+        "route": "/api/space/location/{id:guid}/deactivate",
+        "source": "baseline"
+      },
+      {
+        "authorized": true,
+        "implementationStatus": "Implemented",
+        "method": "GET",
+        "owner": "CP6.WebApi/Controllers/Space/SpaceLocateController.cs#Detail",
+        "permission": null,
+        "route": "/api/space/location/{id:guid}/detail",
+        "source": "baseline"
+      },
+      {
+        "authorized": true,
+        "implementationStatus": "Implemented",
+        "method": "POST",
+        "owner": "CP6.WebApi/Controllers/Space/CodeRuleController.cs#GenCode",
+        "permission": "space-code-rule:generate",
+        "route": "/api/space/location/{id:guid}/gen-code",
+        "source": "baseline"
+      },
+      {
+        "authorized": true,
+        "implementationStatus": "Implemented",
+        "method": "GET",
+        "owner": "CP6.WebApi/Controllers/Space/LocationPublishController.cs#ListEvents",
+        "permission": null,
+        "route": "/api/space/publish/events",
+        "source": "baseline"
+      },
+      {
+        "authorized": true,
+        "implementationStatus": "Implemented",
+        "method": "GET",
+        "owner": "CP6.WebApi/Controllers/Space/SpaceMasterController.cs#ListRacks",
+        "permission": null,
+        "route": "/api/space/rack",
+        "source": "baseline"
+      },
+      {
+        "authorized": true,
+        "implementationStatus": "Implemented",
+        "method": "POST",
+        "owner": "CP6.WebApi/Controllers/Space/SpaceMasterController.cs#CreateRack",
+        "permission": "space-floor:edit",
+        "route": "/api/space/rack",
+        "source": "baseline"
+      },
+      {
+        "authorized": true,
+        "implementationStatus": "Implemented",
+        "method": "DELETE",
+        "owner": "CP6.WebApi/Controllers/Space/SpaceMasterController.cs#DeleteRack",
+        "permission": "space-floor:edit",
+        "route": "/api/space/rack/{id:guid}",
+        "source": "baseline"
+      },
+      {
+        "authorized": true,
+        "implementationStatus": "Implemented",
+        "method": "PUT",
+        "owner": "CP6.WebApi/Controllers/Space/SpaceMasterController.cs#UpdateRack",
+        "permission": "space-floor:edit",
+        "route": "/api/space/rack/{id:guid}",
+        "source": "baseline"
+      },
+      {
+        "authorized": true,
+        "implementationStatus": "Implemented",
+        "method": "POST",
+        "owner": "CP6.WebApi/Controllers/Space/SceneController.cs#BindCodes",
+        "permission": "space-floor:edit",
+        "route": "/api/space/rack/{id:guid}/bind-codes",
+        "source": "baseline"
+      },
+      {
+        "authorized": true,
+        "implementationStatus": "Implemented",
+        "method": "GET",
+        "owner": "CP6.WebApi/Controllers/Space/SpaceMasterController.cs#ListSites",
+        "permission": null,
+        "route": "/api/space/site",
+        "source": "baseline"
+      },
+      {
+        "authorized": true,
+        "implementationStatus": "Implemented",
+        "method": "POST",
+        "owner": "CP6.WebApi/Controllers/Space/SpaceMasterController.cs#CreateSite",
+        "permission": "space-site:add",
+        "route": "/api/space/site",
+        "source": "baseline"
+      },
+      {
+        "authorized": true,
+        "implementationStatus": "Implemented",
+        "method": "DELETE",
+        "owner": "CP6.WebApi/Controllers/Space/SpaceMasterController.cs#DeleteSite",
+        "permission": "space-site:delete",
+        "route": "/api/space/site/{id:guid}",
+        "source": "baseline"
+      },
+      {
+        "authorized": true,
+        "implementationStatus": "Implemented",
+        "method": "PUT",
+        "owner": "CP6.WebApi/Controllers/Space/SpaceMasterController.cs#UpdateSite",
+        "permission": "space-site:edit",
+        "route": "/api/space/site/{id:guid}",
+        "source": "baseline"
+      },
+      {
+        "authorized": true,
+        "implementationStatus": "Implemented",
+        "method": "POST",
+        "owner": "CP6.WebApi/Controllers/Space/SceneController.cs#Import",
+        "permission": "space-floor:edit",
+        "route": "/api/space/site/{id:guid}/import",
+        "source": "baseline"
+      },
+      {
+        "authorized": true,
+        "implementationStatus": "Implemented",
+        "method": "GET",
+        "owner": "CP6.WebApi/Controllers/Space/ConnectorController.cs#ListBySite",
+        "permission": null,
+        "route": "/api/space/site/{siteId:guid}/connector",
+        "source": "baseline"
+      },
+      {
+        "authorized": true,
+        "implementationStatus": "Implemented",
+        "method": "GET",
+        "owner": "CP6.WebApi/Controllers/Space/SpaceAdvancedController.cs#SitePickPath",
+        "permission": null,
+        "route": "/api/space/site/{siteId:guid}/pick-path",
+        "source": "baseline"
+      },
+      {
+        "authorized": true,
+        "implementationStatus": "Implemented",
+        "method": "GET",
+        "owner": "CP6.WebApi/Controllers/Space/SpaceStockController.cs#Locate",
+        "permission": null,
+        "route": "/api/space/stock/locate",
+        "source": "baseline"
+      },
+      {
+        "authorized": true,
+        "implementationStatus": "Implemented",
+        "method": "GET",
+        "owner": "CP6.WebApi/Controllers/Space/TemplateController.cs#List",
+        "permission": null,
+        "route": "/api/space/template",
+        "source": "baseline"
+      },
+      {
+        "authorized": true,
+        "implementationStatus": "Implemented",
+        "method": "POST",
+        "owner": "CP6.WebApi/Controllers/Space/TemplateController.cs#Create",
+        "permission": "space-floor:edit",
+        "route": "/api/space/template",
+        "source": "baseline"
+      },
+      {
+        "authorized": true,
+        "implementationStatus": "Implemented",
+        "method": "DELETE",
+        "owner": "CP6.WebApi/Controllers/Space/TemplateController.cs#Delete",
+        "permission": "space-floor:edit",
+        "route": "/api/space/template/{id:guid}",
+        "source": "baseline"
+      },
+      {
+        "authorized": true,
+        "implementationStatus": "Implemented",
+        "method": "PUT",
+        "owner": "CP6.WebApi/Controllers/Space/TemplateController.cs#Update",
+        "permission": "space-floor:edit",
+        "route": "/api/space/template/{id:guid}",
+        "source": "baseline"
+      },
+      {
+        "authorized": true,
+        "implementationStatus": "Implemented",
+        "method": "POST",
+        "owner": "CP6.WebApi/Controllers/Space/TemplateController.cs#Clone",
+        "permission": "space-floor:edit",
+        "route": "/api/space/template/{id:guid}/clone",
+        "source": "baseline"
+      },
+      {
+        "authorized": true,
+        "implementationStatus": "Implemented",
+        "method": "GET",
+        "owner": "CP6.WebApi/Controllers/Space/SpaceMasterController.cs#ListZones",
+        "permission": null,
+        "route": "/api/space/zone",
+        "source": "baseline"
+      },
+      {
+        "authorized": true,
+        "implementationStatus": "Implemented",
+        "method": "POST",
+        "owner": "CP6.WebApi/Controllers/Space/SpaceMasterController.cs#CreateZone",
+        "permission": "space-floor:edit",
+        "route": "/api/space/zone",
+        "source": "baseline"
+      },
+      {
+        "authorized": true,
+        "implementationStatus": "Implemented",
+        "method": "DELETE",
+        "owner": "CP6.WebApi/Controllers/Space/SpaceMasterController.cs#DeleteZone",
+        "permission": "space-floor:edit",
+        "route": "/api/space/zone/{id:guid}",
+        "source": "baseline"
+      },
+      {
+        "authorized": true,
+        "implementationStatus": "Implemented",
+        "method": "PUT",
+        "owner": "CP6.WebApi/Controllers/Space/SpaceMasterController.cs#UpdateZone",
+        "permission": "space-floor:edit",
+        "route": "/api/space/zone/{id:guid}",
+        "source": "baseline"
+      }
+    ],
+    "baselineTables": [
+      {
+        "entities": [
+          "Space_Aisle"
+        ],
+        "implementationStatus": "Implemented",
+        "name": "Space_Aisle",
+        "owners": [
+          "CP6.Core/Migrations/20260627105640_SpaceP1Init.Designer.cs",
+          "CP6.Core/Migrations/20260627105640_SpaceP1Init.cs",
+          "CP6.Core/Migrations/20260629135411_SpaceP4Connector.Designer.cs",
+          "CP6.Core/Migrations/20260629142700_WfsServiceTask.Designer.cs",
+          "CP6.Core/Migrations/20260629162744_SpaceP5ConnectorCost.Designer.cs",
+          "CP6.Core/Migrations/20260705172214_SpaceWave1WmsBin.Designer.cs",
+          "CP6.Core/Migrations/20260708085236_PersistDataProtectionKeys.Designer.cs",
+          "CP6.Core/Migrations/20260708093013_SysRoleTenantize.Designer.cs",
+          "CP6.Core/Migrations/20260708100345_SysRoleMenuTenantize.Designer.cs",
+          "CP6.Core/Migrations/20260710172302_SysRoleMenuUniqueIndex.Designer.cs",
+          "CP6.Core/Migrations/20260713135253_WfsFlowTrigger.Designer.cs",
+          "CP6.Core/Migrations/20260714003924_WfsInfra.Designer.cs",
+          "CP6.Core/Migrations/20260714075419_WfsSubFlow.Designer.cs",
+          "CP6.Core/Migrations/CP6ContextModelSnapshot.cs",
+          "CP6.Entity/DomainModels/Space/Space_Aisle.cs"
+        ],
+        "source": "baseline"
+      },
+      {
+        "entities": [
+          "Space_CodeRule"
+        ],
+        "implementationStatus": "Implemented",
+        "name": "Space_CodeRule",
+        "owners": [
+          "CP6.Core/Migrations/20260627105640_SpaceP1Init.Designer.cs",
+          "CP6.Core/Migrations/20260627105640_SpaceP1Init.cs",
+          "CP6.Core/Migrations/20260629135411_SpaceP4Connector.Designer.cs",
+          "CP6.Core/Migrations/20260629142700_WfsServiceTask.Designer.cs",
+          "CP6.Core/Migrations/20260629162744_SpaceP5ConnectorCost.Designer.cs",
+          "CP6.Core/Migrations/20260705172214_SpaceWave1WmsBin.Designer.cs",
+          "CP6.Core/Migrations/20260708085236_PersistDataProtectionKeys.Designer.cs",
+          "CP6.Core/Migrations/20260708093013_SysRoleTenantize.Designer.cs",
+          "CP6.Core/Migrations/20260708100345_SysRoleMenuTenantize.Designer.cs",
+          "CP6.Core/Migrations/20260710172302_SysRoleMenuUniqueIndex.Designer.cs",
+          "CP6.Core/Migrations/20260713135253_WfsFlowTrigger.Designer.cs",
+          "CP6.Core/Migrations/20260714003924_WfsInfra.Designer.cs",
+          "CP6.Core/Migrations/20260714075419_WfsSubFlow.Designer.cs",
+          "CP6.Core/Migrations/CP6ContextModelSnapshot.cs",
+          "CP6.Entity/DomainModels/Space/Space_CodeRule.cs"
+        ],
+        "source": "baseline"
+      },
+      {
+        "entities": [
+          "Space_Connector"
+        ],
+        "implementationStatus": "Implemented",
+        "name": "Space_Connector",
+        "owners": [
+          "CP6.Core/Migrations/20260629135411_SpaceP4Connector.Designer.cs",
+          "CP6.Core/Migrations/20260629135411_SpaceP4Connector.cs",
+          "CP6.Core/Migrations/20260629162744_SpaceP5ConnectorCost.Designer.cs",
+          "CP6.Core/Migrations/20260705172214_SpaceWave1WmsBin.Designer.cs",
+          "CP6.Core/Migrations/20260708085236_PersistDataProtectionKeys.Designer.cs",
+          "CP6.Core/Migrations/20260708093013_SysRoleTenantize.Designer.cs",
+          "CP6.Core/Migrations/20260708100345_SysRoleMenuTenantize.Designer.cs",
+          "CP6.Core/Migrations/20260710172302_SysRoleMenuUniqueIndex.Designer.cs",
+          "CP6.Core/Migrations/20260713135253_WfsFlowTrigger.Designer.cs",
+          "CP6.Core/Migrations/20260714003924_WfsInfra.Designer.cs",
+          "CP6.Core/Migrations/20260714075419_WfsSubFlow.Designer.cs",
+          "CP6.Core/Migrations/CP6ContextModelSnapshot.cs",
+          "CP6.Entity/DomainModels/Space/Space_Connector.cs"
+        ],
+        "source": "baseline"
+      },
+      {
+        "entities": [
+          "Space_ConnectorStop"
+        ],
+        "implementationStatus": "Implemented",
+        "name": "Space_ConnectorStop",
+        "owners": [
+          "CP6.Core/Migrations/20260629135411_SpaceP4Connector.Designer.cs",
+          "CP6.Core/Migrations/20260629135411_SpaceP4Connector.cs",
+          "CP6.Core/Migrations/20260629162744_SpaceP5ConnectorCost.Designer.cs",
+          "CP6.Core/Migrations/20260705172214_SpaceWave1WmsBin.Designer.cs",
+          "CP6.Core/Migrations/20260708085236_PersistDataProtectionKeys.Designer.cs",
+          "CP6.Core/Migrations/20260708093013_SysRoleTenantize.Designer.cs",
+          "CP6.Core/Migrations/20260708100345_SysRoleMenuTenantize.Designer.cs",
+          "CP6.Core/Migrations/20260710172302_SysRoleMenuUniqueIndex.Designer.cs",
+          "CP6.Core/Migrations/20260713135253_WfsFlowTrigger.Designer.cs",
+          "CP6.Core/Migrations/20260714003924_WfsInfra.Designer.cs",
+          "CP6.Core/Migrations/20260714075419_WfsSubFlow.Designer.cs",
+          "CP6.Core/Migrations/CP6ContextModelSnapshot.cs",
+          "CP6.Entity/DomainModels/Space/Space_ConnectorStop.cs"
+        ],
+        "source": "baseline"
+      },
+      {
+        "entities": [
+          "Space_Floor"
+        ],
+        "implementationStatus": "Implemented",
+        "name": "Space_Floor",
+        "owners": [
+          "CP6.Core/Migrations/20260627105640_SpaceP1Init.Designer.cs",
+          "CP6.Core/Migrations/20260627105640_SpaceP1Init.cs",
+          "CP6.Core/Migrations/20260629135411_SpaceP4Connector.Designer.cs",
+          "CP6.Core/Migrations/20260629142700_WfsServiceTask.Designer.cs",
+          "CP6.Core/Migrations/20260629162744_SpaceP5ConnectorCost.Designer.cs",
+          "CP6.Core/Migrations/20260705172214_SpaceWave1WmsBin.Designer.cs",
+          "CP6.Core/Migrations/20260708085236_PersistDataProtectionKeys.Designer.cs",
+          "CP6.Core/Migrations/20260708093013_SysRoleTenantize.Designer.cs",
+          "CP6.Core/Migrations/20260708100345_SysRoleMenuTenantize.Designer.cs",
+          "CP6.Core/Migrations/20260710172302_SysRoleMenuUniqueIndex.Designer.cs",
+          "CP6.Core/Migrations/20260713135253_WfsFlowTrigger.Designer.cs",
+          "CP6.Core/Migrations/20260714003924_WfsInfra.Designer.cs",
+          "CP6.Core/Migrations/20260714075419_WfsSubFlow.Designer.cs",
+          "CP6.Core/Migrations/CP6ContextModelSnapshot.cs",
+          "CP6.Entity/DomainModels/Space/Space_Floor.cs"
+        ],
+        "source": "baseline"
+      },
+      {
+        "entities": [
+          "Space_Location"
+        ],
+        "implementationStatus": "Implemented",
+        "name": "Space_Location",
+        "owners": [
+          "CP6.Core/Migrations/20260627105640_SpaceP1Init.Designer.cs",
+          "CP6.Core/Migrations/20260627105640_SpaceP1Init.cs",
+          "CP6.Core/Migrations/20260629135411_SpaceP4Connector.Designer.cs",
+          "CP6.Core/Migrations/20260629142700_WfsServiceTask.Designer.cs",
+          "CP6.Core/Migrations/20260629162744_SpaceP5ConnectorCost.Designer.cs",
+          "CP6.Core/Migrations/20260705172214_SpaceWave1WmsBin.Designer.cs",
+          "CP6.Core/Migrations/20260708085236_PersistDataProtectionKeys.Designer.cs",
+          "CP6.Core/Migrations/20260708093013_SysRoleTenantize.Designer.cs",
+          "CP6.Core/Migrations/20260708100345_SysRoleMenuTenantize.Designer.cs",
+          "CP6.Core/Migrations/20260710172302_SysRoleMenuUniqueIndex.Designer.cs",
+          "CP6.Core/Migrations/20260713135253_WfsFlowTrigger.Designer.cs",
+          "CP6.Core/Migrations/20260714003924_WfsInfra.Designer.cs",
+          "CP6.Core/Migrations/20260714075419_WfsSubFlow.Designer.cs",
+          "CP6.Core/Migrations/CP6ContextModelSnapshot.cs",
+          "CP6.Entity/DomainModels/Space/Space_Location.cs"
+        ],
+        "source": "baseline"
+      },
+      {
+        "entities": [
+          "Space_Marker"
+        ],
+        "implementationStatus": "Implemented",
+        "name": "Space_Marker",
+        "owners": [
+          "CP6.Core/Migrations/20260627105640_SpaceP1Init.Designer.cs",
+          "CP6.Core/Migrations/20260627105640_SpaceP1Init.cs",
+          "CP6.Core/Migrations/20260629135411_SpaceP4Connector.Designer.cs",
+          "CP6.Core/Migrations/20260629142700_WfsServiceTask.Designer.cs",
+          "CP6.Core/Migrations/20260629162744_SpaceP5ConnectorCost.Designer.cs",
+          "CP6.Core/Migrations/20260705172214_SpaceWave1WmsBin.Designer.cs",
+          "CP6.Core/Migrations/20260708085236_PersistDataProtectionKeys.Designer.cs",
+          "CP6.Core/Migrations/20260708093013_SysRoleTenantize.Designer.cs",
+          "CP6.Core/Migrations/20260708100345_SysRoleMenuTenantize.Designer.cs",
+          "CP6.Core/Migrations/20260710172302_SysRoleMenuUniqueIndex.Designer.cs",
+          "CP6.Core/Migrations/20260713135253_WfsFlowTrigger.Designer.cs",
+          "CP6.Core/Migrations/20260714003924_WfsInfra.Designer.cs",
+          "CP6.Core/Migrations/20260714075419_WfsSubFlow.Designer.cs",
+          "CP6.Core/Migrations/CP6ContextModelSnapshot.cs",
+          "CP6.Entity/DomainModels/Space/Space_Marker.cs"
+        ],
+        "source": "baseline"
+      },
+      {
+        "entities": [
+          "Space_Rack"
+        ],
+        "implementationStatus": "Implemented",
+        "name": "Space_Rack",
+        "owners": [
+          "CP6.Core/Migrations/20260627105640_SpaceP1Init.Designer.cs",
+          "CP6.Core/Migrations/20260627105640_SpaceP1Init.cs",
+          "CP6.Core/Migrations/20260629135411_SpaceP4Connector.Designer.cs",
+          "CP6.Core/Migrations/20260629142700_WfsServiceTask.Designer.cs",
+          "CP6.Core/Migrations/20260629162744_SpaceP5ConnectorCost.Designer.cs",
+          "CP6.Core/Migrations/20260705172214_SpaceWave1WmsBin.Designer.cs",
+          "CP6.Core/Migrations/20260708085236_PersistDataProtectionKeys.Designer.cs",
+          "CP6.Core/Migrations/20260708093013_SysRoleTenantize.Designer.cs",
+          "CP6.Core/Migrations/20260708100345_SysRoleMenuTenantize.Designer.cs",
+          "CP6.Core/Migrations/20260710172302_SysRoleMenuUniqueIndex.Designer.cs",
+          "CP6.Core/Migrations/20260713135253_WfsFlowTrigger.Designer.cs",
+          "CP6.Core/Migrations/20260714003924_WfsInfra.Designer.cs",
+          "CP6.Core/Migrations/20260714075419_WfsSubFlow.Designer.cs",
+          "CP6.Core/Migrations/CP6ContextModelSnapshot.cs",
+          "CP6.Entity/DomainModels/Space/Space_Rack.cs"
+        ],
+        "source": "baseline"
+      },
+      {
+        "entities": [
+          "Space_Site"
+        ],
+        "implementationStatus": "Implemented",
+        "name": "Space_Site",
+        "owners": [
+          "CP6.Core/Migrations/20260627105640_SpaceP1Init.Designer.cs",
+          "CP6.Core/Migrations/20260627105640_SpaceP1Init.cs",
+          "CP6.Core/Migrations/20260629135411_SpaceP4Connector.Designer.cs",
+          "CP6.Core/Migrations/20260629142700_WfsServiceTask.Designer.cs",
+          "CP6.Core/Migrations/20260629162744_SpaceP5ConnectorCost.Designer.cs",
+          "CP6.Core/Migrations/20260705172214_SpaceWave1WmsBin.Designer.cs",
+          "CP6.Core/Migrations/20260708085236_PersistDataProtectionKeys.Designer.cs",
+          "CP6.Core/Migrations/20260708093013_SysRoleTenantize.Designer.cs",
+          "CP6.Core/Migrations/20260708100345_SysRoleMenuTenantize.Designer.cs",
+          "CP6.Core/Migrations/20260710172302_SysRoleMenuUniqueIndex.Designer.cs",
+          "CP6.Core/Migrations/20260713135253_WfsFlowTrigger.Designer.cs",
+          "CP6.Core/Migrations/20260714003924_WfsInfra.Designer.cs",
+          "CP6.Core/Migrations/20260714075419_WfsSubFlow.Designer.cs",
+          "CP6.Core/Migrations/CP6ContextModelSnapshot.cs",
+          "CP6.Entity/DomainModels/Space/Space_Site.cs"
+        ],
+        "source": "baseline"
+      },
+      {
+        "entities": [
+          "Space_Template"
+        ],
+        "implementationStatus": "Implemented",
+        "name": "Space_Template",
+        "owners": [
+          "CP6.Core/Migrations/20260627105640_SpaceP1Init.Designer.cs",
+          "CP6.Core/Migrations/20260627105640_SpaceP1Init.cs",
+          "CP6.Core/Migrations/20260629135411_SpaceP4Connector.Designer.cs",
+          "CP6.Core/Migrations/20260629142700_WfsServiceTask.Designer.cs",
+          "CP6.Core/Migrations/20260629162744_SpaceP5ConnectorCost.Designer.cs",
+          "CP6.Core/Migrations/20260705172214_SpaceWave1WmsBin.Designer.cs",
+          "CP6.Core/Migrations/20260708085236_PersistDataProtectionKeys.Designer.cs",
+          "CP6.Core/Migrations/20260708093013_SysRoleTenantize.Designer.cs",
+          "CP6.Core/Migrations/20260708100345_SysRoleMenuTenantize.Designer.cs",
+          "CP6.Core/Migrations/20260710172302_SysRoleMenuUniqueIndex.Designer.cs",
+          "CP6.Core/Migrations/20260713135253_WfsFlowTrigger.Designer.cs",
+          "CP6.Core/Migrations/20260714003924_WfsInfra.Designer.cs",
+          "CP6.Core/Migrations/20260714075419_WfsSubFlow.Designer.cs",
+          "CP6.Core/Migrations/CP6ContextModelSnapshot.cs",
+          "CP6.Entity/DomainModels/Space/Space_Template.cs"
+        ],
+        "source": "baseline"
+      },
+      {
+        "entities": [
+          "Space_Zone"
+        ],
+        "implementationStatus": "Implemented",
+        "name": "Space_Zone",
+        "owners": [
+          "CP6.Core/Migrations/20260627105640_SpaceP1Init.Designer.cs",
+          "CP6.Core/Migrations/20260627105640_SpaceP1Init.cs",
+          "CP6.Core/Migrations/20260629135411_SpaceP4Connector.Designer.cs",
+          "CP6.Core/Migrations/20260629142700_WfsServiceTask.Designer.cs",
+          "CP6.Core/Migrations/20260629162744_SpaceP5ConnectorCost.Designer.cs",
+          "CP6.Core/Migrations/20260705172214_SpaceWave1WmsBin.Designer.cs",
+          "CP6.Core/Migrations/20260708085236_PersistDataProtectionKeys.Designer.cs",
+          "CP6.Core/Migrations/20260708093013_SysRoleTenantize.Designer.cs",
+          "CP6.Core/Migrations/20260708100345_SysRoleMenuTenantize.Designer.cs",
+          "CP6.Core/Migrations/20260710172302_SysRoleMenuUniqueIndex.Designer.cs",
+          "CP6.Core/Migrations/20260713135253_WfsFlowTrigger.Designer.cs",
+          "CP6.Core/Migrations/20260714003924_WfsInfra.Designer.cs",
+          "CP6.Core/Migrations/20260714075419_WfsSubFlow.Designer.cs",
+          "CP6.Core/Migrations/CP6ContextModelSnapshot.cs",
+          "CP6.Entity/DomainModels/Space/Space_Zone.cs"
+        ],
+        "source": "baseline"
+      }
+    ],
+    "baselineTests": [
+      {
+        "implementationStatus": "Implemented",
+        "owner": "CP6.Tests/SignalRSpaceNotifierTests.cs",
+        "source": "baseline"
+      },
+      {
+        "implementationStatus": "Implemented",
+        "owner": "CP6.Tests/Space/ConnectorServiceTests.cs",
+        "source": "baseline"
+      },
+      {
+        "implementationStatus": "Implemented",
+        "owner": "CP6.Tests/Space/SitePickPathTests.cs",
+        "source": "baseline"
+      },
+      {
+        "implementationStatus": "Implemented",
+        "owner": "CP6.Tests/Space/SpaceAuditTests.cs",
+        "source": "baseline"
+      },
+      {
+        "implementationStatus": "Implemented",
+        "owner": "CP6.Tests/Space/SpaceBinDriftScannerTests.cs",
+        "source": "baseline"
+      },
+      {
+        "implementationStatus": "Implemented",
+        "owner": "CP6.Tests/Space/SpaceLocateControllerTests.cs",
+        "source": "baseline"
+      },
+      {
+        "implementationStatus": "Implemented",
+        "owner": "CP6.Tests/Space/SpacePermissionAttributeTests.cs",
+        "source": "baseline"
+      },
+      {
+        "implementationStatus": "Implemented",
+        "owner": "CP6.Tests/SpaceBridgeHookTests.cs",
+        "source": "baseline"
+      },
+      {
+        "implementationStatus": "Implemented",
+        "owner": "CP6.Tests/SpaceLocateServiceTests.cs",
+        "source": "baseline"
+      },
+      {
+        "implementationStatus": "Implemented",
+        "owner": "CP6.Tests/SpaceMasterServiceTests.cs",
+        "source": "baseline"
+      },
+      {
+        "implementationStatus": "Implemented",
+        "owner": "cp6.web/e2e/space-viewer.spec.ts",
+        "source": "baseline"
+      },
+      {
+        "implementationStatus": "Implemented",
+        "owner": "cp6.web/src/api/space/__tests__/codeRule.spec.ts",
+        "source": "baseline"
+      },
+      {
+        "implementationStatus": "Implemented",
+        "owner": "cp6.web/src/space-editor/command/CommandStack.spec.ts",
+        "source": "baseline"
+      },
+      {
+        "implementationStatus": "Implemented",
+        "owner": "cp6.web/src/space-editor/command/commands.spec.ts",
+        "source": "baseline"
+      },
+      {
+        "implementationStatus": "Implemented",
+        "owner": "cp6.web/src/space-editor/coords.spec.ts",
+        "source": "baseline"
+      },
+      {
+        "implementationStatus": "Implemented",
+        "owner": "cp6.web/src/space-editor/generate/arrayFootprint.spec.ts",
+        "source": "baseline"
+      },
+      {
+        "implementationStatus": "Implemented",
+        "owner": "cp6.web/src/space-editor/generate/bindMatch.spec.ts",
+        "source": "baseline"
+      },
+      {
+        "implementationStatus": "Implemented",
+        "owner": "cp6.web/src/space-editor/generate/genRack.spec.ts",
+        "source": "baseline"
+      },
+      {
+        "implementationStatus": "Implemented",
+        "owner": "cp6.web/src/space-editor/interact/collide/CollisionHint.spec.ts",
+        "source": "baseline"
+      },
+      {
+        "implementationStatus": "Implemented",
+        "owner": "cp6.web/src/space-editor/interact/rotate/rotateGeometry.spec.ts",
+        "source": "baseline"
+      },
+      {
+        "implementationStatus": "Implemented",
+        "owner": "cp6.web/src/space-editor/interact/select/lassoHit.spec.ts",
+        "source": "baseline"
+      },
+      {
+        "implementationStatus": "Implemented",
+        "owner": "cp6.web/src/space-editor/interact/snap/SnapEngine.spec.ts",
+        "source": "baseline"
+      },
+      {
+        "implementationStatus": "Implemented",
+        "owner": "cp6.web/src/space-editor/interact/tools/zoneGeom.spec.ts",
+        "source": "baseline"
+      },
+      {
+        "implementationStatus": "Implemented",
+        "owner": "cp6.web/src/space-viewer/advanced/DeviceLayer.spec.ts",
+        "source": "baseline"
+      },
+      {
+        "implementationStatus": "Implemented",
+        "owner": "cp6.web/src/space-viewer/advanced/PathAnimator.spec.ts",
+        "source": "baseline"
+      },
+      {
+        "implementationStatus": "Implemented",
+        "owner": "cp6.web/src/space-viewer/advanced/PickPathPlanner.spec.ts",
+        "source": "baseline"
+      },
+      {
+        "implementationStatus": "Implemented",
+        "owner": "cp6.web/src/space-viewer/advanced/WorkloadHeatmap.spec.ts",
+        "source": "baseline"
+      },
+      {
+        "implementationStatus": "Implemented",
+        "owner": "cp6.web/src/space-viewer/advanced/cost.spec.ts",
+        "source": "baseline"
+      },
+      {
+        "implementationStatus": "Implemented",
+        "owner": "cp6.web/src/space-viewer/advanced/multiFloor.spec.ts",
+        "source": "baseline"
+      },
+      {
+        "implementationStatus": "Implemented",
+        "owner": "cp6.web/src/space-viewer/advanced/pathModel.spec.ts",
+        "source": "baseline"
+      },
+      {
+        "implementationStatus": "Implemented",
+        "owner": "cp6.web/src/space-viewer/advanced/planMultiFloor.spec.ts",
+        "source": "baseline"
+      },
+      {
+        "implementationStatus": "Implemented",
+        "owner": "cp6.web/src/space-viewer/advanced/routeOptimize.spec.ts",
+        "source": "baseline"
+      },
+      {
+        "implementationStatus": "Implemented",
+        "owner": "cp6.web/src/space-viewer/advanced/segmentIntersect.spec.ts",
+        "source": "baseline"
+      },
+      {
+        "implementationStatus": "Implemented",
+        "owner": "cp6.web/src/space-viewer/advanced/workloadModel.spec.ts",
+        "source": "baseline"
+      },
+      {
+        "implementationStatus": "Implemented",
+        "owner": "cp6.web/src/space-viewer/build/InstancedBuckets.spec.ts",
+        "source": "baseline"
+      },
+      {
+        "implementationStatus": "Implemented",
+        "owner": "cp6.web/src/space-viewer/core/SceneRoot.spec.ts",
+        "source": "baseline"
+      },
+      {
+        "implementationStatus": "Implemented",
+        "owner": "cp6.web/src/space-viewer/cull/FrustumCuller.spec.ts",
+        "source": "baseline"
+      },
+      {
+        "implementationStatus": "Implemented",
+        "owner": "cp6.web/src/space-viewer/cull/LodController.spec.ts",
+        "source": "baseline"
+      },
+      {
+        "implementationStatus": "Implemented",
+        "owner": "cp6.web/src/space-viewer/labels/LabelVirtualizer.spec.ts",
+        "source": "baseline"
+      },
+      {
+        "implementationStatus": "Implemented",
+        "owner": "cp6.web/src/space-viewer/navigate/CameraController.spec.ts",
+        "source": "baseline"
+      },
+      {
+        "implementationStatus": "Implemented",
+        "owner": "cp6.web/src/space-viewer/navigate/Picker.spec.ts",
+        "source": "baseline"
+      },
+      {
+        "implementationStatus": "Implemented",
+        "owner": "cp6.web/src/space-viewer/overlay/StockOverlay.spec.ts",
+        "source": "baseline"
+      },
+      {
+        "implementationStatus": "Implemented",
+        "owner": "cp6.web/src/space-viewer/overlay/stockModel.spec.ts",
+        "source": "baseline"
+      },
+      {
+        "implementationStatus": "Implemented",
+        "owner": "cp6.web/src/space-viewer/stacked/StackedViewer.spec.ts",
+        "source": "baseline"
+      },
+      {
+        "implementationStatus": "Implemented",
+        "owner": "cp6.web/src/stores/spaceEditor.spec.ts",
+        "source": "baseline"
+      },
+      {
+        "implementationStatus": "Implemented",
+        "owner": "cp6.web/src/views/space/__tests__/SpaceHomeView.spec.ts",
+        "source": "baseline"
+      },
+      {
+        "implementationStatus": "Implemented",
+        "owner": "cp6.web/src/views/space/editor/__tests__/PropertiesPanel.spec.ts",
+        "source": "baseline"
+      },
+      {
+        "implementationStatus": "Implemented",
+        "owner": "cp6.web/src/views/space/lifecycle/__tests__/SpaceCodeRuleView.spec.ts",
+        "source": "baseline"
+      },
+      {
+        "implementationStatus": "Implemented",
+        "owner": "cp6.web/src/views/space/lifecycle/__tests__/SpaceEventsView.spec.ts",
+        "source": "baseline"
+      },
+      {
+        "implementationStatus": "Implemented",
+        "owner": "cp6.web/src/views/space/lifecycle/__tests__/SpacePublishView.spec.ts",
+        "source": "baseline"
+      },
+      {
+        "implementationStatus": "Implemented",
+        "owner": "cp6.web/src/views/space/lifecycle/__tests__/codeRuleValidate.spec.ts",
+        "source": "baseline"
+      },
+      {
+        "implementationStatus": "Implemented",
+        "owner": "cp6.web/src/views/space/master/__tests__/SpaceFloorView.spec.ts",
+        "source": "baseline"
+      },
+      {
+        "implementationStatus": "Implemented",
+        "owner": "cp6.web/src/views/space/master/__tests__/SpaceSiteView.spec.ts",
+        "source": "baseline"
+      }
+    ],
+    "candidateEndpoints": [
+      {
+        "authorized": true,
+        "implementationStatus": "Partial",
+        "method": "GET",
+        "owner": "CP6.WebApi/Controllers/Space/SpaceDesignV1Controller.cs#GetCutover",
+        "permission": null,
+        "route": "/api/space/design/v1/cutovers/{operationId:guid}",
+        "source": "candidate"
+      },
+      {
+        "authorized": true,
+        "implementationStatus": "Partial",
+        "method": "POST",
+        "owner": "CP6.WebApi/Controllers/Space/SpaceDesignV1Controller.cs#ReopenLegacy",
+        "permission": "space-floor:edit",
+        "route": "/api/space/design/v1/cutovers/{operationId:guid}/reopen-legacy",
+        "source": "candidate"
+      },
+      {
+        "authorized": true,
+        "implementationStatus": "Partial",
+        "method": "GET",
+        "owner": "CP6.WebApi/Controllers/Space/SpaceDesignV1Controller.cs#GetJob",
+        "permission": null,
+        "route": "/api/space/design/v1/jobs/{jobId:guid}",
+        "source": "candidate"
+      },
+      {
+        "authorized": true,
+        "implementationStatus": "Partial",
+        "method": "POST",
+        "owner": "CP6.WebApi/Controllers/Space/SpaceDesignV1Controller.cs#StartCutover",
+        "permission": "space-floor:edit",
+        "route": "/api/space/design/v1/sites/{siteId:guid}/cutovers",
+        "source": "candidate"
+      },
+      {
+        "authorized": true,
+        "implementationStatus": "Partial",
+        "method": "GET",
+        "owner": "CP6.WebApi/Controllers/Space/SpaceDesignV1Controller.cs#GetModel",
+        "permission": null,
+        "route": "/api/space/design/v1/sites/{siteId:guid}/model",
+        "source": "candidate"
+      },
+      {
+        "authorized": true,
+        "implementationStatus": "Partial",
+        "method": "POST",
+        "owner": "CP6.WebApi/Controllers/Space/SpaceDesignV1Controller.cs#CreateVersion",
+        "permission": "space-floor:edit",
+        "route": "/api/space/design/v1/sites/{siteId:guid}/versions",
+        "source": "candidate"
+      },
+      {
+        "authorized": true,
+        "implementationStatus": "Partial",
+        "method": "GET",
+        "owner": "CP6.WebApi/Controllers/Space/SpaceDesignV1Controller.cs#GetVersion",
+        "permission": null,
+        "route": "/api/space/design/v1/versions/{versionId:guid}",
+        "source": "candidate"
+      },
+      {
+        "authorized": true,
+        "implementationStatus": "Partial",
+        "method": "GET",
+        "owner": "CP6.WebApi/Controllers/Space/SpaceDesignV1Controller.cs#GetChanges",
+        "permission": null,
+        "route": "/api/space/design/v1/versions/{versionId:guid}/floors/{floorLogicalId:guid}/changes",
+        "source": "candidate"
+      },
+      {
+        "authorized": true,
+        "implementationStatus": "Partial",
+        "method": "POST",
+        "owner": "CP6.WebApi/Controllers/Space/SpaceDesignV1Controller.cs#ApplyCommands",
+        "permission": "space-floor:edit",
+        "route": "/api/space/design/v1/versions/{versionId:guid}/floors/{floorLogicalId:guid}/commands",
+        "source": "candidate"
+      },
+      {
+        "authorized": true,
+        "implementationStatus": "Partial",
+        "method": "POST",
+        "owner": "CP6.WebApi/Controllers/Space/SpaceDesignV1Controller.cs#AcquireLease",
+        "permission": "space-floor:edit",
+        "route": "/api/space/design/v1/versions/{versionId:guid}/floors/{floorLogicalId:guid}/lease",
+        "source": "candidate"
+      },
+      {
+        "authorized": true,
+        "implementationStatus": "Partial",
+        "method": "DELETE",
+        "owner": "CP6.WebApi/Controllers/Space/SpaceDesignV1Controller.cs#ReleaseLease",
+        "permission": "space-floor:edit",
+        "route": "/api/space/design/v1/versions/{versionId:guid}/floors/{floorLogicalId:guid}/lease/{leaseId:guid}",
+        "source": "candidate"
+      },
+      {
+        "authorized": true,
+        "implementationStatus": "Partial",
+        "method": "PUT",
+        "owner": "CP6.WebApi/Controllers/Space/SpaceDesignV1Controller.cs#RenewLease",
+        "permission": "space-floor:edit",
+        "route": "/api/space/design/v1/versions/{versionId:guid}/floors/{floorLogicalId:guid}/lease/{leaseId:guid}",
+        "source": "candidate"
+      },
+      {
+        "authorized": true,
+        "implementationStatus": "Partial",
+        "method": "POST",
+        "owner": "CP6.WebApi/Controllers/Space/SpaceDesignV1Controller.cs#StartPublish",
+        "permission": "space-floor:edit",
+        "route": "/api/space/design/v1/versions/{versionId:guid}/publications",
+        "source": "candidate"
+      },
+      {
+        "authorized": true,
+        "implementationStatus": "Partial",
+        "method": "POST",
+        "owner": "CP6.WebApi/Controllers/Space/SpaceDesignV1Controller.cs#StartReconciliation",
+        "permission": "space-floor:edit",
+        "route": "/api/space/design/v1/versions/{versionId:guid}/reconciliations",
+        "source": "candidate"
+      },
+      {
+        "authorized": true,
+        "implementationStatus": "Partial",
+        "method": "GET",
+        "owner": "CP6.WebApi/Controllers/Space/SpaceDesignV1Controller.cs#GetScene",
+        "permission": null,
+        "route": "/api/space/design/v1/versions/{versionId:guid}/scene",
+        "source": "candidate"
+      },
+      {
+        "authorized": true,
+        "implementationStatus": "Partial",
+        "method": "POST",
+        "owner": "CP6.WebApi/Controllers/Space/SpaceDesignV1Controller.cs#StartValidation",
+        "permission": "space-floor:edit",
+        "route": "/api/space/design/v1/versions/{versionId:guid}/validations",
+        "source": "candidate"
+      },
+      {
+        "authorized": true,
+        "implementationStatus": "Partial",
+        "method": "GET",
+        "owner": "CP6.WebApi/Controllers/Space/SpaceDesignV1Controller.cs#GetLatestValidation",
+        "permission": null,
+        "route": "/api/space/design/v1/versions/{versionId:guid}/validations/latest",
+        "source": "candidate"
+      }
+    ],
+    "candidateFiles": [
+      {
+        "implementationStatus": "Partial",
+        "path": ".config/dotnet-tools.json",
+        "status": "??"
+      },
+      {
+        "implementationStatus": "Partial",
+        "path": "CP6.Space.AcceptanceTests/CP6.Space.AcceptanceTests.csproj",
+        "status": "??"
+      },
+      {
+        "implementationStatus": "Partial",
+        "path": "CP6.Space.AcceptanceTests/GlobalUsings.cs",
+        "status": "??"
+      },
+      {
+        "implementationStatus": "Partial",
+        "path": "CP6.Space.AcceptanceTests/SpaceApiContractTests.cs",
+        "status": "??"
+      },
+      {
+        "implementationStatus": "Partial",
+        "path": "CP6.Space.Application/Abstractions.cs",
+        "status": "??"
+      },
+      {
+        "implementationStatus": "Partial",
+        "path": "CP6.Space.Application/CP6.Space.Application.csproj",
+        "status": "??"
+      },
+      {
+        "implementationStatus": "Partial",
+        "path": "CP6.Space.Application/SpaceDesignService.cs",
+        "status": "??"
+      },
+      {
+        "implementationStatus": "Partial",
+        "path": "CP6.Space.Application/SpaceHashing.cs",
+        "status": "??"
+      },
+      {
+        "implementationStatus": "Partial",
+        "path": "CP6.Space.Application/SpaceProblemException.cs",
+        "status": "??"
+      },
+      {
+        "implementationStatus": "Partial",
+        "path": "CP6.Space.Application/SpaceQueryAbstractions.cs",
+        "status": "??"
+      },
+      {
+        "implementationStatus": "Partial",
+        "path": "CP6.Space.Application/SystemClock.cs",
+        "status": "??"
+      },
+      {
+        "implementationStatus": "Partial",
+        "path": "CP6.Space.Client/CP6.Space.Client.csproj",
+        "status": "??"
+      },
+      {
+        "implementationStatus": "Partial",
+        "path": "CP6.Space.Client/SpaceDesignClient.cs",
+        "status": "??"
+      },
+      {
+        "implementationStatus": "Partial",
+        "path": "CP6.Space.Contracts/CP6.Space.Contracts.csproj",
+        "status": "??"
+      },
+      {
+        "implementationStatus": "Partial",
+        "path": "CP6.Space.Contracts/Commands.cs",
+        "status": "??"
+      },
+      {
+        "implementationStatus": "Partial",
+        "path": "CP6.Space.Contracts/Models.cs",
+        "status": "??"
+      },
+      {
+        "implementationStatus": "Partial",
+        "path": "CP6.Space.Contracts/SpaceErrors.cs",
+        "status": "??"
+      },
+      {
+        "implementationStatus": "Partial",
+        "path": "CP6.Space.Domain/CP6.Space.Domain.csproj",
+        "status": "??"
+      },
+      {
+        "implementationStatus": "Partial",
+        "path": "CP6.Space.Domain/Editing.cs",
+        "status": "??"
+      },
+      {
+        "implementationStatus": "Partial",
+        "path": "CP6.Space.Domain/Operations.cs",
+        "status": "??"
+      },
+      {
+        "implementationStatus": "Partial",
+        "path": "CP6.Space.Domain/Revisions.cs",
+        "status": "??"
+      },
+      {
+        "implementationStatus": "Partial",
+        "path": "CP6.Space.Domain/SpaceEnums.cs",
+        "status": "??"
+      },
+      {
+        "implementationStatus": "Partial",
+        "path": "CP6.Space.Domain/SpaceModel.cs",
+        "status": "??"
+      },
+      {
+        "implementationStatus": "Partial",
+        "path": "CP6.Space.Domain/SpaceModelVersion.cs",
+        "status": "??"
+      },
+      {
+        "implementationStatus": "Partial",
+        "path": "CP6.Space.Domain/SpaceTenantEntity.cs",
+        "status": "??"
+      },
+      {
+        "implementationStatus": "Partial",
+        "path": "CP6.Space.Infrastructure/CP6.Space.Infrastructure.csproj",
+        "status": "??"
+      },
+      {
+        "implementationStatus": "Partial",
+        "path": "CP6.Space.Infrastructure/EfSpaceDataStore.cs",
+        "status": "??"
+      },
+      {
+        "implementationStatus": "Partial",
+        "path": "CP6.Space.Infrastructure/LegacySpaceBootstrapExecutor.cs",
+        "status": "??"
+      },
+      {
+        "implementationStatus": "Partial",
+        "path": "CP6.Space.Infrastructure/LegacySpaceWriteGuardInterceptor.cs",
+        "status": "??"
+      },
+      {
+        "implementationStatus": "Partial",
+        "path": "CP6.Space.Infrastructure/Migrations/20260724005335_SpaceVolume1Initial.Designer.cs",
+        "status": "??"
+      },
+      {
+        "implementationStatus": "Partial",
+        "path": "CP6.Space.Infrastructure/Migrations/20260724005335_SpaceVolume1Initial.cs",
+        "status": "??"
+      },
+      {
+        "implementationStatus": "Partial",
+        "path": "CP6.Space.Infrastructure/Migrations/20260724005826_SpaceVolume1IntegrityIndexes.Designer.cs",
+        "status": "??"
+      },
+      {
+        "implementationStatus": "Partial",
+        "path": "CP6.Space.Infrastructure/Migrations/20260724005826_SpaceVolume1IntegrityIndexes.cs",
+        "status": "??"
+      },
+      {
+        "implementationStatus": "Partial",
+        "path": "CP6.Space.Infrastructure/Migrations/20260724010202_SpaceVolume1ValidationPublishing.Designer.cs",
+        "status": "??"
+      },
+      {
+        "implementationStatus": "Partial",
+        "path": "CP6.Space.Infrastructure/Migrations/20260724010202_SpaceVolume1ValidationPublishing.cs",
+        "status": "??"
+      },
+      {
+        "implementationStatus": "Partial",
+        "path": "CP6.Space.Infrastructure/Migrations/20260724010503_SpaceVolume1TopologyIndexes.Designer.cs",
+        "status": "??"
+      },
+      {
+        "implementationStatus": "Partial",
+        "path": "CP6.Space.Infrastructure/Migrations/20260724010503_SpaceVolume1TopologyIndexes.cs",
+        "status": "??"
+      },
+      {
+        "implementationStatus": "Partial",
+        "path": "CP6.Space.Infrastructure/Migrations/SpaceContextModelSnapshot.cs",
+        "status": "??"
+      },
+      {
+        "implementationStatus": "Partial",
+        "path": "CP6.Space.Infrastructure/SpaceContentHashCalculator.cs",
+        "status": "??"
+      },
+      {
+        "implementationStatus": "Partial",
+        "path": "CP6.Space.Infrastructure/SpaceContext.cs",
+        "status": "??"
+      },
+      {
+        "implementationStatus": "Partial",
+        "path": "CP6.Space.Infrastructure/SpaceContextDesignFactory.cs",
+        "status": "??"
+      },
+      {
+        "implementationStatus": "Partial",
+        "path": "CP6.Space.Infrastructure/SpaceExecutionContexts.cs",
+        "status": "??"
+      },
+      {
+        "implementationStatus": "Partial",
+        "path": "CP6.Space.Infrastructure/SpaceInfrastructureRegistration.cs",
+        "status": "??"
+      },
+      {
+        "implementationStatus": "Partial",
+        "path": "CP6.Space.Infrastructure/SpaceJobRunner.cs",
+        "status": "??"
+      },
+      {
+        "implementationStatus": "Partial",
+        "path": "CP6.Space.Infrastructure/SpaceOutboxDispatcher.cs",
+        "status": "??"
+      },
+      {
+        "implementationStatus": "Partial",
+        "path": "CP6.Space.Infrastructure/SpacePublishExecutor.cs",
+        "status": "??"
+      },
+      {
+        "implementationStatus": "Partial",
+        "path": "CP6.Space.Infrastructure/SpaceQueryService.cs",
+        "status": "??"
+      },
+      {
+        "implementationStatus": "Partial",
+        "path": "CP6.Space.Infrastructure/SpaceRuntimeMaterializer.cs",
+        "status": "??"
+      },
+      {
+        "implementationStatus": "Partial",
+        "path": "CP6.Space.Infrastructure/SpaceValidationExecutor.cs",
+        "status": "??"
+      },
+      {
+        "implementationStatus": "Partial",
+        "path": "CP6.Space.Infrastructure/SpaceVersionCloneExecutor.cs",
+        "status": "??"
+      },
+      {
+        "implementationStatus": "Partial",
+        "path": "CP6.Space.IntegrationTests/CP6.Space.IntegrationTests.csproj",
+        "status": "??"
+      },
+      {
+        "implementationStatus": "Partial",
+        "path": "CP6.Space.IntegrationTests/GlobalUsings.cs",
+        "status": "??"
+      },
+      {
+        "implementationStatus": "Partial",
+        "path": "CP6.Space.IntegrationTests/SpaceCommandLedgerTests.cs",
+        "status": "??"
+      },
+      {
+        "implementationStatus": "Partial",
+        "path": "CP6.Space.IntegrationTests/SpaceContextTenantTests.cs",
+        "status": "??"
+      },
+      {
+        "implementationStatus": "Partial",
+        "path": "CP6.Space.IntegrationTests/SpacePublishLoopTests.cs",
+        "status": "??"
+      },
+      {
+        "implementationStatus": "Partial",
+        "path": "CP6.Space.UnitTests/CP6.Space.UnitTests.csproj",
+        "status": "??"
+      },
+      {
+        "implementationStatus": "Partial",
+        "path": "CP6.Space.UnitTests/GlobalUsings.cs",
+        "status": "??"
+      },
+      {
+        "implementationStatus": "Partial",
+        "path": "CP6.Space.UnitTests/SpaceContractTests.cs",
+        "status": "??"
+      },
+      {
+        "implementationStatus": "Partial",
+        "path": "CP6.Space.UnitTests/SpaceDomainStateTests.cs",
+        "status": "??"
+      },
+      {
+        "implementationStatus": "Partial",
+        "path": "CP6.Space.Worker/CP6.Space.Worker.csproj",
+        "status": "??"
+      },
+      {
+        "implementationStatus": "Partial",
+        "path": "CP6.Space.Worker/Program.cs",
+        "status": "??"
+      },
+      {
+        "implementationStatus": "Partial",
+        "path": "CP6.Space.Worker/SpaceJobWorker.cs",
+        "status": "??"
+      },
+      {
+        "implementationStatus": "Partial",
+        "path": "CP6.Space.Worker/appsettings.json",
+        "status": "??"
+      },
+      {
+        "implementationStatus": "Partial",
+        "path": "CP6.Tests/Space/SpacePermissionAttributeTests.cs",
+        "status": " M"
+      },
+      {
+        "implementationStatus": "Partial",
+        "path": "CP6.WebApi/CP6.WebApi.csproj",
+        "status": " M"
+      },
+      {
+        "implementationStatus": "Partial",
+        "path": "CP6.WebApi/Controllers/Space/SpaceDesignV1Controller.cs",
+        "status": "??"
+      },
+      {
+        "implementationStatus": "Partial",
+        "path": "CP6.WebApi/Middleware/SpaceProblemDetailsMiddleware.cs",
+        "status": "??"
+      },
+      {
+        "implementationStatus": "Partial",
+        "path": "CP6.WebApi/Program.cs",
+        "status": " M"
+      },
+      {
+        "implementationStatus": "Partial",
+        "path": "CP6.slnx",
+        "status": " M"
+      },
+      {
+        "implementationStatus": "Partial",
+        "path": "docs/space-v1/API.md",
+        "status": "??"
+      },
+      {
+        "implementationStatus": "Partial",
+        "path": "docs/space-v1/README.md",
+        "status": "??"
+      },
+      {
+        "implementationStatus": "Partial",
+        "path": "sdk/typescript/space-design-v1/package-lock.json",
+        "status": "??"
+      },
+      {
+        "implementationStatus": "Partial",
+        "path": "sdk/typescript/space-design-v1/package.json",
+        "status": "??"
+      },
+      {
+        "implementationStatus": "Partial",
+        "path": "sdk/typescript/space-design-v1/src/contracts.ts",
+        "status": "??"
+      },
+      {
+        "implementationStatus": "Partial",
+        "path": "sdk/typescript/space-design-v1/src/index.ts",
+        "status": "??"
+      },
+      {
+        "implementationStatus": "Partial",
+        "path": "sdk/typescript/space-design-v1/src/spaceDesignClient.ts",
+        "status": "??"
+      },
+      {
+        "implementationStatus": "Partial",
+        "path": "sdk/typescript/space-design-v1/tsconfig.json",
+        "status": "??"
+      },
+      {
+        "implementationStatus": "Partial",
+        "path": "tools/space-sdk/generate.ps1",
+        "status": "??"
+      },
+      {
+        "implementationStatus": "Partial",
+        "path": "tools/space-sdk/nswag.json",
+        "status": "??"
+      }
+    ],
+    "candidateTables": [
+      {
+        "entities": [],
+        "implementationStatus": "Partial",
+        "name": "Space_AisleRevisions",
+        "owners": [
+          "CP6.Space.Infrastructure/Migrations/20260724005335_SpaceVolume1Initial.Designer.cs",
+          "CP6.Space.Infrastructure/Migrations/20260724005335_SpaceVolume1Initial.cs",
+          "CP6.Space.Infrastructure/Migrations/20260724005826_SpaceVolume1IntegrityIndexes.Designer.cs",
+          "CP6.Space.Infrastructure/Migrations/20260724010202_SpaceVolume1ValidationPublishing.Designer.cs",
+          "CP6.Space.Infrastructure/Migrations/20260724010503_SpaceVolume1TopologyIndexes.Designer.cs",
+          "CP6.Space.Infrastructure/Migrations/SpaceContextModelSnapshot.cs",
+          "CP6.Space.Infrastructure/SpaceContext.cs"
+        ],
+        "source": "candidate"
+      },
+      {
+        "entities": [],
+        "implementationStatus": "Partial",
+        "name": "Space_AuditEvents",
+        "owners": [
+          "CP6.Space.Infrastructure/Migrations/20260724005335_SpaceVolume1Initial.Designer.cs",
+          "CP6.Space.Infrastructure/Migrations/20260724005335_SpaceVolume1Initial.cs",
+          "CP6.Space.Infrastructure/Migrations/20260724005826_SpaceVolume1IntegrityIndexes.Designer.cs",
+          "CP6.Space.Infrastructure/Migrations/20260724010202_SpaceVolume1ValidationPublishing.Designer.cs",
+          "CP6.Space.Infrastructure/Migrations/20260724010503_SpaceVolume1TopologyIndexes.Designer.cs",
+          "CP6.Space.Infrastructure/Migrations/SpaceContextModelSnapshot.cs",
+          "CP6.Space.Infrastructure/SpaceContext.cs"
+        ],
+        "source": "candidate"
+      },
+      {
+        "entities": [],
+        "implementationStatus": "Partial",
+        "name": "Space_CommandBatches",
+        "owners": [
+          "CP6.Space.Infrastructure/Migrations/20260724005335_SpaceVolume1Initial.Designer.cs",
+          "CP6.Space.Infrastructure/Migrations/20260724005335_SpaceVolume1Initial.cs",
+          "CP6.Space.Infrastructure/Migrations/20260724005826_SpaceVolume1IntegrityIndexes.Designer.cs",
+          "CP6.Space.Infrastructure/Migrations/20260724010202_SpaceVolume1ValidationPublishing.Designer.cs",
+          "CP6.Space.Infrastructure/Migrations/20260724010503_SpaceVolume1TopologyIndexes.Designer.cs",
+          "CP6.Space.Infrastructure/Migrations/SpaceContextModelSnapshot.cs",
+          "CP6.Space.Infrastructure/SpaceContext.cs"
+        ],
+        "source": "candidate"
+      },
+      {
+        "entities": [],
+        "implementationStatus": "Partial",
+        "name": "Space_CommandRecords",
+        "owners": [
+          "CP6.Space.Infrastructure/Migrations/20260724005335_SpaceVolume1Initial.Designer.cs",
+          "CP6.Space.Infrastructure/Migrations/20260724005335_SpaceVolume1Initial.cs",
+          "CP6.Space.Infrastructure/Migrations/20260724005826_SpaceVolume1IntegrityIndexes.Designer.cs",
+          "CP6.Space.Infrastructure/Migrations/20260724010202_SpaceVolume1ValidationPublishing.Designer.cs",
+          "CP6.Space.Infrastructure/Migrations/20260724010503_SpaceVolume1TopologyIndexes.Designer.cs",
+          "CP6.Space.Infrastructure/Migrations/SpaceContextModelSnapshot.cs",
+          "CP6.Space.Infrastructure/SpaceContext.cs"
+        ],
+        "source": "candidate"
+      },
+      {
+        "entities": [],
+        "implementationStatus": "Partial",
+        "name": "Space_CutoverAttempts",
+        "owners": [
+          "CP6.Space.Infrastructure/Migrations/20260724005335_SpaceVolume1Initial.Designer.cs",
+          "CP6.Space.Infrastructure/Migrations/20260724005335_SpaceVolume1Initial.cs",
+          "CP6.Space.Infrastructure/Migrations/20260724005826_SpaceVolume1IntegrityIndexes.Designer.cs",
+          "CP6.Space.Infrastructure/Migrations/20260724010202_SpaceVolume1ValidationPublishing.Designer.cs",
+          "CP6.Space.Infrastructure/Migrations/20260724010503_SpaceVolume1TopologyIndexes.Designer.cs",
+          "CP6.Space.Infrastructure/Migrations/SpaceContextModelSnapshot.cs",
+          "CP6.Space.Infrastructure/SpaceContext.cs"
+        ],
+        "source": "candidate"
+      },
+      {
+        "entities": [],
+        "implementationStatus": "Partial",
+        "name": "Space_CutoverEvidence",
+        "owners": [
+          "CP6.Space.Infrastructure/Migrations/20260724005335_SpaceVolume1Initial.Designer.cs",
+          "CP6.Space.Infrastructure/Migrations/20260724005335_SpaceVolume1Initial.cs",
+          "CP6.Space.Infrastructure/Migrations/20260724005826_SpaceVolume1IntegrityIndexes.Designer.cs",
+          "CP6.Space.Infrastructure/Migrations/20260724010202_SpaceVolume1ValidationPublishing.Designer.cs",
+          "CP6.Space.Infrastructure/Migrations/20260724010503_SpaceVolume1TopologyIndexes.Designer.cs",
+          "CP6.Space.Infrastructure/Migrations/SpaceContextModelSnapshot.cs",
+          "CP6.Space.Infrastructure/SpaceContext.cs"
+        ],
+        "source": "candidate"
+      },
+      {
+        "entities": [],
+        "implementationStatus": "Partial",
+        "name": "Space_EditLeases",
+        "owners": [
+          "CP6.Space.Infrastructure/Migrations/20260724005335_SpaceVolume1Initial.Designer.cs",
+          "CP6.Space.Infrastructure/Migrations/20260724005335_SpaceVolume1Initial.cs",
+          "CP6.Space.Infrastructure/Migrations/20260724005826_SpaceVolume1IntegrityIndexes.Designer.cs",
+          "CP6.Space.Infrastructure/Migrations/20260724010202_SpaceVolume1ValidationPublishing.Designer.cs",
+          "CP6.Space.Infrastructure/Migrations/20260724010503_SpaceVolume1TopologyIndexes.Designer.cs",
+          "CP6.Space.Infrastructure/Migrations/SpaceContextModelSnapshot.cs",
+          "CP6.Space.Infrastructure/SpaceContext.cs"
+        ],
+        "source": "candidate"
+      },
+      {
+        "entities": [],
+        "implementationStatus": "Partial",
+        "name": "Space_ElementAttributes",
+        "owners": [
+          "CP6.Space.Infrastructure/Migrations/20260724005335_SpaceVolume1Initial.Designer.cs",
+          "CP6.Space.Infrastructure/Migrations/20260724005335_SpaceVolume1Initial.cs",
+          "CP6.Space.Infrastructure/Migrations/20260724005826_SpaceVolume1IntegrityIndexes.Designer.cs",
+          "CP6.Space.Infrastructure/Migrations/20260724010202_SpaceVolume1ValidationPublishing.Designer.cs",
+          "CP6.Space.Infrastructure/Migrations/20260724010503_SpaceVolume1TopologyIndexes.Designer.cs",
+          "CP6.Space.Infrastructure/Migrations/SpaceContextModelSnapshot.cs",
+          "CP6.Space.Infrastructure/SpaceContext.cs"
+        ],
+        "source": "candidate"
+      },
+      {
+        "entities": [],
+        "implementationStatus": "Partial",
+        "name": "Space_ElementRevisions",
+        "owners": [
+          "CP6.Space.Infrastructure/Migrations/20260724005335_SpaceVolume1Initial.Designer.cs",
+          "CP6.Space.Infrastructure/Migrations/20260724005335_SpaceVolume1Initial.cs",
+          "CP6.Space.Infrastructure/Migrations/20260724005826_SpaceVolume1IntegrityIndexes.Designer.cs",
+          "CP6.Space.Infrastructure/Migrations/20260724010202_SpaceVolume1ValidationPublishing.Designer.cs",
+          "CP6.Space.Infrastructure/Migrations/20260724010503_SpaceVolume1TopologyIndexes.Designer.cs",
+          "CP6.Space.Infrastructure/Migrations/SpaceContextModelSnapshot.cs",
+          "CP6.Space.Infrastructure/SpaceContext.cs"
+        ],
+        "source": "candidate"
+      },
+      {
+        "entities": [],
+        "implementationStatus": "Partial",
+        "name": "Space_FloorRevisions",
+        "owners": [
+          "CP6.Space.Infrastructure/Migrations/20260724005335_SpaceVolume1Initial.Designer.cs",
+          "CP6.Space.Infrastructure/Migrations/20260724005335_SpaceVolume1Initial.cs",
+          "CP6.Space.Infrastructure/Migrations/20260724005826_SpaceVolume1IntegrityIndexes.Designer.cs",
+          "CP6.Space.Infrastructure/Migrations/20260724010202_SpaceVolume1ValidationPublishing.Designer.cs",
+          "CP6.Space.Infrastructure/Migrations/20260724010503_SpaceVolume1TopologyIndexes.Designer.cs",
+          "CP6.Space.Infrastructure/Migrations/SpaceContextModelSnapshot.cs",
+          "CP6.Space.Infrastructure/SpaceContext.cs"
+        ],
+        "source": "candidate"
+      },
+      {
+        "entities": [],
+        "implementationStatus": "Partial",
+        "name": "Space_IdempotencyRecords",
+        "owners": [
+          "CP6.Space.Infrastructure/Migrations/20260724005335_SpaceVolume1Initial.Designer.cs",
+          "CP6.Space.Infrastructure/Migrations/20260724005335_SpaceVolume1Initial.cs",
+          "CP6.Space.Infrastructure/Migrations/20260724005826_SpaceVolume1IntegrityIndexes.Designer.cs",
+          "CP6.Space.Infrastructure/Migrations/20260724010202_SpaceVolume1ValidationPublishing.Designer.cs",
+          "CP6.Space.Infrastructure/Migrations/20260724010503_SpaceVolume1TopologyIndexes.Designer.cs",
+          "CP6.Space.Infrastructure/Migrations/SpaceContextModelSnapshot.cs",
+          "CP6.Space.Infrastructure/SpaceContext.cs"
+        ],
+        "source": "candidate"
+      },
+      {
+        "entities": [],
+        "implementationStatus": "Partial",
+        "name": "Space_JobAttempts",
+        "owners": [
+          "CP6.Space.Infrastructure/Migrations/20260724005335_SpaceVolume1Initial.Designer.cs",
+          "CP6.Space.Infrastructure/Migrations/20260724005335_SpaceVolume1Initial.cs",
+          "CP6.Space.Infrastructure/Migrations/20260724005826_SpaceVolume1IntegrityIndexes.Designer.cs",
+          "CP6.Space.Infrastructure/Migrations/20260724010202_SpaceVolume1ValidationPublishing.Designer.cs",
+          "CP6.Space.Infrastructure/Migrations/20260724010503_SpaceVolume1TopologyIndexes.Designer.cs",
+          "CP6.Space.Infrastructure/Migrations/SpaceContextModelSnapshot.cs",
+          "CP6.Space.Infrastructure/SpaceContext.cs"
+        ],
+        "source": "candidate"
+      },
+      {
+        "entities": [],
+        "implementationStatus": "Partial",
+        "name": "Space_Jobs",
+        "owners": [
+          "CP6.Space.Infrastructure/Migrations/20260724005335_SpaceVolume1Initial.Designer.cs",
+          "CP6.Space.Infrastructure/Migrations/20260724005335_SpaceVolume1Initial.cs",
+          "CP6.Space.Infrastructure/Migrations/20260724005826_SpaceVolume1IntegrityIndexes.Designer.cs",
+          "CP6.Space.Infrastructure/Migrations/20260724010202_SpaceVolume1ValidationPublishing.Designer.cs",
+          "CP6.Space.Infrastructure/Migrations/20260724010503_SpaceVolume1TopologyIndexes.Designer.cs",
+          "CP6.Space.Infrastructure/Migrations/SpaceContextModelSnapshot.cs",
+          "CP6.Space.Infrastructure/SpaceContext.cs"
+        ],
+        "source": "candidate"
+      },
+      {
+        "entities": [],
+        "implementationStatus": "Partial",
+        "name": "Space_JobSteps",
+        "owners": [
+          "CP6.Space.Infrastructure/Migrations/20260724005335_SpaceVolume1Initial.Designer.cs",
+          "CP6.Space.Infrastructure/Migrations/20260724005335_SpaceVolume1Initial.cs",
+          "CP6.Space.Infrastructure/Migrations/20260724005826_SpaceVolume1IntegrityIndexes.Designer.cs",
+          "CP6.Space.Infrastructure/Migrations/20260724010202_SpaceVolume1ValidationPublishing.Designer.cs",
+          "CP6.Space.Infrastructure/Migrations/20260724010503_SpaceVolume1TopologyIndexes.Designer.cs",
+          "CP6.Space.Infrastructure/Migrations/SpaceContextModelSnapshot.cs",
+          "CP6.Space.Infrastructure/SpaceContext.cs"
+        ],
+        "source": "candidate"
+      },
+      {
+        "entities": [],
+        "implementationStatus": "Partial",
+        "name": "Space_LocationRevisions",
+        "owners": [
+          "CP6.Space.Infrastructure/Migrations/20260724005335_SpaceVolume1Initial.Designer.cs",
+          "CP6.Space.Infrastructure/Migrations/20260724005335_SpaceVolume1Initial.cs",
+          "CP6.Space.Infrastructure/Migrations/20260724005826_SpaceVolume1IntegrityIndexes.Designer.cs",
+          "CP6.Space.Infrastructure/Migrations/20260724010202_SpaceVolume1ValidationPublishing.Designer.cs",
+          "CP6.Space.Infrastructure/Migrations/20260724010503_SpaceVolume1TopologyIndexes.Designer.cs",
+          "CP6.Space.Infrastructure/Migrations/SpaceContextModelSnapshot.cs",
+          "CP6.Space.Infrastructure/SpaceContext.cs"
+        ],
+        "source": "candidate"
+      },
+      {
+        "entities": [],
+        "implementationStatus": "Partial",
+        "name": "Space_Models",
+        "owners": [
+          "CP6.Space.Infrastructure/Migrations/20260724005335_SpaceVolume1Initial.Designer.cs",
+          "CP6.Space.Infrastructure/Migrations/20260724005335_SpaceVolume1Initial.cs",
+          "CP6.Space.Infrastructure/Migrations/20260724005826_SpaceVolume1IntegrityIndexes.Designer.cs",
+          "CP6.Space.Infrastructure/Migrations/20260724010202_SpaceVolume1ValidationPublishing.Designer.cs",
+          "CP6.Space.Infrastructure/Migrations/20260724010503_SpaceVolume1TopologyIndexes.Designer.cs",
+          "CP6.Space.Infrastructure/Migrations/SpaceContextModelSnapshot.cs",
+          "CP6.Space.Infrastructure/SpaceContext.cs"
+        ],
+        "source": "candidate"
+      },
+      {
+        "entities": [],
+        "implementationStatus": "Partial",
+        "name": "Space_ModelVersions",
+        "owners": [
+          "CP6.Space.Infrastructure/Migrations/20260724005335_SpaceVolume1Initial.Designer.cs",
+          "CP6.Space.Infrastructure/Migrations/20260724005335_SpaceVolume1Initial.cs",
+          "CP6.Space.Infrastructure/Migrations/20260724005826_SpaceVolume1IntegrityIndexes.Designer.cs",
+          "CP6.Space.Infrastructure/Migrations/20260724010202_SpaceVolume1ValidationPublishing.Designer.cs",
+          "CP6.Space.Infrastructure/Migrations/20260724010503_SpaceVolume1TopologyIndexes.Designer.cs",
+          "CP6.Space.Infrastructure/Migrations/SpaceContextModelSnapshot.cs",
+          "CP6.Space.Infrastructure/SpaceContext.cs"
+        ],
+        "source": "candidate"
+      },
+      {
+        "entities": [],
+        "implementationStatus": "Partial",
+        "name": "Space_Outbox",
+        "owners": [
+          "CP6.Space.Infrastructure/Migrations/20260724005335_SpaceVolume1Initial.Designer.cs",
+          "CP6.Space.Infrastructure/Migrations/20260724005335_SpaceVolume1Initial.cs",
+          "CP6.Space.Infrastructure/Migrations/20260724005826_SpaceVolume1IntegrityIndexes.Designer.cs",
+          "CP6.Space.Infrastructure/Migrations/20260724010202_SpaceVolume1ValidationPublishing.Designer.cs",
+          "CP6.Space.Infrastructure/Migrations/20260724010503_SpaceVolume1TopologyIndexes.Designer.cs",
+          "CP6.Space.Infrastructure/Migrations/SpaceContextModelSnapshot.cs",
+          "CP6.Space.Infrastructure/SpaceContext.cs"
+        ],
+        "source": "candidate"
+      },
+      {
+        "entities": [],
+        "implementationStatus": "Partial",
+        "name": "Space_RackLevelRevisions",
+        "owners": [
+          "CP6.Space.Infrastructure/Migrations/20260724005335_SpaceVolume1Initial.Designer.cs",
+          "CP6.Space.Infrastructure/Migrations/20260724005335_SpaceVolume1Initial.cs",
+          "CP6.Space.Infrastructure/Migrations/20260724005826_SpaceVolume1IntegrityIndexes.Designer.cs",
+          "CP6.Space.Infrastructure/Migrations/20260724010202_SpaceVolume1ValidationPublishing.Designer.cs",
+          "CP6.Space.Infrastructure/Migrations/20260724010503_SpaceVolume1TopologyIndexes.Designer.cs",
+          "CP6.Space.Infrastructure/Migrations/SpaceContextModelSnapshot.cs",
+          "CP6.Space.Infrastructure/SpaceContext.cs"
+        ],
+        "source": "candidate"
+      },
+      {
+        "entities": [],
+        "implementationStatus": "Partial",
+        "name": "Space_RackRevisions",
+        "owners": [
+          "CP6.Space.Infrastructure/Migrations/20260724005335_SpaceVolume1Initial.Designer.cs",
+          "CP6.Space.Infrastructure/Migrations/20260724005335_SpaceVolume1Initial.cs",
+          "CP6.Space.Infrastructure/Migrations/20260724005826_SpaceVolume1IntegrityIndexes.Designer.cs",
+          "CP6.Space.Infrastructure/Migrations/20260724010202_SpaceVolume1ValidationPublishing.Designer.cs",
+          "CP6.Space.Infrastructure/Migrations/20260724010503_SpaceVolume1TopologyIndexes.Designer.cs",
+          "CP6.Space.Infrastructure/Migrations/SpaceContextModelSnapshot.cs",
+          "CP6.Space.Infrastructure/SpaceContext.cs"
+        ],
+        "source": "candidate"
+      },
+      {
+        "entities": [],
+        "implementationStatus": "Partial",
+        "name": "Space_RuntimeElements",
+        "owners": [
+          "CP6.Space.Infrastructure/Migrations/20260724005335_SpaceVolume1Initial.Designer.cs",
+          "CP6.Space.Infrastructure/Migrations/20260724005335_SpaceVolume1Initial.cs",
+          "CP6.Space.Infrastructure/Migrations/20260724005826_SpaceVolume1IntegrityIndexes.Designer.cs",
+          "CP6.Space.Infrastructure/Migrations/20260724010202_SpaceVolume1ValidationPublishing.Designer.cs",
+          "CP6.Space.Infrastructure/Migrations/20260724010503_SpaceVolume1TopologyIndexes.Designer.cs",
+          "CP6.Space.Infrastructure/Migrations/SpaceContextModelSnapshot.cs",
+          "CP6.Space.Infrastructure/SpaceContext.cs"
+        ],
+        "source": "candidate"
+      },
+      {
+        "entities": [],
+        "implementationStatus": "Partial",
+        "name": "Space_RuntimeStageElements",
+        "owners": [
+          "CP6.Space.Infrastructure/Migrations/20260724010202_SpaceVolume1ValidationPublishing.Designer.cs",
+          "CP6.Space.Infrastructure/Migrations/20260724010202_SpaceVolume1ValidationPublishing.cs",
+          "CP6.Space.Infrastructure/Migrations/20260724010503_SpaceVolume1TopologyIndexes.Designer.cs",
+          "CP6.Space.Infrastructure/Migrations/SpaceContextModelSnapshot.cs",
+          "CP6.Space.Infrastructure/SpaceContext.cs"
+        ],
+        "source": "candidate"
+      },
+      {
+        "entities": [],
+        "implementationStatus": "Partial",
+        "name": "Space_ValidationFindings",
+        "owners": [
+          "CP6.Space.Infrastructure/Migrations/20260724010202_SpaceVolume1ValidationPublishing.Designer.cs",
+          "CP6.Space.Infrastructure/Migrations/20260724010202_SpaceVolume1ValidationPublishing.cs",
+          "CP6.Space.Infrastructure/Migrations/20260724010503_SpaceVolume1TopologyIndexes.Designer.cs",
+          "CP6.Space.Infrastructure/Migrations/SpaceContextModelSnapshot.cs",
+          "CP6.Space.Infrastructure/SpaceContext.cs"
+        ],
+        "source": "candidate"
+      },
+      {
+        "entities": [],
+        "implementationStatus": "Partial",
+        "name": "Space_ValidationRuns",
+        "owners": [
+          "CP6.Space.Infrastructure/Migrations/20260724010202_SpaceVolume1ValidationPublishing.Designer.cs",
+          "CP6.Space.Infrastructure/Migrations/20260724010202_SpaceVolume1ValidationPublishing.cs",
+          "CP6.Space.Infrastructure/Migrations/20260724010503_SpaceVolume1TopologyIndexes.Designer.cs",
+          "CP6.Space.Infrastructure/Migrations/SpaceContextModelSnapshot.cs",
+          "CP6.Space.Infrastructure/SpaceContext.cs"
+        ],
+        "source": "candidate"
+      },
+      {
+        "entities": [],
+        "implementationStatus": "Partial",
+        "name": "Space_ZoneRevisions",
+        "owners": [
+          "CP6.Space.Infrastructure/Migrations/20260724005335_SpaceVolume1Initial.Designer.cs",
+          "CP6.Space.Infrastructure/Migrations/20260724005335_SpaceVolume1Initial.cs",
+          "CP6.Space.Infrastructure/Migrations/20260724005826_SpaceVolume1IntegrityIndexes.Designer.cs",
+          "CP6.Space.Infrastructure/Migrations/20260724010202_SpaceVolume1ValidationPublishing.Designer.cs",
+          "CP6.Space.Infrastructure/Migrations/20260724010503_SpaceVolume1TopologyIndexes.Designer.cs",
+          "CP6.Space.Infrastructure/Migrations/SpaceContextModelSnapshot.cs",
+          "CP6.Space.Infrastructure/SpaceContext.cs"
+        ],
+        "source": "candidate"
+      }
+    ],
+    "candidateTests": [
+      {
+        "implementationStatus": "Partial",
+        "owner": "CP6.Space.AcceptanceTests/SpaceApiContractTests.cs",
+        "source": "candidate"
+      },
+      {
+        "implementationStatus": "Partial",
+        "owner": "CP6.Space.IntegrationTests/SpaceCommandLedgerTests.cs",
+        "source": "candidate"
+      },
+      {
+        "implementationStatus": "Partial",
+        "owner": "CP6.Space.IntegrationTests/SpaceContextTenantTests.cs",
+        "source": "candidate"
+      },
+      {
+        "implementationStatus": "Partial",
+        "owner": "CP6.Space.IntegrationTests/SpacePublishLoopTests.cs",
+        "source": "candidate"
+      },
+      {
+        "implementationStatus": "Partial",
+        "owner": "CP6.Space.UnitTests/SpaceContractTests.cs",
+        "source": "candidate"
+      },
+      {
+        "implementationStatus": "Partial",
+        "owner": "CP6.Space.UnitTests/SpaceDomainStateTests.cs",
+        "source": "candidate"
+      },
+      {
+        "implementationStatus": "Partial",
+        "owner": "CP6.Tests/Space/SpacePermissionAttributeTests.cs",
+        "source": "candidate"
+      }
+    ],
+    "frontendCalls": [
+      {
+        "implementationStatus": "Implemented",
+        "method": "DELETE",
+        "owner": "cp6.web/src/api/space/codeRule.ts",
+        "route": "/space/code-rule/{param}"
+      },
+      {
+        "implementationStatus": "Implemented",
+        "method": "PUT",
+        "owner": "cp6.web/src/api/space/codeRule.ts",
+        "route": "/space/code-rule/{param}"
+      },
+      {
+        "implementationStatus": "Implemented",
+        "method": "POST",
+        "owner": "cp6.web/src/api/space/connector.ts",
+        "route": "/space/connector"
+      },
+      {
+        "implementationStatus": "Implemented",
+        "method": "DELETE",
+        "owner": "cp6.web/src/api/space/connector.ts",
+        "route": "/space/connector/{param}"
+      },
+      {
+        "implementationStatus": "Implemented",
+        "method": "PUT",
+        "owner": "cp6.web/src/api/space/connector.ts",
+        "route": "/space/connector/{param}"
+      },
+      {
+        "implementationStatus": "Implemented",
+        "method": "PUT",
+        "owner": "cp6.web/src/api/space/connector.ts",
+        "route": "/space/connector/{param}/stop"
+      },
+      {
+        "implementationStatus": "Implemented",
+        "method": "DELETE",
+        "owner": "cp6.web/src/api/space/connector.ts",
+        "route": "/space/connector/{param}/stop/{param}"
+      },
+      {
+        "implementationStatus": "Implemented",
+        "method": "GET",
+        "owner": "cp6.web/src/api/space/floor.ts",
+        "route": "/space/floor"
+      },
+      {
+        "implementationStatus": "Implemented",
+        "method": "POST",
+        "owner": "cp6.web/src/api/space/floor.ts",
+        "route": "/space/floor"
+      },
+      {
+        "implementationStatus": "Implemented",
+        "method": "DELETE",
+        "owner": "cp6.web/src/api/space/floor.ts",
+        "route": "/space/floor/{param}"
+      },
+      {
+        "implementationStatus": "Implemented",
+        "method": "PUT",
+        "owner": "cp6.web/src/api/space/floor.ts",
+        "route": "/space/floor/{param}"
+      },
+      {
+        "implementationStatus": "Implemented",
+        "method": "GET",
+        "owner": "cp6.web/src/api/space/codeRule.ts",
+        "route": "/space/floor/{param}/code-precheck"
+      },
+      {
+        "implementationStatus": "Implemented",
+        "method": "GET",
+        "owner": "cp6.web/src/api/space/advanced.ts",
+        "route": "/space/floor/{param}/devices"
+      },
+      {
+        "implementationStatus": "Implemented",
+        "method": "GET",
+        "owner": "cp6.web/src/api/space/scene.ts",
+        "route": "/space/floor/{param}/export"
+      },
+      {
+        "implementationStatus": "Implemented",
+        "method": "POST",
+        "owner": "cp6.web/src/api/space/codeRule.ts",
+        "route": "/space/floor/{param}/generate-codes"
+      },
+      {
+        "implementationStatus": "Implemented",
+        "method": "GET",
+        "owner": "cp6.web/src/api/space/advanced.ts",
+        "route": "/space/floor/{param}/pick-path"
+      },
+      {
+        "implementationStatus": "Implemented",
+        "method": "POST",
+        "owner": "cp6.web/src/api/space/publish.ts",
+        "route": "/space/floor/{param}/publish"
+      },
+      {
+        "implementationStatus": "Implemented",
+        "method": "GET",
+        "owner": "cp6.web/src/api/space/scene.ts",
+        "route": "/space/floor/{param}/scene"
+      },
+      {
+        "implementationStatus": "Implemented",
+        "method": "POST",
+        "owner": "cp6.web/src/api/space/scene.ts",
+        "route": "/space/floor/{param}/scene"
+      },
+      {
+        "implementationStatus": "Implemented",
+        "method": "GET",
+        "owner": "cp6.web/src/api/space/stock.ts",
+        "route": "/space/floor/{param}/stock"
+      },
+      {
+        "implementationStatus": "Implemented",
+        "method": "GET",
+        "owner": "cp6.web/src/api/space/advanced.ts",
+        "route": "/space/floor/{param}/workload"
+      },
+      {
+        "implementationStatus": "Implemented",
+        "method": "GET",
+        "owner": "cp6.web/src/api/space/locate.ts",
+        "route": "/space/location/locate"
+      },
+      {
+        "implementationStatus": "Implemented",
+        "method": "GET",
+        "owner": "cp6.web/src/api/space/locate.ts",
+        "route": "/space/location/search"
+      },
+      {
+        "implementationStatus": "Implemented",
+        "method": "GET",
+        "owner": "cp6.web/src/api/space/scene.ts",
+        "route": "/space/location/unplaced"
+      },
+      {
+        "implementationStatus": "Implemented",
+        "method": "PUT",
+        "owner": "cp6.web/src/api/space/publish.ts",
+        "route": "/space/location/{param}/deactivate"
+      },
+      {
+        "implementationStatus": "Implemented",
+        "method": "GET",
+        "owner": "cp6.web/src/api/space/locate.ts",
+        "route": "/space/location/{param}/detail"
+      },
+      {
+        "implementationStatus": "Implemented",
+        "method": "POST",
+        "owner": "cp6.web/src/api/space/codeRule.ts",
+        "route": "/space/location/{param}/gen-code"
+      },
+      {
+        "implementationStatus": "Implemented",
+        "method": "POST",
+        "owner": "cp6.web/src/api/space/scene.ts",
+        "route": "/space/rack/{param}/bind-codes"
+      },
+      {
+        "implementationStatus": "Implemented",
+        "method": "GET",
+        "owner": "cp6.web/src/api/space/site.ts",
+        "route": "/space/site"
+      },
+      {
+        "implementationStatus": "Implemented",
+        "method": "POST",
+        "owner": "cp6.web/src/api/space/site.ts",
+        "route": "/space/site"
+      },
+      {
+        "implementationStatus": "Implemented",
+        "method": "DELETE",
+        "owner": "cp6.web/src/api/space/site.ts",
+        "route": "/space/site/{param}"
+      },
+      {
+        "implementationStatus": "Implemented",
+        "method": "PUT",
+        "owner": "cp6.web/src/api/space/site.ts",
+        "route": "/space/site/{param}"
+      },
+      {
+        "implementationStatus": "Implemented",
+        "method": "GET",
+        "owner": "cp6.web/src/api/space/connector.ts",
+        "route": "/space/site/{param}/connector"
+      },
+      {
+        "implementationStatus": "Implemented",
+        "method": "POST",
+        "owner": "cp6.web/src/api/space/scene.ts",
+        "route": "/space/site/{param}/import"
+      },
+      {
+        "implementationStatus": "Implemented",
+        "method": "GET",
+        "owner": "cp6.web/src/api/space/advanced.ts",
+        "route": "/space/site/{param}/pick-path"
+      },
+      {
+        "implementationStatus": "Implemented",
+        "method": "GET",
+        "owner": "cp6.web/src/api/space/stock.ts",
+        "route": "/space/stock/locate"
+      },
+      {
+        "implementationStatus": "Implemented",
+        "method": "DELETE",
+        "owner": "cp6.web/src/api/space/template.ts",
+        "route": "/space/template/{param}"
+      },
+      {
+        "implementationStatus": "Implemented",
+        "method": "GET",
+        "owner": "cp6.web/src/api/space/template.ts",
+        "route": "/space/template/{param}"
+      },
+      {
+        "implementationStatus": "Implemented",
+        "method": "PUT",
+        "owner": "cp6.web/src/api/space/template.ts",
+        "route": "/space/template/{param}"
+      },
+      {
+        "implementationStatus": "Implemented",
+        "method": "POST",
+        "owner": "cp6.web/src/api/space/template.ts",
+        "route": "/space/template/{param}/clone"
+      }
+    ],
+    "pages": [
+      {
+        "component": "SpaceHomeView",
+        "implementationStatus": "Implemented",
+        "owner": "cp6.web/src/views/space/SpaceHomeView.vue"
+      },
+      {
+        "component": "FloorEditor",
+        "implementationStatus": "Implemented",
+        "owner": "cp6.web/src/views/space/editor/FloorEditor.vue"
+      },
+      {
+        "component": "BindCodesDialog",
+        "implementationStatus": "Implemented",
+        "owner": "cp6.web/src/views/space/editor/panels/BindCodesDialog.vue"
+      },
+      {
+        "component": "ConnectorPanel",
+        "implementationStatus": "Implemented",
+        "owner": "cp6.web/src/views/space/editor/panels/ConnectorPanel.vue"
+      },
+      {
+        "component": "PropertiesPanel",
+        "implementationStatus": "Implemented",
+        "owner": "cp6.web/src/views/space/editor/panels/PropertiesPanel.vue"
+      },
+      {
+        "component": "TemplatePanel",
+        "implementationStatus": "Implemented",
+        "owner": "cp6.web/src/views/space/editor/panels/TemplatePanel.vue"
+      },
+      {
+        "component": "SegmentsEditor",
+        "implementationStatus": "Implemented",
+        "owner": "cp6.web/src/views/space/lifecycle/SegmentsEditor.vue"
+      },
+      {
+        "component": "SpaceCodeRuleView",
+        "implementationStatus": "Implemented",
+        "owner": "cp6.web/src/views/space/lifecycle/SpaceCodeRuleView.vue"
+      },
+      {
+        "component": "SpaceEventsView",
+        "implementationStatus": "Implemented",
+        "owner": "cp6.web/src/views/space/lifecycle/SpaceEventsView.vue"
+      },
+      {
+        "component": "SpacePublishView",
+        "implementationStatus": "Implemented",
+        "owner": "cp6.web/src/views/space/lifecycle/SpacePublishView.vue"
+      },
+      {
+        "component": "SpaceFloorView",
+        "implementationStatus": "Implemented",
+        "owner": "cp6.web/src/views/space/master/SpaceFloorView.vue"
+      },
+      {
+        "component": "SpaceSiteView",
+        "implementationStatus": "Implemented",
+        "owner": "cp6.web/src/views/space/master/SpaceSiteView.vue"
+      },
+      {
+        "component": "StackedViewer",
+        "implementationStatus": "Implemented",
+        "owner": "cp6.web/src/views/space/stacked/StackedViewer.vue"
+      },
+      {
+        "component": "AdvancedPanel",
+        "implementationStatus": "Implemented",
+        "owner": "cp6.web/src/views/space/viewer/AdvancedPanel.vue"
+      },
+      {
+        "component": "FloorList",
+        "implementationStatus": "Implemented",
+        "owner": "cp6.web/src/views/space/viewer/FloorList.vue"
+      },
+      {
+        "component": "FloorViewer",
+        "implementationStatus": "Implemented",
+        "owner": "cp6.web/src/views/space/viewer/FloorViewer.vue"
+      },
+      {
+        "component": "InfoCard",
+        "implementationStatus": "Implemented",
+        "owner": "cp6.web/src/views/space/viewer/InfoCard.vue"
+      },
+      {
+        "component": "SearchBox",
+        "implementationStatus": "Implemented",
+        "owner": "cp6.web/src/views/space/viewer/SearchBox.vue"
+      },
+      {
+        "component": "StockLegend",
+        "implementationStatus": "Implemented",
+        "owner": "cp6.web/src/views/space/viewer/StockLegend.vue"
+      }
+    ],
+    "permissions": [
+      {
+        "implementationStatus": "Implemented",
+        "owners": [
+          "CP6.WebApi/Controllers/Space/CodeRuleController.cs#CreateRule"
+        ],
+        "permission": "space-code-rule:add",
+        "sources": [
+          "baseline"
+        ]
+      },
+      {
+        "implementationStatus": "Implemented",
+        "owners": [
+          "CP6.WebApi/Controllers/Space/CodeRuleController.cs#DeleteRule"
+        ],
+        "permission": "space-code-rule:delete",
+        "sources": [
+          "baseline"
+        ]
+      },
+      {
+        "implementationStatus": "Implemented",
+        "owners": [
+          "CP6.WebApi/Controllers/Space/CodeRuleController.cs#UpdateRule"
+        ],
+        "permission": "space-code-rule:edit",
+        "sources": [
+          "baseline"
+        ]
+      },
+      {
+        "implementationStatus": "Implemented",
+        "owners": [
+          "CP6.WebApi/Controllers/Space/CodeRuleController.cs#GenCode",
+          "CP6.WebApi/Controllers/Space/CodeRuleController.cs#GenerateCodes"
+        ],
+        "permission": "space-code-rule:generate",
+        "sources": [
+          "baseline"
+        ]
+      },
+      {
+        "implementationStatus": "Implemented",
+        "owners": [
+          "CP6.WebApi/Controllers/Space/SpaceMasterController.cs#CreateFloor"
+        ],
+        "permission": "space-floor:add",
+        "sources": [
+          "baseline"
+        ]
+      },
+      {
+        "implementationStatus": "Implemented",
+        "owners": [
+          "CP6.WebApi/Controllers/Space/SpaceMasterController.cs#DeleteFloor"
+        ],
+        "permission": "space-floor:delete",
+        "sources": [
+          "baseline"
+        ]
+      },
+      {
+        "implementationStatus": "Implemented",
+        "owners": [
+          "CP6.WebApi/Controllers/Space/ConnectorController.cs#Create",
+          "CP6.WebApi/Controllers/Space/ConnectorController.cs#Delete",
+          "CP6.WebApi/Controllers/Space/ConnectorController.cs#DeleteStop",
+          "CP6.WebApi/Controllers/Space/ConnectorController.cs#Update",
+          "CP6.WebApi/Controllers/Space/ConnectorController.cs#UpsertStop",
+          "CP6.WebApi/Controllers/Space/SceneController.cs#BindCodes",
+          "CP6.WebApi/Controllers/Space/SceneController.cs#Import",
+          "CP6.WebApi/Controllers/Space/SceneController.cs#SaveScene",
+          "CP6.WebApi/Controllers/Space/SpaceDesignV1Controller.cs#AcquireLease",
+          "CP6.WebApi/Controllers/Space/SpaceDesignV1Controller.cs#ApplyCommands",
+          "CP6.WebApi/Controllers/Space/SpaceDesignV1Controller.cs#CreateVersion",
+          "CP6.WebApi/Controllers/Space/SpaceDesignV1Controller.cs#ReleaseLease",
+          "CP6.WebApi/Controllers/Space/SpaceDesignV1Controller.cs#RenewLease",
+          "CP6.WebApi/Controllers/Space/SpaceDesignV1Controller.cs#ReopenLegacy",
+          "CP6.WebApi/Controllers/Space/SpaceDesignV1Controller.cs#StartCutover",
+          "CP6.WebApi/Controllers/Space/SpaceDesignV1Controller.cs#StartPublish",
+          "CP6.WebApi/Controllers/Space/SpaceDesignV1Controller.cs#StartReconciliation",
+          "CP6.WebApi/Controllers/Space/SpaceDesignV1Controller.cs#StartValidation",
+          "CP6.WebApi/Controllers/Space/SpaceMasterController.cs#CreateAisle",
+          "CP6.WebApi/Controllers/Space/SpaceMasterController.cs#CreateRack",
+          "CP6.WebApi/Controllers/Space/SpaceMasterController.cs#CreateZone",
+          "CP6.WebApi/Controllers/Space/SpaceMasterController.cs#DeleteAisle",
+          "CP6.WebApi/Controllers/Space/SpaceMasterController.cs#DeleteRack",
+          "CP6.WebApi/Controllers/Space/SpaceMasterController.cs#DeleteZone",
+          "CP6.WebApi/Controllers/Space/SpaceMasterController.cs#UpdateAisle",
+          "CP6.WebApi/Controllers/Space/SpaceMasterController.cs#UpdateFloor",
+          "CP6.WebApi/Controllers/Space/SpaceMasterController.cs#UpdateRack",
+          "CP6.WebApi/Controllers/Space/SpaceMasterController.cs#UpdateZone",
+          "CP6.WebApi/Controllers/Space/TemplateController.cs#Clone",
+          "CP6.WebApi/Controllers/Space/TemplateController.cs#Create",
+          "CP6.WebApi/Controllers/Space/TemplateController.cs#Delete",
+          "CP6.WebApi/Controllers/Space/TemplateController.cs#Update"
+        ],
+        "permission": "space-floor:edit",
+        "sources": [
+          "baseline",
+          "candidate"
+        ]
+      },
+      {
+        "implementationStatus": "Implemented",
+        "owners": [
+          "CP6.WebApi/Controllers/Space/LocationPublishController.cs#Adopt"
+        ],
+        "permission": "space-publish:adopt",
+        "sources": [
+          "baseline"
+        ]
+      },
+      {
+        "implementationStatus": "Implemented",
+        "owners": [
+          "CP6.WebApi/Controllers/Space/LocationPublishController.cs#Deactivate"
+        ],
+        "permission": "space-publish:deactivate",
+        "sources": [
+          "baseline"
+        ]
+      },
+      {
+        "implementationStatus": "Implemented",
+        "owners": [
+          "CP6.WebApi/Controllers/Space/LocationPublishController.cs#PublishFloor"
+        ],
+        "permission": "space-publish:publish",
+        "sources": [
+          "baseline"
+        ]
+      },
+      {
+        "implementationStatus": "Implemented",
+        "owners": [
+          "CP6.WebApi/Controllers/Space/SpaceMasterController.cs#CreateSite"
+        ],
+        "permission": "space-site:add",
+        "sources": [
+          "baseline"
+        ]
+      },
+      {
+        "implementationStatus": "Implemented",
+        "owners": [
+          "CP6.WebApi/Controllers/Space/SpaceMasterController.cs#DeleteSite"
+        ],
+        "permission": "space-site:delete",
+        "sources": [
+          "baseline"
+        ]
+      },
+      {
+        "implementationStatus": "Implemented",
+        "owners": [
+          "CP6.WebApi/Controllers/Space/SpaceMasterController.cs#UpdateSite"
+        ],
+        "permission": "space-site:edit",
+        "sources": [
+          "baseline"
+        ]
+      }
+    ]
+  },
+  "provenance": {
+    "baseline": {
+      "branch": "codex/space-e00-inventory",
+      "commit": "1524289fbac6f94b81b69a6fe1ce2f48fceb02dd",
+      "spaceFileCount": 452
+    },
+    "candidate": {
+      "branch": "codex/space-volume1",
+      "changeCount": 79,
+      "commit": "1524289fbac6f94b81b69a6fe1ce2f48fceb02dd"
+    },
+    "contractCatalog": "Space MVP Scope Baseline v1.0 and E00/E01 handoff",
+    "determinism": "No timestamps or absolute paths are emitted; inputs and output collections are sorted.",
+    "inputDigestSha256": "336cfb912d5fef6b81f891a2e1d55bd6329c8f6fef86658bfc9da1bdee803bbc"
+  },
+  "schemaVersion": "1.0",
+  "summary": {
+    "baselineEndpoints": 59,
+    "baselineTables": 11,
+    "baselineTests": 53,
+    "candidateEndpoints": 17,
+    "candidateFiles": 79,
+    "candidateTables": 25,
+    "candidateTests": 7,
+    "contractStatuses": {
+      "Implemented": 2,
+      "NotStarted": 3,
+      "Partial": 8
+    },
+    "frontendCalls": 40,
+    "pages": 19,
+    "permissions": 13
+  },
+  "task": "E00-S01",
+  "title": "CP6 Space current-facts inventory"
+}

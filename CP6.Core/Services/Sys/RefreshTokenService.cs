@@ -32,7 +32,11 @@ public class RefreshTokenService : IRefreshTokenService
     private static string HashOf(string raw) => Convert.ToHexString(SHA256.HashData(Encoding.UTF8.GetBytes(raw)));
     private static string Base64Url(byte[] b) => Convert.ToBase64String(b).TrimEnd('=').Replace('+', '-').Replace('/', '_');
 
-    public async Task<string> IssueAsync(Sys_User user, string? ip, string? ua)
+    public Task<string> IssueAsync(Sys_User user, string? ip, string? ua)
+        => IssueAsync(user, ip, ua, RefreshTokenClientContext.Web);
+
+    public async Task<string> IssueAsync(
+        Sys_User user, string? ip, string? ua, RefreshTokenClientContext client)
     {
         var raw = NewRaw();
         _db.Sys_RefreshTokens.Add(new Sys_RefreshToken
@@ -42,13 +46,20 @@ public class RefreshTokenService : IRefreshTokenService
             TokenHash = HashOf(raw),
             ExpiresAt = DateTime.Now.AddDays(_t.RefreshTokenDays),
             CreatedIp = ip,
-            UserAgent = ua
+            UserAgent = ua,
+            ClientKind = client.ClientKind,
+            DeviceId = client.DeviceId,
+            AppVersion = client.AppVersion
         });
         await _db.SaveChangesAsync();
         return raw;
     }
 
-    public async Task<(string newToken, Sys_User user)> RotateAsync(string rawToken, string? ip, string? ua)
+    public Task<(string newToken, Sys_User user)> RotateAsync(string rawToken, string? ip, string? ua)
+        => RotateAsync(rawToken, ip, ua, RefreshTokenClientContext.Web);
+
+    public async Task<(string newToken, Sys_User user)> RotateAsync(
+        string rawToken, string? ip, string? ua, RefreshTokenClientContext client)
     {
         var hash = HashOf(rawToken);
         // 无租户上下文：按 TokenHash 跨租户查（全局唯一索引；IgnoreQueryFilters 白名单——令牌本身即凭证）
@@ -63,28 +74,80 @@ public class RefreshTokenService : IRefreshTokenService
             throw new InvalidOperationException("E-SEC-008");   // 检测到令牌重用
         }
 
-        // ⚠️ 已知并发窗口（T4 review M1，专项后续）：此处「读 RevokedAt==null → 改 RevokedAt → 加新行」
-        // 非原子。同一原始令牌并发提交（多标签页同时刷新）可能两请求都读到未吊销→各发一条新令牌（静默双活，
-        // 不触发重用检测）。真正盗用场景（旧令牌被攻击者重放）仍能在后续轮换被检出，故影响有限、非阻塞。
-        // 彻底修法：带条件原子吊销（ExecuteUpdate ... WHERE Id=@id AND RevokedAt IS NULL 校验受影响行=1，
-        // 否则视为竞态/重用）或加 RowVersion 乐观并发——二者均与 InMemory 测试基建冲突，留作专项（须配 SQLite 并发测）。
+        // Native refresh tokens are device-bound. AppVersion may legitimately
+        // change during an upgrade, but client kind and stable device identity
+        // must remain the same throughout the token family.
+        if (!string.Equals(row.ClientKind, "Web", StringComparison.OrdinalIgnoreCase)
+            && (!string.Equals(row.ClientKind, client.ClientKind, StringComparison.OrdinalIgnoreCase)
+                || !string.Equals(row.DeviceId, client.DeviceId, StringComparison.Ordinal)))
+        {
+            await RevokeAllForUserAsync(row.UserId);
+            throw new InvalidOperationException("E-SEC-024");
+        }
+
         // 由令牌的 TenantId 回设上下文，后续查询/盖章按其租户正确作用域
         _tenant.CurrentTenantId = row.TenantId;
         var user = await _db.Sys_Users.IgnoreQueryFilters().FirstAsync(u => u.Id == row.UserId);
 
         var raw2 = NewRaw();
         var hash2 = HashOf(raw2);
-        row.RevokedAt = DateTime.Now;
-        row.ReplacedByTokenHash = hash2;
-        _db.Sys_RefreshTokens.Add(new Sys_RefreshToken
+        var now = DateTime.Now;
+
+        var replacement = new Sys_RefreshToken
         {
             UserId = user.Id,
             TenantId = row.TenantId,
             TokenHash = hash2,
             ExpiresAt = DateTime.Now.AddDays(_t.RefreshTokenDays),
             CreatedIp = ip,
-            UserAgent = ua
-        });
+            UserAgent = ua,
+            ClientKind = client.ClientKind,
+            DeviceId = client.DeviceId,
+            AppVersion = client.AppVersion
+        };
+
+        if (_db.Database.IsRelational())
+        {
+            // The conditional revoke and replacement insert share one database
+            // transaction. Exactly one concurrent caller can create the next
+            // token; a failed insert rolls the revoke back as well.
+            var tx = await _db.Database.BeginTransactionAsync();
+            try
+            {
+                var affected = await _db.Sys_RefreshTokens.IgnoreQueryFilters()
+                    .Where(r => r.Id == row.Id && r.RevokedAt == null)
+                    .ExecuteUpdateAsync(s => s
+                        .SetProperty(r => r.RevokedAt, now)
+                        .SetProperty(r => r.ReplacedByTokenHash, hash2));
+                if (affected != 1)
+                {
+                    await tx.RollbackAsync();
+                    await tx.DisposeAsync();
+                    tx = null!;
+                    _db.ChangeTracker.Clear();
+                    await RevokeAllForUserAsync(row.UserId);
+                    throw new InvalidOperationException("E-SEC-008");
+                }
+
+                _db.Sys_RefreshTokens.Add(replacement);
+                await _db.SaveChangesAsync();
+                await tx.CommitAsync();
+                return (raw2, user);
+            }
+            catch
+            {
+                if (tx != null) await tx.RollbackAsync();
+                throw;
+            }
+            finally
+            {
+                if (tx != null) await tx.DisposeAsync();
+            }
+        }
+
+        row.RevokedAt = now;
+        row.ReplacedByTokenHash = hash2;
+        _db.Sys_RefreshTokens.Add(replacement);
         await _db.SaveChangesAsync();
         return (raw2, user);
     }
@@ -107,6 +170,21 @@ public class RefreshTokenService : IRefreshTokenService
         if (rows.Count == 0) return;
         foreach (var r in rows) r.RevokedAt = DateTime.Now;
         // saveChanges:false → 变更留在跟踪器，由调用方与其它写入合并一次原子保存
+        if (saveChanges) await _db.SaveChangesAsync();
+    }
+
+    public async Task RevokeAllForDeviceAsync(
+        Guid tenantId,
+        string deviceId,
+        bool saveChanges = true)
+    {
+        var rows = await _db.Sys_RefreshTokens.IgnoreQueryFilters()
+            .Where(r => r.TenantId == tenantId
+                        && r.DeviceId == deviceId
+                        && r.RevokedAt == null)
+            .ToListAsync();
+        if (rows.Count == 0) return;
+        foreach (var row in rows) row.RevokedAt = DateTime.Now;
         if (saveChanges) await _db.SaveChangesAsync();
     }
 }

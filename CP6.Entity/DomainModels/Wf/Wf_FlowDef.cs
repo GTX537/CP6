@@ -21,8 +21,8 @@ public class Wf_FlowDef : BaseTenantEntity, IAuditable
     public string FlowName { get; set; } = string.Empty;
 
     /// <summary>绑定的表单定义 FormKey</summary>
-    [Required, MaxLength(100)]
-    public string FormKey { get; set; } = string.Empty;
+    [MaxLength(100)]
+    public string? FormKey { get; set; }
 
     /// <summary>流程 schema（节点/边 JSON）</summary>
     [Column(TypeName = "nvarchar(max)")]

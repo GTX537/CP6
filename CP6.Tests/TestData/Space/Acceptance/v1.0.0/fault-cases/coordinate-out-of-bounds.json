@@ -1,0 +1,17 @@
+{
+  "expectedErrorCode": "SPACE_GEOMETRY_OUT_OF_BOUNDS",
+  "floorCode": "F1",
+  "floorBoundsMm": {
+    "minX": 0,
+    "minY": 0,
+    "maxX": 140000,
+    "maxY": 120000
+  },
+  "location": {
+    "logicalId": "e3b3ed6c-2fdc-3d18-2e3d-f75679a23489",
+    "locationCode": "F1-FAULT-OUT-OF-BOUNDS",
+    "xMm": 150000,
+    "yMm": 130000,
+    "zMm": 500
+  }
+}

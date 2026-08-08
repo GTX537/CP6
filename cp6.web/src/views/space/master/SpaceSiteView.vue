@@ -66,7 +66,7 @@ import { useRouter } from 'vue-router'
 import { ElMessage, ElMessageBox, type FormRules } from 'element-plus'
 import { useI18n } from 'vue-i18n'
 import CpPageShell from '@/components/templates/CpPageShell.vue'
-import CpListPage, { type ListColumn, type ListFetch } from '@/components/templates/CpListPage.vue'
+import CpListPage, { type ListColumn, type ListFetch, type ListPageExpose } from '@/components/templates/CpListPage.vue'
 import { type FilterField } from '@/components/templates/CpFilterBar.vue'
 import CpFormDialog from '@/components/templates/CpFormDialog.vue'
 import { siteApi } from '@/api/space/site'
@@ -77,10 +77,10 @@ const router = useRouter()
 
 const total = ref<number>()
 // in-place 变更后命令式刷新（保留当前筛选/页码）
-const listRef = ref<InstanceType<typeof CpListPage> | null>(null)
+const listRef = ref<ListPageExpose | null>(null)
 function reloadList() { listRef.value?.reload() }
 
-const columns = computed<ListColumn[]>(() => [
+const columns = computed<ListColumn<SiteVO>[]>(() => [
   { prop: 'siteCode', label: t('space.site.fld.code'), width: 160, kind: 'mono' },
   { prop: 'siteName', label: t('space.site.fld.name'), minWidth: 200 },
   { prop: 'warehouseCd', label: t('space.site.fld.warehouseCd'), width: 140 },
@@ -103,7 +103,7 @@ const searchFields = computed<FilterField[]>(() => [
 ])
 
 // list 端点无分页/筛选 → 前端拉全量、切片分页（照 WarehouseListView 切片写法）
-const fetchList: ListFetch = async ({ page, size, filters }) => {
+const fetchList: ListFetch<SiteVO> = async ({ page, size, filters }) => {
   const f = filters as Record<string, unknown>
   const res = await siteApi.list()
   let all = res.data || []

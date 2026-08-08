@@ -2,6 +2,7 @@ using CP6.Core.EFDbContext;
 using CP6.WebApi.Localization;
 using CP6.Core.Services.Common;
 using CP6.Core.Services.Integration;
+using CP6.Core.Services.Space.Observability;
 using CP6.Entity.DomainModels.Space;
 using CP6.Entity.DTOs.Space;
 using Microsoft.EntityFrameworkCore;
@@ -26,6 +27,8 @@ public class LocationPublishService : ILocationPublishService
     private readonly IWmsStockQuery _stock;
     private readonly IWmsBinDeactivator _deactivator;
     private readonly ISpaceNotifier _notifier;
+    private readonly ISpaceExecutionContextAccessor _execution;
+    private readonly ISpaceExecutionContextManager _executionManager;
 
     public LocationPublishService(
         CP6Context db,
@@ -34,7 +37,9 @@ public class LocationPublishService : ILocationPublishService
         ISpaceBridgeHook hook,
         IWmsStockQuery stock,
         IWmsBinDeactivator deactivator,
-        ISpaceNotifier notifier)
+        ISpaceNotifier notifier,
+        ISpaceExecutionContextAccessor execution,
+        ISpaceExecutionContextManager executionManager)
     {
         _db = db;
         _t = t;
@@ -43,6 +48,8 @@ public class LocationPublishService : ILocationPublishService
         _stock = stock;
         _deactivator = deactivator;
         _notifier = notifier;
+        _execution = execution;
+        _executionManager = executionManager;
     }
 
     /// <inheritdoc/>
@@ -54,6 +61,7 @@ public class LocationPublishService : ILocationPublishService
         IDbContextTransaction? tx = _db.Database.IsRelational()
             ? await _db.Database.BeginTransactionAsync()
             : null;
+        IDisposable? executionScope = null;
         try
         {
             // 1. 闸门（ch03 §9.2；zoneId 给定时按库区收窄，H5）
@@ -72,6 +80,11 @@ public class LocationPublishService : ILocationPublishService
             var locs = await locQuery.ToListAsync();
 
             if (locs.Count == 0) return 0;
+
+            // 只有真正进入发布流程时才建立一次发布意图；必须早于任何本地状态翻转和 Adapter 调用。
+            var publishExecution = BeginPublishExecution();
+            var context = publishExecution.Context;
+            executionScope = publishExecution.Scope;
 
             // 3. 批号（D-E）
             var (_, seq) = await DocNumber.NextAsync(_db, "LPB");
@@ -96,7 +109,7 @@ public class LocationPublishService : ILocationPublishService
             await _db.SaveChangesAsync();
 
             // 5. 发事件（hook 内部吞消费异常→Failed 事件落库，由 Worker 重试；不影响本事务提交）
-            await _hook.OnLocationPublishedAsync(batch, Guid.NewGuid());
+            await _hook.OnLocationPublishedAsync(batch, context.CorrelationId);
 
             if (tx != null) await tx.CommitAsync();
 
@@ -107,7 +120,14 @@ public class LocationPublishService : ILocationPublishService
         }
         finally
         {
-            if (tx != null) await tx.DisposeAsync();   // 未 Commit 即 Dispose = 回滚
+            try
+            {
+                if (tx != null) await tx.DisposeAsync();   // 未 Commit 即 Dispose = 回滚
+            }
+            finally
+            {
+                executionScope?.Dispose();
+            }
         }
     }
 
@@ -119,50 +139,64 @@ public class LocationPublishService : ILocationPublishService
         if (l.Status != 1)
             throw new BizException("E-SPACE-004");
 
-        // ① 前置校验（用户体验，连 RPC 都不发；ch04 §6.1①；H7 带仓维度防多仓同码误拦）
-        // 波5：单库位也走统一预载，前置校验与后续 BuildItem 共用同一 lookup（FloorId/RackId 期间不变）。
-        var lk = await LoadLookupAsync(new[] { l }, default);
-        var warehouseCd = ResolveWarehouseCd(l, lk);
-        var qty = await _stock.GetStockQtyAsync(l.LocationCode ?? "", warehouseCd);
-        if (qty > 0)
-            throw new BizException("E-SPACE-401");
-
-        // ② 同步 RPC：WMS 按实时库存权威判定（TOCTOU 防护；ch04 §6.1② v1.1）
-        var newVersion = l.Version + 1;
-        var resp = await _deactivator.DeactivateAsync(new WmsDeactivateRequest
+        // 停用意图必须在任何库存数据源或 WMS Adapter 调用前建立。
+        var publishExecution = BeginPublishExecution();
+        try
         {
-            LocationId = l.Id,
-            LocationCode = l.LocationCode ?? "",
-            WarehouseCd = warehouseCd,
-            Version = newVersion,
-            User = user
-        });
+            var context = publishExecution.Context;
 
-        // ③ 据同步返回决定本地 Status——被拒不前进，无翻转回滚（ch04 §6.3）
-        if (!resp.Success)
-            throw new BizException("W-SPACE-404");
+            // ① 前置校验（用户体验，连 RPC 都不发；ch04 §6.1①；H7 带仓维度防多仓同码误拦）
+            // 波5：单库位也走统一预载，前置校验与后续 BuildItem 共用同一 lookup（FloorId/RackId 期间不变）。
+            var lk = await LoadLookupAsync(new[] { l }, default);
+            var warehouseCd = ResolveWarehouseCd(l, lk);
+            if (_stock.DataSourceKind == SpaceDataSourceKind.Unavailable)
+                throw new BizException(SpaceDataSourceErrors.Unavailable, 503);
 
-        l.Status = 2;
-        l.Version = newVersion;
-        l.Modifier = user;
-        l.ModifyDate = DateTime.Now;
+            var qty = await _stock.GetStockQtyAsync(l.LocationCode ?? "", warehouseCd);
+            if (qty > 0)
+                throw new BizException("E-SPACE-401");
 
-        var (_, seq) = await DocNumber.NextAsync(_db, "LPB");
-        var batch = new LocationPublishBatch
+            // ② 同步 RPC：WMS 按实时库存权威判定（TOCTOU 防护；ch04 §6.1② v1.1）
+            var newVersion = l.Version + 1;
+            var resp = await _deactivator.DeactivateAsync(new WmsDeactivateRequest
+            {
+                LocationId = l.Id,
+                LocationCode = l.LocationCode ?? "",
+                WarehouseCd = warehouseCd,
+                Version = newVersion,
+                User = user
+            });
+
+            // ③ 据同步返回决定本地 Status——被拒不前进，无翻转回滚（ch04 §6.3）
+            if (!resp.Success)
+                throw new BizException("W-SPACE-404");
+
+            l.Status = 2;
+            l.Version = newVersion;
+            l.Modifier = user;
+            l.ModifyDate = DateTime.Now;
+
+            var (_, seq) = await DocNumber.NextAsync(_db, "LPB");
+            var batch = new LocationPublishBatch
+            {
+                BatchNo = $"LPUB-{DateTime.Today:yyyyMMdd}-{seq:D4}",
+                TenantId = _t.CurrentTenantId,
+                PublishedBy = user
+            };
+            batch.Items.Add(BuildItem(l, "DEACTIVATE", lk));
+            await _db.SaveChangesAsync();
+
+            // ④ 异步事件兜底（对账/审计/漂移纠正，不参与本地 Status 决策；ch04 §6.1④）
+            await _hook.OnLocationPublishedAsync(batch, context.CorrelationId);
+
+            // ⑤ SignalR プッシュ（兜底事件 hook 後：本地 Status 已 SaveChanges 確定。
+            //    実装は例外を投げない契約 ── 推送失敗絕不坏业务）
+            await _notifier.NotifyLocationPublishedAsync(batch.BatchNo, 1, "SUCCESS");
+        }
+        finally
         {
-            BatchNo = $"LPUB-{DateTime.Today:yyyyMMdd}-{seq:D4}",
-            TenantId = _t.CurrentTenantId,
-            PublishedBy = user
-        };
-        batch.Items.Add(BuildItem(l, "DEACTIVATE", lk));
-        await _db.SaveChangesAsync();
-
-        // ④ 异步事件兜底（对账/审计/漂移纠正，不参与本地 Status 决策；ch04 §6.1④）
-        await _hook.OnLocationPublishedAsync(batch, Guid.NewGuid());
-
-        // ⑤ SignalR プッシュ（兜底事件 hook 後：本地 Status 已 SaveChanges 確定。
-        //    実装は例外を投げない契約 ── 推送失敗絕不坏业务）
-        await _notifier.NotifyLocationPublishedAsync(batch.BatchNo, 1, "SUCCESS");
+            publishExecution.Scope?.Dispose();
+        }
     }
 
     /// <inheritdoc/>
@@ -174,12 +208,18 @@ public class LocationPublishService : ILocationPublishService
         // 已有环境事务时直接加入（同连接嵌套 BeginTransaction 会抛），无事务时自开（惯例守卫）。
         var ownsTx = _db.Database.IsRelational() && _db.Database.CurrentTransaction == null;
         IDbContextTransaction? tx = ownsTx ? await _db.Database.BeginTransactionAsync() : null;
+        IDisposable? executionScope = null;
         try
         {
             var locs = await _db.Space_Locations
                 .Where(l => locationIds.Contains(l.Id) && l.Status == 1 && l.LocationCode != null)
                 .ToListAsync();
             if (locs.Count == 0) return 0;
+
+            // 空集合或无命中不制造虚假发布意图；命中后、状态升版前建立上下文。
+            var publishExecution = BeginPublishExecution();
+            var context = publishExecution.Context;
+            executionScope = publishExecution.Scope;
 
             var (_, seq) = await DocNumber.NextAsync(_db, "LPB");
             var batch = new LocationPublishBatch
@@ -197,14 +237,21 @@ public class LocationPublishService : ILocationPublishService
                 batch.Items.Add(BuildItem(l, "UPSERT", lk));
             }
             await _db.SaveChangesAsync();
-            await _hook.OnLocationPublishedAsync(batch, Guid.NewGuid());
+            await _hook.OnLocationPublishedAsync(batch, context.CorrelationId);
 
             if (tx != null) await tx.CommitAsync();
             return locs.Count;
         }
         finally
         {
-            if (tx != null) await tx.DisposeAsync();
+            try
+            {
+                if (tx != null) await tx.DisposeAsync();
+            }
+            finally
+            {
+                executionScope?.Dispose();
+            }
         }
     }
 
@@ -244,6 +291,44 @@ public class LocationPublishService : ILocationPublishService
         await _db.SaveChangesAsync();
         // 不发 LocationPublished（码本就来自 WMS）
         return (n, skipped);
+    }
+
+    /// <summary>
+    /// 为一次实际发布意图建立执行身份。首个意图补充根作用域，便于 HTTP 结果审计读取最终标识；
+    /// 同一请求中的后续意图使用派生作用域，保持 Correlation/Actor 等身份不变，同时生成独立
+    /// PublishAttemptId/JobId，并在调用结束后恢复首个根身份。
+    /// </summary>
+    private (ISpaceExecutionContext Context, IDisposable? Scope) BeginPublishExecution()
+    {
+        var current = _execution.RequireCurrent();
+        if (current.JobId is null && current.PublishAttemptId is null)
+        {
+            _executionManager.Enrich(publishAttemptId: Guid.NewGuid());
+            return (_execution.RequireCurrent(), null);
+        }
+
+        var derived = new SpaceExecutionContext(
+            current.CorrelationId,
+            current.TraceId,
+            current.TenantId,
+            current.ActorType,
+            current.ActorId,
+            current.ActorName,
+            current.OrganizationContextId,
+            JobId: null,
+            RunId: current.RunId,
+            PublishAttemptId: null);
+        var scope = _executionManager.PushDerived(derived);
+        try
+        {
+            _executionManager.Enrich(publishAttemptId: Guid.NewGuid());
+            return (_execution.RequireCurrent(), scope);
+        }
+        catch
+        {
+            scope.Dispose();
+            throw;
+        }
     }
 
     /// <summary>

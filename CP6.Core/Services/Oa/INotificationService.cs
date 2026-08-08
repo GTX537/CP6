@@ -32,4 +32,9 @@ public interface INotificationService
     /// </summary>
     Task CreateAsync(Guid userId, int type, string title, string body,
         Guid? instanceId, Guid? taskId, string? flowKey);
+
+    Task CreateOutboxAsync(Guid userId, int type, string title, string body,
+        Guid? instanceId, Guid? taskId, string? flowKey,
+        string eventKey, bool inAppRequested, bool emailRequested) =>
+        CreateAsync(userId, type, title, body, instanceId, taskId, flowKey);
 }

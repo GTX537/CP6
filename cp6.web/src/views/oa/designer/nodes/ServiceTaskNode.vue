@@ -1,8 +1,8 @@
 <script setup lang="ts">
 import { computed } from 'vue'
-import { Handle, Position } from '@vue-flow/core'
 import type { NodeProps } from '@vue-flow/core'
 import { useI18n } from 'vue-i18n'
+import FourWayHandles from './FourWayHandles.vue'
 
 const props = defineProps<NodeProps>()
 const { t } = useI18n()
@@ -31,13 +31,12 @@ const name = computed(() => (props.data as NodeData)?.name || t('oa.designer.svc
 
 <template>
   <div :class="['vf-node-service', { 'vf-node--selected': props.selected }]">
-    <Handle type="target" :position="Position.Top" />
+    <FourWayHandles />
     <div class="node-label">
       <span class="node-kind-icon" aria-hidden="true">{{ icon }}</span>
       <span class="node-label-text">{{ name }}</span>
     </div>
     <div class="node-strategy">{{ kindLabel }}</div>
-    <Handle type="source" :position="Position.Bottom" />
   </div>
 </template>
 

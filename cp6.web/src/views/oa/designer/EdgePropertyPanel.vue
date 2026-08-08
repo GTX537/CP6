@@ -1,42 +1,47 @@
 <script setup lang="ts">
-import { ref, watch, nextTick } from 'vue'
-import { useI18n } from 'vue-i18n'
+import { computed, nextTick, ref, watch } from 'vue'
+import { Connection, Flag, Rank, Warning } from '@element-plus/icons-vue'
+
 import { userApi } from '@/api/sys/user'
-import type { SchemaEdge } from './designerModel'
+import { isFallbackEdge, type SchemaEdge } from './designerModel'
 
 const props = defineProps<{ edge: SchemaEdge }>()
 const emit = defineEmits<{ update: [patch: Partial<SchemaEdge>] }>()
-const { t } = useI18n()
 
-// ── Local copy ────────────────────────────────────────────────────
-function cloneEdge(e: SchemaEdge): SchemaEdge {
-  return { ...e, ccUsers: e.ccUsers ? [...e.ccUsers] : [] }
+function cloneEdge(edge: SchemaEdge): SchemaEdge {
+  return { ...edge, ccUsers: edge.ccUsers ? [...edge.ccUsers] : [] }
 }
 
 const syncing = ref(false)
 const local = ref<SchemaEdge>(cloneEdge(props.edge))
-
-// conditionType: UI concept — derived from whether condition is set
 const conditionType = ref<'none' | 'condition'>(props.edge.condition ? 'condition' : 'none')
+const isFallback = computed(() => isFallbackEdge(local.value))
 
 watch(
   () => props.edge,
-  async (e) => {
+  async edge => {
     syncing.value = true
-    local.value = cloneEdge(e)
-    conditionType.value = e.condition ? 'condition' : 'none'
+    local.value = cloneEdge(edge)
+    conditionType.value = edge.condition ? 'condition' : 'none'
     await nextTick()
     syncing.value = false
   },
   { deep: true },
 )
 
-// When switching to 'none', clear the condition expression
-watch(conditionType, (ct) => {
-  if (ct === 'none') {
-    local.value = { ...local.value, condition: undefined }
-  }
+watch(conditionType, type => {
+  if (type === 'none') local.value = { ...local.value, condition: undefined, isError: false }
+  else if (!local.value.condition) local.value = { ...local.value, condition: 'false', isError: false }
 })
+
+watch(
+  () => local.value.isError,
+  enabled => {
+    if (!enabled) return
+    conditionType.value = 'none'
+    local.value = { ...local.value, condition: undefined }
+  },
+)
 
 watch(
   local,
@@ -47,21 +52,25 @@ watch(
   { deep: true },
 )
 
-// ── CC user search ────────────────────────────────────────────────
-interface UserOpt { label: string; value: string }
-const ccUserOptions = ref<UserOpt[]>([])
+interface UserOption { label: string; value: string }
+const ccUserOptions = ref<UserOption[]>([])
 const ccUserSearchLoading = ref(false)
 
-async function searchCcUsers(kw: string) {
-  if (!kw) { ccUserOptions.value = []; return }
+async function searchCcUsers(keyword: string) {
+  if (!keyword) {
+    ccUserOptions.value = []
+    return
+  }
   ccUserSearchLoading.value = true
   try {
-    const res = await userApi.getList({ page: 1, pageSize: 20, keyword: kw }) as any
-    ccUserOptions.value = (res.rows ?? []).map((u: any) => ({
-      label: u.nickName || u.userName,
-      value: String(u.id),
+    const response = await userApi.getList({ page: 1, pageSize: 20, keyword }) as any
+    ccUserOptions.value = (response.rows ?? []).map((user: any) => ({
+      label: user.nickName || user.userName,
+      value: String(user.id),
     }))
-  } catch { /* HTTP interceptor toasts */ } finally {
+  } catch {
+    // HTTP interceptor displays the request error.
+  } finally {
     ccUserSearchLoading.value = false
   }
 }
@@ -69,38 +78,43 @@ async function searchCcUsers(kw: string) {
 
 <template>
   <div class="edge-prop-panel">
-    <div class="panel-title">{{ t('oa.designer.edgeProps') }}</div>
+    <section class="route-summary" :class="{ fallback: isFallback, error: local.isError }">
+      <span><el-icon><Warning v-if="local.isError" /><Flag v-else-if="isFallback" /><Connection v-else /></el-icon></span>
+      <div>
+        <strong>{{ local.isError ? '失败路径' : (isFallback ? '无条件兜底路径' : '条件路径') }}</strong>
+        <small>{{ local.from }} → {{ local.to }}</small>
+      </div>
+    </section>
 
-    <el-form label-position="top" size="small" class="prop-form">
-      <!-- 路徑類型 -->
-      <el-form-item :label="t('oa.designer.pathType')">
-        <el-radio-group v-model="conditionType">
-          <el-radio value="none">{{ t('oa.designer.conditionNone') }}</el-radio>
-          <el-radio value="condition">{{ t('oa.designer.conditionCond') }}</el-radio>
+    <el-form label-position="top" class="prop-form">
+      <div class="section-title"><span><el-icon><Connection /></el-icon></span><div><strong>基础信息</strong><small>路径名称与画布连接方向</small></div></div>
+      <el-form-item label="路径名称">
+        <el-input v-model="local.name" clearable placeholder="例如：金额超过 10 万" />
+      </el-form-item>
+      <div class="route-metadata">
+        <span><small>优先级</small><strong><el-icon><Rank /></el-icon>{{ local.priority ?? '—' }}</strong></span>
+        <span><small>起点</small><strong>{{ local.sourceHandle || '自动' }}</strong></span>
+        <span><small>终点</small><strong>{{ local.targetHandle || '自动' }}</strong></span>
+      </div>
+
+      <div class="section-title"><span class="amber"><el-icon><Flag /></el-icon></span><div><strong>匹配规则</strong><small>从上到下判断，无条件路径最后兜底</small></div></div>
+      <el-form-item v-if="!local.isError" label="路径类型">
+        <el-radio-group v-model="conditionType" class="route-type">
+          <el-radio-button value="condition">条件路径</el-radio-button>
+          <el-radio-button value="none">无条件兜底</el-radio-button>
         </el-radio-group>
       </el-form-item>
-
-      <!-- 條件表達式（條件路徑時顯示）-->
-      <el-form-item
-        v-if="conditionType === 'condition'"
-        :label="t('oa.designer.conditionExpr')"
-      >
-        <el-input
-          v-model="local.condition"
-          type="textarea"
-          :rows="2"
-          :placeholder="t('oa.designer.conditionPlaceholder')"
-        />
+      <el-form-item v-if="conditionType === 'condition' && !local.isError" label="条件表达式">
+        <el-input v-model="local.condition" type="textarea" :rows="3" placeholder="例如：amount >= 100000" />
       </el-form-item>
+      <div v-if="isFallback && !local.isError" class="fallback-note">
+        <el-icon><Flag /></el-icon><span>此路径不设置条件，运行时仅在前面的条件均未命中后执行。</span>
+      </div>
 
-      <!-- 失败边（IsError）：服务任务失败耗尽时走此边（D-T3）-->
-      <el-form-item>
-        <el-checkbox v-model="local.isError">{{ t('oa.designer.svc.errorEdge') }}</el-checkbox>
-      </el-form-item>
-      <div class="edge-error-hint">{{ t('oa.designer.svc.errorEdgeHint') }}</div>
-
-      <!-- 知會人員 -->
-      <el-form-item :label="t('oa.designer.ccUsers')">
+      <div class="section-title"><span class="red"><el-icon><Warning /></el-icon></span><div><strong>异常与知会</strong><small>服务失败分流及路径抄送</small></div></div>
+      <el-checkbox v-model="local.isError" class="error-toggle">服务任务失败时走此路径</el-checkbox>
+      <p class="field-hint">失败路径不参与普通条件优先级判断，每个来源节点最多一条。</p>
+      <el-form-item label="知会人员">
         <el-select
           v-model="local.ccUsers"
           style="width: 100%"
@@ -109,15 +123,10 @@ async function searchCcUsers(kw: string) {
           remote
           :remote-method="searchCcUsers"
           :loading="ccUserSearchLoading"
-          :placeholder="t('oa.designer.userHint')"
+          placeholder="搜索并选择人员"
           clearable
         >
-          <el-option
-            v-for="u in ccUserOptions"
-            :key="u.value"
-            :label="u.label"
-            :value="u.value"
-          />
+          <el-option v-for="user in ccUserOptions" :key="user.value" :label="user.label" :value="user.value" />
         </el-select>
       </el-form-item>
     </el-form>
@@ -125,41 +134,38 @@ async function searchCcUsers(kw: string) {
 </template>
 
 <style scoped>
-.edge-prop-panel {
-  padding: 8px;
-  overflow-y: auto;
-  height: 100%;
-  box-sizing: border-box;
-}
-
-.panel-title {
-  font-size: 13px;
-  font-weight: 600;
-  color: var(--cp-ink);
-  padding: 4px 0 8px;
-  border-bottom: 1px solid var(--cp-line);
-  margin-bottom: 8px;
-}
-
-.prop-form {
-  padding: 4px 2px 0;
-}
-
-.prop-form :deep(.el-form-item) {
-  margin-bottom: 10px;
-}
-
-.prop-form :deep(.el-form-item__label) {
-  font-size: 12px;
-  color: var(--cp-text);
-  padding-bottom: 2px;
-  line-height: 1.4;
-}
-
-.edge-error-hint {
-  font-size: 12px;
-  color: var(--cp-text-muted);
-  line-height: 1.4;
-  margin: -4px 0 10px;
-}
+.edge-prop-panel { height: 100%; padding: 10px; overflow-y: auto; box-sizing: border-box; }
+.route-summary { min-height: 58px; padding: 8px 10px; display: grid; grid-template-columns: 34px minmax(0, 1fr); align-items: center; gap: 9px; border: 1px solid #d8e3e5; border-radius: 6px; background: #f7fafb; }
+.route-summary > span { width: 34px; height: 34px; display: grid; place-items: center; border-radius: 5px; background: #e6f1f2; color: #4c7c83; }
+.route-summary strong, .route-summary small { display: block; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
+.route-summary strong { color: #3b555c; font-size: 11px; }
+.route-summary small { margin-top: 4px; color: #819399; font-size: 9px; }
+.route-summary.fallback { border-color: #cce2d8; background: #f3faf6; }
+.route-summary.fallback > span { background: #dff1e8; color: #27815f; }
+.route-summary.error { border-color: #ead0ce; background: #fff7f6; }
+.route-summary.error > span { background: #f8e5e3; color: #c75a54; }
+.prop-form { padding-top: 4px; }
+.section-title { margin: 14px -10px 10px; padding: 10px; display: grid; grid-template-columns: 30px minmax(0, 1fr); align-items: center; gap: 8px; border-top: 1px solid var(--cp-line); border-bottom: 1px solid #edf1f2; background: #fbfcfc; }
+.section-title > span { width: 30px; height: 30px; display: grid; place-items: center; border-radius: 5px; background: var(--cp-brand-bg); color: var(--cp-brand); }
+.section-title > span.amber { background: #fff1dc; color: #b87618; }
+.section-title > span.red { background: #fae9e7; color: #be5650; }
+.section-title strong, .section-title small { display: block; }
+.section-title strong { color: var(--cp-ink); font-size: 11px; }
+.section-title small { margin-top: 2px; color: var(--cp-muted); font-size: 9px; }
+.prop-form :deep(.el-form-item) { margin-bottom: 11px; }
+.prop-form :deep(.el-form-item__label) { padding-bottom: 4px; color: var(--cp-text); font-size: 10px; line-height: 1.3; }
+.route-metadata { display: grid; grid-template-columns: repeat(3, 1fr); overflow: hidden; border: 1px solid var(--cp-line); border-radius: 5px; }
+.route-metadata > span { min-width: 0; padding: 7px 8px; border-right: 1px solid var(--cp-line); }
+.route-metadata > span:last-child { border-right: 0; }
+.route-metadata small, .route-metadata strong { display: block; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
+.route-metadata small { color: var(--cp-muted); font-size: 8px; }
+.route-metadata strong { margin-top: 4px; color: #4a666d; font-size: 10px; }
+.route-metadata .el-icon { margin-right: 3px; vertical-align: -2px; }
+.route-type { display: flex; width: 100%; }
+.route-type :deep(.el-radio-button) { flex: 1; }
+.route-type :deep(.el-radio-button__inner) { width: 100%; }
+.fallback-note { margin: -2px 0 8px; padding: 8px; display: flex; gap: 7px; border: 1px solid #d4e7dd; border-radius: 5px; background: #f3faf6; color: #3b7d65; font-size: 9px; line-height: 1.5; }
+.fallback-note .el-icon { margin-top: 2px; flex-shrink: 0; }
+.error-toggle { color: var(--cp-text); }
+.field-hint { margin: 3px 0 12px; color: var(--cp-muted); font-size: 9px; line-height: 1.45; }
 </style>

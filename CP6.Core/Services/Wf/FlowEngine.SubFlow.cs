@@ -14,18 +14,21 @@ public partial class FlowEngine
     /// ② 不 SaveChanges（handler 三律——随父动作外壳统一落库，子实例与父停泊同事务原子）；
     /// ③ 目标不存在/停用抛 E-WF-025（保存时校验已拦，运行时兜底防发布后停用）。
     /// 版本口径=发起时刻该 FlowKey 最新已发布版（SubmitAsync 既有口径，spec §3.1）。</summary>
-    internal async Task<Guid> SubmitChildAsync(string flowKey, Guid starterId, string varsJson,
+    internal async Task<Guid> SubmitChildAsync(Guid flowDefVersionId, Guid starterId, string varsJson,
         Guid parentInstanceId, Guid parentTokenId, int subIndex)
     {
-        var def = await _db.Wf_FlowDefs.FirstOrDefaultAsync(x => x.FlowKey == flowKey && x.Enable)
-                  ?? throw new InvalidOperationException($"E-WF-025: 子流程引用不存在或已停用:{flowKey}");
-        var schema = Deserialize(def.SchemaJson);
-        var first = FirstNode(schema) ?? throw new InvalidOperationException($"E-WF-025: 子流程 {flowKey} 无节点");
+        var version = await _db.Wf_FlowDefVersions.AsNoTracking()
+            .SingleOrDefaultAsync(x => x.Id == flowDefVersionId && x.Status == WfDefinitionVersionStatus.Published)
+            ?? throw new InvalidOperationException("E-WF-046");
+        var def = await _db.Wf_FlowDefs.AsNoTracking().SingleAsync(x => x.Id == version.FlowDefId);
+        var schema = Deserialize(version.SchemaJson);
+        var first = FirstNode(schema) ?? throw new InvalidOperationException($"E-WF-025: 子流程 {def.FlowKey} 无节点");
 
         var inst = new Wf_FlowInstance
         {
             Id = Guid.NewGuid(),
-            FlowKey = flowKey,
+            FlowDefVersionId = version.Id,
+            FlowKey = def.FlowKey,
             VarsJson = string.IsNullOrWhiteSpace(varsJson) ? "{}" : varsJson,
             StarterId = starterId,
             Status = FlowInstanceStatus.Running,
@@ -107,7 +110,7 @@ public partial class FlowEngine
                 if (token is null || token.Status != FlowTokenStatus.Active) return;          // 停泊状态闸：已恢复/已剪/已取消
                 var inst = await _db.Wf_FlowInstances.FirstOrDefaultAsync(i => i.Id == token.InstanceId, ct);
                 if (inst is null || inst.Status != FlowInstanceStatus.Running) return;        // 父实例状态闸：级联 Withdrawn 不回注
-                var schema = await LoadSchemaAsync(inst.FlowKey);
+                var schema = await LoadSchemaAsync(inst, ct);
                 var node = FindNode(schema, token.NodeId);
                 if (node is null || string.IsNullOrWhiteSpace(node.SubFlowKey)) return;       // token 已离开 subFlow 节点
 

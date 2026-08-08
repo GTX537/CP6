@@ -87,6 +87,27 @@ public class SecurityMiddlewareTests
     }
 
     [Fact]
+    public async Task Csrf_explicit_bearer_write_passes_without_cookie_token()
+    {
+        var (next, called) = FakeNext();
+        var ctx = Ctx("POST", "/api/v1/wms/mobile/tasks/MTK1/claim");
+        ctx.Request.Headers.Authorization = "Bearer native-access-token";
+
+        await Csrf(next).Invoke(ctx);
+
+        Assert.True(called());
+    }
+
+    [Fact]
+    public async Task Csrf_cookie_write_on_native_business_route_still_requires_token()
+    {
+        var (next, _) = FakeNext();
+        var ex = await Assert.ThrowsAsync<BizException>(() =>
+            Csrf(next).Invoke(Ctx("POST", "/api/v1/wms/mobile/tasks/MTK1/claim")));
+        Assert.Equal("E-SEC-010", ex.Code);
+    }
+
+    [Fact]
     public async Task Csrf_safe_method_passes_without_token()
     {
         var (next, called) = FakeNext();

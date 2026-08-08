@@ -19,10 +19,10 @@ public interface IInboxService
     // ── 批量办理（act-as，Phase C T8）── actorId=实际执行人；onBehalfOf=被代理人（null=本人操作）
     Task<IReadOnlyList<BatchActResultItem>> ActBatchAsAsync(Guid actorId, Guid? onBehalfOf, IReadOnlyList<Guid> taskIds, bool approve, string? comment = null);
     // ── 详情 + 仪表盘（T8）──
-    Task<InboxDetail?> DetailAsync(Guid instanceId);   // 不存在 → null（控制器转 404）
+    Task<InboxDetail?> DetailAsync(Guid actualUserId, Guid effectiveUserId, Guid instanceId);
     Task<InboxStats> StatsAsync(Guid userId);
     // ── 表單查詢（Phase C）──
-    Task<IReadOnlyList<FormQueryItem>> QueryAsync(FormQueryFilter filter);
+    Task<FormQueryPage> QueryAsync(Guid effectiveUserId, FormQueryFilter filter);
     // ── 在途批量转单（wfs-inbox-ux §3）── actorId=操作者（管理员本人）；逐条独立事务（引擎 TransferAsync 内部 SaveChanges）
     Task<BatchTransferReport> BatchTransferAsync(Guid actorId, Guid fromUserId, Guid toUserId, string? comment, BatchTransferFilter? filter = null);
     Task<BatchTransferPreview> BatchTransferPreviewAsync(Guid fromUserId, BatchTransferFilter? filter = null);

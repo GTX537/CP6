@@ -38,7 +38,7 @@ public class PendingCookieTests
         var ctx = new DefaultHttpContext();
         writer.WritePendingCookies(ctx.Response, "pending.jwt", "csrf-token-xyz");
 
-        var setCookies = ctx.Response.Headers["Set-Cookie"].ToArray();
+        var setCookies = ctx.Response.Headers["Set-Cookie"].OfType<string>().ToArray();
         Assert.Contains(setCookies, h => h.Contains("cp6_2fa=") && h.Contains("httponly", StringComparison.OrdinalIgnoreCase) && h.Contains("path=/api/auth", StringComparison.OrdinalIgnoreCase));
         Assert.Contains(setCookies, h => h.Contains("cp6_csrf=") && !h.Contains("httponly", StringComparison.OrdinalIgnoreCase));
     }
@@ -52,7 +52,7 @@ public class PendingCookieTests
         }));
         var ctx = new DefaultHttpContext();
         writer.ClearAuthCookies(ctx.Response);
-        var setCookies = ctx.Response.Headers["Set-Cookie"].ToArray();
+        var setCookies = ctx.Response.Headers["Set-Cookie"].OfType<string>().ToArray();
         Assert.Contains(setCookies, h => h.StartsWith("cp6_2fa=") && h.Contains("expires=", StringComparison.OrdinalIgnoreCase));
     }
 }

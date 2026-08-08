@@ -1,0 +1,301 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://cp6.local/contracts/space/ai/v1/warehouse-generation-input.schema.json",
+  "title": "CP6 Warehouse Generation Provider Input v1",
+  "type": "object",
+  "additionalProperties": false,
+  "required": [
+    "schemaVersion",
+    "runCorrelationKey",
+    "policy",
+    "warehouseKind",
+    "limits",
+    "features",
+    "mappingHints",
+    "lockedFacts"
+  ],
+  "properties": {
+    "schemaVersion": {
+      "const": "1.0"
+    },
+    "runCorrelationKey": {
+      "type": "string",
+      "minLength": 32,
+      "maxLength": 128,
+      "description": "Opaque HMAC correlation value; never a TenantId, SiteId, file name or storage key."
+    },
+    "policy": {
+      "enum": [
+        "MetadataOnly",
+        "StructuredFeatures"
+      ]
+    },
+    "warehouseKind": {
+      "const": "GeneralRackWarehouse"
+    },
+    "limits": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": [
+        "maxSuggestions",
+        "maxRelationsPerSuggestion"
+      ],
+      "properties": {
+        "maxSuggestions": {
+          "type": "integer",
+          "minimum": 1,
+          "maximum": 1000000
+        },
+        "maxRelationsPerSuggestion": {
+          "type": "integer",
+          "minimum": 0,
+          "maximum": 32
+        }
+      }
+    },
+    "features": {
+      "type": "array",
+      "maxItems": 1000000,
+      "items": {
+        "$ref": "#/$defs/feature"
+      }
+    },
+    "mappingHints": {
+      "type": "array",
+      "maxItems": 10000,
+      "items": {
+        "$ref": "#/$defs/mappingHint"
+      }
+    },
+    "lockedFacts": {
+      "type": "array",
+      "maxItems": 1000000,
+      "items": {
+        "$ref": "#/$defs/lockedFact"
+      }
+    }
+  },
+  "allOf": [
+    {
+      "if": {
+        "properties": {
+          "policy": {
+            "const": "MetadataOnly"
+          }
+        },
+        "required": [
+          "policy"
+        ]
+      },
+      "then": {
+        "properties": {
+          "features": {
+            "items": {
+              "properties": {
+                "normalizedBounds": {
+                  "type": "null"
+                },
+                "relationSourceKeys": {
+                  "maxItems": 0
+                }
+              }
+            }
+          },
+          "lockedFacts": {
+            "maxItems": 0
+          }
+        }
+      }
+    }
+  ],
+  "$defs": {
+    "token": {
+      "type": "string",
+      "minLength": 1,
+      "maxLength": 256,
+      "pattern": "^[^\\u0000-\\u001F\\u007F]*$"
+    },
+    "feature": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": [
+        "sourceKey",
+        "cadEntityType",
+        "layerToken",
+        "blockToken",
+        "entityCount",
+        "normalizedBounds",
+        "angleBucket",
+        "aspectRatioBucket",
+        "repetitionGroup",
+        "attributeKeyTokens",
+        "relationSourceKeys"
+      ],
+      "properties": {
+        "sourceKey": {
+          "$ref": "#/$defs/token"
+        },
+        "cadEntityType": {
+          "enum": [
+            "Line",
+            "Polyline",
+            "ClosedPolyline",
+            "Circle",
+            "Arc",
+            "BlockReference",
+            "TextToken",
+            "Unknown"
+          ]
+        },
+        "layerToken": {
+          "$ref": "#/$defs/token"
+        },
+        "blockToken": {
+          "anyOf": [
+            {
+              "$ref": "#/$defs/token"
+            },
+            {
+              "type": "null"
+            }
+          ]
+        },
+        "entityCount": {
+          "type": "integer",
+          "minimum": 1,
+          "maximum": 1000000
+        },
+        "normalizedBounds": {
+          "type": [
+            "object",
+            "null"
+          ],
+          "additionalProperties": false,
+          "required": [
+            "x",
+            "y",
+            "width",
+            "height"
+          ],
+          "properties": {
+            "x": {
+              "type": "number",
+              "minimum": 0,
+              "maximum": 1
+            },
+            "y": {
+              "type": "number",
+              "minimum": 0,
+              "maximum": 1
+            },
+            "width": {
+              "type": "number",
+              "exclusiveMinimum": 0,
+              "maximum": 1
+            },
+            "height": {
+              "type": "number",
+              "exclusiveMinimum": 0,
+              "maximum": 1
+            }
+          }
+        },
+        "angleBucket": {
+          "type": "integer",
+          "minimum": 0,
+          "maximum": 35
+        },
+        "aspectRatioBucket": {
+          "type": [
+            "integer",
+            "null"
+          ],
+          "minimum": 0,
+          "maximum": 8,
+          "description": "Dimensionless floor(log2(long-side/short-side)) bucket, capped at 8; null for degenerate bounds."
+        },
+        "repetitionGroup": {
+          "anyOf": [
+            {
+              "$ref": "#/$defs/token"
+            },
+            {
+              "type": "null"
+            }
+          ]
+        },
+        "attributeKeyTokens": {
+          "type": "array",
+          "maxItems": 64,
+          "items": {
+            "$ref": "#/$defs/token"
+          }
+        },
+        "relationSourceKeys": {
+          "type": "array",
+          "maxItems": 32,
+          "items": {
+            "$ref": "#/$defs/token"
+          }
+        }
+      }
+    },
+    "mappingHint": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": [
+        "token",
+        "targetType",
+        "strength"
+      ],
+      "properties": {
+        "token": {
+          "$ref": "#/$defs/token"
+        },
+        "targetType": {
+          "$ref": "#/$defs/spaceType"
+        },
+        "strength": {
+          "type": "number",
+          "minimum": 0,
+          "maximum": 1
+        }
+      }
+    },
+    "lockedFact": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": [
+        "sourceKey",
+        "fieldPath",
+        "valueToken"
+      ],
+      "properties": {
+        "sourceKey": {
+          "$ref": "#/$defs/token"
+        },
+        "fieldPath": {
+          "$ref": "#/$defs/token"
+        },
+        "valueToken": {
+          "$ref": "#/$defs/token"
+        }
+      }
+    },
+    "spaceType": {
+      "enum": [
+        "Floor",
+        "Zone",
+        "Aisle",
+        "Rack",
+        "Wall",
+        "Column",
+        "Door",
+        "Dock",
+        "StaticEquipment",
+        "Ignore",
+        "Unknown"
+      ]
+    }
+  }
+}

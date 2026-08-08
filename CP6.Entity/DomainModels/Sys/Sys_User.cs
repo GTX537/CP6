@@ -92,4 +92,10 @@ public class Sys_User : BaseTenantEntity, IAuditable
     /// true=可访问 /api/platform/* 端点族（[RequirePlatformAdmin] 守卫，claim 快判 + DB 回查纵深防御）。默认 false。
     /// </summary>
     public bool IsPlatformAdmin { get; set; }
+
+    /// <summary>Warehouse badge identifier used for shared-device handover.</summary>
+    [MaxLength(64)] public string? BadgeNo { get; set; }
+
+    /// <summary>BCrypt hash of the six-digit quick-switch PIN.</summary>
+    [MaxLength(200), AuditIgnore] public string? QuickPinHash { get; set; }
 }

@@ -32,6 +32,31 @@ describe('designerModel', () => {
     expect(back.edges.find(e => e.from === 'a')!.condition).toBe('days>3')
   })
 
+  it('round-trips stable edge ids, four-way handles and route priority', () => {
+    const value: FlowSchemaDto = {
+      start: 'left',
+      nodes: [
+        { id: 'left', type: 'start', x: 0, y: 0 },
+        { id: 'right', type: 'end', x: 240, y: 0 },
+      ],
+      edges: [{
+        id: 'route-main', from: 'left', to: 'right', name: '主路径', priority: 2,
+        sourceHandle: 'right', targetHandle: 'left',
+      }],
+    }
+
+    const graph = schemaToGraph(value)
+    expect(graph.edges[0]!.id).toBe('route-main')
+    expect(graph.edges[0]!.sourceHandle).toBe('right')
+    expect(graph.edges[0]!.targetHandle).toBe('left')
+
+    const back = graphToSchema(graph)
+    expect(back.edges[0]).toMatchObject({
+      id: 'route-main', name: '主路径', priority: 2,
+      sourceHandle: 'right', targetHandle: 'left',
+    })
+  })
+
   it('validateClient flags missing start + edge to unknown node', () => {
     expect(validateClient(schema as any)).toEqual([])
     const noStart = { ...schema, nodes: schema.nodes.filter(n => n.type !== 'start') }

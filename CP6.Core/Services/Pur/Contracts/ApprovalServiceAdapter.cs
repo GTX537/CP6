@@ -16,7 +16,6 @@ public class ApprovalServiceAdapter : IApprovalService
 {
     private readonly WfApproval _wfApproval;
     private readonly CP6Context _db;
-
     public ApprovalServiceAdapter(WfApproval wfApproval, CP6Context db)
     {
         _wfApproval = wfApproval;
@@ -26,18 +25,13 @@ public class ApprovalServiceAdapter : IApprovalService
     /// <inheritdoc />
     public async Task<ApprovalSubmitResult> SubmitAsync(ApprovalSubmitRequest request)
     {
-        // 无启用绑定 → 自动放行（向后兼容：未配审批流程的 BizType 直通）
-        var hasBinding = await _db.Wf_ApprovalBindings.AnyAsync(b => b.BizType == request.BizType && b.Enable);
-        if (!hasBinding)
-            return new ApprovalSubmitResult { AutoApproved = true, ApprovalRef = $"AUTO-{request.BizKey}" };
-
-        // 提交人 userName → Sys_User.Id（OA 起流程需 starterId Guid；缺则 Empty，审批人由流程定义指定）
-        var starterId = await _db.Sys_Users
-            .Where(u => u.UserName == request.Submitter)
-            .Select(u => (Guid?)u.Id).FirstOrDefaultAsync() ?? Guid.Empty;
-
-        var instanceId = await _wfApproval.SubmitAsync(request.BizType, request.BizKey, starterId,
-            new { amount = request.Amount, submitter = request.Submitter });
+        var actorId = request.ActorId;
+        if (actorId == Guid.Empty && !string.IsNullOrWhiteSpace(request.Submitter))
+            actorId = await _db.Sys_Users.Where(x => x.UserName == request.Submitter && x.Enable)
+                .Select(x => x.Id).FirstOrDefaultAsync();
+        if (actorId == Guid.Empty) throw new InvalidOperationException("E-PUR-057");
+        var instanceId = await _wfApproval.SubmitAsync(
+            request.BizType, request.BizKey, actorId, request.Snapshot, request.InstanceId);
 
         return new ApprovalSubmitResult { AutoApproved = false, ApprovalRef = instanceId.ToString() };
     }

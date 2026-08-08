@@ -13,7 +13,7 @@ namespace CP6.Entity.DomainModels.Pur;
 /// 多租户继承 <see cref="BaseBizEntity"/>（TenantId 自动盖、查询全局过滤、软删/乐观锁）。
 /// </remarks>
 [Table("Pur_PurchaseRequest")]
-public class PurchaseRequest : BaseBizEntity
+public class PurchaseRequest : BaseBizEntity, IDataScoped
 {
     /// <summary>采购申请号（采番 "PR"+yyyyMMdd+流水，同租户唯一）</summary>
     [Required, MaxLength(20)]

@@ -2,6 +2,9 @@ using System.Text.Json;
 using CP6.Core.Auth;
 using CP6.Core.Services.Sys;
 using CP6.Core.Services.Wf;
+using CP6.Core.Services.Oa;
+using CP6.Core.EFDbContext;
+using Microsoft.EntityFrameworkCore;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 
@@ -18,11 +21,18 @@ public class ApprovalController : LocalizedControllerBase
 {
     private readonly IApprovalService _approval;
     private readonly ICurrentPermissionContext _ctx;
+    private readonly CP6Context _db;
+    private readonly IOaInstanceAccessService _access;
+    private readonly IDelegateService _delegates;
 
-    public ApprovalController(IApprovalService approval, ICurrentPermissionContext ctx)
+    public ApprovalController(IApprovalService approval, ICurrentPermissionContext ctx,
+        CP6Context db, IOaInstanceAccessService access, IDelegateService delegates)
     {
         _approval = approval;
         _ctx = ctx;
+        _db = db;
+        _access = access;
+        _delegates = delegates;
     }
 
     private IActionResult Ok2(object? data = null) => Ok(new { code = 0, message = "OK", data });
@@ -33,21 +43,32 @@ public class ApprovalController : LocalizedControllerBase
     [RequirePermission("oa-form-catalog", "submit")]
     public async Task<IActionResult> Submit([FromBody] ApprovalSubmitReq r)
     {
-        try
-        {
-            var starter = (await _ctx.GetAsync()).UserId;
-            // formSnapshot 透传为对象（已是 JsonElement / 由业务侧序列化）
-            object? snapshot = r.FormSnapshot.ValueKind == JsonValueKind.Undefined ? null : r.FormSnapshot;
-            var id = await _approval.SubmitAsync(r.BizType, r.BizId, starter, snapshot);
-            return Ok2(new { instanceId = id });
-        }
-        catch (InvalidOperationException e) { return Err(e); }
+        await Task.CompletedTask;
+        return StatusCode(StatusCodes.Status410Gone,
+            new { code = 410, message = "Business modules must submit through their trusted backend endpoint." });
     }
 
     /// <summary>查业务单据的审批状态。</summary>
     [HttpGet("status")]
     public async Task<IActionResult> Status([FromQuery] string bizType, [FromQuery] string bizId)
     {
+        var instanceId = await _db.Wf_FlowInstances.AsNoTracking()
+            .Where(x => x.BizType == bizType && x.BizId == bizId)
+            .OrderByDescending(x => x.CreateDate).Select(x => (Guid?)x.Id).FirstOrDefaultAsync();
+        if (instanceId == null) return NotFound(new { code = 404, message = "E-WF-007" });
+        var actual = (await _ctx.GetAsync()).UserId;
+        var effective = actual;
+        var header = Request.Headers["X-Acting-As"].ToString();
+        if (Guid.TryParse(header, out var actingAs) && actingAs != Guid.Empty && actingAs != actual)
+        {
+            await _delegates.AssertActiveGrantAsync(actual, actingAs);
+            effective = actingAs;
+        }
+        try { await _access.GetAsync(actual, effective, instanceId.Value); }
+        catch (UnauthorizedAccessException)
+        {
+            return StatusCode(StatusCodes.Status403Forbidden, new { code = "E-WF-043", message = "E-WF-043" });
+        }
         var status = await _approval.GetStatusAsync(bizType, bizId);
         return Ok2(new { bizType, bizId, status = (int)status, statusName = status.ToString() });
     }

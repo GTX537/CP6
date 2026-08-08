@@ -16,6 +16,13 @@ public class FormServiceTests
 
     private const string LeaveSchema =
         """{"fields":[{"name":"reason","label":"事由","type":"input","required":true,"maxLength":50},{"name":"days","label":"天数","type":"number","required":true}]}""";
+    private const string PurchaseSchema =
+        """
+        {"fields":[{"name":"items","label":"采购明细","type":"table","required":true,"minRows":1,"maxRows":2,
+        "columns":[{"name":"material","label":"物料","type":"input","required":true,"maxLength":5},
+        {"name":"qty","label":"数量","type":"number","required":true},
+        {"name":"unit","label":"单位","type":"select"}]}]}
+        """;
 
     [Fact]
     public async Task SaveDef_Then_GetDef_RoundTrip()
@@ -90,5 +97,57 @@ public class FormServiceTests
         var data = await db.Wf_FormDatas.SingleAsync();
         Assert.Equal(1, data.FormVersion);              // 旧数据仍记 v1
         Assert.Contains("年假", data.DataJson);
+    }
+
+    [Fact]
+    public async Task SubmitData_ValidTable_StoredAsVersionedJson()
+    {
+        using var db = NewDb();
+        var svc = new FormService(db);
+        await svc.SaveDefAsync("purchase", "采购单", PurchaseSchema);
+
+        await svc.SubmitDataAsync("purchase", null,
+            """{"items":[{"material":"A-01","qty":2,"unit":"pc"}]}""");
+
+        var data = await db.Wf_FormDatas.SingleAsync();
+        Assert.Contains(@"""items"":[{", data.DataJson);
+        Assert.Contains(@"""qty"":2", data.DataJson);
+    }
+
+    [Theory]
+    [InlineData("""{"items":[]}""", "必填")]
+    [InlineData("""{"items":[{"material":"A-01"}]}""", "数量 必填")]
+    [InlineData("""{"items":[{"material":"A-01","qty":"two"}]}""", "必须是数字")]
+    [InlineData("""{"items":[{"material":"A-01","qty":1,"unexpected":true}]}""", "未知列")]
+    [InlineData("""{"items":[{"material":"TOO-LONG","qty":1}]}""", "最大长度")]
+    [InlineData("""{"items":[{"material":"A","qty":1},{"material":"B","qty":2},{"material":"C","qty":3}]}""", "最多允许 2 行")]
+    public async Task SubmitData_InvalidTable_ThrowsAndDoesNotStore(string json, string message)
+    {
+        using var db = NewDb();
+        var svc = new FormService(db);
+        await svc.SaveDefAsync("purchase", "采购单", PurchaseSchema);
+
+        var ex = await Assert.ThrowsAsync<InvalidOperationException>(
+            () => svc.SubmitDataAsync("purchase", null, json));
+
+        Assert.Contains(message, ex.Message);
+        Assert.Empty(await db.Wf_FormDatas.ToListAsync());
+    }
+
+    [Fact]
+    public async Task Publish_InvalidTableSchema_FailsClosed()
+    {
+        using var db = NewDb();
+        var svc = new FormService(db);
+        const string invalid =
+            """{"fields":[{"name":"items","type":"table","minRows":2,"maxRows":1,"columns":[]}]}""";
+        var draft = await svc.SaveDraftAsync("purchase", "采购单", invalid, null);
+
+        var ex = await Assert.ThrowsAsync<InvalidOperationException>(
+            () => svc.PublishAsync("purchase", draft.RowVersion, Guid.NewGuid()));
+
+        Assert.Equal("E-WF-036", ex.Message);
+        Assert.Empty(await db.Wf_FormDefVersions
+            .Where(x => x.Status == WfDefinitionVersionStatus.Published).ToListAsync());
     }
 }

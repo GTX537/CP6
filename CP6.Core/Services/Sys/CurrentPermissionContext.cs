@@ -1,60 +1,93 @@
+using System.Text.Json;
 using CP6.Core.EFDbContext;
 using Microsoft.AspNetCore.Http;
 using Microsoft.EntityFrameworkCore;
-using Microsoft.Extensions.Caching.Memory;
+using Microsoft.Extensions.Caching.Distributed;
 
 namespace CP6.Core.Services.Sys;
 
 /// <summary>
-/// <see cref="ICurrentPermissionContext"/> 实现 —— IMemoryCache（单机）缓存权限上下文。
-/// PUB 章01 §8.2/8.3。多实例部署改 Redis（CP6 已有 CacheService/IDistributedCache 基建）。
+/// Request permission context backed by IDistributedCache. Production uses Redis,
+/// so role changes invalidate every API replica instead of one process only.
 /// </summary>
 public class CurrentPermissionContext : ICurrentPermissionContext
 {
-    private readonly IHttpContextAccessor _http;
-    private readonly IMemoryCache _cache;
-    private readonly CP6Context _db;
-    private readonly IPermissionAggregator _agg;
+    private static readonly JsonSerializerOptions JsonOptions =
+        new(JsonSerializerDefaults.Web);
+    private static readonly DistributedCacheEntryOptions CacheOptions = new()
+    {
+        SlidingExpiration = TimeSpan.FromMinutes(30),
+    };
 
-    public CurrentPermissionContext(IHttpContextAccessor http, IMemoryCache cache, CP6Context db, IPermissionAggregator agg)
+    private readonly IHttpContextAccessor _http;
+    private readonly IDistributedCache _cache;
+    private readonly CP6Context _db;
+    private readonly IPermissionAggregator _aggregator;
+
+    public CurrentPermissionContext(
+        IHttpContextAccessor http,
+        IDistributedCache cache,
+        CP6Context db,
+        IPermissionAggregator aggregator)
     {
         _http = http;
         _cache = cache;
         _db = db;
-        _agg = agg;
+        _aggregator = aggregator;
     }
 
     public async Task<UserPermissionContext> GetAsync()
     {
         var name = _http.HttpContext?.User?.Identity?.Name
-                   ?? throw new InvalidOperationException("未登录");
-        var user = await _db.Sys_Users.FirstOrDefaultAsync(u => u.UserName == name)
-                   ?? throw new InvalidOperationException("用户不存在");
-
-        return await _cache.GetOrCreateAsync(CacheKey(user.Id), async e =>
-        {
-            e.SlidingExpiration = TimeSpan.FromMinutes(30);
-            return await _agg.BuildAsync(user.Id);
-        }) ?? throw new InvalidOperationException("权限上下文构建失败");
+                   ?? throw new InvalidOperationException("Not authenticated");
+        var user = await _db.Sys_Users.FirstOrDefaultAsync(x => x.UserName == name)
+                   ?? throw new InvalidOperationException("User does not exist");
+        return await GetOrBuildAsync(user.Id);
     }
 
-    public Task<UserPermissionContext> PrewarmAsync(Guid userId) =>
-        _cache.GetOrCreateAsync(CacheKey(userId), async e =>
-        {
-            e.SlidingExpiration = TimeSpan.FromMinutes(30);
-            return await _agg.BuildAsync(userId);
-        })!;
+    public Task<UserPermissionContext> PrewarmAsync(Guid userId)
+        => GetOrBuildAsync(userId);
 
-    public void Invalidate(Guid userId) => _cache.Remove(CacheKey(userId));
+    public void Invalidate(Guid userId)
+        => _cache.Remove(CacheKey(userId));
 
     public void InvalidateByRole(int roleId)
     {
-        // 该角色全部用户 = Sys_UserRole.RoleId==roleId（附加角色）∪ Sys_User.RoleId==roleId（主角色）
-        var users = _db.Sys_UserRoles.Where(ur => ur.RoleId == roleId).Select(ur => ur.UserId)
-            .Union(_db.Sys_Users.Where(u => u.RoleId == roleId).Select(u => u.Id))
-            .Distinct().ToList();
-        foreach (var uid in users) _cache.Remove(CacheKey(uid));
+        var users = _db.Sys_UserRoles
+            .Where(x => x.RoleId == roleId)
+            .Select(x => x.UserId)
+            .Union(_db.Sys_Users
+                .Where(x => x.RoleId == roleId)
+                .Select(x => x.Id))
+            .Distinct()
+            .ToList();
+        foreach (var userId in users)
+            _cache.Remove(CacheKey(userId));
     }
 
-    private static string CacheKey(Guid uid) => $"perm-ctx:{uid}";
+    private async Task<UserPermissionContext> GetOrBuildAsync(Guid userId)
+    {
+        var key = CacheKey(userId);
+        var cached = await _cache.GetStringAsync(key);
+        if (!string.IsNullOrWhiteSpace(cached))
+        {
+            var context = JsonSerializer.Deserialize<UserPermissionContext>(
+                cached,
+                JsonOptions);
+            if (context is not null)
+            {
+                await _cache.RefreshAsync(key);
+                return context;
+            }
+        }
+
+        var built = await _aggregator.BuildAsync(userId);
+        await _cache.SetStringAsync(
+            key,
+            JsonSerializer.Serialize(built, JsonOptions),
+            CacheOptions);
+        return built;
+    }
+
+    private static string CacheKey(Guid userId) => $"perm-ctx:{userId}";
 }

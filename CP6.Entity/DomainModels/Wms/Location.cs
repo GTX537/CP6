@@ -44,6 +44,15 @@ public class Location : BaseBizEntity, IAuditable
     [Column(TypeName = "decimal(21,8)")]
     public decimal CapacityQty { get; set; } = 0m;
 
+    /// <summary>
+    /// Capacity held by production tasks but not yet physically received into
+    /// this location. A zero CapacityQty still means unlimited capacity.
+    /// </summary>
+    [Column(TypeName = "decimal(21,8)")]
+    public decimal ReservedCapacityQty { get; set; } = 0m;
+
+    [MaxLength(20)] public string? AreaCd { get; set; }
+
     /// <summary>収容可能区分（カンマ区切り）</summary>
     [MaxLength(50)] public string? AllowedProductType { get; set; }
 
