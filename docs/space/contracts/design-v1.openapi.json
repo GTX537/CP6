@@ -17043,6 +17043,7 @@
           "runId",
           "schemaVersion",
           "siteId",
+          "sourceId",
           "status"
         ],
         "type": "object",
@@ -17062,6 +17063,20 @@
           "modelVersionId": {
             "type": "string",
             "format": "uuid"
+          },
+          "sourceId": {
+            "type": "string",
+            "format": "uuid"
+          },
+          "mappingProfileVersionId": {
+            "type": "string",
+            "format": "uuid",
+            "nullable": true
+          },
+          "rackGenerationProfileVersionId": {
+            "type": "string",
+            "format": "uuid",
+            "nullable": true
           },
           "targetFloorLogicalId": {
             "type": "string",

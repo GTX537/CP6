@@ -40,6 +40,21 @@ describe('aiProposalReviewApi', () => {
     )
   })
 
+  it('loads the Draft precondition and bounded source candidates', async () => {
+    await aiProposalReviewApi.getVersion('version-1')
+    await aiProposalReviewApi.getSources('version-1')
+
+    expect(http.get).toHaveBeenNthCalledWith(
+      1,
+      '/space/design/v1/versions/version-1',
+    )
+    expect(http.get).toHaveBeenNthCalledWith(
+      2,
+      '/space/design/v1/versions/version-1/sources',
+      { params: { limit: 200 } },
+    )
+  })
+
   it('queues an atomic apply with the frozen review preconditions', async () => {
     await aiProposalReviewApi.apply(
       'run-1',
@@ -68,14 +83,18 @@ describe('aiProposalReviewApi', () => {
     await aiProposalReviewApi.retry('run-1', action, 'retry-key')
     await aiProposalReviewApi.discard('run-1', action, 'discard-key')
     await aiProposalReviewApi.reconcile('run-1', action, 'reconcile-key')
-    await aiProposalReviewApi.recover(
+    await aiProposalReviewApi.createGenerationRun(
       'version-1',
       {
+        sourceId: 'source-1',
+        mappingProfileVersionId: 'mapping-1',
+        rackGenerationProfileVersionId: null,
         basedOnRunId: 'run-1',
         expectedContentRevision: 43,
         expectedBasedOnRunRowVersion: 'run-row-version',
         mode: 'RuleOnly',
       },
+      'version-row-version',
       'recover-key',
     )
 
@@ -89,7 +108,12 @@ describe('aiProposalReviewApi', () => {
       5,
       '/space/design/v1/versions/version-1/generation-runs',
       expect.objectContaining({ mode: 'RuleOnly', expectedContentRevision: 43 }),
-      { headers: { 'Idempotency-Key': 'recover-key' } },
+      {
+        headers: {
+          'If-Match': 'version-row-version',
+          'Idempotency-Key': 'recover-key',
+        },
+      },
     )
   })
 

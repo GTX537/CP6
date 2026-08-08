@@ -75,10 +75,15 @@ const canReconcile = computed(() =>
 const canRecover = computed(() => Boolean(
   ['Failed', 'Stale'].includes(generationRun.value?.status ?? '') &&
   generationRun.value?.modelVersionId &&
+  generationRun.value?.sourceId &&
   Number.isInteger(props.currentContentRevision),
 ))
+const generationInProgress = computed(() => [
+  'Queued', 'Preparing', 'Inferring', 'Validating',
+].includes(generationRun.value?.status ?? ''))
 
 let applyPollTimer: ReturnType<typeof setTimeout> | undefined
+let generationPollTimer: ReturnType<typeof setTimeout> | undefined
 let applyTerminalNotified = false
 let applyIdempotencyKey = ''
 const recoveryIdempotencyKeys: Record<string, string> = {}
@@ -86,36 +91,65 @@ const recoveryIdempotencyKeys: Record<string, string> = {}
 watch([status, confidenceBand, proposalType], () => void load())
 watch(() => props.runId, () => {
   stopApplyPolling()
+  stopGenerationPolling()
   applyTerminalNotified = false
   applyIdempotencyKey = ''
   Object.keys(recoveryIdempotencyKeys).forEach(key => delete recoveryIdempotencyKeys[key])
   void load()
 })
 onMounted(() => void load())
-onBeforeUnmount(stopApplyPolling)
+onBeforeUnmount(() => {
+  stopApplyPolling()
+  stopGenerationPolling()
+})
 
 async function load(conflict = false): Promise<void> {
   if (!props.runId) return
   loading.value = true
   try {
-    const [nextRun, nextReview, page] = await Promise.all([
-      aiProposalReviewApi.getRun(props.runId),
-      aiProposalReviewApi.getReview(props.runId),
-      aiProposalReviewApi.getProposals(props.runId, {
-        status: status.value || undefined,
-        confidenceBand: confidenceBand.value || undefined,
-        proposalType: proposalType.value || undefined,
-        limit: 200,
-      }),
-    ])
+    const nextRun = await aiProposalReviewApi.getRun(props.runId)
     generationRun.value = nextRun
-    review.value = nextReview
-    proposals.value = page.items ?? []
-    selectedIds.value = selectedIds.value.filter(id =>
-      proposals.value.some(item => item.proposalId === id && item.status === 'Proposed'),
-    )
-    if (conflict) ElMessage.warning('审查已被其他操作更新，已加载最新状态')
-    if (nextRun.status === 'Applying') startApplyPolling()
+    if (generationInProgress.value) {
+      review.value = null
+      proposals.value = []
+      selectedIds.value = []
+      startGenerationPolling()
+      return
+    }
+
+    stopGenerationPolling()
+    if (!['AwaitingReview', 'Applying', 'Succeeded'].includes(nextRun.status ?? '')) {
+      review.value = null
+      proposals.value = []
+      selectedIds.value = []
+      return
+    }
+
+    try {
+      const [nextReview, page] = await Promise.all([
+        aiProposalReviewApi.getReview(props.runId),
+        aiProposalReviewApi.getProposals(props.runId, {
+          status: status.value || undefined,
+          confidenceBand: confidenceBand.value || undefined,
+          proposalType: proposalType.value || undefined,
+          limit: 200,
+        }),
+      ])
+      review.value = nextReview
+      proposals.value = page.items ?? []
+      selectedIds.value = selectedIds.value.filter(id =>
+        proposals.value.some(item => item.proposalId === id && item.status === 'Proposed'),
+      )
+      if (conflict) ElMessage.warning('审查已被其他操作更新，已加载最新状态')
+      if (nextRun.status === 'Applying') startApplyPolling()
+    } catch (error) {
+      if (nextRun.status === 'AwaitingReview' && isAxiosError(error) &&
+        error.response?.status === 404) {
+        startGenerationPolling()
+        return
+      }
+      throw error
+    }
   } finally {
     loading.value = false
   }
@@ -209,7 +243,7 @@ async function runAction(
 
 async function recoverRun(mode: 'SamePolicy' | 'RuleOnly'): Promise<void> {
   const run = generationRun.value
-  if (!canRecover.value || !run?.modelVersionId || !run.rowVersion ||
+  if (!canRecover.value || !run?.modelVersionId || !run.sourceId || !run.rowVersion ||
     !Number.isInteger(props.currentContentRevision)) return
   await ElMessageBox.confirm(
     mode === 'RuleOnly'
@@ -222,19 +256,32 @@ async function recoverRun(mode: 'SamePolicy' | 'RuleOnly'): Promise<void> {
   recoveryBusy.value = action
   recoveryIdempotencyKeys[action] ||= crypto.randomUUID()
   try {
-    const response = await aiProposalReviewApi.recover(
+    const currentVersion = await aiProposalReviewApi.getVersion(run.modelVersionId)
+    if (!currentVersion.rowVersion ||
+      currentVersion.contentRevision !== props.currentContentRevision ||
+      currentVersion.status !== 'Draft') {
+      delete recoveryIdempotencyKeys[action]
+      ElMessage.warning('当前 Draft 已变化，请刷新后再创建恢复 Run')
+      await load(true)
+      return
+    }
+    const response = await aiProposalReviewApi.createGenerationRun(
       run.modelVersionId,
       {
+        sourceId: run.sourceId,
+        mappingProfileVersionId: run.mappingProfileVersionId ?? null,
+        rackGenerationProfileVersionId: run.rackGenerationProfileVersionId ?? null,
         basedOnRunId: props.runId,
         expectedContentRevision: props.currentContentRevision!,
         expectedBasedOnRunRowVersion: run.rowVersion,
         mode,
       },
+      currentVersion.rowVersion,
       recoveryIdempotencyKeys[action],
     )
-    if (response.replacementRunId) {
+    if (response.runId) {
       ElMessage.success('新的恢复 Run 已排队；完成后需要重新审查差异')
-      emit('recovered', response.replacementRunId)
+      emit('recovered', response.runId)
     }
   } catch (error) {
     if (isAxiosError(error) && error.response && [409, 422].includes(error.response.status)) {
@@ -243,6 +290,31 @@ async function recoverRun(mode: 'SamePolicy' | 'RuleOnly'): Promise<void> {
     }
   } finally {
     recoveryBusy.value = ''
+  }
+}
+
+function startGenerationPolling(): void {
+  stopGenerationPolling()
+  generationPollTimer = setTimeout(() => void refreshGenerationStatus(), 1_500)
+}
+
+function stopGenerationPolling(): void {
+  if (generationPollTimer !== undefined) clearTimeout(generationPollTimer)
+  generationPollTimer = undefined
+}
+
+async function refreshGenerationStatus(): Promise<void> {
+  stopGenerationPolling()
+  try {
+    const nextRun = await aiProposalReviewApi.getRun(props.runId)
+    generationRun.value = nextRun
+    if (generationInProgress.value) {
+      startGenerationPolling()
+      return
+    }
+    await load()
+  } catch {
+    startGenerationPolling()
   }
 }
 
@@ -439,10 +511,16 @@ function readPath(item: ISpaceAiProposalDto, path: string): string {
       title="本次审查已完成；Decision 历史已保存，Draft 尚未应用。"
     />
     <el-alert
-      v-else-if="review?.status !== 'AwaitingReview'"
+      v-else-if="generationInProgress"
+      type="info"
+      :closable="false"
+      :title="`规则生成正在进行：${generationRun?.status ?? 'Queued'}（${generationRun?.progress ?? 0}%）`"
+    />
+    <el-alert
+      v-else-if="generationRun?.status !== 'AwaitingReview'"
       type="warning"
       :closable="false"
-      :title="`当前 Run 状态为 ${review?.status ?? '未知'}，不能继续决策。`"
+      :title="`当前 Run 状态为 ${generationRun?.status ?? '未知'}，不能继续决策。`"
     />
     <el-alert
       v-else
@@ -451,7 +529,7 @@ function readPath(item: ISpaceAiProposalDto, path: string): string {
       title="接受、拒绝和修正只写 Decision；修正字段会成为后续重跑的人工锁定事实。"
     />
 
-    <div class="summary">
+    <div v-if="review" class="summary">
       <el-tag>总计 {{ summary?.totalCount ?? 0 }}</el-tag>
       <el-tag type="warning">待决 {{ summary?.proposedCount ?? 0 }}</el-tag>
       <el-tag type="success">接受 {{ summary?.acceptedCount ?? 0 }}</el-tag>
@@ -466,6 +544,9 @@ function readPath(item: ISpaceAiProposalDto, path: string): string {
         <strong>原子应用到 Draft</strong>
         <p>
           状态：{{ generationRun?.status ?? review?.status ?? 'Unknown' }}
+          <template v-if="generationInProgress">
+            · {{ generationRun?.progress ?? 0 }}%
+          </template>
           <template v-if="generationRun?.applyJobStatus">
             · Job {{ generationRun.applyJobStatus }}
           </template>
@@ -546,7 +627,7 @@ function readPath(item: ISpaceAiProposalDto, path: string): string {
       </small>
     </section>
 
-    <div class="filters">
+    <div v-if="review" class="filters">
       <el-select v-model="status" aria-label="提案状态">
         <el-option label="待决" value="Proposed" />
         <el-option label="全部状态" value="" />
@@ -567,7 +648,7 @@ function readPath(item: ISpaceAiProposalDto, path: string): string {
       <el-button @click="load()">刷新</el-button>
     </div>
 
-    <div class="batch-bar">
+    <div v-if="review" class="batch-bar">
       <span>已选 {{ selectedProposedIds.length }}/1000</span>
       <el-button
         v-permission="'space:model:edit'"
@@ -582,8 +663,9 @@ function readPath(item: ISpaceAiProposalDto, path: string): string {
       </el-tooltip>
     </div>
 
-    <div v-if="proposals.length === 0" class="empty">当前筛选没有提案</div>
-    <div v-else class="proposal-list">
+    <div v-if="generationInProgress" class="empty">生成完成后将自动进入人工审查。</div>
+    <div v-else-if="review && proposals.length === 0" class="empty">当前筛选没有提案</div>
+    <div v-else-if="review" class="proposal-list">
       <article v-for="item in proposals" :key="item.proposalId" class="proposal">
         <el-checkbox
           :model-value="selectedIds.includes(item.proposalId ?? '')"

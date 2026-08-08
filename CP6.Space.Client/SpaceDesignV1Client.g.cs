@@ -21498,6 +21498,16 @@ namespace CP6.Space.Client
         [System.ComponentModel.DataAnnotations.Required(AllowEmptyStrings = true)]
         public System.Guid ModelVersionId { get; set; } = default!;
 
+        [System.Text.Json.Serialization.JsonPropertyName("sourceId")]
+        [System.ComponentModel.DataAnnotations.Required(AllowEmptyStrings = true)]
+        public System.Guid SourceId { get; set; } = default!;
+
+        [System.Text.Json.Serialization.JsonPropertyName("mappingProfileVersionId")]
+        public System.Guid? MappingProfileVersionId { get; set; } = default!;
+
+        [System.Text.Json.Serialization.JsonPropertyName("rackGenerationProfileVersionId")]
+        public System.Guid? RackGenerationProfileVersionId { get; set; } = default!;
+
         [System.Text.Json.Serialization.JsonPropertyName("targetFloorLogicalId")]
         public System.Guid? TargetFloorLogicalId { get; set; } = default!;
 

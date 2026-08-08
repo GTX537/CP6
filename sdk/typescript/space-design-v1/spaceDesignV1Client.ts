@@ -15313,6 +15313,9 @@ export class SpaceAiGenerationRunDto implements ISpaceAiGenerationRunDto {
     runId!: string;
     siteId!: string;
     modelVersionId!: string;
+    sourceId!: string;
+    mappingProfileVersionId?: string | undefined;
+    rackGenerationProfileVersionId?: string | undefined;
     targetFloorLogicalId?: string | undefined;
     status!: string;
     progress!: number;
@@ -15347,6 +15350,9 @@ export class SpaceAiGenerationRunDto implements ISpaceAiGenerationRunDto {
             this.runId = _data["runId"];
             this.siteId = _data["siteId"];
             this.modelVersionId = _data["modelVersionId"];
+            this.sourceId = _data["sourceId"];
+            this.mappingProfileVersionId = _data["mappingProfileVersionId"];
+            this.rackGenerationProfileVersionId = _data["rackGenerationProfileVersionId"];
             this.targetFloorLogicalId = _data["targetFloorLogicalId"];
             this.status = _data["status"];
             this.progress = _data["progress"];
@@ -15381,6 +15387,9 @@ export class SpaceAiGenerationRunDto implements ISpaceAiGenerationRunDto {
         data["runId"] = this.runId;
         data["siteId"] = this.siteId;
         data["modelVersionId"] = this.modelVersionId;
+        data["sourceId"] = this.sourceId;
+        data["mappingProfileVersionId"] = this.mappingProfileVersionId;
+        data["rackGenerationProfileVersionId"] = this.rackGenerationProfileVersionId;
         data["targetFloorLogicalId"] = this.targetFloorLogicalId;
         data["status"] = this.status;
         data["progress"] = this.progress;
@@ -15408,6 +15417,9 @@ export interface ISpaceAiGenerationRunDto {
     runId: string;
     siteId: string;
     modelVersionId: string;
+    sourceId: string;
+    mappingProfileVersionId?: string | undefined;
+    rackGenerationProfileVersionId?: string | undefined;
     targetFloorLogicalId?: string | undefined;
     status: string;
     progress: number;

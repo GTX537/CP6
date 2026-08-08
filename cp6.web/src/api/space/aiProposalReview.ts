@@ -1,16 +1,18 @@
 import http from '../http'
 import type {
-  ICreateSpaceAiGenerationRecoveryRequest,
   ICreateSpaceAiProposalBatchDecisionRequest,
   ICreateSpaceAiProposalDecisionRequest,
   ICreateSpaceAiAtomicApplyRequest,
   ISpaceAiAtomicApplyAcceptedDto,
+  ISpaceAiGenerationRunAcceptedDto,
   ISpaceAiGenerationReviewDto,
   ISpaceAiGenerationRunDto,
   ISpaceAiGenerationRunActionDto,
   ISpaceAiProposalDecisionResponse,
   ISpaceAiProposalIssuePageDto,
   ISpaceAiProposalPageDto,
+  ISpacePageOfSpaceSourceDto,
+  ISpaceVersionDto,
   ISpaceAiRunActionRequest,
 } from '../../../../sdk/typescript/space-design-v1/spaceDesignV1Client'
 
@@ -25,7 +27,30 @@ export interface SpaceAiProposalListQuery {
   limit?: number
 }
 
+export interface CreateSpaceAiGenerationRunPayload {
+  sourceId: string
+  mappingProfileVersionId: string | null
+  rackGenerationProfileVersionId: string | null
+  mode: 'RuleOnly' | 'AiAssisted' | 'SamePolicy'
+  expectedContentRevision: number
+  basedOnRunId?: string
+  expectedBasedOnRunRowVersion?: string
+}
+
 export const aiProposalReviewApi = {
+  getVersion(versionId: string) {
+    return http.get<unknown, ISpaceVersionDto>(
+      `/space/design/v1/versions/${versionId}`,
+    )
+  },
+
+  getSources(versionId: string, limit = 200) {
+    return http.get<unknown, ISpacePageOfSpaceSourceDto>(
+      `/space/design/v1/versions/${versionId}/sources`,
+      { params: { limit } },
+    )
+  },
+
   getRun(runId: string) {
     return http.get<unknown, ISpaceAiGenerationRunDto>(
       `${root}/${runId}`,
@@ -136,15 +161,21 @@ export const aiProposalReviewApi = {
     )
   },
 
-  recover(
+  createGenerationRun(
     versionId: string,
-    request: ICreateSpaceAiGenerationRecoveryRequest,
+    request: CreateSpaceAiGenerationRunPayload,
+    expectedVersionRowVersion: string,
     idempotencyKey: string = crypto.randomUUID(),
   ) {
-    return http.post<unknown, ISpaceAiGenerationRunActionDto>(
+    return http.post<unknown, ISpaceAiGenerationRunAcceptedDto>(
       `/space/design/v1/versions/${versionId}/generation-runs`,
       request,
-      { headers: { 'Idempotency-Key': idempotencyKey } },
+      {
+        headers: {
+          'If-Match': expectedVersionRowVersion,
+          'Idempotency-Key': idempotencyKey,
+        },
+      },
     )
   },
 }
