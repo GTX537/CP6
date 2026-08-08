@@ -11,6 +11,7 @@ using System.Data;
 using Microsoft.Data.SqlClient;
 using CP6.Core.Utilities;
 using CP6.WebApi.Filters;
+using CP6.WebApi.BackgroundServices;
 using CP6.WebApi.Hubs;
 using Prometheus;
 using CP6.Core.Services.Space.Compatibility;
@@ -765,7 +766,7 @@ builder.Services.AddHostedService<CP6.WebApi.BackgroundServices.IntegrationEvent
 builder.Services.AddHostedService<CP6.WebApi.BackgroundServices.FinReconciliationWorker>();
 // Space 库位对账 worker（波5）：每日扫已发布库位(Status=1)↔WMS bin 停用漂移，只读告警不自愈
 builder.Services.AddHostedService<CP6.WebApi.BackgroundServices.SpaceBinReconciliationWorker>();
-builder.Services.AddHostedService<CP6.WebApi.BackgroundServices.SpacePublishJobWorker>();
+builder.Services.AddSpaceJobWorkers();
 builder.Services.AddHostedService<CP6.WebApi.BackgroundServices.AssetDepreciationWorker>(); // A3 §6.2 月末折旧 Worker（备草稿不过账）
 
 // 4.15.6 T15 / Gap 2.3 — Prometheus /metrics（ブリッジ業務指標）
