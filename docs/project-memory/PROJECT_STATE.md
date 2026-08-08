@@ -9,6 +9,7 @@
 - 非空 `RackTemplateCode` 解析可见活动 Asset：Tenant 同码优先于 System，并固定到最新 Ready 不可变 SpaceAssetVersion。Excel 显式尺寸与层级行仍是导入几何权威，模板只固定版本血缘。
 - `Bindings`、`Attributes` 和非空 `LocationType` 继续返回 `SPACE_EXCEL_CAD_APPLY_SCOPE_UNSUPPORTED`，因为现有模型分别缺少仓库到 Site/Adapter 的权威解析、Rack/RackLevel/Location 属性归属和 LocationType 持久字段；不静默丢失数据。无 Migration、HTTP、OpenAPI、SDK 或前端变化，`main` 未修改。
 - 门禁：Location 领域 3/3、Match/Apply 9/9、Space Unit 467/467、默认 Space Integration 272 passed / 94 SQL-gated skipped、CP6.Tests 2811 passed / 17 environment-gated skipped；完整 solution Release（含 Desktop/Android AOT）0 warning / 0 error，任务文件格式和 diff 检查通过。完整证据见 `docs/space/reports/e03-s05-hierarchy-template-apply.md`。
+- 功能提交 `cb802cf6`、验证记录提交 `35e77a05` 已通过 no-ff 合并提交 `99801da1` 进入并推送至 `integration/space-v1-20260730`；`main` 未修改。合并后清理本隔离工作区 37 个可重建 `bin/obj` 目录、6,649 个生成文件，共释放 1,262.83 MiB（约 1.23 GiB）。
 
 ## Space 生产处理 Job Worker 接线（2026-08-08）
 
