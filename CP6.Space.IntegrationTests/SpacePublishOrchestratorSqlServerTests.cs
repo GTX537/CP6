@@ -353,6 +353,285 @@ public sealed class SpacePublishOrchestratorSqlServerTests
             });
     }
 
+    [SqlServerFact]
+    public async Task Historical_version_is_republished_as_new_attempt_without_rewriting_history()
+    {
+        await WithDatabaseAsync(
+            async (connectionString, execution, clock) =>
+            {
+                SeededVersions seeded;
+                await using (var cp6 = CreateCp6Context(
+                                 connectionString,
+                                 execution.TenantId))
+                {
+                    seeded = await SeedCp6AndDesignAsync(
+                        connectionString,
+                        cp6,
+                        execution,
+                        clock);
+                }
+
+                var historicalAttemptId = await PublishCandidateAsync(
+                    connectionString,
+                    execution,
+                    clock,
+                    seeded.SiteId,
+                    seeded.TargetVersionId,
+                    seeded.BaseVersionId,
+                    "publish-historical-candidate");
+                var currentVersionId = await SeedNextCandidateAsync(
+                    connectionString,
+                    execution,
+                    clock,
+                    seeded);
+                await PublishCandidateAsync(
+                    connectionString,
+                    execution,
+                    clock,
+                    seeded.SiteId,
+                    currentVersionId,
+                    seeded.TargetVersionId,
+                    "publish-current-candidate");
+
+                AuditSnapshot[] originalAudits;
+                Guid originalPlanId;
+                await using (var evidence = CreateSpaceContext(
+                                 connectionString,
+                                 execution,
+                                 clock))
+                {
+                    var historicalAttempt = await evidence.PublishAttempts
+                        .AsNoTracking()
+                        .SingleAsync(value => value.Id == historicalAttemptId);
+                    originalPlanId = historicalAttempt.PublishPlanId;
+                    originalAudits = await evidence.PublishAuditEvents
+                        .AsNoTracking()
+                        .Where(value => value.AttemptId == historicalAttemptId)
+                        .OrderBy(value => value.EventNo)
+                        .Select(value => new AuditSnapshot(
+                            value.EventNo,
+                            value.EventType,
+                            value.EvidenceHash,
+                            value.PreviousEventHash,
+                            value.EventHash))
+                        .ToArrayAsync();
+                    Assert.NotEmpty(originalAudits);
+                    Assert.Equal(
+                        SpaceVersionStatus.Superseded,
+                        (await evidence.Versions.SingleAsync(
+                            value => value.Id == seeded.TargetVersionId)).Status);
+                }
+
+                StartSpaceHistoricalRepublishResponse started;
+                var request = new StartSpaceHistoricalRepublishRequest(
+                    currentVersionId,
+                    "Restore the previously verified warehouse layout.",
+                    "CAB-ROLLBACK-42",
+                    "Historical layout restoration");
+                await using (var requestContext = CreateSpaceContext(
+                                 connectionString,
+                                 execution,
+                                 clock))
+                {
+                    var service = new SpaceHistoricalRepublishService(
+                        requestContext,
+                        execution,
+                        clock,
+                        new TestAccessEvaluator(seeded.SiteId));
+                    var stale = await Assert.ThrowsAsync<SpaceProblemException>(
+                        () => service.StartAsync(
+                            seeded.TargetVersionId,
+                            request with
+                            {
+                                ExpectedPublishedVersionId =
+                                    seeded.BaseVersionId,
+                            },
+                            "historical-republish-stale"));
+                    Assert.Equal(
+                        SpaceErrorCodes.PublishedVersionChanged,
+                        stale.Code);
+                    requestContext.ChangeTracker.Clear();
+                    Assert.Equal(
+                        currentVersionId,
+                        (await requestContext.Models.AsNoTracking()
+                            .SingleAsync(value => value.Id == seeded.ModelId))
+                        .CurrentPublishedVersionId);
+                    Assert.Empty(
+                        await requestContext.HistoricalRepublishes
+                            .AsNoTracking()
+                            .ToArrayAsync());
+                    started = await service.StartAsync(
+                        seeded.TargetVersionId,
+                        request,
+                        "historical-republish-42");
+                    var replay = await service.StartAsync(
+                        seeded.TargetVersionId,
+                        request,
+                        "historical-republish-42");
+                    Assert.True(replay.IdempotentReplay);
+                    Assert.Equal(started.Republish.Id, replay.Republish.Id);
+                    var conflict = await Assert.ThrowsAsync<SpaceProblemException>(
+                        () => service.StartAsync(
+                            seeded.TargetVersionId,
+                            request with { Reason = "A different restore request." },
+                            "historical-republish-42"));
+                    Assert.Equal(
+                        SpaceErrorCodes.IdempotencyConflict,
+                        conflict.Code);
+                }
+
+                var workerExecution = new TestExecutionContext(
+                    execution.TenantId,
+                    Guid.NewGuid(),
+                    Guid.NewGuid());
+                await using var worker = CreateSpaceContext(
+                    connectionString,
+                    workerExecution,
+                    clock);
+                await using var ledger = CreateSpaceContext(
+                    connectionString,
+                    workerExecution,
+                    clock);
+                await using var cloneLedger = CreateSpaceContext(
+                    connectionString,
+                    workerExecution,
+                    clock);
+                await using var cp6Worker = CreateCp6Context(
+                    connectionString,
+                    workerExecution.TenantId);
+                var access = new TestAccessEvaluator(seeded.SiteId);
+                var adapter = new Cp6SpaceWmsAdapter(cp6Worker);
+                var profile = new AdapterProfileProvider(adapter);
+                var validationEngine = new SpaceValidationEngine();
+                var planEngine = new SpacePublishPlanEngine();
+                var preview = new SpacePublishPreviewService(
+                    worker,
+                    workerExecution,
+                    access,
+                    profile,
+                    validationEngine,
+                    planEngine,
+                    new TestCursorCodec());
+                var orchestrator = new SpacePublishOrchestrator(
+                    worker,
+                    workerExecution,
+                    clock,
+                    access,
+                    new Cp6SpaceWarehouseResolver(cp6Worker),
+                    adapter,
+                    new Cp6SpaceRuntimeMaterializer(
+                        worker,
+                        workerExecution,
+                        clock),
+                    planEngine);
+                var historicalExecutor = new SpaceHistoricalRepublishJobExecutor(
+                    worker,
+                    clock,
+                    new EfSpaceVersionCloneProcessor(
+                        worker,
+                        clock,
+                        new EfSpaceJobLeaseStore(cloneLedger, clock)),
+                    profile,
+                    validationEngine,
+                    preview,
+                    orchestrator);
+                var capturingHistoricalExecutor =
+                    new CapturingHistoricalRepublishExecutor(
+                        historicalExecutor);
+                var historicalRunner = new SpaceJobProcessorRunner(
+                    new EfSpaceJobLeaseStore(ledger, clock),
+                    [new SpaceHistoricalRepublishJobProcessor(
+                        capturingHistoricalExecutor)]);
+
+                Assert.True(await historicalRunner.RunNextAsync(
+                    SpaceJobType.HistoricalRepublish,
+                    "historical-republish-worker"));
+                if (capturingHistoricalExecutor.Failure is not null)
+                {
+                    throw new InvalidOperationException(
+                        "Historical republish processing failed.",
+                        capturingHistoricalExecutor.Failure);
+                }
+                worker.ChangeTracker.Clear();
+                var operation = await worker.HistoricalRepublishes
+                    .SingleAsync(value => value.Id == started.Republish.Id);
+                Assert.Equal(
+                    SpaceHistoricalRepublishStatus.PublishQueued,
+                    operation.Status);
+                Assert.NotNull(operation.PublishAttemptId);
+                var restoredVersionId = operation.TargetVersionId;
+                var restoredAttemptId = operation.PublishAttemptId!.Value;
+
+                var capturingPublishExecutor =
+                    new CapturingPublishExecutor(orchestrator);
+                Assert.True(await PublishRunner(
+                        ledger,
+                        clock,
+                        capturingPublishExecutor)
+                    .RunNextAsync(
+                        SpaceJobType.Publish,
+                        "historical-publish-worker"));
+                if (capturingPublishExecutor.Failure is not null)
+                {
+                    throw new InvalidOperationException(
+                        "Historical publish processing failed.",
+                        capturingPublishExecutor.Failure);
+                }
+
+                await using var final = CreateSpaceContext(
+                    connectionString,
+                    execution,
+                    clock);
+                var finalModel = await final.Models.AsNoTracking()
+                    .SingleAsync(value => value.Id == seeded.ModelId);
+                var historical = await final.Versions.AsNoTracking()
+                    .SingleAsync(value => value.Id == seeded.TargetVersionId);
+                var previousCurrent = await final.Versions.AsNoTracking()
+                    .SingleAsync(value => value.Id == currentVersionId);
+                var restored = await final.Versions.AsNoTracking()
+                    .SingleAsync(value => value.Id == restoredVersionId);
+                var restoredAttempt = await final.PublishAttempts.AsNoTracking()
+                    .SingleAsync(value => value.Id == restoredAttemptId);
+                var unchangedAudits = await final.PublishAuditEvents
+                    .AsNoTracking()
+                    .Where(value => value.AttemptId == historicalAttemptId)
+                    .OrderBy(value => value.EventNo)
+                    .Select(value => new AuditSnapshot(
+                        value.EventNo,
+                        value.EventType,
+                        value.EvidenceHash,
+                        value.PreviousEventHash,
+                        value.EventHash))
+                    .ToArrayAsync();
+
+                Assert.Equal(restoredVersionId, finalModel.CurrentPublishedVersionId);
+                Assert.Equal(SpaceVersionStatus.Superseded, historical.Status);
+                Assert.Equal(SpaceVersionStatus.Superseded, previousCurrent.Status);
+                Assert.Equal(SpaceVersionStatus.Published, restored.Status);
+                Assert.Equal(historical.Id, restored.BasedOnVersionId);
+                Assert.Equal(started.Republish.Id, restored.CloneOperationId);
+                Assert.Equal(
+                    await CountSnapshotAsync(final, historical.Id),
+                    await CountSnapshotAsync(final, restored.Id));
+                Assert.Equal(
+                    await SnapshotLogicalKeysAsync(final, historical.Id),
+                    await SnapshotLogicalKeysAsync(final, restored.Id));
+                Assert.NotNull(restored.ContentHash);
+                Assert.Equal(64, restored.ContentHash!.Length);
+                Assert.Equal(SpacePublishAttemptStatus.Completed, restoredAttempt.Status);
+                Assert.Equal(execution.ActorId, restoredAttempt.RequestedBy);
+                Assert.NotEqual(workerExecution.ActorId, restoredAttempt.RequestedBy);
+                Assert.NotEqual(originalPlanId, restoredAttempt.PublishPlanId);
+                Assert.Equal(originalAudits, unchangedAudits);
+                Assert.Contains(
+                    await final.PublishAuditEvents.AsNoTracking()
+                        .Where(value => value.AttemptId == restoredAttemptId)
+                        .ToArrayAsync(),
+                    value => value.EventType ==
+                             SpacePublishAuditEventType.HistoricalRepublishQueued);
+            });
+    }
+
     private static SpaceJobProcessorRunner PublishRunner(
         SpaceContext context,
         TestClock clock,
@@ -364,12 +643,95 @@ public sealed class SpacePublishOrchestratorSqlServerTests
                 new SpacePublishReconciliationJobProcessor(executor),
             ]);
 
+    private static async Task<Guid> PublishCandidateAsync(
+        string connectionString,
+        TestExecutionContext execution,
+        TestClock clock,
+        Guid siteId,
+        Guid targetVersionId,
+        Guid expectedPublishedVersionId,
+        string idempotencyKey)
+    {
+        ValidationEvidence evidence;
+        await using (var validationCp6 = CreateCp6Context(
+                         connectionString,
+                         execution.TenantId))
+        {
+            evidence = await ValidateAndPreviewAsync(
+                connectionString,
+                execution,
+                clock,
+                validationCp6,
+                siteId,
+                targetVersionId);
+        }
+
+        await using var space = CreateSpaceContext(
+            connectionString,
+            execution,
+            clock);
+        await using var ledger = CreateSpaceContext(
+            connectionString,
+            execution,
+            clock);
+        await using var cp6 = CreateCp6Context(
+            connectionString,
+            execution.TenantId);
+        var adapter = new Cp6SpaceWmsAdapter(cp6);
+        var orchestrator = new SpacePublishOrchestrator(
+            space,
+            execution,
+            clock,
+            new TestAccessEvaluator(siteId),
+            new Cp6SpaceWarehouseResolver(cp6),
+            adapter,
+            new Cp6SpaceRuntimeMaterializer(space, execution, clock),
+            new SpacePublishPlanEngine());
+        var queued = await orchestrator.StartAsync(
+            targetVersionId,
+            new CreateSpacePublishAttemptRequest(
+                expectedPublishedVersionId,
+                evidence.ValidationRunId,
+                evidence.PlanHash,
+                ApprovalReference: null),
+            idempotencyKey);
+        Assert.True(await PublishRunner(ledger, clock, orchestrator)
+            .RunNextAsync(SpaceJobType.Publish, "publish-candidate-worker"));
+        space.ChangeTracker.Clear();
+        Assert.Equal(
+            "Completed",
+            (await orchestrator.GetAsync(queued.Attempt.Id)).Status);
+        return queued.Attempt.Id;
+    }
+
     private sealed class CapturingPublishExecutor(
         ISpacePublishJobExecutor inner) : ISpacePublishJobExecutor
     {
         public Exception? Failure { get; private set; }
 
         public void ClearFailure() => Failure = null;
+
+        public async Task<SpaceJobStepOutput> ExecuteAsync(
+            SpaceJobStepExecution execution,
+            CancellationToken cancellationToken = default)
+        {
+            try
+            {
+                return await inner.ExecuteAsync(execution, cancellationToken);
+            }
+            catch (Exception exception)
+            {
+                Failure = exception;
+                throw;
+            }
+        }
+    }
+
+    private sealed class CapturingHistoricalRepublishExecutor(
+        ISpaceHistoricalRepublishJobExecutor inner) :
+        ISpaceHistoricalRepublishJobExecutor
+    {
+        public Exception? Failure { get; private set; }
 
         public async Task<SpaceJobStepOutput> ExecuteAsync(
             SpaceJobStepExecution execution,
@@ -799,6 +1161,65 @@ public sealed class SpacePublishOrchestratorSqlServerTests
                 value => value.Id == seeded.FloorId)).SiteId);
     }
 
+    private static async Task<SpaceVersionCloneCounts> CountSnapshotAsync(
+        SpaceContext context,
+        Guid versionId) =>
+        new(
+            await context.Sources.CountAsync(
+                value => value.ModelVersionId == versionId),
+            await context.FloorRevisions.CountAsync(
+                value => value.ModelVersionId == versionId),
+            await context.ZoneRevisions.CountAsync(
+                value => value.ModelVersionId == versionId),
+            await context.AisleRevisions.CountAsync(
+                value => value.ModelVersionId == versionId),
+            await context.RackRevisions.CountAsync(
+                value => value.ModelVersionId == versionId),
+            await context.RackLevelRevisions.CountAsync(
+                value => value.ModelVersionId == versionId),
+            await context.LocationRevisions.CountAsync(
+                value => value.ModelVersionId == versionId),
+            await context.ElementRevisions.CountAsync(
+                value => value.ModelVersionId == versionId),
+            await context.ElementAttributes.CountAsync(
+                value => value.ModelVersionId == versionId));
+
+    private static async Task<string> SnapshotLogicalKeysAsync(
+        SpaceContext context,
+        Guid versionId)
+    {
+        var keys = new List<string>();
+        keys.AddRange((await context.FloorRevisions
+            .Where(value => value.ModelVersionId == versionId)
+            .Select(value => value.LogicalId)
+            .ToArrayAsync()).Select(value => $"floor:{value:D}"));
+        keys.AddRange((await context.ZoneRevisions
+            .Where(value => value.ModelVersionId == versionId)
+            .Select(value => value.LogicalId)
+            .ToArrayAsync()).Select(value => $"zone:{value:D}"));
+        keys.AddRange((await context.AisleRevisions
+            .Where(value => value.ModelVersionId == versionId)
+            .Select(value => value.LogicalId)
+            .ToArrayAsync()).Select(value => $"aisle:{value:D}"));
+        keys.AddRange((await context.RackRevisions
+            .Where(value => value.ModelVersionId == versionId)
+            .Select(value => value.LogicalId)
+            .ToArrayAsync()).Select(value => $"rack:{value:D}"));
+        keys.AddRange((await context.RackLevelRevisions
+            .Where(value => value.ModelVersionId == versionId)
+            .Select(value => value.LogicalId)
+            .ToArrayAsync()).Select(value => $"level:{value:D}"));
+        keys.AddRange((await context.LocationRevisions
+            .Where(value => value.ModelVersionId == versionId)
+            .Select(value => value.LogicalId)
+            .ToArrayAsync()).Select(value => $"location:{value:D}"));
+        keys.AddRange((await context.ElementRevisions
+            .Where(value => value.ModelVersionId == versionId)
+            .Select(value => value.LogicalId)
+            .ToArrayAsync()).Select(value => $"element:{value:D}"));
+        return string.Join("\n", keys.Order(StringComparer.Ordinal));
+    }
+
     private static SpaceFloorRevision CreateFloor(
         Guid tenantId,
         Guid versionId,
@@ -1190,6 +1611,13 @@ public sealed class SpacePublishOrchestratorSqlServerTests
     private sealed record ValidationEvidence(
         Guid ValidationRunId,
         string PlanHash);
+
+    private sealed record AuditSnapshot(
+        int EventNo,
+        SpacePublishAuditEventType EventType,
+        string EvidenceHash,
+        string? PreviousEventHash,
+        string EventHash);
 
     private sealed record TestExecutionContext(
         Guid TenantId,

@@ -13,9 +13,14 @@ if (-not (Test-Path -LiteralPath $apiDll)) {
 $previousEnvironment = $env:ASPNETCORE_ENVIRONMENT
 $previousSkipDatabase = $env:Startup__SkipDatabaseInitialization
 $previousSkipHosted = $env:Startup__SkipHostedServices
+$previousConnection = $env:ConnectionStrings__DefaultConnection
+$previousFileRoot = $env:Space__Files__RootPath
 $env:ASPNETCORE_ENVIRONMENT = "Development"
 $env:Startup__SkipDatabaseInitialization = "true"
 $env:Startup__SkipHostedServices = "true"
+$env:ConnectionStrings__DefaultConnection =
+    "Server=(localdb)\MSSQLLocalDB;Database=unused;Trusted_Connection=True;TrustServerCertificate=True"
+$env:Space__Files__RootPath = Join-Path $projectRoot "tmp\space-openapi-files"
 
 $api = $null
 try {
@@ -26,7 +31,8 @@ try {
     $swaggerUrl = "$($Url.TrimEnd('/'))/swagger/v1/swagger.json"
     for ($attempt = 0; $attempt -lt 40; $attempt++) {
         try {
-            Invoke-WebRequest $swaggerUrl -UseBasicParsing | Out-Null
+            Invoke-WebRequest $swaggerUrl -UseBasicParsing -TimeoutSec 2 |
+                Out-Null
             break
         }
         catch {
@@ -45,4 +51,6 @@ finally {
     $env:ASPNETCORE_ENVIRONMENT = $previousEnvironment
     $env:Startup__SkipDatabaseInitialization = $previousSkipDatabase
     $env:Startup__SkipHostedServices = $previousSkipHosted
+    $env:ConnectionStrings__DefaultConnection = $previousConnection
+    $env:Space__Files__RootPath = $previousFileRoot
 }

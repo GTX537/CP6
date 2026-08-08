@@ -285,7 +285,9 @@ public sealed class EfSpaceVersionCloneStore : ISpaceVersionCloneStore
     }
 }
 
-public sealed class EfSpaceVersionCloneProcessor : ISpaceVersionCloneProcessor
+public sealed class EfSpaceVersionCloneProcessor :
+    ISpaceVersionCloneProcessor,
+    ISpaceVersionSnapshotCloner
 {
     private static readonly JsonSerializerOptions JsonOptions =
         new(JsonSerializerDefaults.Web);
@@ -302,6 +304,83 @@ public sealed class EfSpaceVersionCloneProcessor : ISpaceVersionCloneProcessor
         _context = context;
         _clock = clock;
         _leases = leases;
+    }
+
+    public async Task<SpaceVersionCloneCounts> CloneSnapshotAsync(
+        SpaceVersionSnapshotCloneRequest request,
+        CancellationToken cancellationToken = default)
+    {
+        ArgumentNullException.ThrowIfNull(request);
+        if (_context.CurrentTenantId == Guid.Empty)
+        {
+            throw new SpaceTenantScopeException(
+                "A verified tenant is required to clone a version snapshot.");
+        }
+        if (request.HistoricalVersionId == Guid.Empty ||
+            request.TargetVersionId == Guid.Empty ||
+            request.RequestedBy == Guid.Empty)
+        {
+            throw new ArgumentException(
+                "Historical, target, and requester identities are required.",
+                nameof(request));
+        }
+        if (request.RequestedAtUtc.Kind != DateTimeKind.Utc)
+        {
+            throw new ArgumentException(
+                "The snapshot clone timestamp must be UTC.",
+                nameof(request));
+        }
+
+        var source = await _context.Versions
+            .AsNoTracking()
+            .SingleAsync(
+                value => value.Id == request.HistoricalVersionId,
+                cancellationToken);
+        var target = await _context.Versions
+            .AsNoTracking()
+            .SingleAsync(
+                value => value.Id == request.TargetVersionId,
+                cancellationToken);
+        if (source.Purpose != SpaceModelVersionPurpose.Production ||
+            source.Status is not (
+                SpaceVersionStatus.Published or
+                SpaceVersionStatus.Superseded) ||
+            !string.Equals(
+                source.ContentHash,
+                request.HistoricalContentHash,
+                StringComparison.OrdinalIgnoreCase))
+        {
+            throw new SpaceVersionStateException(
+                "The historical source is no longer an immutable published snapshot.");
+        }
+        if (target.ModelId != source.ModelId ||
+            target.BasedOnVersionId != source.Id)
+        {
+            throw new SpaceVersionStateException(
+                "The target is not bound to the requested historical snapshot.");
+        }
+
+        if (await TargetContainsSnapshotAsync(target.Id, cancellationToken))
+        {
+            if (target.Status != SpaceVersionStatus.Initializing)
+                return await CountSnapshotAsync(target.Id, cancellationToken);
+            throw new SpaceVersionStateException(
+                "An initializing historical clone contains partial snapshot rows.");
+        }
+        if (target.Status != SpaceVersionStatus.Initializing)
+        {
+            throw new SpaceVersionStateException(
+                "The historical clone target is not initializing.");
+        }
+
+        await CloneSnapshotSqlAsync(
+            source.Id,
+            target.Id,
+            _context.CurrentTenantId,
+            request.RequestedBy,
+            request.RequestedAtUtc,
+            cancellationToken);
+        return await CountSnapshotAsync(target.Id, cancellationToken);
     }
 
     public async Task<SpaceVersionCloneCounts> ProcessAsync(

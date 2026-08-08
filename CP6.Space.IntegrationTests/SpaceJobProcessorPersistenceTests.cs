@@ -18,7 +18,7 @@ public sealed class SpaceJobProcessorPersistenceTests
         new(2026, 7, 30, 20, 30, 0, DateTimeKind.Utc);
 
     [Fact]
-    public void Default_registration_exposes_nine_explicit_processors()
+    public void Default_registration_exposes_ten_explicit_processors()
     {
         var services = new ServiceCollection();
         services.AddScoped<ISpaceExecutionContext>(
@@ -29,6 +29,9 @@ public sealed class SpaceJobProcessorPersistenceTests
             "Server=(localdb)\\MSSQLLocalDB;Database=unused;" +
             "Trusted_Connection=True;TrustServerCertificate=True");
         services.AddScoped<ISpacePublishJobExecutor, RecordingExecutor>();
+        services.AddScoped<
+            ISpaceHistoricalRepublishJobExecutor,
+            RecordingExecutor>();
 
         using var provider = services.BuildServiceProvider();
         using var scope = provider.CreateScope();
@@ -37,7 +40,7 @@ public sealed class SpaceJobProcessorPersistenceTests
             .OrderBy(processor => processor.JobType)
             .ToArray();
 
-        Assert.Equal(9, processors.Length);
+        Assert.Equal(10, processors.Length);
         Assert.IsType<SpaceCadParseJobProcessor>(processors[0]);
         Assert.IsType<SpaceExcelPreflightJobProcessor>(processors[1]);
         Assert.IsType<SpaceImportJobProcessor>(processors[2]);
@@ -47,6 +50,7 @@ public sealed class SpaceJobProcessorPersistenceTests
         Assert.IsType<SpacePublishReconciliationJobProcessor>(processors[6]);
         Assert.IsType<SpaceGenerationApplyJobProcessor>(processors[7]);
         Assert.IsType<SpaceAiRetentionJobProcessor>(processors[8]);
+        Assert.IsType<SpaceHistoricalRepublishJobProcessor>(processors[9]);
         Assert.IsType<UnavailableSpaceCadParseProvider>(
             scope.ServiceProvider.GetRequiredService<ISpaceCadParseProvider>());
         Assert.IsType<SpaceCadParseJobStepExecutor>(
@@ -422,7 +426,8 @@ public sealed class SpaceJobProcessorPersistenceTests
     private sealed class RecordingExecutor
         : ISpaceImportJobStepExecutor,
           ISpaceBuildSceneJobStepExecutor,
-          ISpacePublishJobExecutor
+          ISpacePublishJobExecutor,
+          ISpaceHistoricalRepublishJobExecutor
     {
         public Func<
             SpaceJobStepExecution,

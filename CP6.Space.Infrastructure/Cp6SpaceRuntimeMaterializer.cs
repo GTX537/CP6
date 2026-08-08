@@ -54,6 +54,37 @@ public sealed class Cp6SpaceRuntimeMaterializer : ISpaceRuntimeMaterializer
                      ?? throw NotFound(
                          SpaceErrorCodes.VersionNotFound,
                          "The version to activate was not found.");
+        var attempt = await _space.PublishAttempts
+                          .AsNoTracking()
+                          .SingleOrDefaultAsync(
+                              value => value.Id == request.AttemptId,
+                              cancellationToken)
+                      ?? throw new SpaceTenantScopeException(
+                          "The runtime activation attempt is unavailable in the verified tenant scope.");
+        var plan = await _space.PublishPlans
+                       .AsNoTracking()
+                       .SingleOrDefaultAsync(
+                           value => value.Id == attempt.PublishPlanId,
+                           cancellationToken)
+                   ?? throw new SpaceTenantScopeException(
+                       "The runtime activation plan is unavailable in the verified tenant scope.");
+        if (attempt.SiteId != request.SiteId ||
+            attempt.TargetVersionId != request.TargetVersionId ||
+            attempt.BaseVersionId != request.BaseVersionId ||
+            attempt.RequestedBy != request.ActorId ||
+            attempt.Status != SpacePublishAttemptStatus.ActivatingRuntime ||
+            attempt.CurrentStep != SpacePublishStep.ActivateRuntime ||
+            plan.SiteId != request.SiteId ||
+            plan.TargetVersionId != request.TargetVersionId ||
+            plan.BaseVersionId != request.BaseVersionId ||
+            !string.Equals(
+                plan.PlanHash,
+                request.PlanHash,
+                StringComparison.OrdinalIgnoreCase))
+        {
+            throw new SpaceTenantScopeException(
+                "The runtime activation request does not match its persisted publish evidence.");
+        }
         if (model.CurrentPublishedVersionId != request.BaseVersionId)
         {
             throw Conflict(
@@ -839,7 +870,7 @@ public sealed class Cp6SpaceRuntimeMaterializer : ISpaceRuntimeMaterializer
         ArgumentNullException.ThrowIfNull(request);
         if (_execution.TenantId == Guid.Empty ||
             _execution.ActorId == Guid.Empty ||
-            request.ActorId != _execution.ActorId)
+            request.ActorId == Guid.Empty)
         {
             throw new SpaceTenantScopeException(
                 "A verified tenant and actor are required.");
