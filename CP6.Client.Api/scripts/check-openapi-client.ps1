@@ -7,9 +7,58 @@ param(
 $ErrorActionPreference = "Stop"
 $projectRoot = Split-Path -Parent $PSScriptRoot
 $hashFile = Join-Path $projectRoot "openapi\client-surface.sha256"
+
+function ConvertTo-CanonicalValue {
+    param(
+        [AllowNull()]
+        [object]$Value
+    )
+
+    if ($null -eq $Value `
+        -or $Value -is [string] `
+        -or $Value -is [ValueType]) {
+        return $Value
+    }
+
+    if ($Value -is [System.Collections.IDictionary]) {
+        $result = [ordered]@{}
+        $keys = [string[]]@($Value.Keys | ForEach-Object { [string]$_ })
+        [Array]::Sort($keys, [StringComparer]::Ordinal)
+        foreach ($key in $keys) {
+            $result[$key] = ConvertTo-CanonicalValue $Value[$key]
+        }
+        return $result
+    }
+
+    if ($Value -is [System.Collections.IEnumerable]) {
+        $items = @()
+        foreach ($item in $Value) {
+            $items += ,(ConvertTo-CanonicalValue $item)
+        }
+        return ,$items
+    }
+
+    $propertyNames = [string[]]@(
+        $Value.PSObject.Properties |
+            Where-Object { $_.MemberType -in @("NoteProperty", "Property") } |
+            ForEach-Object { $_.Name }
+    )
+    if ($propertyNames.Count -gt 0) {
+        [Array]::Sort($propertyNames, [StringComparer]::Ordinal)
+        $result = [ordered]@{}
+        foreach ($name in $propertyNames) {
+            $result[$name] = ConvertTo-CanonicalValue `
+                $Value.PSObject.Properties[$name].Value
+        }
+        return $result
+    }
+
+    return $Value
+}
+
 $document = Invoke-RestMethod -Uri $SwaggerUrl
 $selected = [ordered]@{}
-foreach ($property in $document.paths.PSObject.Properties | Sort-Object Name) {
+foreach ($property in $document.paths.PSObject.Properties) {
     if ($property.Name -like "/api/client-auth/*" `
         -or $property.Name -eq "/api/client/bootstrap" `
         -or $property.Name -like "/api/client/devices/*" `
@@ -22,7 +71,8 @@ $surface = [ordered]@{
     paths = $selected
     schemas = $document.components.schemas
 }
-$canonical = $surface | ConvertTo-Json -Depth 100 -Compress
+$canonical = ConvertTo-CanonicalValue $surface |
+    ConvertTo-Json -Depth 100 -Compress
 $bytes = [Text.Encoding]::UTF8.GetBytes($canonical)
 $sha = [Security.Cryptography.SHA256]::Create()
 try {
