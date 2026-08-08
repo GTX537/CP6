@@ -1,5 +1,13 @@
 # 已完成能力与近期里程碑
 
+## 2026-08-08 E13 纯规则 BuildScene 生产执行链接线
+
+- `36cc0241` / `89c6fb2a` / `9e7f7e0a` 完成功能、报告与 no-ff 受控集成；生产默认 BuildScene executor 可让 RuleOnly recovery 从权威 PreviewSet 走完 12 步并到达 AwaitingReview。
+- local-only 稳定特征快照、同 SourceHash 已确认 locked facts 重映射、Serializable Proposal/Issue 幂等持久化、Blocking 问题和零 Provider/Usage/Draft 写入均已落地；Provider-backed 模式继续失败关闭。
+- 验证为规则/融合 21/21、BuildScene 2/2、Space Unit 484/484、默认 Integration 277 passed / 94 skipped、CP6.Tests 2811 passed / 17 skipped、完整 Release 0 warning / 0 error；合并后重点复验 24/24。
+- 首次 Generation Run 创建服务/API、不同 SourceHash 人工确认继承、权威 RackGenerationProfile、确定性父关系、外部 Provider 与正式 CAD/黄金集证据仍属待办。
+- 清理当前隔离工作区 36 个可重建 `bin/obj` 目录和 6,108 个文件，释放 1,209,344,722 bytes（约 1.13 GiB）；`main` 未修改。
+
 ## 2026-08-08 E13-S14 离线评估工程切片
 
 - `e69b3bca` / `9261d59a` / `292a26ed` 完成功能、报告和 no-ff 集成；稳定 SourceKey 一对一匹配、覆盖率/语义准确率/人工下降率、高置信度 Precision 与 Wilson 下界，Calibration-only 选阈值且 Validation/Holdout 不参与调参。

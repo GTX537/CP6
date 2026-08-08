@@ -1,10 +1,12 @@
 # E13 纯规则 BuildScene 生产执行链接线报告
 
-- 状态：工程切片已完成验证；外部 Provider 路径继续失败关闭
+- 状态：已进入受控集成分支；外部 Provider 路径继续失败关闭
 - 日期：2026-08-08
 - 起始集成基线：`4d9bc3f6`
 - 功能分支：`codex/space-rule-only-build-scene`
 - 功能提交：`36cc0241`
+- 验证报告提交：`89c6fb2a`
+- no-ff 集成提交：`9e7f7e0a`
 - 目标分支：`integration/space-v1-20260730`
 
 ## 1. 交付结论
@@ -101,3 +103,10 @@ same-source modified Proposal/Decision/LockedFact，逐步执行全部 12 步，
 
 因此，本报告证明纯规则 recovery 的“排队到可审阅提案”生产执行闭环，不证明首次生成 UX、外部 AI
 端到端、正式 CAD 或 GA 签收。
+
+## 8. 受控集成与清理
+
+功能提交 `36cc0241` 和验证报告提交 `89c6fb2a` 已通过 no-ff 提交 `9e7f7e0a` 进入
+`integration/space-v1-20260730`；合并后 21 项规则/融合测试和 3 项执行链/默认注册测试复验通过。
+远端集成推送前清理当前隔离工作区内 36 个可重建 `bin/obj` 目录、6,108 个文件，释放
+1,209,344,722 bytes（1,153.32 MiB，约 1.13 GiB）。`main` 未修改。

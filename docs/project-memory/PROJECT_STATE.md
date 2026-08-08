@@ -4,11 +4,13 @@
 
 ## E13 纯规则 BuildScene 生产执行链接线（2026-08-08）
 
+- 功能提交 `36cc0241`、验证报告提交 `89c6fb2a` 已通过 no-ff 提交 `9e7f7e0a` 进入 `integration/space-v1-20260730`；合并后规则/融合 21/21、BuildScene 与默认注册 3/3 复验通过，`main` 未修改。
 - 在集成基线 `4d9bc3f6` 上以功能提交 `36cc0241` 实现生产默认 `SpaceBuildSceneJobStepExecutor`：`RuleOnly` recovery 现在能从私有、哈希和血缘校验通过的 CAD PreviewSet 走完 12 步 BuildScene，持久化只读 Proposal/Issue 并把 Run 推进到 AwaitingReview；Provider-backed 模式继续 `SPACE_AI_PROVIDER_UNAVAILABLE` 失败关闭。
 - local-only 特征快照使用稳定 `Source SHA + SourceRef` SourceKey、Run 隔离 correlation 和零 Provider 调用；同 SourceHash 的已确认 E13-S10 locked facts 会从旧 Proposal SourceRef 重映射并参与融合，覆盖名称、allowlisted 类型属性和 Zone/Aisle/Wall 父关系。不同 SourceHash 仍不自动继承。
 - Proposal/Issue 落库使用 Serializable 和逐字段重放校验；元素尺寸、Aisle/Rack 父关系和 RackProfile 缺失均 Blocking。执行器不写 Draft、不创建 AI Usage、不启用 High Accept；Draft 继续只能经人工 Decision 与原子 Apply 修改。
 - 门禁：规则/融合聚焦 21/21、BuildScene 端到端与外部模式关闭 2/2、Space Unit 484/484、默认 Space Integration 277 passed / 94 SQL-gated skipped、CP6.Tests 2811 passed / 17 environment-gated skipped、完整 solution Release（含 Desktop/Android AOT）0 warning / 0 error。
 - 本切片关闭“生产 BuildScene 全部占位失败”和“同源 LockedFacts 未接 Worker”的内部缺口，但尚无首次 Generation Run 创建 API；当前入口仍是 Failed/Stale Run 的 RuleOnly recovery。外部 Provider、不同 SourceHash 人工确认继承、权威 RackGenerationProfile、确定性无锁父关系和正式 CAD/黄金集证据仍未完成。完整边界见 `docs/space/reports/e13-rule-only-build-scene-production.md`。
+- 合并后清理当前隔离工作区内 36 个可重建 `bin/obj` 目录、6,108 个文件，共 1,209,344,722 bytes（约 1.13 GiB）；临时功能分支待远端集成祖先链确认后删除。
 
 ## E13-S14 离线质量评估开发切片（2026-08-08）
 

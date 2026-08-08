@@ -2,6 +2,13 @@
 
 > 依据 Git log 汇总，不替代完整 Git 历史。重点记录影响接手判断的里程碑。
 
+## 2026-08-08：Space E13 纯规则 BuildScene 生产执行链
+
+- `36cc0241` / `89c6fb2a` / `9e7f7e0a`：实现、记录并 no-ff 集成生产默认 `SpaceBuildSceneJobStepExecutor`；RuleOnly recovery 从权威 CAD PreviewSet 走完 12 步 BuildScene 并生成可审阅 Proposal/Issue。
+- 新增 local-only 稳定特征快照和同 SourceHash confirmed locked facts 重映射；Proposal/Issue 以 Serializable 事务和逐字段校验实现幂等重放，缺少尺寸、父关系或 RackProfile 时失败关闭为 Blocking。
+- 执行链不调用外部 Provider、不记录 AI Usage、不写 Draft；Provider-backed 模式稳定返回 `SPACE_AI_PROVIDER_UNAVAILABLE`。验证为规则/融合 21/21、BuildScene 2/2、Space Unit 484/484、默认 Integration 277 passed / 94 skipped、CP6.Tests 2811 passed / 17 skipped、完整 Release 0 warning / 0 error。
+- 合并后重点复验 24/24；清理 36 个可重建目录、6,108 个文件，回收 1,209,344,722 bytes（约 1.13 GiB）。首次 Generation Run 创建入口与外部证据仍待后续，`main` 未修改。
+
 ## 2026-08-08：Space V1 E13-S14 离线评估工程能力
 
 - `e69b3bca` / `9261d59a` / `292a26ed`：实现、记录并 no-ff 集成最终融合提案离线评估、Calibration-only 阈值选择、Validation+ReleaseHoldout 样本外门禁、95% Wilson 下界、人工操作下降率和防篡改报告。
