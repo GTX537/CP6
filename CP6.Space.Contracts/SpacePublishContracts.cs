@@ -63,6 +63,29 @@ public sealed record SpacePublishAttemptDto(
     IReadOnlyList<SpacePublishBatchDto> Batches,
     IReadOnlyList<SpacePublishAuditEventDto> AuditEvents);
 
+public sealed record SpacePublishAttemptSummaryDto(
+    Guid Id,
+    Guid SiteId,
+    Guid TargetVersionId,
+    string TargetVersionNo,
+    string TargetVersionName,
+    Guid? BaseVersionId,
+    string Status,
+    string CurrentStep,
+    DateTime StartedAtUtc,
+    DateTime? FinishedAtUtc,
+    string? ApprovalReference,
+    string? LastErrorCode,
+    string? Summary,
+    Guid? JobId,
+    string JobStatus,
+    int JobAttemptCount,
+    int JobMaxAttempts,
+    DateTime? NextAttemptAtUtc,
+    int OpenReconciliationIssueCount,
+    Guid? HistoricalRepublishId,
+    Guid? HistoricalVersionId);
+
 public sealed record SpacePublishAuditEventDto(
     Guid Id,
     int EventNo,

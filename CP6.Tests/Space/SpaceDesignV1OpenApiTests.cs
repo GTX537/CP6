@@ -27,6 +27,7 @@ public sealed class SpaceDesignV1OpenApiTests
         var expectedPaths = new[]
         {
             "/api/space/design/v1/sites/{siteId}/model",
+            "/api/space/design/v1/sites/{siteId}/publish-attempts",
             "/api/space/design/v1/sites/{siteId}/device-events",
             "/api/space/design/v1/sites/{siteId}/devices",
             "/api/space/design/v1/sites/{siteId}/device-mappings",
@@ -130,8 +131,8 @@ public sealed class SpaceDesignV1OpenApiTests
             .Select(operation =>
                 operation.Value.GetProperty("operationId").GetString())
             .ToArray();
-        Assert.Equal(110, operationIds.Length);
-        Assert.Equal(110, operationIds.Distinct().Count());
+        Assert.Equal(111, operationIds.Length);
+        Assert.Equal(111, operationIds.Distinct().Count());
         Assert.Contains("GetPolicy", operationIds);
         Assert.Contains("UpdatePolicy", operationIds);
         Assert.Contains("GetUsage", operationIds);
@@ -173,6 +174,7 @@ public sealed class SpaceDesignV1OpenApiTests
         Assert.Contains("GetPublishPreview", operationIds);
         Assert.Contains("CreatePublishAttempt", operationIds);
         Assert.Contains("GetPublishAttempt", operationIds);
+        Assert.Contains("GetPublishAttempts", operationIds);
         Assert.Contains("RetryPublishAttempt", operationIds);
         Assert.Contains("StartHistoricalRepublish", operationIds);
         Assert.Contains("GetHistoricalRepublish", operationIds);

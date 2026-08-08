@@ -22,6 +22,16 @@ public interface ISpacePublishOrchestrator
         CancellationToken cancellationToken = default);
 }
 
+public interface ISpacePublishActivityService
+{
+    Task<SpacePage<SpacePublishAttemptSummaryDto>> GetBySiteAsync(
+        Guid siteId,
+        string? status,
+        int limit,
+        string? cursor,
+        CancellationToken cancellationToken = default);
+}
+
 public interface ISpacePublishJobExecutor
 {
     Task<SpaceJobStepOutput> ExecuteAsync(
