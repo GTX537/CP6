@@ -175,6 +175,9 @@ public sealed class SpaceAiRunRecoveryService(
             }
 
             var replacementRunId = Guid.NewGuid();
+            var previewPin = await LoadPinnedPreviewAsync(
+                source.JobId,
+                cancellationToken);
             var jobInputHash = Hash(string.Join(
                 "\n",
                 source.SourceHash,
@@ -184,7 +187,9 @@ public sealed class SpaceAiRunRecoveryService(
                 source.RuleVersion,
                 source.MappingProfileVersionId?.ToString("N") ?? string.Empty,
                 source.RackGenerationProfileVersionId?.ToString("N") ??
-                    string.Empty));
+                    string.Empty,
+                previewPin?.ArtifactId.ToString("N") ?? string.Empty,
+                previewPin?.FileSha256 ?? string.Empty));
             var job = SpaceJob.CreateQueued(
                 execution.TenantId,
                 SpaceJobType.BuildScene,
@@ -207,6 +212,8 @@ public sealed class SpaceAiRunRecoveryService(
                         expectedContentRevision =
                             request.ExpectedContentRevision,
                         mode,
+                        previewArtifactId = previewPin?.ArtifactId,
+                        previewArtifactSha256 = previewPin?.FileSha256,
                     },
                     JsonOptions));
             var ruleOnly = string.Equals(
@@ -547,6 +554,58 @@ public sealed class SpaceAiRunRecoveryService(
         return run;
     }
 
+    private async Task<PreviewPin?> LoadPinnedPreviewAsync(
+        Guid jobId,
+        CancellationToken cancellationToken)
+    {
+        var payload = await context.Jobs.AsNoTracking()
+            .Where(item => item.Id == jobId)
+            .Select(item => item.PayloadJson)
+            .SingleAsync(cancellationToken);
+        try
+        {
+            using var document = JsonDocument.Parse(payload);
+            var root = document.RootElement;
+            var hasArtifactId = root.TryGetProperty(
+                "previewArtifactId",
+                out var artifactId);
+            var hasArtifactSha256 = root.TryGetProperty(
+                "previewArtifactSha256",
+                out var artifactSha256);
+            if (!hasArtifactId && !hasArtifactSha256)
+            {
+                return null;
+            }
+            if (!hasArtifactId || !hasArtifactSha256)
+                throw new JsonException();
+            if (artifactId.ValueKind == JsonValueKind.Null &&
+                artifactSha256.ValueKind == JsonValueKind.Null)
+            {
+                return null;
+            }
+            var id = artifactId.GetGuid();
+            var sha256 = artifactSha256.GetString();
+            if (id == Guid.Empty ||
+                sha256 is not { Length: 64 } ||
+                sha256.Any(character =>
+                    !Uri.IsHexDigit(character) || char.IsUpper(character)))
+            {
+                throw new JsonException();
+            }
+            return new PreviewPin(id, sha256);
+        }
+        catch (Exception exception) when (
+            exception is JsonException or InvalidOperationException or
+            FormatException)
+        {
+            throw Problem(
+                SpaceErrorCodes.AiRunStateInvalid,
+                409,
+                "The source generation run has an invalid pinned PreviewSet.",
+                "discard-and-create-generation-run");
+        }
+    }
+
     private Task<SpaceJob?> LoadCurrentJobAsync(
         SpaceGenerationRun run,
         CancellationToken cancellationToken)
@@ -802,4 +861,8 @@ public sealed class SpaceAiRunRecoveryService(
         string title,
         string recovery) =>
         new(code, status, title, recoveryAction: recovery);
+
+    private sealed record PreviewPin(
+        Guid ArtifactId,
+        string FileSha256);
 }

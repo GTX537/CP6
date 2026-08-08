@@ -147,7 +147,7 @@ public sealed class SpaceDesignV1OpenApiTests
         Assert.Contains("RetryGenerationRun", operationIds);
         Assert.Contains("DiscardGenerationRun", operationIds);
         Assert.Contains("ReconcileGenerationRun", operationIds);
-        Assert.Contains("RecoverGenerationRun", operationIds);
+        Assert.Contains("CreateGenerationRun", operationIds);
         Assert.Contains("GetGenerationProposals", operationIds);
         Assert.Contains("GetGenerationProposalIssues", operationIds);
         Assert.Contains("GetProposalDecisions", operationIds);
@@ -323,6 +323,53 @@ public sealed class SpaceDesignV1OpenApiTests
             property.Contains("secret", StringComparison.OrdinalIgnoreCase) ||
             property.Contains("url", StringComparison.OrdinalIgnoreCase) ||
             property.Contains("endpoint", StringComparison.OrdinalIgnoreCase));
+    }
+
+    [Fact]
+    public void Ai_generation_create_contract_pins_draft_and_source_input()
+    {
+        using var document = ReadContract();
+        var root = document.RootElement;
+        var create = root.GetProperty("paths")
+            .GetProperty(
+                "/api/space/design/v1/versions/{versionId}/generation-runs")
+            .GetProperty("post");
+
+        Assert.Equal(
+            "CreateGenerationRun",
+            create.GetProperty("operationId").GetString());
+        var parameters = create.GetProperty("parameters").EnumerateArray()
+            .ToArray();
+        Assert.True(parameters.Single(parameter =>
+                parameter.GetProperty("name").GetString() == "If-Match")
+            .GetProperty("required").GetBoolean());
+        Assert.True(parameters.Single(parameter =>
+                parameter.GetProperty("name").GetString() == "Idempotency-Key")
+            .GetProperty("required").GetBoolean());
+        Assert.True(create.GetProperty("responses")
+            .GetProperty("202")
+            .GetProperty("headers")
+            .TryGetProperty("Idempotent-Replay", out _));
+
+        var required = root.GetProperty("components")
+            .GetProperty("schemas")
+            .GetProperty(
+                "CP6.Space.Contracts.CreateSpaceAiGenerationRunRequest")
+            .GetProperty("required")
+            .EnumerateArray()
+            .Select(value => value.GetString())
+            .Order()
+            .ToArray();
+        Assert.Equal(
+            new[]
+            {
+                "expectedContentRevision",
+                "mappingProfileVersionId",
+                "mode",
+                "rackGenerationProfileVersionId",
+                "sourceId",
+            },
+            required);
     }
 
     [Fact]

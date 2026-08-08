@@ -16,6 +16,14 @@ public static class SpaceAiRunRecoveryContract
     public const string RuleOnlyMode = "RuleOnly";
 }
 
+public static class SpaceAiGenerationRunContract
+{
+    public const int SchemaVersion = 1;
+    public const string AiAssistedMode = "AiAssisted";
+    public const string RuleOnlyMode = "RuleOnly";
+    public const string RuleVersion = "warehouse-rule-only-v1";
+}
+
 public sealed record CreateSpaceAiAtomicApplyRequest(
     long ExpectedContentRevision,
     string ExpectedRunRowVersion,
@@ -29,6 +37,34 @@ public sealed record CreateSpaceAiGenerationRecoveryRequest(
     long ExpectedContentRevision,
     string ExpectedBasedOnRunRowVersion,
     string Mode);
+
+public sealed record CreateSpaceAiGenerationRunRequest(
+    Guid SourceId,
+    Guid? MappingProfileVersionId,
+    Guid? RackGenerationProfileVersionId,
+    string Mode,
+    long ExpectedContentRevision,
+    Guid? BasedOnRunId = null,
+    string? ExpectedBasedOnRunRowVersion = null);
+
+public sealed record SpaceAiGenerationRunLinksDto(
+    string Self,
+    string Proposals);
+
+public sealed record SpaceAiGenerationRunAcceptedDto(
+    int SchemaVersion,
+    Guid RunId,
+    Guid JobId,
+    string Status,
+    long BaseContentRevision,
+    Guid SourceId,
+    string SourceHash,
+    string Mode,
+    string Policy,
+    Guid? BasedOnRunId,
+    SpaceAiGenerationRunLinksDto Links,
+    bool Reused,
+    bool IdempotentReplay);
 
 public sealed record SpaceAiGenerationRunActionDto(
     int SchemaVersion,

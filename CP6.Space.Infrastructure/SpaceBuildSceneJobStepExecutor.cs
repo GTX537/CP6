@@ -549,6 +549,13 @@ public sealed class SpaceBuildSceneJobStepExecutor(
             payload.SourceId == Guid.Empty ||
             payload.ExpectedContentRevision < 0 ||
             string.IsNullOrWhiteSpace(payload.Mode) ||
+            payload.PreviewArtifactId.HasValue !=
+                !string.IsNullOrWhiteSpace(payload.PreviewArtifactSha256) ||
+            (payload.PreviewArtifactId.HasValue &&
+             (payload.PreviewArtifactId == Guid.Empty ||
+              payload.PreviewArtifactSha256!.Length != 64 ||
+              payload.PreviewArtifactSha256.Any(character =>
+                  !Uri.IsHexDigit(character) || char.IsUpper(character)))) ||
             job.JobType != SpaceJobType.BuildScene ||
             job.SubjectType != SpaceJobSubjectType.ModelVersion ||
             job.SubjectId != lease.SubjectId ||
@@ -599,6 +606,7 @@ public sealed class SpaceBuildSceneJobStepExecutor(
         var (artifactId, preview) = await LoadPreviewAsync(
             run,
             source,
+            payload,
             cancellationToken);
         return new BuildInput(
             job,
@@ -614,6 +622,7 @@ public sealed class SpaceBuildSceneJobStepExecutor(
         LoadPreviewAsync(
             SpaceGenerationRun run,
             SpaceModelSource source,
+            BuildScenePayload payload,
             CancellationToken cancellationToken)
     {
         var rows = await (
@@ -635,14 +644,24 @@ public sealed class SpaceBuildSceneJobStepExecutor(
         var producers = await context.Jobs.AsNoTracking()
             .Where(item => producerIds.Contains(item.Id))
             .ToDictionaryAsync(item => item.Id, cancellationToken);
-        var selected = rows
+        var eligible = rows
             .Where(item =>
                 producers.TryGetValue(item.Artifact.JobId!.Value, out var producer) &&
                 producer.JobType == SpaceJobType.CadParse &&
                 producer.SubjectType == SpaceJobSubjectType.ModelSource &&
                 producer.SubjectId == source.Id &&
                 producer.Status == SpaceJobStatus.Succeeded &&
-                IsCleanArtifact(item.File))
+                IsCleanArtifact(item.File));
+        if (payload.PreviewArtifactId.HasValue)
+        {
+            eligible = eligible.Where(item =>
+                item.Artifact.Id == payload.PreviewArtifactId.Value &&
+                string.Equals(
+                    item.File.Sha256,
+                    payload.PreviewArtifactSha256,
+                    StringComparison.Ordinal));
+        }
+        var selected = eligible
             .OrderByDescending(item =>
                 producers[item.Artifact.JobId!.Value].RequestedAtUtc)
             .ThenByDescending(item => item.Artifact.JobId)
@@ -1435,7 +1454,9 @@ public sealed class SpaceBuildSceneJobStepExecutor(
         Guid? BasedOnRunId,
         Guid SourceId,
         long ExpectedContentRevision,
-        string Mode);
+        string Mode,
+        Guid? PreviewArtifactId = null,
+        string? PreviewArtifactSha256 = null);
 
     private sealed record BuildInput(
         SpaceJob Job,
