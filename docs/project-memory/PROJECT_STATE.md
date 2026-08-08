@@ -4,7 +4,7 @@
 
 ## E06-S05 历史版本重新发布回退开发切片（2026-08-08）
 
-- 在集成基线 `bf9c07d8` 上由 `codex/space-e06-s05-historical-republish` 完成开发，按既定流程待 no-ff 进入 `integration/space-v1-20260730`；`main` 未修改。新增 `space:model:rollback`、创建/查询历史重新发布 API、OpenAPI 及 C#/TypeScript SDK，OpenAPI 操作数为 110。
+- 在集成基线 `bf9c07d8` 上以功能提交 `ea16ce67`、no-ff 提交 `85e039f8` 进入 `integration/space-v1-20260730`；`main` 未修改。新增 `space:model:rollback`、创建/查询历史重新发布 API、OpenAPI 及 C#/TypeScript SDK，OpenAPI 操作数为 110。
 - 回退不是改写旧版本：系统冻结不可变 HistoricalRepublish 证据，把 `Production + Superseded` 历史快照克隆成新生产候选，保留 LogicalId 并建立 BasedOn/CloneOperation 血缘；再按当前规则与当前 WMS 能力校验，创建新的 PublishPlan、PublishAttempt、Publish Job 和追加式审计链。历史版本、旧计划、旧尝试和旧审计均不修改或删除。
 - `HistoricalRepublish` 后台 Job 按克隆、校验、排队三步执行，复用 E06-S04 的租约、超时、退避、恢复和对账。旧生产指针、活动草稿/发布、校验阻断、能力变化和计划漂移都失败关闭；新尝试完成前当前 Published 保持有效。运行态激活再次核验持久化 Attempt/Plan 与原申请人，允许系统 Worker 执行但防止内部身份或计划替换。
 - Migration `20260807170204` 使用强 Tenant 复合外键、唯一幂等约束、不可变证据保护和前向修复 Down；幂等 SQL 已生成。门禁：Space Unit 462/462、CP6.Tests 2803 passed / 17 skipped、默认 Space Integration 261 passed / 94 SQL-gated skipped、发布真实 SQL 3/3（其中历史重新发布 1/1）；完整 solution Release（含 Desktop/Android 双架构 AOT）0 warning / 0 error，EF/SDK/TypeScript/Web/diff 门禁通过。证据见 `docs/space/reports/e06-s05-historical-republish-development.md`。
