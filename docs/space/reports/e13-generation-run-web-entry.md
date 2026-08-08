@@ -1,10 +1,12 @@
 # E13 Generation Run 建模 Web 入口报告
 
-- 状态：功能分支验证完成，待受控集成
+- 状态：已进入受控集成分支
 - 日期：2026-08-08
 - 起始集成基线：`3d3f923c`
 - 功能分支：`codex/space-generation-run-web-entry`
 - 功能提交：`52bb3a29`
+- 验证报告提交：`282d4e54`
+- no-ff 集成提交：`2871df1b`
 - 目标分支：`integration/space-v1-20260730`
 
 ## 1. 交付结论
@@ -64,3 +66,9 @@ Run 详情因此足以安全构造 BasedOn replacement 请求，不再依赖浏�
 - 正式 CAD 签收仍需用户有权使用的 DWG/DXF、组织黄金集、真实大文件/故障/性能和人工验收证据。
 
 因此，本报告只证明内部用户已能通过建模 Web UI 启动和跟踪权威 RuleOnly Generation Run，并安全恢复 Failed/Stale Run；不证明外部 AI、正式 CAD 或 GA 签收。
+
+## 6. 受控集成与清理
+
+功能提交 `52bb3a29` 和验证报告提交 `282d4e54` 已通过 no-ff 提交 `2871df1b` 进入 `integration/space-v1-20260730`。合并态前端聚焦 11/11、OpenAPI 合同 29/29 与 SDK drift 复验通过。
+
+随后清理当前隔离工作区 38 个可重建目标（36 个项目 `bin/obj` 根目录，以及 `cp6.web/node_modules` 和 `cp6.web/dist`）、29,416 个文件，共释放 1,982,552,577 bytes（约 1.85 GiB）；复核剩余 `bin/obj` 为 0，前端依赖与构建目录均不存在。远端祖先链已确认，临时功能分支已从本地和远端删除。`main` 未修改。

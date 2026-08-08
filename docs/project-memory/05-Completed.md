@@ -1,11 +1,12 @@
 # 已完成能力与近期里程碑
 
-## 2026-08-08 E13 Generation Run 建模 Web 入口（待受控集成）
+## 2026-08-08 E13 Generation Run 建模 Web 入口
 
-- 功能提交 `52bb3a29` 把编辑器接入统一 `CreateGenerationRun`：从已确认 DWG/DXF Preview 启动 RuleOnly Run，显示排队/进度后进入审核与原子 Apply；Failed/Stale 恢复也改用同一并发、幂等和 BasedOn 合同。
+- `52bb3a29` / `282d4e54` / `2871df1b` 完成功能、报告与 no-ff 受控集成；编辑器接入统一 `CreateGenerationRun`，从已确认 DWG/DXF Preview 启动 RuleOnly Run，显示排队/进度后进入审核与原子 Apply；Failed/Stale 恢复也改用同一并发、幂等和 BasedOn 合同。
 - Run DTO 补齐冻结 Source/Mapping/Rack Profile 标识；Web 使用当前 Draft `If-Match` 和 ContentRevision，409/422 后重读权威状态，中间态不提前请求 Review/Proposal。
 - 前端聚焦 11/11、全量 710/710、type-check/build、OpenAPI/审计 31/31、Space Unit 484/484、Integration 283 passed / 94 skipped、CP6.Tests 2812 passed / 17 skipped、SDK drift/strict 与完整 Release/AOT 0 warning / 0 error。
 - 无 Migration、Provider、Secret、网络、Usage、High Accept 或 Draft 自动写入；完整证据见 `docs/space/reports/e13-generation-run-web-entry.md`。
+- 合并态复验前端 11/11、OpenAPI 29/29 与 SDK drift；清理 38 个可重建目标、29,416 个文件，释放 1,982,552,577 bytes（约 1.85 GiB）。远端祖先链确认后已删除本地/远端临时分支，`main` 未修改。
 
 ## 2026-08-08 E13 首次 Generation Run 创建入口
 

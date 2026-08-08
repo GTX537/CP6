@@ -2,12 +2,13 @@
 
 > 依据 Git log 汇总，不替代完整 Git 历史。重点记录影响接手判断的里程碑。
 
-## 2026-08-08：Space E13 Generation Run 建模 Web 入口（待受控集成）
+## 2026-08-08：Space E13 Generation Run 建模 Web 入口
 
-- `52bb3a29`：编辑器接入统一 `CreateGenerationRun`，从已确认 DWG/DXF Preview 启动 RuleOnly Run；排队/处理中轮询 Run，达到 AwaitingReview 后再读取提案，Failed/Stale 恢复使用同一 BasedOn、`If-Match` 与幂等合同。
+- `52bb3a29` / `282d4e54` / `2871df1b`：实现、记录并 no-ff 集成建模 Web 的统一 `CreateGenerationRun`；从已确认 DWG/DXF Preview 启动 RuleOnly Run，排队/处理中轮询 Run，达到 AwaitingReview 后再读取提案，Failed/Stale 恢复使用同一 BasedOn、`If-Match` 与幂等合同。
 - Run 详情补齐 Source/Mapping/Rack Profile 冻结标识，OpenAPI 与 C#/TypeScript SDK 同步；409/422 后重读当前 Draft 与来源，浏览器筛选不替代服务端权威校验。
 - 验证为前端聚焦 11/11、全量 710/710、type-check/build、OpenAPI/审计 31/31、Space Unit 484/484、Integration 283 passed / 94 skipped、CP6.Tests 2812 passed / 17 skipped、SDK strict/drift 与完整 Release/AOT 0 warning / 0 error。
 - 无 Migration、Provider、Secret、网络、Usage 或 Draft 自动写入；RackGenerationProfile 权威存储、无锁父关系、异 SourceHash 确认、外部 Provider 与正式 CAD/黄金集仍是后续边界。
+- 合并态前端 11/11、OpenAPI 29/29 与 SDK drift 复验通过；清理 38 个可重建目标和 29,416 个文件，回收 1,982,552,577 bytes（约 1.85 GiB）。远端祖先链确认后已删除本地/远端临时分支，`main` 未修改。
 
 ## 2026-08-08：Space E13 首次 Generation Run 创建入口
 

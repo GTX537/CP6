@@ -2,12 +2,13 @@
 
 最后更新：2026-08-08
 
-## E13 Generation Run 建模 Web 入口（2026-08-08，待受控集成）
+## E13 Generation Run 建模 Web 入口（2026-08-08）
 
-- 在集成基线 `3d3f923c` 上以功能提交 `52bb3a29` 接入统一 `CreateGenerationRun`：编辑器可从已确认 DWG/DXF Preview 启动 RuleOnly Run，并在同一决策面板显示排队/进度、审核、Apply 和 Failed/Stale replacement 恢复；旧 recovery 合同已移除。
+- 功能提交 `52bb3a29` 与验证报告提交 `282d4e54` 已通过 no-ff 提交 `2871df1b` 进入 `integration/space-v1-20260730`；编辑器可从已确认 DWG/DXF Preview 启动 RuleOnly Run，并在同一决策面板显示排队/进度、审核、Apply 和 Failed/Stale replacement 恢复，旧 recovery 合同已移除。
 - Run 公开 DTO 补齐冻结 Source/Mapping/Rack Profile 标识，恢复请求重新读取当前 Draft RowVersion/ContentRevision，并发送 `If-Match`、旧 Run RowVersion、BasedOn 血缘和稳定 Idempotency-Key。Queued 等中间态不再提前读取尚未物化的 Review/Proposal。
 - 门禁：前端聚焦 3 files / 11 tests、全量 133 files / 710 tests、type-check/production build、OpenAPI/审计 31/31、Space Unit 484/484、默认 Integration 283 passed / 94 skipped、CP6.Tests 2812 passed / 17 skipped、SDK strict/drift 与完整 solution Release/AOT 0 warning / 0 error。无 Migration、Provider、外部网络、Usage 或 Draft 自动写入。
 - 下一项内部缺口优先为权威 RackGenerationProfile 版本存储/读取，随后可独立处理无锁父关系推导或不同 SourceHash 人工确认；外部 Provider 与正式 CAD/黄金集证据仍独立存在。完整边界见 `docs/space/reports/e13-generation-run-web-entry.md`。
+- 合并态前端聚焦 11/11、OpenAPI 合同 29/29 与 SDK drift 通过；清理 38 个可重建目标和 29,416 个文件，释放 1,982,552,577 bytes（约 1.85 GiB）。远端祖先链确认后已删除本地/远端临时分支，`main` 未修改。
 
 ## E13 首次 Generation Run 创建入口（2026-08-08）
 
