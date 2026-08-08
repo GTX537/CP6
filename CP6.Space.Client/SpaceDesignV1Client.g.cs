@@ -122,16 +122,18 @@ namespace CP6.Space.Client
         /// <exception cref="ApiException">A server side error occurred.</exception>
         System.Threading.Tasks.Task<SpaceAiGenerationRunActionDto> ReconcileGenerationRunAsync(System.Guid runId, string idempotency_Key, SpaceAiRunActionRequest body, System.Threading.CancellationToken cancellationToken);
 
+        /// <param name="if_Match">Current Draft RowVersion, optionally quoted as an ETag.</param>
         /// <param name="idempotency_Key">Opaque caller key; 1-128 UTF-8 bytes. Reuse with a different request returns SPACE_IDEMPOTENCY_KEY_REUSED.</param>
         /// <returns>Accepted</returns>
         /// <exception cref="ApiException">A server side error occurred.</exception>
-        System.Threading.Tasks.Task<SpaceAiGenerationRunActionDto> RecoverGenerationRunAsync(System.Guid versionId, string idempotency_Key, CreateSpaceAiGenerationRecoveryRequest body);
+        System.Threading.Tasks.Task<SpaceAiGenerationRunAcceptedDto> CreateGenerationRunAsync(System.Guid versionId, string if_Match, string idempotency_Key, CreateSpaceAiGenerationRunRequest body);
 
         /// <param name="cancellationToken">A cancellation token that can be used by other objects or threads to receive notice of cancellation.</param>
+        /// <param name="if_Match">Current Draft RowVersion, optionally quoted as an ETag.</param>
         /// <param name="idempotency_Key">Opaque caller key; 1-128 UTF-8 bytes. Reuse with a different request returns SPACE_IDEMPOTENCY_KEY_REUSED.</param>
         /// <returns>Accepted</returns>
         /// <exception cref="ApiException">A server side error occurred.</exception>
-        System.Threading.Tasks.Task<SpaceAiGenerationRunActionDto> RecoverGenerationRunAsync(System.Guid versionId, string idempotency_Key, CreateSpaceAiGenerationRecoveryRequest body, System.Threading.CancellationToken cancellationToken);
+        System.Threading.Tasks.Task<SpaceAiGenerationRunAcceptedDto> CreateGenerationRunAsync(System.Guid versionId, string if_Match, string idempotency_Key, CreateSpaceAiGenerationRunRequest body, System.Threading.CancellationToken cancellationToken);
 
         /// <returns>OK</returns>
         /// <exception cref="ApiException">A server side error occurred.</exception>
@@ -2589,19 +2591,21 @@ namespace CP6.Space.Client
             }
         }
 
+        /// <param name="if_Match">Current Draft RowVersion, optionally quoted as an ETag.</param>
         /// <param name="idempotency_Key">Opaque caller key; 1-128 UTF-8 bytes. Reuse with a different request returns SPACE_IDEMPOTENCY_KEY_REUSED.</param>
         /// <returns>Accepted</returns>
         /// <exception cref="ApiException">A server side error occurred.</exception>
-        public virtual System.Threading.Tasks.Task<SpaceAiGenerationRunActionDto> RecoverGenerationRunAsync(System.Guid versionId, string idempotency_Key, CreateSpaceAiGenerationRecoveryRequest body)
+        public virtual System.Threading.Tasks.Task<SpaceAiGenerationRunAcceptedDto> CreateGenerationRunAsync(System.Guid versionId, string if_Match, string idempotency_Key, CreateSpaceAiGenerationRunRequest body)
         {
-            return RecoverGenerationRunAsync(versionId, idempotency_Key, body, System.Threading.CancellationToken.None);
+            return CreateGenerationRunAsync(versionId, if_Match, idempotency_Key, body, System.Threading.CancellationToken.None);
         }
 
         /// <param name="cancellationToken">A cancellation token that can be used by other objects or threads to receive notice of cancellation.</param>
+        /// <param name="if_Match">Current Draft RowVersion, optionally quoted as an ETag.</param>
         /// <param name="idempotency_Key">Opaque caller key; 1-128 UTF-8 bytes. Reuse with a different request returns SPACE_IDEMPOTENCY_KEY_REUSED.</param>
         /// <returns>Accepted</returns>
         /// <exception cref="ApiException">A server side error occurred.</exception>
-        public virtual async System.Threading.Tasks.Task<SpaceAiGenerationRunActionDto> RecoverGenerationRunAsync(System.Guid versionId, string idempotency_Key, CreateSpaceAiGenerationRecoveryRequest body, System.Threading.CancellationToken cancellationToken)
+        public virtual async System.Threading.Tasks.Task<SpaceAiGenerationRunAcceptedDto> CreateGenerationRunAsync(System.Guid versionId, string if_Match, string idempotency_Key, CreateSpaceAiGenerationRunRequest body, System.Threading.CancellationToken cancellationToken)
         {
             if (versionId == null)
                 throw new System.ArgumentNullException("versionId");
@@ -2615,6 +2619,10 @@ namespace CP6.Space.Client
             {
                 using (var request_ = new System.Net.Http.HttpRequestMessage())
                 {
+
+                    if (if_Match == null)
+                        throw new System.ArgumentNullException("if_Match");
+                    request_.Headers.TryAddWithoutValidation("If-Match", ConvertToString(if_Match, System.Globalization.CultureInfo.InvariantCulture));
 
                     if (idempotency_Key == null)
                         throw new System.ArgumentNullException("idempotency_Key");
@@ -2658,7 +2666,7 @@ namespace CP6.Space.Client
                         var status_ = (int)response_.StatusCode;
                         if (status_ == 202)
                         {
-                            var objectResponse_ = await ReadObjectResponseAsync<SpaceAiGenerationRunActionDto>(response_, headers_, cancellationToken).ConfigureAwait(false);
+                            var objectResponse_ = await ReadObjectResponseAsync<SpaceAiGenerationRunAcceptedDto>(response_, headers_, cancellationToken).ConfigureAwait(false);
                             if (objectResponse_.Object == null)
                             {
                                 throw new ApiException("Response was null which was not expected.", status_, objectResponse_.Text, headers_, null);
@@ -20341,23 +20349,33 @@ namespace CP6.Space.Client
     }
 
     [System.CodeDom.Compiler.GeneratedCode("NJsonSchema", "14.7.1.0 (NJsonSchema v11.6.1.0 (Newtonsoft.Json v13.0.0.0))")]
-    public partial class CreateSpaceAiGenerationRecoveryRequest
+    public partial class CreateSpaceAiGenerationRunRequest
     {
 
-        [System.Text.Json.Serialization.JsonPropertyName("basedOnRunId")]
+        [System.Text.Json.Serialization.JsonPropertyName("sourceId")]
         [System.ComponentModel.DataAnnotations.Required(AllowEmptyStrings = true)]
-        public System.Guid BasedOnRunId { get; set; } = default!;
+        public System.Guid SourceId { get; set; } = default!;
 
-        [System.Text.Json.Serialization.JsonPropertyName("expectedContentRevision")]
-        public long ExpectedContentRevision { get; set; } = default!;
-
-        [System.Text.Json.Serialization.JsonPropertyName("expectedBasedOnRunRowVersion")]
+        [System.Text.Json.Serialization.JsonPropertyName("mappingProfileVersionId")]
         [System.ComponentModel.DataAnnotations.Required(AllowEmptyStrings = true)]
-        public string ExpectedBasedOnRunRowVersion { get; set; } = default!;
+        public System.Guid MappingProfileVersionId { get; set; } = default!;
+
+        [System.Text.Json.Serialization.JsonPropertyName("rackGenerationProfileVersionId")]
+        [System.ComponentModel.DataAnnotations.Required(AllowEmptyStrings = true)]
+        public System.Guid RackGenerationProfileVersionId { get; set; } = default!;
 
         [System.Text.Json.Serialization.JsonPropertyName("mode")]
         [System.ComponentModel.DataAnnotations.Required(AllowEmptyStrings = true)]
         public string Mode { get; set; } = default!;
+
+        [System.Text.Json.Serialization.JsonPropertyName("expectedContentRevision")]
+        public long ExpectedContentRevision { get; set; } = default!;
+
+        [System.Text.Json.Serialization.JsonPropertyName("basedOnRunId")]
+        public System.Guid? BasedOnRunId { get; set; } = default!;
+
+        [System.Text.Json.Serialization.JsonPropertyName("expectedBasedOnRunRowVersion")]
+        public string? ExpectedBasedOnRunRowVersion { get; set; } = default!;
 
     }
 
@@ -21373,6 +21391,59 @@ namespace CP6.Space.Client
     }
 
     [System.CodeDom.Compiler.GeneratedCode("NJsonSchema", "14.7.1.0 (NJsonSchema v11.6.1.0 (Newtonsoft.Json v13.0.0.0))")]
+    public partial class SpaceAiGenerationRunAcceptedDto
+    {
+
+        [System.Text.Json.Serialization.JsonPropertyName("schemaVersion")]
+        public int SchemaVersion { get; set; } = default!;
+
+        [System.Text.Json.Serialization.JsonPropertyName("runId")]
+        [System.ComponentModel.DataAnnotations.Required(AllowEmptyStrings = true)]
+        public System.Guid RunId { get; set; } = default!;
+
+        [System.Text.Json.Serialization.JsonPropertyName("jobId")]
+        [System.ComponentModel.DataAnnotations.Required(AllowEmptyStrings = true)]
+        public System.Guid JobId { get; set; } = default!;
+
+        [System.Text.Json.Serialization.JsonPropertyName("status")]
+        [System.ComponentModel.DataAnnotations.Required(AllowEmptyStrings = true)]
+        public string Status { get; set; } = default!;
+
+        [System.Text.Json.Serialization.JsonPropertyName("baseContentRevision")]
+        public long BaseContentRevision { get; set; } = default!;
+
+        [System.Text.Json.Serialization.JsonPropertyName("sourceId")]
+        [System.ComponentModel.DataAnnotations.Required(AllowEmptyStrings = true)]
+        public System.Guid SourceId { get; set; } = default!;
+
+        [System.Text.Json.Serialization.JsonPropertyName("sourceHash")]
+        [System.ComponentModel.DataAnnotations.Required(AllowEmptyStrings = true)]
+        public string SourceHash { get; set; } = default!;
+
+        [System.Text.Json.Serialization.JsonPropertyName("mode")]
+        [System.ComponentModel.DataAnnotations.Required(AllowEmptyStrings = true)]
+        public string Mode { get; set; } = default!;
+
+        [System.Text.Json.Serialization.JsonPropertyName("policy")]
+        [System.ComponentModel.DataAnnotations.Required(AllowEmptyStrings = true)]
+        public string Policy { get; set; } = default!;
+
+        [System.Text.Json.Serialization.JsonPropertyName("basedOnRunId")]
+        public System.Guid? BasedOnRunId { get; set; } = default!;
+
+        [System.Text.Json.Serialization.JsonPropertyName("links")]
+        [System.ComponentModel.DataAnnotations.Required]
+        public SpaceAiGenerationRunLinksDto Links { get; set; } = new SpaceAiGenerationRunLinksDto();
+
+        [System.Text.Json.Serialization.JsonPropertyName("reused")]
+        public bool Reused { get; set; } = default!;
+
+        [System.Text.Json.Serialization.JsonPropertyName("idempotentReplay")]
+        public bool IdempotentReplay { get; set; } = default!;
+
+    }
+
+    [System.CodeDom.Compiler.GeneratedCode("NJsonSchema", "14.7.1.0 (NJsonSchema v11.6.1.0 (Newtonsoft.Json v13.0.0.0))")]
     public partial class SpaceAiGenerationRunActionDto
     {
 
@@ -21484,6 +21555,20 @@ namespace CP6.Space.Client
         [System.Text.Json.Serialization.JsonPropertyName("rowVersion")]
         [System.ComponentModel.DataAnnotations.Required(AllowEmptyStrings = true)]
         public string RowVersion { get; set; } = default!;
+
+    }
+
+    [System.CodeDom.Compiler.GeneratedCode("NJsonSchema", "14.7.1.0 (NJsonSchema v11.6.1.0 (Newtonsoft.Json v13.0.0.0))")]
+    public partial class SpaceAiGenerationRunLinksDto
+    {
+
+        [System.Text.Json.Serialization.JsonPropertyName("self")]
+        [System.ComponentModel.DataAnnotations.Required(AllowEmptyStrings = true)]
+        public string Self { get; set; } = default!;
+
+        [System.Text.Json.Serialization.JsonPropertyName("proposals")]
+        [System.ComponentModel.DataAnnotations.Required(AllowEmptyStrings = true)]
+        public string Proposals { get; set; } = default!;
 
     }
 

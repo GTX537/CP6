@@ -565,6 +565,34 @@ public sealed class SpaceWmsRuntimeSchemaFilter : ISchemaFilter
                 "expectedBasedOnRunRowVersion",
                 "mode",
             ],
+            [typeof(CreateSpaceAiGenerationRunRequest)] =
+            [
+                "sourceId",
+                "mappingProfileVersionId",
+                "rackGenerationProfileVersionId",
+                "mode",
+                "expectedContentRevision",
+            ],
+            [typeof(SpaceAiGenerationRunLinksDto)] =
+            [
+                "self",
+                "proposals",
+            ],
+            [typeof(SpaceAiGenerationRunAcceptedDto)] =
+            [
+                "schemaVersion",
+                "runId",
+                "jobId",
+                "status",
+                "baseContentRevision",
+                "sourceId",
+                "sourceHash",
+                "mode",
+                "policy",
+                "links",
+                "reused",
+                "idempotentReplay",
+            ],
             [typeof(SpaceAiGenerationRunActionDto)] =
             [
                 "schemaVersion",
@@ -1311,7 +1339,7 @@ public sealed class SpaceDesignV1OperationFilter : IOperationFilter
                 "RetryGenerationRun" or
                 "DiscardGenerationRun" or
                 "ReconcileGenerationRun" or
-                "RecoverGenerationRun"))
+                "CreateGenerationRun"))
             return;
 
         var idempotencyKey = operation.Parameters.Single(
@@ -1326,12 +1354,26 @@ public sealed class SpaceDesignV1OperationFilter : IOperationFilter
             "Opaque caller key; 1-128 UTF-8 bytes. Reuse with a different " +
             "request returns SPACE_IDEMPOTENCY_KEY_REUSED.";
 
+        if (operation.OperationId == "CreateGenerationRun")
+        {
+            var ifMatch = operation.Parameters.Single(
+                parameter =>
+                    parameter.In == ParameterLocation.Header &&
+                    string.Equals(
+                        parameter.Name,
+                        "If-Match",
+                        StringComparison.Ordinal));
+            ifMatch.Required = true;
+            ifMatch.Description =
+                "Current Draft RowVersion, optionally quoted as an ETag.";
+        }
+
         var successStatus = operation.OperationId switch
         {
             "CreateVersion" or
                 "ApplyGenerationProposals" or
                 "RetryGenerationRun" or
-                "RecoverGenerationRun" =>
+                "CreateGenerationRun" =>
                 StatusCodes.Status202Accepted.ToString(),
             "AttachUnderlay" or
                 "CalibrateUnderlay" or

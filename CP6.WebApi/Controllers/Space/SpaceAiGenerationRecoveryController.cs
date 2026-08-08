@@ -42,36 +42,39 @@ namespace CP6.WebApi.Controllers.Space;
     StatusCodes.Status500InternalServerError,
     "application/problem+json")]
 public sealed class SpaceAiGenerationRecoveryController(
-    ISpaceAiRunRecoveryService service) : ControllerBase
+    ISpaceAiGenerationRunService service) : ControllerBase
 {
     [HttpPost]
     [SpaceAuditOperation(
-        "space.ai-generation-run.recover",
+        "space.ai-generation-run.create",
         "ModelVersion",
         ResourceIdArgument = "versionId",
         PermissionCode = "space:model:generate-ai")]
     [RequirePermission("space", "model:generate-ai", UseProblemDetails = true)]
-    [ProducesResponseType<SpaceAiGenerationRunActionDto>(
+    [ProducesResponseType<SpaceAiGenerationRunAcceptedDto>(
         StatusCodes.Status202Accepted)]
-    public async Task<ActionResult<SpaceAiGenerationRunActionDto>>
-        RecoverGenerationRun(
+    public async Task<ActionResult<SpaceAiGenerationRunAcceptedDto>>
+        CreateGenerationRun(
             Guid versionId,
+            [FromHeader(Name = "If-Match"), Required]
+            string expectedVersionRowVersion,
             [FromHeader(Name = "Idempotency-Key"), Required]
             string idempotencyKey,
             [FromBody, Required]
-            CreateSpaceAiGenerationRecoveryRequest request,
+            CreateSpaceAiGenerationRunRequest request,
             CancellationToken cancellationToken)
     {
-        var response = await service.RecoverAsync(
+        var response = await service.CreateAsync(
             versionId,
             request,
+            expectedVersionRowVersion,
             idempotencyKey,
             cancellationToken);
         Response.Headers["Idempotent-Replay"] =
             response.IdempotentReplay ? "true" : "false";
         return Accepted(
             $"/api/space/design/v1/generation-runs/" +
-            $"{response.ReplacementRunId}",
+            $"{response.RunId}",
             response);
     }
 }

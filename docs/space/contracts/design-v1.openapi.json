@@ -1247,7 +1247,7 @@
         "tags": [
           "SpaceAiGenerationRecovery"
         ],
-        "operationId": "RecoverGenerationRun",
+        "operationId": "CreateGenerationRun",
         "parameters": [
           {
             "name": "versionId",
@@ -1256,6 +1256,15 @@
             "schema": {
               "type": "string",
               "format": "uuid"
+            }
+          },
+          {
+            "name": "If-Match",
+            "in": "header",
+            "description": "Current Draft RowVersion, optionally quoted as an ETag.",
+            "required": true,
+            "schema": {
+              "type": "string"
             }
           },
           {
@@ -1272,17 +1281,17 @@
           "content": {
             "application/json": {
               "schema": {
-                "$ref": "#/components/schemas/CP6.Space.Contracts.CreateSpaceAiGenerationRecoveryRequest"
+                "$ref": "#/components/schemas/CP6.Space.Contracts.CreateSpaceAiGenerationRunRequest"
               }
             },
             "text/json": {
               "schema": {
-                "$ref": "#/components/schemas/CP6.Space.Contracts.CreateSpaceAiGenerationRecoveryRequest"
+                "$ref": "#/components/schemas/CP6.Space.Contracts.CreateSpaceAiGenerationRunRequest"
               }
             },
             "application/*+json": {
               "schema": {
-                "$ref": "#/components/schemas/CP6.Space.Contracts.CreateSpaceAiGenerationRecoveryRequest"
+                "$ref": "#/components/schemas/CP6.Space.Contracts.CreateSpaceAiGenerationRunRequest"
               }
             }
           },
@@ -1372,17 +1381,17 @@
             "content": {
               "text/plain": {
                 "schema": {
-                  "$ref": "#/components/schemas/CP6.Space.Contracts.SpaceAiGenerationRunActionDto"
+                  "$ref": "#/components/schemas/CP6.Space.Contracts.SpaceAiGenerationRunAcceptedDto"
                 }
               },
               "application/json": {
                 "schema": {
-                  "$ref": "#/components/schemas/CP6.Space.Contracts.SpaceAiGenerationRunActionDto"
+                  "$ref": "#/components/schemas/CP6.Space.Contracts.SpaceAiGenerationRunAcceptedDto"
                 }
               },
               "text/json": {
                 "schema": {
-                  "$ref": "#/components/schemas/CP6.Space.Contracts.SpaceAiGenerationRunActionDto"
+                  "$ref": "#/components/schemas/CP6.Space.Contracts.SpaceAiGenerationRunAcceptedDto"
                 }
               }
             }
@@ -15577,28 +15586,43 @@
         },
         "additionalProperties": false
       },
-      "CP6.Space.Contracts.CreateSpaceAiGenerationRecoveryRequest": {
+      "CP6.Space.Contracts.CreateSpaceAiGenerationRunRequest": {
         "required": [
-          "basedOnRunId",
-          "expectedBasedOnRunRowVersion",
           "expectedContentRevision",
-          "mode"
+          "mappingProfileVersionId",
+          "mode",
+          "rackGenerationProfileVersionId",
+          "sourceId"
         ],
         "type": "object",
         "properties": {
-          "basedOnRunId": {
+          "sourceId": {
             "type": "string",
             "format": "uuid"
+          },
+          "mappingProfileVersionId": {
+            "type": "string",
+            "format": "uuid"
+          },
+          "rackGenerationProfileVersionId": {
+            "type": "string",
+            "format": "uuid"
+          },
+          "mode": {
+            "type": "string"
           },
           "expectedContentRevision": {
             "type": "integer",
             "format": "int64"
           },
-          "expectedBasedOnRunRowVersion": {
-            "type": "string"
+          "basedOnRunId": {
+            "type": "string",
+            "format": "uuid",
+            "nullable": true
           },
-          "mode": {
-            "type": "string"
+          "expectedBasedOnRunRowVersion": {
+            "type": "string",
+            "nullable": true
           }
         },
         "additionalProperties": false
@@ -16892,6 +16916,72 @@
         },
         "additionalProperties": false
       },
+      "CP6.Space.Contracts.SpaceAiGenerationRunAcceptedDto": {
+        "required": [
+          "baseContentRevision",
+          "idempotentReplay",
+          "jobId",
+          "links",
+          "mode",
+          "policy",
+          "reused",
+          "runId",
+          "schemaVersion",
+          "sourceHash",
+          "sourceId",
+          "status"
+        ],
+        "type": "object",
+        "properties": {
+          "schemaVersion": {
+            "type": "integer",
+            "format": "int32"
+          },
+          "runId": {
+            "type": "string",
+            "format": "uuid"
+          },
+          "jobId": {
+            "type": "string",
+            "format": "uuid"
+          },
+          "status": {
+            "type": "string"
+          },
+          "baseContentRevision": {
+            "type": "integer",
+            "format": "int64"
+          },
+          "sourceId": {
+            "type": "string",
+            "format": "uuid"
+          },
+          "sourceHash": {
+            "type": "string"
+          },
+          "mode": {
+            "type": "string"
+          },
+          "policy": {
+            "type": "string"
+          },
+          "basedOnRunId": {
+            "type": "string",
+            "format": "uuid",
+            "nullable": true
+          },
+          "links": {
+            "$ref": "#/components/schemas/CP6.Space.Contracts.SpaceAiGenerationRunLinksDto"
+          },
+          "reused": {
+            "type": "boolean"
+          },
+          "idempotentReplay": {
+            "type": "boolean"
+          }
+        },
+        "additionalProperties": false
+      },
       "CP6.Space.Contracts.SpaceAiGenerationRunActionDto": {
         "required": [
           "cancellationPending",
@@ -17040,6 +17130,22 @@
             "type": "string"
           },
           "rowVersion": {
+            "type": "string"
+          }
+        },
+        "additionalProperties": false
+      },
+      "CP6.Space.Contracts.SpaceAiGenerationRunLinksDto": {
+        "required": [
+          "proposals",
+          "self"
+        ],
+        "type": "object",
+        "properties": {
+          "self": {
+            "type": "string"
+          },
+          "proposals": {
             "type": "string"
           }
         },

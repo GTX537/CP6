@@ -16,6 +16,16 @@ public interface ISpaceAiAtomicApplyService
         CancellationToken cancellationToken = default);
 }
 
+public interface ISpaceAiGenerationRunService
+{
+    Task<SpaceAiGenerationRunAcceptedDto> CreateAsync(
+        Guid versionId,
+        CreateSpaceAiGenerationRunRequest request,
+        string expectedVersionRowVersion,
+        string idempotencyKey,
+        CancellationToken cancellationToken = default);
+}
+
 public interface ISpaceAiRunRecoveryService
 {
     Task<SpaceAiGenerationRunActionDto> CancelAsync(

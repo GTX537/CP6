@@ -40,6 +40,12 @@ public sealed class SpaceJobProcessorPersistenceTests
             services,
             descriptor => descriptor.ServiceType ==
                 typeof(ISpaceExcelCadApplyService));
+        Assert.Contains(
+            services,
+            descriptor => descriptor.ServiceType ==
+                              typeof(ISpaceAiGenerationRunService) &&
+                          descriptor.ImplementationType ==
+                              typeof(SpaceAiGenerationRunService));
 
         using var provider = services.BuildServiceProvider();
         using var scope = provider.CreateScope();

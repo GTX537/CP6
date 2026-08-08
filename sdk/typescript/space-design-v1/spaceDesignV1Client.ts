@@ -67,10 +67,11 @@ export interface ISpaceDesignV1Client {
     reconcileGenerationRun(runId: string, idempotency_Key: string, body: SpaceAiRunActionRequest): Promise<SpaceAiGenerationRunActionDto>;
 
     /**
+     * @param if_Match Current Draft RowVersion, optionally quoted as an ETag.
      * @param idempotency_Key Opaque caller key; 1-128 UTF-8 bytes. Reuse with a different request returns SPACE_IDEMPOTENCY_KEY_REUSED.
      * @return Accepted
      */
-    recoverGenerationRun(versionId: string, idempotency_Key: string, body: CreateSpaceAiGenerationRecoveryRequest): Promise<SpaceAiGenerationRunActionDto>;
+    createGenerationRun(versionId: string, if_Match: string, idempotency_Key: string, body: CreateSpaceAiGenerationRunRequest): Promise<SpaceAiGenerationRunAcceptedDto>;
 
     /**
      * @return OK
@@ -1575,10 +1576,11 @@ export class SpaceDesignV1Client implements ISpaceDesignV1Client {
     }
 
     /**
+     * @param if_Match Current Draft RowVersion, optionally quoted as an ETag.
      * @param idempotency_Key Opaque caller key; 1-128 UTF-8 bytes. Reuse with a different request returns SPACE_IDEMPOTENCY_KEY_REUSED.
      * @return Accepted
      */
-    recoverGenerationRun(versionId: string, idempotency_Key: string, body: CreateSpaceAiGenerationRecoveryRequest): Promise<SpaceAiGenerationRunActionDto> {
+    createGenerationRun(versionId: string, if_Match: string, idempotency_Key: string, body: CreateSpaceAiGenerationRunRequest): Promise<SpaceAiGenerationRunAcceptedDto> {
         let url_ = this.baseUrl + "/api/space/design/v1/versions/{versionId}/generation-runs";
         if (versionId === undefined || versionId === null)
             throw new globalThis.Error("The parameter 'versionId' must be defined.");
@@ -1591,6 +1593,7 @@ export class SpaceDesignV1Client implements ISpaceDesignV1Client {
             body: content_,
             method: "POST",
             headers: {
+                "If-Match": if_Match !== undefined && if_Match !== null ? "" + if_Match : "",
                 "Idempotency-Key": idempotency_Key !== undefined && idempotency_Key !== null ? "" + idempotency_Key : "",
                 "Content-Type": "application/json",
                 "Accept": "application/json"
@@ -1598,18 +1601,18 @@ export class SpaceDesignV1Client implements ISpaceDesignV1Client {
         };
 
         return this.http.fetch(url_, options_).then((_response: Response) => {
-            return this.processRecoverGenerationRun(_response);
+            return this.processCreateGenerationRun(_response);
         });
     }
 
-    protected processRecoverGenerationRun(response: Response): Promise<SpaceAiGenerationRunActionDto> {
+    protected processCreateGenerationRun(response: Response): Promise<SpaceAiGenerationRunAcceptedDto> {
         const status = response.status;
         let _headers: any = {}; if (response.headers && response.headers.forEach) { response.headers.forEach((v: any, k: any) => _headers[k] = v); };
         if (status === 202) {
             return response.text().then((_responseText) => {
             let result202: any = null;
             let resultData202 = _responseText === "" ? null : JSON.parse(_responseText, this.jsonParseReviver);
-            result202 = SpaceAiGenerationRunActionDto.fromJS(resultData202);
+            result202 = SpaceAiGenerationRunAcceptedDto.fromJS(resultData202);
             return result202;
             });
         } else if (status === 400) {
@@ -1666,7 +1669,7 @@ export class SpaceDesignV1Client implements ISpaceDesignV1Client {
             return throwException("An unexpected server error occurred.", status, _responseText, _headers);
             });
         }
-        return Promise.resolve<SpaceAiGenerationRunActionDto>(null as any);
+        return Promise.resolve<SpaceAiGenerationRunAcceptedDto>(null as any);
     }
 
     /**
@@ -12561,13 +12564,16 @@ export interface ICreateSpaceAiAtomicApplyRequest {
     reviewEtag: string;
 }
 
-export class CreateSpaceAiGenerationRecoveryRequest implements ICreateSpaceAiGenerationRecoveryRequest {
-    basedOnRunId!: string;
-    expectedContentRevision!: number;
-    expectedBasedOnRunRowVersion!: string;
+export class CreateSpaceAiGenerationRunRequest implements ICreateSpaceAiGenerationRunRequest {
+    sourceId!: string;
+    mappingProfileVersionId!: string;
+    rackGenerationProfileVersionId!: string;
     mode!: string;
+    expectedContentRevision!: number;
+    basedOnRunId?: string | undefined;
+    expectedBasedOnRunRowVersion?: string | undefined;
 
-    constructor(data?: ICreateSpaceAiGenerationRecoveryRequest) {
+    constructor(data?: ICreateSpaceAiGenerationRunRequest) {
         if (data) {
             for (var property in data) {
                 if (data.hasOwnProperty(property))
@@ -12578,35 +12584,44 @@ export class CreateSpaceAiGenerationRecoveryRequest implements ICreateSpaceAiGen
 
     init(_data?: any) {
         if (_data) {
-            this.basedOnRunId = _data["basedOnRunId"];
-            this.expectedContentRevision = _data["expectedContentRevision"];
-            this.expectedBasedOnRunRowVersion = _data["expectedBasedOnRunRowVersion"];
+            this.sourceId = _data["sourceId"];
+            this.mappingProfileVersionId = _data["mappingProfileVersionId"];
+            this.rackGenerationProfileVersionId = _data["rackGenerationProfileVersionId"];
             this.mode = _data["mode"];
+            this.expectedContentRevision = _data["expectedContentRevision"];
+            this.basedOnRunId = _data["basedOnRunId"];
+            this.expectedBasedOnRunRowVersion = _data["expectedBasedOnRunRowVersion"];
         }
     }
 
-    static fromJS(data: any): CreateSpaceAiGenerationRecoveryRequest {
+    static fromJS(data: any): CreateSpaceAiGenerationRunRequest {
         data = typeof data === 'object' ? data : {};
-        let result = new CreateSpaceAiGenerationRecoveryRequest();
+        let result = new CreateSpaceAiGenerationRunRequest();
         result.init(data);
         return result;
     }
 
     toJSON(data?: any) {
         data = typeof data === 'object' ? data : {};
-        data["basedOnRunId"] = this.basedOnRunId;
-        data["expectedContentRevision"] = this.expectedContentRevision;
-        data["expectedBasedOnRunRowVersion"] = this.expectedBasedOnRunRowVersion;
+        data["sourceId"] = this.sourceId;
+        data["mappingProfileVersionId"] = this.mappingProfileVersionId;
+        data["rackGenerationProfileVersionId"] = this.rackGenerationProfileVersionId;
         data["mode"] = this.mode;
+        data["expectedContentRevision"] = this.expectedContentRevision;
+        data["basedOnRunId"] = this.basedOnRunId;
+        data["expectedBasedOnRunRowVersion"] = this.expectedBasedOnRunRowVersion;
         return data;
     }
 }
 
-export interface ICreateSpaceAiGenerationRecoveryRequest {
-    basedOnRunId: string;
-    expectedContentRevision: number;
-    expectedBasedOnRunRowVersion: string;
+export interface ICreateSpaceAiGenerationRunRequest {
+    sourceId: string;
+    mappingProfileVersionId: string;
+    rackGenerationProfileVersionId: string;
     mode: string;
+    expectedContentRevision: number;
+    basedOnRunId?: string | undefined;
+    expectedBasedOnRunRowVersion?: string | undefined;
 }
 
 export class CreateSpaceAiProposalBatchDecisionRequest implements ICreateSpaceAiProposalBatchDecisionRequest {
@@ -15138,6 +15153,93 @@ export interface ISpaceAiGenerationReviewSummaryDto {
     openProposalBlockingIssueCount?: number;
 }
 
+export class SpaceAiGenerationRunAcceptedDto implements ISpaceAiGenerationRunAcceptedDto {
+    schemaVersion!: number;
+    runId!: string;
+    jobId!: string;
+    status!: string;
+    baseContentRevision!: number;
+    sourceId!: string;
+    sourceHash!: string;
+    mode!: string;
+    policy!: string;
+    basedOnRunId?: string | undefined;
+    links!: SpaceAiGenerationRunLinksDto;
+    reused!: boolean;
+    idempotentReplay!: boolean;
+
+    constructor(data?: ISpaceAiGenerationRunAcceptedDto) {
+        if (data) {
+            for (var property in data) {
+                if (data.hasOwnProperty(property))
+                    (this as any)[property] = (data as any)[property];
+            }
+        }
+        if (!data) {
+            this.links = new SpaceAiGenerationRunLinksDto();
+        }
+    }
+
+    init(_data?: any) {
+        if (_data) {
+            this.schemaVersion = _data["schemaVersion"];
+            this.runId = _data["runId"];
+            this.jobId = _data["jobId"];
+            this.status = _data["status"];
+            this.baseContentRevision = _data["baseContentRevision"];
+            this.sourceId = _data["sourceId"];
+            this.sourceHash = _data["sourceHash"];
+            this.mode = _data["mode"];
+            this.policy = _data["policy"];
+            this.basedOnRunId = _data["basedOnRunId"];
+            this.links = _data["links"] ? SpaceAiGenerationRunLinksDto.fromJS(_data["links"]) : new SpaceAiGenerationRunLinksDto();
+            this.reused = _data["reused"];
+            this.idempotentReplay = _data["idempotentReplay"];
+        }
+    }
+
+    static fromJS(data: any): SpaceAiGenerationRunAcceptedDto {
+        data = typeof data === 'object' ? data : {};
+        let result = new SpaceAiGenerationRunAcceptedDto();
+        result.init(data);
+        return result;
+    }
+
+    toJSON(data?: any) {
+        data = typeof data === 'object' ? data : {};
+        data["schemaVersion"] = this.schemaVersion;
+        data["runId"] = this.runId;
+        data["jobId"] = this.jobId;
+        data["status"] = this.status;
+        data["baseContentRevision"] = this.baseContentRevision;
+        data["sourceId"] = this.sourceId;
+        data["sourceHash"] = this.sourceHash;
+        data["mode"] = this.mode;
+        data["policy"] = this.policy;
+        data["basedOnRunId"] = this.basedOnRunId;
+        data["links"] = this.links ? this.links.toJSON() : undefined as any;
+        data["reused"] = this.reused;
+        data["idempotentReplay"] = this.idempotentReplay;
+        return data;
+    }
+}
+
+export interface ISpaceAiGenerationRunAcceptedDto {
+    schemaVersion: number;
+    runId: string;
+    jobId: string;
+    status: string;
+    baseContentRevision: number;
+    sourceId: string;
+    sourceHash: string;
+    mode: string;
+    policy: string;
+    basedOnRunId?: string | undefined;
+    links: SpaceAiGenerationRunLinksDto;
+    reused: boolean;
+    idempotentReplay: boolean;
+}
+
 export class SpaceAiGenerationRunActionDto implements ISpaceAiGenerationRunActionDto {
     schemaVersion!: number;
     runId!: string;
@@ -15324,6 +15426,46 @@ export interface ISpaceAiGenerationRunDto {
     recoveryAction: string;
     applyCommitState: string;
     rowVersion: string;
+}
+
+export class SpaceAiGenerationRunLinksDto implements ISpaceAiGenerationRunLinksDto {
+    self!: string;
+    proposals!: string;
+
+    constructor(data?: ISpaceAiGenerationRunLinksDto) {
+        if (data) {
+            for (var property in data) {
+                if (data.hasOwnProperty(property))
+                    (this as any)[property] = (data as any)[property];
+            }
+        }
+    }
+
+    init(_data?: any) {
+        if (_data) {
+            this.self = _data["self"];
+            this.proposals = _data["proposals"];
+        }
+    }
+
+    static fromJS(data: any): SpaceAiGenerationRunLinksDto {
+        data = typeof data === 'object' ? data : {};
+        let result = new SpaceAiGenerationRunLinksDto();
+        result.init(data);
+        return result;
+    }
+
+    toJSON(data?: any) {
+        data = typeof data === 'object' ? data : {};
+        data["self"] = this.self;
+        data["proposals"] = this.proposals;
+        return data;
+    }
+}
+
+export interface ISpaceAiGenerationRunLinksDto {
+    self: string;
+    proposals: string;
 }
 
 export class SpaceAiPolicyDto implements ISpaceAiPolicyDto {
