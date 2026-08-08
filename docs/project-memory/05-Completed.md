@@ -6,6 +6,7 @@
 - Generation Run 只冻结已验证的 Active/Ready 精确版本；RuleOnly Worker 以 `ExplicitSelected` 消费并派生 RackLevel/Location。Web 显式可选、绝不自动选择；空选择继续 Blocking。
 - 三条 API 的权限、读写审计、统一 Problem Details、OpenAPI 118 operations 与 C#/TypeScript SDK 已同步。真实 SQL 1/1、前端 711/711、Space Unit 487/487、Integration 288 passed / 95 skipped、CP6.Tests 2816 passed / 17 skipped、完整 Release/AOT 0 warning / 0 error。
 - 无外部 Provider、网络、Secret、Usage、High Accept 或 Draft 自动写入。完整证据见 `docs/space/reports/e13-rack-generation-profile-authority.md`。
+- `19d32650` / `6f12a19e` / `70dd670d` 完成功能、报告与 no-ff 远端集成；合并态复验 9/9、63/63 与 SDK drift。删除已合并的本地/远端临时分支，清理 38 个可再生成目标、29,418 个文件并释放约 1.85 GiB；`main` 未修改。
 
 ## 2026-08-08 E13 Generation Run 建模 Web 入口
 

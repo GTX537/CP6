@@ -8,6 +8,7 @@
 - Generation Run 首建验证并冻结 Active/Ready 精确版本，RuleOnly BuildScene 以 `ExplicitSelected` 消费并生成 RackLevel/Location；Web 显式选择且不推断默认，空选择仍失败关闭为 Blocking。
 - 三条 Design V1 API、读写审计、OpenAPI 118 operations 与双 SDK 已同步。验证为真实 SQL 1/1、前端 711/711、Space Unit 487/487、Integration 288 passed / 95 skipped、CP6.Tests 2816 passed / 17 skipped、完整 Release/AOT 0 warning / 0 error。
 - 无 Provider、网络、Secret、Usage、High Accept 或 Draft 自动写入；追加 v2、System 配置、完整管理 UI、无锁父关系和不同 SourceHash 确认仍属后续边界。
+- `19d32650` / `6f12a19e` / `70dd670d` 已完成功能、报告与 no-ff 远端集成；合并态前端 9/9、OpenAPI/权限 63/63、SDK drift 通过。远端祖先链确认后删除本地/远端临时分支，清理 38 个可再生成目标、29,418 个文件并回收 1,985,000,330 bytes（约 1.85 GiB）；`main` 未修改。
 
 ## 2026-08-08：Space E13 Generation Run 建模 Web 入口
 

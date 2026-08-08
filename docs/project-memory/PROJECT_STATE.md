@@ -8,6 +8,7 @@
 - Generation Run 首建会冻结经 Active/Ready 与租户校验的精确版本；RuleOnly Worker 把该版本显式绑定到权威 Preview 的 Rack 项并确定性生成 RackLevel/Location。Web 提供显式可清空选择，不自动推断默认；未选择继续产生 Blocking。
 - Migration `20260808164544`、幂等 SQL、三条 API、读写审计、Problem Details、OpenAPI 118 operations、C#/TypeScript SDK 已同步。真实 SQL 迁移/双执行/隔离/约束 1/1，前端聚焦 9/9、全量 711/711，Space Unit 487/487，默认 Integration 288 passed / 95 skipped，CP6.Tests 2816 passed / 17 skipped，完整 Release/AOT 0 warning / 0 error。
 - 本切片不启用 Provider、网络、Secret、Usage、High Accept 或 Draft 自动写入。现有方案追加 v2、System 配置入口和完整管理 UI 尚未实现；下一项内部优先级转为无锁父关系确定性推导或不同 SourceHash 人工确认。完整证据见 `docs/space/reports/e13-rack-generation-profile-authority.md`。
+- 功能/报告提交 `19d32650` / `6f12a19e` 已通过 no-ff 提交 `70dd670d` 进入远端集成分支；合并态前端 9/9、OpenAPI/权限 63/63、SDK drift 复验通过。祖先链确认后已删除本地/远端临时分支；清理 38 个可再生成目标和 29,418 个文件，释放 1,985,000,330 bytes（约 1.85 GiB），`main` 未修改。
 
 ## E13 Generation Run 建模 Web 入口（2026-08-08）
 

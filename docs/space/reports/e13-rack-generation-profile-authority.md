@@ -2,6 +2,8 @@
 
 日期：2026-08-08  
 功能提交：`19d32650`  
+报告提交：`6f12a19e`
+受控合并：`70dd670d`（no-ff）
 基线：`d0d1c713`（`integration/space-v1-20260730`）
 
 ## 1. 交付结论
@@ -66,3 +68,9 @@
 - 无人工锁时的确定性 Zone/Aisle/Rack 父关系推导、不同 SourceHash 的几何匹配与人工确认仍未完成。
 - 外部 Provider、供应商/法务/网络/预算证据、正式获授权 DWG/DXF、20 份黄金集、真实大文件/故障/性能和人工签字仍是独立外部签收项。
 - 本切片没有启用 Provider、外部网络、Secret、AI Usage、High Accept 或 Draft 自动写入；所有 Proposal 仍必须经过人工 Decision 与原子 Apply。
+
+## 8. 受控集成与存储清理
+
+- 功能提交 `19d32650` 与报告提交 `6f12a19e` 已通过 no-ff 合并 `70dd670d` 进入并推送到 `origin/integration/space-v1-20260730`；远端祖先链核验通过后，本地和远端临时功能分支均已删除，`main` 未修改。
+- 合并态再次通过前端 2 files / 9 tests、OpenAPI + 权限/审计 63/63，以及 OpenAPI/C#/TypeScript SDK drift 检查。
+- 清理当前隔离工作树内 38 个可再生成目标、29,418 个文件，释放 1,985,000,330 bytes（约 1.85 GiB）；复核剩余 `bin/obj` 为 0，前端 `node_modules` 与 `dist` 均不存在。
