@@ -40,6 +40,7 @@ import DesignWmsAdoptionPanel from '@/modules/space-design/panels/DesignWmsAdopt
 import DesignScenePreview3D from '@/modules/space-design/preview3d/DesignScenePreview3D.vue'
 import { CadIssueOverlayLayer } from '@/modules/space-design/cad-review/CadIssueOverlayLayer'
 import DesignCadIssuePanel from '@/modules/space-design/cad-review/DesignCadIssuePanel.vue'
+import DesignExcelCadMatchPanel from '@/modules/space-design/cad-review/DesignExcelCadMatchPanel.vue'
 import {
   cadReviewFreshness,
   parseCadReviewWorkspace,
@@ -71,6 +72,7 @@ import {
 import type { ViewState } from '@/space-editor/coords'
 import type {
   ISpaceDesignSceneDto,
+  ISpaceExcelCadRackMatchV1,
   ISpaceSceneElementDto,
   ISpaceSceneElementAttributeDto,
   ISpaceSceneFloorDto,
@@ -94,6 +96,7 @@ const router = useRouter()
 const versionId = computed(() => String(route.params.versionId ?? ''))
 const floorLogicalId = computed(() => String(route.params.floorLogicalId ?? ''))
 const generationRunId = computed(() => String(route.query.generationRunId ?? ''))
+const matchJobId = computed(() => String(route.query.matchJobId ?? ''))
 const canvasRef = ref<HTMLDivElement>()
 const fileInputRef = ref<HTMLInputElement>()
 const cadReviewFileInputRef = ref<HTMLInputElement>()
@@ -103,6 +106,7 @@ const floor = ref<ISpaceSceneFloorDto | null>(null)
 const selectedObjects = ref<CanvasObjectRef[]>([])
 const cadReviewWorkspace = ref<CadReviewWorkspace | null>(null)
 const cadReviewPanelVisible = ref(false)
+const matchPanelVisible = ref(Boolean(matchJobId.value))
 const activeCadReviewItemId = ref('')
 const aiReviewWorkspace = ref<AiProposalReviewWorkspace | null>(null)
 const aiReviewPanelVisible = ref(false)
@@ -298,6 +302,15 @@ watch([visible, opacity, locked], () => {
   stage?.setLayerState(state)
 })
 
+watch(matchJobId, (jobId) => {
+  if (jobId) {
+    openMatchPanel()
+    return
+  }
+
+  closeMatchPanel()
+})
+
 async function loadScene(): Promise<void> {
   loading.value = true
   try {
@@ -367,6 +380,7 @@ async function onCadReviewArtifactSelected(event: Event): Promise<void> {
     const workspace = parseCadReviewWorkspace(await file.text())
     cadReviewWorkspace.value = workspace
     cadReviewPanelVisible.value = true
+    matchPanelVisible.value = false
     aiReviewPanelVisible.value = false
     aiDecisionPanelVisible.value = false
     activeCadReviewItemId.value = ''
@@ -456,6 +470,97 @@ function closeCadReviewPanel(): void {
   cadIssueOverlay?.clear()
 }
 
+function openMatchPanel(): void {
+  if (!matchJobId.value) return
+  matchPanelVisible.value = true
+  cadReviewPanelVisible.value = false
+  aiReviewPanelVisible.value = false
+  aiDecisionPanelVisible.value = false
+  activeCadReviewItemId.value = ''
+  activeAiReviewItemId.value = ''
+  cadIssueOverlay?.clear()
+}
+
+function closeMatchPanel(): void {
+  matchPanelVisible.value = false
+  cadIssueOverlay?.clear()
+}
+
+function focusExcelCadMatchRow(row: ISpaceExcelCadRackMatchV1): void {
+  if (projectionMode.value === '3d') projectionMode.value = 'split'
+  const item = excelCadMatchAsReviewItem(row)
+  const object = resolveCadReviewCanvasObject(
+    item,
+    activeRacks.value,
+    activeElements.value,
+  )
+  selectObjects(object ? [object] : [], 'replace')
+  const viewport = viewportForCadReviewItem(item)
+  if (viewport) applyCanvasViewport(viewport)
+  cadIssueOverlay?.focus(item)
+}
+
+function excelCadMatchAsReviewItem(
+  row: ISpaceExcelCadRackMatchV1,
+): CadReviewItem {
+  const disposition = String(row.disposition ?? 'Unmatched')
+  const severity: CadReviewItem['severity'] =
+    disposition === 'Conflict' || disposition === 'Error'
+      ? 'Blocking'
+      : disposition === 'Unmatched' ? 'Warning' : 'Info'
+  const location = row.location
+  const rawBounds = location?.bounds
+  const bounds = rawBounds
+    && rawBounds.minX !== undefined
+    && rawBounds.minY !== undefined
+    && rawBounds.maxX !== undefined
+    && rawBounds.maxY !== undefined
+    ? {
+        minX: rawBounds.minX,
+        minY: rawBounds.minY,
+        maxX: rawBounds.maxX,
+        maxY: rawBounds.maxY,
+      }
+    : undefined
+  const rawAnchor = location?.anchor
+  const anchor = rawAnchor
+    && rawAnchor.x !== undefined
+    && rawAnchor.y !== undefined
+    ? { x: rawAnchor.x, y: rawAnchor.y, z: rawAnchor.z ?? 0 }
+    : undefined
+  return {
+    reviewItemId: row.excelRowId ?? `excel-row-${row.rowNumber ?? 0}`,
+    trackingKey: row.excelRowId ?? `excel-row-${row.rowNumber ?? 0}`,
+    kind: disposition === 'Conflict'
+      ? 'ExcelConflict'
+      : disposition === 'Error' ? 'ExcelError' : 'ExcelUnmatched',
+    severity,
+    status: 'Open',
+    code: `SPACE_EXCEL_CAD_${disposition.toUpperCase()}`,
+    relatedCodes: row.errorCodes ?? [],
+    suggestedActionCode: 'review-authoritative-match',
+    sourceRef: row.matchedSourceRef,
+    previewObjectId: row.cadPreviewObjectId,
+    targetLogicalId: row.editorLogicalId,
+    rackCode: row.values?.rackCode,
+    confidenceBand: row.cadConfidenceBand,
+    location: {
+      kind: location?.kind ?? 'Document',
+      floorLogicalId: location?.floorLogicalId ?? floorLogicalId.value,
+      layerId: location?.layerId,
+      blockName: location?.blockName,
+      sourceRef: location?.sourceRef,
+      previewObjectId: location?.previewObjectId,
+      bounds,
+      anchor,
+      suggestedPaddingMillimeters:
+        location?.suggestedPaddingMillimeters ?? 0,
+      canFocusCanvas: location?.canFocusCanvas ?? false,
+    },
+    upstreamEvidenceSha256: row.matchEvidenceSha256 ?? '0'.repeat(64),
+  }
+}
+
 function chooseAiReviewArtifact(): void {
   aiReviewFileInputRef.value?.click()
 }
@@ -473,6 +578,7 @@ async function onAiReviewArtifactSelected(event: Event): Promise<void> {
     const workspace = parseAiProposalReviewWorkspace(await file.text())
     aiReviewWorkspace.value = workspace
     aiReviewPanelVisible.value = true
+    matchPanelVisible.value = false
     aiDecisionPanelVisible.value = false
     cadReviewPanelVisible.value = false
     activeAiReviewItemId.value = ''
@@ -554,6 +660,7 @@ function openAiDecisionPanel(): void {
     return
   }
   aiDecisionPanelVisible.value = true
+  matchPanelVisible.value = false
   aiReviewPanelVisible.value = false
   cadReviewPanelVisible.value = false
   activeAiReviewItemId.value = ''
@@ -1217,6 +1324,16 @@ function delay(milliseconds: number): Promise<void> {
           AI 提案决策
         </el-button>
         <el-button
+          v-if="matchJobId"
+          v-permission="'space:model:read'"
+          size="small"
+          :type="matchPanelVisible ? 'primary' : 'default'"
+          data-test="open-authoritative-match"
+          @click="openMatchPanel"
+        >
+          Excel–CAD 权威匹配
+        </el-button>
+        <el-button
           v-permission="'space:model:read'"
           size="small"
           :type="cadReviewPanelVisible ? 'warning' : 'default'"
@@ -1357,8 +1474,16 @@ function delay(milliseconds: number): Promise<void> {
           </el-button>
         </div>
       </aside>
+      <DesignExcelCadMatchPanel
+        v-if="matchPanelVisible && matchJobId"
+        :version-id="versionId"
+        :job-id="matchJobId"
+        :current-content-revision="designScene?.contentRevision"
+        @locate="focusExcelCadMatchRow"
+        @close="closeMatchPanel"
+      />
       <DesignAiProposalDecisionPanel
-        v-if="aiDecisionPanelVisible && generationRunId"
+        v-else-if="aiDecisionPanelVisible && generationRunId"
         :run-id="generationRunId"
         :current-content-revision="designScene?.contentRevision"
         @close="closeAiDecisionPanel"

@@ -40,6 +40,12 @@ public static class SpaceErrorCodes
         "SPACE_EXCEL_PREFLIGHT_INVALID";
     public const string ExcelPreflightNotFound =
         "SPACE_EXCEL_PREFLIGHT_NOT_FOUND";
+    public const string ExcelCadMatchInvalid =
+        "SPACE_EXCEL_CAD_MATCH_INVALID";
+    public const string ExcelCadMatchNotFound =
+        "SPACE_EXCEL_CAD_MATCH_NOT_FOUND";
+    public const string ExcelCadMatchArtifactInvalid =
+        "SPACE_EXCEL_CAD_MATCH_ARTIFACT_INVALID";
     public const string ExcelWorkbookInvalid =
         "SPACE_EXCEL_WORKBOOK_INVALID";
     public const string FileTooLarge = "SPACE_FILE_TOO_LARGE";
