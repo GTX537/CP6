@@ -1,4 +1,5 @@
 using System.Data;
+using System.Globalization;
 using System.Security.Cryptography;
 using System.Text;
 using System.Text.Json;
@@ -93,31 +94,47 @@ public sealed class SpaceExcelCadApplyJobStepExecutor(
                 SpaceErrorCodes.ExcelCadApplyArtifactInvalid,
                 "The authoritative Excel workbook projection changed or is now blocked.");
         }
+        var unsupportedSheets = projection.CanonicalRows
+            .Where(item => item.TargetSheet is "Bindings" or "Attributes")
+            .Select(item => item.TargetSheet)
+            .Distinct(StringComparer.Ordinal)
+            .OrderBy(item => item, StringComparer.Ordinal)
+            .ToArray();
+        if (unsupportedSheets.Length != 0)
+        {
+            throw Failure(
+                SpaceJobFailureKind.Input,
+                SpaceErrorCodes.ExcelCadApplyScopeUnsupported,
+                $"The populated {string.Join(", ", unsupportedSheets)} sheet is not safely resolvable by this Apply contract.");
+        }
         if (projection.CanonicalRows.Any(item =>
-                !item.TargetSheet.Equals("Racks", StringComparison.Ordinal)))
+                item.TargetSheet == "Locations" &&
+                !string.IsNullOrWhiteSpace(Value(item, "LocationType"))))
         {
             throw Failure(
                 SpaceJobFailureKind.Input,
                 SpaceErrorCodes.ExcelCadApplyScopeUnsupported,
-                "This Apply slice supports authoritative Racks rows only; other populated sheets require a later import slice.");
+                "LocationType is populated but the versioned Location model has no authoritative persistence field.");
         }
-        if (input.Artifact.Preview.Rows.Any(item =>
-                !string.IsNullOrWhiteSpace(item.Values.RackTemplateCode)))
+        if (projection.CanonicalRows.Any(item => item.TargetSheet is not (
+                "Racks" or "RackLevels" or "Locations" or
+                "Bindings" or "Attributes")))
         {
             throw Failure(
                 SpaceJobFailureKind.Input,
                 SpaceErrorCodes.ExcelCadApplyScopeUnsupported,
-                "Rack template resolution is not part of the current authoritative Apply slice.");
+                "The workbook contains a target sheet outside the frozen Apply contract.");
         }
-        if (projection.CanonicalRows.Count != input.Artifact.Preview.Rows.Count)
+        if (projection.CanonicalRows.Count(item => item.TargetSheet == "Racks") !=
+            input.Artifact.Preview.Rows.Count)
         {
             throw Failure(
                 SpaceJobFailureKind.Input,
                 SpaceErrorCodes.ExcelCadApplyArtifactInvalid,
-                "The Match Artifact row set no longer covers the workbook projection exactly.");
+                "The Match Artifact row set no longer covers the workbook rack projection exactly.");
         }
 
-        var plan = BuildStablePlan(input);
+        var plan = BuildStablePlan(input, profile, projection);
         var planJson = JsonSerializer.Serialize(plan, JsonOptions);
         var planSha256 = Hash(planJson);
         var existing = await ReadBatchReplayAsync(
@@ -145,10 +162,19 @@ public sealed class SpaceExcelCadApplyJobStepExecutor(
                 return Output(existing);
             }
 
-            var state = await LoadWritableStateAsync(input, cancellationToken);
+            var state = await LoadWritableStateAsync(
+                input,
+                projection,
+                cancellationToken);
             ValidateEditorSnapshot(input, state);
             var applyRows = BuildApplyRows(input, state);
             ValidateFinalRackKeys(state.Racks, applyRows);
+            var hierarchy = BuildHierarchyRows(
+                input,
+                profile,
+                projection,
+                state,
+                applyRows);
 
             var appliedAtUtc = RequireUtcNow();
             var batch = SpaceElementCommandBatch.Create(
@@ -206,7 +232,8 @@ public sealed class SpaceExcelCadApplyJobStepExecutor(
                     item.RotationZ,
                     item.Width,
                     item.Depth,
-                    item.Height);
+                    item.Height,
+                    item.TemplateVersionId);
                 rack.ChangeLifecycle(item.LifecycleState);
                 rack.AttachSource(input.ExcelSource, item.Row.MatchedSourceRef);
                 var after = RackSnapshot(rack);
@@ -225,6 +252,13 @@ public sealed class SpaceExcelCadApplyJobStepExecutor(
                         JsonSerializer.Serialize(before, JsonOptions),
                         JsonSerializer.Serialize(after, JsonOptions)));
             }
+
+            ApplyHierarchy(
+                execution.Lease.TenantId,
+                input,
+                batch,
+                hierarchy,
+                applyRows.Count);
 
             state.Floor.AdvanceRevision(input.Payload.ExpectedFloorRevision);
             state.Version.TouchContent();
@@ -443,34 +477,48 @@ public sealed class SpaceExcelCadApplyJobStepExecutor(
         }
     }
 
-    private static object BuildStablePlan(ImmutableInput input) => new
-    {
-        schemaVersion = SpaceExcelCadApplyVersions.SchemaVersion,
-        input.Payload.ModelVersionId,
-        input.Payload.MatchJobId,
-        input.Payload.ArtifactId,
-        input.Payload.ArtifactPayloadSha256,
-        input.Payload.ExcelSourceId,
-        input.Payload.FloorLogicalId,
-        input.Payload.ExpectedFloorRevision,
-        input.Payload.ExpectedContentRevision,
-        input.Payload.CommandBatchId,
-        input.Artifact.Preview.MatchPreviewSha256,
-        input.Artifact.Preview.EditorSnapshotSha256,
-        input.Artifact.Preview.WorkbookProjectionSha256,
-        rows = input.Artifact.Preview.Rows.Select(item => new
+    private static object BuildStablePlan(
+        ImmutableInput input,
+        SpaceExcelMappingProfileDto profile,
+        SpaceExcelWorkbookProjectionV1 projection) => new
         {
-            item.ExcelRowId,
-            item.Disposition,
-            item.EditorLogicalId,
-            item.MatchedSourceRef,
-            item.Values,
-            item.MatchEvidenceSha256,
-        }).ToArray(),
-    };
+            schemaVersion = SpaceExcelCadApplyVersions.SchemaVersion,
+            hierarchySchemaVersion = 1,
+            input.Payload.ModelVersionId,
+            input.Payload.MatchJobId,
+            input.Payload.ArtifactId,
+            input.Payload.ArtifactPayloadSha256,
+            input.Payload.ExcelSourceId,
+            input.Payload.FloorLogicalId,
+            input.Payload.ExpectedFloorRevision,
+            input.Payload.ExpectedContentRevision,
+            input.Payload.CommandBatchId,
+            input.Artifact.Preview.MatchPreviewSha256,
+            input.Artifact.Preview.EditorSnapshotSha256,
+            input.Artifact.Preview.WorkbookProjectionSha256,
+            authoritativeSheets = profile.Definition.Sheets
+            .Select(item => item.TargetSheet)
+            .Distinct(StringComparer.Ordinal)
+            .OrderBy(item => item, StringComparer.Ordinal)
+            .ToArray(),
+            projectedRowCounts = projection.CanonicalRows
+            .GroupBy(item => item.TargetSheet, StringComparer.Ordinal)
+            .OrderBy(item => item.Key, StringComparer.Ordinal)
+            .ToDictionary(item => item.Key, item => item.Count()),
+            rows = input.Artifact.Preview.Rows.Select(item => new
+            {
+                item.ExcelRowId,
+                item.Disposition,
+                item.EditorLogicalId,
+                item.MatchedSourceRef,
+                item.Values,
+                item.MatchEvidenceSha256,
+            }).ToArray(),
+        };
 
     private async Task<WritableState> LoadWritableStateAsync(
         ImmutableInput input,
+        SpaceExcelWorkbookProjectionV1 projection,
         CancellationToken cancellationToken)
     {
         var version = await context.Versions.SingleOrDefaultAsync(
@@ -500,7 +548,92 @@ public sealed class SpaceExcelCadApplyJobStepExecutor(
                 item.ModelVersionId == input.Payload.ModelVersionId &&
                 item.FloorLogicalId == input.Payload.FloorLogicalId)
             .ToArrayAsync(cancellationToken);
-        return new WritableState(version, floor, zones, racks);
+        var rackIds = racks.Select(item => item.LogicalId).ToArray();
+        var levels = rackIds.Length == 0
+            ? []
+            : await context.RackLevelRevisions
+                .Where(item =>
+                    item.ModelVersionId == input.Payload.ModelVersionId &&
+                    rackIds.Contains(item.RackLogicalId))
+                .ToArrayAsync(cancellationToken);
+        var locations = await context.LocationRevisions
+            .Where(item =>
+                item.ModelVersionId == input.Payload.ModelVersionId)
+            .ToArrayAsync(cancellationToken);
+        var templateVersions = await ResolveTemplateVersionsAsync(
+            projection,
+            cancellationToken);
+        return new WritableState(
+            version,
+            floor,
+            zones,
+            racks,
+            levels,
+            locations,
+            templateVersions);
+    }
+
+    private async Task<IReadOnlyDictionary<string, Guid>>
+        ResolveTemplateVersionsAsync(
+            SpaceExcelWorkbookProjectionV1 projection,
+            CancellationToken cancellationToken)
+    {
+        var codes = projection.CanonicalRows
+            .Where(item => item.TargetSheet == "Racks")
+            .Select(item => Value(item, "RackTemplateCode"))
+            .Where(item => item is not null)
+            .Select(item => item!)
+            .Distinct(StringComparer.OrdinalIgnoreCase)
+            .ToArray();
+        if (codes.Length == 0)
+            return new Dictionary<string, Guid>(StringComparer.OrdinalIgnoreCase);
+
+        var assets = await context.Assets.AsNoTracking()
+            .Where(item => item.Status == SpaceAssetStatus.Active)
+            .ToArrayAsync(cancellationToken);
+        var selected = new Dictionary<string, SpaceAsset>(
+            StringComparer.OrdinalIgnoreCase);
+        foreach (var code in codes)
+        {
+            var matches = assets
+                .Where(item => item.AssetCode.Equals(
+                    code,
+                    StringComparison.OrdinalIgnoreCase))
+                .ToArray();
+            var tenant = matches
+                .Where(item => item.Scope == SpaceAssetScope.Tenant)
+                .ToArray();
+            var system = matches
+                .Where(item => item.Scope == SpaceAssetScope.System)
+                .ToArray();
+            var preferred = tenant.Length == 0 ? system : tenant;
+            if (preferred.Length != 1)
+            {
+                throw Invalid(
+                    $"RackTemplateCode '{code}' does not resolve to one visible active asset.");
+            }
+            selected[code] = preferred[0];
+        }
+
+        var assetIds = selected.Values.Select(item => item.Id).ToArray();
+        var versions = await context.AssetVersions.AsNoTracking()
+            .Where(item =>
+                assetIds.Contains(item.AssetId) &&
+                item.Status == SpaceAssetVersionStatus.Ready)
+            .ToArrayAsync(cancellationToken);
+        var result = new Dictionary<string, Guid>(
+            StringComparer.OrdinalIgnoreCase);
+        foreach (var item in selected)
+        {
+            var latest = versions
+                .Where(version => version.AssetId == item.Value.Id)
+                .OrderByDescending(version => version.VersionNo)
+                .ThenBy(version => version.Id)
+                .FirstOrDefault() ?? throw Invalid(
+                    $"RackTemplateCode '{item.Key}' has no Ready immutable version.");
+            result[item.Key] = latest.Id;
+        }
+        return result;
     }
 
     private static void ValidateEditorSnapshot(
@@ -586,6 +719,18 @@ public sealed class SpaceExcelCadApplyJobStepExecutor(
             {
                 throw Invalid("A new rack match unexpectedly targets an editor rack.");
             }
+            Guid? templateVersionId = null;
+            if (!string.IsNullOrWhiteSpace(values.RackTemplateCode))
+            {
+                if (!state.TemplateVersions.TryGetValue(
+                        values.RackTemplateCode,
+                        out var resolvedTemplateVersionId))
+                {
+                    throw Invalid(
+                        $"RackTemplateCode '{values.RackTemplateCode}' was not resolved authoritatively.");
+                }
+                templateVersionId = resolvedTemplateVersionId;
+            }
             rows.Add(new ApplyRow(
                 row,
                 logicalId,
@@ -599,6 +744,7 @@ public sealed class SpaceExcelCadApplyJobStepExecutor(
                 PositiveInteger(values.WidthMillimeters, "WidthMillimeters"),
                 PositiveInteger(values.DepthMillimeters, "DepthMillimeters"),
                 PositiveInteger(values.HeightMillimeters, "HeightMillimeters"),
+                templateVersionId,
                 Lifecycle(values.LifecycleStatus)));
         }
         if (rows.Select(item => item.LogicalId).Distinct().Count() != rows.Count ||
@@ -608,6 +754,178 @@ public sealed class SpaceExcelCadApplyJobStepExecutor(
             throw Invalid("The confirmed rack targets contain duplicate identities or codes.");
         }
         return rows;
+    }
+
+    private static HierarchyApply BuildHierarchyRows(
+        ImmutableInput input,
+        SpaceExcelMappingProfileDto profile,
+        SpaceExcelWorkbookProjectionV1 projection,
+        WritableState state,
+        IReadOnlyList<ApplyRow> racks)
+    {
+        var levelsAreAuthoritative = profile.Definition.Sheets.Any(item =>
+            item.TargetSheet.Equals("RackLevels", StringComparison.Ordinal));
+        var locationsAreAuthoritative = profile.Definition.Sheets.Any(item =>
+            item.TargetSheet.Equals("Locations", StringComparison.Ordinal));
+        var rackByCode = racks.ToDictionary(
+            item => item.RackCode,
+            StringComparer.OrdinalIgnoreCase);
+        var existingLevels = state.Levels
+            .GroupBy(
+                item => LevelKey(item.RackLogicalId, item.LevelNo),
+                StringComparer.Ordinal)
+            .ToDictionary(
+                item => item.Key,
+                item => item.Single(),
+                StringComparer.Ordinal);
+        var levels = new List<LevelApply>();
+        foreach (var row in projection.CanonicalRows
+                     .Where(item => item.TargetSheet == "RackLevels")
+                     .OrderBy(item => item.SourceSheet, StringComparer.Ordinal)
+                     .ThenBy(item => item.RowNumber))
+        {
+            var rackCode = RequiredValue(row, "RackCode");
+            if (!rackByCode.TryGetValue(rackCode, out var rack))
+                throw Invalid("A RackLevel row targets an unapplied rack.");
+            var levelNo = PositiveInteger(Value(row, "LevelNo"), "LevelNo");
+            var key = LevelKey(rack.LogicalId, levelNo);
+            existingLevels.TryGetValue(key, out var existing);
+            var logicalId = existing?.LogicalId ??
+                SpaceExcelCadApplyService.DeterministicGuid(
+                    "space-excel-cad-apply-rack-level-v1",
+                    input.Payload.CommandBatchId,
+                    CanonicalIdentity(row));
+            var binCount = PositiveInteger(Value(row, "BinCount"), "BinCount");
+            var depthCount = PositiveInteger(
+                Value(row, "DepthCount"),
+                "DepthCount");
+            levels.Add(new LevelApply(
+                row,
+                existing,
+                logicalId,
+                rack.LogicalId,
+                levelNo,
+                NonNegativeInteger(Value(row, "BottomZMm"), "BottomZMm"),
+                PositiveInteger(
+                    Value(row, "ClearHeightMm"),
+                    "ClearHeightMm"),
+                binCount,
+                depthCount,
+                CellDimension(rack.Width, binCount, "Rack width / BinCount"),
+                CellDimension(rack.Depth, depthCount, "Rack depth / DepthCount"),
+                OptionalDecimal(Value(row, "LoadCapacityKg")),
+                Lifecycle(Value(row, "LifecycleStatus"))));
+        }
+        if (levels.Select(item => item.LogicalId).Distinct().Count() != levels.Count)
+            throw Invalid("The RackLevel projection contains duplicate identities.");
+
+        var levelByBusinessKey = levels.ToDictionary(
+            item => LevelBusinessKey(
+                racks.Single(rack => rack.LogicalId == item.RackLogicalId).RackCode,
+                item.LevelNo),
+            StringComparer.OrdinalIgnoreCase);
+        var existingLocationsByCode = state.Locations
+            .Where(item => !string.IsNullOrWhiteSpace(item.LocationCode))
+            .GroupBy(item => item.LocationCode!, StringComparer.OrdinalIgnoreCase)
+            .ToDictionary(
+                item => item.Key,
+                item => item.Single(),
+                StringComparer.OrdinalIgnoreCase);
+        var locations = new List<LocationApply>();
+        foreach (var row in projection.CanonicalRows
+                     .Where(item => item.TargetSheet == "Locations")
+                     .OrderBy(item => item.SourceSheet, StringComparer.Ordinal)
+                     .ThenBy(item => item.RowNumber))
+        {
+            var rackCode = RequiredValue(row, "RackCode");
+            if (!rackByCode.TryGetValue(rackCode, out var rack))
+                throw Invalid("A Location row targets an unapplied rack.");
+            var levelNo = PositiveInteger(Value(row, "LevelNo"), "LevelNo");
+            if (!levelByBusinessKey.TryGetValue(
+                    LevelBusinessKey(rackCode, levelNo),
+                    out var level))
+            {
+                throw Invalid("A Location row targets an unapplied rack level.");
+            }
+            var locationCode = RequiredValue(row, "LocationCode");
+            existingLocationsByCode.TryGetValue(locationCode, out var existing);
+            if (existing is not null &&
+                existing.FloorLogicalId != input.Payload.FloorLogicalId)
+            {
+                throw Invalid(
+                    $"LocationCode '{locationCode}' already belongs to another floor.");
+            }
+            var logicalId = existing?.LogicalId ??
+                SpaceExcelCadApplyService.DeterministicGuid(
+                    "space-excel-cad-apply-location-v1",
+                    input.Payload.CommandBatchId,
+                    CanonicalIdentity(row));
+            locations.Add(new LocationApply(
+                row,
+                existing,
+                logicalId,
+                rack.LogicalId,
+                locationCode,
+                PositiveInteger(Value(row, "ColumnNo"), "ColumnNo"),
+                levelNo,
+                PositiveInteger(Value(row, "DepthNo"), "DepthNo"),
+                level.CellWidth,
+                level.ClearHeight,
+                level.CellDepth,
+                level.MaxLoad,
+                Lifecycle(Value(row, "LifecycleStatus"))));
+        }
+        if (locations.Select(item => item.LogicalId).Distinct().Count() !=
+            locations.Count)
+        {
+            throw Invalid("The Location projection contains duplicate identities.");
+        }
+
+        var rackIds = racks.Select(item => item.LogicalId).ToHashSet();
+        var expectedLevelIds = levels.Select(item => item.LogicalId).ToHashSet();
+        var obsoleteLevels = levelsAreAuthoritative
+            ? state.Levels
+                .Where(item =>
+                    rackIds.Contains(item.RackLogicalId) &&
+                    !expectedLevelIds.Contains(item.LogicalId) &&
+                    item.LifecycleState != SpaceLifecycleState.Disabled)
+                .OrderBy(item => item.LogicalId)
+                .ToArray()
+            : [];
+        var expectedLocationIds = locations
+            .Select(item => item.LogicalId)
+            .ToHashSet();
+        var obsoleteLocations = locationsAreAuthoritative
+            ? state.Locations
+                .Where(item =>
+                    item.RackLogicalId.HasValue &&
+                    rackIds.Contains(item.RackLogicalId.Value) &&
+                    !expectedLocationIds.Contains(item.LogicalId) &&
+                    item.LifecycleState != SpaceLifecycleState.Disabled)
+                .OrderBy(item => item.LogicalId)
+                .ToArray()
+            : [];
+        if (obsoleteLocations.Any(item =>
+                item.ExternalBindingState != SpaceExternalBindingState.Unbound))
+        {
+            throw Invalid(
+                "Apply cannot disable a WMS-bound Location omitted from the authoritative workbook.");
+        }
+        if (!locationsAreAuthoritative && obsoleteLevels.Any(level =>
+                state.Locations.Any(location =>
+                    location.RackLogicalId == level.RackLogicalId &&
+                    location.LevelNo == level.LevelNo &&
+                    location.LifecycleState == SpaceLifecycleState.Active)))
+        {
+            throw Invalid(
+                "Apply cannot disable a RackLevel while Locations are outside workbook authority.");
+        }
+
+        return new HierarchyApply(
+            levels,
+            obsoleteLevels,
+            locations,
+            obsoleteLocations);
     }
 
     private static void ValidateFinalRackKeys(
@@ -646,6 +964,190 @@ public sealed class SpaceExcelCadApplyJobStepExecutor(
             throw Invalid("Apply would create a duplicate rack code in one zone.");
         }
     }
+
+    private void ApplyHierarchy(
+        Guid tenantId,
+        ImmutableInput input,
+        SpaceElementCommandBatch batch,
+        HierarchyApply hierarchy,
+        int sequence)
+    {
+        foreach (var item in hierarchy.Levels)
+        {
+            var level = item.Existing;
+            object before;
+            string action;
+            if (level is null)
+            {
+                before = new { exists = false };
+                level = SpaceRackLevelRevision.Create(
+                    tenantId,
+                    input.Payload.ModelVersionId,
+                    item.LogicalId,
+                    item.RackLogicalId,
+                    item.LevelNo,
+                    item.BottomZ,
+                    item.ClearHeight,
+                    item.BinCount,
+                    item.DepthCount,
+                    item.CellWidth,
+                    item.CellDepth,
+                    item.MaxLoad);
+                context.RackLevelRevisions.Add(level);
+                action = "Create";
+            }
+            else
+            {
+                before = LevelSnapshot(level);
+                level.UpdateSpecification(
+                    item.LevelNo,
+                    item.BottomZ,
+                    item.ClearHeight,
+                    item.BinCount,
+                    item.DepthCount,
+                    item.CellWidth,
+                    item.CellDepth,
+                    item.MaxLoad);
+                action = "Update";
+            }
+            level.ChangeLifecycle(item.LifecycleState);
+            level.AttachSource(input.ExcelSource, SourceRef(item.Row));
+            AddCommand(
+                tenantId,
+                input,
+                batch,
+                sequence++,
+                "space-excel-cad-apply-rack-level-command-v1",
+                CanonicalIdentity(item.Row),
+                $"ExcelCadApplyRackLevel{action}",
+                item.LogicalId,
+                item.Row,
+                before,
+                LevelSnapshot(level));
+        }
+
+        foreach (var item in hierarchy.Locations)
+        {
+            var location = item.Existing;
+            object before;
+            string action;
+            if (location is null)
+            {
+                before = new { exists = false };
+                location = SpaceLocationRevision.Create(
+                    tenantId,
+                    input.Payload.ModelVersionId,
+                    item.LogicalId,
+                    input.Payload.FloorLogicalId,
+                    item.RackLogicalId,
+                    item.LocationCode,
+                    item.ColumnNo,
+                    item.LevelNo,
+                    item.DepthNo,
+                    item.Width,
+                    item.Height,
+                    item.Depth,
+                    item.MaxLoad,
+                    SpaceLocationCodeOrigin.Imported,
+                    SpaceExternalBindingState.Unbound);
+                context.LocationRevisions.Add(location);
+                action = "Create";
+            }
+            else
+            {
+                before = LocationSnapshot(location);
+                location.UpdateImportedSpecification(
+                    input.Payload.FloorLogicalId,
+                    item.RackLogicalId,
+                    item.LocationCode,
+                    item.ColumnNo,
+                    item.LevelNo,
+                    item.DepthNo,
+                    item.Width,
+                    item.Height,
+                    item.Depth,
+                    item.MaxLoad);
+                action = "Update";
+            }
+            location.ChangeLifecycle(item.LifecycleState);
+            location.AttachSource(input.ExcelSource, SourceRef(item.Row));
+            AddCommand(
+                tenantId,
+                input,
+                batch,
+                sequence++,
+                "space-excel-cad-apply-location-command-v1",
+                CanonicalIdentity(item.Row),
+                $"ExcelCadApplyLocation{action}",
+                item.LogicalId,
+                item.Row,
+                before,
+                LocationSnapshot(location));
+        }
+
+        foreach (var location in hierarchy.ObsoleteLocations)
+        {
+            var before = LocationSnapshot(location);
+            location.ChangeLifecycle(SpaceLifecycleState.Disabled);
+            AddCommand(
+                tenantId,
+                input,
+                batch,
+                sequence++,
+                "space-excel-cad-apply-location-disable-command-v1",
+                location.LogicalId.ToString("N"),
+                "ExcelCadApplyLocationDisable",
+                location.LogicalId,
+                new { reason = "omitted-from-authoritative-workbook" },
+                before,
+                LocationSnapshot(location));
+        }
+
+        foreach (var level in hierarchy.ObsoleteLevels)
+        {
+            var before = LevelSnapshot(level);
+            level.ChangeLifecycle(SpaceLifecycleState.Disabled);
+            AddCommand(
+                tenantId,
+                input,
+                batch,
+                sequence++,
+                "space-excel-cad-apply-rack-level-disable-command-v1",
+                level.LogicalId.ToString("N"),
+                "ExcelCadApplyRackLevelDisable",
+                level.LogicalId,
+                new { reason = "omitted-from-authoritative-workbook" },
+                before,
+                LevelSnapshot(level));
+        }
+    }
+
+    private void AddCommand(
+        Guid tenantId,
+        ImmutableInput input,
+        SpaceElementCommandBatch batch,
+        int sequence,
+        string purpose,
+        string identity,
+        string commandType,
+        Guid logicalId,
+        object request,
+        object before,
+        object after) =>
+        context.ElementCommandRecords.Add(
+            SpaceElementCommandRecord.Create(
+                tenantId,
+                SpaceExcelCadApplyService.DeterministicGuid(
+                    purpose,
+                    input.Payload.CommandBatchId,
+                    identity),
+                batch,
+                sequence,
+                commandType,
+                logicalId,
+                JsonSerializer.Serialize(request, JsonOptions),
+                JsonSerializer.Serialize(before, JsonOptions),
+                JsonSerializer.Serialize(after, JsonOptions)));
 
     private async Task<SpaceExcelCadApplyResultV1?> ReadBatchReplayAsync(
         ImmutableInput input,
@@ -728,6 +1230,124 @@ public sealed class SpaceExcelCadApplyJobStepExecutor(
         rack.SourceRef,
         lifecycleState = rack.LifecycleState.ToString(),
     };
+
+    private static object LevelSnapshot(SpaceRackLevelRevision level) => new
+    {
+        exists = true,
+        level.Id,
+        level.LogicalId,
+        level.RackLogicalId,
+        level.LevelNo,
+        level.BottomZ,
+        level.ClearHeight,
+        level.BinCount,
+        level.DepthCount,
+        level.CellWidth,
+        level.CellDepth,
+        level.BeamHeight,
+        level.MaxLoad,
+        level.SourceId,
+        level.SourceRef,
+        lifecycleState = level.LifecycleState.ToString(),
+    };
+
+    private static object LocationSnapshot(SpaceLocationRevision location) => new
+    {
+        exists = true,
+        location.Id,
+        location.LogicalId,
+        location.FloorLogicalId,
+        location.RackLogicalId,
+        location.LocationCode,
+        location.ColumnNo,
+        location.LevelNo,
+        location.DepthNo,
+        location.Width,
+        location.Height,
+        location.Depth,
+        location.MaxLoad,
+        codeOrigin = location.CodeOrigin.ToString(),
+        externalBindingState = location.ExternalBindingState.ToString(),
+        location.SourceId,
+        location.SourceRef,
+        lifecycleState = location.LifecycleState.ToString(),
+    };
+
+    private static string LevelKey(Guid rackLogicalId, int levelNo) =>
+        $"{rackLogicalId:N}\u001f{levelNo}";
+
+    private static string LevelBusinessKey(string rackCode, int levelNo) =>
+        $"{rackCode}\u001f{levelNo}";
+
+    private static string CanonicalIdentity(SpaceExcelCanonicalRow row) =>
+        $"{row.TargetSheet}\n{row.SourceSheet}\n{row.RowNumber}";
+
+    private static string SourceRef(SpaceExcelCanonicalRow row) =>
+        $"{row.SourceSheet}!{row.RowNumber}";
+
+    private static string? Value(
+        SpaceExcelCanonicalRow row,
+        string field) => row.Values.GetValueOrDefault(field);
+
+    private static string RequiredValue(
+        SpaceExcelCanonicalRow row,
+        string field) =>
+        string.IsNullOrWhiteSpace(Value(row, field))
+            ? throw new InvalidDataException($"{field} is required.")
+            : Value(row, field)!.Trim();
+
+    private static int Integer(string? value, string field)
+    {
+        if (!int.TryParse(
+                value,
+                NumberStyles.Integer,
+                CultureInfo.InvariantCulture,
+                out var result))
+        {
+            throw new InvalidDataException($"{field} must be a 32-bit integer.");
+        }
+        return result;
+    }
+
+    private static int PositiveInteger(string? value, string field)
+    {
+        var result = Integer(value, field);
+        if (result <= 0)
+            throw new InvalidDataException($"{field} must be positive.");
+        return result;
+    }
+
+    private static int NonNegativeInteger(string? value, string field)
+    {
+        var result = Integer(value, field);
+        if (result < 0)
+            throw new InvalidDataException($"{field} cannot be negative.");
+        return result;
+    }
+
+    private static decimal? OptionalDecimal(string? value)
+    {
+        if (string.IsNullOrWhiteSpace(value))
+            return null;
+        if (!decimal.TryParse(
+                value,
+                NumberStyles.Number | NumberStyles.AllowExponent,
+                CultureInfo.InvariantCulture,
+                out var result) || result < 0)
+        {
+            throw new InvalidDataException(
+                "LoadCapacityKg must be a non-negative decimal.");
+        }
+        return result;
+    }
+
+    private static int CellDimension(int dimension, int count, string field)
+    {
+        var result = dimension / count;
+        if (result <= 0)
+            throw new InvalidDataException($"{field} must produce at least 1 mm.");
+        return result;
+    }
 
     private static int Integer(decimal? value, string field)
     {
@@ -873,7 +1493,10 @@ public sealed class SpaceExcelCadApplyJobStepExecutor(
         SpaceModelVersion Version,
         SpaceFloorRevision Floor,
         IReadOnlyList<SpaceZoneRevision> Zones,
-        IReadOnlyList<SpaceRackRevision> Racks);
+        IReadOnlyList<SpaceRackRevision> Racks,
+        IReadOnlyList<SpaceRackLevelRevision> Levels,
+        IReadOnlyList<SpaceLocationRevision> Locations,
+        IReadOnlyDictionary<string, Guid> TemplateVersions);
 
     private sealed record ApplyRow(
         SpaceExcelCadRackMatchV1 Row,
@@ -887,5 +1510,42 @@ public sealed class SpaceExcelCadApplyJobStepExecutor(
         int Width,
         int Depth,
         int Height,
+        Guid? TemplateVersionId,
         SpaceLifecycleState LifecycleState);
+
+    private sealed record LevelApply(
+        SpaceExcelCanonicalRow Row,
+        SpaceRackLevelRevision? Existing,
+        Guid LogicalId,
+        Guid RackLogicalId,
+        int LevelNo,
+        int BottomZ,
+        int ClearHeight,
+        int BinCount,
+        int DepthCount,
+        int CellWidth,
+        int CellDepth,
+        decimal? MaxLoad,
+        SpaceLifecycleState LifecycleState);
+
+    private sealed record LocationApply(
+        SpaceExcelCanonicalRow Row,
+        SpaceLocationRevision? Existing,
+        Guid LogicalId,
+        Guid RackLogicalId,
+        string LocationCode,
+        int ColumnNo,
+        int LevelNo,
+        int DepthNo,
+        int Width,
+        int Height,
+        int Depth,
+        decimal? MaxLoad,
+        SpaceLifecycleState LifecycleState);
+
+    private sealed record HierarchyApply(
+        IReadOnlyList<LevelApply> Levels,
+        IReadOnlyList<SpaceRackLevelRevision> ObsoleteLevels,
+        IReadOnlyList<LocationApply> Locations,
+        IReadOnlyList<SpaceLocationRevision> ObsoleteLocations);
 }
