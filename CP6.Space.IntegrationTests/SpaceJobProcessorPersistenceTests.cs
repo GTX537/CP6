@@ -75,7 +75,7 @@ public sealed class SpaceJobProcessorPersistenceTests
         Assert.IsType<UnavailableSpaceImportJobStepExecutor>(
             scope.ServiceProvider.GetRequiredService<
                 ISpaceImportJobStepExecutor>());
-        Assert.IsType<UnavailableSpaceBuildSceneJobStepExecutor>(
+        Assert.IsType<SpaceBuildSceneJobStepExecutor>(
             scope.ServiceProvider.GetRequiredService<
                 ISpaceBuildSceneJobStepExecutor>());
         Assert.IsType<SpaceGenerationApplyStepExecutor>(

@@ -2,6 +2,14 @@
 
 最后更新：2026-08-08
 
+## E13 纯规则 BuildScene 生产执行链接线（2026-08-08）
+
+- 在集成基线 `4d9bc3f6` 上以功能提交 `36cc0241` 实现生产默认 `SpaceBuildSceneJobStepExecutor`：`RuleOnly` recovery 现在能从私有、哈希和血缘校验通过的 CAD PreviewSet 走完 12 步 BuildScene，持久化只读 Proposal/Issue 并把 Run 推进到 AwaitingReview；Provider-backed 模式继续 `SPACE_AI_PROVIDER_UNAVAILABLE` 失败关闭。
+- local-only 特征快照使用稳定 `Source SHA + SourceRef` SourceKey、Run 隔离 correlation 和零 Provider 调用；同 SourceHash 的已确认 E13-S10 locked facts 会从旧 Proposal SourceRef 重映射并参与融合，覆盖名称、allowlisted 类型属性和 Zone/Aisle/Wall 父关系。不同 SourceHash 仍不自动继承。
+- Proposal/Issue 落库使用 Serializable 和逐字段重放校验；元素尺寸、Aisle/Rack 父关系和 RackProfile 缺失均 Blocking。执行器不写 Draft、不创建 AI Usage、不启用 High Accept；Draft 继续只能经人工 Decision 与原子 Apply 修改。
+- 门禁：规则/融合聚焦 21/21、BuildScene 端到端与外部模式关闭 2/2、Space Unit 484/484、默认 Space Integration 277 passed / 94 SQL-gated skipped、CP6.Tests 2811 passed / 17 environment-gated skipped、完整 solution Release（含 Desktop/Android AOT）0 warning / 0 error。
+- 本切片关闭“生产 BuildScene 全部占位失败”和“同源 LockedFacts 未接 Worker”的内部缺口，但尚无首次 Generation Run 创建 API；当前入口仍是 Failed/Stale Run 的 RuleOnly recovery。外部 Provider、不同 SourceHash 人工确认继承、权威 RackGenerationProfile、确定性无锁父关系和正式 CAD/黄金集证据仍未完成。完整边界见 `docs/space/reports/e13-rule-only-build-scene-production.md`。
+
 ## E13-S14 离线质量评估开发切片（2026-08-08）
 
 - 在集成基线 `6c99b0fe` 上以功能提交 `e69b3bca`、报告提交 `9261d59a` 和 no-ff 提交 `292a26ed` 交付离线质量评估器、Calibration-only 阈值校准、Validation+ReleaseHoldout 样本外验证、95% Wilson 下界和规范报告 SHA-256；最终融合提案按 SampleId+SourceKey 一对一匹配，重复猜测计 False Positive，类型、关键属性和关系必须正确。
@@ -652,7 +660,7 @@
 | E11 S03 | 已进入集成基线 | `3cf42534` + `419d3f6c` + `eea62de0` + `cf7bf778`；内部人员调度建议、真实待分配任务与人员双时点、确定性最大基数匹配、不可变证据、首因排除和 Viewer DSP 面板 |
 | E11 S04 | 已进入集成基线 | `098fb54b` + `a7298e28` + `a552d05d` + `c19231db`；OA 审批、提交/终审人分离、最终事实重验证、真实 `MobileTask` 整批分派、幂等回执与失败关闭 |
 | E11 S05 | 已进入集成基线 | `139c76b5` + `e8df8288` + `a0b247ab` + `cf35849c`；实时执行状态、三层幂等回执、受限人工重试、安全整批补偿、权限审计和 Viewer 执行治理 |
-| E13 S01–S13、S16 | 已进入集成基线；真实外部 Provider 仍关闭 | Provider/确定性端口、Run/Proposal/Decision/Usage、可恢复 Worker、最小化/本地生成/输出校验/融合/审核/决策/原子 Apply/恢复、外部主体与外发门禁，以及数据库配额和策略/用量 UI |
+| E13 S01–S13、S16 | 已进入集成基线；真实外部 Provider 仍关闭 | Provider/确定性端口、Run/Proposal/Decision/Usage、可恢复 Worker、最小化/本地生成/输出校验/融合/审核/决策/原子 Apply/恢复、同源人工锁接线、RuleOnly PreviewSet→AwaitingReview 生产执行、外部主体与外发门禁，以及数据库配额和策略/用量 UI |
 | E05 S01–S05 | 已进入集成基线 | 通用元素、逐层货架、统一场景 DTO、版本化资产库及确定性参数化 3D 渲染 |
 | E06 S01–S02 | 已进入集成基线 | `c17242c3` + `76c70230` + `a174f7cc` + `5bd2c616`；权威 ValidationRun 与来源/规则/WMS 能力冻结、确定性版本差异/WMS 影响预览、稳定 PlanHash、权限审计和 SDK；两卡真实 SQL 各 3/3、完整 Release 与漂移门禁通过 |
 | E02 S02–S08 正式签收、E03 S05、E06 S03–S06、E13 S05～S11 正式外部链验收、S14～S15/S17～S19 等剩余范围 | 候选证据或尚未实现 | 生产 CAD 链、正式输入、Hosted Worker、权威 Match Artifact、持久化发布编排/重试/回退/UI 和真实外部 Provider 证据仍需逐卡解除；`0d25da4d` 只作提取来源，不得以候选报告或开发切片替代正式集成验收 |
@@ -719,4 +727,4 @@
 
 ## 下一动作
 
-E03-S01～S05、生产 Processing Worker、Rack/RackLevel/Location/RackTemplate，以及标准 Excel 的 Bindings/Attributes/LocationType 版本化权威写入均已完成并进入受控集成，不再重复这些卡；标准工作簿没有 Zone/Aisle 表，不得伪造格式。下一动作是重新盘点剩余路线并只选择依赖已满足的工作。已知未关闭项主要依赖外部或生产条件：E02/CAD 正式签收需要获授权原生 DWG/DXF Provider、组织黄金集和真实大文件/故障/性能证据；生产需部署包含 Processing Worker、本 Migration 与本扩展的新镜像并完成备份迁移和 E06 WMS 发布/恢复演练；E13 外部 Provider/S14～S15/S18～S19、E12-S06 和跨职能 Beta/GA 证据仍独立存在。禁止创建未授权生产 CAD/DWG/外部 AI 适配器，禁止把候选检查点 `0d25da4d` 整包合入，GR-VP T1–T7 不要重做。
+E03-S01～S05、生产 Processing Worker、Rack/RackLevel/Location/RackTemplate，以及标准 Excel 的 Bindings/Attributes/LocationType 版本化权威写入均已完成并进入受控集成，不再重复这些卡；标准工作簿没有 Zone/Aisle 表，不得伪造格式。纯规则 BuildScene recovery 已能从 PreviewSet 到 AwaitingReview，下一项依赖已满足的内部工作优先补首次 Generation Run 创建服务/API、权限、审计与幂等合同；随后再评估权威 RackGenerationProfile 读取和无锁父关系确定性推导。已知外部/生产未关闭项包括：E02/CAD 正式签收需要获授权原生 DWG/DXF Provider、组织黄金集和真实大文件/故障/性能证据；生产需部署包含 Processing Worker、本 Migration 与本扩展的新镜像并完成备份迁移和 E06 WMS 发布/恢复演练；E13 外部 Provider/S14～S15/S18～S19、E12-S06 和跨职能 Beta/GA 证据仍独立存在。禁止创建未授权生产 CAD/DWG/外部 AI 适配器，禁止把候选检查点 `0d25da4d` 整包合入，GR-VP T1–T7 不要重做。

@@ -203,6 +203,52 @@ public sealed class SpaceAiCadFeatureMinimizerTests
     }
 
     [Fact]
+    public void Rule_only_snapshot_is_provider_free_stable_and_carries_current_locks()
+    {
+        var scenario = SpaceCadSemanticParserTests.Scenario();
+        var preview = SpaceCadSemanticParser.Parse(
+            scenario.Request,
+            scenario.Preparation,
+            scenario.Inventory,
+            scenario.Profile,
+            scenario.MappingPreview);
+        var first = SpaceAiCadFeatureMinimizer.CreateRuleOnlySnapshot(
+            ModelVersionId,
+            RunId,
+            preview);
+        var sourceKey = first.LocalSourceMap.Entries.Single(item =>
+            item.SourceRefs.Contains("H:160", StringComparer.Ordinal)).SourceKey;
+        var withLocks = SpaceAiCadFeatureMinimizer.CreateRuleOnlySnapshot(
+            ModelVersionId,
+            RunId,
+            preview,
+            [
+                new("H:160", "attributes.name", "Human Rack"),
+                new("H:160", "relations.zoneSourceKey",
+                    first.LocalSourceMap.Entries.Single(item =>
+                        item.SourceRefs.Contains("H:140", StringComparer.Ordinal)).SourceKey),
+            ]);
+        var nextRun = SpaceAiCadFeatureMinimizer.CreateRuleOnlySnapshot(
+            ModelVersionId,
+            Guid.Parse("88888888-8888-8888-8888-888888888888"),
+            preview);
+
+        Assert.Equal(preview.Items.Count, first.ProviderInput.Features.Count);
+        Assert.Equal(sourceKey, nextRun.LocalSourceMap.Entries.Single(item =>
+            item.SourceRefs.Contains("H:160", StringComparer.Ordinal)).SourceKey);
+        Assert.NotEqual(
+            first.ProviderInput.RunCorrelationKey,
+            nextRun.ProviderInput.RunCorrelationKey);
+        Assert.Equal(2, withLocks.ProviderInput.LockedFacts.Count);
+        Assert.All(withLocks.ProviderInput.LockedFacts, fact =>
+            Assert.Equal(sourceKey, fact.SourceKey));
+        Assert.DoesNotContain(
+            "H:160",
+            SpaceAiCadFeatureMinimizer.SerializeProviderInput(withLocks),
+            StringComparison.Ordinal);
+    }
+
+    [Fact]
     public void Locked_facts_use_allowlisted_enums_and_never_raw_source_refs()
     {
         var scenario = SpaceCadSemanticParserTests.Scenario();

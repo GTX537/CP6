@@ -200,6 +200,127 @@ public static class SpaceAiCadFeatureMinimizer
         }
     }
 
+    /// <summary>
+    /// Builds a deterministic, provider-compatible feature snapshot from the
+    /// already validated semantic preview. The snapshot is used only by the
+    /// local rule-only pipeline and must never be sent to a Provider.
+    /// </summary>
+    public static SpaceAiCadFeatureMinimizationV1 CreateRuleOnlySnapshot(
+        Guid modelVersionId,
+        Guid runId,
+        SpaceCadSemanticPreviewV1 preview,
+        IReadOnlyList<SpaceAiCadLockedFactV1>? lockedFacts = null)
+    {
+        ArgumentNullException.ThrowIfNull(preview);
+        if (modelVersionId == Guid.Empty || runId == Guid.Empty)
+        {
+            throw new ArgumentException(
+                "Model version and run identities are required.");
+        }
+
+        SpaceCadSemanticParser.Validate(preview);
+        if (preview.Items.Count > SpaceAiCadFeatureVersions.MaximumFeatures)
+        {
+            throw new InvalidDataException(
+                "CAD semantic preview exceeds the rule-only feature limit.");
+        }
+
+        var entries = preview.Items
+            .Select(item => new SpaceAiCadFeatureSourceMapEntryV1(
+                RuleOnlyToken(
+                    "source",
+                    preview.SourceSha256,
+                    item.Source.SourceRef),
+                new[] { item.Source.SourceRef }))
+            .OrderBy(item => item.SourceKey, StringComparer.Ordinal)
+            .ToArray();
+        var keyByRef = entries
+            .SelectMany(entry => entry.SourceRefs.Select(sourceRef =>
+                new KeyValuePair<string, string>(sourceRef, entry.SourceKey)))
+            .ToDictionary(item => item.Key, item => item.Value, StringComparer.Ordinal);
+        var itemByRef = preview.Items.ToDictionary(
+            item => item.Source.SourceRef,
+            StringComparer.Ordinal);
+        var features = entries.Select(entry =>
+        {
+            var item = itemByRef[entry.SourceRefs[0]];
+            return new WarehouseGenerationFeature(
+                entry.SourceKey,
+                RuleOnlyEntityType(item.Source.RawType),
+                RuleOnlyToken(
+                    "layer",
+                    preview.SourceSha256,
+                    item.Source.LayerId),
+                item.Source.BlockName is null
+                    ? null
+                    : RuleOnlyToken(
+                        "block",
+                        preview.SourceSha256,
+                        item.Source.BlockName),
+                EntityCount: 1,
+                NormalizedBounds: null,
+                AngleBucket: 0,
+                RepetitionGroup: null,
+                AttributeKeyTokens: [],
+                RelationSourceKeys: []);
+        }).ToArray();
+        var localFacts = (lockedFacts ?? [])
+            .OrderBy(item => item.SourceRef, StringComparer.Ordinal)
+            .ThenBy(item => item.FieldPath, StringComparer.Ordinal)
+            .ToArray();
+        var providerFacts = localFacts.Select(fact =>
+        {
+            if (!keyByRef.TryGetValue(fact.SourceRef, out var sourceKey))
+            {
+                throw new InvalidDataException(
+                    "A rule-only locked fact is outside the semantic preview.");
+            }
+            return new WarehouseGenerationLockedFact(
+                sourceKey,
+                fact.FieldPath,
+                fact.ValueToken);
+        }).ToArray();
+        var correlationHash = ComputeSha256(CanonicalJson(new
+        {
+            preview.TenantId,
+            modelVersionId,
+            runId,
+            preview.SourceSha256,
+            preview.SemanticPreviewSha256,
+        }));
+        var providerInput = new WarehouseGenerationInput(
+            $"rule-only-{correlationHash}",
+            SpaceAiDataPolicy.StructuredFeatures,
+            new WarehouseGenerationLimits(
+                Math.Max(1, features.Length),
+                MaxRelationsPerSuggestion: 0),
+            features,
+            [],
+            providerFacts);
+        var providerInputSha256 = ComputeSha256(CanonicalJson(providerInput));
+        var mapWithoutHash = new SpaceAiCadFeatureSourceMapV1(
+            SpaceAiCadFeatureVersions.SourceMapSchemaVersion,
+            IsLocalOnly: true,
+            preview.SourceSha256,
+            preview.CoordinateTransformSha256,
+            preview.FloorLogicalId,
+            SpaceAiDataPolicy.StructuredFeatures,
+            providerInputSha256,
+            features.LongLength,
+            entries.Sum(item => (long)item.SourceRefs.Count),
+            entries,
+            SourceMapSha256: string.Empty);
+        var sourceMap = mapWithoutHash with
+        {
+            SourceMapSha256 = ComputeSha256(CanonicalJson(mapWithoutHash)),
+        };
+        var result = new SpaceAiCadFeatureMinimizationV1(
+            providerInput,
+            sourceMap);
+        Validate(result);
+        return result;
+    }
+
     public static string CreateRunCorrelationKey(
         ReadOnlySpan<byte> hmacKey,
         Guid tenantId,
@@ -234,6 +355,24 @@ public static class SpaceAiCadFeatureMinimizer
             CryptographicOperations.ZeroMemory(key);
         }
     }
+
+    private static WarehouseCadEntityType RuleOnlyEntityType(string rawType) =>
+        Enum.TryParse<WarehouseCadEntityType>(
+            rawType,
+            ignoreCase: true,
+            out var value) && Enum.IsDefined(value)
+            ? value
+            : WarehouseCadEntityType.Unknown;
+
+    private static string RuleOnlyToken(
+        string prefix,
+        string sourceSha256,
+        string value) =>
+        $"{prefix}-{ComputeSha256(CanonicalJson(new
+        {
+            sourceSha256,
+            value,
+        }))}";
 
     public static string SerializeProviderInput(
         SpaceAiCadFeatureMinimizationV1 result)

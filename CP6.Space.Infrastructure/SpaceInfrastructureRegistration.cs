@@ -176,7 +176,7 @@ public static class SpaceInfrastructureRegistration
             UnavailableSpaceImportJobStepExecutor>();
         services.TryAddScoped<
             ISpaceBuildSceneJobStepExecutor,
-            UnavailableSpaceBuildSceneJobStepExecutor>();
+            SpaceBuildSceneJobStepExecutor>();
         services.AddScoped<
             ISpaceGenerationApplyStepExecutor,
             SpaceGenerationApplyStepExecutor>();

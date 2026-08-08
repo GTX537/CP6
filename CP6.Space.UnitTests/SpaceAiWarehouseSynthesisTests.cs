@@ -67,6 +67,59 @@ public sealed class SpaceAiWarehouseSynthesisTests
     }
 
     [Fact]
+    public async Task Rule_only_snapshot_preserves_human_name_and_parent_relation_locks()
+    {
+        var baseFixture = Fixture();
+        var empty = SpaceAiCadFeatureMinimizer.CreateRuleOnlySnapshot(
+            ModelVersionId,
+            RunId,
+            baseFixture.Preview);
+        var zoneKey = empty.LocalSourceMap.Entries.Single(item =>
+            item.SourceRefs.Contains("H:140", StringComparer.Ordinal)).SourceKey;
+        SpaceAiCadLockedFactV1[] facts =
+        [
+            new("H:160", "attributes.name", "Locked Rack"),
+            new("H:160", "relations.zoneSourceKey", zoneKey),
+        ];
+        var snapshot = SpaceAiCadFeatureMinimizer.CreateRuleOnlySnapshot(
+            ModelVersionId,
+            RunId,
+            baseFixture.Preview,
+            facts);
+        var output = new WarehouseGenerationResult(
+            WarehouseGenerationInput.CurrentSchemaVersion,
+            "rule-only-test-request-000000000001",
+            "cp6-deterministic-rules",
+            new WarehouseGenerationUsage(0, 0),
+            [],
+            []);
+        var validated = new WarehouseGenerationOutputValidator().Validate(
+            snapshot.ProviderInput,
+            output);
+
+        var result = await new WarehouseDraftSynthesizer().SynthesizeAsync(
+            new WarehouseDraftSynthesisRequestV1(
+                ModelVersionId,
+                "rules-e02-s06-v1",
+                snapshot,
+                baseFixture.Preview,
+                validated,
+                facts,
+                [],
+                []));
+
+        var rack = Proposal(result, "H:160");
+        Assert.Contains(rack.Fields, field =>
+            field.FieldPath == "attributes.name" &&
+            field.ValueToken == "Locked Rack" &&
+            field.WinningSource == WarehouseFusionSource.HumanLocked);
+        Assert.Contains(rack.Fields, field =>
+            field.FieldPath == "relations.zoneSourceKey" &&
+            field.ValueToken == zoneKey &&
+            field.WinningSource == WarehouseFusionSource.HumanLocked);
+    }
+
+    [Fact]
     public async Task Soft_rule_type_conflict_retains_rule_and_downgrades_band()
     {
         var fixture = Fixture();
