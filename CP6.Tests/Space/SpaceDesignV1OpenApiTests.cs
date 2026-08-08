@@ -370,6 +370,26 @@ public sealed class SpaceDesignV1OpenApiTests
                 "sourceId",
             },
             required);
+
+        var runProperties = root.GetProperty("components")
+            .GetProperty("schemas")
+            .GetProperty("CP6.Space.Contracts.SpaceAiGenerationRunDto")
+            .GetProperty("properties");
+        Assert.True(runProperties.TryGetProperty("sourceId", out _));
+        Assert.True(runProperties.TryGetProperty(
+            "mappingProfileVersionId",
+            out _));
+        Assert.True(runProperties.TryGetProperty(
+            "rackGenerationProfileVersionId",
+            out _));
+        var runRequired = root.GetProperty("components")
+            .GetProperty("schemas")
+            .GetProperty("CP6.Space.Contracts.SpaceAiGenerationRunDto")
+            .GetProperty("required")
+            .EnumerateArray()
+            .Select(value => value.GetString())
+            .ToArray();
+        Assert.Contains("sourceId", runRequired);
     }
 
     [Fact]

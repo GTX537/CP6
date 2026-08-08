@@ -50,6 +50,7 @@ import {
 } from '@/modules/space-design/cad-review/cadReviewWorkspace'
 import DesignAiProposalReviewPanel from '@/modules/space-design/ai-review/DesignAiProposalReviewPanel.vue'
 import DesignAiProposalDecisionPanel from '@/modules/space-design/ai-review/DesignAiProposalDecisionPanel.vue'
+import DesignAiGenerationLauncherPanel from '@/modules/space-design/ai-review/DesignAiGenerationLauncherPanel.vue'
 import {
   aiReviewFreshness,
   parseAiProposalReviewWorkspace,
@@ -111,6 +112,7 @@ const activeCadReviewItemId = ref('')
 const aiReviewWorkspace = ref<AiProposalReviewWorkspace | null>(null)
 const aiReviewPanelVisible = ref(false)
 const aiDecisionPanelVisible = ref(false)
+const aiGenerationPanelVisible = ref(false)
 const activeAiReviewItemId = ref('')
 const loading = ref(true)
 const projectionMode = ref<'2d' | 'split' | '3d'>('split')
@@ -383,6 +385,7 @@ async function onCadReviewArtifactSelected(event: Event): Promise<void> {
     matchPanelVisible.value = false
     aiReviewPanelVisible.value = false
     aiDecisionPanelVisible.value = false
+    aiGenerationPanelVisible.value = false
     activeCadReviewItemId.value = ''
     activeAiReviewItemId.value = ''
     cadIssueOverlay?.clear()
@@ -476,6 +479,7 @@ function openMatchPanel(): void {
   cadReviewPanelVisible.value = false
   aiReviewPanelVisible.value = false
   aiDecisionPanelVisible.value = false
+  aiGenerationPanelVisible.value = false
   activeCadReviewItemId.value = ''
   activeAiReviewItemId.value = ''
   cadIssueOverlay?.clear()
@@ -580,6 +584,7 @@ async function onAiReviewArtifactSelected(event: Event): Promise<void> {
     aiReviewPanelVisible.value = true
     matchPanelVisible.value = false
     aiDecisionPanelVisible.value = false
+    aiGenerationPanelVisible.value = false
     cadReviewPanelVisible.value = false
     activeAiReviewItemId.value = ''
     activeCadReviewItemId.value = ''
@@ -660,12 +665,28 @@ function openAiDecisionPanel(): void {
     return
   }
   aiDecisionPanelVisible.value = true
+  aiGenerationPanelVisible.value = false
   matchPanelVisible.value = false
   aiReviewPanelVisible.value = false
   cadReviewPanelVisible.value = false
   activeAiReviewItemId.value = ''
   activeCadReviewItemId.value = ''
   cadIssueOverlay?.clear()
+}
+
+function openAiGenerationPanel(): void {
+  aiGenerationPanelVisible.value = true
+  aiDecisionPanelVisible.value = false
+  matchPanelVisible.value = false
+  aiReviewPanelVisible.value = false
+  cadReviewPanelVisible.value = false
+  activeAiReviewItemId.value = ''
+  activeCadReviewItemId.value = ''
+  cadIssueOverlay?.clear()
+}
+
+function closeAiGenerationPanel(): void {
+  aiGenerationPanelVisible.value = false
 }
 
 function closeAiDecisionPanel(): void {
@@ -681,14 +702,24 @@ async function onAiProposalsApplied(): Promise<void> {
 }
 
 async function onAiRunRecovered(runId: string): Promise<void> {
-  aiDecisionPanelVisible.value = false
   await router.replace({
     query: {
       ...route.query,
       generationRunId: runId,
     },
   })
-  ElMessage.success('恢复 Run 已创建；待生成完成后重新进入审查')
+  aiDecisionPanelVisible.value = true
+}
+
+async function onAiRunCreated(runId: string): Promise<void> {
+  aiGenerationPanelVisible.value = false
+  await router.replace({
+    query: {
+      ...route.query,
+      generationRunId: runId,
+    },
+  })
+  aiDecisionPanelVisible.value = true
 }
 
 function chooseFile(): void {
@@ -1315,6 +1346,16 @@ function delay(milliseconds: number): Promise<void> {
           下载标准 Excel
         </el-button>
         <el-button
+          v-if="!readonlyScene"
+          v-permission="'space:model:generate-ai'"
+          size="small"
+          :type="aiGenerationPanelVisible ? 'primary' : 'default'"
+          data-test="open-ai-generation"
+          @click="openAiGenerationPanel"
+        >
+          规则生成
+        </el-button>
+        <el-button
           v-if="generationRunId"
           v-permission="'space:model:review-ai'"
           size="small"
@@ -1481,6 +1522,13 @@ function delay(milliseconds: number): Promise<void> {
         :current-content-revision="designScene?.contentRevision"
         @locate="focusExcelCadMatchRow"
         @close="closeMatchPanel"
+      />
+      <DesignAiGenerationLauncherPanel
+        v-else-if="aiGenerationPanelVisible && designScene?.contentRevision !== undefined"
+        :version-id="versionId"
+        :current-content-revision="designScene.contentRevision"
+        @close="closeAiGenerationPanel"
+        @created="onAiRunCreated"
       />
       <DesignAiProposalDecisionPanel
         v-else-if="aiDecisionPanelVisible && generationRunId"

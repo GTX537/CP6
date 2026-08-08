@@ -2,6 +2,13 @@
 
 > 依据 Git log 汇总，不替代完整 Git 历史。重点记录影响接手判断的里程碑。
 
+## 2026-08-08：Space E13 Generation Run 建模 Web 入口（待受控集成）
+
+- `52bb3a29`：编辑器接入统一 `CreateGenerationRun`，从已确认 DWG/DXF Preview 启动 RuleOnly Run；排队/处理中轮询 Run，达到 AwaitingReview 后再读取提案，Failed/Stale 恢复使用同一 BasedOn、`If-Match` 与幂等合同。
+- Run 详情补齐 Source/Mapping/Rack Profile 冻结标识，OpenAPI 与 C#/TypeScript SDK 同步；409/422 后重读当前 Draft 与来源，浏览器筛选不替代服务端权威校验。
+- 验证为前端聚焦 11/11、全量 710/710、type-check/build、OpenAPI/审计 31/31、Space Unit 484/484、Integration 283 passed / 94 skipped、CP6.Tests 2812 passed / 17 skipped、SDK strict/drift 与完整 Release/AOT 0 warning / 0 error。
+- 无 Migration、Provider、Secret、网络、Usage 或 Draft 自动写入；RackGenerationProfile 权威存储、无锁父关系、异 SourceHash 确认、外部 Provider 与正式 CAD/黄金集仍是后续边界。
+
 ## 2026-08-08：Space E13 首次 Generation Run 创建入口
 
 - `770bdc96` / `bbcaf6fe` / `9d0971f4`：实现、记录并 no-ff 集成版本级统一 `CreateGenerationRun`；新增首次 RuleOnly 创建，保留 BasedOn replacement Run，并冻结 `If-Match`、ContentRevision、权限、审计与幂等合同。

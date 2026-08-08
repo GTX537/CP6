@@ -619,6 +619,7 @@ public sealed class SpaceWmsRuntimeSchemaFilter : ISchemaFilter
                 "runId",
                 "siteId",
                 "modelVersionId",
+                "sourceId",
                 "status",
                 "progress",
                 "baseContentRevision",

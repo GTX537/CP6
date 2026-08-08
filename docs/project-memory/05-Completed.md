@@ -1,5 +1,12 @@
 # 已完成能力与近期里程碑
 
+## 2026-08-08 E13 Generation Run 建模 Web 入口（待受控集成）
+
+- 功能提交 `52bb3a29` 把编辑器接入统一 `CreateGenerationRun`：从已确认 DWG/DXF Preview 启动 RuleOnly Run，显示排队/进度后进入审核与原子 Apply；Failed/Stale 恢复也改用同一并发、幂等和 BasedOn 合同。
+- Run DTO 补齐冻结 Source/Mapping/Rack Profile 标识；Web 使用当前 Draft `If-Match` 和 ContentRevision，409/422 后重读权威状态，中间态不提前请求 Review/Proposal。
+- 前端聚焦 11/11、全量 710/710、type-check/build、OpenAPI/审计 31/31、Space Unit 484/484、Integration 283 passed / 94 skipped、CP6.Tests 2812 passed / 17 skipped、SDK drift/strict 与完整 Release/AOT 0 warning / 0 error。
+- 无 Migration、Provider、Secret、网络、Usage、High Accept 或 Draft 自动写入；完整证据见 `docs/space/reports/e13-generation-run-web-entry.md`。
+
 ## 2026-08-08 E13 首次 Generation Run 创建入口
 
 - `770bdc96` / `bbcaf6fe` / `9d0971f4` 完成功能、报告与 no-ff 受控集成；统一 `CreateGenerationRun` 让首次 RuleOnly 与 BasedOn recovery 共享版本并发、权限、审计和公开幂等域，同键冲突、业务复用和 replacement Run 均失败关闭。
