@@ -179,7 +179,8 @@ const viewModules: Record<string, () => Promise<any>> = {
   '/space/floor': () => import('@/views/space/master/SpaceFloorView.vue'),
   // ── Space 波3 生命周期 ─────────────────────────────
   '/space/code-rule': () => import('@/views/space/lifecycle/SpaceCodeRuleView.vue'),
-  '/space/publish': () => import('@/views/space/lifecycle/SpacePublishView.vue'),
+  '/space/publish': () => import('@/views/space/lifecycle/SpacePublishManagementView.vue'),
+  '/space/location-publish': () => import('@/views/space/lifecycle/SpacePublishView.vue'),
   '/space/events': () => import('@/views/space/lifecycle/SpaceEventsView.vue'),
   '/space/ai-admin': () => import('@/views/space/admin/SpaceAiAdminView.vue'),
   '/space/planning': () => import('@/views/space/planning/SpacePlanningScenarioView.vue'),

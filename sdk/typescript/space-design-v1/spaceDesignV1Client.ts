@@ -617,6 +617,14 @@ export interface ISpaceDesignV1Client {
     retryPublishAttempt(attemptId: string, idempotency_Key: string | undefined, body: RetrySpacePublishAttemptRequest | undefined): Promise<RetrySpacePublishAttemptResponse>;
 
     /**
+     * @param status (optional)
+     * @param limit (optional)
+     * @param cursor (optional)
+     * @return OK
+     */
+    getPublishAttempts(siteId: string, status: string | undefined, limit: number | undefined, cursor: string | undefined): Promise<SpacePageOfSpacePublishAttemptSummaryDto>;
+
+    /**
      * @param floorLogicalId (optional)
      * @param objectType (optional)
      * @param action (optional)
@@ -10615,6 +10623,110 @@ export class SpaceDesignV1Client implements ISpaceDesignV1Client {
             });
         }
         return Promise.resolve<RetrySpacePublishAttemptResponse>(null as any);
+    }
+
+    /**
+     * @param status (optional)
+     * @param limit (optional)
+     * @param cursor (optional)
+     * @return OK
+     */
+    getPublishAttempts(siteId: string, status: string | undefined, limit: number | undefined, cursor: string | undefined): Promise<SpacePageOfSpacePublishAttemptSummaryDto> {
+        let url_ = this.baseUrl + "/api/space/design/v1/sites/{siteId}/publish-attempts?";
+        if (siteId === undefined || siteId === null)
+            throw new globalThis.Error("The parameter 'siteId' must be defined.");
+        url_ = url_.replace("{siteId}", encodeURIComponent("" + siteId));
+        if (status === null)
+            throw new globalThis.Error("The parameter 'status' cannot be null.");
+        else if (status !== undefined)
+            url_ += "status=" + encodeURIComponent("" + status) + "&";
+        if (limit === null)
+            throw new globalThis.Error("The parameter 'limit' cannot be null.");
+        else if (limit !== undefined)
+            url_ += "limit=" + encodeURIComponent("" + limit) + "&";
+        if (cursor === null)
+            throw new globalThis.Error("The parameter 'cursor' cannot be null.");
+        else if (cursor !== undefined)
+            url_ += "cursor=" + encodeURIComponent("" + cursor) + "&";
+        url_ = url_.replace(/[?&]$/, "");
+
+        let options_: RequestInit = {
+            method: "GET",
+            headers: {
+                "Accept": "application/json"
+            }
+        };
+
+        return this.http.fetch(url_, options_).then((_response: Response) => {
+            return this.processGetPublishAttempts(_response);
+        });
+    }
+
+    protected processGetPublishAttempts(response: Response): Promise<SpacePageOfSpacePublishAttemptSummaryDto> {
+        const status = response.status;
+        let _headers: any = {}; if (response.headers && response.headers.forEach) { response.headers.forEach((v: any, k: any) => _headers[k] = v); };
+        if (status === 200) {
+            return response.text().then((_responseText) => {
+            let result200: any = null;
+            let resultData200 = _responseText === "" ? null : JSON.parse(_responseText, this.jsonParseReviver);
+            result200 = SpacePageOfSpacePublishAttemptSummaryDto.fromJS(resultData200);
+            return result200;
+            });
+        } else if (status === 400) {
+            return response.text().then((_responseText) => {
+            let result400: any = null;
+            let resultData400 = _responseText === "" ? null : JSON.parse(_responseText, this.jsonParseReviver);
+            result400 = SpaceDesignProblemDetails.fromJS(resultData400);
+            return throwException("Bad Request", status, _responseText, _headers, result400);
+            });
+        } else if (status === 401) {
+            return response.text().then((_responseText) => {
+            let result401: any = null;
+            let resultData401 = _responseText === "" ? null : JSON.parse(_responseText, this.jsonParseReviver);
+            result401 = SpaceDesignProblemDetails.fromJS(resultData401);
+            return throwException("Unauthorized", status, _responseText, _headers, result401);
+            });
+        } else if (status === 403) {
+            return response.text().then((_responseText) => {
+            let result403: any = null;
+            let resultData403 = _responseText === "" ? null : JSON.parse(_responseText, this.jsonParseReviver);
+            result403 = SpaceDesignProblemDetails.fromJS(resultData403);
+            return throwException("Forbidden", status, _responseText, _headers, result403);
+            });
+        } else if (status === 404) {
+            return response.text().then((_responseText) => {
+            let result404: any = null;
+            let resultData404 = _responseText === "" ? null : JSON.parse(_responseText, this.jsonParseReviver);
+            result404 = SpaceDesignProblemDetails.fromJS(resultData404);
+            return throwException("Not Found", status, _responseText, _headers, result404);
+            });
+        } else if (status === 409) {
+            return response.text().then((_responseText) => {
+            let result409: any = null;
+            let resultData409 = _responseText === "" ? null : JSON.parse(_responseText, this.jsonParseReviver);
+            result409 = SpaceDesignProblemDetails.fromJS(resultData409);
+            return throwException("Conflict", status, _responseText, _headers, result409);
+            });
+        } else if (status === 422) {
+            return response.text().then((_responseText) => {
+            let result422: any = null;
+            let resultData422 = _responseText === "" ? null : JSON.parse(_responseText, this.jsonParseReviver);
+            result422 = SpaceDesignProblemDetails.fromJS(resultData422);
+            return throwException("Unprocessable Content", status, _responseText, _headers, result422);
+            });
+        } else if (status === 500) {
+            return response.text().then((_responseText) => {
+            let result500: any = null;
+            let resultData500 = _responseText === "" ? null : JSON.parse(_responseText, this.jsonParseReviver);
+            result500 = SpaceDesignProblemDetails.fromJS(resultData500);
+            return throwException("Internal Server Error", status, _responseText, _headers, result500);
+            });
+        } else if (status !== 200 && status !== 204) {
+            return response.text().then((_responseText) => {
+            return throwException("An unexpected server error occurred.", status, _responseText, _headers);
+            });
+        }
+        return Promise.resolve<SpacePageOfSpacePublishAttemptSummaryDto>(null as any);
     }
 
     /**
@@ -22639,6 +22751,122 @@ export interface ISpacePublishAttemptDto {
     auditEvents?: SpacePublishAuditEventDto[] | undefined;
 }
 
+export class SpacePublishAttemptSummaryDto implements ISpacePublishAttemptSummaryDto {
+    id?: string;
+    siteId?: string;
+    targetVersionId?: string;
+    targetVersionNo?: string | undefined;
+    targetVersionName?: string | undefined;
+    baseVersionId?: string | undefined;
+    status?: string | undefined;
+    currentStep?: string | undefined;
+    startedAtUtc?: Date;
+    finishedAtUtc?: Date | undefined;
+    approvalReference?: string | undefined;
+    lastErrorCode?: string | undefined;
+    summary?: string | undefined;
+    jobId?: string | undefined;
+    jobStatus?: string | undefined;
+    jobAttemptCount?: number;
+    jobMaxAttempts?: number;
+    nextAttemptAtUtc?: Date | undefined;
+    openReconciliationIssueCount?: number;
+    historicalRepublishId?: string | undefined;
+    historicalVersionId?: string | undefined;
+
+    constructor(data?: ISpacePublishAttemptSummaryDto) {
+        if (data) {
+            for (var property in data) {
+                if (data.hasOwnProperty(property))
+                    (this as any)[property] = (data as any)[property];
+            }
+        }
+    }
+
+    init(_data?: any) {
+        if (_data) {
+            this.id = _data["id"];
+            this.siteId = _data["siteId"];
+            this.targetVersionId = _data["targetVersionId"];
+            this.targetVersionNo = _data["targetVersionNo"];
+            this.targetVersionName = _data["targetVersionName"];
+            this.baseVersionId = _data["baseVersionId"];
+            this.status = _data["status"];
+            this.currentStep = _data["currentStep"];
+            this.startedAtUtc = _data["startedAtUtc"] ? new Date(_data["startedAtUtc"].toString()) : undefined as any;
+            this.finishedAtUtc = _data["finishedAtUtc"] ? new Date(_data["finishedAtUtc"].toString()) : undefined as any;
+            this.approvalReference = _data["approvalReference"];
+            this.lastErrorCode = _data["lastErrorCode"];
+            this.summary = _data["summary"];
+            this.jobId = _data["jobId"];
+            this.jobStatus = _data["jobStatus"];
+            this.jobAttemptCount = _data["jobAttemptCount"];
+            this.jobMaxAttempts = _data["jobMaxAttempts"];
+            this.nextAttemptAtUtc = _data["nextAttemptAtUtc"] ? new Date(_data["nextAttemptAtUtc"].toString()) : undefined as any;
+            this.openReconciliationIssueCount = _data["openReconciliationIssueCount"];
+            this.historicalRepublishId = _data["historicalRepublishId"];
+            this.historicalVersionId = _data["historicalVersionId"];
+        }
+    }
+
+    static fromJS(data: any): SpacePublishAttemptSummaryDto {
+        data = typeof data === 'object' ? data : {};
+        let result = new SpacePublishAttemptSummaryDto();
+        result.init(data);
+        return result;
+    }
+
+    toJSON(data?: any) {
+        data = typeof data === 'object' ? data : {};
+        data["id"] = this.id;
+        data["siteId"] = this.siteId;
+        data["targetVersionId"] = this.targetVersionId;
+        data["targetVersionNo"] = this.targetVersionNo;
+        data["targetVersionName"] = this.targetVersionName;
+        data["baseVersionId"] = this.baseVersionId;
+        data["status"] = this.status;
+        data["currentStep"] = this.currentStep;
+        data["startedAtUtc"] = this.startedAtUtc ? this.startedAtUtc.toISOString() : undefined as any;
+        data["finishedAtUtc"] = this.finishedAtUtc ? this.finishedAtUtc.toISOString() : undefined as any;
+        data["approvalReference"] = this.approvalReference;
+        data["lastErrorCode"] = this.lastErrorCode;
+        data["summary"] = this.summary;
+        data["jobId"] = this.jobId;
+        data["jobStatus"] = this.jobStatus;
+        data["jobAttemptCount"] = this.jobAttemptCount;
+        data["jobMaxAttempts"] = this.jobMaxAttempts;
+        data["nextAttemptAtUtc"] = this.nextAttemptAtUtc ? this.nextAttemptAtUtc.toISOString() : undefined as any;
+        data["openReconciliationIssueCount"] = this.openReconciliationIssueCount;
+        data["historicalRepublishId"] = this.historicalRepublishId;
+        data["historicalVersionId"] = this.historicalVersionId;
+        return data;
+    }
+}
+
+export interface ISpacePublishAttemptSummaryDto {
+    id?: string;
+    siteId?: string;
+    targetVersionId?: string;
+    targetVersionNo?: string | undefined;
+    targetVersionName?: string | undefined;
+    baseVersionId?: string | undefined;
+    status?: string | undefined;
+    currentStep?: string | undefined;
+    startedAtUtc?: Date;
+    finishedAtUtc?: Date | undefined;
+    approvalReference?: string | undefined;
+    lastErrorCode?: string | undefined;
+    summary?: string | undefined;
+    jobId?: string | undefined;
+    jobStatus?: string | undefined;
+    jobAttemptCount?: number;
+    jobMaxAttempts?: number;
+    nextAttemptAtUtc?: Date | undefined;
+    openReconciliationIssueCount?: number;
+    historicalRepublishId?: string | undefined;
+    historicalVersionId?: string | undefined;
+}
+
 export class SpacePublishAuditEventDto implements ISpacePublishAuditEventDto {
     id?: string;
     eventNo?: number;
@@ -27571,6 +27799,54 @@ export class SpacePageOfSpaceIssueDto implements ISpacePageOfSpaceIssueDto {
 
 export interface ISpacePageOfSpaceIssueDto {
     items?: SpaceIssueDto[] | undefined;
+    nextCursor?: string | undefined;
+}
+
+export class SpacePageOfSpacePublishAttemptSummaryDto implements ISpacePageOfSpacePublishAttemptSummaryDto {
+    items?: SpacePublishAttemptSummaryDto[] | undefined;
+    nextCursor?: string | undefined;
+
+    constructor(data?: ISpacePageOfSpacePublishAttemptSummaryDto) {
+        if (data) {
+            for (var property in data) {
+                if (data.hasOwnProperty(property))
+                    (this as any)[property] = (data as any)[property];
+            }
+        }
+    }
+
+    init(_data?: any) {
+        if (_data) {
+            if (Array.isArray(_data["items"])) {
+                this.items = [] as any;
+                for (let item of _data["items"])
+                    this.items!.push(SpacePublishAttemptSummaryDto.fromJS(item));
+            }
+            this.nextCursor = _data["nextCursor"];
+        }
+    }
+
+    static fromJS(data: any): SpacePageOfSpacePublishAttemptSummaryDto {
+        data = typeof data === 'object' ? data : {};
+        let result = new SpacePageOfSpacePublishAttemptSummaryDto();
+        result.init(data);
+        return result;
+    }
+
+    toJSON(data?: any) {
+        data = typeof data === 'object' ? data : {};
+        if (Array.isArray(this.items)) {
+            data["items"] = [];
+            for (let item of this.items)
+                data["items"].push(item ? item.toJSON() : undefined as any);
+        }
+        data["nextCursor"] = this.nextCursor;
+        return data;
+    }
+}
+
+export interface ISpacePageOfSpacePublishAttemptSummaryDto {
+    items?: SpacePublishAttemptSummaryDto[] | undefined;
     nextCursor?: string | undefined;
 }
 
