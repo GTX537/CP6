@@ -2,13 +2,13 @@
 
 ## P0：Space V1 下一批受控实现
 
-- 当前功能集成检查点为 `9d0971f4`；首次 Generation Run 创建功能提交 `770bdc96` 与验证报告提交 `bbcaf6fe` 已完成全量门禁，并通过 no-ff 提交 `9d0971f4` 进入受控集成。纯规则 BuildScene 已以 `36cc0241` / `89c6fb2a` / `9e7f7e0a` 进入集成历史。E07 S01–S05、E13 S01–S13/S16/S17、E13-S14 工程切片、E03 S01–S05 及其报告均已存在，不要按旧计划重复实现；`main` 仍不承接这批开发切片。
+- 当前功能集成检查点为 `3d3f923c`；Generation Run Web 入口功能提交 `52bb3a29` 已完成全量门禁，正等待 no-ff 受控集成。首次创建 `770bdc96` / `bbcaf6fe` / `9d0971f4` 与纯规则 BuildScene `36cc0241` / `89c6fb2a` / `9e7f7e0a` 已在集成历史。E07 S01–S05、E13 S01–S13/S16/S17、E13-S14 工程切片、E03 S01–S05 及其报告均已存在，不要按旧计划重复实现；`main` 仍不承接这批开发切片。
 - E13-S11 已完成用户可见取消安全点、同输入重试分类、权威 CommandBatch 对账、Failed/Stale replacement Run、RuleOnly 降级和真库运维演练；生产默认 BuildScene executor 现可让 RuleOnly recovery 从权威 PreviewSet 到 AwaitingReview，且零 Provider、零 Usage、零 Draft 写入。Provider-backed 模式仍失败关闭，不能描述成真实外部 Provider 端到端完成。
 - E13-S13 已完成外部主体在 16 个 AI 操作及 Gateway 的稳定 403 拒绝、External Provider 字段/Token 外发白名单、7 个 GET 读审计和 Customer/Supplier/3PL 矩阵；生产没有真实外部 Provider，不能把门禁实现描述成网络端到端签收。
 - E13-S17 已完成加法 Migration、幂等 SQL、Tenant 清理 Job、90/365 天保留、保留锁、同租户并发租约和 forward-fix 操作说明；生产定时器仍需受控 Worker 配置专用 service principal。
 - E13-S14 的离线评估器、Calibration-only 阈值校准、样本外 Wilson 门禁、规范报告哈希和命令入口已完成；正式 S14 仍需获授权 20 份黄金 CAD、10/5/5、L1～L5、两人标注与 QA 仲裁、真实版本/Provider 输出、人工操作实测、完整性审计和签字。开发合成数据不得计入发布。S15/S19 继续等待供应商合规、影子运行、试点和独立审批证据；S18 依赖 S15，不能提前签收。
 - E13-S10 已消费 E13-S09 Decision 并原子写入 Draft；真实 Worker 的同 SourceHash、已确认 `LoadLockedFacts` 已自动接入 RuleOnly 融合并重映射名称、allowlisted 属性和父关系。不同 SourceHash 的确定性几何建议继承与人工确认仍未完成，不能用猜测匹配绕过失败关闭。
-- 首次 Generation Run 创建服务/API、权限、审计、统一恢复和幂等合同已由 `770bdc96` 完成；RuleOnly 可从已确认 Preview 首次排队，精确固定 Preview Artifact/SHA。下一项内部工作在“权威 RackGenerationProfile 版本存储/读取”与“建模 Web UI 接入 CreateGenerationRun”之间按依赖选择；无人工锁时的确定性父关系推导可随后独立推进，不能发明默认尺寸或关系。
+- 首次 Generation Run 创建服务/API、权限、审计、统一恢复和幂等合同已由 `770bdc96` 完成；建模 Web UI 接入由 `52bb3a29` 完成，RuleOnly 可从已确认 Preview 首次排队、显示进度并进入人工审核。下一项内部工作优先为“权威 RackGenerationProfile 版本存储/读取”；无人工锁时的确定性父关系推导和不同 SourceHash 人工确认可随后独立推进，不能发明默认尺寸或关系。
 - 继续保持批量 High Accept 默认关闭、原始 CAD 不外发、外部 Provider 默认关闭、配额失败关闭、规则路径不依赖 Provider，以及 Draft/Published/WMS/设备边界隔离。
 - E02 S01 中立实验工具已集成，但最终签收仍需数据/QA 提供正式 20 文件黄金集（Calibration 10 / Validation 5 / Holdout 5、L1–L5 各至少 4）及 DWG/DXF 版本/实体矩阵。
 - 法务/采购需确认 ODA 正式 Web/SaaS 授权；工程需获得校验过的 ODA Windows/Linux SDK 包。APS 备试需批准区域、DPA、删除/保留证据和非生产凭据。平台/安全需提供 8 vCPU / 32GiB 的冻结隔离 Worker。
