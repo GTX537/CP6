@@ -1,5 +1,12 @@
 # 已完成能力与近期里程碑
 
+## 2026-08-08 E13-S14 离线评估工程切片
+
+- `e69b3bca` 完成稳定 SourceKey 一对一匹配、覆盖率/语义准确率/人工下降率、高置信度 Precision 与 Wilson 下界，Calibration-only 选阈值且 Validation/Holdout 不参与调参。
+- 20 资产、L1～L5、10/5/5、唯一 hash、授权/脱敏、版本/标注/验收/不可变/完整性审计均进入失败关闭门禁；合成 DevelopmentSeed 永远不能发布。
+- 新增规范报告哈希、现有 Draft Proposal 适配和 `evaluate-ai-offline` 命令。核心 11/11、命令 1/1、工具 26/26、Space Unit 482/482、Integration 275 passed / 94 skipped、CP6.Tests 2811 passed / 17 skipped、完整 Release 0 warning / 0 error。
+- 这里完成的是可复用工程能力；E13-S14 正式黄金数据签收、S15/S18/S19 外部运行与审批证据仍属待办。
+
 ## 2026-08-06 Version Clone 必填字段前向修复
 
 - 以 `0564afad` / `01eba1b7` 完成功能和 no-ff 受控集成；Zone/Aisle/Rack 的 `Name` 与 Rack `RackType` 现在随 Published → Draft 快照保真复制。

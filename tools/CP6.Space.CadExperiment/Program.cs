@@ -52,6 +52,9 @@ public static class Program
                     await SynthesizeDevelopmentAiProposalsAsync(
                         commandLine,
                         cancellation.Token),
+                "evaluate-ai-offline" => await EvaluateAiOfflineAsync(
+                    commandLine,
+                    cancellation.Token),
                 "seal-dev-ai-review-baseline" =>
                     await SealDevelopmentAiReviewBaselineAsync(
                         commandLine,
@@ -708,6 +711,51 @@ public static class Program
             },
             CadExperimentJson.Options));
         return 0;
+    }
+
+    private static async Task<int> EvaluateAiOfflineAsync(
+        CommandLine commandLine,
+        CancellationToken cancellationToken)
+    {
+        var inputPath = Path.GetFullPath(commandLine.Required("--input"));
+        var outputPath = Path.GetFullPath(commandLine.Required("--output"));
+        if (inputPath.Equals(outputPath, StringComparison.OrdinalIgnoreCase))
+        {
+            throw new ArgumentException(
+                "Offline evaluation input and output paths must differ.");
+        }
+
+        var request = await ReadRequiredJsonAsync<
+            SpaceAiOfflineEvaluationRequestV1>(
+                inputPath,
+                "The offline AI evaluation request is empty.",
+                cancellationToken);
+        var report = new SpaceAiOfflineEvaluator().Evaluate(request);
+        await WriteCanonicalJsonAsync(
+            outputPath,
+            SpaceAiOfflineEvaluator.Serialize(report),
+            cancellationToken);
+        Console.WriteLine(JsonSerializer.Serialize(
+            new
+            {
+                report.DatasetVersion,
+                report.DatasetPurpose,
+                report.AppliedHighConfidenceThreshold,
+                report.OverallMetrics,
+                report.OutOfSampleMetrics,
+                report.Calibration.DecisionCode,
+                report.Gate,
+                report.ReportSha256,
+                ExternalProviderInvoked = false,
+                DraftWritten = false,
+            },
+            CadExperimentJson.Options));
+        if (!report.Gate.EvaluationDataValid)
+            return 3;
+        return commandLine.HasFlag("--require-release-eligible")
+               && !report.Gate.ReleaseEligible
+            ? 4
+            : 0;
     }
 
     private static async Task<int> BuildDevelopmentAiReviewWorkspaceAsync(
@@ -1592,6 +1640,9 @@ public static class Program
                   [--locked-facts <json-path>]
                   [--template-defaults <json-path>]
                   [--rack-profiles <json-path>]
+              evaluate-ai-offline --input <normalized-evaluation-request-json-path>
+                  --output <canonical-evaluation-report-json-path>
+                  [--require-release-eligible]
               seal-dev-ai-review-baseline --input <baseline-draft-json-path>
                   --output <sealed-baseline-json-path>
               build-dev-ai-review-workspace --proposals <proposal-set-json-path>

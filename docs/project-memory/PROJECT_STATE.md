@@ -2,6 +2,13 @@
 
 最后更新：2026-08-08
 
+## E13-S14 离线质量评估开发切片（2026-08-08）
+
+- 在集成基线 `6c99b0fe` 上以功能提交 `e69b3bca` 交付离线质量评估器、Calibration-only 阈值校准、Validation+ReleaseHoldout 样本外验证、95% Wilson 下界和规范报告 SHA-256；最终融合提案按 SampleId+SourceKey 一对一匹配，重复猜测计 False Positive，类型、关键属性和关系必须正确。
+- 正式清单硬门禁覆盖 20 资产、L1～L5、10/5/5、唯一 CAD hash、授权/脱敏、应用/Parser/Provider/Model/规则/映射/答案版本、独立标注仲裁、验收日期、不可变和完整性审计。DevelopmentSeed 即使指标全绿也不能成为发布证据。
+- `evaluate-ai-offline` 命令支持开发测量与 `--require-release-eligible` 失败关闭；无 Provider 调用、Draft 写入、Migration、HTTP/OpenAPI 或 SDK 变化。门禁为核心 11/11、命令 1/1、CAD 工具 26/26、Space Unit 482/482、默认 Integration 275 passed / 94 skipped、CP6.Tests 2811 passed / 17 skipped、完整 solution Release 0 warning / 0 error。
+- 本切片是 E13-S14 工程能力，不是正式 S14 签收；仍需获授权黄金 CAD、独立标注/QA、真实版本冻结、Provider 输出、人工操作实测和签字。完整边界见 `docs/space/reports/e13-s14-offline-evaluation-gate-development.md`。
+
 ## E03-S05 Excel 设计元数据权威 Apply 扩展（2026-08-08）
 
 - 在集成基线 `0cff2123` 上以功能提交 `b5aa87b2` 关闭标准 Excel 的最后三个已知失败关闭字段：`Bindings` 成为 ModelVersion 内的设计声明，Site 权威 WarehouseCode 必须逐字符一致，AdapterId 固定自当前运行源；每个有绑定行的 Location 恰有一个 WmsPrimary，并可带 WmsAlias。Excel 声明不冒充 WMS Adoption。
