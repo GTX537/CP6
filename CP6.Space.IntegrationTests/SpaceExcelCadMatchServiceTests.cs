@@ -266,6 +266,266 @@ public sealed class SpaceExcelCadMatchServiceTests
     }
 
     [Fact]
+    public async Task Confirmed_apply_persists_hierarchy_and_pins_tenant_template_version()
+    {
+        var original = await CreateFixtureAsync();
+        await using var fixture = original with
+        {
+            Profile = original.Profile with
+            {
+                Definition = ExcelDefinition(
+                    "Racks",
+                    "RackLevels",
+                    "Locations"),
+            },
+            Workbook = HierarchyExcelWorkbook(),
+        };
+        var tenantId = fixture.Context.CurrentTenantId;
+        var actorId = Guid.NewGuid();
+        var systemAsset = SpaceAsset.CreateSystem(
+            "RT-STD",
+            "System rack template",
+            "RackTemplate",
+            null,
+            actorId,
+            Now);
+        var systemVersion = SpaceAssetVersion.CreateReady(
+            systemAsset,
+            1,
+            SpaceAssetFormat.Parametric,
+            "{}",
+            null,
+            null,
+            new string('a', 64),
+            actorId,
+            Now);
+        var tenantAsset = SpaceAsset.CreateTenant(
+            tenantId,
+            "RT-STD",
+            "Tenant rack template",
+            "RackTemplate",
+            null,
+            actorId,
+            Now);
+        var tenantVersion1 = SpaceAssetVersion.CreateReady(
+            tenantAsset,
+            1,
+            SpaceAssetFormat.Parametric,
+            "{}",
+            null,
+            null,
+            new string('b', 64),
+            actorId,
+            Now);
+        var tenantVersion2 = SpaceAssetVersion.CreateReady(
+            tenantAsset,
+            2,
+            SpaceAssetFormat.Parametric,
+            "{}",
+            null,
+            null,
+            new string('c', 64),
+            actorId,
+            Now);
+        fixture.Context.AddRange(
+            systemAsset,
+            systemVersion,
+            tenantAsset,
+            tenantVersion1,
+            tenantVersion2);
+        await fixture.Context.SaveChangesAsync();
+
+        var match = await ProduceSucceededMatchAsync(fixture, "hierarchy-match");
+        var confirmed = await fixture.ApplyService.ConfirmAsync(
+            fixture.Version.Id,
+            match.JobId,
+            new ConfirmSpaceExcelCadMatchRequest(
+                true,
+                match.ArtifactId,
+                match.Artifact.ArtifactPayloadSha256,
+                fixture.Version.ContentRevision),
+            "hierarchy-confirm");
+        var lease = await ClaimAsync(
+            fixture,
+            confirmed.ApplyJobId,
+            SpaceExcelCadApplyJobProcessor.Version,
+            "hierarchy-worker");
+        var executor = new SpaceExcelCadApplyJobStepExecutor(
+            fixture.Context,
+            new FileServiceProvider(fixture.Files),
+            new FixedWorkbookReader(fixture.Workbook),
+            new FixedMappingService(fixture.Profile),
+            new FixedClock());
+        var execution = new SpaceJobStepExecution(
+            lease,
+            1,
+            SpaceExcelCadApplyJobProcessor.ApplyConfirmedArtifact);
+
+        var first = await executor.ExecuteAsync(execution);
+        var replay = await executor.ExecuteAsync(execution);
+
+        Assert.Equal(first, replay);
+        var rack = await fixture.Context.RackRevisions.SingleAsync();
+        Assert.Equal(tenantVersion2.Id, rack.TemplateVersionId);
+        var levels = await fixture.Context.RackLevelRevisions
+            .OrderBy(item => item.LevelNo)
+            .ToArrayAsync();
+        Assert.Equal(2, levels.Length);
+        Assert.Equal(500, levels[0].CellWidth);
+        Assert.Equal(600, levels[0].CellDepth);
+        Assert.Equal(1000m, levels[0].MaxLoad);
+        var locations = await fixture.Context.LocationRevisions
+            .OrderBy(item => item.LocationCode)
+            .ToArrayAsync();
+        Assert.Equal(2, locations.Length);
+        Assert.All(locations, item =>
+            Assert.Equal(SpaceLocationCodeOrigin.Imported, item.CodeOrigin));
+        Assert.Equal(500, locations[0].Width);
+        Assert.Equal(1000, locations[0].Height);
+        Assert.Equal(600, locations[0].Depth);
+        var commands = await fixture.Context.ElementCommandRecords
+            .OrderBy(item => item.SequenceNo)
+            .ToArrayAsync();
+        Assert.Equal(5, commands.Length);
+        Assert.Equal(Enumerable.Range(0, 5),
+            commands.Select(item => item.SequenceNo));
+    }
+
+    [Fact]
+    public async Task Confirmed_apply_updates_children_and_disables_omitted_authoritative_rows()
+    {
+        var original = await CreateFixtureAsync();
+        await using var fixture = original with
+        {
+            Profile = original.Profile with
+            {
+                Definition = ExcelDefinition(
+                    "Racks",
+                    "RackLevels",
+                    "Locations"),
+            },
+            Workbook = SingleChildHierarchyExcelWorkbook(),
+        };
+        var tenantId = fixture.Context.CurrentTenantId;
+        var floor = await fixture.Context.FloorRevisions.SingleAsync();
+        var zone = await fixture.Context.ZoneRevisions.SingleAsync();
+        var rack = SpaceRackRevision.Create(
+            tenantId,
+            fixture.Version.Id,
+            Guid.NewGuid(),
+            floor.LogicalId,
+            zone.LogicalId,
+            "R-001");
+        rack.ConfigureGeometry(0, 0, 0, 0, 1000, 1200, 5000);
+        var retainedLevel = SpaceRackLevelRevision.Create(
+            tenantId,
+            fixture.Version.Id,
+            Guid.NewGuid(),
+            rack.LogicalId,
+            1,
+            100,
+            800,
+            1,
+            1,
+            1000,
+            1200);
+        var omittedLevel = SpaceRackLevelRevision.Create(
+            tenantId,
+            fixture.Version.Id,
+            Guid.NewGuid(),
+            rack.LogicalId,
+            3,
+            2400,
+            800,
+            1,
+            1,
+            1000,
+            1200);
+        var retainedLocation = SpaceLocationRevision.Create(
+            tenantId,
+            fixture.Version.Id,
+            Guid.NewGuid(),
+            floor.LogicalId,
+            rack.LogicalId,
+            "L-001",
+            1,
+            1,
+            1,
+            1000,
+            800,
+            1200,
+            codeOrigin: SpaceLocationCodeOrigin.Imported);
+        var omittedLocation = SpaceLocationRevision.Create(
+            tenantId,
+            fixture.Version.Id,
+            Guid.NewGuid(),
+            floor.LogicalId,
+            rack.LogicalId,
+            "L-OLD",
+            1,
+            3,
+            1,
+            1000,
+            800,
+            1200,
+            codeOrigin: SpaceLocationCodeOrigin.Imported);
+        fixture.Context.AddRange(
+            rack,
+            retainedLevel,
+            omittedLevel,
+            retainedLocation,
+            omittedLocation);
+        await fixture.Context.SaveChangesAsync();
+
+        var match = await ProduceSucceededMatchAsync(fixture, "update-hierarchy-match");
+        var confirmed = await fixture.ApplyService.ConfirmAsync(
+            fixture.Version.Id,
+            match.JobId,
+            new ConfirmSpaceExcelCadMatchRequest(
+                true,
+                match.ArtifactId,
+                match.Artifact.ArtifactPayloadSha256,
+                fixture.Version.ContentRevision),
+            "update-hierarchy-confirm");
+        var lease = await ClaimAsync(
+            fixture,
+            confirmed.ApplyJobId,
+            SpaceExcelCadApplyJobProcessor.Version,
+            "update-hierarchy-worker");
+        var executor = new SpaceExcelCadApplyJobStepExecutor(
+            fixture.Context,
+            new FileServiceProvider(fixture.Files),
+            new FixedWorkbookReader(fixture.Workbook),
+            new FixedMappingService(fixture.Profile),
+            new FixedClock());
+
+        await executor.ExecuteAsync(new SpaceJobStepExecution(
+            lease,
+            1,
+            SpaceExcelCadApplyJobProcessor.ApplyConfirmedArtifact));
+
+        Assert.Null((await fixture.Context.RackRevisions.SingleAsync())
+            .TemplateVersionId);
+        var appliedRetainedLevel = await fixture.Context.RackLevelRevisions
+            .SingleAsync(item => item.LogicalId == retainedLevel.LogicalId);
+        var appliedOmittedLevel = await fixture.Context.RackLevelRevisions
+            .SingleAsync(item => item.LogicalId == omittedLevel.LogicalId);
+        Assert.Equal(0, appliedRetainedLevel.BottomZ);
+        Assert.Equal(2, appliedRetainedLevel.BinCount);
+        Assert.Equal(SpaceLifecycleState.Disabled,
+            appliedOmittedLevel.LifecycleState);
+        var appliedRetainedLocation = await fixture.Context.LocationRevisions
+            .SingleAsync(item => item.LogicalId == retainedLocation.LogicalId);
+        var appliedOmittedLocation = await fixture.Context.LocationRevisions
+            .SingleAsync(item => item.LogicalId == omittedLocation.LogicalId);
+        Assert.Equal(500, appliedRetainedLocation.Width);
+        Assert.Equal(1000, appliedRetainedLocation.Height);
+        Assert.Equal(SpaceLifecycleState.Disabled,
+            appliedOmittedLocation.LifecycleState);
+        Assert.Equal(5, await fixture.Context.ElementCommandRecords.CountAsync());
+    }
+
+    [Fact]
     public async Task Revision_drift_fails_before_any_apply_write()
     {
         await using var fixture = await CreateFixtureAsync();
@@ -802,18 +1062,19 @@ public sealed class SpaceExcelCadMatchServiceTests
             diagnostics);
     }
 
-    private static SpaceExcelMappingDefinitionDto ExcelDefinition() => new(
+    private static SpaceExcelMappingDefinitionDto ExcelDefinition(
+        params string[] sheets) => new(
         SpaceExcelTargetCatalog.MappingSchemaVersion,
         "Ignore",
         "Reject",
         "Reject",
-        [new SpaceExcelSheetMappingDto(
-            "Racks",
-            "Racks",
+        sheets.Select(sheet => new SpaceExcelSheetMappingDto(
+            sheet,
+            sheet,
             "Exact",
             1,
             2,
-            SpaceExcelTargetCatalog.ForSheet("Racks")
+            SpaceExcelTargetCatalog.ForSheet(sheet)
                 .Select(field => new SpaceExcelColumnMappingDto(
                     field.Field,
                     field.Field,
@@ -825,7 +1086,11 @@ public sealed class SpaceExcelCadMatchServiceTests
                     field.ReferenceTarget,
                     [],
                     null))
-                .ToArray())]);
+                .ToArray()))
+            .ToArray());
+
+    private static SpaceExcelMappingDefinitionDto ExcelDefinition() =>
+        ExcelDefinition("Racks");
 
     private static SpaceExcelWorkbookData ExcelWorkbook()
     {
@@ -863,6 +1128,110 @@ public sealed class SpaceExcelCadMatchServiceTests
                 .ToDictionary(item => item.ColumnIndex));
         return new SpaceExcelWorkbookData(
             [new SpaceExcelWorkbookSheet("Racks", [header, row])]);
+    }
+
+    private static SpaceExcelWorkbookData HierarchyExcelWorkbook(
+        bool withTemplate = true) => new(
+        [
+            Sheet("Racks",
+                new Dictionary<string, string?>
+                {
+                    ["FloorCode"] = "F01",
+                    ["ZoneCode"] = "Z1",
+                    ["RackCode"] = "R-001",
+                    ["XMm"] = "0",
+                    ["YMm"] = "0",
+                    ["ZMm"] = "0",
+                    ["WidthMm"] = "1000",
+                    ["DepthMm"] = "1200",
+                    ["HeightMm"] = "5000",
+                    ["RotationZDeg"] = "0",
+                    ["RackTemplateCode"] = withTemplate ? "RT-STD" : null,
+                    ["LifecycleStatus"] = "Active",
+                }),
+            Sheet("RackLevels",
+                new Dictionary<string, string?>
+                {
+                    ["RackCode"] = "R-001",
+                    ["LevelNo"] = "1",
+                    ["BottomZMm"] = "0",
+                    ["ClearHeightMm"] = "1000",
+                    ["BinCount"] = "2",
+                    ["DepthCount"] = "2",
+                    ["LoadCapacityKg"] = "1000",
+                    ["LifecycleStatus"] = "Active",
+                },
+                new Dictionary<string, string?>
+                {
+                    ["RackCode"] = "R-001",
+                    ["LevelNo"] = "2",
+                    ["BottomZMm"] = "1200",
+                    ["ClearHeightMm"] = "900",
+                    ["BinCount"] = "2",
+                    ["DepthCount"] = "1",
+                    ["LoadCapacityKg"] = null,
+                    ["LifecycleStatus"] = "Disabled",
+                }),
+            Sheet("Locations",
+                new Dictionary<string, string?>
+                {
+                    ["LocationCode"] = "L-001",
+                    ["RackCode"] = "R-001",
+                    ["ColumnNo"] = "1",
+                    ["LevelNo"] = "1",
+                    ["DepthNo"] = "1",
+                    ["LifecycleStatus"] = "Active",
+                    ["LocationType"] = null,
+                },
+                new Dictionary<string, string?>
+                {
+                    ["LocationCode"] = "L-002",
+                    ["RackCode"] = "R-001",
+                    ["ColumnNo"] = "2",
+                    ["LevelNo"] = "1",
+                    ["DepthNo"] = "2",
+                    ["LifecycleStatus"] = "Active",
+                    ["LocationType"] = null,
+                }),
+        ]);
+
+    private static SpaceExcelWorkbookData SingleChildHierarchyExcelWorkbook()
+    {
+        var workbook = HierarchyExcelWorkbook(withTemplate: false);
+        return new SpaceExcelWorkbookData(workbook.Sheets
+            .Select(sheet => sheet.Name == "Racks"
+                ? sheet
+                : sheet with { Rows = sheet.Rows.Take(2).ToArray() })
+            .ToArray());
+    }
+
+    private static SpaceExcelWorkbookSheet Sheet(
+        string name,
+        params IReadOnlyDictionary<string, string?>[] values)
+    {
+        var fields = SpaceExcelTargetCatalog.ForSheet(name);
+        var rows = new List<SpaceExcelWorkbookRow>
+        {
+            new(
+                1,
+                fields.Select((field, index) => new SpaceExcelWorkbookCell(
+                        index + 1,
+                        ColumnName(index + 1),
+                        field.Field,
+                        false))
+                    .ToDictionary(item => item.ColumnIndex)),
+        };
+        rows.AddRange(values.Select((row, rowIndex) =>
+            new SpaceExcelWorkbookRow(
+                rowIndex + 2,
+                fields.Select((field, columnIndex) =>
+                        new SpaceExcelWorkbookCell(
+                            columnIndex + 1,
+                            ColumnName(columnIndex + 1),
+                            row.GetValueOrDefault(field.Field),
+                            false))
+                    .ToDictionary(item => item.ColumnIndex))));
+        return new SpaceExcelWorkbookSheet(name, rows);
     }
 
     private static string ColumnName(int index)

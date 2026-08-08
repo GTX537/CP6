@@ -670,6 +670,47 @@ public sealed class SpaceLocationRevision : SpaceRevisionEntity
         MaxLoad = maxLoad;
         ChangeLifecycle(SpaceLifecycleState.Active);
     }
+
+    public void UpdateImportedSpecification(
+        Guid floorLogicalId,
+        Guid rackLogicalId,
+        string locationCode,
+        int columnNo,
+        int levelNo,
+        int depthNo,
+        int width,
+        int height,
+        int depth,
+        decimal? maxLoad = null)
+    {
+        var normalizedCode = SpaceRevisionValue.RequiredText(
+            locationCode,
+            200,
+            nameof(locationCode));
+        if (ExternalBindingState != SpaceExternalBindingState.Unbound &&
+            !string.Equals(
+                LocationCode,
+                normalizedCode,
+                StringComparison.Ordinal))
+        {
+            throw new InvalidOperationException(
+                "A WMS-bound location code cannot be replaced by an import.");
+        }
+
+        UpdateGeneratedSpecification(
+            floorLogicalId,
+            rackLogicalId,
+            columnNo,
+            levelNo,
+            depthNo,
+            width,
+            height,
+            depth,
+            maxLoad);
+        LocationCode = normalizedCode;
+        if (ExternalBindingState == SpaceExternalBindingState.Unbound)
+            CodeOrigin = SpaceLocationCodeOrigin.Imported;
+    }
 }
 
 public sealed class SpaceElementRevision : SpaceRevisionEntity
