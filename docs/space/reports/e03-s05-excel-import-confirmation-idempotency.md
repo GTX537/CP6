@@ -62,3 +62,7 @@ E03 的五张应用内开发卡现已形成“模板/映射/预检 → 权威匹
 3. Zone、Aisle、RackLevel、Location 等工作表以及 `RackTemplateCode` 的权威解析与写入尚未纳入本卡。
 4. 本卡未调用 WMS、未发布版本，也未改变 `main`；版本校验、发布与 WMS 同步继续由 E06 权威链负责。
 
+## 2026-08-08 后续扩展
+
+上述“仅 Racks”是本报告对应原始提交的历史边界。后续功能提交 `cb802cf6` 已在不改变确认、Artifact、CommandBatch 和修订语义的前提下支持标准工作簿的 RackLevels、Locations 与 RackTemplateCode；详细规则、失败关闭范围和验证证据见 `e03-s05-hierarchy-template-apply.md`。标准模板没有 Zone/Aisle 工作表，因此没有新增或伪造对应导入格式。
+

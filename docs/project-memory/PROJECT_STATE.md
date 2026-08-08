@@ -2,6 +2,14 @@
 
 最后更新：2026-08-08
 
+## E03-S05 Excel 层级与 RackTemplate 权威 Apply 扩展（2026-08-08）
+
+- 在集成基线 `677f8df5` 上以功能提交 `cb802cf6` 扩展 E03-S05：同一 Serializable CommandBatch 现在按 `Racks → RackLevels → Locations` 写入，子对象按稳定业务键更新或按冻结行身份生成确定性 LogicalId/CommandId；整批只提升一次 Floor Revision 与 ContentRevision，重放不重复创建。
+- 标准工作簿本身没有 Zone/Aisle 工作表，因此不伪造格式；`Racks.ZoneCode` 唯一解析已有 Zone，Aisle 保持可空。RackLevel 单元尺寸由 Rack 尺寸和 Bin/DepthCount 以整数毫米推导，Location 继承对应层的 CellWidth/ClearHeight/CellDepth/MaxLoad。映射方案声明子表权威时，省略的活动子对象改为 Disabled；WMS 已绑定 Location 不允许被省略删除。
+- 非空 `RackTemplateCode` 解析可见活动 Asset：Tenant 同码优先于 System，并固定到最新 Ready 不可变 SpaceAssetVersion。Excel 显式尺寸与层级行仍是导入几何权威，模板只固定版本血缘。
+- `Bindings`、`Attributes` 和非空 `LocationType` 继续返回 `SPACE_EXCEL_CAD_APPLY_SCOPE_UNSUPPORTED`，因为现有模型分别缺少仓库到 Site/Adapter 的权威解析、Rack/RackLevel/Location 属性归属和 LocationType 持久字段；不静默丢失数据。无 Migration、HTTP、OpenAPI、SDK 或前端变化，`main` 未修改。
+- 门禁：Location 领域 3/3、Match/Apply 9/9、Space Unit 467/467、默认 Space Integration 272 passed / 94 SQL-gated skipped、CP6.Tests 2811 passed / 17 environment-gated skipped；完整 solution Release（含 Desktop/Android AOT）0 warning / 0 error，任务文件格式和 diff 检查通过。完整证据见 `docs/space/reports/e03-s05-hierarchy-template-apply.md`。
+
 ## Space 生产处理 Job Worker 接线（2026-08-08）
 
 - 在集成基线 `17bce8df` 上以功能提交 `d09e44dc`、验证报告提交 `67d8b417` 和 no-ff 提交 `51012a43` 进入 `integration/space-v1-20260730`；`main` 未修改。
@@ -9,7 +17,7 @@
 - Processing Worker 每个租户每轮每类型最多认领一个 Job，复用既有租约、心跳、checkpoint、超时、退避、取消和接管；热队列不能饿死其他类型。稳定非空系统 Actor 同时传播到 Core/Application 上下文，满足 AI Apply 等后台安全门禁。
 - 未配置 CAD、Import/BuildScene 或外部 AI Provider 时仍按既有稳定错误失败关闭；本卡不启用外部网络、密钥、URL 或来源不明的转换器。无数据库、Migration、API、OpenAPI、SDK 或前端变化。
 - 门禁：Worker 聚焦 3/3、默认处理器注册 1/1、Job Processor 17/17、Space Unit 464/464、默认 Space Integration 270 passed / 94 SQL-gated skipped、CP6.Tests 2811 passed / 17 environment-gated skipped；完整 solution Release（含 Desktop/Android 双架构 AOT）0 warning / 0 error，任务文件格式与 diff 检查通过。完整证据见 `docs/space/reports/space-processing-job-worker-production.md`。
-- 合并后清理 36 个可重建目录、6,190 个文件、1,206,049,385 bytes（约 1.123 GiB）。生产部署仍需发布包含本提交的镜像；正式 CAD Provider、授权 DWG/DXF 黄金集和真实性能证据未因此解除。下一项可本地推进的是补齐 E03-S05 的 Zone/Aisle/RackLevel/Location 与 RackTemplateCode 权威原子写入。
+- 合并后清理 36 个可重建目录、6,190 个文件、1,206,049,385 bytes（约 1.123 GiB）。生产部署仍需发布包含本提交的镜像；正式 CAD Provider、授权 DWG/DXF 黄金集和真实性能证据未因此解除。E03-S05 的 RackLevel/Location 与 RackTemplateCode 权威原子写入已由后续扩展完成；标准工作簿没有 Zone/Aisle 表，ZoneCode 只解析已有 Zone。
 
 ## E03-S05 Excel 导入确认与幂等写入开发切片（2026-08-08）
 
@@ -693,4 +701,4 @@
 
 ## 下一动作
 
-E03-S01～S05、E13-S16、E06-S01～S06 及生产 Processing Worker 代码接线均已进入受控集成，不再重复这些卡。下一项不依赖外部条件的 MVP 工作是扩展 E03-S05 权威 Apply：按冻结工作簿和 Match Artifact 的父子引用顺序支持 Zone、Aisle、Rack、RackLevel、Location，并通过已版本化 Rack Template 解析逐层/库位规格；全部对象继续使用确定性 LogicalId/CommandId、单 CommandBatch、单 Floor/ContentRevision 和整批事务，任何模板、引用、Artifact 或修订漂移保持零写入。E02/CAD 正式签收仍等待获授权的原生 DWG/DXF Provider、组织黄金集和真实大文件/故障/性能证据；生产部署需发布包含 `51012a43` 的镜像。E06 生产等价 WMS 演练、E13 外部 Provider/S14～S15/S18～S19、E12-S06 和跨职能 Beta/GA 证据仍是独立缺口。禁止创建未授权生产 CAD/DWG/外部 AI 适配器，禁止把候选检查点 `0d25da4d` 整包合入，GR-VP T1–T7 不要重做。
+E03-S01～S05、E13-S16、E06-S01～S06、生产 Processing Worker，以及 E03-S05 的 Rack/RackLevel/Location/RackTemplate 权威写入均已进入受控集成，不再重复这些卡。下一项不依赖外部条件的 MVP 工作是为标准 Excel 的 `Bindings`、`Attributes` 与 `LocationType` 建立无歧义的版本化持久合同：先明确 WmsWarehouseCode 到 Site/Adapter 的权威解析、Rack/RackLevel/Location 属性归属及 LocationType 字段，再扩展同一 CommandBatch；合同完成前继续失败关闭。标准工作簿没有 Zone/Aisle 表，不得伪造导入格式。E02/CAD 正式签收仍等待获授权的原生 DWG/DXF Provider、组织黄金集和真实大文件/故障/性能证据；生产部署需发布包含 Processing Worker 与本扩展的新镜像。E06 生产等价 WMS 演练、E13 外部 Provider/S14～S15/S18～S19、E12-S06 和跨职能 Beta/GA 证据仍是独立缺口。禁止创建未授权生产 CAD/DWG/外部 AI 适配器，禁止把候选检查点 `0d25da4d` 整包合入，GR-VP T1–T7 不要重做。
