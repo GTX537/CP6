@@ -3,6 +3,8 @@
 日期：2026-08-08
 基线：`17bce8df`（`integration/space-v1-20260730`）
 功能提交：`d09e44dc`
+验证报告提交：`67d8b417`
+no-ff 集成提交：`51012a43`
 
 ## 交付结论
 
@@ -39,6 +41,7 @@ Space WebApi 生产 Host 现在除既有发布专用 Worker 外，还会启动�
 - CP6.Tests：2811 passed / 0 failed / 17 environment-gated skipped；
 - 完整 `CP6.slnx` Release 单线程构建：0 warning / 0 error，包含 WebApi、Desktop 与 Android 双架构 AOT；
 - 四个任务 C# 文件 whitespace 校验和 `git diff --check` 通过。`Program.cs` 只替换一条 HostedService 注册语句；该历史大文件自身不满足全文件 formatter，未借本卡机械改写无关代码。
+- 集成并推送后清理 36 个可重建 `bin/obj` 目录、6,190 个文件、1,206,049,385 bytes（约 1.123 GiB）；源码、报告和远端 Git 历史不受影响。
 
 ## 未改变与后续边界
 
