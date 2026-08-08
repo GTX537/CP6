@@ -2,6 +2,14 @@
 
 最后更新：2026-08-08
 
+## E03-S04 服务端权威 Match Artifact 开发切片（2026-08-08）
+
+- 在集成基线 `27d3989b` 上完成功能提交 `4db2d0d0`、验证报告提交 `93f65a33`，并以 no-ff 提交 `3ee23655` 进入 `integration/space-v1-20260730`；`main` 未修改。
+- 新增服务端权威 `ExcelCadMatch` Job 与私有 `ExcelCadMatchPreview` Artifact。HTTP 只冻结 Excel Preflight、CAD Parse/PreviewSet、映射方案和 Draft ContentRevision 后排队；Worker 重新打开私有 Excel、校验 Job/Artifact/Schema/SHA/血缘并直接读取数据库 Floor/Zone/Rack 权威快照，客户端不能提交匹配结果或哈希。
+- 新增创建/查询 API、`space:model:edit/read` 权限、写/读审计、外部主体拒绝、受保护游标筛选分页和编辑器权威审阅/画布定位。Draft 修订漂移时保留只读历史证据但关闭 `CanConfirm`；重试只复用唯一且完整校验通过的 Artifact。OpenAPI 操作数为 113，C#/TypeScript SDK 已同步，无 Migration。
+- 门禁：Space Unit 464/464；默认 Space Integration 267 passed / 94 SQL-gated skipped；CP6.Tests 2806 passed / 17 environment-gated skipped；前端 132 files / 702 tests；完整 solution Release（含 Desktop/Android AOT）0 error / 10 条既有 warning；类型检查、生产构建、SDK drift、受影响文件格式和 diff 检查通过。完整证据见 `docs/space/reports/e03-s04-authoritative-match-artifact.md`。
+- E03-S05 的人工确认与原子 Draft 写入现已解除应用内前置依赖，但仍必须只消费本卡权威 Artifact，精确校验 ContentRevision 并失败关闭。正式 CAD Provider、组织授权 DWG/DXF 黄金集、生产 Excel/CAD Worker 部署和真实大文件/故障/性能证据仍未完成，因此本卡不是生产 CAD 正式签收。
+
 ## E06-S06 版本发布管理 UI 开发切片（2026-08-08）
 
 - 在集成基线 `088648b7e` 上以功能提交 `69a8b77a`、验证报告提交 `3fefe0ef` 和 no-ff 提交 `0d61f3dc` 进入 `integration/space-v1-20260730`；`main` 未修改。`/space/publish` 现提供验证、权威差异/WMS 影响预览、外部审批引用确认、发布进度/失败恢复/人工重试、审计时间线和历史版本重新发布入口；原库位发布工具保留在 `/space/location-publish`。
@@ -667,4 +675,4 @@
 
 ## 下一动作
 
-E06-S01～S02 已完成权威校验与只读差异/影响预览并进入受控集成。下一张可独立推进 E06-S03 仓库级发布编排：必须持久化不可变 PublishPlan，以 PlanHash、ValidationRun、ContentHash、当前 Published 指针和 WMS CapabilityHash 再次失败关闭，并通过可恢复 Saga 执行；只有 WMS 成功且回读验证一致后才能激活运行态，部分或不确定结果进入对账。E03-S05 继续等待服务端权威 E03-S04 Match Artifact、持久化、API、权限和审计，不能把客户端离线预览直接写入 Draft。E02/CAD 正式签收继续等待获授权的原生 DWG/DXF Provider、组织有权使用的黄金集、生产 Hosted Worker 以及真实大文件/故障/性能证据；合成 DXF 与开发切片不计入发布门禁。E13 外部 Provider、E12-S06 和跨职能 Beta/GA 证据也仍需独立解除。禁止创建未授权生产 CAD/DWG/外部 AI 适配器，禁止把候选检查点 `0d25da4d` 整包合入，GR-VP T1–T7 不要重做。
+E03-S04 服务端权威 Match Artifact 已完成并进入受控集成。下一张推进 E03-S05：只允许用户显式确认本卡持久化的权威 Artifact，服务端必须再次核验 Tenant/Site/Version/Job/Artifact/哈希、`CanConfirm` 和精确 ExpectedContentRevision，以单事务、单 ContentRevision、稳定幂等键写入 Draft；任何 Unmatched/Conflict/Error/低可信候选或来源漂移都保持零写入。E02/CAD 正式签收继续等待获授权的原生 DWG/DXF Provider、组织有权使用的黄金集、生产 Excel/CAD Worker 以及真实大文件/故障/性能证据；合成 DXF 与开发切片不计入发布门禁。E06 应用内 S01～S06 已完成，但生产等价 WMS 演练与 Beta/GA 证据仍需独立解除。E13 外部 Provider、E12-S06 和跨职能 Beta/GA 证据也仍是独立缺口。禁止创建未授权生产 CAD/DWG/外部 AI 适配器，禁止把候选检查点 `0d25da4d` 整包合入，GR-VP T1–T7 不要重做。
