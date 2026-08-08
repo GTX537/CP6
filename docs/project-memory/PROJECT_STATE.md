@@ -2,6 +2,15 @@
 
 最后更新：2026-08-08
 
+## E03-S05 Excel 导入确认与幂等写入开发切片（2026-08-08）
+
+- 在集成基线 `cdc629ea` 上以功能提交 `4e92e435`、验证报告提交 `d048e01a` 和 no-ff 提交 `f735747a` 进入 `integration/space-v1-20260730`；`main` 未修改。
+- E03-S04 权威匹配面板现在必须由用户显式确认，服务端才创建 `ExcelCadApply` Job。确认绑定 Artifact ID/SHA、ExpectedContentRevision 与幂等键；Worker 重新打开私有 Artifact 和 Excel、重算规范投影并核验 Tenant/Site/Version/映射/Floor/修订，浏览器不能提交匹配结果、目标或写命令。
+- Apply 在 Serializable 事务中写入货架、关联 Excel Source、追加确定性 CommandBatch/Command、提升一次 Floor Revision 和一次 ContentRevision，并把来源置为 Imported。重复确认、不同幂等键重确认、Job 重放及“数据库已提交但 checkpoint 未保存”的恢复均复用同一批次；任何权威输入漂移整批失败关闭、零部分写入。无新表或 Migration。
+- 本卡正式写入范围仅为已匹配 `Racks` 行；其他目标工作表或非空 `RackTemplateCode` 返回 `SPACE_EXCEL_CAD_APPLY_SCOPE_UNSUPPORTED`，不会静默忽略。OpenAPI 操作数为 115，C#/TypeScript SDK 与前端显式确认状态已同步。
+- 门禁：API/权限/OpenAPI 62/62，Apply/原子性/注册 8/8，Match/Artifact/Processor 27/27，Space Unit 464/464，默认 Space Integration 270 passed / 94 SQL-gated skipped，CP6.Tests 2808 passed / 17 environment-gated skipped，前端 132 files / 705 tests；类型、生产构建、SDK drift、格式与 diff 检查通过；完整 solution Release（含 Desktop/Android 双架构 AOT）0 error / 10 条既有 warning。完整证据见 `docs/space/reports/e03-s05-excel-import-confirmation-idempotency.md`。
+- E03-S01～S05 的应用内主链已闭环，但生产 WebApi Hosted Worker 尚未认领 `ExcelCadApply`；完整 Excel 层级/模板写入、正式 CAD Provider、组织授权 DWG/DXF 黄金集和真实大文件/故障/性能证据仍未完成，因此不记作生产 CAD/Excel 正式签收。合并后清理 38 个可重建目录、28,788 个文件、1,544,566,969 bytes（约 1.438 GiB）。
+
 ## E03-S04 服务端权威 Match Artifact 开发切片（2026-08-08）
 
 - 在集成基线 `27d3989b` 上完成功能提交 `4db2d0d0`、验证报告提交 `93f65a33`，并以 no-ff 提交 `3ee23655` 进入 `integration/space-v1-20260730`；`main` 未修改。

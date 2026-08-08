@@ -3,6 +3,8 @@
 日期：2026-08-08
 基线：`cdc629ea`（`integration/space-v1-20260730`）
 功能提交：`4e92e435`
+验证报告提交：`d048e01a`
+no-ff 集成提交：`f735747a`
 
 ## 交付结论
 
@@ -49,6 +51,7 @@ E03-S05 已完成应用内正式开发切片：用户必须在权威 Excel–CAD
 - 前端聚焦：7/7 passed；前端全量 132 files / 705 tests passed；
 - TypeScript 类型检查、前端 production build、OpenAPI/C#/TypeScript SDK drift、受影响 C# whitespace 和 `git diff --check` 全部通过；
 - 完整 `CP6.slnx` Release 单线程构建：0 error / 10 条既有 warning，含 Desktop 与 Android 双架构 AOT。首次完整构建在第三方 Kotlin Serialization 的 Android x64 AOT 工具处瞬时崩溃；未修改代码或降低 AOT 强度，清理可重建缓存后独立 Mobile Release 0 warning / 0 error，随后同一完整解决方案命令通过。
+- 集成并推送后清理 38 个可重建 `bin/obj/node_modules/dist` 目录、28,788 个文件、1,544,566,969 bytes（约 1.438 GiB）；源码、锁文件、报告和远端 Git 历史不受影响。
 
 ## 尚未解除的边界
 
