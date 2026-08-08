@@ -2,6 +2,7 @@
 import { computed, ref, watch } from 'vue'
 import { designExcelCadMatchApi } from '@/api/space/designExcelCadMatch'
 import type {
+  ISpaceExcelCadApplyDto,
   ISpaceExcelCadMatchDto,
   ISpaceExcelCadRackMatchV1,
 } from '../../../../../sdk/typescript/space-design-v1/spaceDesignV1Client'
@@ -20,6 +21,10 @@ const emit = defineEmits<{
 const result = ref<ISpaceExcelCadMatchDto | null>(null)
 const loading = ref(false)
 const error = ref('')
+const confirming = ref(false)
+const confirmationError = ref('')
+const confirmation = ref<ISpaceExcelCadApplyDto | null>(null)
+const applyJobId = ref('')
 const disposition = ref('')
 const rackCode = ref('')
 const sourceRef = ref('')
@@ -49,9 +54,53 @@ watch(
 )
 
 async function resetAndLoad(): Promise<void> {
+  confirmation.value = null
+  applyJobId.value = ''
+  confirmationError.value = ''
   currentCursor.value = undefined
   previousCursors.value = []
   await loadPage()
+}
+
+async function confirmMatch(): Promise<void> {
+  const match = result.value
+  if (!canConfirm.value || !match?.artifactId || !match.artifactPayloadSha256
+      || match.expectedContentRevision === undefined) return
+  confirming.value = true
+  confirmationError.value = ''
+  try {
+    const accepted = await designExcelCadMatchApi.confirm(
+      props.versionId,
+      props.jobId,
+      {
+        confirmed: true,
+        artifactId: match.artifactId,
+        artifactPayloadSha256: match.artifactPayloadSha256,
+        expectedContentRevision: match.expectedContentRevision,
+      },
+      `excel-cad-apply:${props.jobId}:${match.artifactPayloadSha256}`,
+    )
+    applyJobId.value = accepted.applyJobId ?? ''
+    if (applyJobId.value) await refreshConfirmation()
+  } catch {
+    confirmationError.value = '确认写入失败；草稿未发生部分写入，请刷新后重试。'
+  } finally {
+    confirming.value = false
+  }
+}
+
+async function refreshConfirmation(): Promise<void> {
+  if (!applyJobId.value) return
+  confirmationError.value = ''
+  try {
+    confirmation.value = await designExcelCadMatchApi.getConfirmation(
+      props.versionId,
+      props.jobId,
+      applyJobId.value,
+    )
+  } catch {
+    confirmationError.value = '确认任务状态加载失败，请稍后刷新。'
+  }
 }
 
 async function loadPage(cursor = currentCursor.value): Promise<void> {
@@ -167,6 +216,40 @@ function shortHash(value?: string): string {
       </el-tag>
       <span>产物 {{ shortHash(result?.artifactPayloadSha256) }}</span>
       <span>文件 {{ shortHash(result?.fileSha256) }}</span>
+    </div>
+
+    <div class="confirmation" data-test="match-confirmation">
+      <el-button
+        type="primary"
+        :disabled="!canConfirm"
+        :loading="confirming"
+        data-test="confirm-match"
+        @click="confirmMatch"
+      >确认写入当前 Draft</el-button>
+      <el-button
+        v-if="applyJobId"
+        :disabled="confirming"
+        data-test="refresh-confirmation"
+        @click="refreshConfirmation"
+      >刷新写入状态</el-button>
+      <span v-if="confirmation">
+        Apply {{ confirmation.jobStatus }} · 批次
+        {{ shortHash(confirmation.commandBatchId) }}
+      </span>
+      <el-alert
+        v-if="confirmation?.jobStatus === 'Succeeded'"
+        type="success"
+        :closable="false"
+        data-test="confirmation-succeeded"
+        title="权威匹配已原子写入 Draft；重复确认不会重复创建货架。"
+      />
+      <el-alert
+        v-else-if="confirmationError"
+        type="error"
+        :closable="false"
+        data-test="confirmation-error"
+        :title="confirmationError"
+      />
     </div>
 
     <div class="filters">
@@ -286,6 +369,20 @@ function shortHash(value?: string): string {
   align-items: center;
   gap: 8px;
   margin-bottom: 12px;
+}
+
+.confirmation {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  gap: 8px;
+  margin-bottom: 12px;
+  color: #475467;
+  font-size: 12px;
+}
+
+.confirmation :deep(.el-alert) {
+  width: 100%;
 }
 
 .filters {

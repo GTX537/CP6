@@ -104,6 +104,8 @@ public sealed class SpaceJobProcessorOptions
         TimeSpan.FromMinutes(30);
     public TimeSpan ExcelCadMatchTimeout { get; init; } =
         TimeSpan.FromMinutes(30);
+    public TimeSpan ExcelCadApplyTimeout { get; init; } =
+        TimeSpan.FromMinutes(30);
     public TimeSpan ValidationTimeout { get; init; } =
         TimeSpan.FromMinutes(30);
     public TimeSpan ApplyGenerationTimeout { get; init; } =
@@ -150,6 +152,11 @@ public sealed class SpaceJobProcessorOptions
             throw new ArgumentOutOfRangeException(
                 nameof(ExcelCadMatchTimeout));
         }
+        if (ExcelCadApplyTimeout <= TimeSpan.Zero)
+        {
+            throw new ArgumentOutOfRangeException(
+                nameof(ExcelCadApplyTimeout));
+        }
         if (ValidationTimeout <= TimeSpan.Zero)
         {
             throw new ArgumentOutOfRangeException(
@@ -181,6 +188,7 @@ public sealed class SpaceJobProcessorOptions
         {
             SpaceJobType.CadParse => CadParseTimeout,
             SpaceJobType.ExcelCadMatch => ExcelCadMatchTimeout,
+            SpaceJobType.ExcelCadApply => ExcelCadApplyTimeout,
             SpaceJobType.Validate => ValidationTimeout,
             SpaceJobType.ExcelPreview => ExcelPreviewTimeout,
             SpaceJobType.Import => ImportTimeout,
@@ -636,6 +644,8 @@ public sealed class SpaceJobProcessorRunner : ISpaceJobProcessorRunner
         if (jobType is not (
                 SpaceJobType.CadParse or
                 SpaceJobType.ExcelPreview or
+                SpaceJobType.ExcelCadMatch or
+                SpaceJobType.ExcelCadApply or
                 SpaceJobType.Import or
                 SpaceJobType.Validate or
                 SpaceJobType.BuildScene or

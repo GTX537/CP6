@@ -199,6 +199,10 @@ public static class SpaceInfrastructureRegistration
         services.TryAddEnumerable(
             ServiceDescriptor.Scoped<
                 ISpaceJobProcessor,
+                SpaceExcelCadApplyJobProcessor>());
+        services.TryAddEnumerable(
+            ServiceDescriptor.Scoped<
+                ISpaceJobProcessor,
                 SpaceBuildSceneJobProcessor>());
         services.TryAddEnumerable(
             ServiceDescriptor.Scoped<
@@ -275,6 +279,12 @@ public static class SpaceInfrastructureRegistration
         services.AddScoped<
             ISpaceExcelCadMatchService,
             SpaceExcelCadMatchService>();
+        services.AddScoped<
+            ISpaceExcelCadApplyJobStepExecutor,
+            SpaceExcelCadApplyJobStepExecutor>();
+        services.AddScoped<
+            ISpaceExcelCadApplyService,
+            SpaceExcelCadApplyService>();
         services.AddScoped<ISpacePublishedSceneReader, SpacePublishedSceneReader>();
         services.AddScoped<
             ISpaceExternalReferenceValidator,

@@ -46,7 +46,8 @@ namespace CP6.WebApi.Controllers.Space;
     StatusCodes.Status500InternalServerError,
     "application/problem+json")]
 public sealed class SpaceExcelCadMatchController(
-    ISpaceExcelCadMatchService service) : ControllerBase
+    ISpaceExcelCadMatchService service,
+    ISpaceExcelCadApplyService applyService) : ControllerBase
 {
     [HttpPost("versions/{versionId:guid}/excel-cad-matches")]
     [SpaceAuditOperation(
@@ -102,5 +103,56 @@ public sealed class SpaceExcelCadMatchController(
             onlyLocatable,
             limit,
             cursor,
+            cancellationToken);
+
+    [HttpPost(
+        "versions/{versionId:guid}/excel-cad-matches/{matchJobId:guid}/confirmations")]
+    [SpaceAuditOperation(
+        "space.excel-cad-match.confirm",
+        "Job",
+        ResourceIdArgument = "matchJobId",
+        PermissionCode = "space:model:edit")]
+    [RequirePermission("space", "model:edit", UseProblemDetails = true)]
+    [ProducesResponseType<ConfirmSpaceExcelCadMatchResponse>(
+        StatusCodes.Status202Accepted)]
+    public async Task<IActionResult> ConfirmMatch(
+        Guid versionId,
+        Guid matchJobId,
+        [FromHeader(Name = "Idempotency-Key"), Required]
+        string idempotencyKey,
+        [FromBody, Required] ConfirmSpaceExcelCadMatchRequest request,
+        CancellationToken cancellationToken)
+    {
+        var result = await applyService.ConfirmAsync(
+            versionId,
+            matchJobId,
+            request,
+            idempotencyKey,
+            cancellationToken);
+        Response.Headers["Idempotent-Replay"] =
+            result.IdempotentReplay ? "true" : "false";
+        return Accepted(result.JobStatusUrl, result);
+    }
+
+    [HttpGet(
+        "versions/{versionId:guid}/excel-cad-matches/{matchJobId:guid}/" +
+        "confirmations/{applyJobId:guid}")]
+    [SpaceAuditOperation(
+        "space.excel-cad-match.confirmation.read",
+        "Job",
+        ResourceIdArgument = "applyJobId",
+        PermissionCode = "space:model:read",
+        AuditRead = true)]
+    [RequirePermission("space", "model:read", UseProblemDetails = true)]
+    [ProducesResponseType<SpaceExcelCadApplyDto>(StatusCodes.Status200OK)]
+    public Task<SpaceExcelCadApplyDto> GetConfirmation(
+        Guid versionId,
+        Guid matchJobId,
+        Guid applyJobId,
+        CancellationToken cancellationToken = default) =>
+        applyService.GetAsync(
+            versionId,
+            matchJobId,
+            applyJobId,
             cancellationToken);
 }

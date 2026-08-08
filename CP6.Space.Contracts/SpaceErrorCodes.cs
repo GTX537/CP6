@@ -46,6 +46,14 @@ public static class SpaceErrorCodes
         "SPACE_EXCEL_CAD_MATCH_NOT_FOUND";
     public const string ExcelCadMatchArtifactInvalid =
         "SPACE_EXCEL_CAD_MATCH_ARTIFACT_INVALID";
+    public const string ExcelCadApplyInvalid =
+        "SPACE_EXCEL_CAD_APPLY_INVALID";
+    public const string ExcelCadApplyNotFound =
+        "SPACE_EXCEL_CAD_APPLY_NOT_FOUND";
+    public const string ExcelCadApplyArtifactInvalid =
+        "SPACE_EXCEL_CAD_APPLY_ARTIFACT_INVALID";
+    public const string ExcelCadApplyScopeUnsupported =
+        "SPACE_EXCEL_CAD_APPLY_SCOPE_UNSUPPORTED";
     public const string ExcelWorkbookInvalid =
         "SPACE_EXCEL_WORKBOOK_INVALID";
     public const string FileTooLarge = "SPACE_FILE_TOO_LARGE";

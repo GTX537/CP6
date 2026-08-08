@@ -151,6 +151,7 @@ public enum SpaceJobType : short
     AiRetentionCleanup = 11,
     HistoricalRepublish = 12,
     ExcelCadMatch = 13,
+    ExcelCadApply = 14,
 }
 
 public enum SpaceJobSubjectType : short

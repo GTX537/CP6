@@ -7090,6 +7090,303 @@
         }
       }
     },
+    "/api/space/design/v1/versions/{versionId}/excel-cad-matches/{matchJobId}/confirmations": {
+      "post": {
+        "tags": [
+          "SpaceExcelCadMatch"
+        ],
+        "operationId": "ConfirmMatch",
+        "parameters": [
+          {
+            "name": "versionId",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "string",
+              "format": "uuid"
+            }
+          },
+          {
+            "name": "matchJobId",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "string",
+              "format": "uuid"
+            }
+          },
+          {
+            "name": "Idempotency-Key",
+            "in": "header",
+            "required": true,
+            "schema": {
+              "type": "string"
+            }
+          }
+        ],
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/CP6.Space.Contracts.ConfirmSpaceExcelCadMatchRequest"
+              }
+            },
+            "text/json": {
+              "schema": {
+                "$ref": "#/components/schemas/CP6.Space.Contracts.ConfirmSpaceExcelCadMatchRequest"
+              }
+            },
+            "application/*+json": {
+              "schema": {
+                "$ref": "#/components/schemas/CP6.Space.Contracts.ConfirmSpaceExcelCadMatchRequest"
+              }
+            }
+          },
+          "required": true
+        },
+        "responses": {
+          "400": {
+            "description": "Bad Request",
+            "content": {
+              "application/problem+json": {
+                "schema": {
+                  "$ref": "#/components/schemas/CP6.WebApi.OpenApi.SpaceDesignProblemDetails"
+                }
+              }
+            }
+          },
+          "401": {
+            "description": "Unauthorized",
+            "content": {
+              "application/problem+json": {
+                "schema": {
+                  "$ref": "#/components/schemas/CP6.WebApi.OpenApi.SpaceDesignProblemDetails"
+                }
+              }
+            }
+          },
+          "403": {
+            "description": "Forbidden",
+            "content": {
+              "application/problem+json": {
+                "schema": {
+                  "$ref": "#/components/schemas/CP6.WebApi.OpenApi.SpaceDesignProblemDetails"
+                }
+              }
+            }
+          },
+          "404": {
+            "description": "Not Found",
+            "content": {
+              "application/problem+json": {
+                "schema": {
+                  "$ref": "#/components/schemas/CP6.WebApi.OpenApi.SpaceDesignProblemDetails"
+                }
+              }
+            }
+          },
+          "409": {
+            "description": "Conflict",
+            "content": {
+              "application/problem+json": {
+                "schema": {
+                  "$ref": "#/components/schemas/CP6.WebApi.OpenApi.SpaceDesignProblemDetails"
+                }
+              }
+            }
+          },
+          "422": {
+            "description": "Unprocessable Content",
+            "content": {
+              "application/problem+json": {
+                "schema": {
+                  "$ref": "#/components/schemas/CP6.WebApi.OpenApi.SpaceDesignProblemDetails"
+                }
+              }
+            }
+          },
+          "503": {
+            "description": "Service Unavailable",
+            "content": {
+              "application/problem+json": {
+                "schema": {
+                  "$ref": "#/components/schemas/CP6.WebApi.OpenApi.SpaceDesignProblemDetails"
+                }
+              }
+            }
+          },
+          "500": {
+            "description": "Internal Server Error",
+            "content": {
+              "application/problem+json": {
+                "schema": {
+                  "$ref": "#/components/schemas/CP6.WebApi.OpenApi.SpaceDesignProblemDetails"
+                }
+              }
+            }
+          },
+          "202": {
+            "description": "Accepted",
+            "content": {
+              "text/plain": {
+                "schema": {
+                  "$ref": "#/components/schemas/CP6.Space.Contracts.ConfirmSpaceExcelCadMatchResponse"
+                }
+              },
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/CP6.Space.Contracts.ConfirmSpaceExcelCadMatchResponse"
+                }
+              },
+              "text/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/CP6.Space.Contracts.ConfirmSpaceExcelCadMatchResponse"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/api/space/design/v1/versions/{versionId}/excel-cad-matches/{matchJobId}/confirmations/{applyJobId}": {
+      "get": {
+        "tags": [
+          "SpaceExcelCadMatch"
+        ],
+        "operationId": "GetConfirmation",
+        "parameters": [
+          {
+            "name": "versionId",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "string",
+              "format": "uuid"
+            }
+          },
+          {
+            "name": "matchJobId",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "string",
+              "format": "uuid"
+            }
+          },
+          {
+            "name": "applyJobId",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "string",
+              "format": "uuid"
+            }
+          }
+        ],
+        "responses": {
+          "400": {
+            "description": "Bad Request",
+            "content": {
+              "application/problem+json": {
+                "schema": {
+                  "$ref": "#/components/schemas/CP6.WebApi.OpenApi.SpaceDesignProblemDetails"
+                }
+              }
+            }
+          },
+          "401": {
+            "description": "Unauthorized",
+            "content": {
+              "application/problem+json": {
+                "schema": {
+                  "$ref": "#/components/schemas/CP6.WebApi.OpenApi.SpaceDesignProblemDetails"
+                }
+              }
+            }
+          },
+          "403": {
+            "description": "Forbidden",
+            "content": {
+              "application/problem+json": {
+                "schema": {
+                  "$ref": "#/components/schemas/CP6.WebApi.OpenApi.SpaceDesignProblemDetails"
+                }
+              }
+            }
+          },
+          "404": {
+            "description": "Not Found",
+            "content": {
+              "application/problem+json": {
+                "schema": {
+                  "$ref": "#/components/schemas/CP6.WebApi.OpenApi.SpaceDesignProblemDetails"
+                }
+              }
+            }
+          },
+          "409": {
+            "description": "Conflict",
+            "content": {
+              "application/problem+json": {
+                "schema": {
+                  "$ref": "#/components/schemas/CP6.WebApi.OpenApi.SpaceDesignProblemDetails"
+                }
+              }
+            }
+          },
+          "422": {
+            "description": "Unprocessable Content",
+            "content": {
+              "application/problem+json": {
+                "schema": {
+                  "$ref": "#/components/schemas/CP6.WebApi.OpenApi.SpaceDesignProblemDetails"
+                }
+              }
+            }
+          },
+          "503": {
+            "description": "Service Unavailable",
+            "content": {
+              "application/problem+json": {
+                "schema": {
+                  "$ref": "#/components/schemas/CP6.WebApi.OpenApi.SpaceDesignProblemDetails"
+                }
+              }
+            }
+          },
+          "500": {
+            "description": "Internal Server Error",
+            "content": {
+              "application/problem+json": {
+                "schema": {
+                  "$ref": "#/components/schemas/CP6.WebApi.OpenApi.SpaceDesignProblemDetails"
+                }
+              }
+            }
+          },
+          "200": {
+            "description": "OK",
+            "content": {
+              "text/plain": {
+                "schema": {
+                  "$ref": "#/components/schemas/CP6.Space.Contracts.SpaceExcelCadApplyDto"
+                }
+              },
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/CP6.Space.Contracts.SpaceExcelCadApplyDto"
+                }
+              },
+              "text/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/CP6.Space.Contracts.SpaceExcelCadApplyDto"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
     "/api/space/design/v1/mapping-profiles/excel": {
       "get": {
         "tags": [
@@ -15209,6 +15506,56 @@
         },
         "additionalProperties": false
       },
+      "CP6.Space.Contracts.ConfirmSpaceExcelCadMatchRequest": {
+        "type": "object",
+        "properties": {
+          "confirmed": {
+            "type": "boolean"
+          },
+          "artifactId": {
+            "type": "string",
+            "format": "uuid"
+          },
+          "artifactPayloadSha256": {
+            "type": "string",
+            "nullable": true
+          },
+          "expectedContentRevision": {
+            "type": "integer",
+            "format": "int64"
+          }
+        },
+        "additionalProperties": false
+      },
+      "CP6.Space.Contracts.ConfirmSpaceExcelCadMatchResponse": {
+        "type": "object",
+        "properties": {
+          "matchJobId": {
+            "type": "string",
+            "format": "uuid"
+          },
+          "applyJobId": {
+            "type": "string",
+            "format": "uuid"
+          },
+          "commandBatchId": {
+            "type": "string",
+            "format": "uuid"
+          },
+          "jobStatus": {
+            "type": "string",
+            "nullable": true
+          },
+          "jobStatusUrl": {
+            "type": "string",
+            "nullable": true
+          },
+          "idempotentReplay": {
+            "type": "boolean"
+          }
+        },
+        "additionalProperties": false
+      },
       "CP6.Space.Contracts.CreateSpaceAiAtomicApplyRequest": {
         "required": [
           "expectedContentRevision",
@@ -18236,6 +18583,132 @@
             "items": {
               "$ref": "#/components/schemas/CP6.Space.Contracts.SpaceSceneElementAttributeDto"
             },
+            "nullable": true
+          }
+        },
+        "additionalProperties": false
+      },
+      "CP6.Space.Contracts.SpaceExcelCadApplyDto": {
+        "type": "object",
+        "properties": {
+          "matchJobId": {
+            "type": "string",
+            "format": "uuid"
+          },
+          "applyJobId": {
+            "type": "string",
+            "format": "uuid"
+          },
+          "commandBatchId": {
+            "type": "string",
+            "format": "uuid"
+          },
+          "jobStatus": {
+            "type": "string",
+            "nullable": true
+          },
+          "expectedContentRevision": {
+            "type": "integer",
+            "format": "int64"
+          },
+          "result": {
+            "$ref": "#/components/schemas/CP6.Space.Contracts.SpaceExcelCadApplyResultV1"
+          },
+          "idempotentReplay": {
+            "type": "boolean"
+          },
+          "lastErrorCode": {
+            "type": "string",
+            "nullable": true
+          },
+          "lastErrorSummary": {
+            "type": "string",
+            "nullable": true
+          }
+        },
+        "additionalProperties": false
+      },
+      "CP6.Space.Contracts.SpaceExcelCadApplyResultV1": {
+        "type": "object",
+        "properties": {
+          "schemaVersion": {
+            "type": "integer",
+            "format": "int32"
+          },
+          "matchJobId": {
+            "type": "string",
+            "format": "uuid"
+          },
+          "applyJobId": {
+            "type": "string",
+            "format": "uuid"
+          },
+          "artifactId": {
+            "type": "string",
+            "format": "uuid"
+          },
+          "artifactPayloadSha256": {
+            "type": "string",
+            "nullable": true
+          },
+          "modelVersionId": {
+            "type": "string",
+            "format": "uuid"
+          },
+          "excelSourceId": {
+            "type": "string",
+            "format": "uuid"
+          },
+          "floorLogicalId": {
+            "type": "string",
+            "format": "uuid"
+          },
+          "commandBatchId": {
+            "type": "string",
+            "format": "uuid"
+          },
+          "expectedFloorRevision": {
+            "type": "integer",
+            "format": "int64"
+          },
+          "resultFloorRevision": {
+            "type": "integer",
+            "format": "int64"
+          },
+          "expectedContentRevision": {
+            "type": "integer",
+            "format": "int64"
+          },
+          "resultContentRevision": {
+            "type": "integer",
+            "format": "int64"
+          },
+          "createdRackCount": {
+            "type": "integer",
+            "format": "int64"
+          },
+          "updatedRackCount": {
+            "type": "integer",
+            "format": "int64"
+          },
+          "unchangedRackCount": {
+            "type": "integer",
+            "format": "int64"
+          },
+          "confirmedBy": {
+            "type": "string",
+            "format": "uuid"
+          },
+          "confirmedAtUtc": {
+            "type": "string",
+            "format": "date-time"
+          },
+          "appliedAtUtc": {
+            "type": "string",
+            "format": "date-time"
+          },
+          "applyPlanSha256": {
+            "type": "string",
             "nullable": true
           }
         },

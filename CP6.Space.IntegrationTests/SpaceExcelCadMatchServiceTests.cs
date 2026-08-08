@@ -92,6 +92,34 @@ public sealed class SpaceExcelCadMatchServiceTests
     }
 
     [Fact]
+    public async Task External_principal_cannot_confirm_match_artifacts()
+    {
+        await using var fixture = await CreateFixtureAsync();
+        var external = new ExternalExecutionContext(
+            fixture.Context.CurrentTenantId,
+            Guid.NewGuid());
+        var service = new SpaceExcelCadApplyService(
+            fixture.Context,
+            external,
+            new AllowAccess(),
+            new FileServiceProvider(fixture.Files),
+            new FixedClock());
+
+        var error = await Assert.ThrowsAsync<SpaceProblemException>(() =>
+            service.ConfirmAsync(
+                fixture.Version.Id,
+                Guid.NewGuid(),
+                new ConfirmSpaceExcelCadMatchRequest(
+                    true,
+                    Guid.NewGuid(),
+                    new string('a', 64),
+                    0),
+                "external-apply"));
+
+        Assert.Equal(SpaceErrorCodes.ExternalSubjectDenied, error.Code);
+    }
+
+    [Fact]
     public async Task Worker_persists_one_authoritative_artifact_and_reuses_it()
     {
         await using var fixture = await CreateFixtureAsync();
@@ -168,15 +196,185 @@ public sealed class SpaceExcelCadMatchServiceTests
         Assert.Equal(1, read.TotalRowCount);
     }
 
+    [Fact]
+    public async Task Confirmed_apply_is_atomic_and_reuses_the_same_command_batch()
+    {
+        await using var fixture = await CreateFixtureAsync();
+        var match = await ProduceSucceededMatchAsync(fixture, "apply-match-1");
+        var confirmed = await fixture.ApplyService.ConfirmAsync(
+            fixture.Version.Id,
+            match.JobId,
+            new ConfirmSpaceExcelCadMatchRequest(
+                true,
+                match.ArtifactId,
+                match.Artifact.ArtifactPayloadSha256,
+                fixture.Version.ContentRevision),
+            "apply-confirm-1");
+        var lease = await ClaimAsync(
+            fixture,
+            confirmed.ApplyJobId,
+            SpaceExcelCadApplyJobProcessor.Version,
+            "apply-worker");
+        var executor = new SpaceExcelCadApplyJobStepExecutor(
+            fixture.Context,
+            new FileServiceProvider(fixture.Files),
+            new FixedWorkbookReader(fixture.Workbook),
+            new FixedMappingService(fixture.Profile),
+            new FixedClock());
+        var execution = new SpaceJobStepExecution(
+            lease,
+            1,
+            SpaceExcelCadApplyJobProcessor.ApplyConfirmedArtifact);
+
+        var first = await executor.ExecuteAsync(execution);
+        var replay = await executor.ExecuteAsync(execution);
+        var reconfirmed = await fixture.ApplyService.ConfirmAsync(
+            fixture.Version.Id,
+            match.JobId,
+            new ConfirmSpaceExcelCadMatchRequest(
+                true,
+                match.ArtifactId,
+                match.Artifact.ArtifactPayloadSha256,
+                fixture.Version.ContentRevision),
+            "apply-confirm-2");
+
+        Assert.Equal(first, replay);
+        Assert.Equal(confirmed.ApplyJobId, reconfirmed.ApplyJobId);
+        Assert.True(reconfirmed.IdempotentReplay);
+        var result = JsonSerializer.Deserialize<SpaceExcelCadApplyResultV1>(
+            first.CheckpointJson,
+            JsonOptions);
+        Assert.NotNull(result);
+        Assert.Equal(1, result!.CreatedRackCount);
+        Assert.Equal(0, result.UpdatedRackCount);
+        Assert.Equal(0, result.UnchangedRackCount);
+        Assert.Equal(1, result.ResultFloorRevision);
+        Assert.Equal(1, result.ResultContentRevision);
+        var rack = await fixture.Context.RackRevisions.SingleAsync();
+        Assert.Equal("R-001", rack.RackCode);
+        Assert.Equal("H:160", rack.SourceRef);
+        Assert.Equal(SpaceLifecycleState.Active, rack.LifecycleState);
+        var source = await fixture.Context.Sources.SingleAsync(item =>
+            item.Id == fixture.Request.ExcelSourceId);
+        Assert.Equal(SpaceSourceState.Imported, source.State);
+        Assert.Equal(confirmed.CommandBatchId, source.ImportedCommandBatchId);
+        Assert.Single(await fixture.Context.ElementCommandBatches.ToListAsync());
+        Assert.Single(await fixture.Context.ElementCommandRecords.ToListAsync());
+        Assert.Equal(1, (await fixture.Context.FloorRevisions.SingleAsync()).Revision);
+        Assert.Equal(1, (await fixture.Context.Versions.SingleAsync(item =>
+            item.Id == fixture.Version.Id)).ContentRevision);
+    }
+
+    [Fact]
+    public async Task Revision_drift_fails_before_any_apply_write()
+    {
+        await using var fixture = await CreateFixtureAsync();
+        var match = await ProduceSucceededMatchAsync(fixture, "apply-match-drift");
+        var confirmed = await fixture.ApplyService.ConfirmAsync(
+            fixture.Version.Id,
+            match.JobId,
+            new ConfirmSpaceExcelCadMatchRequest(
+                true,
+                match.ArtifactId,
+                match.Artifact.ArtifactPayloadSha256,
+                fixture.Version.ContentRevision),
+            "apply-confirm-drift");
+        var version = await fixture.Context.Versions.SingleAsync(item =>
+            item.Id == fixture.Version.Id);
+        version.TouchContent();
+        await fixture.Context.SaveChangesAsync();
+        var lease = await ClaimAsync(
+            fixture,
+            confirmed.ApplyJobId,
+            SpaceExcelCadApplyJobProcessor.Version,
+            "apply-worker-drift");
+        var executor = new SpaceExcelCadApplyJobStepExecutor(
+            fixture.Context,
+            new FileServiceProvider(fixture.Files),
+            new FixedWorkbookReader(fixture.Workbook),
+            new FixedMappingService(fixture.Profile),
+            new FixedClock());
+
+        var error = await Assert.ThrowsAsync<SpaceJobProcessingException>(() =>
+            executor.ExecuteAsync(new SpaceJobStepExecution(
+                lease,
+                1,
+                SpaceExcelCadApplyJobProcessor.ApplyConfirmedArtifact)));
+
+        Assert.Equal(SpaceErrorCodes.ConcurrencyConflict, error.ErrorCode);
+        Assert.Empty(await fixture.Context.RackRevisions.ToListAsync());
+        Assert.Empty(await fixture.Context.ElementCommandBatches.ToListAsync());
+        Assert.Empty(await fixture.Context.ElementCommandRecords.ToListAsync());
+        Assert.Equal(0, (await fixture.Context.FloorRevisions.SingleAsync()).Revision);
+        Assert.Equal(
+            SpaceSourceState.PreviewReady,
+            (await fixture.Context.Sources.SingleAsync(item =>
+                item.Id == fixture.Request.ExcelSourceId)).State);
+    }
+
+    private static async Task<ProducedMatch> ProduceSucceededMatchAsync(
+        Fixture fixture,
+        string idempotencyKey)
+    {
+        var started = await fixture.Service.StartAsync(
+            fixture.Version.Id,
+            fixture.Request,
+            idempotencyKey);
+        var lease = await ClaimAsync(fixture, started.JobId);
+        var executor = new SpaceExcelCadMatchJobStepExecutor(
+            fixture.Context,
+            new FileServiceProvider(fixture.Files),
+            new FixedWorkbookReader(fixture.Workbook),
+            new FixedMappingService(fixture.Profile));
+        var output = await executor.ExecuteAsync(new SpaceJobStepExecution(
+            lease,
+            1,
+            SpaceExcelCadMatchJobProcessor.PersistMatchArtifact));
+        var persisted = await (
+                from artifact in fixture.Context.Artifacts.AsNoTracking()
+                join file in fixture.Context.Files.AsNoTracking()
+                    on artifact.FileId equals file.Id
+                where artifact.JobId == started.JobId
+                select new { Artifact = artifact, File = file })
+            .SingleAsync();
+        await using var stream = await fixture.Files.OpenQuarantinedReadAsync(
+            persisted.File.TenantId,
+            persisted.File.Id,
+            persisted.File.StorageKey);
+        using var reader = new StreamReader(stream, Encoding.UTF8);
+        var artifactValue = SpaceExcelCadMatchArtifact.Deserialize(
+            await reader.ReadToEndAsync());
+
+        fixture.Context.ChangeTracker.Clear();
+        var job = await fixture.Context.Jobs.SingleAsync(item =>
+            item.Id == started.JobId);
+        var attempt = await fixture.Context.JobAttempts.SingleAsync(item =>
+            item.Id == lease.AttemptId);
+        attempt.Succeed(Now);
+        job.Complete(
+            attempt.Id,
+            attempt.WorkerId,
+            Now,
+            output.CheckpointJson);
+        await fixture.Context.SaveChangesAsync();
+        fixture.Context.ChangeTracker.Clear();
+        return new ProducedMatch(
+            started.JobId,
+            persisted.Artifact.Id,
+            artifactValue);
+    }
+
     private static async Task<SpaceJobLease> ClaimAsync(
         Fixture fixture,
-        Guid jobId)
+        Guid jobId,
+        string processorVersion = SpaceExcelCadMatchJobProcessor.Version,
+        string workerId = "match-worker")
     {
         fixture.Context.ChangeTracker.Clear();
         var job = await fixture.Context.Jobs.SingleAsync(item => item.Id == jobId);
         var attempt = job.Claim(
-            "match-worker",
-            SpaceExcelCadMatchJobProcessor.Version,
+            workerId,
+            processorVersion,
             Now,
             TimeSpan.FromMinutes(5));
         fixture.Context.JobAttempts.Add(attempt);
@@ -355,6 +553,14 @@ public sealed class SpaceExcelCadMatchServiceTests
             1,
             "F01",
             "Floor 01");
+        var zone = SpaceZoneRevision.Create(
+            tenantId,
+            version.Id,
+            Guid.NewGuid(),
+            floorId,
+            "Z1",
+            0,
+            "Zone 1");
         var excelDefinition = ExcelDefinition();
         var excelProfile = new SpaceExcelMappingProfileDto(
             mappingProfileId,
@@ -387,13 +593,20 @@ public sealed class SpaceExcelCadMatchServiceTests
             cadParse,
             previewFile,
             previewArtifact,
-            floor);
+            floor,
+            zone);
         await context.SaveChangesAsync();
         var service = new SpaceExcelCadMatchService(
             context,
             execution,
             new AllowAccess(),
             null!,
+            new FileServiceProvider(files),
+            new FixedClock());
+        var applyService = new SpaceExcelCadApplyService(
+            context,
+            execution,
+            new AllowAccess(),
             new FileServiceProvider(files),
             new FixedClock());
         return new Fixture(
@@ -407,6 +620,7 @@ public sealed class SpaceExcelCadMatchServiceTests
                 floorId,
                 version.ContentRevision),
             service,
+            applyService,
             files,
             excelProfile,
             workbook);
@@ -812,11 +1026,17 @@ public sealed class SpaceExcelCadMatchServiceTests
         SpaceCadSemanticPreviewV1 Preview,
         SpaceCadSemanticDiagnosticIndexV1 Diagnostics);
 
+    private sealed record ProducedMatch(
+        Guid JobId,
+        Guid ArtifactId,
+        SpaceExcelCadMatchArtifactV1 Artifact);
+
     private sealed record Fixture(
         SpaceContext Context,
         SpaceModelVersion Version,
         StartSpaceExcelCadMatchRequest Request,
         SpaceExcelCadMatchService Service,
+        SpaceExcelCadApplyService ApplyService,
         MemoryFileStore Files,
         SpaceExcelMappingProfileDto Profile,
         SpaceExcelWorkbookData Workbook) : IAsyncDisposable
