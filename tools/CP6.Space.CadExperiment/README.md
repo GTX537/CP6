@@ -33,6 +33,11 @@ It provides a set of bounded development capabilities:
   deterministic read-only proposal set. Geometry remains rule-generated;
   rack derivation requires explicit profiles and location codes remain pending
   the existing code-service precheck. It never writes a Design Draft.
+- `evaluate-ai-offline`: matches normalized final proposals to versioned
+  expected targets by sample and stable source key, calculates coverage,
+  semantic accuracy, manual-operation reduction and high-confidence precision,
+  calibrates only on the Calibration split, and applies a Wilson lower-bound
+  gate before any high-confidence shortcut can be enabled.
 - `query-dev-inventory`: runs capped, deterministic layer, block or reference
   queries against an inventory artifact.
 - `seal-dev-mapping-profile`: validates and hash-seals an immutable development
@@ -231,6 +236,43 @@ These commands do not register a production Provider, resolve credentials, call
 a network endpoint, map a vendor-native response, persist Run/Usage data or write
 Draft. External adapters must still cap the HTTP/SDK response before mapping it
 to the CP6 Canonical Envelope and then invoke the same validator.
+
+## Run the offline AI quality gate
+
+Build a normalized `SpaceAiOfflineEvaluationRequestV1` from the immutable
+dataset manifest, expected targets, final fused proposal sets and recorded
+manual/AI-assisted operation counts. Proposal adapters use the existing
+`WarehouseDraftProposalV1.SourceKey`; runtime database GUIDs are never treated
+as expected answers.
+
+```powershell
+dotnet run --project tools\CP6.Space.CadExperiment -c Release -- `
+  evaluate-ai-offline `
+  --input tmp\e13-s14\evaluation-request.json `
+  --output tmp\e13-s14\evaluation-report.json `
+  --require-release-eligible
+```
+
+Without `--require-release-eligible`, exit code `0` means the normalized data
+is structurally valid and the report was written; a DevelopmentSeed report is
+allowed but always records `releaseEligible=false`. With the flag, exit code
+`4` means evidence or quality remains insufficient. Invalid dataset structure
+returns `3`.
+
+Threshold selection reads Calibration proposals only. Validation and
+ReleaseHoldout never influence the selected threshold and are evaluated as the
+out-of-sample group. The high-confidence path requires both at least 95%
+precision and a 95% Wilson lower bound of at least 90%; a perfect but too-small
+sample therefore stays closed. Formal release additionally requires the exact
+10/5/5 split, L1-L5 coverage, unique CAD hashes, per-asset license and
+de-identification evidence, version/annotation/acceptance records, an immutable
+package and a passed hash-sealed integrity audit. The canonical report carries
+its own SHA-256 and is rejected after tampering.
+
+The synthetic `development-v2.0.0` corpus may exercise this command but cannot
+be upgraded into release evidence by changing a flag. Geometry matching remains
+the deterministic CAD golden-data responsibility; this E13 gate measures the
+final semantic type, declared key attributes and exact logical relations.
 
 ## Build and query the read-only AI proposal review workspace
 
