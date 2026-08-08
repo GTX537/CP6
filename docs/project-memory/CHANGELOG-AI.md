@@ -2,6 +2,13 @@
 
 > 依据 Git log 汇总，不替代完整 Git 历史。重点记录影响接手判断的里程碑。
 
+## 2026-08-08：Space E13 RackGenerationProfile 权威版本链
+
+- `19d32650`：新增独立 RackGenerationProfile 头/不可变版本、System/Tenant 可见性、Tenant-only 幂等创建、列表/精确读取、规范化 SHA-256 与 Migration `20260808164544`；真实 SQL 部署脚本双执行通过。
+- Generation Run 首建验证并冻结 Active/Ready 精确版本，RuleOnly BuildScene 以 `ExplicitSelected` 消费并生成 RackLevel/Location；Web 显式选择且不推断默认，空选择仍失败关闭为 Blocking。
+- 三条 Design V1 API、读写审计、OpenAPI 118 operations 与双 SDK 已同步。验证为真实 SQL 1/1、前端 711/711、Space Unit 487/487、Integration 288 passed / 95 skipped、CP6.Tests 2816 passed / 17 skipped、完整 Release/AOT 0 warning / 0 error。
+- 无 Provider、网络、Secret、Usage、High Accept 或 Draft 自动写入；追加 v2、System 配置、完整管理 UI、无锁父关系和不同 SourceHash 确认仍属后续边界。
+
 ## 2026-08-08：Space E13 Generation Run 建模 Web 入口
 
 - `52bb3a29` / `282d4e54` / `2871df1b`：实现、记录并 no-ff 集成建模 Web 的统一 `CreateGenerationRun`；从已确认 DWG/DXF Preview 启动 RuleOnly Run，排队/处理中轮询 Run，达到 AwaitingReview 后再读取提案，Failed/Stale 恢复使用同一 BasedOn、`If-Match` 与幂等合同。
