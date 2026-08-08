@@ -28,6 +28,18 @@ public sealed class WarehouseDraftSynthesizer : IWarehouseDraftSynthesizer
             ["attributes.equipmentType"] = typeof(WarehouseEquipmentType),
         };
 
+    private static readonly IReadOnlyDictionary<string, IReadOnlySet<string>>
+        TextEnumFieldValues =
+            new Dictionary<string, IReadOnlySet<string>>(StringComparer.Ordinal)
+            {
+                ["attributes.direction"] = Values(
+                    "OneWay", "TwoWay", "Bidirectional", "Unknown"),
+                ["attributes.wallType"] = Values(
+                    "Exterior", "Interior", "Partition", "Fire", "Unknown"),
+                ["attributes.columnType"] = Values(
+                    "Structural", "Guard", "Unknown"),
+            };
+
     private readonly IWarehouseGenerationOutputValidator _outputValidator;
 
     public WarehouseDraftSynthesizer()
@@ -340,6 +352,23 @@ public sealed class WarehouseDraftSynthesizer : IWarehouseDraftSynthesizer
         if (allowSemanticLabel
             && fieldPath == "attributes.semanticLabel"
             && IsSafeToken(value, 256))
+        {
+            canonical = value;
+            return true;
+        }
+        if (TextEnumFieldValues.TryGetValue(fieldPath, out var values)
+            && value is not null
+            && values.Contains(value))
+        {
+            canonical = value;
+            return true;
+        }
+        if (value is not null &&
+            (fieldPath == "attributes.name" && IsSafeToken(value, 128) ||
+             fieldPath is (
+                 "relations.zoneSourceKey" or
+                 "relations.aisleSourceKey" or
+                 "relations.wallSourceKey") && IsSafeToken(value, 256)))
         {
             canonical = value;
             return true;
@@ -902,8 +931,20 @@ public sealed class WarehouseDraftSynthesizer : IWarehouseDraftSynthesizer
             "attributes.doorType" => type == WarehouseSpaceType.Door,
             "attributes.dockType" => type == WarehouseSpaceType.Dock,
             "attributes.equipmentType" => type == WarehouseSpaceType.StaticEquipment,
+            "attributes.direction" => type == WarehouseSpaceType.Aisle,
+            "attributes.wallType" => type == WarehouseSpaceType.Wall,
+            "attributes.columnType" => type == WarehouseSpaceType.Column,
+            "relations.zoneSourceKey" => type is
+                WarehouseSpaceType.Rack or
+                WarehouseSpaceType.Dock or
+                WarehouseSpaceType.StaticEquipment,
+            "relations.aisleSourceKey" => type == WarehouseSpaceType.Rack,
+            "relations.wallSourceKey" => type == WarehouseSpaceType.Door,
             _ => true,
         };
+
+    private static IReadOnlySet<string> Values(params string[] values) =>
+        values.ToHashSet(StringComparer.Ordinal);
 
     private static bool TryMapType(
         SpaceCadSemanticTarget target,
