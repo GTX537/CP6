@@ -37,10 +37,13 @@ sqlcmd -S $env:CP6_SQL_SERVER -d $env:CP6_SQL_DATABASE -E -b -i 03-postflight.sq
 
 生产执行前还必须完成应用备份、发布冻结、WMS 发布/恢复对账和受保护环境审批。
 
-## 本地真库证据
+## 数据库演练证据
 
 - 2026-08-08 在随机命名的 SQL Server LocalDB 临时数据库上，先以 EF 逐迁移推进到 `origin/main` 的 `20260714075419_WfsSubFlow` 基线。
 - 随后按顺序连续执行本目录四个文件两轮：`ROUND_1=PASS`、`ROUND_2=PASS`。
 - 最终 migration history 精确核对为 `CORE_CANDIDATE=14`、`SPACE_TOTAL=36`。
 - 三条失败关闭路径分别验证：schema/history 漂移 `51083`、遗留 ModelAssetId `51000`、活跃 Publish slot `51020`。
-- 每次演练使用的随机临时数据库均在验证后删除；这些证据不替代生产备份恢复副本演练。
+- 2026-08-09 确认 CP6 尚无生产数据库，因此合并前恢复演练改用仓库内最新的已校验开发备份 `migration/database/CP6DB_20260718.bak`。
+- 该备份已在隔离的 SQL Server 2022 容器中成功恢复；恢复点已包含 `origin/main` 的 `20260714075419_WfsSubFlow` 基线。
+- 在恢复副本上再次连续执行整包两轮：`ROUND_1=PASS`、`ROUND_2=PASS`，两轮均精确核对为 Core 14 项、Space 36 项。
+- 每次演练使用的临时数据库均在验证后删除。未来首次建立生产数据库或执行生产升级时，仍必须另行完成生产备份、恢复副本演练、发布冻结和审批。
