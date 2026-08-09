@@ -461,16 +461,32 @@ if (-not $SkipModelCheck) {
     try {
         $env:ASPNETCORE_ENVIRONMENT = "Development"
         $env:DOTNET_ENVIRONMENT = "Development"
-        Invoke-CheckedCommand -FilePath "dotnet" `
-            -ArgumentList @(
-                "tool", "run", "dotnet-ef",
-                "migrations", "has-pending-model-changes",
-                "--project", "CP6.Core\CP6.Core.csproj",
-                "--startup-project", "CP6.WebApi\CP6.WebApi.csproj",
-                "--configuration", $Configuration,
-                "--no-build"
-            ) `
-            -Description "EF pending model change check"
+        $contextChecks = @(
+            @{
+                Context = "CP6Context"
+                Project = "CP6.Core\CP6.Core.csproj"
+            },
+            @{
+                Context = "SpaceContext"
+                Project = "CP6.Space.Infrastructure\CP6.Space.Infrastructure.csproj"
+            }
+        )
+        foreach ($contextCheck in $contextChecks) {
+            Invoke-CheckedCommand -FilePath "dotnet" `
+                -ArgumentList @(
+                    "tool", "run", "dotnet-ef",
+                    "migrations", "has-pending-model-changes",
+                    "--context", $contextCheck.Context,
+                    "--project", $contextCheck.Project,
+                    "--startup-project", "CP6.WebApi\CP6.WebApi.csproj",
+                    "--configuration", $Configuration,
+                    "--no-build"
+                ) `
+                -Description (
+                    "EF pending model change check for " +
+                    $contextCheck.Context
+                )
+        }
     }
     finally {
         if ($null -eq $previousAspNetCoreEnvironment) {

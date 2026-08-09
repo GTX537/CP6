@@ -27,6 +27,7 @@ public sealed class Cp6R2PilotContractServer : IDisposable
     private readonly Task _loop;
     private int _taskCreateCount;
     private int _taskCancelCount;
+    private int _stopping;
 
     public int FailCreateAt { get; set; }
     public int TaskCreateCount { get { return _taskCreateCount; } }
@@ -47,14 +48,10 @@ public sealed class Cp6R2PilotContractServer : IDisposable
             {
                 Handle(_listener.GetContext());
             }
-            catch (HttpListenerException)
+            catch (Exception)
             {
-                if (!_listener.IsListening) return;
+                if (Volatile.Read(ref _stopping) != 0) return;
                 throw;
-            }
-            catch (ObjectDisposedException)
-            {
-                return;
             }
         }
     }
@@ -160,6 +157,7 @@ public sealed class Cp6R2PilotContractServer : IDisposable
 
     public void Dispose()
     {
+        Interlocked.Exchange(ref _stopping, 1);
         if (_listener.IsListening) _listener.Stop();
         _listener.Close();
         _loop.Wait(TimeSpan.FromSeconds(5));
