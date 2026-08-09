@@ -12,26 +12,28 @@ SET ANSI_NULLS ON;
 BEGIN TRY
 BEGIN TRANSACTION;
 
-DECLARE @MenuId INT = 907;
+-- 907 is reserved for SPACE AI administration; control tower owns 909.
+DECLARE @MenuId INT = 909;
 
 IF NOT EXISTS (SELECT 1 FROM Sys_Menus WHERE MenuId = 900)
     THROW 51000, 'Space parent menu 900 is missing. Run space-menu-seed.sql first.', 1;
 
 IF EXISTS (SELECT 1 FROM Sys_Menus WHERE MenuId = @MenuId AND MenuKey <> N'space-control-tower')
-    THROW 51001, 'MenuId 907 is already occupied by another menu.', 1;
+    THROW 51001, 'MenuId 909 is already occupied by another menu.', 1;
 
-IF EXISTS (SELECT 1 FROM Sys_Menus WHERE MenuKey = N'space-control-tower')
-    SELECT @MenuId = MenuId FROM Sys_Menus WHERE MenuKey = N'space-control-tower';
-ELSE
+IF EXISTS (SELECT 1 FROM Sys_Menus WHERE MenuKey = N'space-control-tower' AND MenuId <> @MenuId)
+    THROW 51002, 'Legacy SPACE control-tower menu ID detected. Start CP6.WebApi once to repair it before running this seed.', 1;
+
+IF NOT EXISTS (SELECT 1 FROM Sys_Menus WHERE MenuKey = N'space-control-tower')
     INSERT INTO Sys_Menus
         (MenuId, MenuName, RoutePath, MenuKey, Icon, ParentId, OrderNo, Enable, CreateDate)
     VALUES
-        (@MenuId, N'货场控制塔', N'/space/control-tower', N'space-control-tower', N'DataAnalysis', 900, 907, 1, SYSDATETIME());
+        (@MenuId, N'货场控制塔', N'/space/control-tower', N'space-control-tower', N'DataAnalysis', 900, 909, 1, SYSDATETIME());
 
 -- Keep the canonical route stable when this seed is re-applied.
 UPDATE Sys_Menus
 SET MenuName = N'货场控制塔', RoutePath = N'/space/control-tower', Icon = N'DataAnalysis',
-    ParentId = 900, OrderNo = 907, Enable = 1
+    ParentId = 900, OrderNo = 909, Enable = 1
 WHERE MenuId = @MenuId;
 
 INSERT INTO Sys_RoleMenus (TenantId, RoleId, MenuId)

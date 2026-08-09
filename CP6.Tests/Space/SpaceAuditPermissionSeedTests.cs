@@ -179,6 +179,112 @@ public sealed class SpaceAuditPermissionSeedTests
     }
 
     [Fact]
+    public void EnsureSeeded_repairs_full_admin_menu_set_and_splits_control_tower_from_ai_admin()
+    {
+        using var db = NewDb();
+        SeedTenants(db);
+        db.Sys_Menus.AddRange(
+            new Sys_Menu
+            {
+                MenuId = 900,
+                MenuName = "空間管理(Space)",
+                MenuKey = "space",
+                Icon = "Grid",
+                Enable = true,
+            },
+            new Sys_Menu
+            {
+                MenuId = 901,
+                MenuName = "スペースホーム",
+                MenuKey = "space-home",
+                RoutePath = "/space/home",
+                ParentId = 900,
+                Enable = true,
+            },
+            new Sys_Menu
+            {
+                MenuId = 902,
+                MenuName = "サイト管理",
+                MenuKey = "space-site",
+                RoutePath = "/space/site",
+                ParentId = 900,
+                Enable = true,
+            },
+            new Sys_Menu
+            {
+                MenuId = 903,
+                MenuName = "フロア管理",
+                MenuKey = "space-floor",
+                RoutePath = "/space/floor",
+                ParentId = 900,
+                Enable = true,
+            },
+            // Reproduces the post-merge database drift: menu 907 is the
+            // control tower row before the AI-admin startup seed runs.
+            new Sys_Menu
+            {
+                MenuId = 907,
+                MenuName = "货场控制塔",
+                MenuKey = "space-control-tower",
+                RoutePath = "/space/control-tower",
+                ParentId = 900,
+                Enable = true,
+            });
+        db.SaveChanges();
+
+        SpaceAuditPermissionSeed.EnsureSeeded(db);
+
+        var expectedMenuIds = Enumerable.Range(900, 10).ToArray();
+        Assert.Equal(
+            expectedMenuIds,
+            db.Sys_Menus
+                .Where(x => x.MenuId >= 900 && x.MenuId <= 909)
+                .OrderBy(x => x.MenuId)
+                .Select(x => x.MenuId)
+                .ToArray());
+
+        var aiAdmin = db.Sys_Menus.Single(x => x.MenuId == 907);
+        Assert.Equal("space-ai-admin", aiAdmin.MenuKey);
+        Assert.Equal("/space/ai-admin", aiAdmin.RoutePath);
+
+        var controlTower = db.Sys_Menus.Single(x => x.MenuId == 909);
+        Assert.Equal("space-control-tower", controlTower.MenuKey);
+        Assert.Equal("/space/control-tower", controlTower.RoutePath);
+
+        Assert.All(new[] { TenantA, TenantB }, tenant =>
+        {
+            var grantedMenuIds = db.Sys_RoleMenus
+                .IgnoreQueryFilters()
+                .Where(x => x.TenantId == tenant && x.RoleId == 1)
+                .OrderBy(x => x.MenuId)
+                .Select(x => x.MenuId)
+                .ToArray();
+            Assert.Equal(expectedMenuIds, grantedMenuIds);
+
+            Assert.Contains(
+                db.Sys_RoleActions.IgnoreQueryFilters(),
+                x => x.TenantId == tenant && x.RoleId == 1 &&
+                     x.MenuId == 902 && x.ActionCode == "add");
+            Assert.Contains(
+                db.Sys_RoleActions.IgnoreQueryFilters(),
+                x => x.TenantId == tenant && x.RoleId == 1 &&
+                     x.MenuId == 903 && x.ActionCode == "edit");
+            Assert.Contains(
+                db.Sys_RoleActions.IgnoreQueryFilters(),
+                x => x.TenantId == tenant && x.RoleId == 1 &&
+                     x.MenuId == 904 && x.ActionCode == "generate");
+            Assert.Contains(
+                db.Sys_RoleActions.IgnoreQueryFilters(),
+                x => x.TenantId == tenant && x.RoleId == 1 &&
+                     x.MenuId == 905 && x.ActionCode == "publish");
+            Assert.Contains(
+                db.Sys_RoleActions.IgnoreQueryFilters(),
+                x => x.TenantId == tenant && x.RoleId == 1 &&
+                     x.MenuId == 909 && x.ActionCode == "view");
+        });
+    }
+
+    [Fact]
     public void Existing_906_only_converges_menu_key_and_preserves_route()
     {
         using var db = NewDb();

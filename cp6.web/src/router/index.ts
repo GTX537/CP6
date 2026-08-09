@@ -383,10 +383,13 @@ function platformChildren(): RouteRecordRaw[] {
   })) as RouteRecordRaw[]
 }
 
-// OA Phase C 子页路由（非菜单，由目录页程序跳转，始终挂载为 layout 子路由）
-const oaSubRoutePaths = ['/oa/form-initiate']
-function oaSubChildren(): RouteRecordRaw[] {
-  return oaSubRoutePaths.map(p => ({
+// Internal child pages are not menu entries; their parent pages navigate to them.
+const internalSubRoutePaths = [
+  '/oa/form-initiate',
+  '/space/location-publish'
+]
+function internalSubChildren(): RouteRecordRaw[] {
+  return internalSubRoutePaths.map(p => ({
     path: p.replace(/^\//, ''),
     name: p.replace(/^\//, ''),
     component: viewModules[p]
@@ -426,8 +429,8 @@ export function addDynamicRoutes(menus: any[]) {
       })) as RouteRecordRaw[],
       // S类 #5 带外平台区：始终挂载（菜单不含，靠守卫 + 后端把关）
       ...platformChildren(),
-      // OA Phase C 子页：始终挂载（菜单不含，由目录页程序跳转）
-      ...oaSubChildren()
+      // Internal child pages stay mounted even though they are absent from Sys_Menu.
+      ...internalSubChildren()
     ]
   })
 

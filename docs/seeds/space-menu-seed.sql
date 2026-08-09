@@ -70,13 +70,21 @@ IF NOT EXISTS (SELECT 1 FROM Sys_Menus WHERE MenuId = 903)
 /* ------------------------------------------------------------
  * 3. 管理者ロール (RoleId=1) に全 Space メニューを付与（900~919 幂等）
  * ------------------------------------------------------------ */
-INSERT INTO Sys_RoleMenus (RoleId, MenuId)
-SELECT 1, m.MenuId
+IF NOT EXISTS (SELECT 1 FROM Sys_Menus WHERE MenuId = 904)
+    INSERT INTO Sys_Menus (MenuId, MenuName, RoutePath, MenuKey, Icon, ParentId, OrderNo, Enable, CreateDate)
+    VALUES (904, N'编码规则', N'/space/code-rule', N'space-code-rule', N'Tickets', 900, 904, 1, SYSDATETIME());
+IF NOT EXISTS (SELECT 1 FROM Sys_Menus WHERE MenuId = 905)
+    INSERT INTO Sys_Menus (MenuId, MenuName, RoutePath, MenuKey, Icon, ParentId, OrderNo, Enable, CreateDate)
+    VALUES (905, N'发布管理', N'/space/publish', N'space-publish', N'Promotion', 900, 905, 1, SYSDATETIME());
+
+INSERT INTO Sys_RoleMenus (TenantId, RoleId, MenuId)
+SELECT t.Id, 1, m.MenuId
 FROM Sys_Menus m
+CROSS JOIN Sys_Tenants t
 WHERE m.MenuId BETWEEN 900 AND 919
   AND NOT EXISTS (
       SELECT 1 FROM Sys_RoleMenus rm
-      WHERE rm.RoleId = 1 AND rm.MenuId = m.MenuId
+      WHERE rm.TenantId = t.Id AND rm.RoleId = 1 AND rm.MenuId = m.MenuId
   );
 
 /* ------------------------------------------------------------
