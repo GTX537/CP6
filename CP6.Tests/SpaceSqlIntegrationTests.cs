@@ -1,8 +1,12 @@
 using CP6.Core.EFDbContext;
+using CP6.Core.Services.Integration;
+using CP6.Core.Services.Space;
+using CP6.Core.Services.Wf;
 using CP6.Entity.DomainModels.Space;
 using CP6.Tests.Infra;
 using Microsoft.Data.SqlClient;
 using Microsoft.EntityFrameworkCore;
+using Microsoft.Extensions.Logging.Abstractions;
 
 namespace CP6.Tests;
 
@@ -47,6 +51,52 @@ public sealed class SpaceSqlIntegrationTests : IDisposable
         return new CP6Context(options);
     }
 
+    [SqlServerFact]
+    public async Task AnalyticsControlTower_TranslatesNullableFloorFilter_OnSqlServer()
+    {
+        using var ctx = NewContext();
+        var siteId = Guid.NewGuid();
+        var floorId = Guid.NewGuid();
+        var zoneId = Guid.NewGuid();
+        var rackId = Guid.NewGuid();
+        ctx.Space_Sites.Add(new Space_Site
+        {
+            Id = siteId, SiteCode = "SQL-WH", SiteName = "SQL Warehouse", WarehouseCd = "SQL-WH",
+        });
+        ctx.Space_Floors.Add(new Space_Floor
+        {
+            Id = floorId, SiteId = siteId, FloorCode = "F1", FloorName = "Floor 1", Level = 1,
+        });
+        ctx.Space_Zones.Add(new Space_Zone
+        {
+            Id = zoneId, FloorId = floorId, ZoneCode = "A", ZoneName = "Zone A", ZoneType = 1,
+        });
+        ctx.Space_Racks.Add(new Space_Rack
+        {
+            Id = rackId, FloorId = floorId, ZoneId = zoneId, RackCode = "R1",
+            Cols = 1, Levels = 1, CellW = 1000, CellH = 1000, CellD = 1000,
+        });
+        ctx.Space_Locations.Add(new Space_Location
+        {
+            Id = Guid.NewGuid(), FloorId = floorId, RackId = rackId, LocationCode = "SQL-LOC-001",
+            Placed = true, Status = 1, AbsX = 100, AbsY = 100, Capacity = 10, CapacityUom = 1,
+        });
+        await ctx.SaveChangesAsync();
+
+        var service = new SpaceAnalyticsService(
+            ctx,
+            new StubWmsStockQuery(),
+            new StubWmsAnalyticsQuery(),
+            NullLogger<SpaceAnalyticsService>.Instance,
+            new UtcTenantClock(),
+            TimeProvider.System);
+
+        var tower = await service.GetControlTowerAsync(siteId);
+
+        Assert.Equal(1, tower.TotalLocations);
+        Assert.Equal(floorId, Assert.Single(tower.Floors).FloorId);
+    }
+
     public void Dispose()
     {
         if (_connString == null) return;
@@ -59,6 +109,11 @@ public sealed class SpaceSqlIntegrationTests : IDisposable
         {
             // 兜底：清理失败不掩盖测试结果（临时库名含 Guid，不复用）
         }
+    }
+
+    private sealed class UtcTenantClock : ITenantClock
+    {
+        public TimeZoneInfo GetTenantTimeZone() => TimeZoneInfo.Utc;
     }
 
     // ── D-9.1: 过滤唯一索引 ──────────────────────────────────────────────

@@ -25,9 +25,13 @@ const store = useSpaceEditorStore()
 
 const zoneTypeOptions = [
   { value: 1, label: t('存储区') },
-  { value: 2, label: t('拣选区') },
-  { value: 3, label: t('收货区') },
-  { value: 4, label: t('发货区') },
+  { value: 2, label: t('收货区') },
+  { value: 3, label: t('发货区') },
+  { value: 4, label: t('拣选区') },
+  { value: 5, label: t('通道区') },
+  { value: 6, label: t('检验区') },
+  { value: 7, label: t('退货区') },
+  { value: 8, label: t('冷冻区') },
 ]
 const markerTypeOptions = [
   { value: 0, label: t('普通标注') },

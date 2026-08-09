@@ -24,6 +24,8 @@ namespace CP6.WebApi.Hubs;
 [Authorize]
 public class WmsHub : Hub
 {
+    public const string GeneralGroup = "wms:all";
+    private const string FilterGroupsKey = "wms:filter-groups";
     private readonly ILogger<WmsHub> _logger;
     public WmsHub(ILogger<WmsHub> logger) => _logger = logger;
 
@@ -35,6 +37,7 @@ public class WmsHub : Hub
         var tenantClaim = Context.User?.FindFirst("tenant_id")?.Value;
         if (Guid.TryParse(tenantClaim, out var tenantId))
             await Groups.AddToGroupAsync(Context.ConnectionId, TenantGroup(tenantId));
+        await Groups.AddToGroupAsync(Context.ConnectionId, GeneralGroup);
         await base.OnConnectedAsync();
     }
 
@@ -46,15 +49,46 @@ public class WmsHub : Hub
 
     /// <summary>クライアントが特定倉庫の更新を購読</summary>
     public Task SubscribeWarehouse(string warehouseCd)
-        => Groups.AddToGroupAsync(Context.ConnectionId, $"wh:{warehouseCd}");
+        => SubscribeFilterAsync($"wh:{warehouseCd}");
 
     public Task UnsubscribeWarehouse(string warehouseCd)
-        => Groups.RemoveFromGroupAsync(Context.ConnectionId, $"wh:{warehouseCd}");
+        => UnsubscribeFilterAsync($"wh:{warehouseCd}");
 
     /// <summary>クライアントが特定製品の更新を購読</summary>
     public Task SubscribeProduct(string productCd)
-        => Groups.AddToGroupAsync(Context.ConnectionId, $"product:{productCd}");
+        => SubscribeFilterAsync($"product:{productCd}");
 
     public Task UnsubscribeProduct(string productCd)
-        => Groups.RemoveFromGroupAsync(Context.ConnectionId, $"product:{productCd}");
+        => UnsubscribeFilterAsync($"product:{productCd}");
+
+    private HashSet<string> FilterGroups
+    {
+        get
+        {
+            if (Context.Items.TryGetValue(FilterGroupsKey, out var value)
+                && value is HashSet<string> groups)
+                return groups;
+            var created = new HashSet<string>(StringComparer.Ordinal);
+            Context.Items[FilterGroupsKey] = created;
+            return created;
+        }
+    }
+
+    private async Task SubscribeFilterAsync(string group)
+    {
+        var groups = FilterGroups;
+        if (!groups.Add(group)) return;
+        if (groups.Count == 1)
+            await Groups.RemoveFromGroupAsync(Context.ConnectionId, GeneralGroup);
+        await Groups.AddToGroupAsync(Context.ConnectionId, group);
+    }
+
+    private async Task UnsubscribeFilterAsync(string group)
+    {
+        var groups = FilterGroups;
+        if (!groups.Remove(group)) return;
+        await Groups.RemoveFromGroupAsync(Context.ConnectionId, group);
+        if (groups.Count == 0)
+            await Groups.AddToGroupAsync(Context.ConnectionId, GeneralGroup);
+    }
 }

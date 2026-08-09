@@ -36,6 +36,7 @@ export class SpaceViewer implements ViewerHandle {
   private _css2dRenderer: CSS2DRenderer | null = null
   private _picker = new Picker()
   private _highlighter = new Highlighter()
+  private _loadGeneration = 0
 
   private _readyCbs: Array<() => void> = []
   private _progressCbs: Array<(done: number, total: number) => void> = []
@@ -152,9 +153,11 @@ export class SpaceViewer implements ViewerHandle {
   }
 
   async load(floorId: string): Promise<void> {
+    const generation = ++this._loadGeneration
     this._clearSceneData()
     this._currentFloorId = floorId
     const env = await sceneApi.get(floorId)
+    if (generation !== this._loadGeneration) return
     const editorScene = env.data
 
     const builder = new SceneBuilder()
@@ -180,6 +183,7 @@ export class SpaceViewer implements ViewerHandle {
   }
 
   dispose(): void {
+    this._loadGeneration++
     this._loop.stop()
     window.removeEventListener('resize', this._onResize)
     this._cameraController?.dispose()

@@ -30,6 +30,28 @@ public class SpaceStockController : ControllerBase
         return Ok2(new { items, source, ts = source.ObservedAtUtc });
     }
 
+    /// <summary>Authoritative batched refresh for SignalR-dirtied locations on the current floor.</summary>
+    [HttpGet("floor/{floorId:guid}/stock/delta")]
+    public async Task<IActionResult> FloorStockDelta(
+        Guid floorId, [FromQuery] string[] locationCodes, CancellationToken ct)
+    {
+        var requested = locationCodes
+            .Where(x => !string.IsNullOrWhiteSpace(x))
+            .Select(x => x.Trim())
+            .Distinct(StringComparer.Ordinal)
+            .Take(200)
+            .ToList();
+        var allowed = requested.Count == 0
+            ? new List<string>()
+            : await _db.Space_Locations
+                .Where(l => l.FloorId == floorId && l.Placed && l.LocationCode != null
+                            && requested.Contains(l.LocationCode))
+                .Select(l => l.LocationCode!)
+                .ToListAsync(ct);
+        var items = await _stock.GetStockByLocationsAsync(allowed, ct);
+        return Ok2(new { items, requested = requested.Count, matched = allowed.Count, ts = DateTime.Now });
+    }
+
     /// <summary>按物料/批次/容器反查库位（命中列表，前端逐个复用 06 定位）。</summary>
     [HttpGet("stock/locate")]
     public async Task<IActionResult> Locate(

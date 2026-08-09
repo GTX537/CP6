@@ -72,15 +72,27 @@ public class SlottingService : ISlottingService
             .ToListAsync();
 
         // 2. 累計構成比で ABC 分類（パレート 80/15/5）
-        var sorted = stats.OrderByDescending(s => s.Count).ThenByDescending(s => s.Qty).ToList();
-        var totalCount = sorted.Sum(s => s.Count);
-        decimal cumulative = 0;
+        var classified = AbcClassifier.Classify(
+            stats.Select(s => new AbcInputRow(s.ProductCd, s.Count, s.Qty)),
+            AbcMetric.Frequency);
+        var totalCount = stats.Sum(s => s.Count);
+        var productCodes = classified.Select(s => s.ProductCd).ToList();
+        var stockRows = await _db.Stocks.AsNoTracking()
+            .Where(x => x.WarehouseCd == warehouseCd
+                        && productCodes.Contains(x.ProductCd)
+                        && !x.IsDeleted)
+            .Select(x => new { x.ProductCd, x.LocationCd, x.PhysicalQty })
+            .ToListAsync();
+        var currentByProduct = stockRows
+            .GroupBy(x => x.ProductCd)
+            .ToDictionary(
+                g => g.Key,
+                g => g.OrderByDescending(x => x.PhysicalQty).Select(x => x.LocationCd).FirstOrDefault());
+
         var recs = new List<SlottingRecommendation>();
-        foreach (var s in sorted)
+        foreach (var s in classified)
         {
-            cumulative += s.Count;
-            var ratio = totalCount > 0 ? (decimal)cumulative / totalCount : 0m;
-            string rank = ratio <= 0.80m ? AbcRank.A : (ratio <= 0.95m ? AbcRank.B : AbcRank.C);
+            var rank = s.AbcRank;
             string pattern = rank switch
             {
                 AbcRank.A => "PIK-A-*",
@@ -89,11 +101,7 @@ public class SlottingService : ISlottingService
             };
 
             // 現在ロケ：在庫数最大のロケ
-            var currentLoc = await _db.Stocks.AsNoTracking()
-                .Where(x => x.WarehouseCd == warehouseCd && x.ProductCd == s.ProductCd && !x.IsDeleted)
-                .OrderByDescending(x => x.PhysicalQty)
-                .Select(x => x.LocationCd)
-                .FirstOrDefaultAsync();
+            currentByProduct.TryGetValue(s.ProductCd, out var currentLoc);
 
             // 推奨と現状の prefix が違えば移動候補
             var prefix = pattern.Split('-')[0] + "-" + pattern.Split('-')[1] + "-"; // PIK-A- / PIK-B- / RES-C-
@@ -102,8 +110,8 @@ public class SlottingService : ISlottingService
             recs.Add(new SlottingRecommendation
             {
                 ProductCd = s.ProductCd,
-                OutCount = s.Count,
-                OutQty = s.Qty,
+                OutCount = s.OutCount,
+                OutQty = s.OutQty,
                 AbcRank = rank,
                 CurrentLocationCd = currentLoc,
                 RecommendedLocationPattern = pattern,

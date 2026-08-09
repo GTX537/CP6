@@ -20,6 +20,7 @@
           <template #extra>
             <el-button link type="primary" size="small" @click="gotoViewer(s)">{{ t('space.home.viewer3d') }}</el-button>
             <el-button link type="primary" size="small" @click="gotoStacked(s)">{{ t('space.home.stacked') }}</el-button>
+            <el-button v-if="permissionStore.has('space-control-tower:view')" link type="warning" size="small" @click="gotoTower(s)">{{ t('space.home.controlTower') }}</el-button>
             <el-button
               v-permission="'space:planning:scenario:read'"
               link
@@ -63,9 +64,11 @@ import CpEmpty from '@/components/base/CpEmpty.vue'
 import { siteApi } from '@/api/space/site'
 import { floorApi } from '@/api/space/floor'
 import type { SiteVO, FloorVO } from '@/types/space/scene'
+import { usePermissionStore } from '@/stores/permission'
 
 const { t } = useI18n()
 const router = useRouter()
+const permissionStore = usePermissionStore()
 
 const sites = ref<SiteVO[]>([])
 const floorMap = reactive<Record<string, FloorVO[]>>({})
@@ -82,6 +85,7 @@ onMounted(async () => {
 // —— 导航：standalone 页一律 named-push（路径参数）——
 function gotoViewer(s: SiteVO) { router.push({ name: 'space-viewer', params: { siteId: s.id } }) }
 function gotoStacked(s: SiteVO) { router.push({ name: 'space-stacked', params: { siteId: s.id } }) }
+function gotoTower(s: SiteVO) { router.push({ name: 'space-control-tower', params: { siteId: s.id } }) }
 function gotoPlanning(s: SiteVO) { router.push({ path: '/space/planning', query: { siteId: s.id } }) }
 function gotoEditor(f: FloorVO) { router.push({ name: 'space-editor', params: { floorId: f.id } }) }
 function gotoFloorViewer(s: SiteVO, f: FloorVO) {

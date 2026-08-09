@@ -1,13 +1,13 @@
 # 当前待办与优先级
 
-## P0：`main` 同步候选
+## 已完成：`main` 同步与 P2.5 受控整合
 
-- 候选分支 `codex/main-sync-20260808` 基于 `origin/main@adbe7bcd`，整体合入 `origin/integration/space-v1-20260730@f8c3bae8`；不要直接使用包含 P2.5 的本地 `main`，也不要逐个摘取 390 个依赖提交。
-- 原始 5 个冲突已按权威边界解决：OA 两个文件采用集成侧 `formApi.submit` 实现并删除旧 `flowApi` 导入；`06-Todo.md`、`CHANGELOG-AI.md`、`PROJECT_STATE.md` 已人工汇总，unmerged 集合为空。
-- Docker Cookie 修复 `9ffbf8f4` 已独立摘取为候选提交 `0fc6f529`；Analytics Control Tower `9b48ffbb` / `dd6637ea` 仍被排除，待 P2.5 独立评估。
+- `main@8045d872` 已通过 PR #2 合入原 `origin/integration/space-v1-20260730` 基线；原始 5 个冲突已按权威边界解决，Docker Cookie 修复已由 `0fc6f529` 等价纳入。
+- Analytics Control Tower 原始提交 `9b48ffbb` / `dd6637ea` 已从当前 `main` 选择性整合：保留 E10 Runtime/Viewer 真相源，加入独立控制塔、实时脏库位批处理、分析配置、定时 ABC 快照、容量发布和共享 ABC 分类器。
+- 原 `20260720035903` 迁移未进入主线；已基于当前 ModelSnapshot 生成 `20260809092206_SpaceAnalyticsControlTowerCurrent`，只创建两张分析表和三个索引。
 - 客户端心跳时序断言已稳定：测试周期与“事件立即唤醒”解耦，定向 50/50、客户端全量 71/71；生产心跳实现未修改。
 - `deploy/production/sql/main-sync-20260808` 已包含 14 个 Core + 36 个 Space 幂等迁移、preflight/postflight；LocalDB 从远端 main 基线双执行 2/2，history 14/36，51083/51000/51020 失败关闭通过。仍需在生产备份恢复副本重复同一演练。
-- 本地完整门禁已通过，merge candidate `79fa0301` 与 Docker 修复 `0fc6f529` 已形成。下一步推送候选备份并创建受保护 PR，跑 GitHub 门禁和人工复核。PR 批准后才允许合并 `main`，标签、R2 候选和生产部署另行审批。
+- 本地 P2.5 门禁已通过 WebApi build、前端 type-check/生产 build、全量 Vitest、Space UnitTests 和 CP6.Tests；标签、R2 候选、远端推送和生产部署仍需另行审批。
 - 完整依据：`docs/space/reports/2026-08-08-main-merge-readiness.md`。
 
 ## P0：Space V1 下一批受控实现
@@ -25,7 +25,7 @@
 - 外部输入齐全后，在同一冻结环境对 ODA 与 APS 各黄金样本 5 次、50MiB/100 万实体/200MiB 上限、超时/取消/并发进行评分；低于 ADR-0001 的 80 分硬门槛不得主选，若都失败则继续阻断 DWG Beta。
 - 本机 `KOUSQLSERVER` 已用于 E13-S17 的迁移、重复清理、并发租约和幂等 SQL 双执行，结果 3/3、0 skipped；随后 Version Clone 缺失的 Zone/Aisle/Rack `Name` 与 Rack `RackType` 映射已修复，完整 Space Integration 现为 336/336 passed、0 skipped。该项不再是待办。
 - `0d25da4d` 中 E05–E12 是候选证据，不得整包 merge/cherry-pick；必须重新核对依赖、迁移链和产品冻结范围。
-- P2.5 不混入本轮 Space 基线，待 E01 基线稳定后另行评估。
+- P2.5 已在当前主线按现行 E10 数据边界完成受控整合；历史 P2.5 分支仅保留追溯用途，不再整段 merge/cherry-pick。
 
 ## 已完成：GR-VP 波
 

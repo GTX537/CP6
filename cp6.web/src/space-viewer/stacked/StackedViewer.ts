@@ -55,6 +55,8 @@ export class StackedViewer {
   private _floorGroups = new Map<string, Group>()
   /** floorId → InstancedBuckets for that floor (for future picking) */
   private _floorBuckets = new Map<string, InstancedBuckets>()
+  /** locationCode → floor/location identity for analytics overlays and realtime refresh. */
+  private _codeToLocation = new Map<string, { floorId: string; locationId: string }>()
 
   constructor(canvas: HTMLCanvasElement) {
     // ── Renderer ──────────────────────────────────────────────────────────────
@@ -136,6 +138,9 @@ export class StackedViewer {
       this._sceneRoot.add(grp)
       this._floorGroups.set(f.id, grp)
       this._floorBuckets.set(f.id, result.buckets)
+      for (const [locationId, code] of result.locationCodes) {
+        this._codeToLocation.set(code, { floorId: f.id, locationId })
+      }
     }
 
     // Frame camera to the union bounding box of the whole stacked scene
@@ -155,6 +160,22 @@ export class StackedViewer {
       grp.visible = v
       this.requestRender()
     }
+  }
+
+  setInstanceColorByCode(locationCode: string, hex: number): void {
+    const ref = this._codeToLocation.get(locationCode)
+    if (!ref) return
+    this._floorBuckets.get(ref.floorId)?.setColor(ref.locationId, hex)
+    this.requestRender()
+  }
+
+  resetInstanceColors(hex = 0x607d8b): void {
+    for (const buckets of this._floorBuckets.values()) buckets.resetColors(hex)
+    this.requestRender()
+  }
+
+  getFloorIdByCode(locationCode: string): string | null {
+    return this._codeToLocation.get(locationCode)?.floorId ?? null
   }
 
   // ── ViewerHandle-compatible surface ─────────────────────────────────────────
@@ -178,6 +199,7 @@ export class StackedViewer {
       buckets.dispose()
     }
     this._floorBuckets.clear()
+    this._codeToLocation.clear()
 
     while (this._sceneRoot.children.length > 0) {
       const child = this._sceneRoot.children[0]

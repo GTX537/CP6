@@ -1,6 +1,7 @@
 import { createRouter, createWebHistory, type RouteRecordRaw } from 'vue-router'
 import { prefetchNamespacesForPath } from '@/i18n'
 import { usePlatformStore } from '@/stores/platform'
+import { usePermissionStore } from '@/stores/permission'
 
 // 路由路径 → 组件的映射表（所有可能的页面）
 const viewModules: Record<string, () => Promise<any>> = {
@@ -175,6 +176,7 @@ const viewModules: Record<string, () => Promise<any>> = {
   '/wms/report-center':        () => import('@/views/wms/ReportCenterView.vue'),
   // ── Space 空間管理（波2 P0）─────────────────────────────
   '/space/home': () => import('@/views/space/SpaceHomeView.vue'),
+  '/space/control-tower': () => import('@/views/space/control-tower/ControlTowerLandingView.vue'),
   '/space/site': () => import('@/views/space/master/SpaceSiteView.vue'),
   '/space/floor': () => import('@/views/space/master/SpaceFloorView.vue'),
   // ── Space 波3 生命周期 ─────────────────────────────
@@ -331,6 +333,12 @@ const staticRoutes: RouteRecordRaw[] = [
     meta: { standalone: true, title: 'Space 3D 全层叠视图' },
   },
   {
+    path: '/space/control-tower/:siteId',
+    name: 'space-control-tower',
+    component: () => import('@/views/space/control-tower/SpaceControlTowerView.vue'),
+    meta: { standalone: true, title: 'Space Control Tower', permission: 'space-control-tower:view' },
+  },
+  {
     path: '/menu-designs',
     name: 'menu-designs',
     component: () => import('@/views/pms/MenuDesignVariantsView.vue'),
@@ -442,7 +450,7 @@ export function resetRoutes() {
 }
 
 // 路由守卫
-router.beforeEach((to) => {
+router.beforeEach(async (to) => {
   // T9：登录态信号由 httpOnly token 改为非敏感标志 cp6_authed（JS 读不到 httpOnly token）
   const authed = localStorage.getItem('cp6_authed')
 
@@ -480,6 +488,13 @@ router.beforeEach((to) => {
     to.path !== '/sys/change-password'
   ) {
     return '/sys/change-password'
+  }
+
+  const requiredPermission = to.meta?.permission as string | undefined
+  if (requiredPermission) {
+    const permissions = usePermissionStore()
+    if (!permissions.loaded) await permissions.loadMyActions()
+    if (!permissions.has(requiredPermission)) return '/'
   }
 
   // 4. 独立窗口（popup）/ 改密页（standalone）：有登录态即可，不依赖动态菜单

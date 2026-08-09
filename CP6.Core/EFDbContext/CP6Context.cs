@@ -474,6 +474,8 @@ public class CP6Context : DbContext, IDataProtectionKeyContext
     // ───── Space P4 多层路由 ─────
     public DbSet<Space_Connector> Space_Connectors { get; set; }
     public DbSet<Space_ConnectorStop> Space_ConnectorStops { get; set; }
+    public DbSet<Space_AnalyticsConfig> Space_AnalyticsConfigs { get; set; }
+    public DbSet<Space_AbcSnapshot> Space_AbcSnapshots { get; set; }
 
     // ───── Space ch04 v1.1 §5.3 发布落点（WMS 侧消费表，方案A 2026-07-05 拍板）─────
     /// <summary>WMS 库位消费表（Space 发布落点，幂等判据 lastVersion 存放处）</summary>
@@ -2464,6 +2466,18 @@ public class CP6Context : DbContext, IDataProtectionKeyContext
         {
             e.HasIndex(x => new { x.TenantId, x.ConnectorId, x.FloorId }).IsUnique();
             e.HasIndex(x => new { x.TenantId, x.ConnectorId });
+        });
+        modelBuilder.Entity<Space_AnalyticsConfig>(e =>
+        {
+            e.HasIndex(x => x.TenantId).IsUnique();
+        });
+        modelBuilder.Entity<Space_AbcSnapshot>(e =>
+        {
+            e.HasIndex(x => new { x.TenantId, x.SiteId, x.CalculatedAt });
+            e.HasIndex(x => new { x.TenantId, x.SiteId, x.ScheduledDate })
+                .IsUnique()
+                .HasFilter("[ScheduledDate] IS NOT NULL");
+            e.Property(x => x.ResultJson).HasColumnType("nvarchar(max)");
         });
         modelBuilder.Entity<Space_CodeRule>()
             .HasIndex(x => new { x.TenantId, x.ScopeType, x.ScopeId });

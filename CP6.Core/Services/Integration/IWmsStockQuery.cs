@@ -25,9 +25,12 @@ public sealed class WmsStockDto
     public int     BinStatus    { get; set; }   // 0空 1有货 2满 3锁定 4在拣
     public decimal Qty          { get; set; }   // ΣPhysicalQty
     public decimal AllocatedQty { get; set; }   // ΣAllocatedQty
-    public decimal? Capacity    { get; set; }   // Location.CapacityQty（0/未设→null）
-    public string?  TopMaterial { get; set; }   // 占量最大 ProductCd
-    public int      ProductKinds{ get; set; }   // distinct ProductCd 数
+    public decimal? Capacity    { get; set; }
+    public int?     CapacityUom { get; set; }
+    public string?  CapacitySource { get; set; }
+    public string?  TopMaterial { get; set; }
+    public int      ProductKinds{ get; set; }
+    public List<string> ProductCodes { get; set; } = new();
 }
 
 /// <summary>按物料/批/容器反查条件（非空即 AND；全空→空结果）。</summary>

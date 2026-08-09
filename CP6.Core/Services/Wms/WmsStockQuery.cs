@@ -1,3 +1,4 @@
+using System.Text.Json;
 using CP6.Core.EFDbContext;
 using CP6.Core.Services.Integration;
 using CP6.Entity.DomainModels.Wms;
@@ -36,10 +37,20 @@ public class WmsStockQuery : IWmsStockQuery
             Allocated = g.Sum(x => x.AllocatedQty),
             Kinds = g.Select(x => x.ProductCd).Distinct().Count(),
             Top = g.OrderByDescending(x => x.PhysicalQty).Select(x => x.ProductCd).FirstOrDefault(),
+            Products = g.Where(x => x.PhysicalQty > 0).Select(x => x.ProductCd).Distinct().ToList(),
         });
 
         var locs = await _db.Locations.Where(l => codes.Contains(l.LocationCd)).ToListAsync(ct);
-        var locByCode = locs.GroupBy(l => l.LocationCd).ToDictionary(g => g.Key, g => g.First());
+        var locByWarehouseAndCode = locs
+            .GroupBy(l => (l.WarehouseCd, l.LocationCd))
+            .ToDictionary(g => g.Key, g => g.First());
+        var locByCode = locs.GroupBy(l => l.LocationCd)
+            .ToDictionary(g => g.Key, g => g.First());
+        var bins = await _db.WmsBins.AsNoTracking()
+            .Where(b => !b.IsDeleted && b.IsActive && codes.Contains(b.LocationCode))
+            .ToListAsync(ct);
+        var binByCode = bins.GroupBy(b => b.LocationCode)
+            .ToDictionary(g => g.Key, g => g.OrderByDescending(x => x.Version).First());
 
         var pickingCodes = await (
             from d in _db.OutboundOrderDetails
@@ -53,11 +64,22 @@ public class WmsStockQuery : IWmsStockQuery
         foreach (var code in codes)
         {
             stockByLoc.TryGetValue(code, out var st);
-            locByCode.TryGetValue(code, out var loc);
-            if (st is null && loc is null) continue;   // 无数据 → 不返回
+            binByCode.TryGetValue(code, out var bin);
+            Location? loc = null;
+            if (bin is not null)
+                locByWarehouseAndCode.TryGetValue((bin.WarehouseCd, code), out loc);
+            if (loc is null)
+                locByCode.TryGetValue(code, out loc);
+            if (st is null && loc is null && bin is null) continue;   // 无数据 → 不返回
 
             var qty = st?.Qty ?? 0m;
-            var cap = (loc is not null && loc.CapacityQty > 0) ? loc.CapacityQty : (decimal?)null;
+            var publishedCapacity = TryReadCapacity(bin?.AttrsJson);
+            var locationCapacity = (loc is not null && loc.CapacityQty > 0) ? loc.CapacityQty : (decimal?)null;
+            var cap = publishedCapacity.capacity ?? locationCapacity;
+            var capUom = publishedCapacity.uom;
+            var capSource = publishedCapacity.capacity.HasValue
+                ? "wms-bin"
+                : locationCapacity.HasValue ? "wms-location" : null;
 
             int status;
             if (loc?.IsBlocked == true)                 status = 3; // 锁定
@@ -70,10 +92,34 @@ public class WmsStockQuery : IWmsStockQuery
             {
                 LocationCode = code, BinStatus = status, Qty = qty,
                 AllocatedQty = st?.Allocated ?? 0m, Capacity = cap,
+                CapacityUom = capUom, CapacitySource = capSource,
                 TopMaterial = st?.Top, ProductKinds = st?.Kinds ?? 0,
+                ProductCodes = st?.Products ?? new List<string>(),
             });
         }
         return result;
+    }
+
+    private static (decimal? capacity, int? uom) TryReadCapacity(string? attrsJson)
+    {
+        if (string.IsNullOrWhiteSpace(attrsJson)) return (null, null);
+        try
+        {
+            using var doc = JsonDocument.Parse(attrsJson);
+            var root = doc.RootElement;
+            decimal? capacity = null;
+            int? uom = null;
+            if (root.TryGetProperty("capacity", out var cap)
+                && cap.TryGetDecimal(out var parsedCapacity) && parsedCapacity > 0m)
+                capacity = parsedCapacity;
+            if (root.TryGetProperty("capacityUom", out var unit) && unit.TryGetInt32(out var parsedUom))
+                uom = parsedUom;
+            return (capacity, uom);
+        }
+        catch (JsonException)
+        {
+            return (null, null);
+        }
     }
 
     public async Task<IReadOnlyList<WmsLocationHit>> FindLocationsAsync(

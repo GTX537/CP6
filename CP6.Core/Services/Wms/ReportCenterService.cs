@@ -90,28 +90,18 @@ public class ReportCenterService : IReportCenterService
             .Select(g => new { ProductCd = g.Key, OutCount = g.Count(), OutQty = g.Sum(x => x.Qty) })
             .ToListAsync();
 
-        if (agg.Count == 0) return new List<AbcAnalysisRow>();
-
-        var ordered = agg.OrderByDescending(x => x.OutQty).ToList();
-        var totalQty = ordered.Sum(x => x.OutQty);
-        if (totalQty <= 0) return new List<AbcAnalysisRow>();
-
-        var rows = new List<AbcAnalysisRow>(ordered.Count);
-        decimal cum = 0m;
-        foreach (var r in ordered)
-        {
-            cum += r.OutQty;
-            var ratio = cum / totalQty;
-            rows.Add(new AbcAnalysisRow
+        return AbcClassifier.Classify(
+                agg.Select(x => new AbcInputRow(x.ProductCd, x.OutCount, x.OutQty)),
+                AbcMetric.Quantity)
+            .Select(x => new AbcAnalysisRow
             {
-                ProductCd = r.ProductCd,
-                OutCount = r.OutCount,
-                OutQty = r.OutQty,
-                CumulativeRatio = Math.Round(ratio * 100m, 2),
-                AbcRank = ratio <= 0.80m ? "A" : ratio <= 0.95m ? "B" : "C",
-            });
-        }
-        return rows;
+                ProductCd = x.ProductCd,
+                OutCount = x.OutCount,
+                OutQty = x.OutQty,
+                CumulativeRatio = Math.Round(x.CumulativeRatio * 100m, 2),
+                AbcRank = x.AbcRank,
+            })
+            .ToList();
     }
 
     // ═════════ 滞留品 ═════════
