@@ -1,6 +1,6 @@
 <script setup lang="ts">
-import { Handle, Position } from '@vue-flow/core'
 import type { NodeProps } from '@vue-flow/core'
+import FourWayHandles from './FourWayHandles.vue'
 
 const props = defineProps<NodeProps>()
 </script>
@@ -8,7 +8,7 @@ const props = defineProps<NodeProps>()
 <template>
   <div :class="['vf-node-start', { 'vf-node--selected': props.selected }]">
     <div class="node-label">{{ (props.data as Record<string, unknown>)?.name as string || '填單(发起)' }}</div>
-    <Handle type="source" :position="Position.Bottom" />
+    <FourWayHandles />
   </div>
 </template>
 

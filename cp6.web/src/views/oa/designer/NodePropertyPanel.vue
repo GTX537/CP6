@@ -27,6 +27,7 @@ function cloneNode(n: SchemaNode): SchemaNode {
 
 const syncing = ref(false)
 const local = ref<SchemaNode>(cloneNode(props.node))
+const panelScroll = ref<HTMLElement | null>(null)
 
 watch(
   () => props.node,
@@ -43,6 +44,7 @@ watch(
     // 无 timerActionKind 的 pending 鸡生蛋问题——subMulti 无中间「未填集合变量」的驻留态）。
     subMultiState.value = deriveSubMulti(local.value)
     await nextTick()
+    if (idChanged) panelScroll.value?.scrollTo({ top: 0 })
     syncing.value = false
   },
   { deep: true },
@@ -326,7 +328,7 @@ async function searchCcUsers(kw: string) {
 </script>
 
 <template>
-  <div class="node-prop-panel">
+  <div ref="panelScroll" class="node-prop-panel" data-testid="node-property-scroll">
     <div class="panel-title">{{ t('oa.designer.nodeProps') }}</div>
 
     <el-collapse v-model="collapseActive">
@@ -1003,11 +1005,23 @@ async function searchCcUsers(kw: string) {
 
 <style scoped>
 .node-prop-panel {
-  padding: 8px;
+  width: 100%;
+  min-height: 0;
+  max-height: 100%;
+  padding: 8px 8px 28px;
   overflow-y: auto;
   height: 100%;
   box-sizing: border-box;
+  overscroll-behavior: contain;
+  scrollbar-gutter: stable;
+  scrollbar-width: thin;
+  scrollbar-color: #aebfc3 #f3f7f8;
 }
+
+.node-prop-panel::-webkit-scrollbar { width: 10px; }
+.node-prop-panel::-webkit-scrollbar-track { background: #f3f7f8; }
+.node-prop-panel::-webkit-scrollbar-thumb { border: 2px solid #f3f7f8; border-radius: 5px; background: #aebfc3; }
+.node-prop-panel::-webkit-scrollbar-thumb:hover { background: #849da2; }
 
 .gw-hint {
   display: block;

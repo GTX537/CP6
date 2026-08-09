@@ -3,10 +3,12 @@
     <select v-model="mode" class="sb-mode">
       <option value="code">{{ t('按编码') }}</option>
       <option value="material">{{ t('按物料') }}</option>
+      <option value="lot">{{ t('按批次') }}</option>
+      <option value="container">{{ t('按容器') }}</option>
     </select>
     <el-input
       v-model="query"
-      :placeholder="mode === 'code' ? t('搜索库位编码') : t('输入物料号')"
+      :placeholder="placeholder"
       clearable
       size="small"
       @input="onInput"
@@ -34,21 +36,28 @@
 </template>
 
 <script setup lang="ts">
-import { ref } from 'vue'
+import { computed, ref } from 'vue'
 import { useI18n } from 'vue-i18n'
 import { Search } from '@element-plus/icons-vue'
 import { locateApi } from '@/api/space/locate'
 import type { LocateResult } from '@/types/space/viewer'
+import type { SpaceRuntimeInventoryLocateQuery } from '@/types/space/runtime'
 
 const emit = defineEmits<{
   (e: 'locate', code: string): void
-  (e: 'locate-material', material: string): void
+  (e: 'locate-stock', criteria: SpaceRuntimeInventoryLocateQuery): void
 }>()
 
 const { t } = useI18n()
-const mode = ref<'code' | 'material'>('code')
+const mode = ref<'code' | 'material' | 'lot' | 'container'>('code')
 const query = ref('')
 const candidates = ref<LocateResult[]>([])
+const placeholder = computed(() => ({
+  code: t('搜索库位编码'),
+  material: t('输入物料号'),
+  lot: t('输入批次号'),
+  container: t('输入容器号'),
+})[mode.value])
 let debounceTimer = 0
 
 function onInput(): void {
@@ -74,13 +83,20 @@ async function fetchCandidates(prefix: string): Promise<void> {
   }
 }
 
-/** Enter key: emit 'locate' (code mode) or 'locate-material' (material mode). */
+/** Enter key: emit a Space code or an exact unified-runtime stock criterion. */
 function onEnter(): void {
   const q = query.value.trim()
   if (!q) return
   candidates.value = []
-  if (mode.value === 'code') emit('locate', q)
-  else emit('locate-material', q)
+  if (mode.value === 'code') {
+    emit('locate', q)
+    return
+  }
+  const criteria: SpaceRuntimeInventoryLocateQuery = {}
+  if (mode.value === 'material') criteria.materialNumber = q
+  if (mode.value === 'lot') criteria.lotNumber = q
+  if (mode.value === 'container') criteria.containerNumber = q
+  emit('locate-stock', criteria)
 }
 
 function onBlur(): void {

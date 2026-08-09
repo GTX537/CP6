@@ -34,13 +34,21 @@ public class QueryServiceTests
             Version = 1, Enable = true });
         await db.SaveChangesAsync();
         await Engine(db).SubmitAsync("leave", starter, "{}");
+        db.Wf_FlowInstances.Add(new Wf_FlowInstance
+        {
+            Id = Guid.NewGuid(), FlowKey = "leave", StarterId = Guid.NewGuid(),
+            Status = FlowInstanceStatus.Running
+        });
+        await db.SaveChangesAsync();
 
-        var hit = await Inbox(db).QueryAsync(new FormQueryFilter(starter, null, "leave", null, null, null, null));
-        var item = Assert.Single(hit);
+        var hit = await Inbox(db).QueryAsync(starter, new FormQueryFilter(starter, null, "leave", null, null, null, null));
+        var item = Assert.Single(hit.Items);
+        Assert.Equal(1, hit.Total);
         Assert.Equal("发起李", item.StarterName);
         Assert.Equal("leave", item.FlowKey);
 
-        var miss = await Inbox(db).QueryAsync(new FormQueryFilter(Guid.NewGuid(), null, null, null, null, null, null));
-        Assert.Empty(miss);
+        var other = Guid.NewGuid();
+        var miss = await Inbox(db).QueryAsync(other, new FormQueryFilter(other, null, null, null, null, null, null));
+        Assert.Empty(miss.Items);
     }
 }

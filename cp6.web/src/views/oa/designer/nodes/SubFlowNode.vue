@@ -1,9 +1,9 @@
 <script setup lang="ts">
 import { computed } from 'vue'
-import { Handle, Position } from '@vue-flow/core'
 import type { NodeProps } from '@vue-flow/core'
 import { useI18n } from 'vue-i18n'
 import type { SchemaNode } from '../designerModel'
+import FourWayHandles from './FourWayHandles.vue'
 
 const props = defineProps<NodeProps>()
 const { t } = useI18n()
@@ -23,14 +23,13 @@ const policyLabel = computed(() =>
 
 <template>
   <div :class="['vf-node-subflow', { 'vf-node--selected': props.selected }]">
-    <Handle type="target" :position="Position.Top" />
+    <FourWayHandles />
     <div class="sf-title">
       <span class="sf-dot" aria-hidden="true" />
       <span class="sf-title-text">{{ name }}</span>
     </div>
     <div class="sf-key">{{ subKey }}</div>
     <div v-if="multiVar" class="sf-multi">×N {{ multiVar }} · {{ policyLabel }}</div>
-    <Handle type="source" :position="Position.Bottom" />
   </div>
 </template>
 

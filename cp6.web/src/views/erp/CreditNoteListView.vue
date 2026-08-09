@@ -39,7 +39,7 @@ import { type FilterField } from '@/components/templates/CpFilterBar.vue'
 import { type Tone } from '@/components/base/CpTag.vue'
 import { creditNoteApi } from '@/api/erp/creditNote'
 import { formatQty } from '@/utils/format'
-import type { CreditNoteType } from '@/types/erp/creditNote'
+import type { CreditNoteListItem, CreditNoteType } from '@/types/erp/creditNote'
 
 const { t } = useI18n()
 const router = useRouter()
@@ -59,7 +59,7 @@ function truncateReason(value?: string): string {
   return value.length > 50 ? `${value.slice(0, 50)}...` : value
 }
 
-const columns = computed<ListColumn[]>(() => [
+const columns = computed<ListColumn<CreditNoteListItem>[]>(() => [
   { prop: 'issueDate', label: t('erp.creditNote.col.issueDate'), width: 120, kind: 'date' },
   { prop: 'creditNoteNo', label: t('erp.creditNote.col.no'), width: 150, overflowTooltip: true },
   { prop: 'webOrderNo', label: t('erp.creditNote.col.webOrderNo'), width: 150 },
@@ -100,12 +100,12 @@ const searchFields = computed<FilterField[]>(() => [
 function normalizePaged(res: unknown) {
   const data = (res as { data?: Record<string, unknown> })?.data || {}
   return {
-    items: (data.items || data.Items || []) as unknown[],
+    items: (data.items || data.Items || []) as CreditNoteListItem[],
     total: Number(data.total ?? data.Total ?? 0),
   }
 }
 
-const fetchList: ListFetch = async ({ page, size, filters }) => {
+const fetchList: ListFetch<CreditNoteListItem> = async ({ page, size, filters }) => {
   const f = filters as Record<string, unknown>
   const res = await creditNoteApi.search({
     customerCd: (f.customerCd as string) || undefined,

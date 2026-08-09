@@ -71,7 +71,7 @@ import { ref, reactive, computed } from 'vue'
 import { ElMessage, ElMessageBox, type FormRules } from 'element-plus'
 import { useI18n } from 'vue-i18n'
 import CpPageShell from '@/components/templates/CpPageShell.vue'
-import CpListPage, { type ListColumn, type ListFetch } from '@/components/templates/CpListPage.vue'
+import CpListPage, { type ListColumn, type ListFetch, type ListPageExpose } from '@/components/templates/CpListPage.vue'
 import { type FilterField } from '@/components/templates/CpFilterBar.vue'
 import CpFormDialog from '@/components/templates/CpFormDialog.vue'
 import { type Tone } from '@/components/base/CpTag.vue'
@@ -83,7 +83,7 @@ const { t } = useI18n()
 
 const total = ref<number>()
 // in-place 变更后命令式刷新（保留当前筛选/页码）
-const listRef = ref<InstanceType<typeof CpListPage> | null>(null)
+const listRef = ref<ListPageExpose | null>(null)
 function reloadList() { listRef.value?.reload() }
 
 const statusMap = computed<Record<number, string>>(() => ({
@@ -99,7 +99,7 @@ function codeLabel(m: Record<number, string>, v: unknown): string {
   return m[v as number] || (v == null ? '' : String(v))
 }
 
-const columns = computed<ListColumn[]>(() => [
+const columns = computed<ListColumn<CrossDockOrder>[]>(() => [
   { prop: 'xDockNo', label: t('wms.xdock.fld.no'), kind: 'mono', width: 180 },
   { prop: 'status', label: t('wms.common.status'), width: 110, kind: 'tag',
     map: (v) => ({ label: codeLabel(statusMap.value, v), tone: statusTone(v as number) }) },
@@ -129,7 +129,7 @@ const searchFields = computed<FilterField[]>(() => [
 ])
 
 const PAGE_CAP = 500
-const fetchList: ListFetch = async ({ page, size, filters }) => {
+const fetchList: ListFetch<CrossDockOrder> = async ({ page, size, filters }) => {
   const f = filters as Record<string, unknown>
   const q: CrossDockSearchQuery = { pageSize: PAGE_CAP }
   if (f.xdockNo) q.xdockNo = String(f.xdockNo)

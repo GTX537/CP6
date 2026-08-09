@@ -1,5 +1,7 @@
 # CP6 Space 3D 空间数字底座 · 细分规格设计（需求分析定稿 · 修订版）
 
+> **历史文档提示（2026-07-23）**：本文记录 2026-06 的阶段决策。当前已经把 CAD+Excel 低成本建模提升为 MVP，并把人员、设备、优化和仿真保留在完整分期蓝图中。实施、估算和验收请优先使用 [`docs/space/requirements/`](../../space/requirements/01-product-requirements.md) 的当前基线。
+>
 > 本文是 Space 模块**细分丛书撰写前的需求分析定稿**：在总纲 `docs/space/README.md`（已锁的 5 个架构决策）之上，补齐总纲点到为止、但写细分规格时必须拍死的落地设计问题，并定下细分丛书的章节骨架。
 >
 > 产出目标：据此撰写 `docs/space/` 细分丛书 README 总纲 + 00～09 共 10 章，每章 `.md` + `.xlsx`、essay 风格，仿 finance/PUB。

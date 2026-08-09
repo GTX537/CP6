@@ -1,0 +1,29 @@
+{
+  "schemaVersion": "1.0",
+  "providerRequestId": "mock-request-0001",
+  "providerModel": "cp6-mock-provider-v1",
+  "usage": {
+    "inputUnits": 1,
+    "outputUnits": 1
+  },
+  "suggestions": [
+    {
+      "sourceKey": "feature-0001",
+      "suggestedType": "Rack",
+      "confidence": 0.98,
+      "attributes": {
+        "rackType": "Selective",
+        "semanticLabel": "Selective rack group"
+      },
+      "relations": [],
+      "evidenceCodes": [
+        "LAYER_NAME",
+        "BLOCK_NAME",
+        "REPETITION_PATTERN",
+        "MAPPING_HINT"
+      ]
+    }
+  ],
+  "diagnostics": []
+}
+

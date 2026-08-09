@@ -43,11 +43,12 @@ public class DesignerController : LocalizedControllerBase
     {
         var summary = await _designer.LoadAsync(flowKey);
         if (summary is null) return NotFound(new { code = 404, message = "E-WF-006" });
-        var def = await _flowDef.GetDefAsync(flowKey);
-        return Ok2(new { summary, schemaJson = def?.SchemaJson ?? "{}" });
+        var draft = await _flowDef.GetDraftAsync(flowKey);
+        return Ok2(new { summary, schemaJson = draft?.SchemaJson ?? "{}", draft });
     }
 
-    public record SaveReq(string FlowKey, string FlowName, string FormKey, string? FunctionId, string? FlowCode, string SchemaJson);
+    public record SaveReq(string FlowKey, string FlowName, string FormKey, string? FunctionId,
+        string? FlowCode, string SchemaJson, byte[]? RowVersion);
 
     [HttpPost("save")]
     [RequirePermission("oa-designer", "edit")]
@@ -56,10 +57,16 @@ public class DesignerController : LocalizedControllerBase
         try
         {
             var user = (await _ctx.GetAsync()).UserId.ToString();
-            await _designer.SaveAsync(new SaveFlowRequest(r.FlowKey, r.FlowName, r.FormKey, r.FunctionId, r.FlowCode, r.SchemaJson), user);
-            return Ok2(true);
+            await _designer.SaveAsync(new SaveFlowRequest(r.FlowKey, r.FlowName, r.FormKey,
+                r.FunctionId, r.FlowCode, r.SchemaJson, r.RowVersion), user);
+            return Ok2(await _flowDef.GetDraftAsync(r.FlowKey));
         }
-        catch (InvalidOperationException e) { return Err(e); }
+        catch (InvalidOperationException e)
+        {
+            return e.Message == "E-WF-045"
+                ? Conflict(new { code = e.Message, message = e.Message })
+                : Err(e);
+        }
     }
 
     public record CloneReq(string SourceFlowKey, string NewFlowKey, string NewFlowName);

@@ -1,12 +1,11 @@
-using CP6.Entity.DomainModels.Wf;
-
 namespace CP6.Core.Services.Oa;
 
 // ── 列表项 ──
 public record InboxPendingItem(Guid TaskId, Guid InstanceId, Guid? TokenId, string FlowKey, string? FlowName,
     string NodeId, string? NodeName, Guid StarterId, string StarterName, string? BizType, string? BizId,
     bool IsRead, DateTime SentAt,
-    int StageIndex = 0, int StageRound = 0, string? StageName = null, string? StageCode = null, bool CanSendBackPrevStage = false);
+    int StageIndex = 0, int StageRound = 0, string? StageName = null, string? StageCode = null,
+    bool CanSendBackPrevStage = false, string? DetailRoute = null);
 
 public record InboxCcItem(Guid CcId, Guid InstanceId, string FlowKey, string? FlowName, string? AtNodeId,
     Guid StarterId, string StarterName, bool IsRead, DateTime CreateDate);
@@ -44,8 +43,17 @@ public record CcRow(Guid RecipientId, string RecipientName, string? AtNodeId, bo
 public record SubFlowParentRow(Guid InstanceId, string FlowKey, string? FlowName);
 public record SubFlowChildRow(Guid InstanceId, int SubIndex, string FlowKey, string? FlowName, int Status, string NodeId);
 
-public record InboxDetail(Wf_FlowInstance Instance, string? FlowName, string? FormKey, string? FormSchemaJson,
-    string CurrentDataJson, IReadOnlyList<TimelineRow> Timeline, IReadOnlyList<SnapshotRow> Snapshots,
+public record InboxUser(Guid Id, string Name);
+public record InboxInstanceDto(Guid Id, string FlowKey, string? FlowName, int? FlowVersion,
+    int Status, string CurrentNodeId, string? CurrentNodeName, InboxUser Starter, DateTime CreatedAtUtc);
+public record InboxContentDto(string Kind, Guid? FormDataId, string? FormKey, int? FormVersion,
+    string? SchemaJson, string? DataJson, IReadOnlyDictionary<string, string>? FieldMask,
+    string? BizType, string? BizId);
+public record InboxTaskDto(Guid TaskId, string NodeId, IReadOnlyDictionary<string, string> FieldMask,
+    byte[]? FormDataRowVersion);
+
+public record InboxDetail(InboxInstanceDto Instance, InboxContentDto Content, InboxTaskDto? MyTask,
+    IReadOnlyList<TimelineRow> Timeline, IReadOnlyList<SnapshotRow> Snapshots,
     IReadOnlyList<ForecastStep> Forecast, IReadOnlyList<CcRow> Cc,
     SubFlowParentRow? SubFlowParent = null, IReadOnlyList<SubFlowChildRow>? SubFlows = null);
 

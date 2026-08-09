@@ -12,6 +12,15 @@ namespace CP6.Entity.DomainModels.Wf;
 [Table("Wf_FlowInstance")]
 public class Wf_FlowInstance : BaseTenantEntity
 {
+    /// <summary>Pinned immutable flow definition used by every runtime read.</summary>
+    public Guid? FlowDefVersionId { get; set; }
+
+    /// <summary>Pinned form definition for SFS instances; null for business flows.</summary>
+    public Guid? FormDefVersionId { get; set; }
+
+    /// <summary>Authoritative SFS form data; null for business flows.</summary>
+    public Guid? FormDataId { get; set; }
+
     /// <summary>所属流程定义 FlowKey</summary>
     [Required, MaxLength(100)]
     public string FlowKey { get; set; } = string.Empty;

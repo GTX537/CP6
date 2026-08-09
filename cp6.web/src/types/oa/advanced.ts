@@ -22,6 +22,8 @@ export interface FormQueryFilter {
   status?: number
   from?: string
   to?: string
+  page?: number
+  pageSize?: number
 }
 export interface FormQueryItem {
   instanceId: string

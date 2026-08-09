@@ -1,5 +1,8 @@
 namespace CP6.Core.Services.Wf;
 
+public sealed record FlowBusinessRef(string BizType, string BizId);
+public sealed record FlowFormRef(Guid FormDefVersionId, Guid FormDataId);
+
 /// <summary>退回落点。Kind: prevStage(同节点上一档)/starter(退回发起人重填)/node(退回指定上游节点)。</summary>
 public sealed record SendBackTarget(string Kind, string? NodeId = null);
 
@@ -10,7 +13,8 @@ public sealed record SendBackTarget(string Kind, string? NodeId = null);
 public interface IFlowEngine
 {
     /// <summary>起流程：建实例 → 进首节点（建待办/挂起/直达 end）。返回实例 Id。</summary>
-    Task<Guid> SubmitAsync(string flowKey, Guid starterId, string varsJson, string? bizType = null, string? bizId = null);
+    Task<Guid> SubmitAsync(string flowKey, Guid starterId, string varsJson, string? bizType = null,
+        string? bizId = null, Guid? instanceId = null);
 
     /// <summary>办理任务（同意/驳回）。幂等：已办任务再办无效，不重复流转。</summary>
     Task ActAsync(Guid taskId, Guid actorId, bool approve, string? comment = null);

@@ -8,6 +8,12 @@ public interface IFormService
     /// <summary>建/改表单定义（按 FormKey upsert，schema 变更自增 Version）。返回 FormDef.Id。</summary>
     Task<Guid> SaveDefAsync(string formKey, string formName, string schemaJson, string? user = null);
 
+    Task<DefinitionDraftDto?> GetDraftAsync(string formKey, bool createIfMissing = true, string? user = null);
+    Task<DefinitionDraftDto> SaveDraftAsync(string formKey, string formName, string schemaJson, byte[]? rowVersion, string? user = null);
+    Task<DefinitionPublishResult> PublishAsync(string formKey, byte[]? rowVersion, Guid publishedBy, CancellationToken ct = default);
+    Task<IReadOnlyList<DefinitionVersionItem>> ListVersionsAsync(string formKey, CancellationToken ct = default);
+    Task<DefinitionVersionDto?> GetVersionAsync(string formKey, int version, CancellationToken ct = default);
+
     /// <summary>取表单定义（按 FormKey）。</summary>
     Task<Wf_FormDef?> GetDefAsync(string formKey);
 

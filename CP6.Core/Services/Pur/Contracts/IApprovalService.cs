@@ -20,6 +20,15 @@ public class ApprovalSubmitRequest
     /// <summary>业务单据键（如 PoNo）。</summary>
     public string BizKey { get; set; } = string.Empty;
 
+    /// <summary>Authenticated business actor. Never inferred to Guid.Empty.</summary>
+    public Guid ActorId { get; set; }
+
+    /// <summary>Server-built, trusted business snapshot used for routing and runtime variables.</summary>
+    public object Snapshot { get; set; } = new();
+
+    /// <summary>Business-reserved workflow id used to correlate ApprovalRef before an immediate callback.</summary>
+    public Guid? InstanceId { get; set; }
+
     /// <summary>送审金额（审批路由可按金额分级）。</summary>
     public decimal Amount { get; set; }
 

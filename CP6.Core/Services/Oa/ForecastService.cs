@@ -20,7 +20,22 @@ public class ForecastService : IForecastService
         var def = await _db.Wf_FlowDefs.FirstOrDefaultAsync(x => x.FlowKey == flowKey && x.Enable)
                   ?? throw new InvalidOperationException("E-WF-006");
         var schema = JsonSerializer.Deserialize<FlowSchema>(def.SchemaJson, JsonOpts) ?? new FlowSchema();
+        return await ForecastSchemaAsync(schema, varsJson, starterId, fromNodeId);
+    }
 
+    public async Task<ForecastResult> ForecastPinnedAsync(
+        Guid flowDefVersionId, string varsJson, Guid starterId, string? fromNodeId = null)
+    {
+        var version = await _db.Wf_FlowDefVersions.AsNoTracking()
+            .SingleOrDefaultAsync(x => x.Id == flowDefVersionId)
+            ?? throw new InvalidOperationException("E-WF-006");
+        var schema = JsonSerializer.Deserialize<FlowSchema>(version.SchemaJson, JsonOpts) ?? new FlowSchema();
+        return await ForecastSchemaAsync(schema, varsJson, starterId, fromNodeId);
+    }
+
+    private async Task<ForecastResult> ForecastSchemaAsync(
+        FlowSchema schema, string varsJson, Guid starterId, string? fromNodeId)
+    {
         var steps = new List<ForecastStep>();
         var visited = new HashSet<string>();
         bool branched = false;

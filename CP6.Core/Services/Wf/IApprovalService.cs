@@ -11,7 +11,8 @@ public interface IApprovalService
     /// 起业务审批。按 bizType 找启用的绑定 → 起对应流程，bizId/formSnapshot 随实例落库（OA 不回查业务表）。
     /// 同一 (bizType,bizId) 已有进行中审批 → 抛异常（防重复提交）。返回流程实例 Id。
     /// </summary>
-    Task<Guid> SubmitAsync(string bizType, string bizId, Guid starterId, object? formSnapshot = null);
+    Task<Guid> SubmitAsync(string bizType, string bizId, Guid starterId, object? formSnapshot = null,
+        Guid? instanceId = null);
 
     /// <summary>查业务单据的审批状态（取最近一条实例；无实例 → None）。</summary>
     Task<ApprovalStatus> GetStatusAsync(string bizType, string bizId);

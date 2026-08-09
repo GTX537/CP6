@@ -158,7 +158,7 @@ import { computed, onMounted, ref, watch } from 'vue'
 import { useI18n } from 'vue-i18n'
 import { ElMessage } from 'element-plus'
 import { inboxApi } from '@/api/oa/inbox'
-import type { InboxDetail, PendingItem, BatchResultItem } from '@/types/oa/inbox'
+import type { InboxDetail, PendingItem } from '@/types/oa/inbox'
 import type { FormSchema, FormFieldDef, FieldMask } from '@/types/wf/wf'
 import DynamicForm from '@/views/wf/DynamicForm.vue'
 import { buildFieldMask, safeParseObject } from '@/views/wf/fieldMask'
@@ -200,15 +200,15 @@ const formData = ref<Record<string, any>>({})
 
 // ── Derived form schema + mask ───────────────────────────────────
 const parsedSchema = computed((): FormSchema => {
-  const s = safeParseObject(detail.value?.formSchemaJson)
+  const s = safeParseObject(detail.value?.content.schemaJson)
   return {
     fields: (Array.isArray(s.fields) ? s.fields : []) as FormFieldDef[],
   }
 })
 
-/** All-readonly mask — every field is shown but disabled */
 const readonlyMask = computed((): FieldMask =>
-  buildFieldMask(parsedSchema.value.fields.map((f) => f.name)),
+  (detail.value?.content.fieldMask ?? buildFieldMask(
+    parsedSchema.value.fields.map((f) => f.name))) as FieldMask,
 )
 
 // ── Data loading ─────────────────────────────────────────────────
@@ -219,17 +219,14 @@ async function loadDetail() {
   myTaskId.value = null
   myPendingItem.value = null
   try {
-    const [detailRes, pendingRes] = await Promise.all([
-      inboxApi.detail(props.instanceId),
-      inboxApi.pending('expanded'),
-    ])
+    const detailRes = await inboxApi.detail(props.instanceId)
     detail.value = (detailRes as any).data as InboxDetail
-    const pendingList: PendingItem[] =
-      ((pendingRes as any).data as PendingItem[]) || []
-    const match = pendingList.find((p) => p.instanceId === props.instanceId)
-    myTaskId.value = match?.taskId ?? null
-    myPendingItem.value = match ?? null
-    formData.value = safeParseObject(detail.value?.currentDataJson)
+    myTaskId.value = detail.value.myTask?.taskId ?? null
+    myPendingItem.value = detail.value.myTask
+      ? { taskId: detail.value.myTask.taskId, instanceId: props.instanceId,
+          nodeId: detail.value.myTask.nodeId } as PendingItem
+      : null
+    formData.value = safeParseObject(detail.value?.content.dataJson)
   } catch {
     // HTTP errors already shown by the http interceptor
   } finally {
@@ -242,23 +239,12 @@ async function doAction(approve: boolean) {
   if (!myTaskId.value) return
   acting.value = true
   try {
-    const res = await inboxApi.batch(
-      [myTaskId.value],
-      approve,
-      comment.value || undefined,
-    )
-    const results: BatchResultItem[] =
-      ((res as any).data as BatchResultItem[]) || []
-    const okCount = results.filter((r) => r.ok).length
-    const failed = results.filter((r) => !r.ok)
-    if (okCount) {
-      ElMessage.success(
-        approve ? t('oa.detail.approveOk') : t('oa.detail.rejectOk'),
-      )
-    }
-    for (const f of failed) {
-      ElMessage.error(f.error ?? t('oa.detail.actionFailed'))
-    }
+    const mask = detail.value?.myTask?.fieldMask ?? {}
+    const dataPatch = Object.fromEntries(Object.entries(formData.value)
+      .filter(([key]) => mask[key] === 'edit'))
+    await inboxApi.decide(myTaskId.value, approve ? 'approve' : 'reject',
+      comment.value || undefined, dataPatch, detail.value?.myTask?.formDataRowVersion)
+    ElMessage.success(approve ? t('oa.detail.approveOk') : t('oa.detail.rejectOk'))
     comment.value = ''
     emit('done')
     await loadDetail()

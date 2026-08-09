@@ -1,2 +1,11 @@
 # Environment migration assets are stored through Git LFS, not normal Git objects.
 migration/database/*.bak filter=lfs diff=lfs merge=lfs -text
+*.dxf -text
+*.dwg -text
+
+# Generated Space acceptance packages are byte-stable fixtures. Text
+# normalization would invalidate their manifest SHA-256 values on checkout.
+CP6.Tests/TestData/Space/Acceptance/** binary
+
+# Main-sync SQL hashes are deployment evidence and must stay byte-stable.
+deploy/production/sql/main-sync-*/**.sql text eol=lf

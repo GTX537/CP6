@@ -1,5 +1,5 @@
 import { createI18n } from 'vue-i18n'
-import http from '@/api/http'
+import axios from 'axios'
 
 // 语言选项列表（i18n 优化 P5：仅 dev 构建追加伪本地化 QA 语言）
 export const langOptions = [
@@ -71,13 +71,34 @@ const i18n = createI18n({
 // ── 加载状态跟踪 ────────────────────────────────────────────────
 const loadedPacks = new Set<string>() // `${lang}:${ns}` / `${lang}:_core` / `${lang}:_full`
 const neededNamespaces = new Set<string>() // 本会话访问过的大模块 ns（换语言时按此重载）
+const loadingPacks = new Map<string, Promise<void>>()
 let manifestVersion: string | null = null
+
+const languageHttp = axios.create({
+  baseURL: '/api',
+  timeout: 10000,
+  withCredentials: true,
+})
+
+function loadOnce(key: string, loader: () => Promise<void>): Promise<void> {
+  const existing = loadingPacks.get(key)
+  if (existing) return existing
+
+  const pending = loader().finally(() => loadingPacks.delete(key))
+  loadingPacks.set(key, pending)
+  return pending
+}
+
+async function getLanguageResource<T>(url: string): Promise<T> {
+  const response = await languageHttp.get<T>(url)
+  return response.data
+}
 
 async function fetchManifestVersion(): Promise<string> {
   if (manifestVersion !== null) return manifestVersion
   let v = ''
   try {
-    const m: any = await http.get('/lang/manifest')
+    const m: any = await getLanguageResource('/lang/manifest')
     v = m?.version || ''
   } catch {
     v = ''
@@ -93,16 +114,18 @@ function merge(lang: string, flat: Record<string, string>) {
 }
 
 /** 兜底：实时拉某语言全量包（懒加载失败 / 无路由 ns 映射时用，保证不出现裸 key）。 */
-async function loadFull(lang: string) {
-  if (loadedPacks.has(`${lang}:_full`)) return
-  try {
-    const flat: any = await http.get(`/lang/${lang}`)
-    merge(lang, flat)
-    loadedPacks.add(`${lang}:_full`)
-    loadedPacks.add(`${lang}:_core`)
-  } catch (e) {
-    console.error(`[i18n] loadFull failed: ${lang}`, e)
-  }
+function loadFull(lang: string): Promise<void> {
+  if (loadedPacks.has(`${lang}:_full`)) return Promise.resolve()
+  return loadOnce(`${lang}:_full`, async () => {
+    try {
+      const flat: any = await getLanguageResource(`/lang/${lang}`)
+      merge(lang, flat)
+      loadedPacks.add(`${lang}:_full`)
+      loadedPacks.add(`${lang}:_core`)
+    } catch (e) {
+      console.warn(`[i18n] loadFull failed: ${lang}`, e)
+    }
+  })
 }
 
 /** publish 模式：读版本化静态包（不可变长缓存）；无已发布版本则回退实时全量。 */
@@ -114,7 +137,7 @@ async function loadPublished(lang: string) {
     return
   }
   try {
-    const flat: any = await http.get(`/lang/published/${version}/${lang}`)
+    const flat: any = await getLanguageResource(`/lang/published/${version}/${lang}`)
     merge(lang, flat)
     loadedPacks.add(`${lang}:_full`)
     loadedPacks.add(`${lang}:_core`)
@@ -128,7 +151,7 @@ async function loadPublished(lang: string) {
 async function loadCore(lang: string) {
   if (loadedPacks.has(`${lang}:_core`) || loadedPacks.has(`${lang}:_full`)) return
   try {
-    const flat: any = await http.get(`/lang/${lang}/ns/_core`)
+    const flat: any = await getLanguageResource(`/lang/${lang}/ns/_core`)
     merge(lang, flat)
     loadedPacks.add(`${lang}:_core`)
   } catch (e) {
@@ -138,16 +161,18 @@ async function loadCore(lang: string) {
 }
 
 /** live 模式：加载某语言的某大模块命名空间；失败兜底全量。 */
-async function loadNamespace(lang: string, ns: string) {
-  if (loadedPacks.has(`${lang}:${ns}`) || loadedPacks.has(`${lang}:_full`)) return
-  try {
-    const flat: any = await http.get(`/lang/${lang}/ns/${ns}`)
-    merge(lang, flat)
-    loadedPacks.add(`${lang}:${ns}`)
-  } catch (e) {
-    console.error(`[i18n] loadNamespace failed: ${lang}/${ns}, fallback to full`, e)
-    await loadFull(lang)
-  }
+function loadNamespace(lang: string, ns: string): Promise<void> {
+  if (loadedPacks.has(`${lang}:${ns}`) || loadedPacks.has(`${lang}:_full`)) return Promise.resolve()
+  return loadOnce(`${lang}:${ns}`, async () => {
+    try {
+      const flat: any = await getLanguageResource(`/lang/${lang}/ns/${ns}`)
+      merge(lang, flat)
+      loadedPacks.add(`${lang}:${ns}`)
+    } catch (e) {
+      console.warn(`[i18n] loadNamespace failed: ${lang}/${ns}, fallback to full`, e)
+      await loadFull(lang)
+    }
+  })
 }
 
 // ── i18n 优化 P5：伪本地化质量门（dev-only QA 语言）─────────────────
@@ -179,7 +204,7 @@ async function loadPseudo() {
   if (loadedPacks.has('pseudo:_full')) return
   try {
     // 直接拉「原始」en 字典（值为字符串）。不能用 getLocaleMessage('en')——vue-i18n 会把消息编译成对象。
-    const flat: any = await http.get('/lang/en')
+    const flat: any = await getLanguageResource('/lang/en')
     const pseudo: Record<string, string> = {}
     for (const k in flat) {
       const v = flat[k]
@@ -215,6 +240,13 @@ export async function ensureNamespacesForPath(path: string) {
       return langs.map((l) => loadNamespace(l, ns))
     }),
   )
+}
+
+/** 后台预取路由所需翻译，不延迟页面导航。 */
+export function prefetchNamespacesForPath(path: string): void {
+  void ensureNamespacesForPath(path).catch((e) => {
+    console.warn(`[i18n] route prefetch failed: ${path}`, e)
+  })
 }
 
 // 切换语言：载新语言基础包 + 已访问过的大模块 ns + 回退链基础包。

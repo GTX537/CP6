@@ -132,7 +132,7 @@ public class OawfPermissionAttributeTests
         // 守卫：Controllers.Oa（14，含 F-T2 收编的 FlowTriggerAdminController + A-T4 WorkCalendarController
         //      + D-T2 WfConnectorController）+ Controllers.Wf（5）下继承 ControllerBase 的非抽象类共 19
         //      （含 Forecast/Query 两个全豁免·真写=0 控制器）。防单侧空扫假绿。
-        Assert.Equal(19, OawfControllers.Count());
+        Assert.Equal(23, OawfControllers.Count());
     }
 
     [Fact]
@@ -172,8 +172,8 @@ public class OawfPermissionAttributeTests
         Assert.True(offenders.Count == 0,
             "变更端点权限点缺失/键不合约定/豁免冲突:\n" + string.Join("\n", offenders));
 
-        // 收口断言：贴点 45 + 豁免命中 2 = 全 47 非GET端点，精确吻合真相源 §七 + F-T2 收编 6 + B-T2 新增 2 + A-T4 新增 3 + D-T2 新增 3。
-        Assert.Equal(45, taggedCount);
+        // 收口断言：P0 definition/submission/draft/decision 资源端点纳入后共 52 个贴点。
+        Assert.Equal(52, taggedCount);
         Assert.Equal(2, exemptHit.Count);
     }
 

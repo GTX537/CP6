@@ -5,6 +5,7 @@ using CP6.Core.Services.Pur.Contracts;
 using CP6.Entity.DomainModels.Erp;
 using CP6.Entity.DomainModels.Pub;
 using CP6.Entity.DomainModels.Pur;
+using CP6.Core.Services.Sys;
 using Xunit;
 
 namespace CP6.Tests.Pur;
@@ -12,6 +13,7 @@ namespace CP6.Tests.Pur;
 /// <summary>采购申请服务单测（采购 章05 §4/§5）：手工建单 / 送审（桩即批）/ PR→PO 按建议供应商分组转单。</summary>
 public class PurchaseRequestServiceTests
 {
+    private static readonly Guid ActorId = Guid.Parse("10000000-0000-0000-0000-000000000001");
     private const string SupA = "SUPA";
     private const string SupB = "SUPB";
     private const string Item1 = "ITEM1";
@@ -23,6 +25,16 @@ public class PurchaseRequestServiceTests
 
     private static PurchaseRequestService NewSvc(CP6Context db) =>
         new(db, new SeqService(db), new StubApprovalService(), NewPoSvc(db));
+
+    private static UserPermissionContext Permission(string userName = "u1") => new()
+    {
+        UserId = ActorId,
+        UserName = userName,
+        DataScopes = { ["pur-pr"] = 5 },
+    };
+
+    private static Task<PurchaseRequest> Submit(PurchaseRequestService service, string prNo) =>
+        service.SubmitForApprovalAsync(prNo, ActorId, "u1", Permission());
 
     /// <summary>种子：两发注先供应商 + PR/PO 采番配置。</summary>
     private static async Task SeedAsync(CP6Context db)
@@ -97,7 +109,7 @@ public class PurchaseRequestServiceTests
         var svc = NewSvc(db);
         var pr = await svc.CreateAsync(NewPrDto(Line(Item1, 10m, 5m, SupA)), "u1");
 
-        var submitted = await svc.SubmitForApprovalAsync(pr.PrNo, "u1");
+        var submitted = await Submit(svc, pr.PrNo);
 
         Assert.Equal(PrStatus.Approved, submitted.Status);
         Assert.Equal($"AUTO-{pr.PrNo}", submitted.ApprovalRef);
@@ -110,9 +122,9 @@ public class PurchaseRequestServiceTests
         await SeedAsync(db);
         var svc = NewSvc(db);
         var pr = await svc.CreateAsync(NewPrDto(Line(Item1, 10m, 5m, SupA)), "u1");
-        await svc.SubmitForApprovalAsync(pr.PrNo, "u1"); // → Approved
+        await Submit(svc, pr.PrNo); // → Approved
 
-        var ex = await Assert.ThrowsAsync<InvalidOperationException>(() => svc.SubmitForApprovalAsync(pr.PrNo, "u1"));
+        var ex = await Assert.ThrowsAsync<InvalidOperationException>(() => Submit(svc, pr.PrNo));
         Assert.Equal("E-PUR-052", ex.Message);
     }
 
@@ -139,7 +151,7 @@ public class PurchaseRequestServiceTests
             Line(Item1, 10m, 5m, SupA),
             Line(Item2, 20m, 7m, SupA),
             Line(Item3, 30m, 9m, SupB)), "u1");
-        await svc.SubmitForApprovalAsync(pr.PrNo, "u1");
+        await Submit(svc, pr.PrNo);
 
         var poNos = await svc.ConvertToPoAsync(pr.PrNo, "u1");
 
@@ -172,7 +184,7 @@ public class PurchaseRequestServiceTests
         var pr = await svc.CreateAsync(NewPrDto(
             Line(Item1, 10m, 5m, SupA),
             Line(Item2, 20m, 7m, null)), "u1");
-        await svc.SubmitForApprovalAsync(pr.PrNo, "u1");
+        await Submit(svc, pr.PrNo);
 
         var poNos = await svc.ConvertToPoAsync(pr.PrNo, "u1");
 
@@ -191,7 +203,7 @@ public class PurchaseRequestServiceTests
         var svc = NewSvc(db);
         // 全行无建议供应商 → 无可转
         var pr = await svc.CreateAsync(NewPrDto(Line(Item1, 10m, 5m, null)), "u1");
-        await svc.SubmitForApprovalAsync(pr.PrNo, "u1");
+        await Submit(svc, pr.PrNo);
 
         var ex = await Assert.ThrowsAsync<InvalidOperationException>(() => svc.ConvertToPoAsync(pr.PrNo, "u1"));
         Assert.Equal("E-PUR-054", ex.Message);
@@ -206,7 +218,7 @@ public class PurchaseRequestServiceTests
         var pr = await svc.CreateAsync(NewPrDto(
             Line(Item1, 10m, 5m, SupA),
             Line(Item2, 20m, 7m, null)), "u1");
-        await svc.SubmitForApprovalAsync(pr.PrNo, "u1");
+        await Submit(svc, pr.PrNo);
 
         var first = await svc.ConvertToPoAsync(pr.PrNo, "u1"); // 转 SupA 行，Item2 留下
         Assert.Single(first);
@@ -224,7 +236,7 @@ public class PurchaseRequestServiceTests
         var svc = NewSvc(db);
         var pr1 = await svc.CreateAsync(NewPrDto(Line(Item1, 10m, 5m, SupA)), "u1");
         await svc.CreateAsync(NewPrDto(Line(Item2, 10m, 5m, SupA)), "u1");
-        await svc.SubmitForApprovalAsync(pr1.PrNo, "u1"); // pr1 → Approved
+        await Submit(svc, pr1.PrNo); // pr1 → Approved
 
         var approved = await svc.ListAsync(status: PrStatus.Approved);
         var drafts = await svc.ListAsync(status: PrStatus.Draft);

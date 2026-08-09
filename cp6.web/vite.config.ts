@@ -9,6 +9,20 @@ export default defineConfig({
   plugins: [
     vue(),
     vueDevTools(),
+    {
+      name: 'cp6-release-identity',
+      generateBundle() {
+        this.emitFile({
+          type: 'asset',
+          fileName: 'release.json',
+          source: JSON.stringify({
+            version: process.env.CP6_RELEASE_VERSION || '0.0.0-dev',
+            gitSha: process.env.CP6_GIT_SHA || 'unknown',
+            generatedAtUtc: new Date().toISOString(),
+          }, null, 2),
+        })
+      },
+    },
   ],
   resolve: {
     alias: {

@@ -49,6 +49,7 @@
       <el-button
         v-for="f in folderList"
         :key="f.key"
+        :data-testid="`inbox-folder-${f.key}`"
         size="small"
         round
         :type="folder === f.key ? 'primary' : 'default'"
@@ -70,7 +71,7 @@
             {{ t('oa.inbox.dashboard') }}
           </el-menu-item>
 
-          <el-menu-item index="pending">
+          <el-menu-item index="pending" data-testid="inbox-folder-pending">
             <span class="menu-item-row">
               <span>{{ t('oa.inbox.pending') }}</span>
               <el-badge

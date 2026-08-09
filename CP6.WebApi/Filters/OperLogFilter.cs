@@ -1,10 +1,12 @@
 using System.Diagnostics;
 using System.Security.Claims;
 using CP6.Core.EFDbContext;
+using CP6.Core.Services.Space.Observability;
 using CP6.Core.Utilities;
 using CP6.Entity.DomainModels;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.Filters;
+using Microsoft.AspNetCore.Mvc.Infrastructure;
 
 namespace CP6.WebApi.Filters;
 
@@ -42,9 +44,14 @@ public class OperLogFilter : IAsyncActionFilter
     public async Task OnActionExecutionAsync(ActionExecutingContext context, ActionExecutionDelegate next)
     {
         var stopwatch = Stopwatch.StartNew();
+        var method = context.HttpContext.Request.Method;
+        var path = context.HttpContext.Request.Path.Value ?? "";
+        var isSpace =
+            context.HttpContext.Request.Path.StartsWithSegments("/api/space");
 
         string? requestBody = null;
-        if (context.HttpContext.Request.Method is "POST" or "PUT" or "DELETE")
+        if (!isSpace &&
+            (method is "POST" or "PUT" or "PATCH" or "DELETE"))
         {
             // シリアライズ不可な引数（CancellationToken / IFormFile / Stream 等）は除外する。
             // 除外しないと CancellationToken.WaitHandle.Handle(IntPtr) で
@@ -74,9 +81,6 @@ public class OperLogFilter : IAsyncActionFilter
         var resultContext = await next();
         stopwatch.Stop();
 
-        var method = context.HttpContext.Request.Method;
-        var path = context.HttpContext.Request.Path.Value ?? "";
-
         // 始终跳过：登录（防密码泄露）与日志接口自身（防递归）
         if (path.Contains("/api/operlog", StringComparison.OrdinalIgnoreCase)
             || path.Contains("/api/auth", StringComparison.OrdinalIgnoreCase))
@@ -91,11 +95,7 @@ public class OperLogFilter : IAsyncActionFilter
         var actionName = context.RouteData.Values["action"]?.ToString();
         var clientIp = context.HttpContext.Connection.RemoteIpAddress?.ToString();
 
-        var statusCode = 200;
-        if (resultContext.Exception != null)
-            statusCode = 500;
-        else if (resultContext.Result is ObjectResult objResult)
-            statusCode = objResult.StatusCode ?? 200;
+        var statusCode = StatusCodeOf(resultContext);
 
         var log = new Sys_OperLog
         {
@@ -129,7 +129,10 @@ public class OperLogFilter : IAsyncActionFilter
             }
             catch (Exception ex)
             {
-                Console.WriteLine($"[OperLog] 通道 {_transport.Name} 投递失败: {ex.Message}");
+                if (isSpace)
+                    WriteSafeFailure("SPACE_OPERLOG_TRANSPORT_FAILED", ex);
+                else
+                    Console.WriteLine($"[OperLog] 通道 {_transport.Name} 投递失败: {ex.Message}");
             }
         }
 
@@ -144,8 +147,35 @@ public class OperLogFilter : IAsyncActionFilter
             catch (Exception ex)
             {
                 // 降级写 DB 失败也只作旁路记录，绝不影响主业务接口
-                Console.WriteLine($"[OperLog] 降级写入DB日志失败: {ex.Message}");
+                if (isSpace)
+                    WriteSafeFailure("SPACE_OPERLOG_DB_FALLBACK_FAILED", ex);
+                else
+                    Console.WriteLine($"[OperLog] 降级写入DB日志失败: {ex.Message}");
             }
         }
+    }
+
+    private static void WriteSafeFailure(string reasonCode, Exception exception)
+    {
+        var safe = SpaceErrorSanitizer.Classify(exception, reasonCode);
+        Console.WriteLine(
+            $"[OperLog] {safe.ReasonCode} {safe.ExceptionType} {safe.Fingerprint}");
+    }
+
+    private static int StatusCodeOf(ActionExecutedContext executed)
+    {
+        if (executed.Exception is not null)
+            return StatusCodes.Status500InternalServerError;
+
+        var status = executed.Result switch
+        {
+            ForbidResult => StatusCodes.Status403Forbidden,
+            ChallengeResult => StatusCodes.Status401Unauthorized,
+            IStatusCodeActionResult { StatusCode: int value } => value,
+            _ => executed.HttpContext.Response.StatusCode,
+        };
+        return status is >= 100 and <= 599
+            ? status
+            : StatusCodes.Status200OK;
     }
 }

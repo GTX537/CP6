@@ -17,10 +17,9 @@ import {
 export const UNIT_BOX = new BoxGeometry(1, 1, 1)
 
 export const locMaterial = new MeshLambertMaterial({
-  color: 0x607d8b,
-  vertexColors: false,
+  color: 0xffffff,
+  vertexColors: true,
 })
-locMaterial.vertexColors = false
 
 export const rackEdgesMaterial = new LineBasicMaterial({ color: 0x90a4ae })
 
@@ -50,18 +49,20 @@ export function makeInstanceMatrix(
   absX: number,
   absY: number,
   absZ: number,
-  rotZ: number,
+  rotZDegrees: number,
   sizeW: number,
   sizeD: number,
   sizeH: number,
 ): Matrix4 {
   // All in data/mm space — SceneRoot scale+rotation handles the world conversion.
-  // rotZ is yaw around data Z-axis (up), which maps to Three Y-axis after SceneRoot rotation.
+  // RotationZ contracts use degrees. Size is applied in data axes (X/Y/Z)
+  // before SceneRoot maps data Z-up to Three Y-up.
   const m = new Matrix4()
   const position = new Vector3(absX, absY, absZ)
-  // Rotate around data Z (Y-up in world after SceneRoot)
-  const quat = new Quaternion().setFromEuler(new Euler(0, 0, rotZ))
-  const scale = new Vector3(sizeW, sizeH, sizeD)
+  const quat = new Quaternion().setFromEuler(
+    new Euler(0, 0, (rotZDegrees * Math.PI) / 180),
+  )
+  const scale = new Vector3(sizeW, sizeD, sizeH)
   m.compose(position, quat, scale)
   return m
 }

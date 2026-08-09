@@ -53,14 +53,14 @@ import { computed, onMounted, onBeforeUnmount, ref } from 'vue'
 import { useI18n } from 'vue-i18n'
 import { ElMessage, ElMessageBox } from 'element-plus'
 import { Plus, Check, Link, Download } from '@element-plus/icons-vue'
-import CpListPage, { type ListColumn, type ListFetch, type SortOrder } from '@/components/templates/CpListPage.vue'
+import CpListPage, { type ListColumn, type ListFetch, type ListPageExpose, type SortOrder } from '@/components/templates/CpListPage.vue'
 import { type FilterField } from '@/components/templates/CpFilterBar.vue'
 import CpTag, { type Tone } from '@/components/base/CpTag.vue'
 import { productApi } from '@/api/erp/product'
 import type { ProductListItemDto, ProductQuery } from '@/types/erp/productMaster'
 
 const { t } = useI18n()
-const listRef = ref<InstanceType<typeof CpListPage>>()
+const listRef = ref<ListPageExpose>()
 const exporting = ref(false)
 const statusSel = ref<number[]>([])
 
@@ -76,7 +76,7 @@ function statusTone(s: number): Tone {
   return s === 9 ? 'ok' : s === 1 ? 'warn' : 'info'
 }
 
-const columns = computed<ListColumn[]>(() => [
+const columns = computed<ListColumn<ProductListItemDto>[]>(() => [
   { prop: 'productCd', label: t('sales.term.productCd'), width: 160, fixed: 'left', sortable: 'custom' },
   { prop: 'setProductCd', label: t('セット製品CD'), width: 140, sortable: 'custom' },
   { prop: 'setProductName', label: t('セット品名'), minWidth: 180, overflowTooltip: true, sortable: 'custom' },
@@ -143,7 +143,7 @@ function buildQuery(filters: Record<string, unknown>, sortField?: string, sortOr
   return q as unknown as ProductQuery
 }
 
-const fetchList: ListFetch = async ({ page, size, filters, sortField, sortOrder }) => {
+const fetchList: ListFetch<ProductListItemDto> = async ({ page, size, filters, sortField, sortOrder }) => {
   lastFilters.value = filters
   lastSort.value = { sortField, sortOrder }
   const q = buildQuery(filters, sortField, sortOrder)

@@ -1,6 +1,8 @@
 using System.Text.Json;
 using CP6.Core.EFDbContext;
+using CP6.Core.Services.Space.Observability;
 using CP6.Entity.DomainModels;
+using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Logging;
 
 namespace CP6.Core.Services.Integration;
@@ -36,7 +38,7 @@ public abstract class BridgeHookBase
     /// <param name="sourceNo">源業務番号</param>
     /// <param name="targetNo">目標業務番号（Success 時のみ）</param>
     /// <param name="status"><see cref="IntegrationEventStatus"/> 取値</param>
-    /// <param name="error">失敗時の詳細（Skipped 時は理由、Failed 時は ToString()）</param>
+    /// <param name="error">失敗時の詳細。Space は安定した安全コードのみを許可する。</param>
     /// <param name="correlationId">端到端 trace 用 GUID</param>
     /// <param name="payload">入力 payload（重試時に Dispatcher が反序列化）</param>
     /// <param name="operatorUser">操作者（審計 T4 / spec §8）：呼び出し元の userName を透過して <see cref="IntegrationEvent.Creator"/> に落とす。
@@ -55,11 +57,17 @@ public abstract class BridgeHookBase
         string? error,
         Guid correlationId,
         object payload,
-        string? operatorUser = null)
+        string? operatorUser = null,
+        Guid? jobId = null,
+        Guid? publishAttemptId = null)
     {
+        IntegrationEvent? evt = null;
         try
         {
-            var evt = new IntegrationEvent
+            var spaceNowUtc = sourceModule == "SPACE"
+                ? DateTime.UtcNow
+                : (DateTime?)null;
+            evt = new IntegrationEvent
             {
                 Id = Guid.NewGuid(),
                 SourceModule = sourceModule,
@@ -71,22 +79,60 @@ public abstract class BridgeHookBase
                 Attempts = 1,
                 LastError = error,
                 NextRetryAt = status == IntegrationEventStatus.Failed
-                    ? DateTime.UtcNow.AddSeconds(60)
+                    ? (spaceNowUtc ?? DateTime.UtcNow).AddSeconds(60)
                     : (DateTime?)null,
                 CorrelationId = correlationId,
+                JobId = jobId,
+                PublishAttemptId = publishAttemptId,
                 PayloadJson = SafeSerialize(payload),
                 Creator = string.IsNullOrWhiteSpace(operatorUser) ? "system" : operatorUser,
-                CreateDate = DateTime.Now,
+                CreateDate = spaceNowUtc ?? DateTime.Now,
+                OccurredAtUtc = spaceNowUtc,
             };
             Db.IntegrationEvents.Add(evt);
             await Db.SaveChangesAsync();
         }
         catch (Exception ex)
         {
+            // SaveChanges 失败后 Added 实体仍可能留在共享 ChangeTracker；
+            // 必须先摘除，避免后续无关业务 Save 意外补写旧 Outbox。
+            if (evt is not null)
+            {
+                try
+                {
+                    var entry = Db.Entry(evt);
+                    if (entry.State != EntityState.Detached)
+                        entry.State = EntityState.Detached;
+                }
+                catch
+                {
+                    // 清理失败也不得回显第二个异常；继续记录原始失败的安全分类。
+                }
+            }
+
             // 持久化自体の失敗は親 hook には伝播させない（ILogger に残すのみ）
-            Logger.LogError(ex,
-                "[BridgeHookBase] IntegrationEvent persistence failed for {Hook} {SourceNo}",
-                hookName, sourceNo);
+            if (sourceModule == "SPACE")
+            {
+                var safe = SpaceErrorSanitizer.Classify(
+                    ex,
+                    "SPACE_OUTBOX_PERSIST_FAILED");
+                Logger.LogError(
+                    "[BridgeHookBase] Space event persistence failed {ReasonCode} {ErrorType} {Fingerprint} {Hook} {SourceNo} {CorrelationId}",
+                    safe.ReasonCode,
+                    safe.ExceptionType,
+                    safe.Fingerprint,
+                    hookName,
+                    sourceNo,
+                    correlationId);
+            }
+            else
+            {
+                Logger.LogError(
+                    ex,
+                    "[BridgeHookBase] IntegrationEvent persistence failed for {Hook} {SourceNo}",
+                    hookName,
+                    sourceNo);
+            }
         }
     }
 

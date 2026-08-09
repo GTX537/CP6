@@ -126,12 +126,16 @@ public class InboxController : LocalizedControllerBase
     {
         try
         {
-            // act-as 校验（即使 detail 不过滤 userId，仍须验头有效）
-            await EffectiveAsync();
-            var detail = await _inbox.DetailAsync(instanceId);
+            var actual = await CurrentUserIdAsync();
+            var (effective, _) = await EffectiveAsync();
+            var detail = await _inbox.DetailAsync(actual, effective, instanceId);
             return detail is null
                 ? NotFound(new { code = 404, message = "E-WF-007" })
                 : Ok2(detail);
+        }
+        catch (UnauthorizedAccessException)
+        {
+            return StatusCode(StatusCodes.Status403Forbidden, new { code = "E-WF-043", message = "E-WF-043" });
         }
         catch (InvalidOperationException e) { return Err(e); }
     }

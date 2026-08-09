@@ -1,0 +1,15 @@
+{
+  "schemaVersion": 1,
+  "datasetVersion": "1.0.0",
+  "sampleId": "STANDARD-WAREHOUSE-001",
+  "split": "DevelopmentSeed",
+  "layoutFamily": "L2-MultiFloor",
+  "unit": "Millimeter",
+  "coordinateSystem": "FloorLocal-ZUp",
+  "mappingProfileVersion": "space-cad-mapping-v1",
+  "ruleSetVersion": "space-v1",
+  "license": "Synthetic",
+  "deidentificationEvidence": "Fully generated; contains no customer source data.",
+  "expectedAnswerVersion": "1.0.0",
+  "dataSource": "Simulated"
+}

@@ -80,7 +80,7 @@ import { useI18n } from 'vue-i18n'
 import { ElMessage } from 'element-plus'
 import CpPageShell from '@/components/templates/CpPageShell.vue'
 import CpStatCard from '@/components/templates/CpStatCard.vue'
-import CpListPage, { type ListColumn, type ListFetch } from '@/components/templates/CpListPage.vue'
+import CpListPage, { type ListColumn, type ListFetch, type ListPageExpose } from '@/components/templates/CpListPage.vue'
 import { type FilterField } from '@/components/templates/CpFilterBar.vue'
 import { type Tone } from '@/components/base/CpTag.vue'
 import { materialShortageApi } from '@/api/wms/materialShortage'
@@ -93,7 +93,7 @@ type ActionType = 'resolve' | 'dismiss'
 
 const total = ref<number>()
 const openCount = ref(0)
-const listRef = ref<InstanceType<typeof CpListPage>>()
+const listRef = ref<ListPageExpose>()
 
 const actionDialogVisible = ref(false)
 const actionSaving = ref(false)
@@ -119,7 +119,7 @@ function statusTone(status: MaterialShortageStatus): Tone {
   return 'muted'
 }
 
-const columns = computed<ListColumn[]>(() => [
+const columns = computed<ListColumn<MaterialShortage>[]>(() => [
   { prop: 'detectedAt', label: t('wms.materialShortage.col.detectedAt'), width: 170 },
   { prop: 'workOrderNo', label: t('wms.materialShortage.col.wo'), width: 160, overflowTooltip: true },
   { prop: 'relatedOutboundNo', label: t('wms.materialShortage.col.outbound'), width: 160, overflowTooltip: true },
@@ -174,7 +174,7 @@ function shortQty(row: MaterialShortage): number {
 }
 
 // —— 取数：list + openCount(KPI) を並列取得。status 未指定(初期/リセット)は既定 OPEN、''は全件 ——
-const fetchList: ListFetch = async ({ page, size, filters }) => {
+const fetchList: ListFetch<MaterialShortage> = async ({ page, size, filters }) => {
   const f = filters as Record<string, unknown>
   const status = f.status === undefined ? 'OPEN' : (f.status as MaterialShortageStatus | '')
   const [listRes, openRes] = await Promise.all([

@@ -1,0 +1,40 @@
+{
+  "schemaVersion": "1.0",
+  "runCorrelationKey": "4d5b8e1c9a774be5a365d2d36166bc65e734ef1ea4e64df190aebf835d7a9a11",
+  "policy": "StructuredFeatures",
+  "warehouseKind": "GeneralRackWarehouse",
+  "limits": {
+    "maxSuggestions": 1000,
+    "maxRelationsPerSuggestion": 8
+  },
+  "features": [
+    {
+      "sourceKey": "feature-0001",
+      "cadEntityType": "BlockReference",
+      "layerToken": "RACK",
+      "blockToken": "RACK_UNIT",
+      "entityCount": 4,
+      "normalizedBounds": {
+        "x": 0.16,
+        "y": 0.2,
+        "width": 0.5,
+        "height": 0.32
+      },
+      "angleBucket": 0,
+      "repetitionGroup": "repeat-0001",
+      "attributeKeyTokens": [
+        "RACK_TYPE"
+      ],
+      "relationSourceKeys": []
+    }
+  ],
+  "mappingHints": [
+    {
+      "token": "RACK",
+      "targetType": "Rack",
+      "strength": 1
+    }
+  ],
+  "lockedFacts": []
+}
+

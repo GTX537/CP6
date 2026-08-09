@@ -161,6 +161,9 @@ public class CP6Context : DbContext, IDataProtectionKeyContext
     /// <summary>跨模块 Bridge Hook 持久化记录（重试 / DLQ / trace 基础）</summary>
     public DbSet<IntegrationEvent> IntegrationEvents { get; set; }
 
+    /// <summary>Space 专用只追加审计账本</summary>
+    public DbSet<Space_AuditEvent> SpaceAuditEvents => Set<Space_AuditEvent>();
+
     // ───── MSBBPA010 見積計算書 ─────
 
     /// <summary>見積計算書 主表</summary>
@@ -375,14 +378,43 @@ public class CP6Context : DbContext, IDataProtectionKeyContext
     // ───── MSBBWM300 WMS モバイル作業指示 ─────
     /// <summary>モバイル作業指示（WM300）</summary>
     public DbSet<MobileTask> MobileTasks { get; set; }
+    public DbSet<WmsFeatureFlag> WmsFeatureFlags => Set<WmsFeatureFlag>();
+    public DbSet<WmsFeatureFlagChange> WmsFeatureFlagChanges => Set<WmsFeatureFlagChange>();
+    public DbSet<WmsRoleScope> WmsRoleScopes => Set<WmsRoleScope>();
+    public DbSet<ClientDevice> ClientDevices => Set<ClientDevice>();
+    public DbSet<DeviceActivation> DeviceActivations => Set<DeviceActivation>();
+    public DbSet<BarcodeAlias> BarcodeAliases => Set<BarcodeAlias>();
+    public DbSet<MobileTaskReservation> MobileTaskReservations => Set<MobileTaskReservation>();
+    public DbSet<MobileTaskEvent> MobileTaskEvents => Set<MobileTaskEvent>();
+    public DbSet<MobileTaskScanLog> MobileTaskScanLogs => Set<MobileTaskScanLog>();
+    public DbSet<TaskCommandReceipt> TaskCommandReceipts => Set<TaskCommandReceipt>();
+    public DbSet<SpaceDispatchApprovalRequest> SpaceDispatchApprovalRequests =>
+        Set<SpaceDispatchApprovalRequest>();
+    public DbSet<SpaceDispatchExecutionAction> SpaceDispatchExecutionActions =>
+        Set<SpaceDispatchExecutionAction>();
+    public DbSet<StockSerial> StockSerials => Set<StockSerial>();
+    public DbSet<StockSerialTransaction> StockSerialTransactions => Set<StockSerialTransaction>();
+    public DbSet<LogisticsUnit> LogisticsUnits => Set<LogisticsUnit>();
+    public DbSet<LpnContent> LpnContents => Set<LpnContent>();
+    public DbSet<LpnClosure> LpnClosures => Set<LpnClosure>();
+    public DbSet<LpnPolicy> LpnPolicies => Set<LpnPolicy>();
+    public DbSet<LpnEvent> LpnEvents => Set<LpnEvent>();
+    public DbSet<BarcodeProfile> BarcodeProfiles => Set<BarcodeProfile>();
+    public DbSet<LabelTemplate> LabelTemplates => Set<LabelTemplate>();
+    public DbSet<LabelJob> LabelJobs => Set<LabelJob>();
 
     // ───── OA(Wf) 阶段1 运行时 ─────
     /// <summary>表单定义（OA 章02，JSON 列）</summary>
     public DbSet<Wf_FormDef> Wf_FormDefs { get; set; }
+    public DbSet<Wf_FormDefVersion> Wf_FormDefVersions { get; set; }
+    public DbSet<Wf_FormFlowBinding> Wf_FormFlowBindings { get; set; }
+    public DbSet<Wf_FormDraft> Wf_FormDrafts { get; set; }
     /// <summary>表单数据（OA 章02，JSON 列）</summary>
     public DbSet<Wf_FormData> Wf_FormDatas { get; set; }
     /// <summary>流程定义（OA 章03，节点/边 schema JSON）</summary>
     public DbSet<Wf_FlowDef> Wf_FlowDefs { get; set; }
+    public DbSet<Wf_FlowDefVersion> Wf_FlowDefVersions { get; set; }
+    public DbSet<Wf_FlowDefVersionDependency> Wf_FlowDefVersionDependencies { get; set; }
     /// <summary>流程实例（OA 章03，状态机状态载体）</summary>
     public DbSet<Wf_FlowInstance> Wf_FlowInstances { get; set; }
     /// <summary>流程待办任务（OA 章03，会签多条/节点）</summary>
@@ -446,6 +478,8 @@ public class CP6Context : DbContext, IDataProtectionKeyContext
     // ───── Space ch04 v1.1 §5.3 发布落点（WMS 侧消费表，方案A 2026-07-05 拍板）─────
     /// <summary>WMS 库位消费表（Space 发布落点，幂等判据 lastVersion 存放处）</summary>
     public DbSet<CP6.Entity.DomainModels.Wms.WmsBin> WmsBins { get; set; }
+    /// <summary>Space WMS Adapter operation-key ledger.</summary>
+    public DbSet<SpaceWmsOperation> SpaceWmsOperations { get; set; }
 
     // ───── 财务（Fin）章01 总账内核 ─────
     /// <summary>会计科目（章01，多国别模板包 + Role 角色锚点）</summary>
@@ -576,6 +610,8 @@ public class CP6Context : DbContext, IDataProtectionKeyContext
             e.HasIndex(x => x.ParentId);              // 取直接下级
         });
         modelBuilder.Entity<Sys_User>().HasIndex(x => x.DeptId);   // 按部门取人（DataScope）
+        modelBuilder.Entity<Sys_User>().HasIndex(x => x.BadgeNo).IsUnique()
+            .HasFilter("[BadgeNo] IS NOT NULL");
 
         // P0-T3 Sys_Role 租户化：int RoleId 用户自定义主键 → 复合主键 (TenantId, RoleId)，每租户独立角色集。
         // RoleId 保持稳定（各租户副本同号），子表(UserRole/RoleAction/RoleDataScope/RoleFieldPerm/User.RoleId)
@@ -665,6 +701,7 @@ public class CP6Context : DbContext, IDataProtectionKeyContext
         {
             e.HasIndex(x => x.TokenHash).IsUnique().HasDatabaseName("UX_Sys_RefreshToken_TokenHash");
             e.HasIndex(x => x.UserId);
+            e.Property(x => x.RowVersion).IsRowVersion();
         });
 
         // S 类 #3 SSO：每租户一行（TenantId 单列唯一）。已含 TenantId → 反射批量自动跳过保留（spec R6 §1 锚点）。
@@ -706,6 +743,38 @@ public class CP6Context : DbContext, IDataProtectionKeyContext
         {
             e.HasIndex(x => x.FormKey).HasDatabaseName("IX_Wf_FormData_FormKey");
             e.HasIndex(x => x.BizId).HasDatabaseName("IX_Wf_FormData_Biz");
+            e.HasIndex(x => new { x.TenantId, x.SubmissionKey }).IsUnique()
+                .HasFilter("[SubmissionKey] IS NOT NULL")
+                .HasDatabaseName("UX_Wf_FormData_SubmissionKey");
+            e.HasIndex(x => new { x.TenantId, x.FormDefVersionId, x.SubmittedAtUtc })
+                .HasDatabaseName("IX_Wf_FormData_VersionSubmitted");
+        });
+        modelBuilder.Entity<Wf_FormDefVersion>(e =>
+        {
+            e.HasIndex(x => new { x.TenantId, x.FormDefId, x.Version }).IsUnique()
+                .HasDatabaseName("UX_Wf_FormDefVersion");
+            e.HasIndex(x => new { x.TenantId, x.FormDefId, x.Status }).IsUnique()
+                .HasFilter("[Status] = 0")
+                .HasDatabaseName("UX_Wf_FormDefVersion_OneDraft");
+            e.HasOne<Wf_FormDef>().WithMany().HasForeignKey(x => x.FormDefId).OnDelete(DeleteBehavior.Restrict);
+        });
+        modelBuilder.Entity<Wf_FormFlowBinding>(e =>
+        {
+            e.HasIndex(x => new { x.TenantId, x.FormDefId }).IsUnique()
+                .HasFilter("[Enable] = 1")
+                .HasDatabaseName("UX_Wf_FormFlowBinding_Active");
+            e.HasOne<Wf_FormDef>().WithMany().HasForeignKey(x => x.FormDefId).OnDelete(DeleteBehavior.Restrict);
+            e.HasOne<Wf_FlowDef>().WithMany().HasForeignKey(x => x.FlowDefId).OnDelete(DeleteBehavior.Restrict);
+        });
+        modelBuilder.Entity<Wf_FormDraft>(e =>
+        {
+            e.HasIndex(x => new { x.TenantId, x.OwnerUserId, x.Status, x.ModifyDate })
+                .HasDatabaseName("IX_Wf_FormDraft_Owner");
+            e.HasIndex(x => new { x.TenantId, x.LegacyFlowInstanceId }).IsUnique()
+                .HasFilter("[LegacyFlowInstanceId] IS NOT NULL")
+                .HasDatabaseName("UX_Wf_FormDraft_Legacy");
+            e.HasOne<Wf_FormDef>().WithMany().HasForeignKey(x => x.FormDefId).OnDelete(DeleteBehavior.Restrict);
+            e.HasOne<Wf_FormDefVersion>().WithMany().HasForeignKey(x => x.FormDefVersionId).OnDelete(DeleteBehavior.Restrict);
         });
 
         // OA 章03 流程引擎：FlowKey 唯一；任务按 实例+节点 / 处理人+状态 取（待办中心高频）
@@ -717,6 +786,24 @@ public class CP6Context : DbContext, IDataProtectionKeyContext
             e.HasIndex(x => new { x.TenantId, x.FlowCode }).IsUnique()
                 .HasFilter("[FlowCode] IS NOT NULL").HasDatabaseName("UX_Wf_FlowDef_Code");
         });
+        modelBuilder.Entity<Wf_FlowDefVersion>(e =>
+        {
+            e.HasIndex(x => new { x.TenantId, x.FlowDefId, x.Version }).IsUnique()
+                .HasDatabaseName("UX_Wf_FlowDefVersion");
+            e.HasIndex(x => new { x.TenantId, x.FlowDefId, x.Status }).IsUnique()
+                .HasFilter("[Status] = 0")
+                .HasDatabaseName("UX_Wf_FlowDefVersion_OneDraft");
+            e.HasOne<Wf_FlowDef>().WithMany().HasForeignKey(x => x.FlowDefId).OnDelete(DeleteBehavior.Restrict);
+        });
+        modelBuilder.Entity<Wf_FlowDefVersionDependency>(e =>
+        {
+            e.HasIndex(x => new { x.TenantId, x.FlowDefVersionId, x.NodeId, x.DependencyType }).IsUnique()
+                .HasDatabaseName("UX_Wf_FlowDefVersionDependency");
+            e.HasIndex(x => new { x.TenantId, x.TargetFlowDefVersionId })
+                .HasDatabaseName("IX_Wf_FlowDefVersionDependency_Target");
+            e.HasOne<Wf_FlowDefVersion>().WithMany().HasForeignKey(x => x.FlowDefVersionId).OnDelete(DeleteBehavior.Restrict);
+            e.HasOne<Wf_FlowDefVersion>().WithMany().HasForeignKey(x => x.TargetFlowDefVersionId).OnDelete(DeleteBehavior.Restrict);
+        });
         modelBuilder.Entity<Wf_FlowInstance>(e =>
         {
             e.HasIndex(x => x.StarterId).HasDatabaseName("IX_Wf_FlowInstance_Starter");   // 我的申请
@@ -726,6 +813,9 @@ public class CP6Context : DbContext, IDataProtectionKeyContext
             // 代码级 SubFlowNodeHandler 先查兜底(InMemory 无索引语义,B-T1)
             e.HasIndex(x => new { x.TenantId, x.ParentTokenId, x.SubIndex }).IsUnique()
                 .HasFilter("[ParentTokenId] IS NOT NULL").HasDatabaseName("UX_Wf_FlowInstance_SubSlot");
+            e.HasIndex(x => new { x.TenantId, x.BizType, x.BizId }).IsUnique()
+                .HasFilter("[BizType] IS NOT NULL AND [BizId] IS NOT NULL AND [Status] IN (0, 4)")
+                .HasDatabaseName("UX_Wf_FlowInstance_ActiveBusiness");
         });
         modelBuilder.Entity<Wf_FlowTask>(e =>
         {
@@ -733,6 +823,8 @@ public class CP6Context : DbContext, IDataProtectionKeyContext
             e.HasIndex(x => new { x.InstanceId, x.NodeId, x.TokenId, x.StageIndex, x.StageRound, x.Status })
                 .HasDatabaseName("IX_Wf_FlowTask_Tally");   // 串簽档·轮计票
             e.HasIndex(x => new { x.AssigneeId, x.Status }).HasDatabaseName("IX_Wf_FlowTask_AssigneeStatus"); // 待办中心
+            e.HasIndex(x => new { x.TenantId, x.AssigneeId, x.Status, x.InstanceId, x.CreateDate })
+                .HasDatabaseName("IX_Wf_FlowTask_PendingPage");
             e.HasIndex(x => new { x.Status, x.DueAt }).HasDatabaseName("IX_Wf_FlowTask_StatusDue");           // 章07 §4 超时扫描
             e.HasIndex(x => new { x.AssigneeId, x.IsRead }).HasDatabaseName("IX_Wf_FlowTask_AssigneeRead");    // 信箱未處理未读
         });
@@ -758,6 +850,9 @@ public class CP6Context : DbContext, IDataProtectionKeyContext
             e.HasIndex(x => new { x.InstanceId, x.StepSeq }).HasDatabaseName("IX_Wf_FlowFormTo_Step");
             e.HasIndex(x => new { x.InstanceId, x.TokenId }).HasDatabaseName("IX_Wf_FlowFormTo_Token");
             e.HasIndex(x => new { x.ExpectedHandlerId, x.Status }).HasDatabaseName("IX_Wf_FlowFormTo_Handler");
+            e.HasIndex(x => new { x.TenantId, x.ExpectedHandlerId, x.InstanceId }).HasDatabaseName("IX_Wf_FlowFormTo_ExpectedParticipant");
+            e.HasIndex(x => new { x.TenantId, x.ActualHandlerId, x.InstanceId }).HasDatabaseName("IX_Wf_FlowFormTo_ActualParticipant");
+            e.HasIndex(x => new { x.TenantId, x.OnBehalfOfId, x.InstanceId }).HasDatabaseName("IX_Wf_FlowFormTo_OnBehalfParticipant");
         });
         modelBuilder.Entity<Wf_FlowData>(e =>
             e.HasIndex(x => new { x.InstanceId, x.StepSeq }).HasDatabaseName("IX_Wf_FlowData_Step"));
@@ -765,13 +860,20 @@ public class CP6Context : DbContext, IDataProtectionKeyContext
         {
             e.HasIndex(x => new { x.RecipientId, x.IsRead }).HasDatabaseName("IX_Wf_FlowCc_Recipient");
             e.HasIndex(x => x.InstanceId).HasDatabaseName("IX_Wf_FlowCc_Instance");
+            e.HasIndex(x => new { x.TenantId, x.RecipientId, x.InstanceId }).HasDatabaseName("IX_Wf_FlowCc_Participant");
         });
         modelBuilder.Entity<Wf_FormFavorite>(e =>
             e.HasIndex(x => new { x.TenantId, x.UserId, x.FormKey }).IsUnique().HasDatabaseName("UX_Wf_FormFavorite"));
         modelBuilder.Entity<Wf_InboxPref>(e =>
             e.HasIndex(x => new { x.TenantId, x.UserId }).IsUnique().HasDatabaseName("UX_Wf_InboxPref_User"));
         modelBuilder.Entity<Wf_Notification>(e =>
-            e.HasIndex(x => new { x.TenantId, x.UserId, x.IsRead }).HasDatabaseName("IX_Wf_Notification_UserRead"));
+        {
+            e.HasIndex(x => new { x.TenantId, x.UserId, x.IsRead }).HasDatabaseName("IX_Wf_Notification_UserRead");
+            e.HasIndex(x => new { x.TenantId, x.EventKey }).IsUnique()
+                .HasFilter("[EventKey] IS NOT NULL").HasDatabaseName("UX_Wf_Notification_Event");
+            e.HasIndex(x => new { x.TenantId, x.DispatchStatus, x.NextAttemptAtUtc })
+                .HasDatabaseName("IX_Wf_Notification_Dispatch");
+        });
         modelBuilder.Entity<Wf_ApproverMap>(e =>
             e.HasIndex(x => new { x.TenantId, x.MapKey, x.MatchValue }).HasDatabaseName("IX_Wf_ApproverMap_Lookup"));
 
@@ -2019,8 +2121,208 @@ public class CP6Context : DbContext, IDataProtectionKeyContext
             e.HasIndex(x => x.MobileTaskNo).IsUnique();
             e.HasIndex(x => new { x.AssignedTo, x.Status, x.IsDeleted });
             e.HasIndex(x => new { x.TaskType, x.Status });
+            e.HasIndex(x => new { x.ContractVersion, x.WarehouseCd, x.AreaCd, x.Status });
             e.HasIndex(x => new { x.Priority, x.Status });
             e.HasIndex(x => x.RelatedNo);
+            e.HasIndex(x => x.ParentTaskNo);
+            e.HasIndex(x => x.DueAt);
+            e.HasIndex(x => x.CompletionOperationId).IsUnique()
+                .HasFilter("[CompletionOperationId] IS NOT NULL");
+            e.Property(x => x.RowVersion).IsRowVersion();
+        });
+
+        modelBuilder.Entity<WmsFeatureFlag>(e =>
+        {
+            e.HasIndex(x => new { x.TenantId, x.WarehouseCd }).IsUnique();
+        });
+
+        modelBuilder.Entity<WmsFeatureFlagChange>(e =>
+        {
+            e.HasIndex(x => new { x.TenantId, x.OperationId }).IsUnique();
+            e.HasIndex(x => new { x.TenantId, x.WarehouseCd })
+                .IsUnique()
+                .HasFilter("[IsDeleted] = 0 AND [Status] = 'PENDING'");
+            e.HasIndex(x => new { x.TenantId, x.WarehouseCd, x.RequestedAtUtc });
+        });
+
+        modelBuilder.Entity<WmsRoleScope>(e =>
+        {
+            e.HasIndex(x => new
+            {
+                x.TenantId, x.RoleId, x.WarehouseCd, x.AreaCd
+            }).IsUnique();
+            e.HasIndex(x => new { x.RoleId, x.WarehouseCd, x.AreaCd });
+        });
+
+        modelBuilder.Entity<ClientDevice>(e =>
+        {
+            e.HasIndex(x => x.DeviceId).IsUnique();
+            e.HasIndex(x => new { x.Status, x.WarehouseCd, x.AreaCd });
+            e.HasIndex(x => x.LastSeenAt);
+        });
+
+        modelBuilder.Entity<DeviceActivation>(e =>
+        {
+            e.HasIndex(x => x.TokenHash).IsUnique();
+            e.HasIndex(x => new { x.ExpiresAt, x.ConsumedAt });
+        });
+
+        modelBuilder.Entity<BarcodeAlias>(e =>
+        {
+            e.HasIndex(x => x.Barcode).IsUnique();
+            e.HasIndex(x => new { x.BarcodeType, x.TargetKey });
+            e.HasIndex(x => new { x.ProductCd, x.LotNo });
+        });
+
+        modelBuilder.Entity<MobileTaskReservation>(e =>
+        {
+            e.HasIndex(x => x.TaskNo).IsUnique();
+            e.HasIndex(x => new
+            {
+                x.WarehouseCd, x.FromLocationCd, x.ProductCd, x.LotNo, x.IsActive
+            });
+        });
+
+        modelBuilder.Entity<MobileTaskEvent>(e =>
+        {
+            e.HasIndex(x => new { x.TaskNo, x.OccurredAt });
+            e.HasIndex(x => x.OperationId);
+            e.Property(x => x.DataJson).HasColumnType("nvarchar(max)");
+        });
+
+        modelBuilder.Entity<MobileTaskScanLog>(e =>
+        {
+            e.HasIndex(x => x.ClientScanNo).IsUnique();
+            e.HasIndex(x => new { x.TaskNo, x.ExecutionVersion, x.ScannedAt });
+            e.HasIndex(x => x.RetainUntil);
+        });
+
+        modelBuilder.Entity<TaskCommandReceipt>(e =>
+        {
+            e.HasIndex(x => x.OperationId).IsUnique();
+            e.HasIndex(x => new { x.TaskNo, x.CommandName });
+            e.Property(x => x.ResultJson).HasColumnType("nvarchar(max)");
+        });
+
+        modelBuilder.Entity<SpaceDispatchApprovalRequest>(e =>
+        {
+            e.HasAlternateKey(x => new { x.TenantId, x.Id });
+            e.HasIndex(x => new { x.TenantId, x.SiteId, x.RecommendationId })
+                .IsUnique()
+                .HasFilter("[IsDeleted] = 0 AND [Status] = 'PendingApproval'");
+            e.HasIndex(x => new { x.TenantId, x.SiteId, x.RequestedAtUtc });
+            e.HasIndex(x => new { x.TenantId, x.FlowInstanceId }).IsUnique();
+            e.Property(x => x.RecommendationRequestHash)
+                .HasColumnType("char(64)")
+                .IsUnicode(false)
+                .IsFixedLength();
+            e.Property(x => x.PayloadHash)
+                .HasColumnType("char(64)")
+                .IsUnicode(false)
+                .IsFixedLength();
+            e.Property(x => x.SelectionJson).HasColumnType("nvarchar(max)");
+            e.Property(x => x.ResultJson).HasColumnType("nvarchar(max)");
+        });
+
+        modelBuilder.Entity<SpaceDispatchExecutionAction>(e =>
+        {
+            e.ToTable("T_SpaceDispatchExecutionAction", table =>
+            {
+                table.HasCheckConstraint(
+                    "CK_SpaceDispatchExecutionAction_Type",
+                    "[ActionType] IN ('RetryAssignment','CompensateAssignment')");
+                table.HasCheckConstraint(
+                    "CK_SpaceDispatchExecutionAction_Status",
+                    "[Status] IN ('Applied','FailedNoEffect','RejectedNoEffect')");
+            });
+            e.HasIndex(x => new
+            {
+                x.TenantId,
+                x.ApprovalRequestId,
+                x.RequestedAtUtc,
+            });
+            e.HasIndex(x => new
+            {
+                x.TenantId,
+                x.ApprovalRequestId,
+                x.ActionType,
+            });
+            e.Property(x => x.PayloadHash)
+                .HasColumnType("char(64)")
+                .IsUnicode(false)
+                .IsFixedLength();
+            e.Property(x => x.ReceiptJson).HasColumnType("nvarchar(max)");
+            e.HasOne<SpaceDispatchApprovalRequest>()
+                .WithMany()
+                .HasForeignKey(x => new { x.TenantId, x.ApprovalRequestId })
+                .HasPrincipalKey(x => new { x.TenantId, x.Id })
+                .OnDelete(DeleteBehavior.Restrict);
+        });
+
+        modelBuilder.Entity<StockSerial>(e =>
+        {
+            e.HasIndex(x => new { x.ProductCd, x.SerialNo }).IsUnique();
+            e.HasIndex(x => new { x.WarehouseCd, x.LocationCd, x.ProductCd, x.LotNo });
+            e.HasIndex(x => x.LpnNo);
+        });
+
+        modelBuilder.Entity<StockSerialTransaction>(e =>
+        {
+            e.HasIndex(x => x.TxnNo).IsUnique();
+            e.HasIndex(x => new { x.ProductCd, x.SerialNo, x.OccurredAt });
+            e.HasIndex(x => x.OperationId);
+        });
+
+        modelBuilder.Entity<LogisticsUnit>(e =>
+        {
+            e.HasIndex(x => x.LpnNo).IsUnique();
+            e.HasIndex(x => new { x.WarehouseCd, x.LocationCd, x.Status });
+            e.HasIndex(x => x.ParentLpnNo);
+        });
+
+        modelBuilder.Entity<LpnContent>(e =>
+        {
+            e.HasIndex(x => new { x.LpnNo, x.ProductCd, x.LotNo, x.SerialNo }).IsUnique();
+            e.HasIndex(x => x.SerialNo).IsUnique().HasFilter("[SerialNo] IS NOT NULL");
+        });
+
+        modelBuilder.Entity<LpnClosure>(e =>
+        {
+            e.HasIndex(x => new { x.AncestorLpnNo, x.DescendantLpnNo }).IsUnique();
+            e.HasIndex(x => new { x.DescendantLpnNo, x.Depth });
+        });
+
+        modelBuilder.Entity<LpnPolicy>(e =>
+        {
+            e.HasIndex(x => new { x.WarehouseCd, x.ContainerType }).IsUnique();
+        });
+
+        modelBuilder.Entity<LpnEvent>(e =>
+        {
+            e.HasIndex(x => new { x.LpnNo, x.OccurredAt });
+            e.HasIndex(x => x.OperationId);
+            e.Property(x => x.DataJson).HasColumnType("nvarchar(max)");
+        });
+
+        modelBuilder.Entity<BarcodeProfile>(e =>
+        {
+            e.HasIndex(x => x.ProfileName).IsUnique();
+            e.HasIndex(x => new { x.IsEnabled, x.Priority });
+            e.Property(x => x.MappingJson).HasColumnType("nvarchar(max)");
+        });
+
+        modelBuilder.Entity<LabelTemplate>(e =>
+        {
+            e.HasIndex(x => x.TemplateName).IsUnique();
+            e.Property(x => x.TemplateBody).HasColumnType("nvarchar(max)");
+        });
+
+        modelBuilder.Entity<LabelJob>(e =>
+        {
+            e.HasIndex(x => x.JobNo).IsUnique();
+            e.HasIndex(x => x.OperationId).IsUnique();
+            e.HasIndex(x => new { x.WarehouseCd, x.Status, x.RequestedAt });
+            e.Property(x => x.PayloadJson).HasColumnType("nvarchar(max)");
         });
 
         // ═══════════════════════════════════════════════════════════
@@ -2033,8 +2335,63 @@ public class CP6Context : DbContext, IDataProtectionKeyContext
             e.HasIndex(x => new { x.Status, x.NextRetryAt });
             // 端到端 trace：按 CorrelationId 串起整条业务链
             e.HasIndex(x => x.CorrelationId);
+            e.HasIndex(x => new { x.TenantId, x.CorrelationId });
+            e.HasIndex(x => new { x.TenantId, x.JobId });
+            e.HasIndex(x => new { x.TenantId, x.PublishAttemptId });
+            e.HasIndex(x => new { x.TenantId, x.RetryLeaseId });
+            e.HasIndex(x => new
+                {
+                    x.TenantId,
+                    x.SourceModule,
+                    x.CorrelationId,
+                    x.OccurredAtUtc,
+                    x.Id,
+                })
+                .IsDescending(false, false, false, true, true);
+            e.HasIndex(x => new
+                {
+                    x.TenantId,
+                    x.SourceModule,
+                    x.OccurredAtUtc,
+                    x.Id,
+                })
+                .IsDescending(false, false, true, true);
+            e.HasIndex(x => new
+            {
+                x.TenantId,
+                x.Status,
+                x.DeadLetterNotifiedAtUtc,
+                x.DeadLetterNotificationLeaseUntilUtc,
+            });
             // 按业务号查询历史 hook 调用
             e.HasIndex(x => new { x.SourceNo, x.HookName });
+        });
+
+        modelBuilder.Entity<Space_AuditEvent>(e =>
+        {
+            e.ToTable("Space_AuditEvent", table =>
+            {
+                table.HasCheckConstraint(
+                    "CK_Space_AuditEvent_Tenant",
+                    "[TenantId] <> '00000000-0000-0000-0000-000000000000'");
+                table.HasCheckConstraint(
+                    "CK_Space_AuditEvent_Correlation",
+                    "[CorrelationId] <> '00000000-0000-0000-0000-000000000000'");
+                table.HasCheckConstraint(
+                    "CK_Space_AuditEvent_ActorType",
+                    "[ActorType] IN ('User','System')");
+                table.HasCheckConstraint(
+                    "CK_Space_AuditEvent_Outcome",
+                    "[Outcome] IN ('Started','Succeeded','Failed','Denied')");
+            });
+            e.Property(x => x.AuthorizationEvidenceJson).HasColumnType("nvarchar(max)");
+            e.Property(x => x.OccurredAtUtc).HasConversion(
+                value => value,
+                value => DateTime.SpecifyKind(value, DateTimeKind.Utc));
+            e.HasIndex(x => new { x.TenantId, x.OccurredAtUtc });
+            e.HasIndex(x => new { x.TenantId, x.CorrelationId, x.OccurredAtUtc });
+            e.HasIndex(x => new { x.TenantId, x.PublishAttemptId, x.OccurredAtUtc });
+            e.HasIndex(x => new { x.TenantId, x.JobId, x.RunId });
         });
 
         modelBuilder.Entity<Order>(e =>
@@ -2120,6 +2477,19 @@ public class CP6Context : DbContext, IDataProtectionKeyContext
             e.HasIndex(x => new { x.TenantId, x.WarehouseCd, x.LocationCode }).IsUnique();
             e.Property(x => x.PathJson).HasColumnType("nvarchar(max)");
             e.Property(x => x.AttrsJson).HasColumnType("nvarchar(max)");
+        });
+        modelBuilder.Entity<SpaceWmsOperation>(e =>
+        {
+            e.HasIndex(x => new { x.TenantId, x.OperationKey })
+                .IsUnique();
+            e.Property(x => x.PayloadHash)
+                .HasColumnType("char(64)")
+                .IsUnicode(false)
+                .IsFixedLength();
+            e.Property(x => x.ResultJson)
+                .HasColumnType("nvarchar(max)");
+            e.Property(x => x.ObservedAtUtc)
+                .HasColumnType("datetime2");
         });
 
         // ═══════════════════════════════════════════════════════════
@@ -2307,8 +2677,32 @@ public class CP6Context : DbContext, IDataProtectionKeyContext
                 e.Entity.TenantId = CurrentTenantId;
     }
 
+    private void GuardSerialTrackingDowngrade()
+    {
+        foreach (var entry in ChangeTracker.Entries<ProductMaster>()
+                     .Where(x => x.State == EntityState.Modified))
+        {
+            var lockedBefore = entry.OriginalValues
+                .GetValue<DateTime?>(nameof(ProductMaster.SerialTrackingLockedAt));
+            if (!lockedBefore.HasValue) continue;
+            if (!entry.Entity.SerialTrackingLockedAt.HasValue
+                || !ProductTrackingMode.UsesSerial(entry.Entity.TrackingMode))
+                throw new InvalidOperationException("WM-SERIAL-TRACKING-LOCKED");
+        }
+    }
+
+    private void RejectSpaceAuditMutation()
+    {
+        if (ChangeTracker.Entries<Space_AuditEvent>()
+            .Any(e => e.State is EntityState.Modified or EntityState.Deleted))
+            throw new InvalidOperationException("SPACE_AUDIT_APPEND_ONLY");
+    }
+
     public override int SaveChanges(bool acceptAllChangesOnSuccess)
     {
+        DefinitionImmutabilityInterceptor.Guard(this);
+        GuardSerialTrackingDowngrade();
+        RejectSpaceAuditMutation();
         StampTenant();   // SaveChanges() 经 base 路由至本重载，无需再覆盖无参版（避免重复盖章）
         var pending = CaptureFieldAuditBeforeSave();
         if (pending.Count == 0) return base.SaveChanges(acceptAllChangesOnSuccess);   // 无审计目标 → 零开销原路径
@@ -2329,6 +2723,9 @@ public class CP6Context : DbContext, IDataProtectionKeyContext
 
     public override async Task<int> SaveChangesAsync(bool acceptAllChangesOnSuccess, CancellationToken cancellationToken = default)
     {
+        DefinitionImmutabilityInterceptor.Guard(this);
+        GuardSerialTrackingDowngrade();
+        RejectSpaceAuditMutation();
         StampTenant();
         var pending = CaptureFieldAuditBeforeSave();
         if (pending.Count == 0) return await base.SaveChangesAsync(acceptAllChangesOnSuccess, cancellationToken);

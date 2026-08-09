@@ -3631,6 +3631,9 @@ namespace CP6.Core.Migrations
                         .HasMaxLength(4)
                         .HasColumnType("nvarchar(4)");
 
+                    b.Property<DateTime?>("SerialTrackingLockedAt")
+                        .HasColumnType("datetime2");
+
                     b.Property<string>("SetProductCd")
                         .IsRequired()
                         .HasMaxLength(20)
@@ -3722,6 +3725,9 @@ namespace CP6.Core.Migrations
                     b.Property<string>("TkpWrinkleStd")
                         .HasMaxLength(4)
                         .HasColumnType("nvarchar(4)");
+
+                    b.Property<int>("TrackingMode")
+                        .HasColumnType("int");
 
                     b.Property<string>("UnescoMark")
                         .HasMaxLength(4)
@@ -7340,6 +7346,15 @@ namespace CP6.Core.Migrations
                         .HasMaxLength(100)
                         .HasColumnType("nvarchar(100)");
 
+                    b.Property<Guid?>("DeadLetterNotificationLeaseId")
+                        .HasColumnType("uniqueidentifier");
+
+                    b.Property<DateTime?>("DeadLetterNotificationLeaseUntilUtc")
+                        .HasColumnType("datetime2");
+
+                    b.Property<DateTime?>("DeadLetterNotifiedAtUtc")
+                        .HasColumnType("datetime2");
+
                     b.Property<string>("HookName")
                         .IsRequired()
                         .HasMaxLength(100)
@@ -7347,6 +7362,9 @@ namespace CP6.Core.Migrations
 
                     b.Property<bool>("IsDeleted")
                         .HasColumnType("bit");
+
+                    b.Property<Guid?>("JobId")
+                        .HasColumnType("uniqueidentifier");
 
                     b.Property<string>("LastError")
                         .HasColumnType("nvarchar(max)");
@@ -7361,9 +7379,24 @@ namespace CP6.Core.Migrations
                     b.Property<DateTime?>("NextRetryAt")
                         .HasColumnType("datetime2");
 
+                    b.Property<DateTime?>("OccurredAtUtc")
+                        .HasColumnType("datetime2");
+
                     b.Property<string>("PayloadJson")
                         .IsRequired()
                         .HasColumnType("nvarchar(max)");
+
+                    b.Property<Guid?>("PublishAttemptId")
+                        .HasColumnType("uniqueidentifier");
+
+                    b.Property<Guid?>("RetryCompletionLeaseId")
+                        .HasColumnType("uniqueidentifier");
+
+                    b.Property<bool?>("RetryCompletionSucceeded")
+                        .HasColumnType("bit");
+
+                    b.Property<Guid?>("RetryLeaseId")
+                        .HasColumnType("uniqueidentifier");
 
                     b.Property<byte[]>("RowVersion")
                         .IsConcurrencyToken()
@@ -7404,6 +7437,22 @@ namespace CP6.Core.Migrations
                     b.HasIndex("SourceNo", "HookName");
 
                     b.HasIndex("Status", "NextRetryAt");
+
+                    b.HasIndex("TenantId", "CorrelationId");
+
+                    b.HasIndex("TenantId", "JobId");
+
+                    b.HasIndex("TenantId", "PublishAttemptId");
+
+                    b.HasIndex("TenantId", "RetryLeaseId");
+
+                    b.HasIndex("TenantId", "SourceModule", "OccurredAtUtc", "Id")
+                        .IsDescending(false, false, true, true);
+
+                    b.HasIndex("TenantId", "Status", "DeadLetterNotifiedAtUtc", "DeadLetterNotificationLeaseUntilUtc");
+
+                    b.HasIndex("TenantId", "SourceModule", "CorrelationId", "OccurredAtUtc", "Id")
+                        .IsDescending(false, false, false, true, true);
 
                     b.ToTable("T_IntegrationEvent");
                 });
@@ -10541,6 +10590,145 @@ namespace CP6.Core.Migrations
                     b.ToTable("Space_Aisle");
                 });
 
+            modelBuilder.Entity("CP6.Entity.DomainModels.Space.Space_AuditEvent", b =>
+                {
+                    b.Property<Guid>("Id")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("uniqueidentifier");
+
+                    b.Property<string>("Action")
+                        .IsRequired()
+                        .HasMaxLength(100)
+                        .HasColumnType("nvarchar(100)");
+
+                    b.Property<string>("ActorId")
+                        .IsRequired()
+                        .HasMaxLength(100)
+                        .HasColumnType("nvarchar(100)");
+
+                    b.Property<string>("ActorName")
+                        .HasMaxLength(100)
+                        .HasColumnType("nvarchar(100)");
+
+                    b.Property<string>("ActorType")
+                        .IsRequired()
+                        .HasMaxLength(16)
+                        .HasColumnType("nvarchar(16)");
+
+                    b.Property<string>("AfterHash")
+                        .HasColumnType("char(64)");
+
+                    b.Property<int?>("AttemptNo")
+                        .HasColumnType("int");
+
+                    b.Property<string>("AuthorizationEvidenceJson")
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<string>("BeforeHash")
+                        .HasColumnType("char(64)");
+
+                    b.Property<string>("ClientType")
+                        .HasMaxLength(32)
+                        .HasColumnType("nvarchar(32)");
+
+                    b.Property<Guid>("CorrelationId")
+                        .HasColumnType("uniqueidentifier");
+
+                    b.Property<DateTime>("CreateDate")
+                        .HasColumnType("datetime2");
+
+                    b.Property<string>("Creator")
+                        .HasMaxLength(100)
+                        .HasColumnType("nvarchar(100)");
+
+                    b.Property<Guid?>("FloorId")
+                        .HasColumnType("uniqueidentifier");
+
+                    b.Property<string>("IpAddress")
+                        .HasMaxLength(64)
+                        .HasColumnType("nvarchar(64)");
+
+                    b.Property<Guid?>("JobId")
+                        .HasColumnType("uniqueidentifier");
+
+                    b.Property<string>("Modifier")
+                        .HasMaxLength(100)
+                        .HasColumnType("nvarchar(100)");
+
+                    b.Property<DateTime?>("ModifyDate")
+                        .HasColumnType("datetime2");
+
+                    b.Property<DateTime>("OccurredAtUtc")
+                        .HasColumnType("datetime2");
+
+                    b.Property<string>("OrganizationContextId")
+                        .HasMaxLength(100)
+                        .HasColumnType("nvarchar(100)");
+
+                    b.Property<string>("Outcome")
+                        .IsRequired()
+                        .HasMaxLength(16)
+                        .HasColumnType("nvarchar(16)");
+
+                    b.Property<Guid?>("PublishAttemptId")
+                        .HasColumnType("uniqueidentifier");
+
+                    b.Property<string>("ReasonCode")
+                        .HasMaxLength(100)
+                        .HasColumnType("nvarchar(100)");
+
+                    b.Property<string>("ResourceId")
+                        .HasMaxLength(128)
+                        .HasColumnType("nvarchar(128)");
+
+                    b.Property<string>("ResourceType")
+                        .IsRequired()
+                        .HasMaxLength(64)
+                        .HasColumnType("nvarchar(64)");
+
+                    b.Property<Guid?>("RunId")
+                        .HasColumnType("uniqueidentifier");
+
+                    b.Property<Guid?>("SiteId")
+                        .HasColumnType("uniqueidentifier");
+
+                    b.Property<Guid>("TenantId")
+                        .HasColumnType("uniqueidentifier");
+
+                    b.Property<string>("TraceId")
+                        .IsRequired()
+                        .HasMaxLength(64)
+                        .HasColumnType("varchar(64)");
+
+                    b.Property<string>("UserAgent")
+                        .HasMaxLength(256)
+                        .HasColumnType("nvarchar(256)");
+
+                    b.Property<Guid?>("VersionId")
+                        .HasColumnType("uniqueidentifier");
+
+                    b.HasKey("Id");
+
+                    b.HasIndex("TenantId", "OccurredAtUtc");
+
+                    b.HasIndex("TenantId", "CorrelationId", "OccurredAtUtc");
+
+                    b.HasIndex("TenantId", "JobId", "RunId");
+
+                    b.HasIndex("TenantId", "PublishAttemptId", "OccurredAtUtc");
+
+                    b.ToTable("Space_AuditEvent", null, t =>
+                        {
+                            t.HasCheckConstraint("CK_Space_AuditEvent_ActorType", "[ActorType] IN ('User','System')");
+
+                            t.HasCheckConstraint("CK_Space_AuditEvent_Correlation", "[CorrelationId] <> '00000000-0000-0000-0000-000000000000'");
+
+                            t.HasCheckConstraint("CK_Space_AuditEvent_Outcome", "[Outcome] IN ('Started','Succeeded','Failed','Denied')");
+
+                            t.HasCheckConstraint("CK_Space_AuditEvent_Tenant", "[TenantId] <> '00000000-0000-0000-0000-000000000000'");
+                        });
+                });
+
             modelBuilder.Entity("CP6.Entity.DomainModels.Space.Space_CodeRule", b =>
                 {
                     b.Property<Guid>("Id")
@@ -11691,6 +11879,15 @@ namespace CP6.Core.Migrations
                         .ValueGeneratedOnAdd()
                         .HasColumnType("uniqueidentifier");
 
+                    b.Property<string>("AppVersion")
+                        .HasMaxLength(32)
+                        .HasColumnType("nvarchar(32)");
+
+                    b.Property<string>("ClientKind")
+                        .IsRequired()
+                        .HasMaxLength(20)
+                        .HasColumnType("nvarchar(20)");
+
                     b.Property<DateTime>("CreateDate")
                         .HasColumnType("datetime2");
 
@@ -11701,6 +11898,10 @@ namespace CP6.Core.Migrations
                     b.Property<string>("Creator")
                         .HasMaxLength(100)
                         .HasColumnType("nvarchar(100)");
+
+                    b.Property<string>("DeviceId")
+                        .HasMaxLength(128)
+                        .HasColumnType("nvarchar(128)");
 
                     b.Property<DateTime>("ExpiresAt")
                         .HasColumnType("datetime2");
@@ -11718,6 +11919,12 @@ namespace CP6.Core.Migrations
 
                     b.Property<DateTime?>("RevokedAt")
                         .HasColumnType("datetime2");
+
+                    b.Property<byte[]>("RowVersion")
+                        .IsConcurrencyToken()
+                        .IsRequired()
+                        .ValueGeneratedOnAddOrUpdate()
+                        .HasColumnType("rowversion");
 
                     b.Property<Guid>("TenantId")
                         .HasColumnType("uniqueidentifier");
@@ -12135,6 +12342,10 @@ namespace CP6.Core.Migrations
                     b.Property<bool>("AllowPasswordFallback")
                         .HasColumnType("bit");
 
+                    b.Property<string>("BadgeNo")
+                        .HasMaxLength(64)
+                        .HasColumnType("nvarchar(64)");
+
                     b.Property<DateTime>("CreateDate")
                         .HasColumnType("datetime2");
 
@@ -12204,6 +12415,10 @@ namespace CP6.Core.Migrations
                     b.Property<DateTime?>("PasswordChangedAt")
                         .HasColumnType("datetime2");
 
+                    b.Property<string>("QuickPinHash")
+                        .HasMaxLength(200)
+                        .HasColumnType("nvarchar(200)");
+
                     b.Property<int?>("RoleId")
                         .HasColumnType("int");
 
@@ -12228,6 +12443,11 @@ namespace CP6.Core.Migrations
                     b.HasKey("Id");
 
                     b.HasIndex("DeptId");
+
+                    b.HasIndex("TenantId", "BadgeNo")
+                        .IsUnique()
+                        .HasDatabaseName("IX_Sys_Users_BadgeNo")
+                        .HasFilter("[BadgeNo] IS NOT NULL");
 
                     b.ToTable("Sys_Users");
                 });
@@ -12334,6 +12554,10 @@ namespace CP6.Core.Migrations
                     b.Property<string>("Creator")
                         .HasMaxLength(100)
                         .HasColumnType("nvarchar(100)");
+
+                    b.Property<string>("DetailRoute")
+                        .HasMaxLength(300)
+                        .HasColumnType("nvarchar(300)");
 
                     b.Property<bool>("Enable")
                         .HasColumnType("bit");
@@ -12527,6 +12751,9 @@ namespace CP6.Core.Migrations
                     b.HasIndex("RecipientId", "IsRead")
                         .HasDatabaseName("IX_Wf_FlowCc_Recipient");
 
+                    b.HasIndex("TenantId", "RecipientId", "InstanceId")
+                        .HasDatabaseName("IX_Wf_FlowCc_Participant");
+
                     b.ToTable("Wf_FlowCc");
                 });
 
@@ -12610,7 +12837,6 @@ namespace CP6.Core.Migrations
                         .HasColumnType("nvarchar(200)");
 
                     b.Property<string>("FormKey")
-                        .IsRequired()
                         .HasMaxLength(100)
                         .HasColumnType("nvarchar(100)");
 
@@ -12652,6 +12878,129 @@ namespace CP6.Core.Migrations
                         .HasFilter("[FunctionId] IS NOT NULL");
 
                     b.ToTable("Wf_FlowDef");
+                });
+
+            modelBuilder.Entity("CP6.Entity.DomainModels.Wf.Wf_FlowDefVersion", b =>
+                {
+                    b.Property<Guid>("Id")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("uniqueidentifier");
+
+                    b.Property<DateTime>("CreateDate")
+                        .HasColumnType("datetime2");
+
+                    b.Property<string>("Creator")
+                        .HasMaxLength(100)
+                        .HasColumnType("nvarchar(100)");
+
+                    b.Property<Guid>("FlowDefId")
+                        .HasColumnType("uniqueidentifier");
+
+                    b.Property<string>("FlowNameSnapshot")
+                        .IsRequired()
+                        .HasMaxLength(200)
+                        .HasColumnType("nvarchar(200)");
+
+                    b.Property<string>("Modifier")
+                        .HasMaxLength(100)
+                        .HasColumnType("nvarchar(100)");
+
+                    b.Property<DateTime?>("ModifyDate")
+                        .HasColumnType("datetime2");
+
+                    b.Property<DateTime?>("PublishedAtUtc")
+                        .HasColumnType("datetime2");
+
+                    b.Property<Guid?>("PublishedBy")
+                        .HasColumnType("uniqueidentifier");
+
+                    b.Property<byte[]>("RowVersion")
+                        .IsConcurrencyToken()
+                        .ValueGeneratedOnAddOrUpdate()
+                        .HasColumnType("rowversion");
+
+                    b.Property<string>("SchemaJson")
+                        .IsRequired()
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<int>("Status")
+                        .HasColumnType("int");
+
+                    b.Property<Guid>("TenantId")
+                        .HasColumnType("uniqueidentifier");
+
+                    b.Property<int>("Version")
+                        .HasColumnType("int");
+
+                    b.HasKey("Id");
+
+                    b.HasIndex("FlowDefId");
+
+                    b.HasIndex("TenantId", "FlowDefId", "Status")
+                        .IsUnique()
+                        .HasDatabaseName("UX_Wf_FlowDefVersion_OneDraft")
+                        .HasFilter("[Status] = 0");
+
+                    b.HasIndex("TenantId", "FlowDefId", "Version")
+                        .IsUnique()
+                        .HasDatabaseName("UX_Wf_FlowDefVersion");
+
+                    b.ToTable("Wf_FlowDefVersion");
+                });
+
+            modelBuilder.Entity("CP6.Entity.DomainModels.Wf.Wf_FlowDefVersionDependency", b =>
+                {
+                    b.Property<Guid>("Id")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("uniqueidentifier");
+
+                    b.Property<DateTime>("CreateDate")
+                        .HasColumnType("datetime2");
+
+                    b.Property<string>("Creator")
+                        .HasMaxLength(100)
+                        .HasColumnType("nvarchar(100)");
+
+                    b.Property<string>("DependencyType")
+                        .IsRequired()
+                        .HasMaxLength(30)
+                        .HasColumnType("nvarchar(30)");
+
+                    b.Property<Guid>("FlowDefVersionId")
+                        .HasColumnType("uniqueidentifier");
+
+                    b.Property<string>("Modifier")
+                        .HasMaxLength(100)
+                        .HasColumnType("nvarchar(100)");
+
+                    b.Property<DateTime?>("ModifyDate")
+                        .HasColumnType("datetime2");
+
+                    b.Property<string>("NodeId")
+                        .IsRequired()
+                        .HasMaxLength(100)
+                        .HasColumnType("nvarchar(100)");
+
+                    b.Property<Guid>("TargetFlowDefVersionId")
+                        .HasColumnType("uniqueidentifier");
+
+                    b.Property<Guid>("TenantId")
+                        .HasColumnType("uniqueidentifier");
+
+                    b.HasKey("Id");
+
+                    b.HasIndex("FlowDefVersionId");
+
+                    b.HasIndex("TargetFlowDefVersionId");
+
+                    b.HasIndex("TenantId", "TargetFlowDefVersionId")
+                        .HasDatabaseName("IX_Wf_FlowDefVersionDependency_Target");
+
+                    b.HasIndex("TenantId", "FlowDefVersionId", "NodeId", "DependencyType")
+                        .IsUnique()
+                        .HasDatabaseName("UX_Wf_FlowDefVersionDependency");
+
+                    b.ToTable("Wf_FlowDefVersionDependency");
                 });
 
             modelBuilder.Entity("CP6.Entity.DomainModels.Wf.Wf_FlowDelegate", b =>
@@ -12796,6 +13145,15 @@ namespace CP6.Core.Migrations
                     b.HasIndex("InstanceId", "TokenId")
                         .HasDatabaseName("IX_Wf_FlowFormTo_Token");
 
+                    b.HasIndex("TenantId", "ActualHandlerId", "InstanceId")
+                        .HasDatabaseName("IX_Wf_FlowFormTo_ActualParticipant");
+
+                    b.HasIndex("TenantId", "ExpectedHandlerId", "InstanceId")
+                        .HasDatabaseName("IX_Wf_FlowFormTo_ExpectedParticipant");
+
+                    b.HasIndex("TenantId", "OnBehalfOfId", "InstanceId")
+                        .HasDatabaseName("IX_Wf_FlowFormTo_OnBehalfParticipant");
+
                     b.ToTable("Wf_FlowFormTo");
                 });
 
@@ -12876,10 +13234,19 @@ namespace CP6.Core.Migrations
                         .HasMaxLength(100)
                         .HasColumnType("nvarchar(100)");
 
+                    b.Property<Guid?>("FlowDefVersionId")
+                        .HasColumnType("uniqueidentifier");
+
                     b.Property<string>("FlowKey")
                         .IsRequired()
                         .HasMaxLength(100)
                         .HasColumnType("nvarchar(100)");
+
+                    b.Property<Guid?>("FormDataId")
+                        .HasColumnType("uniqueidentifier");
+
+                    b.Property<Guid?>("FormDefVersionId")
+                        .HasColumnType("uniqueidentifier");
 
                     b.Property<string>("Modifier")
                         .HasMaxLength(100)
@@ -12925,6 +13292,11 @@ namespace CP6.Core.Migrations
 
                     b.HasIndex("TenantId", "ParentInstanceId")
                         .HasDatabaseName("IX_Wf_FlowInstance_Parent");
+
+                    b.HasIndex("TenantId", "BizType", "BizId")
+                        .IsUnique()
+                        .HasDatabaseName("UX_Wf_FlowInstance_ActiveBusiness")
+                        .HasFilter("[BizType] IS NOT NULL AND [BizId] IS NOT NULL AND [Status] IN (0, 4)");
 
                     b.HasIndex("TenantId", "ParentTokenId", "SubIndex")
                         .IsUnique()
@@ -13017,6 +13389,9 @@ namespace CP6.Core.Migrations
 
                     b.HasIndex("Status", "DueAt")
                         .HasDatabaseName("IX_Wf_FlowTask_StatusDue");
+
+                    b.HasIndex("TenantId", "AssigneeId", "Status", "InstanceId", "CreateDate")
+                        .HasDatabaseName("IX_Wf_FlowTask_PendingPage");
 
                     b.HasIndex("InstanceId", "NodeId", "TokenId", "StageIndex", "StageRound", "Status")
                         .HasDatabaseName("IX_Wf_FlowTask_Tally");
@@ -13173,6 +13548,9 @@ namespace CP6.Core.Migrations
                         .IsRequired()
                         .HasColumnType("nvarchar(max)");
 
+                    b.Property<Guid?>("FormDefVersionId")
+                        .HasColumnType("uniqueidentifier");
+
                     b.Property<string>("FormKey")
                         .IsRequired()
                         .HasMaxLength(100)
@@ -13188,6 +13566,25 @@ namespace CP6.Core.Migrations
                     b.Property<DateTime?>("ModifyDate")
                         .HasColumnType("datetime2");
 
+                    b.Property<string>("RequestHash")
+                        .HasMaxLength(64)
+                        .HasColumnType("nvarchar(64)");
+
+                    b.Property<byte[]>("RowVersion")
+                        .IsConcurrencyToken()
+                        .ValueGeneratedOnAddOrUpdate()
+                        .HasColumnType("rowversion");
+
+                    b.Property<string>("SubmissionKey")
+                        .HasMaxLength(100)
+                        .HasColumnType("nvarchar(100)");
+
+                    b.Property<DateTime?>("SubmittedAtUtc")
+                        .HasColumnType("datetime2");
+
+                    b.Property<Guid?>("SubmittedBy")
+                        .HasColumnType("uniqueidentifier");
+
                     b.Property<Guid>("TenantId")
                         .HasColumnType("uniqueidentifier");
 
@@ -13198,6 +13595,14 @@ namespace CP6.Core.Migrations
 
                     b.HasIndex("FormKey")
                         .HasDatabaseName("IX_Wf_FormData_FormKey");
+
+                    b.HasIndex("TenantId", "SubmissionKey")
+                        .IsUnique()
+                        .HasDatabaseName("UX_Wf_FormData_SubmissionKey")
+                        .HasFilter("[SubmissionKey] IS NOT NULL");
+
+                    b.HasIndex("TenantId", "FormDefVersionId", "SubmittedAtUtc")
+                        .HasDatabaseName("IX_Wf_FormData_VersionSubmitted");
 
                     b.ToTable("Wf_FormData");
                 });
@@ -13262,6 +13667,151 @@ namespace CP6.Core.Migrations
                     b.ToTable("Wf_FormDef");
                 });
 
+            modelBuilder.Entity("CP6.Entity.DomainModels.Wf.Wf_FormDefVersion", b =>
+                {
+                    b.Property<Guid>("Id")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("uniqueidentifier");
+
+                    b.Property<DateTime>("CreateDate")
+                        .HasColumnType("datetime2");
+
+                    b.Property<string>("Creator")
+                        .HasMaxLength(100)
+                        .HasColumnType("nvarchar(100)");
+
+                    b.Property<Guid>("FormDefId")
+                        .HasColumnType("uniqueidentifier");
+
+                    b.Property<string>("FormNameSnapshot")
+                        .IsRequired()
+                        .HasMaxLength(200)
+                        .HasColumnType("nvarchar(200)");
+
+                    b.Property<string>("Modifier")
+                        .HasMaxLength(100)
+                        .HasColumnType("nvarchar(100)");
+
+                    b.Property<DateTime?>("ModifyDate")
+                        .HasColumnType("datetime2");
+
+                    b.Property<DateTime?>("PublishedAtUtc")
+                        .HasColumnType("datetime2");
+
+                    b.Property<Guid?>("PublishedBy")
+                        .HasColumnType("uniqueidentifier");
+
+                    b.Property<byte[]>("RowVersion")
+                        .IsConcurrencyToken()
+                        .ValueGeneratedOnAddOrUpdate()
+                        .HasColumnType("rowversion");
+
+                    b.Property<string>("SchemaJson")
+                        .IsRequired()
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<int>("Status")
+                        .HasColumnType("int");
+
+                    b.Property<Guid>("TenantId")
+                        .HasColumnType("uniqueidentifier");
+
+                    b.Property<int>("Version")
+                        .HasColumnType("int");
+
+                    b.HasKey("Id");
+
+                    b.HasIndex("FormDefId");
+
+                    b.HasIndex("TenantId", "FormDefId", "Status")
+                        .IsUnique()
+                        .HasDatabaseName("UX_Wf_FormDefVersion_OneDraft")
+                        .HasFilter("[Status] = 0");
+
+                    b.HasIndex("TenantId", "FormDefId", "Version")
+                        .IsUnique()
+                        .HasDatabaseName("UX_Wf_FormDefVersion");
+
+                    b.ToTable("Wf_FormDefVersion");
+                });
+
+            modelBuilder.Entity("CP6.Entity.DomainModels.Wf.Wf_FormDraft", b =>
+                {
+                    b.Property<Guid>("Id")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("uniqueidentifier");
+
+                    b.Property<DateTime>("CreateDate")
+                        .HasColumnType("datetime2");
+
+                    b.Property<string>("Creator")
+                        .HasMaxLength(100)
+                        .HasColumnType("nvarchar(100)");
+
+                    b.Property<string>("DataJson")
+                        .IsRequired()
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<Guid>("FormDefId")
+                        .HasColumnType("uniqueidentifier");
+
+                    b.Property<Guid>("FormDefVersionId")
+                        .HasColumnType("uniqueidentifier");
+
+                    b.Property<Guid?>("LegacyFlowInstanceId")
+                        .HasColumnType("uniqueidentifier");
+
+                    b.Property<string>("Modifier")
+                        .HasMaxLength(100)
+                        .HasColumnType("nvarchar(100)");
+
+                    b.Property<DateTime?>("ModifyDate")
+                        .HasColumnType("datetime2");
+
+                    b.Property<Guid>("OwnerUserId")
+                        .HasColumnType("uniqueidentifier");
+
+                    b.Property<Guid?>("RebasedFromVersionId")
+                        .HasColumnType("uniqueidentifier");
+
+                    b.Property<byte[]>("RowVersion")
+                        .IsConcurrencyToken()
+                        .ValueGeneratedOnAddOrUpdate()
+                        .HasColumnType("rowversion");
+
+                    b.Property<int>("Status")
+                        .HasColumnType("int");
+
+                    b.Property<DateTime?>("SubmittedAtUtc")
+                        .HasColumnType("datetime2");
+
+                    b.Property<Guid?>("SubmittedFormDataId")
+                        .HasColumnType("uniqueidentifier");
+
+                    b.Property<Guid>("TenantId")
+                        .HasColumnType("uniqueidentifier");
+
+                    b.Property<string>("Title")
+                        .HasMaxLength(200)
+                        .HasColumnType("nvarchar(200)");
+
+                    b.HasKey("Id");
+
+                    b.HasIndex("FormDefId");
+
+                    b.HasIndex("FormDefVersionId");
+
+                    b.HasIndex("TenantId", "LegacyFlowInstanceId")
+                        .IsUnique()
+                        .HasDatabaseName("UX_Wf_FormDraft_Legacy")
+                        .HasFilter("[LegacyFlowInstanceId] IS NOT NULL");
+
+                    b.HasIndex("TenantId", "OwnerUserId", "Status", "ModifyDate")
+                        .HasDatabaseName("IX_Wf_FormDraft_Owner");
+
+                    b.ToTable("Wf_FormDraft");
+                });
+
             modelBuilder.Entity("CP6.Entity.DomainModels.Wf.Wf_FormFavorite", b =>
                 {
                     b.Property<Guid>("Id")
@@ -13300,6 +13850,57 @@ namespace CP6.Core.Migrations
                         .HasDatabaseName("UX_Wf_FormFavorite");
 
                     b.ToTable("Wf_FormFavorite");
+                });
+
+            modelBuilder.Entity("CP6.Entity.DomainModels.Wf.Wf_FormFlowBinding", b =>
+                {
+                    b.Property<Guid>("Id")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("uniqueidentifier");
+
+                    b.Property<DateTime>("CreateDate")
+                        .HasColumnType("datetime2");
+
+                    b.Property<string>("Creator")
+                        .HasMaxLength(100)
+                        .HasColumnType("nvarchar(100)");
+
+                    b.Property<bool>("Enable")
+                        .HasColumnType("bit");
+
+                    b.Property<Guid>("FlowDefId")
+                        .HasColumnType("uniqueidentifier");
+
+                    b.Property<Guid>("FormDefId")
+                        .HasColumnType("uniqueidentifier");
+
+                    b.Property<string>("Modifier")
+                        .HasMaxLength(100)
+                        .HasColumnType("nvarchar(100)");
+
+                    b.Property<DateTime?>("ModifyDate")
+                        .HasColumnType("datetime2");
+
+                    b.Property<byte[]>("RowVersion")
+                        .IsConcurrencyToken()
+                        .ValueGeneratedOnAddOrUpdate()
+                        .HasColumnType("rowversion");
+
+                    b.Property<Guid>("TenantId")
+                        .HasColumnType("uniqueidentifier");
+
+                    b.HasKey("Id");
+
+                    b.HasIndex("FlowDefId");
+
+                    b.HasIndex("FormDefId");
+
+                    b.HasIndex("TenantId", "FormDefId")
+                        .IsUnique()
+                        .HasDatabaseName("UX_Wf_FormFlowBinding_Active")
+                        .HasFilter("[Enable] = 1");
+
+                    b.ToTable("Wf_FormFlowBinding");
                 });
 
             modelBuilder.Entity("CP6.Entity.DomainModels.Wf.Wf_InboxPref", b =>
@@ -13358,9 +13959,28 @@ namespace CP6.Core.Migrations
                         .HasMaxLength(100)
                         .HasColumnType("nvarchar(100)");
 
+                    b.Property<int>("DispatchAttempts")
+                        .HasColumnType("int");
+
+                    b.Property<int>("DispatchStatus")
+                        .HasColumnType("int");
+
+                    b.Property<DateTime?>("DispatchedAtUtc")
+                        .HasColumnType("datetime2");
+
+                    b.Property<bool>("EmailRequested")
+                        .HasColumnType("bit");
+
+                    b.Property<string>("EventKey")
+                        .HasMaxLength(300)
+                        .HasColumnType("nvarchar(300)");
+
                     b.Property<string>("FlowKey")
                         .HasMaxLength(100)
                         .HasColumnType("nvarchar(100)");
+
+                    b.Property<bool>("InAppRequested")
+                        .HasColumnType("bit");
 
                     b.Property<Guid?>("InstanceId")
                         .HasColumnType("uniqueidentifier");
@@ -13368,11 +13988,18 @@ namespace CP6.Core.Migrations
                     b.Property<bool>("IsRead")
                         .HasColumnType("bit");
 
+                    b.Property<string>("LastDispatchError")
+                        .HasMaxLength(2000)
+                        .HasColumnType("nvarchar(2000)");
+
                     b.Property<string>("Modifier")
                         .HasMaxLength(100)
                         .HasColumnType("nvarchar(100)");
 
                     b.Property<DateTime?>("ModifyDate")
+                        .HasColumnType("datetime2");
+
+                    b.Property<DateTime?>("NextAttemptAtUtc")
                         .HasColumnType("datetime2");
 
                     b.Property<DateTime?>("ReadAt")
@@ -13396,6 +14023,14 @@ namespace CP6.Core.Migrations
                         .HasColumnType("uniqueidentifier");
 
                     b.HasKey("Id");
+
+                    b.HasIndex("TenantId", "EventKey")
+                        .IsUnique()
+                        .HasDatabaseName("UX_Wf_Notification_Event")
+                        .HasFilter("[EventKey] IS NOT NULL");
+
+                    b.HasIndex("TenantId", "DispatchStatus", "NextAttemptAtUtc")
+                        .HasDatabaseName("IX_Wf_Notification_Dispatch");
 
                     b.HasIndex("TenantId", "UserId", "IsRead")
                         .HasDatabaseName("IX_Wf_Notification_UserRead");
@@ -13555,6 +14190,160 @@ namespace CP6.Core.Migrations
                     b.ToTable("Wf_TriggerFire");
                 });
 
+            modelBuilder.Entity("CP6.Entity.DomainModels.Wms.BarcodeAlias", b =>
+                {
+                    b.Property<Guid>("Id")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("uniqueidentifier");
+
+                    b.Property<string>("Barcode")
+                        .IsRequired()
+                        .HasMaxLength(256)
+                        .HasColumnType("nvarchar(256)");
+
+                    b.Property<string>("BarcodeType")
+                        .IsRequired()
+                        .HasMaxLength(20)
+                        .HasColumnType("nvarchar(20)");
+
+                    b.Property<decimal>("ConversionRate")
+                        .HasColumnType("decimal(21,8)");
+
+                    b.Property<DateTime>("CreateDate")
+                        .HasColumnType("datetime2");
+
+                    b.Property<string>("Creator")
+                        .HasMaxLength(100)
+                        .HasColumnType("nvarchar(100)");
+
+                    b.Property<bool>("IsDeleted")
+                        .HasColumnType("bit");
+
+                    b.Property<bool>("IsEnabled")
+                        .HasColumnType("bit");
+
+                    b.Property<string>("LocationCd")
+                        .HasMaxLength(30)
+                        .HasColumnType("nvarchar(30)");
+
+                    b.Property<string>("LotNo")
+                        .HasMaxLength(30)
+                        .HasColumnType("nvarchar(30)");
+
+                    b.Property<string>("Modifier")
+                        .HasMaxLength(100)
+                        .HasColumnType("nvarchar(100)");
+
+                    b.Property<DateTime?>("ModifyDate")
+                        .HasColumnType("datetime2");
+
+                    b.Property<string>("PackageUnitCd")
+                        .HasMaxLength(10)
+                        .HasColumnType("nvarchar(10)");
+
+                    b.Property<string>("ProductCd")
+                        .HasMaxLength(20)
+                        .HasColumnType("nvarchar(20)");
+
+                    b.Property<byte[]>("RowVersion")
+                        .IsConcurrencyToken()
+                        .ValueGeneratedOnAddOrUpdate()
+                        .HasColumnType("rowversion");
+
+                    b.Property<string>("TargetKey")
+                        .IsRequired()
+                        .HasMaxLength(128)
+                        .HasColumnType("nvarchar(128)");
+
+                    b.Property<Guid>("TenantId")
+                        .HasColumnType("uniqueidentifier");
+
+                    b.Property<DateTime?>("ValidFrom")
+                        .HasColumnType("datetime2");
+
+                    b.Property<DateTime?>("ValidUntil")
+                        .HasColumnType("datetime2");
+
+                    b.HasKey("Id");
+
+                    b.HasIndex("BarcodeType", "TargetKey");
+
+                    b.HasIndex("ProductCd", "LotNo");
+
+                    b.HasIndex("TenantId", "Barcode")
+                        .IsUnique()
+                        .HasDatabaseName("IX_T_BarcodeAlias_Barcode");
+
+                    b.ToTable("T_BarcodeAlias");
+                });
+
+            modelBuilder.Entity("CP6.Entity.DomainModels.Wms.BarcodeProfile", b =>
+                {
+                    b.Property<Guid>("Id")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("uniqueidentifier");
+
+                    b.Property<DateTime>("CreateDate")
+                        .HasColumnType("datetime2");
+
+                    b.Property<string>("Creator")
+                        .HasMaxLength(100)
+                        .HasColumnType("nvarchar(100)");
+
+                    b.Property<string>("Format")
+                        .IsRequired()
+                        .HasMaxLength(20)
+                        .HasColumnType("nvarchar(20)");
+
+                    b.Property<bool>("IsDeleted")
+                        .HasColumnType("bit");
+
+                    b.Property<bool>("IsEnabled")
+                        .HasColumnType("bit");
+
+                    b.Property<string>("MappingJson")
+                        .IsRequired()
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<string>("Modifier")
+                        .HasMaxLength(100)
+                        .HasColumnType("nvarchar(100)");
+
+                    b.Property<DateTime?>("ModifyDate")
+                        .HasColumnType("datetime2");
+
+                    b.Property<string>("Pattern")
+                        .IsRequired()
+                        .HasMaxLength(1000)
+                        .HasColumnType("nvarchar(1000)");
+
+                    b.Property<int>("Priority")
+                        .HasColumnType("int");
+
+                    b.Property<string>("ProfileName")
+                        .IsRequired()
+                        .HasMaxLength(100)
+                        .HasColumnType("nvarchar(100)");
+
+                    b.Property<byte[]>("RowVersion")
+                        .IsConcurrencyToken()
+                        .ValueGeneratedOnAddOrUpdate()
+                        .HasColumnType("rowversion");
+
+                    b.Property<Guid>("TenantId")
+                        .HasColumnType("uniqueidentifier");
+
+                    b.HasKey("Id");
+
+                    b.HasIndex("IsEnabled", "Priority");
+
+                    b.HasIndex("TenantId", "ProfileName")
+                        .IsUnique()
+                        .HasDatabaseName("IX_T_BarcodeProfile_ProfileName");
+
+                    b.ToTable("T_BarcodeProfile");
+                });
+
             modelBuilder.Entity("CP6.Entity.DomainModels.Wms.CarrierShipment", b =>
                 {
                     b.Property<Guid>("Id")
@@ -13667,6 +14456,129 @@ namespace CP6.Core.Migrations
                     b.HasIndex("CarrierCd", "Status", "IsDeleted");
 
                     b.ToTable("T_CarrierShipment");
+                });
+
+            modelBuilder.Entity("CP6.Entity.DomainModels.Wms.ClientDevice", b =>
+                {
+                    b.Property<Guid>("Id")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("uniqueidentifier");
+
+                    b.Property<DateTime>("ActivatedAt")
+                        .HasColumnType("datetime2");
+
+                    b.Property<string>("ActivatedBy")
+                        .HasMaxLength(100)
+                        .HasColumnType("nvarchar(100)");
+
+                    b.Property<string>("AppVersion")
+                        .HasMaxLength(32)
+                        .HasColumnType("nvarchar(32)");
+
+                    b.Property<string>("AreaCd")
+                        .HasMaxLength(20)
+                        .HasColumnType("nvarchar(20)");
+
+                    b.Property<int?>("BatteryPercent")
+                        .HasColumnType("int");
+
+                    b.Property<DateTime>("CreateDate")
+                        .HasColumnType("datetime2");
+
+                    b.Property<string>("Creator")
+                        .HasMaxLength(100)
+                        .HasColumnType("nvarchar(100)");
+
+                    b.Property<string>("CurrentTaskNo")
+                        .HasMaxLength(25)
+                        .HasColumnType("nvarchar(25)");
+
+                    b.Property<string>("CurrentUser")
+                        .HasMaxLength(100)
+                        .HasColumnType("nvarchar(100)");
+
+                    b.Property<string>("DeviceId")
+                        .IsRequired()
+                        .HasMaxLength(128)
+                        .HasColumnType("nvarchar(128)");
+
+                    b.Property<string>("DeviceMode")
+                        .IsRequired()
+                        .HasMaxLength(20)
+                        .HasColumnType("nvarchar(20)");
+
+                    b.Property<DateTime?>("DisabledAt")
+                        .HasColumnType("datetime2");
+
+                    b.Property<string>("DisabledBy")
+                        .HasMaxLength(100)
+                        .HasColumnType("nvarchar(100)");
+
+                    b.Property<DateTime?>("FullAuthExpiresAt")
+                        .HasColumnType("datetime2");
+
+                    b.Property<bool>("IsDeleted")
+                        .HasColumnType("bit");
+
+                    b.Property<DateTime?>("LastSeenAt")
+                        .HasColumnType("datetime2");
+
+                    b.Property<string>("Modifier")
+                        .HasMaxLength(100)
+                        .HasColumnType("nvarchar(100)");
+
+                    b.Property<DateTime?>("ModifyDate")
+                        .HasColumnType("datetime2");
+
+                    b.Property<string>("NetworkType")
+                        .HasMaxLength(32)
+                        .HasColumnType("nvarchar(32)");
+
+                    b.Property<string>("Platform")
+                        .IsRequired()
+                        .HasMaxLength(20)
+                        .HasColumnType("nvarchar(20)");
+
+                    b.Property<string>("PlatformVersion")
+                        .HasMaxLength(64)
+                        .HasColumnType("nvarchar(64)");
+
+                    b.Property<string>("PublicKey")
+                        .IsRequired()
+                        .HasMaxLength(2048)
+                        .HasColumnType("nvarchar(2048)");
+
+                    b.Property<int>("QuickSwitchFailureCount")
+                        .HasColumnType("int");
+
+                    b.Property<byte[]>("RowVersion")
+                        .IsConcurrencyToken()
+                        .ValueGeneratedOnAddOrUpdate()
+                        .HasColumnType("rowversion");
+
+                    b.Property<string>("Status")
+                        .IsRequired()
+                        .HasMaxLength(20)
+                        .HasColumnType("nvarchar(20)");
+
+                    b.Property<Guid>("TenantId")
+                        .HasColumnType("uniqueidentifier");
+
+                    b.Property<string>("WarehouseCd")
+                        .HasMaxLength(10)
+                        .HasColumnType("nvarchar(10)");
+
+                    b.HasKey("Id");
+
+                    b.HasIndex("LastSeenAt");
+
+                    b.HasIndex("TenantId", "DeviceId")
+                        .IsUnique()
+                        .HasDatabaseName("IX_T_ClientDevice_DeviceId");
+
+                    b.HasIndex("Status", "WarehouseCd", "AreaCd");
+
+                    b.ToTable("T_ClientDevice");
                 });
 
             modelBuilder.Entity("CP6.Entity.DomainModels.Wms.CrossDockOrder", b =>
@@ -13793,6 +14705,81 @@ namespace CP6.Core.Migrations
                         .HasDatabaseName("IX_T_CrossDockOrder_XDockNo");
 
                     b.ToTable("T_CrossDockOrder");
+                });
+
+            modelBuilder.Entity("CP6.Entity.DomainModels.Wms.DeviceActivation", b =>
+                {
+                    b.Property<Guid>("Id")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("uniqueidentifier");
+
+                    b.Property<string>("AreaCd")
+                        .HasMaxLength(20)
+                        .HasColumnType("nvarchar(20)");
+
+                    b.Property<DateTime?>("ConsumedAt")
+                        .HasColumnType("datetime2");
+
+                    b.Property<string>("ConsumedByDeviceId")
+                        .HasMaxLength(128)
+                        .HasColumnType("nvarchar(128)");
+
+                    b.Property<DateTime>("CreateDate")
+                        .HasColumnType("datetime2");
+
+                    b.Property<string>("Creator")
+                        .HasMaxLength(100)
+                        .HasColumnType("nvarchar(100)");
+
+                    b.Property<string>("DeviceMode")
+                        .IsRequired()
+                        .HasMaxLength(20)
+                        .HasColumnType("nvarchar(20)");
+
+                    b.Property<DateTime>("ExpiresAt")
+                        .HasColumnType("datetime2");
+
+                    b.Property<bool>("IsDeleted")
+                        .HasColumnType("bit");
+
+                    b.Property<string>("Modifier")
+                        .HasMaxLength(100)
+                        .HasColumnType("nvarchar(100)");
+
+                    b.Property<DateTime?>("ModifyDate")
+                        .HasColumnType("datetime2");
+
+                    b.Property<string>("Platform")
+                        .IsRequired()
+                        .HasMaxLength(20)
+                        .HasColumnType("nvarchar(20)");
+
+                    b.Property<byte[]>("RowVersion")
+                        .IsConcurrencyToken()
+                        .ValueGeneratedOnAddOrUpdate()
+                        .HasColumnType("rowversion");
+
+                    b.Property<Guid>("TenantId")
+                        .HasColumnType("uniqueidentifier");
+
+                    b.Property<string>("TokenHash")
+                        .IsRequired()
+                        .HasMaxLength(64)
+                        .HasColumnType("nvarchar(64)");
+
+                    b.Property<string>("WarehouseCd")
+                        .HasMaxLength(10)
+                        .HasColumnType("nvarchar(10)");
+
+                    b.HasKey("Id");
+
+                    b.HasIndex("ExpiresAt", "ConsumedAt");
+
+                    b.HasIndex("TenantId", "TokenHash")
+                        .IsUnique()
+                        .HasDatabaseName("IX_T_DeviceActivation_TokenHash");
+
+                    b.ToTable("T_DeviceActivation");
                 });
 
             modelBuilder.Entity("CP6.Entity.DomainModels.Wms.InboundOrder", b =>
@@ -14713,6 +15700,165 @@ namespace CP6.Core.Migrations
                     b.ToTable("T_KitOrder");
                 });
 
+            modelBuilder.Entity("CP6.Entity.DomainModels.Wms.LabelJob", b =>
+                {
+                    b.Property<Guid>("Id")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("uniqueidentifier");
+
+                    b.Property<int>("AttemptCount")
+                        .HasColumnType("int");
+
+                    b.Property<DateTime?>("CompletedAt")
+                        .HasColumnType("datetime2");
+
+                    b.Property<DateTime>("CreateDate")
+                        .HasColumnType("datetime2");
+
+                    b.Property<string>("Creator")
+                        .HasMaxLength(100)
+                        .HasColumnType("nvarchar(100)");
+
+                    b.Property<bool>("IsDeleted")
+                        .HasColumnType("bit");
+
+                    b.Property<string>("JobNo")
+                        .IsRequired()
+                        .HasMaxLength(25)
+                        .HasColumnType("nvarchar(25)");
+
+                    b.Property<string>("Modifier")
+                        .HasMaxLength(100)
+                        .HasColumnType("nvarchar(100)");
+
+                    b.Property<DateTime?>("ModifyDate")
+                        .HasColumnType("datetime2");
+
+                    b.Property<Guid>("OperationId")
+                        .HasColumnType("uniqueidentifier");
+
+                    b.Property<string>("PayloadJson")
+                        .IsRequired()
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<string>("PrinterName")
+                        .HasMaxLength(128)
+                        .HasColumnType("nvarchar(128)");
+
+                    b.Property<DateTime>("RequestedAt")
+                        .HasColumnType("datetime2");
+
+                    b.Property<string>("RequestedBy")
+                        .HasMaxLength(100)
+                        .HasColumnType("nvarchar(100)");
+
+                    b.Property<string>("RequestedDeviceId")
+                        .HasMaxLength(128)
+                        .HasColumnType("nvarchar(128)");
+
+                    b.Property<string>("ResultMessage")
+                        .HasMaxLength(1000)
+                        .HasColumnType("nvarchar(1000)");
+
+                    b.Property<byte[]>("RowVersion")
+                        .IsConcurrencyToken()
+                        .ValueGeneratedOnAddOrUpdate()
+                        .HasColumnType("rowversion");
+
+                    b.Property<string>("Status")
+                        .IsRequired()
+                        .HasMaxLength(20)
+                        .HasColumnType("nvarchar(20)");
+
+                    b.Property<string>("TemplateName")
+                        .IsRequired()
+                        .HasMaxLength(100)
+                        .HasColumnType("nvarchar(100)");
+
+                    b.Property<Guid>("TenantId")
+                        .HasColumnType("uniqueidentifier");
+
+                    b.Property<string>("WarehouseCd")
+                        .IsRequired()
+                        .HasMaxLength(10)
+                        .HasColumnType("nvarchar(10)");
+
+                    b.HasKey("Id");
+
+                    b.HasIndex("TenantId", "JobNo")
+                        .IsUnique()
+                        .HasDatabaseName("IX_T_LabelJob_JobNo");
+
+                    b.HasIndex("TenantId", "OperationId")
+                        .IsUnique()
+                        .HasDatabaseName("IX_T_LabelJob_OperationId");
+
+                    b.HasIndex("WarehouseCd", "Status", "RequestedAt");
+
+                    b.ToTable("T_LabelJob");
+                });
+
+            modelBuilder.Entity("CP6.Entity.DomainModels.Wms.LabelTemplate", b =>
+                {
+                    b.Property<Guid>("Id")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("uniqueidentifier");
+
+                    b.Property<DateTime>("CreateDate")
+                        .HasColumnType("datetime2");
+
+                    b.Property<string>("Creator")
+                        .HasMaxLength(100)
+                        .HasColumnType("nvarchar(100)");
+
+                    b.Property<string>("Format")
+                        .IsRequired()
+                        .HasMaxLength(20)
+                        .HasColumnType("nvarchar(20)");
+
+                    b.Property<bool>("IsDeleted")
+                        .HasColumnType("bit");
+
+                    b.Property<bool>("IsEnabled")
+                        .HasColumnType("bit");
+
+                    b.Property<string>("Language")
+                        .HasMaxLength(10)
+                        .HasColumnType("nvarchar(10)");
+
+                    b.Property<string>("Modifier")
+                        .HasMaxLength(100)
+                        .HasColumnType("nvarchar(100)");
+
+                    b.Property<DateTime?>("ModifyDate")
+                        .HasColumnType("datetime2");
+
+                    b.Property<byte[]>("RowVersion")
+                        .IsConcurrencyToken()
+                        .ValueGeneratedOnAddOrUpdate()
+                        .HasColumnType("rowversion");
+
+                    b.Property<string>("TemplateBody")
+                        .IsRequired()
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<string>("TemplateName")
+                        .IsRequired()
+                        .HasMaxLength(100)
+                        .HasColumnType("nvarchar(100)");
+
+                    b.Property<Guid>("TenantId")
+                        .HasColumnType("uniqueidentifier");
+
+                    b.HasKey("Id");
+
+                    b.HasIndex("TenantId", "TemplateName")
+                        .IsUnique()
+                        .HasDatabaseName("IX_T_LabelTemplate_TemplateName");
+
+                    b.ToTable("T_LabelTemplate");
+                });
+
             modelBuilder.Entity("CP6.Entity.DomainModels.Wms.Location", b =>
                 {
                     b.Property<Guid>("Id")
@@ -14722,6 +15868,10 @@ namespace CP6.Core.Migrations
                     b.Property<string>("AllowedProductType")
                         .HasMaxLength(50)
                         .HasColumnType("nvarchar(50)");
+
+                    b.Property<string>("AreaCd")
+                        .HasMaxLength(20)
+                        .HasColumnType("nvarchar(20)");
 
                     b.Property<string>("Barcode")
                         .HasMaxLength(50)
@@ -14769,6 +15919,9 @@ namespace CP6.Core.Migrations
                         .HasMaxLength(30)
                         .HasColumnType("nvarchar(30)");
 
+                    b.Property<decimal>("ReservedCapacityQty")
+                        .HasColumnType("decimal(21,8)");
+
                     b.Property<byte[]>("RowVersion")
                         .IsConcurrencyToken()
                         .ValueGeneratedOnAddOrUpdate()
@@ -14804,6 +15957,309 @@ namespace CP6.Core.Migrations
                     b.HasIndex("WarehouseCd", "IsBlocked", "IsPickable");
 
                     b.ToTable("T_Location");
+                });
+
+            modelBuilder.Entity("CP6.Entity.DomainModels.Wms.LogisticsUnit", b =>
+                {
+                    b.Property<Guid>("Id")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("uniqueidentifier");
+
+                    b.Property<string>("ContainerType")
+                        .IsRequired()
+                        .HasMaxLength(30)
+                        .HasColumnType("nvarchar(30)");
+
+                    b.Property<DateTime>("CreateDate")
+                        .HasColumnType("datetime2");
+
+                    b.Property<string>("Creator")
+                        .HasMaxLength(100)
+                        .HasColumnType("nvarchar(100)");
+
+                    b.Property<bool>("IsDeleted")
+                        .HasColumnType("bit");
+
+                    b.Property<string>("LocationCd")
+                        .IsRequired()
+                        .HasMaxLength(30)
+                        .HasColumnType("nvarchar(30)");
+
+                    b.Property<string>("LpnNo")
+                        .IsRequired()
+                        .HasMaxLength(64)
+                        .HasColumnType("nvarchar(64)");
+
+                    b.Property<string>("Modifier")
+                        .HasMaxLength(100)
+                        .HasColumnType("nvarchar(100)");
+
+                    b.Property<DateTime?>("ModifyDate")
+                        .HasColumnType("datetime2");
+
+                    b.Property<string>("ParentLpnNo")
+                        .HasMaxLength(64)
+                        .HasColumnType("nvarchar(64)");
+
+                    b.Property<byte[]>("RowVersion")
+                        .IsConcurrencyToken()
+                        .ValueGeneratedOnAddOrUpdate()
+                        .HasColumnType("rowversion");
+
+                    b.Property<string>("Status")
+                        .IsRequired()
+                        .HasMaxLength(20)
+                        .HasColumnType("nvarchar(20)");
+
+                    b.Property<Guid>("TenantId")
+                        .HasColumnType("uniqueidentifier");
+
+                    b.Property<string>("WarehouseCd")
+                        .IsRequired()
+                        .HasMaxLength(10)
+                        .HasColumnType("nvarchar(10)");
+
+                    b.HasKey("Id");
+
+                    b.HasIndex("ParentLpnNo");
+
+                    b.HasIndex("TenantId", "LpnNo")
+                        .IsUnique()
+                        .HasDatabaseName("IX_T_LogisticsUnit_LpnNo");
+
+                    b.HasIndex("WarehouseCd", "LocationCd", "Status");
+
+                    b.ToTable("T_LogisticsUnit");
+                });
+
+            modelBuilder.Entity("CP6.Entity.DomainModels.Wms.LpnClosure", b =>
+                {
+                    b.Property<Guid>("Id")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("uniqueidentifier");
+
+                    b.Property<string>("AncestorLpnNo")
+                        .IsRequired()
+                        .HasMaxLength(64)
+                        .HasColumnType("nvarchar(64)");
+
+                    b.Property<DateTime>("CreateDate")
+                        .HasColumnType("datetime2");
+
+                    b.Property<string>("Creator")
+                        .HasMaxLength(100)
+                        .HasColumnType("nvarchar(100)");
+
+                    b.Property<int>("Depth")
+                        .HasColumnType("int");
+
+                    b.Property<string>("DescendantLpnNo")
+                        .IsRequired()
+                        .HasMaxLength(64)
+                        .HasColumnType("nvarchar(64)");
+
+                    b.Property<string>("Modifier")
+                        .HasMaxLength(100)
+                        .HasColumnType("nvarchar(100)");
+
+                    b.Property<DateTime?>("ModifyDate")
+                        .HasColumnType("datetime2");
+
+                    b.Property<Guid>("TenantId")
+                        .HasColumnType("uniqueidentifier");
+
+                    b.HasKey("Id");
+
+                    b.HasIndex("DescendantLpnNo", "Depth");
+
+                    b.HasIndex("TenantId", "AncestorLpnNo", "DescendantLpnNo")
+                        .IsUnique()
+                        .HasDatabaseName("IX_T_LpnClosure_AncestorLpnNo_DescendantLpnNo");
+
+                    b.ToTable("T_LpnClosure");
+                });
+
+            modelBuilder.Entity("CP6.Entity.DomainModels.Wms.LpnContent", b =>
+                {
+                    b.Property<Guid>("Id")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("uniqueidentifier");
+
+                    b.Property<DateTime>("CreateDate")
+                        .HasColumnType("datetime2");
+
+                    b.Property<string>("Creator")
+                        .HasMaxLength(100)
+                        .HasColumnType("nvarchar(100)");
+
+                    b.Property<bool>("IsDeleted")
+                        .HasColumnType("bit");
+
+                    b.Property<string>("LotNo")
+                        .IsRequired()
+                        .HasMaxLength(30)
+                        .HasColumnType("nvarchar(30)");
+
+                    b.Property<string>("LpnNo")
+                        .IsRequired()
+                        .HasMaxLength(64)
+                        .HasColumnType("nvarchar(64)");
+
+                    b.Property<string>("Modifier")
+                        .HasMaxLength(100)
+                        .HasColumnType("nvarchar(100)");
+
+                    b.Property<DateTime?>("ModifyDate")
+                        .HasColumnType("datetime2");
+
+                    b.Property<string>("ProductCd")
+                        .IsRequired()
+                        .HasMaxLength(20)
+                        .HasColumnType("nvarchar(20)");
+
+                    b.Property<decimal>("Qty")
+                        .HasColumnType("decimal(21,8)");
+
+                    b.Property<byte[]>("RowVersion")
+                        .IsConcurrencyToken()
+                        .ValueGeneratedOnAddOrUpdate()
+                        .HasColumnType("rowversion");
+
+                    b.Property<string>("SerialNo")
+                        .HasMaxLength(128)
+                        .HasColumnType("nvarchar(128)");
+
+                    b.Property<Guid>("TenantId")
+                        .HasColumnType("uniqueidentifier");
+
+                    b.HasKey("Id");
+
+                    b.HasIndex("TenantId", "SerialNo")
+                        .IsUnique()
+                        .HasDatabaseName("IX_T_LpnContent_SerialNo")
+                        .HasFilter("[SerialNo] IS NOT NULL");
+
+                    b.HasIndex("TenantId", "LpnNo", "ProductCd", "LotNo", "SerialNo")
+                        .IsUnique()
+                        .HasDatabaseName("IX_T_LpnContent_LpnNo_ProductCd_LotNo_SerialNo")
+                        .HasFilter("[SerialNo] IS NOT NULL");
+
+                    b.ToTable("T_LpnContent");
+                });
+
+            modelBuilder.Entity("CP6.Entity.DomainModels.Wms.LpnEvent", b =>
+                {
+                    b.Property<Guid>("Id")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("uniqueidentifier");
+
+                    b.Property<DateTime>("CreateDate")
+                        .HasColumnType("datetime2");
+
+                    b.Property<string>("Creator")
+                        .HasMaxLength(100)
+                        .HasColumnType("nvarchar(100)");
+
+                    b.Property<string>("DataJson")
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<string>("DeviceId")
+                        .HasMaxLength(128)
+                        .HasColumnType("nvarchar(128)");
+
+                    b.Property<string>("EventType")
+                        .IsRequired()
+                        .HasMaxLength(30)
+                        .HasColumnType("nvarchar(30)");
+
+                    b.Property<string>("LpnNo")
+                        .IsRequired()
+                        .HasMaxLength(64)
+                        .HasColumnType("nvarchar(64)");
+
+                    b.Property<string>("Modifier")
+                        .HasMaxLength(100)
+                        .HasColumnType("nvarchar(100)");
+
+                    b.Property<DateTime?>("ModifyDate")
+                        .HasColumnType("datetime2");
+
+                    b.Property<DateTime>("OccurredAt")
+                        .HasColumnType("datetime2");
+
+                    b.Property<Guid>("OperationId")
+                        .HasColumnType("uniqueidentifier");
+
+                    b.Property<Guid>("TenantId")
+                        .HasColumnType("uniqueidentifier");
+
+                    b.Property<string>("UserName")
+                        .HasMaxLength(100)
+                        .HasColumnType("nvarchar(100)");
+
+                    b.HasKey("Id");
+
+                    b.HasIndex("OperationId");
+
+                    b.HasIndex("LpnNo", "OccurredAt");
+
+                    b.ToTable("T_LpnEvent");
+                });
+
+            modelBuilder.Entity("CP6.Entity.DomainModels.Wms.LpnPolicy", b =>
+                {
+                    b.Property<Guid>("Id")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("uniqueidentifier");
+
+                    b.Property<bool>("AllowMixedLots")
+                        .HasColumnType("bit");
+
+                    b.Property<bool>("AllowMixedProducts")
+                        .HasColumnType("bit");
+
+                    b.Property<string>("ContainerType")
+                        .IsRequired()
+                        .HasMaxLength(30)
+                        .HasColumnType("nvarchar(30)");
+
+                    b.Property<DateTime>("CreateDate")
+                        .HasColumnType("datetime2");
+
+                    b.Property<string>("Creator")
+                        .HasMaxLength(100)
+                        .HasColumnType("nvarchar(100)");
+
+                    b.Property<bool>("IsDeleted")
+                        .HasColumnType("bit");
+
+                    b.Property<string>("Modifier")
+                        .HasMaxLength(100)
+                        .HasColumnType("nvarchar(100)");
+
+                    b.Property<DateTime?>("ModifyDate")
+                        .HasColumnType("datetime2");
+
+                    b.Property<byte[]>("RowVersion")
+                        .IsConcurrencyToken()
+                        .ValueGeneratedOnAddOrUpdate()
+                        .HasColumnType("rowversion");
+
+                    b.Property<Guid>("TenantId")
+                        .HasColumnType("uniqueidentifier");
+
+                    b.Property<string>("WarehouseCd")
+                        .IsRequired()
+                        .HasMaxLength(10)
+                        .HasColumnType("nvarchar(10)");
+
+                    b.HasKey("Id");
+
+                    b.HasIndex("TenantId", "WarehouseCd", "ContainerType")
+                        .IsUnique()
+                        .HasDatabaseName("IX_T_LpnPolicy_WarehouseCd_ContainerType");
+
+                    b.ToTable("T_LpnPolicy");
                 });
 
             modelBuilder.Entity("CP6.Entity.DomainModels.Wms.MaterialShortage", b =>
@@ -14891,9 +16347,19 @@ namespace CP6.Core.Migrations
                         .ValueGeneratedOnAdd()
                         .HasColumnType("uniqueidentifier");
 
+                    b.Property<string>("AreaCd")
+                        .HasMaxLength(20)
+                        .HasColumnType("nvarchar(20)");
+
                     b.Property<string>("AssignedTo")
                         .HasMaxLength(20)
                         .HasColumnType("nvarchar(20)");
+
+                    b.Property<Guid?>("CompletionOperationId")
+                        .HasColumnType("uniqueidentifier");
+
+                    b.Property<int>("ContractVersion")
+                        .HasColumnType("int");
 
                     b.Property<DateTime>("CreateDate")
                         .HasColumnType("datetime2");
@@ -14904,6 +16370,23 @@ namespace CP6.Core.Migrations
 
                     b.Property<DateTime?>("DoneAt")
                         .HasColumnType("datetime2");
+
+                    b.Property<DateTime?>("DueAt")
+                        .HasColumnType("datetime2");
+
+                    b.Property<string>("ExceptionDescription")
+                        .HasMaxLength(500)
+                        .HasColumnType("nvarchar(500)");
+
+                    b.Property<string>("ExceptionReasonCd")
+                        .HasMaxLength(30)
+                        .HasColumnType("nvarchar(30)");
+
+                    b.Property<Guid?>("ExecutionId")
+                        .HasColumnType("uniqueidentifier");
+
+                    b.Property<int>("ExecutionVersion")
+                        .HasColumnType("int");
 
                     b.Property<string>("FromLocationCd")
                         .HasMaxLength(30)
@@ -14919,6 +16402,10 @@ namespace CP6.Core.Migrations
 
                     b.Property<bool>("IsDeleted")
                         .HasColumnType("bit");
+
+                    b.Property<string>("LastDeviceId")
+                        .HasMaxLength(128)
+                        .HasColumnType("nvarchar(128)");
 
                     b.Property<string>("LotNo")
                         .HasMaxLength(30)
@@ -14939,6 +16426,21 @@ namespace CP6.Core.Migrations
                     b.Property<string>("OutTxnNo")
                         .HasMaxLength(25)
                         .HasColumnType("nvarchar(25)");
+
+                    b.Property<string>("ParentTaskNo")
+                        .HasMaxLength(25)
+                        .HasColumnType("nvarchar(25)");
+
+                    b.Property<string>("PartialReason")
+                        .HasMaxLength(500)
+                        .HasColumnType("nvarchar(500)");
+
+                    b.Property<string>("PauseReason")
+                        .HasMaxLength(500)
+                        .HasColumnType("nvarchar(500)");
+
+                    b.Property<DateTime?>("PlannedStartAt")
+                        .HasColumnType("datetime2");
 
                     b.Property<int>("Priority")
                         .HasColumnType("int");
@@ -14962,9 +16464,19 @@ namespace CP6.Core.Migrations
                         .HasMaxLength(20)
                         .HasColumnType("nvarchar(20)");
 
+                    b.Property<string>("RemainderTaskNo")
+                        .HasMaxLength(25)
+                        .HasColumnType("nvarchar(25)");
+
                     b.Property<string>("Remarks")
                         .HasMaxLength(500)
                         .HasColumnType("nvarchar(500)");
+
+                    b.Property<decimal>("ReservedSourceQty")
+                        .HasColumnType("decimal(21,8)");
+
+                    b.Property<decimal>("ReservedTargetCapacityQty")
+                        .HasColumnType("decimal(21,8)");
 
                     b.Property<byte[]>("RowVersion")
                         .IsConcurrencyToken()
@@ -15002,11 +16514,20 @@ namespace CP6.Core.Migrations
 
                     b.HasKey("Id");
 
+                    b.HasIndex("DueAt");
+
+                    b.HasIndex("ParentTaskNo");
+
                     b.HasIndex("RelatedNo");
 
                     b.HasIndex("Priority", "Status");
 
                     b.HasIndex("TaskType", "Status");
+
+                    b.HasIndex("TenantId", "CompletionOperationId")
+                        .IsUnique()
+                        .HasDatabaseName("IX_T_MobileTask_CompletionOperationId")
+                        .HasFilter("[CompletionOperationId] IS NOT NULL");
 
                     b.HasIndex("TenantId", "MobileTaskNo")
                         .IsUnique()
@@ -15014,7 +16535,244 @@ namespace CP6.Core.Migrations
 
                     b.HasIndex("AssignedTo", "Status", "IsDeleted");
 
+                    b.HasIndex("ContractVersion", "WarehouseCd", "AreaCd", "Status");
+
                     b.ToTable("T_MobileTask");
+                });
+
+            modelBuilder.Entity("CP6.Entity.DomainModels.Wms.MobileTaskEvent", b =>
+                {
+                    b.Property<Guid>("Id")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("uniqueidentifier");
+
+                    b.Property<DateTime>("CreateDate")
+                        .HasColumnType("datetime2");
+
+                    b.Property<string>("Creator")
+                        .HasMaxLength(100)
+                        .HasColumnType("nvarchar(100)");
+
+                    b.Property<string>("DataJson")
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<string>("DeviceId")
+                        .HasMaxLength(128)
+                        .HasColumnType("nvarchar(128)");
+
+                    b.Property<string>("EventType")
+                        .IsRequired()
+                        .HasMaxLength(40)
+                        .HasColumnType("nvarchar(40)");
+
+                    b.Property<int>("ExecutionVersion")
+                        .HasColumnType("int");
+
+                    b.Property<string>("Modifier")
+                        .HasMaxLength(100)
+                        .HasColumnType("nvarchar(100)");
+
+                    b.Property<DateTime?>("ModifyDate")
+                        .HasColumnType("datetime2");
+
+                    b.Property<DateTime>("OccurredAt")
+                        .HasColumnType("datetime2");
+
+                    b.Property<Guid?>("OperationId")
+                        .HasColumnType("uniqueidentifier");
+
+                    b.Property<string>("TaskNo")
+                        .IsRequired()
+                        .HasMaxLength(25)
+                        .HasColumnType("nvarchar(25)");
+
+                    b.Property<Guid>("TenantId")
+                        .HasColumnType("uniqueidentifier");
+
+                    b.Property<string>("UserName")
+                        .HasMaxLength(100)
+                        .HasColumnType("nvarchar(100)");
+
+                    b.HasKey("Id");
+
+                    b.HasIndex("OperationId");
+
+                    b.HasIndex("TaskNo", "OccurredAt");
+
+                    b.ToTable("T_MobileTaskEvent");
+                });
+
+            modelBuilder.Entity("CP6.Entity.DomainModels.Wms.MobileTaskReservation", b =>
+                {
+                    b.Property<Guid>("Id")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("uniqueidentifier");
+
+                    b.Property<decimal>("ConsumedQty")
+                        .HasColumnType("decimal(21,8)");
+
+                    b.Property<DateTime>("CreateDate")
+                        .HasColumnType("datetime2");
+
+                    b.Property<string>("Creator")
+                        .HasMaxLength(100)
+                        .HasColumnType("nvarchar(100)");
+
+                    b.Property<string>("FromLocationCd")
+                        .IsRequired()
+                        .HasMaxLength(30)
+                        .HasColumnType("nvarchar(30)");
+
+                    b.Property<bool>("IsActive")
+                        .HasColumnType("bit");
+
+                    b.Property<bool>("IsDeleted")
+                        .HasColumnType("bit");
+
+                    b.Property<string>("LotNo")
+                        .IsRequired()
+                        .HasMaxLength(30)
+                        .HasColumnType("nvarchar(30)");
+
+                    b.Property<string>("Modifier")
+                        .HasMaxLength(100)
+                        .HasColumnType("nvarchar(100)");
+
+                    b.Property<DateTime?>("ModifyDate")
+                        .HasColumnType("datetime2");
+
+                    b.Property<string>("ProductCd")
+                        .IsRequired()
+                        .HasMaxLength(20)
+                        .HasColumnType("nvarchar(20)");
+
+                    b.Property<decimal>("ReleasedQty")
+                        .HasColumnType("decimal(21,8)");
+
+                    b.Property<decimal>("ReservedQty")
+                        .HasColumnType("decimal(21,8)");
+
+                    b.Property<byte[]>("RowVersion")
+                        .IsConcurrencyToken()
+                        .ValueGeneratedOnAddOrUpdate()
+                        .HasColumnType("rowversion");
+
+                    b.Property<string>("TaskNo")
+                        .IsRequired()
+                        .HasMaxLength(25)
+                        .HasColumnType("nvarchar(25)");
+
+                    b.Property<Guid>("TenantId")
+                        .HasColumnType("uniqueidentifier");
+
+                    b.Property<string>("ToLocationCd")
+                        .IsRequired()
+                        .HasMaxLength(30)
+                        .HasColumnType("nvarchar(30)");
+
+                    b.Property<string>("WarehouseCd")
+                        .IsRequired()
+                        .HasMaxLength(10)
+                        .HasColumnType("nvarchar(10)");
+
+                    b.HasKey("Id");
+
+                    b.HasIndex("TenantId", "TaskNo")
+                        .IsUnique()
+                        .HasDatabaseName("IX_T_MobileTaskReservation_TaskNo");
+
+                    b.HasIndex("WarehouseCd", "FromLocationCd", "ProductCd", "LotNo", "IsActive");
+
+                    b.ToTable("T_MobileTaskReservation");
+                });
+
+            modelBuilder.Entity("CP6.Entity.DomainModels.Wms.MobileTaskScanLog", b =>
+                {
+                    b.Property<Guid>("Id")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("uniqueidentifier");
+
+                    b.Property<string>("ClientScanNo")
+                        .IsRequired()
+                        .HasMaxLength(64)
+                        .HasColumnType("nvarchar(64)");
+
+                    b.Property<DateTime>("CreateDate")
+                        .HasColumnType("datetime2");
+
+                    b.Property<string>("Creator")
+                        .HasMaxLength(100)
+                        .HasColumnType("nvarchar(100)");
+
+                    b.Property<string>("DeviceId")
+                        .IsRequired()
+                        .HasMaxLength(128)
+                        .HasColumnType("nvarchar(128)");
+
+                    b.Property<int>("ExecutionVersion")
+                        .HasColumnType("int");
+
+                    b.Property<string>("FailureCode")
+                        .HasMaxLength(64)
+                        .HasColumnType("nvarchar(64)");
+
+                    b.Property<bool>("Matched")
+                        .HasColumnType("bit");
+
+                    b.Property<string>("Modifier")
+                        .HasMaxLength(100)
+                        .HasColumnType("nvarchar(100)");
+
+                    b.Property<DateTime?>("ModifyDate")
+                        .HasColumnType("datetime2");
+
+                    b.Property<string>("ParsedKind")
+                        .HasMaxLength(20)
+                        .HasColumnType("nvarchar(20)");
+
+                    b.Property<string>("ParsedValue")
+                        .HasMaxLength(256)
+                        .HasColumnType("nvarchar(256)");
+
+                    b.Property<string>("RawBarcode")
+                        .IsRequired()
+                        .HasMaxLength(512)
+                        .HasColumnType("nvarchar(512)");
+
+                    b.Property<DateTime>("RetainUntil")
+                        .HasColumnType("datetime2");
+
+                    b.Property<DateTime>("ScannedAt")
+                        .HasColumnType("datetime2");
+
+                    b.Property<string>("Step")
+                        .IsRequired()
+                        .HasMaxLength(30)
+                        .HasColumnType("nvarchar(30)");
+
+                    b.Property<string>("TaskNo")
+                        .IsRequired()
+                        .HasMaxLength(25)
+                        .HasColumnType("nvarchar(25)");
+
+                    b.Property<Guid>("TenantId")
+                        .HasColumnType("uniqueidentifier");
+
+                    b.Property<string>("UserName")
+                        .HasMaxLength(100)
+                        .HasColumnType("nvarchar(100)");
+
+                    b.HasKey("Id");
+
+                    b.HasIndex("RetainUntil");
+
+                    b.HasIndex("TenantId", "ClientScanNo")
+                        .IsUnique()
+                        .HasDatabaseName("IX_T_MobileTaskScanLog_ClientScanNo");
+
+                    b.HasIndex("TaskNo", "ExecutionVersion", "ScannedAt");
+
+                    b.ToTable("T_MobileTaskScanLog");
                 });
 
             modelBuilder.Entity("CP6.Entity.DomainModels.Wms.OutboundOrder", b =>
@@ -16497,6 +18255,302 @@ namespace CP6.Core.Migrations
                     b.ToTable("T_SlottingPlan");
                 });
 
+            modelBuilder.Entity("CP6.Entity.DomainModels.Wms.SpaceDispatchApprovalRequest", b =>
+                {
+                    b.Property<Guid>("Id")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("uniqueidentifier");
+
+                    b.Property<string>("AdapterId")
+                        .IsRequired()
+                        .HasMaxLength(100)
+                        .HasColumnType("nvarchar(100)");
+
+                    b.Property<DateTime?>("AppliedAtUtc")
+                        .HasColumnType("datetime2");
+
+                    b.Property<DateTime?>("CompensatedAtUtc")
+                        .HasColumnType("datetime2");
+
+                    b.Property<Guid?>("CompensatedById")
+                        .HasColumnType("uniqueidentifier");
+
+                    b.Property<string>("CompensationReason")
+                        .HasMaxLength(500)
+                        .HasColumnType("nvarchar(500)");
+
+                    b.Property<DateTime>("CreateDate")
+                        .HasColumnType("datetime2");
+
+                    b.Property<string>("Creator")
+                        .HasMaxLength(100)
+                        .HasColumnType("nvarchar(100)");
+
+                    b.Property<DateTime?>("DecidedAtUtc")
+                        .HasColumnType("datetime2");
+
+                    b.Property<Guid?>("DecidedById")
+                        .HasColumnType("uniqueidentifier");
+
+                    b.Property<string>("FailureCode")
+                        .HasMaxLength(100)
+                        .HasColumnType("nvarchar(100)");
+
+                    b.Property<Guid>("FlowInstanceId")
+                        .HasColumnType("uniqueidentifier");
+
+                    b.Property<bool>("IsDeleted")
+                        .HasColumnType("bit");
+
+                    b.Property<string>("Modifier")
+                        .HasMaxLength(100)
+                        .HasColumnType("nvarchar(100)");
+
+                    b.Property<DateTime?>("ModifyDate")
+                        .HasColumnType("datetime2");
+
+                    b.Property<string>("PayloadHash")
+                        .IsRequired()
+                        .HasMaxLength(64)
+                        .IsUnicode(false)
+                        .HasColumnType("char(64)")
+                        .IsFixedLength();
+
+                    b.Property<Guid>("PublishedVersionId")
+                        .HasColumnType("uniqueidentifier");
+
+                    b.Property<string>("Reason")
+                        .IsRequired()
+                        .HasMaxLength(500)
+                        .HasColumnType("nvarchar(500)");
+
+                    b.Property<string>("RecommendationDefinitionVersion")
+                        .IsRequired()
+                        .HasMaxLength(50)
+                        .HasColumnType("nvarchar(50)");
+
+                    b.Property<Guid>("RecommendationId")
+                        .HasColumnType("uniqueidentifier");
+
+                    b.Property<string>("RecommendationRequestHash")
+                        .IsRequired()
+                        .HasMaxLength(64)
+                        .IsUnicode(false)
+                        .HasColumnType("char(64)")
+                        .IsFixedLength();
+
+                    b.Property<DateTime>("RequestedAtUtc")
+                        .HasColumnType("datetime2");
+
+                    b.Property<Guid>("RequestedById")
+                        .HasColumnType("uniqueidentifier");
+
+                    b.Property<string>("ResultJson")
+                        .IsRequired()
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<int>("RetryAttemptCount")
+                        .HasColumnType("int");
+
+                    b.Property<byte[]>("RowVersion")
+                        .IsConcurrencyToken()
+                        .ValueGeneratedOnAddOrUpdate()
+                        .HasColumnType("rowversion");
+
+                    b.Property<string>("SelectionJson")
+                        .IsRequired()
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<Guid>("SiteId")
+                        .HasColumnType("uniqueidentifier");
+
+                    b.Property<string>("Status")
+                        .IsRequired()
+                        .HasMaxLength(32)
+                        .HasColumnType("nvarchar(32)");
+
+                    b.Property<Guid>("TenantId")
+                        .HasColumnType("uniqueidentifier");
+
+                    b.Property<string>("WarehouseCode")
+                        .IsRequired()
+                        .HasMaxLength(10)
+                        .HasColumnType("nvarchar(10)");
+
+                    b.HasKey("Id");
+
+                    b.HasIndex("TenantId", "FlowInstanceId")
+                        .IsUnique();
+
+                    b.HasIndex("TenantId", "SiteId", "RecommendationId")
+                        .IsUnique()
+                        .HasFilter("[IsDeleted] = 0 AND [Status] = 'PendingApproval'");
+
+                    b.HasIndex("TenantId", "SiteId", "RequestedAtUtc");
+
+                    b.ToTable("T_SpaceDispatchApprovalRequest");
+                });
+
+            modelBuilder.Entity("CP6.Entity.DomainModels.Wms.SpaceDispatchExecutionAction", b =>
+                {
+                    b.Property<Guid>("Id")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("uniqueidentifier");
+
+                    b.Property<string>("ActionType")
+                        .IsRequired()
+                        .HasMaxLength(32)
+                        .HasColumnType("nvarchar(32)");
+
+                    b.Property<string>("AdapterId")
+                        .IsRequired()
+                        .HasMaxLength(100)
+                        .HasColumnType("nvarchar(100)");
+
+                    b.Property<Guid>("ApprovalRequestId")
+                        .HasColumnType("uniqueidentifier");
+
+                    b.Property<DateTime>("CreateDate")
+                        .HasColumnType("datetime2");
+
+                    b.Property<string>("Creator")
+                        .HasMaxLength(100)
+                        .HasColumnType("nvarchar(100)");
+
+                    b.Property<string>("FailureCode")
+                        .HasMaxLength(100)
+                        .HasColumnType("nvarchar(100)");
+
+                    b.Property<bool>("IsDeleted")
+                        .HasColumnType("bit");
+
+                    b.Property<string>("Modifier")
+                        .HasMaxLength(100)
+                        .HasColumnType("nvarchar(100)");
+
+                    b.Property<DateTime?>("ModifyDate")
+                        .HasColumnType("datetime2");
+
+                    b.Property<string>("PayloadHash")
+                        .IsRequired()
+                        .HasMaxLength(64)
+                        .IsUnicode(false)
+                        .HasColumnType("char(64)")
+                        .IsFixedLength();
+
+                    b.Property<string>("Reason")
+                        .IsRequired()
+                        .HasMaxLength(500)
+                        .HasColumnType("nvarchar(500)");
+
+                    b.Property<string>("ReceiptJson")
+                        .IsRequired()
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<Guid>("RecommendationId")
+                        .HasColumnType("uniqueidentifier");
+
+                    b.Property<DateTime>("RequestedAtUtc")
+                        .HasColumnType("datetime2");
+
+                    b.Property<Guid>("RequestedById")
+                        .HasColumnType("uniqueidentifier");
+
+                    b.Property<byte[]>("RowVersion")
+                        .IsConcurrencyToken()
+                        .ValueGeneratedOnAddOrUpdate()
+                        .HasColumnType("rowversion");
+
+                    b.Property<Guid>("SiteId")
+                        .HasColumnType("uniqueidentifier");
+
+                    b.Property<string>("Status")
+                        .IsRequired()
+                        .HasMaxLength(32)
+                        .HasColumnType("nvarchar(32)");
+
+                    b.Property<Guid>("TenantId")
+                        .HasColumnType("uniqueidentifier");
+
+                    b.HasKey("Id");
+
+                    b.HasIndex("TenantId", "ApprovalRequestId", "ActionType");
+
+                    b.HasIndex("TenantId", "ApprovalRequestId", "RequestedAtUtc");
+
+                    b.ToTable("T_SpaceDispatchExecutionAction", null, t =>
+                        {
+                            t.HasCheckConstraint("CK_SpaceDispatchExecutionAction_Status", "[Status] IN ('Applied','FailedNoEffect','RejectedNoEffect')");
+
+                            t.HasCheckConstraint("CK_SpaceDispatchExecutionAction_Type", "[ActionType] IN ('RetryAssignment','CompensateAssignment')");
+                        });
+                });
+
+            modelBuilder.Entity("CP6.Entity.DomainModels.Wms.SpaceWmsOperation", b =>
+                {
+                    b.Property<Guid>("Id")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("uniqueidentifier");
+
+                    b.Property<DateTime>("CreateDate")
+                        .HasColumnType("datetime2");
+
+                    b.Property<string>("Creator")
+                        .HasMaxLength(100)
+                        .HasColumnType("nvarchar(100)");
+
+                    b.Property<string>("ExternalOperationId")
+                        .HasMaxLength(100)
+                        .HasColumnType("nvarchar(100)");
+
+                    b.Property<bool>("IsDeleted")
+                        .HasColumnType("bit");
+
+                    b.Property<string>("Modifier")
+                        .HasMaxLength(100)
+                        .HasColumnType("nvarchar(100)");
+
+                    b.Property<DateTime?>("ModifyDate")
+                        .HasColumnType("datetime2");
+
+                    b.Property<DateTime>("ObservedAtUtc")
+                        .HasColumnType("datetime2");
+
+                    b.Property<string>("OperationKey")
+                        .IsRequired()
+                        .HasMaxLength(250)
+                        .HasColumnType("nvarchar(250)");
+
+                    b.Property<string>("PayloadHash")
+                        .IsRequired()
+                        .HasMaxLength(64)
+                        .IsUnicode(false)
+                        .HasColumnType("char(64)")
+                        .IsFixedLength();
+
+                    b.Property<string>("ResultJson")
+                        .IsRequired()
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<byte[]>("RowVersion")
+                        .IsConcurrencyToken()
+                        .ValueGeneratedOnAddOrUpdate()
+                        .HasColumnType("rowversion");
+
+                    b.Property<int>("State")
+                        .HasColumnType("int");
+
+                    b.Property<Guid>("TenantId")
+                        .HasColumnType("uniqueidentifier");
+
+                    b.HasKey("Id");
+
+                    b.HasIndex("TenantId", "OperationKey")
+                        .IsUnique();
+
+                    b.ToTable("T_SpaceWmsOperation");
+                });
+
             modelBuilder.Entity("CP6.Entity.DomainModels.Wms.Stock", b =>
                 {
                     b.Property<Guid>("Id")
@@ -16610,6 +18664,180 @@ namespace CP6.Core.Migrations
                         .HasDatabaseName("UX_Stock_WLPL");
 
                     b.ToTable("T_Stock");
+                });
+
+            modelBuilder.Entity("CP6.Entity.DomainModels.Wms.StockSerial", b =>
+                {
+                    b.Property<Guid>("Id")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("uniqueidentifier");
+
+                    b.Property<DateTime>("CreateDate")
+                        .HasColumnType("datetime2");
+
+                    b.Property<string>("Creator")
+                        .HasMaxLength(100)
+                        .HasColumnType("nvarchar(100)");
+
+                    b.Property<bool>("IsDeleted")
+                        .HasColumnType("bit");
+
+                    b.Property<string>("LastTxnNo")
+                        .HasMaxLength(25)
+                        .HasColumnType("nvarchar(25)");
+
+                    b.Property<string>("LocationCd")
+                        .IsRequired()
+                        .HasMaxLength(30)
+                        .HasColumnType("nvarchar(30)");
+
+                    b.Property<string>("LotNo")
+                        .IsRequired()
+                        .HasMaxLength(30)
+                        .HasColumnType("nvarchar(30)");
+
+                    b.Property<string>("LpnNo")
+                        .HasMaxLength(64)
+                        .HasColumnType("nvarchar(64)");
+
+                    b.Property<string>("Modifier")
+                        .HasMaxLength(100)
+                        .HasColumnType("nvarchar(100)");
+
+                    b.Property<DateTime?>("ModifyDate")
+                        .HasColumnType("datetime2");
+
+                    b.Property<string>("ProductCd")
+                        .IsRequired()
+                        .HasMaxLength(20)
+                        .HasColumnType("nvarchar(20)");
+
+                    b.Property<byte[]>("RowVersion")
+                        .IsConcurrencyToken()
+                        .ValueGeneratedOnAddOrUpdate()
+                        .HasColumnType("rowversion");
+
+                    b.Property<string>("SerialNo")
+                        .IsRequired()
+                        .HasMaxLength(128)
+                        .HasColumnType("nvarchar(128)");
+
+                    b.Property<string>("Status")
+                        .IsRequired()
+                        .HasMaxLength(20)
+                        .HasColumnType("nvarchar(20)");
+
+                    b.Property<Guid>("TenantId")
+                        .HasColumnType("uniqueidentifier");
+
+                    b.Property<string>("WarehouseCd")
+                        .IsRequired()
+                        .HasMaxLength(10)
+                        .HasColumnType("nvarchar(10)");
+
+                    b.HasKey("Id");
+
+                    b.HasIndex("LpnNo");
+
+                    b.HasIndex("TenantId", "ProductCd", "SerialNo")
+                        .IsUnique()
+                        .HasDatabaseName("IX_T_StockSerial_ProductCd_SerialNo");
+
+                    b.HasIndex("WarehouseCd", "LocationCd", "ProductCd", "LotNo");
+
+                    b.ToTable("T_StockSerial");
+                });
+
+            modelBuilder.Entity("CP6.Entity.DomainModels.Wms.StockSerialTransaction", b =>
+                {
+                    b.Property<Guid>("Id")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("uniqueidentifier");
+
+                    b.Property<DateTime>("CreateDate")
+                        .HasColumnType("datetime2");
+
+                    b.Property<string>("Creator")
+                        .HasMaxLength(100)
+                        .HasColumnType("nvarchar(100)");
+
+                    b.Property<string>("DeviceId")
+                        .HasMaxLength(128)
+                        .HasColumnType("nvarchar(128)");
+
+                    b.Property<string>("FromLocationCd")
+                        .HasMaxLength(30)
+                        .HasColumnType("nvarchar(30)");
+
+                    b.Property<string>("LotNo")
+                        .IsRequired()
+                        .HasMaxLength(30)
+                        .HasColumnType("nvarchar(30)");
+
+                    b.Property<string>("LpnNo")
+                        .HasMaxLength(64)
+                        .HasColumnType("nvarchar(64)");
+
+                    b.Property<string>("Modifier")
+                        .HasMaxLength(100)
+                        .HasColumnType("nvarchar(100)");
+
+                    b.Property<DateTime?>("ModifyDate")
+                        .HasColumnType("datetime2");
+
+                    b.Property<DateTime>("OccurredAt")
+                        .HasColumnType("datetime2");
+
+                    b.Property<Guid>("OperationId")
+                        .HasColumnType("uniqueidentifier");
+
+                    b.Property<string>("OperatorCd")
+                        .HasMaxLength(100)
+                        .HasColumnType("nvarchar(100)");
+
+                    b.Property<string>("ProductCd")
+                        .IsRequired()
+                        .HasMaxLength(20)
+                        .HasColumnType("nvarchar(20)");
+
+                    b.Property<string>("SerialNo")
+                        .IsRequired()
+                        .HasMaxLength(128)
+                        .HasColumnType("nvarchar(128)");
+
+                    b.Property<Guid>("TenantId")
+                        .HasColumnType("uniqueidentifier");
+
+                    b.Property<string>("ToLocationCd")
+                        .HasMaxLength(30)
+                        .HasColumnType("nvarchar(30)");
+
+                    b.Property<string>("TxnNo")
+                        .IsRequired()
+                        .HasMaxLength(25)
+                        .HasColumnType("nvarchar(25)");
+
+                    b.Property<string>("TxnType")
+                        .IsRequired()
+                        .HasMaxLength(20)
+                        .HasColumnType("nvarchar(20)");
+
+                    b.Property<string>("WarehouseCd")
+                        .IsRequired()
+                        .HasMaxLength(10)
+                        .HasColumnType("nvarchar(10)");
+
+                    b.HasKey("Id");
+
+                    b.HasIndex("OperationId");
+
+                    b.HasIndex("TenantId", "TxnNo")
+                        .IsUnique()
+                        .HasDatabaseName("IX_T_StockSerialTransaction_TxnNo");
+
+                    b.HasIndex("ProductCd", "SerialNo", "OccurredAt");
+
+                    b.ToTable("T_StockSerialTransaction");
                 });
 
             modelBuilder.Entity("CP6.Entity.DomainModels.Wms.StockTake", b =>
@@ -16893,8 +19121,8 @@ namespace CP6.Core.Migrations
                         .HasColumnType("nvarchar(25)");
 
                     b.Property<string>("RelatedNo")
-                        .HasMaxLength(25)
-                        .HasColumnType("nvarchar(25)");
+                        .HasMaxLength(36)
+                        .HasColumnType("nvarchar(36)");
 
                     b.Property<string>("RelatedType")
                         .HasMaxLength(20)
@@ -16958,6 +19186,60 @@ namespace CP6.Core.Migrations
                     b.HasIndex("WarehouseCd", "LocationCd", "TxnDateTime");
 
                     b.ToTable("T_StockTransaction");
+                });
+
+            modelBuilder.Entity("CP6.Entity.DomainModels.Wms.TaskCommandReceipt", b =>
+                {
+                    b.Property<Guid>("Id")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("uniqueidentifier");
+
+                    b.Property<string>("CommandName")
+                        .IsRequired()
+                        .HasMaxLength(30)
+                        .HasColumnType("nvarchar(30)");
+
+                    b.Property<DateTime>("CompletedAt")
+                        .HasColumnType("datetime2");
+
+                    b.Property<DateTime>("CreateDate")
+                        .HasColumnType("datetime2");
+
+                    b.Property<string>("Creator")
+                        .HasMaxLength(100)
+                        .HasColumnType("nvarchar(100)");
+
+                    b.Property<string>("Modifier")
+                        .HasMaxLength(100)
+                        .HasColumnType("nvarchar(100)");
+
+                    b.Property<DateTime?>("ModifyDate")
+                        .HasColumnType("datetime2");
+
+                    b.Property<Guid>("OperationId")
+                        .HasColumnType("uniqueidentifier");
+
+                    b.Property<string>("ResultJson")
+                        .IsRequired()
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<string>("TaskNo")
+                        .IsRequired()
+                        .HasMaxLength(128)
+                        .HasColumnType("nvarchar(128)");
+
+                    b.Property<Guid>("TenantId")
+                        .HasColumnType("uniqueidentifier");
+
+                    b.HasKey("Id");
+
+                    b.HasIndex("TaskNo", "CommandName");
+
+                    b.HasIndex("TenantId", "OperationId")
+                        .IsUnique()
+                        .HasDatabaseName("IX_T_TaskCommandReceipt_OperationId");
+
+                    b.ToTable("T_TaskCommandReceipt");
                 });
 
             modelBuilder.Entity("CP6.Entity.DomainModels.Wms.VmiBilling", b =>
@@ -17334,6 +19616,222 @@ namespace CP6.Core.Migrations
                     b.ToTable("T_WmsBin");
                 });
 
+            modelBuilder.Entity("CP6.Entity.DomainModels.Wms.WmsFeatureFlag", b =>
+                {
+                    b.Property<Guid>("Id")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("uniqueidentifier");
+
+                    b.Property<DateTime>("CreateDate")
+                        .HasColumnType("datetime2");
+
+                    b.Property<string>("Creator")
+                        .HasMaxLength(100)
+                        .HasColumnType("nvarchar(100)");
+
+                    b.Property<bool>("IsDeleted")
+                        .HasColumnType("bit");
+
+                    b.Property<string>("Modifier")
+                        .HasMaxLength(100)
+                        .HasColumnType("nvarchar(100)");
+
+                    b.Property<DateTime?>("ModifyDate")
+                        .HasColumnType("datetime2");
+
+                    b.Property<bool>("ProductionMoveEnabled")
+                        .HasColumnType("bit");
+
+                    b.Property<byte[]>("RowVersion")
+                        .IsConcurrencyToken()
+                        .ValueGeneratedOnAddOrUpdate()
+                        .HasColumnType("rowversion");
+
+                    b.Property<int>("ScanRetentionDays")
+                        .HasColumnType("int");
+
+                    b.Property<bool>("SerialLpnEnabled")
+                        .HasColumnType("bit");
+
+                    b.Property<Guid>("TenantId")
+                        .HasColumnType("uniqueidentifier");
+
+                    b.Property<string>("WarehouseCd")
+                        .IsRequired()
+                        .HasMaxLength(10)
+                        .HasColumnType("nvarchar(10)");
+
+                    b.HasKey("Id");
+
+                    b.HasIndex("TenantId", "WarehouseCd")
+                        .IsUnique();
+
+                    b.ToTable("T_WmsFeatureFlag");
+                });
+
+            modelBuilder.Entity("CP6.Entity.DomainModels.Wms.WmsFeatureFlagChange", b =>
+                {
+                    b.Property<Guid>("Id")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("uniqueidentifier");
+
+                    b.Property<DateTime?>("AppliedAtUtc")
+                        .HasColumnType("datetime2");
+
+                    b.Property<string>("BaseFeatureRowVersion")
+                        .IsRequired()
+                        .HasMaxLength(128)
+                        .HasColumnType("nvarchar(128)");
+
+                    b.Property<bool>("BaseProductionMoveEnabled")
+                        .HasColumnType("bit");
+
+                    b.Property<int>("BaseScanRetentionDays")
+                        .HasColumnType("int");
+
+                    b.Property<bool>("BaseSerialLpnEnabled")
+                        .HasColumnType("bit");
+
+                    b.Property<string>("ChangeTicket")
+                        .IsRequired()
+                        .HasMaxLength(100)
+                        .HasColumnType("nvarchar(100)");
+
+                    b.Property<DateTime>("CreateDate")
+                        .HasColumnType("datetime2");
+
+                    b.Property<string>("Creator")
+                        .HasMaxLength(100)
+                        .HasColumnType("nvarchar(100)");
+
+                    b.Property<DateTime?>("DecidedAtUtc")
+                        .HasColumnType("datetime2");
+
+                    b.Property<Guid?>("DecidedById")
+                        .HasColumnType("uniqueidentifier");
+
+                    b.Property<string>("EvidenceUri")
+                        .HasMaxLength(1000)
+                        .HasColumnType("nvarchar(1000)");
+
+                    b.Property<string>("FailureCode")
+                        .HasMaxLength(64)
+                        .HasColumnType("nvarchar(64)");
+
+                    b.Property<Guid>("FlowInstanceId")
+                        .HasColumnType("uniqueidentifier");
+
+                    b.Property<bool>("IsDeleted")
+                        .HasColumnType("bit");
+
+                    b.Property<string>("Modifier")
+                        .HasMaxLength(100)
+                        .HasColumnType("nvarchar(100)");
+
+                    b.Property<DateTime?>("ModifyDate")
+                        .HasColumnType("datetime2");
+
+                    b.Property<Guid>("OperationId")
+                        .HasColumnType("uniqueidentifier");
+
+                    b.Property<string>("Reason")
+                        .IsRequired()
+                        .HasMaxLength(500)
+                        .HasColumnType("nvarchar(500)");
+
+                    b.Property<DateTime>("RequestedAtUtc")
+                        .HasColumnType("datetime2");
+
+                    b.Property<Guid>("RequestedById")
+                        .HasColumnType("uniqueidentifier");
+
+                    b.Property<byte[]>("RowVersion")
+                        .IsConcurrencyToken()
+                        .ValueGeneratedOnAddOrUpdate()
+                        .HasColumnType("rowversion");
+
+                    b.Property<string>("Status")
+                        .IsRequired()
+                        .HasMaxLength(20)
+                        .HasColumnType("nvarchar(20)");
+
+                    b.Property<bool>("TargetProductionMoveEnabled")
+                        .HasColumnType("bit");
+
+                    b.Property<int>("TargetScanRetentionDays")
+                        .HasColumnType("int");
+
+                    b.Property<bool>("TargetSerialLpnEnabled")
+                        .HasColumnType("bit");
+
+                    b.Property<Guid>("TenantId")
+                        .HasColumnType("uniqueidentifier");
+
+                    b.Property<string>("WarehouseCd")
+                        .IsRequired()
+                        .HasMaxLength(10)
+                        .HasColumnType("nvarchar(10)");
+
+                    b.HasKey("Id");
+
+                    b.HasIndex("TenantId", "OperationId")
+                        .IsUnique();
+
+                    b.HasIndex("TenantId", "WarehouseCd")
+                        .IsUnique()
+                        .HasFilter("[IsDeleted] = 0 AND [Status] = 'PENDING'");
+
+                    b.HasIndex("TenantId", "WarehouseCd", "RequestedAtUtc");
+
+                    b.ToTable("T_WmsFeatureFlagChange");
+                });
+
+            modelBuilder.Entity("CP6.Entity.DomainModels.Wms.WmsRoleScope", b =>
+                {
+                    b.Property<Guid>("Id")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("uniqueidentifier");
+
+                    b.Property<string>("AreaCd")
+                        .IsRequired()
+                        .HasMaxLength(20)
+                        .HasColumnType("nvarchar(20)");
+
+                    b.Property<DateTime>("CreateDate")
+                        .HasColumnType("datetime2");
+
+                    b.Property<string>("Creator")
+                        .HasMaxLength(100)
+                        .HasColumnType("nvarchar(100)");
+
+                    b.Property<string>("Modifier")
+                        .HasMaxLength(100)
+                        .HasColumnType("nvarchar(100)");
+
+                    b.Property<DateTime?>("ModifyDate")
+                        .HasColumnType("datetime2");
+
+                    b.Property<int>("RoleId")
+                        .HasColumnType("int");
+
+                    b.Property<Guid>("TenantId")
+                        .HasColumnType("uniqueidentifier");
+
+                    b.Property<string>("WarehouseCd")
+                        .IsRequired()
+                        .HasMaxLength(10)
+                        .HasColumnType("nvarchar(10)");
+
+                    b.HasKey("Id");
+
+                    b.HasIndex("RoleId", "WarehouseCd", "AreaCd");
+
+                    b.HasIndex("TenantId", "RoleId", "WarehouseCd", "AreaCd")
+                        .IsUnique();
+
+                    b.ToTable("T_WmsRoleScope");
+                });
+
             modelBuilder.Entity("CP6.Entity.DomainModels.Wms.WmsSequence", b =>
                 {
                     b.Property<Guid>("Id")
@@ -17660,6 +20158,79 @@ namespace CP6.Core.Migrations
                         .HasForeignKey("MatchNo")
                         .HasPrincipalKey("MatchNo")
                         .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+                });
+
+            modelBuilder.Entity("CP6.Entity.DomainModels.Wf.Wf_FlowDefVersion", b =>
+                {
+                    b.HasOne("CP6.Entity.DomainModels.Wf.Wf_FlowDef", null)
+                        .WithMany()
+                        .HasForeignKey("FlowDefId")
+                        .OnDelete(DeleteBehavior.Restrict)
+                        .IsRequired();
+                });
+
+            modelBuilder.Entity("CP6.Entity.DomainModels.Wf.Wf_FlowDefVersionDependency", b =>
+                {
+                    b.HasOne("CP6.Entity.DomainModels.Wf.Wf_FlowDefVersion", null)
+                        .WithMany()
+                        .HasForeignKey("FlowDefVersionId")
+                        .OnDelete(DeleteBehavior.Restrict)
+                        .IsRequired();
+
+                    b.HasOne("CP6.Entity.DomainModels.Wf.Wf_FlowDefVersion", null)
+                        .WithMany()
+                        .HasForeignKey("TargetFlowDefVersionId")
+                        .OnDelete(DeleteBehavior.Restrict)
+                        .IsRequired();
+                });
+
+            modelBuilder.Entity("CP6.Entity.DomainModels.Wf.Wf_FormDefVersion", b =>
+                {
+                    b.HasOne("CP6.Entity.DomainModels.Wf.Wf_FormDef", null)
+                        .WithMany()
+                        .HasForeignKey("FormDefId")
+                        .OnDelete(DeleteBehavior.Restrict)
+                        .IsRequired();
+                });
+
+            modelBuilder.Entity("CP6.Entity.DomainModels.Wf.Wf_FormDraft", b =>
+                {
+                    b.HasOne("CP6.Entity.DomainModels.Wf.Wf_FormDef", null)
+                        .WithMany()
+                        .HasForeignKey("FormDefId")
+                        .OnDelete(DeleteBehavior.Restrict)
+                        .IsRequired();
+
+                    b.HasOne("CP6.Entity.DomainModels.Wf.Wf_FormDefVersion", null)
+                        .WithMany()
+                        .HasForeignKey("FormDefVersionId")
+                        .OnDelete(DeleteBehavior.Restrict)
+                        .IsRequired();
+                });
+
+            modelBuilder.Entity("CP6.Entity.DomainModels.Wf.Wf_FormFlowBinding", b =>
+                {
+                    b.HasOne("CP6.Entity.DomainModels.Wf.Wf_FlowDef", null)
+                        .WithMany()
+                        .HasForeignKey("FlowDefId")
+                        .OnDelete(DeleteBehavior.Restrict)
+                        .IsRequired();
+
+                    b.HasOne("CP6.Entity.DomainModels.Wf.Wf_FormDef", null)
+                        .WithMany()
+                        .HasForeignKey("FormDefId")
+                        .OnDelete(DeleteBehavior.Restrict)
+                        .IsRequired();
+                });
+
+            modelBuilder.Entity("CP6.Entity.DomainModels.Wms.SpaceDispatchExecutionAction", b =>
+                {
+                    b.HasOne("CP6.Entity.DomainModels.Wms.SpaceDispatchApprovalRequest", null)
+                        .WithMany()
+                        .HasForeignKey("TenantId", "ApprovalRequestId")
+                        .HasPrincipalKey("TenantId", "Id")
+                        .OnDelete(DeleteBehavior.Restrict)
                         .IsRequired();
                 });
 

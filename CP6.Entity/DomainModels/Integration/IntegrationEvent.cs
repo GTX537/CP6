@@ -59,6 +59,46 @@ public class IntegrationEvent : BaseBizEntity
     /// <summary>串联同一业务链（受注→指図→出库→回写 共享同一 GUID，端到端 trace 用）</summary>
     public Guid CorrelationId { get; set; }
 
+    /// <summary>后台工作项标识。非 Space 事件保持为空</summary>
+    public Guid? JobId { get; set; }
+
+    /// <summary>Space 发布意图标识。非 Space 事件保持为空</summary>
+    public Guid? PublishAttemptId { get; set; }
+
+    /// <summary>
+    /// Canonical occurrence time for Space observability queries.
+    /// New Space rows always persist this as UTC using the same clock sample
+    /// as <see cref="BaseEntity.CreateDate"/>. Non-Space rows may remain null.
+    /// </summary>
+    public DateTime? OccurredAtUtc { get; set; }
+
+    /// <summary>
+    /// Space retry lease owner/fencing token. Null when no worker owns the
+    /// row. NextRetryAt is the matching lease expiry while this is non-null.
+    /// Non-Space events keep this field null.
+    /// </summary>
+    public Guid? RetryLeaseId { get; set; }
+
+    /// <summary>
+    /// Lease that durably completed the WMS transaction. The outcome remains
+    /// recoverable until the retry finalizer atomically clears both fields.
+    /// </summary>
+    public Guid? RetryCompletionLeaseId { get; set; }
+
+    /// <summary>
+    /// Durable WMS completion outcome for <see cref="RetryCompletionLeaseId"/>.
+    /// </summary>
+    public bool? RetryCompletionSucceeded { get; set; }
+
+    /// <summary>UTC acknowledgement time for the durable dead-letter alert.</summary>
+    public DateTime? DeadLetterNotifiedAtUtc { get; set; }
+
+    /// <summary>Owner token for a pending Space dead-letter notification.</summary>
+    public Guid? DeadLetterNotificationLeaseId { get; set; }
+
+    /// <summary>UTC expiry for <see cref="DeadLetterNotificationLeaseId"/>.</summary>
+    public DateTime? DeadLetterNotificationLeaseUntilUtc { get; set; }
+
     /// <summary>触发时的入参 JSON（重试用，Dispatcher 反序列化后调用）</summary>
     public string PayloadJson { get; set; } = "{}";
 }

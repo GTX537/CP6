@@ -1,0 +1,162 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://cp6.local/contracts/space/cad/v1/cad-ir.schema.json",
+  "title": "CP6 Space CAD IR v1",
+  "type": "object",
+  "additionalProperties": false,
+  "required": ["document", "layers", "blocks", "entities", "issues", "summary"],
+  "properties": {
+    "document": { "$ref": "#/$defs/document" },
+    "layers": { "type": "array", "items": { "$ref": "#/$defs/layer" } },
+    "blocks": { "type": "array", "items": { "$ref": "#/$defs/block" } },
+    "entities": { "type": "array", "items": { "$ref": "#/$defs/entity" } },
+    "issues": { "type": "array", "items": { "$ref": "#/$defs/issue" } },
+    "summary": { "$ref": "#/$defs/summary" }
+  },
+  "$defs": {
+    "sha256": { "type": "string", "pattern": "^[0-9a-f]{64}$" },
+    "identifier": { "type": "string", "minLength": 1, "maxLength": 128 },
+    "point": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["x", "y", "z"],
+      "properties": {
+        "x": { "type": "number" },
+        "y": { "type": "number" },
+        "z": { "type": "number" }
+      }
+    },
+    "bounds": {
+      "type": ["object", "null"],
+      "additionalProperties": false,
+      "required": ["minX", "minY", "maxX", "maxY"],
+      "properties": {
+        "minX": { "type": "number" },
+        "minY": { "type": "number" },
+        "maxX": { "type": "number" },
+        "maxY": { "type": "number" }
+      }
+    },
+    "transform": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["m11", "m12", "m21", "m22", "offsetX", "offsetY", "offsetZ"],
+      "properties": {
+        "m11": { "type": "number" },
+        "m12": { "type": "number" },
+        "m21": { "type": "number" },
+        "m22": { "type": "number" },
+        "offsetX": { "type": "number" },
+        "offsetY": { "type": "number" },
+        "offsetZ": { "type": "number" }
+      }
+    },
+    "document": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": [
+        "schemaVersion", "sourceSha256", "sourceFormat", "cadVersion", "unit",
+        "coordinateSystem", "converterId", "converterVersion"
+      ],
+      "properties": {
+        "schemaVersion": { "const": 1 },
+        "sourceSha256": { "$ref": "#/$defs/sha256" },
+        "sourceFormat": { "enum": ["Dxf", "Dwg"] },
+        "cadVersion": { "$ref": "#/$defs/identifier" },
+        "unit": { "enum": ["Unknown", "Millimeter", "Centimeter", "Meter", "Inch", "Foot"] },
+        "scaleToMillimeters": { "type": ["number", "null"], "exclusiveMinimum": 0 },
+        "coordinateSystem": { "const": "FloorLocal-ZUp" },
+        "bounds": { "$ref": "#/$defs/bounds" },
+        "converterId": { "$ref": "#/$defs/identifier" },
+        "converterVersion": { "$ref": "#/$defs/identifier" }
+      }
+    },
+    "layer": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["layerId", "name", "entityCount"],
+      "properties": {
+        "layerId": { "$ref": "#/$defs/identifier" },
+        "name": { "$ref": "#/$defs/identifier" },
+        "entityCount": { "type": "integer", "minimum": 0 },
+        "color": { "type": ["string", "null"], "minLength": 1, "maxLength": 128 },
+        "lineType": { "type": ["string", "null"], "minLength": 1, "maxLength": 128 },
+        "isVisible": { "type": "boolean" }
+      }
+    },
+    "block": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["blockId", "name", "isExternalReference", "entityCount"],
+      "properties": {
+        "blockId": { "$ref": "#/$defs/identifier" },
+        "name": { "$ref": "#/$defs/identifier" },
+        "isExternalReference": { "type": "boolean" },
+        "externalReferenceToken": { "type": ["string", "null"], "maxLength": 128 },
+        "entityCount": { "type": "integer", "minimum": 0 }
+      }
+    },
+    "entity": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": [
+        "sourceRef", "type", "rawType", "layerId", "points", "transform",
+        "isClosed", "isSupported", "attributes"
+      ],
+      "properties": {
+        "sourceRef": { "type": "string", "minLength": 1, "maxLength": 200 },
+        "type": {
+          "enum": [
+            "Line", "Polyline", "ClosedPolyline", "Circle", "Arc",
+            "BlockReference", "Text", "Hatch", "Spline", "Ellipse",
+            "Dimension", "Unknown"
+          ]
+        },
+        "rawType": { "$ref": "#/$defs/identifier" },
+        "layerId": { "$ref": "#/$defs/identifier" },
+        "blockName": { "type": ["string", "null"], "maxLength": 128 },
+        "points": { "type": "array", "items": { "$ref": "#/$defs/point" } },
+        "radius": { "type": ["number", "null"], "minimum": 0 },
+        "startAngleDegrees": { "type": ["number", "null"] },
+        "endAngleDegrees": { "type": ["number", "null"] },
+        "transform": { "$ref": "#/$defs/transform" },
+        "bounds": { "$ref": "#/$defs/bounds" },
+        "isClosed": { "type": "boolean" },
+        "isSupported": { "type": "boolean" },
+        "attributes": {
+          "type": "object",
+          "maxProperties": 64,
+          "additionalProperties": { "type": "string", "maxLength": 512 }
+        }
+      }
+    },
+    "issue": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["code", "severity"],
+      "properties": {
+        "code": { "$ref": "#/$defs/identifier" },
+        "severity": { "enum": ["Info", "Warning", "Blocking"] },
+        "sourceRef": { "type": ["string", "null"], "maxLength": 200 },
+        "detailToken": { "type": ["string", "null"], "maxLength": 128 }
+      }
+    },
+    "summary": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": [
+        "layerCount", "blockCount", "entityCount", "supportedEntityCount",
+        "unsupportedEntityCount", "missingSourceRefCount"
+      ],
+      "properties": {
+        "layerCount": { "type": "integer", "minimum": 0 },
+        "blockCount": { "type": "integer", "minimum": 0 },
+        "entityCount": { "type": "integer", "minimum": 0 },
+        "supportedEntityCount": { "type": "integer", "minimum": 0 },
+        "unsupportedEntityCount": { "type": "integer", "minimum": 0 },
+        "missingSourceRefCount": { "type": "integer", "minimum": 0 },
+        "bounds": { "$ref": "#/$defs/bounds" }
+      }
+    }
+  }
+}

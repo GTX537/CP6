@@ -1,0 +1,448 @@
+name: R2 protected-tag candidate
+
+on:
+  push:
+    tags:
+      - "v*.*.*"
+
+permissions:
+  contents: read
+  packages: write
+
+concurrency:
+  group: r2-candidate-${{ github.ref }}
+  cancel-in-progress: false
+
+jobs:
+  source-gate:
+    runs-on: windows-latest
+    outputs:
+      version: ${{ steps.release.outputs.version }}
+      spec_path: ${{ steps.release.outputs.spec_path }}
+      spec_sha256: ${{ steps.release.outputs.spec_sha256 }}
+      snapshot_uri: ${{ steps.release.outputs.snapshot_uri }}
+      snapshot_sha256: ${{ steps.release.outputs.snapshot_sha256 }}
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
+      - uses: actions/setup-dotnet@v4
+        with:
+          dotnet-version: 8.0.x
+      - uses: actions/setup-node@v4
+        with:
+          node-version: 22
+          cache: npm
+          cache-dependency-path: cp6.web/package-lock.json
+      - name: Validate protected release ref
+        id: release
+        shell: pwsh
+        run: |
+          if ($env:GITHUB_REF -notmatch '^refs/tags/v(\d+\.\d+\.\d+)$') {
+            throw "Candidate tags must be vX.Y.Z."
+          }
+          $version = $Matches[1]
+          git fetch origin main --no-tags
+          $mainSha = (git rev-parse origin/main).Trim()
+          if ($mainSha -ne $env:GITHUB_SHA) {
+            throw "The protected release tag must point at the current main commit."
+          }
+          $tagType = (git cat-file -t $env:GITHUB_REF).Trim()
+          if ($tagType -ne "tag") {
+            throw "Candidate tags must be immutable annotated tags created by the freeze workflow."
+          }
+          $tagBody = (git cat-file -p $env:GITHUB_REF) -join "`n"
+          $metadata = @{}
+          foreach ($line in ($tagBody -split "`n")) {
+            if ($line -match "^(release-freeze-uri|release-freeze-sha256|execution-spec-path|execution-spec-sha256)=(.+)$") {
+              $metadata[$Matches[1]] = $Matches[2].Trim()
+            }
+          }
+          foreach ($key in @(
+            "release-freeze-uri",
+            "release-freeze-sha256",
+            "execution-spec-path",
+            "execution-spec-sha256"
+          )) {
+            if (-not $metadata.ContainsKey($key)) {
+              throw "Annotated release tag is missing '$key'."
+            }
+          }
+          if ($metadata["release-freeze-uri"] -notmatch "^s3://[^/]+/.+/release-freeze\.json$" -or
+              $metadata["release-freeze-sha256"] -notmatch "^[A-Fa-f0-9]{64}$" -or
+              $metadata["execution-spec-sha256"] -notmatch "^[A-Fa-f0-9]{64}$") {
+            throw "Annotated release tag freeze metadata is invalid."
+          }
+          $expectedSpecPath = "docs/client/r2/releases/v$version/candidate.yaml"
+          if ($metadata["execution-spec-path"] -ne $expectedSpecPath) {
+            throw "Annotated release tag execution spec path is invalid."
+          }
+          $actualSpecHash = (Get-FileHash -LiteralPath $expectedSpecPath -Algorithm SHA256).Hash
+          if ($actualSpecHash -ne $metadata["execution-spec-sha256"]) {
+            throw "Annotated release tag execution spec hash does not match the tagged source."
+          }
+          [xml]$desktop = Get-Content CP6.Desktop/CP6.Desktop.csproj
+          [xml]$mobile = Get-Content CP6.Mobile/CP6.Mobile.csproj
+          if ([string]$desktop.Project.PropertyGroup.Version -ne $version -or
+              [string]$mobile.Project.PropertyGroup.ApplicationDisplayVersion -ne $version) {
+            throw "Tag, Desktop version, and Android display version must match."
+          }
+          "version=$version" >> $env:GITHUB_OUTPUT
+          "spec_path=$expectedSpecPath" >> $env:GITHUB_OUTPUT
+          "spec_sha256=$actualSpecHash" >> $env:GITHUB_OUTPUT
+          "snapshot_uri=$($metadata["release-freeze-uri"])" >> $env:GITHUB_OUTPUT
+          "snapshot_sha256=$($metadata["release-freeze-sha256"])" >> $env:GITHUB_OUTPUT
+      - name: Restore release gates
+        shell: pwsh
+        run: |
+          dotnet restore CP6.WebApi/CP6.WebApi.csproj
+          dotnet restore CP6.Tests/CP6.Tests.csproj
+          dotnet restore CP6.Client.Tests/CP6.Client.Tests.csproj
+          dotnet tool restore
+          npm ci --prefix cp6.web
+      - name: Execute source, server, client, and Web gates
+        shell: pwsh
+        run: |
+          $report = Join-Path $env:RUNNER_TEMP "source-gate.txt"
+          & ./scripts/test-r2-release-readiness.ps1 `
+            -SpecPath "${{ steps.release.outputs.spec_path }}" `
+            -Mode Structure `
+            -ExpectedVersion "${{ steps.release.outputs.version }}" 2>&1 |
+            Tee-Object -FilePath $report
+          if ($LASTEXITCODE -ne 0) { throw "R2 execution spec structure gate failed." }
+          & ./scripts/test-r2-source-gate.ps1 `
+            -Configuration Release `
+            -ExpectedVersion "${{ steps.release.outputs.version }}" 2>&1 |
+            Tee-Object -FilePath $report
+          if ($LASTEXITCODE -ne 0) { throw "R2 source gate failed." }
+          dotnet test CP6.Tests/CP6.Tests.csproj -c Release --no-restore 2>&1 |
+            Tee-Object -FilePath $report -Append
+          if ($LASTEXITCODE -ne 0) { throw "Server tests failed." }
+          dotnet test CP6.Client.Tests/CP6.Client.Tests.csproj `
+            -c Release --no-restore 2>&1 |
+            Tee-Object -FilePath $report -Append
+          if ($LASTEXITCODE -ne 0) { throw "Client tests failed." }
+          $env:CP6_RELEASE_VERSION = "${{ steps.release.outputs.version }}"
+          $env:CP6_GIT_SHA = $env:GITHUB_SHA
+          npm --prefix cp6.web run type-check 2>&1 |
+            Tee-Object -FilePath $report -Append
+          if ($LASTEXITCODE -ne 0) { throw "Web type check failed." }
+          npm --prefix cp6.web test -- --maxWorkers=4 2>&1 |
+            Tee-Object -FilePath $report -Append
+          if ($LASTEXITCODE -ne 0) { throw "Web unit tests failed." }
+          npm --prefix cp6.web run build-only 2>&1 |
+            Tee-Object -FilePath $report -Append
+          if ($LASTEXITCODE -ne 0) { throw "Web production build failed." }
+          npm --prefix cp6.web exec -- playwright install chromium 2>&1 |
+            Tee-Object -FilePath $report -Append
+          if ($LASTEXITCODE -ne 0) { throw "Playwright browser installation failed." }
+          npm --prefix cp6.web run e2e -- `
+            --project=wms-production-mocked `
+            e2e/wms-production-console.spec.ts 2>&1 |
+            Tee-Object -FilePath $report -Append
+          if ($LASTEXITCODE -ne 0) { throw "Web WMS approval E2E failed." }
+      - uses: actions/upload-artifact@v4
+        with:
+          name: source-gate
+          path: ${{ runner.temp }}/source-gate.txt
+          retention-days: 1
+
+  sql-integration:
+    runs-on: ubuntu-latest
+    services:
+      sqlserver:
+        image: mcr.microsoft.com/mssql/server:2022-latest
+        env:
+          ACCEPT_EULA: Y
+          MSSQL_SA_PASSWORD: CP6_Test_Strong_Passw0rd!
+        ports:
+          - 1433:1433
+        options: >-
+          --health-cmd "/opt/mssql-tools18/bin/sqlcmd -S localhost -U sa -P 'CP6_Test_Strong_Passw0rd!' -C -Q 'SELECT 1' || exit 1"
+          --health-interval 10s
+          --health-timeout 5s
+          --health-retries 20
+    env:
+      CP6_TEST_SQLSERVER: Server=localhost,1433;Database=master;User Id=sa;Password=CP6_Test_Strong_Passw0rd!;TrustServerCertificate=True
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-dotnet@v4
+        with:
+          dotnet-version: 8.0.x
+      - run: dotnet restore CP6.Tests/CP6.Tests.csproj
+      - name: Run SQL Server production integration tests
+        run: >-
+          dotnet test CP6.Tests/CP6.Tests.csproj -c Release --no-restore
+          --filter FullyQualifiedName~WmsProductionSqlServerTests
+          --logger "trx;LogFileName=wms-sql.trx"
+          --results-directory evidence/sql
+      - uses: actions/upload-artifact@v4
+        with:
+          name: sql-evidence
+          path: evidence/sql/wms-sql.trx
+          retention-days: 1
+
+  images:
+    needs: source-gate
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: docker/setup-buildx-action@v3
+      - uses: docker/login-action@v3
+        with:
+          registry: ghcr.io
+          username: ${{ github.actor }}
+          password: ${{ secrets.GITHUB_TOKEN }}
+      - name: Build, attest, and push digest-pinned images
+        id: images
+        shell: bash
+        env:
+          VERSION: ${{ needs.source-gate.outputs.version }}
+        run: |
+          set -euo pipefail
+          owner="$(echo '${{ github.repository_owner }}' | tr '[:upper:]' '[:lower:]')"
+          api_repo="ghcr.io/${owner}/cp6-api"
+          web_repo="ghcr.io/${owner}/cp6-web"
+          docker buildx build . \
+            --file CP6.WebApi/Dockerfile \
+            --platform linux/amd64 \
+            --build-arg RELEASE_VERSION="$VERSION" \
+            --build-arg GIT_SHA="$GITHUB_SHA" \
+            --provenance=true --sbom=true --push \
+            --tag "${api_repo}:v${VERSION}" \
+            --metadata-file api-metadata.json
+          docker buildx build cp6.web \
+            --file cp6.web/Dockerfile \
+            --platform linux/amd64 \
+            --build-arg RELEASE_VERSION="$VERSION" \
+            --build-arg GIT_SHA="$GITHUB_SHA" \
+            --provenance=true --sbom=true --push \
+            --tag "${web_repo}:v${VERSION}" \
+            --metadata-file web-metadata.json
+          api_digest="$(jq -r '."containerimage.digest"' api-metadata.json)"
+          web_digest="$(jq -r '."containerimage.digest"' web-metadata.json)"
+          jq -n \
+            --arg apiRepository "$api_repo" --arg apiDigest "$api_digest" \
+            --arg webRepository "$web_repo" --arg webDigest "$web_digest" \
+            '{api:{repository:$apiRepository,digest:$apiDigest},web:{repository:$webRepository,digest:$webDigest}}' \
+            > image-metadata.json
+          docker pull "${api_repo}@${api_digest}"
+          docker pull "${web_repo}@${web_digest}"
+          docker run --rm -v /var/run/docker.sock:/var/run/docker.sock \
+            -v "$PWD:/work" anchore/syft:v1.18.1 \
+            "docker:${api_repo}@${api_digest}" -o cyclonedx-json=/work/api-sbom.json
+          docker run --rm -v /var/run/docker.sock:/var/run/docker.sock \
+            -v "$PWD:/work" anchore/syft:v1.18.1 \
+            "docker:${web_repo}@${web_digest}" -o cyclonedx-json=/work/web-sbom.json
+          jq -s '{components:map(.components // []) | add, metadata:{component:{name:"cp6-r2"}}}' \
+            api-sbom.json web-sbom.json > sbom.json
+          docker run --rm -v /var/run/docker.sock:/var/run/docker.sock \
+            -v "$PWD:/work" aquasec/trivy:0.58.2 image \
+            --exit-code 1 --severity HIGH,CRITICAL --format json \
+            --output /work/api-vulnerabilities.json "${api_repo}@${api_digest}"
+          docker run --rm -v /var/run/docker.sock:/var/run/docker.sock \
+            -v "$PWD:/work" aquasec/trivy:0.58.2 image \
+            --exit-code 1 --severity HIGH,CRITICAL --format json \
+            --output /work/web-vulnerabilities.json "${web_repo}@${web_digest}"
+          jq -s '{reports:.}' api-vulnerabilities.json web-vulnerabilities.json \
+            > vulnerability-report.json
+      - uses: actions/upload-artifact@v4
+        with:
+          name: image-evidence
+          path: |
+            image-metadata.json
+            sbom.json
+            vulnerability-report.json
+          retention-days: 1
+
+  sign-and-archive:
+    needs: [source-gate, sql-integration, images]
+    runs-on: [self-hosted, Windows, X64, cp6-release]
+    environment: r2-candidate
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
+      - uses: actions/download-artifact@v4
+        with:
+          name: source-gate
+          path: evidence/source
+      - uses: actions/download-artifact@v4
+        with:
+          name: image-evidence
+          path: evidence/images
+      - uses: actions/download-artifact@v4
+        with:
+          name: sql-evidence
+          path: evidence/sql
+      - uses: actions/setup-dotnet@v4
+        with:
+          dotnet-version: |
+            8.0.x
+            10.0.x
+      - uses: actions/setup-node@v4
+        with:
+          node-version: 22
+          cache: npm
+          cache-dependency-path: cp6.web/package-lock.json
+      - name: Verify immutable freeze snapshot
+        shell: pwsh
+        run: |
+          npm ci --prefix cp6.web --ignore-scripts
+          $snapshotPath = Join-Path $env:RUNNER_TEMP "release-freeze.json"
+          aws --endpoint-url "${{ vars.R2_S3_ENDPOINT }}" s3 cp `
+            "${{ needs.source-gate.outputs.snapshot_uri }}" $snapshotPath
+          if ($LASTEXITCODE -ne 0) {
+            throw "Unable to download the approved release freeze snapshot."
+          }
+          ./scripts/test-r2-release-readiness.ps1 `
+            -SpecPath "${{ needs.source-gate.outputs.spec_path }}" `
+            -Mode VerifySnapshot `
+            -ExpectedVersion "${{ needs.source-gate.outputs.version }}" `
+            -ExpectedGitSha $env:GITHUB_SHA `
+            -SnapshotPath $snapshotPath `
+            -ExpectedSnapshotSha256 "${{ needs.source-gate.outputs.snapshot_sha256 }}"
+          "CP6_R2_FREEZE_PATH=$snapshotPath" >> $env:GITHUB_ENV
+      - name: Publish and sign native clients
+        shell: pwsh
+        env:
+          CP6_ANDROID_STORE_PASSWORD: ${{ secrets.CP6_ANDROID_STORE_PASSWORD }}
+          CP6_ANDROID_KEY_PASSWORD: ${{ secrets.CP6_ANDROID_KEY_PASSWORD }}
+          R2_RESOLVED_SETTINGS_JSON: ${{ secrets.R2_RESOLVED_SETTINGS_JSON }}
+          VERSION: ${{ needs.source-gate.outputs.version }}
+        run: |
+          $artifactDir = Join-Path $env:RUNNER_TEMP "r2-$env:VERSION"
+          [IO.Directory]::CreateDirectory($artifactDir) | Out-Null
+          ./CP6.Desktop/scripts/publish-msix.ps1 `
+            -CertificateThumbprint "${{ vars.CP6_WINDOWS_CERT_THUMBPRINT }}" `
+            -OutputDirectory $artifactDir `
+            -PackageUri ([uri]"${{ vars.CP6_MSIX_URL }}") `
+            -AppInstallerUri ([uri]"${{ vars.CP6_APPINSTALLER_URL }}") `
+            -PackageVersion "$env:VERSION.0" `
+            -TimestampServerUrl ([uri]"${{ vars.CP6_TIMESTAMP_URL }}") `
+            -AssetsDirectory "${{ vars.CP6_WINDOWS_ASSETS_DIRECTORY }}"
+          ./CP6.Mobile/scripts/publish-apk.ps1 `
+            -KeyStore "${{ vars.CP6_ANDROID_KEYSTORE_PATH }}" `
+            -KeyAlias "${{ vars.CP6_ANDROID_KEY_ALIAS }}"
+          $apk = Get-ChildItem CP6.Mobile/bin/Release/net10.0-android/publish `
+            -Filter "*-Signed.apk" | Sort-Object LastWriteTimeUtc -Descending |
+            Select-Object -First 1
+          Copy-Item -LiteralPath $apk.FullName -Destination $artifactDir
+          $settingsPath = Join-Path $env:RUNNER_TEMP "cp6.production.resolved.json"
+          [IO.File]::WriteAllText(
+            $settingsPath,
+            $env:R2_RESOLVED_SETTINGS_JSON,
+            [Text.UTF8Encoding]::new($false))
+          "CP6_R2_ARTIFACT_DIR=$artifactDir" >> $env:GITHUB_ENV
+          "CP6_R2_SETTINGS_PATH=$settingsPath" >> $env:GITHUB_ENV
+      - name: Build initialization artifact and release manifest v2
+        shell: pwsh
+        env:
+          VERSION: ${{ needs.source-gate.outputs.version }}
+        run: |
+          dotnet restore CP6.WebApi/CP6.WebApi.csproj
+          $initDir = Join-Path $env:RUNNER_TEMP "db-init"
+          dotnet publish CP6.WebApi/CP6.WebApi.csproj -c Release -o $initDir `
+            --no-restore -p:Version=$env:VERSION `
+            -p:InformationalVersion="$env:VERSION+$env:GITHUB_SHA"
+          $initZip = Join-Path $env:RUNNER_TEMP "cp6-db-init.zip"
+          Compress-Archive -Path (Join-Path $initDir "*") -DestinationPath $initZip
+          $images = Get-Content evidence/images/image-metadata.json | ConvertFrom-Json
+          $latestMigration = Get-ChildItem CP6.Core/Migrations -File -Filter "*.cs" |
+            Where-Object { $_.Name -match '^\d{14}_.+\.cs$' -and $_.Name -notmatch '\.Designer\.cs$' } |
+            Sort-Object Name | Select-Object -Last 1 -ExpandProperty BaseName
+          $evidenceRoot = "s3://${{ vars.R2_EVIDENCE_BUCKET }}/${{ vars.R2_EVIDENCE_PREFIX }}/v$env:VERSION"
+          ./scripts/test-r2-artifacts.ps1 `
+            -ArtifactDirectory $env:CP6_R2_ARTIFACT_DIR `
+            -ExpectedVersion $env:VERSION `
+            -ExpectedWindowsPublisher "${{ vars.CP6_WINDOWS_PUBLISHER }}" `
+            -ExpectedAndroidSignerSha256 "${{ vars.CP6_ANDROID_SIGNER_SHA256 }}" `
+            -ResolvedSettingsPath $env:CP6_R2_SETTINGS_PATH `
+            -GitSha $env:GITHUB_SHA `
+            -ApiImageRepository $images.api.repository `
+            -ApiImageDigest $images.api.digest `
+            -WebImageRepository $images.web.repository `
+            -WebImageDigest $images.web.digest `
+            -SbomPath evidence/images/sbom.json `
+            -VulnerabilityReportPath evidence/images/vulnerability-report.json `
+            -DatabaseInitializationArtifactPath $initZip `
+            -SourceGateReportPath evidence/source/source-gate.txt `
+            -SqlIntegrationReportPath evidence/sql/wms-sql.trx `
+            -LatestMigration $latestMigration `
+            -EvidenceRootUri $evidenceRoot `
+            -ExecutionSpecPath "${{ needs.source-gate.outputs.spec_path }}" `
+            -ExecutionSpecRepositoryPath "${{ needs.source-gate.outputs.spec_path }}" `
+            -FreezeSnapshotPath $env:CP6_R2_FREEZE_PATH `
+            -FreezeSnapshotUri "${{ needs.source-gate.outputs.snapshot_uri }}"
+          "CP6_R2_EVIDENCE_ROOT=$evidenceRoot" >> $env:GITHUB_ENV
+          "CP6_R2_INIT_ZIP=$initZip" >> $env:GITHUB_ENV
+      - name: Build immutable candidate result
+        shell: pwsh
+        run: |
+          $manifestPath = Join-Path $env:CP6_R2_ARTIFACT_DIR "release-manifest.json"
+          $manifestHash = (Get-FileHash -LiteralPath $manifestPath -Algorithm SHA256).Hash
+          $resultPath = Join-Path $env:CP6_R2_ARTIFACT_DIR "candidate-result.json"
+          $result = [ordered]@{
+            SchemaVersion = 1
+            ReleaseVersion = "${{ needs.source-gate.outputs.version }}"
+            Tag = "v${{ needs.source-gate.outputs.version }}"
+            GitSha = $env:GITHUB_SHA.ToLowerInvariant()
+            GeneratedAtUtc = [DateTimeOffset]::UtcNow.ToString("O")
+            ManifestUri = "$env:CP6_R2_EVIDENCE_ROOT/release-manifest.json"
+            ManifestSha256 = $manifestHash
+            FreezeSnapshotUri = "${{ needs.source-gate.outputs.snapshot_uri }}"
+            FreezeSnapshotSha256 = "${{ needs.source-gate.outputs.snapshot_sha256 }}"
+            ExecutionSpecPath = "${{ needs.source-gate.outputs.spec_path }}"
+            ExecutionSpecSha256 = "${{ needs.source-gate.outputs.spec_sha256 }}"
+          }
+          [IO.File]::WriteAllText(
+            $resultPath,
+            ($result | ConvertTo-Json -Depth 5) + [Environment]::NewLine,
+            [Text.UTF8Encoding]::new($false))
+          "CP6_R2_CANDIDATE_RESULT=$resultPath" >> $env:GITHUB_ENV
+      - name: Archive immutable release evidence
+        id: archive
+        shell: pwsh
+        run: |
+          $paths = @(
+            (Join-Path $env:CP6_R2_ARTIFACT_DIR "release-manifest.json"),
+            $env:CP6_R2_INIT_ZIP,
+            "evidence/images/sbom.json",
+            "evidence/images/vulnerability-report.json",
+            "evidence/source/source-gate.txt",
+            "evidence/sql/wms-sql.trx",
+            "${{ needs.source-gate.outputs.spec_path }}"
+          )
+          $paths += Get-ChildItem -LiteralPath $env:CP6_R2_ARTIFACT_DIR -File |
+            Where-Object Name -ne "release-manifest.json" |
+            Select-Object -ExpandProperty FullName
+          ./scripts/publish-r2-evidence.ps1 `
+            -Paths $paths `
+            -EvidenceRootUri $env:CP6_R2_EVIDENCE_ROOT `
+            -EndpointUrl ([uri]"${{ vars.R2_S3_ENDPOINT }}") | Out-Null
+          $manifestPath = Join-Path $env:CP6_R2_ARTIFACT_DIR "release-manifest.json"
+          $hash = (Get-FileHash $manifestPath -Algorithm SHA256).Hash
+          "manifest_hash=$hash" >> $env:GITHUB_OUTPUT
+      - name: Candidate summary
+        shell: pwsh
+        run: |
+          @"
+          ## R2 candidate
+          - Version: `${{ needs.source-gate.outputs.version }}`
+          - Git SHA: `$env:GITHUB_SHA`
+          - Manifest SHA-256: `${{ steps.archive.outputs.manifest_hash }}`
+          - Execution spec SHA-256: `${{ needs.source-gate.outputs.spec_sha256 }}`
+          - Freeze snapshot SHA-256: `${{ needs.source-gate.outputs.snapshot_sha256 }}`
+          - Candidate result: `$env:CP6_R2_EVIDENCE_ROOT/candidate-result.json`
+          - Evidence URI: `$env:CP6_R2_EVIDENCE_ROOT`
+          - Protected environment: `r2-candidate`
+          - Approved deployment actor: `${{ github.actor }}`
+          "@ >> $env:GITHUB_STEP_SUMMARY
+      - name: Remove rendered secrets
+        if: always()
+        shell: pwsh
+        run: |
+          if ($env:CP6_R2_SETTINGS_PATH -and
+              (Test-Path -LiteralPath $env:CP6_R2_SETTINGS_PATH)) {
+            Remove-Item -LiteralPath $env:CP6_R2_SETTINGS_PATH -Force
+          }

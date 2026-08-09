@@ -11,6 +11,11 @@ public class WmsStockQuery : IWmsStockQuery
     private readonly CP6Context _db;
     public WmsStockQuery(CP6Context db) => _db = db;
 
+    public CP6.Entity.DTOs.Space.SpaceDataSourceKind DataSourceKind =>
+        CP6.Entity.DTOs.Space.SpaceDataSourceKind.Real;
+
+    public string DataSourceId => "CP6_WMS";
+
     public async Task<decimal> GetStockQtyAsync(string locationCode, string? warehouseCd = null, CancellationToken ct = default)
     {
         var q = _db.Stocks.Where(s => s.LocationCd == locationCode);

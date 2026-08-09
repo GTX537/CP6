@@ -1,0 +1,102 @@
+name: client-contract
+
+on:
+  pull_request:
+  push:
+    branches: [main]
+
+jobs:
+  windows-and-web:
+    runs-on: windows-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-dotnet@v4
+        with:
+          dotnet-version: 8.0.x
+      - uses: actions/setup-node@v4
+        with:
+          node-version: 22
+          cache: npm
+          cache-dependency-path: cp6.web/package-lock.json
+
+      - name: Restore
+        run: |
+          dotnet restore CP6.WebApi/CP6.WebApi.csproj
+          dotnet restore CP6.Desktop/CP6.Desktop.csproj
+          dotnet restore CP6.Client.Tests/CP6.Client.Tests.csproj
+          dotnet tool restore
+
+      - name: Enforce .NET 10 release gate
+        shell: pwsh
+        run: ./scripts/check-client-net10-gate.ps1
+
+      - name: Build and test .NET
+        run: |
+          dotnet build CP6.WebApi/CP6.WebApi.csproj --no-restore
+          dotnet build CP6.Desktop/CP6.Desktop.csproj --no-restore
+          dotnet test CP6.Tests/CP6.Tests.csproj
+          dotnet test CP6.Client.Tests/CP6.Client.Tests.csproj --no-restore
+
+      - name: Check OpenAPI generated client drift
+        shell: pwsh
+        run: |
+          $env:ASPNETCORE_ENVIRONMENT = "Development"
+          $env:Startup__SkipDatabaseInitialization = "true"
+          $env:Startup__SkipHostedServices = "true"
+          $api = Start-Process dotnet `
+            -WorkingDirectory "CP6.WebApi" `
+            -ArgumentList @(
+              "bin/Debug/net8.0/CP6.WebApi.dll",
+              "--urls", "http://127.0.0.1:5080"
+            ) -WindowStyle Hidden -PassThru
+          try {
+            for ($i = 0; $i -lt 30; $i++) {
+              try {
+                Invoke-WebRequest "http://127.0.0.1:5080/swagger/v1/swagger.json" | Out-Null
+                break
+              } catch {
+                if ($i -eq 29) { throw }
+                Start-Sleep -Milliseconds 500
+              }
+            }
+            ./CP6.Client.Api/scripts/check-openapi-client.ps1 `
+              -SwaggerUrl "http://127.0.0.1:5080/swagger/v1/swagger.json"
+          } finally {
+            Stop-Process -Id $api.Id -ErrorAction SilentlyContinue
+          }
+
+      - name: Build and test Web
+        working-directory: cp6.web
+        run: |
+          npm ci
+          npm run type-check
+          npm test -- --maxWorkers=4
+          npm run build-only
+
+      - name: R2 source release gate
+        shell: pwsh
+        run: ./scripts/test-r2-source-gate.ps1 -Configuration Debug
+
+  android:
+    runs-on: windows-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-dotnet@v4
+        with:
+          dotnet-version: 10.0.x
+      - name: Install MAUI Android workload
+        run: dotnet workload install maui-android
+      - name: Audit Android dependencies
+        shell: pwsh
+        run: |
+          $output = dotnet list CP6.Mobile/CP6.Mobile.csproj package `
+            --vulnerable --include-transitive 2>&1
+          $output
+          if ($LASTEXITCODE -ne 0) {
+            throw "Android NuGet vulnerability audit failed."
+          }
+          if (($output | Out-String) -match "has the following vulnerable packages") {
+            throw "Android NuGet vulnerability audit found vulnerable packages."
+          }
+      - name: Build Android client
+        run: dotnet build CP6.Mobile/CP6.Mobile.csproj -f net10.0-android -c Release

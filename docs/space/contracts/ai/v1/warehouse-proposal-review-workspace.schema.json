@@ -1,0 +1,228 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://cp6.local/contracts/space/ai/v1/warehouse-proposal-review-workspace.schema.json",
+  "title": "CP6 Space Warehouse Proposal Review Workspace v1",
+  "type": "object",
+  "additionalProperties": false,
+  "required": [
+    "schemaVersion", "isReadOnlyWorkspace", "decisionWritten", "draftWritten",
+    "tenantId", "modelVersionId", "floorLogicalId", "proposalSetSha256",
+    "baselineSnapshotSha256", "baselineContentRevision", "runIssues", "items",
+    "summary", "reviewEtag", "workspaceSha256"
+  ],
+  "properties": {
+    "schemaVersion": { "const": 1 },
+    "isReadOnlyWorkspace": { "const": true },
+    "decisionWritten": { "const": false },
+    "draftWritten": { "const": false },
+    "tenantId": { "$ref": "#/$defs/uuid" },
+    "modelVersionId": { "$ref": "#/$defs/uuid" },
+    "floorLogicalId": { "$ref": "#/$defs/uuid" },
+    "proposalSetSha256": { "$ref": "#/$defs/sha256" },
+    "baselineSnapshotSha256": { "$ref": "#/$defs/sha256" },
+    "baselineContentRevision": { "type": "integer", "minimum": 0 },
+    "baselineContentHash": { "$ref": "#/$defs/sha256" },
+    "runIssues": { "type": "array", "items": { "$ref": "#/$defs/issue" } },
+    "items": {
+      "type": "array",
+      "maxItems": 100000,
+      "items": { "$ref": "#/$defs/item" }
+    },
+    "summary": { "$ref": "#/$defs/summary" },
+    "reviewEtag": { "$ref": "#/$defs/sha256" },
+    "workspaceSha256": { "$ref": "#/$defs/sha256" }
+  },
+  "$defs": {
+    "uuid": {
+      "type": "string",
+      "format": "uuid",
+      "not": { "const": "00000000-0000-0000-0000-000000000000" }
+    },
+    "sha256": { "type": "string", "pattern": "^[0-9a-f]{64}$" },
+    "token": { "type": "string", "minLength": 1, "maxLength": 512 },
+    "bounds": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["minX", "minY", "maxX", "maxY"],
+      "properties": {
+        "minX": { "type": "integer" },
+        "minY": { "type": "integer" },
+        "maxX": { "type": "integer" },
+        "maxY": { "type": "integer" }
+      }
+    },
+    "point": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["x", "y", "z"],
+      "properties": {
+        "x": { "type": "integer" },
+        "y": { "type": "integer" },
+        "z": { "type": "integer" }
+      }
+    },
+    "evidence": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["source", "valueToken", "confidence", "evidenceCodes"],
+      "properties": {
+        "source": { "enum": ["TemplateDefault", "Ai", "DeterministicRule", "HumanLocked"] },
+        "valueToken": { "$ref": "#/$defs/token" },
+        "confidence": { "type": "number", "minimum": 0, "maximum": 1 },
+        "evidenceCodes": {
+          "type": "array",
+          "items": { "type": "string", "minLength": 1, "maxLength": 128 }
+        }
+      }
+    },
+    "field": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["fieldPath", "valueToken", "winningSource", "confidence", "evidence"],
+      "properties": {
+        "fieldPath": { "type": "string", "minLength": 1, "maxLength": 128 },
+        "valueToken": { "$ref": "#/$defs/token" },
+        "winningSource": { "enum": ["TemplateDefault", "Ai", "DeterministicRule", "HumanLocked"] },
+        "confidence": { "type": "number", "minimum": 0, "maximum": 1 },
+        "evidence": { "type": "array", "items": { "$ref": "#/$defs/evidence" } }
+      }
+    },
+    "issue": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["code", "severity"],
+      "properties": {
+        "code": { "type": "string", "minLength": 1, "maxLength": 128 },
+        "severity": { "enum": ["Info", "Warning", "Blocking"] },
+        "sourceRef": { "type": "string", "minLength": 1, "maxLength": 256 },
+        "sourceKey": { "type": "string", "minLength": 1, "maxLength": 256 },
+        "fieldPath": { "type": "string", "minLength": 1, "maxLength": 128 },
+        "detailToken": { "$ref": "#/$defs/token" }
+      }
+    },
+    "fieldDifference": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["fieldPath", "kind", "evidence"],
+      "properties": {
+        "fieldPath": { "type": "string", "minLength": 1, "maxLength": 128 },
+        "kind": { "enum": ["Added", "Removed", "Changed"] },
+        "beforeValueToken": { "$ref": "#/$defs/token" },
+        "afterValueToken": { "$ref": "#/$defs/token" },
+        "winningSource": { "enum": ["TemplateDefault", "Ai", "DeterministicRule", "HumanLocked"] },
+        "confidence": { "type": "number", "minimum": 0, "maximum": 1 },
+        "evidence": { "type": "array", "items": { "$ref": "#/$defs/evidence" } }
+      }
+    },
+    "difference": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": [
+        "kind", "geometryChanged", "afterGeometrySha256", "afterGeometryBounds",
+        "fields", "beforeRackLevelCount", "afterRackLevelCount",
+        "beforeLocationCount", "afterLocationCount"
+      ],
+      "properties": {
+        "kind": { "enum": ["Added", "Modified", "Unchanged"] },
+        "geometryChanged": { "type": "boolean" },
+        "beforeGeometrySha256": { "$ref": "#/$defs/sha256" },
+        "afterGeometrySha256": { "$ref": "#/$defs/sha256" },
+        "beforeGeometryBounds": { "$ref": "#/$defs/bounds" },
+        "afterGeometryBounds": { "$ref": "#/$defs/bounds" },
+        "fields": { "type": "array", "items": { "$ref": "#/$defs/fieldDifference" } },
+        "beforeRackLevelCount": { "type": "integer", "minimum": 0 },
+        "afterRackLevelCount": { "type": "integer", "minimum": 0 },
+        "beforeLocationCount": { "type": "integer", "minimum": 0 },
+        "afterLocationCount": { "type": "integer", "minimum": 0 }
+      }
+    },
+    "location": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": [
+        "floorLogicalId", "sourceRef", "bounds", "anchor",
+        "suggestedPaddingMillimeters", "canFocusCanvas"
+      ],
+      "properties": {
+        "floorLogicalId": { "$ref": "#/$defs/uuid" },
+        "sourceRef": { "type": "string", "minLength": 1, "maxLength": 256 },
+        "bounds": { "$ref": "#/$defs/bounds" },
+        "anchor": { "$ref": "#/$defs/point" },
+        "suggestedPaddingMillimeters": { "type": "integer", "minimum": 0 },
+        "canFocusCanvas": { "const": true }
+      }
+    },
+    "relation": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["relationType", "targetLogicalId", "confidence", "evidenceCodes"],
+      "properties": {
+        "relationType": { "type": "string", "minLength": 1, "maxLength": 64 },
+        "targetLogicalId": { "$ref": "#/$defs/uuid" },
+        "confidence": { "type": "number", "minimum": 0, "maximum": 1 },
+        "evidenceCodes": {
+          "type": "array",
+          "items": { "type": "string", "minLength": 1, "maxLength": 128 }
+        }
+      }
+    },
+    "item": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": [
+        "reviewItemId", "logicalId", "sourceKey", "sourceRef", "objectType",
+        "confidence", "confidenceBand", "readiness", "hasBlockingIssue",
+        "canBatchAccept", "location", "fields", "relations", "issues", "difference"
+      ],
+      "properties": {
+        "reviewItemId": { "type": "string", "pattern": "^ai-review-[0-9a-f]{32}$" },
+        "logicalId": { "$ref": "#/$defs/uuid" },
+        "sourceKey": { "type": "string", "minLength": 1, "maxLength": 256 },
+        "sourceRef": { "type": "string", "minLength": 1, "maxLength": 256 },
+        "objectType": { "type": "string", "minLength": 1, "maxLength": 64 },
+        "confidence": { "type": "number", "minimum": 0, "maximum": 1 },
+        "confidenceBand": { "enum": ["High", "Medium", "Low"] },
+        "readiness": { "enum": ["Ready", "NeedsReview", "Blocked"] },
+        "hasBlockingIssue": { "type": "boolean" },
+        "canBatchAccept": { "type": "boolean" },
+        "location": { "$ref": "#/$defs/location" },
+        "fields": { "type": "array", "minItems": 1, "items": { "$ref": "#/$defs/field" } },
+        "relations": { "type": "array", "items": { "$ref": "#/$defs/relation" } },
+        "rackDerivation": { "type": "object" },
+        "issues": { "type": "array", "items": { "$ref": "#/$defs/issue" } },
+        "difference": { "$ref": "#/$defs/difference" }
+      }
+    },
+    "summary": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": [
+        "totalCount", "highConfidenceCount", "mediumConfidenceCount", "lowConfidenceCount",
+        "readyCount", "needsReviewCount", "blockedCount", "batchAcceptEligibleCount",
+        "addedCount", "modifiedCount", "unchangedCount", "locatableCount",
+        "infoIssueCount", "warningIssueCount", "blockingIssueCount",
+        "runIssueCount", "runBlockingIssueCount"
+      ],
+      "properties": {
+        "totalCount": { "$ref": "#/$defs/count" },
+        "highConfidenceCount": { "$ref": "#/$defs/count" },
+        "mediumConfidenceCount": { "$ref": "#/$defs/count" },
+        "lowConfidenceCount": { "$ref": "#/$defs/count" },
+        "readyCount": { "$ref": "#/$defs/count" },
+        "needsReviewCount": { "$ref": "#/$defs/count" },
+        "blockedCount": { "$ref": "#/$defs/count" },
+        "batchAcceptEligibleCount": { "$ref": "#/$defs/count" },
+        "addedCount": { "$ref": "#/$defs/count" },
+        "modifiedCount": { "$ref": "#/$defs/count" },
+        "unchangedCount": { "$ref": "#/$defs/count" },
+        "locatableCount": { "$ref": "#/$defs/count" },
+        "infoIssueCount": { "$ref": "#/$defs/count" },
+        "warningIssueCount": { "$ref": "#/$defs/count" },
+        "blockingIssueCount": { "$ref": "#/$defs/count" },
+        "runIssueCount": { "$ref": "#/$defs/count" },
+        "runBlockingIssueCount": { "$ref": "#/$defs/count" }
+      }
+    },
+    "count": { "type": "integer", "minimum": 0 }
+  }
+}

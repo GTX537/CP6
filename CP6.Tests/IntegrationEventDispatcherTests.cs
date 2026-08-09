@@ -1,6 +1,7 @@
 using CP6.Core.Services;
 using CP6.Core.Services.Integration;
 using CP6.Entity.DomainModels;
+using CP6.Entity.DTOs.Space;
 using Moq;
 
 namespace CP6.Tests;
@@ -10,6 +11,45 @@ namespace CP6.Tests;
 /// </summary>
 public class IntegrationEventDispatcherTests
 {
+    [Fact]
+    public async Task Dispatch_space_route_reuses_persisted_correlation()
+    {
+        var expected = Guid.NewGuid();
+        var eventId = Guid.NewGuid();
+        var leaseId = Guid.NewGuid();
+        var space = new Mock<ISpaceBridgeHook>();
+        space.Setup(x => x.OnLocationPublishedAsync(
+                It.IsAny<LocationPublishBatch>(),
+                expected,
+                false,
+                It.Is<SpaceRetryFence>(f =>
+                    f.EventId == eventId &&
+                    f.LeaseId == leaseId),
+                It.IsAny<CancellationToken>()))
+            .ReturnsAsync(new SpaceBridgeResult { Success = true });
+        var dispatcher = new IntegrationEventDispatcher(
+            Mock.Of<IMesBridgeHook>(),
+            Mock.Of<IWmsBridgeHook>(),
+            Mock.Of<IErpBridgeHook>(),
+            Mock.Of<IOrderCancelBridgeHook>(),
+            Mock.Of<IFinBridgeHook>(),
+            space.Object);
+
+        var ok = await dispatcher.DispatchAsync(new IntegrationEvent
+        {
+            Id = eventId,
+            SourceModule = "SPACE",
+            TargetModule = "WMS",
+            HookName = "OnLocationPublishedAsync",
+            CorrelationId = expected,
+            RetryLeaseId = leaseId,
+            PayloadJson = """{"batchNo":"LPUB-1","items":[]}""",
+        });
+
+        Assert.True(ok);
+        space.VerifyAll();
+    }
+
     [Fact]
     public async Task Dispatch_MesBridgeRoute_CallsMesHook()
     {

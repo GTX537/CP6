@@ -28,6 +28,10 @@ public class Wf_ApprovalBinding : BaseTenantEntity, IAuditable
     [Column(TypeName = "nvarchar(max)")]
     public string? ConditionJson { get; set; }
 
+    /// <summary>Internal relative route template. Only {bizId} is substituted.</summary>
+    [MaxLength(300)]
+    public string? DetailRoute { get; set; }
+
     /// <summary>备注</summary>
     [MaxLength(200)]
     public string? Remark { get; set; }

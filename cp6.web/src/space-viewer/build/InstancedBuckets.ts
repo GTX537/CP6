@@ -1,4 +1,4 @@
-import { InstancedMesh, Color } from 'three'
+import { Color, InstancedBufferAttribute, InstancedMesh } from 'three'
 import { UNIT_BOX, locMaterial, makeInstanceMatrix } from './BoxFactory'
 
 export interface EnrichedLocation {
@@ -19,6 +19,7 @@ export class InstancedBuckets {
   private _zoneToMesh: Map<string, number> = new Map()
   private _instanceToLocation: Map<number, Map<number, string>> = new Map()
   private _locationToInstance: Map<string, { meshId: number; instanceId: number }> = new Map()
+  private readonly _scratchColor = new Color()
 
   build(locations: EnrichedLocation[]): void {
     const placed = locations.filter((l) => l.placed)
@@ -35,7 +36,10 @@ export class InstancedBuckets {
 
     for (const [zoneId, locs] of byZone) {
       const mesh = new InstancedMesh(UNIT_BOX, locMaterial, locs.length)
-      mesh.instanceColor = null
+      mesh.instanceColor = new InstancedBufferAttribute(
+        new Float32Array(locs.length * 3),
+        3,
+      )
 
       const instMap = new Map<number, string>()
 
@@ -51,11 +55,13 @@ export class InstancedBuckets {
           loc.sizeH,
         )
         mesh.setMatrixAt(i, matrix)
+        mesh.setColorAt(i, this._scratchColor.setRGB(0.8, 0.8, 0.8))
         instMap.set(i, loc.id)
         this._locationToInstance.set(loc.id, { meshId: mesh.id, instanceId: i })
       }
 
       mesh.instanceMatrix.needsUpdate = true
+      mesh.instanceColor.needsUpdate = true
       mesh.computeBoundingBox()
 
       this._meshes.set(mesh.id, mesh)
@@ -85,17 +91,23 @@ export class InstancedBuckets {
   }
 
   setColor(locationId: string, hex: number): void {
-    const ref = this._locationToInstance.get(locationId)
-    if (!ref) return
-    const mesh = this._meshes.get(ref.meshId)
-    if (!mesh) return
-    if (!mesh.instanceColor) {
-      mesh.instanceColor = null
+    this.setColors([{ locationId, hex }])
+  }
+
+  setColors(colors: Iterable<{ locationId: string; hex: number }>): number {
+    const changedMeshes = new Set<InstancedMesh>()
+    let changed = 0
+    for (const { locationId, hex } of colors) {
+      const ref = this._locationToInstance.get(locationId)
+      if (!ref) continue
+      const mesh = this._meshes.get(ref.meshId)
+      if (!mesh) continue
+      mesh.setColorAt(ref.instanceId, this._scratchColor.setHex(hex))
+      changedMeshes.add(mesh)
+      changed++
     }
-    mesh.setColorAt(ref.instanceId, new Color(hex))
-    if (mesh.instanceColor) {
-      mesh.instanceColor.needsUpdate = true
-    }
+    for (const mesh of changedMeshes) mesh.instanceColor!.needsUpdate = true
+    return changed
   }
 
   dispose(): void {

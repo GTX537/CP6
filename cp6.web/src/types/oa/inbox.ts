@@ -17,6 +17,7 @@ export interface PendingItem {
   stageName?: string
   stageCode?: string
   canSendBackPrevStage?: boolean
+  detailRoute?: string
 }
 
 export interface CcItem {
@@ -108,11 +109,34 @@ export interface ForecastStep {
 }
 
 export interface InboxDetail {
-  instance: any
-  flowName?: string
-  formKey?: string
-  formSchemaJson?: string
-  currentDataJson: string
+  instance: {
+    id: string
+    flowKey: string
+    flowName?: string
+    flowVersion?: number
+    status: number
+    currentNodeId: string
+    currentNodeName?: string
+    starter: { id: string; name: string }
+    createdAtUtc: string
+  }
+  content: {
+    kind: 'sfs' | 'business'
+    formDataId?: string
+    formKey?: string
+    formVersion?: number
+    schemaJson?: string
+    dataJson?: string
+    fieldMask?: Record<string, 'edit' | 'readonly'>
+    bizType?: string
+    bizId?: string
+  }
+  myTask?: {
+    taskId: string
+    nodeId: string
+    fieldMask: Record<string, 'edit' | 'readonly'>
+    formDataRowVersion?: string
+  } | null
   timeline: TimelineRow[]
   snapshots: SnapshotRow[]
   forecast: ForecastStep[]

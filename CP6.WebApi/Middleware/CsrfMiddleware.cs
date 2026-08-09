@@ -8,7 +8,8 @@ namespace CP6.WebApi.Middleware;
 /// CSRF 双提交校验（S 类认证加固 T6）。Cookie 化后浏览器自动带 cp6_at，需防跨站伪造写请求：
 /// 非安全方法须同时带 cp6_csrf cookie 与 X-CSRF-Token 头且二者相等（攻击者跨站无法读非 httpOnly
 /// cookie 也无法设自定义头）。开关 Security:Csrf:Enabled（默认 true；开发/QA 在 T9 前端注入头前置 false）。
-/// 登录端点豁免（登录时尚无 csrf cookie）；refresh 不豁免（轮换是高价值写操作）。
+/// Web 登录端点豁免（登录时尚无 csrf cookie）；Web Cookie refresh 不豁免。
+/// 原生 JSON 登录/挑战/refresh 端点不使用环境 Cookie，按精确路径单独豁免。
 /// </summary>
 public class CsrfMiddleware
 {
@@ -27,7 +28,13 @@ public class CsrfMiddleware
         if (_enabled)
         {
             var path = ctx.Request.Path.Value ?? "";
-            if (!IsExempt(path) && UnsafeMethods.Contains(ctx.Request.Method.ToUpperInvariant()))
+            // 原生客户端显式 Bearer 不依赖浏览器自动附带的 Cookie，CSRF 攻击模型不成立。
+            // 浏览器 Cookie 请求即使命中同一路由，因无 Authorization: Bearer 仍须双提交校验。
+            var explicitBearer = ctx.Request.Headers.Authorization.ToString()
+                .StartsWith("Bearer ", StringComparison.OrdinalIgnoreCase);
+            if (!explicitBearer
+                && !IsExempt(path)
+                && UnsafeMethods.Contains(ctx.Request.Method.ToUpperInvariant()))
             {
                 var cookie = ctx.Request.Cookies[AuthCookieWriter.CsrfCookie];
                 var header = ctx.Request.Headers["X-CSRF-Token"].ToString();
@@ -55,8 +62,26 @@ public class CsrfMiddleware
     ///    manual-fire）走 cookie 认证，必须留在 CSRF 保护面。</summary>
     internal static bool IsExempt(string path)
         => PathMatches(path, "/api/auth/login")
+           || IsNativeAnonymousAuthPath(path)
            || PathMatches(path, "/hubs")
            || IsFlowTriggerFirePath(path);
+
+    /// <summary>
+    /// 原生认证匿名端点不消费环境 Cookie：凭证/refresh/challenge 都在 JSON body，
+    /// 故仅对这些精确端点豁免；/api/client-auth/logout 仍依赖显式 Bearer 或 CSRF。
+    /// </summary>
+    internal static bool IsNativeAnonymousAuthPath(string path)
+        => new[]
+        {
+            "/api/client-auth/login",
+            "/api/client-auth/2fa/setup",
+            "/api/client-auth/2fa/enroll",
+            "/api/client-auth/2fa/verify",
+            "/api/client-auth/2fa/email-otp",
+            "/api/client-auth/sso/start",
+            "/api/client-auth/sso/exchange",
+            "/api/client-auth/refresh"
+        }.Any(x => path.Equals(x, StringComparison.OrdinalIgnoreCase));
 
     /// <summary>形状精确匹配 /api/oa/flow-triggers/{guid}/fire：前缀+字面 /fire 尾+中段须为单一 GUID 段
     /// （Guid.TryParse 与路由约束 {id:guid} 同判据；含 '/' 必然解析失败，杜绝多段穿透）。大小写不敏感与

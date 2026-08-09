@@ -32,7 +32,7 @@ import { computed, onMounted, onBeforeUnmount, ref } from 'vue'
 import { useI18n } from 'vue-i18n'
 import { ElMessage, ElMessageBox } from 'element-plus'
 import { Plus } from '@element-plus/icons-vue'
-import CpListPage, { type ListColumn, type ListFetch } from '@/components/templates/CpListPage.vue'
+import CpListPage, { type ListColumn, type ListFetch, type ListPageExpose } from '@/components/templates/CpListPage.vue'
 import { type FilterField } from '@/components/templates/CpFilterBar.vue'
 import { estimateCalcApi } from '@/api/erp/estimateCalc'
 import { masterApi } from '@/api/erp/master'
@@ -40,14 +40,14 @@ import type { EstimateCalcListItem, MasterBase } from '@/types/erp/estimateCalc'
 import { formatQty, formatNumber } from '@/utils/format'
 
 const { t } = useI18n()
-const listRef = ref<InstanceType<typeof CpListPage>>()
+const listRef = ref<ListPageExpose>()
 const bases = ref<MasterBase[]>([])
 
 const fmtDateTime = (v?: string) => (v ? v.replace('T', ' ').slice(0, 19) : '')
 const fmtNum = (v?: number) => (v == null ? '' : formatQty(v))
 const fmtMoney = (v?: number) => (v == null ? '' : formatNumber(v, 'decimal'))
 
-const columns = computed<ListColumn[]>(() => [
+const columns = computed<ListColumn<EstimateCalcListItem>[]>(() => [
   { prop: 'qtnCalcNo', label: t('sales.term.calcNo'), width: 140, sortable: 'custom' },
   { prop: 'qtnDate', label: t('sales.qtn.qtnDate'), width: 110, kind: 'date', sortable: 'custom' },
   { prop: 'qtnBaseCd', label: t('sales.term.base'), width: 80, sortable: 'custom' },
@@ -79,7 +79,7 @@ const searchFields = computed<FilterField[]>(() => [
   { key: 'dateRange', label: t('sales.qtn.qtnDate'), type: 'daterange', valueFormat: 'YYYY-MM-DD' },
 ])
 
-const fetchList: ListFetch = async ({ page, size, filters, sortField, sortOrder }) => {
+const fetchList: ListFetch<EstimateCalcListItem> = async ({ page, size, filters, sortField, sortOrder }) => {
   const f = filters as Record<string, unknown>
   const range = (f.dateRange as [string, string] | undefined) || null
   const res = await estimateCalcApi.getList({

@@ -5,4 +5,6 @@ public interface IForecastService
 {
     /// <param name="fromNodeId">null=从起点前推（发起预览）；非 null=从该当前关卡的下一步前推（详情预计段）。</param>
     Task<ForecastResult> ForecastAsync(string flowKey, string varsJson, Guid starterId, string? fromNodeId = null);
+    Task<ForecastResult> ForecastPinnedAsync(Guid flowDefVersionId, string varsJson, Guid starterId,
+        string? fromNodeId = null);
 }

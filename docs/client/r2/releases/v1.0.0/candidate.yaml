@@ -1,0 +1,258 @@
+schemaVersion: 1
+
+release:
+  version: 1.0.0
+  tag: v1.0.0
+  state: Draft
+  changeTicket: PENDING
+  approvedAt:
+  approvalExpiresAt:
+
+environments:
+  freeze: r2-release-freeze
+  candidate: r2-candidate
+  compose: r2-pilot-compose
+
+runners:
+  freeze: [self-hosted, Windows, X64, cp6-release]
+  candidate: [self-hosted, Windows, X64, cp6-release]
+  compose: [self-hosted, Windows, X64, cp6-deploy]
+
+deployment:
+  target: Compose
+  environment: r2-pilot-compose
+  baseUrl: PENDING
+  evidenceRootUri: PENDING
+  namespace: cp6-production
+  ingressHost: N/A
+  ingressClass: nginx
+  tlsSecret: cp6-tls
+
+tagPolicy:
+  creator: GitHubApp
+  immutable: true
+  nextVersionAfterFailure: 1.0.1
+  clientIdSecretReference: env:CP6_RELEASE_TAG_APP_CLIENT_ID
+  privateKeySecretReference: env:CP6_RELEASE_TAG_APP_PRIVATE_KEY
+
+inputs:
+  - id: windows-signing
+    description: Windows 代码签名证书、Publisher、私钥可用性与备份
+    requiredFor: [Candidate]
+    owner: PENDING
+    targetDate:
+    secretReference: PENDING
+    evidenceUri: PENDING
+    approver: Security
+    approvedAt:
+    expiresAt:
+    status: Pending
+  - id: windows-timestamp
+    description: RFC 3161 时间戳服务
+    requiredFor: [Candidate]
+    owner: PENDING
+    targetDate:
+    secretReference: N/A
+    evidenceUri: PENDING
+    approver: Security
+    approvedAt:
+    expiresAt:
+    status: Pending
+  - id: windows-distribution
+    description: MSIX、AppInstaller 正式 HTTPS 地址与品牌资产
+    requiredFor: [Candidate]
+    owner: PENDING
+    targetDate:
+    secretReference: N/A
+    evidenceUri: PENDING
+    approver: Release Owner
+    approvedAt:
+    expiresAt:
+    status: Pending
+  - id: android-signing
+    description: Android 正式 keystore、alias、SHA-256 签名指纹与备份
+    requiredFor: [Candidate]
+    owner: PENDING
+    targetDate:
+    secretReference: PENDING
+    evidenceUri: PENDING
+    approver: Security
+    approvedAt:
+    expiresAt:
+    status: Pending
+  - id: android-distribution
+    description: APK 正式 HTTPS 下载地址
+    requiredFor: [Candidate]
+    owner: PENDING
+    targetDate:
+    secretReference: N/A
+    evidenceUri: PENDING
+    approver: Release Owner
+    approvedAt:
+    expiresAt:
+    status: Pending
+  - id: api-tls
+    description: API 域名、证书链、AllowedHosts、CORS
+    requiredFor: [Candidate, Compose]
+    owner: PENDING
+    targetDate:
+    secretReference: PENDING
+    evidenceUri: PENDING
+    approver: Security
+    approvedAt:
+    expiresAt:
+    status: Pending
+  - id: database
+    description: SQL Server 端点、迁移/运行账号、备份与恢复策略
+    requiredFor: [Candidate, Compose]
+    owner: PENDING
+    targetDate:
+    secretReference: PENDING
+    evidenceUri: PENDING
+    approver: DBA
+    approvedAt:
+    expiresAt:
+    status: Pending
+  - id: redis
+    description: Redis TLS 端点、ACL 与容量
+    requiredFor: [Candidate, Compose]
+    owner: PENDING
+    targetDate:
+    secretReference: PENDING
+    evidenceUri: PENDING
+    approver: Platform
+    approvedAt:
+    expiresAt:
+    status: Pending
+  - id: messaging
+    description: RabbitMQ 或 Kafka 端点、账号与启用范围
+    requiredFor: [Candidate, Compose]
+    owner: PENDING
+    targetDate:
+    secretReference: PENDING
+    evidenceUri: PENDING
+    approver: Platform
+    approvedAt:
+    expiresAt:
+    status: Pending
+  - id: identity
+    description: JWT、OIDC、回调地址、SMTP 与 OTP
+    requiredFor: [Candidate, Compose]
+    owner: PENDING
+    targetDate:
+    secretReference: PENDING
+    evidenceUri: PENDING
+    approver: Security
+    approvedAt:
+    expiresAt:
+    status: Pending
+  - id: storage
+    description: S3 端点、bucket、SSE、版本控制与 Object Lock
+    requiredFor: [Candidate, Compose]
+    owner: PENDING
+    targetDate:
+    secretReference: PENDING
+    evidenceUri: PENDING
+    approver: Security
+    approvedAt:
+    expiresAt:
+    status: Pending
+  - id: release-tag-automation
+    description: 最小权限 GitHub App、Tag Ruleset 与冻结 Environment
+    requiredFor: [Candidate]
+    owner: PENDING
+    targetDate:
+    secretReference: env:CP6_RELEASE_TAG_APP_PRIVATE_KEY
+    evidenceUri: PENDING
+    approver: Security
+    approvedAt:
+    expiresAt:
+    status: Pending
+  - id: observability
+    description: 日志、指标、告警、值班路由与保留期
+    requiredFor: [Compose]
+    owner: PENDING
+    targetDate:
+    secretReference: N/A
+    evidenceUri: PENDING
+    approver: Operations
+    approvedAt:
+    expiresAt:
+    status: Pending
+  - id: pilot-scope
+    description: 试点租户、仓库、区域与设备组
+    requiredFor: [R2A]
+    owner: PENDING
+    targetDate:
+    secretReference: N/A
+    evidenceUri: PENDING
+    approver: Warehouse Owner
+    approvedAt:
+    expiresAt:
+    status: Pending
+  - id: role-owners
+    description: 主管、调度、操作与审计四类负责人
+    requiredFor: [R2A]
+    owner: PENDING
+    targetDate:
+    secretReference: N/A
+    evidenceUri: PENDING
+    approver: Business Owner
+    approvedAt:
+    expiresAt:
+    status: Pending
+  - id: devices
+    description: 十台 Android、扫描枪型号及扫码配置
+    requiredFor: [R2A]
+    owner: PENDING
+    targetDate:
+    secretReference: N/A
+    evidenceUri: PENDING
+    approver: Device Owner
+    approvedAt:
+    expiresAt:
+    status: Pending
+  - id: master-data
+    description: 条码、UOM、批次、打印机映射与正式标签模板
+    requiredFor: [R2A]
+    owner: PENDING
+    targetDate:
+    secretReference: N/A
+    evidenceUri: PENDING
+    approver: Warehouse Owner
+    approvedAt:
+    expiresAt:
+    status: Pending
+  - id: r2b-scope
+    description: 首批序列追踪产品与 LPN 容器范围
+    requiredFor: [R2B]
+    owner: PENDING
+    targetDate:
+    secretReference: N/A
+    evidenceUri: PENDING
+    approver: Inventory Owner
+    approvedAt:
+    expiresAt:
+    status: Pending
+  - id: recovery
+    description: SQL 备份恢复演练与 RPO/RTO
+    requiredFor: [Compose]
+    owner: PENDING
+    targetDate:
+    secretReference: PENDING
+    evidenceUri: PENDING
+    approver: DBA + Operations
+    approvedAt:
+    expiresAt:
+    status: Pending
+  - id: change-approval
+    description: 安全、仓库、平台与运维 Go/No-Go 审批
+    requiredFor: [Compose]
+    owner: PENDING
+    targetDate:
+    secretReference: N/A
+    evidenceUri: PENDING
+    approver: Change Manager
+    approvedAt:
+    expiresAt:
+    status: Pending

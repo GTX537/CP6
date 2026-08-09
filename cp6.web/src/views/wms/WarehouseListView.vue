@@ -63,7 +63,7 @@ import { ref, reactive, computed } from 'vue'
 import { ElMessage, ElMessageBox, type FormRules } from 'element-plus'
 import { useI18n } from 'vue-i18n'
 import CpPageShell from '@/components/templates/CpPageShell.vue'
-import CpListPage, { type ListColumn, type ListFetch } from '@/components/templates/CpListPage.vue'
+import CpListPage, { type ListColumn, type ListFetch, type ListPageExpose } from '@/components/templates/CpListPage.vue'
 import { type FilterField } from '@/components/templates/CpFilterBar.vue'
 import CpFormDialog from '@/components/templates/CpFormDialog.vue'
 import CpTag, { type Tone } from '@/components/base/CpTag.vue'
@@ -74,7 +74,7 @@ const { t } = useI18n()
 
 const total = ref<number>()
 // in-place 变更后命令式刷新（保留当前筛选/页码）
-const listRef = ref<InstanceType<typeof CpListPage> | null>(null)
+const listRef = ref<ListPageExpose | null>(null)
 function reloadList() { listRef.value?.reload() }
 
 const warehouseTypeMap = computed<Record<number, string>>(() => ({
@@ -92,7 +92,7 @@ function codeLabel(m: Record<number, string>, v: unknown): string {
   return m[v as number] || (v == null ? '' : String(v))
 }
 
-const columns = computed<ListColumn[]>(() => [
+const columns = computed<ListColumn<Warehouse>[]>(() => [
   { prop: 'warehouseCd', label: t('wms.warehouse.fld.cd'), width: 120 },
   { prop: 'warehouseName', label: t('wms.warehouse.fld.name'), minWidth: 200 },
   { prop: 'warehouseType', label: t('wms.warehouse.fld.type'), width: 120, kind: 'tag',
@@ -118,7 +118,7 @@ const searchFields = computed<FilterField[]>(() => [
   { key: 'baseCd', label: t('wms.warehouse.fld.baseCd'), type: 'text' },
 ])
 
-const fetchList: ListFetch = async ({ page, size, filters }) => {
+const fetchList: ListFetch<Warehouse> = async ({ page, size, filters }) => {
   const f = filters as Record<string, unknown>
   const q: { warehouseCd?: string; warehouseType?: number; baseCd?: string } = {}
   if (f.warehouseCd) q.warehouseCd = String(f.warehouseCd)

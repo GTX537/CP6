@@ -44,7 +44,7 @@ import { ref, computed } from 'vue'
 import { ElMessage, ElMessageBox } from 'element-plus'
 import { useI18n } from 'vue-i18n'
 import CpPageShell from '@/components/templates/CpPageShell.vue'
-import CpListPage, { type ListColumn, type ListFetch } from '@/components/templates/CpListPage.vue'
+import CpListPage, { type ListColumn, type ListFetch, type ListPageExpose } from '@/components/templates/CpListPage.vue'
 import { type FilterField } from '@/components/templates/CpFilterBar.vue'
 import CpTag from '@/components/base/CpTag.vue'
 import { expiryApi } from '@/api/wms/expiry'
@@ -58,7 +58,7 @@ const selected = ref<ExpiryStock[]>([])
 const overdueCount = ref(0)
 const totalLoss = ref(0)
 // 廃棄成功后命令式 reload（保留当前搜索条件，in-place 刷新）
-const listRef = ref<InstanceType<typeof CpListPage> | null>(null)
+const listRef = ref<ListPageExpose | null>(null)
 
 function dayClass(d: number) {
   if (d < 0) return 'overdue'
@@ -67,7 +67,7 @@ function dayClass(d: number) {
 }
 function formatMoney(n: number) { return formatQty(Math.round(Number(n) || 0), 0) }
 
-const columns = computed<ListColumn[]>(() => [
+const columns = computed<ListColumn<ExpiryStock>[]>(() => [
   { prop: 'productCd', label: t('wms.common.product'), width: 120 },
   { prop: 'lotNo', label: t('wms.common.lot'), width: 140 },
   { prop: 'warehouseCd', label: t('wms.common.warehouse'), width: 90 },
@@ -90,7 +90,7 @@ const searchFields = computed<FilterField[]>(() => [
   { key: 'warehouseCd', label: t('wms.common.warehouse'), type: 'text' },
 ])
 
-const fetchList: ListFetch = async ({ page, size, filters }) => {
+const fetchList: ListFetch<ExpiryStock> = async ({ page, size, filters }) => {
   const f = filters as Record<string, unknown>
   const rawDays = f.days == null || f.days === '' ? 30 : Number(f.days)
   const days = Number.isFinite(rawDays) && rawDays > 0 ? Math.min(rawDays, 365) : 30

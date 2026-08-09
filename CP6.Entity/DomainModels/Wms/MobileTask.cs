@@ -69,5 +69,40 @@ public class MobileTask : BaseBizEntity
     /// <summary>完了時に発行したトランザクションNO（MOVE 先 IN）</summary>
     [MaxLength(25)] public string? InTxnNo { get; set; }
 
+    /// <summary>
+    /// MOVE 完了コマンドの冪等キー。最初に成功した OperationId を保持し、
+    /// ネットワーク再送時に在庫を二重移動させない。
+    /// </summary>
+    public Guid? CompletionOperationId { get; set; }
+
     [MaxLength(500)] public string? Remarks { get; set; }
+
+    /// <summary>API contract generation. Legacy tasks are 1; production tasks are 2.</summary>
+    public int ContractVersion { get; set; } = 1;
+
+    [MaxLength(20)] public string? AreaCd { get; set; }
+    public DateTime? PlannedStartAt { get; set; }
+    public DateTime? DueAt { get; set; }
+
+    [MaxLength(25)] public string? ParentTaskNo { get; set; }
+    [MaxLength(25)] public string? RemainderTaskNo { get; set; }
+
+    /// <summary>
+    /// Incremented whenever ownership or execution continuity changes. Cached
+    /// scans from an older execution can never be submitted to a newer one.
+    /// </summary>
+    public int ExecutionVersion { get; set; }
+    public Guid? ExecutionId { get; set; }
+    [MaxLength(128)] public string? LastDeviceId { get; set; }
+
+    [MaxLength(30)] public string? ExceptionReasonCd { get; set; }
+    [MaxLength(500)] public string? ExceptionDescription { get; set; }
+    [MaxLength(500)] public string? PauseReason { get; set; }
+    [MaxLength(500)] public string? PartialReason { get; set; }
+
+    [Column(TypeName = "decimal(21,8)")]
+    public decimal ReservedSourceQty { get; set; }
+
+    [Column(TypeName = "decimal(21,8)")]
+    public decimal ReservedTargetCapacityQty { get; set; }
 }

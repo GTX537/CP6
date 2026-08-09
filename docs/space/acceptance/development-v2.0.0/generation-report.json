@@ -1,0 +1,22 @@
+{
+  "schemaVersion": 1,
+  "generatorVersion": "1.0.0",
+  "outputDirectory": ".",
+  "manifestPath": "manifest.json",
+  "sampleCount": 20,
+  "totalSizeBytes": 49983,
+  "cadVersions": [
+    "AC1009",
+    "AC1015",
+    "AC1021",
+    "AC1027",
+    "AC1032"
+  ],
+  "layoutFamilies": {
+    "L1": 4,
+    "L2": 4,
+    "L3": 4,
+    "L4": 4,
+    "L5": 4
+  }
+}

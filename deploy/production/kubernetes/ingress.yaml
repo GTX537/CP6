@@ -1,0 +1,47 @@
+apiVersion: networking.k8s.io/v1
+kind: Ingress
+metadata:
+  name: cp6
+  namespace: CP6_NAMESPACE
+  annotations:
+    nginx.ingress.kubernetes.io/affinity: cookie
+    nginx.ingress.kubernetes.io/session-cookie-name: cp6-affinity
+    nginx.ingress.kubernetes.io/session-cookie-secure: "true"
+spec:
+  ingressClassName: CP6_INGRESS_CLASS
+  tls:
+    - hosts:
+        - CP6_HOST
+      secretName: CP6_TLS_SECRET
+  rules:
+    - host: CP6_HOST
+      http:
+        paths:
+          - path: /api
+            pathType: Prefix
+            backend:
+              service:
+                name: cp6-api
+                port:
+                  number: 5000
+          - path: /health
+            pathType: Prefix
+            backend:
+              service:
+                name: cp6-api
+                port:
+                  number: 5000
+          - path: /hubs
+            pathType: Prefix
+            backend:
+              service:
+                name: cp6-api
+                port:
+                  number: 5000
+          - path: /
+            pathType: Prefix
+            backend:
+              service:
+                name: cp6-web
+                port:
+                  number: 80

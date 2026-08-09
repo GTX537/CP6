@@ -14,6 +14,9 @@ ARM64/
 # Build results & publish
 [Dd]ebugPublic/
 [Rr]eleases/
+# Version-controlled R2 release execution specifications are not build output.
+!docs/client/r2/releases/
+!docs/client/r2/releases/**
 *.user
 *.userosscache
 *.suo
@@ -175,6 +178,7 @@ docs/file/
 # i18n 优化 P4：发布模式生成的版本化静态包（产物，非源码）
 CP6.WebApi/wwwroot/i18n/
 .gstack/
+.tools/
 
 # pnpm store (2026-07-03 新机器迁移: 本地包缓存, 非源码)
 .pnpm-store/

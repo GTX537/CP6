@@ -5,7 +5,9 @@ using CP6.Entity.DomainModels.Sys;
 using Microsoft.AspNetCore.Http;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Diagnostics;
+using Microsoft.Extensions.Caching.Distributed;
 using Microsoft.Extensions.Caching.Memory;
+using Microsoft.Extensions.Options;
 
 namespace CP6.Tests;
 
@@ -50,7 +52,7 @@ public class CurrentPermissionContextTests
         await db.SaveChangesAsync();
 
         var agg = new CountingAggregator();
-        var cache = new MemoryCache(new MemoryCacheOptions());
+        var cache = Cache();
         var sut = new CurrentPermissionContext(HttpAs("u1"), cache, db, agg);
 
         var c1 = await sut.GetAsync();
@@ -75,7 +77,7 @@ public class CurrentPermissionContextTests
         await db.SaveChangesAsync();
 
         var agg = new CountingAggregator();
-        var cache = new MemoryCache(new MemoryCacheOptions());
+        var cache = Cache();
         // 单 accessor 切换 HttpContext（HttpContextAccessor 用静态 AsyncLocal，不能并存多实例）
         var http = new HttpContextAccessor();
         var sut = new CurrentPermissionContext(http, cache, db, agg);
@@ -100,7 +102,7 @@ public class CurrentPermissionContextTests
         await db.SaveChangesAsync();
 
         var agg = new CountingAggregator();
-        var cache = new MemoryCache(new MemoryCacheOptions());
+        var cache = Cache();
         var sut = new CurrentPermissionContext(HttpAs("u1"), cache, db, agg);
 
         await sut.PrewarmAsync(uid);   // 登录预热：build + 缓存
@@ -109,12 +111,47 @@ public class CurrentPermissionContextTests
     }
 
     [Fact]
+    public async Task TwoInstances_ShareCacheAndCrossInstanceInvalidation()
+    {
+        using var db = NewDb();
+        var uid = Guid.NewGuid();
+        db.Sys_Users.Add(new Sys_User
+        {
+            Id = uid,
+            UserName = "shared-user",
+            Password = "x",
+        });
+        await db.SaveChangesAsync();
+
+        var sharedCache = Cache();
+        var firstAggregator = new CountingAggregator();
+        var secondAggregator = new CountingAggregator();
+        var first = new CurrentPermissionContext(
+            HttpAs("shared-user"), sharedCache, db, firstAggregator);
+        var second = new CurrentPermissionContext(
+            HttpAs("shared-user"), sharedCache, db, secondAggregator);
+
+        await first.GetAsync();
+        await second.GetAsync();
+        Assert.Equal(1, firstAggregator.Calls);
+        Assert.Equal(0, secondAggregator.Calls);
+
+        first.Invalidate(uid);
+        await second.GetAsync();
+        Assert.Equal(1, secondAggregator.Calls);
+    }
+
+    [Fact]
     public async Task GetAsync_NotLoggedIn_Throws()
     {
         using var db = NewDb();
         var sut = new CurrentPermissionContext(
             new HttpContextAccessor { HttpContext = new DefaultHttpContext() },   // 无身份
-            new MemoryCache(new MemoryCacheOptions()), db, new CountingAggregator());
+            Cache(), db, new CountingAggregator());
         await Assert.ThrowsAsync<InvalidOperationException>(() => sut.GetAsync());
     }
+
+    private static IDistributedCache Cache()
+        => new MemoryDistributedCache(
+            Options.Create(new MemoryDistributedCacheOptions()));
 }

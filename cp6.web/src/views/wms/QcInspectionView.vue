@@ -192,7 +192,7 @@ const filterLabels = computed(() => ({
   reset: t('wms.common.clear'),
 }))
 
-const columns = computed<ListColumn[]>(() => [
+const columns = computed<ListColumn<QcInspection>[]>(() => [
   { prop: 'inspectionNo', label: t('wms.qc.fld.inspectionNo'), kind: 'mono', width: 180 },
   { prop: 'status', label: t('wms.common.status'), width: 110, kind: 'tag',
     map: (v) => ({ label: statusMap.value[v as number] ?? '', tone: statusTone(v as number) }) },
@@ -217,7 +217,7 @@ const searchFields = computed<FilterField[]>(() => [
   },
 ])
 
-const fetchList: ListFetch = async ({ filters }) => {
+const fetchList: ListFetch<QcInspection> = async ({ filters }) => {
   const f = filters as Record<string, unknown>
   const q: QcInspectionSearchQuery = { pageSize: 500 }
   if (f.inspectionNo) q.inspectionNo = String(f.inspectionNo)
@@ -242,7 +242,8 @@ const detailItems = computed<DetailItem[]>(() => {
   ]
 })
 
-async function openDetail(no: string) {
+async function openDetail(no?: string) {
+  if (!no) return
   const res = await qcInspectionApi.get(no)
   current.value = res.data
   mode.value = 'detail'

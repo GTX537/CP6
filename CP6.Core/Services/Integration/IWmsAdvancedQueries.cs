@@ -5,7 +5,7 @@ namespace CP6.Core.Services.Integration;
 /// 与 <see cref="IWmsStockQuery"/> 同族：单向、纯读、join 按 LocationCode/FloorId。
 /// 多租户由 CP6Context 全局过滤自动隔离（无 tenantId 参数）。
 /// </summary>
-public interface IWmsPickTaskQuery
+public interface IWmsPickTaskQuery : ISpaceDataSourceDescriptor
 {
     /// <summary>取拣货任务的有序拣货点（源=出库单 + 明细，按 LineNo 序）。未知单 → 空 Items。</summary>
     Task<PickPathDto> GetPickPathAsync(string taskNo, CancellationToken ct = default);
@@ -28,7 +28,7 @@ public sealed class PickStop
 }
 
 /// <summary>作业热图查询（源=库存流水按库位×时间窗计次）。</summary>
-public interface IWmsWorkloadQuery
+public interface IWmsWorkloadQuery : ISpaceDataSourceDescriptor
 {
     Task<IReadOnlyList<WorkloadDto>> GetWorkloadAsync(
         Guid floorId, DateTime from, DateTime to, CancellationToken ct = default);
@@ -42,7 +42,7 @@ public sealed class WorkloadDto
 }
 
 /// <summary>设备联动查询（v1 占位，WMS 返空/示例）。</summary>
-public interface IWmsDeviceQuery
+public interface IWmsDeviceQuery : ISpaceDataSourceDescriptor
 {
     Task<IReadOnlyList<DeviceDto>> GetDevicesAsync(Guid floorId, CancellationToken ct = default);
 }

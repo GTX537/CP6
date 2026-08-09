@@ -3,18 +3,16 @@
     <!-- Loading skeleton -->
     <el-skeleton v-if="loading" :rows="6" animated />
 
-    <!-- No enabled flow configured for this form -->
-    <el-alert
-      v-else-if="noFlow"
-      type="warning"
-      :title="t('该表单未配置启用流程')"
-      show-icon
-      :closable="false"
-      style="margin-bottom: 16px"
-    />
-
     <!-- Main content -->
     <template v-else>
+      <el-alert
+        v-if="noFlow"
+        type="info"
+        :title="t('该表单将作为独立表单提交')"
+        show-icon
+        :closable="false"
+        style="margin-bottom: 16px"
+      />
       <el-row :gutter="16" class="initiate-body">
         <!-- LEFT: editable form -->
         <el-col :span="forecastVisible ? 14 : 24" class="form-col">
@@ -63,7 +61,6 @@ import { useRoute, useRouter } from 'vue-router'
 import { useI18n } from 'vue-i18n'
 import { ElMessage } from 'element-plus'
 import { formApi } from '@/api/wf/form'
-import { flowApi } from '@/api/wf/flow'
 import { flowAdminApi } from '@/api/oa/flowAdmin'
 import { forecastApi } from '@/api/oa/forecast'
 import { draftApi } from '@/api/oa/draft'
@@ -108,11 +105,8 @@ async function load() {
     const adminRes = await flowAdminApi.list()
     const flows = ((adminRes as any).data as FlowAdminItem[]) || []
     const matched = flows.find((f) => f.formKey === formKey && f.enable)
-    if (!matched) {
-      noFlow.value = true
-      return
-    }
-    resolvedFlowKey.value = matched.flowKey
+    noFlow.value = !matched
+    resolvedFlowKey.value = matched?.flowKey ?? ''
 
     // 2. Load form field schema
     const formRes = await formApi.getDef(formKey)
@@ -151,10 +145,10 @@ async function doPreview() {
 
 /** 存暂存: save current model as draft */
 async function doSave() {
-  if (!resolvedFlowKey.value) return
+  if (!formKey) return
   saving.value = true
   try {
-    await draftApi.save(resolvedFlowKey.value, JSON.stringify(model.value))
+    await draftApi.create(formKey, model.value)
     ElMessage.success(t('oa.initiate.savedDraft'))
   } catch {
     // HTTP errors already surfaced by the http interceptor
@@ -165,8 +159,6 @@ async function doSave() {
 
 /** 提交: validate → save draft → submit → navigate to inbox */
 async function doSubmit() {
-  if (!resolvedFlowKey.value) return
-
   // validate form fields before submitting
   if (dynamicFormRef.value) {
     const valid = await dynamicFormRef.value.validate()
@@ -175,11 +167,9 @@ async function doSubmit() {
 
   submitting.value = true
   try {
-    // save → get draft id → submit
-    await flowApi.submit({
-      flowKey: resolvedFlowKey.value,
-      varsJson: JSON.stringify(model.value),
-    })
+    const idempotencyKey = globalThis.crypto?.randomUUID?.()
+      ?? `${Date.now()}-${Math.random().toString(16).slice(2)}`
+    await formApi.submit(formKey, model.value, idempotencyKey)
     ElMessage.success(t('oa.initiate.submitOk'))
     router.push('/oa/inbox')
   } catch {

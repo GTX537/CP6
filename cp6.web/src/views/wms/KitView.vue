@@ -210,7 +210,7 @@
 import { ref, computed, onMounted } from 'vue'
 import { ElMessage, ElMessageBox } from 'element-plus'
 import { useI18n } from 'vue-i18n'
-import CpListPage, { type ListColumn, type ListFetch } from '@/components/templates/CpListPage.vue'
+import CpListPage, { type ListColumn, type ListFetch, type ListPageExpose } from '@/components/templates/CpListPage.vue'
 import { type FilterField } from '@/components/templates/CpFilterBar.vue'
 import CpTag, { type Tone } from '@/components/base/CpTag.vue'
 import { kittingApi } from '@/api/wms/kitting'
@@ -252,9 +252,9 @@ async function loadActiveMasters() {
 const masterMode = ref<'list' | 'detail'>('list')
 const masterIsNew = ref(false)
 const currentMaster = ref<KitMaster | null>(null)
-const masterListRef = ref<InstanceType<typeof CpListPage>>()
+const masterListRef = ref<ListPageExpose>()
 
-const masterColumns = computed<ListColumn[]>(() => [
+const masterColumns = computed<ListColumn<KitMaster>[]>(() => [
   { prop: 'kitSku', label: t('wms.kit.fld.kitSku'), kind: 'mono', width: 180 },
   { prop: 'kitName', label: t('wms.kit.fld.kitName'), minWidth: 200, overflowTooltip: true },
   { prop: 'defaultWarehouseCd', label: t('wms.kit.fld.defaultWh'), width: 140 },
@@ -267,7 +267,7 @@ const masterSearchFields = computed<FilterField[]>(() => [
   { key: 'kitSku', label: t('wms.kit.fld.kitSku'), type: 'text' },
 ])
 
-const fetchMasters: ListFetch = async ({ page, size, filters }) => {
+const fetchMasters: ListFetch<KitMaster> = async ({ page, size, filters }) => {
   const f = filters as Record<string, unknown>
   const kw = f.kitSku ? String(f.kitSku) : undefined
   const all = (await kittingApi.searchMasters(kw)).data || []
@@ -331,7 +331,7 @@ async function onMasterDelete(kitSku: string) {
 // ─────────────────────── 指示 ───────────────────────
 const orderMode = ref<'list' | 'detail'>('list')
 const currentOrder = ref<KitOrder | null>(null)
-const orderListRef = ref<InstanceType<typeof CpListPage>>()
+const orderListRef = ref<ListPageExpose>()
 
 const isNewOrder = computed(() => currentOrder.value !== null && !currentOrder.value.kitOrderNo)
 const canExecute = computed(() => currentOrder.value && currentOrder.value.kitOrderNo && currentOrder.value.status === 0)
@@ -341,7 +341,7 @@ const kitLotHint = computed(() => currentOrder.value?.direction === 'DISASSEMBLE
   ? t('wms.kit.msg.kitLotRequiredDisassemble')
   : t('wms.kit.msg.kitLotAutoGen'))
 
-const orderColumns = computed<ListColumn[]>(() => [
+const orderColumns = computed<ListColumn<KitOrder>[]>(() => [
   { prop: 'kitOrderNo', label: t('wms.kit.fld.orderNo'), kind: 'mono', width: 180 },
   { prop: 'direction', label: t('wms.kit.fld.direction'), width: 120, kind: 'tag',
     map: (v) => ({ label: directionMap.value[v as string] ?? '', tone: v === 'ASSEMBLE' ? 'ok' : 'warn' }) },
@@ -370,7 +370,7 @@ const orderSearchFields = computed<FilterField[]>(() => [
   },
 ])
 
-const fetchOrders: ListFetch = async ({ page, size, filters }) => {
+const fetchOrders: ListFetch<KitOrder> = async ({ page, size, filters }) => {
   const f = filters as Record<string, unknown>
   const q: KitOrderSearchQuery = { pageSize: 100 }
   if (f.kitOrderNo) q.kitOrderNo = String(f.kitOrderNo)
@@ -390,7 +390,8 @@ function openOrderCreate() {
   orderMode.value = 'detail'
 }
 
-async function openOrderDetail(no: string) {
+async function openOrderDetail(no?: string) {
+  if (!no) return
   const res = await kittingApi.getOrder(no)
   currentOrder.value = res.data
   orderMode.value = 'detail'

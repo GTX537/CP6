@@ -1,0 +1,203 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://cp6.local/schemas/space/cad/v1/cad-review-workspace.schema.json",
+  "title": "CP6 Space CAD Review Workspace v1",
+  "type": "object",
+  "additionalProperties": false,
+  "required": [
+    "schemaVersion",
+    "isReadOnlyWorkspace",
+    "tenantId",
+    "modelVersionId",
+    "floorLogicalId",
+    "floorCode",
+    "diagnosticIndexSha256",
+    "editorContentRevision",
+    "editorSnapshotSha256",
+    "items",
+    "summary",
+    "workspaceSha256"
+  ],
+  "properties": {
+    "schemaVersion": { "const": 1 },
+    "isReadOnlyWorkspace": { "const": true },
+    "tenantId": { "$ref": "#/$defs/guid" },
+    "modelVersionId": { "$ref": "#/$defs/guid" },
+    "floorLogicalId": { "$ref": "#/$defs/guid" },
+    "floorCode": { "$ref": "#/$defs/token" },
+    "diagnosticIndexSha256": { "$ref": "#/$defs/sha256" },
+    "matchPreviewSha256": { "$ref": "#/$defs/sha256" },
+    "editorContentRevision": { "type": "integer", "minimum": 0 },
+    "editorContentHash": { "$ref": "#/$defs/sha256" },
+    "editorSnapshotSha256": { "$ref": "#/$defs/sha256" },
+    "previousWorkspaceSha256": { "$ref": "#/$defs/sha256" },
+    "items": {
+      "type": "array",
+      "maxItems": 100000,
+      "items": { "$ref": "#/$defs/reviewItem" }
+    },
+    "summary": { "$ref": "#/$defs/summary" },
+    "workspaceSha256": { "$ref": "#/$defs/sha256" }
+  },
+  "$defs": {
+    "guid": {
+      "type": "string",
+      "format": "uuid"
+    },
+    "sha256": {
+      "type": "string",
+      "pattern": "^[0-9a-f]{64}$"
+    },
+    "token": {
+      "type": "string",
+      "minLength": 1,
+      "maxLength": 128,
+      "pattern": "^\\S(?:.*\\S)?$"
+    },
+    "sourceRef": {
+      "type": "string",
+      "minLength": 1,
+      "maxLength": 200,
+      "pattern": "^\\S(?:.*\\S)?$"
+    },
+    "reviewItem": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": [
+        "reviewItemId",
+        "trackingKey",
+        "kind",
+        "severity",
+        "status",
+        "code",
+        "relatedCodes",
+        "suggestedActionCode",
+        "location",
+        "upstreamEvidenceSha256"
+      ],
+      "properties": {
+        "reviewItemId": { "$ref": "#/$defs/token" },
+        "trackingKey": {
+          "type": "string",
+          "minLength": 1,
+          "maxLength": 512,
+          "pattern": "^\\S(?:.*\\S)?$"
+        },
+        "kind": {
+          "enum": [
+            "MappingDiagnostic",
+            "SemanticDiagnostic",
+            "LowConfidenceProposal",
+            "RejectedProposal",
+            "ExcelUnmatched",
+            "ExcelConflict",
+            "ExcelError"
+          ]
+        },
+        "severity": { "enum": ["Info", "Warning", "Blocking"] },
+        "status": { "enum": ["Open", "Resolved"] },
+        "code": { "$ref": "#/$defs/token" },
+        "relatedCodes": {
+          "type": "array",
+          "uniqueItems": true,
+          "items": { "$ref": "#/$defs/token" }
+        },
+        "detailToken": {
+          "type": "string",
+          "minLength": 1,
+          "maxLength": 512,
+          "pattern": "^\\S(?:.*\\S)?$"
+        },
+        "suggestedActionCode": { "$ref": "#/$defs/token" },
+        "sourceRef": { "$ref": "#/$defs/sourceRef" },
+        "previewObjectId": { "$ref": "#/$defs/token" },
+        "targetLogicalId": { "$ref": "#/$defs/guid" },
+        "rackCode": { "$ref": "#/$defs/token" },
+        "confidenceBand": { "enum": ["High", "Review", "Low", "Rejected"] },
+        "location": { "$ref": "#/$defs/location" },
+        "upstreamEvidenceSha256": { "$ref": "#/$defs/sha256" },
+        "resolvedFromWorkspaceSha256": { "$ref": "#/$defs/sha256" }
+      },
+      "allOf": [
+        {
+          "if": { "properties": { "status": { "const": "Resolved" } } },
+          "then": { "required": ["resolvedFromWorkspaceSha256"] },
+          "else": { "not": { "required": ["resolvedFromWorkspaceSha256"] } }
+        }
+      ]
+    },
+    "location": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": [
+        "kind",
+        "floorLogicalId",
+        "suggestedPaddingMillimeters",
+        "canFocusCanvas"
+      ],
+      "properties": {
+        "kind": { "enum": ["Document", "Layer", "Block", "Entity"] },
+        "floorLogicalId": { "$ref": "#/$defs/guid" },
+        "layerId": { "$ref": "#/$defs/token" },
+        "blockName": { "$ref": "#/$defs/token" },
+        "sourceRef": { "$ref": "#/$defs/sourceRef" },
+        "previewObjectId": { "$ref": "#/$defs/token" },
+        "bounds": { "$ref": "#/$defs/bounds" },
+        "anchor": { "$ref": "#/$defs/point" },
+        "suggestedPaddingMillimeters": { "type": "integer", "minimum": 0 },
+        "canFocusCanvas": { "type": "boolean" }
+      }
+    },
+    "bounds": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["minX", "minY", "maxX", "maxY"],
+      "properties": {
+        "minX": { "type": "integer" },
+        "minY": { "type": "integer" },
+        "maxX": { "type": "integer" },
+        "maxY": { "type": "integer" }
+      }
+    },
+    "point": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["x", "y", "z"],
+      "properties": {
+        "x": { "type": "integer" },
+        "y": { "type": "integer" },
+        "z": { "type": "integer" }
+      }
+    },
+    "summary": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": [
+        "totalCount",
+        "openCount",
+        "resolvedCount",
+        "openInfoCount",
+        "openWarningCount",
+        "openBlockingCount",
+        "locatableCount",
+        "unlocatableCount",
+        "cadDiagnosticCount",
+        "proposalReviewCount",
+        "excelReviewCount"
+      ],
+      "properties": {
+        "totalCount": { "type": "integer", "minimum": 0 },
+        "openCount": { "type": "integer", "minimum": 0 },
+        "resolvedCount": { "type": "integer", "minimum": 0 },
+        "openInfoCount": { "type": "integer", "minimum": 0 },
+        "openWarningCount": { "type": "integer", "minimum": 0 },
+        "openBlockingCount": { "type": "integer", "minimum": 0 },
+        "locatableCount": { "type": "integer", "minimum": 0 },
+        "unlocatableCount": { "type": "integer", "minimum": 0 },
+        "cadDiagnosticCount": { "type": "integer", "minimum": 0 },
+        "proposalReviewCount": { "type": "integer", "minimum": 0 },
+        "excelReviewCount": { "type": "integer", "minimum": 0 }
+      }
+    }
+  }
+}

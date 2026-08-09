@@ -59,6 +59,12 @@
             </el-table-column>
             <el-table-column prop="currentLocationCd" :label="t('wms.slotting.rec.currentLoc')" width="180" />
             <el-table-column prop="recommendedLocationPattern" :label="t('wms.slotting.rec.recPattern')" width="180" />
+            <el-table-column prop="targetLocationCd" :label="t('wms.replenish.fld.toLoc')" width="160">
+              <template #default="{ row }">{{ row.targetLocationCd || '—' }}</template>
+            </el-table-column>
+            <el-table-column prop="mobileTaskNo" label="MOVE Task" width="190">
+              <template #default="{ row }"><span class="cp-mono">{{ row.mobileTaskNo || '—' }}</span></template>
+            </el-table-column>
             <el-table-column :label="t('wms.slotting.rec.needsMove')" width="110" align="center">
               <template #default="{ row }">
                 <CpTag v-if="row.needsRelocation" tone="warn">{{ t('wms.common.confirm') }}</CpTag>
@@ -72,7 +78,7 @@
       <el-affix position="bottom" :offset="0">
         <div class="action-bar">
           <el-button v-if="currentResult.plan.status === 1" type="success" @click="onApprove">{{ t('wms.stocktake.btn.approve') }}</el-button>
-          <el-button v-if="currentResult.plan.status !== 9 && currentResult.plan.status !== 2" type="danger" plain @click="onCancel">{{ t('wms.outbound.btn.cancel') }}</el-button>
+          <el-button v-if="currentResult.plan.status !== 9" type="danger" plain @click="onCancel">{{ t('wms.outbound.btn.cancel') }}</el-button>
         </div>
       </el-affix>
     </template>
@@ -103,20 +109,20 @@ import { ref, reactive, computed } from 'vue'
 import { ElMessage, ElMessageBox, type FormRules } from 'element-plus'
 import { useI18n } from 'vue-i18n'
 import CpPageShell from '@/components/templates/CpPageShell.vue'
-import CpListPage, { type ListColumn, type ListFetch } from '@/components/templates/CpListPage.vue'
+import CpListPage, { type ListColumn, type ListFetch, type ListPageExpose } from '@/components/templates/CpListPage.vue'
 import { type FilterField } from '@/components/templates/CpFilterBar.vue'
 import CpFormDialog from '@/components/templates/CpFormDialog.vue'
 import CpDetailPanel, { type DetailItem } from '@/components/templates/CpDetailPanel.vue'
 import CpSectionHeader from '@/components/base/CpSectionHeader.vue'
 import CpTag, { type Tone } from '@/components/base/CpTag.vue'
 import { slottingApi } from '@/api/wms/logistics'
-import type { SlottingPlanResult } from '@/types/wms/wms'
+import type { SlottingPlan, SlottingPlanResult } from '@/types/wms/wms'
 import { formatQty } from '@/utils/format'
 
 const { t } = useI18n()
 const mode = ref<'list' | 'detail'>('list')
 const total = ref<number>()
-const listRef = ref<InstanceType<typeof CpListPage>>()
+const listRef = ref<ListPageExpose>()
 const currentResult = ref<SlottingPlanResult | null>(null)
 // 明细内承認/取消后置脏标记：返回一覧时命令式刷新 CpListPage（v-show 常挂不自动重取）
 const listDirty = ref(false)
@@ -161,7 +167,7 @@ const planItems = computed<DetailItem[]>(() => {
 })
 
 // —— 一覧列 ——
-const columns = computed<ListColumn[]>(() => [
+const columns = computed<ListColumn<SlottingPlan>[]>(() => [
   { prop: 'slottingPlanNo', label: t('wms.slotting.fld.no'), kind: 'mono', width: 200 },
   { prop: 'status', label: t('wms.common.status'), width: 120, kind: 'tag',
     map: (v) => ({ label: codeLabel(statusMap.value, v), tone: statusTone(v as number) }) },
@@ -186,7 +192,7 @@ const searchFields = computed<FilterField[]>(() => [
 ])
 
 // —— 取数：slottingApi.search(wh, status) 返回扁平数组无 total → 客户端分页 ——
-const fetchList: ListFetch = async ({ page, size, filters }) => {
+const fetchList: ListFetch<SlottingPlan> = async ({ page, size, filters }) => {
   const f = filters as Record<string, unknown>
   const wh = f.warehouseCd ? String(f.warehouseCd) : undefined
   const status = f.status !== undefined && f.status !== '' ? Number(f.status) : undefined
@@ -219,8 +225,8 @@ async function onApprove() {
   if (!currentResult.value) return
   try {
     await ElMessageBox.confirm(t('wms.slotting.msg.approveAsk'), t('wms.common.confirm'), { type: 'warning' })
-    await slottingApi.approve(currentResult.value.plan.slottingPlanNo)
-    ElMessage.success(t('wms.common.success'))
+    const res = await slottingApi.approve(currentResult.value.plan.slottingPlanNo)
+    ElMessage.success(`${t('wms.common.success')}: ${res.data.generated} MOVE`)
     listDirty.value = true
     await openDetail(currentResult.value.plan.slottingPlanNo)
   } catch { /* */ }

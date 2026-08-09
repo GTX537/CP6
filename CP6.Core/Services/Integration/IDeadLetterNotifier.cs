@@ -12,3 +12,15 @@ public interface IDeadLetterNotifier
     /// </summary>
     Task NotifyAsync(IntegrationEvent evt, CancellationToken ct = default);
 }
+
+/// <summary>
+/// Fenced, durable notification contract for the Space dead-letter outbox.
+/// Success means the operator log is durably present; SignalR is best effort.
+/// </summary>
+public interface ISpaceDeadLetterNotifier
+{
+    Task<bool> TryNotifyDurablyAsync(
+        IntegrationEvent evt,
+        Guid notificationLeaseId,
+        CancellationToken ct = default);
+}

@@ -116,7 +116,7 @@ import { computed, onMounted, reactive, ref } from 'vue'
 import { useI18n } from 'vue-i18n'
 import { ElMessage, ElMessageBox } from 'element-plus'
 import CpPageShell from '@/components/templates/CpPageShell.vue'
-import CpListPage, { type ListColumn, type ListFetch } from '@/components/templates/CpListPage.vue'
+import CpListPage, { type ListColumn, type ListFetch, type ListPageExpose } from '@/components/templates/CpListPage.vue'
 import CpTag from '@/components/base/CpTag.vue'
 import { outboundRoutingApi } from '@/api/wms/outboundRouting'
 import { warehouseApi } from '@/api/wms/warehouse'
@@ -125,7 +125,7 @@ import type { OutboundRoutingRule } from '@/types/wms/outboundRouting'
 const { t } = useI18n()
 
 const total = ref<number>()
-const listRef = ref<InstanceType<typeof CpListPage>>()
+const listRef = ref<ListPageExpose>()
 const warehouses = ref<{ warehouseCd: string; warehouseName: string }[]>([])
 const saving = ref(false)
 
@@ -136,7 +136,7 @@ const dialogTitle = computed(() =>
 )
 
 // —— 列定义（customerCd/productCdPrefix/outboundType は any フォールバックを map で文案置換；enabled は kind:'tag'+map） ——
-const columns = computed<ListColumn[]>(() => [
+const columns = computed<ListColumn<OutboundRoutingRule>[]>(() => [
   { prop: 'sortOrder', label: t('wms.outboundRouting.col.sortOrder'), width: 90, kind: 'num' },
   { prop: 'ruleName', label: t('wms.outboundRouting.col.ruleName'), minWidth: 180, overflowTooltip: true },
   { prop: 'customerCd', label: t('wms.outboundRouting.col.customerCd'), width: 120,
@@ -153,7 +153,7 @@ const columns = computed<ListColumn[]>(() => [
 ])
 
 // —— 取数：outboundRoutingApi.list(true) 扁平数组、无分页 → paginated=false 一次取全 ——
-const fetchList: ListFetch = async () => {
+const fetchList: ListFetch<OutboundRoutingRule> = async () => {
   const res = await outboundRoutingApi.list(true)
   const all = (res?.data || []) as OutboundRoutingRule[]
   return { rows: all, total: all.length }

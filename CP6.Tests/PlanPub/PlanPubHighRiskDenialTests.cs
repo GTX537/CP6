@@ -68,6 +68,7 @@ public class PlanPubHighRiskDenialTests
         var services = new ServiceCollection();
         services.AddSingleton(db);
         services.AddMemoryCache();
+        services.AddDistributedMemoryCache();
         services.AddSingleton<IHttpContextAccessor, HttpContextAccessor>();
         services.AddScoped<IPermissionAggregator, PermissionAggregator>();
         services.AddScoped<ICurrentPermissionContext, CurrentPermissionContext>();

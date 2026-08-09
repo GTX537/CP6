@@ -4,16 +4,19 @@ import {
   ShapeGeometry,
   Object3D,
   Group,
-  LineSegments,
-  LineBasicMaterial,
-  EdgesGeometry,
   MeshBasicMaterial,
   Color,
   PlaneGeometry,
 } from 'three'
-import type { EditorScene, ZoneVO, AisleVO, RackVO } from '@/types/space/scene'
+import type { EditorScene, ZoneVO, AisleVO } from '@/types/space/scene'
 import { InstancedBuckets } from './InstancedBuckets'
-import { UNIT_BOX, addLights, makeRackEdges, zoneMaterial } from './BoxFactory'
+import { addLights, zoneMaterial } from './BoxFactory'
+import { buildInstancedRacks } from './InstancedRacks'
+import {
+  ParametricDesignSceneBuilder,
+  type ParametricDesignSceneBuildResult,
+} from '../design/ParametricDesignSceneBuilder'
+import type { ParametricDesignSceneInput } from '../design/ParametricRenderPlan'
 
 export interface SceneBuildResult {
   objects: Object3D[]
@@ -27,6 +30,12 @@ interface BuildOptions {
 }
 
 export class SceneBuilder {
+  buildDesign(
+    scene: ParametricDesignSceneInput,
+  ): ParametricDesignSceneBuildResult {
+    return new ParametricDesignSceneBuilder().build(scene)
+  }
+
   build(scene: EditorScene, opts: BuildOptions = {}): SceneBuildResult {
     const objects: Object3D[] = []
 
@@ -82,10 +91,7 @@ export class SceneBuilder {
 
     // Rack frames
     const rackGroup = new Group()
-    for (const rack of scene.racks) {
-      const frame = this._buildRackFrame(rack)
-      rackGroup.add(frame)
-    }
+    rackGroup.add(buildInstancedRacks(scene.racks))
     objects.push(rackGroup)
 
     // InstancedBuckets for locations (synchronous build — requestIdleCallback batching is a K-3+ refinement)
@@ -153,18 +159,6 @@ export class SceneBuilder {
       depthWrite: false,
     })
     return new Mesh(geo, mat)
-  }
-
-  private _buildRackFrame(rack: RackVO): LineSegments {
-    const frame = makeRackEdges()
-    // Size = total rack envelope in mm
-    const w = rack.cols * rack.cellW
-    const h = rack.levels * rack.cellH
-    const d = rack.depthCount * rack.cellD
-    frame.scale.set(w, h, d)
-    frame.position.set(rack.x, rack.y, rack.z)
-    frame.rotation.z = rack.rotationZ
-    return frame
   }
 
   private _parsePolygon(polyStr: string): [number, number][] {

@@ -3,6 +3,7 @@ using CP6.WebApi.Localization;
 using CP6.Core.Services.Common;
 using CP6.Core.Services.Integration;
 using CP6.Core.Services.Space;
+using CP6.Core.Services.Space.Observability;
 using CP6.Entity.DomainModels.Space;
 using CP6.Entity.DTOs.Space;
 using Microsoft.EntityFrameworkCore;
@@ -24,15 +25,43 @@ public class LocationPublishServiceTests
         IWmsStockQuery? stock = null,
         ISpaceBridgeHook? hook = null,
         IWmsBinDeactivator? deact = null,
-        ISpaceNotifier? notifier = null)
+        ISpaceNotifier? notifier = null,
+        SpaceExecutionContextAccessor? execution = null)
     {
         var t = new TenantContext();
         var code = new CodeEngineService(db);
-        hook ??= new SpaceBridgeHook(db, NullLogger<SpaceBridgeHook>.Instance, new NoOpWmsLocationConsumer());
-        stock ??= new StubWmsStockQuery();
+        execution ??= NewExecution();
+        hook ??= new SpaceBridgeHook(
+            db,
+            NullLogger<SpaceBridgeHook>.Instance,
+            new NoOpWmsLocationConsumer(),
+            execution,
+            execution);
+        stock ??= new FixedStockQuery(0);
         deact ??= new CP6.Core.Services.Wms.WmsBinDeactivator(db);
         notifier ??= new NoOpSpaceNotifier();
-        return new LocationPublishService(db, t, code, hook, stock, deact, notifier);
+        return new LocationPublishService(
+            db,
+            t,
+            code,
+            hook,
+            stock,
+            deact,
+            notifier,
+            execution,
+            execution);
+    }
+
+    private static SpaceExecutionContextAccessor NewExecution(Guid? correlationId = null)
+    {
+        var execution = new SpaceExecutionContextAccessor();
+        execution.Push(SpaceExecutionContext.ForUser(
+            TenantContext.DefaultTenant,
+            "test-user",
+            "Test User",
+            correlationId ?? Guid.NewGuid(),
+            Guid.NewGuid().ToString("N")));
+        return execution;
     }
 
     /// <summary>发布/停用后 SignalR プッシュが呼ばれたか記録する桩（実装契約通り例外を投げない）。</summary>
@@ -59,6 +88,118 @@ public class LocationPublishServiceTests
         new CodeSegmentDef { Key = "zone", Source = "zone-code", Sep = "-" },
         new CodeSegmentDef { Key = "col",  Source = "col",       Sep = "" }
     });
+
+    private static Guid SeedPublishableFloor(CP6Context db)
+    {
+        var floorId = Guid.NewGuid();
+        var site = new Space_Site
+        {
+            Id = Guid.NewGuid(),
+            SiteCode = "S1",
+            SiteName = "Site 1"
+        };
+        var floor = new Space_Floor
+        {
+            Id = floorId,
+            SiteId = site.Id,
+            Level = 1,
+            FloorCode = "F1",
+            FloorName = "Floor 1"
+        };
+        var zone = new Space_Zone
+        {
+            Id = Guid.NewGuid(),
+            FloorId = floorId,
+            ZoneCode = "Z1",
+            ZoneName = "Zone 1"
+        };
+        var rack = new Space_Rack
+        {
+            Id = Guid.NewGuid(),
+            ZoneId = zone.Id,
+            FloorId = floorId,
+            RackCode = "R1",
+            Cols = 1,
+            Levels = 1,
+            CellW = 1000,
+            CellH = 1000,
+            CellD = 1000
+        };
+        db.Space_CodeRules.Add(new Space_CodeRule
+        {
+            Id = Guid.NewGuid(),
+            RuleName = "default",
+            ScopeType = 0,
+            IsDefault = true,
+            Segments = ValidSegmentsJson()
+        });
+        db.AddRange(site, floor, zone, rack);
+        db.Space_Locations.Add(new Space_Location
+        {
+            Id = Guid.NewGuid(),
+            FloorId = floorId,
+            RackId = rack.Id,
+            Placed = true,
+            Status = 0,
+            CodeOrigin = 1,
+            LocationCode = "Z1-1",
+            Col = 1,
+            Level = 1,
+            Depth = 1
+        });
+        db.SaveChanges();
+        return floorId;
+    }
+
+    [Fact]
+    public async Task Publish_reuses_execution_correlation_and_persists_attempt_and_job()
+    {
+        using var db = Db();
+        var correlationId = Guid.NewGuid();
+        var execution = NewExecution(correlationId);
+        var floorId = SeedPublishableFloor(db);
+        var service = MakePublishSvc(db, execution: execution);
+
+        await service.PublishFloorAsync(floorId, null, "alice");
+
+        var evt = await db.IntegrationEvents.SingleAsync();
+        Assert.Equal(correlationId, evt.CorrelationId);
+        Assert.NotNull(evt.PublishAttemptId);
+        Assert.NotNull(evt.JobId);
+        Assert.Equal(evt.PublishAttemptId, execution.Current!.PublishAttemptId);
+        Assert.Equal(evt.JobId, execution.Current.JobId);
+    }
+
+    [Fact]
+    public async Task Publish_without_matching_locations_does_not_create_attempt()
+    {
+        using var db = Db();
+        var execution = NewExecution();
+        var service = MakePublishSvc(db, execution: execution);
+
+        var count = await service.PublishFloorAsync(Guid.NewGuid(), null, "alice");
+
+        Assert.Equal(0, count);
+        Assert.Null(execution.Current!.PublishAttemptId);
+        Assert.Null(execution.Current.JobId);
+        Assert.Empty(db.IntegrationEvents);
+    }
+
+    [Fact]
+    public async Task Publish_requires_context_before_state_change()
+    {
+        using var db = Db();
+        var floorId = SeedPublishableFloor(db);
+        var execution = new SpaceExecutionContextAccessor();
+        var service = MakePublishSvc(db, execution: execution);
+
+        var error = await Assert.ThrowsAsync<InvalidOperationException>(
+            () => service.PublishFloorAsync(floorId, null, "alice"));
+
+        Assert.Equal("SPACE_EXECUTION_CONTEXT_REQUIRED", error.Message);
+        Assert.Equal(0, (await db.Space_Locations.SingleAsync()).Status);
+        Assert.Empty(db.IntegrationEvents);
+    }
 
     [Fact]
     public async Task Publish_GatePassed_FlipsStatusAndEmitsEvent()
@@ -194,6 +335,29 @@ public class LocationPublishServiceTests
         db.Space_Zones.Add(zone);
         db.Space_Racks.Add(rack);
         return (floorId, rackId);
+    }
+
+    private static IReadOnlyList<Guid> SeedPublishedLocations(
+        CP6Context db,
+        int count)
+    {
+        var ids = Enumerable.Range(1, count)
+            .Select(_ => Guid.NewGuid())
+            .ToList();
+        db.Space_Locations.AddRange(ids.Select((id, index) =>
+            new Space_Location
+            {
+                Id = id,
+                FloorId = Guid.NewGuid(),
+                RackId = Guid.NewGuid(),
+                Placed = true,
+                Status = 1,
+                CodeOrigin = 1,
+                LocationCode = $"CTX-OUTCOME-{index + 1:D2}",
+                Version = 1
+            }));
+        db.SaveChanges();
+        return ids;
     }
 
     [Fact]
@@ -361,6 +525,7 @@ public class LocationPublishServiceTests
     public async Task Deactivate_StockZero_Success_EmitsDeactivateEvent()
     {
         using var db = Db();
+        var execution = NewExecution();
         var floorId = Guid.NewGuid();
         var rackId = Guid.NewGuid();
         var site = new Space_Site { Id = Guid.NewGuid(), SiteCode = "S1", SiteName = "S1" };
@@ -380,7 +545,7 @@ public class LocationPublishServiceTests
         });
         await db.SaveChangesAsync();
 
-        await MakePublishSvc(db).DeactivateAsync(locId, "u");
+        await MakePublishSvc(db, execution: execution).DeactivateAsync(locId, "u");
 
         var loc = await db.Space_Locations.SingleAsync();
         Assert.Equal(2, loc.Status);
@@ -390,6 +555,231 @@ public class LocationPublishServiceTests
         var payload = JsonSerializer.Deserialize<JsonElement>(evt.PayloadJson);
         var firstOp = payload.GetProperty("Items")[0].GetProperty("Op").GetString();
         Assert.Equal("DEACTIVATE", firstOp);
+        Assert.Equal(execution.Current!.CorrelationId, evt.CorrelationId);
+        Assert.Equal(execution.Current.PublishAttemptId, evt.PublishAttemptId);
+        Assert.Equal(execution.Current.JobId, evt.JobId);
+        Assert.NotNull(evt.PublishAttemptId);
+        Assert.NotNull(evt.JobId);
+    }
+
+    [Fact]
+    public async Task Deactivate_establishes_attempt_before_stock_and_deactivator_calls()
+    {
+        using var db = Db();
+        var locationId = Guid.NewGuid();
+        db.Space_Locations.Add(new Space_Location
+        {
+            Id = locationId,
+            FloorId = Guid.NewGuid(),
+            RackId = Guid.NewGuid(),
+            Placed = true,
+            Status = 1,
+            CodeOrigin = 1,
+            LocationCode = "CTX-01",
+            Version = 1
+        });
+        await db.SaveChangesAsync();
+        var execution = NewExecution();
+        var stock = new ContextCheckingStockQuery(execution);
+        var deactivator = new ContextCheckingDeactivator(execution);
+        var service = MakePublishSvc(
+            db,
+            stock: stock,
+            deact: deactivator,
+            execution: execution);
+
+        await service.DeactivateAsync(locationId, "alice");
+
+        Assert.NotNull(execution.Current!.PublishAttemptId);
+        Assert.Equal(execution.Current.PublishAttemptId, stock.SeenPublishAttemptId);
+        Assert.Equal(execution.Current.PublishAttemptId, deactivator.SeenPublishAttemptId);
+    }
+
+    [Fact]
+    public async Task Sequential_deactivations_use_distinct_child_attempts_and_restore_first_root_identity()
+    {
+        using var db = Db();
+        var firstLocationId = Guid.NewGuid();
+        var secondLocationId = Guid.NewGuid();
+        db.Space_Locations.AddRange(
+            new Space_Location
+            {
+                Id = firstLocationId,
+                FloorId = Guid.NewGuid(),
+                RackId = Guid.NewGuid(),
+                Placed = true,
+                Status = 1,
+                CodeOrigin = 1,
+                LocationCode = "CTX-BATCH-01",
+                Version = 1
+            },
+            new Space_Location
+            {
+                Id = secondLocationId,
+                FloorId = Guid.NewGuid(),
+                RackId = Guid.NewGuid(),
+                Placed = true,
+                Status = 1,
+                CodeOrigin = 1,
+                LocationCode = "CTX-BATCH-02",
+                Version = 1
+            });
+        await db.SaveChangesAsync();
+        var execution = NewExecution();
+        var stock = new ContextCheckingStockQuery(execution);
+        var deactivator = new ContextCheckingDeactivator(execution);
+        var service = MakePublishSvc(
+            db,
+            stock: stock,
+            deact: deactivator,
+            execution: execution);
+
+        await service.DeactivateAsync(firstLocationId, "alice");
+        var firstRootAttempt = execution.Current!.PublishAttemptId;
+        var firstRootJob = execution.Current.JobId;
+
+        await service.DeactivateAsync(secondLocationId, "alice");
+
+        var events = await db.IntegrationEvents.ToListAsync();
+        Assert.Equal(2, events.Count);
+        Assert.All(events, evt =>
+        {
+            Assert.Equal(execution.Current.CorrelationId, evt.CorrelationId);
+            Assert.NotNull(evt.PublishAttemptId);
+            Assert.NotNull(evt.JobId);
+        });
+        Assert.Equal(2, events.Select(evt => evt.PublishAttemptId).Distinct().Count());
+        Assert.Equal(2, events.Select(evt => evt.JobId).Distinct().Count());
+        Assert.Equal(2, stock.SeenPublishAttemptIds.Count);
+        Assert.Equal(2, deactivator.SeenPublishAttemptIds.Count);
+        Assert.Equal(stock.SeenPublishAttemptIds, deactivator.SeenPublishAttemptIds);
+        Assert.True(events
+            .Select(evt => evt.PublishAttemptId)
+            .ToHashSet()
+            .SetEquals(stock.SeenPublishAttemptIds));
+        Assert.Equal(firstRootAttempt, execution.Current.PublishAttemptId);
+        Assert.Equal(firstRootJob, execution.Current.JobId);
+    }
+
+    [Fact]
+    public async Task Second_deactivation_failure_before_hook_becomes_latest_outcome_without_job()
+    {
+        using var db = Db();
+        var locationIds = SeedPublishedLocations(db, 2);
+        var execution = NewExecution();
+        var stock = new ContextCheckingStockQuery(execution);
+        var deactivator = new RejectSecondDeactivator(execution);
+        var service = MakePublishSvc(
+            db,
+            stock: stock,
+            deact: deactivator,
+            execution: execution);
+
+        await service.DeactivateAsync(locationIds[0], "alice");
+        var firstAttempt = execution.Current!.PublishAttemptId;
+        var firstJob = execution.Current.JobId;
+
+        var error = await Assert.ThrowsAsync<BizException>(
+            () => service.DeactivateAsync(locationIds[1], "alice"));
+
+        Assert.Equal("W-SPACE-404", error.Code);
+        Assert.Equal(firstAttempt, execution.Current.PublishAttemptId);
+        Assert.Equal(firstJob, execution.Current.JobId);
+        var outcome = execution.RequireOutcomeCurrent();
+        Assert.Equal(
+            deactivator.SeenPublishAttemptIds[1],
+            outcome.PublishAttemptId);
+        Assert.NotEqual(firstAttempt, outcome.PublishAttemptId);
+        Assert.Null(outcome.JobId);
+        Assert.Single(await db.IntegrationEvents.ToListAsync());
+    }
+
+    [Fact]
+    public async Task Failed_final_audit_after_second_hook_uses_second_attempt_and_job()
+    {
+        var tenant = new TenantContext
+        {
+            CurrentTenantId = TenantContext.DefaultTenant
+        };
+        var options = new DbContextOptionsBuilder<CP6Context>()
+            .UseInMemoryDatabase(Guid.NewGuid().ToString())
+            .Options;
+        await using var db = new CP6Context(options, tenant);
+        var locationIds = SeedPublishedLocations(db, 2);
+        var execution = NewExecution();
+        var notifier = new ThrowOnSecondNotifier();
+        var service = MakePublishSvc(
+            db,
+            notifier: notifier,
+            execution: execution);
+
+        await service.DeactivateAsync(locationIds[0], "alice");
+        var firstAttempt = execution.Current!.PublishAttemptId;
+        var firstJob = execution.Current.JobId;
+
+        await Assert.ThrowsAsync<InvalidOperationException>(
+            () => service.DeactivateAsync(locationIds[1], "alice"));
+
+        Assert.Equal(firstAttempt, execution.Current.PublishAttemptId);
+        Assert.Equal(firstJob, execution.Current.JobId);
+        var outcome = execution.RequireOutcomeCurrent();
+        Assert.NotNull(outcome.PublishAttemptId);
+        Assert.NotNull(outcome.JobId);
+        Assert.NotEqual(firstAttempt, outcome.PublishAttemptId);
+        Assert.NotEqual(firstJob, outcome.JobId);
+        var events = await db.IntegrationEvents.ToListAsync();
+        var secondEvent = Assert.Single(
+            events,
+            evt => evt.PublishAttemptId == outcome.PublishAttemptId);
+        Assert.Equal(outcome.JobId, secondEvent.JobId);
+
+        var writer = new SpaceAuditWriter(
+            new SharedAuditFactory(options, tenant),
+            execution,
+            NullLogger<SpaceAuditWriter>.Instance);
+        Assert.True(await writer.TryAppendAsync(new SpaceAuditEventInput(
+            Action: "space.location.deactivate",
+            ResourceType: "Location",
+            ResourceId: locationIds[1].ToString(),
+            Outcome: SpaceAuditOutcome.Failed,
+            ReasonCode: "SPACE_ACTION_FAILED")));
+
+        var audit = await db.SpaceAuditEvents.SingleAsync();
+        Assert.Equal(outcome.PublishAttemptId, audit.PublishAttemptId);
+        Assert.Equal(outcome.JobId, audit.JobId);
+    }
+
+    [Fact]
+    public async Task Deactivate_missing_context_fails_before_stock_query()
+    {
+        using var db = Db();
+        var locationId = Guid.NewGuid();
+        db.Space_Locations.Add(new Space_Location
+        {
+            Id = locationId,
+            FloorId = Guid.NewGuid(),
+            RackId = Guid.NewGuid(),
+            Placed = true,
+            Status = 1,
+            CodeOrigin = 1,
+            LocationCode = "CTX-02",
+            Version = 1
+        });
+        await db.SaveChangesAsync();
+        var execution = new SpaceExecutionContextAccessor();
+        var stock = new CountingStockQuery();
+        var service = MakePublishSvc(
+            db,
+            stock: stock,
+            execution: execution);
+
+        var error = await Assert.ThrowsAsync<InvalidOperationException>(
+            () => service.DeactivateAsync(locationId, "alice"));
+
+        Assert.Equal("SPACE_EXECUTION_CONTEXT_REQUIRED", error.Message);
+        Assert.Equal(0, stock.Calls);
+        Assert.Equal(1, (await db.Space_Locations.SingleAsync()).Status);
+        Assert.Empty(db.IntegrationEvents);
     }
 
     [Fact]
@@ -410,6 +800,37 @@ public class LocationPublishServiceTests
             () => MakePublishSvc(db, stock: stockStub).DeactivateAsync(locId, "u"));
         Assert.Equal("E-SPACE-401", ex.Code);
         Assert.Equal(0, await db.IntegrationEvents.CountAsync());
+    }
+
+    [Fact]
+    public async Task Deactivate_UnavailableStockSource_FailsClosed()
+    {
+        using var db = Db();
+        var locId = Guid.NewGuid();
+        db.Space_Locations.Add(new Space_Location
+        {
+            Id = locId,
+            FloorId = Guid.NewGuid(),
+            RackId = Guid.NewGuid(),
+            Placed = true,
+            Status = 1,
+            CodeOrigin = 1,
+            LocationCode = "X-02-01-01",
+            Col = 1,
+            Level = 1,
+            Depth = 1,
+            Version = 1,
+        });
+        await db.SaveChangesAsync();
+
+        var error = await Assert.ThrowsAsync<BizException>(
+            () => MakePublishSvc(db, stock: new StubWmsStockQuery())
+                .DeactivateAsync(locId, "u"));
+
+        Assert.Equal(SpaceDataSourceErrors.Unavailable, error.Code);
+        Assert.Equal(503, error.HttpStatus);
+        Assert.Equal(1, (await db.Space_Locations.SingleAsync()).Status);
+        Assert.Empty(db.IntegrationEvents);
     }
 
     [Fact]
@@ -434,6 +855,7 @@ public class LocationPublishServiceTests
     public async Task Republish_PublishedLocation_BumpsVersion_EmitsUpsert()
     {
         using var db = Db();
+        var execution = NewExecution();
         var (floorId, rackId) = SeedHierarchy(db, siteWarehouseCd: null);
         var locId = Guid.NewGuid();
         db.Space_Locations.Add(new Space_Location
@@ -444,7 +866,8 @@ public class LocationPublishServiceTests
         });
         await db.SaveChangesAsync();
 
-        var n = await MakePublishSvc(db).RepublishAsync(new[] { locId }, "u");
+        var n = await MakePublishSvc(db, execution: execution)
+            .RepublishAsync(new[] { locId }, "u");
 
         Assert.Equal(1, n);
         var loc = await db.Space_Locations.SingleAsync();
@@ -455,6 +878,11 @@ public class LocationPublishServiceTests
         var payload = System.Text.Json.JsonSerializer.Deserialize<System.Text.Json.JsonElement>(evt.PayloadJson);
         Assert.Equal("UPSERT", payload.GetProperty("Items")[0].GetProperty("Op").GetString());
         Assert.Equal(4, payload.GetProperty("Items")[0].GetProperty("Version").GetInt64());
+        Assert.Equal(execution.Current!.CorrelationId, evt.CorrelationId);
+        Assert.Equal(execution.Current.PublishAttemptId, evt.PublishAttemptId);
+        Assert.Equal(execution.Current.JobId, evt.JobId);
+        Assert.NotNull(evt.PublishAttemptId);
+        Assert.NotNull(evt.JobId);
     }
 
     [Fact]
@@ -473,20 +901,28 @@ public class LocationPublishServiceTests
         });
         await db.SaveChangesAsync();
 
-        var n = await MakePublishSvc(db).RepublishAsync(new[] { draftId, deactId }, "u");
+        var execution = NewExecution();
+        var n = await MakePublishSvc(db, execution: execution)
+            .RepublishAsync(new[] { draftId, deactId }, "u");
 
         Assert.Equal(0, n);
         Assert.Equal(0, await db.IntegrationEvents.CountAsync());   // 非发布态不产生事件
         Assert.Equal(0, (await db.Space_Locations.FirstAsync(l => l.Id == draftId)).Version);
+        Assert.Null(execution.Current!.PublishAttemptId);
+        Assert.Null(execution.Current.JobId);
     }
 
     [Fact]
     public async Task Republish_EmptyInput_Returns0_NoEvent()
     {
         using var db = Db();
-        var n = await MakePublishSvc(db).RepublishAsync(Array.Empty<Guid>(), "u");
+        var execution = NewExecution();
+        var n = await MakePublishSvc(db, execution: execution)
+            .RepublishAsync(Array.Empty<Guid>(), "u");
         Assert.Equal(0, n);
         Assert.Equal(0, await db.IntegrationEvents.CountAsync());
+        Assert.Null(execution.Current!.PublishAttemptId);
+        Assert.Null(execution.Current.JobId);
     }
 
     // ── D-5: 采纳导入 ──────────────────────────────────────────────────────
@@ -542,6 +978,8 @@ public class LocationPublishServiceTests
     {
         private readonly decimal _qty;
         public FixedStockQuery(int qty) => _qty = qty;
+        public SpaceDataSourceKind DataSourceKind => SpaceDataSourceKind.Real;
+        public string DataSourceId => "TEST_WMS";
         public Task<decimal> GetStockQtyAsync(string locationCode, string? warehouseCd = null, CancellationToken ct = default) => Task.FromResult(_qty);
         public Task<IReadOnlyList<CP6.Core.Services.Integration.WmsStockDto>> GetStockByLocationsAsync(
             IReadOnlyCollection<string> locationCodes, CancellationToken ct = default)
@@ -549,6 +987,147 @@ public class LocationPublishServiceTests
         public Task<IReadOnlyList<CP6.Core.Services.Integration.WmsLocationHit>> FindLocationsAsync(
             CP6.Core.Services.Integration.StockLocateQuery query, CancellationToken ct = default)
             => Task.FromResult<IReadOnlyList<CP6.Core.Services.Integration.WmsLocationHit>>(Array.Empty<CP6.Core.Services.Integration.WmsLocationHit>());
+    }
+
+    private sealed class ContextCheckingStockQuery : IWmsStockQuery
+    {
+        private readonly ISpaceExecutionContextAccessor _execution;
+
+        public ContextCheckingStockQuery(ISpaceExecutionContextAccessor execution)
+        {
+            _execution = execution;
+        }
+
+        public List<Guid?> SeenPublishAttemptIds { get; } = new();
+        public Guid? SeenPublishAttemptId => SeenPublishAttemptIds.LastOrDefault();
+        public SpaceDataSourceKind DataSourceKind => SpaceDataSourceKind.Real;
+        public string DataSourceId => "TEST_WMS";
+
+        public Task<decimal> GetStockQtyAsync(
+            string locationCode,
+            string? warehouseCd = null,
+            CancellationToken ct = default)
+        {
+            SeenPublishAttemptIds.Add(
+                _execution.RequireCurrent().PublishAttemptId);
+            return Task.FromResult(0m);
+        }
+
+        public Task<IReadOnlyList<WmsStockDto>> GetStockByLocationsAsync(
+            IReadOnlyCollection<string> locationCodes,
+            CancellationToken ct = default)
+            => Task.FromResult<IReadOnlyList<WmsStockDto>>(Array.Empty<WmsStockDto>());
+
+        public Task<IReadOnlyList<WmsLocationHit>> FindLocationsAsync(
+            StockLocateQuery query,
+            CancellationToken ct = default)
+            => Task.FromResult<IReadOnlyList<WmsLocationHit>>(Array.Empty<WmsLocationHit>());
+    }
+
+    private sealed class CountingStockQuery : IWmsStockQuery
+    {
+        public int Calls { get; private set; }
+        public SpaceDataSourceKind DataSourceKind => SpaceDataSourceKind.Real;
+        public string DataSourceId => "TEST_WMS";
+
+        public Task<decimal> GetStockQtyAsync(
+            string locationCode,
+            string? warehouseCd = null,
+            CancellationToken ct = default)
+        {
+            Calls++;
+            return Task.FromResult(0m);
+        }
+
+        public Task<IReadOnlyList<WmsStockDto>> GetStockByLocationsAsync(
+            IReadOnlyCollection<string> locationCodes,
+            CancellationToken ct = default)
+            => Task.FromResult<IReadOnlyList<WmsStockDto>>(Array.Empty<WmsStockDto>());
+
+        public Task<IReadOnlyList<WmsLocationHit>> FindLocationsAsync(
+            StockLocateQuery query,
+            CancellationToken ct = default)
+            => Task.FromResult<IReadOnlyList<WmsLocationHit>>(Array.Empty<WmsLocationHit>());
+    }
+
+    private sealed class ContextCheckingDeactivator : IWmsBinDeactivator
+    {
+        private readonly ISpaceExecutionContextAccessor _execution;
+
+        public ContextCheckingDeactivator(ISpaceExecutionContextAccessor execution)
+        {
+            _execution = execution;
+        }
+
+        public List<Guid?> SeenPublishAttemptIds { get; } = new();
+        public Guid? SeenPublishAttemptId => SeenPublishAttemptIds.LastOrDefault();
+
+        public Task<WmsDeactivateResult> DeactivateAsync(
+            WmsDeactivateRequest req,
+            CancellationToken ct = default)
+        {
+            SeenPublishAttemptIds.Add(
+                _execution.RequireCurrent().PublishAttemptId);
+            return Task.FromResult(new WmsDeactivateResult { Success = true });
+        }
+    }
+
+    private sealed class RejectSecondDeactivator : IWmsBinDeactivator
+    {
+        private readonly ISpaceExecutionContextAccessor _execution;
+
+        public RejectSecondDeactivator(
+            ISpaceExecutionContextAccessor execution)
+        {
+            _execution = execution;
+        }
+
+        public List<Guid?> SeenPublishAttemptIds { get; } = new();
+
+        public Task<WmsDeactivateResult> DeactivateAsync(
+            WmsDeactivateRequest req,
+            CancellationToken ct = default)
+        {
+            SeenPublishAttemptIds.Add(
+                _execution.RequireCurrent().PublishAttemptId);
+            return Task.FromResult(new WmsDeactivateResult
+            {
+                Success = SeenPublishAttemptIds.Count == 1
+            });
+        }
+    }
+
+    private sealed class ThrowOnSecondNotifier : ISpaceNotifier
+    {
+        private int _calls;
+
+        public Task NotifyLocationPublishedAsync(
+            string batchNo,
+            int count,
+            string status)
+        {
+            if (Interlocked.Increment(ref _calls) == 2)
+                throw new InvalidOperationException(
+                    "expected notifier failure");
+
+            return Task.CompletedTask;
+        }
+    }
+
+    private sealed class SharedAuditFactory : ISpaceAuditDbContextFactory
+    {
+        private readonly DbContextOptions<CP6Context> _options;
+        private readonly ITenantContext _tenant;
+
+        public SharedAuditFactory(
+            DbContextOptions<CP6Context> options,
+            ITenantContext tenant)
+        {
+            _options = options;
+            _tenant = tenant;
+        }
+
+        public CP6Context CreateDbContext() => new(_options, _tenant);
     }
 
     private sealed class RejectingDeactivator : IWmsBinDeactivator

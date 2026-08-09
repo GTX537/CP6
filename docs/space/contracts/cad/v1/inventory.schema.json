@@ -1,0 +1,146 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://cp6.local/contracts/space/cad/v1/inventory.schema.json",
+  "title": "CP6 Space CAD inventory v1",
+  "type": "object",
+  "additionalProperties": false,
+  "required": [
+    "schemaVersion", "sourceSha256", "coordinateTransformSha256",
+    "floorLogicalId", "floorCode", "layers", "blocks", "blockReferences",
+    "summary", "inventorySha256"
+  ],
+  "properties": {
+    "schemaVersion": { "const": 1 },
+    "sourceSha256": { "$ref": "#/$defs/sha256" },
+    "coordinateTransformSha256": { "$ref": "#/$defs/sha256" },
+    "floorLogicalId": { "type": "string", "format": "uuid" },
+    "floorCode": { "$ref": "#/$defs/identifier" },
+    "layers": { "type": "array", "items": { "$ref": "#/$defs/layer" } },
+    "blocks": { "type": "array", "items": { "$ref": "#/$defs/block" } },
+    "blockReferences": {
+      "type": "array",
+      "items": { "$ref": "#/$defs/blockReference" }
+    },
+    "summary": { "$ref": "#/$defs/summary" },
+    "inventorySha256": { "$ref": "#/$defs/sha256" }
+  },
+  "$defs": {
+    "sha256": { "type": "string", "pattern": "^[0-9a-f]{64}$" },
+    "identifier": { "type": "string", "minLength": 1, "maxLength": 128 },
+    "bounds": {
+      "type": ["object", "null"],
+      "additionalProperties": false,
+      "required": ["minX", "minY", "maxX", "maxY"],
+      "properties": {
+        "minX": { "type": "number" },
+        "minY": { "type": "number" },
+        "maxX": { "type": "number" },
+        "maxY": { "type": "number" }
+      }
+    },
+    "layer": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": [
+        "layerId", "name", "isVisible", "entityCount",
+        "supportedEntityCount", "unsupportedEntityCount", "blockReferenceCount",
+        "attributedEntityCount", "entityTypeCounts"
+      ],
+      "properties": {
+        "layerId": { "$ref": "#/$defs/identifier" },
+        "name": { "$ref": "#/$defs/identifier" },
+        "color": { "type": ["string", "null"], "minLength": 1, "maxLength": 128 },
+        "lineType": { "type": ["string", "null"], "minLength": 1, "maxLength": 128 },
+        "isVisible": { "type": "boolean" },
+        "entityCount": { "type": "integer", "minimum": 0 },
+        "supportedEntityCount": { "type": "integer", "minimum": 0 },
+        "unsupportedEntityCount": { "type": "integer", "minimum": 0 },
+        "blockReferenceCount": { "type": "integer", "minimum": 0 },
+        "attributedEntityCount": { "type": "integer", "minimum": 0 },
+        "entityTypeCounts": {
+          "type": "object",
+          "additionalProperties": { "type": "integer", "minimum": 0 }
+        },
+        "bounds": { "$ref": "#/$defs/bounds" }
+      }
+    },
+    "blockAttribute": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["name", "referenceCount", "distinctValueCount"],
+      "properties": {
+        "name": { "$ref": "#/$defs/identifier" },
+        "referenceCount": { "type": "integer", "minimum": 1 },
+        "distinctValueCount": { "type": "integer", "minimum": 1 }
+      }
+    },
+    "block": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": [
+        "blockId", "name", "isDefined", "isExternalReference",
+        "definitionEntityCount", "referenceCount", "attributedReferenceCount",
+        "attributes"
+      ],
+      "properties": {
+        "blockId": { "$ref": "#/$defs/identifier" },
+        "name": { "$ref": "#/$defs/identifier" },
+        "isDefined": { "type": "boolean" },
+        "isExternalReference": { "type": "boolean" },
+        "externalReferenceToken": {
+          "type": ["string", "null"],
+          "minLength": 1,
+          "maxLength": 128
+        },
+        "definitionEntityCount": { "type": "integer", "minimum": 0 },
+        "referenceCount": { "type": "integer", "minimum": 0 },
+        "attributedReferenceCount": { "type": "integer", "minimum": 0 },
+        "attributes": {
+          "type": "array",
+          "items": { "$ref": "#/$defs/blockAttribute" }
+        },
+        "referenceBounds": { "$ref": "#/$defs/bounds" }
+      }
+    },
+    "blockReference": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": [
+        "sourceRef", "blockName", "layerId", "isSupported", "attributes"
+      ],
+      "properties": {
+        "sourceRef": { "type": "string", "minLength": 1, "maxLength": 200 },
+        "blockName": { "$ref": "#/$defs/identifier" },
+        "layerId": { "$ref": "#/$defs/identifier" },
+        "isSupported": { "type": "boolean" },
+        "attributes": {
+          "type": "object",
+          "maxProperties": 64,
+          "additionalProperties": { "type": "string", "maxLength": 512 }
+        },
+        "bounds": { "$ref": "#/$defs/bounds" }
+      }
+    },
+    "summary": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": [
+        "layerCount", "emptyLayerCount", "blockCount", "undefinedBlockCount",
+        "blockReferenceCount", "attributedBlockReferenceCount", "entityCount",
+        "supportedEntityCount", "unsupportedEntityCount"
+      ],
+      "properties": {
+        "layerCount": { "type": "integer", "minimum": 0 },
+        "emptyLayerCount": { "type": "integer", "minimum": 0 },
+        "blockCount": { "type": "integer", "minimum": 0 },
+        "undefinedBlockCount": { "type": "integer", "minimum": 0 },
+        "blockReferenceCount": { "type": "integer", "minimum": 0 },
+        "attributedBlockReferenceCount": { "type": "integer", "minimum": 0 },
+        "entityCount": { "type": "integer", "minimum": 0 },
+        "supportedEntityCount": { "type": "integer", "minimum": 0 },
+        "unsupportedEntityCount": { "type": "integer", "minimum": 0 },
+        "bounds": { "$ref": "#/$defs/bounds" }
+      }
+    }
+  }
+}

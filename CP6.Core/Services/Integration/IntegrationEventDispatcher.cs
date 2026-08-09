@@ -68,8 +68,18 @@ public class IntegrationEventDispatcher : IIntegrationEventDispatcher
         [RouteKey("SPACE", "WMS", "OnLocationPublishedAsync")] = async ctx =>
         {
             var p = ctx.GetPayload<LocationPublishBatch>();
+            var leaseId = ctx.Event.RetryLeaseId ??
+                throw new InvalidOperationException(
+                    "SPACE_RETRY_FENCE_REQUIRED");
             // 重试路径不重复落事件：Worker 负责更新原 IntegrationEvent 行的 Status/Attempts
-            var r = await ctx.Space.OnLocationPublishedAsync(p, Guid.NewGuid(), persistEvent: false);
+            var r = await ctx.Space.OnLocationPublishedAsync(
+                p,
+                ctx.Event.CorrelationId,
+                persistEvent: false,
+                retryFence: new SpaceRetryFence(
+                    ctx.Event.Id,
+                    leaseId),
+                ct: ctx.CancellationToken);
             return r.Success;
         },
     };
@@ -132,7 +142,16 @@ public class IntegrationEventDispatcher : IIntegrationEventDispatcher
         }
 
         var payload = JsonSerializer.Deserialize<JsonElement>(evt.PayloadJson);
-        var context = new DispatchContext(_mes, _wms, _erp, _cancel, _fin, _space, payload);
+        var context = new DispatchContext(
+            _mes,
+            _wms,
+            _erp,
+            _cancel,
+            _fin,
+            _space,
+            evt,
+            payload,
+            ct);
         return await route(context);
     }
 
@@ -145,7 +164,9 @@ public class IntegrationEventDispatcher : IIntegrationEventDispatcher
             IOrderCancelBridgeHook cancel,
             IFinBridgeHook fin,
             ISpaceBridgeHook space,
-            JsonElement payload)
+            IntegrationEvent evt,
+            JsonElement payload,
+            CancellationToken cancellationToken)
         {
             Mes = mes;
             Wms = wms;
@@ -153,7 +174,9 @@ public class IntegrationEventDispatcher : IIntegrationEventDispatcher
             Cancel = cancel;
             Fin = fin;
             Space = space;
+            Event = evt;
             Payload = payload;
+            CancellationToken = cancellationToken;
         }
 
         public IMesBridgeHook Mes { get; }
@@ -162,7 +185,9 @@ public class IntegrationEventDispatcher : IIntegrationEventDispatcher
         public IOrderCancelBridgeHook Cancel { get; }
         public IFinBridgeHook Fin { get; }
         public ISpaceBridgeHook Space { get; }
+        public IntegrationEvent Event { get; }
         public JsonElement Payload { get; }
+        public CancellationToken CancellationToken { get; }
 
         public T GetPayload<T>()
         {

@@ -1,11 +1,32 @@
+using System.Text.Json;
+using CP6.Core.Services.Wf;
+
 namespace CP6.Core.Services.Oa;
 
-/// <summary>草稿（暫存）服务（umbrella §4.3 / R2）。草稿 = Wf_FlowInstance.Status=Draft。</summary>
+public sealed record DraftListItem(
+    Guid Id, string FormKey, string FormName, int FormVersion, int LatestPublishedVersion,
+    string DataJson, string? Title, DateTime UpdatedAtUtc, bool Stale, byte[]? RowVersion);
+
+public sealed record DraftDetail(
+    Guid Id, string FormKey, string FormName, Guid FormDefVersionId, int FormVersion,
+    int LatestPublishedVersion, string SchemaJson, string DataJson, string? Title,
+    bool Stale, byte[]? RowVersion);
+
+public sealed record DraftRebaseResult(
+    Guid DraftId, int FormVersion, string DataJson, IReadOnlyList<string> RemovedFields,
+    IReadOnlyList<string> ValidationErrors, byte[]? RowVersion);
+
+public sealed record DraftPage(IReadOnlyList<DraftListItem> Items, int Total, int Page, int PageSize);
+
 public interface IDraftService
 {
-    Task<Guid> SaveDraftAsync(Guid starterId, string flowKey, string varsJson);   // 新建草稿，返回实例 Id
-    Task UpdateDraftAsync(Guid starterId, Guid instanceId, string varsJson);       // 改草稿字段
-    Task<IReadOnlyList<InboxRunningItem>> ListDraftsAsync(Guid starterId);         // 我的草稿（复用 Running DTO 形状）
-    Task DeleteDraftAsync(Guid starterId, Guid instanceId);                        // 删草稿
-    Task SubmitDraftAsync(Guid starterId, Guid instanceId);                        // 提交 → 引擎 StartDraftAsync
+    Task<DraftDetail> CreateAsync(Guid ownerId, string formKey, JsonElement data, string? title, CancellationToken ct = default);
+    Task<DraftDetail> UpdateAsync(Guid ownerId, Guid draftId, JsonElement data, string? title, byte[]? rowVersion, CancellationToken ct = default);
+    Task<DraftPage> ListAsync(Guid ownerId, int page, int pageSize, CancellationToken ct = default);
+    Task<DraftDetail> GetAsync(Guid ownerId, Guid draftId, CancellationToken ct = default);
+    Task<DraftRebaseResult> RebaseAsync(Guid ownerId, Guid draftId, int targetVersion,
+        bool confirmRemovedValues, byte[]? rowVersion, CancellationToken ct = default);
+    Task<SubmitFormResult> SubmitAsync(Guid ownerId, Guid draftId, string submissionKey,
+        byte[]? rowVersion, CancellationToken ct = default);
+    Task DeleteAsync(Guid ownerId, Guid draftId, CancellationToken ct = default);
 }

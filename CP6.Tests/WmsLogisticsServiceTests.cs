@@ -25,11 +25,48 @@ public class WmsLogisticsServiceTests
     {
         var db = TestHelper.CreateInMemoryContext();
         db.Warehouses.Add(new Warehouse { WarehouseCd = "W01", WarehouseName = "M", AllowNegative = false });
+        db.WmsFeatureFlags.Add(new WmsFeatureFlag
+        {
+            WarehouseCd = "W01",
+            ProductionMoveEnabled = true,
+        });
+        db.ClientDevices.Add(new ClientDevice
+        {
+            DeviceId = "RF-01",
+            DeviceMode = ClientDeviceMode.Shared,
+            Platform = "Android",
+            Status = ClientDeviceStatus.Active,
+            PublicKey = "test-public-key",
+            WarehouseCd = "W01",
+            ActivatedAt = DateTime.UtcNow,
+        });
+        db.Locations.AddRange(
+            new Location { WarehouseCd = "W01", LocationCd = "RES-A-01", AreaCd = "RES", CapacityQty = 10_000m },
+            new Location { WarehouseCd = "W01", LocationCd = "PIK-A-01", AreaCd = "PIK-A", CapacityQty = 10_000m },
+            new Location { WarehouseCd = "W01", LocationCd = "PIK-A-02", AreaCd = "PIK-A", CapacityQty = 10_000m },
+            new Location { WarehouseCd = "W01", LocationCd = "PIK-B-01", AreaCd = "PIK-B", CapacityQty = 10_000m },
+            new Location { WarehouseCd = "W01", LocationCd = "RES-C-01", AreaCd = "RES-C", CapacityQty = 10_000m },
+            new Location { WarehouseCd = "W01", LocationCd = "RES-1", AreaCd = "RES", CapacityQty = 10_000m },
+            new Location { WarehouseCd = "W01", LocationCd = "RES-2", AreaCd = "RES", CapacityQty = 10_000m },
+            new Location { WarehouseCd = "W01", LocationCd = "RES-3", AreaCd = "RES", CapacityQty = 10_000m });
         db.SaveChanges();
         var seq = new WmsSequenceService(db);
         var stock = new StockMovementService(db, seq);
         return (db, seq, stock);
     }
+
+    private static MobileTaskV2Service Tasks(
+        CP6.Core.EFDbContext.CP6Context db,
+        WmsSequenceService seq,
+        StockMovementService stock)
+        => new(
+            db,
+            seq,
+            stock,
+            new FixedWmsAccessScopeProvider(WmsAccessScope.All));
+
+    private static IWmsAccessScopeProvider AllScopes()
+        => new FixedWmsAccessScopeProvider(WmsAccessScope.All);
 
     // ═════════ CrossDock ═════════
 
@@ -77,7 +114,7 @@ public class WmsLogisticsServiceTests
     // ═════════ Replenish ═════════
 
     [Fact]
-    public async Task Replenish_ManualExecute_ShouldMoveStock()
+    public async Task Replenish_ManualExecute_ShouldPublishMoveTask()
     {
         var (db, seq, stock) = Create();
         // 保管棚 RES-A-01 に 100 個
@@ -87,26 +124,33 @@ public class WmsLogisticsServiceTests
             ProductCd = "P1", LotNo = "L1", Qty = 100,
         });
 
-        var svc = new ReplenishService(db, seq, stock);
+        var svc = new ReplenishService(db, seq, Tasks(db, seq, stock), AllScopes());
         var no = await svc.CreateAsync(new ReplenishOrderDto
         {
             ProductCd = "P1", WarehouseCd = "W01",
             FromLocationCd = "RES-A-01", ToLocationCd = "PIK-A-01",
             LotNo = "L1", Qty = 20,
         }, "u");
-        await svc.ExecuteAsync(no, "u");
+        var taskNo = await svc.ExecuteAsync(no, "u");
 
-        var stocks = await db.Stocks.OrderBy(s => s.LocationCd).ToListAsync();
-        Assert.Equal(2, stocks.Count);
-        Assert.Equal(20m, stocks.Single(s => s.LocationCd == "PIK-A-01").PhysicalQty);
-        Assert.Equal(80m, stocks.Single(s => s.LocationCd == "RES-A-01").PhysicalQty);
+        var source = await db.Stocks.SingleAsync(
+            s => s.LocationCd == "RES-A-01");
+        Assert.Equal(100m, source.PhysicalQty);
+        Assert.Equal(20m, source.AllocatedQty);
+        var task = await db.MobileTasks.SingleAsync();
+        Assert.Equal(taskNo, task.MobileTaskNo);
+        Assert.Equal("REPLENISH", task.RelatedType);
+        Assert.Equal(no, task.RelatedNo);
+        Assert.Equal(MobileTaskStatus.Pending, task.Status);
+        Assert.Equal(ReplenishStatus.TaskIssued,
+            (await db.ReplenishOrders.SingleAsync()).Status);
     }
 
     [Fact]
     public async Task Replenish_GenerateBatch_ShouldCreateForLowStock()
     {
         var (db, seq, stock) = Create();
-        var svc = new ReplenishService(db, seq, stock);
+        var svc = new ReplenishService(db, seq, Tasks(db, seq, stock), AllScopes());
 
         // ピッキング棚 PIK-A-01 で MinQty=10 未満（5 個）
         await stock.ApplyAsync(new StockMovementRequest
@@ -141,7 +185,7 @@ public class WmsLogisticsServiceTests
     public async Task Replenish_GenerateBatch_NoDuplicateWhenPendingExists()
     {
         var (db, seq, stock) = Create();
-        var svc = new ReplenishService(db, seq, stock);
+        var svc = new ReplenishService(db, seq, Tasks(db, seq, stock), AllScopes());
         await stock.ApplyAsync(new StockMovementRequest
         {
             TxnType = WmsTxnType.IN, WarehouseCd = "W01", LocationCd = "PIK-A-01",
@@ -159,6 +203,232 @@ public class WmsLogisticsServiceTests
         Assert.Equal(0, n2); // 重複防止
     }
 
+    [Fact]
+    public async Task Replenish_UpdateIssuedTask_ShouldSynchronizeReservation()
+    {
+        var (db, seq, stock) = Create();
+        await stock.ApplyAsync(new StockMovementRequest
+        {
+            TxnType = WmsTxnType.IN,
+            WarehouseCd = "W01",
+            LocationCd = "RES-A-01",
+            ProductCd = "P1",
+            LotNo = "L1",
+            Qty = 100
+        });
+        var tasks = Tasks(db, seq, stock);
+        var svc = new ReplenishService(db, seq, tasks, AllScopes());
+        var no = await svc.CreateAsync(new ReplenishOrderDto
+        {
+            ProductCd = "P1",
+            WarehouseCd = "W01",
+            FromLocationCd = "RES-A-01",
+            ToLocationCd = "PIK-A-01",
+            LotNo = "L1",
+            Qty = 20
+        }, "dispatcher");
+        await svc.ExecuteAsync(no, "dispatcher");
+
+        await svc.UpdateAsync(no, new ReplenishOrderDto
+        {
+            Priority = 1,
+            ProductCd = "P1",
+            WarehouseCd = "W01",
+            FromLocationCd = "RES-A-01",
+            ToLocationCd = "PIK-A-02",
+            LotNo = "L1",
+            Qty = 30,
+            Remarks = "updated"
+        }, "dispatcher");
+
+        var task = await db.MobileTasks.SingleAsync();
+        var reservation = await db.MobileTaskReservations.SingleAsync();
+        var source = await db.Stocks.SingleAsync(
+            x => x.LocationCd == "RES-A-01");
+        Assert.Equal(MobileTaskStatus.Pending, task.Status);
+        Assert.Equal("PIK-A-02", task.ToLocationCd);
+        Assert.Equal(30m, task.Qty);
+        Assert.Equal("PIK-A-02", reservation.ToLocationCd);
+        Assert.Equal(30m, reservation.ReservedQty);
+        Assert.True(reservation.IsActive);
+        Assert.Equal(30m, source.AllocatedQty);
+        Assert.Equal(0m, (await db.Locations.SingleAsync(
+            x => x.LocationCd == "PIK-A-01")).ReservedCapacityQty);
+        Assert.Equal(30m, (await db.Locations.SingleAsync(
+            x => x.LocationCd == "PIK-A-02")).ReservedCapacityQty);
+    }
+
+    [Fact]
+    public async Task Replenish_CancelIssuedTask_ShouldReleaseReservation()
+    {
+        var (db, seq, stock) = Create();
+        await stock.ApplyAsync(new StockMovementRequest
+        {
+            TxnType = WmsTxnType.IN,
+            WarehouseCd = "W01",
+            LocationCd = "RES-A-01",
+            ProductCd = "P1",
+            LotNo = "L1",
+            Qty = 100
+        });
+        var tasks = Tasks(db, seq, stock);
+        var svc = new ReplenishService(db, seq, tasks, AllScopes());
+        var no = await svc.CreateAsync(new ReplenishOrderDto
+        {
+            ProductCd = "P1",
+            WarehouseCd = "W01",
+            FromLocationCd = "RES-A-01",
+            ToLocationCd = "PIK-A-01",
+            LotNo = "L1",
+            Qty = 20
+        }, "dispatcher");
+        await svc.ExecuteAsync(no, "dispatcher");
+
+        await svc.CancelAsync(no, "dispatcher");
+
+        Assert.Equal(ReplenishStatus.Cancelled,
+            (await db.ReplenishOrders.SingleAsync()).Status);
+        Assert.Equal(MobileTaskStatus.Cancelled,
+            (await db.MobileTasks.SingleAsync()).Status);
+        Assert.False((await db.MobileTaskReservations.SingleAsync()).IsActive);
+        Assert.Equal(0m, (await db.Stocks.SingleAsync(
+            x => x.LocationCd == "RES-A-01")).AllocatedQty);
+        Assert.Equal(0m, (await db.Locations.SingleAsync(
+            x => x.LocationCd == "PIK-A-01")).ReservedCapacityQty);
+    }
+
+    [Fact]
+    public async Task Replenish_ClaimedTask_ShouldBlockSourceChangeAndCancel()
+    {
+        var (db, seq, stock) = Create();
+        await stock.ApplyAsync(new StockMovementRequest
+        {
+            TxnType = WmsTxnType.IN,
+            WarehouseCd = "W01",
+            LocationCd = "RES-A-01",
+            ProductCd = "P1",
+            LotNo = "L1",
+            Qty = 100
+        });
+        var tasks = Tasks(db, seq, stock);
+        var svc = new ReplenishService(db, seq, tasks, AllScopes());
+        var dto = new ReplenishOrderDto
+        {
+            ProductCd = "P1",
+            WarehouseCd = "W01",
+            FromLocationCd = "RES-A-01",
+            ToLocationCd = "PIK-A-01",
+            LotNo = "L1",
+            Qty = 20
+        };
+        var no = await svc.CreateAsync(dto, "dispatcher");
+        var taskNo = await svc.ExecuteAsync(no, "dispatcher");
+        var task = await tasks.GetAsync(taskNo);
+        await tasks.ClaimAsync(taskNo, new ClaimTaskV2Request
+        {
+            OperationId = Guid.NewGuid(),
+            RowVersion = string.IsNullOrWhiteSpace(task!.RowVersion)
+                ? "AA=="
+                : task.RowVersion,
+            DeviceId = "RF-01"
+        }, "worker");
+
+        var updateError = await Assert.ThrowsAsync<
+            MobileTaskConflictException>(
+            () => svc.UpdateAsync(no, dto, "dispatcher"));
+        var cancelError = await Assert.ThrowsAsync<
+            MobileTaskConflictException>(
+            () => svc.CancelAsync(no, "dispatcher"));
+        Assert.Equal("WM-V2-SOURCE-TASK-STARTED", updateError.Code);
+        Assert.Equal("WM-V2-SOURCE-TASK-STARTED", cancelError.Code);
+    }
+
+    [Fact]
+    public async Task Replenish_TaskCompletion_ShouldCloseSourceAndMoveOnce()
+    {
+        var (db, seq, stock) = Create();
+        await stock.ApplyAsync(new StockMovementRequest
+        {
+            TxnType = WmsTxnType.IN,
+            WarehouseCd = "W01",
+            LocationCd = "RES-A-01",
+            ProductCd = "P1",
+            LotNo = "L1",
+            Qty = 100
+        });
+        var tasks = Tasks(db, seq, stock);
+        var svc = new ReplenishService(db, seq, tasks, AllScopes());
+        var no = await svc.CreateAsync(new ReplenishOrderDto
+        {
+            ProductCd = "P1",
+            WarehouseCd = "W01",
+            FromLocationCd = "RES-A-01",
+            ToLocationCd = "PIK-A-01",
+            LotNo = "L1",
+            Qty = 20
+        }, "dispatcher");
+        var taskNo = await svc.ExecuteAsync(no, "dispatcher");
+        var current = (await tasks.GetAsync(taskNo))!;
+        current = await tasks.ClaimAsync(taskNo, new ClaimTaskV2Request
+        {
+            OperationId = Guid.NewGuid(),
+            RowVersion = string.IsNullOrWhiteSpace(current.RowVersion)
+                ? "AA=="
+                : current.RowVersion,
+            DeviceId = "RF-01"
+        }, "worker");
+
+        foreach (var (step, raw) in new[]
+                 {
+                     ("SourceLocation", "RES-A-01"),
+                     ("Product", "P1"),
+                     ("TargetLocation", "PIK-A-01"),
+                     ("Quantity", "20")
+                 })
+        {
+            var scan = await tasks.ScanAsync(taskNo, new ScanCommand
+            {
+                OperationId = Guid.NewGuid(),
+                RowVersion = string.IsNullOrWhiteSpace(current.RowVersion)
+                    ? "AA=="
+                    : current.RowVersion,
+                DeviceId = "RF-01",
+                ExecutionVersion = current.ExecutionVersion,
+                ClientScanNo = Guid.NewGuid().ToString("N"),
+                Step = step,
+                RawBarcode = raw,
+                ScannedAt = DateTimeOffset.UtcNow
+            }, "worker");
+            Assert.True(scan.Matched);
+        }
+
+        var completed = await tasks.CompleteAsync(
+            taskNo,
+            new CompleteMoveV2Request
+            {
+                OperationId = Guid.NewGuid(),
+                RowVersion = string.IsNullOrWhiteSpace(current.RowVersion)
+                    ? "AA=="
+                    : current.RowVersion,
+                DeviceId = "RF-01",
+                ExecutionVersion = current.ExecutionVersion,
+                ScannedQty = 20,
+                ToLocationCd = "PIK-A-01"
+            },
+            "worker");
+
+        Assert.Equal(MobileTaskStatus.Completed, completed.Status);
+        var order = await db.ReplenishOrders.SingleAsync();
+        Assert.Equal(ReplenishStatus.Executed, order.Status);
+        Assert.NotNull(order.ExecutedAt);
+        Assert.Equal(80m, (await db.Stocks.SingleAsync(
+            x => x.LocationCd == "RES-A-01")).PhysicalQty);
+        Assert.Equal(20m, (await db.Stocks.SingleAsync(
+            x => x.LocationCd == "PIK-A-01")).PhysicalQty);
+        Assert.Equal(2, await db.StockTransactions.CountAsync(
+            x => x.TxnType == WmsTxnType.MOVE));
+    }
+
     // ═════════ Slotting ═════════
 
     [Fact]
@@ -171,7 +441,7 @@ public class WmsLogisticsServiceTests
         await SeedInAndOut(stock, "P_MID", "RES-2", 500, 5, 30);
         await SeedInAndOut(stock, "P_COLD", "RES-3", 200, 1, 20);
 
-        var svc = new SlottingService(db, seq);
+        var svc = new SlottingService(db, seq, Tasks(db, seq, stock), AllScopes());
         var no = await svc.AnalyzeAsync("W01", 30, "u");
 
         var result = await svc.GetAsync(no);
@@ -194,13 +464,35 @@ public class WmsLogisticsServiceTests
     {
         var (db, seq, stock) = Create();
         await SeedInAndOut(stock, "P1", "RES-1", 100, 1, 10);
-        var svc = new SlottingService(db, seq);
+        var svc = new SlottingService(db, seq, Tasks(db, seq, stock), AllScopes());
         var no = await svc.AnalyzeAsync("W01", 30, "u");
-        await svc.ApproveAsync(no, "approver");
+        var generated = await svc.ApproveAsync(no, "approver");
 
         var p = await db.SlottingPlans.SingleAsync();
         Assert.Equal(SlottingStatus.Approved, p.Status);
         Assert.Equal("approver", p.ApproverCd);
+        Assert.Equal(1, generated);
+        var task = await db.MobileTasks.SingleAsync();
+        Assert.Equal("SLOTTING", task.RelatedType);
+        Assert.Equal(no, task.RelatedNo);
+    }
+
+    [Fact]
+    public async Task Slotting_CancelApproved_ShouldCancelPendingMoveTask()
+    {
+        var (db, seq, stock) = Create();
+        await SeedInAndOut(stock, "P1", "RES-1", 100, 1, 10);
+        var tasks = Tasks(db, seq, stock);
+        var svc = new SlottingService(db, seq, tasks, AllScopes());
+        var no = await svc.AnalyzeAsync("W01", 30, "u");
+        await svc.ApproveAsync(no, "approver");
+
+        await svc.CancelAsync(no, "approver");
+
+        Assert.Equal(SlottingStatus.Cancelled,
+            (await db.SlottingPlans.SingleAsync()).Status);
+        Assert.Equal(MobileTaskStatus.Cancelled,
+            (await db.MobileTasks.SingleAsync()).Status);
     }
 
     // ─── ヘルパー ───

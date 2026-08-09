@@ -31,4 +31,17 @@ public class Sys_RefreshToken : BaseTenantEntity
 
     /// <summary>签发时 User-Agent</summary>
     [MaxLength(256)] public string? UserAgent { get; set; }
+
+    /// <summary>Web / Windows / Android。</summary>
+    [MaxLength(20)] public string ClientKind { get; set; } = "Web";
+
+    /// <summary>原生客户端稳定设备标识；Web 会话为空。</summary>
+    [MaxLength(128)] public string? DeviceId { get; set; }
+
+    /// <summary>签发/轮换时客户端版本。</summary>
+    [MaxLength(32)] public string? AppVersion { get; set; }
+
+    /// <summary>轮换并发令牌；并发使用同一 refresh token 时仅一方可成功。</summary>
+    [Timestamp]
+    public byte[] RowVersion { get; set; } = Array.Empty<byte>();
 }

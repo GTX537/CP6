@@ -90,7 +90,7 @@ public class PurApprovalTests
     private static PurchaseRequestService NewPrSvc(CP6Context db, IApprovalService? approval = null)
         => new(db, new SeqService(db), approval ?? new StubApprovalService(), NewPoSvc(db, approval));
 
-    private static async Task<string> CreateSubmittedPrAsync(CP6Context db)
+    private static async Task<(string prNo, Guid instanceId)> CreateSubmittedPrAsync(CP6Context db)
     {
         var pr = await NewPrSvc(db).CreateAsync(new PrCreateDto
         {
@@ -98,8 +98,10 @@ public class PurApprovalTests
         }, "u1");
         var row = await db.PurchaseRequests.FirstAsync(p => p.PrNo == pr.PrNo);
         row.Status = PrStatus.Submitted;   // 模拟已送审进流程
+        var instanceId = Guid.NewGuid();
+        row.ApprovalRef = instanceId.ToString();
         await db.SaveChangesAsync();
-        return pr.PrNo;
+        return (pr.PrNo, instanceId);
     }
 
     [Fact]
@@ -107,9 +109,9 @@ public class PurApprovalTests
     {
         using var db = TestHelper.CreateInMemoryContext();
         await SeedAsync(db);
-        var prNo = await CreateSubmittedPrAsync(db);
+        var (prNo, instanceId) = await CreateSubmittedPrAsync(db);
 
-        await NewPrSvc(db).ApproveFromApprovalAsync(prNo, "approver");
+        await NewPrSvc(db).ApproveFromApprovalAsync(prNo, instanceId, "approver");
         await db.SaveChangesAsync();
 
         Assert.Equal(PrStatus.Approved, (await db.PurchaseRequests.FirstAsync(p => p.PrNo == prNo)).Status);
@@ -120,9 +122,9 @@ public class PurApprovalTests
     {
         using var db = TestHelper.CreateInMemoryContext();
         await SeedAsync(db);
-        var prNo = await CreateSubmittedPrAsync(db);
+        var (prNo, instanceId) = await CreateSubmittedPrAsync(db);
 
-        await NewPrSvc(db).RejectFromApprovalAsync(prNo, "不批");
+        await NewPrSvc(db).RejectFromApprovalAsync(prNo, instanceId, "不批");
         await db.SaveChangesAsync();
 
         Assert.Equal(PrStatus.Draft, (await db.PurchaseRequests.FirstAsync(p => p.PrNo == prNo)).Status);   // 回退草稿可重编重送
@@ -135,25 +137,30 @@ public class PurApprovalTests
     {
         public Guid ReturnId = Guid.NewGuid();
         public string? LastBizType, LastBizId;
-        public Task<Guid> SubmitAsync(string bizType, string bizId, Guid starterId, object? formSnapshot = null)
+        public Task<Guid> SubmitAsync(string bizType, string bizId, Guid starterId,
+            object? formSnapshot = null, Guid? instanceId = null)
         {
             LastBizType = bizType; LastBizId = bizId;
-            return Task.FromResult(ReturnId);
+            return Task.FromResult(instanceId ?? ReturnId);
         }
         public Task<CP6.Core.Services.Wf.ApprovalStatus> GetStatusAsync(string bizType, string bizId)
             => Task.FromResult(CP6.Core.Services.Wf.ApprovalStatus.None);
     }
 
     [Fact]
-    public async Task Adapter_NoBinding_AutoApproves()
+    public async Task Adapter_DoesNotAutoApprove_WhenBindingIsAbsent()
     {
         using var db = TestHelper.CreateInMemoryContext();
-        var adapter = new ApprovalServiceAdapter(new FakeWfApproval(), db);
+        var fake = new FakeWfApproval();
+        var adapter = new ApprovalServiceAdapter(fake, db);
 
-        var r = await adapter.SubmitAsync(new ApprovalSubmitRequest { BizType = "PUR_PO", BizKey = "PO1", Amount = 100m, Submitter = "admin" });
+        var r = await adapter.SubmitAsync(new ApprovalSubmitRequest
+        {
+            BizType = "PUR_PO", BizKey = "PO1", ActorId = Guid.NewGuid(), Snapshot = new { amount = 100m }
+        });
 
-        Assert.True(r.AutoApproved);                 // 未配绑定 → 向后兼容直通
-        Assert.Equal("AUTO-PO1", r.ApprovalRef);
+        Assert.False(r.AutoApproved);
+        Assert.Equal(fake.ReturnId.ToString(), r.ApprovalRef);
     }
 
     [Fact]
@@ -165,7 +172,10 @@ public class PurApprovalTests
         var fake = new FakeWfApproval();
         var adapter = new ApprovalServiceAdapter(fake, db);
 
-        var r = await adapter.SubmitAsync(new ApprovalSubmitRequest { BizType = "PUR_PO", BizKey = "PO1", Amount = 100m, Submitter = "admin" });
+        var r = await adapter.SubmitAsync(new ApprovalSubmitRequest
+        {
+            BizType = "PUR_PO", BizKey = "PO1", ActorId = Guid.NewGuid(), Snapshot = new { amount = 100m }
+        });
 
         Assert.False(r.AutoApproved);                // 有绑定 → 进 OA 流程
         Assert.Equal(fake.ReturnId.ToString(), r.ApprovalRef);

@@ -75,6 +75,7 @@ internal sealed class SubFlowNodeHandler : INodeHandler
             }
         }
         int n = coll?.Count ?? 1;
+        var childVersionId = await eng.ResolvePinnedSubFlowVersionAsync(inst, node.Id, node.SubFlowKey!);
 
         // ④ 逐 i 起子实例（停泊重入幂等：槽已存在跳过——Local ∪ DB 惯用法 + filtered unique 双保险）
         var childIds = new List<Guid>();
@@ -86,7 +87,7 @@ internal sealed class SubFlowNodeHandler : INodeHandler
             if (exists) continue;
             var childVars = SubFlowVarsMapper.BuildChildVars(node.SubVarsInJson, inst.VarsJson,
                 coll?[i], coll is null ? null : i);
-            childIds.Add(await eng.SubmitChildAsync(node.SubFlowKey!, inst.StarterId, childVars, inst.Id, token.Id, i));
+            childIds.Add(await eng.SubmitChildAsync(childVersionId, inst.StarterId, childVars, inst.Id, token.Id, i));
         }
         eng.AddHistory(inst.Id, node.Id, inst.StarterId, "subFlowStarted",
             $"n={n}; children=[{string.Join(",", childIds)}]");

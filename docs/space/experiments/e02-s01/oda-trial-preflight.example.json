@@ -1,0 +1,45 @@
+{
+  "schemaVersion": 1,
+  "candidateId": "oda-drawings-sdk",
+  "candidateVersion": "<exact-sdk-version>",
+  "deploymentMode": "EmbeddedSdk",
+  "dataset": {
+    "manifestPath": "<formal-golden-package>/manifest.json",
+    "stress50MiBPath": "<stress-assets>/stress-50mb.dxf",
+    "stressOneMillionPath": "<stress-assets>/stress-1m-entities.dxf"
+  },
+  "legal": {
+    "approvalReference": "<legal-or-procurement-record>",
+    "multiTenantSaasApproved": false,
+    "scaledWorkersApproved": false,
+    "disasterRecoveryApproved": false,
+    "nonProductionApproved": false,
+    "redistributionOrHostedServiceApproved": false
+  },
+  "isolation": {
+    "evidenceReference": "<worker-security-evidence>",
+    "workerVcpu": 8,
+    "workerMemoryMiB": 32768,
+    "networkPolicy": "DenyAll",
+    "restrictedServiceIdentity": true,
+    "noBusinessCredentials": true,
+    "dedicatedTemporaryDirectory": true,
+    "outOfProcess": true,
+    "processTreeKillVerified": true
+  },
+  "packages": [
+    {
+      "platform": "windows-x64",
+      "path": "<vendor-packages>/oda-drawings-windows.zip",
+      "sha256": "<64-lowercase-hex>"
+    },
+    {
+      "platform": "linux-x64",
+      "path": "<vendor-packages>/oda-drawings-linux.tgz",
+      "sha256": "<64-lowercase-hex>"
+    }
+  ],
+  "requiredSecretEnvironmentVariables": [
+    "CP6_SPACE_ODA_LICENSE_PATH"
+  ]
+}

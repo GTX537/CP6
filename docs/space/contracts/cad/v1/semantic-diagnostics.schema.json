@@ -1,0 +1,165 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://cp6.local/contracts/space/cad/v1/semantic-diagnostics.schema.json",
+  "title": "CP6 Space CAD semantic diagnostic index v1",
+  "type": "object",
+  "additionalProperties": false,
+  "required": [
+    "schemaVersion", "isReadOnlyIndex", "tenantId", "floorLogicalId", "floorCode",
+    "sourceSha256", "coordinateTransformSha256", "inventorySha256", "profileId",
+    "profileVersion", "profileDefinitionSha256", "mappingPreviewSha256",
+    "semanticPreviewSha256", "evidence", "diagnostics", "summary", "diagnosticIndexSha256"
+  ],
+  "properties": {
+    "schemaVersion": { "const": 1 },
+    "isReadOnlyIndex": { "const": true },
+    "tenantId": { "type": "string", "format": "uuid" },
+    "floorLogicalId": { "type": "string", "format": "uuid" },
+    "floorCode": { "$ref": "#/$defs/token" },
+    "sourceSha256": { "$ref": "#/$defs/sha256" },
+    "coordinateTransformSha256": { "$ref": "#/$defs/sha256" },
+    "inventorySha256": { "$ref": "#/$defs/sha256" },
+    "profileId": { "type": "string", "format": "uuid" },
+    "profileVersion": { "type": "integer", "minimum": 1 },
+    "profileDefinitionSha256": { "$ref": "#/$defs/sha256" },
+    "mappingPreviewSha256": { "$ref": "#/$defs/sha256" },
+    "semanticPreviewSha256": { "$ref": "#/$defs/sha256" },
+    "evidence": { "type": "array", "items": { "$ref": "#/$defs/evidence" } },
+    "diagnostics": { "type": "array", "items": { "$ref": "#/$defs/diagnostic" } },
+    "summary": { "$ref": "#/$defs/summary" },
+    "diagnosticIndexSha256": { "$ref": "#/$defs/sha256" }
+  },
+  "$defs": {
+    "sha256": { "type": "string", "pattern": "^[0-9a-f]{64}$" },
+    "token": { "type": "string", "minLength": 1, "maxLength": 128 },
+    "sourceRef": { "type": "string", "minLength": 1, "maxLength": 200 },
+    "target": {
+      "enum": [
+        "Wall", "Column", "Door", "Dock", "Zone", "Aisle", "Rack",
+        "Equipment", "VerticalCirculation", "Annotation", "Guide", "RestrictedArea"
+      ]
+    },
+    "point": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["x", "y", "z"],
+      "properties": {
+        "x": { "type": "integer" },
+        "y": { "type": "integer" },
+        "z": { "type": "integer" }
+      }
+    },
+    "bounds": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["minX", "minY", "maxX", "maxY"],
+      "properties": {
+        "minX": { "type": "integer" },
+        "minY": { "type": "integer" },
+        "maxX": { "type": "integer" },
+        "maxY": { "type": "integer" }
+      }
+    },
+    "location": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": [
+        "kind", "floorLogicalId", "suggestedPaddingMillimeters", "canFocusCanvas"
+      ],
+      "properties": {
+        "kind": { "enum": ["Document", "Layer", "Block", "Entity"] },
+        "floorLogicalId": { "type": "string", "format": "uuid" },
+        "layerId": { "type": ["string", "null"], "minLength": 1, "maxLength": 128 },
+        "blockName": { "type": ["string", "null"], "minLength": 1, "maxLength": 128 },
+        "sourceRef": { "type": ["string", "null"], "minLength": 1, "maxLength": 200 },
+        "previewObjectId": { "type": ["string", "null"], "minLength": 1, "maxLength": 128 },
+        "bounds": { "oneOf": [{ "$ref": "#/$defs/bounds" }, { "type": "null" }] },
+        "anchor": { "oneOf": [{ "$ref": "#/$defs/point" }, { "type": "null" }] },
+        "suggestedPaddingMillimeters": { "type": "integer", "minimum": 0, "maximum": 10000 },
+        "canFocusCanvas": { "type": "boolean" }
+      }
+    },
+    "evidence": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": [
+        "previewObjectId", "sourceRef", "semanticPreviewSha256", "target", "confidence",
+        "disposition", "confidenceBand", "sourceKind", "sourceKey", "decisionSource",
+        "geometryRule", "location", "evidenceSha256"
+      ],
+      "properties": {
+        "previewObjectId": { "$ref": "#/$defs/token" },
+        "sourceRef": { "$ref": "#/$defs/sourceRef" },
+        "semanticPreviewSha256": { "$ref": "#/$defs/sha256" },
+        "target": { "$ref": "#/$defs/target" },
+        "targetSubtype": { "type": ["string", "null"], "minLength": 1, "maxLength": 128 },
+        "confidence": { "type": "number", "minimum": 0, "maximum": 1 },
+        "disposition": { "enum": ["AutoAccepted", "Candidate", "Rejected"] },
+        "confidenceBand": { "enum": ["High", "Review", "Low", "Rejected"] },
+        "sourceKind": { "enum": ["Layer", "Block"] },
+        "sourceKey": { "$ref": "#/$defs/token" },
+        "decisionSource": { "enum": ["ProfileRule", "LayerOverride"] },
+        "ruleId": { "type": ["string", "null"], "minLength": 1, "maxLength": 128 },
+        "geometryRule": {
+          "enum": ["DirectGeometry", "Centerline", "ClosedBoundary", "BlockFootprint", "InsertionPoint"]
+        },
+        "location": { "$ref": "#/$defs/location" },
+        "evidenceSha256": { "$ref": "#/$defs/sha256" }
+      }
+    },
+    "diagnostic": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": [
+        "diagnosticId", "origin", "code", "severity", "recovery", "location"
+      ],
+      "properties": {
+        "diagnosticId": { "$ref": "#/$defs/token" },
+        "origin": { "enum": ["Mapping", "Semantic"] },
+        "code": { "$ref": "#/$defs/token" },
+        "severity": { "enum": ["Info", "Warning", "Blocking"] },
+        "recovery": {
+          "enum": [
+            "None", "MapSource", "FixMappingConflict", "ReviewCandidate",
+            "InspectGeometry", "ConfirmRequiredSource"
+          ]
+        },
+        "confidenceBand": {
+          "enum": ["High", "Review", "Low", "Rejected", null]
+        },
+        "sourceKind": { "enum": ["Layer", "Block", null] },
+        "sourceKey": { "type": ["string", "null"], "minLength": 1, "maxLength": 128 },
+        "sourceRef": { "type": ["string", "null"], "minLength": 1, "maxLength": 200 },
+        "previewObjectId": { "type": ["string", "null"], "minLength": 1, "maxLength": 128 },
+        "ruleId": { "type": ["string", "null"], "minLength": 1, "maxLength": 128 },
+        "detailToken": { "type": ["string", "null"], "maxLength": 128 },
+        "location": { "$ref": "#/$defs/location" }
+      }
+    },
+    "summary": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": [
+        "sourceEntityCount", "proposalCount", "highConfidenceCount", "reviewConfidenceCount",
+        "lowConfidenceCount", "rejectedCount", "mappingDiagnosticCount",
+        "semanticDiagnosticCount", "locatableDiagnosticCount", "unlocatableDiagnosticCount",
+        "infoCount", "warningCount", "blockingCount"
+      ],
+      "properties": {
+        "sourceEntityCount": { "type": "integer", "minimum": 0 },
+        "proposalCount": { "type": "integer", "minimum": 0 },
+        "highConfidenceCount": { "type": "integer", "minimum": 0 },
+        "reviewConfidenceCount": { "type": "integer", "minimum": 0 },
+        "lowConfidenceCount": { "type": "integer", "minimum": 0 },
+        "rejectedCount": { "type": "integer", "minimum": 0 },
+        "mappingDiagnosticCount": { "type": "integer", "minimum": 0 },
+        "semanticDiagnosticCount": { "type": "integer", "minimum": 0 },
+        "locatableDiagnosticCount": { "type": "integer", "minimum": 0 },
+        "unlocatableDiagnosticCount": { "type": "integer", "minimum": 0 },
+        "infoCount": { "type": "integer", "minimum": 0 },
+        "warningCount": { "type": "integer", "minimum": 0 },
+        "blockingCount": { "type": "integer", "minimum": 0 }
+      }
+    }
+  }
+}

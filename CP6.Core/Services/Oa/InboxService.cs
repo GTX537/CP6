@@ -11,32 +11,63 @@ public class InboxService : IInboxService
     private readonly CP6Context _db;
     private readonly IFlowEngine _engine;       // T7 批量办理
     private readonly IForecastService _forecast; // T8 详情预计段
+    private readonly IOaInstanceAccessService _access;
+    private readonly IFormFieldProjectionService _projection;
     public InboxService(CP6Context db, IFlowEngine engine, IForecastService forecast)
+        : this(db, engine, forecast,
+            new OaInstanceAccessService(db, new DelegateService(db)),
+            new FormFieldProjectionService(db))
     {
-        _db = db; _engine = engine; _forecast = forecast;
+    }
+
+    public InboxService(CP6Context db, IFlowEngine engine, IForecastService forecast,
+        IOaInstanceAccessService access, IFormFieldProjectionService projection)
+    {
+        _db = db; _engine = engine; _forecast = forecast; _access = access; _projection = projection;
     }
 
     public async Task<IReadOnlyList<InboxPendingItem>> PendingAsync(Guid userId, string rowMode = "merged", int? page = null, int? pageSize = null)
     {
-        var rows = await (from t in _db.Wf_FlowTasks
-                          where t.AssigneeId == userId && t.Status == FlowTaskStatus.Pending
+        var taskScope = from t in _db.Wf_FlowTasks
+                        where t.AssigneeId == userId && t.Status == FlowTaskStatus.Pending
+                        join i in _db.Wf_FlowInstances on t.InstanceId equals i.Id
+                        where i.Status == FlowInstanceStatus.Running
+                        select t;
+        if (rowMode != "expanded")
+        {
+            var latestTaskIds = taskScope.GroupBy(x => x.InstanceId)
+                .Select(group => group.OrderByDescending(x => x.CreateDate)
+                    .ThenByDescending(x => x.Id).Select(x => x.Id).First());
+            taskScope = taskScope.Where(x => latestTaskIds.Contains(x.Id));
+        }
+        taskScope = taskScope.OrderByDescending(x => x.CreateDate);
+        if (page is { } p && pageSize is { } ps)
+        {
+            p = Math.Max(1, p);
+            ps = Math.Clamp(ps, 1, 100);
+            taskScope = taskScope.Skip((p - 1) * ps).Take(ps);
+        }
+
+        var rows = await (from t in taskScope
                           join i in _db.Wf_FlowInstances on t.InstanceId equals i.Id
-                          where i.Status == FlowInstanceStatus.Running
                           join d in _db.Wf_FlowDefs on i.FlowKey equals d.FlowKey into dd
                           from d in dd.DefaultIfEmpty()
                           join s in _db.Sys_Users on i.StarterId equals s.Id into ss
                           from s in ss.DefaultIfEmpty()
-                          orderby t.CreateDate descending
-                          select new { t, i, FlowName = d == null ? null : d.FlowName, Starter = s }).ToListAsync();
-
-        // ── rowMode（wfs-inbox-ux §5）：merged=同实例合并取最新（照 DoneAsync 既有口径）；分组先于分页 ──
-        if (rowMode != "expanded")
-            rows = rows.GroupBy(x => x.i.Id)
-                       .Select(g => g.OrderByDescending(x => x.t.CreateDate).First())
-                       .OrderByDescending(x => x.t.CreateDate)
-                       .ToList();
-        if (page is { } p && pageSize is { } ps && p >= 1 && ps >= 1)
-            rows = rows.Skip((p - 1) * ps).Take(ps).ToList();
+                          select new { t, i, FlowName = d == null ? null : d.FlowName, Starter = s })
+            .ToListAsync();
+        var bizTypes = rows.Select(x => x.i.BizType).Where(x => !string.IsNullOrWhiteSpace(x))
+            .Distinct().ToList();
+        var detailRoutes = await _db.Wf_ApprovalBindings.AsNoTracking()
+            .Where(x => bizTypes.Contains(x.BizType))
+            .GroupBy(x => x.BizType)
+            .Select(x => new
+            {
+                BizType = x.Key,
+                Route = x.OrderByDescending(b => b.Enable)
+                    .ThenByDescending(b => b.ModifyDate ?? b.CreateDate)
+                    .Select(b => b.DetailRoute).FirstOrDefault()
+            }).ToDictionaryAsync(x => x.BizType, x => x.Route);
 
         // Batch-load frozen stage plans for tokens that carry multi-stage plans
         var tokenIds = rows.Where(x => x.t.TokenId.HasValue).Select(x => x.t.TokenId!.Value).Distinct().ToList();
@@ -69,7 +100,11 @@ public class InboxService : IInboxService
                 x.i.BizType, x.i.BizId, x.t.IsRead, x.t.CreateDate,
                 StageIndex: x.t.StageIndex, StageRound: x.t.StageRound,
                 StageName: stageName, StageCode: stageCode,
-                CanSendBackPrevStage: x.t.StageIndex > 0);
+                CanSendBackPrevStage: x.t.StageIndex > 0,
+                DetailRoute: x.i.BizType != null && x.i.BizId != null &&
+                    detailRoutes.TryGetValue(x.i.BizType, out var template)
+                        ? ApprovalPanelService.RenderDetailRoute(template, x.i.BizId)
+                        : null);
         }).ToList();
     }
 
@@ -215,6 +250,16 @@ public class InboxService : IInboxService
             var t = await _db.Wf_FlowTasks.FirstOrDefaultAsync(x => x.Id == taskId);
             if (t is null || t.AssigneeId != owner || t.Status != FlowTaskStatus.Pending)
             { results.Add(new BatchActResultItem(taskId, false, "E-WF-004")); continue; }
+            if (await HasEditableFieldsAsync(t))
+            {
+                results.Add(new BatchActResultItem(taskId, false, "E-WF-042"));
+                continue;
+            }
+            if (await HasEditableFieldsAsync(t))
+            {
+                results.Add(new BatchActResultItem(taskId, false, "E-WF-042"));
+                continue;
+            }
             try
             {
                 await _engine.ActAsAsync(taskId, actorId, onBehalfOf, approve, comment);
@@ -225,13 +270,27 @@ public class InboxService : IInboxService
         return results;
     }
 
-    public async Task<InboxDetail?> DetailAsync(Guid instanceId)
+    private async Task<bool> HasEditableFieldsAsync(Wf_FlowTask task)
     {
-        var inst = await _db.Wf_FlowInstances.FirstOrDefaultAsync(i => i.Id == instanceId);
+        var versionId = await _db.Wf_FlowInstances.Where(x => x.Id == task.InstanceId)
+            .Select(x => x.FlowDefVersionId).SingleAsync();
+        if (versionId == null) return false;
+        var json = await _db.Wf_FlowDefVersions.Where(x => x.Id == versionId)
+            .Select(x => x.SchemaJson).SingleAsync();
+        var schema = System.Text.Json.JsonSerializer.Deserialize<FlowSchema>(json,
+            new System.Text.Json.JsonSerializerOptions { PropertyNameCaseInsensitive = true });
+        return schema?.Nodes.FirstOrDefault(x => x.Id == task.NodeId)?.FieldPerms?.Values
+            .Any(x => string.Equals(x, "edit", StringComparison.OrdinalIgnoreCase)) == true;
+    }
+
+    public async Task<InboxDetail?> DetailAsync(Guid actualUserId, Guid effectiveUserId, Guid instanceId)
+    {
+        await _access.GetAsync(actualUserId, effectiveUserId, instanceId);
+        var inst = await _db.Wf_FlowInstances.AsNoTracking().FirstOrDefaultAsync(i => i.Id == instanceId);
         if (inst is null) return null;
-        var def = await _db.Wf_FlowDefs.FirstOrDefaultAsync(d => d.FlowKey == inst.FlowKey);
-        var formSchema = def == null ? null
-            : (await _db.Wf_FormDefs.FirstOrDefaultAsync(fd => fd.FormKey == def.FormKey))?.SchemaJson;
+        var flowVersion = inst.FlowDefVersionId is Guid flowVersionId
+            ? await _db.Wf_FlowDefVersions.AsNoTracking().SingleOrDefaultAsync(x => x.Id == flowVersionId)
+            : null;
 
         var formTos = await _db.Wf_FlowFormTos.Where(f => f.InstanceId == instanceId)
             .OrderBy(f => f.StepSeq).ThenBy(f => f.SentAt).ToListAsync();
@@ -250,39 +309,80 @@ public class InboxService : IInboxService
             f.ActualHandlerId, N(f.ActualHandlerId), f.OnBehalfOfId, N(f.OnBehalfOfId),
             f.Status, f.Comment, f.SentAt, f.HandledAt,
             StageIndex: f.StageIndex, StageRound: f.StageRound)).ToList();
-        var snapshots = snaps.Select(s => new SnapshotRow(s.StepSeq, s.NodeId, s.DataJson)).ToList();
         var ccRows = ccs.Select(c => new CcRow(c.RecipientId, N(c.RecipientId) ?? "", c.AtNodeId, c.IsRead)).ToList();
 
         IReadOnlyList<ForecastStep> forecast = inst.Status == FlowInstanceStatus.Running
-            ? (await _forecast.ForecastAsync(inst.FlowKey, inst.VarsJson, inst.StarterId, fromNodeId: inst.CurrentNode)).Steps
+            && inst.FlowDefVersionId is Guid pinnedFlowId
+            ? (await _forecast.ForecastPinnedAsync(pinnedFlowId, inst.VarsJson, inst.StarterId, inst.CurrentNode)).Steps
             : Array.Empty<ForecastStep>();
 
         // ── 子流程互链（spec §4.5）：向上=父实例链接;向下=本实例名下子实例组（按停泊 token 的 NodeId 归组）──
         SubFlowParentRow? subFlowParent = null;
         if (inst.ParentInstanceId is Guid parentId)
         {
-            var p = await _db.Wf_FlowInstances.FirstOrDefaultAsync(x => x.Id == parentId);
-            var pDef = p is null ? null : await _db.Wf_FlowDefs.FirstOrDefaultAsync(d => d.FlowKey == p.FlowKey);
-            if (p is not null) subFlowParent = new SubFlowParentRow(p.Id, p.FlowKey, pDef?.FlowName);
+            var visibleParent = await _access.VisibleInstanceIds(effectiveUserId).AnyAsync(x => x == parentId);
+            if (visibleParent)
+            {
+                var p = await _db.Wf_FlowInstances.AsNoTracking().FirstOrDefaultAsync(x => x.Id == parentId);
+                var pVersion = p?.FlowDefVersionId is Guid id
+                    ? await _db.Wf_FlowDefVersions.AsNoTracking().SingleOrDefaultAsync(x => x.Id == id)
+                    : null;
+                if (p is not null) subFlowParent = new SubFlowParentRow(p.Id, p.FlowKey, pVersion?.FlowNameSnapshot);
+            }
         }
+        var visibleIds = _access.VisibleInstanceIds(effectiveUserId);
         var childRows = await (
             from c in _db.Wf_FlowInstances
-            where c.ParentInstanceId == instanceId
+            where c.ParentInstanceId == instanceId && visibleIds.Contains(c.Id)
             join tk in _db.Wf_FlowTokens on c.ParentTokenId equals tk.Id
-            join cd in _db.Wf_FlowDefs on c.FlowKey equals cd.FlowKey into cds
-            from cd in cds.DefaultIfEmpty()
+            join cv in _db.Wf_FlowDefVersions on c.FlowDefVersionId equals cv.Id into cvs
+            from cv in cvs.DefaultIfEmpty()
             orderby tk.NodeId, c.SubIndex
-            select new SubFlowChildRow(c.Id, c.SubIndex ?? 0, c.FlowKey, cd != null ? cd.FlowName : null, c.Status, tk.NodeId)
+            select new SubFlowChildRow(c.Id, c.SubIndex ?? 0, c.FlowKey, cv != null ? cv.FlowNameSnapshot : null, c.Status, tk.NodeId)
         ).ToListAsync();
 
-        return new InboxDetail(inst, def?.FlowName, def?.FormKey, formSchema,
-            inst.VarsJson, timeline, snapshots, forecast, ccRows,
+        var currentNodeName = flowVersion == null ? null
+            : System.Text.Json.JsonSerializer.Deserialize<FlowSchema>(flowVersion.SchemaJson,
+                new System.Text.Json.JsonSerializerOptions { PropertyNameCaseInsensitive = true })
+                ?.Nodes.FirstOrDefault(x => x.Id == inst.CurrentNode)?.Name;
+        var projected = inst.FormDataId is Guid
+            ? await _projection.ProjectAsync(instanceId, effectiveUserId,
+                (await _db.Wf_FormDatas.AsNoTracking().SingleAsync(x => x.Id == inst.FormDataId)).DataJson)
+            : null;
+        var snapshots = new List<SnapshotRow>();
+        foreach (var snapshot in snaps)
+        {
+            if (projected == null) break;
+            var item = await _projection.ProjectAsync(instanceId, effectiveUserId, snapshot.DataJson);
+            snapshots.Add(new SnapshotRow(snapshot.StepSeq, snapshot.NodeId, item.DataJson));
+        }
+        var myTaskRow = await _db.Wf_FlowTasks.AsNoTracking()
+            .Where(x => x.InstanceId == instanceId && x.AssigneeId == effectiveUserId &&
+                        x.Status == FlowTaskStatus.Pending)
+            .OrderByDescending(x => x.CreateDate).FirstOrDefaultAsync();
+        var formDataRowVersion = inst.FormDataId is Guid formDataId
+            ? await _db.Wf_FormDatas.AsNoTracking().Where(x => x.Id == formDataId)
+                .Select(x => x.RowVersion).SingleAsync()
+            : null;
+        var myTask = myTaskRow == null ? null : new InboxTaskDto(
+            myTaskRow.Id, myTaskRow.NodeId, projected?.FieldMask ?? new Dictionary<string, string>(),
+            formDataRowVersion);
+        var content = projected == null
+            ? new InboxContentDto("business", null, null, null, null, null, null, inst.BizType, inst.BizId)
+            : new InboxContentDto("sfs", projected.FormDataId, projected.FormKey, projected.FormVersion,
+                projected.SchemaJson, projected.DataJson, projected.FieldMask, null, null);
+        var instanceDto = new InboxInstanceDto(inst.Id, inst.FlowKey, flowVersion?.FlowNameSnapshot,
+            flowVersion?.Version, inst.Status, inst.CurrentNode, currentNodeName,
+            new InboxUser(inst.StarterId, names.GetValueOrDefault(inst.StarterId, inst.StarterId.ToString())),
+            inst.CreateDate);
+        return new InboxDetail(instanceDto, content, myTask, timeline, snapshots, forecast, ccRows,
             subFlowParent, childRows);
     }
 
-    public async Task<IReadOnlyList<FormQueryItem>> QueryAsync(FormQueryFilter f)
+    public async Task<FormQueryPage> QueryAsync(Guid effectiveUserId, FormQueryFilter f)
     {
-        var q = _db.Wf_FlowInstances.AsQueryable();
+        var visible = _access.VisibleInstanceIds(effectiveUserId);
+        var q = _db.Wf_FlowInstances.Where(x => visible.Contains(x.Id));
         if (f.StarterId is { } s) q = q.Where(i => i.StarterId == s);
         if (!string.IsNullOrWhiteSpace(f.FlowKey)) q = q.Where(i => i.FlowKey == f.FlowKey);
         if (f.Status is { } st) q = q.Where(i => i.Status == st);
@@ -294,22 +394,36 @@ public class InboxService : IInboxService
         if (!string.IsNullOrWhiteSpace(f.Keyword))
             q = q.Where(i => i.FlowKey.Contains(f.Keyword!) || (i.BizId != null && i.BizId.Contains(f.Keyword!)));
 
+        var total = await q.CountAsync();
+        var page = Math.Max(1, f.Page);
+        var pageSize = Math.Clamp(f.PageSize, 1, 100);
         var rows = await (from i in q
                           join d in _db.Wf_FlowDefs on i.FlowKey equals d.FlowKey into dd
                           from d in dd.DefaultIfEmpty()
                           join u in _db.Sys_Users on i.StarterId equals u.Id into uu
                           from u in uu.DefaultIfEmpty()
                           orderby i.CreateDate descending
-                          select new { i, FlowName = d == null ? null : d.FlowName, Starter = u }).Take(500).ToListAsync();
-        return rows.Select(x => new FormQueryItem(x.i.Id, x.i.FlowKey, x.FlowName, x.i.StarterId,
+                          select new { i, FlowName = d == null ? null : d.FlowName, Starter = u })
+            .Skip((page - 1) * pageSize).Take(pageSize).ToListAsync();
+        var items = rows.Select(x => new FormQueryItem(x.i.Id, x.i.FlowKey, x.FlowName, x.i.StarterId,
             Name(x.Starter), x.i.Status, x.i.CurrentNode, x.i.CreateDate)).ToList();
+        return new(items, total, page, pageSize);
     }
 
     public async Task<InboxStats> StatsAsync(Guid userId)
     {
-        var pending = await PendingAsync(userId);
-        var running = await RunningAsync(userId);
-        var doneMine = await DoneAsync(userId, DateTime.Now.Year, DateTime.Now.Month, "mine");
+        var pendingCount = await (from task in _db.Wf_FlowTasks
+                                  where task.AssigneeId == userId && task.Status == FlowTaskStatus.Pending
+                                  join instance in _db.Wf_FlowInstances on task.InstanceId equals instance.Id
+                                  where instance.Status == FlowInstanceStatus.Running
+                                  select task.InstanceId).Distinct().CountAsync();
+        var runningCount = await _db.Wf_FlowInstances
+            .CountAsync(x => x.StarterId == userId && x.Status == FlowInstanceStatus.Running);
+        var monthStart = new DateTime(DateTime.Now.Year, DateTime.Now.Month, 1);
+        var monthEnd = monthStart.AddMonths(1);
+        var doneThisMonth = await _db.Wf_FlowFormTos
+            .Where(x => x.ActualHandlerId == userId && x.HandledAt >= monthStart && x.HandledAt < monthEnd)
+            .Select(x => x.InstanceId).Distinct().CountAsync();
         var rejectedBack = await _db.Wf_FlowInstances
             .CountAsync(i => i.StarterId == userId && i.Status == FlowInstanceStatus.Rejected);
 
@@ -323,8 +437,9 @@ public class InboxService : IInboxService
             return new TrendPoint(day.ToString("MM-dd"), handledRows.Count(h => h.Date == day));
         }).ToList();
 
-        return new InboxStats(pending.Count, running.Count, doneMine.Count, rejectedBack,
-            trend, pending.Take(5).ToList());
+        var recent = await PendingAsync(userId, "merged", 1, 5);
+        return new InboxStats(pendingCount, runningCount, doneThisMonth, rejectedBack,
+            trend, recent);
     }
 
     // ── 在途批量转单（wfs-inbox-ux §3，D3：逐条独立事务 + 汇总报告）──────────

@@ -1,6 +1,7 @@
 using CP6.Core.Auth;
 using CP6.Core.Services.Sys;
 using CP6.Core.Services.Wf;
+using CP6.Core.Services.Oa;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 
@@ -18,12 +19,17 @@ public class FlowController : LocalizedControllerBase
     private readonly IFlowEngine _engine;
     private readonly IFlowDefService _defSvc;
     private readonly ICurrentPermissionContext _ctx;
+    private readonly IInboxService _inbox;
+    private readonly IDelegateService _delegates;
 
-    public FlowController(IFlowEngine engine, IFlowDefService defSvc, ICurrentPermissionContext ctx)
+    public FlowController(IFlowEngine engine, IFlowDefService defSvc, ICurrentPermissionContext ctx,
+        IInboxService inbox, IDelegateService delegates)
     {
         _engine = engine;
         _defSvc = defSvc;
         _ctx = ctx;
+        _inbox = inbox;
+        _delegates = delegates;
     }
 
     private string? CurrentUser => User?.Identity?.Name;
@@ -37,7 +43,11 @@ public class FlowController : LocalizedControllerBase
     [RequirePermission("oa-designer", "edit")]
     public async Task<IActionResult> SaveDef([FromBody] FlowDefReq r)
     {
-        try { return Ok2(new { id = await _defSvc.SaveDefAsync(r.FlowKey, r.FlowName, r.FormKey, r.SchemaJson, CurrentUser) }); }
+        try
+        {
+            var draft = await _defSvc.SaveDraftAsync(r.FlowKey, r.FlowName, r.FormKey, r.SchemaJson, null, CurrentUser);
+            return Ok2(new { id = draft.DefinitionId, versionId = draft.VersionId, status = "draft" });
+        }
         catch (InvalidOperationException e) { return Err(e); }
     }
 
@@ -54,26 +64,18 @@ public class FlowController : LocalizedControllerBase
     [RequirePermission("oa-form-catalog", "submit")]
     public async Task<IActionResult> Submit([FromBody] SubmitReq r)
     {
-        try
-        {
-            var starter = await CurrentUserIdAsync();
-            var id = await _engine.SubmitAsync(r.FlowKey, starter, r.VarsJson ?? "{}", r.BizType, r.BizId);
-            return Ok2(new { instanceId = id });
-        }
-        catch (InvalidOperationException e) { return Err(e); }
+        await Task.CompletedTask;
+        return StatusCode(StatusCodes.Status410Gone,
+            new { code = 410, message = "Use an authoritative SFS or business submission endpoint." });
     }
 
     [HttpPost("task/{id}/act")]
     [RequirePermission("oa-inbox", "approve")]
     public async Task<IActionResult> Act(Guid id, [FromBody] ActReq r)
     {
-        try
-        {
-            var actor = await CurrentUserIdAsync();
-            await _engine.ActAsync(id, actor, r.Approve, r.Comment);
-            return Ok2();
-        }
-        catch (InvalidOperationException e) { return Err(e); }
+        await Task.CompletedTask;
+        return StatusCode(StatusCodes.Status410Gone,
+            new { code = 410, message = "Use /api/oa/tasks/{taskId}/decision." });
     }
 
     // ── 实例详情（含审批痕迹）──
@@ -81,11 +83,26 @@ public class FlowController : LocalizedControllerBase
     [HttpGet("flow/instance/{id}")]
     public async Task<IActionResult> Instance(Guid id)
     {
-        var detail = await _defSvc.GetInstanceDetailAsync(id);
-        return detail is null ? NotFound(new { code = 404, message = Localizer["流程实例不存在"] }) : Ok2(detail);
+        try
+        {
+            var actual = await CurrentUserIdAsync();
+            var effective = actual;
+            var header = Request.Headers["X-Acting-As"].ToString();
+            if (Guid.TryParse(header, out var actingAs) && actingAs != Guid.Empty && actingAs != actual)
+            {
+                await _delegates.AssertActiveGrantAsync(actual, actingAs);
+                effective = actingAs;
+            }
+            var detail = await _inbox.DetailAsync(actual, effective, id);
+            return detail is null ? NotFound(new { code = 404, message = "E-WF-007" }) : Ok2(detail);
+        }
+        catch (UnauthorizedAccessException)
+        {
+            return StatusCode(StatusCodes.Status403Forbidden, new { code = "E-WF-043", message = "E-WF-043" });
+        }
     }
 
-    public record FlowDefReq(string FlowKey, string FlowName, string FormKey, string SchemaJson);
+    public record FlowDefReq(string FlowKey, string FlowName, string? FormKey, string SchemaJson);
     public record SubmitReq(string FlowKey, string? VarsJson, string? BizType, string? BizId);
     public record ActReq(bool Approve, string? Comment);
 }

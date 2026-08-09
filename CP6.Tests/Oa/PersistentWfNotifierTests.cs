@@ -19,9 +19,16 @@ public class PersistentWfNotifierTests
     // ── 手写 fakes ──────────────────────────────────────────────────────────
     private sealed class RecordingNotif : INotificationService
     {
-        public readonly List<(Guid UserId, int Type)> Created = new();
+        public readonly List<(Guid UserId, int Type, string EventKey, bool InApp, bool Email)> Created = new();
         public Task CreateAsync(Guid userId, int type, string title, string body, Guid? instanceId, Guid? taskId, string? flowKey)
-        { Created.Add((userId, type)); return Task.CompletedTask; }
+        { Created.Add((userId, type, Guid.NewGuid().ToString("N"), true, false)); return Task.CompletedTask; }
+        public Task CreateOutboxAsync(Guid userId, int type, string title, string body,
+            Guid? instanceId, Guid? taskId, string? flowKey, string eventKey,
+            bool inAppRequested, bool emailRequested)
+        {
+            Created.Add((userId, type, eventKey, inAppRequested, emailRequested));
+            return Task.CompletedTask;
+        }
         public Task<IReadOnlyList<NotificationItem>> ListAsync(Guid userId, bool unreadOnly, int page, int pageSize)
             => Task.FromResult<IReadOnlyList<NotificationItem>>(Array.Empty<NotificationItem>());
         public Task<int> UnreadCountAsync(Guid userId) => Task.FromResult(0);
@@ -89,15 +96,17 @@ public class PersistentWfNotifierTests
 
     // ── 跳过矩阵（spec §7）──────────────────────────────────────────────────
     [Fact]
-    public async Task Default_NoPrefRow_PersistsPushesAndEmails()
+    public async Task Default_NoPrefRow_EnqueuesWithoutPreCommitDelivery()
     {
         var user = Guid.NewGuid();
         var r = await BuildAsync(user, prefsJson: null);
         await r.Notifier.TodoCreatedAsync(user, Guid.NewGuid(), Guid.NewGuid(), "leave");
         Assert.Single(r.Notif.Created);
         Assert.Equal(WfNotificationType.TodoCreated, r.Notif.Created[0].Type);
-        Assert.Equal(1, r.Hub.FakeClients.Proxy.SendCount);
-        Assert.Single(r.Email.Sent);
+        Assert.True(r.Notif.Created[0].InApp);
+        Assert.True(r.Notif.Created[0].Email);
+        Assert.Equal(0, r.Hub.FakeClients.Proxy.SendCount);
+        Assert.Empty(r.Email.Sent);
     }
 
     [Fact]
@@ -106,9 +115,11 @@ public class PersistentWfNotifierTests
         var user = Guid.NewGuid();
         var r = await BuildAsync(user, """{"notify":{"todoCreated":{"inApp":false,"email":true}}}""");
         await r.Notifier.TodoCreatedAsync(user, Guid.NewGuid(), Guid.NewGuid(), "leave");
-        Assert.Empty(r.Notif.Created);
+        Assert.Single(r.Notif.Created);
+        Assert.False(r.Notif.Created[0].InApp);
+        Assert.True(r.Notif.Created[0].Email);
         Assert.Equal(0, r.Hub.FakeClients.Proxy.SendCount);
-        Assert.Single(r.Email.Sent);                       // 通道独立：邮件照发
+        Assert.Empty(r.Email.Sent);
     }
 
     [Fact]
@@ -119,7 +130,9 @@ public class PersistentWfNotifierTests
         await r.Notifier.FlowApprovedAsync(user, Guid.NewGuid(), "leave");
         Assert.Single(r.Notif.Created);
         Assert.Equal(WfNotificationType.FlowApproved, r.Notif.Created[0].Type);
-        Assert.Equal(1, r.Hub.FakeClients.Proxy.SendCount);
+        Assert.True(r.Notif.Created[0].InApp);
+        Assert.False(r.Notif.Created[0].Email);
+        Assert.Equal(0, r.Hub.FakeClients.Proxy.SendCount);
         Assert.Empty(r.Email.Sent);
     }
 
@@ -141,7 +154,7 @@ public class PersistentWfNotifierTests
         var r = await BuildAsync(user, """{"notify":{"flowRejected":{"inApp":false,"email":false}}}""");
         await r.Notifier.TodoCreatedAsync(user, Guid.NewGuid(), Guid.NewGuid(), "leave");
         Assert.Single(r.Notif.Created);
-        Assert.Single(r.Email.Sent);
+        Assert.Empty(r.Email.Sent);
     }
 
     // ── 遗留扁平数据回归（C2：旧用户已存开关不失效）──
@@ -162,20 +175,23 @@ public class PersistentWfNotifierTests
         var r = await BuildAsync(user, """{"notify":{"email":false}}""");
         await r.Notifier.FlowApprovedAsync(user, Guid.NewGuid(), "leave");
         Assert.Single(r.Notif.Created);
+        Assert.False(r.Notif.Created[0].Email);
         Assert.Empty(r.Email.Sent);
     }
 
     // ── 第 4 方法 BranchPrunedAsync 矩阵门控（hardening 波已合入；typeKey="branchPruned"）──
     [Fact]
-    public async Task BranchPruned_Default_PersistsPushesAndEmails()
+    public async Task BranchPruned_Default_EnqueuesWithoutPreCommitDelivery()
     {
         var user = Guid.NewGuid();
         var r = await BuildAsync(user, prefsJson: null);
         await r.Notifier.BranchPrunedAsync(user, Guid.NewGuid(), "leave", "node2", "分支驳回");
         Assert.Single(r.Notif.Created);
         Assert.Equal(WfNotificationType.BranchPruned, r.Notif.Created[0].Type);
-        Assert.Equal(1, r.Hub.FakeClients.Proxy.SendCount);
-        Assert.Single(r.Email.Sent);
+        Assert.True(r.Notif.Created[0].InApp);
+        Assert.True(r.Notif.Created[0].Email);
+        Assert.Equal(0, r.Hub.FakeClients.Proxy.SendCount);
+        Assert.Empty(r.Email.Sent);
     }
 
     [Fact]
@@ -184,9 +200,11 @@ public class PersistentWfNotifierTests
         var user = Guid.NewGuid();
         var r = await BuildAsync(user, """{"notify":{"branchPruned":{"inApp":false,"email":true}}}""");
         await r.Notifier.BranchPrunedAsync(user, Guid.NewGuid(), "leave", "node2", "分支驳回");
-        Assert.Empty(r.Notif.Created);
+        Assert.Single(r.Notif.Created);
+        Assert.False(r.Notif.Created[0].InApp);
+        Assert.True(r.Notif.Created[0].Email);
         Assert.Equal(0, r.Hub.FakeClients.Proxy.SendCount);
-        Assert.Single(r.Email.Sent);                       // 通道独立：邮件照发
+        Assert.Empty(r.Email.Sent);
     }
 
     [Fact]
@@ -197,7 +215,9 @@ public class PersistentWfNotifierTests
         await r.Notifier.BranchPrunedAsync(user, Guid.NewGuid(), "leave", "node2", "分支驳回");
         Assert.Single(r.Notif.Created);
         Assert.Equal(WfNotificationType.BranchPruned, r.Notif.Created[0].Type);
-        Assert.Equal(1, r.Hub.FakeClients.Proxy.SendCount);
+        Assert.True(r.Notif.Created[0].InApp);
+        Assert.False(r.Notif.Created[0].Email);
+        Assert.Equal(0, r.Hub.FakeClients.Proxy.SendCount);
         Assert.Empty(r.Email.Sent);
     }
 

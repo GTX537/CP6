@@ -27,6 +27,7 @@ public class SpaceAdvancedController : ControllerBase
     public async Task<IActionResult> PickPath(Guid floorId, [FromQuery] string taskNo, CancellationToken ct)
     {
         var path = await _pick.GetPickPathAsync(taskNo ?? "", ct);
+        var source = _pick.CaptureSource();
         var codes = path.Items.Select(i => i.LocationCode).Distinct().ToList();
 
         var coordByCode = (await _db.Space_Locations
@@ -52,7 +53,7 @@ public class SpaceAdvancedController : ControllerBase
             where z.FloorId == floorId
             select new { aisleCode = a.AisleCode, centerline = a.Centerline }).ToListAsync(ct);
 
-        return Ok2(new { taskNo = path.TaskNo, stops, aisles });
+        return Ok2(new { taskNo = path.TaskNo, stops, aisles, source });
     }
 
     /// <summary>作业热图：时间窗内各库位作业频次（默认今日）。</summary>
@@ -63,7 +64,13 @@ public class SpaceAdvancedController : ControllerBase
         var f = from ?? DateTime.Today;
         var t = to ?? DateTime.Today.AddDays(1);
         var items = await _workload.GetWorkloadAsync(floorId, f, t, ct);
-        return Ok2(new { items, from = f, to = t });
+        return Ok2(new
+        {
+            items,
+            from = f,
+            to = t,
+            source = _workload.CaptureSource(),
+        });
     }
 
     /// <summary>全站楼层按 Level 升序自底向上累加层高赋 Z（mm）。最低 Level Z=0。 </summary>
@@ -85,6 +92,7 @@ public class SpaceAdvancedController : ControllerBase
     public async Task<IActionResult> SitePickPath(Guid siteId, [FromQuery] string taskNo, CancellationToken ct)
     {
         var path = await _pick.GetPickPathAsync(taskNo ?? "", ct);
+        var source = _pick.CaptureSource();
         var codes = path.Items.Select(i => i.LocationCode).Distinct().ToList();
 
         var siteFloors = await _db.Space_Floors.Where(f => f.SiteId == siteId)
@@ -125,7 +133,15 @@ public class SpaceAdvancedController : ControllerBase
         }).ToList();
 
         var floors = siteFloors.Select(f => new { floorId = f.Id, floorCode = f.FloorCode, level = f.Level, height = f.Height, z = zMap[f.Id] }).ToList();
-        return Ok2(new { taskNo = path.TaskNo, floors, stops, aisles, connectors });
+        return Ok2(new
+        {
+            taskNo = path.TaskNo,
+            floors,
+            stops,
+            aisles,
+            connectors,
+            source,
+        });
     }
 
     /// <summary>设备示意（v1 占位；有 LocationCode 的设备补 AbsXYZ）。</summary>
@@ -149,6 +165,10 @@ public class SpaceAdvancedController : ControllerBase
             return new { deviceId = d.DeviceId, type = d.Type, status = d.Status, locationCode = d.LocationCode, absX = x, absY = y, absZ = z };
         }).ToList();
 
-        return Ok2(result);
+        return Ok2(new
+        {
+            items = result,
+            source = _device.CaptureSource(),
+        });
     }
 }
