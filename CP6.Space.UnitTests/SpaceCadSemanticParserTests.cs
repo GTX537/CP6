@@ -241,7 +241,10 @@ public sealed class SpaceCadSemanticParserTests
 
     internal static SemanticScenario Scenario(
         bool conditionalBlockRule = false,
-        bool requiredUnsupported = false)
+        bool requiredUnsupported = false,
+        bool addDistantZone = false,
+        bool addOverlappingZone = false,
+        bool useConcaveZone = false)
     {
         var request = new SpaceCadConversionRequest(
             TenantId,
@@ -251,6 +254,19 @@ public sealed class SpaceCadSemanticParserTests
             SpaceCadSourceFormat.Dxf,
             "semantic-test-converter",
             "1.0.0");
+        var primaryZonePoints = useConcaveZone
+            ? new SpaceCadPointV1[]
+            {
+                new(0, 0),
+                new(8_000, 0),
+                new(8_000, 8_000),
+                new(4_500, 8_000),
+                new(4_500, 4_000),
+                new(3_500, 4_000),
+                new(3_500, 8_000),
+                new(0, 8_000),
+            }
+            : Rectangle(0, 0, 8_000, 8_000);
         var entities = new SpaceCadIrEntityV1[]
         {
             Entity(
@@ -273,7 +289,7 @@ public sealed class SpaceCadSemanticParserTests
                 isClosed: true),
             Entity(
                 "H:140", SpaceCadIrEntityType.ClosedPolyline, "LWPOLYLINE", "ZONE",
-                Rectangle(0, 0, 8_000, 8_000),
+                primaryZonePoints,
                 new(0, 0, 8_000, 8_000),
                 isClosed: true),
             Entity(
@@ -302,6 +318,32 @@ public sealed class SpaceCadSemanticParserTests
                 [new(9_000, 8_000), new(9_000, 8_000)],
                 new(9_000, 8_000, 9_000, 8_000)),
         };
+        if (addDistantZone)
+        {
+            entities =
+            [
+                .. entities,
+                Entity(
+                    "H:142", SpaceCadIrEntityType.ClosedPolyline,
+                    "LWPOLYLINE", "ZONE",
+                    Rectangle(8_200, 0, 8_800, 1_000),
+                    new(8_200, 0, 8_800, 1_000),
+                    isClosed: true),
+            ];
+        }
+        if (addOverlappingZone)
+        {
+            entities =
+            [
+                .. entities,
+                Entity(
+                    "H:142", SpaceCadIrEntityType.ClosedPolyline,
+                    "LWPOLYLINE", "ZONE",
+                    Rectangle(500, 500, 7_500, 7_500),
+                    new(500, 500, 7_500, 7_500),
+                    isClosed: true),
+            ];
+        }
         var layerNames = new[]
         {
             "AISLE", "BAD", "BAD_GEOMETRY", "COLUMN", "DOCK", "DOOR", "RACK", "WALL", "ZONE",

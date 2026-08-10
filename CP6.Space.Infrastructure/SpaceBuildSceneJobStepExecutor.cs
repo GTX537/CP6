@@ -911,6 +911,7 @@ public sealed class SpaceBuildSceneJobStepExecutor(
                 preview,
                 sourceKeyByLogicalId,
                 typeByLogicalId,
+                proposalSet.Issues,
                 localIssues);
             var hasBlocking = proposalSet.Issues.Any(issue =>
                                   issue.Severity ==
@@ -992,6 +993,7 @@ public sealed class SpaceBuildSceneJobStepExecutor(
         SpaceCadSemanticPreviewItemV1 preview,
         IReadOnlyDictionary<Guid, string> sourceKeyByLogicalId,
         IReadOnlyDictionary<Guid, WarehouseSpaceType> typeByLogicalId,
+        IReadOnlyList<WarehouseProposalIssueV1> proposalSetIssues,
         ICollection<ExpectedIssue> issues)
     {
         var attributes = new JsonObject();
@@ -1044,11 +1046,16 @@ public sealed class SpaceBuildSceneJobStepExecutor(
 
         AddDeterministicDimensions(proposal, preview, attributes, issues);
         if (proposal.ObjectType is WarehouseSpaceType.Aisle or WarehouseSpaceType.Rack &&
-            relations["zoneSourceKey"] is null)
+            relations["zoneSourceKey"] is null &&
+            !proposalSetIssues.Any(issue =>
+                issue.Code == SpaceErrorCodes.RuleOnlyParentRequired &&
+                issue.FieldPath == "relations.zoneSourceKey" &&
+                (issue.SourceKey == proposal.SourceKey ||
+                 issue.SourceRef == proposal.SourceRef)))
         {
             issues.Add(LocalIssue(
                 proposal,
-                "SPACE_RULE_ONLY_PARENT_REQUIRED",
+                SpaceErrorCodes.RuleOnlyParentRequired,
                 "relations.zoneSourceKey",
                 "select-parent-in-a-new-generation-run"));
         }

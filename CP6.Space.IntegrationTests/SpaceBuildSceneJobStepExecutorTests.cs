@@ -169,10 +169,18 @@ public sealed class SpaceBuildSceneJobStepExecutorTests
             fixture.RackProfileVersionId!.Value.ToString(),
             proposal.SuggestedAttributesJson,
             StringComparison.OrdinalIgnoreCase);
+        var issues = await fixture.Context.Issues.Where(item =>
+            item.GenerationRunId == fixture.TargetRunId).ToArrayAsync();
         Assert.DoesNotContain(
-            await fixture.Context.Issues.Where(item =>
-                item.GenerationRunId == fixture.TargetRunId).ToArrayAsync(),
+            issues,
             item => item.Code == SpaceErrorCodes.RackProfileRequired);
+        var parentIssue = Assert.Single(issues, item =>
+            item.Code == SpaceErrorCodes.RuleOnlyParentRequired);
+        Assert.Equal("relations.zoneSourceKey", parentIssue.FieldPath);
+        Assert.Contains(
+            "no-containing-zone",
+            parentIssue.MessageArgsJson,
+            StringComparison.Ordinal);
     }
 
     private static async Task<Fixture> CreateFixtureAsync(
@@ -438,7 +446,7 @@ public sealed class SpaceBuildSceneJobStepExecutorTests
             null,
             null,
             rackProfileVersion?.Id,
-            "rules-test-v1",
+            SpaceAiGenerationRunContract.DeterministicParentRuleVersion,
             SpaceAiPolicySnapshot.Disabled,
             null,
             WarehouseGenerationInput.CurrentSchemaVersion,
@@ -521,7 +529,7 @@ public sealed class SpaceBuildSceneJobStepExecutorTests
             sourceRun.Id,
             null,
             rackProfileVersion?.Id,
-            "rules-test-v1",
+            SpaceAiGenerationRunContract.DeterministicParentRuleVersion,
             providerBacked
                 ? SpaceAiPolicySnapshot.MetadataOnly
                 : SpaceAiPolicySnapshot.Disabled,

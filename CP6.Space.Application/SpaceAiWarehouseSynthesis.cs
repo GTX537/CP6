@@ -9,6 +9,8 @@ namespace CP6.Space.Application;
 public sealed class WarehouseDraftSynthesizer : IWarehouseDraftSynthesizer
 {
     private const long MaximumDerivedLocations = 10_000_000;
+    private const string DeterministicParentEvidence =
+        "RULE:ZONE_GEOMETRY_CONTAINMENT_V1";
 
     private static readonly JsonSerializerOptions CanonicalJsonOptions = new()
     {
@@ -75,6 +77,9 @@ public sealed class WarehouseDraftSynthesizer : IWarehouseDraftSynthesizer
         var context = ValidateAndBind(request);
         var issues = RuleAndProviderIssues(request, context);
         var proposals = new List<MutableProposal>();
+        var deterministicZones = BuildDeterministicZones(
+            request.RulePreview.Items,
+            context);
 
         foreach (var item in request.RulePreview.Items)
         {
@@ -98,12 +103,26 @@ public sealed class WarehouseDraftSynthesizer : IWarehouseDraftSynthesizer
             var sourceRef = item.Source.SourceRef;
             var sourceKey = context.SourceKeyByRef[sourceRef];
             context.SuggestionByKey.TryGetValue(sourceKey, out var suggestion);
+            var locked = context.LockedByRef.GetValueOrDefault(sourceRef) ?? [];
+            var effectiveType = EffectiveType(ruleType, locked);
+            var inferredParent = InferZoneParent(
+                request.RuleVersion,
+                item,
+                effectiveType,
+                locked,
+                deterministicZones);
+            AddParentInferenceIssue(
+                inferredParent,
+                sourceRef,
+                sourceKey,
+                issues);
             var candidates = CandidateFields(
                 item,
                 ruleType,
                 suggestion,
-                context.LockedByRef.GetValueOrDefault(sourceRef) ?? [],
-                context.DefaultsByRef.GetValueOrDefault(sourceRef) ?? []);
+                locked,
+                context.DefaultsByRef.GetValueOrDefault(sourceRef) ?? [],
+                inferredParent.Parent);
             var resolvedType = ResolveField(
                 sourceRef,
                 sourceKey,
@@ -512,7 +531,8 @@ public sealed class WarehouseDraftSynthesizer : IWarehouseDraftSynthesizer
         WarehouseSpaceType ruleType,
         WarehouseGenerationSuggestion? ai,
         IReadOnlyList<SpaceAiCadLockedFactV1> locked,
-        IReadOnlyList<SpaceAiCadLockedFactV1> defaults)
+        IReadOnlyList<SpaceAiCadLockedFactV1> defaults,
+        DeterministicZoneParent? inferredParent)
     {
         var result = new Dictionary<string, List<FieldCandidate>>(StringComparer.Ordinal);
         AddCandidate(result, "type", ruleType.ToString(),
@@ -542,6 +562,16 @@ public sealed class WarehouseDraftSynthesizer : IWarehouseDraftSynthesizer
                 AddCandidate(result, "attributes.semanticLabel", ai.Attributes.SemanticLabel,
                     WarehouseFusionSource.Ai, ai.Confidence, evidence);
             }
+        }
+        if (inferredParent is not null)
+        {
+            AddCandidate(
+                result,
+                "relations.zoneSourceKey",
+                inferredParent.SourceKey,
+                WarehouseFusionSource.DeterministicRule,
+                inferredParent.Confidence,
+                [DeterministicParentEvidence]);
         }
         foreach (var fact in defaults)
         {
@@ -708,6 +738,343 @@ public sealed class WarehouseDraftSynthesizer : IWarehouseDraftSynthesizer
         }
     }
 
+    private static DeterministicZone[] BuildDeterministicZones(
+        IReadOnlyList<SpaceCadSemanticPreviewItemV1> items,
+        BindingContext context)
+    {
+        var zones = new List<DeterministicZone>();
+        foreach (var item in items)
+        {
+            if (item.Disposition == SpaceCadSemanticDisposition.Rejected
+                || item.Geometry is null
+                || !TryMapType(item.Target, out var ruleType))
+            {
+                continue;
+            }
+            var locked = context.LockedByRef.GetValueOrDefault(
+                item.Source.SourceRef) ?? [];
+            if (EffectiveType(ruleType, locked) != WarehouseSpaceType.Zone
+                || item.Geometry.Kind != SpaceCadSemanticGeometryKind.Polygon)
+            {
+                continue;
+            }
+            zones.Add(new DeterministicZone(
+                context.SourceKeyByRef[item.Source.SourceRef],
+                item.Source.SourceRef,
+                item.Geometry,
+                item.Confidence));
+        }
+        return zones
+            .OrderBy(item => item.SourceKey, StringComparer.Ordinal)
+            .ThenBy(item => item.SourceRef, StringComparer.Ordinal)
+            .ToArray();
+    }
+
+    private static WarehouseSpaceType EffectiveType(
+        WarehouseSpaceType ruleType,
+        IReadOnlyList<SpaceAiCadLockedFactV1> locked)
+    {
+        var lockedType = locked.SingleOrDefault(item =>
+            item.FieldPath == "type");
+        return lockedType is null
+            ? ruleType
+            : Enum.Parse<WarehouseSpaceType>(
+                lockedType.ValueToken,
+                ignoreCase: false);
+    }
+
+    private static ZoneParentInference InferZoneParent(
+        string ruleVersion,
+        SpaceCadSemanticPreviewItemV1 child,
+        WarehouseSpaceType childType,
+        IReadOnlyList<SpaceAiCadLockedFactV1> locked,
+        IReadOnlyList<DeterministicZone> zones)
+    {
+        if (!ruleVersion.Equals(
+                SpaceAiGenerationRunContract.DeterministicParentRuleVersion,
+                StringComparison.Ordinal))
+        {
+            return new ZoneParentInference(ParentInferenceStatus.VersionDisabled);
+        }
+        if (childType is not (
+                WarehouseSpaceType.Aisle or WarehouseSpaceType.Rack))
+        {
+            return new ZoneParentInference(ParentInferenceStatus.NotApplicable);
+        }
+        if (locked.Any(item =>
+                item.FieldPath == "relations.zoneSourceKey"))
+        {
+            return new ZoneParentInference(ParentInferenceStatus.HumanLocked);
+        }
+
+        var matches = zones
+            .Where(zone =>
+                !zone.SourceRef.Equals(
+                    child.Source.SourceRef,
+                    StringComparison.Ordinal)
+                && GeometryContains(zone.Geometry, child.Geometry!))
+            .ToArray();
+        if (matches.Length == 0)
+            return new ZoneParentInference(ParentInferenceStatus.NoMatch);
+        if (matches.Length > 1)
+            return new ZoneParentInference(ParentInferenceStatus.Ambiguous);
+        return new ZoneParentInference(
+            ParentInferenceStatus.Inferred,
+            new DeterministicZoneParent(
+                matches[0].SourceKey,
+                decimal.Min(child.Confidence, matches[0].Confidence)));
+    }
+
+    private static void AddParentInferenceIssue(
+        ZoneParentInference inference,
+        string sourceRef,
+        string sourceKey,
+        ICollection<WarehouseProposalIssueV1> issues)
+    {
+        var detailToken = inference.Status switch
+        {
+            ParentInferenceStatus.NoMatch => "no-containing-zone",
+            ParentInferenceStatus.Ambiguous => "ambiguous-containing-zones",
+            _ => null,
+        };
+        if (detailToken is null)
+            return;
+        issues.Add(new WarehouseProposalIssueV1(
+            SpaceErrorCodes.RuleOnlyParentRequired,
+            WarehouseProposalIssueSeverity.Blocking,
+            sourceRef,
+            sourceKey,
+            "relations.zoneSourceKey",
+            detailToken));
+    }
+
+    private static bool GeometryContains(
+        SpaceCadSemanticGeometryV1 zone,
+        SpaceCadSemanticGeometryV1 child)
+    {
+        if (zone.Kind != SpaceCadSemanticGeometryKind.Polygon
+            || zone.Points.Count < 3
+            || !BoundsContain(zone.Bounds, child.Bounds))
+        {
+            return false;
+        }
+        return child.Kind switch
+        {
+            SpaceCadSemanticGeometryKind.Point or
+            SpaceCadSemanticGeometryKind.BlockInstance =>
+                child.Points.Count > 0
+                && child.Points.All(point => PointInPolygon(
+                    new DecimalPoint(point.X, point.Y),
+                    zone.Points)),
+            SpaceCadSemanticGeometryKind.Path =>
+                LinearGeometryContained(
+                    child.Points,
+                    child.IsClosed,
+                    zone.Points),
+            SpaceCadSemanticGeometryKind.Polygon =>
+                LinearGeometryContained(
+                    child.Points,
+                    closed: true,
+                    zone.Points),
+            SpaceCadSemanticGeometryKind.Circle =>
+                CircleContained(child, zone.Points),
+            _ => false,
+        };
+    }
+
+    private static bool BoundsContain(
+        SpaceCadMillimeterBoundsV1 parent,
+        SpaceCadMillimeterBoundsV1 child) =>
+        child.MinX >= parent.MinX
+        && child.MinY >= parent.MinY
+        && child.MaxX <= parent.MaxX
+        && child.MaxY <= parent.MaxY;
+
+    private static bool LinearGeometryContained(
+        IReadOnlyList<SpaceCadMillimeterPointV1> points,
+        bool closed,
+        IReadOnlyList<SpaceCadMillimeterPointV1> polygon)
+    {
+        if (points.Count < 2
+            || points.Any(point => !PointInPolygon(
+                new DecimalPoint(point.X, point.Y),
+                polygon)))
+        {
+            return false;
+        }
+        for (var index = 1; index < points.Count; index++)
+        {
+            if (!SegmentContained(points[index - 1], points[index], polygon))
+                return false;
+        }
+        return !closed
+               || SegmentContained(points[^1], points[0], polygon);
+    }
+
+    private static bool SegmentContained(
+        SpaceCadMillimeterPointV1 start,
+        SpaceCadMillimeterPointV1 end,
+        IReadOnlyList<SpaceCadMillimeterPointV1> polygon)
+    {
+        var from = new DecimalPoint(start.X, start.Y);
+        var to = new DecimalPoint(end.X, end.Y);
+        if (from == to)
+            return PointInPolygon(from, polygon);
+
+        var parameters = new List<decimal> { 0m, 1m };
+        for (var index = 0; index < polygon.Count; index++)
+        {
+            var edgeStart = polygon[index];
+            var edgeEnd = polygon[(index + 1) % polygon.Count];
+            AddIntersectionParameters(
+                from,
+                to,
+                new DecimalPoint(edgeStart.X, edgeStart.Y),
+                new DecimalPoint(edgeEnd.X, edgeEnd.Y),
+                parameters);
+        }
+        var ordered = parameters
+            .Where(value => value is >= 0m and <= 1m)
+            .Distinct()
+            .Order()
+            .ToArray();
+        for (var index = 1; index < ordered.Length; index++)
+        {
+            var midpoint = (ordered[index] + ordered[index - 1]) / 2m;
+            if (!PointInPolygon(PointAt(from, to, midpoint), polygon))
+                return false;
+        }
+        return true;
+    }
+
+    private static void AddIntersectionParameters(
+        DecimalPoint start,
+        DecimalPoint end,
+        DecimalPoint edgeStart,
+        DecimalPoint edgeEnd,
+        ICollection<decimal> parameters)
+    {
+        var direction = end - start;
+        var edgeDirection = edgeEnd - edgeStart;
+        var offset = edgeStart - start;
+        var denominator = Cross(direction, edgeDirection);
+        if (denominator != 0m)
+        {
+            var parameter = Cross(offset, edgeDirection) / denominator;
+            var edgeParameter = Cross(offset, direction) / denominator;
+            if (parameter is >= 0m and <= 1m
+                && edgeParameter is >= 0m and <= 1m)
+            {
+                parameters.Add(parameter);
+            }
+            return;
+        }
+        if (Cross(offset, direction) != 0m)
+            return;
+
+        var useX = decimal.Abs(direction.X) >= decimal.Abs(direction.Y);
+        var divisor = useX ? direction.X : direction.Y;
+        if (divisor == 0m)
+            return;
+        parameters.Add(useX
+            ? (edgeStart.X - start.X) / divisor
+            : (edgeStart.Y - start.Y) / divisor);
+        parameters.Add(useX
+            ? (edgeEnd.X - start.X) / divisor
+            : (edgeEnd.Y - start.Y) / divisor);
+    }
+
+    private static bool CircleContained(
+        SpaceCadSemanticGeometryV1 circle,
+        IReadOnlyList<SpaceCadMillimeterPointV1> polygon)
+    {
+        if (circle.Points.Count != 1 || circle.RadiusMillimeters is not > 0)
+            return false;
+        var point = circle.Points[0];
+        var center = new DecimalPoint(point.X, point.Y);
+        if (!PointInPolygon(center, polygon))
+            return false;
+        var radiusSquared = (decimal)circle.RadiusMillimeters.Value
+                            * circle.RadiusMillimeters.Value;
+        for (var index = 0; index < polygon.Count; index++)
+        {
+            var edgeStart = polygon[index];
+            var edgeEnd = polygon[(index + 1) % polygon.Count];
+            if (DistanceSquared(
+                    center,
+                    new DecimalPoint(edgeStart.X, edgeStart.Y),
+                    new DecimalPoint(edgeEnd.X, edgeEnd.Y)) < radiusSquared)
+            {
+                return false;
+            }
+        }
+        return true;
+    }
+
+    private static decimal DistanceSquared(
+        DecimalPoint point,
+        DecimalPoint start,
+        DecimalPoint end)
+    {
+        var edge = end - start;
+        var lengthSquared = Dot(edge, edge);
+        if (lengthSquared == 0m)
+            return Dot(point - start, point - start);
+        var projection = Math.Clamp(
+            Dot(point - start, edge) / lengthSquared,
+            0m,
+            1m);
+        var nearest = PointAt(start, end, projection);
+        var delta = point - nearest;
+        return Dot(delta, delta);
+    }
+
+    private static bool PointInPolygon(
+        DecimalPoint point,
+        IReadOnlyList<SpaceCadMillimeterPointV1> polygon)
+    {
+        var inside = false;
+        for (var index = 0; index < polygon.Count; index++)
+        {
+            var first = polygon[index];
+            var second = polygon[(index + 1) % polygon.Count];
+            var start = new DecimalPoint(first.X, first.Y);
+            var end = new DecimalPoint(second.X, second.Y);
+            if (PointOnSegment(point, start, end))
+                return true;
+            if ((start.Y > point.Y) == (end.Y > point.Y))
+                continue;
+            var crossingX = start.X
+                            + ((point.Y - start.Y) * (end.X - start.X)
+                               / (end.Y - start.Y));
+            if (crossingX > point.X)
+                inside = !inside;
+        }
+        return inside;
+    }
+
+    private static bool PointOnSegment(
+        DecimalPoint point,
+        DecimalPoint start,
+        DecimalPoint end) =>
+        Cross(point - start, end - start) == 0m
+        && point.X >= decimal.Min(start.X, end.X)
+        && point.X <= decimal.Max(start.X, end.X)
+        && point.Y >= decimal.Min(start.Y, end.Y)
+        && point.Y <= decimal.Max(start.Y, end.Y);
+
+    private static DecimalPoint PointAt(
+        DecimalPoint start,
+        DecimalPoint end,
+        decimal parameter) =>
+        start + ((end - start) * parameter);
+
+    private static decimal Cross(DecimalPoint first, DecimalPoint second) =>
+        (first.X * second.Y) - (first.Y * second.X);
+
+    private static decimal Dot(DecimalPoint first, DecimalPoint second) =>
+        (first.X * second.X) + (first.Y * second.Y);
+
     private static void AddRelations(
         BindingContext context,
         IReadOnlyList<MutableProposal> proposals,
@@ -720,6 +1087,30 @@ public sealed class WarehouseDraftSynthesizer : IWarehouseDraftSynthesizer
                 group => group.OrderBy(item => item.SourceRef, StringComparer.Ordinal).ToArray(),
                 StringComparer.Ordinal);
         var pending = new List<PendingRelation>();
+        foreach (var proposal in proposals)
+        {
+            foreach (var field in proposal.Fields)
+            {
+                var targetType = RelationTargetType(field.FieldPath);
+                if (targetType is null
+                    || !proposalsByKey.TryGetValue(field.ValueToken, out var targets))
+                {
+                    continue;
+                }
+                foreach (var target in targets.Where(item =>
+                             item.ObjectType == targetType.Value))
+                {
+                    pending.Add(new PendingRelation(
+                        proposal,
+                        target,
+                        WarehouseRelationType.ContainedBy,
+                        field.Confidence,
+                        EmitRelation: false));
+                }
+            }
+        }
+
+        var reportedConflicts = new HashSet<string>(StringComparer.Ordinal);
         foreach (var proposal in proposals)
         {
             if (!context.SuggestionByKey.TryGetValue(proposal.SourceKey, out var suggestion))
@@ -738,11 +1129,56 @@ public sealed class WarehouseDraftSynthesizer : IWarehouseDraftSynthesizer
                 }
                 foreach (var target in targets)
                 {
+                    var fieldPath = RelationFieldPath(target.ObjectType);
+                    var resolved = fieldPath is null
+                        ? null
+                        : proposal.Fields.SingleOrDefault(field =>
+                            field.FieldPath.Equals(fieldPath, StringComparison.Ordinal));
+                    if (resolved is not null
+                        && (resolved.ValueToken.Equals(
+                                target.SourceKey,
+                                StringComparison.Ordinal)
+                            || resolved.WinningSource is
+                                WarehouseFusionSource.HumanLocked or
+                                WarehouseFusionSource.DeterministicRule))
+                    {
+                        if (!resolved.ValueToken.Equals(
+                                target.SourceKey,
+                                StringComparison.Ordinal))
+                        {
+                            var conflictKey = $"{proposal.LogicalId:N}:{fieldPath}";
+                            if (reportedConflicts.Add(conflictKey))
+                            {
+                                var locked = resolved.WinningSource ==
+                                             WarehouseFusionSource.HumanLocked;
+                                var softRule = resolved.WinningSource ==
+                                               WarehouseFusionSource.DeterministicRule
+                                               && resolved.Confidence < 1m;
+                                issues.Add(new WarehouseProposalIssueV1(
+                                    locked
+                                        ? "AI_LOCKED_VALUE_CONFLICT"
+                                        : "AI_RULE_VALUE_CONFLICT",
+                                    locked || !softRule
+                                        ? WarehouseProposalIssueSeverity.Info
+                                        : WarehouseProposalIssueSeverity.Warning,
+                                    proposal.SourceRef,
+                                    proposal.SourceKey,
+                                    fieldPath,
+                                    locked
+                                        ? null
+                                        : softRule
+                                            ? "confidence-downgraded"
+                                            : "strong-rule-retained"));
+                            }
+                        }
+                        continue;
+                    }
                     pending.Add(new PendingRelation(
                         proposal,
                         target,
                         relation.RelationType,
-                        relation.Confidence));
+                        relation.Confidence,
+                        EmitRelation: true));
                 }
             }
         }
@@ -765,6 +1201,8 @@ public sealed class WarehouseDraftSynthesizer : IWarehouseDraftSynthesizer
                     "relations"));
                 continue;
             }
+            if (!relation.EmitRelation)
+                continue;
             relation.Source.Relations.Add(new WarehouseProposalRelationV1(
                 relation.Type,
                 relation.Target.LogicalId,
@@ -772,6 +1210,24 @@ public sealed class WarehouseDraftSynthesizer : IWarehouseDraftSynthesizer
                 ["AI_RELATION"]));
         }
     }
+
+    private static WarehouseSpaceType? RelationTargetType(string fieldPath) =>
+        fieldPath switch
+        {
+            "relations.zoneSourceKey" => WarehouseSpaceType.Zone,
+            "relations.aisleSourceKey" => WarehouseSpaceType.Aisle,
+            "relations.wallSourceKey" => WarehouseSpaceType.Wall,
+            _ => null,
+        };
+
+    private static string? RelationFieldPath(WarehouseSpaceType targetType) =>
+        targetType switch
+        {
+            WarehouseSpaceType.Zone => "relations.zoneSourceKey",
+            WarehouseSpaceType.Aisle => "relations.aisleSourceKey",
+            WarehouseSpaceType.Wall => "relations.wallSourceKey",
+            _ => null,
+        };
 
     private static HashSet<Guid> CyclicParentCore(
         IReadOnlyList<PendingRelation> relations)
@@ -935,6 +1391,7 @@ public sealed class WarehouseDraftSynthesizer : IWarehouseDraftSynthesizer
             "attributes.wallType" => type == WarehouseSpaceType.Wall,
             "attributes.columnType" => type == WarehouseSpaceType.Column,
             "relations.zoneSourceKey" => type is
+                WarehouseSpaceType.Aisle or
                 WarehouseSpaceType.Rack or
                 WarehouseSpaceType.Dock or
                 WarehouseSpaceType.StaticEquipment,
@@ -1320,7 +1777,50 @@ public sealed class WarehouseDraftSynthesizer : IWarehouseDraftSynthesizer
         MutableProposal Source,
         MutableProposal Target,
         WarehouseRelationType Type,
+        decimal Confidence,
+        bool EmitRelation);
+
+    private enum ParentInferenceStatus
+    {
+        VersionDisabled = 0,
+        NotApplicable = 1,
+        HumanLocked = 2,
+        NoMatch = 3,
+        Ambiguous = 4,
+        Inferred = 5,
+    }
+
+    private sealed record DeterministicZone(
+        string SourceKey,
+        string SourceRef,
+        SpaceCadSemanticGeometryV1 Geometry,
         decimal Confidence);
+
+    private sealed record DeterministicZoneParent(
+        string SourceKey,
+        decimal Confidence);
+
+    private sealed record ZoneParentInference(
+        ParentInferenceStatus Status,
+        DeterministicZoneParent? Parent = null);
+
+    private readonly record struct DecimalPoint(decimal X, decimal Y)
+    {
+        public static DecimalPoint operator +(
+            DecimalPoint first,
+            DecimalPoint second) =>
+            new(first.X + second.X, first.Y + second.Y);
+
+        public static DecimalPoint operator -(
+            DecimalPoint first,
+            DecimalPoint second) =>
+            new(first.X - second.X, first.Y - second.Y);
+
+        public static DecimalPoint operator *(
+            DecimalPoint point,
+            decimal scalar) =>
+            new(point.X * scalar, point.Y * scalar);
+    }
 
     private sealed class MutableProposal(
         Guid logicalId,
