@@ -148,10 +148,7 @@ public class CodeEngineService : ICodeEngineService
         // ★ rack-seq：按 Zone 分组，每 Zone 内按 (X, Y) 几何序编号（保变长唯一，ch03 §5.3）
         //   关键：即使「有巷道货架」与「无巷道货架」混在同一 Zone，rack-seq 在 Zone 范围内唯一，
         //   从而无巷道路径（跳过 aisle 段）仍能与有巷道路径区分码值。
-        var rackSeq = racks
-            .GroupBy(r => r.ZoneId)
-            .SelectMany(g => g.OrderBy(r => r.X).ThenBy(r => r.Y).Select((r, i) => (r.Id, Seq: i + 1)))
-            .ToDictionary(x => x.Id, x => x.Seq);
+        var rackSeq = BuildRackSequence(racks);
 
         var rackById  = racks .ToDictionary(r => r.Id);
         var zoneById  = zones .ToDictionary(z => z.Id);
@@ -332,13 +329,12 @@ public class CodeEngineService : ICodeEngineService
     }
 
     // ══════════════════════════════════════════════════════════════════════
-    // GenSingleAsync — 单格生成（ch03 §10，最小实现）
+    // GenSingleAsync — 单格生成（ch03 §10）
     // ══════════════════════════════════════════════════════════════════════
 
     /// <inheritdoc/>
     public async Task<string> GenSingleAsync(Guid locationId)
     {
-        // TODO: rackSeq 在大规则集下应取 Zone 级完整排序；此处取 1 作最小实现（计划 §10 补全）
         var loc = await _db.Space_Locations.FirstOrDefaultAsync(l => l.Id == locationId)
                   ?? throw new BizException("E-SPACE-301");
 
@@ -349,6 +345,9 @@ public class CodeEngineService : ICodeEngineService
                    ?? throw new BizException("E-SPACE-301");
         var zone = await _db.Space_Zones.FirstOrDefaultAsync(z => z.Id == rack.ZoneId)
                    ?? throw new BizException("E-SPACE-301");
+        var zoneRacks = await _db.Space_Racks
+            .Where(r => r.ZoneId == zone.Id)
+            .ToListAsync();
         Space_Aisle? aisle = rack.AisleId.HasValue
             ? await _db.Space_Aisles.FirstOrDefaultAsync(a => a.Id == rack.AisleId)
             : null;
@@ -365,9 +364,9 @@ public class CodeEngineService : ICodeEngineService
         if (preErrs.Count > 0)
             throw new BizException(preErrs[0]);
 
-        // 简化序号字典（单格场景；完整 Zone 级排序见计划 §10）
+        // 单格生成与批量生成共享同一 Zone 级货架序号，避免非首架被错编为 1。
         var zoneSeq = new Dictionary<Guid, int> { [zone.Id] = 1 };
-        var rackSeq = new Dictionary<Guid, int> { [rack.Id] = 1 };
+        var rackSeq = BuildRackSequence(zoneRacks);
 
         var code = Assemble(segs, site, floor, zone, aisle, rack,
             loc.Col ?? 1, loc.Level ?? 1, loc.Depth ?? 1, zoneSeq, rackSeq);
@@ -380,6 +379,16 @@ public class CodeEngineService : ICodeEngineService
     // ══════════════════════════════════════════════════════════════════════
     // 私有算法辅助
     // ══════════════════════════════════════════════════════════════════════
+
+    private static Dictionary<Guid, int> BuildRackSequence(IEnumerable<Space_Rack> racks) =>
+        racks
+            .GroupBy(r => r.ZoneId)
+            .SelectMany(g => g
+                .OrderBy(r => r.X)
+                .ThenBy(r => r.Y)
+                .ThenBy(r => r.Id)
+                .Select((r, i) => (r.Id, Seq: i + 1)))
+            .ToDictionary(x => x.Id, x => x.Seq);
 
     /// <summary>
     /// 规则优先级解析（ch03 §2.2）。

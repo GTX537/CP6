@@ -47,7 +47,7 @@ public interface ICodeEngineService
 
     /// <summary>
     /// 单格生成（ch03 §10）。对单个库位走同样的 Assemble 路径写回 LocationCode。
-    /// 最小实现：rackSeq 简化为 1；后续补全参见计划 §10。
+    /// rackSeq 与批量生成一致，按当前 Zone 内全部货架的确定性几何顺序计算。
     /// </summary>
     Task<string> GenSingleAsync(Guid locationId);
 }
