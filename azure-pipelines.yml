@@ -3,13 +3,10 @@ trigger:
     include:
       - main
 
-pr:
-  branches:
-    include:
-      - main
+
 
 pool:
-  vmImage: 'windows-latest'
+  name: 'Default'
 
 variables:
   buildConfiguration: 'Release'
