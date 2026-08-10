@@ -4,6 +4,7 @@ trigger:
       - main
 
 
+pr: none
 
 pool:
   name: 'Default'
