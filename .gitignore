@@ -113,6 +113,7 @@ backend.log
 
 # Claude Code worktrees & temp probes
 .claude/worktrees/
+.claude/settings.local.json
 tmp-*.js
 docs/_manual_render/
 
