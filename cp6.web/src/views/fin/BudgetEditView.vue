@@ -527,13 +527,23 @@ const versionForm = reactive({
 
 async function loadVersions() {
   if (!selectedBudget.value?.id) return
+  const selectedId = selectedVersion.value?.id
   versionsLoading.value = true
   try {
     const res = await budgetVersionApi.list(selectedBudget.value.id)
     versions.value = res?.data || []
+    if (selectedId) {
+      selectedVersion.value = versions.value.find(v => v.id === selectedId) ?? null
+      if (!selectedVersion.value) lines.value = []
+    }
   } finally {
     versionsLoading.value = false
   }
+}
+
+async function reloadSelectedVersionAndLines() {
+  await loadVersions()
+  if (selectedVersion.value?.id) await loadLines()
 }
 
 function openCreateVersion() {
@@ -702,15 +712,16 @@ async function doAddLine() {
       controlBasis: lineForm.controlBasis as import('@/types/fin/budget').BudgetControlBasis,
       memo: lineForm.memo || null,
       rowVersion: null,
+      versionRowVersion: selectedVersion.value.rowVersion ?? null,
     }
     const res = await budgetLineApi.upsert(dto)
     if (res?.code === 0) {
       ElMessage.success(t('budget.msg.saved'))
       addLineVisible.value = false
-      await loadLines()
+      await reloadSelectedVersionAndLines()
     } else if (res?.message === 'E-A5-CONCURRENCY-001') {
       await ElMessageBox.alert(t('E-A5-CONCURRENCY-001'), t('budget.msg.concurrencyTitle'), { type: 'warning' })
-      await loadLines()
+      await reloadSelectedVersionAndLines()
     } else {
       ElMessage.error(res?.message || t('操作失败'))
     }
@@ -718,7 +729,7 @@ async function doAddLine() {
     const code = e?.response?.data?.message ?? e?.message
     if (code === 'E-A5-CONCURRENCY-001') {
       await ElMessageBox.alert(t('E-A5-CONCURRENCY-001'), t('budget.msg.concurrencyTitle'), { type: 'warning' })
-      await loadLines()
+      await reloadSelectedVersionAndLines()
     } else {
       ElMessage.error(code || t('操作失败'))
     }
@@ -763,17 +774,15 @@ async function upsertRow(row: BudgetLineGridRow) {
     controlBasis: (row.controlBasis ?? 0) as import('@/types/fin/budget').BudgetControlBasis,
     memo: row.memo || null,
     rowVersion: row.rowVersion ?? null,
+    versionRowVersion: selectedVersion.value.rowVersion ?? null,
   }
   try {
     const res = await budgetLineApi.upsert(dto)
     if (res?.code === 0) {
-      // refresh rowVersion from reload (do a silent reload)
-      const refreshed = await budgetLineApi.list(selectedVersion.value!.id)
-      const updated = (refreshed?.data || []).find(r => r.id === row.id)
-      if (updated) row.rowVersion = updated.rowVersion ?? null
+      await reloadSelectedVersionAndLines()
     } else if (res?.message === 'E-A5-CONCURRENCY-001') {
       await ElMessageBox.alert(t('E-A5-CONCURRENCY-001'), t('budget.msg.concurrencyTitle'), { type: 'warning' })
-      await loadLines()
+      await reloadSelectedVersionAndLines()
     } else {
       ElMessage.error(res?.message || t('操作失败'))
     }
@@ -781,7 +790,7 @@ async function upsertRow(row: BudgetLineGridRow) {
     const code = e?.response?.data?.message ?? e?.message
     if (code === 'E-A5-CONCURRENCY-001') {
       await ElMessageBox.alert(t('E-A5-CONCURRENCY-001'), t('budget.msg.concurrencyTitle'), { type: 'warning' })
-      await loadLines()
+      await reloadSelectedVersionAndLines()
     } else {
       ElMessage.error(code || t('操作失败'))
     }
@@ -792,16 +801,26 @@ async function doDeleteLine(row: BudgetLineGridRow) {
   try {
     await ElMessageBox.confirm(t('budget.msg.deleteLineConfirm'), t('budget.btn.deleteLine'), { type: 'warning' })
   } catch { return }
+  if (!selectedVersion.value?.rowVersion || !row.rowVersion) return
   try {
-    const res = await budgetLineApi.remove(row.id)
+    const res = await budgetLineApi.remove(row.id, row.rowVersion, selectedVersion.value.rowVersion)
     if (res?.code === 0) {
       ElMessage.success(t('budget.msg.deleted'))
-      await loadLines()
+      await reloadSelectedVersionAndLines()
+    } else if (res?.message === 'E-A5-CONCURRENCY-001') {
+      await ElMessageBox.alert(t('E-A5-CONCURRENCY-001'), t('budget.msg.concurrencyTitle'), { type: 'warning' })
+      await reloadSelectedVersionAndLines()
     } else {
       ElMessage.error(res?.message || t('操作失败'))
     }
   } catch (e: any) {
-    ElMessage.error(e?.response?.data?.message || t('操作失败'))
+    const code = e?.response?.data?.message ?? e?.message
+    if (code === 'E-A5-CONCURRENCY-001') {
+      await ElMessageBox.alert(t('E-A5-CONCURRENCY-001'), t('budget.msg.concurrencyTitle'), { type: 'warning' })
+      await reloadSelectedVersionAndLines()
+    } else {
+      ElMessage.error(code || t('操作失败'))
+    }
   }
 }
 
@@ -828,17 +847,32 @@ async function handleImportPreview(file: File): Promise<boolean> {
 }
 
 async function doImportConfirm() {
-  if (!selectedVersion.value?.id || !pendingImportFile) return
+  if (!selectedVersion.value?.id || !selectedVersion.value.rowVersion || !pendingImportFile) return
   saving.value = true
   try {
-    const res = await budgetLineApi.importConfirm(selectedVersion.value.id, pendingImportFile)
+    const res = await budgetLineApi.importConfirm(
+      selectedVersion.value.id,
+      selectedVersion.value.rowVersion,
+      pendingImportFile,
+    )
     if (res?.code === 0) {
       ElMessage.success(t('budget.msg.importDone'))
       importPreviewVisible.value = false
       pendingImportFile = null
-      await loadLines()
+      await reloadSelectedVersionAndLines()
+    } else if (res?.message === 'E-A5-CONCURRENCY-001') {
+      await ElMessageBox.alert(t('E-A5-CONCURRENCY-001'), t('budget.msg.concurrencyTitle'), { type: 'warning' })
+      await reloadSelectedVersionAndLines()
     } else {
       ElMessage.error(res?.message || t('操作失败'))
+    }
+  } catch (e: any) {
+    const code = e?.response?.data?.message ?? e?.message
+    if (code === 'E-A5-CONCURRENCY-001') {
+      await ElMessageBox.alert(t('E-A5-CONCURRENCY-001'), t('budget.msg.concurrencyTitle'), { type: 'warning' })
+      await reloadSelectedVersionAndLines()
+    } else {
+      ElMessage.error(code || t('操作失败'))
     }
   } finally {
     saving.value = false

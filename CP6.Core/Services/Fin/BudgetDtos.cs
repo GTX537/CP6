@@ -28,6 +28,7 @@ public class BudgetLineDto
     public BudgetControlBasis? ControlBasis { get; set; }
     public string? Memo { get; set; }
     public byte[]? RowVersion { get; set; }
+    public byte[]? VersionRowVersion { get; set; }
 }
 
 public class BudgetLineGridRow
