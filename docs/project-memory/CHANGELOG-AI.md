@@ -2,6 +2,12 @@
 
 > 依据 Git log 汇总，不替代完整 Git 历史。重点记录影响接手判断的里程碑。
 
+## 2026-08-09：WF 通知定向推送与遗留广播清理
+
+- 生产通知路径明确为事务内 outbox + 提交后派送：`PersistentWfNotifier` 只入队，`WfNotificationDispatchWorker` 使用 `Clients.User(row.UserId.ToString())` 定向触达接收人，`NotifyHub` 继续要求认证。
+- 删除未注册的 `SignalRWfNotifier` 与 `PersistentWfNotifier` 中四段 outbox 后不可达的 `Clients.All`/邮件直发回退；通知器构造依赖收敛为通知存储与偏好服务，避免旧广播实现被意外恢复。
+- 同步关闭 API TODO、跨波跟踪票和 KnownIssue。验证为通知聚焦 13/13、CP6.Tests 2832 passed / 18 environment-gated skipped / 0 failed、WebApi Release 0 warning / 0 error。
+
 ## 2026-08-09：分支优先规范与本地配置优先级修复
 
 - `04eaf42d` / `e4e33364`：新增并合入 `AGENTS.md` 与开发指南中的分支优先规则；`main` 只作集成，任务必须在独立分支验证，脏工作区使用 worktree 隔离，合并后再推送远端。

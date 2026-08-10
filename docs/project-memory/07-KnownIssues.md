@@ -15,7 +15,6 @@
 
 ## 代码层已知项
 
-- WF SignalR 通知当前广播后由客户端按用户过滤，隐私与效率均不如定向推送。
 - Space rackSeq 大规则集排序仍是最小实现。
 - FIN BudgetLine 缺版本级并发控制。
 - `GdprService` purge 在非关系型测试 DB 上明确不支持，这是测试边界而非线上缺陷。

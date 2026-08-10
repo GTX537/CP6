@@ -1,15 +1,11 @@
 // CP6.Tests/Oa/PersistentWfNotifierTests.cs
 using CP6.Core.EFDbContext;
 using CP6.Core.Services.Oa;
-using CP6.Core.Services.Sys;
 using CP6.Entity.DomainModels.Sys;
 using CP6.Entity.DomainModels.Wf;
-using CP6.WebApi.Hubs;
 using CP6.WebApi.Services;
-using Microsoft.AspNetCore.SignalR;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Diagnostics;
-using Microsoft.Extensions.Logging.Abstractions;
 using Xunit;
 
 namespace CP6.Tests.Oa;
@@ -36,48 +32,12 @@ public class PersistentWfNotifierTests
         public Task MarkAllReadAsync(Guid userId) => Task.CompletedTask;
     }
 
-    private sealed class RecordingEmail : IEmailSender
-    {
-        public readonly List<(string To, string Subject)> Sent = new();
-        public Task SendAsync(string to, string subject, string body)
-        { Sent.Add((to, subject)); return Task.CompletedTask; }
-    }
-
-    private sealed class FakeClientProxy : IClientProxy
-    {
-        public int SendCount;
-        public Task SendCoreAsync(string method, object?[] args, CancellationToken ct = default)
-        { SendCount++; return Task.CompletedTask; }
-    }
-
-    private sealed class FakeHubClients : IHubClients
-    {
-        public readonly FakeClientProxy Proxy = new();
-        public IClientProxy All => Proxy;
-        public IClientProxy AllExcept(IReadOnlyList<string> x) => Proxy;
-        public IClientProxy Client(string x) => Proxy;
-        public IClientProxy Clients(IReadOnlyList<string> x) => Proxy;
-        public IClientProxy Group(string x) => Proxy;
-        public IClientProxy Groups(IReadOnlyList<string> x) => Proxy;
-        public IClientProxy GroupExcept(string x, IReadOnlyList<string> y) => Proxy;
-        public IClientProxy User(string x) => Proxy;
-        public IClientProxy Users(IReadOnlyList<string> x) => Proxy;
-    }
-
-    private sealed class FakeHub : IHubContext<NotifyHub>
-    {
-        public readonly FakeHubClients FakeClients = new();
-        public IHubClients Clients => FakeClients;
-        public IGroupManager Groups => null!;   // 通知器不触达 Groups
-    }
-
     // ── 脚手架 ──────────────────────────────────────────────────────────────
     private static CP6Context NewDb() => new(new DbContextOptionsBuilder<CP6Context>()
         .UseInMemoryDatabase(Guid.NewGuid().ToString())
         .ConfigureWarnings(w => w.Ignore(InMemoryEventId.TransactionIgnoredWarning)).Options);
 
-    private sealed record Rig(CP6Context Db, PersistentWfNotifier Notifier,
-        RecordingNotif Notif, RecordingEmail Email, FakeHub Hub);
+    private sealed record Rig(PersistentWfNotifier Notifier, RecordingNotif Notif);
 
     private static async Task<Rig> BuildAsync(Guid user, string? prefsJson)
     {
@@ -87,16 +47,13 @@ public class PersistentWfNotifierTests
             db.Wf_InboxPrefs.Add(new Wf_InboxPref { Id = Guid.NewGuid(), UserId = user, PrefsJson = prefsJson });
         await db.SaveChangesAsync();
         var notif = new RecordingNotif();
-        var email = new RecordingEmail();
-        var hub = new FakeHub();
-        var notifier = new PersistentWfNotifier(db, notif, new PrefService(db), email, hub,
-            NullLogger<PersistentWfNotifier>.Instance);
-        return new Rig(db, notifier, notif, email, hub);
+        var notifier = new PersistentWfNotifier(notif, new PrefService(db));
+        return new Rig(notifier, notif);
     }
 
     // ── 跳过矩阵（spec §7）──────────────────────────────────────────────────
     [Fact]
-    public async Task Default_NoPrefRow_EnqueuesWithoutPreCommitDelivery()
+    public async Task Default_NoPrefRow_EnqueuesBothRequestedChannels()
     {
         var user = Guid.NewGuid();
         var r = await BuildAsync(user, prefsJson: null);
@@ -105,12 +62,10 @@ public class PersistentWfNotifierTests
         Assert.Equal(WfNotificationType.TodoCreated, r.Notif.Created[0].Type);
         Assert.True(r.Notif.Created[0].InApp);
         Assert.True(r.Notif.Created[0].Email);
-        Assert.Equal(0, r.Hub.FakeClients.Proxy.SendCount);
-        Assert.Empty(r.Email.Sent);
     }
 
     [Fact]
-    public async Task InAppOff_SkipsPersistAndPush_EmailStillSent()
+    public async Task InAppOff_EnqueuesEmailOnly()
     {
         var user = Guid.NewGuid();
         var r = await BuildAsync(user, """{"notify":{"todoCreated":{"inApp":false,"email":true}}}""");
@@ -118,12 +73,10 @@ public class PersistentWfNotifierTests
         Assert.Single(r.Notif.Created);
         Assert.False(r.Notif.Created[0].InApp);
         Assert.True(r.Notif.Created[0].Email);
-        Assert.Equal(0, r.Hub.FakeClients.Proxy.SendCount);
-        Assert.Empty(r.Email.Sent);
     }
 
     [Fact]
-    public async Task EmailOff_PersistsAndPushes_NoEmail()
+    public async Task EmailOff_EnqueuesInAppOnly()
     {
         var user = Guid.NewGuid();
         var r = await BuildAsync(user, """{"notify":{"flowApproved":{"email":false}}}""");
@@ -132,8 +85,6 @@ public class PersistentWfNotifierTests
         Assert.Equal(WfNotificationType.FlowApproved, r.Notif.Created[0].Type);
         Assert.True(r.Notif.Created[0].InApp);
         Assert.False(r.Notif.Created[0].Email);
-        Assert.Equal(0, r.Hub.FakeClients.Proxy.SendCount);
-        Assert.Empty(r.Email.Sent);
     }
 
     [Fact]
@@ -143,8 +94,6 @@ public class PersistentWfNotifierTests
         var r = await BuildAsync(user, """{"notify":{"flowRejected":{"inApp":false,"email":false}}}""");
         await r.Notifier.FlowRejectedAsync(user, Guid.NewGuid(), "leave", "缺附件");
         Assert.Empty(r.Notif.Created);
-        Assert.Equal(0, r.Hub.FakeClients.Proxy.SendCount);
-        Assert.Empty(r.Email.Sent);
     }
 
     [Fact]
@@ -154,7 +103,6 @@ public class PersistentWfNotifierTests
         var r = await BuildAsync(user, """{"notify":{"flowRejected":{"inApp":false,"email":false}}}""");
         await r.Notifier.TodoCreatedAsync(user, Guid.NewGuid(), Guid.NewGuid(), "leave");
         Assert.Single(r.Notif.Created);
-        Assert.Empty(r.Email.Sent);
     }
 
     // ── 遗留扁平数据回归（C2：旧用户已存开关不失效）──
@@ -165,7 +113,6 @@ public class PersistentWfNotifierTests
         var r = await BuildAsync(user, """{"notify":{"todo":false,"email":true}}""");
         await r.Notifier.TodoCreatedAsync(user, Guid.NewGuid(), Guid.NewGuid(), "leave");
         Assert.Empty(r.Notif.Created);
-        Assert.Empty(r.Email.Sent);
     }
 
     [Fact]
@@ -176,12 +123,11 @@ public class PersistentWfNotifierTests
         await r.Notifier.FlowApprovedAsync(user, Guid.NewGuid(), "leave");
         Assert.Single(r.Notif.Created);
         Assert.False(r.Notif.Created[0].Email);
-        Assert.Empty(r.Email.Sent);
     }
 
     // ── 第 4 方法 BranchPrunedAsync 矩阵门控（hardening 波已合入；typeKey="branchPruned"）──
     [Fact]
-    public async Task BranchPruned_Default_EnqueuesWithoutPreCommitDelivery()
+    public async Task BranchPruned_Default_EnqueuesBothRequestedChannels()
     {
         var user = Guid.NewGuid();
         var r = await BuildAsync(user, prefsJson: null);
@@ -190,12 +136,10 @@ public class PersistentWfNotifierTests
         Assert.Equal(WfNotificationType.BranchPruned, r.Notif.Created[0].Type);
         Assert.True(r.Notif.Created[0].InApp);
         Assert.True(r.Notif.Created[0].Email);
-        Assert.Equal(0, r.Hub.FakeClients.Proxy.SendCount);
-        Assert.Empty(r.Email.Sent);
     }
 
     [Fact]
-    public async Task BranchPruned_InAppOff_SkipsPersistAndPush_EmailStillSent()
+    public async Task BranchPruned_InAppOff_EnqueuesEmailOnly()
     {
         var user = Guid.NewGuid();
         var r = await BuildAsync(user, """{"notify":{"branchPruned":{"inApp":false,"email":true}}}""");
@@ -203,12 +147,10 @@ public class PersistentWfNotifierTests
         Assert.Single(r.Notif.Created);
         Assert.False(r.Notif.Created[0].InApp);
         Assert.True(r.Notif.Created[0].Email);
-        Assert.Equal(0, r.Hub.FakeClients.Proxy.SendCount);
-        Assert.Empty(r.Email.Sent);
     }
 
     [Fact]
-    public async Task BranchPruned_EmailOff_PersistsAndPushes_NoEmail()
+    public async Task BranchPruned_EmailOff_EnqueuesInAppOnly()
     {
         var user = Guid.NewGuid();
         var r = await BuildAsync(user, """{"notify":{"branchPruned":{"email":false}}}""");
@@ -217,8 +159,6 @@ public class PersistentWfNotifierTests
         Assert.Equal(WfNotificationType.BranchPruned, r.Notif.Created[0].Type);
         Assert.True(r.Notif.Created[0].InApp);
         Assert.False(r.Notif.Created[0].Email);
-        Assert.Equal(0, r.Hub.FakeClients.Proxy.SendCount);
-        Assert.Empty(r.Email.Sent);
     }
 
     [Fact]
@@ -228,7 +168,5 @@ public class PersistentWfNotifierTests
         var r = await BuildAsync(user, """{"notify":{"branchPruned":{"inApp":false,"email":false}}}""");
         await r.Notifier.BranchPrunedAsync(user, Guid.NewGuid(), "leave", "node2", "分支驳回");
         Assert.Empty(r.Notif.Created);
-        Assert.Equal(0, r.Hub.FakeClients.Proxy.SendCount);
-        Assert.Empty(r.Email.Sent);
     }
 }

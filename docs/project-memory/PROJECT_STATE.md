@@ -9,6 +9,12 @@
 - `.claude/settings.local.json` 已作为机器本地文件忽略；任务没有提交 `localhost\\KOUSQLSERVER` 等机器专属 `launchSettings` 配置。
 - 验证：配置聚焦 4/4、OpenAPI 契约 30/30、CP6.Tests 2832 passed / 18 environment-gated skipped / 0 failed、WebApi Release 0 warning / 0 error、C# whitespace 与 `git diff --check` 通过。
 
+## WF 通知定向推送与遗留广播清理（2026-08-09）
+
+- 运行链路已收敛为事务内 outbox：`PersistentWfNotifier` 只根据用户偏好写通知意图，不再持有数据库、邮件或 SignalR 直发依赖；提交后由 `WfNotificationDispatchWorker` 统一派送。
+- 实时通知使用 `Clients.User(row.UserId.ToString())`，目标值与 JWT `ClaimTypes.NameIdentifier` 的用户 GUID 一致；`NotifyHub` 继续要求认证。未注册的 `SignalRWfNotifier` 与四段永远不可达的 `Clients.All` 回退代码已删除，避免旧广播路径被重新启用。
+- 项目记忆中“WF 仍广播”的 API TODO、Todo 和 KnownIssue 已同步关闭。门禁为通知聚焦 13/13、CP6.Tests 2832 passed / 18 environment-gated skipped / 0 failed、WebApi Release 0 warning / 0 error。
+
 ## E13 无锁 Zone 父关系确定性推导（2026-08-09）
 
 - 功能提交 `d19a5300` 基于 `main@6bbdd760` 交付 `warehouse-rule-only-v2`：Aisle/Rack 没有人工 `relations.zoneSourceKey` 锁时，只在同一权威 CAD Semantic Preview 中恰有一个 Zone Polygon 被证明完整包含其确定性几何时写入父关系；来源为 `DeterministicRule`，证据码为 `RULE:ZONE_GEOMETRY_CONTAINMENT_V1`。
