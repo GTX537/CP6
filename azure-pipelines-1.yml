@@ -1,0 +1,94 @@
+trigger:
+  branches:
+    include:
+      - main
+
+pr:
+  branches:
+    include:
+      - main
+
+pool:
+  vmImage: 'windows-latest'
+
+variables:
+  buildConfiguration: 'Release'
+
+stages:
+- stage: CI
+  displayName: 'CP6 CI'
+
+  jobs:
+  - job: BuildAndTest
+    displayName: 'Build and Test CP6'
+
+    steps:
+    - checkout: self
+      fetchDepth: 0
+
+    # =========================
+    # Environment
+    # =========================
+
+    - task: UseDotNet@2
+      displayName: 'Install .NET 8 SDK'
+      inputs:
+        packageType: 'sdk'
+        version: '8.x'
+
+    - task: NodeTool@0
+      displayName: 'Install Node.js 22'
+      inputs:
+        versionSpec: '22.x'
+
+    # =========================
+    # .NET Backend
+    # =========================
+
+    - powershell: |
+        dotnet restore CP6.WebApi/CP6.WebApi.csproj
+        dotnet restore CP6.Tests/CP6.Tests.csproj
+        dotnet restore CP6.Client.Tests/CP6.Client.Tests.csproj
+      displayName: 'Restore .NET Projects'
+
+    - powershell: |
+        dotnet build CP6.WebApi/CP6.WebApi.csproj `
+          -c $(buildConfiguration) `
+          --no-restore
+      displayName: 'Build CP6 API'
+
+    - powershell: |
+        dotnet test CP6.Tests/CP6.Tests.csproj `
+          -c $(buildConfiguration) `
+          --no-restore
+      displayName: 'Run Backend Tests'
+
+    - powershell: |
+        dotnet test CP6.Client.Tests/CP6.Client.Tests.csproj `
+          -c $(buildConfiguration) `
+          --no-restore
+      displayName: 'Run Client Tests'
+
+    # =========================
+    # Vue Frontend
+    # =========================
+
+    - powershell: |
+        npm ci
+      workingDirectory: 'cp6.web'
+      displayName: 'Install Vue Dependencies'
+
+    - powershell: |
+        npm run type-check
+      workingDirectory: 'cp6.web'
+      displayName: 'Vue Type Check'
+
+    - powershell: |
+        npm test -- --maxWorkers=4
+      workingDirectory: 'cp6.web'
+      displayName: 'Vue Unit Tests'
+
+    - powershell: |
+        npm run build-only
+      workingDirectory: 'cp6.web'
+      displayName: 'Build Vue Production'
