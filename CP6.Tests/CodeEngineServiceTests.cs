@@ -347,6 +347,56 @@ public class CodeEngineServiceTests
     }
 
     [Fact]
+    public async Task GenSingle_RackSeq_MatchesBatchOrdering_WithYAndIdTieBreaks()
+    {
+        using var db = Db();
+        var (floorId, zoneId, firstRackId) = SeedFloorZoneRack(db);
+        var secondRackId = Guid.Parse("00000000-0000-0000-0000-000000000001");
+        var lowerYRackId = Guid.Parse("ffffffff-ffff-ffff-ffff-ffffffffffff");
+        db.Space_Racks.Add(new Space_Rack
+        {
+            Id = secondRackId,
+            ZoneId = zoneId,
+            FloorId = floorId,
+            RackCode = "R02",
+            X = 0,
+            Y = 0,
+            Cols = 2,
+            Levels = 2,
+            DepthCount = 1
+        });
+        db.Space_Racks.Add(new Space_Rack
+        {
+            Id = lowerYRackId,
+            ZoneId = zoneId,
+            FloorId = floorId,
+            RackCode = "R03",
+            X = 0,
+            Y = -1,
+            Cols = 2,
+            Levels = 2,
+            DepthCount = 1
+        });
+        db.Space_CodeRules.Add(DefaultRule());
+        var targetLocation = Draft(firstRackId, floorId, 1, 1, 1);
+        var lowerIdLocation = Draft(secondRackId, floorId, 1, 1, 1);
+        var lowerYLocation = Draft(lowerYRackId, floorId, 1, 1, 1);
+        db.Space_Locations.AddRange(targetLocation, lowerIdLocation, lowerYLocation);
+        await db.SaveChangesAsync();
+
+        await Svc(db).GenerateAsync(floorId, "rebuild", null);
+        var batchCode = targetLocation.LocationCode;
+
+        var singleCode = await Svc(db).GenSingleAsync(targetLocation.Id);
+
+        Assert.Equal("A-03-01-01", batchCode);
+        Assert.Equal(batchCode, singleCode);
+        Assert.Equal("A-02-01-01", lowerIdLocation.LocationCode);
+        Assert.Equal("A-01-01-01", lowerYLocation.LocationCode);
+        Assert.NotEqual(lowerIdLocation.LocationCode, singleCode);
+    }
+
+    [Fact]
     public async Task Generate_ScopeZoneId_OnlyTargetZone()
     {
         // scopeZoneId 限定时只生成指定库区的库位码
@@ -369,6 +419,24 @@ public class CodeEngineServiceTests
         // 仅生成 zone A
         var codes = await Svc(db).GenerateAsync(floorId, "rebuild", zoneId);
         Assert.Single(codes);
+
+        var allCodes = await Svc(db).GenerateAsync(floorId, "rebuild", null);
+        Assert.Contains("A-01-01-01", allCodes);
+        Assert.Contains("B-01-01-01", allCodes);
+    }
+
+    [Fact]
+    public async Task Generate_EmptyRackSet_ReturnsNoCodes()
+    {
+        using var db = Db();
+        var (floorId, _, rackId) = SeedFloorZoneRack(db);
+        db.Space_Racks.Remove(db.Space_Racks.Local.Single(r => r.Id == rackId));
+        db.Space_CodeRules.Add(DefaultRule());
+        await db.SaveChangesAsync();
+
+        var codes = await Svc(db).GenerateAsync(floorId, "rebuild", null);
+
+        Assert.Empty(codes);
     }
 
     // ══════════════════════════════════════════════════════════════════════

@@ -15,7 +15,6 @@
 
 ## 代码层已知项
 
-- Space rackSeq 大规则集排序仍是最小实现。
 - FIN BudgetLine 缺版本级并发控制。
 - `GdprService` purge 在非关系型测试 DB 上明确不支持，这是测试边界而非线上缺陷。
 - 多端点保存按钮当前前端通常按主动作 `add` 隐显；非常规 add/edit 分离授权可能出现 UX 误隐，但后端仍正确校验。

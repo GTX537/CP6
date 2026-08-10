@@ -2,6 +2,12 @@
 
 > 依据 Git log 汇总，不替代完整 Git 历史。重点记录影响接手判断的里程碑。
 
+## 2026-08-10：Space 单格货位码 Zone 级 rackSeq
+
+- `CodeEngineService.GenSingleAsync` 不再把货架序号固定为 `1`，而是读取目标 Zone 全部货架，与批量生成共享 `(X, Y, Id)` 确定性排序。
+- 相同坐标以货架 `Id` 稳定排序；回归覆盖非首架单格生成，证明结果与批量重建一致且不与首架重复。
+- 无规则模型、API、数据库、迁移或前端变化。验证为 CodeEngine/LocationPublish 聚焦 55/55、CP6.Tests 2843 passed / 19 environment-gated skipped / 0 failed、WebApi Release 0 warning / 0 error；新增排序路径覆盖率审计 8/8，任务 diff 与新增行格式检查通过。
+
 ## 2026-08-10：FIN BudgetLine 版本级并发控制
 
 - 以 `BudgetVersion.RowVersion` 作为预算行聚合令牌；行新增/编辑/删除与 Excel 确认导入都要求客户端版本令牌，任一预算桶写入都使旧快照失效，冲突统一为 `E-A5-CONCURRENCY-001`。
