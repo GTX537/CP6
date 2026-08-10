@@ -1,5 +1,12 @@
 # 已完成能力与近期里程碑
 
+## 2026-08-09 分支优先规范与本地配置优先级修复
+
+- `04eaf42d` / `e4e33364` 新增并合入仓库级分支规则：日常开发必须从最新 `main` 创建单任务分支，脏工作区使用独立 worktree，测试通过后才能合并并推送远端。
+- `e3bf2420` 把 Local JSON 配置源排序提取为 `LocalJsonConfiguration`，准确插在无前缀环境变量源之前，保留主机前缀源顺序以及环境变量/命令行的高优先级。
+- 新增四条测试覆盖插入位置、环境变量覆盖、后置命令行覆盖和缺少无前缀环境源的回退；同时忽略机器本地 `.claude/settings.local.json`，不提交个人 SQL Server 启动配置。
+- 门禁：配置 4/4、OpenAPI 30/30、CP6.Tests 2832 passed / 18 skipped / 0 failed、WebApi Release 0 warning / 0 error、whitespace 与 diff 检查通过。
+
 ## 2026-08-08 `main` 同步候选本地收敛
 
 - 从 `origin/main@adbe7bcd` 创建 `codex/main-sync-20260808` 并整体合入集成 tip `f8c3bae8`；2 个 OA 与 3 个项目记忆冲突已按权威边界人工解决，unmerged 集合和冲突标记均为空。

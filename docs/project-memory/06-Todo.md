@@ -1,5 +1,11 @@
 # 当前待办与优先级
 
+## 已完成：分支优先规范与本地配置优先级
+
+- `main@e4e33364` 已包含仓库级分支优先规则；后续任务除有记录的技术例外外，均需独立分支、验证后合并并推送。
+- `e3bf2420` 已修复 `appsettings.Local.json` 的配置源插入边界，只在无前缀环境变量源前插入，环境变量和命令行继续保持最高优先级。
+- 配置聚焦 4/4、OpenAPI 30/30、CP6.Tests 2832 passed / 18 environment-gated skipped / 0 failed、WebApi Release 0 warning / 0 error。该项不再是待办。
+
 ## 已完成：`main` 同步与 P2.5 受控整合
 
 - `main@8045d872` 已通过 PR #2 合入原 `origin/integration/space-v1-20260730` 基线；原始 5 个冲突已按权威边界解决，Docker Cookie 修复已由 `0fc6f529` 等价纳入。

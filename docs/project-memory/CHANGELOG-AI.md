@@ -2,6 +2,13 @@
 
 > 依据 Git log 汇总，不替代完整 Git 历史。重点记录影响接手判断的里程碑。
 
+## 2026-08-09：分支优先规范与本地配置优先级修复
+
+- `04eaf42d` / `e4e33364`：新增并合入 `AGENTS.md` 与开发指南中的分支优先规则；`main` 只作集成，任务必须在独立分支验证，脏工作区使用 worktree 隔离，合并后再推送远端。
+- `e3bf2420`：把 `appsettings.Local.json` 排序逻辑提取为可测试组件，准确定位 `Prefix: null` 的无前缀环境变量源，避免误插到 `DOTNET_`/`ASPNETCORE_` 主机源之前。
+- 环境变量和后置命令行源继续覆盖 Local JSON；无无前缀环境源时安全追加。`.claude/settings.local.json` 被忽略，个人 `KOUSQLSERVER` 启动设置未进入任务。
+- 验证为配置 4/4、OpenAPI 30/30、CP6.Tests 2832 passed / 18 skipped / 0 failed、WebApi Release 0 warning / 0 error，whitespace 与 diff 检查通过。
+
 ## 2026-08-08：`main` 合并冲突收敛
 
 - 从 `origin/main@adbe7bcd` 创建 `codex/main-sync-20260808`，整体合入集成 `f8c3bae8`；原始合并准确产生 OA 2 个、项目记忆 3 个冲突，没有新增隐藏冲突。
