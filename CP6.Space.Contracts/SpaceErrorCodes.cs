@@ -99,6 +99,8 @@ public static class SpaceErrorCodes
         "SPACE_AI_OUTPUT_INVALID";
     public const string RackProfileRequired =
         "SPACE_RACK_PROFILE_REQUIRED";
+    public const string RuleOnlyParentRequired =
+        "SPACE_RULE_ONLY_PARENT_REQUIRED";
     public const string RackGenerationProfileNotFound =
         "SPACE_RACK_GENERATION_PROFILE_NOT_FOUND";
     public const string RackGenerationProfileConflict =

@@ -21,7 +21,9 @@ public static class SpaceAiGenerationRunContract
     public const int SchemaVersion = 1;
     public const string AiAssistedMode = "AiAssisted";
     public const string RuleOnlyMode = "RuleOnly";
-    public const string RuleVersion = "warehouse-rule-only-v1";
+    public const string LegacyRuleVersion = "warehouse-rule-only-v1";
+    public const string DeterministicParentRuleVersion = "warehouse-rule-only-v2";
+    public const string RuleVersion = DeterministicParentRuleVersion;
 }
 
 public sealed record CreateSpaceAiAtomicApplyRequest(

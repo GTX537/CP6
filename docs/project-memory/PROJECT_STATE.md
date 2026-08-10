@@ -2,6 +2,13 @@
 
 最后更新：2026-08-09
 
+## E13 无锁 Zone 父关系确定性推导（2026-08-09）
+
+- 功能提交 `d19a5300` 基于 `main@6bbdd760` 交付 `warehouse-rule-only-v2`：Aisle/Rack 没有人工 `relations.zoneSourceKey` 锁时，只在同一权威 CAD Semantic Preview 中恰有一个 Zone Polygon 被证明完整包含其确定性几何时写入父关系；来源为 `DeterministicRule`，证据码为 `RULE:ZONE_GEOMETRY_CONTAINMENT_V1`。
+- 零候选与多候选继续以 Blocking `SPACE_RULE_ONLY_PARENT_REQUIRED` 失败关闭，细节分别为 `no-containing-zone` / `ambiguous-containing-zones`；凹多边形路径按完整线段而非端点或 Bounds 判断。人工锁仍优先，冲突 AI Relation 被拒绝并保留融合问题，已解析关系进入环检测。
+- `warehouse-rule-only-v1` 的冻结 Run 与恢复链保持旧行为，不被新算法静默改写；不同 SourceHash 的匹配、建议继承和人工确认仍是独立产品卡，不在本切片内。
+- 门禁为融合聚焦 16/16、BuildScene 3/3、Space Unit 492/492、默认 Integration 288 passed / 95 SQL 环境门禁 skipped、完整 Release/AOT 0 warning / 0 error。无 Migration、HTTP/OpenAPI/SDK、前端、Provider、Usage、High Accept 或 Draft 写入变化。完整证据见 `docs/space/reports/e13-deterministic-zone-parent-inference.md`。
+
 ## `main` 同步、P2.5 受控整合与分支策略（2026-08-09）
 
 - PR #2 已以 `8045d872` 把原 `integration/space-v1-20260730@f8c3bae8` 受保护合入 `main`；5 个预期冲突按权威边界人工解决，Docker 本地 HTTP Cookie 修复以 `0fc6f529` 等价纳入。

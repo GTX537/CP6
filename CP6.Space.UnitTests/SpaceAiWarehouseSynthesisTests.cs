@@ -120,6 +120,137 @@ public sealed class SpaceAiWarehouseSynthesisTests
     }
 
     [Fact]
+    public async Task Unique_zone_geometry_infers_parent_for_aisle_and_racks()
+    {
+        var fixture = Fixture();
+
+        var result = await new WarehouseDraftSynthesizer()
+            .SynthesizeAsync(Request(fixture, []));
+
+        var zoneKey = fixture.SourceKey("H:140");
+        foreach (var sourceRef in new[] { "H:150", "H:160", "H:161" })
+        {
+            var field = Assert.Single(
+                Proposal(result, sourceRef).Fields,
+                item => item.FieldPath == "relations.zoneSourceKey");
+            Assert.Equal(zoneKey, field.ValueToken);
+            Assert.Equal(
+                WarehouseFusionSource.DeterministicRule,
+                field.WinningSource);
+            Assert.Contains(field.Evidence, evidence =>
+                evidence.EvidenceCodes.Contains(
+                    "RULE:ZONE_GEOMETRY_CONTAINMENT_V1",
+                    StringComparer.Ordinal));
+            Assert.DoesNotContain(result.Issues, issue =>
+                issue.Code == SpaceErrorCodes.RuleOnlyParentRequired &&
+                issue.SourceRef == sourceRef);
+        }
+    }
+
+    [Fact]
+    public async Task Ambiguous_zone_geometry_keeps_parent_blocking()
+    {
+        var fixture = Fixture(addOverlappingZone: true);
+
+        var result = await new WarehouseDraftSynthesizer()
+            .SynthesizeAsync(Request(fixture, []));
+
+        foreach (var sourceRef in new[] { "H:150", "H:160", "H:161" })
+        {
+            Assert.DoesNotContain(
+                Proposal(result, sourceRef).Fields,
+                item => item.FieldPath == "relations.zoneSourceKey");
+            Assert.Contains(result.Issues, issue =>
+                issue.Code == SpaceErrorCodes.RuleOnlyParentRequired &&
+                issue.SourceRef == sourceRef &&
+                issue.Severity == WarehouseProposalIssueSeverity.Blocking &&
+                issue.DetailToken == "ambiguous-containing-zones");
+        }
+    }
+
+    [Fact]
+    public async Task Concave_zone_does_not_infer_for_path_that_leaves_boundary()
+    {
+        var fixture = Fixture(useConcaveZone: true);
+
+        var result = await new WarehouseDraftSynthesizer()
+            .SynthesizeAsync(Request(fixture, []));
+
+        Assert.DoesNotContain(
+            Proposal(result, "H:150").Fields,
+            item => item.FieldPath == "relations.zoneSourceKey");
+        Assert.Contains(result.Issues, issue =>
+            issue.Code == SpaceErrorCodes.RuleOnlyParentRequired &&
+            issue.SourceRef == "H:150" &&
+            issue.DetailToken == "no-containing-zone");
+        Assert.Contains(
+            Proposal(result, "H:160").Fields,
+            item => item.FieldPath == "relations.zoneSourceKey" &&
+                    item.ValueToken == fixture.SourceKey("H:140"));
+    }
+
+    [Fact]
+    public async Task Deterministic_parent_beats_conflicting_ai_relation()
+    {
+        var fixture = Fixture(addDistantZone: true);
+        var request = Request(
+            fixture,
+            [
+                Suggestion(
+                    fixture,
+                    "H:160",
+                    WarehouseSpaceType.Rack,
+                    0.96m,
+                    relations:
+                    [
+                        Relation(
+                            fixture,
+                            WarehouseRelationType.ContainedBy,
+                            "H:142"),
+                    ]),
+            ]);
+
+        var result = await new WarehouseDraftSynthesizer()
+            .SynthesizeAsync(request);
+
+        var rack = Proposal(result, "H:160");
+        var field = Assert.Single(
+            rack.Fields,
+            item => item.FieldPath == "relations.zoneSourceKey");
+        Assert.Equal(fixture.SourceKey("H:140"), field.ValueToken);
+        Assert.Equal(WarehouseFusionSource.DeterministicRule, field.WinningSource);
+        Assert.Empty(rack.Relations);
+        Assert.Contains(result.Issues, issue =>
+            issue.Code == "AI_RULE_VALUE_CONFLICT" &&
+            issue.SourceRef == "H:160" &&
+            issue.FieldPath == "relations.zoneSourceKey" &&
+            issue.Severity == WarehouseProposalIssueSeverity.Warning &&
+            issue.DetailToken == "confidence-downgraded");
+    }
+
+    [Fact]
+    public async Task Legacy_rule_version_does_not_rewrite_frozen_parent_behavior()
+    {
+        var fixture = Fixture();
+        var request = Request(fixture, []) with
+        {
+            RuleVersion = SpaceAiGenerationRunContract.LegacyRuleVersion,
+        };
+
+        var result = await new WarehouseDraftSynthesizer()
+            .SynthesizeAsync(request);
+
+        Assert.DoesNotContain(
+            Proposal(result, "H:150").Fields,
+            item => item.FieldPath == "relations.zoneSourceKey");
+        Assert.DoesNotContain(
+            Proposal(result, "H:160").Fields,
+            item => item.FieldPath == "relations.zoneSourceKey");
+        Assert.DoesNotContain(result.Issues, issue =>
+            issue.Code == SpaceErrorCodes.RuleOnlyParentRequired);
+    }
+
+    [Fact]
     public async Task Soft_rule_type_conflict_retains_rule_and_downgrades_band()
     {
         var fixture = Fixture();
@@ -401,9 +532,15 @@ public sealed class SpaceAiWarehouseSynthesisTests
 
     internal static FixtureData Fixture(
         IReadOnlyList<SpaceAiCadLockedFactV1>? lockedFacts = null,
-        bool strongWallRule = false)
+        bool strongWallRule = false,
+        bool addDistantZone = false,
+        bool addOverlappingZone = false,
+        bool useConcaveZone = false)
     {
-        var scenario = SpaceCadSemanticParserTests.Scenario();
+        var scenario = SpaceCadSemanticParserTests.Scenario(
+            addDistantZone: addDistantZone,
+            addOverlappingZone: addOverlappingZone,
+            useConcaveZone: useConcaveZone);
         var profile = scenario.Profile;
         var mappingPreview = scenario.MappingPreview;
         if (strongWallRule)
@@ -471,7 +608,7 @@ public sealed class SpaceAiWarehouseSynthesisTests
             output);
         return new WarehouseDraftSynthesisRequestV1(
             ModelVersionId,
-            "rules-e02-s06-v1",
+            SpaceAiGenerationRunContract.DeterministicParentRuleVersion,
             fixture.FeaturePackage,
             fixture.Preview,
             ai,
