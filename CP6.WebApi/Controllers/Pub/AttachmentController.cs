@@ -20,10 +20,17 @@ public class AttachmentController : LocalizedControllerBase
     {
         _svc = svc;
         _perm = perm;
-        _enforceBizPerm = cfg.GetValue<bool>("Attachment:EnforceBizPermission");   // v1 默认 false：仅登录
+        _enforceBizPerm = cfg.GetValue<bool?>("Attachment:EnforceBizPermission") ?? true;
     }
 
     private string? CurrentUser => User?.Identity?.Name;
+
+    private async Task<bool> CanAccessBizAsync(string? bizType) =>
+        !_enforceBizPerm
+        || (!string.IsNullOrWhiteSpace(bizType) && await _perm.HasMenuAsync(bizType));
+
+    private ObjectResult BizPermissionDenied() =>
+        StatusCode(403, new { code = 403, message = "E-PUB-063" });
 
     /// <summary>上传（multipart）。bizId 已知直传；草稿期传 draftToken。</summary>
     [HttpPost("upload")]
@@ -31,6 +38,7 @@ public class AttachmentController : LocalizedControllerBase
     public async Task<IActionResult> Upload(IFormFile file, [FromForm] string bizType,
         [FromForm] string? bizId, [FromForm] string? draftToken)
     {
+        if (!await CanAccessBizAsync(bizType)) return BizPermissionDenied();
         if (file == null || file.Length == 0) return BadRequest(new { code = 400, message = Localizer["空文件"] });
         try
         {
@@ -43,10 +51,13 @@ public class AttachmentController : LocalizedControllerBase
 
     /// <summary>按业务取附件列表</summary>
     [HttpGet("list")]
-    public async Task<IActionResult> List(string bizType, string bizId) =>
-        Ok(new { code = 0, message = "OK", data = await _svc.ListAsync(bizType, bizId) });
+    public async Task<IActionResult> List(string bizType, string bizId)
+    {
+        if (!await CanAccessBizAsync(bizType)) return BizPermissionDenied();
+        return Ok(new { code = 0, message = "OK", data = await _svc.ListAsync(bizType, bizId) });
+    }
 
-    /// <summary>下载（下载鉴权：开启 Attachment:EnforceBizPermission 时回查可访问该业务菜单，否则仅登录）</summary>
+    /// <summary>下载：先按附件 BizType 回查宿主菜单，再打开物理文件。</summary>
     [HttpGet("{id}/download")]
     public async Task<IActionResult> Download(Guid id) => await Stream(id, asAttachment: true);
 
@@ -56,17 +67,14 @@ public class AttachmentController : LocalizedControllerBase
 
     private async Task<IActionResult> Stream(Guid id, bool asAttachment)
     {
-        Pub_Attachment att;
+        var att = await _svc.FindAsync(id);
+        if (att == null) return NotFound();
+        if (!await CanAccessBizAsync(att.BizType)) return BizPermissionDenied();
+
         Stream stream;
-        try { (att, stream) = await _svc.DownloadAsync(id); }
+        try { (_, stream) = await _svc.DownloadAsync(id); }
         catch (InvalidOperationException) { return NotFound(); }
         catch (FileNotFoundException) { return NotFound(); }
-
-        if (_enforceBizPerm && !await _perm.HasMenuAsync(att.BizType))
-        {
-            stream.Dispose();
-            return StatusCode(403, new { code = 403, message = "E-PUB-063" });   // 无权访问该业务附件
-        }
 
         var contentType = att.ContentType ?? "application/octet-stream";
         return asAttachment
@@ -78,6 +86,10 @@ public class AttachmentController : LocalizedControllerBase
     [HttpDelete("{id}")]
     public async Task<IActionResult> Delete(Guid id)
     {
+        var att = await _svc.FindAsync(id);
+        if (att == null) return NotFound();
+        if (!await CanAccessBizAsync(att.BizType)) return BizPermissionDenied();
+
         await _svc.DeleteAsync(id);
         return Ok(new { code = 0, message = "OK" });
     }
@@ -86,6 +98,19 @@ public class AttachmentController : LocalizedControllerBase
     [HttpPost("rebind")]
     public async Task<IActionResult> Rebind([FromBody] RebindReq r)
     {
+        var attachments = await _svc.ListDraftAsync(r.DraftToken);
+        if (_enforceBizPerm && attachments.Count > 0)
+        {
+            if (string.IsNullOrWhiteSpace(CurrentUser)
+                || attachments.Any(a => !string.Equals(
+                    a.Uploader, CurrentUser, StringComparison.OrdinalIgnoreCase)))
+                return BizPermissionDenied();
+
+            foreach (var bizType in attachments.Select(a => a.BizType).Distinct(StringComparer.Ordinal))
+                if (!await CanAccessBizAsync(bizType))
+                    return BizPermissionDenied();
+        }
+
         await _svc.RebindAsync(r.DraftToken, r.BizId);
         return Ok(new { code = 0, message = "OK" });
     }

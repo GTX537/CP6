@@ -26,6 +26,7 @@ Controller 位于 `CP6.WebApi/Controllers/<Domain>`，2026-07-18 实扫 145 个�
 - 写端点必须有认证、租户边界及业务权限；权限键由 `RequirePermission` 声明。
 - 错误码通过数据库 i18n 键传到前端，由 `http.ts` 翻译。
 - CSRF、Cookie/JWT、强制改密、异常本地化及操作日志由中间件/过滤器处理。
+- Attachment 是无独立菜单的横切组件：不铸 `pub-attachment` 暗键，六个读写入口按 `BizType` 回查宿主菜单；草稿转正另校验上传人。`EnforceBizPermission` 缺省开启。
 
 ## 权限 API 约束
 

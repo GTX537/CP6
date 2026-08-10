@@ -12,6 +12,12 @@ public interface IAttachmentService
     /// <summary>按业务取附件列表。</summary>
     Task<List<Pub_Attachment>> ListAsync(string bizType, string bizId);
 
+    /// <summary>读取附件元数据，不打开物理文件。</summary>
+    Task<Pub_Attachment?> FindAsync(Guid id);
+
+    /// <summary>读取草稿 token 下的附件，供转正前做权限与归属校验。</summary>
+    Task<List<Pub_Attachment>> ListDraftAsync(string draftToken);
+
     /// <summary>下载：返回元数据 + 读取流（控制器鉴权后流式输出）。</summary>
     Task<(Pub_Attachment att, Stream stream)> DownloadAsync(Guid id);
 
