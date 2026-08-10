@@ -1,6 +1,13 @@
 # 项目当前状态
 
-最后更新：2026-08-09
+最后更新：2026-08-10
+
+## PLAN/PUB Attachment 宿主业务权限补强（2026-08-10）
+
+- Attachment 保持横切组件架构，不新增没有页面可锚的 `pub-attachment` 暗菜单；`Attachment:EnforceBizPermission` 缺省改为 true，显式 false 只保留为受控兼容开关。
+- list/upload/download/preview/delete/rebind 六个入口统一按请求或持久化 `BizType` 回查宿主菜单。下载/预览在授权后才打开物理流，删除在授权后才调用服务；rebind 还要求当前用户是 draft token 下全部附件的上传人，并拥有全部宿主菜单。
+- `PubUpload` 新增必填 `writePermission` 宿主 action key；无写权限时隐藏上传与删除，但保留下载/预览。前端只是 UX，后端宿主菜单回查仍是安全边界。
+- 门禁：Attachment/PLAN-PUB 聚焦 21/21、OpenAPI 30/30、CP6.Tests 2841 passed / 18 environment-gated skipped / 0 failed、PubUpload 3/3、前端全量 716/716、Vue type-check 与 production build 通过、WebApi Release 0 warning / 0 error。
 
 ## 分支优先规范与本地配置优先级（2026-08-09）
 

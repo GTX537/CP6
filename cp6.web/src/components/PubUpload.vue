@@ -1,18 +1,20 @@
 <template>
   <div class="pub-upload">
-    <el-upload
-      :http-request="customUpload"
-      :show-file-list="false"
-      :multiple="multiple"
-      :accept="accept"
-      drag
-    >
-      <el-icon class="el-icon--upload"><UploadFilled /></el-icon>
-      <div class="el-upload__text">{{ t('拖拽文件到此或') }}<em>{{ t('点击上传') }}</em></div>
-      <template #tip>
-        <div class="el-upload__tip">{{ t('单文件 ≤ {n}MB', { n: maxSize }) }}<span v-if="accept">{{ t('，类型：{accept}', { accept }) }}</span></div>
-      </template>
-    </el-upload>
+    <div v-permission="writePermission" class="attachment-write">
+      <el-upload
+        :http-request="customUpload"
+        :show-file-list="false"
+        :multiple="multiple"
+        :accept="accept"
+        drag
+      >
+        <el-icon class="el-icon--upload"><UploadFilled /></el-icon>
+        <div class="el-upload__text">{{ t('拖拽文件到此或') }}<em>{{ t('点击上传') }}</em></div>
+        <template #tip>
+          <div class="el-upload__tip">{{ t('单文件 ≤ {n}MB', { n: maxSize }) }}<span v-if="accept">{{ t('，类型：{accept}', { accept }) }}</span></div>
+        </template>
+      </el-upload>
+    </div>
 
     <el-table v-if="fileList.length" :data="fileList" size="small" style="margin-top: 10px">
       <el-table-column prop="fileName" :label="t('文件名')" show-overflow-tooltip />
@@ -22,9 +24,9 @@
       <el-table-column prop="uploader" :label="t('上传人')" width="120" />
       <el-table-column :label="t('操作')" width="180">
         <template #default="{ row }">
-          <el-button link type="primary" @click="download(row)">{{ t('下载') }}</el-button>
-          <el-button link type="primary" @click="preview(row)">{{ t('预览') }}</el-button>
-          <el-button link type="danger" @click="remove(row)">{{ t('删除') }}</el-button>
+          <el-button class="attachment-download" link type="primary" @click="download(row)">{{ t('下载') }}</el-button>
+          <el-button class="attachment-preview" link type="primary" @click="preview(row)">{{ t('预览') }}</el-button>
+          <el-button v-permission="writePermission" class="attachment-delete" link type="danger" @click="remove(row)">{{ t('删除') }}</el-button>
         </template>
       </el-table-column>
     </el-table>
@@ -42,6 +44,7 @@ const { t } = useI18n()
 
 const props = withDefaults(defineProps<{
   bizType: string
+  writePermission: string // 宿主业务 action key；附件组件本身不铸独立权限键
   bizId?: string
   maxSize?: number       // MB
   accept?: string

@@ -32,7 +32,7 @@
 | 7 | CodeGenController | POST `/api/pub/codegen/save` | Save | `pub-codegen` | save | **是** | **代码生成元数据写盘**：整体 upsert `Pub_GenTables` + `RemoveRange` 旧列后重插 `Pub_GenColumns`（CodeGenController:27-53）。覆盖既有列定义、驱动脚手架产物，独立高危键（详§三） |
 | 8 | CodeGenController | POST `/api/pub/codegen/preview` | PreviewInline | `pub-codegen` | view | 只读POST→view | body 直传元数据即时生成，`_gen.Generate(req.Table, req.Columns)` 纯内存、**无 `_db`/SaveChanges**（CodeGenController:66-68）。POST 仅为传 body。§四豁免 |
 | 9 | AttachmentController | POST `/api/pub/attachment/upload` | Upload | （组件豁免） | — | 组件豁免 | 统一附件上传，无独立页面/菜单行（横切组件嵌入各业务页）。§四组件豁免、§五.4 裁定 |
-| 10 | AttachmentController | DELETE `/api/pub/attachment/{id}` | Delete | （组件豁免） | — | 组件豁免（高危-shaped） | 引用计数后物理删附件。删除本属高危形态，但无菜单可锚→组件豁免，并列 §六 follow-up（扩 EnforceBizPermission 至写端点） |
+| 10 | AttachmentController | DELETE `/api/pub/attachment/{id}` | Delete | （组件豁免） | — | 组件豁免（高危-shaped） | 引用计数后物理删附件。删除本属高危形态，但无菜单可锚→组件豁免；现已按附件持久化 `BizType` 回查宿主菜单后才删除 |
 | 11 | AttachmentController | POST `/api/pub/attachment/rebind` | Rebind | （组件豁免） | — | 组件豁免 | 草稿转正：draftToken 附件回填 BizId（业务单据保存后调） |
 | 12 | SeqController | POST `/api/pub/seq` | Add | `pub-seq` | add | 否 | 建富采番规则（BizKey 唯一，SeqController:31-39） |
 | 13 | SeqController | PUT `/api/pub/seq` | Update | `pub-seq` | edit | 否 | 改采番规则（前缀/日期格式/长度/重置周期）。**⚠️ HttpPut**——反射测试须覆盖 PUT（§六 跨波票背景） |
@@ -42,7 +42,7 @@
 > - Mrp：GET `runs` / `run/{id}/planned-orders` / `run/{id}/net-requirements`（看板+钻取，纯读）。
 > - ItemPlanningPolicy：GET `` / `{itemCd}`（List/Get，纯读）。
 > - CodeGen：GET `tables` / `{id}/preview`（纯读；`{id}/preview` 读持久化元数据后 `_gen.Generate`，无写）。
-> - Attachment：GET `list` / `{id}/download` / `{id}/preview`（下载/预览；`Download`/`Preview` 走 `Stream()`，读流 + 可选 `HasMenuAsync(att.BizType)` biz 权限回查，无写）。
+> - Attachment：GET `list` / `{id}/download` / `{id}/preview`（全部按宿主 `BizType` 回查 `HasMenuAsync`；下载/预览在权限通过后才打开物理流，无写）。
 > - Seq：GET `` / `preview/{bizKey}`（列表 + 号码格式预览，不消费流水，SeqController:66-73）。
 
 ---
@@ -71,7 +71,7 @@
 | `plan-mrp:convert` | 3 | **转单=创建采购/生产承诺**：PlanConvertService.ConvertAsync:45-47 采购类→`_prService.CreatePrFromPlannedOrderAsync` 建 PR、生产类→`_woService.CreateWorkOrderFromPlannedOrderAsync` 建工单，回填 `ConvertedDocNo`、置 Converted。**跨模块建承诺**，对标 `pur-pr:convert`/`pur-rfq:convert` 高危。当前委托 P1 桩（§六 必带票）。 |
 | `pub-codegen:save` | 7 | **代码生成元数据写盘覆盖**：CodeGenController.Save:43-51 `RemoveRange(oldCols)` 后重插整套 `Pub_GenColumns` + upsert `Pub_GenTables`——**整体替换、覆写既有列定义**，误授即他人可篡改脚手架产物模型。生成写盘类独立成键。 |
 
-> **旁注·attachment:delete（端点#10）高危-shaped 但不铸键**：物理删附件本属不可逆写，但 Attachment 无独立菜单可锚（§五.4），归组件豁免；其高危形态正是 §六 follow-up「扩 `Attachment:EnforceBizPermission` 至 upload/delete」的驱动理由。
+> **旁注·attachment:delete（端点#10）高危-shaped 但不铸键**：物理删附件本属不可逆写，但 Attachment 无独立菜单可锚（§五.4），归组件豁免；后端现以数据库中附件的 `BizType` 回查宿主菜单，失败时在删除前返回 403。
 
 ### 3b. 独立状态流转动作键（`状态`，共 2 个，仍单独成键、不塞 edit/view）
 
@@ -91,9 +91,9 @@
 
 | # | 端点（方法） | 豁免依据 + 裁定 |
 |---|---|---|
-| 1 | POST `/api/pub/attachment/upload`（Upload） | 统一附件组件（PUB 章06），嵌入各业务单据页、无独立页面/菜单行/RoutePath。现有设计以 `Attachment:EnforceBizPermission` 配置 + `_perm.HasMenuAsync(att.BizType)` 按宿主业务菜单自门控（v1 默认 false=仅登录）。§五.4 裁定：登入组件豁免表。 |
-| 2 | DELETE `/api/pub/attachment/{id}`（Delete） | 同上；删除属高危形态，§六 follow-up 建议将 biz 权限回查扩至此端点。 |
-| 3 | POST `/api/pub/attachment/rebind`（Rebind） | 同上；草稿附件回填 BizId，业务单据保存后由前端调，随宿主页授权。 |
+| 1 | POST `/api/pub/attachment/upload`（Upload） | 统一附件组件（PUB 章06），嵌入各业务单据页、无独立页面/菜单行/RoutePath。`Attachment:EnforceBizPermission` 缺省为 true，先以请求 `bizType` 回查宿主菜单再读取/保存文件。§五.4 裁定仍为组件豁免，不铸暗键。 |
+| 2 | DELETE `/api/pub/attachment/{id}`（Delete） | 同上；先读取附件元数据并以持久化 `BizType` 回查宿主菜单，403 时不进入删除服务。 |
+| 3 | POST `/api/pub/attachment/rebind`（Rebind） | 同上；转正前读取 draft token 全部附件，要求当前用户为上传人且拥有每个附件的宿主菜单，再回填 BizId。 |
 
 > **复核结论（防望文生义）**：
 > - `POST /api/pub/codegen/save`（Save）：`RemoveRange`+`Add`+`SaveChangesAsync` → **真写、高危**，非「预览」。仅 `POST .../codegen/preview`（PreviewInline）无持久化可豁免。
@@ -110,9 +110,9 @@
 4. **★ Attachment 锚定裁定（组件豁免，非新增菜单）**：
    - **形态**：AttachmentController 是 PUB 章06 **统一附件横切组件**，被各业务单据页内嵌调用（`bizType`/`bizId` 定位宿主），**自身无路由页、无 `Sys_Menu` 行**——与 Space editor 那种「standalone 全屏页」不同（后者有 RoutePath 可锚），附件连 RoutePath 都没有。
    - **规范约束**：§三.2「资源键必须能锚定到一个 `Sys_Menu` 行」——为无菜单的组件铸 `pub-attachment:*` 键，`PermissionAggregator`（join `Sys_Menus`）永远 join 不出 → 该键**恒 403**，铸键即死键。故**不铸键**。
-   - **裁定 = 组件豁免（方案A，采纳）**：upload/delete/rebind 登入 fail-closed 反射测试的**显式豁免清单**，理由=横切组件、随宿主业务页授权、当前 `[Authorize]` 登录闸 + 既有 `Attachment:EnforceBizPermission`（开启时 `HasMenuAsync(att.BizType)` 按宿主菜单门控）的分层设计。此与现有架构一致（附件已以 biz-menu 回查自门控，而非自建菜单键）。
+   - **裁定 = 组件豁免（方案A，采纳）**：upload/delete/rebind 登入 fail-closed 反射测试的**显式豁免清单**，理由=横切组件、随宿主业务页授权、当前 `[Authorize]` 登录闸 + 缺省开启的 `Attachment:EnforceBizPermission` 分层设计。所有读写端点均以请求或持久化 `BizType` 回查宿主菜单；rebind 另校验草稿上传人。此与现有架构一致，不自建菜单键。
    - **拒绝方案B（新增 `pub-attachment` 隐藏菜单 114 仅为挂键）**：附件无页面，凭空造隐藏菜单只为寄存键，破坏「菜单=可达页面」语义（§三.2 暗物质禁令的反面），且 114 段位挤占 Pub 菜单序列，收益仅为形式合规。**不采纳**；若未来产品要求附件独立授权，再按 §六 follow-up 落 114 段位 + 扩 biz 权限。
-   - **follow-up（§六）**：现 `EnforceBizPermission` 仅门控 download/preview（Stream 路径），**未覆盖 upload/delete/rebind**——建议后续扩至写端点做纵深防御（delete 尤为高危形态）。本波按登录闸豁免、留票。
+   - **follow-up（§六，2026-08-10 已完成）**：`EnforceBizPermission` 已覆盖 list/upload/download/preview/delete/rebind，且缺省为 true；显式 false 只保留为受控兼容开关。前端 `PubUpload.writePermission` 使用宿主 action key 隐藏上传/删除，后端宿主菜单回查仍是安全边界。
 
 ---
 

@@ -1,5 +1,11 @@
 # 已完成能力与近期里程碑
 
+## 2026-08-10 PLAN/PUB Attachment 宿主业务权限补强
+
+- Attachment 不新增暗菜单键；`Attachment:EnforceBizPermission` 缺省为 true，list/upload/download/preview/delete/rebind 均按请求或持久化 `BizType` 回查宿主菜单，拒绝时不读物理流、不执行删除或转正。
+- rebind 读取 draft token 下全部附件，要求当前用户为上传人并拥有所有宿主菜单；显式 false 仅保留受控兼容。`IAttachmentService` 增加只读元数据和草稿查询，避免鉴权前打开文件。
+- `PubUpload.writePermission` 接收宿主 action key；无写权限时隐藏上传/删除，保留下载/预览。门禁为后端聚焦 21/21、OpenAPI 30/30、CP6.Tests 2841 passed / 18 skipped / 0 failed、前端聚焦 3/3、全量 716/716、Vue type-check 与 production build 通过、WebApi Release 0 warning / 0 error。
+
 ## 2026-08-09 WF 通知定向推送与遗留广播清理
 
 - 确认生产注册链路早已由 `PersistentWfNotifier` 写 outbox、`WfNotificationDispatchWorker` 提交后派送；worker 通过 `Clients.User(row.UserId.ToString())` 只触达通知接收人，`NotifyHub` 要求认证。

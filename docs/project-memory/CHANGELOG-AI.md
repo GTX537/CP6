@@ -2,6 +2,12 @@
 
 > 依据 Git log 汇总，不替代完整 Git 历史。重点记录影响接手判断的里程碑。
 
+## 2026-08-10：PLAN/PUB Attachment 宿主业务权限补强
+
+- 保留 Attachment 横切组件/无独立菜单的既定边界；`Attachment:EnforceBizPermission` 缺省改为 true，list/upload/download/preview/delete/rebind 全部以请求或持久化 `BizType` 回查宿主菜单。
+- 下载/预览授权后才打开物理流，删除授权后才进入引用计数服务；rebind 要求当前用户拥有 draft token 下全部附件且具备全部宿主菜单。显式 false 只作受控兼容。
+- `PubUpload` 新增宿主 `writePermission`，只隐藏上传/删除 UX，下载/预览保持可用；安全边界仍在后端。验证为后端聚焦 21/21、OpenAPI 30/30、CP6.Tests 2841 passed / 18 skipped / 0 failed、前端 3/3 与全量 716/716、Vue type-check/production build、WebApi Release 0 warning / 0 error。
+
 ## 2026-08-09：WF 通知定向推送与遗留广播清理
 
 - 生产通知路径明确为事务内 outbox + 提交后派送：`PersistentWfNotifier` 只入队，`WfNotificationDispatchWorker` 使用 `Clients.User(row.UserId.ToString())` 定向触达接收人，`NotifyHub` 继续要求认证。

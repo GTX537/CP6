@@ -1,5 +1,11 @@
 # 当前待办与优先级
 
+## 已完成：PLAN/PUB Attachment 宿主业务权限
+
+- Attachment 继续作为无独立页面的横切组件，不新增暗菜单；六个读写入口已按 `BizType` 回查宿主菜单，缺省失败关闭，rebind 另校验草稿上传人。
+- `PubUpload` 已要求宿主 `writePermission` action key，无写权限时隐藏上传/删除，后端权限不依赖前端隐藏。
+- 后端聚焦 21/21、OpenAPI 30/30、CP6.Tests 2841 passed / 18 environment-gated skipped / 0 failed、前端聚焦 3/3、全量 716/716、Vue type-check 与 production build 通过、WebApi Release 0 warning / 0 error。该项不再是待办。
+
 ## 已完成：分支优先规范与本地配置优先级
 
 - `main@e4e33364` 已包含仓库级分支优先规则；后续任务除有记录的技术例外外，均需独立分支、验证后合并并推送。
@@ -65,7 +71,6 @@ T1–T7 已完成，不要重复铺设。T7 细节见 `.superpowers/sdd/gr-vp-t7
 
 ## 已知跨波跟踪票
 
-- PLAN/PUB Attachment 写端点补强业务权限与前端权限 UX。
 - Space `CodeEngineService` 大规则集 rackSeq 应改为 Zone 级完整排序。
 - FIN BudgetLine 需要版本级并发控制。
 - WFS/Space 各 plan 文末保留若干 live QA、移动端视觉和清理票；动手前读对应最新计划的“完成后跟踪票”。

@@ -75,6 +75,15 @@ public class AttachmentService : IAttachmentService
             .OrderBy(a => a.CreateDate)
             .ToListAsync();
 
+    public Task<Pub_Attachment?> FindAsync(Guid id) =>
+        _db.Pub_Attachments.FirstOrDefaultAsync(a => a.Id == id);
+
+    public async Task<List<Pub_Attachment>> ListDraftAsync(string draftToken) =>
+        await _db.Pub_Attachments
+            .Where(a => a.DraftToken == draftToken)
+            .OrderBy(a => a.CreateDate)
+            .ToListAsync();
+
     public async Task<(Pub_Attachment att, Stream stream)> DownloadAsync(Guid id)
     {
         var att = await _db.Pub_Attachments.FindAsync(id) ?? throw new InvalidOperationException("E-PUB-404");
