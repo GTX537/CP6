@@ -38,7 +38,7 @@ Controller 位于 `CP6.WebApi/Controllers/<Domain>`，2026-07-18 实扫 145 个�
 
 - SignalR 用于工作流通知、MES/WMS 看板等实时反馈。
 - Kafka/RabbitMQ/Outbox 用于日志流或业务异步边界，具体启用情况以配置和服务注册为准。
-- 当前已知 TODO：`SignalRWfNotifier` 仍使用广播后客户端按 assignee 过滤，未来应改定向 `Clients.User`。
+- 工作流通知在事务内只写 outbox；提交后由 `WfNotificationDispatchWorker` 使用 `Clients.User(userId)` 定向推送，目标用户 ID 与 JWT `NameIdentifier` 保持一致。禁止退回 `Clients.All` 后由客户端过滤。
 
 ## API 变更检查
 

@@ -1,5 +1,11 @@
 # 已完成能力与近期里程碑
 
+## 2026-08-09 WF 通知定向推送与遗留广播清理
+
+- 确认生产注册链路早已由 `PersistentWfNotifier` 写 outbox、`WfNotificationDispatchWorker` 提交后派送；worker 通过 `Clients.User(row.UserId.ToString())` 只触达通知接收人，`NotifyHub` 要求认证。
+- 删除未注册的旧 `SignalRWfNotifier`，并从 `PersistentWfNotifier` 移除 outbox 入队后永远不可达的 SignalR 广播、邮件直发和重复持久化回退；通知器依赖收敛为 `INotificationService` 与 `IPrefService`。
+- 项目记忆不再把该项误报为待办或已知隐私问题。通知聚焦测试 13/13、CP6.Tests 2832 passed / 18 environment-gated skipped / 0 failed、WebApi Release 0 warning / 0 error。
+
 ## 2026-08-09 分支优先规范与本地配置优先级修复
 
 - `04eaf42d` / `e4e33364` 新增并合入仓库级分支规则：日常开发必须从最新 `main` 创建单任务分支，脏工作区使用独立 worktree，测试通过后才能合并并推送远端。

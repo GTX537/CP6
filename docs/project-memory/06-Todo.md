@@ -6,6 +6,12 @@
 - `e3bf2420` 已修复 `appsettings.Local.json` 的配置源插入边界，只在无前缀环境变量源前插入，环境变量和命令行继续保持最高优先级。
 - 配置聚焦 4/4、OpenAPI 30/30、CP6.Tests 2832 passed / 18 environment-gated skipped / 0 failed、WebApi Release 0 warning / 0 error。该项不再是待办。
 
+## 已完成：WF 通知定向用户推送
+
+- 当前运行链路由 `PersistentWfNotifier` 在事务内写 outbox，提交后由 `WfNotificationDispatchWorker` 以 `Clients.User(userId)` 定向派送；`NotifyHub` 要求认证。
+- 未注册的 `SignalRWfNotifier` 及不可达的 `Clients.All` 回退已经删除，项目中不再存在工作流通知广播后由客户端过滤的路径。
+- 门禁为通知聚焦 13/13、CP6.Tests 2832 passed / 18 environment-gated skipped / 0 failed、WebApi Release 0 warning / 0 error。该项不再是待办。
+
 ## 已完成：`main` 同步与 P2.5 受控整合
 
 - 远端 `main` 的文档同步基线 `e4e33364` 已包含 PR #2 的 `8045d872`、P2.5 受控整合 `030a97b9`、Space 权限/文档对齐 `b2a91680` 和分支优先流程；原始 5 个冲突已按权威边界解决，Docker Cookie 修复已由 `0fc6f529` 等价纳入。
@@ -60,7 +66,6 @@ T1–T7 已完成，不要重复铺设。T7 细节见 `.superpowers/sdd/gr-vp-t7
 ## 已知跨波跟踪票
 
 - PLAN/PUB Attachment 写端点补强业务权限与前端权限 UX。
-- WF `SignalRWfNotifier` 从广播过滤改为定向用户推送。
 - Space `CodeEngineService` 大规则集 rackSeq 应改为 Zone 级完整排序。
 - FIN BudgetLine 需要版本级并发控制。
 - WFS/Space 各 plan 文末保留若干 live QA、移动端视觉和清理票；动手前读对应最新计划的“完成后跟踪票”。

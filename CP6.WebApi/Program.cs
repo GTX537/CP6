@@ -253,7 +253,7 @@ builder.Services.AddScoped<CP6.Core.Services.Wf.INodeHandler, CP6.Core.Services.
 builder.Services.AddScoped<CP6.Core.Services.Wf.INodeHandler>(sp => new CP6.Core.Services.Wf.SubFlowNodeHandler(
     sp.GetRequiredService<IConfiguration>().GetValue<int?>("Wfs:SubFlowMaxInstances")));   // 子流程 B-T1 节点处理器（N 上限可配，缺省 100）
 builder.Services.AddScoped<CP6.Core.Services.Wf.IFlowDefService, CP6.Core.Services.Wf.FlowDefService>();     // 章03/04 流程定义 + 实例详情查询
-builder.Services.AddScoped<CP6.Core.Services.Wf.IWfNotifier, CP6.WebApi.Services.PersistentWfNotifier>();     // Phase D-1 N-T4 复合通知器（持久化+SignalR+邮件；替换 SignalRWfNotifier）
+builder.Services.AddScoped<CP6.Core.Services.Wf.IWfNotifier, CP6.WebApi.Services.PersistentWfNotifier>();     // 事务内仅写通知 outbox；提交后由 worker 定向推送/发邮件
 builder.Services.AddHostedService<CP6.WebApi.BackgroundServices.WfNotificationDispatchWorker>();
 builder.Services.AddScoped<CP6.Core.Services.Wf.ITaskCenterService, CP6.Core.Services.Wf.TaskCenterService>(); // 章04 待办中心（待办/我的申请/撤回）
 
