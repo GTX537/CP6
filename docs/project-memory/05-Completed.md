@@ -1,5 +1,11 @@
 # 已完成能力与近期里程碑
 
+## 2026-08-10 Space 单格货位码 Zone 级 rackSeq
+
+- `CodeEngineService.GenSingleAsync` 不再把当前货架序号硬编码为 `1`，而是加载目标 Zone 的全部货架，与批量 `GenerateAsync` 复用同一套 `(X, Y, Id)` 确定性排序。
+- 相同几何坐标以货架 `Id` 作稳定兜底；非首架单格生成现在与整层批量重建得到相同编码，避免与 Zone 首架重复或漂移。
+- 未改变规则模型、API、数据库或前端。CodeEngine/LocationPublish 聚焦回归 55/55、CP6.Tests 2843 passed / 19 environment-gated skipped / 0 failed、WebApi Release 0 warning / 0 error；新增排序路径覆盖率审计 8/8，任务 diff 与新增行格式检查通过。
+
 ## 2026-08-10 FIN BudgetLine 版本级并发控制
 
 - 预算行新增、编辑、删除与 Excel 确认导入统一使用 `BudgetVersion.RowVersion` 作为聚合令牌；API 对缺失或非法版本令牌失败关闭，陈旧令牌返回 `E-A5-CONCURRENCY-001`。

@@ -1,5 +1,10 @@
 # 当前待办与优先级
 
+## 已完成：Space `CodeEngineService` Zone 级 rackSeq
+
+- 批量 `GenerateAsync` 与单格 `GenSingleAsync` 已复用同一套 Zone 级 `(X, Y, Id)` 确定性货架排序；单格生成不再把非首架简化为序号 `1`。
+- CodeEngine/LocationPublish 聚焦回归 55/55、CP6.Tests 2843 passed / 19 environment-gated skipped / 0 failed、WebApi Release 0 warning / 0 error；新增排序路径覆盖率审计 8/8，该项不再是跨波待办。
+
 ## 已完成：FIN BudgetLine 版本级并发控制
 
 - `BudgetVersion.RowVersion` 已成为预算行聚合并发边界；新增、编辑、删除和 Excel 确认导入必须携带客户端最后读到的版本令牌，任一预算行写入都会推进共享版本令牌。
@@ -77,7 +82,6 @@ T1–T7 已完成，不要重复铺设。T7 细节见 `.superpowers/sdd/gr-vp-t7
 
 ## 已知跨波跟踪票
 
-- Space `CodeEngineService` 大规则集 rackSeq 应改为 Zone 级完整排序。
 - WFS/Space 各 plan 文末保留若干 live QA、移动端视觉和清理票；动手前读对应最新计划的“完成后跟踪票”。
 
 ## 文档维护任务

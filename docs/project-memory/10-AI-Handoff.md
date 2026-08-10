@@ -46,7 +46,6 @@
 ## 哪些地方仍需要重构
 
 - WF SignalR 定向推送。
-- Space rackSeq 完整排序。
 - FIN BudgetLine 版本级并发。
 - PMS/Sys 平台页权限 UX。
 - GR-VP 多端点保存按钮 add/edit 的精细 UX。
