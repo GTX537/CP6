@@ -2,13 +2,14 @@
 
 > 依据 Git log 汇总，不替代完整 Git 历史。重点记录影响接手判断的里程碑。
 
-## 2026-08-08：`main` 合并冲突收敛
+## 2026-08-09：`main` 受保护同步与 P2.5 受控整合完成
 
-- 从 `origin/main@adbe7bcd` 创建 `codex/main-sync-20260808`，整体合入集成 `f8c3bae8`；原始合并准确产生 OA 2 个、项目记忆 3 个冲突，没有新增隐藏冲突。
-- OA 冲突采用集成侧权威 SFS 提交实现：`FormInitiate` 直接调用 `formApi.submit(formKey, model, idempotencyKey)`，不恢复旧 `flowApi.submit`，并保留独立表单按 `formKey` 保存草稿的回归覆盖。
-- 三份项目记忆以“保留 GR-VP 已完成事实 + 保留完整 Space 集成链 + 新增 main 同步门禁”的规则人工汇总；merge candidate 为 `79fa0301`，Docker 修复已由 `9ffbf8f4` 独立摘取为 `0fc6f529`，P2.5 Analytics 两个提交继续排除。
-- 客户端心跳时序测试已稳定并重复 50/50；数据库包覆盖 Core 14 + Space 36，main 基线 LocalDB 双执行两轮通过，schema drift、遗留资产、活跃发布分别以 51083/51000/51020 失败关闭。完整本地门禁为 Release/AOT 0 warning / 0 error、前端 711、CP6.Tests 2816、Space Unit 487、默认 Integration 288、Client 71 和 EF drift clean。
-- 本条记录的是候选冲突解决，不代表已经合并或推送 `main`。完整评估见 `docs/space/reports/2026-08-08-main-merge-readiness.md`。
+- PR #2 以 `8045d872` 把原 Space 集成 tip `f8c3bae8` 受保护合入 `main`；OA 2 个和项目记忆 3 个冲突均按权威边界人工解决，Docker 本地 HTTP Cookie 修复以 `0fc6f529` 等价纳入。
+- OA 保留 `formApi.submit(formKey, model, idempotencyKey)`；客户端心跳测试稳定重复 50/50。Core 14 + Space 36 迁移包从 main 基线在 LocalDB 双执行通过，51083/51000/51020 失败关闭通过。
+- `030a97b9` 没有整段合并 P2.5 历史分支，而是在现行 E10 Runtime/Viewer 真相源上选择性整合独立控制塔、实时脏库位批处理、分析配置、定时 ABC 快照、容量发布和共享 ABC 分类器。
+- 历史迁移 `20260720035903` 未进入主线；替代迁移 `20260809092206_SpaceAnalyticsControlTowerCurrent` 只新增两张分析表和三个索引。`b2a91680` 随后对齐 Space 权限、菜单种子与配置文档。
+- 主线完整门禁为 Release/AOT 0 warning / 0 error、前端 711、CP6.Tests 2816、Space Unit 487、默认 Integration 288、Client 71 和 EF drift clean；P2.5 独立门禁也全绿。完整合并前评估见 `docs/space/reports/2026-08-08-main-merge-readiness.md`。
+- `e4e33364` 已成为远端 `main`，并纳入 `04eaf42d` 的分支优先开发规则；R2 标签、生产数据库建立和生产部署仍需独立审批。
 
 ## 2026-08-08：Space E13 RackGenerationProfile 权威版本链
 

@@ -1,13 +1,15 @@
 # 项目当前状态
 
-最后更新：2026-08-08
+最后更新：2026-08-09
 
-## `main` 同步候选（2026-08-08）
+## `main` 同步、P2.5 受控整合与分支策略（2026-08-09）
 
-- 远端 `main` 停在 `adbe7bcd`（2026-07-19），远端集成 tip 为 `f8c3bae8`；双方分叉为 main-only 3 / integration-only 390，不能直接 fast-forward 或逐提交摘取。
-- 已从 `origin/main` 创建隔离候选 `codex/main-sync-20260808`；5 个预期冲突均已解决。OA 两处采用集成侧权威 SFS 提交实现；三份项目记忆人工汇总 GR-VP、Space 与本轮主线门禁，unmerged 集合为空。
-- merge candidate `79fa0301` 已形成；本地 Docker 修复 `9ffbf8f4` 已独立摘取为 `0fc6f529`。P2.5 `9b48ffbb` / `dd6637ea` 均不是候选祖先。源码候选不代表正式 CAD/Provider/S14/S15/S18/S19 或 R2 生产启用。
-- OA 2/2、前端 711、CP6.Tests 2816、Space Unit 487、默认 Integration 288、客户端 71 与心跳重复 50、EF drift、完整 Release/AOT 0 warning / 0 error 均通过。14 个 Core + 36 个 Space 幂等迁移已从 main 基线在 LocalDB 双执行，51083/51000/51020 失败关闭通过；正式生产仍需备份恢复副本演练。完整评估见 `docs/space/reports/2026-08-08-main-merge-readiness.md`。
+- PR #2 已以 `8045d872` 把原 `integration/space-v1-20260730@f8c3bae8` 受保护合入 `main`；5 个预期冲突按权威边界人工解决，Docker 本地 HTTP Cookie 修复以 `0fc6f529` 等价纳入。
+- P2.5 Analytics Control Tower 随后以 `030a97b9` 在当前 E10 Runtime/Viewer 真相源上选择性整合；保留独立控制塔、实时脏库位批处理、分析配置、定时 ABC 快照、容量发布和共享 ABC 分类器，不整段摘取历史分支。
+- 历史迁移 `20260720035903` 未进入主线；替代迁移 `20260809092206_SpaceAnalyticsControlTowerCurrent` 基于当前 ModelSnapshot，仅新增两张分析表和三个索引。`b2a91680` 已对齐 Space 权限、菜单种子与配置文档。
+- 本次文档同步以远端 `main@e4e33364` 为基线；该提交通过 `04eaf42d` 明确分支优先规则。后续开发、修复、重构和文档任务必须从最新 `main` 建独立分支；根工作区有未提交改动时使用独立 worktree。
+- 合并前门禁包括 OA 2/2、前端 711、CP6.Tests 2816、Space Unit 487、默认 Integration 288、客户端 71 与心跳重复 50、EF drift、完整 Release/AOT 0 warning / 0 error。14 个 Core + 36 个 Space 幂等迁移已从 main 基线在 LocalDB 双执行，51083/51000/51020 失败关闭通过；正式生产仍需备份恢复副本演练。完整评估见 `docs/space/reports/2026-08-08-main-merge-readiness.md`。
+- 主线代码不代表正式 CAD/Provider/S14/S15/S18/S19、R2 标签或生产部署获批；这些门禁继续独立失败关闭。
 
 ## E13 RackGenerationProfile 权威版本链（2026-08-08）
 
@@ -765,4 +767,4 @@
 
 ## 下一动作
 
-当前最高优先级是完成 `codex/main-sync-20260808` 的本地门禁、数据库演练和受保护 PR；在 PR 获批前不修改 `main`。GR-VP T1–T7 已完成，不要重做；其 PMS/Sys 权限 UX、角色显示名和 insert-only 基线语义仍按 `06-Todo.md` 的 P1 独立处理。Space E03-S01～S05、生产 Processing Worker、Rack/RackLevel/Location/RackTemplate、标准 Excel 权威写入、RuleOnly BuildScene、首次 Generation Run 和 RackGenerationProfile 均已进入集成链，不再重复实现。正式 CAD/黄金集、外部 Provider、S14～S15/S18～S19、E12-S06、生产迁移与 WMS 发布/恢复演练继续作为独立失败关闭门禁；禁止把候选检查点 `0d25da4d` 整包合入。
+`main` 同步和 P2.5 受控整合已经完成，不再重复处理候选分支。下一张不依赖外部输入的 Space 卡优先实现无人工锁时的确定性父关系推导：只有唯一、可证明的几何包含关系才能生成 Zone/Aisle/Rack 父关系，无匹配或多候选继续 Blocking。不同 SourceHash 的几何建议继承与人工确认另开产品卡。GR-VP T1–T7 已完成，不要重做；其 PMS/Sys 权限 UX、角色显示名和 insert-only 基线语义仍按 `06-Todo.md` 的 P1 独立处理。正式 CAD/黄金集、外部 Provider、S14～S15/S18～S19、E12-S06、生产迁移与 WMS 发布/恢复演练继续作为独立失败关闭门禁；禁止把候选检查点 `0d25da4d` 整包合入。
