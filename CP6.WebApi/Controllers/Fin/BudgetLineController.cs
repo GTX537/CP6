@@ -20,6 +20,20 @@ public class BudgetLineController : ControllerBase
 
     private IActionResult Ok2(object? data = null) => Ok(new { code = 0, message = "OK", data });
     private IActionResult Fin(FinResult r) => r.Ok ? Ok2() : BadRequest(new { code = 400, message = r.Code, args = r.Args });
+    private static bool TryDecodeRowVersion(string? encoded, out byte[]? rowVersion)
+    {
+        rowVersion = null;
+        if (string.IsNullOrWhiteSpace(encoded)) return false;
+        try
+        {
+            rowVersion = Convert.FromBase64String(encoded);
+            return rowVersion.Length > 0;
+        }
+        catch (FormatException)
+        {
+            return false;
+        }
+    }
 
     [HttpGet]
     [RequirePermission("fin-budget", "view")]
@@ -29,12 +43,24 @@ public class BudgetLineController : ControllerBase
     [HttpPost]
     [RequirePermission("fin-budget", "edit")]
     public async Task<IActionResult> Upsert([FromBody] BudgetLineDto dto)
-        => Fin(await _svc.UpsertLineAsync(dto));
+    {
+        if (dto.VersionRowVersion is not { Length: > 0 })
+            return Fin(FinResult.Fail("E-A5-CONCURRENCY-001"));
+        return Fin(await _svc.UpsertLineAsync(dto));
+    }
 
     [HttpDelete("{lineId:guid}")]
     [RequirePermission("fin-budget", "edit")]
-    public async Task<IActionResult> Delete(Guid lineId)
-        => Fin(await _svc.DeleteLineAsync(lineId));
+    public async Task<IActionResult> Delete(
+        Guid lineId,
+        [FromQuery] string? lineRowVersion,
+        [FromQuery] string? versionRowVersion)
+    {
+        if (!TryDecodeRowVersion(lineRowVersion, out var lineToken) ||
+            !TryDecodeRowVersion(versionRowVersion, out var versionToken))
+            return Fin(FinResult.Fail("E-A5-CONCURRENCY-001"));
+        return Fin(await _svc.DeleteLineAsync(lineId, lineToken, versionToken));
+    }
 
     [HttpPost("import/preview")]
     [RequirePermission("fin-budget", "import")]
@@ -46,9 +72,14 @@ public class BudgetLineController : ControllerBase
 
     [HttpPost("import/confirm")]
     [RequirePermission("fin-budget", "import")]
-    public async Task<IActionResult> ImportConfirm([FromQuery] Guid versionId, IFormFile file)
+    public async Task<IActionResult> ImportConfirm(
+        [FromQuery] Guid versionId,
+        [FromQuery] string? versionRowVersion,
+        IFormFile file)
     {
+        if (!TryDecodeRowVersion(versionRowVersion, out var versionToken))
+            return Fin(FinResult.Fail("E-A5-CONCURRENCY-001"));
         using var s = file.OpenReadStream();
-        return Fin(await _svc.ConfirmImportAsync(versionId, s));
+        return Fin(await _svc.ConfirmImportAsync(versionId, s, versionToken));
     }
 }

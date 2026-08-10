@@ -74,8 +74,10 @@ export const budgetLineApi = {
     return http.post<any, ApiResp<unknown>>('/fin/budget/lines', d)
   },
   /** 删除预算行 */
-  remove(lineId: string) {
-    return http.delete<any, ApiResp<unknown>>(`/fin/budget/lines/${lineId}`)
+  remove(lineId: string, lineRowVersion: string, versionRowVersion: string) {
+    return http.delete<any, ApiResp<unknown>>(`/fin/budget/lines/${lineId}`, {
+      params: { lineRowVersion, versionRowVersion },
+    })
   },
   /** Excel 导入预览（multipart file）*/
   importPreview(versionId: string, file: File) {
@@ -84,10 +86,10 @@ export const budgetLineApi = {
       `/fin/budget/lines/import/preview?versionId=${versionId}`, fd)
   },
   /** Excel 导入确认（multipart file）*/
-  importConfirm(versionId: string, file: File) {
+  importConfirm(versionId: string, versionRowVersion: string, file: File) {
     const fd = new FormData(); fd.append('file', file)
     return http.post<any, ApiResp<unknown>>(
-      `/fin/budget/lines/import/confirm?versionId=${versionId}`, fd)
+      '/fin/budget/lines/import/confirm', fd, { params: { versionId, versionRowVersion } })
   },
 }
 

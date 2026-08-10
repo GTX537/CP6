@@ -2,6 +2,12 @@
 
 最后更新：2026-08-10
 
+## FIN BudgetLine 版本级并发控制（2026-08-10）
+
+- `BudgetVersion.RowVersion` 已经是预算行聚合并发边界。新增、编辑、删除和 Excel 确认导入都从客户端接收版本令牌，每次行写入都会推进该令牌；因此两个用户即使修改不同预算桶，旧快照也会统一失败为 `E-A5-CONCURRENCY-001`。
+- API 对缺失/非法令牌失败关闭；前端在新增、行内编辑、删除、确认导入后同时刷新版本和行数据。单行的行头/12 期明细与 Excel 整批确认分别在单一事务中持久化。
+- 本机 `KOUSQLSERVER` 原生 `rowversion` 证明 1/1，覆盖不同行的第二写者拒绝、刷新重试和陈旧删除回滚。其余门禁为 FIN 303 passed / 1 个既存 SQLite 限制项 skipped、前端令牌合同 3/3、Vue type-check、WebApi Release 0 warning / 0 error。
+
 ## PLAN/PUB Attachment 宿主业务权限补强（2026-08-10）
 
 - Attachment 保持横切组件架构，不新增没有页面可锚的 `pub-attachment` 暗菜单；`Attachment:EnforceBizPermission` 缺省改为 true，显式 false 只保留为受控兼容开关。

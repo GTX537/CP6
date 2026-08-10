@@ -51,8 +51,6 @@ public class BudgetLineService : IBudgetLineService
             // Optimistic concurrency: tell EF the client's last-read RowVersion so the UPDATE gains
             // WHERE RowVersion = @original — throws DbUpdateConcurrencyException on stale reads.
             // NOTE: EF Core InMemory provider IGNORES concurrency tokens; this only fires on SQL Server.
-            // TODO: version-level concurrency (BudgetVersion.RowVersion) is deferred — line-level is the
-            //       primary multi-editor surface and covers spec §14.3 / AC-017.
             _db.Entry(line).Property(nameof(BudgetLine.RowVersion)).OriginalValue = dto.RowVersion;
         }
 
@@ -65,6 +63,11 @@ public class BudgetLineService : IBudgetLineService
         line.ControlBasis = dto.ControlBasis;
         line.Memo = dto.Memo;
 
+        ApplyVersionConcurrency(v, dto.VersionRowVersion);
+
+        var ownsTransaction = _db.Database.IsRelational() && _db.Database.CurrentTransaction == null;
+        await using var transaction = ownsTransaction ? await _db.Database.BeginTransactionAsync() : null;
+
         try
         {
             await _db.SaveChangesAsync();   // persist line to get Id
@@ -74,12 +77,29 @@ public class BudgetLineService : IBudgetLineService
                 _db.BudgetLinePeriods.Add(new BudgetLinePeriod { BudgetLineId = line.Id, PeriodNo = i + 1, Amount = periods[i] });
 
             await _db.SaveChangesAsync();
+            if (transaction != null) await transaction.CommitAsync();
         }
         catch (DbUpdateConcurrencyException)
         {
+            if (transaction != null) await transaction.RollbackAsync();
             return FinResult.Fail("E-A5-CONCURRENCY-001");
         }
+        catch
+        {
+            if (transaction != null) await transaction.RollbackAsync();
+            throw;
+        }
         return FinResult.Pass();
+    }
+
+    private void ApplyVersionConcurrency(BudgetVersion version, byte[]? rowVersion)
+    {
+        if (rowVersion != null)
+            _db.Entry(version).Property(nameof(BudgetVersion.RowVersion)).OriginalValue = rowVersion;
+
+        // BudgetVersion is the aggregate concurrency boundary. Every line mutation must
+        // update it so writes to different buckets still invalidate the same client token.
+        version.ModifyDate = DateTime.Now;
     }
 
     /// <summary>
@@ -102,37 +122,47 @@ public class BudgetLineService : IBudgetLineService
         switch (dto.SpreadMode)
         {
             case "manual":
-            {
-                var r = new decimal[12];
-                var src = dto.Periods ?? new decimal[12];
-                for (int i = 0; i < 12; i++) r[i] = i < src.Length ? src[i] : 0m;
-                return r;
-            }
+                {
+                    var r = new decimal[12];
+                    var src = dto.Periods ?? new decimal[12];
+                    for (int i = 0; i < 12; i++) r[i] = i < src.Length ? src[i] : 0m;
+                    return r;
+                }
             case "seasonal":
-            {
-                var w = dto.Periods ?? Enumerable.Repeat(1m, 12).ToArray();
-                var wsum = w.Sum();
-                if (wsum == 0) return EvenSpread(dto.AnnualAmount);
-                var r = new decimal[12];
-                decimal acc = 0;
-                for (int i = 0; i < 12; i++) { r[i] = Math.Round(dto.AnnualAmount * w[i] / wsum, 2); acc += r[i]; }
-                r[11] += dto.AnnualAmount - acc;
-                return r;
-            }
+                {
+                    var w = dto.Periods ?? Enumerable.Repeat(1m, 12).ToArray();
+                    var wsum = w.Sum();
+                    if (wsum == 0) return EvenSpread(dto.AnnualAmount);
+                    var r = new decimal[12];
+                    decimal acc = 0;
+                    for (int i = 0; i < 12; i++) { r[i] = Math.Round(dto.AnnualAmount * w[i] / wsum, 2); acc += r[i]; }
+                    r[11] += dto.AnnualAmount - acc;
+                    return r;
+                }
             default:   // even
                 return EvenSpread(dto.AnnualAmount);
         }
     }
 
-    public async Task<FinResult> DeleteLineAsync(Guid lineId)
+    public async Task<FinResult> DeleteLineAsync(Guid lineId, byte[]? lineRowVersion = null, byte[]? versionRowVersion = null)
     {
         var line = await _db.BudgetLines.FindAsync(lineId);
         if (line == null) return FinResult.Fail("E-A5-LINE-404");
         var v = await _db.BudgetVersions.FindAsync(line.VersionId);
         if (v?.Status != BudgetVersionStatus.Draft) return FinResult.Fail("E-A5-VERSION-005");
+        if (lineRowVersion != null)
+            _db.Entry(line).Property(nameof(BudgetLine.RowVersion)).OriginalValue = lineRowVersion;
+        ApplyVersionConcurrency(v, versionRowVersion);
         _db.BudgetLinePeriods.RemoveRange(_db.BudgetLinePeriods.Where(p => p.BudgetLineId == lineId));
         _db.BudgetLines.Remove(line);
-        await _db.SaveChangesAsync();
+        try
+        {
+            await _db.SaveChangesAsync();
+        }
+        catch (DbUpdateConcurrencyException)
+        {
+            return FinResult.Fail("E-A5-CONCURRENCY-001");
+        }
         return FinResult.Pass();
     }
 
@@ -163,24 +193,55 @@ public class BudgetLineService : IBudgetLineService
     public async Task<BudgetImportPreviewResult> PreviewImportAsync(Guid versionId, Stream excel)
         => await ParseAndValidateAsync(excel);
 
-    public async Task<FinResult> ConfirmImportAsync(Guid versionId, Stream excel)
+    public async Task<FinResult> ConfirmImportAsync(Guid versionId, Stream excel, byte[]? versionRowVersion = null)
     {
         var v = await _db.BudgetVersions.FindAsync(versionId);
         if (v == null) return FinResult.Fail("E-A5-VERSION-404");
         if (v.Status != BudgetVersionStatus.Draft) return FinResult.Fail("E-A5-VERSION-005");
         var preview = await ParseAndValidateAsync(excel);
         if (preview.HasFatal) return FinResult.Fail("E-A5-IMPORT-001");
-        foreach (var row in preview.Rows)
+
+        var ownsTransaction = _db.Database.IsRelational() && _db.Database.CurrentTransaction == null;
+        await using var transaction = ownsTransaction ? await _db.Database.BeginTransactionAsync() : null;
+        ApplyVersionConcurrency(v, versionRowVersion);
+        try
         {
-            var acct = await _db.GlAccounts.FirstAsync(a => a.Code == row.AccountCode);
-            Guid? ccId = row.CostCenterCode == null ? null
-                : (await _db.CostCenters.FirstOrDefaultAsync(c => c.Code == row.CostCenterCode))?.Id;
-            await UpsertLineAsync(new BudgetLineDto {
-                VersionId = versionId, AccountId = acct.Id, CostCenterId = ccId,
-                CostObjectType = string.IsNullOrEmpty(row.CostObjectType) ? null : row.CostObjectType,
-                CostObjectId = string.IsNullOrEmpty(row.CostObjectId) ? null : row.CostObjectId,
-                SpreadMode = "manual", Periods = row.Periods, AnnualAmount = row.Periods.Sum(),
-            });
+            foreach (var row in preview.Rows)
+            {
+                var acct = await _db.GlAccounts.FirstAsync(a => a.Code == row.AccountCode);
+                Guid? ccId = row.CostCenterCode == null ? null
+                    : (await _db.CostCenters.FirstOrDefaultAsync(c => c.Code == row.CostCenterCode))?.Id;
+                var upsert = await UpsertLineAsync(new BudgetLineDto
+                {
+                    VersionId = versionId,
+                    AccountId = acct.Id,
+                    CostCenterId = ccId,
+                    CostObjectType = string.IsNullOrEmpty(row.CostObjectType) ? null : row.CostObjectType,
+                    CostObjectId = string.IsNullOrEmpty(row.CostObjectId) ? null : row.CostObjectId,
+                    SpreadMode = "manual",
+                    Periods = row.Periods,
+                    AnnualAmount = row.Periods.Sum(),
+                });
+                if (!upsert.Ok)
+                {
+                    if (transaction != null) await transaction.RollbackAsync();
+                    return upsert;
+                }
+            }
+
+            // Also assert and advance the version token for a valid, empty workbook.
+            await _db.SaveChangesAsync();
+            if (transaction != null) await transaction.CommitAsync();
+        }
+        catch (DbUpdateConcurrencyException)
+        {
+            if (transaction != null) await transaction.RollbackAsync();
+            return FinResult.Fail("E-A5-CONCURRENCY-001");
+        }
+        catch
+        {
+            if (transaction != null) await transaction.RollbackAsync();
+            throw;
         }
         return FinResult.Pass();
     }

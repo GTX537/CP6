@@ -1,5 +1,11 @@
 # 当前待办与优先级
 
+## 已完成：FIN BudgetLine 版本级并发控制
+
+- `BudgetVersion.RowVersion` 已成为预算行聚合并发边界；新增、编辑、删除和 Excel 确认导入必须携带客户端最后读到的版本令牌，任一预算行写入都会推进共享版本令牌。
+- 不同预算桶的两个写者也会在同一版本令牌上串行化；陈旧令牌统一返回 `E-A5-CONCURRENCY-001`，前端冲突或成功后同时刷新版本和行令牌。Excel 确认导入参与单一事务，不再忽略内部 upsert 失败或留下部分提交。
+- 门禁为 FIN 303 passed / 1 个既存 SQLite 限制项 skipped；本机 `KOUSQLSERVER` 原生 `rowversion` 用例 1/1、前端令牌合同 3/3、Vue type-check、WebApi Release 0 warning / 0 error。该项不再是跨波待办。
+
 ## 已完成：PLAN/PUB Attachment 宿主业务权限
 
 - Attachment 继续作为无独立页面的横切组件，不新增暗菜单；六个读写入口已按 `BizType` 回查宿主菜单，缺省失败关闭，rebind 另校验草稿上传人。
@@ -72,7 +78,6 @@ T1–T7 已完成，不要重复铺设。T7 细节见 `.superpowers/sdd/gr-vp-t7
 ## 已知跨波跟踪票
 
 - Space `CodeEngineService` 大规则集 rackSeq 应改为 Zone 级完整排序。
-- FIN BudgetLine 需要版本级并发控制。
 - WFS/Space 各 plan 文末保留若干 live QA、移动端视觉和清理票；动手前读对应最新计划的“完成后跟踪票”。
 
 ## 文档维护任务

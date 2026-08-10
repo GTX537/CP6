@@ -2,6 +2,12 @@
 
 > 依据 Git log 汇总，不替代完整 Git 历史。重点记录影响接手判断的里程碑。
 
+## 2026-08-10：FIN BudgetLine 版本级并发控制
+
+- 以 `BudgetVersion.RowVersion` 作为预算行聚合令牌；行新增/编辑/删除与 Excel 确认导入都要求客户端版本令牌，任一预算桶写入都使旧快照失效，冲突统一为 `E-A5-CONCURRENCY-001`。
+- 单行行头与 12 期明细使用单一事务；Excel 确认导入使用整批事务并检查内部 upsert 结果。API 缺失/非法令牌失败关闭，前端成功或冲突后同时刷新版本和行令牌。
+- 真 SQL Server 用例使用独立写者验证不同行也会发生版本冲突、刷新可重试、陈旧删除整体回滚。验证为 FIN 303 passed / 1 个既存 SQLite 限制项 skipped、`KOUSQLSERVER` 1/1、前端 3/3、Vue type-check、WebApi Release 0 warning / 0 error。
+
 ## 2026-08-10：PLAN/PUB Attachment 宿主业务权限补强
 
 - 保留 Attachment 横切组件/无独立菜单的既定边界；`Attachment:EnforceBizPermission` 缺省改为 true，list/upload/download/preview/delete/rebind 全部以请求或持久化 `BizType` 回查宿主菜单。
