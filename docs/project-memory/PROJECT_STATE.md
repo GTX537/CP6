@@ -2,6 +2,13 @@
 
 最后更新：2026-08-09
 
+## 分支优先规范与本地配置优先级（2026-08-09）
+
+- `e4e33364` 已把仓库级“分支优先、验证后合并”规范合入并推送 `main`；`AGENTS.md` 和 `DEVELOPMENT-GUIDE.md` 约束每个任务使用独立分支/必要时使用 worktree、只暂存任务文件、必需门禁通过后再合并与推送。
+- 配置任务提交 `e3bf2420` 把 `appsettings.Local.json` 插入逻辑从 `Program.cs` 提取为可测试组件，并只匹配 `Prefix: null` 的无前缀环境变量源；`DOTNET_`/`ASPNETCORE_` 主机源不会被误认，环境变量与其后的命令行源继续覆盖本地 JSON。
+- `.claude/settings.local.json` 已作为机器本地文件忽略；任务没有提交 `localhost\\KOUSQLSERVER` 等机器专属 `launchSettings` 配置。
+- 验证：配置聚焦 4/4、OpenAPI 契约 30/30、CP6.Tests 2832 passed / 18 environment-gated skipped / 0 failed、WebApi Release 0 warning / 0 error、C# whitespace 与 `git diff --check` 通过。
+
 ## E13 无锁 Zone 父关系确定性推导（2026-08-09）
 
 - 功能提交 `d19a5300` 基于 `main@6bbdd760` 交付 `warehouse-rule-only-v2`：Aisle/Rack 没有人工 `relations.zoneSourceKey` 锁时，只在同一权威 CAD Semantic Preview 中恰有一个 Zone Polygon 被证明完整包含其确定性几何时写入父关系；来源为 `DeterministicRule`，证据码为 `RULE:ZONE_GEOMETRY_CONTAINMENT_V1`。
