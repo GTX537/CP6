@@ -5,7 +5,8 @@
 - 建立三个独立 Compose project 和端口/网络/volume/消息资源边界；共用同一组 `cp6-api:lab-local`、`cp6-web:lab-local` 镜像，环境间不重新构建。
 - `db-init` 与 API 分别接收 migrator/runtime SQL 身份；SQL 和应用 Secret 从 DPAPI vault 临时渲染，命令结束后删除明文文件。三套数据库都完成 Core/Space 迁移。
 - 三套环境各 5 个容器全部健康，API live/ready 均为 Healthy，API/Web 统一报告 `0.0.0-lab` 和相同 Git SHA；合同测试覆盖三环境配置、Secret 分离、端口隔离和 Docker 构建上下文。
-- 修复 API Docker restore 依赖图和 Web 仓库级 SDK 构建上下文，使本机 Lab 与现有 R2 candidate 使用同一可构建 Dockerfile。Azure Environment 外部资源仍按独立验收清单创建，不计入本里程碑完成项。
+- 修复 API Docker restore 依赖图和 Web 仓库级 SDK 构建上下文，使本机 Lab 与现有 R2 candidate 使用同一可构建 Dockerfile。
+- 2026-08-11 外部截图确认 Azure DevOps 已创建 `cp6-dev`、`cp6-uat`、`cp6-prod-lab`，当前均为 `Never deployed`；逻辑名称创建已完成，权限、审批与实际部署不计入本里程碑完成项。
 
 ## 2026-08-11 Azure DevOps CI/CD 项目规划固化
 

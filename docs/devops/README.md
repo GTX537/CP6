@@ -42,7 +42,8 @@
 | CI 代码验证 | 已配置并已接通 | Azure self-hosted Agent 可执行后端/客户端测试与 Web 检查 |
 | 发布制品 | Azure 未完成；GitHub R2 已有实现 | Azure 尚未产出 `cp6-api` / `cp6-web` 镜像或不可变清单 |
 | 本机 Lab 运行环境 | 已完成 | DEV/UAT/PROD-LAB Compose project 已实际启动并通过健康/身份验证 |
-| Azure DEV 自动部署 | 未完成 | Azure Environment 尚待网页创建与外部证据；尚无 deployment job |
+| Azure 逻辑 Environments | 已创建 | `cp6-dev`、`cp6-uat`、`cp6-prod-lab` 已由 2026-08-11 外部截图验证，当前均为 `Never deployed` |
+| Azure DEV 自动部署 | 未完成 | 尚无 deployment job；Resource、Pipeline permissions 和审批检查仍需独立验收 |
 | PROD 审批与部署 | Azure 未完成；GitHub R2 有受控实现 | 不得把 Azure CI 成功描述为生产上线 |
 
 ## 核心原则
