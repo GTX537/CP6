@@ -2,6 +2,13 @@
 
 > 依据 Git log 汇总，不替代完整 Git 历史。重点记录影响接手判断的里程碑。
 
+## 2026-08-11：本机 DEV/UAT/PROD-LAB Docker 发布环境
+
+- 新增参数化 Lab Compose、PowerShell 管理工具与合同测试；DEV/UAT/PROD-LAB 使用独立 project、端口、network、volumes、消息资源和 SQL 数据库，但消费同一组 API/Web 镜像。
+- migration/runtime/infrastructure Secret 完全拆分。SQL 凭据读取已有 DPAPI note；新生成 RabbitMQ/JWT 密钥写入 ACL 受限的 DPAPI vault，Compose 只消费任务期间的临时 env 文件。
+- 修复 API Docker restore 缺少 Space 项目文件和 Web Docker context 缺少仓库级 TypeScript SDK 的可复现构建故障；同步根 Compose、R2 candidate workflow 与文档。
+- 实际验证三套数据库迁移成功、15 个 Lab 容器全部健康、三套 live/ready Healthy、API/Web 版本与 Git SHA 一致。Azure DevOps 逻辑 Environment 尚需网页创建，未把外部未验证状态记为完成。
+
 ## 2026-08-11：Azure DevOps CI/CD 项目记忆与路线图
 
 - 新增 `docs/devops/` 五份交叉链接文档，覆盖当前 Azure CI、目标架构、分阶段 Azure Pipelines 计划、发布操作和 DEV/UAT/PROD 环境策略；`AGENTS.md` 与 README 已增加接手入口。

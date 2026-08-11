@@ -45,7 +45,7 @@
 
 - [ ] 新增独立 Release stage/job，只在完整 CI 和版本冻结通过后运行。
 - [ ] API 使用根构建上下文与 `CP6.WebApi/Dockerfile`。
-- [ ] Web 使用 `cp6.web` 构建上下文与 `cp6.web/Dockerfile`。
+- [ ] Web 使用仓库根构建上下文与 `cp6.web/Dockerfile`，确保可读取版本化 TypeScript SDK。
 - [ ] 传入 `RELEASE_VERSION` 与完整 `GIT_SHA`。
 - [ ] 为两个镜像保存 SemVer、Git SHA 和 Pipeline 追踪标签。
 - [ ] 生成 provenance、SBOM 和 High/Critical 漏洞门禁，至少与现行 R2 等价。
@@ -75,9 +75,9 @@
 
 状态：**待 Phase 4**。
 
-- [ ] 创建 `cp6-uat` 和 `cp6-prod` Azure Environments。
+- [ ] 创建 `cp6-uat` 和 `cp6-prod-lab` Azure Environments。
 - [ ] UAT 使用 DEV 验证过的同一 digest，记录业务验收证据。
-- [ ] 在 `cp6-prod` 资源上配置 Approvals and checks，禁止批准人默认自批。
+- [ ] 在 `cp6-prod-lab` 资源上配置 Approvals and checks；单人学习期允许本人批准，真实生产禁止自批。
 - [ ] 配置分支控制、允许的 Pipeline、超时、维护窗口和 exclusive lock。
 - [ ] PROD 从同一候选清单部署同一 digest。
 - [ ] 执行生产健康、发布身份、迁移和远程制品核对。

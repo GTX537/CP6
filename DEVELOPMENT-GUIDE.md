@@ -451,7 +451,7 @@ minikube addons enable metrics-server
 # 构建镜像到 minikube（Windows PowerShell）
 minikube docker-env | Invoke-Expression
 docker build -t cp6-api:latest -f CP6.WebApi/Dockerfile .
-docker build -t cp6-web:latest -f cp6.web/Dockerfile ./cp6.web
+docker build -t cp6-web:latest -f cp6.web/Dockerfile .
 
 # 一键部署
 cd k8s && .\deploy.bat
