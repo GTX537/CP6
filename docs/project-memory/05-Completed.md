@@ -6,6 +6,12 @@
 - 交付 `docs/crm/CRM-PRODUCT-FRAMEWORK.md` 与 `docs/crm/CRM-V1-EXECUTABLE-SPEC.md`，完整定义产品定位、角色/渠道/旅程、V1/VNext、三仓微服务架构、领域与状态机、数据/API/事件、权限/PII/租户、前端、ERP、迁移、SLO、安全、测试、发布和 DoD。
 - 把实现工作拆为 Platform P01–P10、CP6 C01–C04、CRM01–CRM12，并给出依赖、门禁、切换预算和硬停止条件。该完成项仅代表规划和审阅材料交付；新仓库、服务、前端、迁移、云资源和生产发布仍未实施。
 
+## 2026-08-11 Azure 专用部署 Agent 基础
+
+- Azure DevOps `CP6-Deploy` Pool 已创建，专用 Agent `LAPTOP-3QQ44FJS` 以 `cp6_deploy_agent` 非管理员 Windows 服务身份 Online/Idle；未覆盖或迁移 `Default` Pool 的通用 CI Agent。
+- 新增无 Secret、手工触发的部署 Agent readiness YAML、静态合同测试和操作文档，验证身份、Docker Desktop Linux engine、Compose 与 SQL TCP 可达性。
+- Azure readiness Pipeline 已从 `main` 创建；Build ID `10` / Run `20260811.1` 的完整 Job 与验证 Step 成功，截图和本机 Worker 日志已交叉确认。
+
 ## 2026-08-11 本机 DEV/UAT/PROD-LAB Docker 环境
 
 - 建立三个独立 Compose project 和端口/网络/volume/消息资源边界；共用同一组 `cp6-api:lab-local`、`cp6-web:lab-local` 镜像，环境间不重新构建。

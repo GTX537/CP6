@@ -9,6 +9,12 @@
 - 新增三仓可执行 Spec，冻结 CP6/Platform/CRM 边界，以及 Dapr/Kafka/YARP、RS256/OIDC/JWKS、Next.js、独立数据库、CloudEvents/JSON Schema、Outbox/Inbox、ERP 数据主权和 20 表迁移策略。
 - 规格包含状态机、数据/API/事件、权限/PII/租户隔离、迁移/切换、SLO/威胁模型、测试矩阵、发布门禁、Platform P01–P10、CP6 C01–C04、CRM01–CRM12 依赖与 DoD。本变更只交付规划材料和项目记忆，不创建新仓、改业务代码、部署或迁移。
 
+## 2026-08-11：Azure 专用部署 Agent Readiness
+
+- 记录 `CP6-Deploy` Pool、Agent `LAPTOP-3QQ44FJS` 和非管理员服务身份 `cp6_deploy_agent` 已由本机状态与 Azure Online/Idle 截图验证。
+- 新增手工、无 Secret、无 Checkout 的部署 Agent readiness Pipeline，验证实际 Windows 身份、非管理员边界、Git、Docker Desktop Linux engine、Docker Compose 和 `KOUSQLSERVER` TCP。
+- 新增静态合同测试与 Azure 创建/授权/外部 Run 验收清单；Azure Build ID `10` / Run `20260811.1` 已成功，截图和本机 Worker 日志确认验证 Step 与 Job 均为 `Succeeded`。
+
 ## 2026-08-11：本机 DEV/UAT/PROD-LAB Docker 发布环境
 
 - 新增参数化 Lab Compose、PowerShell 管理工具与合同测试；DEV/UAT/PROD-LAB 使用独立 project、端口、network、volumes、消息资源和 SQL 数据库，但消费同一组 API/Web 镜像。

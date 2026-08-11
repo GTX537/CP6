@@ -11,6 +11,7 @@
 | [CI/CD 架构](./CI-CD-ARCHITECTURE.md) | Explanation | 解释当前双流水线边界、目标架构和关键取舍 |
 | [Azure Pipelines 演进计划](./AZURE-PIPELINES-PLAN.md) | Reference / Roadmap | 记录阶段、任务、完成定义和迁移门禁 |
 | [Azure Environments 设置](./AZURE-ENVIRONMENTS-SETUP.md) | How-to / Checklist | 创建并验收 DEV、UAT、PROD-LAB 逻辑环境 |
+| [部署 Agent Readiness](./DEPLOY-AGENT-READINESS.md) | How-to / Gate | 验证专用部署身份、Docker Desktop 和本机 SQL TCP 能力 |
 | [发布流程](./RELEASE-PROCESS.md) | How-to | 说明从代码到 DEV、审批和 PROD 的标准操作顺序 |
 | [环境策略](./ENVIRONMENT-STRATEGY.md) | Explanation / Reference | 定义 DEV、UAT、PROD 的用途、权限、配置和证据边界 |
 | [WMS R2 生产就绪主规范](../client/r2/README.md) | Normative | 当前生产候选、部署和现场试点的唯一规范源 |
@@ -43,6 +44,7 @@
 | 发布制品 | Azure 未完成；GitHub R2 已有实现 | Azure 尚未产出 `cp6-api` / `cp6-web` 镜像或不可变清单 |
 | 本机 Lab 运行环境 | 已完成 | DEV/UAT/PROD-LAB Compose project 已实际启动并通过健康/身份验证 |
 | Azure 逻辑 Environments | 已创建 | `cp6-dev`、`cp6-uat`、`cp6-prod-lab` 已由 2026-08-11 外部截图验证，当前均为 `Never deployed` |
+| 专用部署 Agent | Readiness 已通过 | `CP6-Deploy` 使用 `cp6_deploy_agent` 服务身份；Azure Build ID `10` 验证身份、Docker、Compose 与 SQL TCP |
 | Azure DEV 自动部署 | 未完成 | 尚无 deployment job；Resource、Pipeline permissions 和审批检查仍需独立验收 |
 | PROD 审批与部署 | Azure 未完成；GitHub R2 有受控实现 | 不得把 Azure CI 成功描述为生产上线 |
 
