@@ -1,6 +1,13 @@
 # 项目当前状态
 
-最后更新：2026-08-10
+最后更新：2026-08-11
+
+## Azure DevOps CI/CD 项目记忆（2026-08-11）
+
+- 新增 `docs/devops/` 项目级文档入口，整理当前 Azure CI、目标 Release/CD、Build once、环境策略、发布步骤和分阶段路线；`AGENTS.md` 与根 README 已接入，Codex 后续无需从聊天记录猜测上下文。
+- 当前仓库事实是：`azure-pipelines.yml` 在 `main` 提交上运行 `Default` self-hosted pool，完成 .NET 8/Node 22 的后端/客户端测试和 Web 类型/单测/构建；`pr: none`，尚无 Azure Docker、Registry 或环境部署。
+- 现有 `.github/workflows/r2-*` 已实现更完整的受保护版本、GHCR 镜像、SBOM/漏洞扫描、签名、不可变证据和 digest 部署，因此在 Azure 门禁等价并显式切换前继续作为生产发布权威。
+- 聊天规划中的 ACR 被记录为候选目标而非当前事实。下一任务先决定唯一 Registry、候选清单、Azure/GitHub 影子期和回退条件，再实现 Docker Release；本任务没有改流水线、创建云资源或执行部署。
 
 ## CRM V1 Foundation（2026-08-10）
 

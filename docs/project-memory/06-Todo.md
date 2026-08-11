@@ -1,5 +1,13 @@
 # 当前待办与优先级
 
+## P0：Azure DevOps Release/CD 演进
+
+- 当前 Azure `azure-pipelines.yml` 已完成基础 CI，使用 `Default` self-hosted pool、`main` trigger 和 `pr: none`；先补运行证据、Agent 运维边界和 PR 门禁归属，不把 CI 绿灯描述为上线。
+- 下一张任务卡为“发布权威与 Registry 决策”：在现有 GHCR/R2 与候选 ACR 之间确定唯一 Registry、候选清单、影子期、等价矩阵、回退条件和最小权限 Service Connection。
+- 决策通过后按独立任务推进：Docker Release（版本/SHA、provenance、SBOM、扫描、digest）→ DEV Environment/健康与身份核对 → UAT → PROD 资源侧审批 → 回滚/前滚演练 → AKS 多仓。
+- 全阶段遵守 Build once：DEV/UAT/PROD 只推广同一 digest，不按环境重新 Build；Azure 与 GitHub 不得对同一版本生成两套权威候选。
+- Azure 门禁未与 `.github/workflows/r2-*` 等价且未显式切换前，GitHub R2 继续作为生产发布权威。完整路线见 `docs/devops/AZURE-PIPELINES-PLAN.md`。
+
 ## P0：CRM V1 端到端交付
 
 - 已完成 Foundation：产品规格、20 张实体表、固定状态机、租户/PII/外键边界、EF 迁移、6 个禁用菜单节点、22 个动作与管理员幂等授权。

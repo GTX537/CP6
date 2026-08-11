@@ -1,5 +1,12 @@
 # 已完成能力与近期里程碑
 
+## 2026-08-11 Azure DevOps CI/CD 项目规划固化
+
+- 新建 `docs/devops/README.md`、架构、Azure 演进计划、发布流程和环境策略五份文档，并从 `AGENTS.md` 与根 README 建立入口。
+- 明确 Azure 当前只完成基于 `Default` self-hosted pool 的 CI；Docker Release、Registry、DEV/UAT/PROD 仍为待办，避免把构建测试成功描述为生产上线。
+- 把现有 GitHub R2 的 protected tag、GHCR、SBOM/扫描、签名、证据和 digest 部署定义为迁移期间的生产权威；ACR 只作为待决策候选。
+- 固化 Build once、digest 推广、CI/部署身份分离、资源侧审批、前向迁移和生产资产边界。本项完成的是项目记忆与路线图，不代表 Azure CD 或生产部署完成。
+
 ## 2026-08-10 CRM V1 Foundation
 
 - 冻结并记录 CRM V1 范围、漏斗、赢单门槛、租户公开路由、官网发布、反垃圾、归因和 24 个月 PII 匿名化边界。
