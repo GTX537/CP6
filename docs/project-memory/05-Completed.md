@@ -1,5 +1,11 @@
 # 已完成能力与近期里程碑
 
+## 2026-08-11 Azure 专用部署 Agent 基础
+
+- Azure DevOps `CP6-Deploy` Pool 已创建，专用 Agent `LAPTOP-3QQ44FJS` 以 `cp6_deploy_agent` 非管理员 Windows 服务身份 Online/Idle；未覆盖或迁移 `Default` Pool 的通用 CI Agent。
+- 新增无 Secret、手工触发的部署 Agent readiness YAML、静态合同测试和操作文档，验证身份、Docker Desktop Linux engine、Compose 与 SQL TCP 可达性。
+- Azure readiness Pipeline 尚待从 `main` 创建并运行；没有把代码合同通过冒充为外部 Pipeline Run 成功。
+
 ## 2026-08-11 本机 DEV/UAT/PROD-LAB Docker 环境
 
 - 建立三个独立 Compose project 和端口/网络/volume/消息资源边界；共用同一组 `cp6-api:lab-local`、`cp6-web:lab-local` 镜像，环境间不重新构建。

@@ -2,6 +2,12 @@
 
 > 依据 Git log 汇总，不替代完整 Git 历史。重点记录影响接手判断的里程碑。
 
+## 2026-08-11：Azure 专用部署 Agent Readiness
+
+- 记录 `CP6-Deploy` Pool、Agent `LAPTOP-3QQ44FJS` 和非管理员服务身份 `cp6_deploy_agent` 已由本机状态与 Azure Online/Idle 截图验证。
+- 新增手工、无 Secret、无 Checkout 的部署 Agent readiness Pipeline，验证实际 Windows 身份、非管理员边界、Git、Docker Desktop Linux engine、Docker Compose 和 `KOUSQLSERVER` TCP。
+- 新增静态合同测试与 Azure 创建/授权/外部 Run 验收清单；Readiness 外部 Run 仍待执行，不记录为已完成。
+
 ## 2026-08-11：本机 DEV/UAT/PROD-LAB Docker 发布环境
 
 - 新增参数化 Lab Compose、PowerShell 管理工具与合同测试；DEV/UAT/PROD-LAB 使用独立 project、端口、network、volumes、消息资源和 SQL 数据库，但消费同一组 API/Web 镜像。
