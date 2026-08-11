@@ -5,7 +5,7 @@
 ## Azure DevOps CI/CD 项目记忆（2026-08-11）
 
 - Azure `CP6-Deploy` 专用 Pool 已建立；Agent `LAPTOP-3QQ44FJS` 以非管理员本机账号 `cp6_deploy_agent` 作为延迟自动启动 Windows 服务运行，Azure 截图显示版本 `5.277.0`、Online/Idle。通用 CI Agent `CP6-Windows` 仍留在 `Default` Pool。
-- 新增手工、无 Secret、无 Checkout 的 `azure-pipelines-deploy-agent-readiness.yml`，在接 DEV Secret/Environment 前验证实际 Job 身份、非管理员边界、Docker Desktop Linux engine、Compose 和 `KOUSQLSERVER` TCP。仓库合同完成不等于 Azure Run 已成功，外部 Run ID 仍待记录。
+- 手工、无 Secret、无 Checkout 的 `azure-pipelines-deploy-agent-readiness.yml` 已在 Azure Build ID `10`（Run `20260811.1`）成功运行；截图与 Worker 日志确认专用 Job 身份、非管理员边界、Docker Desktop Linux engine、Compose 和 `KOUSQLSERVER` TCP 门禁通过。Pipeline 当前外部名称为 `GTX537.CP6 (3)`，建议重命名为 `CP6 Deploy Agent Readiness`。
 - 已交付本机 `cp6-dev`、`cp6-uat`、`cp6-prod-lab` 三套隔离 Compose project；每套包含 Redis、RabbitMQ、Kafka、API、Web，分别使用 `CP6_DEV`、`CP6_UAT`、`CP6_PROD_LAB` 和独立 migrator/runtime SQL 登录。三套环境均为 5/5 容器健康，live/ready Healthy，API/Web 版本与 Git SHA 一致。
 - 新增 `deploy/lab/` 与 `Invoke-Cp6LabEnvironment.ps1`，从现有 SQL DPAPI note 临时渲染最小权限 Secret；RabbitMQ/JWT Lab 密钥保存在额外 DPAPI vault，明文临时文件在每次命令结束后删除。`KOUSQLSERVER` TCP `50286` 由工具自动发现，不写入 Git。
 - 修复 API Dockerfile 未在 restore 层复制 Space 项目文件，以及 Web Docker 构建上下文无法读取仓库级 TypeScript SDK 的缺陷；Lab、根 Compose 与 R2 candidate 现统一使用可复现的构建边界。

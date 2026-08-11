@@ -6,7 +6,7 @@
 
 - 记录 `CP6-Deploy` Pool、Agent `LAPTOP-3QQ44FJS` 和非管理员服务身份 `cp6_deploy_agent` 已由本机状态与 Azure Online/Idle 截图验证。
 - 新增手工、无 Secret、无 Checkout 的部署 Agent readiness Pipeline，验证实际 Windows 身份、非管理员边界、Git、Docker Desktop Linux engine、Docker Compose 和 `KOUSQLSERVER` TCP。
-- 新增静态合同测试与 Azure 创建/授权/外部 Run 验收清单；Readiness 外部 Run 仍待执行，不记录为已完成。
+- 新增静态合同测试与 Azure 创建/授权/外部 Run 验收清单；Azure Build ID `10` / Run `20260811.1` 已成功，截图和本机 Worker 日志确认验证 Step 与 Job 均为 `Succeeded`。
 
 ## 2026-08-11：本机 DEV/UAT/PROD-LAB Docker 发布环境
 
