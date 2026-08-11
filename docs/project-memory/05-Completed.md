@@ -1,5 +1,12 @@
 # 已完成能力与近期里程碑
 
+## 2026-08-10 CRM V1 Foundation
+
+- 冻结并记录 CRM V1 范围、漏斗、赢单门槛、租户公开路由、官网发布、反垃圾、归因和 24 个月 PII 匿名化边界。
+- 新增 20 张 CRM/CMS 实体表、固定线索/商机状态机、聚合外键、租户过滤与唯一索引、PII 擦除元数据，以及 `CrmFoundation` EF 迁移。
+- 新增 CRM 菜单/动作种子：6 个菜单节点、22 个动作、租户管理员幂等授权；页面未交付前保持禁用，并保留后续显式启用状态。
+- 新增状态转换、Accepted/Won 守卫、租户隔离、公开路由共享边界和种子幂等测试。此项只标记 Foundation 完成，业务 API、Vue 页面、公开官网与运营任务仍按 CRM 待办推进。
+
 ## 2026-08-10 Space 单格货位码 Zone 级 rackSeq
 
 - `CodeEngineService.GenSingleAsync` 不再把当前货架序号硬编码为 `1`，而是加载目标 Zone 的全部货架，与批量 `GenerateAsync` 复用同一套 `(X, Y, Id)` 确定性排序。

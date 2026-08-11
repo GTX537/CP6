@@ -486,6 +486,9 @@ builder.Services.AddScoped<CP6.Core.Services.Sys.IFieldPermService, CP6.Core.Ser
 CP6.Core.Services.Sys.DataScopeRegistry.Register("order", "受注", new[] { 1, 2, 3, 4, 5 }, 2);
 CP6.Core.Services.Sys.DataScopeRegistry.Register("product", "製品", new[] { 1, 2, 3, 4, 5 }, 5);
 CP6.Core.Services.Sys.DataScopeRegistry.Register("pur-pr", "采购申请", new[] { 1, 2, 3, 4, 5 }, 1);
+CP6.Core.Services.Sys.DataScopeRegistry.Register("crm-lead", "CRM 线索", new[] { 1, 2, 3, 4, 5 }, 1);
+CP6.Core.Services.Sys.DataScopeRegistry.Register("crm-account", "CRM 企业与联系人", new[] { 1, 2, 3, 4, 5 }, 1);
+CP6.Core.Services.Sys.DataScopeRegistry.Register("crm-opportunity", "CRM 商机", new[] { 1, 2, 3, 4, 5 }, 1);
 // 章04 字段权限资源/字段注册（业务返回 DTO 贴 [FieldMask] 后即生效）
 CP6.Core.Services.Sys.FieldRegistry.Register("order",
     new CP6.Core.Services.Sys.FieldRegistry.Field("UnitPrice", "単価"),
@@ -1223,6 +1226,9 @@ using (var scope = app.Services.CreateScope())
     // Calendar.View/Edit（743）+ Connector.View/Edit（挂既有 734 oa-flow-admin）权限点幂等种子。
     // 须置于 OawfPermissionSeed（及 OawfMenuSeed 的 734 锚定）之后、:1005 回填块之前。「贴点⊆种子」互锁。
     CP6.WebApi.Seed.WorkCalendarConnectorPermissionSeed.EnsureSeeded(db);
+
+    // CRM foundation：先播种禁用菜单目录和逐租户管理员权限；页面交付后再显式启用，避免出现死链接。
+    CP6.WebApi.Seed.CrmMenuPermissionSeed.EnsureSeeded(db);
 
     // 普通角色授权放开波 T1：逐租户预置「一般用户」(RoleId=10) + OA 办理最小键集（4 菜单 740/733/735/737 + 8 操作点）。
     // 洁净部署下各波仅授 admin(RoleId=1)，普通员工无角色可用致 OA 全 403；本种子给每租户开箱即用的办理角色。
