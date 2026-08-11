@@ -2,6 +2,12 @@
 
 > 依据 Git log 汇总，不替代完整 Git 历史。重点记录影响接手判断的里程碑。
 
+## 2026-08-10：CRM V1 Foundation
+
+- 形成 `docs/crm/CRM-V1-SPEC.md`，冻结从官网/人工获客到线索、企业/联系人、商机、报价接受、ERP 订单和 Won 的 V1 闭环，以及多租户营销官网、归因、反垃圾和 PII 保留边界。
+- 新增 20 张 CRM/CMS 实体表、固定状态机、租户过滤/唯一约束、聚合 Restrict 外键、公开路由注册表和 `CrmFoundation` EF 迁移；标准化联系方式、来源 URL、IP 哈希和 User-Agent 均纳入 PII 擦除。
+- 新增 6 个菜单节点、22 个动作及租户管理员幂等授权。页面未落地前菜单保持禁用；Foundation 不冒充 CRM 端到端完成，Intake/API、Vue、CMS 与运营任务继续列为 P0。
+
 ## 2026-08-10：Space 单格货位码 Zone 级 rackSeq
 
 - `CodeEngineService.GenSingleAsync` 不再把货架序号固定为 `1`，而是读取目标 Zone 全部货架，与批量生成共享 `(X, Y, Id)` 确定性排序。
