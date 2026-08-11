@@ -115,8 +115,8 @@ services:
 
   cp6-web:
     build:
-      context: ./cp6.web
-      dockerfile: Dockerfile
+      context: .
+      dockerfile: cp6.web/Dockerfile
     container_name: cp6-web
     ports:
       - "8080:80"

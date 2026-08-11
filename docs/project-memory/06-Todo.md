@@ -2,6 +2,8 @@
 
 ## P0：Azure DevOps Release/CD 演进
 
+- 本机 DEV/UAT/PROD-LAB Docker 运行边界已建立并实际验证；Azure DevOps 的 `cp6-dev`、`cp6-uat`、`cp6-prod-lab` 也已由 2026-08-11 外部截图确认创建。下一步在详情页核对三者 Resource 为空，并确认没有录入 Secret。
+- 创建独立 Release Pipeline 和 deployment job，把三个 Environment 的 Pipeline permissions 收紧到该 Pipeline；DEV 自动，UAT/PROD-LAB 再配置审批与 exclusive lock。单人学习期 PROD-LAB 可自批，真实生产必须换独立批准人。
 - 当前 Azure `azure-pipelines.yml` 已完成基础 CI，使用 `Default` self-hosted pool、`main` trigger 和 `pr: none`；先补运行证据、Agent 运维边界和 PR 门禁归属，不把 CI 绿灯描述为上线。
 - 下一张任务卡为“发布权威与 Registry 决策”：在现有 GHCR/R2 与候选 ACR 之间确定唯一 Registry、候选清单、影子期、等价矩阵、回退条件和最小权限 Service Connection。
 - 决策通过后按独立任务推进：Docker Release（版本/SHA、provenance、SBOM、扫描、digest）→ DEV Environment/健康与身份核对 → UAT → PROD 资源侧审批 → 回滚/前滚演练 → AKS 多仓。

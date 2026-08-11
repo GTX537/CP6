@@ -33,7 +33,7 @@
 ```text
 cp6-dev
 cp6-uat
-cp6-prod
+cp6-prod-lab
 ```
 
 每个环境都应：
@@ -44,7 +44,7 @@ cp6-prod
 - 记录环境 Owner 与紧急联系人；
 - 禁止把明文 Secret、连接串、私钥或机器路径提交到 Git。
 
-`cp6-prod` 还应配置：
+`cp6-prod-lab` 在学习阶段还应配置：
 
 - 指定个人/组审批，并限制自批；
 - Branch control，只允许受保护的发布来源；

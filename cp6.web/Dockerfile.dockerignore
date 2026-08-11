@@ -1,0 +1,7 @@
+**
+!cp6.web/
+!cp6.web/**
+!sdk/
+!sdk/typescript/
+!sdk/typescript/space-design-v1/
+!sdk/typescript/space-design-v1/**

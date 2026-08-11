@@ -96,7 +96,8 @@ services:
 
   cp6-web:
     build:
-      context: ./cp6.web
+      context: .
+      dockerfile: cp6.web/Dockerfile
     ports:
       - "8080:80"
     depends_on:

@@ -211,7 +211,7 @@ jobs:
             --provenance=true --sbom=true --push \
             --tag "${api_repo}:v${VERSION}" \
             --metadata-file api-metadata.json
-          docker buildx build cp6.web \
+          docker buildx build . \
             --file cp6.web/Dockerfile \
             --platform linux/amd64 \
             --build-arg RELEASE_VERSION="$VERSION" \
