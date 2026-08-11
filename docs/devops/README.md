@@ -12,6 +12,7 @@
 | [Azure Pipelines 演进计划](./AZURE-PIPELINES-PLAN.md) | Reference / Roadmap | 记录阶段、任务、完成定义和迁移门禁 |
 | [Azure Environments 设置](./AZURE-ENVIRONMENTS-SETUP.md) | How-to / Checklist | 创建并验收 DEV、UAT、PROD-LAB 逻辑环境 |
 | [部署 Agent Readiness](./DEPLOY-AGENT-READINESS.md) | How-to / Gate | 验证专用部署身份、Docker Desktop 和本机 SQL TCP 能力 |
+| [DEV 自动部署](./DEV-AUTOMATIC-DEPLOYMENT.md) | How-to / Checklist | 创建受限 `CP6 DEV CD`，完成本机学习环境的首次 deployment job 验收 |
 | [发布流程](./RELEASE-PROCESS.md) | How-to | 说明从代码到 DEV、审批和 PROD 的标准操作顺序 |
 | [环境策略](./ENVIRONMENT-STRATEGY.md) | Explanation / Reference | 定义 DEV、UAT、PROD 的用途、权限、配置和证据边界 |
 | [WMS R2 生产就绪主规范](../client/r2/README.md) | Normative | 当前生产候选、部署和现场试点的唯一规范源 |
@@ -25,7 +26,7 @@
 - 安装 .NET 8 SDK 和 Node.js 22。
 - 还原、构建并测试 `CP6.WebApi`、`CP6.Tests`、`CP6.Client.Tests`。
 - 执行 Vue 类型检查、Vitest 和生产构建。
-- 尚未构建/推送镜像，也未部署 DEV、UAT 或 PROD。
+- 该基础 CI 自身不构建/推送镜像，也不部署环境；独立 `azure-pipelines-dev.yml` 负责本机 DEV 学习链，外部首次 Run 尚待验收。
 
 项目上下文确认 self-hosted Agent 已接通并能执行该 CI。具体 Agent 名称、在线状态和历史运行结果属于 Azure DevOps 外部运行证据，不能只靠仓库文件推断。
 
@@ -45,7 +46,7 @@
 | 本机 Lab 运行环境 | 已完成 | DEV/UAT/PROD-LAB Compose project 已实际启动并通过健康/身份验证 |
 | Azure 逻辑 Environments | 已创建 | `cp6-dev`、`cp6-uat`、`cp6-prod-lab` 已由 2026-08-11 外部截图验证，当前均为 `Never deployed` |
 | 专用部署 Agent | Readiness 已通过 | `CP6-Deploy` 使用 `cp6_deploy_agent` 服务身份；Azure Build ID `10` 验证身份、Docker、Compose 与 SQL TCP |
-| Azure DEV 自动部署 | 未完成 | 尚无 deployment job；Resource、Pipeline permissions 和审批检查仍需独立验收 |
+| Azure DEV 自动部署 | 仓库配置已交付，Azure 运行待验收 | `azure-pipelines-dev.yml` 已定义 CI completion trigger、SHA 镜像、`cp6-dev` deployment job 和非敏感证据；外部 Pipeline 创建、资源授权与首次成功 Run 仍待完成 |
 | PROD 审批与部署 | Azure 未完成；GitHub R2 有受控实现 | 不得把 Azure CI 成功描述为生产上线 |
 
 ## 核心原则

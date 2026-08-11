@@ -17,8 +17,8 @@ cp6-prod-lab
 以上三个逻辑 Environment 均已创建，状态均为 `Never deployed`。该状态符合当前阶段预期，
 表示尚无 deployment job 写入部署历史；它不代表创建失败。
 
-截图只证明名称和当前部署状态，未展示 Resource 详情、Pipeline permissions 或 Approvals and checks。
-这些项目仍需在对应详情页或后续 CD 任务中单独验收。
+截图只证明名称和当时的部署状态，未展示 Resource 详情、Pipeline permissions 或 Approvals and checks。
+DEV deployment job 的仓库配置现已交付，但这些 Azure 资源权限和首次实际部署仍需在对应详情页单独验收。
 
 ## 创建步骤
 

@@ -4,16 +4,19 @@
 
 ## Azure DevOps CI/CD 项目记忆（2026-08-11）
 
+- 已交付本机学习环境的 `azure-pipelines-dev.yml`：仅由 `GTX537.CP6` 在 `main` 成功后的 pipeline completion 触发，在 `CP6-Deploy/LAPTOP-3QQ44FJS` 上核对完整 Git SHA，构建一次 commit-addressed API/Web 镜像，再用 `cp6-dev` deployment job 执行 db-init、服务启动、健康/发布身份验证和非敏感证据归档。
+- Azure Variable Group `cp6-dev-secrets` 已由 2026-08-11 外部截图确认存在，四项 DEV SQL/RabbitMQ/JWT 变量均为锁定 Secret。部署脚本新增进程环境 Secret 模式，同时保留人工 DPAPI 模式；只有 deployment task 接收 Secret，RabbitMQ 使用独立 `cp6-dev_rabbitmq-data-azure` volume，不覆盖原人工 Lab 数据。
+- 上述是仓库配置完成，不是外部部署成功：`CP6 DEV CD` Pipeline 尚待从 `/azure-pipelines-dev.yml` 创建，`CP6-Deploy`、Variable Group、`cp6-dev` 必须仅授权该 Pipeline，并取得首次成功 Run/Environment deployment history/Artifact 证据。该本机镜像缓存方案不适用于 UAT/PROD-LAB，也不关闭 Registry/发布权威门禁。
 - Azure `CP6-Deploy` 专用 Pool 已建立；Agent `LAPTOP-3QQ44FJS` 以非管理员本机账号 `cp6_deploy_agent` 作为延迟自动启动 Windows 服务运行，Azure 截图显示版本 `5.277.0`、Online/Idle。通用 CI Agent `CP6-Windows` 仍留在 `Default` Pool。
-- 手工、无 Secret、无 Checkout 的 `azure-pipelines-deploy-agent-readiness.yml` 已在 Azure Build ID `10`（Run `20260811.1`）成功运行；截图与 Worker 日志确认专用 Job 身份、非管理员边界、Docker Desktop Linux engine、Compose 和 `KOUSQLSERVER` TCP 门禁通过。Pipeline 当前外部名称为 `GTX537.CP6 (3)`，建议重命名为 `CP6 Deploy Agent Readiness`。
+- 手工、无 Secret、无 Checkout 的 `azure-pipelines-deploy-agent-readiness.yml` 已在 Azure Build ID `10`（Run `20260811.1`）成功运行；截图与 Worker 日志确认专用 Job 身份、非管理员边界、Docker Desktop Linux engine、Compose 和 `KOUSQLSERVER` TCP 门禁通过。Pipeline 当前外部名称为 `CP6 Deploy Agent`，可再补全为 `CP6 Deploy Agent Readiness`。
 - 已交付本机 `cp6-dev`、`cp6-uat`、`cp6-prod-lab` 三套隔离 Compose project；每套包含 Redis、RabbitMQ、Kafka、API、Web，分别使用 `CP6_DEV`、`CP6_UAT`、`CP6_PROD_LAB` 和独立 migrator/runtime SQL 登录。三套环境均为 5/5 容器健康，live/ready Healthy，API/Web 版本与 Git SHA 一致。
 - 新增 `deploy/lab/` 与 `Invoke-Cp6LabEnvironment.ps1`，从现有 SQL DPAPI note 临时渲染最小权限 Secret；RabbitMQ/JWT Lab 密钥保存在额外 DPAPI vault，明文临时文件在每次命令结束后删除。`KOUSQLSERVER` TCP `50286` 由工具自动发现，不写入 Git。
 - 修复 API Dockerfile 未在 restore 层复制 Space 项目文件，以及 Web Docker 构建上下文无法读取仓库级 TypeScript SDK 的缺陷；Lab、根 Compose 与 R2 candidate 现统一使用可复现的构建边界。
-- 2026-08-11 用户提供的 Azure DevOps 列表截图已确认 `cp6-dev`、`cp6-uat`、`cp6-prod-lab` 三个逻辑 Environment 存在，且均为 `Never deployed`。这只关闭 Environment 名称创建项；Resource、Pipeline permissions、审批检查和 deployment job 仍待后续验收，详见 `docs/devops/AZURE-ENVIRONMENTS-SETUP.md`。
+- 2026-08-11 用户提供的 Azure DevOps 列表截图已确认 `cp6-dev`、`cp6-uat`、`cp6-prod-lab` 三个逻辑 Environment 存在，且当时均为 `Never deployed`。这只关闭 Environment 名称创建项；DEV YAML job 已交付，但 Resource、Pipeline permissions、审批检查和首次 deployment history 仍待外部验收，详见 `docs/devops/AZURE-ENVIRONMENTS-SETUP.md`。
 - 新增 `docs/devops/` 项目级文档入口，整理当前 Azure CI、目标 Release/CD、Build once、环境策略、发布步骤和分阶段路线；`AGENTS.md` 与根 README 已接入，Codex 后续无需从聊天记录猜测上下文。
-- 当前仓库事实是：`azure-pipelines.yml` 在 `main` 提交上运行 `Default` self-hosted pool，完成 .NET 8/Node 22 的后端/客户端测试和 Web 类型/单测/构建；`pr: none`，尚无 Azure Docker、Registry 或环境部署。
+- 当前仓库事实是：`azure-pipelines.yml` 在 `main` 提交上运行 `Default` self-hosted pool，完成 .NET 8/Node 22 的后端/客户端测试和 Web 类型/单测/构建；`pr: none`。另有 DEV 学习链在部署 Agent 本机 Build/Deploy，但尚无 Azure Registry、不可变候选或生产环境部署。
 - 现有 `.github/workflows/r2-*` 已实现更完整的受保护版本、GHCR 镜像、SBOM/漏洞扫描、签名、不可变证据和 digest 部署，因此在 Azure 门禁等价并显式切换前继续作为生产发布权威。
-- 聊天规划中的 ACR 被记录为候选目标而非当前事实。下一任务先决定唯一 Registry、候选清单、Azure/GitHub 影子期和回退条件，再实现 Docker Release；本任务没有改流水线、创建云资源或执行部署。
+- 聊天规划中的 ACR 被记录为候选目标而非当前事实。当前只新增本机 DEV 学习流水线，没有创建 Registry/云资源或执行生产部署；后续仍需决定唯一 Registry、候选清单、Azure/GitHub 影子期和回退条件，再实现正式 Docker Release。
 
 ## CRM V1 Foundation（2026-08-10）
 

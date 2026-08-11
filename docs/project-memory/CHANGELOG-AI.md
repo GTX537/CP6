@@ -2,6 +2,12 @@
 
 > 依据 Git log 汇总，不替代完整 Git 历史。重点记录影响接手判断的里程碑。
 
+## 2026-08-11：新增 Azure DEV 自动部署学习链
+
+- 新增 `azure-pipelines-dev.yml` 与静态合同：只响应 `GTX537.CP6/main` 成功 Run，绑定专用部署 Agent，按完整 Git SHA 构建一次本机镜像，并通过 `cp6-dev` deployment job 部署、验证和发布证据。
+- `Invoke-Cp6LabEnvironment.ps1` 支持从 Azure task 进程环境安全接收四个 Secret，参数化 ReleaseVersion/GitSha，保留原 DPAPI 路径，并隔离 Azure RabbitMQ volume。
+- 新增 `DEV-AUTOMATIC-DEPLOYMENT.md`，记录外部 Pipeline 创建、最小资源授权、首次运行与验收步骤。Variable Group 已由截图确认，首次实际 Azure deployment 尚未完成，且该学习链不提升为 UAT/生产发布权威。
+
 ## 2026-08-11：Azure 专用部署 Agent Readiness
 
 - 记录 `CP6-Deploy` Pool、Agent `LAPTOP-3QQ44FJS` 和非管理员服务身份 `cp6_deploy_agent` 已由本机状态与 Azure Online/Idle 截图验证。
