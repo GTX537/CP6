@@ -26,3 +26,14 @@
 - 涉及项目状态的任务同步更新 `docs/project-memory/PROJECT_STATE.md`、`05-Completed.md`、`06-Todo.md` 和 `CHANGELOG-AI.md`。
 - 未经明确授权不得 force-push、重写共享历史、删除远端分支或执行生产部署。
 
+## CP6 DevOps 上下文
+
+- DevOps 入口为 `docs/devops/README.md`；处理 CI、Release、Registry、部署或环境任务前必须阅读该目录，并交叉核对 `docs/client/r2/README.md`。
+- 当前 `azure-pipelines.yml` 只完成 CI：`main` 触发、`pr: none`、`Default` self-hosted pool，执行 .NET 8/Node 22 的 restore、build、test、Vue type-check/test/build。它尚未构建镜像或部署任何环境。
+- 现有 GitHub R2 流水线仍是生产候选与部署的权威实现，包含受保护 Tag、SQL/E2E、镜像、SBOM、漏洞扫描、签名、不可变证据、digest 部署和运行身份核对。Azure 迁移未通过等价验收前不得删除、绕过或弱化这些门禁。
+- Release 必须遵守 **Build once, deploy many**：API/Web 镜像只构建一次，DEV/UAT/PROD 推广同一 `repository@sha256:digest`；SemVer 和 Git SHA 用于追踪，不以可变 Tag 作为生产身份。
+- 聊天规划建议 ACR，但仓库当前 R2 使用 GHCR。实现 Azure Docker Release 前必须先确定唯一 Registry、候选清单、迁移期和回退方案，禁止两套系统对同一版本分别 Build 并同时宣称权威。
+- CI Agent 与部署身份分离；不得让开发者 PC/通用 CI Agent 自动持有 PROD Secret 或生产管理权限。PROD Approval/Checks 配置在 Azure Environment/受保护资源侧，不由 YAML 作者自行取消。
+- 生产部署只使用 `deploy/production/compose/compose.yaml` 或 `deploy/production/kubernetes/`；根 `docker-compose.yml` 与 `k8s/` 仅供开发。数据库先运行一次性 `db-init`，只前向迁移，应用回退必须证明 Schema 兼容。
+- 当前下一阶段不是直接上线，而是完成 `docs/devops/AZURE-PIPELINES-PLAN.md` 中的“发布权威与 Registry 决策”，再实现 Docker Release、DEV、UAT、PROD。
+

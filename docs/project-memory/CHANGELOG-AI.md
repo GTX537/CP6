@@ -2,6 +2,13 @@
 
 > 依据 Git log 汇总，不替代完整 Git 历史。重点记录影响接手判断的里程碑。
 
+## 2026-08-11：Azure DevOps CI/CD 项目记忆与路线图
+
+- 新增 `docs/devops/` 五份交叉链接文档，覆盖当前 Azure CI、目标架构、分阶段 Azure Pipelines 计划、发布操作和 DEV/UAT/PROD 环境策略；`AGENTS.md` 与 README 已增加接手入口。
+- 准确记录 `azure-pipelines.yml` 当前为 `main` + `pr: none` + `Default` self-hosted CI，仅执行 .NET/客户端/Web 验证，尚未生成 Azure 候选制品或部署环境。
+- 明确现有 GitHub R2 继续作为迁移期生产权威；ACR 是待决策候选，必须先解决 GHCR/ACR、候选清单和影子期唯一性，再实现 Docker Release。
+- 固化 Build once、digest 推广、CI/部署身份分离、资源侧审批、一次性 db-init、前向迁移和健康/发布身份核对。本变更只生成文档与项目状态记录，未修改 Pipeline 或执行部署。
+
 ## 2026-08-10：CRM V1 Foundation
 
 - 形成 `docs/crm/CRM-V1-SPEC.md`，冻结从官网/人工获客到线索、企业/联系人、商机、报价接受、ERP 订单和 Won 的 V1 闭环，以及多租户营销官网、归因、反垃圾和 PII 保留边界。
