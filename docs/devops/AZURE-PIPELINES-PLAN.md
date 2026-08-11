@@ -61,7 +61,7 @@
 状态：**待 Phase 3**。
 
 - [x] 创建 `cp6-dev` Azure Environment。（2026-08-11 外部截图验证；Pipeline 权限仍待配置。）
-- [ ] 使用专用部署身份，不复用开发者 PC 的通用 CI 权限。
+- [ ] 使用专用部署身份，不复用开发者 PC 的通用 CI 权限；`CP6-Deploy` Pool 与 `cp6_deploy_agent` 服务身份已 Online，待 Readiness Run 和 Pipeline permission 证据后关闭本项。
 - [ ] 配置外部 SQL Server、Redis、消息服务和 S3；不把它们塞进生产 Compose。
 - [ ] 从候选清单读取 digest，不从源码重新 Build。
 - [ ] 复用 `deploy/production/compose/compose.yaml` 与受控部署/验证脚本，或记录与其等价的新实现。

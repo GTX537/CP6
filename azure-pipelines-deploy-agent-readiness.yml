@@ -1,0 +1,102 @@
+trigger: none
+
+pr: none
+
+pool:
+  name: 'CP6-Deploy'
+  demands:
+    - Agent.Name -equals LAPTOP-3QQ44FJS
+
+stages:
+- stage: Readiness
+  displayName: 'CP6 deploy agent readiness'
+
+  jobs:
+  - job: VerifyDeployAgent
+    displayName: 'Verify dedicated identity and local dependencies'
+    timeoutInMinutes: 10
+
+    workspace:
+      clean: all
+
+    steps:
+    - checkout: none
+
+    - task: PowerShell@2
+      displayName: 'Verify identity, Docker, and SQL endpoint'
+      inputs:
+        targetType: 'inline'
+        pwsh: false
+        script: |
+          $ErrorActionPreference = 'Stop'
+
+          $expectedIdentity = 'LAPTOP-3QQ44FJS\cp6_deploy_agent'
+          $actualIdentity = [Security.Principal.WindowsIdentity]::GetCurrent().Name
+          if (-not $actualIdentity.Equals(
+              $expectedIdentity,
+              [StringComparison]::OrdinalIgnoreCase
+          )) {
+              throw "Expected '$expectedIdentity', but the job is running as '$actualIdentity'."
+          }
+
+          $principal = [Security.Principal.WindowsPrincipal]::new(
+              [Security.Principal.WindowsIdentity]::GetCurrent()
+          )
+          if ($principal.IsInRole([Security.Principal.WindowsBuiltInRole]::Administrator)) {
+              throw "The deployment agent account must not be a local administrator."
+          }
+
+          Get-Command git.exe -ErrorAction Stop | Out-Null
+          Get-Command docker.exe -ErrorAction Stop | Out-Null
+
+          # The service account does not use the interactive user's Docker context.
+          # Address Docker Desktop's Linux engine explicitly instead.
+          $env:DOCKER_HOST = 'npipe:////./pipe/dockerDesktopLinuxEngine'
+
+          $dockerServerVersion = (& docker version --format '{{.Server.Version}}').Trim()
+          if ($LASTEXITCODE -ne 0 -or [string]::IsNullOrWhiteSpace($dockerServerVersion)) {
+              throw "The deployment agent cannot reach the Docker Desktop Linux engine."
+          }
+
+          $dockerOsType = (& docker info --format '{{.OSType}}').Trim()
+          if ($LASTEXITCODE -ne 0 -or $dockerOsType -ne 'linux') {
+              throw "Expected the Docker Desktop Linux engine, but received '$dockerOsType'."
+          }
+
+          $composeVersion = (& docker compose version --short).Trim()
+          if ($LASTEXITCODE -ne 0 -or [string]::IsNullOrWhiteSpace($composeVersion)) {
+              throw "Docker Compose is unavailable to the deployment agent."
+          }
+
+          $instanceMapPath = 'HKLM:\SOFTWARE\Microsoft\Microsoft SQL Server\Instance Names\SQL'
+          $instanceId = (Get-ItemProperty -LiteralPath $instanceMapPath).KOUSQLSERVER
+          if ([string]::IsNullOrWhiteSpace($instanceId)) {
+              throw "SQL Server instance KOUSQLSERVER was not found."
+          }
+
+          $ipAllPath = "HKLM:\SOFTWARE\Microsoft\Microsoft SQL Server\$instanceId\MSSQLServer\SuperSocketNetLib\Tcp\IPAll"
+          $ipAll = Get-ItemProperty -LiteralPath $ipAllPath
+          $sqlPortText = if (-not [string]::IsNullOrWhiteSpace($ipAll.TcpPort)) {
+              $ipAll.TcpPort
+          }
+          else {
+              $ipAll.TcpDynamicPorts
+          }
+          $sqlPort = 0
+          if (-not [int]::TryParse($sqlPortText, [ref]$sqlPort) -or $sqlPort -le 0) {
+              throw "KOUSQLSERVER does not expose a usable TCP port."
+          }
+
+          $sqlTcp = Test-NetConnection `
+              -ComputerName '127.0.0.1' `
+              -Port $sqlPort `
+              -WarningAction SilentlyContinue
+          if (-not $sqlTcp.TcpTestSucceeded) {
+              throw "The deployment agent cannot reach KOUSQLSERVER on its configured TCP port."
+          }
+
+          Write-Host "Deploy agent identity: $actualIdentity"
+          Write-Host "Docker server: $dockerServerVersion ($dockerOsType)"
+          Write-Host "Docker Compose: $composeVersion"
+          Write-Host "KOUSQLSERVER TCP: reachable"
+          Write-Host "CP6 deploy agent readiness passed."
