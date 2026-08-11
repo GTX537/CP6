@@ -78,7 +78,8 @@ CRM 是 CP6 面向包装和制造企业的行业化售前工作台，负责把�
 | 销售经理 | 查看漏斗、分配/移交、处理重复和超时 | 受部门或全部数据范围约束 |
 | 销售人员 | 跟进 Lead、维护 Account/Contact、推进 Opportunity | 默认只访问本人及协作记录 |
 | 协作人员 | 查看和记录被授权 Lead/Opportunity 活动 | 不能移交、合并、接受报价或请求订单 |
-| 内容编辑 | 编辑、预览和发布受控内容块 | 不能注入 HTML/脚本或查看 Lead 原始表单 |
+| 内容编辑 | 编辑和预览受控内容块 | 不能发布、注入 HTML/脚本或查看 Lead 原始表单 |
+| 内容发布者 | 发布、回滚并配置站点和表单 | 必须具有 `crm-site:query/edit/publish/configure`，其中 `publish/configure` 独立授予；不能查看 Lead 原始表单 |
 | ERP 集成运营 | 查看 IntegrationProcess、重试可重试失败 | 不能手工伪造 ERP 成功或直接改为 Won |
 | 隐私/审计人员 | 执行保留、匿名化和审计取证 | 受独立动作权限、理由和不可变审计约束 |
 | 公开访客 | 浏览站点、提交表单、获得回执 | 不接触 TenantId、LeadId、风险原因或内部状态 |
@@ -1083,12 +1084,12 @@ SemVer/Git SHA 用于追踪；环境只部署 digest。三个仓库各自 Build 
 | P01–P10 | Platform Owner | Security、SRE；合同变更再加消费方 Owner |
 | C01–C02 | Identity Owner | Security、CRM Owner |
 | C03 | ERP Owner | CRM Owner、Data Owner、Security |
-| C04 | CP6 Owner | Data Owner、Release Owner |
+| C04A–C04B | CP6 Owner | Data Owner、Release Owner |
 | CRM01–CRM10 | CRM Engineering Owner | Product/UX 或对应 Platform/ERP Owner |
 | CRM11 | Data Owner | CRM Owner、DBA、Security、Release Owner |
 | CRM12 | Release Owner | SRE、Security、QA、三仓 Owner |
 
-里程碑出口按依赖而非日期承诺：M0 关闭 DEC-CRM-001–007；M1 完成 P01–P06、C01–C03、CRM01–CRM03；M2 完成 CRM04–CRM05；M3 完成 CRM06–CRM07；M4 完成 CRM08–CRM10；M5 完成 CRM11–CRM12 和 UAT；M6 由 DEC-CRM-008 批准生产切换。上游出口证据未完成时，下游只允许合同原型和测试夹具，不允许发布候选。
+里程碑出口按依赖而非日期承诺：M0 关闭 DEC-CRM-001–007；M1 完成 P01–P06、C01–C03、CRM01–CRM03；M2 完成 CRM04–CRM05；M3 完成 CRM06–CRM07；M4 完成 CRM08–CRM10；M5 完成 CRM11 恢复副本演练、CRM12 预生产候选门禁和 UAT；M6 由 DEC-CRM-008 批准并执行 CRM11 生产切换，随后完成 CRM12 生产验证和最终关闭；M7 在一个只读观察周期后完成 C04B 旧 EF 解除。上游出口证据未完成时，下游只允许合同原型和测试夹具，不允许发布候选。
 
 ### 18.1 Platform P01–P10
 
@@ -1105,14 +1106,15 @@ SemVer/Git SHA 用于追踪；环境只部署 digest。三个仓库各自 Build 
 | P09 | Compose/K8s Dapr 组件、订阅、Topic/ACL provision | P05,P08 | 非生产部署演练 |
 | P10 | NuGet/镜像 release、System Manifest schema、证据 | P01-P09 | 签名候选和消费方验证 |
 
-### 18.2 CP6 C01–C04
+### 18.2 CP6 C01–C04（C04 分两阶段）
 
 | ID | 交付 | 前置 | 完成证据 |
 | --- | --- | --- | --- |
 | C01 | RS256 issuer、Discovery、JWKS、kid/audience/轮换 | P03 contract 可用 | CP6.Web/Services Token 和轮换 E2E |
 | C02 | Tenant/User/Dept/Permission/Revocation Outbox 事件 | P04,P06,C01 | 投影契约、reconciliation、撤销 SLO |
 | C03 | ERP BP/Quotation/Order 内部 API 与 Inbox/Outbox handler | P04-P06,C01 | 订单并发幂等和错误映射 |
-| C04 | 旧 CRM 写冻结、迁移源支持、切换开关和后续 EF 解除 | CRM11 前置数据完成 | cutover 演练；旧表一个周期只读 |
+| C04A | 切换前旧 CRM 源读取支持、写冻结和切换开关 | CRM02 列合同/migration map、DEC-CRM-004 | 恢复副本读数验证、冻结/开关演练和回退证据 |
+| C04B | 切换后解除旧 CRM EF 映射和运行时依赖 | CRM11 生产切换成功且旧表完成一个只读观察周期 | 无旧表写入/运行时引用；前向清理验证 |
 
 ### 18.3 CRM01–CRM12
 
@@ -1128,7 +1130,7 @@ SemVer/Git SHA 用于追踪；环境只部署 digest。三个仓库各自 Build 
 | CRM08 | Dashboard、漏斗、来源、SLA、集成运营报表 | CRM04,CRM07 | KPI 公式对账和性能 |
 | CRM09 | Site/CMS/Form/Media、公开 SSR/ISR、发布重验证 | CRM02-CRM04,P07 | 多语言、XSS、缓存和表单 E2E |
 | CRM10 | `/crm/**` 完整 IA/UX、a11y/i18n/权限状态 | CRM04-CRM09 | 角色旅程、WCAG 和浏览器 E2E |
-| CRM11 | Migrator、24 月匿名化、T-7/T-1/cutover | CRM02,C04，业务 Schema 冻结 | 恢复副本全量哈希、≤30 分钟 |
+| CRM11 | Migrator、24 月匿名化、T-7/T-1/cutover | CRM02,C04A，业务 Schema 冻结 | 恢复副本全量哈希、≤30 分钟 |
 | CRM12 | OTel/SLO、安全/性能/故障、生产资产、候选门禁 | P08-P10,CRM01-CRM11 | System Manifest、UAT/Go-No-Go evidence |
 
 ### 18.4 依赖图
@@ -1152,7 +1154,7 @@ flowchart LR
     CRM08 --> CRM10
     CRM09 --> CRM10
     CRM02 --> CRM11
-    C04 --> CRM11
+    C04A --> CRM11 --> C04B
     P08 --> CRM12
     P09 --> CRM12
     P10 --> CRM12
@@ -1164,12 +1166,12 @@ flowchart LR
 
 ### 18.5 推荐小分支序列
 
-1. P01/C01/CRM01 并行启动。
-2. P02/P03/P04 后，CRM02 与 C02/C03 并行。
-3. CRM03 安全底座通过后，CRM04 和 CRM09 的 CMS 只读/草稿部分并行。
+1. P01 先建立 Platform 合同和 runner；P03 可用后启动 C01，P01 与 DEC-CRM-001/002 关闭后启动 CRM01。
+2. P02/P03/P04 完成各自前置后，CRM02 与 C02/C03 按任务表依赖并行。
+3. CRM03 安全底座通过后启动 CRM04；CRM09 仅在 CRM04 Intake 契约完成后启动，不以未编号的“CMS 部分”绕过前置。
 4. CRM05→CRM06→CRM07 保持交易主链顺序。
 5. CRM08、CRM10 按已完成 API slice 增量交付，但不提前启用死链接菜单。
-6. CRM11 在业务 Schema 冻结后执行；CRM12 从第一天持续接入，最后收敛系统候选。
+6. CRM02 migration map 完成后先交付 C04A；CRM11 在业务 Schema 冻结后演练并切换，经过一个只读观察周期后再交付 C04B。CRM12 从第一天持续接入，最后收敛系统候选和生产验证。
 
 ## 19. Definition of Done
 

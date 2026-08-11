@@ -266,7 +266,7 @@ flowchart LR
 
 | KPI | 公式 | V1 说明 |
 | --- | --- | --- |
-| 首次响应达标率 | `FirstResponseAt <= SlaDueAt 的 Lead / 已有首次响应的 Lead` | 默认 SLA 4 自然小时，按来源/团队分组 |
+| 首次响应达标率 | `FirstResponseAt <= SlaDueAt 的 Lead / 观察窗口内已到期或已响应的 SLA 适用 Lead` | 默认 SLA 4 自然小时；Merged、Quarantined 和窗口结束时尚未到期且未响应的 Lead 排除，未响应且已超时的 Lead 必须留在分母；按来源/团队分组 |
 | Lead 合格率 | `Qualified Lead / 非隔离且非合并 Lead` | Merged 不重复计入分母 |
 | Lead 转换率 | `Converted Lead / Qualified Lead` | 以转换发生时间分桶 |
 | 商机赢单率 | `Won / (Won + Lost)` | Accepted 不计入已关闭 |
