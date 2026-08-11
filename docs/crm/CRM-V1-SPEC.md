@@ -2,6 +2,10 @@
 
 最后确认：2026-08-10
 
+> 本文记录已合入 CP6 单体的 Foundation 历史基线。完整产品边界见
+> [CRM-PRODUCT-FRAMEWORK.md](./CRM-PRODUCT-FRAMEWORK.md)，三仓可执行规格见
+> [CRM-V1-EXECUTABLE-SPEC.md](./CRM-V1-EXECUTABLE-SPEC.md)。后两份文档获批前不得开始生产实施。
+
 ## 产品目标
 
 CRM V1 为 CP6 补齐从获客到 ERP 订单的可审计闭环：营销官网或人工录入产生线索，进入跨部门线索池，经负责人和协作人跟进后转为商机；客户资料预登记为 BusinessPartner，内部报价被接受后才允许受控创建 ERP 订单，订单创建成功后商机才能标记赢单。

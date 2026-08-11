@@ -2,6 +2,14 @@
 
 最后更新：2026-08-11
 
+## CRM 产品框架与三仓可执行 Spec（2026-08-11）
+
+- 已从 `main == origin/main == f149c75e` 的干净独立 worktree 核对 CRM Foundation：聚焦回归 16/16 通过。当前主线实际只有 20 张 CRM/CMS 表、状态机、迁移和菜单权限种子，没有 CRM Controller、应用服务或前端路由；现有 JWT 仍是 HS256、租户上下文仍有默认 A1，均不得复制进新服务。
+- 新增 `docs/crm/CRM-PRODUCT-FRAMEWORK.md`，把 CRM 定位为包装/制造企业从获客到 ERP 订单的行业化售前工作台，冻结角色、22 个权限动作、获客渠道、端到端旅程、V1/VNext、信息架构、UX、指标和产品验收场景。
+- 新增 `docs/crm/CRM-V1-EXECUTABLE-SPEC.md`，固化 `CP6`、`CP6.Platform`、`CP6.CRM` 三仓边界，以及 Dapr/Kafka/YARP、RS256/OIDC/JWKS、Next.js、独立 CRM 数据库、CloudEvents/JSON Schema、Outbox/Inbox、20 表一次性迁移和 build-once 发布方案。
+- Spec 已覆盖领域/状态机、数据/API/事件、权限/PII/租户隔离、ERP 集成、SLO/威胁模型、测试/发布门禁、里程碑/任务依赖和 Definition of Done。当前状态是待产品、架构、安全、数据、ERP、SRE 和 QA 审批的规划交付；未创建新仓库、未改业务代码、未迁移数据或部署。
+- CRM 实施必须按 Spec 的 Platform P01–P10、CP6 C01–C04、CRM01–CRM12 依赖图拆分小分支。发布权威与 Registry 决策仍是系统 Release Manifest 和任何 CRM 候选发布的硬前置。
+
 ## Azure DevOps CI/CD 项目记忆（2026-08-11）
 
 - Azure `CP6-Deploy` 专用 Pool 已建立；Agent `LAPTOP-3QQ44FJS` 以非管理员本机账号 `cp6_deploy_agent` 作为延迟自动启动 Windows 服务运行，Azure 截图显示版本 `5.277.0`、Online/Idle。通用 CI Agent `CP6-Windows` 仍留在 `Default` Pool。
