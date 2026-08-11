@@ -2,8 +2,8 @@
 
 ## P0：Azure DevOps Release/CD 演进
 
-- 从 `main` 的 `/azure-pipelines-deploy-agent-readiness.yml` 创建 `CP6 Deploy Agent Readiness`，只授权它使用 `CP6-Deploy` Pool；运行成功并保存 Run URL/Run ID 后，才能给 DEV CD 接 Secret 和 Environment。
-- Readiness 通过后创建受限 `cp6-dev-secrets` Variable Group；Secret 只映射到需要的 PowerShell task，不进入 YAML、命令行参数或日志。
+- 将外部 Pipeline `GTX537.CP6 (3)` 重命名为 `CP6 Deploy Agent Readiness`，并在 `CP6-Deploy` Pool 的 Pipeline permissions 中确认未对所有 Pipelines 开放。
+- Readiness Build ID `10` 已通过；下一步创建受限 `cp6-dev-secrets` Variable Group。Secret 只映射到需要的 PowerShell task，不进入 YAML、命令行参数或日志。
 - 本机 DEV/UAT/PROD-LAB Docker 运行边界已建立并实际验证；Azure DevOps 的 `cp6-dev`、`cp6-uat`、`cp6-prod-lab` 也已由 2026-08-11 外部截图确认创建。下一步在详情页核对三者 Resource 为空，并确认没有录入 Secret。
 - 创建独立 Release Pipeline 和 deployment job，把三个 Environment 的 Pipeline permissions 收紧到该 Pipeline；DEV 自动，UAT/PROD-LAB 再配置审批与 exclusive lock。单人学习期 PROD-LAB 可自批，真实生产必须换独立批准人。
 - 当前 Azure `azure-pipelines.yml` 已完成基础 CI，使用 `Default` self-hosted pool、`main` trigger 和 `pr: none`；先补运行证据、Agent 运维边界和 PR 门禁归属，不把 CI 绿灯描述为上线。

@@ -4,7 +4,7 @@
 
 - Azure DevOps `CP6-Deploy` Pool 已创建，专用 Agent `LAPTOP-3QQ44FJS` 以 `cp6_deploy_agent` 非管理员 Windows 服务身份 Online/Idle；未覆盖或迁移 `Default` Pool 的通用 CI Agent。
 - 新增无 Secret、手工触发的部署 Agent readiness YAML、静态合同测试和操作文档，验证身份、Docker Desktop Linux engine、Compose 与 SQL TCP 可达性。
-- Azure readiness Pipeline 尚待从 `main` 创建并运行；没有把代码合同通过冒充为外部 Pipeline Run 成功。
+- Azure readiness Pipeline 已从 `main` 创建；Build ID `10` / Run `20260811.1` 的完整 Job 与验证 Step 成功，截图和本机 Worker 日志已交叉确认。
 
 ## 2026-08-11 本机 DEV/UAT/PROD-LAB Docker 环境
 
