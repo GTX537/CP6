@@ -29,6 +29,7 @@ export const designElementsApi = {
     floorLogicalId: string,
     expectedFloorRevision: number,
     clientInstanceId: string,
+    leaseId: string,
     element: ISpaceSceneElementDto,
     payload: ElementPropertiesPayload,
   ) {
@@ -38,6 +39,7 @@ export const designElementsApi = {
       floorLogicalId,
       expectedFloorRevision,
       clientInstanceId,
+      leaseId,
       [
         {
           type: 'UpdateProperties',
@@ -53,6 +55,7 @@ export const designElementsApi = {
     floorLogicalId: string,
     expectedFloorRevision: number,
     clientInstanceId: string,
+    leaseId: string,
     element: ISpaceSceneElementDto,
   ) {
     const targetLogicalId = requireLogicalId(element)
@@ -61,6 +64,7 @@ export const designElementsApi = {
       floorLogicalId,
       expectedFloorRevision,
       clientInstanceId,
+      leaseId,
       [
         {
           type: 'DeleteObject',
@@ -75,12 +79,14 @@ export const designElementsApi = {
     floorLogicalId: string,
     expectedFloorRevision: number,
     clientInstanceId: string,
+    leaseId: string,
     commands: readonly EditorCommandInput[],
   ) {
     return apply(versionId, floorLogicalId, {
       schemaVersion: 1,
       commandBatchId: crypto.randomUUID(),
       clientInstanceId,
+      leaseId,
       expectedFloorRevision,
       commands: commands.map((command) => ({
         ...command,

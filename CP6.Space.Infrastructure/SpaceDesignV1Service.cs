@@ -296,6 +296,12 @@ public sealed class SpaceDesignV1Service : ISpaceDesignV1Service
 
         var model = await FindModelByVersionAsync(versionId, cancellationToken);
         EnsureWritable(model);
+        await EnsureActiveEditLeaseAsync(
+            versionId,
+            floorLogicalId,
+            request.LeaseId,
+            request.ClientInstanceId,
+            cancellationToken);
         var requestHash = Hash(
             $"{versionId:D}\n{floorLogicalId:D}\n" +
             JsonSerializer.Serialize(request, JsonOptions));
@@ -329,6 +335,12 @@ public sealed class SpaceDesignV1Service : ISpaceDesignV1Service
                           ?? throw NotFound(
                               SpaceErrorCodes.VersionNotFound,
                               "Space version");
+            await EnsureActiveEditLeaseAsync(
+                versionId,
+                floorLogicalId,
+                request.LeaseId,
+                request.ClientInstanceId,
+                cancellationToken);
             if (version.Status != SpaceVersionStatus.Draft)
             {
                 throw Conflict(
@@ -427,6 +439,7 @@ public sealed class SpaceDesignV1Service : ISpaceDesignV1Service
                 versionId,
                 floorLogicalId,
                 request.ClientInstanceId,
+                request.LeaseId,
                 request.ExpectedFloorRevision,
                 requestHash,
                 _execution.ActorId,
@@ -1249,6 +1262,8 @@ public sealed class SpaceDesignV1Service : ISpaceDesignV1Service
             throw Invalid("commandBatchId", "A non-empty identity is required.");
         if (request.ClientInstanceId == Guid.Empty)
             throw Invalid("clientInstanceId", "A non-empty identity is required.");
+        if (request.LeaseId == Guid.Empty)
+            throw Invalid("leaseId", "A non-empty identity is required.");
         if (request.ExpectedFloorRevision < 0)
         {
             throw Invalid(
@@ -2016,6 +2031,35 @@ public sealed class SpaceDesignV1Service : ISpaceDesignV1Service
                        model => model.SiteId == siteId,
                        cancellationToken)
                ?? throw NotFound(SpaceErrorCodes.ModelNotFound, "Space model");
+    }
+
+    private async Task EnsureActiveEditLeaseAsync(
+        Guid versionId,
+        Guid floorLogicalId,
+        Guid leaseId,
+        Guid clientInstanceId,
+        CancellationToken cancellationToken)
+    {
+        var now = RequireUtcNow();
+        var lease = await _context.EditLeases
+            .AsNoTracking()
+            .SingleOrDefaultAsync(candidate =>
+                candidate.ModelVersionId == versionId &&
+                candidate.FloorLogicalId == floorLogicalId,
+                cancellationToken);
+        if (lease is null ||
+            lease.LeaseId != leaseId ||
+            lease.OwnerUserId != _execution.ActorId ||
+            lease.ClientInstanceId != clientInstanceId ||
+            lease.IsExpired(now))
+        {
+            throw new SpaceProblemException(
+                SpaceErrorCodes.EditLeaseLost,
+                409,
+                "The edit lease is no longer valid.",
+                recoveryAction: "export-recovery-draft-or-reacquire",
+                retryable: true);
+        }
     }
 
     private async Task<SpaceModel> FindModelByVersionAsync(

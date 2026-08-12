@@ -1,5 +1,12 @@
 # 已完成能力与近期里程碑
 
+## 2026-08-12 Space Studio v1.3 核心切片
+
+- 交付 Space Studio 冻结布局、2D/3D 本地草稿切换、首次任务清单、属性/批量/问题检查器、显式保存/租约状态、窄屏只读和恢复草稿导出。
+- 交付强 Floor 编辑租约与命令批 `leaseId` 契约，包括唯一槽、续租、释放、过期复用、强制接管权限和持久化审计。
+- 交付 CAD Job 状态监控和 PreviewSet → 当前场景审核空间自动加载；工件读取验证文件状态、SHA 与 Job/Source/Version/Floor 链。
+- 此完成项不包含真实 Provider 认证、黄金 CAD/Pilot/生产签字，不把开发完成记作核心 GA 完成。
+
 ## 2026-08-11 Azure DEV 自动部署仓库配置
 
 - 新增 `azure-pipelines-dev.yml`：以 `GTX537.CP6` 的成功 `main` Run 为唯一 completion resource，绑定 `CP6-Deploy/LAPTOP-3QQ44FJS`，核对服务身份、分支和完整 Git SHA 后构建一次本机 API/Web 镜像。

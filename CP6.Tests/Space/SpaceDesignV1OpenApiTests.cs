@@ -70,6 +70,10 @@ public sealed class SpaceDesignV1OpenApiTests
             "/api/space/design/v1/versions/{versionId}/floors/{floorLogicalId}/commands",
             "/api/space/design/v1/versions/{versionId}/floors/{floorLogicalId}/scene",
             "/api/space/design/v1/versions/{versionId}/floors/{floorLogicalId}/underlay",
+            "/api/space/design/v1/versions/{versionId}/floors/{floorLogicalId}/lease",
+            "/api/space/design/v1/versions/{versionId}/floors/{floorLogicalId}/lease/{leaseId}:renew",
+            "/api/space/design/v1/versions/{versionId}/floors/{floorLogicalId}/lease/{leaseId}:release",
+            "/api/space/design/v1/versions/{versionId}/floors/{floorLogicalId}/lease:takeover",
             "/api/space/design/v1/versions/{versionId}/files/{fileId}",
             "/api/space/design/v1/versions/{versionId}/excel-sources",
             "/api/space/design/v1/versions/{versionId}/excel-cad-matches",
@@ -84,6 +88,7 @@ public sealed class SpaceDesignV1OpenApiTests
             "/api/space/design/v1/versions/{versionId}/sources/{sourceId}/excel-preflights/{jobId}/report",
             "/api/space/design/v1/versions/{versionId}/sources/{sourceId}/cad-parses",
             "/api/space/design/v1/versions/{versionId}/sources/{sourceId}/cad-parses/{jobId}",
+            "/api/space/design/v1/versions/{versionId}/sources/{sourceId}/cad-parses/{jobId}/review-workspace",
             "/api/space/design/v1/versions/{versionId}/sources/{sourceId}/cad-parses/{jobId}:cancel",
             "/api/space/design/v1/versions/{versionId}/sources/{sourceId}/cad-parses/{jobId}:retry",
             "/api/space/design/v1/versions/{versionId}/sources/{sourceId}/underlay-calibration",
@@ -137,8 +142,8 @@ public sealed class SpaceDesignV1OpenApiTests
             .Select(operation =>
                 operation.Value.GetProperty("operationId").GetString())
             .ToArray();
-        Assert.Equal(118, operationIds.Length);
-        Assert.Equal(118, operationIds.Distinct().Count());
+        Assert.Equal(124, operationIds.Length);
+        Assert.Equal(124, operationIds.Distinct().Count());
         Assert.Contains("GetPolicy", operationIds);
         Assert.Contains("UpdatePolicy", operationIds);
         Assert.Contains("GetUsage", operationIds);

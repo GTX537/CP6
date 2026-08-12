@@ -2,6 +2,14 @@
 
 > 依据 Git log 汇总，不替代完整 Git 历史。重点记录影响接手判断的里程碑。
 
+## 2026-08-12：Space Studio v1.3 核心实现
+
+- 把低成本 3D 建模 Spec 修订到 v1.3 并新增 Scope Change RFC-003，明确外部 AI、Viewer 与 Supplier UAT 范围变化。
+- 将 `DesignUnderlayView` 收敛为独立 Space Studio 子主题四栏工作台，增加状态栏、任务清单、检查器域、窄屏只读、保存状态与恢复草稿。
+- 新增带数据库唯一槽和 rowversion 的 Floor 编辑租约、90 秒过期/30 秒续租、释放、强制接管专有权限与不可变审计；Design V1 命令批要求当前 `leaseId`。
+- 新增 CAD Parse Review Workspace API：成功 Job 的 PreviewSet 经过文件状态和 SHA 校验后，与当前编辑器快照组成审核空间；前端根据 route Job 自动轮询和加载。
+- 记录真实 Provider、黄金 CAD、Viewer 基准、两仓 Pilot 与五角色签字仍是未完成门禁，未将本次代码交付表述为 GA。
+
 ## 2026-08-11：新增 Azure DEV 自动部署学习链
 
 - 新增 `azure-pipelines-dev.yml` 与静态合同：只响应 `GTX537.CP6/main` 成功 Run，绑定专用部署 Agent，按完整 Git SHA 构建一次本机镜像，并通过 `cp6-dev` deployment job 部署、验证和发布证据。

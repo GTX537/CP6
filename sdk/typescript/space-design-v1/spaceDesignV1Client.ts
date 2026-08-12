@@ -135,6 +135,11 @@ export interface ISpaceDesignV1Client {
     getParse(versionId: string, sourceId: string, jobId: string): Promise<SpaceCadParseDto>;
 
     /**
+     * @return OK
+     */
+    getReviewWorkspace(versionId: string, sourceId: string, jobId: string): Promise<SpaceCadReviewWorkspaceV1>;
+
+    /**
      * @return Accepted
      */
     cancelParse(versionId: string, sourceId: string, jobId: string): Promise<SpaceCadParseActionResponse>;
@@ -324,6 +329,33 @@ export interface ISpaceDesignV1Client {
      * @return OK
      */
     getCurrentDevices(siteId: string, sourceKind: string | undefined, deviceKind: string | undefined, operatingState: string | undefined, floorLogicalId: string | undefined, hasActiveAlarm: boolean | undefined, limit: number | undefined, cursor: string | undefined): Promise<SpaceDeviceCurrentPageDto>;
+
+    /**
+     * @return OK
+     */
+    getEditLease(versionId: string, floorLogicalId: string): Promise<SpaceEditLeaseDto>;
+
+    /**
+     * @param body (optional)
+     * @return OK
+     */
+    acquireEditLease(versionId: string, floorLogicalId: string, body: AcquireSpaceEditLeaseRequest | undefined): Promise<SpaceEditLeaseDto>;
+
+    /**
+     * @return OK
+     */
+    renewEditLease(versionId: string, floorLogicalId: string, leaseId: string): Promise<SpaceEditLeaseDto>;
+
+    /**
+     * @return OK
+     */
+    releaseEditLease(versionId: string, floorLogicalId: string, leaseId: string): Promise<SpaceEditLeaseDto>;
+
+    /**
+     * @param body (optional)
+     * @return OK
+     */
+    takeoverEditLease(versionId: string, floorLogicalId: string, body: TakeoverSpaceEditLeaseRequest | undefined): Promise<SpaceEditLeaseDto>;
 
     /**
      * @return Accepted
@@ -2597,6 +2629,101 @@ export class SpaceDesignV1Client implements ISpaceDesignV1Client {
             });
         }
         return Promise.resolve<SpaceCadParseDto>(null as any);
+    }
+
+    /**
+     * @return OK
+     */
+    getReviewWorkspace(versionId: string, sourceId: string, jobId: string): Promise<SpaceCadReviewWorkspaceV1> {
+        let url_ = this.baseUrl + "/api/space/design/v1/versions/{versionId}/sources/{sourceId}/cad-parses/{jobId}/review-workspace";
+        if (versionId === undefined || versionId === null)
+            throw new globalThis.Error("The parameter 'versionId' must be defined.");
+        url_ = url_.replace("{versionId}", encodeURIComponent("" + versionId));
+        if (sourceId === undefined || sourceId === null)
+            throw new globalThis.Error("The parameter 'sourceId' must be defined.");
+        url_ = url_.replace("{sourceId}", encodeURIComponent("" + sourceId));
+        if (jobId === undefined || jobId === null)
+            throw new globalThis.Error("The parameter 'jobId' must be defined.");
+        url_ = url_.replace("{jobId}", encodeURIComponent("" + jobId));
+        url_ = url_.replace(/[?&]$/, "");
+
+        let options_: RequestInit = {
+            method: "GET",
+            headers: {
+                "Accept": "application/json"
+            }
+        };
+
+        return this.http.fetch(url_, options_).then((_response: Response) => {
+            return this.processGetReviewWorkspace(_response);
+        });
+    }
+
+    protected processGetReviewWorkspace(response: Response): Promise<SpaceCadReviewWorkspaceV1> {
+        const status = response.status;
+        let _headers: any = {}; if (response.headers && response.headers.forEach) { response.headers.forEach((v: any, k: any) => _headers[k] = v); };
+        if (status === 200) {
+            return response.text().then((_responseText) => {
+            let result200: any = null;
+            let resultData200 = _responseText === "" ? null : JSON.parse(_responseText, this.jsonParseReviver);
+            result200 = SpaceCadReviewWorkspaceV1.fromJS(resultData200);
+            return result200;
+            });
+        } else if (status === 400) {
+            return response.text().then((_responseText) => {
+            let result400: any = null;
+            let resultData400 = _responseText === "" ? null : JSON.parse(_responseText, this.jsonParseReviver);
+            result400 = SpaceDesignProblemDetails.fromJS(resultData400);
+            return throwException("Bad Request", status, _responseText, _headers, result400);
+            });
+        } else if (status === 401) {
+            return response.text().then((_responseText) => {
+            let result401: any = null;
+            let resultData401 = _responseText === "" ? null : JSON.parse(_responseText, this.jsonParseReviver);
+            result401 = SpaceDesignProblemDetails.fromJS(resultData401);
+            return throwException("Unauthorized", status, _responseText, _headers, result401);
+            });
+        } else if (status === 403) {
+            return response.text().then((_responseText) => {
+            let result403: any = null;
+            let resultData403 = _responseText === "" ? null : JSON.parse(_responseText, this.jsonParseReviver);
+            result403 = SpaceDesignProblemDetails.fromJS(resultData403);
+            return throwException("Forbidden", status, _responseText, _headers, result403);
+            });
+        } else if (status === 404) {
+            return response.text().then((_responseText) => {
+            let result404: any = null;
+            let resultData404 = _responseText === "" ? null : JSON.parse(_responseText, this.jsonParseReviver);
+            result404 = SpaceDesignProblemDetails.fromJS(resultData404);
+            return throwException("Not Found", status, _responseText, _headers, result404);
+            });
+        } else if (status === 409) {
+            return response.text().then((_responseText) => {
+            let result409: any = null;
+            let resultData409 = _responseText === "" ? null : JSON.parse(_responseText, this.jsonParseReviver);
+            result409 = SpaceDesignProblemDetails.fromJS(resultData409);
+            return throwException("Conflict", status, _responseText, _headers, result409);
+            });
+        } else if (status === 422) {
+            return response.text().then((_responseText) => {
+            let result422: any = null;
+            let resultData422 = _responseText === "" ? null : JSON.parse(_responseText, this.jsonParseReviver);
+            result422 = SpaceDesignProblemDetails.fromJS(resultData422);
+            return throwException("Unprocessable Content", status, _responseText, _headers, result422);
+            });
+        } else if (status === 500) {
+            return response.text().then((_responseText) => {
+            let result500: any = null;
+            let resultData500 = _responseText === "" ? null : JSON.parse(_responseText, this.jsonParseReviver);
+            result500 = SpaceDesignProblemDetails.fromJS(resultData500);
+            return throwException("Internal Server Error", status, _responseText, _headers, result500);
+            });
+        } else if (status !== 200 && status !== 204) {
+            return response.text().then((_responseText) => {
+            return throwException("An unexpected server error occurred.", status, _responseText, _headers);
+            });
+        }
+        return Promise.resolve<SpaceCadReviewWorkspaceV1>(null as any);
     }
 
     /**
@@ -5632,6 +5759,482 @@ export class SpaceDesignV1Client implements ISpaceDesignV1Client {
             });
         }
         return Promise.resolve<SpaceDeviceCurrentPageDto>(null as any);
+    }
+
+    /**
+     * @return OK
+     */
+    getEditLease(versionId: string, floorLogicalId: string): Promise<SpaceEditLeaseDto> {
+        let url_ = this.baseUrl + "/api/space/design/v1/versions/{versionId}/floors/{floorLogicalId}/lease";
+        if (versionId === undefined || versionId === null)
+            throw new globalThis.Error("The parameter 'versionId' must be defined.");
+        url_ = url_.replace("{versionId}", encodeURIComponent("" + versionId));
+        if (floorLogicalId === undefined || floorLogicalId === null)
+            throw new globalThis.Error("The parameter 'floorLogicalId' must be defined.");
+        url_ = url_.replace("{floorLogicalId}", encodeURIComponent("" + floorLogicalId));
+        url_ = url_.replace(/[?&]$/, "");
+
+        let options_: RequestInit = {
+            method: "GET",
+            headers: {
+                "Accept": "application/json"
+            }
+        };
+
+        return this.http.fetch(url_, options_).then((_response: Response) => {
+            return this.processGetEditLease(_response);
+        });
+    }
+
+    protected processGetEditLease(response: Response): Promise<SpaceEditLeaseDto> {
+        const status = response.status;
+        let _headers: any = {}; if (response.headers && response.headers.forEach) { response.headers.forEach((v: any, k: any) => _headers[k] = v); };
+        if (status === 200) {
+            return response.text().then((_responseText) => {
+            let result200: any = null;
+            let resultData200 = _responseText === "" ? null : JSON.parse(_responseText, this.jsonParseReviver);
+            result200 = SpaceEditLeaseDto.fromJS(resultData200);
+            return result200;
+            });
+        } else if (status === 400) {
+            return response.text().then((_responseText) => {
+            let result400: any = null;
+            let resultData400 = _responseText === "" ? null : JSON.parse(_responseText, this.jsonParseReviver);
+            result400 = SpaceDesignProblemDetails.fromJS(resultData400);
+            return throwException("Bad Request", status, _responseText, _headers, result400);
+            });
+        } else if (status === 401) {
+            return response.text().then((_responseText) => {
+            let result401: any = null;
+            let resultData401 = _responseText === "" ? null : JSON.parse(_responseText, this.jsonParseReviver);
+            result401 = SpaceDesignProblemDetails.fromJS(resultData401);
+            return throwException("Unauthorized", status, _responseText, _headers, result401);
+            });
+        } else if (status === 403) {
+            return response.text().then((_responseText) => {
+            let result403: any = null;
+            let resultData403 = _responseText === "" ? null : JSON.parse(_responseText, this.jsonParseReviver);
+            result403 = SpaceDesignProblemDetails.fromJS(resultData403);
+            return throwException("Forbidden", status, _responseText, _headers, result403);
+            });
+        } else if (status === 404) {
+            return response.text().then((_responseText) => {
+            let result404: any = null;
+            let resultData404 = _responseText === "" ? null : JSON.parse(_responseText, this.jsonParseReviver);
+            result404 = SpaceDesignProblemDetails.fromJS(resultData404);
+            return throwException("Not Found", status, _responseText, _headers, result404);
+            });
+        } else if (status === 409) {
+            return response.text().then((_responseText) => {
+            let result409: any = null;
+            let resultData409 = _responseText === "" ? null : JSON.parse(_responseText, this.jsonParseReviver);
+            result409 = SpaceDesignProblemDetails.fromJS(resultData409);
+            return throwException("Conflict", status, _responseText, _headers, result409);
+            });
+        } else if (status === 422) {
+            return response.text().then((_responseText) => {
+            let result422: any = null;
+            let resultData422 = _responseText === "" ? null : JSON.parse(_responseText, this.jsonParseReviver);
+            result422 = SpaceDesignProblemDetails.fromJS(resultData422);
+            return throwException("Unprocessable Content", status, _responseText, _headers, result422);
+            });
+        } else if (status === 500) {
+            return response.text().then((_responseText) => {
+            let result500: any = null;
+            let resultData500 = _responseText === "" ? null : JSON.parse(_responseText, this.jsonParseReviver);
+            result500 = SpaceDesignProblemDetails.fromJS(resultData500);
+            return throwException("Internal Server Error", status, _responseText, _headers, result500);
+            });
+        } else if (status !== 200 && status !== 204) {
+            return response.text().then((_responseText) => {
+            return throwException("An unexpected server error occurred.", status, _responseText, _headers);
+            });
+        }
+        return Promise.resolve<SpaceEditLeaseDto>(null as any);
+    }
+
+    /**
+     * @param body (optional)
+     * @return OK
+     */
+    acquireEditLease(versionId: string, floorLogicalId: string, body: AcquireSpaceEditLeaseRequest | undefined): Promise<SpaceEditLeaseDto> {
+        let url_ = this.baseUrl + "/api/space/design/v1/versions/{versionId}/floors/{floorLogicalId}/lease";
+        if (versionId === undefined || versionId === null)
+            throw new globalThis.Error("The parameter 'versionId' must be defined.");
+        url_ = url_.replace("{versionId}", encodeURIComponent("" + versionId));
+        if (floorLogicalId === undefined || floorLogicalId === null)
+            throw new globalThis.Error("The parameter 'floorLogicalId' must be defined.");
+        url_ = url_.replace("{floorLogicalId}", encodeURIComponent("" + floorLogicalId));
+        url_ = url_.replace(/[?&]$/, "");
+
+        const content_ = JSON.stringify(body);
+
+        let options_: RequestInit = {
+            body: content_,
+            method: "POST",
+            headers: {
+                "Content-Type": "application/json",
+                "Accept": "application/json"
+            }
+        };
+
+        return this.http.fetch(url_, options_).then((_response: Response) => {
+            return this.processAcquireEditLease(_response);
+        });
+    }
+
+    protected processAcquireEditLease(response: Response): Promise<SpaceEditLeaseDto> {
+        const status = response.status;
+        let _headers: any = {}; if (response.headers && response.headers.forEach) { response.headers.forEach((v: any, k: any) => _headers[k] = v); };
+        if (status === 200) {
+            return response.text().then((_responseText) => {
+            let result200: any = null;
+            let resultData200 = _responseText === "" ? null : JSON.parse(_responseText, this.jsonParseReviver);
+            result200 = SpaceEditLeaseDto.fromJS(resultData200);
+            return result200;
+            });
+        } else if (status === 400) {
+            return response.text().then((_responseText) => {
+            let result400: any = null;
+            let resultData400 = _responseText === "" ? null : JSON.parse(_responseText, this.jsonParseReviver);
+            result400 = SpaceDesignProblemDetails.fromJS(resultData400);
+            return throwException("Bad Request", status, _responseText, _headers, result400);
+            });
+        } else if (status === 401) {
+            return response.text().then((_responseText) => {
+            let result401: any = null;
+            let resultData401 = _responseText === "" ? null : JSON.parse(_responseText, this.jsonParseReviver);
+            result401 = SpaceDesignProblemDetails.fromJS(resultData401);
+            return throwException("Unauthorized", status, _responseText, _headers, result401);
+            });
+        } else if (status === 403) {
+            return response.text().then((_responseText) => {
+            let result403: any = null;
+            let resultData403 = _responseText === "" ? null : JSON.parse(_responseText, this.jsonParseReviver);
+            result403 = SpaceDesignProblemDetails.fromJS(resultData403);
+            return throwException("Forbidden", status, _responseText, _headers, result403);
+            });
+        } else if (status === 404) {
+            return response.text().then((_responseText) => {
+            let result404: any = null;
+            let resultData404 = _responseText === "" ? null : JSON.parse(_responseText, this.jsonParseReviver);
+            result404 = SpaceDesignProblemDetails.fromJS(resultData404);
+            return throwException("Not Found", status, _responseText, _headers, result404);
+            });
+        } else if (status === 409) {
+            return response.text().then((_responseText) => {
+            let result409: any = null;
+            let resultData409 = _responseText === "" ? null : JSON.parse(_responseText, this.jsonParseReviver);
+            result409 = SpaceDesignProblemDetails.fromJS(resultData409);
+            return throwException("Conflict", status, _responseText, _headers, result409);
+            });
+        } else if (status === 422) {
+            return response.text().then((_responseText) => {
+            let result422: any = null;
+            let resultData422 = _responseText === "" ? null : JSON.parse(_responseText, this.jsonParseReviver);
+            result422 = SpaceDesignProblemDetails.fromJS(resultData422);
+            return throwException("Unprocessable Content", status, _responseText, _headers, result422);
+            });
+        } else if (status === 500) {
+            return response.text().then((_responseText) => {
+            let result500: any = null;
+            let resultData500 = _responseText === "" ? null : JSON.parse(_responseText, this.jsonParseReviver);
+            result500 = SpaceDesignProblemDetails.fromJS(resultData500);
+            return throwException("Internal Server Error", status, _responseText, _headers, result500);
+            });
+        } else if (status !== 200 && status !== 204) {
+            return response.text().then((_responseText) => {
+            return throwException("An unexpected server error occurred.", status, _responseText, _headers);
+            });
+        }
+        return Promise.resolve<SpaceEditLeaseDto>(null as any);
+    }
+
+    /**
+     * @return OK
+     */
+    renewEditLease(versionId: string, floorLogicalId: string, leaseId: string): Promise<SpaceEditLeaseDto> {
+        let url_ = this.baseUrl + "/api/space/design/v1/versions/{versionId}/floors/{floorLogicalId}/lease/{leaseId}:renew";
+        if (versionId === undefined || versionId === null)
+            throw new globalThis.Error("The parameter 'versionId' must be defined.");
+        url_ = url_.replace("{versionId}", encodeURIComponent("" + versionId));
+        if (floorLogicalId === undefined || floorLogicalId === null)
+            throw new globalThis.Error("The parameter 'floorLogicalId' must be defined.");
+        url_ = url_.replace("{floorLogicalId}", encodeURIComponent("" + floorLogicalId));
+        if (leaseId === undefined || leaseId === null)
+            throw new globalThis.Error("The parameter 'leaseId' must be defined.");
+        url_ = url_.replace("{leaseId}", encodeURIComponent("" + leaseId));
+        url_ = url_.replace(/[?&]$/, "");
+
+        let options_: RequestInit = {
+            method: "POST",
+            headers: {
+                "Accept": "application/json"
+            }
+        };
+
+        return this.http.fetch(url_, options_).then((_response: Response) => {
+            return this.processRenewEditLease(_response);
+        });
+    }
+
+    protected processRenewEditLease(response: Response): Promise<SpaceEditLeaseDto> {
+        const status = response.status;
+        let _headers: any = {}; if (response.headers && response.headers.forEach) { response.headers.forEach((v: any, k: any) => _headers[k] = v); };
+        if (status === 200) {
+            return response.text().then((_responseText) => {
+            let result200: any = null;
+            let resultData200 = _responseText === "" ? null : JSON.parse(_responseText, this.jsonParseReviver);
+            result200 = SpaceEditLeaseDto.fromJS(resultData200);
+            return result200;
+            });
+        } else if (status === 400) {
+            return response.text().then((_responseText) => {
+            let result400: any = null;
+            let resultData400 = _responseText === "" ? null : JSON.parse(_responseText, this.jsonParseReviver);
+            result400 = SpaceDesignProblemDetails.fromJS(resultData400);
+            return throwException("Bad Request", status, _responseText, _headers, result400);
+            });
+        } else if (status === 401) {
+            return response.text().then((_responseText) => {
+            let result401: any = null;
+            let resultData401 = _responseText === "" ? null : JSON.parse(_responseText, this.jsonParseReviver);
+            result401 = SpaceDesignProblemDetails.fromJS(resultData401);
+            return throwException("Unauthorized", status, _responseText, _headers, result401);
+            });
+        } else if (status === 403) {
+            return response.text().then((_responseText) => {
+            let result403: any = null;
+            let resultData403 = _responseText === "" ? null : JSON.parse(_responseText, this.jsonParseReviver);
+            result403 = SpaceDesignProblemDetails.fromJS(resultData403);
+            return throwException("Forbidden", status, _responseText, _headers, result403);
+            });
+        } else if (status === 404) {
+            return response.text().then((_responseText) => {
+            let result404: any = null;
+            let resultData404 = _responseText === "" ? null : JSON.parse(_responseText, this.jsonParseReviver);
+            result404 = SpaceDesignProblemDetails.fromJS(resultData404);
+            return throwException("Not Found", status, _responseText, _headers, result404);
+            });
+        } else if (status === 409) {
+            return response.text().then((_responseText) => {
+            let result409: any = null;
+            let resultData409 = _responseText === "" ? null : JSON.parse(_responseText, this.jsonParseReviver);
+            result409 = SpaceDesignProblemDetails.fromJS(resultData409);
+            return throwException("Conflict", status, _responseText, _headers, result409);
+            });
+        } else if (status === 422) {
+            return response.text().then((_responseText) => {
+            let result422: any = null;
+            let resultData422 = _responseText === "" ? null : JSON.parse(_responseText, this.jsonParseReviver);
+            result422 = SpaceDesignProblemDetails.fromJS(resultData422);
+            return throwException("Unprocessable Content", status, _responseText, _headers, result422);
+            });
+        } else if (status === 500) {
+            return response.text().then((_responseText) => {
+            let result500: any = null;
+            let resultData500 = _responseText === "" ? null : JSON.parse(_responseText, this.jsonParseReviver);
+            result500 = SpaceDesignProblemDetails.fromJS(resultData500);
+            return throwException("Internal Server Error", status, _responseText, _headers, result500);
+            });
+        } else if (status !== 200 && status !== 204) {
+            return response.text().then((_responseText) => {
+            return throwException("An unexpected server error occurred.", status, _responseText, _headers);
+            });
+        }
+        return Promise.resolve<SpaceEditLeaseDto>(null as any);
+    }
+
+    /**
+     * @return OK
+     */
+    releaseEditLease(versionId: string, floorLogicalId: string, leaseId: string): Promise<SpaceEditLeaseDto> {
+        let url_ = this.baseUrl + "/api/space/design/v1/versions/{versionId}/floors/{floorLogicalId}/lease/{leaseId}:release";
+        if (versionId === undefined || versionId === null)
+            throw new globalThis.Error("The parameter 'versionId' must be defined.");
+        url_ = url_.replace("{versionId}", encodeURIComponent("" + versionId));
+        if (floorLogicalId === undefined || floorLogicalId === null)
+            throw new globalThis.Error("The parameter 'floorLogicalId' must be defined.");
+        url_ = url_.replace("{floorLogicalId}", encodeURIComponent("" + floorLogicalId));
+        if (leaseId === undefined || leaseId === null)
+            throw new globalThis.Error("The parameter 'leaseId' must be defined.");
+        url_ = url_.replace("{leaseId}", encodeURIComponent("" + leaseId));
+        url_ = url_.replace(/[?&]$/, "");
+
+        let options_: RequestInit = {
+            method: "POST",
+            headers: {
+                "Accept": "application/json"
+            }
+        };
+
+        return this.http.fetch(url_, options_).then((_response: Response) => {
+            return this.processReleaseEditLease(_response);
+        });
+    }
+
+    protected processReleaseEditLease(response: Response): Promise<SpaceEditLeaseDto> {
+        const status = response.status;
+        let _headers: any = {}; if (response.headers && response.headers.forEach) { response.headers.forEach((v: any, k: any) => _headers[k] = v); };
+        if (status === 200) {
+            return response.text().then((_responseText) => {
+            let result200: any = null;
+            let resultData200 = _responseText === "" ? null : JSON.parse(_responseText, this.jsonParseReviver);
+            result200 = SpaceEditLeaseDto.fromJS(resultData200);
+            return result200;
+            });
+        } else if (status === 400) {
+            return response.text().then((_responseText) => {
+            let result400: any = null;
+            let resultData400 = _responseText === "" ? null : JSON.parse(_responseText, this.jsonParseReviver);
+            result400 = SpaceDesignProblemDetails.fromJS(resultData400);
+            return throwException("Bad Request", status, _responseText, _headers, result400);
+            });
+        } else if (status === 401) {
+            return response.text().then((_responseText) => {
+            let result401: any = null;
+            let resultData401 = _responseText === "" ? null : JSON.parse(_responseText, this.jsonParseReviver);
+            result401 = SpaceDesignProblemDetails.fromJS(resultData401);
+            return throwException("Unauthorized", status, _responseText, _headers, result401);
+            });
+        } else if (status === 403) {
+            return response.text().then((_responseText) => {
+            let result403: any = null;
+            let resultData403 = _responseText === "" ? null : JSON.parse(_responseText, this.jsonParseReviver);
+            result403 = SpaceDesignProblemDetails.fromJS(resultData403);
+            return throwException("Forbidden", status, _responseText, _headers, result403);
+            });
+        } else if (status === 404) {
+            return response.text().then((_responseText) => {
+            let result404: any = null;
+            let resultData404 = _responseText === "" ? null : JSON.parse(_responseText, this.jsonParseReviver);
+            result404 = SpaceDesignProblemDetails.fromJS(resultData404);
+            return throwException("Not Found", status, _responseText, _headers, result404);
+            });
+        } else if (status === 409) {
+            return response.text().then((_responseText) => {
+            let result409: any = null;
+            let resultData409 = _responseText === "" ? null : JSON.parse(_responseText, this.jsonParseReviver);
+            result409 = SpaceDesignProblemDetails.fromJS(resultData409);
+            return throwException("Conflict", status, _responseText, _headers, result409);
+            });
+        } else if (status === 422) {
+            return response.text().then((_responseText) => {
+            let result422: any = null;
+            let resultData422 = _responseText === "" ? null : JSON.parse(_responseText, this.jsonParseReviver);
+            result422 = SpaceDesignProblemDetails.fromJS(resultData422);
+            return throwException("Unprocessable Content", status, _responseText, _headers, result422);
+            });
+        } else if (status === 500) {
+            return response.text().then((_responseText) => {
+            let result500: any = null;
+            let resultData500 = _responseText === "" ? null : JSON.parse(_responseText, this.jsonParseReviver);
+            result500 = SpaceDesignProblemDetails.fromJS(resultData500);
+            return throwException("Internal Server Error", status, _responseText, _headers, result500);
+            });
+        } else if (status !== 200 && status !== 204) {
+            return response.text().then((_responseText) => {
+            return throwException("An unexpected server error occurred.", status, _responseText, _headers);
+            });
+        }
+        return Promise.resolve<SpaceEditLeaseDto>(null as any);
+    }
+
+    /**
+     * @param body (optional)
+     * @return OK
+     */
+    takeoverEditLease(versionId: string, floorLogicalId: string, body: TakeoverSpaceEditLeaseRequest | undefined): Promise<SpaceEditLeaseDto> {
+        let url_ = this.baseUrl + "/api/space/design/v1/versions/{versionId}/floors/{floorLogicalId}/lease:takeover";
+        if (versionId === undefined || versionId === null)
+            throw new globalThis.Error("The parameter 'versionId' must be defined.");
+        url_ = url_.replace("{versionId}", encodeURIComponent("" + versionId));
+        if (floorLogicalId === undefined || floorLogicalId === null)
+            throw new globalThis.Error("The parameter 'floorLogicalId' must be defined.");
+        url_ = url_.replace("{floorLogicalId}", encodeURIComponent("" + floorLogicalId));
+        url_ = url_.replace(/[?&]$/, "");
+
+        const content_ = JSON.stringify(body);
+
+        let options_: RequestInit = {
+            body: content_,
+            method: "POST",
+            headers: {
+                "Content-Type": "application/json",
+                "Accept": "application/json"
+            }
+        };
+
+        return this.http.fetch(url_, options_).then((_response: Response) => {
+            return this.processTakeoverEditLease(_response);
+        });
+    }
+
+    protected processTakeoverEditLease(response: Response): Promise<SpaceEditLeaseDto> {
+        const status = response.status;
+        let _headers: any = {}; if (response.headers && response.headers.forEach) { response.headers.forEach((v: any, k: any) => _headers[k] = v); };
+        if (status === 200) {
+            return response.text().then((_responseText) => {
+            let result200: any = null;
+            let resultData200 = _responseText === "" ? null : JSON.parse(_responseText, this.jsonParseReviver);
+            result200 = SpaceEditLeaseDto.fromJS(resultData200);
+            return result200;
+            });
+        } else if (status === 400) {
+            return response.text().then((_responseText) => {
+            let result400: any = null;
+            let resultData400 = _responseText === "" ? null : JSON.parse(_responseText, this.jsonParseReviver);
+            result400 = SpaceDesignProblemDetails.fromJS(resultData400);
+            return throwException("Bad Request", status, _responseText, _headers, result400);
+            });
+        } else if (status === 401) {
+            return response.text().then((_responseText) => {
+            let result401: any = null;
+            let resultData401 = _responseText === "" ? null : JSON.parse(_responseText, this.jsonParseReviver);
+            result401 = SpaceDesignProblemDetails.fromJS(resultData401);
+            return throwException("Unauthorized", status, _responseText, _headers, result401);
+            });
+        } else if (status === 403) {
+            return response.text().then((_responseText) => {
+            let result403: any = null;
+            let resultData403 = _responseText === "" ? null : JSON.parse(_responseText, this.jsonParseReviver);
+            result403 = SpaceDesignProblemDetails.fromJS(resultData403);
+            return throwException("Forbidden", status, _responseText, _headers, result403);
+            });
+        } else if (status === 404) {
+            return response.text().then((_responseText) => {
+            let result404: any = null;
+            let resultData404 = _responseText === "" ? null : JSON.parse(_responseText, this.jsonParseReviver);
+            result404 = SpaceDesignProblemDetails.fromJS(resultData404);
+            return throwException("Not Found", status, _responseText, _headers, result404);
+            });
+        } else if (status === 409) {
+            return response.text().then((_responseText) => {
+            let result409: any = null;
+            let resultData409 = _responseText === "" ? null : JSON.parse(_responseText, this.jsonParseReviver);
+            result409 = SpaceDesignProblemDetails.fromJS(resultData409);
+            return throwException("Conflict", status, _responseText, _headers, result409);
+            });
+        } else if (status === 422) {
+            return response.text().then((_responseText) => {
+            let result422: any = null;
+            let resultData422 = _responseText === "" ? null : JSON.parse(_responseText, this.jsonParseReviver);
+            result422 = SpaceDesignProblemDetails.fromJS(resultData422);
+            return throwException("Unprocessable Content", status, _responseText, _headers, result422);
+            });
+        } else if (status === 500) {
+            return response.text().then((_responseText) => {
+            let result500: any = null;
+            let resultData500 = _responseText === "" ? null : JSON.parse(_responseText, this.jsonParseReviver);
+            result500 = SpaceDesignProblemDetails.fromJS(resultData500);
+            return throwException("Internal Server Error", status, _responseText, _headers, result500);
+            });
+        } else if (status !== 200 && status !== 204) {
+            return response.text().then((_responseText) => {
+            return throwException("An unexpected server error occurred.", status, _responseText, _headers);
+            });
+        }
+        return Promise.resolve<SpaceEditLeaseDto>(null as any);
     }
 
     /**
@@ -12353,10 +12956,47 @@ export class SpaceDesignV1Client implements ISpaceDesignV1Client {
     }
 }
 
+export class AcquireSpaceEditLeaseRequest implements IAcquireSpaceEditLeaseRequest {
+    clientInstanceId?: string;
+
+    constructor(data?: IAcquireSpaceEditLeaseRequest) {
+        if (data) {
+            for (var property in data) {
+                if (data.hasOwnProperty(property))
+                    (this as any)[property] = (data as any)[property];
+            }
+        }
+    }
+
+    init(_data?: any) {
+        if (_data) {
+            this.clientInstanceId = _data["clientInstanceId"];
+        }
+    }
+
+    static fromJS(data: any): AcquireSpaceEditLeaseRequest {
+        data = typeof data === 'object' ? data : {};
+        let result = new AcquireSpaceEditLeaseRequest();
+        result.init(data);
+        return result;
+    }
+
+    toJSON(data?: any) {
+        data = typeof data === 'object' ? data : {};
+        data["clientInstanceId"] = this.clientInstanceId;
+        return data;
+    }
+}
+
+export interface IAcquireSpaceEditLeaseRequest {
+    clientInstanceId?: string;
+}
+
 export class ApplySpaceElementCommandBatchRequest implements IApplySpaceElementCommandBatchRequest {
     schemaVersion?: number;
     commandBatchId?: string;
     clientInstanceId?: string;
+    leaseId?: string;
     expectedFloorRevision?: number;
     commands?: SpaceElementCommandDto[] | undefined;
 
@@ -12374,6 +13014,7 @@ export class ApplySpaceElementCommandBatchRequest implements IApplySpaceElementC
             this.schemaVersion = _data["schemaVersion"];
             this.commandBatchId = _data["commandBatchId"];
             this.clientInstanceId = _data["clientInstanceId"];
+            this.leaseId = _data["leaseId"];
             this.expectedFloorRevision = _data["expectedFloorRevision"];
             if (Array.isArray(_data["commands"])) {
                 this.commands = [] as any;
@@ -12395,6 +13036,7 @@ export class ApplySpaceElementCommandBatchRequest implements IApplySpaceElementC
         data["schemaVersion"] = this.schemaVersion;
         data["commandBatchId"] = this.commandBatchId;
         data["clientInstanceId"] = this.clientInstanceId;
+        data["leaseId"] = this.leaseId;
         data["expectedFloorRevision"] = this.expectedFloorRevision;
         if (Array.isArray(this.commands)) {
             data["commands"] = [];
@@ -12409,6 +13051,7 @@ export interface IApplySpaceElementCommandBatchRequest {
     schemaVersion?: number;
     commandBatchId?: string;
     clientInstanceId?: string;
+    leaseId?: string;
     expectedFloorRevision?: number;
     commands?: SpaceElementCommandDto[] | undefined;
 }
@@ -17122,6 +17765,12 @@ export interface ISpaceCadDiagnosticLocationV1 {
     canFocusCanvas?: boolean;
 }
 
+export enum SpaceCadIssueSeverity {
+    Info = "Info",
+    Warning = "Warning",
+    Blocking = "Blocking",
+}
+
 export class SpaceCadMillimeterBoundsV1 implements ISpaceCadMillimeterBoundsV1 {
     minX?: number;
     minY?: number;
@@ -17428,6 +18077,305 @@ export interface ISpaceCadParseDto {
     lastErrorCode?: string | undefined;
     lastErrorSummary?: string | undefined;
     artifacts?: SpaceCadParseArtifactDto[] | undefined;
+}
+
+export enum SpaceCadReviewItemKind {
+    MappingDiagnostic = "MappingDiagnostic",
+    SemanticDiagnostic = "SemanticDiagnostic",
+    LowConfidenceProposal = "LowConfidenceProposal",
+    RejectedProposal = "RejectedProposal",
+    ExcelUnmatched = "ExcelUnmatched",
+    ExcelConflict = "ExcelConflict",
+    ExcelError = "ExcelError",
+}
+
+export enum SpaceCadReviewItemStatus {
+    Open = "Open",
+    Resolved = "Resolved",
+}
+
+export class SpaceCadReviewItemV1 implements ISpaceCadReviewItemV1 {
+    reviewItemId?: string | undefined;
+    trackingKey?: string | undefined;
+    kind?: SpaceCadReviewItemKind;
+    severity?: SpaceCadIssueSeverity;
+    status?: SpaceCadReviewItemStatus;
+    code?: string | undefined;
+    relatedCodes?: string[] | undefined;
+    detailToken?: string | undefined;
+    suggestedActionCode?: string | undefined;
+    sourceRef?: string | undefined;
+    previewObjectId?: string | undefined;
+    targetLogicalId?: string | undefined;
+    rackCode?: string | undefined;
+    confidenceBand?: SpaceCadConfidenceBand;
+    location?: SpaceCadDiagnosticLocationV1;
+    upstreamEvidenceSha256?: string | undefined;
+    resolvedFromWorkspaceSha256?: string | undefined;
+
+    constructor(data?: ISpaceCadReviewItemV1) {
+        if (data) {
+            for (var property in data) {
+                if (data.hasOwnProperty(property))
+                    (this as any)[property] = (data as any)[property];
+            }
+        }
+    }
+
+    init(_data?: any) {
+        if (_data) {
+            this.reviewItemId = _data["reviewItemId"];
+            this.trackingKey = _data["trackingKey"];
+            this.kind = _data["kind"];
+            this.severity = _data["severity"];
+            this.status = _data["status"];
+            this.code = _data["code"];
+            if (Array.isArray(_data["relatedCodes"])) {
+                this.relatedCodes = [] as any;
+                for (let item of _data["relatedCodes"])
+                    this.relatedCodes!.push(item);
+            }
+            this.detailToken = _data["detailToken"];
+            this.suggestedActionCode = _data["suggestedActionCode"];
+            this.sourceRef = _data["sourceRef"];
+            this.previewObjectId = _data["previewObjectId"];
+            this.targetLogicalId = _data["targetLogicalId"];
+            this.rackCode = _data["rackCode"];
+            this.confidenceBand = _data["confidenceBand"];
+            this.location = _data["location"] ? SpaceCadDiagnosticLocationV1.fromJS(_data["location"]) : undefined as any;
+            this.upstreamEvidenceSha256 = _data["upstreamEvidenceSha256"];
+            this.resolvedFromWorkspaceSha256 = _data["resolvedFromWorkspaceSha256"];
+        }
+    }
+
+    static fromJS(data: any): SpaceCadReviewItemV1 {
+        data = typeof data === 'object' ? data : {};
+        let result = new SpaceCadReviewItemV1();
+        result.init(data);
+        return result;
+    }
+
+    toJSON(data?: any) {
+        data = typeof data === 'object' ? data : {};
+        data["reviewItemId"] = this.reviewItemId;
+        data["trackingKey"] = this.trackingKey;
+        data["kind"] = this.kind;
+        data["severity"] = this.severity;
+        data["status"] = this.status;
+        data["code"] = this.code;
+        if (Array.isArray(this.relatedCodes)) {
+            data["relatedCodes"] = [];
+            for (let item of this.relatedCodes)
+                data["relatedCodes"].push(item);
+        }
+        data["detailToken"] = this.detailToken;
+        data["suggestedActionCode"] = this.suggestedActionCode;
+        data["sourceRef"] = this.sourceRef;
+        data["previewObjectId"] = this.previewObjectId;
+        data["targetLogicalId"] = this.targetLogicalId;
+        data["rackCode"] = this.rackCode;
+        data["confidenceBand"] = this.confidenceBand;
+        data["location"] = this.location ? this.location.toJSON() : undefined as any;
+        data["upstreamEvidenceSha256"] = this.upstreamEvidenceSha256;
+        data["resolvedFromWorkspaceSha256"] = this.resolvedFromWorkspaceSha256;
+        return data;
+    }
+}
+
+export interface ISpaceCadReviewItemV1 {
+    reviewItemId?: string | undefined;
+    trackingKey?: string | undefined;
+    kind?: SpaceCadReviewItemKind;
+    severity?: SpaceCadIssueSeverity;
+    status?: SpaceCadReviewItemStatus;
+    code?: string | undefined;
+    relatedCodes?: string[] | undefined;
+    detailToken?: string | undefined;
+    suggestedActionCode?: string | undefined;
+    sourceRef?: string | undefined;
+    previewObjectId?: string | undefined;
+    targetLogicalId?: string | undefined;
+    rackCode?: string | undefined;
+    confidenceBand?: SpaceCadConfidenceBand;
+    location?: SpaceCadDiagnosticLocationV1;
+    upstreamEvidenceSha256?: string | undefined;
+    resolvedFromWorkspaceSha256?: string | undefined;
+}
+
+export class SpaceCadReviewWorkspaceSummaryV1 implements ISpaceCadReviewWorkspaceSummaryV1 {
+    totalCount?: number;
+    openCount?: number;
+    resolvedCount?: number;
+    openInfoCount?: number;
+    openWarningCount?: number;
+    openBlockingCount?: number;
+    locatableCount?: number;
+    unlocatableCount?: number;
+    cadDiagnosticCount?: number;
+    proposalReviewCount?: number;
+    excelReviewCount?: number;
+
+    constructor(data?: ISpaceCadReviewWorkspaceSummaryV1) {
+        if (data) {
+            for (var property in data) {
+                if (data.hasOwnProperty(property))
+                    (this as any)[property] = (data as any)[property];
+            }
+        }
+    }
+
+    init(_data?: any) {
+        if (_data) {
+            this.totalCount = _data["totalCount"];
+            this.openCount = _data["openCount"];
+            this.resolvedCount = _data["resolvedCount"];
+            this.openInfoCount = _data["openInfoCount"];
+            this.openWarningCount = _data["openWarningCount"];
+            this.openBlockingCount = _data["openBlockingCount"];
+            this.locatableCount = _data["locatableCount"];
+            this.unlocatableCount = _data["unlocatableCount"];
+            this.cadDiagnosticCount = _data["cadDiagnosticCount"];
+            this.proposalReviewCount = _data["proposalReviewCount"];
+            this.excelReviewCount = _data["excelReviewCount"];
+        }
+    }
+
+    static fromJS(data: any): SpaceCadReviewWorkspaceSummaryV1 {
+        data = typeof data === 'object' ? data : {};
+        let result = new SpaceCadReviewWorkspaceSummaryV1();
+        result.init(data);
+        return result;
+    }
+
+    toJSON(data?: any) {
+        data = typeof data === 'object' ? data : {};
+        data["totalCount"] = this.totalCount;
+        data["openCount"] = this.openCount;
+        data["resolvedCount"] = this.resolvedCount;
+        data["openInfoCount"] = this.openInfoCount;
+        data["openWarningCount"] = this.openWarningCount;
+        data["openBlockingCount"] = this.openBlockingCount;
+        data["locatableCount"] = this.locatableCount;
+        data["unlocatableCount"] = this.unlocatableCount;
+        data["cadDiagnosticCount"] = this.cadDiagnosticCount;
+        data["proposalReviewCount"] = this.proposalReviewCount;
+        data["excelReviewCount"] = this.excelReviewCount;
+        return data;
+    }
+}
+
+export interface ISpaceCadReviewWorkspaceSummaryV1 {
+    totalCount?: number;
+    openCount?: number;
+    resolvedCount?: number;
+    openInfoCount?: number;
+    openWarningCount?: number;
+    openBlockingCount?: number;
+    locatableCount?: number;
+    unlocatableCount?: number;
+    cadDiagnosticCount?: number;
+    proposalReviewCount?: number;
+    excelReviewCount?: number;
+}
+
+export class SpaceCadReviewWorkspaceV1 implements ISpaceCadReviewWorkspaceV1 {
+    schemaVersion?: number;
+    isReadOnlyWorkspace?: boolean;
+    tenantId?: string;
+    modelVersionId?: string;
+    floorLogicalId?: string;
+    floorCode?: string | undefined;
+    diagnosticIndexSha256?: string | undefined;
+    matchPreviewSha256?: string | undefined;
+    editorContentRevision?: number;
+    editorContentHash?: string | undefined;
+    editorSnapshotSha256?: string | undefined;
+    previousWorkspaceSha256?: string | undefined;
+    items?: SpaceCadReviewItemV1[] | undefined;
+    summary?: SpaceCadReviewWorkspaceSummaryV1;
+    workspaceSha256?: string | undefined;
+
+    constructor(data?: ISpaceCadReviewWorkspaceV1) {
+        if (data) {
+            for (var property in data) {
+                if (data.hasOwnProperty(property))
+                    (this as any)[property] = (data as any)[property];
+            }
+        }
+    }
+
+    init(_data?: any) {
+        if (_data) {
+            this.schemaVersion = _data["schemaVersion"];
+            this.isReadOnlyWorkspace = _data["isReadOnlyWorkspace"];
+            this.tenantId = _data["tenantId"];
+            this.modelVersionId = _data["modelVersionId"];
+            this.floorLogicalId = _data["floorLogicalId"];
+            this.floorCode = _data["floorCode"];
+            this.diagnosticIndexSha256 = _data["diagnosticIndexSha256"];
+            this.matchPreviewSha256 = _data["matchPreviewSha256"];
+            this.editorContentRevision = _data["editorContentRevision"];
+            this.editorContentHash = _data["editorContentHash"];
+            this.editorSnapshotSha256 = _data["editorSnapshotSha256"];
+            this.previousWorkspaceSha256 = _data["previousWorkspaceSha256"];
+            if (Array.isArray(_data["items"])) {
+                this.items = [] as any;
+                for (let item of _data["items"])
+                    this.items!.push(SpaceCadReviewItemV1.fromJS(item));
+            }
+            this.summary = _data["summary"] ? SpaceCadReviewWorkspaceSummaryV1.fromJS(_data["summary"]) : undefined as any;
+            this.workspaceSha256 = _data["workspaceSha256"];
+        }
+    }
+
+    static fromJS(data: any): SpaceCadReviewWorkspaceV1 {
+        data = typeof data === 'object' ? data : {};
+        let result = new SpaceCadReviewWorkspaceV1();
+        result.init(data);
+        return result;
+    }
+
+    toJSON(data?: any) {
+        data = typeof data === 'object' ? data : {};
+        data["schemaVersion"] = this.schemaVersion;
+        data["isReadOnlyWorkspace"] = this.isReadOnlyWorkspace;
+        data["tenantId"] = this.tenantId;
+        data["modelVersionId"] = this.modelVersionId;
+        data["floorLogicalId"] = this.floorLogicalId;
+        data["floorCode"] = this.floorCode;
+        data["diagnosticIndexSha256"] = this.diagnosticIndexSha256;
+        data["matchPreviewSha256"] = this.matchPreviewSha256;
+        data["editorContentRevision"] = this.editorContentRevision;
+        data["editorContentHash"] = this.editorContentHash;
+        data["editorSnapshotSha256"] = this.editorSnapshotSha256;
+        data["previousWorkspaceSha256"] = this.previousWorkspaceSha256;
+        if (Array.isArray(this.items)) {
+            data["items"] = [];
+            for (let item of this.items)
+                data["items"].push(item ? item.toJSON() : undefined as any);
+        }
+        data["summary"] = this.summary ? this.summary.toJSON() : undefined as any;
+        data["workspaceSha256"] = this.workspaceSha256;
+        return data;
+    }
+}
+
+export interface ISpaceCadReviewWorkspaceV1 {
+    schemaVersion?: number;
+    isReadOnlyWorkspace?: boolean;
+    tenantId?: string;
+    modelVersionId?: string;
+    floorLogicalId?: string;
+    floorCode?: string | undefined;
+    diagnosticIndexSha256?: string | undefined;
+    matchPreviewSha256?: string | undefined;
+    editorContentRevision?: number;
+    editorContentHash?: string | undefined;
+    editorSnapshotSha256?: string | undefined;
+    previousWorkspaceSha256?: string | undefined;
+    items?: SpaceCadReviewItemV1[] | undefined;
+    summary?: SpaceCadReviewWorkspaceSummaryV1;
+    workspaceSha256?: string | undefined;
 }
 
 export enum SpaceCadUnit {
@@ -18214,6 +19162,78 @@ export class SpaceDeviceMappingPageDto implements ISpaceDeviceMappingPageDto {
 export interface ISpaceDeviceMappingPageDto {
     items: SpaceDeviceMappingDto[];
     nextCursor: string;
+}
+
+export class SpaceEditLeaseDto implements ISpaceEditLeaseDto {
+    modelVersionId?: string;
+    floorLogicalId?: string;
+    leaseId?: string | undefined;
+    ownerUserId?: string | undefined;
+    clientInstanceId?: string | undefined;
+    expiresAtUtc?: Date | undefined;
+    lastRenewedAtUtc?: Date | undefined;
+    isAvailable?: boolean;
+    isOwnedByCurrentActor?: boolean;
+    rowVersion?: string | undefined;
+
+    constructor(data?: ISpaceEditLeaseDto) {
+        if (data) {
+            for (var property in data) {
+                if (data.hasOwnProperty(property))
+                    (this as any)[property] = (data as any)[property];
+            }
+        }
+    }
+
+    init(_data?: any) {
+        if (_data) {
+            this.modelVersionId = _data["modelVersionId"];
+            this.floorLogicalId = _data["floorLogicalId"];
+            this.leaseId = _data["leaseId"];
+            this.ownerUserId = _data["ownerUserId"];
+            this.clientInstanceId = _data["clientInstanceId"];
+            this.expiresAtUtc = _data["expiresAtUtc"] ? new Date(_data["expiresAtUtc"].toString()) : undefined as any;
+            this.lastRenewedAtUtc = _data["lastRenewedAtUtc"] ? new Date(_data["lastRenewedAtUtc"].toString()) : undefined as any;
+            this.isAvailable = _data["isAvailable"];
+            this.isOwnedByCurrentActor = _data["isOwnedByCurrentActor"];
+            this.rowVersion = _data["rowVersion"];
+        }
+    }
+
+    static fromJS(data: any): SpaceEditLeaseDto {
+        data = typeof data === 'object' ? data : {};
+        let result = new SpaceEditLeaseDto();
+        result.init(data);
+        return result;
+    }
+
+    toJSON(data?: any) {
+        data = typeof data === 'object' ? data : {};
+        data["modelVersionId"] = this.modelVersionId;
+        data["floorLogicalId"] = this.floorLogicalId;
+        data["leaseId"] = this.leaseId;
+        data["ownerUserId"] = this.ownerUserId;
+        data["clientInstanceId"] = this.clientInstanceId;
+        data["expiresAtUtc"] = this.expiresAtUtc ? this.expiresAtUtc.toISOString() : undefined as any;
+        data["lastRenewedAtUtc"] = this.lastRenewedAtUtc ? this.lastRenewedAtUtc.toISOString() : undefined as any;
+        data["isAvailable"] = this.isAvailable;
+        data["isOwnedByCurrentActor"] = this.isOwnedByCurrentActor;
+        data["rowVersion"] = this.rowVersion;
+        return data;
+    }
+}
+
+export interface ISpaceEditLeaseDto {
+    modelVersionId?: string;
+    floorLogicalId?: string;
+    leaseId?: string | undefined;
+    ownerUserId?: string | undefined;
+    clientInstanceId?: string | undefined;
+    expiresAtUtc?: Date | undefined;
+    lastRenewedAtUtc?: Date | undefined;
+    isAvailable?: boolean;
+    isOwnedByCurrentActor?: boolean;
+    rowVersion?: string | undefined;
 }
 
 export class SpaceElementAttributeWriteDto implements ISpaceElementAttributeWriteDto {
@@ -29403,6 +30423,46 @@ export class StartSpaceHistoricalRepublishResponse implements IStartSpaceHistori
 export interface IStartSpaceHistoricalRepublishResponse {
     republish?: SpaceHistoricalRepublishDto;
     idempotentReplay?: boolean;
+}
+
+export class TakeoverSpaceEditLeaseRequest implements ITakeoverSpaceEditLeaseRequest {
+    clientInstanceId?: string;
+    reason?: string | undefined;
+
+    constructor(data?: ITakeoverSpaceEditLeaseRequest) {
+        if (data) {
+            for (var property in data) {
+                if (data.hasOwnProperty(property))
+                    (this as any)[property] = (data as any)[property];
+            }
+        }
+    }
+
+    init(_data?: any) {
+        if (_data) {
+            this.clientInstanceId = _data["clientInstanceId"];
+            this.reason = _data["reason"];
+        }
+    }
+
+    static fromJS(data: any): TakeoverSpaceEditLeaseRequest {
+        data = typeof data === 'object' ? data : {};
+        let result = new TakeoverSpaceEditLeaseRequest();
+        result.init(data);
+        return result;
+    }
+
+    toJSON(data?: any) {
+        data = typeof data === 'object' ? data : {};
+        data["clientInstanceId"] = this.clientInstanceId;
+        data["reason"] = this.reason;
+        return data;
+    }
+}
+
+export interface ITakeoverSpaceEditLeaseRequest {
+    clientInstanceId?: string;
+    reason?: string | undefined;
 }
 
 export class UpdateSpaceAiPolicyRequest implements IUpdateSpaceAiPolicyRequest {

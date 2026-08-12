@@ -11,6 +11,7 @@ public sealed class SpaceElementCommandBatch : SpaceTenantEntity
     public Guid ModelVersionId { get; private set; }
     public Guid FloorLogicalId { get; private set; }
     public Guid ClientInstanceId { get; private set; }
+    public Guid? LeaseId { get; private set; }
     public long ExpectedFloorRevision { get; private set; }
     public long? ResultFloorRevision { get; private set; }
     public long? ResultVersionContentRevision { get; private set; }
@@ -28,12 +29,37 @@ public sealed class SpaceElementCommandBatch : SpaceTenantEntity
         long expectedFloorRevision,
         string requestHash,
         Guid actorId,
+        DateTime appliedAtUtc) =>
+        Create(
+            tenantId,
+            commandBatchId,
+            modelVersionId,
+            floorLogicalId,
+            clientInstanceId,
+            null,
+            expectedFloorRevision,
+            requestHash,
+            actorId,
+            appliedAtUtc);
+
+    public static SpaceElementCommandBatch Create(
+        Guid tenantId,
+        Guid commandBatchId,
+        Guid modelVersionId,
+        Guid floorLogicalId,
+        Guid clientInstanceId,
+        Guid? leaseId,
+        long expectedFloorRevision,
+        string requestHash,
+        Guid actorId,
         DateTime appliedAtUtc)
     {
         RequireIdentity(commandBatchId, nameof(commandBatchId));
         RequireIdentity(modelVersionId, nameof(modelVersionId));
         RequireIdentity(floorLogicalId, nameof(floorLogicalId));
         RequireIdentity(clientInstanceId, nameof(clientInstanceId));
+        if (leaseId == Guid.Empty)
+            throw new ArgumentException("Lease identity cannot be empty.", nameof(leaseId));
         RequireIdentity(actorId, nameof(actorId));
         if (expectedFloorRevision < 0)
             throw new ArgumentOutOfRangeException(nameof(expectedFloorRevision));
@@ -45,6 +71,7 @@ public sealed class SpaceElementCommandBatch : SpaceTenantEntity
             ModelVersionId = modelVersionId,
             FloorLogicalId = floorLogicalId,
             ClientInstanceId = clientInstanceId,
+            LeaseId = leaseId,
             ExpectedFloorRevision = expectedFloorRevision,
             RequestHash = RequireHash(requestHash),
             AppliedAtUtc = appliedAtUtc,

@@ -27,6 +27,7 @@ describe('designElementsApi', () => {
       'floor-1',
       7,
       '22222222-2222-2222-2222-222222222222',
+      '33333333-3333-3333-3333-333333333333',
       element,
       {
         geometryJson:
@@ -50,6 +51,7 @@ describe('designElementsApi', () => {
     expect(body).toMatchObject({
       schemaVersion: 1,
       clientInstanceId: '22222222-2222-2222-2222-222222222222',
+      leaseId: '33333333-3333-3333-3333-333333333333',
       expectedFloorRevision: 7,
       commands: [
         {
@@ -71,6 +73,7 @@ describe('designElementsApi', () => {
       'floor-1',
       8,
       '22222222-2222-2222-2222-222222222222',
+      '33333333-3333-3333-3333-333333333333',
       element,
     )
 
@@ -91,6 +94,7 @@ describe('designElementsApi', () => {
         'floor-1',
         8,
         '22222222-2222-2222-2222-222222222222',
+        '33333333-3333-3333-3333-333333333333',
         {} as ISpaceSceneElementDto,
       ),
     ).toThrow('The selected element has no logical identity.')

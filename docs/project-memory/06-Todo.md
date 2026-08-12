@@ -1,5 +1,13 @@
 # 当前待办与优先级
 
+## P0：Space Studio v1.3 GA 外部与扩展门禁
+
+- 为 CAD 接入一个主 DWG/DXF Provider 和一个同合同、同审批的备用 Provider；当前默认 unavailable Provider 不能作为真实 CAD 验收。
+- 完成待审变更集的新增/修改/删除/冲突确认合入 UX；当前自动审核加载覆盖问题与低置信度定位，未把未确认解析结果自动写入 Draft。
+- 用 20 份授权真实黄金 CAD 执行 10/5/5 Calibration/Validation/Holdout，产出覆盖率、准确率、高置信度精确率和 Blocking 遗漏证据。
+- 在 Iris Xe/WebGL2/500 货架/10,000 库位跑正式 Viewer 门槛；补齐选择高亮/视角持久化和完整 GA 快捷键的浏览器 E2E/可达性证据。
+- 执行一个绿地仓和一个存量仓各 14 天 Pilot、WMS 故障恢复与对账演练，并取得产品、QA、WMS、架构、安全签字后才可声明核心 GA。
+
 ## P0：Azure DevOps Release/CD 演进
 
 - 外部 Readiness Pipeline 已命名为 `CP6 Deploy Agent`；可再补全为 `CP6 Deploy Agent Readiness`，并保持 `CP6-Deploy` Pool 未对所有 Pipelines 开放。

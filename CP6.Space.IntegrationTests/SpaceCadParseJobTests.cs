@@ -188,6 +188,61 @@ public sealed class SpaceCadParseJobTests
         Assert.Empty(await fixture.Context.ZoneRevisions.ToListAsync());
     }
 
+    [Fact]
+    public async Task Completed_parse_rejects_an_invalid_review_artifact_with_stable_error()
+    {
+        await using var fixture = await CreateFixtureAsync();
+        var started = await fixture.Service.StartAsync(
+            fixture.Version.Id,
+            fixture.Source.Id,
+            Request(fixture.Source.Sha256),
+            "cad-review-workspace-1");
+        var provider = new DeterministicProvider();
+        var executor = new SpaceCadParseJobStepExecutor(
+            fixture.Context,
+            new FileServiceProvider(fixture.Files),
+            provider);
+        var lease = await ClaimAsync(fixture, started.JobId);
+        var job = fixture.Context.Jobs.Local.Single(item => item.Id == started.JobId);
+        var attempt = fixture.Context.JobAttempts.Local.Single(
+            item => item.Id == lease.AttemptId);
+        var generateStep = SpaceJobStep.Start(
+            fixture.Execution.TenantId,
+            attempt.Id,
+            1,
+            SpaceCadParseJobProcessor.GenerateArtifacts,
+            Now);
+        fixture.Context.JobSteps.Add(generateStep);
+        await fixture.Context.SaveChangesAsync();
+        var generated = await executor.ExecuteAsync(
+            new(lease, 1, SpaceCadParseJobProcessor.GenerateArtifacts));
+        generateStep.Complete(generated.CheckpointJson, generated.OutputHash, Now);
+        await fixture.Context.SaveChangesAsync();
+        var finalizeStep = SpaceJobStep.Start(
+            fixture.Execution.TenantId,
+            attempt.Id,
+            2,
+            SpaceCadParseJobProcessor.FinalizePreview,
+            Now);
+        fixture.Context.JobSteps.Add(finalizeStep);
+        await fixture.Context.SaveChangesAsync();
+        var finalized = await executor.ExecuteAsync(
+            new(lease, 2, SpaceCadParseJobProcessor.FinalizePreview));
+        finalizeStep.Complete(finalized.CheckpointJson, finalized.OutputHash, Now);
+        attempt.Succeed(Now);
+        job.Complete(attempt.Id, attempt.WorkerId, Now, finalized.CheckpointJson);
+        await fixture.Context.SaveChangesAsync();
+
+        fixture.Context.ChangeTracker.Clear();
+        var problem = await Assert.ThrowsAsync<SpaceProblemException>(() =>
+            fixture.Service.GetReviewWorkspaceAsync(
+                fixture.Version.Id,
+                fixture.Source.Id,
+                started.JobId));
+
+        Assert.Equal(SpaceErrorCodes.SourceUnsafe, problem.Code);
+    }
+
     private static async Task<SpaceJobLease> ClaimAsync(Fixture fixture, Guid jobId)
     {
         fixture.Context.ChangeTracker.Clear();
@@ -282,7 +337,8 @@ public sealed class SpaceCadParseJobTests
             new AllowAccess(),
             null!,
             null!,
-            clock);
+            clock,
+            files);
         return new Fixture(
             context,
             execution,

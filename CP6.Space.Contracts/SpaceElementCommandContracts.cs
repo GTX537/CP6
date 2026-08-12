@@ -63,6 +63,7 @@ public sealed record ApplySpaceElementCommandBatchRequest(
     int SchemaVersion,
     Guid CommandBatchId,
     Guid ClientInstanceId,
+    Guid LeaseId,
     long ExpectedFloorRevision,
     IReadOnlyList<SpaceElementCommandDto> Commands);
 

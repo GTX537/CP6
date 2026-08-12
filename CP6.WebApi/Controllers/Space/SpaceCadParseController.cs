@@ -141,6 +141,21 @@ public sealed class SpaceCadParseController(
             jobId,
             cancellationToken);
 
+    [HttpGet(
+        "versions/{versionId:guid}/sources/{sourceId:guid}/" +
+        "cad-parses/{jobId:guid}/review-workspace")]
+    [ProducesResponseType<SpaceCadReviewWorkspaceV1>(StatusCodes.Status200OK)]
+    public Task<SpaceCadReviewWorkspaceV1> GetReviewWorkspace(
+        Guid versionId,
+        Guid sourceId,
+        Guid jobId,
+        CancellationToken cancellationToken) =>
+        service.GetReviewWorkspaceAsync(
+            versionId,
+            sourceId,
+            jobId,
+            cancellationToken);
+
     [HttpPost(
         "versions/{versionId:guid}/sources/{sourceId:guid}/" +
         "cad-parses/{jobId:guid}:cancel")]

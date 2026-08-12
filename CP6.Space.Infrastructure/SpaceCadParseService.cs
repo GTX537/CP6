@@ -17,7 +17,8 @@ public sealed class SpaceCadParseService(
     ISpaceDesignAccessEvaluator access,
     SpaceFileUploadService uploads,
     SpaceSourceCoordinator sources,
-    ISpaceClock clock) : ISpaceCadParseService
+    ISpaceClock clock,
+    ISpaceFileStore? files = null) : ISpaceCadParseService
 {
     private static readonly JsonSerializerOptions JsonOptions =
         new(JsonSerializerDefaults.Web);
@@ -308,6 +309,158 @@ public sealed class SpaceCadParseService(
             input.Job.LastErrorCode,
             input.Job.LastErrorSummary,
             artifacts);
+    }
+
+    public async Task<SpaceCadReviewWorkspaceV1> GetReviewWorkspaceAsync(
+        Guid versionId,
+        Guid sourceId,
+        Guid jobId,
+        CancellationToken cancellationToken = default)
+    {
+        EnsureExecutionContext();
+        if (files is null)
+        {
+            throw new SpaceProblemException(
+                SpaceErrorCodes.JobProcessorUnavailable,
+                503,
+                "Private Space artifact storage is not configured.",
+                recoveryAction: "configure-space-artifact-storage",
+                retryable: true);
+        }
+
+        var input = await LoadReadableAsync(
+            versionId,
+            sourceId,
+            jobId,
+            tracked: false,
+            cancellationToken);
+        if (input.Job.Status != SpaceJobStatus.Succeeded ||
+            input.Source.State != SpaceSourceState.PreviewReady)
+        {
+            throw Conflict(
+                "The CAD parse has not produced a reviewable PreviewSet yet.");
+        }
+
+        var artifactInput = await (
+                from artifact in context.Artifacts.AsNoTracking()
+                join file in context.Files.AsNoTracking()
+                    on artifact.FileId equals file.Id
+                where artifact.ArtifactType == SpaceArtifactType.PreviewSet &&
+                      (artifact.JobId == jobId ||
+                       (input.Job.RetryOfJobId.HasValue &&
+                        artifact.JobId == input.Job.RetryOfJobId.Value))
+                select new { Artifact = artifact, File = file })
+            .SingleOrDefaultAsync(cancellationToken)
+            ?? throw NotFound();
+        if (artifactInput.File.State != SpaceFileState.Clean ||
+            artifactInput.File.IsDeleted ||
+            artifactInput.File.SizeBytes is < 1 or > 100L * 1024L * 1024L ||
+            string.IsNullOrWhiteSpace(artifactInput.File.Sha256))
+        {
+            throw new SpaceProblemException(
+                SpaceErrorCodes.SourceUnsafe,
+                409,
+                "The CAD PreviewSet artifact is not readable.",
+                recoveryAction: "retry-cad-parse");
+        }
+
+        string json;
+        await using (var stream = await files.OpenQuarantinedReadAsync(
+                         artifactInput.File.TenantId,
+                         artifactInput.File.Id,
+                         artifactInput.File.StorageKey,
+                         cancellationToken))
+        using (var reader = new StreamReader(
+                   stream,
+                   Encoding.UTF8,
+                   detectEncodingFromByteOrderMarks: false,
+                   leaveOpen: false))
+        {
+            json = await reader.ReadToEndAsync(cancellationToken);
+        }
+        if (!Hash(json).Equals(artifactInput.File.Sha256, StringComparison.Ordinal))
+        {
+            throw new SpaceProblemException(
+                SpaceErrorCodes.SourceUnsafe,
+                409,
+                "The CAD PreviewSet artifact failed integrity verification.",
+                recoveryAction: "retry-cad-parse");
+        }
+        SpaceCadPreviewSetV1 previewSet;
+        try
+        {
+            previewSet = SpaceCadPreviewSet.Deserialize(json);
+        }
+        catch (Exception exception) when (
+            exception is InvalidDataException or JsonException or ArgumentException)
+        {
+            throw new SpaceProblemException(
+                SpaceErrorCodes.SourceUnsafe,
+                409,
+                "The CAD PreviewSet artifact failed schema verification.",
+                recoveryAction: "retry-cad-parse");
+        }
+        var artifactJobMatches = previewSet.CadParseJobId == jobId ||
+            previewSet.CadParseJobId == input.Job.RetryOfJobId;
+        if (previewSet.ModelVersionId != versionId ||
+            previewSet.SourceId != sourceId ||
+            !artifactJobMatches ||
+            previewSet.FloorLogicalId != input.Payload.FloorLogicalId)
+        {
+            throw new SpaceProblemException(
+                SpaceErrorCodes.ParseChangesetStale,
+                409,
+                "The CAD PreviewSet no longer matches the selected parse chain.",
+                recoveryAction: "refresh-cad-parse");
+        }
+
+        var version = await context.Versions.AsNoTracking()
+            .SingleAsync(item => item.Id == versionId, cancellationToken);
+        var floor = await context.FloorRevisions.AsNoTracking()
+            .SingleOrDefaultAsync(item =>
+                item.ModelVersionId == versionId &&
+                item.LogicalId == input.Payload.FloorLogicalId,
+                cancellationToken)
+            ?? throw NotFound();
+        var zones = await context.ZoneRevisions.AsNoTracking()
+            .Where(item =>
+                item.ModelVersionId == versionId &&
+                item.FloorLogicalId == floor.LogicalId)
+            .ToDictionaryAsync(item => item.LogicalId, item => item.ZoneCode, cancellationToken);
+        var rackRows = await context.RackRevisions.AsNoTracking()
+            .Where(item =>
+                item.ModelVersionId == versionId &&
+                item.FloorLogicalId == floor.LogicalId)
+            .ToArrayAsync(cancellationToken);
+        var racks = rackRows.Select(item =>
+        {
+            if (!zones.TryGetValue(item.ZoneLogicalId, out var zoneCode))
+                throw new InvalidDataException("An editor rack has no authoritative zone.");
+            return new SpaceExcelEditorRackSnapshotV1(
+                item.LogicalId,
+                item.Id,
+                item.RackCode,
+                item.SourceRef,
+                floor.FloorCode,
+                zoneCode,
+                item.X,
+                item.Y,
+                item.Z,
+                item.Width,
+                item.Depth,
+                item.Height,
+                item.RotationZ,
+                item.LifecycleState.ToString());
+        }).ToArray();
+        var snapshot = SpaceExcelCadMatching.SealEditorSnapshot(
+            execution.TenantId,
+            versionId,
+            floor.LogicalId,
+            floor.FloorCode,
+            version.ContentRevision,
+            version.ContentHash,
+            racks);
+        return SpaceCadReviewWorkspace.Build(previewSet.DiagnosticIndex, snapshot);
     }
 
     public async Task<SpaceCadParseActionResponse> CancelAsync(
@@ -767,6 +920,14 @@ public sealed class SpaceCadParseService(
 
     private void EnsureExecutionContext()
     {
+        if (execution.IsExternal)
+        {
+            throw new SpaceProblemException(
+                SpaceErrorCodes.ExternalSubjectDenied,
+                403,
+                "External principals cannot access CAD sources or parse artifacts.",
+                recoveryAction: "use-published-runtime");
+        }
         if (execution.TenantId == Guid.Empty || execution.ActorId == Guid.Empty)
             throw new SpaceTenantScopeException(
                 "A verified Space tenant and actor are required.");

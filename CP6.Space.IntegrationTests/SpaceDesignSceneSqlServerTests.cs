@@ -399,10 +399,22 @@ public sealed class SpaceDesignSceneSqlServerTests
                 execution,
                 clock,
                 seeded.Model.SiteId);
+            var clientId = Guid.NewGuid();
+            var editLease = SpaceEditLease.Create(
+                execution.TenantId,
+                draft.Id,
+                floor.LogicalId,
+                execution.ActorId,
+                clientId,
+                clock.UtcNow,
+                TimeSpan.FromSeconds(90));
+            context.EditLeases.Add(editLease);
+            await context.SaveChangesAsync();
             var update = new ApplySpaceElementCommandBatchRequest(
                 SpaceElementCommandContract.SchemaVersion,
                 Guid.NewGuid(),
-                Guid.NewGuid(),
+                clientId,
+                editLease.LeaseId,
                 ExpectedFloorRevision: 0,
                 [
                     new SpaceElementCommandDto(
@@ -470,6 +482,7 @@ public sealed class SpaceDesignSceneSqlServerTests
                 SpaceElementCommandContract.SchemaVersion,
                 Guid.NewGuid(),
                 update.ClientInstanceId,
+                editLease.LeaseId,
                 ExpectedFloorRevision: 0,
                 [
                     new SpaceElementCommandDto(
@@ -674,6 +687,16 @@ public sealed class SpaceDesignSceneSqlServerTests
                 clock,
                 seeded.Model.SiteId);
             var clientId = Guid.NewGuid();
+            var editLease = SpaceEditLease.Create(
+                execution.TenantId,
+                draft.Id,
+                floor.LogicalId,
+                execution.ActorId,
+                clientId,
+                clock.UtcNow,
+                TimeSpan.FromSeconds(90));
+            context.EditLeases.Add(editLease);
+            await context.SaveChangesAsync();
             var mixed = await service.ApplyElementCommandsAsync(
                 draft.Id,
                 floor.LogicalId,
@@ -681,6 +704,7 @@ public sealed class SpaceDesignSceneSqlServerTests
                     SpaceElementCommandContract.SchemaVersion,
                     Guid.NewGuid(),
                     clientId,
+                    editLease.LeaseId,
                     ExpectedFloorRevision: 0,
                     [
                         new SpaceElementCommandDto(
@@ -710,6 +734,7 @@ public sealed class SpaceDesignSceneSqlServerTests
                     SpaceElementCommandContract.SchemaVersion,
                     Guid.NewGuid(),
                     clientId,
+                    editLease.LeaseId,
                     ExpectedFloorRevision: 1,
                     [
                         new SpaceElementCommandDto(
@@ -737,6 +762,7 @@ public sealed class SpaceDesignSceneSqlServerTests
                     SpaceElementCommandContract.SchemaVersion,
                     Guid.NewGuid(),
                     clientId,
+                    editLease.LeaseId,
                     ExpectedFloorRevision: 2,
                     [
                         new SpaceElementCommandDto(
@@ -781,6 +807,7 @@ public sealed class SpaceDesignSceneSqlServerTests
                 floor.LogicalId,
                 LifecycleBatch(
                     clientId,
+                    editLease.LeaseId,
                     expectedFloorRevision: 3,
                     SpaceElementCommandContract.DeleteObject,
                     generatedIds));
@@ -806,6 +833,7 @@ public sealed class SpaceDesignSceneSqlServerTests
                 floor.LogicalId,
                 LifecycleBatch(
                     clientId,
+                    editLease.LeaseId,
                     expectedFloorRevision: 4,
                     SpaceElementCommandContract.RestoreLogicalObject,
                     generatedIds));
@@ -821,6 +849,7 @@ public sealed class SpaceDesignSceneSqlServerTests
                     SpaceElementCommandContract.SchemaVersion,
                     Guid.NewGuid(),
                     clientId,
+                    editLease.LeaseId,
                     ExpectedFloorRevision: 5,
                     [
                         new SpaceElementCommandDto(
@@ -851,6 +880,7 @@ public sealed class SpaceDesignSceneSqlServerTests
                             SpaceElementCommandContract.SchemaVersion,
                             Guid.NewGuid(),
                             clientId,
+                            editLease.LeaseId,
                             ExpectedFloorRevision: 5,
                             [
                                 new SpaceElementCommandDto(
@@ -899,6 +929,7 @@ public sealed class SpaceDesignSceneSqlServerTests
 
     private static ApplySpaceElementCommandBatchRequest LifecycleBatch(
         Guid clientInstanceId,
+        Guid leaseId,
         long expectedFloorRevision,
         string commandType,
         IReadOnlyList<Guid> logicalIds) =>
@@ -906,6 +937,7 @@ public sealed class SpaceDesignSceneSqlServerTests
             SpaceElementCommandContract.SchemaVersion,
             Guid.NewGuid(),
             clientInstanceId,
+            leaseId,
             expectedFloorRevision,
             logicalIds
                 .Select(logicalId => new SpaceElementCommandDto(
