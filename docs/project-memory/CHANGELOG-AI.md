@@ -4,7 +4,7 @@
 
 ## 2026-08-12：Space Studio v1.3 核心实现
 
-- 把低成本 3D 建模 Spec 修订到 v1.3 并新增 Scope Change RFC-003，明确外部 AI、Viewer 与 Supplier UAT 范围变化。
+- 以 v1.2 的完整详细正文为底稿增量修订低成本 3D 建模 Spec 到 v1.3，并新增 Scope Change RFC-003；保留原数据模型、状态机、接口、恢复与验收细节，同时合入外部 AI、Viewer 与 Supplier UAT 范围变化。
 - 将 `DesignUnderlayView` 收敛为独立 Space Studio 子主题四栏工作台，增加状态栏、任务清单、检查器域、窄屏只读、保存状态与恢复草稿。
 - 新增带数据库唯一槽和 rowversion 的 Floor 编辑租约、90 秒过期/30 秒续租、释放、强制接管专有权限与不可变审计；Design V1 命令批要求当前 `leaseId`。
 - 新增 CAD Parse Review Workspace API：成功 Job 的 PreviewSet 经过文件状态和 SHA 校验后，与当前编辑器快照组成审核空间；前端根据 route Job 自动轮询和加载。

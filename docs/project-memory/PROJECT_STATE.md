@@ -4,7 +4,7 @@
 
 ## Space Studio v1.3 核心实现（2026-08-12）
 
-- 低成本 3D 建模 Spec 已由 v1.2 修订为 v1.3，并提交 Scope Change RFC-003：外部 AI 独立 Beta、Viewer 性能门槛收紧、Supplier 不参加现场 UAT，`DesignUnderlayView` 成为单一页面权威。
+- 低成本 3D 建模 Spec 已在完整保留 v1.2 详细正文的基础上增量修订为 v1.3，并提交 Scope Change RFC-003：外部 AI 独立 Beta、Viewer 性能门槛收紧、Supplier 不参加现场 UAT，`DesignUnderlayView` 成为单一页面权威。
 - Space Studio 已形成冻结四栏壳层，包含 44px 标题栏、60px 命令栏、52+244px 左侧模式/上下文、主 2D/3D 画布、324px 属性/批量/问题检查器和 30px 状态栏；小于 1280px 自动只读。
 - 新增 Floor 编辑租约：数据库唯一槽、90 秒租期、30 秒前端续租、释放、过期重申请、带专用权限和原因的强制接管、不可变接管审计。编辑命令请求新增必填 `leaseId`，服务端在 Revision 与命令前失败关闭校验。
 - CAD Parse 成功后可由 Job/Source 路由自动读取并校验 PreviewSet SHA，服务端按当前编辑器快照生成审核空间，前端轮询阶段/耗时/失败并自动加载；本地 JSON 仅保留为高级回退。
