@@ -10,6 +10,8 @@ param(
 
     [string]$ApiImage = "cp6-api:lab-local",
     [string]$WebImage = "cp6-web:lab-local",
+    [string]$ReleaseVersion = "0.0.0-lab",
+    [string]$GitSha = "",
     [int]$SqlPort = 0,
     [string]$SqlHost = "host.docker.internal",
     [string]$DbVaultPath = (Join-Path `
@@ -30,6 +32,7 @@ $environmentSettings = @{
         Database = "CP6_DEV"
         MigratorAccount = "cp6_dev_migrator"
         RuntimeAccount = "cp6_dev_runtime"
+        RabbitMqUser = "cp6_dev"
         AspNetEnvironment = "Docker"
         ApiPort = 19991
         WebPort = 18080
@@ -40,6 +43,7 @@ $environmentSettings = @{
         Database = "CP6_UAT"
         MigratorAccount = "cp6_uat_migrator"
         RuntimeAccount = "cp6_uat_runtime"
+        RabbitMqUser = "cp6_uat"
         AspNetEnvironment = "Staging"
         ApiPort = 29991
         WebPort = 28080
@@ -50,11 +54,16 @@ $environmentSettings = @{
         Database = "CP6_PROD_LAB"
         MigratorAccount = "cp6_prod_lab_migrator"
         RuntimeAccount = "cp6_prod_lab_runtime"
+        RabbitMqUser = "cp6_prod_lab"
         AspNetEnvironment = "ProductionLab"
         ApiPort = 39991
         WebPort = 38080
         RabbitManagementPort = 36072
     }
+}
+
+if ($ReleaseVersion -notmatch '^\d+\.\d+\.\d+(?:-[0-9A-Za-z.-]+)?$') {
+    throw "ReleaseVersion must be a SemVer-compatible version."
 }
 
 function New-RandomSecret {
@@ -141,8 +150,107 @@ function Get-PlainSecret {
     return [Net.NetworkCredential]::new("", $SecureString).Password
 }
 
+function Get-RequiredPipelineSecret {
+    param([Parameter(Mandatory = $true)][string]$Name)
+
+    $value = [Environment]::GetEnvironmentVariable($Name, "Process")
+    if ([string]::IsNullOrWhiteSpace($value)) {
+        throw "Required deployment Secret '$Name' is missing."
+    }
+    return $value
+}
+
+function Test-PipelineSecretSource {
+    $names = @(
+        "CP6_DB_MIGRATOR_PASSWORD",
+        "CP6_DB_RUNTIME_PASSWORD",
+        "CP6_RABBITMQ_PASSWORD",
+        "CP6_JWT_SECRET"
+    )
+    $present = @($names | Where-Object {
+        -not [string]::IsNullOrWhiteSpace(
+            [Environment]::GetEnvironmentVariable($_, "Process"))
+    })
+    if ($present.Count -eq 0) {
+        return $false
+    }
+    if ($present.Count -ne $names.Count) {
+        $missing = @($names | Where-Object { $_ -notin $present })
+        throw "Deployment Secret set is incomplete. Missing: $($missing -join ', ')."
+    }
+    return $true
+}
+
+function New-PipelineCredentialRecord {
+    param(
+        [Parameter(Mandatory = $true)][string]$Account,
+        [Parameter(Mandatory = $true)][string]$PasswordEnvironmentVariable
+    )
+
+    $password = Get-RequiredPipelineSecret -Name $PasswordEnvironmentVariable
+    return [pscustomobject]@{
+        Account = $Account
+        Credential = [PSCredential]::new(
+            $Account,
+            (ConvertTo-SecureString $password -AsPlainText -Force))
+    }
+}
+
+function Get-LabRecord {
+    param([Parameter(Mandatory = $true)]$Settings)
+
+    if ($script:usePipelineSecrets) {
+        return [pscustomobject]@{
+            Environment = $Environment
+            RabbitMqUser = $Settings.RabbitMqUser
+            RabbitMqPassword = ConvertTo-SecureString `
+                (Get-RequiredPipelineSecret -Name "CP6_RABBITMQ_PASSWORD") `
+                -AsPlainText -Force
+            JwtSecret = ConvertTo-SecureString `
+                (Get-RequiredPipelineSecret -Name "CP6_JWT_SECRET") `
+                -AsPlainText -Force
+        }
+    }
+
+    $record = Import-Clixml -LiteralPath $LabVaultPath |
+        Where-Object { $_.Environment -eq $Environment } |
+        Select-Object -First 1
+    if ($null -eq $record) {
+        throw "Environment '$Environment' was not found in the encrypted lab vault."
+    }
+    return $record
+}
+
+function Get-ReleaseGitSha {
+    $repositorySha = (& git -C $repoRoot rev-parse HEAD).Trim()
+    if ($LASTEXITCODE -ne 0 -or $repositorySha -notmatch '^[A-Fa-f0-9]{40}$') {
+        throw "Unable to resolve the repository Git SHA."
+    }
+    if ([string]::IsNullOrWhiteSpace($GitSha)) {
+        return $repositorySha.ToLowerInvariant()
+    }
+    if ($GitSha -notmatch '^[A-Fa-f0-9]{40}$') {
+        throw "GitSha must be a complete 40-character commit SHA."
+    }
+    if (-not $repositorySha.Equals($GitSha, [StringComparison]::OrdinalIgnoreCase)) {
+        throw "GitSha '$GitSha' does not match checked-out commit '$repositorySha'."
+    }
+    return $GitSha.ToLowerInvariant()
+}
+
+$usePipelineSecrets = Test-PipelineSecretSource
+
 function Get-DbRecord {
-    param([Parameter(Mandatory = $true)][string]$Account)
+    param(
+        [Parameter(Mandatory = $true)][string]$Account,
+        [string]$PasswordEnvironmentVariable = ""
+    )
+
+    if ($script:usePipelineSecrets) {
+        return New-PipelineCredentialRecord `
+            -Account $Account `
+            -PasswordEnvironmentVariable $PasswordEnvironmentVariable
+    }
 
     if (-not (Test-Path -LiteralPath $DbVaultPath -PathType Leaf)) {
         throw "Encrypted SQL account note was not found at '$DbVaultPath'."
@@ -211,14 +319,13 @@ function Set-ComposeEnvironment {
         [Parameter(Mandatory = $true)][int]$Port
     )
 
-    $dbMigrator = Get-DbRecord -Account $Settings.MigratorAccount
-    $dbRuntime = Get-DbRecord -Account $Settings.RuntimeAccount
-    $labRecord = Import-Clixml -LiteralPath $LabVaultPath |
-        Where-Object { $_.Environment -eq $Environment } |
-        Select-Object -First 1
-    if ($null -eq $labRecord) {
-        throw "Environment '$Environment' was not found in the encrypted lab vault."
-    }
+    $dbMigrator = Get-DbRecord `
+        -Account $Settings.MigratorAccount `
+        -PasswordEnvironmentVariable "CP6_DB_MIGRATOR_PASSWORD"
+    $dbRuntime = Get-DbRecord `
+        -Account $Settings.RuntimeAccount `
+        -PasswordEnvironmentVariable "CP6_DB_RUNTIME_PASSWORD"
+    $labRecord = Get-LabRecord -Settings $Settings
 
     $migrationPath = Join-Path $TemporaryRoot "migration.env"
     $runtimePath = Join-Path $TemporaryRoot "runtime.env"
@@ -241,7 +348,7 @@ function Set-ComposeEnvironment {
         RABBITMQ_DEFAULT_PASS = $rabbitPassword
     }
 
-    $gitSha = (& git -C $repoRoot rev-parse HEAD).Trim()
+    $releaseGitSha = Get-ReleaseGitSha
     $env:CP6_INFRA_ENV_FILE = $infraPath
     $env:CP6_MIGRATION_ENV_FILE = $migrationPath
     $env:CP6_RUNTIME_ENV_FILE = $runtimePath
@@ -251,10 +358,16 @@ function Set-ComposeEnvironment {
     $env:CP6_API_PORT = [string]$Settings.ApiPort
     $env:CP6_WEB_PORT = [string]$Settings.WebPort
     $env:CP6_RABBITMQ_MANAGEMENT_PORT = [string]$Settings.RabbitManagementPort
+    $env:CP6_RABBITMQ_VOLUME_NAME = if ($script:usePipelineSecrets) {
+        "$($Settings.ProjectName)_rabbitmq-data-azure"
+    }
+    else {
+        "$($Settings.ProjectName)_rabbitmq-data"
+    }
     $env:CP6_KAFKA_TOPIC = "cp6.$Environment.operlog"
     $env:CP6_KAFKA_CONSUMER_GROUP = "cp6-$Environment-operlog-consumer"
-    $env:CP6_RELEASE_VERSION = "0.0.0-lab"
-    $env:CP6_GIT_SHA = $gitSha
+    $env:CP6_RELEASE_VERSION = $ReleaseVersion
+    $env:CP6_GIT_SHA = $releaseGitSha
     $env:CP6_API_DIGEST = Get-ImageDigestOrPlaceholder -Image $ApiImage
     $env:CP6_WEB_DIGEST = Get-ImageDigestOrPlaceholder -Image $WebImage
 }
@@ -278,10 +391,18 @@ function Assert-DockerDaemon {
 $settings = $environmentSettings[$Environment]
 
 if ($Action -eq "Initialize") {
-    Initialize-LabVault
+    if (-not $usePipelineSecrets) {
+        Initialize-LabVault
+    }
     $resolvedPort = Get-SqlPort
-    Get-DbRecord -Account $settings.MigratorAccount | Out-Null
-    Get-DbRecord -Account $settings.RuntimeAccount | Out-Null
+    Get-DbRecord `
+        -Account $settings.MigratorAccount `
+        -PasswordEnvironmentVariable "CP6_DB_MIGRATOR_PASSWORD" |
+        Out-Null
+    Get-DbRecord `
+        -Account $settings.RuntimeAccount `
+        -PasswordEnvironmentVariable "CP6_DB_RUNTIME_PASSWORD" |
+        Out-Null
     [pscustomobject]@{
         Environment = $Environment
         ProjectName = $settings.ProjectName
@@ -289,29 +410,31 @@ if ($Action -eq "Initialize") {
         SqlEndpoint = "$SqlHost,$resolvedPort"
         ApiUrl = "http://127.0.0.1:$($settings.ApiPort)"
         WebUrl = "http://127.0.0.1:$($settings.WebPort)"
-        Secrets = "DPAPI encrypted"
+        Secrets = if ($usePipelineSecrets) { "Process environment" } else { "DPAPI encrypted" }
     }
     exit 0
 }
 
 if ($Action -eq "Build") {
     Assert-DockerDaemon
-    $gitSha = (& git -C $repoRoot rev-parse HEAD).Trim()
+    $releaseGitSha = Get-ReleaseGitSha
     & docker build -f (Join-Path $repoRoot "CP6.WebApi\Dockerfile") `
-        --build-arg "RELEASE_VERSION=0.0.0-lab" `
-        --build-arg "GIT_SHA=$gitSha" `
+        --build-arg "RELEASE_VERSION=$ReleaseVersion" `
+        --build-arg "GIT_SHA=$releaseGitSha" `
         -t $ApiImage $repoRoot
     if ($LASTEXITCODE -ne 0) { throw "API image build failed." }
     & docker build -f (Join-Path $repoRoot "cp6.web\Dockerfile") `
-        --build-arg "RELEASE_VERSION=0.0.0-lab" `
-        --build-arg "GIT_SHA=$gitSha" `
+        --build-arg "RELEASE_VERSION=$ReleaseVersion" `
+        --build-arg "GIT_SHA=$releaseGitSha" `
         -t $WebImage $repoRoot
     if ($LASTEXITCODE -ne 0) { throw "Web image build failed." }
-    Write-Host "Built '$ApiImage' and '$WebImage' from $gitSha."
+    Write-Host "Built '$ApiImage' and '$WebImage' from $releaseGitSha."
     exit 0
 }
 
-Initialize-LabVault
+if (-not $usePipelineSecrets) {
+    Initialize-LabVault
+}
 $temporaryRoot = Join-Path `
     ([IO.Path]::GetTempPath()) `
     "cp6-lab-$([Guid]::NewGuid().ToString('N'))"

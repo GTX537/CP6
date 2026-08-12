@@ -6,6 +6,17 @@ $repoRoot = Split-Path -Parent $PSScriptRoot
 $temporaryRoot = Join-Path `
     ([IO.Path]::GetTempPath()) `
     "cp6-lab-contract-$([Guid]::NewGuid().ToString('N'))"
+$pipelineSecretNames = @(
+    "CP6_DB_MIGRATOR_PASSWORD",
+    "CP6_DB_RUNTIME_PASSWORD",
+    "CP6_RABBITMQ_PASSWORD",
+    "CP6_JWT_SECRET"
+)
+$originalPipelineSecrets = @{}
+foreach ($name in $pipelineSecretNames) {
+    $originalPipelineSecrets[$name] = [Environment]::GetEnvironmentVariable($name, "Process")
+    [Environment]::SetEnvironmentVariable($name, $null, "Process")
+}
 
 function New-FakeCredentialRecord {
     param(
@@ -70,6 +81,82 @@ try {
             $env:CP6_RABBITMQ_MANAGEMENT_PORT -ne $expected[$name].Rabbit) {
             throw "Port mapping is incorrect for '$name'."
         }
+        if ($env:CP6_RABBITMQ_VOLUME_NAME -ne "$($expected[$name].Project)_rabbitmq-data") {
+            throw "DPAPI mode RabbitMQ volume is incorrect for '$name'."
+        }
+    }
+
+    foreach ($name in $pipelineSecretNames) {
+        [Environment]::SetEnvironmentVariable($name, $null, "Process")
+    }
+    $partialProbeValue = "synthetic-$([Guid]::NewGuid().ToString('N'))"
+    [Environment]::SetEnvironmentVariable(
+        "CP6_DB_MIGRATOR_PASSWORD",
+        $partialProbeValue,
+        "Process")
+    $partialSetRejected = $false
+    try {
+        & (Join-Path $repoRoot "scripts\Invoke-Cp6LabEnvironment.ps1") `
+            -Environment dev `
+            -Action Config `
+            -SqlPort 1433 `
+            -DbVaultPath (Join-Path $temporaryRoot "missing-db.clixml") `
+            -LabVaultPath (Join-Path $temporaryRoot "missing-lab.clixml") 2>&1 |
+            Out-Null
+    }
+    catch {
+        $partialSetRejected = $true
+        if ($_ | Out-String | Select-String -SimpleMatch $partialProbeValue -Quiet) {
+            throw "Incomplete Pipeline Secret failure exposed a Secret value."
+        }
+    }
+    if (-not $partialSetRejected) {
+        throw "An incomplete Pipeline Secret set must be rejected."
+    }
+
+    foreach ($name in $pipelineSecretNames) {
+        [Environment]::SetEnvironmentVariable(
+            $name,
+            "synthetic-$([Guid]::NewGuid().ToString('N'))",
+            "Process")
+    }
+    $gitSha = (& git -C $repoRoot rev-parse HEAD).Trim()
+    $pipelineOutput = & (Join-Path $repoRoot "scripts\Invoke-Cp6LabEnvironment.ps1") `
+        -Environment dev `
+        -Action Config `
+        -SqlPort 1433 `
+        -DbVaultPath (Join-Path $temporaryRoot "missing-db.clixml") `
+        -LabVaultPath (Join-Path $temporaryRoot "missing-lab.clixml") `
+        -ReleaseVersion "0.0.0-dev.42" `
+        -GitSha $gitSha 2>&1
+    if ($LASTEXITCODE -ne 0) {
+        throw "Pipeline Secret mode Compose config failed: $($pipelineOutput | Out-String)"
+    }
+    if ($env:CP6_RABBITMQ_VOLUME_NAME -ne "cp6-dev_rabbitmq-data-azure") {
+        throw "Pipeline Secret mode must use the isolated Azure RabbitMQ volume."
+    }
+    if ($env:CP6_RELEASE_VERSION -ne "0.0.0-dev.42" -or $env:CP6_GIT_SHA -ne $gitSha) {
+        throw "Pipeline release identity was not preserved."
+    }
+
+    $mismatchedSha = if ($gitSha -eq ("0" * 40)) { "1" * 40 } else { "0" * 40 }
+    $mismatchedShaRejected = $false
+    try {
+        & (Join-Path $repoRoot "scripts\Invoke-Cp6LabEnvironment.ps1") `
+            -Environment dev `
+            -Action Config `
+            -SqlPort 1433 `
+            -DbVaultPath (Join-Path $temporaryRoot "missing-db.clixml") `
+            -LabVaultPath (Join-Path $temporaryRoot "missing-lab.clixml") `
+            -ReleaseVersion "0.0.0-dev.42" `
+            -GitSha $mismatchedSha 2>&1 |
+            Out-Null
+    }
+    catch {
+        $mismatchedShaRejected = $true
+    }
+    if (-not $mismatchedShaRejected) {
+        throw "A release Git SHA that differs from checkout must be rejected."
     }
 
     $composeText = [IO.File]::ReadAllText(
@@ -102,11 +189,17 @@ try {
     $labScript = [IO.File]::ReadAllText(
         (Join-Path $repoRoot "scripts\Invoke-Cp6LabEnvironment.ps1"),
         [Text.Encoding]::UTF8)
-    if ($labScript -notmatch 'RELEASE_VERSION=0\.0\.0-lab') {
-        throw "Lab image build does not pass a SemVer-compatible release version."
+    if ($labScript -notmatch '\[string\]\$ReleaseVersion = "0\.0\.0-lab"') {
+        throw "Lab script does not expose a SemVer-compatible release version parameter."
     }
-    if ($labScript -notmatch '\$env:CP6_RELEASE_VERSION = "0\.0\.0-lab"') {
-        throw "Lab environments do not promote one shared release version."
+    if ($labScript -notmatch '\$env:CP6_RELEASE_VERSION = \$ReleaseVersion') {
+        throw "Lab environments do not promote the requested release version."
+    }
+    if ($labScript -notmatch 'CP6_DB_MIGRATOR_PASSWORD' -or
+        $labScript -notmatch 'CP6_DB_RUNTIME_PASSWORD' -or
+        $labScript -notmatch 'CP6_RABBITMQ_PASSWORD' -or
+        $labScript -notmatch 'CP6_JWT_SECRET') {
+        throw "Lab script does not support the complete Pipeline Secret contract."
     }
     if ($labScript -notmatch '-t \$WebImage \$repoRoot') {
         throw "Lab Web image build does not use the repository root context."
@@ -130,6 +223,12 @@ try {
     Write-Host "CP6 lab environment contract test passed for DEV, UAT, and PROD-LAB."
 }
 finally {
+    foreach ($name in $pipelineSecretNames) {
+        [Environment]::SetEnvironmentVariable(
+            $name,
+            $originalPipelineSecrets[$name],
+            "Process")
+    }
     $resolvedTemporaryRoot = [IO.Path]::GetFullPath($temporaryRoot)
     $resolvedSystemTemp = [IO.Path]::GetFullPath([IO.Path]::GetTempPath())
     if ($resolvedTemporaryRoot.StartsWith(

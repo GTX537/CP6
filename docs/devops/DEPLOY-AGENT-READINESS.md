@@ -15,7 +15,7 @@
 | Agent 版本 | `5.277.0` |
 | Windows 服务身份 | `LAPTOP-3QQ44FJS\cp6_deploy_agent` |
 | Windows 服务启动 | Automatic（Delayed Start） |
-| Azure Pipeline | `GTX537.CP6 (3)`（Definition ID `3`；待重命名） |
+| Azure Pipeline | `CP6 Deploy Agent`（Definition ID `3`；可再补全为 `CP6 Deploy Agent Readiness`） |
 | 首次成功 Run | [`#20260811.1` / Build ID `10`](https://dev.azure.com/gaobubao/japanese/_build/results?buildId=10) |
 | Run 结果 | Succeeded |
 

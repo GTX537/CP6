@@ -2,6 +2,12 @@
 
 > 依据 Git log 汇总，不替代完整 Git 历史。重点记录影响接手判断的里程碑。
 
+## 2026-08-11：新增 Azure DEV 自动部署学习链
+
+- 新增 `azure-pipelines-dev.yml` 与静态合同：只响应 `GTX537.CP6/main` 成功 Run，绑定专用部署 Agent，按完整 Git SHA 构建一次本机镜像，并通过 `cp6-dev` deployment job 部署、验证和发布证据。
+- `Invoke-Cp6LabEnvironment.ps1` 支持从 Azure task 进程环境安全接收四个 Secret，参数化 ReleaseVersion/GitSha，保留原 DPAPI 路径，并隔离 Azure RabbitMQ volume。
+- 新增 `DEV-AUTOMATIC-DEPLOYMENT.md`，记录外部 Pipeline 创建、最小资源授权、首次运行与验收步骤。Variable Group 已由截图确认，首次实际 Azure deployment 尚未完成，且该学习链不提升为 UAT/生产发布权威。
+
 ## 2026-08-11：CRM 产品框架与三仓可执行 Spec
 
 - 从 `main == origin/main == f149c75e` 的干净独立 worktree 复核 CRM Foundation 和 DevOps/R2 约束；聚焦 CRM 测试 16/16 通过。确认 Foundation 只有 20 表、状态机、EF 迁移和菜单权限种子，没有 CRM API、应用服务或前端。

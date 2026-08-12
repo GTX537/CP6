@@ -153,6 +153,7 @@ services:
 volumes:
   redis-data:
   rabbitmq-data:
+    name: ${CP6_RABBITMQ_VOLUME_NAME:?Set CP6_RABBITMQ_VOLUME_NAME}
   kafka-data:
   api-data:
   api-i18n:

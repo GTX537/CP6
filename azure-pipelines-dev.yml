@@ -1,0 +1,262 @@
+name: dev-$(Date:yyyyMMdd).$(Rev:r)
+
+trigger: none
+
+pr: none
+
+resources:
+  pipelines:
+  - pipeline: cp6ci
+    source: GTX537.CP6
+    trigger:
+      branches:
+        include:
+        - refs/heads/main
+
+pool:
+  name: 'CP6-Deploy'
+  demands:
+    - Agent.Name -equals LAPTOP-3QQ44FJS
+
+stages:
+- stage: BuildCandidate
+  displayName: 'Build DEV candidate locally'
+
+  jobs:
+  - job: BuildLocalImages
+    displayName: 'Build API and Web images from CI commit'
+    timeoutInMinutes: 60
+
+    workspace:
+      clean: all
+
+    steps:
+    - checkout: self
+      clean: true
+      fetchDepth: 0
+
+    - task: PowerShell@2
+      displayName: 'Verify CI source and deployment identity'
+      env:
+        CP6_CI_SOURCE_BRANCH: '$(resources.pipeline.cp6ci.sourceBranch)'
+        CP6_CI_SOURCE_COMMIT: '$(resources.pipeline.cp6ci.sourceCommit)'
+      inputs:
+        targetType: 'inline'
+        pwsh: false
+        script: |
+          $ErrorActionPreference = 'Stop'
+
+          if ($env:CP6_CI_SOURCE_BRANCH -ne 'refs/heads/main') {
+              throw "DEV deployment requires a successful main CI run; received '$($env:CP6_CI_SOURCE_BRANCH)'."
+          }
+          if ($env:CP6_CI_SOURCE_COMMIT -notmatch '^[0-9a-fA-F]{40}$') {
+              throw 'The CI pipeline did not provide a complete source commit.'
+          }
+
+          $checkedOutCommit = (& git rev-parse HEAD).Trim()
+          if ($LASTEXITCODE -ne 0 -or
+              -not $checkedOutCommit.Equals(
+                  $env:CP6_CI_SOURCE_COMMIT,
+                  [StringComparison]::OrdinalIgnoreCase
+              )) {
+              throw "Checked-out commit '$checkedOutCommit' does not match CI commit '$($env:CP6_CI_SOURCE_COMMIT)'."
+          }
+
+          $expectedIdentity = 'LAPTOP-3QQ44FJS\cp6_deploy_agent'
+          $actualIdentity = [Security.Principal.WindowsIdentity]::GetCurrent().Name
+          if (-not $actualIdentity.Equals(
+              $expectedIdentity,
+              [StringComparison]::OrdinalIgnoreCase
+          )) {
+              throw "Expected '$expectedIdentity', but the job is running as '$actualIdentity'."
+          }
+
+          Write-Host "Verified main CI source commit: $checkedOutCommit"
+          Write-Host "Verified deployment identity: $actualIdentity"
+
+    - task: PowerShell@2
+      displayName: 'Run DEV deployment contract tests'
+      inputs:
+        targetType: 'inline'
+        pwsh: false
+        script: |
+          $ErrorActionPreference = 'Stop'
+          & .\scripts\test-cp6-lab-environment-contract.ps1
+          if ($LASTEXITCODE -ne 0) { throw 'CP6 lab contract test failed.' }
+          & .\scripts\test-dev-cd-contract.ps1
+          if ($LASTEXITCODE -ne 0) { throw 'CP6 DEV CD contract test failed.' }
+
+    - task: PowerShell@2
+      displayName: 'Build commit-addressed API and Web images'
+      env:
+        CP6_CI_RUN_ID: '$(resources.pipeline.cp6ci.runID)'
+        CP6_CI_SOURCE_COMMIT: '$(resources.pipeline.cp6ci.sourceCommit)'
+        DOCKER_HOST: 'npipe:////./pipe/dockerDesktopLinuxEngine'
+      inputs:
+        targetType: 'inline'
+        pwsh: false
+        script: |
+          $ErrorActionPreference = 'Stop'
+          $releaseVersion = "0.0.0-dev.$($env:CP6_CI_RUN_ID)"
+          $apiImage = "cp6-api:dev-$($env:CP6_CI_SOURCE_COMMIT)"
+          $webImage = "cp6-web:dev-$($env:CP6_CI_SOURCE_COMMIT)"
+
+          & .\scripts\Invoke-Cp6LabEnvironment.ps1 `
+              -Environment dev `
+              -Action Build `
+              -ApiImage $apiImage `
+              -WebImage $webImage `
+              -ReleaseVersion $releaseVersion `
+              -GitSha $env:CP6_CI_SOURCE_COMMIT
+          if ($LASTEXITCODE -ne 0) { throw 'DEV image build failed.' }
+
+          Write-Host "Built DEV candidate version $releaseVersion from $($env:CP6_CI_SOURCE_COMMIT)."
+
+- stage: DeployDev
+  displayName: 'Deploy CP6 DEV'
+  dependsOn: BuildCandidate
+  condition: succeeded()
+
+  jobs:
+  - deployment: DeployDev
+    displayName: 'Deploy and verify cp6-dev'
+    timeoutInMinutes: 30
+    environment:
+      name: cp6-dev
+    variables:
+    - group: cp6-dev-secrets
+
+    strategy:
+      runOnce:
+        deploy:
+          steps:
+          - checkout: self
+            clean: true
+            fetchDepth: 0
+
+          - task: PowerShell@2
+            displayName: 'Deploy database, API, and Web'
+            env:
+              CP6_CI_RUN_ID: '$(resources.pipeline.cp6ci.runID)'
+              CP6_CI_SOURCE_BRANCH: '$(resources.pipeline.cp6ci.sourceBranch)'
+              CP6_CI_SOURCE_COMMIT: '$(resources.pipeline.cp6ci.sourceCommit)'
+              CP6_DB_MIGRATOR_PASSWORD: '$(CP6_DEV_DB_MIGRATOR_PASSWORD)'
+              CP6_DB_RUNTIME_PASSWORD: '$(CP6_DEV_DB_RUNTIME_PASSWORD)'
+              CP6_RABBITMQ_PASSWORD: '$(CP6_DEV_RABBITMQ_PASSWORD)'
+              CP6_JWT_SECRET: '$(CP6_DEV_JWT_SECRET)'
+              DOCKER_HOST: 'npipe:////./pipe/dockerDesktopLinuxEngine'
+            inputs:
+              targetType: 'inline'
+              pwsh: false
+              script: |
+                $ErrorActionPreference = 'Stop'
+
+                if ($env:CP6_CI_SOURCE_BRANCH -ne 'refs/heads/main') {
+                    throw 'Only a successful main CI run may deploy to cp6-dev.'
+                }
+                $checkedOutCommit = (& git rev-parse HEAD).Trim()
+                if ($LASTEXITCODE -ne 0 -or
+                    -not $checkedOutCommit.Equals(
+                        $env:CP6_CI_SOURCE_COMMIT,
+                        [StringComparison]::OrdinalIgnoreCase
+                    )) {
+                    throw "Deployment checkout '$checkedOutCommit' does not match CI commit '$($env:CP6_CI_SOURCE_COMMIT)'."
+                }
+
+                $releaseVersion = "0.0.0-dev.$($env:CP6_CI_RUN_ID)"
+                $apiImage = "cp6-api:dev-$($env:CP6_CI_SOURCE_COMMIT)"
+                $webImage = "cp6-web:dev-$($env:CP6_CI_SOURCE_COMMIT)"
+
+                & .\scripts\Invoke-Cp6LabEnvironment.ps1 `
+                    -Environment dev `
+                    -Action Deploy `
+                    -ApiImage $apiImage `
+                    -WebImage $webImage `
+                    -ReleaseVersion $releaseVersion `
+                    -GitSha $env:CP6_CI_SOURCE_COMMIT
+                if ($LASTEXITCODE -ne 0) { throw 'CP6 DEV deployment failed.' }
+
+          - task: PowerShell@2
+            displayName: 'Verify release identity and write evidence'
+            env:
+              CP6_CI_PIPELINE_NAME: '$(resources.pipeline.cp6ci.pipelineName)'
+              CP6_CI_RUN_ID: '$(resources.pipeline.cp6ci.runID)'
+              CP6_CI_RUN_NAME: '$(resources.pipeline.cp6ci.runName)'
+              CP6_CI_SOURCE_BRANCH: '$(resources.pipeline.cp6ci.sourceBranch)'
+              CP6_CI_SOURCE_COMMIT: '$(resources.pipeline.cp6ci.sourceCommit)'
+              CP6_CD_RUN_ID: '$(Build.BuildId)'
+              CP6_CD_RUN_NAME: '$(Build.BuildNumber)'
+              CP6_EVIDENCE_DIRECTORY: '$(Pipeline.Workspace)\cp6-dev-evidence'
+              DOCKER_HOST: 'npipe:////./pipe/dockerDesktopLinuxEngine'
+            inputs:
+              targetType: 'inline'
+              pwsh: false
+              script: |
+                $ErrorActionPreference = 'Stop'
+                $releaseVersion = "0.0.0-dev.$($env:CP6_CI_RUN_ID)"
+                $apiImage = "cp6-api:dev-$($env:CP6_CI_SOURCE_COMMIT)"
+                $webImage = "cp6-web:dev-$($env:CP6_CI_SOURCE_COMMIT)"
+
+                $live = Invoke-RestMethod -Uri 'http://127.0.0.1:19991/health/live'
+                $ready = Invoke-RestMethod -Uri 'http://127.0.0.1:19991/health/ready'
+                $apiRelease = Invoke-RestMethod -Uri 'http://127.0.0.1:19991/health/release'
+                $webRelease = Invoke-RestMethod -Uri 'http://127.0.0.1:18080/release.json'
+
+                if ($live.status -ne 'Healthy' -or $ready.status -ne 'Healthy') {
+                    throw "DEV health verification failed: live=$($live.status), ready=$($ready.status)."
+                }
+                if ($apiRelease.version -ne $releaseVersion -or
+                    $webRelease.version -ne $releaseVersion -or
+                    $apiRelease.gitSha -ne $env:CP6_CI_SOURCE_COMMIT -or
+                    $webRelease.gitSha -ne $env:CP6_CI_SOURCE_COMMIT) {
+                    throw 'API/Web release identity does not match the promoted CI commit.'
+                }
+
+                $apiImageId = (& docker image inspect --format '{{.Id}}' $apiImage).Trim()
+                if ($LASTEXITCODE -ne 0) { throw "Cannot inspect '$apiImage'." }
+                $webImageId = (& docker image inspect --format '{{.Id}}' $webImage).Trim()
+                if ($LASTEXITCODE -ne 0) { throw "Cannot inspect '$webImage'." }
+
+                New-Item -ItemType Directory -Path $env:CP6_EVIDENCE_DIRECTORY -Force | Out-Null
+                [ordered]@{
+                    schemaVersion = 1
+                    environment = 'cp6-dev'
+                    deployedAtUtc = [DateTime]::UtcNow.ToString('o')
+                    releaseVersion = $releaseVersion
+                    sourceBranch = $env:CP6_CI_SOURCE_BRANCH
+                    gitSha = $env:CP6_CI_SOURCE_COMMIT
+                    ci = [ordered]@{
+                        pipeline = $env:CP6_CI_PIPELINE_NAME
+                        runId = $env:CP6_CI_RUN_ID
+                        runName = $env:CP6_CI_RUN_NAME
+                    }
+                    cd = [ordered]@{
+                        runId = $env:CP6_CD_RUN_ID
+                        runName = $env:CP6_CD_RUN_NAME
+                    }
+                    images = [ordered]@{
+                        api = [ordered]@{ tag = $apiImage; id = $apiImageId }
+                        web = [ordered]@{ tag = $webImage; id = $webImageId }
+                    }
+                    verification = [ordered]@{
+                        live = $live.status
+                        ready = $ready.status
+                        apiVersion = $apiRelease.version
+                        apiGitSha = $apiRelease.gitSha
+                        webVersion = $webRelease.version
+                        webGitSha = $webRelease.gitSha
+                        latestMigration = $apiRelease.latestMigration
+                    }
+                } | ConvertTo-Json -Depth 8 |
+                    Set-Content `
+                        -LiteralPath (Join-Path $env:CP6_EVIDENCE_DIRECTORY 'deployment.json') `
+                        -Encoding utf8
+
+                Write-Host "Verified CP6 DEV version $releaseVersion at $($env:CP6_CI_SOURCE_COMMIT)."
+
+          - task: PublishPipelineArtifact@1
+            displayName: 'Publish DEV deployment evidence'
+            inputs:
+              targetPath: '$(Pipeline.Workspace)\cp6-dev-evidence'
+              artifact: 'cp6-dev-evidence'
+              publishLocation: 'pipeline'

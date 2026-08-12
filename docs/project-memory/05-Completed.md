@@ -1,5 +1,12 @@
 # 已完成能力与近期里程碑
 
+## 2026-08-11 Azure DEV 自动部署仓库配置
+
+- 新增 `azure-pipelines-dev.yml`：以 `GTX537.CP6` 的成功 `main` Run 为唯一 completion resource，绑定 `CP6-Deploy/LAPTOP-3QQ44FJS`，核对服务身份、分支和完整 Git SHA 后构建一次本机 API/Web 镜像。
+- `DeployDev` deployment job 绑定 `cp6-dev`，只在部署任务内映射 `cp6-dev-secrets` 的四个锁定 Secret；先运行 db-init，再启动 API/Web，最后校验 live/ready/release identity 并发布不含 Secret 的 `cp6-dev-evidence`。
+- Lab 脚本新增 Azure 进程环境 Secret 与参数化 ReleaseVersion/GitSha，同时保留原 DPAPI 人工模式；Azure RabbitMQ 使用独立 volume，避免已有人工 Lab 密码状态冲突。PowerShell/YAML 解析、Lab/DEV CD 合同和 Secret/SHA 失败关闭检查已通过；既有 DEV/UAT/PROD-LAB 仍为 live/ready Healthy 且 API/Web 身份一致。
+- 本里程碑只表示仓库能力配置完成。外部 `CP6 DEV CD` 创建、三个资源的最小 Pipeline 授权和首次实际 Run 尚未完成；该本机学习链不构成 Registry、UAT/PROD-LAB 或生产发布能力。
+
 ## 2026-08-11 CRM 产品框架与可执行 Spec
 
 - 在 `main == origin/main == f149c75e` 的独立任务 worktree 完成 Foundation 事实核对；CRM 聚焦测试 16/16 通过，并明确当前实现仅含模型、状态机、迁移和菜单权限种子，不把它误记为 API、Next.js 或端到端能力。
