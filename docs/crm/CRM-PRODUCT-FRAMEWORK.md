@@ -1,10 +1,12 @@
 # CP6 CRM 产品框架
 
-状态：V1 产品范围冻结，等待工程 Spec 审阅后实施
+状态：Approved implementation-planning baseline；不得据此跳过实施、验收或生产审批
 
-最后核验：2026-08-11
+最后核验：2026-08-12（`main == origin/main == c68d9b53b4cf3adb5925b8258c36969fdebda753`）
 
 配套工程规格：[CRM-V1-EXECUTABLE-SPEC.md](./CRM-V1-EXECUTABLE-SPEC.md)
+
+审阅证据：工程/设计审阅计划 `C8574D3...01A08`、QA 测试计划 `1A6995...F281`、采用优先产品设计 `C60FA7...2DF7`。完整 SHA-256 和受控工件位置记录在本任务的项目记忆中；审批结论冻结产品和实施规划，不代表任何业务代码、仓库、云资源、迁移或部署已经完成。
 
 ## 1. 产品定位
 
@@ -38,6 +40,8 @@ CP6 现有 ERP/MES/WMS 负责报价、订单、生产、库存和履约。CRM �
 5. 公开提交、转换、合并和 ERP 请求必须幂等；消息至少一次投递不等于业务至少执行一次。
 6. 来源、活动、合并和阶段历史只追加或显式更正，不通过覆盖历史制造“干净漏斗”。
 7. V1 使用固定状态机和受控内容区块，先保证可审计闭环，不提供任意流程或任意 HTML。
+8. 部署不是成功口径。Pilot、Lead Adoption 和 Full Journey Adoption 均为不可豁免的产品门禁；采用证据未通过时 CRM V1 Epic 保持 blocked。
+9. 可用性与正确性优先于功能数量。Lead Pilot 先验证分配、首次响应和两租户隔离，再解锁完整交易旅程、CMS、迁移候选和生产发布。
 
 ## 2. 用户与角色
 
@@ -126,10 +130,11 @@ flowchart LR
 
 1. New Lead 进入配置的 Intake 队列。
 2. 协调员或分配策略设置唯一负责人；其他用户只能作为协作人。
-3. 默认首次响应 SLA 是 4 个自然小时，从 Lead 创建时间开始计算。
+3. 默认首次响应 SLA 是 4 个租户业务小时，由版本化 `BusinessCalendar` 计算。夜间、周末和假日创建的 Lead 不从 Eligible Lead 中排除；计时从创建时刻后的第一个业务时刻开始，跨非工作时段顺延。
 4. 第一条客户面对型 Call、Email、Meeting 或 CustomerMessage 活动设置 `FirstResponseAt`；Note 和 System 不算响应。
 5. 距 SLA 60 分钟时预警，超时后产生可查询的 breach 指标；通知失败不能回滚业务活动。
 6. 移交负责人必须记录原负责人、新负责人、操作者、原因和时间。
+7. V1 不提供任意暂停、重启或人工改写 SLA 的 API。隔离、确定性合并和测试数据通过明确规则排除；其余生产 Lead 均保留在测量口径中。
 
 ### 4.4 重复候选与合并
 
@@ -163,6 +168,7 @@ flowchart LR
 3. 发布者执行发布，系统原子更新 PublishedRevision、记录审计并发出 `site.published` 事件。
 4. Next.js 消费事件并按站点/页面缓存标签重验证。
 5. 回滚是把一个历史修订重新发布成新的发布动作，不篡改旧修订。
+6. CMS 只允许固定页面模板、命名槽位、批准区块和有限变体；V1 不允许任意拖拽排序、任意 HTML 或脚本。
 
 ### 4.8 隐私保留旅程
 
@@ -186,6 +192,7 @@ flowchart LR
 - 漏斗、来源、SLA 和集成状态报表。
 - 20 张旧表迁移、迁移演练、30 分钟切换窗口和前向修复策略。
 - SLO、威胁模型、可观测性、测试矩阵、三仓 System Release Manifest 和生产门禁。
+- Observation、Pilot UAT、Lead Adoption 和 Full Journey Adoption 的真实采用证据与不可豁免门禁。
 
 ### 5.2 VNext
 
@@ -223,13 +230,20 @@ flowchart LR
 
 菜单根路径保持 Foundation 已种入的五个路由。详情页是子路由，不新增一级菜单。
 
+Lead Pilot 固定采用已批准的 C 分栏工作台：宽屏左侧是按 SLA 风险排序的 Lead 队列，右侧只承载负责人分配和首次客户响应；复杂历史、查重、转换和窄屏操作进入 `/crm/leads/[leadId]`。Pilot 不以 Dashboard、看板或全量 CRM 菜单替代这一主任务面。
+
 ### 6.2 公开站点路由
 
 - 默认语言首页：`/site/{siteKey}`。
 - 默认语言页面：`/site/{siteKey}/{slug}`。
 - 非默认语言：`/site/{siteKey}/{locale}/{slug?}`。
+- 提交回执：`/site/{siteKey}/receipt/{receiptId}`。高熵查询凭据只能保存在有界、加密、`Secure`/`HttpOnly`/`SameSite=Lax` 的 `__Host-cp6-receipts` Cookie 中，不得进入 URL、HTML、浏览器 JavaScript、日志或分析事件。
 - 公开表单提交：页面内由 Next.js Server Action 或 Route Handler 调用 CRM Public API；浏览器不直连内部服务地址。
 - 未发布、禁用、过期或未知路由均返回 404，不泄露租户或目标 ID。
+
+公开首页顺序固定为：价值主张与“提交需求” → 信任证据 → 核心能力 → 行业场景 → 合作流程 → 案例/资质 → 最终 CTA → 页脚。主 CTA 使用“提交需求”，次 CTA 使用“查看能力”；不得暗示即时自动报价。
+
+视觉方向固定为“工程精度 + 材料质感”：暖纸色背景、深墨色正文、CP6 青绿作为单一行动色、真实材料摄影和克制刀模线。禁止通用 SaaS 三卡片首屏、紫蓝渐变、轮播和装饰性大圆角。CRM09 开始前，首页、能力/行业页、联系/回执页的桌面、平板和移动高保真稿必须由 Product/UX Owner 批准。
 
 ### 6.3 统一页面状态
 
@@ -239,7 +253,7 @@ flowchart LR
 | Empty | 面向任务的空态和合法下一步 | 只有具备动作权限时显示 CTA |
 | Forbidden | 403 页面或字段遮罩 | 不通过 404/403 差异泄露跨租户资源 |
 | Not found | 资源不存在或不可见 | 管理 API 对跨租户 ID 返回同一 404 语义 |
-| Conflict | 数据已被他人修改 | 展示差异提示，重新加载；不自动覆盖 |
+| Conflict | 数据已被他人修改 | 412 保留未提交文本，刷新服务端快照并显示差异；用户显式确认后才能重试，绝不自动覆盖 |
 | Integration pending | 订单请求处理中 | 轮询或事件刷新，禁用重复提交按钮 |
 | Integration failed | 稳定错误码、可重试条件和支持引用号 | 不显示连接串、堆栈或原始 ERP 负载 |
 | Partial report | 报表数据有延迟 | 显示数据截至时间和事件积压状态 |
@@ -247,11 +261,13 @@ flowchart LR
 ### 6.4 交互规则
 
 - 列表使用服务端筛选和游标分页；默认 20 条，最大 100 条。
-- 所有修改表单使用 ETag/`If-Match`，409/412 时不得静默覆盖。
+- 资源修改使用 ETag/`If-Match`；创建 Lead 不使用 `If-Match`。409/412 时不得静默覆盖，412 必须保留未提交文本并提供服务端差异。
 - 无 `view-pii` 时姓名保留首字符，其余遮罩；邮箱和电话只显示不可反推出原值的局部掩码。
 - 危险动作要求原因：Disqualify、Merge、Lost、负责人移交、发布回滚和失败补偿。
-- 键盘可操作、焦点可见、表单错误与字段关联；目标 WCAG 2.1 AA。
+- 键盘可操作、焦点可见、表单错误与字段关联；正文至少 16 px、触控目标至少 44 px，目标 WCAG 2.2 AA。
 - 管理台至少支持 `zh-CN`、`ja-JP`、`en-US`；站点语言由各 Site 的 EnabledLocales 决定。
+- 移动端“提交需求”使用独立全屏表单，不把桌面侧栏或浮层机械压缩到窄屏。
+- CRM 仓在实现 UI 前建立 `DESIGN.md`：继承 CP6 青绿色义但重建可访问 Token；公开站点使用 Source Sans 3 / Source Han Sans SC/JP，展示衬线使用 Newsreader / Source Han Serif，管理台使用 IBM Plex Sans。字体自托管、按语言子集，首屏字体预算不超过 180 KiB；间距基线 4 px，公开站点圆角只允许 0/4/8 px。
 
 ### 6.5 缓存规则
 
@@ -259,6 +275,12 @@ flowchart LR
 - 已发布站点页面：ISR，默认 5 分钟兜底；发布事件触发按 `tenant:site:page:locale` 标签重验证。
 - 表单定义可短缓存 60 秒；提交端点永不缓存。
 - 预览和所有带令牌页面 `private, no-store`。
+- 回执页面和查询响应 `private, no-store`、`no-referrer`、`noindex`；Cookie 缺失、过期、篡改或与 receiptId 不匹配时统一显示中性 Not Found，不区分是否存在内部提交。
+
+### 6.6 回执公开状态
+
+- PublicSubmission 完成持久事务后才能显示回执。Accepted、Processing 和 Quarantined 对外只映射为“已收到/审核中”。
+- 回执永不显示内部风险、隔离原因、LeadId、负责人、租户、拒绝原因或 ERP 状态；无可用查询凭据时不通过页面内容、状态码差异或分析事件泄露存在性。
 
 ## 7. KPI 与上线口径
 
@@ -266,7 +288,7 @@ flowchart LR
 
 | KPI | 公式 | V1 说明 |
 | --- | --- | --- |
-| 首次响应达标率 | `FirstResponseAt <= SlaDueAt 的 Lead / 观察窗口内已到期或已响应的 SLA 适用 Lead` | 默认 SLA 4 自然小时；Merged、Quarantined 和窗口结束时尚未到期且未响应的 Lead 排除，未响应且已超时的 Lead 必须留在分母；按来源/团队分组 |
+| 首次响应达标率 | `FirstResponseAt <= SlaDueAt 的 Lead / 观察窗口内已到期或已响应的 SLA 适用 Lead` | 默认 4 个租户业务小时；测试、Quarantined、Merged 和窗口结束时尚未到期且未响应的 Lead 排除，夜间/周末 Lead 不排除，未响应且已超时的 Lead 必须留在分母；按来源/团队分组 |
 | Lead 合格率 | `Qualified Lead / 非隔离且非合并 Lead` | Merged 不重复计入分母 |
 | Lead 转换率 | `Converted Lead / Qualified Lead` | 以转换发生时间分桶 |
 | 商机赢单率 | `Won / (Won + Lost)` | Accepted 不计入已关闭 |
@@ -275,7 +297,7 @@ flowchart LR
 | 公开提交接受率 | `ConvertedToLead / 总有效提交` | Quarantined 单列，不当成系统错误 |
 | ERP 流程成功率 | `Succeeded / 终态 IntegrationProcess` | 按操作类型和错误码分组 |
 
-在没有真实使用基线前，不编造增长百分比。上线后首 30 天建立基线，再由产品 Owner 为各租户设置业务目标。
+在没有真实使用基线前，不编造增长百分比。Observation Gate 在开发前建立脱敏基线；生产切换后的 Lead Adoption 与 Full Journey Gate 直接测量真实使用和业务交易，再由 Product Owner 为各租户设置后续业务目标。
 
 ### 7.2 技术 SLO
 
@@ -298,6 +320,23 @@ flowchart LR
 5. 所有必需测试与发布门禁真实通过；不得用跳过、合成成功或手工口头确认代替。
 6. CRM 菜单只在对应 API、页面、权限和 E2E 全部通过后启用。
 7. 生产维护窗口不超过 30 分钟，并保存迁移、部署、审批、健康和发布身份证据。
+8. Pilot UAT 达到本节采用门禁，且没有开放 P0/P1。
+9. CRM V1 的唯一 Registry/候选权威为 GitHub R2/GHCR；Azure 只能执行 CI、DEV 学习链、影子验证或消费相同 digest，不得为同一版本重建候选。
+
+技术 Go-Live 只授权单次生产切换，不关闭 Epic。Lead Adoption Gate 与 Full Journey Gate 都通过后，才可称为 CRM V1 产品完成。
+
+### 7.4 采用门禁
+
+| 门禁 | 最低样本/时长 | 硬通过条件 |
+| --- | --- | --- |
+| Observation Gate | 3 人/15 条 Lead 定性观察；8 名用户、2 个部门、100 个事件、10 个工作日脱敏定量基线 | Sponsor、Product Owner、Sales Operations Owner、cohort、任务 manifest 和基线证据均实名冻结 |
+| Pilot UAT | 8–12 名销售、2 个部门、至少 2 名主管；固定 manifest 至少 120 个任务且每人至少 10 个 | 正常路径无引导完成率 ≥90%，成功任务 median ≤60 秒、p90 ≤120 秒；预期拒绝与恢复结果各 100%；正确性、租户隔离和 PII 隔离 100%；0 开放 P0/P1 或主流程 P2 |
+| Lead Adoption Gate | 生产切换后至少 10 个工作日且至少 200 条 Eligible Lead | Website/Manual 100% 进入新 CRM且旧写为 0；≥90% 30 分钟内分配 Owner 或进入可见异常队列；≥85% 在 4 个业务小时内首次响应；各部门 Eligible Active User-Day 的真实业务动作率均 ≥80%；0 P0/P1 数据、安全或集成事故 |
+| Full Journey Gate | 最多 30 个自然日；至少 20 个 Conversion 和 10 个 OrderRequest | 所有自然发生的 Qualified→Converted、Accepted→OrderRequest 在 CRM 完成；ERP 零丢失/重复订单，失败/重试/冲突有证据，Dashboard/归因/漏斗与 canonical SQL 100% 对账 |
+
+Pilot manifest 至少包含 Website/Manual 各 20、重复候选 15、跨部门移交 15、无 Owner 10、并发冲突 10、跨非工作时段 SLA 10 个任务。`Eligible Active User-Day` 是“启用且需要 CRM 完成职责的 cohort 用户，在当天存在其权限范围内可行动工作”的用户日。只允许预先批准的休假、账号停用、正式入职/培训期和无可行动工作排除；临时声称培训不足、性能慢、用户绕过系统或数据错误不是排除理由。
+
+所有采用阈值不可豁免。门禁失败后系统继续运行、旧系统保持只读，只允许修复并冻结新范围/候选；最多两个固定版本整改窗口，期间 CRM V1 Epic 保持 blocked。第二次仍失败时必须由 Sponsor 重新立项或终止，不得降低阈值追认通过。
 
 ## 8. 产品验收场景
 
@@ -310,3 +349,9 @@ flowchart LR
 7. 发布页面后，公开站点在 60 秒内显示新修订；回滚后旧修订以新发布动作恢复。
 8. 到期匿名化后，业务指标仍可复算，但原姓名、邮箱、电话、来源 URL、IP 哈希和 User-Agent 不可恢复。
 9. 切换后首次 CRM 写入之前可停止并恢复旧入口；首次新库写入之后只允许前向修复，不做覆盖式回切。
+10. `POST /leads` 缺少 `Idempotency-Key` 返回 428；同 key/同规范化载荷重放返回原资源，同 key/不同载荷返回 409，且不要求 `If-Match`。
+11. Assignment 和 Activity 同时要求 `If-Match` 与 `Idempotency-Key`；缺失返回 428、RowVersion 过期返回 412，任何验证或冲突都零写入。
+12. Merge 同时携带 source/target RowVersion；任一过期整笔 412，源/目标、活动、审计和 Outbox 都不产生部分写入。
+13. 回执查询凭据只存在 `__Host-cp6-receipts` 加密 Cookie；过期、篡改、缺失和错配显示相同中性状态，页面、日志和分析均找不到 token。
+14. 首页/能力/行业/联系/回执在桌面、平板、移动端满足批准高保真稿、受控 CMS Schema、WCAG 2.2 AA、16 px 正文和 44 px 触控目标。
+15. Pilot、Lead Adoption 和 Full Journey 三套固定 manifest 使用真实 cohort 与生产/生产等价数据通过；失败样本不能被事后排除或改写口径。

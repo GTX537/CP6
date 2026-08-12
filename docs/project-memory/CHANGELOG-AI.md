@@ -2,6 +2,14 @@
 
 > 依据 Git log 汇总，不替代完整 Git 历史。重点记录影响接手判断的里程碑。
 
+## 2026-08-12：CRM V1 规范批准与采用门禁
+
+- 从 `main/origin/main@c68d9b53` 的独立任务分支修订 CRM 产品框架、可执行 Spec 和入口，将工程、QA、采用/设计审阅结论固化为 Approved implementation-planning baseline；未修改旧根工作区或业务代码。
+- 新增可执行的 Lead 创建/Assignment/Activity/Merge 幂等和并发合同、428/409/412/422 与零部分写入、412 保文/差异/显式重试、回执加密有界 HttpOnly Cookie、受控 CMS、高保真设计前置与 WCAG 2.2 AA。
+- 固化真实 C03 handler + 隔离 ERP SQL UAT、Pilot 与 CRM12 两层性能配置、Observation/Pilot/Lead/Full Journey 不可豁免采用 manifest，以及 GHCR/GitHub R2 唯一候选权威；Azure 仅作非权威验证或消费相同 digest。
+- 该变更只关闭规范 T1。M0/R00 ADR、named Owner/cohort/Observation、三仓实施、迁移、候选和生产发布仍为待办。
+- 验证：三份外部审阅工件 hash 与记录一致；CRM Foundation 聚焦测试 16/16 通过；Markdown 相对链接和差异格式门禁通过。
+
 ## 2026-08-11：新增 Azure DEV 自动部署学习链
 
 - 新增 `azure-pipelines-dev.yml` 与静态合同：只响应 `GTX537.CP6/main` 成功 Run，绑定专用部署 Agent，按完整 Git SHA 构建一次本机镜像，并通过 `cp6-dev` deployment job 部署、验证和发布证据。

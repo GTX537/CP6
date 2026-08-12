@@ -1,8 +1,8 @@
 # CP6 CRM V1 可执行工程规格
 
-状态：Draft for approval，禁止据此直接上线
+状态：Approved implementation-planning baseline；禁止据此直接上线
 
-最后核验：2026-08-11
+最后核验：2026-08-12
 
 产品框架：[CRM-PRODUCT-FRAMEWORK.md](./CRM-PRODUCT-FRAMEWORK.md)
 
@@ -13,6 +13,16 @@ Foundation 基线：[CRM-V1-SPEC.md](./CRM-V1-SPEC.md)
 本 Spec 把已经锁定的 CRM 方向转换为三仓库可执行计划。实现者不再决定仓库边界、前后端技术、身份协议、消息格式、数据主权或迁移策略；这些内容是输入约束。每个实施分支仍需把本 Spec 的里程碑拆为 1–3 天、可独立验证的子任务。
 
 本规划任务只交付规格和审阅证据，不创建新仓库、不实现服务、不创建云资源、不配置生产 Secret、不发布镜像、不执行数据迁移或部署。
+
+批准证据：
+
+| 工件 | SHA-256 | 结论 |
+| --- | --- | --- |
+| `tt-HEAD-eng-review-20260811-211539.md` | `C8574D3BE11C5492C2CFFA8797917FE4898328E16B25A832267714C719701A08` | 工程与设计问题已并入本 Spec |
+| `tt-HEAD-eng-review-test-plan-20260811-211539.md` | `1A6995F45DAD2CD4DD511B7D6CF2E5FA760123C63DD597D1E0F5975D91C5F281` | 测试矩阵与分层性能门禁已批准 |
+| `tt-HEAD-design-20260811-204332.md` | `C60FA78E3F876D0682CB39814EEB9383FBAEC17D1E285DC59D2BB9256C322DF7` | Lead Pilot、采用门禁与公开站点设计契约已批准 |
+
+这些工件保存在受控 gstack 项目证据目录，不复制进仓库。批准只允许按本 Spec 拆票实施；Sponsor、Owner、cohort、环境与生产 Go/No-Go 仍需实名证据。
 
 ## 2. 已锁定决策
 
@@ -28,11 +38,12 @@ Foundation 基线：[CRM-V1-SPEC.md](./CRM-V1-SPEC.md)
 10. CRM 管售前客户、线索、联系人、商机和来源；ERP 管法定、财务和交易主数据。
 11. 现有 20 张 CRM/CMS 表是迁移来源；Activity、Collaborator、StageHistory 改用显式 LeadId/OpportunityId。
 12. V1 在一次生产切换前完成；维护窗口上限 30 分钟；切换后产生新写入时只允许前向修复。
-13. 当前生产发布权威仍是 GitHub R2/GHCR。Registry 和发布权威未决前，不得由 Azure 与 GitHub 对同一版本重复 Build。
+13. CRM V1 唯一 Registry/候选权威固定为 GitHub R2/GHCR。Azure 可做 CI、DEV 学习链、影子验证或消费同一 digest，但不得对同一版本重新 Build 并宣称候选；ACR 迁移必须独立立项。
+14. 实施采用 Lead Pilot → 完整旅程 → 单次切换 → Lead Adoption → Full Journey Adoption。Observation、Pilot 和两项生产采用阈值都是不可豁免硬门禁。
 
 ## 3. 已验证当前状态
 
-验证基线：`main == origin/main == f149c75eed77edc0b4bb10a4921af43a78c4abf9`，验证日期 2026-08-11。
+验证基线：`main == origin/main == c68d9b53b4cf3adb5925b8258c36969fdebda753`，验证日期 2026-08-12。
 
 | 观察 | 证据 | 结论 |
 | --- | --- | --- |
@@ -56,7 +67,7 @@ Foundation 基线：[CRM-V1-SPEC.md](./CRM-V1-SPEC.md)
 - Accepted 要求已接受报价；Won 要求已创建 ERP 订单。
 - 五个菜单根路由、22 个动作和数据范围 1–5。
 - 公开路由是跨租户解析注册表且不得存业务内容或 PII。
-- 24 个月 PII 匿名化、首末触点、4 小时首次响应 SLA。
+- 24 个月 PII 匿名化、首末触点和 4 个租户业务小时首次响应 SLA；实现使用版本化 `BusinessCalendar`，不复制旧自然小时口径。
 
 ### 3.2 不得复制的历史结构
 
@@ -88,7 +99,7 @@ V1 获客渠道只有 `Website` 和 `Manual`。Website 先通过 `siteKey` 解�
 
 ### 3.4 端到端旅程与 V1/VNext 边界
 
-V1 的验收主链为：公开访客访问已发布页面 → 提交表单 → 同一事务写 PublicSubmission、Lead 或 Quarantine、SourceTouch 和 Outbox → 线索池分配并启动 4 个自然小时首次响应 SLA → 销售记录活动、查重和合格 → 一次转换创建或关联 Account、Contact、Opportunity → 同步只读校验 ERP 报价 → 报价接受后进入 Accepted → 用户显式请求 ERP Business Partner/Order → 异步成功后进入 Won。失败必须停留在可恢复状态，不允许以人工改字段伪造闭环。
+V1 的验收主链为：公开访客访问已发布页面 → 提交表单 → 同一事务写 PublicSubmission、Lead 或 Quarantine、SourceTouch 和 Outbox → 线索池分配并启动 4 个租户业务小时首次响应 SLA → 销售记录活动、查重和合格 → 一次转换创建或关联 Account、Contact、Opportunity → 同步只读校验 ERP 报价 → 报价接受后进入 Accepted → 用户显式请求 ERP Business Partner/Order → 异步成功后进入 Won。失败必须停留在可恢复状态，不允许以人工改字段伪造闭环。
 
 | 边界 | 包含 | 不包含 |
 | --- | --- | --- |
@@ -101,14 +112,14 @@ V1 的验收主链为：公开访客访问已发布页面 → 提交表单 → �
 
 | 决策/门禁 | Accountable 角色 | 最迟关闭点 | 必需证据 |
 | --- | --- | --- | --- |
-| DEC-CRM-001 唯一 Registry、发布权威、候选清单和影子期 | Release Owner | P01/CRM01 建候选流水线前 | 批准的 ADR + R2/Azure 等价矩阵 |
+| DEC-CRM-001 记录 GHCR/R2 唯一权威、候选清单和 Azure 非权威边界 | Release Owner | P01/CRM01 建候选流水线前 | 批准的 R00 ADR + R2/Azure 等价矩阵；不得重新选择 Registry |
 | DEC-CRM-002 私有 NuGet 源、source mapping、签名和保留 | Platform Owner | P01 第一个包发布前 | 包源 ADR + 消费/撤回演练 |
 | DEC-CRM-003 定位、角色、V1/VNext、KPI | Product Owner | CRM04 开始前 | 产品框架逐项签收 |
 | DEC-CRM-004 20 表列合同、转换和保留 | Data Owner | CRM02 Schema 合并前 | 列合同 + migration map + golden vectors |
 | DEC-CRM-005 BP/Quotation/Order 契约、幂等和错误码 | ERP Owner | C03/CRM06 开始前 | OpenAPI/Event Schema 消费方签收 |
 | DEC-CRM-006 RS256/JWKS、租户、PII、威胁模型 | Security Owner | C01/CRM03 开始前 | 安全 ADR + 负向测试计划 |
 | DEC-CRM-007 SLO、容量、告警和故障预算 | SRE Owner | CRM12 性能门禁前 | 负载配置 + Dashboard/Alert review |
-| DEC-CRM-008 T-7/T-1/生产 Go/No-Go | Release Owner | 每次推广前 | 各 Owner 签字的不可变清单 |
+| DEC-CRM-008 T-7/T-1/生产 Go/No-Go 与采用门禁 | Release Owner | 每次推广和 Epic 关闭前 | 各 Owner 签字的不可变清单 + Pilot/Lead/Full Journey manifest |
 
 例外由 Product Owner、System Architect 和 Security Owner 三方共同审批，必须写明范围、风险、补偿控制、负责人和不超过 30 天的到期日。跨租户隔离、JWT 验证、订单幂等、迁移哈希、发布 digest 身份、生产 Secret、未修复 Critical 漏洞及新写 fence 后的数据回退不可豁免；High 漏洞只有供应商无修复且存在已验证补偿控制时才可限时豁免。
 
@@ -183,7 +194,7 @@ contracts/
 | 子域 | 聚合/实体 | 负责 | 不负责 |
 | --- | --- | --- | --- |
 | Acquisition | PublicSubmission, SourceTouch, DuplicateCandidate | 来源、公开风险、幂等、归因 | 广告平台对账、营销自动化 |
-| Lead | Lead, IntakeConfig, IntakeMember, MergeRecord | 线索池、SLA、分配、合格、合并、转换 | ERP 客户/报价/订单 |
+| Lead | Lead, IntakeConfig, IntakeMember, BusinessCalendar, MergeRecord | 线索池、业务时间 SLA、分配、合格、合并、转换 | ERP 客户/报价/订单 |
 | Customer | Account, Contact | 售前企业和联系人关系 | 法定名称、税务、信用、付款条款 |
 | Opportunity | Opportunity, StageHistory | 固定漏斗、金额、阶段、Accepted/Won 守卫 | 报价计算、订单记账 |
 | Collaboration | Activity, Collaborator | 跟进时间线、下一步、协作范围 | 邮件/日历自动同步 |
@@ -250,16 +261,16 @@ Won、Lost 是终态。Probability 由状态机派生，不持久化为可编辑
 ### 6.4 IntegrationProcess
 
 ```text
-WaitingPrerequisite -> Requested -> Processing -> Succeeded
-                          ^             |
-                          +-- FailedRetryable
-                                        +-> FailedTerminal
+Requested -> Processing -> Succeeded
+    ^            |
+    +--------- Retryable
+                 +------> Terminal
 ```
 
 - 操作类型固定为 `EnsureBusinessPartner`、`CreateOrder`；Quotation 在 V1 是同步只读校验，不创建 IntegrationProcess。
 - 唯一业务键：`TenantId + Operation + AggregateId + RequestVersion`。
-- `WaitingPrerequisite` 只用于等待 Business Partner 的 CreateOrder。BP 成功事件在同一事务写 ErpLink、把子流程改为 Requested 并写 Order Outbox；BP 终态失败把子流程改为 FailedTerminal。
-- Requested 只能由 worker 租约推进 Processing；Processing 只能进入 Succeeded、FailedRetryable 或 FailedTerminal；到期调度器把 FailedRetryable 重新放回 Requested。同一行不允许其它边。
+- 等待 Business Partner 的 CreateOrder 仍处于 Requested，但必须带 `PrerequisiteProcessId` 和 `BlockedReason=BusinessPartner`，worker 在前置成功前不得获取租约。BP 成功事件在同一事务写 ErpLink、清除阻塞并写 Order Outbox；BP Terminal 把被阻塞 Order 同时置为 Terminal。
+- Requested 只能由 worker 租约推进 Processing；Processing 只能进入 Succeeded、Retryable 或 Terminal；到期调度器把 Retryable 重新放回 Requested。同一行不允许其它边。
 - `CreateOrder` 成功后禁止重新进入 Requested。
 - Retryable 使用指数退避和上限；Terminal 需要人工修正业务数据后产生新 RequestVersion。
 
@@ -297,7 +308,7 @@ RowVersion rowversion not null
 | --- | --- | --- |
 | Account | Name, NormalizedName, Website, Industry, OwnerUserId, DeptId | `(TenantId, NormalizedName)` 查询索引；不存财务/信用主数据 |
 | Contact | AccountId?, FullName, Email/NormalizedEmail, Phone/NormalizedPhone, JobTitle, Consent | 复合 Account FK；PII 字段遮罩和匿名化 |
-| Lead | LeadNo, Subject, Company/Contact/Channel, Status, Owner/Dept, SLA, consent, conversion refs, attribution | `(TenantId, LeadNo)` 唯一；Account/Contact/Opportunity/Merged target 均复合 FK |
+| Lead | LeadNo, Subject, Company/Contact/Channel, Status, Owner/Dept, BusinessCalendarVersion, SlaDueAtUtc, consent, conversion refs, attribution | `(TenantId, LeadNo)` 唯一；SLA 到期时间按创建时冻结的日历版本计算；Account/Contact/Opportunity/Merged target 均复合 FK |
 | Collaborator | LeadId?, OpportunityId?, UserId, Role | 恰好一个目标；`TenantId + target + UserId` 唯一 |
 | Activity | LeadId?, OpportunityId?, Type, Subject, Details, OccurredAtUtc, NextActionAtUtc | 恰好一个目标；客户面对型活动驱动 FirstResponseAt |
 | SourceTouch | LeadId, Source, Medium, Campaign, Content, Term, LandingPage, Referrer, TouchedAtUtc | Lead 复合 FK；URL 按 PII 保留 |
@@ -306,11 +317,11 @@ RowVersion rowversion not null
 | StageHistory | LeadId?, OpportunityId?, FromStage, ToStage, Reason, ChangedAtUtc, ChangedBy | 恰好一个目标；只追加 |
 | ErpLink | AccountId?, OpportunityId?, ErpSystem, ErpEntityType, ErpEntityKey, IsPrimary, LastVerifiedAtUtc | 恰好一个 CRM 目标；外部键唯一规则按实体类型定义 |
 | MergeRecord | SourceLeadId, TargetLeadId, Reason, MergedBy, MergedAtUtc | Source 唯一；两端同租户复合 FK |
-| IntakeConfig | Name, DefaultDeptId?, DefaultOwnerUserId?, SlaMinutes, WarningMinutes, notification flags | 启用配置同名不得重复；默认 SLA 240 |
+| IntakeConfig | Name, DefaultDeptId?, DefaultOwnerUserId?, BusinessCalendarId, SlaBusinessMinutes, WarningMinutes, notification flags | 启用配置同名不得重复；默认 SLA 240 个业务分钟；日历同租户复合 FK |
 | IntakeMember | IntakeConfigId, UserId | `(TenantId, IntakeConfigId, UserId)` 唯一 |
 | Site | SiteKey, SiteName, DefaultLocale, EnabledLocalesJson, Status, DefaultFormId, publish fields | `(TenantId, SiteKey)` 唯一；公开访问不直接按此索引跨租户查 |
-| SitePage | SiteId, PageType, PageKey, PublishedRevisionId, SortOrder, Enable | `(TenantId, SiteId, PageKey)` 唯一 |
-| PageRevision | PageId, Version, Status, publish fields | `(TenantId, PageId, Version)` 唯一；已发布内容不可改 |
+| SitePage | SiteId, PageType, PageKey, TemplateKey, PublishedRevisionId, Enable | `(TenantId, SiteId, PageKey)` 唯一；TemplateKey 必须来自部署的受控合同 |
+| PageRevision | PageId, Version, TemplateSchemaVersion, Status, publish fields | `(TenantId, PageId, Version)` 唯一；已发布内容不可改，不能更换槽位顺序 |
 | PageTranslation | SiteId, RevisionId, Locale, Slug, Title, Summary, BodyJson, SEO | 修订/语言和站点/语言/Slug 均租户内唯一 |
 | MediaAsset | SiteId, FileName, StoreKey, ContentType, Size, FileHash, publish state | 禁止存机器路径；对象存储 Key 不含租户 PII |
 | PublicForm | SiteId, FormKey, Name, IntakeConfigId?, PrivacyPolicyVersion, Enable, TokenRotatedAtUtc | `(TenantId, SiteId, FormKey)` 唯一 |
@@ -321,6 +332,7 @@ RowVersion rowversion not null
 | 表 | 目的 | 必需唯一键/保留 |
 | --- | --- | --- |
 | DuplicateCandidate | 保存候选、匹配原因、置信度和处置结果 | `(TenantId, SourceLeadId, CandidateLeadId, AlgorithmVersion)` |
+| BusinessCalendar | 时区、每周工作段、假日/例外和不可变版本 | `(TenantId, CalendarKey, Version)`；已被 Lead 引用的版本不可改，只能新建版本 |
 | IntegrationProcess | Operation、AggregateId、RequestVersion、Status、PrerequisiteProcessId?、尝试/下次重试、错误码和外部结果 | 业务键唯一；前置流程同租户 FK；错误详情必须脱敏 |
 | OutboxMessage | 同事务待发布 CloudEvent | Id 唯一；成功 7 天、失败转 DLQ |
 | InboxMessage | 消费去重、处理状态和数据哈希 | `(ConsumerName, MessageId)` 唯一；30 天 |
@@ -346,27 +358,33 @@ Activity、Collaborator、StageHistory 使用该约束。ErpLink 使用同型约
 
 ### 7.5 受控 BodyJson
 
-根结构：
+根结构按 TemplateKey 使用命名槽位；顺序由部署在 `contracts/cms/templates/<templateKey>/<version>.schema.json` 的 JSON Schema 决定，不由内容作者提交：
 
 ```json
 {
+  "templateKey": "home.v1",
   "schemaVersion": 1,
-  "blocks": [
-    {
-      "id": "01H...",
+  "slots": {
+    "hero": {
       "type": "hero",
+      "variant": "material-left",
       "props": {
         "heading": "Custom packaging",
         "body": "...",
         "imageAssetId": "...",
-        "cta": { "label": "Contact us", "href": "/contact" }
+        "cta": { "label": "提交需求", "href": "/contact" }
       }
+    },
+    "trustEvidence": {
+      "type": "evidenceList",
+      "variant": "certifications",
+      "props": { "items": [] }
     }
-  ]
+  }
 }
 ```
 
-V1 类型只允许 `hero`、`richText`、`image`、`productGrid`、`serviceCards`、`cta`、`formEmbed`。`richText` 存受限 AST，不存任意 HTML；链接协议只允许 `https`、`mailto`、`tel` 和站内相对路径。
+V1 类型只允许 `hero`、`richText`、`image`、`evidenceList`、`capabilityList`、`industryList`、`processSteps`、`caseList`、`cta`、`formEmbed`。每个模板固定 required/optional 槽位、允许类型、variant、顺序和长度；未知槽位、重复块、非法顺序/variant 返回 422。`richText` 存受限 AST，不存任意 HTML；链接协议只允许 `https`、`mailto`、`tel` 和站内相对路径。
 
 ### 7.6 列合同与迁移映射门禁
 
@@ -387,8 +405,11 @@ V1 类型只允许 `hero`、`richText`、`image`、`productGrid`、`serviceCards
 - Body 不接受 TenantId、Owner 权限范围或系统审计字段。
 - 列表使用 `cursor`、`pageSize`、`sort` 和明确白名单筛选；默认 20，最大 100。
 - 创建返回 201；异步跨服务命令返回 202；幂等重放返回原状态和相同资源 ID。
-- 修改要求 `If-Match: "<rowVersion>"`；缺失返回 428，冲突返回 412。
+- 端点表中的 REST 路径是唯一合同；不得增加 `/resource/{id}:command` 一类冒号命令别名。
+- 要求幂等的命令缺少 `Idempotency-Key` 返回 428。同一租户、调用方、端点和 key 使用规范化 payload hash：同载荷重放返回首次状态码、资源 ID 和语义结果，不同载荷返回 409 且零业务写入。
+- 资源修改要求 `If-Match: "<rowVersion>"`；缺失返回 428，冲突返回 412。`POST /leads` 是创建命令，只要求 `Idempotency-Key`，不要求 `If-Match`；可选 `If-None-Match: *` 只表达 create-only，不替代幂等键。
 - 错误使用 RFC 9457 Problem Details，并带稳定 `code`、`traceId`、`correlationId`。
+- 422 表示请求结构合法但领域/业务校验失败；任何 409/412/422/428 都不得留下 Activity、Audit、StageHistory、Idempotency、Outbox 或聚合的部分写入。
 
 本节端点表是必须实现的产品表面，不是可发布的逐字段合同。每个 API slice 必须先更新 `contracts/api/crm-v1.openapi.yaml`，为 operationId、参数、request/response、required/nullability、长度/格式、分页、ETag、幂等、权限、Problem Details 和示例定版；生成的 C# / TypeScript client 必须无 drift。缺 OpenAPI、存在未引用自由对象或 breaking diff 未升 major 时，handler 和 UI 分支不得合并。
 
@@ -423,7 +444,7 @@ V1 类型只允许 `hero`、`richText`、`image`、`productGrid`、`serviceCards
 | GET `/api/public/v1/sites/{siteKey}/content?locale=&path=` | Next.js SSR 获取已发布内容 | 无 JWT；按 IP/site 限流，只返回发布投影 |
 | GET `/api/public/v1/sites/{siteKey}/forms/{formKey}` | 获取启用表单和隐私版本 | 无 JWT；短缓存 |
 | POST `/api/public/v1/sites/{siteKey}/forms/{formKey}/submissions` | 公开提交 | `Idempotency-Key` 必填；Body ≤ 32 KiB |
-| GET `/api/public/v1/submissions/{receiptId}` | 返回接收/隔离的粗粒度状态 | 需要不可逆 receipt token；不返回 Lead/租户 ID |
+| GET `/api/public/v1/submissions/{receiptId}` | 返回 `received`/`reviewing` 粗粒度状态 | Next.js BFF 使用 `X-Receipt-Token`；不返回 Lead/租户/风险/分配/拒绝信息 |
 
 提交请求：
 
@@ -450,7 +471,9 @@ V1 类型只允许 `hero`、`richText`、`image`、`productGrid`、`serviceCards
 }
 ```
 
-提交响应只返回 `receiptId`、`status`、`receivedAtUtc`。不返回 LeadId、TenantId、风险原因或内部队列信息。
+CRM Public API 在持久事务成功后向受信任 Next.js BFF 返回 `receiptId`、高熵 `receiptToken`、`status`、`receivedAtUtc` 和 `expiresAtUtc`。BFF 必须在同一响应周期把 token 写入 §11.4 的 HttpOnly 加密 Cookie，再只把 `receiptId`、粗粒度状态和回执路由返回浏览器；token 不得进入浏览器 JSON、URL、HTML 或 JavaScript。不返回 LeadId、TenantId、风险原因或内部队列信息。
+
+Accepted、Processing 和内部 Quarantined 只映射为 `received` 或 `reviewing`。不存在、缺 token、过期、篡改、receipt/token 错配必须使用固定形状、近似固定耗时的中性 404；不得暴露提交是否存在。
 
 默认防滥用策略：单 IP 哈希每 10 分钟 10 次、每天 50 次；单 Site/Form 每分钟 120 次。阈值可由运维配置但不得由公开请求控制。蜜罐命中进入隔离；明显协议攻击直接拒绝。
 
@@ -459,18 +482,33 @@ V1 类型只允许 `hero`、`richText`、`image`、`productGrid`、`serviceCards
 | 方法与路径 | 权限 | 说明 |
 | --- | --- | --- |
 | GET `/leads` | `crm-lead:query` | status、owner、dept、source、SLA、created range 筛选 |
-| POST `/leads` | `crm-lead:add` | 人工创建；支持 Idempotency-Key |
+| POST `/leads` | `crm-lead:add` | 人工创建；`Idempotency-Key` 必填，不要求 `If-Match` |
 | GET `/leads/{id}` | `query` + 数据范围 | PII 按 `view-pii` 遮罩 |
 | PATCH `/leads/{id}` | `edit` + 数据范围 | 不允许直接改 Status/Owner/转换字段 |
-| POST `/leads/{id}/assignments` | `assign` | 分配或移交，原因必填 |
-| POST `/leads/{id}/activities` | `edit` | 追加活动，客户面对型可触发 Contacted |
+| POST `/leads/{id}/assignments` | `assign` | `If-Match` + `Idempotency-Key`；分配或移交，原因必填 |
+| POST `/leads/{id}/activities` | `edit` | `If-Match` + `Idempotency-Key`；追加活动，客户面对型可触发 Contacted |
 | POST `/leads/{id}/collaborators` | `edit` | 添加协作人 |
 | DELETE `/leads/{id}/collaborators/{userId}` | `edit` | 不能移除唯一负责人 |
 | POST `/leads/{id}/qualify` | `edit` | Contacted → Qualified |
 | POST `/leads/{id}/disqualify` | `edit` | 原因必填 |
 | GET `/leads/{id}/duplicates` | `query` | 只返回用户可访问候选 |
-| POST `/leads/{id}/merge` | `merge` | `targetLeadId`、reason、Idempotency-Key |
+| POST `/leads/{id}/merge` | `merge` | `targetLeadId`、reason、source/target RowVersion、`Idempotency-Key` |
 | POST `/leads/{id}/convert` | `convert` | 原子转换；返回 Account/Contact/Opportunity ID |
+
+Assignment 和 Activity 在一个数据库事务内重新验证租户、授权、数据范围、当前 RowVersion、幂等 key 与领域守卫。客户面对型 Activity 同事务追加 Activity，在 `FirstResponseAtUtc` 仍为空时仅设置一次，并按状态机推进 Contacted，同时写 Audit、聚合 RowVersion 和 Outbox；任何一步失败整笔回滚。
+
+Merge 请求体至少为：
+
+```json
+{
+  "targetLeadId": "00000000-0000-0000-0000-000000000002",
+  "reason": "Confirmed duplicate",
+  "sourceRowVersion": "base64-source-version",
+  "targetRowVersion": "base64-target-version"
+}
+```
+
+Merge 在同一事务锁定并复核 source/target；任一 RowVersion 过期返回 412，源状态、目标时间线、MergeRecord、Audit 和 Outbox 均零写入。跨租户或不可见目标使用统一 Not Found 语义，不通过冲突细节泄露资源。
 
 转换请求：
 
@@ -530,7 +568,7 @@ V1 类型只允许 `hero`、`richText`、`image`、`productGrid`、`serviceCards
 
 至少实现：
 
-`CRM_TENANT_REQUIRED`、`CRM_FORBIDDEN`、`CRM_PII_FORBIDDEN`、`CRM_NOT_FOUND`、`CRM_CONCURRENCY_CONFLICT`、`CRM_IDEMPOTENCY_CONFLICT`、`CRM_VALIDATION_FAILED`、`CRM_LEAD_TRANSITION_INVALID`、`CRM_OPPORTUNITY_TRANSITION_INVALID`、`CRM_ACCEPTED_QUOTATION_REQUIRED`、`CRM_ORDER_REQUIRED_FOR_WON`、`CRM_MERGE_TARGET_INVALID`、`CRM_PUBLIC_ROUTE_NOT_FOUND`、`CRM_PUBLIC_RATE_LIMITED`、`CRM_PUBLIC_QUARANTINED`、`CRM_ERP_UNAVAILABLE`、`CRM_ERP_REJECTED`、`CRM_EVENT_SCHEMA_INVALID`。
+`CRM_TENANT_REQUIRED`、`CRM_FORBIDDEN`、`CRM_PII_FORBIDDEN`、`CRM_NOT_FOUND`、`CRM_PRECONDITION_REQUIRED`、`CRM_CONCURRENCY_CONFLICT`、`CRM_IDEMPOTENCY_CONFLICT`、`CRM_VALIDATION_FAILED`、`CRM_LEAD_TRANSITION_INVALID`、`CRM_OPPORTUNITY_TRANSITION_INVALID`、`CRM_ACCEPTED_QUOTATION_REQUIRED`、`CRM_ORDER_REQUIRED_FOR_WON`、`CRM_MERGE_TARGET_INVALID`、`CRM_PUBLIC_ROUTE_NOT_FOUND`、`CRM_PUBLIC_RATE_LIMITED`、`CRM_PUBLIC_QUARANTINED`、`CRM_RECEIPT_UNAVAILABLE`、`CRM_ERP_UNAVAILABLE`、`CRM_ERP_REJECTED`、`CRM_EVENT_SCHEMA_INVALID`。
 
 ## 9. 事件契约
 
@@ -571,7 +609,7 @@ Kafka 消息值就是结构化 CloudEvent，不再包一层 `event/payload/envel
 - `correlationid` 从入口请求开始贯穿；`causationid` 指向直接触发本事件的命令或事件。
 - `aggregateversion` 必须单调递增；消费者拒绝倒退状态，但仍把重复消息记为已处理。
 - Data 不包含未经批准的 PII。业务需要引用联系人时只传 ID，消费者按权限同步只读查询。
-- Schema 在各生产者仓库版本化，Platform Contracts 发布索引和校验工具。
+- Schema 在各生产者仓库版本化，Platform Contracts 发布索引和校验工具。生产者在写 Outbox 前验证完整 CloudEvent/Data，消费者在写 Inbox/执行业务前再次按声明的 Schema 验证；任一侧失败都不得执行领域副作用。
 
 ### 9.2 Topic 和订阅
 
@@ -686,6 +724,7 @@ PII 禁止进入 URL query、日志、Trace attributes、Metric labels、事件 
 ```text
 app/
   (public)/site/[siteKey]/[[...segments]]/page.tsx
+  (public)/site/[siteKey]/receipt/[receiptId]/page.tsx
   (public)/preview/[token]/page.tsx
   (crm)/crm/dashboard/page.tsx
   (crm)/crm/leads/page.tsx
@@ -711,6 +750,7 @@ app/
 - 自动保存只保存草稿 Revision，500 ms debounce；发布永远是显式动作。
 - Block 编辑器只发结构化 AST；禁止 `dangerouslySetInnerHTML` 渲染用户 HTML。
 - 媒体上传采用服务端签名上传或流式代理，验证 MIME、扩展名、尺寸、大小和恶意文件扫描。
+- 412 Conflict 必须保留用户未提交文本，重新读取服务端快照和 ETag，显示字段级差异，并要求用户显式选择重试；禁止自动覆盖或把旧 payload 静默重放到新版本。
 
 ### 11.3 缓存与重验证
 
@@ -718,6 +758,29 @@ app/
 - 发布页面使用 `revalidateTag(tenant:site:page:locale)`；消费事件要通过 Inbox 去重。
 - 事件丢失时 ISR 5 分钟兜底；失败时继续服务上一已发布修订，不回退到草稿。
 - 缓存键必须包含 TenantId/SiteId/Locale/RevisionVersion，不能只用 Slug。
+
+### 11.4 公开回执与 BFF Cookie
+
+- 浏览器回执路由固定为 `/site/{siteKey}/receipt/{receiptId}`；`receiptId` 是非秘密 opaque reference，高熵 token 永不进入 URL、HTML、浏览器 JavaScript、日志、Trace 或分析事件。
+- 同源 BFF 在提交成功后把最新最多 10 个 `{receiptId, token, expiresAtUtc}` 条目存入认证并加密的 `__Host-cp6-receipts` Cookie。属性固定为 `Secure; HttpOnly; SameSite=Lax; Path=/`；每项 30 天到期，超过上限逐出最旧项，并支持有重叠验证窗口的服务端密钥轮换。
+- Server Component 只读取与 URL receiptId 匹配且未过期的 Cookie 条目，再调用 `GET /api/public/v1/submissions/{receiptId}` 并通过 `X-Receipt-Token` 传递 token。缺失、过期、篡改、错配和不存在返回同一中性 404-style 页面与 Contact 行动。
+- 页面和 API 应用 `Cache-Control: private, no-store`、`Referrer-Policy: no-referrer`、`X-Robots-Tag: noindex, nofollow`。分析事件不得包含 receiptId/token；每 receipt/IP 限流且无可观察的内部状态枚举。
+- 对外只有 `received` 和 `reviewing`；内部 Accepted、Processing、Quarantined 均映射到这两个状态之一。风险、Lead 创建、分配、拒绝和 ERP 状态永不公开。
+
+### 11.5 公开站点设计与 CMS 合同
+
+- 首页槽位顺序固定为：价值与“提交需求” → 信任证据 → 核心能力 → 行业场景 → 合作流程 → 案例/资质 → 最终 CTA → 页脚。主 CTA 是“提交需求”，次 CTA 是“查看能力”，不得声称即时 ERP 报价。
+- 页面 IA 固定包含 capability、industry、case/about、contact/form 和 receipt 语义模板。CMS Schema 为模板定义命名槽位、允许区块、顺序和有限 variants；非法顺序、区块或 variant 在保存前返回 422，不提供任意拖拽排序、HTML 或脚本。
+- 视觉语言是“工程精度 + 材料质感”：暖纸色、深墨色、CP6 青绿单一行动色、真实材料摄影、克制刀模线；禁止通用 SaaS 三卡片首屏、紫蓝渐变、轮播和装饰性大圆角。
+- CRM 仓在首个 UI slice 前提交 `DESIGN.md`，继承 CP6 青绿色义并重建可访问 Design Token。公开站点字体为 Source Sans 3 / Source Han Sans SC/JP，展示衬线为 Newsreader / Source Han Serif；管理台为 IBM Plex Sans。字体自托管、按 locale 子集，首屏字体预算 ≤180 KiB；4 px spacing grid，公开圆角仅 0/4/8 px。
+- 小于 768 px 时“提交需求”进入独立全屏 route/sheet，保留标题、返回、错误摘要和提交状态；不得把桌面表单直接堆到 Hero 下。正文 ≥16 px、触控目标 ≥44×44 CSS px，320 px 与 200% zoom 不产生非数据表二维滚动。
+- CRM09 开始前必须完成并批准首页、能力/行业、联系/回执的桌面、平板、移动高保真稿；覆盖 Loading/Empty/Error/429/503/Received/Reviewing/Expired，且 Product/Design Owner 不得在实现阶段重新打开已冻结的规范行为。
+
+### 11.6 Lead Pilot 工作台
+
+- 宽屏使用已批准的 C 分栏：左栏是按 SLA 风险排序、可访问范围内的 Lead 队列；右栏只承载负责人分配和第一次客户面对型响应。详情历史、查重、合并、转换与窄屏任务进入 `/crm/leads/[leadId]`。
+- 所有页面显式实现 Loading、Empty、Forbidden、Not Found、Conflict、Integration Pending/Failed 和 Partial Report；缓存、Skeleton 和旧请求响应不得显示上一租户数据。
+- Pilot 任务 manifest 固定正常、预期拒绝和恢复路径。界面不得通过隐藏失败样本、预填超出权限的信息或人工后台修数提高完成率。
 
 ## 12. ERP 集成
 
@@ -747,9 +810,9 @@ Order 的 Business Partner 前置固定如下：
 
 1. `POST order-requests` 重新同步只读校验 Accepted Quotation，并检查 Opportunity Account 的主 `BusinessPartner` ErpLink。
 2. 有已验证 Link 时，同一事务只创建 `CreateOrder/Requested` 和 Order Outbox。
-3. 无 Link 时，同一事务创建或复用 `EnsureBusinessPartner/Requested`、创建 `CreateOrder/WaitingPrerequisite` 并关联 `PrerequisiteProcessId`，只发布 BP requested。HTTP 202 返回一个聚合 tracking id 和两个流程状态。
-4. CP6 以 `TenantId + AccountId + RequestVersion` 幂等创建或关联 BP。CRM 消费成功事件时，同一事务写主 ErpLink、完成 BP 流程、把匹配的 CreateOrder 改为 Requested 并写 Order Outbox。
-5. BP Retryable 失败保持子流程等待；BP Terminal 失败把子流程标为 `CRM_ERP_BP_REQUIRED` Terminal。用户修正主数据后必须发新 RequestVersion，不能复用终态流程。
+3. 无 Link 时，同一事务创建或复用 `EnsureBusinessPartner/Requested`、创建 `CreateOrder/Requested` 并以 `PrerequisiteProcessId + BlockedReason=BusinessPartner` 标记阻塞，只发布 BP requested。HTTP 202 返回一个聚合 tracking id 和两个流程状态。
+4. CP6 以 `TenantId + AccountId + RequestVersion` 幂等创建或关联 BP。CRM 消费成功事件时，同一事务写主 ErpLink、完成 BP 流程、清除匹配 CreateOrder 的 prerequisite block 并写 Order Outbox；CreateOrder 状态保持 Requested，版本只前进不倒退。
+5. BP Retryable 失败保持 CreateOrder 为 Requested(blocked)；BP Terminal 失败把被阻塞 CreateOrder 标为 `CRM_ERP_BP_REQUIRED` Terminal。用户修正主数据后必须发新 RequestVersion，不能复用终态流程。
 6. CP6 收到 Order 请求后再次验证 tenant、BP、Quotation、金额/币种和幂等键；任一不匹配返回稳定 Terminal error，不创建部分订单。
 
 ```mermaid
@@ -764,8 +827,8 @@ sequenceDiagram
         C-->>U: 202 CreateOrder Requested
         C->>K: order-requested
     else BP link missing
-        C->>C: Tx: EnsureBP Requested + CreateOrder WaitingPrerequisite + BP Outbox
-        C-->>U: 202 BP Requested / Order Waiting
+        C->>C: Tx: EnsureBP Requested + CreateOrder Requested(blocked) + BP Outbox
+        C-->>U: 202 BP Requested / Order Requested(blocked)
         C->>K: business-partner-requested
         K->>E: at-least-once BP request
         E->>E: Inbox dedupe + BP Tx + Outbox
@@ -775,7 +838,7 @@ sequenceDiagram
             C->>C: Tx: ErpLink + BP Succeeded + Order Requested + Order Outbox
             C->>K: order-requested
         else BP terminal failure
-            C->>C: Tx: BP and waiting Order FailedTerminal
+            C->>C: Tx: BP and blocked Order Terminal
         end
     end
     K->>E: at-least-once delivery
@@ -793,9 +856,15 @@ ERP 幂等键为 `TenantId + OpportunityId + RequestVersion`。ERP 创建订单�
 | --- | --- | --- |
 | Retryable technical | timeout、broker unavailable、ERP 5xx | 保持 Accepted，指数退避，显示处理中/暂时失败 |
 | Retryable contention | ERP lock、并发更新 | 延迟重试，不增加 RequestVersion |
-| Terminal business | 报价过期、客户冻结、缺必填主数据 | FailedTerminal，用户修正后新 RequestVersion |
+| Terminal business | 报价过期、客户冻结、缺必填主数据 | Terminal，用户修正后新 RequestVersion |
 | Duplicate success | 重放 order-created | Inbox 命中，返回已处理，不再推进状态 |
 | Out-of-order failure | 成功之后到达旧失败 | aggregateversion/requestVersion 低，忽略并审计 |
+
+### 12.5 ERP UAT 真实性门禁
+
+- C03 必须提供真实 BP/Quotation/Order handler，并连接专用、隔离、可重置但使用真实 SQL 约束的 ERP UAT 数据库。CRM UAT 通过真实 Dapr/Kafka 消费请求与结果，不允许测试进程直接写 ERP 结果表。
+- Mock handler 只用于 Domain/Application 单元测试。Mock ERP、内存数据库、手工回写 `order-created` 或预置 Won 不能签署 Pilot 后的完整旅程、CRM12、迁移候选或生产发布门禁。
+- UAT evidence 固定 ERP DB baseline hash、handler Git SHA/image digest、request/Inbox/Order/Outbox 关联和最终 canonical SQL 对账；同幂等键并发、timeout、duplicate、out-of-order 与 Terminal 错误必须证明最多创建一张订单且状态不倒退。
 
 ## 13. 数据迁移与切换
 
@@ -822,14 +891,16 @@ cutover-check
 6. 状态/枚举有效，Accepted 有报价，Won 有订单关联，Converted Lead 有唯一 Opportunity。
 7. BodyJson 符合受控 Schema；媒体 StorePath 能映射为对象存储 Key。
 8. 本地时间按显式时区转换无 invalid/ambiguous time。任一歧义阻断，不猜夏令时偏移。
-9. PII 长度、字符和字段策略可迁移；证据路径不位于仓库或公开共享目录。
-10. 最近一次演练在同规模数据上 `migrate + verify` ≤ 17 分钟，给 30 分钟窗口保留切换与冒烟余量。
+9. 每个启用租户都有 Product/Sales Operations 批准的时区、BusinessCalendar 工作段/假日和初始版本；缺失、重叠、零工作时间或不可计算 SLA 一律阻断。
+10. PII 长度、字符和字段策略可迁移；证据路径不位于仓库或公开共享目录。
+11. 最近一次演练在同规模数据上 `migrate + verify` ≤ 17 分钟，给 30 分钟窗口保留切换与冒烟余量。
 
 ### 13.3 Migrate
 
 - 在目标数据库一个显式事务内按依赖顺序复制 20 张表。
 - 保留 Id、TenantId、IsDeleted、Created/Updated 审计字段；RowVersion 在目标重建。
 - 所有时间先转换 UTC；所有字符串按目标长度和正规化规则验证，禁止截断。
+- 迁移初始化批准的 BusinessCalendar 不可变版本；历史 FirstResponse/SLA 事实按 migration map 保留，新写 Lead 从 write fence 后按该版本计算 `SlaDueAtUtc`，不把自然小时源配置直接当业务日历。
 - 三张弱引用表映射到显式 LeadId/OpportunityId；未知类型、孤儿或双目标立即回滚整个事务。
 - 不使用 upsert、`INSERT IGNORE` 或“最后一行赢”掩盖重复和脏数据。
 - 支持表在业务迁移成功后初始化；Outbox 不为历史业务批量伪造事件。
@@ -891,7 +962,7 @@ Web 同时提供 `/release.json`，字段与 System Release Manifest 对账且 `
 | 管理 API latency | Gateway 到 CRM 响应，排除客户端网络 | p95 < 300 ms，5xx 仍计入样本 |
 | 公开 SSR TTFB | 受控外部探针到首字节 | p95 < 500 ms |
 | 公开提交处理 | Gateway 接收至 2xx/隔离响应 | p95 < 500 ms；硬拒绝 4xx 不计成功率但计容量 |
-| ERP 异步完成 | CRM 请求事务提交至 Succeeded/FailedTerminal | 99% < 30 s |
+| ERP 异步完成 | CRM 请求事务提交至 Succeeded/Terminal | 99% < 30 s |
 | 管理/公开读取可用性 | 非 5xx 且延迟 < 2 s | 99.9%，计划维护也计入 |
 | Outbox dispatch | 业务事务提交至 broker ack | 99% < 5 s，p99 < 30 s |
 | 撤销生效 | CP6 撤销事务至 CRM 拒绝 | 99% < 30 s |
@@ -907,7 +978,13 @@ Web 同时提供 `/release.json`，字段与 System Release Manifest 对账且 `
 - ERP 不可用时保持 Accepted 并排队，不把商机误标 Won。
 - 授权投影不可用时管理端 fail closed；公开已发布内容可以继续只读服务。
 
-### 14.5 可复制负载配置
+### 14.5 Lead Pilot 性能 Smoke
+
+Pilot UAT 前把 `tests/performance/crm-lead-pilot` 固化为生产形态 SQL Server/Kafka/Dapr 配置：10 个租户，最大租户 10 万 Lead/50 万 Activity；预热 3 分钟后运行 15 分钟，30 RPS 管理读取、10 RPS Intake，并在统计窗口中停止 Kafka 2 分钟再恢复。
+
+硬通过条件：管理 API p95 <300 ms、Intake p95 <500 ms、5xx <0.1%、零重复 Lead/业务副作用，Kafka 恢复后 10 分钟内清空积压。报告固定 manifest、环境、数据集/脚本 hash、UTC 窗口、分位数、错误率、积压和资源曲线；任一失败阻止 Pilot 签收和后续 CRM04 余项解锁。
+
+### 14.6 CRM12 可复制负载配置
 
 CRM12 必须把下表固化为 `tests/performance/crm-v1-slo` 配置；DEV 用于趋势，UAT 等规格环境是发布门禁。数据集为 100 个租户，其中最大租户 100 万 Lead/500 万 Activity/20 万 Opportunity；先预热 5 分钟，统计窗口不含预热，运行时禁止 Debug、mock ERP 或内存数据库。
 
@@ -934,6 +1011,7 @@ CRM12 必须把下表固化为 `tests/performance/crm-v1-slo` 配置；DEV 用�
 | 数据范围绕过 | 详情/报表/计数与列表策略不同 | 单一 Policy Query builder，数据库侧过滤 | owner/collaborator/dept/custom/all 矩阵 |
 | PII 泄露 | 日志、Trace、Event、URL、缓存、错误回显 | 分类、遮罩、最小事件、日志 redaction、no-store | Canary PII 扫描和日志断言 |
 | 公开表单滥用 | Spam、DoS、枚举、重复 Lead | 限流、Body 上限、蜜罐、风险隔离、幂等、粗粒度 receipt | 速率、重放、并发和 fuzz |
+| 回执凭据泄露/枚举 | URL、HTML、JS、日志、分析或 Cookie 篡改泄露提交状态 | 加密有界 HttpOnly Cookie、30 天 TTL、key rotation、固定形状 404、no-store/no-referrer/noindex | sink scan、篡改/错配/过期、时序近似、Cookie eviction/rotation E2E |
 | CMS 存储型 XSS | BodyJson/链接/媒体注入脚本 | 受控 AST、Schema、协议 allowlist、CSP、无任意 HTML | XSS corpus 和 CSP 浏览器测试 |
 | SSRF/恶意媒体 | URL 抓取内网、上传恶意文件 | 不抓取任意外链、对象存储、MIME/病毒扫描、大小限制 | 私网 URL、双扩展、压缩炸弹测试 |
 | CSRF/会话窃取 | 管理 Mutation 被第三方触发 | HttpOnly/Secure/SameSite、CSRF token、Origin 校验 | 跨站 POST/预检测试 |
@@ -955,30 +1033,33 @@ CRM12 必须把下表固化为 `tests/performance/crm-v1-slo` 配置；DEV 用�
 | Domain unit | Lead/Opportunity/Integration 状态机、概率、SLA、风险评分、BodyJson | 每条合法/非法边、终态、guard、边界时间 |
 | Application unit | 命令、权限组合、PII 投影、幂等、错误码 | 22 动作 × 适用命令；无权限无数据 materialize |
 | SQL Server integration | Schema、复合 FK、唯一键、RowVersion、事务、Outbox/Inbox | Testcontainers SQL Server；禁止用 InMemory 代替关系门禁 |
-| API integration | JWT/JWKS、ProblemDetails、ETag、分页、公开限流 | 正向 + 缺 claim/错误 audience/跨租户/并发 |
+| API integration | JWT/JWKS、ProblemDetails、ETag、Idempotency、分页、公开限流 | Create/assign/activity/merge 的 428/409/412/422、零部分写入 + 缺 claim/错误 audience/跨租户 |
 | Contract | OpenAPI、CloudEvents JSON Schema、Package API | producer/consumer 样例、向后兼容、未知字段 |
 | Dapr/Kafka integration | service invocation、Pub/Sub、分区、重放、DLQ | Compose 真 Kafka/Dapr；重复、乱序、broker 重启 |
-| CP6 ERP integration | BP、报价校验、订单幂等、错误映射 | 同 tenant/opportunity 并发请求只建一单 |
-| Next.js unit/component | 权限隐藏、PII 遮罩、表单、编辑器、错误态 | Server/Client boundary、a11y、i18n |
-| Browser E2E | 官网→Lead→转换→Accepted→ERP→Won；CMS 发布 | Playwright，三角色、两租户、三语言 |
+| CP6 ERP integration | BP、报价校验、订单幂等、错误映射 | 真实 C03 handler + 隔离 ERP SQL；同 tenant/opportunity 并发请求只建一单 |
+| Next.js unit/component | 权限隐藏、PII 遮罩、412 保文/差异、回执 Cookie、受控模板、错误态 | Server/Client boundary、cookie rotation/eviction、Schema、a11y、i18n |
+| Browser E2E | 官网→Lead→转换→Accepted→ERP→Won；CMS 发布 | Playwright，三角色、两租户、三语言、320–1440 viewport、键盘/屏幕阅读器 smoke |
 | Security | BOLA、XSS、CSRF、SSRF、header/JWT、Secret/PII scan | 0 Critical/High 未豁免；租户矩阵 100% 通过 |
 | Performance | API、SSR、提交、Outbox、ERP flow、百万级查询 | k6/受控负载达到 §14 阈值，无错误预算爆发 |
 | Resilience | Kafka/ERP/JWKS/DB/sidecar 故障 | 恢复后无重复订单、无状态倒退、积压可清 |
 | Migration | preflight/migrate/verify/cutover-check | 脱敏生产恢复副本；全量计数/哈希/不变量 |
 | Deployment | Compose 和 Kubernetes 原始 YAML | db-init 先行、探针、identity、digest、NetworkPolicy |
+| Adoption | Observation、Pilot、Lead Adoption、Full Journey | 固定 cohort/task/event manifest、canonical SQL、不可改写排除项与签名证据 |
 
 ### 16.1 必需 E2E 场景
 
-1. 官网正常提交、幂等重放、隔离和速率限制。
-2. 人工 Lead、分配、客户面对型活动、SLA 和 Qualified。
-3. 重复候选、合并、来源/活动保留和跨租户目标拒绝。
+1. 官网正常提交、幂等重放、隔离、速率限制、回执 Cookie/轮换/过期/篡改/错配和公开状态不枚举。
+2. 人工 Lead 创建同 key 同 payload 重放原资源、不同 payload 409；分配/客户面对型活动的 Idempotency + If-Match、FirstResponse 仅一次、SLA 和 Qualified。
+3. 重复候选、双 RowVersion 合并、任一 stale 时零写入、来源/活动保留和跨租户目标拒绝。
 4. 原子转换并发冲突，最终只产生一个 Opportunity。
 5. 报价 Accepted 守卫、订单请求、成功 Won、Retryable/Terminal 失败。
 6. 消息重复、乱序、消费者崩溃恢复和 DLQ 重放。
-7. CMS 草稿、预览、发布、缓存重验证、回滚和 XSS 负向样例。
+7. CMS 固定模板/命名槽位/非法变体、草稿、预览、发布、缓存重验证、回滚和 XSS 负向样例。
 8. 数据范围 1–5、协作人、PII、有权/无权和禁用用户。
 9. RS256 key rotation、JWKS 暂不可用、Token 撤销。
 10. 迁移后 20 表计数/哈希/状态/关联与生产前切换冒烟。
+11. Lead C 分栏工作台在正常、预期拒绝和恢复路径保留文本/焦点/差异；宽屏和窄屏不越权、不混租户。
+12. 公开首页、能力/行业、联系/回执在桌面/平板/移动与批准高保真稿一致，并通过 WCAG 2.2 AA、长文本和降级状态矩阵。
 
 ### 16.2 禁止的伪验收
 
@@ -1000,6 +1081,7 @@ pwsh ./eng/verify.ps1 -Gate Integration
 pwsh ./eng/verify.ps1 -Gate Contract
 pwsh ./eng/verify.ps1 -Gate Security
 pwsh ./eng/verify.ps1 -Gate E2E
+pwsh ./eng/verify.ps1 -Gate Performance -Profile crm-lead-pilot
 pwsh ./eng/verify.ps1 -Gate Performance -Profile crm-v1-slo
 pwsh ./eng/verify.ps1 -Gate Migration -Profile crm-v1-cutover
 ```
@@ -1011,6 +1093,9 @@ pwsh ./eng/system-verify.ps1 -Manifest ./release/system-release-manifest.yaml -G
 pwsh ./eng/system-verify.ps1 -Manifest ./release/system-release-manifest.yaml -Gate Contracts
 pwsh ./eng/system-verify.ps1 -Manifest ./release/system-release-manifest.yaml -Gate Security
 pwsh ./eng/system-verify.ps1 -Manifest ./release/system-release-manifest.yaml -Gate Slo
+pwsh ./eng/system-verify.ps1 -Manifest ./release/system-release-manifest.yaml -Gate Adoption -Profile Pilot -Evidence ./evidence/adoption/pilot-manifest.json
+pwsh ./eng/system-verify.ps1 -Manifest ./release/system-release-manifest.yaml -Gate Adoption -Profile Lead -Evidence ./evidence/adoption/lead-manifest.json
+pwsh ./eng/system-verify.ps1 -Manifest ./release/system-release-manifest.yaml -Gate Adoption -Profile FullJourney -Evidence ./evidence/adoption/full-journey-manifest.json
 ```
 
 命令必须失败关闭、透传工具退出码，并输出 JUnit、机器可读 summary 和 content-free evidence 目录。CI 与本地使用同一入口；README 中复制命令必须可直接执行。CRM01/P01/C01 各自负责先建立 runner contract，后续任务不得另造不可复现的门禁路径。
@@ -1042,16 +1127,24 @@ crm:
   webImage: <repository@sha256:digest>
   databaseMigration: <actual-latest>
 contractsBundleDigest: sha256:<digest>
+evidence:
+  indexUri: s3://<object-lock-bucket>/<systemVersion>/evidence-index.json
+  adoptionManifestDigests:
+    pilot: sha256:<digest>
+    lead: sha256:<digest>
+    fullJourney: sha256:<digest>
 forwardOnly: true
 ```
 
 SemVer/Git SHA 用于追踪；环境只部署 digest。三个仓库各自 Build once，DEV/UAT/PROD 推广同一组 digest。
 
+证据复用现有 S3-compatible 存储并启用服务端加密、版本控制和 Object Lock；System Release Manifest 只记录不可变 URI、内容 digest 和保留策略，不把 PII、Token、Cookie、Secret 或原始迁移行放入证据包。
+
 ### 17.2 Registry 和发布权威
 
-- 在 `docs/devops/AZURE-PIPELINES-PLAN.md` Phase 2 决策完成前，GHCR/GitHub R2 是权威。
-- Azure 可以做影子验证或消费既有候选，但不得对同一版本重新 Build 并宣称候选。
-- 若迁移 ACR，必须先固定候选清单、复制/重建禁令、影子期、等价矩阵、退出条件和恢复 GitHub R2 的时限。
+- CRM V1 唯一 Registry 和候选权威是 GHCR/GitHub R2；该选择不是实现者待选项。R00 必须在 P09/P10/CRM12 前把候选清单、权威工作流、Azure 非权威边界和回退写入批准 ADR。
+- Azure 可以做 CI、DEV 学习链、影子验证或消费既有 `repository@sha256:digest`，但不得对同一版本重新 Build 并宣称候选，也不得让两条链同时签发权威 System Release Manifest。
+- ACR 迁移是 CRM V1 之外的独立任务；必须另行固定复制而非重建策略、影子期、等价矩阵、退出条件和恢复 GitHub R2 时限，且不得阻塞或弱化 CRM V1 的现有 R2 门禁。
 
 ### 17.3 Repo 级门禁
 
@@ -1064,12 +1157,13 @@ SemVer/Git SHA 用于追踪；环境只部署 digest。三个仓库各自 Build 
 3. RS256/JWKS、权限投影、订单幂等和两租户安全矩阵通过。
 4. 迁移在生产恢复副本完成，哈希/不变量和时间预算通过。
 5. 性能、故障注入、DLQ 重放、PII/Secret 扫描通过。
-6. System Release Manifest、SBOM、签名、扫描和测试证据不可变归档。
+6. UAT 使用真实 C03 handler、隔离 ERP SQL 数据库和真实 Dapr/Kafka，Mock 结果不能签收。
+7. System Release Manifest、SBOM、签名、扫描、采用和测试证据不可变归档。
 
 ### 17.5 环境推广
 
 - DEV：同一候选 digest，先 db-init，再 API/Web/Gateway；健康、发布身份和 Smoke。
-- UAT：推广 DEV 同一 digest；业务 Owner 验收产品旅程和报表。
+- UAT：推广 DEV 同一 digest；先完成 Pilot UAT，再使用真实隔离 ERP 验收完整产品旅程和报表。
 - PROD：受保护环境 Approval/Checks、Branch control、允许 Pipeline、维护窗口、Exclusive lock。
 - 生产只使用各仓 `deploy/production/compose/compose.yaml` 或 `deploy/production/kubernetes/`；根开发资产禁止。
 - 任一 identity、migration、digest、contract 或健康核对不一致都按失败处理。
@@ -1081,6 +1175,7 @@ SemVer/Git SHA 用于追踪；环境只部署 digest。三个仓库各自 Build 
 
 | 前缀/门禁 | 默认 Accountable | 必需 Reviewer |
 | --- | --- | --- |
+| T1 / R00 | Product Owner / Release Owner | System Architect、Security、SRE |
 | P01–P10 | Platform Owner | Security、SRE；合同变更再加消费方 Owner |
 | C01–C02 | Identity Owner | Security、CRM Owner |
 | C03 | ERP Owner | CRM Owner、Data Owner、Security |
@@ -1088,8 +1183,20 @@ SemVer/Git SHA 用于追踪；环境只部署 digest。三个仓库各自 Build 
 | CRM01–CRM10 | CRM Engineering Owner | Product/UX 或对应 Platform/ERP Owner |
 | CRM11 | Data Owner | CRM Owner、DBA、Security、Release Owner |
 | CRM12 | Release Owner | SRE、Security、QA、三仓 Owner |
+| Observation/Pilot/Lead/Full Journey | Product Owner | Sponsor、Sales Operations、QA、Security、Data/ERP Owner（按阶段） |
 
-里程碑出口按依赖而非日期承诺：M0 关闭 DEC-CRM-001–007；M1 完成 P01–P06、C01–C03、CRM01–CRM03；M2 完成 CRM04–CRM05；M3 完成 CRM06–CRM07；M4 完成 CRM08–CRM10；M5 完成 CRM11 恢复副本演练、CRM12 预生产候选门禁和 UAT；M6 由 DEC-CRM-008 批准并执行 CRM11 生产切换，随后完成 CRM12 生产验证和最终关闭；M7 在一个只读观察周期后完成 C04B 旧 EF 解除。上游出口证据未完成时，下游只允许合同原型和测试夹具，不允许发布候选。
+里程碑出口按依赖而非日期承诺：
+
+1. **T1（本票）**：批准仓库内产品框架、工程 Spec 和入口；只修规范与项目记忆，不实现业务代码。
+2. **M0**：R00 记录 GHCR/R2 唯一权威；DEC-CRM-001–007 关闭；Sponsor、Product/Sales Operations/Security/ERP/Data/SRE/Release Owner、Pilot cohort 和 Observation Gate 证据实名冻结。
+3. **M1 底座并行**：完成 P01–P07、C01–C03、CRM01–CRM03。没有身份、租户、合同、Outbox/Inbox 和真实 Intake 链，不进入 Pilot。
+4. **M2 Lead Pilot**：只解锁 CRM04 的 Website/Manual Intake、Lead 队列、assignment、first-response activity/SLA 子集和 C 分栏工作台；通过两租户负向矩阵、真实 Dapr/Kafka Intake 回放、§14.5 性能 Smoke 和 Pilot UAT。
+5. **M3–M5 完整旅程**：Pilot 通过后才解锁 CRM04 余项、CRM05–CRM10、真实 ERP 全旅程、报表与 CMS；CRM09 前先通过高保真设计门禁。
+6. **M6 候选**：完成 P08–P10、C04A、CRM11 脱敏生产恢复副本演练，以及 CRM12 SLO/安全/故障/候选门禁；DEC-CRM-008 批准单次生产切换。
+7. **M7 生产采用**：执行 CRM11 切换与 CRM12 生产验证，然后依次通过 Lead Adoption（≥10 个工作日/≥200 Eligible Lead）和最多 30 日 Full Journey Gate；两者未通过时 Epic 保持 blocked。
+8. **M8 旧模型解除**：只读观察周期和完整采用门禁结束后完成 C04B；旧表物理删除另立受控任务。
+
+上游出口证据未完成时，下游只允许合同原型和测试夹具，不允许发布候选。Pilot 未通过时 CRM04 余项、CRM05–CRM11 和候选发布保持锁定；采用失败时系统保持运行、旧系统保持只读，只允许固定版本修复。
 
 ### 18.1 Platform P01–P10
 
@@ -1123,17 +1230,32 @@ SemVer/Git SHA 用于追踪；环境只部署 digest。三个仓库各自 Build 
 | CRM01 | CRM 仓分层、Next.js、CI、本地 Compose/Multi-App Run、标准 verify runner | P01,DEC-CRM-001/002 | 全栈空壳、健康、runner contract、依赖规则测试 |
 | CRM02 | 列合同/migration map、独立 DB、20 表目标模型、支持表、复合租户 FK | CRM01,P02,P06,DEC-CRM-004 | 合同/DDL drift + SQL Server Schema/tenant/outbox 测试 |
 | CRM03 | JWT、RequestContext、授权/撤销投影、PII/DataScope | CRM02,P03,C01,C02 | 22 动作 × 范围 × PII 矩阵 |
-| CRM04 | 官网/人工 Intake、Lead、SLA、重复、合并、活动/协作 | CRM02,CRM03,P07 | Intake API/消息/E2E |
+| CRM04 | Pilot 子集：官网/人工 Intake、Lead 队列、分配、首次响应/SLA；Pilot 后余项：重复、合并、完整活动/协作 | CRM02,CRM03,P07；余项再依赖 Pilot UAT | Intake API/消息/E2E、C 分栏、两租户负向、真实 Kafka 回放、Pilot 性能/采用证据 |
 | CRM05 | Account/Contact 和原子 Lead 转换 | CRM04 | 并发转换、复合 FK、审计 |
 | CRM06 | Opportunity、阶段历史、报价 Accepted | CRM05,C03 read API | 状态边/ERP 报价校验 E2E |
 | CRM07 | IntegrationProcess、BP/Order async、Won | CRM06,C03,P05,P06 | duplicate/out-of-order/failure E2E |
 | CRM08 | Dashboard、漏斗、来源、SLA、集成运营报表 | CRM04,CRM07 | KPI 公式对账和性能 |
-| CRM09 | Site/CMS/Form/Media、公开 SSR/ISR、发布重验证 | CRM02-CRM04,P07 | 多语言、XSS、缓存和表单 E2E |
-| CRM10 | `/crm/**` 完整 IA/UX、a11y/i18n/权限状态 | CRM04-CRM09 | 角色旅程、WCAG 和浏览器 E2E |
+| CRM09 | Site/CMS/Form/Media、受控模板、公开 SSR/ISR、回执 Cookie、发布重验证 | CRM02-CRM04,P07，且高保真稿批准 | 多语言、Schema/XSS、缓存、回执安全和表单 E2E |
+| CRM10 | `/crm/**` 完整 IA/UX、a11y/i18n/权限状态 | CRM04-CRM09 | 角色旅程、WCAG 2.2 AA 和浏览器 E2E |
 | CRM11 | Migrator、24 月匿名化、T-7/T-1/cutover | CRM02,C04A，业务 Schema 冻结 | 恢复副本全量哈希、≤30 分钟 |
-| CRM12 | OTel/SLO、安全/性能/故障、生产资产、候选门禁 | P08-P10,CRM01-CRM11 | System Manifest、UAT/Go-No-Go evidence |
+| CRM12 | OTel/SLO、安全/性能/故障、生产资产、候选与采用门禁 | P08-P10,CRM01-CRM11 | System Manifest、真实 ERP UAT、Go/No-Go、Lead/Full Journey evidence |
 
-### 18.4 依赖图
+### 18.4 采用证据合同
+
+| Gate | 冻结输入 | 硬阈值/输出 |
+| --- | --- | --- |
+| Observation | 3 人/15 Lead 观察脚本；8 人、2 部门、100 事件、10 工作日脱敏基线 | named Sponsor/Owner/cohort、摩擦排序、冻结的 Pilot task manifest |
+| Pilot UAT | 8–12 名销售、2 部门、≥2 主管、≥120 个固定任务且每人 ≥10；正常/拒绝/恢复任务预标记 | 正常路径无引导完成 ≥90%，成功 normal 任务 median ≤60 秒/p90 ≤120 秒；拒绝/恢复各 100%；业务正确性、两租户与 PII 隔离 100%；0 开放 P0/P1 或主流程 P2 |
+| Lead Adoption | 切换后 ≥10 工作日、≥200 Eligible Lead；冻结版本、cohort、BusinessCalendar 与 canonical SQL | Website/Manual 100% 进新 CRM且旧写 0；≥90% 在 30 分钟内有 Owner/可见异常；≥85% 在 4 业务小时内首次响应；各部门 Eligible Active User-Day 真实业务动作率 ≥80%；0 P0/P1 数据/安全/集成事故 |
+| Full Journey | 切换后最多 30 自然日、≥20 Conversion、≥10 OrderRequest；转换、Accepted、ERP result、报表 manifest | 所有自然样本在 CRM 完成；CRM/ERP canonical SQL、事件和报表 100% 对账；零无订单 Won、零重复订单、零租户/PII 泄露，失败/重试/冲突可复现 |
+
+Pilot 的 120 个任务至少包含 Website/Manual 各 20、重复候选 15、跨部门移交 15、无 Owner 10、并发冲突 10、跨非工作时段 SLA 10。`Eligible Active User-Day` 只要求用户启用、角色需要 CRM 且当天存在其授权范围内可行动工作。排除项仅限预先批准的休假、账号停用、正式入职/培训期和无可行动工作；临时培训不足、性能问题、绕开系统、失败任务、夜间/周末创建和数据错误不能事后排除。manifest 固定 release digest、cohort、任务/事件 ID、期望结果、排除原因 allowlist、canonical SQL SHA、UTC 区间和签名；修复后必须以新的固定版本重跑，不能改写旧证据。
+
+`Scenario manifest` 在执行前冻结 `ScenarioId`、`PathClass`（normal/expected-rejection/recovery）、`ExpectedOutcome`、执行用户与脱敏数据引用，执行后只追加结果。真实业务动作只包括有 Audit 的 create-lead、assign、contact、qualify、convert、accept-quotation、request-order；登录、查询和打开页面不计。成功 Contact 必须满足 §8.3 的单事务不变量。效率使用 nearest-rank，仅统计成功 normal 任务；浏览器用同一页面进程的 `performance.now()` 从可交互到成功响应，不能与服务端时钟相减。只有带 IncidentId 的基础设施故障可从效率分位数排除，仍需单列；用户错误、权限拒绝和 412 恢复保留在各自准确率/恢复报告中。
+
+所有门禁不可豁免。失败后系统继续运行、旧系统保持只读、范围和候选冻结，只允许修复；最多两个固定版本整改窗口。第二次仍失败时 Sponsor 必须重新立项或终止，Epic 保持 blocked，不能降低阈值或把失败样本重分类。
+
+### 18.5 依赖图
 
 ```mermaid
 flowchart LR
@@ -1164,14 +1286,15 @@ flowchart LR
 
 顺序理由：身份、租户、事件和原子消息是业务写入的安全前置；ERP handler 可与 CRM 核心并行，但 Accepted/Won 不能在 C03 可验证前收口；迁移工具在目标 Schema 稳定后实现，正式演练在全部业务行为冻结后执行；UI 可以按 API slice 并行，但一级菜单只能在整条对应旅程通过后启用。
 
-### 18.5 推荐小分支序列
+### 18.6 推荐小分支序列
 
-1. P01 先建立 Platform 合同和 runner；P03 可用后启动 C01，P01 与 DEC-CRM-001/002 关闭后启动 CRM01。
+1. T1 先冻结本 Spec；M0 再以 R00 ADR、named Owner/cohort 和 Observation Gate 关闭开工输入。P01 建立 Platform 合同和 runner；P03 可用后启动 C01，P01 与 DEC-CRM-001/002 关闭后启动 CRM01。
 2. P02/P03/P04 完成各自前置后，CRM02 与 C02/C03 按任务表依赖并行。
-3. CRM03 安全底座通过后启动 CRM04；CRM09 仅在 CRM04 Intake 契约完成后启动，不以未编号的“CMS 部分”绕过前置。
-4. CRM05→CRM06→CRM07 保持交易主链顺序。
-5. CRM08、CRM10 按已完成 API slice 增量交付，但不提前启用死链接菜单。
-6. CRM02 migration map 完成后先交付 C04A；CRM11 在业务 Schema 冻结后演练并切换，经过一个只读观察周期后再交付 C04B。CRM12 从第一天持续接入，最后收敛系统候选和生产验证。
+3. CRM03 安全底座通过后只启动 CRM04 Pilot 子集；Pilot UAT 未通过时不得实现 CRM04 余项或进入 CRM05–CRM11。
+4. Pilot 通过后 CRM05→CRM06→CRM07 保持交易主链顺序；CRM08/CRM10 按已完成 API slice 增量交付，但不提前启用死链接菜单。
+5. CRM09 仅在 CRM04 Intake 契约和批准高保真稿完成后启动，不以未编号的“CMS 部分”绕过前置。
+6. CRM02 migration map 完成后先交付 C04A；CRM11 在业务 Schema 冻结后演练并切换。CRM12 从第一天持续接入，在候选阶段收敛技术门禁，在生产阶段收敛 Lead/Full Journey 采用证据。
+7. 单次切换后先完成 Lead Adoption，再完成 Full Journey；两项均通过且经过一个只读观察周期后才交付 C04B。旧表物理删除继续另立任务。
 
 ## 19. Definition of Done
 
@@ -1204,18 +1327,25 @@ flowchart LR
 9. 新写 fence 后只执行前向修复；旧表只读保留一个发布周期，物理删除另立任务。
 10. 同步更新三个仓库的项目状态、完成项、待办和 AI 变更记录后，才可声明完成。
 11. DEC-CRM-001–008 全部有有效审批和证据；没有过期例外、无 named Owner 任务或未关闭硬停条件。
+12. Observation、Pilot UAT、Lead Adoption 和 Full Journey Adoption 的固定 manifest 全部通过；正常任务完成率、拒绝/恢复、两租户/PII 与 canonical SQL 对账达到 §18.4，不存在事后排除。
+13. GHCR/GitHub R2 是唯一候选权威；DEV/UAT/PROD 使用 System Release Manifest 中相同 digest，Azure 没有为该版本重建或签发第二份权威候选。
+14. 公开站点批准稿、受控 CMS Schema、回执 Cookie 安全、WCAG 2.2 AA 和多视口视觉/功能门禁通过；CRM09 不存在未批准任意模板或 HTML 逃生口。
 
-## 20. 发布前硬停条件
+## 20. 发布与 Epic 关闭硬停条件
 
-- Registry、候选清单或 GitHub/Azure 发布权威没有唯一答案。
+- R00 未把已锁定的 GHCR/R2 唯一权威、候选清单、Azure 非权威边界和回退写入批准 ADR，或 Azure/GitHub 为同一版本重复 Build。
+- Sponsor、Product/Sales Operations/Security/ERP/Data/SRE/Release Owner、Pilot cohort 或 Observation Gate 缺实名/证据。
 - CP6 仍使用 HS256 或 CRM/Gateway 任一层未独立验证 JWT。
 - 任何管理路径存在默认租户或接受外部 Tenant/User header。
 - Activity/Collaborator/StageHistory 仍是无约束弱引用，或迁移有未知 EntityType。
 - Outbox 不与业务数据同事务，Inbox 没有 `(ConsumerName, MessageId)` 唯一键。
 - ERP Order handler 未证明幂等，或 Won 能由人工直接写入。
+- Pilot UAT 未通过却启动 CRM04 余项、CRM05–CRM11 或候选发布；或使用 Mock ERP 签署完整旅程/UAT。
+- CRM09 开始时缺首页、能力/行业和联系/回执的桌面/平板/移动批准高保真稿或受控模板 Schema。
 - 生产 Topic/ACL 依赖自动创建，或 Dapr/服务内部端口公开。
 - 迁移演练使用合成数据、超过时间预算、哈希不一致或含歧义本地时间。
 - 必需门禁跳过、存在未豁免 Critical/High、发布身份/digest/迁移不匹配。
+- Lead Adoption 或 Full Journey manifest 未达到固定样本、时长、准确率与 canonical SQL 对账，却尝试关闭 CRM V1 Epic 或执行 C04B。
 
 ## 21. Do Not Touch / 暂缓
 
@@ -1227,6 +1357,8 @@ flowchart LR
 
 ## 22. 规格审阅清单
 
+本轮工程、QA 和采用/设计审阅已经形成上方哈希证据并冻结实现规划。以下复选框是实名 Owner 的开工、里程碑和生产审批，不能因文档状态为 Approved 而预先勾选。
+
 - [ ] 产品 Owner 确认定位、角色、V1/VNext 和 KPI 公式。
 - [ ] System Architect 确认三仓分层、同步/异步边界、合同所有权和依赖图。
 - [ ] 安全 Owner 确认 RS256/JWKS、投影、PII、威胁模型和 Secret 边界。
@@ -1235,7 +1367,9 @@ flowchart LR
 - [ ] 前端 Owner 确认 Next.js IA、SSR/ISR、缓存、BodyJson、a11y/i18n。
 - [ ] 平台/运维 Owner 确认 Dapr/Kafka/YARP、SLO、Topic/ACL、探针和 Runbook。
 - [ ] QA Owner 确认测试矩阵、两租户负向场景、性能 Profile、门禁命令和证据格式。
-- [ ] 发布 Owner 先完成 Registry/Authority 决策，再确认 System Manifest 和 R2 等价矩阵。
+- [ ] 发布 Owner 以 R00 ADR 记录已锁定的 GHCR/R2 Authority，再确认 System Manifest、Azure 非权威边界和 R2 等价矩阵。
+- [ ] Product/Design Owner 确认 C 分栏 Pilot、高保真公开站点、受控 CMS、移动全屏表单与回执 Cookie 契约。
+- [ ] Sponsor/Sales Operations 确认 cohort、Observation、Pilot、Lead Adoption 和 Full Journey manifest 与不可豁免阈值。
 - [ ] 三仓里程碑拆成 1–3 天子票据，依赖和验收逐票落地。
 
 所有勾选都必须引用实际评审或可复现证据；不能由 Spec 作者自行代签。

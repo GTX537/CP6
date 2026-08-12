@@ -1,5 +1,12 @@
 # 已完成能力与近期里程碑
 
+## 2026-08-12 CRM V1 规范批准 T1
+
+- 从 `main/origin/main@c68d9b53` 创建独立规范分支，按已批准的工程、QA 和采用/设计审阅证据修订 CRM 产品框架、可执行工程 Spec 与文档入口；旧根工作区未修改。
+- 冻结 API 幂等/并发与稳定错误语义、Pilot C 分栏、公开站点 IA/视觉/受控 CMS/回执 Cookie、真实 ERP UAT、分层性能、GHCR/R2 唯一权威，以及 Observation/Pilot/Lead/Full Journey 不可豁免门禁。
+- 本完成项只代表 T1 规划规范可用于拆票；业务代码、新仓、云资源、迁移、候选镜像和部署均未实施。下一项是 M0/R00 ADR 与 named Owner/cohort/Observation 输入。
+- 门禁：最新 `main` 基线与三份审阅工件 SHA-256 复核一致；CRM Foundation 聚焦回归 16/16 passed、0 failed/skipped；Markdown 相对链接与 `git diff --check` 通过。
+
 ## 2026-08-11 Azure DEV 自动部署仓库配置
 
 - 新增 `azure-pipelines-dev.yml`：以 `GTX537.CP6` 的成功 `main` Run 为唯一 completion resource，绑定 `CP6-Deploy/LAPTOP-3QQ44FJS`，核对服务身份、分支和完整 Git SHA 后构建一次本机 API/Web 镜像。
