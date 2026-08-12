@@ -8,6 +8,13 @@
 - `Invoke-Cp6LabEnvironment.ps1` 支持从 Azure task 进程环境安全接收四个 Secret，参数化 ReleaseVersion/GitSha，保留原 DPAPI 路径，并隔离 Azure RabbitMQ volume。
 - 新增 `DEV-AUTOMATIC-DEPLOYMENT.md`，记录外部 Pipeline 创建、最小资源授权、首次运行与验收步骤。Variable Group 已由截图确认，首次实际 Azure deployment 尚未完成，且该学习链不提升为 UAT/生产发布权威。
 
+## 2026-08-11：CRM 产品框架与三仓可执行 Spec
+
+- 从 `main == origin/main == f149c75e` 的干净独立 worktree 复核 CRM Foundation 和 DevOps/R2 约束；聚焦 CRM 测试 16/16 通过。确认 Foundation 只有 20 表、状态机、EF 迁移和菜单权限种子，没有 CRM API、应用服务或前端。
+- 新增 CRM 产品框架，确定包装/制造行业的售前获客到 ERP 订单定位、用户角色、官网/人工渠道、全旅程、V1/VNext、管理端与公开站点 IA/UX、指标和产品验收。
+- 新增三仓可执行 Spec，冻结 CP6/Platform/CRM 边界，以及 Dapr/Kafka/YARP、RS256/OIDC/JWKS、Next.js、独立数据库、CloudEvents/JSON Schema、Outbox/Inbox、ERP 数据主权和 20 表迁移策略。
+- 规格包含状态机、数据/API/事件、权限/PII/租户隔离、迁移/切换、SLO/威胁模型、测试矩阵、发布门禁、Platform P01–P10、CP6 C01–C04、CRM01–CRM12 依赖与 DoD。本变更只交付规划材料和项目记忆，不创建新仓、改业务代码、部署或迁移。
+
 ## 2026-08-11：Azure 专用部署 Agent Readiness
 
 - 记录 `CP6-Deploy` Pool、Agent `LAPTOP-3QQ44FJS` 和非管理员服务身份 `cp6_deploy_agent` 已由本机状态与 Azure Online/Idle 截图验证。
