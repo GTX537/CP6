@@ -2,7 +2,7 @@
 
 状态：Approved implementation-planning baseline；禁止据此直接上线
 
-最后核验：2026-08-12
+最后核验：2026-08-13
 
 产品框架：[CRM-PRODUCT-FRAMEWORK.md](./CRM-PRODUCT-FRAMEWORK.md)
 
@@ -12,7 +12,7 @@ Foundation 基线：[CRM-V1-SPEC.md](./CRM-V1-SPEC.md)
 
 本 Spec 把已经锁定的 CRM 方向转换为三仓库可执行计划。实现者不再决定仓库边界、前后端技术、身份协议、消息格式、数据主权或迁移策略；这些内容是输入约束。每个实施分支仍需把本 Spec 的里程碑拆为 1–3 天、可独立验证的子任务。
 
-本规划任务只交付规格和审阅证据，不创建新仓库、不实现服务、不创建云资源、不配置生产 Secret、不发布镜像、不执行数据迁移或部署。
+本规划任务只交付规格和审阅证据，不创建新仓库、不实现服务、不创建云资源、不配置生产 Secret、不发布镜像、不执行数据迁移或部署。`GTX537/CP6.CRM` 只在本 Spec 进入最新 `main`、M0 输入关闭且 P01 runner/合同可消费后，由 `CRM01-S01` 创建为私有仓库；不得提前创建空仓，也不得把 CRM 临时实现回 CP6 单体。
 
 批准证据：
 
@@ -27,7 +27,7 @@ Foundation 基线：[CRM-V1-SPEC.md](./CRM-V1-SPEC.md)
 ## 2. 已锁定决策
 
 1. 三个独立仓库：`GTX537/CP6`、`GTX537/CP6.Platform`、`GTX537/CP6.CRM`。
-2. CRM 仓库包含单一 CRM 后端、独立数据库和全部 Next.js 前端；公开站点使用 SSR/ISR，管理端在 `/crm/**`。
+2. CRM 仓库包含单一 CRM 后端、独立数据库和全部 Next.js 前端；公开站点使用 SSR/ISR，管理端在 `/crm/**`。CRM Web/BFF 与 CRM API 都是 Dapr 应用并各有 sidecar。
 3. YARP Gateway 是独立入口；Dapr sidecar 负责服务调用和 Pub/Sub；Kafka 是 Pub/Sub 底层。现有操作审计主题保持独立。
 4. 同步只用于只读查询；跨服务写入使用异步事件。
 5. CP6 是身份发行方，使用 RS256、OIDC Discovery、JWKS、`kid` 轮换和 `CP6.Web`/`CP6.Services` audiences。
@@ -40,6 +40,8 @@ Foundation 基线：[CRM-V1-SPEC.md](./CRM-V1-SPEC.md)
 12. V1 在一次生产切换前完成；维护窗口上限 30 分钟；切换后产生新写入时只允许前向修复。
 13. CRM V1 唯一 Registry/候选权威固定为 GitHub R2/GHCR。Azure 可做 CI、DEV 学习链、影子验证或消费同一 digest，但不得对同一版本重新 Build 并宣称候选；ACR 迁移必须独立立项。
 14. 实施采用 Lead Pilot → 完整旅程 → 单次切换 → Lead Adoption → Full Journey Adoption。Observation、Pilot 和两项生产采用阈值都是不可豁免硬门禁。
+15. 浏览器只向同源 Next.js BFF 提交公开表单；Gateway 不发布浏览器直达 CRM submission 写端点。CRM API 只向同时满足固定服务 JWT、Dapr mTLS AppId、workload identity 与 NetworkPolicy 的 BFF 返回回执秘密。
+16. CRM V1 不交付 CP6 产品目录、软件商城、第三方商品、订阅/授权或登录后客户产品中心；这些能力必须以后续独立 bounded context 立项。
 
 ## 3. 已验证当前状态
 
@@ -131,13 +133,16 @@ flowchart TB
     GW --> CP6["CP6 Identity + ERP APIs"]
     GW --> CRMWeb["CRM Next.js"]
     GW --> CRMApi["CRM API"]
-    CRMWeb --> CRMApi
+    CRMWeb --- DW["Dapr sidecar"]
+    CRMWeb -->|"CP6.Services JWT + Dapr mTLS/AppId + workload identity"| CRMApi
     CP6 --- D1["Dapr sidecar"]
     CRMApi --- D2["Dapr sidecar"]
     GW --- D3["Dapr sidecar"]
     D1 <--> Kafka["Kafka via Dapr Pub/Sub"]
+    DW <--> D2
     D2 <--> Kafka
     CRMApi --> CRMDB["Independent CRM SQL Server DB"]
+    CRMWeb --> Spool["Encrypted emergency intake spool"]
     CP6 --> CP6DB["CP6 ERP/Identity DB"]
     Kafka --> DLQ["Explicit retry / dead-letter topics"]
 ```
@@ -250,11 +255,26 @@ Won、Lost 是终态。Probability 由状态机派生，不持久化为可编辑
 
 ### 6.3 PublicSubmission
 
+`DispositionStatus` 与 `PiiState` 分开建模；匿名化是 PII 生命周期，不伪造新的业务处置结果：
+
+```text
+received ──normal────────────> ConvertedToLead
+    └──────risk──────────────> Quarantined ──release──> ConvertedToLead
+                                    ├────reject───────> Rejected
+                                    └────review TTL───> Expired
+Rejected/Expired ──retention job──> PiiState=Anonymized
+```
+
 | 状态 | 进入条件 | 允许后续 |
 | --- | --- | --- |
-| Accepted | 语法、令牌、幂等、限流和风险检查通过 | 同事务转换为 Lead，正常结果应直接到 ConvertedToLead |
-| Quarantined | 中风险、蜜罐、异常频率或策略命中 | 有权限人员释放为 Lead 或保持隔离到期匿名化 |
-| ConvertedToLead | 已创建 Lead 且关联写入成功 | 终态 |
+| Quarantined | 中风险、蜜罐、异常频率或策略命中 | release、reject 或审核到期；此时不是 Lead |
+| ConvertedToLead | 正常提交或 release 原子创建唯一 Lead | 业务终态；PII 随关联 Lead 保留策略处理 |
+| Rejected | 授权人员提交稳定原因码并通过并发检查 | 处置终态；24 小时内匿名化 PII |
+| Expired | `ReviewExpiresAtUtc` 到期且仍未处置 | 处置终态；24 小时内匿名化 PII |
+
+- release/reject/expiry 竞争只允许一个 RowVersion 获胜，失败返回 412 且 PublicSubmission、Lead、Audit、Outbox 和幂等记录均零部分写入。
+- release 在单一事务创建 Lead、SourceTouch、Audit 和 Outbox，并复制冻结的 Intake、BusinessCalendarVersion、SlaDueAtUtc 与 `IntakeReceivedAtUtc/SlaAnchorAtUtc`；不得伪造 Lead.CreatedAtUtc。
+- Owner 30 分钟分配指标从 release 后成为 Eligible Lead 起算；首次响应 SLA 从原 `ReceivedAtUtc` 起算，释放时已逾期立即形成 breach。Website 进入新 CRM 的 100% 口径按 PublicSubmission 计，Rejected/Expired 仍保留非 PII 来源质量事实。
 
 硬拒绝请求不落 PII：无效站点/表单、超大 Body、非法 Content-Type、明显协议攻击返回 4xx。
 
@@ -308,11 +328,11 @@ RowVersion rowversion not null
 | --- | --- | --- |
 | Account | Name, NormalizedName, Website, Industry, OwnerUserId, DeptId | `(TenantId, NormalizedName)` 查询索引；不存财务/信用主数据 |
 | Contact | AccountId?, FullName, Email/NormalizedEmail, Phone/NormalizedPhone, JobTitle, Consent | 复合 Account FK；PII 字段遮罩和匿名化 |
-| Lead | LeadNo, Subject, Company/Contact/Channel, Status, Owner/Dept, BusinessCalendarVersion, SlaDueAtUtc, consent, conversion refs, attribution | `(TenantId, LeadNo)` 唯一；SLA 到期时间按创建时冻结的日历版本计算；Account/Contact/Opportunity/Merged target 均复合 FK |
+| Lead | LeadNo, Subject, Company/Contact/Channel, Status, Owner/Dept, BusinessCalendarVersion, SlaDueAtUtc, IntakeReceivedAtUtc?, SlaAnchorAtUtc, consent, conversion refs, attribution | `(TenantId, LeadNo)` 唯一；官网 Lead 保留原提交 SLA 锚点，人工 Lead 以创建时间为锚点；Account/Contact/Opportunity/Merged target 均复合 FK |
 | Collaborator | LeadId?, OpportunityId?, UserId, Role | 恰好一个目标；`TenantId + target + UserId` 唯一 |
 | Activity | LeadId?, OpportunityId?, Type, Subject, Details, OccurredAtUtc, NextActionAtUtc | 恰好一个目标；客户面对型活动驱动 FirstResponseAt |
 | SourceTouch | LeadId, Source, Medium, Campaign, Content, Term, LandingPage, Referrer, TouchedAtUtc | Lead 复合 FK；URL 按 PII 保留 |
-| PublicSubmission | FormId, LeadId?, IdempotencyHash, IpHash, UserAgent, Status, RiskReason | `(TenantId, FormId, IdempotencyHash)` 唯一 |
+| PublicSubmission | FormId, LeadId?, ReceivedAtUtc, ReviewExpiresAtUtc, PiiAnonymizeAtUtc, IntakeConfigId, BusinessCalendarVersion, SlaDueAtUtc, IdempotencyHash, PayloadHash, DispositionStatus, PiiState, decision fields, IpHash, UserAgent | `(TenantId, FormId, IdempotencyHash)` 唯一；Needs Review 使用 `(TenantId, DispositionStatus, ReceivedAtUtc, Id)`，到期任务使用 `(TenantId, DispositionStatus, ReviewExpiresAtUtc, Id)` 游标索引 |
 | Opportunity | OpportunityNo, LeadId, AccountId?, PrimaryContactId?, Stage, amount/currency/date, accepted/won/lost fields | `(TenantId, LeadId)`、`(TenantId, OpportunityNo)` 唯一 |
 | StageHistory | LeadId?, OpportunityId?, FromStage, ToStage, Reason, ChangedAtUtc, ChangedBy | 恰好一个目标；只追加 |
 | ErpLink | AccountId?, OpportunityId?, ErpSystem, ErpEntityType, ErpEntityKey, IsPrimary, LastVerifiedAtUtc | 恰好一个 CRM 目标；外部键唯一规则按实体类型定义 |
@@ -344,6 +364,7 @@ RowVersion rowversion not null
 | RevokedToken | Jti、用户、撤销/过期时间 | `(Issuer, Jti)` 唯一；到 Token 过期后删除 |
 | AuditEntry | 关键命令、操作者、目标、结果、相关性和字段名 | 只追加，不存 Secret 和 PII 原值 |
 | RetentionRun | 匿名化批次、计数、失败和证据哈希 | 不保存被擦除原值 |
+| PublicAttempt | AttemptHash、Site/Form、BrowserNonceHash、PayloadHash、ReceiptId、ReceiptCredentialCiphertext、ExpiresAtUtc、TombstonedAtUtc | 秘密只在有效期内向同一 BFF 身份重放；到期擦除密文并保留不可恢复 tombstone |
 
 ### 7.4 显式目标约束
 
@@ -439,12 +460,15 @@ V1 类型只允许 `hero`、`richText`、`image`、`evidenceList`、`capabilityL
 
 ### 8.2 公开端点
 
-| 方法与路径 | 用途 | 认证/限流 |
+浏览器可见路由与 CRM 内部写契约必须分开，Gateway 不得把内部 submission 路由发布到公网：
+
+| 方法与路径 | 所有者/用途 | 认证/限流 |
 | --- | --- | --- |
 | GET `/api/public/v1/sites/{siteKey}/content?locale=&path=` | Next.js SSR 获取已发布内容 | 无 JWT；按 IP/site 限流，只返回发布投影 |
 | GET `/api/public/v1/sites/{siteKey}/forms/{formKey}` | 获取启用表单和隐私版本 | 无 JWT；短缓存 |
-| POST `/api/public/v1/sites/{siteKey}/forms/{formKey}/submissions` | 公开提交 | `Idempotency-Key` 必填；Body ≤ 32 KiB |
-| GET `/api/public/v1/submissions/{receiptId}` | 返回 `received`/`reviewing` 粗粒度状态 | Next.js BFF 使用 `X-Receipt-Token`；不返回 Lead/租户/风险/分配/拒绝信息 |
+| POST `/api/site/{siteKey}/forms/{formKey}/submissions` | Next.js 同源 BFF 接受浏览器提交 | attempt Cookie + CSRF/Origin + Body ≤ 32 KiB；不透传浏览器身份头 |
+| POST `/internal/crm/v1/sites/{siteKey}/forms/{formKey}/submissions` | CRM API 持久化公开提交 | 固定 `CP6.Services` JWT、CRM Web Dapr mTLS AppId、workload identity 与 NetworkPolicy 四项同时满足 |
+| GET `/internal/crm/v1/submissions/{receiptId}` | BFF 查询 `received`/`reviewing` 粗粒度状态 | 与内部 POST 相同身份边界并携带 `X-Receipt-Token`；不返回 Lead/租户/风险/分配/拒绝信息 |
 
 提交请求：
 
@@ -471,11 +495,15 @@ V1 类型只允许 `hero`、`richText`、`image`、`evidenceList`、`capabilityL
 }
 ```
 
-CRM Public API 在持久事务成功后向受信任 Next.js BFF 返回 `receiptId`、高熵 `receiptToken`、`status`、`receivedAtUtc` 和 `expiresAtUtc`。BFF 必须在同一响应周期把 token 写入 §11.4 的 HttpOnly 加密 Cookie，再只把 `receiptId`、粗粒度状态和回执路由返回浏览器；token 不得进入浏览器 JSON、URL、HTML 或 JavaScript。不返回 LeadId、TenantId、风险原因或内部队列信息。
+表单渲染时 BFF 创建至少 128 bit 随机 `attemptId` 和认证加密的 `__Host-cp6-attempt` HttpOnly Cookie，绑定 Site/Form、浏览器 nonce、过期时间和 BFF key id。提交后 BFF 计算 canonical payload hash；CRM 以 `TenantId + SiteId + FormId + AttemptHash` 幂等。同 attempt/同 payload 重放原资源和有效回执秘密，同 attempt/不同 payload 返回 409；attempt 过期后只返回不可恢复 tombstone/中性不可用，不得新建提交或重新签发 token。`attemptId` 单独不能查询回执。
 
-Accepted、Processing 和内部 Quarantined 只映射为 `received` 或 `reviewing`。不存在、缺 token、过期、篡改、receipt/token 错配必须使用固定形状、近似固定耗时的中性 404；不得暴露提交是否存在。
+CRM API 在持久事务成功后向同一受信任 BFF 身份返回 `receiptId`、高熵 `receiptToken`、`status`、`receivedAtUtc` 和 `expiresAtUtc`。回执 token 加密保存并支持 key rotation；BFF 必须在同一响应周期把 token 写入 §11.4 的 HttpOnly 加密 Cookie，再只把 `receiptId`、粗粒度状态和回执路由返回浏览器。token 不得进入浏览器 JSON、URL、HTML 或 JavaScript。不返回 LeadId、TenantId、风险原因或内部队列信息。
+
+内部 ConvertedToLead、Quarantined、Rejected 和 Expired 只映射为 `received`、`reviewing` 或中性不可用。不存在、缺 token、过期、篡改、receipt/token 错配必须使用固定形状、近似固定耗时的中性 404；不得暴露提交是否存在。
 
 默认防滥用策略：单 IP 哈希每 10 分钟 10 次、每天 50 次；单 Site/Form 每分钟 120 次。阈值可由运维配置但不得由公开请求控制。蜜罐命中进入隔离；明显协议攻击直接拒绝。
+
+发布或启用表单必须唯一解析到 active IntakeConfig、BusinessCalendarVersion、SLA policy 和隐私版本，否则返回 422 且继续服务上一已发布版本。被已发布表单引用的配置不得单独停用/删除；变更必须在同一事务切换到有效替代配置，或原子下线该表单。
 
 ### 8.3 Lead 端点
 
@@ -494,6 +522,18 @@ Accepted、Processing 和内部 Quarantined 只映射为 `received` 或 `reviewi
 | GET `/leads/{id}/duplicates` | `query` | 只返回用户可访问候选 |
 | POST `/leads/{id}/merge` | `merge` | `targetLeadId`、reason、source/target RowVersion、`Idempotency-Key` |
 | POST `/leads/{id}/convert` | `convert` | 原子转换；返回 Account/Contact/Opportunity ID |
+
+隔离提交不是 Lead，审核端点固定为独立 Intake 资源并复用 Foundation 22 个权限动作：
+
+| 方法与路径 | 权限 | 说明 |
+| --- | --- | --- |
+| GET `/intake/submissions` | `crm-lead:query` | 仅 Needs Review；与 Intake/Dept 行级 predicate 取交集 |
+| GET `/intake/submissions/{id}` | `crm-lead:query` | 基本字段；PII 仍遮罩 |
+| GET `/intake/submissions/{id}/pii` | `crm-lead:view-pii` | 在相同行级 predicate 内服务端解密；审计读取 |
+| POST `/intake/submissions/{id}/release` | `crm-lead:add` | `If-Match` + `Idempotency-Key`；原子创建 Lead |
+| POST `/intake/submissions/{id}/reject` | `crm-lead:edit` | `If-Match` + `Idempotency-Key`；稳定原因码必填 |
+
+expiry/anonymize 只允许专用服务身份执行，不新增第 23 个权限动作。release、reject、expiry 对同一 RowVersion 竞争且仅一方成功；412 必须零业务写入并保留操作人员输入。
 
 Assignment 和 Activity 在一个数据库事务内重新验证租户、授权、数据范围、当前 RowVersion、幂等 key 与领域守卫。客户面对型 Activity 同事务追加 Activity，在 `FirstResponseAtUtc` 仍为空时仅设置一次，并按状态机推进 Contacted，同时写 Audit、聚合 RowVersion 和 Outbox；任何一步失败整笔回滚。
 
@@ -568,7 +608,7 @@ Merge 在同一事务锁定并复核 source/target；任一 RowVersion 过期返
 
 至少实现：
 
-`CRM_TENANT_REQUIRED`、`CRM_FORBIDDEN`、`CRM_PII_FORBIDDEN`、`CRM_NOT_FOUND`、`CRM_PRECONDITION_REQUIRED`、`CRM_CONCURRENCY_CONFLICT`、`CRM_IDEMPOTENCY_CONFLICT`、`CRM_VALIDATION_FAILED`、`CRM_LEAD_TRANSITION_INVALID`、`CRM_OPPORTUNITY_TRANSITION_INVALID`、`CRM_ACCEPTED_QUOTATION_REQUIRED`、`CRM_ORDER_REQUIRED_FOR_WON`、`CRM_MERGE_TARGET_INVALID`、`CRM_PUBLIC_ROUTE_NOT_FOUND`、`CRM_PUBLIC_RATE_LIMITED`、`CRM_PUBLIC_QUARANTINED`、`CRM_RECEIPT_UNAVAILABLE`、`CRM_ERP_UNAVAILABLE`、`CRM_ERP_REJECTED`、`CRM_EVENT_SCHEMA_INVALID`。
+`CRM_TENANT_REQUIRED`、`CRM_FORBIDDEN`、`CRM_PII_FORBIDDEN`、`CRM_NOT_FOUND`、`CRM_PRECONDITION_REQUIRED`、`CRM_CONCURRENCY_CONFLICT`、`CRM_IDEMPOTENCY_CONFLICT`、`CRM_VALIDATION_FAILED`、`CRM_LEAD_TRANSITION_INVALID`、`CRM_OPPORTUNITY_TRANSITION_INVALID`、`CRM_ACCEPTED_QUOTATION_REQUIRED`、`CRM_ORDER_REQUIRED_FOR_WON`、`CRM_MERGE_TARGET_INVALID`、`CRM_PUBLIC_ROUTE_NOT_FOUND`、`CRM_PUBLIC_RATE_LIMITED`、`CRM_PUBLIC_QUARANTINED`、`CRM_PUBLIC_ATTEMPT_CONFLICT`、`CRM_INTAKE_CONFIGURATION_INVALID`、`CRM_SUBMISSION_DISPOSITION_INVALID`、`CRM_RECEIPT_UNAVAILABLE`、`CRM_EMERGENCY_INTAKE_UNAVAILABLE`、`CRM_ERP_UNAVAILABLE`、`CRM_ERP_REJECTED`、`CRM_EVENT_SCHEMA_INVALID`。
 
 ## 9. 事件契约
 
@@ -632,7 +672,7 @@ Kafka 消息值就是结构化 CloudEvent，不再包一层 `event/payload/envel
 | `com.gtx537.platform.department.changed.v1` | deptId, parentId, path, version | 更新部门树和数据范围 |
 | `com.gtx537.platform.permission.changed.v1` | subjectId, resource, action, scope, version | 原子替换该 subject 的授权投影 |
 | `com.gtx537.platform.token.revoked.v1` | issuer, jti, subjectId, expiresAtUtc | 写 RevokedToken，TTL 到 Token 过期 |
-| `com.gtx537.crm.public-submission.accepted.v1` | submissionId, leadId, formId, source summary | 只用于运营/告警，不包含表单原文 |
+| `com.gtx537.crm.public-submission.quarantined.v1` | submissionId, formId, riskReasonCode, receivedAtUtc | Needs Review 运营/告警；不包含表单原文、网络标识或回执秘密 |
 | `com.gtx537.crm.lead.created.v1` | leadId, sourceChannel, ownerId?, slaDueAtUtc | 报表和通知 |
 | `com.gtx537.crm.lead.converted.v1` | leadId, accountId, contactId, opportunityId | 下游只读投影 |
 | `com.gtx537.crm.opportunity.accepted.v1` | opportunityId, quotationKey, acceptedAtUtc | ERP/报表准备 |
@@ -728,6 +768,7 @@ app/
   (public)/preview/[token]/page.tsx
   (crm)/crm/dashboard/page.tsx
   (crm)/crm/leads/page.tsx
+  (crm)/crm/leads/intake/page.tsx
   (crm)/crm/leads/[leadId]/page.tsx
   (crm)/crm/accounts/page.tsx
   (crm)/crm/accounts/[accountId]/page.tsx
@@ -736,6 +777,7 @@ app/
   (crm)/crm/site/page.tsx
   (crm)/crm/site/pages/[pageId]/page.tsx
   (crm)/crm/site/forms/[formId]/page.tsx
+  api/site/[siteKey]/forms/[formKey]/submissions/route.ts
   api/revalidate/route.ts
 ```
 
@@ -762,10 +804,11 @@ app/
 ### 11.4 公开回执与 BFF Cookie
 
 - 浏览器回执路由固定为 `/site/{siteKey}/receipt/{receiptId}`；`receiptId` 是非秘密 opaque reference，高熵 token 永不进入 URL、HTML、浏览器 JavaScript、日志、Trace 或分析事件。
-- 同源 BFF 在提交成功后把最新最多 10 个 `{receiptId, token, expiresAtUtc}` 条目存入认证并加密的 `__Host-cp6-receipts` Cookie。属性固定为 `Secure; HttpOnly; SameSite=Lax; Path=/`；每项 30 天到期，超过上限逐出最旧项，并支持有重叠验证窗口的服务端密钥轮换。
-- Server Component 只读取与 URL receiptId 匹配且未过期的 Cookie 条目，再调用 `GET /api/public/v1/submissions/{receiptId}` 并通过 `X-Receipt-Token` 传递 token。缺失、过期、篡改、错配和不存在返回同一中性 404-style 页面与 Contact 行动。
+- 同源 BFF 在提交成功后把 `{receiptId, token, expiresAtUtc}` 条目存入认证并加密的 `__Host-cp6-receipts` Cookie。属性固定为 `Secure; HttpOnly; SameSite=Lax; Path=/`；每项最多 30 天，并支持有重叠验证窗口的服务端密钥轮换。
+- 整个 `Set-Cookie` 编码后字节数（名称、密文、Base64 和全部属性）硬上限 3800 bytes；按最旧过期时间逐项淘汰直到满足预算，不能依赖“最多 10 个”作为容量证明。CI 使用生产序列化器、最大 token 和 key id 验证该预算。
+- Server Component 只读取与 URL receiptId 匹配且未过期的 Cookie 条目，再调用 `GET /internal/crm/v1/submissions/{receiptId}` 并通过 `X-Receipt-Token` 传递 token。缺失、过期、篡改、错配和不存在返回同一中性 404-style 页面与 Contact 行动。
 - 页面和 API 应用 `Cache-Control: private, no-store`、`Referrer-Policy: no-referrer`、`X-Robots-Tag: noindex, nofollow`。分析事件不得包含 receiptId/token；每 receipt/IP 限流且无可观察的内部状态枚举。
-- 对外只有 `received` 和 `reviewing`；内部 Accepted、Processing、Quarantined 均映射到这两个状态之一。风险、Lead 创建、分配、拒绝和 ERP 状态永不公开。
+- 对外只有 `received`、`reviewing` 和中性不可用；内部 ConvertedToLead、Quarantined、Rejected、Expired 映射到这些状态。风险、Lead 创建、分配、拒绝和 ERP 状态永不公开。
 
 ### 11.5 公开站点设计与 CMS 合同
 
@@ -779,6 +822,7 @@ app/
 ### 11.6 Lead Pilot 工作台
 
 - 宽屏使用已批准的 C 分栏：左栏是按 SLA 风险排序、可访问范围内的 Lead 队列；右栏只承载负责人分配和第一次客户面对型响应。详情历史、查重、合并、转换与窄屏任务进入 `/crm/leads/[leadId]`。
+- Leads 一级导航下固定两个二级入口：Lead Queue 与 `Intake / Needs Review`。Needs Review 显示原 ReceivedAt、审核剩余时间、释放后首次响应 SLA 是否已 breach、来源摘要和权限遮罩；不得把隔离记录伪装成 Lead 或另设一级导航。
 - 所有页面显式实现 Loading、Empty、Forbidden、Not Found、Conflict、Integration Pending/Failed 和 Partial Report；缓存、Skeleton 和旧请求响应不得显示上一租户数据。
 - Pilot 任务 manifest 固定正常、预期拒绝和恢复路径。界面不得通过隐藏失败样本、预填超出权限的信息或人工后台修数提高完成率。
 
@@ -992,12 +1036,27 @@ CRM12 必须把下表固化为 `tests/performance/crm-v1-slo` 配置；DEV 用�
 | --- | --- | --- |
 | admin-read | 30 分钟，100 RPS，60% list/25% detail/15% dashboard，50 个并发用户 | API p95 < 300 ms、5xx < 0.1%、SQL 无全表扫描回归 |
 | public-ssr | 30 分钟，50 RPS，70% ISR hit/30% miss，3 locale | 外部 TTFB p95 < 500 ms、5xx < 0.1%、无跨租户缓存 |
-| public-submit | 30 分钟 20 RPS + 5 分钟 40 RPS burst，10% 幂等重放/5% quarantine | 处理 p95 < 500 ms、无重复 Lead、无丢失 accepted submission |
+| public-submit | 30 分钟 20 RPS + 5 分钟 40 RPS burst，10% 幂等重放/5% quarantine | 处理 p95 < 500 ms、无重复 Lead、无丢失已持久化 submission |
 | event-flow | 30 分钟 100 event/s；中段 Kafka 停 5 分钟后恢复 | 正常 Outbox 99% < 5 秒；恢复 15 分钟内清空，零丢失/重复副作用 |
 | erp-order | 30 分钟 5 request/s，注入 1% timeout/1% duplicate/1% out-of-order | 99% 终态 < 30 秒；每幂等键最多一单，状态不倒退 |
 | soak | 8 小时按预期峰值 50% 混合流量 | 无持续内存/连接增长，错误预算消耗 < 10%，积压回到基线 |
 
 每次报告固定 release manifest、环境规格、数据集 hash、脚本 SHA、开始/结束 UTC、SLI 分位数、错误率和资源曲线。硬件或数据集不等价时结果只作诊断，不得用于 UAT/PROD 签收。
+
+### 14.7 数据库连续性与 Emergency Intake
+
+生产 CRM 数据库固定为 Azure SQL Database General Purpose vCore standard-series、zone redundant，自动备份使用 GZRS 且 PITR 保留 35 天。验收把两类故障分开：
+
+| 故障 | RPO/RTO 目标 | 计时与证据 |
+| --- | --- | --- |
+| 单节点/可用区故障 | 已提交数据 RPO=0 目标；RTO ≤30 分钟 | 从外部探针首次发现至 readiness 恢复，并完成管理读写、公开回执和两租户冒烟；季度故障演练 |
+| 逻辑损坏/PITR | 可选恢复点距声明时间 ≤10 分钟；同规模季度恢复 RTO ≤4 小时 | 从 Incident Commander 声明至恢复库验证、路由切换、spool 导入和 100% 对账完成；不得表述为 Azure 平台保证 |
+
+数据库不可写时，同源 BFF 可启用唯一批准的 Emergency Intake：Azure Storage ZRS 私有账户内的不可变加密 Blob 保存 envelope，Queue 只保存指针；通过 private endpoint、workload identity 和 Key Vault envelope encryption 访问，envelope 以轮换 HMAC 认证并包含原 attempt id、tenant/site/form、隐私版本、ReceivedAtUtc、payload hash 与密文。它不是 CRM/ERP 权威、不可人工编辑、不得形成第二条浏览器写路径。
+
+- 容量为经实测的四小时峰值提交量加 25%；达到 80% 告警，95% 后拒绝新提交并返回中性 503，禁止无界积压。
+- 保留期 7 天。CRM 恢复后按原 attempt 幂等导入、重新执行风险和配置有效性判断，并对 Blob/Queue/CRM 的数量与 payload hash 做 100% 对账后才删除。
+- Emergency Intake 启用期间的 5xx、延迟、事故和后续提交仍计入 99.9% 可用性与 Adoption 证据；不能因 spool 接收成功排除错误预算。
 
 ## 15. 安全威胁模型
 
@@ -1011,12 +1070,14 @@ CRM12 必须把下表固化为 `tests/performance/crm-v1-slo` 配置；DEV 用�
 | 数据范围绕过 | 详情/报表/计数与列表策略不同 | 单一 Policy Query builder，数据库侧过滤 | owner/collaborator/dept/custom/all 矩阵 |
 | PII 泄露 | 日志、Trace、Event、URL、缓存、错误回显 | 分类、遮罩、最小事件、日志 redaction、no-store | Canary PII 扫描和日志断言 |
 | 公开表单滥用 | Spam、DoS、枚举、重复 Lead | 限流、Body 上限、蜜罐、风险隔离、幂等、粗粒度 receipt | 速率、重放、并发和 fuzz |
+| attempt 劫持/重放 | 获取 attemptId 后替换载荷或套取回执 | Site/Form/browser nonce/payload hash/期限绑定、同 BFF 身份、tombstone | 同/异 payload、跨浏览器、并发、过期重放矩阵 |
 | 回执凭据泄露/枚举 | URL、HTML、JS、日志、分析或 Cookie 篡改泄露提交状态 | 加密有界 HttpOnly Cookie、30 天 TTL、key rotation、固定形状 404、no-store/no-referrer/noindex | sink scan、篡改/错配/过期、时序近似、Cookie eviction/rotation E2E |
 | CMS 存储型 XSS | BodyJson/链接/媒体注入脚本 | 受控 AST、Schema、协议 allowlist、CSP、无任意 HTML | XSS corpus 和 CSP 浏览器测试 |
 | SSRF/恶意媒体 | URL 抓取内网、上传恶意文件 | 不抓取任意外链、对象存储、MIME/病毒扫描、大小限制 | 私网 URL、双扩展、压缩炸弹测试 |
 | CSRF/会话窃取 | 管理 Mutation 被第三方触发 | HttpOnly/Secure/SameSite、CSRF token、Origin 校验 | 跨站 POST/预检测试 |
 | Kafka 重放/乱序/篡改 | 重复订单、状态倒退、毒消息 | Inbox、业务幂等、aggregateversion、ACL/TLS、DLQ | duplicate/out-of-order/poison 测试 |
 | Dapr sidecar 绕过 | 未授权服务调用内部端点 | mTLS、App ID allowlist、K8s NetworkPolicy、服务 JWT | 非允许 AppId/SA 调用拒绝 |
+| BFF/应急 spool 绕过 | 伪造 AppId/服务头直写 CRM，或篡改/泄露 spool PII | 浏览器路由隔离、四重服务身份、private endpoint、不可变加密 envelope/HMAC、7 天 TTL | Gateway 路由枚举、伪身份、Blob/Queue RBAC、篡改、容量与恢复对账 |
 | YARP 绕过 | 直接打后端避开第一层校验 | 后端独立 JWT、NetworkPolicy、内部端口不公开 | 直连负向测试 |
 | Outbox 非原子 | 业务成功但事件丢失或反之 | 同 DbContext/事务、dispatcher lease | kill-after-save 故障注入 |
 | NuGet/容器供应链 | 恶意包或漂移镜像 | package source mapping、lock、签名、SBOM、provenance、digest | 依赖/镜像扫描和来源验证 |
@@ -1031,9 +1092,9 @@ CRM12 必须把下表固化为 `tests/performance/crm-v1-slo` 配置；DEV 用�
 | 层 | 范围 | 最低场景/门禁 |
 | --- | --- | --- |
 | Domain unit | Lead/Opportunity/Integration 状态机、概率、SLA、风险评分、BodyJson | 每条合法/非法边、终态、guard、边界时间 |
-| Application unit | 命令、权限组合、PII 投影、幂等、错误码 | 22 动作 × 适用命令；无权限无数据 materialize |
+| Application unit | 命令、权限组合、PII 投影、幂等、错误码 | 22 动作 × 适用命令；Intake 权限映射与 release/reject/expiry 竞争；无权限无数据 materialize |
 | SQL Server integration | Schema、复合 FK、唯一键、RowVersion、事务、Outbox/Inbox | Testcontainers SQL Server；禁止用 InMemory 代替关系门禁 |
-| API integration | JWT/JWKS、ProblemDetails、ETag、Idempotency、分页、公开限流 | Create/assign/activity/merge 的 428/409/412/422、零部分写入 + 缺 claim/错误 audience/跨租户 |
+| API integration | JWT/JWKS、ProblemDetails、ETag、Idempotency、分页、公开限流 | Create/assign/activity/merge/intake 的 428/409/412/422、attempt 绑定、BFF 四重身份、零部分写入 + 缺 claim/错误 audience/跨租户 |
 | Contract | OpenAPI、CloudEvents JSON Schema、Package API | producer/consumer 样例、向后兼容、未知字段 |
 | Dapr/Kafka integration | service invocation、Pub/Sub、分区、重放、DLQ | Compose 真 Kafka/Dapr；重复、乱序、broker 重启 |
 | CP6 ERP integration | BP、报价校验、订单幂等、错误映射 | 真实 C03 handler + 隔离 ERP SQL；同 tenant/opportunity 并发请求只建一单 |
@@ -1041,14 +1102,14 @@ CRM12 必须把下表固化为 `tests/performance/crm-v1-slo` 配置；DEV 用�
 | Browser E2E | 官网→Lead→转换→Accepted→ERP→Won；CMS 发布 | Playwright，三角色、两租户、三语言、320–1440 viewport、键盘/屏幕阅读器 smoke |
 | Security | BOLA、XSS、CSRF、SSRF、header/JWT、Secret/PII scan | 0 Critical/High 未豁免；租户矩阵 100% 通过 |
 | Performance | API、SSR、提交、Outbox、ERP flow、百万级查询 | k6/受控负载达到 §14 阈值，无错误预算爆发 |
-| Resilience | Kafka/ERP/JWKS/DB/sidecar 故障 | 恢复后无重复订单、无状态倒退、积压可清 |
+| Resilience | Kafka/ERP/JWKS/DB/sidecar/AZ/PITR/应急 spool 故障 | 恢复后无重复订单、无状态倒退、积压可清；§14.7 RPO/RTO 与 100% spool 对账 |
 | Migration | preflight/migrate/verify/cutover-check | 脱敏生产恢复副本；全量计数/哈希/不变量 |
 | Deployment | Compose 和 Kubernetes 原始 YAML | db-init 先行、探针、identity、digest、NetworkPolicy |
 | Adoption | Observation、Pilot、Lead Adoption、Full Journey | 固定 cohort/task/event manifest、canonical SQL、不可改写排除项与签名证据 |
 
 ### 16.1 必需 E2E 场景
 
-1. 官网正常提交、幂等重放、隔离、速率限制、回执 Cookie/轮换/过期/篡改/错配和公开状态不枚举。
+1. 官网正常提交、attempt 同载荷/异载荷/跨浏览器重放、隔离 release/reject/expiry 竞争、速率限制、回执 Cookie 最终字节预算/轮换/过期/篡改/错配和公开状态不枚举。
 2. 人工 Lead 创建同 key 同 payload 重放原资源、不同 payload 409；分配/客户面对型活动的 Idempotency + If-Match、FirstResponse 仅一次、SLA 和 Qualified。
 3. 重复候选、双 RowVersion 合并、任一 stale 时零写入、来源/活动保留和跨租户目标拒绝。
 4. 原子转换并发冲突，最终只产生一个 Opportunity。
@@ -1060,6 +1121,7 @@ CRM12 必须把下表固化为 `tests/performance/crm-v1-slo` 配置；DEV 用�
 10. 迁移后 20 表计数/哈希/状态/关联与生产前切换冒烟。
 11. Lead C 分栏工作台在正常、预期拒绝和恢复路径保留文本/焦点/差异；宽屏和窄屏不越权、不混租户。
 12. 公开首页、能力/行业、联系/回执在桌面/平板/移动与批准高保真稿一致，并通过 WCAG 2.2 AA、长文本和降级状态矩阵。
+13. Azure SQL AZ 故障与 PITR 恢复按 §14.7 计时；Emergency Intake 容量阈值、HMAC 篡改、原 attempt 导入、风险重判和 100% 数量/hash 对账通过。
 
 ### 16.2 禁止的伪验收
 
@@ -1108,10 +1170,11 @@ pwsh ./eng/system-verify.ps1 -Manifest ./release/system-release-manifest.yaml -G
 
 ```yaml
 systemVersion: 1.0.0
+previousSystemManifestDigest: sha256:<digest>
 cp6:
   gitSha: <full-sha>
   apiImage: <repository@sha256:digest>
-  databaseMigration: <actual-latest>
+  databaseMigrationRange: { min: <id>, max: <id> }
 platform:
   gitSha: <full-sha>
   gatewayImage: <repository@sha256:digest>
@@ -1120,13 +1183,18 @@ platform:
     aspnetCore: <version>
     messaging: <version>
     entityFramework: <version>
-  daprComponentsVersion: <version>
+  daprComponentsVersion: <immutable-version>
 crm:
   gitSha: <full-sha>
   apiImage: <repository@sha256:digest>
   webImage: <repository@sha256:digest>
-  databaseMigration: <actual-latest>
-contractsBundleDigest: sha256:<digest>
+  databaseMigrationRange: { min: <id>, max: <id> }
+compatibility:
+  openApiMajors: { cp6: 1, crm: 1 }
+  eventMajors: { platform: 1, crm: 1, erp: 1 }
+  contractsBundleDigest: sha256:<digest>
+  currentSchemaReadWriteEvidenceDigest: sha256:<digest>
+  upgradedRealisticDataEvidenceDigest: sha256:<digest>
 evidence:
   indexUri: s3://<object-lock-bucket>/<systemVersion>/evidence-index.json
   adoptionManifestDigests:
@@ -1136,7 +1204,7 @@ evidence:
 forwardOnly: true
 ```
 
-SemVer/Git SHA 用于追踪；环境只部署 digest。三个仓库各自 Build once，DEV/UAT/PROD 推广同一组 digest。
+SemVer/Git SHA 用于追踪；环境只部署 digest。三个仓库各自 Build once，DEV/UAT/PROD 推广同一组 digest。Manifest Schema 必须机器判定 DB migration range、OpenAPI/Event major、contract digest、Dapr component version 与上一份 Manifest 的兼容性；自由文本声明不能通过候选门禁。
 
 证据复用现有 S3-compatible 存储并启用服务端加密、版本控制和 Object Lock；System Release Manifest 只记录不可变 URI、内容 digest 和保留策略，不把 PII、Token、Cookie、Secret 或原始迁移行放入证据包。
 
@@ -1159,6 +1227,7 @@ SemVer/Git SHA 用于追踪；环境只部署 digest。三个仓库各自 Build 
 5. 性能、故障注入、DLQ 重放、PII/Secret 扫描通过。
 6. UAT 使用真实 C03 handler、隔离 ERP SQL 数据库和真实 Dapr/Kafka，Mock 结果不能签收。
 7. System Release Manifest、SBOM、签名、扫描、采用和测试证据不可变归档。
+8. 候选中的旧/新二进制均在当前 Schema 与真实升级后形态数据上验证读、写和事件；默认回退整个 System Manifest，组件级回退只有在 Manifest 内存在签名兼容证据时才允许。
 
 ### 17.5 环境推广
 
@@ -1167,7 +1236,7 @@ SemVer/Git SHA 用于追踪；环境只部署 digest。三个仓库各自 Build 
 - PROD：受保护环境 Approval/Checks、Branch control、允许 Pipeline、维护窗口、Exclusive lock。
 - 生产只使用各仓 `deploy/production/compose/compose.yaml` 或 `deploy/production/kubernetes/`；根开发资产禁止。
 - 任一 identity、migration、digest、contract 或健康核对不一致都按失败处理。
-- 数据库只前向迁移；应用回退必须先证明与当前 Schema 兼容。
+- 数据库与业务数据只前向迁移，任何回退都不恢复旧 Schema/旧数据。默认整套回退到 `previousSystemManifestDigest` 指向的已验证组件组合；单组件例外必须由机器可判定范围和签名的当前 Schema/升级后数据读写事件证据授权。
 
 ## 18. 里程碑、任务和依赖
 
@@ -1188,9 +1257,9 @@ SemVer/Git SHA 用于追踪；环境只部署 digest。三个仓库各自 Build 
 里程碑出口按依赖而非日期承诺：
 
 1. **T1（本票）**：批准仓库内产品框架、工程 Spec 和入口；只修规范与项目记忆，不实现业务代码。
-2. **M0**：R00 记录 GHCR/R2 唯一权威；DEC-CRM-001–007 关闭；Sponsor、Product/Sales Operations/Security/ERP/Data/SRE/Release Owner、Pilot cohort 和 Observation Gate 证据实名冻结。
+2. **M0**：R00 记录 GHCR/R2 唯一权威；DEC-CRM-001–007 关闭；冻结 Azure SQL 拓扑、Emergency Intake 账户/容量/身份和 System Manifest 回退合同；Sponsor、Product/Sales Operations/Security/ERP/Data/SRE/Release Owner、Pilot cohort 和 Observation Gate 证据实名冻结。
 3. **M1 底座并行**：完成 P01–P07、C01–C03、CRM01–CRM03。没有身份、租户、合同、Outbox/Inbox 和真实 Intake 链，不进入 Pilot。
-4. **M2 Lead Pilot**：只解锁 CRM04 的 Website/Manual Intake、Lead 队列、assignment、first-response activity/SLA 子集和 C 分栏工作台；通过两租户负向矩阵、真实 Dapr/Kafka Intake 回放、§14.5 性能 Smoke 和 Pilot UAT。
+4. **M2 Lead Pilot**：只解锁 CRM04 的 Website/Manual Intake、Needs Review、双 SLA、稳定 attempt/BFF 信任边界、Emergency Intake、Lead 队列、assignment、first-response activity/SLA 子集和 C 分栏工作台；通过两租户负向矩阵、真实 Dapr/Kafka Intake 回放、§14.5 性能 Smoke 和 Pilot UAT。
 5. **M3–M5 完整旅程**：Pilot 通过后才解锁 CRM04 余项、CRM05–CRM10、真实 ERP 全旅程、报表与 CMS；CRM09 前先通过高保真设计门禁。
 6. **M6 候选**：完成 P08–P10、C04A、CRM11 脱敏生产恢复副本演练，以及 CRM12 SLO/安全/故障/候选门禁；DEC-CRM-008 批准单次生产切换。
 7. **M7 生产采用**：执行 CRM11 切换与 CRM12 生产验证，然后依次通过 Lead Adoption（≥10 个工作日/≥200 Eligible Lead）和最多 30 日 Full Journey Gate；两者未通过时 Epic 保持 blocked。
@@ -1227,10 +1296,10 @@ SemVer/Git SHA 用于追踪；环境只部署 digest。三个仓库各自 Build 
 
 | ID | 交付 | 前置 | 完成证据 |
 | --- | --- | --- | --- |
-| CRM01 | CRM 仓分层、Next.js、CI、本地 Compose/Multi-App Run、标准 verify runner | P01,DEC-CRM-001/002 | 全栈空壳、健康、runner contract、依赖规则测试 |
+| CRM01 | `CRM01-S01` 才创建私有 CRM 仓；随后交付分层、Next.js、CI、本地 Compose/Multi-App Run、标准 verify runner | T1 已进最新 main、M0 输入关闭、P01 runner/合同可消费、DEC-CRM-001/002 | 仓库创建审计、全栈空壳、健康、runner contract、依赖规则测试 |
 | CRM02 | 列合同/migration map、独立 DB、20 表目标模型、支持表、复合租户 FK | CRM01,P02,P06,DEC-CRM-004 | 合同/DDL drift + SQL Server Schema/tenant/outbox 测试 |
 | CRM03 | JWT、RequestContext、授权/撤销投影、PII/DataScope | CRM02,P03,C01,C02 | 22 动作 × 范围 × PII 矩阵 |
-| CRM04 | Pilot 子集：官网/人工 Intake、Lead 队列、分配、首次响应/SLA；Pilot 后余项：重复、合并、完整活动/协作 | CRM02,CRM03,P07；余项再依赖 Pilot UAT | Intake API/消息/E2E、C 分栏、两租户负向、真实 Kafka 回放、Pilot 性能/采用证据 |
+| CRM04 | Pilot 子集：同源 BFF、稳定 attempt、官网/人工 Intake、Needs Review/处置、双 SLA、Emergency Intake、Lead 队列、分配、首次响应；Pilot 后余项：重复、合并、完整活动/协作 | CRM02,CRM03,P07；余项再依赖 Pilot UAT | Intake API/消息/E2E、spool 恢复对账、C 分栏、两租户负向、真实 Kafka 回放、Pilot 性能/采用证据 |
 | CRM05 | Account/Contact 和原子 Lead 转换 | CRM04 | 并发转换、复合 FK、审计 |
 | CRM06 | Opportunity、阶段历史、报价 Accepted | CRM05,C03 read API | 状态边/ERP 报价校验 E2E |
 | CRM07 | IntegrationProcess、BP/Order async、Won | CRM06,C03,P05,P06 | duplicate/out-of-order/failure E2E |
@@ -1238,7 +1307,7 @@ SemVer/Git SHA 用于追踪；环境只部署 digest。三个仓库各自 Build 
 | CRM09 | Site/CMS/Form/Media、受控模板、公开 SSR/ISR、回执 Cookie、发布重验证 | CRM02-CRM04,P07，且高保真稿批准 | 多语言、Schema/XSS、缓存、回执安全和表单 E2E |
 | CRM10 | `/crm/**` 完整 IA/UX、a11y/i18n/权限状态 | CRM04-CRM09 | 角色旅程、WCAG 2.2 AA 和浏览器 E2E |
 | CRM11 | Migrator、24 月匿名化、T-7/T-1/cutover | CRM02,C04A，业务 Schema 冻结 | 恢复副本全量哈希、≤30 分钟 |
-| CRM12 | OTel/SLO、安全/性能/故障、生产资产、候选与采用门禁 | P08-P10,CRM01-CRM11 | System Manifest、真实 ERP UAT、Go/No-Go、Lead/Full Journey evidence |
+| CRM12 | OTel/SLO、安全/性能、AZ/PITR/spool 故障、生产资产、候选兼容与采用门禁 | P08-P10,CRM01-CRM11 | System Manifest/previous digest、季度恢复证据、真实 ERP UAT、Go/No-Go、Lead/Full Journey evidence |
 
 ### 18.4 采用证据合同
 
@@ -1330,6 +1399,9 @@ flowchart LR
 12. Observation、Pilot UAT、Lead Adoption 和 Full Journey Adoption 的固定 manifest 全部通过；正常任务完成率、拒绝/恢复、两租户/PII 与 canonical SQL 对账达到 §18.4，不存在事后排除。
 13. GHCR/GitHub R2 是唯一候选权威；DEV/UAT/PROD 使用 System Release Manifest 中相同 digest，Azure 没有为该版本重建或签发第二份权威候选。
 14. 公开站点批准稿、受控 CMS Schema、回执 Cookie 安全、WCAG 2.2 AA 和多视口视觉/功能门禁通过；CRM09 不存在未批准任意模板或 HTML 逃生口。
+15. PublicSubmission disposition/PII 生命周期、Needs Review 权限、双 SLA、attempt/replay/tombstone、3800-byte Cookie 和表单配置引用不变量均有自动化契约与两租户证据。
+16. §14.7 Azure SQL AZ/PITR 季度恢复和 Emergency Intake 容量、不可变加密、幂等导入及 100% 对账通过；恢复事件完整计入 SLO/Adoption。
+17. System Manifest 的 previous digest、migration/OpenAPI/Event/Dapr 兼容范围和当前 Schema/升级后真实形态数据签名证据机器可验证；回退不回滚数据或 Schema。
 
 ## 20. 发布与 Epic 关闭硬停条件
 
@@ -1337,6 +1409,9 @@ flowchart LR
 - Sponsor、Product/Sales Operations/Security/ERP/Data/SRE/Release Owner、Pilot cohort 或 Observation Gate 缺实名/证据。
 - CP6 仍使用 HS256 或 CRM/Gateway 任一层未独立验证 JWT。
 - 任何管理路径存在默认租户或接受外部 Tenant/User header。
+- Gateway 发布浏览器直达 CRM submission 写路由，CRM Web 无 Dapr sidecar，或 CRM API 未同时验证服务 JWT、Dapr mTLS AppId、workload/network identity。
+- 隔离提交被伪装成 Lead、新增第 23 个权限、release/reject/expiry 不能以 ETag 保证唯一胜者，或释放后 SLA 从 release 漂白而非原 ReceivedAt。
+- 表单发布可引用失效 IntakeConfig/Calendar，attempt 可跨 payload/浏览器重放，或回执 Cookie 超过 3800-byte 最终编码预算。
 - Activity/Collaborator/StageHistory 仍是无约束弱引用，或迁移有未知 EntityType。
 - Outbox 不与业务数据同事务，Inbox 没有 `(ConsumerName, MessageId)` 唯一键。
 - ERP Order handler 未证明幂等，或 Won 能由人工直接写入。
@@ -1344,6 +1419,8 @@ flowchart LR
 - CRM09 开始时缺首页、能力/行业和联系/回执的桌面/平板/移动批准高保真稿或受控模板 Schema。
 - 生产 Topic/ACL 依赖自动创建，或 Dapr/服务内部端口公开。
 - 迁移演练使用合成数据、超过时间预算、哈希不一致或含歧义本地时间。
+- Azure SQL 拓扑、AZ/PITR RPO/RTO 证据或 Emergency Intake 合同未固定；spool 可人工改写/无界保留/成为第二权威，或恢复后未 100% 对账。
+- System Manifest 不含 previous digest 与机器可判定兼容范围，单组件回退无当前 Schema/升级后数据签名证据，或试图回退 Schema/业务数据。
 - 必需门禁跳过、存在未豁免 Critical/High、发布身份/digest/迁移不匹配。
 - Lead Adoption 或 Full Journey manifest 未达到固定样本、时长、准确率与 canonical SQL 对账，却尝试关闭 CRM V1 Epic 或执行 C04B。
 
@@ -1354,6 +1431,7 @@ flowchart LR
 - 不拆 Identity/Space，不重写全部旧 Bridge，不引入双写数据库。
 - 暂缓 Dapr Actors/Workflow/State Store/Bindings、Avro/Schema Registry、Helm、多区域和额外 Service Mesh。
 - 不在同一版本完成旧 EF 模型解除和物理 DROP。
+- 不在 CRM V1 内建立 CP6 软件产品目录、商城、第三方商品、订阅/授权、客户产品中心或 Portal 仓；未来按独立 bounded context 与 CRM Account/Contact 合同集成。
 
 ## 22. 规格审阅清单
 
@@ -1366,8 +1444,10 @@ flowchart LR
 - [ ] ERP Owner 确认 Business Partner/Quotation/Order 权威、幂等键和错误码。
 - [ ] 前端 Owner 确认 Next.js IA、SSR/ISR、缓存、BodyJson、a11y/i18n。
 - [ ] 平台/运维 Owner 确认 Dapr/Kafka/YARP、SLO、Topic/ACL、探针和 Runbook。
+- [ ] SRE/DBA 确认 Azure SQL zone-redundant/GZRS/PITR 拓扑、§14.7 RPO/RTO 计时、季度恢复与 Emergency Intake 合同。
 - [ ] QA Owner 确认测试矩阵、两租户负向场景、性能 Profile、门禁命令和证据格式。
 - [ ] 发布 Owner 以 R00 ADR 记录已锁定的 GHCR/R2 Authority，再确认 System Manifest、Azure 非权威边界和 R2 等价矩阵。
+- [ ] 发布/三仓 Owner 确认 previous System Manifest、机器可判定兼容范围、整套默认回退与数据/Schema 永不回退。
 - [ ] Product/Design Owner 确认 C 分栏 Pilot、高保真公开站点、受控 CMS、移动全屏表单与回执 Cookie 契约。
 - [ ] Sponsor/Sales Operations 确认 cohort、Observation、Pilot、Lead Adoption 和 Full Journey manifest 与不可豁免阈值。
 - [ ] 三仓里程碑拆成 1–3 天子票据，依赖和验收逐票落地。

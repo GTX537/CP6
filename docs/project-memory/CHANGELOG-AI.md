@@ -2,6 +2,14 @@
 
 > 依据 Git log 汇总，不替代完整 Git 历史。重点记录影响接手判断的里程碑。
 
+## 2026-08-13：CRM V1 T1 对抗审阅收口
+
+- 把公开提交从浏览器直达 CRM 收紧为同源 Next.js BFF，并固定服务 JWT、Dapr mTLS AppId、workload/network identity 交集；补齐 attempt 绑定、幂等回执、tombstone 与 3800-byte Cookie 预算。
+- 将 Quarantined 建成 PublicSubmission 独立处置闭环，复用既有 22 权限；释放时复制原 ReceivedAt/SLA 锚点，避免隔离漂白首次响应指标。
+- 固定 Azure SQL GP zone-redundant/GZRS/PITR 与 Emergency Intake，区分 AZ RPO/RTO 和逻辑损坏季度恢复门禁；System Manifest 增加 previous digest 与机器兼容范围。
+- 明确 CRM V1 不承担软件商城/订阅/客户产品中心，CRM 仓只在 CRM01-S01 前置关闭后创建；本变更仍无业务代码、仓库、云资源、迁移或部署。
+- 验证：本地工程/设计 fallback 复核无新的 Critical/High；正式交互技能审阅未在缺少 AskUserQuestion 的宿主中冒充完成；CRM Foundation 16/16、Markdown 相对链接和 `git diff --check` 通过。
+
 ## 2026-08-12：CRM V1 规范批准与采用门禁
 
 - 从 `main/origin/main@c68d9b53` 的独立任务分支修订 CRM 产品框架、可执行 Spec 和入口，将工程、QA、采用/设计审阅结论固化为 Approved implementation-planning baseline；未修改旧根工作区或业务代码。

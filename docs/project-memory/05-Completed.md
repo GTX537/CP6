@@ -1,5 +1,12 @@
 # 已完成能力与近期里程碑
 
+## 2026-08-13 CRM V1 T1 对抗审阅收口
+
+- 修订产品框架与可执行 Spec，关闭隔离提交状态/权限、原 ReceivedAt 双 SLA、同源 BFF 四重身份、attempt/replay/tombstone 和回执 Cookie 字节预算歧义。
+- 固定 Azure SQL AZ/PITR 连续性与 Emergency Intake 实施合同，并把 previous System Manifest、机器兼容矩阵、系统整体默认回退和数据/Schema 前向边界纳入发布门禁。
+- 明确 CRM 产品商城/订阅/客户产品中心不属于 V1；`CP6.CRM` 仓库只在 CRM01-S01 前置满足后创建。本完成项仍仅代表规范闭环，不代表任何业务实现或云资源完成。
+- 本地工程/设计 fallback 复核无新的 Critical/High；正式 gstack 交互审阅因宿主接口缺失未签发。CRM Foundation 16/16、Markdown 相对链接和差异格式门禁通过。
+
 ## 2026-08-12 CRM V1 规范批准 T1
 
 - 从 `main/origin/main@c68d9b53` 创建独立规范分支，按已批准的工程、QA 和采用/设计审阅证据修订 CRM 产品框架、可执行工程 Spec 与文档入口；旧根工作区未修改。

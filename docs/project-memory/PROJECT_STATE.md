@@ -1,6 +1,15 @@
 # 项目当前状态
 
-最后更新：2026-08-12
+最后更新：2026-08-13
+
+## CRM V1 T1 对抗审阅收口（2026-08-13）
+
+- T1 继续保持纯规范范围；没有创建 `CP6.CRM` 仓库、业务代码、数据库、云资源、迁移或部署。新仓只允许由满足 T1/M0/P01 前置的 `CRM01-S01` 创建。
+- PublicSubmission 已形成独立 Intake 闭环：Quarantined 只能竞争性 release/reject/expiry，匿名化是 PII 生命周期；复用既有 22 个权限，并把首次响应 SLA 固定在原 ReceivedAt，Owner 30 分钟从 release 起算。
+- 公开写入固定为浏览器到同源 BFF，再以服务 JWT、Dapr mTLS AppId、workload identity/NetworkPolicy 调 CRM；稳定 attempt 绑定 payload/browser，回执 Cookie 按最终编码 3800 bytes 控制。
+- 生产连续性固定 Azure SQL Database GP vCore zone-redundant、GZRS/35-day PITR，以及受控 Azure Storage ZRS Emergency Intake；AZ 与逻辑损坏分别以 RPO/RTO 和季度恢复证据验收。
+- System Release Manifest 新增 previous digest 与 DB/OpenAPI/Event/Dapr 兼容范围；默认系统整体回退，组件级例外必须有签名证据，Schema/业务数据永不回退。
+- 本地工程/设计 fallback 复核未发现新的 Critical/High；正式 `plan-eng-review`/`plan-design-review` 因当前宿主缺少技能强制的 AskUserQuestion 接口未签发，不能冒充技能门禁。CRM Foundation 16/16、Markdown 相对链接和 `git diff --check` 通过。
 
 ## CRM V1 规范批准基线（2026-08-12）
 

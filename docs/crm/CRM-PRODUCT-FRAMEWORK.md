@@ -2,7 +2,7 @@
 
 状态：Approved implementation-planning baseline；不得据此跳过实施、验收或生产审批
 
-最后核验：2026-08-12（`main == origin/main == c68d9b53b4cf3adb5925b8258c36969fdebda753`）
+最后核验：2026-08-13（`main == origin/main == c68d9b53b4cf3adb5925b8258c36969fdebda753`）
 
 配套工程规格：[CRM-V1-EXECUTABLE-SPEC.md](./CRM-V1-EXECUTABLE-SPEC.md)
 
@@ -42,6 +42,7 @@ CP6 现有 ERP/MES/WMS 负责报价、订单、生产、库存和履约。CRM �
 7. V1 使用固定状态机和受控内容区块，先保证可审计闭环，不提供任意流程或任意 HTML。
 8. 部署不是成功口径。Pilot、Lead Adoption 和 Full Journey Adoption 均为不可豁免的产品门禁；采用证据未通过时 CRM V1 Epic 保持 blocked。
 9. 可用性与正确性优先于功能数量。Lead Pilot 先验证分配、首次响应和两租户隔离，再解锁完整交易旅程、CMS、迁移候选和生产发布。
+10. CRM V1 是行业获客与售前工作台，不是 CP6 产品商城或登录后客户产品门户。未来软件目录、订阅、授权和统一产品入口必须按独立 bounded context 立项，不能把各产品业务代码塞进 CRM。
 
 ## 2. 用户与角色
 
@@ -130,11 +131,19 @@ flowchart LR
 
 1. New Lead 进入配置的 Intake 队列。
 2. 协调员或分配策略设置唯一负责人；其他用户只能作为协作人。
-3. 默认首次响应 SLA 是 4 个租户业务小时，由版本化 `BusinessCalendar` 计算。夜间、周末和假日创建的 Lead 不从 Eligible Lead 中排除；计时从创建时刻后的第一个业务时刻开始，跨非工作时段顺延。
+3. 默认首次响应 SLA 是 4 个租户业务小时，由公开提交事务冻结的版本化 `BusinessCalendar` 计算。正常提交从 `PublicSubmission.ReceivedAtUtc` 起算；隔离提交释放后仍保留原始 SLA 锚点，释放时已经逾期则立即形成 breach。人工 Lead 从创建时刻起算。夜间、周末和假日不从 Eligible Lead 中排除；非工作时段不累计，跨非工作时段顺延。
 4. 第一条客户面对型 Call、Email、Meeting 或 CustomerMessage 活动设置 `FirstResponseAt`；Note 和 System 不算响应。
 5. 距 SLA 60 分钟时预警，超时后产生可查询的 breach 指标；通知失败不能回滚业务活动。
 6. 移交负责人必须记录原负责人、新负责人、操作者、原因和时间。
 7. V1 不提供任意暂停、重启或人工改写 SLA 的 API。隔离、确定性合并和测试数据通过明确规则排除；其余生产 Lead 均保留在测量口径中。
+
+### 4.3A 公开提交审核与恢复
+
+1. 公开提交在 BFF 中生成与浏览器会话、站点、表单、载荷摘要和有效期绑定的稳定 `attemptId`；结果不确定时只使用同一 attempt 重试，不要求访客重新填写或创建第二条 Lead。
+2. 正常提交在一个事务内形成 Lead；风险命中进入 `Leads → Intake → Needs Review`，此时仍是 PublicSubmission，不伪装成 Lead。
+3. 有现有 Lead 权限且满足 Intake/部门数据范围的协调员可以查看、释放或驳回；释放原子创建唯一 Lead，驳回和审核到期随后按策略匿名化 PII。
+4. 线索负责人 30 分钟分配指标从释放并成为 Eligible Lead 起算；首次响应 SLA 继续从访客原始 `ReceivedAtUtc` 起算。隔离时长、最老积压、释放、驳回和到期必须独立报告，不能用长期隔离美化采用指标。
+5. CRM 数据库不可用时，同源 BFF 只可写入受控、加密、不可人工改写且有 TTL/容量上限的应急 Spool；恢复后用原 attempt 幂等导入并做 100% 计数/哈希对账。Spool 不成为 CRM 或 ERP 权威。
 
 ### 4.4 重复候选与合并
 
@@ -200,6 +209,7 @@ flowchart LR
 - 邮件/日历/电话连接器、开放 API、Webhook、Excel 导入导出。
 - 客户门户、自定义域名、电子签名、合同和订阅。
 - AI 摘要、推荐、生成内容和预测；必须另做数据使用与提示注入威胁评审。
+- CP6 软件产品目录、第三方商品、统一客户产品中心、订阅、授权、支付和产品启动入口。
 - 多区域、Helm、额外 Service Mesh、Dapr Actors/Workflow/State Store/Bindings。
 
 ### 5.3 明确非目标
@@ -209,6 +219,7 @@ flowchart LR
 - 不允许任意 HTML、任意脚本或可视化页面搭建器。
 - 不在 V1 拆分 Identity、Space 或重写全部旧 Bridge。
 - 不引入 Avro/Schema Registry，不为“未来可能需要”引入 Actors、Workflow 或 State Store。
+- 不创建独立 Portal 仓库，不把未来自研产品的代码、数据库或部署生命周期放入 CRM 仓库。
 - 不在本规划任务创建生产环境、Secret、云资源或执行部署。
 
 ## 6. 信息架构与 UX
@@ -219,6 +230,7 @@ flowchart LR
 | --- | --- | --- |
 | `/crm/dashboard` | 漏斗、来源、SLA、待处理集成、我的任务 | `crm-dashboard:query` |
 | `/crm/leads` | 线索池、筛选、批量分配入口 | `crm-lead:query` |
+| `/crm/leads/intake` | Lead 队列和 Needs Review 隔离提交 | `crm-lead:query`；原始 PII 再要求 `view-pii` |
 | `/crm/leads/[leadId]` | 摘要、PII、活动、协作、来源、重复、转换 | `crm-lead:query` |
 | `/crm/accounts` | 企业和联系人列表 | `crm-account:query` |
 | `/crm/accounts/[accountId]` | 企业、联系人、关联商机和 ERP 关联 | `crm-account:query` |
@@ -238,7 +250,7 @@ Lead Pilot 固定采用已批准的 C 分栏工作台：宽屏左侧是按 SLA �
 - 默认语言页面：`/site/{siteKey}/{slug}`。
 - 非默认语言：`/site/{siteKey}/{locale}/{slug?}`。
 - 提交回执：`/site/{siteKey}/receipt/{receiptId}`。高熵查询凭据只能保存在有界、加密、`Secure`/`HttpOnly`/`SameSite=Lax` 的 `__Host-cp6-receipts` Cookie 中，不得进入 URL、HTML、浏览器 JavaScript、日志或分析事件。
-- 公开表单提交：页面内由 Next.js Server Action 或 Route Handler 调用 CRM Public API；浏览器不直连内部服务地址。
+- 公开表单提交：浏览器只调用同源 Next.js Server Action/Route Handler；BFF 通过自己的 Dapr sidecar 调用 CRM 内部提交 API。Gateway 不发布浏览器直达 CRM submission POST，回执秘密只返回受信任 BFF。
 - 未发布、禁用、过期或未知路由均返回 404，不泄露租户或目标 ID。
 
 公开首页顺序固定为：价值主张与“提交需求” → 信任证据 → 核心能力 → 行业场景 → 合作流程 → 案例/资质 → 最终 CTA → 页脚。主 CTA 使用“提交需求”，次 CTA 使用“查看能力”；不得暗示即时自动报价。
@@ -279,7 +291,7 @@ Lead Pilot 固定采用已批准的 C 分栏工作台：宽屏左侧是按 SLA �
 
 ### 6.6 回执公开状态
 
-- PublicSubmission 完成持久事务后才能显示回执。Accepted、Processing 和 Quarantined 对外只映射为“已收到/审核中”。
+- PublicSubmission 完成持久事务后才能显示回执。ConvertedToLead、Quarantined、Rejected 和 Expired 对外只映射为“已收到/审核中”或中性不可用，不公开内部处置结果。
 - 回执永不显示内部风险、隔离原因、LeadId、负责人、租户、拒绝原因或 ERP 状态；无可用查询凭据时不通过页面内容、状态码差异或分析事件泄露存在性。
 
 ## 7. KPI 与上线口径
@@ -288,7 +300,7 @@ Lead Pilot 固定采用已批准的 C 分栏工作台：宽屏左侧是按 SLA �
 
 | KPI | 公式 | V1 说明 |
 | --- | --- | --- |
-| 首次响应达标率 | `FirstResponseAt <= SlaDueAt 的 Lead / 观察窗口内已到期或已响应的 SLA 适用 Lead` | 默认 4 个租户业务小时；测试、Quarantined、Merged 和窗口结束时尚未到期且未响应的 Lead 排除，夜间/周末 Lead 不排除，未响应且已超时的 Lead 必须留在分母；按来源/团队分组 |
+| 首次响应达标率 | `FirstResponseAt <= SlaDueAt 的 Lead / 观察窗口内已到期或已响应的 SLA 适用 Lead` | 默认 4 个租户业务小时；测试、Merged 和窗口结束时尚未到期且未响应的 Lead 排除；Quarantined 尚不是 Lead，release 后按原 ReceivedAt 进入分母；夜间/周末不排除，未响应且已超时必须留在分母；按来源/团队分组 |
 | Lead 合格率 | `Qualified Lead / 非隔离且非合并 Lead` | Merged 不重复计入分母 |
 | Lead 转换率 | `Converted Lead / Qualified Lead` | 以转换发生时间分桶 |
 | 商机赢单率 | `Won / (Won + Lost)` | Accepted 不计入已关闭 |
