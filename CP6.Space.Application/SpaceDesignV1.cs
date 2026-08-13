@@ -127,3 +127,39 @@ public interface ISpaceDesignV1Service
         string? cursor,
         CancellationToken cancellationToken = default);
 }
+
+public sealed record SpaceLocationCodingRuleDefinition(
+    Guid RuleId,
+    string RuleName,
+    int ScopeType,
+    Guid? ScopeId,
+    IReadOnlyList<SpaceLocationCodeSegmentDto> Segments,
+    bool IsDefault = false,
+    string? ScopeFloorCode = null,
+    string? ScopeZoneCode = null);
+
+public sealed record SpaceLocationCodingCatalog(
+    string? SiteCode,
+    IReadOnlyList<SpaceLocationCodingRuleDefinition> Rules);
+
+public interface ISpaceLocationCodeRuleProvider
+{
+    Task<SpaceLocationCodingCatalog> GetCatalogAsync(
+        Guid siteId,
+        CancellationToken cancellationToken = default);
+}
+
+public interface ISpaceDesignCodingService
+{
+    Task<PreviewSpaceLocationCodesResponse> PreviewLocationCodesAsync(
+        Guid versionId,
+        Guid floorLogicalId,
+        PreviewSpaceLocationCodesRequest request,
+        CancellationToken cancellationToken = default);
+
+    Task<ApplySpaceLocationCodesResponse> ApplyLocationCodesAsync(
+        Guid versionId,
+        Guid floorLogicalId,
+        ApplySpaceLocationCodesRequest request,
+        CancellationToken cancellationToken = default);
+}

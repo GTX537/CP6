@@ -160,6 +160,41 @@ test('creates, updates and explicitly deletes business layout through the leased
   expect(errors).toEqual([])
 })
 
+test('previews protected location codes and explicitly applies the frozen proposal', async ({ page }) => {
+  const errors = collectPageErrors(page)
+  const methods: string[] = []
+  const codingBodies: Array<Record<string, any>> = []
+  await installSpaceStudioFixtures(page, methods, {
+    codingEnabled: true,
+    codingBodies,
+  })
+  await page.setViewportSize({ width: 1440, height: 900 })
+  await page.goto(studioUrl)
+
+  await page.locator('.inspector-tabs [role="tab"]').nth(1).click()
+  await page.locator('[data-test="preview-location-codes"]').click()
+  await expect(page.getByText('将修改 1', { exact: true })).toBeVisible()
+  await expect(page.getByText('已绑定 WMS', { exact: false })).toBeVisible()
+  await expect(page.locator('[data-test="apply-location-codes"]')).toBeDisabled()
+
+  await page.locator('[data-test="confirm-location-codes"]').check()
+  await page.locator('[data-test="apply-location-codes"]').click()
+  await expect(page.getByText('已原子写入 1 个设计态库位编码')).toBeVisible()
+
+  expect(methods).toContain('POST coding preview')
+  expect(methods).toContain('POST coding apply')
+  expect(codingBodies).toHaveLength(1)
+  expect(codingBodies[0]).toMatchObject({
+    leaseId: ownedLease().leaseId,
+    mode: 'fill-empty',
+    expectedFloorRevision: 7,
+    expectedContentRevision: 7,
+    proposalHash: 'a'.repeat(64),
+  })
+  expect(codingBodies[0]!.commandBatchId).toBeTruthy()
+  expect(errors).toEqual([])
+})
+
 function collectPageErrors(page: Page): string[] {
   const errors: string[] = []
   page.on('pageerror', (error) => errors.push(error.message))
@@ -181,6 +216,8 @@ async function installSpaceStudioFixtures(
   options: {
     leaseHeld?: boolean
     layoutBodies?: Array<Record<string, any>>
+    codingEnabled?: boolean
+    codingBodies?: Array<Record<string, any>>
   } = {},
 ) {
   await page.addInitScript(() => {
@@ -190,12 +227,32 @@ async function installSpaceStudioFixtures(
   })
 
   const scene: any = sceneFixture()
+  if (options.codingEnabled) {
+    scene.zones.push({
+      revision: revision('99999999-1111-1111-1111-111111111111'),
+      floorLogicalId: floorId,
+      zoneCode: 'Z-A',
+      name: '存储区 A',
+      zoneType: 1,
+      polygonJson: JSON.stringify({
+        schemaVersion: 1,
+        points: [[0, 0], [5000, 0], [5000, 5000], [0, 5000]],
+      }),
+    })
+    scene.racks[0].zoneLogicalId = '99999999-1111-1111-1111-111111111111'
+    scene.locations[0].locationCode = undefined
+    scene.locations[1].locationCode = 'WMS-001'
+    scene.locations[1].codeOrigin = 'Adopted'
+    scene.locations[1].externalBindingState = 'Bound'
+  }
   await page.route((url) => url.pathname.startsWith('/api/'), async (route) => {
     const request = route.request()
     const url = new URL(request.url())
     const scenePath = `/api/space/design/v1/versions/${versionId}/floors/${floorId}/scene`
     const leasePath = `/api/space/design/v1/versions/${versionId}/floors/${floorId}/lease`
     const layoutPath = `/api/space/design/v1/versions/${versionId}/floors/${floorId}/layout-commands`
+    const codingPreviewPath = `/api/space/design/v1/versions/${versionId}/floors/${floorId}/location-codes:preview`
+    const codingApplyPath = `/api/space/design/v1/versions/${versionId}/floors/${floorId}/location-codes:apply`
 
     if (url.pathname === scenePath) {
       await route.fulfill({ json: scene })
@@ -296,6 +353,80 @@ async function installSpaceStudioFixtures(
           affectedRacks,
           affectedRackLevels,
           affectedLocations,
+          idempotentReplay: false,
+        },
+      })
+      return
+    }
+    if (url.pathname === codingPreviewPath && request.method() === 'POST') {
+      methods.push('POST coding preview')
+      const body = request.postDataJSON() as Record<string, any>
+      await route.fulfill({
+        json: {
+          schemaVersion: 1,
+          modelVersionId: versionId,
+          floorLogicalId: floorId,
+          mode: body.mode,
+          scopeZoneLogicalId: body.scopeZoneLogicalId,
+          baseFloorRevision: scene.floor.revisionNumber,
+          baseContentRevision: scene.contentRevision,
+          proposalHash: 'a'.repeat(64),
+          ruleSetHash: 'b'.repeat(64),
+          changedCount: 1,
+          unchangedCount: 0,
+          protectedCount: 1,
+          rules: [{
+            ruleId: '99999999-2222-2222-2222-222222222222',
+            ruleName: '仓库默认编码',
+            scopeType: 0,
+            ruleHash: 'c'.repeat(64),
+          }],
+          items: [
+            {
+              locationLogicalId: scene.locations[0].revision.logicalId,
+              rackLogicalId: rackId,
+              rackCode: 'R-001',
+              columnNo: 1,
+              levelNo: 1,
+              depthNo: 1,
+              proposedCode: 'Z-A-R-001-01-01-01',
+              decision: 'modify',
+              reason: 'fill-empty',
+              ruleId: '99999999-2222-2222-2222-222222222222',
+            },
+            {
+              locationLogicalId: scene.locations[1].revision.logicalId,
+              rackLogicalId: rackId,
+              rackCode: 'R-001',
+              columnNo: 2,
+              levelNo: 1,
+              depthNo: 1,
+              currentCode: 'WMS-001',
+              proposedCode: 'WMS-001',
+              decision: 'protected',
+              reason: 'wms-bound',
+              ruleId: '99999999-2222-2222-2222-222222222222',
+            },
+          ],
+        },
+      })
+      return
+    }
+    if (url.pathname === codingApplyPath && request.method() === 'POST') {
+      methods.push('POST coding apply')
+      const body = request.postDataJSON() as Record<string, any>
+      options.codingBodies?.push(body)
+      scene.locations[0].locationCode = 'Z-A-R-001-01-01-01'
+      scene.floor.revisionNumber += 1
+      scene.contentRevision += 1
+      await route.fulfill({
+        json: {
+          commandBatchId: body.commandBatchId,
+          floorRevision: scene.floor.revisionNumber,
+          versionContentRevision: scene.contentRevision,
+          proposalHash: body.proposalHash,
+          appliedCount: 1,
+          appliedItems: [],
           idempotentReplay: false,
         },
       })
@@ -420,7 +551,33 @@ function sceneFixture() {
       beamHeight: 100,
       maxLoad: 1000,
     }],
-    locations: [],
+    locations: [{
+      revision: revision('aaaaaaaa-1111-1111-1111-111111111111'),
+      floorLogicalId: floorId,
+      rackLogicalId: rackId,
+      locationCode: 'R-001-L01-C001-D01',
+      columnNo: 1,
+      levelNo: 1,
+      depthNo: 1,
+      width: 1200,
+      height: 1200,
+      depth: 1000,
+      codeOrigin: 'Generated',
+      externalBindingState: 'Unbound',
+    }, {
+      revision: revision('aaaaaaaa-2222-2222-2222-222222222222'),
+      floorLogicalId: floorId,
+      rackLogicalId: rackId,
+      locationCode: 'R-001-L01-C002-D01',
+      columnNo: 2,
+      levelNo: 1,
+      depthNo: 1,
+      width: 1200,
+      height: 1200,
+      depth: 1000,
+      codeOrigin: 'Generated',
+      externalBindingState: 'Unbound',
+    }],
     elements: [{
       revision: revision(columnId),
       floorLogicalId: floorId,

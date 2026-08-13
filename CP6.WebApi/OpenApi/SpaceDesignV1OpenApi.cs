@@ -239,6 +239,82 @@ public sealed class SpaceWmsRuntimeSchemaFilter : ISchemaFilter
             [
                 "cascade",
             ],
+            [typeof(SpaceLocationCodeSegmentDto)] =
+            [
+                "key",
+                "name",
+                "source",
+                "width",
+                "pad",
+                "start",
+                "step",
+                "separator",
+                "upper",
+                "fixedValue",
+                "optional",
+            ],
+            [typeof(PreviewSpaceLocationCodesRequest)] =
+            [
+                "schemaVersion",
+                "mode",
+                "expectedFloorRevision",
+                "expectedContentRevision",
+            ],
+            [typeof(SpaceLocationCodingRuleDto)] =
+            [
+                "ruleId",
+                "ruleName",
+                "scopeType",
+                "ruleHash",
+            ],
+            [typeof(SpaceLocationCodeProposalItemDto)] =
+            [
+                "locationLogicalId",
+                "rackLogicalId",
+                "rackCode",
+                "columnNo",
+                "levelNo",
+                "depthNo",
+                "decision",
+                "reason",
+            ],
+            [typeof(PreviewSpaceLocationCodesResponse)] =
+            [
+                "schemaVersion",
+                "modelVersionId",
+                "floorLogicalId",
+                "mode",
+                "baseFloorRevision",
+                "baseContentRevision",
+                "proposalHash",
+                "ruleSetHash",
+                "changedCount",
+                "unchangedCount",
+                "protectedCount",
+                "rules",
+                "items",
+            ],
+            [typeof(ApplySpaceLocationCodesRequest)] =
+            [
+                "schemaVersion",
+                "commandBatchId",
+                "clientInstanceId",
+                "leaseId",
+                "mode",
+                "expectedFloorRevision",
+                "expectedContentRevision",
+                "proposalHash",
+            ],
+            [typeof(ApplySpaceLocationCodesResponse)] =
+            [
+                "commandBatchId",
+                "floorRevision",
+                "versionContentRevision",
+                "proposalHash",
+                "appliedCount",
+                "appliedItems",
+                "idempotentReplay",
+            ],
             [typeof(SpaceLayoutCommandResultDto)] =
             [
                 "commandId",

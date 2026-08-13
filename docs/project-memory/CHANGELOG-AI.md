@@ -2,6 +2,13 @@
 
 > 依据 Git log 汇总，不替代完整 Git 历史。重点记录影响接手判断的里程碑。
 
+## 2026-08-13：Space Studio WP1 设计态库位批量编码
+
+- 在独立 `codex/space-layout-bulk-coding` 中交付 Design V1 `location-codes:preview` → `location-codes:apply`，复用既有编码规则语义但只写 `SpaceLocationRevision`，不调用旧运行态编码写服务，也不触碰 Published/WMS。
+- 服务端按 Zone/Floor/Tenant 默认优先级选规则；Preview 绑定双 Revision、完整差异与 Proposal Hash 且零写入，Apply 在 Floor applock/Serializable 事务内复算，并用租约、双 Revision、Proposal Hash 和幂等命令包关闭 stale/重复写入。WMS Bound、Adopted、Imported、Manual 编码不可被覆盖，重建审计保留真实 before/after。
+- Space Studio 批量域提供填空/重建、整层/单库区、逐项差异、保护原因与显式确认；普通失败保留原 commandBatchId 重试，Revision/规则变更要求重新 Preview。OpenAPI、C#/TypeScript SDK、稳定错误、权限和自动化同步更新。
+- 当前已通过 Space Unit 501、Space Web/API 聚焦 501、Web 749、真实 SQL 1、OpenAPI/权限 73、Space Studio Playwright 7、完整 Release solution 0 warning / 0 error、Vue type-check、生产构建与 SDK drift；Provider、黄金 CAD、Viewer 真机、WMS 恢复、双仓 Pilot 和五方签字仍未完成，未将本卡描述为 GA。
+
 ## 2026-08-13：Space Studio WP1 布局修改与级联删除
 
 - 在独立 `codex/space-layout-update-delete` 中扩展 Design V1 Layout Command，交付 Zone/Aisle/Rack 修改与删除；所有写入继续使用租约、Floor/Content Revision、幂等和原子事务，不触碰 Published/WMS。

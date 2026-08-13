@@ -1,5 +1,12 @@
 # 已完成能力与近期里程碑
 
+## 2026-08-13 Space Studio WP1 设计态库位批量编码
+
+- 从远端 `main@fdfb404e` 建立独立 `codex/space-layout-bulk-coding`，新增 Design V1 `location-codes:preview` / `location-codes:apply` 两阶段合同；规则仍由现有编码规则库按 Zone → Floor → Tenant 默认优先级选择，客户端不能提交任意规则或直接调用旧运行态编码服务。
+- Preview 对当前 Draft 的 LocationRevision 生成完整差异与 Proposal Hash，确认前零写入；Apply 在同一 Floor applock 和 Serializable 事务中复算规则与 Proposal，并以租约、Floor/Content Revision、Proposal Hash、commandBatchId 关闭 stale 与重复写入。只允许修改 Active/Unbound/Generated 编码，WMS Bound、Adopted、Imported 和 Manual 均显式列为 protected；重建时通过两阶段置空支持安全换码，审计保留真实 before/after。
+- Space Studio 批量检查器支持填空/重建、整层/单库区范围、规则与修改/保持/保护统计、逐项编码差异和显式确认 Apply；失败请求保留同一幂等包用于安全重试，Revision 变化后要求重新 Preview。OpenAPI、C#/TypeScript SDK、权限、稳定错误码、领域/SQL/API/组件/E2E 自动化同步交付。
+- 当前证据：Space Unit 501/501、Space Web/API 聚焦 501 passed / 7 个既有 SQL 环境用例 skipped、Web 749/749、真实 SQL 编码闭环 1/1、OpenAPI/权限 73/73、Space Studio Playwright 7/7、完整 Release solution 0 warning / 0 error、Vue type-check、生产构建、SDK drift 和 diff whitespace 通过；本卡不表示核心 GA 完成，Provider、黄金 CAD、Viewer 真机、WMS 演练、双仓 Pilot 和五方签字仍为硬门槛。
+
 ## 2026-08-13 Space Studio WP1 布局修改与级联删除
 
 - 从远端 `main@35147b85` 建立独立 `codex/space-layout-update-delete`，在既有 Design V1 Layout Command 中增加 Zone/Aisle/Rack 的完整定义修改与删除；写入继续受租约、Floor/Content Revision、幂等和原子事务保护，不调用旧运行态服务，也不直接改 Published/WMS。
