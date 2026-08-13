@@ -83,6 +83,32 @@ describe('designLayoutApi', () => {
     expect(vi.mocked(http.post).mock.calls[0]?.[1]).toBe(envelope)
     expect(vi.mocked(http.post).mock.calls[1]?.[1]).toBe(envelope)
   })
+
+  it('preserves typed update and explicit cascade delete payloads', () => {
+    const envelope = designLayoutApi.createEnvelope(
+      8,
+      13,
+      '22222222-2222-2222-2222-222222222222',
+      '33333333-3333-3333-3333-333333333333',
+      [
+        {
+          commandId: '',
+          type: 'UpdateZone',
+          targetLogicalId: '11111111-1111-1111-1111-111111111111',
+          updateZone: { zoneCode: 'Z-B', zoneType: 2, polygonJson: '[]' },
+        },
+        {
+          commandId: '',
+          type: 'DeleteAisle',
+          targetLogicalId: '44444444-4444-4444-4444-444444444444',
+          deleteObject: { cascade: true },
+        },
+      ],
+    )
+
+    expect(envelope.commands[0]?.updateZone?.zoneCode).toBe('Z-B')
+    expect(envelope.commands[1]?.deleteObject?.cascade).toBe(true)
+  })
 })
 
 interface LayoutBody {

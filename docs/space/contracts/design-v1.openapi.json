@@ -20499,6 +20499,18 @@
         },
         "additionalProperties": false
       },
+      "CP6.Space.Contracts.SpaceDeleteLayoutObjectDto": {
+        "required": [
+          "cascade"
+        ],
+        "type": "object",
+        "properties": {
+          "cascade": {
+            "type": "boolean"
+          }
+        },
+        "additionalProperties": false
+      },
       "CP6.Space.Contracts.SpaceDesignSceneDto": {
         "type": "object",
         "properties": {
@@ -22871,6 +22883,18 @@
           },
           "createRack": {
             "$ref": "#/components/schemas/CP6.Space.Contracts.SpaceCreateLayoutRackDto"
+          },
+          "updateZone": {
+            "$ref": "#/components/schemas/CP6.Space.Contracts.SpaceUpdateLayoutZoneDto"
+          },
+          "updateAisle": {
+            "$ref": "#/components/schemas/CP6.Space.Contracts.SpaceUpdateLayoutAisleDto"
+          },
+          "updateRack": {
+            "$ref": "#/components/schemas/CP6.Space.Contracts.SpaceUpdateLayoutRackDto"
+          },
+          "deleteObject": {
+            "$ref": "#/components/schemas/CP6.Space.Contracts.SpaceDeleteLayoutObjectDto"
           }
         },
         "additionalProperties": false
@@ -26818,6 +26842,203 @@
             "items": {
               "$ref": "#/components/schemas/CP6.Space.Contracts.SpaceElementAttributeWriteDto"
             },
+            "nullable": true
+          }
+        },
+        "additionalProperties": false
+      },
+      "CP6.Space.Contracts.SpaceUpdateLayoutAisleDto": {
+        "required": [
+          "aisleCode",
+          "centerlineJson",
+          "direction",
+          "polygonJson",
+          "zoneLogicalId"
+        ],
+        "type": "object",
+        "properties": {
+          "zoneLogicalId": {
+            "type": "string",
+            "format": "uuid"
+          },
+          "aisleCode": {
+            "type": "string"
+          },
+          "name": {
+            "type": "string",
+            "nullable": true
+          },
+          "direction": {
+            "type": "integer",
+            "format": "int32"
+          },
+          "polygonJson": {
+            "type": "string"
+          },
+          "centerlineJson": {
+            "type": "string"
+          }
+        },
+        "additionalProperties": false
+      },
+      "CP6.Space.Contracts.SpaceUpdateLayoutRackDto": {
+        "required": [
+          "depth",
+          "height",
+          "levels",
+          "rackCode",
+          "rotationZ",
+          "width",
+          "x",
+          "y",
+          "z",
+          "zoneLogicalId"
+        ],
+        "type": "object",
+        "properties": {
+          "zoneLogicalId": {
+            "type": "string",
+            "format": "uuid"
+          },
+          "aisleLogicalId": {
+            "type": "string",
+            "format": "uuid",
+            "nullable": true
+          },
+          "rackCode": {
+            "type": "string"
+          },
+          "name": {
+            "type": "string",
+            "nullable": true
+          },
+          "rackType": {
+            "type": "string",
+            "nullable": true
+          },
+          "templateVersionId": {
+            "type": "string",
+            "format": "uuid",
+            "nullable": true
+          },
+          "x": {
+            "type": "integer",
+            "format": "int32"
+          },
+          "y": {
+            "type": "integer",
+            "format": "int32"
+          },
+          "z": {
+            "type": "integer",
+            "format": "int32"
+          },
+          "rotationZ": {
+            "type": "number",
+            "format": "double"
+          },
+          "width": {
+            "type": "integer",
+            "format": "int32"
+          },
+          "depth": {
+            "type": "integer",
+            "format": "int32"
+          },
+          "height": {
+            "type": "integer",
+            "format": "int32"
+          },
+          "levels": {
+            "type": "array",
+            "items": {
+              "$ref": "#/components/schemas/CP6.Space.Contracts.SpaceUpdateLayoutRackLevelDto"
+            }
+          }
+        },
+        "additionalProperties": false
+      },
+      "CP6.Space.Contracts.SpaceUpdateLayoutRackLevelDto": {
+        "required": [
+          "beamHeight",
+          "binCount",
+          "bottomZ",
+          "cellDepth",
+          "cellWidth",
+          "clearHeight",
+          "depthCount",
+          "levelNo"
+        ],
+        "type": "object",
+        "properties": {
+          "levelNo": {
+            "type": "integer",
+            "format": "int32"
+          },
+          "bottomZ": {
+            "type": "integer",
+            "format": "int32"
+          },
+          "clearHeight": {
+            "type": "integer",
+            "format": "int32"
+          },
+          "binCount": {
+            "type": "integer",
+            "format": "int32"
+          },
+          "depthCount": {
+            "type": "integer",
+            "format": "int32"
+          },
+          "cellWidth": {
+            "type": "integer",
+            "format": "int32"
+          },
+          "cellDepth": {
+            "type": "integer",
+            "format": "int32"
+          },
+          "beamHeight": {
+            "type": "integer",
+            "format": "int32"
+          },
+          "maxLoad": {
+            "type": "number",
+            "format": "double",
+            "nullable": true
+          }
+        },
+        "additionalProperties": false
+      },
+      "CP6.Space.Contracts.SpaceUpdateLayoutZoneDto": {
+        "required": [
+          "polygonJson",
+          "zoneCode",
+          "zoneType"
+        ],
+        "type": "object",
+        "properties": {
+          "zoneCode": {
+            "type": "string"
+          },
+          "name": {
+            "type": "string",
+            "nullable": true
+          },
+          "zoneType": {
+            "type": "integer",
+            "format": "int32"
+          },
+          "polygonJson": {
+            "type": "string"
+          },
+          "color": {
+            "type": "string",
+            "nullable": true
+          },
+          "capabilityFlags": {
+            "type": "string",
             "nullable": true
           }
         },

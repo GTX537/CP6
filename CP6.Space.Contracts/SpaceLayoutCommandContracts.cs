@@ -6,6 +6,12 @@ public static class SpaceLayoutCommandContract
     public const string CreateZone = "CreateZone";
     public const string CreateAisle = "CreateAisle";
     public const string CreateRack = "CreateRack";
+    public const string UpdateZone = "UpdateZone";
+    public const string UpdateAisle = "UpdateAisle";
+    public const string UpdateRack = "UpdateRack";
+    public const string DeleteZone = "DeleteZone";
+    public const string DeleteAisle = "DeleteAisle";
+    public const string DeleteRack = "DeleteRack";
 }
 
 public sealed record SpaceCreateLayoutZoneDto(
@@ -52,13 +58,62 @@ public sealed record SpaceCreateLayoutRackDto(
     int Height,
     IReadOnlyList<SpaceCreateLayoutRackLevelDto> Levels);
 
+public sealed record SpaceUpdateLayoutZoneDto(
+    string ZoneCode,
+    string? Name,
+    short ZoneType,
+    string PolygonJson,
+    string? Color,
+    string? CapabilityFlags);
+
+public sealed record SpaceUpdateLayoutAisleDto(
+    Guid ZoneLogicalId,
+    string AisleCode,
+    string? Name,
+    short Direction,
+    string PolygonJson,
+    string CenterlineJson);
+
+public sealed record SpaceUpdateLayoutRackLevelDto(
+    int LevelNo,
+    int BottomZ,
+    int ClearHeight,
+    int BinCount,
+    int DepthCount,
+    int CellWidth,
+    int CellDepth,
+    int BeamHeight,
+    decimal? MaxLoad);
+
+public sealed record SpaceUpdateLayoutRackDto(
+    Guid ZoneLogicalId,
+    Guid? AisleLogicalId,
+    string RackCode,
+    string? Name,
+    string? RackType,
+    Guid? TemplateVersionId,
+    int X,
+    int Y,
+    int Z,
+    decimal RotationZ,
+    int Width,
+    int Depth,
+    int Height,
+    IReadOnlyList<SpaceUpdateLayoutRackLevelDto> Levels);
+
+public sealed record SpaceDeleteLayoutObjectDto(bool Cascade);
+
 public sealed record SpaceLayoutCommandDto(
     Guid CommandId,
     string Type,
     Guid TargetLogicalId,
     SpaceCreateLayoutZoneDto? CreateZone = null,
     SpaceCreateLayoutAisleDto? CreateAisle = null,
-    SpaceCreateLayoutRackDto? CreateRack = null);
+    SpaceCreateLayoutRackDto? CreateRack = null,
+    SpaceUpdateLayoutZoneDto? UpdateZone = null,
+    SpaceUpdateLayoutAisleDto? UpdateAisle = null,
+    SpaceUpdateLayoutRackDto? UpdateRack = null,
+    SpaceDeleteLayoutObjectDto? DeleteObject = null);
 
 public sealed record ApplySpaceLayoutCommandBatchRequest(
     int SchemaVersion,

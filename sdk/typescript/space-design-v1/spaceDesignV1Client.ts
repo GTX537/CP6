@@ -19548,6 +19548,42 @@ export interface ISpaceCreateLayoutZoneDto {
     capabilityFlags?: string | undefined;
 }
 
+export class SpaceDeleteLayoutObjectDto implements ISpaceDeleteLayoutObjectDto {
+    cascade!: boolean;
+
+    constructor(data?: ISpaceDeleteLayoutObjectDto) {
+        if (data) {
+            for (var property in data) {
+                if (data.hasOwnProperty(property))
+                    (this as any)[property] = (data as any)[property];
+            }
+        }
+    }
+
+    init(_data?: any) {
+        if (_data) {
+            this.cascade = _data["cascade"];
+        }
+    }
+
+    static fromJS(data: any): SpaceDeleteLayoutObjectDto {
+        data = typeof data === 'object' ? data : {};
+        let result = new SpaceDeleteLayoutObjectDto();
+        result.init(data);
+        return result;
+    }
+
+    toJSON(data?: any) {
+        data = typeof data === 'object' ? data : {};
+        data["cascade"] = this.cascade;
+        return data;
+    }
+}
+
+export interface ISpaceDeleteLayoutObjectDto {
+    cascade: boolean;
+}
+
 export class SpaceDesignSceneDto implements ISpaceDesignSceneDto {
     schemaVersion?: number;
     authority?: string | undefined;
@@ -23059,6 +23095,10 @@ export class SpaceLayoutCommandDto implements ISpaceLayoutCommandDto {
     createZone?: SpaceCreateLayoutZoneDto;
     createAisle?: SpaceCreateLayoutAisleDto;
     createRack?: SpaceCreateLayoutRackDto;
+    updateZone?: SpaceUpdateLayoutZoneDto;
+    updateAisle?: SpaceUpdateLayoutAisleDto;
+    updateRack?: SpaceUpdateLayoutRackDto;
+    deleteObject?: SpaceDeleteLayoutObjectDto;
 
     constructor(data?: ISpaceLayoutCommandDto) {
         if (data) {
@@ -23077,6 +23117,10 @@ export class SpaceLayoutCommandDto implements ISpaceLayoutCommandDto {
             this.createZone = _data["createZone"] ? SpaceCreateLayoutZoneDto.fromJS(_data["createZone"]) : undefined as any;
             this.createAisle = _data["createAisle"] ? SpaceCreateLayoutAisleDto.fromJS(_data["createAisle"]) : undefined as any;
             this.createRack = _data["createRack"] ? SpaceCreateLayoutRackDto.fromJS(_data["createRack"]) : undefined as any;
+            this.updateZone = _data["updateZone"] ? SpaceUpdateLayoutZoneDto.fromJS(_data["updateZone"]) : undefined as any;
+            this.updateAisle = _data["updateAisle"] ? SpaceUpdateLayoutAisleDto.fromJS(_data["updateAisle"]) : undefined as any;
+            this.updateRack = _data["updateRack"] ? SpaceUpdateLayoutRackDto.fromJS(_data["updateRack"]) : undefined as any;
+            this.deleteObject = _data["deleteObject"] ? SpaceDeleteLayoutObjectDto.fromJS(_data["deleteObject"]) : undefined as any;
         }
     }
 
@@ -23095,6 +23139,10 @@ export class SpaceLayoutCommandDto implements ISpaceLayoutCommandDto {
         data["createZone"] = this.createZone ? this.createZone.toJSON() : undefined as any;
         data["createAisle"] = this.createAisle ? this.createAisle.toJSON() : undefined as any;
         data["createRack"] = this.createRack ? this.createRack.toJSON() : undefined as any;
+        data["updateZone"] = this.updateZone ? this.updateZone.toJSON() : undefined as any;
+        data["updateAisle"] = this.updateAisle ? this.updateAisle.toJSON() : undefined as any;
+        data["updateRack"] = this.updateRack ? this.updateRack.toJSON() : undefined as any;
+        data["deleteObject"] = this.deleteObject ? this.deleteObject.toJSON() : undefined as any;
         return data;
     }
 }
@@ -23106,6 +23154,10 @@ export interface ISpaceLayoutCommandDto {
     createZone?: SpaceCreateLayoutZoneDto;
     createAisle?: SpaceCreateLayoutAisleDto;
     createRack?: SpaceCreateLayoutRackDto;
+    updateZone?: SpaceUpdateLayoutZoneDto;
+    updateAisle?: SpaceUpdateLayoutAisleDto;
+    updateRack?: SpaceUpdateLayoutRackDto;
+    deleteObject?: SpaceDeleteLayoutObjectDto;
 }
 
 export class SpaceLayoutCommandResultDto implements ISpaceLayoutCommandResultDto {
@@ -29101,6 +29153,285 @@ export interface ISpaceUpdateElementPropertiesDto {
     linkedEntityType?: string | undefined;
     linkedLogicalId?: string | undefined;
     attributes?: SpaceElementAttributeWriteDto[] | undefined;
+}
+
+export class SpaceUpdateLayoutAisleDto implements ISpaceUpdateLayoutAisleDto {
+    zoneLogicalId!: string;
+    aisleCode!: string;
+    name?: string | undefined;
+    direction!: number;
+    polygonJson!: string;
+    centerlineJson!: string;
+
+    constructor(data?: ISpaceUpdateLayoutAisleDto) {
+        if (data) {
+            for (var property in data) {
+                if (data.hasOwnProperty(property))
+                    (this as any)[property] = (data as any)[property];
+            }
+        }
+    }
+
+    init(_data?: any) {
+        if (_data) {
+            this.zoneLogicalId = _data["zoneLogicalId"];
+            this.aisleCode = _data["aisleCode"];
+            this.name = _data["name"];
+            this.direction = _data["direction"];
+            this.polygonJson = _data["polygonJson"];
+            this.centerlineJson = _data["centerlineJson"];
+        }
+    }
+
+    static fromJS(data: any): SpaceUpdateLayoutAisleDto {
+        data = typeof data === 'object' ? data : {};
+        let result = new SpaceUpdateLayoutAisleDto();
+        result.init(data);
+        return result;
+    }
+
+    toJSON(data?: any) {
+        data = typeof data === 'object' ? data : {};
+        data["zoneLogicalId"] = this.zoneLogicalId;
+        data["aisleCode"] = this.aisleCode;
+        data["name"] = this.name;
+        data["direction"] = this.direction;
+        data["polygonJson"] = this.polygonJson;
+        data["centerlineJson"] = this.centerlineJson;
+        return data;
+    }
+}
+
+export interface ISpaceUpdateLayoutAisleDto {
+    zoneLogicalId: string;
+    aisleCode: string;
+    name?: string | undefined;
+    direction: number;
+    polygonJson: string;
+    centerlineJson: string;
+}
+
+export class SpaceUpdateLayoutRackDto implements ISpaceUpdateLayoutRackDto {
+    zoneLogicalId!: string;
+    aisleLogicalId?: string | undefined;
+    rackCode!: string;
+    name?: string | undefined;
+    rackType?: string | undefined;
+    templateVersionId?: string | undefined;
+    x!: number;
+    y!: number;
+    z!: number;
+    rotationZ!: number;
+    width!: number;
+    depth!: number;
+    height!: number;
+    levels!: SpaceUpdateLayoutRackLevelDto[];
+
+    constructor(data?: ISpaceUpdateLayoutRackDto) {
+        if (data) {
+            for (var property in data) {
+                if (data.hasOwnProperty(property))
+                    (this as any)[property] = (data as any)[property];
+            }
+        }
+        if (!data) {
+            this.levels = [];
+        }
+    }
+
+    init(_data?: any) {
+        if (_data) {
+            this.zoneLogicalId = _data["zoneLogicalId"];
+            this.aisleLogicalId = _data["aisleLogicalId"];
+            this.rackCode = _data["rackCode"];
+            this.name = _data["name"];
+            this.rackType = _data["rackType"];
+            this.templateVersionId = _data["templateVersionId"];
+            this.x = _data["x"];
+            this.y = _data["y"];
+            this.z = _data["z"];
+            this.rotationZ = _data["rotationZ"];
+            this.width = _data["width"];
+            this.depth = _data["depth"];
+            this.height = _data["height"];
+            if (Array.isArray(_data["levels"])) {
+                this.levels = [] as any;
+                for (let item of _data["levels"])
+                    this.levels!.push(SpaceUpdateLayoutRackLevelDto.fromJS(item));
+            }
+        }
+    }
+
+    static fromJS(data: any): SpaceUpdateLayoutRackDto {
+        data = typeof data === 'object' ? data : {};
+        let result = new SpaceUpdateLayoutRackDto();
+        result.init(data);
+        return result;
+    }
+
+    toJSON(data?: any) {
+        data = typeof data === 'object' ? data : {};
+        data["zoneLogicalId"] = this.zoneLogicalId;
+        data["aisleLogicalId"] = this.aisleLogicalId;
+        data["rackCode"] = this.rackCode;
+        data["name"] = this.name;
+        data["rackType"] = this.rackType;
+        data["templateVersionId"] = this.templateVersionId;
+        data["x"] = this.x;
+        data["y"] = this.y;
+        data["z"] = this.z;
+        data["rotationZ"] = this.rotationZ;
+        data["width"] = this.width;
+        data["depth"] = this.depth;
+        data["height"] = this.height;
+        if (Array.isArray(this.levels)) {
+            data["levels"] = [];
+            for (let item of this.levels)
+                data["levels"].push(item ? item.toJSON() : undefined as any);
+        }
+        return data;
+    }
+}
+
+export interface ISpaceUpdateLayoutRackDto {
+    zoneLogicalId: string;
+    aisleLogicalId?: string | undefined;
+    rackCode: string;
+    name?: string | undefined;
+    rackType?: string | undefined;
+    templateVersionId?: string | undefined;
+    x: number;
+    y: number;
+    z: number;
+    rotationZ: number;
+    width: number;
+    depth: number;
+    height: number;
+    levels: SpaceUpdateLayoutRackLevelDto[];
+}
+
+export class SpaceUpdateLayoutRackLevelDto implements ISpaceUpdateLayoutRackLevelDto {
+    levelNo!: number;
+    bottomZ!: number;
+    clearHeight!: number;
+    binCount!: number;
+    depthCount!: number;
+    cellWidth!: number;
+    cellDepth!: number;
+    beamHeight!: number;
+    maxLoad?: number | undefined;
+
+    constructor(data?: ISpaceUpdateLayoutRackLevelDto) {
+        if (data) {
+            for (var property in data) {
+                if (data.hasOwnProperty(property))
+                    (this as any)[property] = (data as any)[property];
+            }
+        }
+    }
+
+    init(_data?: any) {
+        if (_data) {
+            this.levelNo = _data["levelNo"];
+            this.bottomZ = _data["bottomZ"];
+            this.clearHeight = _data["clearHeight"];
+            this.binCount = _data["binCount"];
+            this.depthCount = _data["depthCount"];
+            this.cellWidth = _data["cellWidth"];
+            this.cellDepth = _data["cellDepth"];
+            this.beamHeight = _data["beamHeight"];
+            this.maxLoad = _data["maxLoad"];
+        }
+    }
+
+    static fromJS(data: any): SpaceUpdateLayoutRackLevelDto {
+        data = typeof data === 'object' ? data : {};
+        let result = new SpaceUpdateLayoutRackLevelDto();
+        result.init(data);
+        return result;
+    }
+
+    toJSON(data?: any) {
+        data = typeof data === 'object' ? data : {};
+        data["levelNo"] = this.levelNo;
+        data["bottomZ"] = this.bottomZ;
+        data["clearHeight"] = this.clearHeight;
+        data["binCount"] = this.binCount;
+        data["depthCount"] = this.depthCount;
+        data["cellWidth"] = this.cellWidth;
+        data["cellDepth"] = this.cellDepth;
+        data["beamHeight"] = this.beamHeight;
+        data["maxLoad"] = this.maxLoad;
+        return data;
+    }
+}
+
+export interface ISpaceUpdateLayoutRackLevelDto {
+    levelNo: number;
+    bottomZ: number;
+    clearHeight: number;
+    binCount: number;
+    depthCount: number;
+    cellWidth: number;
+    cellDepth: number;
+    beamHeight: number;
+    maxLoad?: number | undefined;
+}
+
+export class SpaceUpdateLayoutZoneDto implements ISpaceUpdateLayoutZoneDto {
+    zoneCode!: string;
+    name?: string | undefined;
+    zoneType!: number;
+    polygonJson!: string;
+    color?: string | undefined;
+    capabilityFlags?: string | undefined;
+
+    constructor(data?: ISpaceUpdateLayoutZoneDto) {
+        if (data) {
+            for (var property in data) {
+                if (data.hasOwnProperty(property))
+                    (this as any)[property] = (data as any)[property];
+            }
+        }
+    }
+
+    init(_data?: any) {
+        if (_data) {
+            this.zoneCode = _data["zoneCode"];
+            this.name = _data["name"];
+            this.zoneType = _data["zoneType"];
+            this.polygonJson = _data["polygonJson"];
+            this.color = _data["color"];
+            this.capabilityFlags = _data["capabilityFlags"];
+        }
+    }
+
+    static fromJS(data: any): SpaceUpdateLayoutZoneDto {
+        data = typeof data === 'object' ? data : {};
+        let result = new SpaceUpdateLayoutZoneDto();
+        result.init(data);
+        return result;
+    }
+
+    toJSON(data?: any) {
+        data = typeof data === 'object' ? data : {};
+        data["zoneCode"] = this.zoneCode;
+        data["name"] = this.name;
+        data["zoneType"] = this.zoneType;
+        data["polygonJson"] = this.polygonJson;
+        data["color"] = this.color;
+        data["capabilityFlags"] = this.capabilityFlags;
+        return data;
+    }
+}
+
+export interface ISpaceUpdateLayoutZoneDto {
+    zoneCode: string;
+    name?: string | undefined;
+    zoneType: number;
+    polygonJson: string;
+    color?: string | undefined;
+    capabilityFlags?: string | undefined;
 }
 
 export class SpaceValidationIssueDto implements ISpaceValidationIssueDto {

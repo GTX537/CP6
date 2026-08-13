@@ -1512,6 +1512,29 @@ public sealed class SpaceDesignV1OpenApiTests
             "affectedRackLevels",
             "affectedLocations",
             "idempotentReplay");
+
+        var schemas = document.RootElement.GetProperty("components")
+            .GetProperty("schemas");
+        AssertExactRequired(
+            Schema(schemas, "CP6.Space.Contracts.SpaceUpdateLayoutRackDto"),
+            "zoneLogicalId",
+            "rackCode",
+            "x",
+            "y",
+            "z",
+            "rotationZ",
+            "width",
+            "depth",
+            "height",
+            "levels");
+        AssertExactRequired(
+            Schema(schemas, "CP6.Space.Contracts.SpaceDeleteLayoutObjectDto"),
+            "cascade");
+        AssertRequiredTypeScriptProperties(
+            ExtractTypeBlock(
+                typescript,
+                "export interface ISpaceDeleteLayoutObjectDto"),
+            "cascade");
     }
 
     [Fact]

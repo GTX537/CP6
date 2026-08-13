@@ -881,7 +881,7 @@ public sealed class SpaceDesignV1Service : ISpaceDesignV1Service
                 return concurrentReplay;
             }
 
-            var newLogicalIds = ExpandLayoutLogicalIds(request.Commands);
+            var newLogicalIds = ExpandCreatedLayoutLogicalIds(request.Commands);
             if (newLogicalIds.Count != newLogicalIds.Distinct().Count() ||
                 await LogicalIdsExistAsync(
                     versionId,
@@ -925,19 +925,24 @@ public sealed class SpaceDesignV1Service : ISpaceDesignV1Service
                     candidate.LifecycleState == SpaceLifecycleState.Active)
                 .Select(candidate => (candidate.ZoneLogicalId, candidate.AisleCode))
                 .ToHashSet();
-            var rackCodes = (await _context.RackRevisions
-                    .Where(candidate => candidate.ModelVersionId == versionId)
-                    .Select(candidate => new
-                    {
-                        candidate.ZoneLogicalId,
-                        candidate.RackCode,
-                        candidate.LifecycleState,
-                    })
-                    .ToListAsync(cancellationToken))
+            var persistedRacks = await _context.RackRevisions
+                .Where(candidate =>
+                    candidate.ModelVersionId == versionId &&
+                    candidate.FloorLogicalId == floorLogicalId)
+                .ToListAsync(cancellationToken);
+            var rackCodes = persistedRacks
                 .Where(candidate =>
                     candidate.LifecycleState == SpaceLifecycleState.Active)
                 .Select(candidate => (candidate.ZoneLogicalId, candidate.RackCode))
                 .ToHashSet();
+            var persistedLevels = await _context.RackLevelRevisions
+                .Where(candidate => candidate.ModelVersionId == versionId)
+                .ToListAsync(cancellationToken);
+            var persistedLocations = await _context.LocationRevisions
+                .Where(candidate =>
+                    candidate.ModelVersionId == versionId &&
+                    candidate.FloorLogicalId == floorLogicalId)
+                .ToListAsync(cancellationToken);
             var locationCodes = (await _context.LocationRevisions
                     .Where(candidate =>
                         candidate.ModelVersionId == versionId &&
@@ -968,10 +973,33 @@ public sealed class SpaceDesignV1Service : ISpaceDesignV1Service
                 RequireUtcNow());
             _context.ElementCommandBatches.Add(batch);
 
+            void EnsureRackParentIsValid(
+                Guid zoneLogicalId,
+                Guid? aisleLogicalId)
+            {
+                if (!persistedZoneIds.Contains(zoneLogicalId))
+                {
+                    throw NotFound(
+                        SpaceErrorCodes.LogicalIdNotFound,
+                        "Space zone logical identity");
+                }
+                if (aisleLogicalId.HasValue &&
+                    (!aisleZones.TryGetValue(
+                         aisleLogicalId.Value,
+                         out var aisleZoneId) ||
+                     aisleZoneId != zoneLogicalId))
+                {
+                    throw Invalid(
+                        "commands.layoutRack.aisleLogicalId",
+                        "The aisle must exist in the selected zone.");
+                }
+            }
+
             for (var index = 0; index < request.Commands.Count; index++)
             {
                 var command = request.Commands[index];
                 string afterJson;
+                var beforeJson = "{}";
                 string payloadJson;
                 switch (command.Type)
                 {
@@ -1181,6 +1209,265 @@ public sealed class SpaceDesignV1Service : ISpaceDesignV1Service
                                 candidate.RackLogicalId == rack.LogicalId));
                         break;
                     }
+                    case SpaceLayoutCommandContract.UpdateZone:
+                    {
+                        var payload = command.UpdateZone!;
+                        var zone = FindActiveLayoutTarget(
+                            zones,
+                            persistedZones,
+                            command.TargetLogicalId,
+                            "Space zone logical identity");
+                        beforeJson = JsonSerializer.Serialize(ToSceneDto(zone), JsonOptions);
+                        zoneCodes.Remove(zone.ZoneCode);
+                        if (!zoneCodes.Add(payload.ZoneCode.Trim()))
+                        {
+                            throw Conflict(
+                                SpaceErrorCodes.CommandConflict,
+                                $"Zone code '{payload.ZoneCode}' is already active on the floor.",
+                                "choose-unique-layout-code");
+                        }
+                        zone.UpdateDefinition(
+                            floorLogicalId,
+                            payload.ZoneCode,
+                            payload.ZoneType,
+                            payload.Name);
+                        zone.ConfigureShape(
+                            payload.PolygonJson,
+                            payload.Color,
+                            payload.CapabilityFlags);
+                        zones[zone.LogicalId] = zone;
+                        payloadJson = JsonSerializer.Serialize(payload, JsonOptions);
+                        afterJson = JsonSerializer.Serialize(ToSceneDto(zone), JsonOptions);
+                        break;
+                    }
+                    case SpaceLayoutCommandContract.UpdateAisle:
+                    {
+                        var payload = command.UpdateAisle!;
+                        var aisle = FindActiveLayoutTarget(
+                            aisles,
+                            persistedAisles,
+                            command.TargetLogicalId,
+                            "Space aisle logical identity");
+                        if (!persistedZoneIds.Contains(payload.ZoneLogicalId))
+                        {
+                            throw NotFound(
+                                SpaceErrorCodes.LogicalIdNotFound,
+                                "Space zone logical identity");
+                        }
+                        if (aisle.ZoneLogicalId != payload.ZoneLogicalId &&
+                            ActiveRacks(persistedRacks, racks.Values).Any(candidate =>
+                                candidate.AisleLogicalId == aisle.LogicalId))
+                        {
+                            throw Conflict(
+                                SpaceErrorCodes.CommandConflict,
+                                "An aisle with active racks cannot be moved to another zone.",
+                                "create-new-aisle-and-move-racks");
+                        }
+                        beforeJson = JsonSerializer.Serialize(ToSceneDto(aisle), JsonOptions);
+                        RemoveScopedCode(aisleCodes, aisle.ZoneLogicalId, aisle.AisleCode);
+                        if (!AddScopedCode(
+                                aisleCodes,
+                                payload.ZoneLogicalId,
+                                payload.AisleCode))
+                        {
+                            throw Conflict(
+                                SpaceErrorCodes.CommandConflict,
+                                $"Aisle code '{payload.AisleCode}' is already active in the zone.",
+                                "choose-unique-layout-code");
+                        }
+                        aisle.UpdateDefinition(
+                            payload.ZoneLogicalId,
+                            payload.AisleCode,
+                            payload.Direction,
+                            payload.Name);
+                        aisle.ConfigureShape(payload.PolygonJson, payload.CenterlineJson);
+                        aisles[aisle.LogicalId] = aisle;
+                        aisleZones[aisle.LogicalId] = aisle.ZoneLogicalId;
+                        payloadJson = JsonSerializer.Serialize(payload, JsonOptions);
+                        afterJson = JsonSerializer.Serialize(ToSceneDto(aisle), JsonOptions);
+                        break;
+                    }
+                    case SpaceLayoutCommandContract.UpdateRack:
+                    {
+                        var payload = command.UpdateRack!;
+                        var rack = FindActiveLayoutTarget(
+                            racks,
+                            persistedRacks,
+                            command.TargetLogicalId,
+                            "Space rack logical identity");
+                        EnsureRackParentIsValid(payload.ZoneLogicalId, payload.AisleLogicalId);
+                        beforeJson = RackAuditJson(
+                            rack,
+                            RackLevelsFor(rack.LogicalId, persistedLevels, levels),
+                            LocationsFor(rack.LogicalId, persistedLocations, locations));
+                        RemoveScopedCode(rackCodes, rack.ZoneLogicalId, rack.RackCode);
+                        if (!AddScopedCode(rackCodes, payload.ZoneLogicalId, payload.RackCode))
+                        {
+                            throw Conflict(
+                                SpaceErrorCodes.CommandConflict,
+                                $"Rack code '{payload.RackCode}' is already active in the zone.",
+                                "choose-unique-layout-code");
+                        }
+                        rack.UpdateDefinition(
+                            floorLogicalId,
+                            payload.ZoneLogicalId,
+                            payload.RackCode,
+                            payload.AisleLogicalId,
+                            payload.Name,
+                            payload.RackType);
+                        rack.ConfigureGeometry(
+                            payload.X,
+                            payload.Y,
+                            payload.Z,
+                            payload.RotationZ,
+                            payload.Width,
+                            payload.Depth,
+                            payload.Height,
+                            payload.TemplateVersionId);
+                        racks[rack.LogicalId] = rack;
+                        ReconcileRackLayout(
+                            versionId,
+                            floorLogicalId,
+                            rack,
+                            payload.Levels,
+                            persistedLevels,
+                            persistedLocations,
+                            levels,
+                            locations);
+                        payloadJson = JsonSerializer.Serialize(payload, JsonOptions);
+                        afterJson = RackAuditJson(
+                            rack,
+                            RackLevelsFor(rack.LogicalId, persistedLevels, levels),
+                            LocationsFor(rack.LogicalId, persistedLocations, locations));
+                        break;
+                    }
+                    case SpaceLayoutCommandContract.DeleteRack:
+                    {
+                        var payload = command.DeleteObject!;
+                        var rack = FindActiveLayoutTarget(
+                            racks,
+                            persistedRacks,
+                            command.TargetLogicalId,
+                            "Space rack logical identity");
+                        var rackLevels = RackLevelsFor(
+                            rack.LogicalId,
+                            persistedLevels,
+                            levels).ToArray();
+                        var rackLocations = LocationsFor(
+                            rack.LogicalId,
+                            persistedLocations,
+                            locations).ToArray();
+                        RequireExplicitCascade(
+                            payload,
+                            rackLevels.Any(candidate => candidate.LifecycleState == SpaceLifecycleState.Active) ||
+                            rackLocations.Any(candidate => candidate.LifecycleState == SpaceLifecycleState.Active),
+                            "Rack",
+                            "rack levels or locations");
+                        beforeJson = RackAuditJson(rack, rackLevels, rackLocations);
+                        ChangeRackLifecycle(
+                            rack,
+                            rackLevels,
+                            rackLocations,
+                            SpaceLifecycleState.RemoveRequested);
+                        racks[rack.LogicalId] = rack;
+                        AddAffected(levels, rackLevels);
+                        AddAffected(locations, rackLocations);
+                        RemoveScopedCode(rackCodes, rack.ZoneLogicalId, rack.RackCode);
+                        payloadJson = JsonSerializer.Serialize(payload, JsonOptions);
+                        afterJson = RackAuditJson(rack, rackLevels, rackLocations);
+                        break;
+                    }
+                    case SpaceLayoutCommandContract.DeleteAisle:
+                    {
+                        var payload = command.DeleteObject!;
+                        var aisle = FindActiveLayoutTarget(
+                            aisles,
+                            persistedAisles,
+                            command.TargetLogicalId,
+                            "Space aisle logical identity");
+                        var childRacks = ActiveRacks(persistedRacks, racks.Values)
+                            .Where(candidate => candidate.AisleLogicalId == aisle.LogicalId)
+                            .ToArray();
+                        RequireExplicitCascade(
+                            payload,
+                            childRacks.Length > 0,
+                            "Aisle",
+                            "racks");
+                        beforeJson = JsonSerializer.Serialize(ToSceneDto(aisle), JsonOptions);
+                        foreach (var childRack in childRacks)
+                        {
+                            CascadeRackRemoval(
+                                childRack,
+                                persistedLevels,
+                                persistedLocations,
+                                racks,
+                                levels,
+                                locations);
+                            RemoveScopedCode(
+                                rackCodes,
+                                childRack.ZoneLogicalId,
+                                childRack.RackCode);
+                        }
+                        aisle.ChangeLifecycle(SpaceLifecycleState.RemoveRequested);
+                        aisles[aisle.LogicalId] = aisle;
+                        aisleZones.Remove(aisle.LogicalId);
+                        RemoveScopedCode(aisleCodes, aisle.ZoneLogicalId, aisle.AisleCode);
+                        payloadJson = JsonSerializer.Serialize(payload, JsonOptions);
+                        afterJson = JsonSerializer.Serialize(ToSceneDto(aisle), JsonOptions);
+                        break;
+                    }
+                    case SpaceLayoutCommandContract.DeleteZone:
+                    {
+                        var payload = command.DeleteObject!;
+                        var zone = FindActiveLayoutTarget(
+                            zones,
+                            persistedZones,
+                            command.TargetLogicalId,
+                            "Space zone logical identity");
+                        var childAisles = ActiveAisles(persistedAisles, aisles.Values)
+                            .Where(candidate => candidate.ZoneLogicalId == zone.LogicalId)
+                            .ToArray();
+                        var childRacks = ActiveRacks(persistedRacks, racks.Values)
+                            .Where(candidate => candidate.ZoneLogicalId == zone.LogicalId)
+                            .ToArray();
+                        RequireExplicitCascade(
+                            payload,
+                            childAisles.Length > 0 || childRacks.Length > 0,
+                            "Zone",
+                            "aisles or racks");
+                        beforeJson = JsonSerializer.Serialize(ToSceneDto(zone), JsonOptions);
+                        foreach (var childRack in childRacks)
+                        {
+                            CascadeRackRemoval(
+                                childRack,
+                                persistedLevels,
+                                persistedLocations,
+                                racks,
+                                levels,
+                                locations);
+                            RemoveScopedCode(
+                                rackCodes,
+                                childRack.ZoneLogicalId,
+                                childRack.RackCode);
+                        }
+                        foreach (var childAisle in childAisles)
+                        {
+                            childAisle.ChangeLifecycle(SpaceLifecycleState.RemoveRequested);
+                            aisles[childAisle.LogicalId] = childAisle;
+                            aisleZones.Remove(childAisle.LogicalId);
+                            RemoveScopedCode(
+                                aisleCodes,
+                                childAisle.ZoneLogicalId,
+                                childAisle.AisleCode);
+                        }
+                        zone.ChangeLifecycle(SpaceLifecycleState.RemoveRequested);
+                        zones[zone.LogicalId] = zone;
+                        persistedZoneIds.Remove(zone.LogicalId);
+                        zoneCodes.Remove(zone.ZoneCode);
+                        payloadJson = JsonSerializer.Serialize(payload, JsonOptions);
+                        afterJson = JsonSerializer.Serialize(ToSceneDto(zone), JsonOptions);
+                        break;
+                    }
                     default:
                         throw new InvalidOperationException(
                             "The validated layout command type is invalid.");
@@ -1200,7 +1487,7 @@ public sealed class SpaceDesignV1Service : ISpaceDesignV1Service
                         command.Type,
                         command.TargetLogicalId,
                         payloadJson,
-                        "{}",
+                        beforeJson,
                         afterJson));
             }
 
@@ -2062,7 +2349,11 @@ public sealed class SpaceDesignV1Service : ISpaceDesignV1Service
             var payloadCount =
                 (command.CreateZone is null ? 0 : 1) +
                 (command.CreateAisle is null ? 0 : 1) +
-                (command.CreateRack is null ? 0 : 1);
+                (command.CreateRack is null ? 0 : 1) +
+                (command.UpdateZone is null ? 0 : 1) +
+                (command.UpdateAisle is null ? 0 : 1) +
+                (command.UpdateRack is null ? 0 : 1) +
+                (command.DeleteObject is null ? 0 : 1);
             switch (command.Type)
             {
                 case SpaceLayoutCommandContract.CreateZone
@@ -2091,9 +2382,44 @@ public sealed class SpaceDesignV1Service : ISpaceDesignV1Service
                             (long)level.BinCount * level.DepthCount);
                     }
                     break;
+                case SpaceLayoutCommandContract.UpdateZone
+                    when command.UpdateZone is not null && payloadCount == 1:
+                    break;
+                case SpaceLayoutCommandContract.UpdateAisle
+                    when command.UpdateAisle is not null && payloadCount == 1:
+                    if (command.UpdateAisle.ZoneLogicalId == Guid.Empty)
+                    {
+                        throw Invalid(
+                            "commands.updateAisle.zoneLogicalId",
+                            "A non-empty zone identity is required.");
+                    }
+                    break;
+                case SpaceLayoutCommandContract.UpdateRack
+                    when command.UpdateRack is not null && payloadCount == 1:
+                    ValidateUpdateLayoutRack(command.UpdateRack);
+                    foreach (var level in command.UpdateRack.Levels)
+                    {
+                        generatedLocationCount = checked(
+                            generatedLocationCount +
+                            (long)level.BinCount * level.DepthCount);
+                    }
+                    break;
+                case SpaceLayoutCommandContract.DeleteZone:
+                case SpaceLayoutCommandContract.DeleteAisle:
+                case SpaceLayoutCommandContract.DeleteRack:
+                    if (command.DeleteObject is null || payloadCount != 1)
+                    {
+                        throw Invalid(
+                            "commands.deleteObject",
+                            $"{command.Type} requires only its strongly typed payload.");
+                    }
+                    break;
                 case SpaceLayoutCommandContract.CreateZone:
                 case SpaceLayoutCommandContract.CreateAisle:
                 case SpaceLayoutCommandContract.CreateRack:
+                case SpaceLayoutCommandContract.UpdateZone:
+                case SpaceLayoutCommandContract.UpdateAisle:
+                case SpaceLayoutCommandContract.UpdateRack:
                     throw Invalid(
                         "commands",
                         $"{command.Type} requires only its strongly typed payload.");
@@ -2109,7 +2435,7 @@ public sealed class SpaceDesignV1Service : ISpaceDesignV1Service
         if (generatedLocationCount > 5_000)
         {
             throw Invalid(
-                "commands.createRack.levels",
+                "commands.layoutRack.levels",
                 "A layout batch can generate at most 5,000 locations.");
         }
 
@@ -2199,12 +2525,135 @@ public sealed class SpaceDesignV1Service : ISpaceDesignV1Service
                     "Rack level dimensions, counts or load are outside the supported range.");
             }
         }
+        ValidateRackEnvelope(
+            payload.Width,
+            payload.Depth,
+            payload.Height,
+            payload.RotationZ,
+            payload.Levels.Select(level => new RackEnvelopeLevel(
+                level.LevelNo,
+                level.BottomZ,
+                level.ClearHeight,
+                level.BinCount,
+                level.DepthCount,
+                level.CellWidth,
+                level.CellDepth,
+                level.BeamHeight)),
+            "commands.createRack");
     }
 
-    private static List<Guid> ExpandLayoutLogicalIds(
+    private static void ValidateUpdateLayoutRack(
+        SpaceUpdateLayoutRackDto payload)
+    {
+        if (payload.ZoneLogicalId == Guid.Empty ||
+            payload.AisleLogicalId == Guid.Empty ||
+            payload.TemplateVersionId == Guid.Empty)
+        {
+            throw Invalid(
+                "commands.updateRack",
+                "Zone, aisle and template identities cannot be empty.");
+        }
+        if (payload.Levels is null || payload.Levels.Count is < 1 or > 50)
+        {
+            throw Invalid(
+                "commands.updateRack.levels",
+                "A rack must contain between 1 and 50 level specifications.");
+        }
+        if (payload.Levels.Any(level => level is null) ||
+            payload.Levels.Select(level => level.LevelNo).Distinct().Count() !=
+            payload.Levels.Count)
+        {
+            throw Invalid(
+                "commands.updateRack.levels",
+                "Rack level entries and level numbers must be non-null and unique.");
+        }
+        foreach (var level in payload.Levels)
+        {
+            if (level.LevelNo <= 0 ||
+                level.BottomZ < 0 ||
+                level.ClearHeight <= 0 ||
+                level.BinCount is < 1 or > 500 ||
+                level.DepthCount is < 1 or > 20 ||
+                level.CellWidth <= 0 ||
+                level.CellDepth <= 0 ||
+                level.BeamHeight < 0 ||
+                level.MaxLoad < 0)
+            {
+                throw Invalid(
+                    "commands.updateRack.levels",
+                    "Rack level dimensions, counts or load are outside the supported range.");
+            }
+        }
+        ValidateRackEnvelope(
+            payload.Width,
+            payload.Depth,
+            payload.Height,
+            payload.RotationZ,
+            payload.Levels.Select(level => new RackEnvelopeLevel(
+                level.LevelNo,
+                level.BottomZ,
+                level.ClearHeight,
+                level.BinCount,
+                level.DepthCount,
+                level.CellWidth,
+                level.CellDepth,
+                level.BeamHeight)),
+            "commands.updateRack");
+    }
+
+    private static void ValidateRackEnvelope(
+        int width,
+        int depth,
+        int height,
+        decimal rotationZ,
+        IEnumerable<RackEnvelopeLevel> sourceLevels,
+        string fieldPath)
+    {
+        if (width <= 0 || depth <= 0 || height <= 0 ||
+            rotationZ is < 0 or >= 360)
+        {
+            throw Invalid(
+                fieldPath,
+                "Rack dimensions must be positive and rotation must be in [0, 360).");
+        }
+        var previousTop = 0L;
+        foreach (var level in sourceLevels.OrderBy(candidate => candidate.BottomZ))
+        {
+            var levelTop = checked(
+                (long)level.BottomZ + level.BeamHeight + level.ClearHeight);
+            if ((long)level.BinCount * level.CellWidth > width ||
+                (long)level.DepthCount * level.CellDepth > depth ||
+                levelTop > height ||
+                level.BottomZ < previousTop)
+            {
+                throw Invalid(
+                    $"{fieldPath}.levels",
+                    $"Level {level.LevelNo} does not fit the rack envelope or overlaps another level.");
+            }
+            previousTop = levelTop;
+        }
+    }
+
+    private sealed record RackEnvelopeLevel(
+        int LevelNo,
+        int BottomZ,
+        int ClearHeight,
+        int BinCount,
+        int DepthCount,
+        int CellWidth,
+        int CellDepth,
+        int BeamHeight);
+
+    private static List<Guid> ExpandCreatedLayoutLogicalIds(
         IReadOnlyList<SpaceLayoutCommandDto> commands)
     {
-        var result = commands.Select(command => command.TargetLogicalId).ToList();
+        var result = commands
+            .Where(command => command.Type is
+                SpaceLayoutCommandContract.CreateZone or
+                SpaceLayoutCommandContract.CreateAisle or
+                SpaceLayoutCommandContract.CreateRack)
+            .Select(command => command.TargetLogicalId)
+            .ToList();
         foreach (var command in commands.Where(command =>
                      command.Type == SpaceLayoutCommandContract.CreateRack))
         {
@@ -2246,6 +2695,268 @@ public sealed class SpaceDesignV1Service : ISpaceDesignV1Service
         }
         codes.Add((scopeLogicalId, normalized));
         return true;
+    }
+
+    private static void RemoveScopedCode(
+        HashSet<(Guid ScopeLogicalId, string Code)> codes,
+        Guid scopeLogicalId,
+        string code)
+    {
+        var match = codes.FirstOrDefault(candidate =>
+            candidate.ScopeLogicalId == scopeLogicalId &&
+            string.Equals(
+                candidate.Code,
+                code?.Trim(),
+                StringComparison.OrdinalIgnoreCase));
+        if (match != default)
+            codes.Remove(match);
+    }
+
+    private static TRevision FindActiveLayoutTarget<TRevision>(
+        IReadOnlyDictionary<Guid, TRevision> affected,
+        IEnumerable<TRevision> persisted,
+        Guid logicalId,
+        string resourceName)
+        where TRevision : SpaceRevisionEntity
+    {
+        var target = affected.GetValueOrDefault(logicalId) ??
+                     persisted.SingleOrDefault(candidate =>
+                         candidate.LogicalId == logicalId);
+        if (target is null)
+            throw NotFound(SpaceErrorCodes.LogicalIdNotFound, resourceName);
+        if (target.LifecycleState != SpaceLifecycleState.Active)
+        {
+            throw Conflict(
+                SpaceErrorCodes.CommandConflict,
+                "The layout command requires an active target.",
+                "reload-floor-scene");
+        }
+        return target;
+    }
+
+    private static IEnumerable<SpaceAisleRevision> ActiveAisles(
+        IEnumerable<SpaceAisleRevision> persisted,
+        IEnumerable<SpaceAisleRevision> affected) =>
+        persisted.Concat(affected)
+            .GroupBy(candidate => candidate.LogicalId)
+            .Select(group => group.Last())
+            .Where(candidate =>
+                candidate.LifecycleState == SpaceLifecycleState.Active);
+
+    private static IEnumerable<SpaceRackRevision> ActiveRacks(
+        IEnumerable<SpaceRackRevision> persisted,
+        IEnumerable<SpaceRackRevision> affected) =>
+        persisted.Concat(affected)
+            .GroupBy(candidate => candidate.LogicalId)
+            .Select(group => group.Last())
+            .Where(candidate =>
+                candidate.LifecycleState == SpaceLifecycleState.Active);
+
+    private static IEnumerable<SpaceRackLevelRevision> RackLevelsFor(
+        Guid rackLogicalId,
+        IEnumerable<SpaceRackLevelRevision> persisted,
+        IEnumerable<SpaceRackLevelRevision> affected) =>
+        persisted.Concat(affected)
+            .Where(candidate => candidate.RackLogicalId == rackLogicalId)
+            .GroupBy(candidate => candidate.LogicalId)
+            .Select(group => group.Last());
+
+    private static IEnumerable<SpaceLocationRevision> LocationsFor(
+        Guid rackLogicalId,
+        IEnumerable<SpaceLocationRevision> persisted,
+        IEnumerable<SpaceLocationRevision> affected) =>
+        persisted.Concat(affected)
+            .Where(candidate => candidate.RackLogicalId == rackLogicalId)
+            .GroupBy(candidate => candidate.LogicalId)
+            .Select(group => group.Last());
+
+    private void ReconcileRackLayout(
+        Guid versionId,
+        Guid floorLogicalId,
+        SpaceRackRevision rack,
+        IReadOnlyList<SpaceUpdateLayoutRackLevelDto> specifications,
+        List<SpaceRackLevelRevision> persistedLevels,
+        List<SpaceLocationRevision> persistedLocations,
+        List<SpaceRackLevelRevision> affectedLevels,
+        List<SpaceLocationRevision> affectedLocations)
+    {
+        var rackLevels = RackLevelsFor(
+                rack.LogicalId,
+                persistedLevels,
+                affectedLevels)
+            .ToDictionary(candidate => candidate.LevelNo);
+        var rackLocations = LocationsFor(
+                rack.LogicalId,
+                persistedLocations,
+                affectedLocations)
+            .ToDictionary(
+                candidate => (candidate.LevelNo, candidate.ColumnNo, candidate.DepthNo));
+        var desiredLevels = specifications
+            .Select(candidate => candidate.LevelNo)
+            .ToHashSet();
+
+        foreach (var level in rackLevels.Values.Where(candidate =>
+                     candidate.LifecycleState == SpaceLifecycleState.Active &&
+                     !desiredLevels.Contains(candidate.LevelNo)))
+        {
+            level.ChangeLifecycle(SpaceLifecycleState.RemoveRequested);
+            AddAffected(affectedLevels, [level]);
+            foreach (var location in rackLocations.Values.Where(candidate =>
+                         candidate.LevelNo == level.LevelNo &&
+                         candidate.LifecycleState == SpaceLifecycleState.Active))
+            {
+                location.ChangeLifecycle(SpaceLifecycleState.RemoveRequested);
+                AddAffected(affectedLocations, [location]);
+            }
+        }
+
+        foreach (var specification in specifications.OrderBy(candidate => candidate.LevelNo))
+        {
+            if (!rackLevels.TryGetValue(specification.LevelNo, out var level))
+            {
+                level = SpaceRackLevelRevision.Create(
+                    _execution.TenantId,
+                    versionId,
+                    WarehouseDeterministicIdentity.CreateRackLevelLogicalId(
+                        rack.LogicalId,
+                        specification.LevelNo),
+                    rack.LogicalId,
+                    specification.LevelNo,
+                    specification.BottomZ,
+                    specification.ClearHeight,
+                    specification.BinCount,
+                    specification.DepthCount,
+                    specification.CellWidth,
+                    specification.CellDepth,
+                    specification.MaxLoad,
+                    specification.BeamHeight);
+                persistedLevels.Add(level);
+                _context.RackLevelRevisions.Add(level);
+            }
+            else
+            {
+                level.UpdateSpecification(
+                    specification.LevelNo,
+                    specification.BottomZ,
+                    specification.ClearHeight,
+                    specification.BinCount,
+                    specification.DepthCount,
+                    specification.CellWidth,
+                    specification.CellDepth,
+                    specification.MaxLoad,
+                    specification.BeamHeight);
+                level.Restore();
+            }
+            AddAffected(affectedLevels, [level]);
+
+            for (var columnNo = 1; columnNo <= specification.BinCount; columnNo++)
+            for (var depthNo = 1; depthNo <= specification.DepthCount; depthNo++)
+            {
+                if (!rackLocations.TryGetValue(
+                        (specification.LevelNo, columnNo, depthNo),
+                        out var location))
+                {
+                    location = SpaceLocationRevision.Create(
+                        _execution.TenantId,
+                        versionId,
+                        WarehouseDeterministicIdentity.CreateLocationLogicalId(
+                            rack.LogicalId,
+                            specification.LevelNo,
+                            columnNo,
+                            depthNo),
+                        floorLogicalId,
+                        rack.LogicalId,
+                        locationCode: null,
+                        columnNo,
+                        specification.LevelNo,
+                        depthNo,
+                        specification.CellWidth,
+                        specification.ClearHeight,
+                        specification.CellDepth,
+                        specification.MaxLoad,
+                        SpaceLocationCodeOrigin.Generated);
+                    persistedLocations.Add(location);
+                    _context.LocationRevisions.Add(location);
+                }
+                else
+                {
+                    location.UpdateGeneratedSpecification(
+                        floorLogicalId,
+                        rack.LogicalId,
+                        columnNo,
+                        specification.LevelNo,
+                        depthNo,
+                        specification.CellWidth,
+                        specification.ClearHeight,
+                        specification.CellDepth,
+                        specification.MaxLoad);
+                }
+                AddAffected(affectedLocations, [location]);
+            }
+
+            foreach (var location in rackLocations.Values.Where(candidate =>
+                         candidate.LevelNo == specification.LevelNo &&
+                         candidate.LifecycleState == SpaceLifecycleState.Active &&
+                         (candidate.ColumnNo > specification.BinCount ||
+                          candidate.DepthNo > specification.DepthCount)))
+            {
+                location.ChangeLifecycle(SpaceLifecycleState.RemoveRequested);
+                AddAffected(affectedLocations, [location]);
+            }
+        }
+    }
+
+    private static void RequireExplicitCascade(
+        SpaceDeleteLayoutObjectDto payload,
+        bool hasActiveChildren,
+        string parentKind,
+        string childDescription)
+    {
+        if (hasActiveChildren && !payload.Cascade)
+        {
+            throw Conflict(
+                SpaceErrorCodes.CommandConflict,
+                $"{parentKind} has active {childDescription}; explicit cascade is required.",
+                "confirm-layout-cascade");
+        }
+    }
+
+    private static void CascadeRackRemoval(
+        SpaceRackRevision rack,
+        List<SpaceRackLevelRevision> persistedLevels,
+        List<SpaceLocationRevision> persistedLocations,
+        IDictionary<Guid, SpaceRackRevision> affectedRacks,
+        List<SpaceRackLevelRevision> affectedLevels,
+        List<SpaceLocationRevision> affectedLocations)
+    {
+        var rackLevels = RackLevelsFor(
+            rack.LogicalId,
+            persistedLevels,
+            affectedLevels).ToArray();
+        var rackLocations = LocationsFor(
+            rack.LogicalId,
+            persistedLocations,
+            affectedLocations).ToArray();
+        ChangeRackLifecycle(
+            rack,
+            rackLevels,
+            rackLocations,
+            SpaceLifecycleState.RemoveRequested);
+        affectedRacks[rack.LogicalId] = rack;
+        AddAffected(affectedLevels, rackLevels);
+        AddAffected(affectedLocations, rackLocations);
+    }
+
+    private static void AddAffected<TRevision>(
+        List<TRevision> affected,
+        IEnumerable<TRevision> candidates)
+        where TRevision : SpaceRevisionEntity
+    {
+        foreach (var candidate in candidates)
+        {
+            if (affected.All(existing => existing.LogicalId != candidate.LogicalId))
+                affected.Add(candidate);
+        }
     }
 
     private static string? CreateManualLocationCode(

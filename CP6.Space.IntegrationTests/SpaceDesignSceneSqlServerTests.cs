@@ -1329,6 +1329,219 @@ public sealed class SpaceDesignSceneSqlServerTests
                 SpaceErrorCodes.FloorRevisionConflict,
                 staleProblem.Code);
             Assert.Equal(3, await context.ElementCommandRecords.CountAsync());
+
+            var update = new ApplySpaceLayoutCommandBatchRequest(
+                SpaceLayoutCommandContract.SchemaVersion,
+                Guid.NewGuid(),
+                clientId,
+                lease.LeaseId,
+                ExpectedFloorRevision: 1,
+                ExpectedContentRevision: 1,
+                [
+                    new SpaceLayoutCommandDto(
+                        Guid.NewGuid(),
+                        SpaceLayoutCommandContract.UpdateZone,
+                        zoneId,
+                        UpdateZone: new SpaceUpdateLayoutZoneDto(
+                            "Z-AMBIENT",
+                            "Ambient storage",
+                            2,
+                            """
+                            {"schemaVersion":1,"points":[[0,0],[14000,0],[14000,8000],[0,8000]]}
+                            """,
+                            "#008C99",
+                            "temperatureControlled")),
+                    new SpaceLayoutCommandDto(
+                        Guid.NewGuid(),
+                        SpaceLayoutCommandContract.UpdateAisle,
+                        aisleId,
+                        UpdateAisle: new SpaceUpdateLayoutAisleDto(
+                            zoneId,
+                            "A-PRIMARY",
+                            "Primary aisle",
+                            2,
+                            """
+                            {"schemaVersion":1,"points":[[0,0],[2200,0],[2200,8000],[0,8000]]}
+                            """,
+                            """
+                            {"schemaVersion":1,"points":[[1100,0],[1100,8000]]}
+                            """)),
+                    new SpaceLayoutCommandDto(
+                        Guid.NewGuid(),
+                        SpaceLayoutCommandContract.UpdateRack,
+                        rackId,
+                        UpdateRack: new SpaceUpdateLayoutRackDto(
+                            zoneId,
+                            aisleId,
+                            "R-PRIMARY",
+                            "Primary rack",
+                            "Selective",
+                            null,
+                            X: 3000,
+                            Y: 1200,
+                            Z: 0,
+                            RotationZ: 90,
+                            Width: 2400,
+                            Depth: 1000,
+                            Height: 4200,
+                            [
+                                new SpaceUpdateLayoutRackLevelDto(
+                                    LevelNo: 1,
+                                    BottomZ: 0,
+                                    ClearHeight: 1800,
+                                    BinCount: 1,
+                                    DepthCount: 1,
+                                    CellWidth: 1200,
+                                    CellDepth: 500,
+                                    BeamHeight: 100,
+                                    MaxLoad: 1200),
+                                new SpaceUpdateLayoutRackLevelDto(
+                                    LevelNo: 3,
+                                    BottomZ: 1900,
+                                    ClearHeight: 1800,
+                                    BinCount: 1,
+                                    DepthCount: 1,
+                                    CellWidth: 1200,
+                                    CellDepth: 500,
+                                    BeamHeight: 100,
+                                    MaxLoad: 1200),
+                            ])),
+                ]);
+            var updated = await service.ApplyLayoutCommandsAsync(
+                draft.Id,
+                floor.LogicalId,
+                update);
+
+            Assert.Equal(2, updated.FloorRevision);
+            Assert.Equal(2, updated.VersionContentRevision);
+            Assert.Equal("Z-AMBIENT", Assert.Single(updated.AffectedZones).ZoneCode);
+            Assert.Equal("A-PRIMARY", Assert.Single(updated.AffectedAisles).AisleCode);
+            Assert.Equal("R-PRIMARY", Assert.Single(updated.AffectedRacks).RackCode);
+            Assert.Equal(3, updated.AffectedRackLevels.Count);
+            Assert.Equal(9, updated.AffectedLocations.Count);
+            var preservedLocation = Assert.Single(updated.AffectedLocations, candidate =>
+                candidate.Revision.LogicalId ==
+                WarehouseDeterministicIdentity.CreateLocationLogicalId(
+                    rackId,
+                    1,
+                    1,
+                    1));
+            Assert.Equal("R-001-L01-C001-D01", preservedLocation.LocationCode);
+            Assert.Equal(
+                SpaceLifecycleState.Active.ToString(),
+                preservedLocation.Revision.LifecycleState);
+            Assert.Contains(updated.AffectedLocations, candidate =>
+                candidate.Revision.LogicalId ==
+                WarehouseDeterministicIdentity.CreateLocationLogicalId(
+                    rackId,
+                    3,
+                    1,
+                    1) &&
+                candidate.LocationCode is null);
+
+            var guardedDelete = new ApplySpaceLayoutCommandBatchRequest(
+                SpaceLayoutCommandContract.SchemaVersion,
+                Guid.NewGuid(),
+                clientId,
+                lease.LeaseId,
+                ExpectedFloorRevision: 2,
+                ExpectedContentRevision: 2,
+                [
+                    new SpaceLayoutCommandDto(
+                        Guid.NewGuid(),
+                        SpaceLayoutCommandContract.DeleteZone,
+                        zoneId,
+                        DeleteObject: new SpaceDeleteLayoutObjectDto(Cascade: false)),
+                ]);
+            var cascadeProblem = await Assert.ThrowsAsync<SpaceProblemException>(
+                () => service.ApplyLayoutCommandsAsync(
+                    draft.Id,
+                    floor.LogicalId,
+                    guardedDelete));
+            Assert.Equal(SpaceErrorCodes.CommandConflict, cascadeProblem.Code);
+            Assert.Equal("confirm-layout-cascade", cascadeProblem.RecoveryAction);
+
+            var deleted = await service.ApplyLayoutCommandsAsync(
+                draft.Id,
+                floor.LogicalId,
+                guardedDelete with
+                {
+                    CommandBatchId = Guid.NewGuid(),
+                    Commands = [guardedDelete.Commands[0] with
+                    {
+                        CommandId = Guid.NewGuid(),
+                        DeleteObject = new SpaceDeleteLayoutObjectDto(Cascade: true),
+                    }],
+                });
+            Assert.Equal(3, deleted.FloorRevision);
+            Assert.All(deleted.AffectedZones, candidate => Assert.Equal(
+                SpaceLifecycleState.RemoveRequested.ToString(),
+                candidate.Revision.LifecycleState));
+            Assert.All(deleted.AffectedAisles, candidate => Assert.Equal(
+                SpaceLifecycleState.RemoveRequested.ToString(),
+                candidate.Revision.LifecycleState));
+            Assert.All(deleted.AffectedRacks, candidate => Assert.Equal(
+                SpaceLifecycleState.RemoveRequested.ToString(),
+                candidate.Revision.LifecycleState));
+            Assert.All(deleted.AffectedRackLevels, candidate => Assert.Equal(
+                SpaceLifecycleState.RemoveRequested.ToString(),
+                candidate.Revision.LifecycleState));
+            Assert.All(deleted.AffectedLocations, candidate => Assert.Equal(
+                SpaceLifecycleState.RemoveRequested.ToString(),
+                candidate.Revision.LifecycleState));
+            Assert.All(
+                await context.ElementCommandRecords.AsNoTracking()
+                    .Where(candidate =>
+                        candidate.CommandType.StartsWith("Update"))
+                    .ToArrayAsync(),
+                candidate => Assert.NotEqual("{}", candidate.BeforeJson));
+
+            var noCascadeZoneId = Guid.NewGuid();
+            var noCascadeCreated = await service.ApplyLayoutCommandsAsync(
+                draft.Id,
+                floor.LogicalId,
+                new ApplySpaceLayoutCommandBatchRequest(
+                    SpaceLayoutCommandContract.SchemaVersion,
+                    Guid.NewGuid(),
+                    clientId,
+                    lease.LeaseId,
+                    ExpectedFloorRevision: 3,
+                    ExpectedContentRevision: 3,
+                    [
+                        new SpaceLayoutCommandDto(
+                            Guid.NewGuid(),
+                            SpaceLayoutCommandContract.CreateZone,
+                            noCascadeZoneId,
+                            CreateZone: new SpaceCreateLayoutZoneDto(
+                                "Z-EMPTY",
+                                null,
+                                1,
+                                "[]",
+                                null,
+                                null)),
+                    ]));
+            Assert.Equal(4, noCascadeCreated.FloorRevision);
+            var noCascadeDeleted = await service.ApplyLayoutCommandsAsync(
+                draft.Id,
+                floor.LogicalId,
+                new ApplySpaceLayoutCommandBatchRequest(
+                    SpaceLayoutCommandContract.SchemaVersion,
+                    Guid.NewGuid(),
+                    clientId,
+                    lease.LeaseId,
+                    ExpectedFloorRevision: 4,
+                    ExpectedContentRevision: 4,
+                    [
+                        new SpaceLayoutCommandDto(
+                            Guid.NewGuid(),
+                            SpaceLayoutCommandContract.DeleteZone,
+                            noCascadeZoneId,
+                            DeleteObject: new SpaceDeleteLayoutObjectDto(Cascade: false)),
+                    ]));
+            Assert.Equal(5, noCascadeDeleted.FloorRevision);
+            Assert.Equal(
+                SpaceLifecycleState.RemoveRequested.ToString(),
+                Assert.Single(noCascadeDeleted.AffectedZones).Revision.LifecycleState);
         });
     }
 
