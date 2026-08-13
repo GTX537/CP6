@@ -49,6 +49,7 @@ import DesignWmsAdoptionPanel from '@/modules/space-design/panels/DesignWmsAdopt
 import SpaceStudioContextPanel from '@/modules/space-design/panels/SpaceStudioContextPanel.vue'
 import SpaceStudioChecklist from '@/modules/space-design/panels/SpaceStudioChecklist.vue'
 import DesignLayoutCreatePanel from '@/modules/space-design/layout/DesignLayoutCreatePanel.vue'
+import DesignLayoutPropertiesPanel from '@/modules/space-design/layout/DesignLayoutPropertiesPanel.vue'
 import type {
   LayoutCreateIntent,
   LayoutParentOption,
@@ -93,7 +94,13 @@ import type {
   ISpaceSceneElementDto,
   ISpaceSceneElementAttributeDto,
   ISpaceSceneFloorDto,
+  ISpaceSceneAisleDto,
   ISpaceSceneRackDto,
+  ISpaceSceneRackLevelDto,
+  ISpaceSceneZoneDto,
+  ISpaceUpdateLayoutAisleDto,
+  ISpaceUpdateLayoutRackDto,
+  ISpaceUpdateLayoutZoneDto,
 } from '../../../../../sdk/typescript/space-design-v1/spaceDesignV1Client'
 
 const maxUploadBytes = 100 * 1024 * 1024
@@ -295,6 +302,36 @@ const selectedRack = computed<ISpaceSceneRackDto | null>(() => {
     ) ?? null
   )
 })
+const selectedZone = computed<ISpaceSceneZoneDto | null>(() => {
+  const selection = selectedObjects.value
+  if (selection.length !== 1 || selection[0]?.ownerKind !== 'Zone') return null
+  return (designScene.value?.zones ?? []).find(
+    (zone) => zone.revision?.logicalId === selection[0]?.logicalId &&
+      zone.revision?.lifecycleState === 'Active',
+  ) ?? null
+})
+const selectedAisle = computed<ISpaceSceneAisleDto | null>(() => {
+  const selection = selectedObjects.value
+  if (selection.length !== 1 || selection[0]?.ownerKind !== 'Aisle') return null
+  return (designScene.value?.aisles ?? []).find(
+    (aisle) => aisle.revision?.logicalId === selection[0]?.logicalId &&
+      aisle.revision?.lifecycleState === 'Active',
+  ) ?? null
+})
+const selectedRackLevels = computed<ISpaceSceneRackLevelDto[]>(() => {
+  const rackLogicalId = selectedRack.value?.revision?.logicalId
+  return rackLogicalId
+    ? (designScene.value?.rackLevels ?? []).filter((level) =>
+        level.rackLogicalId === rackLogicalId &&
+        level.revision?.lifecycleState === 'Active')
+    : []
+})
+const selectedLayoutObject = computed(() =>
+  selectedZone.value ?? selectedAisle.value ?? selectedRack.value,
+)
+const selectedEditorObjectCount = computed(() => selectedObjects.value.filter(
+  (selection) => selection.ownerKind === 'Element' || selection.ownerKind === 'Rack',
+).length)
 const canUndo = computed(() => {
   historyRevision.value
   return history.canUndo
@@ -304,7 +341,7 @@ const canRedo = computed(() => {
   return history.canRedo
 })
 const selectionBounds = computed(() => {
-  if (selectedObjects.value.length === 0) return ''
+  if (selectedEditorObjectCount.value === 0) return ''
   try {
     const bounds = selectedSnapshots().map((snapshot) => snapshot.bounds)
     return `X ${Math.round(Math.min(...bounds.map((item) => item.minX)))}…${Math.round(
@@ -1277,6 +1314,15 @@ function selectObjects(
   mode: CanvasSelectionMode,
 ): void {
   if (calibrationMode.value) return
+  const hierarchyObject = objects.find((object) =>
+    object.ownerKind === 'Zone' || object.ownerKind === 'Aisle',
+  )
+  if (hierarchyObject) {
+    selectedObjects.value = [hierarchyObject]
+    inspectorTab.value = 'properties'
+    elementLayer?.setSelected([hierarchyObject.logicalId])
+    return
+  }
   if (mode === 'replace') {
     selectedObjects.value = [...objects]
   } else {
@@ -1634,11 +1680,69 @@ async function createLayout(intent: LayoutCreateIntent): Promise<void> {
   }
 }
 
+async function updateLayout(
+  type: 'UpdateZone' | 'UpdateAisle' | 'UpdateRack',
+  payload: ISpaceUpdateLayoutZoneDto | ISpaceUpdateLayoutAisleDto | ISpaceUpdateLayoutRackDto,
+): Promise<void> {
+  const targetLogicalId = selectedLayoutObject.value?.revision?.logicalId
+  if (!targetLogicalId || readonlyScene.value || savingElement.value) return
+  const command: LayoutCommandInput = {
+    commandId: crypto.randomUUID(),
+    type,
+    targetLogicalId,
+  }
+  if (type === 'UpdateZone') command.updateZone = payload as ISpaceUpdateLayoutZoneDto
+  if (type === 'UpdateAisle') command.updateAisle = payload as ISpaceUpdateLayoutAisleDto
+  if (type === 'UpdateRack') command.updateRack = payload as ISpaceUpdateLayoutRackDto
+  savingElement.value = true
+  try {
+    await applyLayoutCommands([command])
+    await loadScene()
+    ElMessage.success('业务构件修改已保存')
+  } catch {
+    ElMessage.error('业务构件修改失败；未同步命令已保留，可刷新重放或导出')
+  } finally {
+    savingElement.value = false
+  }
+}
+
+async function removeLayout(): Promise<void> {
+  const selection = selectedObjects.value[0]
+  if (!selection || !['Zone', 'Aisle', 'Rack'].includes(selection.ownerKind) ||
+    readonlyScene.value || savingElement.value) return
+  const label = selection.ownerKind === 'Zone' ? '库区' : selection.ownerKind === 'Aisle' ? '巷道' : '货架'
+  try {
+    await ElMessageBox.confirm(
+      `删除${label}将同时把其活动子构件标记为待删除。此操作只写入当前 Draft，不直接修改 Published/WMS。`,
+      `确认级联删除${label}`,
+      { type: 'warning', confirmButtonText: '确认级联删除', cancelButtonText: '取消' },
+    )
+  } catch {
+    return
+  }
+  savingElement.value = true
+  try {
+    await applyLayoutCommands([{
+      commandId: crypto.randomUUID(),
+      type: `Delete${selection.ownerKind}`,
+      targetLogicalId: selection.logicalId,
+      deleteObject: { cascade: true },
+    }])
+    selectedObjects.value = []
+    await loadScene()
+    ElMessage.success(`${label}及其子构件已在 Draft 中标记删除`)
+  } catch {
+    ElMessage.error(`${label}删除失败；Draft 未发生部分写入`)
+  } finally {
+    savingElement.value = false
+  }
+}
+
 function isLayoutEnvelope(
   envelope: EditorCommandEnvelope | LayoutCommandEnvelope,
 ): envelope is LayoutCommandEnvelope {
   return envelope.commands.some((command) =>
-    ['CreateZone', 'CreateAisle', 'CreateRack'].includes(command.type),
+    ['CreateZone', 'CreateAisle', 'CreateRack', 'UpdateZone', 'UpdateAisle', 'UpdateRack', 'DeleteZone', 'DeleteAisle', 'DeleteRack'].includes(command.type),
   )
 }
 
@@ -1748,13 +1852,17 @@ function discardUnsavedEnvelope(): void {
 function selectedSnapshots(): EditorObjectSnapshot[] {
   const scene = designScene.value
   if (!scene) return []
+  const editorSelections = selectedObjects.value.filter(
+    (selection): selection is CanvasObjectRef & { ownerKind: 'Element' | 'Rack' } =>
+      selection.ownerKind === 'Element' || selection.ownerKind === 'Rack',
+  )
   const drawables = new Map(
     buildElementCanvasPlan(scene).map((drawable) => [
       drawable.logicalId,
       drawable,
     ]),
   )
-  return selectedObjects.value.map((selection) => {
+  return editorSelections.map((selection) => {
     const drawable = drawables.get(selection.logicalId)
     const source =
       selection.ownerKind === 'Rack'
@@ -2112,6 +2220,10 @@ function onStudioKeydown(event: KeyboardEvent): void {
   } else if ((event.ctrlKey || event.metaKey) && key === 'y') {
     event.preventDefault()
     void redoSavedCommand()
+  } else if (key === 'delete' && selectedLayoutObject.value &&
+    selectedObjects.value.length === 1 && !readonlyScene.value) {
+    event.preventDefault()
+    void removeLayout()
   } else if (key === 'delete' && !readonlyScene.value) {
     event.preventDefault()
     void removeSelected()
@@ -2286,7 +2398,7 @@ function tabClientInstanceId(): string {
 
         <DesignBatchToolsPanel
           v-if="inspectorTab === 'batch'"
-          :selected-count="selectedObjects.length"
+          :selected-count="selectedEditorObjectCount"
           :selection-bounds="selectionBounds"
           :selected-rack-code="selectedRack?.rackCode"
           :busy="savingElement"
@@ -2406,6 +2518,31 @@ function tabClientInstanceId(): string {
         @save="saveElement"
         @remove="removeElement"
       />
+      <div v-else-if="inspectorTab === 'properties' && selectedLayoutObject">
+        <DesignLayoutPropertiesPanel
+          :zone="selectedZone"
+          :aisle="selectedAisle"
+          :rack="selectedRack"
+          :rack-levels="selectedRackLevels"
+          :zones="activeZones"
+          :aisles="activeAisles"
+          :busy="savingElement"
+          :readonly="readonlyScene"
+          @save-zone="(payload) => updateLayout('UpdateZone', payload)"
+          @save-aisle="(payload) => updateLayout('UpdateAisle', payload)"
+          @save-rack="(payload) => updateLayout('UpdateRack', payload)"
+          @remove="removeLayout"
+        />
+        <DesignWmsAdoptionPanel
+          v-if="selectedRack"
+          :version-id="versionId"
+          :floor-logical-id="floorLogicalId"
+          :scene="designScene"
+          :selected-rack="selectedRack"
+          :readonly="readonlyScene"
+          @changed="loadScene"
+        />
+      </div>
       <DesignWmsAdoptionPanel
         v-else-if="inspectorTab === 'properties'"
         :version-id="versionId"

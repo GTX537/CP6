@@ -5,6 +5,10 @@ import type {
   ISpaceCreateLayoutAisleDto,
   ISpaceCreateLayoutRackDto,
   ISpaceCreateLayoutZoneDto,
+  ISpaceDeleteLayoutObjectDto,
+  ISpaceUpdateLayoutAisleDto,
+  ISpaceUpdateLayoutRackDto,
+  ISpaceUpdateLayoutZoneDto,
 } from '../../../../sdk/typescript/space-design-v1/spaceDesignV1Client'
 
 const root = '/space/design/v1'
@@ -21,6 +25,10 @@ export interface LayoutCommandInput {
   createZone?: ISpaceCreateLayoutZoneDto
   createAisle?: ISpaceCreateLayoutAisleDto
   createRack?: ISpaceCreateLayoutRackDto
+  updateZone?: ISpaceUpdateLayoutZoneDto
+  updateAisle?: ISpaceUpdateLayoutAisleDto
+  updateRack?: ISpaceUpdateLayoutRackDto
+  deleteObject?: ISpaceDeleteLayoutObjectDto
 }
 
 export const designLayoutApi = {

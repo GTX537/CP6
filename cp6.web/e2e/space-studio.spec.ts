@@ -99,7 +99,7 @@ test('below 1280 switches to read-only 3D with version and issues only', async (
   expect(errors).toEqual([])
 })
 
-test('creates Zone, Aisle and Rack through the leased Layout Command chain', async ({ page }) => {
+test('creates, updates and explicitly deletes business layout through the leased chain', async ({ page }) => {
   const errors = collectPageErrors(page)
   const methods: string[] = []
   const layoutBodies: Array<Record<string, any>> = []
@@ -137,9 +137,26 @@ test('creates Zone, Aisle and Rack through the leased Layout Command chain', asy
   expect(layoutBodies[1]!.expectedFloorRevision).toBe(8)
   expect(layoutBodies[2]!.expectedFloorRevision).toBe(9)
 
+  await expect(page.locator('[data-test="layout-properties-panel"]')).toBeVisible()
+  await page.locator('[data-test="layout-property-rack-code"]').fill('R-UPDATED')
+  await page.locator('[data-test="save-layout-properties"]').click()
+  await expect(page.getByText('业务构件修改已保存')).toBeVisible()
+  expect(layoutBodies[3]!.commands[0].type).toBe('UpdateRack')
+  expect(layoutBodies[3]!.commands[0].updateRack.rackCode).toBe('R-UPDATED')
+
+  await page.locator('[data-test="remove-layout"]').click()
+  await expect(page.getByText('确认级联删除货架')).toBeVisible()
+  await page.getByRole('button', { name: '确认级联删除', exact: true }).click()
+  await expect(page.getByText('货架及其子构件已在 Draft 中标记删除')).toBeVisible()
+  expect(layoutBodies[4]!.commands[0]).toMatchObject({
+    type: 'DeleteRack',
+    deleteObject: { cascade: true },
+  })
+  expect(methods.filter((value) => value === 'POST layout')).toHaveLength(5)
+
   await page.getByRole('button', { name: '3D', exact: true }).click()
   await expect(page.getByText('2D/3D 清单一致', { exact: true })).toBeVisible()
-  await expect(page.getByText('2D 5 / 3D 5', { exact: true })).toBeVisible()
+  await expect(page.getByText('2D 4 / 3D 4', { exact: true })).toBeVisible()
   expect(errors).toEqual([])
 })
 
@@ -236,6 +253,30 @@ async function installSpaceStudioFixtures(
               })
             }
           }
+        }
+      }
+      if (command.type === 'UpdateRack') {
+        const updated = scene.racks.find((rack: any) => rack.revision.logicalId === command.targetLogicalId)
+        Object.assign(updated, command.updateRack)
+        affectedRacks.push(updated)
+        scene.rackLevels = scene.rackLevels.filter((level: any) => level.rackLogicalId !== command.targetLogicalId)
+        for (const level of command.updateRack.levels) {
+          const updatedLevel = {
+            revision: revision(crypto.randomUUID()),
+            rackLogicalId: command.targetLogicalId,
+            ...level,
+          }
+          scene.rackLevels.push(updatedLevel)
+          affectedRackLevels.push(updatedLevel)
+        }
+      }
+      if (command.type === 'DeleteRack') {
+        const removed = scene.racks.find((rack: any) => rack.revision.logicalId === command.targetLogicalId)
+        removed.revision.lifecycleState = 'RemoveRequested'
+        affectedRacks.push(removed)
+        for (const level of scene.rackLevels.filter((item: any) => item.rackLogicalId === command.targetLogicalId)) {
+          level.revision.lifecycleState = 'RemoveRequested'
+          affectedRackLevels.push(level)
         }
       }
       scene.floor.revisionNumber += 1

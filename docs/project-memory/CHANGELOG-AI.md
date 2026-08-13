@@ -2,6 +2,13 @@
 
 > 依据 Git log 汇总，不替代完整 Git 历史。重点记录影响接手判断的里程碑。
 
+## 2026-08-13：Space Studio WP1 布局修改与级联删除
+
+- 在独立 `codex/space-layout-update-delete` 中扩展 Design V1 Layout Command，交付 Zone/Aisle/Rack 修改与删除；所有写入继续使用租约、Floor/Content Revision、幂等和原子事务，不触碰 Published/WMS。
+- Rack 规格修改保留仍存在的层/库位身份、编码和绑定，新库位保持未编码；删除默认保护含子对象的布局，只有显式 `cascade=true` 才把设计态子树标记为 `RemoveRequested`。命令审计记录真实 before/after，冲突返回稳定 Problem Details 与恢复动作。
+- Space Studio 画布与右侧属性域支持三类布局对象的选择和修改，鼠标及键盘删除都要求级联确认；OpenAPI、C#/TypeScript SDK、SQL/契约/组件/E2E 自动化同步更新。
+- 验证通过：真实 SQL 聚焦回归 1/1、OpenAPI 38/38、Web 744/744、Space Studio Playwright 6/6、Vue type-check、生产构建、SDK drift、完整 solution 0 warning / 0 error 和 diff whitespace。本卡不代表 WP1/GA 完成，批量编码 Preview → Apply 仍待独立交付。
+
 ## 2026-08-13：Space Studio WP1 工作台创建接入
 
 - 在独立 `codex/space-layout-workbench-create` 中把 Design V1 Layout Command 接入 Space Studio“构件”上下文，提供 Zone/Aisle/Rack 表单、画布坐标、逐层货架规格、库位数预览和可选编码前缀；保存、租约丢失、Revision 冲突、导出与重放继续使用工作台统一状态。

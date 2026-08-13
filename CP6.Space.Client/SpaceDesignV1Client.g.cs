@@ -24952,6 +24952,15 @@ namespace CP6.Space.Client
     }
 
     [System.CodeDom.Compiler.GeneratedCode("NJsonSchema", "14.7.1.0 (NJsonSchema v11.6.1.0 (Newtonsoft.Json v13.0.0.0))")]
+    public partial class SpaceDeleteLayoutObjectDto
+    {
+
+        [System.Text.Json.Serialization.JsonPropertyName("cascade")]
+        public bool Cascade { get; set; } = default!;
+
+    }
+
+    [System.CodeDom.Compiler.GeneratedCode("NJsonSchema", "14.7.1.0 (NJsonSchema v11.6.1.0 (Newtonsoft.Json v13.0.0.0))")]
     public partial class SpaceDesignSceneDto
     {
 
@@ -26734,6 +26743,18 @@ namespace CP6.Space.Client
 
         [System.Text.Json.Serialization.JsonPropertyName("createRack")]
         public SpaceCreateLayoutRackDto CreateRack { get; set; } = default!;
+
+        [System.Text.Json.Serialization.JsonPropertyName("updateZone")]
+        public SpaceUpdateLayoutZoneDto UpdateZone { get; set; } = default!;
+
+        [System.Text.Json.Serialization.JsonPropertyName("updateAisle")]
+        public SpaceUpdateLayoutAisleDto UpdateAisle { get; set; } = default!;
+
+        [System.Text.Json.Serialization.JsonPropertyName("updateRack")]
+        public SpaceUpdateLayoutRackDto UpdateRack { get; set; } = default!;
+
+        [System.Text.Json.Serialization.JsonPropertyName("deleteObject")]
+        public SpaceDeleteLayoutObjectDto DeleteObject { get; set; } = default!;
 
     }
 
@@ -29679,6 +29700,144 @@ namespace CP6.Space.Client
 
         [System.Text.Json.Serialization.JsonPropertyName("attributes")]
         public System.Collections.Generic.ICollection<SpaceElementAttributeWriteDto>? Attributes { get; set; } = default!;
+
+    }
+
+    [System.CodeDom.Compiler.GeneratedCode("NJsonSchema", "14.7.1.0 (NJsonSchema v11.6.1.0 (Newtonsoft.Json v13.0.0.0))")]
+    public partial class SpaceUpdateLayoutAisleDto
+    {
+
+        [System.Text.Json.Serialization.JsonPropertyName("zoneLogicalId")]
+        [System.ComponentModel.DataAnnotations.Required(AllowEmptyStrings = true)]
+        public System.Guid ZoneLogicalId { get; set; } = default!;
+
+        [System.Text.Json.Serialization.JsonPropertyName("aisleCode")]
+        [System.ComponentModel.DataAnnotations.Required(AllowEmptyStrings = true)]
+        public string AisleCode { get; set; } = default!;
+
+        [System.Text.Json.Serialization.JsonPropertyName("name")]
+        public string? Name { get; set; } = default!;
+
+        [System.Text.Json.Serialization.JsonPropertyName("direction")]
+        public int Direction { get; set; } = default!;
+
+        [System.Text.Json.Serialization.JsonPropertyName("polygonJson")]
+        [System.ComponentModel.DataAnnotations.Required(AllowEmptyStrings = true)]
+        public string PolygonJson { get; set; } = default!;
+
+        [System.Text.Json.Serialization.JsonPropertyName("centerlineJson")]
+        [System.ComponentModel.DataAnnotations.Required(AllowEmptyStrings = true)]
+        public string CenterlineJson { get; set; } = default!;
+
+    }
+
+    [System.CodeDom.Compiler.GeneratedCode("NJsonSchema", "14.7.1.0 (NJsonSchema v11.6.1.0 (Newtonsoft.Json v13.0.0.0))")]
+    public partial class SpaceUpdateLayoutRackDto
+    {
+
+        [System.Text.Json.Serialization.JsonPropertyName("zoneLogicalId")]
+        [System.ComponentModel.DataAnnotations.Required(AllowEmptyStrings = true)]
+        public System.Guid ZoneLogicalId { get; set; } = default!;
+
+        [System.Text.Json.Serialization.JsonPropertyName("aisleLogicalId")]
+        public System.Guid? AisleLogicalId { get; set; } = default!;
+
+        [System.Text.Json.Serialization.JsonPropertyName("rackCode")]
+        [System.ComponentModel.DataAnnotations.Required(AllowEmptyStrings = true)]
+        public string RackCode { get; set; } = default!;
+
+        [System.Text.Json.Serialization.JsonPropertyName("name")]
+        public string? Name { get; set; } = default!;
+
+        [System.Text.Json.Serialization.JsonPropertyName("rackType")]
+        public string? RackType { get; set; } = default!;
+
+        [System.Text.Json.Serialization.JsonPropertyName("templateVersionId")]
+        public System.Guid? TemplateVersionId { get; set; } = default!;
+
+        [System.Text.Json.Serialization.JsonPropertyName("x")]
+        public int X { get; set; } = default!;
+
+        [System.Text.Json.Serialization.JsonPropertyName("y")]
+        public int Y { get; set; } = default!;
+
+        [System.Text.Json.Serialization.JsonPropertyName("z")]
+        public int Z { get; set; } = default!;
+
+        [System.Text.Json.Serialization.JsonPropertyName("rotationZ")]
+        public double RotationZ { get; set; } = default!;
+
+        [System.Text.Json.Serialization.JsonPropertyName("width")]
+        public int Width { get; set; } = default!;
+
+        [System.Text.Json.Serialization.JsonPropertyName("depth")]
+        public int Depth { get; set; } = default!;
+
+        [System.Text.Json.Serialization.JsonPropertyName("height")]
+        public int Height { get; set; } = default!;
+
+        [System.Text.Json.Serialization.JsonPropertyName("levels")]
+        [System.ComponentModel.DataAnnotations.Required]
+        public System.Collections.Generic.ICollection<SpaceUpdateLayoutRackLevelDto> Levels { get; set; } = new System.Collections.ObjectModel.Collection<SpaceUpdateLayoutRackLevelDto>();
+
+    }
+
+    [System.CodeDom.Compiler.GeneratedCode("NJsonSchema", "14.7.1.0 (NJsonSchema v11.6.1.0 (Newtonsoft.Json v13.0.0.0))")]
+    public partial class SpaceUpdateLayoutRackLevelDto
+    {
+
+        [System.Text.Json.Serialization.JsonPropertyName("levelNo")]
+        public int LevelNo { get; set; } = default!;
+
+        [System.Text.Json.Serialization.JsonPropertyName("bottomZ")]
+        public int BottomZ { get; set; } = default!;
+
+        [System.Text.Json.Serialization.JsonPropertyName("clearHeight")]
+        public int ClearHeight { get; set; } = default!;
+
+        [System.Text.Json.Serialization.JsonPropertyName("binCount")]
+        public int BinCount { get; set; } = default!;
+
+        [System.Text.Json.Serialization.JsonPropertyName("depthCount")]
+        public int DepthCount { get; set; } = default!;
+
+        [System.Text.Json.Serialization.JsonPropertyName("cellWidth")]
+        public int CellWidth { get; set; } = default!;
+
+        [System.Text.Json.Serialization.JsonPropertyName("cellDepth")]
+        public int CellDepth { get; set; } = default!;
+
+        [System.Text.Json.Serialization.JsonPropertyName("beamHeight")]
+        public int BeamHeight { get; set; } = default!;
+
+        [System.Text.Json.Serialization.JsonPropertyName("maxLoad")]
+        public double? MaxLoad { get; set; } = default!;
+
+    }
+
+    [System.CodeDom.Compiler.GeneratedCode("NJsonSchema", "14.7.1.0 (NJsonSchema v11.6.1.0 (Newtonsoft.Json v13.0.0.0))")]
+    public partial class SpaceUpdateLayoutZoneDto
+    {
+
+        [System.Text.Json.Serialization.JsonPropertyName("zoneCode")]
+        [System.ComponentModel.DataAnnotations.Required(AllowEmptyStrings = true)]
+        public string ZoneCode { get; set; } = default!;
+
+        [System.Text.Json.Serialization.JsonPropertyName("name")]
+        public string? Name { get; set; } = default!;
+
+        [System.Text.Json.Serialization.JsonPropertyName("zoneType")]
+        public int ZoneType { get; set; } = default!;
+
+        [System.Text.Json.Serialization.JsonPropertyName("polygonJson")]
+        [System.ComponentModel.DataAnnotations.Required(AllowEmptyStrings = true)]
+        public string PolygonJson { get; set; } = default!;
+
+        [System.Text.Json.Serialization.JsonPropertyName("color")]
+        public string? Color { get; set; } = default!;
+
+        [System.Text.Json.Serialization.JsonPropertyName("capabilityFlags")]
+        public string? CapabilityFlags { get; set; } = default!;
 
     }
 

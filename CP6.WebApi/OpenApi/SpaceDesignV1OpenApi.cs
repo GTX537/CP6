@@ -197,6 +197,48 @@ public sealed class SpaceWmsRuntimeSchemaFilter : ISchemaFilter
                 "cellDepth",
                 "beamHeight",
             ],
+            [typeof(SpaceUpdateLayoutZoneDto)] =
+            [
+                "zoneCode",
+                "zoneType",
+                "polygonJson",
+            ],
+            [typeof(SpaceUpdateLayoutAisleDto)] =
+            [
+                "zoneLogicalId",
+                "aisleCode",
+                "direction",
+                "polygonJson",
+                "centerlineJson",
+            ],
+            [typeof(SpaceUpdateLayoutRackDto)] =
+            [
+                "zoneLogicalId",
+                "rackCode",
+                "x",
+                "y",
+                "z",
+                "rotationZ",
+                "width",
+                "depth",
+                "height",
+                "levels",
+            ],
+            [typeof(SpaceUpdateLayoutRackLevelDto)] =
+            [
+                "levelNo",
+                "bottomZ",
+                "clearHeight",
+                "binCount",
+                "depthCount",
+                "cellWidth",
+                "cellDepth",
+                "beamHeight",
+            ],
+            [typeof(SpaceDeleteLayoutObjectDto)] =
+            [
+                "cascade",
+            ],
             [typeof(SpaceLayoutCommandResultDto)] =
             [
                 "commandId",

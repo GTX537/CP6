@@ -8,7 +8,7 @@ import {
 
 export interface CanvasObjectRef {
   logicalId: string
-  ownerKind: 'Element' | 'Rack'
+  ownerKind: 'Element' | 'Zone' | 'Aisle' | 'Rack'
 }
 
 export type CanvasSelectionMode = 'replace' | 'toggle'
@@ -131,10 +131,10 @@ export class ElementCanvasLayer {
   }
 
   private addDrawable(drawable: ElementCanvasDrawable): void {
-    const selectable = drawable.ownerKind === 'Element' || drawable.ownerKind === 'Rack'
+    const selectable = true
     const selected = this.selectedLogicalIds.has(drawable.logicalId)
     const common = {
-      name: selectable ? 'design-element' : 'design-layout-context',
+      name: 'design-element',
       fill: colorFor(drawable.elementType),
       opacity: selected
         ? 0.9
