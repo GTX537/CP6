@@ -2,6 +2,12 @@
 
 > 依据 Git log 汇总，不替代完整 Git 历史。重点记录影响接手判断的里程碑。
 
+## 2026-08-13：修复 OpenAPI 原生客户端漂移门禁
+
+- GitHub `client-contract` 在 `main` 与 CRM PR #5 上均因相同 OpenAPI 指纹漂移失败，证明问题属于既有主线门禁而非 CRM 文档变更。
+- 改用 Node.js 稳定排序/哈希，并将 schema 集合收敛为所选原生客户端路径的递归引用闭包，消除 PowerShell 版本差异及无关模块 schema 的假阳性。
+- 新增 Node 20/22 合同单测，更新受审指纹；真实 Swagger check、CP6.Tests、Client、Web 与 R2 source gate 全部通过。未改变 API、客户端运行行为、数据库或发布权威。
+
 ## 2026-08-11：新增 Azure DEV 自动部署学习链
 
 - 新增 `azure-pipelines-dev.yml` 与静态合同：只响应 `GTX537.CP6/main` 成功 Run，绑定专用部署 Agent，按完整 Git SHA 构建一次本机镜像，并通过 `cp6-dev` deployment job 部署、验证和发布证据。

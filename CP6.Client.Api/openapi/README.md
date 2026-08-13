@@ -8,10 +8,11 @@ surface. CI starts `CP6.WebApi`, downloads `/swagger/v1/swagger.json`, and runs:
 ```
 
 The check extracts the routes owned by `client-auth`, `client/bootstrap`,
-device activation, v2 production tasks, and label jobs together with the
-OpenAPI schema set. It recursively sorts every JSON object before hashing so
-Windows PowerShell 5.1 and PowerShell 7 produce the same canonical surface.
-It compares that hash with
+device activation, v2 production tasks, and label jobs together with only the
+schemas reachable from those operations. A Node.js helper recursively sorts
+every JSON object before hashing, so PowerShell runtime differences and
+unrelated API schemas cannot create false-positive client drift. It compares
+that hash with
 `openapi/client-surface.sha256`. A contract change therefore cannot land
 without intentionally regenerating/reviewing the typed client and updating
 the recorded surface hash. The v1 route remains server-side for one release,

@@ -1,5 +1,11 @@
 # 已完成能力与近期里程碑
 
+## 2026-08-13 OpenAPI 原生客户端漂移门禁修复
+
+- 确认 `main` 与 CRM PR #5 的 `client-contract` 以相同 expected/actual 指纹失败，根因属于主线门禁，不由 CRM 文档 diff 引入。
+- 用 Node.js 稳定规范化替代 PowerShell JSON 序列化，并把指纹范围收敛为原生客户端路径及其递归可达 schema；无关模块新增 schema 不再造成假阳性，真实客户端合同变化仍失败关闭。
+- 新增 4 个 Node 单测并在 Node 20/22 通过；真实 Swagger 指纹两次生成一致且 check 模式通过。完整门禁为 CP6.Tests 2859 passed / 19 environment-gated skipped、Client 71/71、Web 719/719、类型检查/生产构建和 R2 source gate 全绿。
+
 ## 2026-08-11 Azure DEV 自动部署仓库配置
 
 - 新增 `azure-pipelines-dev.yml`：以 `GTX537.CP6` 的成功 `main` Run 为唯一 completion resource，绑定 `CP6-Deploy/LAPTOP-3QQ44FJS`，核对服务身份、分支和完整 Git SHA 后构建一次本机 API/Web 镜像。
