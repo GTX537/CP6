@@ -5,13 +5,13 @@
 ## Space Studio v1.3 核心实现（2026-08-12）
 
 - M0 基线 PR #4 已验证并以 merge commit `9c320a74` 合入；WP1 第一张独立任务卡也已通过 merge commit `289b51d0` 合入并推送远端 `main`。
-- WP1 新增独立 Design V1 `layout-commands` 原子写链：在不写入通用 `Space_Element` 的前提下，按租约、Floor Revision、Content Revision 和命令幂等 fence 创建 Zone、Aisle、Rack，并由 Rack 逐层规格确定性生成 RackLevel/Location；库位编码前缀显式可选，未提供时保持未编码，后续仍由批量编码 Preview → Apply 负责。
+- WP1 新增独立 Design V1 `layout-commands` 原子写链：在不写入通用 `Space_Element` 的前提下，按租约、Floor Revision、Content Revision 和命令幂等 fence 创建 Zone、Aisle、Rack，并由 Rack 逐层规格确定性生成 RackLevel/Location；Space Studio“构件”上下文现已接入三类创建表单、画布坐标、逐层规格和库位数预览，保存后自动刷新同源场景；库位编码前缀显式可选，未提供时保持未编码，后续仍由批量编码 Preview → Apply 负责。
 - 低成本 3D 建模 Spec 已在完整保留 v1.2 详细正文的基础上增量修订为 v1.3；RFC-003 明确为“产品决定已冻结、跨职能批准 Pending”，外部 AI 独立 Beta、Viewer 性能门槛收紧、Supplier 不参加现场 UAT，`DesignUnderlayView` 成为单一页面权威。
 - Space Studio 已形成冻结四栏壳层，包含 44px 标题栏、60px 命令栏、52+244px 左侧模式/上下文、主 2D/3D 画布、324px 属性/批量/问题检查器和 30px 状态栏；小于 1280px 自动只读。
 - 新增 Floor 编辑租约：数据库唯一槽、数据库 UTC、90 秒租期、30 秒前端续租、释放、同用户不同浏览器会话隔离、过期重申请、带双权限和原因的强制接管、不可变接管审计。编辑命令请求新增必填 `leaseId`，保存与租约写入共享 Floor applock，Revision/命令/幂等失败关闭。
 - CAD Parse 成功后可由 Job/Source 路由自动读取并校验 PreviewSet SHA、Tenant/Source/Job/Floor 与解析启动时 BaseContentRevision；审核空间输出带基线与哈希的 typed 新增/修改/删除/冲突/低置信度/未识别变更集，经用户勾选后通过租约、Revision、ContentRevision 与幂等 fence 原子合入 Draft，stale 或工件链异常均零写入。前端提供 DWG/DXF 上传、后台监控、取消/重试和自动审核加载，本地 JSON 仅保留为高级回退；扫描完成后的坐标确认与 Mapping Profile 选择/预览仍为 P0，未使用伪默认值。
-- 空白画布/底图路径已可直接创建墙、柱、门、月台和静态设备，并与保存命令批、撤销/重做和本地 2D/3D 场景共用同一 LogicalId；Zone/Aisle/Rack 的后端 Layout Command 已进入远端主线，工作台拖放/表单接入、修改/删除和批量编码仍待后续切片。工作台“运行校验/校验并发布”会携带 Site/Version 进入正式发布控制面并自动发起 Validation，发布本身仍要求 Preview、审批确认和 `space:model:publish`，不会自动执行。
-- 仓库门禁证据：Space Unit 497/497、连接 `KOUSQLSERVER` 的 Space Integration 397/397（0 skipped）、CP6.Tests 2868 passed / 19 个既有环境门禁 skipped、Web 729/729、Space Studio Playwright 5/5、前后端生产构建通过且完整 Release solution 为 0 warning / 0 error；SDK drift、EF pending-model-changes 与 diff whitespace 均 clean。
+- 空白画布/底图路径已可直接创建墙、柱、门、月台和静态设备；Zone/Aisle/Rack 创建也已接入工作台并使用同一租约、Revision、幂等和恢复状态。Zone/Aisle 作为只读上下文多边形与 Rack 一起进入共享参数化渲染计划，2D/3D 机器清单一致；设计态修改/删除和批量编码仍待后续切片。工作台“运行校验/校验并发布”会携带 Site/Version 进入正式发布控制面并自动发起 Validation，发布本身仍要求 Preview、审批确认和 `space:model:publish`，不会自动执行。
+- 仓库门禁证据：后端基线 Space Unit 497/497、连接 `KOUSQLSERVER` 的 Space Integration 397/397（0 skipped）、CP6.Tests 2868 passed / 19 个既有环境门禁 skipped、完整 Release solution 0 warning / 0 error、SDK/EF drift clean；本次工作台创建卡新增后 Web 全量为 740/740、Space Studio Playwright 6/6，Vue type-check、生产构建和 diff whitespace 通过。
 - 本项完成的是仓库核心实现和自动化，不代表 GA：真实主/备 DWG Provider、20 份授权黄金 CAD、500/10,000 Viewer 基准、两仓各 14 天 Pilot、WMS 恢复演练和五角色签字仍未完成。
 ## CRM V1 T1 对抗审阅收口（2026-08-13）
 

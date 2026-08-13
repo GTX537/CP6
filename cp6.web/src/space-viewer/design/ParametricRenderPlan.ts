@@ -1,9 +1,11 @@
 import type {
   ISpaceDesignSceneDto,
+  SpaceSceneAisleDto,
   SpaceSceneElementDto,
   SpaceSceneRackDto,
   SpaceSceneRackLevelDto,
   SpaceSceneRevisionDto,
+  SpaceSceneZoneDto,
 } from '../../../../sdk/typescript/space-design-v1/spaceDesignV1Client'
 
 export const PARAMETRIC_RENDERER_VERSION = 'space-parametric-v1'
@@ -75,21 +77,46 @@ type ElementInput = Omit<
   revision?: RevisionInput
 }
 
+type ZoneInput = Omit<
+  Pick<
+    SpaceSceneZoneDto,
+    'revision' | 'zoneCode' | 'polygonJson' | 'color'
+  >,
+  'revision'
+> & { revision?: RevisionInput }
+
+type AisleInput = Omit<
+  Pick<
+    SpaceSceneAisleDto,
+    'revision' | 'zoneLogicalId' | 'aisleCode' | 'polygonJson'
+  >,
+  'revision'
+> & { revision?: RevisionInput }
+
 export type ParametricDesignSceneInput = Pick<
   ISpaceDesignSceneDto,
   'schemaVersion' | 'authority' | 'runtimeOverlayIncluded'
 > & {
+  zones?: readonly ZoneInput[]
+  aisles?: readonly AisleInput[]
   racks?: readonly RackInput[]
   rackLevels?: readonly RackLevelInput[]
   elements?: readonly ElementInput[]
 }
 
-export type ParametricOwnerKind = 'Rack' | 'RackLevel' | 'Element'
+export type ParametricOwnerKind =
+  | 'Zone'
+  | 'Aisle'
+  | 'Rack'
+  | 'RackLevel'
+  | 'Element'
 
 export type ParametricMaterialRole =
   | 'rack-envelope'
   | 'rack-beam'
   | 'rack-cell'
+  | 'zone'
+  | 'aisle'
   | 'element'
   | 'asset-placeholder'
 
@@ -187,6 +214,22 @@ export function buildParametricRenderPlan(
   }
 
   const allRacks = requireArray(scene.racks, 'racks')
+  const zones = (scene.zones ?? [])
+    .filter(isActiveRevision)
+    .slice()
+    .sort((left, right) =>
+      logicalId(left.revision, 'zone').localeCompare(
+        logicalId(right.revision, 'zone'),
+      ),
+    )
+  const aisles = (scene.aisles ?? [])
+    .filter(isActiveRevision)
+    .slice()
+    .sort((left, right) =>
+      logicalId(left.revision, 'aisle').localeCompare(
+        logicalId(right.revision, 'aisle'),
+      ),
+    )
   const allRackIds = new Set(
     allRacks.map((rack) => logicalId(rack.revision, 'rack')),
   )
@@ -233,6 +276,12 @@ export function buildParametricRenderPlan(
   const polygons: ParametricPolygonPrimitive[] = []
   const keys = new Set<string>()
 
+  for (const zone of zones) {
+    addLayoutPolygon(zone, 'Zone', polygons, keys)
+  }
+  for (const aisle of aisles) {
+    addLayoutPolygon(aisle, 'Aisle', polygons, keys)
+  }
   for (const rack of racks) {
     addRackPrimitives(rack, levelsByRack, boxes, keys)
   }
@@ -247,6 +296,44 @@ export function buildParametricRenderPlan(
     polygons,
     primitiveCount: boxes.length + polygons.length,
   }
+}
+
+function addLayoutPolygon(
+  value: ZoneInput | AisleInput,
+  ownerKind: 'Zone' | 'Aisle',
+  polygons: ParametricPolygonPrimitive[],
+  keys: Set<string>,
+): void {
+  const kind = ownerKind.toLowerCase()
+  const id = logicalId(value.revision, kind)
+  const lifecycleState = requireText(
+    value.revision?.lifecycleState,
+    `${kind}.${id}.lifecycleState`,
+  )
+  const outer = parseLayoutPolygon(value.polygonJson, `${kind}.${id}.polygonJson`)
+  const key = `${kind}:${id}:polygon`
+  requireUniqueKey(keys, key)
+  const isAisle = ownerKind === 'Aisle'
+  polygons.push({
+    key,
+    logicalId: id,
+    ownerKind,
+    parentLogicalId: isAisle
+      ? requireGuid((value as AisleInput).zoneLogicalId, `${kind}.${id}.zoneLogicalId`)
+      : undefined,
+    businessCode: optionalText(
+      isAisle ? (value as AisleInput).aisleCode : (value as ZoneInput).zoneCode,
+    ),
+    elementType: ownerKind,
+    materialRole: isAisle ? 'aisle' : 'zone',
+    lifecycleState,
+    kind: 'extruded-polygon',
+    origin: { x: 0, y: 0, z: isAisle ? 12 : 0 },
+    outer,
+    holes: [],
+    height: isAisle ? 16 : 10,
+    rotationZ: 0,
+  })
 }
 
 function addRackPrimitives(
@@ -840,6 +927,39 @@ function parseGeometry(
     throw invalid(`${field}.kind`, 'geometry kind is required')
   }
   return parsed as Record<string, unknown> & { kind: string }
+}
+
+function parseLayoutPolygon(
+  value: string | undefined,
+  field: string,
+): DataPoint3[] {
+  if (!value) throw invalid(field, 'polygon JSON is required')
+  let parsed: unknown
+  try {
+    parsed = JSON.parse(value)
+  } catch {
+    throw invalid(field, 'polygon JSON is invalid')
+  }
+  if (!isRecord(parsed) || parsed.schemaVersion !== 1) {
+    throw invalid(field, 'polygon schemaVersion 1 is required')
+  }
+  if (!Array.isArray(parsed.points) || parsed.points.length < 3) {
+    throw invalid(`${field}.points`, 'at least three points are required')
+  }
+  return parsed.points.map((point, index) => {
+    if (
+      !Array.isArray(point) ||
+      point.length < 2 ||
+      !Number.isInteger(point[0]) ||
+      !Number.isInteger(point[1])
+    ) {
+      throw invalid(
+        `${field}.points[${index}]`,
+        'an [x,y] integer millimeter pair is required',
+      )
+    }
+    return { x: point[0], y: point[1], z: 0 }
+  })
 }
 
 function geometryPoints(

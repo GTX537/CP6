@@ -99,6 +99,50 @@ test('below 1280 switches to read-only 3D with version and issues only', async (
   expect(errors).toEqual([])
 })
 
+test('creates Zone, Aisle and Rack through the leased Layout Command chain', async ({ page }) => {
+  const errors = collectPageErrors(page)
+  const methods: string[] = []
+  const layoutBodies: Array<Record<string, any>> = []
+  await installSpaceStudioFixtures(page, methods, { layoutBodies })
+  await page.setViewportSize({ width: 1440, height: 900 })
+  await page.goto(studioUrl)
+
+  await page.locator('.studio-modebar button').filter({ hasText: '构件' }).click()
+  await page.locator('[data-test="zone-code"]').fill('Z-A')
+  await page.locator('[data-test="submit-layout"]').click()
+  await expect(page.getByText('库区已创建并保存')).toBeVisible()
+
+  await page.getByRole('tab', { name: '巷道', exact: true }).click()
+  await page.locator('[data-test="aisle-code"]').fill('A-01')
+  await page.locator('[data-test="submit-layout"]').click()
+  await expect(page.getByText('巷道已创建并保存')).toBeVisible()
+
+  await page.getByRole('tab', { name: '货架', exact: true }).click()
+  await page.locator('[data-test="rack-code"]').fill('R-NEW')
+  await expect(page.getByText('将生成 4 个库位', { exact: false })).toBeVisible()
+  await page.locator('[data-test="submit-layout"]').click()
+  await expect(page.getByText('货架已创建，并生成 4 个设计态库位')).toBeVisible()
+
+  expect(methods.filter((value) => value === 'POST layout')).toHaveLength(3)
+  expect(layoutBodies.map((body) => body.commands[0].type)).toEqual([
+    'CreateZone',
+    'CreateAisle',
+    'CreateRack',
+  ])
+  for (const body of layoutBodies) {
+    expect(body.leaseId).toBe(ownedLease().leaseId)
+    expect(body.clientInstanceId).toBeTruthy()
+  }
+  expect(layoutBodies[0]!.expectedFloorRevision).toBe(7)
+  expect(layoutBodies[1]!.expectedFloorRevision).toBe(8)
+  expect(layoutBodies[2]!.expectedFloorRevision).toBe(9)
+
+  await page.getByRole('button', { name: '3D', exact: true }).click()
+  await expect(page.getByText('2D/3D 清单一致', { exact: true })).toBeVisible()
+  await expect(page.getByText('2D 5 / 3D 5', { exact: true })).toBeVisible()
+  expect(errors).toEqual([])
+})
+
 function collectPageErrors(page: Page): string[] {
   const errors: string[] = []
   page.on('pageerror', (error) => errors.push(error.message))
@@ -117,7 +161,10 @@ async function captureEvidence(page: Page, fileName: string): Promise<void> {
 async function installSpaceStudioFixtures(
   page: Page,
   methods: string[] = [],
-  options: { leaseHeld?: boolean } = {},
+  options: {
+    leaseHeld?: boolean
+    layoutBodies?: Array<Record<string, any>>
+  } = {},
 ) {
   await page.addInitScript(() => {
     localStorage.setItem('cp6_authed', '1')
@@ -125,14 +172,92 @@ async function installSpaceStudioFixtures(
     localStorage.setItem('nickName', 'Space Modeler')
   })
 
+  const scene: any = sceneFixture()
   await page.route((url) => url.pathname.startsWith('/api/'), async (route) => {
     const request = route.request()
     const url = new URL(request.url())
     const scenePath = `/api/space/design/v1/versions/${versionId}/floors/${floorId}/scene`
     const leasePath = `/api/space/design/v1/versions/${versionId}/floors/${floorId}/lease`
+    const layoutPath = `/api/space/design/v1/versions/${versionId}/floors/${floorId}/layout-commands`
 
     if (url.pathname === scenePath) {
-      await route.fulfill({ json: sceneFixture() })
+      await route.fulfill({ json: scene })
+      return
+    }
+    if (url.pathname === layoutPath && request.method() === 'POST') {
+      methods.push('POST layout')
+      const body = request.postDataJSON() as Record<string, any>
+      options.layoutBodies?.push(body)
+      const command = body.commands[0]
+      const revisionValue = revision(command.targetLogicalId)
+      const affectedZones: any[] = []
+      const affectedAisles: any[] = []
+      const affectedRacks: any[] = []
+      const affectedRackLevels: any[] = []
+      const affectedLocations: any[] = []
+      if (command.type === 'CreateZone') {
+        const created = {
+          revision: revisionValue,
+          floorLogicalId: floorId,
+          ...command.createZone,
+        }
+        scene.zones.push(created)
+        affectedZones.push(created)
+      }
+      if (command.type === 'CreateAisle') {
+        const created = { revision: revisionValue, ...command.createAisle }
+        scene.aisles.push(created)
+        affectedAisles.push(created)
+      }
+      if (command.type === 'CreateRack') {
+        const created = {
+          revision: revisionValue,
+          floorLogicalId: floorId,
+          ...command.createRack,
+        }
+        scene.racks.push(created)
+        affectedRacks.push(created)
+        for (const level of command.createRack.levels) {
+          const createdLevel = {
+            revision: revision(crypto.randomUUID()),
+            rackLogicalId: command.targetLogicalId,
+            ...level,
+          }
+          scene.rackLevels.push(createdLevel)
+          affectedRackLevels.push(createdLevel)
+          for (let column = 1; column <= level.binCount; column += 1) {
+            for (let depth = 1; depth <= level.depthCount; depth += 1) {
+              affectedLocations.push({
+                revision: revision(crypto.randomUUID()),
+                rackLogicalId: command.targetLogicalId,
+                levelNo: level.levelNo,
+                columnNo: column,
+                depthNo: depth,
+              })
+            }
+          }
+        }
+      }
+      scene.floor.revisionNumber += 1
+      scene.contentRevision += 1
+      await route.fulfill({
+        json: {
+          commandBatchId: body.commandBatchId,
+          floorRevision: scene.floor.revisionNumber,
+          versionContentRevision: scene.contentRevision,
+          appliedCommands: [{
+            commandId: command.commandId,
+            type: command.type,
+            targetLogicalId: command.targetLogicalId,
+          }],
+          affectedZones,
+          affectedAisles,
+          affectedRacks,
+          affectedRackLevels,
+          affectedLocations,
+          idempotentReplay: false,
+        },
+      })
       return
     }
     if (url.pathname === leasePath && request.method() === 'GET') {
