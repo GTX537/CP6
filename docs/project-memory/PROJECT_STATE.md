@@ -11,14 +11,38 @@
 - 空白画布/底图路径已可直接创建墙、柱、门、月台和静态设备，并与保存命令批、撤销/重做和本地 2D/3D 场景共用同一 LogicalId；库区、巷道和首个货架的直接拖放创建仍待后续切片。工作台“运行校验/校验并发布”会携带 Site/Version 进入正式发布控制面并自动发起 Validation，发布本身仍要求 Preview、审批确认和 `space:model:publish`，不会自动执行。
 - 仓库门禁证据：Space Unit 497/497、连接 `KOUSQLSERVER` 的 Space Integration 396/396（0 skipped）、CP6.Tests 2867 passed / 19 个既有环境门禁 skipped、Web 727/727、Space Studio Playwright 5/5、前后端生产构建通过且完整 Release solution 为 0 warning / 0 error；SDK drift、EF pending-model-changes 与 diff whitespace 均 clean。
 - 本项完成的是仓库核心实现和自动化，不代表 GA：真实主/备 DWG Provider、20 份授权黄金 CAD、500/10,000 Viewer 基准、两仓各 14 天 Pilot、WMS 恢复演练和五角色签字仍未完成。
+## CRM V1 T1 对抗审阅收口（2026-08-13）
+
+- T1 继续保持纯规范范围；没有创建 `CP6.CRM` 仓库、业务代码、数据库、云资源、迁移或部署。新仓只允许由满足 T1/M0/P01 前置的 `CRM01-S01` 创建。
+- PublicSubmission 已形成独立 Intake 闭环：Quarantined 只能竞争性 release/reject/expiry，匿名化是 PII 生命周期；复用既有 22 个权限，并把首次响应 SLA 固定在原 ReceivedAt，Owner 30 分钟从 release 起算。
+- 公开写入固定为浏览器到同源 BFF，再以服务 JWT、Dapr mTLS AppId、workload identity/NetworkPolicy 调 CRM；稳定 attempt 绑定 payload/browser，回执 Cookie 按最终编码 3800 bytes 控制。
+- 生产连续性固定 Azure SQL Database GP vCore zone-redundant、GZRS/35-day PITR，以及受控 Azure Storage ZRS Emergency Intake；AZ 与逻辑损坏分别以 RPO/RTO 和季度恢复证据验收。
+- System Release Manifest 新增 previous digest 与 DB/OpenAPI/Event/Dapr 兼容范围；默认系统整体回退，组件级例外必须有签名证据，Schema/业务数据永不回退。
+- 本地工程/设计与合入前 fallback 复核修正了 Dapr 调用图、IntakeDeptId/PII 权限、实际 migration ID 和首次切换回退边界，修正后无剩余 Critical/High；正式 gstack 交互审阅因当前宿主缺少技能强制的 AskUserQuestion 接口未签发，不能冒充技能门禁。CRM Foundation 16/16、Markdown 相对链接和 `git diff --check` 通过。
+
+## OpenAPI 原生客户端漂移门禁修复（2026-08-13）
+
+- `client-contract` 的 OpenAPI 指纹曾同时在 `main@c68d9b53` 和 CRM PR #5 失败；两者均为期望 `D305...`、实际 `774F...`，确认不是 CRM 文档分支引入。
+- 根因有两项：PowerShell 5.1/7 的 JSON 序列化仍会产生不同字节；旧门禁还把全部全局 schema 纳入原生客户端指纹，使 CRM、Space、Finance 等无关 API schema 也触发客户端漂移。
+- 门禁现由 Node.js 对 JSON 键作稳定排序，只保留原生客户端路径及其递归可达 schema；PowerShell 入口、失败关闭语义和受控 `-Update` 流程保持不变。新增 4 个 Node 单测，Node 20/22 均通过，当前指纹为 `A49DB452941BF554AEAD66E35C41A7013CB280F7B5A918E41195C4C0FF44A637`。
+- 本地完整门禁通过：OpenAPI live check、CP6.Tests 2859/2859、Client 71/71、Web 719/719、类型检查、生产构建与 R2 source gate；19 个 SQL/环境门禁保持基线 skip。本任务不改 API、客户端行为、数据库、部署或生产资源。
+
+## CRM V1 规范批准基线（2026-08-12）
+
+- 规范任务从 `main == origin/main == c68d9b53b4cf3adb5925b8258c36969fdebda753` 创建独立 `codex/crm-v1-spec-approval-20260812` 分支；只修订 CRM 规范与项目记忆，不修改旧根工作区、业务代码、仓库、云资源、数据或部署。
+- `CRM-PRODUCT-FRAMEWORK.md` 与 `CRM-V1-EXECUTABLE-SPEC.md` 已升级为 Approved implementation-planning baseline。审阅证据为工程/设计计划 `C8574D3BE11C5492C2CFFA8797917FE4898328E16B25A832267714C719701A08`、QA 计划 `1A6995F45DAD2CD4DD511B7D6CF2E5FA760123C63DD597D1E0F5975D91C5F281`、采用/产品设计 `C60FA78E3F876D0682CB39814EEB9383FBAEC17D1E285DC59D2BB9256C322DF7`。
+- 本轮冻结 Lead 创建/Assignment/Activity/Merge 的幂等与并发、412 保文/差异/显式重试、4 个租户业务小时 SLA、C 分栏 Pilot、公开站点 IA/视觉/受控 CMS、加密有界回执 Cookie、真实隔离 ERP UAT，以及 Pilot/CRM12 分层性能门禁。
+- Observation、Pilot UAT、Lead Adoption 和 Full Journey Adoption 都是不可豁免硬门禁；最多两个固定版本整改窗口。CRM V1 唯一 Registry/候选权威固定为 GHCR/GitHub R2，Azure 只能做 CI、DEV 学习、影子验证或消费同一 digest；ACR 迁移独立立项。
+- 该状态只表示 T1 规范批准，不表示 CRM 端到端实现完成。下一张票据是 M0/R00 DevOps ADR；Sponsor、Product/Sales Operations/Security/ERP/Data/SRE/Release Owner、Pilot cohort 和 Observation 证据缺失时自动 No-Go。
+- 最新基线复核确认 20 个 CRM DbSet、无 CRM Controller/前端路由、JWT 仍为 HMAC SHA-256 且旧租户上下文仍回退 A1；`dotnet test CP6.Tests/CP6.Tests.csproj -c Release --filter "FullyQualifiedName~CP6.Tests.Crm" --nologo` 为 16/16 passed、0 failed、0 skipped。Markdown 相对链接和 `git diff --check` 通过。
 
 ## CRM 产品框架与三仓可执行 Spec（2026-08-11）
 
 - 已从 `main == origin/main == f149c75e` 的干净独立 worktree 核对 CRM Foundation：聚焦回归 16/16 通过。当前主线实际只有 20 张 CRM/CMS 表、状态机、迁移和菜单权限种子，没有 CRM Controller、应用服务或前端路由；现有 JWT 仍是 HS256、租户上下文仍有默认 A1，均不得复制进新服务。
 - 新增 `docs/crm/CRM-PRODUCT-FRAMEWORK.md`，把 CRM 定位为包装/制造企业从获客到 ERP 订单的行业化售前工作台，冻结角色、22 个权限动作、获客渠道、端到端旅程、V1/VNext、信息架构、UX、指标和产品验收场景。
 - 新增 `docs/crm/CRM-V1-EXECUTABLE-SPEC.md`，固化 `CP6`、`CP6.Platform`、`CP6.CRM` 三仓边界，以及 Dapr/Kafka/YARP、RS256/OIDC/JWKS、Next.js、独立 CRM 数据库、CloudEvents/JSON Schema、Outbox/Inbox、20 表一次性迁移和 build-once 发布方案。
-- Spec 已覆盖领域/状态机、数据/API/事件、权限/PII/租户隔离、ERP 集成、SLO/威胁模型、测试/发布门禁、里程碑/任务依赖和 Definition of Done。当前状态是待产品、架构、安全、数据、ERP、SRE 和 QA 审批的规划交付；未创建新仓库、未改业务代码、未迁移数据或部署。
-- CRM 实施必须按 Spec 的 Platform P01–P10、CP6 C01–C04、CRM01–CRM12 依赖图拆分小分支。发布权威与 Registry 决策仍是系统 Release Manifest 和任何 CRM 候选发布的硬前置。
+- Spec 已覆盖领域/状态机、数据/API/事件、权限/PII/租户隔离、ERP 集成、SLO/威胁模型、测试/发布门禁、里程碑/任务依赖和 Definition of Done。该条记录的是 2026-08-11 初稿状态；2026-08-12 已完成上方规划批准，但 named 开工/生产 Owner 审批仍待完成；未创建新仓库、未改业务代码、未迁移数据或部署。
+- CRM 实施必须按 Spec 的 Platform P01–P10、CP6 C01–C04、CRM01–CRM12 依赖图拆分小分支。2026-08-12 已固定 CRM V1 使用 GHCR/R2；R00 只负责在 ADR 中记录该权威、候选清单与 Azure 非权威边界，仍是 P09/P10/CRM12 的硬前置。
 
 ## Azure DevOps CI/CD 项目记忆（2026-08-11）
 
@@ -34,7 +58,7 @@
 - 新增 `docs/devops/` 项目级文档入口，整理当前 Azure CI、目标 Release/CD、Build once、环境策略、发布步骤和分阶段路线；`AGENTS.md` 与根 README 已接入，Codex 后续无需从聊天记录猜测上下文。
 - 当前仓库事实是：`azure-pipelines.yml` 在 `main` 提交上运行 `Default` self-hosted pool，完成 .NET 8/Node 22 的后端/客户端测试和 Web 类型/单测/构建；`pr: none`。另有 DEV 学习链在部署 Agent 本机 Build/Deploy，但尚无 Azure Registry、不可变候选或生产环境部署。
 - 现有 `.github/workflows/r2-*` 已实现更完整的受保护版本、GHCR 镜像、SBOM/漏洞扫描、签名、不可变证据和 digest 部署，因此在 Azure 门禁等价并显式切换前继续作为生产发布权威。
-- 聊天规划中的 ACR 被记录为候选目标而非当前事实。当前只新增本机 DEV 学习流水线，没有创建 Registry/云资源或执行生产部署；后续仍需决定唯一 Registry、候选清单、Azure/GitHub 影子期和回退条件，再实现正式 Docker Release。
+- 聊天规划中的 ACR 被记录为候选目标而非当前事实。当前只新增本机 DEV 学习流水线，没有创建 Registry/云资源或执行生产部署；CRM V1 已在 2026-08-12 固定沿用 GHCR/R2，R00 记录候选清单、Azure 非权威影子期和回退。ACR 或其他产品的长期 Registry 迁移另行决策。
 
 ## CRM V1 Foundation（2026-08-10）
 

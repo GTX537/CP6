@@ -11,6 +11,27 @@
 - 空白画布/底图已支持墙、柱、门、月台和静态设备直接创建及本地 2D/3D 同源；“校验并发布”深链会选择指定 Site/Version 并自动启动正式 Validation，但不会绕过 Preview、审批确认或发布权限。库区/巷道/首个货架直建及 CAD Mapping Profile 启动 UI 仍保留为 P0。
 - 门禁通过：Space Unit 497、真实 SQL Space Integration 396（0 skipped）、CP6.Tests 2867、Web 727、Playwright 5；SDK/EF drift clean，完整 Release solution 0 warning / 0 error。
 - 记录真实 Provider、黄金 CAD、Viewer 基准、两仓 Pilot 与五角色签字仍是未完成门禁，未将本次代码交付表述为 GA。
+## 2026-08-13：CRM V1 T1 对抗审阅收口
+
+- 把公开提交从浏览器直达 CRM 收紧为同源 Next.js BFF，并固定服务 JWT、Dapr mTLS AppId、workload/network identity 交集；补齐 attempt 绑定、幂等回执、tombstone 与 3800-byte Cookie 预算。
+- 将 Quarantined 建成 PublicSubmission 独立处置闭环，复用既有 22 权限；释放时复制原 ReceivedAt/SLA 锚点，避免隔离漂白首次响应指标。
+- 固定 Azure SQL GP zone-redundant/GZRS/PITR 与 Emergency Intake，区分 AZ RPO/RTO 和逻辑损坏季度恢复门禁；System Manifest 增加 previous digest 与机器兼容范围。
+- 明确 CRM V1 不承担软件商城/订阅/客户产品中心，CRM 仓只在 CRM01-S01 前置关闭后创建；本变更仍无业务代码、仓库、云资源、迁移或部署。
+- 验证：本地工程/设计与合入前 fallback 复核修正 Dapr 调用图、IntakeDeptId/PII 权限、实际 migration ID 和首次切换回退边界后无剩余 Critical/High；正式交互技能审阅未在缺少 AskUserQuestion 的宿主中冒充完成；CRM Foundation 16/16、Markdown 相对链接和 `git diff --check` 通过。
+
+## 2026-08-13：修复 OpenAPI 原生客户端漂移门禁
+
+- GitHub `client-contract` 在 `main` 与 CRM PR #5 上均因相同 OpenAPI 指纹漂移失败，证明问题属于既有主线门禁而非 CRM 文档变更。
+- 改用 Node.js 稳定排序/哈希，并将 schema 集合收敛为所选原生客户端路径的递归引用闭包，消除 PowerShell 版本差异及无关模块 schema 的假阳性。
+- 新增 Node 20/22 合同单测，更新受审指纹；真实 Swagger check、CP6.Tests、Client、Web 与 R2 source gate 全部通过。未改变 API、客户端运行行为、数据库或发布权威。
+
+## 2026-08-12：CRM V1 规范批准与采用门禁
+
+- 从 `main/origin/main@c68d9b53` 的独立任务分支修订 CRM 产品框架、可执行 Spec 和入口，将工程、QA、采用/设计审阅结论固化为 Approved implementation-planning baseline；未修改旧根工作区或业务代码。
+- 新增可执行的 Lead 创建/Assignment/Activity/Merge 幂等和并发合同、428/409/412/422 与零部分写入、412 保文/差异/显式重试、回执加密有界 HttpOnly Cookie、受控 CMS、高保真设计前置与 WCAG 2.2 AA。
+- 固化真实 C03 handler + 隔离 ERP SQL UAT、Pilot 与 CRM12 两层性能配置、Observation/Pilot/Lead/Full Journey 不可豁免采用 manifest，以及 GHCR/GitHub R2 唯一候选权威；Azure 仅作非权威验证或消费相同 digest。
+- 该变更只关闭规范 T1。M0/R00 ADR、named Owner/cohort/Observation、三仓实施、迁移、候选和生产发布仍为待办。
+- 验证：三份外部审阅工件 hash 与记录一致；CRM Foundation 聚焦测试 16/16 通过；Markdown 相对链接和差异格式门禁通过。
 
 ## 2026-08-11：新增 Azure DEV 自动部署学习链
 
