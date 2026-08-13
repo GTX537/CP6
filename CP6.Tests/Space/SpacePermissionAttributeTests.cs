@@ -81,6 +81,9 @@ public class SpacePermissionAttributeTests
             ["SpaceDesignV1Controller.GetVersion"] = "space:model:read",
             ["SpaceDesignV1Controller.GetScene"] = "space:model:read",
             ["SpaceEditLeaseController.GetEditLease"] = "space:model:edit",
+            ["SpaceCadParseController.GetParse"] = "space:model:read",
+            ["SpaceCadParseController.GetReviewWorkspace"] =
+                "space:model:read",
             ["SpaceDesignV1Controller.GetAssets"] = "space:model:read",
             ["SpaceDesignV1Controller.GetSources"] = "space:model:read",
             ["SpaceDesignV1Controller.GetFile"] = "space:model:read",
@@ -329,6 +332,29 @@ public class SpacePermissionAttributeTests
         [
             "space:source:upload",
             "space:model:edit",
+        ]));
+    }
+
+    [Fact]
+    public void Lease_takeover_requires_edit_and_takeover_permissions()
+    {
+        var method = typeof(SpaceEditLeaseController).GetMethod(
+            nameof(SpaceEditLeaseController.TakeoverEditLease));
+        Assert.NotNull(method);
+
+        var permissions = CustomAttributeData
+            .GetCustomAttributes(method!)
+            .Where(data =>
+                data.AttributeType == typeof(RequirePermissionAttribute))
+            .Select(data =>
+                $"{data.ConstructorArguments[0].Value}:" +
+                $"{data.ConstructorArguments[1].Value}")
+            .ToHashSet();
+
+        Assert.True(permissions.SetEquals(
+        [
+            "space:model:edit",
+            "space:model:lease:takeover",
         ]));
     }
 

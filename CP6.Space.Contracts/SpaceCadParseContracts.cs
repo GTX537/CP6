@@ -59,3 +59,21 @@ public sealed record SpaceCadParseActionResponse(
     string JobStatusUrl,
     string ParseStatusUrl,
     bool IdempotentReplay = false);
+
+public sealed record ApplySpaceCadChangesetRequest(
+    Guid CommandBatchId,
+    Guid ClientInstanceId,
+    Guid LeaseId,
+    long ExpectedFloorRevision,
+    long ExpectedContentRevision,
+    string? ExpectedContentHash,
+    string WorkspaceSha256,
+    IReadOnlyList<string> ChangeIds);
+
+public sealed record ApplySpaceCadChangesetResponse(
+    Guid CommandBatchId,
+    long FloorRevision,
+    long VersionContentRevision,
+    long AppliedChangeCount,
+    string WorkspaceSha256,
+    bool IdempotentReplay);

@@ -24,17 +24,20 @@ public sealed class SpaceEditLeaseTests
         Assert.Throws<InvalidOperationException>(() => lease.Renew(
             Guid.NewGuid(),
             lease.OwnerUserId,
+            lease.ClientInstanceId,
             Now.AddSeconds(30),
             TimeSpan.FromSeconds(90)));
         Assert.Throws<InvalidOperationException>(() => lease.Renew(
             lease.LeaseId,
             Guid.NewGuid(),
+            lease.ClientInstanceId,
             Now.AddSeconds(30),
             TimeSpan.FromSeconds(90)));
 
         lease.Renew(
             lease.LeaseId,
             lease.OwnerUserId,
+            lease.ClientInstanceId,
             Now.AddSeconds(30),
             TimeSpan.FromSeconds(90));
         Assert.Equal(Now.AddSeconds(120), lease.ExpiresAtUtc);
@@ -50,6 +53,7 @@ public sealed class SpaceEditLeaseTests
 
         lease.Reassign(
             newOwner,
+            "New owner",
             newClient,
             Now.AddSeconds(10),
             TimeSpan.FromSeconds(90));
@@ -72,6 +76,8 @@ public sealed class SpaceEditLeaseTests
                 Guid.NewGuid(),
                 Guid.NewGuid(),
                 "   ",
+                Guid.NewGuid(),
+                "127.0.0.1 | test",
                 Now));
     }
 
@@ -99,6 +105,7 @@ public sealed class SpaceEditLeaseTests
         Guid.NewGuid(),
         Guid.NewGuid(),
         Guid.NewGuid(),
+        "Lease owner",
         Guid.NewGuid(),
         Now,
         TimeSpan.FromSeconds(90));

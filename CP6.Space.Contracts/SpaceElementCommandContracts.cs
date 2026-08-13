@@ -9,6 +9,7 @@ public static class SpaceElementCommandContract
     public const string DeleteObject = "DeleteObject";
     public const string RestoreLogicalObject = "RestoreLogicalObject";
     public const string GenerateRackArray = "GenerateRackArray";
+    public const string CreateElement = "CreateElement";
 }
 
 public sealed record SpaceElementAttributeWriteDto(
@@ -57,7 +58,24 @@ public sealed record SpaceElementCommandDto(
     SpaceUpdateElementPropertiesDto? UpdateProperties,
     SpaceMoveObjectDto? MoveObject = null,
     SpaceRotateObjectDto? RotateObject = null,
-    SpaceGenerateRackArrayDto? GenerateRackArray = null);
+    SpaceGenerateRackArrayDto? GenerateRackArray = null,
+    SpaceCreateElementDto? CreateElement = null);
+
+public sealed record SpaceCreateElementDto(
+    string ElementType,
+    string GeometryJson,
+    int X,
+    int Y,
+    int Z,
+    decimal RotationZ,
+    int Width,
+    int Height,
+    int Depth,
+    string? BusinessCode,
+    Guid? ParentLogicalId,
+    Guid? SourceId,
+    string? SourceRef,
+    IReadOnlyList<SpaceElementAttributeWriteDto> Attributes);
 
 public sealed record ApplySpaceElementCommandBatchRequest(
     int SchemaVersion,
@@ -65,7 +83,10 @@ public sealed record ApplySpaceElementCommandBatchRequest(
     Guid ClientInstanceId,
     Guid LeaseId,
     long ExpectedFloorRevision,
-    IReadOnlyList<SpaceElementCommandDto> Commands);
+    IReadOnlyList<SpaceElementCommandDto> Commands,
+    long? ExpectedContentRevision = null,
+    string? ExpectedContentHash = null,
+    string? ChangesetSha256 = null);
 
 public sealed record SpaceElementCommandResultDto(
     Guid CommandId,

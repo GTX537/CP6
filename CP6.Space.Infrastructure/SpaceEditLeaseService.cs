@@ -2,6 +2,7 @@ using System.Data;
 using CP6.Space.Application;
 using CP6.Space.Contracts;
 using CP6.Space.Domain;
+using Microsoft.Data.SqlClient;
 using Microsoft.EntityFrameworkCore;
 
 namespace CP6.Space.Infrastructure;
@@ -10,7 +11,8 @@ public sealed class SpaceEditLeaseService(
     SpaceContext context,
     ISpaceExecutionContext execution,
     ISpaceClock clock,
-    ISpaceDesignAccessEvaluator access) : ISpaceEditLeaseService
+    ISpaceDesignAccessEvaluator access,
+    ISpaceCorrelationContext? correlation = null) : ISpaceEditLeaseService
 {
     private static readonly TimeSpan LeaseDuration = TimeSpan.FromSeconds(90);
 
@@ -31,7 +33,11 @@ public sealed class SpaceEditLeaseService(
                 candidate.ModelVersionId == versionId &&
                 candidate.FloorLogicalId == floorLogicalId,
                 cancellationToken);
-        return ToDto(versionId, floorLogicalId, lease, RequireUtcNow());
+        return ToDto(
+            versionId,
+            floorLogicalId,
+            lease,
+            await ReadAuthoritativeUtcNowAsync(cancellationToken));
     }
 
     public async Task<SpaceEditLeaseDto> AcquireAsync(
@@ -44,16 +50,21 @@ public sealed class SpaceEditLeaseService(
         if (request.ClientInstanceId == Guid.Empty)
             throw Invalid("clientInstanceId", "A non-empty identity is required.");
 
+        EnsureExecutionContext();
+        await using var transaction = await context.Database.BeginTransactionAsync(
+            IsolationLevel.Serializable,
+            cancellationToken);
+        await AcquireFloorEditLockAsync(
+            versionId,
+            floorLogicalId,
+            cancellationToken);
         await EnsureScopeAsync(
             versionId,
             floorLogicalId,
             write: true,
             requireDraft: true,
             cancellationToken);
-        await using var transaction = await context.Database.BeginTransactionAsync(
-            IsolationLevel.Serializable,
-            cancellationToken);
-        var now = RequireUtcNow();
+        var now = await ReadAuthoritativeUtcNowAsync(cancellationToken);
         var lease = await context.EditLeases.SingleOrDefaultAsync(candidate =>
             candidate.ModelVersionId == versionId &&
             candidate.FloorLogicalId == floorLogicalId,
@@ -66,6 +77,7 @@ public sealed class SpaceEditLeaseService(
                 versionId,
                 floorLogicalId,
                 execution.ActorId,
+                HolderDisplayName(),
                 request.ClientInstanceId,
                 now,
                 LeaseDuration);
@@ -75,13 +87,19 @@ public sealed class SpaceEditLeaseService(
         {
             lease.Reassign(
                 execution.ActorId,
+                HolderDisplayName(),
                 request.ClientInstanceId,
                 now,
                 LeaseDuration);
         }
         else if (lease.IsOwnedBy(execution.ActorId, request.ClientInstanceId))
         {
-            lease.Renew(lease.LeaseId, execution.ActorId, now, LeaseDuration);
+            lease.Renew(
+                lease.LeaseId,
+                execution.ActorId,
+                request.ClientInstanceId,
+                now,
+                LeaseDuration);
         }
         else
         {
@@ -103,23 +121,34 @@ public sealed class SpaceEditLeaseService(
                 recoveryAction: "refresh-lease-state",
                 retryable: true);
         }
-        return ToDto(versionId, floorLogicalId, lease, now);
+        return ToDto(versionId, floorLogicalId, lease, now, exposeCredential: true);
     }
 
     public async Task<SpaceEditLeaseDto> RenewAsync(
         Guid versionId,
         Guid floorLogicalId,
         Guid leaseId,
+        ContinueSpaceEditLeaseRequest request,
         CancellationToken cancellationToken = default)
     {
+        ArgumentNullException.ThrowIfNull(request);
         RequireLeaseId(leaseId);
+        RequireClientInstanceId(request.ClientInstanceId);
+        EnsureExecutionContext();
+        await using var transaction = await context.Database.BeginTransactionAsync(
+            IsolationLevel.Serializable,
+            cancellationToken);
+        await AcquireFloorEditLockAsync(
+            versionId,
+            floorLogicalId,
+            cancellationToken);
         await EnsureScopeAsync(
             versionId,
             floorLogicalId,
             write: true,
             requireDraft: true,
             cancellationToken);
-        var now = RequireUtcNow();
+        var now = await ReadAuthoritativeUtcNowAsync(cancellationToken);
         var lease = await context.EditLeases.SingleOrDefaultAsync(candidate =>
             candidate.ModelVersionId == versionId &&
             candidate.FloorLogicalId == floorLogicalId,
@@ -127,58 +156,82 @@ public sealed class SpaceEditLeaseService(
         if (lease is null ||
             lease.LeaseId != leaseId ||
             lease.OwnerUserId != execution.ActorId ||
+            lease.ClientInstanceId != request.ClientInstanceId ||
             lease.IsExpired(now))
         {
             throw Lost();
         }
 
-        lease.Renew(leaseId, execution.ActorId, now, LeaseDuration);
+        lease.Renew(
+            leaseId,
+            execution.ActorId,
+            request.ClientInstanceId,
+            now,
+            LeaseDuration);
         try
         {
             await context.SaveChangesAsync(cancellationToken);
+            await transaction.CommitAsync(cancellationToken);
         }
         catch (DbUpdateConcurrencyException)
         {
             throw Lost();
         }
-        return ToDto(versionId, floorLogicalId, lease, now);
+        return ToDto(versionId, floorLogicalId, lease, now, exposeCredential: true);
     }
 
     public async Task<SpaceEditLeaseDto> ReleaseAsync(
         Guid versionId,
         Guid floorLogicalId,
         Guid leaseId,
+        ContinueSpaceEditLeaseRequest request,
         CancellationToken cancellationToken = default)
     {
+        ArgumentNullException.ThrowIfNull(request);
         RequireLeaseId(leaseId);
+        RequireClientInstanceId(request.ClientInstanceId);
+        EnsureExecutionContext();
+        await using var transaction = await context.Database.BeginTransactionAsync(
+            IsolationLevel.Serializable,
+            cancellationToken);
+        await AcquireFloorEditLockAsync(
+            versionId,
+            floorLogicalId,
+            cancellationToken);
         await EnsureScopeAsync(
             versionId,
             floorLogicalId,
             write: true,
             requireDraft: false,
             cancellationToken);
-        var now = RequireUtcNow();
+        var now = await ReadAuthoritativeUtcNowAsync(cancellationToken);
         var lease = await context.EditLeases.SingleOrDefaultAsync(candidate =>
             candidate.ModelVersionId == versionId &&
             candidate.FloorLogicalId == floorLogicalId,
             cancellationToken);
         if (lease is null ||
             lease.LeaseId != leaseId ||
-            lease.OwnerUserId != execution.ActorId)
+            lease.OwnerUserId != execution.ActorId ||
+            lease.ClientInstanceId != request.ClientInstanceId)
         {
             throw Lost();
         }
 
-        lease.Release(leaseId, execution.ActorId, now);
+        lease.Release(
+            leaseId,
+            execution.ActorId,
+            request.ClientInstanceId,
+            now);
         try
         {
             await context.SaveChangesAsync(cancellationToken);
+            await transaction.CommitAsync(cancellationToken);
         }
         catch (DbUpdateConcurrencyException)
         {
             throw Lost();
         }
-        return ToDto(versionId, floorLogicalId, lease, now);
+        return ToDto(versionId, floorLogicalId, lease, now, exposeCredential: true);
     }
 
     public async Task<SpaceEditLeaseDto> TakeoverAsync(
@@ -194,21 +247,28 @@ public sealed class SpaceEditLeaseService(
         if (string.IsNullOrWhiteSpace(reason) || reason.Length > 500)
             throw Invalid("reason", "A takeover reason of at most 500 characters is required.");
 
+        EnsureExecutionContext();
+        await using var transaction = await context.Database.BeginTransactionAsync(
+            IsolationLevel.Serializable,
+            cancellationToken);
+        await AcquireFloorEditLockAsync(
+            versionId,
+            floorLogicalId,
+            cancellationToken);
         await EnsureScopeAsync(
             versionId,
             floorLogicalId,
             write: true,
             requireDraft: true,
             cancellationToken);
-        await using var transaction = await context.Database.BeginTransactionAsync(
-            IsolationLevel.Serializable,
-            cancellationToken);
-        var now = RequireUtcNow();
+        var now = await ReadAuthoritativeUtcNowAsync(cancellationToken);
         var lease = await context.EditLeases.SingleOrDefaultAsync(candidate =>
             candidate.ModelVersionId == versionId &&
             candidate.FloorLogicalId == floorLogicalId,
             cancellationToken);
-        if (lease is null || lease.IsExpired(now) || lease.OwnerUserId == execution.ActorId)
+        if (lease is null ||
+            lease.IsExpired(now) ||
+            lease.IsOwnedBy(execution.ActorId, request.ClientInstanceId))
         {
             throw new SpaceProblemException(
                 SpaceErrorCodes.EditLeaseTakeoverDenied,
@@ -221,6 +281,7 @@ public sealed class SpaceEditLeaseService(
         var previousOwnerUserId = lease.OwnerUserId;
         lease.Reassign(
             execution.ActorId,
+            HolderDisplayName(),
             request.ClientInstanceId,
             now,
             LeaseDuration);
@@ -235,6 +296,11 @@ public sealed class SpaceEditLeaseService(
                 execution.ActorId,
                 request.ClientInstanceId,
                 reason!,
+                correlation?.CorrelationId is { } correlationId &&
+                correlationId != Guid.Empty
+                    ? correlationId
+                    : Guid.NewGuid(),
+                execution.RequestSource,
                 now));
         try
         {
@@ -251,7 +317,7 @@ public sealed class SpaceEditLeaseService(
                 recoveryAction: "refresh-lease-state",
                 retryable: true);
         }
-        return ToDto(versionId, floorLogicalId, lease, now);
+        return ToDto(versionId, floorLogicalId, lease, now, exposeCredential: true);
     }
 
     private async Task EnsureScopeAsync(
@@ -321,25 +387,76 @@ public sealed class SpaceEditLeaseService(
         }
     }
 
-    private DateTime RequireUtcNow()
+    private async Task<DateTime> ReadAuthoritativeUtcNowAsync(
+        CancellationToken cancellationToken)
     {
-        var now = clock.UtcNow;
+        var now = context.Database.IsSqlServer()
+            ? await context.Database
+                .SqlQueryRaw<DateTime>("SELECT SYSUTCDATETIME() AS [Value]")
+                .SingleAsync(cancellationToken)
+            : clock.UtcNow;
         if (now.Kind != DateTimeKind.Utc)
-            throw new InvalidOperationException("The Space clock must return UTC.");
+            now = DateTime.SpecifyKind(now, DateTimeKind.Utc);
         return now;
     }
+
+    private async Task AcquireFloorEditLockAsync(
+        Guid versionId,
+        Guid floorLogicalId,
+        CancellationToken cancellationToken)
+    {
+        if (!context.Database.IsSqlServer())
+            return;
+
+        var result = new SqlParameter("@result", SqlDbType.Int)
+        {
+            Direction = ParameterDirection.Output,
+        };
+        var resource = new SqlParameter("@resource", SqlDbType.NVarChar, 255)
+        {
+            Value = $"cp6:space:floor-edit:{execution.TenantId:N}:" +
+                    $"{versionId:N}:{floorLogicalId:N}",
+        };
+        await context.Database.ExecuteSqlRawAsync(
+            """
+            EXEC @result = sys.sp_getapplock
+                @Resource = @resource,
+                @LockMode = 'Exclusive',
+                @LockOwner = 'Transaction',
+                @LockTimeout = 15000;
+            """,
+            [result, resource],
+            cancellationToken);
+        if (Convert.ToInt32(result.Value) < 0)
+        {
+            throw new SpaceProblemException(
+                SpaceErrorCodes.EditLeaseHeld,
+                409,
+                "The floor edit session is busy.",
+                recoveryAction: "retry-lease-operation",
+                retryable: true);
+        }
+    }
+
+    private string HolderDisplayName() =>
+        string.IsNullOrWhiteSpace(execution.ActorDisplayName)
+            ? execution.ActorId.ToString("D")
+            : execution.ActorDisplayName!.Trim();
 
     private SpaceEditLeaseDto ToDto(
         Guid versionId,
         Guid floorLogicalId,
         SpaceEditLease? lease,
-        DateTime now)
+        DateTime now,
+        bool exposeCredential = false)
     {
         if (lease is null || lease.IsExpired(now))
         {
             return new SpaceEditLeaseDto(
                 versionId,
                 floorLogicalId,
+                null,
+                null,
                 null,
                 null,
                 null,
@@ -352,14 +469,18 @@ public sealed class SpaceEditLeaseService(
         return new SpaceEditLeaseDto(
             versionId,
             floorLogicalId,
-            lease.LeaseId,
+            exposeCredential ? lease.LeaseId : null,
             lease.OwnerUserId,
-            lease.ClientInstanceId,
+            lease.HolderDisplayName,
+            exposeCredential ? lease.ClientInstanceId : null,
+            lease.AcquiredAtUtc,
             lease.ExpiresAtUtc,
             lease.LastRenewedAtUtc,
             false,
             lease.OwnerUserId == execution.ActorId,
-            Convert.ToBase64String(lease.RowVersion));
+            exposeCredential
+                ? Convert.ToBase64String(lease.RowVersion)
+                : null);
     }
 
     private static SpaceProblemException Held(SpaceEditLease lease) => new(
@@ -394,5 +515,12 @@ public sealed class SpaceEditLeaseService(
     {
         if (leaseId == Guid.Empty)
             throw Invalid("leaseId", "A non-empty identity is required.");
+    }
+
+
+    private static void RequireClientInstanceId(Guid clientInstanceId)
+    {
+        if (clientInstanceId == Guid.Empty)
+            throw Invalid("clientInstanceId", "A non-empty identity is required.");
     }
 }

@@ -405,6 +405,7 @@ public sealed class SpaceDesignSceneSqlServerTests
                 draft.Id,
                 floor.LogicalId,
                 execution.ActorId,
+                "Editor",
                 clientId,
                 clock.UtcNow,
                 TimeSpan.FromSeconds(90));
@@ -581,6 +582,136 @@ public sealed class SpaceDesignSceneSqlServerTests
     }
 
     [SqlServerFact]
+    public async Task Create_element_accepts_null_content_hash_and_stale_fence_is_zero_write()
+    {
+        await WithDatabaseAsync(async (connectionString, execution, clock) =>
+        {
+            await using var context = CreateContext(
+                connectionString,
+                execution,
+                clock);
+            var seeded = await SeedDesignModelAsync(
+                context,
+                execution.ActorId,
+                clock.UtcNow);
+            var draft = SpaceModelVersion.CreateDraft(
+                execution.TenantId,
+                seeded.Model.Id,
+                2,
+                "Blank canvas editing",
+                seeded.Published.Id);
+            seeded.Model.ReserveDraft(draft);
+            var floor = SpaceFloorRevision.Create(
+                execution.TenantId,
+                draft.Id,
+                Guid.NewGuid(),
+                seeded.Model.SiteId,
+                1,
+                "F1",
+                "Floor 1",
+                height: 6000);
+            context.AddRange(draft, floor);
+            await context.SaveChangesAsync();
+            var clientId = Guid.NewGuid();
+            var lease = SpaceEditLease.Create(
+                execution.TenantId,
+                draft.Id,
+                floor.LogicalId,
+                execution.ActorId,
+                "Editor",
+                clientId,
+                clock.UtcNow,
+                TimeSpan.FromSeconds(90));
+            context.EditLeases.Add(lease);
+            await context.SaveChangesAsync();
+            var service = NewService(
+                context,
+                execution,
+                clock,
+                seeded.Model.SiteId);
+            var logicalId = Guid.NewGuid();
+            var create = new ApplySpaceElementCommandBatchRequest(
+                SpaceElementCommandContract.SchemaVersion,
+                Guid.NewGuid(),
+                clientId,
+                lease.LeaseId,
+                ExpectedFloorRevision: 0,
+                [new SpaceElementCommandDto(
+                    Guid.NewGuid(),
+                    SpaceElementCommandContract.CreateElement,
+                    logicalId,
+                    UpdateProperties: null,
+                    CreateElement: new SpaceCreateElementDto(
+                        SpaceElementTypes.Wall,
+                        """
+                        {"schemaVersion":1,"kind":"box","width":5000,"height":3000,"depth":200}
+                        """,
+                        1000,
+                        2000,
+                        0,
+                        0,
+                        5000,
+                        3000,
+                        200,
+                        null,
+                        null,
+                        null,
+                        null,
+                        [new SpaceElementAttributeWriteDto(
+                            SpaceElementAttributeNamespaces.Design,
+                            "label",
+                            SpaceElementAttributeValueTypes.String,
+                            "Wall A",
+                            null)]))],
+                ExpectedContentRevision: 0,
+                ExpectedContentHash: null,
+                ChangesetSha256: new string('c', 64));
+
+            var applied = await service.ApplyElementCommandsAsync(
+                draft.Id,
+                floor.LogicalId,
+                create);
+
+            Assert.Equal(1, applied.FloorRevision);
+            Assert.Equal(1, applied.VersionContentRevision);
+            var element = Assert.Single(applied.AffectedObjects);
+            Assert.Equal(logicalId, element.TargetLogicalId);
+            Assert.Equal(SpaceElementTypes.Wall, element.Element.ElementType);
+            Assert.Equal(5000, element.Element.Width);
+            Assert.Equal("Wall A", Assert.Single(element.Attributes).Value);
+
+            var replay = await service.ApplyElementCommandsAsync(
+                draft.Id,
+                floor.LogicalId,
+                create);
+            Assert.True(replay.IdempotentReplay);
+            Assert.Equal(applied.FloorRevision, replay.FloorRevision);
+            Assert.Equal(
+                applied.VersionContentRevision,
+                replay.VersionContentRevision);
+
+            var stale = create with
+            {
+                CommandBatchId = Guid.NewGuid(),
+                ExpectedFloorRevision = 1,
+                Commands = [create.Commands[0] with
+                {
+                    CommandId = Guid.NewGuid(),
+                    TargetLogicalId = Guid.NewGuid(),
+                }],
+            };
+            var problem = await Assert.ThrowsAsync<SpaceProblemException>(() =>
+                service.ApplyElementCommandsAsync(
+                    draft.Id,
+                    floor.LogicalId,
+                    stale));
+            Assert.Equal(SpaceErrorCodes.ParseChangesetStale, problem.Code);
+            Assert.Single(await context.ElementRevisions.AsNoTracking().ToListAsync());
+            Assert.Single(await context.ElementCommandBatches.AsNoTracking().ToListAsync());
+        });
+    }
+
+    [SqlServerFact]
     public async Task Mixed_editor_batches_array_and_saved_compensation_are_atomic()
     {
         await WithDatabaseAsync(async (connectionString, execution, clock) =>
@@ -692,6 +823,7 @@ public sealed class SpaceDesignSceneSqlServerTests
                 draft.Id,
                 floor.LogicalId,
                 execution.ActorId,
+                "Editor",
                 clientId,
                 clock.UtcNow,
                 TimeSpan.FromSeconds(90));

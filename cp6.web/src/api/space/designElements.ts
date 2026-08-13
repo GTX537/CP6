@@ -23,6 +23,15 @@ export interface ElementPropertiesPayload {
   attributes: ISpaceElementAttributeWriteDto[]
 }
 
+export interface EditorCommandEnvelope {
+  schemaVersion: number
+  commandBatchId: string
+  clientInstanceId: string
+  leaseId: string
+  expectedFloorRevision: number
+  commands: Array<EditorCommandInput & { commandId: string }>
+}
+
 export const designElementsApi = {
   update(
     versionId: string,
@@ -82,7 +91,22 @@ export const designElementsApi = {
     leaseId: string,
     commands: readonly EditorCommandInput[],
   ) {
-    return apply(versionId, floorLogicalId, {
+    const envelope = designElementsApi.createEnvelope(
+      expectedFloorRevision,
+      clientInstanceId,
+      leaseId,
+      commands,
+    )
+    return designElementsApi.sendEnvelope(versionId, floorLogicalId, envelope)
+  },
+
+  createEnvelope(
+    expectedFloorRevision: number,
+    clientInstanceId: string,
+    leaseId: string,
+    commands: readonly EditorCommandInput[],
+  ): EditorCommandEnvelope {
+    return {
       schemaVersion: 1,
       commandBatchId: crypto.randomUUID(),
       clientInstanceId,
@@ -92,7 +116,15 @@ export const designElementsApi = {
         ...command,
         commandId: crypto.randomUUID(),
       })),
-    })
+    }
+  },
+
+  sendEnvelope(
+    versionId: string,
+    floorLogicalId: string,
+    envelope: EditorCommandEnvelope,
+  ) {
+    return apply(versionId, floorLogicalId, envelope)
   },
 }
 

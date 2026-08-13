@@ -990,9 +990,9 @@ CAD 转换层输出的中间表示至少包含：
 
 已批准设计基线：
 
-- [2D 工作台基线](C:/Users/tt/.gstack/projects/cp6/designs/low-cost-3d-workbench-20260812/workbench-review-2d.png)
-- [3D 草稿预览基线](C:/Users/tt/.gstack/projects/cp6/designs/low-cost-3d-workbench-20260812/workbench-review-3d.png)
-- [交互线框](C:/Users/tt/.gstack/projects/cp6/designs/low-cost-3d-workbench-20260812/workbench-review.html)
+- [2D 工作台基线](../designs/low-cost-3d-workbench-v1.3/workbench-review-2d.png)
+- [3D 草稿预览基线](../designs/low-cost-3d-workbench-v1.3/workbench-review-3d.png)
+- [交互线框](../designs/low-cost-3d-workbench-v1.3/workbench-review.html)
 
 线框冻结结构、密度和交互方向；本 Spec 的字号、对比度和 44×44px 热区规则优先于截图中的临时尺寸。设计评审结果为 6/10 → 10/10，11 项决定已落定，0 个未决设计项。
 
@@ -1205,8 +1205,8 @@ AI 日志还不得记录原始 Provider Prompt/响应、Provider 密钥或未经
 10. 墙、柱、门、月台、托盘和静态设备可保存并 3D 预览。
 11. 2D 和 3D 的对象数量、标识、尺寸和编码一致。
 11A. v1.3 追加与机器可读对象清单的 LogicalId、逐层规格三方 100% 一致性。
-11A. 解析运行时 Draft 可继续使用；成功后自动出现待审变更集，确认前 Draft 不变。
-11B. 解析失败时 Draft 不变，用户可重试或更换来源；旧 Published 不受影响。
+11B. 解析运行时 Draft 可继续使用；成功后自动出现待审变更集，确认前 Draft 不变。
+11C. 解析失败时 Draft 不变，用户可重试或更换来源；旧 Published 不受影响。
 
 ### 19.2 Excel 与编码
 

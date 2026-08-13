@@ -7,6 +7,7 @@ using System.Text.Json;
 using CP6.Space.Application;
 using CP6.Space.Contracts;
 using CP6.Space.Domain;
+using Microsoft.Data.SqlClient;
 using Microsoft.EntityFrameworkCore;
 
 namespace CP6.Space.Infrastructure;
@@ -292,7 +293,6 @@ public sealed class SpaceDesignV1Service : ISpaceDesignV1Service
     {
         ArgumentNullException.ThrowIfNull(request);
         EnsureExecutionContext();
-        ValidateElementCommandBatch(request);
 
         var model = await FindModelByVersionAsync(versionId, cancellationToken);
         EnsureWritable(model);
@@ -305,12 +305,6 @@ public sealed class SpaceDesignV1Service : ISpaceDesignV1Service
         var requestHash = Hash(
             $"{versionId:D}\n{floorLogicalId:D}\n" +
             JsonSerializer.Serialize(request, JsonOptions));
-        var replay = await ReadElementCommandReplayAsync(
-            request.CommandBatchId,
-            requestHash,
-            cancellationToken);
-        if (replay is not null)
-            return replay;
 
         await using var transaction = await _context.Database
             .BeginTransactionAsync(
@@ -318,16 +312,16 @@ public sealed class SpaceDesignV1Service : ISpaceDesignV1Service
                 cancellationToken);
         try
         {
-            var concurrentReplay = await ReadElementCommandReplayAsync(
-                request.CommandBatchId,
-                requestHash,
+            await AcquireFloorEditLockAsync(
+                versionId,
+                floorLogicalId,
                 cancellationToken);
-            if (concurrentReplay is not null)
-            {
-                await transaction.CommitAsync(cancellationToken);
-                return concurrentReplay;
-            }
-
+            await EnsureActiveEditLeaseAsync(
+                versionId,
+                floorLogicalId,
+                request.LeaseId,
+                request.ClientInstanceId,
+                cancellationToken);
             var version = await _context.Versions
                               .SingleOrDefaultAsync(
                                   candidate => candidate.Id == versionId,
@@ -335,18 +329,33 @@ public sealed class SpaceDesignV1Service : ISpaceDesignV1Service
                           ?? throw NotFound(
                               SpaceErrorCodes.VersionNotFound,
                               "Space version");
-            await EnsureActiveEditLeaseAsync(
-                versionId,
-                floorLogicalId,
-                request.LeaseId,
-                request.ClientInstanceId,
-                cancellationToken);
             if (version.Status != SpaceVersionStatus.Draft)
             {
                 throw Conflict(
                     SpaceErrorCodes.VersionStateInvalid,
                     "Only a Draft version accepts editor commands.",
                     "open-or-create-draft");
+            }
+            if (request.ExpectedContentRevision.HasValue &&
+                (version.ContentRevision != request.ExpectedContentRevision.Value ||
+                 !string.Equals(
+                     version.ContentHash,
+                     request.ExpectedContentHash,
+                     StringComparison.Ordinal)))
+            {
+                var completedReplay = await ReadElementCommandReplayAsync(
+                    request.CommandBatchId,
+                    requestHash,
+                    cancellationToken);
+                if (completedReplay is not null)
+                {
+                    await transaction.CommitAsync(cancellationToken);
+                    return completedReplay;
+                }
+                throw Conflict(
+                    SpaceErrorCodes.ParseChangesetStale,
+                    "The CAD changeset no longer matches the current Draft revision.",
+                    "start-new-cad-parse");
             }
 
             var floor = await _context.FloorRevisions
@@ -360,6 +369,16 @@ public sealed class SpaceDesignV1Service : ISpaceDesignV1Service
                             "Space floor logical identity");
             if (floor.Revision != request.ExpectedFloorRevision)
             {
+                var completedReplay = await ReadElementCommandReplayAsync(
+                    request.CommandBatchId,
+                    requestHash,
+                    cancellationToken);
+                if (completedReplay is not null &&
+                    completedReplay.FloorRevision == floor.Revision)
+                {
+                    await transaction.CommitAsync(cancellationToken);
+                    return completedReplay;
+                }
                 throw Conflict(
                     SpaceErrorCodes.FloorRevisionConflict,
                     $"Expected floor revision {request.ExpectedFloorRevision}, " +
@@ -367,7 +386,25 @@ public sealed class SpaceDesignV1Service : ISpaceDesignV1Service
                     "reload-floor-scene");
             }
 
+            ValidateElementCommandBatch(request);
+            var concurrentReplay = await ReadElementCommandReplayAsync(
+                request.CommandBatchId,
+                requestHash,
+                cancellationToken);
+            if (concurrentReplay is not null)
+            {
+                await transaction.CommitAsync(cancellationToken);
+                return concurrentReplay;
+            }
+
             var targetIds = request.Commands
+                .Where(command => command.Type !=
+                    SpaceElementCommandContract.CreateElement)
+                .Select(command => command.TargetLogicalId)
+                .ToArray();
+            var createIds = request.Commands
+                .Where(command => command.Type ==
+                    SpaceElementCommandContract.CreateElement)
                 .Select(command => command.TargetLogicalId)
                 .ToArray();
             var elements = await _context.ElementRevisions
@@ -393,6 +430,14 @@ public sealed class SpaceDesignV1Service : ISpaceDesignV1Service
                     SpaceErrorCodes.LogicalIdNotFound,
                     "Space editor object logical identity");
             }
+            if (createIds.Length > 0 &&
+                await LogicalIdsExistAsync(versionId, createIds, cancellationToken))
+            {
+                throw Conflict(
+                    SpaceErrorCodes.CommandConflict,
+                    "A CreateElement target logical identity already exists.",
+                    "create-new-command-batch");
+            }
 
             var elementRevisionIds = elements.Values
                 .Select(element => element.Id)
@@ -413,6 +458,25 @@ public sealed class SpaceDesignV1Service : ISpaceDesignV1Service
                     candidate.ModelVersionId == versionId &&
                     rackIds.Contains(candidate.RackLogicalId))
                 .ToListAsync(cancellationToken);
+
+            var sourceIds = request.Commands
+                .Where(command => command.CreateElement?.SourceId is not null)
+                .Select(command => command.CreateElement!.SourceId!.Value)
+                .Distinct()
+                .ToArray();
+            var sources = sourceIds.Length == 0
+                ? new Dictionary<Guid, SpaceModelSource>()
+                : await _context.Sources
+                    .Where(candidate =>
+                        candidate.ModelVersionId == versionId &&
+                        sourceIds.Contains(candidate.Id))
+                    .ToDictionaryAsync(candidate => candidate.Id, cancellationToken);
+            if (sources.Count != sourceIds.Length)
+            {
+                throw NotFound(
+                    SpaceErrorCodes.SourceNotFound,
+                    "Space CAD source");
+            }
             var locations = await _context.LocationRevisions
                 .Where(candidate =>
                     candidate.ModelVersionId == versionId &&
@@ -441,6 +505,9 @@ public sealed class SpaceDesignV1Service : ISpaceDesignV1Service
                 request.ClientInstanceId,
                 request.LeaseId,
                 request.ExpectedFloorRevision,
+                request.ExpectedContentRevision,
+                request.ExpectedContentHash,
+                request.ChangesetSha256,
                 requestHash,
                 _execution.ActorId,
                 RequireUtcNow());
@@ -459,7 +526,46 @@ public sealed class SpaceDesignV1Service : ISpaceDesignV1Service
                 string beforeJson;
                 string afterJson;
                 string payloadJson;
-                if (elements.TryGetValue(
+                if (command.Type == SpaceElementCommandContract.CreateElement)
+                {
+                    var payload = command.CreateElement!;
+                    var element = SpaceElementRevision.Create(
+                        _execution.TenantId,
+                        versionId,
+                        command.TargetLogicalId,
+                        floorLogicalId,
+                        payload.ElementType,
+                        payload.GeometryJson,
+                        payload.ParentLogicalId);
+                    element.ConfigurePlacement(
+                        payload.X,
+                        payload.Y,
+                        payload.Z,
+                        payload.RotationZ,
+                        payload.Width,
+                        payload.Height,
+                        payload.Depth);
+                    element.ConfigureBusinessLink(
+                        payload.BusinessCode,
+                        linkedEntityType: null,
+                        linkedLogicalId: null);
+                    if (payload.SourceId.HasValue)
+                    {
+                        element.AttachSource(
+                            sources[payload.SourceId.Value],
+                            payload.SourceRef);
+                    }
+                    _context.ElementRevisions.Add(element);
+                    var attributes = new List<SpaceElementAttribute>();
+                    ApplyElementAttributes(element, attributes, payload.Attributes);
+                    elements[element.LogicalId] = element;
+                    attributesByElement[element.Id] = attributes;
+                    beforeJson = "{}";
+                    payloadJson = JsonSerializer.Serialize(payload, JsonOptions);
+                    afterJson = ElementAuditJson(element, attributes);
+                    affectedElementCommands[element.LogicalId] = command;
+                }
+                else if (elements.TryGetValue(
                         command.TargetLogicalId,
                         out var element))
                 {
@@ -1270,6 +1376,18 @@ public sealed class SpaceDesignV1Service : ISpaceDesignV1Service
                 "expectedFloorRevision",
                 "A non-negative revision is required.");
         }
+        if (request.ExpectedContentRevision < 0 ||
+            !request.ExpectedContentRevision.HasValue &&
+                request.ExpectedContentHash is not null ||
+            request.ExpectedContentHash is not null &&
+                !IsSha256(request.ExpectedContentHash) ||
+            request.ChangesetSha256 is not null &&
+                !IsSha256(request.ChangesetSha256))
+        {
+            throw Invalid(
+                "expectedContentRevision",
+                "A complete CAD changeset content fence is required.");
+        }
         if (request.Commands is null ||
             request.Commands.Count is < 1 or > 100)
         {
@@ -1308,7 +1426,8 @@ public sealed class SpaceDesignV1Service : ISpaceDesignV1Service
                 (command.UpdateProperties is null ? 0 : 1) +
                 (command.MoveObject is null ? 0 : 1) +
                 (command.RotateObject is null ? 0 : 1) +
-                (command.GenerateRackArray is null ? 0 : 1);
+                (command.GenerateRackArray is null ? 0 : 1) +
+                (command.CreateElement is null ? 0 : 1);
             switch (command.Type)
             {
                 case SpaceElementCommandContract.UpdateProperties
@@ -1335,6 +1454,10 @@ public sealed class SpaceDesignV1Service : ISpaceDesignV1Service
                          payloadCount == 1:
                     ValidateRackArray(command.GenerateRackArray);
                     break;
+                case SpaceElementCommandContract.CreateElement
+                    when command.CreateElement is not null && payloadCount == 1:
+                    ValidateCreateElement(command.CreateElement);
+                    break;
                 case SpaceElementCommandContract.DeleteObject
                     when payloadCount == 0:
                     break;
@@ -1357,6 +1480,10 @@ public sealed class SpaceDesignV1Service : ISpaceDesignV1Service
                     throw Invalid(
                         "commands.generateRackArray",
                         "GenerateRackArray requires only its strongly typed payload.");
+                case SpaceElementCommandContract.CreateElement:
+                    throw Invalid(
+                        "commands.createElement",
+                        "CreateElement requires only its strongly typed payload.");
                 case SpaceElementCommandContract.DeleteObject:
                 case SpaceElementCommandContract.RestoreLogicalObject:
                     throw Invalid(
@@ -1465,6 +1592,8 @@ public sealed class SpaceDesignV1Service : ISpaceDesignV1Service
     {
         foreach (var command in commands)
         {
+            if (command.Type == SpaceElementCommandContract.CreateElement)
+                continue;
             var isElement = elements.TryGetValue(
                 command.TargetLogicalId,
                 out var element);
@@ -1868,17 +1997,53 @@ public sealed class SpaceDesignV1Service : ISpaceDesignV1Service
             payload.LinkedEntityType,
             payload.LinkedLogicalId);
 
+        ApplyElementAttributes(element, attributes, payload.Attributes);
+        return JsonSerializer.Serialize(payload, JsonOptions);
+    }
+
+    private async Task<bool> LogicalIdsExistAsync(
+        Guid versionId,
+        Guid[] logicalIds,
+        CancellationToken cancellationToken)
+    {
+        if (logicalIds.Length == 0)
+            return false;
+        return await _context.FloorRevisions.AnyAsync(item =>
+                   item.ModelVersionId == versionId &&
+                   logicalIds.Contains(item.LogicalId), cancellationToken) ||
+               await _context.ZoneRevisions.AnyAsync(item =>
+                   item.ModelVersionId == versionId &&
+                   logicalIds.Contains(item.LogicalId), cancellationToken) ||
+               await _context.AisleRevisions.AnyAsync(item =>
+                   item.ModelVersionId == versionId &&
+                   logicalIds.Contains(item.LogicalId), cancellationToken) ||
+               await _context.RackRevisions.AnyAsync(item =>
+                   item.ModelVersionId == versionId &&
+                   logicalIds.Contains(item.LogicalId), cancellationToken) ||
+               await _context.LocationRevisions.AnyAsync(item =>
+                   item.ModelVersionId == versionId &&
+                   logicalIds.Contains(item.LogicalId), cancellationToken) ||
+               await _context.ElementRevisions.AnyAsync(item =>
+                   item.ModelVersionId == versionId &&
+                   logicalIds.Contains(item.LogicalId), cancellationToken);
+    }
+
+    private void ApplyElementAttributes(
+        SpaceElementRevision element,
+        List<SpaceElementAttribute> attributes,
+        IReadOnlyList<SpaceElementAttributeWriteDto> requestedAttributes)
+    {
         var existing = attributes.ToDictionary(
             AttributeKey,
             StringComparer.OrdinalIgnoreCase);
         var retained = new HashSet<string>(StringComparer.OrdinalIgnoreCase);
-        foreach (var requested in payload.Attributes)
+        foreach (var requested in requestedAttributes)
         {
             if (requested is null)
             {
                 throw new ArgumentException(
                     "Attribute entries cannot be null.",
-                    nameof(payload));
+                    nameof(requestedAttributes));
             }
             var candidate = SpaceElementAttribute.Create(
                 _execution.TenantId,
@@ -1893,7 +2058,7 @@ public sealed class SpaceDesignV1Service : ISpaceDesignV1Service
             {
                 throw new ArgumentException(
                     "Element attribute namespace and key pairs must be unique.",
-                    nameof(payload));
+                    nameof(requestedAttributes));
             }
             if (existing.TryGetValue(key, out var current))
             {
@@ -1914,7 +2079,6 @@ public sealed class SpaceDesignV1Service : ISpaceDesignV1Service
         {
             attribute.Remove();
         }
-        return JsonSerializer.Serialize(payload, JsonOptions);
     }
 
     private static string ElementAuditJson(
@@ -2040,7 +2204,7 @@ public sealed class SpaceDesignV1Service : ISpaceDesignV1Service
         Guid clientInstanceId,
         CancellationToken cancellationToken)
     {
-        var now = RequireUtcNow();
+        var now = await ReadAuthoritativeUtcNowAsync(cancellationToken);
         var lease = await _context.EditLeases
             .AsNoTracking()
             .SingleOrDefaultAsync(candidate =>
@@ -2059,6 +2223,100 @@ public sealed class SpaceDesignV1Service : ISpaceDesignV1Service
                 "The edit lease is no longer valid.",
                 recoveryAction: "export-recovery-draft-or-reacquire",
                 retryable: true);
+        }
+    }
+
+    private static void ValidateCreateElement(SpaceCreateElementDto payload)
+    {
+        if (payload.Attributes is null || payload.Attributes.Count > 100)
+        {
+            throw Invalid(
+                "commands.createElement.attributes",
+                "At most 100 attributes are allowed.");
+        }
+        if (payload.ParentLogicalId == Guid.Empty)
+        {
+            throw Invalid(
+                "commands.createElement.parentLogicalId",
+                "Parent identity cannot be empty.");
+        }
+        if (string.IsNullOrWhiteSpace(payload.ElementType) ||
+            payload.ElementType.Trim().Length > 64)
+        {
+            throw Invalid(
+                "commands.createElement.elementType",
+                "A bounded element type is required.");
+        }
+        if (payload.Width <= 0 || payload.Height <= 0 || payload.Depth <= 0)
+        {
+            throw Invalid(
+                "commands.createElement",
+                "Positive element dimensions are required.");
+        }
+        if (payload.SourceRef is not null &&
+            (string.IsNullOrWhiteSpace(payload.SourceRef) ||
+             payload.SourceRef.Trim().Length > 500))
+        {
+            throw Invalid(
+                "commands.createElement.sourceRef",
+                "Source reference is invalid.");
+        }
+        if (payload.SourceId == Guid.Empty ||
+            payload.SourceId.HasValue != (payload.SourceRef is not null))
+        {
+            throw Invalid(
+                "commands.createElement.sourceId",
+                "Source identity and source reference must be supplied together.");
+        }
+    }
+
+
+    private async Task<DateTime> ReadAuthoritativeUtcNowAsync(
+        CancellationToken cancellationToken)
+    {
+        var now = _context.Database.IsSqlServer()
+            ? await _context.Database
+                .SqlQueryRaw<DateTime>("SELECT SYSUTCDATETIME() AS [Value]")
+                .SingleAsync(cancellationToken)
+            : RequireUtcNow();
+        return now.Kind == DateTimeKind.Utc
+            ? now
+            : DateTime.SpecifyKind(now, DateTimeKind.Utc);
+    }
+
+    private async Task AcquireFloorEditLockAsync(
+        Guid versionId,
+        Guid floorLogicalId,
+        CancellationToken cancellationToken)
+    {
+        if (!_context.Database.IsSqlServer())
+            return;
+
+        var result = new SqlParameter("@result", SqlDbType.Int)
+        {
+            Direction = ParameterDirection.Output,
+        };
+        var resource = new SqlParameter("@resource", SqlDbType.NVarChar, 255)
+        {
+            Value = $"cp6:space:floor-edit:{_execution.TenantId:N}:" +
+                    $"{versionId:N}:{floorLogicalId:N}",
+        };
+        await _context.Database.ExecuteSqlRawAsync(
+            """
+            EXEC @result = sys.sp_getapplock
+                @Resource = @resource,
+                @LockMode = 'Exclusive',
+                @LockOwner = 'Transaction',
+                @LockTimeout = 15000;
+            """,
+            [result, resource],
+            cancellationToken);
+        if (Convert.ToInt32(result.Value) < 0)
+        {
+            throw Conflict(
+                SpaceErrorCodes.CommandConflict,
+                "The floor edit session is busy.",
+                "retry-command-batch");
         }
     }
 
@@ -2671,6 +2929,11 @@ public sealed class SpaceDesignV1Service : ISpaceDesignV1Service
         Convert.ToHexString(
                 SHA256.HashData(Encoding.UTF8.GetBytes(value)))
             .ToLowerInvariant();
+
+    private static bool IsSha256(string value) =>
+        value.Length == 64 &&
+        value.All(character =>
+            character is >= '0' and <= '9' or >= 'a' and <= 'f');
 
     private static Guid OperationId(string keyHash)
     {

@@ -129,6 +129,7 @@ public sealed class SpaceCadParseController(
     [HttpGet(
         "versions/{versionId:guid}/sources/{sourceId:guid}/" +
         "cad-parses/{jobId:guid}")]
+    [RequirePermission("space", "model:read", UseProblemDetails = true)]
     [ProducesResponseType<SpaceCadParseDto>(StatusCodes.Status200OK)]
     public Task<SpaceCadParseDto> GetParse(
         Guid versionId,
@@ -144,6 +145,7 @@ public sealed class SpaceCadParseController(
     [HttpGet(
         "versions/{versionId:guid}/sources/{sourceId:guid}/" +
         "cad-parses/{jobId:guid}/review-workspace")]
+    [RequirePermission("space", "model:read", UseProblemDetails = true)]
     [ProducesResponseType<SpaceCadReviewWorkspaceV1>(StatusCodes.Status200OK)]
     public Task<SpaceCadReviewWorkspaceV1> GetReviewWorkspace(
         Guid versionId,
@@ -154,6 +156,29 @@ public sealed class SpaceCadParseController(
             versionId,
             sourceId,
             jobId,
+            cancellationToken);
+
+    [HttpPost(
+        "versions/{versionId:guid}/sources/{sourceId:guid}/" +
+        "cad-parses/{jobId:guid}/review-workspace:apply")]
+    [SpaceAuditOperation(
+        "space.cad-changeset.apply",
+        "Job",
+        PermissionCode = "space:model:edit")]
+    [RequirePermission("space", "model:edit", UseProblemDetails = true)]
+    [ProducesResponseType<ApplySpaceCadChangesetResponse>(
+        StatusCodes.Status200OK)]
+    public Task<ApplySpaceCadChangesetResponse> ApplyReviewChanges(
+        Guid versionId,
+        Guid sourceId,
+        Guid jobId,
+        [FromBody, Required] ApplySpaceCadChangesetRequest request,
+        CancellationToken cancellationToken) =>
+        service.ApplyReviewChangesAsync(
+            versionId,
+            sourceId,
+            jobId,
+            request,
             cancellationToken);
 
     [HttpPost(

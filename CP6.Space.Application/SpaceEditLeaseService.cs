@@ -19,12 +19,14 @@ public interface ISpaceEditLeaseService
         Guid versionId,
         Guid floorLogicalId,
         Guid leaseId,
+        ContinueSpaceEditLeaseRequest request,
         CancellationToken cancellationToken = default);
 
     Task<SpaceEditLeaseDto> ReleaseAsync(
         Guid versionId,
         Guid floorLogicalId,
         Guid leaseId,
+        ContinueSpaceEditLeaseRequest request,
         CancellationToken cancellationToken = default);
 
     Task<SpaceEditLeaseDto> TakeoverAsync(

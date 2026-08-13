@@ -225,6 +225,15 @@ namespace CP6.Space.Client
         /// <exception cref="ApiException">A server side error occurred.</exception>
         System.Threading.Tasks.Task<SpaceCadReviewWorkspaceV1> GetReviewWorkspaceAsync(System.Guid versionId, System.Guid sourceId, System.Guid jobId, System.Threading.CancellationToken cancellationToken);
 
+        /// <returns>OK</returns>
+        /// <exception cref="ApiException">A server side error occurred.</exception>
+        System.Threading.Tasks.Task<ApplySpaceCadChangesetResponse> ApplyReviewChangesAsync(System.Guid versionId, System.Guid sourceId, System.Guid jobId, ApplySpaceCadChangesetRequest body);
+
+        /// <param name="cancellationToken">A cancellation token that can be used by other objects or threads to receive notice of cancellation.</param>
+        /// <returns>OK</returns>
+        /// <exception cref="ApiException">A server side error occurred.</exception>
+        System.Threading.Tasks.Task<ApplySpaceCadChangesetResponse> ApplyReviewChangesAsync(System.Guid versionId, System.Guid sourceId, System.Guid jobId, ApplySpaceCadChangesetRequest body, System.Threading.CancellationToken cancellationToken);
+
         /// <returns>Accepted</returns>
         /// <exception cref="ApiException">A server side error occurred.</exception>
         System.Threading.Tasks.Task<SpaceCadParseActionResponse> CancelParseAsync(System.Guid versionId, System.Guid sourceId, System.Guid jobId);
@@ -525,39 +534,39 @@ namespace CP6.Space.Client
 
         /// <returns>OK</returns>
         /// <exception cref="ApiException">A server side error occurred.</exception>
-        System.Threading.Tasks.Task<SpaceEditLeaseDto> AcquireEditLeaseAsync(System.Guid versionId, System.Guid floorLogicalId, AcquireSpaceEditLeaseRequest? body);
+        System.Threading.Tasks.Task<SpaceEditLeaseDto> AcquireEditLeaseAsync(System.Guid versionId, System.Guid floorLogicalId, AcquireSpaceEditLeaseRequest body);
 
         /// <param name="cancellationToken">A cancellation token that can be used by other objects or threads to receive notice of cancellation.</param>
         /// <returns>OK</returns>
         /// <exception cref="ApiException">A server side error occurred.</exception>
-        System.Threading.Tasks.Task<SpaceEditLeaseDto> AcquireEditLeaseAsync(System.Guid versionId, System.Guid floorLogicalId, AcquireSpaceEditLeaseRequest? body, System.Threading.CancellationToken cancellationToken);
+        System.Threading.Tasks.Task<SpaceEditLeaseDto> AcquireEditLeaseAsync(System.Guid versionId, System.Guid floorLogicalId, AcquireSpaceEditLeaseRequest body, System.Threading.CancellationToken cancellationToken);
 
         /// <returns>OK</returns>
         /// <exception cref="ApiException">A server side error occurred.</exception>
-        System.Threading.Tasks.Task<SpaceEditLeaseDto> RenewEditLeaseAsync(System.Guid versionId, System.Guid floorLogicalId, System.Guid leaseId);
-
-        /// <param name="cancellationToken">A cancellation token that can be used by other objects or threads to receive notice of cancellation.</param>
-        /// <returns>OK</returns>
-        /// <exception cref="ApiException">A server side error occurred.</exception>
-        System.Threading.Tasks.Task<SpaceEditLeaseDto> RenewEditLeaseAsync(System.Guid versionId, System.Guid floorLogicalId, System.Guid leaseId, System.Threading.CancellationToken cancellationToken);
-
-        /// <returns>OK</returns>
-        /// <exception cref="ApiException">A server side error occurred.</exception>
-        System.Threading.Tasks.Task<SpaceEditLeaseDto> ReleaseEditLeaseAsync(System.Guid versionId, System.Guid floorLogicalId, System.Guid leaseId);
+        System.Threading.Tasks.Task<SpaceEditLeaseDto> RenewEditLeaseAsync(System.Guid versionId, System.Guid floorLogicalId, System.Guid leaseId, ContinueSpaceEditLeaseRequest body);
 
         /// <param name="cancellationToken">A cancellation token that can be used by other objects or threads to receive notice of cancellation.</param>
         /// <returns>OK</returns>
         /// <exception cref="ApiException">A server side error occurred.</exception>
-        System.Threading.Tasks.Task<SpaceEditLeaseDto> ReleaseEditLeaseAsync(System.Guid versionId, System.Guid floorLogicalId, System.Guid leaseId, System.Threading.CancellationToken cancellationToken);
+        System.Threading.Tasks.Task<SpaceEditLeaseDto> RenewEditLeaseAsync(System.Guid versionId, System.Guid floorLogicalId, System.Guid leaseId, ContinueSpaceEditLeaseRequest body, System.Threading.CancellationToken cancellationToken);
 
         /// <returns>OK</returns>
         /// <exception cref="ApiException">A server side error occurred.</exception>
-        System.Threading.Tasks.Task<SpaceEditLeaseDto> TakeoverEditLeaseAsync(System.Guid versionId, System.Guid floorLogicalId, TakeoverSpaceEditLeaseRequest? body);
+        System.Threading.Tasks.Task<SpaceEditLeaseDto> ReleaseEditLeaseAsync(System.Guid versionId, System.Guid floorLogicalId, System.Guid leaseId, ContinueSpaceEditLeaseRequest body);
 
         /// <param name="cancellationToken">A cancellation token that can be used by other objects or threads to receive notice of cancellation.</param>
         /// <returns>OK</returns>
         /// <exception cref="ApiException">A server side error occurred.</exception>
-        System.Threading.Tasks.Task<SpaceEditLeaseDto> TakeoverEditLeaseAsync(System.Guid versionId, System.Guid floorLogicalId, TakeoverSpaceEditLeaseRequest? body, System.Threading.CancellationToken cancellationToken);
+        System.Threading.Tasks.Task<SpaceEditLeaseDto> ReleaseEditLeaseAsync(System.Guid versionId, System.Guid floorLogicalId, System.Guid leaseId, ContinueSpaceEditLeaseRequest body, System.Threading.CancellationToken cancellationToken);
+
+        /// <returns>OK</returns>
+        /// <exception cref="ApiException">A server side error occurred.</exception>
+        System.Threading.Tasks.Task<SpaceEditLeaseDto> TakeoverEditLeaseAsync(System.Guid versionId, System.Guid floorLogicalId, TakeoverSpaceEditLeaseRequest body);
+
+        /// <param name="cancellationToken">A cancellation token that can be used by other objects or threads to receive notice of cancellation.</param>
+        /// <returns>OK</returns>
+        /// <exception cref="ApiException">A server side error occurred.</exception>
+        System.Threading.Tasks.Task<SpaceEditLeaseDto> TakeoverEditLeaseAsync(System.Guid versionId, System.Guid floorLogicalId, TakeoverSpaceEditLeaseRequest body, System.Threading.CancellationToken cancellationToken);
 
         /// <returns>Accepted</returns>
         /// <exception cref="ApiException">A server side error occurred.</exception>
@@ -4421,6 +4430,176 @@ namespace CP6.Space.Client
                         if (status_ == 200)
                         {
                             var objectResponse_ = await ReadObjectResponseAsync<SpaceCadReviewWorkspaceV1>(response_, headers_, cancellationToken).ConfigureAwait(false);
+                            if (objectResponse_.Object == null)
+                            {
+                                throw new ApiException("Response was null which was not expected.", status_, objectResponse_.Text, headers_, null);
+                            }
+                            return objectResponse_.Object;
+                        }
+                        else
+                        if (status_ == 400)
+                        {
+                            var objectResponse_ = await ReadObjectResponseAsync<SpaceDesignProblemDetails>(response_, headers_, cancellationToken).ConfigureAwait(false);
+                            if (objectResponse_.Object == null)
+                            {
+                                throw new ApiException("Response was null which was not expected.", status_, objectResponse_.Text, headers_, null);
+                            }
+                            throw new ApiException<SpaceDesignProblemDetails>("Bad Request", status_, objectResponse_.Text, headers_, objectResponse_.Object, null);
+                        }
+                        else
+                        if (status_ == 401)
+                        {
+                            var objectResponse_ = await ReadObjectResponseAsync<SpaceDesignProblemDetails>(response_, headers_, cancellationToken).ConfigureAwait(false);
+                            if (objectResponse_.Object == null)
+                            {
+                                throw new ApiException("Response was null which was not expected.", status_, objectResponse_.Text, headers_, null);
+                            }
+                            throw new ApiException<SpaceDesignProblemDetails>("Unauthorized", status_, objectResponse_.Text, headers_, objectResponse_.Object, null);
+                        }
+                        else
+                        if (status_ == 403)
+                        {
+                            var objectResponse_ = await ReadObjectResponseAsync<SpaceDesignProblemDetails>(response_, headers_, cancellationToken).ConfigureAwait(false);
+                            if (objectResponse_.Object == null)
+                            {
+                                throw new ApiException("Response was null which was not expected.", status_, objectResponse_.Text, headers_, null);
+                            }
+                            throw new ApiException<SpaceDesignProblemDetails>("Forbidden", status_, objectResponse_.Text, headers_, objectResponse_.Object, null);
+                        }
+                        else
+                        if (status_ == 404)
+                        {
+                            var objectResponse_ = await ReadObjectResponseAsync<SpaceDesignProblemDetails>(response_, headers_, cancellationToken).ConfigureAwait(false);
+                            if (objectResponse_.Object == null)
+                            {
+                                throw new ApiException("Response was null which was not expected.", status_, objectResponse_.Text, headers_, null);
+                            }
+                            throw new ApiException<SpaceDesignProblemDetails>("Not Found", status_, objectResponse_.Text, headers_, objectResponse_.Object, null);
+                        }
+                        else
+                        if (status_ == 409)
+                        {
+                            var objectResponse_ = await ReadObjectResponseAsync<SpaceDesignProblemDetails>(response_, headers_, cancellationToken).ConfigureAwait(false);
+                            if (objectResponse_.Object == null)
+                            {
+                                throw new ApiException("Response was null which was not expected.", status_, objectResponse_.Text, headers_, null);
+                            }
+                            throw new ApiException<SpaceDesignProblemDetails>("Conflict", status_, objectResponse_.Text, headers_, objectResponse_.Object, null);
+                        }
+                        else
+                        if (status_ == 422)
+                        {
+                            var objectResponse_ = await ReadObjectResponseAsync<SpaceDesignProblemDetails>(response_, headers_, cancellationToken).ConfigureAwait(false);
+                            if (objectResponse_.Object == null)
+                            {
+                                throw new ApiException("Response was null which was not expected.", status_, objectResponse_.Text, headers_, null);
+                            }
+                            throw new ApiException<SpaceDesignProblemDetails>("Unprocessable Content", status_, objectResponse_.Text, headers_, objectResponse_.Object, null);
+                        }
+                        else
+                        if (status_ == 500)
+                        {
+                            var objectResponse_ = await ReadObjectResponseAsync<SpaceDesignProblemDetails>(response_, headers_, cancellationToken).ConfigureAwait(false);
+                            if (objectResponse_.Object == null)
+                            {
+                                throw new ApiException("Response was null which was not expected.", status_, objectResponse_.Text, headers_, null);
+                            }
+                            throw new ApiException<SpaceDesignProblemDetails>("Internal Server Error", status_, objectResponse_.Text, headers_, objectResponse_.Object, null);
+                        }
+                        else
+                        {
+                            var responseData_ = response_.Content == null ? null : await ReadAsStringAsync(response_.Content, cancellationToken).ConfigureAwait(false);
+                            throw new ApiException("The HTTP status code of the response was not expected (" + status_ + ").", status_, responseData_, headers_, null);
+                        }
+                    }
+                    finally
+                    {
+                        if (disposeResponse_)
+                            response_.Dispose();
+                    }
+                }
+            }
+            finally
+            {
+                if (disposeClient_)
+                    client_.Dispose();
+            }
+        }
+
+        /// <returns>OK</returns>
+        /// <exception cref="ApiException">A server side error occurred.</exception>
+        public virtual System.Threading.Tasks.Task<ApplySpaceCadChangesetResponse> ApplyReviewChangesAsync(System.Guid versionId, System.Guid sourceId, System.Guid jobId, ApplySpaceCadChangesetRequest body)
+        {
+            return ApplyReviewChangesAsync(versionId, sourceId, jobId, body, System.Threading.CancellationToken.None);
+        }
+
+        /// <param name="cancellationToken">A cancellation token that can be used by other objects or threads to receive notice of cancellation.</param>
+        /// <returns>OK</returns>
+        /// <exception cref="ApiException">A server side error occurred.</exception>
+        public virtual async System.Threading.Tasks.Task<ApplySpaceCadChangesetResponse> ApplyReviewChangesAsync(System.Guid versionId, System.Guid sourceId, System.Guid jobId, ApplySpaceCadChangesetRequest body, System.Threading.CancellationToken cancellationToken)
+        {
+            if (versionId == null)
+                throw new System.ArgumentNullException("versionId");
+
+            if (sourceId == null)
+                throw new System.ArgumentNullException("sourceId");
+
+            if (jobId == null)
+                throw new System.ArgumentNullException("jobId");
+
+            if (body == null)
+                throw new System.ArgumentNullException("body");
+
+            var client_ = _httpClient;
+            var disposeClient_ = false;
+            try
+            {
+                using (var request_ = new System.Net.Http.HttpRequestMessage())
+                {
+                    var json_ = System.Text.Json.JsonSerializer.SerializeToUtf8Bytes(body, JsonSerializerSettings);
+                    var content_ = new System.Net.Http.ByteArrayContent(json_);
+                    content_.Headers.ContentType = System.Net.Http.Headers.MediaTypeHeaderValue.Parse("application/json");
+                    request_.Content = content_;
+                    request_.Method = new System.Net.Http.HttpMethod("POST");
+                    request_.Headers.Accept.Add(System.Net.Http.Headers.MediaTypeWithQualityHeaderValue.Parse("application/json"));
+
+                    var urlBuilder_ = new System.Text.StringBuilder();
+
+                    // Operation Path: "api/space/design/v1/versions/{versionId}/sources/{sourceId}/cad-parses/{jobId}/review-workspace:apply"
+                    urlBuilder_.Append("api/space/design/v1/versions/");
+                    urlBuilder_.Append(System.Uri.EscapeDataString(ConvertToString(versionId, System.Globalization.CultureInfo.InvariantCulture)));
+                    urlBuilder_.Append("/sources/");
+                    urlBuilder_.Append(System.Uri.EscapeDataString(ConvertToString(sourceId, System.Globalization.CultureInfo.InvariantCulture)));
+                    urlBuilder_.Append("/cad-parses/");
+                    urlBuilder_.Append(System.Uri.EscapeDataString(ConvertToString(jobId, System.Globalization.CultureInfo.InvariantCulture)));
+                    urlBuilder_.Append("/review-workspace:apply");
+
+                    PrepareRequest(client_, request_, urlBuilder_);
+
+                    var url_ = urlBuilder_.ToString();
+                    request_.RequestUri = new System.Uri(url_, System.UriKind.RelativeOrAbsolute);
+
+                    PrepareRequest(client_, request_, url_);
+
+                    var response_ = await client_.SendAsync(request_, System.Net.Http.HttpCompletionOption.ResponseHeadersRead, cancellationToken).ConfigureAwait(false);
+                    var disposeResponse_ = true;
+                    try
+                    {
+                        var headers_ = new System.Collections.Generic.Dictionary<string, System.Collections.Generic.IEnumerable<string>>();
+                        foreach (var item_ in response_.Headers)
+                            headers_[item_.Key] = item_.Value;
+                        if (response_.Content != null && response_.Content.Headers != null)
+                        {
+                            foreach (var item_ in response_.Content.Headers)
+                                headers_[item_.Key] = item_.Value;
+                        }
+
+                        ProcessResponse(client_, response_);
+
+                        var status_ = (int)response_.StatusCode;
+                        if (status_ == 200)
+                        {
+                            var objectResponse_ = await ReadObjectResponseAsync<ApplySpaceCadChangesetResponse>(response_, headers_, cancellationToken).ConfigureAwait(false);
                             if (objectResponse_.Object == null)
                             {
                                 throw new ApiException("Response was null which was not expected.", status_, objectResponse_.Text, headers_, null);
@@ -9766,7 +9945,7 @@ namespace CP6.Space.Client
 
         /// <returns>OK</returns>
         /// <exception cref="ApiException">A server side error occurred.</exception>
-        public virtual System.Threading.Tasks.Task<SpaceEditLeaseDto> AcquireEditLeaseAsync(System.Guid versionId, System.Guid floorLogicalId, AcquireSpaceEditLeaseRequest? body)
+        public virtual System.Threading.Tasks.Task<SpaceEditLeaseDto> AcquireEditLeaseAsync(System.Guid versionId, System.Guid floorLogicalId, AcquireSpaceEditLeaseRequest body)
         {
             return AcquireEditLeaseAsync(versionId, floorLogicalId, body, System.Threading.CancellationToken.None);
         }
@@ -9774,13 +9953,16 @@ namespace CP6.Space.Client
         /// <param name="cancellationToken">A cancellation token that can be used by other objects or threads to receive notice of cancellation.</param>
         /// <returns>OK</returns>
         /// <exception cref="ApiException">A server side error occurred.</exception>
-        public virtual async System.Threading.Tasks.Task<SpaceEditLeaseDto> AcquireEditLeaseAsync(System.Guid versionId, System.Guid floorLogicalId, AcquireSpaceEditLeaseRequest? body, System.Threading.CancellationToken cancellationToken)
+        public virtual async System.Threading.Tasks.Task<SpaceEditLeaseDto> AcquireEditLeaseAsync(System.Guid versionId, System.Guid floorLogicalId, AcquireSpaceEditLeaseRequest body, System.Threading.CancellationToken cancellationToken)
         {
             if (versionId == null)
                 throw new System.ArgumentNullException("versionId");
 
             if (floorLogicalId == null)
                 throw new System.ArgumentNullException("floorLogicalId");
+
+            if (body == null)
+                throw new System.ArgumentNullException("body");
 
             var client_ = _httpClient;
             var disposeClient_ = false;
@@ -9928,15 +10110,15 @@ namespace CP6.Space.Client
 
         /// <returns>OK</returns>
         /// <exception cref="ApiException">A server side error occurred.</exception>
-        public virtual System.Threading.Tasks.Task<SpaceEditLeaseDto> RenewEditLeaseAsync(System.Guid versionId, System.Guid floorLogicalId, System.Guid leaseId)
+        public virtual System.Threading.Tasks.Task<SpaceEditLeaseDto> RenewEditLeaseAsync(System.Guid versionId, System.Guid floorLogicalId, System.Guid leaseId, ContinueSpaceEditLeaseRequest body)
         {
-            return RenewEditLeaseAsync(versionId, floorLogicalId, leaseId, System.Threading.CancellationToken.None);
+            return RenewEditLeaseAsync(versionId, floorLogicalId, leaseId, body, System.Threading.CancellationToken.None);
         }
 
         /// <param name="cancellationToken">A cancellation token that can be used by other objects or threads to receive notice of cancellation.</param>
         /// <returns>OK</returns>
         /// <exception cref="ApiException">A server side error occurred.</exception>
-        public virtual async System.Threading.Tasks.Task<SpaceEditLeaseDto> RenewEditLeaseAsync(System.Guid versionId, System.Guid floorLogicalId, System.Guid leaseId, System.Threading.CancellationToken cancellationToken)
+        public virtual async System.Threading.Tasks.Task<SpaceEditLeaseDto> RenewEditLeaseAsync(System.Guid versionId, System.Guid floorLogicalId, System.Guid leaseId, ContinueSpaceEditLeaseRequest body, System.Threading.CancellationToken cancellationToken)
         {
             if (versionId == null)
                 throw new System.ArgumentNullException("versionId");
@@ -9947,13 +10129,19 @@ namespace CP6.Space.Client
             if (leaseId == null)
                 throw new System.ArgumentNullException("leaseId");
 
+            if (body == null)
+                throw new System.ArgumentNullException("body");
+
             var client_ = _httpClient;
             var disposeClient_ = false;
             try
             {
                 using (var request_ = new System.Net.Http.HttpRequestMessage())
                 {
-                    request_.Content = new System.Net.Http.StringContent(string.Empty, System.Text.Encoding.UTF8, "application/json");
+                    var json_ = System.Text.Json.JsonSerializer.SerializeToUtf8Bytes(body, JsonSerializerSettings);
+                    var content_ = new System.Net.Http.ByteArrayContent(json_);
+                    content_.Headers.ContentType = System.Net.Http.Headers.MediaTypeHeaderValue.Parse("application/json");
+                    request_.Content = content_;
                     request_.Method = new System.Net.Http.HttpMethod("POST");
                     request_.Headers.Accept.Add(System.Net.Http.Headers.MediaTypeWithQualityHeaderValue.Parse("application/json"));
 
@@ -10092,15 +10280,15 @@ namespace CP6.Space.Client
 
         /// <returns>OK</returns>
         /// <exception cref="ApiException">A server side error occurred.</exception>
-        public virtual System.Threading.Tasks.Task<SpaceEditLeaseDto> ReleaseEditLeaseAsync(System.Guid versionId, System.Guid floorLogicalId, System.Guid leaseId)
+        public virtual System.Threading.Tasks.Task<SpaceEditLeaseDto> ReleaseEditLeaseAsync(System.Guid versionId, System.Guid floorLogicalId, System.Guid leaseId, ContinueSpaceEditLeaseRequest body)
         {
-            return ReleaseEditLeaseAsync(versionId, floorLogicalId, leaseId, System.Threading.CancellationToken.None);
+            return ReleaseEditLeaseAsync(versionId, floorLogicalId, leaseId, body, System.Threading.CancellationToken.None);
         }
 
         /// <param name="cancellationToken">A cancellation token that can be used by other objects or threads to receive notice of cancellation.</param>
         /// <returns>OK</returns>
         /// <exception cref="ApiException">A server side error occurred.</exception>
-        public virtual async System.Threading.Tasks.Task<SpaceEditLeaseDto> ReleaseEditLeaseAsync(System.Guid versionId, System.Guid floorLogicalId, System.Guid leaseId, System.Threading.CancellationToken cancellationToken)
+        public virtual async System.Threading.Tasks.Task<SpaceEditLeaseDto> ReleaseEditLeaseAsync(System.Guid versionId, System.Guid floorLogicalId, System.Guid leaseId, ContinueSpaceEditLeaseRequest body, System.Threading.CancellationToken cancellationToken)
         {
             if (versionId == null)
                 throw new System.ArgumentNullException("versionId");
@@ -10111,13 +10299,19 @@ namespace CP6.Space.Client
             if (leaseId == null)
                 throw new System.ArgumentNullException("leaseId");
 
+            if (body == null)
+                throw new System.ArgumentNullException("body");
+
             var client_ = _httpClient;
             var disposeClient_ = false;
             try
             {
                 using (var request_ = new System.Net.Http.HttpRequestMessage())
                 {
-                    request_.Content = new System.Net.Http.StringContent(string.Empty, System.Text.Encoding.UTF8, "application/json");
+                    var json_ = System.Text.Json.JsonSerializer.SerializeToUtf8Bytes(body, JsonSerializerSettings);
+                    var content_ = new System.Net.Http.ByteArrayContent(json_);
+                    content_.Headers.ContentType = System.Net.Http.Headers.MediaTypeHeaderValue.Parse("application/json");
+                    request_.Content = content_;
                     request_.Method = new System.Net.Http.HttpMethod("POST");
                     request_.Headers.Accept.Add(System.Net.Http.Headers.MediaTypeWithQualityHeaderValue.Parse("application/json"));
 
@@ -10256,7 +10450,7 @@ namespace CP6.Space.Client
 
         /// <returns>OK</returns>
         /// <exception cref="ApiException">A server side error occurred.</exception>
-        public virtual System.Threading.Tasks.Task<SpaceEditLeaseDto> TakeoverEditLeaseAsync(System.Guid versionId, System.Guid floorLogicalId, TakeoverSpaceEditLeaseRequest? body)
+        public virtual System.Threading.Tasks.Task<SpaceEditLeaseDto> TakeoverEditLeaseAsync(System.Guid versionId, System.Guid floorLogicalId, TakeoverSpaceEditLeaseRequest body)
         {
             return TakeoverEditLeaseAsync(versionId, floorLogicalId, body, System.Threading.CancellationToken.None);
         }
@@ -10264,13 +10458,16 @@ namespace CP6.Space.Client
         /// <param name="cancellationToken">A cancellation token that can be used by other objects or threads to receive notice of cancellation.</param>
         /// <returns>OK</returns>
         /// <exception cref="ApiException">A server side error occurred.</exception>
-        public virtual async System.Threading.Tasks.Task<SpaceEditLeaseDto> TakeoverEditLeaseAsync(System.Guid versionId, System.Guid floorLogicalId, TakeoverSpaceEditLeaseRequest? body, System.Threading.CancellationToken cancellationToken)
+        public virtual async System.Threading.Tasks.Task<SpaceEditLeaseDto> TakeoverEditLeaseAsync(System.Guid versionId, System.Guid floorLogicalId, TakeoverSpaceEditLeaseRequest body, System.Threading.CancellationToken cancellationToken)
         {
             if (versionId == null)
                 throw new System.ArgumentNullException("versionId");
 
             if (floorLogicalId == null)
                 throw new System.ArgumentNullException("floorLogicalId");
+
+            if (body == null)
+                throw new System.ArgumentNullException("body");
 
             var client_ = _httpClient;
             var disposeClient_ = false;
@@ -21714,7 +21911,69 @@ namespace CP6.Space.Client
     {
 
         [System.Text.Json.Serialization.JsonPropertyName("clientInstanceId")]
+        [System.ComponentModel.DataAnnotations.Required(AllowEmptyStrings = true)]
         public System.Guid ClientInstanceId { get; set; } = default!;
+
+    }
+
+    [System.CodeDom.Compiler.GeneratedCode("NJsonSchema", "14.7.1.0 (NJsonSchema v11.6.1.0 (Newtonsoft.Json v13.0.0.0))")]
+    public partial class ApplySpaceCadChangesetRequest
+    {
+
+        [System.Text.Json.Serialization.JsonPropertyName("commandBatchId")]
+        [System.ComponentModel.DataAnnotations.Required(AllowEmptyStrings = true)]
+        public System.Guid CommandBatchId { get; set; } = default!;
+
+        [System.Text.Json.Serialization.JsonPropertyName("clientInstanceId")]
+        [System.ComponentModel.DataAnnotations.Required(AllowEmptyStrings = true)]
+        public System.Guid ClientInstanceId { get; set; } = default!;
+
+        [System.Text.Json.Serialization.JsonPropertyName("leaseId")]
+        [System.ComponentModel.DataAnnotations.Required(AllowEmptyStrings = true)]
+        public System.Guid LeaseId { get; set; } = default!;
+
+        [System.Text.Json.Serialization.JsonPropertyName("expectedFloorRevision")]
+        public long ExpectedFloorRevision { get; set; } = default!;
+
+        [System.Text.Json.Serialization.JsonPropertyName("expectedContentRevision")]
+        public long ExpectedContentRevision { get; set; } = default!;
+
+        [System.Text.Json.Serialization.JsonPropertyName("expectedContentHash")]
+        public string? ExpectedContentHash { get; set; } = default!;
+
+        [System.Text.Json.Serialization.JsonPropertyName("workspaceSha256")]
+        [System.ComponentModel.DataAnnotations.Required(AllowEmptyStrings = true)]
+        public string WorkspaceSha256 { get; set; } = default!;
+
+        [System.Text.Json.Serialization.JsonPropertyName("changeIds")]
+        [System.ComponentModel.DataAnnotations.Required]
+        public System.Collections.Generic.ICollection<string> ChangeIds { get; set; } = new System.Collections.ObjectModel.Collection<string>();
+
+    }
+
+    [System.CodeDom.Compiler.GeneratedCode("NJsonSchema", "14.7.1.0 (NJsonSchema v11.6.1.0 (Newtonsoft.Json v13.0.0.0))")]
+    public partial class ApplySpaceCadChangesetResponse
+    {
+
+        [System.Text.Json.Serialization.JsonPropertyName("commandBatchId")]
+        [System.ComponentModel.DataAnnotations.Required(AllowEmptyStrings = true)]
+        public System.Guid CommandBatchId { get; set; } = default!;
+
+        [System.Text.Json.Serialization.JsonPropertyName("floorRevision")]
+        public long FloorRevision { get; set; } = default!;
+
+        [System.Text.Json.Serialization.JsonPropertyName("versionContentRevision")]
+        public long VersionContentRevision { get; set; } = default!;
+
+        [System.Text.Json.Serialization.JsonPropertyName("appliedChangeCount")]
+        public long AppliedChangeCount { get; set; } = default!;
+
+        [System.Text.Json.Serialization.JsonPropertyName("workspaceSha256")]
+        [System.ComponentModel.DataAnnotations.Required(AllowEmptyStrings = true)]
+        public string WorkspaceSha256 { get; set; } = default!;
+
+        [System.Text.Json.Serialization.JsonPropertyName("idempotentReplay")]
+        public bool IdempotentReplay { get; set; } = default!;
 
     }
 
@@ -21726,19 +21985,32 @@ namespace CP6.Space.Client
         public int SchemaVersion { get; set; } = default!;
 
         [System.Text.Json.Serialization.JsonPropertyName("commandBatchId")]
+        [System.ComponentModel.DataAnnotations.Required(AllowEmptyStrings = true)]
         public System.Guid CommandBatchId { get; set; } = default!;
 
         [System.Text.Json.Serialization.JsonPropertyName("clientInstanceId")]
+        [System.ComponentModel.DataAnnotations.Required(AllowEmptyStrings = true)]
         public System.Guid ClientInstanceId { get; set; } = default!;
 
         [System.Text.Json.Serialization.JsonPropertyName("leaseId")]
+        [System.ComponentModel.DataAnnotations.Required(AllowEmptyStrings = true)]
         public System.Guid LeaseId { get; set; } = default!;
 
         [System.Text.Json.Serialization.JsonPropertyName("expectedFloorRevision")]
         public long ExpectedFloorRevision { get; set; } = default!;
 
         [System.Text.Json.Serialization.JsonPropertyName("commands")]
-        public System.Collections.Generic.ICollection<SpaceElementCommandDto>? Commands { get; set; } = default!;
+        [System.ComponentModel.DataAnnotations.Required]
+        public System.Collections.Generic.ICollection<SpaceElementCommandDto> Commands { get; set; } = new System.Collections.ObjectModel.Collection<SpaceElementCommandDto>();
+
+        [System.Text.Json.Serialization.JsonPropertyName("expectedContentRevision")]
+        public long? ExpectedContentRevision { get; set; } = default!;
+
+        [System.Text.Json.Serialization.JsonPropertyName("expectedContentHash")]
+        public string? ExpectedContentHash { get; set; } = default!;
+
+        [System.Text.Json.Serialization.JsonPropertyName("changesetSha256")]
+        public string? ChangesetSha256 { get; set; } = default!;
 
     }
 
@@ -21871,6 +22143,16 @@ namespace CP6.Space.Client
 
         [System.Text.Json.Serialization.JsonPropertyName("idempotentReplay")]
         public bool IdempotentReplay { get; set; } = default!;
+
+    }
+
+    [System.CodeDom.Compiler.GeneratedCode("NJsonSchema", "14.7.1.0 (NJsonSchema v11.6.1.0 (Newtonsoft.Json v13.0.0.0))")]
+    public partial class ContinueSpaceEditLeaseRequest
+    {
+
+        [System.Text.Json.Serialization.JsonPropertyName("clientInstanceId")]
+        [System.ComponentModel.DataAnnotations.Required(AllowEmptyStrings = true)]
+        public System.Guid ClientInstanceId { get; set; } = default!;
 
     }
 
@@ -23670,6 +23952,111 @@ namespace CP6.Space.Client
     }
 
     [System.CodeDom.Compiler.GeneratedCode("NJsonSchema", "14.7.1.0 (NJsonSchema v11.6.1.0 (Newtonsoft.Json v13.0.0.0))")]
+    public enum SpaceCadChangeKind
+    {
+
+        [System.Runtime.Serialization.EnumMember(Value = @"Add")]
+        Add = 0,
+
+        [System.Runtime.Serialization.EnumMember(Value = @"Modify")]
+        Modify = 1,
+
+        [System.Runtime.Serialization.EnumMember(Value = @"Delete")]
+        Delete = 2,
+
+        [System.Runtime.Serialization.EnumMember(Value = @"Conflict")]
+        Conflict = 3,
+
+        [System.Runtime.Serialization.EnumMember(Value = @"LowConfidence")]
+        LowConfidence = 4,
+
+        [System.Runtime.Serialization.EnumMember(Value = @"Unrecognized")]
+        Unrecognized = 5,
+
+    }
+
+    [System.CodeDom.Compiler.GeneratedCode("NJsonSchema", "14.7.1.0 (NJsonSchema v11.6.1.0 (Newtonsoft.Json v13.0.0.0))")]
+    public partial class SpaceCadChangeSummaryV1
+    {
+
+        [System.Text.Json.Serialization.JsonPropertyName("totalCount")]
+        public long TotalCount { get; set; } = default!;
+
+        [System.Text.Json.Serialization.JsonPropertyName("addCount")]
+        public long AddCount { get; set; } = default!;
+
+        [System.Text.Json.Serialization.JsonPropertyName("modifyCount")]
+        public long ModifyCount { get; set; } = default!;
+
+        [System.Text.Json.Serialization.JsonPropertyName("deleteCount")]
+        public long DeleteCount { get; set; } = default!;
+
+        [System.Text.Json.Serialization.JsonPropertyName("conflictCount")]
+        public long ConflictCount { get; set; } = default!;
+
+        [System.Text.Json.Serialization.JsonPropertyName("lowConfidenceCount")]
+        public long LowConfidenceCount { get; set; } = default!;
+
+        [System.Text.Json.Serialization.JsonPropertyName("unrecognizedCount")]
+        public long UnrecognizedCount { get; set; } = default!;
+
+        [System.Text.Json.Serialization.JsonPropertyName("selectedCount")]
+        public long SelectedCount { get; set; } = default!;
+
+        [System.Text.Json.Serialization.JsonPropertyName("applyEligibleCount")]
+        public long ApplyEligibleCount { get; set; } = default!;
+
+    }
+
+    [System.CodeDom.Compiler.GeneratedCode("NJsonSchema", "14.7.1.0 (NJsonSchema v11.6.1.0 (Newtonsoft.Json v13.0.0.0))")]
+    public partial class SpaceCadChangeV1
+    {
+
+        [System.Text.Json.Serialization.JsonPropertyName("changeId")]
+        [System.ComponentModel.DataAnnotations.Required(AllowEmptyStrings = true)]
+        public string ChangeId { get; set; } = default!;
+
+        [System.Text.Json.Serialization.JsonPropertyName("kind")]
+        [System.ComponentModel.DataAnnotations.Required(AllowEmptyStrings = true)]
+        [System.Text.Json.Serialization.JsonConverter(typeof(System.Text.Json.Serialization.JsonStringEnumConverter<SpaceCadChangeKind>))]
+        public SpaceCadChangeKind Kind { get; set; } = default!;
+
+        [System.Text.Json.Serialization.JsonPropertyName("logicalId")]
+        [System.ComponentModel.DataAnnotations.Required(AllowEmptyStrings = true)]
+        public System.Guid LogicalId { get; set; } = default!;
+
+        [System.Text.Json.Serialization.JsonPropertyName("sourceRef")]
+        [System.ComponentModel.DataAnnotations.Required(AllowEmptyStrings = true)]
+        public string SourceRef { get; set; } = default!;
+
+        [System.Text.Json.Serialization.JsonPropertyName("previewObjectId")]
+        public string? PreviewObjectId { get; set; } = default!;
+
+        [System.Text.Json.Serialization.JsonPropertyName("objectType")]
+        [System.ComponentModel.DataAnnotations.Required(AllowEmptyStrings = true)]
+        public string ObjectType { get; set; } = default!;
+
+        [System.Text.Json.Serialization.JsonPropertyName("confidence")]
+        public double? Confidence { get; set; } = default!;
+
+        [System.Text.Json.Serialization.JsonPropertyName("isSelected")]
+        public bool IsSelected { get; set; } = default!;
+
+        [System.Text.Json.Serialization.JsonPropertyName("canApply")]
+        public bool CanApply { get; set; } = default!;
+
+        [System.Text.Json.Serialization.JsonPropertyName("blockingReasonCode")]
+        public string? BlockingReasonCode { get; set; } = default!;
+
+        [System.Text.Json.Serialization.JsonPropertyName("beforeBounds")]
+        public SpaceCadMillimeterBoundsV1 BeforeBounds { get; set; } = default!;
+
+        [System.Text.Json.Serialization.JsonPropertyName("afterBounds")]
+        public SpaceCadMillimeterBoundsV1 AfterBounds { get; set; } = default!;
+
+    }
+
+    [System.CodeDom.Compiler.GeneratedCode("NJsonSchema", "14.7.1.0 (NJsonSchema v11.6.1.0 (Newtonsoft.Json v13.0.0.0))")]
     public enum SpaceCadConfidenceBand
     {
 
@@ -24080,6 +24467,24 @@ namespace CP6.Space.Client
         [System.Text.Json.Serialization.JsonPropertyName("workspaceSha256")]
         public string? WorkspaceSha256 { get; set; } = default!;
 
+        [System.Text.Json.Serialization.JsonPropertyName("sourceId")]
+        public System.Guid? SourceId { get; set; } = default!;
+
+        [System.Text.Json.Serialization.JsonPropertyName("cadParseJobId")]
+        public System.Guid? CadParseJobId { get; set; } = default!;
+
+        [System.Text.Json.Serialization.JsonPropertyName("semanticPreviewSha256")]
+        public string? SemanticPreviewSha256 { get; set; } = default!;
+
+        [System.Text.Json.Serialization.JsonPropertyName("changes")]
+        public System.Collections.Generic.ICollection<SpaceCadChangeV1>? Changes { get; set; } = default!;
+
+        [System.Text.Json.Serialization.JsonPropertyName("changeSummary")]
+        public SpaceCadChangeSummaryV1 ChangeSummary { get; set; } = default!;
+
+        [System.Text.Json.Serialization.JsonPropertyName("changesetSha256")]
+        public string? ChangesetSha256 { get; set; } = default!;
+
     }
 
     [System.CodeDom.Compiler.GeneratedCode("NJsonSchema", "14.7.1.0 (NJsonSchema v11.6.1.0 (Newtonsoft.Json v13.0.0.0))")]
@@ -24103,6 +24508,57 @@ namespace CP6.Space.Client
 
         [System.Runtime.Serialization.EnumMember(Value = @"Foot")]
         Foot = 5,
+
+    }
+
+    [System.CodeDom.Compiler.GeneratedCode("NJsonSchema", "14.7.1.0 (NJsonSchema v11.6.1.0 (Newtonsoft.Json v13.0.0.0))")]
+    public partial class SpaceCreateElementDto
+    {
+
+        [System.Text.Json.Serialization.JsonPropertyName("elementType")]
+        [System.ComponentModel.DataAnnotations.Required(AllowEmptyStrings = true)]
+        public string ElementType { get; set; } = default!;
+
+        [System.Text.Json.Serialization.JsonPropertyName("geometryJson")]
+        [System.ComponentModel.DataAnnotations.Required(AllowEmptyStrings = true)]
+        public string GeometryJson { get; set; } = default!;
+
+        [System.Text.Json.Serialization.JsonPropertyName("x")]
+        public int X { get; set; } = default!;
+
+        [System.Text.Json.Serialization.JsonPropertyName("y")]
+        public int Y { get; set; } = default!;
+
+        [System.Text.Json.Serialization.JsonPropertyName("z")]
+        public int Z { get; set; } = default!;
+
+        [System.Text.Json.Serialization.JsonPropertyName("rotationZ")]
+        public double RotationZ { get; set; } = default!;
+
+        [System.Text.Json.Serialization.JsonPropertyName("width")]
+        public int Width { get; set; } = default!;
+
+        [System.Text.Json.Serialization.JsonPropertyName("height")]
+        public int Height { get; set; } = default!;
+
+        [System.Text.Json.Serialization.JsonPropertyName("depth")]
+        public int Depth { get; set; } = default!;
+
+        [System.Text.Json.Serialization.JsonPropertyName("businessCode")]
+        public string? BusinessCode { get; set; } = default!;
+
+        [System.Text.Json.Serialization.JsonPropertyName("parentLogicalId")]
+        public System.Guid? ParentLogicalId { get; set; } = default!;
+
+        [System.Text.Json.Serialization.JsonPropertyName("sourceId")]
+        public System.Guid? SourceId { get; set; } = default!;
+
+        [System.Text.Json.Serialization.JsonPropertyName("sourceRef")]
+        public string? SourceRef { get; set; } = default!;
+
+        [System.Text.Json.Serialization.JsonPropertyName("attributes")]
+        [System.ComponentModel.DataAnnotations.Required]
+        public System.Collections.Generic.ICollection<SpaceElementAttributeWriteDto> Attributes { get; set; } = new System.Collections.ObjectModel.Collection<SpaceElementAttributeWriteDto>();
 
     }
 
@@ -24523,8 +24979,14 @@ namespace CP6.Space.Client
         [System.Text.Json.Serialization.JsonPropertyName("ownerUserId")]
         public System.Guid? OwnerUserId { get; set; } = default!;
 
+        [System.Text.Json.Serialization.JsonPropertyName("holderDisplayName")]
+        public string? HolderDisplayName { get; set; } = default!;
+
         [System.Text.Json.Serialization.JsonPropertyName("clientInstanceId")]
         public System.Guid? ClientInstanceId { get; set; } = default!;
+
+        [System.Text.Json.Serialization.JsonPropertyName("acquiredAtUtc")]
+        public System.DateTimeOffset? AcquiredAtUtc { get; set; } = default!;
 
         [System.Text.Json.Serialization.JsonPropertyName("expiresAtUtc")]
         public System.DateTimeOffset? ExpiresAtUtc { get; set; } = default!;
@@ -24569,12 +25031,15 @@ namespace CP6.Space.Client
     {
 
         [System.Text.Json.Serialization.JsonPropertyName("commandId")]
+        [System.ComponentModel.DataAnnotations.Required(AllowEmptyStrings = true)]
         public System.Guid CommandId { get; set; } = default!;
 
         [System.Text.Json.Serialization.JsonPropertyName("type")]
-        public string? Type { get; set; } = default!;
+        [System.ComponentModel.DataAnnotations.Required(AllowEmptyStrings = true)]
+        public string Type { get; set; } = default!;
 
         [System.Text.Json.Serialization.JsonPropertyName("targetLogicalId")]
+        [System.ComponentModel.DataAnnotations.Required(AllowEmptyStrings = true)]
         public System.Guid TargetLogicalId { get; set; } = default!;
 
         [System.Text.Json.Serialization.JsonPropertyName("updateProperties")]
@@ -24588,6 +25053,9 @@ namespace CP6.Space.Client
 
         [System.Text.Json.Serialization.JsonPropertyName("generateRackArray")]
         public SpaceGenerateRackArrayDto GenerateRackArray { get; set; } = default!;
+
+        [System.Text.Json.Serialization.JsonPropertyName("createElement")]
+        public SpaceCreateElementDto CreateElement { get; set; } = default!;
 
     }
 
@@ -30074,10 +30542,12 @@ namespace CP6.Space.Client
     {
 
         [System.Text.Json.Serialization.JsonPropertyName("clientInstanceId")]
+        [System.ComponentModel.DataAnnotations.Required(AllowEmptyStrings = true)]
         public System.Guid ClientInstanceId { get; set; } = default!;
 
         [System.Text.Json.Serialization.JsonPropertyName("reason")]
-        public string? Reason { get; set; } = default!;
+        [System.ComponentModel.DataAnnotations.Required(AllowEmptyStrings = true)]
+        public string Reason { get; set; } = default!;
 
     }
 

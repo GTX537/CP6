@@ -35,6 +35,9 @@ export class DesignScenePreview3D {
   private bounds = new Box3()
   private center = new Vector3()
   private radius = 10
+  private hasFramedScene = false
+  private selectedLogicalIds = new Set<string>()
+  private baseInstanceColors = new Map<number, Color[]>()
 
   constructor(canvas: HTMLCanvasElement) {
     this.renderer = new Renderer(canvas)
@@ -65,8 +68,18 @@ export class DesignScenePreview3D {
     const build = new SceneBuilder().buildDesign(scene)
     this.build = build
     for (const object of build.objects) this.root.add(object)
+    this.baseInstanceColors.clear()
+    for (const mesh of build.meshes) {
+      const colors: Color[] = []
+      for (let instanceId = 0; instanceId < mesh.count; instanceId += 1) {
+        colors.push(mesh.getColorAt(instanceId, new Color()).clone())
+      }
+      this.baseInstanceColors.set(mesh.id, colors)
+    }
     this.root.updateMatrixWorld(true)
-    this.frameContent()
+    this.frameContent(!this.hasFramedScene)
+    this.hasFramedScene = true
+    this.setSelectedLogicalIds(this.selectedLogicalIds)
     this.render()
     return buildSceneProjectionEvidence(scene, build)
   }
@@ -100,6 +113,43 @@ export class DesignScenePreview3D {
     this.render()
   }
 
+  setSelectedLogicalIds(logicalIds: Iterable<string>): void {
+    this.selectedLogicalIds = new Set(logicalIds)
+    if (!this.build) return
+    for (const mesh of this.build.meshes) {
+      for (let instanceId = 0; instanceId < mesh.count; instanceId += 1) {
+        const target = this.build.instanceToTarget(mesh.id, instanceId)
+        const selected = Boolean(target && this.selectedLogicalIds.has(
+          target.ownerKind === 'RackLevel'
+            ? target.parentLogicalId ?? target.logicalId
+            : target.logicalId,
+        ))
+        const base = this.baseInstanceColors.get(mesh.id)?.[instanceId] ?? new Color(0x94a3b8)
+        mesh.setColorAt(instanceId, selected ? new Color(0x22d3ee) : base)
+      }
+      if (mesh.instanceColor) mesh.instanceColor.needsUpdate = true
+    }
+    for (const object of this.build.objects) {
+      object.traverse((candidate) => {
+        const target = this.build?.objectToTarget(candidate.id)
+        if (!target || !('material' in candidate)) return
+        const material = candidate.material as unknown
+        if (material && typeof material === 'object' &&
+            !Array.isArray(material) && 'emissive' in material) {
+          const selected = this.selectedLogicalIds.has(
+            target.ownerKind === 'RackLevel'
+              ? target.parentLogicalId ?? target.logicalId
+              : target.logicalId,
+          )
+          ;((material as { emissive: Color }).emissive).set(
+            selected ? 0x0e7490 : 0x000000,
+          )
+        }
+      })
+    }
+    this.render()
+  }
+
   dispose(): void {
     this.controls.removeEventListener('change', this.render)
     this.controls.dispose()
@@ -107,7 +157,7 @@ export class DesignScenePreview3D {
     this.renderer.dispose()
   }
 
-  private frameContent(): void {
+  private frameContent(resetCamera: boolean): void {
     this.bounds = new Box3().setFromObject(this.root)
     if (this.bounds.isEmpty()) {
       this.center.set(0, 0, 0)
@@ -120,7 +170,7 @@ export class DesignScenePreview3D {
     this.camera.near = Math.max(this.radius / 1000, 0.01)
     this.camera.far = Math.max(this.radius * 50, 1000)
     this.camera.updateProjectionMatrix()
-    this.setPreset('iso')
+    if (resetCamera) this.setPreset('iso')
   }
 
   private clearBuild(): void {
@@ -128,6 +178,7 @@ export class DesignScenePreview3D {
     for (const object of this.build.objects) this.root.remove(object)
     this.build.dispose()
     this.build = null
+    this.baseInstanceColors.clear()
   }
 
   private render = (): void => {

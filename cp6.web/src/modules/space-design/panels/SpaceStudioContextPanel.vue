@@ -13,9 +13,13 @@ defineProps<{
 
 const emit = defineEmits<{
   chooseUnderlay: []
+  chooseCad: []
   downloadTemplate: []
   openCadReview: []
   cancelParse: []
+  retryParse: []
+  openRuleOnly: []
+  createComponent: [elementType: string]
 }>()
 
 type Mode = 'source' | 'assets' | 'layers' | 'history' | 'settings'
@@ -52,6 +56,9 @@ const modes: Array<{ id: Mode; label: string; glyph: string }> = [
         <button type="button" class="primary" :disabled="readonly" @click="emit('chooseUnderlay')">
           PDF / 图片底图
         </button>
+        <button type="button" class="primary" :disabled="readonly" @click="emit('chooseCad')">
+          上传 DWG / DXF
+        </button>
         <button type="button" @click="emit('downloadTemplate')">下载标准 Excel</button>
         <button type="button" @click="emit('openCadReview')">打开 CAD 审核</button>
 
@@ -63,6 +70,9 @@ const modes: Array<{ id: Mode; label: string; glyph: string }> = [
           <button v-if="parseStatus === 'Queued' || parseStatus === 'Running'" type="button" @click="emit('cancelParse')">
             取消解析
           </button>
+          <button v-else-if="parseStatus === 'Failed' || parseStatus === 'Cancelled'" type="button" @click="emit('retryParse')">
+            重试解析
+          </button>
         </div>
         <div class="source-state">
           底图：{{ hasUnderlay ? (calibrated ? '已标定' : '待标定') : '未导入' }}
@@ -72,7 +82,15 @@ const modes: Array<{ id: Mode; label: string; glyph: string }> = [
       <template v-else-if="activeMode === 'assets'">
         <h2>构件库</h2>
         <p>墙、柱、门、月台、静态设备与货架模板。</p>
-        <div class="empty-note">选择或拖放构件到 2D 画布。</div>
+        <button type="button" class="primary" :disabled="readonly" @click="emit('openRuleOnly')">
+          从 CAD 规则生成构件
+        </button>
+        <div class="component-grid" aria-label="快速创建构件">
+          <button v-for="type in ['Wall', 'Column', 'Door', 'Dock', 'StaticEquipment']" :key="type" type="button" :disabled="readonly" @click="emit('createComponent', type)">
+            + {{ type }}
+          </button>
+        </div>
+        <div class="empty-note">构件会落在当前指针附近并通过同一租约、Revision 与 CommandBatch 权威链保存；创建后可在右侧属性面板精调。</div>
       </template>
 
       <template v-else-if="activeMode === 'layers'">
@@ -116,6 +134,8 @@ button:focus-visible,input:focus-visible { outline:3px solid var(--space-studio-
 progress { width:100%; accent-color:var(--space-studio-accent); }
 .blocking { color:var(--space-studio-blocking); }
 .source-state,.empty-note { margin-top:16px; padding:10px; border-radius:6px; background:rgba(148,163,184,.08); }
+.component-grid { display:grid; grid-template-columns:1fr 1fr; gap:8px; margin-top:12px; }
+.component-grid button { margin-top:0; }
 label { display:block; margin:12px 0; color:var(--space-studio-text); }
 @media (max-width:1279px) {
   .studio-context { grid-template-columns:52px 0; min-width:52px; overflow:hidden; }

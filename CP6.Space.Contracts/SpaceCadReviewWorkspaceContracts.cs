@@ -29,6 +29,42 @@ public enum SpaceCadReviewItemStatus
     Resolved = 1,
 }
 
+[JsonConverter(typeof(JsonStringEnumConverter))]
+public enum SpaceCadChangeKind
+{
+    Add = 0,
+    Modify = 1,
+    Delete = 2,
+    Conflict = 3,
+    LowConfidence = 4,
+    Unrecognized = 5,
+}
+
+public sealed record SpaceCadChangeV1(
+    string ChangeId,
+    SpaceCadChangeKind Kind,
+    Guid LogicalId,
+    string SourceRef,
+    string? PreviewObjectId,
+    string ObjectType,
+    decimal? Confidence,
+    bool IsSelected,
+    bool CanApply,
+    string? BlockingReasonCode,
+    SpaceCadMillimeterBoundsV1? BeforeBounds,
+    SpaceCadMillimeterBoundsV1? AfterBounds);
+
+public sealed record SpaceCadChangeSummaryV1(
+    long TotalCount,
+    long AddCount,
+    long ModifyCount,
+    long DeleteCount,
+    long ConflictCount,
+    long LowConfidenceCount,
+    long UnrecognizedCount,
+    long SelectedCount,
+    long ApplyEligibleCount);
+
 public sealed record SpaceCadReviewItemV1(
     string ReviewItemId,
     string TrackingKey,
@@ -76,7 +112,13 @@ public sealed record SpaceCadReviewWorkspaceV1(
     string? PreviousWorkspaceSha256,
     IReadOnlyList<SpaceCadReviewItemV1> Items,
     SpaceCadReviewWorkspaceSummaryV1 Summary,
-    string WorkspaceSha256);
+    string WorkspaceSha256,
+    Guid? SourceId = null,
+    Guid? CadParseJobId = null,
+    string? SemanticPreviewSha256 = null,
+    IReadOnlyList<SpaceCadChangeV1>? Changes = null,
+    SpaceCadChangeSummaryV1? ChangeSummary = null,
+    string? ChangesetSha256 = null);
 
 public sealed record SpaceCadReviewWorkspaceQueryV1(
     SpaceCadReviewItemStatus? Status = null,

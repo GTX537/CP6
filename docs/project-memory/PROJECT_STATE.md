@@ -1,13 +1,15 @@
 # 项目当前状态
 
-最后更新：2026-08-12
+最后更新：2026-08-13
 
 ## Space Studio v1.3 核心实现（2026-08-12）
 
-- 低成本 3D 建模 Spec 已在完整保留 v1.2 详细正文的基础上增量修订为 v1.3，并提交 Scope Change RFC-003：外部 AI 独立 Beta、Viewer 性能门槛收紧、Supplier 不参加现场 UAT，`DesignUnderlayView` 成为单一页面权威。
+- 低成本 3D 建模 Spec 已在完整保留 v1.2 详细正文的基础上增量修订为 v1.3；RFC-003 明确为“产品决定已冻结、跨职能批准 Pending”，外部 AI 独立 Beta、Viewer 性能门槛收紧、Supplier 不参加现场 UAT，`DesignUnderlayView` 成为单一页面权威。
 - Space Studio 已形成冻结四栏壳层，包含 44px 标题栏、60px 命令栏、52+244px 左侧模式/上下文、主 2D/3D 画布、324px 属性/批量/问题检查器和 30px 状态栏；小于 1280px 自动只读。
-- 新增 Floor 编辑租约：数据库唯一槽、90 秒租期、30 秒前端续租、释放、过期重申请、带专用权限和原因的强制接管、不可变接管审计。编辑命令请求新增必填 `leaseId`，服务端在 Revision 与命令前失败关闭校验。
-- CAD Parse 成功后可由 Job/Source 路由自动读取并校验 PreviewSet SHA，服务端按当前编辑器快照生成审核空间，前端轮询阶段/耗时/失败并自动加载；本地 JSON 仅保留为高级回退。
+- 新增 Floor 编辑租约：数据库唯一槽、数据库 UTC、90 秒租期、30 秒前端续租、释放、同用户不同浏览器会话隔离、过期重申请、带双权限和原因的强制接管、不可变接管审计。编辑命令请求新增必填 `leaseId`，保存与租约写入共享 Floor applock，Revision/命令/幂等失败关闭。
+- CAD Parse 成功后可由 Job/Source 路由自动读取并校验 PreviewSet SHA、Tenant/Source/Job/Floor 与解析启动时 BaseContentRevision；审核空间输出带基线与哈希的 typed 新增/修改/删除/冲突/低置信度/未识别变更集，经用户勾选后通过租约、Revision、ContentRevision 与幂等 fence 原子合入 Draft，stale 或工件链异常均零写入。前端提供 DWG/DXF 上传、后台监控、取消/重试和自动审核加载，本地 JSON 仅保留为高级回退；扫描完成后的坐标确认与 Mapping Profile 选择/预览仍为 P0，未使用伪默认值。
+- 空白画布/底图路径已可直接创建墙、柱、门、月台和静态设备，并与保存命令批、撤销/重做和本地 2D/3D 场景共用同一 LogicalId；库区、巷道和首个货架的直接拖放创建仍待后续切片。工作台“运行校验/校验并发布”会携带 Site/Version 进入正式发布控制面并自动发起 Validation，发布本身仍要求 Preview、审批确认和 `space:model:publish`，不会自动执行。
+- 仓库门禁证据：Space Unit 497/497、连接 `KOUSQLSERVER` 的 Space Integration 396/396（0 skipped）、CP6.Tests 2867 passed / 19 个既有环境门禁 skipped、Web 727/727、Space Studio Playwright 5/5、前后端生产构建通过且完整 Release solution 为 0 warning / 0 error；SDK drift、EF pending-model-changes 与 diff whitespace 均 clean。
 - 本项完成的是仓库核心实现和自动化，不代表 GA：真实主/备 DWG Provider、20 份授权黄金 CAD、500/10,000 Viewer 基准、两仓各 14 天 Pilot、WMS 恢复演练和五角色签字仍未完成。
 
 ## CRM 产品框架与三仓可执行 Spec（2026-08-11）

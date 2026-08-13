@@ -140,6 +140,11 @@ export interface ISpaceDesignV1Client {
     getReviewWorkspace(versionId: string, sourceId: string, jobId: string): Promise<SpaceCadReviewWorkspaceV1>;
 
     /**
+     * @return OK
+     */
+    applyReviewChanges(versionId: string, sourceId: string, jobId: string, body: ApplySpaceCadChangesetRequest): Promise<ApplySpaceCadChangesetResponse>;
+
+    /**
      * @return Accepted
      */
     cancelParse(versionId: string, sourceId: string, jobId: string): Promise<SpaceCadParseActionResponse>;
@@ -336,26 +341,24 @@ export interface ISpaceDesignV1Client {
     getEditLease(versionId: string, floorLogicalId: string): Promise<SpaceEditLeaseDto>;
 
     /**
-     * @param body (optional)
      * @return OK
      */
-    acquireEditLease(versionId: string, floorLogicalId: string, body: AcquireSpaceEditLeaseRequest | undefined): Promise<SpaceEditLeaseDto>;
+    acquireEditLease(versionId: string, floorLogicalId: string, body: AcquireSpaceEditLeaseRequest): Promise<SpaceEditLeaseDto>;
 
     /**
      * @return OK
      */
-    renewEditLease(versionId: string, floorLogicalId: string, leaseId: string): Promise<SpaceEditLeaseDto>;
+    renewEditLease(versionId: string, floorLogicalId: string, leaseId: string, body: ContinueSpaceEditLeaseRequest): Promise<SpaceEditLeaseDto>;
 
     /**
      * @return OK
      */
-    releaseEditLease(versionId: string, floorLogicalId: string, leaseId: string): Promise<SpaceEditLeaseDto>;
+    releaseEditLease(versionId: string, floorLogicalId: string, leaseId: string, body: ContinueSpaceEditLeaseRequest): Promise<SpaceEditLeaseDto>;
 
     /**
-     * @param body (optional)
      * @return OK
      */
-    takeoverEditLease(versionId: string, floorLogicalId: string, body: TakeoverSpaceEditLeaseRequest | undefined): Promise<SpaceEditLeaseDto>;
+    takeoverEditLease(versionId: string, floorLogicalId: string, body: TakeoverSpaceEditLeaseRequest): Promise<SpaceEditLeaseDto>;
 
     /**
      * @return Accepted
@@ -2724,6 +2727,105 @@ export class SpaceDesignV1Client implements ISpaceDesignV1Client {
             });
         }
         return Promise.resolve<SpaceCadReviewWorkspaceV1>(null as any);
+    }
+
+    /**
+     * @return OK
+     */
+    applyReviewChanges(versionId: string, sourceId: string, jobId: string, body: ApplySpaceCadChangesetRequest): Promise<ApplySpaceCadChangesetResponse> {
+        let url_ = this.baseUrl + "/api/space/design/v1/versions/{versionId}/sources/{sourceId}/cad-parses/{jobId}/review-workspace:apply";
+        if (versionId === undefined || versionId === null)
+            throw new globalThis.Error("The parameter 'versionId' must be defined.");
+        url_ = url_.replace("{versionId}", encodeURIComponent("" + versionId));
+        if (sourceId === undefined || sourceId === null)
+            throw new globalThis.Error("The parameter 'sourceId' must be defined.");
+        url_ = url_.replace("{sourceId}", encodeURIComponent("" + sourceId));
+        if (jobId === undefined || jobId === null)
+            throw new globalThis.Error("The parameter 'jobId' must be defined.");
+        url_ = url_.replace("{jobId}", encodeURIComponent("" + jobId));
+        url_ = url_.replace(/[?&]$/, "");
+
+        const content_ = JSON.stringify(body);
+
+        let options_: RequestInit = {
+            body: content_,
+            method: "POST",
+            headers: {
+                "Content-Type": "application/json",
+                "Accept": "application/json"
+            }
+        };
+
+        return this.http.fetch(url_, options_).then((_response: Response) => {
+            return this.processApplyReviewChanges(_response);
+        });
+    }
+
+    protected processApplyReviewChanges(response: Response): Promise<ApplySpaceCadChangesetResponse> {
+        const status = response.status;
+        let _headers: any = {}; if (response.headers && response.headers.forEach) { response.headers.forEach((v: any, k: any) => _headers[k] = v); };
+        if (status === 200) {
+            return response.text().then((_responseText) => {
+            let result200: any = null;
+            let resultData200 = _responseText === "" ? null : JSON.parse(_responseText, this.jsonParseReviver);
+            result200 = ApplySpaceCadChangesetResponse.fromJS(resultData200);
+            return result200;
+            });
+        } else if (status === 400) {
+            return response.text().then((_responseText) => {
+            let result400: any = null;
+            let resultData400 = _responseText === "" ? null : JSON.parse(_responseText, this.jsonParseReviver);
+            result400 = SpaceDesignProblemDetails.fromJS(resultData400);
+            return throwException("Bad Request", status, _responseText, _headers, result400);
+            });
+        } else if (status === 401) {
+            return response.text().then((_responseText) => {
+            let result401: any = null;
+            let resultData401 = _responseText === "" ? null : JSON.parse(_responseText, this.jsonParseReviver);
+            result401 = SpaceDesignProblemDetails.fromJS(resultData401);
+            return throwException("Unauthorized", status, _responseText, _headers, result401);
+            });
+        } else if (status === 403) {
+            return response.text().then((_responseText) => {
+            let result403: any = null;
+            let resultData403 = _responseText === "" ? null : JSON.parse(_responseText, this.jsonParseReviver);
+            result403 = SpaceDesignProblemDetails.fromJS(resultData403);
+            return throwException("Forbidden", status, _responseText, _headers, result403);
+            });
+        } else if (status === 404) {
+            return response.text().then((_responseText) => {
+            let result404: any = null;
+            let resultData404 = _responseText === "" ? null : JSON.parse(_responseText, this.jsonParseReviver);
+            result404 = SpaceDesignProblemDetails.fromJS(resultData404);
+            return throwException("Not Found", status, _responseText, _headers, result404);
+            });
+        } else if (status === 409) {
+            return response.text().then((_responseText) => {
+            let result409: any = null;
+            let resultData409 = _responseText === "" ? null : JSON.parse(_responseText, this.jsonParseReviver);
+            result409 = SpaceDesignProblemDetails.fromJS(resultData409);
+            return throwException("Conflict", status, _responseText, _headers, result409);
+            });
+        } else if (status === 422) {
+            return response.text().then((_responseText) => {
+            let result422: any = null;
+            let resultData422 = _responseText === "" ? null : JSON.parse(_responseText, this.jsonParseReviver);
+            result422 = SpaceDesignProblemDetails.fromJS(resultData422);
+            return throwException("Unprocessable Content", status, _responseText, _headers, result422);
+            });
+        } else if (status === 500) {
+            return response.text().then((_responseText) => {
+            let result500: any = null;
+            let resultData500 = _responseText === "" ? null : JSON.parse(_responseText, this.jsonParseReviver);
+            result500 = SpaceDesignProblemDetails.fromJS(resultData500);
+            return throwException("Internal Server Error", status, _responseText, _headers, result500);
+            });
+        } else if (status !== 200 && status !== 204) {
+            return response.text().then((_responseText) => {
+            return throwException("An unexpected server error occurred.", status, _responseText, _headers);
+            });
+        }
+        return Promise.resolve<ApplySpaceCadChangesetResponse>(null as any);
     }
 
     /**
@@ -5854,10 +5956,9 @@ export class SpaceDesignV1Client implements ISpaceDesignV1Client {
     }
 
     /**
-     * @param body (optional)
      * @return OK
      */
-    acquireEditLease(versionId: string, floorLogicalId: string, body: AcquireSpaceEditLeaseRequest | undefined): Promise<SpaceEditLeaseDto> {
+    acquireEditLease(versionId: string, floorLogicalId: string, body: AcquireSpaceEditLeaseRequest): Promise<SpaceEditLeaseDto> {
         let url_ = this.baseUrl + "/api/space/design/v1/versions/{versionId}/floors/{floorLogicalId}/lease";
         if (versionId === undefined || versionId === null)
             throw new globalThis.Error("The parameter 'versionId' must be defined.");
@@ -5953,7 +6054,7 @@ export class SpaceDesignV1Client implements ISpaceDesignV1Client {
     /**
      * @return OK
      */
-    renewEditLease(versionId: string, floorLogicalId: string, leaseId: string): Promise<SpaceEditLeaseDto> {
+    renewEditLease(versionId: string, floorLogicalId: string, leaseId: string, body: ContinueSpaceEditLeaseRequest): Promise<SpaceEditLeaseDto> {
         let url_ = this.baseUrl + "/api/space/design/v1/versions/{versionId}/floors/{floorLogicalId}/lease/{leaseId}:renew";
         if (versionId === undefined || versionId === null)
             throw new globalThis.Error("The parameter 'versionId' must be defined.");
@@ -5966,9 +6067,13 @@ export class SpaceDesignV1Client implements ISpaceDesignV1Client {
         url_ = url_.replace("{leaseId}", encodeURIComponent("" + leaseId));
         url_ = url_.replace(/[?&]$/, "");
 
+        const content_ = JSON.stringify(body);
+
         let options_: RequestInit = {
+            body: content_,
             method: "POST",
             headers: {
+                "Content-Type": "application/json",
                 "Accept": "application/json"
             }
         };
@@ -6048,7 +6153,7 @@ export class SpaceDesignV1Client implements ISpaceDesignV1Client {
     /**
      * @return OK
      */
-    releaseEditLease(versionId: string, floorLogicalId: string, leaseId: string): Promise<SpaceEditLeaseDto> {
+    releaseEditLease(versionId: string, floorLogicalId: string, leaseId: string, body: ContinueSpaceEditLeaseRequest): Promise<SpaceEditLeaseDto> {
         let url_ = this.baseUrl + "/api/space/design/v1/versions/{versionId}/floors/{floorLogicalId}/lease/{leaseId}:release";
         if (versionId === undefined || versionId === null)
             throw new globalThis.Error("The parameter 'versionId' must be defined.");
@@ -6061,9 +6166,13 @@ export class SpaceDesignV1Client implements ISpaceDesignV1Client {
         url_ = url_.replace("{leaseId}", encodeURIComponent("" + leaseId));
         url_ = url_.replace(/[?&]$/, "");
 
+        const content_ = JSON.stringify(body);
+
         let options_: RequestInit = {
+            body: content_,
             method: "POST",
             headers: {
+                "Content-Type": "application/json",
                 "Accept": "application/json"
             }
         };
@@ -6141,10 +6250,9 @@ export class SpaceDesignV1Client implements ISpaceDesignV1Client {
     }
 
     /**
-     * @param body (optional)
      * @return OK
      */
-    takeoverEditLease(versionId: string, floorLogicalId: string, body: TakeoverSpaceEditLeaseRequest | undefined): Promise<SpaceEditLeaseDto> {
+    takeoverEditLease(versionId: string, floorLogicalId: string, body: TakeoverSpaceEditLeaseRequest): Promise<SpaceEditLeaseDto> {
         let url_ = this.baseUrl + "/api/space/design/v1/versions/{versionId}/floors/{floorLogicalId}/lease:takeover";
         if (versionId === undefined || versionId === null)
             throw new globalThis.Error("The parameter 'versionId' must be defined.");
@@ -12957,7 +13065,7 @@ export class SpaceDesignV1Client implements ISpaceDesignV1Client {
 }
 
 export class AcquireSpaceEditLeaseRequest implements IAcquireSpaceEditLeaseRequest {
-    clientInstanceId?: string;
+    clientInstanceId!: string;
 
     constructor(data?: IAcquireSpaceEditLeaseRequest) {
         if (data) {
@@ -12989,16 +13097,150 @@ export class AcquireSpaceEditLeaseRequest implements IAcquireSpaceEditLeaseReque
 }
 
 export interface IAcquireSpaceEditLeaseRequest {
-    clientInstanceId?: string;
+    clientInstanceId: string;
+}
+
+export class ApplySpaceCadChangesetRequest implements IApplySpaceCadChangesetRequest {
+    commandBatchId!: string;
+    clientInstanceId!: string;
+    leaseId!: string;
+    expectedFloorRevision!: number;
+    expectedContentRevision!: number;
+    expectedContentHash?: string | undefined;
+    workspaceSha256!: string;
+    changeIds!: string[];
+
+    constructor(data?: IApplySpaceCadChangesetRequest) {
+        if (data) {
+            for (var property in data) {
+                if (data.hasOwnProperty(property))
+                    (this as any)[property] = (data as any)[property];
+            }
+        }
+        if (!data) {
+            this.changeIds = [];
+        }
+    }
+
+    init(_data?: any) {
+        if (_data) {
+            this.commandBatchId = _data["commandBatchId"];
+            this.clientInstanceId = _data["clientInstanceId"];
+            this.leaseId = _data["leaseId"];
+            this.expectedFloorRevision = _data["expectedFloorRevision"];
+            this.expectedContentRevision = _data["expectedContentRevision"];
+            this.expectedContentHash = _data["expectedContentHash"];
+            this.workspaceSha256 = _data["workspaceSha256"];
+            if (Array.isArray(_data["changeIds"])) {
+                this.changeIds = [] as any;
+                for (let item of _data["changeIds"])
+                    this.changeIds!.push(item);
+            }
+        }
+    }
+
+    static fromJS(data: any): ApplySpaceCadChangesetRequest {
+        data = typeof data === 'object' ? data : {};
+        let result = new ApplySpaceCadChangesetRequest();
+        result.init(data);
+        return result;
+    }
+
+    toJSON(data?: any) {
+        data = typeof data === 'object' ? data : {};
+        data["commandBatchId"] = this.commandBatchId;
+        data["clientInstanceId"] = this.clientInstanceId;
+        data["leaseId"] = this.leaseId;
+        data["expectedFloorRevision"] = this.expectedFloorRevision;
+        data["expectedContentRevision"] = this.expectedContentRevision;
+        data["expectedContentHash"] = this.expectedContentHash;
+        data["workspaceSha256"] = this.workspaceSha256;
+        if (Array.isArray(this.changeIds)) {
+            data["changeIds"] = [];
+            for (let item of this.changeIds)
+                data["changeIds"].push(item);
+        }
+        return data;
+    }
+}
+
+export interface IApplySpaceCadChangesetRequest {
+    commandBatchId: string;
+    clientInstanceId: string;
+    leaseId: string;
+    expectedFloorRevision: number;
+    expectedContentRevision: number;
+    expectedContentHash?: string | undefined;
+    workspaceSha256: string;
+    changeIds: string[];
+}
+
+export class ApplySpaceCadChangesetResponse implements IApplySpaceCadChangesetResponse {
+    commandBatchId!: string;
+    floorRevision!: number;
+    versionContentRevision!: number;
+    appliedChangeCount!: number;
+    workspaceSha256!: string;
+    idempotentReplay!: boolean;
+
+    constructor(data?: IApplySpaceCadChangesetResponse) {
+        if (data) {
+            for (var property in data) {
+                if (data.hasOwnProperty(property))
+                    (this as any)[property] = (data as any)[property];
+            }
+        }
+    }
+
+    init(_data?: any) {
+        if (_data) {
+            this.commandBatchId = _data["commandBatchId"];
+            this.floorRevision = _data["floorRevision"];
+            this.versionContentRevision = _data["versionContentRevision"];
+            this.appliedChangeCount = _data["appliedChangeCount"];
+            this.workspaceSha256 = _data["workspaceSha256"];
+            this.idempotentReplay = _data["idempotentReplay"];
+        }
+    }
+
+    static fromJS(data: any): ApplySpaceCadChangesetResponse {
+        data = typeof data === 'object' ? data : {};
+        let result = new ApplySpaceCadChangesetResponse();
+        result.init(data);
+        return result;
+    }
+
+    toJSON(data?: any) {
+        data = typeof data === 'object' ? data : {};
+        data["commandBatchId"] = this.commandBatchId;
+        data["floorRevision"] = this.floorRevision;
+        data["versionContentRevision"] = this.versionContentRevision;
+        data["appliedChangeCount"] = this.appliedChangeCount;
+        data["workspaceSha256"] = this.workspaceSha256;
+        data["idempotentReplay"] = this.idempotentReplay;
+        return data;
+    }
+}
+
+export interface IApplySpaceCadChangesetResponse {
+    commandBatchId: string;
+    floorRevision: number;
+    versionContentRevision: number;
+    appliedChangeCount: number;
+    workspaceSha256: string;
+    idempotentReplay: boolean;
 }
 
 export class ApplySpaceElementCommandBatchRequest implements IApplySpaceElementCommandBatchRequest {
-    schemaVersion?: number;
-    commandBatchId?: string;
-    clientInstanceId?: string;
-    leaseId?: string;
-    expectedFloorRevision?: number;
-    commands?: SpaceElementCommandDto[] | undefined;
+    schemaVersion!: number;
+    commandBatchId!: string;
+    clientInstanceId!: string;
+    leaseId!: string;
+    expectedFloorRevision!: number;
+    commands!: SpaceElementCommandDto[];
+    expectedContentRevision?: number | undefined;
+    expectedContentHash?: string | undefined;
+    changesetSha256?: string | undefined;
 
     constructor(data?: IApplySpaceElementCommandBatchRequest) {
         if (data) {
@@ -13006,6 +13248,9 @@ export class ApplySpaceElementCommandBatchRequest implements IApplySpaceElementC
                 if (data.hasOwnProperty(property))
                     (this as any)[property] = (data as any)[property];
             }
+        }
+        if (!data) {
+            this.commands = [];
         }
     }
 
@@ -13021,6 +13266,9 @@ export class ApplySpaceElementCommandBatchRequest implements IApplySpaceElementC
                 for (let item of _data["commands"])
                     this.commands!.push(SpaceElementCommandDto.fromJS(item));
             }
+            this.expectedContentRevision = _data["expectedContentRevision"];
+            this.expectedContentHash = _data["expectedContentHash"];
+            this.changesetSha256 = _data["changesetSha256"];
         }
     }
 
@@ -13043,17 +13291,23 @@ export class ApplySpaceElementCommandBatchRequest implements IApplySpaceElementC
             for (let item of this.commands)
                 data["commands"].push(item ? item.toJSON() : undefined as any);
         }
+        data["expectedContentRevision"] = this.expectedContentRevision;
+        data["expectedContentHash"] = this.expectedContentHash;
+        data["changesetSha256"] = this.changesetSha256;
         return data;
     }
 }
 
 export interface IApplySpaceElementCommandBatchRequest {
-    schemaVersion?: number;
-    commandBatchId?: string;
-    clientInstanceId?: string;
-    leaseId?: string;
-    expectedFloorRevision?: number;
-    commands?: SpaceElementCommandDto[] | undefined;
+    schemaVersion: number;
+    commandBatchId: string;
+    clientInstanceId: string;
+    leaseId: string;
+    expectedFloorRevision: number;
+    commands: SpaceElementCommandDto[];
+    expectedContentRevision?: number | undefined;
+    expectedContentHash?: string | undefined;
+    changesetSha256?: string | undefined;
 }
 
 export class ApplySpaceElementCommandBatchResponse implements IApplySpaceElementCommandBatchResponse {
@@ -13462,6 +13716,42 @@ export interface IConfirmSpaceExcelCadMatchResponse {
     jobStatus?: string | undefined;
     jobStatusUrl?: string | undefined;
     idempotentReplay?: boolean;
+}
+
+export class ContinueSpaceEditLeaseRequest implements IContinueSpaceEditLeaseRequest {
+    clientInstanceId!: string;
+
+    constructor(data?: IContinueSpaceEditLeaseRequest) {
+        if (data) {
+            for (var property in data) {
+                if (data.hasOwnProperty(property))
+                    (this as any)[property] = (data as any)[property];
+            }
+        }
+    }
+
+    init(_data?: any) {
+        if (_data) {
+            this.clientInstanceId = _data["clientInstanceId"];
+        }
+    }
+
+    static fromJS(data: any): ContinueSpaceEditLeaseRequest {
+        data = typeof data === 'object' ? data : {};
+        let result = new ContinueSpaceEditLeaseRequest();
+        result.init(data);
+        return result;
+    }
+
+    toJSON(data?: any) {
+        data = typeof data === 'object' ? data : {};
+        data["clientInstanceId"] = this.clientInstanceId;
+        return data;
+    }
+}
+
+export interface IContinueSpaceEditLeaseRequest {
+    clientInstanceId: string;
 }
 
 export class CreateSpaceAiAtomicApplyRequest implements ICreateSpaceAiAtomicApplyRequest {
@@ -17679,6 +17969,163 @@ export interface ISpaceAssetVersionDto {
     rowVersion?: string | undefined;
 }
 
+export enum SpaceCadChangeKind {
+    Add = "Add",
+    Modify = "Modify",
+    Delete = "Delete",
+    Conflict = "Conflict",
+    LowConfidence = "LowConfidence",
+    Unrecognized = "Unrecognized",
+}
+
+export class SpaceCadChangeSummaryV1 implements ISpaceCadChangeSummaryV1 {
+    totalCount!: number;
+    addCount!: number;
+    modifyCount!: number;
+    deleteCount!: number;
+    conflictCount!: number;
+    lowConfidenceCount!: number;
+    unrecognizedCount!: number;
+    selectedCount!: number;
+    applyEligibleCount!: number;
+
+    constructor(data?: ISpaceCadChangeSummaryV1) {
+        if (data) {
+            for (var property in data) {
+                if (data.hasOwnProperty(property))
+                    (this as any)[property] = (data as any)[property];
+            }
+        }
+    }
+
+    init(_data?: any) {
+        if (_data) {
+            this.totalCount = _data["totalCount"];
+            this.addCount = _data["addCount"];
+            this.modifyCount = _data["modifyCount"];
+            this.deleteCount = _data["deleteCount"];
+            this.conflictCount = _data["conflictCount"];
+            this.lowConfidenceCount = _data["lowConfidenceCount"];
+            this.unrecognizedCount = _data["unrecognizedCount"];
+            this.selectedCount = _data["selectedCount"];
+            this.applyEligibleCount = _data["applyEligibleCount"];
+        }
+    }
+
+    static fromJS(data: any): SpaceCadChangeSummaryV1 {
+        data = typeof data === 'object' ? data : {};
+        let result = new SpaceCadChangeSummaryV1();
+        result.init(data);
+        return result;
+    }
+
+    toJSON(data?: any) {
+        data = typeof data === 'object' ? data : {};
+        data["totalCount"] = this.totalCount;
+        data["addCount"] = this.addCount;
+        data["modifyCount"] = this.modifyCount;
+        data["deleteCount"] = this.deleteCount;
+        data["conflictCount"] = this.conflictCount;
+        data["lowConfidenceCount"] = this.lowConfidenceCount;
+        data["unrecognizedCount"] = this.unrecognizedCount;
+        data["selectedCount"] = this.selectedCount;
+        data["applyEligibleCount"] = this.applyEligibleCount;
+        return data;
+    }
+}
+
+export interface ISpaceCadChangeSummaryV1 {
+    totalCount: number;
+    addCount: number;
+    modifyCount: number;
+    deleteCount: number;
+    conflictCount: number;
+    lowConfidenceCount: number;
+    unrecognizedCount: number;
+    selectedCount: number;
+    applyEligibleCount: number;
+}
+
+export class SpaceCadChangeV1 implements ISpaceCadChangeV1 {
+    changeId!: string;
+    kind!: SpaceCadChangeKind;
+    logicalId!: string;
+    sourceRef!: string;
+    previewObjectId?: string | undefined;
+    objectType!: string;
+    confidence?: number | undefined;
+    isSelected!: boolean;
+    canApply!: boolean;
+    blockingReasonCode?: string | undefined;
+    beforeBounds?: SpaceCadMillimeterBoundsV1;
+    afterBounds?: SpaceCadMillimeterBoundsV1;
+
+    constructor(data?: ISpaceCadChangeV1) {
+        if (data) {
+            for (var property in data) {
+                if (data.hasOwnProperty(property))
+                    (this as any)[property] = (data as any)[property];
+            }
+        }
+    }
+
+    init(_data?: any) {
+        if (_data) {
+            this.changeId = _data["changeId"];
+            this.kind = _data["kind"];
+            this.logicalId = _data["logicalId"];
+            this.sourceRef = _data["sourceRef"];
+            this.previewObjectId = _data["previewObjectId"];
+            this.objectType = _data["objectType"];
+            this.confidence = _data["confidence"];
+            this.isSelected = _data["isSelected"];
+            this.canApply = _data["canApply"];
+            this.blockingReasonCode = _data["blockingReasonCode"];
+            this.beforeBounds = _data["beforeBounds"] ? SpaceCadMillimeterBoundsV1.fromJS(_data["beforeBounds"]) : undefined as any;
+            this.afterBounds = _data["afterBounds"] ? SpaceCadMillimeterBoundsV1.fromJS(_data["afterBounds"]) : undefined as any;
+        }
+    }
+
+    static fromJS(data: any): SpaceCadChangeV1 {
+        data = typeof data === 'object' ? data : {};
+        let result = new SpaceCadChangeV1();
+        result.init(data);
+        return result;
+    }
+
+    toJSON(data?: any) {
+        data = typeof data === 'object' ? data : {};
+        data["changeId"] = this.changeId;
+        data["kind"] = this.kind;
+        data["logicalId"] = this.logicalId;
+        data["sourceRef"] = this.sourceRef;
+        data["previewObjectId"] = this.previewObjectId;
+        data["objectType"] = this.objectType;
+        data["confidence"] = this.confidence;
+        data["isSelected"] = this.isSelected;
+        data["canApply"] = this.canApply;
+        data["blockingReasonCode"] = this.blockingReasonCode;
+        data["beforeBounds"] = this.beforeBounds ? this.beforeBounds.toJSON() : undefined as any;
+        data["afterBounds"] = this.afterBounds ? this.afterBounds.toJSON() : undefined as any;
+        return data;
+    }
+}
+
+export interface ISpaceCadChangeV1 {
+    changeId: string;
+    kind: SpaceCadChangeKind;
+    logicalId: string;
+    sourceRef: string;
+    previewObjectId?: string | undefined;
+    objectType: string;
+    confidence?: number | undefined;
+    isSelected: boolean;
+    canApply: boolean;
+    blockingReasonCode?: string | undefined;
+    beforeBounds?: SpaceCadMillimeterBoundsV1;
+    afterBounds?: SpaceCadMillimeterBoundsV1;
+}
+
 export enum SpaceCadConfidenceBand {
     High = "High",
     Review = "Review",
@@ -18294,6 +18741,12 @@ export class SpaceCadReviewWorkspaceV1 implements ISpaceCadReviewWorkspaceV1 {
     items?: SpaceCadReviewItemV1[] | undefined;
     summary?: SpaceCadReviewWorkspaceSummaryV1;
     workspaceSha256?: string | undefined;
+    sourceId?: string | undefined;
+    cadParseJobId?: string | undefined;
+    semanticPreviewSha256?: string | undefined;
+    changes?: SpaceCadChangeV1[] | undefined;
+    changeSummary?: SpaceCadChangeSummaryV1;
+    changesetSha256?: string | undefined;
 
     constructor(data?: ISpaceCadReviewWorkspaceV1) {
         if (data) {
@@ -18325,6 +18778,16 @@ export class SpaceCadReviewWorkspaceV1 implements ISpaceCadReviewWorkspaceV1 {
             }
             this.summary = _data["summary"] ? SpaceCadReviewWorkspaceSummaryV1.fromJS(_data["summary"]) : undefined as any;
             this.workspaceSha256 = _data["workspaceSha256"];
+            this.sourceId = _data["sourceId"];
+            this.cadParseJobId = _data["cadParseJobId"];
+            this.semanticPreviewSha256 = _data["semanticPreviewSha256"];
+            if (Array.isArray(_data["changes"])) {
+                this.changes = [] as any;
+                for (let item of _data["changes"])
+                    this.changes!.push(SpaceCadChangeV1.fromJS(item));
+            }
+            this.changeSummary = _data["changeSummary"] ? SpaceCadChangeSummaryV1.fromJS(_data["changeSummary"]) : undefined as any;
+            this.changesetSha256 = _data["changesetSha256"];
         }
     }
 
@@ -18356,6 +18819,16 @@ export class SpaceCadReviewWorkspaceV1 implements ISpaceCadReviewWorkspaceV1 {
         }
         data["summary"] = this.summary ? this.summary.toJSON() : undefined as any;
         data["workspaceSha256"] = this.workspaceSha256;
+        data["sourceId"] = this.sourceId;
+        data["cadParseJobId"] = this.cadParseJobId;
+        data["semanticPreviewSha256"] = this.semanticPreviewSha256;
+        if (Array.isArray(this.changes)) {
+            data["changes"] = [];
+            for (let item of this.changes)
+                data["changes"].push(item ? item.toJSON() : undefined as any);
+        }
+        data["changeSummary"] = this.changeSummary ? this.changeSummary.toJSON() : undefined as any;
+        data["changesetSha256"] = this.changesetSha256;
         return data;
     }
 }
@@ -18376,6 +18849,12 @@ export interface ISpaceCadReviewWorkspaceV1 {
     items?: SpaceCadReviewItemV1[] | undefined;
     summary?: SpaceCadReviewWorkspaceSummaryV1;
     workspaceSha256?: string | undefined;
+    sourceId?: string | undefined;
+    cadParseJobId?: string | undefined;
+    semanticPreviewSha256?: string | undefined;
+    changes?: SpaceCadChangeV1[] | undefined;
+    changeSummary?: SpaceCadChangeSummaryV1;
+    changesetSha256?: string | undefined;
 }
 
 export enum SpaceCadUnit {
@@ -18385,6 +18864,105 @@ export enum SpaceCadUnit {
     Meter = "Meter",
     Inch = "Inch",
     Foot = "Foot",
+}
+
+export class SpaceCreateElementDto implements ISpaceCreateElementDto {
+    elementType!: string;
+    geometryJson!: string;
+    x!: number;
+    y!: number;
+    z!: number;
+    rotationZ!: number;
+    width!: number;
+    height!: number;
+    depth!: number;
+    businessCode?: string | undefined;
+    parentLogicalId?: string | undefined;
+    sourceId?: string | undefined;
+    sourceRef?: string | undefined;
+    attributes!: SpaceElementAttributeWriteDto[];
+
+    constructor(data?: ISpaceCreateElementDto) {
+        if (data) {
+            for (var property in data) {
+                if (data.hasOwnProperty(property))
+                    (this as any)[property] = (data as any)[property];
+            }
+        }
+        if (!data) {
+            this.attributes = [];
+        }
+    }
+
+    init(_data?: any) {
+        if (_data) {
+            this.elementType = _data["elementType"];
+            this.geometryJson = _data["geometryJson"];
+            this.x = _data["x"];
+            this.y = _data["y"];
+            this.z = _data["z"];
+            this.rotationZ = _data["rotationZ"];
+            this.width = _data["width"];
+            this.height = _data["height"];
+            this.depth = _data["depth"];
+            this.businessCode = _data["businessCode"];
+            this.parentLogicalId = _data["parentLogicalId"];
+            this.sourceId = _data["sourceId"];
+            this.sourceRef = _data["sourceRef"];
+            if (Array.isArray(_data["attributes"])) {
+                this.attributes = [] as any;
+                for (let item of _data["attributes"])
+                    this.attributes!.push(SpaceElementAttributeWriteDto.fromJS(item));
+            }
+        }
+    }
+
+    static fromJS(data: any): SpaceCreateElementDto {
+        data = typeof data === 'object' ? data : {};
+        let result = new SpaceCreateElementDto();
+        result.init(data);
+        return result;
+    }
+
+    toJSON(data?: any) {
+        data = typeof data === 'object' ? data : {};
+        data["elementType"] = this.elementType;
+        data["geometryJson"] = this.geometryJson;
+        data["x"] = this.x;
+        data["y"] = this.y;
+        data["z"] = this.z;
+        data["rotationZ"] = this.rotationZ;
+        data["width"] = this.width;
+        data["height"] = this.height;
+        data["depth"] = this.depth;
+        data["businessCode"] = this.businessCode;
+        data["parentLogicalId"] = this.parentLogicalId;
+        data["sourceId"] = this.sourceId;
+        data["sourceRef"] = this.sourceRef;
+        if (Array.isArray(this.attributes)) {
+            data["attributes"] = [];
+            for (let item of this.attributes)
+                data["attributes"].push(item ? item.toJSON() : undefined as any);
+        }
+        return data;
+    }
+}
+
+export interface ISpaceCreateElementDto {
+    elementType: string;
+    geometryJson: string;
+    x: number;
+    y: number;
+    z: number;
+    rotationZ: number;
+    width: number;
+    height: number;
+    depth: number;
+    businessCode?: string | undefined;
+    parentLogicalId?: string | undefined;
+    sourceId?: string | undefined;
+    sourceRef?: string | undefined;
+    attributes: SpaceElementAttributeWriteDto[];
 }
 
 export class SpaceDesignSceneDto implements ISpaceDesignSceneDto {
@@ -19169,7 +19747,9 @@ export class SpaceEditLeaseDto implements ISpaceEditLeaseDto {
     floorLogicalId?: string;
     leaseId?: string | undefined;
     ownerUserId?: string | undefined;
+    holderDisplayName?: string | undefined;
     clientInstanceId?: string | undefined;
+    acquiredAtUtc?: Date | undefined;
     expiresAtUtc?: Date | undefined;
     lastRenewedAtUtc?: Date | undefined;
     isAvailable?: boolean;
@@ -19191,7 +19771,9 @@ export class SpaceEditLeaseDto implements ISpaceEditLeaseDto {
             this.floorLogicalId = _data["floorLogicalId"];
             this.leaseId = _data["leaseId"];
             this.ownerUserId = _data["ownerUserId"];
+            this.holderDisplayName = _data["holderDisplayName"];
             this.clientInstanceId = _data["clientInstanceId"];
+            this.acquiredAtUtc = _data["acquiredAtUtc"] ? new Date(_data["acquiredAtUtc"].toString()) : undefined as any;
             this.expiresAtUtc = _data["expiresAtUtc"] ? new Date(_data["expiresAtUtc"].toString()) : undefined as any;
             this.lastRenewedAtUtc = _data["lastRenewedAtUtc"] ? new Date(_data["lastRenewedAtUtc"].toString()) : undefined as any;
             this.isAvailable = _data["isAvailable"];
@@ -19213,7 +19795,9 @@ export class SpaceEditLeaseDto implements ISpaceEditLeaseDto {
         data["floorLogicalId"] = this.floorLogicalId;
         data["leaseId"] = this.leaseId;
         data["ownerUserId"] = this.ownerUserId;
+        data["holderDisplayName"] = this.holderDisplayName;
         data["clientInstanceId"] = this.clientInstanceId;
+        data["acquiredAtUtc"] = this.acquiredAtUtc ? this.acquiredAtUtc.toISOString() : undefined as any;
         data["expiresAtUtc"] = this.expiresAtUtc ? this.expiresAtUtc.toISOString() : undefined as any;
         data["lastRenewedAtUtc"] = this.lastRenewedAtUtc ? this.lastRenewedAtUtc.toISOString() : undefined as any;
         data["isAvailable"] = this.isAvailable;
@@ -19228,7 +19812,9 @@ export interface ISpaceEditLeaseDto {
     floorLogicalId?: string;
     leaseId?: string | undefined;
     ownerUserId?: string | undefined;
+    holderDisplayName?: string | undefined;
     clientInstanceId?: string | undefined;
+    acquiredAtUtc?: Date | undefined;
     expiresAtUtc?: Date | undefined;
     lastRenewedAtUtc?: Date | undefined;
     isAvailable?: boolean;
@@ -19289,13 +19875,14 @@ export interface ISpaceElementAttributeWriteDto {
 }
 
 export class SpaceElementCommandDto implements ISpaceElementCommandDto {
-    commandId?: string;
-    type?: string | undefined;
-    targetLogicalId?: string;
+    commandId!: string;
+    type!: string;
+    targetLogicalId!: string;
     updateProperties?: SpaceUpdateElementPropertiesDto;
     moveObject?: SpaceMoveObjectDto;
     rotateObject?: SpaceRotateObjectDto;
     generateRackArray?: SpaceGenerateRackArrayDto;
+    createElement?: SpaceCreateElementDto;
 
     constructor(data?: ISpaceElementCommandDto) {
         if (data) {
@@ -19315,6 +19902,7 @@ export class SpaceElementCommandDto implements ISpaceElementCommandDto {
             this.moveObject = _data["moveObject"] ? SpaceMoveObjectDto.fromJS(_data["moveObject"]) : undefined as any;
             this.rotateObject = _data["rotateObject"] ? SpaceRotateObjectDto.fromJS(_data["rotateObject"]) : undefined as any;
             this.generateRackArray = _data["generateRackArray"] ? SpaceGenerateRackArrayDto.fromJS(_data["generateRackArray"]) : undefined as any;
+            this.createElement = _data["createElement"] ? SpaceCreateElementDto.fromJS(_data["createElement"]) : undefined as any;
         }
     }
 
@@ -19334,18 +19922,20 @@ export class SpaceElementCommandDto implements ISpaceElementCommandDto {
         data["moveObject"] = this.moveObject ? this.moveObject.toJSON() : undefined as any;
         data["rotateObject"] = this.rotateObject ? this.rotateObject.toJSON() : undefined as any;
         data["generateRackArray"] = this.generateRackArray ? this.generateRackArray.toJSON() : undefined as any;
+        data["createElement"] = this.createElement ? this.createElement.toJSON() : undefined as any;
         return data;
     }
 }
 
 export interface ISpaceElementCommandDto {
-    commandId?: string;
-    type?: string | undefined;
-    targetLogicalId?: string;
+    commandId: string;
+    type: string;
+    targetLogicalId: string;
     updateProperties?: SpaceUpdateElementPropertiesDto;
     moveObject?: SpaceMoveObjectDto;
     rotateObject?: SpaceRotateObjectDto;
     generateRackArray?: SpaceGenerateRackArrayDto;
+    createElement?: SpaceCreateElementDto;
 }
 
 export class SpaceElementCommandResultDto implements ISpaceElementCommandResultDto {
@@ -30426,8 +31016,8 @@ export interface IStartSpaceHistoricalRepublishResponse {
 }
 
 export class TakeoverSpaceEditLeaseRequest implements ITakeoverSpaceEditLeaseRequest {
-    clientInstanceId?: string;
-    reason?: string | undefined;
+    clientInstanceId!: string;
+    reason!: string;
 
     constructor(data?: ITakeoverSpaceEditLeaseRequest) {
         if (data) {
@@ -30461,8 +31051,8 @@ export class TakeoverSpaceEditLeaseRequest implements ITakeoverSpaceEditLeaseReq
 }
 
 export interface ITakeoverSpaceEditLeaseRequest {
-    clientInstanceId?: string;
-    reason?: string | undefined;
+    clientInstanceId: string;
+    reason: string;
 }
 
 export class UpdateSpaceAiPolicyRequest implements IUpdateSpaceAiPolicyRequest {

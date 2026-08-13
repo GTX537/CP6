@@ -280,6 +280,7 @@ public sealed class SpaceContext : DbContext
         ProtectRackGenerationProfiles();
         ProtectUnderlayCalibrationHistory();
         ProtectElementCommandHistory();
+        ProtectEditLeaseTakeoverAuditHistory();
         ProtectExcelMappingVersionHistory();
         ProtectPersonnelEventHistory();
         ProtectDeviceEventHistory();
@@ -2482,6 +2483,16 @@ public sealed class SpaceContext : DbContext
             .IsFixedLength()
             .HasMaxLength(64)
             .IsRequired();
+        entity.Property(x => x.ExpectedContentHash)
+            .HasColumnType("char(64)")
+            .IsUnicode(false)
+            .IsFixedLength()
+            .HasMaxLength(64);
+        entity.Property(x => x.ChangesetSha256)
+            .HasColumnType("char(64)")
+            .IsUnicode(false)
+            .IsFixedLength()
+            .HasMaxLength(64);
         entity.Property(x => x.ResponseJson).HasColumnType("nvarchar(max)");
         entity.Property(x => x.AppliedAtUtc).HasColumnType("datetime2");
 
@@ -2560,6 +2571,8 @@ public sealed class SpaceContext : DbContext
         entity.Property(x => x.Id).ValueGeneratedNever();
         ConfigureTenantEntity(entity);
         entity.Property(x => x.ExpiresAtUtc).HasColumnType("datetime2");
+        entity.Property(x => x.HolderDisplayName).HasMaxLength(200).IsRequired();
+        entity.Property(x => x.AcquiredAtUtc).HasColumnType("datetime2");
         entity.Property(x => x.LastRenewedAtUtc).HasColumnType("datetime2");
         entity.Property(x => x.RowVersion).IsRowVersion();
         entity.HasIndex(x => new
@@ -2603,6 +2616,7 @@ public sealed class SpaceContext : DbContext
         entity.Property(x => x.Id).ValueGeneratedNever();
         ConfigureTenantEntity(entity);
         entity.Property(x => x.Reason).HasMaxLength(500).IsRequired();
+        entity.Property(x => x.RequestSource).HasMaxLength(500).IsRequired();
         entity.Property(x => x.TakenOverAtUtc).HasColumnType("datetime2");
         entity.HasIndex(x => new
         {

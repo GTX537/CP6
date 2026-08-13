@@ -734,5 +734,5 @@ public sealed class SpaceExcelCadMatchJobStepExecutor(
 
     private sealed record PreviewSetInput(
         SpaceArtifact Artifact,
-        SpaceCadPreviewSetV1 Value);
+        SpaceCadPreviewSetV2 Value);
 }

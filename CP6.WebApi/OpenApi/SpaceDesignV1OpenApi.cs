@@ -134,6 +134,88 @@ public sealed class SpaceWmsRuntimeSchemaFilter : ISchemaFilter
                 "profile",
                 "idempotentReplay",
             ],
+            [typeof(ApplySpaceElementCommandBatchRequest)] =
+            [
+                "schemaVersion",
+                "commandBatchId",
+                "clientInstanceId",
+                "leaseId",
+                "expectedFloorRevision",
+                "commands",
+            ],
+            [typeof(SpaceElementCommandDto)] =
+            [
+                "commandId",
+                "type",
+                "targetLogicalId",
+            ],
+            [typeof(SpaceCreateElementDto)] =
+            [
+                "elementType",
+                "geometryJson",
+                "x",
+                "y",
+                "z",
+                "rotationZ",
+                "width",
+                "height",
+                "depth",
+                "attributes",
+            ],
+            [typeof(ApplySpaceCadChangesetRequest)] =
+            [
+                "commandBatchId",
+                "clientInstanceId",
+                "leaseId",
+                "expectedFloorRevision",
+                "expectedContentRevision",
+                "workspaceSha256",
+                "changeIds",
+            ],
+            [typeof(ApplySpaceCadChangesetResponse)] =
+            [
+                "commandBatchId",
+                "floorRevision",
+                "versionContentRevision",
+                "appliedChangeCount",
+                "workspaceSha256",
+                "idempotentReplay",
+            ],
+            [typeof(SpaceCadChangeV1)] =
+            [
+                "changeId",
+                "kind",
+                "logicalId",
+                "sourceRef",
+                "objectType",
+                "isSelected",
+                "canApply",
+            ],
+            [typeof(SpaceCadChangeSummaryV1)] =
+            [
+                "totalCount",
+                "addCount",
+                "modifyCount",
+                "deleteCount",
+                "conflictCount",
+                "lowConfidenceCount",
+                "unrecognizedCount",
+                "selectedCount",
+                "applyEligibleCount",
+            ],
+            [typeof(AcquireSpaceEditLeaseRequest)] =
+            [
+                "clientInstanceId",
+            ],
+            [typeof(ContinueSpaceEditLeaseRequest)] =
+            [
+                "clientInstanceId",
+            ],
+            [typeof(TakeoverSpaceEditLeaseRequest)] =
+            [
+                "clientInstanceId",
+                "reason",
+            ],
             [typeof(SpaceWmsRuntimeInventoryResponse)] =
             [
                 "siteId",

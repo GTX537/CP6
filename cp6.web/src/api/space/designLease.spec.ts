@@ -15,7 +15,12 @@ describe('designLeaseApi', () => {
   it('uses the frozen acquire and renew routes', async () => {
     vi.mocked(http.post).mockResolvedValue({})
     await designLeaseApi.acquire('version-1', 'floor-1', 'client-1')
-    await designLeaseApi.renew('version-1', 'floor-1', 'lease-1')
+    await designLeaseApi.renew(
+      'version-1',
+      'floor-1',
+      'lease-1',
+      'client-1',
+    )
 
     expect(http.post).toHaveBeenNthCalledWith(
       1,
@@ -25,6 +30,7 @@ describe('designLeaseApi', () => {
     expect(http.post).toHaveBeenNthCalledWith(
       2,
       '/space/design/v1/versions/version-1/floors/floor-1/lease/lease-1:renew',
+      { clientInstanceId: 'client-1' },
     )
   })
 

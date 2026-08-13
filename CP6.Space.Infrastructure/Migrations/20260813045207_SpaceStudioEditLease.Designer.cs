@@ -12,7 +12,7 @@ using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 namespace CP6.Space.Infrastructure.Migrations
 {
     [DbContext(typeof(SpaceContext))]
-    [Migration("20260812151629_SpaceStudioEditLease")]
+    [Migration("20260813045207_SpaceStudioEditLease")]
     partial class SpaceStudioEditLease
     {
         /// <inheritdoc />
@@ -1313,6 +1313,9 @@ namespace CP6.Space.Infrastructure.Migrations
                     b.Property<Guid>("Id")
                         .HasColumnType("uniqueidentifier");
 
+                    b.Property<DateTime>("AcquiredAtUtc")
+                        .HasColumnType("datetime2");
+
                     b.Property<Guid>("ClientInstanceId")
                         .HasColumnType("uniqueidentifier");
 
@@ -1327,6 +1330,11 @@ namespace CP6.Space.Infrastructure.Migrations
 
                     b.Property<Guid>("FloorLogicalId")
                         .HasColumnType("uniqueidentifier");
+
+                    b.Property<string>("HolderDisplayName")
+                        .IsRequired()
+                        .HasMaxLength(200)
+                        .HasColumnType("nvarchar(200)");
 
                     b.Property<bool>("IsDeleted")
                         .ValueGeneratedOnAdd()
@@ -1377,6 +1385,9 @@ namespace CP6.Space.Infrastructure.Migrations
                     b.Property<Guid>("ClientInstanceId")
                         .HasColumnType("uniqueidentifier");
 
+                    b.Property<Guid>("CorrelationId")
+                        .HasColumnType("uniqueidentifier");
+
                     b.Property<DateTime>("CreatedAtUtc")
                         .HasColumnType("datetime2");
 
@@ -1410,6 +1421,11 @@ namespace CP6.Space.Infrastructure.Migrations
                         .HasColumnType("uniqueidentifier");
 
                     b.Property<string>("Reason")
+                        .IsRequired()
+                        .HasMaxLength(500)
+                        .HasColumnType("nvarchar(500)");
+
+                    b.Property<string>("RequestSource")
                         .IsRequired()
                         .HasMaxLength(500)
                         .HasColumnType("nvarchar(500)");

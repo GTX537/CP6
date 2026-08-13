@@ -7,7 +7,9 @@ export interface SpaceEditLease {
   floorLogicalId: string
   leaseId?: string
   ownerUserId?: string
+  holderDisplayName?: string
   clientInstanceId?: string
+  acquiredAtUtc?: string
   expiresAtUtc?: string
   lastRenewedAtUtc?: string
   isAvailable: boolean
@@ -34,9 +36,11 @@ export const designLeaseApi = {
     versionId: string,
     floorLogicalId: string,
     leaseId: string,
+    clientInstanceId: string,
   ) {
     return http.post<unknown, SpaceEditLease>(
       `${url(versionId, floorLogicalId)}/${leaseId}:renew`,
+      { clientInstanceId },
     )
   },
 
@@ -44,9 +48,11 @@ export const designLeaseApi = {
     versionId: string,
     floorLogicalId: string,
     leaseId: string,
+    clientInstanceId: string,
   ) {
     return http.post<unknown, SpaceEditLease>(
       `${url(versionId, floorLogicalId)}/${leaseId}:release`,
+      { clientInstanceId },
     )
   },
 

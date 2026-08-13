@@ -2,12 +2,14 @@
 
 > 依据 Git log 汇总，不替代完整 Git 历史。重点记录影响接手判断的里程碑。
 
-## 2026-08-12：Space Studio v1.3 核心实现
+## 2026-08-13：Space Studio v1.3 核心实现与预发布收口
 
-- 以 v1.2 的完整详细正文为底稿增量修订低成本 3D 建模 Spec 到 v1.3，并新增 Scope Change RFC-003；保留原数据模型、状态机、接口、恢复与验收细节，同时合入外部 AI、Viewer 与 Supplier UAT 范围变化。
+- 以 v1.2 的完整详细正文为底稿增量修订低成本 3D 建模 Spec 到 v1.3；RFC-003 补齐影响、兼容、测试、回滚和五方批准表，并明确“产品冻结”不等于跨职能 RFC 生效或 GA。
 - 将 `DesignUnderlayView` 收敛为独立 Space Studio 子主题四栏工作台，增加状态栏、任务清单、检查器域、窄屏只读、保存状态与恢复草稿。
-- 新增带数据库唯一槽和 rowversion 的 Floor 编辑租约、90 秒过期/30 秒续租、释放、强制接管专有权限与不可变审计；Design V1 命令批要求当前 `leaseId`。
-- 新增 CAD Parse Review Workspace API：成功 Job 的 PreviewSet 经过文件状态和 SHA 校验后，与当前编辑器快照组成审核空间；前端根据 route Job 自动轮询和加载。
+- 新增带数据库唯一槽、数据库 UTC、会话 fence 和 rowversion 的 Floor 编辑租约；保存与租约写入共用 Floor applock，接管要求 edit+takeover 双权限并记录 display name、correlation、request source 的不可变审计。
+- CAD Parse Review Workspace 绑定解析启动时 BaseContentRevision/Hash、Source/Job/Floor 和三个 SHA；输出 typed 新增/修改/删除/冲突/低置信度/未识别变更集，确认 Apply 通过租约、Revision、ContentRevision、变更集哈希与幂等键原子写入，成功、重放和 stale 零写入均有自动化证据。
+- 空白画布/底图已支持墙、柱、门、月台和静态设备直接创建及本地 2D/3D 同源；“校验并发布”深链会选择指定 Site/Version 并自动启动正式 Validation，但不会绕过 Preview、审批确认或发布权限。库区/巷道/首个货架直建及 CAD Mapping Profile 启动 UI 仍保留为 P0。
+- 门禁通过：Space Unit 497、真实 SQL Space Integration 396（0 skipped）、CP6.Tests 2867、Web 727、Playwright 5；SDK/EF drift clean，完整 Release solution 0 warning / 0 error。
 - 记录真实 Provider、黄金 CAD、Viewer 基准、两仓 Pilot 与五角色签字仍是未完成门禁，未将本次代码交付表述为 GA。
 
 ## 2026-08-11：新增 Azure DEV 自动部署学习链
