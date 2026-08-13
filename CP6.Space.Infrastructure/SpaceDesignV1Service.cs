@@ -347,7 +347,8 @@ public sealed class SpaceDesignV1Service : ISpaceDesignV1Service
                     request.CommandBatchId,
                     requestHash,
                     cancellationToken);
-                if (completedReplay is not null)
+                if (completedReplay is not null &&
+                    completedReplay.VersionContentRevision == version.ContentRevision)
                 {
                     await transaction.CommitAsync(cancellationToken);
                     return completedReplay;

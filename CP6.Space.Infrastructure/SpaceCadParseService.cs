@@ -556,13 +556,20 @@ public sealed class SpaceCadParseService(
         {
             throw Invalid("CAD changeset Apply request is invalid.");
         }
+        var parse = await LoadReadableAsync(
+            versionId,
+            sourceId,
+            jobId,
+            tracked: false,
+            cancellationToken);
         var applyFingerprint = CadApplyFingerprint(
             versionId,
             sourceId,
             jobId,
             request);
-        var replay = await ReadCadApplyReplayAsync(
+        var replay = await ReadCadApplyReplayWithFenceAsync(
             versionId,
+            parse.Payload.FloorLogicalId,
             request,
             applyFingerprint,
             cancellationToken);
@@ -1026,6 +1033,7 @@ public sealed class SpaceCadParseService(
 
     private async Task<ApplySpaceCadChangesetResponse?> ReadCadApplyReplayAsync(
         Guid versionId,
+        SpaceModelVersion currentVersion,
         ApplySpaceCadChangesetRequest request,
         string applyFingerprint,
         CancellationToken cancellationToken)
@@ -1070,6 +1078,29 @@ public sealed class SpaceCadParseService(
                           JsonOptions)
                       ?? throw new InvalidDataException(
                           "The CAD command batch response is invalid.");
+        if (currentVersion.ContentRevision != applied.VersionContentRevision)
+        {
+            throw new SpaceProblemException(
+                SpaceErrorCodes.ParseChangesetStale,
+                409,
+                "The CAD changeset replay no longer matches the current Draft revision.",
+                recoveryAction: "start-new-cad-parse");
+        }
+        var floorRevision = await context.FloorRevisions.AsNoTracking()
+            .Where(item =>
+                item.ModelVersionId == versionId &&
+                item.LogicalId == batch.FloorLogicalId)
+            .Select(item => (long?)item.Revision)
+            .SingleOrDefaultAsync(cancellationToken)
+            ?? throw NotFound();
+        if (floorRevision != applied.FloorRevision)
+        {
+            throw new SpaceProblemException(
+                SpaceErrorCodes.FloorRevisionConflict,
+                409,
+                "The CAD changeset replay no longer matches the current floor revision.",
+                recoveryAction: "reload-floor-scene");
+        }
         return new ApplySpaceCadChangesetResponse(
             applied.CommandBatchId,
             applied.FloorRevision,
@@ -1077,6 +1108,129 @@ public sealed class SpaceCadParseService(
             request.ChangeIds.Count,
             request.WorkspaceSha256,
             IdempotentReplay: true);
+    }
+
+    private async Task<ApplySpaceCadChangesetResponse?>
+        ReadCadApplyReplayWithFenceAsync(
+            Guid versionId,
+            Guid floorLogicalId,
+            ApplySpaceCadChangesetRequest request,
+            string applyFingerprint,
+            CancellationToken cancellationToken)
+    {
+        IDbContextTransaction? transaction = context.Database.IsRelational()
+            ? await context.Database.BeginTransactionAsync(
+                IsolationLevel.Serializable,
+                cancellationToken)
+            : null;
+        try
+        {
+            await AcquireFloorEditLockAsync(
+                versionId,
+                floorLogicalId,
+                cancellationToken);
+            var currentVersion = await LoadWritableVersionSnapshotAsync(
+                versionId,
+                cancellationToken);
+            await EnsureActiveEditLeaseAsync(
+                versionId,
+                floorLogicalId,
+                request.LeaseId,
+                request.ClientInstanceId,
+                cancellationToken);
+            var replay = await ReadCadApplyReplayAsync(
+                versionId,
+                currentVersion,
+                request,
+                applyFingerprint,
+                cancellationToken);
+            if (transaction is not null)
+                await transaction.CommitAsync(cancellationToken);
+            return replay;
+        }
+        catch
+        {
+            if (transaction is not null)
+                await transaction.RollbackAsync(CancellationToken.None);
+            throw;
+        }
+        finally
+        {
+            if (transaction is not null)
+                await transaction.DisposeAsync();
+        }
+    }
+
+    private async Task EnsureActiveEditLeaseAsync(
+        Guid versionId,
+        Guid floorLogicalId,
+        Guid leaseId,
+        Guid clientInstanceId,
+        CancellationToken cancellationToken)
+    {
+        var now = context.Database.IsSqlServer()
+            ? await context.Database
+                .SqlQueryRaw<DateTime>("SELECT SYSUTCDATETIME() AS [Value]")
+                .SingleAsync(cancellationToken)
+            : RequireUtcNow();
+        if (now.Kind != DateTimeKind.Utc)
+            now = DateTime.SpecifyKind(now, DateTimeKind.Utc);
+        var lease = await context.EditLeases.AsNoTracking()
+            .SingleOrDefaultAsync(candidate =>
+                candidate.ModelVersionId == versionId &&
+                candidate.FloorLogicalId == floorLogicalId &&
+                candidate.LeaseId == leaseId,
+                cancellationToken);
+        if (lease is null ||
+            lease.OwnerUserId != execution.ActorId ||
+            lease.ClientInstanceId != clientInstanceId ||
+            lease.IsExpired(now))
+        {
+            throw new SpaceProblemException(
+                SpaceErrorCodes.EditLeaseLost,
+                409,
+                "The edit lease is no longer valid.",
+                recoveryAction: "export-recovery-draft-or-reacquire",
+                retryable: true);
+        }
+    }
+
+    private async Task AcquireFloorEditLockAsync(
+        Guid versionId,
+        Guid floorLogicalId,
+        CancellationToken cancellationToken)
+    {
+        if (!context.Database.IsSqlServer())
+            return;
+
+        var result = new SqlParameter("@result", SqlDbType.Int)
+        {
+            Direction = ParameterDirection.Output,
+        };
+        var resource = new SqlParameter("@resource", SqlDbType.NVarChar, 255)
+        {
+            Value = $"cp6:space:floor-edit:{execution.TenantId:N}:" +
+                    $"{versionId:N}:{floorLogicalId:N}",
+        };
+        await context.Database.ExecuteSqlRawAsync(
+            """
+            EXEC @result = sys.sp_getapplock
+                @Resource = @resource,
+                @LockMode = 'Exclusive',
+                @LockOwner = 'Transaction',
+                @LockTimeout = 15000;
+            """,
+            [result, resource],
+            cancellationToken);
+        if (Convert.ToInt32(result.Value) < 0)
+        {
+            throw new SpaceProblemException(
+                SpaceErrorCodes.CommandConflict,
+                409,
+                "The floor edit session is busy.",
+                recoveryAction: "retry-cad-changeset-apply",
+                retryable: true);
+        }
     }
 
     private static Guid CadCommandId(Guid commandBatchId, string changeId) =>
@@ -1301,6 +1455,31 @@ public sealed class SpaceCadParseService(
                 recoveryAction: "open-or-create-draft");
         }
         return (result.version, result.model);
+    }
+
+    private async Task<SpaceModelVersion> LoadWritableVersionSnapshotAsync(
+        Guid versionId,
+        CancellationToken cancellationToken)
+    {
+        var result = await (
+                from version in context.Versions.AsNoTracking()
+                join model in context.Models.AsNoTracking() on version.ModelId equals model.Id
+                where version.Id == versionId
+                select new { version, model })
+            .SingleOrDefaultAsync(cancellationToken);
+        if (result is null)
+            throw NotFound();
+        EnsureReadable(result.model);
+        access.EnsureSiteAccess(result.model.SiteId, write: true);
+        if (result.version.Status != SpaceVersionStatus.Draft)
+        {
+            throw new SpaceProblemException(
+                SpaceErrorCodes.VersionStateInvalid,
+                409,
+                "Only a Draft version can accept a CAD changeset.",
+                recoveryAction: "open-or-create-draft");
+        }
+        return result.version;
     }
 
     private void EnsureReadable(SpaceModel model)

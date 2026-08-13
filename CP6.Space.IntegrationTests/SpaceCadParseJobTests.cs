@@ -462,6 +462,33 @@ public sealed class SpaceCadParseJobTests
         Assert.Equal(SpaceErrorCodes.CommandConflict, conflict.Code);
         Assert.Single(await fixture.Context.ElementRevisions.AsNoTracking().ToListAsync());
         Assert.Single(await fixture.Context.ElementCommandBatches.AsNoTracking().ToListAsync());
+
+        var currentVersion = await fixture.Context.Versions.SingleAsync(
+            item => item.Id == fixture.Version.Id);
+        currentVersion.TouchContent();
+        await fixture.Context.SaveChangesAsync();
+        fixture.Context.ChangeTracker.Clear();
+        var staleReplay = await Assert.ThrowsAsync<SpaceProblemException>(() =>
+            fixture.Service.ApplyReviewChangesAsync(
+                fixture.Version.Id,
+                fixture.Source.Id,
+                started.JobId,
+                request));
+        Assert.Equal(SpaceErrorCodes.ParseChangesetStale, staleReplay.Code);
+
+        lease = await fixture.Context.EditLeases.SingleAsync();
+        lease.Release(lease.LeaseId, fixture.Execution.ActorId, clientId, Now);
+        await fixture.Context.SaveChangesAsync();
+        fixture.Context.ChangeTracker.Clear();
+        var lost = await Assert.ThrowsAsync<SpaceProblemException>(() =>
+            fixture.Service.ApplyReviewChangesAsync(
+                fixture.Version.Id,
+                fixture.Source.Id,
+                started.JobId,
+                request));
+        Assert.Equal(SpaceErrorCodes.EditLeaseLost, lost.Code);
+        Assert.Single(await fixture.Context.ElementRevisions.AsNoTracking().ToListAsync());
+        Assert.Single(await fixture.Context.ElementCommandBatches.AsNoTracking().ToListAsync());
     }
 
     [Fact]
@@ -498,6 +525,17 @@ public sealed class SpaceCadParseJobTests
         var version = await fixture.Context.Versions.SingleAsync(
             item => item.Id == fixture.Version.Id);
         version.TouchContent();
+        var clientId = Guid.NewGuid();
+        var lease = SpaceEditLease.Create(
+            fixture.Execution.TenantId,
+            fixture.Version.Id,
+            floor.LogicalId,
+            fixture.Execution.ActorId,
+            "CAD reviewer",
+            clientId,
+            Now,
+            TimeSpan.FromSeconds(90));
+        fixture.Context.EditLeases.Add(lease);
         await fixture.Context.SaveChangesAsync();
         fixture.Context.ChangeTracker.Clear();
 
@@ -508,8 +546,8 @@ public sealed class SpaceCadParseJobTests
                 started.JobId,
                 new ApplySpaceCadChangesetRequest(
                     Guid.NewGuid(),
-                    Guid.NewGuid(),
-                    Guid.NewGuid(),
+                    clientId,
+                    lease.LeaseId,
                     0,
                     workspace.EditorContentRevision,
                     workspace.EditorContentHash,

@@ -690,6 +690,17 @@ public sealed class SpaceDesignSceneSqlServerTests
                 applied.VersionContentRevision,
                 replay.VersionContentRevision);
 
+            var currentVersion = await context.Versions.SingleAsync(
+                item => item.Id == draft.Id);
+            currentVersion.TouchContent();
+            await context.SaveChangesAsync();
+            var advancedReplay = await Assert.ThrowsAsync<SpaceProblemException>(() =>
+                service.ApplyElementCommandsAsync(
+                    draft.Id,
+                    floor.LogicalId,
+                    create));
+            Assert.Equal(SpaceErrorCodes.ParseChangesetStale, advancedReplay.Code);
+
             var stale = create with
             {
                 CommandBatchId = Guid.NewGuid(),
