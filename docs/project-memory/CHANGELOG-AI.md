@@ -8,7 +8,7 @@
 - 将 Quarantined 建成 PublicSubmission 独立处置闭环，复用既有 22 权限；释放时复制原 ReceivedAt/SLA 锚点，避免隔离漂白首次响应指标。
 - 固定 Azure SQL GP zone-redundant/GZRS/PITR 与 Emergency Intake，区分 AZ RPO/RTO 和逻辑损坏季度恢复门禁；System Manifest 增加 previous digest 与机器兼容范围。
 - 明确 CRM V1 不承担软件商城/订阅/客户产品中心，CRM 仓只在 CRM01-S01 前置关闭后创建；本变更仍无业务代码、仓库、云资源、迁移或部署。
-- 验证：本地工程/设计 fallback 复核无新的 Critical/High；正式交互技能审阅未在缺少 AskUserQuestion 的宿主中冒充完成；CRM Foundation 16/16、Markdown 相对链接和 `git diff --check` 通过。
+- 验证：本地工程/设计与合入前 fallback 复核修正 Dapr 调用图、IntakeDeptId/PII 权限、实际 migration ID 和首次切换回退边界后无剩余 Critical/High；正式交互技能审阅未在缺少 AskUserQuestion 的宿主中冒充完成；CRM Foundation 16/16、Markdown 相对链接和 `git diff --check` 通过。
 
 ## 2026-08-12：CRM V1 规范批准与采用门禁
 

@@ -9,7 +9,7 @@
 - 公开写入固定为浏览器到同源 BFF，再以服务 JWT、Dapr mTLS AppId、workload identity/NetworkPolicy 调 CRM；稳定 attempt 绑定 payload/browser，回执 Cookie 按最终编码 3800 bytes 控制。
 - 生产连续性固定 Azure SQL Database GP vCore zone-redundant、GZRS/35-day PITR，以及受控 Azure Storage ZRS Emergency Intake；AZ 与逻辑损坏分别以 RPO/RTO 和季度恢复证据验收。
 - System Release Manifest 新增 previous digest 与 DB/OpenAPI/Event/Dapr 兼容范围；默认系统整体回退，组件级例外必须有签名证据，Schema/业务数据永不回退。
-- 本地工程/设计 fallback 复核未发现新的 Critical/High；正式 `plan-eng-review`/`plan-design-review` 因当前宿主缺少技能强制的 AskUserQuestion 接口未签发，不能冒充技能门禁。CRM Foundation 16/16、Markdown 相对链接和 `git diff --check` 通过。
+- 本地工程/设计与合入前 fallback 复核修正了 Dapr 调用图、IntakeDeptId/PII 权限、实际 migration ID 和首次切换回退边界，修正后无剩余 Critical/High；正式 gstack 交互审阅因当前宿主缺少技能强制的 AskUserQuestion 接口未签发，不能冒充技能门禁。CRM Foundation 16/16、Markdown 相对链接和 `git diff --check` 通过。
 
 ## CRM V1 规范批准基线（2026-08-12）
 
