@@ -33,9 +33,10 @@ CRM V1 由 [ADR-CRM-R00](./adr/ADR-CRM-R00-RELEASE-AUTHORITY.md) 固定为 GHCR/
 - [x] 记录 CRM V1 唯一候选 Registry 为 GHCR，权威工作流为 GitHub R2。
 - [x] 记录 Azure 在 CRM V1 中只可执行 CI、DEV 学习、非权威影子验证或消费同一 digest。
 - [x] 区分当前 CP6 Schema 2 组件清单与未来 CRM 三仓 System Release Manifest。
-- [x] 盘点现有 R2 与 CRM 目标能力，明确 OCI 签名、三仓清单、兼容范围和采用证据 Gap。
+- [x] 盘点现有 R2 与 CRM 目标能力，明确 OCI 签名、三仓清单、兼容范围、精确对象版本和分阶段采用证据 Gap。
 - [ ] 取得 Release Owner、System Architect、Security Owner、SRE Owner 对 R00 固定 digest 的批准。
-- [ ] 为 R00 等价矩阵中的 Gap 建立有 DRI/reviewer/验证命令的独立 P10/CRM12 任务。
+- [ ] 为 R00 候选前置 Gap 建立有 DRI/reviewer/验证命令的独立 P10/CRM12 任务；对象证据必须实现 content-addressed key、每版本 first-writer-wins、`VersionId` 固定、签名 `CandidateLocator` 根指针和精确版本读取。
+- [ ] 把切换后的 Lead/Full Journey Adoption 作为 append-only `SystemReleaseEvidenceRecord` 关联候选 Manifest digest；不得把它设为候选前置或改写已签发 Manifest。
 - [ ] 若一般 CP6/Azure 路线未来选择 ACR，另立 ADR 固定复制而非重建、影子期、切换/退出门禁和恢复时限。
 
 Azure 影子链只能重跑验证或消费 R2 digest；它产生的源码构建物必须明确标为非候选且不可推广。禁止 GitHub 与 Azure 对同一版本分别 Build 并都声称正式候选。
@@ -114,10 +115,10 @@ Azure 影子链只能重跑验证或消费 R2 digest；它产生的源码构建�
 
 **CRM 路线：关闭 M0 外部输入，不实施 Docker Release。**
 
-1. 由受控项目系统冻结 Sponsor、所有 named Owner 与 backup；
-2. 完成 R00、DEC-CRM-002–007 的有效批准和不可变证据引用；
-3. 完成 Observation baseline、Pilot cohort/task manifest；
-4. 由 SRE/DBA/Security 审批 Azure SQL/Emergency Intake 合同与真实环境/演练计划；
+1. 由受控项目系统冻结八类 M0 硬角色与 backup；System Architect/Platform/DBA/CRM/Design/QA 按 R00、DEC 或后续里程碑分别冻结；
+2. 完成 R00、DEC-CRM-002–007 的有效批准和精确 evidence object identity 引用；
+3. 完成 Observation baseline、Pilot cohort/task manifest、评价规则和证据合同；
+4. 由 SRE/DBA/Security 审批 Azure SQL/Emergency Intake 的目标拓扑、账户/容量/身份、连续性合同、DRI、测试与真实环境/演练计划；M0 不要求资源已创建或演练已执行；
 5. M0 全部 Approved 后，再在 P01 提供 runner/合同；此后才可由 CRM01-S01 创建 CRM 私有仓。
 
 一般 Azure Release/ACR 演进保持独立任务，不得借 CRM V1 绕过 R00、重新选择 Registry 或直接实现 ACR Push。

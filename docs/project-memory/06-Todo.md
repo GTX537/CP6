@@ -13,7 +13,7 @@
 - 本机 DEV/UAT/PROD-LAB Docker 运行边界已建立并实际验证；Azure DevOps 的 `cp6-dev`、`cp6-uat`、`cp6-prod-lab` 也已由 2026-08-11 外部截图确认创建。下一步在详情页核对三者 Resource 为空，并确认没有录入 Secret。
 - DEV 学习 Pipeline 已有独立 deployment job；UAT/PROD-LAB 不得复制本机重新 Build 方案。完成 Registry/发布权威决策后，再创建不可变候选推广 Pipeline，并为 UAT/PROD-LAB 配置审批与 exclusive lock。单人学习期 PROD-LAB 可自批，真实生产必须换独立批准人。
 - 当前 Azure `azure-pipelines.yml` 已完成基础 CI，使用 `Default` self-hosted pool、`main` trigger 和 `pr: none`；先补运行证据、Agent 运维边界和 PR 门禁归属，不把 CI 绿灯描述为上线。
-- CRM R00 决策工件和等价矩阵已形成，但 ADR 仍是 Proposed。下一步不是实现 Docker Release，而是取得 Release/Architecture/Security/SRE 等 named approval，并为 OCI 签名、三仓 System Manifest、机器兼容范围和采用证据 Gap 建立独立 P10/CRM12 任务；不得重新选择 Registry。
+- CRM R00 决策工件和等价矩阵已形成，但 ADR 仍是 Proposed。下一步不是实现 Docker Release，而是取得 Release/Architecture/Security/SRE 对固定 `decisionPayloadSha256` 的 named approval，并为 OCI 签名、三仓 System Manifest、机器兼容范围、content-addressed evidence、first-writer-wins、对象 `VersionId`、签名 `CandidateLocator` 和真实集成证据建立独立 P10/CRM12 任务；不得重新选择 Registry。切换后 Adoption 使用 append-only evidence record 关联 Manifest digest，不是候选前置。
 - 决策通过后按独立任务推进：Docker Release（版本/SHA、provenance、SBOM、扫描、digest）→ DEV Environment/健康与身份核对 → UAT → PROD 资源侧审批 → 回滚/前滚演练 → AKS 多仓。
 - 全阶段遵守 Build once：DEV/UAT/PROD 只推广同一 digest，不按环境重新 Build；Azure 与 GitHub 不得对同一版本生成两套权威候选。
 - CRM V1 全周期固定使用 GitHub R2/GHCR 作为候选权威；Azure 即使达到等价也只能在本 Epic 内消费相同 digest 或做非权威验证。其他产品的未来显式切换继续按 `docs/devops/AZURE-PIPELINES-PLAN.md` 独立决策。
@@ -21,7 +21,7 @@
 ## P0：CRM V1 端到端交付
 
 - 产品框架和三仓可执行 Spec 已批准为 implementation-planning baseline，入口为 `docs/crm/README.md`；Foundation 的 20 张表、固定状态机、迁移、6 个禁用菜单节点和 22 个动作只作为迁移源与兼容语义，不是目标服务实现。
-- R00 已以 Proposed ADR 冻结 GHCR/R2 权威、Azure 边界和 System Manifest 整体回退；M0 仍为 No-Go。必须继续取得 DEC-CRM-001–007 有效批准、Sponsor、Product、Sales Operations、Architecture、Platform、CRM、Security、Data、ERP、DBA、SRE、QA、Release 的 named Owner/backup，以及 Pilot cohort、Observation 和 Azure SQL/Emergency Intake 真实证据。
+- R00 已以 Proposed ADR 冻结 GHCR/R2 权威、Azure 边界和 System Manifest 整体回退；M0 仍为 No-Go。M0 硬角色只枚举 Sponsor、Product、Sales Operations、Security、ERP、Data、SRE、Release；System Architect 通过 R00，Platform/DBA/CRM/QA 按 DEC 或后续里程碑失败关闭。还需取得 DEC-CRM-001–007、Pilot cohort/task manifest、Observation 和 Azure SQL/Emergency Intake 开工合同批准；真实资源、Dapr/Kafka/C03/隔离 ERP 与演练证据属于 M2/M6/CRM12。
 - 不要现在建立 `GTX537/CP6.CRM` 空仓。只有 T1 已在最新 main、M0 输入关闭且 P01 runner/合同可消费后，才由 CRM01-S01 创建私有仓库；V1 不实现软件产品目录、商城、订阅或客户产品中心。
 - 第一阶段可并行推进 Platform P01–P07、CP6 C01–C03、CRM01–CRM03；随后只实现 CRM04 的 Lead Pilot 子集、C 分栏工作台、真实 Dapr/Kafka Intake、两租户负向与 Pilot 性能 Smoke。Pilot UAT 通过后才解锁 CRM04 余项、CRM05–CRM10、完整 ERP/CMS 旅程，再进入 P08–P10、C04A、CRM11/CRM12。
 - Intake 必须覆盖人工录入、同源 BFF 官网提交、稳定 attempt、Needs Review release/reject/expiry、原 ReceivedAt 首次响应 SLA、Emergency Intake、线索池、分配/移交、协作人、活动时间线、重复候选与受控合并；数据范围按负责人、协作人、部门和管理员显式校验。

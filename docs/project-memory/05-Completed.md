@@ -3,8 +3,8 @@
 ## 2026-08-13 CRM R00 发布权威决策工件
 
 - 在独立文档分支新增 DevOps ADR 索引与 `ADR-CRM-R00`，记录 CRM V1 已锁定的 GHCR/GitHub R2 唯一权威、Azure 允许/禁止边界、三仓组件候选到 System Release Manifest 的聚合责任，以及整套系统默认回退和数据/Schema 前向边界。
-- 逐项盘点当前 R2：受保护冻结、GHCR digest、provenance/SBOM、漏洞扫描、不可变证据和 CP6 digest 部署有实现；OCI 镜像签名、三仓清单、机器兼容范围、previous digest 和 CRM 采用/ERP 证据仍是 Gap。
-- 新增 M0 No-Go 清单，固定 DEC-CRM-001–007、named Owner、Azure SQL/Emergency Intake、Observation/Pilot 的输入、证据状态和关闭公式。该完成项只表示 R00/M0 管理工件可评审，不表示 ADR 已批准、M0 已关闭或实现已开工。
+- 逐项盘点当前 R2：受保护冻结、GHCR digest、provenance/SBOM、漏洞扫描、版本控制/Object Lock 和 CP6 digest 部署有实现；精确对象 `VersionId` 与签名 `CandidateLocator` 绑定仍缺失，连同 OCI 镜像签名、三仓清单、机器兼容范围、previous digest 和 CRM 真实集成证据登记为候选前置 Gap。
+- 新增 M0 No-Go 清单，固定 DEC-CRM-001–007、八类 M0 硬角色、Azure SQL/Emergency Intake 开工合同、Observation 与 Pilot cohort/task manifest。合并前审阅消除了真实资源/C03 前置、候选后 Adoption 和完整 blob 审批造成的循环；该完成项只表示 R00/M0 管理工件可评审，不表示 ADR 已批准、M0 已关闭或实现已开工。
 
 ## 2026-08-13 CRM V1 T1 对抗审阅收口
 

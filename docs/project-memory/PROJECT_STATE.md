@@ -6,8 +6,8 @@
 
 - 从 `main == origin/main == 57f0199ab014ea5d8b09939c0421de6f771943f3` 创建独立 `codex/crm-r00-release-authority-20260813` 文档分支；未创建 CRM/Platform 仓库、业务代码、云资源、Secret、候选或部署。
 - `ADR-CRM-R00` 固定 CRM V1 的 GHCR/GitHub R2 唯一 Registry/候选权威、Azure 非权威边界、Build once/digest 推广、Platform R2 唯一 System Release Manifest 签发者和整套默认回退。
-- 当前 CP6 Schema 2 `release-manifest.json` 只作为 CP6/WMS 组件候选清单；OCI 镜像签名、三仓 System Manifest、OpenAPI/Event/Dapr/DB 兼容范围、previous digest 与采用证据明确登记为 P10/CRM12 Gap，不冒充现有能力。
-- 新增 M0 就绪清单，登记 DEC-CRM-001–007、named Owner、Azure SQL/Emergency Intake、Observation 和 Pilot 输入。所有批准与真实环境证据仍 Pending，因此 M0 保持 No-Go，`CRM01-S01` 和 CRM 仓创建继续锁定。
+- 当前 CP6 Schema 2 `release-manifest.json` 只作为 CP6/WMS 组件候选清单；现有证据桶具备版本控制/Object Lock，但候选/部署未固定对象 `VersionId` 和签名 `CandidateLocator` 根指针。精确对象身份、OCI 镜像签名、三仓 System Manifest、OpenAPI/Event/Dapr/DB 兼容范围、previous digest 与真实集成证据明确登记为 P10/CRM12 候选前置 Gap；Lead/Full Journey Adoption 是切换后 Epic 关闭记录。
+- R00 规范正文使用稳定 `decisionPayloadSha256` 审批，状态/证据镜像不参与摘要；新增 M0 就绪清单只以前置合同、八类硬角色、Observation 和 Pilot cohort/task manifest 关闭 M0。真实云资源、Dapr/Kafka/C03/隔离 ERP 和演练证据属于 M2/M6/CRM12。所有批准仍 Pending，因此 M0 保持 No-Go，`CRM01-S01` 和 CRM 仓创建继续锁定。
 
 ## CRM V1 T1 对抗审阅收口（2026-08-13）
 
@@ -55,7 +55,7 @@
 - 2026-08-11 用户提供的 Azure DevOps 列表截图已确认 `cp6-dev`、`cp6-uat`、`cp6-prod-lab` 三个逻辑 Environment 存在，且当时均为 `Never deployed`。这只关闭 Environment 名称创建项；DEV YAML job 已交付，但 Resource、Pipeline permissions、审批检查和首次 deployment history 仍待外部验收，详见 `docs/devops/AZURE-ENVIRONMENTS-SETUP.md`。
 - 新增 `docs/devops/` 项目级文档入口，整理当前 Azure CI、目标 Release/CD、Build once、环境策略、发布步骤和分阶段路线；`AGENTS.md` 与根 README 已接入，Codex 后续无需从聊天记录猜测上下文。
 - 当前仓库事实是：`azure-pipelines.yml` 在 `main` 提交上运行 `Default` self-hosted pool，完成 .NET 8/Node 22 的后端/客户端测试和 Web 类型/单测/构建；`pr: none`。另有 DEV 学习链在部署 Agent 本机 Build/Deploy，但尚无 Azure Registry、不可变候选或生产环境部署。
-- 现有 `.github/workflows/r2-*` 已实现更完整的受保护版本、GHCR 镜像、SBOM/漏洞扫描、签名、不可变证据和 digest 部署，因此在 Azure 门禁等价并显式切换前继续作为生产发布权威。
+- 现有 `.github/workflows/r2-*` 已实现更完整的受保护版本、GHCR 镜像、SBOM/漏洞扫描、签名、版本化/Object-Locked 证据和 digest 部署，因此在 Azure 门禁等价并显式切换前继续作为生产发布权威；其未固定对象 `VersionId` 的缺口不得在 CRM 系统候选中冒充已关闭。
 - 聊天规划中的 ACR 被记录为候选目标而非当前事实。当前只新增本机 DEV 学习流水线，没有创建 Registry/云资源或执行生产部署；CRM V1 已在 2026-08-12 固定沿用 GHCR/R2，R00 记录候选清单、Azure 非权威影子期和回退。ACR 或其他产品的长期 Registry 迁移另行决策。
 
 ## CRM V1 Foundation（2026-08-10）

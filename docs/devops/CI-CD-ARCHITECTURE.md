@@ -26,7 +26,7 @@ Build/Test/Type Check              source + SQL + E2E gates
                                protected environment deploy
 ```
 
-当前 Azure CI 的职责是快速验证 `main`。GitHub R2 负责受保护 Tag、候选镜像、签名、SBOM、漏洞扫描、不可变证据、数据库初始化、生产部署和运行身份核对。
+当前 Azure CI 的职责是快速验证 `main`。GitHub R2 负责受保护 Tag、候选镜像、签名、SBOM、漏洞扫描、版本化/Object-Locked 证据、数据库初始化、生产部署和运行身份核对。当前部署读取尚未固定对象 `VersionId`，所以“精确不可变对象身份”仍是 CRM P10/CRM12 Gap。
 
 这两个流程可以暂时并存，但职责不能模糊：Azure CI 绿灯不是 R2 候选，也不能替代生产批准。
 
@@ -71,6 +71,8 @@ main CI -------------------------------+
 - CRM V1 不实施 ACR；未来迁移需独立 ADR，定义复制而非重建、影子期、清单格式、切换/退出和恢复条件。
 - 一般 Azure 路线在决策前也不得把 ACR 设为生产真相源。
 - 不允许 GitHub 与 Azure 对同一个版本号各自重新 Build，并都声称是生产候选。
+- CRM 系统候选必须按 content-addressed key 发布证据，对 `systemVersion` first-writer-wins，并由签名 `CandidateLocator` 固定 candidate-result 的 `bucket + key + VersionId + SHA-256`；部署端先验证 Locator，再按精确版本读取，不得读取可变 latest。
+- 候选前只收敛技术、真实集成和 Pilot UAT 证据；Lead/Full Journey Adoption 在切换后通过 append-only evidence record 关联候选 Manifest digest，不改写候选。
 
 ## 职责边界
 

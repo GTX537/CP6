@@ -39,6 +39,8 @@
 - 候选制品、GHCR 镜像、SBOM、漏洞扫描和签名：`.github/workflows/r2-candidate.yml`。
 - 受保护环境、数据库初始化、digest 部署和运行身份验证：`.github/workflows/r2-deploy.yml`。
 
+现有证据桶已检查版本控制与 Object Lock，但候选发布和部署仍使用不含 `VersionId` 的固定 SemVer key。Object Lock 能保留历史版本，不能证明消费端固定了其中哪一个版本；因此 CRM 系统候选把 content-addressed key、每版本 first-writer-wins、`bucket + key + VersionId + SHA-256`、签名 `CandidateLocator` 根指针和精确版本读取登记为 P10/CRM12 候选前置 Gap，不能把该能力误报为现有完整实现。
+
 ## 当前完成与未完成
 
 | 层次 | 状态 | 准确描述 |
@@ -55,7 +57,7 @@
 
 1. **Build once, deploy many**：同一 API/Web 镜像只构建一次，DEV、UAT、PROD 推广同一 digest。
 2. **生产按 digest 部署**：SemVer 和 Git SHA 用于追踪；运行环境只接受 `repository@sha256:digest`。
-3. **发布身份可追溯**：至少记录版本、完整 Git SHA、镜像 digest、Pipeline Run ID、批准人、部署时间和验证证据。
+3. **发布身份可追溯**：至少记录版本、完整 Git SHA、镜像 digest、Pipeline Run ID、批准人、部署时间，以及证据对象的精确版本和内容摘要。
 4. **数据库只前向迁移**：初始化先于 API/Web；回退应用前先证明 Schema 兼容，数据库故障用更高版本迁移前滚修复。
 5. **审批不由 YAML 作者控制**：PROD Approval/Checks 放在 Azure Environment 或其他受保护资源上。
 6. **不产生双重真相源**：一般 Azure 路线若评估 ACR，必须先明确 registry、候选清单和发布权威的唯一来源；CRM V1 已由 [R00](./adr/ADR-CRM-R00-RELEASE-AUTHORITY.md) 固定 GHCR/R2，ACR 不属于该 Epic。

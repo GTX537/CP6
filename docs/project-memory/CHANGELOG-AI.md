@@ -5,8 +5,8 @@
 ## 2026-08-13：CRM R00 发布权威与 M0 No-Go 工件
 
 - 新增 `ADR-CRM-R00`，把 CRM V1 的 GHCR/GitHub R2 唯一 Registry/候选权威、Azure 非权威边界、Platform R2 唯一 System Release Manifest 签发者和整套默认回退写成可批准决策。
-- 区分现有 CP6 Schema 2 组件清单与未来三仓系统清单；如实登记 OCI 镜像签名、兼容范围、previous digest、真实升级数据和采用/ERP 证据缺口。
-- 新增 M0 readiness，冻结 DEC-CRM-001–007、named Owner、Azure SQL/Emergency Intake、Observation/Pilot 的证据规则与关闭公式。当前所有外部批准仍 Pending，因此 M0 保持 No-Go，未创建仓库、业务代码、云资源、候选或部署。
+- 区分现有 CP6 Schema 2 组件清单与未来三仓系统清单；确认当前 R2 虽有版本控制/Object Lock，却未固定对象 `VersionId` 和签名 `CandidateLocator` 根指针，因此连同 OCI 镜像签名、兼容范围、previous digest、真实升级数据和真实集成证据登记为候选前置缺口。切换后 Adoption 改由 append-only evidence record 关联候选摘要。
+- 新增 M0 readiness，冻结 DEC-CRM-001–007、八类 M0 硬角色、Azure SQL/Emergency Intake 开工合同、Observation 和 Pilot cohort/task manifest；真实资源、C03/Pilot 环境和运行演练移至 M2/M6/CRM12。R00 批准绑定稳定 `decisionPayloadSha256`，状态镜像更新不再使批准失效。当前所有外部批准仍 Pending，因此 M0 保持 No-Go，未创建仓库、业务代码、云资源、候选或部署。
 
 ## 2026-08-13：CRM V1 T1 对抗审阅收口
 
