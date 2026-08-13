@@ -20,6 +20,7 @@ const props = withDefaults(defineProps<{
 
 const emit = defineEmits<{
   select: [item: CadReviewItem]
+  applyChanges: [changeIds: string[]]
   close: []
 }>()
 
@@ -28,6 +29,11 @@ const severity = ref<CadReviewSeverity | ''>('')
 const kind = ref<CadReviewItemKind | ''>('')
 const search = ref('')
 const onlyLocatable = ref(false)
+const selectedChangeIds = ref<string[]>(
+  (props.workspace.changes ?? [])
+    .filter(change => change.isSelected && change.canApply)
+    .map(change => change.changeId),
+)
 
 const items = computed(() => filterCadReviewItems(props.workspace, {
   status: status.value || undefined,
@@ -51,6 +57,12 @@ function severityType(value: CadReviewSeverity) {
     default:
       return 'info'
   }
+}
+
+function toggleChange(changeId: string, checked: boolean): void {
+  const ids = new Set(selectedChangeIds.value)
+  checked ? ids.add(changeId) : ids.delete(changeId)
+  selectedChangeIds.value = [...ids].slice(0, 100)
 }
 </script>
 
@@ -77,6 +89,37 @@ function severityType(value: CadReviewSeverity) {
       :closable="false"
       title="工件与当前模型修订不一致；已禁用画布定位，请重新生成。"
     />
+
+    <section v-if="workspace.changes?.length" class="changeset" data-test="cad-changeset">
+      <header>
+        <strong>待审变更集</strong>
+        <span>
+          +{{ workspace.changeSummary?.addCount ?? 0 }} /
+          ~{{ workspace.changeSummary?.modifyCount ?? 0 }} /
+          −{{ workspace.changeSummary?.deleteCount ?? 0 }} /
+          冲突 {{ workspace.changeSummary?.conflictCount ?? 0 }}
+        </span>
+      </header>
+      <div class="change-list">
+        <label v-for="change in workspace.changes" :key="change.changeId" class="change-row">
+          <el-checkbox
+            :model-value="selectedChangeIds.includes(change.changeId)"
+            :disabled="stale || !change.canApply || (!selectedChangeIds.includes(change.changeId) && selectedChangeIds.length >= 100)"
+            @change="toggleChange(change.changeId, Boolean($event))"
+          />
+          <span>
+            <strong>{{ change.kind }} · {{ change.objectType }}</strong>
+            <small>{{ change.sourceRef }}<template v-if="change.blockingReasonCode"> · {{ change.blockingReasonCode }}</template></small>
+          </span>
+        </label>
+      </div>
+      <el-button
+        v-permission="'space:model:edit'"
+        type="primary"
+        :disabled="stale || selectedChangeIds.length === 0"
+        @click="emit('applyChanges', selectedChangeIds)"
+      >确认并合入 {{ selectedChangeIds.length }} 项</el-button>
+    </section>
 
     <div class="summary-tags">
       <el-tag type="danger">Blocking {{ workspace.summary.openBlockingCount }}</el-tag>
@@ -248,6 +291,13 @@ function severityType(value: CadReviewSeverity) {
   color: #94a3b8;
   text-align: center;
 }
+
+.changeset { margin: 12px 0; padding: 10px; border: 1px solid #bae6fd; border-radius: 6px; background: #f0f9ff; }
+.changeset > header { display: flex; justify-content: space-between; gap: 8px; margin-bottom: 8px; font-size: 13px; }
+.change-list { display: grid; gap: 6px; max-height: 220px; overflow: auto; margin-bottom: 10px; }
+.change-row { display: grid; grid-template-columns: auto 1fr; gap: 8px; align-items: start; padding: 7px; background: #fff; border-radius: 4px; }
+.change-row span { display: grid; gap: 2px; min-width: 0; }
+.change-row small { color: #667085; overflow-wrap: anywhere; }
 
 @media (max-width: 900px) {
   .cad-review-panel {

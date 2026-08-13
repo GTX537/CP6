@@ -1,5 +1,14 @@
 # 已完成能力与近期里程碑
 
+## 2026-08-12 Space Studio v1.3 核心切片
+
+- 低成本 3D 建模详细 Spec 以 v1.2 完整正文为底稿增量合并 v1.3；原有领域、接口、恢复、权限与验收细节保留，新增冻结结论逐节落位并由 RFC-003 记录变更。
+- 交付 Space Studio 冻结布局、2D/3D 本地草稿切换、首次任务清单、属性/批量/问题检查器、显式保存/租约状态、窄屏只读和恢复草稿导出。
+- 交付强 Floor 编辑租约与命令批 `leaseId` 契约，包括 SQL 唯一槽/数据库时钟、续租、释放、浏览器会话 fence、过期复用、双权限强制接管和不可变审计；真实 SQL 自动化覆盖生命周期、过期重申请、续租/接管竞争、并发唯一槽和审计不可变。
+- 交付 CAD 上传、Job 状态监控/取消/重试和 PreviewSet → typed 审核变更集自动加载；工件读取验证文件状态、SHA、Job/Source/Version/Floor 与冻结 BaseContentRevision，确认 Apply 受租约、Revision、ContentRevision、变更集哈希和幂等键共同保护，成功、精确重放和 stale 零写入均有集成测试。
+- 交付空白画布/底图的墙、柱、门、月台和静态设备直接创建，以及 2D/3D 同源选中与视角保持；正式“校验并发布”入口只自动启动 Validation，不绕过 Preview、审批确认或发布权限。
+- 自动化与构建门禁为 Space Unit 497/497、真实 SQL Space Integration 396/396（0 skipped）、CP6.Tests 2867 passed / 19 个既有环境门禁 skipped、Web 727/727、Space Studio Playwright 5/5、SDK/EF drift clean，以及完整 Release solution 0 warning / 0 error。
+- 此完成项不包含真实 Provider 认证、黄金 CAD/Pilot/生产签字，不把开发完成记作核心 GA 完成。
 ## 2026-08-13 CRM V1 T1 对抗审阅收口
 
 - 修订产品框架与可执行 Spec，关闭隔离提交状态/权限、原 ReceivedAt 双 SLA、同源 BFF 四重身份、attempt/replay/tombstone 和回执 Cookie 字节预算歧义。

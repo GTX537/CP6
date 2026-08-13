@@ -27,6 +27,7 @@ describe('designElementsApi', () => {
       'floor-1',
       7,
       '22222222-2222-2222-2222-222222222222',
+      '33333333-3333-3333-3333-333333333333',
       element,
       {
         geometryJson:
@@ -50,6 +51,7 @@ describe('designElementsApi', () => {
     expect(body).toMatchObject({
       schemaVersion: 1,
       clientInstanceId: '22222222-2222-2222-2222-222222222222',
+      leaseId: '33333333-3333-3333-3333-333333333333',
       expectedFloorRevision: 7,
       commands: [
         {
@@ -71,6 +73,7 @@ describe('designElementsApi', () => {
       'floor-1',
       8,
       '22222222-2222-2222-2222-222222222222',
+      '33333333-3333-3333-3333-333333333333',
       element,
     )
 
@@ -84,6 +87,21 @@ describe('designElementsApi', () => {
     expect(body.commands[0]).not.toHaveProperty('updateProperties')
   })
 
+  it('reuses a prepared envelope for a safe retry', async () => {
+    const envelope = designElementsApi.createEnvelope(
+      8,
+      '22222222-2222-2222-2222-222222222222',
+      '33333333-3333-3333-3333-333333333333',
+      [{ type: 'DeleteObject', targetLogicalId: element.revision!.logicalId! }],
+    )
+
+    await designElementsApi.sendEnvelope('version-1', 'floor-1', envelope)
+    await designElementsApi.sendEnvelope('version-1', 'floor-1', envelope)
+
+    expect(vi.mocked(http.post).mock.calls[0]?.[1]).toBe(envelope)
+    expect(vi.mocked(http.post).mock.calls[1]?.[1]).toBe(envelope)
+  })
+
   it('fails closed when the selected element has no logical identity', () => {
     expect(() =>
       designElementsApi.remove(
@@ -91,6 +109,7 @@ describe('designElementsApi', () => {
         'floor-1',
         8,
         '22222222-2222-2222-2222-222222222222',
+        '33333333-3333-3333-3333-333333333333',
         {} as ISpaceSceneElementDto,
       ),
     ).toThrow('The selected element has no logical identity.')

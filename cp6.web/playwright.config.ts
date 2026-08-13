@@ -43,7 +43,7 @@ export default defineConfig({
     {
       name: 'chromium',
       dependencies: ['setup'],
-      testIgnore: /wms-production-console\.spec\.ts/,
+      testIgnore: /(wms-production-console|space-studio)\.spec\.ts/,
       use: {
         ...devices['Desktop Chrome'],
         storageState: 'e2e/.auth/admin.json',
@@ -53,6 +53,14 @@ export default defineConfig({
     {
       name: 'wms-production-mocked',
       testMatch: /wms-production-console\.spec\.ts/,
+      use: {
+        ...devices['Desktop Chrome'],
+        channel: process.env.CI ? undefined : 'chrome',
+      },
+    },
+    {
+      name: 'space-studio-mocked',
+      testMatch: /space-studio\.spec\.ts/,
       use: {
         ...devices['Desktop Chrome'],
         channel: process.env.CI ? undefined : 'chrome',

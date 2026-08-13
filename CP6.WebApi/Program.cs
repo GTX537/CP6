@@ -411,6 +411,9 @@ builder.Services.AddScoped<CP6.Core.Services.Space.Observability.ISpaceExecution
 builder.Services.AddScoped<
     CP6.Space.Application.ISpaceExecutionContext,
     CP6.WebApi.Services.HttpSpaceApplicationExecutionContext>();
+builder.Services.AddScoped<CP6.Space.Application.ISpaceCorrelationContext>(
+    sp => (CP6.Space.Application.ISpaceCorrelationContext)sp
+        .GetRequiredService<CP6.Space.Application.ISpaceExecutionContext>());
 builder.Services.AddScoped<
     ISpaceDesignAccessEvaluator,
     CP6.WebApi.Services.CompatibilitySpaceDesignAccessEvaluator>();

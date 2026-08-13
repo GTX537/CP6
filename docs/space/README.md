@@ -4,7 +4,7 @@
 >
 > 技术栈：Vue3 + Three.js / .NET8 + EF Core / SQL Server，多租户 SaaS（沿用 CP6 全表 `TenantId`）。
 
-## 2026-07-25 当前需求基线
+## 2026-08-13 当前需求基线
 
 本 README 的 00～09 章节仍是当前代码和早期架构的重要参考，但其中“CAD 导入推迟”和“人员/设备不进入总蓝图”的阶段结论已经被新一轮产品决策替代。实施和验收应优先使用：
 
@@ -16,6 +16,7 @@
 6. [MVP Scope Baseline v1.0](./requirements/06-mvp-scope-freeze-baseline-v1.0.md)
 7. [Development Ready 实施交接](./requirements/07-development-ready-handoff.md)
 8. [Scope Change RFC 模板](./requirements/08-scope-change-rfc-template.md)
+9. [Scope Change RFC-003：Space Studio v1.3](./requirements/09-scope-change-rfc-space-studio-v1.3.md)
 
 评审通过的详细设计：
 
@@ -50,7 +51,7 @@ AI Provider 机器契约：
 | D15 验收 | 确定性标准仓、真实 SQL、适配器契约、故障注入、安全与性能门禁 |
 | T1～T7 AI 生成 | Provider 中立；AI 只产提案并原子 Apply 到 Draft；结构化 CAD IR；原文件不外发；确定性几何；既有租户默认关闭 |
 
-> 范围状态、实现状态、技术 ADR 和统一 Alpha/Beta/GA 门槛以 [MVP Scope Baseline v1.0](./requirements/06-mvp-scope-freeze-baseline-v1.0.md) 为准。`Frozen-MVP` 不表示代码已经实现。
+> 产品实现方向以 [低成本 3D 建模详细 Spec v1.3](./requirements/04-low-cost-3d-modeling-spec.md) 为准；跨职能范围生效仍受 [MVP Scope Baseline v1.0](./requirements/06-mvp-scope-freeze-baseline-v1.0.md) 与 [RFC-003 批准状态](./requirements/09-scope-change-rfc-space-studio-v1.3.md) 共同约束。产品冻结、核心开发完成与 GA 批准是三个不同状态。
 
 新的第一版核心闭环是：
 
@@ -223,4 +224,4 @@ Space_Marker        打点/标注   位置, 类型, 文本（受控自由布局�
 
 ---
 
-*初版生成于 2026-06-12；当前产品基线更新于 2026-07-25。配套实现位于 `CP6.Entity/DomainModels/Space`、`CP6.Core/Services/Space`、`cp6.web/src/views/space`。前端 3D = Three.js。*
+*初版生成于 2026-06-12；当前产品实施提案更新于 2026-08-13，跨职能生效状态见 RFC-003。配套实现位于 `CP6.Entity/DomainModels/Space`、`CP6.Core/Services/Space`、`cp6.web/src/views/space`。前端 3D = Three.js。*

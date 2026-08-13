@@ -8,6 +8,7 @@ import {
 
 const props = defineProps<{
   scene: ISpaceDesignSceneDto | null
+  selectedLogicalIds?: readonly string[]
 }>()
 
 const hostRef = ref<HTMLDivElement>()
@@ -64,6 +65,12 @@ watch(
   },
 )
 
+watch(
+  () => props.selectedLogicalIds,
+  (logicalIds) => controller?.setSelectedLogicalIds(logicalIds ?? []),
+  { deep: true },
+)
+
 onBeforeUnmount(() => {
   renderVersion++
   resizeObserver?.disconnect()
@@ -77,6 +84,7 @@ async function renderScene(scene: ISpaceDesignSceneDto): Promise<void> {
   errorText.value = ''
   try {
     const evidence = await controller!.setScene(scene)
+    controller!.setSelectedLogicalIds(props.selectedLogicalIds ?? [])
     if (version !== renderVersion) return
     objectCount2d.value = evidence.editor.objectCount
     objectCount3d.value = evidence.viewer.objectCount

@@ -2,11 +2,11 @@ namespace CP6.Space.Contracts;
 
 public static class SpaceCadPreviewSetVersions
 {
-    public const int SchemaVersion = 1;
-    public const string ArtifactSchema = "space-cad-preview-set-v1";
+    public const int SchemaVersion = 2;
+    public const string ArtifactSchema = "space-cad-preview-set-v2";
 }
 
-public sealed record SpaceCadPreviewSetV1(
+public sealed record SpaceCadPreviewSetV2(
     int SchemaVersion,
     bool IsReadOnlyArtifact,
     Guid TenantId,
@@ -14,6 +14,8 @@ public sealed record SpaceCadPreviewSetV1(
     Guid SourceId,
     Guid CadParseJobId,
     Guid FloorLogicalId,
+    long BaseContentRevision,
+    string? BaseContentHash,
     string SourceSha256,
     string CoordinateTransformSha256,
     string MappingPreviewSha256,

@@ -1098,7 +1098,9 @@ public sealed class SpaceExcelCadMatchServiceTests
             cad.MappingProfileId!.Value,
             1,
             cadAuthority.Profile.DefinitionSha256,
-            cadAuthority.Preview.MappingPreviewSha256);
+            cadAuthority.Preview.MappingPreviewSha256,
+            version.ContentRevision,
+            version.ContentHash);
         var cadParse = SucceededJob(
             tenantId,
             execution.ActorId,
@@ -1111,7 +1113,9 @@ public sealed class SpaceExcelCadMatchServiceTests
             cad.Id,
             cadParse.Id,
             cadAuthority.Preview,
-            cadAuthority.Diagnostics);
+            cadAuthority.Diagnostics,
+            cadPayload.BaseContentRevision,
+            cadPayload.BaseContentHash);
         var previewBytes = Encoding.UTF8.GetBytes(
             SpaceCadPreviewSet.Serialize(previewSet));
         var previewFile = CleanFile(

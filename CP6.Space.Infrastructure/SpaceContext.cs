@@ -98,6 +98,9 @@ public sealed class SpaceContext : DbContext
         Set<SpaceElementCommandBatch>();
     public DbSet<SpaceElementCommandRecord> ElementCommandRecords =>
         Set<SpaceElementCommandRecord>();
+    public DbSet<SpaceEditLease> EditLeases => Set<SpaceEditLease>();
+    public DbSet<SpaceEditLeaseTakeoverAudit> EditLeaseTakeoverAudits =>
+        Set<SpaceEditLeaseTakeoverAudit>();
     public DbSet<SpaceWmsAdoption> WmsAdoptions =>
         Set<SpaceWmsAdoption>();
     public DbSet<SpacePersonnelEvent> PersonnelEvents =>
@@ -179,6 +182,8 @@ public sealed class SpaceContext : DbContext
         ConfigureElementAttribute(modelBuilder);
         ConfigureElementCommandBatch(modelBuilder);
         ConfigureElementCommandRecord(modelBuilder);
+        ConfigureEditLease(modelBuilder);
+        ConfigureEditLeaseTakeoverAudit(modelBuilder);
         ConfigureWmsAdoption(modelBuilder);
         ConfigurePersonnelEvent(modelBuilder);
         ConfigurePersonnelState(modelBuilder);
@@ -249,6 +254,7 @@ public sealed class SpaceContext : DbContext
         ProtectRackGenerationProfiles();
         ProtectUnderlayCalibrationHistory();
         ProtectElementCommandHistory();
+        ProtectEditLeaseTakeoverAuditHistory();
         ProtectExcelMappingVersionHistory();
         ProtectPersonnelEventHistory();
         ProtectDeviceEventHistory();
@@ -274,6 +280,7 @@ public sealed class SpaceContext : DbContext
         ProtectRackGenerationProfiles();
         ProtectUnderlayCalibrationHistory();
         ProtectElementCommandHistory();
+        ProtectEditLeaseTakeoverAuditHistory();
         ProtectExcelMappingVersionHistory();
         ProtectPersonnelEventHistory();
         ProtectDeviceEventHistory();
@@ -2476,6 +2483,16 @@ public sealed class SpaceContext : DbContext
             .IsFixedLength()
             .HasMaxLength(64)
             .IsRequired();
+        entity.Property(x => x.ExpectedContentHash)
+            .HasColumnType("char(64)")
+            .IsUnicode(false)
+            .IsFixedLength()
+            .HasMaxLength(64);
+        entity.Property(x => x.ChangesetSha256)
+            .HasColumnType("char(64)")
+            .IsUnicode(false)
+            .IsFixedLength()
+            .HasMaxLength(64);
         entity.Property(x => x.ResponseJson).HasColumnType("nvarchar(max)");
         entity.Property(x => x.AppliedAtUtc).HasColumnType("datetime2");
 
@@ -2543,6 +2560,78 @@ public sealed class SpaceContext : DbContext
             .HasConstraintName(
                 "FK_Space_ElementCommandRecord_Batch_Tenant");
 
+        entity.HasQueryFilter(x => x.TenantId == CurrentTenantId && !x.IsDeleted);
+    }
+
+    private void ConfigureEditLease(ModelBuilder modelBuilder)
+    {
+        var entity = modelBuilder.Entity<SpaceEditLease>();
+        entity.ToTable("Space_EditLease");
+        entity.HasKey(x => x.Id);
+        entity.Property(x => x.Id).ValueGeneratedNever();
+        ConfigureTenantEntity(entity);
+        entity.Property(x => x.ExpiresAtUtc).HasColumnType("datetime2");
+        entity.Property(x => x.HolderDisplayName).HasMaxLength(200).IsRequired();
+        entity.Property(x => x.AcquiredAtUtc).HasColumnType("datetime2");
+        entity.Property(x => x.LastRenewedAtUtc).HasColumnType("datetime2");
+        entity.Property(x => x.RowVersion).IsRowVersion();
+        entity.HasIndex(x => new
+        {
+            x.TenantId,
+            x.ModelVersionId,
+            x.FloorLogicalId,
+        })
+            .IsUnique()
+            .HasDatabaseName("UX_Space_EditLease_Version_Floor");
+        entity.HasOne<SpaceModelVersion>()
+            .WithMany()
+            .HasForeignKey(x => new { x.TenantId, x.ModelVersionId })
+            .HasPrincipalKey(x => new { x.TenantId, x.Id })
+            .OnDelete(DeleteBehavior.Restrict)
+            .HasConstraintName("FK_Space_EditLease_Version_Tenant");
+        entity.HasOne<SpaceFloorRevision>()
+            .WithMany()
+            .HasForeignKey(x => new
+            {
+                x.TenantId,
+                x.ModelVersionId,
+                x.FloorLogicalId,
+            })
+            .HasPrincipalKey(x => new
+            {
+                x.TenantId,
+                x.ModelVersionId,
+                x.LogicalId,
+            })
+            .OnDelete(DeleteBehavior.Restrict)
+            .HasConstraintName("FK_Space_EditLease_Floor_Tenant_Version_Logical");
+        entity.HasQueryFilter(x => x.TenantId == CurrentTenantId && !x.IsDeleted);
+    }
+
+    private void ConfigureEditLeaseTakeoverAudit(ModelBuilder modelBuilder)
+    {
+        var entity = modelBuilder.Entity<SpaceEditLeaseTakeoverAudit>();
+        entity.ToTable("Space_EditLeaseTakeoverAudit");
+        entity.HasKey(x => x.Id);
+        entity.Property(x => x.Id).ValueGeneratedNever();
+        ConfigureTenantEntity(entity);
+        entity.Property(x => x.Reason).HasMaxLength(500).IsRequired();
+        entity.Property(x => x.RequestSource).HasMaxLength(500).IsRequired();
+        entity.Property(x => x.TakenOverAtUtc).HasColumnType("datetime2");
+        entity.HasIndex(x => new
+        {
+            x.TenantId,
+            x.ModelVersionId,
+            x.FloorLogicalId,
+            x.TakenOverAtUtc,
+        })
+            .HasDatabaseName("IX_Space_EditLeaseTakeoverAudit_Floor_TakenOver");
+        entity.HasOne<SpaceModelVersion>()
+            .WithMany()
+            .HasForeignKey(x => new { x.TenantId, x.ModelVersionId })
+            .HasPrincipalKey(x => new { x.TenantId, x.Id })
+            .OnDelete(DeleteBehavior.Restrict)
+            .HasConstraintName("FK_Space_EditLeaseTakeoverAudit_Version_Tenant");
         entity.HasQueryFilter(x => x.TenantId == CurrentTenantId && !x.IsDeleted);
     }
 
@@ -5718,6 +5807,16 @@ public sealed class SpaceContext : DbContext
         entity.Property(x => x.CreatedAtUtc).HasColumnType("datetime2");
         entity.Property(x => x.ModifiedAtUtc).HasColumnType("datetime2");
         entity.Property(x => x.IsDeleted).HasDefaultValue(false);
+    }
+
+    private void ProtectEditLeaseTakeoverAuditHistory()
+    {
+        if (ChangeTracker.Entries<SpaceEditLeaseTakeoverAudit>()
+            .Any(entry => entry.State is EntityState.Modified or EntityState.Deleted))
+        {
+            throw new InvalidOperationException(
+                "Edit lease takeover audit records are immutable.");
+        }
     }
 
     private void ProtectPutawayRecommendationHistory()

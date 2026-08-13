@@ -245,7 +245,7 @@ public sealed class SpaceCadParseJobStepExecutor(
                 SpaceErrorCodes.CadParseNotFound,
                 "The CAD parse Job was not found.");
         var payload = DeserializePayload(job.PayloadJson);
-        if (payload.SchemaVersion != 1 ||
+        if (payload.SchemaVersion != SpaceCadParsePayloadVersions.Current ||
             payload.SourceId != lease.SubjectId ||
             payload.ModelVersionId == Guid.Empty ||
             payload.FileId == Guid.Empty ||
@@ -256,6 +256,9 @@ public sealed class SpaceCadParseJobStepExecutor(
             payload.MappingProfileVersion <= 0 ||
             !IsSha256(payload.MappingDefinitionSha256) ||
             !IsSha256(payload.MappingPreviewSha256) ||
+            payload.BaseContentRevision < 0 ||
+            payload.BaseContentHash is not null &&
+                !IsSha256(payload.BaseContentHash) ||
             !Hash(job.PayloadJson).Equals(lease.InputHash, StringComparison.Ordinal))
         {
             throw Failure(

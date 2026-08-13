@@ -23,12 +23,22 @@ export interface ElementPropertiesPayload {
   attributes: ISpaceElementAttributeWriteDto[]
 }
 
+export interface EditorCommandEnvelope {
+  schemaVersion: number
+  commandBatchId: string
+  clientInstanceId: string
+  leaseId: string
+  expectedFloorRevision: number
+  commands: Array<EditorCommandInput & { commandId: string }>
+}
+
 export const designElementsApi = {
   update(
     versionId: string,
     floorLogicalId: string,
     expectedFloorRevision: number,
     clientInstanceId: string,
+    leaseId: string,
     element: ISpaceSceneElementDto,
     payload: ElementPropertiesPayload,
   ) {
@@ -38,6 +48,7 @@ export const designElementsApi = {
       floorLogicalId,
       expectedFloorRevision,
       clientInstanceId,
+      leaseId,
       [
         {
           type: 'UpdateProperties',
@@ -53,6 +64,7 @@ export const designElementsApi = {
     floorLogicalId: string,
     expectedFloorRevision: number,
     clientInstanceId: string,
+    leaseId: string,
     element: ISpaceSceneElementDto,
   ) {
     const targetLogicalId = requireLogicalId(element)
@@ -61,6 +73,7 @@ export const designElementsApi = {
       floorLogicalId,
       expectedFloorRevision,
       clientInstanceId,
+      leaseId,
       [
         {
           type: 'DeleteObject',
@@ -75,18 +88,43 @@ export const designElementsApi = {
     floorLogicalId: string,
     expectedFloorRevision: number,
     clientInstanceId: string,
+    leaseId: string,
     commands: readonly EditorCommandInput[],
   ) {
-    return apply(versionId, floorLogicalId, {
+    const envelope = designElementsApi.createEnvelope(
+      expectedFloorRevision,
+      clientInstanceId,
+      leaseId,
+      commands,
+    )
+    return designElementsApi.sendEnvelope(versionId, floorLogicalId, envelope)
+  },
+
+  createEnvelope(
+    expectedFloorRevision: number,
+    clientInstanceId: string,
+    leaseId: string,
+    commands: readonly EditorCommandInput[],
+  ): EditorCommandEnvelope {
+    return {
       schemaVersion: 1,
       commandBatchId: crypto.randomUUID(),
       clientInstanceId,
+      leaseId,
       expectedFloorRevision,
       commands: commands.map((command) => ({
         ...command,
         commandId: crypto.randomUUID(),
       })),
-    })
+    }
+  },
+
+  sendEnvelope(
+    versionId: string,
+    floorLogicalId: string,
+    envelope: EditorCommandEnvelope,
+  ) {
+    return apply(versionId, floorLogicalId, envelope)
   },
 }
 

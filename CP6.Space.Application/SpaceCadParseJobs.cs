@@ -3,6 +3,11 @@ using CP6.Space.Domain;
 
 namespace CP6.Space.Application;
 
+public static class SpaceCadParsePayloadVersions
+{
+    public const int Current = 2;
+}
+
 public sealed record SpaceCadParseJobPayload(
     int SchemaVersion,
     Guid ModelVersionId,
@@ -18,7 +23,9 @@ public sealed record SpaceCadParseJobPayload(
     Guid MappingProfileId,
     int MappingProfileVersion,
     string MappingDefinitionSha256,
-    string MappingPreviewSha256);
+    string MappingPreviewSha256,
+    long BaseContentRevision,
+    string? BaseContentHash);
 
 public sealed record SpaceCadParseProviderRequest(
     Guid TenantId,
@@ -71,6 +78,19 @@ public interface ISpaceCadParseService
         Guid versionId,
         Guid sourceId,
         Guid jobId,
+        CancellationToken cancellationToken = default);
+
+    Task<SpaceCadReviewWorkspaceV1> GetReviewWorkspaceAsync(
+        Guid versionId,
+        Guid sourceId,
+        Guid jobId,
+        CancellationToken cancellationToken = default);
+
+    Task<ApplySpaceCadChangesetResponse> ApplyReviewChangesAsync(
+        Guid versionId,
+        Guid sourceId,
+        Guid jobId,
+        ApplySpaceCadChangesetRequest request,
         CancellationToken cancellationToken = default);
 
     Task<SpaceCadParseActionResponse> CancelAsync(

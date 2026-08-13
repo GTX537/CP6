@@ -266,7 +266,8 @@
 </template>
 
 <script setup lang="ts">
-import { computed, onBeforeUnmount, reactive, ref, watch } from 'vue'
+import { computed, nextTick, onBeforeUnmount, reactive, ref, watch } from 'vue'
+import { useRoute } from 'vue-router'
 import { ElMessage, ElMessageBox } from 'element-plus'
 import CpPageShell from '@/components/templates/CpPageShell.vue'
 import CpEmpty from '@/components/base/CpEmpty.vue'
@@ -286,6 +287,10 @@ import type {
 } from '../../../../../sdk/typescript/space-design-v1/spaceDesignV1Client'
 
 const tr = useTOr()
+const route = useRoute()
+const requestedSiteId = String(route.query.siteId ?? '')
+const requestedVersionId = String(route.query.versionId ?? '')
+const requestedAction = String(route.query.action ?? '')
 const sites = ref<SiteVO[]>([])
 const siteId = ref('')
 const candidateId = ref('')
@@ -319,8 +324,12 @@ let republishTimer: number | undefined
 let publishKey = ''
 let retryKey = ''
 let rollbackKey = ''
+let requestedWorkflowHandled = false
 
-const candidates = computed(() => versions.value.filter(v => v.status === 'Ready' && (v.purpose || 'Production') === 'Production'))
+const candidates = computed(() => versions.value.filter(
+  v => ['Draft', 'Ready'].includes(v.status || '') &&
+    (v.purpose || 'Production') === 'Production',
+))
 const historicalVersions = computed(() => versions.value.filter(v => v.status === 'Superseded' && (v.purpose || 'Production') === 'Production'))
 const publishedVersion = computed(() => versions.value.find(v => v.id === model.value?.currentPublishedVersionId))
 const publishedVersionLabel = computed(() => publishedVersion.value ? `v${publishedVersion.value.versionNo} · ${publishedVersion.value.name}` : tr('space.publishManagement.none', '尚未发布'))
@@ -422,7 +431,20 @@ async function refreshScope() {
     model.value = nextModel
     versions.value = versionPage.items || []
     activities.value = activityPage.items || []
-    if (!candidates.value.some(v => v.id === candidateId.value)) candidateId.value = candidates.value[0]?.id || ''
+    if (!candidates.value.some(v => v.id === candidateId.value)) {
+      candidateId.value = candidates.value.some(v => v.id === requestedVersionId)
+        ? requestedVersionId
+        : candidates.value[0]?.id || ''
+    }
+    await nextTick()
+    if (
+      !requestedWorkflowHandled &&
+      candidateId.value === requestedVersionId &&
+      ['validate', 'publish'].includes(requestedAction)
+    ) {
+      requestedWorkflowHandled = true
+      await startValidation()
+    }
   } catch (error) {
     await showError(error)
   } finally {
@@ -618,7 +640,11 @@ watch(candidateId, () => {
 
 onBeforeUnmount(() => { clearValidationTimer(); clearAttemptTimer(); clearRepublishTimer() })
 
-void loadSites()
+void loadSites().then(() => {
+  if (requestedSiteId && sites.value.some(site => site.id === requestedSiteId)) {
+    siteId.value = requestedSiteId
+  }
+})
 </script>
 
 <style scoped>

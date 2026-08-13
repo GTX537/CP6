@@ -1,5 +1,13 @@
 # 当前待办与优先级
 
+## P0：Space Studio v1.3 GA 外部与扩展门禁
+
+- 为 CAD 接入一个主 DWG/DXF Provider 和一个同合同、同审批的备用 Provider；当前默认 unavailable Provider 不能作为真实 CAD 验收。
+- 为 CAD 上传补齐扫描就绪后的坐标/单位确认与 CAD Mapping Profile 选择/预览启动 UI；当前工作台已能上传、取消、重试并自动打开已有 Parse Job，但无权猜测映射 profile/hash，因此未用伪默认值自动启动解析。
+- 在已交付墙、柱、门、月台和静态设备直接创建的基础上，补齐库区、巷道和首个货架的 Design V1 直接拖放创建与批量编码；旧 `FloorEditor` 不继续发展为第二套权威。
+- 用 20 份授权真实黄金 CAD 执行 10/5/5 Calibration/Validation/Holdout，产出覆盖率、准确率、高置信度精确率和 Blocking 遗漏证据。
+- 在 Iris Xe/WebGL2/500 货架/10,000 库位跑正式 Viewer 门槛；补齐选择高亮/视角持久化和完整 GA 快捷键的浏览器 E2E/可达性证据。
+- 执行一个绿地仓和一个存量仓各 14 天 Pilot、WMS 故障恢复与对账演练，并取得产品、QA、WMS、架构、安全签字后才可声明核心 GA。
 ## 已完成：OpenAPI 原生客户端漂移门禁
 
 - PowerShell 版本差异与全局无关 schema 导致的假阳性已消除；门禁现在只哈希原生客户端路径及递归可达 schema，并使用 Node.js 稳定规范化。

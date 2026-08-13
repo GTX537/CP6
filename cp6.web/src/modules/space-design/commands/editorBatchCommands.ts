@@ -43,11 +43,28 @@ export interface EditorCommandInput {
     | 'DeleteObject'
     | 'RestoreLogicalObject'
     | 'GenerateRackArray'
+    | 'CreateElement'
     | 'UpdateProperties'
   targetLogicalId: string
   moveObject?: MoveObjectPayload
   rotateObject?: RotateObjectPayload
   generateRackArray?: GenerateRackArrayPayload
+  createElement?: {
+    elementType: string
+    geometryJson: string
+    x: number
+    y: number
+    z: number
+    rotationZ: number
+    width: number
+    height: number
+    depth: number
+    businessCode?: string
+    parentLogicalId?: string
+    sourceId?: string
+    sourceRef?: string
+    attributes: unknown[]
+  }
   updateProperties?: unknown
 }
 

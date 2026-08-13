@@ -1,5 +1,7 @@
 # CP6 3D Space MVP Scope Baseline v1.0
 
+> 2026-08-12 修订：低成本 3D 建模范围由 [Spec v1.3](04-low-cost-3d-modeling-spec.md) 与 [Scope Change RFC-003](09-scope-change-rfc-space-studio-v1.3.md) 更新；外部 AI 为独立 Beta、Viewer 性能门槛收紧、Supplier 不参加现场业务 UAT。其余未冲突条款继续有效。
+
 - 状态：**Scope Frozen / Development Ready Gate Pending Sign-off**
 - 基线日期：2026-07-25
 - 代码核验基线：`feat/gr-vp-t6@1524289fbac6f94b81b69a6fe1ce2f48fceb02dd`

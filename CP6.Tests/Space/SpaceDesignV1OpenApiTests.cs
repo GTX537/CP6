@@ -70,6 +70,10 @@ public sealed class SpaceDesignV1OpenApiTests
             "/api/space/design/v1/versions/{versionId}/floors/{floorLogicalId}/commands",
             "/api/space/design/v1/versions/{versionId}/floors/{floorLogicalId}/scene",
             "/api/space/design/v1/versions/{versionId}/floors/{floorLogicalId}/underlay",
+            "/api/space/design/v1/versions/{versionId}/floors/{floorLogicalId}/lease",
+            "/api/space/design/v1/versions/{versionId}/floors/{floorLogicalId}/lease/{leaseId}:renew",
+            "/api/space/design/v1/versions/{versionId}/floors/{floorLogicalId}/lease/{leaseId}:release",
+            "/api/space/design/v1/versions/{versionId}/floors/{floorLogicalId}/lease:takeover",
             "/api/space/design/v1/versions/{versionId}/files/{fileId}",
             "/api/space/design/v1/versions/{versionId}/excel-sources",
             "/api/space/design/v1/versions/{versionId}/excel-cad-matches",
@@ -84,6 +88,8 @@ public sealed class SpaceDesignV1OpenApiTests
             "/api/space/design/v1/versions/{versionId}/sources/{sourceId}/excel-preflights/{jobId}/report",
             "/api/space/design/v1/versions/{versionId}/sources/{sourceId}/cad-parses",
             "/api/space/design/v1/versions/{versionId}/sources/{sourceId}/cad-parses/{jobId}",
+            "/api/space/design/v1/versions/{versionId}/sources/{sourceId}/cad-parses/{jobId}/review-workspace",
+            "/api/space/design/v1/versions/{versionId}/sources/{sourceId}/cad-parses/{jobId}/review-workspace:apply",
             "/api/space/design/v1/versions/{versionId}/sources/{sourceId}/cad-parses/{jobId}:cancel",
             "/api/space/design/v1/versions/{versionId}/sources/{sourceId}/cad-parses/{jobId}:retry",
             "/api/space/design/v1/versions/{versionId}/sources/{sourceId}/underlay-calibration",
@@ -137,8 +143,8 @@ public sealed class SpaceDesignV1OpenApiTests
             .Select(operation =>
                 operation.Value.GetProperty("operationId").GetString())
             .ToArray();
-        Assert.Equal(118, operationIds.Length);
-        Assert.Equal(118, operationIds.Distinct().Count());
+        Assert.Equal(125, operationIds.Length);
+        Assert.Equal(125, operationIds.Distinct().Count());
         Assert.Contains("GetPolicy", operationIds);
         Assert.Contains("UpdatePolicy", operationIds);
         Assert.Contains("GetUsage", operationIds);
@@ -180,6 +186,8 @@ public sealed class SpaceDesignV1OpenApiTests
         Assert.Contains("UploadCadSource", operationIds);
         Assert.Contains("StartParse", operationIds);
         Assert.Contains("GetParse", operationIds);
+        Assert.Contains("GetReviewWorkspace", operationIds);
+        Assert.Contains("ApplyReviewChanges", operationIds);
         Assert.Contains("CancelParse", operationIds);
         Assert.Contains("RetryParse", operationIds);
         Assert.Contains("CreateValidation", operationIds);
@@ -1422,6 +1430,174 @@ public sealed class SpaceDesignV1OpenApiTests
                 .GetProperty("schema")
                 .GetProperty("$ref")
                 .GetString());
+
+        var requestSchema = document.RootElement
+            .GetProperty("components")
+            .GetProperty("schemas")
+            .GetProperty(
+                "CP6.Space.Contracts.ApplySpaceElementCommandBatchRequest");
+        var required = requestSchema.GetProperty("required")
+            .EnumerateArray()
+            .Select(property => property.GetString())
+            .ToHashSet(StringComparer.Ordinal);
+        Assert.Contains("leaseId", required);
+    }
+
+    [Fact]
+    public void Generated_command_batch_client_requires_the_edit_lease()
+    {
+        var typescript = File.ReadAllText(
+            Path.Combine(
+                RepositoryRoot,
+                "sdk",
+                "typescript",
+                "space-design-v1",
+                "spaceDesignV1Client.ts"));
+        var request = ExtractTypeBlock(
+            typescript,
+            "export interface IApplySpaceElementCommandBatchRequest");
+
+        AssertRequiredTypeScriptProperties(request, "leaseId");
+    }
+
+    [Fact]
+    public void Cad_review_apply_and_manual_create_are_required_in_generated_clients()
+    {
+        using var document = ReadContract();
+        var operation = document.RootElement
+            .GetProperty("paths")
+            .GetProperty(
+                "/api/space/design/v1/versions/{versionId}/sources/{sourceId}/" +
+                "cad-parses/{jobId}/review-workspace:apply")
+            .GetProperty("post");
+        Assert.Equal(
+            "ApplyReviewChanges",
+            operation.GetProperty("operationId").GetString());
+        Assert.True(operation.GetProperty("requestBody")
+            .GetProperty("required")
+            .GetBoolean());
+
+        var schemas = document.RootElement
+            .GetProperty("components")
+            .GetProperty("schemas");
+        AssertExactRequired(
+            schemas.GetProperty(
+                "CP6.Space.Contracts.ApplySpaceCadChangesetRequest"),
+            "commandBatchId",
+            "clientInstanceId",
+            "leaseId",
+            "expectedFloorRevision",
+            "expectedContentRevision",
+            "workspaceSha256",
+            "changeIds");
+        AssertExactRequired(
+            schemas.GetProperty("CP6.Space.Contracts.SpaceCreateElementDto"),
+            "elementType",
+            "geometryJson",
+            "x",
+            "y",
+            "z",
+            "rotationZ",
+            "width",
+            "height",
+            "depth",
+            "attributes");
+
+        var typescript = File.ReadAllText(
+            Path.Combine(
+                RepositoryRoot,
+                "sdk",
+                "typescript",
+                "space-design-v1",
+                "spaceDesignV1Client.ts"));
+        AssertRequiredTypeScriptProperties(
+            ExtractTypeBlock(
+                typescript,
+                "export interface IApplySpaceCadChangesetRequest"),
+            "commandBatchId",
+            "clientInstanceId",
+            "leaseId",
+            "expectedFloorRevision",
+            "expectedContentRevision",
+            "workspaceSha256",
+            "changeIds");
+        AssertRequiredTypeScriptProperties(
+            ExtractTypeBlock(
+                typescript,
+                "export interface ISpaceCreateElementDto"),
+            "elementType",
+            "geometryJson",
+            "x",
+            "y",
+            "z",
+            "rotationZ",
+            "width",
+            "height",
+            "depth",
+            "attributes");
+    }
+
+    [Theory]
+    [InlineData(
+        "/api/space/design/v1/versions/{versionId}/floors/{floorLogicalId}/lease",
+        "CP6.Space.Contracts.AcquireSpaceEditLeaseRequest")]
+    [InlineData(
+        "/api/space/design/v1/versions/{versionId}/floors/{floorLogicalId}/lease/{leaseId}:renew",
+        "CP6.Space.Contracts.ContinueSpaceEditLeaseRequest")]
+    [InlineData(
+        "/api/space/design/v1/versions/{versionId}/floors/{floorLogicalId}/lease/{leaseId}:release",
+        "CP6.Space.Contracts.ContinueSpaceEditLeaseRequest")]
+    [InlineData(
+        "/api/space/design/v1/versions/{versionId}/floors/{floorLogicalId}/lease:takeover",
+        "CP6.Space.Contracts.TakeoverSpaceEditLeaseRequest")]
+    public void Lease_mutations_require_their_json_body(
+        string path,
+        string requestSchema)
+    {
+        using var document = ReadContract();
+        var body = document.RootElement
+            .GetProperty("paths")
+            .GetProperty(path)
+            .GetProperty("post")
+            .GetProperty("requestBody");
+
+        Assert.True(body.GetProperty("required").GetBoolean());
+        Assert.Equal(
+            $"#/components/schemas/{requestSchema}",
+            body.GetProperty("content")
+                .GetProperty("application/json")
+                .GetProperty("schema")
+                .GetProperty("$ref")
+                .GetString());
+    }
+
+    [Fact]
+    public void Generated_lease_clients_require_session_fence_fields()
+    {
+        var typescript = File.ReadAllText(
+            Path.Combine(
+                RepositoryRoot,
+                "sdk",
+                "typescript",
+                "space-design-v1",
+                "spaceDesignV1Client.ts"));
+
+        AssertRequiredTypeScriptProperties(
+            ExtractTypeBlock(
+                typescript,
+                "export interface IAcquireSpaceEditLeaseRequest"),
+            "clientInstanceId");
+        AssertRequiredTypeScriptProperties(
+            ExtractTypeBlock(
+                typescript,
+                "export interface IContinueSpaceEditLeaseRequest"),
+            "clientInstanceId");
+        AssertRequiredTypeScriptProperties(
+            ExtractTypeBlock(
+                typescript,
+                "export interface ITakeoverSpaceEditLeaseRequest"),
+            "clientInstanceId",
+            "reason");
     }
 
     [Fact]

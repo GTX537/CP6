@@ -41,6 +41,7 @@ public class SpacePermissionAttributeTests
         "space-publish:publish", "space-publish:deactivate", "space-publish:adopt",
         "space-audit:read",
         "space:model:read", "space:model:edit", "space:model:validate",
+        "space:model:lease:takeover",
         "space:model:publish", "space:model:rollback",
         "space:source:upload",
         "space:model:generate-ai", "space:model:review-ai",
@@ -79,6 +80,10 @@ public class SpacePermissionAttributeTests
             ["SpaceDesignV1Controller.GetVersions"] = "space:model:read",
             ["SpaceDesignV1Controller.GetVersion"] = "space:model:read",
             ["SpaceDesignV1Controller.GetScene"] = "space:model:read",
+            ["SpaceEditLeaseController.GetEditLease"] = "space:model:edit",
+            ["SpaceCadParseController.GetParse"] = "space:model:read",
+            ["SpaceCadParseController.GetReviewWorkspace"] =
+                "space:model:read",
             ["SpaceDesignV1Controller.GetAssets"] = "space:model:read",
             ["SpaceDesignV1Controller.GetSources"] = "space:model:read",
             ["SpaceDesignV1Controller.GetFile"] = "space:model:read",
@@ -234,7 +239,7 @@ public class SpacePermissionAttributeTests
     public void SpaceControllers_AreDiscovered()
     {
         // 守卫：确保反射确实扫到全部 controller（防命名空间/程序集变动导致「空扫空过」）。
-        Assert.Equal(42, SpaceControllers.Count());
+        Assert.Equal(43, SpaceControllers.Count());
     }
 
     [Fact]
@@ -327,6 +332,29 @@ public class SpacePermissionAttributeTests
         [
             "space:source:upload",
             "space:model:edit",
+        ]));
+    }
+
+    [Fact]
+    public void Lease_takeover_requires_edit_and_takeover_permissions()
+    {
+        var method = typeof(SpaceEditLeaseController).GetMethod(
+            nameof(SpaceEditLeaseController.TakeoverEditLease));
+        Assert.NotNull(method);
+
+        var permissions = CustomAttributeData
+            .GetCustomAttributes(method!)
+            .Where(data =>
+                data.AttributeType == typeof(RequirePermissionAttribute))
+            .Select(data =>
+                $"{data.ConstructorArguments[0].Value}:" +
+                $"{data.ConstructorArguments[1].Value}")
+            .ToHashSet();
+
+        Assert.True(permissions.SetEquals(
+        [
+            "space:model:edit",
+            "space:model:lease:takeover",
         ]));
     }
 

@@ -1,10 +1,14 @@
 <script setup lang="ts">
 import { computed, nextTick, onBeforeUnmount, onMounted, ref, watch } from 'vue'
-import { useRoute, useRouter } from 'vue-router'
+import { onBeforeRouteUpdate, useRoute, useRouter } from 'vue-router'
 import { useI18n } from 'vue-i18n'
 import { ElMessage, ElMessageBox } from 'element-plus'
+import { isAxiosError } from 'axios'
+import { designLeaseApi, type SpaceEditLease } from '@/api/space/designLease'
+import { designCadParseApi } from '@/api/space/designCadParse'
 import {
   designElementsApi,
+  type EditorCommandEnvelope,
   type ElementPropertiesPayload,
 } from '@/api/space/designElements'
 import {
@@ -37,6 +41,8 @@ import {
 import DesignBatchToolsPanel from '@/modules/space-design/panels/DesignBatchToolsPanel.vue'
 import DesignElementPropertiesPanel from '@/modules/space-design/panels/DesignElementPropertiesPanel.vue'
 import DesignWmsAdoptionPanel from '@/modules/space-design/panels/DesignWmsAdoptionPanel.vue'
+import SpaceStudioContextPanel from '@/modules/space-design/panels/SpaceStudioContextPanel.vue'
+import SpaceStudioChecklist from '@/modules/space-design/panels/SpaceStudioChecklist.vue'
 import DesignScenePreview3D from '@/modules/space-design/preview3d/DesignScenePreview3D.vue'
 import { CadIssueOverlayLayer } from '@/modules/space-design/cad-review/CadIssueOverlayLayer'
 import DesignCadIssuePanel from '@/modules/space-design/cad-review/DesignCadIssuePanel.vue'
@@ -70,7 +76,7 @@ import {
   UnderlayStage,
   type UnderlayLayerState,
 } from '@/space-editor/underlay/UnderlayStage'
-import type { ViewState } from '@/space-editor/coords'
+import { screenToWorld, type ViewState } from '@/space-editor/coords'
 import type {
   ISpaceDesignSceneDto,
   ISpaceExcelCadRackMatchV1,
@@ -98,8 +104,11 @@ const versionId = computed(() => String(route.params.versionId ?? ''))
 const floorLogicalId = computed(() => String(route.params.floorLogicalId ?? ''))
 const generationRunId = computed(() => String(route.query.generationRunId ?? ''))
 const matchJobId = computed(() => String(route.query.matchJobId ?? ''))
+const cadSourceId = computed(() => String(route.query.cadSourceId ?? ''))
+const cadParseJobId = computed(() => String(route.query.cadParseJobId ?? ''))
 const canvasRef = ref<HTMLDivElement>()
 const fileInputRef = ref<HTMLInputElement>()
+const cadFileInputRef = ref<HTMLInputElement>()
 const cadReviewFileInputRef = ref<HTMLInputElement>()
 const aiReviewFileInputRef = ref<HTMLInputElement>()
 const designScene = ref<ISpaceDesignSceneDto | null>(null)
@@ -113,15 +122,44 @@ const aiReviewWorkspace = ref<AiProposalReviewWorkspace | null>(null)
 const aiReviewPanelVisible = ref(false)
 const aiDecisionPanelVisible = ref(false)
 const aiGenerationPanelVisible = ref(false)
+const inspectorTab = ref<'properties' | 'batch' | 'issues'>('properties')
 const activeAiReviewItemId = ref('')
 const loading = ref(true)
-const projectionMode = ref<'2d' | 'split' | '3d'>('split')
+const projectionMode = ref<'2d' | '3d'>('2d')
 const uploading = ref(false)
 const downloadingTemplate = ref(false)
 const savingCalibration = ref(false)
 const savingElement = ref(false)
 const calibrationMode = ref(false)
 const statusText = ref('')
+const saveState = ref<'idle' | 'saving' | 'saved' | 'failed'>('idle')
+const lastSavedAt = ref<Date | null>(null)
+const unsavedEnvelope = ref<EditorCommandEnvelope | null>(null)
+const revisionConflict = ref(false)
+const unsavedCommands = computed(
+  () => unsavedEnvelope.value?.commands ?? [],
+)
+const lease = ref<SpaceEditLease | null>(null)
+const leaseState = ref<'loading' | 'owned' | 'held' | 'lost' | 'released'>('loading')
+const viewportWidth = ref(window.innerWidth)
+const parseStatus = ref('')
+const parseProgress = ref(0)
+const parseStartedAt = ref<Date | null>(null)
+const parseElapsed = ref('')
+const parseError = ref('')
+const canvasZoomPercent = ref(5)
+const canvasSelectionTool = ref<'select' | 'pan' | 'measure'>('select')
+const canvasViewport = ref({ ...defaultCanvasViewport })
+const pointerCoordinates = ref('X — / Y —')
+const measurementText = ref('')
+const measurementStart = ref<{ x: number; y: number } | null>(null)
+let panGesture: {
+  screenX: number
+  screenY: number
+  viewport: Pick<ViewState, 'panX' | 'panY' | 'zoom'>
+} | null = null
+let leaseRenewTimer: number | null = null
+let parseElapsedTimer: number | null = null
 const visible = ref(true)
 const opacity = ref(55)
 const locked = ref(true)
@@ -135,13 +173,35 @@ let elementLayer: ElementCanvasLayer | null = null
 let cadIssueOverlay: CadIssueOverlayLayer | null = null
 let resizeObserver: ResizeObserver | null = null
 let disposed = false
-const clientInstanceId = crypto.randomUUID()
+const clientInstanceId = tabClientInstanceId()
 const history = new SavedCommandHistory()
 const historyRevision = ref(0)
 
 const calibrated = computed(() => Boolean(floor.value?.underlayCalibrationId))
 const hasUnderlay = computed(() => Boolean(floor.value?.underlaySourceId))
-const readonlyScene = computed(() => designScene.value?.versionStatus !== 'Draft')
+const narrowReadonly = computed(() => viewportWidth.value < 1280)
+const readonlyScene = computed(
+  () =>
+    designScene.value?.versionStatus !== 'Draft' ||
+    narrowReadonly.value ||
+    leaseState.value !== 'owned' ||
+    revisionConflict.value,
+)
+const leaseLabel = computed(() => {
+  if (narrowReadonly.value) return '窄屏只读'
+  if (leaseState.value === 'owned') return `租约至 ${formatTime(lease.value?.expiresAtUtc)}`
+  if (leaseState.value === 'held') {
+    return `由 ${lease.value?.holderDisplayName ?? lease.value?.ownerUserId ?? '其他编辑者'} 编辑至 ${formatTime(lease.value?.expiresAtUtc)}`
+  }
+  if (leaseState.value === 'lost') return '租约已丢失 · 未同步命令已保留'
+  return '正在确认编辑租约'
+})
+const saveLabel = computed(() => {
+  if (saveState.value === 'saving') return `保存中 · ${unsavedCommands.value.length} 条`
+  if (saveState.value === 'failed') return `保存失败 · ${unsavedCommands.value.length} 条未同步`
+  if (lastSavedAt.value) return `已保存 ${lastSavedAt.value.toLocaleTimeString()}`
+  return '尚无修改'
+})
 const cadReviewWorkspaceFreshness = computed(() => {
   const workspace = cadReviewWorkspace.value
   const scene = designScene.value
@@ -267,9 +327,16 @@ const calibrationPreview = computed(() => {
 })
 
 onMounted(async () => {
+  window.addEventListener('resize', updateViewportWidth)
+  window.addEventListener('keydown', onStudioKeydown)
   await nextTick()
   if (!canvasRef.value) return
   stage = new UnderlayStage(canvasRef.value)
+  stage.stage.on('pointermove.space-studio-tools', onCanvasPointerMove)
+  stage.stage.on('pointerdown.space-studio-tools', onCanvasPointerDown)
+  stage.stage.on('pointerup.space-studio-tools', onCanvasPointerUp)
+  stage.stage.on('click.space-studio-tools', onCanvasToolClick)
+  stage.stage.on('wheel.space-studio-tools', onCanvasWheel)
   elementLayer = new ElementCanvasLayer(stage.stage, selectObjects)
   cadIssueOverlay = new CadIssueOverlayLayer(stage.stage)
   resizeObserver = new ResizeObserver((entries) => {
@@ -282,10 +349,63 @@ onMounted(async () => {
   })
   resizeObserver.observe(canvasRef.value)
   await loadScene()
+  if (narrowReadonly.value) {
+    projectionMode.value = '3d'
+    inspectorTab.value = 'issues'
+  }
+  if (designScene.value?.versionStatus === 'Draft' && !narrowReadonly.value) {
+    await acquireEditLease()
+  } else {
+    leaseState.value = 'held'
+  }
+  if (cadSourceId.value && cadParseJobId.value) {
+    void monitorCadParse()
+  }
+})
+const allRacksCoded = computed(
+  () => activeRacks.value.every((rack) => Boolean(rack.rackCode?.trim())),
+)
+const publishReady = computed(
+  () => (!cadReviewWorkspace.value ||
+    (!cadReviewWorkspaceStale.value &&
+      cadReviewWorkspace.value.summary.openBlockingCount === 0)) &&
+    allRacksCoded.value,
+)
+
+onBeforeRouteUpdate(async () => {
+  if (!unsavedEnvelope.value) return true
+  try {
+    await ElMessageBox.confirm(
+      '当前楼层仍有未同步命令。切换前可导出完整命令包，之后在原楼层继续恢复。',
+      '未同步命令',
+      {
+        type: 'warning',
+        confirmButtonText: '导出并切换',
+        cancelButtonText: '留在当前楼层',
+      },
+    )
+    exportRecoveryDraft()
+    return true
+  } catch {
+    return false
+  }
 })
 
 onBeforeUnmount(() => {
   disposed = true
+  window.removeEventListener('resize', updateViewportWidth)
+  window.removeEventListener('keydown', onStudioKeydown)
+  if (leaseRenewTimer !== null) window.clearInterval(leaseRenewTimer)
+  if (parseElapsedTimer !== null) window.clearInterval(parseElapsedTimer)
+  const leaseId = lease.value?.leaseId
+  if (leaseId && leaseState.value === 'owned') {
+    void designLeaseApi.release(
+      versionId.value,
+      floorLogicalId.value,
+      leaseId,
+      clientInstanceId,
+    )
+  }
   resizeObserver?.disconnect()
   elementLayer?.destroy()
   elementLayer = null
@@ -293,6 +413,33 @@ onBeforeUnmount(() => {
   cadIssueOverlay = null
   stage?.destroy()
   stage = null
+})
+
+watch(narrowReadonly, async (isNarrow, wasNarrow) => {
+  if (isNarrow) {
+    projectionMode.value = '3d'
+    inspectorTab.value = 'issues'
+  }
+  if (isNarrow && leaseState.value === 'owned') {
+    const leaseId = lease.value?.leaseId
+    if (leaseId) {
+      await designLeaseApi.release(
+        versionId.value,
+        floorLogicalId.value,
+        leaseId,
+        clientInstanceId,
+      )
+        .catch(() => undefined)
+    }
+    stopLeaseRenewal()
+    leaseState.value = 'released'
+  } else if (!isNarrow && wasNarrow && designScene.value?.versionStatus === 'Draft') {
+    await acquireEditLease()
+  }
+})
+
+watch(readonlyScene, (isReadonly) => {
+  elementLayer?.setEnabled(!isReadonly && canvasSelectionTool.value === 'select')
 })
 
 watch([visible, opacity, locked], () => {
@@ -312,6 +459,36 @@ watch(matchJobId, (jobId) => {
 
   closeMatchPanel()
 })
+
+watch(
+  [versionId, floorLogicalId],
+  async ([nextVersion, nextFloor], [previousVersion, previousFloor]) => {
+    if (!previousVersion || !previousFloor ||
+        nextVersion === previousVersion && nextFloor === previousFloor) return
+    const previousLeaseId = lease.value?.leaseId
+    if (previousLeaseId && leaseState.value === 'owned') {
+      await designLeaseApi.release(
+        previousVersion,
+        previousFloor,
+        previousLeaseId,
+        clientInstanceId,
+      ).catch(() => undefined)
+    }
+    stopLeaseRenewal()
+    selectedObjects.value = []
+    cadReviewWorkspace.value = null
+    unsavedEnvelope.value = null
+    revisionConflict.value = false
+    history.clear()
+    touchHistory()
+    lease.value = null
+    leaseState.value = 'loading'
+    await loadScene()
+    if (designScene.value?.versionStatus === 'Draft' && !narrowReadonly.value) {
+      await acquireEditLease()
+    }
+  },
+)
 
 async function loadScene(): Promise<void> {
   loading.value = true
@@ -369,6 +546,37 @@ function chooseCadReviewArtifact(): void {
   cadReviewFileInputRef.value?.click()
 }
 
+function chooseCadFile(): void {
+  cadFileInputRef.value?.click()
+}
+
+async function onCadFileSelected(event: Event): Promise<void> {
+  const input = event.target as HTMLInputElement
+  const file = input.files?.[0]
+  input.value = ''
+  if (!file) return
+  if (file.size > maxUploadBytes) {
+    ElMessage.error('CAD 文件不能超过 100MB')
+    return
+  }
+  uploading.value = true
+  try {
+    const uploaded = await designCadParseApi.upload(versionId.value, file)
+    parseStatus.value = uploaded.source.state
+    await router.replace({
+      query: {
+        ...route.query,
+        cadSourceId: uploaded.source.id,
+      },
+    })
+    ElMessage.success('CAD 已上传。安全扫描完成后可按冻结映射启动解析。')
+  } catch {
+    ElMessage.error('CAD 上传失败，当前 Draft 未变更')
+  } finally {
+    uploading.value = false
+  }
+}
+
 async function onCadReviewArtifactSelected(event: Event): Promise<void> {
   const input = event.target as HTMLInputElement
   const file = input.files?.[0]
@@ -406,7 +614,7 @@ function focusCadReviewItem(item: CadReviewItem): void {
     return
   }
   activeCadReviewItemId.value = item.reviewItemId
-  if (projectionMode.value === '3d') projectionMode.value = 'split'
+  if (projectionMode.value === '3d') projectionMode.value = '2d'
 
   const object = resolveCadReviewCanvasObject(
     item,
@@ -458,6 +666,8 @@ function viewportForCadReviewItem(
 function applyCanvasViewport(
   viewport: Pick<ViewState, 'panX' | 'panY' | 'zoom'>,
 ): void {
+  canvasViewport.value = { ...viewport }
+  canvasZoomPercent.value = Math.round(viewport.zoom * 100)
   stage?.setViewport(viewport)
   elementLayer?.setViewport(viewport)
   cadIssueOverlay?.setViewport(viewport)
@@ -465,6 +675,76 @@ function applyCanvasViewport(
 
 function resetCanvasViewport(): void {
   applyCanvasViewport(defaultCanvasViewport)
+}
+
+function canvasWorldPoint(): { x: number; y: number } | null {
+  const canvasStage = stage?.stage
+  const point = canvasStage?.getPointerPosition()
+  if (!canvasStage || !point) return null
+  return screenToWorld(point, {
+    ...canvasViewport.value,
+    height: canvasStage.height(),
+  })
+}
+
+function selectCanvasTool(tool: 'select' | 'pan' | 'measure'): void {
+  canvasSelectionTool.value = tool
+  elementLayer?.setEnabled(tool === 'select' && !readonlyScene.value)
+  if (tool === 'measure') {
+    measurementStart.value = null
+    measurementText.value = '测量：请选择起点'
+  }
+}
+
+function onCanvasPointerMove(): void {
+  const canvasStage = stage?.stage
+  const screen = canvasStage?.getPointerPosition()
+  const world = canvasWorldPoint()
+  if (world) pointerCoordinates.value = `X ${Math.round(world.x)} / Y ${Math.round(world.y)} mm`
+  if (!canvasStage || !screen || !panGesture || canvasSelectionTool.value !== 'pan') return
+  applyCanvasViewport({
+    zoom: panGesture.viewport.zoom,
+    panX: panGesture.viewport.panX - (screen.x - panGesture.screenX) / panGesture.viewport.zoom,
+    panY: panGesture.viewport.panY + (screen.y - panGesture.screenY) / panGesture.viewport.zoom,
+  })
+}
+
+function onCanvasPointerDown(): void {
+  const point = stage?.stage.getPointerPosition()
+  if (canvasSelectionTool.value !== 'pan' || !point) return
+  panGesture = {
+    screenX: point.x,
+    screenY: point.y,
+    viewport: { ...canvasViewport.value },
+  }
+}
+
+function onCanvasPointerUp(): void {
+  panGesture = null
+}
+
+function onCanvasToolClick(): void {
+  if (canvasSelectionTool.value !== 'measure') return
+  const world = canvasWorldPoint()
+  if (!world) return
+  if (!measurementStart.value) {
+    measurementStart.value = world
+    measurementText.value = '测量：请选择终点'
+    return
+  }
+  const distance = Math.hypot(
+    world.x - measurementStart.value.x,
+    world.y - measurementStart.value.y,
+  )
+  measurementText.value = `测量 ${distance.toFixed(1)} mm`
+  measurementStart.value = null
+}
+
+function onCanvasWheel(event: { evt: WheelEvent }): void {
+  event.evt.preventDefault()
+  const direction = event.evt.deltaY > 0 ? 0.9 : 1.1
+  const zoom = Math.min(1, Math.max(0.001, canvasViewport.value.zoom * direction))
+  applyCanvasViewport({ ...canvasViewport.value, zoom })
 }
 
 function closeCadReviewPanel(): void {
@@ -491,7 +771,7 @@ function closeMatchPanel(): void {
 }
 
 function focusExcelCadMatchRow(row: ISpaceExcelCadRackMatchV1): void {
-  if (projectionMode.value === '3d') projectionMode.value = 'split'
+  if (projectionMode.value === '3d') projectionMode.value = '2d'
   const item = excelCadMatchAsReviewItem(row)
   const object = resolveCadReviewCanvasObject(
     item,
@@ -606,7 +886,7 @@ function focusAiReviewItem(item: AiReviewItem): void {
     return
   }
   activeAiReviewItemId.value = item.reviewItemId
-  if (projectionMode.value === '3d') projectionMode.value = 'split'
+  if (projectionMode.value === '3d') projectionMode.value = '2d'
   const overlayItem = aiReviewAsCadReviewItem(item)
   const object = resolveCadReviewCanvasObject(
     overlayItem,
@@ -1208,16 +1488,129 @@ async function executeReversible(
   await loadScene()
 }
 
-function applyEditorCommands(commands: readonly EditorCommandInput[]) {
+async function applyEditorCommands(commands: readonly EditorCommandInput[]) {
   const currentFloor = floor.value
   if (!currentFloor) throw new Error('Floor is unavailable')
-  return designElementsApi.apply(
-    versionId.value,
-    floorLogicalId.value,
+  const leaseId = lease.value?.leaseId
+  if (!leaseId || leaseState.value !== 'owned') {
+    throw new Error('An active edit lease is required')
+  }
+  const envelope = designElementsApi.createEnvelope(
     currentFloor.revisionNumber ?? 0,
     clientInstanceId,
+    leaseId,
     commands,
   )
+  unsavedEnvelope.value = envelope
+  saveState.value = 'saving'
+  try {
+    const response = await designElementsApi.sendEnvelope(
+      versionId.value,
+      floorLogicalId.value,
+      envelope,
+    )
+    unsavedEnvelope.value = null
+    saveState.value = 'saved'
+    lastSavedAt.value = new Date()
+    return response
+  } catch (error) {
+    saveState.value = 'failed'
+    const code = isAxiosError(error) ? error.response?.data?.code : undefined
+    if (code === 'SPACE_EDIT_LEASE_LOST') loseEditLease()
+    if (code === 'SPACE_FLOOR_REVISION_CONFLICT') {
+      revisionConflict.value = true
+      ElMessage.error('楼层修订冲突：请刷新并重放或导出本地恢复草稿')
+    }
+    throw error
+  }
+}
+
+async function applyCadReviewChanges(changeIds: string[]): Promise<void> {
+  const workspace = cadReviewWorkspace.value
+  const currentFloor = floor.value
+  const leaseId = lease.value?.leaseId
+  if (!workspace?.sourceId || !workspace.cadParseJobId || !currentFloor ||
+    !leaseId || readonlyScene.value || changeIds.length === 0) return
+  const commandBatchId = crypto.randomUUID()
+  saveState.value = 'saving'
+  try {
+    const response = await designCadParseApi.applyReviewChanges(
+      versionId.value,
+      workspace.sourceId,
+      workspace.cadParseJobId,
+      {
+        commandBatchId,
+        clientInstanceId,
+        leaseId,
+        expectedFloorRevision: currentFloor.revisionNumber ?? 0,
+        expectedContentRevision: workspace.editorContentRevision,
+        expectedContentHash: workspace.editorContentHash,
+        workspaceSha256: workspace.workspaceSha256,
+        changeIds,
+      },
+    )
+    saveState.value = 'saved'
+    lastSavedAt.value = new Date()
+    cadReviewWorkspace.value = null
+    await loadScene()
+    ElMessage.success(`已确认并原子合入 ${response.appliedChangeCount} 项 CAD 变更`)
+  } catch (error) {
+    saveState.value = 'failed'
+    const code = isAxiosError(error) ? error.response?.data?.code : undefined
+    if (code === 'SPACE_PARSE_CHANGESET_STALE') {
+      ElMessage.error('当前 Draft 已变化；CAD 变更集未写入，请重新解析')
+    } else if (code === 'SPACE_EDIT_LEASE_LOST') {
+      loseEditLease()
+    }
+  }
+}
+
+async function retryUnsavedEnvelope(): Promise<void> {
+  const envelope = unsavedEnvelope.value
+  if (!envelope || saveState.value === 'saving') return
+  saveState.value = 'saving'
+  try {
+    await designElementsApi.sendEnvelope(
+      versionId.value,
+      floorLogicalId.value,
+      envelope,
+    )
+    unsavedEnvelope.value = null
+    revisionConflict.value = false
+    saveState.value = 'saved'
+    lastSavedAt.value = new Date()
+    await loadScene()
+    ElMessage.success('未同步命令已使用原幂等标识恢复')
+  } catch (error) {
+    saveState.value = 'failed'
+    const code = isAxiosError(error) ? error.response?.data?.code : undefined
+    if (code === 'SPACE_EDIT_LEASE_LOST') loseEditLease()
+    if (code === 'SPACE_FLOOR_REVISION_CONFLICT') revisionConflict.value = true
+    ElMessage.error('原命令包仍无法提交，请选择刷新重放、导出或放弃')
+  }
+}
+
+async function refreshAndReplayUnsaved(): Promise<void> {
+  const envelope = unsavedEnvelope.value
+  if (!envelope) return
+  const commands = envelope.commands.map(({ commandId: _commandId, ...command }) => command)
+  await loadScene()
+  revisionConflict.value = false
+  unsavedEnvelope.value = null
+  try {
+    await applyEditorCommands(commands)
+    await loadScene()
+    ElMessage.success('已基于最新楼层修订重放命令')
+  } catch {
+    // applyEditorCommands keeps the replacement envelope available for recovery.
+  }
+}
+
+function discardUnsavedEnvelope(): void {
+  unsavedEnvelope.value = null
+  revisionConflict.value = false
+  saveState.value = 'idle'
+  ElMessage.info('本地未同步命令已放弃')
 }
 
 function selectedSnapshots(): EditorObjectSnapshot[] {
@@ -1309,159 +1702,465 @@ function touchHistory(): void {
   historyRevision.value++
 }
 
+function updateViewportWidth(): void {
+  viewportWidth.value = window.innerWidth
+}
+
+async function acquireEditLease(): Promise<void> {
+  leaseState.value = 'loading'
+  try {
+    lease.value = await designLeaseApi.acquire(
+      versionId.value,
+      floorLogicalId.value,
+      clientInstanceId,
+    )
+    leaseState.value = 'owned'
+    startLeaseRenewal()
+  } catch (error) {
+    if (isProblemCode(error, 'SPACE_EDIT_LEASE_HELD')) {
+      lease.value = await designLeaseApi.get(
+        versionId.value,
+        floorLogicalId.value,
+      ).catch(() => null)
+      leaseState.value = 'held'
+      return
+    }
+    leaseState.value = 'lost'
+  }
+}
+
+async function takeoverEditLease(): Promise<void> {
+  try {
+    const { value } = await ElMessageBox.prompt(
+      '请填写接管原因。接管会中断现有会话并写入审计记录。',
+      '申请接管编辑租约',
+      { inputValidator: (input) => Boolean(input.trim()) || '接管原因不能为空' },
+    )
+    lease.value = await designLeaseApi.takeover(
+      versionId.value,
+      floorLogicalId.value,
+      clientInstanceId,
+      value.trim(),
+    )
+    leaseState.value = 'owned'
+    startLeaseRenewal()
+  } catch (error) {
+    if (error !== 'cancel' && error !== 'close') {
+      ElMessage.error('接管失败，请刷新租约状态或联系当前持有人')
+    }
+  }
+}
+
+function startLeaseRenewal(): void {
+  stopLeaseRenewal()
+  leaseRenewTimer = window.setInterval(async () => {
+    const leaseId = lease.value?.leaseId
+    if (!leaseId || leaseState.value !== 'owned') return
+    try {
+      lease.value = await designLeaseApi.renew(
+        versionId.value,
+        floorLogicalId.value,
+        leaseId,
+        clientInstanceId,
+      )
+    } catch {
+      loseEditLease()
+    }
+  }, 30_000)
+}
+
+function stopLeaseRenewal(): void {
+  if (leaseRenewTimer !== null) window.clearInterval(leaseRenewTimer)
+  leaseRenewTimer = null
+}
+
+function loseEditLease(): void {
+  stopLeaseRenewal()
+  leaseState.value = 'lost'
+  ElMessage.error('编辑租约已丢失，工作台已切换为只读；可导出本地恢复草稿')
+}
+
+function exportRecoveryDraft(): void {
+  const payload = {
+    schemaVersion: 1,
+    exportedAtUtc: new Date().toISOString(),
+    versionId: versionId.value,
+    floorLogicalId: floorLogicalId.value,
+    clientInstanceId,
+    envelope: unsavedEnvelope.value,
+  }
+  const anchor = document.createElement('a')
+  anchor.href = URL.createObjectURL(
+    new Blob([JSON.stringify(payload, null, 2)], { type: 'application/json' }),
+  )
+  anchor.download = `space-recovery-${floorLogicalId.value}.json`
+  anchor.click()
+  URL.revokeObjectURL(anchor.href)
+}
+
+async function monitorCadParse(): Promise<void> {
+  parseStartedAt.value = new Date()
+  parseElapsedTimer = window.setInterval(() => {
+    const started = parseStartedAt.value
+    if (!started) return
+    parseElapsed.value = `${Math.max(0, Math.floor((Date.now() - started.getTime()) / 1000))}s`
+  }, 1_000)
+  for (let attempt = 0; attempt < 450 && !disposed; attempt++) {
+    try {
+      const parse = await designCadParseApi.get(
+        versionId.value,
+        cadSourceId.value,
+        cadParseJobId.value,
+      )
+      parseStatus.value = parse.status
+      parseProgress.value = parse.status === 'Queued' ? 5 : parse.status === 'Running' ? 50 : 100
+      if (parse.status === 'Succeeded') {
+        const raw = await designCadParseApi.getReviewWorkspace(
+          versionId.value,
+          cadSourceId.value,
+          cadParseJobId.value,
+        )
+        cadReviewWorkspace.value = parseCadReviewWorkspace(JSON.stringify(raw))
+        cadReviewPanelVisible.value = true
+        parseError.value = ''
+        stopParseElapsed()
+        return
+      }
+      if (parse.status === 'Failed' || parse.status === 'Cancelled') {
+        parseError.value = parse.lastErrorSummary || parse.lastErrorCode || 'CAD 解析失败，当前 Draft 未变更。'
+        stopParseElapsed()
+        return
+      }
+    } catch (error) {
+      parseError.value = isAxiosError(error)
+        ? String(error.response?.data?.detail ?? error.message)
+        : 'CAD 解析状态加载失败'
+    }
+    await delay(2_000)
+  }
+  stopParseElapsed()
+}
+
+async function cancelCadParse(): Promise<void> {
+  if (!cadSourceId.value || !cadParseJobId.value) return
+  await designCadParseApi.cancel(
+    versionId.value,
+    cadSourceId.value,
+    cadParseJobId.value,
+  )
+}
+
+async function retryCadParse(): Promise<void> {
+  if (!cadSourceId.value || !cadParseJobId.value) return
+  try {
+    const retried = await designCadParseApi.retry(
+      versionId.value,
+      cadSourceId.value,
+      cadParseJobId.value,
+    )
+    await router.replace({
+      query: { ...route.query, cadParseJobId: retried.jobId },
+    })
+    parseStatus.value = retried.status
+    parseError.value = ''
+    void monitorCadParse()
+  } catch {
+    ElMessage.error('CAD 解析重试失败，当前 Draft 未变更')
+  }
+}
+
+function stopParseElapsed(): void {
+  if (parseElapsedTimer !== null) window.clearInterval(parseElapsedTimer)
+  parseElapsedTimer = null
+}
+
+function openCadReviewWorkspace(): void {
+  inspectorTab.value = 'issues'
+  if (cadReviewWorkspace.value) cadReviewPanelVisible.value = true
+  else chooseCadReviewArtifact()
+}
+
+function openRuleOnlyCreation(): void {
+  inspectorTab.value = 'issues'
+  aiGenerationPanelVisible.value = true
+  cadReviewPanelVisible.value = false
+  ElMessage.info('请在 RuleOnly 模式中选择已上传 CAD 来源和货架模板；结果确认后才写入 Draft。')
+}
+
+async function createComponent(elementType: string): Promise<void> {
+  if (readonlyScene.value || savingElement.value) return
+  const logicalId = crypto.randomUUID()
+  const point = canvasWorldPoint()
+  const x = Math.round((point?.x ?? 0) - 500)
+  const y = Math.round((point?.y ?? 0) - 500)
+  const dimensions = elementType === 'Wall'
+    ? { width: 4000, height: 3000, depth: 200 }
+    : elementType === 'Column'
+      ? { width: 500, height: 3000, depth: 500 }
+      : { width: 1200, height: 2200, depth: 300 }
+  savingElement.value = true
+  try {
+    await applyEditorCommands([{
+      type: 'CreateElement',
+      targetLogicalId: logicalId,
+      createElement: {
+        elementType,
+        geometryJson: JSON.stringify({
+          schemaVersion: 1,
+          kind: 'box',
+          width: dimensions.width,
+          height: dimensions.height,
+          depth: dimensions.depth,
+        }),
+        x,
+        y,
+        z: 0,
+        rotationZ: 0,
+        ...dimensions,
+        businessCode: `${elementType.toUpperCase()}-${logicalId.slice(0, 6)}`,
+        attributes: [],
+      },
+    }])
+    await loadScene()
+    const created = designScene.value && buildElementCanvasPlan(designScene.value).find(
+      item => item.logicalId === logicalId,
+    )
+    if (created) selectObjects([{ logicalId, ownerKind: 'Element' }], 'replace')
+    ElMessage.success(`${elementType} 已创建，可在属性面板继续调整`)
+  } catch {
+    ElMessage.error(`${elementType} 创建失败，命令包已保留用于恢复`)
+  } finally {
+    savingElement.value = false
+  }
+}
+
+async function openValidationWorkflow(): Promise<void> {
+  await router.push({
+    path: '/space/publish',
+    query: {
+      siteId: designScene.value?.siteId ?? '',
+      versionId: versionId.value,
+      action: 'validate',
+    },
+  })
+}
+
+async function openPublishWorkflow(): Promise<void> {
+  if (!publishReady.value) {
+    inspectorTab.value = 'issues'
+    ElMessage.warning('请补齐货架编码，并清除当前来源中的 Blocking 问题')
+  }
+  await router.push({
+    path: '/space/publish',
+    query: {
+      siteId: designScene.value?.siteId ?? '',
+      versionId: versionId.value,
+      action: 'publish',
+    },
+  })
+}
+
+function showShortcutHelp(): void {
+  void ElMessageBox.alert(
+    'Ctrl/Cmd+Z 撤销 · Ctrl/Cmd+Y 重做 · Delete 删除 · Esc 清空选择 · V 选择 · H 平移 · M 测量 · Ctrl/Cmd+S 保存状态',
+    'Space Studio 快捷键',
+  )
+}
+
+function onStudioKeydown(event: KeyboardEvent): void {
+  const target = event.target as HTMLElement | null
+  if (target?.matches('input, textarea, select, [contenteditable="true"]') ||
+      target?.closest('.el-dialog, .el-message-box, .el-input, .el-select')) {
+    return
+  }
+  const key = event.key.toLowerCase()
+  if ((event.ctrlKey || event.metaKey) && key === 'z') {
+    event.preventDefault()
+    void (event.shiftKey ? redoSavedCommand() : undoSavedCommand())
+  } else if ((event.ctrlKey || event.metaKey) && key === 'y') {
+    event.preventDefault()
+    void redoSavedCommand()
+  } else if (key === 'delete' && !readonlyScene.value) {
+    event.preventDefault()
+    void removeSelected()
+  } else if (key === 'escape') {
+    selectObjects([], 'replace')
+    canvasSelectionTool.value = 'select'
+  } else if (key === 'v') {
+    canvasSelectionTool.value = 'select'
+    elementLayer?.setEnabled(!readonlyScene.value)
+  } else if (key === 'h') {
+    canvasSelectionTool.value = 'pan'
+    elementLayer?.setEnabled(false)
+  } else if (key === 'm') {
+    canvasSelectionTool.value = 'measure'
+    elementLayer?.setEnabled(false)
+    measurementStart.value = null
+    measurementText.value = '测量：请选择起点'
+  } else if ((event.ctrlKey || event.metaKey) && key === 'a') {
+    event.preventDefault()
+    selectObjects(
+      [
+        ...activeElements.value
+          .map((item) => item.revision?.logicalId)
+          .filter((id): id is string => Boolean(id))
+          .map((logicalId) => ({ logicalId, ownerKind: 'Element' as const })),
+        ...activeRacks.value
+          .map((item) => item.revision?.logicalId)
+          .filter((id): id is string => Boolean(id))
+          .map((logicalId) => ({ logicalId, ownerKind: 'Rack' as const })),
+      ],
+      'replace',
+    )
+  } else if ((event.ctrlKey || event.metaKey) && key === 's') {
+    event.preventDefault()
+    ElMessage.info(saveLabel.value)
+  } else if (key === '?') {
+    showShortcutHelp()
+  }
+}
+
+function isProblemCode(error: unknown, code: string): boolean {
+  return isAxiosError(error) && error.response?.data?.code === code
+}
+
+function formatTime(value?: string): string {
+  if (!value) return '—'
+  return new Date(value).toLocaleTimeString()
+}
+
 function delay(milliseconds: number): Promise<void> {
   return new Promise((resolve) => setTimeout(resolve, milliseconds))
+}
+
+function tabClientInstanceId(): string {
+  const key = 'cp6-space-studio-client-instance'
+  try {
+    const existing = window.sessionStorage.getItem(key)
+    if (existing) return existing
+    const created = crypto.randomUUID()
+    window.sessionStorage.setItem(key, created)
+    return created
+  } catch {
+    return crypto.randomUUID()
+  }
 }
 </script>
 
 <template>
-  <div class="underlay-editor" v-loading="loading">
-    <header class="toolbar">
+  <div class="underlay-editor space-studio" v-loading="loading">
+    <header class="studio-titlebar">
+      <div class="studio-brand">CP6 <span>Space Studio</span></div>
       <div>
-        <div class="title">{{ t('Design V1 楼层编辑器') }}</div>
-        <div class="status">
-          {{ statusText }}
-          <el-tag size="small" type="info">
-            {{ t('{count} 个可编辑元素', { count: activeElements.length }) }}
-          </el-tag>
-          <el-tag size="small" type="success">
-            {{ activeRacks.length }} 个可编辑货架
-          </el-tag>
-          <el-tag v-if="readonlyScene" size="small" type="danger">
-            {{ t('只读版本') }}
-          </el-tag>
-          <el-tag v-if="hasUnderlay" size="small" :type="calibrated ? 'success' : 'warning'">
-            {{ calibrated ? t('已标定') : t('未标定') }}
-          </el-tag>
-        </div>
+        <strong>{{ floor?.floorCode || '楼层' }}</strong>
+        <span> / {{ designScene?.versionStatus || 'Draft' }} · r{{ floor?.revisionNumber ?? 0 }}</span>
       </div>
-
-      <div class="controls">
-        <el-button
-          v-permission="'space:model:read'"
-          size="small"
-          :loading="downloadingTemplate"
-          @click="downloadStandardExcelTemplate"
-        >
-          下载标准 Excel
-        </el-button>
-        <el-button
-          v-if="!readonlyScene"
-          v-permission="'space:model:generate-ai'"
-          size="small"
-          :type="aiGenerationPanelVisible ? 'primary' : 'default'"
-          data-test="open-ai-generation"
-          @click="openAiGenerationPanel"
-        >
-          规则生成
-        </el-button>
-        <el-button
-          v-if="generationRunId"
-          v-permission="'space:model:review-ai'"
-          size="small"
-          :type="aiDecisionPanelVisible ? 'success' : 'default'"
-          @click="openAiDecisionPanel"
-        >
-          AI 提案决策
-        </el-button>
-        <el-button
-          v-if="matchJobId"
-          v-permission="'space:model:read'"
-          size="small"
-          :type="matchPanelVisible ? 'primary' : 'default'"
-          data-test="open-authoritative-match"
-          @click="openMatchPanel"
-        >
-          Excel–CAD 权威匹配
-        </el-button>
-        <el-button
-          v-permission="'space:model:read'"
-          size="small"
-          :type="cadReviewPanelVisible ? 'warning' : 'default'"
-          @click="chooseCadReviewArtifact"
-        >
-          加载/更新 CAD 问题工件
-          <template v-if="cadReviewWorkspace">
-            ({{ cadReviewWorkspace.summary.openCount }})
-          </template>
-        </el-button>
-        <el-button
-          v-permission="'space:model:read'"
-          size="small"
-          :type="aiReviewPanelVisible ? 'primary' : 'default'"
-          @click="chooseAiReviewArtifact"
-        >
-          加载/更新 AI 提案工件
-          <template v-if="aiReviewWorkspace">
-            ({{ aiReviewWorkspace.summary.totalCount }})
-          </template>
-        </el-button>
-        <el-button size="small" @click="resetCanvasViewport">
-          重置视图
-        </el-button>
-        <el-button-group size="small" aria-label="2D/3D 预览模式">
-          <el-button
-            :type="projectionMode === '2d' ? 'primary' : 'default'"
-            @click="projectionMode = '2d'"
-          >2D</el-button>
-          <el-button
-            :type="projectionMode === 'split' ? 'primary' : 'default'"
-            @click="projectionMode = 'split'"
-          >2D + 3D</el-button>
-          <el-button
-            :type="projectionMode === '3d' ? 'primary' : 'default'"
-            @click="projectionMode = '3d'"
-          >3D</el-button>
-        </el-button-group>
-        <el-checkbox v-model="visible">{{ t('显示') }}</el-checkbox>
-        <span>{{ t('透明度') }}</span>
-        <el-slider v-model="opacity" :min="10" :max="100" class="opacity-slider" />
-        <el-checkbox v-model="locked">{{ t('锁定') }}</el-checkbox>
-        <el-button
-          v-permission="'space:model:edit'"
-          :disabled="!hasUnderlay || uploading"
-          @click="beginCalibration"
-        >
-          {{ calibrated ? t('重新标定') : t('两点标定') }}
-        </el-button>
-        <el-button
-          v-permission="'space:source:upload'"
-          type="primary"
-          :loading="uploading"
-          @click="chooseFile"
-        >
-          {{ t('上传 PDF/PNG/JPG') }}
-        </el-button>
-      </div>
+      <div class="studio-title-state"><span>{{ saveLabel }}</span><span>{{ leaseLabel }}</span></div>
     </header>
 
-    <DesignBatchToolsPanel
-      :selected-count="selectedObjects.length"
-      :selection-bounds="selectionBounds"
-      :selected-rack-code="selectedRack?.rackCode"
-      :busy="savingElement"
-      :readonly="readonlyScene"
-      :can-undo="canUndo"
-      :can-redo="canRedo"
-      @align="alignSelected"
-      @distribute="distributeSelected"
-      @rotate="rotateSelected"
-      @remove="removeSelected"
-      @array="generateRackArray"
-      @undo="undoSavedCommand"
-      @redo="redoSavedCommand"
-    />
+    <div class="studio-commandbar">
+      <div class="studio-view-switch" role="group" aria-label="2D/3D 模式">
+        <button type="button" :class="{ active: projectionMode === '2d' }" @click="projectionMode = '2d'">2D</button>
+        <button type="button" :class="{ active: projectionMode === '3d' }" @click="projectionMode = '3d'">3D</button>
+      </div>
+      <button type="button" :class="{ active: canvasSelectionTool === 'select' }" @click="selectCanvasTool('select')">选择 V</button>
+      <button type="button" :class="{ active: canvasSelectionTool === 'pan' }" @click="selectCanvasTool('pan')">平移 H</button>
+      <button type="button" :class="{ active: canvasSelectionTool === 'measure' }" @click="selectCanvasTool('measure')">测量 M</button>
+      <button type="button" :disabled="!canUndo || readonlyScene" @click="undoSavedCommand">撤销</button>
+      <button type="button" :disabled="!canRedo || readonlyScene" @click="redoSavedCommand">重做</button>
+      <button type="button" @click="resetCanvasViewport">重置视图</button>
+      <button v-if="matchJobId" type="button" @click="openMatchPanel">Excel–CAD 匹配</button>
+      <span class="studio-command-spacer" />
+      <button type="button" class="issues-command" @click="inspectorTab = 'issues'; openCadReviewWorkspace()">
+        问题 {{ cadReviewWorkspace ? `(${cadReviewWorkspace.summary.openCount})` : '' }}
+      </button>
+      <button type="button" @click="openValidationWorkflow">运行校验</button>
+      <button type="button" class="publish" :disabled="readonlyScene" @click="openPublishWorkflow">校验并发布</button>
+      <button type="button" class="help" aria-label="快捷键帮助" @click="showShortcutHelp">?</button>
+    </div>
 
     <section class="workspace">
+      <SpaceStudioContextPanel
+        :parse-status="parseStatus"
+        :parse-progress="parseProgress"
+        :parse-elapsed="parseElapsed"
+        :parse-error="parseError"
+        :has-underlay="hasUnderlay"
+        :calibrated="calibrated"
+        :readonly="readonlyScene"
+        @choose-underlay="chooseFile"
+        @choose-cad="chooseCadFile"
+        @download-template="downloadStandardExcelTemplate"
+        @open-cad-review="openCadReviewWorkspace"
+        @cancel-parse="cancelCadParse"
+        @retry-parse="retryCadParse"
+        @open-rule-only="openRuleOnlyCreation"
+        @create-component="createComponent"
+      >
+        <template #settings>
+          <button type="button" @click="chooseCadReviewArtifact">加载本地 CAD 工件（回退）</button>
+          <button type="button" @click="chooseAiReviewArtifact">加载 AI Beta 工件</button>
+        </template>
+      </SpaceStudioContextPanel>
+
+      <div v-if="leaseState === 'held' && !narrowReadonly" class="lease-recovery" role="status">
+        <strong>当前楼层正由其他会话编辑</strong>
+        <span>{{ leaseLabel }}</span>
+        <button type="button" @click="acquireEditLease">刷新并等待</button>
+        <button v-permission="'space:model:lease:takeover'" type="button" class="danger" @click="takeoverEditLease">申请接管</button>
+      </div>
+
+      <div v-if="revisionConflict && unsavedEnvelope" class="revision-recovery" role="alert">
+        <strong>楼层修订冲突，编辑已暂停</strong>
+        <span>命令包 {{ unsavedEnvelope.commandBatchId.slice(0, 8) }}… 已保留。</span>
+        <button type="button" @click="retryUnsavedEnvelope">按原幂等标识重试</button>
+        <button type="button" @click="refreshAndReplayUnsaved">刷新并重放</button>
+        <button type="button" @click="exportRecoveryDraft">导出</button>
+        <button type="button" class="danger" @click="discardUnsavedEnvelope">放弃</button>
+      </div>
+
       <div class="projection-surface" :class="`mode-${projectionMode}`">
-        <main v-show="projectionMode !== '3d'" ref="canvasRef" class="canvas" />
+        <SpaceStudioChecklist
+          :imported="hasUnderlay || Boolean(cadReviewWorkspace)"
+          :reviewed="Boolean(cadReviewWorkspace) && !cadReviewWorkspaceStale"
+          :coded="allRacksCoded"
+          :publish-ready="publishReady"
+        />
+        <main v-show="projectionMode === '2d'" ref="canvasRef" class="canvas" />
         <DesignScenePreview3D
-          v-show="projectionMode !== '2d'"
+          v-show="projectionMode === '3d'"
           :scene="designScene"
+          :selected-logical-ids="selectedObjects.map((item) => item.logicalId)"
           class="preview3d"
         />
       </div>
-      <aside v-if="calibrationMode" class="calibration-panel">
+
+      <aside class="studio-inspector">
+        <div class="inspector-tabs" role="tablist" aria-label="检查器">
+          <button type="button" role="tab" :aria-selected="inspectorTab === 'properties'" :class="{ active: inspectorTab === 'properties' }" @click="inspectorTab = 'properties'">属性</button>
+          <button type="button" role="tab" :aria-selected="inspectorTab === 'batch'" :class="{ active: inspectorTab === 'batch' }" @click="inspectorTab = 'batch'">批量</button>
+          <button type="button" role="tab" :aria-selected="inspectorTab === 'issues'" :class="{ active: inspectorTab === 'issues' }" @click="inspectorTab = 'issues'">问题</button>
+        </div>
+
+        <DesignBatchToolsPanel
+          v-if="inspectorTab === 'batch'"
+          :selected-count="selectedObjects.length"
+          :selection-bounds="selectionBounds"
+          :selected-rack-code="selectedRack?.rackCode"
+          :busy="savingElement"
+          :readonly="readonlyScene"
+          :can-undo="canUndo"
+          :can-redo="canRedo"
+          @align="alignSelected"
+          @distribute="distributeSelected"
+          @rotate="rotateSelected"
+          @remove="removeSelected"
+          @array="generateRackArray"
+          @undo="undoSavedCommand"
+          @redo="redoSavedCommand"
+        />
+
+        <aside v-else-if="calibrationMode" class="calibration-panel">
         <div class="panel-title">{{ t('两点标定') }}</div>
         <p class="panel-help">
           {{ t('依次在底图选择 P1、P2 和验证点 V，再填写各点的世界毫米坐标。') }}
@@ -1514,9 +2213,9 @@ function delay(milliseconds: number): Promise<void> {
             {{ t('验证并保存') }}
           </el-button>
         </div>
-      </aside>
+        </aside>
       <DesignExcelCadMatchPanel
-        v-if="matchPanelVisible && matchJobId"
+        v-else-if="inspectorTab === 'issues' && matchPanelVisible && matchJobId"
         :version-id="versionId"
         :job-id="matchJobId"
         :current-content-revision="designScene?.contentRevision"
@@ -1524,14 +2223,14 @@ function delay(milliseconds: number): Promise<void> {
         @close="closeMatchPanel"
       />
       <DesignAiGenerationLauncherPanel
-        v-else-if="aiGenerationPanelVisible && designScene?.contentRevision !== undefined"
+        v-else-if="inspectorTab === 'issues' && aiGenerationPanelVisible && designScene?.contentRevision !== undefined"
         :version-id="versionId"
         :current-content-revision="designScene.contentRevision"
         @close="closeAiGenerationPanel"
         @created="onAiRunCreated"
       />
       <DesignAiProposalDecisionPanel
-        v-else-if="aiDecisionPanelVisible && generationRunId"
+        v-else-if="inspectorTab === 'issues' && aiDecisionPanelVisible && generationRunId"
         :run-id="generationRunId"
         :current-content-revision="designScene?.contentRevision"
         @close="closeAiDecisionPanel"
@@ -1540,7 +2239,7 @@ function delay(milliseconds: number): Promise<void> {
         @recovered="onAiRunRecovered"
       />
       <DesignAiProposalReviewPanel
-        v-else-if="aiReviewPanelVisible && aiReviewWorkspace"
+        v-else-if="inspectorTab === 'issues' && aiReviewPanelVisible && aiReviewWorkspace"
         :workspace="aiReviewWorkspace"
         :active-item-id="activeAiReviewItemId"
         :stale="aiReviewWorkspaceStale"
@@ -1548,15 +2247,16 @@ function delay(milliseconds: number): Promise<void> {
         @close="closeAiReviewPanel"
       />
       <DesignCadIssuePanel
-        v-else-if="cadReviewPanelVisible && cadReviewWorkspace"
+        v-else-if="inspectorTab === 'issues' && cadReviewPanelVisible && cadReviewWorkspace"
         :workspace="cadReviewWorkspace"
         :active-item-id="activeCadReviewItemId"
         :stale="cadReviewWorkspaceStale"
         @select="focusCadReviewItem"
+        @apply-changes="applyCadReviewChanges"
         @close="closeCadReviewPanel"
       />
       <DesignElementPropertiesPanel
-        v-else-if="selectedElement"
+        v-else-if="inspectorTab === 'properties' && selectedElement"
         :element="selectedElement"
         :attributes="selectedAttributes"
         :saving="savingElement"
@@ -1565,7 +2265,7 @@ function delay(milliseconds: number): Promise<void> {
         @remove="removeElement"
       />
       <DesignWmsAdoptionPanel
-        v-else
+        v-else-if="inspectorTab === 'properties'"
         :version-id="versionId"
         :floor-logical-id="floorLogicalId"
         :scene="designScene"
@@ -1573,7 +2273,24 @@ function delay(milliseconds: number): Promise<void> {
         :readonly="readonlyScene"
         @changed="loadScene"
       />
+        <div v-else class="studio-inspector-empty">
+          {{ inspectorTab === 'issues' ? '当前没有已加载的问题工件。' : '选择对象后可进行批量编辑。' }}
+        </div>
+      </aside>
     </section>
+
+    <footer class="studio-statusbar">
+      <span>{{ pointerCoordinates }}</span>
+      <span>比例 {{ canvasZoomPercent }}%</span>
+      <span>选择 {{ selectedObjects.length }}</span>
+      <span v-if="measurementText">{{ measurementText }}</span>
+      <span>{{ saveLabel }}</span>
+      <span :class="{ blocking: readonlyScene }">{{ leaseLabel }}</span>
+      <span v-if="cadReviewWorkspace">阻断 {{ cadReviewWorkspace.summary.openBlockingCount }}</span>
+      <span class="studio-status-spacer" />
+      <button v-if="unsavedEnvelope" type="button" @click="exportRecoveryDraft">导出恢复草稿</button>
+      <span>WebGL2 · 本地草稿场景</span>
+    </footer>
 
     <input
       ref="fileInputRef"
@@ -1581,6 +2298,13 @@ function delay(milliseconds: number): Promise<void> {
       accept=".pdf,.png,.jpg,.jpeg,application/pdf,image/png,image/jpeg"
       hidden
       @change="onFileSelected"
+    />
+    <input
+      ref="cadFileInputRef"
+      type="file"
+      accept=".dwg,.dxf,application/acad,application/dxf,application/vnd.autocad.dwg,application/vnd.autocad.dxf"
+      hidden
+      @change="onCadFileSelected"
     />
     <input
       ref="cadReviewFileInputRef"
@@ -1600,48 +2324,44 @@ function delay(milliseconds: number): Promise<void> {
 </template>
 
 <style scoped>
-.underlay-editor {
-  display: flex;
-  flex-direction: column;
-  height: 100vh;
-  background: #eef1f5;
+.space-studio {
+  --space-studio-bg:#0b1220;
+  --space-studio-panel:#111a2b;
+  --space-studio-panel-raised:#172236;
+  --space-studio-rail:#0d1626;
+  --space-studio-border:#2a3950;
+  --space-studio-text:#f4f7fb;
+  --space-studio-muted:#aebbd0;
+  --space-studio-accent:#18c2c9;
+  --space-studio-success:#45d391;
+  --space-studio-warning:#ffbf5b;
+  --space-studio-blocking:#ff6b76;
+  --space-studio-focus:#8cebf0;
+  display:flex;
+  flex-direction:column;
+  height:100vh;
+  min-width:0;
+  color:var(--space-studio-text);
+  background:var(--space-studio-bg);
+  font-size:16px;
 }
-
-.toolbar {
-  display: flex;
-  align-items: center;
-  justify-content: space-between;
-  min-height: 64px;
-  padding: 8px 16px;
-  background: #fff;
-  border-bottom: 1px solid #dfe4ea;
-  gap: 24px;
-}
-
-.title {
-  font-size: 16px;
-  font-weight: 650;
-}
-
-.status {
-  display: flex;
-  align-items: center;
-  gap: 8px;
-  margin-top: 4px;
-  color: #667085;
-  font-size: 12px;
-}
-
-.controls {
-  display: flex;
-  align-items: center;
-  gap: 12px;
-  white-space: nowrap;
-}
-
-.opacity-slider {
-  width: 150px;
-}
+.studio-titlebar { box-sizing:border-box; display:grid; grid-template-columns:220px 1fr auto; align-items:center; height:44px; min-height:44px; padding:0 14px; border-bottom:1px solid var(--space-studio-border); background:#0d1626; font-size:14px; }
+.studio-brand { color:var(--space-studio-accent); font-weight:800; letter-spacing:.04em; }
+.studio-brand span { margin-left:8px; color:var(--space-studio-text); font-weight:650; }
+.studio-titlebar span { color:var(--space-studio-muted); }
+.studio-title-state { display:flex; gap:18px; font-size:13px; }
+.studio-commandbar { box-sizing:border-box; display:flex; align-items:center; gap:8px; height:60px; min-height:60px; padding:8px 12px; border-bottom:1px solid var(--space-studio-border); background:var(--space-studio-panel); }
+.studio-commandbar button,.studio-view-switch button,.inspector-tabs button,.studio-statusbar button { min-width:44px; min-height:44px; padding:0 12px; border:1px solid var(--space-studio-border); border-radius:6px; color:var(--space-studio-text); background:var(--space-studio-panel-raised); cursor:pointer; }
+.studio-commandbar button:focus-visible,.studio-view-switch button:focus-visible,.inspector-tabs button:focus-visible,.studio-statusbar button:focus-visible { outline:3px solid var(--space-studio-focus); outline-offset:2px; }
+.studio-commandbar button:disabled { cursor:not-allowed; opacity:.45; }
+.studio-view-switch { display:flex; }
+.studio-view-switch button { border-radius:0; }
+.studio-view-switch button:first-child { border-radius:6px 0 0 6px; }
+.studio-view-switch button:last-child { border-radius:0 6px 6px 0; }
+.studio-view-switch button.active { border-color:var(--space-studio-accent); color:#062f33; background:var(--space-studio-accent); font-weight:750; }
+.studio-command-spacer,.studio-status-spacer { flex:1; }
+.studio-commandbar button.publish { border-color:var(--space-studio-accent); color:#062f33; background:var(--space-studio-accent); font-weight:750; }
+.studio-commandbar button.help { padding:0; border-radius:50%; font-weight:800; }
 
 .canvas {
   width: 100%;
@@ -1651,24 +2371,17 @@ function delay(milliseconds: number): Promise<void> {
   background:
     linear-gradient(90deg, rgba(100, 116, 139, 0.08) 1px, transparent 1px),
     linear-gradient(rgba(100, 116, 139, 0.08) 1px, transparent 1px),
-    #f8fafc;
+    #111827;
   background-size: 20px 20px;
 }
 
 .projection-surface {
+  position:relative;
   display: grid;
   min-width: 0;
   min-height: 0;
   flex: 1;
   grid-template-columns: minmax(0, 1fr);
-}
-
-.projection-surface.mode-split {
-  grid-template-columns: minmax(0, 1fr) minmax(360px, 0.85fr);
-}
-
-.projection-surface.mode-split .canvas {
-  border-right: 1px solid #334155;
 }
 
 .preview3d {
@@ -1677,17 +2390,76 @@ function delay(milliseconds: number): Promise<void> {
 }
 
 .workspace {
-  display: flex;
+  display:grid;
+  grid-template-columns:296px minmax(0,1fr) 324px;
   flex: 1;
   min-height: 0;
 }
 
+.studio-inspector { min-width:0; overflow:auto; border-left:1px solid var(--space-studio-border); background:var(--space-studio-panel); }
+.inspector-tabs { position:sticky; top:0; z-index:4; display:grid; grid-template-columns:repeat(3,1fr); padding:8px; border-bottom:1px solid var(--space-studio-border); background:var(--space-studio-panel); }
+.inspector-tabs button { border-radius:0; font-size:14px; }
+.inspector-tabs button.active { border-bottom-color:var(--space-studio-accent); color:var(--space-studio-accent); }
+.studio-inspector-empty { padding:24px 16px; color:var(--space-studio-muted); font-size:14px; line-height:1.6; }
+.studio-inspector :deep(.cad-review-panel),
+.studio-inspector :deep(.match-panel),
+.studio-inspector :deep(.ai-review-panel),
+.studio-inspector :deep(.decision-panel),
+.studio-inspector :deep(.properties-panel),
+.studio-inspector :deep(.wms-panel),
+.studio-inspector :deep(.generation-launcher) {
+  box-sizing:border-box;
+  width:100%;
+  min-width:0;
+  max-width:100%;
+}
+
+.lease-recovery {
+  position:fixed;
+  z-index:20;
+  right:340px;
+  top:112px;
+  display:grid;
+  grid-template-columns:auto auto;
+  gap:8px 12px;
+  align-items:center;
+  max-width:520px;
+  padding:12px;
+  border:1px solid var(--space-studio-warning);
+  border-radius:8px;
+  color:var(--space-studio-text);
+  background:#2b2112;
+  box-shadow:0 12px 32px rgba(0,0,0,.35);
+}
+.lease-recovery strong,.lease-recovery span { grid-column:1 / -1; }
+.lease-recovery button { min-height:44px; border:1px solid var(--space-studio-border); border-radius:6px; color:var(--space-studio-text); background:var(--space-studio-panel-raised); }
+.lease-recovery button.danger { border-color:var(--space-studio-blocking); }
+.revision-recovery {
+  position:absolute;
+  z-index:19;
+  top:112px;
+  left:308px;
+  right:336px;
+  display:flex;
+  align-items:center;
+  gap:10px;
+  padding:10px 12px;
+  border:1px solid var(--space-studio-blocking);
+  color:var(--space-studio-text);
+  background:#321a24;
+  box-shadow:0 12px 32px rgba(0,0,0,.35);
+}
+.revision-recovery span { color:var(--space-studio-muted); }
+.revision-recovery button { min-height:44px; border:1px solid var(--space-studio-border); border-radius:6px; color:var(--space-studio-text); background:var(--space-studio-panel-raised); }
+.revision-recovery button.danger { border-color:var(--space-studio-blocking); }
+
 .calibration-panel {
-  width: 340px;
+  box-sizing:border-box;
+  width:100%;
   padding: 16px;
   overflow: auto;
-  background: #fff;
-  border-left: 1px solid #dfe4ea;
+  color:var(--space-studio-text);
+  background:var(--space-studio-panel);
 }
 
 .panel-title {
@@ -1697,8 +2469,8 @@ function delay(milliseconds: number): Promise<void> {
 
 .panel-help,
 .pixel-value {
-  color: #667085;
-  font-size: 12px;
+  color:var(--space-studio-muted);
+  font-size:14px;
 }
 
 .calibration-point-row {
@@ -1719,10 +2491,10 @@ function delay(milliseconds: number): Promise<void> {
 .calibration-preview {
   margin-top: 16px;
   padding: 12px;
-  color: #344054;
-  background: #f8fafc;
+  color:var(--space-studio-text);
+  background:var(--space-studio-panel-raised);
   border-radius: 6px;
-  font-size: 12px;
+  font-size:14px;
 }
 
 .panel-actions {
@@ -1732,36 +2504,17 @@ function delay(milliseconds: number): Promise<void> {
   margin-top: 16px;
 }
 
-@media (max-width: 900px) {
-  .toolbar {
-    align-items: flex-start;
-    flex-direction: column;
-  }
-
-  .controls {
-    flex-wrap: wrap;
-  }
-
-  .workspace {
-    flex-direction: column;
-  }
-
-  .projection-surface.mode-split {
-    grid-template-columns: minmax(0, 1fr);
-    grid-template-rows: minmax(260px, 1fr) minmax(260px, 1fr);
-  }
-
-  .projection-surface.mode-split .canvas {
-    border-right: 0;
-    border-bottom: 1px solid #334155;
-  }
-
-  .calibration-panel {
-    box-sizing: border-box;
-    width: 100%;
-    max-height: 45vh;
-    border-top: 1px solid #dfe4ea;
-    border-left: 0;
-  }
+.studio-statusbar { box-sizing:border-box; display:flex; align-items:center; gap:16px; height:30px; min-height:30px; padding:0 10px; border-top:1px solid var(--space-studio-border); color:var(--space-studio-muted); background:#0d1626; font-size:13px; }
+.studio-statusbar .blocking { color:var(--space-studio-blocking); }
+.studio-statusbar button { min-height:24px; height:24px; padding:0 8px; font-size:12px; }
+@media (max-width:1279px) {
+  .workspace { grid-template-columns:minmax(0,1fr) 280px; }
+  .studio-context,.studio-checklist,.studio-statusbar { display:none; }
+  .studio-commandbar > button:not(.issues-command),.studio-commandbar .studio-command-spacer { display:none; }
+  .studio-view-switch button:first-child { display:none; }
+  .studio-view-switch button:last-child { border-radius:6px; pointer-events:none; }
+  .studio-title-state span:first-child { display:none; }
+  .studio-inspector .inspector-tabs button:not(:last-child) { display:none; }
+  .studio-inspector .inspector-tabs { grid-template-columns:1fr; }
 }
 </style>

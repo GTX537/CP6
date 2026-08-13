@@ -15,17 +15,19 @@ public static class SpaceCadPreviewSet
         WriteIndented = false,
     };
 
-    public static SpaceCadPreviewSetV1 Create(
+    public static SpaceCadPreviewSetV2 Create(
         Guid tenantId,
         Guid modelVersionId,
         Guid sourceId,
         Guid cadParseJobId,
         SpaceCadSemanticPreviewV1 semanticPreview,
-        SpaceCadSemanticDiagnosticIndexV1 diagnosticIndex)
+        SpaceCadSemanticDiagnosticIndexV1 diagnosticIndex,
+        long baseContentRevision = 0,
+        string? baseContentHash = null)
     {
         ArgumentNullException.ThrowIfNull(semanticPreview);
         ArgumentNullException.ThrowIfNull(diagnosticIndex);
-        var withoutHash = new SpaceCadPreviewSetV1(
+        var withoutHash = new SpaceCadPreviewSetV2(
             SpaceCadPreviewSetVersions.SchemaVersion,
             IsReadOnlyArtifact: true,
             tenantId,
@@ -33,6 +35,8 @@ public static class SpaceCadPreviewSet
             sourceId,
             cadParseJobId,
             semanticPreview.FloorLogicalId,
+            baseContentRevision,
+            baseContentHash,
             semanticPreview.SourceSha256,
             semanticPreview.CoordinateTransformSha256,
             semanticPreview.MappingPreviewSha256,
@@ -47,17 +51,17 @@ public static class SpaceCadPreviewSet
         return result;
     }
 
-    public static string Serialize(SpaceCadPreviewSetV1 previewSet)
+    public static string Serialize(SpaceCadPreviewSetV2 previewSet)
     {
         Validate(previewSet);
         return SerializeUnchecked(previewSet);
     }
 
-    public static SpaceCadPreviewSetV1 Deserialize(string json)
+    public static SpaceCadPreviewSetV2 Deserialize(string json)
     {
         try
         {
-            var value = JsonSerializer.Deserialize<SpaceCadPreviewSetV1>(
+            var value = JsonSerializer.Deserialize<SpaceCadPreviewSetV2>(
                 json,
                 JsonOptions) ?? throw new JsonException();
             Validate(value);
@@ -71,7 +75,7 @@ public static class SpaceCadPreviewSet
         }
     }
 
-    public static void Validate(SpaceCadPreviewSetV1 previewSet)
+    public static void Validate(SpaceCadPreviewSetV2 previewSet)
     {
         ArgumentNullException.ThrowIfNull(previewSet);
         ArgumentNullException.ThrowIfNull(previewSet.SemanticPreview);
@@ -85,6 +89,9 @@ public static class SpaceCadPreviewSet
             previewSet.SourceId == Guid.Empty ||
             previewSet.CadParseJobId == Guid.Empty ||
             previewSet.FloorLogicalId == Guid.Empty ||
+            previewSet.BaseContentRevision < 0 ||
+            previewSet.BaseContentHash is not null &&
+                !IsSha256(previewSet.BaseContentHash) ||
             !IsSha256(previewSet.SourceSha256) ||
             !IsSha256(previewSet.CoordinateTransformSha256) ||
             !IsSha256(previewSet.MappingPreviewSha256) ||
@@ -119,7 +126,7 @@ public static class SpaceCadPreviewSet
         }
     }
 
-    private static string SerializeUnchecked(SpaceCadPreviewSetV1 value) =>
+    private static string SerializeUnchecked(SpaceCadPreviewSetV2 value) =>
         JsonSerializer.Serialize(value, JsonOptions);
 
     private static string Hash(string value) =>

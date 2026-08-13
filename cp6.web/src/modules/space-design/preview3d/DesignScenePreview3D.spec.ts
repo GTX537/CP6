@@ -7,6 +7,7 @@ const preview = vi.hoisted(() => ({
   setScene: vi.fn(),
   resize: vi.fn(),
   setPreset: vi.fn(),
+  setSelectedLogicalIds: vi.fn(),
   dispose: vi.fn(),
 }))
 
@@ -15,6 +16,7 @@ vi.mock('./DesignScenePreview3D', () => ({
     setScene = preview.setScene
     resize = preview.resize
     setPreset = preview.setPreset
+    setSelectedLogicalIds = preview.setSelectedLogicalIds
     dispose = preview.dispose
   },
 }))
@@ -57,6 +59,7 @@ describe('DesignScenePreview3D component', () => {
     await flushPromises()
 
     expect(preview.setScene).toHaveBeenCalledWith(initial)
+    expect(preview.setSelectedLogicalIds).toHaveBeenCalledWith([])
     expect(wrapper.text()).toContain('2D 2 / 3D 2')
     expect(wrapper.text()).toContain('2D/3D 清单一致')
 

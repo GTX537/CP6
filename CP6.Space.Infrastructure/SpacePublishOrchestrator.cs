@@ -612,8 +612,10 @@ public sealed partial class SpacePublishOrchestrator :
         var resolution = request.Resolution?.Trim();
         if (reconciliation && string.IsNullOrWhiteSpace(resolution))
         {
-            throw Invalid(
-                "A reconciliation resolution note is required for this retry.");
+            throw Conflict(
+                SpaceErrorCodes.PublishReconciliationRequired,
+                "A reconciliation resolution note is required for this retry.",
+                "open-publish-reconciliation");
         }
 
         var jobType = reconciliation

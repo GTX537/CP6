@@ -7,6 +7,10 @@ import SpacePublishManagementView from '../SpacePublishManagementView.vue'
 import { siteApi } from '@/api/space/site'
 import { publishManagementApi } from '@/api/space/publishManagement'
 
+const { routeQuery } = vi.hoisted(() => ({ routeQuery: {} as Record<string, string> }))
+
+vi.mock('vue-router', () => ({ useRoute: () => ({ query: routeQuery }) }))
+
 vi.mock('@/api/space/site', () => ({ siteApi: { list: vi.fn() } }))
 vi.mock('@/api/space/publishManagement', () => ({
   publishManagementApi: {
@@ -69,6 +73,7 @@ async function selectSite(wrapper: ReturnType<typeof mountView>) {
 describe('SpacePublishManagementView', () => {
   beforeEach(() => {
     vi.clearAllMocks()
+    for (const key of Object.keys(routeQuery)) delete routeQuery[key]
     vi.stubGlobal('crypto', { randomUUID: () => '00000000-0000-4000-8000-000000000001' })
     vi.mocked(siteApi.list).mockResolvedValue({ code: 0, message: '', data: [{ id: 's1', siteCode: 'SEA', siteName: 'Seattle', enable: true }] })
     vi.mocked(publishManagementApi.getModel).mockResolvedValue(model)
@@ -110,6 +115,19 @@ describe('SpacePublishManagementView', () => {
       'space-publish-00000000-0000-4000-8000-000000000001',
     )
     expect(wrapper.text()).toContain('已完成')
+  })
+
+  it('从 Space Studio 深链进入时选择指定版本并自动启动正式验证，但不自动发布', async () => {
+    routeQuery.siteId = 's1'
+    routeQuery.versionId = 'v3'
+    routeQuery.action = 'publish'
+
+    mountView()
+    await flushPromises()
+
+    expect(publishManagementApi.createValidation).toHaveBeenCalledWith('v3')
+    expect(publishManagementApi.getPreview).toHaveBeenCalledWith('v3', expect.objectContaining({ limit: 100 }))
+    expect(publishManagementApi.createAttempt).not.toHaveBeenCalled()
   })
 
   it('恢复失败发布记录并提交带原因的人工重试', async () => {

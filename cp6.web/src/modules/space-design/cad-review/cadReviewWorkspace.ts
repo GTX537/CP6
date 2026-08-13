@@ -72,6 +72,41 @@ export interface CadReviewWorkspaceSummary {
   excelReviewCount: number
 }
 
+export type CadChangeKind =
+  | 'Add'
+  | 'Modify'
+  | 'Delete'
+  | 'Conflict'
+  | 'LowConfidence'
+  | 'Unrecognized'
+
+export interface CadReviewChange {
+  changeId: string
+  kind: CadChangeKind
+  logicalId: string
+  sourceRef: string
+  previewObjectId?: string
+  objectType: string
+  confidence?: number
+  isSelected: boolean
+  canApply: boolean
+  blockingReasonCode?: string
+  beforeBounds?: CadReviewBounds
+  afterBounds?: CadReviewBounds
+}
+
+export interface CadReviewChangeSummary {
+  totalCount: number
+  addCount: number
+  modifyCount: number
+  deleteCount: number
+  conflictCount: number
+  lowConfidenceCount: number
+  unrecognizedCount: number
+  selectedCount: number
+  applyEligibleCount: number
+}
+
 export interface CadReviewWorkspace {
   schemaVersion: 1
   isReadOnlyWorkspace: true
@@ -88,6 +123,12 @@ export interface CadReviewWorkspace {
   items: CadReviewItem[]
   summary: CadReviewWorkspaceSummary
   workspaceSha256: string
+  sourceId?: string
+  cadParseJobId?: string
+  semanticPreviewSha256?: string
+  changes?: CadReviewChange[]
+  changeSummary?: CadReviewChangeSummary
+  changesetSha256?: string
 }
 
 export interface CadReviewFilters {
@@ -166,6 +207,10 @@ export function parseCadReviewWorkspace(input: string | unknown): CadReviewWorks
   requireSha(value.editorSnapshotSha256, 'editorSnapshotSha256')
   optionalSha(value.previousWorkspaceSha256, 'previousWorkspaceSha256')
   requireSha(value.workspaceSha256, 'workspaceSha256')
+  optionalGuid(value.sourceId, 'sourceId')
+  optionalGuid(value.cadParseJobId, 'cadParseJobId')
+  optionalSha(value.semanticPreviewSha256, 'semanticPreviewSha256')
+  optionalSha(value.changesetSha256, 'changesetSha256')
   if (!Array.isArray(value.items) || value.items.length > 100_000) {
     throw new Error('CAD review workspace items are invalid or too large')
   }
@@ -183,7 +228,42 @@ export function parseCadReviewWorkspace(input: string | unknown): CadReviewWorks
   })
   const expectedSummary = summarizeCadReviewItems(items)
   assertSummary(value.summary, expectedSummary)
+  parseChanges(value)
   return value as unknown as CadReviewWorkspace
+}
+
+function parseChanges(value: Record<string, unknown>): void {
+  if (value.changes === undefined) return
+  if (!Array.isArray(value.changes) || value.changes.length > 100_000) {
+    throw new Error('CAD review changeset is invalid or too large')
+  }
+  requireGuid(value.sourceId, 'sourceId')
+  requireGuid(value.cadParseJobId, 'cadParseJobId')
+  requireSha(value.semanticPreviewSha256, 'semanticPreviewSha256')
+  requireSha(value.changesetSha256, 'changesetSha256')
+  const ids = new Set<string>()
+  for (const [index, candidate] of value.changes.entries()) {
+    assertRecord(candidate, `changes[${index}]`)
+    requireText(candidate.changeId, `changes[${index}].changeId`, 128)
+    if (ids.has(String(candidate.changeId))) throw new Error('Duplicate CAD change identity')
+    ids.add(String(candidate.changeId))
+    if (!['Add', 'Modify', 'Delete', 'Conflict', 'LowConfidence', 'Unrecognized']
+      .includes(String(candidate.kind))) throw new Error(`changes[${index}].kind is invalid`)
+    requireGuid(candidate.logicalId, `changes[${index}].logicalId`)
+    requireText(candidate.sourceRef, `changes[${index}].sourceRef`, 200)
+    requireText(candidate.objectType, `changes[${index}].objectType`, 128)
+    if (typeof candidate.isSelected !== 'boolean' || typeof candidate.canApply !== 'boolean') {
+      throw new Error(`changes[${index}] selection state is invalid`)
+    }
+    if (candidate.confidence !== undefined &&
+      (typeof candidate.confidence !== 'number' || candidate.confidence < 0 || candidate.confidence > 1)) {
+      throw new Error(`changes[${index}].confidence is invalid`)
+    }
+    optionalText(candidate.previewObjectId, `changes[${index}].previewObjectId`, 128)
+    optionalText(candidate.blockingReasonCode, `changes[${index}].blockingReasonCode`, 128)
+    if (candidate.beforeBounds !== undefined) parseBounds(candidate.beforeBounds, index)
+    if (candidate.afterBounds !== undefined) parseBounds(candidate.afterBounds, index)
+  }
 }
 
 export function filterCadReviewItems(
@@ -426,6 +506,10 @@ function requireGuid(value: unknown, name: string): void {
   ) {
     throw new Error(`${name} is not a GUID`)
   }
+}
+
+function optionalGuid(value: unknown, name: string): void {
+  if (value !== undefined) requireGuid(value, name)
 }
 
 function requireInteger(value: unknown, name: string, minimum?: number): void {
