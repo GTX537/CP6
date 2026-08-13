@@ -143,6 +143,79 @@ public sealed class SpaceWmsRuntimeSchemaFilter : ISchemaFilter
                 "expectedFloorRevision",
                 "commands",
             ],
+            [typeof(ApplySpaceLayoutCommandBatchRequest)] =
+            [
+                "schemaVersion",
+                "commandBatchId",
+                "clientInstanceId",
+                "leaseId",
+                "expectedFloorRevision",
+                "expectedContentRevision",
+                "commands",
+            ],
+            [typeof(SpaceLayoutCommandDto)] =
+            [
+                "commandId",
+                "type",
+                "targetLogicalId",
+            ],
+            [typeof(SpaceCreateLayoutZoneDto)] =
+            [
+                "zoneCode",
+                "zoneType",
+                "polygonJson",
+            ],
+            [typeof(SpaceCreateLayoutAisleDto)] =
+            [
+                "zoneLogicalId",
+                "aisleCode",
+                "direction",
+                "polygonJson",
+                "centerlineJson",
+            ],
+            [typeof(SpaceCreateLayoutRackDto)] =
+            [
+                "zoneLogicalId",
+                "rackCode",
+                "x",
+                "y",
+                "z",
+                "rotationZ",
+                "width",
+                "depth",
+                "height",
+                "levels",
+            ],
+            [typeof(SpaceCreateLayoutRackLevelDto)] =
+            [
+                "levelNo",
+                "bottomZ",
+                "clearHeight",
+                "binCount",
+                "depthCount",
+                "cellWidth",
+                "cellDepth",
+                "beamHeight",
+            ],
+            [typeof(SpaceLayoutCommandResultDto)] =
+            [
+                "commandId",
+                "type",
+                "targetLogicalId",
+            ],
+            [typeof(ApplySpaceLayoutCommandBatchResponse)] =
+            [
+                "commandBatchId",
+                "floorRevision",
+                "versionContentRevision",
+                "appliedCommands",
+                "affectedZones",
+                "affectedAisles",
+                "affectedRacks",
+                "affectedRackLevels",
+                "affectedLocations",
+                "idempotentReplay",
+            ],
             [typeof(SpaceElementCommandDto)] =
             [
                 "commandId",

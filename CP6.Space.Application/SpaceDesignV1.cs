@@ -77,6 +77,12 @@ public interface ISpaceDesignV1Service
         ApplySpaceElementCommandBatchRequest request,
         CancellationToken cancellationToken = default);
 
+    Task<ApplySpaceLayoutCommandBatchResponse> ApplyLayoutCommandsAsync(
+        Guid versionId,
+        Guid floorLogicalId,
+        ApplySpaceLayoutCommandBatchRequest request,
+        CancellationToken cancellationToken = default);
+
     Task<SpacePage<SpaceAssetDto>> GetAssetsAsync(
         string? scope,
         string? category,

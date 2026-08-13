@@ -1070,6 +1070,268 @@ public sealed class SpaceDesignSceneSqlServerTests
         });
     }
 
+    [SqlServerFact]
+    public async Task Layout_commands_create_coded_warehouse_atomically()
+    {
+        await WithDatabaseAsync(async (connectionString, execution, clock) =>
+        {
+            await using var context = CreateContext(
+                connectionString,
+                execution,
+                clock);
+            var seeded = await SeedDesignModelAsync(
+                context,
+                execution.ActorId,
+                clock.UtcNow);
+            var draft = SpaceModelVersion.CreateDraft(
+                execution.TenantId,
+                seeded.Model.Id,
+                2,
+                "Blank layout",
+                seeded.Published.Id);
+            seeded.Model.ReserveDraft(draft);
+            var floor = SpaceFloorRevision.Create(
+                execution.TenantId,
+                draft.Id,
+                Guid.NewGuid(),
+                seeded.Model.SiteId,
+                1,
+                "F1",
+                "Floor 1",
+                height: 6000);
+            context.AddRange(draft, floor);
+            await context.SaveChangesAsync();
+
+            var clientId = Guid.NewGuid();
+            var lease = SpaceEditLease.Create(
+                execution.TenantId,
+                draft.Id,
+                floor.LogicalId,
+                execution.ActorId,
+                "Editor",
+                clientId,
+                clock.UtcNow,
+                TimeSpan.FromSeconds(90));
+            context.EditLeases.Add(lease);
+            await context.SaveChangesAsync();
+
+            var zoneId = Guid.NewGuid();
+            var aisleId = Guid.NewGuid();
+            var rackId = Guid.NewGuid();
+            var request = new ApplySpaceLayoutCommandBatchRequest(
+                SpaceLayoutCommandContract.SchemaVersion,
+                Guid.NewGuid(),
+                clientId,
+                lease.LeaseId,
+                ExpectedFloorRevision: 0,
+                ExpectedContentRevision: 0,
+                [
+                    new SpaceLayoutCommandDto(
+                        Guid.NewGuid(),
+                        SpaceLayoutCommandContract.CreateZone,
+                        zoneId,
+                        CreateZone: new SpaceCreateLayoutZoneDto(
+                            "Z-A",
+                            "Ambient",
+                            1,
+                            """
+                            {"schemaVersion":1,"points":[[0,0],[12000,0],[12000,8000],[0,8000]]}
+                            """,
+                            "#00A6B2",
+                            null)),
+                    new SpaceLayoutCommandDto(
+                        Guid.NewGuid(),
+                        SpaceLayoutCommandContract.CreateAisle,
+                        aisleId,
+                        CreateAisle: new SpaceCreateLayoutAisleDto(
+                            zoneId,
+                            "A-01",
+                            "Main aisle",
+                            1,
+                            """
+                            {"schemaVersion":1,"points":[[0,0],[2000,0],[2000,8000],[0,8000]]}
+                            """,
+                            """
+                            {"schemaVersion":1,"points":[[1000,0],[1000,8000]]}
+                            """)),
+                    new SpaceLayoutCommandDto(
+                        Guid.NewGuid(),
+                        SpaceLayoutCommandContract.CreateRack,
+                        rackId,
+                        CreateRack: new SpaceCreateLayoutRackDto(
+                            zoneId,
+                            aisleId,
+                            "R-001",
+                            "Rack 1",
+                            "Selective",
+                            null,
+                            X: 2500,
+                            Y: 1000,
+                            Z: 0,
+                            RotationZ: 0,
+                            Width: 2400,
+                            Depth: 1000,
+                            Height: 4000,
+                            [
+                                new SpaceCreateLayoutRackLevelDto(
+                                    LevelNo: 1,
+                                    BottomZ: 0,
+                                    ClearHeight: 1600,
+                                    BinCount: 2,
+                                    DepthCount: 2,
+                                    CellWidth: 1200,
+                                    CellDepth: 500,
+                                    BeamHeight: 100,
+                                    MaxLoad: 1000,
+                                    LocationCodePrefix: "R-001"),
+                                new SpaceCreateLayoutRackLevelDto(
+                                    LevelNo: 2,
+                                    BottomZ: 1700,
+                                    ClearHeight: 1600,
+                                    BinCount: 2,
+                                    DepthCount: 2,
+                                    CellWidth: 1200,
+                                    CellDepth: 500,
+                                    BeamHeight: 100,
+                                    MaxLoad: 1000,
+                                    LocationCodePrefix: "R-001"),
+                            ])),
+                ]);
+            var service = NewService(
+                context,
+                execution,
+                clock,
+                seeded.Model.SiteId);
+
+            var applied = await service.ApplyLayoutCommandsAsync(
+                draft.Id,
+                floor.LogicalId,
+                request);
+            var replay = await service.ApplyLayoutCommandsAsync(
+                draft.Id,
+                floor.LogicalId,
+                request);
+
+            Assert.Equal(1, applied.FloorRevision);
+            Assert.Equal(1, applied.VersionContentRevision);
+            Assert.False(applied.IdempotentReplay);
+            Assert.True(replay.IdempotentReplay);
+            Assert.Equal(3, applied.AppliedCommands.Count);
+            Assert.Single(applied.AffectedZones);
+            Assert.Single(applied.AffectedAisles);
+            Assert.Single(applied.AffectedRacks);
+            Assert.Equal(2, applied.AffectedRackLevels.Count);
+            Assert.Equal(8, applied.AffectedLocations.Count);
+            Assert.Contains(
+                applied.AffectedLocations,
+                location => location.LocationCode == "R-001-L01-C001-D01");
+            Assert.Equal(
+                WarehouseDeterministicIdentity.CreateRackLevelLogicalId(
+                    rackId,
+                    2),
+                applied.AffectedRackLevels[1].Revision.LogicalId);
+            Assert.Equal(
+                WarehouseDeterministicIdentity.CreateLocationLogicalId(
+                    rackId,
+                    2,
+                    2,
+                    2),
+                applied.AffectedLocations[^1].Revision.LogicalId);
+            Assert.Equal(3, await context.ElementCommandRecords.CountAsync());
+
+            var lostLeaseRequest = request with
+            {
+                CommandBatchId = Guid.NewGuid(),
+                LeaseId = Guid.NewGuid(),
+                ExpectedFloorRevision = 1,
+                ExpectedContentRevision = 1,
+                Commands = [request.Commands[0] with
+                {
+                    CommandId = Guid.NewGuid(),
+                    TargetLogicalId = Guid.NewGuid(),
+                }],
+            };
+            var leaseProblem = await Assert.ThrowsAsync<SpaceProblemException>(
+                () => service.ApplyLayoutCommandsAsync(
+                    draft.Id,
+                    floor.LogicalId,
+                    lostLeaseRequest));
+            Assert.Equal(SpaceErrorCodes.EditLeaseLost, leaseProblem.Code);
+            Assert.Equal(3, await context.ElementCommandRecords.CountAsync());
+
+            var scene = await service.GetSceneAsync(
+                draft.Id,
+                floor.LogicalId);
+            Assert.Single(scene.Zones);
+            Assert.Single(scene.Aisles);
+            Assert.Single(scene.Racks);
+            Assert.Equal(2, scene.RackLevels.Count);
+            Assert.Equal(8, scene.Locations.Count);
+
+            var atomicBatchId = Guid.NewGuid();
+            var atomicZoneId = Guid.NewGuid();
+            var atomicProblem = await Assert.ThrowsAsync<SpaceProblemException>(
+                () => service.ApplyLayoutCommandsAsync(
+                    draft.Id,
+                    floor.LogicalId,
+                    new ApplySpaceLayoutCommandBatchRequest(
+                        SpaceLayoutCommandContract.SchemaVersion,
+                        atomicBatchId,
+                        clientId,
+                        lease.LeaseId,
+                        ExpectedFloorRevision: 1,
+                        ExpectedContentRevision: 1,
+                        [
+                            new SpaceLayoutCommandDto(
+                                Guid.NewGuid(),
+                                SpaceLayoutCommandContract.CreateZone,
+                                atomicZoneId,
+                                CreateZone: new SpaceCreateLayoutZoneDto(
+                                    "Z-B",
+                                    null,
+                                    1,
+                                    "[]",
+                                    null,
+                                    null)),
+                            new SpaceLayoutCommandDto(
+                                Guid.NewGuid(),
+                                SpaceLayoutCommandContract.CreateAisle,
+                                Guid.NewGuid(),
+                                CreateAisle: new SpaceCreateLayoutAisleDto(
+                                    Guid.NewGuid(),
+                                    "A-BROKEN",
+                                    null,
+                                    1,
+                                    "[]",
+                                    "[]")),
+                        ])));
+            Assert.Equal(SpaceErrorCodes.LogicalIdNotFound, atomicProblem.Code);
+            Assert.False(await context.ZoneRevisions.AsNoTracking().AnyAsync(
+                candidate => candidate.LogicalId == atomicZoneId));
+            Assert.False(await context.ElementCommandBatches.AsNoTracking()
+                .AnyAsync(candidate => candidate.Id == atomicBatchId));
+
+            var stale = request with
+            {
+                CommandBatchId = Guid.NewGuid(),
+                Commands = request.Commands.Select(command => command with
+                {
+                    CommandId = Guid.NewGuid(),
+                    TargetLogicalId = Guid.NewGuid(),
+                }).ToArray(),
+            };
+            var staleProblem = await Assert.ThrowsAsync<SpaceProblemException>(
+                () => service.ApplyLayoutCommandsAsync(
+                    draft.Id,
+                    floor.LogicalId,
+                    stale));
+            Assert.Equal(
+                SpaceErrorCodes.FloorRevisionConflict,
+                staleProblem.Code);
+            Assert.Equal(3, await context.ElementCommandRecords.CountAsync());
+        });
+    }
+
     private static ApplySpaceElementCommandBatchRequest LifecycleBatch(
         Guid clientInstanceId,
         Guid leaseId,
