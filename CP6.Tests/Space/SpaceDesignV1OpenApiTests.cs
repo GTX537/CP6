@@ -69,6 +69,8 @@ public sealed class SpaceDesignV1OpenApiTests
             "/api/space/design/v1/versions/{versionId}/generation-runs",
             "/api/space/design/v1/versions/{versionId}/floors/{floorLogicalId}/commands",
             "/api/space/design/v1/versions/{versionId}/floors/{floorLogicalId}/layout-commands",
+            "/api/space/design/v1/versions/{versionId}/floors/{floorLogicalId}/location-codes:preview",
+            "/api/space/design/v1/versions/{versionId}/floors/{floorLogicalId}/location-codes:apply",
             "/api/space/design/v1/versions/{versionId}/floors/{floorLogicalId}/scene",
             "/api/space/design/v1/versions/{versionId}/floors/{floorLogicalId}/underlay",
             "/api/space/design/v1/versions/{versionId}/floors/{floorLogicalId}/lease",
@@ -144,8 +146,8 @@ public sealed class SpaceDesignV1OpenApiTests
             .Select(operation =>
                 operation.Value.GetProperty("operationId").GetString())
             .ToArray();
-        Assert.Equal(126, operationIds.Length);
-        Assert.Equal(126, operationIds.Distinct().Count());
+        Assert.Equal(128, operationIds.Length);
+        Assert.Equal(128, operationIds.Distinct().Count());
         Assert.Contains("GetPolicy", operationIds);
         Assert.Contains("UpdatePolicy", operationIds);
         Assert.Contains("GetUsage", operationIds);
@@ -208,6 +210,8 @@ public sealed class SpaceDesignV1OpenApiTests
         Assert.Contains("GetScene", operationIds);
         Assert.Contains("ApplyElementCommands", operationIds);
         Assert.Contains("ApplyLayoutCommands", operationIds);
+        Assert.Contains("PreviewLocationCodes", operationIds);
+        Assert.Contains("ApplyLocationCodes", operationIds);
         Assert.Contains("UploadUnderlay", operationIds);
         Assert.Contains("GetFile", operationIds);
         Assert.Contains("GetUnderlayContent", operationIds);
@@ -1535,6 +1539,87 @@ public sealed class SpaceDesignV1OpenApiTests
                 typescript,
                 "export interface ISpaceDeleteLayoutObjectDto"),
             "cascade");
+    }
+
+    [Fact]
+    public void Location_coding_requires_preview_then_fenced_apply_and_generated_clients()
+    {
+        using var document = ReadContract();
+        var paths = document.RootElement.GetProperty("paths");
+        var schemas = document.RootElement.GetProperty("components")
+            .GetProperty("schemas");
+
+        var preview = paths.GetProperty(
+                "/api/space/design/v1/versions/{versionId}/floors/" +
+                "{floorLogicalId}/location-codes:preview")
+            .GetProperty("post");
+        Assert.Equal(
+            "PreviewLocationCodes",
+            preview.GetProperty("operationId").GetString());
+        Assert.True(
+            preview.GetProperty("requestBody")
+                .GetProperty("required")
+                .GetBoolean());
+        AssertExactRequired(
+            Schema(
+                schemas,
+                "CP6.Space.Contracts.PreviewSpaceLocationCodesRequest"),
+            "schemaVersion",
+            "mode",
+            "expectedFloorRevision",
+            "expectedContentRevision");
+
+        var apply = paths.GetProperty(
+                "/api/space/design/v1/versions/{versionId}/floors/" +
+                "{floorLogicalId}/location-codes:apply")
+            .GetProperty("post");
+        Assert.Equal(
+            "ApplyLocationCodes",
+            apply.GetProperty("operationId").GetString());
+        Assert.True(
+            apply.GetProperty("requestBody")
+                .GetProperty("required")
+                .GetBoolean());
+        AssertExactRequired(
+            Schema(
+                schemas,
+                "CP6.Space.Contracts.ApplySpaceLocationCodesRequest"),
+            "schemaVersion",
+            "commandBatchId",
+            "clientInstanceId",
+            "leaseId",
+            "mode",
+            "expectedFloorRevision",
+            "expectedContentRevision",
+            "proposalHash");
+
+        var typescript = File.ReadAllText(
+            Path.Combine(
+                RepositoryRoot,
+                "sdk",
+                "typescript",
+                "space-design-v1",
+                "spaceDesignV1Client.ts"));
+        AssertRequiredTypeScriptProperties(
+            ExtractTypeBlock(
+                typescript,
+                "export interface IPreviewSpaceLocationCodesRequest"),
+            "schemaVersion",
+            "mode",
+            "expectedFloorRevision",
+            "expectedContentRevision");
+        AssertRequiredTypeScriptProperties(
+            ExtractTypeBlock(
+                typescript,
+                "export interface IApplySpaceLocationCodesRequest"),
+            "schemaVersion",
+            "commandBatchId",
+            "clientInstanceId",
+            "leaseId",
+            "mode",
+            "expectedFloorRevision",
+            "expectedContentRevision",
+            "proposalHash");
     }
 
     [Fact]

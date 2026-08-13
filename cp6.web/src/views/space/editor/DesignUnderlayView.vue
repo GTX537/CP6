@@ -7,6 +7,10 @@ import { isAxiosError } from 'axios'
 import { designLeaseApi, type SpaceEditLease } from '@/api/space/designLease'
 import { designCadParseApi } from '@/api/space/designCadParse'
 import {
+  designCodingApi,
+  type LocationCodingEnvelope,
+} from '@/api/space/designCoding'
+import {
   designElementsApi,
   type EditorCommandEnvelope,
   type ElementPropertiesPayload,
@@ -44,6 +48,7 @@ import {
   type ReversibleCommandBatch,
 } from '@/modules/space-design/commands/editorBatchCommands'
 import DesignBatchToolsPanel from '@/modules/space-design/panels/DesignBatchToolsPanel.vue'
+import DesignLocationCodingPanel from '@/modules/space-design/coding/DesignLocationCodingPanel.vue'
 import DesignElementPropertiesPanel from '@/modules/space-design/panels/DesignElementPropertiesPanel.vue'
 import DesignWmsAdoptionPanel from '@/modules/space-design/panels/DesignWmsAdoptionPanel.vue'
 import SpaceStudioContextPanel from '@/modules/space-design/panels/SpaceStudioContextPanel.vue'
@@ -101,6 +106,7 @@ import type {
   ISpaceUpdateLayoutAisleDto,
   ISpaceUpdateLayoutRackDto,
   ISpaceUpdateLayoutZoneDto,
+  IPreviewSpaceLocationCodesResponse,
 } from '../../../../../sdk/typescript/space-design-v1/spaceDesignV1Client'
 
 const maxUploadBytes = 100 * 1024 * 1024
@@ -152,9 +158,15 @@ const statusText = ref('')
 const saveState = ref<'idle' | 'saving' | 'saved' | 'failed'>('idle')
 const lastSavedAt = ref<Date | null>(null)
 const unsavedEnvelope = ref<EditorCommandEnvelope | LayoutCommandEnvelope | null>(null)
+const unsavedCodingEnvelope = ref<LocationCodingEnvelope | null>(null)
+const locationCodingPreview = ref<IPreviewSpaceLocationCodesResponse | null>(null)
+const locationCodingBusy = ref(false)
 const revisionConflict = ref(false)
 const unsavedCommands = computed(
-  () => unsavedEnvelope.value?.commands ?? [],
+  () => unsavedEnvelope.value?.commands ?? (unsavedCodingEnvelope.value ? [unsavedCodingEnvelope.value] : []),
+)
+const unsavedCommandBatchId = computed(
+  () => unsavedEnvelope.value?.commandBatchId ?? unsavedCodingEnvelope.value?.commandBatchId,
 )
 const lease = ref<SpaceEditLease | null>(null)
 const leaseState = ref<'loading' | 'owned' | 'held' | 'lost' | 'released'>('loading')
@@ -433,18 +445,25 @@ onMounted(async () => {
     void monitorCadParse()
   }
 })
-const allRacksCoded = computed(
-  () => activeRacks.value.every((rack) => Boolean(rack.rackCode?.trim())),
+const allLocationsCoded = computed(
+  () => {
+    const active = (designScene.value?.locations ?? []).filter(
+      (location) => location.revision?.lifecycleState === 'Active',
+    )
+    return active.length > 0 && active.every(
+      (location) => Boolean(location.locationCode?.trim()),
+    )
+  },
 )
 const publishReady = computed(
   () => (!cadReviewWorkspace.value ||
     (!cadReviewWorkspaceStale.value &&
       cadReviewWorkspace.value.summary.openBlockingCount === 0)) &&
-    allRacksCoded.value,
+    allLocationsCoded.value,
 )
 
 onBeforeRouteUpdate(async () => {
-  if (!unsavedEnvelope.value) return true
+  if (!unsavedEnvelope.value && !unsavedCodingEnvelope.value) return true
   try {
     await ElMessageBox.confirm(
       '当前楼层仍有未同步命令。切换前可导出完整命令包，之后在原楼层继续恢复。',
@@ -549,6 +568,8 @@ watch(
     selectedObjects.value = []
     cadReviewWorkspace.value = null
     unsavedEnvelope.value = null
+    unsavedCodingEnvelope.value = null
+    locationCodingPreview.value = null
     revisionConflict.value = false
     history.clear()
     touchHistory()
@@ -571,6 +592,11 @@ async function loadScene(): Promise<void> {
     if (!scene.floor) throw new Error('Design scene is missing its floor')
     designScene.value = scene
     floor.value = scene.floor
+    if (locationCodingPreview.value &&
+      (locationCodingPreview.value.baseFloorRevision !== (scene.floor.revisionNumber ?? 0) ||
+       locationCodingPreview.value.baseContentRevision !== (scene.contentRevision ?? 0))) {
+      locationCodingPreview.value = null
+    }
     elementLayer?.setScene(scene)
     const activeIds = new Set([
       ...(scene.elements ?? [])
@@ -1648,6 +1674,93 @@ async function applyLayoutCommands(commands: readonly LayoutCommandInput[]) {
   }
 }
 
+async function previewLocationCodes(request: {
+  mode: string
+  scopeZoneLogicalId?: string
+}): Promise<void> {
+  if (unsavedCodingEnvelope.value) {
+    ElMessage.warning('已有未完成的编码 Apply；请先安全重试、刷新重做或放弃')
+    return
+  }
+  const currentFloor = floor.value
+  const currentScene = designScene.value
+  if (!currentFloor || !currentScene || readonlyScene.value) return
+  locationCodingBusy.value = true
+  try {
+    locationCodingPreview.value = await designCodingApi.preview(
+      versionId.value,
+      floorLogicalId.value,
+      {
+        schemaVersion: 1,
+        mode: request.mode,
+        scopeZoneLogicalId: request.scopeZoneLogicalId,
+        expectedFloorRevision: currentFloor.revisionNumber ?? 0,
+        expectedContentRevision: currentScene.contentRevision ?? 0,
+      },
+    )
+    ElMessage.success('编码预览已生成；确认前 Draft 保持不变')
+  } catch (error) {
+    const code = isAxiosError(error) ? error.response?.data?.code : undefined
+    if (code === 'SPACE_CODING_PROPOSAL_STALE') {
+      await loadScene()
+      ElMessage.error('楼层已变化，已刷新场景；请重新生成编码预览')
+    } else {
+      ElMessage.error('编码预览失败；Draft 未发生写入')
+    }
+  } finally {
+    locationCodingBusy.value = false
+  }
+}
+
+async function applyLocationCodes(): Promise<void> {
+  if (unsavedCodingEnvelope.value) {
+    await retryUnsavedEnvelope()
+    return
+  }
+  const preview = locationCodingPreview.value
+  const leaseId = lease.value?.leaseId
+  if (!preview || !leaseId || leaseState.value !== 'owned' ||
+    readonlyScene.value || locationCodingBusy.value) return
+  const envelope = designCodingApi.createEnvelope(
+    preview,
+    clientInstanceId,
+    leaseId,
+  )
+  unsavedCodingEnvelope.value = envelope
+  saveState.value = 'saving'
+  locationCodingBusy.value = true
+  try {
+    const response = await designCodingApi.apply(
+      versionId.value,
+      floorLogicalId.value,
+      envelope,
+    )
+    unsavedCodingEnvelope.value = null
+    locationCodingPreview.value = null
+    revisionConflict.value = false
+    saveState.value = 'saved'
+    lastSavedAt.value = new Date()
+    await loadScene()
+    ElMessage.success(`已原子写入 ${response.appliedCount} 个设计态库位编码`)
+  } catch (error) {
+    saveState.value = 'failed'
+    const code = isAxiosError(error) ? error.response?.data?.code : undefined
+    if (code === 'SPACE_EDIT_LEASE_LOST') loseEditLease()
+    if (
+      code === 'SPACE_CODING_PROPOSAL_STALE' ||
+      code === 'SPACE_FLOOR_REVISION_CONFLICT' ||
+      code === 'SPACE_VERSION_CONFLICT'
+    ) {
+      revisionConflict.value = true
+      ElMessage.error('编码 Proposal 已过期且零写入；请刷新并重新预览')
+    } else {
+      ElMessage.error('编码 Apply 未完成；原幂等请求已保留，可安全重试')
+    }
+  } finally {
+    locationCodingBusy.value = false
+  }
+}
+
 async function createLayout(intent: LayoutCreateIntent): Promise<void> {
   if (readonlyScene.value || savingElement.value) return
   const targetLogicalId = crypto.randomUUID()
@@ -1788,16 +1901,23 @@ async function applyCadReviewChanges(changeIds: string[]): Promise<void> {
 
 async function retryUnsavedEnvelope(): Promise<void> {
   const envelope = unsavedEnvelope.value
-  if (!envelope || saveState.value === 'saving') return
+  const codingEnvelope = unsavedCodingEnvelope.value
+  if ((!envelope && !codingEnvelope) || saveState.value === 'saving') return
   saveState.value = 'saving'
   try {
-    if (isLayoutEnvelope(envelope)) {
+    if (codingEnvelope) {
+      await designCodingApi.apply(
+        versionId.value,
+        floorLogicalId.value,
+        codingEnvelope,
+      )
+    } else if (envelope && isLayoutEnvelope(envelope)) {
       await designLayoutApi.sendEnvelope(
         versionId.value,
         floorLogicalId.value,
         envelope,
       )
-    } else {
+    } else if (envelope) {
       await designElementsApi.sendEnvelope(
         versionId.value,
         floorLogicalId.value,
@@ -1805,6 +1925,8 @@ async function retryUnsavedEnvelope(): Promise<void> {
       )
     }
     unsavedEnvelope.value = null
+    unsavedCodingEnvelope.value = null
+    locationCodingPreview.value = null
     revisionConflict.value = false
     saveState.value = 'saved'
     lastSavedAt.value = new Date()
@@ -1821,6 +1943,21 @@ async function retryUnsavedEnvelope(): Promise<void> {
 
 async function refreshAndReplayUnsaved(): Promise<void> {
   const envelope = unsavedEnvelope.value
+  const codingEnvelope = unsavedCodingEnvelope.value
+  if (!envelope && !codingEnvelope) return
+  if (codingEnvelope) {
+    await loadScene()
+    unsavedCodingEnvelope.value = null
+    locationCodingPreview.value = null
+    revisionConflict.value = false
+    saveState.value = 'idle'
+    await previewLocationCodes({
+      mode: codingEnvelope.mode,
+      scopeZoneLogicalId: codingEnvelope.scopeZoneLogicalId,
+    })
+    ElMessage.info('已基于最新 Revision 重新生成预览；请再次复核后确认 Apply')
+    return
+  }
   if (!envelope) return
   const layoutEnvelope = isLayoutEnvelope(envelope)
   const editorCommands = layoutEnvelope
@@ -1844,6 +1981,7 @@ async function refreshAndReplayUnsaved(): Promise<void> {
 
 function discardUnsavedEnvelope(): void {
   unsavedEnvelope.value = null
+  unsavedCodingEnvelope.value = null
   revisionConflict.value = false
   saveState.value = 'idle'
   ElMessage.info('本地未同步命令已放弃')
@@ -2028,6 +2166,7 @@ function exportRecoveryDraft(): void {
     floorLogicalId: floorLogicalId.value,
     clientInstanceId,
     envelope: unsavedEnvelope.value,
+    codingEnvelope: unsavedCodingEnvelope.value,
   }
   const anchor = document.createElement('a')
   anchor.href = URL.createObjectURL(
@@ -2364,9 +2503,9 @@ function tabClientInstanceId(): string {
         <button v-permission="'space:model:lease:takeover'" type="button" class="danger" @click="takeoverEditLease">申请接管</button>
       </div>
 
-      <div v-if="revisionConflict && unsavedEnvelope" class="revision-recovery" role="alert">
+      <div v-if="revisionConflict && (unsavedEnvelope || unsavedCodingEnvelope)" class="revision-recovery" role="alert">
         <strong>楼层修订冲突，编辑已暂停</strong>
-        <span>命令包 {{ unsavedEnvelope.commandBatchId.slice(0, 8) }}… 已保留。</span>
+        <span>命令包 {{ unsavedCommandBatchId?.slice(0, 8) }}… 已保留。</span>
         <button type="button" @click="retryUnsavedEnvelope">按原幂等标识重试</button>
         <button type="button" @click="refreshAndReplayUnsaved">刷新并重放</button>
         <button type="button" @click="exportRecoveryDraft">导出</button>
@@ -2377,7 +2516,7 @@ function tabClientInstanceId(): string {
         <SpaceStudioChecklist
           :imported="hasUnderlay || Boolean(cadReviewWorkspace)"
           :reviewed="Boolean(cadReviewWorkspace) && !cadReviewWorkspaceStale"
-          :coded="allRacksCoded"
+          :coded="allLocationsCoded"
           :publish-ready="publishReady"
         />
         <main v-show="projectionMode === '2d'" ref="canvasRef" class="canvas" />
@@ -2396,23 +2535,32 @@ function tabClientInstanceId(): string {
           <button type="button" role="tab" :aria-selected="inspectorTab === 'issues'" :class="{ active: inspectorTab === 'issues' }" @click="inspectorTab = 'issues'">问题</button>
         </div>
 
-        <DesignBatchToolsPanel
-          v-if="inspectorTab === 'batch'"
-          :selected-count="selectedEditorObjectCount"
-          :selection-bounds="selectionBounds"
-          :selected-rack-code="selectedRack?.rackCode"
-          :busy="savingElement"
-          :readonly="readonlyScene"
-          :can-undo="canUndo"
-          :can-redo="canRedo"
-          @align="alignSelected"
-          @distribute="distributeSelected"
-          @rotate="rotateSelected"
-          @remove="removeSelected"
-          @array="generateRackArray"
-          @undo="undoSavedCommand"
-          @redo="redoSavedCommand"
-        />
+        <div v-if="inspectorTab === 'batch'" class="batch-inspector">
+          <DesignBatchToolsPanel
+            :selected-count="selectedEditorObjectCount"
+            :selection-bounds="selectionBounds"
+            :selected-rack-code="selectedRack?.rackCode"
+            :busy="savingElement"
+            :readonly="readonlyScene"
+            :can-undo="canUndo"
+            :can-redo="canRedo"
+            @align="alignSelected"
+            @distribute="distributeSelected"
+            @rotate="rotateSelected"
+            @remove="removeSelected"
+            @array="generateRackArray"
+            @undo="undoSavedCommand"
+            @redo="redoSavedCommand"
+          />
+          <DesignLocationCodingPanel
+            :zones="activeZones"
+            :preview="locationCodingPreview"
+            :busy="locationCodingBusy"
+            :readonly="readonlyScene"
+            @preview="previewLocationCodes"
+            @apply="applyLocationCodes"
+          />
+        </div>
 
         <aside v-else-if="calibrationMode" class="calibration-panel">
         <div class="panel-title">{{ t('两点标定') }}</div>
@@ -2567,7 +2715,7 @@ function tabClientInstanceId(): string {
       <span :class="{ blocking: readonlyScene }">{{ leaseLabel }}</span>
       <span v-if="cadReviewWorkspace">阻断 {{ cadReviewWorkspace.summary.openBlockingCount }}</span>
       <span class="studio-status-spacer" />
-      <button v-if="unsavedEnvelope" type="button" @click="exportRecoveryDraft">导出恢复草稿</button>
+      <button v-if="unsavedEnvelope || unsavedCodingEnvelope" type="button" @click="exportRecoveryDraft">导出恢复草稿</button>
       <span>WebGL2 · 本地草稿场景</span>
     </footer>
 

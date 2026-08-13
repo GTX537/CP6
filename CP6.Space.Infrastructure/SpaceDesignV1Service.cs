@@ -12,11 +12,16 @@ using Microsoft.EntityFrameworkCore;
 
 namespace CP6.Space.Infrastructure;
 
-public sealed class SpaceDesignV1Service : ISpaceDesignV1Service
+public sealed class SpaceDesignV1Service :
+    ISpaceDesignV1Service,
+    ISpaceDesignCodingService
 {
     private const int DefaultPageSize = 50;
     private const int MaxPageSize = 200;
     private const string PublishedVersionMode = "PublishedVersion";
+    private const string CodingDecisionModify = "modify";
+    private const string CodingDecisionUnchanged = "unchanged";
+    private const string CodingDecisionProtected = "protected";
 
     private static readonly JsonSerializerOptions JsonOptions =
         new(JsonSerializerDefaults.Web);
@@ -28,6 +33,7 @@ public sealed class SpaceDesignV1Service : ISpaceDesignV1Service
     private readonly ISpaceDesignAccessEvaluator _access;
     private readonly SpaceVersionCloneCoordinator _clone;
     private readonly SpaceSourceCoordinator _sources;
+    private readonly ISpaceLocationCodeRuleProvider _codingRules;
 
     public SpaceDesignV1Service(
         SpaceContext context,
@@ -36,7 +42,8 @@ public sealed class SpaceDesignV1Service : ISpaceDesignV1Service
         ISpaceCursorCodec cursorCodec,
         ISpaceDesignAccessEvaluator access,
         SpaceVersionCloneCoordinator clone,
-        SpaceSourceCoordinator sources)
+        SpaceSourceCoordinator sources,
+        ISpaceLocationCodeRuleProvider? codingRules = null)
     {
         _context = context;
         _execution = execution;
@@ -45,6 +52,18 @@ public sealed class SpaceDesignV1Service : ISpaceDesignV1Service
         _access = access;
         _clone = clone;
         _sources = sources;
+        _codingRules = codingRules ?? EmptySpaceLocationCodeRuleProvider.Instance;
+    }
+
+    private sealed class EmptySpaceLocationCodeRuleProvider :
+        ISpaceLocationCodeRuleProvider
+    {
+        public static readonly EmptySpaceLocationCodeRuleProvider Instance = new();
+
+        public Task<SpaceLocationCodingCatalog> GetCatalogAsync(
+            Guid siteId,
+            CancellationToken cancellationToken = default) =>
+            Task.FromResult(new SpaceLocationCodingCatalog(null, []));
     }
 
     public async Task<SpaceModelDto> GetModelAsync(
@@ -1560,6 +1579,266 @@ public sealed class SpaceDesignV1Service : ISpaceDesignV1Service
         }
     }
 
+    public async Task<PreviewSpaceLocationCodesResponse>
+        PreviewLocationCodesAsync(
+            Guid versionId,
+            Guid floorLogicalId,
+            PreviewSpaceLocationCodesRequest request,
+            CancellationToken cancellationToken = default)
+    {
+        ArgumentNullException.ThrowIfNull(request);
+        EnsureExecutionContext();
+        EnsureInternalEditor();
+        var model = await FindModelByVersionAsync(versionId, cancellationToken);
+        EnsureReadable(model);
+        ValidateCodingPreviewRequest(request);
+        return await BuildLocationCodeProposalAsync(
+            model,
+            versionId,
+            floorLogicalId,
+            request.Mode,
+            request.ScopeZoneLogicalId,
+            request.ExpectedFloorRevision,
+            request.ExpectedContentRevision,
+            cancellationToken);
+    }
+
+    public async Task<ApplySpaceLocationCodesResponse>
+        ApplyLocationCodesAsync(
+            Guid versionId,
+            Guid floorLogicalId,
+            ApplySpaceLocationCodesRequest request,
+            CancellationToken cancellationToken = default)
+    {
+        ArgumentNullException.ThrowIfNull(request);
+        EnsureExecutionContext();
+        EnsureInternalEditor();
+        var model = await FindModelByVersionAsync(versionId, cancellationToken);
+        EnsureWritable(model);
+        await EnsureActiveEditLeaseAsync(
+            versionId,
+            floorLogicalId,
+            request.LeaseId,
+            request.ClientInstanceId,
+            cancellationToken);
+        ValidateCodingApplyRequest(request);
+        var requestHash = Hash(
+            $"location-coding\n{versionId:D}\n{floorLogicalId:D}\n" +
+            JsonSerializer.Serialize(request, JsonOptions));
+
+        await using var transaction = await _context.Database
+            .BeginTransactionAsync(IsolationLevel.Serializable, cancellationToken);
+        try
+        {
+            await AcquireFloorEditLockAsync(
+                versionId,
+                floorLogicalId,
+                cancellationToken);
+            await EnsureActiveEditLeaseAsync(
+                versionId,
+                floorLogicalId,
+                request.LeaseId,
+                request.ClientInstanceId,
+                cancellationToken);
+
+            var version = await _context.Versions
+                              .SingleOrDefaultAsync(
+                                  candidate => candidate.Id == versionId,
+                                  cancellationToken)
+                          ?? throw NotFound(
+                              SpaceErrorCodes.VersionNotFound,
+                              "Space version");
+            var floor = await _context.FloorRevisions
+                            .SingleOrDefaultAsync(
+                                candidate =>
+                                    candidate.ModelVersionId == versionId &&
+                                    candidate.LogicalId == floorLogicalId,
+                                cancellationToken)
+                        ?? throw NotFound(
+                            SpaceErrorCodes.LogicalIdNotFound,
+                            "Space floor logical identity");
+            if (version.Status != SpaceVersionStatus.Draft)
+            {
+                throw Conflict(
+                    SpaceErrorCodes.VersionStateInvalid,
+                    "Only a Draft version accepts generated location codes.",
+                    "open-or-create-draft");
+            }
+            if (floor.Revision != request.ExpectedFloorRevision ||
+                version.ContentRevision != request.ExpectedContentRevision)
+            {
+                var replay = await ReadLocationCodingReplayAsync(
+                    request.CommandBatchId,
+                    requestHash,
+                    cancellationToken);
+                if (replay is not null &&
+                    replay.FloorRevision == floor.Revision &&
+                    replay.VersionContentRevision == version.ContentRevision)
+                {
+                    await transaction.CommitAsync(cancellationToken);
+                    return replay;
+                }
+                throw Conflict(
+                    SpaceErrorCodes.CodingProposalStale,
+                    "The location coding preview no longer matches the current Draft revision.",
+                    "preview-location-codes-again");
+            }
+
+            var concurrentReplay = await ReadLocationCodingReplayAsync(
+                request.CommandBatchId,
+                requestHash,
+                cancellationToken);
+            if (concurrentReplay is not null)
+            {
+                await transaction.CommitAsync(cancellationToken);
+                return concurrentReplay;
+            }
+
+            var proposal = await BuildLocationCodeProposalAsync(
+                model,
+                versionId,
+                floorLogicalId,
+                request.Mode,
+                request.ScopeZoneLogicalId,
+                request.ExpectedFloorRevision,
+                request.ExpectedContentRevision,
+                cancellationToken);
+            if (!string.Equals(
+                    proposal.ProposalHash,
+                    request.ProposalHash,
+                    StringComparison.Ordinal))
+            {
+                throw Conflict(
+                    SpaceErrorCodes.CodingProposalStale,
+                    "The location coding rules or Draft inputs changed after preview.",
+                    "preview-location-codes-again");
+            }
+
+            var changedItems = proposal.Items
+                .Where(item => item.Decision == CodingDecisionModify)
+                .ToArray();
+            if (changedItems.Length == 0)
+            {
+                throw new SpaceProblemException(
+                    SpaceErrorCodes.CodingRuleInvalid,
+                    422,
+                    "The coding proposal contains no changes.",
+                    recoveryAction: "adjust-coding-scope-or-mode");
+            }
+
+            var changedIds = changedItems
+                .Select(item => item.LocationLogicalId)
+                .ToArray();
+            var locations = await _context.LocationRevisions
+                .Where(location =>
+                    location.ModelVersionId == versionId &&
+                    location.FloorLogicalId == floorLogicalId &&
+                    changedIds.Contains(location.LogicalId))
+                .ToDictionaryAsync(
+                    location => location.LogicalId,
+                    cancellationToken);
+            if (locations.Count != changedItems.Length)
+            {
+                throw Conflict(
+                    SpaceErrorCodes.CodingProposalStale,
+                    "A location from the coding preview is no longer available.",
+                    "preview-location-codes-again");
+            }
+
+            var batch = SpaceElementCommandBatch.Create(
+                _execution.TenantId,
+                request.CommandBatchId,
+                versionId,
+                floorLogicalId,
+                request.ClientInstanceId,
+                request.LeaseId,
+                request.ExpectedFloorRevision,
+                request.ExpectedContentRevision,
+                expectedContentHash: null,
+                proposal.ProposalHash,
+                requestHash,
+                _execution.ActorId,
+                RequireUtcNow());
+            _context.ElementCommandBatches.Add(batch);
+
+            var beforeByLocation = changedItems.ToDictionary(
+                item => item.LocationLogicalId,
+                item => JsonSerializer.Serialize(
+                    ToSceneDto(locations[item.LocationLogicalId]),
+                    JsonOptions));
+            if (request.Mode == SpaceDesignCodingContract.Rebuild)
+            {
+                foreach (var item in changedItems)
+                    locations[item.LocationLogicalId].ClearGeneratedLocationCode();
+                await _context.SaveChangesAsync(cancellationToken);
+            }
+
+            for (var index = 0; index < changedItems.Length; index++)
+            {
+                var item = changedItems[index];
+                var location = locations[item.LocationLogicalId];
+                location.ApplyGeneratedLocationCode(item.ProposedCode!);
+                var afterJson = JsonSerializer.Serialize(
+                    ToSceneDto(location),
+                    JsonOptions);
+                _context.ElementCommandRecords.Add(
+                    SpaceElementCommandRecord.Create(
+                        _execution.TenantId,
+                        OperationId(Hash(
+                            $"location-coding-command\n{request.CommandBatchId:D}\n" +
+                            $"{item.LocationLogicalId:D}")),
+                        batch,
+                        index,
+                        "ApplyGeneratedLocationCode",
+                        item.LocationLogicalId,
+                        JsonSerializer.Serialize(item, JsonOptions),
+                        beforeByLocation[item.LocationLogicalId],
+                        afterJson));
+            }
+
+            floor.AdvanceRevision(request.ExpectedFloorRevision);
+            version.TouchContent();
+            await _context.SaveChangesAsync(cancellationToken);
+
+            var response = new ApplySpaceLocationCodesResponse(
+                request.CommandBatchId,
+                floor.Revision,
+                version.ContentRevision,
+                proposal.ProposalHash,
+                changedItems.Length,
+                changedItems,
+                IdempotentReplay: false);
+            batch.Complete(
+                floor.Revision,
+                version.ContentRevision,
+                JsonSerializer.Serialize(response, JsonOptions));
+            await _context.SaveChangesAsync(cancellationToken);
+            await transaction.CommitAsync(cancellationToken);
+            return response;
+        }
+        catch (DbUpdateException)
+        {
+            await transaction.RollbackAsync(CancellationToken.None);
+            _context.ChangeTracker.Clear();
+            var replay = await ReadLocationCodingReplayAsync(
+                request.CommandBatchId,
+                requestHash,
+                cancellationToken);
+            if (replay is not null)
+                return replay;
+            throw Conflict(
+                SpaceErrorCodes.CodingConflict,
+                "The coding proposal conflicted with another Draft write.",
+                "preview-location-codes-again");
+        }
+        catch
+        {
+            await transaction.RollbackAsync(CancellationToken.None);
+            _context.ChangeTracker.Clear();
+            throw;
+        }
+    }
+
     public async Task<SpacePage<SpaceAssetDto>> GetAssetsAsync(
         string? scope,
         string? category,
@@ -3005,6 +3284,572 @@ public sealed class SpaceDesignV1Service : ISpaceDesignV1Service
         };
     }
 
+    private async Task<ApplySpaceLocationCodesResponse?>
+        ReadLocationCodingReplayAsync(
+            Guid commandBatchId,
+            string requestHash,
+            CancellationToken cancellationToken)
+    {
+        var batch = await _context.ElementCommandBatches
+            .AsNoTracking()
+            .SingleOrDefaultAsync(
+                candidate => candidate.Id == commandBatchId,
+                cancellationToken);
+        if (batch is null)
+            return null;
+        if (!string.Equals(batch.RequestHash, requestHash, StringComparison.Ordinal))
+        {
+            throw Conflict(
+                SpaceErrorCodes.CodingConflict,
+                "The commandBatchId was already used with different coding input.",
+                "create-new-command-batch");
+        }
+        if (batch.ResponseJson is null)
+        {
+            throw Conflict(
+                SpaceErrorCodes.CodingConflict,
+                "The coding command batch is not replayable yet.",
+                "reload-floor-scene");
+        }
+        return Deserialize<ApplySpaceLocationCodesResponse>(batch.ResponseJson) with
+        {
+            IdempotentReplay = true,
+        };
+    }
+
+    private async Task<PreviewSpaceLocationCodesResponse>
+        BuildLocationCodeProposalAsync(
+            SpaceModel model,
+            Guid versionId,
+            Guid floorLogicalId,
+            string mode,
+            Guid? scopeZoneLogicalId,
+            long expectedFloorRevision,
+            long expectedContentRevision,
+            CancellationToken cancellationToken)
+    {
+        var normalizedMode = NormalizeCodingMode(mode);
+        var version = await _context.Versions
+                          .AsNoTracking()
+                          .SingleOrDefaultAsync(
+                              candidate => candidate.Id == versionId,
+                              cancellationToken)
+                      ?? throw NotFound(
+                          SpaceErrorCodes.VersionNotFound,
+                          "Space version");
+        if (version.Status != SpaceVersionStatus.Draft)
+        {
+            throw Conflict(
+                SpaceErrorCodes.VersionStateInvalid,
+                "Only a Draft version can preview generated location codes.",
+                "open-or-create-draft");
+        }
+        var floor = await _context.FloorRevisions
+                        .AsNoTracking()
+                        .SingleOrDefaultAsync(
+                            candidate =>
+                                candidate.ModelVersionId == versionId &&
+                                candidate.LogicalId == floorLogicalId,
+                            cancellationToken)
+                    ?? throw NotFound(
+                        SpaceErrorCodes.LogicalIdNotFound,
+                        "Space floor logical identity");
+        if (floor.Revision != expectedFloorRevision ||
+            version.ContentRevision != expectedContentRevision)
+        {
+            throw Conflict(
+                SpaceErrorCodes.CodingProposalStale,
+                "The requested coding base revision is stale.",
+                "reload-floor-scene");
+        }
+
+        var zones = await _context.ZoneRevisions
+            .AsNoTracking()
+            .Where(zone =>
+                zone.ModelVersionId == versionId &&
+                zone.FloorLogicalId == floorLogicalId &&
+                zone.LifecycleState == SpaceLifecycleState.Active &&
+                (!scopeZoneLogicalId.HasValue ||
+                 zone.LogicalId == scopeZoneLogicalId.Value))
+            .OrderBy(zone => zone.ZoneCode)
+            .ThenBy(zone => zone.LogicalId)
+            .ToListAsync(cancellationToken);
+        if (scopeZoneLogicalId.HasValue && zones.Count == 0)
+        {
+            throw NotFound(
+                SpaceErrorCodes.LogicalIdNotFound,
+                "Space zone logical identity");
+        }
+        var zoneIds = zones.Select(zone => zone.LogicalId).ToHashSet();
+        var aisles = await _context.AisleRevisions
+            .AsNoTracking()
+            .Where(aisle =>
+                aisle.ModelVersionId == versionId &&
+                zoneIds.Contains(aisle.ZoneLogicalId) &&
+                aisle.LifecycleState == SpaceLifecycleState.Active)
+            .ToDictionaryAsync(aisle => aisle.LogicalId, cancellationToken);
+        var racks = await _context.RackRevisions
+            .AsNoTracking()
+            .Where(rack =>
+                rack.ModelVersionId == versionId &&
+                rack.FloorLogicalId == floorLogicalId &&
+                zoneIds.Contains(rack.ZoneLogicalId) &&
+                rack.LifecycleState == SpaceLifecycleState.Active)
+            .OrderBy(rack => rack.ZoneLogicalId)
+            .ThenBy(rack => rack.X)
+            .ThenBy(rack => rack.Y)
+            .ThenBy(rack => rack.LogicalId)
+            .ToListAsync(cancellationToken);
+        var rackIds = racks.Select(rack => rack.LogicalId).ToHashSet();
+        var locations = await _context.LocationRevisions
+            .AsNoTracking()
+            .Where(location =>
+                location.ModelVersionId == versionId &&
+                location.FloorLogicalId == floorLogicalId &&
+                location.RackLogicalId.HasValue &&
+                rackIds.Contains(location.RackLogicalId.Value) &&
+                location.LifecycleState == SpaceLifecycleState.Active)
+            .OrderBy(location => location.RackLogicalId)
+            .ThenBy(location => location.LevelNo)
+            .ThenBy(location => location.ColumnNo)
+            .ThenBy(location => location.DepthNo)
+            .ThenBy(location => location.LogicalId)
+            .ToListAsync(cancellationToken);
+        if (locations.Count > 10_000)
+        {
+            throw new SpaceProblemException(
+                SpaceErrorCodes.CodingRuleInvalid,
+                422,
+                "The coding preview exceeds the 10,000-location floor limit.",
+                recoveryAction: "select-a-zone-scope");
+        }
+
+        var catalog = await _codingRules.GetCatalogAsync(
+            model.SiteId,
+            cancellationToken);
+        var selectedRules = zones.ToDictionary(
+            zone => zone.LogicalId,
+            zone => PickCodingRule(catalog.Rules, floor, zone));
+        var zoneSequences = zones
+            .Select((zone, index) => (zone.LogicalId, Sequence: index + 1))
+            .ToDictionary(item => item.LogicalId, item => item.Sequence);
+        var rackSequences = racks
+            .GroupBy(rack => rack.ZoneLogicalId)
+            .SelectMany(group => group.Select(
+                (rack, index) => (rack.LogicalId, Sequence: index + 1)))
+            .ToDictionary(item => item.LogicalId, item => item.Sequence);
+        var rackById = racks.ToDictionary(rack => rack.LogicalId);
+        var zoneById = zones.ToDictionary(zone => zone.LogicalId);
+        var candidateItems = new List<SpaceLocationCodeProposalItemDto>();
+
+        foreach (var location in locations)
+        {
+            var rack = rackById[location.RackLogicalId!.Value];
+            var zone = zoneById[rack.ZoneLogicalId];
+            var rule = selectedRules[zone.LogicalId];
+            var protectedReason = CodingProtectionReason(location);
+            if (protectedReason is not null)
+            {
+                candidateItems.Add(ToCodingProposalItem(
+                    location,
+                    rack,
+                    location.LocationCode,
+                    CodingDecisionProtected,
+                    protectedReason,
+                    rule.RuleId));
+                continue;
+            }
+            if (normalizedMode == SpaceDesignCodingContract.FillEmpty &&
+                location.LocationCode is not null)
+            {
+                candidateItems.Add(ToCodingProposalItem(
+                    location,
+                    rack,
+                    location.LocationCode,
+                    CodingDecisionUnchanged,
+                    "already-coded",
+                    rule.RuleId));
+                continue;
+            }
+
+            aisles.TryGetValue(rack.AisleLogicalId ?? Guid.Empty, out var aisle);
+            var code = AssembleDesignLocationCode(
+                rule.Segments,
+                catalog.SiteCode,
+                floor,
+                zone,
+                aisle,
+                rack,
+                location,
+                zoneSequences,
+                rackSequences);
+            if (string.IsNullOrWhiteSpace(code) || code.Length > 200)
+            {
+                throw new SpaceProblemException(
+                    SpaceErrorCodes.CodingRuleInvalid,
+                    422,
+                    "A generated location code is empty or exceeds 200 characters.",
+                    $"Rule {rule.RuleName} generated an invalid code for {location.LogicalId:D}.",
+                    "repair-coding-rule");
+            }
+            candidateItems.Add(ToCodingProposalItem(
+                location,
+                rack,
+                code,
+                string.Equals(
+                    location.LocationCode,
+                    code,
+                    StringComparison.Ordinal)
+                    ? CodingDecisionUnchanged
+                    : CodingDecisionModify,
+                string.Equals(
+                    location.LocationCode,
+                    code,
+                    StringComparison.Ordinal)
+                    ? "matches-rule"
+                    : normalizedMode,
+                rule.RuleId));
+        }
+
+        var changingCodes = candidateItems
+            .Where(item => item.Decision == CodingDecisionModify)
+            .Select(item => item.ProposedCode!)
+            .ToArray();
+        if (changingCodes
+            .GroupBy(code => code, StringComparer.OrdinalIgnoreCase)
+            .Any(group => group.Count() > 1))
+        {
+            throw new SpaceProblemException(
+                SpaceErrorCodes.CodingConflict,
+                409,
+                "The coding proposal contains duplicate location codes.",
+                recoveryAction: "repair-coding-rule");
+        }
+        var changedLogicalIds = candidateItems
+            .Where(item => item.Decision == CodingDecisionModify)
+            .Select(item => item.LocationLogicalId)
+            .ToHashSet();
+        var reservedCodes = await _context.LocationRevisions
+            .AsNoTracking()
+            .Where(location =>
+                location.ModelVersionId == versionId &&
+                location.LocationCode != null &&
+                !changedLogicalIds.Contains(location.LogicalId))
+            .Select(location => location.LocationCode!)
+            .ToListAsync(cancellationToken);
+        var reservedSet = reservedCodes.ToHashSet(StringComparer.OrdinalIgnoreCase);
+        if (changingCodes.Any(reservedSet.Contains))
+        {
+            throw new SpaceProblemException(
+                SpaceErrorCodes.CodingConflict,
+                409,
+                "A generated code conflicts with an existing Draft location.",
+                recoveryAction: "repair-coding-rule-or-change-scope");
+        }
+
+        var usedRules = selectedRules.Values
+            .DistinctBy(rule => rule.RuleId)
+            .OrderBy(rule => rule.ScopeType)
+            .ThenBy(rule => rule.RuleName)
+            .ThenBy(rule => rule.RuleId)
+            .Select(ToCodingRuleDto)
+            .ToArray();
+        var ruleSetHash = Hash(JsonSerializer.Serialize(usedRules, JsonOptions));
+        var proposalHash = Hash(JsonSerializer.Serialize(
+            new
+            {
+                schemaVersion = SpaceDesignCodingContract.SchemaVersion,
+                modelVersionId = versionId,
+                floorLogicalId,
+                mode = normalizedMode,
+                scopeZoneLogicalId,
+                baseFloorRevision = floor.Revision,
+                baseContentRevision = version.ContentRevision,
+                ruleSetHash,
+                items = candidateItems,
+            },
+            JsonOptions));
+        return new PreviewSpaceLocationCodesResponse(
+            SpaceDesignCodingContract.SchemaVersion,
+            versionId,
+            floorLogicalId,
+            normalizedMode,
+            scopeZoneLogicalId,
+            floor.Revision,
+            version.ContentRevision,
+            proposalHash,
+            ruleSetHash,
+            candidateItems.Count(item => item.Decision == CodingDecisionModify),
+            candidateItems.Count(item => item.Decision == CodingDecisionUnchanged),
+            candidateItems.Count(item => item.Decision == CodingDecisionProtected),
+            usedRules,
+            candidateItems);
+    }
+
+    private static void ValidateCodingPreviewRequest(
+        PreviewSpaceLocationCodesRequest request)
+    {
+        if (request.SchemaVersion != SpaceDesignCodingContract.SchemaVersion)
+            throw Invalid("schemaVersion", "The coding schema is not supported.");
+        _ = NormalizeCodingMode(request.Mode);
+        if (request.ScopeZoneLogicalId == Guid.Empty ||
+            request.ExpectedFloorRevision < 0 ||
+            request.ExpectedContentRevision < 0)
+        {
+            throw Invalid(
+                "codingPreview",
+                "Zone identity and expected revisions are invalid.");
+        }
+    }
+
+    private static void ValidateCodingApplyRequest(
+        ApplySpaceLocationCodesRequest request)
+    {
+        if (request.SchemaVersion != SpaceDesignCodingContract.SchemaVersion)
+            throw Invalid("schemaVersion", "The coding schema is not supported.");
+        _ = NormalizeCodingMode(request.Mode);
+        if (request.CommandBatchId == Guid.Empty ||
+            request.ClientInstanceId == Guid.Empty ||
+            request.LeaseId == Guid.Empty ||
+            request.ScopeZoneLogicalId == Guid.Empty ||
+            request.ExpectedFloorRevision < 0 ||
+            request.ExpectedContentRevision < 0 ||
+            !IsSha256(request.ProposalHash))
+        {
+            throw Invalid(
+                "codingApply",
+                "Command, lease, revision and proposal hash fields are invalid.");
+        }
+    }
+
+    private static string NormalizeCodingMode(string mode) =>
+        mode?.Trim().ToLowerInvariant() switch
+        {
+            SpaceDesignCodingContract.FillEmpty =>
+                SpaceDesignCodingContract.FillEmpty,
+            SpaceDesignCodingContract.Rebuild =>
+                SpaceDesignCodingContract.Rebuild,
+            _ => throw Invalid(
+                "mode",
+                "mode must be fill-empty or rebuild."),
+        };
+
+    private static SpaceLocationCodingRuleDefinition PickCodingRule(
+        IReadOnlyList<SpaceLocationCodingRuleDefinition> rules,
+        SpaceFloorRevision floor,
+        SpaceZoneRevision zone)
+    {
+        var candidates = rules.Where(rule =>
+                rule.ScopeType == 2 &&
+                string.Equals(
+                    rule.ScopeFloorCode,
+                    floor.FloorCode,
+                    StringComparison.OrdinalIgnoreCase) &&
+                string.Equals(
+                    rule.ScopeZoneCode,
+                    zone.ZoneCode,
+                    StringComparison.OrdinalIgnoreCase))
+            .ToArray();
+        if (candidates.Length == 0)
+        {
+            candidates = rules.Where(rule =>
+                    rule.ScopeType == 1 &&
+                    string.Equals(
+                        rule.ScopeFloorCode,
+                        floor.FloorCode,
+                        StringComparison.OrdinalIgnoreCase))
+                .ToArray();
+        }
+        if (candidates.Length == 0)
+            candidates = rules.Where(rule => rule.ScopeType == 0).ToArray();
+        if (candidates.Length == 0)
+        {
+            throw new SpaceProblemException(
+                SpaceErrorCodes.CodingRuleNotFound,
+                422,
+                "No coding rule applies to a selected zone.",
+                $"No rule applies to zone {zone.ZoneCode} on floor {floor.FloorCode}.",
+                "configure-coding-rule");
+        }
+        var selected = candidates.FirstOrDefault(rule => rule.IsDefault) ??
+                       (candidates.Length == 1 ? candidates[0] : null);
+        if (selected is null)
+        {
+            throw new SpaceProblemException(
+                SpaceErrorCodes.CodingRuleInvalid,
+                422,
+                "More than one coding rule applies without a default.",
+                $"Zone {zone.ZoneCode} matches {candidates.Length} rules.",
+                "choose-default-coding-rule");
+        }
+        ValidateCodingSegments(selected);
+        return selected;
+    }
+
+    private static void ValidateCodingSegments(
+        SpaceLocationCodingRuleDefinition rule)
+    {
+        var segments = rule.Segments;
+        var supported = new HashSet<string>(StringComparer.Ordinal)
+        {
+            "fixed", "site-code", "floor-level", "zone-code", "zone-seq",
+            "aisle-code", "aisle-seq", "rack-code", "rack-seq", "col",
+            "level", "depth",
+        };
+        var keys = new HashSet<string>(StringComparer.OrdinalIgnoreCase);
+        if (segments.Count is < 1 or > 32 ||
+            segments.Any(segment =>
+                string.IsNullOrWhiteSpace(segment.Key) ||
+                string.IsNullOrWhiteSpace(segment.Source) ||
+                segment.Pad is null ||
+                segment.Separator is null ||
+                segment.FixedValue is null ||
+                !keys.Add(segment.Key.Trim()) ||
+                !supported.Contains(segment.Source) ||
+                segment.Width is < 0 or > 200 ||
+                segment.Pad.Length > 1 ||
+                segment.Start < 0 ||
+                segment.Step <= 0 ||
+                segment.Separator.Length > 10 ||
+                segment.FixedValue.Length > 200))
+        {
+            throw new SpaceProblemException(
+                SpaceErrorCodes.CodingRuleInvalid,
+                422,
+                "A coding rule segment is invalid.",
+                $"Rule {rule.RuleName} has an invalid or unsupported segment.",
+                "repair-coding-rule");
+        }
+        var hasZone = segments.Any(segment =>
+            segment.Source is "zone-code" or "zone-seq");
+        var hasSiteFloor = segments.Any(segment => segment.Source == "site-code") &&
+                           segments.Any(segment => segment.Source == "floor-level");
+        if ((!hasZone && !hasSiteFloor) ||
+            segments.Any(segment =>
+                segment.Source is "aisle-code" or "aisle-seq" &&
+                !segment.Optional) ||
+            !segments.Any(segment =>
+                segment.Source is "col" or "level" or "depth"))
+        {
+            throw new SpaceProblemException(
+                SpaceErrorCodes.CodingRuleInvalid,
+                422,
+                "A coding rule cannot produce safely unique location codes.",
+                $"Rule {rule.RuleName} is missing required zone/location or optional aisle semantics.",
+                "repair-coding-rule");
+        }
+    }
+
+    private static string? CodingProtectionReason(
+        SpaceLocationRevision location)
+    {
+        if (location.ExternalBindingState != SpaceExternalBindingState.Unbound)
+            return "wms-bound";
+        return location.CodeOrigin switch
+        {
+            SpaceLocationCodeOrigin.Imported => "imported-code",
+            SpaceLocationCodeOrigin.Adopted => "adopted-code",
+            SpaceLocationCodeOrigin.Manual => "manual-code",
+            _ => null,
+        };
+    }
+
+    private static SpaceLocationCodeProposalItemDto ToCodingProposalItem(
+        SpaceLocationRevision location,
+        SpaceRackRevision rack,
+        string? proposedCode,
+        string decision,
+        string reason,
+        Guid? ruleId) =>
+        new(
+            location.LogicalId,
+            rack.LogicalId,
+            rack.RackCode,
+            location.ColumnNo,
+            location.LevelNo,
+            location.DepthNo,
+            location.LocationCode,
+            proposedCode,
+            decision,
+            reason,
+            ruleId);
+
+    private static SpaceLocationCodingRuleDto ToCodingRuleDto(
+        SpaceLocationCodingRuleDefinition rule) =>
+        new(
+            rule.RuleId,
+            rule.RuleName,
+            rule.ScopeType,
+            rule.ScopeId,
+            Hash(JsonSerializer.Serialize(rule, JsonOptions)));
+
+    private static string AssembleDesignLocationCode(
+        IReadOnlyList<SpaceLocationCodeSegmentDto> segments,
+        string? siteCode,
+        SpaceFloorRevision floor,
+        SpaceZoneRevision zone,
+        SpaceAisleRevision? aisle,
+        SpaceRackRevision rack,
+        SpaceLocationRevision location,
+        IReadOnlyDictionary<Guid, int> zoneSequences,
+        IReadOnlyDictionary<Guid, int> rackSequences)
+    {
+        var builder = new StringBuilder();
+        foreach (var segment in segments)
+        {
+            var aisleSegment = segment.Source is "aisle-code" or "aisle-seq";
+            if (aisleSegment && aisle is null && segment.Optional)
+                continue;
+            var value = segment.Source switch
+            {
+                "fixed" => segment.FixedValue,
+                "site-code" => siteCode ?? string.Empty,
+                "floor-level" => floor.Level.ToString(CultureInfo.InvariantCulture),
+                "zone-code" => zone.ZoneCode,
+                "zone-seq" => CodingSequence(segment, zoneSequences[zone.LogicalId]),
+                "aisle-code" => aisle?.AisleCode ?? string.Empty,
+                "aisle-seq" => CodingSequence(segment, 1),
+                "rack-code" => rack.RackCode,
+                "rack-seq" => CodingSequence(segment, rackSequences[rack.LogicalId]),
+                "col" => CodingSequence(segment, location.ColumnNo),
+                "level" => CodingSequence(segment, location.LevelNo),
+                "depth" => CodingSequence(segment, location.DepthNo),
+                _ => string.Empty,
+            };
+            if (segment.Upper)
+                value = value.ToUpperInvariant();
+            if (segment.Width > 0)
+            {
+                value = value.PadLeft(
+                    segment.Width,
+                    string.IsNullOrEmpty(segment.Pad) ? '0' : segment.Pad[0]);
+            }
+            builder.Append(value);
+            builder.Append(segment.Separator);
+        }
+        return builder.ToString().TrimEnd('-', '_', '.', '/', ' ');
+    }
+
+    private static string CodingSequence(
+        SpaceLocationCodeSegmentDto segment,
+        int sequence)
+    {
+        try
+        {
+            return checked(segment.Start + (sequence - 1) * segment.Step)
+                .ToString(CultureInfo.InvariantCulture);
+        }
+        catch (OverflowException)
+        {
+            throw new SpaceProblemException(
+                SpaceErrorCodes.CodingRuleInvalid,
+                422,
+                "A coding rule sequence exceeds the supported range.",
+                $"Segment {segment.Key} overflowed for sequence {sequence}.",
+                "repair-coding-rule");
+        }
+    }
+
     private static void ValidateRackArray(SpaceGenerateRackArrayDto payload)
     {
         int total;
@@ -4370,6 +5215,17 @@ public sealed class SpaceDesignV1Service : ISpaceDesignV1Service
                 "The Space tenant scope was denied.",
                 recoveryAction: "reauthenticate");
         }
+    }
+
+    private void EnsureInternalEditor()
+    {
+        if (!_execution.IsExternal)
+            return;
+        throw new SpaceProblemException(
+            SpaceErrorCodes.ExternalSubjectDenied,
+            403,
+            "External principals cannot access Draft location coding.",
+            recoveryAction: "use-internal-space-editor");
     }
 
     private static int NormalizeLimit(int limit)

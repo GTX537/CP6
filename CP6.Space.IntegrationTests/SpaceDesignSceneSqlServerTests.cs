@@ -1545,6 +1545,313 @@ public sealed class SpaceDesignSceneSqlServerTests
         });
     }
 
+    [SqlServerFact]
+    public async Task Location_coding_previews_without_writes_and_applies_with_fences()
+    {
+        await WithDatabaseAsync(async (connectionString, execution, clock) =>
+        {
+            await using var context = CreateContext(
+                connectionString,
+                execution,
+                clock);
+            var seeded = await SeedDesignModelAsync(
+                context,
+                execution.ActorId,
+                clock.UtcNow);
+            var draft = SpaceModelVersion.CreateDraft(
+                execution.TenantId,
+                seeded.Model.Id,
+                2,
+                "Coding draft",
+                seeded.Published.Id);
+            seeded.Model.ReserveDraft(draft);
+            var floor = SpaceFloorRevision.Create(
+                execution.TenantId,
+                draft.Id,
+                Guid.NewGuid(),
+                seeded.Model.SiteId,
+                1,
+                "F1",
+                "Floor 1",
+                height: 6000);
+            var zone = SpaceZoneRevision.Create(
+                execution.TenantId,
+                draft.Id,
+                Guid.NewGuid(),
+                floor.LogicalId,
+                "Z-A",
+                zoneType: 1,
+                "Ambient");
+            var rack = SpaceRackRevision.Create(
+                execution.TenantId,
+                draft.Id,
+                Guid.NewGuid(),
+                floor.LogicalId,
+                zone.LogicalId,
+                "R-01");
+            var emptyGenerated = SpaceLocationRevision.Create(
+                execution.TenantId,
+                draft.Id,
+                Guid.NewGuid(),
+                floor.LogicalId,
+                rack.LogicalId,
+                locationCode: null,
+                columnNo: 1,
+                levelNo: 1,
+                depthNo: 1,
+                width: 1000,
+                height: 1000,
+                depth: 1000);
+            var existingGenerated = SpaceLocationRevision.Create(
+                execution.TenantId,
+                draft.Id,
+                Guid.NewGuid(),
+                floor.LogicalId,
+                rack.LogicalId,
+                "OLD-GENERATED",
+                columnNo: 2,
+                levelNo: 1,
+                depthNo: 1,
+                width: 1000,
+                height: 1000,
+                depth: 1000);
+            var adopted = SpaceLocationRevision.Create(
+                execution.TenantId,
+                draft.Id,
+                Guid.NewGuid(),
+                floor.LogicalId,
+                rack.LogicalId,
+                "WMS-001",
+                columnNo: 3,
+                levelNo: 1,
+                depthNo: 1,
+                width: 1000,
+                height: 1000,
+                depth: 1000,
+                codeOrigin: SpaceLocationCodeOrigin.Adopted,
+                externalBindingState: SpaceExternalBindingState.Bound);
+            var manual = SpaceLocationRevision.Create(
+                execution.TenantId,
+                draft.Id,
+                Guid.NewGuid(),
+                floor.LogicalId,
+                rack.LogicalId,
+                "MANUAL-001",
+                columnNo: 4,
+                levelNo: 1,
+                depthNo: 1,
+                width: 1000,
+                height: 1000,
+                depth: 1000,
+                codeOrigin: SpaceLocationCodeOrigin.Manual);
+            context.AddRange(
+                draft,
+                floor,
+                zone,
+                rack,
+                emptyGenerated,
+                existingGenerated,
+                adopted,
+                manual);
+            await context.SaveChangesAsync();
+
+            var clientId = Guid.NewGuid();
+            var lease = SpaceEditLease.Create(
+                execution.TenantId,
+                draft.Id,
+                floor.LogicalId,
+                execution.ActorId,
+                "Coding editor",
+                clientId,
+                clock.UtcNow,
+                TimeSpan.FromSeconds(90));
+            context.EditLeases.Add(lease);
+            await context.SaveChangesAsync();
+
+            var rules = new MutableCodingRuleProvider();
+            var service = NewService(
+                context,
+                execution,
+                clock,
+                seeded.Model.SiteId,
+                rules);
+            var previewRequest = new PreviewSpaceLocationCodesRequest(
+                SpaceDesignCodingContract.SchemaVersion,
+                SpaceDesignCodingContract.FillEmpty,
+                ScopeZoneLogicalId: null,
+                ExpectedFloorRevision: 0,
+                ExpectedContentRevision: 0);
+
+            await using (var externalContext = CreateContext(
+                             connectionString,
+                             new TestExecutionContext(
+                                 execution.TenantId,
+                                 execution.ActorId,
+                                 IsExternal: true),
+                             clock))
+            {
+                var externalProblem = await Assert.ThrowsAsync<SpaceProblemException>(
+                    () => NewService(
+                            externalContext,
+                            new TestExecutionContext(
+                                execution.TenantId,
+                                execution.ActorId,
+                                IsExternal: true),
+                            clock,
+                            seeded.Model.SiteId,
+                            rules)
+                        .PreviewLocationCodesAsync(
+                            draft.Id,
+                            floor.LogicalId,
+                            previewRequest));
+                Assert.Equal(SpaceErrorCodes.ExternalSubjectDenied, externalProblem.Code);
+            }
+
+            var preview = await service.PreviewLocationCodesAsync(
+                draft.Id,
+                floor.LogicalId,
+                previewRequest);
+
+            Assert.Equal(1, preview.ChangedCount);
+            Assert.Equal(1, preview.UnchangedCount);
+            Assert.Equal(2, preview.ProtectedCount);
+            Assert.Equal(
+                "A-Z-A-R-01-01-01-01",
+                preview.Items.Single(item =>
+                    item.LocationLogicalId == emptyGenerated.LogicalId)
+                    .ProposedCode);
+            Assert.Null(
+                await context.LocationRevisions
+                    .AsNoTracking()
+                    .Where(location => location.Id == emptyGenerated.Id)
+                    .Select(location => location.LocationCode)
+                    .SingleAsync());
+            Assert.Empty(await context.ElementCommandBatches.ToListAsync());
+
+            var applyRequest = new ApplySpaceLocationCodesRequest(
+                SpaceDesignCodingContract.SchemaVersion,
+                Guid.NewGuid(),
+                clientId,
+                lease.LeaseId,
+                preview.Mode,
+                preview.ScopeZoneLogicalId,
+                preview.BaseFloorRevision,
+                preview.BaseContentRevision,
+                preview.ProposalHash);
+            var applied = await service.ApplyLocationCodesAsync(
+                draft.Id,
+                floor.LogicalId,
+                applyRequest);
+            var replay = await service.ApplyLocationCodesAsync(
+                draft.Id,
+                floor.LogicalId,
+                applyRequest);
+
+            Assert.Equal(1, applied.AppliedCount);
+            Assert.False(applied.IdempotentReplay);
+            Assert.True(replay.IdempotentReplay);
+            Assert.Equal(1, applied.FloorRevision);
+            Assert.Equal(1, applied.VersionContentRevision);
+            Assert.Equal(
+                "A-Z-A-R-01-01-01-01",
+                await context.LocationRevisions
+                    .AsNoTracking()
+                    .Where(location => location.Id == emptyGenerated.Id)
+                    .Select(location => location.LocationCode)
+                    .SingleAsync());
+            Assert.Equal(
+                "OLD-GENERATED",
+                await context.LocationRevisions
+                    .AsNoTracking()
+                    .Where(location => location.Id == existingGenerated.Id)
+                    .Select(location => location.LocationCode)
+                    .SingleAsync());
+            Assert.Equal(
+                "WMS-001",
+                await context.LocationRevisions
+                    .AsNoTracking()
+                    .Where(location => location.Id == adopted.Id)
+                    .Select(location => location.LocationCode)
+                    .SingleAsync());
+            Assert.Equal(
+                "MANUAL-001",
+                await context.LocationRevisions
+                    .AsNoTracking()
+                    .Where(location => location.Id == manual.Id)
+                    .Select(location => location.LocationCode)
+                    .SingleAsync());
+            Assert.Single(await context.ElementCommandBatches.ToListAsync());
+            Assert.Single(await context.ElementCommandRecords.ToListAsync());
+
+            var rebuildPreview = await service.PreviewLocationCodesAsync(
+                draft.Id,
+                floor.LogicalId,
+                new PreviewSpaceLocationCodesRequest(
+                    SpaceDesignCodingContract.SchemaVersion,
+                    SpaceDesignCodingContract.Rebuild,
+                    ScopeZoneLogicalId: null,
+                    ExpectedFloorRevision: 1,
+                    ExpectedContentRevision: 1));
+            var rebuilt = await service.ApplyLocationCodesAsync(
+                draft.Id,
+                floor.LogicalId,
+                new ApplySpaceLocationCodesRequest(
+                    SpaceDesignCodingContract.SchemaVersion,
+                    Guid.NewGuid(),
+                    clientId,
+                    lease.LeaseId,
+                    rebuildPreview.Mode,
+                    rebuildPreview.ScopeZoneLogicalId,
+                    rebuildPreview.BaseFloorRevision,
+                    rebuildPreview.BaseContentRevision,
+                    rebuildPreview.ProposalHash));
+            Assert.Equal(1, rebuilt.AppliedCount);
+            Assert.Equal(2, rebuilt.FloorRevision);
+            Assert.Equal(2, rebuilt.VersionContentRevision);
+            var rebuildAudit = await context.ElementCommandRecords
+                .AsNoTracking()
+                .SingleAsync(record =>
+                    record.CommandBatchId == rebuilt.CommandBatchId);
+            Assert.Contains("OLD-GENERATED", rebuildAudit.BeforeJson);
+            Assert.DoesNotContain("OLD-GENERATED", rebuildAudit.AfterJson);
+
+            var stalePreview = await service.PreviewLocationCodesAsync(
+                draft.Id,
+                floor.LogicalId,
+                new PreviewSpaceLocationCodesRequest(
+                    SpaceDesignCodingContract.SchemaVersion,
+                    SpaceDesignCodingContract.Rebuild,
+                    ScopeZoneLogicalId: null,
+                    ExpectedFloorRevision: 2,
+                    ExpectedContentRevision: 2));
+            rules.Prefix = "B";
+            var stale = await Assert.ThrowsAsync<SpaceProblemException>(
+                () => service.ApplyLocationCodesAsync(
+                    draft.Id,
+                    floor.LogicalId,
+                    new ApplySpaceLocationCodesRequest(
+                        SpaceDesignCodingContract.SchemaVersion,
+                        Guid.NewGuid(),
+                        clientId,
+                        lease.LeaseId,
+                        stalePreview.Mode,
+                        stalePreview.ScopeZoneLogicalId,
+                        stalePreview.BaseFloorRevision,
+                        stalePreview.BaseContentRevision,
+                        stalePreview.ProposalHash)));
+            Assert.Equal(SpaceErrorCodes.CodingProposalStale, stale.Code);
+            Assert.Equal(2, await context.ElementCommandBatches.CountAsync());
+            Assert.Equal(2, await context.ElementCommandRecords.CountAsync());
+            Assert.Equal(
+                "A-Z-A-R-01-02-01-01",
+                await context.LocationRevisions
+                    .AsNoTracking()
+                    .Where(location => location.Id == existingGenerated.Id)
+                    .Select(location => location.LocationCode)
+                    .SingleAsync());
+        });
+    }
+
     private static ApplySpaceElementCommandBatchRequest LifecycleBatch(
         Guid clientInstanceId,
         Guid leaseId,
@@ -1569,7 +1876,8 @@ public sealed class SpaceDesignSceneSqlServerTests
         SpaceContext context,
         TestExecutionContext execution,
         TestClock clock,
-        Guid allowedSiteId)
+        Guid allowedSiteId,
+        ISpaceLocationCodeRuleProvider? codingRules = null)
     {
         var cloneStore = new EfSpaceVersionCloneStore(
             context,
@@ -1582,7 +1890,8 @@ public sealed class SpaceDesignSceneSqlServerTests
             new TestCursorCodec(),
             new TestAccessEvaluator(allowedSiteId),
             new SpaceVersionCloneCoordinator(execution, cloneStore),
-            new SpaceSourceCoordinator(execution));
+            new SpaceSourceCoordinator(execution),
+            codingRules);
     }
 
     private static async Task<(SpaceModel Model, SpaceModelVersion Published)>
@@ -1660,7 +1969,8 @@ public sealed class SpaceDesignSceneSqlServerTests
 
     private sealed record TestExecutionContext(
         Guid TenantId,
-        Guid ActorId) : ISpaceExecutionContext;
+        Guid ActorId,
+        bool IsExternal = false) : ISpaceExecutionContext;
 
     private sealed class TestClock : ISpaceClock
     {
@@ -1680,6 +1990,53 @@ public sealed class SpaceDesignSceneSqlServerTests
                     "Site denied.");
             }
         }
+    }
+
+    private sealed class MutableCodingRuleProvider :
+        ISpaceLocationCodeRuleProvider
+    {
+        public string Prefix { get; set; } = "A";
+
+        public Task<SpaceLocationCodingCatalog> GetCatalogAsync(
+            Guid siteId,
+            CancellationToken cancellationToken = default) =>
+            Task.FromResult(new SpaceLocationCodingCatalog(
+                "SITE",
+                [
+                    new SpaceLocationCodingRuleDefinition(
+                        Guid.Parse("34b217b5-02e3-4d26-9017-2295e9b97770"),
+                        "Default location code",
+                        ScopeType: 0,
+                        ScopeId: null,
+                        [
+                            Segment("prefix", "fixed", Prefix),
+                            Segment("zone", "zone-code"),
+                            Segment("rack", "rack-code"),
+                            Segment("column", "col", width: 2),
+                            Segment("level", "level", width: 2),
+                            Segment("depth", "depth", width: 2, separator: ""),
+                        ],
+                        IsDefault: true),
+                ]));
+
+        private static SpaceLocationCodeSegmentDto Segment(
+            string key,
+            string source,
+            string fixedValue = "",
+            int width = 0,
+            string separator = "-") =>
+            new(
+                key,
+                key,
+                source,
+                width,
+                "0",
+                Start: 1,
+                Step: 1,
+                separator,
+                Upper: true,
+                fixedValue,
+                Optional: false);
     }
 
     private sealed class TestCursorCodec : ISpaceCursorCodec

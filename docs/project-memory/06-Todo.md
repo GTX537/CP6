@@ -4,7 +4,7 @@
 
 - 为 CAD 接入一个主 DWG/DXF Provider 和一个同合同、同审批的备用 Provider；当前默认 unavailable Provider 不能作为真实 CAD 验收。
 - 为 CAD 上传补齐扫描就绪后的坐标/单位确认与 CAD Mapping Profile 选择/预览启动 UI；当前工作台已能上传、取消、重试并自动打开已有 Parse Job，但无权猜测映射 profile/hash，因此未用伪默认值自动启动解析。
-- Layout Command 与 Space Studio 已完成 Zone/Aisle/Rack 的设计态创建、修改、删除和显式级联语义；下一张独立任务卡实现批量编码 Preview → Apply。画布拖放精调保持后续 UX 卡，禁止调用旧运行态服务直接改 Published/WMS；旧 `FloorEditor` 不继续发展为第二套权威。
+- Layout Command、Space Studio 与设计态库位批量编码 Preview → Apply 已完成仓库内闭环；下一张独立任务卡进入 CAD 起始向导，补齐扫描就绪后的楼层、单位、坐标/比例、Mapping Profile 与语义预览确认。画布拖放精调保持后续 UX 卡，禁止调用旧运行态服务直接改 Published/WMS；旧 `FloorEditor` 不继续发展为第二套权威。
 - 用 20 份授权真实黄金 CAD 执行 10/5/5 Calibration/Validation/Holdout，产出覆盖率、准确率、高置信度精确率和 Blocking 遗漏证据。
 - 在 Iris Xe/WebGL2/500 货架/10,000 库位跑正式 Viewer 门槛；补齐选择高亮/视角持久化和完整 GA 快捷键的浏览器 E2E/可达性证据。
 - 执行一个绿地仓和一个存量仓各 14 天 Pilot、WMS 故障恢复与对账演练，并取得产品、QA、WMS、架构、安全签字后才可声明核心 GA。

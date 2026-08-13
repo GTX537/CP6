@@ -83,6 +83,10 @@ public static class SpaceErrorCodes
     public const string CommandSchemaUnsupported =
         "SPACE_COMMAND_SCHEMA_UNSUPPORTED";
     public const string CommandConflict = "SPACE_COMMAND_CONFLICT";
+    public const string CodingRuleNotFound = "SPACE_CODING_RULE_NOT_FOUND";
+    public const string CodingRuleInvalid = "SPACE_CODING_RULE_INVALID";
+    public const string CodingConflict = "SPACE_CODING_CONFLICT";
+    public const string CodingProposalStale = "SPACE_CODING_PROPOSAL_STALE";
     public const string SourceUnsafe = "SPACE_SOURCE_UNSAFE";
     public const string JobLeaseLost = "SPACE_JOB_LEASE_LOST";
     public const string JobNotRetryable = "SPACE_JOB_NOT_RETRYABLE";

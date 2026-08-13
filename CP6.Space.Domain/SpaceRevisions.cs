@@ -639,6 +639,32 @@ public sealed class SpaceLocationRevision : SpaceRevisionEntity
         ExternalBindingState = SpaceExternalBindingState.Bound;
     }
 
+    public void ClearGeneratedLocationCode()
+    {
+        EnsureGeneratedCodeCanChange();
+        LocationCode = null;
+    }
+
+    public void ApplyGeneratedLocationCode(string locationCode)
+    {
+        EnsureGeneratedCodeCanChange();
+        LocationCode = SpaceRevisionValue.RequiredText(
+            locationCode,
+            200,
+            nameof(locationCode));
+    }
+
+    private void EnsureGeneratedCodeCanChange()
+    {
+        if (LifecycleState != SpaceLifecycleState.Active ||
+            ExternalBindingState != SpaceExternalBindingState.Unbound ||
+            CodeOrigin != SpaceLocationCodeOrigin.Generated)
+        {
+            throw new InvalidOperationException(
+                "Only an active, unbound, generated location code can be changed.");
+        }
+    }
+
     public void UpdateGeneratedSpecification(
         Guid floorLogicalId,
         Guid rackLogicalId,
