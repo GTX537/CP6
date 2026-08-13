@@ -194,6 +194,11 @@ export interface ISpaceDesignV1Client {
     applyElementCommands(versionId: string, floorLogicalId: string, body: ApplySpaceElementCommandBatchRequest): Promise<ApplySpaceElementCommandBatchResponse>;
 
     /**
+     * @return OK
+     */
+    applyLayoutCommands(versionId: string, floorLogicalId: string, body: ApplySpaceLayoutCommandBatchRequest): Promise<ApplySpaceLayoutCommandBatchResponse>;
+
+    /**
      * @param scope (optional)
      * @param category (optional)
      * @param limit (optional)
@@ -3672,6 +3677,102 @@ export class SpaceDesignV1Client implements ISpaceDesignV1Client {
             });
         }
         return Promise.resolve<ApplySpaceElementCommandBatchResponse>(null as any);
+    }
+
+    /**
+     * @return OK
+     */
+    applyLayoutCommands(versionId: string, floorLogicalId: string, body: ApplySpaceLayoutCommandBatchRequest): Promise<ApplySpaceLayoutCommandBatchResponse> {
+        let url_ = this.baseUrl + "/api/space/design/v1/versions/{versionId}/floors/{floorLogicalId}/layout-commands";
+        if (versionId === undefined || versionId === null)
+            throw new globalThis.Error("The parameter 'versionId' must be defined.");
+        url_ = url_.replace("{versionId}", encodeURIComponent("" + versionId));
+        if (floorLogicalId === undefined || floorLogicalId === null)
+            throw new globalThis.Error("The parameter 'floorLogicalId' must be defined.");
+        url_ = url_.replace("{floorLogicalId}", encodeURIComponent("" + floorLogicalId));
+        url_ = url_.replace(/[?&]$/, "");
+
+        const content_ = JSON.stringify(body);
+
+        let options_: RequestInit = {
+            body: content_,
+            method: "POST",
+            headers: {
+                "Content-Type": "application/json",
+                "Accept": "application/json"
+            }
+        };
+
+        return this.http.fetch(url_, options_).then((_response: Response) => {
+            return this.processApplyLayoutCommands(_response);
+        });
+    }
+
+    protected processApplyLayoutCommands(response: Response): Promise<ApplySpaceLayoutCommandBatchResponse> {
+        const status = response.status;
+        let _headers: any = {}; if (response.headers && response.headers.forEach) { response.headers.forEach((v: any, k: any) => _headers[k] = v); };
+        if (status === 200) {
+            return response.text().then((_responseText) => {
+            let result200: any = null;
+            let resultData200 = _responseText === "" ? null : JSON.parse(_responseText, this.jsonParseReviver);
+            result200 = ApplySpaceLayoutCommandBatchResponse.fromJS(resultData200);
+            return result200;
+            });
+        } else if (status === 400) {
+            return response.text().then((_responseText) => {
+            let result400: any = null;
+            let resultData400 = _responseText === "" ? null : JSON.parse(_responseText, this.jsonParseReviver);
+            result400 = SpaceDesignProblemDetails.fromJS(resultData400);
+            return throwException("Bad Request", status, _responseText, _headers, result400);
+            });
+        } else if (status === 401) {
+            return response.text().then((_responseText) => {
+            let result401: any = null;
+            let resultData401 = _responseText === "" ? null : JSON.parse(_responseText, this.jsonParseReviver);
+            result401 = SpaceDesignProblemDetails.fromJS(resultData401);
+            return throwException("Unauthorized", status, _responseText, _headers, result401);
+            });
+        } else if (status === 403) {
+            return response.text().then((_responseText) => {
+            let result403: any = null;
+            let resultData403 = _responseText === "" ? null : JSON.parse(_responseText, this.jsonParseReviver);
+            result403 = SpaceDesignProblemDetails.fromJS(resultData403);
+            return throwException("Forbidden", status, _responseText, _headers, result403);
+            });
+        } else if (status === 404) {
+            return response.text().then((_responseText) => {
+            let result404: any = null;
+            let resultData404 = _responseText === "" ? null : JSON.parse(_responseText, this.jsonParseReviver);
+            result404 = SpaceDesignProblemDetails.fromJS(resultData404);
+            return throwException("Not Found", status, _responseText, _headers, result404);
+            });
+        } else if (status === 409) {
+            return response.text().then((_responseText) => {
+            let result409: any = null;
+            let resultData409 = _responseText === "" ? null : JSON.parse(_responseText, this.jsonParseReviver);
+            result409 = SpaceDesignProblemDetails.fromJS(resultData409);
+            return throwException("Conflict", status, _responseText, _headers, result409);
+            });
+        } else if (status === 422) {
+            return response.text().then((_responseText) => {
+            let result422: any = null;
+            let resultData422 = _responseText === "" ? null : JSON.parse(_responseText, this.jsonParseReviver);
+            result422 = SpaceDesignProblemDetails.fromJS(resultData422);
+            return throwException("Unprocessable Content", status, _responseText, _headers, result422);
+            });
+        } else if (status === 500) {
+            return response.text().then((_responseText) => {
+            let result500: any = null;
+            let resultData500 = _responseText === "" ? null : JSON.parse(_responseText, this.jsonParseReviver);
+            result500 = SpaceDesignProblemDetails.fromJS(resultData500);
+            return throwException("Internal Server Error", status, _responseText, _headers, result500);
+            });
+        } else if (status !== 200 && status !== 204) {
+            return response.text().then((_responseText) => {
+            return throwException("An unexpected server error occurred.", status, _responseText, _headers);
+            });
+        }
+        return Promise.resolve<ApplySpaceLayoutCommandBatchResponse>(null as any);
     }
 
     /**
@@ -13406,6 +13507,205 @@ export interface IApplySpaceElementCommandBatchResponse {
     affectedLocations?: SpaceSceneLocationDto[] | undefined;
 }
 
+export class ApplySpaceLayoutCommandBatchRequest implements IApplySpaceLayoutCommandBatchRequest {
+    schemaVersion!: number;
+    commandBatchId!: string;
+    clientInstanceId!: string;
+    leaseId!: string;
+    expectedFloorRevision!: number;
+    expectedContentRevision!: number;
+    commands!: SpaceLayoutCommandDto[];
+
+    constructor(data?: IApplySpaceLayoutCommandBatchRequest) {
+        if (data) {
+            for (var property in data) {
+                if (data.hasOwnProperty(property))
+                    (this as any)[property] = (data as any)[property];
+            }
+        }
+        if (!data) {
+            this.commands = [];
+        }
+    }
+
+    init(_data?: any) {
+        if (_data) {
+            this.schemaVersion = _data["schemaVersion"];
+            this.commandBatchId = _data["commandBatchId"];
+            this.clientInstanceId = _data["clientInstanceId"];
+            this.leaseId = _data["leaseId"];
+            this.expectedFloorRevision = _data["expectedFloorRevision"];
+            this.expectedContentRevision = _data["expectedContentRevision"];
+            if (Array.isArray(_data["commands"])) {
+                this.commands = [] as any;
+                for (let item of _data["commands"])
+                    this.commands!.push(SpaceLayoutCommandDto.fromJS(item));
+            }
+        }
+    }
+
+    static fromJS(data: any): ApplySpaceLayoutCommandBatchRequest {
+        data = typeof data === 'object' ? data : {};
+        let result = new ApplySpaceLayoutCommandBatchRequest();
+        result.init(data);
+        return result;
+    }
+
+    toJSON(data?: any) {
+        data = typeof data === 'object' ? data : {};
+        data["schemaVersion"] = this.schemaVersion;
+        data["commandBatchId"] = this.commandBatchId;
+        data["clientInstanceId"] = this.clientInstanceId;
+        data["leaseId"] = this.leaseId;
+        data["expectedFloorRevision"] = this.expectedFloorRevision;
+        data["expectedContentRevision"] = this.expectedContentRevision;
+        if (Array.isArray(this.commands)) {
+            data["commands"] = [];
+            for (let item of this.commands)
+                data["commands"].push(item ? item.toJSON() : undefined as any);
+        }
+        return data;
+    }
+}
+
+export interface IApplySpaceLayoutCommandBatchRequest {
+    schemaVersion: number;
+    commandBatchId: string;
+    clientInstanceId: string;
+    leaseId: string;
+    expectedFloorRevision: number;
+    expectedContentRevision: number;
+    commands: SpaceLayoutCommandDto[];
+}
+
+export class ApplySpaceLayoutCommandBatchResponse implements IApplySpaceLayoutCommandBatchResponse {
+    commandBatchId!: string;
+    floorRevision!: number;
+    versionContentRevision!: number;
+    appliedCommands!: SpaceLayoutCommandResultDto[];
+    affectedZones!: SpaceSceneZoneDto[];
+    affectedAisles!: SpaceSceneAisleDto[];
+    affectedRacks!: SpaceSceneRackDto[];
+    affectedRackLevels!: SpaceSceneRackLevelDto[];
+    affectedLocations!: SpaceSceneLocationDto[];
+    idempotentReplay!: boolean;
+
+    constructor(data?: IApplySpaceLayoutCommandBatchResponse) {
+        if (data) {
+            for (var property in data) {
+                if (data.hasOwnProperty(property))
+                    (this as any)[property] = (data as any)[property];
+            }
+        }
+        if (!data) {
+            this.appliedCommands = [];
+            this.affectedZones = [];
+            this.affectedAisles = [];
+            this.affectedRacks = [];
+            this.affectedRackLevels = [];
+            this.affectedLocations = [];
+        }
+    }
+
+    init(_data?: any) {
+        if (_data) {
+            this.commandBatchId = _data["commandBatchId"];
+            this.floorRevision = _data["floorRevision"];
+            this.versionContentRevision = _data["versionContentRevision"];
+            if (Array.isArray(_data["appliedCommands"])) {
+                this.appliedCommands = [] as any;
+                for (let item of _data["appliedCommands"])
+                    this.appliedCommands!.push(SpaceLayoutCommandResultDto.fromJS(item));
+            }
+            if (Array.isArray(_data["affectedZones"])) {
+                this.affectedZones = [] as any;
+                for (let item of _data["affectedZones"])
+                    this.affectedZones!.push(SpaceSceneZoneDto.fromJS(item));
+            }
+            if (Array.isArray(_data["affectedAisles"])) {
+                this.affectedAisles = [] as any;
+                for (let item of _data["affectedAisles"])
+                    this.affectedAisles!.push(SpaceSceneAisleDto.fromJS(item));
+            }
+            if (Array.isArray(_data["affectedRacks"])) {
+                this.affectedRacks = [] as any;
+                for (let item of _data["affectedRacks"])
+                    this.affectedRacks!.push(SpaceSceneRackDto.fromJS(item));
+            }
+            if (Array.isArray(_data["affectedRackLevels"])) {
+                this.affectedRackLevels = [] as any;
+                for (let item of _data["affectedRackLevels"])
+                    this.affectedRackLevels!.push(SpaceSceneRackLevelDto.fromJS(item));
+            }
+            if (Array.isArray(_data["affectedLocations"])) {
+                this.affectedLocations = [] as any;
+                for (let item of _data["affectedLocations"])
+                    this.affectedLocations!.push(SpaceSceneLocationDto.fromJS(item));
+            }
+            this.idempotentReplay = _data["idempotentReplay"];
+        }
+    }
+
+    static fromJS(data: any): ApplySpaceLayoutCommandBatchResponse {
+        data = typeof data === 'object' ? data : {};
+        let result = new ApplySpaceLayoutCommandBatchResponse();
+        result.init(data);
+        return result;
+    }
+
+    toJSON(data?: any) {
+        data = typeof data === 'object' ? data : {};
+        data["commandBatchId"] = this.commandBatchId;
+        data["floorRevision"] = this.floorRevision;
+        data["versionContentRevision"] = this.versionContentRevision;
+        if (Array.isArray(this.appliedCommands)) {
+            data["appliedCommands"] = [];
+            for (let item of this.appliedCommands)
+                data["appliedCommands"].push(item ? item.toJSON() : undefined as any);
+        }
+        if (Array.isArray(this.affectedZones)) {
+            data["affectedZones"] = [];
+            for (let item of this.affectedZones)
+                data["affectedZones"].push(item ? item.toJSON() : undefined as any);
+        }
+        if (Array.isArray(this.affectedAisles)) {
+            data["affectedAisles"] = [];
+            for (let item of this.affectedAisles)
+                data["affectedAisles"].push(item ? item.toJSON() : undefined as any);
+        }
+        if (Array.isArray(this.affectedRacks)) {
+            data["affectedRacks"] = [];
+            for (let item of this.affectedRacks)
+                data["affectedRacks"].push(item ? item.toJSON() : undefined as any);
+        }
+        if (Array.isArray(this.affectedRackLevels)) {
+            data["affectedRackLevels"] = [];
+            for (let item of this.affectedRackLevels)
+                data["affectedRackLevels"].push(item ? item.toJSON() : undefined as any);
+        }
+        if (Array.isArray(this.affectedLocations)) {
+            data["affectedLocations"] = [];
+            for (let item of this.affectedLocations)
+                data["affectedLocations"].push(item ? item.toJSON() : undefined as any);
+        }
+        data["idempotentReplay"] = this.idempotentReplay;
+        return data;
+    }
+}
+
+export interface IApplySpaceLayoutCommandBatchResponse {
+    commandBatchId: string;
+    floorRevision: number;
+    versionContentRevision: number;
+    appliedCommands: SpaceLayoutCommandResultDto[];
+    affectedZones: SpaceSceneZoneDto[];
+    affectedAisles: SpaceSceneAisleDto[];
+    affectedRacks: SpaceSceneRackDto[];
+    affectedRackLevels: SpaceSceneRackLevelDto[];
+    affectedLocations: SpaceSceneLocationDto[];
+    idempotentReplay: boolean;
+}
+
 export class AttachSpaceUnderlayRequest implements IAttachSpaceUnderlayRequest {
     sourceId?: string;
     expectedFloorRevision?: number;
@@ -18965,6 +19265,289 @@ export interface ISpaceCreateElementDto {
     attributes: SpaceElementAttributeWriteDto[];
 }
 
+export class SpaceCreateLayoutAisleDto implements ISpaceCreateLayoutAisleDto {
+    zoneLogicalId!: string;
+    aisleCode!: string;
+    name?: string | undefined;
+    direction!: number;
+    polygonJson!: string;
+    centerlineJson!: string;
+
+    constructor(data?: ISpaceCreateLayoutAisleDto) {
+        if (data) {
+            for (var property in data) {
+                if (data.hasOwnProperty(property))
+                    (this as any)[property] = (data as any)[property];
+            }
+        }
+    }
+
+    init(_data?: any) {
+        if (_data) {
+            this.zoneLogicalId = _data["zoneLogicalId"];
+            this.aisleCode = _data["aisleCode"];
+            this.name = _data["name"];
+            this.direction = _data["direction"];
+            this.polygonJson = _data["polygonJson"];
+            this.centerlineJson = _data["centerlineJson"];
+        }
+    }
+
+    static fromJS(data: any): SpaceCreateLayoutAisleDto {
+        data = typeof data === 'object' ? data : {};
+        let result = new SpaceCreateLayoutAisleDto();
+        result.init(data);
+        return result;
+    }
+
+    toJSON(data?: any) {
+        data = typeof data === 'object' ? data : {};
+        data["zoneLogicalId"] = this.zoneLogicalId;
+        data["aisleCode"] = this.aisleCode;
+        data["name"] = this.name;
+        data["direction"] = this.direction;
+        data["polygonJson"] = this.polygonJson;
+        data["centerlineJson"] = this.centerlineJson;
+        return data;
+    }
+}
+
+export interface ISpaceCreateLayoutAisleDto {
+    zoneLogicalId: string;
+    aisleCode: string;
+    name?: string | undefined;
+    direction: number;
+    polygonJson: string;
+    centerlineJson: string;
+}
+
+export class SpaceCreateLayoutRackDto implements ISpaceCreateLayoutRackDto {
+    zoneLogicalId!: string;
+    aisleLogicalId?: string | undefined;
+    rackCode!: string;
+    name?: string | undefined;
+    rackType?: string | undefined;
+    templateVersionId?: string | undefined;
+    x!: number;
+    y!: number;
+    z!: number;
+    rotationZ!: number;
+    width!: number;
+    depth!: number;
+    height!: number;
+    levels!: SpaceCreateLayoutRackLevelDto[];
+
+    constructor(data?: ISpaceCreateLayoutRackDto) {
+        if (data) {
+            for (var property in data) {
+                if (data.hasOwnProperty(property))
+                    (this as any)[property] = (data as any)[property];
+            }
+        }
+        if (!data) {
+            this.levels = [];
+        }
+    }
+
+    init(_data?: any) {
+        if (_data) {
+            this.zoneLogicalId = _data["zoneLogicalId"];
+            this.aisleLogicalId = _data["aisleLogicalId"];
+            this.rackCode = _data["rackCode"];
+            this.name = _data["name"];
+            this.rackType = _data["rackType"];
+            this.templateVersionId = _data["templateVersionId"];
+            this.x = _data["x"];
+            this.y = _data["y"];
+            this.z = _data["z"];
+            this.rotationZ = _data["rotationZ"];
+            this.width = _data["width"];
+            this.depth = _data["depth"];
+            this.height = _data["height"];
+            if (Array.isArray(_data["levels"])) {
+                this.levels = [] as any;
+                for (let item of _data["levels"])
+                    this.levels!.push(SpaceCreateLayoutRackLevelDto.fromJS(item));
+            }
+        }
+    }
+
+    static fromJS(data: any): SpaceCreateLayoutRackDto {
+        data = typeof data === 'object' ? data : {};
+        let result = new SpaceCreateLayoutRackDto();
+        result.init(data);
+        return result;
+    }
+
+    toJSON(data?: any) {
+        data = typeof data === 'object' ? data : {};
+        data["zoneLogicalId"] = this.zoneLogicalId;
+        data["aisleLogicalId"] = this.aisleLogicalId;
+        data["rackCode"] = this.rackCode;
+        data["name"] = this.name;
+        data["rackType"] = this.rackType;
+        data["templateVersionId"] = this.templateVersionId;
+        data["x"] = this.x;
+        data["y"] = this.y;
+        data["z"] = this.z;
+        data["rotationZ"] = this.rotationZ;
+        data["width"] = this.width;
+        data["depth"] = this.depth;
+        data["height"] = this.height;
+        if (Array.isArray(this.levels)) {
+            data["levels"] = [];
+            for (let item of this.levels)
+                data["levels"].push(item ? item.toJSON() : undefined as any);
+        }
+        return data;
+    }
+}
+
+export interface ISpaceCreateLayoutRackDto {
+    zoneLogicalId: string;
+    aisleLogicalId?: string | undefined;
+    rackCode: string;
+    name?: string | undefined;
+    rackType?: string | undefined;
+    templateVersionId?: string | undefined;
+    x: number;
+    y: number;
+    z: number;
+    rotationZ: number;
+    width: number;
+    depth: number;
+    height: number;
+    levels: SpaceCreateLayoutRackLevelDto[];
+}
+
+export class SpaceCreateLayoutRackLevelDto implements ISpaceCreateLayoutRackLevelDto {
+    levelNo!: number;
+    bottomZ!: number;
+    clearHeight!: number;
+    binCount!: number;
+    depthCount!: number;
+    cellWidth!: number;
+    cellDepth!: number;
+    beamHeight!: number;
+    maxLoad?: number | undefined;
+    locationCodePrefix?: string | undefined;
+
+    constructor(data?: ISpaceCreateLayoutRackLevelDto) {
+        if (data) {
+            for (var property in data) {
+                if (data.hasOwnProperty(property))
+                    (this as any)[property] = (data as any)[property];
+            }
+        }
+    }
+
+    init(_data?: any) {
+        if (_data) {
+            this.levelNo = _data["levelNo"];
+            this.bottomZ = _data["bottomZ"];
+            this.clearHeight = _data["clearHeight"];
+            this.binCount = _data["binCount"];
+            this.depthCount = _data["depthCount"];
+            this.cellWidth = _data["cellWidth"];
+            this.cellDepth = _data["cellDepth"];
+            this.beamHeight = _data["beamHeight"];
+            this.maxLoad = _data["maxLoad"];
+            this.locationCodePrefix = _data["locationCodePrefix"];
+        }
+    }
+
+    static fromJS(data: any): SpaceCreateLayoutRackLevelDto {
+        data = typeof data === 'object' ? data : {};
+        let result = new SpaceCreateLayoutRackLevelDto();
+        result.init(data);
+        return result;
+    }
+
+    toJSON(data?: any) {
+        data = typeof data === 'object' ? data : {};
+        data["levelNo"] = this.levelNo;
+        data["bottomZ"] = this.bottomZ;
+        data["clearHeight"] = this.clearHeight;
+        data["binCount"] = this.binCount;
+        data["depthCount"] = this.depthCount;
+        data["cellWidth"] = this.cellWidth;
+        data["cellDepth"] = this.cellDepth;
+        data["beamHeight"] = this.beamHeight;
+        data["maxLoad"] = this.maxLoad;
+        data["locationCodePrefix"] = this.locationCodePrefix;
+        return data;
+    }
+}
+
+export interface ISpaceCreateLayoutRackLevelDto {
+    levelNo: number;
+    bottomZ: number;
+    clearHeight: number;
+    binCount: number;
+    depthCount: number;
+    cellWidth: number;
+    cellDepth: number;
+    beamHeight: number;
+    maxLoad?: number | undefined;
+    locationCodePrefix?: string | undefined;
+}
+
+export class SpaceCreateLayoutZoneDto implements ISpaceCreateLayoutZoneDto {
+    zoneCode!: string;
+    name?: string | undefined;
+    zoneType!: number;
+    polygonJson!: string;
+    color?: string | undefined;
+    capabilityFlags?: string | undefined;
+
+    constructor(data?: ISpaceCreateLayoutZoneDto) {
+        if (data) {
+            for (var property in data) {
+                if (data.hasOwnProperty(property))
+                    (this as any)[property] = (data as any)[property];
+            }
+        }
+    }
+
+    init(_data?: any) {
+        if (_data) {
+            this.zoneCode = _data["zoneCode"];
+            this.name = _data["name"];
+            this.zoneType = _data["zoneType"];
+            this.polygonJson = _data["polygonJson"];
+            this.color = _data["color"];
+            this.capabilityFlags = _data["capabilityFlags"];
+        }
+    }
+
+    static fromJS(data: any): SpaceCreateLayoutZoneDto {
+        data = typeof data === 'object' ? data : {};
+        let result = new SpaceCreateLayoutZoneDto();
+        result.init(data);
+        return result;
+    }
+
+    toJSON(data?: any) {
+        data = typeof data === 'object' ? data : {};
+        data["zoneCode"] = this.zoneCode;
+        data["name"] = this.name;
+        data["zoneType"] = this.zoneType;
+        data["polygonJson"] = this.polygonJson;
+        data["color"] = this.color;
+        data["capabilityFlags"] = this.capabilityFlags;
+        return data;
+    }
+}
+
+export interface ISpaceCreateLayoutZoneDto {
+    zoneCode: string;
+    name?: string | undefined;
+    zoneType: number;
+    polygonJson: string;
+    color?: string | undefined;
+    capabilityFlags?: string | undefined;
+}
+
 export class SpaceDesignSceneDto implements ISpaceDesignSceneDto {
     schemaVersion?: number;
     authority?: string | undefined;
@@ -22467,6 +23050,106 @@ export interface ISpaceJobDto {
     finishedAtUtc?: Date | undefined;
     resultSummaryJson?: string | undefined;
     rowVersion?: string | undefined;
+}
+
+export class SpaceLayoutCommandDto implements ISpaceLayoutCommandDto {
+    commandId!: string;
+    type!: string;
+    targetLogicalId!: string;
+    createZone?: SpaceCreateLayoutZoneDto;
+    createAisle?: SpaceCreateLayoutAisleDto;
+    createRack?: SpaceCreateLayoutRackDto;
+
+    constructor(data?: ISpaceLayoutCommandDto) {
+        if (data) {
+            for (var property in data) {
+                if (data.hasOwnProperty(property))
+                    (this as any)[property] = (data as any)[property];
+            }
+        }
+    }
+
+    init(_data?: any) {
+        if (_data) {
+            this.commandId = _data["commandId"];
+            this.type = _data["type"];
+            this.targetLogicalId = _data["targetLogicalId"];
+            this.createZone = _data["createZone"] ? SpaceCreateLayoutZoneDto.fromJS(_data["createZone"]) : undefined as any;
+            this.createAisle = _data["createAisle"] ? SpaceCreateLayoutAisleDto.fromJS(_data["createAisle"]) : undefined as any;
+            this.createRack = _data["createRack"] ? SpaceCreateLayoutRackDto.fromJS(_data["createRack"]) : undefined as any;
+        }
+    }
+
+    static fromJS(data: any): SpaceLayoutCommandDto {
+        data = typeof data === 'object' ? data : {};
+        let result = new SpaceLayoutCommandDto();
+        result.init(data);
+        return result;
+    }
+
+    toJSON(data?: any) {
+        data = typeof data === 'object' ? data : {};
+        data["commandId"] = this.commandId;
+        data["type"] = this.type;
+        data["targetLogicalId"] = this.targetLogicalId;
+        data["createZone"] = this.createZone ? this.createZone.toJSON() : undefined as any;
+        data["createAisle"] = this.createAisle ? this.createAisle.toJSON() : undefined as any;
+        data["createRack"] = this.createRack ? this.createRack.toJSON() : undefined as any;
+        return data;
+    }
+}
+
+export interface ISpaceLayoutCommandDto {
+    commandId: string;
+    type: string;
+    targetLogicalId: string;
+    createZone?: SpaceCreateLayoutZoneDto;
+    createAisle?: SpaceCreateLayoutAisleDto;
+    createRack?: SpaceCreateLayoutRackDto;
+}
+
+export class SpaceLayoutCommandResultDto implements ISpaceLayoutCommandResultDto {
+    commandId!: string;
+    type!: string;
+    targetLogicalId!: string;
+
+    constructor(data?: ISpaceLayoutCommandResultDto) {
+        if (data) {
+            for (var property in data) {
+                if (data.hasOwnProperty(property))
+                    (this as any)[property] = (data as any)[property];
+            }
+        }
+    }
+
+    init(_data?: any) {
+        if (_data) {
+            this.commandId = _data["commandId"];
+            this.type = _data["type"];
+            this.targetLogicalId = _data["targetLogicalId"];
+        }
+    }
+
+    static fromJS(data: any): SpaceLayoutCommandResultDto {
+        data = typeof data === 'object' ? data : {};
+        let result = new SpaceLayoutCommandResultDto();
+        result.init(data);
+        return result;
+    }
+
+    toJSON(data?: any) {
+        data = typeof data === 'object' ? data : {};
+        data["commandId"] = this.commandId;
+        data["type"] = this.type;
+        data["targetLogicalId"] = this.targetLogicalId;
+        return data;
+    }
+}
+
+export interface ISpaceLayoutCommandResultDto {
+    commandId: string;
+    type: string;
+    targetLogicalId: string;
 }
 
 export class SpaceModelDto implements ISpaceModelDto {

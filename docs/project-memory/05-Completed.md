@@ -1,5 +1,12 @@
 # 已完成能力与近期里程碑
 
+## 2026-08-13 Space Studio WP1 Layout Command 任务分支
+
+- M0 PR #4 已完成完整门禁、合入并推送远端 `main@9c320a74`；本任务从该最新基线建立独立 `codex/space-layout-command-v1` 分支。
+- 任务分支已形成独立 `/layout-commands` 契约和原子领域写链：Zone → Aisle → Rack → 逐层 RackLevel → Location，不借用通用 `Space_Element`；服务端生成层/库位确定性 LogicalId，统一执行租约、Floor/Content Revision、幂等回放和命令审计。
+- 分支门禁：完整 Release solution 0 warning / 0 error，Space Unit 497/497、真实 SQL Space Integration 397/397（0 skipped）、CP6.Tests 2868 passed / 19 个既有环境门禁 skipped、Web 729/729、Vue type-check 与生产构建通过，SDK/EF/diff drift clean。
+- 本条只记录分支内已实现/已验证切片，不表示已经合入 `main`，也不表示 WP1 或 GA 完成；工作台接入、修改/删除和批量编码仍在 Todo。
+
 ## 2026-08-12 Space Studio v1.3 核心切片
 
 - 低成本 3D 建模详细 Spec 以 v1.2 完整正文为底稿增量合并 v1.3；原有领域、接口、恢复、权限与验收细节保留，新增冻结结论逐节落位并由 RFC-003 记录变更。

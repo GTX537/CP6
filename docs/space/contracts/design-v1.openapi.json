@@ -4040,6 +4040,146 @@
         }
       }
     },
+    "/api/space/design/v1/versions/{versionId}/floors/{floorLogicalId}/layout-commands": {
+      "post": {
+        "tags": [
+          "SpaceDesignV1"
+        ],
+        "operationId": "ApplyLayoutCommands",
+        "parameters": [
+          {
+            "name": "versionId",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "string",
+              "format": "uuid"
+            }
+          },
+          {
+            "name": "floorLogicalId",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "string",
+              "format": "uuid"
+            }
+          }
+        ],
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/CP6.Space.Contracts.ApplySpaceLayoutCommandBatchRequest"
+              }
+            },
+            "text/json": {
+              "schema": {
+                "$ref": "#/components/schemas/CP6.Space.Contracts.ApplySpaceLayoutCommandBatchRequest"
+              }
+            },
+            "application/*+json": {
+              "schema": {
+                "$ref": "#/components/schemas/CP6.Space.Contracts.ApplySpaceLayoutCommandBatchRequest"
+              }
+            }
+          },
+          "required": true
+        },
+        "responses": {
+          "400": {
+            "description": "Bad Request",
+            "content": {
+              "application/problem+json": {
+                "schema": {
+                  "$ref": "#/components/schemas/CP6.WebApi.OpenApi.SpaceDesignProblemDetails"
+                }
+              }
+            }
+          },
+          "401": {
+            "description": "Unauthorized",
+            "content": {
+              "application/problem+json": {
+                "schema": {
+                  "$ref": "#/components/schemas/CP6.WebApi.OpenApi.SpaceDesignProblemDetails"
+                }
+              }
+            }
+          },
+          "403": {
+            "description": "Forbidden",
+            "content": {
+              "application/problem+json": {
+                "schema": {
+                  "$ref": "#/components/schemas/CP6.WebApi.OpenApi.SpaceDesignProblemDetails"
+                }
+              }
+            }
+          },
+          "404": {
+            "description": "Not Found",
+            "content": {
+              "application/problem+json": {
+                "schema": {
+                  "$ref": "#/components/schemas/CP6.WebApi.OpenApi.SpaceDesignProblemDetails"
+                }
+              }
+            }
+          },
+          "409": {
+            "description": "Conflict",
+            "content": {
+              "application/problem+json": {
+                "schema": {
+                  "$ref": "#/components/schemas/CP6.WebApi.OpenApi.SpaceDesignProblemDetails"
+                }
+              }
+            }
+          },
+          "422": {
+            "description": "Unprocessable Content",
+            "content": {
+              "application/problem+json": {
+                "schema": {
+                  "$ref": "#/components/schemas/CP6.WebApi.OpenApi.SpaceDesignProblemDetails"
+                }
+              }
+            }
+          },
+          "500": {
+            "description": "Internal Server Error",
+            "content": {
+              "application/problem+json": {
+                "schema": {
+                  "$ref": "#/components/schemas/CP6.WebApi.OpenApi.SpaceDesignProblemDetails"
+                }
+              }
+            }
+          },
+          "200": {
+            "description": "OK",
+            "content": {
+              "text/plain": {
+                "schema": {
+                  "$ref": "#/components/schemas/CP6.Space.Contracts.ApplySpaceLayoutCommandBatchResponse"
+                }
+              },
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/CP6.Space.Contracts.ApplySpaceLayoutCommandBatchResponse"
+                }
+              },
+              "text/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/CP6.Space.Contracts.ApplySpaceLayoutCommandBatchResponse"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
     "/api/space/design/v1/assets": {
       "get": {
         "tags": [
@@ -16912,6 +17052,120 @@
         },
         "additionalProperties": false
       },
+      "CP6.Space.Contracts.ApplySpaceLayoutCommandBatchRequest": {
+        "required": [
+          "clientInstanceId",
+          "commandBatchId",
+          "commands",
+          "expectedContentRevision",
+          "expectedFloorRevision",
+          "leaseId",
+          "schemaVersion"
+        ],
+        "type": "object",
+        "properties": {
+          "schemaVersion": {
+            "type": "integer",
+            "format": "int32"
+          },
+          "commandBatchId": {
+            "type": "string",
+            "format": "uuid"
+          },
+          "clientInstanceId": {
+            "type": "string",
+            "format": "uuid"
+          },
+          "leaseId": {
+            "type": "string",
+            "format": "uuid"
+          },
+          "expectedFloorRevision": {
+            "type": "integer",
+            "format": "int64"
+          },
+          "expectedContentRevision": {
+            "type": "integer",
+            "format": "int64"
+          },
+          "commands": {
+            "type": "array",
+            "items": {
+              "$ref": "#/components/schemas/CP6.Space.Contracts.SpaceLayoutCommandDto"
+            }
+          }
+        },
+        "additionalProperties": false
+      },
+      "CP6.Space.Contracts.ApplySpaceLayoutCommandBatchResponse": {
+        "required": [
+          "affectedAisles",
+          "affectedLocations",
+          "affectedRackLevels",
+          "affectedRacks",
+          "affectedZones",
+          "appliedCommands",
+          "commandBatchId",
+          "floorRevision",
+          "idempotentReplay",
+          "versionContentRevision"
+        ],
+        "type": "object",
+        "properties": {
+          "commandBatchId": {
+            "type": "string",
+            "format": "uuid"
+          },
+          "floorRevision": {
+            "type": "integer",
+            "format": "int64"
+          },
+          "versionContentRevision": {
+            "type": "integer",
+            "format": "int64"
+          },
+          "appliedCommands": {
+            "type": "array",
+            "items": {
+              "$ref": "#/components/schemas/CP6.Space.Contracts.SpaceLayoutCommandResultDto"
+            }
+          },
+          "affectedZones": {
+            "type": "array",
+            "items": {
+              "$ref": "#/components/schemas/CP6.Space.Contracts.SpaceSceneZoneDto"
+            }
+          },
+          "affectedAisles": {
+            "type": "array",
+            "items": {
+              "$ref": "#/components/schemas/CP6.Space.Contracts.SpaceSceneAisleDto"
+            }
+          },
+          "affectedRacks": {
+            "type": "array",
+            "items": {
+              "$ref": "#/components/schemas/CP6.Space.Contracts.SpaceSceneRackDto"
+            }
+          },
+          "affectedRackLevels": {
+            "type": "array",
+            "items": {
+              "$ref": "#/components/schemas/CP6.Space.Contracts.SpaceSceneRackLevelDto"
+            }
+          },
+          "affectedLocations": {
+            "type": "array",
+            "items": {
+              "$ref": "#/components/schemas/CP6.Space.Contracts.SpaceSceneLocationDto"
+            }
+          },
+          "idempotentReplay": {
+            "type": "boolean"
+          }
+        },
+        "additionalProperties": false
+      },
       "CP6.Space.Contracts.AttachSpaceUnderlayRequest": {
         "type": "object",
         "properties": {
@@ -20044,6 +20298,207 @@
         },
         "additionalProperties": false
       },
+      "CP6.Space.Contracts.SpaceCreateLayoutAisleDto": {
+        "required": [
+          "aisleCode",
+          "centerlineJson",
+          "direction",
+          "polygonJson",
+          "zoneLogicalId"
+        ],
+        "type": "object",
+        "properties": {
+          "zoneLogicalId": {
+            "type": "string",
+            "format": "uuid"
+          },
+          "aisleCode": {
+            "type": "string"
+          },
+          "name": {
+            "type": "string",
+            "nullable": true
+          },
+          "direction": {
+            "type": "integer",
+            "format": "int32"
+          },
+          "polygonJson": {
+            "type": "string"
+          },
+          "centerlineJson": {
+            "type": "string"
+          }
+        },
+        "additionalProperties": false
+      },
+      "CP6.Space.Contracts.SpaceCreateLayoutRackDto": {
+        "required": [
+          "depth",
+          "height",
+          "levels",
+          "rackCode",
+          "rotationZ",
+          "width",
+          "x",
+          "y",
+          "z",
+          "zoneLogicalId"
+        ],
+        "type": "object",
+        "properties": {
+          "zoneLogicalId": {
+            "type": "string",
+            "format": "uuid"
+          },
+          "aisleLogicalId": {
+            "type": "string",
+            "format": "uuid",
+            "nullable": true
+          },
+          "rackCode": {
+            "type": "string"
+          },
+          "name": {
+            "type": "string",
+            "nullable": true
+          },
+          "rackType": {
+            "type": "string",
+            "nullable": true
+          },
+          "templateVersionId": {
+            "type": "string",
+            "format": "uuid",
+            "nullable": true
+          },
+          "x": {
+            "type": "integer",
+            "format": "int32"
+          },
+          "y": {
+            "type": "integer",
+            "format": "int32"
+          },
+          "z": {
+            "type": "integer",
+            "format": "int32"
+          },
+          "rotationZ": {
+            "type": "number",
+            "format": "double"
+          },
+          "width": {
+            "type": "integer",
+            "format": "int32"
+          },
+          "depth": {
+            "type": "integer",
+            "format": "int32"
+          },
+          "height": {
+            "type": "integer",
+            "format": "int32"
+          },
+          "levels": {
+            "type": "array",
+            "items": {
+              "$ref": "#/components/schemas/CP6.Space.Contracts.SpaceCreateLayoutRackLevelDto"
+            }
+          }
+        },
+        "additionalProperties": false
+      },
+      "CP6.Space.Contracts.SpaceCreateLayoutRackLevelDto": {
+        "required": [
+          "beamHeight",
+          "binCount",
+          "bottomZ",
+          "cellDepth",
+          "cellWidth",
+          "clearHeight",
+          "depthCount",
+          "levelNo"
+        ],
+        "type": "object",
+        "properties": {
+          "levelNo": {
+            "type": "integer",
+            "format": "int32"
+          },
+          "bottomZ": {
+            "type": "integer",
+            "format": "int32"
+          },
+          "clearHeight": {
+            "type": "integer",
+            "format": "int32"
+          },
+          "binCount": {
+            "type": "integer",
+            "format": "int32"
+          },
+          "depthCount": {
+            "type": "integer",
+            "format": "int32"
+          },
+          "cellWidth": {
+            "type": "integer",
+            "format": "int32"
+          },
+          "cellDepth": {
+            "type": "integer",
+            "format": "int32"
+          },
+          "beamHeight": {
+            "type": "integer",
+            "format": "int32"
+          },
+          "maxLoad": {
+            "type": "number",
+            "format": "double",
+            "nullable": true
+          },
+          "locationCodePrefix": {
+            "type": "string",
+            "nullable": true
+          }
+        },
+        "additionalProperties": false
+      },
+      "CP6.Space.Contracts.SpaceCreateLayoutZoneDto": {
+        "required": [
+          "polygonJson",
+          "zoneCode",
+          "zoneType"
+        ],
+        "type": "object",
+        "properties": {
+          "zoneCode": {
+            "type": "string"
+          },
+          "name": {
+            "type": "string",
+            "nullable": true
+          },
+          "zoneType": {
+            "type": "integer",
+            "format": "int32"
+          },
+          "polygonJson": {
+            "type": "string"
+          },
+          "color": {
+            "type": "string",
+            "nullable": true
+          },
+          "capabilityFlags": {
+            "type": "string",
+            "nullable": true
+          }
+        },
+        "additionalProperties": false
+      },
       "CP6.Space.Contracts.SpaceDesignSceneDto": {
         "type": "object",
         "properties": {
@@ -22385,6 +22840,59 @@
           "rowVersion": {
             "type": "string",
             "nullable": true
+          }
+        },
+        "additionalProperties": false
+      },
+      "CP6.Space.Contracts.SpaceLayoutCommandDto": {
+        "required": [
+          "commandId",
+          "targetLogicalId",
+          "type"
+        ],
+        "type": "object",
+        "properties": {
+          "commandId": {
+            "type": "string",
+            "format": "uuid"
+          },
+          "type": {
+            "type": "string"
+          },
+          "targetLogicalId": {
+            "type": "string",
+            "format": "uuid"
+          },
+          "createZone": {
+            "$ref": "#/components/schemas/CP6.Space.Contracts.SpaceCreateLayoutZoneDto"
+          },
+          "createAisle": {
+            "$ref": "#/components/schemas/CP6.Space.Contracts.SpaceCreateLayoutAisleDto"
+          },
+          "createRack": {
+            "$ref": "#/components/schemas/CP6.Space.Contracts.SpaceCreateLayoutRackDto"
+          }
+        },
+        "additionalProperties": false
+      },
+      "CP6.Space.Contracts.SpaceLayoutCommandResultDto": {
+        "required": [
+          "commandId",
+          "targetLogicalId",
+          "type"
+        ],
+        "type": "object",
+        "properties": {
+          "commandId": {
+            "type": "string",
+            "format": "uuid"
+          },
+          "type": {
+            "type": "string"
+          },
+          "targetLogicalId": {
+            "type": "string",
+            "format": "uuid"
           }
         },
         "additionalProperties": false

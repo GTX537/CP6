@@ -68,6 +68,7 @@ public sealed class SpaceDesignV1OpenApiTests
             "/api/space/design/v1/versions/{versionId}",
             "/api/space/design/v1/versions/{versionId}/generation-runs",
             "/api/space/design/v1/versions/{versionId}/floors/{floorLogicalId}/commands",
+            "/api/space/design/v1/versions/{versionId}/floors/{floorLogicalId}/layout-commands",
             "/api/space/design/v1/versions/{versionId}/floors/{floorLogicalId}/scene",
             "/api/space/design/v1/versions/{versionId}/floors/{floorLogicalId}/underlay",
             "/api/space/design/v1/versions/{versionId}/floors/{floorLogicalId}/lease",
@@ -143,8 +144,8 @@ public sealed class SpaceDesignV1OpenApiTests
             .Select(operation =>
                 operation.Value.GetProperty("operationId").GetString())
             .ToArray();
-        Assert.Equal(125, operationIds.Length);
-        Assert.Equal(125, operationIds.Distinct().Count());
+        Assert.Equal(126, operationIds.Length);
+        Assert.Equal(126, operationIds.Distinct().Count());
         Assert.Contains("GetPolicy", operationIds);
         Assert.Contains("UpdatePolicy", operationIds);
         Assert.Contains("GetUsage", operationIds);
@@ -206,6 +207,7 @@ public sealed class SpaceDesignV1OpenApiTests
         Assert.Contains("CreateSource", operationIds);
         Assert.Contains("GetScene", operationIds);
         Assert.Contains("ApplyElementCommands", operationIds);
+        Assert.Contains("ApplyLayoutCommands", operationIds);
         Assert.Contains("UploadUnderlay", operationIds);
         Assert.Contains("GetFile", operationIds);
         Assert.Contains("GetUnderlayContent", operationIds);
@@ -1441,6 +1443,75 @@ public sealed class SpaceDesignV1OpenApiTests
             .Select(property => property.GetString())
             .ToHashSet(StringComparer.Ordinal);
         Assert.Contains("leaseId", required);
+    }
+
+    [Fact]
+    public void Layout_commands_require_all_concurrency_fences_and_generated_clients()
+    {
+        using var document = ReadContract();
+        var operation = document.RootElement
+            .GetProperty("paths")
+            .GetProperty(
+                "/api/space/design/v1/versions/{versionId}/floors/" +
+                "{floorLogicalId}/layout-commands")
+            .GetProperty("post");
+        Assert.Equal(
+            "ApplyLayoutCommands",
+            operation.GetProperty("operationId").GetString());
+        Assert.True(
+            operation.GetProperty("requestBody")
+                .GetProperty("required")
+                .GetBoolean());
+
+        var requestSchema = document.RootElement
+            .GetProperty("components")
+            .GetProperty("schemas")
+            .GetProperty(
+                "CP6.Space.Contracts.ApplySpaceLayoutCommandBatchRequest");
+        var required = requestSchema.GetProperty("required")
+            .EnumerateArray()
+            .Select(property => property.GetString())
+            .ToHashSet(StringComparer.Ordinal);
+        Assert.Contains("commandBatchId", required);
+        Assert.Contains("clientInstanceId", required);
+        Assert.Contains("leaseId", required);
+        Assert.Contains("expectedFloorRevision", required);
+        Assert.Contains("expectedContentRevision", required);
+        Assert.Contains("commands", required);
+
+        var typescript = File.ReadAllText(
+            Path.Combine(
+                RepositoryRoot,
+                "sdk",
+                "typescript",
+                "space-design-v1",
+                "spaceDesignV1Client.ts"));
+        var request = ExtractTypeBlock(
+            typescript,
+            "export interface IApplySpaceLayoutCommandBatchRequest");
+        AssertRequiredTypeScriptProperties(
+            request,
+            "commandBatchId",
+            "clientInstanceId",
+            "leaseId",
+            "expectedFloorRevision",
+            "expectedContentRevision",
+            "commands");
+        var response = ExtractTypeBlock(
+            typescript,
+            "export interface IApplySpaceLayoutCommandBatchResponse");
+        AssertRequiredTypeScriptProperties(
+            response,
+            "commandBatchId",
+            "floorRevision",
+            "versionContentRevision",
+            "appliedCommands",
+            "affectedZones",
+            "affectedAisles",
+            "affectedRacks",
+            "affectedRackLevels",
+            "affectedLocations",
+            "idempotentReplay");
     }
 
     [Fact]
