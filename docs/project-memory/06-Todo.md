@@ -13,19 +13,21 @@
 - 本机 DEV/UAT/PROD-LAB Docker 运行边界已建立并实际验证；Azure DevOps 的 `cp6-dev`、`cp6-uat`、`cp6-prod-lab` 也已由 2026-08-11 外部截图确认创建。下一步在详情页核对三者 Resource 为空，并确认没有录入 Secret。
 - DEV 学习 Pipeline 已有独立 deployment job；UAT/PROD-LAB 不得复制本机重新 Build 方案。完成 Registry/发布权威决策后，再创建不可变候选推广 Pipeline，并为 UAT/PROD-LAB 配置审批与 exclusive lock。单人学习期 PROD-LAB 可自批，真实生产必须换独立批准人。
 - 当前 Azure `azure-pipelines.yml` 已完成基础 CI，使用 `Default` self-hosted pool、`main` trigger 和 `pr: none`；先补运行证据、Agent 运维边界和 PR 门禁归属，不把 CI 绿灯描述为上线。
-- 下一张任务卡为“发布权威与 Registry 决策”：在现有 GHCR/R2 与候选 ACR 之间确定唯一 Registry、候选清单、影子期、等价矩阵、回退条件和最小权限 Service Connection。
+- 下一张 CRM 相关任务卡为 M0/R00：把 CRM V1 已锁定的 GHCR/R2 唯一权威、候选清单、Azure 非权威影子边界、等价矩阵和回退写入 ADR；不得重新选择 Registry。ACR 迁移与其他产品的长期 Azure Registry 决策独立立项。
 - 决策通过后按独立任务推进：Docker Release（版本/SHA、provenance、SBOM、扫描、digest）→ DEV Environment/健康与身份核对 → UAT → PROD 资源侧审批 → 回滚/前滚演练 → AKS 多仓。
 - 全阶段遵守 Build once：DEV/UAT/PROD 只推广同一 digest，不按环境重新 Build；Azure 与 GitHub 不得对同一版本生成两套权威候选。
-- Azure 门禁未与 `.github/workflows/r2-*` 等价且未显式切换前，GitHub R2 继续作为生产发布权威。完整路线见 `docs/devops/AZURE-PIPELINES-PLAN.md`。
+- CRM V1 全周期固定使用 GitHub R2/GHCR 作为候选权威；Azure 即使达到等价也只能在本 Epic 内消费相同 digest 或做非权威验证。其他产品的未来显式切换继续按 `docs/devops/AZURE-PIPELINES-PLAN.md` 独立决策。
 
 ## P0：CRM V1 端到端交付
 
-- 产品框架和三仓可执行 Spec 已完成，入口为 `docs/crm/README.md`；Foundation 的 20 张表、固定状态机、迁移、6 个禁用菜单节点和 22 个动作只作为迁移源与兼容语义，不是目标服务实现。
-- 先取得产品、架构、安全、数据、ERP、SRE 和 QA 对 Spec 的审批，并关闭 Registry/发布权威决策；任何团队不得在这些硬前置未关闭时并行发明仓库、身份、消息或数据契约。
-- 按依赖推进：Platform P01–P10（窄 NuGet、RequestContext、CloudEvents、Outbox/Inbox、YARP/Dapr/可观测性）→ CP6 C01–C04（RS256/OIDC/JWKS、授权投影事件、ERP 查询与命令契约）→ CRM01–CRM12（骨架/Schema、迁移器、公开接入、Intake、转化、ERP 桥、CMS、Next.js、运营、切换）。
-- Intake 必须覆盖人工录入和官网公开提交、线索池、分配/移交、协作人、活动时间线、4 自然小时 SLA、重复候选与受控合并；数据范围按负责人、协作人、部门和管理员显式校验。
+- 产品框架和三仓可执行 Spec 已批准为 implementation-planning baseline，入口为 `docs/crm/README.md`；Foundation 的 20 张表、固定状态机、迁移、6 个禁用菜单节点和 22 个动作只作为迁移源与兼容语义，不是目标服务实现。
+- 先完成 M0/R00 ADR，冻结 GHCR/R2 权威、Azure SQL/Emergency Intake、System Manifest 整体回退，并取得 Sponsor、Product、Sales Operations、Architecture、Security、Data、ERP、SRE、QA、Release 的 named Owner、Pilot cohort 与 Observation Gate 证据；缺失即 No-Go。
+- 不要现在建立 `GTX537/CP6.CRM` 空仓。只有 T1 已在最新 main、M0 输入关闭且 P01 runner/合同可消费后，才由 CRM01-S01 创建私有仓库；V1 不实现软件产品目录、商城、订阅或客户产品中心。
+- 第一阶段可并行推进 Platform P01–P07、CP6 C01–C03、CRM01–CRM03；随后只实现 CRM04 的 Lead Pilot 子集、C 分栏工作台、真实 Dapr/Kafka Intake、两租户负向与 Pilot 性能 Smoke。Pilot UAT 通过后才解锁 CRM04 余项、CRM05–CRM10、完整 ERP/CMS 旅程，再进入 P08–P10、C04A、CRM11/CRM12。
+- Intake 必须覆盖人工录入、同源 BFF 官网提交、稳定 attempt、Needs Review release/reject/expiry、原 ReceivedAt 首次响应 SLA、Emergency Intake、线索池、分配/移交、协作人、活动时间线、重复候选与受控合并；数据范围按负责人、协作人、部门和管理员显式校验。
 - 后续能力为企业/联系人/商机转化、报价接受和 ERP 订单桥接、独立 CRM Next.js 工作台、营销官网 CMS/多语言 SSR/ISR、PII 24 个月匿名化、SLA 通知及漏斗/来源报表。
-- 在对应后端、前端和端到端门禁通过前，CRM 菜单不得启用；不得把仅有表结构或合成演示数据记为业务验收完成。
+- CRM09 开始前必须批准首页、能力/行业和联系/回执的桌面/平板/移动高保真稿与受控 CMS Schema；完整 UAT 必须使用真实 C03 handler 和隔离 ERP SQL，Mock 只允许单元测试。
+- 单次生产切换后依次执行 ≥10 工作日/≥200 Eligible Lead 的 Lead Adoption 和最多 30 日 Full Journey Gate；技术绿灯、部署成功或菜单可见都不能关闭 Epic。两项通过并完成只读观察后才执行 C04B，旧表物理删除另立任务。
 
 ## 已完成：Space `CodeEngineService` Zone 级 rackSeq
 

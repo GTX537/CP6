@@ -1,10 +1,24 @@
 # 已完成能力与近期里程碑
 
+## 2026-08-13 CRM V1 T1 对抗审阅收口
+
+- 修订产品框架与可执行 Spec，关闭隔离提交状态/权限、原 ReceivedAt 双 SLA、同源 BFF 四重身份、attempt/replay/tombstone 和回执 Cookie 字节预算歧义。
+- 固定 Azure SQL AZ/PITR 连续性与 Emergency Intake 实施合同，并把 previous System Manifest、机器兼容矩阵、系统整体默认回退和数据/Schema 前向边界纳入发布门禁。
+- 明确 CRM 产品商城/订阅/客户产品中心不属于 V1；`CP6.CRM` 仓库只在 CRM01-S01 前置满足后创建。本完成项仍仅代表规范闭环，不代表任何业务实现或云资源完成。
+- 本地工程/设计与合入前 fallback 复核修正 Dapr 调用图、IntakeDeptId/PII 权限、实际 migration ID 和首次切换回退边界后无剩余 Critical/High；正式 gstack 交互审阅因宿主接口缺失未签发。CRM Foundation 16/16、Markdown 相对链接和差异格式门禁通过。
+
 ## 2026-08-13 OpenAPI 原生客户端漂移门禁修复
 
 - 确认 `main` 与 CRM PR #5 的 `client-contract` 以相同 expected/actual 指纹失败，根因属于主线门禁，不由 CRM 文档 diff 引入。
 - 用 Node.js 稳定规范化替代 PowerShell JSON 序列化，并把指纹范围收敛为原生客户端路径及其递归可达 schema；无关模块新增 schema 不再造成假阳性，真实客户端合同变化仍失败关闭。
 - 新增 4 个 Node 单测并在 Node 20/22 通过；真实 Swagger 指纹两次生成一致且 check 模式通过。完整门禁为 CP6.Tests 2859 passed / 19 environment-gated skipped、Client 71/71、Web 719/719、类型检查/生产构建和 R2 source gate 全绿。
+
+## 2026-08-12 CRM V1 规范批准 T1
+
+- 从 `main/origin/main@c68d9b53` 创建独立规范分支，按已批准的工程、QA 和采用/设计审阅证据修订 CRM 产品框架、可执行工程 Spec 与文档入口；旧根工作区未修改。
+- 冻结 API 幂等/并发与稳定错误语义、Pilot C 分栏、公开站点 IA/视觉/受控 CMS/回执 Cookie、真实 ERP UAT、分层性能、GHCR/R2 唯一权威，以及 Observation/Pilot/Lead/Full Journey 不可豁免门禁。
+- 本完成项只代表 T1 规划规范可用于拆票；业务代码、新仓、云资源、迁移、候选镜像和部署均未实施。下一项是 M0/R00 ADR 与 named Owner/cohort/Observation 输入。
+- 门禁：最新 `main` 基线与三份审阅工件 SHA-256 复核一致；CRM Foundation 聚焦回归 16/16 passed、0 failed/skipped；Markdown 相对链接与 `git diff --check` 通过。
 
 ## 2026-08-11 Azure DEV 自动部署仓库配置
 
