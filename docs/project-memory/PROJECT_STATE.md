@@ -11,6 +11,13 @@
 - System Release Manifest 新增 previous digest 与 DB/OpenAPI/Event/Dapr 兼容范围；默认系统整体回退，组件级例外必须有签名证据，Schema/业务数据永不回退。
 - 本地工程/设计与合入前 fallback 复核修正了 Dapr 调用图、IntakeDeptId/PII 权限、实际 migration ID 和首次切换回退边界，修正后无剩余 Critical/High；正式 gstack 交互审阅因当前宿主缺少技能强制的 AskUserQuestion 接口未签发，不能冒充技能门禁。CRM Foundation 16/16、Markdown 相对链接和 `git diff --check` 通过。
 
+## OpenAPI 原生客户端漂移门禁修复（2026-08-13）
+
+- `client-contract` 的 OpenAPI 指纹曾同时在 `main@c68d9b53` 和 CRM PR #5 失败；两者均为期望 `D305...`、实际 `774F...`，确认不是 CRM 文档分支引入。
+- 根因有两项：PowerShell 5.1/7 的 JSON 序列化仍会产生不同字节；旧门禁还把全部全局 schema 纳入原生客户端指纹，使 CRM、Space、Finance 等无关 API schema 也触发客户端漂移。
+- 门禁现由 Node.js 对 JSON 键作稳定排序，只保留原生客户端路径及其递归可达 schema；PowerShell 入口、失败关闭语义和受控 `-Update` 流程保持不变。新增 4 个 Node 单测，Node 20/22 均通过，当前指纹为 `A49DB452941BF554AEAD66E35C41A7013CB280F7B5A918E41195C4C0FF44A637`。
+- 本地完整门禁通过：OpenAPI live check、CP6.Tests 2859/2859、Client 71/71、Web 719/719、类型检查、生产构建与 R2 source gate；19 个 SQL/环境门禁保持基线 skip。本任务不改 API、客户端行为、数据库、部署或生产资源。
+
 ## CRM V1 规范批准基线（2026-08-12）
 
 - 规范任务从 `main == origin/main == c68d9b53b4cf3adb5925b8258c36969fdebda753` 创建独立 `codex/crm-v1-spec-approval-20260812` 分支；只修订 CRM 规范与项目记忆，不修改旧根工作区、业务代码、仓库、云资源、数据或部署。
