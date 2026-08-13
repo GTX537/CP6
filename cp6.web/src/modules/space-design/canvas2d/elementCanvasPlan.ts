@@ -19,7 +19,7 @@ export interface ElementCanvasRect {
 export interface ElementCanvasPolygon {
   kind: 'polygon'
   logicalId: string
-  ownerKind: 'Element'
+  ownerKind: 'Element' | 'Zone' | 'Aisle'
   elementType: string
   points: readonly { x: number; y: number }[]
 }
@@ -33,6 +33,27 @@ export function buildElementCanvasPlan(
 ): readonly ElementCanvasDrawable[] {
   const plan = buildParametricRenderPlan(scene)
   const drawables: ElementCanvasDrawable[] = []
+
+  // Context polygons are added first so opaque Rack/Element objects remain
+  // legible and selectable above the Zone/Aisle floor tint.
+  for (const polygon of plan.polygons) {
+    if (
+      !['Element', 'Zone', 'Aisle'].includes(polygon.ownerKind) ||
+      polygon.lifecycleState !== 'Active' ||
+      !polygon.elementType
+    ) {
+      continue
+    }
+    drawables.push({
+      kind: 'polygon',
+      logicalId: polygon.logicalId,
+      ownerKind: polygon.ownerKind as 'Element' | 'Zone' | 'Aisle',
+      elementType: polygon.elementType,
+      points: polygon.outer.map((point) =>
+        localToWorld(point, polygon.origin, polygon.rotationZ),
+      ),
+    })
+  }
 
   for (const box of plan.boxes) {
     if (box.lifecycleState !== 'Active') {
@@ -55,25 +76,6 @@ export function buildElementCanvasPlan(
       width: box.size.width,
       depth: box.size.depth,
       rotationZ: box.rotationZ,
-    })
-  }
-
-  for (const polygon of plan.polygons) {
-    if (
-      polygon.ownerKind !== 'Element' ||
-      polygon.lifecycleState !== 'Active' ||
-      !polygon.elementType
-    ) {
-      continue
-    }
-    drawables.push({
-      kind: 'polygon',
-      logicalId: polygon.logicalId,
-      ownerKind: 'Element',
-      elementType: polygon.elementType,
-      points: polygon.outer.map((point) =>
-        localToWorld(point, polygon.origin, polygon.rotationZ),
-      ),
     })
   }
 

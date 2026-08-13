@@ -12,6 +12,11 @@ import {
   type ElementPropertiesPayload,
 } from '@/api/space/designElements'
 import {
+  designLayoutApi,
+  type LayoutCommandEnvelope,
+  type LayoutCommandInput,
+} from '@/api/space/designLayout'
+import {
   designModelingTemplateApi,
   standardSpaceModelingTemplateFileName,
 } from '@/api/space/designModelingTemplate'
@@ -43,6 +48,11 @@ import DesignElementPropertiesPanel from '@/modules/space-design/panels/DesignEl
 import DesignWmsAdoptionPanel from '@/modules/space-design/panels/DesignWmsAdoptionPanel.vue'
 import SpaceStudioContextPanel from '@/modules/space-design/panels/SpaceStudioContextPanel.vue'
 import SpaceStudioChecklist from '@/modules/space-design/panels/SpaceStudioChecklist.vue'
+import DesignLayoutCreatePanel from '@/modules/space-design/layout/DesignLayoutCreatePanel.vue'
+import type {
+  LayoutCreateIntent,
+  LayoutParentOption,
+} from '@/modules/space-design/layout/layoutCreate'
 import DesignScenePreview3D from '@/modules/space-design/preview3d/DesignScenePreview3D.vue'
 import { CadIssueOverlayLayer } from '@/modules/space-design/cad-review/CadIssueOverlayLayer'
 import DesignCadIssuePanel from '@/modules/space-design/cad-review/DesignCadIssuePanel.vue'
@@ -134,7 +144,7 @@ const calibrationMode = ref(false)
 const statusText = ref('')
 const saveState = ref<'idle' | 'saving' | 'saved' | 'failed'>('idle')
 const lastSavedAt = ref<Date | null>(null)
-const unsavedEnvelope = ref<EditorCommandEnvelope | null>(null)
+const unsavedEnvelope = ref<EditorCommandEnvelope | LayoutCommandEnvelope | null>(null)
 const revisionConflict = ref(false)
 const unsavedCommands = computed(
   () => unsavedEnvelope.value?.commands ?? [],
@@ -151,6 +161,7 @@ const canvasZoomPercent = ref(5)
 const canvasSelectionTool = ref<'select' | 'pan' | 'measure'>('select')
 const canvasViewport = ref({ ...defaultCanvasViewport })
 const pointerCoordinates = ref('X — / Y —')
+const canvasPointerWorld = ref<{ x: number; y: number } | null>(null)
 const measurementText = ref('')
 const measurementStart = ref<{ x: number; y: number } | null>(null)
 let panGesture: {
@@ -239,6 +250,29 @@ const activeRacks = computed(() =>
   (designScene.value?.racks ?? []).filter(
     (rack) => rack.revision?.lifecycleState === 'Active',
   ),
+)
+const activeZones = computed<LayoutParentOption[]>(() =>
+  (designScene.value?.zones ?? [])
+    .filter((zone) => zone.revision?.lifecycleState === 'Active')
+    .flatMap((zone) => zone.revision?.logicalId
+      ? [{
+          logicalId: zone.revision.logicalId,
+          code: zone.zoneCode ?? zone.revision.logicalId,
+          name: zone.name,
+        }]
+      : []),
+)
+const activeAisles = computed<LayoutParentOption[]>(() =>
+  (designScene.value?.aisles ?? [])
+    .filter((aisle) => aisle.revision?.lifecycleState === 'Active')
+    .flatMap((aisle) => aisle.revision?.logicalId && aisle.zoneLogicalId
+      ? [{
+          logicalId: aisle.revision.logicalId,
+          code: aisle.aisleCode ?? aisle.revision.logicalId,
+          name: aisle.name,
+          zoneLogicalId: aisle.zoneLogicalId,
+        }]
+      : []),
 )
 const selectedElement = computed<ISpaceSceneElementDto | null>(() => {
   const selection = selectedObjects.value
@@ -700,6 +734,7 @@ function onCanvasPointerMove(): void {
   const canvasStage = stage?.stage
   const screen = canvasStage?.getPointerPosition()
   const world = canvasWorldPoint()
+  canvasPointerWorld.value = world
   if (world) pointerCoordinates.value = `X ${Math.round(world.x)} / Y ${Math.round(world.y)} mm`
   if (!canvasStage || !screen || !panGesture || canvasSelectionTool.value !== 'pan') return
   applyCanvasViewport({
@@ -1525,6 +1560,88 @@ async function applyEditorCommands(commands: readonly EditorCommandInput[]) {
   }
 }
 
+async function applyLayoutCommands(commands: readonly LayoutCommandInput[]) {
+  const currentFloor = floor.value
+  const currentScene = designScene.value
+  if (!currentFloor || !currentScene) throw new Error('Design scene is unavailable')
+  const leaseId = lease.value?.leaseId
+  if (!leaseId || leaseState.value !== 'owned') {
+    throw new Error('An active edit lease is required')
+  }
+  const envelope = designLayoutApi.createEnvelope(
+    currentFloor.revisionNumber ?? 0,
+    currentScene.contentRevision ?? 0,
+    clientInstanceId,
+    leaseId,
+    commands,
+  )
+  unsavedEnvelope.value = envelope
+  saveState.value = 'saving'
+  try {
+    const response = await designLayoutApi.sendEnvelope(
+      versionId.value,
+      floorLogicalId.value,
+      envelope,
+    )
+    unsavedEnvelope.value = null
+    saveState.value = 'saved'
+    lastSavedAt.value = new Date()
+    return response
+  } catch (error) {
+    saveState.value = 'failed'
+    const code = isAxiosError(error) ? error.response?.data?.code : undefined
+    if (code === 'SPACE_EDIT_LEASE_LOST') loseEditLease()
+    if (
+      code === 'SPACE_FLOOR_REVISION_CONFLICT' ||
+      code === 'SPACE_VERSION_CONFLICT'
+    ) {
+      revisionConflict.value = true
+      ElMessage.error('设计态 Revision 冲突；本地创建命令已保留，可刷新后重放或导出')
+    }
+    throw error
+  }
+}
+
+async function createLayout(intent: LayoutCreateIntent): Promise<void> {
+  if (readonlyScene.value || savingElement.value) return
+  const targetLogicalId = crypto.randomUUID()
+  const command: LayoutCommandInput = {
+    commandId: crypto.randomUUID(),
+    type: intent.type,
+    targetLogicalId,
+  }
+  if (intent.type === 'CreateZone') command.createZone = intent.payload
+  if (intent.type === 'CreateAisle') command.createAisle = intent.payload
+  if (intent.type === 'CreateRack') command.createRack = intent.payload
+
+  savingElement.value = true
+  try {
+    const response = await applyLayoutCommands([command])
+    await loadScene()
+    if (intent.type === 'CreateRack') {
+      selectObjects([{ logicalId: targetLogicalId, ownerKind: 'Rack' }], 'replace')
+    }
+    const locationCount = response.affectedLocations?.length ?? 0
+    ElMessage.success(
+      intent.type === 'CreateRack'
+        ? `货架已创建，并生成 ${locationCount} 个设计态库位`
+        : `${intent.type === 'CreateZone' ? '库区' : '巷道'}已创建并保存`,
+    )
+  } catch {
+    ElMessage.error('业务构件创建失败；未完成的幂等命令包已保留用于恢复')
+  } finally {
+    savingElement.value = false
+  }
+}
+
+function isLayoutEnvelope(
+  envelope: EditorCommandEnvelope | LayoutCommandEnvelope,
+): envelope is LayoutCommandEnvelope {
+  return envelope.commands.some((command) =>
+    ['CreateZone', 'CreateAisle', 'CreateRack'].includes(command.type),
+  )
+}
+
 async function applyCadReviewChanges(changeIds: string[]): Promise<void> {
   const workspace = cadReviewWorkspace.value
   const currentFloor = floor.value
@@ -1570,11 +1687,19 @@ async function retryUnsavedEnvelope(): Promise<void> {
   if (!envelope || saveState.value === 'saving') return
   saveState.value = 'saving'
   try {
-    await designElementsApi.sendEnvelope(
-      versionId.value,
-      floorLogicalId.value,
-      envelope,
-    )
+    if (isLayoutEnvelope(envelope)) {
+      await designLayoutApi.sendEnvelope(
+        versionId.value,
+        floorLogicalId.value,
+        envelope,
+      )
+    } else {
+      await designElementsApi.sendEnvelope(
+        versionId.value,
+        floorLogicalId.value,
+        envelope,
+      )
+    }
     unsavedEnvelope.value = null
     revisionConflict.value = false
     saveState.value = 'saved'
@@ -1593,12 +1718,19 @@ async function retryUnsavedEnvelope(): Promise<void> {
 async function refreshAndReplayUnsaved(): Promise<void> {
   const envelope = unsavedEnvelope.value
   if (!envelope) return
-  const commands = envelope.commands.map(({ commandId: _commandId, ...command }) => command)
+  const layoutEnvelope = isLayoutEnvelope(envelope)
+  const editorCommands = layoutEnvelope
+    ? []
+    : envelope.commands.map(({ commandId: _commandId, ...command }) => command)
+  const layoutCommands = layoutEnvelope
+    ? envelope.commands.map((command) => ({ ...command, commandId: '' }))
+    : []
   await loadScene()
   revisionConflict.value = false
   unsavedEnvelope.value = null
   try {
-    await applyEditorCommands(commands)
+    if (layoutEnvelope) await applyLayoutCommands(layoutCommands)
+    else await applyEditorCommands(editorCommands)
     await loadScene()
     ElMessage.success('已基于最新楼层修订重放命令')
   } catch {
@@ -2097,6 +2229,16 @@ function tabClientInstanceId(): string {
         @open-rule-only="openRuleOnlyCreation"
         @create-component="createComponent"
       >
+        <template #assets>
+          <DesignLayoutCreatePanel
+            :zones="activeZones"
+            :aisles="activeAisles"
+            :readonly="readonlyScene"
+            :busy="savingElement"
+            :pointer="canvasPointerWorld"
+            @create="createLayout"
+          />
+        </template>
         <template #settings>
           <button type="button" @click="chooseCadReviewArtifact">加载本地 CAD 工件（回退）</button>
           <button type="button" @click="chooseAiReviewArtifact">加载 AI Beta 工件</button>

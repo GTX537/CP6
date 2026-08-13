@@ -36,7 +36,7 @@ export interface SceneProjectionPrimitiveManifest {
 
 export interface SceneProjectionObjectManifest {
   logicalId: string
-  ownerKind: 'Rack' | 'Element'
+  ownerKind: 'Zone' | 'Aisle' | 'Rack' | 'Element'
   parentLogicalId: string | null
   businessCode: string | null
   elementType: string | null
@@ -67,7 +67,7 @@ export interface SceneProjectionEvidence {
 
 interface MutableObjectManifest {
   logicalId: string
-  ownerKind: 'Rack' | 'Element'
+  ownerKind: 'Zone' | 'Aisle' | 'Rack' | 'Element'
   parentLogicalId: string | null
   businessCode: string | null
   elementType: string | null
@@ -281,7 +281,7 @@ function addPrimitive(
     identity.ownerKind === 'RackLevel'
       ? requiredParent(identity)
       : identity.logicalId
-  const ownerKind = identity.ownerKind === 'Element' ? 'Element' : 'Rack'
+  const ownerKind = manifestOwnerKind(identity.ownerKind)
   let object = objects.get(rootLogicalId)
   if (!object) {
     object = {
@@ -318,6 +318,19 @@ function addPrimitive(
     )
   }
   object.primitives.push(primitive)
+}
+
+function manifestOwnerKind(
+  ownerKind: string,
+): MutableObjectManifest['ownerKind'] {
+  if (ownerKind === 'RackLevel') return 'Rack'
+  if (
+    ownerKind === 'Zone' ||
+    ownerKind === 'Aisle' ||
+    ownerKind === 'Rack' ||
+    ownerKind === 'Element'
+  ) return ownerKind
+  throw new Error(`Unsupported Design projection owner kind ${ownerKind}`)
 }
 
 function finalizeManifest(

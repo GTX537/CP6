@@ -131,14 +131,21 @@ export class ElementCanvasLayer {
   }
 
   private addDrawable(drawable: ElementCanvasDrawable): void {
+    const selectable = drawable.ownerKind === 'Element' || drawable.ownerKind === 'Rack'
     const selected = this.selectedLogicalIds.has(drawable.logicalId)
     const common = {
-      name: 'design-element',
+      name: selectable ? 'design-element' : 'design-layout-context',
       fill: colorFor(drawable.elementType),
-      opacity: selected ? 0.9 : 0.66,
+      opacity: selected
+        ? 0.9
+        : drawable.ownerKind === 'Zone'
+          ? 0.16
+          : drawable.ownerKind === 'Aisle'
+            ? 0.28
+            : 0.66,
       stroke: selected ? '#f59e0b' : '#1e3a5f',
       strokeWidth: selected ? 4 : 1.5,
-      listening: this.enabled,
+      listening: this.enabled && selectable,
     }
     const node: Konva.Shape =
       drawable.kind === 'rect'
@@ -148,13 +155,13 @@ export class ElementCanvasLayer {
     node.setAttr('ownerKind', drawable.ownerKind)
     node.setAttr('elementType', drawable.elementType)
     node.on('pointerdown', (event: Konva.KonvaEventObject<PointerEvent>) => {
-      if (!this.enabled) return
+      if (!this.enabled || !selectable) return
       event.cancelBubble = true
       this.onSelect(
         [
           {
             logicalId: drawable.logicalId,
-            ownerKind: drawable.ownerKind,
+            ownerKind: drawable.ownerKind as CanvasObjectRef['ownerKind'],
           },
         ],
         hasSelectionModifier(event.evt) ? 'toggle' : 'replace',
@@ -179,7 +186,7 @@ export class ElementCanvasLayer {
       )
       .map((node) => ({
         logicalId: String(node.getAttr('logicalId')),
-        ownerKind: node.getAttr('ownerKind') as 'Element' | 'Rack',
+        ownerKind: node.getAttr('ownerKind') as CanvasObjectRef['ownerKind'],
       }))
     return [
       ...new Map(matches.map((item) => [item.logicalId, item])).values(),
@@ -232,6 +239,10 @@ function colorFor(elementType: string): string {
   switch (elementType) {
     case 'Rack':
       return '#14b8a6'
+    case 'Zone':
+      return '#0891b2'
+    case 'Aisle':
+      return '#f59e0b'
     case 'Wall':
       return '#64748b'
     case 'Column':

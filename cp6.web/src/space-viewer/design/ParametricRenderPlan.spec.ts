@@ -99,6 +99,46 @@ describe('ParametricRenderPlan', () => {
     expect(asset.rotationZ).toBe(120)
   })
 
+  it('renders DesignRevision zones and aisles from their authoritative polygons', () => {
+    const scene = emptyScene()
+    const zoneId = '77777777-7777-7777-7777-777777777777'
+    const aisleId = '88888888-8888-8888-8888-888888888888'
+    scene.zones = [{
+      revision: { logicalId: zoneId, lifecycleState: 'Active' },
+      zoneCode: 'Z-A',
+      polygonJson: '{"schemaVersion":1,"points":[[0,0],[10000,0],[10000,8000],[0,8000]]}',
+    }]
+    scene.aisles = [{
+      revision: { logicalId: aisleId, lifecycleState: 'Active' },
+      zoneLogicalId: zoneId,
+      aisleCode: 'A-01',
+      polygonJson: '{"schemaVersion":1,"points":[[1000,0],[3000,0],[3000,8000],[1000,8000]]}',
+    }]
+
+    const plan = buildParametricRenderPlan(scene)
+
+    expect(plan.polygons).toHaveLength(2)
+    expect(plan.polygons[0]).toMatchObject({
+      logicalId: zoneId,
+      ownerKind: 'Zone',
+      businessCode: 'Z-A',
+      materialRole: 'zone',
+      height: 10,
+    })
+    expect(plan.polygons[1]).toMatchObject({
+      logicalId: aisleId,
+      ownerKind: 'Aisle',
+      parentLogicalId: zoneId,
+      businessCode: 'A-01',
+      materialRole: 'aisle',
+      height: 16,
+    })
+
+    const build = new SceneBuilder().buildDesign(scene)
+    expect(build.plan.polygons).toHaveLength(2)
+    build.dispose()
+  })
+
   it('builds shared instanced meshes with data-axis scale and stable pick maps', () => {
     const builder = new SceneBuilder()
     const result = builder.buildDesign(rackScene())

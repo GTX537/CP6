@@ -146,4 +146,57 @@ describe('buildElementCanvasPlan', () => {
     expect(polygon.points[1]?.x).toBeCloseTo(1000)
     expect(polygon.points[1]?.y).toBeCloseTo(2100)
   })
+
+  it('projects active Zone and Aisle revisions as shared layout context', () => {
+    const zoneId = '77777777-7777-7777-7777-777777777777'
+    const aisleId = '88888888-8888-8888-8888-888888888888'
+    const scene = {
+      schemaVersion: 1,
+      authority: 'DesignRevision',
+      runtimeOverlayIncluded: false,
+      zones: [{
+        revision: { logicalId: zoneId, lifecycleState: 'Active' },
+        zoneCode: 'Z-A',
+        polygonJson: '{"schemaVersion":1,"points":[[0,0],[10000,0],[10000,8000],[0,8000]]}',
+      }],
+      aisles: [{
+        revision: { logicalId: aisleId, lifecycleState: 'Active' },
+        zoneLogicalId: zoneId,
+        aisleCode: 'A-01',
+        polygonJson: '{"schemaVersion":1,"points":[[1000,0],[3000,0],[3000,8000],[1000,8000]]}',
+      }],
+      racks: [],
+      rackLevels: [],
+      elements: [],
+    } as unknown as ISpaceDesignSceneDto
+
+    const plan = buildElementCanvasPlan(scene)
+
+    expect(plan).toEqual([
+      {
+        kind: 'polygon',
+        logicalId: zoneId,
+        ownerKind: 'Zone',
+        elementType: 'Zone',
+        points: [
+          { x: 0, y: 0 },
+          { x: 10_000, y: 0 },
+          { x: 10_000, y: 8_000 },
+          { x: 0, y: 8_000 },
+        ],
+      },
+      {
+        kind: 'polygon',
+        logicalId: aisleId,
+        ownerKind: 'Aisle',
+        elementType: 'Aisle',
+        points: [
+          { x: 1_000, y: 0 },
+          { x: 3_000, y: 0 },
+          { x: 3_000, y: 8_000 },
+          { x: 1_000, y: 8_000 },
+        ],
+      },
+    ])
+  })
 })

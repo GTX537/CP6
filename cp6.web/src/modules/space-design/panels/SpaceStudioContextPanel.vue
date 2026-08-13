@@ -81,7 +81,7 @@ const modes: Array<{ id: Mode; label: string; glyph: string }> = [
 
       <template v-else-if="activeMode === 'assets'">
         <h2>构件库</h2>
-        <p>墙、柱、门、月台、静态设备与货架模板。</p>
+        <p>库区、巷道、货架与静态建筑构件。</p>
         <button type="button" class="primary" :disabled="readonly" @click="emit('openRuleOnly')">
           从 CAD 规则生成构件
         </button>
@@ -91,6 +91,7 @@ const modes: Array<{ id: Mode; label: string; glyph: string }> = [
           </button>
         </div>
         <div class="empty-note">构件会落在当前指针附近并通过同一租约、Revision 与 CommandBatch 权威链保存；创建后可在右侧属性面板精调。</div>
+        <slot name="assets" />
       </template>
 
       <template v-else-if="activeMode === 'layers'">

@@ -1,5 +1,11 @@
 # 已完成能力与近期里程碑
 
+## 2026-08-13 Space Studio WP1 工作台创建接入
+
+- 从远端 `main@fbc1b4e5` 建立独立 `codex/space-layout-workbench-create`，将已合入的 Layout Command 接入 Space Studio 单一“构件”上下文；库区、巷道、货架均提供显式编码、几何和父级表单，货架另提供 1–50 层逐层规格、库位数预览和可选编码前缀。
+- 所有创建继续使用 Design V1 租约、Floor/Content Revision、幂等命令包和本地失败恢复；成功后刷新同一 Design scene。Zone/Aisle 现由共享参数化渲染计划投影到 2D/3D，机器清单验证与 Rack/Element 同源；它们暂作为布局上下文，不误接旧通用 Element 的修改/删除命令。
+- 自动化覆盖表单禁用/父级约束/逐层 payload、前端包络校验、确定性几何、上下文单开和 Zone/Aisle 2D/3D 一致性；Web 全量 740/740、Space Studio Playwright 6/6、Vue type-check、生产构建及 `git diff --check` 通过。设计态修改/删除和批量编码仍在 Todo，本卡不表示 WP1 或 GA 完成。
+
 ## 2026-08-13 Space Studio WP1 Layout Command 创建链
 
 - M0 PR #4 已完成完整门禁、合入并推送远端 `main@9c320a74`；本任务从该最新基线建立独立 `codex/space-layout-command-v1` 分支。
