@@ -2,6 +2,13 @@
 
 最后更新：2026-08-13
 
+## CRM V1 M0/R00 发布权威工件（2026-08-13）
+
+- 从 `main == origin/main == 57f0199ab014ea5d8b09939c0421de6f771943f3` 创建独立 `codex/crm-r00-release-authority-20260813` 文档分支；未创建 CRM/Platform 仓库、业务代码、云资源、Secret、候选或部署。
+- `ADR-CRM-R00` 固定 CRM V1 的 GHCR/GitHub R2 唯一 Registry/候选权威、Azure 非权威边界、Build once/digest 推广、Platform R2 唯一 System Release Manifest 签发者和整套默认回退。
+- 当前 CP6 Schema 2 `release-manifest.json` 只作为 CP6/WMS 组件候选清单；OCI 镜像签名、三仓 System Manifest、OpenAPI/Event/Dapr/DB 兼容范围、previous digest 与采用证据明确登记为 P10/CRM12 Gap，不冒充现有能力。
+- 新增 M0 就绪清单，登记 DEC-CRM-001–007、named Owner、Azure SQL/Emergency Intake、Observation 和 Pilot 输入。所有批准与真实环境证据仍 Pending，因此 M0 保持 No-Go，`CRM01-S01` 和 CRM 仓创建继续锁定。
+
 ## CRM V1 T1 对抗审阅收口（2026-08-13）
 
 - T1 继续保持纯规范范围；没有创建 `CP6.CRM` 仓库、业务代码、数据库、云资源、迁移或部署。新仓只允许由满足 T1/M0/P01 前置的 `CRM01-S01` 创建。

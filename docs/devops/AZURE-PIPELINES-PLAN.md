@@ -26,18 +26,21 @@
 
 ## Phase 2：发布权威与 Registry 决策
 
-状态：**待决策，必须先于 Docker Release**。
+状态：**一般 CP6/Azure 路线待决策；CRM V1 决策已记录、批准待完成**。
 
-- [ ] 决定唯一候选 Registry：继续 GHCR，或迁移到 ACR。
-- [ ] 若选择 ACR，创建/审批 Azure Container Registry 和最小权限 Service Connection；不把凭据写入 YAML/Git。
-- [ ] 决定 Azure 与 GitHub R2 的迁移模式：影子验证、候选复制或最终切换。
-- [ ] 确定版本入口，默认沿用受保护 `vX.Y.Z` Tag 和当前 `main` 校验。
-- [ ] 确定候选清单的唯一格式和存储位置，避免 Azure/GitHub 各产一份冲突清单。
-- [ ] 写出 GitHub R2 退出条件和一键恢复旧发布链的时限。
+CRM V1 由 [ADR-CRM-R00](./adr/ADR-CRM-R00-RELEASE-AUTHORITY.md) 固定为 GHCR/GitHub R2 唯一 Registry/候选权威。该选择不得在实现票中重开；R00 仍为 Proposed，M0 状态见 [CRM M0 就绪清单](../crm/CRM-M0-READINESS.md)。
 
-建议：Azure Release 先以影子模式产出非生产候选并比较 digest、SBOM、扫描和清单；通过等价验收后再切换唯一权威。不要让两个系统对同一版本分别 Build。
+- [x] 记录 CRM V1 唯一候选 Registry 为 GHCR，权威工作流为 GitHub R2。
+- [x] 记录 Azure 在 CRM V1 中只可执行 CI、DEV 学习、非权威影子验证或消费同一 digest。
+- [x] 区分当前 CP6 Schema 2 组件清单与未来 CRM 三仓 System Release Manifest。
+- [x] 盘点现有 R2 与 CRM 目标能力，明确 OCI 签名、三仓清单、兼容范围和采用证据 Gap。
+- [ ] 取得 Release Owner、System Architect、Security Owner、SRE Owner 对 R00 固定 digest 的批准。
+- [ ] 为 R00 等价矩阵中的 Gap 建立有 DRI/reviewer/验证命令的独立 P10/CRM12 任务。
+- [ ] 若一般 CP6/Azure 路线未来选择 ACR，另立 ADR 固定复制而非重建、影子期、切换/退出门禁和恢复时限。
 
-`GATE`：Registry、候选清单和发布权威均有唯一答案，并通过安全/运维评审。
+Azure 影子链只能重跑验证或消费 R2 digest；它产生的源码构建物必须明确标为非候选且不可推广。禁止 GitHub 与 Azure 对同一版本分别 Build 并都声称正式候选。
+
+`GATE`：CRM V1 必须先让 R00 获有效批准并关闭 M0；一般 ACR 迁移必须另有 Accepted ADR。任何路线都只能有一个 Registry、一个候选清单签发者和一个发布权威。
 
 ## Phase 3：Docker Release
 
@@ -109,16 +112,15 @@
 
 ## 当前下一张任务卡
 
-**任务：Azure Release Authority & Registry Decision**
+**CRM 路线：关闭 M0 外部输入，不实施 Docker Release。**
 
-范围：
+1. 由受控项目系统冻结 Sponsor、所有 named Owner 与 backup；
+2. 完成 R00、DEC-CRM-002–007 的有效批准和不可变证据引用；
+3. 完成 Observation baseline、Pilot cohort/task manifest；
+4. 由 SRE/DBA/Security 审批 Azure SQL/Emergency Intake 合同与真实环境/演练计划；
+5. M0 全部 Approved 后，再在 P01 提供 runner/合同；此后才可由 CRM01-S01 创建 CRM 私有仓。
 
-1. 输出 GHCR 与 ACR 的选择记录；
-2. 定义 Azure/GitHub 影子期和唯一候选清单；
-3. 盘点现有 R2 门禁，形成 Azure 等价矩阵；
-4. 设计 Phase 3 YAML，但暂不触发生产部署。
-
-完成定义：评审通过的决策文档、等价矩阵、Service Connection 权限边界和可回退迁移方案。没有该决策，不直接实现 ACR Push。
+一般 Azure Release/ACR 演进保持独立任务，不得借 CRM V1 绕过 R00、重新选择 Registry 或直接实现 ACR Push。
 
 ## 相关文档
 

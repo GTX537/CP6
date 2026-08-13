@@ -2,6 +2,12 @@
 
 > 依据 Git log 汇总，不替代完整 Git 历史。重点记录影响接手判断的里程碑。
 
+## 2026-08-13：CRM R00 发布权威与 M0 No-Go 工件
+
+- 新增 `ADR-CRM-R00`，把 CRM V1 的 GHCR/GitHub R2 唯一 Registry/候选权威、Azure 非权威边界、Platform R2 唯一 System Release Manifest 签发者和整套默认回退写成可批准决策。
+- 区分现有 CP6 Schema 2 组件清单与未来三仓系统清单；如实登记 OCI 镜像签名、兼容范围、previous digest、真实升级数据和采用/ERP 证据缺口。
+- 新增 M0 readiness，冻结 DEC-CRM-001–007、named Owner、Azure SQL/Emergency Intake、Observation/Pilot 的证据规则与关闭公式。当前所有外部批准仍 Pending，因此 M0 保持 No-Go，未创建仓库、业务代码、云资源、候选或部署。
+
 ## 2026-08-13：CRM V1 T1 对抗审阅收口
 
 - 把公开提交从浏览器直达 CRM 收紧为同源 Next.js BFF，并固定服务 JWT、Dapr mTLS AppId、workload/network identity 交集；补齐 attempt 绑定、幂等回执、tombstone 与 3800-byte Cookie 预算。

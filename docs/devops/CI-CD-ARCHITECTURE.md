@@ -66,10 +66,10 @@ main CI -------------------------------+
                  健康、身份、迁移与证据核对
 ```
 
-目标中的“唯一受控 Registry”尚未最终切换。聊天规划建议 ACR，但仓库现行 R2 使用 GHCR。实施 Azure Release 前必须记录选择：
+一般 CP6/Azure 演进中的“唯一受控 Registry”尚未最终切换；仓库现行 R2 使用 GHCR。CRM V1 是更窄且已锁定的边界：[ADR-CRM-R00](./adr/ADR-CRM-R00-RELEASE-AUTHORITY.md) 固定 GHCR/GitHub R2 为整个 CRM V1 Epic 的唯一 Registry/候选权威，Azure Pipelines 只消费/推广其 digest 或进行非权威验证。
 
-- 若选择 ACR，定义从 GHCR/R2 到 ACR/Azure 的迁移期、镜像复制或重建禁令、清单格式和回退条件。
-- 若暂时保留 GHCR，Azure Pipelines 只消费/推广现有候选，不另建同版本镜像。
+- CRM V1 不实施 ACR；未来迁移需独立 ADR，定义复制而非重建、影子期、清单格式、切换/退出和恢复条件。
+- 一般 Azure 路线在决策前也不得把 ACR 设为生产真相源。
 - 不允许 GitHub 与 Azure 对同一个版本号各自重新 Build，并都声称是生产候选。
 
 ## 职责边界

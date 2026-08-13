@@ -2,7 +2,7 @@
 
 本目录保存 CP6 的项目级 DevOps 上下文，供开发者、Codex 和发布负责人共同使用。它回答三个问题：当前流水线已经做到了什么、目标发布链是什么、下一步按什么顺序实施。
 
-> 当前状态：Azure DevOps 已接入 CI，但尚未成为 CP6 的生产发布权威。现有 WMS R2 候选与部署链仍由 GitHub Actions 和 [`docs/client/r2`](../client/r2/README.md) 约束。未经显式迁移验收，不得删除、绕过或弱化现有 R2 门禁。
+> 当前状态：Azure DevOps 已接入 CI，但尚未成为 CP6 的生产发布权威。现有 WMS R2 候选与部署链仍由 GitHub Actions 和 [`docs/client/r2`](../client/r2/README.md) 约束。CRM V1 已进一步锁定 GHCR/GitHub R2 为整个 Epic 的唯一 Registry/候选权威；Azure 仅可做非权威验证或消费同一 digest。未经独立迁移 ADR 与等价验收，不得删除、绕过或弱化现有 R2 门禁。
 
 ## 文档地图
 
@@ -10,6 +10,8 @@
 | --- | --- | --- |
 | [CI/CD 架构](./CI-CD-ARCHITECTURE.md) | Explanation | 解释当前双流水线边界、目标架构和关键取舍 |
 | [Azure Pipelines 演进计划](./AZURE-PIPELINES-PLAN.md) | Reference / Roadmap | 记录阶段、任务、完成定义和迁移门禁 |
+| [DevOps ADR 索引](./adr/README.md) | Decision index | 记录候选身份、发布权威、环境推广和恢复边界的决策状态 |
+| [CRM R00 发布权威 ADR](./adr/ADR-CRM-R00-RELEASE-AUTHORITY.md) | Proposed ADR | 固定 CRM V1 的 GHCR/R2 权威、Azure 边界、System Manifest 与等价缺口 |
 | [Azure Environments 设置](./AZURE-ENVIRONMENTS-SETUP.md) | How-to / Checklist | 创建并验收 DEV、UAT、PROD-LAB 逻辑环境 |
 | [部署 Agent Readiness](./DEPLOY-AGENT-READINESS.md) | How-to / Gate | 验证专用部署身份、Docker Desktop 和本机 SQL TCP 能力 |
 | [DEV 自动部署](./DEV-AUTOMATIC-DEPLOYMENT.md) | How-to / Checklist | 创建受限 `CP6 DEV CD`，完成本机学习环境的首次 deployment job 验收 |
@@ -56,7 +58,7 @@
 3. **发布身份可追溯**：至少记录版本、完整 Git SHA、镜像 digest、Pipeline Run ID、批准人、部署时间和验证证据。
 4. **数据库只前向迁移**：初始化先于 API/Web；回退应用前先证明 Schema 兼容，数据库故障用更高版本迁移前滚修复。
 5. **审批不由 YAML 作者控制**：PROD Approval/Checks 放在 Azure Environment 或其他受保护资源上。
-6. **不产生双重真相源**：ACR 是 Azure 路线的候选目标；当前 R2 使用 GHCR。切换前必须明确 registry、候选清单和发布权威的唯一来源。
+6. **不产生双重真相源**：一般 Azure 路线若评估 ACR，必须先明确 registry、候选清单和发布权威的唯一来源；CRM V1 已由 [R00](./adr/ADR-CRM-R00-RELEASE-AUTHORITY.md) 固定 GHCR/R2，ACR 不属于该 Epic。
 
 ## Codex 接手顺序
 
