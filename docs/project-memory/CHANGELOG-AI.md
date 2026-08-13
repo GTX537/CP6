@@ -2,12 +2,12 @@
 
 > 依据 Git log 汇总，不替代完整 Git 历史。重点记录影响接手判断的里程碑。
 
-## 2026-08-13：Space Studio WP1 Layout Command 任务分支
+## 2026-08-13：Space Studio WP1 Layout Command 创建链
 
 - 在 `main@9c320a74` 上建立独立 `codex/space-layout-command-v1`，新增 Design V1 `/layout-commands` 原子写入口和 C#/TypeScript SDK；Zone、Aisle、Rack 继续写设计态 Revision，RackLevel/Location 由逐层规格与确定性身份算法生成，不伪装成 `Space_Element`。
 - 写入统一受编辑租约、Floor Revision、Content Revision、幂等回放和命令审计保护；任一父级/代码/身份冲突整批零写入。库位编码前缀为显式输入，未提供时保持未编码，为后续 Preview → Apply 批量编码保留权威边界。
 - 分支验证为 Release solution 0 warning / 0 error、Space Unit 497、真实 SQL Space Integration 397（0 skipped）、CP6.Tests 2868、Web 729、Vue type-check/生产构建与 SDK/EF drift clean。
-- 当前记录是任务分支状态，不宣称已合入或 WP1 完成；后续仍需工作台 UI、修改/删除、批量编码及完整门禁。
+- 任务提交 `77256dd9` 已通过 `289b51d0` 合入并推送远端 `main`；后续仍需工作台 UI、修改/删除、批量编码及完整门禁，未将该切片记为 WP1 或 GA 完成。
 
 ## 2026-08-13：Space Studio v1.3 核心实现与预发布收口
 
