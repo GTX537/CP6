@@ -2,6 +2,12 @@
 
 > 依据 Git log 汇总，不替代完整 Git 历史。重点记录影响接手判断的里程碑。
 
+## 2026-08-14：Space Studio WP4 底图与 Excel–CAD 工作台路径闭环
+
+- 底图上传并挂接后，工作台上下文面板现在显示“标定底图”，已标定来源可重新标定；只读状态禁用写入口。三点标定继续写既有 Design V1 calibration 合同。
+- `matchJobId` 深链会自动打开问题域与 Excel–CAD 权威匹配面板；匹配行可定位 Draft Rack，显式确认仍绑定 Artifact Hash 和 Expected Content Revision 后 Apply。
+- Playwright 新增图片底图、Excel–CAD、DWG、DXF 四条路径证据；Web 762、Space Studio Playwright 13、Vue type-check、production build 与 diff whitespace 通过。测试使用受控 API fixture，真实 Provider/文件/WMS/Pilot 门禁未完成，本切片不等于 WP4 或核心 GA。
+
 ## 2026-08-14：Space Studio WP5 2D/3D 同源选择与逐楼层视角恢复
 
 - 草稿 3D 增加参数化场景 raycast 拾取，Element/Zone/Aisle/Rack 使用同一 Design LogicalId，RackLevel 回到父 Rack；点选进入既有工作台选择状态，Ctrl/Command 切换选择，Orbit 拖动不误触。

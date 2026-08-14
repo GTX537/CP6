@@ -1,3 +1,4 @@
+import { readFileSync } from 'node:fs'
 import path from 'node:path'
 import { expect, test, type Page } from '@playwright/test'
 
@@ -8,6 +9,10 @@ const rackLevelId = '44444444-4444-4444-4444-444444444444'
 const columnId = '55555555-5555-5555-5555-555555555555'
 const cadSourceId = 'aaaaaaaa-2222-2222-2222-222222222222'
 const cadParseJobId = 'aaaaaaaa-4444-4444-4444-444444444444'
+const underlaySourceId = 'bbbbbbbb-2222-2222-2222-222222222222'
+const underlayFileId = 'bbbbbbbb-3333-3333-3333-333333333333'
+const excelCadMatchJobId = 'cccccccc-2222-2222-2222-222222222222'
+const excelCadApplyJobId = 'cccccccc-3333-3333-3333-333333333333'
 const studioUrl = `/space/design/${versionId}/floors/${floorId}/underlay`
 
 test('1440x900 provides the full editor and a consistent local 3D preview', async ({ page }) => {
@@ -88,6 +93,94 @@ test('1280x720 remains a complete editing surface', async ({ page }) => {
   await expect(page.getByText('窄屏只读', { exact: true })).toHaveCount(0)
   await expect(page.locator('.el-loading-mask')).toHaveCount(0)
   await captureEvidence(page, 'space-studio-1280x720.png')
+  expect(errors).toEqual([])
+})
+
+test('uploads and calibrates an image underlay without internal identifiers', async ({ page }) => {
+  const errors = collectPageErrors(page)
+  const methods: string[] = []
+  const underlayBodies: Array<Record<string, any>> = []
+  await installSpaceStudioFixtures(page, methods, { underlayBodies })
+  await page.setViewportSize({ width: 1440, height: 900 })
+  await page.goto(studioUrl)
+
+  await page.locator('input[accept^=".pdf,.png"]').setInputFiles({
+    name: 'warehouse-floor.png',
+    mimeType: 'image/png',
+    buffer: underlayPng(),
+  })
+  await expect(page.getByText('底图：待标定', { exact: true })).toBeVisible()
+
+  await page.getByRole('button', { name: '标定底图', exact: true }).click()
+  await expect(page.getByText('两点标定', { exact: true })).toBeVisible()
+  await page.locator('.calibration-point-row').nth(2).locator('input').nth(0).fill('10000')
+  const stage = page.locator('.canvas .konvajs-content')
+  const bounds = await stage.boundingBox()
+  expect(bounds).not.toBeNull()
+  const renderWidth = Math.min(
+    bounds!.width * 0.8,
+    bounds!.height * 0.8 * (1440 / 900),
+  )
+  const renderHeight = renderWidth * (900 / 1440)
+  const renderTop = bounds!.height - renderHeight
+  await stage.click({
+    position: { x: renderWidth * 0.1, y: renderTop + renderHeight * 0.7 },
+  })
+  await stage.click({
+    position: { x: renderWidth * 0.7, y: renderTop + renderHeight * 0.7 },
+  })
+  await stage.click({
+    position: { x: renderWidth * 0.7, y: renderTop + renderHeight * 0.1 },
+  })
+  await expect(page.locator('.calibration-preview')).toContainText('验证误差')
+  await page.getByRole('button', { name: '验证并保存', exact: true }).click()
+
+  await expect(page.getByText('底图：已标定', { exact: true })).toBeVisible()
+  expect(methods).toEqual(expect.arrayContaining([
+    'POST underlay upload',
+    'PUT underlay attach',
+    'GET underlay content',
+    'POST underlay calibration',
+  ]))
+  expect(underlayBodies).toHaveLength(1)
+  expect(underlayBodies[0]).toMatchObject({
+    floorLogicalId: floorId,
+    pageNumber: 1,
+    pixelWidth: 1440,
+    pixelHeight: 900,
+    expectedFloorRevision: 8,
+  })
+  expect(errors).toEqual([])
+})
+
+test('reviews and confirms the authoritative CAD plus Excel match in the studio', async ({ page }) => {
+  const errors = collectPageErrors(page)
+  const methods: string[] = []
+  const matchBodies: Array<Record<string, any>> = []
+  await installSpaceStudioFixtures(page, methods, { matchBodies })
+  await page.setViewportSize({ width: 1440, height: 900 })
+  await page.goto(`${studioUrl}?matchJobId=${excelCadMatchJobId}`)
+
+  await expect(page.getByRole('heading', { name: 'Excel–CAD 权威匹配' })).toBeVisible()
+  await expect(page.getByText('满足后续确认条件', { exact: true })).toBeVisible()
+  const matchRow = page.locator('[data-test="match-row"]')
+  await expect(matchRow).toContainText('R-001')
+  await matchRow.click()
+  await expect(page.locator('.studio-statusbar')).toContainText('选择 1')
+
+  await page.locator('[data-test="confirm-match"]').click()
+  await expect(page.locator('[data-test="confirmation-succeeded"]')).toBeVisible()
+  expect(methods).toEqual(expect.arrayContaining([
+    'GET Excel-CAD match',
+    'POST Excel-CAD confirmation',
+    'GET Excel-CAD confirmation',
+  ]))
+  expect(matchBodies).toEqual([{
+    confirmed: true,
+    artifactId: 'excel-cad-artifact-1',
+    artifactPayloadSha256: 'f'.repeat(64),
+    expectedContentRevision: 7,
+  }])
   expect(errors).toEqual([])
 })
 
@@ -277,7 +370,21 @@ test('previews protected location codes and explicitly applies the frozen propos
   expect(errors).toEqual([])
 })
 
-test('uploads CAD and requires a server preview plus two confirmations before parse start', async ({ page }) => {
+for (const cadSample of [
+  {
+    format: 'DWG',
+    fileName: 'warehouse.dwg',
+    mimeType: 'application/vnd.autocad.dwg',
+    content: Buffer.from('AC1027-CP6-DWG-FIXTURE'),
+  },
+  {
+    format: 'DXF',
+    fileName: 'warehouse.dxf',
+    mimeType: 'application/vnd.autocad.dxf',
+    content: Buffer.from('0\nSECTION\n2\nENTITIES\n0\nENDSEC\n0\nEOF\n'),
+  },
+]) {
+test(`uploads ${cadSample.format} and requires a server preview plus two confirmations before parse start`, async ({ page }) => {
   const errors = collectPageErrors(page)
   const methods: string[] = []
   const cadBodies: Array<Record<string, any>> = []
@@ -286,9 +393,9 @@ test('uploads CAD and requires a server preview plus two confirmations before pa
   await page.goto(studioUrl)
 
   await page.locator('input[accept^=".dwg,.dxf"]').setInputFiles({
-    name: 'warehouse.dxf',
-    mimeType: 'application/vnd.autocad.dxf',
-    buffer: Buffer.from('0\nSECTION\n2\nENTITIES\n0\nENDSEC\n0\nEOF\n'),
+    name: cadSample.fileName,
+    mimeType: cadSample.mimeType,
+    buffer: cadSample.content,
   })
   await expect(page.getByRole('heading', { name: '确认楼层、单位、坐标与映射' })).toBeVisible()
   await page.getByLabel('来源单位').selectOption('Millimeter')
@@ -319,6 +426,7 @@ test('uploads CAD and requires a server preview plus two confirmations before pa
   })
   expect(errors).toEqual([])
 })
+}
 
 function collectPageErrors(page: Page): string[] {
   const errors: string[] = []
@@ -345,6 +453,8 @@ async function installSpaceStudioFixtures(
     codingBodies?: Array<Record<string, any>>
     cadBodies?: Array<Record<string, any>>
     cadReview?: boolean
+    underlayBodies?: Array<Record<string, any>>
+    matchBodies?: Array<Record<string, any>>
   } = {},
 ) {
   await page.addInitScript(() => {
@@ -386,9 +496,106 @@ async function installSpaceStudioFixtures(
     const cadPreparationPath = `/api/space/design/v1/versions/${versionId}/sources/${cadSourceId}/cad-preparations:preview`
     const cadParsePath = `/api/space/design/v1/versions/${versionId}/sources/${cadSourceId}/cad-parses`
     const cadCapabilityPath = `/api/space/design/v1/sites/${scene.siteId}/cad-capability`
+    const underlayUploadPath = `/api/space/design/v1/versions/${versionId}/underlay-sources`
+    const underlayAttachPath = `/api/space/design/v1/versions/${versionId}/floors/${floorId}/underlay`
+    const underlayContentPath = `/api/space/design/v1/versions/${versionId}/sources/${underlaySourceId}/content`
+    const underlayCalibrationPath = `/api/space/design/v1/versions/${versionId}/sources/${underlaySourceId}/underlay-calibration`
+    const excelCadMatchPath = `/api/space/design/v1/versions/${versionId}/excel-cad-matches/${excelCadMatchJobId}`
 
     if (url.pathname === scenePath) {
       await route.fulfill({ json: scene })
+      return
+    }
+    if (url.pathname === underlayUploadPath && request.method() === 'POST') {
+      methods.push('POST underlay upload')
+      await route.fulfill({
+        status: 201,
+        json: {
+          file: { id: underlayFileId, state: 'Clean' },
+          source: { id: underlaySourceId, state: 'Ready' },
+        },
+      })
+      return
+    }
+    if (url.pathname === underlayAttachPath && request.method() === 'PUT') {
+      methods.push('PUT underlay attach')
+      scene.floor.revisionNumber = 8
+      scene.floor.underlaySourceId = underlaySourceId
+      await route.fulfill({ json: { floor: scene.floor } })
+      return
+    }
+    if (url.pathname === underlayContentPath) {
+      methods.push('GET underlay content')
+      await route.fulfill({
+        contentType: 'image/png',
+        body: underlayPng(),
+      })
+      return
+    }
+    if (url.pathname === underlayCalibrationPath && request.method() === 'POST') {
+      methods.push('POST underlay calibration')
+      const body = request.postDataJSON() as Record<string, any>
+      options.underlayBodies?.push(body)
+      scene.floor.revisionNumber = 9
+      scene.floor.underlayCalibrationId = 'bbbbbbbb-4444-4444-4444-444444444444'
+      scene.floor.underlayScale = 10
+      scene.floor.underlayOffsetX = 0
+      scene.floor.underlayOffsetY = 0
+      scene.floor.underlayRotationZ = 0
+      await route.fulfill({
+        json: {
+          floor: scene.floor,
+          calibration: {
+            id: scene.floor.underlayCalibrationId,
+            modelVersionId: versionId,
+            floorLogicalId: floorId,
+            sourceId: underlaySourceId,
+            pageNumber: 1,
+            pixelWidth: 1440,
+            pixelHeight: 900,
+            point1: body.point1,
+            point2: body.point2,
+            validationPoint: body.validationPoint,
+            millimetersPerPixel: 10,
+            offsetX: 0,
+            offsetY: 0,
+            rotationZ: 0,
+            validationErrorMillimeters: 0,
+            errorThresholdMillimeters: 50,
+          },
+        },
+      })
+      return
+    }
+    if (url.pathname === excelCadMatchPath && request.method() === 'GET') {
+      methods.push('GET Excel-CAD match')
+      await route.fulfill({ json: excelCadMatchFixture() })
+      return
+    }
+    if (url.pathname === `${excelCadMatchPath}/confirmations` && request.method() === 'POST') {
+      methods.push('POST Excel-CAD confirmation')
+      options.matchBodies?.push(request.postDataJSON() as Record<string, any>)
+      await route.fulfill({
+        status: 202,
+        json: {
+          matchJobId: excelCadMatchJobId,
+          applyJobId: excelCadApplyJobId,
+          jobStatus: 'Queued',
+        },
+      })
+      return
+    }
+    if (url.pathname === `${excelCadMatchPath}/confirmations/${excelCadApplyJobId}`) {
+      methods.push('GET Excel-CAD confirmation')
+      await route.fulfill({
+        json: {
+          matchJobId: excelCadMatchJobId,
+          applyJobId: excelCadApplyJobId,
+          commandBatchId: 'cccccccc-4444-4444-4444-444444444444',
+          jobStatus: 'Succeeded',
+          expectedContentRevision: 7,
+        },
+      })
       return
     }
     if (url.pathname === cadUploadPath && request.method() === 'POST') {
@@ -910,6 +1117,73 @@ function sceneFixture() {
     elementAttributes: [],
     locationExternalBindings: [],
     designAttributes: [],
+  }
+}
+
+function underlayPng(): Buffer {
+  return readFileSync(path.resolve(
+    process.cwd(),
+    '../docs/space/reports/e08-s05-performance-browser-hardware.png',
+  ))
+}
+
+function excelCadMatchFixture() {
+  return {
+    jobId: excelCadMatchJobId,
+    modelVersionId: versionId,
+    jobStatus: 'Succeeded',
+    processorVersion: 'space-excel-cad-match-v1',
+    excelSourceId: 'cccccccc-5555-5555-5555-555555555555',
+    preflightJobId: 'cccccccc-6666-6666-6666-666666666666',
+    cadSourceId,
+    cadParseJobId,
+    floorLogicalId: floorId,
+    expectedContentRevision: 7,
+    artifactId: 'excel-cad-artifact-1',
+    artifactPayloadSha256: 'f'.repeat(64),
+    fileSha256: 'e'.repeat(64),
+    canConfirm: true,
+    summary: {
+      excelRackRowCount: 1,
+      newCount: 0,
+      updateCount: 1,
+      unchangedCount: 0,
+      unmatchedCount: 0,
+      conflictCount: 0,
+      errorCount: 0,
+      locatableCount: 1,
+    },
+    totalRowCount: 1,
+    returnedRowCount: 1,
+    rows: [{
+      excelRowId: 'excel-row-1',
+      sourceSheet: 'Racks',
+      rowNumber: 2,
+      values: { rackCode: 'R-001' },
+      disposition: 'Update',
+      cadPreviewObjectId: 'cad-rack-1',
+      editorLogicalId: rackId,
+      matchedSourceRef: 'H:RACK-001',
+      cadConfidence: 0.98,
+      cadConfidenceBand: 'High',
+      keyEvidence: [{
+        kind: 'EditorRackCode',
+        value: 'R-001',
+        candidateId: rackId,
+      }],
+      differenceFields: ['name'],
+      errorCodes: [],
+      location: {
+        kind: 'Entity',
+        floorLogicalId: floorId,
+        sourceRef: 'H:RACK-001',
+        anchor: { x: 2200, y: 1700, z: 0 },
+        bounds: { minX: 1000, minY: 1200, maxX: 3400, maxY: 2200 },
+        suggestedPaddingMillimeters: 500,
+        canFocusCanvas: true,
+      },
+      matchEvidenceSha256: 'd'.repeat(64),
+    }],
   }
 }
 

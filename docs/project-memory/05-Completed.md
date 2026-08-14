@@ -1,5 +1,12 @@
 # 已完成能力与近期里程碑
 
+## 2026-08-14 Space Studio WP4 底图与 Excel–CAD 工作台路径闭环
+
+- 从远端 `main@8d66d773` 建立独立 `codex/space-studio-path-e2e`，为底图上传后的工作台增加明确标定入口；已挂接底图可重新进入同一标定流程，窄屏或失租只读时入口禁用，不新增第二套底图权威。
+- Excel–CAD 权威匹配现在可由 `matchJobId` 深链直接打开问题域；用户可从匹配行定位当前 Draft Rack，并通过既有两阶段确认合同显式 Apply。匹配读取不会自动写 Draft，确认继续绑定 Artifact Hash 与 Expected Content Revision。
+- Space Studio Playwright 分别覆盖图片上传→挂接→三点标定、Excel–CAD 审核→定位→确认，以及 DWG、DXF 各自经服务器 Preview 和双确认启动解析。Web 762/762、Playwright 13/13、Vue type-check、production build 与 `git diff --check` 通过。
+- 本卡关闭的是仓库内 UI 与浏览器合同路径，不代表 WP4 或核心 GA 已完成；浏览器场景使用受控 API fixture，真实主备 Provider、授权 DWG/DXF、真实 Excel、发布到 CP6 WMS 与恢复证据仍在 Todo。
+
 ## 2026-08-14 Space Studio WP5 2D/3D 同源选择与逐楼层视角恢复
 
 - 从远端 `main@548c4077` 建立独立 `codex/space-studio-3d-interaction`，为草稿参数化 3D 场景增加 raycast 拾取；Element/Zone/Aisle/Rack 直接返回同一 Design LogicalId，RackLevel 归一到所属 Rack，不引入第二套选择或模型权威。
