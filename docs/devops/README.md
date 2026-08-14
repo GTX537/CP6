@@ -2,7 +2,7 @@
 
 本目录保存 CP6 的项目级 DevOps 上下文，供开发者、Codex 和发布负责人共同使用。它回答三个问题：当前流水线已经做到了什么、目标发布链是什么、下一步按什么顺序实施。
 
-> 当前状态：Azure DevOps 已接入 CI，但尚未成为 CP6 的生产发布权威。现有 WMS R2 候选与部署链仍由 GitHub Actions 和 [`docs/client/r2`](../client/r2/README.md) 约束。未经显式迁移验收，不得删除、绕过或弱化现有 R2 门禁。
+> 当前状态：Azure DevOps 已接入 CI，但尚未成为 CP6 的生产发布权威。现有 WMS R2 候选与部署链仍由 GitHub Actions 和 [`docs/client/r2`](../client/r2/README.md) 约束。CRM V1 的私有 R00 摘要 `64a53dd895aedc20a51288ad0ffdb69f60ddc7c22012c1df83984efba5adbc03` 已 Accepted，公开 [ADR-CRM-R00](./adr/ADR-CRM-R00-RELEASE-AUTHORITY.md) 镜像仍为 Candidate；P09/P10 未完成前不得声称候选对象身份 Gap 已关闭。
 
 ## 文档地图
 
@@ -15,6 +15,7 @@
 | [DEV 自动部署](./DEV-AUTOMATIC-DEPLOYMENT.md) | How-to / Checklist | 创建受限 `CP6 DEV CD`，完成本机学习环境的首次 deployment job 验收 |
 | [发布流程](./RELEASE-PROCESS.md) | How-to | 说明从代码到 DEV、审批和 PROD 的标准操作顺序 |
 | [环境策略](./ENVIRONMENT-STRATEGY.md) | Explanation / Reference | 定义 DEV、UAT、PROD 的用途、权限、配置和证据边界 |
+| [DevOps ADR 索引](./adr/README.md) | Normative mirror / Index | CRM R00 发布权威、候选对象身份、Manifest 与回退工程合同 |
 | [WMS R2 生产就绪主规范](../client/r2/README.md) | Normative | 当前生产候选、部署和现场试点的唯一规范源 |
 
 ## 当前事实
@@ -48,6 +49,7 @@
 | 专用部署 Agent | Readiness 已通过 | `CP6-Deploy` 使用 `cp6_deploy_agent` 服务身份；Azure Build ID `10` 验证身份、Docker、Compose 与 SQL TCP |
 | Azure DEV 自动部署 | 仓库配置已交付，Azure 运行待验收 | `azure-pipelines-dev.yml` 已定义 CI completion trigger、SHA 镜像、`cp6-dev` deployment job 和非敏感证据；外部 Pipeline 创建、资源授权与首次成功 Run 仍待完成 |
 | PROD 审批与部署 | Azure 未完成；GitHub R2 有受控实现 | 不得把 Azure CI 成功描述为生产上线 |
+| CRM R00 | 私有源 Accepted；公开同步 Candidate；P09/P10 Pending | GHCR/GitHub R2 已固定为 V1 唯一权威，但精确对象版本与四仓 Manifest 尚未实现 |
 
 ## 核心原则
 
@@ -56,7 +58,7 @@
 3. **发布身份可追溯**：至少记录版本、完整 Git SHA、镜像 digest、Pipeline Run ID、批准人、部署时间和验证证据。
 4. **数据库只前向迁移**：初始化先于 API/Web；回退应用前先证明 Schema 兼容，数据库故障用更高版本迁移前滚修复。
 5. **审批不由 YAML 作者控制**：PROD Approval/Checks 放在 Azure Environment 或其他受保护资源上。
-6. **不产生双重真相源**：ACR 是 Azure 路线的候选目标；当前 R2 使用 GHCR。切换前必须明确 registry、候选清单和发布权威的唯一来源。
+6. **不产生双重真相源**：CRM V1 已固定使用 GHCR/GitHub R2；Azure 只能做非权威验证或消费同一 digest。ACR 或其他 Registry 迁移必须另立 ADR，不得在本 Epic 内重建同版本候选。
 
 ## Codex 接手顺序
 
@@ -64,7 +66,7 @@
 
 1. 根目录 [`AGENTS.md`](../../AGENTS.md)；
 2. 本页与 [Azure Pipelines 演进计划](./AZURE-PIPELINES-PLAN.md)；
-3. [R2 主规范](../client/r2/README.md) 和相关生产规范；
+3. [R2 主规范](../client/r2/README.md)、[ADR-CRM-R00](./adr/ADR-CRM-R00-RELEASE-AUTHORITY.md) 和相关生产规范；
 4. 实际 `azure-pipelines.yml`、`.github/workflows/`、Dockerfile 与 `deploy/production/`。
 
 任何实现任务都必须从最新 `main` 创建单任务分支。根工作区有未提交改动时使用独立 worktree。

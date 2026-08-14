@@ -2,9 +2,8 @@
 
 最后确认：2026-08-10
 
-> 本文记录已合入 CP6 单体的 Foundation 历史基线。完整产品边界见
-> [CRM-PRODUCT-FRAMEWORK.md](./CRM-PRODUCT-FRAMEWORK.md)，三仓可执行规格见
-> [CRM-V1-EXECUTABLE-SPEC.md](./CRM-V1-EXECUTABLE-SPEC.md)。后两份文档获批前不得开始生产实施。
+> 状态：Historical Foundation baseline。本文只记录已合入 CP6 单体的迁移源；当前四仓产品和工程权威见
+> [CP6 SaaS V1 公开工程契约](./CP6-SAAS-V1-PUBLIC-CONTRACT.md)。历史产品框架和可执行规格仅保留规划追溯，不能单独授权实施。
 
 ## 产品目标
 

@@ -2,6 +2,14 @@
 
 最后更新：2026-08-14
 
+## CP6 SaaS V1 私有冻结与公开同步候选（2026-08-14）
+
+- 私有 `GTX537/CP6.CRM` 已在 merge commit `07a7bb0b50f33b0cb70c18c14f83be77c725626d` 冻结产品决策 `CP6-SAAS-V1`，摘要为 `e210cb804d5b499e725c0ddeca84bb1157d09eb5304bc3b77b031142db84287b`；R00 `CP6-SAAS-R00` 摘要 `64a53dd895aedc20a51288ad0ffdb69f60ddc7c22012c1df83984efba5adbc03` 已 Accepted。
+- 本公开仓库新增 `CP6-SAAS-V1-PUBLIC-CONTRACT` Candidate，只同步四仓职责、领域/API/事件、安全、发布和 M0 开工规则；价格、支付供应商、商业 cohort、个人审批身份和内部风险记录不公开。
+- 公开同步尚未达到 Complete，M0 保持 No-Go。唯一人类批准角色为 ProgramOwner；Architecture、Security、Privacy/Legal、Finance/Commerce、ERP、Data、SRE、Release、Sales Operations、Design、QA 和工程角色只提供评审或证据，所有硬门禁不可豁免。
+- `GTX537/CP6.CRM` 已建立为 Private 只表示仓库存在。当前没有业务代码、云资源、Secret、数据库、迁移或部署；只有公开同步 Complete、DEC-001 至 DEC-009/专业证据、Critical/High、分支保护和必需检查全部关闭后，M0 才能 Go 并解锁 CRM01。
+- 公开 Draft PR #7 和旧本地同步候选都基于冻结前治理模型，不得原样合并；本 Candidate 已在工作期间快进到最新 `main@90b9edda` 并独立重建，后续按明确的替代流程处理旧 PR。
+
 ## Space Studio v1.3 核心实现（2026-08-12）
 
 - WP0 核心 GA 证据索引已建立：`docs/space/acceptance/v1.3-ga/ga-evidence-index.json` 固定 72%→100% 口径、五类外部输入、WP0–WP8 九个不可删除 Blocking Gate 和产品/QA/WMS/架构/安全五个实名签字角色；仓库实现、真实环境接受与正式签字分开记录。`tools/Test-SpaceGaEvidence.ps1` 校验结构、证据路径与派生状态，`-RequireGaReady` 当前按设计以退出码 2 失败。当前仍为 `NoGo`：5 项外部输入、9 个接受门禁和 5 个签字均 Pending，未填写虚构 Owner、Site、Provider 或证据。

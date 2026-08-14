@@ -1,5 +1,11 @@
 # 已完成能力与近期里程碑
 
+## 2026-08-14 CP6 SaaS V1 私有产品冻结与公开契约候选
+
+- 私有 `GTX537/CP6.CRM` 已以 merge commit `07a7bb0b50f33b0cb70c18c14f83be77c725626d` 保存 Frozen 产品摘要 `e210cb804d5b499e725c0ddeca84bb1157d09eb5304bc3b77b031142db84287b` 和 Accepted R00 摘要 `64a53dd895aedc20a51288ad0ffdb69f60ddc7c22012c1df83984efba5adbc03`；单一 ProgramOwner 不能豁免专业证据或硬门禁。
+- 公开仓库从最新 `main` 独立生成脱敏 `CP6-SAAS-V1-PUBLIC-CONTRACT` Candidate、R00/M0 镜像和失败关闭验证器；没有复用落后主线的旧本地同步分支，也没有修改 R2 workflow、业务代码、云资源、Secret、数据库或部署。
+- 本项完成的是可审阅候选，不是公开同步完成或 M0 Go。公开摘要仍需 ProgramOwner 可审计批准，随后才能更新 Complete 并回写私有聚合记录。
+
 ## 2026-08-14 Space Studio 正式黄金 CAD 证据门禁
 
 - WP7 新增正式黄金 CAD Manifest、模板、协议和专项校验器，组合已有离线质量评估和 Provider 资格输出，不重造指标算法。

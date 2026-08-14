@@ -2,10 +2,13 @@
 
 | 文档 | 地位 | 用途 |
 | --- | --- | --- |
-| [CRM 产品框架](./CRM-PRODUCT-FRAMEWORK.md) | Approved normative product baseline | 产品定位、角色、渠道、旅程、V1/VNext、IA/UX、设计/采用门禁、KPI 和上线口径 |
-| [CRM V1 可执行工程规格](./CRM-V1-EXECUTABLE-SPEC.md) | Approved implementation-planning baseline | 三仓架构、领域/数据/API/事件、安全、迁移、测试、发布权威、任务依赖和 DoD |
-| [CRM V1 Foundation 基线](./CRM-V1-SPEC.md) | Historical foundation baseline | 2026-08-10 已实现的 20 表、状态机和菜单/权限范围 |
+| [CP6 SaaS V1 公开工程契约](./CP6-SAAS-V1-PUBLIC-CONTRACT.md) | Candidate public synchronization contract | 脱敏同步私有 Frozen 产品与 Accepted R00 的四仓边界、领域/API/事件、安全、发布和 M0 开工规则 |
+| [CRM M0 Readiness](./CRM-M0-READINESS.md) | No-Go gate mirror | DEC-000 至 DEC-009、唯一 ProgramOwner 模型、专业证据、分支保护和开工关闭公式 |
+| [CRM R00 发布权威镜像](../devops/adr/ADR-CRM-R00-RELEASE-AUTHORITY.md) | Private source Accepted / public mirror Candidate | GHCR/GitHub R2 唯一权威、CandidateLocator、精确对象身份、四仓 Manifest 和回退 |
+| [CRM 产品框架](./CRM-PRODUCT-FRAMEWORK.md) | Historical planning baseline | 2026-08-11 至 08-13 的产品规划输入；不再作为新实施权威 |
+| [CRM V1 可执行工程规格](./CRM-V1-EXECUTABLE-SPEC.md) | Historical planning baseline | 原三仓可执行计划；最终四仓合同以公开工程契约为准 |
+| [CRM V1 Foundation 基线](./CRM-V1-SPEC.md) | Historical Foundation baseline | 2026-08-10 已合入 CP6 单体的 20 表、状态机和菜单/权限迁移源 |
 
-两份 Approved 文档冻结的是可拆票实施的产品和工程规划，不是开工 Owner、Pilot、UAT 或生产批准。当前只完成 Foundation 代码和规范 T1；API、Next.js、独立 CRM 数据库、Dapr/Kafka/YARP、RS256/JWKS、ERP 异步闭环、数据搬迁、采用门禁和生产发布均不能仅凭这些文档标记为完成。V1 仍是包装/制造行业售前工作台，不包含软件商城、产品订阅或登录后客户产品中心。
+私有 `GTX537/CP6.CRM` 已在合并提交 `07a7bb0b50f33b0cb70c18c14f83be77c725626d` 冻结产品摘要 `e210cb804d5b499e725c0ddeca84bb1157d09eb5304bc3b77b031142db84287b`，并接受 R00 摘要 `64a53dd895aedc20a51288ad0ffdb69f60ddc7c22012c1df83984efba5adbc03`。私有仓库已建立为 Private，但没有业务实现、云资源、Secret、数据库、迁移或部署。
 
-下一张单任务票据是 M0/R00：在 DevOps ADR 中记录 CRM V1 已锁定的 GHCR/GitHub R2 唯一候选权威、Azure 非权威边界和系统级回退，同时冻结 Azure SQL/Emergency Intake 合同；Sponsor、各 named Owner、Pilot cohort 与 Observation Gate 缺失时自动 No-Go。`GTX537/CP6.CRM` 不在规划阶段提前建立，只在 T1 已进入最新 `main`、M0 输入关闭且 P01 runner/合同可消费后由 `CRM01-S01` 创建。
+当前公开工程契约仍为 Candidate，M0 继续 No-Go。下一步是由唯一 `ProgramOwner` 批准公开契约的当前摘要并以独立历史证据将同步改为 Complete；随后回写私有聚合记录，再逐项关闭 DEC-001、DEC-003 至 DEC-009、专业证据、Critical/High、分支保护和必需检查。只有 M0 Go 后才解锁 `CRM01` 业务脚手架。

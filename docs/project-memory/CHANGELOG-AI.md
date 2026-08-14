@@ -2,6 +2,12 @@
 
 > 依据 Git log 汇总，不替代完整 Git 历史。重点记录影响接手判断的里程碑。
 
+## 2026-08-14：CP6 SaaS V1 公开工程契约候选
+
+- 私有 `GTX537/CP6.CRM` 的 Frozen 产品摘要 `e210cb804d5b499e725c0ddeca84bb1157d09eb5304bc3b77b031142db84287b` 和 Accepted R00 摘要 `64a53dd895aedc20a51288ad0ffdb69f60ddc7c22012c1df83984efba5adbc03` 已绑定到公开 `CP6-SAAS-V1-PUBLIC-CONTRACT` Candidate，不复制价格、支付供应商、商业 cohort、个人审批身份或内部风险记录。
+- 新增四仓边界、API/事件/数据、安全、ERP/Commerce、迁移、SLO、候选对象身份和 M0 开工规则的脱敏合同，并将旧三仓产品/工程文件降为历史规划输入。
+- 唯一人类批准角色固定为 ProgramOwner；专业评审、Critical/High、真实环境、租户/PII、迁移、性能、采用、发布完整性、分支保护和必需检查保持不可豁免。公开同步仍 Candidate、M0 仍 No-Go，未实现业务代码或修改 R2 workflow。
+
 ## 2026-08-14：Space Studio 正式黄金 CAD 证据失败关闭
 
 - WP7 新增结构化 Manifest、模板、协议和机器校验器，把授权 20 份、10/5/5、L1～L5、DWG/DXF、标注/仲裁、主备同源冻结链、离线质量/Holdout/性能报告收敛为一条可验证证据链。
