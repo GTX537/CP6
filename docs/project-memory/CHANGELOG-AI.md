@@ -2,6 +2,12 @@
 
 > 依据 Git log 汇总，不替代完整 Git 历史。重点记录影响接手判断的里程碑。
 
+## 2026-08-14：Space Studio WP6 发布恢复可观测性基础
+
+- 新增跨租户、无业务标识标签的 Publish Recovery 聚合器与 Prometheus Gauge，按固定三种恢复状态输出活动数量、最老等待时长、SLO 超时数量和 15 分钟/4 小时目标。
+- 新增自动恢复超时、人工恢复/对账超时和指标缺失告警规则，并补齐正式 Retry/Reconcile、旧 Published 连续服务、幂等与证据要求的运行手册；权威 Spec 同步冻结低基数和生产等价演练要求。
+- 聚焦合同测试与 WebApi 构建通过。真实 SQL/WMS 用例在本机仍因环境门禁 skipped，规则尚未部署到真实通知链；本卡只交付仓库可观测性基础，不等于 WP6 或核心 GA 完成。
+
 ## 2026-08-14：Space Studio WP6 发布 Warning 明确认领
 
 - Publish Preview 新增与 ValidationRun 和 Warning Issue 集绑定的确认哈希；发布请求在存在 Warning 时必须携带该哈希，缺失返回稳定 422，集合变化返回 409 并要求刷新。

@@ -134,6 +134,9 @@ public static class SpaceInfrastructureRegistration
         services.AddScoped<
             ISpacePublishActivityService,
             SpacePublishActivityService>();
+        services.AddScoped<
+            ISpacePublishRecoveryMetricsSnapshotProvider,
+            SpacePublishRecoveryMetricsSnapshotProvider>();
         services.AddScoped<ISpaceHistoricalRepublishPublishStarter>(provider =>
             provider.GetRequiredService<SpacePublishOrchestrator>());
         services.AddScoped<ISpacePublishJobExecutor>(provider =>

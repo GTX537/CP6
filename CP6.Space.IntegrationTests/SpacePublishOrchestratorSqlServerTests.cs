@@ -93,6 +93,21 @@ public sealed class SpacePublishOrchestratorSqlServerTests
                 Assert.Equal("Queued", waiting.JobStatus);
                 Assert.Equal(1, waiting.JobAttemptCount);
                 Assert.NotNull(waiting.NextAttemptAtUtc);
+                var recoveryMetrics =
+                    await new SpacePublishRecoveryMetricsSnapshotProvider(
+                            space,
+                            clock)
+                        .GetSnapshotAsync();
+                Assert.Equal(
+                    1,
+                    recoveryMetrics.ByState[
+                            SpacePublishRecoveryMetricStates.WaitingRetry]
+                        .Count);
+                Assert.Equal(
+                    0,
+                    recoveryMetrics.ByState[
+                            SpacePublishRecoveryMetricStates.WaitingRetry]
+                        .SloBreachedCount);
                 var unchanged = await space.Models.AsNoTracking().SingleAsync(
                     value => value.Id == seeded.ModelId);
                 Assert.Equal(
@@ -111,6 +126,16 @@ public sealed class SpacePublishOrchestratorSqlServerTests
                 Assert.Equal("Completed", completed.Status);
                 Assert.Equal("Succeeded", completed.JobStatus);
                 Assert.Equal(2, completed.JobAttemptCount);
+                recoveryMetrics =
+                    await new SpacePublishRecoveryMetricsSnapshotProvider(
+                            space,
+                            clock)
+                        .GetSnapshotAsync();
+                Assert.Equal(
+                    0,
+                    recoveryMetrics.ByState[
+                            SpacePublishRecoveryMetricStates.WaitingRetry]
+                        .Count);
                 Assert.Contains(
                     completed.AuditEvents,
                     value => value.EventType == "RetryableFailureObserved");

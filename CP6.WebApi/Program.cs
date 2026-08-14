@@ -768,6 +768,8 @@ builder.Services.AddScoped<CP6.Core.Services.Integration.IBridgeMetricsSnapshotP
 builder.Services.AddSingleton<CP6.WebApi.Observability.BridgeMetricsCollector>();
 builder.Services.AddSingleton<
     CP6.WebApi.Observability.SpaceAuditMetricsCollector>();
+builder.Services.AddSingleton<
+    CP6.WebApi.Observability.SpacePublishRecoveryMetricsCollector>();
 
 // S 类认证加固（T1）：Security 配置 + BCrypt 密码哈希服务
 builder.Services.Configure<CP6.Core.Services.Sys.SecurityOptions>(builder.Configuration.GetSection("Security"));
@@ -3066,5 +3068,10 @@ CP6.WebApi.Observability.SpaceAuditMetricsRegistration.RegisterIfEnabled(
     app.Configuration.GetValue<bool?>(
         "SpaceObservability:MetricsEnabled") ?? true,
     app.Services);
+CP6.WebApi.Observability.SpacePublishRecoveryMetricsRegistration
+    .RegisterIfEnabled(
+        app.Configuration.GetValue<bool?>(
+            "SpaceObservability:MetricsEnabled") ?? true,
+        app.Services);
 
 app.Run();
