@@ -73,4 +73,65 @@ describe('designCadParseApi', () => {
       { headers: { 'Idempotency-Key': 'retry-1' } },
     )
   })
+
+  it('previews a server-known mapping and starts only with the sealed request', async () => {
+    vi.mocked(http.get).mockResolvedValue({})
+    vi.mocked(http.post).mockResolvedValue({})
+    const previewRequest = {
+      floorLogicalId: 'floor-1',
+      confirmedUnit: 'Millimeter',
+      sourceOriginInSourceUnits: { x: 0, y: 0 },
+      floorOriginMillimeters: { x: 0, y: 0, z: 0 },
+      rotationZDegrees: 0,
+      mappingProfileId: 'profile-1',
+      mappingProfileVersion: 1,
+      layerOverrides: [],
+    }
+    const startRequest = {
+      preparationId: 'preparation-1',
+      floorLogicalId: 'floor-1',
+      confirmedUnit: 'Millimeter',
+      confirmedScaleToMillimeters: 1,
+      coordinateMetadataJson: '{}',
+      coordinateTransformSha256: 'a'.repeat(64),
+      mappingProfileId: 'profile-1',
+      mappingProfileVersion: 1,
+      mappingDefinitionSha256: 'b'.repeat(64),
+      mappingPreviewSha256: 'c'.repeat(64),
+    }
+
+    await designCadParseApi.getPreparationStatus('version-1', 'source-1')
+    await designCadParseApi.listMappingProfiles('version-1')
+    await designCadParseApi.previewPreparation(
+      'version-1',
+      'source-1',
+      previewRequest,
+    )
+    await designCadParseApi.start(
+      'version-1',
+      'source-1',
+      startRequest,
+      'start-1',
+    )
+
+    expect(http.get).toHaveBeenNthCalledWith(
+      1,
+      '/space/design/v1/versions/version-1/sources/source-1/cad-preparations/status',
+    )
+    expect(http.get).toHaveBeenNthCalledWith(
+      2,
+      '/space/design/v1/versions/version-1/cad-mapping-profiles',
+    )
+    expect(http.post).toHaveBeenNthCalledWith(
+      1,
+      '/space/design/v1/versions/version-1/sources/source-1/cad-preparations:preview',
+      previewRequest,
+    )
+    expect(http.post).toHaveBeenNthCalledWith(
+      2,
+      '/space/design/v1/versions/version-1/sources/source-1/cad-parses',
+      startRequest,
+      { headers: { 'Idempotency-Key': 'start-1' } },
+    )
+  })
 })

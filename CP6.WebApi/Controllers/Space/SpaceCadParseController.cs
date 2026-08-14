@@ -51,7 +51,8 @@ public sealed class UploadSpaceCadSourceForm
     StatusCodes.Status500InternalServerError,
     "application/problem+json")]
 public sealed class SpaceCadParseController(
-    ISpaceCadParseService service) : ControllerBase
+    ISpaceCadParseService service,
+    ISpaceCadPreparationService preparation) : ControllerBase
 {
     private const long CadUploadLimit = 100L * 1024L * 1024L;
 
@@ -96,6 +97,52 @@ public sealed class SpaceCadParseController(
             cancellationToken);
         return Accepted(result.JobStatusUrl, result);
     }
+
+    [HttpGet(
+        "versions/{versionId:guid}/sources/{sourceId:guid}/" +
+        "cad-preparations/status")]
+    [RequirePermission("space", "source:upload", UseProblemDetails = true)]
+    [RequirePermission("space", "model:edit", UseProblemDetails = true)]
+    [ProducesResponseType<SpaceCadPreparationStatusDto>(
+        StatusCodes.Status200OK)]
+    public Task<SpaceCadPreparationStatusDto> GetPreparationStatus(
+        Guid versionId,
+        Guid sourceId,
+        CancellationToken cancellationToken) =>
+        preparation.GetStatusAsync(versionId, sourceId, cancellationToken);
+
+    [HttpGet("versions/{versionId:guid}/cad-mapping-profiles")]
+    [RequirePermission("space", "source:upload", UseProblemDetails = true)]
+    [RequirePermission("space", "model:edit", UseProblemDetails = true)]
+    [ProducesResponseType<IReadOnlyList<SpaceCadMappingProfileSummaryDto>>(
+        StatusCodes.Status200OK)]
+    public Task<IReadOnlyList<SpaceCadMappingProfileSummaryDto>>
+        GetMappingProfiles(
+            Guid versionId,
+            CancellationToken cancellationToken) =>
+        preparation.ListProfilesAsync(versionId, cancellationToken);
+
+    [HttpPost(
+        "versions/{versionId:guid}/sources/{sourceId:guid}/" +
+        "cad-preparations:preview")]
+    [SpaceAuditOperation(
+        "space.cad-preparation.preview",
+        "ModelSource",
+        PermissionCode = "space:model:edit")]
+    [RequirePermission("space", "source:upload", UseProblemDetails = true)]
+    [RequirePermission("space", "model:edit", UseProblemDetails = true)]
+    [ProducesResponseType<PreviewSpaceCadPreparationResponse>(
+        StatusCodes.Status200OK)]
+    public Task<PreviewSpaceCadPreparationResponse> PreviewPreparation(
+        Guid versionId,
+        Guid sourceId,
+        [FromBody, Required] PreviewSpaceCadPreparationRequest request,
+        CancellationToken cancellationToken) =>
+        preparation.PreviewAsync(
+            versionId,
+            sourceId,
+            request,
+            cancellationToken);
 
     [HttpPost(
         "versions/{versionId:guid}/sources/{sourceId:guid}/cad-parses")]

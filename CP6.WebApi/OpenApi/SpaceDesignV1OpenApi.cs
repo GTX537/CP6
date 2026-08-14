@@ -85,6 +85,46 @@ public sealed class SpaceWmsRuntimeSchemaFilter : ISchemaFilter
     private static readonly IReadOnlyDictionary<Type, string[]>
         RequiredProperties = new Dictionary<Type, string[]>
         {
+            [typeof(PreviewSpaceCadPreparationRequest)] =
+            [
+                "floorLogicalId",
+                "confirmedUnit",
+                "sourceOriginInSourceUnits",
+                "floorOriginMillimeters",
+                "rotationZDegrees",
+                "mappingProfileId",
+                "mappingProfileVersion",
+                "layerOverrides",
+            ],
+            [typeof(SpaceCadPointV1)] =
+            [
+                "x",
+                "y",
+            ],
+            [typeof(SpaceCadMillimeterPointV1)] =
+            [
+                "x",
+                "y",
+                "z",
+            ],
+            [typeof(SpaceCadLayerMappingOverrideV1)] =
+            [
+                "layerId",
+                "ignore",
+            ],
+            [typeof(StartSpaceCadParseRequest)] =
+            [
+                "preparationId",
+                "floorLogicalId",
+                "confirmedUnit",
+                "confirmedScaleToMillimeters",
+                "coordinateMetadataJson",
+                "coordinateTransformSha256",
+                "mappingProfileId",
+                "mappingProfileVersion",
+                "mappingDefinitionSha256",
+                "mappingPreviewSha256",
+            ],
             [typeof(SpaceRackGenerationProfileLevelDto)] =
             [
                 "levelNo",

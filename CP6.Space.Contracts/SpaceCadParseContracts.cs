@@ -8,6 +8,7 @@ public sealed record UploadSpaceCadSourceResponse(
     bool Reused);
 
 public sealed record StartSpaceCadParseRequest(
+    Guid PreparationId,
     Guid FloorLogicalId,
     SpaceCadUnit ConfirmedUnit,
     decimal ConfirmedScaleToMillimeters,
@@ -17,6 +18,46 @@ public sealed record StartSpaceCadParseRequest(
     int MappingProfileVersion,
     string MappingDefinitionSha256,
     string MappingPreviewSha256);
+
+public sealed record PreviewSpaceCadPreparationRequest(
+    Guid FloorLogicalId,
+    SpaceCadUnit ConfirmedUnit,
+    SpaceCadPointV1 SourceOriginInSourceUnits,
+    SpaceCadMillimeterPointV1 FloorOriginMillimeters,
+    decimal RotationZDegrees,
+    Guid MappingProfileId,
+    int MappingProfileVersion,
+    IReadOnlyList<SpaceCadLayerMappingOverrideV1> LayerOverrides);
+
+public sealed record SpaceCadMappingProfileSummaryDto(
+    Guid ProfileId,
+    int Version,
+    string Name,
+    string Scope,
+    bool IsEnabled,
+    string DefinitionSha256,
+    int RuleCount);
+
+public sealed record SpaceCadPreparationStatusDto(
+    Guid SourceId,
+    string SourceState,
+    string FileState,
+    bool ReadyForPreparation,
+    string? BlockingCode);
+
+public sealed record PreviewSpaceCadPreparationResponse(
+    Guid? PreparationId,
+    DateTime? ExpiresAtUtc,
+    long BaseContentRevision,
+    string? BaseContentHash,
+    bool ReadyForParsing,
+    SpaceCadCoordinateAnalysisV1 CoordinateAnalysis,
+    SpaceCadCoordinateMetadataV1 CoordinateMetadata,
+    SpaceCadInventorySummaryV1? InventorySummary,
+    SpaceCadMappingProfileSummaryDto MappingProfile,
+    SpaceCadMappingPreviewV1? MappingPreview,
+    SpaceCadSemanticPreviewV1? SemanticPreview,
+    StartSpaceCadParseRequest? StartRequest);
 
 public sealed record StartSpaceCadParseResponse(
     Guid JobId,

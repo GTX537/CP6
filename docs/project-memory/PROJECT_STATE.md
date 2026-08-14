@@ -1,6 +1,6 @@
 # 项目当前状态
 
-最后更新：2026-08-13
+最后更新：2026-08-14
 
 ## Space Studio v1.3 核心实现（2026-08-12）
 
@@ -10,9 +10,9 @@
 - 低成本 3D 建模 Spec 已在完整保留 v1.2 详细正文的基础上增量修订为 v1.3；RFC-003 明确为“产品决定已冻结、跨职能批准 Pending”，外部 AI 独立 Beta、Viewer 性能门槛收紧、Supplier 不参加现场 UAT，`DesignUnderlayView` 成为单一页面权威。
 - Space Studio 已形成冻结四栏壳层，包含 44px 标题栏、60px 命令栏、52+244px 左侧模式/上下文、主 2D/3D 画布、324px 属性/批量/问题检查器和 30px 状态栏；小于 1280px 自动只读。
 - 新增 Floor 编辑租约：数据库唯一槽、数据库 UTC、90 秒租期、30 秒前端续租、释放、同用户不同浏览器会话隔离、过期重申请、带双权限和原因的强制接管、不可变接管审计。编辑命令请求新增必填 `leaseId`，保存与租约写入共享 Floor applock，Revision/命令/幂等失败关闭。
-- CAD Parse 成功后可由 Job/Source 路由自动读取并校验 PreviewSet SHA、Tenant/Source/Job/Floor 与解析启动时 BaseContentRevision；审核空间输出带基线与哈希的 typed 新增/修改/删除/冲突/低置信度/未识别变更集，经用户勾选后通过租约、Revision、ContentRevision 与幂等 fence 原子合入 Draft，stale 或工件链异常均零写入。前端提供 DWG/DXF 上传、后台监控、取消/重试和自动审核加载，本地 JSON 仅保留为高级回退；扫描完成后的坐标确认与 Mapping Profile 选择/预览仍为 P0，未使用伪默认值。
+- CAD Parse 成功后可由 Job/Source 路由自动读取并校验 PreviewSet SHA、Tenant/Source/Job/Floor 与解析启动时 BaseContentRevision；审核空间输出带基线与哈希的 typed 新增/修改/删除/冲突/低置信度/未识别变更集，经用户勾选后通过租约、Revision、ContentRevision 与幂等 fence 原子合入 Draft，stale 或工件链异常均零写入。CAD 起始向导现会轮询并同步安全扫描终态，要求用户显式确认当前楼层、来源单位、原点、旋转和服务器已知 Mapping Profile；服务端在受控 `ISpaceCadPreparationProvider` 边界内检查原始 CAD，生成坐标、库存、映射和语义预览，并保存绑定 Source SHA、Profile/Transform/Preview Hash、BaseContentRevision/Hash 与两小时有效期的 sealed Preparation。唯一解析启动接口新增必填 `preparationId`，伪 Profile、伪 Hash、过期或 Draft 已前进均拒绝且零 Job/Draft 写入。前端只有在两项显式确认后才能启动解析，本地 JSON 仅保留为高级回退。
 - 空白画布/底图路径已可直接创建墙、柱、门、月台和静态设备；Zone/Aisle/Rack 可在工作台创建、选择、修改和显式级联删除，并使用同一租约、Revision、幂等和恢复状态。三类布局对象与 Element 一起进入共享参数化渲染计划，2D/3D 机器清单一致；库位批量编码已在同一批量检查器闭环。工作台“运行校验/校验并发布”会携带 Site/Version 进入正式发布控制面并自动发起 Validation，发布本身仍要求 Preview、审批确认和 `space:model:publish`，不会自动执行。
-- 仓库门禁证据：本卡 Space Unit 501/501、Space Web/API 聚焦 501 passed / 7 个既有 SQL 环境用例 skipped、前端 749/749、真实 `KOUSQLSERVER` 编码原子/审计/外部主体拒绝 1/1、Space Studio Playwright 7/7、OpenAPI/权限聚焦 73/73、完整 Release solution 0 warning / 0 error、Vue type-check、生产构建、SDK drift 和 diff whitespace 已通过。既有布局修改/删除卡的真实 SQL 1/1、OpenAPI 38/38、Web 744/744 和 Playwright 6/6 保持为已交付证据。
+- 仓库门禁证据：本卡完整 Release solution 0 warning / 0 error，.NET 全量 3,744 passed / 122 个既有环境用例 skipped，Space Unit 501/501，CAD 准备/解析聚焦 12/12，OpenAPI/权限/Controller 81/81，Web 752/752，Space Studio Playwright 8/8，Vue type-check、生产构建、SDK drift、EF pending-model 和 diff whitespace 均通过。本机未配置真实 SQL Server，故 skipped 场景不计为通过；既有批量编码卡的真实 `KOUSQLSERVER` 1/1 及其他已合入卡片证据保持有效。
 - 本项完成的是仓库核心实现和自动化，不代表 GA：真实主/备 DWG Provider、20 份授权黄金 CAD、500/10,000 Viewer 基准、两仓各 14 天 Pilot、WMS 恢复演练和五角色签字仍未完成。
 ## CRM V1 T1 对抗审阅收口（2026-08-13）
 

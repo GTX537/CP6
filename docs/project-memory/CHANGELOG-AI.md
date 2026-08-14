@@ -2,6 +2,13 @@
 
 > 依据 Git log 汇总，不替代完整 Git 历史。重点记录影响接手判断的里程碑。
 
+## 2026-08-14：Space Studio WP2 CAD 起始向导
+
+- 新增扫描状态、Mapping Profile 查询与 CAD preparation preview；服务端通过受控 Provider 边界生成坐标、Inventory、Mapping 和 Semantic Preview，并保存绑定来源、楼层、Draft 基线与全部 Hash 的两小时 sealed Preparation。
+- 原有 `StartSpaceCadParseRequest` 新增必填 `preparationId`；解析启动会拒绝伪造、过期或 stale Preparation，不产生 Job 或 Draft 写入。OpenAPI、C#/TypeScript SDK、稳定错误码、权限和可回滚迁移同步更新。
+- Space Studio 上传后进入四步向导，单位与 Profile 无静默默认值，语义对象、置信度与阻断摘要可见；转换和映射必须分别勾选确认后才能启动原有解析 Job。默认 Provider 仍失败关闭，真实 Site 主备 Provider、黄金 CAD、Pilot 与签字仍是后续硬门槛。
+- 验证通过：完整 Release solution 0 warning / 0 error；.NET 3,744 passed / 122 个既有环境用例 skipped，Space Unit 501、CAD 聚焦 12、OpenAPI/权限/Controller 81、Web 752、Playwright 8；Vue type-check、生产构建、SDK/EF/diff 漂移门禁通过。真实 SQL 未配置，未把 skipped 场景算作完成证据。
+
 ## 2026-08-13：Space Studio WP1 设计态库位批量编码
 
 - 在独立 `codex/space-layout-bulk-coding` 中交付 Design V1 `location-codes:preview` → `location-codes:apply`，复用既有编码规则语义但只写 `SpaceLocationRevision`，不调用旧运行态编码写服务，也不触碰 Published/WMS。

@@ -84,12 +84,15 @@ public sealed class SpaceDesignV1OpenApiTests
             "/api/space/design/v1/versions/{versionId}/excel-cad-matches/{matchJobId}/confirmations",
             "/api/space/design/v1/versions/{versionId}/excel-cad-matches/{matchJobId}/confirmations/{applyJobId}",
             "/api/space/design/v1/versions/{versionId}/cad-sources",
+            "/api/space/design/v1/versions/{versionId}/cad-mapping-profiles",
             "/api/space/design/v1/versions/{versionId}/sources",
             "/api/space/design/v1/versions/{versionId}/sources/{sourceId}/content",
             "/api/space/design/v1/versions/{versionId}/sources/{sourceId}/excel-preflights",
             "/api/space/design/v1/versions/{versionId}/sources/{sourceId}/excel-preflights/{jobId}",
             "/api/space/design/v1/versions/{versionId}/sources/{sourceId}/excel-preflights/{jobId}/report",
             "/api/space/design/v1/versions/{versionId}/sources/{sourceId}/cad-parses",
+            "/api/space/design/v1/versions/{versionId}/sources/{sourceId}/cad-preparations/status",
+            "/api/space/design/v1/versions/{versionId}/sources/{sourceId}/cad-preparations:preview",
             "/api/space/design/v1/versions/{versionId}/sources/{sourceId}/cad-parses/{jobId}",
             "/api/space/design/v1/versions/{versionId}/sources/{sourceId}/cad-parses/{jobId}/review-workspace",
             "/api/space/design/v1/versions/{versionId}/sources/{sourceId}/cad-parses/{jobId}/review-workspace:apply",
@@ -146,8 +149,8 @@ public sealed class SpaceDesignV1OpenApiTests
             .Select(operation =>
                 operation.Value.GetProperty("operationId").GetString())
             .ToArray();
-        Assert.Equal(128, operationIds.Length);
-        Assert.Equal(128, operationIds.Distinct().Count());
+        Assert.Equal(131, operationIds.Length);
+        Assert.Equal(131, operationIds.Distinct().Count());
         Assert.Contains("GetPolicy", operationIds);
         Assert.Contains("UpdatePolicy", operationIds);
         Assert.Contains("GetUsage", operationIds);
@@ -2361,6 +2364,61 @@ public sealed class SpaceDesignV1OpenApiTests
             "occupiedLocationRatePercent: number | null | undefined;",
             warehouseInventory,
             StringComparison.Ordinal);
+    }
+
+    [Fact]
+    public void Cad_preparation_contract_seals_preview_and_parse_start_fields()
+    {
+        using var document = ReadContract();
+        var root = document.RootElement;
+        var paths = root.GetProperty("paths");
+        var preview = paths.GetProperty(
+                "/api/space/design/v1/versions/{versionId}/sources/{sourceId}/cad-preparations:preview")
+            .GetProperty("post");
+        Assert.True(preview.GetProperty("requestBody")
+            .GetProperty("required").GetBoolean());
+        var start = paths.GetProperty(
+                "/api/space/design/v1/versions/{versionId}/sources/{sourceId}/cad-parses")
+            .GetProperty("post");
+        Assert.True(start.GetProperty("requestBody")
+            .GetProperty("required").GetBoolean());
+
+        var schemas = root.GetProperty("components").GetProperty("schemas");
+        AssertExactRequired(
+            Schema(schemas, "CP6.Space.Contracts.PreviewSpaceCadPreparationRequest"),
+            "floorLogicalId",
+            "confirmedUnit",
+            "sourceOriginInSourceUnits",
+            "floorOriginMillimeters",
+            "rotationZDegrees",
+            "mappingProfileId",
+            "mappingProfileVersion",
+            "layerOverrides");
+        AssertExactRequired(
+            Schema(schemas, "CP6.Space.Contracts.StartSpaceCadParseRequest"),
+            "preparationId",
+            "floorLogicalId",
+            "confirmedUnit",
+            "confirmedScaleToMillimeters",
+            "coordinateMetadataJson",
+            "coordinateTransformSha256",
+            "mappingProfileId",
+            "mappingProfileVersion",
+            "mappingDefinitionSha256",
+            "mappingPreviewSha256");
+        AssertExactRequired(
+            Schema(schemas, "CP6.Space.Contracts.SpaceCadPointV1"),
+            "x",
+            "y");
+        AssertExactRequired(
+            Schema(schemas, "CP6.Space.Contracts.SpaceCadMillimeterPointV1"),
+            "x",
+            "y",
+            "z");
+        AssertExactRequired(
+            Schema(schemas, "CP6.Space.Contracts.SpaceCadLayerMappingOverrideV1"),
+            "layerId",
+            "ignore");
     }
 
     private static JsonElement Schema(JsonElement schemas, string name) =>

@@ -162,6 +162,22 @@ public sealed class SpaceCadParseService(
                     retryable: true);
             }
             ValidateCoordinateMetadata(request, source.Sha256);
+            var preparation = await context.CadParsePreparations
+                .SingleOrDefaultAsync(
+                    item => item.Id == request.PreparationId &&
+                            item.ModelVersionId == versionId &&
+                            item.SourceId == sourceId,
+                    cancellationToken) ?? throw new SpaceProblemException(
+                        SpaceErrorCodes.CadPreparationNotFound,
+                        404,
+                        "The confirmed CAD preparation was not found.",
+                        recoveryAction: "reopen-cad-wizard");
+            ValidatePreparation(
+                preparation,
+                version,
+                source,
+                request,
+                RequireUtcNow());
             var payload = new SpaceCadParseJobPayload(
                 SpaceCadParsePayloadVersions.Current,
                 versionId,
@@ -1599,7 +1615,8 @@ public sealed class SpaceCadParseService(
 
     private static void ValidateRequest(StartSpaceCadParseRequest request)
     {
-        if (request.FloorLogicalId == Guid.Empty ||
+        if (request.PreparationId == Guid.Empty ||
+            request.FloorLogicalId == Guid.Empty ||
             request.ConfirmedUnit == SpaceCadUnit.Unknown ||
             request.ConfirmedScaleToMillimeters <= 0 ||
             string.IsNullOrWhiteSpace(request.CoordinateMetadataJson) ||
@@ -1612,6 +1629,60 @@ public sealed class SpaceCadParseService(
         {
             throw Invalid("CAD coordinate and mapping confirmations are required.");
         }
+    }
+
+    private static void ValidatePreparation(
+        SpaceCadParsePreparation preparation,
+        SpaceModelVersion version,
+        SpaceModelSource source,
+        StartSpaceCadParseRequest request,
+        DateTime now)
+    {
+        if (preparation.ExpiresAtUtc <= now)
+            throw new SpaceProblemException(
+                SpaceErrorCodes.CadPreparationExpired,
+                409,
+                "The CAD preparation has expired.",
+                "Run the preparation preview again before starting parsing.",
+                "restart-cad-preparation");
+        if (!preparation.ReadyForParsing)
+            throw new SpaceProblemException(
+                SpaceErrorCodes.CadPreparationInvalid,
+                422,
+                "The CAD preparation still has Blocking issues.",
+                recoveryAction: "resolve-cad-preparation-blockers");
+        if (preparation.BaseContentRevision != version.ContentRevision ||
+            !string.Equals(
+                preparation.BaseContentHash,
+                version.ContentHash,
+                StringComparison.Ordinal))
+            throw new SpaceProblemException(
+                SpaceErrorCodes.ParseChangesetStale,
+                409,
+                "The Draft changed after CAD preparation.",
+                "Run the preparation preview again against the current Draft.",
+                "restart-cad-preparation");
+        if (!preparation.SourceSha256.Equals(source.Sha256, StringComparison.Ordinal) ||
+            preparation.FloorLogicalId != request.FloorLogicalId ||
+            !preparation.ConfirmedUnit.Equals(request.ConfirmedUnit.ToString(), StringComparison.Ordinal) ||
+            preparation.ConfirmedScaleToMillimeters != request.ConfirmedScaleToMillimeters ||
+            !preparation.CoordinateMetadataJson.Equals(request.CoordinateMetadataJson, StringComparison.Ordinal) ||
+            !preparation.CoordinateTransformSha256.Equals(
+                request.CoordinateTransformSha256,
+                StringComparison.Ordinal) ||
+            preparation.MappingProfileId != request.MappingProfileId ||
+            preparation.MappingProfileVersion != request.MappingProfileVersion ||
+            !preparation.MappingDefinitionSha256.Equals(
+                request.MappingDefinitionSha256,
+                StringComparison.Ordinal) ||
+            !preparation.MappingPreviewSha256.Equals(
+                request.MappingPreviewSha256,
+                StringComparison.Ordinal))
+            throw new SpaceProblemException(
+                SpaceErrorCodes.CadPreparationInvalid,
+                422,
+                "The CAD parse request does not match its server preparation.",
+                recoveryAction: "restart-cad-preparation");
     }
 
     private static void ValidateCoordinateMetadata(

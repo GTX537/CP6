@@ -1,5 +1,13 @@
 # 已完成能力与近期里程碑
 
+## 2026-08-14 Space Studio WP2 CAD 起始向导
+
+- 在独立 `codex/space-cad-start-wizard` 中交付扫描状态、服务器 Mapping Profile、CAD preparation preview 和原有 parse start 的完整向导链；没有增加第二个解析启动接口，也没有允许客户端构造 Profile、Transform 或 Preview Hash。
+- 服务端通过受控 `ISpaceCadPreparationProvider` 读取隔离文件并生成确定性坐标、Inventory、Mapping 与 Semantic Preview；只为无 Blocking 的预览保存两小时 sealed Preparation，绑定 Source SHA、楼层、Base Content Revision/Hash 和全部确认 Hash。`StartSpaceCadParseRequest.preparationId` 必填，过期、篡改和 Draft 前进均失败关闭。
+- Space Studio 上传后自动进入向导，扫描、楼层、单位、原点/旋转、Profile、语义对象与低置信/阻断摘要在同一流程展示；用户必须分别确认转换和映射才能启动，关闭或失败不改变当前 Draft。OpenAPI、C#/TypeScript SDK、权限矩阵、迁移与自动化同步更新。
+- 仓库默认 Preparation Provider 仍是 fail-closed unavailable；真实 DWG/DXF 能力必须由下一张 WP3 Site 主备 Provider 认证卡接入，并由真实黄金 CAD/隔离 Worker 证据验收。本卡完成仓库内向导和 fence，不代表 CAD GA 或核心 GA。
+- 自动化证据：完整 Release solution 0 warning / 0 error；.NET 全量 3,744 passed / 122 个既有环境用例 skipped，Space Unit 501/501，CAD 准备/解析聚焦 12/12，OpenAPI/权限/Controller 81/81；Web 752/752、Space Studio Playwright 8/8、Vue type-check、生产构建、SDK drift、EF pending-model 与 diff whitespace 全部通过。真实 SQL Server 未配置，因此没有把 skipped 场景计为通过。
+
 ## 2026-08-13 Space Studio WP1 设计态库位批量编码
 
 - 从远端 `main@fdfb404e` 建立独立 `codex/space-layout-bulk-coding`，新增 Design V1 `location-codes:preview` / `location-codes:apply` 两阶段合同；规则仍由现有编码规则库按 Zone → Floor → Tenant 默认优先级选择，客户端不能提交任意规则或直接调用旧运行态编码服务。

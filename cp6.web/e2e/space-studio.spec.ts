@@ -195,6 +195,49 @@ test('previews protected location codes and explicitly applies the frozen propos
   expect(errors).toEqual([])
 })
 
+test('uploads CAD and requires a server preview plus two confirmations before parse start', async ({ page }) => {
+  const errors = collectPageErrors(page)
+  const methods: string[] = []
+  const cadBodies: Array<Record<string, any>> = []
+  await installSpaceStudioFixtures(page, methods, { cadBodies })
+  await page.setViewportSize({ width: 1440, height: 900 })
+  await page.goto(studioUrl)
+
+  await page.locator('input[accept^=".dwg,.dxf"]').setInputFiles({
+    name: 'warehouse.dxf',
+    mimeType: 'application/vnd.autocad.dxf',
+    buffer: Buffer.from('0\nSECTION\n2\nENTITIES\n0\nENDSEC\n0\nEOF\n'),
+  })
+  await expect(page.getByRole('heading', { name: '确认楼层、单位、坐标与映射' })).toBeVisible()
+  await page.getByLabel('来源单位').selectOption('Millimeter')
+  await page.getByLabel('映射 Profile').selectOption('cad-profile-1:1')
+  await page.getByRole('button', { name: '生成语义预览' }).click()
+  await expect(page.getByText('WALL · H:WALL-1')).toBeVisible()
+  await expect(page.getByRole('button', { name: '确认并启动解析' })).toBeDisabled()
+
+  await page.locator('.confirmation input').nth(0).check()
+  await page.locator('.confirmation input').nth(1).check()
+  await page.getByRole('button', { name: '确认并启动解析' }).click()
+
+  await expect(page.getByText('CAD 解析已启动', { exact: false })).toBeVisible()
+  expect(methods).toContain('POST cad upload')
+  expect(methods).toContain('POST cad preparation')
+  expect(methods).toContain('POST cad parse')
+  expect(cadBodies[0]).toMatchObject({
+    floorLogicalId: floorId,
+    confirmedUnit: 'Millimeter',
+    mappingProfileId: 'cad-profile-1',
+    mappingProfileVersion: 1,
+  })
+  expect(cadBodies[1]).toMatchObject({
+    preparationId: 'cad-preparation-1',
+    coordinateTransformSha256: 'a'.repeat(64),
+    mappingDefinitionSha256: 'b'.repeat(64),
+    mappingPreviewSha256: 'c'.repeat(64),
+  })
+  expect(errors).toEqual([])
+})
+
 function collectPageErrors(page: Page): string[] {
   const errors: string[] = []
   page.on('pageerror', (error) => errors.push(error.message))
@@ -218,6 +261,7 @@ async function installSpaceStudioFixtures(
     layoutBodies?: Array<Record<string, any>>
     codingEnabled?: boolean
     codingBodies?: Array<Record<string, any>>
+    cadBodies?: Array<Record<string, any>>
   } = {},
 ) {
   await page.addInitScript(() => {
@@ -253,9 +297,150 @@ async function installSpaceStudioFixtures(
     const layoutPath = `/api/space/design/v1/versions/${versionId}/floors/${floorId}/layout-commands`
     const codingPreviewPath = `/api/space/design/v1/versions/${versionId}/floors/${floorId}/location-codes:preview`
     const codingApplyPath = `/api/space/design/v1/versions/${versionId}/floors/${floorId}/location-codes:apply`
+    const cadSourceId = 'aaaaaaaa-2222-2222-2222-222222222222'
+    const cadUploadPath = `/api/space/design/v1/versions/${versionId}/cad-sources`
+    const cadStatusPath = `/api/space/design/v1/versions/${versionId}/sources/${cadSourceId}/cad-preparations/status`
+    const cadProfilesPath = `/api/space/design/v1/versions/${versionId}/cad-mapping-profiles`
+    const cadPreparationPath = `/api/space/design/v1/versions/${versionId}/sources/${cadSourceId}/cad-preparations:preview`
+    const cadParsePath = `/api/space/design/v1/versions/${versionId}/sources/${cadSourceId}/cad-parses`
 
     if (url.pathname === scenePath) {
       await route.fulfill({ json: scene })
+      return
+    }
+    if (url.pathname === cadUploadPath && request.method() === 'POST') {
+      methods.push('POST cad upload')
+      await route.fulfill({
+        status: 202,
+        json: {
+          source: { id: cadSourceId, state: 'Scanning', sha256: 'd'.repeat(64) },
+          scanJobId: 'aaaaaaaa-3333-3333-3333-333333333333',
+        },
+      })
+      return
+    }
+    if (url.pathname === cadStatusPath) {
+      await route.fulfill({
+        json: {
+          sourceId: cadSourceId,
+          sourceState: 'Ready',
+          fileState: 'Clean',
+          readyForPreparation: true,
+        },
+      })
+      return
+    }
+    if (url.pathname === cadProfilesPath) {
+      await route.fulfill({
+        json: [{
+          profileId: 'cad-profile-1',
+          version: 1,
+          name: 'CP6 warehouse',
+          scope: 'System',
+          definitionSha256: 'b'.repeat(64),
+          ruleCount: 8,
+        }],
+      })
+      return
+    }
+    if (url.pathname === cadPreparationPath && request.method() === 'POST') {
+      methods.push('POST cad preparation')
+      options.cadBodies?.push(request.postDataJSON() as Record<string, any>)
+      await route.fulfill({
+        json: {
+          preparationId: 'cad-preparation-1',
+          expiresAtUtc: '2030-01-01T02:00:00Z',
+          baseContentRevision: scene.contentRevision,
+          baseContentHash: scene.contentHash,
+          readyForParsing: true,
+          coordinateAnalysis: {
+            suggestedUnit: 'Millimeter',
+            suggestedScaleToMillimeters: 1,
+            isSuggestedExtentPlausible: true,
+            issues: [],
+          },
+          coordinateMetadata: {
+            confirmedUnit: 'Millimeter',
+            confirmedScaleToMillimeters: 1,
+          },
+          inventorySummary: {
+            layerCount: 1,
+            blockCount: 0,
+            entityCount: 1,
+            supportedEntityCount: 1,
+            unsupportedEntityCount: 0,
+          },
+          mappingProfile: {
+            profileId: 'cad-profile-1',
+            version: 1,
+            name: 'CP6 warehouse',
+            scope: 'System',
+            definitionSha256: 'b'.repeat(64),
+            ruleCount: 8,
+          },
+          mappingPreview: {
+            summary: {
+              mappedLayerCount: 1,
+              unmappedLayerCount: 0,
+              conflictLayerCount: 0,
+              mappedBlockCount: 0,
+              unmappedBlockCount: 0,
+              blockingCount: 0,
+              warningCount: 0,
+            },
+          },
+          semanticPreview: {
+            items: [{
+              previewObjectId: 'wall-1',
+              target: 'Wall',
+              confidence: 0.95,
+              disposition: 'AutoAccepted',
+              isConfirmable: true,
+              source: { sourceRef: 'H:WALL-1', layerId: 'WALL' },
+            }],
+            summary: {
+              autoAcceptedCount: 1,
+              candidateCount: 0,
+              rejectedCount: 0,
+              blockingCount: 0,
+              warningCount: 0,
+            },
+          },
+          startRequest: {
+            preparationId: 'cad-preparation-1',
+            floorLogicalId: floorId,
+            confirmedUnit: 'Millimeter',
+            confirmedScaleToMillimeters: 1,
+            coordinateMetadataJson: '{}',
+            coordinateTransformSha256: 'a'.repeat(64),
+            mappingProfileId: 'cad-profile-1',
+            mappingProfileVersion: 1,
+            mappingDefinitionSha256: 'b'.repeat(64),
+            mappingPreviewSha256: 'c'.repeat(64),
+          },
+        },
+      })
+      return
+    }
+    if (url.pathname === cadParsePath && request.method() === 'POST') {
+      methods.push('POST cad parse')
+      options.cadBodies?.push(request.postDataJSON() as Record<string, any>)
+      await route.fulfill({
+        status: 202,
+        json: { jobId: 'aaaaaaaa-4444-4444-4444-444444444444', status: 'Queued' },
+      })
+      return
+    }
+    if (url.pathname === `${cadParsePath}/aaaaaaaa-4444-4444-4444-444444444444`) {
+      await route.fulfill({
+        json: {
+          jobId: 'aaaaaaaa-4444-4444-4444-444444444444',
+          status: 'Failed',
+          sourceState: 'Ready',
+          lastErrorCode: 'TEST_TERMINAL',
+          artifacts: [],
+        },
+      })
       return
     }
     if (url.pathname === layoutPath && request.method() === 'POST') {

@@ -112,7 +112,7 @@ public sealed class SpaceCadParseControllerTests
 
     private static SpaceCadParseController NewController(
         ISpaceCadParseService service) =>
-        new(service)
+        new(service, Mock.Of<ISpaceCadPreparationService>())
         {
             ControllerContext = new ControllerContext
             {
@@ -122,6 +122,7 @@ public sealed class SpaceCadParseControllerTests
 
     private static StartSpaceCadParseRequest Request() =>
         new(
+            Guid.NewGuid(),
             Guid.NewGuid(),
             SpaceCadUnit.Millimeter,
             1,

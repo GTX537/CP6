@@ -81,6 +81,10 @@ public class SpacePermissionAttributeTests
             ["SpaceDesignV1Controller.GetVersion"] = "space:model:read",
             ["SpaceDesignV1Controller.GetScene"] = "space:model:read",
             ["SpaceEditLeaseController.GetEditLease"] = "space:model:edit",
+            ["SpaceCadParseController.GetPreparationStatus"] =
+                "space:source:upload",
+            ["SpaceCadParseController.GetMappingProfiles"] =
+                "space:source:upload",
             ["SpaceCadParseController.GetParse"] = "space:model:read",
             ["SpaceCadParseController.GetReviewWorkspace"] =
                 "space:model:read",
@@ -323,6 +327,31 @@ public class SpacePermissionAttributeTests
             .GetCustomAttributes(method!)
             .Where(data =>
                 data.AttributeType == typeof(RequirePermissionAttribute))
+            .Select(data =>
+                $"{data.ConstructorArguments[0].Value}:" +
+                $"{data.ConstructorArguments[1].Value}")
+            .ToHashSet();
+
+        Assert.True(permissions.SetEquals(
+        [
+            "space:source:upload",
+            "space:model:edit",
+        ]));
+    }
+
+    [Theory]
+    [InlineData(nameof(SpaceCadParseController.GetPreparationStatus))]
+    [InlineData(nameof(SpaceCadParseController.GetMappingProfiles))]
+    [InlineData(nameof(SpaceCadParseController.PreviewPreparation))]
+    [InlineData(nameof(SpaceCadParseController.StartParse))]
+    public void Cad_preparation_requires_upload_and_model_edit(
+        string methodName)
+    {
+        var method = typeof(SpaceCadParseController).GetMethod(methodName);
+        Assert.NotNull(method);
+        var permissions = CustomAttributeData
+            .GetCustomAttributes(method!)
+            .Where(data => data.AttributeType == typeof(RequirePermissionAttribute))
             .Select(data =>
                 $"{data.ConstructorArguments[0].Value}:" +
                 $"{data.ConstructorArguments[1].Value}")
