@@ -85,6 +85,10 @@ public sealed class SpaceWmsRuntimeSchemaFilter : ISchemaFilter
     private static readonly IReadOnlyDictionary<Type, string[]>
         RequiredProperties = new Dictionary<Type, string[]>
         {
+            [typeof(SpacePublishPreviewDto)] =
+            [
+                "validationWarningCount",
+            ],
             [typeof(ReplaceSpaceCadProviderConfigurationRequest)] =
             [
                 "expectedConfigurationRevision",

@@ -876,6 +876,15 @@ public sealed class SpaceHistoricalRepublishJobExecutor :
                 SpaceErrorCodes.ValidationBlocked,
                 "The rollback publish plan contains blocking impact.");
         }
+        if (preview.ValidationWarningCount > 0)
+        {
+            throw Processing(
+                SpaceJobFailureKind.Input,
+                SpaceErrorCodes.PublishWarningAcknowledgementRequired,
+                "The rollback validation contains Warnings. Open the " +
+                "generated Ready version in publish preview and confirm " +
+                "the bound Warning set before publishing.");
+        }
 
         var publish = await _publish.StartHistoricalRepublishAsync(
             state.Target.Id,

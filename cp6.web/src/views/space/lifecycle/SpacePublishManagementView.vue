@@ -151,6 +151,21 @@
             </header>
             <p class="muted-copy">{{ tr('space.publishManagement.approvalHint', '系统记录审批单号，但不代替你所在组织的审批流程。请在审批完成后继续。') }}</p>
             <el-input v-model="approvalReference" maxlength="500" show-word-limit :placeholder="tr('space.publishManagement.approvalPlaceholder', '审批单、变更单或工单编号（可选）')" />
+            <el-alert
+              v-if="hasValidationWarnings"
+              type="warning"
+              :closable="false"
+              show-icon
+              :title="tr('space.publishManagement.warningConfirmTitle', `发布前必须逐项确认 ${preview?.validationWarningCount || 0} 个 Warning`)"
+            />
+            <el-checkbox
+              v-if="hasValidationWarnings"
+              v-model="warningsConfirmed"
+              class="warning-check"
+              data-test="confirm-publish-warnings"
+            >
+              {{ tr('space.publishManagement.warningConfirm', '我已逐项复核发布预览中的全部 Warning，并确认接受这些风险。') }}
+            </el-checkbox>
             <el-checkbox v-model="approvalConfirmed" class="risk-check">
               {{ tr('space.publishManagement.riskConfirm', '我已核对阻断项、WMS 影响和当前线上版本，并确认可以发布。') }}
             </el-checkbox>
@@ -310,6 +325,7 @@ const retryLoading = ref(false)
 const rollbackLoading = ref(false)
 const approvalReference = ref('')
 const approvalConfirmed = ref(false)
+const warningsConfirmed = ref(false)
 const retryVisible = ref(false)
 const rollbackVisible = ref(false)
 const retryForm = reactive({ reason: '', resolution: '' })
@@ -337,9 +353,18 @@ const wmsWriteCount = computed(() => {
   const impact = preview.value?.wmsImpact
   return (impact?.wmsCreateCount || 0) + (impact?.wmsUpdateCount || 0) + (impact?.wmsDisableCount || 0) + (impact?.wmsRestoreCount || 0)
 })
+const hasValidationWarnings = computed(() =>
+  (preview.value?.validationWarningCount || 0) > 0,
+)
+const warningAcknowledgementReady = computed(() =>
+  !hasValidationWarnings.value || Boolean(
+    warningsConfirmed.value && preview.value?.warningAcknowledgementHash,
+  ),
+)
 const canPublish = computed(() => Boolean(
   candidateId.value && validation.value?.status === 'Passed' && preview.value?.publishable &&
-  preview.value?.planHash && approvalConfirmed.value && !attemptLoading.value,
+  preview.value?.planHash && warningAcknowledgementReady.value &&
+  approvalConfirmed.value && !attemptLoading.value,
 ))
 const canRetryAttempt = computed(() => ['FailedNoEffect', 'ManualIntervention', 'ReconciliationRequired'].includes(attempt.value?.status || ''))
 const canRollback = computed(() => Boolean(rollbackForm.historicalVersionId && rollbackForm.reason.trim() && rollbackForm.confirmed && model.value?.currentPublishedVersionId))
@@ -463,6 +488,7 @@ async function startValidation() {
   preview.value = undefined
   previewItems.value = []
   approvalConfirmed.value = false
+  warningsConfirmed.value = false
   publishKey = ''
   try {
     const response = await publishManagementApi.createValidation(candidateId.value)
@@ -506,6 +532,7 @@ async function loadPreview(append: boolean) {
     else preview.value = next
     publishKey = ''
     approvalConfirmed.value = false
+    warningsConfirmed.value = false
   } catch (error) {
     await showError(error)
   } finally {
@@ -523,6 +550,9 @@ async function startPublish() {
       validationRunId: preview.value.validationRunId,
       planHash: preview.value.planHash,
       approvalReference: approvalReference.value.trim() || undefined,
+      warningAcknowledgementHash: hasValidationWarnings.value
+        ? preview.value.warningAcknowledgementHash
+        : undefined,
     }, publishKey)
     attempt.value = response.attempt
     if (attempt.value?.id) {
@@ -635,7 +665,7 @@ watch(siteId, async () => {
 watch(candidateId, () => {
   clearValidationTimer()
   validation.value = undefined; preview.value = undefined; previewItems.value = []; attempt.value = undefined
-  approvalReference.value = ''; approvalConfirmed.value = false; publishKey = ''
+  approvalReference.value = ''; approvalConfirmed.value = false; warningsConfirmed.value = false; publishKey = ''
 })
 
 onBeforeUnmount(() => { clearValidationTimer(); clearAttemptTimer(); clearRepublishTimer() })

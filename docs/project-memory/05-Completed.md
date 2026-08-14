@@ -1,5 +1,12 @@
 # 已完成能力与近期里程碑
 
+## 2026-08-14 Space Studio WP6 发布 Warning 明确认领
+
+- Publish Preview 现在返回 `validationWarningCount`，并在存在 Warning 时返回绑定 ValidationRun 与完整 Warning Issue ID 集的 SHA-256；顺序变化不改变哈希，Run 或集合变化会改变证据。
+- 发布页把 Warning 认领和既有通用风险确认分开：用户必须逐项复核后显式勾选，Publish Attempt 才携带 `warningAcknowledgementHash`。服务端缺失哈希返回稳定 422，哈希或持久 Issue 摘要不一致返回 409，二次事务校验阻止预览后竞态。
+- 历史版本重发若新 ValidationRun 产生 Warning，会失败关闭并保留生成的 Ready 版本，要求操作者打开正式发布预览确认；不会由后台任务或旧审批引用自动接受新风险。OpenAPI、C#/TypeScript SDK、错误码、Spec 与自动化已同步。
+- 门禁通过：完整 Release solution 0 warning / 0 error；策略单测 5/5、OpenAPI 42/42、发布 UI 5/5；Space Unit 506、CP6.Tests 2,877 passed / 19 environment skipped、Client 71、Space Integration 305 passed / 104 environment skipped、Web 763、Vue type-check、production build 与 SDK drift。发布 SQL 用例因未配置 `CP6_TEST_SQLSERVER` skipped，本卡不代表 WP6 或核心 GA 完成。
+
 ## 2026-08-14 Space Studio WP4 底图与 Excel–CAD 工作台路径闭环
 
 - 从远端 `main@8d66d773` 建立独立 `codex/space-studio-path-e2e`，为底图上传后的工作台增加明确标定入口；已挂接底图可重新进入同一标定流程，窄屏或失租只读时入口禁用，不新增第二套底图权威。

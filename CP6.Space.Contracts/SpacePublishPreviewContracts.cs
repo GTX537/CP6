@@ -54,4 +54,6 @@ public sealed record SpacePublishPreviewDto(
     SpacePublishChangeSummaryDto Changes,
     SpacePublishImpactSummaryDto WmsImpact,
     IReadOnlyList<SpacePublishPreviewItemDto> Items,
-    string? NextCursor);
+    string? NextCursor,
+    int ValidationWarningCount = 0,
+    string? WarningAcknowledgementHash = null);

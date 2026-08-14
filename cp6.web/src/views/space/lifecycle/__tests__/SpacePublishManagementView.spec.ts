@@ -42,7 +42,9 @@ const passedValidation = {
 }
 const preview = {
   targetVersionId: 'v3', baseVersionId: 'v1', validationRunId: 'val1', validationStatus: 'Passed',
-  validationBlockingCount: 0, planHash: '1234567890abcdef', adapterId: 'wms-test', publishable: true,
+  validationBlockingCount: 0, validationWarningCount: 1,
+  warningAcknowledgementHash: 'a'.repeat(64),
+  planHash: '1234567890abcdef', adapterId: 'wms-test', publishable: true,
   itemCount: 1, changeCount: 1, matchedItemCount: 1,
   changes: { createCount: 1, updateMasterCount: 0, updateGeometryOnlyCount: 0, disableCount: 0, restoreCount: 0, noOpCount: 0 },
   wmsImpact: { wmsCreateCount: 1, wmsUpdateCount: 0, wmsDisableCount: 0, wmsRestoreCount: 0, wmsNoOpCount: 0, runtimeOnlyCount: 0, blockingCount: 0 },
@@ -107,11 +109,19 @@ describe('SpacePublishManagementView', () => {
     const checkbox = wrapper.find('.risk-check input')
     await checkbox.setValue(true)
     const publishButton = wrapper.findAll('button').find(button => button.text().includes('启动生产发布'))!
+    expect(publishButton.attributes('disabled')).toBeDefined()
+    await wrapper.find('.warning-check input').setValue(true)
+    expect(publishButton.attributes('disabled')).toBeUndefined()
     await publishButton.trigger('click')
     await flushPromises()
     expect(publishManagementApi.createAttempt).toHaveBeenCalledWith(
       'v3',
-      expect.objectContaining({ expectedPublishedVersionId: 'v1', validationRunId: 'val1', planHash: '1234567890abcdef' }),
+      expect.objectContaining({
+        expectedPublishedVersionId: 'v1',
+        validationRunId: 'val1',
+        planHash: '1234567890abcdef',
+        warningAcknowledgementHash: 'a'.repeat(64),
+      }),
       'space-publish-00000000-0000-4000-8000-000000000001',
     )
     expect(wrapper.text()).toContain('已完成')
@@ -128,6 +138,31 @@ describe('SpacePublishManagementView', () => {
     expect(publishManagementApi.createValidation).toHaveBeenCalledWith('v3')
     expect(publishManagementApi.getPreview).toHaveBeenCalledWith('v3', expect.objectContaining({ limit: 100 }))
     expect(publishManagementApi.createAttempt).not.toHaveBeenCalled()
+  })
+
+  it('没有 Warning 时不要求额外认领，也不提交认领哈希', async () => {
+    vi.mocked(publishManagementApi.getPreview).mockResolvedValue({
+      ...preview,
+      validationWarningCount: 0,
+      warningAcknowledgementHash: undefined,
+    })
+    const wrapper = mountView()
+    await selectSite(wrapper)
+    await wrapper.findAll('button').find(button => button.text().includes('开始验证'))!.trigger('click')
+    await flushPromises()
+
+    expect(wrapper.find('.warning-check').exists()).toBe(false)
+    await wrapper.find('.risk-check input').setValue(true)
+    const publishButton = wrapper.findAll('button').find(button => button.text().includes('启动生产发布'))!
+    expect(publishButton.attributes('disabled')).toBeUndefined()
+    await publishButton.trigger('click')
+    await flushPromises()
+
+    expect(publishManagementApi.createAttempt).toHaveBeenCalledWith(
+      'v3',
+      expect.objectContaining({ warningAcknowledgementHash: undefined }),
+      'space-publish-00000000-0000-4000-8000-000000000001',
+    )
   })
 
   it('恢复失败发布记录并提交带原因的人工重试', async () => {
@@ -167,6 +202,7 @@ describe('SpacePublishManagementView', () => {
     await wrapper.findAll('button').find(button => button.text().includes('开始验证'))!.trigger('click')
     await flushPromises()
     await wrapper.find('.risk-check input').setValue(true)
+    await wrapper.find('.warning-check input').setValue(true)
     await wrapper.findAll('button').find(button => button.text().includes('启动生产发布'))!.trigger('click')
     await flushPromises()
     expect(alert).toHaveBeenCalledWith(expect.stringContaining('线上版本已经变化'), 'SPACE_VERSION_CONFLICT', expect.objectContaining({ type: 'warning' }))

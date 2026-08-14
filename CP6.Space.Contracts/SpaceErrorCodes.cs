@@ -180,6 +180,8 @@ public static class SpaceErrorCodes
     public const string PublishedVersionChanged =
         "SPACE_PUBLISHED_VERSION_CHANGED";
     public const string PublishSlotBusy = "SPACE_PUBLISH_SLOT_BUSY";
+    public const string PublishWarningAcknowledgementRequired =
+        "SPACE_PUBLISH_WARNING_ACKNOWLEDGEMENT_REQUIRED";
     public const string PublishRetryNotAllowed =
         "SPACE_PUBLISH_RETRY_NOT_ALLOWED";
     public const string PublishJobMismatch =

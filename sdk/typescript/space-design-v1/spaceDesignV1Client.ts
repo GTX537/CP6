@@ -16149,6 +16149,7 @@ export class CreateSpacePublishAttemptRequest implements ICreateSpacePublishAtte
     validationRunId?: string;
     planHash?: string | undefined;
     approvalReference?: string | undefined;
+    warningAcknowledgementHash?: string | undefined;
 
     constructor(data?: ICreateSpacePublishAttemptRequest) {
         if (data) {
@@ -16165,6 +16166,7 @@ export class CreateSpacePublishAttemptRequest implements ICreateSpacePublishAtte
             this.validationRunId = _data["validationRunId"];
             this.planHash = _data["planHash"];
             this.approvalReference = _data["approvalReference"];
+            this.warningAcknowledgementHash = _data["warningAcknowledgementHash"];
         }
     }
 
@@ -16181,6 +16183,7 @@ export class CreateSpacePublishAttemptRequest implements ICreateSpacePublishAtte
         data["validationRunId"] = this.validationRunId;
         data["planHash"] = this.planHash;
         data["approvalReference"] = this.approvalReference;
+        data["warningAcknowledgementHash"] = this.warningAcknowledgementHash;
         return data;
     }
 }
@@ -16190,6 +16193,7 @@ export interface ICreateSpacePublishAttemptRequest {
     validationRunId?: string;
     planHash?: string | undefined;
     approvalReference?: string | undefined;
+    warningAcknowledgementHash?: string | undefined;
 }
 
 export class CreateSpacePublishAttemptResponse implements ICreateSpacePublishAttemptResponse {
@@ -30764,6 +30768,8 @@ export class SpacePublishPreviewDto implements ISpacePublishPreviewDto {
     wmsImpact?: SpacePublishImpactSummaryDto;
     items?: SpacePublishPreviewItemDto[] | undefined;
     nextCursor?: string | undefined;
+    validationWarningCount!: number;
+    warningAcknowledgementHash?: string | undefined;
 
     constructor(data?: ISpacePublishPreviewDto) {
         if (data) {
@@ -30798,6 +30804,8 @@ export class SpacePublishPreviewDto implements ISpacePublishPreviewDto {
                     this.items!.push(SpacePublishPreviewItemDto.fromJS(item));
             }
             this.nextCursor = _data["nextCursor"];
+            this.validationWarningCount = _data["validationWarningCount"];
+            this.warningAcknowledgementHash = _data["warningAcknowledgementHash"];
         }
     }
 
@@ -30832,6 +30840,8 @@ export class SpacePublishPreviewDto implements ISpacePublishPreviewDto {
                 data["items"].push(item ? item.toJSON() : undefined as any);
         }
         data["nextCursor"] = this.nextCursor;
+        data["validationWarningCount"] = this.validationWarningCount;
+        data["warningAcknowledgementHash"] = this.warningAcknowledgementHash;
         return data;
     }
 }
@@ -30855,6 +30865,8 @@ export interface ISpacePublishPreviewDto {
     wmsImpact?: SpacePublishImpactSummaryDto;
     items?: SpacePublishPreviewItemDto[] | undefined;
     nextCursor?: string | undefined;
+    validationWarningCount: number;
+    warningAcknowledgementHash?: string | undefined;
 }
 
 export class SpacePublishPreviewItemDto implements ISpacePublishPreviewItemDto {
