@@ -1,8 +1,7 @@
 <template>
   <div class="floor-list">
     <div class="floor-list__header">{{ t('楼层') }}</div>
-    <div v-if="loading" class="floor-list__loading">{{ t('加载中') }}</div>
-    <div v-else class="floor-list__items">
+    <div class="floor-list__items">
       <div
         v-for="f in floors"
         :key="f.id"
@@ -21,31 +20,18 @@
 </template>
 
 <script setup lang="ts">
-import { ref, onMounted, onBeforeUnmount, watch } from 'vue'
+import { onBeforeUnmount } from 'vue'
 import { useI18n } from 'vue-i18n'
-import { floorApi } from '@/api/space/floor'
 import type { FloorVO } from '@/types/space/scene'
 
-const props = defineProps<{ siteId: string; currentFloorId: string }>()
+const props = defineProps<{
+  floors: readonly FloorVO[]
+  currentFloorId: string
+}>()
 const emit = defineEmits<{ (e: 'switch-floor', floorId: string): void }>()
 
 const { t } = useI18n()
-const floors = ref<FloorVO[]>([])
-const loading = ref(false)
 let debounceTimer = 0
-
-async function loadFloors(): Promise<void> {
-  if (!props.siteId) return
-  loading.value = true
-  try {
-    const env = await floorApi.list(props.siteId)
-    floors.value = [...env.data].sort((a, b) => a.level - b.level)
-  } catch {
-    floors.value = []
-  } finally {
-    loading.value = false
-  }
-}
 
 /** Debounce rapid clicks — only emit the last floor clicked within 250 ms. */
 function onFloorClick(floorId: string): void {
@@ -57,8 +43,6 @@ function onFloorClick(floorId: string): void {
   }, 250)
 }
 
-watch(() => props.siteId, (id) => { if (id) loadFloors() })
-onMounted(() => { loadFloors() })
 onBeforeUnmount(() => { clearTimeout(debounceTimer) })
 </script>
 
@@ -80,12 +64,6 @@ onBeforeUnmount(() => { clearTimeout(debounceTimer) })
   letter-spacing: 0.08em;
   text-transform: uppercase;
   border-bottom: 1px solid rgba(255, 255, 255, 0.06);
-}
-
-.floor-list__loading {
-  padding: 12px;
-  color: #546e7a;
-  font-size: 12px;
 }
 
 .floor-list__items {

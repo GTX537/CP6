@@ -27,6 +27,22 @@ public sealed record SpaceDesignSceneDto(
         LocationExternalBindings = null,
     IReadOnlyList<SpaceSceneDesignAttributeDto>? DesignAttributes = null);
 
+/// <summary>
+/// Immutable scene snapshot selected exclusively from a site's current
+/// Published production version. Runtime inventory, personnel, and device
+/// overlays are intentionally outside this contract.
+/// </summary>
+public sealed record SpacePublishedViewerSceneDto(
+    int SchemaVersion,
+    string Authority,
+    bool RuntimeOverlayIncluded,
+    Guid SiteId,
+    Guid PublishedVersionId,
+    DateTime? PublishedAtUtc,
+    long ContentRevision,
+    string? ContentHash,
+    IReadOnlyList<SpaceDesignSceneDto> Floors);
+
 public sealed record SpaceSceneRevisionDto(
     Guid RevisionId,
     Guid LogicalId,

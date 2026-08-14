@@ -57,7 +57,10 @@ import { useRoute } from 'vue-router'
 import { useI18n } from 'vue-i18n'
 import { ElMessage } from 'element-plus'
 import { StackedViewer } from '@/space-viewer/stacked/StackedViewer'
-import { floorApi } from '@/api/space/floor'
+import {
+  designPublishedSceneApi,
+  indexPublishedViewerScene,
+} from '@/api/space/designPublishedScene'
 import type { FloorVO } from '@/types/space/scene'
 import { PathAnimator } from '@/space-viewer/advanced/PathAnimator'
 import type { ViewerHandle } from '@/space-viewer/api/ViewerHandle'
@@ -150,17 +153,20 @@ onMounted(async () => {
   errorMsg.value = ''
 
   try {
-    // loadSite builds all floor groups internally
-    await viewer.loadSite(siteId)
+    const published = indexPublishedViewerScene(
+      await designPublishedSceneApi.get(siteId),
+      siteId,
+    )
+    floors.value = published.floors
+    await viewer.loadPublished(
+      published.floors.map((floor) => published.scenes.get(floor.id)!),
+    )
 
     // Construct PathAnimator after scene is ready; cast is safe — PathAnimator only
     // calls getSceneRoot() + requestRender(), both present on StackedViewer.
     pathAnimator = new PathAnimator(viewer as unknown as ViewerHandle)
 
-    // Fetch floor list separately for sidebar labels
-    const env = await floorApi.list(siteId)
-    floors.value = env.data
-    for (const f of env.data) {
+    for (const f of floors.value) {
       floorVisible[f.id] = true
     }
 

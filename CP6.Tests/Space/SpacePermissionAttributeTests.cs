@@ -78,6 +78,8 @@ public class SpacePermissionAttributeTests
             ["SpaceAuditController.Query"] = "space-audit:read",
             ["SpaceAuditController.Timeline"] = "space-audit:read",
             ["SpaceDesignV1Controller.GetModel"] = "space:model:read",
+            ["SpaceDesignV1Controller.GetPublishedScene"] =
+                "space:model:read",
             ["SpaceDesignV1Controller.GetVersions"] = "space:model:read",
             ["SpaceDesignV1Controller.GetVersion"] = "space:model:read",
             ["SpaceDesignV1Controller.GetScene"] = "space:model:read",

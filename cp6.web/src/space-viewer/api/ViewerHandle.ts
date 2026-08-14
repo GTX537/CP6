@@ -1,8 +1,9 @@
 import type { Box3, Group, Vector3 } from 'three'
 import type { RuntimeLocationRef } from '@/types/space/runtime'
+import type { ISpaceDesignSceneDto } from '../../../../sdk/typescript/space-design-v1/spaceDesignV1Client'
 
 export interface ViewerHandle {
-  load(floorId: string): Promise<void>
+  load(scene: ISpaceDesignSceneDto): Promise<void>
   dispose(): void
   getSceneRoot(): Group
   worldToData(v: Vector3): { x: number; y: number; z: number }

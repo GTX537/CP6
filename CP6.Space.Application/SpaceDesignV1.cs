@@ -71,6 +71,10 @@ public interface ISpaceDesignV1Service
         Guid floorLogicalId,
         CancellationToken cancellationToken = default);
 
+    Task<SpacePublishedViewerSceneDto> GetPublishedSceneAsync(
+        Guid siteId,
+        CancellationToken cancellationToken = default);
+
     Task<ApplySpaceElementCommandBatchResponse> ApplyElementCommandsAsync(
         Guid versionId,
         Guid floorLogicalId,

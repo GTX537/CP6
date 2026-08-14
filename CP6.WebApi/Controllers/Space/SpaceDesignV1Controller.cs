@@ -92,6 +92,15 @@ public sealed class SpaceDesignV1Controller(
         CancellationToken cancellationToken) =>
         service.GetModelAsync(siteId, cancellationToken);
 
+    [HttpGet("sites/{siteId:guid}/published-scene")]
+    [RequirePermission("space", "model:read", UseProblemDetails = true)]
+    [ProducesResponseType<SpacePublishedViewerSceneDto>(
+        StatusCodes.Status200OK)]
+    public Task<SpacePublishedViewerSceneDto> GetPublishedScene(
+        Guid siteId,
+        CancellationToken cancellationToken) =>
+        service.GetPublishedSceneAsync(siteId, cancellationToken);
+
     [HttpGet("sites/{siteId:guid}/versions")]
     [RequirePermission("space", "model:read")]
     [ProducesResponseType<SpacePage<SpaceVersionDto>>(StatusCodes.Status200OK)]

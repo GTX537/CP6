@@ -17,12 +17,19 @@ import {
   type ParametricDesignSceneBuildResult,
 } from '../design/ParametricDesignSceneBuilder'
 import type { ParametricDesignSceneInput } from '../design/ParametricRenderPlan'
+import type {
+  ISpaceDesignSceneDto,
+  SpaceSceneLocationDto,
+  SpaceSceneRackDto,
+  SpaceSceneRackLevelDto,
+} from '../../../../sdk/typescript/space-design-v1/spaceDesignV1Client'
 
 export interface SceneBuildResult {
   objects: Object3D[]
   buckets: InstancedBuckets
   /** locationId → locationCode for all placed locations with a non-null code */
   locationCodes: Map<string, string>
+  dispose(): void
 }
 
 interface BuildOptions {
@@ -34,6 +41,72 @@ export class SceneBuilder {
     scene: ParametricDesignSceneInput,
   ): ParametricDesignSceneBuildResult {
     return new ParametricDesignSceneBuilder().build(scene)
+  }
+
+  /**
+   * Build the production viewer exclusively from an immutable Design V1
+   * Published scene. Missing geometric authority fails closed so the viewer
+   * never silently presents a partial warehouse as complete.
+   */
+  buildPublished(scene: ISpaceDesignSceneDto): SceneBuildResult {
+    if (scene.versionStatus !== 'Published') {
+      throw new Error('Production viewer requires a Published scene.')
+    }
+    if (scene.runtimeOverlayIncluded) {
+      throw new Error('Published geometry must not contain runtime overlays.')
+    }
+
+    const racks = new Map<string, SpaceSceneRackDto>()
+    for (const rack of scene.racks ?? []) {
+      if (rack.revision?.lifecycleState !== 'Active') continue
+      racks.set(requiredString(rack.revision.logicalId, 'rack.logicalId'), rack)
+    }
+    const levels = new Map<string, SpaceSceneRackLevelDto>()
+    for (const level of scene.rackLevels ?? []) {
+      if (level.revision?.lifecycleState !== 'Active') continue
+      const rackId = requiredString(level.rackLogicalId, 'rackLevel.rackLogicalId')
+      const levelNo = requiredPositiveInteger(level.levelNo, 'rackLevel.levelNo')
+      levels.set(`${rackId}:${levelNo}`, level)
+    }
+
+    const locationCodes = new Map<string, string>()
+    const locations = (scene.locations ?? [])
+      .filter((location) => location.revision?.lifecycleState === 'Active')
+      .map((location) => projectPublishedLocation(location, racks, levels))
+    for (const location of scene.locations ?? []) {
+      if (location.revision?.lifecycleState !== 'Active') continue
+      if (location.locationCode) {
+        locationCodes.set(
+          requiredString(location.revision?.logicalId, 'location.logicalId'),
+          location.locationCode,
+        )
+      }
+    }
+
+    const design = this.buildDesign(scene)
+    for (const mesh of design.meshes) {
+      if (mesh.userData.parametricRole === 'rack-cell') mesh.visible = false
+    }
+
+    const buckets = new InstancedBuckets()
+    try {
+      buckets.build(locations)
+    } catch (error) {
+      design.dispose()
+      buckets.dispose()
+      throw error
+    }
+    const bucketGroup = new Group()
+    for (const mesh of buckets.meshes) bucketGroup.add(mesh)
+    const lightGroup = new Group()
+    addLights(lightGroup)
+
+    return {
+      objects: [...design.objects, bucketGroup, lightGroup],
+      buckets,
+      locationCodes,
+      dispose: () => design.dispose(),
+    }
   }
 
   build(scene: EditorScene, opts: BuildOptions = {}): SceneBuildResult {
@@ -114,7 +187,7 @@ export class SceneBuilder {
       }
     }
 
-    return { objects, buckets, locationCodes }
+    return { objects, buckets, locationCodes, dispose: () => undefined }
   }
 
   private _buildZoneMesh(zone: ZoneVO): Mesh | null {
@@ -173,4 +246,84 @@ export class SceneBuilder {
       return []
     }
   }
+}
+
+function projectPublishedLocation(
+  location: SpaceSceneLocationDto,
+  racks: ReadonlyMap<string, SpaceSceneRackDto>,
+  levels: ReadonlyMap<string, SpaceSceneRackLevelDto>,
+) {
+  const logicalId = requiredString(
+    location.revision?.logicalId,
+    'location.logicalId',
+  )
+  const rackId = requiredString(location.rackLogicalId, 'location.rackLogicalId')
+  const rack = racks.get(rackId)
+  if (!rack) throw new Error(`Published location ${logicalId} has no active rack.`)
+  const levelNo = requiredPositiveInteger(location.levelNo, 'location.levelNo')
+  const level = levels.get(`${rackId}:${levelNo}`)
+  if (!level) {
+    throw new Error(`Published location ${logicalId} has no active rack level.`)
+  }
+  const columnNo = requiredPositiveInteger(location.columnNo, 'location.columnNo')
+  const depthNo = requiredPositiveInteger(location.depthNo, 'location.depthNo')
+  const binCount = requiredPositiveInteger(level.binCount, 'rackLevel.binCount')
+  const depthCount = requiredPositiveInteger(level.depthCount, 'rackLevel.depthCount')
+  if (columnNo > binCount || depthNo > depthCount) {
+    throw new Error(`Published location ${logicalId} is outside its rack level.`)
+  }
+
+  const rotationZ = requiredFinite(rack.rotationZ, 'rack.rotationZ')
+  const radians = rotationZ * Math.PI / 180
+  const localX = (columnNo - 0.5) * requiredPositive(level.cellWidth, 'rackLevel.cellWidth')
+  const localY = (depthNo - 0.5) * requiredPositive(level.cellDepth, 'rackLevel.cellDepth')
+  const height = requiredPositive(location.height, 'location.height')
+  const originX = requiredFinite(rack.x, 'rack.x')
+  const originY = requiredFinite(rack.y, 'rack.y')
+  const originZ = requiredFinite(rack.z, 'rack.z')
+
+  return {
+    id: logicalId,
+    zoneId: requiredString(rack.zoneLogicalId, 'rack.zoneLogicalId'),
+    placed: true,
+    absX: Math.round(originX + localX * Math.cos(radians) - localY * Math.sin(radians)),
+    absY: Math.round(originY + localX * Math.sin(radians) + localY * Math.cos(radians)),
+    absZ: Math.round(
+      originZ
+      + requiredFinite(level.bottomZ, 'rackLevel.bottomZ')
+      + requiredFinite(level.beamHeight, 'rackLevel.beamHeight')
+      + height / 2,
+    ),
+    sizeW: requiredPositive(location.width, 'location.width'),
+    sizeH: height,
+    sizeD: requiredPositive(location.depth, 'location.depth'),
+    rotationZ,
+  }
+}
+
+function requiredString(value: string | null | undefined, field: string): string {
+  if (!value?.trim()) throw new Error(`Published scene is missing ${field}.`)
+  return value
+}
+
+function requiredFinite(value: number | null | undefined, field: string): number {
+  if (value == null || !Number.isFinite(value)) {
+    throw new Error(`Published scene has invalid ${field}.`)
+  }
+  return value
+}
+
+function requiredPositive(value: number | null | undefined, field: string): number {
+  const result = requiredFinite(value, field)
+  if (result <= 0) throw new Error(`Published scene has invalid ${field}.`)
+  return result
+}
+
+function requiredPositiveInteger(
+  value: number | null | undefined,
+  field: string,
+): number {
+  const result = requiredPositive(value, field)
+  if (!Number.isInteger(result)) throw new Error(`Published scene has invalid ${field}.`)
+  return result
 }
