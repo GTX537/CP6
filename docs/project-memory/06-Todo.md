@@ -7,7 +7,7 @@
 - 在已配置 `CP6_TEST_SQLSERVER` 的真实 SQL Server 执行 `SpaceCadProviderSqlServerTests`，保存并发替换、唯一 Current Revision、历史追加、认证不可变和幂等迁移证据；本机 skip 不算关闭此门禁。
 - CAD 起始向导、sealed Preparation、parse start fence 和 Site 能力检查已完成仓库内闭环；画布拖放精调保持后续 UX 卡，旧 `FloorEditor` 不继续发展为第二套权威。
 - 用 20 份授权真实黄金 CAD 执行 10/5/5 Calibration/Validation/Holdout，产出覆盖率、准确率、高置信度精确率和 Blocking 遗漏证据。
-- 在 Iris Xe/WebGL2/500 货架/10,000 库位跑正式 Viewer 门槛；补齐选择高亮/视角持久化和完整 GA 快捷键的浏览器 E2E/可达性证据。
+- 工作台 GA 快捷键、问题定位、标准 tab 焦点、窄屏 3D 保持、字号和主要热区已有仓库内浏览器自动化；仍须在独立验收环境完成 4.5:1 对比度、真实键盘/辅助技术与 1440×900/1280×720 人工 UX 签字。在 Iris Xe/WebGL2/500 货架/10,000 库位跑正式 Viewer 门槛，并补齐生产 Viewer 的选择高亮、视角持久化和性能报告。
 - 执行一个绿地仓和一个存量仓各 14 天 Pilot、WMS 故障恢复与对账演练，并取得产品、QA、WMS、架构、安全签字后才可声明核心 GA。
 ## 已完成：OpenAPI 原生客户端漂移门禁
 

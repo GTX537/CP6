@@ -153,8 +153,9 @@ function save(): void {
   width: 390px;
   padding: 16px;
   overflow: auto;
-  background: #fff;
-  border-left: 1px solid #dfe4ea;
+  color: var(--space-studio-text, #101828);
+  background: var(--space-studio-panel, #fff);
+  border-left: 1px solid var(--space-studio-border, #dfe4ea);
 }
 
 .panel-heading,
@@ -167,9 +168,9 @@ function save(): void {
 
 .logical-id {
   margin-top: 4px;
-  color: #64748b;
+  color: var(--space-studio-muted, #64748b);
   font-family: monospace;
-  font-size: 11px;
+  font-size: 13px;
   word-break: break-all;
 }
 
@@ -190,8 +191,8 @@ label {
   display: grid;
   gap: 4px;
   margin-bottom: 10px;
-  color: #475569;
-  font-size: 12px;
+  color: var(--space-studio-muted, #475569);
+  font-size: 14px;
 }
 
 .attribute-row {
@@ -200,7 +201,7 @@ label {
   gap: 6px;
   margin-bottom: 10px;
   padding-bottom: 10px;
-  border-bottom: 1px solid #eef2f6;
+  border-bottom: 1px solid var(--space-studio-border, #eef2f6);
 }
 
 .panel-actions {
@@ -208,15 +209,24 @@ label {
   bottom: -16px;
   margin: 18px -16px -16px;
   padding: 12px 16px;
-  background: #fff;
-  border-top: 1px solid #dfe4ea;
+  background: var(--space-studio-panel, #fff);
+  border-top: 1px solid var(--space-studio-border, #dfe4ea);
 }
+
+.element-properties :deep(.el-button),
+.element-properties :deep(.el-input__wrapper),
+.element-properties :deep(.el-select__wrapper),
+.element-properties :deep(.el-input-number) { min-height: 44px; }
+.element-properties :deep(.el-button:focus-visible),
+.element-properties :deep(.el-input__wrapper:focus-within),
+.element-properties :deep(.el-select__wrapper:focus-within),
+.element-properties :deep(.el-input-number:focus-within) { outline: 3px solid var(--space-studio-focus, #0e7490); outline-offset: 2px; }
 
 @media (max-width: 900px) {
   .element-properties {
     width: 100%;
     max-height: 45vh;
-    border-top: 1px solid #dfe4ea;
+    border-top: 1px solid var(--space-studio-border, #dfe4ea);
     border-left: 0;
   }
 }

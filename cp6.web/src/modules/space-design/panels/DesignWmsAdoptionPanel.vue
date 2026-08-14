@@ -434,8 +434,9 @@ function statusType(statusValue?: string) {
   gap: 12px;
   padding: 16px;
   overflow: auto;
-  background: #fff;
-  border-left: 1px solid #dfe4ea;
+  color: var(--space-studio-text, #101828);
+  background: var(--space-studio-panel, #fff);
+  border-left: 1px solid var(--space-studio-border, #dfe4ea);
 }
 
 .panel-header,
@@ -450,20 +451,22 @@ function statusType(statusValue?: string) {
 }
 
 .panel-title {
-  color: #101828;
+  color: var(--space-studio-text, #101828);
   font-size: 16px;
   font-weight: 650;
 }
 
 .panel-subtitle,
-.adoption-meta,
 .rack-context,
 .binding-summary,
-.pagination,
 .empty-state {
-  color: #667085;
-  font-size: 12px;
+  color: var(--space-studio-muted, #667085);
+  font-size: 16px;
+  line-height: 1.45;
 }
+
+.adoption-meta,
+.pagination { color: var(--space-studio-muted, #667085); font-size: 14px; }
 
 .panel-subtitle {
   margin-top: 4px;
@@ -478,7 +481,7 @@ function statusType(statusValue?: string) {
 .rack-context,
 .empty-state {
   padding: 10px;
-  background: #f8fafc;
+  background: var(--space-studio-panel-raised, #f8fafc);
   border-radius: 6px;
 }
 
@@ -491,7 +494,8 @@ function statusType(statusValue?: string) {
   display: grid;
   gap: 7px;
   padding: 10px;
-  border: 1px solid #e4e7ec;
+  background: var(--space-studio-panel-raised, #fff);
+  border: 1px solid var(--space-studio-border, #e4e7ec);
   border-radius: 7px;
 }
 
@@ -509,12 +513,19 @@ function statusType(statusValue?: string) {
   padding-top: 4px;
 }
 
+.wms-panel :deep(.el-button),
+.wms-panel :deep(.el-input__wrapper),
+.wms-panel :deep(.el-select__wrapper) { min-height: 44px; }
+.wms-panel :deep(.el-button:focus-visible),
+.wms-panel :deep(.el-input__wrapper:focus-within),
+.wms-panel :deep(.el-select__wrapper:focus-within) { outline: 3px solid var(--space-studio-focus, #0e7490); outline-offset: 2px; }
+
 @media (max-width: 900px) {
   .wms-panel {
     width: 100%;
     min-width: 0;
     max-height: 55vh;
-    border-top: 1px solid #dfe4ea;
+    border-top: 1px solid var(--space-studio-border, #dfe4ea);
     border-left: 0;
   }
 }

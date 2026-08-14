@@ -1,5 +1,12 @@
 # 已完成能力与近期里程碑
 
+## 2026-08-14 Space Studio WP5 工作台键盘与可达性闭环
+
+- 从远端 `main@1a30a601` 建立独立 `codex/space-studio-accessibility-ga`，补齐检查器 roving tab、方向键/Home/End、工具 `aria-pressed`、快捷键声明、状态播报、2D 画布焦点和工作台统一 `focus-visible`。`G` 按 Blocking → Warning → Info 循环定位下一个 Open 问题；窄屏只读定位只同步对象选择，不会把 3D 强制切回隐藏的 2D。
+- CAD 审核、Excel–CAD 匹配、通用属性、WMS 采纳和 3D 预览的核心控件统一到 Space Studio token、16px 正文/问题说明、13–14px 元数据和 44px 主要点击/焦点热区；右侧固定宽度面板在 324px 检查器内收敛，不再继承白底/白字或溢出。
+- 自动化新增真实浏览器键盘问题循环、选择同步、tab 焦点、焦点环、字号/热区和窄屏保持 3D 的证据。Web 754/754、Space Studio Playwright 9/9、Vue type-check、production build 与 `git diff --check` 通过。
+- 本卡只完成 WP5 的仓库内工作台键盘/可达性能力，不代表完整 WP5 或核心 GA；Iris Xe/WebGL2 500 货架/10,000 库位性能、独立 4.5:1 对比度审计、真实输入设备/辅助技术验收仍在 Todo。
+
 ## 2026-08-14 Space Studio WP3 Site CAD Provider 认证与路由基础
 
 - 从远端 `main@1c64e577` 建立独立 `codex/space-cad-provider-routing`，新增 Tenant/Site 级版本化 Provider 配置、Primary/Backup 认证明细、专用管理权限和只读 CAD 能力接口。配置保存部署模式、数据边界、审批证据引用、有效期、格式范围及 Secret 引用；Secret 内容不经查询契约返回，认证记录不可变，配置历史追加保留。
