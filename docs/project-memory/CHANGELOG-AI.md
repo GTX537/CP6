@@ -2,6 +2,12 @@
 
 > 依据 Git log 汇总，不替代完整 Git 历史。重点记录影响接手判断的里程碑。
 
+## 2026-08-14：Space/WMS CP6.Tests 真库门禁
+
+- SQL Server LocalDB 独立执行 SpaceSqlIntegration、WmsProductionSqlServer 和 IntegrationEvent UTC 回填集合，15/15 passed、0 skipped。
+- 覆盖 Space 过滤唯一索引/换码/rowversion/SQL 翻译，WMS Move/Replenish/Serial/LPN/Feature Flag 事务及 Session applock。
+- 全套 CP6.Tests 的两个 OA/PUR 共享 Stage 拒绝不属于 Space/WMS，未绕过或冒充通过；生产 CP6 WMS/SQL 接受仍为 Pending，核心 GA 保持 72% / No-Go。
+
 ## 2026-08-14：Space Studio 全量 SQL Server LocalDB 门禁收敛
 
 - 完整 Space Integration 首次在 SQL Server 17.0.4025.3 LocalDB 真实执行，424/426 暴露两个此前被环境 skip 隐藏的问题；发布恢复查询已独立修复。
