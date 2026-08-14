@@ -23,6 +23,7 @@ describe('DesignCadStartWizard', () => {
       cadGaReady: true,
       primary: {
         providerKey: 'primary',
+        providerVersion: '1.0',
         displayName: 'Primary CAD',
         role: 'Primary',
         deploymentMode: 'OnPremisesIsolatedWorker',
@@ -48,6 +49,7 @@ describe('DesignCadStartWizard', () => {
       },
       backup: {
         providerKey: 'backup',
+        providerVersion: '1.0',
         displayName: 'Backup CAD',
         role: 'Backup',
         deploymentMode: 'ApprovedCloudService',
@@ -147,6 +149,8 @@ describe('DesignCadStartWizard', () => {
       .toContain('Primary CAD')
     expect(wrapper.get('[aria-label="Site CAD Provider 能力"]').text())
       .toContain('Backup CAD')
+    expect(wrapper.get('[aria-label="Site CAD Provider 能力"]').text())
+      .toContain('v1.0')
 
     const startButton = wrapper.get('footer .primary')
     expect(startButton.attributes('disabled')).toBeDefined()

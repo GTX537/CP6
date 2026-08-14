@@ -68,6 +68,7 @@ public sealed class SpaceCadPreparationServiceTests
             new JsonSerializerOptions(JsonSerializerDefaults.Web));
         Assert.NotNull(payload);
         Assert.Equal(SpaceCadParsePayloadVersions.Current, payload.SchemaVersion);
+        Assert.Equal(preparation.ProviderVersion, payload.PreferredProviderVersion);
         Assert.Equal(preparation.MappingReplaySnapshotJson,
             payload.MappingReplaySnapshotJson);
     }

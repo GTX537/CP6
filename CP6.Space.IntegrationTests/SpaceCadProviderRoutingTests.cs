@@ -38,6 +38,7 @@ public sealed class SpaceCadProviderRoutingTests
         Assert.True(read.CadGaReady);
         Assert.Empty(read.BlockingCodes);
         Assert.Equal("primary.local", read.Primary!.ProviderKey);
+        Assert.Equal("1.0", read.Primary.ProviderVersion);
         Assert.Equal("backup.cloud", read.Backup!.ProviderKey);
         Assert.Equal(2, await fixture.Context.CadProviderCertifications.CountAsync());
     }
@@ -130,6 +131,108 @@ public sealed class SpaceCadProviderRoutingTests
     }
 
     [Fact]
+    public async Task Runtime_version_mismatch_fails_closed_without_invoking_provider()
+    {
+        await using var fixture = Fixture.Create();
+        _ = await fixture.Service.ReplaceAsync(
+            fixture.SiteId,
+            Configuration(0, includeBackup: false),
+            "primary-only");
+        var upgraded = new TestProvider("primary.local", providerVersion: "2.0");
+        var registry = new SpaceCadProviderRegistry(
+        [
+            new SpaceCadProviderRegistration(
+                upgraded.ProviderKey,
+                upgraded.ProviderVersion,
+                upgraded.ProviderKey,
+                SpaceCadProviderDeploymentMode.OnPremisesIsolatedWorker,
+                SpaceCadProviderDataBoundary.SiteLocal,
+                supportsDwg: true,
+                supportsDxf: true,
+                upgraded,
+                upgraded),
+        ]);
+        var service = new SpaceCadProviderCapabilityService(
+            fixture.Context,
+            fixture.Execution,
+            new AllowAccess(),
+            registry,
+            fixture.Clock);
+        var capability = await service.GetAsync(fixture.SiteId);
+        var router = new SpaceCadProviderRouter(
+            fixture.Context,
+            registry,
+            fixture.Clock,
+            NullLogger<SpaceCadProviderRouter>.Instance);
+
+        await using var source = new MemoryStream([1, 2, 3]);
+        var problem = await Assert.ThrowsAsync<SpaceProblemException>(() =>
+            router.InspectAsync(
+                new SpaceCadPreparationProviderRequest(
+                    fixture.Execution.TenantId,
+                    fixture.SiteId,
+                    Guid.NewGuid(),
+                    Guid.NewGuid(),
+                    new string('a', 64),
+                    SpaceCadSourceFormat.Dwg,
+                    SpaceWorkerSandboxPolicy.FileSafetyDefault),
+                source));
+
+        Assert.False(capability.CanPrepareCad);
+        Assert.False(capability.Primary!.RuntimeAvailable);
+        Assert.Contains(
+            "CAD_PRIMARY_RUNTIME_VERSION_MISMATCH",
+            capability.BlockingCodes);
+        Assert.Equal(SpaceErrorCodes.CadProviderUnavailable, problem.Code);
+        Assert.Equal(0, upgraded.PreparationCalls);
+    }
+
+    [Fact]
+    public async Task Provider_output_version_must_match_runtime_registration()
+    {
+        await using var fixture = Fixture.Create();
+        _ = await fixture.Service.ReplaceAsync(
+            fixture.SiteId,
+            Configuration(0, includeBackup: false),
+            "primary-only");
+        var changedOutput = new TestProvider("primary.local", providerVersion: "2.0");
+        var registry = new SpaceCadProviderRegistry(
+        [
+            new SpaceCadProviderRegistration(
+                changedOutput.ProviderKey,
+                "1.0",
+                changedOutput.ProviderKey,
+                SpaceCadProviderDeploymentMode.OnPremisesIsolatedWorker,
+                SpaceCadProviderDataBoundary.SiteLocal,
+                supportsDwg: true,
+                supportsDxf: true,
+                changedOutput,
+                changedOutput),
+        ]);
+        var router = new SpaceCadProviderRouter(
+            fixture.Context,
+            registry,
+            fixture.Clock,
+            NullLogger<SpaceCadProviderRouter>.Instance);
+
+        await using var source = new MemoryStream([1, 2, 3]);
+        var problem = await Assert.ThrowsAsync<SpaceProblemException>(() =>
+            router.InspectAsync(
+                new SpaceCadPreparationProviderRequest(
+                    fixture.Execution.TenantId,
+                    fixture.SiteId,
+                    Guid.NewGuid(),
+                    Guid.NewGuid(),
+                    new string('a', 64),
+                    SpaceCadSourceFormat.Dwg,
+                    SpaceWorkerSandboxPolicy.FileSafetyDefault),
+                source));
+
+        Assert.Equal(SpaceErrorCodes.CadProviderFailoverDenied, problem.Code);
+        Assert.Equal(1, changedOutput.PreparationCalls);
+    }
+
+    [Fact]
     public async Task Parse_uses_the_preparation_sealed_provider_then_certified_backup()
     {
         var primary = new TestProvider("primary.local", failParse: true);
@@ -173,7 +276,8 @@ public sealed class SpaceCadProviderRoutingTests
             0,
             null,
             "primary.local",
-            new string('e', 64));
+            new string('e', 64),
+            PreferredProviderVersion: "1.0");
 
         await using var source = new MemoryStream([1, 2, 3]);
         var artifacts = await router.GenerateAsync(
@@ -227,6 +331,47 @@ public sealed class SpaceCadProviderRoutingTests
         Assert.Equal(SpaceErrorCodes.CadProviderUnavailable, problem.ErrorCode);
         Assert.Equal(0, primary.ParseCalls);
         Assert.Equal(1, backup.ParseCalls);
+    }
+
+    [Fact]
+    public async Task Parse_rejects_preparation_sealed_to_a_different_provider_version()
+    {
+        var primary = new TestProvider("primary.local");
+        var backup = new TestProvider("backup.cloud");
+        await using var fixture = Fixture.Create(primary, backup);
+        _ = await fixture.Service.ReplaceAsync(
+            fixture.SiteId,
+            Configuration(0, includeBackup: true),
+            "configure-1");
+        var model = SpaceModel.Create(
+            fixture.Execution.TenantId,
+            fixture.SiteId);
+        var version = SpaceModelVersion.CreateDraft(
+            fixture.Execution.TenantId,
+            model.Id,
+            1,
+            "CAD routing test");
+        fixture.Context.AddRange(model, version);
+        await fixture.Context.SaveChangesAsync();
+        var router = new SpaceCadProviderRouter(
+            fixture.Context,
+            fixture.Registry,
+            fixture.Clock,
+            NullLogger<SpaceCadProviderRouter>.Instance);
+        var payload = Payload(version.Id, "primary.local", "2.0");
+
+        await using var source = new MemoryStream([1, 2, 3]);
+        var problem = await Assert.ThrowsAsync<SpaceJobProcessingException>(() =>
+            router.GenerateAsync(
+                new SpaceCadParseProviderRequest(
+                    fixture.Execution.TenantId,
+                    Guid.NewGuid(),
+                    payload),
+                source));
+
+        Assert.Equal(SpaceErrorCodes.CadProviderUnavailable, problem.ErrorCode);
+        Assert.Equal(0, primary.ParseCalls);
+        Assert.Equal(0, backup.ParseCalls);
     }
 
     [Fact]
@@ -308,18 +453,38 @@ public sealed class SpaceCadProviderRoutingTests
         Assert.Empty(await fixture.Context.CadProviderConfigurations.ToListAsync());
     }
 
+    [Fact]
+    public async Task Configuration_rejects_version_not_registered_in_this_deployment()
+    {
+        await using var fixture = Fixture.Create();
+
+        var problem = await Assert.ThrowsAsync<SpaceProblemException>(() =>
+            fixture.Service.ReplaceAsync(
+                fixture.SiteId,
+                Configuration(
+                    0,
+                    includeBackup: false,
+                    primaryVersion: "2.0"),
+                "unregistered-version"));
+
+        Assert.Equal(SpaceErrorCodes.CadProviderConfigurationInvalid, problem.Code);
+        Assert.Empty(await fixture.Context.CadProviderConfigurations.ToListAsync());
+    }
+
     private static ReplaceSpaceCadProviderConfigurationRequest Configuration(
         long revision,
         bool includeBackup,
         int primaryScore = 92,
         int backupScore = 86,
         string? backupEnvironmentSha256 = null,
-        bool primarySecurityApproved = true)
+        bool primarySecurityApproved = true,
+        string primaryVersion = "1.0")
     {
         var certifications = new List<SpaceCadProviderCertificationInputDto>
         {
             new(
                 "primary.local",
+                primaryVersion,
                 "Primary",
                 "OnPremisesIsolatedWorker",
                 "SiteLocal",
@@ -343,6 +508,7 @@ public sealed class SpaceCadProviderRoutingTests
         {
             certifications.Add(new SpaceCadProviderCertificationInputDto(
                 "backup.cloud",
+                "1.0",
                 "Backup",
                 "ApprovedCloudService",
                 "CustomerApprovedCloudRegion",
@@ -370,7 +536,8 @@ public sealed class SpaceCadProviderRoutingTests
 
     private static SpaceCadParseJobPayload Payload(
         Guid versionId,
-        string providerKey) =>
+        string providerKey,
+        string providerVersion = "1.0") =>
         new(
             SpaceCadParsePayloadVersions.Current,
             versionId,
@@ -390,7 +557,8 @@ public sealed class SpaceCadProviderRoutingTests
             0,
             null,
             providerKey,
-            new string('e', 64));
+            new string('e', 64),
+            PreferredProviderVersion: providerVersion);
 
     private sealed class Fixture : IAsyncDisposable
     {
@@ -464,6 +632,7 @@ public sealed class SpaceCadProviderRoutingTests
             SpaceCadProviderDataBoundary boundary) =>
             new(
                 provider.ProviderKey,
+                provider.ProviderVersion,
                 provider.ProviderKey,
                 deployment,
                 boundary,
@@ -475,12 +644,14 @@ public sealed class SpaceCadProviderRoutingTests
 
     private sealed class TestProvider(
         string providerKey,
+        string providerVersion = "1.0",
         bool failPreparation = false,
         bool failParse = false) :
         ISpaceCadPreparationProvider,
         ISpaceCadParseProvider
     {
         public string ProviderKey { get; } = providerKey;
+        public string ProviderVersion { get; } = providerVersion;
         public int PreparationCalls { get; private set; }
         public int ParseCalls { get; private set; }
 
@@ -507,7 +678,7 @@ public sealed class SpaceCadProviderRoutingTests
                     SpaceCadIrVersions.CoordinateSystem,
                     new SpaceCadBoundsV1(0, 0, 10, 10),
                     ProviderKey,
-                    "1.0"),
+                    ProviderVersion),
                 [],
                 [],
                 [],

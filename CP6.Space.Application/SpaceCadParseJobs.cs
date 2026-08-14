@@ -7,7 +7,8 @@ public static class SpaceCadParsePayloadVersions
 {
     public const int LegacyBaseRevision = 2;
     public const int LegacyProviderRouting = 3;
-    public const int Current = 4;
+    public const int LegacyMappingReplay = 4;
+    public const int Current = 5;
 }
 
 public sealed record SpaceCadParseJobPayload(
@@ -30,7 +31,8 @@ public sealed record SpaceCadParseJobPayload(
     string? BaseContentHash,
     string? PreferredProviderKey,
     string? ExpectedSemanticPreviewSha256,
-    string? MappingReplaySnapshotJson = null);
+    string? MappingReplaySnapshotJson = null,
+    string? PreferredProviderVersion = null);
 
 public sealed record SpaceCadParseProviderRequest(
     Guid TenantId,

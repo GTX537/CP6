@@ -26692,6 +26692,10 @@ namespace CP6.Space.Client
         [System.ComponentModel.DataAnnotations.Required(AllowEmptyStrings = true)]
         public string ProviderKey { get; set; } = default!;
 
+        [System.Text.Json.Serialization.JsonPropertyName("providerVersion")]
+        [System.ComponentModel.DataAnnotations.Required(AllowEmptyStrings = true)]
+        public string ProviderVersion { get; set; } = default!;
+
         [System.Text.Json.Serialization.JsonPropertyName("role")]
         [System.ComponentModel.DataAnnotations.Required(AllowEmptyStrings = true)]
         public string Role { get; set; } = default!;
@@ -26765,6 +26769,10 @@ namespace CP6.Space.Client
         [System.Text.Json.Serialization.JsonPropertyName("providerKey")]
         [System.ComponentModel.DataAnnotations.Required(AllowEmptyStrings = true)]
         public string ProviderKey { get; set; } = default!;
+
+        [System.Text.Json.Serialization.JsonPropertyName("providerVersion")]
+        [System.ComponentModel.DataAnnotations.Required(AllowEmptyStrings = true)]
+        public string ProviderVersion { get; set; } = default!;
 
         [System.Text.Json.Serialization.JsonPropertyName("displayName")]
         [System.ComponentModel.DataAnnotations.Required(AllowEmptyStrings = true)]

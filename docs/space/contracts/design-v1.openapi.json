@@ -21989,6 +21989,7 @@
           "goldenDatasetSha256",
           "licensingApproved",
           "providerKey",
+          "providerVersion",
           "qualificationEvidenceReference",
           "qualificationRubricVersion",
           "qualificationScore",
@@ -22001,6 +22002,9 @@
         "type": "object",
         "properties": {
           "providerKey": {
+            "type": "string"
+          },
+          "providerVersion": {
             "type": "string"
           },
           "role": {
@@ -22076,6 +22080,7 @@
           "expiresAtUtc",
           "licensingApproved",
           "providerKey",
+          "providerVersion",
           "qualified",
           "role",
           "runtimeAvailable",
@@ -22088,6 +22093,9 @@
         "type": "object",
         "properties": {
           "providerKey": {
+            "type": "string"
+          },
+          "providerVersion": {
             "type": "string"
           },
           "displayName": {

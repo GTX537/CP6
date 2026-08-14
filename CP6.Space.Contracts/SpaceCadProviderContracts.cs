@@ -2,6 +2,7 @@ namespace CP6.Space.Contracts;
 
 public sealed record SpaceCadProviderCertificationInputDto(
     string ProviderKey,
+    string ProviderVersion,
     string Role,
     string DeploymentMode,
     string DataBoundary,
@@ -28,6 +29,7 @@ public sealed record ReplaceSpaceCadProviderConfigurationRequest(
 
 public sealed record SpaceCadProviderSlotDto(
     string ProviderKey,
+    string ProviderVersion,
     string DisplayName,
     string Role,
     string DeploymentMode,

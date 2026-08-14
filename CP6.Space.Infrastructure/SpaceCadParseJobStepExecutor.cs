@@ -248,6 +248,7 @@ public sealed class SpaceCadParseJobStepExecutor(
         if (payload.SchemaVersion is not (
                 SpaceCadParsePayloadVersions.LegacyBaseRevision or
                 SpaceCadParsePayloadVersions.LegacyProviderRouting or
+                SpaceCadParsePayloadVersions.LegacyMappingReplay or
                 SpaceCadParsePayloadVersions.Current) ||
             payload.SourceId != lease.SubjectId ||
             payload.ModelVersionId == Guid.Empty ||
@@ -264,11 +265,16 @@ public sealed class SpaceCadParseJobStepExecutor(
                 !IsSha256(payload.BaseContentHash) ||
             payload.SchemaVersion is (
                 SpaceCadParsePayloadVersions.LegacyProviderRouting or
+                SpaceCadParsePayloadVersions.LegacyMappingReplay or
                 SpaceCadParsePayloadVersions.Current) &&
                 (!IsProviderKey(payload.PreferredProviderKey) ||
                  !IsSha256(payload.ExpectedSemanticPreviewSha256)) ||
-            payload.SchemaVersion == SpaceCadParsePayloadVersions.Current &&
+            payload.SchemaVersion is (
+                SpaceCadParsePayloadVersions.LegacyMappingReplay or
+                SpaceCadParsePayloadVersions.Current) &&
                 !IsValidMappingReplaySnapshot(payload, lease.TenantId) ||
+            payload.SchemaVersion == SpaceCadParsePayloadVersions.Current &&
+                !IsProviderVersion(payload.PreferredProviderVersion) ||
             !Hash(job.PayloadJson).Equals(lease.InputHash, StringComparison.Ordinal))
         {
             throw Failure(
@@ -356,6 +362,18 @@ public sealed class SpaceCadParseJobStepExecutor(
         try
         {
             return SpaceCadProviderKey.Normalize(value!) == value;
+        }
+        catch (ArgumentException)
+        {
+            return false;
+        }
+    }
+
+    private static bool IsProviderVersion(string? value)
+    {
+        try
+        {
+            return SpaceCadProviderVersion.Normalize(value!) == value;
         }
         catch (ArgumentException)
         {

@@ -1,9 +1,15 @@
 # 已完成能力与近期里程碑
 
+## 2026-08-14 Space Studio WP3 CAD Provider 版本认证围栏
+
+- Site Provider 认证和运行时注册新增必填 `ProviderVersion`，能力查询、执行路由和 Provider 输出身份均要求 Key + Version 完全一致；版本不一致时能力显示明确阻断并在调用 Provider 前失败关闭。
+- 当前 Parse payload 升级为 v5，除 Mapping Replay Snapshot 外继续封存 Preparation 的 Provider Version；评分工具生成的 Site 认证输入携带同一候选版本，CAD 向导显示主备认证版本，OpenAPI/C#/TypeScript SDK 同步必填合同。
+- 新增独立可回滚迁移和幂等 SQL；历史认证行不猜测补版本并按不完整资格失败关闭。仓库版本围栏完成不等于真实 ODA/APS 或替代者已认证，真 SQL、黄金 CAD、Site 审批和 Pilot 仍为 Pending，WP3 保持 Partial/Pending。
+
 ## 2026-08-14 Space Studio WP3 CAD 映射确定性重放快照
 
 - sealed Preparation 现在保存服务器生成、规范排序并由 SHA-256 密封的 Mapping Replay Snapshot，绑定 Tenant、Source、不可变 Profile、Inventory/Structure/Preview Hash 和用户确认的完整 Layer Overrides；客户端不能提交或替换快照。
-- 新 Parse Job 使用 payload schema v4 并携带同一快照；启动服务与 Worker 分别在入队前和 Provider 调用前验证身份/哈希。损坏或缺失的 v4 快照零 Job 或零 Provider 写入，历史 v2/v3 保持显式兼容。
+- 历史 Parse Job v4 首次携带同一快照；当前 v5 继续携带快照并新增 Provider Version 围栏。启动服务与 Worker 分别在入队前和 Provider 调用前验证身份/哈希。损坏或缺失的当前快照/版本零 Job 或零 Provider 写入，历史 v2–v4 保持显式兼容读取。
 - 新增可回滚迁移、幂等 SQL、合同说明与聚焦自动化。当前 18 个 Mapping 单测和 15 个 Preparation/Parse 集成测试通过；全量 Space Unit 512/512、Integration 313 passed / 106 environment skipped、CP6.Tests 2,916 passed / 19 environment skipped，Release solution 0 warning / 0 error。真实适配器仍须按快照重放并执行结果核验，ODA/APS、黄金 CAD、Site 审批和 Pilot 均未发生，因此 WP3 仍为 Partial/Pending。
 
 ## 2026-08-14 Space Studio WP3 Provider 评分与选型工具

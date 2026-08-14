@@ -2,6 +2,12 @@
 
 > 依据 Git log 汇总，不替代完整 Git 历史。重点记录影响接手判断的里程碑。
 
+## 2026-08-14：Space Studio WP3 CAD Provider 版本认证围栏
+
+- Site 认证、运行时注册、能力查询、Preparation 输出和新 Parse payload v5 统一绑定 `ProviderVersion`；配置、路由与产物身份都要求 Key + Version 完全一致，避免同名 Worker 升级绕过原黄金集和审批证据。
+- 评分工具输出的 Site 认证输入携带候选版本；CAD 向导显示主备版本，OpenAPI、C#/TypeScript SDK、新迁移和幂等 SQL 同步。历史认证只迁移为空版本并失败关闭，不猜测回填。
+- 仓库测试覆盖版本错配零调用、输出漂移拒绝和封存解析版本漂移。真实 Provider、真 SQL 接受、20 份黄金 CAD、Site 审批和 Pilot 未发生，WP3 保持 Partial/Pending，核心 GA 保持 No-Go。
+
 ## 2026-08-14：Space Studio WP3 CAD 映射确定性重放快照
 
 - CAD Preparation 新增服务器拥有、SHA-256 密封的 Mapping Replay Snapshot，保存不可变 Profile/Source/Inventory/Structure/Preview 身份和完整 Layer Overrides，修复后台 Parse 只有结果 Hash、没有重放输入的问题。

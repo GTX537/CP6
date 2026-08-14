@@ -41,6 +41,7 @@ export interface SpaceCadPreparationStatus {
 
 export interface SpaceCadProviderSlot {
   providerKey: string
+  providerVersion: string
   displayName: string
   role: string
   deploymentMode: string

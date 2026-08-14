@@ -84,6 +84,7 @@ public sealed class SpaceCadProviderSqlServerTests
             Assert.Equal(2, replaced.Capability.ConfigurationRevision);
             Assert.True(replaced.Capability.CadGaReady);
             Assert.Equal(92, replaced.Capability.Primary!.QualificationScore);
+            Assert.Equal("1.0", replaced.Capability.Primary.ProviderVersion);
             Assert.Equal(86, replaced.Capability.Backup!.QualificationScore);
             Assert.True(replaced.Capability.Primary.Qualified);
             Assert.True(replaced.Capability.Backup.Qualified);
@@ -175,6 +176,40 @@ public sealed class SpaceCadProviderSqlServerTests
         });
     }
 
+    [SqlServerFact]
+    public async Task Legacy_certification_without_provider_version_is_fail_closed()
+    {
+        await WithDatabaseAsync(async (connectionString, tenantId, siteId) =>
+        {
+            var execution = new TestExecution(tenantId, Guid.NewGuid());
+            await using var context = CreateContext(connectionString, execution);
+            var service = NewService(context, execution);
+            _ = await service.ReplaceAsync(
+                siteId,
+                Configuration(expectedRevision: 0),
+                "qualified-config");
+            await context.Database.ExecuteSqlRawAsync("""
+                UPDATE [Space_CadSiteProviderCertification]
+                SET [ProviderVersion] = ''
+                WHERE [TenantId] = {0} AND [SiteId] = {1}
+                """, tenantId, siteId);
+            context.ChangeTracker.Clear();
+
+            var capability = await service.GetAsync(siteId);
+
+            Assert.False(capability.CanPrepareCad);
+            Assert.False(capability.CadGaReady);
+            Assert.False(capability.Primary!.Qualified);
+            Assert.False(capability.Backup!.Qualified);
+            Assert.Contains(
+                "CAD_PRIMARY_QUALIFICATION_INCOMPLETE",
+                capability.BlockingCodes);
+            Assert.Contains(
+                "CAD_BACKUP_QUALIFICATION_INCOMPLETE",
+                capability.BlockingCodes);
+        });
+    }
+
     private static ReplaceSpaceCadProviderConfigurationRequest Configuration(
         long expectedRevision) =>
         new(
@@ -183,6 +218,7 @@ public sealed class SpaceCadProviderSqlServerTests
             [
                 new SpaceCadProviderCertificationInputDto(
                     "primary.local",
+                    "1.0",
                     "Primary",
                     "OnPremisesIsolatedWorker",
                     "SiteLocal",
@@ -203,6 +239,7 @@ public sealed class SpaceCadProviderSqlServerTests
                     QualificationEvidenceReference: "evidence://qualification/primary"),
                 new SpaceCadProviderCertificationInputDto(
                     "backup.cloud",
+                    "1.0",
                     "Backup",
                     "ApprovedCloudService",
                     "CustomerApprovedCloudRegion",
@@ -241,6 +278,7 @@ public sealed class SpaceCadProviderSqlServerTests
         [
             new SpaceCadProviderRegistration(
                 "primary.local",
+                "1.0",
                 "Primary local Provider",
                 SpaceCadProviderDeploymentMode.OnPremisesIsolatedWorker,
                 SpaceCadProviderDataBoundary.SiteLocal,
@@ -250,6 +288,7 @@ public sealed class SpaceCadProviderSqlServerTests
                 primary),
             new SpaceCadProviderRegistration(
                 "backup.cloud",
+                "1.0",
                 "Approved cloud backup",
                 SpaceCadProviderDeploymentMode.ApprovedCloudService,
                 SpaceCadProviderDataBoundary.CustomerApprovedCloudRegion,
@@ -298,6 +337,7 @@ public sealed class SpaceCadProviderSqlServerTests
                      {
                          "20260814011926_SpaceCadProviderRouting.sql",
                          "20260814051514_SpaceCadProviderQualificationEvidence.sql",
+                         "20260814063519_SpaceCadProviderVersionFence.sql",
                      })
             {
                 var scriptPath = Path.Combine(

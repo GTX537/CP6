@@ -161,6 +161,78 @@ public sealed class SpaceCadParseJobTests
     }
 
     [Fact]
+    public async Task Current_payload_requires_a_sealed_provider_version()
+    {
+        await using var fixture = await CreateFixtureAsync();
+        var started = await fixture.Service.StartAsync(
+            fixture.Version.Id,
+            fixture.Source.Id,
+            fixture.Request,
+            "cad-missing-provider-version");
+        var job = await fixture.Context.Jobs.SingleAsync(item => item.Id == started.JobId);
+        var payload = JsonNode.Parse(job.PayloadJson)!.AsObject();
+        payload.Remove("preferredProviderVersion");
+        var frozenPayload = payload.ToJsonString(JsonOptions);
+        fixture.Context.Entry(job).Property(item => item.PayloadJson).CurrentValue =
+            frozenPayload;
+        fixture.Context.Entry(job).Property(item => item.InputHash).CurrentValue =
+            Sha256(Encoding.UTF8.GetBytes(frozenPayload));
+        await fixture.Context.SaveChangesAsync();
+        var lease = await ClaimAsync(fixture, started.JobId);
+        var provider = new DeterministicProvider();
+        var executor = new SpaceCadParseJobStepExecutor(
+            fixture.Context,
+            new FileServiceProvider(fixture.Files),
+            provider);
+
+        var problem = await Assert.ThrowsAsync<SpaceJobProcessingException>(() =>
+            executor.ExecuteAsync(new(
+                lease,
+                1,
+                SpaceCadParseJobProcessor.GenerateArtifacts)));
+
+        Assert.Equal(SpaceErrorCodes.CadParseInvalid, problem.ErrorCode);
+        Assert.Equal(SpaceJobFailureKind.Input, problem.FailureKind);
+        Assert.Equal(0, provider.CallCount);
+        Assert.Empty(await fixture.Context.Artifacts.ToListAsync());
+    }
+
+    [Fact]
+    public async Task Legacy_v4_payload_without_provider_version_remains_explicitly_supported()
+    {
+        await using var fixture = await CreateFixtureAsync();
+        var started = await fixture.Service.StartAsync(
+            fixture.Version.Id,
+            fixture.Source.Id,
+            fixture.Request,
+            "cad-legacy-v4-provider-version");
+        var job = await fixture.Context.Jobs.SingleAsync(item => item.Id == started.JobId);
+        var payload = JsonNode.Parse(job.PayloadJson)!.AsObject();
+        payload["schemaVersion"] = SpaceCadParsePayloadVersions.LegacyMappingReplay;
+        payload.Remove("preferredProviderVersion");
+        var frozenPayload = payload.ToJsonString(JsonOptions);
+        fixture.Context.Entry(job).Property(item => item.PayloadJson).CurrentValue =
+            frozenPayload;
+        fixture.Context.Entry(job).Property(item => item.InputHash).CurrentValue =
+            Sha256(Encoding.UTF8.GetBytes(frozenPayload));
+        await fixture.Context.SaveChangesAsync();
+        var lease = await ClaimAsync(fixture, started.JobId);
+        var provider = new DeterministicProvider();
+        var executor = new SpaceCadParseJobStepExecutor(
+            fixture.Context,
+            new FileServiceProvider(fixture.Files),
+            provider);
+
+        await executor.ExecuteAsync(new(
+            lease,
+            1,
+            SpaceCadParseJobProcessor.GenerateArtifacts));
+
+        Assert.Equal(1, provider.CallCount);
+        Assert.Equal(3, await fixture.Context.Artifacts.CountAsync());
+    }
+
+    [Fact]
     public async Task Legacy_v3_payload_without_mapping_replay_snapshot_remains_explicitly_supported()
     {
         await using var fixture = await CreateFixtureAsync();

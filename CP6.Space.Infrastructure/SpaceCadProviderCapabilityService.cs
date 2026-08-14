@@ -97,6 +97,7 @@ public sealed class SpaceCadProviderCapabilityService(
                     next.Id,
                     siteId,
                     item.ProviderKey,
+                    item.ProviderVersion,
                     item.Role,
                     item.DeploymentMode,
                     item.DataBoundary,
@@ -179,6 +180,8 @@ public sealed class SpaceCadProviderCapabilityService(
         var blockers = new List<string>();
         AddBlockers(primaryDto, "PRIMARY", blockers);
         AddBlockers(backupDto, "BACKUP", blockers);
+        AddRuntimeVersionBlocker(primary, "PRIMARY", blockers);
+        AddRuntimeVersionBlocker(backup, "BACKUP", blockers);
         if (primaryDto is not null && backupDto is not null &&
             primaryDto.ProviderKey == backupDto.ProviderKey)
             blockers.Add("CAD_PROVIDER_KEYS_NOT_DISTINCT");
@@ -211,12 +214,16 @@ public sealed class SpaceCadProviderCapabilityService(
     {
         var runtime = registry.TryGet(value.ProviderKey, out var registration) &&
             registration is not null &&
+            registration.ProviderVersion.Equals(
+                value.ProviderVersion,
+                StringComparison.Ordinal) &&
             registration.DeploymentMode == value.DeploymentMode &&
             registration.DataBoundary == value.DataBoundary &&
             (!value.SupportsDwg || registration.SupportsDwg) &&
             (!value.SupportsDxf || registration.SupportsDxf);
         return new SpaceCadProviderSlotDto(
             value.ProviderKey,
+            value.ProviderVersion,
             registration?.DisplayName ?? value.ProviderKey,
             value.Role.ToString(),
             value.DeploymentMode.ToString(),
@@ -239,6 +246,22 @@ public sealed class SpaceCadProviderCapabilityService(
             value.HasCompleteQualification,
             runtime,
             value.IsValidAt(now));
+    }
+
+    private void AddRuntimeVersionBlocker(
+        SpaceCadSiteProviderCertification? certification,
+        string role,
+        ICollection<string> blockers)
+    {
+        if (certification is not null &&
+            registry.TryGet(certification.ProviderKey, out var registration) &&
+            registration is not null &&
+            !registration.ProviderVersion.Equals(
+                certification.ProviderVersion,
+                StringComparison.Ordinal))
+        {
+            blockers.Add($"CAD_{role}_RUNTIME_VERSION_MISMATCH");
+        }
     }
 
     private static void AddBlockers(
@@ -322,6 +345,7 @@ public sealed class SpaceCadProviderCapabilityService(
         try
         {
             var key = SpaceCadProviderKey.Normalize(request.ProviderKey);
+            var version = SpaceCadProviderVersion.Normalize(request.ProviderVersion);
             if (!Enum.TryParse<SpaceCadProviderRole>(request.Role, true, out var role) ||
                 !Enum.IsDefined(role) ||
                 !Enum.TryParse<SpaceCadProviderDeploymentMode>(
@@ -342,6 +366,7 @@ public sealed class SpaceCadProviderCapabilityService(
                     "The Provider is not registered in this deployment.",
                     recoveryAction: "register-cad-provider-deployment");
             if (registration.DeploymentMode != deployment ||
+                !registration.ProviderVersion.Equals(version, StringComparison.Ordinal) ||
                 registration.DataBoundary != boundary ||
                 request.SupportsDwg && !registration.SupportsDwg ||
                 request.SupportsDxf && !registration.SupportsDxf)
@@ -353,6 +378,7 @@ public sealed class SpaceCadProviderCapabilityService(
                 Guid.NewGuid(),
                 Guid.NewGuid(),
                 key,
+                version,
                 role,
                 deployment,
                 boundary,
@@ -373,6 +399,7 @@ public sealed class SpaceCadProviderCapabilityService(
                 request.QualificationEvidenceReference);
             return new NormalizedCertification(
                 key,
+                version,
                 role,
                 deployment,
                 boundary,
@@ -568,6 +595,7 @@ public sealed class SpaceCadProviderCapabilityService(
 
     private sealed record NormalizedCertification(
         string ProviderKey,
+        string ProviderVersion,
         SpaceCadProviderRole Role,
         SpaceCadProviderDeploymentMode DeploymentMode,
         SpaceCadProviderDataBoundary DataBoundary,

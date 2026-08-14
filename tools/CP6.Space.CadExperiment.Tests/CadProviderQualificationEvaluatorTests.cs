@@ -35,6 +35,7 @@ public sealed class CadProviderQualificationEvaluatorTests
             primary =>
             {
                 Assert.Equal("candidate-a", primary.ProviderKey);
+                Assert.Equal("2026.8.14", primary.ProviderVersion);
                 Assert.Equal("Primary", primary.Role);
                 Assert.Equal(92, primary.QualificationScore);
                 Assert.True(primary.LicensingApproved);
@@ -48,6 +49,7 @@ public sealed class CadProviderQualificationEvaluatorTests
             backup =>
             {
                 Assert.Equal("candidate-b", backup.ProviderKey);
+                Assert.Equal("2026.8.14", backup.ProviderVersion);
                 Assert.Equal("Backup", backup.Role);
                 Assert.Equal(87, backup.QualificationScore);
                 Assert.Equal(
