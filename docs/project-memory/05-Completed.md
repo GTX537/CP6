@@ -1,5 +1,11 @@
 # 已完成能力与近期里程碑
 
+## 2026-08-14 Space/WMS CP6.Tests 真库门禁
+
+- 在 SQL Server 17.0.4025.3 LocalDB 上单独运行 CP6.Tests 的 SpaceSqlIntegration、WmsProductionSqlServer 和 SpaceIntegrationEventOccurredAtUtc 三个集合，15/15 passed、0 failed、0 skipped。
+- 证据覆盖过滤唯一索引、NULL 草稿码、两阶段换码、rowversion、Control Tower SQL、WMS Move/Replenish/Serial/LPN/Feature Flag 原子事务，以及两连接 Session applock/UTC 回填释放。
+- 全套 CP6.Tests 开启 SQL 后为 2932 passed / 2 unrelated failed / 1 intentional skipped；两个失败来自 OA/PUR 要求显式共享隔离 Stage，未被普通 LocalDB 绕过，也不混入 Space/WMS 通过口径。本项不替代生产 CP6 WMS 或生产等价 SQL 接受。
+
 ## 2026-08-14 Space Studio 全量 SQL Server LocalDB 门禁
 
 - 首次把 `CP6_TEST_SQLSERVER` 指向 SQL Server 17.0.4025.3 LocalDB 后，完整 Space Integration 从原先的环境 skip 变为真实执行；第一次结果 424/426，实际暴露发布恢复查询翻译和 Published Viewer 测试夹具违反不可变快照顺序两项问题。
