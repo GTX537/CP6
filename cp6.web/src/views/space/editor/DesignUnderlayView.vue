@@ -115,6 +115,8 @@ const maxCadReviewArtifactBytes = 20 * 1024 * 1024
 const maxAiReviewArtifactBytes = 50 * 1024 * 1024
 const pollAttempts = 30
 const pollDelayMs = 2000
+const inspectorTabs = ['properties', 'batch', 'issues'] as const
+type InspectorTab = typeof inspectorTabs[number]
 const defaultCanvasViewport: Pick<ViewState, 'panX' | 'panY' | 'zoom'> = {
   panX: 0,
   panY: 0,
@@ -147,7 +149,7 @@ const aiReviewWorkspace = ref<AiProposalReviewWorkspace | null>(null)
 const aiReviewPanelVisible = ref(false)
 const aiDecisionPanelVisible = ref(false)
 const aiGenerationPanelVisible = ref(false)
-const inspectorTab = ref<'properties' | 'batch' | 'issues'>('properties')
+const inspectorTab = ref<InspectorTab>('properties')
 const activeAiReviewItemId = ref('')
 const loading = ref(true)
 const projectionMode = ref<'2d' | '3d'>('2d')
@@ -729,7 +731,9 @@ function focusCadReviewItem(item: CadReviewItem): void {
     return
   }
   activeCadReviewItemId.value = item.reviewItemId
-  if (projectionMode.value === '3d') projectionMode.value = '2d'
+  if (projectionMode.value === '3d' && !narrowReadonly.value) {
+    projectionMode.value = '2d'
+  }
 
   const object = resolveCadReviewCanvasObject(
     item,
@@ -737,11 +741,43 @@ function focusCadReviewItem(item: CadReviewItem): void {
     activeElements.value,
   )
   selectObjects(object ? [object] : [], 'replace')
-  const viewport = viewportForCadReviewItem(item)
+  const viewport = narrowReadonly.value ? null : viewportForCadReviewItem(item)
   if (viewport) applyCanvasViewport(viewport)
-  if (!cadIssueOverlay?.focus(item)) {
+  if (!narrowReadonly.value && !cadIssueOverlay?.focus(item)) {
     ElMessage.warning('该问题没有可用的画布范围')
   }
+}
+
+function focusNextCadReviewItem(): void {
+  inspectorTab.value = 'issues'
+  const workspace = cadReviewWorkspace.value
+  if (!workspace || cadReviewWorkspaceStale.value) {
+    ElMessage.info(
+      workspace
+        ? 'CAD 问题工件已过期，请重新生成后定位'
+        : '当前没有已加载的 CAD 问题工件',
+    )
+    return
+  }
+  cadReviewPanelVisible.value = true
+  const severityOrder: Record<CadReviewItem['severity'], number> = {
+    Blocking: 0,
+    Warning: 1,
+    Info: 2,
+  }
+  const candidates = workspace.items
+    .filter((item) => item.status === 'Open' && item.location.canFocusCanvas)
+    .sort((left, right) =>
+      severityOrder[left.severity] - severityOrder[right.severity]
+      || left.reviewItemId.localeCompare(right.reviewItemId))
+  if (candidates.length === 0) {
+    ElMessage.info('当前没有可定位的 Open CAD 问题')
+    return
+  }
+  const currentIndex = candidates.findIndex(
+    (item) => item.reviewItemId === activeCadReviewItemId.value,
+  )
+  focusCadReviewItem(candidates[(currentIndex + 1) % candidates.length]!)
 }
 
 function viewportForCadReviewItem(
@@ -2359,9 +2395,25 @@ async function openPublishWorkflow(): Promise<void> {
 
 function showShortcutHelp(): void {
   void ElMessageBox.alert(
-    'Ctrl/Cmd+Z 撤销 · Ctrl/Cmd+Y 重做 · Delete 删除 · Esc 清空选择 · V 选择 · H 平移 · M 测量 · Ctrl/Cmd+S 保存状态',
+    'Ctrl/Cmd+Z 撤销 · Ctrl/Cmd+Y 重做 · Ctrl/Cmd+A 全选可批量对象 · Delete 删除 · Esc 清空选择 · V 选择 · H 平移 · M 测量 · G 定位下一个 Open 问题 · Ctrl/Cmd+S 查看保存状态 · ? 快捷键帮助',
     'Space Studio 快捷键',
   )
+}
+
+function onInspectorTabKeydown(event: KeyboardEvent): void {
+  const currentIndex = inspectorTabs.indexOf(inspectorTab.value)
+  let nextIndex = currentIndex
+  if (event.key === 'ArrowRight') nextIndex = (currentIndex + 1) % inspectorTabs.length
+  else if (event.key === 'ArrowLeft') {
+    nextIndex = (currentIndex - 1 + inspectorTabs.length) % inspectorTabs.length
+  } else if (event.key === 'Home') nextIndex = 0
+  else if (event.key === 'End') nextIndex = inspectorTabs.length - 1
+  else return
+  event.preventDefault()
+  inspectorTab.value = inspectorTabs[nextIndex]!
+  const tabs = (event.currentTarget as HTMLElement).parentElement
+    ?.querySelectorAll<HTMLElement>('[role="tab"]')
+  tabs?.[nextIndex]?.focus()
 }
 
 function onStudioKeydown(event: KeyboardEvent): void {
@@ -2416,7 +2468,11 @@ function onStudioKeydown(event: KeyboardEvent): void {
   } else if ((event.ctrlKey || event.metaKey) && key === 's') {
     event.preventDefault()
     ElMessage.info(saveLabel.value)
-  } else if (key === '?') {
+  } else if (key === 'g') {
+    event.preventDefault()
+    focusNextCadReviewItem()
+  } else if (key === '?' || (key === '/' && event.shiftKey)) {
+    event.preventDefault()
     showShortcutHelp()
   }
 }
@@ -2456,28 +2512,28 @@ function tabClientInstanceId(): string {
         <strong>{{ floor?.floorCode || '楼层' }}</strong>
         <span> / {{ designScene?.versionStatus || 'Draft' }} · r{{ floor?.revisionNumber ?? 0 }}</span>
       </div>
-      <div class="studio-title-state"><span>{{ saveLabel }}</span><span>{{ leaseLabel }}</span></div>
+      <div class="studio-title-state" aria-live="polite"><span>{{ saveLabel }}</span><span>{{ leaseLabel }}</span></div>
     </header>
 
-    <div class="studio-commandbar">
+    <div class="studio-commandbar" role="toolbar" aria-label="Space Studio 编辑命令">
       <div class="studio-view-switch" role="group" aria-label="2D/3D 模式">
-        <button type="button" :class="{ active: projectionMode === '2d' }" @click="projectionMode = '2d'">2D</button>
-        <button type="button" :class="{ active: projectionMode === '3d' }" @click="projectionMode = '3d'">3D</button>
+        <button type="button" :aria-pressed="projectionMode === '2d'" :class="{ active: projectionMode === '2d' }" @click="projectionMode = '2d'">2D</button>
+        <button type="button" :aria-pressed="projectionMode === '3d'" :class="{ active: projectionMode === '3d' }" @click="projectionMode = '3d'">3D</button>
       </div>
-      <button type="button" :class="{ active: canvasSelectionTool === 'select' }" @click="selectCanvasTool('select')">选择 V</button>
-      <button type="button" :class="{ active: canvasSelectionTool === 'pan' }" @click="selectCanvasTool('pan')">平移 H</button>
-      <button type="button" :class="{ active: canvasSelectionTool === 'measure' }" @click="selectCanvasTool('measure')">测量 M</button>
-      <button type="button" :disabled="!canUndo || readonlyScene" @click="undoSavedCommand">撤销</button>
-      <button type="button" :disabled="!canRedo || readonlyScene" @click="redoSavedCommand">重做</button>
+      <button type="button" aria-keyshortcuts="V" :aria-pressed="canvasSelectionTool === 'select'" :class="{ active: canvasSelectionTool === 'select' }" @click="selectCanvasTool('select')">选择 V</button>
+      <button type="button" aria-keyshortcuts="H" :aria-pressed="canvasSelectionTool === 'pan'" :class="{ active: canvasSelectionTool === 'pan' }" @click="selectCanvasTool('pan')">平移 H</button>
+      <button type="button" aria-keyshortcuts="M" :aria-pressed="canvasSelectionTool === 'measure'" :class="{ active: canvasSelectionTool === 'measure' }" @click="selectCanvasTool('measure')">测量 M</button>
+      <button type="button" aria-keyshortcuts="Control+Z Meta+Z" :disabled="!canUndo || readonlyScene" @click="undoSavedCommand">撤销</button>
+      <button type="button" aria-keyshortcuts="Control+Y Meta+Y" :disabled="!canRedo || readonlyScene" @click="redoSavedCommand">重做</button>
       <button type="button" @click="resetCanvasViewport">重置视图</button>
       <button v-if="matchJobId" type="button" @click="openMatchPanel">Excel–CAD 匹配</button>
       <span class="studio-command-spacer" />
-      <button type="button" class="issues-command" @click="inspectorTab = 'issues'; openCadReviewWorkspace()">
+      <button type="button" class="issues-command" aria-keyshortcuts="G" @click="inspectorTab = 'issues'; openCadReviewWorkspace()">
         问题 {{ cadReviewWorkspace ? `(${cadReviewWorkspace.summary.openCount})` : '' }}
       </button>
       <button type="button" @click="openValidationWorkflow">运行校验</button>
       <button type="button" class="publish" :disabled="readonlyScene" @click="openPublishWorkflow">校验并发布</button>
-      <button type="button" class="help" aria-label="快捷键帮助" @click="showShortcutHelp">?</button>
+      <button type="button" class="help" aria-label="快捷键帮助" aria-keyshortcuts="Shift+/" @click="showShortcutHelp">?</button>
     </div>
 
     <section class="workspace">
@@ -2537,7 +2593,7 @@ function tabClientInstanceId(): string {
           :coded="allLocationsCoded"
           :publish-ready="publishReady"
         />
-        <main v-show="projectionMode === '2d'" ref="canvasRef" class="canvas" />
+        <main v-show="projectionMode === '2d'" ref="canvasRef" class="canvas" tabindex="0" aria-label="仓库楼层 2D 建模画布" />
         <DesignScenePreview3D
           v-show="projectionMode === '3d'"
           :scene="designScene"
@@ -2546,13 +2602,20 @@ function tabClientInstanceId(): string {
         />
       </div>
 
-      <aside class="studio-inspector">
+      <aside class="studio-inspector" aria-label="检查器">
         <div class="inspector-tabs" role="tablist" aria-label="检查器">
-          <button type="button" role="tab" :aria-selected="inspectorTab === 'properties'" :class="{ active: inspectorTab === 'properties' }" @click="inspectorTab = 'properties'">属性</button>
-          <button type="button" role="tab" :aria-selected="inspectorTab === 'batch'" :class="{ active: inspectorTab === 'batch' }" @click="inspectorTab = 'batch'">批量</button>
-          <button type="button" role="tab" :aria-selected="inspectorTab === 'issues'" :class="{ active: inspectorTab === 'issues' }" @click="inspectorTab = 'issues'">问题</button>
+          <button id="space-studio-tab-properties" type="button" role="tab" aria-controls="space-studio-inspector-panel" :tabindex="inspectorTab === 'properties' ? 0 : -1" :aria-selected="inspectorTab === 'properties'" :class="{ active: inspectorTab === 'properties' }" @click="inspectorTab = 'properties'" @keydown="onInspectorTabKeydown">属性</button>
+          <button id="space-studio-tab-batch" type="button" role="tab" aria-controls="space-studio-inspector-panel" :tabindex="inspectorTab === 'batch' ? 0 : -1" :aria-selected="inspectorTab === 'batch'" :class="{ active: inspectorTab === 'batch' }" @click="inspectorTab = 'batch'" @keydown="onInspectorTabKeydown">批量</button>
+          <button id="space-studio-tab-issues" type="button" role="tab" aria-controls="space-studio-inspector-panel" :tabindex="inspectorTab === 'issues' ? 0 : -1" :aria-selected="inspectorTab === 'issues'" :class="{ active: inspectorTab === 'issues' }" @click="inspectorTab = 'issues'" @keydown="onInspectorTabKeydown">问题</button>
         </div>
 
+        <div
+          id="space-studio-inspector-panel"
+          class="studio-inspector-panel"
+          role="tabpanel"
+          :aria-labelledby="`space-studio-tab-${inspectorTab}`"
+          tabindex="0"
+        >
         <div v-if="inspectorTab === 'batch'" class="batch-inspector">
           <DesignBatchToolsPanel
             :selected-count="selectedEditorObjectCount"
@@ -2721,10 +2784,11 @@ function tabClientInstanceId(): string {
         <div v-else class="studio-inspector-empty">
           {{ inspectorTab === 'issues' ? '当前没有已加载的问题工件。' : '选择对象后可进行批量编辑。' }}
         </div>
+        </div>
       </aside>
     </section>
 
-    <footer class="studio-statusbar">
+    <footer class="studio-statusbar" role="contentinfo" aria-label="Space Studio 状态栏">
       <span>{{ pointerCoordinates }}</span>
       <span>比例 {{ canvasZoomPercent }}%</span>
       <span>选择 {{ selectedObjects.length }}</span>
@@ -2807,6 +2871,7 @@ function tabClientInstanceId(): string {
 .studio-commandbar { box-sizing:border-box; display:flex; align-items:center; gap:8px; height:60px; min-height:60px; padding:8px 12px; border-bottom:1px solid var(--space-studio-border); background:var(--space-studio-panel); }
 .studio-commandbar button,.studio-view-switch button,.inspector-tabs button,.studio-statusbar button { min-width:44px; min-height:44px; padding:0 12px; border:1px solid var(--space-studio-border); border-radius:6px; color:var(--space-studio-text); background:var(--space-studio-panel-raised); cursor:pointer; }
 .studio-commandbar button:focus-visible,.studio-view-switch button:focus-visible,.inspector-tabs button:focus-visible,.studio-statusbar button:focus-visible { outline:3px solid var(--space-studio-focus); outline-offset:2px; }
+.space-studio :deep(button:focus-visible),.space-studio :deep(input:focus-visible),.space-studio :deep(select:focus-visible),.space-studio :deep(textarea:focus-visible),.canvas:focus-visible,.studio-inspector-panel:focus-visible { outline:3px solid var(--space-studio-focus); outline-offset:2px; }
 .studio-commandbar button:disabled { cursor:not-allowed; opacity:.45; }
 .studio-view-switch { display:flex; }
 .studio-view-switch button { border-radius:0; }
@@ -2860,6 +2925,7 @@ function tabClientInstanceId(): string {
 .studio-inspector :deep(.ai-review-panel),
 .studio-inspector :deep(.decision-panel),
 .studio-inspector :deep(.properties-panel),
+.studio-inspector :deep(.element-properties),
 .studio-inspector :deep(.wms-panel),
 .studio-inspector :deep(.generation-launcher) {
   box-sizing:border-box;
@@ -2960,7 +3026,8 @@ function tabClientInstanceId(): string {
 
 .studio-statusbar { box-sizing:border-box; display:flex; align-items:center; gap:16px; height:30px; min-height:30px; padding:0 10px; border-top:1px solid var(--space-studio-border); color:var(--space-studio-muted); background:#0d1626; font-size:13px; }
 .studio-statusbar .blocking { color:var(--space-studio-blocking); }
-.studio-statusbar button { min-height:24px; height:24px; padding:0 8px; font-size:12px; }
+.studio-statusbar button { position:relative; min-height:24px; height:24px; padding:0 8px; font-size:13px; }
+.studio-statusbar button::after { position:absolute; inset:-10px 0; content:""; }
 @media (max-width:1279px) {
   .workspace { grid-template-columns:minmax(0,1fr) 280px; }
   .studio-context,.studio-checklist,.studio-statusbar { display:none; }

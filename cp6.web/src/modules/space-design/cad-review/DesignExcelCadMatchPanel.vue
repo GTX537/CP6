@@ -320,8 +320,9 @@ function shortHash(value?: string): string {
   width: 420px;
   padding: 14px;
   overflow: auto;
-  background: #fff;
-  border-left: 1px solid #dfe4ea;
+  color: var(--space-studio-text, #101828);
+  background: var(--space-studio-panel, #fff);
+  border-left: 1px solid var(--space-studio-border, #dfe4ea);
 }
 
 .panel-header,
@@ -340,10 +341,9 @@ function shortHash(value?: string): string {
 
 .panel-header p,
 .authority,
-.match-row,
 .pagination {
-  color: #667085;
-  font-size: 12px;
+  color: var(--space-studio-muted, #667085);
+  font-size: 14px;
 }
 
 .panel-header p {
@@ -359,7 +359,7 @@ function shortHash(value?: string): string {
 
 .summary-grid span {
   padding: 8px;
-  background: #f8fafc;
+  background: var(--space-studio-panel-raised, #f8fafc);
   border-radius: 6px;
 }
 
@@ -377,8 +377,9 @@ function shortHash(value?: string): string {
   align-items: center;
   gap: 8px;
   margin-bottom: 12px;
-  color: #475467;
-  font-size: 12px;
+  color: var(--space-studio-muted, #475467);
+  font-size: 16px;
+  line-height: 1.45;
 }
 
 .confirmation :deep(.el-alert) {
@@ -399,13 +400,17 @@ function shortHash(value?: string): string {
 .match-row {
   display: grid;
   width: 100%;
+  min-height: 44px;
   padding: 10px;
   margin-bottom: 8px;
   text-align: left;
-  background: #f8fafc;
-  border: 1px solid #e2e8f0;
+  background: var(--space-studio-panel-raised, #f8fafc);
+  border: 1px solid var(--space-studio-border, #e2e8f0);
   border-radius: 6px;
   cursor: pointer;
+  color: var(--space-studio-text, #475467);
+  font-size: 16px;
+  line-height: 1.45;
   gap: 4px;
 }
 
@@ -418,6 +423,11 @@ function shortHash(value?: string): string {
   opacity: 0.7;
 }
 
+.match-row:focus-visible {
+  outline: 3px solid var(--space-studio-focus, #0e7490);
+  outline-offset: 2px;
+}
+
 .row-title {
   justify-content: flex-start;
 }
@@ -428,15 +438,23 @@ function shortHash(value?: string): string {
 
 .empty {
   padding: 28px 8px;
-  color: #94a3b8;
+  color: var(--space-studio-muted, #64748b);
   text-align: center;
 }
+
+.match-panel :deep(.el-button),
+.match-panel :deep(.el-input__wrapper),
+.match-panel :deep(.el-select__wrapper),
+.match-panel :deep(.el-checkbox) { min-height: 44px; }
+.match-panel :deep(.el-button:focus-visible),
+.match-panel :deep(.el-input__wrapper:focus-within),
+.match-panel :deep(.el-select__wrapper:focus-within) { outline: 3px solid var(--space-studio-focus, #0e7490); outline-offset: 2px; }
 
 @media (max-width: 900px) {
   .match-panel {
     width: 100%;
     max-height: 50vh;
-    border-top: 1px solid #dfe4ea;
+    border-top: 1px solid var(--space-studio-border, #dfe4ea);
     border-left: 0;
   }
 }

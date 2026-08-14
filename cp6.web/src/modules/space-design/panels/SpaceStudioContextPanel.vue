@@ -123,7 +123,7 @@ const modes: Array<{ id: Mode; label: string; glyph: string }> = [
 .studio-modebar button.active { border-left-color:var(--space-studio-accent); color:var(--space-studio-text); background:rgba(12,181,190,.10); }
 .studio-modebar span,.studio-modebar small { display:block; }
 .studio-modebar span { font-size:15px; font-weight:700; }
-.studio-modebar small { margin-top:3px; font-size:12px; }
+.studio-modebar small { margin-top:3px; font-size:13px; }
 .studio-context-pane { padding:16px; overflow:auto; color:var(--space-studio-text); }
 h2 { margin:0 0 10px; font-size:16px; }
 p,.source-state,.empty-note,label { font-size:14px; line-height:1.5; color:var(--space-studio-muted); }

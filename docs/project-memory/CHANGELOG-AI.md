@@ -2,6 +2,12 @@
 
 > 依据 Git log 汇总，不替代完整 Git 历史。重点记录影响接手判断的里程碑。
 
+## 2026-08-14：Space Studio WP5 工作台键盘与可达性闭环
+
+- 检查器改为标准 tab 键盘模型，补齐工具选中语义、快捷键元数据、状态播报、画布焦点和统一焦点环；`G` 按严重度循环定位 Open 问题，窄屏只读模式保持 3D 并同步选择。
+- CAD/Excel/属性/WMS/3D 核心面板统一 Space Studio token、正文/元数据字号与 44px 主要热区，修复固定宽度面板在 324px 检查器中的溢出及暗色工作台内的颜色继承不一致。
+- Web 754、Space Studio Playwright 9、Vue type-check、production build 与 diff whitespace 通过。Iris Xe 500/10,000 性能、独立对比度/辅助技术验收和现场签字未完成，本切片不等于 WP5/核心 GA。
+
 ## 2026-08-14：Space Studio WP3 Site CAD Provider 认证与路由基础
 
 - 新增 Tenant/Site 级版本化 CAD Provider 配置、Primary/Backup 认证记录、专用管理权限及只读能力接口；部署模式、数据边界、有效期、格式、审批和 Secret 引用均由服务端校验，Secret 内容不回传，认证历史不可修改。

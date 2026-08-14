@@ -155,7 +155,7 @@ function setPreset(preset: DesignPreviewPreset): void {
   display: flex;
   align-items: center;
   justify-content: space-between;
-  min-height: 42px;
+  min-height: 56px;
   padding: 6px 10px;
   color: #e2e8f0;
   background: #111827;
@@ -168,7 +168,7 @@ function setPreset(preset: DesignPreviewPreset): void {
   min-width: 0;
   align-items: center;
   gap: 8px;
-  font-size: 12px;
+  font-size: 14px;
 }
 
 .counts,
@@ -218,9 +218,12 @@ function setPreset(preset: DesignPreviewPreset): void {
   color: #cbd5e1;
   background: rgba(15, 23, 42, 0.72);
   border-radius: 4px;
-  font-size: 11px;
+  font-size: 13px;
   pointer-events: none;
 }
+
+.design-preview :deep(.el-button) { min-width: 44px; min-height: 44px; }
+.design-preview :deep(.el-button:focus-visible) { outline: 3px solid var(--space-studio-focus, #8cebf0); outline-offset: 2px; }
 
 @media (max-width: 900px) {
   .preview-toolbar {

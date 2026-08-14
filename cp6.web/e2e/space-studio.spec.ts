@@ -6,6 +6,8 @@ const floorId = '22222222-2222-2222-2222-222222222222'
 const rackId = '33333333-3333-3333-3333-333333333333'
 const rackLevelId = '44444444-4444-4444-4444-444444444444'
 const columnId = '55555555-5555-5555-5555-555555555555'
+const cadSourceId = 'aaaaaaaa-2222-2222-2222-222222222222'
+const cadParseJobId = 'aaaaaaaa-4444-4444-4444-444444444444'
 const studioUrl = `/space/design/${versionId}/floors/${floorId}/underlay`
 
 test('1440x900 provides the full editor and a consistent local 3D preview', async ({ page }) => {
@@ -77,12 +79,55 @@ test('keyboard shortcuts never hijack focused inputs', async ({ page }) => {
   await expect(input).toHaveValue('v')
 })
 
+test('keyboard navigation locates problems and exposes accessible focus targets', async ({ page }) => {
+  const errors = collectPageErrors(page)
+  await installSpaceStudioFixtures(page, [], { cadReview: true })
+  await page.setViewportSize({ width: 1440, height: 900 })
+  await page.goto(`${studioUrl}?cadSourceId=${cadSourceId}&cadParseJobId=${cadParseJobId}`)
+
+  await expect(page.locator('.el-loading-mask')).toHaveCount(0)
+  await expect(page.locator('.issues-command')).toContainText('(2)')
+  await page.locator('.canvas').focus()
+  await page.keyboard.press('g')
+  const activeIssue = page.locator('[data-test="cad-review-item"].active')
+  await expect(activeIssue).toContainText('CAD_BLOCKING_TEST')
+  await expect(page.locator('.studio-statusbar')).toContainText('选择 1')
+
+  await page.keyboard.press('g')
+  await expect(activeIssue).toContainText('CAD_WARNING_TEST')
+  const issueFontSize = await page.locator('.issue-action').first().evaluate((element) =>
+    Number.parseFloat(getComputedStyle(element).fontSize),
+  )
+  expect(issueFontSize).toBeGreaterThanOrEqual(16)
+  const issueHeights = await page.locator('[data-test="cad-review-item"]').evaluateAll(
+    (elements) => elements.map((element) => element.getBoundingClientRect().height),
+  )
+  expect(issueHeights.every((height) => height >= 44)).toBe(true)
+
+  const issuesTab = page.locator('#space-studio-tab-issues')
+  await issuesTab.focus()
+  await issuesTab.press('Home')
+  const propertiesTab = page.locator('#space-studio-tab-properties')
+  await expect(propertiesTab).toBeFocused()
+  await expect(propertiesTab).toHaveAttribute('aria-selected', 'true')
+  await propertiesTab.press('ArrowRight')
+  const batchTab = page.locator('#space-studio-tab-batch')
+  await expect(batchTab).toBeFocused()
+  await expect(batchTab).toHaveAttribute('aria-selected', 'true')
+  const focusOutline = await batchTab.evaluate((element) => getComputedStyle(element).outlineStyle)
+  expect(focusOutline).not.toBe('none')
+
+  await page.keyboard.press('Shift+/')
+  await expect(page.locator('.el-message-box')).toContainText('G 定位下一个 Open 问题')
+  expect(errors).toEqual([])
+})
+
 test('below 1280 switches to read-only 3D with version and issues only', async ({ page }) => {
   const errors = collectPageErrors(page)
   const methods: string[] = []
-  await installSpaceStudioFixtures(page, methods)
+  await installSpaceStudioFixtures(page, methods, { cadReview: true })
   await page.setViewportSize({ width: 1024, height: 720 })
-  await page.goto(studioUrl)
+  await page.goto(`${studioUrl}?cadSourceId=${cadSourceId}&cadParseJobId=${cadParseJobId}`)
 
   await expect(page.getByText('Draft · r7', { exact: false })).toBeVisible()
   await expect(page.locator('.studio-title-state').getByText('窄屏只读', { exact: true })).toBeVisible()
@@ -94,6 +139,9 @@ test('below 1280 switches to read-only 3D with version and issues only', async (
   await expect(page.getByRole('tab', { name: '问题', exact: true })).toBeVisible()
   await expect(page.getByRole('tab', { name: '属性', exact: true })).toBeHidden()
   await expect(page.getByText('2D/3D 清单一致', { exact: true })).toBeVisible()
+  await page.keyboard.press('g')
+  await expect(page.locator('[data-test="cad-review-item"].active')).toContainText('CAD_BLOCKING_TEST')
+  await expect(page.getByRole('button', { name: '3D', exact: true })).toHaveClass(/active/)
   expect(methods).not.toContain('POST lease')
   await captureEvidence(page, 'space-studio-1024x720.png')
   expect(errors).toEqual([])
@@ -262,6 +310,7 @@ async function installSpaceStudioFixtures(
     codingEnabled?: boolean
     codingBodies?: Array<Record<string, any>>
     cadBodies?: Array<Record<string, any>>
+    cadReview?: boolean
   } = {},
 ) {
   await page.addInitScript(() => {
@@ -297,7 +346,6 @@ async function installSpaceStudioFixtures(
     const layoutPath = `/api/space/design/v1/versions/${versionId}/floors/${floorId}/layout-commands`
     const codingPreviewPath = `/api/space/design/v1/versions/${versionId}/floors/${floorId}/location-codes:preview`
     const codingApplyPath = `/api/space/design/v1/versions/${versionId}/floors/${floorId}/location-codes:apply`
-    const cadSourceId = 'aaaaaaaa-2222-2222-2222-222222222222'
     const cadUploadPath = `/api/space/design/v1/versions/${versionId}/cad-sources`
     const cadStatusPath = `/api/space/design/v1/versions/${versionId}/sources/${cadSourceId}/cad-preparations/status`
     const cadProfilesPath = `/api/space/design/v1/versions/${versionId}/cad-mapping-profiles`
@@ -475,16 +523,20 @@ async function installSpaceStudioFixtures(
       })
       return
     }
-    if (url.pathname === `${cadParsePath}/aaaaaaaa-4444-4444-4444-444444444444`) {
+    if (url.pathname === `${cadParsePath}/${cadParseJobId}`) {
       await route.fulfill({
         json: {
-          jobId: 'aaaaaaaa-4444-4444-4444-444444444444',
-          status: 'Failed',
+          jobId: cadParseJobId,
+          status: options.cadReview ? 'Succeeded' : 'Failed',
           sourceState: 'Ready',
-          lastErrorCode: 'TEST_TERMINAL',
+          lastErrorCode: options.cadReview ? undefined : 'TEST_TERMINAL',
           artifacts: [],
         },
       })
+      return
+    }
+    if (url.pathname === `${cadParsePath}/${cadParseJobId}/review-workspace`) {
+      await route.fulfill({ json: cadReviewWorkspaceFixture() })
       return
     }
     if (url.pathname === layoutPath && request.method() === 'POST') {
@@ -824,6 +876,78 @@ function sceneFixture() {
     elementAttributes: [],
     locationExternalBindings: [],
     designAttributes: [],
+  }
+}
+
+function cadReviewWorkspaceFixture() {
+  return {
+    schemaVersion: 1,
+    isReadOnlyWorkspace: true,
+    tenantId: '77777777-8888-9999-aaaa-bbbbbbbbbbbb',
+    modelVersionId: versionId,
+    floorLogicalId: floorId,
+    floorCode: 'F1',
+    diagnosticIndexSha256: 'a'.repeat(64),
+    editorContentRevision: 7,
+    editorSnapshotSha256: 'b'.repeat(64),
+    sourceId: cadSourceId,
+    cadParseJobId,
+    items: [{
+      reviewItemId: 'issue-blocking',
+      trackingKey: 'blocking:rack',
+      kind: 'MappingDiagnostic',
+      severity: 'Blocking',
+      status: 'Open',
+      code: 'CAD_BLOCKING_TEST',
+      relatedCodes: [],
+      suggestedActionCode: 'REVIEW_RACK',
+      sourceRef: 'H:RACK-001',
+      targetLogicalId: rackId,
+      rackCode: 'R-001',
+      location: {
+        kind: 'Entity',
+        floorLogicalId: floorId,
+        sourceRef: 'H:RACK-001',
+        bounds: { minX: 800, minY: 1000, maxX: 3600, maxY: 2400 },
+        suggestedPaddingMillimeters: 500,
+        canFocusCanvas: true,
+      },
+      upstreamEvidenceSha256: 'c'.repeat(64),
+    }, {
+      reviewItemId: 'issue-warning',
+      trackingKey: 'warning:column',
+      kind: 'SemanticDiagnostic',
+      severity: 'Warning',
+      status: 'Open',
+      code: 'CAD_WARNING_TEST',
+      relatedCodes: [],
+      suggestedActionCode: 'REVIEW_COLUMN',
+      sourceRef: 'H:COLUMN-001',
+      targetLogicalId: columnId,
+      location: {
+        kind: 'Entity',
+        floorLogicalId: floorId,
+        sourceRef: 'H:COLUMN-001',
+        anchor: { x: 5200, y: 2400, z: 0 },
+        suggestedPaddingMillimeters: 500,
+        canFocusCanvas: true,
+      },
+      upstreamEvidenceSha256: 'd'.repeat(64),
+    }],
+    summary: {
+      totalCount: 2,
+      openCount: 2,
+      resolvedCount: 0,
+      openInfoCount: 0,
+      openWarningCount: 1,
+      openBlockingCount: 1,
+      locatableCount: 2,
+      unlocatableCount: 0,
+      cadDiagnosticCount: 2,
+      proposalReviewCount: 0,
+      excelReviewCount: 0,
+    },
+    workspaceSha256: 'e'.repeat(64),
   }
 }
 
