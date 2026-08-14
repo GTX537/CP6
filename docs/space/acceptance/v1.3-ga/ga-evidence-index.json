@@ -258,6 +258,7 @@
       "evidencePaths": [
         "docs/space/reports/2026-08-14-space-publish-warning-acknowledgement.md",
         "docs/space/reports/2026-08-14-space-publish-recovery-observability.md",
+        "docs/space/reports/2026-08-14-space-publish-recovery-sql-query.md",
         "docs/space/reports/2026-08-14-space-external-subject-security-matrix.md"
       ],
       "acceptedEvidence": [],

@@ -28,19 +28,16 @@ public sealed class SpacePublishRecoveryMetricsSnapshotProvider(
                     .IgnoreQueryFilters()
                     .AsNoTracking()
                 where trackedStatuses.Contains(attempt.Status)
-                join audit in context.PublishAuditEvents
-                        .IgnoreQueryFilters()
-                        .AsNoTracking()
-                    on new { attempt.TenantId, AttemptId = attempt.Id }
-                    equals new { audit.TenantId, audit.AttemptId }
-                    into audits
                 select new RecoveryRow(
                     attempt.Status,
                     attempt.StartedAtUtc,
-                    audits
-                        .Where(value =>
-                            value.AttemptStatus == attempt.Status)
-                        .Max(value => (DateTime?)value.OccurredAtUtc)))
+                    context.PublishAuditEvents
+                        .IgnoreQueryFilters()
+                        .Where(audit =>
+                            audit.TenantId == attempt.TenantId &&
+                            audit.AttemptId == attempt.Id &&
+                            audit.AttemptStatus == attempt.Status)
+                        .Max(audit => (DateTime?)audit.OccurredAtUtc)))
             .ToArrayAsync(cancellationToken);
 
         var nowUtc = clock.UtcNow;

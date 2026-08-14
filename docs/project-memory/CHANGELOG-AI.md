@@ -2,6 +2,12 @@
 
 > 依据 Git log 汇总，不替代完整 Git 历史。重点记录影响接手判断的里程碑。
 
+## 2026-08-14：Space Studio WP6 发布恢复指标 SQL Server 翻译修复
+
+- 真 SQL 全量门禁暴露恢复指标的复合键 GroupJoin 无法翻译；改为显式 TenantId/AttemptId/AttemptStatus 相关子查询，保持跨租户无标签聚合与 Audit 状态进入时间语义。
+- 恢复指标单测 6/6、发布编排 SQL Server 3/3 通过，覆盖 WMS 首次超时、WaitingRetry、旧 Published 保持和正式重试完成。
+- LocalDB 不替代生产等价 SQL/WMS；首次完整真库仍有独立 Viewer 场景失败，当前不能声明全量 SQL 或核心 GA 完成。
+
 ## 2026-08-14：Space Studio WP3 CAD Converter 共合同执行器
 
 - 新增供应商无关的 `SpaceCadConverterContractRunner`，把 Source 只读、流式 Sink 顺序/唯一性/计数/完成协议和 Result → 实际 Artifact 证明绑定为所有 `ICadConverter` 的共同执行边界；开发转换入口已迁移。
