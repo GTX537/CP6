@@ -4,9 +4,11 @@ import {
   designCadParseApi,
   type PreviewSpaceCadPreparationResponse,
   type SpaceCadMappingProfile,
+  type SpaceCadSiteCapability,
 } from '@/api/space/designCadParse'
 
 const props = defineProps<{
+  siteId: string
   versionId: string
   sourceId: string
   floorLogicalId: string
@@ -19,6 +21,7 @@ const emit = defineEmits<{
 
 const scanState = ref('正在确认安全扫描…')
 const profiles = ref<SpaceCadMappingProfile[]>([])
+const capability = ref<SpaceCadSiteCapability | null>(null)
 const preview = ref<PreviewSpaceCadPreparationResponse | null>(null)
 const busy = ref(false)
 const error = ref('')
@@ -44,6 +47,7 @@ const selectedProfile = computed(() => {
   )
 })
 const canPreview = computed(() =>
+  capability.value?.canPrepareCad === true &&
   Boolean(form.confirmedUnit && selectedProfile.value && props.floorLogicalId) &&
   [
     form.sourceOriginX,
@@ -62,7 +66,16 @@ onMounted(async () => {
   await nextTick()
   dialogElement.value?.focus()
   try {
-    profiles.value = await designCadParseApi.listMappingProfiles(props.versionId)
+    const [loadedCapability, loadedProfiles] = await Promise.all([
+      designCadParseApi.getCadCapability(props.siteId),
+      designCadParseApi.listMappingProfiles(props.versionId),
+    ])
+    capability.value = loadedCapability
+    profiles.value = loadedProfiles
+    if (!loadedCapability.canPrepareCad) {
+      error.value = '当前 Site 没有可用且有效的 CAD Provider；Draft 未变更。'
+      return
+    }
     await waitForCleanSource()
   } catch (cause) {
     error.value = message(cause, '无法加载 CAD 准备信息')
@@ -203,6 +216,25 @@ function handleDialogKeydown(event: KeyboardEvent): void {
         <button type="button" class="icon-button" aria-label="关闭 CAD 向导" @click="emit('close')">×</button>
       </header>
 
+      <aside
+        v-if="capability"
+        class="provider-capability"
+        :class="{ 'ga-ready': capability.cadGaReady, blocked: !capability.canPrepareCad }"
+        aria-label="Site CAD Provider 能力"
+      >
+        <div>
+          <strong>{{ capability.cadGaReady ? 'CAD GA 已就绪' : 'CAD GA 尚未就绪' }}</strong>
+          <span>配置 Revision {{ capability.configurationRevision }}</span>
+        </div>
+        <div class="provider-slots">
+          <span>主：{{ capability.primary?.displayName ?? '未配置' }}</span>
+          <span>备：{{ capability.backup?.displayName ?? '未配置' }}</span>
+        </div>
+        <p v-if="capability.blockingCodes.length">
+          门禁：{{ capability.blockingCodes.join(' · ') }}
+        </p>
+      </aside>
+
       <div class="wizard-body">
         <section class="step">
           <span class="step-number">1</span>
@@ -324,6 +356,12 @@ h3 { margin-bottom:10px; font-size:17px; }
 .eyebrow { color:#18c2c9; font-size:13px; font-weight:800; letter-spacing:.08em; text-transform:uppercase; }
 .icon-button { width:44px; height:44px; border:0; font-size:28px; background:transparent; }
 .wizard-body { display:grid; gap:1px; background:#2a3950; }
+.provider-capability { display:grid; gap:8px; padding:14px 22px; border-top:1px solid #2a3950; border-bottom:1px solid #2a3950; color:#ffd27a; background:#2a2114; }
+.provider-capability.ga-ready { color:#9cf0c3; background:#10281f; }
+.provider-capability.blocked { color:#ff9ba4; background:#321922; }
+.provider-capability > div { display:flex; justify-content:space-between; gap:16px; }
+.provider-capability span,.provider-capability p { font-size:14px; }
+.provider-slots { flex-wrap:wrap; }
 .step { display:grid; grid-template-columns:44px 1fr; gap:14px; padding:18px 22px; background:#111a2b; }
 .step-number { display:grid; place-items:center; width:36px; height:36px; border:1px solid #18c2c9; border-radius:50%; color:#18c2c9; font-weight:800; }
 .fields { display:grid; grid-template-columns:repeat(2,minmax(0,1fr)); gap:12px; }

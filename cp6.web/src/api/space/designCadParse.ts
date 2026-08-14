@@ -39,6 +39,35 @@ export interface SpaceCadPreparationStatus {
   blockingCode?: string
 }
 
+export interface SpaceCadProviderSlot {
+  providerKey: string
+  displayName: string
+  role: string
+  deploymentMode: string
+  dataBoundary: string
+  approvalEvidenceReference: string
+  secretReferenceConfigured: boolean
+  validFromUtc: string
+  expiresAtUtc: string
+  supportsDwg: boolean
+  supportsDxf: boolean
+  runtimeAvailable: boolean
+  currentlyValid: boolean
+}
+
+export interface SpaceCadSiteCapability {
+  siteId: string
+  configurationRevision: number
+  canPrepareCad: boolean
+  cadGaReady: boolean
+  primary?: SpaceCadProviderSlot
+  backup?: SpaceCadProviderSlot
+  blockingCodes: string[]
+  evaluatedAtUtc: string
+  updatedAtUtc?: string
+  updatedBy?: string
+}
+
 export interface StartSpaceCadParseRequest {
   preparationId: string
   floorLogicalId: string
@@ -113,6 +142,12 @@ function url(versionId: string, sourceId: string, jobId: string) {
 }
 
 export const designCadParseApi = {
+  getCadCapability(siteId: string) {
+    return http.get<unknown, SpaceCadSiteCapability>(
+      `${root}/sites/${siteId}/cad-capability`,
+    )
+  },
+
   upload(versionId: string, file: File) {
     const form = new FormData()
     form.append('SourceFormat', file.name.toLowerCase().endsWith('.dwg') ? 'Dwg' : 'Dxf')

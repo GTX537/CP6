@@ -27,6 +27,8 @@ public sealed class SpaceDesignV1OpenApiTests
         var expectedPaths = new[]
         {
             "/api/space/design/v1/sites/{siteId}/model",
+            "/api/space/design/v1/sites/{siteId}/cad-capability",
+            "/api/space/design/v1/sites/{siteId}/cad-provider-configuration",
             "/api/space/design/v1/sites/{siteId}/publish-attempts",
             "/api/space/design/v1/sites/{siteId}/device-events",
             "/api/space/design/v1/sites/{siteId}/devices",
@@ -149,8 +151,10 @@ public sealed class SpaceDesignV1OpenApiTests
             .Select(operation =>
                 operation.Value.GetProperty("operationId").GetString())
             .ToArray();
-        Assert.Equal(131, operationIds.Length);
-        Assert.Equal(131, operationIds.Distinct().Count());
+        Assert.Equal(133, operationIds.Length);
+        Assert.Equal(133, operationIds.Distinct().Count());
+        Assert.Contains("GetCapability", operationIds);
+        Assert.Contains("ReplaceProviderConfiguration", operationIds);
         Assert.Contains("GetPolicy", operationIds);
         Assert.Contains("UpdatePolicy", operationIds);
         Assert.Contains("GetUsage", operationIds);
@@ -2364,6 +2368,66 @@ public sealed class SpaceDesignV1OpenApiTests
             "occupiedLocationRatePercent: number | null | undefined;",
             warehouseInventory,
             StringComparison.Ordinal);
+    }
+
+    [Fact]
+    public void Cad_provider_configuration_is_explicit_required_and_idempotent()
+    {
+        using var document = ReadContract();
+        var root = document.RootElement;
+        var operation = root.GetProperty("paths")
+            .GetProperty(
+                "/api/space/design/v1/sites/{siteId}/cad-provider-configuration")
+            .GetProperty("put");
+
+        Assert.True(operation.GetProperty("requestBody")
+            .GetProperty("required").GetBoolean());
+        var idempotency = operation.GetProperty("parameters")
+            .EnumerateArray()
+            .Single(parameter =>
+                parameter.GetProperty("name").GetString() ==
+                "Idempotency-Key");
+        Assert.Equal("header", idempotency.GetProperty("in").GetString());
+        Assert.True(idempotency.GetProperty("required").GetBoolean());
+        Assert.True(operation.GetProperty("responses")
+            .GetProperty("200")
+            .GetProperty("headers")
+            .TryGetProperty("Idempotent-Replay", out _));
+
+        var schemas = root.GetProperty("components").GetProperty("schemas");
+        AssertExactRequired(
+            Schema(
+                schemas,
+                "CP6.Space.Contracts.ReplaceSpaceCadProviderConfigurationRequest"),
+            "expectedConfigurationRevision",
+            "reason",
+            "certifications");
+        AssertExactRequired(
+            Schema(
+                schemas,
+                "CP6.Space.Contracts.SpaceCadProviderCertificationInputDto"),
+            "providerKey",
+            "role",
+            "deploymentMode",
+            "dataBoundary",
+            "approvalEvidenceReference",
+            "validFromUtc",
+            "expiresAtUtc",
+            "supportsDwg",
+            "supportsDxf");
+        AssertNullable(
+            Schema(
+                schemas,
+                "CP6.Space.Contracts.SpaceCadProviderCertificationInputDto"),
+            "secretReference");
+        AssertExactRequired(
+            Schema(schemas, "CP6.Space.Contracts.SpaceCadSiteCapabilityDto"),
+            "siteId",
+            "configurationRevision",
+            "canPrepareCad",
+            "cadGaReady",
+            "blockingCodes",
+            "evaluatedAtUtc");
     }
 
     [Fact]

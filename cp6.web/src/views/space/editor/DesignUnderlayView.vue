@@ -2766,7 +2766,8 @@ function tabClientInstanceId(): string {
       @change="onAiReviewArtifactSelected"
     />
     <DesignCadStartWizard
-      v-if="cadWizardVisible && cadSourceId && floorLogicalId"
+      v-if="cadWizardVisible && cadSourceId && floorLogicalId && designScene?.siteId"
+      :site-id="designScene.siteId"
       :version-id="versionId"
       :source-id="cadSourceId"
       :floor-logical-id="floorLogicalId"

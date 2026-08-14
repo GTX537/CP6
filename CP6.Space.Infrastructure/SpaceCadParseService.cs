@@ -197,7 +197,9 @@ public sealed class SpaceCadParseService(
                 NormalizeHash(request.MappingDefinitionSha256),
                 NormalizeHash(request.MappingPreviewSha256),
                 version.ContentRevision,
-                version.ContentHash);
+                version.ContentHash,
+                preparation.ProviderKey,
+                preparation.SemanticPreviewSha256);
             var payloadJson = JsonSerializer.Serialize(payload, JsonOptions);
             var inputHash = Hash(payloadJson);
             var enqueue = Enqueue(payload, inputHash, payloadJson);
@@ -436,6 +438,10 @@ public sealed class SpaceCadParseService(
                 StringComparison.Ordinal) ||
             !previewSet.MappingPreviewSha256.Equals(
                 input.Payload.MappingPreviewSha256,
+                StringComparison.Ordinal) ||
+            input.Payload.ExpectedSemanticPreviewSha256 is not null &&
+            !previewSet.SemanticPreview.SemanticPreviewSha256.Equals(
+                input.Payload.ExpectedSemanticPreviewSha256,
                 StringComparison.Ordinal) ||
             previewSet.BaseContentRevision != input.Payload.BaseContentRevision ||
             !string.Equals(
@@ -1433,7 +1439,9 @@ public sealed class SpaceCadParseService(
             throw NotFound();
         EnsureReadable(result.model);
         var payload = DeserializePayload(result.job.PayloadJson);
-        if (payload.SchemaVersion != SpaceCadParsePayloadVersions.Current)
+        if (payload.SchemaVersion is not (
+                SpaceCadParsePayloadVersions.LegacyBaseRevision or
+                SpaceCadParsePayloadVersions.Current))
         {
             throw new SpaceProblemException(
                 SpaceErrorCodes.CadParseInvalid,
@@ -1662,7 +1670,9 @@ public sealed class SpaceCadParseService(
                 "The Draft changed after CAD preparation.",
                 "Run the preparation preview again against the current Draft.",
                 "restart-cad-preparation");
-        if (!preparation.SourceSha256.Equals(source.Sha256, StringComparison.Ordinal) ||
+        if (string.IsNullOrWhiteSpace(preparation.ProviderKey) ||
+            string.IsNullOrWhiteSpace(preparation.ProviderVersion) ||
+            !preparation.SourceSha256.Equals(source.Sha256, StringComparison.Ordinal) ||
             preparation.FloorLogicalId != request.FloorLogicalId ||
             !preparation.ConfirmedUnit.Equals(request.ConfirmedUnit.ToString(), StringComparison.Ordinal) ||
             preparation.ConfirmedScaleToMillimeters != request.ConfirmedScaleToMillimeters ||

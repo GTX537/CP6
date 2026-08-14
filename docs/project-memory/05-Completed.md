@@ -1,5 +1,13 @@
 # 已完成能力与近期里程碑
 
+## 2026-08-14 Space Studio WP3 Site CAD Provider 认证与路由基础
+
+- 从远端 `main@1c64e577` 建立独立 `codex/space-cad-provider-routing`，新增 Tenant/Site 级版本化 Provider 配置、Primary/Backup 认证明细、专用管理权限和只读 CAD 能力接口。配置保存部署模式、数据边界、审批证据引用、有效期、格式范围及 Secret 引用；Secret 内容不经查询契约返回，认证记录不可变，配置历史追加保留。
+- `SpaceCadProviderRouter` 成为 Preparation/Parse 的统一入口，只把原始 CAD 交给当前 Site 已认证、未过期、格式与部署边界一致且当前可用的运行注册。Primary 只在可重试资源故障时切换到同一配置的 Backup；未认证 Provider、未批准云边界、同一配置之外的运行注册和从 Backup 反向回 Primary 均失败关闭。
+- sealed Preparation 现记录实际 Provider Key/Version；Parse payload v3 绑定 Preparation 的 Provider Key 与 Semantic Preview Hash，审核产物继续校验完整来源、映射、坐标和语义链。Space Studio 向导显示 Site 配置 Revision、主备状态和阻断码，没有可用认证链时不轮询扫描，也不能生成 Preview。
+- OpenAPI、C#/TypeScript SDK、稳定 Problem Details、权限矩阵、EF 迁移、幂等 SQL 脚本、领域/路由/契约/前端/E2E 自动化同步交付。完整 Release solution 0 warning / 0 error；.NET 3,753 passed / 123 environment-gated skipped，Web 754/754、Space Studio Playwright 8/8，Vue type-check、生产构建、SDK drift、EF pending-model 和 diff whitespace 通过。
+- 本完成项是 WP3 的仓库路由基础，不是 Provider 认证完成或 CAD GA。默认运行注册为空并失败关闭；真实 ODA/APS（或经评分替代者）适配、受控 Worker、客户/安全/法务批准、同一 Site 两条实链和真 SQL 执行证据仍在 Todo。新增 `SpaceCadProviderSqlServerTests` 因本机未配置 `CP6_TEST_SQLSERVER` 而 skipped，未冒充真库通过。
+
 ## 2026-08-14 Space Studio WP2 CAD 起始向导
 
 - 在独立 `codex/space-cad-start-wizard` 中交付扫描状态、服务器 Mapping Profile、CAD preparation preview 和原有 parse start 的完整向导链；没有增加第二个解析启动接口，也没有允许客户端构造 Profile、Transform 或 Preview Hash。

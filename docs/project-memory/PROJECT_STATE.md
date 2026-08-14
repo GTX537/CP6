@@ -4,7 +4,10 @@
 
 ## Space Studio v1.3 核心实现（2026-08-12）
 
-- M0 基线 PR #4 已验证并以 merge commit `9c320a74` 合入；WP1 第一张独立任务卡也已通过 merge commit `289b51d0` 合入并推送远端 `main`。
+- M0 基线 PR #4 已验证并以 merge commit `9c320a74` 合入；WP1 已完成 Design V1 布局创建/修改/删除、工作台接入和批量编码，WP2 CAD 起始向导也已合入远端 `main`。WP3 当前已完成 Site 级 Provider 认证与主备路由的仓库基础，但真实 ODA/APS 适配器、隔离 Worker 注册和客户批准证据尚未完成。
+- WP3 新增按 Tenant/Site 版本化、追加式的 CAD Provider 配置：每个配置最多一个 Primary 和一个 Backup，记录部署模式、数据边界、DWG/DXF 范围、有效期、审批证据引用及 Secret 引用；认证明细不可修改，历史配置只允许从 Current 变为 Superseded。独立 `space:model:provider:manage` 权限维护配置，`space:model:read` 只读能力接口不返回 Secret 内容。
+- CAD Preparation/Parse 现在统一经 `SpaceCadProviderRouter`：只选择当前 Site 已认证、有效、格式匹配且在当前部署注册的 Provider；Primary 仅在可重试资源故障时切到同配置 Backup，不会跨到未认证链，Preparation 已由 Backup 密封时也不会反向切回 Primary。Preparation 保存 Provider 身份，Parse payload v3 绑定 Provider Key 和 Semantic Preview Hash，旧 v2 仍可按当前 Site 合规链读取，v1 继续拒绝。
+- Space Studio CAD 起始向导先读取 Site CAD 能力，展示配置 Revision、主备链和阻断码；没有有效运行链时禁止扫描轮询和 Preview。`CanPrepareCad` 只代表当前至少一条已批准链可用于内部准备，`CadGaReady` 只有主备两条链均有效、运行可用且同时覆盖 DWG/DXF 才成立。
 - WP1 已形成独立 Design V1 `layout-commands` 原子写链：在不写入通用 `Space_Element` 的前提下，按租约、Floor Revision、Content Revision 和命令幂等 fence 创建、修改、删除 Zone、Aisle、Rack，并由 Rack 逐层规格确定性协调 RackLevel/Location；Space Studio“构件”上下文已接入三类创建表单、画布坐标、逐层规格和库位数预览，右侧属性面板可修改三类布局对象并显式确认级联删除。货架修改保留既有层/库位 LogicalId、编码与绑定，新增库位保持未编码。
 - WP1 批量编码任务卡已实现 Design V1 `location-codes:preview` → `location-codes:apply`：服务端按 Zone → Floor → Tenant 默认规则选择，只修改 Active/Unbound/Generated 库位，保护 WMS Bound、Adopted、Imported 和 Manual 编码；Preview 绑定 Floor/Content Revision、规则集和完整 Proposal Hash 且零写入，Apply 再在同一楼层锁与 Serializable 事务内复算，并受租约、双 Revision、Proposal Hash 与命令幂等保护。Space Studio 批量域可选择填空/重建与库区范围，展示修改/保持/保护项，显式勾选后才写当前 Draft；失败包保留原幂等标识，Published/WMS 不被直接修改。
 - 低成本 3D 建模 Spec 已在完整保留 v1.2 详细正文的基础上增量修订为 v1.3；RFC-003 明确为“产品决定已冻结、跨职能批准 Pending”，外部 AI 独立 Beta、Viewer 性能门槛收紧、Supplier 不参加现场 UAT，`DesignUnderlayView` 成为单一页面权威。
@@ -12,7 +15,7 @@
 - 新增 Floor 编辑租约：数据库唯一槽、数据库 UTC、90 秒租期、30 秒前端续租、释放、同用户不同浏览器会话隔离、过期重申请、带双权限和原因的强制接管、不可变接管审计。编辑命令请求新增必填 `leaseId`，保存与租约写入共享 Floor applock，Revision/命令/幂等失败关闭。
 - CAD Parse 成功后可由 Job/Source 路由自动读取并校验 PreviewSet SHA、Tenant/Source/Job/Floor 与解析启动时 BaseContentRevision；审核空间输出带基线与哈希的 typed 新增/修改/删除/冲突/低置信度/未识别变更集，经用户勾选后通过租约、Revision、ContentRevision 与幂等 fence 原子合入 Draft，stale 或工件链异常均零写入。CAD 起始向导现会轮询并同步安全扫描终态，要求用户显式确认当前楼层、来源单位、原点、旋转和服务器已知 Mapping Profile；服务端在受控 `ISpaceCadPreparationProvider` 边界内检查原始 CAD，生成坐标、库存、映射和语义预览，并保存绑定 Source SHA、Profile/Transform/Preview Hash、BaseContentRevision/Hash 与两小时有效期的 sealed Preparation。唯一解析启动接口新增必填 `preparationId`，伪 Profile、伪 Hash、过期或 Draft 已前进均拒绝且零 Job/Draft 写入。前端只有在两项显式确认后才能启动解析，本地 JSON 仅保留为高级回退。
 - 空白画布/底图路径已可直接创建墙、柱、门、月台和静态设备；Zone/Aisle/Rack 可在工作台创建、选择、修改和显式级联删除，并使用同一租约、Revision、幂等和恢复状态。三类布局对象与 Element 一起进入共享参数化渲染计划，2D/3D 机器清单一致；库位批量编码已在同一批量检查器闭环。工作台“运行校验/校验并发布”会携带 Site/Version 进入正式发布控制面并自动发起 Validation，发布本身仍要求 Preview、审批确认和 `space:model:publish`，不会自动执行。
-- 仓库门禁证据：本卡完整 Release solution 0 warning / 0 error，.NET 全量 3,744 passed / 122 个既有环境用例 skipped，Space Unit 501/501，CAD 准备/解析聚焦 12/12，OpenAPI/权限/Controller 81/81，Web 752/752，Space Studio Playwright 8/8，Vue type-check、生产构建、SDK drift、EF pending-model 和 diff whitespace 均通过。本机未配置真实 SQL Server，故 skipped 场景不计为通过；既有批量编码卡的真实 `KOUSQLSERVER` 1/1 及其他已合入卡片证据保持有效。
+- 最新仓库门禁证据：完整 Release solution 0 warning / 0 error；.NET 全量 3,753 passed / 123 个环境用例 skipped（CP6 2,876/19、Space Unit 501/0、Client 71/0、Space Integration 305/104）；Web 754/754，Space Studio Playwright 8/8，Vue type-check、生产构建、OpenAPI/C#/TypeScript SDK drift、EF pending-model 和 diff whitespace 均通过。本机未配置 `CP6_TEST_SQLSERVER`，新增 Provider 配置并发/迁移/不可变证据 SQL 用例因此 skipped，不计为真实 SQL 通过；既有已合入卡片的真库证据保持有效。
 - 本项完成的是仓库核心实现和自动化，不代表 GA：真实主/备 DWG Provider、20 份授权黄金 CAD、500/10,000 Viewer 基准、两仓各 14 天 Pilot、WMS 恢复演练和五角色签字仍未完成。
 ## CRM V1 T1 对抗审阅收口（2026-08-13）
 

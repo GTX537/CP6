@@ -113,6 +113,16 @@ public static class SpaceErrorCodes
         "SPACE_CAD_PREPARATION_EXPIRED";
     public const string CadPreparationUnavailable =
         "SPACE_CAD_PREPARATION_UNAVAILABLE";
+    public const string CadProviderConfigurationInvalid =
+        "SPACE_CAD_PROVIDER_CONFIGURATION_INVALID";
+    public const string CadProviderRevisionConflict =
+        "SPACE_CAD_PROVIDER_REVISION_CONFLICT";
+    public const string CadProviderNotCertified =
+        "SPACE_CAD_PROVIDER_NOT_CERTIFIED";
+    public const string CadProviderUnavailable =
+        "SPACE_CAD_PROVIDER_UNAVAILABLE";
+    public const string CadProviderFailoverDenied =
+        "SPACE_CAD_PROVIDER_FAILOVER_DENIED";
     public const string AiDisabled = "SPACE_AI_DISABLED";
     public const string AiQuotaExceeded = "SPACE_AI_QUOTA_EXCEEDED";
     public const string AiProviderUnavailable =

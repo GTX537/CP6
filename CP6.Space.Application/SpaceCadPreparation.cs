@@ -4,6 +4,7 @@ namespace CP6.Space.Application;
 
 public sealed record SpaceCadPreparationProviderRequest(
     Guid TenantId,
+    Guid SiteId,
     Guid FileId,
     Guid SourceId,
     string SourceSha256,

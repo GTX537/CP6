@@ -172,6 +172,17 @@ export interface ISpaceDesignV1Client {
     /**
      * @return OK
      */
+    getCapability(siteId: string): Promise<SpaceCadSiteCapabilityDto>;
+
+    /**
+     * @param idempotency_Key Opaque caller key; 1-128 UTF-8 bytes. Reuse with a different request returns SPACE_IDEMPOTENCY_KEY_REUSED.
+     * @return OK
+     */
+    replaceProviderConfiguration(siteId: string, idempotency_Key: string, body: ReplaceSpaceCadProviderConfigurationRequest): Promise<ReplaceSpaceCadProviderConfigurationResponse>;
+
+    /**
+     * @return OK
+     */
     previewLocationCodes(versionId: string, floorLogicalId: string, body: PreviewSpaceLocationCodesRequest): Promise<PreviewSpaceLocationCodesResponse>;
 
     /**
@@ -3331,6 +3342,190 @@ export class SpaceDesignV1Client implements ISpaceDesignV1Client {
             });
         }
         return Promise.resolve<SpaceCadParseActionResponse>(null as any);
+    }
+
+    /**
+     * @return OK
+     */
+    getCapability(siteId: string): Promise<SpaceCadSiteCapabilityDto> {
+        let url_ = this.baseUrl + "/api/space/design/v1/sites/{siteId}/cad-capability";
+        if (siteId === undefined || siteId === null)
+            throw new globalThis.Error("The parameter 'siteId' must be defined.");
+        url_ = url_.replace("{siteId}", encodeURIComponent("" + siteId));
+        url_ = url_.replace(/[?&]$/, "");
+
+        let options_: RequestInit = {
+            method: "GET",
+            headers: {
+                "Accept": "application/json"
+            }
+        };
+
+        return this.http.fetch(url_, options_).then((_response: Response) => {
+            return this.processGetCapability(_response);
+        });
+    }
+
+    protected processGetCapability(response: Response): Promise<SpaceCadSiteCapabilityDto> {
+        const status = response.status;
+        let _headers: any = {}; if (response.headers && response.headers.forEach) { response.headers.forEach((v: any, k: any) => _headers[k] = v); };
+        if (status === 200) {
+            return response.text().then((_responseText) => {
+            let result200: any = null;
+            let resultData200 = _responseText === "" ? null : JSON.parse(_responseText, this.jsonParseReviver);
+            result200 = SpaceCadSiteCapabilityDto.fromJS(resultData200);
+            return result200;
+            });
+        } else if (status === 400) {
+            return response.text().then((_responseText) => {
+            let result400: any = null;
+            let resultData400 = _responseText === "" ? null : JSON.parse(_responseText, this.jsonParseReviver);
+            result400 = SpaceDesignProblemDetails.fromJS(resultData400);
+            return throwException("Bad Request", status, _responseText, _headers, result400);
+            });
+        } else if (status === 401) {
+            return response.text().then((_responseText) => {
+            let result401: any = null;
+            let resultData401 = _responseText === "" ? null : JSON.parse(_responseText, this.jsonParseReviver);
+            result401 = SpaceDesignProblemDetails.fromJS(resultData401);
+            return throwException("Unauthorized", status, _responseText, _headers, result401);
+            });
+        } else if (status === 403) {
+            return response.text().then((_responseText) => {
+            let result403: any = null;
+            let resultData403 = _responseText === "" ? null : JSON.parse(_responseText, this.jsonParseReviver);
+            result403 = SpaceDesignProblemDetails.fromJS(resultData403);
+            return throwException("Forbidden", status, _responseText, _headers, result403);
+            });
+        } else if (status === 404) {
+            return response.text().then((_responseText) => {
+            let result404: any = null;
+            let resultData404 = _responseText === "" ? null : JSON.parse(_responseText, this.jsonParseReviver);
+            result404 = SpaceDesignProblemDetails.fromJS(resultData404);
+            return throwException("Not Found", status, _responseText, _headers, result404);
+            });
+        } else if (status === 409) {
+            return response.text().then((_responseText) => {
+            let result409: any = null;
+            let resultData409 = _responseText === "" ? null : JSON.parse(_responseText, this.jsonParseReviver);
+            result409 = SpaceDesignProblemDetails.fromJS(resultData409);
+            return throwException("Conflict", status, _responseText, _headers, result409);
+            });
+        } else if (status === 422) {
+            return response.text().then((_responseText) => {
+            let result422: any = null;
+            let resultData422 = _responseText === "" ? null : JSON.parse(_responseText, this.jsonParseReviver);
+            result422 = SpaceDesignProblemDetails.fromJS(resultData422);
+            return throwException("Unprocessable Content", status, _responseText, _headers, result422);
+            });
+        } else if (status === 500) {
+            return response.text().then((_responseText) => {
+            let result500: any = null;
+            let resultData500 = _responseText === "" ? null : JSON.parse(_responseText, this.jsonParseReviver);
+            result500 = SpaceDesignProblemDetails.fromJS(resultData500);
+            return throwException("Internal Server Error", status, _responseText, _headers, result500);
+            });
+        } else if (status !== 200 && status !== 204) {
+            return response.text().then((_responseText) => {
+            return throwException("An unexpected server error occurred.", status, _responseText, _headers);
+            });
+        }
+        return Promise.resolve<SpaceCadSiteCapabilityDto>(null as any);
+    }
+
+    /**
+     * @param idempotency_Key Opaque caller key; 1-128 UTF-8 bytes. Reuse with a different request returns SPACE_IDEMPOTENCY_KEY_REUSED.
+     * @return OK
+     */
+    replaceProviderConfiguration(siteId: string, idempotency_Key: string, body: ReplaceSpaceCadProviderConfigurationRequest): Promise<ReplaceSpaceCadProviderConfigurationResponse> {
+        let url_ = this.baseUrl + "/api/space/design/v1/sites/{siteId}/cad-provider-configuration";
+        if (siteId === undefined || siteId === null)
+            throw new globalThis.Error("The parameter 'siteId' must be defined.");
+        url_ = url_.replace("{siteId}", encodeURIComponent("" + siteId));
+        url_ = url_.replace(/[?&]$/, "");
+
+        const content_ = JSON.stringify(body);
+
+        let options_: RequestInit = {
+            body: content_,
+            method: "PUT",
+            headers: {
+                "Idempotency-Key": idempotency_Key !== undefined && idempotency_Key !== null ? "" + idempotency_Key : "",
+                "Content-Type": "application/json",
+                "Accept": "application/json"
+            }
+        };
+
+        return this.http.fetch(url_, options_).then((_response: Response) => {
+            return this.processReplaceProviderConfiguration(_response);
+        });
+    }
+
+    protected processReplaceProviderConfiguration(response: Response): Promise<ReplaceSpaceCadProviderConfigurationResponse> {
+        const status = response.status;
+        let _headers: any = {}; if (response.headers && response.headers.forEach) { response.headers.forEach((v: any, k: any) => _headers[k] = v); };
+        if (status === 200) {
+            return response.text().then((_responseText) => {
+            let result200: any = null;
+            let resultData200 = _responseText === "" ? null : JSON.parse(_responseText, this.jsonParseReviver);
+            result200 = ReplaceSpaceCadProviderConfigurationResponse.fromJS(resultData200);
+            return result200;
+            });
+        } else if (status === 400) {
+            return response.text().then((_responseText) => {
+            let result400: any = null;
+            let resultData400 = _responseText === "" ? null : JSON.parse(_responseText, this.jsonParseReviver);
+            result400 = SpaceDesignProblemDetails.fromJS(resultData400);
+            return throwException("Bad Request", status, _responseText, _headers, result400);
+            });
+        } else if (status === 401) {
+            return response.text().then((_responseText) => {
+            let result401: any = null;
+            let resultData401 = _responseText === "" ? null : JSON.parse(_responseText, this.jsonParseReviver);
+            result401 = SpaceDesignProblemDetails.fromJS(resultData401);
+            return throwException("Unauthorized", status, _responseText, _headers, result401);
+            });
+        } else if (status === 403) {
+            return response.text().then((_responseText) => {
+            let result403: any = null;
+            let resultData403 = _responseText === "" ? null : JSON.parse(_responseText, this.jsonParseReviver);
+            result403 = SpaceDesignProblemDetails.fromJS(resultData403);
+            return throwException("Forbidden", status, _responseText, _headers, result403);
+            });
+        } else if (status === 404) {
+            return response.text().then((_responseText) => {
+            let result404: any = null;
+            let resultData404 = _responseText === "" ? null : JSON.parse(_responseText, this.jsonParseReviver);
+            result404 = SpaceDesignProblemDetails.fromJS(resultData404);
+            return throwException("Not Found", status, _responseText, _headers, result404);
+            });
+        } else if (status === 409) {
+            return response.text().then((_responseText) => {
+            let result409: any = null;
+            let resultData409 = _responseText === "" ? null : JSON.parse(_responseText, this.jsonParseReviver);
+            result409 = SpaceDesignProblemDetails.fromJS(resultData409);
+            return throwException("Conflict", status, _responseText, _headers, result409);
+            });
+        } else if (status === 422) {
+            return response.text().then((_responseText) => {
+            let result422: any = null;
+            let resultData422 = _responseText === "" ? null : JSON.parse(_responseText, this.jsonParseReviver);
+            result422 = SpaceDesignProblemDetails.fromJS(resultData422);
+            return throwException("Unprocessable Content", status, _responseText, _headers, result422);
+            });
+        } else if (status === 500) {
+            return response.text().then((_responseText) => {
+            let result500: any = null;
+            let resultData500 = _responseText === "" ? null : JSON.parse(_responseText, this.jsonParseReviver);
+            result500 = SpaceDesignProblemDetails.fromJS(resultData500);
+            return throwException("Internal Server Error", status, _responseText, _headers, result500);
+            });
+        } else if (status !== 200 && status !== 204) {
+            return response.text().then((_responseText) => {
+            return throwException("An unexpected server error occurred.", status, _responseText, _headers);
+            });
+        }
+        return Promise.resolve<ReplaceSpaceCadProviderConfigurationResponse>(null as any);
     }
 
     /**
@@ -17172,6 +17367,104 @@ export interface IRefreshSpaceWmsAdoptionResponse {
     differenceCount?: number;
 }
 
+export class ReplaceSpaceCadProviderConfigurationRequest implements IReplaceSpaceCadProviderConfigurationRequest {
+    expectedConfigurationRevision!: number;
+    reason!: string;
+    certifications!: SpaceCadProviderCertificationInputDto[];
+
+    constructor(data?: IReplaceSpaceCadProviderConfigurationRequest) {
+        if (data) {
+            for (var property in data) {
+                if (data.hasOwnProperty(property))
+                    (this as any)[property] = (data as any)[property];
+            }
+        }
+        if (!data) {
+            this.certifications = [];
+        }
+    }
+
+    init(_data?: any) {
+        if (_data) {
+            this.expectedConfigurationRevision = _data["expectedConfigurationRevision"];
+            this.reason = _data["reason"];
+            if (Array.isArray(_data["certifications"])) {
+                this.certifications = [] as any;
+                for (let item of _data["certifications"])
+                    this.certifications!.push(SpaceCadProviderCertificationInputDto.fromJS(item));
+            }
+        }
+    }
+
+    static fromJS(data: any): ReplaceSpaceCadProviderConfigurationRequest {
+        data = typeof data === 'object' ? data : {};
+        let result = new ReplaceSpaceCadProviderConfigurationRequest();
+        result.init(data);
+        return result;
+    }
+
+    toJSON(data?: any) {
+        data = typeof data === 'object' ? data : {};
+        data["expectedConfigurationRevision"] = this.expectedConfigurationRevision;
+        data["reason"] = this.reason;
+        if (Array.isArray(this.certifications)) {
+            data["certifications"] = [];
+            for (let item of this.certifications)
+                data["certifications"].push(item ? item.toJSON() : undefined as any);
+        }
+        return data;
+    }
+}
+
+export interface IReplaceSpaceCadProviderConfigurationRequest {
+    expectedConfigurationRevision: number;
+    reason: string;
+    certifications: SpaceCadProviderCertificationInputDto[];
+}
+
+export class ReplaceSpaceCadProviderConfigurationResponse implements IReplaceSpaceCadProviderConfigurationResponse {
+    capability!: SpaceCadSiteCapabilityDto;
+    idempotentReplay!: boolean;
+
+    constructor(data?: IReplaceSpaceCadProviderConfigurationResponse) {
+        if (data) {
+            for (var property in data) {
+                if (data.hasOwnProperty(property))
+                    (this as any)[property] = (data as any)[property];
+            }
+        }
+        if (!data) {
+            this.capability = new SpaceCadSiteCapabilityDto();
+        }
+    }
+
+    init(_data?: any) {
+        if (_data) {
+            this.capability = _data["capability"] ? SpaceCadSiteCapabilityDto.fromJS(_data["capability"]) : new SpaceCadSiteCapabilityDto();
+            this.idempotentReplay = _data["idempotentReplay"];
+        }
+    }
+
+    static fromJS(data: any): ReplaceSpaceCadProviderConfigurationResponse {
+        data = typeof data === 'object' ? data : {};
+        let result = new ReplaceSpaceCadProviderConfigurationResponse();
+        result.init(data);
+        return result;
+    }
+
+    toJSON(data?: any) {
+        data = typeof data === 'object' ? data : {};
+        data["capability"] = this.capability ? this.capability.toJSON() : undefined as any;
+        data["idempotentReplay"] = this.idempotentReplay;
+        return data;
+    }
+}
+
+export interface IReplaceSpaceCadProviderConfigurationResponse {
+    capability: SpaceCadSiteCapabilityDto;
+    idempotentReplay: boolean;
+}
+
 export class RetrySpacePublishAttemptRequest implements IRetrySpacePublishAttemptRequest {
     reason?: string | undefined;
     resolution?: string | undefined;
@@ -20825,6 +21118,162 @@ export interface ISpaceCadPreparationStatusDto {
     blockingCode?: string | undefined;
 }
 
+export class SpaceCadProviderCertificationInputDto implements ISpaceCadProviderCertificationInputDto {
+    providerKey!: string;
+    role!: string;
+    deploymentMode!: string;
+    dataBoundary!: string;
+    approvalEvidenceReference!: string;
+    secretReference?: string | undefined;
+    validFromUtc!: Date;
+    expiresAtUtc!: Date;
+    supportsDwg!: boolean;
+    supportsDxf!: boolean;
+
+    constructor(data?: ISpaceCadProviderCertificationInputDto) {
+        if (data) {
+            for (var property in data) {
+                if (data.hasOwnProperty(property))
+                    (this as any)[property] = (data as any)[property];
+            }
+        }
+    }
+
+    init(_data?: any) {
+        if (_data) {
+            this.providerKey = _data["providerKey"];
+            this.role = _data["role"];
+            this.deploymentMode = _data["deploymentMode"];
+            this.dataBoundary = _data["dataBoundary"];
+            this.approvalEvidenceReference = _data["approvalEvidenceReference"];
+            this.secretReference = _data["secretReference"];
+            this.validFromUtc = _data["validFromUtc"] ? new Date(_data["validFromUtc"].toString()) : undefined as any;
+            this.expiresAtUtc = _data["expiresAtUtc"] ? new Date(_data["expiresAtUtc"].toString()) : undefined as any;
+            this.supportsDwg = _data["supportsDwg"];
+            this.supportsDxf = _data["supportsDxf"];
+        }
+    }
+
+    static fromJS(data: any): SpaceCadProviderCertificationInputDto {
+        data = typeof data === 'object' ? data : {};
+        let result = new SpaceCadProviderCertificationInputDto();
+        result.init(data);
+        return result;
+    }
+
+    toJSON(data?: any) {
+        data = typeof data === 'object' ? data : {};
+        data["providerKey"] = this.providerKey;
+        data["role"] = this.role;
+        data["deploymentMode"] = this.deploymentMode;
+        data["dataBoundary"] = this.dataBoundary;
+        data["approvalEvidenceReference"] = this.approvalEvidenceReference;
+        data["secretReference"] = this.secretReference;
+        data["validFromUtc"] = this.validFromUtc ? this.validFromUtc.toISOString() : undefined as any;
+        data["expiresAtUtc"] = this.expiresAtUtc ? this.expiresAtUtc.toISOString() : undefined as any;
+        data["supportsDwg"] = this.supportsDwg;
+        data["supportsDxf"] = this.supportsDxf;
+        return data;
+    }
+}
+
+export interface ISpaceCadProviderCertificationInputDto {
+    providerKey: string;
+    role: string;
+    deploymentMode: string;
+    dataBoundary: string;
+    approvalEvidenceReference: string;
+    secretReference?: string | undefined;
+    validFromUtc: Date;
+    expiresAtUtc: Date;
+    supportsDwg: boolean;
+    supportsDxf: boolean;
+}
+
+export class SpaceCadProviderSlotDto implements ISpaceCadProviderSlotDto {
+    providerKey!: string;
+    displayName!: string;
+    role!: string;
+    deploymentMode!: string;
+    dataBoundary!: string;
+    approvalEvidenceReference!: string;
+    secretReferenceConfigured!: boolean;
+    validFromUtc!: Date;
+    expiresAtUtc!: Date;
+    supportsDwg!: boolean;
+    supportsDxf!: boolean;
+    runtimeAvailable!: boolean;
+    currentlyValid!: boolean;
+
+    constructor(data?: ISpaceCadProviderSlotDto) {
+        if (data) {
+            for (var property in data) {
+                if (data.hasOwnProperty(property))
+                    (this as any)[property] = (data as any)[property];
+            }
+        }
+    }
+
+    init(_data?: any) {
+        if (_data) {
+            this.providerKey = _data["providerKey"];
+            this.displayName = _data["displayName"];
+            this.role = _data["role"];
+            this.deploymentMode = _data["deploymentMode"];
+            this.dataBoundary = _data["dataBoundary"];
+            this.approvalEvidenceReference = _data["approvalEvidenceReference"];
+            this.secretReferenceConfigured = _data["secretReferenceConfigured"];
+            this.validFromUtc = _data["validFromUtc"] ? new Date(_data["validFromUtc"].toString()) : undefined as any;
+            this.expiresAtUtc = _data["expiresAtUtc"] ? new Date(_data["expiresAtUtc"].toString()) : undefined as any;
+            this.supportsDwg = _data["supportsDwg"];
+            this.supportsDxf = _data["supportsDxf"];
+            this.runtimeAvailable = _data["runtimeAvailable"];
+            this.currentlyValid = _data["currentlyValid"];
+        }
+    }
+
+    static fromJS(data: any): SpaceCadProviderSlotDto {
+        data = typeof data === 'object' ? data : {};
+        let result = new SpaceCadProviderSlotDto();
+        result.init(data);
+        return result;
+    }
+
+    toJSON(data?: any) {
+        data = typeof data === 'object' ? data : {};
+        data["providerKey"] = this.providerKey;
+        data["displayName"] = this.displayName;
+        data["role"] = this.role;
+        data["deploymentMode"] = this.deploymentMode;
+        data["dataBoundary"] = this.dataBoundary;
+        data["approvalEvidenceReference"] = this.approvalEvidenceReference;
+        data["secretReferenceConfigured"] = this.secretReferenceConfigured;
+        data["validFromUtc"] = this.validFromUtc ? this.validFromUtc.toISOString() : undefined as any;
+        data["expiresAtUtc"] = this.expiresAtUtc ? this.expiresAtUtc.toISOString() : undefined as any;
+        data["supportsDwg"] = this.supportsDwg;
+        data["supportsDxf"] = this.supportsDxf;
+        data["runtimeAvailable"] = this.runtimeAvailable;
+        data["currentlyValid"] = this.currentlyValid;
+        return data;
+    }
+}
+
+export interface ISpaceCadProviderSlotDto {
+    providerKey: string;
+    displayName: string;
+    role: string;
+    deploymentMode: string;
+    dataBoundary: string;
+    approvalEvidenceReference: string;
+    secretReferenceConfigured: boolean;
+    validFromUtc: Date;
+    expiresAtUtc: Date;
+    supportsDwg: boolean;
+    supportsDxf: boolean;
+    runtimeAvailable: boolean;
+    currentlyValid: boolean;
+}
+
 export enum SpaceCadReviewItemKind {
     MappingDiagnostic = "MappingDiagnostic",
     SemanticDiagnostic = "SemanticDiagnostic",
@@ -21775,6 +22224,89 @@ export interface ISpaceCadSemanticTransformV1 {
     offsetX?: number;
     offsetY?: number;
     offsetZ?: number;
+}
+
+export class SpaceCadSiteCapabilityDto implements ISpaceCadSiteCapabilityDto {
+    siteId!: string;
+    configurationRevision!: number;
+    canPrepareCad!: boolean;
+    cadGaReady!: boolean;
+    primary?: SpaceCadProviderSlotDto;
+    backup?: SpaceCadProviderSlotDto;
+    blockingCodes!: string[];
+    evaluatedAtUtc!: Date;
+    updatedAtUtc?: Date | undefined;
+    updatedBy?: string | undefined;
+
+    constructor(data?: ISpaceCadSiteCapabilityDto) {
+        if (data) {
+            for (var property in data) {
+                if (data.hasOwnProperty(property))
+                    (this as any)[property] = (data as any)[property];
+            }
+        }
+        if (!data) {
+            this.blockingCodes = [];
+        }
+    }
+
+    init(_data?: any) {
+        if (_data) {
+            this.siteId = _data["siteId"];
+            this.configurationRevision = _data["configurationRevision"];
+            this.canPrepareCad = _data["canPrepareCad"];
+            this.cadGaReady = _data["cadGaReady"];
+            this.primary = _data["primary"] ? SpaceCadProviderSlotDto.fromJS(_data["primary"]) : undefined as any;
+            this.backup = _data["backup"] ? SpaceCadProviderSlotDto.fromJS(_data["backup"]) : undefined as any;
+            if (Array.isArray(_data["blockingCodes"])) {
+                this.blockingCodes = [] as any;
+                for (let item of _data["blockingCodes"])
+                    this.blockingCodes!.push(item);
+            }
+            this.evaluatedAtUtc = _data["evaluatedAtUtc"] ? new Date(_data["evaluatedAtUtc"].toString()) : undefined as any;
+            this.updatedAtUtc = _data["updatedAtUtc"] ? new Date(_data["updatedAtUtc"].toString()) : undefined as any;
+            this.updatedBy = _data["updatedBy"];
+        }
+    }
+
+    static fromJS(data: any): SpaceCadSiteCapabilityDto {
+        data = typeof data === 'object' ? data : {};
+        let result = new SpaceCadSiteCapabilityDto();
+        result.init(data);
+        return result;
+    }
+
+    toJSON(data?: any) {
+        data = typeof data === 'object' ? data : {};
+        data["siteId"] = this.siteId;
+        data["configurationRevision"] = this.configurationRevision;
+        data["canPrepareCad"] = this.canPrepareCad;
+        data["cadGaReady"] = this.cadGaReady;
+        data["primary"] = this.primary ? this.primary.toJSON() : undefined as any;
+        data["backup"] = this.backup ? this.backup.toJSON() : undefined as any;
+        if (Array.isArray(this.blockingCodes)) {
+            data["blockingCodes"] = [];
+            for (let item of this.blockingCodes)
+                data["blockingCodes"].push(item);
+        }
+        data["evaluatedAtUtc"] = this.evaluatedAtUtc ? this.evaluatedAtUtc.toISOString() : undefined as any;
+        data["updatedAtUtc"] = this.updatedAtUtc ? this.updatedAtUtc.toISOString() : undefined as any;
+        data["updatedBy"] = this.updatedBy;
+        return data;
+    }
+}
+
+export interface ISpaceCadSiteCapabilityDto {
+    siteId: string;
+    configurationRevision: number;
+    canPrepareCad: boolean;
+    cadGaReady: boolean;
+    primary?: SpaceCadProviderSlotDto;
+    backup?: SpaceCadProviderSlotDto;
+    blockingCodes: string[];
+    evaluatedAtUtc: Date;
+    updatedAtUtc?: Date | undefined;
+    updatedBy?: string | undefined;
 }
 
 export enum SpaceCadUnit {

@@ -2,6 +2,13 @@
 
 > 依据 Git log 汇总，不替代完整 Git 历史。重点记录影响接手判断的里程碑。
 
+## 2026-08-14：Space Studio WP3 Site CAD Provider 认证与路由基础
+
+- 新增 Tenant/Site 级版本化 CAD Provider 配置、Primary/Backup 认证记录、专用管理权限及只读能力接口；部署模式、数据边界、有效期、格式、审批和 Secret 引用均由服务端校验，Secret 内容不回传，认证历史不可修改。
+- Preparation/Parse 统一经合规路由，只使用当前 Site 已认证且运行可用的 Provider；Primary 可在可重试资源故障时切至同配置 Backup，未认证链、未批准云边界和 Backup 反向切换均失败关闭。Parse payload v3 绑定 Preparation Provider 与 Semantic Preview Hash。
+- Space Studio 起始向导显示 Site 主备状态与阻断码，无有效链时禁止扫描轮询和 Preview；两条链都有效、运行可用且覆盖 DWG/DXF 才报告 `CadGaReady`。
+- 验证通过：Release solution 0 warning / 0 error；.NET 3,753 passed、123 environment-gated skipped，Web 754、Playwright 8，Vue type-check、production build、OpenAPI/双 SDK、EF 与 diff drift 均绿色。真实 SQL 和真实 ODA/APS Worker/审批证据尚未完成，本切片不等于 CAD GA。
+
 ## 2026-08-14：Space Studio WP2 CAD 起始向导
 
 - 新增扫描状态、Mapping Profile 查询与 CAD preparation preview；服务端通过受控 Provider 边界生成坐标、Inventory、Mapping 和 Semantic Preview，并保存绑定来源、楼层、Draft 基线与全部 Hash 的两小时 sealed Preparation。

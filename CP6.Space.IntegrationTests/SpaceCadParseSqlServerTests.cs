@@ -64,6 +64,8 @@ public sealed class SpaceCadParseSqlServerTests
                 request.MappingDefinitionSha256,
                 request.MappingPreviewSha256,
                 new string('9', 64),
+                "sql-test",
+                "1.0",
                 true,
                 fixture.Version.ContentRevision,
                 fixture.Version.ContentHash,

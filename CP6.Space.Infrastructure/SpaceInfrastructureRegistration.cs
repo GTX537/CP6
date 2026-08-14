@@ -2,6 +2,8 @@ using CP6.Space.Application;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.DependencyInjection.Extensions;
+using Microsoft.Extensions.Logging;
+using Microsoft.Extensions.Logging.Abstractions;
 
 namespace CP6.Space.Infrastructure;
 
@@ -273,11 +275,21 @@ public static class SpaceInfrastructureRegistration
             ISpaceRackGenerationProfileService,
             SpaceRackGenerationProfileService>();
         services.TryAddScoped<
-            ISpaceCadParseProvider,
-            UnavailableSpaceCadParseProvider>();
-        services.TryAddScoped<
-            ISpaceCadPreparationProvider,
-            UnavailableSpaceCadPreparationProvider>();
+            ISpaceCadProviderRegistry,
+            SpaceCadProviderRegistry>();
+        services.AddScoped(provider => new SpaceCadProviderRouter(
+            provider.GetRequiredService<SpaceContext>(),
+            provider.GetRequiredService<ISpaceCadProviderRegistry>(),
+            provider.GetRequiredService<ISpaceClock>(),
+            provider.GetService<ILogger<SpaceCadProviderRouter>>() ??
+                NullLogger<SpaceCadProviderRouter>.Instance));
+        services.TryAddScoped<ISpaceCadParseProvider>(provider =>
+            provider.GetRequiredService<SpaceCadProviderRouter>());
+        services.TryAddScoped<ISpaceCadPreparationProvider>(provider =>
+            provider.GetRequiredService<SpaceCadProviderRouter>());
+        services.AddScoped<
+            ISpaceCadProviderCapabilityService,
+            SpaceCadProviderCapabilityService>();
         services.TryAddSingleton<
             ISpaceCadMappingProfileCatalog,
             StandardSpaceCadMappingProfileCatalog>();
