@@ -7,6 +7,7 @@ public sealed class SpaceCadProviderRegistration
 {
     public SpaceCadProviderRegistration(
         string providerKey,
+        string providerVersion,
         string displayName,
         SpaceCadProviderDeploymentMode deploymentMode,
         SpaceCadProviderDataBoundary dataBoundary,
@@ -16,6 +17,7 @@ public sealed class SpaceCadProviderRegistration
         ISpaceCadParseProvider parseProvider)
     {
         ProviderKey = SpaceCadProviderKey.Normalize(providerKey);
+        ProviderVersion = SpaceCadProviderVersion.Normalize(providerVersion);
         DisplayName = RequireDisplayName(displayName);
         if (!Enum.IsDefined(deploymentMode) || !Enum.IsDefined(dataBoundary))
             throw new ArgumentOutOfRangeException(nameof(deploymentMode));
@@ -32,6 +34,7 @@ public sealed class SpaceCadProviderRegistration
     }
 
     public string ProviderKey { get; }
+    public string ProviderVersion { get; }
     public string DisplayName { get; }
     public SpaceCadProviderDeploymentMode DeploymentMode { get; }
     public SpaceCadProviderDataBoundary DataBoundary { get; }

@@ -348,7 +348,7 @@ IR 以 Artifact 保存。大文件使用流式记录格式，API 不一次返回
 
 向导确认后，服务端把 Tenant、Source SHA、Mapping Profile ID/Version、Profile Definition SHA、Inventory/Source Structure/Mapping Preview SHA，以及完整 Layer Overrides 写入规范排序、SHA-256 密封的 Mapping Replay Snapshot。Preparation 与后台 Parse Job 都保存同一快照，客户端不能提交或修改该字段。
 
-新 Parse Job 使用 schema v4。启动服务和 Worker 必须分别在入队前、Provider 调用前复核快照身份与哈希。Provider 使用不可变 Profile 版本和快照覆盖重新生成 Mapping Preview，并验证结果与快照期望值完全一致；不一致时失败关闭，不产生 PreviewSet 或 Draft 写入。schema v2/v3 只用于历史 Job 兼容，不允许新建。
+历史 schema v4 首次封存 Mapping Replay Snapshot；当前新 Parse Job 使用 schema v5，在同一快照上继续封存 Provider Key + Version。启动服务和 Worker 必须分别在入队前、Provider 调用前复核快照身份、哈希及 Provider 版本。Provider 使用不可变 Profile 版本和快照覆盖重新生成 Mapping Preview，并验证结果与快照期望值完全一致；不一致时失败关闭，不产生 PreviewSet 或 Draft 写入。schema v2–v4 只用于历史 Job 兼容，不允许新建。
 
 ## 8. Excel 流程
 

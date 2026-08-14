@@ -2450,9 +2450,10 @@ public sealed class SpaceDesignV1OpenApiTests
         AssertExactRequired(
             Schema(
                 schemas,
-                "CP6.Space.Contracts.SpaceCadProviderCertificationInputDto"),
-            "providerKey",
-            "role",
+                  "CP6.Space.Contracts.SpaceCadProviderCertificationInputDto"),
+              "providerKey",
+              "providerVersion",
+              "role",
             "deploymentMode",
             "dataBoundary",
             "approvalEvidenceReference",
@@ -2477,9 +2478,10 @@ public sealed class SpaceDesignV1OpenApiTests
         AssertExactRequired(
             Schema(
                 schemas,
-                "CP6.Space.Contracts.SpaceCadProviderSlotDto"),
-            "providerKey",
-            "displayName",
+                  "CP6.Space.Contracts.SpaceCadProviderSlotDto"),
+              "providerKey",
+              "providerVersion",
+              "displayName",
             "role",
             "deploymentMode",
             "dataBoundary",

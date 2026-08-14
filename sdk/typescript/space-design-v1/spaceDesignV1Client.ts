@@ -21218,6 +21218,7 @@ export interface ISpaceCadPreparationStatusDto {
 
 export class SpaceCadProviderCertificationInputDto implements ISpaceCadProviderCertificationInputDto {
     providerKey!: string;
+    providerVersion!: string;
     role!: string;
     deploymentMode!: string;
     dataBoundary!: string;
@@ -21249,6 +21250,7 @@ export class SpaceCadProviderCertificationInputDto implements ISpaceCadProviderC
     init(_data?: any) {
         if (_data) {
             this.providerKey = _data["providerKey"];
+            this.providerVersion = _data["providerVersion"];
             this.role = _data["role"];
             this.deploymentMode = _data["deploymentMode"];
             this.dataBoundary = _data["dataBoundary"];
@@ -21280,6 +21282,7 @@ export class SpaceCadProviderCertificationInputDto implements ISpaceCadProviderC
     toJSON(data?: any) {
         data = typeof data === 'object' ? data : {};
         data["providerKey"] = this.providerKey;
+        data["providerVersion"] = this.providerVersion;
         data["role"] = this.role;
         data["deploymentMode"] = this.deploymentMode;
         data["dataBoundary"] = this.dataBoundary;
@@ -21304,6 +21307,7 @@ export class SpaceCadProviderCertificationInputDto implements ISpaceCadProviderC
 
 export interface ISpaceCadProviderCertificationInputDto {
     providerKey: string;
+    providerVersion: string;
     role: string;
     deploymentMode: string;
     dataBoundary: string;
@@ -21326,6 +21330,7 @@ export interface ISpaceCadProviderCertificationInputDto {
 
 export class SpaceCadProviderSlotDto implements ISpaceCadProviderSlotDto {
     providerKey!: string;
+    providerVersion!: string;
     displayName!: string;
     role!: string;
     deploymentMode!: string;
@@ -21361,6 +21366,7 @@ export class SpaceCadProviderSlotDto implements ISpaceCadProviderSlotDto {
     init(_data?: any) {
         if (_data) {
             this.providerKey = _data["providerKey"];
+            this.providerVersion = _data["providerVersion"];
             this.displayName = _data["displayName"];
             this.role = _data["role"];
             this.deploymentMode = _data["deploymentMode"];
@@ -21396,6 +21402,7 @@ export class SpaceCadProviderSlotDto implements ISpaceCadProviderSlotDto {
     toJSON(data?: any) {
         data = typeof data === 'object' ? data : {};
         data["providerKey"] = this.providerKey;
+        data["providerVersion"] = this.providerVersion;
         data["displayName"] = this.displayName;
         data["role"] = this.role;
         data["deploymentMode"] = this.deploymentMode;
@@ -21424,6 +21431,7 @@ export class SpaceCadProviderSlotDto implements ISpaceCadProviderSlotDto {
 
 export interface ISpaceCadProviderSlotDto {
     providerKey: string;
+    providerVersion: string;
     displayName: string;
     role: string;
     deploymentMode: string;

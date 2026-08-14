@@ -110,6 +110,7 @@ public sealed class SpaceWmsRuntimeSchemaFilter : ISchemaFilter
             [typeof(SpaceCadProviderCertificationInputDto)] =
             [
                 "providerKey",
+                "providerVersion",
                 "role",
                 "deploymentMode",
                 "dataBoundary",
@@ -131,6 +132,7 @@ public sealed class SpaceWmsRuntimeSchemaFilter : ISchemaFilter
             [typeof(SpaceCadProviderSlotDto)] =
             [
                 "providerKey",
+                "providerVersion",
                 "displayName",
                 "role",
                 "deploymentMode",

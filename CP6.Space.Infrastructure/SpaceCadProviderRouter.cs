@@ -25,6 +25,7 @@ public sealed class SpaceCadProviderRouter(
             request.SiteId,
             request.SourceFormat,
             preferredProviderKey: null,
+            preferredProviderVersion: null,
             cancellationToken);
         var initialPosition = source.CanSeek ? source.Position : (long?)null;
         Exception? last = null;
@@ -37,6 +38,9 @@ public sealed class SpaceCadProviderRouter(
                     .InspectAsync(request, source, cancellationToken);
                 if (!package.Document.ConverterId.Equals(
                         candidate.Registration.ProviderKey,
+                        StringComparison.Ordinal) ||
+                    !package.Document.ConverterVersion.Equals(
+                        candidate.Registration.ProviderVersion,
                         StringComparison.Ordinal))
                 {
                     throw new SpaceProblemException(
@@ -88,6 +92,7 @@ public sealed class SpaceCadProviderRouter(
                 siteId,
                 request.Payload.SourceFormat,
                 request.Payload.PreferredProviderKey,
+                request.Payload.PreferredProviderVersion,
                 cancellationToken);
         }
         catch (SpaceProblemException exception)
@@ -132,6 +137,7 @@ public sealed class SpaceCadProviderRouter(
         Guid siteId,
         SpaceCadSourceFormat format,
         string? preferredProviderKey,
+        string? preferredProviderVersion,
         CancellationToken cancellationToken)
     {
         var configuration = await context.CadProviderConfigurations.AsNoTracking()
@@ -156,6 +162,9 @@ public sealed class SpaceCadProviderRouter(
                     !Supports(certification, format) ||
                     !registry.TryGet(certification.ProviderKey, out var registration) ||
                     registration is null ||
+                    !registration.ProviderVersion.Equals(
+                        certification.ProviderVersion,
+                        StringComparison.Ordinal) ||
                     registration.DeploymentMode != certification.DeploymentMode ||
                     registration.DataBoundary != certification.DataBoundary ||
                     !Supports(registration, format))
@@ -168,8 +177,13 @@ public sealed class SpaceCadProviderRouter(
         if (!string.IsNullOrWhiteSpace(preferredProviderKey))
         {
             var normalized = SpaceCadProviderKey.Normalize(preferredProviderKey);
+            var normalizedVersion = string.IsNullOrWhiteSpace(preferredProviderVersion)
+                ? null
+                : SpaceCadProviderVersion.Normalize(preferredProviderVersion);
             var preferred = eligible.SingleOrDefault(item =>
-                item.Registration.ProviderKey == normalized);
+                item.Registration.ProviderKey == normalized &&
+                (normalizedVersion is null ||
+                 item.Registration.ProviderVersion == normalizedVersion));
             if (preferred is null)
                 throw new SpaceProblemException(
                     SpaceErrorCodes.CadProviderFailoverDenied,

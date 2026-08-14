@@ -200,7 +200,8 @@ public sealed class SpaceCadParseService(
                 version.ContentHash,
                 preparation.ProviderKey,
                 preparation.SemanticPreviewSha256,
-                preparation.MappingReplaySnapshotJson);
+                preparation.MappingReplaySnapshotJson,
+                preparation.ProviderVersion);
             var payloadJson = JsonSerializer.Serialize(payload, JsonOptions);
             var inputHash = Hash(payloadJson);
             var enqueue = Enqueue(payload, inputHash, payloadJson);
@@ -1443,6 +1444,7 @@ public sealed class SpaceCadParseService(
         if (payload.SchemaVersion is not (
                 SpaceCadParsePayloadVersions.LegacyBaseRevision or
                 SpaceCadParsePayloadVersions.LegacyProviderRouting or
+                SpaceCadParsePayloadVersions.LegacyMappingReplay or
                 SpaceCadParsePayloadVersions.Current))
         {
             throw new SpaceProblemException(

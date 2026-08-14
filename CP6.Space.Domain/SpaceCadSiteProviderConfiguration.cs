@@ -41,6 +41,29 @@ public static class SpaceCadProviderKey
     }
 }
 
+public static class SpaceCadProviderVersion
+{
+    public const int MaximumLength = 100;
+
+    public static string Normalize(string value)
+    {
+        var normalized = value?.Trim();
+        if (!IsValid(normalized))
+        {
+            throw new ArgumentException(
+                "A bounded opaque Provider version is required.",
+                nameof(value));
+        }
+        return normalized!;
+    }
+
+    public static bool IsValid(string? value) =>
+        !string.IsNullOrWhiteSpace(value) &&
+        value.Length <= MaximumLength &&
+        !value.Any(char.IsControl) &&
+        !value.Any(char.IsWhiteSpace);
+}
+
 public sealed class SpaceCadSiteProviderConfiguration : SpaceTenantEntity
 {
     private SpaceCadSiteProviderConfiguration()
@@ -101,6 +124,7 @@ public sealed class SpaceCadSiteProviderCertification : SpaceTenantEntity
     public Guid ConfigurationId { get; private set; }
     public Guid SiteId { get; private set; }
     public string ProviderKey { get; private set; } = string.Empty;
+    public string ProviderVersion { get; private set; } = string.Empty;
     public SpaceCadProviderRole Role { get; private set; }
     public SpaceCadProviderDeploymentMode DeploymentMode { get; private set; }
     public SpaceCadProviderDataBoundary DataBoundary { get; private set; }
@@ -125,6 +149,7 @@ public sealed class SpaceCadSiteProviderCertification : SpaceTenantEntity
         Guid configurationId,
         Guid siteId,
         string providerKey,
+        string providerVersion,
         SpaceCadProviderRole role,
         SpaceCadProviderDeploymentMode deploymentMode,
         SpaceCadProviderDataBoundary dataBoundary,
@@ -197,6 +222,7 @@ public sealed class SpaceCadSiteProviderCertification : SpaceTenantEntity
             ConfigurationId = configurationId,
             SiteId = siteId,
             ProviderKey = SpaceCadProviderKey.Normalize(providerKey),
+            ProviderVersion = SpaceCadProviderVersion.Normalize(providerVersion),
             Role = role,
             DeploymentMode = deploymentMode,
             DataBoundary = dataBoundary,
@@ -228,6 +254,7 @@ public sealed class SpaceCadSiteProviderCertification : SpaceTenantEntity
         SecurityApproved &&
         DataRegionApproved &&
         DeletionRetentionApproved &&
+        SpaceCadProviderVersion.IsValid(ProviderVersion) &&
         QualificationScore is >= MinimumQualificationScore and <= 100 &&
         IsReference(QualificationRubricVersion, 100) &&
         IsSha256(GoldenDatasetSha256) &&

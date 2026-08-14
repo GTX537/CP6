@@ -450,6 +450,7 @@ public static class CadProviderQualificationEvaluator
         string selectionSha256) =>
         new(
             value.ProviderKey,
+            value.ProviderVersion,
             role.ToString(),
             value.DeploymentMode,
             value.DataBoundary,

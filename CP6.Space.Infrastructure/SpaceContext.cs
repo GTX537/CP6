@@ -2746,6 +2746,9 @@ public sealed class SpaceContext : DbContext
         ConfigureTenantEntity(entity);
         entity.Property(x => x.ProviderKey)
             .HasMaxLength(64).IsUnicode(false).IsRequired();
+        entity.Property(x => x.ProviderVersion)
+            .HasMaxLength(SpaceCadProviderVersion.MaximumLength)
+            .IsUnicode(false).IsRequired();
         entity.Property(x => x.Role).HasConversion<short>();
         entity.Property(x => x.DeploymentMode).HasConversion<short>();
         entity.Property(x => x.DataBoundary).HasConversion<short>();

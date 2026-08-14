@@ -227,8 +227,16 @@ function handleDialogKeydown(event: KeyboardEvent): void {
           <span>配置 Revision {{ capability.configurationRevision }}</span>
         </div>
         <div class="provider-slots">
-          <span>主：{{ capability.primary?.displayName ?? '未配置' }}</span>
-          <span>备：{{ capability.backup?.displayName ?? '未配置' }}</span>
+          <span>
+            主：{{ capability.primary?.displayName ?? '未配置' }}<template v-if="capability.primary">
+              · v{{ capability.primary.providerVersion }}
+            </template>
+          </span>
+          <span>
+            备：{{ capability.backup?.displayName ?? '未配置' }}<template v-if="capability.backup">
+              · v{{ capability.backup.providerVersion }}
+            </template>
+          </span>
         </div>
         <p v-if="capability.blockingCodes.length">
           门禁：{{ capability.blockingCodes.join(' · ') }}

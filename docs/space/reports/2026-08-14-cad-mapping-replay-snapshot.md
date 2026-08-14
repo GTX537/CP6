@@ -21,15 +21,15 @@ Preparation 在语义预览 Ready 后才创建快照，并与 Base Content Revis
 
 ## 执行边界
 
-- 新启动的 Parse Job 使用 payload schema v4，并原样携带 Preparation 的重放快照。
+- 该任务交付时，新启动的 Parse Job 使用 payload schema v4，并原样携带 Preparation 的重放快照。后续 Provider 版本围栏将当前格式升级为 v5；v4 保持历史兼容且仍保留完整快照。
 - Parse 启动前复核快照的 Tenant、Source、Profile、Definition Hash 和 Mapping Preview Hash；快照缺失、损坏或身份不一致时返回稳定 422，零 Job 写入。
-- Worker 在打开原始 CAD 和调用 Provider 前再次验证同一组身份及 Job input hash；无效 v4 payload 按 Input failure 失败，Provider 调用次数保持零。
-- schema v2/v3 历史 Job 保持显式只读/执行兼容；新 Job 不再生成旧 schema。schema v4 不允许降级为“只有哈希、没有重放内容”。
+- Worker 在打开原始 CAD 和调用 Provider 前再次验证同一组身份及 Job input hash；无效 v4/v5 payload 按 Input failure 失败，Provider 调用次数保持零。
+- schema v2–v4 历史 Job 保持显式只读/执行兼容；当前新 Job 只生成 v5。schema v4/v5 都不允许降级为“只有哈希、没有重放内容”。
 - Provider 适配器仍须从不可变 Profile ID/Version 取得定义并核对 Definition Hash，使用快照内的覆盖重新生成 Mapping Preview，再调用 `ValidateReplay` 核对全部输入/输出 Hash 后才能生成语义产物。
 
 ## 数据与迁移
 
-- `Space_CadParsePreparation.MappingReplaySnapshotJson`：`nvarchar(max)`、必填；历史短期 Preparation 使用空字符串保留读取兼容，但不能启动新的 schema v4 Job。
+- `Space_CadParsePreparation.MappingReplaySnapshotJson`：`nvarchar(max)`、必填；历史短期 Preparation 使用空字符串保留读取兼容，但不能启动当前 schema v5 Job。
 - EF Migration：`20260814060254_SpaceCadMappingReplaySnapshot`。
 - 幂等 SQL：`CP6.Space.Infrastructure/Migrations/Scripts/20260814060254_SpaceCadMappingReplaySnapshot.sql`。
 - 迁移只新增上述列；Down 只删除上述列。没有修改已发布迁移，也没有 OpenAPI/SDK 变更。
