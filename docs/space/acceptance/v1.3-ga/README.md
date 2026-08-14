@@ -21,6 +21,26 @@
 
 第一条校验索引结构、路径和状态自洽；第二条是正式 GA 门禁，当前应以退出码 `2` 失败。任何人不得通过删除 Blocking Gate、降低门槛或把合成证据标成 Accepted 来消除该失败。
 
+## 证据证明对象
+
+`signers[].evidence`、`externalInputs[].evidence` 和 `gates[].acceptedEvidence` 使用同一结构：
+
+```json
+{
+  "uri": "docs/space/acceptance/v1.3-ga/evidence/wp1-report.json",
+  "sha256": "<64 hex>",
+  "acceptedBy": "<real person name>",
+  "acceptedAtUtc": "2026-08-14T12:00:00Z"
+}
+```
+
+- 仓库内证据只能使用仓库根目录相对路径。校验器会重算文件 SHA-256；不存在、越界或哈希不一致均失败。
+- 受客户数据边界限制的证据可使用无用户信息的 HTTPS URI，或 `urn:cp6-space-ga-evidence:*` 受控引用；由接受人记录受控存储中对象内容的 SHA-256。
+- `acceptedBy` 必须是真实人名，不接受 `TBD/Pending/待定`；`acceptedAtUtc` 必须为以 `Z` 结尾的 ISO-8601 UTC 时间，不允许未来时间。
+- 原始 `.dwg`/`.dxf` 不能作为仓库内证据；只提交授权登记、脱敏指标、哈希和接受记录。
+
+开发者可运行 `./tools/Test-SpaceGaEvidence.Tests.ps1` 覆盖本地哈希、受控 URI、不存在路径、不安全 scheme、原始 CAD、UTC 和占位接受人等正反向场景。
+
 ## 状态口径
 
 | 字段 | 含义 |

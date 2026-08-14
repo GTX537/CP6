@@ -5,6 +5,7 @@
 ## Space Studio v1.3 核心实现（2026-08-12）
 
 - WP0 核心 GA 证据索引已建立：`docs/space/acceptance/v1.3-ga/ga-evidence-index.json` 固定 72%→100% 口径、五类外部输入、WP0–WP8 九个不可删除 Blocking Gate 和产品/QA/WMS/架构/安全五个实名签字角色；仓库实现、真实环境接受与正式签字分开记录。`tools/Test-SpaceGaEvidence.ps1` 校验结构、证据路径与派生状态，`-RequireGaReady` 当前按设计以退出码 2 失败。当前仍为 `NoGo`：5 项外部输入、9 个接受门禁和 5 个签字均 Pending，未填写虚构 Owner、Site、Provider 或证据。
+- WP0 证据证明链已加固：Signed/Complete/Accepted 统一验证受控 URI、实际本地文件 SHA-256、非占位的实名字段与 ISO-8601 UTC 时间，拒绝越界/不存在/哈希不一致证据、不安全 URI、原始 DWG/DXF 仓库路径和角色/团队/占位人名；GitHub Actions 工作流覆盖 16 个正反向自测。该加固没有填写任何真实证据，不改变 72% / No-Go 状态。
 - M0 基线 PR #4 已验证并以 merge commit `9c320a74` 合入；WP1 已完成 Design V1 布局创建/修改/删除、工作台接入和批量编码，WP2 CAD 起始向导也已合入远端 `main`。WP3 当前已完成 Site 级 Provider 认证与主备路由的仓库基础，但真实 ODA/APS 适配器、隔离 Worker 注册和客户批准证据尚未完成。
 - WP3 新增按 Tenant/Site 版本化、追加式的 CAD Provider 配置：每个配置最多一个 Primary 和一个 Backup，记录部署模式、数据边界、DWG/DXF 范围、有效期、审批证据引用及 Secret 引用；认证明细不可修改，历史配置只允许从 Current 变为 Superseded。独立 `space:model:provider:manage` 权限维护配置，`space:model:read` 只读能力接口不返回 Secret 内容。
 - WP3 Provider 资格选择已按 ADR-0001 和冻结执行计划补齐服务端约束：新认证必须绑定四项硬门禁、80–100 总分、评分规则版本、黄金集 SHA、冻结环境 SHA 与资格证据引用；两条链必须共享同一评测基线，Primary 分数必须严格高于 Backup，低于 80、基线混用或并列均零写入。历史认证不会被迁移默认值冒充合格，缺少资格证据时能力接口和执行路由均失败关闭。该项只完成仓库规则，不代表真实 ODA/APS、Site 审批或黄金集评分已经取得。

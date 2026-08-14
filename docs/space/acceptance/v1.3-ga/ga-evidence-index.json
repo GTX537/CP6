@@ -115,7 +115,8 @@
         "Named owners, target dates and evidence register"
       ],
       "evidencePaths": [
-        "docs/project-memory/PROJECT_STATE.md"
+        "docs/project-memory/PROJECT_STATE.md",
+        "docs/space/reports/2026-08-14-ga-evidence-attestation.md"
       ],
       "acceptedEvidence": [],
       "acceptanceCriteria": [
