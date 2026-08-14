@@ -1,5 +1,11 @@
 # 已完成能力与近期里程碑
 
+## 2026-08-14 Space Studio WP0 核心 GA 证据索引
+
+- 新增唯一核心 GA 索引、说明和校验器，固定 72% 基线、100% 派生规则、5 类外部输入、WP0–WP8 九个不可删除 Blocking Gate，以及产品/QA/WMS/架构/安全五个实名签字角色；代码完成、真实证据接受和签字不再混为同一状态。
+- 校验器拒绝绝对/越界/不存在的仓库证据路径、缺失 Gate/Input/Signer、无实名/证据却标记 Complete/Accepted/Signed，以及与派生状态不一致的 `GaReady`。结构校验正常退出，`-RequireGaReady` 当前按设计以退出码 2 No-Go；自动化 2/2 通过。
+- 当前索引诚实记录 5 项外部输入、9 个接受门禁和 5 个签字 Pending；未虚构 Owner、Provider、Site、黄金 CAD、Pilot 或签字，因此本卡只关闭 WP0 的索引与机器门禁，不声明核心 GA 完成。
+
 ## 2026-08-14 Space Studio WP5 生产 Viewer Published-only 边界
 
 - 新增内部只读 `GET /api/space/design/v1/sites/{siteId}/published-scene`，服务端只接受模型当前 `CurrentPublishedVersionId` 指向的 Production/Published 版本，按有效楼层返回不可变 Design Revision，并固定 `runtimeOverlayIncluded=false`；无 Published 指针或读取期间权威漂移时失败关闭。

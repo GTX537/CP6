@@ -6,6 +6,7 @@
 
 | 文件/目录 | 用途 | 发布门禁 |
 |---|---|---|
+| [`v1.3-ga/ga-evidence-index.json`](./v1.3-ga/ga-evidence-index.json) | 核心 GA Owner、外部输入、WP0–WP8 证据和五方签字的失败关闭索引 | 核心 GA |
 | [黄金数据与基准协议](./01-golden-dataset-protocol.md) | 数据版本、标注、分层、指标和证据 | Beta/GA |
 | [WMS 与权限场景矩阵](./02-wms-permission-scenarios.md) | 绿地、存量、故障、外部角色和越权验收 | Alpha/Beta/GA |
 | [`v1.0.0/manifest.json`](./v1.0.0/manifest.json) | 冻结包机器清单 | 开发启动 |
