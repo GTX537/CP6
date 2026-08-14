@@ -1,0 +1,311 @@
+{
+  "schemaVersion": 1,
+  "programId": "CP6_SPACE_STUDIO_V1_CORE_GA",
+  "scope": "CoreGA",
+  "asOfDate": "2026-08-14",
+  "declaredStatus": "NoGo",
+  "baselinePercent": 72,
+  "gaPercent": 100,
+  "kickoffDate": null,
+  "targetGaDate": null,
+  "progressPolicy": "Progress may equal 100 only when every blocking gate is Accepted, every external input is Complete, and all five named signers are Signed.",
+  "signers": [
+    {
+      "role": "Product",
+      "name": null,
+      "status": "Pending",
+      "evidence": []
+    },
+    {
+      "role": "QA",
+      "name": null,
+      "status": "Pending",
+      "evidence": []
+    },
+    {
+      "role": "WMS",
+      "name": null,
+      "status": "Pending",
+      "evidence": []
+    },
+    {
+      "role": "Architecture",
+      "name": null,
+      "status": "Pending",
+      "evidence": []
+    },
+    {
+      "role": "Security",
+      "name": null,
+      "status": "Pending",
+      "evidence": []
+    }
+  ],
+  "externalInputs": [
+    {
+      "id": "NAMED_GA_SIGNERS",
+      "ownerRole": "Product",
+      "ownerName": null,
+      "deadlineMilestone": "M0",
+      "status": "Pending",
+      "evidenceFormat": [
+        "Five-role responsibility register with real names and approval authority"
+      ],
+      "evidence": []
+    },
+    {
+      "id": "CORE_TEAM_ALLOCATION",
+      "ownerRole": "EngineeringManagement",
+      "ownerName": null,
+      "deadlineMilestone": "M0",
+      "status": "Pending",
+      "evidenceFormat": [
+        "Named allocation for two backend, two frontend/3D, one QA, and shared roles"
+      ],
+      "evidence": []
+    },
+    {
+      "id": "AUTHORIZED_GOLDEN_CAD_CANDIDATES",
+      "ownerRole": "BusinessDataOwner",
+      "ownerName": null,
+      "deadlineMilestone": "M1_WEEK_2",
+      "status": "Pending",
+      "evidenceFormat": [
+        "Authorized 20-file candidate register",
+        "Source SHA-256 and authorization reference per file"
+      ],
+      "evidence": []
+    },
+    {
+      "id": "PROVIDER_APPROVALS_AND_ISOLATED_WORKER",
+      "ownerRole": "SecurityProcurementDevOps",
+      "ownerName": null,
+      "deadlineMilestone": "M1_WEEK_2",
+      "status": "Pending",
+      "evidenceFormat": [
+        "Licensing, security, data-region, retention and deletion approvals",
+        "Controlled isolated worker deployment and secret references"
+      ],
+      "evidence": []
+    },
+    {
+      "id": "TWO_PILOT_SITES_AND_WMS_WINDOWS",
+      "ownerRole": "ProductImplementationWMS",
+      "ownerName": null,
+      "deadlineMilestone": "M1_WEEK_4",
+      "status": "Pending",
+      "evidenceFormat": [
+        "Named greenfield and retrofit Sites",
+        "Business owner, implementation owner and CP6 WMS test window"
+      ],
+      "evidence": []
+    }
+  ],
+  "gates": [
+    {
+      "id": "WP0_BASELINE_AND_GOVERNANCE",
+      "blocking": true,
+      "ownerRole": "ProductQA",
+      "ownerName": null,
+      "deadlineMilestone": "M0",
+      "implementationStatus": "Partial",
+      "acceptanceStatus": "Pending",
+      "evidenceFormat": [
+        "Remote main commit and post-merge smoke",
+        "Named owners, target dates and evidence register"
+      ],
+      "evidencePaths": [
+        "docs/project-memory/PROJECT_STATE.md"
+      ],
+      "acceptedEvidence": [],
+      "acceptanceCriteria": [
+        "All five internal signers are named",
+        "Golden CAD, Provider experiment and Pilot owners are named",
+        "Kickoff and target GA dates are recorded"
+      ]
+    },
+    {
+      "id": "WP1_DESIGN_V1_MANUAL_MODELING",
+      "blocking": true,
+      "ownerRole": "BackendBFrontendAQA",
+      "ownerName": null,
+      "deadlineMilestone": "M1",
+      "implementationStatus": "Complete",
+      "acceptanceStatus": "Pending",
+      "evidenceFormat": [
+        "Automated blank-canvas modeling and code Preview/Apply results",
+        "Independent QA acceptance record"
+      ],
+      "evidencePaths": [
+        "docs/space/reports/2026-08-14-space-studio-3d-interaction.md",
+        "docs/project-memory/05-Completed.md"
+      ],
+      "acceptedEvidence": [],
+      "acceptanceCriteria": [
+        "A complete coded warehouse can be built from a blank canvas",
+        "All writes use lease, revision and idempotency fences"
+      ]
+    },
+    {
+      "id": "WP2_CAD_START_WIZARD",
+      "blocking": true,
+      "ownerRole": "BackendAFrontendAQA",
+      "ownerName": null,
+      "deadlineMilestone": "M1",
+      "implementationStatus": "Complete",
+      "acceptanceStatus": "Pending",
+      "evidenceFormat": [
+        "DWG and DXF wizard E2E with real authorized files",
+        "Preparation and parse-start audit records"
+      ],
+      "evidencePaths": [
+        "docs/space/reports/2026-08-14-cad-start-wizard.md"
+      ],
+      "acceptedEvidence": [],
+      "acceptanceCriteria": [
+        "A non-developer can select floor, unit, transform and mapping profile",
+        "No fake profile, hash or silent unit default is accepted"
+      ]
+    },
+    {
+      "id": "WP3_SITE_PRIMARY_BACKUP_PROVIDERS",
+      "blocking": true,
+      "ownerRole": "BackendASecurityArchitectureDevOps",
+      "ownerName": null,
+      "deadlineMilestone": "M2",
+      "implementationStatus": "Partial",
+      "acceptanceStatus": "Pending",
+      "evidenceFormat": [
+        "Two Site-approved Provider certifications",
+        "Frozen-worker scorecards at or above 80 of 100",
+        "Failover and no-unapproved-cloud evidence"
+      ],
+      "evidencePaths": [
+        "docs/space/reports/2026-08-14-cad-provider-routing.md"
+      ],
+      "acceptedEvidence": [],
+      "acceptanceCriteria": [
+        "Each CAD-enabled Site has an approved primary and backup chain",
+        "Both chains cover real DWG and DXF",
+        "Provider credentials remain secret references"
+      ]
+    },
+    {
+      "id": "WP4_THREE_PATH_END_TO_END",
+      "blocking": true,
+      "ownerRole": "FrontendABackendBQA",
+      "ownerName": null,
+      "deadlineMilestone": "M2",
+      "implementationStatus": "Complete",
+      "acceptanceStatus": "Pending",
+      "evidenceFormat": [
+        "Real DWG, DXF, Excel, PDF/image and blank-canvas E2E records",
+        "Draft to Validate, Publish, CP6 WMS and Published evidence"
+      ],
+      "evidencePaths": [
+        "docs/space/reports/2026-08-14-space-studio-path-closure.md"
+      ],
+      "acceptedEvidence": [],
+      "acceptanceCriteria": [
+        "All import paths use the same typed changeset semantics",
+        "Draft remains unchanged before explicit Apply"
+      ]
+    },
+    {
+      "id": "WP5_VIEWER_ACCESSIBILITY_AND_PERFORMANCE",
+      "blocking": true,
+      "ownerRole": "FrontendBQA",
+      "ownerName": null,
+      "deadlineMilestone": "M2",
+      "implementationStatus": "Complete",
+      "acceptanceStatus": "Pending",
+      "evidenceFormat": [
+        "Published-only production-equivalent Viewer E2E",
+        "Iris Xe WebGL2 raw performance samples",
+        "Independent keyboard, contrast and assistive-technology signoff"
+      ],
+      "evidencePaths": [
+        "docs/space/reports/2026-08-14-space-viewer-v13-ga.md",
+        "docs/space/reports/2026-08-14-space-viewer-v13-ga.json",
+        "docs/space/reports/2026-08-14-space-studio-accessibility.md"
+      ],
+      "acceptedEvidence": [],
+      "acceptanceCriteria": [
+        "Production Viewer consumes only Current Published Design Revision",
+        "All frozen Viewer performance thresholds pass",
+        "1440x900, 1280x720, keyboard and accessibility checks are signed"
+      ]
+    },
+    {
+      "id": "WP6_PUBLISH_WMS_SECURITY_AND_RECOVERY",
+      "blocking": true,
+      "ownerRole": "BackendBQAWMSSecurity",
+      "ownerName": null,
+      "deadlineMilestone": "M2",
+      "implementationStatus": "Complete",
+      "acceptanceStatus": "Pending",
+      "evidenceFormat": [
+        "Real SQL Server and CP6 WMS recovery exercise",
+        "Alert routing, backup restore and reconciliation evidence",
+        "Independent security negative test report"
+      ],
+      "evidencePaths": [
+        "docs/space/reports/2026-08-14-space-publish-warning-acknowledgement.md",
+        "docs/space/reports/2026-08-14-space-publish-recovery-observability.md",
+        "docs/space/reports/2026-08-14-space-external-subject-security-matrix.md"
+      ],
+      "acceptedEvidence": [],
+      "acceptanceCriteria": [
+        "Old Published remains available during every failure",
+        "Automatic recovery is at most 15 minutes and manual recovery at most 4 hours",
+        "Retry produces no duplicate locations, events or external writes"
+      ]
+    },
+    {
+      "id": "WP7_GOLDEN_CAD_FORMAL_EVIDENCE",
+      "blocking": true,
+      "ownerRole": "QABusinessDataOwnerProviderEngineering",
+      "ownerName": null,
+      "deadlineMilestone": "M2",
+      "implementationStatus": "ExternalExecution",
+      "acceptanceStatus": "Pending",
+      "evidenceFormat": [
+        "Immutable 10/5/5 manifest with per-file hashes and authorization",
+        "Provider/version/config/artifact hashes and correction effort",
+        "Coverage, accuracy, precision and performance report"
+      ],
+      "evidencePaths": [
+        "docs/space/acceptance/01-golden-dataset-protocol.md"
+      ],
+      "acceptedEvidence": [],
+      "acceptanceCriteria": [
+        "Coverage is at least 80 percent",
+        "Overall accuracy is at least 90 percent",
+        "High-confidence precision is at least 95 percent",
+        "Holdout has no unreported Blocking omission"
+      ]
+    },
+    {
+      "id": "WP8_TWO_SITE_PILOT_AND_SIGNOFF",
+      "blocking": true,
+      "ownerRole": "ProductImplementationQAWMS",
+      "ownerName": null,
+      "deadlineMilestone": "M4",
+      "implementationStatus": "ExternalExecution",
+      "acceptanceStatus": "Pending",
+      "evidenceFormat": [
+        "Greenfield Site 14-day immutable run log",
+        "Retrofit Site 14-day immutable run log",
+        "Defect closure, business outcome and five-role signoff pack"
+      ],
+      "evidencePaths": [],
+      "acceptedEvidence": [],
+      "acceptanceCriteria": [
+        "Each Site runs continuously for 14 days",
+        "There are zero S1 and S2 defects",
+        "Every S3 is closed before signoff",
+        "All five internal signers are Signed"
+      ]
+    }
+  ]
+}

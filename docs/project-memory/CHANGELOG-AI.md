@@ -2,6 +2,11 @@
 
 > 依据 Git log 汇总，不替代完整 Git 历史。重点记录影响接手判断的里程碑。
 
+## 2026-08-14：Space Studio WP0 核心 GA 证据索引
+
+- 新增 `v1.3-ga` 核心 GA 索引，冻结 72%→100% 规则、5 类外部输入、WP0–WP8 九个 Blocking Gate 和产品/QA/WMS/架构/安全五方实名签字；实现状态、真实证据接受和正式签字分离。
+- 新增 PowerShell 5.1/7 兼容校验器和 2 个自动化测试，拒绝删除门禁、缺失 Owner/证据、越界路径和不自洽的 `GaReady`。普通校验通过；`-RequireGaReady` 当前按设计返回 No-Go 退出码 2，因为 5 项输入、9 个门禁和 5 个签字仍 Pending。
+
 ## 2026-08-14：Space Studio WP5 生产 Viewer Published-only 边界
 
 - 新增 Site 级 Published 聚合场景合同，只从模型当前 Production/Published 指针读取不可变 Design Revision，明确不内嵌库存、人员或设备 runtime overlay；无 Published 或权威漂移时返回稳定 Problem Details。
