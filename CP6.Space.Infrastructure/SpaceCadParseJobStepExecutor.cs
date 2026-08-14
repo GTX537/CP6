@@ -247,6 +247,7 @@ public sealed class SpaceCadParseJobStepExecutor(
         var payload = DeserializePayload(job.PayloadJson);
         if (payload.SchemaVersion is not (
                 SpaceCadParsePayloadVersions.LegacyBaseRevision or
+                SpaceCadParsePayloadVersions.LegacyProviderRouting or
                 SpaceCadParsePayloadVersions.Current) ||
             payload.SourceId != lease.SubjectId ||
             payload.ModelVersionId == Guid.Empty ||
@@ -261,9 +262,13 @@ public sealed class SpaceCadParseJobStepExecutor(
             payload.BaseContentRevision < 0 ||
             payload.BaseContentHash is not null &&
                 !IsSha256(payload.BaseContentHash) ||
-            payload.SchemaVersion == SpaceCadParsePayloadVersions.Current &&
+            payload.SchemaVersion is (
+                SpaceCadParsePayloadVersions.LegacyProviderRouting or
+                SpaceCadParsePayloadVersions.Current) &&
                 (!IsProviderKey(payload.PreferredProviderKey) ||
                  !IsSha256(payload.ExpectedSemanticPreviewSha256)) ||
+            payload.SchemaVersion == SpaceCadParsePayloadVersions.Current &&
+                !IsValidMappingReplaySnapshot(payload, lease.TenantId) ||
             !Hash(job.PayloadJson).Equals(lease.InputHash, StringComparison.Ordinal))
         {
             throw Failure(
@@ -317,6 +322,33 @@ public sealed class SpaceCadParseJobStepExecutor(
                 "The CAD source file is not clean or no longer matches its hash.");
         }
         return new ParseInput(job, payload, source, file);
+    }
+
+    private static bool IsValidMappingReplaySnapshot(
+        SpaceCadParseJobPayload payload,
+        Guid tenantId)
+    {
+        try
+        {
+            var snapshot = SpaceCadMappingReplaySnapshot.Deserialize(
+                payload.MappingReplaySnapshotJson!);
+            return snapshot.TenantId == tenantId &&
+                   snapshot.ProfileId == payload.MappingProfileId &&
+                   snapshot.ProfileVersion == payload.MappingProfileVersion &&
+                   snapshot.ProfileDefinitionSha256.Equals(
+                       payload.MappingDefinitionSha256,
+                       StringComparison.Ordinal) &&
+                   snapshot.SourceSha256.Equals(
+                       payload.SourceSha256,
+                       StringComparison.Ordinal) &&
+                   snapshot.ExpectedMappingPreviewSha256.Equals(
+                       payload.MappingPreviewSha256,
+                       StringComparison.Ordinal);
+        }
+        catch (InvalidDataException)
+        {
+            return false;
+        }
     }
 
     private static bool IsProviderKey(string? value)

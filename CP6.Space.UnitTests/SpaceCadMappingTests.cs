@@ -127,6 +127,174 @@ public sealed class SpaceCadMappingTests
     }
 
     [Fact]
+    public void Replay_snapshot_preserves_overrides_and_accepts_only_the_same_mapping()
+    {
+        var profile = Profile();
+        var inventory = SpaceCadInventoryTests.Inventory();
+        var preview = SpaceCadMapping.Preview(
+            TenantId,
+            inventory,
+            profile,
+            [new SpaceCadLayerMappingOverrideV1(
+                "wall",
+                Ignore: false,
+                SpaceCadSemanticTarget.Door,
+                TargetSubtype: null,
+                SpaceCadGeometryRule.DirectGeometry,
+                DefaultHeightMillimeters: 2_400,
+                DefaultThicknessMillimeters: 120,
+                ConfidenceWeight: .8m)]);
+        var json = SpaceCadMappingReplaySnapshot.Serialize(
+            SpaceCadMappingReplaySnapshot.Create(preview));
+
+        var snapshot = SpaceCadMappingReplaySnapshot.Deserialize(json);
+        var replayed = SpaceCadMapping.Preview(
+            TenantId,
+            inventory,
+            profile,
+            snapshot.LayerOverrides);
+
+        SpaceCadMappingReplaySnapshot.ValidateReplay(snapshot, replayed);
+        Assert.Equal("WALL", Assert.Single(snapshot.LayerOverrides).LayerId);
+        Assert.Equal(preview.PreviewSha256,
+            snapshot.ExpectedMappingPreviewSha256);
+        Assert.Matches("^[0-9a-f]{64}$", snapshot.SnapshotSha256);
+
+        var different = SpaceCadMapping.Preview(TenantId, inventory, profile);
+        Assert.Throws<InvalidDataException>(() =>
+            SpaceCadMappingReplaySnapshot.ValidateReplay(snapshot, different));
+    }
+
+    [Fact]
+    public void Replay_snapshot_rejects_unknown_duplicate_and_noncanonical_json()
+    {
+        var preview = SpaceCadMapping.Preview(
+            TenantId,
+            SpaceCadInventoryTests.Inventory(),
+            Profile());
+        var json = SpaceCadMappingReplaySnapshot.Serialize(
+            SpaceCadMappingReplaySnapshot.Create(preview));
+
+        Assert.Throws<InvalidDataException>(() =>
+            SpaceCadMappingReplaySnapshot.Deserialize(
+                "{\"unknown\":true," + json[1..]));
+        Assert.Throws<InvalidDataException>(() =>
+            SpaceCadMappingReplaySnapshot.Deserialize(
+                "{\"SchemaVersion\":1," + json[1..]));
+        Assert.Throws<InvalidDataException>(() =>
+            SpaceCadMappingReplaySnapshot.Deserialize(
+                json.Replace(
+                    "\"layerOverrides\":[]",
+                    "\"layerOverrides\":[null]",
+                    StringComparison.Ordinal)));
+        Assert.Throws<InvalidDataException>(() =>
+            SpaceCadMappingReplaySnapshot.Deserialize(json.Replace(
+                "\"schemaVersion\":1",
+                "\"schemaVersion\": 1",
+                StringComparison.Ordinal)));
+    }
+
+    [Fact]
+    public void Replay_snapshot_rejects_a_tampered_content_hash()
+    {
+        var snapshot = SpaceCadMappingReplaySnapshot.Create(
+            SpaceCadMapping.Preview(
+                TenantId,
+                SpaceCadInventoryTests.Inventory(),
+                Profile()));
+
+        Assert.Throws<InvalidDataException>(() =>
+            SpaceCadMappingReplaySnapshot.Validate(snapshot with
+            {
+                ExpectedMappingPreviewSha256 = new string('f', 64),
+            }));
+    }
+
+    [Fact]
+    public void Replay_snapshot_rejects_a_null_override_before_canonical_sorting()
+    {
+        var preview = SpaceCadMapping.Preview(
+            TenantId,
+            SpaceCadInventoryTests.Inventory(),
+            Profile());
+        var invalid = new SpaceCadLayerMappingOverrideV1[] { null! };
+
+        Assert.Throws<InvalidDataException>(() =>
+            SpaceCadMappingReplaySnapshot.Create(
+                preview.TenantId,
+                preview.ProfileId,
+                preview.ProfileVersion,
+                preview.ProfileDefinitionSha256,
+                preview.SourceSha256,
+                preview.InventorySha256,
+                preview.SourceStructureSha256,
+                preview.PreviewSha256,
+                invalid));
+    }
+
+    [Fact]
+    public void Replay_snapshot_rejects_an_oversized_override_set()
+    {
+        var preview = SpaceCadMapping.Preview(
+            TenantId,
+            SpaceCadInventoryTests.Inventory(),
+            Profile());
+        var oversized = Enumerable.Range(0, SpaceCadMappingVersions.MaximumOverrides)
+            .Select(index => new SpaceCadLayerMappingOverrideV1(
+                $"L{index:D4}{new string('x', 190)}",
+                Ignore: true,
+                Target: null,
+                TargetSubtype: null,
+                GeometryRule: null,
+                DefaultHeightMillimeters: null,
+                DefaultThicknessMillimeters: null,
+                ConfidenceWeight: null))
+            .ToArray();
+
+        Assert.Throws<InvalidDataException>(() =>
+            SpaceCadMappingReplaySnapshot.Create(
+                preview.TenantId,
+                preview.ProfileId,
+                preview.ProfileVersion,
+                preview.ProfileDefinitionSha256,
+                preview.SourceSha256,
+                preview.InventorySha256,
+                preview.SourceStructureSha256,
+                preview.PreviewSha256,
+                oversized));
+    }
+
+    [Fact]
+    public void Replay_snapshot_rejects_invalid_override_semantics()
+    {
+        var preview = SpaceCadMapping.Preview(
+            TenantId,
+            SpaceCadInventoryTests.Inventory(),
+            Profile());
+        var invalid = new SpaceCadLayerMappingOverrideV1(
+            "WALL",
+            Ignore: false,
+            (SpaceCadSemanticTarget)999,
+            TargetSubtype: null,
+            SpaceCadGeometryRule.Centerline,
+            DefaultHeightMillimeters: null,
+            DefaultThicknessMillimeters: null,
+            ConfidenceWeight: .9m);
+
+        Assert.Throws<InvalidDataException>(() =>
+            SpaceCadMappingReplaySnapshot.Create(
+                preview.TenantId,
+                preview.ProfileId,
+                preview.ProfileVersion,
+                preview.ProfileDefinitionSha256,
+                preview.SourceSha256,
+                preview.InventorySha256,
+                preview.SourceStructureSha256,
+                preview.PreviewSha256,
+                [invalid]));
+    }
+
+    [Fact]
     public void Equal_priority_and_specificity_rules_fail_closed_as_a_conflict()
     {
         var rules = Rules().Append(Rule(

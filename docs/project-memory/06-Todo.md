@@ -4,6 +4,7 @@
 
 - 核心 GA 证据索引与失败关闭校验已建立，当前派生结果为 `NoGo`：5 类外部输入、WP0–WP8 九个接受门禁和 5 个实名签字均 Pending。开工实名登记产品、QA、WMS、架构、安全签字人，以及核心团队、黄金 CAD、Provider 试验和两个 Pilot Site Owner；随后填写 kickoff/目标日期。缺失项不得通过删除 Gate、把角色名当实名或把仓库自动化标为 Accepted 来绕过。
 - WP3 的 Site 级认证数据模型、管理/查询接口、ADR-0001 资格证据、80 分门槛、同基线确定性主备排名、合规故障切换和向导能力展示已完成仓库基础。下一张 Provider 任务卡必须在现有 `ICadConverter`/Provider 注册边界实现真实 ODA、APS 或评分后替代者的适配器与隔离 Worker 注册；不得把供应商类型写入领域层，也不得允许客户端提交任意 Provider Key。
+- Preparation → Parse 的 Mapping Replay Snapshot 与 v4 payload 已完成；真实 Provider 适配器必须加载快照绑定的不可变 Profile ID/Version、核对 Definition Hash、使用完整 Layer Overrides 重建 Mapping Preview，并在输出语义工件前执行 `SpaceCadMappingReplaySnapshot.ValidateReplay`。不得只信任期望 Preview Hash、忽略覆盖内容或让 Worker 使用当前 Profile 代替冻结版本。
 - 使用已交付的 `CP6.Space.CadExperiment qualify-providers` 在同一 20 份授权黄金集、同一冻结 Worker 和同一规则 `cad-provider-adr-0001-v1` 上评测所有真实候选；保存每个 Provider 版本、Preflight/产物/环境哈希和六维原始依据。只有工具产出唯一 Primary/Backup 且两者均不低于 80，才可把报告交给 Site 管理接口；当前没有真实评分报告，示例或人工改写 JSON 不算证据。
 - 为每个启用 CAD GA 的 Site 接入并实测一个主 DWG/DXF Provider 和一个同合同、同黄金集、同 Site 审批的备用 Provider；补齐法务、安全、数据区域、删除保留、Secret 管理和审批证据。当前默认运行注册为空，能力接口会失败关闭，不能作为真实 CAD 验收。
 - 在已配置 `CP6_TEST_SQLSERVER` 的真实 SQL Server 执行 `SpaceCadProviderSqlServerTests`，保存并发替换、唯一 Current Revision、历史追加、认证不可变、旧认证资格缺失失败关闭和幂等迁移证据；本机 skip 不算关闭此门禁。

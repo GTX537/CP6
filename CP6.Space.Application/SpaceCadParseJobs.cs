@@ -6,7 +6,8 @@ namespace CP6.Space.Application;
 public static class SpaceCadParsePayloadVersions
 {
     public const int LegacyBaseRevision = 2;
-    public const int Current = 3;
+    public const int LegacyProviderRouting = 3;
+    public const int Current = 4;
 }
 
 public sealed record SpaceCadParseJobPayload(
@@ -28,7 +29,8 @@ public sealed record SpaceCadParseJobPayload(
     long BaseContentRevision,
     string? BaseContentHash,
     string? PreferredProviderKey,
-    string? ExpectedSemanticPreviewSha256);
+    string? ExpectedSemanticPreviewSha256,
+    string? MappingReplaySnapshotJson = null);
 
 public sealed record SpaceCadParseProviderRequest(
     Guid TenantId,

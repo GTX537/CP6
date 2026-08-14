@@ -43,6 +43,11 @@ contract; SDK-specific objects may not cross the converter boundary.
   explicit layer overrides win. Required sources fail closed when absent or empty.
 - Mapping previews retain unmapped and empty sources, bind the profile, inventory,
   structural reuse key and overrides by SHA-256, and do not write semantic objects.
+- A ready preparation seals the exact mapping replay inputs as canonical JSON: tenant,
+  source and immutable profile identities, inventory/structure/preview hashes, and
+  canonical layer overrides. New parse jobs carry that server-owned snapshot and a
+  worker must validate it before invoking a provider; a provider must replay and
+  validate the resulting mapping preview before emitting semantic artifacts.
 - Semantic parsing consumes the exact prepared IR, inventory, sealed profile and
   mapping preview chain. It emits deterministic temporary `previewObjectId` values,
   integer-millimeter geometry, source/rule/default provenance and confidence bands;

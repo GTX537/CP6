@@ -201,6 +201,22 @@ public sealed class SpaceCadPreparationService(
                 semantic);
         }
 
+        string mappingReplaySnapshotJson;
+        try
+        {
+            mappingReplaySnapshotJson = SpaceCadMappingReplaySnapshot.Serialize(
+                SpaceCadMappingReplaySnapshot.Create(mapping));
+        }
+        catch (InvalidDataException exception)
+        {
+            throw new SpaceProblemException(
+                SpaceErrorCodes.CadPreparationInvalid,
+                422,
+                "The confirmed CAD mapping cannot be sealed for replay.",
+                exception.Message,
+                "reduce-or-correct-cad-mapping-overrides");
+        }
+
         await using var transaction = await context.Database.BeginTransactionAsync(
             IsolationLevel.Serializable,
             cancellationToken);
@@ -235,6 +251,7 @@ public sealed class SpaceCadPreparationService(
             profile.Version,
             profile.DefinitionSha256,
             mapping.PreviewSha256,
+            mappingReplaySnapshotJson,
             semantic.SemanticPreviewSha256,
             package.Document.ConverterId,
             package.Document.ConverterVersion,

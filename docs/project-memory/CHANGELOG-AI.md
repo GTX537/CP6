@@ -2,6 +2,12 @@
 
 > 依据 Git log 汇总，不替代完整 Git 历史。重点记录影响接手判断的里程碑。
 
+## 2026-08-14：Space Studio WP3 CAD 映射确定性重放快照
+
+- CAD Preparation 新增服务器拥有、SHA-256 密封的 Mapping Replay Snapshot，保存不可变 Profile/Source/Inventory/Structure/Preview 身份和完整 Layer Overrides，修复后台 Parse 只有结果 Hash、没有重放输入的问题。
+- 新 Job payload 升级为 v4；启动服务和 Worker 在入队/调用 Provider 前双重验证，v4 快照缺失或篡改失败关闭，历史 v2/v3 明确兼容。新增独立迁移、幂等 SQL 和聚焦测试。
+- 本变更不实现真实 ODA/APS；真实适配器仍须取得冻结 Profile、重放并校验 Preview。WP3 保持 Partial/Pending，核心 GA 保持 NoGo。
+
 ## 2026-08-14：Space Studio WP3 Provider 评分与选型工具
 
 - 新增严格、失败关闭的 `qualify-providers` 命令，将 ADR-0001 六维权重、80 分门槛、四项审批证据、同黄金集/冻结环境和唯一第一/第二名规则转换为可重复执行的选择报告。

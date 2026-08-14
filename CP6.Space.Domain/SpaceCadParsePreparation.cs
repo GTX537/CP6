@@ -2,6 +2,8 @@ namespace CP6.Space.Domain;
 
 public sealed class SpaceCadParsePreparation : SpaceTenantEntity
 {
+    public const int MaximumMappingReplaySnapshotJsonLength = 1024 * 1024;
+
     private SpaceCadParsePreparation()
     {
     }
@@ -18,6 +20,7 @@ public sealed class SpaceCadParsePreparation : SpaceTenantEntity
     public int MappingProfileVersion { get; private set; }
     public string MappingDefinitionSha256 { get; private set; } = string.Empty;
     public string MappingPreviewSha256 { get; private set; } = string.Empty;
+    public string MappingReplaySnapshotJson { get; private set; } = string.Empty;
     public string SemanticPreviewSha256 { get; private set; } = string.Empty;
     public string? ProviderKey { get; private set; }
     public string? ProviderVersion { get; private set; }
@@ -40,6 +43,7 @@ public sealed class SpaceCadParsePreparation : SpaceTenantEntity
         int mappingProfileVersion,
         string mappingDefinitionSha256,
         string mappingPreviewSha256,
+        string mappingReplaySnapshotJson,
         string semanticPreviewSha256,
         string providerKey,
         string providerVersion,
@@ -84,6 +88,10 @@ public sealed class SpaceCadParsePreparation : SpaceTenantEntity
             MappingPreviewSha256 = RequireHash(
                 mappingPreviewSha256,
                 nameof(mappingPreviewSha256)),
+            MappingReplaySnapshotJson = RequireText(
+                mappingReplaySnapshotJson,
+                MaximumMappingReplaySnapshotJsonLength,
+                nameof(mappingReplaySnapshotJson)),
             SemanticPreviewSha256 = RequireHash(
                 semanticPreviewSha256,
                 nameof(semanticPreviewSha256)),
