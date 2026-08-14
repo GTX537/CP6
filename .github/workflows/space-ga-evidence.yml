@@ -13,9 +13,12 @@ on:
       - 'tools/Test-SpaceGaPilotEvidence.Tests.ps1'
       - 'tools/Test-SpaceGaGoldenCadEvidence.ps1'
       - 'tools/Test-SpaceGaGoldenCadEvidence.Tests.ps1'
+      - 'tools/Test-SpaceGaKickoffEvidence.ps1'
+      - 'tools/Test-SpaceGaKickoffEvidence.Tests.ps1'
       - 'tools/test-fixtures/space-ga-evidence/**'
       - 'tools/test-fixtures/space-ga-pilot-evidence/**'
       - 'tools/test-fixtures/space-ga-golden-cad-evidence/**'
+      - 'tools/test-fixtures/space-ga-kickoff-evidence/**'
   push:
     branches:
       - main
@@ -30,9 +33,12 @@ on:
       - 'tools/Test-SpaceGaPilotEvidence.Tests.ps1'
       - 'tools/Test-SpaceGaGoldenCadEvidence.ps1'
       - 'tools/Test-SpaceGaGoldenCadEvidence.Tests.ps1'
+      - 'tools/Test-SpaceGaKickoffEvidence.ps1'
+      - 'tools/Test-SpaceGaKickoffEvidence.Tests.ps1'
       - 'tools/test-fixtures/space-ga-evidence/**'
       - 'tools/test-fixtures/space-ga-pilot-evidence/**'
       - 'tools/test-fixtures/space-ga-golden-cad-evidence/**'
+      - 'tools/test-fixtures/space-ga-kickoff-evidence/**'
 
 permissions:
   contents: read
@@ -60,3 +66,7 @@ jobs:
       - name: Exercise formal golden CAD evidence failure modes
         shell: pwsh
         run: ./tools/Test-SpaceGaGoldenCadEvidence.Tests.ps1
+
+      - name: Exercise M0 kickoff evidence failure modes
+        shell: pwsh
+        run: ./tools/Test-SpaceGaKickoffEvidence.Tests.ps1

@@ -51,6 +51,7 @@
       "evidenceFormat": [
         "Five-role responsibility register with real names and approval authority"
       ],
+      "verificationManifest": null,
       "evidence": []
     },
     {
@@ -62,6 +63,7 @@
       "evidenceFormat": [
         "Named allocation for two backend, two frontend/3D, one QA, and shared roles"
       ],
+      "verificationManifest": null,
       "evidence": []
     },
     {
@@ -74,6 +76,7 @@
         "Authorized 20-file candidate register",
         "Source SHA-256 and authorization reference per file"
       ],
+      "verificationManifest": null,
       "evidence": []
     },
     {
@@ -86,6 +89,7 @@
         "Licensing, security, data-region, retention and deletion approvals",
         "Controlled isolated worker deployment and secret references"
       ],
+      "verificationManifest": null,
       "evidence": []
     },
     {
@@ -98,6 +102,7 @@
         "Named greenfield and retrofit Sites",
         "Business owner, implementation owner and CP6 WMS test window"
       ],
+      "verificationManifest": null,
       "evidence": []
     }
   ],

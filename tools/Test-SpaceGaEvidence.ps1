@@ -17,6 +17,8 @@ $repoPrefix = $repoFullPath + [System.IO.Path]::DirectorySeparatorChar
 $pilotValidator = Join-Path $PSScriptRoot 'Test-SpaceGaPilotEvidence.ps1'
 $goldenCadValidator = Join-Path $PSScriptRoot (
     'Test-SpaceGaGoldenCadEvidence.ps1')
+$kickoffValidator = Join-Path $PSScriptRoot (
+    'Test-SpaceGaKickoffEvidence.ps1')
 
 if (!(Test-Path -LiteralPath $manifestFullPath -PathType Leaf)) {
     throw "GA evidence manifest was not found: $manifestFullPath"
@@ -263,6 +265,92 @@ foreach ($input in @($manifest.externalInputs)) {
         }
         foreach ($evidence in @($input.evidence)) {
             Test-AttestedEvidence -OwnerId $input.id -Evidence $evidence
+        }
+        $kickoffManifestReference = [string]$input.verificationManifest
+        if (!(Test-Text $kickoffManifestReference)) {
+            Add-ValidationError (
+                'SPACE_GA_KICKOFF_MANIFEST_REQUIRED: Complete external ' +
+                "input $($input.id) requires a structured kickoff manifest.")
+        }
+        elseif ([System.IO.Path]::IsPathRooted($kickoffManifestReference)) {
+            Add-ValidationError (
+                'SPACE_GA_KICKOFF_MANIFEST_ABSOLUTE: kickoff manifest ' +
+                'must use a repository-relative path.')
+        }
+        else {
+            $kickoffManifestFullPath = [System.IO.Path]::GetFullPath(
+                (Join-Path $repo $kickoffManifestReference))
+            $isInsideRepository = $kickoffManifestFullPath.StartsWith(
+                $repoPrefix,
+                [System.StringComparison]::OrdinalIgnoreCase)
+            $normalizedReference = $kickoffManifestReference.Replace('\', '/')
+            $isTemplateOrFixture =
+                $normalizedReference -match '(^|/)tools/test-fixtures/' -or
+                $normalizedReference.EndsWith(
+                    '/kickoff-evidence-template.json',
+                    [System.StringComparison]::OrdinalIgnoreCase)
+            if (!$isInsideRepository) {
+                Add-ValidationError (
+                    'SPACE_GA_KICKOFF_MANIFEST_ESCAPE: kickoff manifest ' +
+                    'escapes the repository root.')
+            }
+            elseif ($isTemplateOrFixture) {
+                Add-ValidationError (
+                    'SPACE_GA_KICKOFF_MANIFEST_SYNTHETIC: a template or ' +
+                    'test fixture cannot close an external input.')
+            }
+            elseif ([System.IO.Path]::GetExtension(
+                $kickoffManifestFullPath) -ne '.json' -or
+                !(Test-Path -LiteralPath $kickoffManifestFullPath -PathType Leaf)) {
+                Add-ValidationError (
+                    'SPACE_GA_KICKOFF_MANIFEST_MISSING: kickoff manifest ' +
+                    "does not exist as JSON: $kickoffManifestReference")
+            }
+            else {
+                $manifestIsAttested = @($input.evidence | Where-Object {
+                    ([string]$_.uri).Equals(
+                        $kickoffManifestReference,
+                        [System.StringComparison]::OrdinalIgnoreCase)
+                }).Count -gt 0
+                if (!$manifestIsAttested) {
+                    Add-ValidationError (
+                        'SPACE_GA_KICKOFF_MANIFEST_UNATTESTED: Complete ' +
+                        "external input $($input.id) must attest the " +
+                        'structured kickoff manifest itself.')
+                }
+                try {
+                    & $kickoffValidator `
+                        -ManifestPath $kickoffManifestFullPath `
+                        -InputId ([string]$input.id) `
+                        -ExpectedOwnerName ([string]$input.ownerName) |
+                        Out-Null
+                    if ($input.id -eq 'NAMED_GA_SIGNERS') {
+                        $kickoffManifest = Get-Content `
+                            -LiteralPath $kickoffManifestFullPath `
+                            -Raw | ConvertFrom-Json
+                        foreach ($signer in @($manifest.signers)) {
+                            $kickoffSigner = @(
+                                $kickoffManifest.namedGaSigners.signers |
+                                Where-Object { $_.role -eq $signer.role })[0]
+                            if (!(Test-PersonName $signer.name) -or
+                                $null -eq $kickoffSigner -or
+                                !([string]$signer.name).Equals(
+                                    [string]$kickoffSigner.name,
+                                    [System.StringComparison]::OrdinalIgnoreCase)) {
+                                Add-ValidationError (
+                                    'SPACE_GA_KICKOFF_SIGNER_INDEX_MISMATCH: ' +
+                                    "GA index signer $($signer.role) must match " +
+                                    'the named kickoff register.')
+                            }
+                        }
+                    }
+                }
+                catch {
+                    Add-ValidationError (
+                        'SPACE_GA_KICKOFF_EVIDENCE_INVALID: ' +
+                        $_.Exception.Message)
+                }
+            }
         }
     }
 }

@@ -17,6 +17,9 @@
 ```powershell
 ./tools/Test-SpaceGaEvidence.ps1
 ./tools/Test-SpaceGaEvidence.ps1 -RequireGaReady
+./tools/Test-SpaceGaKickoffEvidence.ps1 `
+  -ManifestPath <最终或增量开工 Manifest 路径> `
+  -InputId <五类外部输入之一>
 ./tools/Test-SpaceGaPilotEvidence.ps1 `
   -ManifestPath <最终双仓 Pilot Manifest 路径>
 ./tools/Test-SpaceGaGoldenCadEvidence.ps1 `
@@ -24,6 +27,8 @@
 ```
 
 第一条校验索引结构、路径和状态自洽；第二条是正式 GA 门禁，当前应以退出码 `2` 失败。任何人不得通过删除 Blocking Gate、降低门槛或把合成证据标成 Accepted 来消除该失败。
+
+任何 `externalInputs.status=Complete` 都必须按 [`kickoff-evidence-protocol.md`](./kickoff-evidence-protocol.md) 绑定结构化开工 Manifest，并由该输入的 `evidence` 证明 Manifest 自身哈希。专项校验器按输入 ID 复核实名签字人、2+2+1 团队、20 份授权 CAD 候选、至少两条 Provider 审批与隔离 Worker、Greenfield/Retrofit 双仓和 CP6 WMS 窗口；总校验器还会核对分区 Owner 与索引 Owner、签字人登记与总索引逐角色一致。空模板或一份泛化说明不能关闭外部输入。
 
 WP8 不能只附一份泛化签字说明。标记 `Accepted` 前必须先完成五个内部角色签字，再按 [`pilot-evidence-protocol.md`](./pilot-evidence-protocol.md) 生成最终结构化 Manifest，在 Gate 的 `verificationManifest` 中登记其仓库相对路径，并由 `acceptedEvidence` 对该 Manifest 自身的内容哈希进行证明。总校验器会调用 Pilot 校验器复核双仓类型、连续 14 天、每日记录、缺陷、恢复 SLO、一致性、Published-only/双写边界和两类现场确认；空白模板与测试 fixture 永远不能作为正式证据。
 
