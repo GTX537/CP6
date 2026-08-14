@@ -2,6 +2,12 @@
 
 > 依据 Git log 汇总，不替代完整 Git 历史。重点记录影响接手判断的里程碑。
 
+## 2026-08-14：Space CAD Provider SQL Server 门禁
+
+- SQL Server 17.0.4025.3 LocalDB 独立执行 `SpaceCadProviderSqlServerTests`，3/3 passed、0 skipped，关闭此前环境门控的 Provider 认证真库自动化。
+- 覆盖并发配置替换、唯一 Current Revision、历史追加、认证不可变、迁移重复执行和旧资格/版本失败关闭；临时数据库已清理。
+- 测试 Provider 仍是合同替身，真实 ODA/APS、授权黄金 CAD、冻结 Worker 和 Site 双链审批未发生；WP3 保持 Partial/Pending，核心 GA 保持 72% / No-Go。
+
 ## 2026-08-14：Space/WMS CP6.Tests 真库门禁
 
 - SQL Server LocalDB 独立执行 SpaceSqlIntegration、WmsProductionSqlServer 和 IntegrationEvent UTC 回填集合，15/15 passed、0 skipped。

@@ -1,5 +1,11 @@
 # 已完成能力与近期里程碑
 
+## 2026-08-14 Space CAD Provider SQL Server 门禁
+
+- `SpaceCadProviderSqlServerTests` 已在 SQL Server 17.0.4025.3 LocalDB 真实执行，3/3 passed、0 failed、0 skipped，运行后无 `CP6SpaceCadProviders_*` 临时数据库残留。
+- 覆盖并发 Replace、唯一 Current Revision、历史追加、认证证据不可变、幂等记录、路由/资格/版本迁移脚本重复执行，以及旧资格或 Provider Version 缺失时失败关闭。
+- 该项关闭 WP3 仓库 SQL 自动化 skip；测试 Provider 不是 ODA/APS，真实主备适配、客户审批、黄金 CAD、冻结 Worker 和 Site 故障切换仍为 Pending。
+
 ## 2026-08-14 Space/WMS CP6.Tests 真库门禁
 
 - 在 SQL Server 17.0.4025.3 LocalDB 上单独运行 CP6.Tests 的 SpaceSqlIntegration、WmsProductionSqlServer 和 SpaceIntegrationEventOccurredAtUtc 三个集合，15/15 passed、0 failed、0 skipped。
