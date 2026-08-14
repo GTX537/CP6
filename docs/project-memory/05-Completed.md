@@ -1,5 +1,11 @@
 # 已完成能力与近期里程碑
 
+## 2026-08-14 Space Studio WP3 Provider 评分与选型工具
+
+- `CP6.Space.CadExperiment qualify-providers` 已把 ADR-0001 的六维 25/20/15/15/15/10 评分、80 分门槛、四项硬门禁、同黄金集/同冻结环境和唯一第一/第二名规则机器化；输入异常、门禁缺失、基线混用或名次并列均失败关闭。
+- Pass 只生成一主一备两条受选择报告 SHA-256 绑定的 Site 认证输入；No-Go 报告保留逐候选阻断码但认证输入为空，工具本身不写 Site 配置、不读取 Secret 值。
+- 聚焦工具测试 34/34 通过。该项只关闭仓库评分与审计工具，不代表真实候选、客户审批、黄金 CAD、冻结 Worker 或目标 Site 已通过，因此 WP3 接受状态仍为 Pending。
+
 ## 2026-08-14 Space Studio WP3 Provider 资格与确定性主备排名
 
 - Site Provider 新认证必须同时记录 Licensing/Security/Data Region/Deletion-Retention 四项通过状态、ADR-0001 总分、规则版本、黄金集 SHA、冻结环境 SHA 和资格证据引用；四项门禁缺一、总分低于 80 或证据字段不完整均返回 422 且零写入。

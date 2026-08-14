@@ -8,5 +8,6 @@
   <ItemGroup>
     <ProjectReference Include="..\..\CP6.Space.Application\CP6.Space.Application.csproj" />
     <ProjectReference Include="..\..\CP6.Space.Contracts\CP6.Space.Contracts.csproj" />
+    <ProjectReference Include="..\..\CP6.Space.Domain\CP6.Space.Domain.csproj" />
   </ItemGroup>
 </Project>
