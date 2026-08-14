@@ -15,6 +15,8 @@ $repoFullPath = [System.IO.Path]::GetFullPath($repo).TrimEnd(
     [System.IO.Path]::AltDirectorySeparatorChar)
 $repoPrefix = $repoFullPath + [System.IO.Path]::DirectorySeparatorChar
 $pilotValidator = Join-Path $PSScriptRoot 'Test-SpaceGaPilotEvidence.ps1'
+$goldenCadValidator = Join-Path $PSScriptRoot (
+    'Test-SpaceGaGoldenCadEvidence.ps1')
 
 if (!(Test-Path -LiteralPath $manifestFullPath -PathType Leaf)) {
     throw "GA evidence manifest was not found: $manifestFullPath"
@@ -321,6 +323,89 @@ foreach ($gate in @($manifest.gates)) {
         }
         foreach ($evidence in @($gate.acceptedEvidence)) {
             Test-AttestedEvidence -OwnerId $gate.id -Evidence $evidence
+        }
+        if ($gate.id -eq 'WP7_GOLDEN_CAD_FORMAL_EVIDENCE') {
+            $requiredInputIdsForWp7 = @(
+                'AUTHORIZED_GOLDEN_CAD_CANDIDATES',
+                'PROVIDER_APPROVALS_AND_ISOLATED_WORKER')
+            $incompleteInputs = @($manifest.externalInputs | Where-Object {
+                $_.id -in $requiredInputIdsForWp7 -and
+                $_.status -ne 'Complete'
+            })
+            $providerGate = @($manifest.gates | Where-Object {
+                $_.id -eq 'WP3_SITE_PRIMARY_BACKUP_PROVIDERS'
+            })[0]
+            if ($incompleteInputs.Count -gt 0 -or
+                $providerGate.acceptanceStatus -ne 'Accepted') {
+                Add-ValidationError (
+                    'SPACE_GA_GOLDEN_PREREQUISITES_INCOMPLETE: WP7 cannot ' +
+                    'be Accepted before authorized CAD, Provider/Worker ' +
+                    'inputs and WP3 Provider acceptance are complete.')
+            }
+            $goldenManifestReference = [string]$gate.verificationManifest
+            if (!(Test-Text $goldenManifestReference)) {
+                Add-ValidationError (
+                    'SPACE_GA_GOLDEN_MANIFEST_REQUIRED: Accepted WP7 ' +
+                    'requires a structured golden CAD evidence manifest.')
+            }
+            elseif ([System.IO.Path]::IsPathRooted($goldenManifestReference)) {
+                Add-ValidationError (
+                    'SPACE_GA_GOLDEN_MANIFEST_ABSOLUTE: WP7 golden CAD ' +
+                    'manifest must use a repository-relative path.')
+            }
+            else {
+                $goldenManifestFullPath = [System.IO.Path]::GetFullPath(
+                    (Join-Path $repo $goldenManifestReference))
+                $isInsideRepository = $goldenManifestFullPath.StartsWith(
+                    $repoPrefix,
+                    [System.StringComparison]::OrdinalIgnoreCase)
+                $normalizedReference = $goldenManifestReference.Replace('\', '/')
+                $isTemplateOrFixture =
+                    $normalizedReference -match '(^|/)tools/test-fixtures/' -or
+                    $normalizedReference.EndsWith(
+                        '/golden-cad-evidence-template.json',
+                        [System.StringComparison]::OrdinalIgnoreCase)
+                if (!$isInsideRepository) {
+                    Add-ValidationError (
+                        'SPACE_GA_GOLDEN_MANIFEST_ESCAPE: WP7 golden CAD ' +
+                        'manifest escapes the repository root.')
+                }
+                elseif ($isTemplateOrFixture) {
+                    Add-ValidationError (
+                        'SPACE_GA_GOLDEN_MANIFEST_SYNTHETIC: WP7 cannot use ' +
+                        'a template or test fixture as golden CAD evidence.')
+                }
+                elseif ([System.IO.Path]::GetExtension(
+                    $goldenManifestFullPath) -ne '.json' -or
+                    !(Test-Path -LiteralPath $goldenManifestFullPath -PathType Leaf)) {
+                    Add-ValidationError (
+                        'SPACE_GA_GOLDEN_MANIFEST_MISSING: WP7 golden CAD ' +
+                        "manifest does not exist as JSON: $goldenManifestReference")
+                }
+                else {
+                    $manifestIsAttested = @($gate.acceptedEvidence |
+                        Where-Object {
+                            ([string]$_.uri).Equals(
+                                $goldenManifestReference,
+                                [System.StringComparison]::OrdinalIgnoreCase)
+                        }).Count -gt 0
+                    if (!$manifestIsAttested) {
+                        Add-ValidationError (
+                            'SPACE_GA_GOLDEN_MANIFEST_UNATTESTED: WP7 ' +
+                            'accepted evidence must attest the structured ' +
+                            'golden CAD manifest itself.')
+                    }
+                    try {
+                        & $goldenCadValidator `
+                            -ManifestPath $goldenManifestFullPath | Out-Null
+                    }
+                    catch {
+                        Add-ValidationError (
+                            'SPACE_GA_GOLDEN_EVIDENCE_INVALID: ' +
+                            $_.Exception.Message)
+                    }
+                }
+            }
         }
         if ($gate.id -eq 'WP8_TWO_SITE_PILOT_AND_SIGNOFF') {
             if (@($manifest.signers | Where-Object {

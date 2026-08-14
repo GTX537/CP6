@@ -11,8 +11,11 @@ on:
       - 'tools/Test-SpaceGaEvidence.Tests.ps1'
       - 'tools/Test-SpaceGaPilotEvidence.ps1'
       - 'tools/Test-SpaceGaPilotEvidence.Tests.ps1'
+      - 'tools/Test-SpaceGaGoldenCadEvidence.ps1'
+      - 'tools/Test-SpaceGaGoldenCadEvidence.Tests.ps1'
       - 'tools/test-fixtures/space-ga-evidence/**'
       - 'tools/test-fixtures/space-ga-pilot-evidence/**'
+      - 'tools/test-fixtures/space-ga-golden-cad-evidence/**'
   push:
     branches:
       - main
@@ -25,8 +28,11 @@ on:
       - 'tools/Test-SpaceGaEvidence.Tests.ps1'
       - 'tools/Test-SpaceGaPilotEvidence.ps1'
       - 'tools/Test-SpaceGaPilotEvidence.Tests.ps1'
+      - 'tools/Test-SpaceGaGoldenCadEvidence.ps1'
+      - 'tools/Test-SpaceGaGoldenCadEvidence.Tests.ps1'
       - 'tools/test-fixtures/space-ga-evidence/**'
       - 'tools/test-fixtures/space-ga-pilot-evidence/**'
+      - 'tools/test-fixtures/space-ga-golden-cad-evidence/**'
 
 permissions:
   contents: read
@@ -50,3 +56,7 @@ jobs:
       - name: Exercise two-site Pilot evidence failure modes
         shell: pwsh
         run: ./tools/Test-SpaceGaPilotEvidence.Tests.ps1
+
+      - name: Exercise formal golden CAD evidence failure modes
+        shell: pwsh
+        run: ./tools/Test-SpaceGaGoldenCadEvidence.Tests.ps1

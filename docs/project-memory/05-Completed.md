@@ -1,5 +1,11 @@
 # 已完成能力与近期里程碑
 
+## 2026-08-14 Space Studio 正式黄金 CAD 证据门禁
+
+- WP7 新增正式黄金 CAD Manifest、模板、协议和专项校验器，组合已有离线质量评估和 Provider 资格输出，不重造指标算法。
+- 强制 20 份授权样本、10/5/5、L1～L5、DWG/DXF、双标注/QA 仲裁、主备同 Source Set/Worker、release-eligible、五项质量阈值、Holdout 零 Blocking 遗漏和 50 MiB/Ready P95。
+- 总 GA 校验器要求授权 CAD、Provider/Worker 外部输入和 WP3 验收先完成，再复核 Manifest 自身哈希；专项 31/31、组合证明链 29/29。真实 CAD/Provider 仍 Pending，不计正式执行。
+
 ## 2026-08-14 Space Studio 双仓 Pilot 证据门禁
 
 - WP8 新增结构化 Pilot Manifest、复制模板、现场证据协议和专项校验器；强制一个 Greenfield、一个 Retrofit、各连续至少 14 天并逐日列出不可重复/不缺日的不可变记录。

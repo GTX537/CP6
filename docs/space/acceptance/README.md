@@ -7,6 +7,7 @@
 | 文件/目录 | 用途 | 发布门禁 |
 |---|---|---|
 | [`v1.3-ga/ga-evidence-index.json`](./v1.3-ga/ga-evidence-index.json) | 核心 GA Owner、外部输入、WP0–WP8 证据和五方签字的失败关闭索引 | 核心 GA |
+| [正式黄金 CAD 证据协议](./v1.3-ga/golden-cad-evidence-protocol.md) | 20 份授权 CAD、10/5/5、双 Provider、质量/Holdout/性能的结构化 Manifest | 核心 GA / WP7 |
 | [双仓 Pilot 证据协议](./v1.3-ga/pilot-evidence-protocol.md) | Greenfield/Retrofit 各 14 天运行、缺陷、恢复、一致性和现场确认的结构化 Manifest | 核心 GA / WP8 |
 | [黄金数据与基准协议](./01-golden-dataset-protocol.md) | 数据版本、标注、分层、指标和证据 | Beta/GA |
 | [WMS 与权限场景矩阵](./02-wms-permission-scenarios.md) | 绿地、存量、故障、外部角色和越权验收 | Alpha/Beta/GA |
