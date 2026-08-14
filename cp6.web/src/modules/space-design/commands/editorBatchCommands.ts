@@ -224,6 +224,26 @@ export function buildRotationBatch(
   }
 }
 
+export function buildTranslationBatch(
+  objects: readonly EditorObjectSnapshot[],
+  deltaX: number,
+  deltaY: number,
+): ReversibleCommandBatch {
+  if (!Number.isFinite(deltaX) || !Number.isFinite(deltaY)) {
+    throw new Error('Object translation is invalid')
+  }
+  const x = Math.round(deltaX)
+  const y = Math.round(deltaY)
+  if (objects.length === 0 || (x === 0 && y === 0)) {
+    return { forward: [], reverse: [] }
+  }
+  return moveBatch(objects.map((object) => ({
+    object,
+    x: object.x + x,
+    y: object.y + y,
+  })))
+}
+
 export function buildDeleteBatch(
   objects: readonly EditorObjectSnapshot[],
 ): ReversibleCommandBatch {

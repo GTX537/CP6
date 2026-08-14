@@ -29,6 +29,8 @@ export interface EditorCommandEnvelope {
   clientInstanceId: string
   leaseId: string
   expectedFloorRevision: number
+  expectedContentRevision: number
+  expectedContentHash: string
   commands: Array<EditorCommandInput & { commandId: string }>
 }
 
@@ -37,6 +39,8 @@ export const designElementsApi = {
     versionId: string,
     floorLogicalId: string,
     expectedFloorRevision: number,
+    expectedContentRevision: number,
+    expectedContentHash: string,
     clientInstanceId: string,
     leaseId: string,
     element: ISpaceSceneElementDto,
@@ -47,6 +51,8 @@ export const designElementsApi = {
       versionId,
       floorLogicalId,
       expectedFloorRevision,
+      expectedContentRevision,
+      expectedContentHash,
       clientInstanceId,
       leaseId,
       [
@@ -63,6 +69,8 @@ export const designElementsApi = {
     versionId: string,
     floorLogicalId: string,
     expectedFloorRevision: number,
+    expectedContentRevision: number,
+    expectedContentHash: string,
     clientInstanceId: string,
     leaseId: string,
     element: ISpaceSceneElementDto,
@@ -72,6 +80,8 @@ export const designElementsApi = {
       versionId,
       floorLogicalId,
       expectedFloorRevision,
+      expectedContentRevision,
+      expectedContentHash,
       clientInstanceId,
       leaseId,
       [
@@ -87,12 +97,16 @@ export const designElementsApi = {
     versionId: string,
     floorLogicalId: string,
     expectedFloorRevision: number,
+    expectedContentRevision: number,
+    expectedContentHash: string,
     clientInstanceId: string,
     leaseId: string,
     commands: readonly EditorCommandInput[],
   ) {
     const envelope = designElementsApi.createEnvelope(
       expectedFloorRevision,
+      expectedContentRevision,
+      expectedContentHash,
       clientInstanceId,
       leaseId,
       commands,
@@ -102,6 +116,8 @@ export const designElementsApi = {
 
   createEnvelope(
     expectedFloorRevision: number,
+    expectedContentRevision: number,
+    expectedContentHash: string,
     clientInstanceId: string,
     leaseId: string,
     commands: readonly EditorCommandInput[],
@@ -112,6 +128,8 @@ export const designElementsApi = {
       clientInstanceId,
       leaseId,
       expectedFloorRevision,
+      expectedContentRevision,
+      expectedContentHash,
       commands: commands.map((command) => ({
         ...command,
         commandId: crypto.randomUUID(),

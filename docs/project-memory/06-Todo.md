@@ -9,7 +9,7 @@
 - 使用已交付的 `CP6.Space.CadExperiment qualify-providers` 在同一 20 份授权黄金集、同一冻结 Worker 和同一规则 `cad-provider-adr-0001-v1` 上评测所有真实候选；保存每个 Provider 版本、Preflight/产物/环境哈希和六维原始依据。只有工具产出唯一 Primary/Backup 且两者均不低于 80，才可把报告交给 Site 管理接口；当前没有真实评分报告，示例或人工改写 JSON 不算证据。
 - 为每个启用 CAD GA 的 Site 接入并实测一个主 DWG/DXF Provider 和一个同合同、同黄金集、同 Site 审批的备用 Provider；补齐法务、安全、数据区域、删除保留、Secret 管理和审批证据。当前默认运行注册为空，能力接口会失败关闭，不能作为真实 CAD 验收。
 - `SpaceCadProviderSqlServerTests` 已在 SQL Server LocalDB 3/3、0 skipped，关闭并发替换、唯一 Current Revision、历史追加、认证不可变、旧资格/版本失败关闭和迁移幂等的仓库真库门禁；生产等价 SQL、真实 Provider 和 Site 认证仍须随主备链外部验收执行，不能用 LocalDB 替代。
-- CAD 起始向导、sealed Preparation、parse start fence 和 Site 能力检查已完成仓库内闭环；画布拖放精调保持后续 UX 卡，旧 `FloorEditor` 不继续发展为第二套权威。
+- CAD 起始向导、sealed Preparation、parse start fence、Site 能力检查和 Rack/Element 画布拖动精调已完成仓库内闭环；拖动复用带 Lease、Floor/Content Revision 与幂等 Fence 的 Design V1 `MoveObject`，Zone/Aisle 继续走 Layout 合同，旧 `FloorEditor` 不继续发展为第二套权威。仍须完成独立人工 UX、辅助技术和 Pilot 签字。
 - WP4 的图片底图标定入口、Excel–CAD 深链审核/确认及 DWG/DXF 分格式浏览器合同已完成仓库内自动化；仍须用授权真实 DWG、DXF、Excel 和 PDF/图片在两条已认证 Provider 链及 CP6 WMS 环境完成端到端证据。Mock/fixture 结果不得计入黄金 CAD、性能、恢复或 Pilot 完成度。
 - 用 20 份授权真实黄金 CAD 执行 10/5/5 Calibration/Validation/Holdout，产出覆盖率、准确率、高置信度精确率和 Blocking 遗漏证据。
 - 工作台 GA 快捷键、问题定位、标准 tab 焦点、窄屏 3D 保持、字号/主要热区、2D/3D 同源选择和逐 Version+Floor 视角恢复已有仓库内自动化；Iris Xe/WebGL2/500 货架/10,000 库位正式 Viewer 性能门槛已在 `bd206ff8` 以 30 次冷 Context、3,000 次命中拾取和原始证据关闭。生产 Viewer 的代码与合同已统一为 Current Published Design Revision，并由结构守卫禁止回接可变旧 floor/scene API。仍须在配置真实 SQL、已发布仓库数据和生产等价身份/部署的环境运行 Published/Draft 隔离与 Viewer E2E，完成 4.5:1 对比度、真实键盘/辅助技术与 1440×900/1280×720 人工 UX 签字。性能输入、数据集、Three.js/浏览器主版本或生产渲染路径发生实质变化时必须重跑，不得沿用旧报告。
