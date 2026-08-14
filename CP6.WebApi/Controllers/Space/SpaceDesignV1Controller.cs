@@ -21,6 +21,7 @@ public sealed class UploadSpaceUnderlayForm
 
 [ApiController]
 [Authorize]
+[SpaceDesignV1Contract]
 [Route("api/space/design/v1")]
 [ProducesResponseType(
     typeof(SpaceDesignProblemDetails),

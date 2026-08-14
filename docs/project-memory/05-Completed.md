@@ -1,5 +1,11 @@
 # 已完成能力与近期里程碑
 
+## 2026-08-14 Space Studio WP6 外部主体安全矩阵
+
+- Design V1 控制面新增统一授权阶段 fail-closed 过滤器，早于功能权限、模型绑定、上传体读取、Controller 和服务数据访问；外部主体即使被误授内部权限，也稳定返回 `SPACE_EXTERNAL_SUBJECT_DENIED`，并引导至 Published-only 门户。
+- Customer、Supplier、3PL 均覆盖 Draft、Source、Upload、Lease、Validate、Publish Preview、Publish 和 AI；Published-only `SpaceExternalPortalController` 是唯一显式放行，反射守卫禁止新增隐式或 Action 级例外。
+- 门禁通过：聚焦矩阵 30/30、权限/OpenAPI/主体边界聚焦 111/111、CP6.Tests 2,913 passed / 19 environment skipped、Space Integration 305 passed / 104 environment skipped、完整 Release solution 0 warning / 0 error。真实身份提供方 HTTP 负向、生产等价 SQL 跨租户、独立渗透测试和安全签字仍是 GA 门禁。
+
 ## 2026-08-14 Space Studio WP6 发布恢复可观测性基础
 
 - 发布恢复聚合器以不可变 Publish Audit 的状态进入时间为主、Attempt 启动时间为旧记录回退，跨租户汇总 `WaitingRetry`、`ManualIntervention` 和 `ReconciliationRequired`，只输出固定状态标签，不暴露 Tenant、Site、Version 或 Attempt。
