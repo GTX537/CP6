@@ -1,5 +1,11 @@
 # 已完成能力与近期里程碑
 
+## 2026-08-14 Space Studio WP6 发布恢复指标真库查询修复
+
+- 启用 `CP6_TEST_SQLSERVER` 后，全量真库门禁暴露发布恢复指标的复合键 GroupJoin 无法由 SQL Server Provider 翻译；查询改为显式 TenantId、AttemptId 与 AttemptStatus 相关子查询，继续忽略租户查询过滤器做无标签跨租户聚合。
+- WMS 首次超时 → WaitingRetry 指标 → 旧 Published 保持 → 正式重试完成的真库场景恢复通过；恢复指标单测 6/6、发布编排 SQL Server 3/3 通过。
+- 本项不把 LocalDB 冒充生产等价 SQL/WMS 或告警链接受；首次全量 SQL 仍有一个独立 Published Viewer 数据准备失败，另卡处理后才可形成 426/426 完整证据。
+
 ## 2026-08-14 Space Studio WP3 CAD Converter 共合同执行器
 
 - 新增 `SpaceCadConverterContractRunner` 作为 `ICadConverter` 强制执行边界：Source Stream 对适配器只读且所有权保留，Sink 只能按 Document → Layer/Block → Entity → Complete 顺序单线程写入，并验证唯一 ID、逐层数量、汇总与 Bounds。
