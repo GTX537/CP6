@@ -10,6 +10,7 @@ namespace CP6.WebApi.Controllers.Space;
 [ApiController]
 [Authorize]
 [SpaceDesignV1Contract]
+[AllowSpaceExternalSubject]
 [Route("api/space/portal/v1")]
 [ProducesResponseType(
     typeof(SpaceDesignProblemDetails),

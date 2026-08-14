@@ -9,7 +9,7 @@
 - WP4 的图片底图标定入口、Excel–CAD 深链审核/确认及 DWG/DXF 分格式浏览器合同已完成仓库内自动化；仍须用授权真实 DWG、DXF、Excel 和 PDF/图片在两条已认证 Provider 链及 CP6 WMS 环境完成端到端证据。Mock/fixture 结果不得计入黄金 CAD、性能、恢复或 Pilot 完成度。
 - 用 20 份授权真实黄金 CAD 执行 10/5/5 Calibration/Validation/Holdout，产出覆盖率、准确率、高置信度精确率和 Blocking 遗漏证据。
 - 工作台 GA 快捷键、问题定位、标准 tab 焦点、窄屏 3D 保持、字号/主要热区、2D/3D 同源选择和逐 Version+Floor 视角恢复已有仓库内自动化；仍须在独立验收环境完成 4.5:1 对比度、真实键盘/辅助技术与 1440×900/1280×720 人工 UX 签字。在 Iris Xe/WebGL2/500 货架/10,000 库位跑正式 Viewer 门槛，核验 Published-only 生产 Viewer 并形成性能报告。
-- WP6 已完成 Warning 集合绑定的 Preview → 显式确认 → Publish fence，并交付固定低基数恢复指标、15 分钟/4 小时 Prometheus 规则和运行手册。仍须在生产等价观测链实际加载规则并验证通知路由；在真实 SQL Server 与 CP6 WMS 环境运行发布成功、超时自动恢复、部分写入对账、同 PublishPlan 重试无重复、历史重发及旧 Published 持续服务证据，并完成备份恢复和安全矩阵演练。当前 104 个 SQL/environment-gated Space Integration 用例的 skip 不得计为通过。
+- WP6 已完成 Warning 集合绑定的 Preview → 显式确认 → Publish fence，交付固定低基数恢复指标、15 分钟/4 小时 Prometheus 规则和运行手册，并以 Customer/Supplier/3PL 自动化矩阵关闭仓库侧 Draft/Source/Upload/Lease/Validate/Publish/AI 外部主体边界。仍须在生产等价观测链实际加载规则并验证通知路由；在真实 SQL Server 与 CP6 WMS 环境运行发布成功、超时自动恢复、部分写入对账、同 PublishPlan 重试无重复、历史重发及旧 Published 持续服务证据，并完成备份恢复、真实 IdP HTTP 负向、独立渗透测试和安全签字。当前 104 个 SQL/environment-gated Space Integration 用例的 skip 不得计为通过。
 - 执行一个绿地仓和一个存量仓各 14 天 Pilot、WMS 故障恢复与对账演练，并取得产品、QA、WMS、架构、安全签字后才可声明核心 GA。
 ## 已完成：OpenAPI 原生客户端漂移门禁
 

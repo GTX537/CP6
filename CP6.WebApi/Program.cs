@@ -31,10 +31,13 @@ if (builder.Environment.IsProduction())
 
 builder.Services.AddScoped<OperLogFilter>();
 builder.Services.AddScoped<SpaceAuditActionFilter>();
+builder.Services.AddScoped<SpaceDesignControlPlaneSubjectFilter>();
 builder.Services.AddControllers(options =>
 {
     options.Filters.AddService<OperLogFilter>();
     options.Filters.AddService<SpaceAuditActionFilter>();
+    options.Filters.AddService<SpaceDesignControlPlaneSubjectFilter>(
+        SpaceDesignControlPlaneSubjectFilter.OrderValue);
 });
 builder.Services.Configure<Microsoft.AspNetCore.Mvc.ApiBehaviorOptions>(
     options =>

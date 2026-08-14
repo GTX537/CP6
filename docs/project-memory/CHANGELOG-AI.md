@@ -2,6 +2,12 @@
 
 > 依据 Git log 汇总，不替代完整 Git 历史。重点记录影响接手判断的里程碑。
 
+## 2026-08-14：Space Studio WP6 外部主体控制面隔离
+
+- Design V1 新增全局授权阶段主体过滤器，外部账号在功能权限、模型绑定和 Controller 之前被稳定拒绝；避免误授权限让 Customer、Supplier 或 3PL 触达 Draft、Source、Upload、Lease、Validate、Publish 或 AI。
+- Published-only 外部门户成为唯一显式例外，反射守卫锁死例外集合；内部用户路径保持不变。聚焦矩阵 29/29 通过。
+- 仓库自动化不替代真实 IdP、生产等价 SQL 跨租户、独立渗透测试和安全签字，本卡不等于 WP6 或核心 GA 完成。
+
 ## 2026-08-14：Space Studio WP6 发布恢复可观测性基础
 
 - 新增跨租户、无业务标识标签的 Publish Recovery 聚合器与 Prometheus Gauge，按固定三种恢复状态输出活动数量、最老等待时长、SLO 超时数量和 15 分钟/4 小时目标。
