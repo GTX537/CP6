@@ -2,6 +2,12 @@
 
 > 依据 Git log 汇总，不替代完整 Git 历史。重点记录影响接手判断的里程碑。
 
+## 2026-08-14：Space Studio WP5 Viewer GA 性能复验
+
+- 硬件门禁改为 1 次独立预热 + 30 次冷浏览器 Context，保存每次原始帧、标签、拾取、着色样本，并记录 P50/P95/最大值、失败率、代码 SHA、输入哈希、浏览器/OS/GPU 驱动与截图；样本不足、软件渲染、非 WebGL2、拾取 miss、console error、渲染器切换或脏跟踪工作区均失败关闭。
+- 在干净提交 `bd206ff8`、Chrome 151、Intel Iris Xe 31.0.101.4502、ANGLE D3D11/WebGL2、1920×1080 上正式运行：30/30 成功、3,000/3,000 拾取命中、0 console errors；可交互 P95 62.3ms、帧 P95 8.2ms、拾取 P95 0.3ms、10,000 库位着色+渲染 P95 2.0ms、36 draw calls，全部通过冻结门槛。
+- 证据算法 5、CPU 性能 1、Web 763、Vue type-check 与 production build 通过。该结果只关闭当前仓库 SHA 的 Viewer 性能门禁；Published-only 生产 Viewer、独立 UX/辅助技术验收、Pilot 与 GA 签字仍未完成。
+
 ## 2026-08-14：Space Studio WP6 外部主体控制面隔离
 
 - Design V1 新增全局授权阶段主体过滤器，外部账号在功能权限、模型绑定和 Controller 之前被稳定拒绝；避免误授权限让 Customer、Supplier 或 3PL 触达 Draft、Source、Upload、Lease、Validate、Publish 或 AI。

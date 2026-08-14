@@ -1,5 +1,12 @@
 # 已完成能力与近期里程碑
 
+## 2026-08-14 Space Studio WP5 Viewer GA 性能复验
+
+- 将硬件执行器从一次性截图升级为可审计正式门禁：1 次预热单独报告，30 次全新浏览器 Context 形成稳定分布；每次执行 100 次实际命中拾取、30 次 10,000 库位着色和 180 帧轨道渲染，并保存原始样本、P50/P95/最大值、失败率、提交 SHA、输入文件哈希、浏览器/OS/GPU/驱动和截图。
+- 正式证据绑定干净提交 `bd206ff8`，环境为 Windows 11、Chrome 151、Intel Iris Xe 31.0.101.4502、ANGLE D3D11/WebGL2、1920×1080。30/30 冷运行成功、3,000/3,000 拾取命中、0 console errors、0 软件渲染；可交互 P95 62.3ms、帧 P95 8.2ms、拾取 P95 0.3ms、着色+渲染 P95 2.0ms、36 draw calls，全部 PASS。
+- 聚合器对样本不足、SwiftShader、非 WebGL2、渲染器切换、console error、拾取 miss、数据规模漂移、性能超限和脏跟踪工作区失败关闭；证据算法 5/5、CPU 性能 1/1、Web 763/763、Vue type-check 和 production build 通过。报告见 `docs/space/reports/2026-08-14-space-viewer-v13-ga.md`。
+- 本卡关闭当前仓库 SHA 的 Iris Xe/WebGL2/500 货架/10,000 库位性能门禁；生产 Published-only Viewer 核验、独立 UX/辅助技术验收、双仓 Pilot 和 GA 签字仍未完成。
+
 ## 2026-08-14 Space Studio WP6 外部主体安全矩阵
 
 - Design V1 控制面新增统一授权阶段 fail-closed 过滤器，早于功能权限、模型绑定、上传体读取、Controller 和服务数据访问；外部主体即使被误授内部权限，也稳定返回 `SPACE_EXTERNAL_SUBJECT_DENIED`，并引导至 Published-only 门户。
