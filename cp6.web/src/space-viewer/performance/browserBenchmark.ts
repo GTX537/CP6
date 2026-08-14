@@ -14,16 +14,24 @@ declare global {
   }
 }
 
-interface BrowserPerformanceResult {
+export interface BrowserPerformanceResult {
   status: 'PASS' | 'FAIL'
+  datasetVersion: string
+  racks: number
   locations: number
   drawCalls: number
   interactiveMilliseconds: number
+  frameP95Milliseconds: number
   framesPerSecondP95: number
   labelUpdateP95Milliseconds: number
   pickP95Milliseconds: number
+  pickHitCount: number
   stockApplyP95Milliseconds: number
   visibleLabels: number
+  frameIntervalsMilliseconds: number[]
+  labelUpdateSamplesMilliseconds: number[]
+  pickSamplesMilliseconds: number[]
+  stockApplySamplesMilliseconds: number[]
 }
 
 function sample(count: number, action: () => void): number[] {
@@ -43,7 +51,7 @@ function nextFrame(): Promise<number> {
 async function measureFrames(
   count: number,
   render: (index: number) => void,
-): Promise<number> {
+): Promise<number[]> {
   const intervals: number[] = []
   let previous = await nextFrame()
   for (let index = 0; index < count; index++) {
@@ -52,7 +60,7 @@ async function measureFrames(
     if (index >= 30) intervals.push(now - previous)
     previous = now
   }
-  return 1_000 / percentile95(intervals)
+  return intervals
 }
 
 function renderMetrics(result: BrowserPerformanceResult): void {
@@ -64,11 +72,14 @@ function renderMetrics(result: BrowserPerformanceResult): void {
     : 'One or more locked browser budgets failed.'
   const rows: Array<[string, string]> = [
     ['Locations', result.locations.toLocaleString()],
+    ['Racks', result.racks.toLocaleString()],
     ['WebGL draw calls', `${result.drawCalls} / ≤${budgets.maxDrawCalls}`],
     ['Interactive', `${result.interactiveMilliseconds.toFixed(1)}ms / ≤${budgets.maxInteractiveMilliseconds}ms`],
+    ['Frame time P95', `${result.frameP95Milliseconds.toFixed(2)}ms / ≤${budgets.maxFrameP95Milliseconds}ms`],
     ['FPS (P95 frame)', `${result.framesPerSecondP95.toFixed(1)} / ≥${budgets.minFramesPerSecond}`],
     ['Label update P95', `${result.labelUpdateP95Milliseconds.toFixed(2)}ms / ≤${budgets.maxLabelUpdateP95Milliseconds}ms`],
     ['Pick P95', `${result.pickP95Milliseconds.toFixed(2)}ms / ≤${budgets.maxPickP95Milliseconds}ms`],
+    ['Pick hits', `${result.pickHitCount} / ${budgets.pickSampleCount}`],
     ['Stock apply P95', `${result.stockApplyP95Milliseconds.toFixed(2)}ms / ≤${budgets.maxStockApplyP95Milliseconds}ms`],
     ['Visible labels', `${result.visibleLabels} / ≤${budgets.maxVisibleLabels}`],
   ]
@@ -85,7 +96,8 @@ async function run(): Promise<void> {
   const scene = new Scene()
   const root = new SceneRoot()
   scene.add(root)
-  const build = new SceneBuilder().build(createStandardWarehouseScene())
+  const standardScene = createStandardWarehouseScene()
+  const build = new SceneBuilder().build(standardScene)
   for (const object of build.objects) root.add(object)
 
   const labelGroup = new Group()
@@ -120,15 +132,30 @@ async function run(): Promise<void> {
     labels.update(camera, build.buckets, 'near', build.locationCodes, renderer.gl)
   })
   const picker = new Picker()
-  picker.pick(0, 0, camera, build.buckets, root)
-  const pickSamples = sample(30, () => picker.pick(0, 0, camera, build.buckets, root))
-  const colors = createStandardWarehouseScene().locations.map((location, index) => ({
+  const pickLocation = standardScene.locations.reduce((closest, candidate) => {
+    const closestDistance = Math.hypot(closest.absX - 110_000, closest.absY - 42_000)
+    const candidateDistance = Math.hypot(candidate.absX - 110_000, candidate.absY - 42_000)
+    return candidateDistance < closestDistance ? candidate : closest
+  })
+  const pickNdc = root.dataToWorld({
+    x: pickLocation.absX,
+    y: pickLocation.absY,
+    z: pickLocation.absZ,
+  }).project(camera)
+  let pickHitCount = 0
+  const pickSamples = sample(budgets.pickSampleCount, () => {
+    if (picker.pick(pickNdc.x, pickNdc.y, camera, build.buckets, root)) pickHitCount++
+  })
+  const colors = standardScene.locations.map((location, index) => ({
     locationId: location.id,
     hex: index % 2 === 0 ? 0x2da44e : 0xd29922,
   }))
-  const stockSamples = sample(10, () => { build.buckets.setColors(colors) })
+  const stockSamples = sample(budgets.stockSampleCount, () => {
+    build.buckets.setColors(colors)
+    renderer.gl.render(scene, camera)
+  })
 
-  const framesPerSecondP95 = await measureFrames(180, (index) => {
+  const frameIntervals = await measureFrames(180, (index) => {
     const angle = index * 0.006
     camera.position.set(
       target.x + Math.cos(angle) * 160,
@@ -143,25 +170,37 @@ async function run(): Promise<void> {
     renderer.gl.render(scene, camera)
     labelRenderer.render(scene, camera)
   })
+  const frameP95Milliseconds = percentile95(frameIntervals)
+  const framesPerSecondP95 = frameP95Milliseconds > 0 ? 1_000 / frameP95Milliseconds : 0
 
   const result: BrowserPerformanceResult = {
     status: 'PASS',
+    datasetVersion: standardScene.source.dataSourceId,
+    racks: standardScene.racks.length,
     locations: build.locationCodes.size,
     drawCalls,
     interactiveMilliseconds,
+    frameP95Milliseconds,
     framesPerSecondP95,
     labelUpdateP95Milliseconds: percentile95(labelSamples),
     pickP95Milliseconds: percentile95(pickSamples),
+    pickHitCount,
     stockApplyP95Milliseconds: percentile95(stockSamples),
     visibleLabels: labels.pool.activeCount,
+    frameIntervalsMilliseconds: frameIntervals,
+    labelUpdateSamplesMilliseconds: labelSamples,
+    pickSamplesMilliseconds: pickSamples,
+    stockApplySamplesMilliseconds: stockSamples,
   }
   result.status = (
     result.locations === budgets.locationCount &&
+    result.racks === budgets.rackCount &&
     result.drawCalls <= budgets.maxDrawCalls &&
     result.interactiveMilliseconds <= budgets.maxInteractiveMilliseconds &&
-    result.framesPerSecondP95 >= budgets.minFramesPerSecond &&
+    result.frameP95Milliseconds <= budgets.maxFrameP95Milliseconds &&
     result.labelUpdateP95Milliseconds <= budgets.maxLabelUpdateP95Milliseconds &&
     result.pickP95Milliseconds <= budgets.maxPickP95Milliseconds &&
+    result.pickHitCount === budgets.pickSampleCount &&
     result.stockApplyP95Milliseconds <= budgets.maxStockApplyP95Milliseconds &&
     result.visibleLabels <= budgets.maxVisibleLabels
   ) ? 'PASS' : 'FAIL'
