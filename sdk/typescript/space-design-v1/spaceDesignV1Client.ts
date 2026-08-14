@@ -125,6 +125,21 @@ export interface ISpaceDesignV1Client {
     uploadCadSource(versionId: string, sourceFormat: string | undefined, file: FileParameter | undefined): Promise<UploadSpaceCadSourceResponse>;
 
     /**
+     * @return OK
+     */
+    getPreparationStatus(versionId: string, sourceId: string): Promise<SpaceCadPreparationStatusDto>;
+
+    /**
+     * @return OK
+     */
+    getMappingProfiles(versionId: string): Promise<SpaceCadMappingProfileSummaryDto[]>;
+
+    /**
+     * @return OK
+     */
+    previewPreparation(versionId: string, sourceId: string, body: PreviewSpaceCadPreparationRequest): Promise<PreviewSpaceCadPreparationResponse>;
+
+    /**
      * @return Accepted
      */
     startParse(versionId: string, sourceId: string, idempotency_Key: string, body: StartSpaceCadParseRequest): Promise<StartSpaceCadParseResponse>;
@@ -2455,6 +2470,290 @@ export class SpaceDesignV1Client implements ISpaceDesignV1Client {
             });
         }
         return Promise.resolve<UploadSpaceCadSourceResponse>(null as any);
+    }
+
+    /**
+     * @return OK
+     */
+    getPreparationStatus(versionId: string, sourceId: string): Promise<SpaceCadPreparationStatusDto> {
+        let url_ = this.baseUrl + "/api/space/design/v1/versions/{versionId}/sources/{sourceId}/cad-preparations/status";
+        if (versionId === undefined || versionId === null)
+            throw new globalThis.Error("The parameter 'versionId' must be defined.");
+        url_ = url_.replace("{versionId}", encodeURIComponent("" + versionId));
+        if (sourceId === undefined || sourceId === null)
+            throw new globalThis.Error("The parameter 'sourceId' must be defined.");
+        url_ = url_.replace("{sourceId}", encodeURIComponent("" + sourceId));
+        url_ = url_.replace(/[?&]$/, "");
+
+        let options_: RequestInit = {
+            method: "GET",
+            headers: {
+                "Accept": "application/json"
+            }
+        };
+
+        return this.http.fetch(url_, options_).then((_response: Response) => {
+            return this.processGetPreparationStatus(_response);
+        });
+    }
+
+    protected processGetPreparationStatus(response: Response): Promise<SpaceCadPreparationStatusDto> {
+        const status = response.status;
+        let _headers: any = {}; if (response.headers && response.headers.forEach) { response.headers.forEach((v: any, k: any) => _headers[k] = v); };
+        if (status === 200) {
+            return response.text().then((_responseText) => {
+            let result200: any = null;
+            let resultData200 = _responseText === "" ? null : JSON.parse(_responseText, this.jsonParseReviver);
+            result200 = SpaceCadPreparationStatusDto.fromJS(resultData200);
+            return result200;
+            });
+        } else if (status === 400) {
+            return response.text().then((_responseText) => {
+            let result400: any = null;
+            let resultData400 = _responseText === "" ? null : JSON.parse(_responseText, this.jsonParseReviver);
+            result400 = SpaceDesignProblemDetails.fromJS(resultData400);
+            return throwException("Bad Request", status, _responseText, _headers, result400);
+            });
+        } else if (status === 401) {
+            return response.text().then((_responseText) => {
+            let result401: any = null;
+            let resultData401 = _responseText === "" ? null : JSON.parse(_responseText, this.jsonParseReviver);
+            result401 = SpaceDesignProblemDetails.fromJS(resultData401);
+            return throwException("Unauthorized", status, _responseText, _headers, result401);
+            });
+        } else if (status === 403) {
+            return response.text().then((_responseText) => {
+            let result403: any = null;
+            let resultData403 = _responseText === "" ? null : JSON.parse(_responseText, this.jsonParseReviver);
+            result403 = SpaceDesignProblemDetails.fromJS(resultData403);
+            return throwException("Forbidden", status, _responseText, _headers, result403);
+            });
+        } else if (status === 404) {
+            return response.text().then((_responseText) => {
+            let result404: any = null;
+            let resultData404 = _responseText === "" ? null : JSON.parse(_responseText, this.jsonParseReviver);
+            result404 = SpaceDesignProblemDetails.fromJS(resultData404);
+            return throwException("Not Found", status, _responseText, _headers, result404);
+            });
+        } else if (status === 409) {
+            return response.text().then((_responseText) => {
+            let result409: any = null;
+            let resultData409 = _responseText === "" ? null : JSON.parse(_responseText, this.jsonParseReviver);
+            result409 = SpaceDesignProblemDetails.fromJS(resultData409);
+            return throwException("Conflict", status, _responseText, _headers, result409);
+            });
+        } else if (status === 422) {
+            return response.text().then((_responseText) => {
+            let result422: any = null;
+            let resultData422 = _responseText === "" ? null : JSON.parse(_responseText, this.jsonParseReviver);
+            result422 = SpaceDesignProblemDetails.fromJS(resultData422);
+            return throwException("Unprocessable Content", status, _responseText, _headers, result422);
+            });
+        } else if (status === 500) {
+            return response.text().then((_responseText) => {
+            let result500: any = null;
+            let resultData500 = _responseText === "" ? null : JSON.parse(_responseText, this.jsonParseReviver);
+            result500 = SpaceDesignProblemDetails.fromJS(resultData500);
+            return throwException("Internal Server Error", status, _responseText, _headers, result500);
+            });
+        } else if (status !== 200 && status !== 204) {
+            return response.text().then((_responseText) => {
+            return throwException("An unexpected server error occurred.", status, _responseText, _headers);
+            });
+        }
+        return Promise.resolve<SpaceCadPreparationStatusDto>(null as any);
+    }
+
+    /**
+     * @return OK
+     */
+    getMappingProfiles(versionId: string): Promise<SpaceCadMappingProfileSummaryDto[]> {
+        let url_ = this.baseUrl + "/api/space/design/v1/versions/{versionId}/cad-mapping-profiles";
+        if (versionId === undefined || versionId === null)
+            throw new globalThis.Error("The parameter 'versionId' must be defined.");
+        url_ = url_.replace("{versionId}", encodeURIComponent("" + versionId));
+        url_ = url_.replace(/[?&]$/, "");
+
+        let options_: RequestInit = {
+            method: "GET",
+            headers: {
+                "Accept": "application/json"
+            }
+        };
+
+        return this.http.fetch(url_, options_).then((_response: Response) => {
+            return this.processGetMappingProfiles(_response);
+        });
+    }
+
+    protected processGetMappingProfiles(response: Response): Promise<SpaceCadMappingProfileSummaryDto[]> {
+        const status = response.status;
+        let _headers: any = {}; if (response.headers && response.headers.forEach) { response.headers.forEach((v: any, k: any) => _headers[k] = v); };
+        if (status === 200) {
+            return response.text().then((_responseText) => {
+            let result200: any = null;
+            let resultData200 = _responseText === "" ? null : JSON.parse(_responseText, this.jsonParseReviver);
+            if (Array.isArray(resultData200)) {
+                result200 = [] as any;
+                for (let item of resultData200)
+                    result200!.push(SpaceCadMappingProfileSummaryDto.fromJS(item));
+            }
+            else {
+                result200 = null as any;
+            }
+            return result200;
+            });
+        } else if (status === 400) {
+            return response.text().then((_responseText) => {
+            let result400: any = null;
+            let resultData400 = _responseText === "" ? null : JSON.parse(_responseText, this.jsonParseReviver);
+            result400 = SpaceDesignProblemDetails.fromJS(resultData400);
+            return throwException("Bad Request", status, _responseText, _headers, result400);
+            });
+        } else if (status === 401) {
+            return response.text().then((_responseText) => {
+            let result401: any = null;
+            let resultData401 = _responseText === "" ? null : JSON.parse(_responseText, this.jsonParseReviver);
+            result401 = SpaceDesignProblemDetails.fromJS(resultData401);
+            return throwException("Unauthorized", status, _responseText, _headers, result401);
+            });
+        } else if (status === 403) {
+            return response.text().then((_responseText) => {
+            let result403: any = null;
+            let resultData403 = _responseText === "" ? null : JSON.parse(_responseText, this.jsonParseReviver);
+            result403 = SpaceDesignProblemDetails.fromJS(resultData403);
+            return throwException("Forbidden", status, _responseText, _headers, result403);
+            });
+        } else if (status === 404) {
+            return response.text().then((_responseText) => {
+            let result404: any = null;
+            let resultData404 = _responseText === "" ? null : JSON.parse(_responseText, this.jsonParseReviver);
+            result404 = SpaceDesignProblemDetails.fromJS(resultData404);
+            return throwException("Not Found", status, _responseText, _headers, result404);
+            });
+        } else if (status === 409) {
+            return response.text().then((_responseText) => {
+            let result409: any = null;
+            let resultData409 = _responseText === "" ? null : JSON.parse(_responseText, this.jsonParseReviver);
+            result409 = SpaceDesignProblemDetails.fromJS(resultData409);
+            return throwException("Conflict", status, _responseText, _headers, result409);
+            });
+        } else if (status === 422) {
+            return response.text().then((_responseText) => {
+            let result422: any = null;
+            let resultData422 = _responseText === "" ? null : JSON.parse(_responseText, this.jsonParseReviver);
+            result422 = SpaceDesignProblemDetails.fromJS(resultData422);
+            return throwException("Unprocessable Content", status, _responseText, _headers, result422);
+            });
+        } else if (status === 500) {
+            return response.text().then((_responseText) => {
+            let result500: any = null;
+            let resultData500 = _responseText === "" ? null : JSON.parse(_responseText, this.jsonParseReviver);
+            result500 = SpaceDesignProblemDetails.fromJS(resultData500);
+            return throwException("Internal Server Error", status, _responseText, _headers, result500);
+            });
+        } else if (status !== 200 && status !== 204) {
+            return response.text().then((_responseText) => {
+            return throwException("An unexpected server error occurred.", status, _responseText, _headers);
+            });
+        }
+        return Promise.resolve<SpaceCadMappingProfileSummaryDto[]>(null as any);
+    }
+
+    /**
+     * @return OK
+     */
+    previewPreparation(versionId: string, sourceId: string, body: PreviewSpaceCadPreparationRequest): Promise<PreviewSpaceCadPreparationResponse> {
+        let url_ = this.baseUrl + "/api/space/design/v1/versions/{versionId}/sources/{sourceId}/cad-preparations:preview";
+        if (versionId === undefined || versionId === null)
+            throw new globalThis.Error("The parameter 'versionId' must be defined.");
+        url_ = url_.replace("{versionId}", encodeURIComponent("" + versionId));
+        if (sourceId === undefined || sourceId === null)
+            throw new globalThis.Error("The parameter 'sourceId' must be defined.");
+        url_ = url_.replace("{sourceId}", encodeURIComponent("" + sourceId));
+        url_ = url_.replace(/[?&]$/, "");
+
+        const content_ = JSON.stringify(body);
+
+        let options_: RequestInit = {
+            body: content_,
+            method: "POST",
+            headers: {
+                "Content-Type": "application/json",
+                "Accept": "application/json"
+            }
+        };
+
+        return this.http.fetch(url_, options_).then((_response: Response) => {
+            return this.processPreviewPreparation(_response);
+        });
+    }
+
+    protected processPreviewPreparation(response: Response): Promise<PreviewSpaceCadPreparationResponse> {
+        const status = response.status;
+        let _headers: any = {}; if (response.headers && response.headers.forEach) { response.headers.forEach((v: any, k: any) => _headers[k] = v); };
+        if (status === 200) {
+            return response.text().then((_responseText) => {
+            let result200: any = null;
+            let resultData200 = _responseText === "" ? null : JSON.parse(_responseText, this.jsonParseReviver);
+            result200 = PreviewSpaceCadPreparationResponse.fromJS(resultData200);
+            return result200;
+            });
+        } else if (status === 400) {
+            return response.text().then((_responseText) => {
+            let result400: any = null;
+            let resultData400 = _responseText === "" ? null : JSON.parse(_responseText, this.jsonParseReviver);
+            result400 = SpaceDesignProblemDetails.fromJS(resultData400);
+            return throwException("Bad Request", status, _responseText, _headers, result400);
+            });
+        } else if (status === 401) {
+            return response.text().then((_responseText) => {
+            let result401: any = null;
+            let resultData401 = _responseText === "" ? null : JSON.parse(_responseText, this.jsonParseReviver);
+            result401 = SpaceDesignProblemDetails.fromJS(resultData401);
+            return throwException("Unauthorized", status, _responseText, _headers, result401);
+            });
+        } else if (status === 403) {
+            return response.text().then((_responseText) => {
+            let result403: any = null;
+            let resultData403 = _responseText === "" ? null : JSON.parse(_responseText, this.jsonParseReviver);
+            result403 = SpaceDesignProblemDetails.fromJS(resultData403);
+            return throwException("Forbidden", status, _responseText, _headers, result403);
+            });
+        } else if (status === 404) {
+            return response.text().then((_responseText) => {
+            let result404: any = null;
+            let resultData404 = _responseText === "" ? null : JSON.parse(_responseText, this.jsonParseReviver);
+            result404 = SpaceDesignProblemDetails.fromJS(resultData404);
+            return throwException("Not Found", status, _responseText, _headers, result404);
+            });
+        } else if (status === 409) {
+            return response.text().then((_responseText) => {
+            let result409: any = null;
+            let resultData409 = _responseText === "" ? null : JSON.parse(_responseText, this.jsonParseReviver);
+            result409 = SpaceDesignProblemDetails.fromJS(resultData409);
+            return throwException("Conflict", status, _responseText, _headers, result409);
+            });
+        } else if (status === 422) {
+            return response.text().then((_responseText) => {
+            let result422: any = null;
+            let resultData422 = _responseText === "" ? null : JSON.parse(_responseText, this.jsonParseReviver);
+            result422 = SpaceDesignProblemDetails.fromJS(resultData422);
+            return throwException("Unprocessable Content", status, _responseText, _headers, result422);
+            });
+        } else if (status === 500) {
+            return response.text().then((_responseText) => {
+            let result500: any = null;
+            let resultData500 = _responseText === "" ? null : JSON.parse(_responseText, this.jsonParseReviver);
+            result500 = SpaceDesignProblemDetails.fromJS(resultData500);
+            return throwException("Internal Server Error", status, _responseText, _headers, result500);
+            });
+        } else if (status !== 200 && status !== 204) {
+            return response.text().then((_responseText) => {
+            return throwException("An unexpected server error occurred.", status, _responseText, _headers);
+            });
+        }
+        return Promise.resolve<PreviewSpaceCadPreparationResponse>(null as any);
     }
 
     /**
@@ -16428,6 +16727,163 @@ export interface IPlaceSpaceWmsAdoptionRequest {
     expectedRowVersion?: string | undefined;
 }
 
+export class PreviewSpaceCadPreparationRequest implements IPreviewSpaceCadPreparationRequest {
+    floorLogicalId!: string;
+    confirmedUnit!: SpaceCadUnit;
+    sourceOriginInSourceUnits!: SpaceCadPointV1;
+    floorOriginMillimeters!: SpaceCadMillimeterPointV1;
+    rotationZDegrees!: number;
+    mappingProfileId!: string;
+    mappingProfileVersion!: number;
+    layerOverrides!: SpaceCadLayerMappingOverrideV1[];
+
+    constructor(data?: IPreviewSpaceCadPreparationRequest) {
+        if (data) {
+            for (var property in data) {
+                if (data.hasOwnProperty(property))
+                    (this as any)[property] = (data as any)[property];
+            }
+        }
+        if (!data) {
+            this.sourceOriginInSourceUnits = new SpaceCadPointV1();
+            this.floorOriginMillimeters = new SpaceCadMillimeterPointV1();
+            this.layerOverrides = [];
+        }
+    }
+
+    init(_data?: any) {
+        if (_data) {
+            this.floorLogicalId = _data["floorLogicalId"];
+            this.confirmedUnit = _data["confirmedUnit"];
+            this.sourceOriginInSourceUnits = _data["sourceOriginInSourceUnits"] ? SpaceCadPointV1.fromJS(_data["sourceOriginInSourceUnits"]) : new SpaceCadPointV1();
+            this.floorOriginMillimeters = _data["floorOriginMillimeters"] ? SpaceCadMillimeterPointV1.fromJS(_data["floorOriginMillimeters"]) : new SpaceCadMillimeterPointV1();
+            this.rotationZDegrees = _data["rotationZDegrees"];
+            this.mappingProfileId = _data["mappingProfileId"];
+            this.mappingProfileVersion = _data["mappingProfileVersion"];
+            if (Array.isArray(_data["layerOverrides"])) {
+                this.layerOverrides = [] as any;
+                for (let item of _data["layerOverrides"])
+                    this.layerOverrides!.push(SpaceCadLayerMappingOverrideV1.fromJS(item));
+            }
+        }
+    }
+
+    static fromJS(data: any): PreviewSpaceCadPreparationRequest {
+        data = typeof data === 'object' ? data : {};
+        let result = new PreviewSpaceCadPreparationRequest();
+        result.init(data);
+        return result;
+    }
+
+    toJSON(data?: any) {
+        data = typeof data === 'object' ? data : {};
+        data["floorLogicalId"] = this.floorLogicalId;
+        data["confirmedUnit"] = this.confirmedUnit;
+        data["sourceOriginInSourceUnits"] = this.sourceOriginInSourceUnits ? this.sourceOriginInSourceUnits.toJSON() : undefined as any;
+        data["floorOriginMillimeters"] = this.floorOriginMillimeters ? this.floorOriginMillimeters.toJSON() : undefined as any;
+        data["rotationZDegrees"] = this.rotationZDegrees;
+        data["mappingProfileId"] = this.mappingProfileId;
+        data["mappingProfileVersion"] = this.mappingProfileVersion;
+        if (Array.isArray(this.layerOverrides)) {
+            data["layerOverrides"] = [];
+            for (let item of this.layerOverrides)
+                data["layerOverrides"].push(item ? item.toJSON() : undefined as any);
+        }
+        return data;
+    }
+}
+
+export interface IPreviewSpaceCadPreparationRequest {
+    floorLogicalId: string;
+    confirmedUnit: SpaceCadUnit;
+    sourceOriginInSourceUnits: SpaceCadPointV1;
+    floorOriginMillimeters: SpaceCadMillimeterPointV1;
+    rotationZDegrees: number;
+    mappingProfileId: string;
+    mappingProfileVersion: number;
+    layerOverrides: SpaceCadLayerMappingOverrideV1[];
+}
+
+export class PreviewSpaceCadPreparationResponse implements IPreviewSpaceCadPreparationResponse {
+    preparationId?: string | undefined;
+    expiresAtUtc?: Date | undefined;
+    baseContentRevision?: number;
+    baseContentHash?: string | undefined;
+    readyForParsing?: boolean;
+    coordinateAnalysis?: SpaceCadCoordinateAnalysisV1;
+    coordinateMetadata?: SpaceCadCoordinateMetadataV1;
+    inventorySummary?: SpaceCadInventorySummaryV1;
+    mappingProfile?: SpaceCadMappingProfileSummaryDto;
+    mappingPreview?: SpaceCadMappingPreviewV1;
+    semanticPreview?: SpaceCadSemanticPreviewV1;
+    startRequest?: StartSpaceCadParseRequest;
+
+    constructor(data?: IPreviewSpaceCadPreparationResponse) {
+        if (data) {
+            for (var property in data) {
+                if (data.hasOwnProperty(property))
+                    (this as any)[property] = (data as any)[property];
+            }
+        }
+    }
+
+    init(_data?: any) {
+        if (_data) {
+            this.preparationId = _data["preparationId"];
+            this.expiresAtUtc = _data["expiresAtUtc"] ? new Date(_data["expiresAtUtc"].toString()) : undefined as any;
+            this.baseContentRevision = _data["baseContentRevision"];
+            this.baseContentHash = _data["baseContentHash"];
+            this.readyForParsing = _data["readyForParsing"];
+            this.coordinateAnalysis = _data["coordinateAnalysis"] ? SpaceCadCoordinateAnalysisV1.fromJS(_data["coordinateAnalysis"]) : undefined as any;
+            this.coordinateMetadata = _data["coordinateMetadata"] ? SpaceCadCoordinateMetadataV1.fromJS(_data["coordinateMetadata"]) : undefined as any;
+            this.inventorySummary = _data["inventorySummary"] ? SpaceCadInventorySummaryV1.fromJS(_data["inventorySummary"]) : undefined as any;
+            this.mappingProfile = _data["mappingProfile"] ? SpaceCadMappingProfileSummaryDto.fromJS(_data["mappingProfile"]) : undefined as any;
+            this.mappingPreview = _data["mappingPreview"] ? SpaceCadMappingPreviewV1.fromJS(_data["mappingPreview"]) : undefined as any;
+            this.semanticPreview = _data["semanticPreview"] ? SpaceCadSemanticPreviewV1.fromJS(_data["semanticPreview"]) : undefined as any;
+            this.startRequest = _data["startRequest"] ? StartSpaceCadParseRequest.fromJS(_data["startRequest"]) : undefined as any;
+        }
+    }
+
+    static fromJS(data: any): PreviewSpaceCadPreparationResponse {
+        data = typeof data === 'object' ? data : {};
+        let result = new PreviewSpaceCadPreparationResponse();
+        result.init(data);
+        return result;
+    }
+
+    toJSON(data?: any) {
+        data = typeof data === 'object' ? data : {};
+        data["preparationId"] = this.preparationId;
+        data["expiresAtUtc"] = this.expiresAtUtc ? this.expiresAtUtc.toISOString() : undefined as any;
+        data["baseContentRevision"] = this.baseContentRevision;
+        data["baseContentHash"] = this.baseContentHash;
+        data["readyForParsing"] = this.readyForParsing;
+        data["coordinateAnalysis"] = this.coordinateAnalysis ? this.coordinateAnalysis.toJSON() : undefined as any;
+        data["coordinateMetadata"] = this.coordinateMetadata ? this.coordinateMetadata.toJSON() : undefined as any;
+        data["inventorySummary"] = this.inventorySummary ? this.inventorySummary.toJSON() : undefined as any;
+        data["mappingProfile"] = this.mappingProfile ? this.mappingProfile.toJSON() : undefined as any;
+        data["mappingPreview"] = this.mappingPreview ? this.mappingPreview.toJSON() : undefined as any;
+        data["semanticPreview"] = this.semanticPreview ? this.semanticPreview.toJSON() : undefined as any;
+        data["startRequest"] = this.startRequest ? this.startRequest.toJSON() : undefined as any;
+        return data;
+    }
+}
+
+export interface IPreviewSpaceCadPreparationResponse {
+    preparationId?: string | undefined;
+    expiresAtUtc?: Date | undefined;
+    baseContentRevision?: number;
+    baseContentHash?: string | undefined;
+    readyForParsing?: boolean;
+    coordinateAnalysis?: SpaceCadCoordinateAnalysisV1;
+    coordinateMetadata?: SpaceCadCoordinateMetadataV1;
+    inventorySummary?: SpaceCadInventorySummaryV1;
+    mappingProfile?: SpaceCadMappingProfileSummaryDto;
+    mappingPreview?: SpaceCadMappingPreviewV1;
+    semanticPreview?: SpaceCadSemanticPreviewV1;
+    startRequest?: StartSpaceCadParseRequest;
+}
+
 export class PreviewSpaceExcelMappingRequest implements IPreviewSpaceExcelMappingRequest {
     definition!: SpaceExcelMappingDefinitionDto;
     workbook!: SpaceExcelHeaderSampleDto[];
@@ -18770,6 +19226,114 @@ export interface ISpaceAssetVersionDto {
     rowVersion?: string | undefined;
 }
 
+export class SpaceCadAffineTransformV1 implements ISpaceCadAffineTransformV1 {
+    m11?: number;
+    m12?: number;
+    m21?: number;
+    m22?: number;
+    offsetX?: number;
+    offsetY?: number;
+    offsetZ?: number;
+
+    constructor(data?: ISpaceCadAffineTransformV1) {
+        if (data) {
+            for (var property in data) {
+                if (data.hasOwnProperty(property))
+                    (this as any)[property] = (data as any)[property];
+            }
+        }
+    }
+
+    init(_data?: any) {
+        if (_data) {
+            this.m11 = _data["m11"];
+            this.m12 = _data["m12"];
+            this.m21 = _data["m21"];
+            this.m22 = _data["m22"];
+            this.offsetX = _data["offsetX"];
+            this.offsetY = _data["offsetY"];
+            this.offsetZ = _data["offsetZ"];
+        }
+    }
+
+    static fromJS(data: any): SpaceCadAffineTransformV1 {
+        data = typeof data === 'object' ? data : {};
+        let result = new SpaceCadAffineTransformV1();
+        result.init(data);
+        return result;
+    }
+
+    toJSON(data?: any) {
+        data = typeof data === 'object' ? data : {};
+        data["m11"] = this.m11;
+        data["m12"] = this.m12;
+        data["m21"] = this.m21;
+        data["m22"] = this.m22;
+        data["offsetX"] = this.offsetX;
+        data["offsetY"] = this.offsetY;
+        data["offsetZ"] = this.offsetZ;
+        return data;
+    }
+}
+
+export interface ISpaceCadAffineTransformV1 {
+    m11?: number;
+    m12?: number;
+    m21?: number;
+    m22?: number;
+    offsetX?: number;
+    offsetY?: number;
+    offsetZ?: number;
+}
+
+export class SpaceCadBoundsV1 implements ISpaceCadBoundsV1 {
+    minX?: number;
+    minY?: number;
+    maxX?: number;
+    maxY?: number;
+
+    constructor(data?: ISpaceCadBoundsV1) {
+        if (data) {
+            for (var property in data) {
+                if (data.hasOwnProperty(property))
+                    (this as any)[property] = (data as any)[property];
+            }
+        }
+    }
+
+    init(_data?: any) {
+        if (_data) {
+            this.minX = _data["minX"];
+            this.minY = _data["minY"];
+            this.maxX = _data["maxX"];
+            this.maxY = _data["maxY"];
+        }
+    }
+
+    static fromJS(data: any): SpaceCadBoundsV1 {
+        data = typeof data === 'object' ? data : {};
+        let result = new SpaceCadBoundsV1();
+        result.init(data);
+        return result;
+    }
+
+    toJSON(data?: any) {
+        data = typeof data === 'object' ? data : {};
+        data["minX"] = this.minX;
+        data["minY"] = this.minY;
+        data["maxX"] = this.maxX;
+        data["maxY"] = this.maxY;
+        return data;
+    }
+}
+
+export interface ISpaceCadBoundsV1 {
+    minX?: number;
+    minY?: number;
+    maxX?: number;
+    maxY?: number;
+}
+
 export enum SpaceCadChangeKind {
     Add = "Add",
     Modify = "Modify",
@@ -18934,6 +19498,222 @@ export enum SpaceCadConfidenceBand {
     Rejected = "Rejected",
 }
 
+export class SpaceCadConversionIssueV1 implements ISpaceCadConversionIssueV1 {
+    code?: string | undefined;
+    severity?: SpaceCadIssueSeverity;
+    sourceRef?: string | undefined;
+    detailToken?: string | undefined;
+
+    constructor(data?: ISpaceCadConversionIssueV1) {
+        if (data) {
+            for (var property in data) {
+                if (data.hasOwnProperty(property))
+                    (this as any)[property] = (data as any)[property];
+            }
+        }
+    }
+
+    init(_data?: any) {
+        if (_data) {
+            this.code = _data["code"];
+            this.severity = _data["severity"];
+            this.sourceRef = _data["sourceRef"];
+            this.detailToken = _data["detailToken"];
+        }
+    }
+
+    static fromJS(data: any): SpaceCadConversionIssueV1 {
+        data = typeof data === 'object' ? data : {};
+        let result = new SpaceCadConversionIssueV1();
+        result.init(data);
+        return result;
+    }
+
+    toJSON(data?: any) {
+        data = typeof data === 'object' ? data : {};
+        data["code"] = this.code;
+        data["severity"] = this.severity;
+        data["sourceRef"] = this.sourceRef;
+        data["detailToken"] = this.detailToken;
+        return data;
+    }
+}
+
+export interface ISpaceCadConversionIssueV1 {
+    code?: string | undefined;
+    severity?: SpaceCadIssueSeverity;
+    sourceRef?: string | undefined;
+    detailToken?: string | undefined;
+}
+
+export class SpaceCadCoordinateAnalysisV1 implements ISpaceCadCoordinateAnalysisV1 {
+    schemaVersion?: number;
+    sourceSha256?: string | undefined;
+    suggestedUnit?: SpaceCadUnit;
+    suggestedScaleToMillimeters?: number | undefined;
+    sourceBounds?: SpaceCadBoundsV1;
+    suggestedBoundsMillimeters?: SpaceCadBoundsV1;
+    isSuggestedExtentPlausible?: boolean;
+    requiresUnitConfirmation?: boolean;
+    issues?: SpaceCadConversionIssueV1[] | undefined;
+
+    constructor(data?: ISpaceCadCoordinateAnalysisV1) {
+        if (data) {
+            for (var property in data) {
+                if (data.hasOwnProperty(property))
+                    (this as any)[property] = (data as any)[property];
+            }
+        }
+    }
+
+    init(_data?: any) {
+        if (_data) {
+            this.schemaVersion = _data["schemaVersion"];
+            this.sourceSha256 = _data["sourceSha256"];
+            this.suggestedUnit = _data["suggestedUnit"];
+            this.suggestedScaleToMillimeters = _data["suggestedScaleToMillimeters"];
+            this.sourceBounds = _data["sourceBounds"] ? SpaceCadBoundsV1.fromJS(_data["sourceBounds"]) : undefined as any;
+            this.suggestedBoundsMillimeters = _data["suggestedBoundsMillimeters"] ? SpaceCadBoundsV1.fromJS(_data["suggestedBoundsMillimeters"]) : undefined as any;
+            this.isSuggestedExtentPlausible = _data["isSuggestedExtentPlausible"];
+            this.requiresUnitConfirmation = _data["requiresUnitConfirmation"];
+            if (Array.isArray(_data["issues"])) {
+                this.issues = [] as any;
+                for (let item of _data["issues"])
+                    this.issues!.push(SpaceCadConversionIssueV1.fromJS(item));
+            }
+        }
+    }
+
+    static fromJS(data: any): SpaceCadCoordinateAnalysisV1 {
+        data = typeof data === 'object' ? data : {};
+        let result = new SpaceCadCoordinateAnalysisV1();
+        result.init(data);
+        return result;
+    }
+
+    toJSON(data?: any) {
+        data = typeof data === 'object' ? data : {};
+        data["schemaVersion"] = this.schemaVersion;
+        data["sourceSha256"] = this.sourceSha256;
+        data["suggestedUnit"] = this.suggestedUnit;
+        data["suggestedScaleToMillimeters"] = this.suggestedScaleToMillimeters;
+        data["sourceBounds"] = this.sourceBounds ? this.sourceBounds.toJSON() : undefined as any;
+        data["suggestedBoundsMillimeters"] = this.suggestedBoundsMillimeters ? this.suggestedBoundsMillimeters.toJSON() : undefined as any;
+        data["isSuggestedExtentPlausible"] = this.isSuggestedExtentPlausible;
+        data["requiresUnitConfirmation"] = this.requiresUnitConfirmation;
+        if (Array.isArray(this.issues)) {
+            data["issues"] = [];
+            for (let item of this.issues)
+                data["issues"].push(item ? item.toJSON() : undefined as any);
+        }
+        return data;
+    }
+}
+
+export interface ISpaceCadCoordinateAnalysisV1 {
+    schemaVersion?: number;
+    sourceSha256?: string | undefined;
+    suggestedUnit?: SpaceCadUnit;
+    suggestedScaleToMillimeters?: number | undefined;
+    sourceBounds?: SpaceCadBoundsV1;
+    suggestedBoundsMillimeters?: SpaceCadBoundsV1;
+    isSuggestedExtentPlausible?: boolean;
+    requiresUnitConfirmation?: boolean;
+    issues?: SpaceCadConversionIssueV1[] | undefined;
+}
+
+export class SpaceCadCoordinateMetadataV1 implements ISpaceCadCoordinateMetadataV1 {
+    schemaVersion?: number;
+    sourceSha256?: string | undefined;
+    unitConfirmed?: boolean;
+    detectedUnit?: SpaceCadUnit;
+    detectedScaleToMillimeters?: number | undefined;
+    confirmedUnit?: SpaceCadUnit;
+    confirmedScaleToMillimeters?: number;
+    sourceOriginInSourceUnits?: SpaceCadPointV1;
+    floorOriginMillimeters?: SpaceCadMillimeterPointV1;
+    rotationZDegrees?: number;
+    targetFloor?: SpaceCadFloorAssignmentV1;
+    sourceToFloorTransform?: SpaceCadAffineTransformV1;
+    sourceBounds?: SpaceCadBoundsV1;
+    preparedBounds?: SpaceCadBoundsV1;
+    transformSha256?: string | undefined;
+
+    constructor(data?: ISpaceCadCoordinateMetadataV1) {
+        if (data) {
+            for (var property in data) {
+                if (data.hasOwnProperty(property))
+                    (this as any)[property] = (data as any)[property];
+            }
+        }
+    }
+
+    init(_data?: any) {
+        if (_data) {
+            this.schemaVersion = _data["schemaVersion"];
+            this.sourceSha256 = _data["sourceSha256"];
+            this.unitConfirmed = _data["unitConfirmed"];
+            this.detectedUnit = _data["detectedUnit"];
+            this.detectedScaleToMillimeters = _data["detectedScaleToMillimeters"];
+            this.confirmedUnit = _data["confirmedUnit"];
+            this.confirmedScaleToMillimeters = _data["confirmedScaleToMillimeters"];
+            this.sourceOriginInSourceUnits = _data["sourceOriginInSourceUnits"] ? SpaceCadPointV1.fromJS(_data["sourceOriginInSourceUnits"]) : undefined as any;
+            this.floorOriginMillimeters = _data["floorOriginMillimeters"] ? SpaceCadMillimeterPointV1.fromJS(_data["floorOriginMillimeters"]) : undefined as any;
+            this.rotationZDegrees = _data["rotationZDegrees"];
+            this.targetFloor = _data["targetFloor"] ? SpaceCadFloorAssignmentV1.fromJS(_data["targetFloor"]) : undefined as any;
+            this.sourceToFloorTransform = _data["sourceToFloorTransform"] ? SpaceCadAffineTransformV1.fromJS(_data["sourceToFloorTransform"]) : undefined as any;
+            this.sourceBounds = _data["sourceBounds"] ? SpaceCadBoundsV1.fromJS(_data["sourceBounds"]) : undefined as any;
+            this.preparedBounds = _data["preparedBounds"] ? SpaceCadBoundsV1.fromJS(_data["preparedBounds"]) : undefined as any;
+            this.transformSha256 = _data["transformSha256"];
+        }
+    }
+
+    static fromJS(data: any): SpaceCadCoordinateMetadataV1 {
+        data = typeof data === 'object' ? data : {};
+        let result = new SpaceCadCoordinateMetadataV1();
+        result.init(data);
+        return result;
+    }
+
+    toJSON(data?: any) {
+        data = typeof data === 'object' ? data : {};
+        data["schemaVersion"] = this.schemaVersion;
+        data["sourceSha256"] = this.sourceSha256;
+        data["unitConfirmed"] = this.unitConfirmed;
+        data["detectedUnit"] = this.detectedUnit;
+        data["detectedScaleToMillimeters"] = this.detectedScaleToMillimeters;
+        data["confirmedUnit"] = this.confirmedUnit;
+        data["confirmedScaleToMillimeters"] = this.confirmedScaleToMillimeters;
+        data["sourceOriginInSourceUnits"] = this.sourceOriginInSourceUnits ? this.sourceOriginInSourceUnits.toJSON() : undefined as any;
+        data["floorOriginMillimeters"] = this.floorOriginMillimeters ? this.floorOriginMillimeters.toJSON() : undefined as any;
+        data["rotationZDegrees"] = this.rotationZDegrees;
+        data["targetFloor"] = this.targetFloor ? this.targetFloor.toJSON() : undefined as any;
+        data["sourceToFloorTransform"] = this.sourceToFloorTransform ? this.sourceToFloorTransform.toJSON() : undefined as any;
+        data["sourceBounds"] = this.sourceBounds ? this.sourceBounds.toJSON() : undefined as any;
+        data["preparedBounds"] = this.preparedBounds ? this.preparedBounds.toJSON() : undefined as any;
+        data["transformSha256"] = this.transformSha256;
+        return data;
+    }
+}
+
+export interface ISpaceCadCoordinateMetadataV1 {
+    schemaVersion?: number;
+    sourceSha256?: string | undefined;
+    unitConfirmed?: boolean;
+    detectedUnit?: SpaceCadUnit;
+    detectedScaleToMillimeters?: number | undefined;
+    confirmedUnit?: SpaceCadUnit;
+    confirmedScaleToMillimeters?: number;
+    sourceOriginInSourceUnits?: SpaceCadPointV1;
+    floorOriginMillimeters?: SpaceCadMillimeterPointV1;
+    rotationZDegrees?: number;
+    targetFloor?: SpaceCadFloorAssignmentV1;
+    sourceToFloorTransform?: SpaceCadAffineTransformV1;
+    sourceBounds?: SpaceCadBoundsV1;
+    preparedBounds?: SpaceCadBoundsV1;
+    transformSha256?: string | undefined;
+}
+
 export enum SpaceCadDiagnosticLocationKind {
     Document = "Document",
     Layer = "Layer",
@@ -19013,10 +19793,632 @@ export interface ISpaceCadDiagnosticLocationV1 {
     canFocusCanvas?: boolean;
 }
 
+export class SpaceCadFloorAssignmentV1 implements ISpaceCadFloorAssignmentV1 {
+    floorLogicalId?: string;
+    floorCode?: string | undefined;
+    level?: number;
+    elevationMillimeters?: number;
+    coordinateSystem?: string | undefined;
+    boundaryBounds?: SpaceCadBoundsV1;
+
+    constructor(data?: ISpaceCadFloorAssignmentV1) {
+        if (data) {
+            for (var property in data) {
+                if (data.hasOwnProperty(property))
+                    (this as any)[property] = (data as any)[property];
+            }
+        }
+    }
+
+    init(_data?: any) {
+        if (_data) {
+            this.floorLogicalId = _data["floorLogicalId"];
+            this.floorCode = _data["floorCode"];
+            this.level = _data["level"];
+            this.elevationMillimeters = _data["elevationMillimeters"];
+            this.coordinateSystem = _data["coordinateSystem"];
+            this.boundaryBounds = _data["boundaryBounds"] ? SpaceCadBoundsV1.fromJS(_data["boundaryBounds"]) : undefined as any;
+        }
+    }
+
+    static fromJS(data: any): SpaceCadFloorAssignmentV1 {
+        data = typeof data === 'object' ? data : {};
+        let result = new SpaceCadFloorAssignmentV1();
+        result.init(data);
+        return result;
+    }
+
+    toJSON(data?: any) {
+        data = typeof data === 'object' ? data : {};
+        data["floorLogicalId"] = this.floorLogicalId;
+        data["floorCode"] = this.floorCode;
+        data["level"] = this.level;
+        data["elevationMillimeters"] = this.elevationMillimeters;
+        data["coordinateSystem"] = this.coordinateSystem;
+        data["boundaryBounds"] = this.boundaryBounds ? this.boundaryBounds.toJSON() : undefined as any;
+        return data;
+    }
+}
+
+export interface ISpaceCadFloorAssignmentV1 {
+    floorLogicalId?: string;
+    floorCode?: string | undefined;
+    level?: number;
+    elevationMillimeters?: number;
+    coordinateSystem?: string | undefined;
+    boundaryBounds?: SpaceCadBoundsV1;
+}
+
+export enum SpaceCadGeometryRule {
+    DirectGeometry = "DirectGeometry",
+    Centerline = "Centerline",
+    ClosedBoundary = "ClosedBoundary",
+    BlockFootprint = "BlockFootprint",
+    InsertionPoint = "InsertionPoint",
+}
+
+export class SpaceCadInventorySummaryV1 implements ISpaceCadInventorySummaryV1 {
+    layerCount?: number;
+    emptyLayerCount?: number;
+    blockCount?: number;
+    undefinedBlockCount?: number;
+    blockReferenceCount?: number;
+    attributedBlockReferenceCount?: number;
+    entityCount?: number;
+    supportedEntityCount?: number;
+    unsupportedEntityCount?: number;
+    bounds?: SpaceCadBoundsV1;
+
+    constructor(data?: ISpaceCadInventorySummaryV1) {
+        if (data) {
+            for (var property in data) {
+                if (data.hasOwnProperty(property))
+                    (this as any)[property] = (data as any)[property];
+            }
+        }
+    }
+
+    init(_data?: any) {
+        if (_data) {
+            this.layerCount = _data["layerCount"];
+            this.emptyLayerCount = _data["emptyLayerCount"];
+            this.blockCount = _data["blockCount"];
+            this.undefinedBlockCount = _data["undefinedBlockCount"];
+            this.blockReferenceCount = _data["blockReferenceCount"];
+            this.attributedBlockReferenceCount = _data["attributedBlockReferenceCount"];
+            this.entityCount = _data["entityCount"];
+            this.supportedEntityCount = _data["supportedEntityCount"];
+            this.unsupportedEntityCount = _data["unsupportedEntityCount"];
+            this.bounds = _data["bounds"] ? SpaceCadBoundsV1.fromJS(_data["bounds"]) : undefined as any;
+        }
+    }
+
+    static fromJS(data: any): SpaceCadInventorySummaryV1 {
+        data = typeof data === 'object' ? data : {};
+        let result = new SpaceCadInventorySummaryV1();
+        result.init(data);
+        return result;
+    }
+
+    toJSON(data?: any) {
+        data = typeof data === 'object' ? data : {};
+        data["layerCount"] = this.layerCount;
+        data["emptyLayerCount"] = this.emptyLayerCount;
+        data["blockCount"] = this.blockCount;
+        data["undefinedBlockCount"] = this.undefinedBlockCount;
+        data["blockReferenceCount"] = this.blockReferenceCount;
+        data["attributedBlockReferenceCount"] = this.attributedBlockReferenceCount;
+        data["entityCount"] = this.entityCount;
+        data["supportedEntityCount"] = this.supportedEntityCount;
+        data["unsupportedEntityCount"] = this.unsupportedEntityCount;
+        data["bounds"] = this.bounds ? this.bounds.toJSON() : undefined as any;
+        return data;
+    }
+}
+
+export interface ISpaceCadInventorySummaryV1 {
+    layerCount?: number;
+    emptyLayerCount?: number;
+    blockCount?: number;
+    undefinedBlockCount?: number;
+    blockReferenceCount?: number;
+    attributedBlockReferenceCount?: number;
+    entityCount?: number;
+    supportedEntityCount?: number;
+    unsupportedEntityCount?: number;
+    bounds?: SpaceCadBoundsV1;
+}
+
 export enum SpaceCadIssueSeverity {
     Info = "Info",
     Warning = "Warning",
     Blocking = "Blocking",
+}
+
+export class SpaceCadLayerMappingOverrideV1 implements ISpaceCadLayerMappingOverrideV1 {
+    layerId!: string;
+    ignore!: boolean;
+    target?: SpaceCadSemanticTarget;
+    targetSubtype?: string | undefined;
+    geometryRule?: SpaceCadGeometryRule;
+    defaultHeightMillimeters?: number | undefined;
+    defaultThicknessMillimeters?: number | undefined;
+    confidenceWeight?: number | undefined;
+
+    constructor(data?: ISpaceCadLayerMappingOverrideV1) {
+        if (data) {
+            for (var property in data) {
+                if (data.hasOwnProperty(property))
+                    (this as any)[property] = (data as any)[property];
+            }
+        }
+    }
+
+    init(_data?: any) {
+        if (_data) {
+            this.layerId = _data["layerId"];
+            this.ignore = _data["ignore"];
+            this.target = _data["target"];
+            this.targetSubtype = _data["targetSubtype"];
+            this.geometryRule = _data["geometryRule"];
+            this.defaultHeightMillimeters = _data["defaultHeightMillimeters"];
+            this.defaultThicknessMillimeters = _data["defaultThicknessMillimeters"];
+            this.confidenceWeight = _data["confidenceWeight"];
+        }
+    }
+
+    static fromJS(data: any): SpaceCadLayerMappingOverrideV1 {
+        data = typeof data === 'object' ? data : {};
+        let result = new SpaceCadLayerMappingOverrideV1();
+        result.init(data);
+        return result;
+    }
+
+    toJSON(data?: any) {
+        data = typeof data === 'object' ? data : {};
+        data["layerId"] = this.layerId;
+        data["ignore"] = this.ignore;
+        data["target"] = this.target;
+        data["targetSubtype"] = this.targetSubtype;
+        data["geometryRule"] = this.geometryRule;
+        data["defaultHeightMillimeters"] = this.defaultHeightMillimeters;
+        data["defaultThicknessMillimeters"] = this.defaultThicknessMillimeters;
+        data["confidenceWeight"] = this.confidenceWeight;
+        return data;
+    }
+}
+
+export interface ISpaceCadLayerMappingOverrideV1 {
+    layerId: string;
+    ignore: boolean;
+    target?: SpaceCadSemanticTarget;
+    targetSubtype?: string | undefined;
+    geometryRule?: SpaceCadGeometryRule;
+    defaultHeightMillimeters?: number | undefined;
+    defaultThicknessMillimeters?: number | undefined;
+    confidenceWeight?: number | undefined;
+}
+
+export enum SpaceCadMappingDecisionSource {
+    ProfileRule = "ProfileRule",
+    LayerOverride = "LayerOverride",
+    None = "None",
+}
+
+export enum SpaceCadMappingDecisionStatus {
+    Mapped = "Mapped",
+    Unmapped = "Unmapped",
+    Ignored = "Ignored",
+    Conflict = "Conflict",
+}
+
+export class SpaceCadMappingDecisionV1 implements ISpaceCadMappingDecisionV1 {
+    sourceKind?: SpaceCadMappingSourceKind;
+    sourceKey?: string | undefined;
+    layerId?: string | undefined;
+    objectCount?: number;
+    status?: SpaceCadMappingDecisionStatus;
+    decisionSource?: SpaceCadMappingDecisionSource;
+    ruleId?: string | undefined;
+    target?: SpaceCadSemanticTarget;
+    targetSubtype?: string | undefined;
+    geometryRule?: SpaceCadGeometryRule;
+    defaultHeightMillimeters?: number | undefined;
+    defaultThicknessMillimeters?: number | undefined;
+    confidenceWeight?: number | undefined;
+
+    constructor(data?: ISpaceCadMappingDecisionV1) {
+        if (data) {
+            for (var property in data) {
+                if (data.hasOwnProperty(property))
+                    (this as any)[property] = (data as any)[property];
+            }
+        }
+    }
+
+    init(_data?: any) {
+        if (_data) {
+            this.sourceKind = _data["sourceKind"];
+            this.sourceKey = _data["sourceKey"];
+            this.layerId = _data["layerId"];
+            this.objectCount = _data["objectCount"];
+            this.status = _data["status"];
+            this.decisionSource = _data["decisionSource"];
+            this.ruleId = _data["ruleId"];
+            this.target = _data["target"];
+            this.targetSubtype = _data["targetSubtype"];
+            this.geometryRule = _data["geometryRule"];
+            this.defaultHeightMillimeters = _data["defaultHeightMillimeters"];
+            this.defaultThicknessMillimeters = _data["defaultThicknessMillimeters"];
+            this.confidenceWeight = _data["confidenceWeight"];
+        }
+    }
+
+    static fromJS(data: any): SpaceCadMappingDecisionV1 {
+        data = typeof data === 'object' ? data : {};
+        let result = new SpaceCadMappingDecisionV1();
+        result.init(data);
+        return result;
+    }
+
+    toJSON(data?: any) {
+        data = typeof data === 'object' ? data : {};
+        data["sourceKind"] = this.sourceKind;
+        data["sourceKey"] = this.sourceKey;
+        data["layerId"] = this.layerId;
+        data["objectCount"] = this.objectCount;
+        data["status"] = this.status;
+        data["decisionSource"] = this.decisionSource;
+        data["ruleId"] = this.ruleId;
+        data["target"] = this.target;
+        data["targetSubtype"] = this.targetSubtype;
+        data["geometryRule"] = this.geometryRule;
+        data["defaultHeightMillimeters"] = this.defaultHeightMillimeters;
+        data["defaultThicknessMillimeters"] = this.defaultThicknessMillimeters;
+        data["confidenceWeight"] = this.confidenceWeight;
+        return data;
+    }
+}
+
+export interface ISpaceCadMappingDecisionV1 {
+    sourceKind?: SpaceCadMappingSourceKind;
+    sourceKey?: string | undefined;
+    layerId?: string | undefined;
+    objectCount?: number;
+    status?: SpaceCadMappingDecisionStatus;
+    decisionSource?: SpaceCadMappingDecisionSource;
+    ruleId?: string | undefined;
+    target?: SpaceCadSemanticTarget;
+    targetSubtype?: string | undefined;
+    geometryRule?: SpaceCadGeometryRule;
+    defaultHeightMillimeters?: number | undefined;
+    defaultThicknessMillimeters?: number | undefined;
+    confidenceWeight?: number | undefined;
+}
+
+export class SpaceCadMappingIssueV1 implements ISpaceCadMappingIssueV1 {
+    code?: string | undefined;
+    severity?: SpaceCadIssueSeverity;
+    sourceKind?: SpaceCadMappingSourceKind;
+    sourceKey?: string | undefined;
+    ruleId?: string | undefined;
+    detailToken?: string | undefined;
+
+    constructor(data?: ISpaceCadMappingIssueV1) {
+        if (data) {
+            for (var property in data) {
+                if (data.hasOwnProperty(property))
+                    (this as any)[property] = (data as any)[property];
+            }
+        }
+    }
+
+    init(_data?: any) {
+        if (_data) {
+            this.code = _data["code"];
+            this.severity = _data["severity"];
+            this.sourceKind = _data["sourceKind"];
+            this.sourceKey = _data["sourceKey"];
+            this.ruleId = _data["ruleId"];
+            this.detailToken = _data["detailToken"];
+        }
+    }
+
+    static fromJS(data: any): SpaceCadMappingIssueV1 {
+        data = typeof data === 'object' ? data : {};
+        let result = new SpaceCadMappingIssueV1();
+        result.init(data);
+        return result;
+    }
+
+    toJSON(data?: any) {
+        data = typeof data === 'object' ? data : {};
+        data["code"] = this.code;
+        data["severity"] = this.severity;
+        data["sourceKind"] = this.sourceKind;
+        data["sourceKey"] = this.sourceKey;
+        data["ruleId"] = this.ruleId;
+        data["detailToken"] = this.detailToken;
+        return data;
+    }
+}
+
+export interface ISpaceCadMappingIssueV1 {
+    code?: string | undefined;
+    severity?: SpaceCadIssueSeverity;
+    sourceKind?: SpaceCadMappingSourceKind;
+    sourceKey?: string | undefined;
+    ruleId?: string | undefined;
+    detailToken?: string | undefined;
+}
+
+export class SpaceCadMappingPreviewSummaryV1 implements ISpaceCadMappingPreviewSummaryV1 {
+    layerCount?: number;
+    mappedLayerCount?: number;
+    unmappedLayerCount?: number;
+    ignoredLayerCount?: number;
+    conflictLayerCount?: number;
+    blockCount?: number;
+    mappedBlockCount?: number;
+    unmappedBlockCount?: number;
+    conflictBlockCount?: number;
+    mappedLayerEntityCount?: number;
+    mappedBlockReferenceCount?: number;
+    infoCount?: number;
+    warningCount?: number;
+    blockingCount?: number;
+
+    constructor(data?: ISpaceCadMappingPreviewSummaryV1) {
+        if (data) {
+            for (var property in data) {
+                if (data.hasOwnProperty(property))
+                    (this as any)[property] = (data as any)[property];
+            }
+        }
+    }
+
+    init(_data?: any) {
+        if (_data) {
+            this.layerCount = _data["layerCount"];
+            this.mappedLayerCount = _data["mappedLayerCount"];
+            this.unmappedLayerCount = _data["unmappedLayerCount"];
+            this.ignoredLayerCount = _data["ignoredLayerCount"];
+            this.conflictLayerCount = _data["conflictLayerCount"];
+            this.blockCount = _data["blockCount"];
+            this.mappedBlockCount = _data["mappedBlockCount"];
+            this.unmappedBlockCount = _data["unmappedBlockCount"];
+            this.conflictBlockCount = _data["conflictBlockCount"];
+            this.mappedLayerEntityCount = _data["mappedLayerEntityCount"];
+            this.mappedBlockReferenceCount = _data["mappedBlockReferenceCount"];
+            this.infoCount = _data["infoCount"];
+            this.warningCount = _data["warningCount"];
+            this.blockingCount = _data["blockingCount"];
+        }
+    }
+
+    static fromJS(data: any): SpaceCadMappingPreviewSummaryV1 {
+        data = typeof data === 'object' ? data : {};
+        let result = new SpaceCadMappingPreviewSummaryV1();
+        result.init(data);
+        return result;
+    }
+
+    toJSON(data?: any) {
+        data = typeof data === 'object' ? data : {};
+        data["layerCount"] = this.layerCount;
+        data["mappedLayerCount"] = this.mappedLayerCount;
+        data["unmappedLayerCount"] = this.unmappedLayerCount;
+        data["ignoredLayerCount"] = this.ignoredLayerCount;
+        data["conflictLayerCount"] = this.conflictLayerCount;
+        data["blockCount"] = this.blockCount;
+        data["mappedBlockCount"] = this.mappedBlockCount;
+        data["unmappedBlockCount"] = this.unmappedBlockCount;
+        data["conflictBlockCount"] = this.conflictBlockCount;
+        data["mappedLayerEntityCount"] = this.mappedLayerEntityCount;
+        data["mappedBlockReferenceCount"] = this.mappedBlockReferenceCount;
+        data["infoCount"] = this.infoCount;
+        data["warningCount"] = this.warningCount;
+        data["blockingCount"] = this.blockingCount;
+        return data;
+    }
+}
+
+export interface ISpaceCadMappingPreviewSummaryV1 {
+    layerCount?: number;
+    mappedLayerCount?: number;
+    unmappedLayerCount?: number;
+    ignoredLayerCount?: number;
+    conflictLayerCount?: number;
+    blockCount?: number;
+    mappedBlockCount?: number;
+    unmappedBlockCount?: number;
+    conflictBlockCount?: number;
+    mappedLayerEntityCount?: number;
+    mappedBlockReferenceCount?: number;
+    infoCount?: number;
+    warningCount?: number;
+    blockingCount?: number;
+}
+
+export class SpaceCadMappingPreviewV1 implements ISpaceCadMappingPreviewV1 {
+    schemaVersion?: number;
+    tenantId?: string;
+    profileId?: string;
+    profileVersion?: number;
+    profileDefinitionSha256?: string | undefined;
+    sourceSha256?: string | undefined;
+    inventorySha256?: string | undefined;
+    sourceStructureSha256?: string | undefined;
+    reuseKeySha256?: string | undefined;
+    layerOverrides?: SpaceCadLayerMappingOverrideV1[] | undefined;
+    decisions?: SpaceCadMappingDecisionV1[] | undefined;
+    issues?: SpaceCadMappingIssueV1[] | undefined;
+    summary?: SpaceCadMappingPreviewSummaryV1;
+    readyForSemanticParsing?: boolean;
+    previewSha256?: string | undefined;
+
+    constructor(data?: ISpaceCadMappingPreviewV1) {
+        if (data) {
+            for (var property in data) {
+                if (data.hasOwnProperty(property))
+                    (this as any)[property] = (data as any)[property];
+            }
+        }
+    }
+
+    init(_data?: any) {
+        if (_data) {
+            this.schemaVersion = _data["schemaVersion"];
+            this.tenantId = _data["tenantId"];
+            this.profileId = _data["profileId"];
+            this.profileVersion = _data["profileVersion"];
+            this.profileDefinitionSha256 = _data["profileDefinitionSha256"];
+            this.sourceSha256 = _data["sourceSha256"];
+            this.inventorySha256 = _data["inventorySha256"];
+            this.sourceStructureSha256 = _data["sourceStructureSha256"];
+            this.reuseKeySha256 = _data["reuseKeySha256"];
+            if (Array.isArray(_data["layerOverrides"])) {
+                this.layerOverrides = [] as any;
+                for (let item of _data["layerOverrides"])
+                    this.layerOverrides!.push(SpaceCadLayerMappingOverrideV1.fromJS(item));
+            }
+            if (Array.isArray(_data["decisions"])) {
+                this.decisions = [] as any;
+                for (let item of _data["decisions"])
+                    this.decisions!.push(SpaceCadMappingDecisionV1.fromJS(item));
+            }
+            if (Array.isArray(_data["issues"])) {
+                this.issues = [] as any;
+                for (let item of _data["issues"])
+                    this.issues!.push(SpaceCadMappingIssueV1.fromJS(item));
+            }
+            this.summary = _data["summary"] ? SpaceCadMappingPreviewSummaryV1.fromJS(_data["summary"]) : undefined as any;
+            this.readyForSemanticParsing = _data["readyForSemanticParsing"];
+            this.previewSha256 = _data["previewSha256"];
+        }
+    }
+
+    static fromJS(data: any): SpaceCadMappingPreviewV1 {
+        data = typeof data === 'object' ? data : {};
+        let result = new SpaceCadMappingPreviewV1();
+        result.init(data);
+        return result;
+    }
+
+    toJSON(data?: any) {
+        data = typeof data === 'object' ? data : {};
+        data["schemaVersion"] = this.schemaVersion;
+        data["tenantId"] = this.tenantId;
+        data["profileId"] = this.profileId;
+        data["profileVersion"] = this.profileVersion;
+        data["profileDefinitionSha256"] = this.profileDefinitionSha256;
+        data["sourceSha256"] = this.sourceSha256;
+        data["inventorySha256"] = this.inventorySha256;
+        data["sourceStructureSha256"] = this.sourceStructureSha256;
+        data["reuseKeySha256"] = this.reuseKeySha256;
+        if (Array.isArray(this.layerOverrides)) {
+            data["layerOverrides"] = [];
+            for (let item of this.layerOverrides)
+                data["layerOverrides"].push(item ? item.toJSON() : undefined as any);
+        }
+        if (Array.isArray(this.decisions)) {
+            data["decisions"] = [];
+            for (let item of this.decisions)
+                data["decisions"].push(item ? item.toJSON() : undefined as any);
+        }
+        if (Array.isArray(this.issues)) {
+            data["issues"] = [];
+            for (let item of this.issues)
+                data["issues"].push(item ? item.toJSON() : undefined as any);
+        }
+        data["summary"] = this.summary ? this.summary.toJSON() : undefined as any;
+        data["readyForSemanticParsing"] = this.readyForSemanticParsing;
+        data["previewSha256"] = this.previewSha256;
+        return data;
+    }
+}
+
+export interface ISpaceCadMappingPreviewV1 {
+    schemaVersion?: number;
+    tenantId?: string;
+    profileId?: string;
+    profileVersion?: number;
+    profileDefinitionSha256?: string | undefined;
+    sourceSha256?: string | undefined;
+    inventorySha256?: string | undefined;
+    sourceStructureSha256?: string | undefined;
+    reuseKeySha256?: string | undefined;
+    layerOverrides?: SpaceCadLayerMappingOverrideV1[] | undefined;
+    decisions?: SpaceCadMappingDecisionV1[] | undefined;
+    issues?: SpaceCadMappingIssueV1[] | undefined;
+    summary?: SpaceCadMappingPreviewSummaryV1;
+    readyForSemanticParsing?: boolean;
+    previewSha256?: string | undefined;
+}
+
+export class SpaceCadMappingProfileSummaryDto implements ISpaceCadMappingProfileSummaryDto {
+    profileId?: string;
+    version?: number;
+    name?: string | undefined;
+    scope?: string | undefined;
+    isEnabled?: boolean;
+    definitionSha256?: string | undefined;
+    ruleCount?: number;
+
+    constructor(data?: ISpaceCadMappingProfileSummaryDto) {
+        if (data) {
+            for (var property in data) {
+                if (data.hasOwnProperty(property))
+                    (this as any)[property] = (data as any)[property];
+            }
+        }
+    }
+
+    init(_data?: any) {
+        if (_data) {
+            this.profileId = _data["profileId"];
+            this.version = _data["version"];
+            this.name = _data["name"];
+            this.scope = _data["scope"];
+            this.isEnabled = _data["isEnabled"];
+            this.definitionSha256 = _data["definitionSha256"];
+            this.ruleCount = _data["ruleCount"];
+        }
+    }
+
+    static fromJS(data: any): SpaceCadMappingProfileSummaryDto {
+        data = typeof data === 'object' ? data : {};
+        let result = new SpaceCadMappingProfileSummaryDto();
+        result.init(data);
+        return result;
+    }
+
+    toJSON(data?: any) {
+        data = typeof data === 'object' ? data : {};
+        data["profileId"] = this.profileId;
+        data["version"] = this.version;
+        data["name"] = this.name;
+        data["scope"] = this.scope;
+        data["isEnabled"] = this.isEnabled;
+        data["definitionSha256"] = this.definitionSha256;
+        data["ruleCount"] = this.ruleCount;
+        return data;
+    }
+}
+
+export interface ISpaceCadMappingProfileSummaryDto {
+    profileId?: string;
+    version?: number;
+    name?: string | undefined;
+    scope?: string | undefined;
+    isEnabled?: boolean;
+    definitionSha256?: string | undefined;
+    ruleCount?: number;
+}
+
+export enum SpaceCadMappingSourceKind {
+    Layer = "Layer",
+    Block = "Block",
 }
 
 export class SpaceCadMillimeterBoundsV1 implements ISpaceCadMillimeterBoundsV1 {
@@ -19068,9 +20470,9 @@ export interface ISpaceCadMillimeterBoundsV1 {
 }
 
 export class SpaceCadMillimeterPointV1 implements ISpaceCadMillimeterPointV1 {
-    x?: number;
-    y?: number;
-    z?: number;
+    x!: number;
+    y!: number;
+    z!: number;
 
     constructor(data?: ISpaceCadMillimeterPointV1) {
         if (data) {
@@ -19106,9 +20508,9 @@ export class SpaceCadMillimeterPointV1 implements ISpaceCadMillimeterPointV1 {
 }
 
 export interface ISpaceCadMillimeterPointV1 {
-    x?: number;
-    y?: number;
-    z?: number;
+    x: number;
+    y: number;
+    z: number;
 }
 
 export class SpaceCadParseActionResponse implements ISpaceCadParseActionResponse {
@@ -19325,6 +20727,102 @@ export interface ISpaceCadParseDto {
     lastErrorCode?: string | undefined;
     lastErrorSummary?: string | undefined;
     artifacts?: SpaceCadParseArtifactDto[] | undefined;
+}
+
+export class SpaceCadPointV1 implements ISpaceCadPointV1 {
+    x!: number;
+    y!: number;
+    z?: number;
+
+    constructor(data?: ISpaceCadPointV1) {
+        if (data) {
+            for (var property in data) {
+                if (data.hasOwnProperty(property))
+                    (this as any)[property] = (data as any)[property];
+            }
+        }
+    }
+
+    init(_data?: any) {
+        if (_data) {
+            this.x = _data["x"];
+            this.y = _data["y"];
+            this.z = _data["z"];
+        }
+    }
+
+    static fromJS(data: any): SpaceCadPointV1 {
+        data = typeof data === 'object' ? data : {};
+        let result = new SpaceCadPointV1();
+        result.init(data);
+        return result;
+    }
+
+    toJSON(data?: any) {
+        data = typeof data === 'object' ? data : {};
+        data["x"] = this.x;
+        data["y"] = this.y;
+        data["z"] = this.z;
+        return data;
+    }
+}
+
+export interface ISpaceCadPointV1 {
+    x: number;
+    y: number;
+    z?: number;
+}
+
+export class SpaceCadPreparationStatusDto implements ISpaceCadPreparationStatusDto {
+    sourceId?: string;
+    sourceState?: string | undefined;
+    fileState?: string | undefined;
+    readyForPreparation?: boolean;
+    blockingCode?: string | undefined;
+
+    constructor(data?: ISpaceCadPreparationStatusDto) {
+        if (data) {
+            for (var property in data) {
+                if (data.hasOwnProperty(property))
+                    (this as any)[property] = (data as any)[property];
+            }
+        }
+    }
+
+    init(_data?: any) {
+        if (_data) {
+            this.sourceId = _data["sourceId"];
+            this.sourceState = _data["sourceState"];
+            this.fileState = _data["fileState"];
+            this.readyForPreparation = _data["readyForPreparation"];
+            this.blockingCode = _data["blockingCode"];
+        }
+    }
+
+    static fromJS(data: any): SpaceCadPreparationStatusDto {
+        data = typeof data === 'object' ? data : {};
+        let result = new SpaceCadPreparationStatusDto();
+        result.init(data);
+        return result;
+    }
+
+    toJSON(data?: any) {
+        data = typeof data === 'object' ? data : {};
+        data["sourceId"] = this.sourceId;
+        data["sourceState"] = this.sourceState;
+        data["fileState"] = this.fileState;
+        data["readyForPreparation"] = this.readyForPreparation;
+        data["blockingCode"] = this.blockingCode;
+        return data;
+    }
+}
+
+export interface ISpaceCadPreparationStatusDto {
+    sourceId?: string;
+    sourceState?: string | undefined;
+    fileState?: string | undefined;
+    readyForPreparation?: boolean;
+    blockingCode?: string | undefined;
 }
 
 export enum SpaceCadReviewItemKind {
@@ -19656,6 +21154,627 @@ export interface ISpaceCadReviewWorkspaceV1 {
     changes?: SpaceCadChangeV1[] | undefined;
     changeSummary?: SpaceCadChangeSummaryV1;
     changesetSha256?: string | undefined;
+}
+
+export class SpaceCadSemanticAppliedMappingV1 implements ISpaceCadSemanticAppliedMappingV1 {
+    sourceKind?: SpaceCadMappingSourceKind;
+    sourceKey?: string | undefined;
+    decisionSource?: SpaceCadMappingDecisionSource;
+    ruleId?: string | undefined;
+    geometryRule?: SpaceCadGeometryRule;
+    defaultHeightMillimeters?: number | undefined;
+    defaultThicknessMillimeters?: number | undefined;
+
+    constructor(data?: ISpaceCadSemanticAppliedMappingV1) {
+        if (data) {
+            for (var property in data) {
+                if (data.hasOwnProperty(property))
+                    (this as any)[property] = (data as any)[property];
+            }
+        }
+    }
+
+    init(_data?: any) {
+        if (_data) {
+            this.sourceKind = _data["sourceKind"];
+            this.sourceKey = _data["sourceKey"];
+            this.decisionSource = _data["decisionSource"];
+            this.ruleId = _data["ruleId"];
+            this.geometryRule = _data["geometryRule"];
+            this.defaultHeightMillimeters = _data["defaultHeightMillimeters"];
+            this.defaultThicknessMillimeters = _data["defaultThicknessMillimeters"];
+        }
+    }
+
+    static fromJS(data: any): SpaceCadSemanticAppliedMappingV1 {
+        data = typeof data === 'object' ? data : {};
+        let result = new SpaceCadSemanticAppliedMappingV1();
+        result.init(data);
+        return result;
+    }
+
+    toJSON(data?: any) {
+        data = typeof data === 'object' ? data : {};
+        data["sourceKind"] = this.sourceKind;
+        data["sourceKey"] = this.sourceKey;
+        data["decisionSource"] = this.decisionSource;
+        data["ruleId"] = this.ruleId;
+        data["geometryRule"] = this.geometryRule;
+        data["defaultHeightMillimeters"] = this.defaultHeightMillimeters;
+        data["defaultThicknessMillimeters"] = this.defaultThicknessMillimeters;
+        return data;
+    }
+}
+
+export interface ISpaceCadSemanticAppliedMappingV1 {
+    sourceKind?: SpaceCadMappingSourceKind;
+    sourceKey?: string | undefined;
+    decisionSource?: SpaceCadMappingDecisionSource;
+    ruleId?: string | undefined;
+    geometryRule?: SpaceCadGeometryRule;
+    defaultHeightMillimeters?: number | undefined;
+    defaultThicknessMillimeters?: number | undefined;
+}
+
+export enum SpaceCadSemanticDisposition {
+    AutoAccepted = "AutoAccepted",
+    Candidate = "Candidate",
+    Rejected = "Rejected",
+}
+
+export enum SpaceCadSemanticDraftObjectKind {
+    Element = "Element",
+    Zone = "Zone",
+    Aisle = "Aisle",
+    Rack = "Rack",
+}
+
+export enum SpaceCadSemanticGeometryKind {
+    Point = "Point",
+    Path = "Path",
+    Polygon = "Polygon",
+    Circle = "Circle",
+    Arc = "Arc",
+    BlockInstance = "BlockInstance",
+}
+
+export class SpaceCadSemanticGeometryV1 implements ISpaceCadSemanticGeometryV1 {
+    kind?: SpaceCadSemanticGeometryKind;
+    points?: SpaceCadMillimeterPointV1[] | undefined;
+    radiusMillimeters?: number | undefined;
+    startAngleDegrees?: number | undefined;
+    endAngleDegrees?: number | undefined;
+    isClosed?: boolean;
+    transform?: SpaceCadSemanticTransformV1;
+    bounds?: SpaceCadMillimeterBoundsV1;
+
+    constructor(data?: ISpaceCadSemanticGeometryV1) {
+        if (data) {
+            for (var property in data) {
+                if (data.hasOwnProperty(property))
+                    (this as any)[property] = (data as any)[property];
+            }
+        }
+    }
+
+    init(_data?: any) {
+        if (_data) {
+            this.kind = _data["kind"];
+            if (Array.isArray(_data["points"])) {
+                this.points = [] as any;
+                for (let item of _data["points"])
+                    this.points!.push(SpaceCadMillimeterPointV1.fromJS(item));
+            }
+            this.radiusMillimeters = _data["radiusMillimeters"];
+            this.startAngleDegrees = _data["startAngleDegrees"];
+            this.endAngleDegrees = _data["endAngleDegrees"];
+            this.isClosed = _data["isClosed"];
+            this.transform = _data["transform"] ? SpaceCadSemanticTransformV1.fromJS(_data["transform"]) : undefined as any;
+            this.bounds = _data["bounds"] ? SpaceCadMillimeterBoundsV1.fromJS(_data["bounds"]) : undefined as any;
+        }
+    }
+
+    static fromJS(data: any): SpaceCadSemanticGeometryV1 {
+        data = typeof data === 'object' ? data : {};
+        let result = new SpaceCadSemanticGeometryV1();
+        result.init(data);
+        return result;
+    }
+
+    toJSON(data?: any) {
+        data = typeof data === 'object' ? data : {};
+        data["kind"] = this.kind;
+        if (Array.isArray(this.points)) {
+            data["points"] = [];
+            for (let item of this.points)
+                data["points"].push(item ? item.toJSON() : undefined as any);
+        }
+        data["radiusMillimeters"] = this.radiusMillimeters;
+        data["startAngleDegrees"] = this.startAngleDegrees;
+        data["endAngleDegrees"] = this.endAngleDegrees;
+        data["isClosed"] = this.isClosed;
+        data["transform"] = this.transform ? this.transform.toJSON() : undefined as any;
+        data["bounds"] = this.bounds ? this.bounds.toJSON() : undefined as any;
+        return data;
+    }
+}
+
+export interface ISpaceCadSemanticGeometryV1 {
+    kind?: SpaceCadSemanticGeometryKind;
+    points?: SpaceCadMillimeterPointV1[] | undefined;
+    radiusMillimeters?: number | undefined;
+    startAngleDegrees?: number | undefined;
+    endAngleDegrees?: number | undefined;
+    isClosed?: boolean;
+    transform?: SpaceCadSemanticTransformV1;
+    bounds?: SpaceCadMillimeterBoundsV1;
+}
+
+export class SpaceCadSemanticIssueV1 implements ISpaceCadSemanticIssueV1 {
+    code?: string | undefined;
+    severity?: SpaceCadIssueSeverity;
+    sourceRef?: string | undefined;
+    previewObjectId?: string | undefined;
+    sourceKind?: SpaceCadMappingSourceKind;
+    sourceKey?: string | undefined;
+    ruleId?: string | undefined;
+    detailToken?: string | undefined;
+
+    constructor(data?: ISpaceCadSemanticIssueV1) {
+        if (data) {
+            for (var property in data) {
+                if (data.hasOwnProperty(property))
+                    (this as any)[property] = (data as any)[property];
+            }
+        }
+    }
+
+    init(_data?: any) {
+        if (_data) {
+            this.code = _data["code"];
+            this.severity = _data["severity"];
+            this.sourceRef = _data["sourceRef"];
+            this.previewObjectId = _data["previewObjectId"];
+            this.sourceKind = _data["sourceKind"];
+            this.sourceKey = _data["sourceKey"];
+            this.ruleId = _data["ruleId"];
+            this.detailToken = _data["detailToken"];
+        }
+    }
+
+    static fromJS(data: any): SpaceCadSemanticIssueV1 {
+        data = typeof data === 'object' ? data : {};
+        let result = new SpaceCadSemanticIssueV1();
+        result.init(data);
+        return result;
+    }
+
+    toJSON(data?: any) {
+        data = typeof data === 'object' ? data : {};
+        data["code"] = this.code;
+        data["severity"] = this.severity;
+        data["sourceRef"] = this.sourceRef;
+        data["previewObjectId"] = this.previewObjectId;
+        data["sourceKind"] = this.sourceKind;
+        data["sourceKey"] = this.sourceKey;
+        data["ruleId"] = this.ruleId;
+        data["detailToken"] = this.detailToken;
+        return data;
+    }
+}
+
+export interface ISpaceCadSemanticIssueV1 {
+    code?: string | undefined;
+    severity?: SpaceCadIssueSeverity;
+    sourceRef?: string | undefined;
+    previewObjectId?: string | undefined;
+    sourceKind?: SpaceCadMappingSourceKind;
+    sourceKey?: string | undefined;
+    ruleId?: string | undefined;
+    detailToken?: string | undefined;
+}
+
+export class SpaceCadSemanticPreviewItemV1 implements ISpaceCadSemanticPreviewItemV1 {
+    previewObjectId?: string | undefined;
+    draftObjectKind?: SpaceCadSemanticDraftObjectKind;
+    target?: SpaceCadSemanticTarget;
+    targetSubtype?: string | undefined;
+    source?: SpaceCadSemanticSourceReferenceV1;
+    appliedMapping?: SpaceCadSemanticAppliedMappingV1;
+    geometry?: SpaceCadSemanticGeometryV1;
+    confidence?: number;
+    disposition?: SpaceCadSemanticDisposition;
+    isConfirmable?: boolean;
+    isSelected?: boolean;
+
+    constructor(data?: ISpaceCadSemanticPreviewItemV1) {
+        if (data) {
+            for (var property in data) {
+                if (data.hasOwnProperty(property))
+                    (this as any)[property] = (data as any)[property];
+            }
+        }
+    }
+
+    init(_data?: any) {
+        if (_data) {
+            this.previewObjectId = _data["previewObjectId"];
+            this.draftObjectKind = _data["draftObjectKind"];
+            this.target = _data["target"];
+            this.targetSubtype = _data["targetSubtype"];
+            this.source = _data["source"] ? SpaceCadSemanticSourceReferenceV1.fromJS(_data["source"]) : undefined as any;
+            this.appliedMapping = _data["appliedMapping"] ? SpaceCadSemanticAppliedMappingV1.fromJS(_data["appliedMapping"]) : undefined as any;
+            this.geometry = _data["geometry"] ? SpaceCadSemanticGeometryV1.fromJS(_data["geometry"]) : undefined as any;
+            this.confidence = _data["confidence"];
+            this.disposition = _data["disposition"];
+            this.isConfirmable = _data["isConfirmable"];
+            this.isSelected = _data["isSelected"];
+        }
+    }
+
+    static fromJS(data: any): SpaceCadSemanticPreviewItemV1 {
+        data = typeof data === 'object' ? data : {};
+        let result = new SpaceCadSemanticPreviewItemV1();
+        result.init(data);
+        return result;
+    }
+
+    toJSON(data?: any) {
+        data = typeof data === 'object' ? data : {};
+        data["previewObjectId"] = this.previewObjectId;
+        data["draftObjectKind"] = this.draftObjectKind;
+        data["target"] = this.target;
+        data["targetSubtype"] = this.targetSubtype;
+        data["source"] = this.source ? this.source.toJSON() : undefined as any;
+        data["appliedMapping"] = this.appliedMapping ? this.appliedMapping.toJSON() : undefined as any;
+        data["geometry"] = this.geometry ? this.geometry.toJSON() : undefined as any;
+        data["confidence"] = this.confidence;
+        data["disposition"] = this.disposition;
+        data["isConfirmable"] = this.isConfirmable;
+        data["isSelected"] = this.isSelected;
+        return data;
+    }
+}
+
+export interface ISpaceCadSemanticPreviewItemV1 {
+    previewObjectId?: string | undefined;
+    draftObjectKind?: SpaceCadSemanticDraftObjectKind;
+    target?: SpaceCadSemanticTarget;
+    targetSubtype?: string | undefined;
+    source?: SpaceCadSemanticSourceReferenceV1;
+    appliedMapping?: SpaceCadSemanticAppliedMappingV1;
+    geometry?: SpaceCadSemanticGeometryV1;
+    confidence?: number;
+    disposition?: SpaceCadSemanticDisposition;
+    isConfirmable?: boolean;
+    isSelected?: boolean;
+}
+
+export class SpaceCadSemanticPreviewSummaryV1 implements ISpaceCadSemanticPreviewSummaryV1 {
+    sourceEntityCount?: number;
+    mappedEntityCount?: number;
+    autoAcceptedCount?: number;
+    candidateCount?: number;
+    rejectedCount?: number;
+    confirmableCount?: number;
+    selectedCount?: number;
+    infoCount?: number;
+    warningCount?: number;
+    blockingCount?: number;
+
+    constructor(data?: ISpaceCadSemanticPreviewSummaryV1) {
+        if (data) {
+            for (var property in data) {
+                if (data.hasOwnProperty(property))
+                    (this as any)[property] = (data as any)[property];
+            }
+        }
+    }
+
+    init(_data?: any) {
+        if (_data) {
+            this.sourceEntityCount = _data["sourceEntityCount"];
+            this.mappedEntityCount = _data["mappedEntityCount"];
+            this.autoAcceptedCount = _data["autoAcceptedCount"];
+            this.candidateCount = _data["candidateCount"];
+            this.rejectedCount = _data["rejectedCount"];
+            this.confirmableCount = _data["confirmableCount"];
+            this.selectedCount = _data["selectedCount"];
+            this.infoCount = _data["infoCount"];
+            this.warningCount = _data["warningCount"];
+            this.blockingCount = _data["blockingCount"];
+        }
+    }
+
+    static fromJS(data: any): SpaceCadSemanticPreviewSummaryV1 {
+        data = typeof data === 'object' ? data : {};
+        let result = new SpaceCadSemanticPreviewSummaryV1();
+        result.init(data);
+        return result;
+    }
+
+    toJSON(data?: any) {
+        data = typeof data === 'object' ? data : {};
+        data["sourceEntityCount"] = this.sourceEntityCount;
+        data["mappedEntityCount"] = this.mappedEntityCount;
+        data["autoAcceptedCount"] = this.autoAcceptedCount;
+        data["candidateCount"] = this.candidateCount;
+        data["rejectedCount"] = this.rejectedCount;
+        data["confirmableCount"] = this.confirmableCount;
+        data["selectedCount"] = this.selectedCount;
+        data["infoCount"] = this.infoCount;
+        data["warningCount"] = this.warningCount;
+        data["blockingCount"] = this.blockingCount;
+        return data;
+    }
+}
+
+export interface ISpaceCadSemanticPreviewSummaryV1 {
+    sourceEntityCount?: number;
+    mappedEntityCount?: number;
+    autoAcceptedCount?: number;
+    candidateCount?: number;
+    rejectedCount?: number;
+    confirmableCount?: number;
+    selectedCount?: number;
+    infoCount?: number;
+    warningCount?: number;
+    blockingCount?: number;
+}
+
+export class SpaceCadSemanticPreviewV1 implements ISpaceCadSemanticPreviewV1 {
+    schemaVersion?: number;
+    isReadOnlyPreview?: boolean;
+    tenantId?: string;
+    floorLogicalId?: string;
+    floorCode?: string | undefined;
+    sourceSha256?: string | undefined;
+    coordinateTransformSha256?: string | undefined;
+    inventorySha256?: string | undefined;
+    profileId?: string;
+    profileVersion?: number;
+    profileDefinitionSha256?: string | undefined;
+    mappingPreviewSha256?: string | undefined;
+    items?: SpaceCadSemanticPreviewItemV1[] | undefined;
+    issues?: SpaceCadSemanticIssueV1[] | undefined;
+    summary?: SpaceCadSemanticPreviewSummaryV1;
+    readyForConfirmation?: boolean;
+    semanticPreviewSha256?: string | undefined;
+
+    constructor(data?: ISpaceCadSemanticPreviewV1) {
+        if (data) {
+            for (var property in data) {
+                if (data.hasOwnProperty(property))
+                    (this as any)[property] = (data as any)[property];
+            }
+        }
+    }
+
+    init(_data?: any) {
+        if (_data) {
+            this.schemaVersion = _data["schemaVersion"];
+            this.isReadOnlyPreview = _data["isReadOnlyPreview"];
+            this.tenantId = _data["tenantId"];
+            this.floorLogicalId = _data["floorLogicalId"];
+            this.floorCode = _data["floorCode"];
+            this.sourceSha256 = _data["sourceSha256"];
+            this.coordinateTransformSha256 = _data["coordinateTransformSha256"];
+            this.inventorySha256 = _data["inventorySha256"];
+            this.profileId = _data["profileId"];
+            this.profileVersion = _data["profileVersion"];
+            this.profileDefinitionSha256 = _data["profileDefinitionSha256"];
+            this.mappingPreviewSha256 = _data["mappingPreviewSha256"];
+            if (Array.isArray(_data["items"])) {
+                this.items = [] as any;
+                for (let item of _data["items"])
+                    this.items!.push(SpaceCadSemanticPreviewItemV1.fromJS(item));
+            }
+            if (Array.isArray(_data["issues"])) {
+                this.issues = [] as any;
+                for (let item of _data["issues"])
+                    this.issues!.push(SpaceCadSemanticIssueV1.fromJS(item));
+            }
+            this.summary = _data["summary"] ? SpaceCadSemanticPreviewSummaryV1.fromJS(_data["summary"]) : undefined as any;
+            this.readyForConfirmation = _data["readyForConfirmation"];
+            this.semanticPreviewSha256 = _data["semanticPreviewSha256"];
+        }
+    }
+
+    static fromJS(data: any): SpaceCadSemanticPreviewV1 {
+        data = typeof data === 'object' ? data : {};
+        let result = new SpaceCadSemanticPreviewV1();
+        result.init(data);
+        return result;
+    }
+
+    toJSON(data?: any) {
+        data = typeof data === 'object' ? data : {};
+        data["schemaVersion"] = this.schemaVersion;
+        data["isReadOnlyPreview"] = this.isReadOnlyPreview;
+        data["tenantId"] = this.tenantId;
+        data["floorLogicalId"] = this.floorLogicalId;
+        data["floorCode"] = this.floorCode;
+        data["sourceSha256"] = this.sourceSha256;
+        data["coordinateTransformSha256"] = this.coordinateTransformSha256;
+        data["inventorySha256"] = this.inventorySha256;
+        data["profileId"] = this.profileId;
+        data["profileVersion"] = this.profileVersion;
+        data["profileDefinitionSha256"] = this.profileDefinitionSha256;
+        data["mappingPreviewSha256"] = this.mappingPreviewSha256;
+        if (Array.isArray(this.items)) {
+            data["items"] = [];
+            for (let item of this.items)
+                data["items"].push(item ? item.toJSON() : undefined as any);
+        }
+        if (Array.isArray(this.issues)) {
+            data["issues"] = [];
+            for (let item of this.issues)
+                data["issues"].push(item ? item.toJSON() : undefined as any);
+        }
+        data["summary"] = this.summary ? this.summary.toJSON() : undefined as any;
+        data["readyForConfirmation"] = this.readyForConfirmation;
+        data["semanticPreviewSha256"] = this.semanticPreviewSha256;
+        return data;
+    }
+}
+
+export interface ISpaceCadSemanticPreviewV1 {
+    schemaVersion?: number;
+    isReadOnlyPreview?: boolean;
+    tenantId?: string;
+    floorLogicalId?: string;
+    floorCode?: string | undefined;
+    sourceSha256?: string | undefined;
+    coordinateTransformSha256?: string | undefined;
+    inventorySha256?: string | undefined;
+    profileId?: string;
+    profileVersion?: number;
+    profileDefinitionSha256?: string | undefined;
+    mappingPreviewSha256?: string | undefined;
+    items?: SpaceCadSemanticPreviewItemV1[] | undefined;
+    issues?: SpaceCadSemanticIssueV1[] | undefined;
+    summary?: SpaceCadSemanticPreviewSummaryV1;
+    readyForConfirmation?: boolean;
+    semanticPreviewSha256?: string | undefined;
+}
+
+export class SpaceCadSemanticSourceReferenceV1 implements ISpaceCadSemanticSourceReferenceV1 {
+    sourceRef?: string | undefined;
+    rawType?: string | undefined;
+    layerId?: string | undefined;
+    blockName?: string | undefined;
+    attributes?: { [key: string]: string; } | undefined;
+
+    constructor(data?: ISpaceCadSemanticSourceReferenceV1) {
+        if (data) {
+            for (var property in data) {
+                if (data.hasOwnProperty(property))
+                    (this as any)[property] = (data as any)[property];
+            }
+        }
+    }
+
+    init(_data?: any) {
+        if (_data) {
+            this.sourceRef = _data["sourceRef"];
+            this.rawType = _data["rawType"];
+            this.layerId = _data["layerId"];
+            this.blockName = _data["blockName"];
+            if (_data["attributes"]) {
+                this.attributes = {} as any;
+                for (let key in _data["attributes"]) {
+                    if (_data["attributes"].hasOwnProperty(key))
+                        (this.attributes as any)![key] = _data["attributes"][key];
+                }
+            }
+        }
+    }
+
+    static fromJS(data: any): SpaceCadSemanticSourceReferenceV1 {
+        data = typeof data === 'object' ? data : {};
+        let result = new SpaceCadSemanticSourceReferenceV1();
+        result.init(data);
+        return result;
+    }
+
+    toJSON(data?: any) {
+        data = typeof data === 'object' ? data : {};
+        data["sourceRef"] = this.sourceRef;
+        data["rawType"] = this.rawType;
+        data["layerId"] = this.layerId;
+        data["blockName"] = this.blockName;
+        if (this.attributes) {
+            data["attributes"] = {};
+            for (let key in this.attributes) {
+                if (this.attributes.hasOwnProperty(key))
+                    (data["attributes"] as any)[key] = (this.attributes as any)[key];
+            }
+        }
+        return data;
+    }
+}
+
+export interface ISpaceCadSemanticSourceReferenceV1 {
+    sourceRef?: string | undefined;
+    rawType?: string | undefined;
+    layerId?: string | undefined;
+    blockName?: string | undefined;
+    attributes?: { [key: string]: string; } | undefined;
+}
+
+export enum SpaceCadSemanticTarget {
+    Wall = "Wall",
+    Column = "Column",
+    Door = "Door",
+    Dock = "Dock",
+    Zone = "Zone",
+    Aisle = "Aisle",
+    Rack = "Rack",
+    Equipment = "Equipment",
+    VerticalCirculation = "VerticalCirculation",
+    Annotation = "Annotation",
+    Guide = "Guide",
+    RestrictedArea = "RestrictedArea",
+}
+
+export class SpaceCadSemanticTransformV1 implements ISpaceCadSemanticTransformV1 {
+    m11?: number;
+    m12?: number;
+    m21?: number;
+    m22?: number;
+    offsetX?: number;
+    offsetY?: number;
+    offsetZ?: number;
+
+    constructor(data?: ISpaceCadSemanticTransformV1) {
+        if (data) {
+            for (var property in data) {
+                if (data.hasOwnProperty(property))
+                    (this as any)[property] = (data as any)[property];
+            }
+        }
+    }
+
+    init(_data?: any) {
+        if (_data) {
+            this.m11 = _data["m11"];
+            this.m12 = _data["m12"];
+            this.m21 = _data["m21"];
+            this.m22 = _data["m22"];
+            this.offsetX = _data["offsetX"];
+            this.offsetY = _data["offsetY"];
+            this.offsetZ = _data["offsetZ"];
+        }
+    }
+
+    static fromJS(data: any): SpaceCadSemanticTransformV1 {
+        data = typeof data === 'object' ? data : {};
+        let result = new SpaceCadSemanticTransformV1();
+        result.init(data);
+        return result;
+    }
+
+    toJSON(data?: any) {
+        data = typeof data === 'object' ? data : {};
+        data["m11"] = this.m11;
+        data["m12"] = this.m12;
+        data["m21"] = this.m21;
+        data["m22"] = this.m22;
+        data["offsetX"] = this.offsetX;
+        data["offsetY"] = this.offsetY;
+        data["offsetZ"] = this.offsetZ;
+        return data;
+    }
+}
+
+export interface ISpaceCadSemanticTransformV1 {
+    m11?: number;
+    m12?: number;
+    m21?: number;
+    m22?: number;
+    offsetX?: number;
+    offsetY?: number;
+    offsetZ?: number;
 }
 
 export enum SpaceCadUnit {
@@ -32228,15 +34347,16 @@ export interface ISpaceWmsRuntimeWarehouseTaskKpiDto {
 }
 
 export class StartSpaceCadParseRequest implements IStartSpaceCadParseRequest {
-    floorLogicalId?: string;
-    confirmedUnit?: SpaceCadUnit;
-    confirmedScaleToMillimeters?: number;
-    coordinateMetadataJson?: string | undefined;
-    coordinateTransformSha256?: string | undefined;
-    mappingProfileId?: string;
-    mappingProfileVersion?: number;
-    mappingDefinitionSha256?: string | undefined;
-    mappingPreviewSha256?: string | undefined;
+    preparationId!: string;
+    floorLogicalId!: string;
+    confirmedUnit!: SpaceCadUnit;
+    confirmedScaleToMillimeters!: number;
+    coordinateMetadataJson!: string;
+    coordinateTransformSha256!: string;
+    mappingProfileId!: string;
+    mappingProfileVersion!: number;
+    mappingDefinitionSha256!: string;
+    mappingPreviewSha256!: string;
 
     constructor(data?: IStartSpaceCadParseRequest) {
         if (data) {
@@ -32249,6 +34369,7 @@ export class StartSpaceCadParseRequest implements IStartSpaceCadParseRequest {
 
     init(_data?: any) {
         if (_data) {
+            this.preparationId = _data["preparationId"];
             this.floorLogicalId = _data["floorLogicalId"];
             this.confirmedUnit = _data["confirmedUnit"];
             this.confirmedScaleToMillimeters = _data["confirmedScaleToMillimeters"];
@@ -32270,6 +34391,7 @@ export class StartSpaceCadParseRequest implements IStartSpaceCadParseRequest {
 
     toJSON(data?: any) {
         data = typeof data === 'object' ? data : {};
+        data["preparationId"] = this.preparationId;
         data["floorLogicalId"] = this.floorLogicalId;
         data["confirmedUnit"] = this.confirmedUnit;
         data["confirmedScaleToMillimeters"] = this.confirmedScaleToMillimeters;
@@ -32284,15 +34406,16 @@ export class StartSpaceCadParseRequest implements IStartSpaceCadParseRequest {
 }
 
 export interface IStartSpaceCadParseRequest {
-    floorLogicalId?: string;
-    confirmedUnit?: SpaceCadUnit;
-    confirmedScaleToMillimeters?: number;
-    coordinateMetadataJson?: string | undefined;
-    coordinateTransformSha256?: string | undefined;
-    mappingProfileId?: string;
-    mappingProfileVersion?: number;
-    mappingDefinitionSha256?: string | undefined;
-    mappingPreviewSha256?: string | undefined;
+    preparationId: string;
+    floorLogicalId: string;
+    confirmedUnit: SpaceCadUnit;
+    confirmedScaleToMillimeters: number;
+    coordinateMetadataJson: string;
+    coordinateTransformSha256: string;
+    mappingProfileId: string;
+    mappingProfileVersion: number;
+    mappingDefinitionSha256: string;
+    mappingPreviewSha256: string;
 }
 
 export class StartSpaceCadParseResponse implements IStartSpaceCadParseResponse {

@@ -63,6 +63,7 @@ import DesignScenePreview3D from '@/modules/space-design/preview3d/DesignScenePr
 import { CadIssueOverlayLayer } from '@/modules/space-design/cad-review/CadIssueOverlayLayer'
 import DesignCadIssuePanel from '@/modules/space-design/cad-review/DesignCadIssuePanel.vue'
 import DesignExcelCadMatchPanel from '@/modules/space-design/cad-review/DesignExcelCadMatchPanel.vue'
+import DesignCadStartWizard from '@/modules/space-design/cad-start/DesignCadStartWizard.vue'
 import {
   cadReviewFreshness,
   parseCadReviewWorkspace,
@@ -138,6 +139,7 @@ const designScene = ref<ISpaceDesignSceneDto | null>(null)
 const floor = ref<ISpaceSceneFloorDto | null>(null)
 const selectedObjects = ref<CanvasObjectRef[]>([])
 const cadReviewWorkspace = ref<CadReviewWorkspace | null>(null)
+const cadWizardVisible = ref(false)
 const cadReviewPanelVisible = ref(false)
 const matchPanelVisible = ref(Boolean(matchJobId.value))
 const activeCadReviewItemId = ref('')
@@ -443,6 +445,8 @@ onMounted(async () => {
   }
   if (cadSourceId.value && cadParseJobId.value) {
     void monitorCadParse()
+  } else if (cadSourceId.value) {
+    cadWizardVisible.value = true
   }
 })
 const allLocationsCoded = computed(
@@ -666,12 +670,26 @@ async function onCadFileSelected(event: Event): Promise<void> {
         cadSourceId: uploaded.source.id,
       },
     })
+    cadWizardVisible.value = true
     ElMessage.success('CAD 已上传。安全扫描完成后可按冻结映射启动解析。')
   } catch {
     ElMessage.error('CAD 上传失败，当前 Draft 未变更')
   } finally {
     uploading.value = false
   }
+}
+
+async function onCadParseStarted(jobId: string): Promise<void> {
+  cadWizardVisible.value = false
+  parseStartedAt.value = new Date()
+  parseStatus.value = 'Queued'
+  parseProgress.value = 0
+  parseError.value = ''
+  await router.replace({
+    query: { ...route.query, cadParseJobId: jobId },
+  })
+  ElMessage.success('CAD 解析已启动；当前 Draft 仍可继续编辑。')
+  void monitorCadParse()
 }
 
 async function onCadReviewArtifactSelected(event: Event): Promise<void> {
@@ -2746,6 +2764,14 @@ function tabClientInstanceId(): string {
       accept=".json,application/json"
       hidden
       @change="onAiReviewArtifactSelected"
+    />
+    <DesignCadStartWizard
+      v-if="cadWizardVisible && cadSourceId && floorLogicalId"
+      :version-id="versionId"
+      :source-id="cadSourceId"
+      :floor-logical-id="floorLogicalId"
+      @close="cadWizardVisible = false"
+      @started="onCadParseStarted"
     />
   </div>
 </template>

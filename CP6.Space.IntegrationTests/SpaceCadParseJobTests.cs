@@ -22,7 +22,7 @@ public sealed class SpaceCadParseJobTests
     public async Task Start_replays_one_job_and_keeps_source_recoverable()
     {
         await using var fixture = await CreateFixtureAsync();
-        var request = Request(fixture.Source.Sha256);
+        var request = fixture.Request;
 
         var started = await fixture.Service.StartAsync(
             fixture.Version.Id,
@@ -52,7 +52,7 @@ public sealed class SpaceCadParseJobTests
         var started = await fixture.Service.StartAsync(
             fixture.Version.Id,
             fixture.Source.Id,
-            Request(fixture.Source.Sha256),
+            fixture.Request,
             "cad-cancel-1");
 
         var cancelled = await fixture.Service.CancelAsync(
@@ -90,7 +90,7 @@ public sealed class SpaceCadParseJobTests
         var started = await fixture.Service.StartAsync(
             fixture.Version.Id,
             fixture.Source.Id,
-            Request(fixture.Source.Sha256),
+            fixture.Request,
             "cad-artifacts-1");
         var lease = await ClaimAsync(fixture, started.JobId);
         var provider = new DeterministicProvider();
@@ -130,7 +130,7 @@ public sealed class SpaceCadParseJobTests
         var started = await fixture.Service.StartAsync(
             fixture.Version.Id,
             fixture.Source.Id,
-            Request(fixture.Source.Sha256),
+            fixture.Request,
             "cad-runner-1");
         var provider = new DeterministicProvider();
         var executor = new SpaceCadParseJobStepExecutor(
@@ -197,7 +197,7 @@ public sealed class SpaceCadParseJobTests
         var started = await fixture.Service.StartAsync(
             fixture.Version.Id,
             fixture.Source.Id,
-            Request(fixture.Source.Sha256),
+            fixture.Request,
             "cad-review-workspace-1");
         var provider = new DeterministicProvider();
         var executor = new SpaceCadParseJobStepExecutor(
@@ -252,7 +252,7 @@ public sealed class SpaceCadParseJobTests
         var provider = new ReviewWorkspaceProvider(
             fixture.Execution.TenantId,
             fixture.Source.Sha256);
-        var request = provider.Request;
+        var request = await ConfirmPreparationAsync(fixture, provider.Request);
         var model = await fixture.Context.Models.SingleAsync();
         fixture.Context.FloorRevisions.Add(SpaceFloorRevision.Create(
             fixture.Execution.TenantId,
@@ -346,7 +346,7 @@ public sealed class SpaceCadParseJobTests
         var started = await fixture.Service.StartAsync(
             fixture.Version.Id,
             fixture.Source.Id,
-            Request(fixture.Source.Sha256),
+            fixture.Request,
             "cad-legacy-v1");
         var job = await fixture.Context.Jobs.SingleAsync(item => item.Id == started.JobId);
         var payload = JsonNode.Parse(job.PayloadJson)!.AsObject();
@@ -394,7 +394,7 @@ public sealed class SpaceCadParseJobTests
         var started = await fixture.Service.StartAsync(
             fixture.Version.Id,
             fixture.Source.Id,
-            provider.Request,
+            await ConfirmPreparationAsync(fixture, provider.Request),
             "cad-review-apply");
         await CompleteParseAsync(fixture, provider, started.JobId);
 
@@ -514,7 +514,7 @@ public sealed class SpaceCadParseJobTests
         var started = await fixture.Service.StartAsync(
             fixture.Version.Id,
             fixture.Source.Id,
-            provider.Request,
+            await ConfirmPreparationAsync(fixture, provider.Request),
             "cad-review-stale-apply");
         await CompleteParseAsync(fixture, provider, started.JobId);
         fixture.Context.ChangeTracker.Clear();
@@ -692,6 +692,15 @@ public sealed class SpaceCadParseJobTests
             "warehouse.dxf");
         context.AddRange(model, published, version, file, source);
         await context.SaveChangesAsync();
+        var request = Request(sourceHash);
+        var preparation = Preparation(
+            tenantId,
+            version,
+            source,
+            request);
+        context.CadParsePreparations.Add(preparation);
+        await context.SaveChangesAsync();
+        request = request with { PreparationId = preparation.Id };
         var files = new MemoryFileStore();
         files.Seed(tenantId, fileId, storageKey, sourceBytes);
         var access = new AllowAccess();
@@ -720,9 +729,49 @@ public sealed class SpaceCadParseJobTests
             clock,
             version,
             source,
+            request,
             files,
             service);
     }
+
+    private static async Task<StartSpaceCadParseRequest> ConfirmPreparationAsync(
+        Fixture fixture,
+        StartSpaceCadParseRequest request)
+    {
+        var preparation = Preparation(
+            fixture.Execution.TenantId,
+            fixture.Version,
+            fixture.Source,
+            request);
+        fixture.Context.CadParsePreparations.Add(preparation);
+        await fixture.Context.SaveChangesAsync();
+        return request with { PreparationId = preparation.Id };
+    }
+
+    private static SpaceCadParsePreparation Preparation(
+        Guid tenantId,
+        SpaceModelVersion version,
+        SpaceModelSource source,
+        StartSpaceCadParseRequest request) =>
+        SpaceCadParsePreparation.Create(
+            tenantId,
+            version.Id,
+            source.Id,
+            source.Sha256,
+            request.FloorLogicalId,
+            request.ConfirmedUnit.ToString(),
+            request.ConfirmedScaleToMillimeters,
+            request.CoordinateMetadataJson,
+            request.CoordinateTransformSha256,
+            request.MappingProfileId,
+            request.MappingProfileVersion,
+            request.MappingDefinitionSha256,
+            request.MappingPreviewSha256,
+            new string('9', 64),
+            true,
+            version.ContentRevision,
+            version.ContentHash,
+            Now.AddHours(2));
 
     private static StartSpaceCadParseRequest Request(string sourceSha256)
     {
@@ -751,6 +800,7 @@ public sealed class SpaceCadParseJobTests
             new SpaceCadBoundsV1(0, 0, 100_000, 100_000),
             transformHash);
         return new StartSpaceCadParseRequest(
+            Guid.Empty,
             floorId,
             SpaceCadUnit.Millimeter,
             1m,
@@ -922,6 +972,7 @@ public sealed class SpaceCadParseJobTests
                 mapping,
                 _semantic);
             Request = new StartSpaceCadParseRequest(
+                Guid.Empty,
                 floor.FloorLogicalId,
                 SpaceCadUnit.Millimeter,
                 1,
@@ -1099,6 +1150,7 @@ public sealed class SpaceCadParseJobTests
         FixedClock Clock,
         SpaceModelVersion Version,
         SpaceModelSource Source,
+        StartSpaceCadParseRequest Request,
         MemoryFileStore Files,
         SpaceCadParseService Service) : IAsyncDisposable
     {

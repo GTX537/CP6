@@ -1,0 +1,350 @@
+<script setup lang="ts">
+import { computed, nextTick, onBeforeUnmount, onMounted, reactive, ref } from 'vue'
+import {
+  designCadParseApi,
+  type PreviewSpaceCadPreparationResponse,
+  type SpaceCadMappingProfile,
+} from '@/api/space/designCadParse'
+
+const props = defineProps<{
+  versionId: string
+  sourceId: string
+  floorLogicalId: string
+}>()
+
+const emit = defineEmits<{
+  close: []
+  started: [jobId: string]
+}>()
+
+const scanState = ref('正在确认安全扫描…')
+const profiles = ref<SpaceCadMappingProfile[]>([])
+const preview = ref<PreviewSpaceCadPreparationResponse | null>(null)
+const busy = ref(false)
+const error = ref('')
+const confirmedConversion = ref(false)
+const confirmedMapping = ref(false)
+const dialogElement = ref<HTMLElement | null>(null)
+let disposed = false
+
+const form = reactive({
+  confirmedUnit: '',
+  sourceOriginX: 0,
+  sourceOriginY: 0,
+  floorOriginX: 0,
+  floorOriginY: 0,
+  rotationZDegrees: 0,
+  mappingProfileKey: '',
+})
+
+const selectedProfile = computed(() => {
+  const [id, version] = form.mappingProfileKey.split(':')
+  return profiles.value.find(
+    (candidate) => candidate.profileId === id && candidate.version === Number(version),
+  )
+})
+const canPreview = computed(() =>
+  Boolean(form.confirmedUnit && selectedProfile.value && props.floorLogicalId) &&
+  [
+    form.sourceOriginX,
+    form.sourceOriginY,
+    form.floorOriginX,
+    form.floorOriginY,
+    form.rotationZDegrees,
+  ].every(Number.isFinite),
+)
+const canStart = computed(() =>
+  Boolean(preview.value?.readyForParsing && preview.value.startRequest) &&
+  confirmedConversion.value && confirmedMapping.value && !busy.value,
+)
+
+onMounted(async () => {
+  await nextTick()
+  dialogElement.value?.focus()
+  try {
+    profiles.value = await designCadParseApi.listMappingProfiles(props.versionId)
+    await waitForCleanSource()
+  } catch (cause) {
+    error.value = message(cause, '无法加载 CAD 准备信息')
+  }
+})
+
+onBeforeUnmount(() => {
+  disposed = true
+})
+
+async function waitForCleanSource(): Promise<void> {
+  for (let attempt = 0; attempt < 150 && !disposed; attempt += 1) {
+    const status = await designCadParseApi.getPreparationStatus(
+      props.versionId,
+      props.sourceId,
+    )
+    scanState.value = `来源 ${status.sourceState} · 文件 ${status.fileState}`
+    if (status.blockingCode) {
+      throw new Error('安全扫描未通过；当前 Draft 未变更')
+    }
+    if (status.readyForPreparation) return
+    await delay(2_000)
+  }
+  if (!disposed) throw new Error('安全扫描等待超时，请稍后重试')
+}
+
+async function buildPreview(): Promise<void> {
+  const profile = selectedProfile.value
+  if (!profile || !canPreview.value) return
+  busy.value = true
+  error.value = ''
+  preview.value = null
+  confirmedConversion.value = false
+  confirmedMapping.value = false
+  try {
+    const status = await designCadParseApi.getPreparationStatus(
+      props.versionId,
+      props.sourceId,
+    )
+    if (!status.readyForPreparation) throw new Error('请等待安全扫描完成')
+    preview.value = await designCadParseApi.previewPreparation(
+      props.versionId,
+      props.sourceId,
+      {
+        floorLogicalId: props.floorLogicalId,
+        confirmedUnit: form.confirmedUnit,
+        sourceOriginInSourceUnits: { x: form.sourceOriginX, y: form.sourceOriginY },
+        floorOriginMillimeters: {
+          x: form.floorOriginX,
+          y: form.floorOriginY,
+          z: 0,
+        },
+        rotationZDegrees: form.rotationZDegrees,
+        mappingProfileId: profile.profileId,
+        mappingProfileVersion: profile.version,
+        layerOverrides: [],
+      },
+    )
+    if (!preview.value.readyForParsing) {
+      error.value = '预览仍有阻断项；请修正单位、坐标或映射后重新预览。'
+    }
+  } catch (cause) {
+    error.value = message(cause, 'CAD 准备预览失败；当前 Draft 未变更')
+  } finally {
+    busy.value = false
+  }
+}
+
+async function startParse(): Promise<void> {
+  if (!canStart.value || !preview.value?.startRequest) return
+  busy.value = true
+  error.value = ''
+  try {
+    const started = await designCadParseApi.start(
+      props.versionId,
+      props.sourceId,
+      preview.value.startRequest,
+    )
+    emit('started', started.jobId)
+  } catch (cause) {
+    error.value = message(cause, '解析启动失败；当前 Draft 未变更')
+  } finally {
+    busy.value = false
+  }
+}
+
+function delay(milliseconds: number) {
+  return new Promise((resolve) => window.setTimeout(resolve, milliseconds))
+}
+
+function message(cause: unknown, fallback: string): string {
+  if (cause instanceof Error && cause.message) return cause.message
+  return fallback
+}
+
+function handleDialogKeydown(event: KeyboardEvent): void {
+  if (event.key === 'Escape') {
+    event.preventDefault()
+    emit('close')
+    return
+  }
+  if (event.key !== 'Tab' || !dialogElement.value) return
+  const focusable = Array.from(
+    dialogElement.value.querySelectorAll<HTMLElement>(
+      'button:not([disabled]), input:not([disabled]), select:not([disabled]), [tabindex]:not([tabindex="-1"])',
+    ),
+  ).filter((candidate) => candidate.offsetParent !== null)
+  if (focusable.length === 0) return
+  const first = focusable[0]!
+  const last = focusable[focusable.length - 1]!
+  if (event.shiftKey && document.activeElement === first) {
+    event.preventDefault()
+    last.focus()
+  } else if (!event.shiftKey && document.activeElement === last) {
+    event.preventDefault()
+    first.focus()
+  }
+}
+</script>
+
+<template>
+  <div class="cad-wizard-backdrop" role="presentation">
+    <section
+      ref="dialogElement"
+      class="cad-wizard"
+      role="dialog"
+      aria-modal="true"
+      aria-labelledby="cad-wizard-title"
+      tabindex="-1"
+      @keydown="handleDialogKeydown"
+    >
+      <header>
+        <div>
+          <p class="eyebrow">确定性 CAD 导入</p>
+          <h2 id="cad-wizard-title">确认楼层、单位、坐标与映射</h2>
+          <p>{{ scanState }}</p>
+        </div>
+        <button type="button" class="icon-button" aria-label="关闭 CAD 向导" @click="emit('close')">×</button>
+      </header>
+
+      <div class="wizard-body">
+        <section class="step">
+          <span class="step-number">1</span>
+          <div>
+            <h3>目标楼层</h3>
+            <code>{{ floorLogicalId }}</code>
+            <p>解析结果只绑定到当前楼层；确认变更集前不会写入 Draft。</p>
+          </div>
+        </section>
+
+        <section class="step">
+          <span class="step-number">2</span>
+          <div class="fields">
+            <h3>单位与坐标</h3>
+            <label>来源单位
+              <select v-model="form.confirmedUnit" aria-label="来源单位">
+                <option value="" disabled>请选择，不自动猜测</option>
+                <option value="Millimeter">毫米</option>
+                <option value="Centimeter">厘米</option>
+                <option value="Meter">米</option>
+                <option value="Inch">英寸</option>
+                <option value="Foot">英尺</option>
+              </select>
+            </label>
+            <label>来源原点 X <input v-model.number="form.sourceOriginX" type="number" /></label>
+            <label>来源原点 Y <input v-model.number="form.sourceOriginY" type="number" /></label>
+            <label>楼层原点 X (mm) <input v-model.number="form.floorOriginX" type="number" /></label>
+            <label>楼层原点 Y (mm) <input v-model.number="form.floorOriginY" type="number" /></label>
+            <label>旋转角度
+              <input v-model.number="form.rotationZDegrees" type="number" min="-360" max="360" step="0.1" />
+            </label>
+          </div>
+        </section>
+
+        <section class="step">
+          <span class="step-number">3</span>
+          <div class="fields">
+            <h3>映射 Profile</h3>
+            <label>语义映射
+              <select v-model="form.mappingProfileKey" aria-label="映射 Profile">
+                <option value="" disabled>请选择服务器已知 Profile</option>
+                <option
+                  v-for="profile in profiles"
+                  :key="`${profile.profileId}:${profile.version}`"
+                  :value="`${profile.profileId}:${profile.version}`"
+                >{{ profile.name }} · v{{ profile.version }} · {{ profile.ruleCount }} 条规则</option>
+              </select>
+            </label>
+            <button type="button" class="primary" :disabled="!canPreview || busy" @click="buildPreview">
+              {{ busy ? '处理中…' : '生成语义预览' }}
+            </button>
+          </div>
+        </section>
+
+        <section v-if="preview" class="step preview-step">
+          <span class="step-number">4</span>
+          <div>
+            <h3>预览与显式确认</h3>
+            <div class="metrics">
+              <span>图层 {{ preview.inventorySummary?.layerCount ?? 0 }}</span>
+              <span>实体 {{ preview.inventorySummary?.entityCount ?? 0 }}</span>
+              <span>支持 {{ preview.inventorySummary?.supportedEntityCount ?? 0 }}</span>
+              <span>未支持 {{ preview.inventorySummary?.unsupportedEntityCount ?? 0 }}</span>
+              <span>映射冲突 {{ preview.mappingPreview?.summary.conflictLayerCount ?? 0 }}</span>
+              <span>低置信候选 {{ preview.semanticPreview?.summary.candidateCount ?? 0 }}</span>
+              <span class="blocking">阻断 {{ (preview.mappingPreview?.summary.blockingCount ?? 0) + (preview.semanticPreview?.summary.blockingCount ?? 0) }}</span>
+            </div>
+            <p class="analysis">
+              CAD 建议单位 {{ preview.coordinateAnalysis.suggestedUnit }}；
+              范围{{ preview.coordinateAnalysis.isSuggestedExtentPlausible ? '合理' : '需要复核' }}。
+            </p>
+            <div v-if="preview.semanticPreview?.items.length" class="semantic-list" aria-label="语义预览对象">
+              <div class="semantic-list-head"><span>来源</span><span>目标</span><span>置信度</span><span>处置</span></div>
+              <div
+                v-for="item in preview.semanticPreview.items.slice(0, 20)"
+                :key="item.previewObjectId"
+                class="semantic-row"
+              >
+                <span>{{ item.source.layerId }} · {{ item.source.sourceRef }}</span>
+                <span>{{ item.target }}</span>
+                <span>{{ Math.round(item.confidence * 100) }}%</span>
+                <span>{{ item.disposition }}</span>
+              </div>
+            </div>
+            <label class="confirmation">
+              <input v-model="confirmedConversion" type="checkbox" />
+              我已确认单位、原点、旋转和楼层转换。
+            </label>
+            <label class="confirmation">
+              <input v-model="confirmedMapping" type="checkbox" />
+              我已检查映射与语义预览；低置信和未识别对象将在审核工作区继续处理。
+            </label>
+          </div>
+        </section>
+
+        <p v-if="error" class="error" role="alert">{{ error }}</p>
+      </div>
+
+      <footer>
+        <span>准备结果绑定当前 Draft Revision，有效期由服务端控制。</span>
+        <div>
+          <button type="button" @click="emit('close')">取消</button>
+          <button type="button" class="primary" :disabled="!canStart" @click="startParse">确认并启动解析</button>
+        </div>
+      </footer>
+    </section>
+  </div>
+</template>
+
+<style scoped>
+.cad-wizard-backdrop { position:fixed; inset:0; z-index:1200; display:grid; place-items:center; padding:24px; background:rgba(2,8,18,.78); }
+.cad-wizard { width:min(920px,100%); max-height:calc(100vh - 48px); overflow:auto; border:1px solid var(--space-studio-border,#2a3950); border-radius:12px; color:var(--space-studio-text,#f4f7fb); background:#111a2b; box-shadow:0 28px 90px rgba(0,0,0,.55); }
+header,footer { display:flex; align-items:center; justify-content:space-between; gap:24px; padding:18px 22px; border-bottom:1px solid #2a3950; }
+footer { border-top:1px solid #2a3950; border-bottom:0; color:#aebbd0; font-size:14px; }
+footer div { display:flex; gap:10px; }
+h2,h3,p { margin:0; }
+h2 { margin:3px 0 5px; font-size:22px; }
+h3 { margin-bottom:10px; font-size:17px; }
+.eyebrow { color:#18c2c9; font-size:13px; font-weight:800; letter-spacing:.08em; text-transform:uppercase; }
+.icon-button { width:44px; height:44px; border:0; font-size:28px; background:transparent; }
+.wizard-body { display:grid; gap:1px; background:#2a3950; }
+.step { display:grid; grid-template-columns:44px 1fr; gap:14px; padding:18px 22px; background:#111a2b; }
+.step-number { display:grid; place-items:center; width:36px; height:36px; border:1px solid #18c2c9; border-radius:50%; color:#18c2c9; font-weight:800; }
+.fields { display:grid; grid-template-columns:repeat(2,minmax(0,1fr)); gap:12px; }
+.fields h3,.fields .primary { grid-column:1/-1; }
+label { display:grid; gap:5px; color:#c6d2e3; font-size:14px; }
+input,select,button { box-sizing:border-box; min-height:44px; border:1px solid #3b4d67; border-radius:6px; color:#f4f7fb; background:#172236; padding:8px 10px; font:inherit; }
+button { cursor:pointer; }
+button:focus-visible,input:focus-visible,select:focus-visible { outline:3px solid #8cebf0; outline-offset:2px; }
+button:disabled { cursor:not-allowed; opacity:.45; }
+.primary { border-color:#18c2c9; color:#041014; background:#18c2c9; font-weight:800; }
+.metrics { display:grid; grid-template-columns:repeat(3,minmax(0,1fr)); gap:8px; margin-bottom:14px; }
+.metrics span { padding:10px; border:1px solid #2a3950; border-radius:6px; background:#0d1626; }
+.analysis { margin:0 0 12px; color:#c6d2e3; }
+.semantic-list { max-height:220px; overflow:auto; margin-bottom:14px; border:1px solid #2a3950; border-radius:6px; }
+.semantic-list-head,.semantic-row { display:grid; grid-template-columns:minmax(220px,2fr) repeat(3,minmax(90px,1fr)); gap:8px; padding:9px 11px; }
+.semantic-list-head { position:sticky; top:0; color:#8cebf0; background:#0d1626; font-size:13px; font-weight:800; }
+.semantic-row + .semantic-row { border-top:1px solid #2a3950; }
+.blocking,.error { color:#ff8590; }
+.confirmation { display:flex; align-items:flex-start; gap:10px; margin:10px 0; font-size:16px; }
+.confirmation input { width:44px; height:44px; flex:0 0 44px; margin:0; }
+.error { padding:14px 22px; background:#321922; }
+code { color:#8cebf0; }
+@media (max-width:720px) { .fields,.metrics { grid-template-columns:1fr; } }
+</style>

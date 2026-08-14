@@ -49,6 +49,28 @@ public sealed class SpaceCadParseSqlServerTests
                 null!,
                 clock);
             var request = Request(fixture.Source.Sha256);
+            var preparation = SpaceCadParsePreparation.Create(
+                execution.TenantId,
+                fixture.Version.Id,
+                fixture.Source.Id,
+                fixture.Source.Sha256,
+                request.FloorLogicalId,
+                request.ConfirmedUnit.ToString(),
+                request.ConfirmedScaleToMillimeters,
+                request.CoordinateMetadataJson,
+                request.CoordinateTransformSha256,
+                request.MappingProfileId,
+                request.MappingProfileVersion,
+                request.MappingDefinitionSha256,
+                request.MappingPreviewSha256,
+                new string('9', 64),
+                true,
+                fixture.Version.ContentRevision,
+                fixture.Version.ContentHash,
+                Now.AddHours(2));
+            context.CadParsePreparations.Add(preparation);
+            await context.SaveChangesAsync();
+            request = request with { PreparationId = preparation.Id };
 
             var started = await service.StartAsync(
                 fixture.Version.Id,
@@ -225,6 +247,7 @@ public sealed class SpaceCadParseSqlServerTests
             new SpaceCadBoundsV1(0, 0, 100_000, 100_000),
             transformHash);
         return new StartSpaceCadParseRequest(
+            Guid.Empty,
             floorId,
             SpaceCadUnit.Millimeter,
             1m,

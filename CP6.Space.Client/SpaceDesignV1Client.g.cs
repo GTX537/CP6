@@ -198,6 +198,33 @@ namespace CP6.Space.Client
         /// <exception cref="ApiException">A server side error occurred.</exception>
         System.Threading.Tasks.Task<UploadSpaceCadSourceResponse> UploadCadSourceAsync(System.Guid versionId, string? sourceFormat, FileParameter file, System.Threading.CancellationToken cancellationToken);
 
+        /// <returns>OK</returns>
+        /// <exception cref="ApiException">A server side error occurred.</exception>
+        System.Threading.Tasks.Task<SpaceCadPreparationStatusDto> GetPreparationStatusAsync(System.Guid versionId, System.Guid sourceId);
+
+        /// <param name="cancellationToken">A cancellation token that can be used by other objects or threads to receive notice of cancellation.</param>
+        /// <returns>OK</returns>
+        /// <exception cref="ApiException">A server side error occurred.</exception>
+        System.Threading.Tasks.Task<SpaceCadPreparationStatusDto> GetPreparationStatusAsync(System.Guid versionId, System.Guid sourceId, System.Threading.CancellationToken cancellationToken);
+
+        /// <returns>OK</returns>
+        /// <exception cref="ApiException">A server side error occurred.</exception>
+        System.Threading.Tasks.Task<System.Collections.Generic.ICollection<SpaceCadMappingProfileSummaryDto>> GetMappingProfilesAsync(System.Guid versionId);
+
+        /// <param name="cancellationToken">A cancellation token that can be used by other objects or threads to receive notice of cancellation.</param>
+        /// <returns>OK</returns>
+        /// <exception cref="ApiException">A server side error occurred.</exception>
+        System.Threading.Tasks.Task<System.Collections.Generic.ICollection<SpaceCadMappingProfileSummaryDto>> GetMappingProfilesAsync(System.Guid versionId, System.Threading.CancellationToken cancellationToken);
+
+        /// <returns>OK</returns>
+        /// <exception cref="ApiException">A server side error occurred.</exception>
+        System.Threading.Tasks.Task<PreviewSpaceCadPreparationResponse> PreviewPreparationAsync(System.Guid versionId, System.Guid sourceId, PreviewSpaceCadPreparationRequest body);
+
+        /// <param name="cancellationToken">A cancellation token that can be used by other objects or threads to receive notice of cancellation.</param>
+        /// <returns>OK</returns>
+        /// <exception cref="ApiException">A server side error occurred.</exception>
+        System.Threading.Tasks.Task<PreviewSpaceCadPreparationResponse> PreviewPreparationAsync(System.Guid versionId, System.Guid sourceId, PreviewSpaceCadPreparationRequest body, System.Threading.CancellationToken cancellationToken);
+
         /// <returns>Accepted</returns>
         /// <exception cref="ApiException">A server side error occurred.</exception>
         System.Threading.Tasks.Task<StartSpaceCadParseResponse> StartParseAsync(System.Guid versionId, System.Guid sourceId, string idempotency_Key, StartSpaceCadParseRequest body);
@@ -3963,6 +3990,482 @@ namespace CP6.Space.Client
                         if (status_ == 202)
                         {
                             var objectResponse_ = await ReadObjectResponseAsync<UploadSpaceCadSourceResponse>(response_, headers_, cancellationToken).ConfigureAwait(false);
+                            if (objectResponse_.Object == null)
+                            {
+                                throw new ApiException("Response was null which was not expected.", status_, objectResponse_.Text, headers_, null);
+                            }
+                            return objectResponse_.Object;
+                        }
+                        else
+                        if (status_ == 400)
+                        {
+                            var objectResponse_ = await ReadObjectResponseAsync<SpaceDesignProblemDetails>(response_, headers_, cancellationToken).ConfigureAwait(false);
+                            if (objectResponse_.Object == null)
+                            {
+                                throw new ApiException("Response was null which was not expected.", status_, objectResponse_.Text, headers_, null);
+                            }
+                            throw new ApiException<SpaceDesignProblemDetails>("Bad Request", status_, objectResponse_.Text, headers_, objectResponse_.Object, null);
+                        }
+                        else
+                        if (status_ == 401)
+                        {
+                            var objectResponse_ = await ReadObjectResponseAsync<SpaceDesignProblemDetails>(response_, headers_, cancellationToken).ConfigureAwait(false);
+                            if (objectResponse_.Object == null)
+                            {
+                                throw new ApiException("Response was null which was not expected.", status_, objectResponse_.Text, headers_, null);
+                            }
+                            throw new ApiException<SpaceDesignProblemDetails>("Unauthorized", status_, objectResponse_.Text, headers_, objectResponse_.Object, null);
+                        }
+                        else
+                        if (status_ == 403)
+                        {
+                            var objectResponse_ = await ReadObjectResponseAsync<SpaceDesignProblemDetails>(response_, headers_, cancellationToken).ConfigureAwait(false);
+                            if (objectResponse_.Object == null)
+                            {
+                                throw new ApiException("Response was null which was not expected.", status_, objectResponse_.Text, headers_, null);
+                            }
+                            throw new ApiException<SpaceDesignProblemDetails>("Forbidden", status_, objectResponse_.Text, headers_, objectResponse_.Object, null);
+                        }
+                        else
+                        if (status_ == 404)
+                        {
+                            var objectResponse_ = await ReadObjectResponseAsync<SpaceDesignProblemDetails>(response_, headers_, cancellationToken).ConfigureAwait(false);
+                            if (objectResponse_.Object == null)
+                            {
+                                throw new ApiException("Response was null which was not expected.", status_, objectResponse_.Text, headers_, null);
+                            }
+                            throw new ApiException<SpaceDesignProblemDetails>("Not Found", status_, objectResponse_.Text, headers_, objectResponse_.Object, null);
+                        }
+                        else
+                        if (status_ == 409)
+                        {
+                            var objectResponse_ = await ReadObjectResponseAsync<SpaceDesignProblemDetails>(response_, headers_, cancellationToken).ConfigureAwait(false);
+                            if (objectResponse_.Object == null)
+                            {
+                                throw new ApiException("Response was null which was not expected.", status_, objectResponse_.Text, headers_, null);
+                            }
+                            throw new ApiException<SpaceDesignProblemDetails>("Conflict", status_, objectResponse_.Text, headers_, objectResponse_.Object, null);
+                        }
+                        else
+                        if (status_ == 422)
+                        {
+                            var objectResponse_ = await ReadObjectResponseAsync<SpaceDesignProblemDetails>(response_, headers_, cancellationToken).ConfigureAwait(false);
+                            if (objectResponse_.Object == null)
+                            {
+                                throw new ApiException("Response was null which was not expected.", status_, objectResponse_.Text, headers_, null);
+                            }
+                            throw new ApiException<SpaceDesignProblemDetails>("Unprocessable Content", status_, objectResponse_.Text, headers_, objectResponse_.Object, null);
+                        }
+                        else
+                        if (status_ == 500)
+                        {
+                            var objectResponse_ = await ReadObjectResponseAsync<SpaceDesignProblemDetails>(response_, headers_, cancellationToken).ConfigureAwait(false);
+                            if (objectResponse_.Object == null)
+                            {
+                                throw new ApiException("Response was null which was not expected.", status_, objectResponse_.Text, headers_, null);
+                            }
+                            throw new ApiException<SpaceDesignProblemDetails>("Internal Server Error", status_, objectResponse_.Text, headers_, objectResponse_.Object, null);
+                        }
+                        else
+                        {
+                            var responseData_ = response_.Content == null ? null : await ReadAsStringAsync(response_.Content, cancellationToken).ConfigureAwait(false);
+                            throw new ApiException("The HTTP status code of the response was not expected (" + status_ + ").", status_, responseData_, headers_, null);
+                        }
+                    }
+                    finally
+                    {
+                        if (disposeResponse_)
+                            response_.Dispose();
+                    }
+                }
+            }
+            finally
+            {
+                if (disposeClient_)
+                    client_.Dispose();
+            }
+        }
+
+        /// <returns>OK</returns>
+        /// <exception cref="ApiException">A server side error occurred.</exception>
+        public virtual System.Threading.Tasks.Task<SpaceCadPreparationStatusDto> GetPreparationStatusAsync(System.Guid versionId, System.Guid sourceId)
+        {
+            return GetPreparationStatusAsync(versionId, sourceId, System.Threading.CancellationToken.None);
+        }
+
+        /// <param name="cancellationToken">A cancellation token that can be used by other objects or threads to receive notice of cancellation.</param>
+        /// <returns>OK</returns>
+        /// <exception cref="ApiException">A server side error occurred.</exception>
+        public virtual async System.Threading.Tasks.Task<SpaceCadPreparationStatusDto> GetPreparationStatusAsync(System.Guid versionId, System.Guid sourceId, System.Threading.CancellationToken cancellationToken)
+        {
+            if (versionId == null)
+                throw new System.ArgumentNullException("versionId");
+
+            if (sourceId == null)
+                throw new System.ArgumentNullException("sourceId");
+
+            var client_ = _httpClient;
+            var disposeClient_ = false;
+            try
+            {
+                using (var request_ = new System.Net.Http.HttpRequestMessage())
+                {
+                    request_.Method = new System.Net.Http.HttpMethod("GET");
+                    request_.Headers.Accept.Add(System.Net.Http.Headers.MediaTypeWithQualityHeaderValue.Parse("application/json"));
+
+                    var urlBuilder_ = new System.Text.StringBuilder();
+
+                    // Operation Path: "api/space/design/v1/versions/{versionId}/sources/{sourceId}/cad-preparations/status"
+                    urlBuilder_.Append("api/space/design/v1/versions/");
+                    urlBuilder_.Append(System.Uri.EscapeDataString(ConvertToString(versionId, System.Globalization.CultureInfo.InvariantCulture)));
+                    urlBuilder_.Append("/sources/");
+                    urlBuilder_.Append(System.Uri.EscapeDataString(ConvertToString(sourceId, System.Globalization.CultureInfo.InvariantCulture)));
+                    urlBuilder_.Append("/cad-preparations/status");
+
+                    PrepareRequest(client_, request_, urlBuilder_);
+
+                    var url_ = urlBuilder_.ToString();
+                    request_.RequestUri = new System.Uri(url_, System.UriKind.RelativeOrAbsolute);
+
+                    PrepareRequest(client_, request_, url_);
+
+                    var response_ = await client_.SendAsync(request_, System.Net.Http.HttpCompletionOption.ResponseHeadersRead, cancellationToken).ConfigureAwait(false);
+                    var disposeResponse_ = true;
+                    try
+                    {
+                        var headers_ = new System.Collections.Generic.Dictionary<string, System.Collections.Generic.IEnumerable<string>>();
+                        foreach (var item_ in response_.Headers)
+                            headers_[item_.Key] = item_.Value;
+                        if (response_.Content != null && response_.Content.Headers != null)
+                        {
+                            foreach (var item_ in response_.Content.Headers)
+                                headers_[item_.Key] = item_.Value;
+                        }
+
+                        ProcessResponse(client_, response_);
+
+                        var status_ = (int)response_.StatusCode;
+                        if (status_ == 200)
+                        {
+                            var objectResponse_ = await ReadObjectResponseAsync<SpaceCadPreparationStatusDto>(response_, headers_, cancellationToken).ConfigureAwait(false);
+                            if (objectResponse_.Object == null)
+                            {
+                                throw new ApiException("Response was null which was not expected.", status_, objectResponse_.Text, headers_, null);
+                            }
+                            return objectResponse_.Object;
+                        }
+                        else
+                        if (status_ == 400)
+                        {
+                            var objectResponse_ = await ReadObjectResponseAsync<SpaceDesignProblemDetails>(response_, headers_, cancellationToken).ConfigureAwait(false);
+                            if (objectResponse_.Object == null)
+                            {
+                                throw new ApiException("Response was null which was not expected.", status_, objectResponse_.Text, headers_, null);
+                            }
+                            throw new ApiException<SpaceDesignProblemDetails>("Bad Request", status_, objectResponse_.Text, headers_, objectResponse_.Object, null);
+                        }
+                        else
+                        if (status_ == 401)
+                        {
+                            var objectResponse_ = await ReadObjectResponseAsync<SpaceDesignProblemDetails>(response_, headers_, cancellationToken).ConfigureAwait(false);
+                            if (objectResponse_.Object == null)
+                            {
+                                throw new ApiException("Response was null which was not expected.", status_, objectResponse_.Text, headers_, null);
+                            }
+                            throw new ApiException<SpaceDesignProblemDetails>("Unauthorized", status_, objectResponse_.Text, headers_, objectResponse_.Object, null);
+                        }
+                        else
+                        if (status_ == 403)
+                        {
+                            var objectResponse_ = await ReadObjectResponseAsync<SpaceDesignProblemDetails>(response_, headers_, cancellationToken).ConfigureAwait(false);
+                            if (objectResponse_.Object == null)
+                            {
+                                throw new ApiException("Response was null which was not expected.", status_, objectResponse_.Text, headers_, null);
+                            }
+                            throw new ApiException<SpaceDesignProblemDetails>("Forbidden", status_, objectResponse_.Text, headers_, objectResponse_.Object, null);
+                        }
+                        else
+                        if (status_ == 404)
+                        {
+                            var objectResponse_ = await ReadObjectResponseAsync<SpaceDesignProblemDetails>(response_, headers_, cancellationToken).ConfigureAwait(false);
+                            if (objectResponse_.Object == null)
+                            {
+                                throw new ApiException("Response was null which was not expected.", status_, objectResponse_.Text, headers_, null);
+                            }
+                            throw new ApiException<SpaceDesignProblemDetails>("Not Found", status_, objectResponse_.Text, headers_, objectResponse_.Object, null);
+                        }
+                        else
+                        if (status_ == 409)
+                        {
+                            var objectResponse_ = await ReadObjectResponseAsync<SpaceDesignProblemDetails>(response_, headers_, cancellationToken).ConfigureAwait(false);
+                            if (objectResponse_.Object == null)
+                            {
+                                throw new ApiException("Response was null which was not expected.", status_, objectResponse_.Text, headers_, null);
+                            }
+                            throw new ApiException<SpaceDesignProblemDetails>("Conflict", status_, objectResponse_.Text, headers_, objectResponse_.Object, null);
+                        }
+                        else
+                        if (status_ == 422)
+                        {
+                            var objectResponse_ = await ReadObjectResponseAsync<SpaceDesignProblemDetails>(response_, headers_, cancellationToken).ConfigureAwait(false);
+                            if (objectResponse_.Object == null)
+                            {
+                                throw new ApiException("Response was null which was not expected.", status_, objectResponse_.Text, headers_, null);
+                            }
+                            throw new ApiException<SpaceDesignProblemDetails>("Unprocessable Content", status_, objectResponse_.Text, headers_, objectResponse_.Object, null);
+                        }
+                        else
+                        if (status_ == 500)
+                        {
+                            var objectResponse_ = await ReadObjectResponseAsync<SpaceDesignProblemDetails>(response_, headers_, cancellationToken).ConfigureAwait(false);
+                            if (objectResponse_.Object == null)
+                            {
+                                throw new ApiException("Response was null which was not expected.", status_, objectResponse_.Text, headers_, null);
+                            }
+                            throw new ApiException<SpaceDesignProblemDetails>("Internal Server Error", status_, objectResponse_.Text, headers_, objectResponse_.Object, null);
+                        }
+                        else
+                        {
+                            var responseData_ = response_.Content == null ? null : await ReadAsStringAsync(response_.Content, cancellationToken).ConfigureAwait(false);
+                            throw new ApiException("The HTTP status code of the response was not expected (" + status_ + ").", status_, responseData_, headers_, null);
+                        }
+                    }
+                    finally
+                    {
+                        if (disposeResponse_)
+                            response_.Dispose();
+                    }
+                }
+            }
+            finally
+            {
+                if (disposeClient_)
+                    client_.Dispose();
+            }
+        }
+
+        /// <returns>OK</returns>
+        /// <exception cref="ApiException">A server side error occurred.</exception>
+        public virtual System.Threading.Tasks.Task<System.Collections.Generic.ICollection<SpaceCadMappingProfileSummaryDto>> GetMappingProfilesAsync(System.Guid versionId)
+        {
+            return GetMappingProfilesAsync(versionId, System.Threading.CancellationToken.None);
+        }
+
+        /// <param name="cancellationToken">A cancellation token that can be used by other objects or threads to receive notice of cancellation.</param>
+        /// <returns>OK</returns>
+        /// <exception cref="ApiException">A server side error occurred.</exception>
+        public virtual async System.Threading.Tasks.Task<System.Collections.Generic.ICollection<SpaceCadMappingProfileSummaryDto>> GetMappingProfilesAsync(System.Guid versionId, System.Threading.CancellationToken cancellationToken)
+        {
+            if (versionId == null)
+                throw new System.ArgumentNullException("versionId");
+
+            var client_ = _httpClient;
+            var disposeClient_ = false;
+            try
+            {
+                using (var request_ = new System.Net.Http.HttpRequestMessage())
+                {
+                    request_.Method = new System.Net.Http.HttpMethod("GET");
+                    request_.Headers.Accept.Add(System.Net.Http.Headers.MediaTypeWithQualityHeaderValue.Parse("application/json"));
+
+                    var urlBuilder_ = new System.Text.StringBuilder();
+
+                    // Operation Path: "api/space/design/v1/versions/{versionId}/cad-mapping-profiles"
+                    urlBuilder_.Append("api/space/design/v1/versions/");
+                    urlBuilder_.Append(System.Uri.EscapeDataString(ConvertToString(versionId, System.Globalization.CultureInfo.InvariantCulture)));
+                    urlBuilder_.Append("/cad-mapping-profiles");
+
+                    PrepareRequest(client_, request_, urlBuilder_);
+
+                    var url_ = urlBuilder_.ToString();
+                    request_.RequestUri = new System.Uri(url_, System.UriKind.RelativeOrAbsolute);
+
+                    PrepareRequest(client_, request_, url_);
+
+                    var response_ = await client_.SendAsync(request_, System.Net.Http.HttpCompletionOption.ResponseHeadersRead, cancellationToken).ConfigureAwait(false);
+                    var disposeResponse_ = true;
+                    try
+                    {
+                        var headers_ = new System.Collections.Generic.Dictionary<string, System.Collections.Generic.IEnumerable<string>>();
+                        foreach (var item_ in response_.Headers)
+                            headers_[item_.Key] = item_.Value;
+                        if (response_.Content != null && response_.Content.Headers != null)
+                        {
+                            foreach (var item_ in response_.Content.Headers)
+                                headers_[item_.Key] = item_.Value;
+                        }
+
+                        ProcessResponse(client_, response_);
+
+                        var status_ = (int)response_.StatusCode;
+                        if (status_ == 200)
+                        {
+                            var objectResponse_ = await ReadObjectResponseAsync<System.Collections.Generic.ICollection<SpaceCadMappingProfileSummaryDto>>(response_, headers_, cancellationToken).ConfigureAwait(false);
+                            if (objectResponse_.Object == null)
+                            {
+                                throw new ApiException("Response was null which was not expected.", status_, objectResponse_.Text, headers_, null);
+                            }
+                            return objectResponse_.Object;
+                        }
+                        else
+                        if (status_ == 400)
+                        {
+                            var objectResponse_ = await ReadObjectResponseAsync<SpaceDesignProblemDetails>(response_, headers_, cancellationToken).ConfigureAwait(false);
+                            if (objectResponse_.Object == null)
+                            {
+                                throw new ApiException("Response was null which was not expected.", status_, objectResponse_.Text, headers_, null);
+                            }
+                            throw new ApiException<SpaceDesignProblemDetails>("Bad Request", status_, objectResponse_.Text, headers_, objectResponse_.Object, null);
+                        }
+                        else
+                        if (status_ == 401)
+                        {
+                            var objectResponse_ = await ReadObjectResponseAsync<SpaceDesignProblemDetails>(response_, headers_, cancellationToken).ConfigureAwait(false);
+                            if (objectResponse_.Object == null)
+                            {
+                                throw new ApiException("Response was null which was not expected.", status_, objectResponse_.Text, headers_, null);
+                            }
+                            throw new ApiException<SpaceDesignProblemDetails>("Unauthorized", status_, objectResponse_.Text, headers_, objectResponse_.Object, null);
+                        }
+                        else
+                        if (status_ == 403)
+                        {
+                            var objectResponse_ = await ReadObjectResponseAsync<SpaceDesignProblemDetails>(response_, headers_, cancellationToken).ConfigureAwait(false);
+                            if (objectResponse_.Object == null)
+                            {
+                                throw new ApiException("Response was null which was not expected.", status_, objectResponse_.Text, headers_, null);
+                            }
+                            throw new ApiException<SpaceDesignProblemDetails>("Forbidden", status_, objectResponse_.Text, headers_, objectResponse_.Object, null);
+                        }
+                        else
+                        if (status_ == 404)
+                        {
+                            var objectResponse_ = await ReadObjectResponseAsync<SpaceDesignProblemDetails>(response_, headers_, cancellationToken).ConfigureAwait(false);
+                            if (objectResponse_.Object == null)
+                            {
+                                throw new ApiException("Response was null which was not expected.", status_, objectResponse_.Text, headers_, null);
+                            }
+                            throw new ApiException<SpaceDesignProblemDetails>("Not Found", status_, objectResponse_.Text, headers_, objectResponse_.Object, null);
+                        }
+                        else
+                        if (status_ == 409)
+                        {
+                            var objectResponse_ = await ReadObjectResponseAsync<SpaceDesignProblemDetails>(response_, headers_, cancellationToken).ConfigureAwait(false);
+                            if (objectResponse_.Object == null)
+                            {
+                                throw new ApiException("Response was null which was not expected.", status_, objectResponse_.Text, headers_, null);
+                            }
+                            throw new ApiException<SpaceDesignProblemDetails>("Conflict", status_, objectResponse_.Text, headers_, objectResponse_.Object, null);
+                        }
+                        else
+                        if (status_ == 422)
+                        {
+                            var objectResponse_ = await ReadObjectResponseAsync<SpaceDesignProblemDetails>(response_, headers_, cancellationToken).ConfigureAwait(false);
+                            if (objectResponse_.Object == null)
+                            {
+                                throw new ApiException("Response was null which was not expected.", status_, objectResponse_.Text, headers_, null);
+                            }
+                            throw new ApiException<SpaceDesignProblemDetails>("Unprocessable Content", status_, objectResponse_.Text, headers_, objectResponse_.Object, null);
+                        }
+                        else
+                        if (status_ == 500)
+                        {
+                            var objectResponse_ = await ReadObjectResponseAsync<SpaceDesignProblemDetails>(response_, headers_, cancellationToken).ConfigureAwait(false);
+                            if (objectResponse_.Object == null)
+                            {
+                                throw new ApiException("Response was null which was not expected.", status_, objectResponse_.Text, headers_, null);
+                            }
+                            throw new ApiException<SpaceDesignProblemDetails>("Internal Server Error", status_, objectResponse_.Text, headers_, objectResponse_.Object, null);
+                        }
+                        else
+                        {
+                            var responseData_ = response_.Content == null ? null : await ReadAsStringAsync(response_.Content, cancellationToken).ConfigureAwait(false);
+                            throw new ApiException("The HTTP status code of the response was not expected (" + status_ + ").", status_, responseData_, headers_, null);
+                        }
+                    }
+                    finally
+                    {
+                        if (disposeResponse_)
+                            response_.Dispose();
+                    }
+                }
+            }
+            finally
+            {
+                if (disposeClient_)
+                    client_.Dispose();
+            }
+        }
+
+        /// <returns>OK</returns>
+        /// <exception cref="ApiException">A server side error occurred.</exception>
+        public virtual System.Threading.Tasks.Task<PreviewSpaceCadPreparationResponse> PreviewPreparationAsync(System.Guid versionId, System.Guid sourceId, PreviewSpaceCadPreparationRequest body)
+        {
+            return PreviewPreparationAsync(versionId, sourceId, body, System.Threading.CancellationToken.None);
+        }
+
+        /// <param name="cancellationToken">A cancellation token that can be used by other objects or threads to receive notice of cancellation.</param>
+        /// <returns>OK</returns>
+        /// <exception cref="ApiException">A server side error occurred.</exception>
+        public virtual async System.Threading.Tasks.Task<PreviewSpaceCadPreparationResponse> PreviewPreparationAsync(System.Guid versionId, System.Guid sourceId, PreviewSpaceCadPreparationRequest body, System.Threading.CancellationToken cancellationToken)
+        {
+            if (versionId == null)
+                throw new System.ArgumentNullException("versionId");
+
+            if (sourceId == null)
+                throw new System.ArgumentNullException("sourceId");
+
+            if (body == null)
+                throw new System.ArgumentNullException("body");
+
+            var client_ = _httpClient;
+            var disposeClient_ = false;
+            try
+            {
+                using (var request_ = new System.Net.Http.HttpRequestMessage())
+                {
+                    var json_ = System.Text.Json.JsonSerializer.SerializeToUtf8Bytes(body, JsonSerializerSettings);
+                    var content_ = new System.Net.Http.ByteArrayContent(json_);
+                    content_.Headers.ContentType = System.Net.Http.Headers.MediaTypeHeaderValue.Parse("application/json");
+                    request_.Content = content_;
+                    request_.Method = new System.Net.Http.HttpMethod("POST");
+                    request_.Headers.Accept.Add(System.Net.Http.Headers.MediaTypeWithQualityHeaderValue.Parse("application/json"));
+
+                    var urlBuilder_ = new System.Text.StringBuilder();
+
+                    // Operation Path: "api/space/design/v1/versions/{versionId}/sources/{sourceId}/cad-preparations:preview"
+                    urlBuilder_.Append("api/space/design/v1/versions/");
+                    urlBuilder_.Append(System.Uri.EscapeDataString(ConvertToString(versionId, System.Globalization.CultureInfo.InvariantCulture)));
+                    urlBuilder_.Append("/sources/");
+                    urlBuilder_.Append(System.Uri.EscapeDataString(ConvertToString(sourceId, System.Globalization.CultureInfo.InvariantCulture)));
+                    urlBuilder_.Append("/cad-preparations:preview");
+
+                    PrepareRequest(client_, request_, urlBuilder_);
+
+                    var url_ = urlBuilder_.ToString();
+                    request_.RequestUri = new System.Uri(url_, System.UriKind.RelativeOrAbsolute);
+
+                    PrepareRequest(client_, request_, url_);
+
+                    var response_ = await client_.SendAsync(request_, System.Net.Http.HttpCompletionOption.ResponseHeadersRead, cancellationToken).ConfigureAwait(false);
+                    var disposeResponse_ = true;
+                    try
+                    {
+                        var headers_ = new System.Collections.Generic.Dictionary<string, System.Collections.Generic.IEnumerable<string>>();
+                        foreach (var item_ in response_.Headers)
+                            headers_[item_.Key] = item_.Value;
+                        if (response_.Content != null && response_.Content.Headers != null)
+                        {
+                            foreach (var item_ in response_.Content.Headers)
+                                headers_[item_.Key] = item_.Value;
+                        }
+
+                        ProcessResponse(client_, response_);
+
+                        var status_ = (int)response_.StatusCode;
+                        if (status_ == 200)
+                        {
+                            var objectResponse_ = await ReadObjectResponseAsync<PreviewSpaceCadPreparationResponse>(response_, headers_, cancellationToken).ConfigureAwait(false);
                             if (objectResponse_.Object == null)
                             {
                                 throw new ApiException("Response was null which was not expected.", status_, objectResponse_.Text, headers_, null);
@@ -23624,6 +24127,85 @@ namespace CP6.Space.Client
     }
 
     [System.CodeDom.Compiler.GeneratedCode("NJsonSchema", "14.7.1.0 (NJsonSchema v11.6.1.0 (Newtonsoft.Json v13.0.0.0))")]
+    public partial class PreviewSpaceCadPreparationRequest
+    {
+
+        [System.Text.Json.Serialization.JsonPropertyName("floorLogicalId")]
+        [System.ComponentModel.DataAnnotations.Required(AllowEmptyStrings = true)]
+        public System.Guid FloorLogicalId { get; set; } = default!;
+
+        [System.Text.Json.Serialization.JsonPropertyName("confirmedUnit")]
+        [System.ComponentModel.DataAnnotations.Required(AllowEmptyStrings = true)]
+        [System.Text.Json.Serialization.JsonConverter(typeof(System.Text.Json.Serialization.JsonStringEnumConverter<SpaceCadUnit>))]
+        public SpaceCadUnit ConfirmedUnit { get; set; } = default!;
+
+        [System.Text.Json.Serialization.JsonPropertyName("sourceOriginInSourceUnits")]
+        [System.ComponentModel.DataAnnotations.Required]
+        public SpaceCadPointV1 SourceOriginInSourceUnits { get; set; } = new SpaceCadPointV1();
+
+        [System.Text.Json.Serialization.JsonPropertyName("floorOriginMillimeters")]
+        [System.ComponentModel.DataAnnotations.Required]
+        public SpaceCadMillimeterPointV1 FloorOriginMillimeters { get; set; } = new SpaceCadMillimeterPointV1();
+
+        [System.Text.Json.Serialization.JsonPropertyName("rotationZDegrees")]
+        public double RotationZDegrees { get; set; } = default!;
+
+        [System.Text.Json.Serialization.JsonPropertyName("mappingProfileId")]
+        [System.ComponentModel.DataAnnotations.Required(AllowEmptyStrings = true)]
+        public System.Guid MappingProfileId { get; set; } = default!;
+
+        [System.Text.Json.Serialization.JsonPropertyName("mappingProfileVersion")]
+        public int MappingProfileVersion { get; set; } = default!;
+
+        [System.Text.Json.Serialization.JsonPropertyName("layerOverrides")]
+        [System.ComponentModel.DataAnnotations.Required]
+        public System.Collections.Generic.ICollection<SpaceCadLayerMappingOverrideV1> LayerOverrides { get; set; } = new System.Collections.ObjectModel.Collection<SpaceCadLayerMappingOverrideV1>();
+
+    }
+
+    [System.CodeDom.Compiler.GeneratedCode("NJsonSchema", "14.7.1.0 (NJsonSchema v11.6.1.0 (Newtonsoft.Json v13.0.0.0))")]
+    public partial class PreviewSpaceCadPreparationResponse
+    {
+
+        [System.Text.Json.Serialization.JsonPropertyName("preparationId")]
+        public System.Guid? PreparationId { get; set; } = default!;
+
+        [System.Text.Json.Serialization.JsonPropertyName("expiresAtUtc")]
+        public System.DateTimeOffset? ExpiresAtUtc { get; set; } = default!;
+
+        [System.Text.Json.Serialization.JsonPropertyName("baseContentRevision")]
+        public long BaseContentRevision { get; set; } = default!;
+
+        [System.Text.Json.Serialization.JsonPropertyName("baseContentHash")]
+        public string? BaseContentHash { get; set; } = default!;
+
+        [System.Text.Json.Serialization.JsonPropertyName("readyForParsing")]
+        public bool ReadyForParsing { get; set; } = default!;
+
+        [System.Text.Json.Serialization.JsonPropertyName("coordinateAnalysis")]
+        public SpaceCadCoordinateAnalysisV1 CoordinateAnalysis { get; set; } = default!;
+
+        [System.Text.Json.Serialization.JsonPropertyName("coordinateMetadata")]
+        public SpaceCadCoordinateMetadataV1 CoordinateMetadata { get; set; } = default!;
+
+        [System.Text.Json.Serialization.JsonPropertyName("inventorySummary")]
+        public SpaceCadInventorySummaryV1 InventorySummary { get; set; } = default!;
+
+        [System.Text.Json.Serialization.JsonPropertyName("mappingProfile")]
+        public SpaceCadMappingProfileSummaryDto MappingProfile { get; set; } = default!;
+
+        [System.Text.Json.Serialization.JsonPropertyName("mappingPreview")]
+        public SpaceCadMappingPreviewV1 MappingPreview { get; set; } = default!;
+
+        [System.Text.Json.Serialization.JsonPropertyName("semanticPreview")]
+        public SpaceCadSemanticPreviewV1 SemanticPreview { get; set; } = default!;
+
+        [System.Text.Json.Serialization.JsonPropertyName("startRequest")]
+        public StartSpaceCadParseRequest StartRequest { get; set; } = default!;
+
+    }
+
+    [System.CodeDom.Compiler.GeneratedCode("NJsonSchema", "14.7.1.0 (NJsonSchema v11.6.1.0 (Newtonsoft.Json v13.0.0.0))")]
     public partial class PreviewSpaceExcelMappingRequest
     {
 
@@ -24693,6 +25275,51 @@ namespace CP6.Space.Client
     }
 
     [System.CodeDom.Compiler.GeneratedCode("NJsonSchema", "14.7.1.0 (NJsonSchema v11.6.1.0 (Newtonsoft.Json v13.0.0.0))")]
+    public partial class SpaceCadAffineTransformV1
+    {
+
+        [System.Text.Json.Serialization.JsonPropertyName("m11")]
+        public double M11 { get; set; } = default!;
+
+        [System.Text.Json.Serialization.JsonPropertyName("m12")]
+        public double M12 { get; set; } = default!;
+
+        [System.Text.Json.Serialization.JsonPropertyName("m21")]
+        public double M21 { get; set; } = default!;
+
+        [System.Text.Json.Serialization.JsonPropertyName("m22")]
+        public double M22 { get; set; } = default!;
+
+        [System.Text.Json.Serialization.JsonPropertyName("offsetX")]
+        public double OffsetX { get; set; } = default!;
+
+        [System.Text.Json.Serialization.JsonPropertyName("offsetY")]
+        public double OffsetY { get; set; } = default!;
+
+        [System.Text.Json.Serialization.JsonPropertyName("offsetZ")]
+        public double OffsetZ { get; set; } = default!;
+
+    }
+
+    [System.CodeDom.Compiler.GeneratedCode("NJsonSchema", "14.7.1.0 (NJsonSchema v11.6.1.0 (Newtonsoft.Json v13.0.0.0))")]
+    public partial class SpaceCadBoundsV1
+    {
+
+        [System.Text.Json.Serialization.JsonPropertyName("minX")]
+        public double MinX { get; set; } = default!;
+
+        [System.Text.Json.Serialization.JsonPropertyName("minY")]
+        public double MinY { get; set; } = default!;
+
+        [System.Text.Json.Serialization.JsonPropertyName("maxX")]
+        public double MaxX { get; set; } = default!;
+
+        [System.Text.Json.Serialization.JsonPropertyName("maxY")]
+        public double MaxY { get; set; } = default!;
+
+    }
+
+    [System.CodeDom.Compiler.GeneratedCode("NJsonSchema", "14.7.1.0 (NJsonSchema v11.6.1.0 (Newtonsoft.Json v13.0.0.0))")]
     public enum SpaceCadChangeKind
     {
 
@@ -24816,6 +25443,112 @@ namespace CP6.Space.Client
     }
 
     [System.CodeDom.Compiler.GeneratedCode("NJsonSchema", "14.7.1.0 (NJsonSchema v11.6.1.0 (Newtonsoft.Json v13.0.0.0))")]
+    public partial class SpaceCadConversionIssueV1
+    {
+
+        [System.Text.Json.Serialization.JsonPropertyName("code")]
+        public string? Code { get; set; } = default!;
+
+        [System.Text.Json.Serialization.JsonPropertyName("severity")]
+        [System.Text.Json.Serialization.JsonConverter(typeof(System.Text.Json.Serialization.JsonStringEnumConverter<SpaceCadIssueSeverity>))]
+        public SpaceCadIssueSeverity Severity { get; set; } = default!;
+
+        [System.Text.Json.Serialization.JsonPropertyName("sourceRef")]
+        public string? SourceRef { get; set; } = default!;
+
+        [System.Text.Json.Serialization.JsonPropertyName("detailToken")]
+        public string? DetailToken { get; set; } = default!;
+
+    }
+
+    [System.CodeDom.Compiler.GeneratedCode("NJsonSchema", "14.7.1.0 (NJsonSchema v11.6.1.0 (Newtonsoft.Json v13.0.0.0))")]
+    public partial class SpaceCadCoordinateAnalysisV1
+    {
+
+        [System.Text.Json.Serialization.JsonPropertyName("schemaVersion")]
+        public int SchemaVersion { get; set; } = default!;
+
+        [System.Text.Json.Serialization.JsonPropertyName("sourceSha256")]
+        public string? SourceSha256 { get; set; } = default!;
+
+        [System.Text.Json.Serialization.JsonPropertyName("suggestedUnit")]
+        [System.Text.Json.Serialization.JsonConverter(typeof(System.Text.Json.Serialization.JsonStringEnumConverter<SpaceCadUnit>))]
+        public SpaceCadUnit SuggestedUnit { get; set; } = default!;
+
+        [System.Text.Json.Serialization.JsonPropertyName("suggestedScaleToMillimeters")]
+        public double? SuggestedScaleToMillimeters { get; set; } = default!;
+
+        [System.Text.Json.Serialization.JsonPropertyName("sourceBounds")]
+        public SpaceCadBoundsV1 SourceBounds { get; set; } = default!;
+
+        [System.Text.Json.Serialization.JsonPropertyName("suggestedBoundsMillimeters")]
+        public SpaceCadBoundsV1 SuggestedBoundsMillimeters { get; set; } = default!;
+
+        [System.Text.Json.Serialization.JsonPropertyName("isSuggestedExtentPlausible")]
+        public bool IsSuggestedExtentPlausible { get; set; } = default!;
+
+        [System.Text.Json.Serialization.JsonPropertyName("requiresUnitConfirmation")]
+        public bool RequiresUnitConfirmation { get; set; } = default!;
+
+        [System.Text.Json.Serialization.JsonPropertyName("issues")]
+        public System.Collections.Generic.ICollection<SpaceCadConversionIssueV1>? Issues { get; set; } = default!;
+
+    }
+
+    [System.CodeDom.Compiler.GeneratedCode("NJsonSchema", "14.7.1.0 (NJsonSchema v11.6.1.0 (Newtonsoft.Json v13.0.0.0))")]
+    public partial class SpaceCadCoordinateMetadataV1
+    {
+
+        [System.Text.Json.Serialization.JsonPropertyName("schemaVersion")]
+        public int SchemaVersion { get; set; } = default!;
+
+        [System.Text.Json.Serialization.JsonPropertyName("sourceSha256")]
+        public string? SourceSha256 { get; set; } = default!;
+
+        [System.Text.Json.Serialization.JsonPropertyName("unitConfirmed")]
+        public bool UnitConfirmed { get; set; } = default!;
+
+        [System.Text.Json.Serialization.JsonPropertyName("detectedUnit")]
+        [System.Text.Json.Serialization.JsonConverter(typeof(System.Text.Json.Serialization.JsonStringEnumConverter<SpaceCadUnit>))]
+        public SpaceCadUnit DetectedUnit { get; set; } = default!;
+
+        [System.Text.Json.Serialization.JsonPropertyName("detectedScaleToMillimeters")]
+        public double? DetectedScaleToMillimeters { get; set; } = default!;
+
+        [System.Text.Json.Serialization.JsonPropertyName("confirmedUnit")]
+        [System.Text.Json.Serialization.JsonConverter(typeof(System.Text.Json.Serialization.JsonStringEnumConverter<SpaceCadUnit>))]
+        public SpaceCadUnit ConfirmedUnit { get; set; } = default!;
+
+        [System.Text.Json.Serialization.JsonPropertyName("confirmedScaleToMillimeters")]
+        public double ConfirmedScaleToMillimeters { get; set; } = default!;
+
+        [System.Text.Json.Serialization.JsonPropertyName("sourceOriginInSourceUnits")]
+        public SpaceCadPointV1 SourceOriginInSourceUnits { get; set; } = default!;
+
+        [System.Text.Json.Serialization.JsonPropertyName("floorOriginMillimeters")]
+        public SpaceCadMillimeterPointV1 FloorOriginMillimeters { get; set; } = default!;
+
+        [System.Text.Json.Serialization.JsonPropertyName("rotationZDegrees")]
+        public double RotationZDegrees { get; set; } = default!;
+
+        [System.Text.Json.Serialization.JsonPropertyName("targetFloor")]
+        public SpaceCadFloorAssignmentV1 TargetFloor { get; set; } = default!;
+
+        [System.Text.Json.Serialization.JsonPropertyName("sourceToFloorTransform")]
+        public SpaceCadAffineTransformV1 SourceToFloorTransform { get; set; } = default!;
+
+        [System.Text.Json.Serialization.JsonPropertyName("sourceBounds")]
+        public SpaceCadBoundsV1 SourceBounds { get; set; } = default!;
+
+        [System.Text.Json.Serialization.JsonPropertyName("preparedBounds")]
+        public SpaceCadBoundsV1 PreparedBounds { get; set; } = default!;
+
+        [System.Text.Json.Serialization.JsonPropertyName("transformSha256")]
+        public string? TransformSha256 { get; set; } = default!;
+
+    }
+
+    [System.CodeDom.Compiler.GeneratedCode("NJsonSchema", "14.7.1.0 (NJsonSchema v11.6.1.0 (Newtonsoft.Json v13.0.0.0))")]
     public enum SpaceCadDiagnosticLocationKind
     {
 
@@ -24871,6 +25604,87 @@ namespace CP6.Space.Client
     }
 
     [System.CodeDom.Compiler.GeneratedCode("NJsonSchema", "14.7.1.0 (NJsonSchema v11.6.1.0 (Newtonsoft.Json v13.0.0.0))")]
+    public partial class SpaceCadFloorAssignmentV1
+    {
+
+        [System.Text.Json.Serialization.JsonPropertyName("floorLogicalId")]
+        public System.Guid FloorLogicalId { get; set; } = default!;
+
+        [System.Text.Json.Serialization.JsonPropertyName("floorCode")]
+        public string? FloorCode { get; set; } = default!;
+
+        [System.Text.Json.Serialization.JsonPropertyName("level")]
+        public int Level { get; set; } = default!;
+
+        [System.Text.Json.Serialization.JsonPropertyName("elevationMillimeters")]
+        public int ElevationMillimeters { get; set; } = default!;
+
+        [System.Text.Json.Serialization.JsonPropertyName("coordinateSystem")]
+        public string? CoordinateSystem { get; set; } = default!;
+
+        [System.Text.Json.Serialization.JsonPropertyName("boundaryBounds")]
+        public SpaceCadBoundsV1 BoundaryBounds { get; set; } = default!;
+
+    }
+
+    [System.CodeDom.Compiler.GeneratedCode("NJsonSchema", "14.7.1.0 (NJsonSchema v11.6.1.0 (Newtonsoft.Json v13.0.0.0))")]
+    public enum SpaceCadGeometryRule
+    {
+
+        [System.Runtime.Serialization.EnumMember(Value = @"DirectGeometry")]
+        DirectGeometry = 0,
+
+        [System.Runtime.Serialization.EnumMember(Value = @"Centerline")]
+        Centerline = 1,
+
+        [System.Runtime.Serialization.EnumMember(Value = @"ClosedBoundary")]
+        ClosedBoundary = 2,
+
+        [System.Runtime.Serialization.EnumMember(Value = @"BlockFootprint")]
+        BlockFootprint = 3,
+
+        [System.Runtime.Serialization.EnumMember(Value = @"InsertionPoint")]
+        InsertionPoint = 4,
+
+    }
+
+    [System.CodeDom.Compiler.GeneratedCode("NJsonSchema", "14.7.1.0 (NJsonSchema v11.6.1.0 (Newtonsoft.Json v13.0.0.0))")]
+    public partial class SpaceCadInventorySummaryV1
+    {
+
+        [System.Text.Json.Serialization.JsonPropertyName("layerCount")]
+        public long LayerCount { get; set; } = default!;
+
+        [System.Text.Json.Serialization.JsonPropertyName("emptyLayerCount")]
+        public long EmptyLayerCount { get; set; } = default!;
+
+        [System.Text.Json.Serialization.JsonPropertyName("blockCount")]
+        public long BlockCount { get; set; } = default!;
+
+        [System.Text.Json.Serialization.JsonPropertyName("undefinedBlockCount")]
+        public long UndefinedBlockCount { get; set; } = default!;
+
+        [System.Text.Json.Serialization.JsonPropertyName("blockReferenceCount")]
+        public long BlockReferenceCount { get; set; } = default!;
+
+        [System.Text.Json.Serialization.JsonPropertyName("attributedBlockReferenceCount")]
+        public long AttributedBlockReferenceCount { get; set; } = default!;
+
+        [System.Text.Json.Serialization.JsonPropertyName("entityCount")]
+        public long EntityCount { get; set; } = default!;
+
+        [System.Text.Json.Serialization.JsonPropertyName("supportedEntityCount")]
+        public long SupportedEntityCount { get; set; } = default!;
+
+        [System.Text.Json.Serialization.JsonPropertyName("unsupportedEntityCount")]
+        public long UnsupportedEntityCount { get; set; } = default!;
+
+        [System.Text.Json.Serialization.JsonPropertyName("bounds")]
+        public SpaceCadBoundsV1 Bounds { get; set; } = default!;
+
+    }
+
+    [System.CodeDom.Compiler.GeneratedCode("NJsonSchema", "14.7.1.0 (NJsonSchema v11.6.1.0 (Newtonsoft.Json v13.0.0.0))")]
     public enum SpaceCadIssueSeverity
     {
 
@@ -24882,6 +25696,286 @@ namespace CP6.Space.Client
 
         [System.Runtime.Serialization.EnumMember(Value = @"Blocking")]
         Blocking = 2,
+
+    }
+
+    [System.CodeDom.Compiler.GeneratedCode("NJsonSchema", "14.7.1.0 (NJsonSchema v11.6.1.0 (Newtonsoft.Json v13.0.0.0))")]
+    public partial class SpaceCadLayerMappingOverrideV1
+    {
+
+        [System.Text.Json.Serialization.JsonPropertyName("layerId")]
+        [System.ComponentModel.DataAnnotations.Required(AllowEmptyStrings = true)]
+        public string LayerId { get; set; } = default!;
+
+        [System.Text.Json.Serialization.JsonPropertyName("ignore")]
+        public bool Ignore { get; set; } = default!;
+
+        [System.Text.Json.Serialization.JsonPropertyName("target")]
+        [System.Text.Json.Serialization.JsonConverter(typeof(System.Text.Json.Serialization.JsonStringEnumConverter<SpaceCadSemanticTarget>))]
+        public SpaceCadSemanticTarget Target { get; set; } = default!;
+
+        [System.Text.Json.Serialization.JsonPropertyName("targetSubtype")]
+        public string? TargetSubtype { get; set; } = default!;
+
+        [System.Text.Json.Serialization.JsonPropertyName("geometryRule")]
+        [System.Text.Json.Serialization.JsonConverter(typeof(System.Text.Json.Serialization.JsonStringEnumConverter<SpaceCadGeometryRule>))]
+        public SpaceCadGeometryRule GeometryRule { get; set; } = default!;
+
+        [System.Text.Json.Serialization.JsonPropertyName("defaultHeightMillimeters")]
+        public double? DefaultHeightMillimeters { get; set; } = default!;
+
+        [System.Text.Json.Serialization.JsonPropertyName("defaultThicknessMillimeters")]
+        public double? DefaultThicknessMillimeters { get; set; } = default!;
+
+        [System.Text.Json.Serialization.JsonPropertyName("confidenceWeight")]
+        public double? ConfidenceWeight { get; set; } = default!;
+
+    }
+
+    [System.CodeDom.Compiler.GeneratedCode("NJsonSchema", "14.7.1.0 (NJsonSchema v11.6.1.0 (Newtonsoft.Json v13.0.0.0))")]
+    public enum SpaceCadMappingDecisionSource
+    {
+
+        [System.Runtime.Serialization.EnumMember(Value = @"ProfileRule")]
+        ProfileRule = 0,
+
+        [System.Runtime.Serialization.EnumMember(Value = @"LayerOverride")]
+        LayerOverride = 1,
+
+        [System.Runtime.Serialization.EnumMember(Value = @"None")]
+        None = 2,
+
+    }
+
+    [System.CodeDom.Compiler.GeneratedCode("NJsonSchema", "14.7.1.0 (NJsonSchema v11.6.1.0 (Newtonsoft.Json v13.0.0.0))")]
+    public enum SpaceCadMappingDecisionStatus
+    {
+
+        [System.Runtime.Serialization.EnumMember(Value = @"Mapped")]
+        Mapped = 0,
+
+        [System.Runtime.Serialization.EnumMember(Value = @"Unmapped")]
+        Unmapped = 1,
+
+        [System.Runtime.Serialization.EnumMember(Value = @"Ignored")]
+        Ignored = 2,
+
+        [System.Runtime.Serialization.EnumMember(Value = @"Conflict")]
+        Conflict = 3,
+
+    }
+
+    [System.CodeDom.Compiler.GeneratedCode("NJsonSchema", "14.7.1.0 (NJsonSchema v11.6.1.0 (Newtonsoft.Json v13.0.0.0))")]
+    public partial class SpaceCadMappingDecisionV1
+    {
+
+        [System.Text.Json.Serialization.JsonPropertyName("sourceKind")]
+        [System.Text.Json.Serialization.JsonConverter(typeof(System.Text.Json.Serialization.JsonStringEnumConverter<SpaceCadMappingSourceKind>))]
+        public SpaceCadMappingSourceKind SourceKind { get; set; } = default!;
+
+        [System.Text.Json.Serialization.JsonPropertyName("sourceKey")]
+        public string? SourceKey { get; set; } = default!;
+
+        [System.Text.Json.Serialization.JsonPropertyName("layerId")]
+        public string? LayerId { get; set; } = default!;
+
+        [System.Text.Json.Serialization.JsonPropertyName("objectCount")]
+        public long ObjectCount { get; set; } = default!;
+
+        [System.Text.Json.Serialization.JsonPropertyName("status")]
+        [System.Text.Json.Serialization.JsonConverter(typeof(System.Text.Json.Serialization.JsonStringEnumConverter<SpaceCadMappingDecisionStatus>))]
+        public SpaceCadMappingDecisionStatus Status { get; set; } = default!;
+
+        [System.Text.Json.Serialization.JsonPropertyName("decisionSource")]
+        [System.Text.Json.Serialization.JsonConverter(typeof(System.Text.Json.Serialization.JsonStringEnumConverter<SpaceCadMappingDecisionSource>))]
+        public SpaceCadMappingDecisionSource DecisionSource { get; set; } = default!;
+
+        [System.Text.Json.Serialization.JsonPropertyName("ruleId")]
+        public string? RuleId { get; set; } = default!;
+
+        [System.Text.Json.Serialization.JsonPropertyName("target")]
+        [System.Text.Json.Serialization.JsonConverter(typeof(System.Text.Json.Serialization.JsonStringEnumConverter<SpaceCadSemanticTarget>))]
+        public SpaceCadSemanticTarget Target { get; set; } = default!;
+
+        [System.Text.Json.Serialization.JsonPropertyName("targetSubtype")]
+        public string? TargetSubtype { get; set; } = default!;
+
+        [System.Text.Json.Serialization.JsonPropertyName("geometryRule")]
+        [System.Text.Json.Serialization.JsonConverter(typeof(System.Text.Json.Serialization.JsonStringEnumConverter<SpaceCadGeometryRule>))]
+        public SpaceCadGeometryRule GeometryRule { get; set; } = default!;
+
+        [System.Text.Json.Serialization.JsonPropertyName("defaultHeightMillimeters")]
+        public double? DefaultHeightMillimeters { get; set; } = default!;
+
+        [System.Text.Json.Serialization.JsonPropertyName("defaultThicknessMillimeters")]
+        public double? DefaultThicknessMillimeters { get; set; } = default!;
+
+        [System.Text.Json.Serialization.JsonPropertyName("confidenceWeight")]
+        public double? ConfidenceWeight { get; set; } = default!;
+
+    }
+
+    [System.CodeDom.Compiler.GeneratedCode("NJsonSchema", "14.7.1.0 (NJsonSchema v11.6.1.0 (Newtonsoft.Json v13.0.0.0))")]
+    public partial class SpaceCadMappingIssueV1
+    {
+
+        [System.Text.Json.Serialization.JsonPropertyName("code")]
+        public string? Code { get; set; } = default!;
+
+        [System.Text.Json.Serialization.JsonPropertyName("severity")]
+        [System.Text.Json.Serialization.JsonConverter(typeof(System.Text.Json.Serialization.JsonStringEnumConverter<SpaceCadIssueSeverity>))]
+        public SpaceCadIssueSeverity Severity { get; set; } = default!;
+
+        [System.Text.Json.Serialization.JsonPropertyName("sourceKind")]
+        [System.Text.Json.Serialization.JsonConverter(typeof(System.Text.Json.Serialization.JsonStringEnumConverter<SpaceCadMappingSourceKind>))]
+        public SpaceCadMappingSourceKind SourceKind { get; set; } = default!;
+
+        [System.Text.Json.Serialization.JsonPropertyName("sourceKey")]
+        public string? SourceKey { get; set; } = default!;
+
+        [System.Text.Json.Serialization.JsonPropertyName("ruleId")]
+        public string? RuleId { get; set; } = default!;
+
+        [System.Text.Json.Serialization.JsonPropertyName("detailToken")]
+        public string? DetailToken { get; set; } = default!;
+
+    }
+
+    [System.CodeDom.Compiler.GeneratedCode("NJsonSchema", "14.7.1.0 (NJsonSchema v11.6.1.0 (Newtonsoft.Json v13.0.0.0))")]
+    public partial class SpaceCadMappingPreviewSummaryV1
+    {
+
+        [System.Text.Json.Serialization.JsonPropertyName("layerCount")]
+        public long LayerCount { get; set; } = default!;
+
+        [System.Text.Json.Serialization.JsonPropertyName("mappedLayerCount")]
+        public long MappedLayerCount { get; set; } = default!;
+
+        [System.Text.Json.Serialization.JsonPropertyName("unmappedLayerCount")]
+        public long UnmappedLayerCount { get; set; } = default!;
+
+        [System.Text.Json.Serialization.JsonPropertyName("ignoredLayerCount")]
+        public long IgnoredLayerCount { get; set; } = default!;
+
+        [System.Text.Json.Serialization.JsonPropertyName("conflictLayerCount")]
+        public long ConflictLayerCount { get; set; } = default!;
+
+        [System.Text.Json.Serialization.JsonPropertyName("blockCount")]
+        public long BlockCount { get; set; } = default!;
+
+        [System.Text.Json.Serialization.JsonPropertyName("mappedBlockCount")]
+        public long MappedBlockCount { get; set; } = default!;
+
+        [System.Text.Json.Serialization.JsonPropertyName("unmappedBlockCount")]
+        public long UnmappedBlockCount { get; set; } = default!;
+
+        [System.Text.Json.Serialization.JsonPropertyName("conflictBlockCount")]
+        public long ConflictBlockCount { get; set; } = default!;
+
+        [System.Text.Json.Serialization.JsonPropertyName("mappedLayerEntityCount")]
+        public long MappedLayerEntityCount { get; set; } = default!;
+
+        [System.Text.Json.Serialization.JsonPropertyName("mappedBlockReferenceCount")]
+        public long MappedBlockReferenceCount { get; set; } = default!;
+
+        [System.Text.Json.Serialization.JsonPropertyName("infoCount")]
+        public long InfoCount { get; set; } = default!;
+
+        [System.Text.Json.Serialization.JsonPropertyName("warningCount")]
+        public long WarningCount { get; set; } = default!;
+
+        [System.Text.Json.Serialization.JsonPropertyName("blockingCount")]
+        public long BlockingCount { get; set; } = default!;
+
+    }
+
+    [System.CodeDom.Compiler.GeneratedCode("NJsonSchema", "14.7.1.0 (NJsonSchema v11.6.1.0 (Newtonsoft.Json v13.0.0.0))")]
+    public partial class SpaceCadMappingPreviewV1
+    {
+
+        [System.Text.Json.Serialization.JsonPropertyName("schemaVersion")]
+        public int SchemaVersion { get; set; } = default!;
+
+        [System.Text.Json.Serialization.JsonPropertyName("tenantId")]
+        public System.Guid TenantId { get; set; } = default!;
+
+        [System.Text.Json.Serialization.JsonPropertyName("profileId")]
+        public System.Guid ProfileId { get; set; } = default!;
+
+        [System.Text.Json.Serialization.JsonPropertyName("profileVersion")]
+        public int ProfileVersion { get; set; } = default!;
+
+        [System.Text.Json.Serialization.JsonPropertyName("profileDefinitionSha256")]
+        public string? ProfileDefinitionSha256 { get; set; } = default!;
+
+        [System.Text.Json.Serialization.JsonPropertyName("sourceSha256")]
+        public string? SourceSha256 { get; set; } = default!;
+
+        [System.Text.Json.Serialization.JsonPropertyName("inventorySha256")]
+        public string? InventorySha256 { get; set; } = default!;
+
+        [System.Text.Json.Serialization.JsonPropertyName("sourceStructureSha256")]
+        public string? SourceStructureSha256 { get; set; } = default!;
+
+        [System.Text.Json.Serialization.JsonPropertyName("reuseKeySha256")]
+        public string? ReuseKeySha256 { get; set; } = default!;
+
+        [System.Text.Json.Serialization.JsonPropertyName("layerOverrides")]
+        public System.Collections.Generic.ICollection<SpaceCadLayerMappingOverrideV1>? LayerOverrides { get; set; } = default!;
+
+        [System.Text.Json.Serialization.JsonPropertyName("decisions")]
+        public System.Collections.Generic.ICollection<SpaceCadMappingDecisionV1>? Decisions { get; set; } = default!;
+
+        [System.Text.Json.Serialization.JsonPropertyName("issues")]
+        public System.Collections.Generic.ICollection<SpaceCadMappingIssueV1>? Issues { get; set; } = default!;
+
+        [System.Text.Json.Serialization.JsonPropertyName("summary")]
+        public SpaceCadMappingPreviewSummaryV1 Summary { get; set; } = default!;
+
+        [System.Text.Json.Serialization.JsonPropertyName("readyForSemanticParsing")]
+        public bool ReadyForSemanticParsing { get; set; } = default!;
+
+        [System.Text.Json.Serialization.JsonPropertyName("previewSha256")]
+        public string? PreviewSha256 { get; set; } = default!;
+
+    }
+
+    [System.CodeDom.Compiler.GeneratedCode("NJsonSchema", "14.7.1.0 (NJsonSchema v11.6.1.0 (Newtonsoft.Json v13.0.0.0))")]
+    public partial class SpaceCadMappingProfileSummaryDto
+    {
+
+        [System.Text.Json.Serialization.JsonPropertyName("profileId")]
+        public System.Guid ProfileId { get; set; } = default!;
+
+        [System.Text.Json.Serialization.JsonPropertyName("version")]
+        public int Version { get; set; } = default!;
+
+        [System.Text.Json.Serialization.JsonPropertyName("name")]
+        public string? Name { get; set; } = default!;
+
+        [System.Text.Json.Serialization.JsonPropertyName("scope")]
+        public string? Scope { get; set; } = default!;
+
+        [System.Text.Json.Serialization.JsonPropertyName("isEnabled")]
+        public bool IsEnabled { get; set; } = default!;
+
+        [System.Text.Json.Serialization.JsonPropertyName("definitionSha256")]
+        public string? DefinitionSha256 { get; set; } = default!;
+
+        [System.Text.Json.Serialization.JsonPropertyName("ruleCount")]
+        public int RuleCount { get; set; } = default!;
+
+    }
+
+    [System.CodeDom.Compiler.GeneratedCode("NJsonSchema", "14.7.1.0 (NJsonSchema v11.6.1.0 (Newtonsoft.Json v13.0.0.0))")]
+    public enum SpaceCadMappingSourceKind
+    {
+
+        [System.Runtime.Serialization.EnumMember(Value = @"Layer")]
+        Layer = 0,
+
+        [System.Runtime.Serialization.EnumMember(Value = @"Block")]
+        Block = 1,
 
     }
 
@@ -25017,6 +26111,42 @@ namespace CP6.Space.Client
 
         [System.Text.Json.Serialization.JsonPropertyName("artifacts")]
         public System.Collections.Generic.ICollection<SpaceCadParseArtifactDto>? Artifacts { get; set; } = default!;
+
+    }
+
+    [System.CodeDom.Compiler.GeneratedCode("NJsonSchema", "14.7.1.0 (NJsonSchema v11.6.1.0 (Newtonsoft.Json v13.0.0.0))")]
+    public partial class SpaceCadPointV1
+    {
+
+        [System.Text.Json.Serialization.JsonPropertyName("x")]
+        public double X { get; set; } = default!;
+
+        [System.Text.Json.Serialization.JsonPropertyName("y")]
+        public double Y { get; set; } = default!;
+
+        [System.Text.Json.Serialization.JsonPropertyName("z")]
+        public double Z { get; set; } = default!;
+
+    }
+
+    [System.CodeDom.Compiler.GeneratedCode("NJsonSchema", "14.7.1.0 (NJsonSchema v11.6.1.0 (Newtonsoft.Json v13.0.0.0))")]
+    public partial class SpaceCadPreparationStatusDto
+    {
+
+        [System.Text.Json.Serialization.JsonPropertyName("sourceId")]
+        public System.Guid SourceId { get; set; } = default!;
+
+        [System.Text.Json.Serialization.JsonPropertyName("sourceState")]
+        public string? SourceState { get; set; } = default!;
+
+        [System.Text.Json.Serialization.JsonPropertyName("fileState")]
+        public string? FileState { get; set; } = default!;
+
+        [System.Text.Json.Serialization.JsonPropertyName("readyForPreparation")]
+        public bool ReadyForPreparation { get; set; } = default!;
+
+        [System.Text.Json.Serialization.JsonPropertyName("blockingCode")]
+        public string? BlockingCode { get; set; } = default!;
 
     }
 
@@ -25225,6 +26355,381 @@ namespace CP6.Space.Client
 
         [System.Text.Json.Serialization.JsonPropertyName("changesetSha256")]
         public string? ChangesetSha256 { get; set; } = default!;
+
+    }
+
+    [System.CodeDom.Compiler.GeneratedCode("NJsonSchema", "14.7.1.0 (NJsonSchema v11.6.1.0 (Newtonsoft.Json v13.0.0.0))")]
+    public partial class SpaceCadSemanticAppliedMappingV1
+    {
+
+        [System.Text.Json.Serialization.JsonPropertyName("sourceKind")]
+        [System.Text.Json.Serialization.JsonConverter(typeof(System.Text.Json.Serialization.JsonStringEnumConverter<SpaceCadMappingSourceKind>))]
+        public SpaceCadMappingSourceKind SourceKind { get; set; } = default!;
+
+        [System.Text.Json.Serialization.JsonPropertyName("sourceKey")]
+        public string? SourceKey { get; set; } = default!;
+
+        [System.Text.Json.Serialization.JsonPropertyName("decisionSource")]
+        [System.Text.Json.Serialization.JsonConverter(typeof(System.Text.Json.Serialization.JsonStringEnumConverter<SpaceCadMappingDecisionSource>))]
+        public SpaceCadMappingDecisionSource DecisionSource { get; set; } = default!;
+
+        [System.Text.Json.Serialization.JsonPropertyName("ruleId")]
+        public string? RuleId { get; set; } = default!;
+
+        [System.Text.Json.Serialization.JsonPropertyName("geometryRule")]
+        [System.Text.Json.Serialization.JsonConverter(typeof(System.Text.Json.Serialization.JsonStringEnumConverter<SpaceCadGeometryRule>))]
+        public SpaceCadGeometryRule GeometryRule { get; set; } = default!;
+
+        [System.Text.Json.Serialization.JsonPropertyName("defaultHeightMillimeters")]
+        public int? DefaultHeightMillimeters { get; set; } = default!;
+
+        [System.Text.Json.Serialization.JsonPropertyName("defaultThicknessMillimeters")]
+        public int? DefaultThicknessMillimeters { get; set; } = default!;
+
+    }
+
+    [System.CodeDom.Compiler.GeneratedCode("NJsonSchema", "14.7.1.0 (NJsonSchema v11.6.1.0 (Newtonsoft.Json v13.0.0.0))")]
+    public enum SpaceCadSemanticDisposition
+    {
+
+        [System.Runtime.Serialization.EnumMember(Value = @"AutoAccepted")]
+        AutoAccepted = 0,
+
+        [System.Runtime.Serialization.EnumMember(Value = @"Candidate")]
+        Candidate = 1,
+
+        [System.Runtime.Serialization.EnumMember(Value = @"Rejected")]
+        Rejected = 2,
+
+    }
+
+    [System.CodeDom.Compiler.GeneratedCode("NJsonSchema", "14.7.1.0 (NJsonSchema v11.6.1.0 (Newtonsoft.Json v13.0.0.0))")]
+    public enum SpaceCadSemanticDraftObjectKind
+    {
+
+        [System.Runtime.Serialization.EnumMember(Value = @"Element")]
+        Element = 0,
+
+        [System.Runtime.Serialization.EnumMember(Value = @"Zone")]
+        Zone = 1,
+
+        [System.Runtime.Serialization.EnumMember(Value = @"Aisle")]
+        Aisle = 2,
+
+        [System.Runtime.Serialization.EnumMember(Value = @"Rack")]
+        Rack = 3,
+
+    }
+
+    [System.CodeDom.Compiler.GeneratedCode("NJsonSchema", "14.7.1.0 (NJsonSchema v11.6.1.0 (Newtonsoft.Json v13.0.0.0))")]
+    public enum SpaceCadSemanticGeometryKind
+    {
+
+        [System.Runtime.Serialization.EnumMember(Value = @"Point")]
+        Point = 0,
+
+        [System.Runtime.Serialization.EnumMember(Value = @"Path")]
+        Path = 1,
+
+        [System.Runtime.Serialization.EnumMember(Value = @"Polygon")]
+        Polygon = 2,
+
+        [System.Runtime.Serialization.EnumMember(Value = @"Circle")]
+        Circle = 3,
+
+        [System.Runtime.Serialization.EnumMember(Value = @"Arc")]
+        Arc = 4,
+
+        [System.Runtime.Serialization.EnumMember(Value = @"BlockInstance")]
+        BlockInstance = 5,
+
+    }
+
+    [System.CodeDom.Compiler.GeneratedCode("NJsonSchema", "14.7.1.0 (NJsonSchema v11.6.1.0 (Newtonsoft.Json v13.0.0.0))")]
+    public partial class SpaceCadSemanticGeometryV1
+    {
+
+        [System.Text.Json.Serialization.JsonPropertyName("kind")]
+        [System.Text.Json.Serialization.JsonConverter(typeof(System.Text.Json.Serialization.JsonStringEnumConverter<SpaceCadSemanticGeometryKind>))]
+        public SpaceCadSemanticGeometryKind Kind { get; set; } = default!;
+
+        [System.Text.Json.Serialization.JsonPropertyName("points")]
+        public System.Collections.Generic.ICollection<SpaceCadMillimeterPointV1>? Points { get; set; } = default!;
+
+        [System.Text.Json.Serialization.JsonPropertyName("radiusMillimeters")]
+        public int? RadiusMillimeters { get; set; } = default!;
+
+        [System.Text.Json.Serialization.JsonPropertyName("startAngleDegrees")]
+        public double? StartAngleDegrees { get; set; } = default!;
+
+        [System.Text.Json.Serialization.JsonPropertyName("endAngleDegrees")]
+        public double? EndAngleDegrees { get; set; } = default!;
+
+        [System.Text.Json.Serialization.JsonPropertyName("isClosed")]
+        public bool IsClosed { get; set; } = default!;
+
+        [System.Text.Json.Serialization.JsonPropertyName("transform")]
+        public SpaceCadSemanticTransformV1 Transform { get; set; } = default!;
+
+        [System.Text.Json.Serialization.JsonPropertyName("bounds")]
+        public SpaceCadMillimeterBoundsV1 Bounds { get; set; } = default!;
+
+    }
+
+    [System.CodeDom.Compiler.GeneratedCode("NJsonSchema", "14.7.1.0 (NJsonSchema v11.6.1.0 (Newtonsoft.Json v13.0.0.0))")]
+    public partial class SpaceCadSemanticIssueV1
+    {
+
+        [System.Text.Json.Serialization.JsonPropertyName("code")]
+        public string? Code { get; set; } = default!;
+
+        [System.Text.Json.Serialization.JsonPropertyName("severity")]
+        [System.Text.Json.Serialization.JsonConverter(typeof(System.Text.Json.Serialization.JsonStringEnumConverter<SpaceCadIssueSeverity>))]
+        public SpaceCadIssueSeverity Severity { get; set; } = default!;
+
+        [System.Text.Json.Serialization.JsonPropertyName("sourceRef")]
+        public string? SourceRef { get; set; } = default!;
+
+        [System.Text.Json.Serialization.JsonPropertyName("previewObjectId")]
+        public string? PreviewObjectId { get; set; } = default!;
+
+        [System.Text.Json.Serialization.JsonPropertyName("sourceKind")]
+        [System.Text.Json.Serialization.JsonConverter(typeof(System.Text.Json.Serialization.JsonStringEnumConverter<SpaceCadMappingSourceKind>))]
+        public SpaceCadMappingSourceKind SourceKind { get; set; } = default!;
+
+        [System.Text.Json.Serialization.JsonPropertyName("sourceKey")]
+        public string? SourceKey { get; set; } = default!;
+
+        [System.Text.Json.Serialization.JsonPropertyName("ruleId")]
+        public string? RuleId { get; set; } = default!;
+
+        [System.Text.Json.Serialization.JsonPropertyName("detailToken")]
+        public string? DetailToken { get; set; } = default!;
+
+    }
+
+    [System.CodeDom.Compiler.GeneratedCode("NJsonSchema", "14.7.1.0 (NJsonSchema v11.6.1.0 (Newtonsoft.Json v13.0.0.0))")]
+    public partial class SpaceCadSemanticPreviewItemV1
+    {
+
+        [System.Text.Json.Serialization.JsonPropertyName("previewObjectId")]
+        public string? PreviewObjectId { get; set; } = default!;
+
+        [System.Text.Json.Serialization.JsonPropertyName("draftObjectKind")]
+        [System.Text.Json.Serialization.JsonConverter(typeof(System.Text.Json.Serialization.JsonStringEnumConverter<SpaceCadSemanticDraftObjectKind>))]
+        public SpaceCadSemanticDraftObjectKind DraftObjectKind { get; set; } = default!;
+
+        [System.Text.Json.Serialization.JsonPropertyName("target")]
+        [System.Text.Json.Serialization.JsonConverter(typeof(System.Text.Json.Serialization.JsonStringEnumConverter<SpaceCadSemanticTarget>))]
+        public SpaceCadSemanticTarget Target { get; set; } = default!;
+
+        [System.Text.Json.Serialization.JsonPropertyName("targetSubtype")]
+        public string? TargetSubtype { get; set; } = default!;
+
+        [System.Text.Json.Serialization.JsonPropertyName("source")]
+        public SpaceCadSemanticSourceReferenceV1 Source { get; set; } = default!;
+
+        [System.Text.Json.Serialization.JsonPropertyName("appliedMapping")]
+        public SpaceCadSemanticAppliedMappingV1 AppliedMapping { get; set; } = default!;
+
+        [System.Text.Json.Serialization.JsonPropertyName("geometry")]
+        public SpaceCadSemanticGeometryV1 Geometry { get; set; } = default!;
+
+        [System.Text.Json.Serialization.JsonPropertyName("confidence")]
+        public double Confidence { get; set; } = default!;
+
+        [System.Text.Json.Serialization.JsonPropertyName("disposition")]
+        [System.Text.Json.Serialization.JsonConverter(typeof(System.Text.Json.Serialization.JsonStringEnumConverter<SpaceCadSemanticDisposition>))]
+        public SpaceCadSemanticDisposition Disposition { get; set; } = default!;
+
+        [System.Text.Json.Serialization.JsonPropertyName("isConfirmable")]
+        public bool IsConfirmable { get; set; } = default!;
+
+        [System.Text.Json.Serialization.JsonPropertyName("isSelected")]
+        public bool IsSelected { get; set; } = default!;
+
+    }
+
+    [System.CodeDom.Compiler.GeneratedCode("NJsonSchema", "14.7.1.0 (NJsonSchema v11.6.1.0 (Newtonsoft.Json v13.0.0.0))")]
+    public partial class SpaceCadSemanticPreviewSummaryV1
+    {
+
+        [System.Text.Json.Serialization.JsonPropertyName("sourceEntityCount")]
+        public long SourceEntityCount { get; set; } = default!;
+
+        [System.Text.Json.Serialization.JsonPropertyName("mappedEntityCount")]
+        public long MappedEntityCount { get; set; } = default!;
+
+        [System.Text.Json.Serialization.JsonPropertyName("autoAcceptedCount")]
+        public long AutoAcceptedCount { get; set; } = default!;
+
+        [System.Text.Json.Serialization.JsonPropertyName("candidateCount")]
+        public long CandidateCount { get; set; } = default!;
+
+        [System.Text.Json.Serialization.JsonPropertyName("rejectedCount")]
+        public long RejectedCount { get; set; } = default!;
+
+        [System.Text.Json.Serialization.JsonPropertyName("confirmableCount")]
+        public long ConfirmableCount { get; set; } = default!;
+
+        [System.Text.Json.Serialization.JsonPropertyName("selectedCount")]
+        public long SelectedCount { get; set; } = default!;
+
+        [System.Text.Json.Serialization.JsonPropertyName("infoCount")]
+        public long InfoCount { get; set; } = default!;
+
+        [System.Text.Json.Serialization.JsonPropertyName("warningCount")]
+        public long WarningCount { get; set; } = default!;
+
+        [System.Text.Json.Serialization.JsonPropertyName("blockingCount")]
+        public long BlockingCount { get; set; } = default!;
+
+    }
+
+    [System.CodeDom.Compiler.GeneratedCode("NJsonSchema", "14.7.1.0 (NJsonSchema v11.6.1.0 (Newtonsoft.Json v13.0.0.0))")]
+    public partial class SpaceCadSemanticPreviewV1
+    {
+
+        [System.Text.Json.Serialization.JsonPropertyName("schemaVersion")]
+        public int SchemaVersion { get; set; } = default!;
+
+        [System.Text.Json.Serialization.JsonPropertyName("isReadOnlyPreview")]
+        public bool IsReadOnlyPreview { get; set; } = default!;
+
+        [System.Text.Json.Serialization.JsonPropertyName("tenantId")]
+        public System.Guid TenantId { get; set; } = default!;
+
+        [System.Text.Json.Serialization.JsonPropertyName("floorLogicalId")]
+        public System.Guid FloorLogicalId { get; set; } = default!;
+
+        [System.Text.Json.Serialization.JsonPropertyName("floorCode")]
+        public string? FloorCode { get; set; } = default!;
+
+        [System.Text.Json.Serialization.JsonPropertyName("sourceSha256")]
+        public string? SourceSha256 { get; set; } = default!;
+
+        [System.Text.Json.Serialization.JsonPropertyName("coordinateTransformSha256")]
+        public string? CoordinateTransformSha256 { get; set; } = default!;
+
+        [System.Text.Json.Serialization.JsonPropertyName("inventorySha256")]
+        public string? InventorySha256 { get; set; } = default!;
+
+        [System.Text.Json.Serialization.JsonPropertyName("profileId")]
+        public System.Guid ProfileId { get; set; } = default!;
+
+        [System.Text.Json.Serialization.JsonPropertyName("profileVersion")]
+        public int ProfileVersion { get; set; } = default!;
+
+        [System.Text.Json.Serialization.JsonPropertyName("profileDefinitionSha256")]
+        public string? ProfileDefinitionSha256 { get; set; } = default!;
+
+        [System.Text.Json.Serialization.JsonPropertyName("mappingPreviewSha256")]
+        public string? MappingPreviewSha256 { get; set; } = default!;
+
+        [System.Text.Json.Serialization.JsonPropertyName("items")]
+        public System.Collections.Generic.ICollection<SpaceCadSemanticPreviewItemV1>? Items { get; set; } = default!;
+
+        [System.Text.Json.Serialization.JsonPropertyName("issues")]
+        public System.Collections.Generic.ICollection<SpaceCadSemanticIssueV1>? Issues { get; set; } = default!;
+
+        [System.Text.Json.Serialization.JsonPropertyName("summary")]
+        public SpaceCadSemanticPreviewSummaryV1 Summary { get; set; } = default!;
+
+        [System.Text.Json.Serialization.JsonPropertyName("readyForConfirmation")]
+        public bool ReadyForConfirmation { get; set; } = default!;
+
+        [System.Text.Json.Serialization.JsonPropertyName("semanticPreviewSha256")]
+        public string? SemanticPreviewSha256 { get; set; } = default!;
+
+    }
+
+    [System.CodeDom.Compiler.GeneratedCode("NJsonSchema", "14.7.1.0 (NJsonSchema v11.6.1.0 (Newtonsoft.Json v13.0.0.0))")]
+    public partial class SpaceCadSemanticSourceReferenceV1
+    {
+
+        [System.Text.Json.Serialization.JsonPropertyName("sourceRef")]
+        public string? SourceRef { get; set; } = default!;
+
+        [System.Text.Json.Serialization.JsonPropertyName("rawType")]
+        public string? RawType { get; set; } = default!;
+
+        [System.Text.Json.Serialization.JsonPropertyName("layerId")]
+        public string? LayerId { get; set; } = default!;
+
+        [System.Text.Json.Serialization.JsonPropertyName("blockName")]
+        public string? BlockName { get; set; } = default!;
+
+        [System.Text.Json.Serialization.JsonPropertyName("attributes")]
+        public System.Collections.Generic.IDictionary<string, string>? Attributes { get; set; } = default!;
+
+    }
+
+    [System.CodeDom.Compiler.GeneratedCode("NJsonSchema", "14.7.1.0 (NJsonSchema v11.6.1.0 (Newtonsoft.Json v13.0.0.0))")]
+    public enum SpaceCadSemanticTarget
+    {
+
+        [System.Runtime.Serialization.EnumMember(Value = @"Wall")]
+        Wall = 0,
+
+        [System.Runtime.Serialization.EnumMember(Value = @"Column")]
+        Column = 1,
+
+        [System.Runtime.Serialization.EnumMember(Value = @"Door")]
+        Door = 2,
+
+        [System.Runtime.Serialization.EnumMember(Value = @"Dock")]
+        Dock = 3,
+
+        [System.Runtime.Serialization.EnumMember(Value = @"Zone")]
+        Zone = 4,
+
+        [System.Runtime.Serialization.EnumMember(Value = @"Aisle")]
+        Aisle = 5,
+
+        [System.Runtime.Serialization.EnumMember(Value = @"Rack")]
+        Rack = 6,
+
+        [System.Runtime.Serialization.EnumMember(Value = @"Equipment")]
+        Equipment = 7,
+
+        [System.Runtime.Serialization.EnumMember(Value = @"VerticalCirculation")]
+        VerticalCirculation = 8,
+
+        [System.Runtime.Serialization.EnumMember(Value = @"Annotation")]
+        Annotation = 9,
+
+        [System.Runtime.Serialization.EnumMember(Value = @"Guide")]
+        Guide = 10,
+
+        [System.Runtime.Serialization.EnumMember(Value = @"RestrictedArea")]
+        RestrictedArea = 11,
+
+    }
+
+    [System.CodeDom.Compiler.GeneratedCode("NJsonSchema", "14.7.1.0 (NJsonSchema v11.6.1.0 (Newtonsoft.Json v13.0.0.0))")]
+    public partial class SpaceCadSemanticTransformV1
+    {
+
+        [System.Text.Json.Serialization.JsonPropertyName("m11")]
+        public double M11 { get; set; } = default!;
+
+        [System.Text.Json.Serialization.JsonPropertyName("m12")]
+        public double M12 { get; set; } = default!;
+
+        [System.Text.Json.Serialization.JsonPropertyName("m21")]
+        public double M21 { get; set; } = default!;
+
+        [System.Text.Json.Serialization.JsonPropertyName("m22")]
+        public double M22 { get; set; } = default!;
+
+        [System.Text.Json.Serialization.JsonPropertyName("offsetX")]
+        public int OffsetX { get; set; } = default!;
+
+        [System.Text.Json.Serialization.JsonPropertyName("offsetY")]
+        public int OffsetY { get; set; } = default!;
+
+        [System.Text.Json.Serialization.JsonPropertyName("offsetZ")]
+        public int OffsetZ { get; set; } = default!;
 
     }
 
@@ -31508,10 +33013,16 @@ namespace CP6.Space.Client
     public partial class StartSpaceCadParseRequest
     {
 
+        [System.Text.Json.Serialization.JsonPropertyName("preparationId")]
+        [System.ComponentModel.DataAnnotations.Required(AllowEmptyStrings = true)]
+        public System.Guid PreparationId { get; set; } = default!;
+
         [System.Text.Json.Serialization.JsonPropertyName("floorLogicalId")]
+        [System.ComponentModel.DataAnnotations.Required(AllowEmptyStrings = true)]
         public System.Guid FloorLogicalId { get; set; } = default!;
 
         [System.Text.Json.Serialization.JsonPropertyName("confirmedUnit")]
+        [System.ComponentModel.DataAnnotations.Required(AllowEmptyStrings = true)]
         [System.Text.Json.Serialization.JsonConverter(typeof(System.Text.Json.Serialization.JsonStringEnumConverter<SpaceCadUnit>))]
         public SpaceCadUnit ConfirmedUnit { get; set; } = default!;
 
@@ -31519,22 +33030,27 @@ namespace CP6.Space.Client
         public double ConfirmedScaleToMillimeters { get; set; } = default!;
 
         [System.Text.Json.Serialization.JsonPropertyName("coordinateMetadataJson")]
-        public string? CoordinateMetadataJson { get; set; } = default!;
+        [System.ComponentModel.DataAnnotations.Required(AllowEmptyStrings = true)]
+        public string CoordinateMetadataJson { get; set; } = default!;
 
         [System.Text.Json.Serialization.JsonPropertyName("coordinateTransformSha256")]
-        public string? CoordinateTransformSha256 { get; set; } = default!;
+        [System.ComponentModel.DataAnnotations.Required(AllowEmptyStrings = true)]
+        public string CoordinateTransformSha256 { get; set; } = default!;
 
         [System.Text.Json.Serialization.JsonPropertyName("mappingProfileId")]
+        [System.ComponentModel.DataAnnotations.Required(AllowEmptyStrings = true)]
         public System.Guid MappingProfileId { get; set; } = default!;
 
         [System.Text.Json.Serialization.JsonPropertyName("mappingProfileVersion")]
         public int MappingProfileVersion { get; set; } = default!;
 
         [System.Text.Json.Serialization.JsonPropertyName("mappingDefinitionSha256")]
-        public string? MappingDefinitionSha256 { get; set; } = default!;
+        [System.ComponentModel.DataAnnotations.Required(AllowEmptyStrings = true)]
+        public string MappingDefinitionSha256 { get; set; } = default!;
 
         [System.Text.Json.Serialization.JsonPropertyName("mappingPreviewSha256")]
-        public string? MappingPreviewSha256 { get; set; } = default!;
+        [System.ComponentModel.DataAnnotations.Required(AllowEmptyStrings = true)]
+        public string MappingPreviewSha256 { get; set; } = default!;
 
     }
 

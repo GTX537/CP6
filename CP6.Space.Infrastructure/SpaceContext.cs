@@ -101,6 +101,8 @@ public sealed class SpaceContext : DbContext
     public DbSet<SpaceEditLease> EditLeases => Set<SpaceEditLease>();
     public DbSet<SpaceEditLeaseTakeoverAudit> EditLeaseTakeoverAudits =>
         Set<SpaceEditLeaseTakeoverAudit>();
+    public DbSet<SpaceCadParsePreparation> CadParsePreparations =>
+        Set<SpaceCadParsePreparation>();
     public DbSet<SpaceWmsAdoption> WmsAdoptions =>
         Set<SpaceWmsAdoption>();
     public DbSet<SpacePersonnelEvent> PersonnelEvents =>
@@ -184,6 +186,7 @@ public sealed class SpaceContext : DbContext
         ConfigureElementCommandRecord(modelBuilder);
         ConfigureEditLease(modelBuilder);
         ConfigureEditLeaseTakeoverAudit(modelBuilder);
+        ConfigureCadParsePreparation(modelBuilder);
         ConfigureWmsAdoption(modelBuilder);
         ConfigurePersonnelEvent(modelBuilder);
         ConfigurePersonnelState(modelBuilder);
@@ -2632,6 +2635,63 @@ public sealed class SpaceContext : DbContext
             .HasPrincipalKey(x => new { x.TenantId, x.Id })
             .OnDelete(DeleteBehavior.Restrict)
             .HasConstraintName("FK_Space_EditLeaseTakeoverAudit_Version_Tenant");
+        entity.HasQueryFilter(x => x.TenantId == CurrentTenantId && !x.IsDeleted);
+    }
+
+    private void ConfigureCadParsePreparation(ModelBuilder modelBuilder)
+    {
+        var entity = modelBuilder.Entity<SpaceCadParsePreparation>();
+        entity.ToTable("Space_CadParsePreparation");
+        entity.HasKey(x => x.Id);
+        entity.Property(x => x.Id).ValueGeneratedNever();
+        ConfigureTenantEntity(entity);
+        entity.Property(x => x.SourceSha256)
+            .HasMaxLength(64).IsUnicode(false).IsFixedLength().IsRequired();
+        entity.Property(x => x.ConfirmedUnit).HasMaxLength(50).IsRequired();
+        entity.Property(x => x.ConfirmedScaleToMillimeters)
+            .HasPrecision(18, 9).IsRequired();
+        entity.Property(x => x.CoordinateMetadataJson)
+            .HasColumnType("nvarchar(max)").IsRequired();
+        entity.Property(x => x.CoordinateTransformSha256)
+            .HasMaxLength(64).IsUnicode(false).IsFixedLength().IsRequired();
+        entity.Property(x => x.MappingDefinitionSha256)
+            .HasMaxLength(64).IsUnicode(false).IsFixedLength().IsRequired();
+        entity.Property(x => x.MappingPreviewSha256)
+            .HasMaxLength(64).IsUnicode(false).IsFixedLength().IsRequired();
+        entity.Property(x => x.SemanticPreviewSha256)
+            .HasMaxLength(64).IsUnicode(false).IsFixedLength().IsRequired();
+        entity.Property(x => x.BaseContentHash)
+            .HasMaxLength(64).IsUnicode(false).IsFixedLength();
+        entity.Property(x => x.ExpiresAtUtc).HasColumnType("datetime2");
+        entity.HasIndex(x => new
+        {
+            x.TenantId,
+            x.ModelVersionId,
+            x.SourceId,
+            x.ExpiresAtUtc,
+        }).HasDatabaseName("IX_Space_CadParsePreparation_Source_Expiry");
+        entity.HasOne<SpaceModelVersion>()
+            .WithMany()
+            .HasForeignKey(x => new { x.TenantId, x.ModelVersionId })
+            .HasPrincipalKey(x => new { x.TenantId, x.Id })
+            .OnDelete(DeleteBehavior.Restrict)
+            .HasConstraintName("FK_Space_CadParsePreparation_Version_Tenant");
+        entity.HasOne<SpaceModelSource>()
+            .WithMany()
+            .HasForeignKey(x => new
+            {
+                x.TenantId,
+                x.ModelVersionId,
+                x.SourceId,
+            })
+            .HasPrincipalKey(x => new
+            {
+                x.TenantId,
+                x.ModelVersionId,
+                x.Id,
+            })
+            .OnDelete(DeleteBehavior.Restrict)
+            .HasConstraintName("FK_Space_CadParsePreparation_Source_Tenant");
         entity.HasQueryFilter(x => x.TenantId == CurrentTenantId && !x.IsDeleted);
     }
 

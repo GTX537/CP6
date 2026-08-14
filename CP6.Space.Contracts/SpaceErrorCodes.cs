@@ -105,6 +105,14 @@ public static class SpaceErrorCodes
     public const string CadParseNotFound = "SPACE_CAD_PARSE_NOT_FOUND";
     public const string CadParseArtifactInvalid =
         "SPACE_CAD_PARSE_ARTIFACT_INVALID";
+    public const string CadPreparationInvalid =
+        "SPACE_CAD_PREPARATION_INVALID";
+    public const string CadPreparationNotFound =
+        "SPACE_CAD_PREPARATION_NOT_FOUND";
+    public const string CadPreparationExpired =
+        "SPACE_CAD_PREPARATION_EXPIRED";
+    public const string CadPreparationUnavailable =
+        "SPACE_CAD_PREPARATION_UNAVAILABLE";
     public const string AiDisabled = "SPACE_AI_DISABLED";
     public const string AiQuotaExceeded = "SPACE_AI_QUOTA_EXCEEDED";
     public const string AiProviderUnavailable =
