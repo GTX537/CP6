@@ -2,6 +2,12 @@
 
 > 依据 Git log 汇总，不替代完整 Git 历史。重点记录影响接手判断的里程碑。
 
+## 2026-08-14：Space Studio WP5 2D/3D 同源选择与逐楼层视角恢复
+
+- 草稿 3D 增加参数化场景 raycast 拾取，Element/Zone/Aisle/Rack 使用同一 Design LogicalId，RackLevel 回到父 Rack；点选进入既有工作台选择状态，Ctrl/Command 切换选择，Orbit 拖动不误触。
+- 2D pan/zoom、投影模式和 3D camera/target 以 Version+Floor 为 scope 保存在当前浏览器标签页；相同楼层刷新恢复，楼层切换隔离，损坏/越界/旧 schema 状态拒绝，新楼层重新 framing。
+- Web 761、Space Studio Playwright 10、Vue type-check、production build 与 diff whitespace 通过。Iris Xe 500/10,000 性能、Published Viewer 真机、独立 UX/辅助技术验收和现场签字未完成，本切片不等于 WP5/核心 GA。
+
 ## 2026-08-14：Space Studio WP5 工作台键盘与可达性闭环
 
 - 检查器改为标准 tab 键盘模型，补齐工具选中语义、快捷键元数据、状态播报、画布焦点和统一焦点环；`G` 按严重度循环定位 Open 问题，窄屏只读模式保持 3D 并同步选择。

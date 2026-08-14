@@ -4,11 +4,18 @@ import type { ISpaceDesignSceneDto } from '../../../../../sdk/typescript/space-d
 import {
   DesignScenePreview3D,
   type DesignPreviewPreset,
+  type DesignPreviewSelection,
+  type DesignPreviewViewState,
 } from './DesignScenePreview3D'
 
 const props = defineProps<{
   scene: ISpaceDesignSceneDto | null
   selectedLogicalIds?: readonly string[]
+  viewState?: DesignPreviewViewState | null
+}>()
+const emit = defineEmits<{
+  select: [objects: readonly DesignPreviewSelection[], mode: 'replace' | 'toggle']
+  viewStateChange: [state: DesignPreviewViewState]
 }>()
 
 const hostRef = ref<HTMLDivElement>()
@@ -21,6 +28,8 @@ const errorText = ref('')
 let controller: DesignScenePreview3D | null = null
 let resizeObserver: ResizeObserver | null = null
 let renderVersion = 0
+let renderedScopeKey: string | null = null
+let pointerStart: { pointerId: number; x: number; y: number } | null = null
 
 const statusLabel = computed(() => {
   switch (state.value) {
@@ -49,7 +58,10 @@ const versionLabel = computed(
 onMounted(async () => {
   await nextTick()
   if (!canvasRef.value || !hostRef.value) return
-  controller = new DesignScenePreview3D(canvasRef.value)
+  controller = new DesignScenePreview3D(
+    canvasRef.value,
+    (viewState) => emit('viewStateChange', viewState),
+  )
   resizeObserver = new ResizeObserver((entries) => {
     const size = entries[0]?.contentRect
     if (size) controller?.resize(size.width, size.height)
@@ -83,8 +95,15 @@ async function renderScene(scene: ISpaceDesignSceneDto): Promise<void> {
   state.value = 'building'
   errorText.value = ''
   try {
-    const evidence = await controller!.setScene(scene)
+    const scopeKey = [
+      scene.modelVersionId ?? '',
+      scene.floor?.revision?.logicalId ?? '',
+    ].join(':')
+    const resetCamera = scopeKey !== renderedScopeKey
+    const evidence = await controller!.setScene(scene, resetCamera)
+    renderedScopeKey = scopeKey
     controller!.setSelectedLogicalIds(props.selectedLogicalIds ?? [])
+    if (props.viewState) controller!.restoreViewState(props.viewState)
     if (version !== renderVersion) return
     objectCount2d.value = evidence.editor.objectCount
     objectCount3d.value = evidence.viewer.objectCount
@@ -101,6 +120,32 @@ async function renderScene(scene: ISpaceDesignSceneDto): Promise<void> {
 
 function setPreset(preset: DesignPreviewPreset): void {
   controller?.setPreset(preset)
+}
+
+function onPointerDown(event: PointerEvent): void {
+  if (event.button !== 0) return
+  pointerStart = {
+    pointerId: event.pointerId,
+    x: event.clientX,
+    y: event.clientY,
+  }
+}
+
+function onPointerUp(event: PointerEvent): void {
+  const start = pointerStart
+  pointerStart = null
+  if (!start || start.pointerId !== event.pointerId) return
+  if (Math.hypot(event.clientX - start.x, event.clientY - start.y) > 4) return
+  const selection = controller?.pick(event.clientX, event.clientY) ?? null
+  emit(
+    'select',
+    selection ? [selection] : [],
+    event.ctrlKey || event.metaKey ? 'toggle' : 'replace',
+  )
+}
+
+function onPointerCancel(): void {
+  pointerStart = null
 }
 </script>
 
@@ -128,7 +173,16 @@ function setPreset(preset: DesignPreviewPreset): void {
       </el-button-group>
     </header>
     <div ref="hostRef" class="preview-host">
-      <canvas ref="canvasRef" class="preview-canvas" />
+      <canvas
+        ref="canvasRef"
+        class="preview-canvas"
+        data-test="design-preview-3d-canvas"
+        tabindex="0"
+        aria-label="仓库楼层 3D 草稿预览。点击对象可与 2D 同步选择，按住拖动可旋转视角。"
+        @pointerdown="onPointerDown"
+        @pointerup="onPointerUp"
+        @pointercancel="onPointerCancel"
+      />
       <div v-if="state === 'building'" class="preview-overlay">
         正在从当前 Design Revision 构建…
       </div>
@@ -136,7 +190,7 @@ function setPreset(preset: DesignPreviewPreset): void {
         {{ errorText || statusLabel }}
       </div>
       <div class="draft-note">
-        {{ versionLabel }} 只读预览 · 不含生产库存/任务
+        {{ versionLabel }} 只读预览 · 点击对象可与 2D 同步选择 · 不含生产库存/任务
       </div>
     </div>
   </section>
@@ -193,6 +247,11 @@ function setPreset(preset: DesignPreviewPreset): void {
   display: block;
   width: 100%;
   height: 100%;
+}
+
+.preview-canvas:focus-visible {
+  outline: 3px solid var(--space-studio-focus, #8cebf0);
+  outline-offset: -3px;
 }
 
 .preview-overlay {

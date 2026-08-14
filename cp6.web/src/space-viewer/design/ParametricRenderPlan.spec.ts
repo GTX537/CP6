@@ -1,5 +1,5 @@
 import { describe, expect, it } from 'vitest'
-import { Matrix4, Quaternion, Vector3 } from 'three'
+import { Matrix4, Mesh, Quaternion, Vector3 } from 'three'
 import { SceneBuilder } from '../build/SceneBuilder'
 import {
   ParametricRenderPlanError,
@@ -102,12 +102,20 @@ describe('ParametricRenderPlan', () => {
   it('renders DesignRevision zones and aisles from their authoritative polygons', () => {
     const scene = emptyScene()
     const zoneId = '77777777-7777-7777-7777-777777777777'
+    const secondZoneId = '99999999-9999-9999-9999-999999999999'
     const aisleId = '88888888-8888-8888-8888-888888888888'
-    scene.zones = [{
-      revision: { logicalId: zoneId, lifecycleState: 'Active' },
-      zoneCode: 'Z-A',
-      polygonJson: '{"schemaVersion":1,"points":[[0,0],[10000,0],[10000,8000],[0,8000]]}',
-    }]
+    scene.zones = [
+      {
+        revision: { logicalId: zoneId, lifecycleState: 'Active' },
+        zoneCode: 'Z-A',
+        polygonJson: '{"schemaVersion":1,"points":[[0,0],[10000,0],[10000,8000],[0,8000]]}',
+      },
+      {
+        revision: { logicalId: secondZoneId, lifecycleState: 'Active' },
+        zoneCode: 'Z-B',
+        polygonJson: '{"schemaVersion":1,"points":[[12000,0],[20000,0],[20000,8000],[12000,8000]]}',
+      },
+    ]
     scene.aisles = [{
       revision: { logicalId: aisleId, lifecycleState: 'Active' },
       zoneLogicalId: zoneId,
@@ -117,7 +125,7 @@ describe('ParametricRenderPlan', () => {
 
     const plan = buildParametricRenderPlan(scene)
 
-    expect(plan.polygons).toHaveLength(2)
+    expect(plan.polygons).toHaveLength(3)
     expect(plan.polygons[0]).toMatchObject({
       logicalId: zoneId,
       ownerKind: 'Zone',
@@ -125,7 +133,7 @@ describe('ParametricRenderPlan', () => {
       materialRole: 'zone',
       height: 10,
     })
-    expect(plan.polygons[1]).toMatchObject({
+    expect(plan.polygons[2]).toMatchObject({
       logicalId: aisleId,
       ownerKind: 'Aisle',
       parentLogicalId: zoneId,
@@ -135,7 +143,12 @@ describe('ParametricRenderPlan', () => {
     })
 
     const build = new SceneBuilder().buildDesign(scene)
-    expect(build.plan.polygons).toHaveLength(2)
+    expect(build.plan.polygons).toHaveLength(3)
+    const polygonMeshes = build.objects[0]!.children.filter(
+      (candidate): candidate is Mesh => candidate instanceof Mesh,
+    )
+    expect(polygonMeshes).toHaveLength(3)
+    expect(polygonMeshes[0]!.material).not.toBe(polygonMeshes[1]!.material)
     build.dispose()
   })
 

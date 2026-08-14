@@ -1,5 +1,13 @@
 # 已完成能力与近期里程碑
 
+## 2026-08-14 Space Studio WP5 2D/3D 同源选择与逐楼层视角恢复
+
+- 从远端 `main@548c4077` 建立独立 `codex/space-studio-3d-interaction`，为草稿参数化 3D 场景增加 raycast 拾取；Element/Zone/Aisle/Rack 直接返回同一 Design LogicalId，RackLevel 归一到所属 Rack，不引入第二套选择或模型权威。
+- 3D 点击通过工作台既有 `selectObjects` 与 2D、问题定位和检查器同步；Ctrl/Command 支持切换选择，超过 4px 的 Orbit 拖动不会触发点选。3D 画布可 Tab 聚焦并提供操作说明，2D 选中继续驱动 3D 高亮。
+- 2D pan/zoom、2D/3D 投影模式和 3D camera/target 使用带 schema 的 Version+Floor `sessionStorage` 状态；相同楼层刷新恢复，切层前 flush，损坏/越界状态失败关闭，新楼层无已存状态时重新 framing。
+- 自动化覆盖拾取目标归一、相机状态校验、点击/拖动区分、组件事件、逐楼层 key、损坏状态拒绝及真实浏览器刷新恢复。Web 761/761、Space Studio Playwright 10/10、Vue type-check、production build 与 `git diff --check` 通过。
+- 本卡只关闭 WP5 的工作台 2D/3D 交互与视角恢复，不表示 WP5 或核心 GA 完成；Iris Xe/WebGL2 500 货架/10,000 库位性能、独立 UX/辅助技术验收和 Published Viewer 真机证据仍在 Todo。
+
 ## 2026-08-14 Space Studio WP5 工作台键盘与可达性闭环
 
 - 从远端 `main@1a30a601` 建立独立 `codex/space-studio-accessibility-ga`，补齐检查器 roving tab、方向键/Home/End、工具 `aria-pressed`、快捷键声明、状态播报、2D 画布焦点和工作台统一 `focus-visible`。`G` 按 Blocking → Warning → Info 循环定位下一个 Open 问题；窄屏只读定位只同步对象选择，不会把 3D 强制切回隐藏的 2D。
