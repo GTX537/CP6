@@ -2666,6 +2666,8 @@ public sealed class SpaceContext : DbContext
             .HasMaxLength(64).IsUnicode(false).IsFixedLength().IsRequired();
         entity.Property(x => x.MappingPreviewSha256)
             .HasMaxLength(64).IsUnicode(false).IsFixedLength().IsRequired();
+        entity.Property(x => x.MappingReplaySnapshotJson)
+            .HasColumnType("nvarchar(max)").IsRequired();
         entity.Property(x => x.SemanticPreviewSha256)
             .HasMaxLength(64).IsUnicode(false).IsFixedLength().IsRequired();
         entity.Property(x => x.ProviderKey)

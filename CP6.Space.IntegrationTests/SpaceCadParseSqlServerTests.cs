@@ -63,6 +63,10 @@ public sealed class SpaceCadParseSqlServerTests
                 request.MappingProfileVersion,
                 request.MappingDefinitionSha256,
                 request.MappingPreviewSha256,
+                MappingReplaySnapshot(
+                    execution.TenantId,
+                    fixture.Source.Sha256,
+                    request),
                 new string('9', 64),
                 "sql-test",
                 "1.0",
@@ -149,6 +153,22 @@ public sealed class SpaceCadParseSqlServerTests
             await context.Database.EnsureDeletedAsync();
         }
     }
+
+    private static string MappingReplaySnapshot(
+        Guid tenantId,
+        string sourceSha256,
+        StartSpaceCadParseRequest request) =>
+        SpaceCadMappingReplaySnapshot.Serialize(
+            SpaceCadMappingReplaySnapshot.Create(
+                tenantId,
+                request.MappingProfileId,
+                request.MappingProfileVersion,
+                request.MappingDefinitionSha256,
+                sourceSha256,
+                new string('7', 64),
+                new string('8', 64),
+                request.MappingPreviewSha256,
+                []));
 
     private static SpaceContext CreateContext(
         string connectionString,

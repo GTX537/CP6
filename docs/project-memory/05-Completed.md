@@ -1,5 +1,11 @@
 # 已完成能力与近期里程碑
 
+## 2026-08-14 Space Studio WP3 CAD 映射确定性重放快照
+
+- sealed Preparation 现在保存服务器生成、规范排序并由 SHA-256 密封的 Mapping Replay Snapshot，绑定 Tenant、Source、不可变 Profile、Inventory/Structure/Preview Hash 和用户确认的完整 Layer Overrides；客户端不能提交或替换快照。
+- 新 Parse Job 使用 payload schema v4 并携带同一快照；启动服务与 Worker 分别在入队前和 Provider 调用前验证身份/哈希。损坏或缺失的 v4 快照零 Job 或零 Provider 写入，历史 v2/v3 保持显式兼容。
+- 新增可回滚迁移、幂等 SQL、合同说明与聚焦自动化。当前 18 个 Mapping 单测和 15 个 Preparation/Parse 集成测试通过；全量 Space Unit 512/512、Integration 313 passed / 106 environment skipped、CP6.Tests 2,916 passed / 19 environment skipped，Release solution 0 warning / 0 error。真实适配器仍须按快照重放并执行结果核验，ODA/APS、黄金 CAD、Site 审批和 Pilot 均未发生，因此 WP3 仍为 Partial/Pending。
+
 ## 2026-08-14 Space Studio WP3 Provider 评分与选型工具
 
 - `CP6.Space.CadExperiment qualify-providers` 已把 ADR-0001 的六维 25/20/15/15/15/10 评分、80 分门槛、四项硬门禁、同黄金集/同冻结环境和唯一第一/第二名规则机器化；输入异常、门禁缺失、基线混用或名次并列均失败关闭。

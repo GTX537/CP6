@@ -199,7 +199,8 @@ public sealed class SpaceCadParseService(
                 version.ContentRevision,
                 version.ContentHash,
                 preparation.ProviderKey,
-                preparation.SemanticPreviewSha256);
+                preparation.SemanticPreviewSha256,
+                preparation.MappingReplaySnapshotJson);
             var payloadJson = JsonSerializer.Serialize(payload, JsonOptions);
             var inputHash = Hash(payloadJson);
             var enqueue = Enqueue(payload, inputHash, payloadJson);
@@ -1441,6 +1442,7 @@ public sealed class SpaceCadParseService(
         var payload = DeserializePayload(result.job.PayloadJson);
         if (payload.SchemaVersion is not (
                 SpaceCadParsePayloadVersions.LegacyBaseRevision or
+                SpaceCadParsePayloadVersions.LegacyProviderRouting or
                 SpaceCadParsePayloadVersions.Current))
         {
             throw new SpaceProblemException(
@@ -1687,12 +1689,51 @@ public sealed class SpaceCadParseService(
                 StringComparison.Ordinal) ||
             !preparation.MappingPreviewSha256.Equals(
                 request.MappingPreviewSha256,
-                StringComparison.Ordinal))
+                StringComparison.Ordinal) ||
+            !IsValidMappingReplaySnapshot(
+                preparation.MappingReplaySnapshotJson,
+                preparation.TenantId,
+                preparation.SourceSha256,
+                preparation.MappingProfileId,
+                preparation.MappingProfileVersion,
+                preparation.MappingDefinitionSha256,
+                preparation.MappingPreviewSha256))
             throw new SpaceProblemException(
                 SpaceErrorCodes.CadPreparationInvalid,
                 422,
                 "The CAD parse request does not match its server preparation.",
                 recoveryAction: "restart-cad-preparation");
+    }
+
+    private static bool IsValidMappingReplaySnapshot(
+        string json,
+        Guid tenantId,
+        string sourceSha256,
+        Guid profileId,
+        int profileVersion,
+        string profileDefinitionSha256,
+        string mappingPreviewSha256)
+    {
+        try
+        {
+            var snapshot = SpaceCadMappingReplaySnapshot.Deserialize(json);
+            return snapshot.TenantId == tenantId &&
+                   snapshot.ProfileId == profileId &&
+                   snapshot.ProfileVersion == profileVersion &&
+                   snapshot.ProfileDefinitionSha256.Equals(
+                       profileDefinitionSha256,
+                       StringComparison.Ordinal) &&
+                   snapshot.SourceSha256.Equals(
+                       sourceSha256,
+                       StringComparison.Ordinal) &&
+                   snapshot.ExpectedMappingPreviewSha256.Equals(
+                       mappingPreviewSha256,
+                       StringComparison.Ordinal);
+        }
+        catch (InvalidDataException)
+        {
+            return false;
+        }
     }
 
     private static void ValidateCoordinateMetadata(

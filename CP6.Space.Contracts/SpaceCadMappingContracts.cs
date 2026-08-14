@@ -9,6 +9,12 @@ public static class SpaceCadMappingVersions
     public const int MaximumOverrides = 5_000;
 }
 
+public static class SpaceCadMappingReplaySnapshotVersions
+{
+    public const int SchemaVersion = 1;
+    public const int MaximumSerializedLength = 1024 * 1024;
+}
+
 [JsonConverter(typeof(JsonStringEnumConverter))]
 public enum SpaceCadMappingScope
 {
@@ -182,3 +188,16 @@ public sealed record SpaceCadMappingPreviewV1(
     SpaceCadMappingPreviewSummaryV1 Summary,
     bool ReadyForSemanticParsing,
     string PreviewSha256);
+
+public sealed record SpaceCadMappingReplaySnapshotV1(
+    int SchemaVersion,
+    Guid TenantId,
+    Guid ProfileId,
+    int ProfileVersion,
+    string ProfileDefinitionSha256,
+    string SourceSha256,
+    string ExpectedInventorySha256,
+    string ExpectedSourceStructureSha256,
+    string ExpectedMappingPreviewSha256,
+    IReadOnlyList<SpaceCadLayerMappingOverrideV1> LayerOverrides,
+    string SnapshotSha256);

@@ -124,6 +124,78 @@ public sealed class SpaceCadParseJobTests
     }
 
     [Fact]
+    public async Task Current_payload_requires_a_sealed_mapping_replay_snapshot()
+    {
+        await using var fixture = await CreateFixtureAsync();
+        var started = await fixture.Service.StartAsync(
+            fixture.Version.Id,
+            fixture.Source.Id,
+            fixture.Request,
+            "cad-missing-mapping-replay");
+        var job = await fixture.Context.Jobs.SingleAsync(item => item.Id == started.JobId);
+        var payload = JsonNode.Parse(job.PayloadJson)!.AsObject();
+        payload.Remove("mappingReplaySnapshotJson");
+        var frozenPayload = payload.ToJsonString(JsonOptions);
+        fixture.Context.Entry(job).Property(item => item.PayloadJson).CurrentValue =
+            frozenPayload;
+        fixture.Context.Entry(job).Property(item => item.InputHash).CurrentValue =
+            Sha256(Encoding.UTF8.GetBytes(frozenPayload));
+        await fixture.Context.SaveChangesAsync();
+        var lease = await ClaimAsync(fixture, started.JobId);
+        var provider = new DeterministicProvider();
+        var executor = new SpaceCadParseJobStepExecutor(
+            fixture.Context,
+            new FileServiceProvider(fixture.Files),
+            provider);
+
+        var problem = await Assert.ThrowsAsync<SpaceJobProcessingException>(() =>
+            executor.ExecuteAsync(new(
+                lease,
+                1,
+                SpaceCadParseJobProcessor.GenerateArtifacts)));
+
+        Assert.Equal(SpaceErrorCodes.CadParseInvalid, problem.ErrorCode);
+        Assert.Equal(SpaceJobFailureKind.Input, problem.FailureKind);
+        Assert.Equal(0, provider.CallCount);
+        Assert.Empty(await fixture.Context.Artifacts.ToListAsync());
+    }
+
+    [Fact]
+    public async Task Legacy_v3_payload_without_mapping_replay_snapshot_remains_explicitly_supported()
+    {
+        await using var fixture = await CreateFixtureAsync();
+        var started = await fixture.Service.StartAsync(
+            fixture.Version.Id,
+            fixture.Source.Id,
+            fixture.Request,
+            "cad-legacy-v3-mapping-replay");
+        var job = await fixture.Context.Jobs.SingleAsync(item => item.Id == started.JobId);
+        var payload = JsonNode.Parse(job.PayloadJson)!.AsObject();
+        payload["schemaVersion"] = SpaceCadParsePayloadVersions.LegacyProviderRouting;
+        payload.Remove("mappingReplaySnapshotJson");
+        var frozenPayload = payload.ToJsonString(JsonOptions);
+        fixture.Context.Entry(job).Property(item => item.PayloadJson).CurrentValue =
+            frozenPayload;
+        fixture.Context.Entry(job).Property(item => item.InputHash).CurrentValue =
+            Sha256(Encoding.UTF8.GetBytes(frozenPayload));
+        await fixture.Context.SaveChangesAsync();
+        var lease = await ClaimAsync(fixture, started.JobId);
+        var provider = new DeterministicProvider();
+        var executor = new SpaceCadParseJobStepExecutor(
+            fixture.Context,
+            new FileServiceProvider(fixture.Files),
+            provider);
+
+        await executor.ExecuteAsync(new(
+            lease,
+            1,
+            SpaceCadParseJobProcessor.GenerateArtifacts));
+
+        Assert.Equal(1, provider.CallCount);
+        Assert.Equal(3, await fixture.Context.Artifacts.CountAsync());
+    }
+
+    [Fact]
     public async Task Runner_completes_preview_without_draft_writes()
     {
         await using var fixture = await CreateFixtureAsync();
@@ -780,6 +852,7 @@ public sealed class SpaceCadParseJobTests
             request.MappingProfileVersion,
             request.MappingDefinitionSha256,
             request.MappingPreviewSha256,
+            MappingReplaySnapshot(tenantId, source.Sha256, request),
             semanticPreviewSha256,
             "review-test",
             "1.0",
@@ -787,6 +860,22 @@ public sealed class SpaceCadParseJobTests
             version.ContentRevision,
             version.ContentHash,
             Now.AddHours(2));
+
+    private static string MappingReplaySnapshot(
+        Guid tenantId,
+        string sourceSha256,
+        StartSpaceCadParseRequest request) =>
+        SpaceCadMappingReplaySnapshot.Serialize(
+            SpaceCadMappingReplaySnapshot.Create(
+                tenantId,
+                request.MappingProfileId,
+                request.MappingProfileVersion,
+                request.MappingDefinitionSha256,
+                sourceSha256,
+                new string('7', 64),
+                new string('8', 64),
+                request.MappingPreviewSha256,
+                []));
 
     private static StartSpaceCadParseRequest Request(string sourceSha256)
     {

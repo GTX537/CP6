@@ -271,18 +271,9 @@ public static class SpaceCadMapping
         var overrideLayers = new HashSet<string>(StringComparer.OrdinalIgnoreCase);
         foreach (var item in preview.LayerOverrides)
         {
-            RequireToken(item.LayerId, nameof(item.LayerId));
+            ValidateLayerOverride(item);
             if (!overrideLayers.Add(item.LayerId))
                 throw new InvalidDataException("CAD mapping preview overrides are duplicated.");
-            ValidateTarget(
-                SpaceCadMappingSourceKind.Layer,
-                item.Ignore,
-                item.Target,
-                item.TargetSubtype,
-                item.GeometryRule,
-                item.DefaultHeightMillimeters,
-                item.DefaultThicknessMillimeters,
-                item.ConfidenceWeight);
         }
         var decisionKeys = new HashSet<string>(StringComparer.Ordinal);
         foreach (var decision in preview.Decisions)
@@ -506,21 +497,11 @@ public static class SpaceCadMapping
         var seen = new HashSet<string>(StringComparer.OrdinalIgnoreCase);
         foreach (var item in overrides)
         {
-            ArgumentNullException.ThrowIfNull(item);
-            RequireToken(item.LayerId, nameof(item.LayerId));
+            ValidateLayerOverride(item);
             if (!seen.Add(item.LayerId))
                 throw new InvalidDataException("CAD layer overrides must be unique.");
             if (!layerIds.Contains(item.LayerId))
                 throw new InvalidDataException($"CAD layer override '{item.LayerId}' is unknown.");
-            ValidateTarget(
-                SpaceCadMappingSourceKind.Layer,
-                item.Ignore,
-                item.Target,
-                item.TargetSubtype,
-                item.GeometryRule,
-                item.DefaultHeightMillimeters,
-                item.DefaultThicknessMillimeters,
-                item.ConfidenceWeight);
             result.Add(item with
             {
                 LayerId = inventory.Layers.Single(layer => layer.LayerId.Equals(
@@ -529,6 +510,22 @@ public static class SpaceCadMapping
             });
         }
         return result.OrderBy(item => item.LayerId, StringComparer.Ordinal).ToArray();
+    }
+
+    internal static void ValidateLayerOverride(
+        SpaceCadLayerMappingOverrideV1 item)
+    {
+        ArgumentNullException.ThrowIfNull(item);
+        RequireToken(item.LayerId, nameof(item.LayerId));
+        ValidateTarget(
+            SpaceCadMappingSourceKind.Layer,
+            item.Ignore,
+            item.Target,
+            item.TargetSubtype,
+            item.GeometryRule,
+            item.DefaultHeightMillimeters,
+            item.DefaultThicknessMillimeters,
+            item.ConfidenceWeight);
     }
 
     private static void ValidateDraft(SpaceCadMappingProfileDraftV1 draft)

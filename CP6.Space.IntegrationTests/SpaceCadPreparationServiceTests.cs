@@ -1,5 +1,6 @@
 using System.Security.Cryptography;
 using System.Text;
+using System.Text.Json;
 using CP6.Space.Application;
 using CP6.Space.Contracts;
 using CP6.Space.Domain;
@@ -27,7 +28,18 @@ public sealed class SpaceCadPreparationServiceTests
         var preview = await fixture.Service.PreviewAsync(
             fixture.Version.Id,
             fixture.Source.Id,
-            Request(fixture.Floor.LogicalId, profile));
+            Request(
+                fixture.Floor.LogicalId,
+                profile,
+                [new SpaceCadLayerMappingOverrideV1(
+                    "WALL",
+                    Ignore: false,
+                    SpaceCadSemanticTarget.Wall,
+                    TargetSubtype: null,
+                    SpaceCadGeometryRule.Centerline,
+                    DefaultHeightMillimeters: 3_000,
+                    DefaultThicknessMillimeters: 200,
+                    ConfidenceWeight: .98m)]));
 
         Assert.True(status.ReadyForPreparation);
         Assert.Equal("Ready", status.SourceState);
@@ -37,7 +49,27 @@ public sealed class SpaceCadPreparationServiceTests
         Assert.Equal(preview.PreparationId, preview.StartRequest!.PreparationId);
         Assert.Equal(fixture.Floor.LogicalId, preview.StartRequest.FloorLogicalId);
         Assert.Equal(0, preview.BaseContentRevision);
-        Assert.Single(await fixture.Context.CadParsePreparations.ToListAsync());
+        var preparation = Assert.Single(
+            await fixture.Context.CadParsePreparations.ToListAsync());
+        var snapshot = SpaceCadMappingReplaySnapshot.Deserialize(
+            preparation.MappingReplaySnapshotJson);
+        Assert.Equal(preview.MappingPreview!.PreviewSha256,
+            snapshot.ExpectedMappingPreviewSha256);
+        Assert.Single(snapshot.LayerOverrides);
+
+        var started = await fixture.Parse.StartAsync(
+            fixture.Version.Id,
+            fixture.Source.Id,
+            preview.StartRequest,
+            "sealed-mapping-snapshot");
+        var job = await fixture.Context.Jobs.SingleAsync(item => item.Id == started.JobId);
+        var payload = JsonSerializer.Deserialize<SpaceCadParseJobPayload>(
+            job.PayloadJson,
+            new JsonSerializerOptions(JsonSerializerDefaults.Web));
+        Assert.NotNull(payload);
+        Assert.Equal(SpaceCadParsePayloadVersions.Current, payload.SchemaVersion);
+        Assert.Equal(preparation.MappingReplaySnapshotJson,
+            payload.MappingReplaySnapshotJson);
     }
 
     [Fact]
@@ -97,9 +129,38 @@ public sealed class SpaceCadPreparationServiceTests
         Assert.Empty(await fixture.Context.Jobs.ToListAsync());
     }
 
+    [Fact]
+    public async Task Start_rejects_a_corrupted_server_mapping_snapshot()
+    {
+        await using var fixture = await CreateFixtureAsync();
+        var profile = Assert.Single(
+            await fixture.Service.ListProfilesAsync(fixture.Version.Id));
+        var preview = await fixture.Service.PreviewAsync(
+            fixture.Version.Id,
+            fixture.Source.Id,
+            Request(fixture.Floor.LogicalId, profile));
+        var preparation = await fixture.Context.CadParsePreparations.SingleAsync();
+        fixture.Context.Entry(preparation)
+            .Property(item => item.MappingReplaySnapshotJson)
+            .CurrentValue = "{}";
+        await fixture.Context.SaveChangesAsync();
+
+        var problem = await Assert.ThrowsAsync<SpaceProblemException>(() =>
+            fixture.Parse.StartAsync(
+                fixture.Version.Id,
+                fixture.Source.Id,
+                preview.StartRequest!,
+                "corrupt-mapping-snapshot"));
+
+        Assert.Equal(SpaceErrorCodes.CadPreparationInvalid, problem.Code);
+        Assert.Equal(422, problem.StatusCode);
+        Assert.Empty(await fixture.Context.Jobs.ToListAsync());
+    }
+
     private static PreviewSpaceCadPreparationRequest Request(
         Guid floorId,
-        SpaceCadMappingProfileSummaryDto profile) =>
+        SpaceCadMappingProfileSummaryDto profile,
+        IReadOnlyList<SpaceCadLayerMappingOverrideV1>? overrides = null) =>
         new(
             floorId,
             SpaceCadUnit.Millimeter,
@@ -108,7 +169,7 @@ public sealed class SpaceCadPreparationServiceTests
             0,
             profile.ProfileId,
             profile.Version,
-            []);
+            overrides ?? []);
 
     private static async Task<Fixture> CreateFixtureAsync()
     {
