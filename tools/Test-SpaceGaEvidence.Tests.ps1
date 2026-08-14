@@ -8,6 +8,8 @@ $fixturePath = Join-Path $repo $fixtureReference
 $fixtureSha256 = (Get-FileHash -LiteralPath $fixturePath -Algorithm SHA256).Hash.ToLowerInvariant()
 $pilotFixturePath = Join-Path $repo (
     'tools\test-fixtures\space-ga-pilot-evidence\valid-pilot-evidence.json')
+$goldenCadTestSuite = Join-Path $PSScriptRoot (
+    'Test-SpaceGaGoldenCadEvidence.Tests.ps1')
 $hostExecutable = (Get-Process -Id $PID).Path
 $tempDirectory = Join-Path (
     [System.IO.Path]::GetTempPath()) (
@@ -80,6 +82,47 @@ function Set-Wp8Accepted {
     $gate.verificationManifest = $PilotReference
     $gate.acceptedEvidence = @(
         (New-Attestation -Uri $PilotReference -Sha256 $PilotSha256))
+}
+
+function Set-Wp7Accepted {
+    param(
+        [Parameter(Mandatory)]$Manifest,
+        [Parameter(Mandatory)][string]$GoldenReference,
+        [Parameter(Mandatory)][string]$GoldenSha256
+    )
+
+    $gate = @($Manifest.gates | Where-Object {
+        $_.id -eq 'WP7_GOLDEN_CAD_FORMAL_EVIDENCE'
+    })[0]
+    $gate.ownerName = 'Zhang Wei'
+    $gate.acceptanceStatus = 'Accepted'
+    $gate.verificationManifest = $GoldenReference
+    $gate.acceptedEvidence = @(
+        (New-Attestation -Uri $GoldenReference -Sha256 $GoldenSha256))
+}
+
+function Complete-Wp7Prerequisites {
+    param(
+        [Parameter(Mandatory)]$Manifest,
+        [Parameter(Mandatory)]$Attestation
+    )
+
+    foreach ($inputId in @(
+        'AUTHORIZED_GOLDEN_CAD_CANDIDATES',
+        'PROVIDER_APPROVALS_AND_ISOLATED_WORKER')) {
+        $input = @($Manifest.externalInputs | Where-Object {
+            $_.id -eq $inputId
+        })[0]
+        $input.ownerName = 'Zhang Wei'
+        $input.status = 'Complete'
+        $input.evidence = @($Attestation)
+    }
+    $providerGate = @($Manifest.gates | Where-Object {
+        $_.id -eq 'WP3_SITE_PRIMARY_BACKUP_PROVIDERS'
+    })[0]
+    $providerGate.ownerName = 'Zhang Wei'
+    $providerGate.acceptanceStatus = 'Accepted'
+    $providerGate.acceptedEvidence = @($Attestation)
 }
 
 function Set-AllGaSignersSigned {
@@ -170,6 +213,51 @@ try {
     $pilotAcceptance | ConvertTo-Json -Depth 100 |
         Set-Content -LiteralPath $pilotAcceptancePath -Encoding UTF8
     $pilotAcceptanceSha256 = (Get-FileHash -LiteralPath $pilotAcceptancePath `
+        -Algorithm SHA256).Hash.ToLowerInvariant()
+
+    $goldenAcceptanceReference = (
+        'docs/space/acceptance/v1.3-ga/.tmp-' +
+        [Guid]::NewGuid().ToString('N') + '/golden-cad-evidence.json')
+    $goldenAcceptancePath = Join-Path $repo $goldenAcceptanceReference
+    $goldenAcceptanceDirectory = Split-Path -Parent $goldenAcceptancePath
+    [void](New-Item -ItemType Directory -Path $goldenAcceptanceDirectory)
+    $exportOutput = & $hostExecutable `
+        -NoProfile `
+        -ExecutionPolicy Bypass `
+        -File $goldenCadTestSuite `
+        -ExportValidManifestPath $goldenAcceptancePath 2>&1 | Out-String
+    if ($LASTEXITCODE -ne 0) {
+        throw "Could not export valid golden CAD fixture.`n$exportOutput"
+    }
+    $goldenAcceptance = Get-Content -LiteralPath $goldenAcceptancePath -Raw |
+        ConvertFrom-Json
+    $goldenAcceptance.dataset.integrityAuditEvidence.uri = (
+        $pilotNestedEvidenceReference)
+    $goldenAcceptance.dataset.integrityAuditEvidence.sha256 = (
+        $pilotNestedEvidenceSha256)
+    foreach ($sample in @($goldenAcceptance.dataset.samples)) {
+        foreach ($evidence in @(
+            $sample.authorizationEvidence,
+            $sample.deidentificationEvidence,
+            $sample.annotation.evidence)) {
+            $evidence.uri = ([string]$evidence.uri).Replace(
+                ':test:',
+                ':integration:')
+        }
+    }
+    foreach ($provider in @($goldenAcceptance.providers)) {
+        foreach ($evidence in @(
+            $provider.qualificationEvidence,
+            $provider.evaluationEvidence,
+            $provider.performance.evidence)) {
+            $evidence.uri = ([string]$evidence.uri).Replace(
+                ':test:',
+                ':integration:')
+        }
+    }
+    $goldenAcceptance | ConvertTo-Json -Depth 100 |
+        Set-Content -LiteralPath $goldenAcceptancePath -Encoding UTF8
+    $goldenAcceptanceSha256 = (Get-FileHash -LiteralPath $goldenAcceptancePath `
         -Algorithm SHA256).Hash.ToLowerInvariant()
 
     Invoke-ValidatorCase `
@@ -409,6 +497,117 @@ try {
         -ShouldPass $false `
         -ExpectedError 'SPACE_GA_EVIDENCE_ACCEPTOR_INVALID'
 
+    $missingGoldenManifestPath = New-TestManifest 'missing-golden-manifest' {
+        param($manifest)
+        $gate = @($manifest.gates | Where-Object {
+            $_.id -eq 'WP7_GOLDEN_CAD_FORMAL_EVIDENCE'
+        })[0]
+        $gate.ownerName = 'Zhang Wei'
+        $gate.acceptanceStatus = 'Accepted'
+        $gate.acceptedEvidence = @($localAttestation)
+    }
+    Invoke-ValidatorCase `
+        -Name 'accepted WP7 requires a structured golden CAD manifest' `
+        -ManifestPath $missingGoldenManifestPath `
+        -ShouldPass $false `
+        -ExpectedError 'SPACE_GA_GOLDEN_MANIFEST_REQUIRED'
+
+    $goldenPrerequisitePath = New-TestManifest 'golden-prerequisites' {
+        param($manifest)
+        Set-Wp7Accepted `
+            -Manifest $manifest `
+            -GoldenReference $goldenAcceptanceReference `
+            -GoldenSha256 $goldenAcceptanceSha256
+    }
+    Invoke-ValidatorCase `
+        -Name 'WP7 requires authorized CAD Provider and Worker prerequisites' `
+        -ManifestPath $goldenPrerequisitePath `
+        -ShouldPass $false `
+        -ExpectedError 'SPACE_GA_GOLDEN_PREREQUISITES_INCOMPLETE'
+
+    $validGoldenPath = New-TestManifest 'valid-golden-manifest' {
+        param($manifest)
+        Complete-Wp7Prerequisites `
+            -Manifest $manifest `
+            -Attestation $localAttestation
+        Set-Wp7Accepted `
+            -Manifest $manifest `
+            -GoldenReference $goldenAcceptanceReference `
+            -GoldenSha256 $goldenAcceptanceSha256
+    }
+    Invoke-ValidatorCase `
+        -Name 'accepted WP7 validates manifest and prerequisites' `
+        -ManifestPath $validGoldenPath `
+        -ShouldPass $true
+
+    $unattestedGoldenPath = New-TestManifest 'unattested-golden-manifest' {
+        param($manifest)
+        Complete-Wp7Prerequisites `
+            -Manifest $manifest `
+            -Attestation $localAttestation
+        Set-Wp7Accepted `
+            -Manifest $manifest `
+            -GoldenReference $goldenAcceptanceReference `
+            -GoldenSha256 $goldenAcceptanceSha256
+        $gate = @($manifest.gates | Where-Object {
+            $_.id -eq 'WP7_GOLDEN_CAD_FORMAL_EVIDENCE'
+        })[0]
+        $gate.acceptedEvidence = @($localAttestation)
+    }
+    Invoke-ValidatorCase `
+        -Name 'WP7 must attest the structured manifest itself' `
+        -ManifestPath $unattestedGoldenPath `
+        -ShouldPass $false `
+        -ExpectedError 'SPACE_GA_GOLDEN_MANIFEST_UNATTESTED'
+
+    $invalidGoldenReference = $goldenAcceptanceReference.Replace(
+        'golden-cad-evidence.json',
+        'invalid-golden-cad-evidence.json')
+    $invalidGoldenPath = Join-Path $repo $invalidGoldenReference
+    $invalidGolden = Get-Content -LiteralPath $goldenAcceptancePath -Raw |
+        ConvertFrom-Json
+    $invalidGolden.providers[0].overallMetrics.targetCoveragePercent = 79
+    $invalidGolden | ConvertTo-Json -Depth 100 |
+        Set-Content -LiteralPath $invalidGoldenPath -Encoding UTF8
+    $invalidGoldenSha256 = (Get-FileHash -LiteralPath $invalidGoldenPath `
+        -Algorithm SHA256).Hash.ToLowerInvariant()
+    $invalidGoldenGatePath = New-TestManifest 'invalid-golden-gate' {
+        param($manifest)
+        Complete-Wp7Prerequisites `
+            -Manifest $manifest `
+            -Attestation $localAttestation
+        Set-Wp7Accepted `
+            -Manifest $manifest `
+            -GoldenReference $invalidGoldenReference `
+            -GoldenSha256 $invalidGoldenSha256
+    }
+    Invoke-ValidatorCase `
+        -Name 'WP7 cannot accept a semantically invalid golden CAD manifest' `
+        -ManifestPath $invalidGoldenGatePath `
+        -ShouldPass $false `
+        -ExpectedError 'SPACE_GA_GOLDEN_EVIDENCE_INVALID'
+
+    $goldenTemplateReference = (
+        'docs/space/acceptance/v1.3-ga/golden-cad-evidence-template.json')
+    $goldenTemplateSha256 = (Get-FileHash `
+        -LiteralPath (Join-Path $repo $goldenTemplateReference) `
+        -Algorithm SHA256).Hash.ToLowerInvariant()
+    $templateGoldenPath = New-TestManifest 'template-golden-manifest' {
+        param($manifest)
+        Complete-Wp7Prerequisites `
+            -Manifest $manifest `
+            -Attestation $localAttestation
+        Set-Wp7Accepted `
+            -Manifest $manifest `
+            -GoldenReference $goldenTemplateReference `
+            -GoldenSha256 $goldenTemplateSha256
+    }
+    Invoke-ValidatorCase `
+        -Name 'WP7 cannot accept the blank golden CAD template' `
+        -ManifestPath $templateGoldenPath `
+        -ShouldPass $false `
+        -ExpectedError 'SPACE_GA_GOLDEN_MANIFEST_SYNTHETIC'
+
     $missingPilotManifestPath = New-TestManifest 'missing-pilot-manifest' {
         param($manifest)
         $gate = @($manifest.gates | Where-Object {
@@ -523,5 +722,9 @@ finally {
     if ($null -ne $pilotAcceptanceDirectory -and
         (Test-Path -LiteralPath $pilotAcceptanceDirectory)) {
         [System.IO.Directory]::Delete($pilotAcceptanceDirectory, $true)
+    }
+    if ($null -ne $goldenAcceptanceDirectory -and
+        (Test-Path -LiteralPath $goldenAcceptanceDirectory)) {
+        [System.IO.Directory]::Delete($goldenAcceptanceDirectory, $true)
     }
 }

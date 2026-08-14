@@ -2,6 +2,12 @@
 
 > 依据 Git log 汇总，不替代完整 Git 历史。重点记录影响接手判断的里程碑。
 
+## 2026-08-14：Space Studio 正式黄金 CAD 证据失败关闭
+
+- WP7 新增结构化 Manifest、模板、协议和机器校验器，把授权 20 份、10/5/5、L1～L5、DWG/DXF、标注/仲裁、主备同源冻结链、离线质量/Holdout/性能报告收敛为一条可验证证据链。
+- 总 GA 校验器只在授权 CAD、Provider/Worker 输入和 WP3 已完成后允许 WP7 Accepted，并要求 Gate 哈希证明 Manifest 本身；模板、fixture 和语义不合格报告均拒绝。专项 31/31、组合证明链 29/29。
+- 该项只关闭证据结构与误报，不代表真实 CAD、Provider 或 Worker 已交付；GA 保持 72% / No-Go，5 类外部输入、9 个 Gate、5 个签字仍 Pending。
+
 ## 2026-08-14：Space Studio 双仓 Pilot 证据失败关闭
 
 - WP8 新增最终 Pilot Manifest 合同、模板、协议和机器校验器，覆盖 Greenfield/Retrofit、连续 14 天、逐日记录、S3 可用绕行/缺陷关闭、100% 一致性、恢复 SLO、Published 边界和两类现场实名确认。

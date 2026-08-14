@@ -287,14 +287,22 @@
         "Coverage, accuracy, precision and performance report"
       ],
       "evidencePaths": [
-        "docs/space/acceptance/01-golden-dataset-protocol.md"
+        "docs/space/acceptance/01-golden-dataset-protocol.md",
+        "docs/space/acceptance/v1.3-ga/golden-cad-evidence-protocol.md",
+        "docs/space/acceptance/v1.3-ga/golden-cad-evidence-template.json",
+        "docs/space/reports/2026-08-14-space-ga-golden-cad-evidence-guard.md"
       ],
+      "verificationManifest": null,
       "acceptedEvidence": [],
       "acceptanceCriteria": [
+        "Exactly 20 authorized immutable samples use the 10/5/5 split and cover L1 through L5 plus DWG and DXF",
+        "Primary and Backup use the same source set, frozen Worker and 50 MiB standard CAD; Primary scores strictly higher and both evaluation reports are release eligible",
         "Coverage is at least 80 percent",
         "Overall accuracy is at least 90 percent",
         "High-confidence precision is at least 95 percent",
-        "Holdout has no unreported Blocking omission"
+        "High-confidence Wilson lower bound is at least 90 percent and manual operation reduction is at least 70 percent",
+        "Holdout has no unreported Blocking omission",
+        "50 MiB to review P95 is at most 15 minutes and trained-user first Ready P95 is at most 60 minutes"
       ]
     },
     {

@@ -19,11 +19,15 @@
 ./tools/Test-SpaceGaEvidence.ps1 -RequireGaReady
 ./tools/Test-SpaceGaPilotEvidence.ps1 `
   -ManifestPath <最终双仓 Pilot Manifest 路径>
+./tools/Test-SpaceGaGoldenCadEvidence.ps1 `
+  -ManifestPath <最终黄金 CAD Manifest 路径>
 ```
 
 第一条校验索引结构、路径和状态自洽；第二条是正式 GA 门禁，当前应以退出码 `2` 失败。任何人不得通过删除 Blocking Gate、降低门槛或把合成证据标成 Accepted 来消除该失败。
 
 WP8 不能只附一份泛化签字说明。标记 `Accepted` 前必须先完成五个内部角色签字，再按 [`pilot-evidence-protocol.md`](./pilot-evidence-protocol.md) 生成最终结构化 Manifest，在 Gate 的 `verificationManifest` 中登记其仓库相对路径，并由 `acceptedEvidence` 对该 Manifest 自身的内容哈希进行证明。总校验器会调用 Pilot 校验器复核双仓类型、连续 14 天、每日记录、缺陷、恢复 SLO、一致性、Published-only/双写边界和两类现场确认；空白模板与测试 fixture 永远不能作为正式证据。
+
+WP7 同样不能用一份汇总文档代替原始质量链。按 [`golden-cad-evidence-protocol.md`](./golden-cad-evidence-protocol.md) 生成最终 Manifest，登记到 WP7 的 `verificationManifest` 并证明其内容哈希。总校验器会复核授权 20 份、10/5/5、L1～L5、DWG/DXF、双人标注/QA 仲裁、Primary/Backup 同 Source Set 和 Worker、主 Provider 严格高分、两者使用同一 50 MiB 标准 CAD、两份 release-eligible 评估、质量/Wilson/人工操作/Holdout Blocking 与 50 MiB/Ready P95；黄金 CAD 和 Provider/Worker 外部输入或 WP3 验收未完成时，WP7 不能 Accepted。
 
 ## 证据证明对象
 
