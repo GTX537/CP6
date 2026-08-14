@@ -2,6 +2,12 @@
 
 > 依据 Git log 汇总，不替代完整 Git 历史。重点记录影响接手判断的里程碑。
 
+## 2026-08-14：Space Studio WP0 GA 证据证明链加固
+
+- GA 校验器现在对 Signed Signer、Complete External Input 和 Accepted Gate 重算仓库证据 SHA-256，并校验受控 HTTPS/CP6 URN、真实接受人及 ISO-8601 UTC 时间。
+- 不存在/越界/哈希不一致文件、原始 DWG/DXF 仓库路径、不安全 scheme、占位/角色/团队人名和非 UTC/未来时间均失败关闭；新 GitHub Actions 运行当前索引和 16 个正反向自测。
+- 没有任何真实 Owner、Provider、黄金 CAD、Pilot 或签字被填写；核心 GA 仍为 72% / No-Go。
+
 ## 2026-08-14：Space Studio WP3 CAD Provider 版本认证围栏
 
 - Site 认证、运行时注册、能力查询、Preparation 输出和新 Parse payload v5 统一绑定 `ProviderVersion`；配置、路由与产物身份都要求 Key + Version 完全一致，避免同名 Worker 升级绕过原黄金集和审批证据。

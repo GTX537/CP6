@@ -56,6 +56,117 @@ function Test-RelativeEvidencePath {
     }
 }
 
+function Test-PersonName {
+    param($Value)
+
+    if (!(Test-Text $Value) -or ([string]$Value).Length -gt 200) {
+        return $false
+    }
+    return ([string]$Value).Trim() -notmatch (
+        '^(?i:tbd|pending|unknown|n/?a|owner|team|product|qa|wms|' +
+        'architecture|security|admin|administrator|\u5f85\u5b9a|' +
+        '\u672a\u5b9a|\u8d1f\u8d23\u4eba|\u56e2\u961f|\u4ea7\u54c1|' +
+        '\u6d4b\u8bd5|\u8d28\u91cf|\u67b6\u6784|\u5b89\u5168|' +
+        '\u7ba1\u7406\u5458)$')
+}
+
+function Test-AttestedEvidence {
+    param(
+        [Parameter(Mandatory)][string]$OwnerId,
+        [Parameter(Mandatory)]$Evidence
+    )
+
+    $reference = [string]$Evidence.uri
+    $sha256 = [string]$Evidence.sha256
+    $acceptedBy = [string]$Evidence.acceptedBy
+    $acceptedAtUtc = [string]$Evidence.acceptedAtUtc
+    $shaIsValid = $sha256 -match '^[a-fA-F0-9]{64}$'
+
+    if (!(Test-Text $reference) -or $reference.Length -gt 2048) {
+        Add-ValidationError "SPACE_GA_EVIDENCE_URI_REQUIRED: $OwnerId has a missing or oversized evidence URI."
+    }
+    if (!$shaIsValid) {
+        Add-ValidationError "SPACE_GA_EVIDENCE_SHA_INVALID: $OwnerId evidence SHA-256 is invalid."
+    }
+    if (!(Test-PersonName $acceptedBy)) {
+        Add-ValidationError "SPACE_GA_EVIDENCE_ACCEPTOR_INVALID: $OwnerId evidence must name the real accepting person."
+    }
+
+    [DateTimeOffset]$acceptedAt = [DateTimeOffset]::MinValue
+    $acceptedAtIsValid = $acceptedAtUtc -match (
+        '^\d{4}-\d{2}-\d{2}T\d{2}:\d{2}:\d{2}(?:\.\d{1,7})?Z$')
+    if ($acceptedAtIsValid) {
+        try {
+            $acceptedAt = [DateTimeOffset]::Parse(
+                $acceptedAtUtc,
+                [System.Globalization.CultureInfo]::InvariantCulture,
+                [System.Globalization.DateTimeStyles]::RoundtripKind)
+        }
+        catch {
+            $acceptedAtIsValid = $false
+        }
+    }
+    if (!$acceptedAtIsValid -or $acceptedAt.Offset -ne [TimeSpan]::Zero) {
+        Add-ValidationError "SPACE_GA_EVIDENCE_TIME_INVALID: $OwnerId evidence acceptedAtUtc must be an ISO-8601 UTC timestamp."
+    }
+    elseif ($acceptedAt -gt [DateTimeOffset]::UtcNow.AddMinutes(5)) {
+        Add-ValidationError "SPACE_GA_EVIDENCE_TIME_FUTURE: $OwnerId evidence acceptedAtUtc cannot be in the future."
+    }
+
+    if (!(Test-Text $reference)) {
+        return
+    }
+    if ($reference -match '^[A-Za-z][A-Za-z0-9+.-]*:') {
+        [Uri]$absoluteUri = $null
+        if (![Uri]::TryCreate(
+            $reference,
+            [UriKind]::Absolute,
+            [ref]$absoluteUri)) {
+            Add-ValidationError "SPACE_GA_EVIDENCE_URI_MALFORMED: $OwnerId evidence URI is malformed."
+            return
+        }
+        $isControlledHttps = $absoluteUri.Scheme -eq 'https' -and
+            [string]::IsNullOrWhiteSpace($absoluteUri.UserInfo)
+        $isControlledUrn = $absoluteUri.Scheme -eq 'urn' -and
+            $absoluteUri.AbsoluteUri -match (
+                '^urn:cp6-space-ga-evidence:[A-Za-z0-9]' +
+                '[A-Za-z0-9:._-]{0,500}$')
+        if (!$isControlledHttps -and !$isControlledUrn) {
+            Add-ValidationError (
+                "SPACE_GA_EVIDENCE_URI_UNCONTROLLED: $OwnerId evidence URI " +
+                "must be repository-relative, HTTPS, " +
+                "or a CP6 GA evidence URN.")
+        }
+        return
+    }
+
+    if ([System.IO.Path]::IsPathRooted($reference)) {
+        Add-ValidationError "SPACE_GA_EVIDENCE_PATH_ABSOLUTE: $OwnerId uses an absolute evidence path."
+        return
+    }
+    $fullPath = [System.IO.Path]::GetFullPath((Join-Path $repo $reference))
+    if (!$fullPath.StartsWith(
+        $repoPrefix,
+        [System.StringComparison]::OrdinalIgnoreCase)) {
+        Add-ValidationError "SPACE_GA_EVIDENCE_PATH_ESCAPE: $OwnerId evidence escapes the repository root."
+        return
+    }
+    if ([System.IO.Path]::GetExtension($fullPath) -match '^(?i:\.dwg|\.dxf)$') {
+        Add-ValidationError "SPACE_GA_EVIDENCE_RAW_CAD_FORBIDDEN: $OwnerId references raw customer CAD inside the repository."
+        return
+    }
+    if (!(Test-Path -LiteralPath $fullPath -PathType Leaf)) {
+        Add-ValidationError "SPACE_GA_EVIDENCE_PATH_MISSING: $OwnerId evidence path does not exist: $reference"
+        return
+    }
+    if ($shaIsValid) {
+        $actualSha256 = (Get-FileHash -LiteralPath $fullPath -Algorithm SHA256).Hash
+        if (!$actualSha256.Equals($sha256, [System.StringComparison]::OrdinalIgnoreCase)) {
+            Add-ValidationError "SPACE_GA_EVIDENCE_SHA_MISMATCH: $OwnerId evidence SHA-256 does not match: $reference"
+        }
+    }
+}
+
 if ($manifest.schemaVersion -ne 1) {
     Add-ValidationError 'schemaVersion must be 1.'
 }
@@ -83,10 +194,20 @@ foreach ($signer in @($manifest.signers)) {
     if ($signer.status -notin @('Pending', 'Signed')) {
         Add-ValidationError "Signer $($signer.role) has an invalid status."
     }
-    if ($signer.status -eq 'Signed' -and
-        (!(Test-Text $signer.name) -or @($signer.evidence).Count -eq 0)) {
-        Add-ValidationError (
-            "Signer $($signer.role) is Signed without a real name and evidence.")
+    if ($signer.status -eq 'Signed') {
+        if (!(Test-PersonName $signer.name)) {
+            Add-ValidationError (
+                "SPACE_GA_SIGNER_NAME_INVALID: Signer $($signer.role) " +
+                "is Signed without a real person name.")
+        }
+        if (@($signer.evidence).Count -eq 0) {
+            Add-ValidationError (
+                "SPACE_GA_SIGNER_EVIDENCE_REQUIRED: Signer $($signer.role) " +
+                "is Signed without evidence.")
+        }
+        foreach ($evidence in @($signer.evidence)) {
+            Test-AttestedEvidence -OwnerId "Signer $($signer.role)" -Evidence $evidence
+        }
     }
 }
 
@@ -118,10 +239,20 @@ foreach ($input in @($manifest.externalInputs)) {
     if ($input.status -notin @('Pending', 'Complete')) {
         Add-ValidationError "$($input.id) has an invalid status."
     }
-    if ($input.status -eq 'Complete' -and
-        (!(Test-Text $input.ownerName) -or @($input.evidence).Count -eq 0)) {
-        Add-ValidationError (
-            "$($input.id) is Complete without a named owner and evidence.")
+    if ($input.status -eq 'Complete') {
+        if (!(Test-PersonName $input.ownerName)) {
+            Add-ValidationError (
+                "SPACE_GA_INPUT_OWNER_INVALID: $($input.id) is Complete " +
+                "without a real person owner.")
+        }
+        if (@($input.evidence).Count -eq 0) {
+            Add-ValidationError (
+                "SPACE_GA_INPUT_EVIDENCE_REQUIRED: $($input.id) is Complete " +
+                "without evidence.")
+        }
+        foreach ($evidence in @($input.evidence)) {
+            Test-AttestedEvidence -OwnerId $input.id -Evidence $evidence
+        }
     }
 }
 
@@ -169,19 +300,18 @@ foreach ($gate in @($manifest.gates)) {
         Test-RelativeEvidencePath -GateId $gate.id -RelativePath $path
     }
     if ($gate.acceptanceStatus -eq 'Accepted') {
-        if (!(Test-Text $gate.ownerName) -or
-            @($gate.acceptedEvidence).Count -eq 0) {
+        if (!(Test-PersonName $gate.ownerName)) {
             Add-ValidationError (
-                "$($gate.id) is Accepted without a named owner and evidence.")
+                "SPACE_GA_GATE_OWNER_INVALID: $($gate.id) is Accepted " +
+                "without a real person owner.")
+        }
+        if (@($gate.acceptedEvidence).Count -eq 0) {
+            Add-ValidationError (
+                "SPACE_GA_GATE_EVIDENCE_REQUIRED: $($gate.id) is Accepted " +
+                "without evidence.")
         }
         foreach ($evidence in @($gate.acceptedEvidence)) {
-            if (!(Test-Text $evidence.uri) -or
-                [string]$evidence.sha256 -notmatch '^[a-fA-F0-9]{64}$' -or
-                !(Test-Text $evidence.acceptedBy) -or
-                !(Test-Text $evidence.acceptedAtUtc)) {
-                Add-ValidationError (
-                    "$($gate.id) has incomplete accepted evidence metadata.")
-            }
+            Test-AttestedEvidence -OwnerId $gate.id -Evidence $evidence
         }
     }
 }
@@ -210,7 +340,7 @@ if (($manifest.declaredStatus -eq 'GaReady') -ne $gaReady) {
 
 if ($errors.Count -gt 0) {
     foreach ($validationError in $errors) {
-        Write-Error $validationError
+        [Console]::Error.WriteLine($validationError)
     }
     exit 1
 }

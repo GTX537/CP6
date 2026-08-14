@@ -1,0 +1,42 @@
+name: Space GA evidence integrity
+
+on:
+  pull_request:
+    paths:
+      - '.github/workflows/space-ga-evidence.yml'
+      - 'docs/project-memory/**'
+      - 'docs/space/acceptance/v1.3-ga/**'
+      - 'docs/space/reports/**'
+      - 'tools/Test-SpaceGaEvidence.ps1'
+      - 'tools/Test-SpaceGaEvidence.Tests.ps1'
+      - 'tools/test-fixtures/space-ga-evidence/**'
+  push:
+    branches:
+      - main
+    paths:
+      - '.github/workflows/space-ga-evidence.yml'
+      - 'docs/project-memory/**'
+      - 'docs/space/acceptance/v1.3-ga/**'
+      - 'docs/space/reports/**'
+      - 'tools/Test-SpaceGaEvidence.ps1'
+      - 'tools/Test-SpaceGaEvidence.Tests.ps1'
+      - 'tools/test-fixtures/space-ga-evidence/**'
+
+permissions:
+  contents: read
+
+jobs:
+  validate:
+    runs-on: windows-latest
+    timeout-minutes: 10
+    steps:
+      - name: Check out repository
+        uses: actions/checkout@v4
+
+      - name: Validate current GA evidence state
+        shell: pwsh
+        run: ./tools/Test-SpaceGaEvidence.ps1
+
+      - name: Exercise evidence attestation failure modes
+        shell: pwsh
+        run: ./tools/Test-SpaceGaEvidence.Tests.ps1

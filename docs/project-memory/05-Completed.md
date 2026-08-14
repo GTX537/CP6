@@ -1,5 +1,11 @@
 # 已完成能力与近期里程碑
 
+## 2026-08-14 Space Studio WP0 GA 证据证明链加固
+
+- Signed Signer、Complete External Input 和 Accepted Gate 现在统一校验受控 URI、SHA-256、真实接受人和 UTC 时间；仓库内证据会重算内容哈希。
+- 越界/不存在/哈希不一致文件、不安全 URI、原始 DWG/DXF 仓库路径、非 UTC/未来时间和占位人名均失败关闭；新 CI 工作流运行当前索引及 16 个正反向自测。
+- 本项只关闭证据造假/漂移通道，没有接受任何外部输入或 Gate；核心 GA 仍为 72% / No-Go。
+
 ## 2026-08-14 Space Studio WP3 CAD Provider 版本认证围栏
 
 - Site Provider 认证和运行时注册新增必填 `ProviderVersion`，能力查询、执行路由和 Provider 输出身份均要求 Key + Version 完全一致；版本不一致时能力显示明确阻断并在调用 Provider 前失败关闭。
