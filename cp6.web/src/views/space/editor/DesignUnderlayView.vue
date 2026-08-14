@@ -579,7 +579,7 @@ watch(matchJobId, (jobId) => {
   }
 
   closeMatchPanel()
-})
+}, { immediate: true })
 
 watch(
   [versionId, floorLogicalId],
@@ -1016,6 +1016,7 @@ function closeCadReviewPanel(): void {
 
 function openMatchPanel(): void {
   if (!matchJobId.value) return
+  inspectorTab.value = 'issues'
   matchPanelVisible.value = true
   cadReviewPanelVisible.value = false
   aiReviewPanelVisible.value = false
@@ -2655,6 +2656,7 @@ function tabClientInstanceId(): string {
         :calibrated="calibrated"
         :readonly="readonlyScene"
         @choose-underlay="chooseFile"
+        @calibrate-underlay="beginCalibration"
         @choose-cad="chooseCadFile"
         @download-template="downloadStandardExcelTemplate"
         @open-cad-review="openCadReviewWorkspace"

@@ -13,6 +13,7 @@ defineProps<{
 
 const emit = defineEmits<{
   chooseUnderlay: []
+  calibrateUnderlay: []
   chooseCad: []
   downloadTemplate: []
   openCadReview: []
@@ -56,6 +57,13 @@ const modes: Array<{ id: Mode; label: string; glyph: string }> = [
         <button type="button" class="primary" :disabled="readonly" @click="emit('chooseUnderlay')">
           PDF / 图片底图
         </button>
+        <button
+          v-if="hasUnderlay"
+          type="button"
+          data-test="calibrate-underlay"
+          :disabled="readonly"
+          @click="emit('calibrateUnderlay')"
+        >{{ calibrated ? '重新标定底图' : '标定底图' }}</button>
         <button type="button" class="primary" :disabled="readonly" @click="emit('chooseCad')">
           上传 DWG / DXF
         </button>
