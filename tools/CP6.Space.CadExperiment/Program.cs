@@ -245,7 +245,8 @@ public static class Program
         await using var source = File.OpenRead(input);
         var sink = new DevelopmentCadIrFileSink(request, output);
         var converter = new DevelopmentDxfCadConverter();
-        var result = await converter.ConvertAsync(
+        var result = await SpaceCadConverterContractRunner.ConvertAsync(
+            converter,
             request,
             source,
             sink,

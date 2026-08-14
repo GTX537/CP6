@@ -22,6 +22,11 @@ contract; SDK-specific objects may not cross the converter boundary.
 - Entity source references and layer IDs are unique within their scopes.
 - The converter receives a read-only stream and writes to `ISpaceCadIrSink`; it
   receives no WebApi dependency, local path, Draft repository, or vendor type.
+- Every adapter invocation must go through `SpaceCadConverterContractRunner`.
+  The runner fails closed on source writes, unordered/concurrent/duplicate sink
+  records, inconsistent streamed counts, missing or repeated completion, and any
+  converter result that does not match the artifact hash, summary, issues and
+  Provider identity committed by the sink.
 - Large production artifacts use streaming records. The JSON Schema documents the
   logical package and is also used for small fixtures and contract examples.
 - Coordinate preparation is a separate deterministic stage. It exposes the detected
@@ -104,6 +109,10 @@ The E04-S05 development slice consumes the diagnostic and optional match artifac
 a read-only review workspace and canvas overlay. Formal E04-S05 still waits for the
 production CAD artifact/issue API, authorization/audit policy and real editor workflow;
 local development-artifact import does not satisfy those gates.
+The WP3 common conformance runner is now the mandatory repository execution boundary
+for `ICadConverter`, and the development conversion entry uses it. This closes a
+vendor-neutral protocol and provenance gap, but it does not install or certify a
+licensed ODA, APS or alternative production adapter and does not change WP3 acceptance.
 
 Files:
 
