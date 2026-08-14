@@ -1,5 +1,12 @@
 # 已完成能力与近期里程碑
 
+## 2026-08-14 Space Studio WP3 CAD Converter 共合同执行器
+
+- 新增 `SpaceCadConverterContractRunner` 作为 `ICadConverter` 强制执行边界：Source Stream 对适配器只读且所有权保留，Sink 只能按 Document → Layer/Block → Entity → Complete 顺序单线程写入，并验证唯一 ID、逐层数量、汇总与 Bounds。
+- 转换 Result 必须与 Sink 实际提交的 Source SHA、Provider Key/Version、Artifact SHA、Summary 和 Issues 完整一致；适配器捕获并忽略 Source 写入或 Sink 协议异常仍会以稳定内部码失败关闭。公共合同补齐未定义枚举和负计数拒绝，开发转换入口已接入 Runner。
+- 门禁通过：Runner/CAD IR 合同聚焦 23/23、Space Unit 525/525、CAD Experiment 34/34、完整 Release solution 0 warning / 0 error。
+- 本项没有实现或认证真实 ODA/APS，不接受 Mock/fixture 为生产证据；真实适配器、隔离 Worker、20 份黄金 CAD、双链 Site 审批和故障切换仍为 Pending，WP3 保持 Partial/Pending，核心 GA 保持 72% / No-Go。
+
 ## 2026-08-14 Space Studio WP0 GA 证据证明链加固
 
 - Signed Signer、Complete External Input 和 Accepted Gate 现在统一校验受控 URI、SHA-256、真实接受人和 UTC 时间；仓库内证据会重算内容哈希。

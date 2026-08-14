@@ -68,6 +68,8 @@ public static partial class SpaceCadConversionContract
         RequireId(request.FileId, nameof(request.FileId));
         RequireId(request.SourceId, nameof(request.SourceId));
         RequireSha256(request.SourceSha256, nameof(request.SourceSha256));
+        if (!Enum.IsDefined(request.SourceFormat))
+            throw new ArgumentOutOfRangeException(nameof(request.SourceFormat));
         RequireIdentifier(request.ConverterId, nameof(request.ConverterId));
         RequireIdentifier(request.ConverterVersion, nameof(request.ConverterVersion));
     }
@@ -101,6 +103,8 @@ public static partial class SpaceCadConversionContract
         }
 
         RequireIdentifier(document.CadVersion, nameof(document.CadVersion));
+        if (!Enum.IsDefined(document.Unit))
+            throw new InvalidDataException("CAD IR source unit is invalid.");
         RequireIdentifier(document.ConverterId, nameof(document.ConverterId));
         RequireIdentifier(document.ConverterVersion, nameof(document.ConverterVersion));
         if (!document.ConverterId.Equals(request.ConverterId, StringComparison.Ordinal)
@@ -140,6 +144,8 @@ public static partial class SpaceCadConversionContract
     public static void ValidateEntity(SpaceCadIrEntityV1 entity)
     {
         ArgumentNullException.ThrowIfNull(entity);
+        if (!Enum.IsDefined(entity.Type))
+            throw new InvalidDataException("CAD IR entity type is invalid.");
         RequireBoundedText(
             entity.SourceRef,
             MaximumSourceReferenceLength,
@@ -177,6 +183,97 @@ public static partial class SpaceCadConversionContract
         }
     }
 
+    public static void ValidateLayer(SpaceCadIrLayerV1 layer)
+    {
+        ArgumentNullException.ThrowIfNull(layer);
+        RequireBoundedText(
+            layer.LayerId,
+            MaximumIdentifierLength,
+            nameof(layer.LayerId));
+        RequireBoundedText(
+            layer.Name,
+            MaximumIdentifierLength,
+            nameof(layer.Name));
+        if (layer.Color is not null)
+        {
+            RequireBoundedText(
+                layer.Color,
+                MaximumIdentifierLength,
+                nameof(layer.Color));
+        }
+        if (layer.LineType is not null)
+        {
+            RequireBoundedText(
+                layer.LineType,
+                MaximumIdentifierLength,
+                nameof(layer.LineType));
+        }
+        if (layer.EntityCount < 0)
+            throw new InvalidDataException("CAD IR layer entity count cannot be negative.");
+    }
+
+    public static void ValidateBlock(SpaceCadIrBlockV1 block)
+    {
+        ArgumentNullException.ThrowIfNull(block);
+        RequireBoundedText(
+            block.BlockId,
+            MaximumIdentifierLength,
+            nameof(block.BlockId));
+        RequireBoundedText(
+            block.Name,
+            MaximumIdentifierLength,
+            nameof(block.Name));
+        if (block.ExternalReferenceToken is not null)
+        {
+            RequireBoundedText(
+                block.ExternalReferenceToken,
+                MaximumIdentifierLength,
+                nameof(block.ExternalReferenceToken));
+        }
+        if (block.EntityCount < 0)
+            throw new InvalidDataException("CAD IR block entity count cannot be negative.");
+    }
+
+    public static void ValidateIssue(SpaceCadConversionIssueV1 issue)
+    {
+        ArgumentNullException.ThrowIfNull(issue);
+        RequireIdentifier(issue.Code, nameof(issue.Code));
+        if (!Enum.IsDefined(issue.Severity))
+            throw new InvalidDataException("CAD IR issue severity is invalid.");
+        if (issue.SourceRef is not null)
+        {
+            RequireBoundedText(
+                issue.SourceRef,
+                MaximumSourceReferenceLength,
+                nameof(issue.SourceRef));
+        }
+        if (issue.DetailToken is not null)
+        {
+            RequireBoundedText(
+                issue.DetailToken,
+                MaximumIdentifierLength,
+                nameof(issue.DetailToken));
+        }
+    }
+
+    public static void ValidateSummary(SpaceCadIrSummaryV1 summary)
+    {
+        ArgumentNullException.ThrowIfNull(summary);
+        if (summary.LayerCount < 0 ||
+            summary.BlockCount < 0 ||
+            summary.EntityCount < 0 ||
+            summary.SupportedEntityCount < 0 ||
+            summary.UnsupportedEntityCount < 0 ||
+            summary.MissingSourceRefCount < 0)
+        {
+            throw new InvalidDataException("CAD IR summary counts cannot be negative.");
+        }
+        ValidateBounds(summary.Bounds);
+    }
+
+    public static void ValidateArtifactSha256(string value) =>
+        RequireSha256(value, "CadIrSha256");
+
     public static void ValidatePackage(
         SpaceCadConversionRequest request,
         SpaceCadIrPackageV1 package)
@@ -192,42 +289,22 @@ public static partial class SpaceCadConversionContract
         var layerIds = new HashSet<string>(StringComparer.Ordinal);
         foreach (var layer in package.Layers)
         {
-            RequireBoundedText(layer.LayerId, MaximumIdentifierLength, nameof(layer.LayerId));
-            RequireBoundedText(layer.Name, MaximumIdentifierLength, nameof(layer.Name));
-            if (layer.Color is not null)
-            {
-                RequireBoundedText(layer.Color, MaximumIdentifierLength, nameof(layer.Color));
-            }
-            if (layer.LineType is not null)
-            {
-                RequireBoundedText(
-                    layer.LineType,
-                    MaximumIdentifierLength,
-                    nameof(layer.LineType));
-            }
-            if (layer.EntityCount < 0 || !layerIds.Add(layer.LayerId))
+            ValidateLayer(layer);
+            if (!layerIds.Add(layer.LayerId))
             {
                 throw new InvalidDataException(
-                    "CAD IR layers must have unique IDs and non-negative counts.");
+                    "CAD IR layers must have unique IDs.");
             }
         }
 
         var blockIds = new HashSet<string>(StringComparer.Ordinal);
         foreach (var block in package.Blocks)
         {
-            RequireBoundedText(block.BlockId, MaximumIdentifierLength, nameof(block.BlockId));
-            RequireBoundedText(block.Name, MaximumIdentifierLength, nameof(block.Name));
-            if (block.ExternalReferenceToken is not null)
-            {
-                RequireBoundedText(
-                    block.ExternalReferenceToken,
-                    MaximumIdentifierLength,
-                    nameof(block.ExternalReferenceToken));
-            }
-            if (block.EntityCount < 0 || !blockIds.Add(block.BlockId))
+            ValidateBlock(block);
+            if (!blockIds.Add(block.BlockId))
             {
                 throw new InvalidDataException(
-                    "CAD IR blocks must have unique IDs and non-negative counts.");
+                    "CAD IR blocks must have unique IDs.");
             }
         }
 
@@ -260,21 +337,7 @@ public static partial class SpaceCadConversionContract
 
         foreach (var issue in package.Issues)
         {
-            RequireIdentifier(issue.Code, nameof(issue.Code));
-            if (issue.SourceRef is not null)
-            {
-                RequireBoundedText(
-                    issue.SourceRef,
-                    MaximumSourceReferenceLength,
-                    nameof(issue.SourceRef));
-            }
-            if (issue.DetailToken is not null)
-            {
-                RequireBoundedText(
-                    issue.DetailToken,
-                    MaximumIdentifierLength,
-                    nameof(issue.DetailToken));
-            }
+            ValidateIssue(issue);
         }
 
         var supported = package.Entities.LongCount(entity => entity.IsSupported);
@@ -283,6 +346,7 @@ public static partial class SpaceCadConversionContract
             issue => issue.Code.Equals(
                 "SPACE_CAD_SOURCE_REF_SYNTHESIZED",
                 StringComparison.Ordinal));
+        ValidateSummary(package.Summary);
         if (package.Summary.LayerCount != package.Layers.Count
             || package.Summary.BlockCount != package.Blocks.Count
             || package.Summary.EntityCount != package.Entities.Count
@@ -294,7 +358,6 @@ public static partial class SpaceCadConversionContract
                 "CAD IR summary counts do not match the package records.");
         }
 
-        ValidateBounds(package.Summary.Bounds);
         if (package.Summary.Bounds != package.Document.Bounds)
         {
             throw new InvalidDataException(

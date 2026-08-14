@@ -14,7 +14,8 @@ It provides a set of bounded development capabilities:
   DXF drawings across L1-L5, with hashes, expected-answer companions, issue
   expectations and an explicit non-release asset statement.
 - `convert-dev-ir`: converts a bounded development DXF into the versioned,
-  vendor-neutral CAD IR contract and writes a deterministic JSON fixture.
+  vendor-neutral CAD IR contract through the mandatory conformance runner and
+  writes a deterministic JSON fixture.
 - `prepare-dev-coordinate`: applies an explicit unit, origin, rotation and
   target-floor confirmation to a development CAD IR package.
 - `build-dev-inventory`: creates a source/transform-bound layer, block and
@@ -61,6 +62,10 @@ The tool implements a development-only `ICadConverter` and small-fixture JSON
 sink. It does not write Draft data, join `CP6.slnx`, read native DWG, or qualify
 as a licensed production adapter. Formal E02-S02 acceptance remains blocked
 until E02-S01 has a licensed, scored selection.
+
+The tool entry never invokes `ICadConverter` directly. Its conversion goes through
+`SpaceCadConverterContractRunner`, the same vendor-neutral protocol boundary required
+of production adapters; this is contract evidence, not Provider certification.
 
 ## Build and test
 

@@ -2,6 +2,13 @@
 
 > 依据 Git log 汇总，不替代完整 Git 历史。重点记录影响接手判断的里程碑。
 
+## 2026-08-14：Space Studio WP3 CAD Converter 共合同执行器
+
+- 新增供应商无关的 `SpaceCadConverterContractRunner`，把 Source 只读、流式 Sink 顺序/唯一性/计数/完成协议和 Result → 实际 Artifact 证明绑定为所有 `ICadConverter` 的共同执行边界；开发转换入口已迁移。
+- 公共 CAD IR 校验补齐未定义枚举、负计数和规范 Artifact SHA 拒绝；适配器即使吞掉 Source 写入或 Sink 协议异常也会失败关闭。
+- 验证通过：Runner/CAD IR 合同聚焦 23/23、Space Unit 525/525、CAD Experiment 34/34、完整 Release solution 0 warning / 0 error。
+- 真实 ODA/APS、隔离 Worker、黄金 CAD、Site 双链审批与故障切换仍未发生，WP3 保持 Partial/Pending，核心 GA 保持 72% / No-Go。
+
 ## 2026-08-14：Space Studio WP0 GA 证据证明链加固
 
 - GA 校验器现在对 Signed Signer、Complete External Input 和 Accepted Gate 重算仓库证据 SHA-256，并校验受控 HTTPS/CP6 URN、真实接受人及 ISO-8601 UTC 时间。

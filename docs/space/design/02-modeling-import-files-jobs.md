@@ -70,7 +70,11 @@ public interface IFileSafetyScanner
 
 public interface ICadConverter
 {
-    Task<CadConversionResult> ConvertAsync(CadConversionRequest request, CancellationToken ct);
+    Task<SpaceCadConversionResult> ConvertAsync(
+        SpaceCadConversionRequest request,
+        Stream source,
+        ISpaceCadIrSink sink,
+        CancellationToken ct);
 }
 
 public interface ICadSemanticParser
@@ -85,6 +89,13 @@ public interface IExcelModelParser
 ```
 
 领域和 Application 只能依赖这些端口，不依赖具体 CAD SDK、杀毒引擎、对象存储 SDK 或 Excel 库类型。
+
+`ICadConverter` 的所有执行必须经过 Application 层的
+`SpaceCadConverterContractRunner`，不得由 WebApi、Worker 命令处理器或工具入口直接调用。
+Runner 把调用方提供的隔离区 Source 包装为只读且不转移所有权，按顺序校验流式
+Document → Layer/Block → Entity → Complete 协议，并把返回结果与 Sink 实际提交的
+Artifact SHA、Summary、Issue、Provider Key/Version 完整绑定。适配器即使捕获并忽略一次
+写 Source 或 Sink 协议异常，整次转换仍失败关闭；供应商 SDK 类型和临时路径不得穿过该边界。
 
 ### 3.2 部署边界
 

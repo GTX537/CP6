@@ -47,6 +47,18 @@ public sealed class SpaceCadConversionContractTests
     }
 
     [Fact]
+    public void Request_rejects_an_undefined_source_format()
+    {
+        var request = ValidRequest(SpaceCadSourceFormat.Dxf) with
+        {
+            SourceFormat = (SpaceCadSourceFormat)999
+        };
+
+        Assert.Throws<ArgumentOutOfRangeException>(
+            () => SpaceCadConversionContract.ValidateRequest(request));
+    }
+
+    [Fact]
     public void Document_rejects_unknown_units_with_a_guessed_scale()
     {
         var request = ValidRequest(SpaceCadSourceFormat.Dxf);
@@ -55,6 +67,19 @@ public sealed class SpaceCadConversionContractTests
         {
             Unit = SpaceCadUnit.Unknown,
             ScaleToMillimeters = 1m
+        };
+
+        Assert.Throws<InvalidDataException>(
+            () => SpaceCadConversionContract.ValidateDocument(request, document));
+    }
+
+    [Fact]
+    public void Document_rejects_an_undefined_source_unit()
+    {
+        var request = ValidRequest(SpaceCadSourceFormat.Dxf);
+        var document = ValidPackage(request).Document with
+        {
+            Unit = (SpaceCadUnit)999
         };
 
         Assert.Throws<InvalidDataException>(
@@ -136,6 +161,28 @@ public sealed class SpaceCadConversionContractTests
 
         Assert.Throws<InvalidDataException>(
             () => SpaceCadConversionContract.ValidateEntity(invalid));
+    }
+
+    [Fact]
+    public void Standalone_records_reject_undefined_enums_and_negative_counts()
+    {
+        var request = ValidRequest(SpaceCadSourceFormat.Dxf);
+        var package = ValidPackage(request);
+
+        Assert.Throws<InvalidDataException>(() =>
+            SpaceCadConversionContract.ValidateEntity(
+                package.Entities[0] with { Type = (SpaceCadIrEntityType)999 }));
+        Assert.Throws<InvalidDataException>(() =>
+            SpaceCadConversionContract.ValidateIssue(
+                new SpaceCadConversionIssueV1(
+                    "SPACE_CAD_TEST",
+                    (SpaceCadIssueSeverity)999)));
+        Assert.Throws<InvalidDataException>(() =>
+            SpaceCadConversionContract.ValidateLayer(
+                package.Layers[0] with { EntityCount = -1 }));
+        Assert.Throws<InvalidDataException>(() =>
+            SpaceCadConversionContract.ValidateSummary(
+                package.Summary with { EntityCount = -1 }));
     }
 
     private static SpaceCadConversionRequest ValidRequest(
