@@ -187,7 +187,8 @@
         "docs/space/reports/2026-08-14-cad-provider-scorecard.md",
         "docs/space/reports/2026-08-14-cad-mapping-replay-snapshot.md",
         "docs/space/reports/2026-08-14-cad-provider-version-fence.md",
-        "docs/space/reports/2026-08-14-cad-converter-conformance-runner.md"
+        "docs/space/reports/2026-08-14-cad-converter-conformance-runner.md",
+        "docs/space/reports/2026-08-14-space-cad-provider-sqlserver-gate.md"
       ],
       "acceptedEvidence": [],
       "acceptanceCriteria": [
