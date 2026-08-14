@@ -9,7 +9,10 @@ on:
       - 'docs/space/reports/**'
       - 'tools/Test-SpaceGaEvidence.ps1'
       - 'tools/Test-SpaceGaEvidence.Tests.ps1'
+      - 'tools/Test-SpaceGaPilotEvidence.ps1'
+      - 'tools/Test-SpaceGaPilotEvidence.Tests.ps1'
       - 'tools/test-fixtures/space-ga-evidence/**'
+      - 'tools/test-fixtures/space-ga-pilot-evidence/**'
   push:
     branches:
       - main
@@ -20,7 +23,10 @@ on:
       - 'docs/space/reports/**'
       - 'tools/Test-SpaceGaEvidence.ps1'
       - 'tools/Test-SpaceGaEvidence.Tests.ps1'
+      - 'tools/Test-SpaceGaPilotEvidence.ps1'
+      - 'tools/Test-SpaceGaPilotEvidence.Tests.ps1'
       - 'tools/test-fixtures/space-ga-evidence/**'
+      - 'tools/test-fixtures/space-ga-pilot-evidence/**'
 
 permissions:
   contents: read
@@ -40,3 +46,7 @@ jobs:
       - name: Exercise evidence attestation failure modes
         shell: pwsh
         run: ./tools/Test-SpaceGaEvidence.Tests.ps1
+
+      - name: Exercise two-site Pilot evidence failure modes
+        shell: pwsh
+        run: ./tools/Test-SpaceGaPilotEvidence.Tests.ps1

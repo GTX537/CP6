@@ -14,7 +14,7 @@
 - 用 20 份授权真实黄金 CAD 执行 10/5/5 Calibration/Validation/Holdout，产出覆盖率、准确率、高置信度精确率和 Blocking 遗漏证据。
 - 工作台 GA 快捷键、问题定位、标准 tab 焦点、窄屏 3D 保持、字号/主要热区、2D/3D 同源选择和逐 Version+Floor 视角恢复已有仓库内自动化；Iris Xe/WebGL2/500 货架/10,000 库位正式 Viewer 性能门槛已在 `bd206ff8` 以 30 次冷 Context、3,000 次命中拾取和原始证据关闭。生产 Viewer 的代码与合同已统一为 Current Published Design Revision，并由结构守卫禁止回接可变旧 floor/scene API。仍须在配置真实 SQL、已发布仓库数据和生产等价身份/部署的环境运行 Published/Draft 隔离与 Viewer E2E，完成 4.5:1 对比度、真实键盘/辅助技术与 1440×900/1280×720 人工 UX 签字。性能输入、数据集、Three.js/浏览器主版本或生产渲染路径发生实质变化时必须重跑，不得沿用旧报告。
 - WP6 已完成 Warning 集合绑定的 Preview → 显式确认 → Publish fence，交付固定低基数恢复指标、15 分钟/4 小时 Prometheus 规则和运行手册，并以 Customer/Supplier/3PL 自动化矩阵关闭仓库侧 Draft/Source/Upload/Lease/Validate/Publish/AI 外部主体边界。完整 Space Integration 已在本机 SQL Server LocalDB 实际运行 426/426、0 skipped，发布编排真库 3/3 及 CP6.Tests Space/WMS SQL 15/15 通过；这只关闭仓库真库自动化 skip。仍须在生产等价观测链实际加载规则并验证通知路由，在生产等价 SQL Server 与真实 CP6 WMS 运行发布成功、超时自动恢复、部分写入对账、同 PublishPlan 重试无重复、历史重发及旧 Published 持续服务证据，并完成备份恢复、真实 IdP HTTP 负向、独立渗透测试和安全签字。
-- 执行一个绿地仓和一个存量仓各 14 天 Pilot、WMS 故障恢复与对账演练，并取得产品、QA、WMS、架构、安全签字后才可声明核心 GA。
+- WP8 的双仓 Pilot 模板、证据协议、失败关闭专项校验和总 GA 组合门禁已完成；模板/fixture 不能冒充接受证据。仍须真实执行一个绿地仓和一个存量仓各连续 14 天 Pilot，按版本化 Manifest 记录逐日运行、建模/人工修改、缺陷、2D/3D/WMS 一致性、15/240 分钟恢复、业务结果和客户/实施确认，再完成产品、QA、WMS、架构、安全签字后才可声明核心 GA。
 ## 已完成：OpenAPI 原生客户端漂移门禁
 
 - PowerShell 版本差异与全局无关 schema 导致的假阳性已消除；门禁现在只哈希原生客户端路径及递归可达 schema，并使用 Node.js 稳定规范化。

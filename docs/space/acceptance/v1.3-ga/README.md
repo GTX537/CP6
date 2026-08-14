@@ -17,9 +17,13 @@
 ```powershell
 ./tools/Test-SpaceGaEvidence.ps1
 ./tools/Test-SpaceGaEvidence.ps1 -RequireGaReady
+./tools/Test-SpaceGaPilotEvidence.ps1 `
+  -ManifestPath <最终双仓 Pilot Manifest 路径>
 ```
 
 第一条校验索引结构、路径和状态自洽；第二条是正式 GA 门禁，当前应以退出码 `2` 失败。任何人不得通过删除 Blocking Gate、降低门槛或把合成证据标成 Accepted 来消除该失败。
+
+WP8 不能只附一份泛化签字说明。标记 `Accepted` 前必须先完成五个内部角色签字，再按 [`pilot-evidence-protocol.md`](./pilot-evidence-protocol.md) 生成最终结构化 Manifest，在 Gate 的 `verificationManifest` 中登记其仓库相对路径，并由 `acceptedEvidence` 对该 Manifest 自身的内容哈希进行证明。总校验器会调用 Pilot 校验器复核双仓类型、连续 14 天、每日记录、缺陷、恢复 SLO、一致性、Published-only/双写边界和两类现场确认；空白模板与测试 fixture 永远不能作为正式证据。
 
 ## 证据证明对象
 
@@ -37,6 +41,7 @@
 - 仓库内证据只能使用仓库根目录相对路径。校验器会重算文件 SHA-256；不存在、越界或哈希不一致均失败。
 - 受客户数据边界限制的证据可使用无用户信息的 HTTPS URI，或 `urn:cp6-space-ga-evidence:*` 受控引用；由接受人记录受控存储中对象内容的 SHA-256。
 - `acceptedBy` 必须是真实人名，不接受 `TBD/Pending/待定`；`acceptedAtUtc` 必须为以 `Z` 结尾的 ISO-8601 UTC 时间，不允许未来时间。
+- `signers[].evidence.acceptedBy` 必须与该角色登记的 `name` 一致；不能由另一人代替签字人证明其签署。
 - 原始 `.dwg`/`.dxf` 不能作为仓库内证据；只提交授权登记、脱敏指标、哈希和接受记录。
 
 开发者可运行 `./tools/Test-SpaceGaEvidence.Tests.ps1` 覆盖本地哈希、受控 URI、不存在路径、不安全 scheme、原始 CAD、UTC 和占位接受人等正反向场景。
