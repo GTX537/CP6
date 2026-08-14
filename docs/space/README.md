@@ -39,6 +39,7 @@ AI Provider 机器契约：
 
 - [技术 ADR 索引](./adr/README.md)
 - [验收资产索引](./acceptance/README.md)
+- [发布恢复与对账运行手册](./runbooks/publish-recovery.md)
 - [五类合成 CAD 种子包 v1.0.0](./acceptance/v1.0.0/manifest.json)
 
 ### 架构评审结论

@@ -1056,6 +1056,8 @@ v1.3 不改变该适配器架构，只改变认证范围：核心 GA 只认证 C
 
 恢复目标：能够通过 OperationStatus/ReadBack 自动判定的故障在 15 分钟内恢复；需要人工对账的故障在 4 小时内闭合。任意失败期间旧 Published 始终继续服务；同一 PublishPlan 重试不得产生重复库位、重复事件或重复外部写入。
 
+生产观测链必须通过 `/metrics` 暴露固定低基数的发布恢复数量、最老等待时长、SLO 超时数量和目标秒数。状态标签只允许 `waiting_retry`、`manual_intervention`、`reconciliation_required`，不得包含 Tenant、Site、Version 或 Attempt 等高基数/业务标识。`waiting_retry` 超过 15 分钟以及后两类超过 4 小时必须触发告警；指标持续缺失也必须告警。告警必须链接受控运行手册，并在生产等价 Prometheus/Alertmanager（或等价平台）中完成实际加载、通知路由和恢复演练；仅提交规则文件或 Mock 测试不构成 GA 证据。
+
 ## 16. 失败、补偿与恢复
 
 | 场景 | 必须结果 |
@@ -1281,6 +1283,7 @@ AI 日志还不得记录原始 Provider Prompt/响应、Provider 密钥或未经
 60. Supplier 不参加现场业务 UAT，只提供自动化权限/越权矩阵证据。
 61. 按 Site 灰度迁移、试点优先，不长期双写；生产 Viewer 在切换前后始终只消费 Published。
 62. 远端 `main` 同时包含代码、测试、状态文档和真实证据后才可声明完成。
+62A. 发布恢复指标不得暴露租户或 Attempt 标识；15 分钟/4 小时 SLO 告警、指标缺失告警和运行手册须在生产等价观测链中实际触发、送达并完成关闭演练。
 
 ## 20. 测试策略
 

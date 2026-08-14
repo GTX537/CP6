@@ -1,5 +1,11 @@
 # 已完成能力与近期里程碑
 
+## 2026-08-14 Space Studio WP6 发布恢复可观测性基础
+
+- 发布恢复聚合器以不可变 Publish Audit 的状态进入时间为主、Attempt 启动时间为旧记录回退，跨租户汇总 `WaitingRetry`、`ManualIntervention` 和 `ReconciliationRequired`，只输出固定状态标签，不暴露 Tenant、Site、Version 或 Attempt。
+- `/metrics` 新增活动数量、最老等待时长、SLO 超时数量和固定目标秒数；Prometheus 规则覆盖自动恢复超过 15 分钟、人工恢复/对账超过 4 小时及指标缺失，运行手册冻结旧 Published 连续服务、幂等 Retry/Reconcile 和证据要求。
+- 门禁通过：聚焦合同测试 6/6、CP6.Tests 2,883 passed / 19 environment skipped、Space Unit 506/506、Client 71/71、Space Integration 305 passed / 104 environment skipped、完整 Release solution 0 warning / 0 error。真实 SQL WMS 超时用例因未配置 `CP6_TEST_SQLSERVER` skipped，生产等价规则加载、通知路由、真实 WMS 演练和 15 分钟/4 小时结果仍是 GA 门禁。
+
 ## 2026-08-14 Space Studio WP6 发布 Warning 明确认领
 
 - Publish Preview 现在返回 `validationWarningCount`，并在存在 Warning 时返回绑定 ValidationRun 与完整 Warning Issue ID 集的 SHA-256；顺序变化不改变哈希，Run 或集合变化会改变证据。
