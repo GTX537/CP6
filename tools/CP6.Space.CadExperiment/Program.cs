@@ -24,6 +24,9 @@ public static class Program
             {
                 "audit" => await AuditAsync(commandLine, cancellation.Token),
                 "preflight" => await PreflightAsync(commandLine, cancellation.Token),
+                "qualify-providers" => await QualifyProvidersAsync(
+                    commandLine,
+                    cancellation.Token),
                 "generate-stress" => await GenerateStressAsync(commandLine, cancellation.Token),
                 "generate-dev-corpus" => await GenerateDevelopmentCorpusAsync(
                     commandLine,
@@ -153,6 +156,21 @@ public static class Program
 
         Console.WriteLine(JsonSerializer.Serialize(report, CadExperimentJson.Options));
         return report.Passed ? 0 : 4;
+    }
+
+    private static async Task<int> QualifyProvidersAsync(
+        CommandLine commandLine,
+        CancellationToken cancellationToken)
+    {
+        var report = await CadProviderQualificationEvaluator.EvaluateAsync(
+            commandLine.Required("--input"),
+            cancellationToken);
+        await CadExperimentJson.WriteAsync(
+            commandLine.Required("--output"),
+            report,
+            cancellationToken);
+        Console.WriteLine(JsonSerializer.Serialize(report, CadExperimentJson.Options));
+        return report.CadGaReady ? 0 : 4;
     }
 
     private static async Task<int> AuditAsync(
@@ -1610,6 +1628,8 @@ public static class Program
                     [--stress-million <path>] [--output <path>]
                     [--require-e02-ready]
               preflight --config <path> [--output <path>]
+              qualify-providers --input <scorecard-json-path>
+                  --output <selection-report-json-path>
               generate-stress --kind <50mb|million> --output <path>
               generate-dev-corpus --output <directory>
               convert-dev-ir --input <dxf-path> --output <cad-ir-json-path>
