@@ -60,6 +60,13 @@ import type {
   LayoutParentOption,
 } from '@/modules/space-design/layout/layoutCreate'
 import DesignScenePreview3D from '@/modules/space-design/preview3d/DesignScenePreview3D.vue'
+import type { DesignPreviewViewState } from '@/modules/space-design/preview3d/DesignScenePreview3D'
+import {
+  parseSpaceStudioFloorViewState,
+  spaceStudioFloorViewStorageKey,
+  type SpaceStudioFloorViewState,
+  type SpaceStudioProjectionMode,
+} from '@/modules/space-design/preview3d/floorViewState'
 import { CadIssueOverlayLayer } from '@/modules/space-design/cad-review/CadIssueOverlayLayer'
 import DesignCadIssuePanel from '@/modules/space-design/cad-review/DesignCadIssuePanel.vue'
 import DesignExcelCadMatchPanel from '@/modules/space-design/cad-review/DesignExcelCadMatchPanel.vue'
@@ -132,6 +139,10 @@ const generationRunId = computed(() => String(route.query.generationRunId ?? '')
 const matchJobId = computed(() => String(route.query.matchJobId ?? ''))
 const cadSourceId = computed(() => String(route.query.cadSourceId ?? ''))
 const cadParseJobId = computed(() => String(route.query.cadParseJobId ?? ''))
+const initialFloorViewState = readFloorViewState(
+  versionId.value,
+  floorLogicalId.value,
+)
 const canvasRef = ref<HTMLDivElement>()
 const fileInputRef = ref<HTMLInputElement>()
 const cadFileInputRef = ref<HTMLInputElement>()
@@ -152,7 +163,9 @@ const aiGenerationPanelVisible = ref(false)
 const inspectorTab = ref<InspectorTab>('properties')
 const activeAiReviewItemId = ref('')
 const loading = ref(true)
-const projectionMode = ref<'2d' | '3d'>('2d')
+const projectionMode = ref<SpaceStudioProjectionMode>(
+  initialFloorViewState?.projectionMode ?? '2d',
+)
 const uploading = ref(false)
 const downloadingTemplate = ref(false)
 const savingCalibration = ref(false)
@@ -182,7 +195,12 @@ const parseElapsed = ref('')
 const parseError = ref('')
 const canvasZoomPercent = ref(5)
 const canvasSelectionTool = ref<'select' | 'pan' | 'measure'>('select')
-const canvasViewport = ref({ ...defaultCanvasViewport })
+const canvasViewport = ref({
+  ...(initialFloorViewState?.canvasViewport ?? defaultCanvasViewport),
+})
+const preview3dViewState = ref<DesignPreviewViewState | null>(
+  initialFloorViewState?.preview3d ?? null,
+)
 const pointerCoordinates = ref('X — / Y —')
 const canvasPointerWorld = ref<{ x: number; y: number } | null>(null)
 const measurementText = ref('')
@@ -194,6 +212,11 @@ let panGesture: {
 } | null = null
 let leaseRenewTimer: number | null = null
 let parseElapsedTimer: number | null = null
+let floorViewPersistenceTimer: number | null = null
+let pendingFloorViewState: {
+  storageKey: string
+  state: SpaceStudioFloorViewState
+} | null = null
 const visible = ref(true)
 const opacity = ref(55)
 const locked = ref(true)
@@ -426,6 +449,7 @@ onMounted(async () => {
   stage.stage.on('wheel.space-studio-tools', onCanvasWheel)
   elementLayer = new ElementCanvasLayer(stage.stage, selectObjects)
   cadIssueOverlay = new CadIssueOverlayLayer(stage.stage)
+  applyCanvasViewport(canvasViewport.value, false)
   resizeObserver = new ResizeObserver((entries) => {
     const size = entries[0]?.contentRect
     if (size) {
@@ -488,6 +512,7 @@ onBeforeRouteUpdate(async () => {
 })
 
 onBeforeUnmount(() => {
+  flushPendingFloorViewState()
   disposed = true
   window.removeEventListener('resize', updateViewportWidth)
   window.removeEventListener('keydown', onStudioKeydown)
@@ -561,6 +586,7 @@ watch(
   async ([nextVersion, nextFloor], [previousVersion, previousFloor]) => {
     if (!previousVersion || !previousFloor ||
         nextVersion === previousVersion && nextFloor === previousFloor) return
+    flushPendingFloorViewState()
     const previousLeaseId = lease.value?.leaseId
     if (previousLeaseId && leaseState.value === 'owned') {
       await designLeaseApi.release(
@@ -581,6 +607,7 @@ watch(
     touchHistory()
     lease.value = null
     leaseState.value = 'loading'
+    restoreFloorViewState(nextVersion, nextFloor)
     await loadScene()
     if (designScene.value?.versionStatus === 'Draft' && !narrowReadonly.value) {
       await acquireEditLease()
@@ -732,7 +759,7 @@ function focusCadReviewItem(item: CadReviewItem): void {
   }
   activeCadReviewItemId.value = item.reviewItemId
   if (projectionMode.value === '3d' && !narrowReadonly.value) {
-    projectionMode.value = '2d'
+    setProjectionMode('2d')
   }
 
   const object = resolveCadReviewCanvasObject(
@@ -816,16 +843,98 @@ function viewportForCadReviewItem(
 
 function applyCanvasViewport(
   viewport: Pick<ViewState, 'panX' | 'panY' | 'zoom'>,
+  persist = true,
 ): void {
   canvasViewport.value = { ...viewport }
   canvasZoomPercent.value = Math.round(viewport.zoom * 100)
   stage?.setViewport(viewport)
   elementLayer?.setViewport(viewport)
   cadIssueOverlay?.setViewport(viewport)
+  if (persist) scheduleFloorViewStatePersistence()
 }
 
 function resetCanvasViewport(): void {
   applyCanvasViewport(defaultCanvasViewport)
+}
+
+function setProjectionMode(mode: SpaceStudioProjectionMode): void {
+  projectionMode.value = narrowReadonly.value && mode === '2d' ? '3d' : mode
+  scheduleFloorViewStatePersistence()
+}
+
+function onPreview3dViewStateChange(state: DesignPreviewViewState): void {
+  preview3dViewState.value = state
+  scheduleFloorViewStatePersistence()
+}
+
+function restoreFloorViewState(nextVersionId: string, nextFloorLogicalId: string): void {
+  const stored = readFloorViewState(nextVersionId, nextFloorLogicalId)
+  projectionMode.value = narrowReadonly.value
+    ? '3d'
+    : stored?.projectionMode ?? '2d'
+  preview3dViewState.value = stored?.preview3d ?? null
+  applyCanvasViewport(stored?.canvasViewport ?? defaultCanvasViewport, false)
+}
+
+function scheduleFloorViewStatePersistence(): void {
+  const currentVersionId = versionId.value
+  const currentFloorLogicalId = floorLogicalId.value
+  if (!currentVersionId || !currentFloorLogicalId) return
+  pendingFloorViewState = {
+    storageKey: spaceStudioFloorViewStorageKey(
+      currentVersionId,
+      currentFloorLogicalId,
+    ),
+    state: {
+      schemaVersion: 1,
+      projectionMode: projectionMode.value,
+      canvasViewport: { ...canvasViewport.value },
+      ...(preview3dViewState.value
+        ? { preview3d: preview3dViewState.value }
+        : {}),
+    },
+  }
+  if (floorViewPersistenceTimer !== null) return
+  floorViewPersistenceTimer = window.setTimeout(
+    flushPendingFloorViewState,
+    120,
+  )
+}
+
+function flushPendingFloorViewState(): void {
+  if (floorViewPersistenceTimer !== null) {
+    window.clearTimeout(floorViewPersistenceTimer)
+    floorViewPersistenceTimer = null
+  }
+  const pending = pendingFloorViewState
+  pendingFloorViewState = null
+  if (!pending) return
+  try {
+    window.sessionStorage.setItem(
+      pending.storageKey,
+      JSON.stringify(pending.state),
+    )
+  } catch {
+    // Private browsing or a full storage quota must not block model editing.
+  }
+}
+
+function readFloorViewState(
+  currentVersionId: string,
+  currentFloorLogicalId: string,
+): SpaceStudioFloorViewState | null {
+  if (typeof window === 'undefined' || !currentVersionId || !currentFloorLogicalId) {
+    return null
+  }
+  try {
+    return parseSpaceStudioFloorViewState(
+      window.sessionStorage.getItem(
+        spaceStudioFloorViewStorageKey(currentVersionId, currentFloorLogicalId),
+      ),
+    )
+  } catch {
+    return null
+  }
 }
 
 function canvasWorldPoint(): { x: number; y: number } | null {
@@ -923,7 +1032,7 @@ function closeMatchPanel(): void {
 }
 
 function focusExcelCadMatchRow(row: ISpaceExcelCadRackMatchV1): void {
-  if (projectionMode.value === '3d') projectionMode.value = '2d'
+  if (projectionMode.value === '3d') setProjectionMode('2d')
   const item = excelCadMatchAsReviewItem(row)
   const object = resolveCadReviewCanvasObject(
     item,
@@ -1038,7 +1147,7 @@ function focusAiReviewItem(item: AiReviewItem): void {
     return
   }
   activeAiReviewItemId.value = item.reviewItemId
-  if (projectionMode.value === '3d') projectionMode.value = '2d'
+  if (projectionMode.value === '3d') setProjectionMode('2d')
   const overlayItem = aiReviewAsCadReviewItem(item)
   const object = resolveCadReviewCanvasObject(
     overlayItem,
@@ -2517,8 +2626,8 @@ function tabClientInstanceId(): string {
 
     <div class="studio-commandbar" role="toolbar" aria-label="Space Studio 编辑命令">
       <div class="studio-view-switch" role="group" aria-label="2D/3D 模式">
-        <button type="button" :aria-pressed="projectionMode === '2d'" :class="{ active: projectionMode === '2d' }" @click="projectionMode = '2d'">2D</button>
-        <button type="button" :aria-pressed="projectionMode === '3d'" :class="{ active: projectionMode === '3d' }" @click="projectionMode = '3d'">3D</button>
+        <button type="button" :aria-pressed="projectionMode === '2d'" :class="{ active: projectionMode === '2d' }" @click="setProjectionMode('2d')">2D</button>
+        <button type="button" :aria-pressed="projectionMode === '3d'" :class="{ active: projectionMode === '3d' }" @click="setProjectionMode('3d')">3D</button>
       </div>
       <button type="button" aria-keyshortcuts="V" :aria-pressed="canvasSelectionTool === 'select'" :class="{ active: canvasSelectionTool === 'select' }" @click="selectCanvasTool('select')">选择 V</button>
       <button type="button" aria-keyshortcuts="H" :aria-pressed="canvasSelectionTool === 'pan'" :class="{ active: canvasSelectionTool === 'pan' }" @click="selectCanvasTool('pan')">平移 H</button>
@@ -2598,7 +2707,10 @@ function tabClientInstanceId(): string {
           v-show="projectionMode === '3d'"
           :scene="designScene"
           :selected-logical-ids="selectedObjects.map((item) => item.logicalId)"
+          :view-state="preview3dViewState"
           class="preview3d"
+          @select="selectObjects"
+          @view-state-change="onPreview3dViewStateChange"
         />
       </div>
 

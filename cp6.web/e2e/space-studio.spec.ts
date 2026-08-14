@@ -41,6 +41,40 @@ test('1440x900 provides the full editor and a consistent local 3D preview', asyn
   expect(errors).toEqual([])
 })
 
+test('restores the selected projection and 3D camera for the same floor', async ({ page }) => {
+  const errors = collectPageErrors(page)
+  await installSpaceStudioFixtures(page)
+  await page.setViewportSize({ width: 1440, height: 900 })
+  await page.goto(studioUrl)
+
+  await page.getByRole('button', { name: '3D', exact: true }).click()
+  await expect(page.getByText('2D/3D 清单一致', { exact: true })).toBeVisible()
+  await page.getByRole('button', { name: '俯视', exact: true }).click()
+
+  const storageKey = `cp6-space-studio-floor-view-v1:${versionId}:${floorId}`
+  await expect.poll(() => page.evaluate((key) => {
+    const serialized = sessionStorage.getItem(key)
+    if (!serialized) return null
+    const state = JSON.parse(serialized)
+    return {
+      schemaVersion: state.schemaVersion,
+      projectionMode: state.projectionMode,
+      hasCamera: Array.isArray(state.preview3d?.cameraPosition),
+      hasTarget: Array.isArray(state.preview3d?.target),
+    }
+  }, storageKey)).toEqual({
+    schemaVersion: 1,
+    projectionMode: '3d',
+    hasCamera: true,
+    hasTarget: true,
+  })
+
+  await page.reload()
+  await expect(page.getByRole('button', { name: '3D', exact: true })).toHaveClass(/active/)
+  await expect(page.locator('[data-test="design-preview-3d-canvas"]')).toBeVisible()
+  expect(errors).toEqual([])
+})
+
 test('1280x720 remains a complete editing surface', async ({ page }) => {
   const errors = collectPageErrors(page)
   await installSpaceStudioFixtures(page)

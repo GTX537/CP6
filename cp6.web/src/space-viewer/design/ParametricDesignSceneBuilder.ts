@@ -70,6 +70,7 @@ export class ParametricDesignSceneBuilder {
     const logicalInstances = new Map<string, ParametricInstanceReference[]>()
     const meshes: InstancedMesh[] = []
     const polygonGeometries: ExtrudeGeometry[] = []
+    const polygonMaterials: Material[] = []
 
     const boxesByRole = groupByRole(plan.boxes)
     for (const [role, boxes] of boxesByRole) {
@@ -106,7 +107,8 @@ export class ParametricDesignSceneBuilder {
 
     for (const primitive of plan.polygons) {
       const geometry = polygonGeometry(primitive)
-      const mesh = new Mesh(geometry, materialFor(primitive.materialRole))
+      const material = materialFor(primitive.materialRole).clone()
+      const mesh = new Mesh(geometry, material)
       mesh.name = primitive.key
       mesh.position.set(
         primitive.origin.x,
@@ -118,6 +120,7 @@ export class ParametricDesignSceneBuilder {
       mesh.userData.logicalId = primitive.logicalId
       objectTargets.set(mesh.id, targetFor(primitive))
       polygonGeometries.push(geometry)
+      polygonMaterials.push(material)
       root.add(mesh)
     }
 
@@ -133,6 +136,7 @@ export class ParametricDesignSceneBuilder {
       dispose: () => {
         for (const mesh of meshes) mesh.dispose()
         for (const geometry of polygonGeometries) geometry.dispose()
+        for (const material of polygonMaterials) material.dispose()
         instanceTargets.clear()
         objectTargets.clear()
         logicalInstances.clear()
