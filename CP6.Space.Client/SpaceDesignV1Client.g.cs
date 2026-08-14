@@ -24169,6 +24169,9 @@ namespace CP6.Space.Client
         [System.Text.Json.Serialization.JsonPropertyName("approvalReference")]
         public string? ApprovalReference { get; set; } = default!;
 
+        [System.Text.Json.Serialization.JsonPropertyName("warningAcknowledgementHash")]
+        public string? WarningAcknowledgementHash { get; set; } = default!;
+
     }
 
     [System.CodeDom.Compiler.GeneratedCode("NJsonSchema", "14.7.1.0 (NJsonSchema v11.6.1.0 (Newtonsoft.Json v13.0.0.0))")]
@@ -31467,6 +31470,12 @@ namespace CP6.Space.Client
 
         [System.Text.Json.Serialization.JsonPropertyName("nextCursor")]
         public string? NextCursor { get; set; } = default!;
+
+        [System.Text.Json.Serialization.JsonPropertyName("validationWarningCount")]
+        public int ValidationWarningCount { get; set; } = default!;
+
+        [System.Text.Json.Serialization.JsonPropertyName("warningAcknowledgementHash")]
+        public string? WarningAcknowledgementHash { get; set; } = default!;
 
     }
 

@@ -68,6 +68,8 @@ public sealed class SpacePublishPreviewSqlServerTests
                     $"items={string.Join(',', first.Items.Select(item =>
                         $"{item.ObjectType}:{item.Action}:{item.ImpactCode}"))}");
                 Assert.Equal("Passed", first.ValidationStatus);
+                Assert.Equal(0, first.ValidationWarningCount);
+                Assert.Null(first.WarningAcknowledgementHash);
                 Assert.Equal(seeded.BaseVersionId, first.BaseVersionId);
                 Assert.Equal(8, first.ItemCount);
                 Assert.Equal(3, first.ChangeCount);

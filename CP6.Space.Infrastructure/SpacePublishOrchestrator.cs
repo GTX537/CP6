@@ -176,6 +176,10 @@ public sealed partial class SpacePublishOrchestrator :
                              SpaceErrorCodes.ValidationNotFound,
                              "The selected ValidationRun was not found.");
         EnsureValidation(target, validation, capabilities);
+        await EnsureWarningAcknowledgementAsync(
+            validation,
+            request.WarningAcknowledgementHash,
+            cancellationToken);
         EnsureBase(model, request.ExpectedPublishedVersionId);
 
         SpaceHistoricalRepublish? historicalRepublish = null;
@@ -309,6 +313,10 @@ public sealed partial class SpacePublishOrchestrator :
                     value => value.Id == validation.Id,
                     cancellationToken);
             EnsureValidation(target, persistedValidation, capabilities);
+            await EnsureWarningAcknowledgementAsync(
+                persistedValidation,
+                request.WarningAcknowledgementHash,
+                cancellationToken);
             if (historicalRepublish is not null && historicalContext is not null)
             {
                 EnsureHistoricalContext(
@@ -1401,6 +1409,12 @@ public sealed partial class SpacePublishOrchestrator :
             throw Invalid(
                 "expectedPublishedVersionId cannot be an empty GUID.");
         }
+        if (!string.IsNullOrWhiteSpace(request.WarningAcknowledgementHash))
+        {
+            _ = SpaceWmsContract.RequireSha256(
+                request.WarningAcknowledgementHash,
+                nameof(request.WarningAcknowledgementHash));
+        }
     }
 
     private static string RequireIdempotencyKey(string value)
@@ -1428,7 +1442,29 @@ public sealed partial class SpacePublishOrchestrator :
             request.ExpectedPublishedVersionId?.ToString("D") ?? "-",
             request.ValidationRunId.ToString("D"),
             request.PlanHash.ToLowerInvariant(),
-            request.ApprovalReference?.Trim() ?? "-"));
+            request.ApprovalReference?.Trim() ?? "-",
+            request.WarningAcknowledgementHash?.Trim().ToLowerInvariant() ??
+            "-"));
+
+    private async Task EnsureWarningAcknowledgementAsync(
+        SpaceValidationRun validation,
+        string? suppliedHash,
+        CancellationToken cancellationToken)
+    {
+        var warningIssueIds = await _context.Issues
+            .AsNoTracking()
+            .Where(value =>
+                value.ValidationRunId == validation.Id &&
+                value.Severity == SpaceIssueSeverity.Warning)
+            .Select(value => value.Id)
+            .OrderBy(value => value)
+            .ToArrayAsync(cancellationToken);
+        SpacePublishWarningAcknowledgement.EnsureConfirmed(
+            validation.Id,
+            validation.WarningCount,
+            warningIssueIds,
+            suppliedHash);
+    }
 
     private static string Invariant<T>(T value)
         where T : IFormattable =>

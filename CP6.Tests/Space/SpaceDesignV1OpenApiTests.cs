@@ -2485,6 +2485,46 @@ public sealed class SpaceDesignV1OpenApiTests
             "ignore");
     }
 
+    [Fact]
+    public void Publish_warning_acknowledgement_contract_is_explicit()
+    {
+        using var document = ReadContract();
+        var schemas = document.RootElement
+            .GetProperty("components")
+            .GetProperty("schemas");
+        var request = Schema(
+            schemas,
+            "CP6.Space.Contracts.CreateSpacePublishAttemptRequest");
+        var requestProperties = request.GetProperty("properties");
+        Assert.True(requestProperties.TryGetProperty(
+            "warningAcknowledgementHash",
+            out var requestHash));
+        Assert.Equal("string", requestHash.GetProperty("type").GetString());
+        Assert.True(requestHash.GetProperty("nullable").GetBoolean());
+        if (request.TryGetProperty("required", out var requestRequired))
+        {
+            Assert.DoesNotContain(
+                "warningAcknowledgementHash",
+                requestRequired.EnumerateArray()
+                    .Select(value => value.GetString()));
+        }
+
+        var preview = Schema(
+            schemas,
+            "CP6.Space.Contracts.SpacePublishPreviewDto");
+        var previewProperties = preview.GetProperty("properties");
+        Assert.True(previewProperties.TryGetProperty(
+            "validationWarningCount",
+            out var warningCount));
+        Assert.Equal("integer", warningCount.GetProperty("type").GetString());
+        Assert.True(previewProperties.TryGetProperty(
+            "warningAcknowledgementHash",
+            out var previewHash));
+        Assert.Equal("string", previewHash.GetProperty("type").GetString());
+        Assert.True(previewHash.GetProperty("nullable").GetBoolean());
+        AssertExactRequired(preview, "validationWarningCount");
+    }
+
     private static JsonElement Schema(JsonElement schemas, string name) =>
         schemas.GetProperty(name);
 

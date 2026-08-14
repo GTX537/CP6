@@ -18975,6 +18975,10 @@
           "approvalReference": {
             "type": "string",
             "nullable": true
+          },
+          "warningAcknowledgementHash": {
+            "type": "string",
+            "nullable": true
           }
         },
         "additionalProperties": false
@@ -28252,6 +28256,9 @@
         "additionalProperties": false
       },
       "CP6.Space.Contracts.SpacePublishPreviewDto": {
+        "required": [
+          "validationWarningCount"
+        ],
         "type": "object",
         "properties": {
           "targetVersionId": {
@@ -28324,6 +28331,14 @@
             "nullable": true
           },
           "nextCursor": {
+            "type": "string",
+            "nullable": true
+          },
+          "validationWarningCount": {
+            "type": "integer",
+            "format": "int32"
+          },
+          "warningAcknowledgementHash": {
             "type": "string",
             "nullable": true
           }

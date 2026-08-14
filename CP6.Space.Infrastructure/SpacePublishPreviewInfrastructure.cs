@@ -132,6 +132,14 @@ public sealed class SpacePublishPreviewService : ISpacePublishPreviewService
                 "rules, adapter, and capability snapshot.");
         }
         EnsureValidationBinding(target, validation);
+        var warningIssueIds = await ReadWarningIssueIdsAsync(
+            validation.Id,
+            cancellationToken);
+        var warningAcknowledgementHash =
+            SpacePublishWarningAcknowledgement.ComputeBoundHash(
+                validation.Id,
+                validation.WarningCount,
+                warningIssueIds);
 
         SpaceModelVersion? baseVersion = null;
         if (model.CurrentPublishedVersionId.HasValue)
@@ -273,8 +281,22 @@ public sealed class SpacePublishPreviewService : ISpacePublishPreviewService
                 plan.WmsImpact.RuntimeOnlyCount,
                 plan.WmsImpact.BlockingCount),
             page.Select(ToDto).ToArray(),
-            nextCursor);
+            nextCursor,
+            validation.WarningCount,
+            warningAcknowledgementHash);
     }
+
+    private Task<Guid[]> ReadWarningIssueIdsAsync(
+        Guid validationRunId,
+        CancellationToken cancellationToken) =>
+        _context.Issues
+            .AsNoTracking()
+            .Where(value =>
+                value.ValidationRunId == validationRunId &&
+                value.Severity == SpaceIssueSeverity.Warning)
+            .Select(value => value.Id)
+            .OrderBy(value => value)
+            .ToArrayAsync(cancellationToken);
 
     private static SpacePublishPreviewItemDto ToDto(
         SpacePublishPlanItem item) =>

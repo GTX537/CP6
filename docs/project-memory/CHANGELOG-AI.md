@@ -2,6 +2,12 @@
 
 > 依据 Git log 汇总，不替代完整 Git 历史。重点记录影响接手判断的里程碑。
 
+## 2026-08-14：Space Studio WP6 发布 Warning 明确认领
+
+- Publish Preview 新增与 ValidationRun 和 Warning Issue 集绑定的确认哈希；发布请求在存在 Warning 时必须携带该哈希，缺失返回稳定 422，集合变化返回 409 并要求刷新。
+- 发布控制面新增独立 Warning 复核勾选，不再用通用风险确认代替；历史重发遇到新 Warning 会停在生成的 Ready 版本等待人工确认，旧 Published 不受影响。
+- OpenAPI、C#/TypeScript SDK、Spec、错误码和自动化同步更新。仓库门禁通过，真实 SQL/CP6 WMS 恢复演练、监控告警、双仓 Pilot 与五方签字仍未完成，本卡不等于 WP6/核心 GA。
+
 ## 2026-08-14：Space Studio WP4 底图与 Excel–CAD 工作台路径闭环
 
 - 底图上传并挂接后，工作台上下文面板现在显示“标定底图”，已标定来源可重新标定；只读状态禁用写入口。三点标定继续写既有 Design V1 calibration 合同。

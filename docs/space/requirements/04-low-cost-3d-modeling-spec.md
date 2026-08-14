@@ -419,7 +419,10 @@ E13 在此模型上新增 `SpaceGenerationRun`、`SpaceGenerationProposal`、`Sp
 | ResolvedBy/ResolvedAt | 处理记录 |
 | ResolutionNote | 忽略 Warning 时必填 |
 
-Blocking 不允许忽略；Warning 可由有权限用户确认。
+Blocking 不允许忽略；Warning 可由有权限用户确认。Publish Preview 必须返回绑定
+ValidationRun 与完整 Warning Issue 集的确认哈希；存在 Warning 时，发布请求必须携带
+该哈希。未确认返回稳定 422，Warning 集或 ValidationRun 已变化时返回 409 并要求刷新
+发布预览，不能用通用风险勾选或历史重发自动确认代替。
 
 ### 8.5 映射方案
 
@@ -849,7 +852,7 @@ v1.2 已冻结错误码：
 
 v1.3 追加错误码：
 
-`SPACE_EDIT_LEASE_HELD`、`SPACE_EDIT_LEASE_LOST`、`SPACE_EDIT_LEASE_TAKEOVER_DENIED`、`SPACE_FLOOR_REVISION_CONFLICT`、`SPACE_PARSE_CHANGESET_STALE`、`SPACE_VALIDATION_BLOCKING`、`SPACE_PUBLISH_RECONCILIATION_REQUIRED`。
+`SPACE_EDIT_LEASE_HELD`、`SPACE_EDIT_LEASE_LOST`、`SPACE_EDIT_LEASE_TAKEOVER_DENIED`、`SPACE_FLOOR_REVISION_CONFLICT`、`SPACE_PARSE_CHANGESET_STALE`、`SPACE_VALIDATION_BLOCKING`、`SPACE_PUBLISH_WARNING_ACKNOWLEDGEMENT_REQUIRED`、`SPACE_PUBLISH_RECONCILIATION_REQUIRED`。
 
 历史客户端使用的 `SPACE_VALIDATION_BLOCKED` 只能作为兼容别名读取；新 Design V1 响应和自动化断言统一使用 `SPACE_VALIDATION_BLOCKING`。
 

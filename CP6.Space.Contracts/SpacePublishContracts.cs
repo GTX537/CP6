@@ -4,7 +4,8 @@ public sealed record CreateSpacePublishAttemptRequest(
     Guid? ExpectedPublishedVersionId,
     Guid ValidationRunId,
     string PlanHash,
-    string? ApprovalReference);
+    string? ApprovalReference,
+    string? WarningAcknowledgementHash = null);
 
 public sealed record SpacePublishReceiptDto(
     Guid LogicalId,
