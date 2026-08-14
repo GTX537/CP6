@@ -25,19 +25,10 @@ public sealed class SpaceDesignSceneSqlServerTests
                 connectionString,
                 execution,
                 clock);
-            var seeded = await SeedDesignModelAsync(
+            var seeded = await SeedPublishedModelWithFloorAsync(
                 context,
                 execution.ActorId,
                 clock.UtcNow);
-            var publishedFloor = SpaceFloorRevision.Create(
-                execution.TenantId,
-                seeded.Published.Id,
-                Guid.NewGuid(),
-                seeded.Model.SiteId,
-                1,
-                "PUB",
-                "Published floor",
-                height: 6000);
             var draft = SpaceModelVersion.CreateDraft(
                 execution.TenantId,
                 seeded.Model.Id,
@@ -54,7 +45,7 @@ public sealed class SpaceDesignSceneSqlServerTests
                 "DRAFT",
                 "Draft-only floor",
                 height: 6000);
-            context.AddRange(publishedFloor, draft, draftFloor);
+            context.AddRange(draft, draftFloor);
             await context.SaveChangesAsync();
 
             var service = NewService(
@@ -72,7 +63,9 @@ public sealed class SpaceDesignSceneSqlServerTests
             Assert.False(scene.RuntimeOverlayIncluded);
             var floor = Assert.Single(scene.Floors);
             Assert.Equal(seeded.Published.Id, floor.ModelVersionId);
-            Assert.Equal(publishedFloor.LogicalId, floor.Floor.Revision.LogicalId);
+            Assert.Equal(
+                seeded.PublishedFloor.LogicalId,
+                floor.Floor.Revision.LogicalId);
             Assert.Equal("PUB", floor.Floor.FloorCode);
             Assert.DoesNotContain(
                 scene.Floors,
@@ -1975,6 +1968,49 @@ public sealed class SpaceDesignSceneSqlServerTests
         context.AddRange(model, published);
         await context.SaveChangesAsync();
 
+        await PublishDesignModelAsync(context, model, published, actorId, nowUtc);
+        return (model, published);
+    }
+
+    private static async Task<(
+        SpaceModel Model,
+        SpaceModelVersion Published,
+        SpaceFloorRevision PublishedFloor)> SeedPublishedModelWithFloorAsync(
+            SpaceContext context,
+            Guid actorId,
+            DateTime nowUtc)
+    {
+        var model = SpaceModel.Create(
+            context.CurrentTenantId,
+            Guid.NewGuid());
+        var published = SpaceModelVersion.CreateDraft(
+            context.CurrentTenantId,
+            model.Id,
+            1,
+            "Published baseline");
+        var publishedFloor = SpaceFloorRevision.Create(
+            context.CurrentTenantId,
+            published.Id,
+            Guid.NewGuid(),
+            model.SiteId,
+            1,
+            "PUB",
+            "Published floor",
+            height: 6000);
+        context.AddRange(model, published, publishedFloor);
+        await context.SaveChangesAsync();
+
+        await PublishDesignModelAsync(context, model, published, actorId, nowUtc);
+        return (model, published, publishedFloor);
+    }
+
+    private static async Task PublishDesignModelAsync(
+        SpaceContext context,
+        SpaceModel model,
+        SpaceModelVersion published,
+        Guid actorId,
+        DateTime nowUtc)
+    {
         published.BeginValidation();
         published.MarkReady(ContentHash, "space-v1", WmsHash);
         published.BeginPublishing();
@@ -1985,7 +2021,6 @@ public sealed class SpaceDesignSceneSqlServerTests
         model.MarkVerified(published);
         model.ActivateDesignV1();
         await context.SaveChangesAsync();
-        return (model, published);
     }
 
     private static async Task WithDatabaseAsync(

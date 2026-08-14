@@ -2,11 +2,17 @@
 
 > 依据 Git log 汇总，不替代完整 Git 历史。重点记录影响接手判断的里程碑。
 
+## 2026-08-14：Space Studio 全量 SQL Server LocalDB 门禁收敛
+
+- 完整 Space Integration 首次在 SQL Server 17.0.4025.3 LocalDB 真实执行，424/426 暴露两个此前被环境 skip 隐藏的问题；发布恢复查询已独立修复。
+- Published Viewer 失败属于测试夹具先把版本发布、再追加楼层；夹具改为 Draft 阶段封存楼层后再发布，保留并证明 Published/Superseded 快照不可变保护。Scene SQL 7/7 通过。
+- 最终完整复跑 426/426、0 failed、0 skipped。LocalDB 不替代生产等价 SQL/WMS/IdP/告警或 Pilot，核心 GA 保持 72% / No-Go。
+
 ## 2026-08-14：Space Studio WP6 发布恢复指标 SQL Server 翻译修复
 
 - 真 SQL 全量门禁暴露恢复指标的复合键 GroupJoin 无法翻译；改为显式 TenantId/AttemptId/AttemptStatus 相关子查询，保持跨租户无标签聚合与 Audit 状态进入时间语义。
 - 恢复指标单测 6/6、发布编排 SQL Server 3/3 通过，覆盖 WMS 首次超时、WaitingRetry、旧 Published 保持和正式重试完成。
-- LocalDB 不替代生产等价 SQL/WMS；首次完整真库仍有独立 Viewer 场景失败，当前不能声明全量 SQL 或核心 GA 完成。
+- LocalDB 不替代生产等价 SQL/WMS；首次完整真库的独立 Viewer 场景随后已修复并取得 426/426，但仍不能声明核心 GA 完成。
 
 ## 2026-08-14：Space Studio WP3 CAD Converter 共合同执行器
 
