@@ -310,12 +310,22 @@
         "Retrofit Site 14-day immutable run log",
         "Defect closure, business outcome and five-role signoff pack"
       ],
-      "evidencePaths": [],
+      "evidencePaths": [
+        "docs/space/acceptance/v1.3-ga/pilot-evidence-protocol.md",
+        "docs/space/acceptance/v1.3-ga/pilot-evidence-template.json",
+        "docs/space/reports/2026-08-14-space-ga-pilot-evidence-guard.md"
+      ],
+      "verificationManifest": null,
       "acceptedEvidence": [],
       "acceptanceCriteria": [
         "Each Site runs continuously for 14 days",
         "There are zero S1 and S2 defects",
-        "Every S3 is closed before signoff",
+        "Every S3 has a usable workaround and is closed before signoff",
+        "2D, 3D, object-list and WMS consistency are 100 percent",
+        "Automatic recovery is at most 15 minutes and manual recovery at most 240 minutes",
+        "Old Published remains available, Viewer is Published-only and there is no long-term dual write",
+        "Customer warehouse representatives and implementation leads confirm both Site outcomes",
+        "The structured Pilot manifest is content-hash attested and passes the WP8 validator",
         "All five internal signers are Signed"
       ]
     }

@@ -1,5 +1,11 @@
 # 已完成能力与近期里程碑
 
+## 2026-08-14 Space Studio 双仓 Pilot 证据门禁
+
+- WP8 新增结构化 Pilot Manifest、复制模板、现场证据协议和专项校验器；强制一个 Greenfield、一个 Retrofit、各连续至少 14 天并逐日列出不可重复/不缺日的不可变记录。
+- Gate 语义覆盖零 S1/S2、每个 S3 的可用绕行与全关闭、2D/3D/WMS 100% 一致、自动/人工恢复 15/240 分钟、旧 Published 持续可用、Published-only/无长期双写及客户仓库代表和实施负责人实名确认。
+- 通用 GA 校验器在 WP8 Accepted 时先要求五方内部签字均 Signed 且签字接受人与登记姓名一致，再复核 Manifest 自身哈希和专项语义，并拒绝模板、Manifest/嵌套证明中的 fixture、未来窗口和 Pilot 结束前预签；Pilot 专项 21/21、通用证明链 23/23。真实 Pilot 仍为 Pending，不计为现场完成。
+
 ## 2026-08-14 Space Studio 2D 画布拖动精调
 
 - Rack 和通用 Element 可在选择工具下直接拖动，屏幕位移按 Zoom 转换成整数世界毫米；已选对象保持多选整体移动，选择修饰键不会误提交拖动。

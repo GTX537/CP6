@@ -2,6 +2,12 @@
 
 > 依据 Git log 汇总，不替代完整 Git 历史。重点记录影响接手判断的里程碑。
 
+## 2026-08-14：Space Studio 双仓 Pilot 证据失败关闭
+
+- WP8 新增最终 Pilot Manifest 合同、模板、协议和机器校验器，覆盖 Greenfield/Retrofit、连续 14 天、逐日记录、S3 可用绕行/缺陷关闭、100% 一致性、恢复 SLO、Published 边界和两类现场实名确认。
+- 总 GA 校验器在 WP8 Accepted 时强制要求五方内部签字完成且签字接受人与登记姓名一致，以及被 Gate 自身哈希证明的结构化 Manifest；空模板、Manifest/嵌套证明中的测试 fixture、未来窗口、缺日/重复日或 Pilot 结束前预签均拒绝。专项 21/21、组合证明链 23/23。
+- 该项只关闭将来现场证据的结构与误报漏洞，不代表 Pilot 已执行；GA 保持 72% / No-Go，5 类外部输入、9 个 Gate、5 个签字仍 Pending。
+
 ## 2026-08-14：Space Studio 2D 画布拖动精调
 
 - Rack/Element 现在可直接拖动并按整数世界毫米保存；选中样式改为就地更新，不再在 pointerdown 销毁 Konva 节点，多选拖动与选择修饰键语义分离。

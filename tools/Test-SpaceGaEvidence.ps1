@@ -14,6 +14,7 @@ $repoFullPath = [System.IO.Path]::GetFullPath($repo).TrimEnd(
     [System.IO.Path]::DirectorySeparatorChar,
     [System.IO.Path]::AltDirectorySeparatorChar)
 $repoPrefix = $repoFullPath + [System.IO.Path]::DirectorySeparatorChar
+$pilotValidator = Join-Path $PSScriptRoot 'Test-SpaceGaPilotEvidence.ps1'
 
 if (!(Test-Path -LiteralPath $manifestFullPath -PathType Leaf)) {
     throw "GA evidence manifest was not found: $manifestFullPath"
@@ -207,6 +208,14 @@ foreach ($signer in @($manifest.signers)) {
         }
         foreach ($evidence in @($signer.evidence)) {
             Test-AttestedEvidence -OwnerId "Signer $($signer.role)" -Evidence $evidence
+            if ((Test-PersonName $signer.name) -and
+                !([string]$evidence.acceptedBy).Equals(
+                    [string]$signer.name,
+                    [System.StringComparison]::OrdinalIgnoreCase)) {
+                Add-ValidationError (
+                    'SPACE_GA_SIGNER_EVIDENCE_MISMATCH: Signer ' +
+                    "$($signer.role) evidence acceptor must match the named signer.")
+            }
         }
     }
 }
@@ -312,6 +321,78 @@ foreach ($gate in @($manifest.gates)) {
         }
         foreach ($evidence in @($gate.acceptedEvidence)) {
             Test-AttestedEvidence -OwnerId $gate.id -Evidence $evidence
+        }
+        if ($gate.id -eq 'WP8_TWO_SITE_PILOT_AND_SIGNOFF') {
+            if (@($manifest.signers | Where-Object {
+                $_.status -ne 'Signed'
+            }).Count -gt 0) {
+                Add-ValidationError (
+                    'SPACE_GA_PILOT_SIGNERS_INCOMPLETE: WP8 cannot be ' +
+                    'Accepted before all five internal GA signers are Signed.')
+            }
+            $pilotManifestReference = [string]$gate.verificationManifest
+            if (!(Test-Text $pilotManifestReference)) {
+                Add-ValidationError (
+                    'SPACE_GA_PILOT_MANIFEST_REQUIRED: Accepted WP8 ' +
+                    'requires a structured Pilot evidence manifest.')
+            }
+            elseif ([System.IO.Path]::IsPathRooted($pilotManifestReference)) {
+                Add-ValidationError (
+                    'SPACE_GA_PILOT_MANIFEST_ABSOLUTE: WP8 Pilot manifest ' +
+                    'must use a repository-relative path.')
+            }
+            else {
+                $pilotManifestFullPath = [System.IO.Path]::GetFullPath(
+                    (Join-Path $repo $pilotManifestReference))
+                $isInsideRepository = $pilotManifestFullPath.StartsWith(
+                    $repoPrefix,
+                    [System.StringComparison]::OrdinalIgnoreCase)
+                $normalizedReference = $pilotManifestReference.Replace('\', '/')
+                $isTemplateOrFixture =
+                    $normalizedReference -match '(^|/)tools/test-fixtures/' -or
+                    $normalizedReference.EndsWith(
+                        '/pilot-evidence-template.json',
+                        [System.StringComparison]::OrdinalIgnoreCase)
+                if (!$isInsideRepository) {
+                    Add-ValidationError (
+                        'SPACE_GA_PILOT_MANIFEST_ESCAPE: WP8 Pilot manifest ' +
+                        'escapes the repository root.')
+                }
+                elseif ($isTemplateOrFixture) {
+                    Add-ValidationError (
+                        'SPACE_GA_PILOT_MANIFEST_SYNTHETIC: WP8 cannot use ' +
+                        'a template or test fixture as Pilot evidence.')
+                }
+                elseif ([System.IO.Path]::GetExtension(
+                    $pilotManifestFullPath) -ne '.json' -or
+                    !(Test-Path -LiteralPath $pilotManifestFullPath -PathType Leaf)) {
+                    Add-ValidationError (
+                        'SPACE_GA_PILOT_MANIFEST_MISSING: WP8 Pilot manifest ' +
+                        "does not exist as JSON: $pilotManifestReference")
+                }
+                else {
+                    $manifestIsAttested = @($gate.acceptedEvidence |
+                        Where-Object {
+                            ([string]$_.uri).Equals(
+                                $pilotManifestReference,
+                                [System.StringComparison]::OrdinalIgnoreCase)
+                        }).Count -gt 0
+                    if (!$manifestIsAttested) {
+                        Add-ValidationError (
+                            'SPACE_GA_PILOT_MANIFEST_UNATTESTED: WP8 accepted ' +
+                            'evidence must attest the structured Pilot manifest itself.')
+                    }
+                    try {
+                        & $pilotValidator `
+                            -ManifestPath $pilotManifestFullPath | Out-Null
+                    }
+                    catch {
+                        Add-ValidationError (
+                            'SPACE_GA_PILOT_EVIDENCE_INVALID: ' +
+                            $_.Exception.Message)
+                    }
+                }
+            }
         }
     }
 }

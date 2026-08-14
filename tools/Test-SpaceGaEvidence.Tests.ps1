@@ -6,6 +6,8 @@ $baseManifestPath = Join-Path $repo (
 $fixtureReference = 'tools/test-fixtures/space-ga-evidence/attestation-fixture.txt'
 $fixturePath = Join-Path $repo $fixtureReference
 $fixtureSha256 = (Get-FileHash -LiteralPath $fixturePath -Algorithm SHA256).Hash.ToLowerInvariant()
+$pilotFixturePath = Join-Path $repo (
+    'tools\test-fixtures\space-ga-pilot-evidence\valid-pilot-evidence.json')
 $hostExecutable = (Get-Process -Id $PID).Path
 $tempDirectory = Join-Path (
     [System.IO.Path]::GetTempPath()) (
@@ -63,6 +65,43 @@ function Set-GateAccepted {
     $gate.acceptedEvidence = @($Attestation)
 }
 
+function Set-Wp8Accepted {
+    param(
+        [Parameter(Mandatory)]$Manifest,
+        [Parameter(Mandatory)][string]$PilotReference,
+        [Parameter(Mandatory)][string]$PilotSha256
+    )
+
+    $gate = @($Manifest.gates | Where-Object {
+        $_.id -eq 'WP8_TWO_SITE_PILOT_AND_SIGNOFF'
+    })[0]
+    $gate.ownerName = 'Zhang Wei'
+    $gate.acceptanceStatus = 'Accepted'
+    $gate.verificationManifest = $PilotReference
+    $gate.acceptedEvidence = @(
+        (New-Attestation -Uri $PilotReference -Sha256 $PilotSha256))
+}
+
+function Set-AllGaSignersSigned {
+    param(
+        [Parameter(Mandatory)]$Manifest,
+        [Parameter(Mandatory)]$Attestation
+    )
+
+    $index = 1
+    foreach ($signer in @($Manifest.signers)) {
+        $signer.name = "Signer Person $index"
+        $signer.status = 'Signed'
+        $signer.evidence = @([pscustomobject]@{
+            uri = $Attestation.uri
+            sha256 = $Attestation.sha256
+            acceptedBy = $signer.name
+            acceptedAtUtc = $Attestation.acceptedAtUtc
+        })
+        $index++
+    }
+}
+
 function Invoke-ValidatorCase {
     param(
         [Parameter(Mandatory)][string]$Name,
@@ -96,6 +135,43 @@ function Invoke-ValidatorCase {
 }
 
 try {
+    $pilotAcceptanceReference = (
+        'docs/space/acceptance/v1.3-ga/.tmp-' +
+        [Guid]::NewGuid().ToString('N') + '/pilot-evidence.json')
+    $pilotAcceptancePath = Join-Path $repo $pilotAcceptanceReference
+    $pilotAcceptanceDirectory = Split-Path -Parent $pilotAcceptancePath
+    [void](New-Item -ItemType Directory -Path $pilotAcceptanceDirectory)
+    $pilotAcceptance = Get-Content -LiteralPath $pilotFixturePath -Raw |
+        ConvertFrom-Json
+    $pilotNestedEvidenceReference = (
+        'docs/space/reports/2026-08-14-ga-evidence-attestation.md')
+    $pilotNestedEvidenceSha256 = (Get-FileHash `
+        -LiteralPath (Join-Path $repo $pilotNestedEvidenceReference) `
+        -Algorithm SHA256).Hash.ToLowerInvariant()
+    foreach ($site in @($pilotAcceptance.sites)) {
+        foreach ($evidenceName in @(
+            'runLog',
+            'metrics',
+            'defectClosure',
+            'businessOutcome',
+            'openIssuesAppendix')) {
+            $site.evidence.$evidenceName.uri = $pilotNestedEvidenceReference
+            $site.evidence.$evidenceName.sha256 = $pilotNestedEvidenceSha256
+        }
+        foreach ($confirmationName in @(
+            'customerWarehouseRepresentative',
+            'implementationLead')) {
+            $site.confirmations.$confirmationName.evidence.uri = (
+                $pilotNestedEvidenceReference)
+            $site.confirmations.$confirmationName.evidence.sha256 = (
+                $pilotNestedEvidenceSha256)
+        }
+    }
+    $pilotAcceptance | ConvertTo-Json -Depth 100 |
+        Set-Content -LiteralPath $pilotAcceptancePath -Encoding UTF8
+    $pilotAcceptanceSha256 = (Get-FileHash -LiteralPath $pilotAcceptancePath `
+        -Algorithm SHA256).Hash.ToLowerInvariant()
+
     Invoke-ValidatorCase `
         -Name 'current honest NoGo manifest' `
         -ManifestPath $baseManifestPath `
@@ -187,6 +263,25 @@ try {
         -ManifestPath $placeholderSignerNamePath `
         -ShouldPass $false `
         -ExpectedError 'SPACE_GA_SIGNER_NAME_INVALID'
+
+    $mismatchedSignerPath = New-TestManifest 'mismatched-signer-evidence' {
+        param($manifest)
+        $signer = @($manifest.signers | Where-Object {
+            $_.role -eq 'Product'
+        })[0]
+        $signer.name = 'Zhang Wei'
+        $signer.status = 'Signed'
+        $signer.evidence = @(
+            (New-Attestation `
+                -Uri $fixtureReference `
+                -Sha256 $fixtureSha256 `
+                -AcceptedBy 'Li Ming'))
+    }
+    Invoke-ValidatorCase `
+        -Name 'signer evidence must be accepted by the named signer' `
+        -ManifestPath $mismatchedSignerPath `
+        -ShouldPass $false `
+        -ExpectedError 'SPACE_GA_SIGNER_EVIDENCE_MISMATCH'
 
     $placeholderInputOwnerPath = New-TestManifest 'placeholder-input-owner' {
         param($manifest)
@@ -314,6 +409,107 @@ try {
         -ShouldPass $false `
         -ExpectedError 'SPACE_GA_EVIDENCE_ACCEPTOR_INVALID'
 
+    $missingPilotManifestPath = New-TestManifest 'missing-pilot-manifest' {
+        param($manifest)
+        $gate = @($manifest.gates | Where-Object {
+            $_.id -eq 'WP8_TWO_SITE_PILOT_AND_SIGNOFF'
+        })[0]
+        $gate.ownerName = 'Zhang Wei'
+        $gate.acceptanceStatus = 'Accepted'
+        $gate.acceptedEvidence = @($localAttestation)
+    }
+    Invoke-ValidatorCase `
+        -Name 'accepted WP8 requires a structured pilot manifest' `
+        -ManifestPath $missingPilotManifestPath `
+        -ShouldPass $false `
+        -ExpectedError 'SPACE_GA_PILOT_MANIFEST_REQUIRED'
+
+    $unsignedPilotPath = New-TestManifest 'unsigned-pilot-manifest' {
+        param($manifest)
+        Set-Wp8Accepted `
+            -Manifest $manifest `
+            -PilotReference $pilotAcceptanceReference `
+            -PilotSha256 $pilotAcceptanceSha256
+    }
+    Invoke-ValidatorCase `
+        -Name 'WP8 cannot be accepted before all five internal signers' `
+        -ManifestPath $unsignedPilotPath `
+        -ShouldPass $false `
+        -ExpectedError 'SPACE_GA_PILOT_SIGNERS_INCOMPLETE'
+
+    $validPilotPath = New-TestManifest 'valid-pilot-manifest' {
+        param($manifest)
+        Set-Wp8Accepted `
+            -Manifest $manifest `
+            -PilotReference $pilotAcceptanceReference `
+            -PilotSha256 $pilotAcceptanceSha256
+        Set-AllGaSignersSigned `
+            -Manifest $manifest `
+            -Attestation $localAttestation
+    }
+    Invoke-ValidatorCase `
+        -Name 'accepted WP8 validates the pilot manifest and signers' `
+        -ManifestPath $validPilotPath `
+        -ShouldPass $true
+
+    $unattestedPilotPath = New-TestManifest 'unattested-pilot-manifest' {
+        param($manifest)
+        Set-Wp8Accepted `
+            -Manifest $manifest `
+            -PilotReference $pilotAcceptanceReference `
+            -PilotSha256 $pilotAcceptanceSha256
+        $gate = @($manifest.gates | Where-Object {
+            $_.id -eq 'WP8_TWO_SITE_PILOT_AND_SIGNOFF'
+        })[0]
+        $gate.acceptedEvidence = @($localAttestation)
+    }
+    Invoke-ValidatorCase `
+        -Name 'WP8 must attest the structured manifest itself' `
+        -ManifestPath $unattestedPilotPath `
+        -ShouldPass $false `
+        -ExpectedError 'SPACE_GA_PILOT_MANIFEST_UNATTESTED'
+
+    $invalidPilotReference = $pilotAcceptanceReference.Replace(
+        'pilot-evidence.json',
+        'invalid-pilot-evidence.json')
+    $invalidPilotPath = Join-Path $repo $invalidPilotReference
+    $invalidPilot = Get-Content -LiteralPath $pilotAcceptancePath -Raw |
+        ConvertFrom-Json
+    $invalidPilot.sites[0].defects.s1Count = 1
+    $invalidPilot | ConvertTo-Json -Depth 100 |
+        Set-Content -LiteralPath $invalidPilotPath -Encoding UTF8
+    $invalidPilotSha256 = (Get-FileHash -LiteralPath $invalidPilotPath `
+        -Algorithm SHA256).Hash.ToLowerInvariant()
+    $invalidPilotGatePath = New-TestManifest 'invalid-pilot-gate' {
+        param($manifest)
+        Set-Wp8Accepted `
+            -Manifest $manifest `
+            -PilotReference $invalidPilotReference `
+            -PilotSha256 $invalidPilotSha256
+    }
+    Invoke-ValidatorCase `
+        -Name 'WP8 cannot accept a semantically invalid pilot manifest' `
+        -ManifestPath $invalidPilotGatePath `
+        -ShouldPass $false `
+        -ExpectedError 'SPACE_GA_PILOT_EVIDENCE_INVALID'
+
+    $templateReference = (
+        'docs/space/acceptance/v1.3-ga/pilot-evidence-template.json')
+    $templateSha256 = (Get-FileHash -LiteralPath (Join-Path $repo $templateReference) `
+        -Algorithm SHA256).Hash.ToLowerInvariant()
+    $templatePilotPath = New-TestManifest 'template-pilot-manifest' {
+        param($manifest)
+        Set-Wp8Accepted `
+            -Manifest $manifest `
+            -PilotReference $templateReference `
+            -PilotSha256 $templateSha256
+    }
+    Invoke-ValidatorCase `
+        -Name 'WP8 cannot accept the blank pilot template' `
+        -ManifestPath $templatePilotPath `
+        -ShouldPass $false `
+        -ExpectedError 'SPACE_GA_PILOT_MANIFEST_SYNTHETIC'
+
     [ordered]@{
         suite = 'CP6_SPACE_GA_EVIDENCE_ATTESTATION'
         passed = $passed
@@ -323,5 +519,9 @@ try {
 finally {
     if (Test-Path -LiteralPath $tempDirectory) {
         [System.IO.Directory]::Delete($tempDirectory, $true)
+    }
+    if ($null -ne $pilotAcceptanceDirectory -and
+        (Test-Path -LiteralPath $pilotAcceptanceDirectory)) {
+        [System.IO.Directory]::Delete($pilotAcceptanceDirectory, $true)
     }
 }

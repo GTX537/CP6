@@ -1,0 +1,210 @@
+{
+  "schemaVersion": 1,
+  "programId": "CP6_SPACE_STUDIO_V1_CORE_GA",
+  "evidenceClass": "WP8_TWO_SITE_PILOT",
+  "conclusion": "Pass",
+  "sites": [
+    {
+      "siteRef": "urn:cp6-space-site:pilot-greenfield-test",
+      "siteType": "Greenfield",
+      "runStartDate": "2026-07-01",
+      "runEndDate": "2026-07-14",
+      "continuousRunDays": 14,
+      "dailyRecordCount": 14,
+      "dailyRecordDates": [
+        "2026-07-01",
+        "2026-07-02",
+        "2026-07-03",
+        "2026-07-04",
+        "2026-07-05",
+        "2026-07-06",
+        "2026-07-07",
+        "2026-07-08",
+        "2026-07-09",
+        "2026-07-10",
+        "2026-07-11",
+        "2026-07-12",
+        "2026-07-13",
+        "2026-07-14"
+      ],
+      "defects": {
+        "s1Count": 0,
+        "s2Count": 0,
+        "s3Opened": 2,
+        "s3WithUsableWorkaround": 2,
+        "s3ClosedBeforeSignoff": 2,
+        "s3OpenAtSignoff": 0
+      },
+      "metrics": {
+        "modelingDurationMinutes": 185,
+        "manualModificationCount": 27,
+        "twoDThreeDObjectConsistencyPercent": 100,
+        "wmsConsistencyPercent": 100
+      },
+      "recovery": {
+        "automaticIncidentCount": 1,
+        "automaticMaxMinutes": 10,
+        "manualIncidentCount": 0,
+        "manualMaxMinutes": 0,
+        "oldPublishedContinuouslyAvailable": true
+      },
+      "boundaries": {
+        "publishedViewerOnly": true,
+        "noLongTermDualWrite": true
+      },
+      "evidence": {
+        "runLog": {
+          "uri": "tools/test-fixtures/space-ga-evidence/attestation-fixture.txt",
+          "sha256": "bb34c116aec15058d59f44b4465faaddf13fbff6cd2c6cc07d09c4dbaecedf2a",
+          "acceptedBy": "Zhang Wei",
+          "acceptedAtUtc": "2026-08-14T12:00:00Z"
+        },
+        "metrics": {
+          "uri": "tools/test-fixtures/space-ga-evidence/attestation-fixture.txt",
+          "sha256": "bb34c116aec15058d59f44b4465faaddf13fbff6cd2c6cc07d09c4dbaecedf2a",
+          "acceptedBy": "Zhang Wei",
+          "acceptedAtUtc": "2026-08-14T12:00:00Z"
+        },
+        "defectClosure": {
+          "uri": "tools/test-fixtures/space-ga-evidence/attestation-fixture.txt",
+          "sha256": "bb34c116aec15058d59f44b4465faaddf13fbff6cd2c6cc07d09c4dbaecedf2a",
+          "acceptedBy": "Zhang Wei",
+          "acceptedAtUtc": "2026-08-14T12:00:00Z"
+        },
+        "businessOutcome": {
+          "uri": "tools/test-fixtures/space-ga-evidence/attestation-fixture.txt",
+          "sha256": "bb34c116aec15058d59f44b4465faaddf13fbff6cd2c6cc07d09c4dbaecedf2a",
+          "acceptedBy": "Zhang Wei",
+          "acceptedAtUtc": "2026-08-14T12:00:00Z"
+        },
+        "openIssuesAppendix": {
+          "uri": "tools/test-fixtures/space-ga-evidence/attestation-fixture.txt",
+          "sha256": "bb34c116aec15058d59f44b4465faaddf13fbff6cd2c6cc07d09c4dbaecedf2a",
+          "acceptedBy": "Zhang Wei",
+          "acceptedAtUtc": "2026-08-14T12:00:00Z"
+        }
+      },
+      "confirmations": {
+        "customerWarehouseRepresentative": {
+          "name": "Li Ming",
+          "evidence": {
+            "uri": "tools/test-fixtures/space-ga-evidence/attestation-fixture.txt",
+            "sha256": "bb34c116aec15058d59f44b4465faaddf13fbff6cd2c6cc07d09c4dbaecedf2a",
+            "acceptedBy": "Li Ming",
+            "acceptedAtUtc": "2026-08-14T12:00:00Z"
+          }
+        },
+        "implementationLead": {
+          "name": "Chen Wei",
+          "evidence": {
+            "uri": "tools/test-fixtures/space-ga-evidence/attestation-fixture.txt",
+            "sha256": "bb34c116aec15058d59f44b4465faaddf13fbff6cd2c6cc07d09c4dbaecedf2a",
+            "acceptedBy": "Chen Wei",
+            "acceptedAtUtc": "2026-08-14T12:00:00Z"
+          }
+        }
+      }
+    },
+    {
+      "siteRef": "urn:cp6-space-site:pilot-retrofit-test",
+      "siteType": "Retrofit",
+      "runStartDate": "2026-07-15",
+      "runEndDate": "2026-07-28",
+      "continuousRunDays": 14,
+      "dailyRecordCount": 14,
+      "dailyRecordDates": [
+        "2026-07-15",
+        "2026-07-16",
+        "2026-07-17",
+        "2026-07-18",
+        "2026-07-19",
+        "2026-07-20",
+        "2026-07-21",
+        "2026-07-22",
+        "2026-07-23",
+        "2026-07-24",
+        "2026-07-25",
+        "2026-07-26",
+        "2026-07-27",
+        "2026-07-28"
+      ],
+      "defects": {
+        "s1Count": 0,
+        "s2Count": 0,
+        "s3Opened": 1,
+        "s3WithUsableWorkaround": 1,
+        "s3ClosedBeforeSignoff": 1,
+        "s3OpenAtSignoff": 0
+      },
+      "metrics": {
+        "modelingDurationMinutes": 260,
+        "manualModificationCount": 44,
+        "twoDThreeDObjectConsistencyPercent": 100,
+        "wmsConsistencyPercent": 100
+      },
+      "recovery": {
+        "automaticIncidentCount": 0,
+        "automaticMaxMinutes": 0,
+        "manualIncidentCount": 1,
+        "manualMaxMinutes": 180,
+        "oldPublishedContinuouslyAvailable": true
+      },
+      "boundaries": {
+        "publishedViewerOnly": true,
+        "noLongTermDualWrite": true
+      },
+      "evidence": {
+        "runLog": {
+          "uri": "tools/test-fixtures/space-ga-evidence/attestation-fixture.txt",
+          "sha256": "bb34c116aec15058d59f44b4465faaddf13fbff6cd2c6cc07d09c4dbaecedf2a",
+          "acceptedBy": "Zhang Wei",
+          "acceptedAtUtc": "2026-08-14T12:00:00Z"
+        },
+        "metrics": {
+          "uri": "tools/test-fixtures/space-ga-evidence/attestation-fixture.txt",
+          "sha256": "bb34c116aec15058d59f44b4465faaddf13fbff6cd2c6cc07d09c4dbaecedf2a",
+          "acceptedBy": "Zhang Wei",
+          "acceptedAtUtc": "2026-08-14T12:00:00Z"
+        },
+        "defectClosure": {
+          "uri": "tools/test-fixtures/space-ga-evidence/attestation-fixture.txt",
+          "sha256": "bb34c116aec15058d59f44b4465faaddf13fbff6cd2c6cc07d09c4dbaecedf2a",
+          "acceptedBy": "Zhang Wei",
+          "acceptedAtUtc": "2026-08-14T12:00:00Z"
+        },
+        "businessOutcome": {
+          "uri": "tools/test-fixtures/space-ga-evidence/attestation-fixture.txt",
+          "sha256": "bb34c116aec15058d59f44b4465faaddf13fbff6cd2c6cc07d09c4dbaecedf2a",
+          "acceptedBy": "Zhang Wei",
+          "acceptedAtUtc": "2026-08-14T12:00:00Z"
+        },
+        "openIssuesAppendix": {
+          "uri": "tools/test-fixtures/space-ga-evidence/attestation-fixture.txt",
+          "sha256": "bb34c116aec15058d59f44b4465faaddf13fbff6cd2c6cc07d09c4dbaecedf2a",
+          "acceptedBy": "Zhang Wei",
+          "acceptedAtUtc": "2026-08-14T12:00:00Z"
+        }
+      },
+      "confirmations": {
+        "customerWarehouseRepresentative": {
+          "name": "Wang Fang",
+          "evidence": {
+            "uri": "tools/test-fixtures/space-ga-evidence/attestation-fixture.txt",
+            "sha256": "bb34c116aec15058d59f44b4465faaddf13fbff6cd2c6cc07d09c4dbaecedf2a",
+            "acceptedBy": "Wang Fang",
+            "acceptedAtUtc": "2026-08-14T12:00:00Z"
+          }
+        },
+        "implementationLead": {
+          "name": "Zhao Lin",
+          "evidence": {
+            "uri": "tools/test-fixtures/space-ga-evidence/attestation-fixture.txt",
+            "sha256": "bb34c116aec15058d59f44b4465faaddf13fbff6cd2c6cc07d09c4dbaecedf2a",
+            "acceptedBy": "Zhao Lin",
+            "acceptedAtUtc": "2026-08-14T12:00:00Z"
+          }
+        }
+      }
+    }
+  ]
+}
