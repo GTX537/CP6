@@ -1,5 +1,11 @@
 # 已完成能力与近期里程碑
 
+## 2026-08-14 Space Studio M0 开工证据语义门禁
+
+- 五类外部输入新增共享的结构化开工 Manifest、复制模板、协议和专项校验器，可按分区增量完成，不要求一次性伪造全绿。
+- 门禁覆盖五角色实名/审批权、2 Backend + 2 Frontend3D + 1 QA 与共享角色、20 份授权 CAD 候选、至少两条 `ICadConverter` 审批链和隔离 Worker、Greenfield/Retrofit 双仓与 CP6 WMS 窗口。
+- 总 GA 校验器要求每个 Complete 输入绑定并证明 Manifest 自身哈希，复核分区 Owner 及签字人索引一致；专项 26/26、组合证明链 34/34。真实输入仍全部 Pending，不计外部执行完成。
+
 ## 2026-08-14 Space Studio 正式黄金 CAD 证据门禁
 
 - WP7 新增正式黄金 CAD Manifest、模板、协议和专项校验器，组合已有离线质量评估和 Provider 资格输出，不重造指标算法。

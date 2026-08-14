@@ -2,6 +2,12 @@
 
 > 依据 Git log 汇总，不替代完整 Git 历史。重点记录影响接手判断的里程碑。
 
+## 2026-08-14：Space Studio M0 外部输入失败关闭
+
+- 新增 M0 开工 Manifest、模板、协议和机器校验器，将实名签字人、2+2+1 团队、20 CAD 候选、Provider/隔离 Worker 审批、双仓/WMS 窗口从泛化附件提升为五个可独立关闭的结构化分区。
+- 总 GA 索引为每个外部输入增加 `verificationManifest`；Complete 时必须由输入证据证明 Manifest 自身哈希，通过对应语义校验，并保持 Owner/签字人登记一致。专项 26/26、组合证明链 34/34。
+- 本改动没有填写任何真实人名、CAD、Provider、Worker、Site 或 WMS 窗口；GA 保持 72% / No-Go，防止用模板、fixture 或一份汇总说明冒充开工输入。
+
 ## 2026-08-14：Space Studio 正式黄金 CAD 证据失败关闭
 
 - WP7 新增结构化 Manifest、模板、协议和机器校验器，把授权 20 份、10/5/5、L1～L5、DWG/DXF、标注/仲裁、主备同源冻结链、离线质量/Holdout/性能报告收敛为一条可验证证据链。

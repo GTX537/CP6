@@ -10,6 +10,8 @@ $pilotFixturePath = Join-Path $repo (
     'tools\test-fixtures\space-ga-pilot-evidence\valid-pilot-evidence.json')
 $goldenCadTestSuite = Join-Path $PSScriptRoot (
     'Test-SpaceGaGoldenCadEvidence.Tests.ps1')
+$kickoffTestSuite = Join-Path $PSScriptRoot (
+    'Test-SpaceGaKickoffEvidence.Tests.ps1')
 $hostExecutable = (Get-Process -Id $PID).Path
 $tempDirectory = Join-Path (
     [System.IO.Path]::GetTempPath()) (
@@ -104,18 +106,27 @@ function Set-Wp7Accepted {
 function Complete-Wp7Prerequisites {
     param(
         [Parameter(Mandatory)]$Manifest,
-        [Parameter(Mandatory)]$Attestation
+        [Parameter(Mandatory)]$Attestation,
+        [Parameter(Mandatory)][string]$KickoffReference,
+        [Parameter(Mandatory)][string]$KickoffSha256
     )
 
-    foreach ($inputId in @(
-        'AUTHORIZED_GOLDEN_CAD_CANDIDATES',
-        'PROVIDER_APPROVALS_AND_ISOLATED_WORKER')) {
+    $inputOwners = [ordered]@{
+        AUTHORIZED_GOLDEN_CAD_CANDIDATES = 'Liu Yan'
+        PROVIDER_APPROVALS_AND_ISOLATED_WORKER = 'Qian Lin'
+    }
+    foreach ($inputId in $inputOwners.Keys) {
         $input = @($Manifest.externalInputs | Where-Object {
             $_.id -eq $inputId
         })[0]
-        $input.ownerName = 'Zhang Wei'
+        $input.ownerName = $inputOwners[$inputId]
         $input.status = 'Complete'
-        $input.evidence = @($Attestation)
+        $input.verificationManifest = $KickoffReference
+        $input.evidence = @(
+            (New-Attestation `
+                -Uri $KickoffReference `
+                -Sha256 $KickoffSha256 `
+                -AcceptedBy $input.ownerName))
     }
     $providerGate = @($Manifest.gates | Where-Object {
         $_.id -eq 'WP3_SITE_PRIMARY_BACKUP_PROVIDERS'
@@ -123,6 +134,28 @@ function Complete-Wp7Prerequisites {
     $providerGate.ownerName = 'Zhang Wei'
     $providerGate.acceptanceStatus = 'Accepted'
     $providerGate.acceptedEvidence = @($Attestation)
+}
+
+function Set-ExternalInputComplete {
+    param(
+        [Parameter(Mandatory)]$Manifest,
+        [Parameter(Mandatory)][string]$InputId,
+        [Parameter(Mandatory)][string]$OwnerName,
+        [Parameter(Mandatory)][string]$KickoffReference,
+        [Parameter(Mandatory)][string]$KickoffSha256
+    )
+
+    $input = @($Manifest.externalInputs | Where-Object {
+        $_.id -eq $InputId
+    })[0]
+    $input.ownerName = $OwnerName
+    $input.status = 'Complete'
+    $input.verificationManifest = $KickoffReference
+    $input.evidence = @(
+        (New-Attestation `
+            -Uri $KickoffReference `
+            -Sha256 $KickoffSha256 `
+            -AcceptedBy $OwnerName))
 }
 
 function Set-AllGaSignersSigned {
@@ -260,6 +293,28 @@ try {
     $goldenAcceptanceSha256 = (Get-FileHash -LiteralPath $goldenAcceptancePath `
         -Algorithm SHA256).Hash.ToLowerInvariant()
 
+    $kickoffAcceptanceReference = (
+        'docs/space/acceptance/v1.3-ga/.tmp-' +
+        [Guid]::NewGuid().ToString('N') + '/kickoff-evidence.json')
+    $kickoffAcceptancePath = Join-Path $repo $kickoffAcceptanceReference
+    $kickoffAcceptanceDirectory = Split-Path -Parent $kickoffAcceptancePath
+    [void](New-Item -ItemType Directory -Path $kickoffAcceptanceDirectory)
+    $kickoffExportOutput = & $hostExecutable `
+        -NoProfile `
+        -ExecutionPolicy Bypass `
+        -File $kickoffTestSuite `
+        -ExportValidManifestPath $kickoffAcceptancePath 2>&1 | Out-String
+    if ($LASTEXITCODE -ne 0) {
+        throw "Could not export valid kickoff fixture.`n$kickoffExportOutput"
+    }
+    $kickoffAcceptanceContent = Get-Content `
+        -LiteralPath $kickoffAcceptancePath -Raw
+    $kickoffAcceptanceContent.Replace(':test:', ':integration:') |
+        Set-Content -LiteralPath $kickoffAcceptancePath -Encoding UTF8
+    $kickoffAcceptanceSha256 = (Get-FileHash `
+        -LiteralPath $kickoffAcceptancePath `
+        -Algorithm SHA256).Hash.ToLowerInvariant()
+
     Invoke-ValidatorCase `
         -Name 'current honest NoGo manifest' `
         -ManifestPath $baseManifestPath `
@@ -275,6 +330,20 @@ try {
         $signer.name = 'Zhang Wei'
         $signer.status = 'Signed'
         $signer.evidence = @($localAttestation)
+        Set-ExternalInputComplete `
+            -Manifest $manifest `
+            -InputId 'CORE_TEAM_ALLOCATION' `
+            -OwnerName 'Zhang Wei' `
+            -KickoffReference $kickoffAcceptanceReference `
+            -KickoffSha256 $kickoffAcceptanceSha256
+    }
+    Invoke-ValidatorCase `
+        -Name 'local evidence with matching content hash' `
+        -ManifestPath $positivePath `
+        -ShouldPass $true
+
+    $missingKickoffPath = New-TestManifest 'missing-kickoff-manifest' {
+        param($manifest)
         $input = @($manifest.externalInputs | Where-Object {
             $_.id -eq 'CORE_TEAM_ALLOCATION'
         })[0]
@@ -283,9 +352,102 @@ try {
         $input.evidence = @($localAttestation)
     }
     Invoke-ValidatorCase `
-        -Name 'local evidence with matching content hash' `
-        -ManifestPath $positivePath `
-        -ShouldPass $true
+        -Name 'complete external input requires a kickoff manifest' `
+        -ManifestPath $missingKickoffPath `
+        -ShouldPass $false `
+        -ExpectedError 'SPACE_GA_KICKOFF_MANIFEST_REQUIRED'
+
+    $unattestedKickoffPath = New-TestManifest 'unattested-kickoff-manifest' {
+        param($manifest)
+        Set-ExternalInputComplete `
+            -Manifest $manifest `
+            -InputId 'CORE_TEAM_ALLOCATION' `
+            -OwnerName 'Zhang Wei' `
+            -KickoffReference $kickoffAcceptanceReference `
+            -KickoffSha256 $kickoffAcceptanceSha256
+        $input = @($manifest.externalInputs | Where-Object {
+            $_.id -eq 'CORE_TEAM_ALLOCATION'
+        })[0]
+        $input.evidence = @($localAttestation)
+    }
+    Invoke-ValidatorCase `
+        -Name 'complete external input attests the kickoff manifest itself' `
+        -ManifestPath $unattestedKickoffPath `
+        -ShouldPass $false `
+        -ExpectedError 'SPACE_GA_KICKOFF_MANIFEST_UNATTESTED'
+
+    $invalidKickoffReference = $kickoffAcceptanceReference.Replace(
+        'kickoff-evidence.json',
+        'invalid-kickoff-evidence.json')
+    $invalidKickoffPath = Join-Path $repo $invalidKickoffReference
+    $invalidKickoff = Get-Content -LiteralPath $kickoffAcceptancePath -Raw |
+        ConvertFrom-Json
+    $invalidKickoff.coreTeamAllocation.members = @(
+        $invalidKickoff.coreTeamAllocation.members | Where-Object {
+            $_.name -ne 'Backend Two'
+        })
+    $invalidKickoff | ConvertTo-Json -Depth 100 |
+        Set-Content -LiteralPath $invalidKickoffPath -Encoding UTF8
+    $invalidKickoffSha256 = (Get-FileHash -LiteralPath $invalidKickoffPath `
+        -Algorithm SHA256).Hash.ToLowerInvariant()
+    $invalidKickoffInputPath = New-TestManifest 'invalid-kickoff-input' {
+        param($manifest)
+        Set-ExternalInputComplete `
+            -Manifest $manifest `
+            -InputId 'CORE_TEAM_ALLOCATION' `
+            -OwnerName 'Zhang Wei' `
+            -KickoffReference $invalidKickoffReference `
+            -KickoffSha256 $invalidKickoffSha256
+    }
+    Invoke-ValidatorCase `
+        -Name 'external input rejects a semantically invalid kickoff package' `
+        -ManifestPath $invalidKickoffInputPath `
+        -ShouldPass $false `
+        -ExpectedError 'SPACE_GA_KICKOFF_EVIDENCE_INVALID'
+
+    $kickoffTemplateReference = (
+        'docs/space/acceptance/v1.3-ga/kickoff-evidence-template.json')
+    $kickoffTemplateSha256 = (Get-FileHash `
+        -LiteralPath (Join-Path $repo $kickoffTemplateReference) `
+        -Algorithm SHA256).Hash.ToLowerInvariant()
+    $templateKickoffPath = New-TestManifest 'template-kickoff-input' {
+        param($manifest)
+        Set-ExternalInputComplete `
+            -Manifest $manifest `
+            -InputId 'CORE_TEAM_ALLOCATION' `
+            -OwnerName 'Zhang Wei' `
+            -KickoffReference $kickoffTemplateReference `
+            -KickoffSha256 $kickoffTemplateSha256
+    }
+    Invoke-ValidatorCase `
+        -Name 'external input rejects the blank kickoff template' `
+        -ManifestPath $templateKickoffPath `
+        -ShouldPass $false `
+        -ExpectedError 'SPACE_GA_KICKOFF_MANIFEST_SYNTHETIC'
+
+    $signerIndexPath = New-TestManifest 'kickoff-signer-index' {
+        param($manifest)
+        Set-ExternalInputComplete `
+            -Manifest $manifest `
+            -InputId 'NAMED_GA_SIGNERS' `
+            -OwnerName 'Zhang Wei' `
+            -KickoffReference $kickoffAcceptanceReference `
+            -KickoffSha256 $kickoffAcceptanceSha256
+        $kickoff = Get-Content -LiteralPath $kickoffAcceptancePath -Raw |
+            ConvertFrom-Json
+        foreach ($signer in @($manifest.signers)) {
+            $namedSigner = @($kickoff.namedGaSigners.signers | Where-Object {
+                $_.role -eq $signer.role
+            })[0]
+            $signer.name = $namedSigner.name
+        }
+        $manifest.signers[0].name = 'Different Person'
+    }
+    Invoke-ValidatorCase `
+        -Name 'GA signer index matches the kickoff register' `
+        -ManifestPath $signerIndexPath `
+        -ShouldPass $false `
+        -ExpectedError 'SPACE_GA_KICKOFF_SIGNER_INDEX_MISMATCH'
 
     $remotePath = New-TestManifest 'positive-controlled-https' {
         param($manifest)
@@ -529,7 +691,9 @@ try {
         param($manifest)
         Complete-Wp7Prerequisites `
             -Manifest $manifest `
-            -Attestation $localAttestation
+            -Attestation $localAttestation `
+            -KickoffReference $kickoffAcceptanceReference `
+            -KickoffSha256 $kickoffAcceptanceSha256
         Set-Wp7Accepted `
             -Manifest $manifest `
             -GoldenReference $goldenAcceptanceReference `
@@ -544,7 +708,9 @@ try {
         param($manifest)
         Complete-Wp7Prerequisites `
             -Manifest $manifest `
-            -Attestation $localAttestation
+            -Attestation $localAttestation `
+            -KickoffReference $kickoffAcceptanceReference `
+            -KickoffSha256 $kickoffAcceptanceSha256
         Set-Wp7Accepted `
             -Manifest $manifest `
             -GoldenReference $goldenAcceptanceReference `
@@ -575,7 +741,9 @@ try {
         param($manifest)
         Complete-Wp7Prerequisites `
             -Manifest $manifest `
-            -Attestation $localAttestation
+            -Attestation $localAttestation `
+            -KickoffReference $kickoffAcceptanceReference `
+            -KickoffSha256 $kickoffAcceptanceSha256
         Set-Wp7Accepted `
             -Manifest $manifest `
             -GoldenReference $invalidGoldenReference `
@@ -596,7 +764,9 @@ try {
         param($manifest)
         Complete-Wp7Prerequisites `
             -Manifest $manifest `
-            -Attestation $localAttestation
+            -Attestation $localAttestation `
+            -KickoffReference $kickoffAcceptanceReference `
+            -KickoffSha256 $kickoffAcceptanceSha256
         Set-Wp7Accepted `
             -Manifest $manifest `
             -GoldenReference $goldenTemplateReference `
@@ -726,5 +896,9 @@ finally {
     if ($null -ne $goldenAcceptanceDirectory -and
         (Test-Path -LiteralPath $goldenAcceptanceDirectory)) {
         [System.IO.Directory]::Delete($goldenAcceptanceDirectory, $true)
+    }
+    if ($null -ne $kickoffAcceptanceDirectory -and
+        (Test-Path -LiteralPath $kickoffAcceptanceDirectory)) {
+        [System.IO.Directory]::Delete($kickoffAcceptanceDirectory, $true)
     }
 }

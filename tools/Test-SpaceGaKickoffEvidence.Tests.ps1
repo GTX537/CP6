@@ -1,0 +1,593 @@
+param([string]$ExportValidManifestPath)
+
+$ErrorActionPreference = 'Stop'
+$repo = Split-Path -Parent $PSScriptRoot
+$validator = Join-Path $PSScriptRoot 'Test-SpaceGaKickoffEvidence.ps1'
+$hostExecutable = (Get-Process -Id $PID).Path
+$fixtureDirectory = Join-Path $PSScriptRoot (
+    'test-fixtures\space-ga-kickoff-evidence')
+$tempDirectory = Join-Path $fixtureDirectory (
+    '.tmp-' + [Guid]::NewGuid().ToString('N'))
+[void](New-Item -ItemType Directory -Path $tempDirectory -Force)
+$passed = 0
+
+function New-KickoffAttestation {
+    param(
+        [Parameter(Mandatory)][string]$Id,
+        [string]$AcceptedBy = 'Zhang Wei'
+    )
+
+    return [pscustomobject]@{
+        uri = "urn:cp6-space-ga-evidence:test:kickoff:$Id"
+        sha256 = ('a' * 64)
+        acceptedBy = $AcceptedBy
+        acceptedAtUtc = '2026-08-14T12:00:00Z'
+    }
+}
+
+function Get-TestCandidateSetSha256 {
+    param([Parameter(Mandatory)][array]$Candidates)
+
+    $payload = [string]::Join("`n", @($Candidates |
+        Sort-Object { [string]$_.sampleRef } |
+        ForEach-Object {
+            ([string]$_.sampleRef) + ':' +
+                ([string]$_.sourceSha256).ToLowerInvariant()
+        }))
+    $bytes = [System.Text.Encoding]::UTF8.GetBytes($payload)
+    try {
+        $algorithm = [System.Security.Cryptography.SHA256]::Create()
+        try {
+            return ([BitConverter]::ToString(
+                $algorithm.ComputeHash($bytes))).Replace('-', '').ToLowerInvariant()
+        }
+        finally {
+            $algorithm.Dispose()
+        }
+    }
+    finally {
+        [Array]::Clear($bytes, 0, $bytes.Length)
+    }
+}
+
+function New-ValidKickoffManifest {
+    $signerRoles = @('Product', 'QA', 'WMS', 'Architecture', 'Security')
+    $signerNames = @('Li Ming', 'Wang Fang', 'Chen Jie', 'Zhao Lei', 'Sun Yue')
+    $signers = for ($index = 0; $index -lt $signerRoles.Count; $index++) {
+        [pscustomobject]@{
+            role = $signerRoles[$index]
+            name = $signerNames[$index]
+            approvalAuthorityConfirmed = $true
+            appointmentEvidence = New-KickoffAttestation `
+                -Id "signer-$index" `
+                -AcceptedBy 'Zhang Wei'
+        }
+    }
+
+    $memberDefinitions = @(
+        @('Backend One', 'Backend', 100),
+        @('Backend Two', 'Backend', 80),
+        @('Frontend One', 'Frontend3D', 100),
+        @('Frontend Two', 'Frontend3D', 80),
+        @('Quality One', 'QA', 100))
+    $members = for ($index = 0; $index -lt $memberDefinitions.Count; $index++) {
+        $definition = $memberDefinitions[$index]
+        [pscustomobject]@{
+            name = $definition[0]
+            discipline = $definition[1]
+            allocationPercent = $definition[2]
+            startDate = '2026-08-01'
+            endDate = '2026-10-24'
+            allocationEvidence = New-KickoffAttestation `
+                -Id "member-$index" `
+                -AcceptedBy 'Zhang Wei'
+        }
+    }
+
+    $sharedRoles = @('Product', 'WMS', 'Architecture', 'Security', 'DevOps')
+    $sharedNames = @('Li Ming', 'Chen Jie', 'Zhao Lei', 'Sun Yue', 'He Qiang')
+    $sharedAssignments = for ($index = 0; $index -lt $sharedRoles.Count; $index++) {
+        [pscustomobject]@{
+            role = $sharedRoles[$index]
+            name = $sharedNames[$index]
+            assignmentEvidence = New-KickoffAttestation `
+                -Id "shared-$index" `
+                -AcceptedBy 'Zhang Wei'
+        }
+    }
+
+    $candidates = for ($index = 0; $index -lt 20; $index++) {
+        $ordinal = $index + 1
+        [pscustomobject]@{
+            sampleRef = ('urn:cp6-space-golden-cad:candidate-{0:D2}' -f $ordinal)
+            sourceSha256 = ('{0:x64}' -f $ordinal)
+            sourceSizeBytes = 1000000 + $ordinal
+            sourceFormat = if ($index % 2 -eq 0) { 'DWG' } else { 'DXF' }
+            layoutFamily = 'L' + ([Math]::Floor($index / 4) + 1)
+            license = 'ApprovedCustomerDerived'
+            authorizedForGoldenEvaluation = $true
+            authorizationEvidence = New-KickoffAttestation `
+                -Id "cad-authorization-$ordinal" `
+                -AcceptedBy 'Liu Yan'
+            deidentificationEvidence = New-KickoffAttestation `
+                -Id "cad-deidentification-$ordinal" `
+                -AcceptedBy 'Liu Yan'
+        }
+    }
+    $candidateSetSha256 = Get-TestCandidateSetSha256 -Candidates $candidates
+
+    $providers = @(
+        [pscustomobject]@{
+            providerKey = 'provider-a'
+            providerVersion = '1.0.0'
+            adapterContract = 'ICadConverter'
+            dataBoundary = 'ControlledIsolatedWorker'
+            licensingApproved = $true
+            securityApproved = $true
+            dataRegionApproved = $true
+            retentionDeletionApproved = $true
+            licensingEvidence = New-KickoffAttestation -Id 'provider-a-license'
+            securityEvidence = New-KickoffAttestation -Id 'provider-a-security'
+            dataRegionEvidence = New-KickoffAttestation -Id 'provider-a-region'
+            retentionDeletionEvidence = New-KickoffAttestation -Id 'provider-a-retention'
+            cloudApprovals = [pscustomobject]@{
+                tenantApproved = $false
+                customerApproved = $false
+                securityApproved = $false
+                tenantEvidence = [pscustomobject]@{}
+                customerEvidence = [pscustomobject]@{}
+                securityEvidence = [pscustomobject]@{}
+            }
+        },
+        [pscustomobject]@{
+            providerKey = 'provider-b'
+            providerVersion = '2.0.0'
+            adapterContract = 'ICadConverter'
+            dataBoundary = 'ControlledIsolatedWorker'
+            licensingApproved = $true
+            securityApproved = $true
+            dataRegionApproved = $true
+            retentionDeletionApproved = $true
+            licensingEvidence = New-KickoffAttestation -Id 'provider-b-license'
+            securityEvidence = New-KickoffAttestation -Id 'provider-b-security'
+            dataRegionEvidence = New-KickoffAttestation -Id 'provider-b-region'
+            retentionDeletionEvidence = New-KickoffAttestation -Id 'provider-b-retention'
+            cloudApprovals = [pscustomobject]@{
+                tenantApproved = $false
+                customerApproved = $false
+                securityApproved = $false
+                tenantEvidence = [pscustomobject]@{}
+                customerEvidence = [pscustomobject]@{}
+                securityEvidence = [pscustomobject]@{}
+            }
+        })
+
+    $sites = @(
+        [pscustomobject]@{
+            siteRef = 'urn:cp6-space-ga-site:greenfield-01'
+            siteType = 'Greenfield'
+            businessOwner = 'Business One'
+            implementationOwner = 'Implementation One'
+            wmsOwner = 'Wms One'
+            wmsSystem = 'CP6_WMS'
+            wmsWindowStartUtc = '2026-09-01T00:00:00Z'
+            wmsWindowEndUtc = '2026-09-15T00:00:00Z'
+            plannedPilotStartDate = '2026-09-01'
+            plannedPilotEndDate = '2026-09-14'
+            pilotWindowConfirmed = $true
+            selectionEvidence = New-KickoffAttestation -Id 'greenfield-selection'
+            wmsWindowEvidence = New-KickoffAttestation -Id 'greenfield-wms-window'
+        },
+        [pscustomobject]@{
+            siteRef = 'urn:cp6-space-ga-site:retrofit-01'
+            siteType = 'Retrofit'
+            businessOwner = 'Business Two'
+            implementationOwner = 'Implementation Two'
+            wmsOwner = 'Wms Two'
+            wmsSystem = 'CP6_WMS'
+            wmsWindowStartUtc = '2026-09-01T00:00:00Z'
+            wmsWindowEndUtc = '2026-09-15T00:00:00Z'
+            plannedPilotStartDate = '2026-09-01'
+            plannedPilotEndDate = '2026-09-14'
+            pilotWindowConfirmed = $true
+            selectionEvidence = New-KickoffAttestation -Id 'retrofit-selection'
+            wmsWindowEvidence = New-KickoffAttestation -Id 'retrofit-wms-window'
+        })
+
+    return [pscustomobject]@{
+        schemaVersion = 1
+        programId = 'CP6_SPACE_STUDIO_V1_CORE_GA'
+        evidenceClass = 'M0_EXTERNAL_INPUT_READINESS'
+        conclusion = 'Pass'
+        kickoffDate = '2026-08-01'
+        targetGaDate = '2026-10-24'
+        namedGaSigners = [pscustomobject]@{
+            inputId = 'NAMED_GA_SIGNERS'
+            status = 'Complete'
+            ownerName = 'Zhang Wei'
+            completionEvidence = New-KickoffAttestation `
+                -Id 'signers-completion' -AcceptedBy 'Zhang Wei'
+            signers = $signers
+        }
+        coreTeamAllocation = [pscustomobject]@{
+            inputId = 'CORE_TEAM_ALLOCATION'
+            status = 'Complete'
+            ownerName = 'Zhang Wei'
+            completionEvidence = New-KickoffAttestation `
+                -Id 'team-completion' -AcceptedBy 'Zhang Wei'
+            members = $members
+            sharedAssignments = $sharedAssignments
+        }
+        authorizedGoldenCadCandidates = [pscustomobject]@{
+            inputId = 'AUTHORIZED_GOLDEN_CAD_CANDIDATES'
+            status = 'Complete'
+            ownerName = 'Liu Yan'
+            completionEvidence = New-KickoffAttestation `
+                -Id 'cad-completion' -AcceptedBy 'Liu Yan'
+            candidateSetVersion = 'golden-candidates-2026-08-v1'
+            candidateSetSha256 = $candidateSetSha256
+            candidates = $candidates
+        }
+        providerApprovalsAndIsolatedWorker = [pscustomobject]@{
+            inputId = 'PROVIDER_APPROVALS_AND_ISOLATED_WORKER'
+            status = 'Complete'
+            ownerName = 'Qian Lin'
+            completionEvidence = New-KickoffAttestation `
+                -Id 'provider-completion' -AcceptedBy 'Qian Lin'
+            candidateProviders = $providers
+            worker = [pscustomobject]@{
+                workerRef = 'urn:cp6-space-ga-worker:isolated-01'
+                environmentSha256 = ('b' * 64)
+                isolated = $true
+                secretsByReferenceOnly = $true
+                rawCadRetentionMode = 'Ephemeral'
+                outboundNetworkPolicy = 'DenyByDefault'
+                readinessEvidence = New-KickoffAttestation -Id 'worker-readiness'
+            }
+        }
+        twoPilotSitesAndWmsWindows = [pscustomobject]@{
+            inputId = 'TWO_PILOT_SITES_AND_WMS_WINDOWS'
+            status = 'Complete'
+            ownerName = 'Guo Jing'
+            completionEvidence = New-KickoffAttestation `
+                -Id 'pilot-completion' -AcceptedBy 'Guo Jing'
+            sites = $sites
+        }
+    }
+}
+
+if (![string]::IsNullOrWhiteSpace($ExportValidManifestPath)) {
+    $exportPath = [System.IO.Path]::GetFullPath($ExportValidManifestPath)
+    $exportDirectory = Split-Path -Parent $exportPath
+    [void](New-Item -ItemType Directory -Path $exportDirectory -Force)
+    New-ValidKickoffManifest | ConvertTo-Json -Depth 100 |
+        Set-Content -LiteralPath $exportPath -Encoding UTF8
+    if (Test-Path -LiteralPath $tempDirectory) {
+        [System.IO.Directory]::Delete($tempDirectory, $true)
+    }
+    if ((Test-Path -LiteralPath $fixtureDirectory -PathType Container) -and
+        @(Get-ChildItem -LiteralPath $fixtureDirectory -Force).Count -eq 0) {
+        [System.IO.Directory]::Delete($fixtureDirectory)
+    }
+    exit 0
+}
+
+function New-KickoffTestManifest {
+    param(
+        [Parameter(Mandatory)][string]$Name,
+        [Parameter(Mandatory)][scriptblock]$Mutation
+    )
+
+    $manifest = New-ValidKickoffManifest
+    & $Mutation $manifest
+    $path = Join-Path $tempDirectory "$Name.json"
+    $manifest | ConvertTo-Json -Depth 100 |
+        Set-Content -LiteralPath $path -Encoding UTF8
+    return $path
+}
+
+function Invoke-KickoffValidatorCase {
+    param(
+        [Parameter(Mandatory)][string]$Name,
+        [Parameter(Mandatory)][string]$ManifestPath,
+        [Parameter(Mandatory)][bool]$ShouldPass,
+        [string]$ExpectedError,
+        [string]$InputId,
+        [string]$ExpectedOwnerName,
+        [bool]$AllowTestFixtures = $true
+    )
+
+    $arguments = @(
+        '-NoProfile', '-ExecutionPolicy', 'Bypass',
+        '-File', $validator,
+        '-ManifestPath', $ManifestPath)
+    if (![string]::IsNullOrWhiteSpace($InputId)) {
+        $arguments += @('-InputId', $InputId)
+    }
+    if (![string]::IsNullOrWhiteSpace($ExpectedOwnerName)) {
+        $arguments += @('-ExpectedOwnerName', $ExpectedOwnerName)
+    }
+    if ($AllowTestFixtures) {
+        $arguments += '-AllowTestFixtures'
+    }
+    $previousErrorActionPreference = $ErrorActionPreference
+    $ErrorActionPreference = 'Continue'
+    try {
+        $output = & $hostExecutable @arguments 2>&1 | Out-String
+        $exitCode = $LASTEXITCODE
+    }
+    finally {
+        $ErrorActionPreference = $previousErrorActionPreference
+    }
+    if ($ShouldPass -and $exitCode -ne 0) {
+        throw "$Name should pass but exited $exitCode.`n$output"
+    }
+    if (!$ShouldPass -and $exitCode -eq 0) {
+        throw "$Name should fail but exited 0.`n$output"
+    }
+    if (!$ShouldPass -and
+        ![string]::IsNullOrWhiteSpace($ExpectedError) -and
+        $output -notmatch [regex]::Escape($ExpectedError)) {
+        throw "$Name did not report '$ExpectedError'.`n$output"
+    }
+    if ($output -match 'ParameterBindingValidationException') {
+        throw "$Name produced a PowerShell parameter binding failure.`n$output"
+    }
+    $script:passed++
+}
+
+try {
+    $validPath = New-KickoffTestManifest 'valid' { param($manifest) }
+    Invoke-KickoffValidatorCase -Name 'valid complete kickoff package' `
+        -ManifestPath $validPath -ShouldPass $true
+
+    Invoke-KickoffValidatorCase `
+        -Name 'formal mode rejects synthetic evidence' `
+        -ManifestPath $validPath -ShouldPass $false `
+        -ExpectedError 'SPACE_GA_KICKOFF_EVIDENCE_SYNTHETIC' `
+        -AllowTestFixtures $false
+
+    Invoke-KickoffValidatorCase `
+        -Name 'blank template fails semantically' `
+        -ManifestPath (Join-Path $repo `
+            'docs/space/acceptance/v1.3-ga/kickoff-evidence-template.json') `
+        -ShouldPass $false `
+        -ExpectedError 'SPACE_GA_KICKOFF_CONCLUSION_INVALID' `
+        -InputId 'CORE_TEAM_ALLOCATION' `
+        -AllowTestFixtures $false
+
+    $incrementalPath = New-KickoffTestManifest 'incremental' {
+        param($manifest)
+        $manifest.conclusion = 'InProgress'
+        $manifest.namedGaSigners.status = 'Pending'
+    }
+    Invoke-KickoffValidatorCase `
+        -Name 'one input can close from an incremental package' `
+        -ManifestPath $incrementalPath -ShouldPass $true `
+        -InputId 'CORE_TEAM_ALLOCATION' `
+        -ExpectedOwnerName 'Zhang Wei'
+
+    Invoke-KickoffValidatorCase `
+        -Name 'index owner must match section owner' `
+        -ManifestPath $validPath -ShouldPass $false `
+        -InputId 'CORE_TEAM_ALLOCATION' `
+        -ExpectedOwnerName 'Different Person' `
+        -ExpectedError 'SPACE_GA_KICKOFF_OWNER_MISMATCH'
+
+    $signerSetPath = New-KickoffTestManifest 'signer-set' {
+        param($manifest)
+        $manifest.namedGaSigners.signers = @(
+            $manifest.namedGaSigners.signers | Select-Object -First 4)
+    }
+    Invoke-KickoffValidatorCase -Name 'five signer roles are fixed' `
+        -ManifestPath $signerSetPath -ShouldPass $false `
+        -InputId 'NAMED_GA_SIGNERS' `
+        -ExpectedError 'SPACE_GA_KICKOFF_SIGNER_SET_INVALID'
+
+    $signerAuthorityPath = New-KickoffTestManifest 'signer-authority' {
+        param($manifest)
+        $manifest.namedGaSigners.signers[0].approvalAuthorityConfirmed = $false
+    }
+    Invoke-KickoffValidatorCase -Name 'signer authority is confirmed' `
+        -ManifestPath $signerAuthorityPath -ShouldPass $false `
+        -InputId 'NAMED_GA_SIGNERS' `
+        -ExpectedError 'SPACE_GA_KICKOFF_SIGNER_INVALID'
+
+    $teamCapacityPath = New-KickoffTestManifest 'team-capacity' {
+        param($manifest)
+        $manifest.coreTeamAllocation.members = @(
+            $manifest.coreTeamAllocation.members | Where-Object {
+                $_.name -ne 'Backend Two'
+            })
+    }
+    Invoke-KickoffValidatorCase -Name 'two backend allocations are required' `
+        -ManifestPath $teamCapacityPath -ShouldPass $false `
+        -InputId 'CORE_TEAM_ALLOCATION' `
+        -ExpectedError 'SPACE_GA_KICKOFF_TEAM_CAPACITY_INVALID'
+
+    $teamWindowPath = New-KickoffTestManifest 'team-window' {
+        param($manifest)
+        $manifest.coreTeamAllocation.members[0].endDate = '2026-09-30'
+    }
+    Invoke-KickoffValidatorCase -Name 'team allocation covers target GA' `
+        -ManifestPath $teamWindowPath -ShouldPass $false `
+        -InputId 'CORE_TEAM_ALLOCATION' `
+        -ExpectedError 'SPACE_GA_KICKOFF_TEAM_WINDOW_INVALID'
+
+    $sharedPath = New-KickoffTestManifest 'shared-roles' {
+        param($manifest)
+        $manifest.coreTeamAllocation.sharedAssignments = @(
+            $manifest.coreTeamAllocation.sharedAssignments | Select-Object -First 4)
+    }
+    Invoke-KickoffValidatorCase -Name 'shared roles are complete' `
+        -ManifestPath $sharedPath -ShouldPass $false `
+        -InputId 'CORE_TEAM_ALLOCATION' `
+        -ExpectedError 'SPACE_GA_KICKOFF_SHARED_ROLES_INVALID'
+
+    $cadCountPath = New-KickoffTestManifest 'cad-count' {
+        param($manifest)
+        $manifest.authorizedGoldenCadCandidates.candidates = @(
+            $manifest.authorizedGoldenCadCandidates.candidates |
+                Select-Object -First 19)
+    }
+    Invoke-KickoffValidatorCase -Name 'twenty CAD candidates are required' `
+        -ManifestPath $cadCountPath -ShouldPass $false `
+        -InputId 'AUTHORIZED_GOLDEN_CAD_CANDIDATES' `
+        -ExpectedError 'SPACE_GA_KICKOFF_CAD_COUNT_INVALID'
+
+    $cadDuplicatePath = New-KickoffTestManifest 'cad-duplicate' {
+        param($manifest)
+        $manifest.authorizedGoldenCadCandidates.candidates[1].sourceSha256 = (
+            $manifest.authorizedGoldenCadCandidates.candidates[0].sourceSha256)
+    }
+    Invoke-KickoffValidatorCase -Name 'CAD identities are unique' `
+        -ManifestPath $cadDuplicatePath -ShouldPass $false `
+        -InputId 'AUTHORIZED_GOLDEN_CAD_CANDIDATES' `
+        -ExpectedError 'SPACE_GA_KICKOFF_CAD_IDENTITY_DUPLICATE'
+
+    $cadAuthorizationPath = New-KickoffTestManifest 'cad-authorization' {
+        param($manifest)
+        $manifest.authorizedGoldenCadCandidates.candidates[0].authorizedForGoldenEvaluation = $false
+    }
+    Invoke-KickoffValidatorCase -Name 'CAD authorization is explicit' `
+        -ManifestPath $cadAuthorizationPath -ShouldPass $false `
+        -InputId 'AUTHORIZED_GOLDEN_CAD_CANDIDATES' `
+        -ExpectedError 'SPACE_GA_KICKOFF_CAD_CANDIDATE_INVALID'
+
+    $cadFormatPath = New-KickoffTestManifest 'cad-format' {
+        param($manifest)
+        foreach ($candidate in $manifest.authorizedGoldenCadCandidates.candidates) {
+            $candidate.sourceFormat = 'DXF'
+        }
+    }
+    Invoke-KickoffValidatorCase -Name 'DWG and DXF are both represented' `
+        -ManifestPath $cadFormatPath -ShouldPass $false `
+        -InputId 'AUTHORIZED_GOLDEN_CAD_CANDIDATES' `
+        -ExpectedError 'SPACE_GA_KICKOFF_CAD_FORMAT_COVERAGE_INVALID'
+
+    $cadLayoutPath = New-KickoffTestManifest 'cad-layout' {
+        param($manifest)
+        $manifest.authorizedGoldenCadCandidates.candidates[19].layoutFamily = 'L1'
+    }
+    Invoke-KickoffValidatorCase -Name 'five layout families have four samples' `
+        -ManifestPath $cadLayoutPath -ShouldPass $false `
+        -InputId 'AUTHORIZED_GOLDEN_CAD_CANDIDATES' `
+        -ExpectedError 'SPACE_GA_KICKOFF_CAD_LAYOUT_COVERAGE_INVALID'
+
+    $cadHashPath = New-KickoffTestManifest 'cad-set-hash' {
+        param($manifest)
+        $manifest.authorizedGoldenCadCandidates.candidateSetSha256 = 'f' * 64
+    }
+    Invoke-KickoffValidatorCase -Name 'candidate set hash seals the list' `
+        -ManifestPath $cadHashPath -ShouldPass $false `
+        -InputId 'AUTHORIZED_GOLDEN_CAD_CANDIDATES' `
+        -ExpectedError 'SPACE_GA_KICKOFF_CAD_SET_HASH_MISMATCH'
+
+    $providerCountPath = New-KickoffTestManifest 'provider-count' {
+        param($manifest)
+        $manifest.providerApprovalsAndIsolatedWorker.candidateProviders = @(
+            $manifest.providerApprovalsAndIsolatedWorker.candidateProviders[0])
+    }
+    Invoke-KickoffValidatorCase -Name 'two Provider candidates are required' `
+        -ManifestPath $providerCountPath -ShouldPass $false `
+        -InputId 'PROVIDER_APPROVALS_AND_ISOLATED_WORKER' `
+        -ExpectedError 'SPACE_GA_KICKOFF_PROVIDER_COUNT_INVALID'
+
+    $providerDuplicatePath = New-KickoffTestManifest 'provider-duplicate' {
+        param($manifest)
+        $providers = $manifest.providerApprovalsAndIsolatedWorker.candidateProviders
+        $providers[1].providerKey = $providers[0].providerKey
+    }
+    Invoke-KickoffValidatorCase -Name 'Provider candidates are distinct' `
+        -ManifestPath $providerDuplicatePath -ShouldPass $false `
+        -InputId 'PROVIDER_APPROVALS_AND_ISOLATED_WORKER' `
+        -ExpectedError 'SPACE_GA_KICKOFF_PROVIDER_DUPLICATE'
+
+    $providerApprovalPath = New-KickoffTestManifest 'provider-approval' {
+        param($manifest)
+        $manifest.providerApprovalsAndIsolatedWorker.candidateProviders[0].licensingApproved = $false
+    }
+    Invoke-KickoffValidatorCase -Name 'Provider approvals are complete' `
+        -ManifestPath $providerApprovalPath -ShouldPass $false `
+        -InputId 'PROVIDER_APPROVALS_AND_ISOLATED_WORKER' `
+        -ExpectedError 'SPACE_GA_KICKOFF_PROVIDER_APPROVALS_INCOMPLETE'
+
+    $cloudApprovalPath = New-KickoffTestManifest 'cloud-approval' {
+        param($manifest)
+        $manifest.providerApprovalsAndIsolatedWorker.candidateProviders[0].dataBoundary = 'ApprovedCloud'
+    }
+    Invoke-KickoffValidatorCase -Name 'cloud requires tenant customer security approvals' `
+        -ManifestPath $cloudApprovalPath -ShouldPass $false `
+        -InputId 'PROVIDER_APPROVALS_AND_ISOLATED_WORKER' `
+        -ExpectedError 'SPACE_GA_KICKOFF_CLOUD_APPROVALS_INCOMPLETE'
+
+    $workerPath = New-KickoffTestManifest 'worker' {
+        param($manifest)
+        $manifest.providerApprovalsAndIsolatedWorker.worker.secretsByReferenceOnly = $false
+    }
+    Invoke-KickoffValidatorCase -Name 'Worker isolation boundary is enforced' `
+        -ManifestPath $workerPath -ShouldPass $false `
+        -InputId 'PROVIDER_APPROVALS_AND_ISOLATED_WORKER' `
+        -ExpectedError 'SPACE_GA_KICKOFF_WORKER_INVALID'
+
+    $pilotSetPath = New-KickoffTestManifest 'pilot-set' {
+        param($manifest)
+        $manifest.twoPilotSitesAndWmsWindows.sites[1].siteType = 'Greenfield'
+    }
+    Invoke-KickoffValidatorCase -Name 'greenfield and retrofit are both required' `
+        -ManifestPath $pilotSetPath -ShouldPass $false `
+        -InputId 'TWO_PILOT_SITES_AND_WMS_WINDOWS' `
+        -ExpectedError 'SPACE_GA_KICKOFF_PILOT_SITE_SET_INVALID'
+
+    $pilotDurationPath = New-KickoffTestManifest 'pilot-duration' {
+        param($manifest)
+        $manifest.twoPilotSitesAndWmsWindows.sites[0].plannedPilotEndDate = '2026-09-13'
+    }
+    Invoke-KickoffValidatorCase -Name 'planned Pilot covers fourteen days' `
+        -ManifestPath $pilotDurationPath -ShouldPass $false `
+        -InputId 'TWO_PILOT_SITES_AND_WMS_WINDOWS' `
+        -ExpectedError 'SPACE_GA_KICKOFF_PILOT_DURATION_INVALID'
+
+    $wmsWindowPath = New-KickoffTestManifest 'wms-window' {
+        param($manifest)
+        $manifest.twoPilotSitesAndWmsWindows.sites[0].wmsWindowEndUtc = '2026-08-31T23:00:00Z'
+    }
+    Invoke-KickoffValidatorCase -Name 'WMS window is ordered' `
+        -ManifestPath $wmsWindowPath -ShouldPass $false `
+        -InputId 'TWO_PILOT_SITES_AND_WMS_WINDOWS' `
+        -ExpectedError 'SPACE_GA_KICKOFF_WMS_WINDOW_INVALID'
+
+    $wmsCoveragePath = New-KickoffTestManifest 'wms-window-coverage' {
+        param($manifest)
+        $manifest.twoPilotSitesAndWmsWindows.sites[0].wmsWindowStartUtc = (
+            '2026-09-02T00:00:00Z')
+    }
+    Invoke-KickoffValidatorCase -Name 'WMS window covers the full Pilot' `
+        -ManifestPath $wmsCoveragePath -ShouldPass $false `
+        -InputId 'TWO_PILOT_SITES_AND_WMS_WINDOWS' `
+        -ExpectedError 'SPACE_GA_KICKOFF_WMS_WINDOW_COVERAGE_INVALID'
+
+    $sectionEvidencePath = New-KickoffTestManifest 'section-evidence' {
+        param($manifest)
+        $manifest.coreTeamAllocation.completionEvidence.acceptedBy = 'Different Person'
+    }
+    Invoke-KickoffValidatorCase -Name 'completion evidence binds section owner' `
+        -ManifestPath $sectionEvidencePath -ShouldPass $false `
+        -InputId 'CORE_TEAM_ALLOCATION' `
+        -ExpectedError 'SPACE_GA_KICKOFF_EVIDENCE_ACCEPTOR_MISMATCH'
+
+    [ordered]@{
+        suite = 'CP6_SPACE_GA_KICKOFF_EVIDENCE'
+        passed = $passed
+        failed = 0
+    } | ConvertTo-Json -Compress
+}
+finally {
+    if (Test-Path -LiteralPath $tempDirectory) {
+        [System.IO.Directory]::Delete($tempDirectory, $true)
+    }
+    if ((Test-Path -LiteralPath $fixtureDirectory -PathType Container) -and
+        @(Get-ChildItem -LiteralPath $fixtureDirectory -Force).Count -eq 0) {
+        [System.IO.Directory]::Delete($fixtureDirectory)
+    }
+}
