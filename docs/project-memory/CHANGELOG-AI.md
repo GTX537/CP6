@@ -2,6 +2,12 @@
 
 > 依据 Git log 汇总，不替代完整 Git 历史。重点记录影响接手判断的里程碑。
 
+## 2026-08-14：Space Studio 2D 画布拖动精调
+
+- Rack/Element 现在可直接拖动并按整数世界毫米保存；选中样式改为就地更新，不再在 pointerdown 销毁 Konva 节点，多选拖动与选择修饰键语义分离。
+- 拖动和撤销均提交带 Lease、Floor Revision、Content Revision/Hash 与幂等标识的 `MoveObject`，失败恢复权威场景；Zone/Aisle 保持 Layout 领域权威。
+- 前端全量 780、Space Studio E2E 14、拖动重复 5、type-check 和 production build 通过。独立 UX/Pilot 尚未发生，核心 GA 仍为 72% / No-Go。
+
 ## 2026-08-14：Space CAD Provider SQL Server 门禁
 
 - SQL Server 17.0.4025.3 LocalDB 独立执行 `SpaceCadProviderSqlServerTests`，3/3 passed、0 skipped，关闭此前环境门控的 Provider 认证真库自动化。

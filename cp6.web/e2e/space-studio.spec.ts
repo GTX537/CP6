@@ -335,6 +335,86 @@ test('creates, updates and explicitly deletes business layout through the leased
   expect(errors).toEqual([])
 })
 
+test('drags selected rack and element through one leased reversible batch', async ({ page }) => {
+  const errors = collectPageErrors(page)
+  const editorBodies: Array<Record<string, any>> = []
+  await installSpaceStudioFixtures(page, [], { editorBodies })
+  await page.setViewportSize({ width: 1440, height: 900 })
+  await page.goto(studioUrl)
+  await expect(page.locator('.studio-title-state').getByText('租约至', { exact: false })).toBeVisible()
+  await expect(page.locator('.el-loading-mask')).toHaveCount(0)
+
+  const canvas = page.locator('.canvas .konvajs-content')
+  const bounds = await canvas.boundingBox()
+  expect(bounds).not.toBeNull()
+  const rackCenter = {
+    x: bounds!.x + (1000 + 2400 / 2) * 0.05,
+    y: bounds!.y + bounds!.height - (1200 + 1000 / 2) * 0.05,
+  }
+  await page.mouse.click(rackCenter.x, rackCenter.y)
+  await page.keyboard.down('Control')
+  await page.mouse.click(
+    bounds!.x + (5200 + 400 / 2) * 0.05,
+    bounds!.y + bounds!.height - (2400 + 400 / 2) * 0.05,
+  )
+  await page.keyboard.up('Control')
+  await expect(page.locator('.studio-statusbar')).toContainText('选择 2')
+  await page.mouse.move(rackCenter.x, rackCenter.y)
+  await page.mouse.down()
+  await page.waitForTimeout(50)
+  await page.mouse.move(rackCenter.x + 50, rackCenter.y - 25, { steps: 5 })
+  await page.waitForTimeout(50)
+  await page.mouse.up()
+
+  await expect.poll(() => editorBodies.length).toBe(1)
+  await expect(page.getByText('对象位置已保存', { exact: true })).toBeVisible()
+  expect(editorBodies[0]).toMatchObject({
+    leaseId: ownedLease().leaseId,
+    expectedFloorRevision: 7,
+    expectedContentRevision: 7,
+    expectedContentHash: 'd'.repeat(64),
+    commands: [
+      {
+        type: 'MoveObject',
+        targetLogicalId: rackId,
+        moveObject: { x: 2000, y: 1700, z: 0 },
+      },
+      {
+        type: 'MoveObject',
+        targetLogicalId: columnId,
+        moveObject: { x: 6200, y: 2900, z: 0 },
+      },
+    ],
+  })
+  expect(editorBodies[0]!.clientInstanceId).toBeTruthy()
+
+  await page.getByRole('tab', { name: '批量', exact: true }).click()
+  await page.locator('[data-test="design-batch-tools"]')
+    .getByRole('button', { name: '撤销', exact: true })
+    .click()
+  await expect(page.getByText('已撤销：拖动 2 个对象', { exact: true })).toBeVisible()
+  expect(editorBodies).toHaveLength(2)
+  expect(editorBodies[1]).toMatchObject({
+    leaseId: ownedLease().leaseId,
+    expectedFloorRevision: 8,
+    expectedContentRevision: 8,
+    expectedContentHash: 'd'.repeat(64),
+    commands: [
+      {
+        type: 'MoveObject',
+        targetLogicalId: rackId,
+        moveObject: { x: 1000, y: 1200, z: 0 },
+      },
+      {
+        type: 'MoveObject',
+        targetLogicalId: columnId,
+        moveObject: { x: 5200, y: 2400, z: 0 },
+      },
+    ],
+  })
+  expect(errors).toEqual([])
+})
+
 test('previews protected location codes and explicitly applies the frozen proposal', async ({ page }) => {
   const errors = collectPageErrors(page)
   const methods: string[] = []
@@ -449,6 +529,7 @@ async function installSpaceStudioFixtures(
   options: {
     leaseHeld?: boolean
     layoutBodies?: Array<Record<string, any>>
+    editorBodies?: Array<Record<string, any>>
     codingEnabled?: boolean
     codingBodies?: Array<Record<string, any>>
     cadBodies?: Array<Record<string, any>>
@@ -488,6 +569,7 @@ async function installSpaceStudioFixtures(
     const scenePath = `/api/space/design/v1/versions/${versionId}/floors/${floorId}/scene`
     const leasePath = `/api/space/design/v1/versions/${versionId}/floors/${floorId}/lease`
     const layoutPath = `/api/space/design/v1/versions/${versionId}/floors/${floorId}/layout-commands`
+    const editorPath = `/api/space/design/v1/versions/${versionId}/floors/${floorId}/commands`
     const codingPreviewPath = `/api/space/design/v1/versions/${versionId}/floors/${floorId}/location-codes:preview`
     const codingApplyPath = `/api/space/design/v1/versions/${versionId}/floors/${floorId}/location-codes:apply`
     const cadUploadPath = `/api/space/design/v1/versions/${versionId}/cad-sources`
@@ -900,6 +982,45 @@ async function installSpaceStudioFixtures(
       })
       return
     }
+    if (url.pathname === editorPath && request.method() === 'POST') {
+      const body = request.postDataJSON() as Record<string, any>
+      options.editorBodies?.push(body)
+      const affectedElements: any[] = []
+      const affectedRacks: any[] = []
+      for (const command of body.commands) {
+        if (command.type !== 'MoveObject') continue
+        const rack = scene.racks.find(
+          (item: any) => item.revision.logicalId === command.targetLogicalId,
+        )
+        const element = scene.elements.find(
+          (item: any) => item.revision.logicalId === command.targetLogicalId,
+        )
+        const target = rack ?? element
+        Object.assign(target, command.moveObject)
+        if (rack) affectedRacks.push(rack)
+        if (element) affectedElements.push(element)
+      }
+      scene.floor.revisionNumber += 1
+      scene.contentRevision += 1
+      await route.fulfill({
+        json: {
+          commandBatchId: body.commandBatchId,
+          floorRevision: scene.floor.revisionNumber,
+          versionContentRevision: scene.contentRevision,
+          appliedCommands: body.commands.map((command: any) => ({
+            commandId: command.commandId,
+            type: command.type,
+            targetLogicalId: command.targetLogicalId,
+          })),
+          affectedElements,
+          affectedRacks,
+          affectedRackLevels: [],
+          affectedLocations: [],
+          idempotentReplay: false,
+        },
+      })
+      return
+    }
     if (url.pathname === codingPreviewPath && request.method() === 'POST') {
       methods.push('POST coding preview')
       const body = request.postDataJSON() as Record<string, any>
@@ -1052,7 +1173,7 @@ function sceneFixture() {
     siteId: '88888888-8888-8888-8888-888888888888',
     versionStatus: 'Draft',
     contentRevision: 7,
-    contentHash: 'space-studio-playwright-fixture',
+    contentHash: 'd'.repeat(64),
     floor: {
       revision: revision(floorId),
       siteLogicalId: '88888888-8888-8888-8888-888888888888',

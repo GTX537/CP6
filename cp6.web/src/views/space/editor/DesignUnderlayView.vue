@@ -40,6 +40,7 @@ import {
   buildDeleteBatch,
   buildDistributionBatch,
   buildRotationBatch,
+  buildTranslationBatch,
   type AlignmentMode,
   type DistributionMode,
   type EditorCommandInput,
@@ -447,7 +448,11 @@ onMounted(async () => {
   stage.stage.on('pointerup.space-studio-tools', onCanvasPointerUp)
   stage.stage.on('click.space-studio-tools', onCanvasToolClick)
   stage.stage.on('wheel.space-studio-tools', onCanvasWheel)
-  elementLayer = new ElementCanvasLayer(stage.stage, selectObjects)
+  elementLayer = new ElementCanvasLayer(
+    stage.stage,
+    selectObjects,
+    moveCanvasObjects,
+  )
   cadIssueOverlay = new CadIssueOverlayLayer(stage.stage)
   applyCanvasViewport(canvasViewport.value, false)
   resizeObserver = new ResizeObserver((entries) => {
@@ -1630,6 +1635,47 @@ async function rotateSelected(degrees: number): Promise<void> {
   )
 }
 
+async function moveCanvasObjects(
+  object: CanvasObjectRef,
+  delta: { x: number; y: number },
+): Promise<void> {
+  if (savingElement.value || readonlyScene.value) return
+  const selected = selectedObjects.value.some(
+    (selection) =>
+      selection.logicalId === object.logicalId &&
+      selection.ownerKind === object.ownerKind,
+  )
+  if (!selected) selectObjects([object], 'replace')
+  let snapshots: EditorObjectSnapshot[]
+  try {
+    snapshots = selectedSnapshots()
+  } catch {
+    elementLayer?.setScene(designScene.value)
+    ElMessage.error('拖动对象已失效，请刷新场景后重试')
+    return
+  }
+  const batch = buildTranslationBatch(snapshots, delta.x, delta.y)
+  if (batch.forward.length === 0) return
+
+  savingElement.value = true
+  elementLayer?.setEnabled(false)
+  try {
+    await executeReversible(
+      `拖动 ${snapshots.length} 个对象`,
+      batch,
+    )
+    ElMessage.success('对象位置已保存')
+  } catch {
+    elementLayer?.setScene(designScene.value)
+    ElMessage.error('对象拖动保存失败，请刷新场景后重试')
+  } finally {
+    savingElement.value = false
+    elementLayer?.setEnabled(
+      !readonlyScene.value && canvasSelectionTool.value === 'select',
+    )
+  }
+}
+
 async function runBatchTool(
   label: string,
   batch: ReversibleCommandBatch,
@@ -1761,13 +1807,22 @@ async function executeReversible(
 
 async function applyEditorCommands(commands: readonly EditorCommandInput[]) {
   const currentFloor = floor.value
-  if (!currentFloor) throw new Error('Floor is unavailable')
+  const currentScene = designScene.value
+  if (
+    !currentFloor
+    || currentScene?.contentRevision === undefined
+    || !currentScene.contentHash
+  ) {
+    throw new Error('Design scene content fence is unavailable')
+  }
   const leaseId = lease.value?.leaseId
   if (!leaseId || leaseState.value !== 'owned') {
     throw new Error('An active edit lease is required')
   }
   const envelope = designElementsApi.createEnvelope(
     currentFloor.revisionNumber ?? 0,
+    currentScene.contentRevision,
+    currentScene.contentHash,
     clientInstanceId,
     leaseId,
     commands,

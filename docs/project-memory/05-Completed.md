@@ -1,5 +1,11 @@
 # 已完成能力与近期里程碑
 
+## 2026-08-14 Space Studio 2D 画布拖动精调
+
+- Rack 和通用 Element 可在选择工具下直接拖动，屏幕位移按 Zoom 转换成整数世界毫米；已选对象保持多选整体移动，选择修饰键不会误提交拖动。
+- 写入复用 `MoveObject`，携带 Lease、Client Instance、Floor Revision、Content Revision/Hash 和幂等批次；撤销提交反向命令，失败重新渲染权威场景。Zone/Aisle 继续使用 Design V1 Layout 合同。
+- 门禁通过：拖动/命令聚焦 14/14、前端全量 780/780、Space Studio Playwright 14/14、拖动连续复跑 5/5、Vue type-check 和 production build。
+
 ## 2026-08-14 Space CAD Provider SQL Server 门禁
 
 - `SpaceCadProviderSqlServerTests` 已在 SQL Server 17.0.4025.3 LocalDB 真实执行，3/3 passed、0 failed、0 skipped，运行后无 `CP6SpaceCadProviders_*` 临时数据库残留。

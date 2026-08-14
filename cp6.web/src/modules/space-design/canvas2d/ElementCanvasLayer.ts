@@ -5,6 +5,10 @@ import {
   buildElementCanvasPlan,
   type ElementCanvasDrawable,
 } from './elementCanvasPlan'
+import {
+  screenDragDeltaToWorld,
+  type CanvasDragDelta,
+} from './elementCanvasDrag'
 
 export interface CanvasObjectRef {
   logicalId: string
@@ -20,6 +24,12 @@ export class ElementCanvasLayer {
   private enabled = true
   private lassoStart: { x: number; y: number } | null = null
   private lasso: Konva.Rect | null = null
+  private activeDrag: {
+    node: Konva.Shape
+    start: CanvasDragDelta
+    object: CanvasObjectRef
+    cancelled: boolean
+  } | null = null
   private viewport: Pick<ViewState, 'panX' | 'panY' | 'zoom'> = {
     panX: 0,
     panY: 0,
@@ -32,6 +42,10 @@ export class ElementCanvasLayer {
       objects: readonly CanvasObjectRef[],
       mode: CanvasSelectionMode,
     ) => void,
+    private readonly onMove: (
+      object: CanvasObjectRef,
+      delta: CanvasDragDelta,
+    ) => Promise<void>,
   ) {
     stage.add(this.layer)
     stage.on('pointerdown.element-selection', (event) => {
@@ -64,6 +78,7 @@ export class ElementCanvasLayer {
       this.layer.batchDraw()
     })
     stage.on('pointerup.element-selection', (event) => {
+      if (this.finishActiveDrag()) return
       if (!this.lassoStart || !this.lasso) return
       const bounds = this.lasso.getClientRect({ relativeTo: stage })
       const isClick = bounds.width < 4 && bounds.height < 4
@@ -75,6 +90,10 @@ export class ElementCanvasLayer {
       this.layer.batchDraw()
       this.onSelect(selected, mode)
     })
+    stage.on('pointercancel.element-selection', () => {
+      this.activeDrag = null
+      this.render()
+    })
   }
 
   setScene(scene: ISpaceDesignSceneDto | null): void {
@@ -84,7 +103,7 @@ export class ElementCanvasLayer {
 
   setSelected(logicalIds: readonly string[]): void {
     this.selectedLogicalIds = new Set(logicalIds)
-    this.render()
+    this.updateSelectionStyles()
   }
 
   setEnabled(enabled: boolean): void {
@@ -115,9 +134,11 @@ export class ElementCanvasLayer {
     this.stage.off('.element-selection')
     this.layer.destroy()
     this.scene = null
+    this.activeDrag = null
   }
 
   private render(): void {
+    this.activeDrag = null
     this.layer.destroyChildren()
     if (!this.scene) {
       this.layer.batchDraw()
@@ -130,22 +151,33 @@ export class ElementCanvasLayer {
     this.layer.batchDraw()
   }
 
+  private updateSelectionStyles(): void {
+    for (const canvasNode of this.layer.find('.design-element')) {
+      const node = canvasNode as Konva.Shape
+      const selected = this.selectedLogicalIds.has(
+        String(node.getAttr('logicalId')),
+      )
+      const ownerKind = node.getAttr('ownerKind') as CanvasObjectRef['ownerKind']
+      node.opacity(selected ? 0.9 : opacityFor(ownerKind))
+      node.stroke(selected ? '#f59e0b' : '#1e3a5f')
+      node.strokeWidth(selected ? 4 : 1.5)
+    }
+    this.layer.batchDraw()
+  }
+
   private addDrawable(drawable: ElementCanvasDrawable): void {
     const selectable = true
+    const movable =
+      drawable.ownerKind === 'Element' || drawable.ownerKind === 'Rack'
     const selected = this.selectedLogicalIds.has(drawable.logicalId)
     const common = {
       name: 'design-element',
       fill: colorFor(drawable.elementType),
-      opacity: selected
-        ? 0.9
-        : drawable.ownerKind === 'Zone'
-          ? 0.16
-          : drawable.ownerKind === 'Aisle'
-            ? 0.28
-            : 0.66,
+      opacity: selected ? 0.9 : opacityFor(drawable.ownerKind),
       stroke: selected ? '#f59e0b' : '#1e3a5f',
       strokeWidth: selected ? 4 : 1.5,
       listening: this.enabled && selectable,
+      draggable: this.enabled && movable,
     }
     const node: Konva.Shape =
       drawable.kind === 'rect'
@@ -155,19 +187,58 @@ export class ElementCanvasLayer {
     node.setAttr('ownerKind', drawable.ownerKind)
     node.setAttr('elementType', drawable.elementType)
     node.on('pointerdown', (event: Konva.KonvaEventObject<PointerEvent>) => {
-      if (!this.enabled || !selectable) return
+      if (!this.enabled || !selectable || event.evt.button !== 0) return
       event.cancelBubble = true
-      this.onSelect(
-        [
-          {
+      const modifier = hasSelectionModifier(event.evt)
+      if (movable) {
+        this.activeDrag = {
+          node,
+          start: { x: node.x(), y: node.y() },
+          cancelled: modifier,
+          object: {
             logicalId: drawable.logicalId,
             ownerKind: drawable.ownerKind as CanvasObjectRef['ownerKind'],
           },
-        ],
-        hasSelectionModifier(event.evt) ? 'toggle' : 'replace',
-      )
+        }
+      }
+      if (modifier || !this.selectedLogicalIds.has(drawable.logicalId)) {
+        this.onSelect(
+          [
+            {
+              logicalId: drawable.logicalId,
+              ownerKind: drawable.ownerKind as CanvasObjectRef['ownerKind'],
+            },
+          ],
+          modifier ? 'toggle' : 'replace',
+        )
+      }
     })
     this.layer.add(node)
+  }
+
+  private finishActiveDrag(): boolean {
+    const active = this.activeDrag
+    this.activeDrag = null
+    if (!active) return false
+    if (!this.enabled || active.cancelled) {
+      this.render()
+      return true
+    }
+    const delta = screenDragDeltaToWorld(
+      {
+        x: active.node.x() - active.start.x,
+        y: active.node.y() - active.start.y,
+      },
+      this.viewport.zoom,
+    )
+    if (delta.x === 0 && delta.y === 0) {
+      this.render()
+      return true
+    }
+    void this.onMove(active.object, delta)
+      .catch(() => undefined)
+      .finally(() => this.render())
+    return true
   }
 
   private objectsInside(bounds: {
@@ -233,6 +304,12 @@ export class ElementCanvasLayer {
       closed: true,
     })
   }
+}
+
+function opacityFor(ownerKind: CanvasObjectRef['ownerKind']): number {
+  if (ownerKind === 'Zone') return 0.16
+  if (ownerKind === 'Aisle') return 0.28
+  return 0.66
 }
 
 function colorFor(elementType: string): string {
