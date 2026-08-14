@@ -85,6 +85,18 @@ public sealed class SpaceWmsRuntimeSchemaFilter : ISchemaFilter
     private static readonly IReadOnlyDictionary<Type, string[]>
         RequiredProperties = new Dictionary<Type, string[]>
         {
+            [typeof(SpacePublishedViewerSceneDto)] =
+            [
+                "schemaVersion",
+                "authority",
+                "runtimeOverlayIncluded",
+                "siteId",
+                "publishedVersionId",
+                "publishedAtUtc",
+                "contentRevision",
+                "contentHash",
+                "floors",
+            ],
             [typeof(SpacePublishPreviewDto)] =
             [
                 "validationWarningCount",
@@ -1434,7 +1446,11 @@ public sealed class SpaceWmsRuntimeSchemaFilter : ISchemaFilter
             Property(schema, propertyName).Nullable = false;
         }
 
-        if (context.Type == typeof(SpaceWmsRuntimeInventoryItemDto))
+        if (context.Type == typeof(SpacePublishedViewerSceneDto))
+        {
+            SetNullable(schema, true, "publishedAtUtc", "contentHash");
+        }
+        else if (context.Type == typeof(SpaceWmsRuntimeInventoryItemDto))
         {
             SetNullable(
                 schema,

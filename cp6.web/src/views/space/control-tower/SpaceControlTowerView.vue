@@ -117,7 +117,10 @@ import { useI18n } from 'vue-i18n'
 import { ElMessage } from 'element-plus'
 import * as signalR from '@microsoft/signalr'
 import { StackedViewer } from '@/space-viewer/stacked/StackedViewer'
-import { floorApi } from '@/api/space/floor'
+import {
+  designPublishedSceneApi,
+  indexPublishedViewerScene,
+} from '@/api/space/designPublishedScene'
 import { analyticsApi } from '@/api/space/analytics'
 import { stockApi } from '@/api/space/stock'
 import type { FloorVO } from '@/types/space/scene'
@@ -403,8 +406,14 @@ onMounted(async () => {
     viewer = new StackedViewer(canvas)
     viewer.start()
     try {
-      floors.value = (await floorApi.list(siteId)).data
-      await viewer.loadSite(siteId)
+      const published = indexPublishedViewerScene(
+        await designPublishedSceneApi.get(siteId),
+        siteId,
+      )
+      floors.value = published.floors
+      await viewer.loadPublished(
+        published.floors.map((floor) => published.scenes.get(floor.id)!),
+      )
       await applyOverlay()
     } catch { sceneError.value = t('3D 场景加载失败') }
     finally { sceneLoading.value = false }

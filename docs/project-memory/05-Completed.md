@@ -1,5 +1,12 @@
 # 已完成能力与近期里程碑
 
+## 2026-08-14 Space Studio WP5 生产 Viewer Published-only 边界
+
+- 新增内部只读 `GET /api/space/design/v1/sites/{siteId}/published-scene`，服务端只接受模型当前 `CurrentPublishedVersionId` 指向的 Production/Published 版本，按有效楼层返回不可变 Design Revision，并固定 `runtimeOverlayIncluded=false`；无 Published 指针或读取期间权威漂移时失败关闭。
+- 单层 Viewer、跨层 Viewer、Control Tower 和楼层列表全部切换为该聚合合同，不再消费可变旧 floor/scene API。Location 从 Published Rack/RackLevel/Location 的 LogicalId、逐层规格与尺寸确定性投影，继续支持拾取和库存着色；Draft/跨版本注入、不完整几何或跨层部分失败不会显示半仓。
+- OpenAPI、C#/TypeScript SDK、`space:model:read` 权限和边界结构守卫同步更新；聚焦 Web 12/12、权限/OpenAPI 82/82、全量 Web 775/775、CP6.Tests 2,914 passed / 19 skipped、Space Unit 506/506、Vue type-check、production build 与 SDK drift 通过。真实 SQL Published/Draft 隔离用例已加入但本机 `CP6_TEST_SQLSERVER` 未配置而 skipped，不冒充生产或真库证据。
+- 本卡关闭仓库实现的 Published-only Viewer 权威边界；生产等价部署、真实 Published 数据、独立 QA/UX/辅助技术验收与 Pilot 仍在 Todo，不能据此声明 WP5 或核心 GA 100%。
+
 ## 2026-08-14 Space Studio WP5 Viewer GA 性能复验
 
 - 将硬件执行器从一次性截图升级为可审计正式门禁：1 次预热单独报告，30 次全新浏览器 Context 形成稳定分布；每次执行 100 次实际命中拾取、30 次 10,000 库位着色和 180 帧轨道渲染，并保存原始样本、P50/P95/最大值、失败率、提交 SHA、输入文件哈希、浏览器/OS/GPU/驱动和截图。

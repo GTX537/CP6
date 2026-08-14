@@ -27,6 +27,7 @@ public sealed class SpaceDesignV1OpenApiTests
         var expectedPaths = new[]
         {
             "/api/space/design/v1/sites/{siteId}/model",
+            "/api/space/design/v1/sites/{siteId}/published-scene",
             "/api/space/design/v1/sites/{siteId}/cad-capability",
             "/api/space/design/v1/sites/{siteId}/cad-provider-configuration",
             "/api/space/design/v1/sites/{siteId}/publish-attempts",
@@ -151,8 +152,8 @@ public sealed class SpaceDesignV1OpenApiTests
             .Select(operation =>
                 operation.Value.GetProperty("operationId").GetString())
             .ToArray();
-        Assert.Equal(133, operationIds.Length);
-        Assert.Equal(133, operationIds.Distinct().Count());
+        Assert.Equal(134, operationIds.Length);
+        Assert.Equal(134, operationIds.Distinct().Count());
         Assert.Contains("GetCapability", operationIds);
         Assert.Contains("ReplaceProviderConfiguration", operationIds);
         Assert.Contains("GetPolicy", operationIds);
@@ -215,6 +216,7 @@ public sealed class SpaceDesignV1OpenApiTests
         Assert.Contains("CreateVersion", operationIds);
         Assert.Contains("CreateSource", operationIds);
         Assert.Contains("GetScene", operationIds);
+        Assert.Contains("GetPublishedScene", operationIds);
         Assert.Contains("ApplyElementCommands", operationIds);
         Assert.Contains("ApplyLayoutCommands", operationIds);
         Assert.Contains("PreviewLocationCodes", operationIds);
@@ -299,6 +301,49 @@ public sealed class SpaceDesignV1OpenApiTests
                 .GetProperty("format")
                 .GetString());
         Assert.True(exchangeResponses.GetProperty("409")
+            .GetProperty("content")
+            .TryGetProperty("application/problem+json", out _));
+    }
+
+    [Fact]
+    public void Published_viewer_scene_contract_is_required_and_overlay_free()
+    {
+        using var document = ReadContract();
+        var root = document.RootElement;
+        var schema = Schema(
+            root.GetProperty("components").GetProperty("schemas"),
+            "CP6.Space.Contracts.SpacePublishedViewerSceneDto");
+        AssertExactRequiredNames(
+            schema,
+            "schemaVersion",
+            "authority",
+            "runtimeOverlayIncluded",
+            "siteId",
+            "publishedVersionId",
+            "publishedAtUtc",
+            "contentRevision",
+            "contentHash",
+            "floors");
+        AssertNullable(schema, "publishedAtUtc", "contentHash");
+        AssertNonNullable(
+            schema,
+            "schemaVersion",
+            "authority",
+            "runtimeOverlayIncluded",
+            "siteId",
+            "publishedVersionId",
+            "contentRevision",
+            "floors");
+
+        var operation = root.GetProperty("paths")
+            .GetProperty(
+                "/api/space/design/v1/sites/{siteId}/published-scene")
+            .GetProperty("get");
+        Assert.Equal(
+            "GetPublishedScene",
+            operation.GetProperty("operationId").GetString());
+        Assert.True(operation.GetProperty("responses")
+            .GetProperty("404")
             .GetProperty("content")
             .TryGetProperty("application/problem+json", out _));
     }

@@ -303,6 +303,120 @@ public sealed class SpaceDesignV1Service :
             designAttributes.Select(ToSceneDto).ToArray());
     }
 
+    public async Task<SpacePublishedViewerSceneDto> GetPublishedSceneAsync(
+        Guid siteId,
+        CancellationToken cancellationToken = default)
+    {
+        EnsureExecutionContext();
+        var model = await FindModelBySiteAsync(siteId, cancellationToken);
+        EnsureReadable(model);
+
+        if (model.CurrentPublishedVersionId is not Guid publishedVersionId)
+        {
+            throw new SpaceProblemException(
+                SpaceErrorCodes.VersionNotFound,
+                404,
+                "Current Published space version",
+                recoveryAction: "publish-version");
+        }
+
+        var published = await _context.Versions
+            .AsNoTracking()
+            .SingleOrDefaultAsync(
+                candidate =>
+                    candidate.Id == publishedVersionId &&
+                    candidate.ModelId == model.Id &&
+                    candidate.Purpose == SpaceModelVersionPurpose.Production &&
+                    candidate.Status == SpaceVersionStatus.Published,
+                cancellationToken);
+        if (published is null)
+        {
+            throw new SpaceProblemException(
+                SpaceErrorCodes.VersionNotFound,
+                404,
+                "Current Published space version",
+                recoveryAction: "reconcile-published-version");
+        }
+
+        var floorLogicalIds = await _context.FloorRevisions
+            .AsNoTracking()
+            .Where(candidate =>
+                candidate.ModelVersionId == publishedVersionId &&
+                candidate.LifecycleState == SpaceLifecycleState.Active)
+            .OrderBy(candidate => candidate.Level)
+            .ThenBy(candidate => candidate.FloorCode)
+            .ThenBy(candidate => candidate.LogicalId)
+            .Select(candidate => candidate.LogicalId)
+            .ToArrayAsync(cancellationToken);
+
+        var floors = new List<SpaceDesignSceneDto>(floorLogicalIds.Length);
+        foreach (var floorLogicalId in floorLogicalIds)
+        {
+            floors.Add(await GetSceneAsync(
+                publishedVersionId,
+                floorLogicalId,
+                cancellationToken));
+        }
+
+        if (floors.Any(scene =>
+                scene.ModelVersionId != publishedVersionId ||
+                scene.SiteId != siteId ||
+                scene.VersionStatus != SpaceVersionStatus.Published.ToString() ||
+                scene.ContentRevision != published.ContentRevision ||
+                !string.Equals(
+                    scene.ContentHash,
+                    published.ContentHash,
+                    StringComparison.Ordinal) ||
+                scene.RuntimeOverlayIncluded))
+        {
+            throw new SpaceProblemException(
+                SpaceErrorCodes.PublishedVersionChanged,
+                409,
+                "Published scene authority changed while it was being read.",
+                recoveryAction: "reload-published-scene",
+                retryable: true);
+        }
+
+        var publishedPointerIsCurrent = await _context.Models
+            .AsNoTracking()
+            .AnyAsync(
+                candidate =>
+                    candidate.Id == model.Id &&
+                    candidate.CurrentPublishedVersionId == publishedVersionId,
+                cancellationToken);
+        var publishedAuthorityIsCurrent = await _context.Versions
+            .AsNoTracking()
+            .AnyAsync(
+                candidate =>
+                    candidate.Id == publishedVersionId &&
+                    candidate.ModelId == model.Id &&
+                    candidate.Purpose == SpaceModelVersionPurpose.Production &&
+                    candidate.Status == SpaceVersionStatus.Published &&
+                    candidate.ContentRevision == published.ContentRevision &&
+                    candidate.ContentHash == published.ContentHash,
+                cancellationToken);
+        if (!publishedPointerIsCurrent || !publishedAuthorityIsCurrent)
+        {
+            throw new SpaceProblemException(
+                SpaceErrorCodes.PublishedVersionChanged,
+                409,
+                "Published scene authority changed while it was being read.",
+                recoveryAction: "reload-published-scene",
+                retryable: true);
+        }
+
+        return new SpacePublishedViewerSceneDto(
+            SpaceDesignSceneContract.SchemaVersion,
+            SpaceDesignSceneContract.Authority,
+            RuntimeOverlayIncluded: false,
+            siteId,
+            publishedVersionId,
+            published.PublishedAtUtc,
+            published.ContentRevision,
+            published.ContentHash,
+            floors);
+    }
+
     public async Task<ApplySpaceElementCommandBatchResponse>
         ApplyElementCommandsAsync(
             Guid versionId,

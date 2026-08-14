@@ -17,6 +17,70 @@ public sealed class SpaceDesignSceneSqlServerTests
         "bbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbb";
 
     [SqlServerFact]
+    public async Task Published_viewer_scene_uses_only_current_published_pointer()
+    {
+        await WithDatabaseAsync(async (connectionString, execution, clock) =>
+        {
+            await using var context = CreateContext(
+                connectionString,
+                execution,
+                clock);
+            var seeded = await SeedDesignModelAsync(
+                context,
+                execution.ActorId,
+                clock.UtcNow);
+            var publishedFloor = SpaceFloorRevision.Create(
+                execution.TenantId,
+                seeded.Published.Id,
+                Guid.NewGuid(),
+                seeded.Model.SiteId,
+                1,
+                "PUB",
+                "Published floor",
+                height: 6000);
+            var draft = SpaceModelVersion.CreateDraft(
+                execution.TenantId,
+                seeded.Model.Id,
+                2,
+                "Unpublished changes",
+                seeded.Published.Id);
+            seeded.Model.ReserveDraft(draft);
+            var draftFloor = SpaceFloorRevision.Create(
+                execution.TenantId,
+                draft.Id,
+                Guid.NewGuid(),
+                seeded.Model.SiteId,
+                2,
+                "DRAFT",
+                "Draft-only floor",
+                height: 6000);
+            context.AddRange(publishedFloor, draft, draftFloor);
+            await context.SaveChangesAsync();
+
+            var service = NewService(
+                context,
+                execution,
+                clock,
+                seeded.Model.SiteId);
+
+            var scene = await service.GetPublishedSceneAsync(
+                seeded.Model.SiteId);
+
+            Assert.Equal(seeded.Model.SiteId, scene.SiteId);
+            Assert.Equal(seeded.Published.Id, scene.PublishedVersionId);
+            Assert.Equal(SpaceDesignSceneContract.Authority, scene.Authority);
+            Assert.False(scene.RuntimeOverlayIncluded);
+            var floor = Assert.Single(scene.Floors);
+            Assert.Equal(seeded.Published.Id, floor.ModelVersionId);
+            Assert.Equal(publishedFloor.LogicalId, floor.Floor.Revision.LogicalId);
+            Assert.Equal("PUB", floor.Floor.FloorCode);
+            Assert.DoesNotContain(
+                scene.Floors,
+                item => item.Floor.Revision.LogicalId == draftFloor.LogicalId);
+        });
+    }
+
+    [SqlServerFact]
     public async Task Scene_uses_revision_authority_without_runtime_overlay()
     {
         await WithDatabaseAsync(async (connectionString, execution, clock) =>

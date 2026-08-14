@@ -201,6 +201,11 @@ export interface ISpaceDesignV1Client {
     getModel(siteId: string): Promise<SpaceModelDto>;
 
     /**
+     * @return OK
+     */
+    getPublishedScene(siteId: string): Promise<SpacePublishedViewerSceneDto>;
+
+    /**
      * @param status (optional)
      * @param limit (optional)
      * @param cursor (optional)
@@ -3897,6 +3902,95 @@ export class SpaceDesignV1Client implements ISpaceDesignV1Client {
             });
         }
         return Promise.resolve<SpaceModelDto>(null as any);
+    }
+
+    /**
+     * @return OK
+     */
+    getPublishedScene(siteId: string): Promise<SpacePublishedViewerSceneDto> {
+        let url_ = this.baseUrl + "/api/space/design/v1/sites/{siteId}/published-scene";
+        if (siteId === undefined || siteId === null)
+            throw new globalThis.Error("The parameter 'siteId' must be defined.");
+        url_ = url_.replace("{siteId}", encodeURIComponent("" + siteId));
+        url_ = url_.replace(/[?&]$/, "");
+
+        let options_: RequestInit = {
+            method: "GET",
+            headers: {
+                "Accept": "application/json"
+            }
+        };
+
+        return this.http.fetch(url_, options_).then((_response: Response) => {
+            return this.processGetPublishedScene(_response);
+        });
+    }
+
+    protected processGetPublishedScene(response: Response): Promise<SpacePublishedViewerSceneDto> {
+        const status = response.status;
+        let _headers: any = {}; if (response.headers && response.headers.forEach) { response.headers.forEach((v: any, k: any) => _headers[k] = v); };
+        if (status === 200) {
+            return response.text().then((_responseText) => {
+            let result200: any = null;
+            let resultData200 = _responseText === "" ? null : JSON.parse(_responseText, this.jsonParseReviver);
+            result200 = SpacePublishedViewerSceneDto.fromJS(resultData200);
+            return result200;
+            });
+        } else if (status === 400) {
+            return response.text().then((_responseText) => {
+            let result400: any = null;
+            let resultData400 = _responseText === "" ? null : JSON.parse(_responseText, this.jsonParseReviver);
+            result400 = SpaceDesignProblemDetails.fromJS(resultData400);
+            return throwException("Bad Request", status, _responseText, _headers, result400);
+            });
+        } else if (status === 401) {
+            return response.text().then((_responseText) => {
+            let result401: any = null;
+            let resultData401 = _responseText === "" ? null : JSON.parse(_responseText, this.jsonParseReviver);
+            result401 = SpaceDesignProblemDetails.fromJS(resultData401);
+            return throwException("Unauthorized", status, _responseText, _headers, result401);
+            });
+        } else if (status === 403) {
+            return response.text().then((_responseText) => {
+            let result403: any = null;
+            let resultData403 = _responseText === "" ? null : JSON.parse(_responseText, this.jsonParseReviver);
+            result403 = SpaceDesignProblemDetails.fromJS(resultData403);
+            return throwException("Forbidden", status, _responseText, _headers, result403);
+            });
+        } else if (status === 404) {
+            return response.text().then((_responseText) => {
+            let result404: any = null;
+            let resultData404 = _responseText === "" ? null : JSON.parse(_responseText, this.jsonParseReviver);
+            result404 = SpaceDesignProblemDetails.fromJS(resultData404);
+            return throwException("Not Found", status, _responseText, _headers, result404);
+            });
+        } else if (status === 409) {
+            return response.text().then((_responseText) => {
+            let result409: any = null;
+            let resultData409 = _responseText === "" ? null : JSON.parse(_responseText, this.jsonParseReviver);
+            result409 = SpaceDesignProblemDetails.fromJS(resultData409);
+            return throwException("Conflict", status, _responseText, _headers, result409);
+            });
+        } else if (status === 422) {
+            return response.text().then((_responseText) => {
+            let result422: any = null;
+            let resultData422 = _responseText === "" ? null : JSON.parse(_responseText, this.jsonParseReviver);
+            result422 = SpaceDesignProblemDetails.fromJS(resultData422);
+            return throwException("Unprocessable Content", status, _responseText, _headers, result422);
+            });
+        } else if (status === 500) {
+            return response.text().then((_responseText) => {
+            let result500: any = null;
+            let resultData500 = _responseText === "" ? null : JSON.parse(_responseText, this.jsonParseReviver);
+            result500 = SpaceDesignProblemDetails.fromJS(resultData500);
+            return throwException("Internal Server Error", status, _responseText, _headers, result500);
+            });
+        } else if (status !== 200 && status !== 204) {
+            return response.text().then((_responseText) => {
+            return throwException("An unexpected server error occurred.", status, _responseText, _headers);
+            });
+        }
+        return Promise.resolve<SpacePublishedViewerSceneDto>(null as any);
     }
 
     /**
@@ -31035,6 +31129,85 @@ export interface ISpacePublishReceiptDto {
     responseHash?: string | undefined;
     errorCode?: string | undefined;
     receivedAtUtc?: Date;
+}
+
+export class SpacePublishedViewerSceneDto implements ISpacePublishedViewerSceneDto {
+    schemaVersion!: number;
+    authority!: string;
+    runtimeOverlayIncluded!: boolean;
+    siteId!: string;
+    publishedVersionId!: string;
+    publishedAtUtc!: Date | undefined;
+    contentRevision!: number;
+    contentHash!: string | undefined;
+    floors!: SpaceDesignSceneDto[];
+
+    constructor(data?: ISpacePublishedViewerSceneDto) {
+        if (data) {
+            for (var property in data) {
+                if (data.hasOwnProperty(property))
+                    (this as any)[property] = (data as any)[property];
+            }
+        }
+        if (!data) {
+            this.floors = [];
+        }
+    }
+
+    init(_data?: any) {
+        if (_data) {
+            this.schemaVersion = _data["schemaVersion"];
+            this.authority = _data["authority"];
+            this.runtimeOverlayIncluded = _data["runtimeOverlayIncluded"];
+            this.siteId = _data["siteId"];
+            this.publishedVersionId = _data["publishedVersionId"];
+            this.publishedAtUtc = _data["publishedAtUtc"] ? new Date(_data["publishedAtUtc"].toString()) : undefined as any;
+            this.contentRevision = _data["contentRevision"];
+            this.contentHash = _data["contentHash"];
+            if (Array.isArray(_data["floors"])) {
+                this.floors = [] as any;
+                for (let item of _data["floors"])
+                    this.floors!.push(SpaceDesignSceneDto.fromJS(item));
+            }
+        }
+    }
+
+    static fromJS(data: any): SpacePublishedViewerSceneDto {
+        data = typeof data === 'object' ? data : {};
+        let result = new SpacePublishedViewerSceneDto();
+        result.init(data);
+        return result;
+    }
+
+    toJSON(data?: any) {
+        data = typeof data === 'object' ? data : {};
+        data["schemaVersion"] = this.schemaVersion;
+        data["authority"] = this.authority;
+        data["runtimeOverlayIncluded"] = this.runtimeOverlayIncluded;
+        data["siteId"] = this.siteId;
+        data["publishedVersionId"] = this.publishedVersionId;
+        data["publishedAtUtc"] = this.publishedAtUtc ? this.publishedAtUtc.toISOString() : undefined as any;
+        data["contentRevision"] = this.contentRevision;
+        data["contentHash"] = this.contentHash;
+        if (Array.isArray(this.floors)) {
+            data["floors"] = [];
+            for (let item of this.floors)
+                data["floors"].push(item ? item.toJSON() : undefined as any);
+        }
+        return data;
+    }
+}
+
+export interface ISpacePublishedViewerSceneDto {
+    schemaVersion: number;
+    authority: string;
+    runtimeOverlayIncluded: boolean;
+    siteId: string;
+    publishedVersionId: string;
+    publishedAtUtc: Date | undefined;
+    contentRevision: number;
+    contentHash: string | undefined;
+    floors: SpaceDesignSceneDto[];
 }
 
 export class SpaceRackGenerationProfileDto implements ISpaceRackGenerationProfileDto {

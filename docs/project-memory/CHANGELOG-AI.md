@@ -2,6 +2,12 @@
 
 > 依据 Git log 汇总，不替代完整 Git 历史。重点记录影响接手判断的里程碑。
 
+## 2026-08-14：Space Studio WP5 生产 Viewer Published-only 边界
+
+- 新增 Site 级 Published 聚合场景合同，只从模型当前 Production/Published 指针读取不可变 Design Revision，明确不内嵌库存、人员或设备 runtime overlay；无 Published 或权威漂移时返回稳定 Problem Details。
+- 单层、跨层和 Control Tower 三条生产查看链统一消费该合同，旧可变 floor/scene API 仅保留给遗留编辑能力。客户端绑定 Site/版本/状态，按 RackLevel 权威生成可拾取 Location；Draft 注入、几何缺失与跨层部分失败均失败关闭。
+- OpenAPI、C#/TypeScript SDK、权限、投影与结构守卫自动化同步。聚焦 Web 12、全量 Web 775、权限/OpenAPI 82、CP6.Tests 2,914、Space Unit 506、type-check、production build 和 SDK drift 通过；SQL 隔离测试因当前未配置 `CP6_TEST_SQLSERVER` skipped，生产等价 E2E、独立 QA/UX、Pilot 与签字仍未完成。
+
 ## 2026-08-14：Space Studio WP5 Viewer GA 性能复验
 
 - 硬件门禁改为 1 次独立预热 + 30 次冷浏览器 Context，保存每次原始帧、标签、拾取、着色样本，并记录 P50/P95/最大值、失败率、代码 SHA、输入哈希、浏览器/OS/GPU 驱动与截图；样本不足、软件渲染、非 WebGL2、拾取 miss、console error、渲染器切换或脏跟踪工作区均失败关闭。
