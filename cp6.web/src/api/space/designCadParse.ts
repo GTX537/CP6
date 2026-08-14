@@ -51,6 +51,16 @@ export interface SpaceCadProviderSlot {
   expiresAtUtc: string
   supportsDwg: boolean
   supportsDxf: boolean
+  licensingApproved: boolean
+  securityApproved: boolean
+  dataRegionApproved: boolean
+  deletionRetentionApproved: boolean
+  qualificationScore?: number
+  qualificationRubricVersion?: string
+  goldenDatasetSha256?: string
+  frozenEnvironmentSha256?: string
+  qualificationEvidenceReference?: string
+  qualified: boolean
   runtimeAvailable: boolean
   currentlyValid: boolean
 }

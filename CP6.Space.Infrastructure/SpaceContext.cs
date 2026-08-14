@@ -2751,8 +2751,20 @@ public sealed class SpaceContext : DbContext
             .HasMaxLength(500).IsUnicode(false).IsRequired();
         entity.Property(x => x.SecretReference)
             .HasMaxLength(256).IsUnicode(false);
+        entity.Property(x => x.QualificationRubricVersion)
+            .HasMaxLength(100).IsUnicode(false);
+        entity.Property(x => x.GoldenDatasetSha256)
+            .HasMaxLength(64).IsUnicode(false);
+        entity.Property(x => x.FrozenEnvironmentSha256)
+            .HasMaxLength(64).IsUnicode(false);
+        entity.Property(x => x.QualificationEvidenceReference)
+            .HasMaxLength(500).IsUnicode(false);
         entity.Property(x => x.ValidFromUtc).HasColumnType("datetime2");
         entity.Property(x => x.ExpiresAtUtc).HasColumnType("datetime2");
+        entity.ToTable(table => table.HasCheckConstraint(
+            "CK_Space_CadProviderCertification_QualificationScore",
+            "[QualificationScore] IS NULL OR " +
+            "([QualificationScore] >= 0 AND [QualificationScore] <= 100)"));
         entity.HasIndex(x => new
         {
             x.TenantId,

@@ -2,6 +2,13 @@
 
 > 依据 Git log 汇总，不替代完整 Git 历史。重点记录影响接手判断的里程碑。
 
+## 2026-08-14：Space Studio WP3 Provider 资格与确定性主备排名
+
+- 扩展 Site Provider 认证合同，保存四项硬门禁、ADR-0001 资格分、规则版本、黄金集/冻结环境 SHA 和资格证据；新认证必须全部通过且总分至少 80。
+- 服务端要求主备使用同一冻结评测基线，并拒绝 Primary 分数较低或最高分并列；能力接口公开非敏感资格状态，CAD 路由只消费资格完整记录。历史记录不自动升级，因此缺少新证据时按设计 No-Go。
+- 新增独立可回滚 EF 迁移、幂等 SQL、OpenAPI/双 SDK 和聚焦自动化。真实 ODA/APS、黄金集评分、Site 审批、真 SQL 运行与双链认证仍未完成，不据此提升 WP3 接受状态。
+- 验证通过：Release solution 0 warning / 0 error；Provider 聚焦 12、Space Unit 506、Space Integration 310 passed / 106 skipped、CP6.Tests 2,916 passed / 19 skipped、Client 71、Web 775、Space Studio Playwright 13、Vue type-check、production build、SDK/EF/GA 索引与 diff 门禁。环境 skip 未冒充正式证据。
+
 ## 2026-08-14：Space Studio WP0 核心 GA 证据索引
 
 - 新增 `v1.3-ga` 核心 GA 索引，冻结 72%→100% 规则、5 类外部输入、WP0–WP8 九个 Blocking Gate 和产品/QA/WMS/架构/安全五方实名签字；实现状态、真实证据接受和正式签字分离。

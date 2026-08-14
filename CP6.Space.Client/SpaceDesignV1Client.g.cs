@@ -26725,6 +26725,37 @@ namespace CP6.Space.Client
         [System.Text.Json.Serialization.JsonPropertyName("supportsDxf")]
         public bool SupportsDxf { get; set; } = default!;
 
+        [System.Text.Json.Serialization.JsonPropertyName("licensingApproved")]
+        public bool LicensingApproved { get; set; } = default!;
+
+        [System.Text.Json.Serialization.JsonPropertyName("securityApproved")]
+        public bool SecurityApproved { get; set; } = default!;
+
+        [System.Text.Json.Serialization.JsonPropertyName("dataRegionApproved")]
+        public bool DataRegionApproved { get; set; } = default!;
+
+        [System.Text.Json.Serialization.JsonPropertyName("deletionRetentionApproved")]
+        public bool DeletionRetentionApproved { get; set; } = default!;
+
+        [System.Text.Json.Serialization.JsonPropertyName("qualificationScore")]
+        public int QualificationScore { get; set; } = default!;
+
+        [System.Text.Json.Serialization.JsonPropertyName("qualificationRubricVersion")]
+        [System.ComponentModel.DataAnnotations.Required(AllowEmptyStrings = true)]
+        public string QualificationRubricVersion { get; set; } = default!;
+
+        [System.Text.Json.Serialization.JsonPropertyName("goldenDatasetSha256")]
+        [System.ComponentModel.DataAnnotations.Required(AllowEmptyStrings = true)]
+        public string GoldenDatasetSha256 { get; set; } = default!;
+
+        [System.Text.Json.Serialization.JsonPropertyName("frozenEnvironmentSha256")]
+        [System.ComponentModel.DataAnnotations.Required(AllowEmptyStrings = true)]
+        public string FrozenEnvironmentSha256 { get; set; } = default!;
+
+        [System.Text.Json.Serialization.JsonPropertyName("qualificationEvidenceReference")]
+        [System.ComponentModel.DataAnnotations.Required(AllowEmptyStrings = true)]
+        public string QualificationEvidenceReference { get; set; } = default!;
+
     }
 
     [System.CodeDom.Compiler.GeneratedCode("NJsonSchema", "14.7.1.0 (NJsonSchema v11.6.1.0 (Newtonsoft.Json v13.0.0.0))")]
@@ -26771,6 +26802,36 @@ namespace CP6.Space.Client
 
         [System.Text.Json.Serialization.JsonPropertyName("supportsDxf")]
         public bool SupportsDxf { get; set; } = default!;
+
+        [System.Text.Json.Serialization.JsonPropertyName("licensingApproved")]
+        public bool LicensingApproved { get; set; } = default!;
+
+        [System.Text.Json.Serialization.JsonPropertyName("securityApproved")]
+        public bool SecurityApproved { get; set; } = default!;
+
+        [System.Text.Json.Serialization.JsonPropertyName("dataRegionApproved")]
+        public bool DataRegionApproved { get; set; } = default!;
+
+        [System.Text.Json.Serialization.JsonPropertyName("deletionRetentionApproved")]
+        public bool DeletionRetentionApproved { get; set; } = default!;
+
+        [System.Text.Json.Serialization.JsonPropertyName("qualificationScore")]
+        public int? QualificationScore { get; set; } = default!;
+
+        [System.Text.Json.Serialization.JsonPropertyName("qualificationRubricVersion")]
+        public string? QualificationRubricVersion { get; set; } = default!;
+
+        [System.Text.Json.Serialization.JsonPropertyName("goldenDatasetSha256")]
+        public string? GoldenDatasetSha256 { get; set; } = default!;
+
+        [System.Text.Json.Serialization.JsonPropertyName("frozenEnvironmentSha256")]
+        public string? FrozenEnvironmentSha256 { get; set; } = default!;
+
+        [System.Text.Json.Serialization.JsonPropertyName("qualificationEvidenceReference")]
+        public string? QualificationEvidenceReference { get; set; } = default!;
+
+        [System.Text.Json.Serialization.JsonPropertyName("qualified")]
+        public bool Qualified { get; set; } = default!;
 
         [System.Text.Json.Serialization.JsonPropertyName("runtimeAvailable")]
         public bool RuntimeAvailable { get; set; } = default!;

@@ -21981,10 +21981,19 @@
         "required": [
           "approvalEvidenceReference",
           "dataBoundary",
+          "dataRegionApproved",
+          "deletionRetentionApproved",
           "deploymentMode",
           "expiresAtUtc",
+          "frozenEnvironmentSha256",
+          "goldenDatasetSha256",
+          "licensingApproved",
           "providerKey",
+          "qualificationEvidenceReference",
+          "qualificationRubricVersion",
+          "qualificationScore",
           "role",
+          "securityApproved",
           "supportsDwg",
           "supportsDxf",
           "validFromUtc"
@@ -22023,6 +22032,34 @@
           },
           "supportsDxf": {
             "type": "boolean"
+          },
+          "licensingApproved": {
+            "type": "boolean"
+          },
+          "securityApproved": {
+            "type": "boolean"
+          },
+          "dataRegionApproved": {
+            "type": "boolean"
+          },
+          "deletionRetentionApproved": {
+            "type": "boolean"
+          },
+          "qualificationScore": {
+            "type": "integer",
+            "format": "int32"
+          },
+          "qualificationRubricVersion": {
+            "type": "string"
+          },
+          "goldenDatasetSha256": {
+            "type": "string"
+          },
+          "frozenEnvironmentSha256": {
+            "type": "string"
+          },
+          "qualificationEvidenceReference": {
+            "type": "string"
           }
         },
         "additionalProperties": false
@@ -22032,13 +22069,18 @@
           "approvalEvidenceReference",
           "currentlyValid",
           "dataBoundary",
+          "dataRegionApproved",
+          "deletionRetentionApproved",
           "deploymentMode",
           "displayName",
           "expiresAtUtc",
+          "licensingApproved",
           "providerKey",
+          "qualified",
           "role",
           "runtimeAvailable",
           "secretReferenceConfigured",
+          "securityApproved",
           "supportsDwg",
           "supportsDxf",
           "validFromUtc"
@@ -22078,6 +22120,42 @@
             "type": "boolean"
           },
           "supportsDxf": {
+            "type": "boolean"
+          },
+          "licensingApproved": {
+            "type": "boolean"
+          },
+          "securityApproved": {
+            "type": "boolean"
+          },
+          "dataRegionApproved": {
+            "type": "boolean"
+          },
+          "deletionRetentionApproved": {
+            "type": "boolean"
+          },
+          "qualificationScore": {
+            "type": "integer",
+            "format": "int32",
+            "nullable": true
+          },
+          "qualificationRubricVersion": {
+            "type": "string",
+            "nullable": true
+          },
+          "goldenDatasetSha256": {
+            "type": "string",
+            "nullable": true
+          },
+          "frozenEnvironmentSha256": {
+            "type": "string",
+            "nullable": true
+          },
+          "qualificationEvidenceReference": {
+            "type": "string",
+            "nullable": true
+          },
+          "qualified": {
             "type": "boolean"
           },
           "runtimeAvailable": {

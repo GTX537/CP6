@@ -21227,6 +21227,15 @@ export class SpaceCadProviderCertificationInputDto implements ISpaceCadProviderC
     expiresAtUtc!: Date;
     supportsDwg!: boolean;
     supportsDxf!: boolean;
+    licensingApproved!: boolean;
+    securityApproved!: boolean;
+    dataRegionApproved!: boolean;
+    deletionRetentionApproved!: boolean;
+    qualificationScore!: number;
+    qualificationRubricVersion!: string;
+    goldenDatasetSha256!: string;
+    frozenEnvironmentSha256!: string;
+    qualificationEvidenceReference!: string;
 
     constructor(data?: ISpaceCadProviderCertificationInputDto) {
         if (data) {
@@ -21249,6 +21258,15 @@ export class SpaceCadProviderCertificationInputDto implements ISpaceCadProviderC
             this.expiresAtUtc = _data["expiresAtUtc"] ? new Date(_data["expiresAtUtc"].toString()) : undefined as any;
             this.supportsDwg = _data["supportsDwg"];
             this.supportsDxf = _data["supportsDxf"];
+            this.licensingApproved = _data["licensingApproved"];
+            this.securityApproved = _data["securityApproved"];
+            this.dataRegionApproved = _data["dataRegionApproved"];
+            this.deletionRetentionApproved = _data["deletionRetentionApproved"];
+            this.qualificationScore = _data["qualificationScore"];
+            this.qualificationRubricVersion = _data["qualificationRubricVersion"];
+            this.goldenDatasetSha256 = _data["goldenDatasetSha256"];
+            this.frozenEnvironmentSha256 = _data["frozenEnvironmentSha256"];
+            this.qualificationEvidenceReference = _data["qualificationEvidenceReference"];
         }
     }
 
@@ -21271,6 +21289,15 @@ export class SpaceCadProviderCertificationInputDto implements ISpaceCadProviderC
         data["expiresAtUtc"] = this.expiresAtUtc ? this.expiresAtUtc.toISOString() : undefined as any;
         data["supportsDwg"] = this.supportsDwg;
         data["supportsDxf"] = this.supportsDxf;
+        data["licensingApproved"] = this.licensingApproved;
+        data["securityApproved"] = this.securityApproved;
+        data["dataRegionApproved"] = this.dataRegionApproved;
+        data["deletionRetentionApproved"] = this.deletionRetentionApproved;
+        data["qualificationScore"] = this.qualificationScore;
+        data["qualificationRubricVersion"] = this.qualificationRubricVersion;
+        data["goldenDatasetSha256"] = this.goldenDatasetSha256;
+        data["frozenEnvironmentSha256"] = this.frozenEnvironmentSha256;
+        data["qualificationEvidenceReference"] = this.qualificationEvidenceReference;
         return data;
     }
 }
@@ -21286,6 +21313,15 @@ export interface ISpaceCadProviderCertificationInputDto {
     expiresAtUtc: Date;
     supportsDwg: boolean;
     supportsDxf: boolean;
+    licensingApproved: boolean;
+    securityApproved: boolean;
+    dataRegionApproved: boolean;
+    deletionRetentionApproved: boolean;
+    qualificationScore: number;
+    qualificationRubricVersion: string;
+    goldenDatasetSha256: string;
+    frozenEnvironmentSha256: string;
+    qualificationEvidenceReference: string;
 }
 
 export class SpaceCadProviderSlotDto implements ISpaceCadProviderSlotDto {
@@ -21300,6 +21336,16 @@ export class SpaceCadProviderSlotDto implements ISpaceCadProviderSlotDto {
     expiresAtUtc!: Date;
     supportsDwg!: boolean;
     supportsDxf!: boolean;
+    licensingApproved!: boolean;
+    securityApproved!: boolean;
+    dataRegionApproved!: boolean;
+    deletionRetentionApproved!: boolean;
+    qualificationScore?: number | undefined;
+    qualificationRubricVersion?: string | undefined;
+    goldenDatasetSha256?: string | undefined;
+    frozenEnvironmentSha256?: string | undefined;
+    qualificationEvidenceReference?: string | undefined;
+    qualified!: boolean;
     runtimeAvailable!: boolean;
     currentlyValid!: boolean;
 
@@ -21325,6 +21371,16 @@ export class SpaceCadProviderSlotDto implements ISpaceCadProviderSlotDto {
             this.expiresAtUtc = _data["expiresAtUtc"] ? new Date(_data["expiresAtUtc"].toString()) : undefined as any;
             this.supportsDwg = _data["supportsDwg"];
             this.supportsDxf = _data["supportsDxf"];
+            this.licensingApproved = _data["licensingApproved"];
+            this.securityApproved = _data["securityApproved"];
+            this.dataRegionApproved = _data["dataRegionApproved"];
+            this.deletionRetentionApproved = _data["deletionRetentionApproved"];
+            this.qualificationScore = _data["qualificationScore"];
+            this.qualificationRubricVersion = _data["qualificationRubricVersion"];
+            this.goldenDatasetSha256 = _data["goldenDatasetSha256"];
+            this.frozenEnvironmentSha256 = _data["frozenEnvironmentSha256"];
+            this.qualificationEvidenceReference = _data["qualificationEvidenceReference"];
+            this.qualified = _data["qualified"];
             this.runtimeAvailable = _data["runtimeAvailable"];
             this.currentlyValid = _data["currentlyValid"];
         }
@@ -21350,6 +21406,16 @@ export class SpaceCadProviderSlotDto implements ISpaceCadProviderSlotDto {
         data["expiresAtUtc"] = this.expiresAtUtc ? this.expiresAtUtc.toISOString() : undefined as any;
         data["supportsDwg"] = this.supportsDwg;
         data["supportsDxf"] = this.supportsDxf;
+        data["licensingApproved"] = this.licensingApproved;
+        data["securityApproved"] = this.securityApproved;
+        data["dataRegionApproved"] = this.dataRegionApproved;
+        data["deletionRetentionApproved"] = this.deletionRetentionApproved;
+        data["qualificationScore"] = this.qualificationScore;
+        data["qualificationRubricVersion"] = this.qualificationRubricVersion;
+        data["goldenDatasetSha256"] = this.goldenDatasetSha256;
+        data["frozenEnvironmentSha256"] = this.frozenEnvironmentSha256;
+        data["qualificationEvidenceReference"] = this.qualificationEvidenceReference;
+        data["qualified"] = this.qualified;
         data["runtimeAvailable"] = this.runtimeAvailable;
         data["currentlyValid"] = this.currentlyValid;
         return data;
@@ -21368,6 +21434,16 @@ export interface ISpaceCadProviderSlotDto {
     expiresAtUtc: Date;
     supportsDwg: boolean;
     supportsDxf: boolean;
+    licensingApproved: boolean;
+    securityApproved: boolean;
+    dataRegionApproved: boolean;
+    deletionRetentionApproved: boolean;
+    qualificationScore?: number | undefined;
+    qualificationRubricVersion?: string | undefined;
+    goldenDatasetSha256?: string | undefined;
+    frozenEnvironmentSha256?: string | undefined;
+    qualificationEvidenceReference?: string | undefined;
+    qualified: boolean;
     runtimeAvailable: boolean;
     currentlyValid: boolean;
 }

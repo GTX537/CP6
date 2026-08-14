@@ -1,5 +1,12 @@
 # 已完成能力与近期里程碑
 
+## 2026-08-14 Space Studio WP3 Provider 资格与确定性主备排名
+
+- Site Provider 新认证必须同时记录 Licensing/Security/Data Region/Deletion-Retention 四项通过状态、ADR-0001 总分、规则版本、黄金集 SHA、冻结环境 SHA 和资格证据引用；四项门禁缺一、总分低于 80 或证据字段不完整均返回 422 且零写入。
+- 两条链必须绑定同一规则、黄金集和冻结环境；服务端拒绝 Primary 低于 Backup 以及同分无法唯一排序的配置。旧认证迁移后不补造资格证据，能力接口输出资格阻断码，执行路由不再使用这些记录。
+- 数据库使用独立可回滚迁移，OpenAPI、C#/TypeScript SDK、前端能力类型和自动化同步。本卡只完成资格合同与路由防线；真实 Provider 适配、冻结环境评分、Site 审批和双链证据仍为 WP3 No-Go 门禁。
+- 门禁通过：Release solution 0 warning / 0 error；Provider 聚焦 12/12，Space Unit 506/506、Space Integration 310 passed / 106 environment skipped、CP6.Tests 2,916 passed / 19 environment skipped、Client 71/71、Web 775/775、Space Studio Playwright 13/13、Vue type-check、production build、OpenAPI/双 SDK drift、EF pending-model、GA 索引和 diff whitespace 均绿色。新增真 SQL 场景因本机无 `CP6_TEST_SQLSERVER` skipped，不计为接受证据。
+
 ## 2026-08-14 Space Studio WP0 核心 GA 证据索引
 
 - 新增唯一核心 GA 索引、说明和校验器，固定 72% 基线、100% 派生规则、5 类外部输入、WP0–WP8 九个不可删除 Blocking Gate，以及产品/QA/WMS/架构/安全五个实名签字角色；代码完成、真实证据接受和签字不再混为同一状态。

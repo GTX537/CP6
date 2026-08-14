@@ -105,7 +105,16 @@ public sealed class SpaceCadProviderCapabilityService(
                     item.ValidFromUtc,
                     item.ExpiresAtUtc,
                     item.SupportsDwg,
-                    item.SupportsDxf))
+                    item.SupportsDxf,
+                    item.LicensingApproved,
+                    item.SecurityApproved,
+                    item.DataRegionApproved,
+                    item.DeletionRetentionApproved,
+                    item.QualificationScore,
+                    item.QualificationRubricVersion,
+                    item.GoldenDatasetSha256,
+                    item.FrozenEnvironmentSha256,
+                    item.QualificationEvidenceReference))
                 .ToArray();
             context.CadProviderCertifications.AddRange(certifications);
             await context.SaveChangesAsync(cancellationToken);
@@ -173,9 +182,12 @@ public sealed class SpaceCadProviderCapabilityService(
         if (primaryDto is not null && backupDto is not null &&
             primaryDto.ProviderKey == backupDto.ProviderKey)
             blockers.Add("CAD_PROVIDER_KEYS_NOT_DISTINCT");
-        var canPrepare = primaryDto is { RuntimeAvailable: true, CurrentlyValid: true } &&
+        AddPairQualificationBlockers(primaryDto, backupDto, blockers);
+        var canPrepare = primaryDto is
+                { Qualified: true, RuntimeAvailable: true, CurrentlyValid: true } &&
             (primaryDto.SupportsDwg || primaryDto.SupportsDxf) ||
-            backupDto is { RuntimeAvailable: true, CurrentlyValid: true } &&
+            backupDto is
+                { Qualified: true, RuntimeAvailable: true, CurrentlyValid: true } &&
             (backupDto.SupportsDwg || backupDto.SupportsDxf);
         var gaReady = blockers.Count == 0 &&
             primaryDto is { SupportsDwg: true, SupportsDxf: true } &&
@@ -215,6 +227,16 @@ public sealed class SpaceCadProviderCapabilityService(
             value.ExpiresAtUtc,
             value.SupportsDwg,
             value.SupportsDxf,
+            value.LicensingApproved,
+            value.SecurityApproved,
+            value.DataRegionApproved,
+            value.DeletionRetentionApproved,
+            value.QualificationScore,
+            value.QualificationRubricVersion,
+            value.GoldenDatasetSha256,
+            value.FrozenEnvironmentSha256,
+            value.QualificationEvidenceReference,
+            value.HasCompleteQualification,
             runtime,
             value.IsValidAt(now));
     }
@@ -231,10 +253,40 @@ public sealed class SpaceCadProviderCapabilityService(
         }
         if (!value.CurrentlyValid)
             blockers.Add($"CAD_{role}_CERTIFICATION_NOT_CURRENT");
+        if (!value.Qualified)
+            blockers.Add($"CAD_{role}_QUALIFICATION_INCOMPLETE");
         if (!value.RuntimeAvailable)
             blockers.Add($"CAD_{role}_RUNTIME_UNAVAILABLE");
         if (!value.SupportsDwg || !value.SupportsDxf)
             blockers.Add($"CAD_{role}_FORMAT_COVERAGE_INCOMPLETE");
+    }
+
+    private static void AddPairQualificationBlockers(
+        SpaceCadProviderSlotDto? primary,
+        SpaceCadProviderSlotDto? backup,
+        ICollection<string> blockers)
+    {
+        if (primary is not { Qualified: true } || backup is not { Qualified: true })
+            return;
+        if (!string.Equals(
+                primary.QualificationRubricVersion,
+                backup.QualificationRubricVersion,
+                StringComparison.Ordinal) ||
+            !string.Equals(
+                primary.GoldenDatasetSha256,
+                backup.GoldenDatasetSha256,
+                StringComparison.Ordinal) ||
+            !string.Equals(
+                primary.FrozenEnvironmentSha256,
+                backup.FrozenEnvironmentSha256,
+                StringComparison.Ordinal))
+        {
+            blockers.Add("CAD_PROVIDER_QUALIFICATION_BASELINE_MISMATCH");
+        }
+        if (primary.QualificationScore == backup.QualificationScore)
+            blockers.Add("CAD_PROVIDER_QUALIFICATION_SCORE_TIE");
+        else if (primary.QualificationScore < backup.QualificationScore)
+            blockers.Add("CAD_PROVIDER_QUALIFICATION_RANKING_INVALID");
     }
 
     private NormalizedRequest Normalize(ReplaceSpaceCadProviderConfigurationRequest request)
@@ -257,6 +309,7 @@ public sealed class SpaceCadProviderCapabilityService(
         if (normalized.Length != 0 &&
             normalized.All(item => item.Role != SpaceCadProviderRole.Primary))
             throw Invalid("A non-empty configuration requires a primary Provider.");
+        ValidateQualificationRanking(normalized);
         return new NormalizedRequest(
             request.ExpectedConfigurationRevision,
             reason,
@@ -308,7 +361,16 @@ public sealed class SpaceCadProviderCapabilityService(
                 request.ValidFromUtc,
                 request.ExpiresAtUtc,
                 request.SupportsDwg,
-                request.SupportsDxf);
+                request.SupportsDxf,
+                request.LicensingApproved,
+                request.SecurityApproved,
+                request.DataRegionApproved,
+                request.DeletionRetentionApproved,
+                request.QualificationScore,
+                request.QualificationRubricVersion,
+                request.GoldenDatasetSha256,
+                request.FrozenEnvironmentSha256,
+                request.QualificationEvidenceReference);
             return new NormalizedCertification(
                 key,
                 role,
@@ -321,7 +383,16 @@ public sealed class SpaceCadProviderCapabilityService(
                 request.ValidFromUtc,
                 request.ExpiresAtUtc,
                 request.SupportsDwg,
-                request.SupportsDxf);
+                request.SupportsDxf,
+                request.LicensingApproved,
+                request.SecurityApproved,
+                request.DataRegionApproved,
+                request.DeletionRetentionApproved,
+                request.QualificationScore,
+                request.QualificationRubricVersion.Trim(),
+                request.GoldenDatasetSha256.Trim().ToLowerInvariant(),
+                request.FrozenEnvironmentSha256.Trim().ToLowerInvariant(),
+                request.QualificationEvidenceReference.Trim());
         }
         catch (SpaceProblemException)
         {
@@ -331,6 +402,36 @@ public sealed class SpaceCadProviderCapabilityService(
         {
             throw Invalid(exception.Message);
         }
+    }
+
+    private static void ValidateQualificationRanking(
+        IReadOnlyList<NormalizedCertification> values)
+    {
+        if (values.Count != 2)
+            return;
+        var primary = values.Single(item => item.Role == SpaceCadProviderRole.Primary);
+        var backup = values.Single(item => item.Role == SpaceCadProviderRole.Backup);
+        if (!primary.QualificationRubricVersion.Equals(
+                backup.QualificationRubricVersion,
+                StringComparison.Ordinal) ||
+            !primary.GoldenDatasetSha256.Equals(
+                backup.GoldenDatasetSha256,
+                StringComparison.Ordinal) ||
+            !primary.FrozenEnvironmentSha256.Equals(
+                backup.FrozenEnvironmentSha256,
+                StringComparison.Ordinal))
+        {
+            throw Invalid(
+                "Primary and backup Providers must use the same approved rubric, " +
+                "golden dataset and frozen evaluation environment.");
+        }
+        if (primary.QualificationScore == backup.QualificationScore)
+            throw Invalid(
+                "Primary and backup qualification scores must be distinct so the " +
+                "highest-ranked Provider is unambiguous.");
+        if (primary.QualificationScore < backup.QualificationScore)
+            throw Invalid(
+                "The primary Provider must have the higher qualification score.");
     }
 
     private async Task<ReplaceSpaceCadProviderConfigurationResponse?> ReadReplayAsync(
@@ -475,5 +576,14 @@ public sealed class SpaceCadProviderCapabilityService(
         DateTime ValidFromUtc,
         DateTime ExpiresAtUtc,
         bool SupportsDwg,
-        bool SupportsDxf);
+        bool SupportsDxf,
+        bool LicensingApproved,
+        bool SecurityApproved,
+        bool DataRegionApproved,
+        bool DeletionRetentionApproved,
+        int QualificationScore,
+        string QualificationRubricVersion,
+        string GoldenDatasetSha256,
+        string FrozenEnvironmentSha256,
+        string QualificationEvidenceReference);
 }

@@ -2459,12 +2459,51 @@ public sealed class SpaceDesignV1OpenApiTests
             "validFromUtc",
             "expiresAtUtc",
             "supportsDwg",
-            "supportsDxf");
+            "supportsDxf",
+            "licensingApproved",
+            "securityApproved",
+            "dataRegionApproved",
+            "deletionRetentionApproved",
+            "qualificationScore",
+            "qualificationRubricVersion",
+            "goldenDatasetSha256",
+            "frozenEnvironmentSha256",
+            "qualificationEvidenceReference");
         AssertNullable(
             Schema(
                 schemas,
                 "CP6.Space.Contracts.SpaceCadProviderCertificationInputDto"),
             "secretReference");
+        AssertExactRequired(
+            Schema(
+                schemas,
+                "CP6.Space.Contracts.SpaceCadProviderSlotDto"),
+            "providerKey",
+            "displayName",
+            "role",
+            "deploymentMode",
+            "dataBoundary",
+            "approvalEvidenceReference",
+            "secretReferenceConfigured",
+            "validFromUtc",
+            "expiresAtUtc",
+            "supportsDwg",
+            "supportsDxf",
+            "licensingApproved",
+            "securityApproved",
+            "dataRegionApproved",
+            "deletionRetentionApproved",
+            "qualified",
+            "runtimeAvailable",
+            "currentlyValid");
+        var providerSlot = Schema(
+            schemas,
+            "CP6.Space.Contracts.SpaceCadProviderSlotDto");
+        AssertNullable(providerSlot, "qualificationScore");
+        AssertNullable(providerSlot, "qualificationRubricVersion");
+        AssertNullable(providerSlot, "goldenDatasetSha256");
+        AssertNullable(providerSlot, "frozenEnvironmentSha256");
+        AssertNullable(providerSlot, "qualificationEvidenceReference");
         AssertExactRequired(
             Schema(schemas, "CP6.Space.Contracts.SpaceCadSiteCapabilityDto"),
             "siteId",
