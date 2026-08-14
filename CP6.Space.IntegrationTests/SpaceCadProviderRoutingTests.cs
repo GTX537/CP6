@@ -12,6 +12,8 @@ public sealed class SpaceCadProviderRoutingTests
 {
     private static readonly DateTime Now =
         new(2026, 8, 14, 2, 0, 0, DateTimeKind.Utc);
+    private static readonly string DatasetSha256 = new('d', 64);
+    private static readonly string EnvironmentSha256 = new('e', 64);
 
     [Fact]
     public async Task Atomic_configuration_replacement_reports_two_provider_GA_and_replays()
@@ -246,9 +248,73 @@ public sealed class SpaceCadProviderRoutingTests
         Assert.Contains("immutable", exception.Message, StringComparison.OrdinalIgnoreCase);
     }
 
+    [Theory]
+    [InlineData(79, 86)]
+    [InlineData(92, 79)]
+    [InlineData(90, 90)]
+    [InlineData(85, 90)]
+    public async Task Configuration_rejects_unqualified_or_ambiguous_ranking(
+        int primaryScore,
+        int backupScore)
+    {
+        await using var fixture = Fixture.Create();
+
+        var problem = await Assert.ThrowsAsync<SpaceProblemException>(() =>
+            fixture.Service.ReplaceAsync(
+                fixture.SiteId,
+                Configuration(
+                    0,
+                    includeBackup: true,
+                    primaryScore: primaryScore,
+                    backupScore: backupScore),
+                $"ranking-{primaryScore}-{backupScore}"));
+
+        Assert.Equal(SpaceErrorCodes.CadProviderConfigurationInvalid, problem.Code);
+        Assert.Equal(422, problem.StatusCode);
+        Assert.Empty(await fixture.Context.CadProviderConfigurations.ToListAsync());
+        Assert.Empty(await fixture.Context.CadProviderCertifications.ToListAsync());
+    }
+
+    [Fact]
+    public async Task Configuration_rejects_mixed_evaluation_baselines_and_failed_hard_gate()
+    {
+        await using var fixture = Fixture.Create();
+        var mixedBaseline = Configuration(
+            0,
+            includeBackup: true,
+            backupEnvironmentSha256: new string('f', 64));
+        var failedGate = Configuration(
+            0,
+            includeBackup: false,
+            primarySecurityApproved: false);
+
+        var baselineProblem = await Assert.ThrowsAsync<SpaceProblemException>(() =>
+            fixture.Service.ReplaceAsync(
+                fixture.SiteId,
+                mixedBaseline,
+                "mixed-baseline"));
+        var gateProblem = await Assert.ThrowsAsync<SpaceProblemException>(() =>
+            fixture.Service.ReplaceAsync(
+                fixture.SiteId,
+                failedGate,
+                "failed-gate"));
+
+        Assert.Equal(
+            SpaceErrorCodes.CadProviderConfigurationInvalid,
+            baselineProblem.Code);
+        Assert.Equal(
+            SpaceErrorCodes.CadProviderConfigurationInvalid,
+            gateProblem.Code);
+        Assert.Empty(await fixture.Context.CadProviderConfigurations.ToListAsync());
+    }
+
     private static ReplaceSpaceCadProviderConfigurationRequest Configuration(
         long revision,
-        bool includeBackup)
+        bool includeBackup,
+        int primaryScore = 92,
+        int backupScore = 86,
+        string? backupEnvironmentSha256 = null,
+        bool primarySecurityApproved = true)
     {
         var certifications = new List<SpaceCadProviderCertificationInputDto>
         {
@@ -262,7 +328,16 @@ public sealed class SpaceCadProviderRoutingTests
                 Now.AddDays(-1),
                 Now.AddDays(90),
                 SupportsDwg: true,
-                SupportsDxf: true),
+                SupportsDxf: true,
+                LicensingApproved: true,
+                SecurityApproved: primarySecurityApproved,
+                DataRegionApproved: true,
+                DeletionRetentionApproved: true,
+                QualificationScore: primaryScore,
+                QualificationRubricVersion: "cad-ga-v1",
+                GoldenDatasetSha256: DatasetSha256,
+                FrozenEnvironmentSha256: EnvironmentSha256,
+                QualificationEvidenceReference: "evidence://qualification/primary"),
         };
         if (includeBackup)
         {
@@ -276,7 +351,16 @@ public sealed class SpaceCadProviderRoutingTests
                 Now.AddDays(-1),
                 Now.AddDays(90),
                 SupportsDwg: true,
-                SupportsDxf: true));
+                SupportsDxf: true,
+                LicensingApproved: true,
+                SecurityApproved: true,
+                DataRegionApproved: true,
+                DeletionRetentionApproved: true,
+                QualificationScore: backupScore,
+                QualificationRubricVersion: "cad-ga-v1",
+                GoldenDatasetSha256: DatasetSha256,
+                FrozenEnvironmentSha256: backupEnvironmentSha256 ?? EnvironmentSha256,
+                QualificationEvidenceReference: "evidence://qualification/backup"));
         }
         return new ReplaceSpaceCadProviderConfigurationRequest(
             revision,

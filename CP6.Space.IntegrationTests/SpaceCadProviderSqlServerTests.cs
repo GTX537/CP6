@@ -13,6 +13,8 @@ public sealed class SpaceCadProviderSqlServerTests
 {
     private static readonly DateTime Now =
         new(2026, 8, 14, 3, 0, 0, DateTimeKind.Utc);
+    private static readonly string DatasetSha256 = new('d', 64);
+    private static readonly string EnvironmentSha256 = new('e', 64);
 
     [SqlServerFact]
     public async Task Concurrent_replace_preserves_one_current_revision_and_immutable_evidence()
@@ -81,6 +83,10 @@ public sealed class SpaceCadProviderSqlServerTests
                 "provider-config-next");
             Assert.Equal(2, replaced.Capability.ConfigurationRevision);
             Assert.True(replaced.Capability.CadGaReady);
+            Assert.Equal(92, replaced.Capability.Primary!.QualificationScore);
+            Assert.Equal(86, replaced.Capability.Backup!.QualificationScore);
+            Assert.True(replaced.Capability.Primary.Qualified);
+            Assert.True(replaced.Capability.Backup.Qualified);
 
             verifier.ChangeTracker.Clear();
             var history = await verifier.CadProviderConfigurations
@@ -110,6 +116,65 @@ public sealed class SpaceCadProviderSqlServerTests
         });
     }
 
+    [SqlServerFact]
+    public async Task Legacy_certification_without_qualification_is_fail_closed()
+    {
+        await WithDatabaseAsync(async (connectionString, tenantId, siteId) =>
+        {
+            var execution = new TestExecution(tenantId, Guid.NewGuid());
+            await using var context = CreateContext(connectionString, execution);
+            var service = NewService(context, execution);
+            _ = await service.ReplaceAsync(
+                siteId,
+                Configuration(expectedRevision: 0),
+                "qualified-config");
+            await context.Database.ExecuteSqlRawAsync("""
+                UPDATE [Space_CadSiteProviderCertification]
+                SET [LicensingApproved] = 0,
+                    [SecurityApproved] = 0,
+                    [DataRegionApproved] = 0,
+                    [DeletionRetentionApproved] = 0,
+                    [QualificationScore] = NULL,
+                    [QualificationRubricVersion] = NULL,
+                    [GoldenDatasetSha256] = NULL,
+                    [FrozenEnvironmentSha256] = NULL,
+                    [QualificationEvidenceReference] = NULL
+                WHERE [TenantId] = {0} AND [SiteId] = {1}
+                """, tenantId, siteId);
+            context.ChangeTracker.Clear();
+
+            var capability = await service.GetAsync(siteId);
+            Assert.False(capability.CanPrepareCad);
+            Assert.False(capability.CadGaReady);
+            Assert.Contains(
+                "CAD_PRIMARY_QUALIFICATION_INCOMPLETE",
+                capability.BlockingCodes);
+            Assert.Contains(
+                "CAD_BACKUP_QUALIFICATION_INCOMPLETE",
+                capability.BlockingCodes);
+
+            var router = new SpaceCadProviderRouter(
+                context,
+                Registry(),
+                new FixedClock(),
+                Microsoft.Extensions.Logging.Abstractions
+                    .NullLogger<SpaceCadProviderRouter>.Instance);
+            await using var source = new MemoryStream([1, 2, 3]);
+            var problem = await Assert.ThrowsAsync<SpaceProblemException>(() =>
+                router.InspectAsync(
+                    new SpaceCadPreparationProviderRequest(
+                        tenantId,
+                        siteId,
+                        Guid.NewGuid(),
+                        Guid.NewGuid(),
+                        new string('a', 64),
+                        SpaceCadSourceFormat.Dwg,
+                        SpaceWorkerSandboxPolicy.FileSafetyDefault),
+                    source));
+            Assert.Equal(SpaceErrorCodes.CadProviderUnavailable, problem.Code);
+        });
+    }
+
     private static ReplaceSpaceCadProviderConfigurationRequest Configuration(
         long expectedRevision) =>
         new(
@@ -126,7 +191,16 @@ public sealed class SpaceCadProviderSqlServerTests
                     Now.AddDays(-1),
                     Now.AddDays(90),
                     SupportsDwg: true,
-                    SupportsDxf: true),
+                    SupportsDxf: true,
+                    LicensingApproved: true,
+                    SecurityApproved: true,
+                    DataRegionApproved: true,
+                    DeletionRetentionApproved: true,
+                    QualificationScore: 92,
+                    QualificationRubricVersion: "cad-ga-v1",
+                    GoldenDatasetSha256: DatasetSha256,
+                    FrozenEnvironmentSha256: EnvironmentSha256,
+                    QualificationEvidenceReference: "evidence://qualification/primary"),
                 new SpaceCadProviderCertificationInputDto(
                     "backup.cloud",
                     "Backup",
@@ -137,7 +211,16 @@ public sealed class SpaceCadProviderSqlServerTests
                     Now.AddDays(-1),
                     Now.AddDays(90),
                     SupportsDwg: true,
-                    SupportsDxf: true),
+                    SupportsDxf: true,
+                    LicensingApproved: true,
+                    SecurityApproved: true,
+                    DataRegionApproved: true,
+                    DeletionRetentionApproved: true,
+                    QualificationScore: 86,
+                    QualificationRubricVersion: "cad-ga-v1",
+                    GoldenDatasetSha256: DatasetSha256,
+                    FrozenEnvironmentSha256: EnvironmentSha256,
+                    QualificationEvidenceReference: "evidence://qualification/backup"),
             ]);
 
     private static SpaceCadProviderCapabilityService NewService(
@@ -208,25 +291,31 @@ public sealed class SpaceCadProviderSqlServerTests
     {
         var repositoryRoot = Path.GetFullPath(
             Path.Combine(AppContext.BaseDirectory, "..", "..", "..", ".."));
-        var scriptPath = Path.Combine(
-            repositoryRoot,
-            "CP6.Space.Infrastructure",
-            "Migrations",
-            "Scripts",
-            "20260814011926_SpaceCadProviderRouting.sql");
-        var batches = Regex.Split(
-                await File.ReadAllTextAsync(scriptPath),
-                @"(?im)^\s*GO\s*$")
-            .Where(batch => !string.IsNullOrWhiteSpace(batch))
-            .ToArray();
-
         await context.Database.OpenConnectionAsync();
         try
         {
-            for (var pass = 0; pass < 2; pass++)
+            foreach (var scriptName in new[]
+                     {
+                         "20260814011926_SpaceCadProviderRouting.sql",
+                         "20260814051514_SpaceCadProviderQualificationEvidence.sql",
+                     })
             {
-                foreach (var batch in batches)
-                    await context.Database.ExecuteSqlRawAsync(batch);
+                var scriptPath = Path.Combine(
+                    repositoryRoot,
+                    "CP6.Space.Infrastructure",
+                    "Migrations",
+                    "Scripts",
+                    scriptName);
+                var batches = Regex.Split(
+                        await File.ReadAllTextAsync(scriptPath),
+                        @"(?im)^\s*GO\s*$")
+                    .Where(batch => !string.IsNullOrWhiteSpace(batch))
+                    .ToArray();
+                for (var pass = 0; pass < 2; pass++)
+                {
+                    foreach (var batch in batches)
+                        await context.Database.ExecuteSqlRawAsync(batch);
+                }
             }
         }
         finally

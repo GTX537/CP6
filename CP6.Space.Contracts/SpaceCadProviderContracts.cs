@@ -10,7 +10,16 @@ public sealed record SpaceCadProviderCertificationInputDto(
     DateTime ValidFromUtc,
     DateTime ExpiresAtUtc,
     bool SupportsDwg,
-    bool SupportsDxf);
+    bool SupportsDxf,
+    bool LicensingApproved,
+    bool SecurityApproved,
+    bool DataRegionApproved,
+    bool DeletionRetentionApproved,
+    int QualificationScore,
+    string QualificationRubricVersion,
+    string GoldenDatasetSha256,
+    string FrozenEnvironmentSha256,
+    string QualificationEvidenceReference);
 
 public sealed record ReplaceSpaceCadProviderConfigurationRequest(
     long ExpectedConfigurationRevision,
@@ -29,6 +38,16 @@ public sealed record SpaceCadProviderSlotDto(
     DateTime ExpiresAtUtc,
     bool SupportsDwg,
     bool SupportsDxf,
+    bool LicensingApproved,
+    bool SecurityApproved,
+    bool DataRegionApproved,
+    bool DeletionRetentionApproved,
+    int? QualificationScore,
+    string? QualificationRubricVersion,
+    string? GoldenDatasetSha256,
+    string? FrozenEnvironmentSha256,
+    string? QualificationEvidenceReference,
+    bool Qualified,
     bool RuntimeAvailable,
     bool CurrentlyValid);
 

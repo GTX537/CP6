@@ -92,6 +92,8 @@ public sealed class SpaceCadSiteProviderConfiguration : SpaceTenantEntity
 
 public sealed class SpaceCadSiteProviderCertification : SpaceTenantEntity
 {
+    public const int MinimumQualificationScore = 80;
+
     private SpaceCadSiteProviderCertification()
     {
     }
@@ -108,6 +110,15 @@ public sealed class SpaceCadSiteProviderCertification : SpaceTenantEntity
     public DateTime ExpiresAtUtc { get; private set; }
     public bool SupportsDwg { get; private set; }
     public bool SupportsDxf { get; private set; }
+    public bool LicensingApproved { get; private set; }
+    public bool SecurityApproved { get; private set; }
+    public bool DataRegionApproved { get; private set; }
+    public bool DeletionRetentionApproved { get; private set; }
+    public int? QualificationScore { get; private set; }
+    public string? QualificationRubricVersion { get; private set; }
+    public string? GoldenDatasetSha256 { get; private set; }
+    public string? FrozenEnvironmentSha256 { get; private set; }
+    public string? QualificationEvidenceReference { get; private set; }
 
     public static SpaceCadSiteProviderCertification Create(
         Guid tenantId,
@@ -122,7 +133,16 @@ public sealed class SpaceCadSiteProviderCertification : SpaceTenantEntity
         DateTime validFromUtc,
         DateTime expiresAtUtc,
         bool supportsDwg,
-        bool supportsDxf)
+        bool supportsDxf,
+        bool licensingApproved,
+        bool securityApproved,
+        bool dataRegionApproved,
+        bool deletionRetentionApproved,
+        int qualificationScore,
+        string qualificationRubricVersion,
+        string goldenDatasetSha256,
+        string frozenEnvironmentSha256,
+        string qualificationEvidenceReference)
     {
         if (configurationId == Guid.Empty)
             throw new ArgumentException("Configuration is required.", nameof(configurationId));
@@ -136,6 +156,14 @@ public sealed class SpaceCadSiteProviderCertification : SpaceTenantEntity
             throw new ArgumentException("A valid UTC certification window is required.");
         if (!supportsDwg && !supportsDxf)
             throw new ArgumentException("At least one CAD format must be certified.");
+        if (!licensingApproved || !securityApproved || !dataRegionApproved ||
+            !deletionRetentionApproved)
+            throw new ArgumentException(
+                "Licensing, security, data-region and deletion/retention gates must all pass.");
+        if (qualificationScore is < MinimumQualificationScore or > 100)
+            throw new ArgumentOutOfRangeException(
+                nameof(qualificationScore),
+                $"Qualification score must be between {MinimumQualificationScore} and 100.");
 
         var evidence = RequireReference(
             approvalEvidenceReference,
@@ -149,6 +177,20 @@ public sealed class SpaceCadSiteProviderCertification : SpaceTenantEntity
             throw new ArgumentException(
                 "Approved cloud Providers require a managed Secret reference.",
                 nameof(secretReference));
+        var rubricVersion = RequireReference(
+            qualificationRubricVersion,
+            100,
+            nameof(qualificationRubricVersion));
+        var datasetSha256 = RequireSha256(
+            goldenDatasetSha256,
+            nameof(goldenDatasetSha256));
+        var environmentSha256 = RequireSha256(
+            frozenEnvironmentSha256,
+            nameof(frozenEnvironmentSha256));
+        var qualificationEvidence = RequireReference(
+            qualificationEvidenceReference,
+            500,
+            nameof(qualificationEvidenceReference));
 
         var value = new SpaceCadSiteProviderCertification
         {
@@ -164,6 +206,15 @@ public sealed class SpaceCadSiteProviderCertification : SpaceTenantEntity
             ExpiresAtUtc = expiresAtUtc,
             SupportsDwg = supportsDwg,
             SupportsDxf = supportsDxf,
+            LicensingApproved = licensingApproved,
+            SecurityApproved = securityApproved,
+            DataRegionApproved = dataRegionApproved,
+            DeletionRetentionApproved = deletionRetentionApproved,
+            QualificationScore = qualificationScore,
+            QualificationRubricVersion = rubricVersion,
+            GoldenDatasetSha256 = datasetSha256,
+            FrozenEnvironmentSha256 = environmentSha256,
+            QualificationEvidenceReference = qualificationEvidence,
         };
         value.SetTenant(tenantId);
         return value;
@@ -172,12 +223,42 @@ public sealed class SpaceCadSiteProviderCertification : SpaceTenantEntity
     public bool IsValidAt(DateTime utcNow) =>
         utcNow.Kind == DateTimeKind.Utc && utcNow >= ValidFromUtc && utcNow < ExpiresAtUtc;
 
+    public bool HasCompleteQualification =>
+        LicensingApproved &&
+        SecurityApproved &&
+        DataRegionApproved &&
+        DeletionRetentionApproved &&
+        QualificationScore is >= MinimumQualificationScore and <= 100 &&
+        IsReference(QualificationRubricVersion, 100) &&
+        IsSha256(GoldenDatasetSha256) &&
+        IsSha256(FrozenEnvironmentSha256) &&
+        IsReference(QualificationEvidenceReference, 500);
+
     private static string RequireReference(string value, int maximum, string parameterName)
     {
         var normalized = value?.Trim();
-        if (string.IsNullOrWhiteSpace(normalized) || normalized.Length > maximum ||
-            normalized.Any(char.IsControl) || normalized.Any(char.IsWhiteSpace))
+        if (!IsReference(normalized, maximum))
             throw new ArgumentException("A bounded opaque reference is required.", parameterName);
-        return normalized;
+        return normalized!;
     }
+
+    private static string RequireSha256(string value, string parameterName)
+    {
+        var normalized = value?.Trim().ToLowerInvariant();
+        if (!IsSha256(normalized))
+            throw new ArgumentException(
+                "A 64-character SHA-256 is required.",
+                parameterName);
+        return normalized!;
+    }
+
+    private static bool IsReference(string? value, int maximum) =>
+        !string.IsNullOrWhiteSpace(value) &&
+        value.Length <= maximum &&
+        !value.Any(char.IsControl) &&
+        !value.Any(char.IsWhiteSpace);
+
+    private static bool IsSha256(string? value) =>
+        value is { Length: 64 } && value.All(character =>
+            character is >= '0' and <= '9' or >= 'a' and <= 'f');
 }

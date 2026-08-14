@@ -152,6 +152,7 @@ public sealed class SpaceCadProviderRouter(
         var eligible = certifications.Select(certification =>
             {
                 if (!certification.IsValidAt(now) ||
+                    !certification.HasCompleteQualification ||
                     !Supports(certification, format) ||
                     !registry.TryGet(certification.ProviderKey, out var registration) ||
                     registration is null ||
