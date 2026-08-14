@@ -1100,7 +1100,9 @@ public sealed class SpaceExcelCadMatchServiceTests
             cadAuthority.Profile.DefinitionSha256,
             cadAuthority.Preview.MappingPreviewSha256,
             version.ContentRevision,
-            version.ContentHash);
+            version.ContentHash,
+            PreferredProviderKey: null,
+            ExpectedSemanticPreviewSha256: null);
         var cadParse = SucceededJob(
             tenantId,
             execution.ActorId,

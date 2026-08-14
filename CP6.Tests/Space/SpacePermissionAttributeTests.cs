@@ -42,6 +42,7 @@ public class SpacePermissionAttributeTests
         "space-audit:read",
         "space:model:read", "space:model:edit", "space:model:validate",
         "space:model:lease:takeover",
+        "space:model:provider:manage",
         "space:model:publish", "space:model:rollback",
         "space:source:upload",
         "space:model:generate-ai", "space:model:review-ai",
@@ -83,6 +84,8 @@ public class SpacePermissionAttributeTests
             ["SpaceEditLeaseController.GetEditLease"] = "space:model:edit",
             ["SpaceCadParseController.GetPreparationStatus"] =
                 "space:source:upload",
+            ["SpaceCadProviderController.GetCapability"] =
+                "space:model:read",
             ["SpaceCadParseController.GetMappingProfiles"] =
                 "space:source:upload",
             ["SpaceCadParseController.GetParse"] = "space:model:read",
@@ -243,7 +246,7 @@ public class SpacePermissionAttributeTests
     public void SpaceControllers_AreDiscovered()
     {
         // 守卫：确保反射确实扫到全部 controller（防命名空间/程序集变动导致「空扫空过」）。
-        Assert.Equal(44, SpaceControllers.Count());
+        Assert.Equal(45, SpaceControllers.Count());
     }
 
     [Fact]
@@ -384,6 +387,28 @@ public class SpacePermissionAttributeTests
         [
             "space:model:edit",
             "space:model:lease:takeover",
+        ]));
+    }
+
+    [Fact]
+    public void Cad_provider_configuration_requires_dedicated_permission()
+    {
+        var method = typeof(SpaceCadProviderController).GetMethod(
+            nameof(SpaceCadProviderController.ReplaceProviderConfiguration));
+        Assert.NotNull(method);
+
+        var permissions = CustomAttributeData
+            .GetCustomAttributes(method!)
+            .Where(data =>
+                data.AttributeType == typeof(RequirePermissionAttribute))
+            .Select(data =>
+                $"{data.ConstructorArguments[0].Value}:" +
+                $"{data.ConstructorArguments[1].Value}")
+            .ToHashSet();
+
+        Assert.True(permissions.SetEquals(
+        [
+            "space:model:provider:manage",
         ]));
     }
 

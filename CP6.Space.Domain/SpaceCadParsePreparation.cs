@@ -19,6 +19,8 @@ public sealed class SpaceCadParsePreparation : SpaceTenantEntity
     public string MappingDefinitionSha256 { get; private set; } = string.Empty;
     public string MappingPreviewSha256 { get; private set; } = string.Empty;
     public string SemanticPreviewSha256 { get; private set; } = string.Empty;
+    public string? ProviderKey { get; private set; }
+    public string? ProviderVersion { get; private set; }
     public bool ReadyForParsing { get; private set; }
     public long BaseContentRevision { get; private set; }
     public string? BaseContentHash { get; private set; }
@@ -39,6 +41,8 @@ public sealed class SpaceCadParsePreparation : SpaceTenantEntity
         string mappingDefinitionSha256,
         string mappingPreviewSha256,
         string semanticPreviewSha256,
+        string providerKey,
+        string providerVersion,
         bool readyForParsing,
         long baseContentRevision,
         string? baseContentHash,
@@ -83,6 +87,8 @@ public sealed class SpaceCadParsePreparation : SpaceTenantEntity
             SemanticPreviewSha256 = RequireHash(
                 semanticPreviewSha256,
                 nameof(semanticPreviewSha256)),
+            ProviderKey = SpaceCadProviderKey.Normalize(providerKey),
+            ProviderVersion = RequireText(providerVersion, 100, nameof(providerVersion)),
             ReadyForParsing = readyForParsing,
             BaseContentRevision = baseContentRevision,
             BaseContentHash = baseContentHash is null

@@ -67,8 +67,11 @@ public sealed class SpaceJobProcessorPersistenceTests
         Assert.IsType<SpaceHistoricalRepublishJobProcessor>(processors[9]);
         Assert.IsType<SpaceExcelCadMatchJobProcessor>(processors[10]);
         Assert.IsType<SpaceExcelCadApplyJobProcessor>(processors[11]);
-        Assert.IsType<UnavailableSpaceCadParseProvider>(
+        Assert.IsType<SpaceCadProviderRouter>(
             scope.ServiceProvider.GetRequiredService<ISpaceCadParseProvider>());
+        Assert.Empty(scope.ServiceProvider
+            .GetRequiredService<ISpaceCadProviderRegistry>()
+            .Registrations);
         Assert.IsType<SpaceCadParseJobStepExecutor>(
             scope.ServiceProvider.GetRequiredService<
                 ISpaceCadParseJobStepExecutor>());

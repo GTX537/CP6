@@ -245,7 +245,9 @@ public sealed class SpaceCadParseJobStepExecutor(
                 SpaceErrorCodes.CadParseNotFound,
                 "The CAD parse Job was not found.");
         var payload = DeserializePayload(job.PayloadJson);
-        if (payload.SchemaVersion != SpaceCadParsePayloadVersions.Current ||
+        if (payload.SchemaVersion is not (
+                SpaceCadParsePayloadVersions.LegacyBaseRevision or
+                SpaceCadParsePayloadVersions.Current) ||
             payload.SourceId != lease.SubjectId ||
             payload.ModelVersionId == Guid.Empty ||
             payload.FileId == Guid.Empty ||
@@ -259,6 +261,9 @@ public sealed class SpaceCadParseJobStepExecutor(
             payload.BaseContentRevision < 0 ||
             payload.BaseContentHash is not null &&
                 !IsSha256(payload.BaseContentHash) ||
+            payload.SchemaVersion == SpaceCadParsePayloadVersions.Current &&
+                (!IsProviderKey(payload.PreferredProviderKey) ||
+                 !IsSha256(payload.ExpectedSemanticPreviewSha256)) ||
             !Hash(job.PayloadJson).Equals(lease.InputHash, StringComparison.Ordinal))
         {
             throw Failure(
@@ -312,6 +317,18 @@ public sealed class SpaceCadParseJobStepExecutor(
                 "The CAD source file is not clean or no longer matches its hash.");
         }
         return new ParseInput(job, payload, source, file);
+    }
+
+    private static bool IsProviderKey(string? value)
+    {
+        try
+        {
+            return SpaceCadProviderKey.Normalize(value!) == value;
+        }
+        catch (ArgumentException)
+        {
+            return false;
+        }
     }
 
     private async Task<SpaceFile> PersistFileAsync(
@@ -574,7 +591,7 @@ public sealed class SpaceCadParseJobStepExecutor(
         }
     }
 
-    private static bool IsSha256(string value) =>
+    private static bool IsSha256(string? value) =>
         value is { Length: 64 } &&
         value.All(character => character is >= '0' and <= '9' or >= 'a' and <= 'f');
 

@@ -85,6 +85,54 @@ public sealed class SpaceWmsRuntimeSchemaFilter : ISchemaFilter
     private static readonly IReadOnlyDictionary<Type, string[]>
         RequiredProperties = new Dictionary<Type, string[]>
         {
+            [typeof(ReplaceSpaceCadProviderConfigurationRequest)] =
+            [
+                "expectedConfigurationRevision",
+                "reason",
+                "certifications",
+            ],
+            [typeof(SpaceCadProviderCertificationInputDto)] =
+            [
+                "providerKey",
+                "role",
+                "deploymentMode",
+                "dataBoundary",
+                "approvalEvidenceReference",
+                "validFromUtc",
+                "expiresAtUtc",
+                "supportsDwg",
+                "supportsDxf",
+            ],
+            [typeof(SpaceCadProviderSlotDto)] =
+            [
+                "providerKey",
+                "displayName",
+                "role",
+                "deploymentMode",
+                "dataBoundary",
+                "approvalEvidenceReference",
+                "secretReferenceConfigured",
+                "validFromUtc",
+                "expiresAtUtc",
+                "supportsDwg",
+                "supportsDxf",
+                "runtimeAvailable",
+                "currentlyValid",
+            ],
+            [typeof(SpaceCadSiteCapabilityDto)] =
+            [
+                "siteId",
+                "configurationRevision",
+                "canPrepareCad",
+                "cadGaReady",
+                "blockingCodes",
+                "evaluatedAtUtc",
+            ],
+            [typeof(ReplaceSpaceCadProviderConfigurationResponse)] =
+            [
+                "capability",
+                "idempotentReplay",
+            ],
             [typeof(PreviewSpaceCadPreparationRequest)] =
             [
                 "floorLogicalId",
@@ -1696,6 +1744,7 @@ public sealed class SpaceDesignV1OperationFilter : IOperationFilter
                 "CreateAsset" or
                 "AttachUnderlay" or
                 "CalibrateUnderlay" or
+                "ReplaceProviderConfiguration" or
                 "UpdatePolicy" or
                 "ApplyGenerationProposals" or
                 "CancelGenerationRun" or
@@ -1741,6 +1790,7 @@ public sealed class SpaceDesignV1OperationFilter : IOperationFilter
                 StatusCodes.Status202Accepted.ToString(),
             "AttachUnderlay" or
                 "CalibrateUnderlay" or
+                "ReplaceProviderConfiguration" or
                 "UpdatePolicy" or
                 "CancelGenerationRun" or
                 "DiscardGenerationRun" or

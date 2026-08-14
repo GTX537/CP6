@@ -3567,6 +3567,265 @@
         }
       }
     },
+    "/api/space/design/v1/sites/{siteId}/cad-capability": {
+      "get": {
+        "tags": [
+          "SpaceCadProvider"
+        ],
+        "operationId": "GetCapability",
+        "parameters": [
+          {
+            "name": "siteId",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "string",
+              "format": "uuid"
+            }
+          }
+        ],
+        "responses": {
+          "400": {
+            "description": "Bad Request",
+            "content": {
+              "application/problem+json": {
+                "schema": {
+                  "$ref": "#/components/schemas/CP6.WebApi.OpenApi.SpaceDesignProblemDetails"
+                }
+              }
+            }
+          },
+          "401": {
+            "description": "Unauthorized",
+            "content": {
+              "application/problem+json": {
+                "schema": {
+                  "$ref": "#/components/schemas/CP6.WebApi.OpenApi.SpaceDesignProblemDetails"
+                }
+              }
+            }
+          },
+          "403": {
+            "description": "Forbidden",
+            "content": {
+              "application/problem+json": {
+                "schema": {
+                  "$ref": "#/components/schemas/CP6.WebApi.OpenApi.SpaceDesignProblemDetails"
+                }
+              }
+            }
+          },
+          "404": {
+            "description": "Not Found",
+            "content": {
+              "application/problem+json": {
+                "schema": {
+                  "$ref": "#/components/schemas/CP6.WebApi.OpenApi.SpaceDesignProblemDetails"
+                }
+              }
+            }
+          },
+          "409": {
+            "description": "Conflict",
+            "content": {
+              "application/problem+json": {
+                "schema": {
+                  "$ref": "#/components/schemas/CP6.WebApi.OpenApi.SpaceDesignProblemDetails"
+                }
+              }
+            }
+          },
+          "422": {
+            "description": "Unprocessable Content",
+            "content": {
+              "application/problem+json": {
+                "schema": {
+                  "$ref": "#/components/schemas/CP6.WebApi.OpenApi.SpaceDesignProblemDetails"
+                }
+              }
+            }
+          },
+          "500": {
+            "description": "Internal Server Error",
+            "content": {
+              "application/problem+json": {
+                "schema": {
+                  "$ref": "#/components/schemas/CP6.WebApi.OpenApi.SpaceDesignProblemDetails"
+                }
+              }
+            }
+          },
+          "200": {
+            "description": "OK",
+            "content": {
+              "text/plain": {
+                "schema": {
+                  "$ref": "#/components/schemas/CP6.Space.Contracts.SpaceCadSiteCapabilityDto"
+                }
+              },
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/CP6.Space.Contracts.SpaceCadSiteCapabilityDto"
+                }
+              },
+              "text/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/CP6.Space.Contracts.SpaceCadSiteCapabilityDto"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/api/space/design/v1/sites/{siteId}/cad-provider-configuration": {
+      "put": {
+        "tags": [
+          "SpaceCadProvider"
+        ],
+        "operationId": "ReplaceProviderConfiguration",
+        "parameters": [
+          {
+            "name": "siteId",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "string",
+              "format": "uuid"
+            }
+          },
+          {
+            "name": "Idempotency-Key",
+            "in": "header",
+            "description": "Opaque caller key; 1-128 UTF-8 bytes. Reuse with a different request returns SPACE_IDEMPOTENCY_KEY_REUSED.",
+            "required": true,
+            "schema": {
+              "type": "string"
+            }
+          }
+        ],
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/CP6.Space.Contracts.ReplaceSpaceCadProviderConfigurationRequest"
+              }
+            },
+            "text/json": {
+              "schema": {
+                "$ref": "#/components/schemas/CP6.Space.Contracts.ReplaceSpaceCadProviderConfigurationRequest"
+              }
+            },
+            "application/*+json": {
+              "schema": {
+                "$ref": "#/components/schemas/CP6.Space.Contracts.ReplaceSpaceCadProviderConfigurationRequest"
+              }
+            }
+          },
+          "required": true
+        },
+        "responses": {
+          "400": {
+            "description": "Bad Request",
+            "content": {
+              "application/problem+json": {
+                "schema": {
+                  "$ref": "#/components/schemas/CP6.WebApi.OpenApi.SpaceDesignProblemDetails"
+                }
+              }
+            }
+          },
+          "401": {
+            "description": "Unauthorized",
+            "content": {
+              "application/problem+json": {
+                "schema": {
+                  "$ref": "#/components/schemas/CP6.WebApi.OpenApi.SpaceDesignProblemDetails"
+                }
+              }
+            }
+          },
+          "403": {
+            "description": "Forbidden",
+            "content": {
+              "application/problem+json": {
+                "schema": {
+                  "$ref": "#/components/schemas/CP6.WebApi.OpenApi.SpaceDesignProblemDetails"
+                }
+              }
+            }
+          },
+          "404": {
+            "description": "Not Found",
+            "content": {
+              "application/problem+json": {
+                "schema": {
+                  "$ref": "#/components/schemas/CP6.WebApi.OpenApi.SpaceDesignProblemDetails"
+                }
+              }
+            }
+          },
+          "409": {
+            "description": "Conflict",
+            "content": {
+              "application/problem+json": {
+                "schema": {
+                  "$ref": "#/components/schemas/CP6.WebApi.OpenApi.SpaceDesignProblemDetails"
+                }
+              }
+            }
+          },
+          "422": {
+            "description": "Unprocessable Content",
+            "content": {
+              "application/problem+json": {
+                "schema": {
+                  "$ref": "#/components/schemas/CP6.WebApi.OpenApi.SpaceDesignProblemDetails"
+                }
+              }
+            }
+          },
+          "500": {
+            "description": "Internal Server Error",
+            "content": {
+              "application/problem+json": {
+                "schema": {
+                  "$ref": "#/components/schemas/CP6.WebApi.OpenApi.SpaceDesignProblemDetails"
+                }
+              }
+            }
+          },
+          "200": {
+            "description": "OK",
+            "headers": {
+              "Idempotent-Replay": {
+                "description": "True when this response replays a stored result.",
+                "schema": {
+                  "type": "boolean"
+                }
+              }
+            },
+            "content": {
+              "text/plain": {
+                "schema": {
+                  "$ref": "#/components/schemas/CP6.Space.Contracts.ReplaceSpaceCadProviderConfigurationResponse"
+                }
+              },
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/CP6.Space.Contracts.ReplaceSpaceCadProviderConfigurationResponse"
+                }
+              },
+              "text/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/CP6.Space.Contracts.ReplaceSpaceCadProviderConfigurationResponse"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
     "/api/space/design/v1/versions/{versionId}/floors/{floorLogicalId}/location-codes:preview": {
       "post": {
         "tags": [
@@ -19365,6 +19624,46 @@
         },
         "additionalProperties": false
       },
+      "CP6.Space.Contracts.ReplaceSpaceCadProviderConfigurationRequest": {
+        "required": [
+          "certifications",
+          "expectedConfigurationRevision",
+          "reason"
+        ],
+        "type": "object",
+        "properties": {
+          "expectedConfigurationRevision": {
+            "type": "integer",
+            "format": "int64"
+          },
+          "reason": {
+            "type": "string"
+          },
+          "certifications": {
+            "type": "array",
+            "items": {
+              "$ref": "#/components/schemas/CP6.Space.Contracts.SpaceCadProviderCertificationInputDto"
+            }
+          }
+        },
+        "additionalProperties": false
+      },
+      "CP6.Space.Contracts.ReplaceSpaceCadProviderConfigurationResponse": {
+        "required": [
+          "capability",
+          "idempotentReplay"
+        ],
+        "type": "object",
+        "properties": {
+          "capability": {
+            "$ref": "#/components/schemas/CP6.Space.Contracts.SpaceCadSiteCapabilityDto"
+          },
+          "idempotentReplay": {
+            "type": "boolean"
+          }
+        },
+        "additionalProperties": false
+      },
       "CP6.Space.Contracts.RetrySpacePublishAttemptRequest": {
         "type": "object",
         "properties": {
@@ -21563,6 +21862,118 @@
         },
         "additionalProperties": false
       },
+      "CP6.Space.Contracts.SpaceCadProviderCertificationInputDto": {
+        "required": [
+          "approvalEvidenceReference",
+          "dataBoundary",
+          "deploymentMode",
+          "expiresAtUtc",
+          "providerKey",
+          "role",
+          "supportsDwg",
+          "supportsDxf",
+          "validFromUtc"
+        ],
+        "type": "object",
+        "properties": {
+          "providerKey": {
+            "type": "string"
+          },
+          "role": {
+            "type": "string"
+          },
+          "deploymentMode": {
+            "type": "string"
+          },
+          "dataBoundary": {
+            "type": "string"
+          },
+          "approvalEvidenceReference": {
+            "type": "string"
+          },
+          "secretReference": {
+            "type": "string",
+            "nullable": true
+          },
+          "validFromUtc": {
+            "type": "string",
+            "format": "date-time"
+          },
+          "expiresAtUtc": {
+            "type": "string",
+            "format": "date-time"
+          },
+          "supportsDwg": {
+            "type": "boolean"
+          },
+          "supportsDxf": {
+            "type": "boolean"
+          }
+        },
+        "additionalProperties": false
+      },
+      "CP6.Space.Contracts.SpaceCadProviderSlotDto": {
+        "required": [
+          "approvalEvidenceReference",
+          "currentlyValid",
+          "dataBoundary",
+          "deploymentMode",
+          "displayName",
+          "expiresAtUtc",
+          "providerKey",
+          "role",
+          "runtimeAvailable",
+          "secretReferenceConfigured",
+          "supportsDwg",
+          "supportsDxf",
+          "validFromUtc"
+        ],
+        "type": "object",
+        "properties": {
+          "providerKey": {
+            "type": "string"
+          },
+          "displayName": {
+            "type": "string"
+          },
+          "role": {
+            "type": "string"
+          },
+          "deploymentMode": {
+            "type": "string"
+          },
+          "dataBoundary": {
+            "type": "string"
+          },
+          "approvalEvidenceReference": {
+            "type": "string"
+          },
+          "secretReferenceConfigured": {
+            "type": "boolean"
+          },
+          "validFromUtc": {
+            "type": "string",
+            "format": "date-time"
+          },
+          "expiresAtUtc": {
+            "type": "string",
+            "format": "date-time"
+          },
+          "supportsDwg": {
+            "type": "boolean"
+          },
+          "supportsDxf": {
+            "type": "boolean"
+          },
+          "runtimeAvailable": {
+            "type": "boolean"
+          },
+          "currentlyValid": {
+            "type": "boolean"
+          }
+        },
+        "additionalProperties": false
+      },
       "CP6.Space.Contracts.SpaceCadReviewItemKind": {
         "enum": [
           "MappingDiagnostic",
@@ -22178,6 +22589,60 @@
           "offsetZ": {
             "type": "integer",
             "format": "int32"
+          }
+        },
+        "additionalProperties": false
+      },
+      "CP6.Space.Contracts.SpaceCadSiteCapabilityDto": {
+        "required": [
+          "blockingCodes",
+          "cadGaReady",
+          "canPrepareCad",
+          "configurationRevision",
+          "evaluatedAtUtc",
+          "siteId"
+        ],
+        "type": "object",
+        "properties": {
+          "siteId": {
+            "type": "string",
+            "format": "uuid"
+          },
+          "configurationRevision": {
+            "type": "integer",
+            "format": "int64"
+          },
+          "canPrepareCad": {
+            "type": "boolean"
+          },
+          "cadGaReady": {
+            "type": "boolean"
+          },
+          "primary": {
+            "$ref": "#/components/schemas/CP6.Space.Contracts.SpaceCadProviderSlotDto"
+          },
+          "backup": {
+            "$ref": "#/components/schemas/CP6.Space.Contracts.SpaceCadProviderSlotDto"
+          },
+          "blockingCodes": {
+            "type": "array",
+            "items": {
+              "type": "string"
+            }
+          },
+          "evaluatedAtUtc": {
+            "type": "string",
+            "format": "date-time"
+          },
+          "updatedAtUtc": {
+            "type": "string",
+            "format": "date-time",
+            "nullable": true
+          },
+          "updatedBy": {
+            "type": "string",
+            "format": "uuid",
+            "nullable": true
           }
         },
         "additionalProperties": false

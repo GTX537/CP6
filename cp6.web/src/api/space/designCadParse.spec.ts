@@ -21,6 +21,15 @@ describe('designCadParseApi', () => {
     )
   })
 
+  it('loads the server-owned CAD capability for a Site', async () => {
+    vi.mocked(http.get).mockResolvedValue({})
+    await designCadParseApi.getCadCapability('site-1')
+
+    expect(http.get).toHaveBeenCalledWith(
+      '/space/design/v1/sites/site-1/cad-capability',
+    )
+  })
+
   it('applies a selected changeset with lease and revision fences', async () => {
     vi.mocked(http.post).mockResolvedValue({})
     const request = {

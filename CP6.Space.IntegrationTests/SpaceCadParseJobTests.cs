@@ -252,7 +252,10 @@ public sealed class SpaceCadParseJobTests
         var provider = new ReviewWorkspaceProvider(
             fixture.Execution.TenantId,
             fixture.Source.Sha256);
-        var request = await ConfirmPreparationAsync(fixture, provider.Request);
+        var request = await ConfirmPreparationAsync(
+            fixture,
+            provider.Request,
+            provider.SemanticPreviewSha256);
         var model = await fixture.Context.Models.SingleAsync();
         fixture.Context.FloorRevisions.Add(SpaceFloorRevision.Create(
             fixture.Execution.TenantId,
@@ -394,7 +397,10 @@ public sealed class SpaceCadParseJobTests
         var started = await fixture.Service.StartAsync(
             fixture.Version.Id,
             fixture.Source.Id,
-            await ConfirmPreparationAsync(fixture, provider.Request),
+            await ConfirmPreparationAsync(
+                fixture,
+                provider.Request,
+                provider.SemanticPreviewSha256),
             "cad-review-apply");
         await CompleteParseAsync(fixture, provider, started.JobId);
 
@@ -514,7 +520,10 @@ public sealed class SpaceCadParseJobTests
         var started = await fixture.Service.StartAsync(
             fixture.Version.Id,
             fixture.Source.Id,
-            await ConfirmPreparationAsync(fixture, provider.Request),
+            await ConfirmPreparationAsync(
+                fixture,
+                provider.Request,
+                provider.SemanticPreviewSha256),
             "cad-review-stale-apply");
         await CompleteParseAsync(fixture, provider, started.JobId);
         fixture.Context.ChangeTracker.Clear();
@@ -697,7 +706,8 @@ public sealed class SpaceCadParseJobTests
             tenantId,
             version,
             source,
-            request);
+            request,
+            new string('9', 64));
         context.CadParsePreparations.Add(preparation);
         await context.SaveChangesAsync();
         request = request with { PreparationId = preparation.Id };
@@ -736,13 +746,15 @@ public sealed class SpaceCadParseJobTests
 
     private static async Task<StartSpaceCadParseRequest> ConfirmPreparationAsync(
         Fixture fixture,
-        StartSpaceCadParseRequest request)
+        StartSpaceCadParseRequest request,
+        string semanticPreviewSha256)
     {
         var preparation = Preparation(
             fixture.Execution.TenantId,
             fixture.Version,
             fixture.Source,
-            request);
+            request,
+            semanticPreviewSha256);
         fixture.Context.CadParsePreparations.Add(preparation);
         await fixture.Context.SaveChangesAsync();
         return request with { PreparationId = preparation.Id };
@@ -752,7 +764,8 @@ public sealed class SpaceCadParseJobTests
         Guid tenantId,
         SpaceModelVersion version,
         SpaceModelSource source,
-        StartSpaceCadParseRequest request) =>
+        StartSpaceCadParseRequest request,
+        string semanticPreviewSha256) =>
         SpaceCadParsePreparation.Create(
             tenantId,
             version.Id,
@@ -767,7 +780,9 @@ public sealed class SpaceCadParseJobTests
             request.MappingProfileVersion,
             request.MappingDefinitionSha256,
             request.MappingPreviewSha256,
-            new string('9', 64),
+            semanticPreviewSha256,
+            "review-test",
+            "1.0",
             true,
             version.ContentRevision,
             version.ContentHash,
@@ -985,6 +1000,7 @@ public sealed class SpaceCadParseJobTests
         }
 
         public StartSpaceCadParseRequest Request { get; }
+        public string SemanticPreviewSha256 => _semantic.SemanticPreviewSha256;
 
         public Task<IReadOnlyList<SpaceCadGeneratedArtifact>> GenerateAsync(
             SpaceCadParseProviderRequest providerRequest,

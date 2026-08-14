@@ -303,6 +303,7 @@ async function installSpaceStudioFixtures(
     const cadProfilesPath = `/api/space/design/v1/versions/${versionId}/cad-mapping-profiles`
     const cadPreparationPath = `/api/space/design/v1/versions/${versionId}/sources/${cadSourceId}/cad-preparations:preview`
     const cadParsePath = `/api/space/design/v1/versions/${versionId}/sources/${cadSourceId}/cad-parses`
+    const cadCapabilityPath = `/api/space/design/v1/sites/${scene.siteId}/cad-capability`
 
     if (url.pathname === scenePath) {
       await route.fulfill({ json: scene })
@@ -315,6 +316,49 @@ async function installSpaceStudioFixtures(
         json: {
           source: { id: cadSourceId, state: 'Scanning', sha256: 'd'.repeat(64) },
           scanJobId: 'aaaaaaaa-3333-3333-3333-333333333333',
+        },
+      })
+      return
+    }
+    if (url.pathname === cadCapabilityPath) {
+      await route.fulfill({
+        json: {
+          siteId: scene.siteId,
+          configurationRevision: 3,
+          canPrepareCad: true,
+          cadGaReady: true,
+          primary: {
+            providerKey: 'primary',
+            displayName: 'Primary CAD',
+            role: 'Primary',
+            deploymentMode: 'OnPremisesIsolatedWorker',
+            dataBoundary: 'SiteLocal',
+            approvalEvidenceReference: 'evidence-primary',
+            secretReferenceConfigured: false,
+            validFromUtc: '2026-01-01T00:00:00Z',
+            expiresAtUtc: '2027-01-01T00:00:00Z',
+            supportsDwg: true,
+            supportsDxf: true,
+            runtimeAvailable: true,
+            currentlyValid: true,
+          },
+          backup: {
+            providerKey: 'backup',
+            displayName: 'Backup CAD',
+            role: 'Backup',
+            deploymentMode: 'ApprovedCloudService',
+            dataBoundary: 'CustomerApprovedCloudRegion',
+            approvalEvidenceReference: 'evidence-backup',
+            secretReferenceConfigured: true,
+            validFromUtc: '2026-01-01T00:00:00Z',
+            expiresAtUtc: '2027-01-01T00:00:00Z',
+            supportsDwg: true,
+            supportsDxf: true,
+            runtimeAvailable: true,
+            currentlyValid: true,
+          },
+          blockingCodes: [],
+          evaluatedAtUtc: '2026-08-14T00:00:00Z',
         },
       })
       return

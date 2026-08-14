@@ -5,6 +5,7 @@ import DesignCadStartWizard from './DesignCadStartWizard.vue'
 
 vi.mock('@/api/space/designCadParse', () => ({
   designCadParseApi: {
+    getCadCapability: vi.fn(),
     getPreparationStatus: vi.fn(),
     listMappingProfiles: vi.fn(),
     previewPreparation: vi.fn(),
@@ -15,6 +16,44 @@ vi.mock('@/api/space/designCadParse', () => ({
 describe('DesignCadStartWizard', () => {
   beforeEach(() => {
     vi.clearAllMocks()
+    vi.mocked(designCadParseApi.getCadCapability).mockResolvedValue({
+      siteId: 'site-1',
+      configurationRevision: 4,
+      canPrepareCad: true,
+      cadGaReady: true,
+      primary: {
+        providerKey: 'primary',
+        displayName: 'Primary CAD',
+        role: 'Primary',
+        deploymentMode: 'OnPremisesIsolatedWorker',
+        dataBoundary: 'SiteLocal',
+        approvalEvidenceReference: 'evidence-primary',
+        secretReferenceConfigured: false,
+        validFromUtc: '2026-01-01T00:00:00Z',
+        expiresAtUtc: '2027-01-01T00:00:00Z',
+        supportsDwg: true,
+        supportsDxf: true,
+        runtimeAvailable: true,
+        currentlyValid: true,
+      },
+      backup: {
+        providerKey: 'backup',
+        displayName: 'Backup CAD',
+        role: 'Backup',
+        deploymentMode: 'ApprovedCloudService',
+        dataBoundary: 'CustomerApprovedCloudRegion',
+        approvalEvidenceReference: 'evidence-backup',
+        secretReferenceConfigured: true,
+        validFromUtc: '2026-01-01T00:00:00Z',
+        expiresAtUtc: '2027-01-01T00:00:00Z',
+        supportsDwg: true,
+        supportsDxf: true,
+        runtimeAvailable: true,
+        currentlyValid: true,
+      },
+      blockingCodes: [],
+      evaluatedAtUtc: '2026-08-14T00:00:00Z',
+    })
     vi.mocked(designCadParseApi.listMappingProfiles).mockResolvedValue([
       {
         profileId: 'profile-1',
@@ -75,6 +114,7 @@ describe('DesignCadStartWizard', () => {
     })
     const wrapper = mount(DesignCadStartWizard, {
       props: {
+        siteId: 'site-1',
         versionId: 'version-1',
         sourceId: 'source-1',
         floorLogicalId: 'floor-1',
@@ -82,6 +122,11 @@ describe('DesignCadStartWizard', () => {
       attachTo: document.body,
     })
     await flushPromises()
+
+    expect(wrapper.get('[aria-label="Site CAD Provider 能力"]').text())
+      .toContain('Primary CAD')
+    expect(wrapper.get('[aria-label="Site CAD Provider 能力"]').text())
+      .toContain('Backup CAD')
 
     const startButton = wrapper.get('footer .primary')
     expect(startButton.attributes('disabled')).toBeDefined()
@@ -110,6 +155,7 @@ describe('DesignCadStartWizard', () => {
   it('moves focus into the modal and supports Escape without waiting for APIs', async () => {
     const wrapper = mount(DesignCadStartWizard, {
       props: {
+        siteId: 'site-1',
         versionId: 'version-1',
         sourceId: 'source-1',
         floorLogicalId: 'floor-1',
@@ -122,5 +168,29 @@ describe('DesignCadStartWizard', () => {
     await wrapper.get('[role="dialog"]').trigger('keydown', { key: 'Escape' })
     expect(wrapper.emitted('close')).toHaveLength(1)
     wrapper.unmount()
+  })
+
+  it('keeps preview disabled when the Site has no approved runtime provider', async () => {
+    vi.mocked(designCadParseApi.getCadCapability).mockResolvedValue({
+      siteId: 'site-1',
+      configurationRevision: 0,
+      canPrepareCad: false,
+      cadGaReady: false,
+      blockingCodes: ['CAD_PRIMARY_PROVIDER_MISSING'],
+      evaluatedAtUtc: '2026-08-14T00:00:00Z',
+    })
+    const wrapper = mount(DesignCadStartWizard, {
+      props: {
+        siteId: 'site-1',
+        versionId: 'version-1',
+        sourceId: 'source-1',
+        floorLogicalId: 'floor-1',
+      },
+    })
+    await flushPromises()
+
+    expect(wrapper.get('[role="alert"]').text()).toContain('没有可用且有效')
+    expect(wrapper.get('.fields > .primary').attributes('disabled')).toBeDefined()
+    expect(designCadParseApi.getPreparationStatus).not.toHaveBeenCalled()
   })
 })

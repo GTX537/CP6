@@ -120,6 +120,7 @@ public sealed class SpaceCadPreparationService(
             package = await provider.InspectAsync(
                 new SpaceCadPreparationProviderRequest(
                     execution.TenantId,
+                    scope.Model.SiteId,
                     scope.File.Id,
                     scope.Source.Id,
                     scope.Source.Sha256,
@@ -235,6 +236,8 @@ public sealed class SpaceCadPreparationService(
             profile.DefinitionSha256,
             mapping.PreviewSha256,
             semantic.SemanticPreviewSha256,
+            package.Document.ConverterId,
+            package.Document.ConverterVersion,
             readyForParsing: true,
             scope.Version.ContentRevision,
             scope.Version.ContentHash,
