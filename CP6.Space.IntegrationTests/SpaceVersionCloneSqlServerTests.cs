@@ -147,6 +147,104 @@ public sealed class SpaceVersionCloneSqlServerTests
     }
 
     [SqlServerFact]
+    public async Task Blank_mode_creates_an_idempotent_editable_draft_without_published_base()
+    {
+        await WithDatabaseAsync(async (context, execution, clock) =>
+        {
+            var model = SpaceModel.Create(execution.TenantId, Guid.NewGuid());
+            context.Models.Add(model);
+            await context.SaveChangesAsync();
+
+            var operationId = Guid.NewGuid();
+            var request = new SpaceBlankVersionRequest(
+                model.Id,
+                "Blank warehouse",
+                operationId,
+                new string('a', 64));
+            var store = new EfSpaceVersionCloneStore(context, execution, clock);
+
+            var first = await store.StartBlankAsync(request);
+            var duplicate = await store.StartBlankAsync(request);
+
+            context.ChangeTracker.Clear();
+            var draft = await context.Versions.SingleAsync(
+                candidate => candidate.Id == first.ModelVersionId);
+            var reloadedModel = await context.Models.SingleAsync(
+                candidate => candidate.Id == model.Id);
+            var job = await context.Jobs.SingleAsync(
+                candidate => candidate.Id == first.JobId);
+            var attempt = await context.JobAttempts.SingleAsync(
+                candidate => candidate.JobId == job.Id);
+
+            Assert.False(first.Reused);
+            Assert.True(duplicate.Reused);
+            Assert.Equal(first.ModelVersionId, duplicate.ModelVersionId);
+            Assert.Equal(first.JobId, duplicate.JobId);
+            Assert.Equal(SpaceVersionStatus.Draft, draft.Status);
+            Assert.Null(draft.BasedOnVersionId);
+            Assert.Equal(operationId, draft.CloneOperationId);
+            Assert.Equal(draft.Id, reloadedModel.ActiveDraftVersionId);
+            Assert.Null(reloadedModel.CurrentPublishedVersionId);
+            Assert.Equal(SpaceJobType.InitializeVersion, job.JobType);
+            Assert.Equal(SpaceJobStatus.Succeeded, job.Status);
+            Assert.Equal(SpaceJobAttemptOutcome.Succeeded, attempt.Outcome);
+            Assert.Empty(await context.FloorRevisions
+                .Where(candidate => candidate.ModelVersionId == draft.Id)
+                .ToArrayAsync());
+            await Assert.ThrowsAsync<SpaceVersionConflictException>(() =>
+                store.StartBlankAsync(request with { Name = "Changed input" }));
+        });
+    }
+
+    [SqlServerFact]
+    public async Task Design_v1_blank_create_supports_replay_and_rejects_a_base_version()
+    {
+        await WithDatabaseAsync(async (context, execution, clock) =>
+        {
+            var (model, published) = await SeedPublishedAsync(
+                context,
+                execution.ActorId,
+                includeSnapshot: false);
+            model.BeginCutover(Guid.NewGuid());
+            model.MarkFrozen();
+            model.MarkBootstrapping();
+            model.MarkVerified(published);
+            model.ActivateDesignV1();
+            await context.SaveChangesAsync();
+            var service = NewDesignService(context, execution, clock);
+
+            var first = await service.CreateVersionAsync(
+                model.SiteId,
+                new CreateSpaceVersionRequest("Blank site", null, "Blank"),
+                "blank-version-request");
+            var replay = await service.CreateVersionAsync(
+                model.SiteId,
+                new CreateSpaceVersionRequest("Blank site", null, "Blank"),
+                "blank-version-request");
+
+            Assert.Equal(SpaceVersionStatus.Draft.ToString(), first.Status);
+            Assert.False(first.IdempotentReplay);
+            Assert.True(replay.IdempotentReplay);
+            Assert.Equal(first.Id, replay.Id);
+            Assert.Equal(first.JobId, replay.JobId);
+            Assert.Equal(
+                SpaceJobStatus.Succeeded,
+                (await context.Jobs.SingleAsync(job => job.Id == first.JobId)).Status);
+
+            var invalid = await Assert.ThrowsAsync<SpaceProblemException>(() =>
+                service.CreateVersionAsync(
+                    model.SiteId,
+                    new CreateSpaceVersionRequest(
+                        "Invalid blank",
+                        Guid.NewGuid(),
+                        "Blank"),
+                    "invalid-blank-version-request"));
+            Assert.Equal(SpaceErrorCodes.RequestInvalid, invalid.Code);
+            Assert.Equal(400, invalid.StatusCode);
+        });
+    }
+
+    [SqlServerFact]
     public async Task Empty_published_warehouse_clones_to_an_empty_draft()
     {
         await WithDatabaseAsync(async (context, execution, clock) =>
@@ -694,6 +792,22 @@ public sealed class SpaceVersionCloneSqlServerTests
         return result;
     }
 
+    private static SpaceDesignV1Service NewDesignService(
+        SpaceContext context,
+        TestExecutionContext execution,
+        TestClock clock)
+    {
+        var cloneStore = new EfSpaceVersionCloneStore(context, execution, clock);
+        return new SpaceDesignV1Service(
+            context,
+            execution,
+            clock,
+            new TestCursorCodec(),
+            new TestAccessEvaluator(),
+            new SpaceVersionCloneCoordinator(execution, cloneStore),
+            new SpaceSourceCoordinator(execution));
+    }
+
     private static async Task WithDatabaseAsync(
         Func<SpaceContext, TestExecutionContext, TestClock, Task> action)
     {
@@ -769,5 +883,24 @@ public sealed class SpaceVersionCloneSqlServerTests
     private sealed class TestClock : ISpaceClock
     {
         public DateTime UtcNow { get; } = DateTime.UtcNow;
+    }
+
+    private sealed class TestAccessEvaluator : ISpaceDesignAccessEvaluator
+    {
+        public void EnsureSiteAccess(Guid siteId, bool write)
+        {
+        }
+    }
+
+    private sealed class TestCursorCodec : ISpaceCursorCodec
+    {
+        public string Encode(SpaceCursorState state) =>
+            throw new NotSupportedException();
+
+        public SpaceCursorState Decode(
+            string cursor,
+            string expectedResource,
+            string expectedFilterHash) =>
+            throw new NotSupportedException();
     }
 }
