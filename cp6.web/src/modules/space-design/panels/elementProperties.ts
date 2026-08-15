@@ -119,7 +119,7 @@ export function buildElementPropertiesPayload(
 
   return {
     elementType,
-    geometryJson: updateGeometryEnvelope(element.geometryJson ?? '{}', draft),
+    geometryJson: updateGeometryEnvelope(element, draft),
     x: draft.x,
     y: draft.y,
     z: draft.z,
@@ -134,10 +134,38 @@ export function buildElementPropertiesPayload(
   }
 }
 
+export function sceneElementPropertiesPayload(
+  element: ISpaceSceneElementDto,
+  attributes: readonly ISpaceSceneElementAttributeDto[],
+): ElementPropertiesPayload {
+  return {
+    elementType: element.elementType,
+    geometryJson: element.geometryJson ?? '{}',
+    x: element.x ?? 0,
+    y: element.y ?? 0,
+    z: element.z ?? 0,
+    rotationZ: element.rotationZ ?? 0,
+    width: element.width ?? 1,
+    height: element.height ?? 1,
+    depth: element.depth ?? 1,
+    businessCode: element.businessCode,
+    linkedEntityType: element.linkedEntityType,
+    linkedLogicalId: element.linkedLogicalId,
+    attributes: attributes.map((attribute) => ({
+      namespace: attribute.namespace ?? '',
+      key: attribute.key ?? '',
+      valueType: attribute.valueType ?? 'String',
+      value: attribute.value,
+      unit: attribute.unit,
+    })),
+  }
+}
+
 function updateGeometryEnvelope(
-  geometryJson: string,
+  element: ISpaceSceneElementDto,
   draft: Pick<ElementPropertiesDraft, 'width' | 'height' | 'depth'>,
 ): string {
+  const geometryJson = element.geometryJson ?? '{}'
   const geometry = JSON.parse(geometryJson) as Record<string, unknown>
   if (geometry.schemaVersion !== 1) {
     throw new Error('Only geometry schemaVersion 1 is editable')
@@ -150,6 +178,15 @@ function updateGeometryEnvelope(
     geometry.width = draft.depth
   } else if (geometry.kind === 'polygon') {
     geometry.height = draft.height
+  } else if (
+    geometry.kind === 'group'
+    && (
+      draft.width !== element.width
+      || draft.height !== element.height
+      || draft.depth !== element.depth
+    )
+  ) {
+    throw new Error('Group geometry dimensions cannot be edited directly')
   }
   return JSON.stringify(geometry)
 }

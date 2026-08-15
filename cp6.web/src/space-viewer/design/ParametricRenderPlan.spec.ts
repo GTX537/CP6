@@ -99,6 +99,77 @@ describe('ParametricRenderPlan', () => {
     expect(asset.rotationZ).toBe(120)
   })
 
+  it('renders a lossless group as one logical element with stable part keys', () => {
+    const scene = emptyScene()
+    const logicalId = '99999999-9999-9999-9999-999999999999'
+    scene.elements = [{
+      revision: revision(logicalId),
+      elementType: 'Column',
+      geometryJson: JSON.stringify({
+        schemaVersion: 1,
+        kind: 'group',
+        parts: [
+          {
+            sourceLogicalId: logicalId,
+            sourceRef: 'CAD-COLUMN-A',
+            x: 0,
+            y: 0,
+            z: 0,
+            rotationZ: 0,
+            width: 400,
+            height: 3000,
+            depth: 400,
+            geometry: {
+              schemaVersion: 1,
+              kind: 'box',
+              width: 400,
+              height: 3000,
+              depth: 400,
+            },
+          },
+          {
+            sourceLogicalId: 'aaaaaaaa-1111-1111-1111-111111111111',
+            x: 1000,
+            y: 0,
+            z: 0,
+            rotationZ: 90,
+            width: 500,
+            height: 1000,
+            depth: 100,
+            geometry: {
+              schemaVersion: 1,
+              kind: 'path',
+              points: [{ x: 0, y: 0, z: 0 }, { x: 500, y: 0, z: 0 }],
+              width: 100,
+            },
+          },
+        ],
+      }),
+      x: 1000,
+      y: 2000,
+      z: 0,
+      rotationZ: 90,
+      width: 1400,
+      height: 3000,
+      depth: 500,
+    }]
+
+    const plan = buildParametricRenderPlan(scene)
+
+    expect(plan.boxes).toHaveLength(2)
+    expect(plan.boxes.map((part) => part.logicalId)).toEqual([
+      logicalId,
+      logicalId,
+    ])
+    expect(plan.boxes.map((part) => part.key)).toEqual([
+      `element:${logicalId}:group:0:box`,
+      `element:${logicalId}:group:1:path:0`,
+    ])
+    expectPoint(plan.boxes[0]!.center, { x: 800, y: 2200, z: 1500 })
+    expectPoint(plan.boxes[1]!.center, { x: 750, y: 3000, z: 500 })
+    expect(plan.boxes[1]!.rotationZ).toBe(180)
+  })
+
   it('renders DesignRevision zones and aisles from their authoritative polygons', () => {
     const scene = emptyScene()
     const zoneId = '77777777-7777-7777-7777-777777777777'

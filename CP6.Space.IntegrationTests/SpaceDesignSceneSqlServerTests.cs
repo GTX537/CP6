@@ -671,6 +671,196 @@ public sealed class SpaceDesignSceneSqlServerTests
     }
 
     [SqlServerFact]
+    public async Task Element_group_merge_and_saved_compensation_are_atomic()
+    {
+        await WithDatabaseAsync(async (connectionString, execution, clock) =>
+        {
+            await using var context = CreateContext(
+                connectionString,
+                execution,
+                clock);
+            var seeded = await SeedDesignModelAsync(
+                context,
+                execution.ActorId,
+                clock.UtcNow);
+            var draft = SpaceModelVersion.CreateDraft(
+                execution.TenantId,
+                seeded.Model.Id,
+                2,
+                "Element exception merge",
+                seeded.Published.Id);
+            seeded.Model.ReserveDraft(draft);
+            var floor = SpaceFloorRevision.Create(
+                execution.TenantId,
+                draft.Id,
+                Guid.NewGuid(),
+                seeded.Model.SiteId,
+                1,
+                "F1",
+                "Floor 1",
+                height: 6000);
+            var survivor = SpaceElementRevision.Create(
+                execution.TenantId,
+                draft.Id,
+                Guid.NewGuid(),
+                floor.LogicalId,
+                SpaceElementTypes.Column,
+                """
+                {"schemaVersion":1,"kind":"box","width":400,"height":5000,"depth":400}
+                """);
+            survivor.ConfigurePlacement(1000, 2000, 0, 0, 400, 5000, 400);
+            var source = SpaceElementRevision.Create(
+                execution.TenantId,
+                draft.Id,
+                Guid.NewGuid(),
+                floor.LogicalId,
+                SpaceElementTypes.Column,
+                """
+                {"schemaVersion":1,"kind":"box","width":400,"height":5000,"depth":400}
+                """);
+            source.ConfigurePlacement(1800, 2000, 0, 0, 400, 5000, 400);
+            var survivorAttribute = SpaceElementAttribute.Create(
+                execution.TenantId,
+                survivor,
+                SpaceElementAttributeNamespaces.Design,
+                "label",
+                SpaceElementAttributeValueTypes.String,
+                "CAD exception");
+            var sourceAttribute = SpaceElementAttribute.Create(
+                execution.TenantId,
+                source,
+                SpaceElementAttributeNamespaces.Design,
+                "label",
+                SpaceElementAttributeValueTypes.String,
+                "CAD exception");
+            context.AddRange(
+                draft,
+                floor,
+                survivor,
+                source,
+                survivorAttribute,
+                sourceAttribute);
+            await context.SaveChangesAsync();
+
+            var service = NewService(
+                context,
+                execution,
+                clock,
+                seeded.Model.SiteId);
+            var clientId = Guid.NewGuid();
+            var lease = SpaceEditLease.Create(
+                execution.TenantId,
+                draft.Id,
+                floor.LogicalId,
+                execution.ActorId,
+                "Editor",
+                clientId,
+                clock.UtcNow,
+                TimeSpan.FromSeconds(90));
+            context.EditLeases.Add(lease);
+            await context.SaveChangesAsync();
+            var groupGeometry = $$$"""
+                {"schemaVersion":1,"kind":"group","parts":[{"sourceLogicalId":"{{{survivor.LogicalId}}}","x":0,"y":0,"z":0,"rotationZ":0,"width":400,"height":5000,"depth":400,"geometry":{"schemaVersion":1,"kind":"box","width":400,"height":5000,"depth":400}},{"sourceLogicalId":"{{{source.LogicalId}}}","x":800,"y":0,"z":0,"rotationZ":0,"width":400,"height":5000,"depth":400,"geometry":{"schemaVersion":1,"kind":"box","width":400,"height":5000,"depth":400}}]}
+                """;
+            var attributes = new[]
+            {
+                new SpaceElementAttributeWriteDto(
+                    SpaceElementAttributeNamespaces.Design,
+                    "label",
+                    SpaceElementAttributeValueTypes.String,
+                    "CAD exception",
+                    null),
+            };
+            var merged = await service.ApplyElementCommandsAsync(
+                draft.Id,
+                floor.LogicalId,
+                new ApplySpaceElementCommandBatchRequest(
+                    SpaceElementCommandContract.SchemaVersion,
+                    Guid.NewGuid(),
+                    clientId,
+                    lease.LeaseId,
+                    ExpectedFloorRevision: 0,
+                    [
+                        new SpaceElementCommandDto(
+                            Guid.NewGuid(),
+                            SpaceElementCommandContract.UpdateProperties,
+                            survivor.LogicalId,
+                            new SpaceUpdateElementPropertiesDto(
+                                groupGeometry,
+                                1000,
+                                2000,
+                                0,
+                                0,
+                                1200,
+                                5000,
+                                400,
+                                null,
+                                null,
+                                null,
+                                attributes,
+                                SpaceElementTypes.Column)),
+                        new SpaceElementCommandDto(
+                            Guid.NewGuid(),
+                            SpaceElementCommandContract.DeleteObject,
+                            source.LogicalId,
+                            null),
+                    ]));
+
+            Assert.Equal(1, merged.FloorRevision);
+            Assert.Equal(1, merged.VersionContentRevision);
+            Assert.Equal(2, merged.AffectedObjects.Count);
+            Assert.Equal(2, await context.ElementCommandRecords.CountAsync());
+            Assert.Single(await context.ElementCommandBatches.ToListAsync());
+            Assert.Contains("\"kind\":\"group\"", survivor.GeometryJson);
+            Assert.Equal(SpaceLifecycleState.RemoveRequested, source.LifecycleState);
+
+            var compensated = await service.ApplyElementCommandsAsync(
+                draft.Id,
+                floor.LogicalId,
+                new ApplySpaceElementCommandBatchRequest(
+                    SpaceElementCommandContract.SchemaVersion,
+                    Guid.NewGuid(),
+                    clientId,
+                    lease.LeaseId,
+                    ExpectedFloorRevision: 1,
+                    [
+                        new SpaceElementCommandDto(
+                            Guid.NewGuid(),
+                            SpaceElementCommandContract.UpdateProperties,
+                            survivor.LogicalId,
+                            new SpaceUpdateElementPropertiesDto(
+                                """
+                                {"schemaVersion":1,"kind":"box","width":400,"height":5000,"depth":400}
+                                """,
+                                1000,
+                                2000,
+                                0,
+                                0,
+                                400,
+                                5000,
+                                400,
+                                null,
+                                null,
+                                null,
+                                attributes,
+                                SpaceElementTypes.Column)),
+                        new SpaceElementCommandDto(
+                            Guid.NewGuid(),
+                            SpaceElementCommandContract.RestoreLogicalObject,
+                            source.LogicalId,
+                            null),
+                    ]));
+
+            Assert.Equal(2, compensated.FloorRevision);
+            Assert.Equal(2, compensated.VersionContentRevision);
+            Assert.Equal(2, compensated.AffectedObjects.Count);
+            Assert.Equal(SpaceLifecycleState.Active, source.LifecycleState);
+            Assert.Equal(4, await context.ElementCommandRecords.CountAsync());
+            Assert.Equal(2, await context.ElementCommandBatches.CountAsync());
+        });
+    }
+
+    [SqlServerFact]
     public async Task Create_element_accepts_null_content_hash_and_stale_fence_is_zero_write()
     {
         await WithDatabaseAsync(async (connectionString, execution, clock) =>

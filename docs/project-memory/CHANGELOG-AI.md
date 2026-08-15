@@ -2,11 +2,17 @@
 
 > 依据 Git log 汇总，不替代完整 Git 历史。重点记录影响接手判断的里程碑。
 
+## 2026-08-15：Space Studio CAD 异常对象合并
+
+- 新增 `schemaVersion=1/kind=group` 的受限组合几何，逐部件保留来源身份和原始几何；限制 100 部件、8 层嵌套并拒绝资产子几何。
+- 工作台可显式合并 2–20 个语义和属性一致的通用元素，保留首选 LogicalId；正向与撤销分别复用现有 Design V1 原子命令和补偿命令，2D/3D 均消费同一组合几何。
+- Space Unit 531、前端 788、Space Studio Playwright 16、真实 LocalDB 1、完整 Release solution、production build、SDK drift 和 GA 证据自测 36 均通过；无数据库 Schema 或 OpenAPI 变化。拆分与重画仍缺，WP4 保持 Partial，核心 GA 保持 72% / `NoGo`。
+
 ## 2026-08-15：Space Studio CAD 异常对象改类型
 
 - `UpdateProperties` 现在可在同一 Design V1 命令批内改变通用元素语义类型，保留 LogicalId 并继续使用 Lease、Revision、幂等及审计 Fence；资产实例和未知类型失败关闭。
 - 工作台属性检查器、撤销/重做、OpenAPI、C#/TypeScript SDK 与自动化同步；真 SQL、领域、契约、前端和 Playwright 聚焦门禁通过。
-- 详细 Spec LM-FR-017 的删除已有实现，但合并、拆分、重画仍缺；WP4 从过宽的 Complete 校正为 Partial，核心 GA 仍为 72% / No-Go。
+- 详细 Spec LM-FR-017 的删除已有实现，合并由后续独立纵切关闭，当前拆分和重画仍缺；WP4 从过宽的 Complete 校正为 Partial，核心 GA 仍为 72% / No-Go。
 
 ## 2026-08-15：Space AutoCAD Core Console 开发转换链
 
