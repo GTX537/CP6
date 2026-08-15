@@ -74,6 +74,10 @@ import {
   inspectObjectCopySelection,
   type ObjectCopySource,
 } from '@/modules/space-design/commands/objectCopy'
+import {
+  buildSpaceStudioComponentCreationPlan,
+  type SpaceStudioComponentPresetId,
+} from '@/modules/space-design/components/staticComponentCatalog'
 import DesignBatchToolsPanel from '@/modules/space-design/panels/DesignBatchToolsPanel.vue'
 import { sceneElementPropertiesPayload } from '@/modules/space-design/panels/elementProperties'
 import DesignLocationCodingPanel from '@/modules/space-design/coding/DesignLocationCodingPanel.vue'
@@ -3172,48 +3176,28 @@ function openRuleOnlyCreation(): void {
   ElMessage.info('请在 RuleOnly 模式中选择已上传 CAD 来源和货架模板；结果确认后才写入 Draft。')
 }
 
-async function createComponent(elementType: string): Promise<void> {
+async function createComponent(presetId: SpaceStudioComponentPresetId): Promise<void> {
   if (readonlyScene.value || savingElement.value) return
   const logicalId = crypto.randomUUID()
-  const point = canvasWorldPoint()
+  const point = canvasPointerWorld.value
   const x = Math.round((point?.x ?? 0) - 500)
   const y = Math.round((point?.y ?? 0) - 500)
-  const dimensions = elementType === 'Wall'
-    ? { width: 4000, height: 3000, depth: 200 }
-    : elementType === 'Column'
-      ? { width: 500, height: 3000, depth: 500 }
-      : { width: 1200, height: 2200, depth: 300 }
+  const creation = buildSpaceStudioComponentCreationPlan(
+    presetId,
+    logicalId,
+    x,
+    y,
+  )
   savingElement.value = true
   try {
-    await applyEditorCommands([{
-      type: 'CreateElement',
-      targetLogicalId: logicalId,
-      createElement: {
-        elementType,
-        geometryJson: JSON.stringify({
-          schemaVersion: 1,
-          kind: 'box',
-          width: dimensions.width,
-          height: dimensions.height,
-          depth: dimensions.depth,
-        }),
-        x,
-        y,
-        z: 0,
-        rotationZ: 0,
-        ...dimensions,
-        businessCode: `${elementType.toUpperCase()}-${logicalId.slice(0, 6)}`,
-        attributes: [],
-      },
-    }])
-    await loadScene()
+    await executeReversible(`创建${creation.preset.label}`, creation.batch)
     const created = designScene.value && buildElementCanvasPlan(designScene.value).find(
       item => item.logicalId === logicalId,
     )
     if (created) selectObjects([{ logicalId, ownerKind: 'Element' }], 'replace')
-    ElMessage.success(`${elementType} 已创建，可在属性面板继续调整`)
+    ElMessage.success(`${creation.preset.label} 已创建，可在属性面板继续调整`)
   } catch {
-    ElMessage.error(`${elementType} 创建失败，命令包已保留用于恢复`)
+    ElMessage.error(`${creation.preset.label} 创建失败，命令包已保留用于恢复`)
   } finally {
     savingElement.value = false
   }

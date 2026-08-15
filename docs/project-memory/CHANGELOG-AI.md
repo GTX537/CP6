@@ -2,6 +2,12 @@
 
 > 依据 Git log 汇总，不替代完整 Git 历史。重点记录影响接手判断的里程碑。
 
+## 2026-08-15：Space Studio 托盘与静态设备构件库
+
+- 构件库补齐墙/柱/门/月台、托盘和输送线、AGV、叉车、工作台、电子秤、充电站，预设固定领域类型、尺寸、业务编码前缀与 Design 属性。
+- 六类设备明确标记 `runtimeBehavior=Static` 和设备子类，不混入实时运行态；创建继续复用 Design V1 Lease/Revision/Hash/幂等 Fence 并进入公共撤销/重做。
+- Web 837、Space Studio Playwright 23、production build 与完整 Release solution 通过。LM-FR-022 仓库实现闭环，WP4 和 GA 72% / `NoGo` 状态不变。
+
 ## 2026-08-15：Space Studio 底图图层控制
 
 - “图层”模式接通底图显示/隐藏、透明度和锁定控制，直接驱动真实 Konva 画布；锁定阻止标定，新挂接自动解锁、标定成功自动锁回。

@@ -24,6 +24,43 @@ describe('SpaceStudioContextPanel', () => {
     expect(wrapper.get('[data-test="layout-editor"]').text()).toBe('layout editor')
   })
 
+  it('offers the frozen pallet and six static-equipment presets', async () => {
+    const wrapper = mount(SpaceStudioContextPanel, {
+      props: {
+        hasUnderlay: false,
+        calibrated: false,
+        readonly: false,
+        underlayVisible: true,
+        underlayOpacity: 55,
+        underlayLocked: true,
+      },
+    })
+
+    await wrapper.findAll('.studio-modebar button')[1]!.trigger('click')
+    expect(wrapper.findAll('.component-grid button').map(button => button.text()))
+      .toEqual([
+        '+ 墙体',
+        '+ 柱',
+        '+ 门',
+        '+ 月台',
+        '+ 托盘',
+        '+ 输送线',
+        '+ AGV',
+        '+ 叉车',
+        '+ 工作台',
+        '+ 电子秤',
+        '+ 充电站',
+      ])
+
+    await wrapper.get('[data-test="component-preset-agv"]').trigger('click')
+    expect(wrapper.emitted('createComponent')).toEqual([['agv']])
+
+    await wrapper.setProps({ readonly: true })
+    expect(wrapper.findAll('.component-grid button').every(
+      button => button.attributes('disabled') !== undefined,
+    )).toBe(true)
+  })
+
   it('exposes the missing underlay calibration action after a source is attached', async () => {
     const wrapper = mount(SpaceStudioContextPanel, {
       props: {

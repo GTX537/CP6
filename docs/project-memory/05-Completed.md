@@ -1,5 +1,12 @@
 # 已完成能力与近期里程碑
 
+## 2026-08-15 Space Studio 托盘与静态设备构件库
+
+- 构件库与既有 Zone/Aisle/Rack/Location 表单同页，补齐墙、柱、门、月台、托盘和输送线、AGV、叉车、工作台、电子秤、充电站六类固定静态设备。
+- 每个预设固定领域类型、尺寸、业务编码前缀、目录/设备子类和 `Static` 设计属性；不引入实时状态、运动或第二套领域权威。
+- 创建复用 Design V1 租约/Revision/Hash/幂等命令链，并以 Delete/Restore 进入公共撤销/重做历史。Web 837/837、Space Studio Playwright 23/23、production build 和完整 Release solution 通过。详细报告见 `docs/space/reports/2026-08-15-space-studio-static-component-library.md`。
+- LM-FR-022 仓库实现闭环；真实多路径、Provider、WMS 和 Pilot 接受仍未完成，WP4 保持 Partial/Pending，核心 GA 保持 72% / `NoGo`。
+
 ## 2026-08-15 Space Studio 底图图层控制
 
 - “图层”模式提供底图显示/隐藏、0～100% 透明度和锁定/解锁；控制直接重绘 Konva 底图，44px 热区、键盘焦点、状态文本和无底图禁用状态同步。

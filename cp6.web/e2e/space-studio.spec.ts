@@ -530,6 +530,76 @@ test('creates, updates and explicitly deletes business layout through the leased
   expect(errors).toEqual([])
 })
 
+test('creates the pallet and six static-equipment presets in the shared 2D/3D scene', async ({ page }) => {
+  const errors = collectPageErrors(page)
+  const editorBodies: Array<Record<string, any>> = []
+  await installSpaceStudioFixtures(page, [], { editorBodies })
+  await page.setViewportSize({ width: 1440, height: 900 })
+  await page.goto(studioUrl)
+
+  await page.locator('.studio-modebar button').filter({ hasText: '构件' }).click()
+  for (const label of ['托盘', '输送线', 'AGV', '叉车', '工作台', '电子秤', '充电站']) {
+    await page.getByRole('button', { name: `创建${label}`, exact: true }).click()
+    await expect(page.getByText(`${label} 已创建，可在属性面板继续调整`, { exact: true }))
+      .toBeVisible()
+  }
+
+  expect(editorBodies).toHaveLength(7)
+  const created = editorBodies.map(body => body.commands[0])
+  expect(created.map(command => command.createElement.elementType)).toEqual([
+    'Pallet',
+    'Conveyor',
+    'Device',
+    'Device',
+    'Workstation',
+    'StaticEquipment',
+    'StaticEquipment',
+  ])
+  expect(created.map(command => command.createElement.businessCode.split('-')[0])).toEqual([
+    'PAL',
+    'CONV',
+    'AGV',
+    'FORK',
+    'BENCH',
+    'SCALE',
+    'CHG',
+  ])
+  expect(created.slice(1).map(command => command.createElement.attributes.find(
+    (attribute: Record<string, string>) => attribute.key === 'equipmentKind',
+  )?.value)).toEqual([
+    'Conveyor',
+    'Agv',
+    'Forklift',
+    'Workbench',
+    'ElectronicScale',
+    'ChargingStation',
+  ])
+  for (const body of editorBodies) {
+    expect(body.leaseId).toBe(ownedLease().leaseId)
+    expect(body.clientInstanceId).toBeTruthy()
+    expect(body.expectedContentHash).toBeTruthy()
+  }
+
+  const tools = page.getByRole('toolbar', { name: 'Space Studio 编辑命令' })
+  await tools.getByRole('button', { name: '撤销', exact: true }).click()
+  await expect(page.getByText('已撤销：创建充电站', { exact: true })).toBeVisible()
+  expect(editorBodies[7]!.commands[0]).toMatchObject({
+    type: 'DeleteObject',
+    targetLogicalId: created[6]!.targetLogicalId,
+  })
+  await tools.getByRole('button', { name: '重做', exact: true }).click()
+  await expect(page.getByText('已重做：创建充电站', { exact: true })).toBeVisible()
+  expect(editorBodies[8]!.commands[0]).toMatchObject({
+    type: 'RestoreLogicalObject',
+    targetLogicalId: created[6]!.targetLogicalId,
+  })
+
+  await page.getByRole('button', { name: '3D', exact: true }).click()
+  await expect(page.getByText('2D/3D 清单一致', { exact: true })).toBeVisible()
+  await expect(page.getByText('2D 9 / 3D 9', { exact: true })).toBeVisible()
+  expect(errors).toEqual([])
+})
+
 test('drags selected rack and element through one leased reversible batch', async ({ page }) => {
   const errors = collectPageErrors(page)
   const editorBodies: Array<Record<string, any>> = []
