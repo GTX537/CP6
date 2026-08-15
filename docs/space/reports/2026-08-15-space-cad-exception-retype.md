@@ -22,7 +22,7 @@ Space Studio 现在允许用户在属性检查器中把一个通用 CAD 异常�
 | 删除 | 已有实现 | 既有 `DeleteObject`、批量删除与补偿命令链 |
 | 合并 | 已由后续独立纵切实现 | 见 `2026-08-15-space-cad-exception-merge.md` |
 | 拆分 | 已由后续纵切实现 | `2026-08-15-space-cad-exception-split.md` |
-| 重画 | 未实现 | 需要画布绘制交互、几何校验、原子替换和撤销合同 |
+| 重画 | 已由后续纵切实现 | `2026-08-15-space-cad-exception-redraw.md` |
 
 因此 WP4 的仓库实现状态为 `Partial`，不是 `Complete`。该校正不改变冻结的整体 72% 基线，也不改变所有 GA Gate 的 `Pending` 接受状态。
 

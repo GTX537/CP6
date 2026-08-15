@@ -56,6 +56,12 @@ import {
   buildElementSplitPlan,
   type ElementSplitPlan,
 } from '@/modules/space-design/commands/elementSplit'
+import {
+  buildElementRedrawPlan,
+  maximumElementRedrawVertices,
+  validateElementRedrawTarget,
+  type ElementRedrawPoint,
+} from '@/modules/space-design/commands/elementRedraw'
 import DesignBatchToolsPanel from '@/modules/space-design/panels/DesignBatchToolsPanel.vue'
 import { sceneElementPropertiesPayload } from '@/modules/space-design/panels/elementProperties'
 import DesignLocationCodingPanel from '@/modules/space-design/coding/DesignLocationCodingPanel.vue'
@@ -78,6 +84,7 @@ import {
   type SpaceStudioProjectionMode,
 } from '@/modules/space-design/preview3d/floorViewState'
 import { CadIssueOverlayLayer } from '@/modules/space-design/cad-review/CadIssueOverlayLayer'
+import { ElementRedrawOverlayLayer } from '@/modules/space-design/canvas2d/ElementRedrawOverlayLayer'
 import DesignCadIssuePanel from '@/modules/space-design/cad-review/DesignCadIssuePanel.vue'
 import DesignExcelCadMatchPanel from '@/modules/space-design/cad-review/DesignExcelCadMatchPanel.vue'
 import DesignCadStartWizard from '@/modules/space-design/cad-start/DesignCadStartWizard.vue'
@@ -204,7 +211,8 @@ const parseStartedAt = ref<Date | null>(null)
 const parseElapsed = ref('')
 const parseError = ref('')
 const canvasZoomPercent = ref(5)
-const canvasSelectionTool = ref<'select' | 'pan' | 'measure'>('select')
+type CanvasTool = 'select' | 'pan' | 'measure' | 'redraw'
+const canvasSelectionTool = ref<CanvasTool>('select')
 const canvasViewport = ref({
   ...(initialFloorViewState?.canvasViewport ?? defaultCanvasViewport),
 })
@@ -215,6 +223,11 @@ const pointerCoordinates = ref('X — / Y —')
 const canvasPointerWorld = ref<{ x: number; y: number } | null>(null)
 const measurementText = ref('')
 const measurementStart = ref<{ x: number; y: number } | null>(null)
+const redrawSession = ref<{
+  targetLogicalId: string
+  points: ElementRedrawPoint[]
+} | null>(null)
+const redrawHover = ref<ElementRedrawPoint | null>(null)
 let panGesture: {
   screenX: number
   screenY: number
@@ -238,6 +251,7 @@ const calibrationPoints = ref([
 let stage: UnderlayStage | null = null
 let elementLayer: ElementCanvasLayer | null = null
 let cadIssueOverlay: CadIssueOverlayLayer | null = null
+let elementRedrawOverlay: ElementRedrawOverlayLayer | null = null
 let resizeObserver: ResizeObserver | null = null
 let disposed = false
 const clientInstanceId = tabClientInstanceId()
@@ -266,9 +280,13 @@ const leaseLabel = computed(() => {
 const saveLabel = computed(() => {
   if (saveState.value === 'saving') return `保存中 · ${unsavedCommands.value.length} 条`
   if (saveState.value === 'failed') return `保存失败 · ${unsavedCommands.value.length} 条未同步`
+  if (redrawSession.value) return `未保存重画 · ${redrawSession.value.points.length} 个顶点`
   if (lastSavedAt.value) return `已保存 ${lastSavedAt.value.toLocaleTimeString()}`
   return '尚无修改'
 })
+const redrawStatus = computed(() => redrawSession.value
+  ? `重画 ${redrawSession.value.points.length}/${maximumElementRedrawVertices} 点 · Enter 完成 · Backspace 回退 · Esc 取消`
+  : '')
 const cadReviewWorkspaceFreshness = computed(() => {
   const workspace = cadReviewWorkspace.value
   const scene = designScene.value
@@ -410,6 +428,29 @@ const selectedAttributes = computed<ISpaceSceneElementAttributeDto[]>(() => {
       )
     : []
 })
+const elementRedrawEligibility = computed<{ eligible: boolean; reason: string }>(() => {
+  if (!selectedElement.value) {
+    return { eligible: false, reason: '请选择一个通用元素进行重画' }
+  }
+  if (readonlyScene.value) {
+    return { eligible: false, reason: '当前场景只读，无法重画' }
+  }
+  if (projectionMode.value !== '2d') {
+    return { eligible: false, reason: '请切换到 2D 后重画' }
+  }
+  if (calibrationMode.value) {
+    return { eligible: false, reason: '请先完成或取消底图标定' }
+  }
+  try {
+    validateElementRedrawTarget(selectedElement.value)
+    return { eligible: true, reason: '' }
+  } catch (error) {
+    return {
+      eligible: false,
+      reason: error instanceof Error ? error.message : '当前对象不能重画',
+    }
+  }
+})
 const selectedMergeElements = computed<ISpaceSceneElementDto[]>(() => {
   if (
     selectedObjects.value.length < 2
@@ -520,6 +561,7 @@ onMounted(async () => {
     moveCanvasObjects,
   )
   cadIssueOverlay = new CadIssueOverlayLayer(stage.stage)
+  elementRedrawOverlay = new ElementRedrawOverlayLayer(stage.stage)
   applyCanvasViewport(canvasViewport.value, false)
   resizeObserver = new ResizeObserver((entries) => {
     const size = entries[0]?.contentRect
@@ -527,6 +569,7 @@ onMounted(async () => {
       stage?.resize(size.width, size.height)
       elementLayer?.resize()
       cadIssueOverlay?.resize()
+      elementRedrawOverlay?.resize()
     }
   })
   resizeObserver.observe(canvasRef.value)
@@ -564,6 +607,22 @@ const publishReady = computed(
 )
 
 onBeforeRouteUpdate(async () => {
+  if (redrawSession.value) {
+    try {
+      await ElMessageBox.confirm(
+        '当前重画仍未确认保存，切换楼层会丢弃这些画布顶点。',
+        '未保存重画',
+        {
+          type: 'warning',
+          confirmButtonText: '丢弃并切换',
+          cancelButtonText: '留在当前楼层',
+        },
+      )
+      cancelElementRedraw(false)
+    } catch {
+      return false
+    }
+  }
   if (!unsavedEnvelope.value && !unsavedCodingEnvelope.value) return true
   try {
     await ElMessageBox.confirm(
@@ -603,6 +662,8 @@ onBeforeUnmount(() => {
   elementLayer = null
   cadIssueOverlay?.destroy()
   cadIssueOverlay = null
+  elementRedrawOverlay?.destroy()
+  elementRedrawOverlay = null
   stage?.destroy()
   stage = null
 })
@@ -632,6 +693,7 @@ watch(narrowReadonly, async (isNarrow, wasNarrow) => {
 
 watch(readonlyScene, (isReadonly) => {
   elementLayer?.setEnabled(!isReadonly && canvasSelectionTool.value === 'select')
+  if (isReadonly && redrawSession.value) cancelElementRedraw(false)
 })
 
 watch([visible, opacity, locked], () => {
@@ -921,6 +983,7 @@ function applyCanvasViewport(
   stage?.setViewport(viewport)
   elementLayer?.setViewport(viewport)
   cadIssueOverlay?.setViewport(viewport)
+  elementRedrawOverlay?.setViewport(viewport)
   if (persist) scheduleFloorViewStatePersistence()
 }
 
@@ -929,6 +992,7 @@ function resetCanvasViewport(): void {
 }
 
 function setProjectionMode(mode: SpaceStudioProjectionMode): void {
+  if (mode === '3d' && redrawSession.value) cancelElementRedraw(false)
   projectionMode.value = narrowReadonly.value && mode === '2d' ? '3d' : mode
   scheduleFloorViewStatePersistence()
 }
@@ -1018,7 +1082,8 @@ function canvasWorldPoint(): { x: number; y: number } | null {
   })
 }
 
-function selectCanvasTool(tool: 'select' | 'pan' | 'measure'): void {
+function selectCanvasTool(tool: Exclude<CanvasTool, 'redraw'>): void {
+  if (redrawSession.value) cancelElementRedraw(false)
   canvasSelectionTool.value = tool
   elementLayer?.setEnabled(tool === 'select' && !readonlyScene.value)
   if (tool === 'measure') {
@@ -1033,6 +1098,16 @@ function onCanvasPointerMove(): void {
   const world = canvasWorldPoint()
   canvasPointerWorld.value = world
   if (world) pointerCoordinates.value = `X ${Math.round(world.x)} / Y ${Math.round(world.y)} mm`
+  if (canvasSelectionTool.value === 'redraw') {
+    redrawHover.value = world
+      ? { x: Math.round(world.x), y: Math.round(world.y) }
+      : null
+    elementRedrawOverlay?.setDraft(
+      redrawSession.value?.points ?? [],
+      redrawHover.value,
+    )
+    return
+  }
   if (!canvasStage || !screen || !panGesture || canvasSelectionTool.value !== 'pan') return
   applyCanvasViewport({
     zoom: panGesture.viewport.zoom,
@@ -1056,6 +1131,27 @@ function onCanvasPointerUp(): void {
 }
 
 function onCanvasToolClick(): void {
+  if (canvasSelectionTool.value === 'redraw') {
+    const session = redrawSession.value
+    const world = canvasWorldPoint()
+    if (!session || !world) return
+    if (session.points.length >= maximumElementRedrawVertices) {
+      ElMessage.warning(`重画最多支持 ${maximumElementRedrawVertices} 个顶点`)
+      return
+    }
+    const point = { x: Math.round(world.x), y: Math.round(world.y) }
+    if (session.points.some((candidate) =>
+      candidate.x === point.x && candidate.y === point.y)) {
+      ElMessage.warning('重画顶点不能重复')
+      return
+    }
+    redrawSession.value = {
+      ...session,
+      points: [...session.points, point],
+    }
+    elementRedrawOverlay?.setDraft(redrawSession.value.points, redrawHover.value)
+    return
+  }
   if (canvasSelectionTool.value !== 'measure') return
   const world = canvasWorldPoint()
   if (!world) return
@@ -1070,6 +1166,87 @@ function onCanvasToolClick(): void {
   )
   measurementText.value = `测量 ${distance.toFixed(1)} mm`
   measurementStart.value = null
+}
+
+function startElementRedraw(): void {
+  const element = selectedElement.value
+  if (!element || !elementRedrawEligibility.value.eligible) {
+    ElMessage.warning(elementRedrawEligibility.value.reason)
+    return
+  }
+  const logicalId = element.revision?.logicalId
+  if (!logicalId) return
+  measurementStart.value = null
+  measurementText.value = ''
+  redrawSession.value = { targetLogicalId: logicalId, points: [] }
+  redrawHover.value = null
+  canvasSelectionTool.value = 'redraw'
+  elementLayer?.setEnabled(false)
+  elementRedrawOverlay?.setDraft([], null)
+  ElMessage.info('请依次点击多边形顶点；Enter 完成，Esc 取消')
+}
+
+function removeLastRedrawPoint(): void {
+  const session = redrawSession.value
+  if (!session || session.points.length === 0) return
+  redrawSession.value = {
+    ...session,
+    points: session.points.slice(0, -1),
+  }
+  elementRedrawOverlay?.setDraft(redrawSession.value.points, redrawHover.value)
+}
+
+function cancelElementRedraw(announce = true): void {
+  const hadSession = Boolean(redrawSession.value)
+  redrawSession.value = null
+  redrawHover.value = null
+  elementRedrawOverlay?.clear()
+  canvasSelectionTool.value = 'select'
+  elementLayer?.setEnabled(!readonlyScene.value)
+  if (announce && hadSession) ElMessage.info('已取消重画，Draft 未发生写入')
+}
+
+async function completeElementRedraw(): Promise<void> {
+  const session = redrawSession.value
+  if (!session || savingElement.value || readonlyScene.value) return
+  const element = activeElements.value.find(
+    (candidate) => candidate.revision?.logicalId === session.targetLogicalId,
+  )
+  if (!element) {
+    ElMessage.error('重画目标已失效，请刷新场景后重试')
+    cancelElementRedraw(false)
+    return
+  }
+  const revisionId = element.revision?.revisionId
+  const attributes = revisionId
+    ? (designScene.value?.elementAttributes ?? []).filter(
+        (attribute) => attribute.elementRevisionId === revisionId,
+      )
+    : []
+  let plan
+  try {
+    plan = buildElementRedrawPlan(element, attributes, session.points)
+  } catch (error) {
+    ElMessage.warning(error instanceof Error ? error.message : '重画几何无效')
+    return
+  }
+  try {
+    await ElMessageBox.confirm(
+      `将 ${plan.vertexCount} 个顶点保存为多边形，并保留对象 LogicalId ${plan.logicalId}、业务属性及 CAD 来源。确认前 Draft 尚未写入，保存后可撤销。`,
+      '确认重画',
+      {
+        type: 'warning',
+        confirmButtonText: '确认保存',
+        cancelButtonText: '继续绘制',
+      },
+    )
+  } catch {
+    return
+  }
+  const saved = await runBatchTool('重画异常对象', plan.batch)
+  if (!saved) return
+  cancelElementRedraw(false)
+  selectObjects([{ logicalId: plan.logicalId, ownerKind: 'Element' }], 'replace')
 }
 
 function onCanvasWheel(event: { evt: WheelEvent }): void {
@@ -2681,7 +2858,7 @@ async function openPublishWorkflow(): Promise<void> {
 
 function showShortcutHelp(): void {
   void ElMessageBox.alert(
-    'Ctrl/Cmd+Z 撤销 · Ctrl/Cmd+Y 重做 · Ctrl/Cmd+A 全选可批量对象 · Delete 删除 · Esc 清空选择 · V 选择 · H 平移 · M 测量 · G 定位下一个 Open 问题 · Ctrl/Cmd+S 查看保存状态 · ? 快捷键帮助',
+    'Ctrl/Cmd+Z 撤销 · Ctrl/Cmd+Y 重做 · Ctrl/Cmd+A 全选可批量对象 · Delete 删除 · Esc 清空选择/取消重画 · V 选择 · H 平移 · M 测量 · R 重画选中通用元素 · 重画中 Enter 完成、Backspace 回退顶点 · G 定位下一个 Open 问题 · Ctrl/Cmd+S 查看保存状态 · ? 快捷键帮助',
     'Space Studio 快捷键',
   )
 }
@@ -2709,6 +2886,19 @@ function onStudioKeydown(event: KeyboardEvent): void {
     return
   }
   const key = event.key.toLowerCase()
+  if (redrawSession.value) {
+    if (key === 'escape') {
+      event.preventDefault()
+      cancelElementRedraw()
+    } else if (key === 'enter') {
+      event.preventDefault()
+      void completeElementRedraw()
+    } else if (key === 'backspace') {
+      event.preventDefault()
+      removeLastRedrawPoint()
+    }
+    return
+  }
   if ((event.ctrlKey || event.metaKey) && key === 'z') {
     event.preventDefault()
     void (event.shiftKey ? redoSavedCommand() : undoSavedCommand())
@@ -2724,18 +2914,16 @@ function onStudioKeydown(event: KeyboardEvent): void {
     void removeSelected()
   } else if (key === 'escape') {
     selectObjects([], 'replace')
-    canvasSelectionTool.value = 'select'
+    selectCanvasTool('select')
   } else if (key === 'v') {
-    canvasSelectionTool.value = 'select'
-    elementLayer?.setEnabled(!readonlyScene.value)
+    selectCanvasTool('select')
   } else if (key === 'h') {
-    canvasSelectionTool.value = 'pan'
-    elementLayer?.setEnabled(false)
+    selectCanvasTool('pan')
   } else if (key === 'm') {
-    canvasSelectionTool.value = 'measure'
-    elementLayer?.setEnabled(false)
-    measurementStart.value = null
-    measurementText.value = '测量：请选择起点'
+    selectCanvasTool('measure')
+  } else if (key === 'r') {
+    event.preventDefault()
+    startElementRedraw()
   } else if ((event.ctrlKey || event.metaKey) && key === 'a') {
     event.preventDefault()
     selectObjects(
@@ -2809,6 +2997,24 @@ function tabClientInstanceId(): string {
       <button type="button" aria-keyshortcuts="V" :aria-pressed="canvasSelectionTool === 'select'" :class="{ active: canvasSelectionTool === 'select' }" @click="selectCanvasTool('select')">选择 V</button>
       <button type="button" aria-keyshortcuts="H" :aria-pressed="canvasSelectionTool === 'pan'" :class="{ active: canvasSelectionTool === 'pan' }" @click="selectCanvasTool('pan')">平移 H</button>
       <button type="button" aria-keyshortcuts="M" :aria-pressed="canvasSelectionTool === 'measure'" :class="{ active: canvasSelectionTool === 'measure' }" @click="selectCanvasTool('measure')">测量 M</button>
+      <button
+        type="button"
+        data-testid="space-redraw-tool"
+        aria-keyshortcuts="R"
+        :aria-pressed="canvasSelectionTool === 'redraw'"
+        :class="{ active: canvasSelectionTool === 'redraw' }"
+        :disabled="!redrawSession && !elementRedrawEligibility.eligible"
+        :title="elementRedrawEligibility.reason"
+        @click="redrawSession ? cancelElementRedraw() : startElementRedraw()"
+      >{{ redrawSession ? '取消重画 Esc' : '重画 R' }}</button>
+      <button
+        v-if="redrawSession"
+        type="button"
+        data-testid="space-redraw-complete"
+        aria-keyshortcuts="Enter"
+        :disabled="redrawSession.points.length < 3 || savingElement"
+        @click="completeElementRedraw"
+      >完成重画 Enter</button>
       <button type="button" aria-keyshortcuts="Control+Z Meta+Z" :disabled="!canUndo || readonlyScene" @click="undoSavedCommand">撤销</button>
       <button type="button" aria-keyshortcuts="Control+Y Meta+Y" :disabled="!canRedo || readonlyScene" @click="redoSavedCommand">重做</button>
       <button type="button" @click="resetCanvasViewport">重置视图</button>
@@ -3089,6 +3295,7 @@ function tabClientInstanceId(): string {
       <span>比例 {{ canvasZoomPercent }}%</span>
       <span>选择 {{ selectedObjects.length }}</span>
       <span v-if="measurementText">{{ measurementText }}</span>
+      <span v-if="redrawStatus" class="pending" aria-live="polite">{{ redrawStatus }}</span>
       <span>{{ saveLabel }}</span>
       <span :class="{ blocking: readonlyScene }">{{ leaseLabel }}</span>
       <span v-if="cadReviewWorkspace">阻断 {{ cadReviewWorkspace.summary.openBlockingCount }}</span>

@@ -31,9 +31,9 @@ Space Studio 已支持把 2–20 个同类型通用 CAD 异常元素合并为一
 | 删除 | 已有实现 | `DeleteObject`、批量删除与补偿命令链 |
 | 合并 | 已实现 | 本报告中的领域、真 SQL、前端、2D/3D 与 E2E 自动化 |
 | 拆分 | 已由后续纵切实现 | `2026-08-15-space-cad-exception-split.md` |
-| 重画 | 未实现 | 仍需画布绘制交互、几何校验、原子替换和撤销合同 |
+| 重画 | 已由后续纵切实现 | `2026-08-15-space-cad-exception-redraw.md` |
 
-WP4 继续为 `Partial/Pending`，核心 GA 继续为 72% / `NoGo`。拆分虽已由后续纵切关闭，画布重画仍缺；仓库实现也不替代真实 DWG/DXF、主备 Provider、黄金集、生产等价 WMS、双仓 Pilot 或五方签字。
+WP4 继续为 `Partial/Pending`，核心 GA 继续为 72% / `NoGo`。拆分和画布重画均已由后续纵切关闭；仓库实现也不替代真实 DWG/DXF、主备 Provider、黄金集、生产等价 WMS、双仓 Pilot 或五方签字。
 
 ## 可复现门禁
 

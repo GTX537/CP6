@@ -2,7 +2,7 @@
 
 ## P0：Space Studio v1.3 GA 外部与扩展门禁
 
-- WP4 详细 Spec LM-FR-017 的改类型、删除、合并和拆分已有仓库实现；当前只缺异常对象画布重画。下一独立任务分支须补绘制/几何编辑交互、几何校验、Lease + Revision + 幂等 Fence、原子替换与审计、撤销/重做和真 SQL/Playwright 证据；闭环后再复核其它未实现 LM-FR 条目，不得提前把 WP4 标回 Complete。
+- WP4 详细 Spec LM-FR-017 的改类型、删除、合并、拆分和画布重画已有仓库实现。下一独立任务先逐项复核其它 LM-FR 与三条路径的真实实现缺口；LM-FR-017 闭环不自动把 WP4 标回 Complete，也不得用 Mock/fixture 替代外部接受。
 - AutoCAD 2025 Core Console 的实验型 DWG→DXF→CAD IR 链已在本机通过并登记到 WP3 实现证据，但它不是已认证 Site Provider：下一步需先通过 Autodesk 更新/修复处理 GUI `acad.exe` 的 `HashMismatch`，再确认许可证允许的 Worker/自动化部署边界、禁网或出口控制、客户/Site 批准，并与至少一个独立备用 Provider 在同一 20 份真实黄金集上评分。未完成这些条件前不得注册生产运行时、填写 `acceptedEvidence` 或关闭 WP3/WP7。
 - 单人开发可使用 `00001`～`00005` 的 `DevelopmentSeed` 完成本地角色切换与权限测试，但它们不能计入 `CORE_TEAM_ALLOCATION`、Pilot 或五方签字。进入正式 GA 前仍必须登记具有真实身份和审批权的 Product、QA、WMS、Architecture、Security 签字人；如后续需要可登录开发账号，应另立身份/最小权限任务，不在证据人员册中保存密码或 Token。
 - 核心 GA 证据索引与失败关闭校验已建立，当前派生结果为 `NoGo`：5 类外部输入、WP0–WP8 九个接受门禁和 5 个实名签字均 Pending。下一步由真实 Owner 按 `kickoff-evidence-protocol.md` 填写结构化开工 Manifest：登记产品/QA/WMS/架构/安全签字人、2+2+1 核心团队、20 CAD 候选、至少两条 Provider 审批链/隔离 Worker、Greenfield/Retrofit 双仓和 WMS 窗口，再将各完成分区绑定到索引。任何 Complete/Accepted/Signed 证据均必须使用新证明对象；模板、fixture、一份泛化说明、本地哈希不一致或受控 URI/真实接受人/UTC 不完整不得改状态，也不得通过删除 Gate、把角色名当实名或把仓库自动化标为 Accepted 来绕过。
@@ -13,7 +13,7 @@
 - 为每个启用 CAD GA 的 Site 接入并实测一个主 DWG/DXF Provider 和一个同合同、同黄金集、同 Site 审批的备用 Provider；补齐法务、安全、数据区域、删除保留、Secret 管理和审批证据。当前默认运行注册为空，能力接口会失败关闭，不能作为真实 CAD 验收。
 - `SpaceCadProviderSqlServerTests` 已在 SQL Server LocalDB 3/3、0 skipped，关闭并发替换、唯一 Current Revision、历史追加、认证不可变、旧资格/版本失败关闭和迁移幂等的仓库真库门禁；生产等价 SQL、真实 Provider 和 Site 认证仍须随主备链外部验收执行，不能用 LocalDB 替代。
 - CAD 起始向导、sealed Preparation、parse start fence、Site 能力检查和 Rack/Element 画布拖动精调已完成仓库内闭环；拖动复用带 Lease、Floor/Content Revision 与幂等 Fence 的 Design V1 `MoveObject`，Zone/Aisle 继续走 Layout 合同，旧 `FloorEditor` 不继续发展为第二套权威。仍须完成独立人工 UX、辅助技术和 Pilot 签字。
-- WP4 的图片底图标定入口、Excel–CAD 深链审核/确认、DWG/DXF 分格式浏览器合同及异常对象改类型/删除/合并/拆分已有仓库内自动化；异常对象重画仍缺，因此实现状态为 Partial。实现闭环后还须用授权真实 DWG、DXF、Excel 和 PDF/图片在两条已认证 Provider 链及 CP6 WMS 环境完成端到端证据。Mock/fixture 结果不得计入黄金 CAD、性能、恢复或 Pilot 完成度。
+- WP4 的图片底图标定入口、Excel–CAD 深链审核/确认、DWG/DXF 分格式浏览器合同及异常对象改类型/删除/合并/拆分/重画已有仓库内自动化；WP4 仍为 Partial，须继续审计统一 Typed Changeset/三路径其余详细条目，并用授权真实 DWG、DXF、Excel 和 PDF/图片在两条已认证 Provider 链及 CP6 WMS 环境完成端到端证据。Mock/fixture 结果不得计入黄金 CAD、性能、恢复或 Pilot 完成度。
 - WP7 的正式黄金 CAD Manifest、证据协议、失败关闭专项校验和总 GA 组合门禁已完成；模板、fixture、DevelopmentSeed 和人工改写汇总不能冒充正式证据。仍须用 20 份授权真实黄金 CAD 执行 10/5/5 Calibration/Validation/Holdout，完成双标注/QA 仲裁，在同一 Source Set/冻结 Worker 上运行主备 Provider，产出 release-eligible 质量/Wilson/人工操作、Holdout Blocking 与 50 MiB/Ready P95 的受控证明。
 - 工作台 GA 快捷键、问题定位、标准 tab 焦点、窄屏 3D 保持、字号/主要热区、2D/3D 同源选择和逐 Version+Floor 视角恢复已有仓库内自动化；Iris Xe/WebGL2/500 货架/10,000 库位正式 Viewer 性能门槛已在 `bd206ff8` 以 30 次冷 Context、3,000 次命中拾取和原始证据关闭。生产 Viewer 的代码与合同已统一为 Current Published Design Revision，并由结构守卫禁止回接可变旧 floor/scene API。仍须在配置真实 SQL、已发布仓库数据和生产等价身份/部署的环境运行 Published/Draft 隔离与 Viewer E2E，完成 4.5:1 对比度、真实键盘/辅助技术与 1440×900/1280×720 人工 UX 签字。性能输入、数据集、Three.js/浏览器主版本或生产渲染路径发生实质变化时必须重跑，不得沿用旧报告。
 - WP6 已完成 Warning 集合绑定的 Preview → 显式确认 → Publish fence，交付固定低基数恢复指标、15 分钟/4 小时 Prometheus 规则和运行手册，并以 Customer/Supplier/3PL 自动化矩阵关闭仓库侧 Draft/Source/Upload/Lease/Validate/Publish/AI 外部主体边界。完整 Space Integration 已在本机 SQL Server LocalDB 实际运行 426/426、0 skipped，发布编排真库 3/3 及 CP6.Tests Space/WMS SQL 15/15 通过；这只关闭仓库真库自动化 skip。仍须在生产等价观测链实际加载规则并验证通知路由，在生产等价 SQL Server 与真实 CP6 WMS 运行发布成功、超时自动恢复、部分写入对账、同 PublishPlan 重试无重复、历史重发及旧 Published 持续服务证据，并完成备份恢复、真实 IdP HTTP 负向、独立渗透测试和安全签字。

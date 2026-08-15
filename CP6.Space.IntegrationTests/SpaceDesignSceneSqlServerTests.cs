@@ -4,6 +4,7 @@ using CP6.Space.Domain;
 using CP6.Space.Infrastructure;
 using Microsoft.Data.SqlClient;
 using Microsoft.EntityFrameworkCore;
+using System.Text.Json;
 
 namespace CP6.Space.IntegrationTests;
 
@@ -1127,6 +1128,197 @@ public sealed class SpaceDesignSceneSqlServerTests
                     item.ModelVersionId == draft.Id));
             Assert.Equal(6, await context.ElementCommandRecords.CountAsync());
             Assert.Equal(3, await context.ElementCommandBatches.CountAsync());
+        });
+    }
+
+    [SqlServerFact]
+    public async Task Element_polygon_redraw_and_saved_compensation_keep_identity_atomic()
+    {
+        await WithDatabaseAsync(async (connectionString, execution, clock) =>
+        {
+            await using var context = CreateContext(
+                connectionString,
+                execution,
+                clock);
+            var seeded = await SeedDesignModelAsync(
+                context,
+                execution.ActorId,
+                clock.UtcNow);
+            var draft = SpaceModelVersion.CreateDraft(
+                execution.TenantId,
+                seeded.Model.Id,
+                2,
+                "Element exception redraw",
+                seeded.Published.Id);
+            seeded.Model.ReserveDraft(draft);
+            var floor = SpaceFloorRevision.Create(
+                execution.TenantId,
+                draft.Id,
+                Guid.NewGuid(),
+                seeded.Model.SiteId,
+                1,
+                "F1",
+                "Floor 1",
+                height: 6000);
+            const string originalGeometry = """
+                {"schemaVersion":1,"kind":"box","width":400,"height":3000,"depth":400}
+                """;
+            const string redrawnGeometry = """
+                {"schemaVersion":1,"kind":"polygon","outer":[{"x":0,"y":0},{"x":800,"y":0},{"x":900,"y":700},{"x":100,"y":800}],"holes":[],"height":3000}
+                """;
+            var element = SpaceElementRevision.Create(
+                execution.TenantId,
+                draft.Id,
+                Guid.NewGuid(),
+                floor.LogicalId,
+                SpaceElementTypes.Column,
+                originalGeometry);
+            element.ConfigurePlacement(5200, 2400, 0, 0, 400, 3000, 400);
+            element.ConfigureBusinessLink("COL-01", "Floor", floor.LogicalId);
+            var source = SpaceModelSource.CreateInlineSource(
+                execution.TenantId,
+                draft.Id,
+                SpaceSourceType.Editor,
+                "CAD redraw source",
+                new string('d', 64));
+            element.AttachSource(source, "CAD:COLUMN-01");
+            var attribute = SpaceElementAttribute.Create(
+                execution.TenantId,
+                element,
+                SpaceElementAttributeNamespaces.Design,
+                "confidence",
+                SpaceElementAttributeValueTypes.Decimal,
+                "0.72");
+            context.AddRange(draft, floor, source, element, attribute);
+            await context.SaveChangesAsync();
+
+            var clientId = Guid.NewGuid();
+            var lease = SpaceEditLease.Create(
+                execution.TenantId,
+                draft.Id,
+                floor.LogicalId,
+                execution.ActorId,
+                "Editor",
+                clientId,
+                clock.UtcNow,
+                TimeSpan.FromSeconds(90));
+            context.EditLeases.Add(lease);
+            await context.SaveChangesAsync();
+            var service = NewService(
+                context,
+                execution,
+                clock,
+                seeded.Model.SiteId);
+            var attributes = new[]
+            {
+                new SpaceElementAttributeWriteDto(
+                    SpaceElementAttributeNamespaces.Design,
+                    "confidence",
+                    SpaceElementAttributeValueTypes.Decimal,
+                    "0.72",
+                    null),
+            };
+            SpaceUpdateElementPropertiesDto redraw() => new(
+                redrawnGeometry,
+                4800,
+                2200,
+                0,
+                0,
+                900,
+                3000,
+                800,
+                "COL-01",
+                "Floor",
+                floor.LogicalId,
+                attributes,
+                SpaceElementTypes.Column);
+            SpaceUpdateElementPropertiesDto restore() => new(
+                originalGeometry,
+                5200,
+                2400,
+                0,
+                0,
+                400,
+                3000,
+                400,
+                "COL-01",
+                "Floor",
+                floor.LogicalId,
+                attributes,
+                SpaceElementTypes.Column);
+            ApplySpaceElementCommandBatchRequest request(
+                long expectedFloorRevision,
+                SpaceUpdateElementPropertiesDto update) => new(
+                    SpaceElementCommandContract.SchemaVersion,
+                    Guid.NewGuid(),
+                    clientId,
+                    lease.LeaseId,
+                    expectedFloorRevision,
+                    [new SpaceElementCommandDto(
+                        Guid.NewGuid(),
+                        SpaceElementCommandContract.UpdateProperties,
+                        element.LogicalId,
+                        update)]);
+
+            var saved = await service.ApplyElementCommandsAsync(
+                draft.Id,
+                floor.LogicalId,
+                request(0, redraw()));
+
+            Assert.Equal(1, saved.FloorRevision);
+            Assert.Equal(1, saved.VersionContentRevision);
+            Assert.Single(saved.AffectedObjects);
+            Assert.Equal(element.LogicalId, saved.AffectedObjects[0].Element.Revision.LogicalId);
+            Assert.Equal(4800, element.X);
+            Assert.Equal(2200, element.Y);
+            Assert.Equal(0, element.RotationZ);
+            Assert.Equal(900, element.Width);
+            Assert.Equal(800, element.Depth);
+            Assert.Contains("\"kind\":\"polygon\"", element.GeometryJson);
+            Assert.Equal(source.Id, element.SourceId);
+            Assert.Equal("CAD:COLUMN-01", element.SourceRef);
+            Assert.Equal("COL-01", element.BusinessCode);
+            Assert.Equal("Floor", element.LinkedEntityType);
+            Assert.Equal(floor.LogicalId, element.LinkedLogicalId);
+            Assert.Equal(
+                "0.72",
+                Assert.Single(await context.ElementAttributes
+                    .Where(item => item.ElementRevisionId == element.Id)
+                    .ToListAsync()).Value);
+            Assert.Single(await context.ElementCommandBatches.ToListAsync());
+            var redrawAudit = Assert.Single(
+                await context.ElementCommandRecords.ToListAsync());
+            using var beforeAudit = JsonDocument.Parse(redrawAudit.BeforeJson);
+            using var afterAudit = JsonDocument.Parse(redrawAudit.AfterJson);
+            Assert.Contains(
+                "\"kind\":\"box\"",
+                beforeAudit.RootElement.GetProperty("geometryJson").GetString()!);
+            Assert.Contains(
+                "\"kind\":\"polygon\"",
+                afterAudit.RootElement.GetProperty("geometryJson").GetString()!);
+
+            var compensated = await service.ApplyElementCommandsAsync(
+                draft.Id,
+                floor.LogicalId,
+                request(1, restore()));
+            Assert.Equal(2, compensated.FloorRevision);
+            Assert.Equal(element.LogicalId, compensated.AffectedObjects[0].Element.Revision.LogicalId);
+            Assert.Contains("\"kind\":\"box\"", element.GeometryJson);
+            Assert.Equal(source.Id, element.SourceId);
+
+            var redone = await service.ApplyElementCommandsAsync(
+                draft.Id,
+                floor.LogicalId,
+                request(2, redraw()));
+            Assert.Equal(3, redone.FloorRevision);
+            Assert.Equal(3, redone.VersionContentRevision);
+            Assert.Equal(element.LogicalId, redone.AffectedObjects[0].Element.Revision.LogicalId);
+            Assert.Contains("\"kind\":\"polygon\"", element.GeometryJson);
+            Assert.Equal(3, await context.ElementCommandBatches.CountAsync());
+            Assert.Equal(3, await context.ElementCommandRecords.CountAsync());
+            Assert.Single(await context.ElementRevisions
+                .Where(item => item.ModelVersionId == draft.Id)
+                .ToListAsync());
         });
     }
 
