@@ -86,6 +86,7 @@ public sealed class SpaceDesignV1OpenApiTests
             "/api/space/design/v1/versions/{versionId}/excel-cad-matches/{jobId}",
             "/api/space/design/v1/versions/{versionId}/excel-cad-matches/{matchJobId}/confirmations",
             "/api/space/design/v1/versions/{versionId}/excel-cad-matches/{matchJobId}/confirmations/{applyJobId}",
+            "/api/space/design/v1/versions/{versionId}/excel-cad-matches/{matchJobId}/confirmations/{applyJobId}:compensate",
             "/api/space/design/v1/versions/{versionId}/cad-sources",
             "/api/space/design/v1/versions/{versionId}/cad-mapping-profiles",
             "/api/space/design/v1/versions/{versionId}/sources",
@@ -152,8 +153,8 @@ public sealed class SpaceDesignV1OpenApiTests
             .Select(operation =>
                 operation.Value.GetProperty("operationId").GetString())
             .ToArray();
-        Assert.Equal(134, operationIds.Length);
-        Assert.Equal(134, operationIds.Distinct().Count());
+        Assert.Equal(135, operationIds.Length);
+        Assert.Equal(135, operationIds.Distinct().Count());
         Assert.Contains("GetCapability", operationIds);
         Assert.Contains("ReplaceProviderConfiguration", operationIds);
         Assert.Contains("GetPolicy", operationIds);
@@ -1633,6 +1634,58 @@ public sealed class SpaceDesignV1OpenApiTests
             "clientInstanceId",
             "leaseId",
             "expectedFloorRevision");
+    }
+
+    [Fact]
+    public void Excel_CAD_compensation_requires_sealed_history_and_all_fences()
+    {
+        using var document = ReadContract();
+        var operation = document.RootElement
+            .GetProperty("paths")
+            .GetProperty(
+                "/api/space/design/v1/versions/{versionId}/excel-cad-matches/" +
+                "{matchJobId}/confirmations/{applyJobId}:compensate")
+            .GetProperty("post");
+        Assert.Equal(
+            "CompensateConfirmation",
+            operation.GetProperty("operationId").GetString());
+        Assert.True(operation.GetProperty("requestBody")
+            .GetProperty("required").GetBoolean());
+
+        var schemas = document.RootElement.GetProperty("components")
+            .GetProperty("schemas");
+        AssertExactRequired(
+            Schema(
+                schemas,
+                "CP6.Space.Contracts.CompensateSpaceExcelCadApplyRequest"),
+            "schemaVersion",
+            "direction",
+            "commandBatchId",
+            "clientInstanceId",
+            "leaseId",
+            "expectedFloorRevision",
+            "expectedContentRevision",
+            "historySha256");
+
+        var typescript = File.ReadAllText(
+            Path.Combine(
+                RepositoryRoot,
+                "sdk",
+                "typescript",
+                "space-design-v1",
+                "spaceDesignV1Client.ts"));
+        AssertRequiredTypeScriptProperties(
+            ExtractTypeBlock(
+                typescript,
+                "export interface ICompensateSpaceExcelCadApplyRequest"),
+            "schemaVersion",
+            "direction",
+            "commandBatchId",
+            "clientInstanceId",
+            "leaseId",
+            "expectedFloorRevision",
+            "expectedContentRevision",
+            "historySha256");
     }
 
     [Fact]

@@ -435,6 +435,11 @@ export interface ISpaceDesignV1Client {
     /**
      * @return OK
      */
+    compensateConfirmation(versionId: string, matchJobId: string, applyJobId: string, idempotency_Key: string, body: CompensateSpaceExcelCadApplyRequest): Promise<CompensateSpaceExcelCadApplyResponse>;
+
+    /**
+     * @return OK
+     */
     getProfiles(): Promise<SpaceExcelMappingProfileDto[]>;
 
     /**
@@ -7675,6 +7680,113 @@ export class SpaceDesignV1Client implements ISpaceDesignV1Client {
     /**
      * @return OK
      */
+    compensateConfirmation(versionId: string, matchJobId: string, applyJobId: string, idempotency_Key: string, body: CompensateSpaceExcelCadApplyRequest): Promise<CompensateSpaceExcelCadApplyResponse> {
+        let url_ = this.baseUrl + "/api/space/design/v1/versions/{versionId}/excel-cad-matches/{matchJobId}/confirmations/{applyJobId}:compensate";
+        if (versionId === undefined || versionId === null)
+            throw new globalThis.Error("The parameter 'versionId' must be defined.");
+        url_ = url_.replace("{versionId}", encodeURIComponent("" + versionId));
+        if (matchJobId === undefined || matchJobId === null)
+            throw new globalThis.Error("The parameter 'matchJobId' must be defined.");
+        url_ = url_.replace("{matchJobId}", encodeURIComponent("" + matchJobId));
+        if (applyJobId === undefined || applyJobId === null)
+            throw new globalThis.Error("The parameter 'applyJobId' must be defined.");
+        url_ = url_.replace("{applyJobId}", encodeURIComponent("" + applyJobId));
+        url_ = url_.replace(/[?&]$/, "");
+
+        const content_ = JSON.stringify(body);
+
+        let options_: RequestInit = {
+            body: content_,
+            method: "POST",
+            headers: {
+                "Idempotency-Key": idempotency_Key !== undefined && idempotency_Key !== null ? "" + idempotency_Key : "",
+                "Content-Type": "application/json",
+                "Accept": "application/json"
+            }
+        };
+
+        return this.http.fetch(url_, options_).then((_response: Response) => {
+            return this.processCompensateConfirmation(_response);
+        });
+    }
+
+    protected processCompensateConfirmation(response: Response): Promise<CompensateSpaceExcelCadApplyResponse> {
+        const status = response.status;
+        let _headers: any = {}; if (response.headers && response.headers.forEach) { response.headers.forEach((v: any, k: any) => _headers[k] = v); };
+        if (status === 200) {
+            return response.text().then((_responseText) => {
+            let result200: any = null;
+            let resultData200 = _responseText === "" ? null : JSON.parse(_responseText, this.jsonParseReviver);
+            result200 = CompensateSpaceExcelCadApplyResponse.fromJS(resultData200);
+            return result200;
+            });
+        } else if (status === 400) {
+            return response.text().then((_responseText) => {
+            let result400: any = null;
+            let resultData400 = _responseText === "" ? null : JSON.parse(_responseText, this.jsonParseReviver);
+            result400 = SpaceDesignProblemDetails.fromJS(resultData400);
+            return throwException("Bad Request", status, _responseText, _headers, result400);
+            });
+        } else if (status === 401) {
+            return response.text().then((_responseText) => {
+            let result401: any = null;
+            let resultData401 = _responseText === "" ? null : JSON.parse(_responseText, this.jsonParseReviver);
+            result401 = SpaceDesignProblemDetails.fromJS(resultData401);
+            return throwException("Unauthorized", status, _responseText, _headers, result401);
+            });
+        } else if (status === 403) {
+            return response.text().then((_responseText) => {
+            let result403: any = null;
+            let resultData403 = _responseText === "" ? null : JSON.parse(_responseText, this.jsonParseReviver);
+            result403 = SpaceDesignProblemDetails.fromJS(resultData403);
+            return throwException("Forbidden", status, _responseText, _headers, result403);
+            });
+        } else if (status === 404) {
+            return response.text().then((_responseText) => {
+            let result404: any = null;
+            let resultData404 = _responseText === "" ? null : JSON.parse(_responseText, this.jsonParseReviver);
+            result404 = SpaceDesignProblemDetails.fromJS(resultData404);
+            return throwException("Not Found", status, _responseText, _headers, result404);
+            });
+        } else if (status === 409) {
+            return response.text().then((_responseText) => {
+            let result409: any = null;
+            let resultData409 = _responseText === "" ? null : JSON.parse(_responseText, this.jsonParseReviver);
+            result409 = SpaceDesignProblemDetails.fromJS(resultData409);
+            return throwException("Conflict", status, _responseText, _headers, result409);
+            });
+        } else if (status === 422) {
+            return response.text().then((_responseText) => {
+            let result422: any = null;
+            let resultData422 = _responseText === "" ? null : JSON.parse(_responseText, this.jsonParseReviver);
+            result422 = SpaceDesignProblemDetails.fromJS(resultData422);
+            return throwException("Unprocessable Content", status, _responseText, _headers, result422);
+            });
+        } else if (status === 500) {
+            return response.text().then((_responseText) => {
+            let result500: any = null;
+            let resultData500 = _responseText === "" ? null : JSON.parse(_responseText, this.jsonParseReviver);
+            result500 = SpaceDesignProblemDetails.fromJS(resultData500);
+            return throwException("Internal Server Error", status, _responseText, _headers, result500);
+            });
+        } else if (status === 503) {
+            return response.text().then((_responseText) => {
+            let result503: any = null;
+            let resultData503 = _responseText === "" ? null : JSON.parse(_responseText, this.jsonParseReviver);
+            result503 = SpaceDesignProblemDetails.fromJS(resultData503);
+            return throwException("Service Unavailable", status, _responseText, _headers, result503);
+            });
+        } else if (status !== 200 && status !== 204) {
+            return response.text().then((_responseText) => {
+            return throwException("An unexpected server error occurred.", status, _responseText, _headers);
+            });
+        }
+        return Promise.resolve<CompensateSpaceExcelCadApplyResponse>(null as any);
+    }
+
+    /**
+     * @return OK
+     */
     getProfiles(): Promise<SpaceExcelMappingProfileDto[]> {
         let url_ = this.baseUrl + "/api/space/design/v1/mapping-profiles/excel";
         url_ = url_.replace(/[?&]$/, "");
@@ -14869,6 +14981,142 @@ export class BindSpaceWmsAdoptionRequest implements IBindSpaceWmsAdoptionRequest
 export interface IBindSpaceWmsAdoptionRequest {
     locationLogicalId?: string;
     expectedRowVersion?: string | undefined;
+}
+
+export class CompensateSpaceExcelCadApplyRequest implements ICompensateSpaceExcelCadApplyRequest {
+    schemaVersion!: number;
+    direction!: string;
+    commandBatchId!: string;
+    clientInstanceId!: string;
+    leaseId!: string;
+    expectedFloorRevision!: number;
+    expectedContentRevision!: number;
+    historySha256!: string;
+
+    constructor(data?: ICompensateSpaceExcelCadApplyRequest) {
+        if (data) {
+            for (var property in data) {
+                if (data.hasOwnProperty(property))
+                    (this as any)[property] = (data as any)[property];
+            }
+        }
+    }
+
+    init(_data?: any) {
+        if (_data) {
+            this.schemaVersion = _data["schemaVersion"];
+            this.direction = _data["direction"];
+            this.commandBatchId = _data["commandBatchId"];
+            this.clientInstanceId = _data["clientInstanceId"];
+            this.leaseId = _data["leaseId"];
+            this.expectedFloorRevision = _data["expectedFloorRevision"];
+            this.expectedContentRevision = _data["expectedContentRevision"];
+            this.historySha256 = _data["historySha256"];
+        }
+    }
+
+    static fromJS(data: any): CompensateSpaceExcelCadApplyRequest {
+        data = typeof data === 'object' ? data : {};
+        let result = new CompensateSpaceExcelCadApplyRequest();
+        result.init(data);
+        return result;
+    }
+
+    toJSON(data?: any) {
+        data = typeof data === 'object' ? data : {};
+        data["schemaVersion"] = this.schemaVersion;
+        data["direction"] = this.direction;
+        data["commandBatchId"] = this.commandBatchId;
+        data["clientInstanceId"] = this.clientInstanceId;
+        data["leaseId"] = this.leaseId;
+        data["expectedFloorRevision"] = this.expectedFloorRevision;
+        data["expectedContentRevision"] = this.expectedContentRevision;
+        data["historySha256"] = this.historySha256;
+        return data;
+    }
+}
+
+export interface ICompensateSpaceExcelCadApplyRequest {
+    schemaVersion: number;
+    direction: string;
+    commandBatchId: string;
+    clientInstanceId: string;
+    leaseId: string;
+    expectedFloorRevision: number;
+    expectedContentRevision: number;
+    historySha256: string;
+}
+
+export class CompensateSpaceExcelCadApplyResponse implements ICompensateSpaceExcelCadApplyResponse {
+    schemaVersion!: number;
+    matchJobId!: string;
+    applyJobId!: string;
+    commandBatchId!: string;
+    direction!: string;
+    historySha256!: string;
+    historyCommandCount!: number;
+    floorRevision!: number;
+    versionContentRevision!: number;
+    idempotentReplay!: boolean;
+
+    constructor(data?: ICompensateSpaceExcelCadApplyResponse) {
+        if (data) {
+            for (var property in data) {
+                if (data.hasOwnProperty(property))
+                    (this as any)[property] = (data as any)[property];
+            }
+        }
+    }
+
+    init(_data?: any) {
+        if (_data) {
+            this.schemaVersion = _data["schemaVersion"];
+            this.matchJobId = _data["matchJobId"];
+            this.applyJobId = _data["applyJobId"];
+            this.commandBatchId = _data["commandBatchId"];
+            this.direction = _data["direction"];
+            this.historySha256 = _data["historySha256"];
+            this.historyCommandCount = _data["historyCommandCount"];
+            this.floorRevision = _data["floorRevision"];
+            this.versionContentRevision = _data["versionContentRevision"];
+            this.idempotentReplay = _data["idempotentReplay"];
+        }
+    }
+
+    static fromJS(data: any): CompensateSpaceExcelCadApplyResponse {
+        data = typeof data === 'object' ? data : {};
+        let result = new CompensateSpaceExcelCadApplyResponse();
+        result.init(data);
+        return result;
+    }
+
+    toJSON(data?: any) {
+        data = typeof data === 'object' ? data : {};
+        data["schemaVersion"] = this.schemaVersion;
+        data["matchJobId"] = this.matchJobId;
+        data["applyJobId"] = this.applyJobId;
+        data["commandBatchId"] = this.commandBatchId;
+        data["direction"] = this.direction;
+        data["historySha256"] = this.historySha256;
+        data["historyCommandCount"] = this.historyCommandCount;
+        data["floorRevision"] = this.floorRevision;
+        data["versionContentRevision"] = this.versionContentRevision;
+        data["idempotentReplay"] = this.idempotentReplay;
+        return data;
+    }
+}
+
+export interface ICompensateSpaceExcelCadApplyResponse {
+    schemaVersion: number;
+    matchJobId: string;
+    applyJobId: string;
+    commandBatchId: string;
+    direction: string;
+    historySha256: string;
+    historyCommandCount: number;
+    floorRevision: number;
+    versionContentRevision: number;
+    idempotentReplay: boolean;
 }
 
 export class ConfirmSpaceExcelCadMatchRequest implements IConfirmSpaceExcelCadMatchRequest {
@@ -24112,6 +24360,8 @@ export class SpaceExcelCadApplyResultV1 implements ISpaceExcelCadApplyResultV1 {
     confirmedAtUtc?: Date;
     appliedAtUtc?: Date;
     applyPlanSha256?: string | undefined;
+    historySha256?: string | undefined;
+    historyCommandCount?: number;
 
     constructor(data?: ISpaceExcelCadApplyResultV1) {
         if (data) {
@@ -24144,6 +24394,8 @@ export class SpaceExcelCadApplyResultV1 implements ISpaceExcelCadApplyResultV1 {
             this.confirmedAtUtc = _data["confirmedAtUtc"] ? new Date(_data["confirmedAtUtc"].toString()) : undefined as any;
             this.appliedAtUtc = _data["appliedAtUtc"] ? new Date(_data["appliedAtUtc"].toString()) : undefined as any;
             this.applyPlanSha256 = _data["applyPlanSha256"];
+            this.historySha256 = _data["historySha256"];
+            this.historyCommandCount = _data["historyCommandCount"];
         }
     }
 
@@ -24176,6 +24428,8 @@ export class SpaceExcelCadApplyResultV1 implements ISpaceExcelCadApplyResultV1 {
         data["confirmedAtUtc"] = this.confirmedAtUtc ? this.confirmedAtUtc.toISOString() : undefined as any;
         data["appliedAtUtc"] = this.appliedAtUtc ? this.appliedAtUtc.toISOString() : undefined as any;
         data["applyPlanSha256"] = this.applyPlanSha256;
+        data["historySha256"] = this.historySha256;
+        data["historyCommandCount"] = this.historyCommandCount;
         return data;
     }
 }
@@ -24201,6 +24455,8 @@ export interface ISpaceExcelCadApplyResultV1 {
     confirmedAtUtc?: Date;
     appliedAtUtc?: Date;
     applyPlanSha256?: string | undefined;
+    historySha256?: string | undefined;
+    historyCommandCount?: number;
 }
 
 export enum SpaceExcelCadMatchDisposition {

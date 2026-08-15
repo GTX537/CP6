@@ -158,7 +158,11 @@ test('reviews and confirms the authoritative CAD plus Excel match in the studio'
   const errors = collectPageErrors(page)
   const methods: string[] = []
   const matchBodies: Array<Record<string, any>> = []
-  await installSpaceStudioFixtures(page, methods, { matchBodies })
+  const matchHistoryBodies: Array<Record<string, any>> = []
+  await installSpaceStudioFixtures(page, methods, {
+    matchBodies,
+    matchHistoryBodies,
+  })
   await page.setViewportSize({ width: 1440, height: 900 })
   await page.goto(`${studioUrl}?matchJobId=${excelCadMatchJobId}`)
 
@@ -185,6 +189,34 @@ test('reviews and confirms the authoritative CAD plus Excel match in the studio'
     leaseId: ownedLease().leaseId,
     expectedFloorRevision: 7,
   }])
+
+  await page.getByRole('tab', { name: '批量', exact: true }).click()
+  const tools = page.locator('[data-test="design-batch-tools"]')
+  await tools.getByRole('button', { name: '撤销', exact: true }).click()
+  await expect(page.getByText(
+    '已撤销：合入 Excel–CAD 匹配（3 项）',
+    { exact: true },
+  )).toBeVisible()
+  await tools.getByRole('button', { name: '重做', exact: true }).click()
+  await expect(page.getByText(
+    '已重做：合入 Excel–CAD 匹配（3 项）',
+    { exact: true },
+  )).toBeVisible()
+  expect(matchHistoryBodies).toHaveLength(2)
+  expect(matchHistoryBodies[0]).toMatchObject({
+    schemaVersion: 2,
+    direction: 'Undo',
+    clientInstanceId: expect.any(String),
+    leaseId: ownedLease().leaseId,
+    expectedFloorRevision: 8,
+    expectedContentRevision: 8,
+    historySha256: 'e'.repeat(64),
+  })
+  expect(matchHistoryBodies[1]).toMatchObject({
+    direction: 'Redo',
+    expectedFloorRevision: 9,
+    expectedContentRevision: 9,
+  })
   expect(errors).toEqual([])
 })
 
@@ -1008,6 +1040,7 @@ async function installSpaceStudioFixtures(
     cadApplyBodies?: Array<Record<string, any>>
     underlayBodies?: Array<Record<string, any>>
     matchBodies?: Array<Record<string, any>>
+    matchHistoryBodies?: Array<Record<string, any>>
     mergeEnabled?: boolean
     splitEnabled?: boolean
   } = {},
@@ -1202,6 +1235,8 @@ async function installSpaceStudioFixtures(
     }
     if (url.pathname === `${excelCadMatchPath}/confirmations/${excelCadApplyJobId}`) {
       methods.push('GET Excel-CAD confirmation')
+      scene.floor.revisionNumber = 8
+      scene.contentRevision = 8
       await route.fulfill({
         json: {
           matchJobId: excelCadMatchJobId,
@@ -1209,6 +1244,37 @@ async function installSpaceStudioFixtures(
           commandBatchId: 'cccccccc-4444-4444-4444-444444444444',
           jobStatus: 'Succeeded',
           expectedContentRevision: 7,
+          result: {
+            schemaVersion: 2,
+            historySha256: 'e'.repeat(64),
+            historyCommandCount: 3,
+          },
+        },
+      })
+      return
+    }
+    if (url.pathname ===
+        `${excelCadMatchPath}/confirmations/${excelCadApplyJobId}:compensate`
+      && request.method() === 'POST') {
+      methods.push('POST Excel-CAD compensation')
+      const body = request.postDataJSON() as Record<string, any>
+      options.matchHistoryBodies?.push(body)
+      scene.floor.revisionNumber += 1
+      scene.contentRevision += 1
+      scene.racks[0].revision.lifecycleState =
+        body.direction === 'Undo' ? 'Disabled' : 'Active'
+      await route.fulfill({
+        json: {
+          schemaVersion: 2,
+          matchJobId: excelCadMatchJobId,
+          applyJobId: excelCadApplyJobId,
+          commandBatchId: body.commandBatchId,
+          direction: body.direction,
+          historySha256: body.historySha256,
+          historyCommandCount: 3,
+          floorRevision: scene.floor.revisionNumber,
+          versionContentRevision: scene.contentRevision,
+          idempotentReplay: false,
         },
       })
       return

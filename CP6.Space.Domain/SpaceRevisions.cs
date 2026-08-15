@@ -39,6 +39,22 @@ public abstract class SpaceRevisionEntity : SpaceTenantEntity
         SourceRef = SpaceRevisionValue.OptionalText(sourceRef, 500, nameof(sourceRef));
     }
 
+    public void RestoreSource(SpaceModelSource? source, string? sourceRef)
+    {
+        if (source is null)
+        {
+            if (!string.IsNullOrWhiteSpace(sourceRef))
+                throw new ArgumentException(
+                    "A source reference requires a source.",
+                    nameof(sourceRef));
+            SourceId = null;
+            SourceRef = null;
+            return;
+        }
+
+        AttachSource(source, sourceRef);
+    }
+
     public void ChangeLifecycle(SpaceLifecycleState lifecycleState)
     {
         LifecycleState = lifecycleState;
@@ -422,6 +438,45 @@ public sealed class SpaceRackRevision : SpaceRevisionEntity
         RackType = SpaceRevisionValue.OptionalText(rackType, 64, nameof(rackType));
         ChangeLifecycle(SpaceLifecycleState.Active);
     }
+
+    public void RestoreSnapshot(
+        Guid floorLogicalId,
+        Guid zoneLogicalId,
+        Guid? aisleLogicalId,
+        string rackCode,
+        string name,
+        string? rackType,
+        Guid? templateVersionId,
+        int x,
+        int y,
+        int z,
+        decimal rotationZ,
+        int width,
+        int depth,
+        int height,
+        SpaceLifecycleState lifecycleState,
+        SpaceModelSource? source,
+        string? sourceRef)
+    {
+        UpdateDefinition(
+            floorLogicalId,
+            zoneLogicalId,
+            rackCode,
+            aisleLogicalId,
+            name,
+            rackType);
+        ConfigureGeometry(
+            x,
+            y,
+            z,
+            rotationZ,
+            width,
+            depth,
+            height,
+            templateVersionId);
+        ChangeLifecycle(lifecycleState);
+        RestoreSource(source, sourceRef);
+    }
 }
 
 public sealed class SpaceRackLevelRevision : SpaceRevisionEntity
@@ -516,6 +571,37 @@ public sealed class SpaceRackLevelRevision : SpaceRevisionEntity
     public void Restore()
     {
         ChangeLifecycle(SpaceLifecycleState.Active);
+    }
+
+    public void RestoreSnapshot(
+        Guid rackLogicalId,
+        int levelNo,
+        int bottomZ,
+        int clearHeight,
+        int binCount,
+        int depthCount,
+        int cellWidth,
+        int cellDepth,
+        int beamHeight,
+        decimal? maxLoad,
+        SpaceLifecycleState lifecycleState,
+        SpaceModelSource? source,
+        string? sourceRef)
+    {
+        SpaceRevisionValue.RequireIdentity(rackLogicalId, nameof(rackLogicalId));
+        RackLogicalId = rackLogicalId;
+        UpdateSpecification(
+            levelNo,
+            bottomZ,
+            clearHeight,
+            binCount,
+            depthCount,
+            cellWidth,
+            cellDepth,
+            maxLoad,
+            beamHeight);
+        ChangeLifecycle(lifecycleState);
+        RestoreSource(source, sourceRef);
     }
 
     private static void RequirePositive(int value, string parameterName)
@@ -741,6 +827,64 @@ public sealed class SpaceLocationRevision : SpaceRevisionEntity
         LocationType = SpaceLocationTypes.NormalizeOptional(locationType);
         if (ExternalBindingState == SpaceExternalBindingState.Unbound)
             CodeOrigin = SpaceLocationCodeOrigin.Imported;
+    }
+
+    public void RestoreSnapshot(
+        Guid floorLogicalId,
+        Guid? rackLogicalId,
+        string? locationCode,
+        int columnNo,
+        int levelNo,
+        int depthNo,
+        int width,
+        int height,
+        int depth,
+        decimal? maxLoad,
+        string? locationType,
+        SpaceLocationCodeOrigin codeOrigin,
+        SpaceExternalBindingState externalBindingState,
+        SpaceLifecycleState lifecycleState,
+        SpaceModelSource? source,
+        string? sourceRef)
+    {
+        SpaceRevisionValue.RequireIdentity(floorLogicalId, nameof(floorLogicalId));
+        if (rackLogicalId == Guid.Empty)
+            throw new ArgumentException(
+                "Rack logical identity cannot be empty.",
+                nameof(rackLogicalId));
+        if (columnNo <= 0 || levelNo <= 0 || depthNo <= 0)
+            throw new ArgumentOutOfRangeException(
+                nameof(columnNo),
+                "Location coordinates must be positive.");
+        SpaceRevisionValue.RequireDimensions(width, height, depth);
+        if (maxLoad < 0)
+            throw new ArgumentOutOfRangeException(nameof(maxLoad));
+        if (!Enum.IsDefined(codeOrigin) || !Enum.IsDefined(externalBindingState) ||
+            !Enum.IsDefined(lifecycleState))
+        {
+            throw new ArgumentOutOfRangeException(
+                nameof(codeOrigin),
+                "Location snapshot enum values are invalid.");
+        }
+
+        FloorLogicalId = floorLogicalId;
+        RackLogicalId = rackLogicalId;
+        LocationCode = SpaceRevisionValue.OptionalText(
+            locationCode,
+            200,
+            nameof(locationCode));
+        ColumnNo = columnNo;
+        LevelNo = levelNo;
+        DepthNo = depthNo;
+        Width = width;
+        Height = height;
+        Depth = depth;
+        MaxLoad = maxLoad;
+        LocationType = SpaceLocationTypes.NormalizeOptional(locationType);
+        CodeOrigin = codeOrigin;
+        ExternalBindingState = externalBindingState;
+        ChangeLifecycle(lifecycleState);
+        RestoreSource(source, sourceRef);
     }
 }
 

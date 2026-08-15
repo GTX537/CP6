@@ -245,6 +245,9 @@ public sealed class SpaceExcelCadMatchServiceTests
         Assert.Equal(0, result.UnchangedRackCount);
         Assert.Equal(1, result.ResultFloorRevision);
         Assert.Equal(1, result.ResultContentRevision);
+        Assert.Equal(SpaceExcelCadApplyVersions.SchemaVersion, result.SchemaVersion);
+        Assert.Matches("^[0-9a-f]{64}$", result.HistorySha256!);
+        Assert.Equal(1, result.HistoryCommandCount);
         var rack = await fixture.Context.RackRevisions.SingleAsync();
         Assert.Equal("R-001", rack.RackCode);
         Assert.Equal("H:160", rack.SourceRef);
@@ -258,6 +261,136 @@ public sealed class SpaceExcelCadMatchServiceTests
         Assert.Equal(1, (await fixture.Context.FloorRevisions.SingleAsync()).Revision);
         Assert.Equal(1, (await fixture.Context.Versions.SingleAsync(item =>
             item.Id == fixture.Version.Id)).ContentRevision);
+    }
+
+    [Fact]
+    public async Task Confirmed_apply_undo_and_redo_use_sealed_server_history()
+    {
+        await using var fixture = await CreateFixtureAsync();
+        var versionId = fixture.Version.Id;
+        var match = await ProduceSucceededMatchAsync(fixture, "history-match-1");
+        var confirmed = await fixture.ApplyService.ConfirmAsync(
+            versionId,
+            match.JobId,
+            ConfirmRequest(fixture, match),
+            "history-confirm-1");
+        var lease = await ClaimAsync(
+            fixture,
+            confirmed.ApplyJobId,
+            SpaceExcelCadApplyJobProcessor.Version,
+            "history-worker");
+        var executor = new SpaceExcelCadApplyJobStepExecutor(
+            fixture.Context,
+            new FileServiceProvider(fixture.Files),
+            new FixedWorkbookReader(fixture.Workbook),
+            new FixedMappingService(fixture.Profile),
+            new FixedClock());
+        var output = await executor.ExecuteAsync(new SpaceJobStepExecution(
+            lease,
+            1,
+            SpaceExcelCadApplyJobProcessor.ApplyConfirmedArtifact));
+        var result = JsonSerializer.Deserialize<SpaceExcelCadApplyResultV1>(
+            output.CheckpointJson,
+            JsonOptions)!;
+        var applyJob = await fixture.Context.Jobs.SingleAsync(item =>
+            item.Id == confirmed.ApplyJobId);
+        var attempt = await fixture.Context.JobAttempts.SingleAsync(item =>
+            item.Id == lease.AttemptId);
+        attempt.Succeed(Now);
+        applyJob.Complete(
+            attempt.Id,
+            attempt.WorkerId,
+            Now,
+            output.CheckpointJson);
+        await fixture.Context.SaveChangesAsync();
+        fixture.Context.ChangeTracker.Clear();
+
+        var undoRequest = new CompensateSpaceExcelCadApplyRequest(
+            SpaceExcelCadApplyVersions.SchemaVersion,
+            SpaceExcelCadCompensationDirections.Undo,
+            Guid.NewGuid(),
+            fixture.ClientInstanceId,
+            fixture.EditLeaseId,
+            1,
+            1,
+            result.HistorySha256!);
+        var undone = await fixture.ApplyService.CompensateAsync(
+            versionId,
+            match.JobId,
+            confirmed.ApplyJobId,
+            undoRequest,
+            "history-undo-1");
+        var replay = await fixture.ApplyService.CompensateAsync(
+            versionId,
+            match.JobId,
+            confirmed.ApplyJobId,
+            undoRequest,
+            "history-undo-1");
+
+        Assert.Equal(2, undone.FloorRevision);
+        Assert.Equal(2, undone.VersionContentRevision);
+        Assert.True(replay.IdempotentReplay);
+        Assert.Equal(
+            SpaceLifecycleState.Disabled,
+            (await fixture.Context.RackRevisions.SingleAsync()).LifecycleState);
+        var source = await fixture.Context.Sources.SingleAsync(item =>
+            item.Id == fixture.Request.ExcelSourceId);
+        Assert.Equal(SpaceSourceState.PreviewReady, source.State);
+        Assert.Null(source.ImportedCommandBatchId);
+
+        fixture.Context.ChangeTracker.Clear();
+        var redoRequest = undoRequest with
+        {
+            Direction = SpaceExcelCadCompensationDirections.Redo,
+            CommandBatchId = Guid.NewGuid(),
+            ExpectedFloorRevision = 2,
+            ExpectedContentRevision = 2,
+        };
+        var redone = await fixture.ApplyService.CompensateAsync(
+            versionId,
+            match.JobId,
+            confirmed.ApplyJobId,
+            redoRequest,
+            "history-redo-1");
+
+        Assert.Equal(3, redone.FloorRevision);
+        Assert.Equal(3, redone.VersionContentRevision);
+        Assert.Equal(
+            SpaceLifecycleState.Active,
+            (await fixture.Context.RackRevisions.SingleAsync()).LifecycleState);
+        source = await fixture.Context.Sources.SingleAsync(item =>
+            item.Id == fixture.Request.ExcelSourceId);
+        Assert.Equal(SpaceSourceState.Imported, source.State);
+        Assert.Equal(confirmed.CommandBatchId, source.ImportedCommandBatchId);
+        Assert.Equal(3, await fixture.Context.ElementCommandBatches.CountAsync());
+        Assert.Equal(3, await fixture.Context.ElementCommandRecords.CountAsync());
+
+        var editedRack = await fixture.Context.RackRevisions.SingleAsync();
+        editedRack.ConfigureGeometry(
+            editedRack.X + 10,
+            editedRack.Y,
+            editedRack.Z,
+            editedRack.RotationZ,
+            editedRack.Width,
+            editedRack.Depth,
+            editedRack.Height,
+            editedRack.TemplateVersionId);
+        await fixture.Context.SaveChangesAsync();
+        fixture.Context.ChangeTracker.Clear();
+        var conflict = await Assert.ThrowsAsync<SpaceProblemException>(() =>
+            fixture.ApplyService.CompensateAsync(
+                versionId,
+                match.JobId,
+                confirmed.ApplyJobId,
+                undoRequest with
+                {
+                    CommandBatchId = Guid.NewGuid(),
+                    ExpectedFloorRevision = 3,
+                    ExpectedContentRevision = 3,
+                },
+                "history-undo-after-edit"));
+        Assert.Equal(SpaceErrorCodes.ConcurrencyConflict, conflict.Code);
+        Assert.Equal(3, await fixture.Context.ElementCommandBatches.CountAsync());
     }
 
     [Fact]
@@ -675,6 +808,76 @@ public sealed class SpaceExcelCadMatchServiceTests
         Assert.Equal(10, commands.Length);
         Assert.Equal(Enumerable.Range(0, 10),
             commands.Select(item => item.SequenceNo));
+
+        var result = JsonSerializer.Deserialize<SpaceExcelCadApplyResultV1>(
+            first.CheckpointJson,
+            JsonOptions)!;
+        var applyJob = await fixture.Context.Jobs.SingleAsync(item =>
+            item.Id == confirmed.ApplyJobId);
+        var attempt = await fixture.Context.JobAttempts.SingleAsync(item =>
+            item.Id == lease.AttemptId);
+        attempt.Succeed(Now);
+        applyJob.Complete(
+            attempt.Id,
+            attempt.WorkerId,
+            Now,
+            first.CheckpointJson);
+        await fixture.Context.SaveChangesAsync();
+        fixture.Context.ChangeTracker.Clear();
+
+        var historyRequest = new CompensateSpaceExcelCadApplyRequest(
+            SpaceExcelCadApplyVersions.SchemaVersion,
+            SpaceExcelCadCompensationDirections.Undo,
+            Guid.NewGuid(),
+            fixture.ClientInstanceId,
+            fixture.EditLeaseId,
+            1,
+            1,
+            result.HistorySha256!);
+        await fixture.ApplyService.CompensateAsync(
+            fixture.Version.Id,
+            match.JobId,
+            confirmed.ApplyJobId,
+            historyRequest,
+            "metadata-history-undo");
+
+        Assert.All(
+            await fixture.Context.RackRevisions.ToArrayAsync(),
+            item => Assert.Equal(
+                SpaceLifecycleState.Disabled,
+                item.LifecycleState));
+        Assert.All(
+            await fixture.Context.RackLevelRevisions.ToArrayAsync(),
+            item => Assert.Equal(
+                SpaceLifecycleState.Disabled,
+                item.LifecycleState));
+        Assert.All(
+            await fixture.Context.LocationRevisions.ToArrayAsync(),
+            item => Assert.Equal(
+                SpaceLifecycleState.Disabled,
+                item.LifecycleState));
+        Assert.Empty(await fixture.Context.LocationExternalBindings.ToArrayAsync());
+        Assert.Empty(await fixture.Context.DesignAttributes.ToArrayAsync());
+
+        fixture.Context.ChangeTracker.Clear();
+        await fixture.ApplyService.CompensateAsync(
+            fixture.Version.Id,
+            match.JobId,
+            confirmed.ApplyJobId,
+            historyRequest with
+            {
+                Direction = SpaceExcelCadCompensationDirections.Redo,
+                CommandBatchId = Guid.NewGuid(),
+                ExpectedFloorRevision = 2,
+                ExpectedContentRevision = 2,
+            },
+            "metadata-history-redo");
+
+        Assert.Equal(2, await fixture.Context.LocationExternalBindings.CountAsync());
+        Assert.Equal(3, await fixture.Context.DesignAttributes.CountAsync());
+        Assert.All(
+            await fixture.Context.LocationRevisions.ToArrayAsync(),
+            item => Assert.Equal(SpaceLifecycleState.Active, item.LifecycleState));
     }
 
     [Fact]
