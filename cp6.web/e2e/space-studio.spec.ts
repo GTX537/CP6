@@ -175,8 +175,13 @@ test('uploads and calibrates an image underlay without internal identifiers', as
   await expect(page.getByText('底图：待标定', { exact: true })).toBeVisible()
 
   await page.getByRole('button', { name: '标定底图', exact: true }).click()
-  await expect(page.getByText('两点标定', { exact: true })).toBeVisible()
-  await page.locator('.calibration-point-row').nth(2).locator('input').nth(0).fill('10000')
+  await expect(page.getByText('两点实距标定', { exact: true })).toBeVisible()
+  await page.locator('[data-test="calibration-distance"] input').fill('8640')
+  await page.locator('[data-test="calibration-origin-x"] input').fill('1000')
+  await page.locator('[data-test="calibration-origin-y"] input').fill('2000')
+  await page.locator('[data-test="calibration-rotation"] input').fill('90')
+  await page.locator('[data-test="calibration-validation-x"] input').fill('-4300')
+  await page.locator('[data-test="calibration-validation-y"] input').fill('2000')
   const stage = page.locator('.canvas .konvajs-content')
   const bounds = await stage.boundingBox()
   expect(bounds).not.toBeNull()
@@ -193,9 +198,16 @@ test('uploads and calibrates an image underlay without internal identifiers', as
     position: { x: renderWidth * 0.7, y: renderTop + renderHeight * 0.7 },
   })
   await stage.click({
-    position: { x: renderWidth * 0.7, y: renderTop + renderHeight * 0.1 },
+    position: { x: renderWidth * 0.1, y: renderTop + renderHeight * 0.1 },
   })
-  await expect(page.locator('.calibration-preview')).toContainText('验证误差')
+  await expect(page.locator('.calibration-preview')).toContainText('验证误差: 100.00 mm / 允许 50.00 mm')
+  await expect(page.getByText('验证未通过，请重新选点或检查坐标', { exact: true })).toBeVisible()
+  await expect(page.getByRole('button', { name: '验证并保存', exact: true })).toBeDisabled()
+
+  await page.locator('[data-test="calibration-validation-x"] input').fill('-4400')
+  await expect(page.locator('.calibration-preview')).toContainText('原点: (1000, 2000) mm')
+  await expect(page.locator('.calibration-preview')).toContainText('旋转: 90.0000°')
+  await expect(page.locator('.calibration-preview')).toContainText('验证误差: 0.00 mm / 允许 50.00 mm')
   await page.getByRole('button', { name: '验证并保存', exact: true }).click()
 
   await expect(page.getByText('底图：已标定', { exact: true })).toBeVisible()
@@ -246,6 +258,9 @@ test('uploads and calibrates an image underlay without internal identifiers', as
     clientInstanceId: expect.any(String),
     leaseId: ownedLease().leaseId,
     commandBatchId: expect.any(String),
+    point1: { worldX: 1000, worldY: 2000 },
+    point2: { worldX: 1000, worldY: 10640 },
+    validationPoint: { worldX: -4400, worldY: 2000 },
   })
   expect(underlayHistoryBodies).toHaveLength(3)
   expect(underlayHistoryBodies[0]).toMatchObject({
@@ -1447,14 +1462,51 @@ async function installSpaceStudioFixtures(
       methods.push('POST underlay calibration')
       const body = request.postDataJSON() as Record<string, any>
       options.underlayBodies?.push(body)
+      const pixelDx = body.point2.pixelX - body.point1.pixelX
+      const pixelDy = body.point1.pixelY - body.point2.pixelY
+      const worldDx = body.point2.worldX - body.point1.worldX
+      const worldDy = body.point2.worldY - body.point1.worldY
+      const millimetersPerPixel = Math.hypot(worldDx, worldDy) / Math.hypot(pixelDx, pixelDy)
+      const rotationRadians = Math.atan2(worldDy, worldDx) - Math.atan2(pixelDy, pixelDx)
+      const rotationZ = ((rotationRadians * 180 / Math.PI) % 360 + 360) % 360
+      const cosine = Math.cos(rotationRadians)
+      const sine = Math.sin(rotationRadians)
+      const localX = body.point1.pixelX
+      const localY = body.pixelHeight - body.point1.pixelY
+      const offsetX = Math.round(body.point1.worldX - millimetersPerPixel * (
+        cosine * localX - sine * localY
+      ))
+      const offsetY = Math.round(body.point1.worldY - millimetersPerPixel * (
+        sine * localX + cosine * localY
+      ))
+      const validationLocalX = body.validationPoint.pixelX
+      const validationLocalY = body.pixelHeight - body.validationPoint.pixelY
+      const validationX = offsetX + millimetersPerPixel * (
+        cosine * validationLocalX - sine * validationLocalY
+      )
+      const validationY = offsetY + millimetersPerPixel * (
+        sine * validationLocalX + cosine * validationLocalY
+      )
+      const validationErrorMillimeters = Math.hypot(
+        validationX - body.validationPoint.worldX,
+        validationY - body.validationPoint.worldY,
+      )
+      const errorThresholdMillimeters = Math.max(50, Math.hypot(worldDx, worldDy) * 0.002)
+      if (validationErrorMillimeters > errorThresholdMillimeters) {
+        await route.fulfill({
+          status: 422,
+          json: { code: 'SPACE_UNDERLAY_CALIBRATION_INVALID' },
+        })
+        return
+      }
       const before = underlaySnapshot()
       scene.floor.revisionNumber++
       scene.contentRevision++
       scene.floor.underlayCalibrationId = 'bbbbbbbb-4444-4444-4444-444444444444'
-      scene.floor.underlayScale = 10
-      scene.floor.underlayOffsetX = 0
-      scene.floor.underlayOffsetY = 0
-      scene.floor.underlayRotationZ = 0
+      scene.floor.underlayScale = millimetersPerPixel
+      scene.floor.underlayOffsetX = offsetX
+      scene.floor.underlayOffsetY = offsetY
+      scene.floor.underlayRotationZ = rotationZ
       underlaySnapshots.set(body.commandBatchId, {
         before,
         after: underlaySnapshot(),
@@ -1473,12 +1525,12 @@ async function installSpaceStudioFixtures(
             point1: body.point1,
             point2: body.point2,
             validationPoint: body.validationPoint,
-            millimetersPerPixel: 10,
-            offsetX: 0,
-            offsetY: 0,
-            rotationZ: 0,
-            validationErrorMillimeters: 0,
-            errorThresholdMillimeters: 50,
+            millimetersPerPixel,
+            offsetX,
+            offsetY,
+            rotationZ,
+            validationErrorMillimeters,
+            errorThresholdMillimeters,
           },
           versionContentRevision: scene.contentRevision,
           history: {

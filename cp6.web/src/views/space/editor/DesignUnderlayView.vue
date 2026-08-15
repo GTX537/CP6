@@ -127,6 +127,9 @@ import {
 import { sourceTypeForUnderlay } from '@/space-editor/underlay/underlayFile'
 import {
   calculateUnderlayCalibration,
+  deriveSecondCalibrationWorldPoint,
+  type UnderlayCalibrationInput,
+  type UnderlayCalibrationPreview,
   type UnderlayPixelPoint,
 } from '@/space-editor/underlay/underlayCalibration'
 import {
@@ -261,10 +264,18 @@ const visible = ref(initialFloorViewState?.underlay?.visible ?? true)
 const opacity = ref(initialFloorViewState?.underlay?.opacityPercent ?? 55)
 const locked = ref(initialFloorViewState?.underlay?.locked ?? true)
 const calibrationPoints = ref([
-  { pixel: null as UnderlayPixelPoint | null, worldX: 0, worldY: 0 },
-  { pixel: null as UnderlayPixelPoint | null, worldX: 10_000, worldY: 0 },
-  { pixel: null as UnderlayPixelPoint | null, worldX: 0, worldY: 10_000 },
+  { pixel: null as UnderlayPixelPoint | null },
+  { pixel: null as UnderlayPixelPoint | null },
+  { pixel: null as UnderlayPixelPoint | null },
 ])
+const calibrationSettings = ref({
+  distanceMillimeters: 10_000,
+  originX: 0,
+  originY: 0,
+  rotationZ: 0,
+  validationWorldX: 0,
+  validationWorldY: 10_000,
+})
 let stage: UnderlayStage | null = null
 let elementLayer: ElementCanvasLayer | null = null
 let cadIssueOverlay: CadIssueOverlayLayer | null = null
@@ -538,7 +549,11 @@ const elementSplitState = computed<{
     }
   }
 })
-const calibrationPreview = computed(() => {
+const calibrationState = computed<{
+  input?: UnderlayCalibrationInput
+  preview?: UnderlayCalibrationPreview
+  issue: string
+}>(() => {
   const size = stage?.getRasterSize()
   const [point1, point2, validationPoint] = calibrationPoints.value
   if (
@@ -547,31 +562,61 @@ const calibrationPreview = computed(() => {
     !point2?.pixel ||
     !validationPoint?.pixel
   ) {
-    return null
+    return { issue: '请依次选择 P1 原点、P2 比例点和 V 验证点' }
   }
   try {
-    return calculateUnderlayCalibration({
+    const derivedPoint2World = deriveSecondCalibrationWorldPoint({
+      point1Pixel: point1.pixel,
+      point2Pixel: point2.pixel,
+      originWorld: {
+        x: calibrationSettings.value.originX,
+        y: calibrationSettings.value.originY,
+      },
+      distanceMillimeters: calibrationSettings.value.distanceMillimeters,
+      rotationZ: calibrationSettings.value.rotationZ,
+    })
+    const point2World = {
+      x: Math.round(derivedPoint2World.x),
+      y: Math.round(derivedPoint2World.y),
+    }
+    const input: UnderlayCalibrationInput = {
       pixelWidth: size.width,
       pixelHeight: size.height,
       point1: {
         pixel: point1.pixel,
-        world: { x: point1.worldX, y: point1.worldY },
+        world: {
+          x: calibrationSettings.value.originX,
+          y: calibrationSettings.value.originY,
+        },
       },
       point2: {
         pixel: point2.pixel,
-        world: { x: point2.worldX, y: point2.worldY },
+        world: point2World,
       },
       validationPoint: {
         pixel: validationPoint.pixel,
         world: {
-          x: validationPoint.worldX,
-          y: validationPoint.worldY,
+          x: calibrationSettings.value.validationWorldX,
+          y: calibrationSettings.value.validationWorldY,
         },
       },
-    })
+    }
+    return {
+      input,
+      preview: calculateUnderlayCalibration(input),
+      issue: '',
+    }
   } catch {
-    return null
+    return { issue: '请检查两点间距、真实距离、旋转和验证点位置' }
   }
+})
+const calibrationPreview = computed(() => calibrationState.value.preview ?? null)
+const calibrationWithinTolerance = computed(() => {
+  const preview = calibrationPreview.value
+  return Boolean(
+    preview &&
+      preview.validationErrorMillimeters <= preview.errorThresholdMillimeters,
+  )
 })
 
 onMounted(async () => {
@@ -1763,9 +1808,9 @@ function beginCalibration(): void {
 
 function resetCalibrationPoints(): void {
   calibrationPoints.value = [
-    { pixel: null, worldX: 0, worldY: 0 },
-    { pixel: null, worldX: 10_000, worldY: 0 },
-    { pixel: null, worldX: 0, worldY: 10_000 },
+    { pixel: null },
+    { pixel: null },
+    { pixel: null },
   ]
   syncCalibrationStage()
 }
@@ -1802,8 +1847,7 @@ async function saveCalibration(): Promise<void> {
   const activeLeaseId = lease.value?.leaseId
   const sourceId = currentFloor?.underlaySourceId
   const size = stage?.getRasterSize()
-  const preview = calibrationPreview.value
-  const [point1, point2, validationPoint] = calibrationPoints.value
+  const calibrationInput = calibrationState.value.input
   if (
     !currentFloor ||
     currentScene?.contentRevision === undefined ||
@@ -1811,12 +1855,12 @@ async function saveCalibration(): Promise<void> {
     leaseState.value !== 'owned' ||
     !sourceId ||
     !size ||
-    !preview ||
-    !point1?.pixel ||
-    !point2?.pixel ||
-    !validationPoint?.pixel
+    !calibrationInput ||
+    !calibrationWithinTolerance.value
   ) {
-    ElMessage.warning(t('请选择三个有效控制点并填写毫米坐标'))
+    ElMessage.warning(
+      calibrationState.value.issue || t('验证点误差超过允许阈值，请重新选点或检查坐标'),
+    )
     return
   }
 
@@ -1832,22 +1876,22 @@ async function saveCalibration(): Promise<void> {
         pixelWidth: size.width,
         pixelHeight: size.height,
         point1: {
-          pixelX: point1.pixel.x,
-          pixelY: point1.pixel.y,
-          worldX: Math.round(point1.worldX),
-          worldY: Math.round(point1.worldY),
+          pixelX: calibrationInput.point1.pixel.x,
+          pixelY: calibrationInput.point1.pixel.y,
+          worldX: Math.round(calibrationInput.point1.world.x),
+          worldY: Math.round(calibrationInput.point1.world.y),
         },
         point2: {
-          pixelX: point2.pixel.x,
-          pixelY: point2.pixel.y,
-          worldX: Math.round(point2.worldX),
-          worldY: Math.round(point2.worldY),
+          pixelX: calibrationInput.point2.pixel.x,
+          pixelY: calibrationInput.point2.pixel.y,
+          worldX: Math.round(calibrationInput.point2.world.x),
+          worldY: Math.round(calibrationInput.point2.world.y),
         },
         validationPoint: {
-          pixelX: validationPoint.pixel.x,
-          pixelY: validationPoint.pixel.y,
-          worldX: Math.round(validationPoint.worldX),
-          worldY: Math.round(validationPoint.worldY),
+          pixelX: calibrationInput.validationPoint.pixel.x,
+          pixelY: calibrationInput.validationPoint.pixel.y,
+          worldX: Math.round(calibrationInput.validationPoint.world.x),
+          worldY: Math.round(calibrationInput.validationPoint.world.y),
         },
         expectedFloorRevision: currentFloor.revisionNumber ?? 0,
         expectedContentRevision: currentScene.contentRevision,
@@ -3529,58 +3573,147 @@ function tabClientInstanceId(): string {
         </div>
 
         <aside v-else-if="calibrationMode" class="calibration-panel">
-        <div class="panel-title">{{ t('两点标定') }}</div>
-        <p class="panel-help">
-          {{ t('依次在底图选择 P1、P2 和验证点 V，再填写各点的世界毫米坐标。') }}
-        </p>
-        <div
-          v-for="(point, index) in calibrationPoints"
-          :key="index"
-          class="calibration-point-row"
-        >
-          <strong>{{ index === 2 ? 'V' : `P${index + 1}` }}</strong>
-          <span class="pixel-value">
-            {{
-              point.pixel
-                ? `px (${point.pixel.x.toFixed(1)}, ${point.pixel.y.toFixed(1)})`
-                : t('等待画布选点')
-            }}
-          </span>
-          <label>
-            X mm
-            <el-input-number v-model="point.worldX" :step="100" />
-          </label>
-          <label>
-            Y mm
-            <el-input-number v-model="point.worldY" :step="100" />
-          </label>
-        </div>
-        <div v-if="calibrationPreview" class="calibration-preview">
-          <div>
-            {{ t('比例') }}:
-            {{ calibrationPreview.millimetersPerPixel.toFixed(6) }} mm/px
-          </div>
-          <div>
-            {{ t('旋转') }}: {{ calibrationPreview.rotationZ.toFixed(4) }}°
-          </div>
-          <div>
-            {{ t('验证误差') }}:
-            {{ calibrationPreview.validationErrorMillimeters.toFixed(2) }} mm
-          </div>
-        </div>
-        <div class="panel-actions">
-          <el-button @click="resetCalibrationPoints">{{ t('重选') }}</el-button>
-          <el-button @click="cancelCalibration">{{ t('取消') }}</el-button>
-          <el-button
-            v-permission="'space:model:edit'"
-            type="primary"
-            :disabled="!calibrationPreview"
-            :loading="savingCalibration"
-            @click="saveCalibration"
+          <div class="panel-title">{{ t('两点实距标定') }}</div>
+          <p class="panel-help">
+            {{ t('依次选择 P1 原点、P2 比例点和独立验证点 V。P1/P2 由真实距离、原点和旋转决定，V 只用于检查误差。') }}
+          </p>
+          <div
+            v-for="(point, index) in calibrationPoints"
+            :key="index"
+            class="calibration-point-row"
+            :data-test="`calibration-point-${index + 1}`"
           >
-            {{ t('验证并保存') }}
-          </el-button>
-        </div>
+            <strong>{{ ['P1 原点', 'P2 比例点', 'V 验证点'][index] }}</strong>
+            <span class="pixel-value">
+              {{
+                point.pixel
+                  ? `px (${point.pixel.x.toFixed(1)}, ${point.pixel.y.toFixed(1)})`
+                  : t('等待画布选点')
+              }}
+            </span>
+          </div>
+
+          <fieldset class="calibration-settings">
+            <legend>{{ t('两点实距与放置') }}</legend>
+            <label>
+              <span>{{ t('真实距离') }} mm</span>
+              <el-input-number
+                v-model="calibrationSettings.distanceMillimeters"
+                data-test="calibration-distance"
+                :min="1"
+                :max="2_147_483_647"
+                :precision="0"
+                :step="100"
+                controls-position="right"
+              />
+            </label>
+            <label>
+              <span>{{ t('P1 原点 X') }} mm</span>
+              <el-input-number
+                v-model="calibrationSettings.originX"
+                data-test="calibration-origin-x"
+                :min="-2_147_483_648"
+                :max="2_147_483_647"
+                :precision="0"
+                :step="100"
+                controls-position="right"
+              />
+            </label>
+            <label>
+              <span>{{ t('P1 原点 Y') }} mm</span>
+              <el-input-number
+                v-model="calibrationSettings.originY"
+                data-test="calibration-origin-y"
+                :min="-2_147_483_648"
+                :max="2_147_483_647"
+                :precision="0"
+                :step="100"
+                controls-position="right"
+              />
+            </label>
+            <label>
+              <span>{{ t('旋转') }} °</span>
+              <el-input-number
+                v-model="calibrationSettings.rotationZ"
+                data-test="calibration-rotation"
+                :min="0"
+                :max="359.9999"
+                :precision="4"
+                :step="1"
+                controls-position="right"
+              />
+            </label>
+          </fieldset>
+
+          <fieldset class="calibration-settings">
+            <legend>{{ t('验证点世界坐标') }}</legend>
+            <label>
+              <span>V X mm</span>
+              <el-input-number
+                v-model="calibrationSettings.validationWorldX"
+                data-test="calibration-validation-x"
+                :min="-2_147_483_648"
+                :max="2_147_483_647"
+                :precision="0"
+                :step="100"
+                controls-position="right"
+              />
+            </label>
+            <label>
+              <span>V Y mm</span>
+              <el-input-number
+                v-model="calibrationSettings.validationWorldY"
+                data-test="calibration-validation-y"
+                :min="-2_147_483_648"
+                :max="2_147_483_647"
+                :precision="0"
+                :step="100"
+                controls-position="right"
+              />
+            </label>
+          </fieldset>
+
+          <div v-if="calibrationPreview" class="calibration-preview" aria-live="polite">
+            <div>
+              {{ t('比例') }}:
+              {{ calibrationPreview.millimetersPerPixel.toFixed(6) }} mm/px
+            </div>
+            <div>
+              {{ t('原点') }}:
+              ({{ calibrationSettings.originX }}, {{ calibrationSettings.originY }}) mm
+            </div>
+            <div>
+              {{ t('旋转') }}: {{ calibrationPreview.rotationZ.toFixed(4) }}°
+            </div>
+            <div>
+              {{ t('验证误差') }}:
+              {{ calibrationPreview.validationErrorMillimeters.toFixed(2) }} mm
+              / {{ t('允许') }} {{ calibrationPreview.errorThresholdMillimeters.toFixed(2) }} mm
+            </div>
+            <div
+              v-if="!calibrationWithinTolerance"
+              class="calibration-preview-warning"
+              role="alert"
+            >
+              {{ t('验证未通过，请重新选点或检查坐标') }}
+            </div>
+          </div>
+          <p v-else class="calibration-issue" aria-live="polite">
+            {{ calibrationState.issue }}
+          </p>
+          <div class="panel-actions">
+            <el-button @click="resetCalibrationPoints">{{ t('重选') }}</el-button>
+            <el-button @click="cancelCalibration">{{ t('取消') }}</el-button>
+            <el-button
+              v-permission="'space:model:edit'"
+              type="primary"
+              :disabled="!calibrationWithinTolerance"
+              :loading="savingCalibration"
+              @click="saveCalibration"
+            >
+              {{ t('验证并保存') }}
+            </el-button>
+          </div>
         </aside>
       <DesignExcelCadMatchPanel
         v-else-if="inspectorTab === 'issues' && matchPanelVisible && matchJobId"
@@ -3888,14 +4021,37 @@ function tabClientInstanceId(): string {
   gap: 8px;
   margin-top: 16px;
   padding-top: 12px;
-  border-top: 1px solid #eef1f5;
+  border-top: 1px solid var(--space-studio-border);
 }
 
-.calibration-point-row label {
+.calibration-settings {
+  margin-top: 16px;
+  padding: 10px 12px;
+  border: 1px solid var(--space-studio-border);
+  border-radius: 6px;
+}
+
+.calibration-settings legend {
+  padding: 0 5px;
+  font-size: 14px;
+  font-weight: 650;
+}
+
+.calibration-settings label {
   display: flex;
   align-items: center;
   justify-content: space-between;
   gap: 8px;
+  min-height: 52px;
+  font-size: 14px;
+}
+
+.calibration-settings :deep(.el-input-number) {
+  width: 142px;
+}
+
+.calibration-settings :deep(.el-input__wrapper) {
+  min-height: 44px;
 }
 
 .calibration-preview {
@@ -3905,6 +4061,18 @@ function tabClientInstanceId(): string {
   background:var(--space-studio-panel-raised);
   border-radius: 6px;
   font-size:14px;
+}
+
+.calibration-issue {
+  margin: 16px 0 0;
+  color: var(--space-studio-warning);
+  font-size: 14px;
+  line-height: 1.5;
+}
+
+.calibration-preview-warning {
+  color: var(--space-studio-blocking);
+  font-weight: 700;
 }
 
 .panel-actions {
