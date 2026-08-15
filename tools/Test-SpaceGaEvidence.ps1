@@ -67,7 +67,15 @@ function Test-PersonName {
     if (!(Test-Text $Value) -or ([string]$Value).Length -gt 200) {
         return $false
     }
-    return ([string]$Value).Trim() -notmatch (
+    $personName = ([string]$Value).Trim()
+    if ($personName -match '^\d+$' -or
+        $personName -match (
+            '^(?i:(?:dev(?:elopment)?|test|demo|simulated|' +
+            '\u5f00\u53d1\u4eba\u5458|\u6d4b\u8bd5\u4eba\u5458)' +
+            '[ _-]?\d+)$')) {
+        return $false
+    }
+    return $personName -notmatch (
         '^(?i:tbd|pending|unknown|n/?a|owner|team|product|qa|wms|' +
         'architecture|security|admin|administrator|\u5f85\u5b9a|' +
         '\u672a\u5b9a|\u8d1f\u8d23\u4eba|\u56e2\u961f|\u4ea7\u54c1|' +

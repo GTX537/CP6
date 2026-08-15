@@ -15,6 +15,8 @@ on:
       - 'tools/Test-SpaceGaGoldenCadEvidence.Tests.ps1'
       - 'tools/Test-SpaceGaKickoffEvidence.ps1'
       - 'tools/Test-SpaceGaKickoffEvidence.Tests.ps1'
+      - 'tools/Test-SpaceGaDevelopmentPersonnelSeed.ps1'
+      - 'tools/Test-SpaceGaDevelopmentPersonnelSeed.Tests.ps1'
       - 'tools/test-fixtures/space-ga-evidence/**'
       - 'tools/test-fixtures/space-ga-pilot-evidence/**'
       - 'tools/test-fixtures/space-ga-golden-cad-evidence/**'
@@ -35,6 +37,8 @@ on:
       - 'tools/Test-SpaceGaGoldenCadEvidence.Tests.ps1'
       - 'tools/Test-SpaceGaKickoffEvidence.ps1'
       - 'tools/Test-SpaceGaKickoffEvidence.Tests.ps1'
+      - 'tools/Test-SpaceGaDevelopmentPersonnelSeed.ps1'
+      - 'tools/Test-SpaceGaDevelopmentPersonnelSeed.Tests.ps1'
       - 'tools/test-fixtures/space-ga-evidence/**'
       - 'tools/test-fixtures/space-ga-pilot-evidence/**'
       - 'tools/test-fixtures/space-ga-golden-cad-evidence/**'
@@ -70,3 +74,7 @@ jobs:
       - name: Exercise M0 kickoff evidence failure modes
         shell: pwsh
         run: ./tools/Test-SpaceGaKickoffEvidence.Tests.ps1
+
+      - name: Validate single-developer personnel seed boundaries
+        shell: pwsh
+        run: ./tools/Test-SpaceGaDevelopmentPersonnelSeed.Tests.ps1
