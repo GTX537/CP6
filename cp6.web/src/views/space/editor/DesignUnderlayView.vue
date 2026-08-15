@@ -1073,7 +1073,6 @@ function resetCanvasViewport(): void {
 }
 
 function setProjectionMode(mode: SpaceStudioProjectionMode): void {
-  if (mode === '3d' && redrawSession.value) cancelElementRedraw(false)
   projectionMode.value = narrowReadonly.value && mode === '2d' ? '3d' : mode
   scheduleFloorViewStatePersistence()
 }
@@ -3307,10 +3306,10 @@ function onStudioKeydown(event: KeyboardEvent): void {
     if (key === 'escape') {
       event.preventDefault()
       cancelElementRedraw()
-    } else if (key === 'enter') {
+    } else if (key === 'enter' && projectionMode.value === '2d') {
       event.preventDefault()
       void completeElementRedraw()
-    } else if (key === 'backspace') {
+    } else if (key === 'backspace' && projectionMode.value === '2d') {
       event.preventDefault()
       removeLastRedrawPoint()
     }
@@ -3429,7 +3428,7 @@ function tabClientInstanceId(): string {
         type="button"
         data-testid="space-redraw-complete"
         aria-keyshortcuts="Enter"
-        :disabled="redrawSession.points.length < 3 || savingElement"
+        :disabled="projectionMode !== '2d' || redrawSession.points.length < 3 || savingElement"
         @click="completeElementRedraw"
       >完成重画 Enter</button>
       <button type="button" aria-keyshortcuts="Control+Z Meta+Z" :disabled="!canUndo || readonlyScene" @click="undoSavedCommand">撤销</button>

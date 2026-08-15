@@ -1,5 +1,12 @@
 # 已完成能力与近期里程碑
 
+## 2026-08-15 Space Studio LM-FR-025～029 最终工作台 UX 要求
+
+- 保存后的同一 Design Scene 直接驱动 2D/3D；选择与逐楼层相机跨模式保留。切到 3D 不再清除 2D 未保存重画，标题持续标记、3D 禁止误提交，切回 2D 后保留全部点集。
+- 首次四步任务清单默认展开并可折叠重开，补齐 44px 热区、焦点环、符号和可访问完成状态；右侧问题严重度筛选控件同样补齐 44px 热区。
+- 聚焦单测 5/5、Web 843/843、Space Studio Playwright 23/23、production build 和完整 Release solution 通过。详细报告见 `docs/space/reports/2026-08-15-space-studio-final-ux-requirements.md`。
+- LM-FR-025～029 仓库实现闭环；WP4 保持 Partial/Pending，WP5 保持 Complete/Pending，核心 GA 保持 72% / `NoGo`。
+
 ## 2026-08-15 Space Studio 两点实距标定工作流
 
 - 底图标定明确为 P1 原点、P2 比例点和独立验证点 V；用户直接输入真实距离、世界原点、旋转和 V 世界坐标，不再手工换算 P2 世界坐标。

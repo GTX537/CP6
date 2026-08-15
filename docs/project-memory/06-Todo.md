@@ -2,7 +2,7 @@
 
 ## P0：Space Studio v1.3 GA 外部与扩展门禁
 
-- WP4 详细 Spec LM-FR-017、LM-FR-018、LM-FR-020～024 已有仓库实现；两点实距标定现提供 P1 原点、P2 比例点、独立 V 验证点、真实距离、原点、旋转和冻结误差阈值，构件库也已补齐托盘与六类静态设备。下一独立任务从 LM-FR-025～029 开始逐项核对三条路径剩余缺口。上述仓库闭环不自动把 WP4 标回 Complete，也不得用 Mock/fixture 替代真实 DWG/DXF/Excel/PDF、Provider、WMS 与 Pilot 接受。
+- WP4 详细 Spec LM-FR-017～029 的编辑器系列已有仓库实现；两点实距标定、构件库、统一历史、2D/3D 同源、选择/视角/未保存状态、四步清单、问题筛选定位和窄屏只读均有自动化。下一独立任务回到三条路径主链，逐项审计 LM-FR-001～016、019/019A 与当前 Typed Changeset/Provider 实现的剩余差距。上述仓库闭环不自动把 WP4 标回 Complete，也不得用 Mock/fixture 替代真实 DWG/DXF/Excel/PDF、Provider、WMS 与 Pilot 接受。
 - AutoCAD 2025 Core Console 的实验型 DWG→DXF→CAD IR 链已在本机通过并登记到 WP3 实现证据，但它不是已认证 Site Provider：下一步需先通过 Autodesk 更新/修复处理 GUI `acad.exe` 的 `HashMismatch`，再确认许可证允许的 Worker/自动化部署边界、禁网或出口控制、客户/Site 批准，并与至少一个独立备用 Provider 在同一 20 份真实黄金集上评分。未完成这些条件前不得注册生产运行时、填写 `acceptedEvidence` 或关闭 WP3/WP7。
 - 单人开发可使用 `00001`～`00005` 的 `DevelopmentSeed` 完成本地角色切换与权限测试，但它们不能计入 `CORE_TEAM_ALLOCATION`、Pilot 或五方签字。进入正式 GA 前仍必须登记具有真实身份和审批权的 Product、QA、WMS、Architecture、Security 签字人；如后续需要可登录开发账号，应另立身份/最小权限任务，不在证据人员册中保存密码或 Token。
 - 核心 GA 证据索引与失败关闭校验已建立，当前派生结果为 `NoGo`：5 类外部输入、WP0–WP8 九个接受门禁和 5 个实名签字均 Pending。下一步由真实 Owner 按 `kickoff-evidence-protocol.md` 填写结构化开工 Manifest：登记产品/QA/WMS/架构/安全签字人、2+2+1 核心团队、20 CAD 候选、至少两条 Provider 审批链/隔离 Worker、Greenfield/Retrofit 双仓和 WMS 窗口，再将各完成分区绑定到索引。任何 Complete/Accepted/Signed 证据均必须使用新证明对象；模板、fixture、一份泛化说明、本地哈希不一致或受控 URI/真实接受人/UTC 不完整不得改状态，也不得通过删除 Gate、把角色名当实名或把仓库自动化标为 Accepted 来绕过。

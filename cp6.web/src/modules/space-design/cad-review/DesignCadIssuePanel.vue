@@ -252,6 +252,11 @@ function toggleChange(changeId: string, checked: boolean): void {
   grid-column: 1 / -1;
 }
 
+.filters :deep(.el-input__wrapper),
+.filters :deep(.el-checkbox) {
+  min-height: 44px;
+}
+
 .result-count {
   margin: 12px 0 6px;
 }
