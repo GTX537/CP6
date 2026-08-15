@@ -9,6 +9,9 @@ defineProps<{
   hasUnderlay: boolean
   calibrated: boolean
   readonly: boolean
+  underlayVisible: boolean
+  underlayOpacity: number
+  underlayLocked: boolean
 }>()
 
 const emit = defineEmits<{
@@ -22,6 +25,9 @@ const emit = defineEmits<{
   retryParse: []
   openRuleOnly: []
   createComponent: [elementType: string]
+  underlayVisibilityChange: [visible: boolean]
+  underlayOpacityChange: [opacity: number]
+  underlayLockChange: [locked: boolean]
 }>()
 
 type Mode = 'source' | 'assets' | 'layers' | 'history' | 'settings'
@@ -33,6 +39,25 @@ const modes: Array<{ id: Mode; label: string; glyph: string }> = [
   { id: 'history', label: '历史', glyph: '史' },
   { id: 'settings', label: '设置', glyph: '设' },
 ]
+
+function emitChecked(
+  event: Event,
+  name: 'underlayVisibilityChange' | 'underlayLockChange',
+): void {
+  const checked = (event.currentTarget as HTMLInputElement).checked
+  if (name === 'underlayVisibilityChange') {
+    emit('underlayVisibilityChange', checked)
+  } else {
+    emit('underlayLockChange', checked)
+  }
+}
+
+function emitOpacity(event: Event): void {
+  const value = Number((event.currentTarget as HTMLInputElement).value)
+  if (Number.isInteger(value) && value >= 0 && value <= 100) {
+    emit('underlayOpacityChange', value)
+  }
+}
 </script>
 
 <template>
@@ -62,7 +87,8 @@ const modes: Array<{ id: Mode; label: string; glyph: string }> = [
           v-if="hasUnderlay"
           type="button"
           data-test="calibrate-underlay"
-          :disabled="readonly"
+          :disabled="readonly || underlayLocked"
+          :title="underlayLocked ? '请先在图层中解锁底图' : undefined"
           @click="emit('calibrateUnderlay')"
         >{{ calibrated ? '重新标定底图' : '标定底图' }}</button>
         <button
@@ -112,7 +138,50 @@ const modes: Array<{ id: Mode; label: string; glyph: string }> = [
 
       <template v-else-if="activeMode === 'layers'">
         <h2>图层</h2>
-        <label><input type="checkbox" checked /> 底图</label>
+        <fieldset class="underlay-layer-controls">
+          <legend>底图</legend>
+          <label class="layer-toggle">
+            <input
+              data-test="underlay-visible"
+              type="checkbox"
+              :checked="underlayVisible"
+              :disabled="!hasUnderlay"
+              @change="emitChecked($event, 'underlayVisibilityChange')"
+            />
+            显示底图
+          </label>
+          <label class="opacity-label" for="space-underlay-opacity">
+            <span>透明度</span>
+            <output for="space-underlay-opacity">{{ underlayOpacity }}%</output>
+          </label>
+          <input
+            id="space-underlay-opacity"
+            data-test="underlay-opacity"
+            type="range"
+            min="0"
+            max="100"
+            step="5"
+            :value="underlayOpacity"
+            :disabled="!hasUnderlay"
+            aria-label="底图透明度"
+            @input="emitOpacity"
+          />
+          <label class="layer-toggle">
+            <input
+              data-test="underlay-locked"
+              type="checkbox"
+              :checked="underlayLocked"
+              :disabled="!hasUnderlay"
+              @change="emitChecked($event, 'underlayLockChange')"
+            />
+            锁定底图
+          </label>
+          <p class="layer-state" aria-live="polite">
+            {{ hasUnderlay
+              ? (underlayLocked ? '底图已锁定，解锁后可重新标定' : '底图已解锁，可进行标定')
+              : '导入底图后可调整显示' }}
+          </p>
+        </fieldset>
         <label><input type="checkbox" checked /> 库区与巷道</label>
         <label><input type="checkbox" checked /> 货架与库位</label>
         <label><input type="checkbox" checked /> 问题标记</label>
@@ -154,6 +223,15 @@ progress { width:100%; accent-color:var(--space-studio-accent); }
 .component-grid { display:grid; grid-template-columns:1fr 1fr; gap:8px; margin-top:12px; }
 .component-grid button { margin-top:0; }
 label { display:block; margin:12px 0; color:var(--space-studio-text); }
+.underlay-layer-controls { margin:0 0 14px; padding:10px 12px; border:1px solid var(--space-studio-border); border-radius:7px; }
+.underlay-layer-controls legend { padding:0 5px; color:var(--space-studio-text); font-size:14px; font-weight:700; }
+.layer-toggle { box-sizing:border-box; display:flex; align-items:center; gap:10px; min-height:44px; margin:0; cursor:pointer; }
+.layer-toggle input { width:20px; height:20px; margin:0; accent-color:var(--space-studio-accent); }
+.opacity-label { display:flex; justify-content:space-between; margin:8px 0 0; }
+.opacity-label output { color:var(--space-studio-text); font-variant-numeric:tabular-nums; }
+input[type='range'] { box-sizing:border-box; width:100%; min-height:44px; margin:0; accent-color:var(--space-studio-accent); cursor:pointer; }
+input:disabled { cursor:not-allowed; opacity:.55; }
+.layer-state { min-height:42px; margin:4px 0 0; font-size:13px; }
 @media (max-width:1279px) {
   .studio-context { grid-template-columns:52px 0; min-width:52px; overflow:hidden; }
   .studio-context-pane { display:none; }

@@ -81,6 +81,62 @@ test('restores the selected projection and 3D camera for the same floor', async 
   expect(errors).toEqual([])
 })
 
+test('controls and restores the underlay layer for the current floor', async ({ page }) => {
+  const errors = collectPageErrors(page)
+  await installSpaceStudioFixtures(page, [], { underlayAttached: true })
+  await page.setViewportSize({ width: 1440, height: 900 })
+  await page.goto(studioUrl)
+
+  await page.locator('.studio-modebar button').nth(2).click()
+  const visible = page.getByLabel('显示底图', { exact: true })
+  const opacity = page.getByLabel('底图透明度', { exact: true })
+  const locked = page.getByLabel('锁定底图', { exact: true })
+  await expect(visible).toBeChecked()
+  await expect(opacity).toHaveValue('55')
+  await expect(locked).toBeChecked()
+
+  const underlayCanvas = page.locator('.canvas canvas').first()
+  const visibleRaster = await underlayCanvas.evaluate((canvas) =>
+    (canvas as HTMLCanvasElement).toDataURL(),
+  )
+  await visible.uncheck()
+  await expect.poll(() => underlayCanvas.evaluate((canvas) =>
+    (canvas as HTMLCanvasElement).toDataURL(),
+  )).not.toBe(visibleRaster)
+  const hiddenRaster = await underlayCanvas.evaluate((canvas) =>
+    (canvas as HTMLCanvasElement).toDataURL(),
+  )
+  await opacity.fill('30')
+  await visible.check()
+  await expect.poll(() => underlayCanvas.evaluate((canvas) =>
+    (canvas as HTMLCanvasElement).toDataURL(),
+  )).not.toBe(hiddenRaster)
+  await visible.uncheck()
+  await locked.uncheck()
+  await expect(page.locator('.underlay-layer-controls output')).toHaveText('30%')
+
+  await page.locator('.studio-modebar button').first().click()
+  await expect(page.getByRole('button', { name: '重新标定底图', exact: true }))
+    .toBeEnabled()
+
+  const storageKey = `cp6-space-studio-floor-view-v1:${versionId}:${floorId}`
+  await expect.poll(() => page.evaluate((key) => {
+    const serialized = sessionStorage.getItem(key)
+    return serialized ? JSON.parse(serialized).underlay : null
+  }, storageKey)).toEqual({
+    visible: false,
+    opacityPercent: 30,
+    locked: false,
+  })
+
+  await page.reload()
+  await page.locator('.studio-modebar button').nth(2).click()
+  await expect(page.getByLabel('显示底图', { exact: true })).not.toBeChecked()
+  await expect(page.getByLabel('底图透明度', { exact: true })).toHaveValue('30')
+  await expect(page.getByLabel('锁定底图', { exact: true })).not.toBeChecked()
+  expect(errors).toEqual([])
+})
+
 test('1280x720 remains a complete editing surface', async ({ page }) => {
   const errors = collectPageErrors(page)
   await installSpaceStudioFixtures(page)
@@ -1103,6 +1159,7 @@ async function installSpaceStudioFixtures(
     matchHistoryBodies?: Array<Record<string, any>>
     mergeEnabled?: boolean
     splitEnabled?: boolean
+    underlayAttached?: boolean
   } = {},
 ) {
   await page.addInitScript(() => {
@@ -1112,6 +1169,14 @@ async function installSpaceStudioFixtures(
   })
 
   const scene: any = sceneFixture()
+  if (options.underlayAttached) {
+    scene.floor.underlaySourceId = underlaySourceId
+    scene.floor.underlayCalibrationId = 'bbbbbbbb-4444-4444-4444-444444444444'
+    scene.floor.underlayScale = 10
+    scene.floor.underlayOffsetX = 0
+    scene.floor.underlayOffsetY = 0
+    scene.floor.underlayRotationZ = 0
+  }
   if (options.mergeEnabled) {
     scene.elements.push({
       revision: revision(secondColumnId),

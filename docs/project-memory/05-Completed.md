@@ -1,5 +1,12 @@
 # 已完成能力与近期里程碑
 
+## 2026-08-15 Space Studio 底图图层控制
+
+- “图层”模式提供底图显示/隐藏、0～100% 透明度和锁定/解锁；控制直接重绘 Konva 底图，44px 热区、键盘焦点、状态文本和无底图禁用状态同步。
+- 锁定会阻止比例/坐标标定，新挂接底图自动解锁，标定成功后自动锁回；视图偏好按版本/楼层保存在当前浏览器标签页，不推进 Draft Revision。
+- floor view schema v1 向后兼容地增加可选底图状态并校验边界；单测、类型检查及 Playwright 覆盖实际画布变化和重载恢复。详细报告见 `docs/space/reports/2026-08-15-space-studio-underlay-layer-controls.md`。
+- LM-FR-020 仓库实现闭环；真实 PDF/PNG/JPG、三条路径、Provider、WMS 和 Pilot 接受仍未完成，WP4 保持 Partial/Pending，核心 GA 保持 72% / `NoGo`。
+
 ## 2026-08-15 Space Studio 底图统一撤销/重做
 
 - PDF/PNG/JPG 底图的挂接、替换、标定和显式移除统一携带页面实例、编辑租约、Floor/Content Revision、CommandBatch 与幂等键；未取得当前会话租约或 Revision 已变化时零 Draft 写入。
