@@ -2,6 +2,12 @@
 
 > 依据 Git log 汇总，不替代完整 Git 历史。重点记录影响接手判断的里程碑。
 
+## 2026-08-15：Space Studio Excel–CAD 确认 Lease/Revision Fence
+
+- Excel–CAD 确认合同新增必填页面实例、编辑租约和 Floor Revision，并保留 Content Revision；工作台无当前自有租约时只允许审阅。
+- 确认入队和 Worker 实际写入都在统一 Floor 锁内重新验证同一租约；SQL Server 使用数据库 UTC。会话更换、租约释放/过期或 Revision 漂移均零 Draft 写入，旧未完成无租约 payload 不再执行。
+- OpenAPI/双 SDK、后端、前端和 Playwright 聚焦门禁通过。该项只是 Excel–CAD 统一撤销/重做的安全前置条件，LM-FR-024、WP4 与 GA 72% / `NoGo` 状态不变。
+
 ## 2026-08-15：Space Studio CAD 确认批次撤销/重做
 
 - CAD Typed Changeset Apply 响应新增服务器密封的 undo/redo 命令；Create/Delete 使用稳定 LogicalId 的 Delete/Restore，Modify 使用命令提交前后的完整属性快照。

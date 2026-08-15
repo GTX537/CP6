@@ -14872,10 +14872,13 @@ export interface IBindSpaceWmsAdoptionRequest {
 }
 
 export class ConfirmSpaceExcelCadMatchRequest implements IConfirmSpaceExcelCadMatchRequest {
-    confirmed?: boolean;
-    artifactId?: string;
-    artifactPayloadSha256?: string | undefined;
-    expectedContentRevision?: number;
+    confirmed!: boolean;
+    artifactId!: string;
+    artifactPayloadSha256!: string;
+    expectedContentRevision!: number;
+    clientInstanceId!: string;
+    leaseId!: string;
+    expectedFloorRevision!: number;
 
     constructor(data?: IConfirmSpaceExcelCadMatchRequest) {
         if (data) {
@@ -14892,6 +14895,9 @@ export class ConfirmSpaceExcelCadMatchRequest implements IConfirmSpaceExcelCadMa
             this.artifactId = _data["artifactId"];
             this.artifactPayloadSha256 = _data["artifactPayloadSha256"];
             this.expectedContentRevision = _data["expectedContentRevision"];
+            this.clientInstanceId = _data["clientInstanceId"];
+            this.leaseId = _data["leaseId"];
+            this.expectedFloorRevision = _data["expectedFloorRevision"];
         }
     }
 
@@ -14908,15 +14914,21 @@ export class ConfirmSpaceExcelCadMatchRequest implements IConfirmSpaceExcelCadMa
         data["artifactId"] = this.artifactId;
         data["artifactPayloadSha256"] = this.artifactPayloadSha256;
         data["expectedContentRevision"] = this.expectedContentRevision;
+        data["clientInstanceId"] = this.clientInstanceId;
+        data["leaseId"] = this.leaseId;
+        data["expectedFloorRevision"] = this.expectedFloorRevision;
         return data;
     }
 }
 
 export interface IConfirmSpaceExcelCadMatchRequest {
-    confirmed?: boolean;
-    artifactId?: string;
-    artifactPayloadSha256?: string | undefined;
-    expectedContentRevision?: number;
+    confirmed: boolean;
+    artifactId: string;
+    artifactPayloadSha256: string;
+    expectedContentRevision: number;
+    clientInstanceId: string;
+    leaseId: string;
+    expectedFloorRevision: number;
 }
 
 export class ConfirmSpaceExcelCadMatchResponse implements IConfirmSpaceExcelCadMatchResponse {

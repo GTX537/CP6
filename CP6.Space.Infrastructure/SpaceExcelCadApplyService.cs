@@ -5,6 +5,7 @@ using System.Text.Json;
 using CP6.Space.Application;
 using CP6.Space.Contracts;
 using CP6.Space.Domain;
+using Microsoft.Data.SqlClient;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Storage;
 
@@ -35,14 +36,6 @@ public sealed class SpaceExcelCadApplyService(
         var operation = $"excel-cad-apply:{versionId:N}:{matchJobId:N}";
         var keyHash = IdempotencyKeyHash(operation, idempotencyKey);
         var requestHash = Hash(JsonSerializer.Serialize(request, JsonOptions));
-        var replay = await ReadReplayAsync(
-            operation,
-            keyHash,
-            requestHash,
-            cancellationToken);
-        if (replay is not null)
-            return replay;
-
         var authority = await LoadAuthorityAsync(
             versionId,
             matchJobId,
@@ -54,14 +47,16 @@ public sealed class SpaceExcelCadApplyService(
             matchJobId,
             request.ArtifactPayloadSha256);
         var payload = new SpaceExcelCadApplyJobPayload(
-            SpaceExcelCadApplyVersions.SchemaVersion,
+            SpaceExcelCadApplyVersions.PayloadSchemaVersion,
             versionId,
             matchJobId,
             request.ArtifactId,
             request.ArtifactPayloadSha256,
             authority.Artifact.ExcelSourceId,
             authority.Artifact.FloorLogicalId,
-            authority.Floor.Revision,
+            request.ClientInstanceId,
+            request.LeaseId,
+            request.ExpectedFloorRevision,
             request.ExpectedContentRevision,
             commandBatchId);
         var payloadJson = JsonSerializer.Serialize(payload, JsonOptions);
@@ -84,6 +79,26 @@ public sealed class SpaceExcelCadApplyService(
             : null;
         try
         {
+            await AcquireFloorEditLockAsync(
+                versionId,
+                authority.Artifact.FloorLogicalId,
+                cancellationToken);
+            authority = await LoadAuthorityAsync(
+                versionId,
+                matchJobId,
+                request,
+                write: true,
+                cancellationToken);
+            await EnsureActiveEditLeaseAsync(
+                versionId,
+                authority.Artifact.FloorLogicalId,
+                request.LeaseId,
+                request.ClientInstanceId,
+                cancellationToken);
+            ValidateAuthorityRevisions(
+                authority,
+                request,
+                commandBatchId);
             var concurrentReplay = await ReadReplayAsync(
                 operation,
                 keyHash,
@@ -95,13 +110,6 @@ public sealed class SpaceExcelCadApplyService(
                     await transaction.CommitAsync(cancellationToken);
                 return concurrentReplay;
             }
-
-            authority = await LoadAuthorityAsync(
-                versionId,
-                matchJobId,
-                request,
-                write: true,
-                cancellationToken);
             var prior = await FindPriorApplyAsync(
                 matchJobId,
                 commandBatchId,
@@ -302,24 +310,11 @@ public sealed class SpaceExcelCadApplyService(
         else
             EnsureReadable(scope.Model);
         var matchPayload = DeserializeMatch(scope.Match.PayloadJson);
-        var commandBatchId = DeterministicGuid(
-            "space-excel-cad-apply-batch-v1",
-            matchJobId,
-            request.ArtifactPayloadSha256);
-        var initialConfirmation =
-            scope.Version.Status == SpaceVersionStatus.Draft &&
-            scope.Source.State == SpaceSourceState.PreviewReady &&
-            scope.Version.ContentRevision == request.ExpectedContentRevision;
-        var alreadyApplied =
-            scope.Source.State == SpaceSourceState.Imported &&
-            scope.Source.ImportedCommandBatchId == commandBatchId &&
-            scope.Version.ContentRevision >= request.ExpectedContentRevision + 1;
         if (scope.Match.Status != SpaceJobStatus.Succeeded ||
             scope.Source.SourceType != SpaceSourceType.Excel ||
             matchPayload.ModelVersionId != versionId ||
             matchPayload.ExcelSourceId != scope.Source.Id ||
-            matchPayload.ExpectedContentRevision != request.ExpectedContentRevision ||
-            !initialConfirmation && !alreadyApplied)
+            matchPayload.ExpectedContentRevision != request.ExpectedContentRevision)
         {
             throw Conflict(
                 "The Match Artifact is no longer attached to the current Draft revision.");
@@ -369,7 +364,36 @@ public sealed class SpaceExcelCadApplyService(
                         item.LogicalId == value.FloorLogicalId,
                 cancellationToken)
             ?? throw NotFound();
-        return new ApplyAuthority(scope.Version, floor, value);
+        return new ApplyAuthority(scope.Version, scope.Source, floor, value);
+    }
+
+    private static void ValidateAuthorityRevisions(
+        ApplyAuthority authority,
+        ConfirmSpaceExcelCadMatchRequest request,
+        Guid commandBatchId)
+    {
+        var initialConfirmation =
+            authority.Version.Status == SpaceVersionStatus.Draft &&
+            authority.Source.State == SpaceSourceState.PreviewReady &&
+            authority.Version.ContentRevision == request.ExpectedContentRevision;
+        var alreadyApplied =
+            authority.Source.State == SpaceSourceState.Imported &&
+            authority.Source.ImportedCommandBatchId == commandBatchId &&
+            authority.Version.ContentRevision >= request.ExpectedContentRevision + 1;
+        if (!initialConfirmation && !alreadyApplied)
+        {
+            throw Conflict(
+                "The Match Artifact is no longer attached to the current Draft revision.");
+        }
+
+        var expectedFloorRevision = alreadyApplied
+            ? request.ExpectedFloorRevision + 1
+            : request.ExpectedFloorRevision;
+        if (authority.Floor.Revision != expectedFloorRevision)
+        {
+            throw Conflict(
+                "The floor revision changed before Excel/CAD Apply confirmation.");
+        }
     }
 
     private async Task<SpaceExcelCadMatchArtifactV1> ReadArtifactAsync(
@@ -429,6 +453,12 @@ public sealed class SpaceExcelCadApplyService(
                 payload = DeserializePayload(job.PayloadJson);
             }
             catch (SpaceProblemException)
+            {
+                continue;
+            }
+            if (payload.SchemaVersion <
+                    SpaceExcelCadApplyVersions.PayloadSchemaVersion &&
+                job.Status != SpaceJobStatus.Succeeded)
             {
                 continue;
             }
@@ -496,13 +526,18 @@ public sealed class SpaceExcelCadApplyService(
             var payload = JsonSerializer.Deserialize<SpaceExcelCadApplyJobPayload>(
                               json,
                               JsonOptions) ?? throw new JsonException();
-            if (payload.SchemaVersion != SpaceExcelCadApplyVersions.SchemaVersion ||
+            if (payload.SchemaVersion is < 1 or >
+                    SpaceExcelCadApplyVersions.PayloadSchemaVersion ||
                 payload.ModelVersionId == Guid.Empty ||
                 payload.MatchJobId == Guid.Empty ||
                 payload.ArtifactId == Guid.Empty ||
                 !IsSha256(payload.ArtifactPayloadSha256) ||
                 payload.ExcelSourceId == Guid.Empty ||
                 payload.FloorLogicalId == Guid.Empty ||
+                (payload.SchemaVersion >=
+                    SpaceExcelCadApplyVersions.PayloadSchemaVersion &&
+                 (payload.ClientInstanceId == Guid.Empty ||
+                  payload.LeaseId == Guid.Empty)) ||
                 payload.ExpectedFloorRevision < 0 ||
                 payload.ExpectedContentRevision < 0 ||
                 payload.CommandBatchId == Guid.Empty)
@@ -552,10 +587,91 @@ public sealed class SpaceExcelCadApplyService(
         if (versionId == Guid.Empty || matchJobId == Guid.Empty ||
             !request.Confirmed || request.ArtifactId == Guid.Empty ||
             !IsSha256(request.ArtifactPayloadSha256) ||
-            request.ExpectedContentRevision is < 0 or long.MaxValue)
+            request.ExpectedContentRevision is < 0 or long.MaxValue ||
+            request.ExpectedFloorRevision is < 0 or long.MaxValue ||
+            request.ClientInstanceId == Guid.Empty ||
+            request.LeaseId == Guid.Empty)
         {
             throw Invalid(
-                "Explicit confirmation, artifact identity and expected revision are required.");
+                "Explicit confirmation, artifact identity, edit lease and expected revisions are required.");
+        }
+    }
+
+    private async Task EnsureActiveEditLeaseAsync(
+        Guid versionId,
+        Guid floorLogicalId,
+        Guid leaseId,
+        Guid clientInstanceId,
+        CancellationToken cancellationToken)
+    {
+        var now = await ReadAuthoritativeUtcNowAsync(cancellationToken);
+        var lease = await context.EditLeases.AsNoTracking()
+            .SingleOrDefaultAsync(candidate =>
+                candidate.ModelVersionId == versionId &&
+                candidate.FloorLogicalId == floorLogicalId,
+                cancellationToken);
+        if (lease is null ||
+            lease.LeaseId != leaseId ||
+            lease.OwnerUserId != execution.ActorId ||
+            lease.ClientInstanceId != clientInstanceId ||
+            lease.IsExpired(now))
+        {
+            throw new SpaceProblemException(
+                SpaceErrorCodes.EditLeaseLost,
+                409,
+                "The floor edit lease is missing, expired, or owned by another session.",
+                recoveryAction: "acquire-edit-lease");
+        }
+    }
+
+    private async Task<DateTime> ReadAuthoritativeUtcNowAsync(
+        CancellationToken cancellationToken)
+    {
+        var now = context.Database.IsSqlServer()
+            ? await context.Database
+                .SqlQueryRaw<DateTime>("SELECT SYSUTCDATETIME() AS [Value]")
+                .SingleAsync(cancellationToken)
+            : clock.UtcNow;
+        return now.Kind == DateTimeKind.Utc
+            ? now
+            : DateTime.SpecifyKind(now, DateTimeKind.Utc);
+    }
+
+    private async Task AcquireFloorEditLockAsync(
+        Guid versionId,
+        Guid floorLogicalId,
+        CancellationToken cancellationToken)
+    {
+        if (!context.Database.IsSqlServer())
+            return;
+
+        var result = new SqlParameter("@result", SqlDbType.Int)
+        {
+            Direction = ParameterDirection.Output,
+        };
+        var resource = new SqlParameter("@resource", SqlDbType.NVarChar, 255)
+        {
+            Value = $"cp6:space:floor-edit:{execution.TenantId:N}:" +
+                    $"{versionId:N}:{floorLogicalId:N}",
+        };
+        await context.Database.ExecuteSqlRawAsync(
+            """
+            EXEC @result = sys.sp_getapplock
+                @Resource = @resource,
+                @LockMode = 'Exclusive',
+                @LockOwner = 'Transaction',
+                @LockTimeout = 15000;
+            """,
+            [result, resource],
+            cancellationToken);
+        if (Convert.ToInt32(result.Value) < 0)
+        {
+            throw new SpaceProblemException(
+                SpaceErrorCodes.EditLeaseHeld,
+                409,
+                "The floor edit session is busy.",
+                recoveryAction: "retry-excel-cad-confirmation",
+                retryable: true);
         }
     }
 
@@ -695,6 +811,7 @@ public sealed class SpaceExcelCadApplyService(
 
     private sealed record ApplyAuthority(
         SpaceModelVersion Version,
+        SpaceModelSource Source,
         SpaceFloorRevision Floor,
         SpaceExcelCadMatchArtifactV1 Artifact);
 

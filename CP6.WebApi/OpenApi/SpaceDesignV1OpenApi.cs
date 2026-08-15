@@ -85,6 +85,16 @@ public sealed class SpaceWmsRuntimeSchemaFilter : ISchemaFilter
     private static readonly IReadOnlyDictionary<Type, string[]>
         RequiredProperties = new Dictionary<Type, string[]>
         {
+            [typeof(ConfirmSpaceExcelCadMatchRequest)] =
+            [
+                "confirmed",
+                "artifactId",
+                "artifactPayloadSha256",
+                "expectedContentRevision",
+                "clientInstanceId",
+                "leaseId",
+                "expectedFloorRevision",
+            ],
             [typeof(SpacePublishedViewerSceneDto)] =
             [
                 "schemaVersion",

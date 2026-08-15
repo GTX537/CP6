@@ -60,6 +60,15 @@ const response = {
   }],
 }
 
+const editableProps = {
+  versionId: 'version-1',
+  jobId: 'job-1',
+  currentContentRevision: 7,
+  currentFloorRevision: 3,
+  clientInstanceId: 'client-1',
+  leaseId: 'lease-1',
+}
+
 describe('DesignExcelCadMatchPanel', () => {
   beforeEach(() => {
     vi.clearAllMocks()
@@ -85,9 +94,7 @@ describe('DesignExcelCadMatchPanel', () => {
   it('loads only server-authoritative rows and emits a locate intent', async () => {
     const wrapper = mount(DesignExcelCadMatchPanel, {
       props: {
-        versionId: 'version-1',
-        jobId: 'job-1',
-        currentContentRevision: 7,
+        ...editableProps,
       },
       global: { plugins: [ElementPlus] },
     })
@@ -118,8 +125,7 @@ describe('DesignExcelCadMatchPanel', () => {
   it('marks a drifted Draft stale and disables canvas location', async () => {
     const wrapper = mount(DesignExcelCadMatchPanel, {
       props: {
-        versionId: 'version-1',
-        jobId: 'job-1',
+        ...editableProps,
         currentContentRevision: 8,
       },
       global: { plugins: [ElementPlus] },
@@ -133,12 +139,26 @@ describe('DesignExcelCadMatchPanel', () => {
     expect(wrapper.text()).toContain('当前仅可审阅')
   })
 
+  it('keeps confirmation read-only without an owned edit lease', async () => {
+    const wrapper = mount(DesignExcelCadMatchPanel, {
+      props: {
+        ...editableProps,
+        leaseId: undefined,
+      },
+      global: { plugins: [ElementPlus] },
+    })
+    await flushPromises()
+
+    expect(wrapper.get('[data-test="confirm-match"]').attributes('disabled'))
+      .toBeDefined()
+    expect(wrapper.text()).toContain('当前仅可审阅')
+    expect(designExcelCadMatchApi.confirm).not.toHaveBeenCalled()
+  })
+
   it('requires an explicit click and confirms the exact artifact identity', async () => {
     const wrapper = mount(DesignExcelCadMatchPanel, {
       props: {
-        versionId: 'version-1',
-        jobId: 'job-1',
-        currentContentRevision: 7,
+        ...editableProps,
       },
       global: { plugins: [ElementPlus] },
     })
@@ -156,6 +176,9 @@ describe('DesignExcelCadMatchPanel', () => {
         artifactId: 'artifact-1',
         artifactPayloadSha256: 'a'.repeat(64),
         expectedContentRevision: 7,
+        clientInstanceId: 'client-1',
+        leaseId: 'lease-1',
+        expectedFloorRevision: 3,
       },
       `excel-cad-apply:job-1:${'a'.repeat(64)}`,
     )

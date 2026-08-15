@@ -4,6 +4,7 @@
 
 ## Space Studio v1.3 核心实现（2026-08-12）
 
+- Excel–CAD 权威确认现已补齐 Lease/Floor Revision 安全前置条件：确认请求强制携带页面实例、租约和双 Revision；确认入队与后台 Worker 写入前均在统一 Floor 锁内复核活动租约，SQL Server 使用数据库 UTC，租约释放/换会话/过期时零 Draft 写入。工作台无自有租约时仅可审阅，OpenAPI/双 SDK 已同步。该项尚未生成统一历史栈所需的完整补偿命令，底图挂接/标定也仍未接入，因此 LM-FR-024、WP4 和 72% / `NoGo` 状态不变。
 - 详细 Spec LM-FR-024 的 CAD 确认批次已接入统一撤销/重做：CAD Typed Changeset 显式 Apply 后，服务端以实际提交结果密封 Create/Delete/Modify 的补偿命令和修改前完整快照，幂等回放保持同一历史；工作台验证白名单与数量后写入既有历史栈，异常响应保护性切为只读。Excel–CAD 确认和底图挂接/标定仍待接入，因此 LM-FR-024 只完成一条纵切，WP4 继续 Partial/Pending，核心 GA 保持 72% / `NoGo`。
 - 详细 Spec LM-FR-018 的人工校正保护已补齐：CAD 来源通用元素可在既有 Design V1 `UpdateProperties` 命令中原子锁定/解除锁定，持久保存单调校正版本、最后操作者和 UTC 时间；锁定后的人工编辑继续递增版本。重新解析命中锁定 SourceRef 时，修改/删除统一变为不可应用的 Blocking Conflict，审核空间可定位并展示版本；服务端 CAD Changeset Apply Fence 再次阻止任何锁定对象写入。迁移、版本克隆、OpenAPI/双 SDK、真 SQL、前端与 Playwright 已覆盖。LM-FR-018 仓库实现闭环；WP4 仍为 Partial/Pending，核心 GA 保持 72% / `NoGo`。
 - 详细 Spec LM-FR-023 的“复制”已补齐：批量检查器可复制 1–100 个 Active 通用元素/货架并允许混合选择，显式确认后把 `CreateElement` 与 `GenerateRackArray` 放入同一 Design V1 原子命令批。通用元素分配新 LogicalId、保留几何/类型/父级/属性并清除唯一业务编码、业务链接和 CAD 来源；货架复制 Active 层与 Generated/Unbound 空编码库位并生成 Zone 内新编码。撤销/重做只 Delete/Restore 已分配身份。真 SQL 混合批、前端单测和 Playwright 已覆盖；LM-FR-023 的对齐、等距、复制、旋转、阵列仓库实现现已闭环。LM-FR-018 已由上条后续纵切关闭；WP4 仍为 Partial/Pending，下一步审计 LM-FR-024 统一撤销/重做及其余三路径细项，核心 GA 保持 72% / `NoGo`。

@@ -6,6 +6,7 @@ using System.Text.Json;
 using CP6.Space.Application;
 using CP6.Space.Contracts;
 using CP6.Space.Domain;
+using Microsoft.Data.SqlClient;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Storage;
 
@@ -129,6 +130,11 @@ public sealed class SpaceExcelCadApplyJobStepExecutor(
             : null;
         try
         {
+            await AcquireFloorEditLockAsync(
+                execution.Lease.TenantId,
+                input.Payload.ModelVersionId,
+                input.Payload.FloorLogicalId,
+                cancellationToken);
             existing = await ReadBatchReplayAsync(
                 input,
                 planSha256,
@@ -140,6 +146,7 @@ public sealed class SpaceExcelCadApplyJobStepExecutor(
                 return Output(existing);
             }
 
+            await EnsureActiveEditLeaseAsync(input, cancellationToken);
             var state = await LoadWritableStateAsync(
                 input,
                 projection,
@@ -297,13 +304,16 @@ public sealed class SpaceExcelCadApplyJobStepExecutor(
         var payload = Deserialize<SpaceExcelCadApplyJobPayload>(
             job.PayloadJson,
             "The frozen Apply payload is invalid.");
-        if (payload.SchemaVersion != SpaceExcelCadApplyVersions.SchemaVersion ||
+        if (payload.SchemaVersion !=
+                SpaceExcelCadApplyVersions.PayloadSchemaVersion ||
             payload.ExcelSourceId != lease.SubjectId ||
             payload.ModelVersionId == Guid.Empty ||
             payload.MatchJobId == Guid.Empty ||
             payload.ArtifactId == Guid.Empty ||
             !IsSha256(payload.ArtifactPayloadSha256) ||
             payload.FloorLogicalId == Guid.Empty ||
+            payload.ClientInstanceId == Guid.Empty ||
+            payload.LeaseId == Guid.Empty ||
             payload.ExpectedFloorRevision < 0 ||
             payload.ExpectedContentRevision < 0 ||
             payload.CommandBatchId == Guid.Empty ||
@@ -1805,6 +1815,79 @@ public sealed class SpaceExcelCadApplyJobStepExecutor(
         if (now.Kind != DateTimeKind.Utc)
             throw new InvalidOperationException("The Space clock must return UTC.");
         return now;
+    }
+
+    private async Task EnsureActiveEditLeaseAsync(
+        ImmutableInput input,
+        CancellationToken cancellationToken)
+    {
+        var now = await ReadAuthoritativeUtcNowAsync(cancellationToken);
+        var lease = await context.EditLeases.AsNoTracking()
+            .SingleOrDefaultAsync(candidate =>
+                candidate.ModelVersionId == input.Payload.ModelVersionId &&
+                candidate.FloorLogicalId == input.Payload.FloorLogicalId,
+                cancellationToken);
+        if (lease is null ||
+            lease.LeaseId != input.Payload.LeaseId ||
+            lease.OwnerUserId != input.Job.RequestedBy ||
+            lease.ClientInstanceId != input.Payload.ClientInstanceId ||
+            lease.IsExpired(now))
+        {
+            throw Failure(
+                SpaceJobFailureKind.Input,
+                SpaceErrorCodes.EditLeaseLost,
+                "The floor edit lease expired or changed before Excel/CAD Apply executed.");
+        }
+    }
+
+    private async Task<DateTime> ReadAuthoritativeUtcNowAsync(
+        CancellationToken cancellationToken)
+    {
+        var now = context.Database.IsSqlServer()
+            ? await context.Database
+                .SqlQueryRaw<DateTime>("SELECT SYSUTCDATETIME() AS [Value]")
+                .SingleAsync(cancellationToken)
+            : clock.UtcNow;
+        return now.Kind == DateTimeKind.Utc
+            ? now
+            : DateTime.SpecifyKind(now, DateTimeKind.Utc);
+    }
+
+    private async Task AcquireFloorEditLockAsync(
+        Guid tenantId,
+        Guid versionId,
+        Guid floorLogicalId,
+        CancellationToken cancellationToken)
+    {
+        if (!context.Database.IsSqlServer())
+            return;
+
+        var result = new SqlParameter("@result", SqlDbType.Int)
+        {
+            Direction = ParameterDirection.Output,
+        };
+        var resource = new SqlParameter("@resource", SqlDbType.NVarChar, 255)
+        {
+            Value = $"cp6:space:floor-edit:{tenantId:N}:" +
+                    $"{versionId:N}:{floorLogicalId:N}",
+        };
+        await context.Database.ExecuteSqlRawAsync(
+            """
+            EXEC @result = sys.sp_getapplock
+                @Resource = @resource,
+                @LockMode = 'Exclusive',
+                @LockOwner = 'Transaction',
+                @LockTimeout = 15000;
+            """,
+            [result, resource],
+            cancellationToken);
+        if (Convert.ToInt32(result.Value) < 0)
+        {
+            throw Failure(
+                SpaceJobFailureKind.Resource,
+                SpaceErrorCodes.EditLeaseHeld,
+                "The floor edit session is busy while Excel/CAD Apply is running.");
+        }
     }
 
     private static async Task<string> ReadVerifiedTextAsync(

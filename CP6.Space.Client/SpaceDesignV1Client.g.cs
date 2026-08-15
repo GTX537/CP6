@@ -23788,13 +23788,26 @@ namespace CP6.Space.Client
         public bool Confirmed { get; set; } = default!;
 
         [System.Text.Json.Serialization.JsonPropertyName("artifactId")]
+        [System.ComponentModel.DataAnnotations.Required(AllowEmptyStrings = true)]
         public System.Guid ArtifactId { get; set; } = default!;
 
         [System.Text.Json.Serialization.JsonPropertyName("artifactPayloadSha256")]
-        public string? ArtifactPayloadSha256 { get; set; } = default!;
+        [System.ComponentModel.DataAnnotations.Required(AllowEmptyStrings = true)]
+        public string ArtifactPayloadSha256 { get; set; } = default!;
 
         [System.Text.Json.Serialization.JsonPropertyName("expectedContentRevision")]
         public long ExpectedContentRevision { get; set; } = default!;
+
+        [System.Text.Json.Serialization.JsonPropertyName("clientInstanceId")]
+        [System.ComponentModel.DataAnnotations.Required(AllowEmptyStrings = true)]
+        public System.Guid ClientInstanceId { get; set; } = default!;
+
+        [System.Text.Json.Serialization.JsonPropertyName("leaseId")]
+        [System.ComponentModel.DataAnnotations.Required(AllowEmptyStrings = true)]
+        public System.Guid LeaseId { get; set; } = default!;
+
+        [System.Text.Json.Serialization.JsonPropertyName("expectedFloorRevision")]
+        public long ExpectedFloorRevision { get; set; } = default!;
 
     }
 
