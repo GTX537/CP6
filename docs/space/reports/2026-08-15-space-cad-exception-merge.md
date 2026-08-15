@@ -30,10 +30,10 @@ Space Studio 已支持把 2–20 个同类型通用 CAD 异常元素合并为一
 | 改类型 | 已实现 | `2026-08-15-space-cad-exception-retype.md` |
 | 删除 | 已有实现 | `DeleteObject`、批量删除与补偿命令链 |
 | 合并 | 已实现 | 本报告中的领域、真 SQL、前端、2D/3D 与 E2E 自动化 |
-| 拆分 | 未实现 | 仍需新 LogicalId 分配、属性继承和可逆合同 |
+| 拆分 | 已由后续纵切实现 | `2026-08-15-space-cad-exception-split.md` |
 | 重画 | 未实现 | 仍需画布绘制交互、几何校验、原子替换和撤销合同 |
 
-WP4 继续为 `Partial/Pending`，核心 GA 继续为 72% / `NoGo`。合并闭环不替代真实 DWG/DXF、主备 Provider、黄金集、生产等价 WMS、双仓 Pilot 或五方签字。
+WP4 继续为 `Partial/Pending`，核心 GA 继续为 72% / `NoGo`。拆分虽已由后续纵切关闭，画布重画仍缺；仓库实现也不替代真实 DWG/DXF、主备 Provider、黄金集、生产等价 WMS、双仓 Pilot 或五方签字。
 
 ## 可复现门禁
 
@@ -57,6 +57,6 @@ WP4 继续为 `Partial/Pending`，核心 GA 继续为 72% / `NoGo`。合并闭�
 
 ## 后续任务
 
-1. 在独立分支实现异常对象拆分。
+1. 异常对象拆分已由 `2026-08-15-space-cad-exception-split.md` 关闭。
 2. 在独立分支实现画布重画与原子几何替换。
-3. 两项完成后复核 LM-FR-017 及 WP4 其余详细条目；只有仓库实现和真实外部接受都满足时才能提升状态。
+3. 重画完成后复核 LM-FR-017 及 WP4 其余详细条目；只有仓库实现和真实外部接受都满足时才能提升状态。

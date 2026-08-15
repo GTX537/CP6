@@ -64,6 +64,8 @@ export interface EditorCommandInput {
     sourceId?: string
     sourceRef?: string
     attributes: unknown[]
+    linkedEntityType?: string
+    linkedLogicalId?: string
   }
   updateProperties?: unknown
 }
@@ -71,6 +73,7 @@ export interface EditorCommandInput {
 export interface ReversibleCommandBatch {
   forward: EditorCommandInput[]
   reverse: EditorCommandInput[]
+  redo?: EditorCommandInput[]
 }
 
 export type AlignmentMode =

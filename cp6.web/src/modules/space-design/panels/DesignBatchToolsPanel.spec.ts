@@ -27,4 +27,27 @@ describe('DesignBatchToolsPanel', () => {
 
     expect(wrapper.emitted('merge')).toHaveLength(1)
   })
+
+  it('exposes split only for an eligible group selection', async () => {
+    const wrapper = mount(DesignBatchToolsPanel, {
+      props: {
+        selectedCount: 1,
+        canSplit: false,
+        splitHint: '请选择一个组合元素进行拆分',
+      },
+      global: {
+        plugins: [ElementPlus],
+        directives: { permission: {} },
+      },
+    })
+    const split = wrapper.get('[data-test="split-element"]')
+
+    expect(split.attributes('disabled')).toBeDefined()
+    expect(wrapper.text()).toContain('请选择一个组合元素进行拆分')
+
+    await wrapper.setProps({ canSplit: true, splitHint: undefined })
+    await split.trigger('click')
+
+    expect(wrapper.emitted('split')).toHaveLength(1)
+  })
 })

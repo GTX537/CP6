@@ -22515,6 +22515,8 @@ export class SpaceCreateElementDto implements ISpaceCreateElementDto {
     sourceId?: string | undefined;
     sourceRef?: string | undefined;
     attributes!: SpaceElementAttributeWriteDto[];
+    linkedEntityType?: string | undefined;
+    linkedLogicalId?: string | undefined;
 
     constructor(data?: ISpaceCreateElementDto) {
         if (data) {
@@ -22548,6 +22550,8 @@ export class SpaceCreateElementDto implements ISpaceCreateElementDto {
                 for (let item of _data["attributes"])
                     this.attributes!.push(SpaceElementAttributeWriteDto.fromJS(item));
             }
+            this.linkedEntityType = _data["linkedEntityType"];
+            this.linkedLogicalId = _data["linkedLogicalId"];
         }
     }
 
@@ -22578,6 +22582,8 @@ export class SpaceCreateElementDto implements ISpaceCreateElementDto {
             for (let item of this.attributes)
                 data["attributes"].push(item ? item.toJSON() : undefined as any);
         }
+        data["linkedEntityType"] = this.linkedEntityType;
+        data["linkedLogicalId"] = this.linkedLogicalId;
         return data;
     }
 }
@@ -22597,6 +22603,8 @@ export interface ISpaceCreateElementDto {
     sourceId?: string | undefined;
     sourceRef?: string | undefined;
     attributes: SpaceElementAttributeWriteDto[];
+    linkedEntityType?: string | undefined;
+    linkedLogicalId?: string | undefined;
 }
 
 export class SpaceCreateLayoutAisleDto implements ISpaceCreateLayoutAisleDto {
