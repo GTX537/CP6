@@ -2,6 +2,12 @@
 
 > 依据 Git log 汇总，不替代完整 Git 历史。重点记录影响接手判断的里程碑。
 
+## 2026-08-15：Space AutoCAD Core Console 开发转换链
+
+- 新增实验型 `ICadConverter`/`convert-autocad-dev-ir`，通过显式本机 Core Console 路径将 DWG 导出为 DXF，并继续进入既有确定性 CAD IR 和共合同执行器。
+- 转换绑定原始 DWG SHA 与 Core Console 文件版本，原始/中间文件只在 D 盘唯一 `attempts` 目录存在；Activity Insights 持久运行包进入拒绝 DWG/DXF 的独立缓存，子进程无 Shell并可超时取消。
+- 签名有效的 Core Console 本机测试 1/1 通过，Floor Plan 样例两次 CAD IR SHA 一致；该链未获 Site/客户/法务批准、无主备评分且 GUI 签名仍需修复，因此 GA 保持 72% / `NoGo`。
+
 ## 2026-08-15：Space Studio 单人开发人员种子
 
 - 增加 `00001`～`00005` 五个开发虚拟人员，供一名真实开发者执行本地角色切换、权限矩阵和任务归属；人员册明确为 `DevelopmentSeed`，无生产访问或正式签字资格。

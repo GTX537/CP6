@@ -1,5 +1,11 @@
 # 已完成能力与近期里程碑
 
+## 2026-08-15 Space AutoCAD Core Console 开发转换链
+
+- 新增实验型 `convert-autocad-dev-ir` 和 `ICadConverter`，以显式 Core Console 路径把原生 DWG 转为中间 DXF，再复用既有确定性 CAD IR 转换与共合同执行器。
+- 原始 DWG/中间 DXF 仅进入 D 盘每次唯一 `attempts` 目录，校验源哈希与 Core Console 文件版本；Activity Insights 持久运行包进入不允许出现 DWG/DXF 的独立缓存。子进程无 Shell，具备超时/取消进程树终止和原始数据目录清理重试。
+- 本机签名有效的 AutoCAD 2025 Core Console 安装型测试 1/1 通过；Autodesk Floor Plan 样例连续两次得到相同 CAD IR SHA，4,424 个实体中 4,422 个受支持。该结果仅为开发证据，不计 Provider 认证、黄金 CAD 或 GA 完成度。
+
 ## 2026-08-15 Space Studio 单人开发人员种子
 
 - 新增 `00001`～`00005` 五个 `DevelopmentSeed` 虚拟人员，为一名真实开发者提供产品、后端、前端/3D、QA、WMS、架构、安全和 DevOps 的本地流程视角。
