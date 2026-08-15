@@ -4,6 +4,7 @@
 
 ## Space Studio v1.3 核心实现（2026-08-12）
 
+- 详细 Spec LM-FR-022 的仓库实现已闭环：构件库在既有 Zone/Aisle/Rack/Location Design Layout 权威链之外，补齐墙、柱、门、月台、托盘及输送线、AGV、叉车、工作台、电子秤、充电站六类静态设备。预设固定领域类型、默认尺寸、编码前缀和 `design` 属性，只表达静态几何/编码/自定义属性。创建复用租约、Floor/Content Revision、Content Hash 与幂等 CommandBatch，并进入公共撤销/重做历史；Playwright 验证托盘与六类设备的 2D/3D 同源清单。LM-FR-022 只代表仓库能力完成，WP4 仍为 Partial/Pending，核心 GA 保持 72% / `NoGo`。
 - 详细 Spec LM-FR-020 的仓库实现已闭环：工作台“图层”模式现提供可访问的底图显示/隐藏、0～100% 透明度和锁定控件，直接驱动真实 Konva 栅格图层；锁定会阻止标定入口，新挂接自动解锁、标定保存后自动锁回。显示偏好按版本/楼层保存在当前浏览器标签页，兼容旧 floor view schema v1，损坏或越界状态失败关闭，不修改 Draft 或制造第二套设计权威。单测、类型检查和 Playwright 已覆盖实际画布变化及重载恢复。LM-FR-020 只代表仓库能力完成，WP4 仍为 Partial/Pending，核心 GA 保持 72% / `NoGo`。
 - 详细 Spec LM-FR-024 的仓库实现已闭环：PDF/图片底图的挂接、同页替换、标定与显式移除现均受页面租约、Floor/Content Revision、数据库 UTC 和幂等 CommandBatch 保护，并以既有不可变 Command Record 密封前后态；工作台将它们接入与 CAD、Excel–CAD、普通编辑相同的撤销/重做栈。Undo/Redo 只提交原批次、方向和历史 Hash，由服务端复核当前底图/标定指针并生成新的不可变补偿批次。真 SQL 已覆盖挂接、标定、替换、移除、会话隔离、历史篡改和恢复旧标定指针；OpenAPI/双 SDK、Web 与 Playwright 同步。LM-FR-024 只代表仓库能力完成，WP4 仍为 Partial/Pending，核心 GA 保持 72% / `NoGo`。
 - Excel–CAD 权威确认现已接入统一撤销/重做：v2 Apply 结果从实际不可变 Command Record 密封历史 Hash/数量，工作台只保存公开历史引用；服务端 Undo/Redo 复核同一页面租约、双 Revision、内容 Hash、原 Apply 工件链、密封历史和当前 Rack/层/库位/绑定/属性/Source 状态，并以新不可变批次原子补偿。介入编辑、历史篡改或旧 v1 结果均失败关闭，OpenAPI/双 SDK、真 SQL和 Playwright 已覆盖。LM-FR-024 现只剩底图挂接/标定可逆合同；WP4 和 72% / `NoGo` 状态不变。

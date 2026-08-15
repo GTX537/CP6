@@ -1,5 +1,10 @@
 <script setup lang="ts">
 import { ref } from 'vue'
+import {
+  spaceStudioComponentGroups,
+  spaceStudioComponentPresets,
+  type SpaceStudioComponentPresetId,
+} from '@/modules/space-design/components/staticComponentCatalog'
 
 defineProps<{
   parseStatus?: string
@@ -24,7 +29,7 @@ const emit = defineEmits<{
   cancelParse: []
   retryParse: []
   openRuleOnly: []
-  createComponent: [elementType: string]
+  createComponent: [presetId: SpaceStudioComponentPresetId]
   underlayVisibilityChange: [visible: boolean]
   underlayOpacityChange: [opacity: number]
   underlayLockChange: [locked: boolean]
@@ -123,16 +128,32 @@ function emitOpacity(event: Event): void {
 
       <template v-else-if="activeMode === 'assets'">
         <h2>构件库</h2>
-        <p>库区、巷道、货架与静态建筑构件。</p>
+        <p>库区、巷道、货架、托盘与静态建筑/设备构件。</p>
         <button type="button" class="primary" :disabled="readonly" @click="emit('openRuleOnly')">
           从 CAD 规则生成构件
         </button>
-        <div class="component-grid" aria-label="快速创建构件">
-          <button v-for="type in ['Wall', 'Column', 'Door', 'Dock', 'StaticEquipment']" :key="type" type="button" :disabled="readonly" @click="emit('createComponent', type)">
-            + {{ type }}
-          </button>
-        </div>
-        <div class="empty-note">构件会落在当前指针附近并通过同一租约、Revision 与 CommandBatch 权威链保存；创建后可在右侧属性面板精调。</div>
+        <section
+          v-for="group in spaceStudioComponentGroups"
+          :key="group.id"
+          class="component-group"
+          :aria-label="group.label"
+        >
+          <h3>{{ group.label }}</h3>
+          <div class="component-grid">
+            <button
+              v-for="preset in spaceStudioComponentPresets.filter(item => item.group === group.id)"
+              :key="preset.id"
+              type="button"
+              :data-test="`component-preset-${preset.id}`"
+              :disabled="readonly"
+              :aria-label="`创建${preset.label}`"
+              @click="emit('createComponent', preset.id)"
+            >
+              + {{ preset.label }}
+            </button>
+          </div>
+        </section>
+        <div class="empty-note">所有设备预设均为静态几何、业务编码和自定义属性，不含实时状态或运动。构件通过同一租约、Revision 与 CommandBatch 权威链保存。</div>
         <slot name="assets" />
       </template>
 
@@ -222,6 +243,8 @@ progress { width:100%; accent-color:var(--space-studio-accent); }
 .source-state,.empty-note { margin-top:16px; padding:10px; border-radius:6px; background:rgba(148,163,184,.08); }
 .component-grid { display:grid; grid-template-columns:1fr 1fr; gap:8px; margin-top:12px; }
 .component-grid button { margin-top:0; }
+.component-group { margin-top:14px; }
+.component-group h3 { margin:0; color:var(--space-studio-text); font-size:13px; }
 label { display:block; margin:12px 0; color:var(--space-studio-text); }
 .underlay-layer-controls { margin:0 0 14px; padding:10px 12px; border:1px solid var(--space-studio-border); border-radius:7px; }
 .underlay-layer-controls legend { padding:0 5px; color:var(--space-studio-text); font-size:14px; font-weight:700; }
