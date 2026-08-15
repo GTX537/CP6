@@ -491,6 +491,13 @@ public sealed class SpaceWmsRuntimeSchemaFilter : ISchemaFilter
                 "appliedChangeCount",
                 "workspaceSha256",
                 "idempotentReplay",
+                "undoCommands",
+                "redoCommands",
+            ],
+            [typeof(SpaceSavedElementCommandDto)] =
+            [
+                "type",
+                "targetLogicalId",
             ],
             [typeof(SpaceCadChangeV1)] =
             [

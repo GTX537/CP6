@@ -117,4 +117,11 @@ public sealed record ApplySpaceCadChangesetResponse(
     long VersionContentRevision,
     long AppliedChangeCount,
     string WorkspaceSha256,
-    bool IdempotentReplay);
+    bool IdempotentReplay,
+    IReadOnlyList<SpaceSavedElementCommandDto> UndoCommands,
+    IReadOnlyList<SpaceSavedElementCommandDto> RedoCommands);
+
+public sealed record SpaceSavedElementCommandDto(
+    string Type,
+    Guid TargetLogicalId,
+    SpaceUpdateElementPropertiesDto? UpdateProperties = null);

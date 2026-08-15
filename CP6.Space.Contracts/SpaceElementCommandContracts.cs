@@ -97,7 +97,9 @@ public sealed record SpaceElementCommandResultDto(
     string Type,
     Guid TargetLogicalId,
     SpaceSceneElementDto Element,
-    IReadOnlyList<SpaceSceneElementAttributeDto> Attributes);
+    IReadOnlyList<SpaceSceneElementAttributeDto> Attributes,
+    SpaceSceneElementDto? BeforeElement = null,
+    IReadOnlyList<SpaceSceneElementAttributeDto>? BeforeAttributes = null);
 
 public sealed record ApplySpaceElementCommandBatchResponse(
     Guid CommandBatchId,

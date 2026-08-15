@@ -48,6 +48,7 @@ import {
   type GenerateRackArrayPayload,
   type ReversibleCommandBatch,
 } from '@/modules/space-design/commands/editorBatchCommands'
+import { buildCadApplyHistoryEntry } from '@/modules/space-design/commands/cadApplyHistory'
 import {
   buildElementMergePlan,
   type ElementMergePlan,
@@ -2516,11 +2517,27 @@ async function applyCadReviewChanges(changeIds: string[]): Promise<void> {
         changeIds,
       },
     )
+    let cadHistory
+    try {
+      cadHistory = buildCadApplyHistoryEntry(response)
+    } catch {
+      cadHistory = undefined
+    }
+    if (cadHistory) {
+      history.push(cadHistory)
+      touchHistory()
+    }
     saveState.value = 'saved'
     lastSavedAt.value = new Date()
     cadReviewWorkspace.value = null
     await loadScene()
-    ElMessage.success(`已确认并原子合入 ${response.appliedChangeCount} 项 CAD 变更`)
+    if (cadHistory) {
+      ElMessage.success(`已确认并原子合入 ${response.appliedChangeCount} 项 CAD 变更，可撤销`)
+    } else {
+      stopLeaseRenewal()
+      leaseState.value = 'lost'
+      ElMessage.error('CAD 变更已合入，但历史响应无效；工作台已保护性切换为只读')
+    }
   } catch (error) {
     saveState.value = 'failed'
     const code = isAxiosError(error) ? error.response?.data?.code : undefined

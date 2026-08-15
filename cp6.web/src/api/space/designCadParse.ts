@@ -1,5 +1,6 @@
 import http from '@/api/http'
 import type { CadReviewWorkspace } from '@/modules/space-design/cad-review/cadReviewWorkspace'
+import type { IApplySpaceCadChangesetResponse } from '../../../../sdk/typescript/space-design-v1/spaceDesignV1Client'
 
 const root = '/space/design/v1'
 
@@ -239,14 +240,10 @@ export const designCadParseApi = {
       changeIds: string[]
     },
   ) {
-    return http.post<unknown, {
-      commandBatchId: string
-      floorRevision: number
-      versionContentRevision: number
-      appliedChangeCount: number
-      workspaceSha256: string
-      idempotentReplay: boolean
-    }>(`${url(versionId, sourceId, jobId)}/review-workspace:apply`, request)
+    return http.post<unknown, IApplySpaceCadChangesetResponse>(
+      `${url(versionId, sourceId, jobId)}/review-workspace:apply`,
+      request,
+    )
   },
 
   cancel(versionId: string, sourceId: string, jobId: string) {

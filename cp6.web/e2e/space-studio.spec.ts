@@ -185,6 +185,51 @@ test('reviews and confirms the authoritative CAD plus Excel match in the studio'
   expect(errors).toEqual([])
 })
 
+test('records confirmed CAD changes in the shared undo and redo stack', async ({ page }) => {
+  const errors = collectPageErrors(page)
+  const cadApplyBodies: Array<Record<string, any>> = []
+  const editorBodies: Array<Record<string, any>> = []
+  await installSpaceStudioFixtures(page, [], {
+    cadReview: true,
+    cadApplyHistory: true,
+    cadApplyBodies,
+    editorBodies,
+  })
+  await page.setViewportSize({ width: 1440, height: 900 })
+  await page.goto(`${studioUrl}?cadSourceId=${cadSourceId}&cadParseJobId=${cadParseJobId}`)
+
+  await page.getByRole('button', { name: /^问题/ }).click()
+  await expect(page.locator('[data-test="cad-changeset"]')).toBeVisible()
+  await page.getByRole('button', { name: '确认并合入 1 项', exact: true }).click()
+  await expect(page.getByText('已确认并原子合入 1 项 CAD 变更，可撤销', { exact: true }))
+    .toBeVisible()
+  expect(cadApplyBodies).toHaveLength(1)
+  expect(cadApplyBodies[0]).toMatchObject({
+    expectedFloorRevision: 7,
+    expectedContentRevision: 7,
+    changeIds: ['cad-change-column'],
+  })
+
+  await page.getByRole('tab', { name: '批量', exact: true }).click()
+  const tools = page.locator('[data-test="design-batch-tools"]')
+  await tools.getByRole('button', { name: '撤销', exact: true }).click()
+  await expect(page.getByText('已撤销：合入 1 项 CAD 变更', { exact: true })).toBeVisible()
+  expect(editorBodies[0]?.commands[0]).toMatchObject({
+    type: 'UpdateProperties',
+    targetLogicalId: columnId,
+    updateProperties: { x: 5200 },
+  })
+
+  await tools.getByRole('button', { name: '重做', exact: true }).click()
+  await expect(page.getByText('已重做：合入 1 项 CAD 变更', { exact: true })).toBeVisible()
+  expect(editorBodies[1]?.commands[0]).toMatchObject({
+    type: 'UpdateProperties',
+    targetLogicalId: columnId,
+    updateProperties: { x: 5500 },
+  })
+  expect(errors).toEqual([])
+})
+
 test('held lease exposes wait and audited takeover recovery', async ({ page }) => {
   await installSpaceStudioFixtures(page, [], { leaseHeld: true })
   await page.setViewportSize({ width: 1440, height: 900 })
@@ -956,6 +1001,8 @@ async function installSpaceStudioFixtures(
     codingBodies?: Array<Record<string, any>>
     cadBodies?: Array<Record<string, any>>
     cadReview?: boolean
+    cadApplyHistory?: boolean
+    cadApplyBodies?: Array<Record<string, any>>
     underlayBodies?: Array<Record<string, any>>
     matchBodies?: Array<Record<string, any>>
     mergeEnabled?: boolean
@@ -1362,7 +1409,56 @@ async function installSpaceStudioFixtures(
       return
     }
     if (url.pathname === `${cadParsePath}/${cadParseJobId}/review-workspace`) {
-      await route.fulfill({ json: cadReviewWorkspaceFixture() })
+      await route.fulfill({
+        json: cadReviewWorkspaceFixture(options.cadApplyHistory),
+      })
+      return
+    }
+    if (url.pathname === `${cadParsePath}/${cadParseJobId}/review-workspace:apply`
+      && request.method() === 'POST') {
+      const body = request.postDataJSON() as Record<string, any>
+      options.cadApplyBodies?.push(body)
+      const element = scene.elements.find(
+        (item: any) => item.revision.logicalId === columnId,
+      )
+      const properties = (x: number) => ({
+        elementType: element.elementType,
+        geometryJson: element.geometryJson,
+        x,
+        y: element.y,
+        z: element.z,
+        rotationZ: element.rotationZ,
+        width: element.width,
+        height: element.height,
+        depth: element.depth,
+        businessCode: element.businessCode,
+        linkedEntityType: element.linkedEntityType,
+        linkedLogicalId: element.linkedLogicalId,
+        attributes: [],
+      })
+      element.x = 5500
+      scene.floor.revisionNumber += 1
+      scene.contentRevision += 1
+      await route.fulfill({
+        json: {
+          commandBatchId: body.commandBatchId,
+          floorRevision: scene.floor.revisionNumber,
+          versionContentRevision: scene.contentRevision,
+          appliedChangeCount: 1,
+          workspaceSha256: 'e'.repeat(64),
+          idempotentReplay: false,
+          undoCommands: [{
+            type: 'UpdateProperties',
+            targetLogicalId: columnId,
+            updateProperties: properties(5200),
+          }],
+          redoCommands: [{
+            type: 'UpdateProperties',
+            targetLogicalId: columnId,
+            updateProperties: properties(5500),
+          }],
+        },
+      })
       return
     }
     if (url.pathname === layoutPath && request.method() === 'POST') {
@@ -1878,7 +1974,7 @@ function excelCadMatchFixture() {
   }
 }
 
-function cadReviewWorkspaceFixture() {
+function cadReviewWorkspaceFixture(includeChanges = false) {
   return {
     schemaVersion: 1,
     isReadOnlyWorkspace: true,
@@ -1947,6 +2043,52 @@ function cadReviewWorkspaceFixture() {
       excelReviewCount: 0,
     },
     workspaceSha256: 'e'.repeat(64),
+    ...(includeChanges
+      ? {
+          changes: [{
+            changeId: 'cad-change-column',
+            kind: 'Modify',
+            logicalId: columnId,
+            sourceRef: 'H:COLUMN-001',
+            previewObjectId: 'preview-column',
+            objectType: 'Column',
+            confidence: 0.99,
+            isSelected: true,
+            canApply: true,
+            isManualCorrectionLocked: false,
+            userCorrectionVersion: 0,
+            beforeBounds: {
+              minX: 5200,
+              minY: 2400,
+              minZ: 0,
+              maxX: 5600,
+              maxY: 2800,
+              maxZ: 3000,
+            },
+            afterBounds: {
+              minX: 5500,
+              minY: 2400,
+              minZ: 0,
+              maxX: 5900,
+              maxY: 2800,
+              maxZ: 3000,
+            },
+          }],
+          changeSummary: {
+            totalCount: 1,
+            addCount: 0,
+            modifyCount: 1,
+            deleteCount: 0,
+            conflictCount: 0,
+            lowConfidenceCount: 0,
+            unrecognizedCount: 0,
+            selectedCount: 1,
+            applyEligibleCount: 1,
+          },
+          semanticPreviewSha256: '9'.repeat(64),
+          changesetSha256: 'f'.repeat(64),
+        }
+      : {}),
   }
 }
 

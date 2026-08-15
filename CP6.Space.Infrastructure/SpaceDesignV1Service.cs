@@ -650,6 +650,11 @@ public sealed class SpaceDesignV1Service :
 
             var affectedElementCommands =
                 new Dictionary<Guid, SpaceElementCommandDto>();
+            var beforeElements =
+                new Dictionary<Guid, SpaceSceneElementDto>();
+            var beforeElementAttributes =
+                new Dictionary<Guid,
+                    IReadOnlyList<SpaceSceneElementAttributeDto>>();
             var affectedRacks = new Dictionary<Guid, SpaceRackRevision>();
             var affectedRackLevels =
                 new Dictionary<Guid, SpaceRackLevelRevision>();
@@ -710,6 +715,17 @@ public sealed class SpaceDesignV1Service :
                     {
                         attributes = [];
                         attributesByElement[element.Id] = attributes;
+                    }
+
+                    if (!beforeElements.ContainsKey(element.LogicalId))
+                    {
+                        beforeElements[element.LogicalId] = ToSceneDto(element);
+                        beforeElementAttributes[element.LogicalId] = attributes
+                            .Where(attribute => !attribute.IsDeleted)
+                            .OrderBy(attribute => attribute.Namespace)
+                            .ThenBy(attribute => attribute.Key)
+                            .Select(ToSceneDto)
+                            .ToArray();
                     }
 
                     beforeJson = ElementAuditJson(element, attributes);
@@ -839,7 +855,9 @@ public sealed class SpaceDesignV1Service :
                         .OrderBy(attribute => attribute.Namespace)
                         .ThenBy(attribute => attribute.Key)
                         .Select(ToSceneDto)
-                        .ToArray());
+                        .ToArray(),
+                        beforeElements.GetValueOrDefault(pair.Key),
+                        beforeElementAttributes.GetValueOrDefault(pair.Key));
                 })
                 .ToArray();
             var response = new ApplySpaceElementCommandBatchResponse(

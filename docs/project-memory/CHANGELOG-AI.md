@@ -2,6 +2,12 @@
 
 > 依据 Git log 汇总，不替代完整 Git 历史。重点记录影响接手判断的里程碑。
 
+## 2026-08-15：Space Studio CAD 确认批次撤销/重做
+
+- CAD Typed Changeset Apply 响应新增服务器密封的 undo/redo 命令；Create/Delete 使用稳定 LogicalId 的 Delete/Restore，Modify 使用命令提交前后的完整属性快照。
+- 通用 Element Command 幂等响应保存首次修改前态；工作台验证历史数量和命令白名单后接入既有统一命令栈，异常历史保护性切换为只读。
+- CAD、真实 LocalDB、OpenAPI、Space Unit、Web、Playwright、构建和 SDK 漂移门禁通过。LM-FR-024 仅完成 CAD 纵切；Excel–CAD 确认及底图挂接/标定仍待完成，WP4 与 GA 状态不变。
+
 ## 2026-08-15：Space Studio CAD 人工校正锁定
 
 - CAD 来源通用元素新增持久人工校正锁、单调版本、最后操作者和 UTC 时间；锁定/解除锁定继续走现有 Lease/Revision/幂等 `UpdateProperties` 原子批，锁定后的人工编辑递增版本。

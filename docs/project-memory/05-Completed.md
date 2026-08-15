@@ -1,5 +1,12 @@
 # 已完成能力与近期里程碑
 
+## 2026-08-15 Space Studio CAD 确认批次撤销/重做
+
+- CAD Typed Changeset 显式 Apply 后，服务端按实际提交结果密封统一历史：新增为 Delete/Restore，删除为 Restore/Delete，修改为提交前/后的完整 Update 快照；多项撤销逆序，LogicalId 保持稳定。
+- Element Command 幂等响应持久保存首次修改前的元素和属性快照；CAD Apply 回放返回同一撤销/重做集合。工作台只接受白名单命令和完整数量，异常历史会保护性切换只读。
+- OpenAPI/C#/TypeScript SDK 同步。门禁通过：CAD 2/2、SQL Server LocalDB 1/1 且 0 skipped、OpenAPI 45/45、Space Unit 533/533、Web 813/813、Space Studio Playwright 21/21、Vue production build、完整解决方案 0 warning/0 error及 SDK 二次生成无漂移。详细报告见 `docs/space/reports/2026-08-15-space-studio-cad-apply-history.md`。
+- 该纵切只关闭 LM-FR-024 的 CAD 确认批次；Excel–CAD 确认和底图挂接/标定仍待接入统一历史。WP4 保持 Partial/Pending，核心 GA 保持 72% / `NoGo`。
+
 ## 2026-08-15 Space Studio CAD 人工校正锁定
 
 - CAD 来源通用元素可在属性检查器中原子保存并锁定/解除锁定；Design Revision 持久保存锁状态、单调校正版本、最后操作者与 UTC 时间，锁定后的继续编辑递增版本，撤销/重做显式恢复锁状态。
