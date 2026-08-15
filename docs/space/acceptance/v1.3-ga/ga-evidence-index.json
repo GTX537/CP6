@@ -231,7 +231,8 @@
         "docs/space/reports/2026-08-15-space-studio-underlay-history.md",
         "docs/space/reports/2026-08-15-space-studio-underlay-layer-controls.md",
         "docs/space/reports/2026-08-15-space-studio-underlay-calibration-workflow.md",
-        "docs/space/reports/2026-08-15-space-studio-static-component-library.md"
+        "docs/space/reports/2026-08-15-space-studio-static-component-library.md",
+        "docs/space/reports/2026-08-15-space-studio-final-ux-requirements.md"
       ],
       "acceptedEvidence": [],
       "acceptanceCriteria": [
@@ -256,7 +257,8 @@
         "docs/space/reports/2026-08-14-space-viewer-v13-ga.md",
         "docs/space/reports/2026-08-14-space-viewer-v13-ga.json",
         "docs/space/reports/2026-08-14-space-studio-accessibility.md",
-        "docs/space/reports/2026-08-14-space-sqlserver-localdb-full-gate.md"
+        "docs/space/reports/2026-08-14-space-sqlserver-localdb-full-gate.md",
+        "docs/space/reports/2026-08-15-space-studio-final-ux-requirements.md"
       ],
       "acceptedEvidence": [],
       "acceptanceCriteria": [

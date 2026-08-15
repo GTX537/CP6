@@ -29,6 +29,21 @@ test('1440x900 provides the full editor and a consistent local 3D preview', asyn
   await expect(page.getByRole('button', { name: '校验并发布', exact: true })).toBeEnabled()
   await expect(page.locator('.el-loading-mask')).toHaveCount(0)
 
+  const checklist = page.locator('[data-test="space-studio-checklist"]')
+  await expect(checklist).toHaveJSProperty('open', true)
+  await expect(checklist.getByRole('listitem')).toHaveCount(4)
+  await expect(checklist.getByRole('listitem').nth(0)).toHaveAttribute(
+    'aria-label',
+    '导入来源 · 待完成',
+  )
+  await checklist.getByText('首次建模任务 · 4 步', { exact: true }).click()
+  await expect(checklist).toHaveJSProperty('open', false)
+  await checklist.getByText('首次建模任务 · 4 步', { exact: true }).click()
+  await expect(checklist).toHaveJSProperty('open', true)
+  expect(await checklist.locator('summary').evaluate(element =>
+    element.getBoundingClientRect().height,
+  )).toBeGreaterThanOrEqual(44)
+
   const columns = await page.locator('.workspace').evaluate((element) =>
     getComputedStyle(element).gridTemplateColumns,
   )
@@ -40,9 +55,19 @@ test('1440x900 provides the full editor and a consistent local 3D preview', asyn
   )
   expect(commandTargetHeights.every((height) => height >= 44)).toBe(true)
 
+  const canvas = page.locator('.canvas .konvajs-content')
+  const bounds = await canvas.boundingBox()
+  expect(bounds).not.toBeNull()
+  await page.mouse.click(
+    bounds!.x + 5_400 * 0.05,
+    bounds!.y + bounds!.height - 2_600 * 0.05,
+  )
+  await expect(page.locator('.studio-statusbar')).toContainText('选择 1')
+
   await page.getByRole('button', { name: '3D', exact: true }).click()
   await expect(page.getByText('2D/3D 清单一致', { exact: true })).toBeVisible()
   await expect(page.getByText('2D 2 / 3D 2', { exact: true })).toBeVisible()
+  await expect(page.locator('.studio-statusbar')).toContainText('选择 1')
   await captureEvidence(page, 'space-studio-1440x900.png')
   expect(errors).toEqual([])
 })
@@ -978,6 +1003,17 @@ test('redraws a CAD exception on canvas without changing its identity', async ({
   await clickWorld(4_900, 3_000)
   await expect(page.locator('.studio-statusbar')).toContainText('重画 4/100 点')
   expect(editorBodies).toHaveLength(0)
+
+  await page.getByRole('button', { name: '3D', exact: true }).click()
+  await expect(page.getByRole('button', { name: '3D', exact: true })).toHaveClass(/active/)
+  await expect(page.locator('.studio-title-state')).toContainText('未保存重画 · 4 个顶点')
+  await expect(page.locator('.studio-statusbar')).toContainText('选择 1')
+  await expect(page.locator('[data-testid="space-redraw-complete"]')).toBeDisabled()
+  expect(editorBodies).toHaveLength(0)
+
+  await page.getByRole('button', { name: '2D', exact: true }).click()
+  await expect(page.locator('.studio-statusbar')).toContainText('重画 4/100 点')
+  await expect(page.locator('[data-testid="space-redraw-complete"]')).toBeEnabled()
 
   await page.locator('[data-testid="space-redraw-complete"]').click()
   await expect(page.getByText('确认重画', { exact: true })).toBeVisible()

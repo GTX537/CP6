@@ -1,6 +1,7 @@
 // @vitest-environment jsdom
 import { describe, expect, it } from 'vitest'
 import { mount } from '@vue/test-utils'
+import { nextTick } from 'vue'
 import ElementPlus from 'element-plus'
 import DesignCadIssuePanel from './DesignCadIssuePanel.vue'
 import type { CadReviewWorkspace } from './cadReviewWorkspace'
@@ -84,6 +85,61 @@ describe('DesignCadIssuePanel', () => {
       .toBeDefined()
     await wrapper.get('[data-test="cad-review-item"]').trigger('click')
     expect(wrapper.emitted('select')).toBeUndefined()
+  })
+
+  it('filters open issues by Blocking, Warning and Info severity', async () => {
+    const severityWorkspace = {
+      ...workspace,
+      items: [
+        {
+          ...workspace.items[0]!,
+          reviewItemId: 'cad-review-blocking',
+          trackingKey: 'cad-blocking',
+          severity: 'Blocking' as const,
+          code: 'CAD_BLOCKING_TEST',
+        },
+        {
+          ...workspace.items[0]!,
+          reviewItemId: 'cad-review-warning',
+          trackingKey: 'cad-warning',
+          code: 'CAD_WARNING_TEST',
+        },
+        {
+          ...workspace.items[0]!,
+          reviewItemId: 'cad-review-info',
+          trackingKey: 'cad-info',
+          severity: 'Info' as const,
+          code: 'CAD_INFO_TEST',
+        },
+      ],
+      summary: {
+        ...workspace.summary,
+        totalCount: 3,
+        openCount: 3,
+        openBlockingCount: 1,
+        openWarningCount: 1,
+        openInfoCount: 1,
+        locatableCount: 3,
+        proposalReviewCount: 3,
+      },
+    } satisfies CadReviewWorkspace
+    const wrapper = mount(DesignCadIssuePanel, {
+      props: { workspace: severityWorkspace },
+      global: { plugins: [ElementPlus] },
+    })
+    const severitySelect = wrapper.findAllComponents({ name: 'ElSelect' })[1]!
+
+    for (const [severity, code] of [
+      ['Blocking', 'CAD_BLOCKING_TEST'],
+      ['Warning', 'CAD_WARNING_TEST'],
+      ['Info', 'CAD_INFO_TEST'],
+    ] as const) {
+      severitySelect.vm.$emit('update:modelValue', severity)
+      await nextTick()
+      const rows = wrapper.findAll('[data-test="cad-review-item"]')
+      expect(rows).toHaveLength(1)
+      expect(rows[0]!.text()).toContain(code)
+    }
   })
 
   it('shows a locked manual correction as a disabled versioned conflict', () => {
