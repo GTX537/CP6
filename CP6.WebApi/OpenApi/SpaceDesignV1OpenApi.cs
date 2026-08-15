@@ -95,6 +95,30 @@ public sealed class SpaceWmsRuntimeSchemaFilter : ISchemaFilter
                 "leaseId",
                 "expectedFloorRevision",
             ],
+            [typeof(CompensateSpaceExcelCadApplyRequest)] =
+            [
+                "schemaVersion",
+                "direction",
+                "commandBatchId",
+                "clientInstanceId",
+                "leaseId",
+                "expectedFloorRevision",
+                "expectedContentRevision",
+                "historySha256",
+            ],
+            [typeof(CompensateSpaceExcelCadApplyResponse)] =
+            [
+                "schemaVersion",
+                "matchJobId",
+                "applyJobId",
+                "commandBatchId",
+                "direction",
+                "historySha256",
+                "historyCommandCount",
+                "floorRevision",
+                "versionContentRevision",
+                "idempotentReplay",
+            ],
             [typeof(SpacePublishedViewerSceneDto)] =
             [
                 "schemaVersion",

@@ -34,4 +34,9 @@ public abstract class SpaceTenantEntity
     {
         IsDeleted = true;
     }
+
+    protected void MarkEntityActive()
+    {
+        IsDeleted = false;
+    }
 }

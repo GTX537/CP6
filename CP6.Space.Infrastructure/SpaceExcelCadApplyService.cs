@@ -11,7 +11,7 @@ using Microsoft.EntityFrameworkCore.Storage;
 
 namespace CP6.Space.Infrastructure;
 
-public sealed class SpaceExcelCadApplyService(
+public sealed partial class SpaceExcelCadApplyService(
     SpaceContext context,
     ISpaceExecutionContext execution,
     ISpaceDesignAccessEvaluator access,
@@ -557,7 +557,8 @@ public sealed class SpaceExcelCadApplyService(
         SpaceExcelCadApplyJobPayload payload,
         Guid applyJobId)
     {
-        if (result.SchemaVersion != SpaceExcelCadApplyVersions.SchemaVersion ||
+        if (result.SchemaVersion is < SpaceExcelCadApplyVersions.LegacySchemaVersion or
+                > SpaceExcelCadApplyVersions.SchemaVersion ||
             result.MatchJobId != payload.MatchJobId ||
             result.ApplyJobId != applyJobId ||
             result.ArtifactId != payload.ArtifactId ||
@@ -573,7 +574,10 @@ public sealed class SpaceExcelCadApplyService(
             result.ConfirmedBy == Guid.Empty ||
             result.ConfirmedAtUtc.Kind != DateTimeKind.Utc ||
             result.AppliedAtUtc.Kind != DateTimeKind.Utc ||
-            !IsSha256(result.ApplyPlanSha256))
+            !IsSha256(result.ApplyPlanSha256) ||
+            (result.SchemaVersion >= SpaceExcelCadApplyVersions.SchemaVersion &&
+             (!IsSha256(result.HistorySha256) ||
+              result.HistoryCommandCount <= 0)))
         {
             throw ArtifactInvalid("The stored Apply result identity is invalid.");
         }

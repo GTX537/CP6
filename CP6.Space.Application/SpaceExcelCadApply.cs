@@ -38,6 +38,14 @@ public interface ISpaceExcelCadApplyService
         Guid matchJobId,
         Guid applyJobId,
         CancellationToken cancellationToken = default);
+
+    Task<CompensateSpaceExcelCadApplyResponse> CompensateAsync(
+        Guid versionId,
+        Guid matchJobId,
+        Guid applyJobId,
+        CompensateSpaceExcelCadApplyRequest request,
+        string idempotencyKey,
+        CancellationToken cancellationToken = default);
 }
 
 public sealed class SpaceExcelCadApplyJobProcessor(

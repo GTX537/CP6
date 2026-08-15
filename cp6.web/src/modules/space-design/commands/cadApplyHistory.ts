@@ -1,6 +1,6 @@
 import type {
   EditorCommandInput,
-  EditorHistoryEntry,
+  CommandHistoryEntry,
 } from './editorBatchCommands'
 
 export interface CadSavedCommand {
@@ -17,7 +17,7 @@ export interface CadApplyHistoryResponse {
 
 export function buildCadApplyHistoryEntry(
   response: CadApplyHistoryResponse,
-): EditorHistoryEntry {
+): CommandHistoryEntry {
   if (!Number.isInteger(response.appliedChangeCount)
     || response.appliedChangeCount < 1
     || response.appliedChangeCount > 100

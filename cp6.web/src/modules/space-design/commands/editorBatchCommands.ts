@@ -86,10 +86,32 @@ export type AlignmentMode =
 
 export type DistributionMode = 'horizontal' | 'vertical'
 
-export interface EditorHistoryEntry {
+export interface CommandHistoryEntry {
   label: string
   undo: EditorCommandInput[]
   redo: EditorCommandInput[]
+}
+
+export interface ExcelCadCompensationHistory {
+  matchJobId: string
+  applyJobId: string
+  historySha256: string
+  historyCommandCount: number
+  pendingUndoCommandBatchId?: string
+  pendingRedoCommandBatchId?: string
+}
+
+export interface ExcelCadHistoryEntry {
+  label: string
+  excelCadCompensation: ExcelCadCompensationHistory
+}
+
+export type EditorHistoryEntry = CommandHistoryEntry | ExcelCadHistoryEntry
+
+export function isExcelCadHistoryEntry(
+  entry: EditorHistoryEntry,
+): entry is ExcelCadHistoryEntry {
+  return 'excelCadCompensation' in entry
 }
 
 export class SavedCommandHistory {

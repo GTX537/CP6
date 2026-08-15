@@ -167,8 +167,12 @@ public sealed class SpaceExcelCadApplyJobStepExecutor(
                 input.Payload.CommandBatchId,
                 input.Payload.ModelVersionId,
                 input.Payload.FloorLogicalId,
-                input.Payload.MatchJobId,
+                input.Payload.ClientInstanceId,
+                input.Payload.LeaseId,
                 input.Payload.ExpectedFloorRevision,
+                input.Payload.ExpectedContentRevision,
+                state.Version.ContentHash,
+                planSha256,
                 planSha256,
                 input.Job.RequestedBy,
                 appliedAtUtc);
@@ -249,6 +253,16 @@ public sealed class SpaceExcelCadApplyJobStepExecutor(
             state.Floor.AdvanceRevision(input.Payload.ExpectedFloorRevision);
             state.Version.TouchContent();
             input.ExcelSource.MarkImported(input.Payload.CommandBatchId);
+            var historyRecords = context.ChangeTracker
+                .Entries<SpaceElementCommandRecord>()
+                .Where(entry =>
+                    entry.State == EntityState.Added &&
+                    entry.Entity.CommandBatchId == input.Payload.CommandBatchId)
+                .Select(entry => entry.Entity)
+                .OrderBy(record => record.SequenceNo)
+                .ToArray();
+            var historySha256 =
+                SpaceExcelCadApplyService.ComputeHistorySha256(historyRecords);
             var result = new SpaceExcelCadApplyResultV1(
                 SpaceExcelCadApplyVersions.SchemaVersion,
                 input.Payload.MatchJobId,
@@ -269,7 +283,9 @@ public sealed class SpaceExcelCadApplyJobStepExecutor(
                 input.Job.RequestedBy,
                 input.Job.RequestedAtUtc,
                 appliedAtUtc,
-                planSha256);
+                planSha256,
+                historySha256,
+                historyRecords.Length);
             var responseJson = JsonSerializer.Serialize(result, JsonOptions);
             batch.Complete(
                 state.Floor.Revision,
@@ -1527,8 +1543,11 @@ public sealed class SpaceExcelCadApplyJobStepExecutor(
             return null;
         if (batch.ModelVersionId != input.Payload.ModelVersionId ||
             batch.FloorLogicalId != input.Payload.FloorLogicalId ||
-            batch.ClientInstanceId != input.Payload.MatchJobId ||
+            batch.ClientInstanceId != input.Payload.ClientInstanceId ||
+            batch.LeaseId != input.Payload.LeaseId ||
             batch.ExpectedFloorRevision != input.Payload.ExpectedFloorRevision ||
+            batch.ExpectedContentRevision != input.Payload.ExpectedContentRevision ||
+            batch.ChangesetSha256 != planSha256 ||
             !batch.RequestHash.Equals(planSha256, StringComparison.Ordinal) ||
             batch.ResponseJson is null ||
             batch.ResultFloorRevision != input.Payload.ExpectedFloorRevision + 1 ||
@@ -1567,7 +1586,9 @@ public sealed class SpaceExcelCadApplyJobStepExecutor(
                 input.Payload.ExpectedContentRevision ||
             result.ResultContentRevision !=
                 input.Payload.ExpectedContentRevision + 1 ||
-            !result.ApplyPlanSha256.Equals(planSha256, StringComparison.Ordinal))
+            !result.ApplyPlanSha256.Equals(planSha256, StringComparison.Ordinal) ||
+            !SpaceExcelCadApplyService.IsSha256(result.HistorySha256) ||
+            result.HistoryCommandCount <= 0)
         {
             throw Invalid("The stored Apply result does not match its frozen input.");
         }
@@ -1580,6 +1601,7 @@ public sealed class SpaceExcelCadApplyJobStepExecutor(
         rack.LogicalId,
         rack.FloorLogicalId,
         rack.ZoneLogicalId,
+        rack.AisleLogicalId,
         rack.RackCode,
         rack.Name,
         rack.RackType,

@@ -181,6 +181,19 @@ public sealed class SpaceModelSource : SpaceTenantEntity
         State = SpaceSourceState.Imported;
     }
 
+    public void ReopenImportedPreview(Guid expectedCommandBatchId)
+    {
+        if (State != SpaceSourceState.Imported ||
+            ImportedCommandBatchId != expectedCommandBatchId)
+        {
+            throw new SpaceFileStateException(
+                "Only the command batch that imported a source can reopen its preview.");
+        }
+
+        ImportedCommandBatchId = null;
+        State = SpaceSourceState.PreviewReady;
+    }
+
     public void Reject()
     {
         if (State == SpaceSourceState.Imported)

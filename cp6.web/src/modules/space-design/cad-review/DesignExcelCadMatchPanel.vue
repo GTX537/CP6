@@ -18,6 +18,7 @@ const props = defineProps<{
 
 const emit = defineEmits<{
   locate: [row: ISpaceExcelCadRackMatchV1]
+  applied: [confirmation: ISpaceExcelCadApplyDto]
   close: []
 }>()
 
@@ -28,6 +29,7 @@ const confirming = ref(false)
 const confirmationError = ref('')
 const confirmation = ref<ISpaceExcelCadApplyDto | null>(null)
 const applyJobId = ref('')
+const emittedApplyJobId = ref('')
 const disposition = ref('')
 const rackCode = ref('')
 const sourceRef = ref('')
@@ -63,6 +65,7 @@ watch(
 async function resetAndLoad(): Promise<void> {
   confirmation.value = null
   applyJobId.value = ''
+  emittedApplyJobId.value = ''
   confirmationError.value = ''
   currentCursor.value = undefined
   previousCursors.value = []
@@ -106,11 +109,18 @@ async function refreshConfirmation(): Promise<void> {
   if (!applyJobId.value) return
   confirmationError.value = ''
   try {
-    confirmation.value = await designExcelCadMatchApi.getConfirmation(
+    const loaded = await designExcelCadMatchApi.getConfirmation(
       props.versionId,
       props.jobId,
       applyJobId.value,
     )
+    confirmation.value = loaded
+    if (loaded.jobStatus === 'Succeeded'
+      && loaded.applyJobId
+      && emittedApplyJobId.value !== loaded.applyJobId) {
+      emittedApplyJobId.value = loaded.applyJobId
+      emit('applied', loaded)
+    }
   } catch {
     confirmationError.value = '确认任务状态加载失败，请稍后刷新。'
   }

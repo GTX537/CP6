@@ -25,6 +25,7 @@ import {
   standardSpaceModelingTemplateFileName,
 } from '@/api/space/designModelingTemplate'
 import { designUnderlayApi } from '@/api/space/designUnderlay'
+import { designExcelCadMatchApi } from '@/api/space/designExcelCadMatch'
 import {
   ElementCanvasLayer,
   type CanvasObjectRef,
@@ -41,14 +42,17 @@ import {
   buildDistributionBatch,
   buildRotationBatch,
   buildTranslationBatch,
+  isExcelCadHistoryEntry,
   type AlignmentMode,
   type DistributionMode,
   type EditorCommandInput,
+  type EditorHistoryEntry,
   type EditorObjectSnapshot,
   type GenerateRackArrayPayload,
   type ReversibleCommandBatch,
 } from '@/modules/space-design/commands/editorBatchCommands'
 import { buildCadApplyHistoryEntry } from '@/modules/space-design/commands/cadApplyHistory'
+import { buildExcelCadApplyHistoryEntry } from '@/modules/space-design/commands/excelCadApplyHistory'
 import {
   buildElementMergePlan,
   type ElementMergePlan,
@@ -127,6 +131,7 @@ import { screenToWorld, type ViewState } from '@/space-editor/coords'
 import type {
   ISpaceDesignSceneDto,
   ISpaceExcelCadRackMatchV1,
+  ISpaceExcelCadApplyDto,
   ISpaceSceneElementDto,
   ISpaceSceneElementAttributeDto,
   ISpaceSceneFloorDto,
@@ -2178,9 +2183,15 @@ async function undoSavedCommand(): Promise<void> {
   savingElement.value = true
   touchHistory()
   try {
-    await applyEditorCommands(entry.undo)
+    await executeHistoryAction(entry, 'Undo')
     history.completeUndo(entry)
-    await loadScene()
+    touchHistory()
+    try {
+      await loadScene()
+    } catch {
+      ElMessage.warning('撤销已保存，但场景刷新失败；请手动刷新')
+      return
+    }
     ElMessage.success(`已撤销：${entry.label}`)
   } catch {
     history.cancelUndo(entry)
@@ -2197,9 +2208,15 @@ async function redoSavedCommand(): Promise<void> {
   savingElement.value = true
   touchHistory()
   try {
-    await applyEditorCommands(entry.redo)
+    await executeHistoryAction(entry, 'Redo')
     history.completeRedo(entry)
-    await loadScene()
+    touchHistory()
+    try {
+      await loadScene()
+    } catch {
+      ElMessage.warning('重做已保存，但场景刷新失败；请手动刷新')
+      return
+    }
     ElMessage.success(`已重做：${entry.label}`)
   } catch {
     history.cancelRedo(entry)
@@ -2208,6 +2225,69 @@ async function redoSavedCommand(): Promise<void> {
     savingElement.value = false
     touchHistory()
   }
+}
+
+async function executeHistoryAction(
+  entry: EditorHistoryEntry,
+  direction: 'Undo' | 'Redo',
+): Promise<void> {
+  if (!isExcelCadHistoryEntry(entry)) {
+    await applyEditorCommands(direction === 'Undo' ? entry.undo : entry.redo)
+    return
+  }
+  const currentFloor = floor.value
+  const currentScene = designScene.value
+  const activeLeaseId = lease.value?.leaseId
+  if (!currentFloor
+    || currentScene?.contentRevision === undefined
+    || !activeLeaseId
+    || leaseState.value !== 'owned') {
+    throw new Error('Excel/CAD history requires an active edit lease')
+  }
+  const action = entry.excelCadCompensation
+  const pendingKey = direction === 'Undo'
+    ? 'pendingUndoCommandBatchId'
+    : 'pendingRedoCommandBatchId'
+  const commandBatchId = action[pendingKey] ?? crypto.randomUUID()
+  action[pendingKey] = commandBatchId
+  await designExcelCadMatchApi.compensate(
+    versionId.value,
+    action.matchJobId,
+    action.applyJobId,
+    {
+      schemaVersion: 2,
+      direction,
+      commandBatchId,
+      clientInstanceId,
+      leaseId: activeLeaseId,
+      expectedFloorRevision: currentFloor.revisionNumber ?? 0,
+      expectedContentRevision: currentScene.contentRevision,
+      historySha256: action.historySha256,
+    },
+    `excel-cad-history:${action.applyJobId}:${commandBatchId}`,
+  )
+  delete action[pendingKey]
+}
+
+async function onExcelCadApplied(
+  confirmation: ISpaceExcelCadApplyDto,
+): Promise<void> {
+  let entry: EditorHistoryEntry
+  try {
+    entry = buildExcelCadApplyHistoryEntry(confirmation)
+  } catch {
+    ElMessage.error('Excel–CAD 已写入，但可逆历史校验失败；请刷新并联系管理员')
+    return
+  }
+  history.push(entry)
+  touchHistory()
+  try {
+    await loadScene()
+  } catch {
+    ElMessage.warning('Excel–CAD 已写入历史，但场景刷新失败；请手动刷新')
+    return
+  }
+  ElMessage.success('Excel–CAD 写入已加入公共撤销历史')
 }
 
 async function executeReversible(
@@ -3367,6 +3447,7 @@ function tabClientInstanceId(): string {
         :client-instance-id="clientInstanceId"
         :lease-id="leaseState === 'owned' ? lease?.leaseId : undefined"
         @locate="focusExcelCadMatchRow"
+        @applied="onExcelCadApplied"
         @close="closeMatchPanel"
       />
       <DesignAiGenerationLauncherPanel

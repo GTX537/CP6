@@ -2,6 +2,12 @@
 
 > 依据 Git log 汇总，不替代完整 Git 历史。重点记录影响接手判断的里程碑。
 
+## 2026-08-15：Space Studio Excel–CAD 确认统一撤销/重做
+
+- Excel–CAD Apply schema v2 以不可变 Command Record 密封历史 Hash/数量；服务器而非客户端持有 Rack、层、库位、绑定、属性和 Source 的可信前后态。
+- 新增受 Lease、Floor/Content Revision、内容 Hash、当前状态、原工件链和幂等键保护的 Undo/Redo 补偿端点；每次补偿生成新的不可变审计批次，介入编辑与旧 v1 历史均失败关闭。
+- 工作台接入共享历史栈，OpenAPI/双 SDK、真 SQL、Web、Playwright 与 Release build 门禁通过。LM-FR-024 只剩底图挂接/标定可逆合同，WP4 与 GA 72% / `NoGo` 状态不变。
+
 ## 2026-08-15：Space Studio Excel–CAD 确认 Lease/Revision Fence
 
 - Excel–CAD 确认合同新增必填页面实例、编辑租约和 Floor Revision，并保留 Content Revision；工作台无当前自有租约时只允许审阅。

@@ -1,5 +1,12 @@
 # 已完成能力与近期里程碑
 
+## 2026-08-15 Space Studio Excel–CAD 确认统一撤销/重做
+
+- Excel–CAD v2 Apply 结果从实际不可变 Command Record 密封历史 Hash 与数量；客户端不能提交可信补偿正文，旧 v1 成功结果仍可读取但不会伪装成可撤销历史。
+- 新增服务器 Undo/Redo 补偿链，统一验证页面租约、Floor/Content Revision、内容 Hash、原 Apply 工件链、当前 Rack/层/库位/绑定/属性/Source 状态与幂等键；每次补偿形成新的不可变审计批次，介入编辑时零写入。
+- 工作台把确认结果加入现有统一历史栈。OpenAPI/双 SDK、后端、真 SQL 1/1、Web 817/817、Space Studio Playwright 21/21、Release solution 0 warning/0 error 与 SDK drift 通过。详细报告见 `docs/space/reports/2026-08-15-space-studio-excel-cad-apply-history.md`。
+- LM-FR-024 的 CAD 与 Excel–CAD 历史已完成，仍剩底图挂接/标定可逆合同；WP4 保持 Partial/Pending，核心 GA 保持 72% / `NoGo`。
+
 ## 2026-08-15 Space Studio Excel–CAD 确认 Lease/Revision Fence
 
 - Excel–CAD 确认请求强制携带 `clientInstanceId`、`leaseId`、Floor Revision 和 Content Revision；确认服务与后台 Worker 均在实际写入前验证同一请求人、同一页面实例和未过期租约，并与普通 Design V1 编辑复用 Floor application lock。

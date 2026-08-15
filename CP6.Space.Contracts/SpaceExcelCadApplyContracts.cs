@@ -2,8 +2,15 @@ namespace CP6.Space.Contracts;
 
 public static class SpaceExcelCadApplyVersions
 {
-    public const int SchemaVersion = 1;
+    public const int SchemaVersion = 2;
+    public const int LegacySchemaVersion = 1;
     public const int PayloadSchemaVersion = 2;
+}
+
+public static class SpaceExcelCadCompensationDirections
+{
+    public const string Undo = "Undo";
+    public const string Redo = "Redo";
 }
 
 public sealed record ConfirmSpaceExcelCadMatchRequest(
@@ -43,7 +50,9 @@ public sealed record SpaceExcelCadApplyResultV1(
     Guid ConfirmedBy,
     DateTime ConfirmedAtUtc,
     DateTime AppliedAtUtc,
-    string ApplyPlanSha256);
+    string ApplyPlanSha256,
+    string? HistorySha256 = null,
+    int HistoryCommandCount = 0);
 
 public sealed record SpaceExcelCadApplyDto(
     Guid MatchJobId,
@@ -55,3 +64,25 @@ public sealed record SpaceExcelCadApplyDto(
     bool IdempotentReplay,
     string? LastErrorCode,
     string? LastErrorSummary);
+
+public sealed record CompensateSpaceExcelCadApplyRequest(
+    int SchemaVersion,
+    string Direction,
+    Guid CommandBatchId,
+    Guid ClientInstanceId,
+    Guid LeaseId,
+    long ExpectedFloorRevision,
+    long ExpectedContentRevision,
+    string HistorySha256);
+
+public sealed record CompensateSpaceExcelCadApplyResponse(
+    int SchemaVersion,
+    Guid MatchJobId,
+    Guid ApplyJobId,
+    Guid CommandBatchId,
+    string Direction,
+    string HistorySha256,
+    int HistoryCommandCount,
+    long FloorRevision,
+    long VersionContentRevision,
+    bool IdempotentReplay);

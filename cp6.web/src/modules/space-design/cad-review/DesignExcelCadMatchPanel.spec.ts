@@ -88,6 +88,11 @@ describe('DesignExcelCadMatchPanel', () => {
       jobStatus: 'Succeeded',
       expectedContentRevision: 7,
       idempotentReplay: false,
+      result: {
+        schemaVersion: 2,
+        historySha256: 'd'.repeat(64),
+        historyCommandCount: 3,
+      },
     } as never)
   })
 
@@ -189,5 +194,12 @@ describe('DesignExcelCadMatchPanel', () => {
     )
     expect(wrapper.get('[data-test="confirmation-succeeded"]').text())
       .toContain('重复确认不会重复创建货架')
+    expect(wrapper.emitted('applied')?.[0]?.[0]).toMatchObject({
+      applyJobId: 'apply-1',
+      result: {
+        historySha256: 'd'.repeat(64),
+        historyCommandCount: 3,
+      },
+    })
   })
 })
