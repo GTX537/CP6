@@ -32,7 +32,8 @@ public sealed record SpaceUpdateElementPropertiesDto(
     string? LinkedEntityType,
     Guid? LinkedLogicalId,
     IReadOnlyList<SpaceElementAttributeWriteDto> Attributes,
-    string? ElementType = null);
+    string? ElementType = null,
+    bool? ManualCorrectionLocked = null);
 
 public sealed record SpaceMoveObjectDto(
     int X,

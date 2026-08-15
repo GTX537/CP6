@@ -624,7 +624,8 @@ public sealed class SpaceDesignV1Service :
                 elements,
                 racks,
                 rackLevels,
-                locations);
+                locations,
+                request.ChangesetSha256 is not null);
             await ValidateRackArrayCodesAsync(
                 versionId,
                 request.Commands,
@@ -4054,7 +4055,8 @@ public sealed class SpaceDesignV1Service :
         IReadOnlyDictionary<Guid, SpaceElementRevision> elements,
         IReadOnlyDictionary<Guid, SpaceRackRevision> racks,
         IReadOnlyCollection<SpaceRackLevelRevision> rackLevels,
-        IReadOnlyCollection<SpaceLocationRevision> locations)
+        IReadOnlyCollection<SpaceLocationRevision> locations,
+        bool isCadChangeset)
     {
         foreach (var command in commands)
         {
@@ -4088,6 +4090,34 @@ public sealed class SpaceDesignV1Service :
                 throw Invalid(
                     "commands.updateProperties",
                     "UpdateProperties can target only a common element.");
+            }
+            if (isCadChangeset && isElement &&
+                element!.IsManualCorrectionLocked)
+            {
+                throw Conflict(
+                    SpaceErrorCodes.CadManualCorrectionLocked,
+                    "A CAD changeset cannot replace a locked manual correction.",
+                    "keep-manual-correction-or-unlock");
+            }
+            if (command.Type ==
+                    SpaceElementCommandContract.UpdateProperties &&
+                command.UpdateProperties!.ManualCorrectionLocked.HasValue)
+            {
+                if (element!.SourceId is null ||
+                    string.IsNullOrWhiteSpace(element.SourceRef))
+                {
+                    throw Invalid(
+                        "commands.updateProperties.manualCorrectionLocked",
+                        "Only a source-backed element can lock a manual correction.");
+                }
+                if (element.IsManualCorrectionLocked ==
+                    command.UpdateProperties.ManualCorrectionLocked.Value)
+                {
+                    throw Conflict(
+                        SpaceErrorCodes.CommandConflict,
+                        "The manual correction already has the requested lock state.",
+                        "reload-floor-scene");
+                }
             }
             if (command.Type ==
                     SpaceElementCommandContract.UpdateProperties &&
@@ -4217,10 +4247,25 @@ public sealed class SpaceDesignV1Service :
         switch (command.Type)
         {
             case SpaceElementCommandContract.UpdateProperties:
-                return ApplyElementProperties(
+                var update = command.UpdateProperties!;
+                var updateJson = ApplyElementProperties(
                     element,
                     attributes,
-                    command.UpdateProperties!);
+                    update);
+                if (update.ManualCorrectionLocked.HasValue)
+                {
+                    element.SetManualCorrectionLock(
+                        update.ManualCorrectionLocked.Value,
+                        _execution.ActorId,
+                        RequireUtcNow());
+                }
+                else
+                {
+                    element.MarkLockedManualCorrectionChanged(
+                        _execution.ActorId,
+                        RequireUtcNow());
+                }
+                return updateJson;
             case SpaceElementCommandContract.MoveObject:
                 var move = command.MoveObject!;
                 element.ConfigurePlacement(
@@ -4231,6 +4276,9 @@ public sealed class SpaceDesignV1Service :
                     element.Width,
                     element.Height,
                     element.Depth);
+                element.MarkLockedManualCorrectionChanged(
+                    _execution.ActorId,
+                    RequireUtcNow());
                 return JsonSerializer.Serialize(move, JsonOptions);
             case SpaceElementCommandContract.RotateObject:
                 var rotation = command.RotateObject!;
@@ -4242,13 +4290,22 @@ public sealed class SpaceDesignV1Service :
                     element.Width,
                     element.Height,
                     element.Depth);
+                element.MarkLockedManualCorrectionChanged(
+                    _execution.ActorId,
+                    RequireUtcNow());
                 return JsonSerializer.Serialize(rotation, JsonOptions);
             case SpaceElementCommandContract.DeleteObject:
                 element.ChangeLifecycle(
                     SpaceLifecycleState.RemoveRequested);
+                element.MarkLockedManualCorrectionChanged(
+                    _execution.ActorId,
+                    RequireUtcNow());
                 return "{}";
             case SpaceElementCommandContract.RestoreLogicalObject:
                 element.ChangeLifecycle(SpaceLifecycleState.Active);
+                element.MarkLockedManualCorrectionChanged(
+                    _execution.ActorId,
+                    RequireUtcNow());
                 return "{}";
             default:
                 throw new UnreachableException();
@@ -4607,6 +4664,10 @@ public sealed class SpaceDesignV1Service :
                 element.BusinessCode,
                 element.LinkedEntityType,
                 element.LinkedLogicalId,
+                element.IsManualCorrectionLocked,
+                element.UserCorrectionVersion,
+                element.ManualCorrectionUpdatedBy,
+                element.ManualCorrectionUpdatedAtUtc,
                 LifecycleState = element.LifecycleState.ToString(),
                 Attributes = attributes
                     .Where(attribute => !attribute.IsDeleted)
@@ -5272,7 +5333,11 @@ public sealed class SpaceDesignV1Service :
             element.Depth,
             element.BusinessCode,
             element.LinkedEntityType,
-            element.LinkedLogicalId);
+            element.LinkedLogicalId,
+            element.IsManualCorrectionLocked,
+            element.UserCorrectionVersion,
+            element.ManualCorrectionUpdatedBy,
+            element.ManualCorrectionUpdatedAtUtc);
 
     private static SpaceAssetDto ToDto(
         SpaceAsset asset,

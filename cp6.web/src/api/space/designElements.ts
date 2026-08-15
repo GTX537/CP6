@@ -22,6 +22,7 @@ export interface ElementPropertiesPayload {
   linkedEntityType?: string
   linkedLogicalId?: string
   attributes: ISpaceElementAttributeWriteDto[]
+  manualCorrectionLocked?: boolean
 }
 
 export interface EditorCommandEnvelope {

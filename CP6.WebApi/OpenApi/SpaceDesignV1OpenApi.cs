@@ -501,6 +501,8 @@ public sealed class SpaceWmsRuntimeSchemaFilter : ISchemaFilter
                 "objectType",
                 "isSelected",
                 "canApply",
+                "isManualCorrectionLocked",
+                "userCorrectionVersion",
             ],
             [typeof(SpaceCadChangeSummaryV1)] =
             [

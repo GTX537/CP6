@@ -956,7 +956,10 @@ public sealed class EfSpaceVersionCloneProcessor :
                     [ElementType], [GeometryJson], [ModelAssetId], [ModelAssetScope],
                     [ModelAssetOwnerTenantId], [X], [Y], [Z],
                     [RotationZ], [Width], [Height], [Depth], [BusinessCode],
-                  [LinkedEntityType], [LinkedLogicalId], [TenantId],
+                  [LinkedEntityType], [LinkedLogicalId],
+                  [IsManualCorrectionLocked], [UserCorrectionVersion],
+                  [ManualCorrectionUpdatedBy], [ManualCorrectionUpdatedAtUtc],
+                  [TenantId],
                   [CreatedAtUtc], [CreatedBy], [ModifiedAtUtc], [ModifiedBy],
                   [IsDeleted])
              SELECT em.[NewId], {targetVersionId}, r.[LogicalId], sm.[NewId],
@@ -965,7 +968,10 @@ public sealed class EfSpaceVersionCloneProcessor :
                       r.[ModelAssetId], r.[ModelAssetScope],
                       r.[ModelAssetOwnerTenantId], r.[X], r.[Y], r.[Z], r.[RotationZ],
                     r.[Width], r.[Height], r.[Depth], r.[BusinessCode],
-                    r.[LinkedEntityType], r.[LinkedLogicalId], {tenantId},
+                    r.[LinkedEntityType], r.[LinkedLogicalId],
+                    r.[IsManualCorrectionLocked], r.[UserCorrectionVersion],
+                    r.[ManualCorrectionUpdatedBy],
+                    r.[ManualCorrectionUpdatedAtUtc], {tenantId},
                     {nowUtc}, {actorId}, NULL, NULL, 0
              FROM [Space_ElementRevision] r
              INNER JOIN @ElementMap em ON em.[OldId] = r.[Id]

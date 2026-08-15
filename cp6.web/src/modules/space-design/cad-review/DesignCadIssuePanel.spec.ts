@@ -85,4 +85,47 @@ describe('DesignCadIssuePanel', () => {
     await wrapper.get('[data-test="cad-review-item"]').trigger('click')
     expect(wrapper.emitted('select')).toBeUndefined()
   })
+
+  it('shows a locked manual correction as a disabled versioned conflict', () => {
+    const lockedWorkspace = {
+      ...workspace,
+      sourceId: '66666666-6666-6666-6666-666666666666',
+      cadParseJobId: '77777777-7777-7777-7777-777777777777',
+      semanticPreviewSha256: 'e'.repeat(64),
+      changesetSha256: 'f'.repeat(64),
+      changes: [{
+        changeId: 'cad-change-locked',
+        kind: 'Conflict' as const,
+        logicalId: '11111111-1111-1111-1111-111111111111',
+        sourceRef: 'CAD:H:COLUMN-1',
+        objectType: 'Column',
+        isSelected: false,
+        canApply: false,
+        blockingReasonCode: 'SPACE_CAD_MANUAL_CORRECTION_LOCKED',
+        isManualCorrectionLocked: true,
+        userCorrectionVersion: 4,
+      }],
+      changeSummary: {
+        totalCount: 1,
+        addCount: 0,
+        modifyCount: 0,
+        deleteCount: 0,
+        conflictCount: 1,
+        lowConfidenceCount: 0,
+        unrecognizedCount: 0,
+        selectedCount: 0,
+        applyEligibleCount: 0,
+      },
+    } satisfies CadReviewWorkspace
+    const wrapper = mount(DesignCadIssuePanel, {
+      props: { workspace: lockedWorkspace },
+      global: { plugins: [ElementPlus] },
+    })
+
+    const changeset = wrapper.get('[data-test="cad-changeset"]')
+    expect(changeset.text()).toContain('人工锁定 v4')
+    expect(changeset.text()).toContain('SPACE_CAD_MANUAL_CORRECTION_LOCKED')
+    expect(changeset.find('input[type="checkbox"]').attributes('disabled'))
+      .toBeDefined()
+  })
 })

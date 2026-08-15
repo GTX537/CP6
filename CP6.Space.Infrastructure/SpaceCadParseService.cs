@@ -800,6 +800,10 @@ public sealed class SpaceCadParseService(
                     (SpaceCadChangeKind.Conflict, false,
                         "SPACE_CAD_SOURCE_REF_CONFLICT"),
                 _ when existing.Length == 1 &&
+                       existing[0].IsManualCorrectionLocked =>
+                    (SpaceCadChangeKind.Conflict, false,
+                        SpaceErrorCodes.CadManualCorrectionLocked),
+                _ when existing.Length == 1 &&
                        !existing[0].ElementType.Equals(
                            supportedType,
                            StringComparison.Ordinal) =>
@@ -822,6 +826,11 @@ public sealed class SpaceCadParseService(
                 item.IsSelected && canApply,
                 canApply,
                 reason,
+                existing.Length == 1 &&
+                    existing[0].IsManualCorrectionLocked,
+                existing.Length == 1
+                    ? existing[0].UserCorrectionVersion
+                    : 0,
                 existing.Length == 1
                     ? new SpaceCadMillimeterBoundsV1(
                         existing[0].X,
@@ -836,17 +845,24 @@ public sealed class SpaceCadParseService(
                      !seenRefs.Contains(item.SourceRef) &&
                      item.LifecycleState == SpaceLifecycleState.Active))
         {
+            var isLocked = element.IsManualCorrectionLocked;
             changes.Add(new SpaceCadChangeV1(
                 ChangeId(element.SourceRef!, element.LogicalId),
-                SpaceCadChangeKind.Delete,
+                isLocked
+                    ? SpaceCadChangeKind.Conflict
+                    : SpaceCadChangeKind.Delete,
                 element.LogicalId,
                 element.SourceRef!,
                 null,
                 element.ElementType,
                 null,
                 IsSelected: false,
-                CanApply: true,
-                BlockingReasonCode: null,
+                CanApply: !isLocked,
+                BlockingReasonCode: isLocked
+                    ? SpaceErrorCodes.CadManualCorrectionLocked
+                    : null,
+                IsManualCorrectionLocked: isLocked,
+                UserCorrectionVersion: element.UserCorrectionVersion,
                 new SpaceCadMillimeterBoundsV1(
                     element.X,
                     element.Y,

@@ -293,6 +293,59 @@ public sealed class SpaceElementRevisionTests
                 logicalId));
     }
 
+    [Fact]
+    public void Manual_correction_lock_requires_a_source_and_tracks_versions()
+    {
+        var actor = Guid.NewGuid();
+        var first = new DateTime(2026, 8, 15, 12, 0, 0, DateTimeKind.Utc);
+        var second = first.AddMinutes(1);
+        var element = NewElement(SpaceElementTypes.Wall);
+
+        Assert.Throws<InvalidOperationException>(() =>
+            element.SetManualCorrectionLock(true, actor, first));
+
+        element.AttachSource(NewCadSource(), "CAD:H:WALL-1");
+        element.SetManualCorrectionLock(true, actor, first);
+
+        Assert.True(element.IsManualCorrectionLocked);
+        Assert.Equal(1, element.UserCorrectionVersion);
+        Assert.Equal(actor, element.ManualCorrectionUpdatedBy);
+        Assert.Equal(first, element.ManualCorrectionUpdatedAtUtc);
+        Assert.Throws<InvalidOperationException>(() =>
+            element.SetManualCorrectionLock(true, actor, first));
+
+        element.MarkLockedManualCorrectionChanged(actor, second);
+        Assert.Equal(2, element.UserCorrectionVersion);
+        Assert.Equal(second, element.ManualCorrectionUpdatedAtUtc);
+
+        element.SetManualCorrectionLock(false, actor, second);
+        element.MarkLockedManualCorrectionChanged(actor, second.AddMinutes(1));
+        Assert.False(element.IsManualCorrectionLocked);
+        Assert.Equal(2, element.UserCorrectionVersion);
+
+        element.SetManualCorrectionLock(true, actor, second.AddMinutes(2));
+        Assert.True(element.IsManualCorrectionLocked);
+        Assert.Equal(3, element.UserCorrectionVersion);
+    }
+
+    [Fact]
+    public void Manual_correction_updates_require_utc_and_real_actor_identity()
+    {
+        var element = NewElement(SpaceElementTypes.Column);
+        element.AttachSource(NewCadSource(), "CAD:H:COLUMN-1");
+
+        Assert.Throws<ArgumentException>(() =>
+            element.SetManualCorrectionLock(
+                true,
+                Guid.Empty,
+                DateTime.SpecifyKind(DateTime.Now, DateTimeKind.Local)));
+        Assert.Throws<ArgumentException>(() =>
+            element.SetManualCorrectionLock(
+                true,
+                Guid.NewGuid(),
+                DateTime.SpecifyKind(DateTime.Now, DateTimeKind.Local)));
+    }
+
     private static SpaceElementRevision NewElement(
         string elementType,
         string geometryJson = BoxGeometry) =>
@@ -303,6 +356,30 @@ public sealed class SpaceElementRevisionTests
             FloorLogicalId,
             elementType,
             geometryJson);
+
+    private static SpaceModelSource NewCadSource()
+    {
+        var file = SpaceFile.CreateUploading(
+            Guid.NewGuid(),
+            TenantId,
+            $"{TenantId:N}/{Guid.NewGuid():N}/source.content",
+            "warehouse.dxf",
+            "application/vnd.autocad.dxf",
+            SpaceFileRetentionClass.Source);
+        file.CompleteQuarantine(
+            "application/vnd.autocad.dxf",
+            ".dxf",
+            1,
+            new string('a', 64));
+        file.BeginScanning();
+        file.MarkClean("unit-test", "1");
+        return SpaceModelSource.CreateFileSource(
+            TenantId,
+            VersionId,
+            SpaceSourceType.Dxf,
+            file,
+            "warehouse.dxf");
+    }
 
     private const string BoxGeometry =
         """{"schemaVersion":1,"kind":"box","width":800,"height":2200,"depth":400}""";

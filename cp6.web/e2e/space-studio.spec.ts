@@ -470,6 +470,63 @@ test('retypes a CAD exception element and restores its semantic type through und
   expect(errors).toEqual([])
 })
 
+test('locks a saved CAD correction and compensates the lock through undo and redo', async ({ page }) => {
+  const errors = collectPageErrors(page)
+  const editorBodies: Array<Record<string, any>> = []
+  await installSpaceStudioFixtures(page, [], { editorBodies })
+  await page.setViewportSize({ width: 1440, height: 900 })
+  await page.goto(studioUrl)
+  await expect(page.locator('.studio-title-state').getByText('租约至', { exact: false })).toBeVisible()
+  await expect(page.locator('.el-loading-mask')).toHaveCount(0)
+
+  const canvas = page.locator('.canvas .konvajs-content')
+  const bounds = await canvas.boundingBox()
+  expect(bounds).not.toBeNull()
+  await page.mouse.click(
+    bounds!.x + (1000 + 2400 / 2) * 0.05,
+    bounds!.y + bounds!.height - (1200 + 1000 / 2) * 0.05,
+  )
+  await expect(page.locator('.studio-statusbar')).toContainText('选择 1')
+  await page.mouse.click(
+    bounds!.x + (5200 + 400 / 2) * 0.05,
+    bounds!.y + bounds!.height - (2400 + 400 / 2) * 0.05,
+  )
+
+  const properties = page.locator('[data-test="design-element-properties"]')
+  await expect(properties.locator('[data-test="manual-correction-lock-state"]'))
+    .toContainText('尚未锁定')
+  await properties.locator('[data-test="lock-manual-correction"]').click()
+
+  await expect(page.getByText('人工校正已保存并锁定', { exact: true })).toBeVisible()
+  await expect.poll(() => editorBodies.length).toBe(1)
+  expect(editorBodies[0]).toMatchObject({
+    expectedFloorRevision: 7,
+    expectedContentRevision: 7,
+    commands: [{
+      type: 'UpdateProperties',
+      targetLogicalId: columnId,
+      updateProperties: { manualCorrectionLocked: true },
+    }],
+  })
+  await expect(properties.locator('[data-test="manual-correction-lock-state"]'))
+    .toContainText('人工校正已锁定 v1')
+
+  await page.getByRole('tab', { name: '批量', exact: true }).click()
+  const tools = page.locator('[data-test="design-batch-tools"]')
+  await tools.getByRole('button', { name: '撤销', exact: true }).click()
+  await expect(page.getByText('已撤销：锁定人工校正', { exact: true })).toBeVisible()
+  await expect.poll(() => editorBodies.length).toBe(2)
+  expect(editorBodies[1]!.commands[0].updateProperties.manualCorrectionLocked)
+    .toBe(false)
+
+  await tools.getByRole('button', { name: '重做', exact: true }).click()
+  await expect(page.getByText('已重做：锁定人工校正', { exact: true })).toBeVisible()
+  await expect.poll(() => editorBodies.length).toBe(3)
+  expect(editorBodies[2]!.commands[0].updateProperties.manualCorrectionLocked)
+    .toBe(true)
+  expect(errors).toEqual([])
+})
+
 test('merges CAD exception elements atomically and restores them through undo and redo', async ({ page }) => {
   const errors = collectPageErrors(page)
   const editorBodies: Array<Record<string, any>> = []
@@ -1418,8 +1475,22 @@ async function installSpaceStudioFixtures(
           const element = scene.elements.find(
             (item: any) => item.revision.logicalId === command.targetLogicalId,
           )
-          const { attributes: _attributes, ...properties } = command.updateProperties
+          const {
+            attributes: _attributes,
+            manualCorrectionLocked,
+            ...properties
+          } = command.updateProperties
           Object.assign(element, properties)
+          if (manualCorrectionLocked !== undefined) {
+            element.isManualCorrectionLocked = manualCorrectionLocked
+            if (manualCorrectionLocked) {
+              element.userCorrectionVersion =
+                (element.userCorrectionVersion ?? 0) + 1
+            }
+          } else if (element.isManualCorrectionLocked) {
+            element.userCorrectionVersion =
+              (element.userCorrectionVersion ?? 0) + 1
+          }
           affectedElements.push(element)
           continue
         }
@@ -1715,7 +1786,11 @@ function sceneFixture() {
       externalBindingState: 'Unbound',
     }],
     elements: [{
-      revision: revision(columnId),
+      revision: {
+        ...revision(columnId),
+        sourceId: cadSourceId,
+        sourceRef: 'H:COLUMN-001',
+      },
       floorLogicalId: floorId,
       elementType: 'Column',
       geometryJson: '{"schemaVersion":1,"kind":"box","width":400,"height":3000,"depth":400}',
@@ -1727,6 +1802,8 @@ function sceneFixture() {
       height: 3000,
       depth: 400,
       businessCode: 'COL-01',
+      isManualCorrectionLocked: false,
+      userCorrectionVersion: 0,
     }],
     elementAttributes: [],
     locationExternalBindings: [],

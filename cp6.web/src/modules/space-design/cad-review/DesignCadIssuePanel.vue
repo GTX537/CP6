@@ -109,7 +109,15 @@ function toggleChange(changeId: string, checked: boolean): void {
           />
           <span>
             <strong>{{ change.kind }} · {{ change.objectType }}</strong>
-            <small>{{ change.sourceRef }}<template v-if="change.blockingReasonCode"> · {{ change.blockingReasonCode }}</template></small>
+            <small>
+              {{ change.sourceRef }}
+              <template v-if="change.isManualCorrectionLocked">
+                · 人工锁定 v{{ change.userCorrectionVersion }}
+              </template>
+              <template v-if="change.blockingReasonCode">
+                · {{ change.blockingReasonCode }}
+              </template>
+            </small>
           </span>
         </label>
       </div>

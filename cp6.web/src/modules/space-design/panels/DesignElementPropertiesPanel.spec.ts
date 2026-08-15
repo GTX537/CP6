@@ -67,4 +67,63 @@ describe('DesignElementPropertiesPanel', () => {
     })
     expect(wrapper.emitted('remove')).toHaveLength(1)
   })
+
+  it('saves and locks a source-backed correction in one typed intent', async () => {
+    const sourceElement = {
+      ...element,
+      revision: {
+        ...element.revision,
+        sourceId: '22222222-2222-2222-2222-222222222222',
+        sourceRef: 'CAD:H:COLUMN-1',
+      },
+      isManualCorrectionLocked: false,
+      userCorrectionVersion: 0,
+    } as unknown as ISpaceSceneElementDto
+    const wrapper = mount(DesignElementPropertiesPanel, {
+      props: { element: sourceElement, attributes },
+      global: {
+        plugins: [ElementPlus],
+        directives: { permission: {} },
+      },
+    })
+
+    expect(wrapper.get('[data-test="manual-correction-lock-state"]').text())
+      .toContain('尚未锁定')
+    await wrapper.get('[data-test="lock-manual-correction"]').trigger('click')
+
+    expect(wrapper.emitted('save')).toHaveLength(1)
+    expect(wrapper.emitted('save')?.[0]?.[0]).toMatchObject({
+      manualCorrectionLocked: true,
+      elementType: 'Column',
+      x: 1000,
+    })
+  })
+
+  it('shows the persisted correction version and emits an explicit unlock', async () => {
+    const lockedElement = {
+      ...element,
+      revision: {
+        ...element.revision,
+        sourceId: '22222222-2222-2222-2222-222222222222',
+        sourceRef: 'CAD:H:COLUMN-1',
+      },
+      isManualCorrectionLocked: true,
+      userCorrectionVersion: 4,
+    } as unknown as ISpaceSceneElementDto
+    const wrapper = mount(DesignElementPropertiesPanel, {
+      props: { element: lockedElement, attributes },
+      global: {
+        plugins: [ElementPlus],
+        directives: { permission: {} },
+      },
+    })
+
+    expect(wrapper.get('[data-test="manual-correction-lock-state"]').text())
+      .toContain('人工校正已锁定 v4')
+    await wrapper.get('[data-test="unlock-manual-correction"]').trigger('click')
+
+    expect(wrapper.emitted('save')?.[0]?.[0]).toMatchObject({
+      manualCorrectionLocked: false,
+    })
+  })
 })

@@ -767,6 +767,10 @@ public sealed class SpaceElementRevision : SpaceRevisionEntity
     public string? BusinessCode { get; private set; }
     public string? LinkedEntityType { get; private set; }
     public Guid? LinkedLogicalId { get; private set; }
+    public bool IsManualCorrectionLocked { get; private set; }
+    public long UserCorrectionVersion { get; private set; }
+    public Guid? ManualCorrectionUpdatedBy { get; private set; }
+    public DateTime? ManualCorrectionUpdatedAtUtc { get; private set; }
 
     public static SpaceElementRevision Create(
         Guid tenantId,
@@ -980,6 +984,57 @@ public sealed class SpaceElementRevision : SpaceRevisionEntity
             100,
             nameof(linkedEntityType));
         LinkedLogicalId = linkedLogicalId;
+    }
+
+    public void SetManualCorrectionLock(
+        bool isLocked,
+        Guid actorId,
+        DateTime nowUtc)
+    {
+        SpaceRevisionValue.RequireIdentity(actorId, nameof(actorId));
+        if (nowUtc.Kind != DateTimeKind.Utc)
+        {
+            throw new ArgumentException(
+                "Manual correction time must be UTC.",
+                nameof(nowUtc));
+        }
+        if (SourceId is null || string.IsNullOrWhiteSpace(SourceRef))
+        {
+            throw new InvalidOperationException(
+                "Only a source-backed element can lock a manual correction.");
+        }
+        if (IsManualCorrectionLocked == isLocked)
+        {
+            throw new InvalidOperationException(
+                $"The manual correction is already {(isLocked ? "locked" : "unlocked")}.");
+        }
+
+        IsManualCorrectionLocked = isLocked;
+        if (!isLocked)
+            return;
+
+        UserCorrectionVersion = checked(UserCorrectionVersion + 1);
+        ManualCorrectionUpdatedBy = actorId;
+        ManualCorrectionUpdatedAtUtc = nowUtc;
+    }
+
+    public void MarkLockedManualCorrectionChanged(
+        Guid actorId,
+        DateTime nowUtc)
+    {
+        if (!IsManualCorrectionLocked)
+            return;
+        SpaceRevisionValue.RequireIdentity(actorId, nameof(actorId));
+        if (nowUtc.Kind != DateTimeKind.Utc)
+        {
+            throw new ArgumentException(
+                "Manual correction time must be UTC.",
+                nameof(nowUtc));
+        }
+
+        UserCorrectionVersion = checked(UserCorrectionVersion + 1);
+        ManualCorrectionUpdatedBy = actorId;
+        ManualCorrectionUpdatedAtUtc = nowUtc;
     }
 }
 
