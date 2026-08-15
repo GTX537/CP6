@@ -111,7 +111,7 @@ describe('buildElementSplitPlan', () => {
       },
       floorLogicalId: group.floorLogicalId,
       ...create,
-    } as ISpaceSceneElementDto
+    } as unknown as ISpaceSceneElementDto
     const scene = (elements: ISpaceSceneElementDto[]) => ({
       schemaVersion: 1,
       authority: 'DesignRevision',
