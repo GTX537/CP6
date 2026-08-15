@@ -5,6 +5,7 @@ param(
 )
 
 $ErrorActionPreference = 'Stop'
+. (Join-Path $PSScriptRoot 'SpaceGaJson.ps1')
 $repo = Split-Path -Parent $PSScriptRoot
 $manifestFullPath = [System.IO.Path]::GetFullPath($ManifestPath)
 $repoFullPath = [System.IO.Path]::GetFullPath($repo).TrimEnd(
@@ -264,7 +265,7 @@ if (!$manifestFullPath.StartsWith(
 }
 
 $manifest = Get-Content -LiteralPath $manifestFullPath -Raw |
-    ConvertFrom-Json
+    ConvertFrom-SpaceGaJson
 
 if ($manifest.schemaVersion -ne 1) {
     Add-GoldenValidationError 'SPACE_GA_GOLDEN_SCHEMA_INVALID: schemaVersion must be 1.'
