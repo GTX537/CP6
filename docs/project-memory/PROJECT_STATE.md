@@ -1,9 +1,10 @@
 # 项目当前状态
 
-最后更新：2026-08-14
+最后更新：2026-08-15
 
 ## Space Studio v1.3 核心实现（2026-08-12）
 
+- 单人开发阶段已新增 `00001`～`00005` 五个 `DevelopmentSeed` 虚拟人员，覆盖本地 Product/Backend/Frontend3D/QA/WMS/Architecture/Security/DevOps 流程视角；专项机器门禁强制一个真实操作者、五个唯一编号、无生产访问且无正式签字资格。总 GA 与开工证据校验同时拒绝纯数字及开发/测试身份进入正式 Owner、接受人和签字人字段。该能力只解除开发测试角色不足，不证明 2+2+1 真实投入，不改变 72% / `NoGo`。
 - WP0 核心 GA 证据索引已建立：`docs/space/acceptance/v1.3-ga/ga-evidence-index.json` 固定 72%→100% 口径、五类外部输入、WP0–WP8 九个不可删除 Blocking Gate 和产品/QA/WMS/架构/安全五个实名签字角色；仓库实现、真实环境接受与正式签字分开记录。`tools/Test-SpaceGaEvidence.ps1` 校验结构、证据路径与派生状态，`-RequireGaReady` 当前按设计以退出码 2 失败。当前仍为 `NoGo`：5 项外部输入、9 个接受门禁和 5 个签字均 Pending，未填写虚构 Owner、Site、Provider 或证据。
 - WP0 证据证明链已加固：Signed/Complete/Accepted 统一验证受控 URI、实际本地文件 SHA-256、非占位的实名字段与 ISO-8601 UTC 时间，拒绝越界/不存在/哈希不一致证据、不安全 URI、原始 DWG/DXF 仓库路径和角色/团队/占位人名；GitHub Actions 工作流覆盖 16 个正反向自测。该加固没有填写任何真实证据，不改变 72% / No-Go 状态。
 - WP0 五类外部输入现已增加结构化开工 Manifest 与语义门禁：五角色实名/审批权、2 Backend + 2 Frontend3D + 1 QA 及共享角色、20 份授权 CAD 候选、至少两条不同 Provider Key 的 `ICadConverter` 审批链与隔离 Worker、Greenfield/Retrofit 双仓和覆盖完整 Pilot 的 CP6 WMS 窗口都必须在对应分区中成立。每个 Complete 输入还必须证明 Manifest 自身哈希、Owner 与索引一致；签字人登记逐角色回绑总索引。专项 26/26、总 GA 证明链 34/34。此项只关闭证据内容误报，未填写真实外部输入，当前仍为 5 Pending。

@@ -4,6 +4,12 @@
 
 当前结论固定为 `NoGo`。原因不是仓库主链不可用，而是实名 Owner、真实主备 Provider、20 份授权黄金 CAD、真实 SQL/WMS/Published Viewer、两仓各 14 天 Pilot 和五方签字尚未齐全。
 
+## 单人开发人员种子
+
+当前单人开发阶段可以使用 [`development-personnel-seed.json`](./development-personnel-seed.json) 中的 `00001`～`00005` 做本地角色切换、任务归属和权限测试。它们全部标记为 `DevelopmentSeed`、`simulated=true`、`productionAccess=false`、`formalGaEligible=false`；详细边界见 [`development-personnel-seed.md`](./development-personnel-seed.md)。
+
+这些编号不是实名人员，不能关闭 `CORE_TEAM_ALLOCATION`，不能作为任何 Owner、证据接受人、Pilot 确认人或五方 GA 签字人。正式人名校验器会拒绝纯数字和开发/测试身份；因此建立开发人员种子不会改变 72% / `NoGo` 状态。
+
 ## 使用方法
 
 1. 在 [`ga-evidence-index.json`](./ga-evidence-index.json) 中填写真实 `ownerName`、`kickoffDate` 和 `targetGaDate`；不得填写角色名、团队名或 `TBD` 冒充实名。

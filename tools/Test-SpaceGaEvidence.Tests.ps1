@@ -342,6 +342,40 @@ try {
         -ManifestPath $positivePath `
         -ShouldPass $true
 
+    $numericOwnerPath = New-TestManifest 'numeric-development-owner' {
+        param($manifest)
+        Set-ExternalInputComplete `
+            -Manifest $manifest `
+            -InputId 'CORE_TEAM_ALLOCATION' `
+            -OwnerName '00001' `
+            -KickoffReference $kickoffAcceptanceReference `
+            -KickoffSha256 $kickoffAcceptanceSha256
+    }
+    Invoke-ValidatorCase `
+        -Name 'development code is not a formal input owner' `
+        -ManifestPath $numericOwnerPath `
+        -ShouldPass $false `
+        -ExpectedError 'SPACE_GA_INPUT_OWNER_INVALID'
+
+    $numericSignerPath = New-TestManifest 'numeric-development-signer' {
+        param($manifest)
+        $signer = @($manifest.signers | Where-Object {
+            $_.role -eq 'Product'
+        })[0]
+        $signer.name = '00001'
+        $signer.status = 'Signed'
+        $signer.evidence = @(
+            (New-Attestation `
+                -Uri $fixtureReference `
+                -Sha256 $fixtureSha256 `
+                -AcceptedBy '00001'))
+    }
+    Invoke-ValidatorCase `
+        -Name 'development code is not a formal GA signer' `
+        -ManifestPath $numericSignerPath `
+        -ShouldPass $false `
+        -ExpectedError 'SPACE_GA_SIGNER_NAME_INVALID'
+
     $missingKickoffPath = New-TestManifest 'missing-kickoff-manifest' {
         param($manifest)
         $input = @($manifest.externalInputs | Where-Object {

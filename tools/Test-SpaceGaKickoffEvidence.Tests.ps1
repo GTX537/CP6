@@ -374,6 +374,26 @@ try {
         -ExpectedOwnerName 'Different Person' `
         -ExpectedError 'SPACE_GA_KICKOFF_OWNER_MISMATCH'
 
+    $numericOwnerPath = New-KickoffTestManifest 'numeric-owner' {
+        param($manifest)
+        $manifest.coreTeamAllocation.ownerName = '00001'
+    }
+    Invoke-KickoffValidatorCase `
+        -Name 'development code is not a real external input owner' `
+        -ManifestPath $numericOwnerPath -ShouldPass $false `
+        -InputId 'CORE_TEAM_ALLOCATION' `
+        -ExpectedError 'SPACE_GA_KICKOFF_OWNER_INVALID'
+
+    $numericSignerPath = New-KickoffTestManifest 'numeric-signer' {
+        param($manifest)
+        $manifest.namedGaSigners.signers[0].name = '00001'
+    }
+    Invoke-KickoffValidatorCase `
+        -Name 'development code is not a formal signer' `
+        -ManifestPath $numericSignerPath -ShouldPass $false `
+        -InputId 'NAMED_GA_SIGNERS' `
+        -ExpectedError 'SPACE_GA_KICKOFF_SIGNER_INVALID'
+
     $signerSetPath = New-KickoffTestManifest 'signer-set' {
         param($manifest)
         $manifest.namedGaSigners.signers = @(

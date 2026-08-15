@@ -1,0 +1,64 @@
+{
+  "schemaVersion": 1,
+  "programId": "CP6_SPACE_STUDIO_V1_CORE_GA",
+  "evidenceClass": "DevelopmentSeed",
+  "singleDeveloperMode": true,
+  "operatorCount": 1,
+  "formalGaEligible": false,
+  "warning": "Development-only simulated personas. They are not employees, production accounts, external evidence owners, Pilot participants, or formal GA signers.",
+  "personas": [
+    {
+      "personCode": "00001",
+      "displayName": "00001",
+      "simulated": true,
+      "productionAccess": false,
+      "formalSignoffEligible": false,
+      "assignments": ["Product", "Backend", "DevOps"]
+    },
+    {
+      "personCode": "00002",
+      "displayName": "00002",
+      "simulated": true,
+      "productionAccess": false,
+      "formalSignoffEligible": false,
+      "assignments": ["QA", "Backend"]
+    },
+    {
+      "personCode": "00003",
+      "displayName": "00003",
+      "simulated": true,
+      "productionAccess": false,
+      "formalSignoffEligible": false,
+      "assignments": ["WMS", "Frontend3D"]
+    },
+    {
+      "personCode": "00004",
+      "displayName": "00004",
+      "simulated": true,
+      "productionAccess": false,
+      "formalSignoffEligible": false,
+      "assignments": ["Architecture", "Frontend3D"]
+    },
+    {
+      "personCode": "00005",
+      "displayName": "00005",
+      "simulated": true,
+      "productionAccess": false,
+      "formalSignoffEligible": false,
+      "assignments": ["Security", "QA"]
+    }
+  ],
+  "allowedUsage": [
+    "Local workflow walkthroughs",
+    "UI role-switching fixtures",
+    "Permission and negative-path automation",
+    "Task ownership during single-developer implementation"
+  ],
+  "prohibitedUsage": [
+    "Formal GA signatures",
+    "External evidence acceptance",
+    "Core team capacity proof",
+    "Production access",
+    "Customer or two-site Pilot confirmation"
+  ]
+}

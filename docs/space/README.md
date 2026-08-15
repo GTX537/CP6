@@ -40,6 +40,7 @@ AI Provider 机器契约：
 - [技术 ADR 索引](./adr/README.md)
 - [验收资产索引](./acceptance/README.md)
 - [Space Studio V1 核心 GA 证据索引](./acceptance/v1.3-ga/README.md)
+- [Space Studio 单人开发人员种子](./acceptance/v1.3-ga/development-personnel-seed.md)
 - [发布恢复与对账运行手册](./runbooks/publish-recovery.md)
 - [五类合成 CAD 种子包 v1.0.0](./acceptance/v1.0.0/manifest.json)
 
