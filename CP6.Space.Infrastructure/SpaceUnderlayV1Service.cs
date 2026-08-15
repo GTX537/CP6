@@ -5,11 +5,12 @@ using System.Text.Json;
 using CP6.Space.Application;
 using CP6.Space.Contracts;
 using CP6.Space.Domain;
+using Microsoft.Data.SqlClient;
 using Microsoft.EntityFrameworkCore;
 
 namespace CP6.Space.Infrastructure;
 
-public sealed class SpaceUnderlayV1Service : ISpaceUnderlayV1Service
+public sealed partial class SpaceUnderlayV1Service : ISpaceUnderlayV1Service
 {
     private static readonly JsonSerializerOptions JsonOptions =
         new(JsonSerializerDefaults.Web);
@@ -238,17 +239,17 @@ public sealed class SpaceUnderlayV1Service : ISpaceUnderlayV1Service
                 SpaceErrorCodes.LogicalIdNotFound,
                 "Space floor logical identity");
         }
-        if (request.SourceId == Guid.Empty)
-            throw InvalidUnderlay("A source identity is required.");
-        if (request.ExpectedFloorRevision < 0)
+        if (request.SourceId == Guid.Empty ||
+            request.ExpectedFloorRevision < 0 ||
+            request.ExpectedContentRevision < 0 ||
+            request.ClientInstanceId == Guid.Empty ||
+            request.LeaseId == Guid.Empty ||
+            request.CommandBatchId == Guid.Empty)
         {
             throw InvalidUnderlay(
-                "The expected floor revision cannot be negative.");
+                "A valid edit lease, command batch and expected revisions are required.");
         }
 
-        await LoadWritableVersionAsync(
-            versionId,
-            cancellationToken);
         var operation =
             $"attach-underlay:{versionId:D}:{floorLogicalId:D}";
         var requestHash = Hash(
@@ -257,31 +258,16 @@ public sealed class SpaceUnderlayV1Service : ISpaceUnderlayV1Service
             operation,
             idempotencyKey);
 
-        var replay = await ReadAttachReplayAsync(
-            operation,
-            keyHash,
-            requestHash,
-            cancellationToken);
-        if (replay is not null)
-            return replay;
-
         await using var transaction = await _context.Database
             .BeginTransactionAsync(
                 IsolationLevel.Serializable,
                 cancellationToken);
         try
         {
-            var concurrentReplay = await ReadAttachReplayAsync(
-                operation,
-                keyHash,
-                requestHash,
+            await AcquireFloorEditLockAsync(
+                versionId,
+                floorLogicalId,
                 cancellationToken);
-            if (concurrentReplay is not null)
-            {
-                await transaction.CommitAsync(cancellationToken);
-                return concurrentReplay;
-            }
-
             var version = await _context.Versions
                               .SingleOrDefaultAsync(
                                   candidate => candidate.Id == versionId,
@@ -289,6 +275,14 @@ public sealed class SpaceUnderlayV1Service : ISpaceUnderlayV1Service
                           ?? throw NotFound(
                               SpaceErrorCodes.VersionNotFound,
                               "Space version");
+            var model = await _context.Models.AsNoTracking()
+                            .SingleOrDefaultAsync(
+                                candidate => candidate.Id == version.ModelId,
+                                cancellationToken)
+                        ?? throw NotFound(
+                            SpaceErrorCodes.ModelNotFound,
+                            "Space model");
+            EnsureWritable(model);
             var floor = await _context.FloorRevisions
                             .SingleOrDefaultAsync(
                                 candidate =>
@@ -298,7 +292,34 @@ public sealed class SpaceUnderlayV1Service : ISpaceUnderlayV1Service
                         ?? throw NotFound(
                             SpaceErrorCodes.LogicalIdNotFound,
                             "Space floor logical identity");
-            var source = await _context.Sources
+            await EnsureActiveEditLeaseAsync(
+                versionId,
+                floorLogicalId,
+                request.LeaseId,
+                request.ClientInstanceId,
+                cancellationToken);
+            var concurrentReplay = await ReadAttachReplayAsync(
+                versionId,
+                floorLogicalId,
+                operation,
+                keyHash,
+                requestHash,
+                cancellationToken);
+            if (concurrentReplay is not null)
+            {
+                await transaction.CommitAsync(cancellationToken);
+                return concurrentReplay;
+            }
+            EnsureUnderlayRevisions(
+                version,
+                floor,
+                request.ExpectedContentRevision,
+                request.ExpectedFloorRevision);
+
+            SpaceModelSource? source = null;
+            if (request.SourceId.HasValue)
+            {
+                source = await _context.Sources
                              .SingleOrDefaultAsync(
                                  candidate =>
                                      candidate.ModelVersionId == versionId &&
@@ -307,40 +328,82 @@ public sealed class SpaceUnderlayV1Service : ISpaceUnderlayV1Service
                          ?? throw NotFound(
                              SpaceErrorCodes.SourceNotFound,
                              "Space source");
-            EnsureUnderlayType(source.SourceType);
-            if (source.State != SpaceSourceState.Ready ||
-                !source.FileId.HasValue)
-            {
-                throw InvalidUnderlay(
-                    "Only a ready scanned file source can be attached as an underlay.");
+                EnsureUnderlayType(source.SourceType);
+                if (source.State != SpaceSourceState.Ready ||
+                    !source.FileId.HasValue)
+                {
+                    throw InvalidUnderlay(
+                        "Only a ready scanned file source can be attached as an underlay.");
+                }
+
+                var fileIsClean = await _context.Files
+                    .AnyAsync(
+                        file =>
+                            file.Id == source.FileId &&
+                            file.State == SpaceFileState.Clean,
+                        cancellationToken);
+                if (!fileIsClean)
+                {
+                    throw InvalidUnderlay(
+                        "The underlay source file is not clean.");
+                }
             }
 
-            var fileIsClean = await _context.Files
-                .AnyAsync(
-                    file =>
-                        file.Id == source.FileId &&
-                        file.State == SpaceFileState.Clean,
-                    cancellationToken);
-            if (!fileIsClean)
-            {
-                throw InvalidUnderlay(
-                    "The underlay source file is not clean.");
-            }
-
+            var beforeJson = SerializeUnderlaySnapshot(floor);
+            var now = await ReadAuthoritativeUtcNowAsync(cancellationToken);
+            var batch = SpaceElementCommandBatch.Create(
+                _execution.TenantId,
+                request.CommandBatchId,
+                versionId,
+                floorLogicalId,
+                request.ClientInstanceId,
+                request.LeaseId,
+                request.ExpectedFloorRevision,
+                request.ExpectedContentRevision,
+                version.ContentHash,
+                requestHash,
+                requestHash,
+                _execution.ActorId,
+                now);
             floor.AdvanceRevision(request.ExpectedFloorRevision);
-            floor.AttachUnderlay(source);
+            if (source is null)
+                floor.DetachUnderlay();
+            else
+                floor.AttachUnderlay(source);
             version.TouchContent();
-            await _context.SaveChangesAsync(cancellationToken);
+            var record = SpaceElementCommandRecord.Create(
+                _execution.TenantId,
+                Guid.NewGuid(),
+                batch,
+                0,
+                "UnderlaySet",
+                floorLogicalId,
+                JsonSerializer.Serialize(
+                    new { request.SourceId },
+                    JsonOptions),
+                beforeJson,
+                SerializeUnderlaySnapshot(floor));
+            var history = SealUnderlayHistory(batch, record);
 
             var response = new AttachSpaceUnderlayResponse(
                 ToDto(floor),
+                version.ContentRevision,
+                history,
                 IdempotentReplay: false);
+            var responseJson = JsonSerializer.Serialize(response, JsonOptions);
+            batch.Complete(
+                floor.Revision,
+                version.ContentRevision,
+                responseJson);
+            _context.ElementCommandBatches.Add(batch);
+            _context.ElementCommandRecords.Add(record);
             _context.IdempotencyRecords.Add(
                 NewIdempotencyRecord(
                     operation,
                     keyHash,
                     requestHash,
-                    JsonSerializer.Serialize(response, JsonOptions)));
+                    responseJson,
+                    now));
             await _context.SaveChangesAsync(cancellationToken);
             await transaction.CommitAsync(cancellationToken);
             return response;
@@ -350,6 +413,8 @@ public sealed class SpaceUnderlayV1Service : ISpaceUnderlayV1Service
             await transaction.RollbackAsync(CancellationToken.None);
             _context.ChangeTracker.Clear();
             var concurrentReplay = await ReadAttachReplayAsync(
+                versionId,
+                floorLogicalId,
                 operation,
                 keyHash,
                 requestHash,
@@ -422,15 +487,18 @@ public sealed class SpaceUnderlayV1Service : ISpaceUnderlayV1Service
         if (sourceId == Guid.Empty ||
             request.FloorLogicalId == Guid.Empty ||
             request.ExpectedFloorRevision < 0 ||
+            request.ExpectedContentRevision < 0 ||
+            request.ClientInstanceId == Guid.Empty ||
+            request.LeaseId == Guid.Empty ||
+            request.CommandBatchId == Guid.Empty ||
             request.Point1 is null ||
             request.Point2 is null ||
             request.ValidationPoint is null)
         {
             throw InvalidCalibration(
-                "A source, floor, three control points and a current floor revision are required.");
+                "A source, floor, three control points, edit lease, command batch and current revisions are required.");
         }
 
-        await LoadWritableVersionAsync(versionId, cancellationToken);
         var operation =
             $"cal-underlay:{versionId:N}:{request.FloorLogicalId:N}";
         var requestHash = Hash(
@@ -438,31 +506,16 @@ public sealed class SpaceUnderlayV1Service : ISpaceUnderlayV1Service
                 new { SourceId = sourceId, Request = request },
                 JsonOptions));
         var keyHash = IdempotencyKeyHash(operation, idempotencyKey);
-        var replay = await ReadCalibrationReplayAsync(
-            operation,
-            keyHash,
-            requestHash,
-            cancellationToken);
-        if (replay is not null)
-            return replay;
-
         await using var transaction = await _context.Database
             .BeginTransactionAsync(
                 IsolationLevel.Serializable,
                 cancellationToken);
         try
         {
-            var concurrentReplay = await ReadCalibrationReplayAsync(
-                operation,
-                keyHash,
-                requestHash,
+            await AcquireFloorEditLockAsync(
+                versionId,
+                request.FloorLogicalId,
                 cancellationToken);
-            if (concurrentReplay is not null)
-            {
-                await transaction.CommitAsync(cancellationToken);
-                return concurrentReplay;
-            }
-
             var version = await _context.Versions
                               .SingleOrDefaultAsync(
                                   candidate => candidate.Id == versionId,
@@ -470,6 +523,14 @@ public sealed class SpaceUnderlayV1Service : ISpaceUnderlayV1Service
                           ?? throw NotFound(
                               SpaceErrorCodes.VersionNotFound,
                               "Space version");
+            var model = await _context.Models.AsNoTracking()
+                            .SingleOrDefaultAsync(
+                                candidate => candidate.Id == version.ModelId,
+                                cancellationToken)
+                        ?? throw NotFound(
+                            SpaceErrorCodes.ModelNotFound,
+                            "Space model");
+            EnsureWritable(model);
             var floor = await _context.FloorRevisions
                             .SingleOrDefaultAsync(
                                 candidate =>
@@ -480,6 +541,29 @@ public sealed class SpaceUnderlayV1Service : ISpaceUnderlayV1Service
                         ?? throw NotFound(
                             SpaceErrorCodes.LogicalIdNotFound,
                             "Space floor logical identity");
+            await EnsureActiveEditLeaseAsync(
+                versionId,
+                request.FloorLogicalId,
+                request.LeaseId,
+                request.ClientInstanceId,
+                cancellationToken);
+            var concurrentReplay = await ReadCalibrationReplayAsync(
+                versionId,
+                request.FloorLogicalId,
+                operation,
+                keyHash,
+                requestHash,
+                cancellationToken);
+            if (concurrentReplay is not null)
+            {
+                await transaction.CommitAsync(cancellationToken);
+                return concurrentReplay;
+            }
+            EnsureUnderlayRevisions(
+                version,
+                floor,
+                request.ExpectedContentRevision,
+                request.ExpectedFloorRevision);
             var source = await _context.Sources
                              .SingleOrDefaultAsync(
                                  candidate =>
@@ -518,6 +602,7 @@ public sealed class SpaceUnderlayV1Service : ISpaceUnderlayV1Service
                     "The underlay source file is not clean.");
             }
 
+            var beforeJson = SerializeUnderlaySnapshot(floor);
             var calibration = SpaceUnderlayCalibration.Create(
                 _execution.TenantId,
                 versionId,
@@ -532,21 +617,58 @@ public sealed class SpaceUnderlayV1Service : ISpaceUnderlayV1Service
                 _calibrationOptions.MinimumValidationErrorMillimeters,
                 _calibrationOptions.RelativeValidationErrorTolerance);
             _context.UnderlayCalibrations.Add(calibration);
+            var now = await ReadAuthoritativeUtcNowAsync(cancellationToken);
+            var batch = SpaceElementCommandBatch.Create(
+                _execution.TenantId,
+                request.CommandBatchId,
+                versionId,
+                request.FloorLogicalId,
+                request.ClientInstanceId,
+                request.LeaseId,
+                request.ExpectedFloorRevision,
+                request.ExpectedContentRevision,
+                version.ContentHash,
+                requestHash,
+                requestHash,
+                _execution.ActorId,
+                now);
             floor.AdvanceRevision(request.ExpectedFloorRevision);
             floor.ApplyUnderlayCalibration(source, calibration);
             version.TouchContent();
-            await _context.SaveChangesAsync(cancellationToken);
+            var record = SpaceElementCommandRecord.Create(
+                _execution.TenantId,
+                Guid.NewGuid(),
+                batch,
+                0,
+                "UnderlayCalibrate",
+                request.FloorLogicalId,
+                JsonSerializer.Serialize(
+                    new { SourceId = sourceId, calibration.Id },
+                    JsonOptions),
+                beforeJson,
+                SerializeUnderlaySnapshot(floor));
+            var history = SealUnderlayHistory(batch, record);
 
             var response = new SaveSpaceUnderlayCalibrationResponse(
                 ToDto(floor),
                 ToDto(calibration),
+                version.ContentRevision,
+                history,
                 IdempotentReplay: false);
+            var responseJson = JsonSerializer.Serialize(response, JsonOptions);
+            batch.Complete(
+                floor.Revision,
+                version.ContentRevision,
+                responseJson);
+            _context.ElementCommandBatches.Add(batch);
+            _context.ElementCommandRecords.Add(record);
             _context.IdempotencyRecords.Add(
                 NewIdempotencyRecord(
                     operation,
                     keyHash,
                     requestHash,
-                    JsonSerializer.Serialize(response, JsonOptions)));
+                    responseJson,
+                    now));
             await _context.SaveChangesAsync(cancellationToken);
             await transaction.CommitAsync(cancellationToken);
             return response;
@@ -568,6 +690,8 @@ public sealed class SpaceUnderlayV1Service : ISpaceUnderlayV1Service
             await transaction.RollbackAsync(CancellationToken.None);
             _context.ChangeTracker.Clear();
             var concurrentReplay = await ReadCalibrationReplayAsync(
+                versionId,
+                request.FloorLogicalId,
                 operation,
                 keyHash,
                 requestHash,
@@ -643,6 +767,8 @@ public sealed class SpaceUnderlayV1Service : ISpaceUnderlayV1Service
             .FirstOrDefaultAsync(cancellationToken);
 
     private async Task<AttachSpaceUnderlayResponse?> ReadAttachReplayAsync(
+        Guid versionId,
+        Guid floorLogicalId,
         string operation,
         string keyHash,
         string requestHash,
@@ -662,7 +788,8 @@ public sealed class SpaceUnderlayV1Service : ISpaceUnderlayV1Service
                 record.RequestHash,
                 requestHash,
                 StringComparison.Ordinal) ||
-            record.ReplayUntilUtc < RequireUtcNow())
+            record.ReplayUntilUtc < await ReadAuthoritativeUtcNowAsync(
+                cancellationToken))
         {
             throw new SpaceProblemException(
                 SpaceErrorCodes.IdempotencyConflict,
@@ -671,19 +798,25 @@ public sealed class SpaceUnderlayV1Service : ISpaceUnderlayV1Service
                 recoveryAction: "use-new-idempotency-key");
         }
 
-        return (JsonSerializer.Deserialize<AttachSpaceUnderlayResponse>(
-                    record.ResponseJson,
-                    JsonOptions)
-                ?? throw new InvalidOperationException(
-                    "The underlay idempotency response is invalid."))
-            with
-        {
-            IdempotentReplay = true,
-        };
+        var response = JsonSerializer.Deserialize<AttachSpaceUnderlayResponse>(
+                           record.ResponseJson,
+                           JsonOptions)
+                       ?? throw new InvalidOperationException(
+                           "The underlay idempotency response is invalid.");
+        EnsureUnderlayHistoryResponse(response.History);
+        await EnsureUnderlayReplayCurrentAsync(
+            versionId,
+            floorLogicalId,
+            response.Floor,
+            response.VersionContentRevision,
+            cancellationToken);
+        return response with { IdempotentReplay = true };
     }
 
     private async Task<SaveSpaceUnderlayCalibrationResponse?>
         ReadCalibrationReplayAsync(
+            Guid versionId,
+            Guid floorLogicalId,
             string operation,
             string keyHash,
             string requestHash,
@@ -703,7 +836,8 @@ public sealed class SpaceUnderlayV1Service : ISpaceUnderlayV1Service
                 record.RequestHash,
                 requestHash,
                 StringComparison.Ordinal) ||
-            record.ReplayUntilUtc < RequireUtcNow())
+            record.ReplayUntilUtc < await ReadAuthoritativeUtcNowAsync(
+                cancellationToken))
         {
             throw new SpaceProblemException(
                 SpaceErrorCodes.IdempotencyConflict,
@@ -712,25 +846,29 @@ public sealed class SpaceUnderlayV1Service : ISpaceUnderlayV1Service
                 recoveryAction: "use-new-idempotency-key");
         }
 
-        return (JsonSerializer
-                    .Deserialize<SaveSpaceUnderlayCalibrationResponse>(
-                        record.ResponseJson,
-                        JsonOptions)
-                ?? throw new InvalidOperationException(
-                    "The calibration idempotency response is invalid."))
-            with
-        {
-            IdempotentReplay = true,
-        };
+        var response = JsonSerializer
+                           .Deserialize<SaveSpaceUnderlayCalibrationResponse>(
+                               record.ResponseJson,
+                               JsonOptions)
+                       ?? throw new InvalidOperationException(
+                           "The calibration idempotency response is invalid.");
+        EnsureUnderlayHistoryResponse(response.History);
+        await EnsureUnderlayReplayCurrentAsync(
+            versionId,
+            floorLogicalId,
+            response.Floor,
+            response.VersionContentRevision,
+            cancellationToken);
+        return response with { IdempotentReplay = true };
     }
 
     private SpaceIdempotencyRecord NewIdempotencyRecord(
         string operation,
         string keyHash,
         string requestHash,
-        string responseJson)
+        string responseJson,
+        DateTime now)
     {
-        var now = RequireUtcNow();
         return SpaceIdempotencyRecord.Create(
             _execution.TenantId,
             _execution.ActorId,
@@ -741,6 +879,21 @@ public sealed class SpaceUnderlayV1Service : ISpaceUnderlayV1Service
             200,
             now.AddHours(24),
             now.AddDays(90));
+    }
+
+    private static void EnsureUnderlayHistoryResponse(
+        SpaceUnderlayHistoryDto? history)
+    {
+        if (history is null ||
+            history.SchemaVersion != SpaceUnderlayHistoryVersions.SchemaVersion ||
+            history.OriginalCommandBatchId == Guid.Empty ||
+            history.OperationType is not (
+                "UnderlaySet" or "UnderlayCalibrate") ||
+            !IsSha256(history.HistorySha256))
+        {
+            throw InvalidUnderlayHistory(
+                "The stored underlay response has no supported reversible history.");
+        }
     }
 
     private string IdempotencyKeyHash(

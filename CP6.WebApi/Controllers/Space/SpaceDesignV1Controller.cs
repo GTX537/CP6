@@ -4,6 +4,7 @@ using CP6.Core.Auth;
 using CP6.Space.Application;
 using CP6.Space.Contracts;
 using CP6.Space.Domain;
+using CP6.WebApi.Filters;
 using CP6.WebApi.OpenApi;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
@@ -273,8 +274,8 @@ public sealed class SpaceDesignV1Controller(
 
     [HttpPost("versions/{versionId:guid}/underlay-sources")]
     [Consumes("multipart/form-data")]
-    [RequirePermission("space", "source:upload")]
-    [RequirePermission("space", "model:edit")]
+    [RequirePermission("space", "source:upload", UseProblemDetails = true)]
+    [RequirePermission("space", "model:edit", UseProblemDetails = true)]
     [RequestSizeLimit(UnderlayUploadLimit)]
     [RequestFormLimits(MultipartBodyLengthLimit = UnderlayUploadLimit)]
     [ProducesResponseType<UploadSpaceUnderlayResponse>(
@@ -297,7 +298,7 @@ public sealed class SpaceDesignV1Controller(
     }
 
     [HttpGet("versions/{versionId:guid}/files/{fileId:guid}")]
-    [RequirePermission("space", "model:read")]
+    [RequirePermission("space", "model:read", UseProblemDetails = true)]
     [ProducesResponseType<SpaceFileDto>(StatusCodes.Status200OK)]
     public Task<SpaceFileDto> GetFile(
         Guid versionId,
@@ -309,7 +310,7 @@ public sealed class SpaceDesignV1Controller(
             cancellationToken);
 
     [HttpGet("versions/{versionId:guid}/sources/{sourceId:guid}/content")]
-    [RequirePermission("space", "model:read")]
+    [RequirePermission("space", "model:read", UseProblemDetails = true)]
     [ProducesResponseType(
         typeof(FileStreamResult),
         StatusCodes.Status200OK,
@@ -340,7 +341,7 @@ public sealed class SpaceDesignV1Controller(
 
     [HttpGet(
         "versions/{versionId:guid}/sources/{sourceId:guid}/underlay-calibration")]
-    [RequirePermission("space", "model:read")]
+    [RequirePermission("space", "model:read", UseProblemDetails = true)]
     [ProducesResponseType<SpaceUnderlayCalibrationDto>(
         StatusCodes.Status200OK)]
     public Task<SpaceUnderlayCalibrationDto> GetUnderlayCalibration(
@@ -356,8 +357,8 @@ public sealed class SpaceDesignV1Controller(
 
     [HttpPost(
         "versions/{versionId:guid}/sources/{sourceId:guid}/underlay-calibration")]
-    [RequirePermission("space", "source:upload")]
-    [RequirePermission("space", "model:edit")]
+    [RequirePermission("space", "source:upload", UseProblemDetails = true)]
+    [RequirePermission("space", "model:edit", UseProblemDetails = true)]
     [ProducesResponseType<SaveSpaceUnderlayCalibrationResponse>(
         StatusCodes.Status200OK)]
     public async Task<IActionResult> CalibrateUnderlay(
@@ -381,8 +382,8 @@ public sealed class SpaceDesignV1Controller(
 
     [HttpPut(
         "versions/{versionId:guid}/floors/{floorLogicalId:guid}/underlay")]
-    [RequirePermission("space", "source:upload")]
-    [RequirePermission("space", "model:edit")]
+    [RequirePermission("space", "source:upload", UseProblemDetails = true)]
+    [RequirePermission("space", "model:edit", UseProblemDetails = true)]
     [ProducesResponseType<AttachSpaceUnderlayResponse>(
         StatusCodes.Status200OK)]
     public async Task<IActionResult> AttachUnderlay(
@@ -394,6 +395,35 @@ public sealed class SpaceDesignV1Controller(
         CancellationToken cancellationToken)
     {
         var result = await underlays.AttachAsync(
+            versionId,
+            floorLogicalId,
+            request,
+            idempotencyKey,
+            cancellationToken);
+        Response.Headers["Idempotent-Replay"] =
+            result.IdempotentReplay ? "true" : "false";
+        return Ok(result);
+    }
+
+    [HttpPost(
+        "versions/{versionId:guid}/floors/{floorLogicalId:guid}/underlay:compensate")]
+    [SpaceAuditOperation(
+        "space.underlay.compensate",
+        "Floor",
+        ResourceIdArgument = "floorLogicalId",
+        PermissionCode = "space:model:edit")]
+    [RequirePermission("space", "model:edit", UseProblemDetails = true)]
+    [ProducesResponseType<CompensateSpaceUnderlayResponse>(
+        StatusCodes.Status200OK)]
+    public async Task<IActionResult> CompensateUnderlay(
+        Guid versionId,
+        Guid floorLogicalId,
+        [FromHeader(Name = "Idempotency-Key"), Required]
+        string idempotencyKey,
+        [FromBody, Required] CompensateSpaceUnderlayRequest request,
+        CancellationToken cancellationToken)
+    {
+        var result = await underlays.CompensateAsync(
             versionId,
             floorLogicalId,
             request,

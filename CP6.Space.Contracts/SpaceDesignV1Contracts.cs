@@ -85,12 +85,35 @@ public sealed record UploadSpaceUnderlayResponse(
     string? JobStatusUrl,
     bool Reused);
 
+public static class SpaceUnderlayHistoryVersions
+{
+    public const int SchemaVersion = 1;
+}
+
+public static class SpaceUnderlayCompensationDirections
+{
+    public const string Undo = "Undo";
+    public const string Redo = "Redo";
+}
+
 public sealed record AttachSpaceUnderlayRequest(
-    Guid SourceId,
-    long ExpectedFloorRevision);
+    Guid? SourceId,
+    long ExpectedFloorRevision,
+    long ExpectedContentRevision,
+    Guid ClientInstanceId,
+    Guid LeaseId,
+    Guid CommandBatchId);
+
+public sealed record SpaceUnderlayHistoryDto(
+    int SchemaVersion,
+    Guid OriginalCommandBatchId,
+    string OperationType,
+    string HistorySha256);
 
 public sealed record AttachSpaceUnderlayResponse(
     SpaceSceneFloorDto Floor,
+    long VersionContentRevision,
+    SpaceUnderlayHistoryDto History,
     bool IdempotentReplay);
 
 public sealed record SpaceUnderlayCalibrationPointDto(
@@ -107,7 +130,11 @@ public sealed record SaveSpaceUnderlayCalibrationRequest(
     SpaceUnderlayCalibrationPointDto Point1,
     SpaceUnderlayCalibrationPointDto Point2,
     SpaceUnderlayCalibrationPointDto ValidationPoint,
-    long ExpectedFloorRevision);
+    long ExpectedFloorRevision,
+    long ExpectedContentRevision,
+    Guid ClientInstanceId,
+    Guid LeaseId,
+    Guid CommandBatchId);
 
 public sealed record SpaceUnderlayCalibrationDto(
     Guid Id,
@@ -132,6 +159,29 @@ public sealed record SpaceUnderlayCalibrationDto(
 public sealed record SaveSpaceUnderlayCalibrationResponse(
     SpaceSceneFloorDto Floor,
     SpaceUnderlayCalibrationDto Calibration,
+    long VersionContentRevision,
+    SpaceUnderlayHistoryDto History,
+    bool IdempotentReplay);
+
+public sealed record CompensateSpaceUnderlayRequest(
+    int SchemaVersion,
+    string Direction,
+    Guid OriginalCommandBatchId,
+    string HistorySha256,
+    Guid CommandBatchId,
+    Guid ClientInstanceId,
+    Guid LeaseId,
+    long ExpectedFloorRevision,
+    long ExpectedContentRevision);
+
+public sealed record CompensateSpaceUnderlayResponse(
+    int SchemaVersion,
+    Guid OriginalCommandBatchId,
+    Guid CommandBatchId,
+    string Direction,
+    string HistorySha256,
+    SpaceSceneFloorDto Floor,
+    long VersionContentRevision,
     bool IdempotentReplay);
 
 public sealed record SpaceJobDto(

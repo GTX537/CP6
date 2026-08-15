@@ -1,6 +1,8 @@
 import http from '../http'
 import type {
   IAttachSpaceUnderlayResponse,
+  ICompensateSpaceUnderlayRequest,
+  ICompensateSpaceUnderlayResponse,
   ISaveSpaceUnderlayCalibrationResponse,
   ISpaceUnderlayCalibrationDto,
   ISpaceDesignSceneDto,
@@ -20,6 +22,19 @@ export interface SaveUnderlayCalibrationPayload {
   point2: UnderlayCalibrationPointPayload
   validationPoint: UnderlayCalibrationPointPayload
   expectedFloorRevision: number
+  expectedContentRevision: number
+  clientInstanceId: string
+  leaseId: string
+  commandBatchId: string
+}
+
+export interface AttachUnderlayPayload {
+  sourceId: string | null
+  expectedFloorRevision: number
+  expectedContentRevision: number
+  clientInstanceId: string
+  leaseId: string
+  commandBatchId: string
 }
 
 interface UnderlayCalibrationPointPayload {
@@ -70,18 +85,15 @@ export const designUnderlayApi = {
   attach(
     versionId: string,
     floorLogicalId: string,
-    sourceId: string,
-    expectedFloorRevision: number,
+    request: AttachUnderlayPayload,
+    idempotencyKey: string,
   ) {
     return http.put<unknown, IAttachSpaceUnderlayResponse>(
       `${root}/versions/${versionId}/floors/${floorLogicalId}/underlay`,
-      {
-        sourceId,
-        expectedFloorRevision,
-      },
+      request,
       {
         headers: {
-          'Idempotency-Key': crypto.randomUUID(),
+          'Idempotency-Key': idempotencyKey,
         },
       },
     )
@@ -104,13 +116,31 @@ export const designUnderlayApi = {
     versionId: string,
     sourceId: string,
     request: SaveUnderlayCalibrationPayload,
+    idempotencyKey: string,
   ) {
     return http.post<unknown, ISaveSpaceUnderlayCalibrationResponse>(
       `${root}/versions/${versionId}/sources/${sourceId}/underlay-calibration`,
       request,
       {
         headers: {
-          'Idempotency-Key': crypto.randomUUID(),
+          'Idempotency-Key': idempotencyKey,
+        },
+      },
+    )
+  },
+
+  compensate(
+    versionId: string,
+    floorLogicalId: string,
+    request: ICompensateSpaceUnderlayRequest,
+    idempotencyKey: string,
+  ) {
+    return http.post<unknown, ICompensateSpaceUnderlayResponse>(
+      `${root}/versions/${versionId}/floors/${floorLogicalId}/underlay:compensate`,
+      request,
+      {
+        headers: {
+          'Idempotency-Key': idempotencyKey,
         },
       },
     )

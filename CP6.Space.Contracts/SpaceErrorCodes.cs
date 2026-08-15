@@ -71,6 +71,7 @@ public static class SpaceErrorCodes
         "SPACE_UNDERLAY_CALIBRATION_INVALID";
     public const string UnderlayCalibrationOutOfTolerance =
         "SPACE_UNDERLAY_CALIBRATION_OUT_OF_TOLERANCE";
+    public const string UnderlayHistoryInvalid = "SPACE_UNDERLAY_HISTORY_INVALID";
     public const string FloorRevisionConflict = "SPACE_FLOOR_REVISION_CONFLICT";
     public const string EditLeaseHeld = "SPACE_EDIT_LEASE_HELD";
     public const string EditLeaseLost = "SPACE_EDIT_LEASE_LOST";

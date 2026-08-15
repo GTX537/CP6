@@ -106,12 +106,34 @@ export interface ExcelCadHistoryEntry {
   excelCadCompensation: ExcelCadCompensationHistory
 }
 
-export type EditorHistoryEntry = CommandHistoryEntry | ExcelCadHistoryEntry
+export interface UnderlayCompensationHistory {
+  originalCommandBatchId: string
+  historySha256: string
+  operationType: 'UnderlaySet' | 'UnderlayCalibrate'
+  pendingUndoCommandBatchId?: string
+  pendingRedoCommandBatchId?: string
+}
+
+export interface UnderlayHistoryEntry {
+  label: string
+  underlayCompensation: UnderlayCompensationHistory
+}
+
+export type EditorHistoryEntry =
+  | CommandHistoryEntry
+  | ExcelCadHistoryEntry
+  | UnderlayHistoryEntry
 
 export function isExcelCadHistoryEntry(
   entry: EditorHistoryEntry,
 ): entry is ExcelCadHistoryEntry {
   return 'excelCadCompensation' in entry
+}
+
+export function isUnderlayHistoryEntry(
+  entry: EditorHistoryEntry,
+): entry is UnderlayHistoryEntry {
+  return 'underlayCompensation' in entry
 }
 
 export class SavedCommandHistory {

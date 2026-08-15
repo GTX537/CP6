@@ -6591,6 +6591,154 @@
         }
       }
     },
+    "/api/space/design/v1/versions/{versionId}/floors/{floorLogicalId}/underlay:compensate": {
+      "post": {
+        "tags": [
+          "SpaceDesignV1"
+        ],
+        "operationId": "CompensateUnderlay",
+        "parameters": [
+          {
+            "name": "versionId",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "string",
+              "format": "uuid"
+            }
+          },
+          {
+            "name": "floorLogicalId",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "string",
+              "format": "uuid"
+            }
+          },
+          {
+            "name": "Idempotency-Key",
+            "in": "header",
+            "required": true,
+            "schema": {
+              "type": "string"
+            }
+          }
+        ],
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/CP6.Space.Contracts.CompensateSpaceUnderlayRequest"
+              }
+            },
+            "text/json": {
+              "schema": {
+                "$ref": "#/components/schemas/CP6.Space.Contracts.CompensateSpaceUnderlayRequest"
+              }
+            },
+            "application/*+json": {
+              "schema": {
+                "$ref": "#/components/schemas/CP6.Space.Contracts.CompensateSpaceUnderlayRequest"
+              }
+            }
+          },
+          "required": true
+        },
+        "responses": {
+          "400": {
+            "description": "Bad Request",
+            "content": {
+              "application/problem+json": {
+                "schema": {
+                  "$ref": "#/components/schemas/CP6.WebApi.OpenApi.SpaceDesignProblemDetails"
+                }
+              }
+            }
+          },
+          "401": {
+            "description": "Unauthorized",
+            "content": {
+              "application/problem+json": {
+                "schema": {
+                  "$ref": "#/components/schemas/CP6.WebApi.OpenApi.SpaceDesignProblemDetails"
+                }
+              }
+            }
+          },
+          "403": {
+            "description": "Forbidden",
+            "content": {
+              "application/problem+json": {
+                "schema": {
+                  "$ref": "#/components/schemas/CP6.WebApi.OpenApi.SpaceDesignProblemDetails"
+                }
+              }
+            }
+          },
+          "404": {
+            "description": "Not Found",
+            "content": {
+              "application/problem+json": {
+                "schema": {
+                  "$ref": "#/components/schemas/CP6.WebApi.OpenApi.SpaceDesignProblemDetails"
+                }
+              }
+            }
+          },
+          "409": {
+            "description": "Conflict",
+            "content": {
+              "application/problem+json": {
+                "schema": {
+                  "$ref": "#/components/schemas/CP6.WebApi.OpenApi.SpaceDesignProblemDetails"
+                }
+              }
+            }
+          },
+          "422": {
+            "description": "Unprocessable Content",
+            "content": {
+              "application/problem+json": {
+                "schema": {
+                  "$ref": "#/components/schemas/CP6.WebApi.OpenApi.SpaceDesignProblemDetails"
+                }
+              }
+            }
+          },
+          "500": {
+            "description": "Internal Server Error",
+            "content": {
+              "application/problem+json": {
+                "schema": {
+                  "$ref": "#/components/schemas/CP6.WebApi.OpenApi.SpaceDesignProblemDetails"
+                }
+              }
+            }
+          },
+          "200": {
+            "description": "OK",
+            "content": {
+              "text/plain": {
+                "schema": {
+                  "$ref": "#/components/schemas/CP6.Space.Contracts.CompensateSpaceUnderlayResponse"
+                }
+              },
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/CP6.Space.Contracts.CompensateSpaceUnderlayResponse"
+                }
+              },
+              "text/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/CP6.Space.Contracts.CompensateSpaceUnderlayResponse"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
     "/api/space/design/v1/jobs/{jobId}": {
       "get": {
         "tags": [
@@ -18472,24 +18620,62 @@
         "additionalProperties": false
       },
       "CP6.Space.Contracts.AttachSpaceUnderlayRequest": {
+        "required": [
+          "clientInstanceId",
+          "commandBatchId",
+          "expectedContentRevision",
+          "expectedFloorRevision",
+          "leaseId",
+          "sourceId"
+        ],
         "type": "object",
         "properties": {
           "sourceId": {
             "type": "string",
-            "format": "uuid"
+            "format": "uuid",
+            "nullable": true
           },
           "expectedFloorRevision": {
             "type": "integer",
             "format": "int64"
+          },
+          "expectedContentRevision": {
+            "type": "integer",
+            "format": "int64"
+          },
+          "clientInstanceId": {
+            "type": "string",
+            "format": "uuid"
+          },
+          "leaseId": {
+            "type": "string",
+            "format": "uuid"
+          },
+          "commandBatchId": {
+            "type": "string",
+            "format": "uuid"
           }
         },
         "additionalProperties": false
       },
       "CP6.Space.Contracts.AttachSpaceUnderlayResponse": {
+        "required": [
+          "floor",
+          "history",
+          "idempotentReplay",
+          "versionContentRevision"
+        ],
         "type": "object",
         "properties": {
           "floor": {
             "$ref": "#/components/schemas/CP6.Space.Contracts.SpaceSceneFloorDto"
+          },
+          "versionContentRevision": {
+            "type": "integer",
+            "format": "int64"
+          },
+          "history": {
+            "$ref": "#/components/schemas/CP6.Space.Contracts.SpaceUnderlayHistoryDto"
           },
           "idempotentReplay": {
             "type": "boolean"
@@ -18632,6 +18818,101 @@
           "floorRevision": {
             "type": "integer",
             "format": "int64"
+          },
+          "versionContentRevision": {
+            "type": "integer",
+            "format": "int64"
+          },
+          "idempotentReplay": {
+            "type": "boolean"
+          }
+        },
+        "additionalProperties": false
+      },
+      "CP6.Space.Contracts.CompensateSpaceUnderlayRequest": {
+        "required": [
+          "clientInstanceId",
+          "commandBatchId",
+          "direction",
+          "expectedContentRevision",
+          "expectedFloorRevision",
+          "historySha256",
+          "leaseId",
+          "originalCommandBatchId",
+          "schemaVersion"
+        ],
+        "type": "object",
+        "properties": {
+          "schemaVersion": {
+            "type": "integer",
+            "format": "int32"
+          },
+          "direction": {
+            "type": "string"
+          },
+          "originalCommandBatchId": {
+            "type": "string",
+            "format": "uuid"
+          },
+          "historySha256": {
+            "type": "string"
+          },
+          "commandBatchId": {
+            "type": "string",
+            "format": "uuid"
+          },
+          "clientInstanceId": {
+            "type": "string",
+            "format": "uuid"
+          },
+          "leaseId": {
+            "type": "string",
+            "format": "uuid"
+          },
+          "expectedFloorRevision": {
+            "type": "integer",
+            "format": "int64"
+          },
+          "expectedContentRevision": {
+            "type": "integer",
+            "format": "int64"
+          }
+        },
+        "additionalProperties": false
+      },
+      "CP6.Space.Contracts.CompensateSpaceUnderlayResponse": {
+        "required": [
+          "commandBatchId",
+          "direction",
+          "floor",
+          "historySha256",
+          "idempotentReplay",
+          "originalCommandBatchId",
+          "schemaVersion",
+          "versionContentRevision"
+        ],
+        "type": "object",
+        "properties": {
+          "schemaVersion": {
+            "type": "integer",
+            "format": "int32"
+          },
+          "originalCommandBatchId": {
+            "type": "string",
+            "format": "uuid"
+          },
+          "commandBatchId": {
+            "type": "string",
+            "format": "uuid"
+          },
+          "direction": {
+            "type": "string"
+          },
+          "historySha256": {
+            "type": "string"
+          },
+          "floor": {
+            "$ref": "#/components/schemas/CP6.Space.Contracts.SpaceSceneFloorDto"
           },
           "versionContentRevision": {
             "type": "integer",
@@ -20163,6 +20444,20 @@
         "additionalProperties": false
       },
       "CP6.Space.Contracts.SaveSpaceUnderlayCalibrationRequest": {
+        "required": [
+          "clientInstanceId",
+          "commandBatchId",
+          "expectedContentRevision",
+          "expectedFloorRevision",
+          "floorLogicalId",
+          "leaseId",
+          "pageNumber",
+          "pixelHeight",
+          "pixelWidth",
+          "point1",
+          "point2",
+          "validationPoint"
+        ],
         "type": "object",
         "properties": {
           "floorLogicalId": {
@@ -20193,11 +20488,34 @@
           "expectedFloorRevision": {
             "type": "integer",
             "format": "int64"
+          },
+          "expectedContentRevision": {
+            "type": "integer",
+            "format": "int64"
+          },
+          "clientInstanceId": {
+            "type": "string",
+            "format": "uuid"
+          },
+          "leaseId": {
+            "type": "string",
+            "format": "uuid"
+          },
+          "commandBatchId": {
+            "type": "string",
+            "format": "uuid"
           }
         },
         "additionalProperties": false
       },
       "CP6.Space.Contracts.SaveSpaceUnderlayCalibrationResponse": {
+        "required": [
+          "calibration",
+          "floor",
+          "history",
+          "idempotentReplay",
+          "versionContentRevision"
+        ],
         "type": "object",
         "properties": {
           "floor": {
@@ -20205,6 +20523,13 @@
           },
           "calibration": {
             "$ref": "#/components/schemas/CP6.Space.Contracts.SpaceUnderlayCalibrationDto"
+          },
+          "versionContentRevision": {
+            "type": "integer",
+            "format": "int64"
+          },
+          "history": {
+            "$ref": "#/components/schemas/CP6.Space.Contracts.SpaceUnderlayHistoryDto"
           },
           "idempotentReplay": {
             "type": "boolean"
@@ -29951,6 +30276,32 @@
           "worldY": {
             "type": "integer",
             "format": "int32"
+          }
+        },
+        "additionalProperties": false
+      },
+      "CP6.Space.Contracts.SpaceUnderlayHistoryDto": {
+        "required": [
+          "historySha256",
+          "operationType",
+          "originalCommandBatchId",
+          "schemaVersion"
+        ],
+        "type": "object",
+        "properties": {
+          "schemaVersion": {
+            "type": "integer",
+            "format": "int32"
+          },
+          "originalCommandBatchId": {
+            "type": "string",
+            "format": "uuid"
+          },
+          "operationType": {
+            "type": "string"
+          },
+          "historySha256": {
+            "type": "string"
           }
         },
         "additionalProperties": false

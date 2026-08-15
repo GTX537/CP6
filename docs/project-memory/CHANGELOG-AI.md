@@ -2,6 +2,12 @@
 
 > 依据 Git log 汇总，不替代完整 Git 历史。重点记录影响接手判断的里程碑。
 
+## 2026-08-15：Space Studio 底图统一撤销/重做
+
+- 底图挂接、替换、标定和移除统一进入 Lease、Floor/Content Revision、数据库 UTC、CommandBatch 与幂等 Fence；Attach 合同以必填但可空的 `sourceId` 表达显式移除。
+- 服务端以不可变 Command Record 密封 Source/Calibration/变换前后态，Undo/Redo 复核历史 Hash 和当前状态后写新补偿批次；工作台接入公共历史栈并可恢复替换前的旧标定。
+- 真 SQL、OpenAPI/双 SDK、Web 和 Playwright 已覆盖。LM-FR-024 仓库实现闭环，但 WP4 与 GA 72% / `NoGo` 状态不变。
+
 ## 2026-08-15：Space Studio Excel–CAD 确认统一撤销/重做
 
 - Excel–CAD Apply schema v2 以不可变 Command Record 密封历史 Hash/数量；服务器而非客户端持有 Rack、层、库位、绑定、属性和 Source 的可信前后态。

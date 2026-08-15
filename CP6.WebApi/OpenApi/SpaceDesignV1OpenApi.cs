@@ -119,6 +119,75 @@ public sealed class SpaceWmsRuntimeSchemaFilter : ISchemaFilter
                 "versionContentRevision",
                 "idempotentReplay",
             ],
+            [typeof(AttachSpaceUnderlayRequest)] =
+            [
+                "sourceId",
+                "expectedFloorRevision",
+                "expectedContentRevision",
+                "clientInstanceId",
+                "leaseId",
+                "commandBatchId",
+            ],
+            [typeof(AttachSpaceUnderlayResponse)] =
+            [
+                "floor",
+                "versionContentRevision",
+                "history",
+                "idempotentReplay",
+            ],
+            [typeof(SaveSpaceUnderlayCalibrationRequest)] =
+            [
+                "floorLogicalId",
+                "pageNumber",
+                "pixelWidth",
+                "pixelHeight",
+                "point1",
+                "point2",
+                "validationPoint",
+                "expectedFloorRevision",
+                "expectedContentRevision",
+                "clientInstanceId",
+                "leaseId",
+                "commandBatchId",
+            ],
+            [typeof(SaveSpaceUnderlayCalibrationResponse)] =
+            [
+                "floor",
+                "calibration",
+                "versionContentRevision",
+                "history",
+                "idempotentReplay",
+            ],
+            [typeof(SpaceUnderlayHistoryDto)] =
+            [
+                "schemaVersion",
+                "originalCommandBatchId",
+                "operationType",
+                "historySha256",
+            ],
+            [typeof(CompensateSpaceUnderlayRequest)] =
+            [
+                "schemaVersion",
+                "direction",
+                "originalCommandBatchId",
+                "historySha256",
+                "commandBatchId",
+                "clientInstanceId",
+                "leaseId",
+                "expectedFloorRevision",
+                "expectedContentRevision",
+            ],
+            [typeof(CompensateSpaceUnderlayResponse)] =
+            [
+                "schemaVersion",
+                "originalCommandBatchId",
+                "commandBatchId",
+                "direction",
+                "historySha256",
+                "floor",
+                "versionContentRevision",
+                "idempotentReplay",
+            ],
             [typeof(SpacePublishedViewerSceneDto)] =
             [
                 "schemaVersion",
@@ -1505,7 +1574,13 @@ public sealed class SpaceWmsRuntimeSchemaFilter : ISchemaFilter
             Property(schema, propertyName).Nullable = false;
         }
 
-        if (context.Type == typeof(SpacePublishedViewerSceneDto))
+        if (context.Type == typeof(AttachSpaceUnderlayRequest))
+        {
+            // sourceId is required so callers must explicitly choose attach/replace
+            // or detach, while null is the intentional detach value.
+            SetNullable(schema, true, "sourceId");
+        }
+        else if (context.Type == typeof(SpacePublishedViewerSceneDto))
         {
             SetNullable(schema, true, "publishedAtUtc", "contentHash");
         }

@@ -43,6 +43,7 @@ import {
   buildRotationBatch,
   buildTranslationBatch,
   isExcelCadHistoryEntry,
+  isUnderlayHistoryEntry,
   type AlignmentMode,
   type DistributionMode,
   type EditorCommandInput,
@@ -53,6 +54,7 @@ import {
 } from '@/modules/space-design/commands/editorBatchCommands'
 import { buildCadApplyHistoryEntry } from '@/modules/space-design/commands/cadApplyHistory'
 import { buildExcelCadApplyHistoryEntry } from '@/modules/space-design/commands/excelCadApplyHistory'
+import { buildUnderlayHistoryEntry } from '@/modules/space-design/commands/underlayHistory'
 import {
   buildElementMergePlan,
   type ElementMergePlan,
@@ -1629,21 +1631,93 @@ async function waitForClean(fileId: string, sourceId: string): Promise<void> {
 
 async function attachAndRender(sourceId: string): Promise<void> {
   const current = floor.value
-  if (!current) throw new Error('Floor is unavailable')
+  const currentScene = designScene.value
+  const activeLeaseId = lease.value?.leaseId
+  if (!current
+    || currentScene?.contentRevision === undefined
+    || !activeLeaseId
+    || leaseState.value !== 'owned') {
+    throw new Error('An active edit lease and current scene are required')
+  }
+  const replacing = Boolean(current.underlaySourceId)
+  const commandBatchId = crypto.randomUUID()
   const response = await designUnderlayApi.attach(
     versionId.value,
     floorLogicalId.value,
-    sourceId,
-    current.revisionNumber ?? 0,
+    {
+      sourceId,
+      expectedFloorRevision: current.revisionNumber ?? 0,
+      expectedContentRevision: currentScene.contentRevision,
+      clientInstanceId,
+      leaseId: activeLeaseId,
+      commandBatchId,
+    },
+    `underlay-attach:${commandBatchId}`,
   )
-  if (!response.floor) throw new Error('Attach response is missing its floor')
+  if (!response.floor || !response.history) {
+    throw new Error('Attach response is missing its floor or history')
+  }
+  const entry = buildUnderlayHistoryEntry(
+    response.history,
+    replacing ? '替换底图' : '挂接底图',
+  )
+  history.push(entry)
+  touchHistory()
   floor.value = response.floor
   cancelCalibration()
-  await loadContent(sourceId)
+  await loadScene()
   statusText.value = calibrated.value
     ? t('底图已加载并标定')
     : t('底图已加载，等待两点标定')
   ElMessage.success(t('底图已安全加载'))
+}
+
+async function removeUnderlay(): Promise<void> {
+  const current = floor.value
+  const currentScene = designScene.value
+  const activeLeaseId = lease.value?.leaseId
+  if (!current?.underlaySourceId
+    || currentScene?.contentRevision === undefined
+    || !activeLeaseId
+    || leaseState.value !== 'owned') return
+  try {
+    await ElMessageBox.confirm(
+      t('移除当前底图？该操作可以通过撤销恢复。'),
+      t('移除底图'),
+      {
+        type: 'warning',
+        confirmButtonText: t('确认'),
+        cancelButtonText: t('取消'),
+      },
+    )
+  } catch {
+    return
+  }
+  const commandBatchId = crypto.randomUUID()
+  try {
+    const response = await designUnderlayApi.attach(
+      versionId.value,
+      floorLogicalId.value,
+      {
+        sourceId: null,
+        expectedFloorRevision: current.revisionNumber ?? 0,
+        expectedContentRevision: currentScene.contentRevision,
+        clientInstanceId,
+        leaseId: activeLeaseId,
+        commandBatchId,
+      },
+      `underlay-detach:${commandBatchId}`,
+    )
+    if (!response.history) throw new Error('Detach history is missing')
+    history.push(buildUnderlayHistoryEntry(response.history, '移除底图'))
+    touchHistory()
+    cancelCalibration()
+    await loadScene()
+    ElMessage.success(t('底图已移除，可使用撤销恢复'))
+  } catch (error) {
+    handleUnderlayWriteError(error)
+    ElMessage.error(t('底图移除失败，请刷新后重试'))
+  }
 }
 
 async function loadContent(sourceId: string): Promise<void> {
@@ -1704,12 +1778,17 @@ function syncCalibrationStage(): void {
 
 async function saveCalibration(): Promise<void> {
   const currentFloor = floor.value
+  const currentScene = designScene.value
+  const activeLeaseId = lease.value?.leaseId
   const sourceId = currentFloor?.underlaySourceId
   const size = stage?.getRasterSize()
   const preview = calibrationPreview.value
   const [point1, point2, validationPoint] = calibrationPoints.value
   if (
     !currentFloor ||
+    currentScene?.contentRevision === undefined ||
+    !activeLeaseId ||
+    leaseState.value !== 'owned' ||
     !sourceId ||
     !size ||
     !preview ||
@@ -1723,6 +1802,7 @@ async function saveCalibration(): Promise<void> {
 
   savingCalibration.value = true
   try {
+    const commandBatchId = crypto.randomUUID()
     const response = await designUnderlayApi.calibrate(
       versionId.value,
       sourceId,
@@ -1750,21 +1830,30 @@ async function saveCalibration(): Promise<void> {
           worldY: Math.round(validationPoint.worldY),
         },
         expectedFloorRevision: currentFloor.revisionNumber ?? 0,
+        expectedContentRevision: currentScene.contentRevision,
+        clientInstanceId,
+        leaseId: activeLeaseId,
+        commandBatchId,
       },
+      `underlay-calibrate:${commandBatchId}`,
     )
-    if (!response.floor || !response.calibration) {
+    if (!response.floor || !response.calibration || !response.history) {
       throw new Error('Calibration response is incomplete')
     }
+    history.push(buildUnderlayHistoryEntry(response.history))
+    touchHistory()
     floor.value = response.floor
     stage?.setFloor(response.floor)
     cancelCalibration()
+    await loadScene()
     statusText.value = t('底图已加载并标定')
     ElMessage.success(
       t('标定已保存，验证误差 {error} mm', {
         error: response.calibration.validationErrorMillimeters ?? 0,
       }),
     )
-  } catch {
+  } catch (error) {
+    handleUnderlayWriteError(error)
     ElMessage.error(t('标定未通过，请检查控制点和实际坐标'))
   } finally {
     savingCalibration.value = false
@@ -2193,8 +2282,9 @@ async function undoSavedCommand(): Promise<void> {
       return
     }
     ElMessage.success(`已撤销：${entry.label}`)
-  } catch {
+  } catch (error) {
     history.cancelUndo(entry)
+    handleUnderlayWriteError(error)
     ElMessage.error('撤销失败，请刷新场景后重试')
   } finally {
     savingElement.value = false
@@ -2218,8 +2308,9 @@ async function redoSavedCommand(): Promise<void> {
       return
     }
     ElMessage.success(`已重做：${entry.label}`)
-  } catch {
+  } catch (error) {
     history.cancelRedo(entry)
+    handleUnderlayWriteError(error)
     ElMessage.error('重做失败，请刷新场景后重试')
   } finally {
     savingElement.value = false
@@ -2231,6 +2322,41 @@ async function executeHistoryAction(
   entry: EditorHistoryEntry,
   direction: 'Undo' | 'Redo',
 ): Promise<void> {
+  if (isUnderlayHistoryEntry(entry)) {
+    const currentFloor = floor.value
+    const currentScene = designScene.value
+    const activeLeaseId = lease.value?.leaseId
+    if (!currentFloor
+      || currentScene?.contentRevision === undefined
+      || !activeLeaseId
+      || leaseState.value !== 'owned') {
+      throw new Error('Underlay history requires an active edit lease')
+    }
+    const action = entry.underlayCompensation
+    const pendingKey = direction === 'Undo'
+      ? 'pendingUndoCommandBatchId'
+      : 'pendingRedoCommandBatchId'
+    const commandBatchId = action[pendingKey] ?? crypto.randomUUID()
+    action[pendingKey] = commandBatchId
+    await designUnderlayApi.compensate(
+      versionId.value,
+      floorLogicalId.value,
+      {
+        schemaVersion: 1,
+        originalCommandBatchId: action.originalCommandBatchId,
+        direction,
+        commandBatchId,
+        clientInstanceId,
+        leaseId: activeLeaseId,
+        expectedFloorRevision: currentFloor.revisionNumber ?? 0,
+        expectedContentRevision: currentScene.contentRevision,
+        historySha256: action.historySha256,
+      },
+      `underlay-history:${action.originalCommandBatchId}:${commandBatchId}`,
+    )
+    delete action[pendingKey]
+    return
+  }
   if (!isExcelCadHistoryEntry(entry)) {
     await applyEditorCommands(direction === 'Undo' ? entry.undo : entry.redo)
     return
@@ -2267,6 +2393,16 @@ async function executeHistoryAction(
     `excel-cad-history:${action.applyJobId}:${commandBatchId}`,
   )
   delete action[pendingKey]
+}
+
+function handleUnderlayWriteError(error: unknown): void {
+  const code = isAxiosError(error) ? error.response?.data?.code : undefined
+  if (code === 'SPACE_EDIT_LEASE_LOST') loseEditLease()
+  if (code === 'SPACE_FLOOR_REVISION_CONFLICT'
+    || code === 'SPACE_VERSION_CONFLICT'
+    || code === 'SPACE_CONCURRENCY_CONFLICT') {
+    revisionConflict.value = true
+  }
 }
 
 async function onExcelCadApplied(
@@ -3275,6 +3411,7 @@ function tabClientInstanceId(): string {
         :readonly="readonlyScene"
         @choose-underlay="chooseFile"
         @calibrate-underlay="beginCalibration"
+        @remove-underlay="removeUnderlay"
         @choose-cad="chooseCadFile"
         @download-template="downloadStandardExcelTemplate"
         @open-cad-review="openCadReviewWorkspace"

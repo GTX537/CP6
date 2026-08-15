@@ -1,5 +1,12 @@
 # 已完成能力与近期里程碑
 
+## 2026-08-15 Space Studio 底图统一撤销/重做
+
+- PDF/PNG/JPG 底图的挂接、替换、标定和显式移除统一携带页面实例、编辑租约、Floor/Content Revision、CommandBatch 与幂等键；未取得当前会话租约或 Revision 已变化时零 Draft 写入。
+- 服务端复用不可变 Element Command Batch/Record 密封底图 Source、Calibration 和变换前后态；Undo/Redo 只接受原批次、方向与历史 Hash，校验当前状态后恢复追加式标定指针，并写入新的不可变补偿批次。
+- 工作台把底图操作加入既有公共历史栈；OpenAPI/C#/TypeScript SDK、真 SQL、Web、Playwright 和构建门禁同步。详细报告见 `docs/space/reports/2026-08-15-space-studio-underlay-history.md`。
+- LM-FR-024 的 CAD、Excel–CAD 和底图可逆历史仓库实现已闭环；真实多路径、Provider、WMS 和 Pilot 接受仍未完成，WP4 保持 Partial/Pending，核心 GA 保持 72% / `NoGo`。
+
 ## 2026-08-15 Space Studio Excel–CAD 确认统一撤销/重做
 
 - Excel–CAD v2 Apply 结果从实际不可变 Command Record 密封历史 Hash 与数量；客户端不能提交可信补偿正文，旧 v1 成功结果仍可读取但不会伪装成可撤销历史。
