@@ -11,11 +11,18 @@ export interface SpaceStudioCanvasViewport {
   zoom: number
 }
 
+export interface SpaceStudioUnderlayViewState {
+  visible: boolean
+  opacityPercent: number
+  locked: boolean
+}
+
 export interface SpaceStudioFloorViewState {
   schemaVersion: 1
   projectionMode: SpaceStudioProjectionMode
   canvasViewport: SpaceStudioCanvasViewport
   preview3d?: DesignPreviewViewState
+  underlay?: SpaceStudioUnderlayViewState
 }
 
 export function spaceStudioFloorViewStorageKey(
@@ -38,15 +45,31 @@ export function parseSpaceStudioFloorViewState(
     if (!validCanvasViewport(candidate.canvasViewport)) return null
     if (candidate.preview3d !== undefined
       && !isDesignPreviewViewState(candidate.preview3d)) return null
+    if (candidate.underlay !== undefined
+      && !validUnderlayViewState(candidate.underlay)) return null
     return {
       schemaVersion: 1,
       projectionMode: candidate.projectionMode,
       canvasViewport: { ...candidate.canvasViewport },
       ...(candidate.preview3d ? { preview3d: candidate.preview3d } : {}),
+      ...(candidate.underlay ? { underlay: { ...candidate.underlay } } : {}),
     }
   } catch {
     return null
   }
+}
+
+function validUnderlayViewState(
+  value: unknown,
+): value is SpaceStudioUnderlayViewState {
+  if (!value || typeof value !== 'object') return false
+  const state = value as Partial<SpaceStudioUnderlayViewState>
+  return typeof state.visible === 'boolean'
+    && typeof state.locked === 'boolean'
+    && typeof state.opacityPercent === 'number'
+    && Number.isInteger(state.opacityPercent)
+    && state.opacityPercent >= 0
+    && state.opacityPercent <= 100
 }
 
 function validCanvasViewport(value: unknown): value is SpaceStudioCanvasViewport {

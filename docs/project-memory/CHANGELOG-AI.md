@@ -2,6 +2,12 @@
 
 > 依据 Git log 汇总，不替代完整 Git 历史。重点记录影响接手判断的里程碑。
 
+## 2026-08-15：Space Studio 底图图层控制
+
+- “图层”模式接通底图显示/隐藏、透明度和锁定控制，直接驱动真实 Konva 画布；锁定阻止标定，新挂接自动解锁、标定成功自动锁回。
+- 底图显示偏好随现有 floor view schema v1 按版本/楼层保存在浏览器标签页，旧数据兼容，非法状态失败关闭且不推进 Draft Revision。
+- 单测、类型检查与 Playwright 已覆盖实际画布变化和重载恢复。LM-FR-020 仓库实现闭环，WP4 与 GA 72% / `NoGo` 状态不变。
+
 ## 2026-08-15：Space Studio 底图统一撤销/重做
 
 - 底图挂接、替换、标定和移除统一进入 Lease、Floor/Content Revision、数据库 UTC、CommandBatch 与幂等 Fence；Attach 合同以必填但可空的 `sourceId` 表达显式移除。

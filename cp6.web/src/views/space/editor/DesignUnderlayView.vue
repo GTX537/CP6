@@ -253,9 +253,9 @@ let pendingFloorViewState: {
   storageKey: string
   state: SpaceStudioFloorViewState
 } | null = null
-const visible = ref(true)
-const opacity = ref(55)
-const locked = ref(true)
+const visible = ref(initialFloorViewState?.underlay?.visible ?? true)
+const opacity = ref(initialFloorViewState?.underlay?.opacityPercent ?? 55)
+const locked = ref(initialFloorViewState?.underlay?.locked ?? true)
 const calibrationPoints = ref([
   { pixel: null as UnderlayPixelPoint | null, worldX: 0, worldY: 0 },
   { pixel: null as UnderlayPixelPoint | null, worldX: 10_000, worldY: 0 },
@@ -576,6 +576,11 @@ onMounted(async () => {
   await nextTick()
   if (!canvasRef.value) return
   stage = new UnderlayStage(canvasRef.value)
+  stage.setLayerState({
+    visible: visible.value,
+    opacity: opacity.value / 100,
+    locked: locked.value,
+  })
   stage.stage.on('pointermove.space-studio-tools', onCanvasPointerMove)
   stage.stage.on('pointerdown.space-studio-tools', onCanvasPointerDown)
   stage.stage.on('pointerup.space-studio-tools', onCanvasPointerUp)
@@ -729,6 +734,7 @@ watch([visible, opacity, locked], () => {
     locked: locked.value,
   }
   stage?.setLayerState(state)
+  scheduleFloorViewStatePersistence()
 })
 
 watch(matchJobId, (jobId) => {
@@ -1034,6 +1040,9 @@ function restoreFloorViewState(nextVersionId: string, nextFloorLogicalId: string
     ? '3d'
     : stored?.projectionMode ?? '2d'
   preview3dViewState.value = stored?.preview3d ?? null
+  visible.value = stored?.underlay?.visible ?? true
+  opacity.value = stored?.underlay?.opacityPercent ?? 55
+  locked.value = stored?.underlay?.locked ?? true
   applyCanvasViewport(stored?.canvasViewport ?? defaultCanvasViewport, false)
 }
 
@@ -1053,6 +1062,11 @@ function scheduleFloorViewStatePersistence(): void {
       ...(preview3dViewState.value
         ? { preview3d: preview3dViewState.value }
         : {}),
+      underlay: {
+        visible: visible.value,
+        opacityPercent: opacity.value,
+        locked: locked.value,
+      },
     },
   }
   if (floorViewPersistenceTimer !== null) return
@@ -1664,6 +1678,8 @@ async function attachAndRender(sourceId: string): Promise<void> {
   history.push(entry)
   touchHistory()
   floor.value = response.floor
+  visible.value = true
+  locked.value = false
   cancelCalibration()
   await loadScene()
   statusText.value = calibrated.value
@@ -1844,6 +1860,7 @@ async function saveCalibration(): Promise<void> {
     touchHistory()
     floor.value = response.floor
     stage?.setFloor(response.floor)
+    locked.value = true
     cancelCalibration()
     await loadScene()
     statusText.value = t('底图已加载并标定')
@@ -3409,6 +3426,9 @@ function tabClientInstanceId(): string {
         :has-underlay="hasUnderlay"
         :calibrated="calibrated"
         :readonly="readonlyScene"
+        :underlay-visible="visible"
+        :underlay-opacity="opacity"
+        :underlay-locked="locked"
         @choose-underlay="chooseFile"
         @calibrate-underlay="beginCalibration"
         @remove-underlay="removeUnderlay"
@@ -3419,6 +3439,9 @@ function tabClientInstanceId(): string {
         @retry-parse="retryCadParse"
         @open-rule-only="openRuleOnlyCreation"
         @create-component="createComponent"
+        @underlay-visibility-change="visible = $event"
+        @underlay-opacity-change="opacity = $event"
+        @underlay-lock-change="locked = $event"
       >
         <template #assets>
           <DesignLayoutCreatePanel

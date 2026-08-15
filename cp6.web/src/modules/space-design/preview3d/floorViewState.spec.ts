@@ -22,6 +22,11 @@ describe('Space Studio floor view state', () => {
         cameraPosition: [10, 20, 30],
         target: [1, 2, 3],
       },
+      underlay: {
+        visible: false,
+        opacityPercent: 35,
+        locked: false,
+      },
     }))
     expect(parsed).toEqual({
       schemaVersion: 1,
@@ -31,6 +36,11 @@ describe('Space Studio floor view state', () => {
         schemaVersion: 1,
         cameraPosition: [10, 20, 30],
         target: [1, 2, 3],
+      },
+      underlay: {
+        visible: false,
+        opacityPercent: 35,
+        locked: false,
       },
     })
   })
@@ -47,5 +57,23 @@ describe('Space Studio floor view state', () => {
       projectionMode: '2d',
       canvasViewport: { panX: 0, panY: 0, zoom: 0 },
     }))).toBeNull()
+    expect(parseSpaceStudioFloorViewState(JSON.stringify({
+      schemaVersion: 1,
+      projectionMode: '2d',
+      canvasViewport: { panX: 0, panY: 0, zoom: 0.05 },
+      underlay: { visible: true, opacityPercent: 101, locked: true },
+    }))).toBeNull()
+  })
+
+  it('keeps legacy version-one state valid when it has no underlay preferences', () => {
+    expect(parseSpaceStudioFloorViewState(JSON.stringify({
+      schemaVersion: 1,
+      projectionMode: '2d',
+      canvasViewport: { panX: 0, panY: 0, zoom: 0.05 },
+    }))).toEqual({
+      schemaVersion: 1,
+      projectionMode: '2d',
+      canvasViewport: { panX: 0, panY: 0, zoom: 0.05 },
+    })
   })
 })
