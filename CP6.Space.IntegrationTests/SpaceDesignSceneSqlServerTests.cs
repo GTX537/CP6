@@ -861,6 +861,276 @@ public sealed class SpaceDesignSceneSqlServerTests
     }
 
     [SqlServerFact]
+    public async Task Element_group_split_compensation_and_redo_keep_new_identities_atomic()
+    {
+        await WithDatabaseAsync(async (connectionString, execution, clock) =>
+        {
+            await using var context = CreateContext(
+                connectionString,
+                execution,
+                clock);
+            var seeded = await SeedDesignModelAsync(
+                context,
+                execution.ActorId,
+                clock.UtcNow);
+            var draft = SpaceModelVersion.CreateDraft(
+                execution.TenantId,
+                seeded.Model.Id,
+                2,
+                "Element exception split",
+                seeded.Published.Id);
+            seeded.Model.ReserveDraft(draft);
+            var floor = SpaceFloorRevision.Create(
+                execution.TenantId,
+                draft.Id,
+                Guid.NewGuid(),
+                seeded.Model.SiteId,
+                1,
+                "F1",
+                "Floor 1",
+                height: 6000);
+            var survivorLogicalId = Guid.NewGuid();
+            var sourceLogicalId = Guid.NewGuid();
+            var groupGeometry = $$$"""
+                {"schemaVersion":1,"kind":"group","parts":[{"sourceLogicalId":"{{{survivorLogicalId}}}","x":0,"y":0,"z":0,"rotationZ":0,"width":400,"height":5000,"depth":400,"geometry":{"schemaVersion":1,"kind":"box","width":400,"height":5000,"depth":400}},{"sourceLogicalId":"{{{sourceLogicalId}}}","x":800,"y":0,"z":0,"rotationZ":0,"width":400,"height":5000,"depth":400,"geometry":{"schemaVersion":1,"kind":"box","width":400,"height":5000,"depth":400}}]}
+                """;
+            const string partGeometry = """
+                {"schemaVersion":1,"kind":"box","width":400,"height":5000,"depth":400}
+                """;
+            var survivor = SpaceElementRevision.Create(
+                execution.TenantId,
+                draft.Id,
+                survivorLogicalId,
+                floor.LogicalId,
+                SpaceElementTypes.Column,
+                groupGeometry);
+            survivor.ConfigurePlacement(1000, 2000, 0, 90, 1200, 5000, 400);
+            survivor.ConfigureBusinessLink(
+                "COL-01",
+                "Floor",
+                floor.LogicalId);
+            var survivorAttribute = SpaceElementAttribute.Create(
+                execution.TenantId,
+                survivor,
+                SpaceElementAttributeNamespaces.Design,
+                "label",
+                SpaceElementAttributeValueTypes.String,
+                "CAD exception");
+            context.AddRange(draft, floor, survivor, survivorAttribute);
+            await context.SaveChangesAsync();
+
+            var clientId = Guid.NewGuid();
+            var lease = SpaceEditLease.Create(
+                execution.TenantId,
+                draft.Id,
+                floor.LogicalId,
+                execution.ActorId,
+                "Editor",
+                clientId,
+                clock.UtcNow,
+                TimeSpan.FromSeconds(90));
+            context.EditLeases.Add(lease);
+            await context.SaveChangesAsync();
+            var service = NewService(
+                context,
+                execution,
+                clock,
+                seeded.Model.SiteId);
+            var splitLogicalId = Guid.NewGuid();
+            var attributes = new[]
+            {
+                new SpaceElementAttributeWriteDto(
+                    SpaceElementAttributeNamespaces.Design,
+                    "label",
+                    SpaceElementAttributeValueTypes.String,
+                    "CAD exception",
+                    null),
+            };
+            SpaceUpdateElementPropertiesDto survivorPart() => new(
+                partGeometry,
+                1000,
+                2000,
+                0,
+                90,
+                400,
+                5000,
+                400,
+                "COL-01",
+                "Floor",
+                floor.LogicalId,
+                attributes,
+                SpaceElementTypes.Column);
+
+            var split = await service.ApplyElementCommandsAsync(
+                draft.Id,
+                floor.LogicalId,
+                new ApplySpaceElementCommandBatchRequest(
+                    SpaceElementCommandContract.SchemaVersion,
+                    Guid.NewGuid(),
+                    clientId,
+                    lease.LeaseId,
+                    ExpectedFloorRevision: 0,
+                    [
+                        new SpaceElementCommandDto(
+                            Guid.NewGuid(),
+                            SpaceElementCommandContract.UpdateProperties,
+                            survivor.LogicalId,
+                            survivorPart()),
+                        new SpaceElementCommandDto(
+                            Guid.NewGuid(),
+                            SpaceElementCommandContract.CreateElement,
+                            splitLogicalId,
+                            UpdateProperties: null,
+                            CreateElement: new SpaceCreateElementDto(
+                                SpaceElementTypes.Column,
+                                partGeometry,
+                                1000,
+                                2800,
+                                0,
+                                90,
+                                400,
+                                5000,
+                                400,
+                                "COL-01",
+                                ParentLogicalId: null,
+                                SourceId: null,
+                                SourceRef: null,
+                                attributes,
+                                LinkedEntityType: "Floor",
+                                LinkedLogicalId: floor.LogicalId)),
+                    ]));
+
+            Assert.Equal(1, split.FloorRevision);
+            Assert.Equal(1, split.VersionContentRevision);
+            Assert.Equal(2, split.AffectedObjects.Count);
+            var created = await context.ElementRevisions.SingleAsync(
+                item => item.LogicalId == splitLogicalId);
+            Assert.Equal(SpaceLifecycleState.Active, created.LifecycleState);
+            Assert.Equal("COL-01", created.BusinessCode);
+            Assert.Equal("Floor", created.LinkedEntityType);
+            Assert.Equal(floor.LogicalId, created.LinkedLogicalId);
+            Assert.Equal(1000, created.X);
+            Assert.Equal(2800, created.Y);
+            Assert.Equal(
+                "CAD exception",
+                Assert.Single(await context.ElementAttributes
+                    .Where(item => item.ElementRevisionId == created.Id)
+                    .ToListAsync()).Value);
+            Assert.Equal(2, await context.ElementCommandRecords.CountAsync());
+
+            var compensated = await service.ApplyElementCommandsAsync(
+                draft.Id,
+                floor.LogicalId,
+                new ApplySpaceElementCommandBatchRequest(
+                    SpaceElementCommandContract.SchemaVersion,
+                    Guid.NewGuid(),
+                    clientId,
+                    lease.LeaseId,
+                    ExpectedFloorRevision: 1,
+                    [
+                        new SpaceElementCommandDto(
+                            Guid.NewGuid(),
+                            SpaceElementCommandContract.UpdateProperties,
+                            survivor.LogicalId,
+                            new SpaceUpdateElementPropertiesDto(
+                                groupGeometry,
+                                1000,
+                                2000,
+                                0,
+                                90,
+                                1200,
+                                5000,
+                                400,
+                                "COL-01",
+                                "Floor",
+                                floor.LogicalId,
+                                attributes,
+                                SpaceElementTypes.Column)),
+                        new SpaceElementCommandDto(
+                            Guid.NewGuid(),
+                            SpaceElementCommandContract.DeleteObject,
+                            splitLogicalId,
+                            null),
+                    ]));
+
+            Assert.Equal(2, compensated.FloorRevision);
+            Assert.Equal(SpaceLifecycleState.RemoveRequested, created.LifecycleState);
+
+            var redone = await service.ApplyElementCommandsAsync(
+                draft.Id,
+                floor.LogicalId,
+                new ApplySpaceElementCommandBatchRequest(
+                    SpaceElementCommandContract.SchemaVersion,
+                    Guid.NewGuid(),
+                    clientId,
+                    lease.LeaseId,
+                    ExpectedFloorRevision: 2,
+                    [
+                        new SpaceElementCommandDto(
+                            Guid.NewGuid(),
+                            SpaceElementCommandContract.UpdateProperties,
+                            survivor.LogicalId,
+                            survivorPart()),
+                        new SpaceElementCommandDto(
+                            Guid.NewGuid(),
+                            SpaceElementCommandContract.RestoreLogicalObject,
+                            splitLogicalId,
+                            null),
+                    ]));
+
+            Assert.Equal(3, redone.FloorRevision);
+            Assert.Equal(3, redone.VersionContentRevision);
+            Assert.Equal(SpaceLifecycleState.Active, created.LifecycleState);
+            Assert.Equal(
+                2,
+                await context.ElementRevisions.CountAsync(item =>
+                    item.ModelVersionId == draft.Id));
+            Assert.Equal(6, await context.ElementCommandRecords.CountAsync());
+            Assert.Equal(3, await context.ElementCommandBatches.CountAsync());
+
+            var invalidLink = await Assert.ThrowsAsync<SpaceProblemException>(() =>
+                service.ApplyElementCommandsAsync(
+                    draft.Id,
+                    floor.LogicalId,
+                    new ApplySpaceElementCommandBatchRequest(
+                        SpaceElementCommandContract.SchemaVersion,
+                        Guid.NewGuid(),
+                        clientId,
+                        lease.LeaseId,
+                        ExpectedFloorRevision: 3,
+                        [new SpaceElementCommandDto(
+                            Guid.NewGuid(),
+                            SpaceElementCommandContract.CreateElement,
+                            Guid.NewGuid(),
+                            UpdateProperties: null,
+                            CreateElement: new SpaceCreateElementDto(
+                                SpaceElementTypes.Column,
+                                partGeometry,
+                                1800,
+                                2800,
+                                0,
+                                90,
+                                400,
+                                5000,
+                                400,
+                                "COL-01",
+                                ParentLogicalId: null,
+                                SourceId: null,
+                                SourceRef: null,
+                                attributes,
+                                LinkedEntityType: "Floor",
+                                LinkedLogicalId: null))])));
+            Assert.Equal(SpaceErrorCodes.RequestInvalid, invalidLink.Code);
+            Assert.Equal(
+                2,
+                await context.ElementRevisions.CountAsync(item =>
+                    item.ModelVersionId == draft.Id));
+            Assert.Equal(6, await context.ElementCommandRecords.CountAsync());
+            Assert.Equal(3, await context.ElementCommandBatches.CountAsync());
+        });
+    }
+
+    [SqlServerFact]
     public async Task Create_element_accepts_null_content_hash_and_stale_fence_is_zero_write()
     {
         await WithDatabaseAsync(async (connectionString, execution, clock) =>

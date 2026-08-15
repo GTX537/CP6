@@ -539,6 +539,82 @@ test('merges CAD exception elements atomically and restores them through undo an
   expect(errors).toEqual([])
 })
 
+test('splits a CAD exception group with inherited properties and stable redo identities', async ({ page }) => {
+  const errors = collectPageErrors(page)
+  const editorBodies: Array<Record<string, any>> = []
+  await installSpaceStudioFixtures(page, [], { editorBodies, splitEnabled: true })
+  await page.setViewportSize({ width: 1440, height: 900 })
+  await page.goto(studioUrl)
+  await expect(page.locator('.studio-title-state').getByText('租约至', { exact: false })).toBeVisible()
+  await expect(page.locator('.el-loading-mask')).toHaveCount(0)
+
+  const canvas = page.locator('.canvas .konvajs-content')
+  const bounds = await canvas.boundingBox()
+  expect(bounds).not.toBeNull()
+  await page.mouse.click(
+    bounds!.x + (5200 + 400 / 2) * 0.05,
+    bounds!.y + bounds!.height - (2400 + 400 / 2) * 0.05,
+  )
+  await expect(page.locator('.studio-statusbar')).toContainText('选择 1')
+
+  await page.getByRole('tab', { name: '批量', exact: true }).click()
+  const tools = page.locator('[data-test="design-batch-tools"]')
+  await tools.locator('[data-test="split-element"]').click()
+  await page.getByRole('button', { name: '确认拆分', exact: true }).click()
+
+  await expect(page.getByText('拆分 2 个异常部件', { exact: true })).toBeVisible()
+  await expect.poll(() => editorBodies.length).toBe(1)
+  expect(editorBodies[0]!.commands.map((command: any) => command.type)).toEqual([
+    'UpdateProperties',
+    'CreateElement',
+  ])
+  expect(editorBodies[0]!.commands[0]).toMatchObject({
+    targetLogicalId: columnId,
+    updateProperties: {
+      x: 5200,
+      y: 2400,
+      width: 400,
+      businessCode: 'COL-01',
+    },
+  })
+  const created = editorBodies[0]!.commands[1]
+  expect(created.targetLogicalId).not.toBe(columnId)
+  expect(created.targetLogicalId).not.toBe(secondColumnId)
+  expect(created.createElement).toMatchObject({
+    elementType: 'Column',
+    x: 6000,
+    y: 2400,
+    width: 400,
+    businessCode: 'COL-01',
+    attributes: [],
+  })
+  expect(JSON.parse(created.createElement.geometryJson)).toMatchObject({
+    schemaVersion: 1,
+    kind: 'box',
+  })
+
+  await tools.getByRole('button', { name: '撤销', exact: true }).click()
+  await expect(page.getByText('已撤销：拆分 2 个异常部件', { exact: true })).toBeVisible()
+  await expect.poll(() => editorBodies.length).toBe(2)
+  expect(editorBodies[1]!.commands.map((command: any) => command.type)).toEqual([
+    'UpdateProperties',
+    'DeleteObject',
+  ])
+  expect(editorBodies[1]!.commands[1].targetLogicalId).toBe(created.targetLogicalId)
+
+  await tools.getByRole('button', { name: '重做', exact: true }).click()
+  await expect(page.getByText('已重做：拆分 2 个异常部件', { exact: true })).toBeVisible()
+  await expect.poll(() => editorBodies.length).toBe(3)
+  expect(editorBodies[2]!.commands.map((command: any) => command.type)).toEqual([
+    'UpdateProperties',
+    'RestoreLogicalObject',
+  ])
+  expect(editorBodies[2]!.commands[1].targetLogicalId).toBe(created.targetLogicalId)
+  expect(editorBodies.flatMap((body) => body.commands)
+    .filter((command: any) => command.type === 'CreateElement')).toHaveLength(1)
+  expect(errors).toEqual([])
+})
+
 test('previews protected location codes and explicitly applies the frozen proposal', async ({ page }) => {
   const errors = collectPageErrors(page)
   const methods: string[] = []
@@ -661,6 +737,7 @@ async function installSpaceStudioFixtures(
     underlayBodies?: Array<Record<string, any>>
     matchBodies?: Array<Record<string, any>>
     mergeEnabled?: boolean
+    splitEnabled?: boolean
   } = {},
 ) {
   await page.addInitScript(() => {
@@ -685,6 +762,49 @@ async function installSpaceStudioFixtures(
       depth: 400,
       businessCode: 'COL-01',
     })
+  }
+  if (options.splitEnabled) {
+    scene.elements[0].geometryJson = JSON.stringify({
+      schemaVersion: 1,
+      kind: 'group',
+      parts: [
+        {
+          sourceLogicalId: columnId,
+          x: 0,
+          y: 0,
+          z: 0,
+          rotationZ: 0,
+          width: 400,
+          height: 3000,
+          depth: 400,
+          geometry: {
+            schemaVersion: 1,
+            kind: 'box',
+            width: 400,
+            height: 3000,
+            depth: 400,
+          },
+        },
+        {
+          sourceLogicalId: secondColumnId,
+          x: 800,
+          y: 0,
+          z: 0,
+          rotationZ: 0,
+          width: 400,
+          height: 3000,
+          depth: 400,
+          geometry: {
+            schemaVersion: 1,
+            kind: 'box',
+            width: 400,
+            height: 3000,
+            depth: 400,
+          },
+        },
+      ],
+    })
+    scene.elements[0].width = 1200
   }
   if (options.codingEnabled) {
     scene.zones.push({
@@ -1135,6 +1255,29 @@ async function installSpaceStudioFixtures(
           )
           const { attributes: _attributes, ...properties } = command.updateProperties
           Object.assign(element, properties)
+          affectedElements.push(element)
+          continue
+        }
+        if (command.type === 'CreateElement') {
+          const payload = command.createElement
+          const element = {
+            revision: revision(command.targetLogicalId),
+            floorLogicalId: floorId,
+            elementType: payload.elementType,
+            geometryJson: payload.geometryJson,
+            x: payload.x,
+            y: payload.y,
+            z: payload.z,
+            rotationZ: payload.rotationZ,
+            width: payload.width,
+            height: payload.height,
+            depth: payload.depth,
+            businessCode: payload.businessCode,
+            parentLogicalId: payload.parentLogicalId,
+            linkedEntityType: payload.linkedEntityType,
+            linkedLogicalId: payload.linkedLogicalId,
+          }
+          scene.elements.push(element)
           affectedElements.push(element)
           continue
         }

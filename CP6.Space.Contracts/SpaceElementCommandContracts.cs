@@ -76,7 +76,9 @@ public sealed record SpaceCreateElementDto(
     Guid? ParentLogicalId,
     Guid? SourceId,
     string? SourceRef,
-    IReadOnlyList<SpaceElementAttributeWriteDto> Attributes);
+    IReadOnlyList<SpaceElementAttributeWriteDto> Attributes,
+    string? LinkedEntityType = null,
+    Guid? LinkedLogicalId = null);
 
 public sealed record ApplySpaceElementCommandBatchRequest(
     int SchemaVersion,

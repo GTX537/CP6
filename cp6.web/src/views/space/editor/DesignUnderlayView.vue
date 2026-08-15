@@ -52,6 +52,10 @@ import {
   buildElementMergePlan,
   type ElementMergePlan,
 } from '@/modules/space-design/commands/elementMerge'
+import {
+  buildElementSplitPlan,
+  type ElementSplitPlan,
+} from '@/modules/space-design/commands/elementSplit'
 import DesignBatchToolsPanel from '@/modules/space-design/panels/DesignBatchToolsPanel.vue'
 import { sceneElementPropertiesPayload } from '@/modules/space-design/panels/elementProperties'
 import DesignLocationCodingPanel from '@/modules/space-design/coding/DesignLocationCodingPanel.vue'
@@ -440,6 +444,26 @@ const elementMergeState = computed<{
   } catch (error) {
     return {
       error: error instanceof Error ? error.message : '当前选择不能合并',
+    }
+  }
+})
+const elementSplitState = computed<{
+  plan?: ElementSplitPlan
+  error?: string
+}>(() => {
+  if (!selectedElement.value) {
+    return { error: '请选择一个组合元素进行拆分' }
+  }
+  try {
+    return {
+      plan: buildElementSplitPlan(
+        selectedElement.value,
+        designScene.value?.elementAttributes ?? [],
+      ),
+    }
+  } catch (error) {
+    return {
+      error: error instanceof Error ? error.message : '当前对象不能拆分',
     }
   }
 })
@@ -1708,6 +1732,41 @@ async function mergeSelectedElements(): Promise<void> {
   }
 }
 
+async function splitSelectedElement(): Promise<void> {
+  const plan = elementSplitState.value.plan
+  if (!plan) {
+    ElMessage.warning(elementSplitState.value.error ?? '当前对象不能拆分')
+    return
+  }
+  try {
+    await ElMessageBox.confirm(
+      `将组合元素拆分为 ${plan.partCount} 个独立元素。首个部件保留当前 LogicalId，其余 ${plan.splitLogicalIds.length} 个部件分配新 LogicalId；类型、父级、业务链接、设计属性和 CAD 来源将继承，操作可撤销。是否继续？`,
+      '确认拆分',
+      {
+        type: 'warning',
+        confirmButtonText: '确认拆分',
+        cancelButtonText: '取消',
+      },
+    )
+  } catch {
+    return
+  }
+
+  const saved = await runBatchTool(
+    `拆分 ${plan.partCount} 个异常部件`,
+    plan.batch,
+  )
+  if (saved) {
+    selectObjects([
+      { logicalId: plan.groupLogicalId, ownerKind: 'Element' },
+      ...plan.splitLogicalIds.map((logicalId) => ({
+        logicalId,
+        ownerKind: 'Element' as const,
+      })),
+    ], 'replace')
+  }
+}
+
 async function moveCanvasObjects(
   object: CanvasObjectRef,
   delta: { x: number; y: number },
@@ -1875,7 +1934,7 @@ async function executeReversible(
   batch: ReversibleCommandBatch,
 ): Promise<void> {
   await applyEditorCommands(batch.forward)
-  history.push({ label, undo: batch.reverse, redo: batch.forward })
+  history.push({ label, undo: batch.reverse, redo: batch.redo ?? batch.forward })
   touchHistory()
   await loadScene()
 }
@@ -2858,11 +2917,14 @@ function tabClientInstanceId(): string {
             :can-redo="canRedo"
             :can-merge="Boolean(elementMergeState.plan)"
             :merge-hint="elementMergeState.error"
+            :can-split="Boolean(elementSplitState.plan)"
+            :split-hint="elementSplitState.error"
             @align="alignSelected"
             @distribute="distributeSelected"
             @rotate="rotateSelected"
             @remove="removeSelected"
             @merge="mergeSelectedElements"
+            @split="splitSelectedElement"
             @array="generateRackArray"
             @undo="undoSavedCommand"
             @redo="redoSavedCommand"

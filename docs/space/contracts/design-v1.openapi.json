@@ -22931,6 +22931,15 @@
             "items": {
               "$ref": "#/components/schemas/CP6.Space.Contracts.SpaceElementAttributeWriteDto"
             }
+          },
+          "linkedEntityType": {
+            "type": "string",
+            "nullable": true
+          },
+          "linkedLogicalId": {
+            "type": "string",
+            "format": "uuid",
+            "nullable": true
           }
         },
         "additionalProperties": false

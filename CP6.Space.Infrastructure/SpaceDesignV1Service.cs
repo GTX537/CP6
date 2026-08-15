@@ -681,8 +681,8 @@ public sealed class SpaceDesignV1Service :
                         payload.Depth);
                     element.ConfigureBusinessLink(
                         payload.BusinessCode,
-                        linkedEntityType: null,
-                        linkedLogicalId: null);
+                        payload.LinkedEntityType,
+                        payload.LinkedLogicalId);
                     if (payload.SourceId.HasValue)
                     {
                         element.AttachSource(
@@ -4774,6 +4774,20 @@ public sealed class SpaceDesignV1Service :
             throw Invalid(
                 "commands.createElement.sourceId",
                 "Source identity and source reference must be supplied together.");
+        }
+        if (payload.LinkedLogicalId == Guid.Empty ||
+            payload.LinkedLogicalId.HasValue !=
+            !string.IsNullOrWhiteSpace(payload.LinkedEntityType))
+        {
+            throw Invalid(
+                "commands.createElement.linkedLogicalId",
+                "Linked entity type and logical identity must be supplied together.");
+        }
+        if (payload.LinkedEntityType?.Trim().Length > 100)
+        {
+            throw Invalid(
+                "commands.createElement.linkedEntityType",
+                "Linked entity type cannot exceed 100 characters.");
         }
     }
 

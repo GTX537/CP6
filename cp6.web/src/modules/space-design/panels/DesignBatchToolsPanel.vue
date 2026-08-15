@@ -16,6 +16,8 @@ const props = defineProps<{
   canRedo?: boolean
   canMerge?: boolean
   mergeHint?: string
+  canSplit?: boolean
+  splitHint?: string
 }>()
 
 const emit = defineEmits<{
@@ -24,6 +26,7 @@ const emit = defineEmits<{
   rotate: [degrees: number]
   remove: []
   merge: []
+  split: []
   array: [payload: GenerateRackArrayPayload]
   undo: []
   redo: []
@@ -170,6 +173,18 @@ const disabled = computed(() => props.busy || props.readonly)
         合并异常对象
       </el-button>
       <el-button
+        v-permission="'space:model:edit'"
+        type="primary"
+        plain
+        size="small"
+        data-test="split-element"
+        :title="splitHint"
+        :disabled="disabled || !canSplit"
+        @click="emit('split')"
+      >
+        拆分异常对象
+      </el-button>
+      <el-button
         type="danger"
         plain
         size="small"
@@ -181,6 +196,9 @@ const disabled = computed(() => props.busy || props.readonly)
     </div>
     <span v-if="selectedCount >= 2 && mergeHint" class="merge-hint">
       {{ mergeHint }}
+    </span>
+    <span v-if="selectedCount === 1 && splitHint" class="merge-hint">
+      {{ splitHint }}
     </span>
 
     <details class="array-tools" :class="{ unavailable: !selectedRackCode }">

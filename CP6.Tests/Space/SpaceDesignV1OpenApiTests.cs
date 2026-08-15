@@ -1757,6 +1757,15 @@ public sealed class SpaceDesignV1OpenApiTests
             "height",
             "depth",
             "attributes");
+        var createElementProperties = schemas
+            .GetProperty("CP6.Space.Contracts.SpaceCreateElementDto")
+            .GetProperty("properties");
+        Assert.True(createElementProperties.TryGetProperty(
+            "linkedEntityType",
+            out _));
+        Assert.True(createElementProperties.TryGetProperty(
+            "linkedLogicalId",
+            out _));
 
         var typescript = File.ReadAllText(
             Path.Combine(
@@ -1776,10 +1785,11 @@ public sealed class SpaceDesignV1OpenApiTests
             "expectedContentRevision",
             "workspaceSha256",
             "changeIds");
+        var createElementTypeScript = ExtractTypeBlock(
+            typescript,
+            "export interface ISpaceCreateElementDto");
         AssertRequiredTypeScriptProperties(
-            ExtractTypeBlock(
-                typescript,
-                "export interface ISpaceCreateElementDto"),
+            createElementTypeScript,
             "elementType",
             "geometryJson",
             "x",
@@ -1790,6 +1800,14 @@ public sealed class SpaceDesignV1OpenApiTests
             "height",
             "depth",
             "attributes");
+        Assert.Contains(
+            "linkedEntityType?: string | undefined;",
+            createElementTypeScript,
+            StringComparison.Ordinal);
+        Assert.Contains(
+            "linkedLogicalId?: string | undefined;",
+            createElementTypeScript,
+            StringComparison.Ordinal);
     }
 
     [Theory]
