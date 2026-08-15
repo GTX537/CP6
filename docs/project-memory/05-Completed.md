@@ -1,5 +1,12 @@
 # 已完成能力与近期里程碑
 
+## 2026-08-15 Design V1 空白 Draft 初始化纵切
+
+- `POST /api/space/design/v1/sites/{siteId}/versions` 新增 `Blank` 模式；草稿不继承 Published 内容，拒绝 `BasedOnVersionId`，保留线上指针并占用唯一活动 Draft 槽。
+- 新增 `InitializeVersion` 完成态 Job/Attempt 和 `space-blank-v1` 初始化身份；Version Operation fence、请求 Hash、SQL 事务及既有 Idempotency-Key 共同保证重放返回同一 Version/Job，不同输入失败关闭。
+- 领域聚焦 7/7、SQL Server LocalDB 聚焦 2/2、Space Integration 真库全量 437/437 且 0 skipped。详细报告见 `docs/space/reports/2026-08-15-space-design-blank-draft.md`。
+- 该纵切不创建或猜测 Floor，也不实现平台/租户整仓模板。LM-FR-001 与 WP1 保持 Partial/Pending，核心 GA 保持 72% / `NoGo`。
+
 ## 2026-08-15 Space Studio LM-FR-025～029 最终工作台 UX 要求
 
 - 保存后的同一 Design Scene 直接驱动 2D/3D；选择与逐楼层相机跨模式保留。切到 3D 不再清除 2D 未保存重画，标题持续标记、3D 禁止误提交，切回 2D 后保留全部点集。

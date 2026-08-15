@@ -158,6 +158,7 @@ public enum SpaceJobType : short
     HistoricalRepublish = 12,
     ExcelCadMatch = 13,
     ExcelCadApply = 14,
+    InitializeVersion = 15,
 }
 
 public enum SpaceJobSubjectType : short

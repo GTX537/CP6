@@ -4,6 +4,7 @@
 
 ## Space Studio v1.3 核心实现（2026-08-12）
 
+- LM-FR-001 的空白版本初始化纵切已交付：Design V1 `CreateVersion` 现在支持 `Blank` 与既有 `PublishedVersion`；Blank 强制无 `BasedOnVersionId`、不继承线上内容、不移动 Published 指针，并以唯一活动 Draft 槽、初始化 Operation、完成态 Job/Attempt、SQL 事务和 Idempotency-Key 失败关闭。真 SQL 2/2、领域聚焦 7/7 通过。新草稿仍没有设计楼层初始化/选择入口，也没有平台/租户整仓模板，因此纠正过宽状态：LM-FR-001 与 WP1 均为 Partial/Pending，核心 GA 保持 72% / `NoGo`。
 - 详细 Spec LM-FR-025～029 的仓库实现与自动化证据已闭环：保存后的 Design Scene 无需第二次建模即驱动 2D/3D；选择与逐楼层 3D 视角跨模式保留，未保存重画不再因切换 3D 被静默丢弃，3D 中禁止误提交且回到 2D 可继续；首次四步清单默认展开、可折叠重开并具有 44px 热区及非颜色状态；问题可按 Blocking/Warning/Info 筛选并定位选择；低于 1280px 保持只读 3D、版本和问题。WP4 仍为 Partial/Pending，WP5 仍为 Complete/Pending，核心 GA 保持 72% / `NoGo`。
 - 详细 Spec LM-FR-021 的仓库实现已闭环：底图标定现在按 P1 原点、P2 比例点、独立验证点 V 的顺序选点，用户输入真实距离、P1 世界原点、旋转和 V 世界坐标，工作台确定性生成服务端实际接收的 P2 世界毫米坐标。预览展示比例、原点、旋转、验证误差及 `max(50mm, 实距×0.2%)` 阈值，误差超限时禁止保存；既有 Lease、Floor/Content Revision、幂等 CommandBatch 和可逆历史权威不变。LM-FR-021 只代表仓库能力完成，WP4 仍为 Partial/Pending，核心 GA 保持 72% / `NoGo`。
 - 详细 Spec LM-FR-022 的仓库实现已闭环：构件库在既有 Zone/Aisle/Rack/Location Design Layout 权威链之外，补齐墙、柱、门、月台、托盘及输送线、AGV、叉车、工作台、电子秤、充电站六类静态设备。预设固定领域类型、默认尺寸、编码前缀和 `design` 属性，只表达静态几何/编码/自定义属性。创建复用租约、Floor/Content Revision、Content Hash 与幂等 CommandBatch，并进入公共撤销/重做历史；Playwright 验证托盘与六类设备的 2D/3D 同源清单。LM-FR-022 只代表仓库能力完成，WP4 仍为 Partial/Pending，核心 GA 保持 72% / `NoGo`。

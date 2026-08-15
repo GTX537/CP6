@@ -2,6 +2,12 @@
 
 > 依据 Git log 汇总，不替代完整 Git 历史。重点记录影响接手判断的里程碑。
 
+## 2026-08-15：Design V1 空白 Draft 初始化
+
+- 版本创建接口新增 `Blank` 模式：强制无基线、不继承线上快照、不移动 Published 指针，并保留唯一活动 Draft 约束。
+- 新增可审计的完成态初始化 Job/Attempt；Operation fence、请求 Hash、SQL 事务和 Idempotency-Key 关闭重复或异参重放。
+- 领域聚焦 7、真 SQL 聚焦 2、Space Integration 真库全量 437 通过且 0 skipped。楼层初始化/选择与平台/租户整仓模板仍待实现，LM-FR-001/WP1 为 Partial，GA 72% / `NoGo` 不变。
+
 ## 2026-08-15：Space Studio LM-FR-025～029 最终工作台 UX 要求
 
 - 2D 未保存重画现在可跨 3D 切换保留点集、选择和标题标记；3D 禁止误提交，回到 2D 可继续完成。既有同源场景与逐楼层相机恢复不变。

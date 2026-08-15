@@ -18,6 +18,7 @@ public sealed class SpaceDesignV1Service :
 {
     private const int DefaultPageSize = 50;
     private const int MaxPageSize = 200;
+    private const string BlankVersionMode = "Blank";
     private const string PublishedVersionMode = "PublishedVersion";
     private const string CodingDecisionModify = "modify";
     private const string CodingDecisionUnchanged = "unchanged";
@@ -2182,23 +2183,36 @@ public sealed class SpaceDesignV1Service :
         EnsureWritable(model);
 
         var name = RequireText(request.Name, 200, "name");
-        if (!string.Equals(
-                request.CreateMode?.Trim(),
-                PublishedVersionMode,
-                StringComparison.Ordinal))
+        var createMode = request.CreateMode?.Trim();
+        var isBlank = string.Equals(
+            createMode,
+            BlankVersionMode,
+            StringComparison.Ordinal);
+        var isPublishedClone = string.Equals(
+            createMode,
+            PublishedVersionMode,
+            StringComparison.Ordinal);
+        if (!isBlank && !isPublishedClone)
         {
             throw Invalid(
                 "createMode",
-                "Only PublishedVersion is supported by the MVP create endpoint.");
+                "Supported values are Blank and PublishedVersion.");
         }
-        if (!model.CurrentPublishedVersionId.HasValue)
+        if (isBlank && request.BasedOnVersionId.HasValue)
+        {
+            throw Invalid(
+                "basedOnVersionId",
+                "Blank drafts cannot specify a base version.");
+        }
+        if (isPublishedClone && !model.CurrentPublishedVersionId.HasValue)
         {
             throw Conflict(
                 SpaceErrorCodes.VersionStateInvalid,
                 "A current Published version is required.",
                 "publish-or-bootstrap-version");
         }
-        if (request.BasedOnVersionId.HasValue &&
+        if (isPublishedClone &&
+            request.BasedOnVersionId.HasValue &&
             request.BasedOnVersionId != model.CurrentPublishedVersionId)
         {
             throw Conflict(
@@ -2210,8 +2224,8 @@ public sealed class SpaceDesignV1Service :
         var operation = $"create-version:{siteId:D}";
         var normalizedRequest = new CreateSpaceVersionRequest(
             name,
-            model.CurrentPublishedVersionId,
-            PublishedVersionMode);
+            isBlank ? null : model.CurrentPublishedVersionId,
+            isBlank ? BlankVersionMode : PublishedVersionMode);
         var requestHash = Hash(
             JsonSerializer.Serialize(normalizedRequest, JsonOptions));
         var keyHash = IdempotencyKeyHash(operation, idempotencyKey);
@@ -2224,15 +2238,36 @@ public sealed class SpaceDesignV1Service :
         if (replay is not null)
             return replay;
 
-        SpaceVersionCloneStartResult started;
+        Guid startedVersionId;
+        Guid startedJobId;
+        bool startedReused;
         try
         {
-            started = await _clone.StartAsync(
-                new SpaceVersionCloneRequest(
-                    model.Id,
-                    name,
-                    OperationId(keyHash)),
-                cancellationToken);
+            if (isBlank)
+            {
+                var started = await _clone.StartBlankAsync(
+                    new SpaceBlankVersionRequest(
+                        model.Id,
+                        name,
+                        OperationId(keyHash),
+                        requestHash),
+                    cancellationToken);
+                startedVersionId = started.ModelVersionId;
+                startedJobId = started.JobId;
+                startedReused = started.Reused;
+            }
+            else
+            {
+                var started = await _clone.StartAsync(
+                    new SpaceVersionCloneRequest(
+                        model.Id,
+                        name,
+                        OperationId(keyHash)),
+                    cancellationToken);
+                startedVersionId = started.ModelVersionId;
+                startedJobId = started.JobId;
+                startedReused = started.Reused;
+            }
         }
         catch (SpaceVersionConflictException exception)
             when (exception.Message.Contains(
@@ -2249,7 +2284,7 @@ public sealed class SpaceDesignV1Service :
         var version = await _context.Versions
             .AsNoTracking()
             .SingleAsync(
-                candidate => candidate.Id == started.ModelVersionId,
+                candidate => candidate.Id == startedVersionId,
                 cancellationToken);
         var response = new CreateSpaceVersionResponse(
             version.Id,
@@ -2257,9 +2292,9 @@ public sealed class SpaceDesignV1Service :
             FormatVersionNo(version.VersionNo),
             version.Status.ToString(),
             RowVersion(version.RowVersion),
-            started.JobId,
-            $"/api/space/design/v1/jobs/{started.JobId:D}",
-            started.Reused);
+            startedJobId,
+            $"/api/space/design/v1/jobs/{startedJobId:D}",
+            startedReused);
 
         return await StoreVersionResultAsync(
             operation,
