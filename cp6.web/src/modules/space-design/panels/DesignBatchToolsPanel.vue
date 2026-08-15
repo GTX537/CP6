@@ -14,6 +14,8 @@ const props = defineProps<{
   readonly?: boolean
   canUndo?: boolean
   canRedo?: boolean
+  canMerge?: boolean
+  mergeHint?: string
 }>()
 
 const emit = defineEmits<{
@@ -21,6 +23,7 @@ const emit = defineEmits<{
   distribute: [mode: DistributionMode]
   rotate: [degrees: number]
   remove: []
+  merge: []
   array: [payload: GenerateRackArrayPayload]
   undo: []
   redo: []
@@ -155,6 +158,18 @@ const disabled = computed(() => props.busy || props.readonly)
         右转 90°
       </el-button>
       <el-button
+        v-permission="'space:model:edit'"
+        type="primary"
+        plain
+        size="small"
+        data-test="merge-elements"
+        :title="mergeHint"
+        :disabled="disabled || !canMerge"
+        @click="emit('merge')"
+      >
+        合并异常对象
+      </el-button>
+      <el-button
         type="danger"
         plain
         size="small"
@@ -164,6 +179,9 @@ const disabled = computed(() => props.busy || props.readonly)
         删除
       </el-button>
     </div>
+    <span v-if="selectedCount >= 2 && mergeHint" class="merge-hint">
+      {{ mergeHint }}
+    </span>
 
     <details class="array-tools" :class="{ unavailable: !selectedRackCode }">
       <summary>货架阵列</summary>
@@ -221,6 +239,11 @@ const disabled = computed(() => props.busy || props.readonly)
 .bounds-preview {
   color: #0f766e;
   font-family: monospace;
+  font-size:13px;
+}
+
+.merge-hint {
+  color:var(--space-studio-muted, #64748b);
   font-size:13px;
 }
 

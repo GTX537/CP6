@@ -7,6 +7,7 @@ const floorId = '22222222-2222-2222-2222-222222222222'
 const rackId = '33333333-3333-3333-3333-333333333333'
 const rackLevelId = '44444444-4444-4444-4444-444444444444'
 const columnId = '55555555-5555-5555-5555-555555555555'
+const secondColumnId = '66666666-5555-5555-5555-555555555555'
 const cadSourceId = 'aaaaaaaa-2222-2222-2222-222222222222'
 const cadParseJobId = 'aaaaaaaa-4444-4444-4444-444444444444'
 const underlaySourceId = 'bbbbbbbb-2222-2222-2222-222222222222'
@@ -469,6 +470,75 @@ test('retypes a CAD exception element and restores its semantic type through und
   expect(errors).toEqual([])
 })
 
+test('merges CAD exception elements atomically and restores them through undo and redo', async ({ page }) => {
+  const errors = collectPageErrors(page)
+  const editorBodies: Array<Record<string, any>> = []
+  await installSpaceStudioFixtures(page, [], { editorBodies, mergeEnabled: true })
+  await page.setViewportSize({ width: 1440, height: 900 })
+  await page.goto(studioUrl)
+  await expect(page.locator('.studio-title-state').getByText('租约至', { exact: false })).toBeVisible()
+  await expect(page.locator('.el-loading-mask')).toHaveCount(0)
+
+  const canvas = page.locator('.canvas .konvajs-content')
+  const bounds = await canvas.boundingBox()
+  expect(bounds).not.toBeNull()
+  await page.mouse.click(
+    bounds!.x + (5200 + 400 / 2) * 0.05,
+    bounds!.y + bounds!.height - (2400 + 400 / 2) * 0.05,
+  )
+  await page.keyboard.down('Control')
+  await page.mouse.click(
+    bounds!.x + (6000 + 400 / 2) * 0.05,
+    bounds!.y + bounds!.height - (2400 + 400 / 2) * 0.05,
+  )
+  await page.keyboard.up('Control')
+  await expect(page.locator('.studio-statusbar')).toContainText('选择 2')
+
+  await page.getByRole('tab', { name: '批量', exact: true }).click()
+  const tools = page.locator('[data-test="design-batch-tools"]')
+  await tools.locator('[data-test="merge-elements"]').click()
+  await page.getByRole('button', { name: '确认合并', exact: true }).click()
+
+  await expect(page.getByText('合并 2 个异常对象', { exact: true })).toBeVisible()
+  await expect.poll(() => editorBodies.length).toBe(1)
+  expect(editorBodies[0]).toMatchObject({
+    leaseId: ownedLease().leaseId,
+    expectedFloorRevision: 7,
+    commands: [
+      { type: 'UpdateProperties', targetLogicalId: columnId },
+      { type: 'DeleteObject', targetLogicalId: secondColumnId },
+    ],
+  })
+  const mergedGeometry = JSON.parse(
+    editorBodies[0]!.commands[0].updateProperties.geometryJson,
+  )
+  expect(mergedGeometry).toMatchObject({
+    schemaVersion: 1,
+    kind: 'group',
+    parts: [
+      { sourceLogicalId: columnId, x: 0, y: 0 },
+      { sourceLogicalId: secondColumnId, x: 800, y: 0 },
+    ],
+  })
+
+  await tools.getByRole('button', { name: '撤销', exact: true }).click()
+  await expect(page.getByText('已撤销：合并 2 个异常对象', { exact: true })).toBeVisible()
+  await expect.poll(() => editorBodies.length).toBe(2)
+  expect(editorBodies[1]!.commands.map((command: any) => command.type)).toEqual([
+    'UpdateProperties',
+    'RestoreLogicalObject',
+  ])
+
+  await tools.getByRole('button', { name: '重做', exact: true }).click()
+  await expect(page.getByText('已重做：合并 2 个异常对象', { exact: true })).toBeVisible()
+  await expect.poll(() => editorBodies.length).toBe(3)
+  expect(editorBodies[2]!.commands.map((command: any) => command.type)).toEqual([
+    'UpdateProperties',
+    'DeleteObject',
+  ])
+  expect(errors).toEqual([])
+})
+
 test('previews protected location codes and explicitly applies the frozen proposal', async ({ page }) => {
   const errors = collectPageErrors(page)
   const methods: string[] = []
@@ -590,6 +660,7 @@ async function installSpaceStudioFixtures(
     cadReview?: boolean
     underlayBodies?: Array<Record<string, any>>
     matchBodies?: Array<Record<string, any>>
+    mergeEnabled?: boolean
   } = {},
 ) {
   await page.addInitScript(() => {
@@ -599,6 +670,22 @@ async function installSpaceStudioFixtures(
   })
 
   const scene: any = sceneFixture()
+  if (options.mergeEnabled) {
+    scene.elements.push({
+      revision: revision(secondColumnId),
+      floorLogicalId: floorId,
+      elementType: 'Column',
+      geometryJson: '{"schemaVersion":1,"kind":"box","width":400,"height":3000,"depth":400}',
+      x: 6000,
+      y: 2400,
+      z: 0,
+      rotationZ: 0,
+      width: 400,
+      height: 3000,
+      depth: 400,
+      businessCode: 'COL-01',
+    })
+  }
   if (options.codingEnabled) {
     scene.zones.push({
       revision: revision('99999999-1111-1111-1111-111111111111'),
@@ -1048,6 +1135,16 @@ async function installSpaceStudioFixtures(
           )
           const { attributes: _attributes, ...properties } = command.updateProperties
           Object.assign(element, properties)
+          affectedElements.push(element)
+          continue
+        }
+        if (command.type === 'DeleteObject' || command.type === 'RestoreLogicalObject') {
+          const element = scene.elements.find(
+            (item: any) => item.revision.logicalId === command.targetLogicalId,
+          )
+          element.revision.lifecycleState = command.type === 'DeleteObject'
+            ? 'RemoveRequested'
+            : 'Active'
           affectedElements.push(element)
           continue
         }

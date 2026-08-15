@@ -48,7 +48,12 @@ import {
   type GenerateRackArrayPayload,
   type ReversibleCommandBatch,
 } from '@/modules/space-design/commands/editorBatchCommands'
+import {
+  buildElementMergePlan,
+  type ElementMergePlan,
+} from '@/modules/space-design/commands/elementMerge'
 import DesignBatchToolsPanel from '@/modules/space-design/panels/DesignBatchToolsPanel.vue'
+import { sceneElementPropertiesPayload } from '@/modules/space-design/panels/elementProperties'
 import DesignLocationCodingPanel from '@/modules/space-design/coding/DesignLocationCodingPanel.vue'
 import DesignElementPropertiesPanel from '@/modules/space-design/panels/DesignElementPropertiesPanel.vue'
 import DesignWmsAdoptionPanel from '@/modules/space-design/panels/DesignWmsAdoptionPanel.vue'
@@ -400,6 +405,43 @@ const selectedAttributes = computed<ISpaceSceneElementAttributeDto[]>(() => {
         (attribute) => attribute.elementRevisionId === revisionId,
       )
     : []
+})
+const selectedMergeElements = computed<ISpaceSceneElementDto[]>(() => {
+  if (
+    selectedObjects.value.length < 2
+    || selectedObjects.value.some((selection) => selection.ownerKind !== 'Element')
+  ) {
+    return []
+  }
+  const byLogicalId = new Map(
+    activeElements.value.flatMap((element) => element.revision?.logicalId
+      ? [[element.revision.logicalId, element] as const]
+      : []),
+  )
+  return selectedObjects.value.flatMap((selection) => {
+    const element = byLogicalId.get(selection.logicalId)
+    return element ? [element] : []
+  })
+})
+const elementMergeState = computed<{
+  plan?: ElementMergePlan
+  error?: string
+}>(() => {
+  if (selectedMergeElements.value.length !== selectedObjects.value.length) {
+    return { error: '仅支持合并 2–20 个通用元素' }
+  }
+  try {
+    return {
+      plan: buildElementMergePlan(
+        selectedMergeElements.value,
+        designScene.value?.elementAttributes ?? [],
+      ),
+    }
+  } catch (error) {
+    return {
+      error: error instanceof Error ? error.message : '当前选择不能合并',
+    }
+  }
 })
 const calibrationPreview = computed(() => {
   const size = stage?.getRasterSize()
@@ -1635,6 +1677,37 @@ async function rotateSelected(degrees: number): Promise<void> {
   )
 }
 
+async function mergeSelectedElements(): Promise<void> {
+  const plan = elementMergeState.value.plan
+  if (!plan) {
+    ElMessage.warning(elementMergeState.value.error ?? '当前选择不能合并')
+    return
+  }
+  try {
+    await ElMessageBox.confirm(
+      `将 ${plan.sourceLogicalIds.length + 1} 个通用元素合并为一个组合元素。保留首选对象 ${plan.survivorLogicalId}，其余对象标记为待移除；操作可撤销。是否继续？`,
+      '确认合并',
+      {
+        type: 'warning',
+        confirmButtonText: '确认合并',
+        cancelButtonText: '取消',
+      },
+    )
+  } catch {
+    return
+  }
+
+  const saved = await runBatchTool(
+    `合并 ${plan.sourceLogicalIds.length + 1} 个异常对象`,
+    plan.batch,
+  )
+  if (saved) {
+    selectObjects([
+      { logicalId: plan.survivorLogicalId, ownerKind: 'Element' },
+    ], 'replace')
+  }
+}
+
 async function moveCanvasObjects(
   object: CanvasObjectRef,
   delta: { x: number; y: number },
@@ -1679,16 +1752,18 @@ async function moveCanvasObjects(
 async function runBatchTool(
   label: string,
   batch: ReversibleCommandBatch,
-): Promise<void> {
+): Promise<boolean> {
   if (savingElement.value || readonlyScene.value || batch.forward.length === 0) {
-    return
+    return false
   }
   savingElement.value = true
   try {
     await executeReversible(label, batch)
     ElMessage.success(label)
+    return true
   } catch {
     ElMessage.error(`${label}失败，请刷新场景后重试`)
+    return false
   } finally {
     savingElement.value = false
   }
@@ -2213,14 +2288,14 @@ function selectedSnapshots(): EditorObjectSnapshot[] {
     (selection): selection is CanvasObjectRef & { ownerKind: 'Element' | 'Rack' } =>
       selection.ownerKind === 'Element' || selection.ownerKind === 'Rack',
   )
-  const drawables = new Map(
-    buildElementCanvasPlan(scene).map((drawable) => [
-      drawable.logicalId,
-      drawable,
-    ]),
-  )
+  const drawables = new Map<string, ElementCanvasDrawable[]>()
+  for (const drawable of buildElementCanvasPlan(scene)) {
+    const candidates = drawables.get(drawable.logicalId) ?? []
+    candidates.push(drawable)
+    drawables.set(drawable.logicalId, candidates)
+  }
   return editorSelections.map((selection) => {
-    const drawable = drawables.get(selection.logicalId)
+    const objectDrawables = drawables.get(selection.logicalId)
     const source =
       selection.ownerKind === 'Rack'
         ? activeRacks.value.find(
@@ -2229,9 +2304,10 @@ function selectedSnapshots(): EditorObjectSnapshot[] {
         : activeElements.value.find(
             (element) => element.revision?.logicalId === selection.logicalId,
           )
-    if (!drawable || !source) {
+    if (!objectDrawables?.length || !source) {
       throw new Error(`Selected object ${selection.logicalId} is unavailable`)
     }
+    const objectBounds = objectDrawables.map(drawableBounds)
     return {
       logicalId: selection.logicalId,
       ownerKind: selection.ownerKind,
@@ -2239,7 +2315,12 @@ function selectedSnapshots(): EditorObjectSnapshot[] {
       y: source.y ?? 0,
       z: source.z ?? 0,
       rotationZ: source.rotationZ ?? 0,
-      bounds: drawableBounds(drawable),
+      bounds: {
+        minX: Math.min(...objectBounds.map((bounds) => bounds.minX)),
+        maxX: Math.max(...objectBounds.map((bounds) => bounds.maxX)),
+        minY: Math.min(...objectBounds.map((bounds) => bounds.minY)),
+        maxY: Math.max(...objectBounds.map((bounds) => bounds.maxY)),
+      },
     }
   })
 }
@@ -2273,27 +2354,7 @@ function drawableBounds(drawable: ElementCanvasDrawable) {
 function elementPropertiesPayload(
   element: ISpaceSceneElementDto,
 ): ElementPropertiesPayload {
-  return {
-    elementType: element.elementType,
-    geometryJson: element.geometryJson ?? '{}',
-    x: element.x ?? 0,
-    y: element.y ?? 0,
-    z: element.z ?? 0,
-    rotationZ: element.rotationZ ?? 0,
-    width: element.width ?? 1,
-    height: element.height ?? 1,
-    depth: element.depth ?? 1,
-    businessCode: element.businessCode,
-    linkedEntityType: element.linkedEntityType,
-    linkedLogicalId: element.linkedLogicalId,
-    attributes: selectedAttributes.value.map((attribute) => ({
-      namespace: attribute.namespace ?? '',
-      key: attribute.key ?? '',
-      valueType: attribute.valueType ?? 'String',
-      value: attribute.value,
-      unit: attribute.unit,
-    })),
-  }
+  return sceneElementPropertiesPayload(element, selectedAttributes.value)
 }
 
 function touchHistory(): void {
@@ -2795,10 +2856,13 @@ function tabClientInstanceId(): string {
             :readonly="readonlyScene"
             :can-undo="canUndo"
             :can-redo="canRedo"
+            :can-merge="Boolean(elementMergeState.plan)"
+            :merge-hint="elementMergeState.error"
             @align="alignSelected"
             @distribute="distributeSelected"
             @rotate="rotateSelected"
             @remove="removeSelected"
+            @merge="mergeSelectedElements"
             @array="generateRackArray"
             @undo="undoSavedCommand"
             @redo="redoSavedCommand"
