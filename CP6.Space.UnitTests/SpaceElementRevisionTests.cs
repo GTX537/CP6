@@ -52,6 +52,21 @@ public sealed class SpaceElementRevisionTests
         Assert.Throws<ArgumentException>(() => NewElement("ForkliftLiveTelemetry"));
     }
 
+    [Fact]
+    public void Draft_element_can_be_retyped_without_replacing_its_identity_or_geometry()
+    {
+        var element = NewElement(SpaceElementTypes.Column);
+        var logicalId = element.LogicalId;
+        var geometry = element.GeometryJson;
+
+        element.Retype(" door ");
+
+        Assert.Equal(SpaceElementTypes.Door, element.ElementType);
+        Assert.Equal(logicalId, element.LogicalId);
+        Assert.Equal(geometry, element.GeometryJson);
+        Assert.Throws<ArgumentException>(() => element.Retype("LiveRobot"));
+    }
+
     [Theory]
     [InlineData("""{"schemaVersion":1,"kind":"point","x":10,"y":-20,"z":0}""")]
     [InlineData("""{"schemaVersion":1,"kind":"path","points":[{"x":0,"y":0},{"x":100,"y":100,"z":5}],"width":20}""")]

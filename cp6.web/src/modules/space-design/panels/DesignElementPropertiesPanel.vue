@@ -7,6 +7,7 @@ import type {
 import {
   buildElementPropertiesPayload,
   createElementPropertiesDraft,
+  SPACE_ELEMENT_TYPES,
   type ElementPropertiesDraft,
 } from './elementProperties'
 
@@ -70,6 +71,22 @@ function save(): void {
     </div>
 
     <fieldset class="property-fields" :disabled="readonly || saving">
+      <el-divider content-position="left">构件语义</el-divider>
+      <label>构件类型
+        <el-select
+          v-model="draft.elementType"
+          data-test="element-type"
+          aria-label="构件类型"
+        >
+          <el-option
+            v-for="type in SPACE_ELEMENT_TYPES"
+            :key="type"
+            :label="type"
+            :value="type"
+          />
+        </el-select>
+      </label>
+
       <el-divider content-position="left">位置与尺寸（mm）</el-divider>
       <div class="number-grid">
         <label>X <el-input-number v-model="draft.x" :step="100" /></label>

@@ -415,6 +415,60 @@ test('drags selected rack and element through one leased reversible batch', asyn
   expect(errors).toEqual([])
 })
 
+test('retypes a CAD exception element and restores its semantic type through undo and redo', async ({ page }) => {
+  const errors = collectPageErrors(page)
+  const editorBodies: Array<Record<string, any>> = []
+  await installSpaceStudioFixtures(page, [], { editorBodies })
+  await page.setViewportSize({ width: 1440, height: 900 })
+  await page.goto(studioUrl)
+  await expect(page.locator('.studio-title-state').getByText('租约至', { exact: false })).toBeVisible()
+  await expect(page.locator('.el-loading-mask')).toHaveCount(0)
+
+  const canvas = page.locator('.canvas .konvajs-content')
+  const bounds = await canvas.boundingBox()
+  expect(bounds).not.toBeNull()
+  await page.mouse.click(
+    bounds!.x + (1000 + 2400 / 2) * 0.05,
+    bounds!.y + bounds!.height - (1200 + 1000 / 2) * 0.05,
+  )
+  await expect(page.locator('.studio-statusbar')).toContainText('选择 1')
+  await page.mouse.click(
+    bounds!.x + (5200 + 400 / 2) * 0.05,
+    bounds!.y + bounds!.height - (2400 + 400 / 2) * 0.05,
+  )
+
+  const properties = page.locator('[data-test="design-element-properties"]')
+  await expect(properties).toBeVisible()
+  await properties.locator('[data-test="element-type"]').click()
+  await page.getByRole('option', { name: 'Door', exact: true }).click()
+  await properties.locator('[data-test="save-element"]').click()
+
+  await expect(page.getByText('元素属性已保存', { exact: true })).toBeVisible()
+  await expect.poll(() => editorBodies.length).toBe(1)
+  expect(editorBodies[0]).toMatchObject({
+    leaseId: ownedLease().leaseId,
+    expectedFloorRevision: 7,
+    commands: [{
+      type: 'UpdateProperties',
+      targetLogicalId: columnId,
+      updateProperties: { elementType: 'Door' },
+    }],
+  })
+
+  await page.getByRole('tab', { name: '批量', exact: true }).click()
+  const tools = page.locator('[data-test="design-batch-tools"]')
+  await tools.getByRole('button', { name: '撤销', exact: true }).click()
+  await expect(page.getByText('已撤销：修改通用元素属性', { exact: true })).toBeVisible()
+  await expect.poll(() => editorBodies.length).toBe(2)
+  expect(editorBodies[1]!.commands[0].updateProperties.elementType).toBe('Column')
+
+  await tools.getByRole('button', { name: '重做', exact: true }).click()
+  await expect(page.getByText('已重做：修改通用元素属性', { exact: true })).toBeVisible()
+  await expect.poll(() => editorBodies.length).toBe(3)
+  expect(editorBodies[2]!.commands[0].updateProperties.elementType).toBe('Door')
+  expect(errors).toEqual([])
+})
+
 test('previews protected location codes and explicitly applies the frozen proposal', async ({ page }) => {
   const errors = collectPageErrors(page)
   const methods: string[] = []
@@ -988,6 +1042,15 @@ async function installSpaceStudioFixtures(
       const affectedElements: any[] = []
       const affectedRacks: any[] = []
       for (const command of body.commands) {
+        if (command.type === 'UpdateProperties') {
+          const element = scene.elements.find(
+            (item: any) => item.revision.logicalId === command.targetLogicalId,
+          )
+          const { attributes: _attributes, ...properties } = command.updateProperties
+          Object.assign(element, properties)
+          affectedElements.push(element)
+          continue
+        }
         if (command.type !== 'MoveObject') continue
         const rack = scene.racks.find(
           (item: any) => item.revision.logicalId === command.targetLogicalId,

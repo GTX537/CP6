@@ -211,14 +211,15 @@
       "ownerRole": "FrontendABackendBQA",
       "ownerName": null,
       "deadlineMilestone": "M2",
-      "implementationStatus": "Complete",
+      "implementationStatus": "Partial",
       "acceptanceStatus": "Pending",
       "evidenceFormat": [
         "Real DWG, DXF, Excel, PDF/image and blank-canvas E2E records",
         "Draft to Validate, Publish, CP6 WMS and Published evidence"
       ],
       "evidencePaths": [
-        "docs/space/reports/2026-08-14-space-studio-path-closure.md"
+        "docs/space/reports/2026-08-14-space-studio-path-closure.md",
+        "docs/space/reports/2026-08-15-space-cad-exception-retype.md"
       ],
       "acceptedEvidence": [],
       "acceptanceCriteria": [

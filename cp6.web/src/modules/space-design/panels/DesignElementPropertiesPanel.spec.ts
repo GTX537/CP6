@@ -50,11 +50,15 @@ describe('DesignElementPropertiesPanel', () => {
       .toContain('Column')
     expect(wrapper.text()).toContain(element.revision?.logicalId)
 
+    wrapper.findComponent({ name: 'ElSelect' })
+      .vm.$emit('update:modelValue', 'Door')
+    await wrapper.vm.$nextTick()
     await wrapper.get('[data-test="save-element"]').trigger('click')
     await wrapper.get('[data-test="delete-element"]').trigger('click')
 
     expect(wrapper.emitted('save')).toHaveLength(1)
     expect(wrapper.emitted('save')?.[0]?.[0]).toMatchObject({
+      elementType: 'Door',
       x: 1000,
       y: 2000,
       width: 400,

@@ -32629,6 +32629,7 @@ export class SpaceUpdateElementPropertiesDto implements ISpaceUpdateElementPrope
     linkedEntityType?: string | undefined;
     linkedLogicalId?: string | undefined;
     attributes?: SpaceElementAttributeWriteDto[] | undefined;
+    elementType?: string | undefined;
 
     constructor(data?: ISpaceUpdateElementPropertiesDto) {
         if (data) {
@@ -32657,6 +32658,7 @@ export class SpaceUpdateElementPropertiesDto implements ISpaceUpdateElementPrope
                 for (let item of _data["attributes"])
                     this.attributes!.push(SpaceElementAttributeWriteDto.fromJS(item));
             }
+            this.elementType = _data["elementType"];
         }
     }
 
@@ -32685,6 +32687,7 @@ export class SpaceUpdateElementPropertiesDto implements ISpaceUpdateElementPrope
             for (let item of this.attributes)
                 data["attributes"].push(item ? item.toJSON() : undefined as any);
         }
+        data["elementType"] = this.elementType;
         return data;
     }
 }
@@ -32702,6 +32705,7 @@ export interface ISpaceUpdateElementPropertiesDto {
     linkedEntityType?: string | undefined;
     linkedLogicalId?: string | undefined;
     attributes?: SpaceElementAttributeWriteDto[] | undefined;
+    elementType?: string | undefined;
 }
 
 export class SpaceUpdateLayoutAisleDto implements ISpaceUpdateLayoutAisleDto {

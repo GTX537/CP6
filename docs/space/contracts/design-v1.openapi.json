@@ -29634,6 +29634,10 @@
               "$ref": "#/components/schemas/CP6.Space.Contracts.SpaceElementAttributeWriteDto"
             },
             "nullable": true
+          },
+          "elementType": {
+            "type": "string",
+            "nullable": true
           }
         },
         "additionalProperties": false

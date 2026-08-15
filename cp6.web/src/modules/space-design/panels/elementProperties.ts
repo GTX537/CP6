@@ -5,7 +5,28 @@ import type {
 } from '../../../../../sdk/typescript/space-design-v1/spaceDesignV1Client'
 import type { ElementPropertiesPayload } from '@/api/space/designElements'
 
+export const SPACE_ELEMENT_TYPES = [
+  'Wall',
+  'Column',
+  'Door',
+  'Dock',
+  'Stair',
+  'Elevator',
+  'Pallet',
+  'Device',
+  'Workstation',
+  'Conveyor',
+  'StaticEquipment',
+  'Annotation',
+  'Dimension',
+  'Guide',
+  'RestrictedArea',
+  'Decoration',
+  'ImportedReference',
+] as const
+
 export interface ElementPropertiesDraft {
+  elementType: string
   x: number
   y: number
   z: number
@@ -24,6 +45,7 @@ export function createElementPropertiesDraft(
   attributes: readonly ISpaceSceneElementAttributeDto[],
 ): ElementPropertiesDraft {
   return {
+    elementType: element.elementType ?? '',
     x: element.x ?? 0,
     y: element.y ?? 0,
     z: element.z ?? 0,
@@ -48,6 +70,10 @@ export function buildElementPropertiesPayload(
   element: ISpaceSceneElementDto,
   draft: ElementPropertiesDraft,
 ): ElementPropertiesPayload {
+  const elementType = draft.elementType.trim()
+  if (!(SPACE_ELEMENT_TYPES as readonly string[]).includes(elementType)) {
+    throw new Error('A supported Space element type is required')
+  }
   if (
     !Number.isInteger(draft.x) ||
     !Number.isInteger(draft.y) ||
@@ -92,6 +118,7 @@ export function buildElementPropertiesPayload(
   }
 
   return {
+    elementType,
     geometryJson: updateGeometryEnvelope(element.geometryJson ?? '{}', draft),
     x: draft.x,
     y: draft.y,
