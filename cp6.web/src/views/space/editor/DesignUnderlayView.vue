@@ -3363,6 +3363,9 @@ function tabClientInstanceId(): string {
         :version-id="versionId"
         :job-id="matchJobId"
         :current-content-revision="designScene?.contentRevision"
+        :current-floor-revision="floor?.revisionNumber"
+        :client-instance-id="clientInstanceId"
+        :lease-id="leaseState === 'owned' ? lease?.leaseId : undefined"
         @locate="focusExcelCadMatchRow"
         @close="closeMatchPanel"
       />

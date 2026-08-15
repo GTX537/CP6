@@ -18376,6 +18376,15 @@
         "additionalProperties": false
       },
       "CP6.Space.Contracts.ConfirmSpaceExcelCadMatchRequest": {
+        "required": [
+          "artifactId",
+          "artifactPayloadSha256",
+          "clientInstanceId",
+          "confirmed",
+          "expectedContentRevision",
+          "expectedFloorRevision",
+          "leaseId"
+        ],
         "type": "object",
         "properties": {
           "confirmed": {
@@ -18386,10 +18395,21 @@
             "format": "uuid"
           },
           "artifactPayloadSha256": {
-            "type": "string",
-            "nullable": true
+            "type": "string"
           },
           "expectedContentRevision": {
+            "type": "integer",
+            "format": "int64"
+          },
+          "clientInstanceId": {
+            "type": "string",
+            "format": "uuid"
+          },
+          "leaseId": {
+            "type": "string",
+            "format": "uuid"
+          },
+          "expectedFloorRevision": {
             "type": "integer",
             "format": "int64"
           }

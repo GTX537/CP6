@@ -3,13 +3,17 @@ namespace CP6.Space.Contracts;
 public static class SpaceExcelCadApplyVersions
 {
     public const int SchemaVersion = 1;
+    public const int PayloadSchemaVersion = 2;
 }
 
 public sealed record ConfirmSpaceExcelCadMatchRequest(
     bool Confirmed,
     Guid ArtifactId,
     string ArtifactPayloadSha256,
-    long ExpectedContentRevision);
+    long ExpectedContentRevision,
+    Guid ClientInstanceId,
+    Guid LeaseId,
+    long ExpectedFloorRevision);
 
 public sealed record ConfirmSpaceExcelCadMatchResponse(
     Guid MatchJobId,

@@ -60,6 +60,9 @@ describe('designExcelCadMatchApi', () => {
       artifactId: 'artifact-1',
       artifactPayloadSha256: 'a'.repeat(64),
       expectedContentRevision: 7,
+      clientInstanceId: 'client-1',
+      leaseId: 'lease-1',
+      expectedFloorRevision: 3,
     }
 
     await designExcelCadMatchApi.confirm(

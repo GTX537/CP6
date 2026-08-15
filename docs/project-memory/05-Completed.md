@@ -1,5 +1,12 @@
 # 已完成能力与近期里程碑
 
+## 2026-08-15 Space Studio Excel–CAD 确认 Lease/Revision Fence
+
+- Excel–CAD 确认请求强制携带 `clientInstanceId`、`leaseId`、Floor Revision 和 Content Revision；确认服务与后台 Worker 均在实际写入前验证同一请求人、同一页面实例和未过期租约，并与普通 Design V1 编辑复用 Floor application lock。
+- SQL Server 租约到期判断使用 `SYSUTCDATETIME()`；换会话、释放/过期租约或双 Revision 漂移均失败关闭，且不创建 Rack、CommandBatch 或部分层级数据。历史成功 payload 可读，未完成的无租约旧 payload 不会继续写入。
+- OpenAPI/C#/TypeScript SDK 和工作台门禁同步；后端聚焦 14/14、Space Unit 533/533、契约/Controller 50/50、CP6.Tests 2919 passed、Web 814/814、Space Studio Playwright 21/21、完整 Release solution 0 warning/0 error及 SDK drift 通过。详细报告见 `docs/space/reports/2026-08-15-space-studio-excel-cad-apply-lease.md`。
+- 该任务只关闭 Excel–CAD 统一历史前的写入安全前置条件；补偿命令和底图可逆合同仍待完成。WP4 保持 Partial/Pending，核心 GA 保持 72% / `NoGo`。
+
 ## 2026-08-15 Space Studio CAD 确认批次撤销/重做
 
 - CAD Typed Changeset 显式 Apply 后，服务端按实际提交结果密封统一历史：新增为 Delete/Restore，删除为 Restore/Delete，修改为提交前/后的完整 Update 快照；多项撤销逆序，LogicalId 保持稳定。

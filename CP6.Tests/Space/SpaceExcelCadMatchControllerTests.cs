@@ -106,7 +106,10 @@ public sealed class SpaceExcelCadMatchControllerTests
             true,
             Guid.NewGuid(),
             new string('a', 64),
-            7);
+            7,
+            Guid.NewGuid(),
+            Guid.NewGuid(),
+            3);
         var response = new ConfirmSpaceExcelCadMatchResponse(
             matchJobId,
             Guid.NewGuid(),

@@ -11,6 +11,8 @@ public sealed record SpaceExcelCadApplyJobPayload(
     string ArtifactPayloadSha256,
     Guid ExcelSourceId,
     Guid FloorLogicalId,
+    Guid ClientInstanceId,
+    Guid LeaseId,
     long ExpectedFloorRevision,
     long ExpectedContentRevision,
     Guid CommandBatchId);
@@ -41,7 +43,7 @@ public interface ISpaceExcelCadApplyService
 public sealed class SpaceExcelCadApplyJobProcessor(
     ISpaceExcelCadApplyJobStepExecutor executor) : ISpaceJobProcessor
 {
-    public const string Version = "space-excel-cad-apply-v2";
+    public const string Version = "space-excel-cad-apply-v3";
     public const string ApplyConfirmedArtifact = nameof(ApplyConfirmedArtifact);
 
     public SpaceJobType JobType => SpaceJobType.ExcelCadApply;

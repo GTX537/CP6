@@ -11,6 +11,9 @@ const props = defineProps<{
   versionId: string
   jobId: string
   currentContentRevision?: number
+  currentFloorRevision?: number
+  clientInstanceId?: string
+  leaseId?: string
 }>()
 
 const emit = defineEmits<{
@@ -45,7 +48,11 @@ const stale = computed(() =>
   && result.value?.expectedContentRevision !== undefined
   && props.currentContentRevision !== result.value.expectedContentRevision,
 )
-const canConfirm = computed(() => result.value?.canConfirm === true && !stale.value)
+const canConfirm = computed(() => result.value?.canConfirm === true
+  && !stale.value
+  && props.currentFloorRevision !== undefined
+  && Boolean(props.clientInstanceId)
+  && Boolean(props.leaseId))
 
 watch(
   () => [props.versionId, props.jobId],
@@ -65,7 +72,10 @@ async function resetAndLoad(): Promise<void> {
 async function confirmMatch(): Promise<void> {
   const match = result.value
   if (!canConfirm.value || !match?.artifactId || !match.artifactPayloadSha256
-      || match.expectedContentRevision === undefined) return
+      || match.expectedContentRevision === undefined
+      || props.currentFloorRevision === undefined
+      || !props.clientInstanceId
+      || !props.leaseId) return
   confirming.value = true
   confirmationError.value = ''
   try {
@@ -77,6 +87,9 @@ async function confirmMatch(): Promise<void> {
         artifactId: match.artifactId,
         artifactPayloadSha256: match.artifactPayloadSha256,
         expectedContentRevision: match.expectedContentRevision,
+        clientInstanceId: props.clientInstanceId,
+        leaseId: props.leaseId,
+        expectedFloorRevision: props.currentFloorRevision,
       },
       `excel-cad-apply:${props.jobId}:${match.artifactPayloadSha256}`,
     )

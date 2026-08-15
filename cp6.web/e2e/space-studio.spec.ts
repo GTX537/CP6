@@ -181,6 +181,9 @@ test('reviews and confirms the authoritative CAD plus Excel match in the studio'
     artifactId: 'excel-cad-artifact-1',
     artifactPayloadSha256: 'f'.repeat(64),
     expectedContentRevision: 7,
+    clientInstanceId: expect.any(String),
+    leaseId: ownedLease().leaseId,
+    expectedFloorRevision: 7,
   }])
   expect(errors).toEqual([])
 })

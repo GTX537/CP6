@@ -1587,6 +1587,55 @@ public sealed class SpaceDesignV1OpenApiTests
     }
 
     [Fact]
+    public void Excel_CAD_confirmation_requires_edit_session_and_revision_fences()
+    {
+        using var document = ReadContract();
+        var operation = document.RootElement
+            .GetProperty("paths")
+            .GetProperty(
+                "/api/space/design/v1/versions/{versionId}/excel-cad-matches/" +
+                "{matchJobId}/confirmations")
+            .GetProperty("post");
+        Assert.True(
+            operation.GetProperty("requestBody")
+                .GetProperty("required")
+                .GetBoolean());
+
+        var schemas = document.RootElement.GetProperty("components")
+            .GetProperty("schemas");
+        AssertExactRequired(
+            Schema(
+                schemas,
+                "CP6.Space.Contracts.ConfirmSpaceExcelCadMatchRequest"),
+            "confirmed",
+            "artifactId",
+            "artifactPayloadSha256",
+            "expectedContentRevision",
+            "clientInstanceId",
+            "leaseId",
+            "expectedFloorRevision");
+
+        var typescript = File.ReadAllText(
+            Path.Combine(
+                RepositoryRoot,
+                "sdk",
+                "typescript",
+                "space-design-v1",
+                "spaceDesignV1Client.ts"));
+        AssertRequiredTypeScriptProperties(
+            ExtractTypeBlock(
+                typescript,
+                "export interface IConfirmSpaceExcelCadMatchRequest"),
+            "confirmed",
+            "artifactId",
+            "artifactPayloadSha256",
+            "expectedContentRevision",
+            "clientInstanceId",
+            "leaseId",
+            "expectedFloorRevision");
+    }
+
+    [Fact]
     public void Layout_commands_require_all_concurrency_fences_and_generated_clients()
     {
         using var document = ReadContract();
