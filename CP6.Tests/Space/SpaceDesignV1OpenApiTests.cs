@@ -76,6 +76,7 @@ public sealed class SpaceDesignV1OpenApiTests
             "/api/space/design/v1/versions/{versionId}/floors/{floorLogicalId}/location-codes:apply",
             "/api/space/design/v1/versions/{versionId}/floors/{floorLogicalId}/scene",
             "/api/space/design/v1/versions/{versionId}/floors/{floorLogicalId}/underlay",
+            "/api/space/design/v1/versions/{versionId}/floors/{floorLogicalId}/underlay:compensate",
             "/api/space/design/v1/versions/{versionId}/floors/{floorLogicalId}/lease",
             "/api/space/design/v1/versions/{versionId}/floors/{floorLogicalId}/lease/{leaseId}:renew",
             "/api/space/design/v1/versions/{versionId}/floors/{floorLogicalId}/lease/{leaseId}:release",
@@ -153,8 +154,8 @@ public sealed class SpaceDesignV1OpenApiTests
             .Select(operation =>
                 operation.Value.GetProperty("operationId").GetString())
             .ToArray();
-        Assert.Equal(135, operationIds.Length);
-        Assert.Equal(135, operationIds.Distinct().Count());
+        Assert.Equal(136, operationIds.Length);
+        Assert.Equal(136, operationIds.Distinct().Count());
         Assert.Contains("GetCapability", operationIds);
         Assert.Contains("ReplaceProviderConfiguration", operationIds);
         Assert.Contains("GetPolicy", operationIds);
@@ -226,6 +227,7 @@ public sealed class SpaceDesignV1OpenApiTests
         Assert.Contains("GetFile", operationIds);
         Assert.Contains("GetUnderlayContent", operationIds);
         Assert.Contains("AttachUnderlay", operationIds);
+        Assert.Contains("CompensateUnderlay", operationIds);
         Assert.Contains("GetUnderlayCalibration", operationIds);
         Assert.Contains("CalibrateUnderlay", operationIds);
         Assert.Contains("RefreshWmsAdoption", operationIds);
@@ -2196,6 +2198,24 @@ public sealed class SpaceDesignV1OpenApiTests
                 .GetProperty("200")
                 .GetProperty("headers")
                 .TryGetProperty("Idempotent-Replay", out _));
+
+        var schema = document.RootElement.GetProperty("components")
+            .GetProperty("schemas")
+            .GetProperty("CP6.Space.Contracts.AttachSpaceUnderlayRequest");
+        Assert.Equal(
+            new[]
+            {
+                "clientInstanceId",
+                "commandBatchId",
+                "expectedContentRevision",
+                "expectedFloorRevision",
+                "leaseId",
+                "sourceId",
+            },
+            schema.GetProperty("required").EnumerateArray()
+                .Select(item => item.GetString()).OrderBy(item => item));
+        Assert.True(schema.GetProperty("properties")
+            .GetProperty("sourceId").GetProperty("nullable").GetBoolean());
     }
 
     [Fact]
@@ -2231,6 +2251,40 @@ public sealed class SpaceDesignV1OpenApiTests
                 .GetProperty("200")
                 .GetProperty("headers")
                 .TryGetProperty("Idempotent-Replay", out _));
+    }
+
+    [Fact]
+    public void Underlay_compensation_requires_sealed_history_lease_and_revisions()
+    {
+        using var document = ReadContract();
+        var operation = document.RootElement.GetProperty("paths")
+            .GetProperty(
+                "/api/space/design/v1/versions/{versionId}/floors/{floorLogicalId}/underlay:compensate")
+            .GetProperty("post");
+        Assert.True(operation.GetProperty("requestBody")
+            .GetProperty("required").GetBoolean());
+        Assert.True(operation.GetProperty("parameters").EnumerateArray()
+            .Single(item => item.GetProperty("name").GetString() == "Idempotency-Key")
+            .GetProperty("required").GetBoolean());
+
+        var schema = document.RootElement.GetProperty("components")
+            .GetProperty("schemas")
+            .GetProperty("CP6.Space.Contracts.CompensateSpaceUnderlayRequest");
+        Assert.Equal(
+            new[]
+            {
+                "clientInstanceId",
+                "commandBatchId",
+                "direction",
+                "expectedContentRevision",
+                "expectedFloorRevision",
+                "historySha256",
+                "leaseId",
+                "originalCommandBatchId",
+                "schemaVersion",
+            },
+            schema.GetProperty("required").EnumerateArray()
+                .Select(item => item.GetString()).OrderBy(item => item));
     }
 
     [Theory]
@@ -2348,6 +2402,7 @@ public sealed class SpaceDesignV1OpenApiTests
                      "GetFile",
                      "GetUnderlayContent",
                      "AttachUnderlay",
+                     "CompensateUnderlay",
                      "GetUnderlayCalibration",
                      "CalibrateUnderlay",
                      "GetJob",

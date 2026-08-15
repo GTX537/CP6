@@ -56,4 +56,11 @@ public interface ISpaceUnderlayV1Service
         SaveSpaceUnderlayCalibrationRequest request,
         string idempotencyKey,
         CancellationToken cancellationToken = default);
+
+    Task<CompensateSpaceUnderlayResponse> CompensateAsync(
+        Guid versionId,
+        Guid floorLogicalId,
+        CompensateSpaceUnderlayRequest request,
+        string idempotencyKey,
+        CancellationToken cancellationToken = default);
 }

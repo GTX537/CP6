@@ -101,7 +101,13 @@ test('uploads and calibrates an image underlay without internal identifiers', as
   const errors = collectPageErrors(page)
   const methods: string[] = []
   const underlayBodies: Array<Record<string, any>> = []
-  await installSpaceStudioFixtures(page, methods, { underlayBodies })
+  const underlayAttachBodies: Array<Record<string, any>> = []
+  const underlayHistoryBodies: Array<Record<string, any>> = []
+  await installSpaceStudioFixtures(page, methods, {
+    underlayBodies,
+    underlayAttachBodies,
+    underlayHistoryBodies,
+  })
   await page.setViewportSize({ width: 1440, height: 900 })
   await page.goto(studioUrl)
 
@@ -137,12 +143,42 @@ test('uploads and calibrates an image underlay without internal identifiers', as
   await page.getByRole('button', { name: '验证并保存', exact: true }).click()
 
   await expect(page.getByText('底图：已标定', { exact: true })).toBeVisible()
+  await page.getByRole('tab', { name: '批量', exact: true }).click()
+  const tools = page.locator('[data-test="design-batch-tools"]')
+  await tools.getByRole('button', { name: '撤销', exact: true }).click()
+  await expect(page.getByText('已撤销：标定底图', { exact: true })).toBeVisible()
+  await expect(page.getByText('底图：待标定', { exact: true })).toBeVisible()
+  await tools.getByRole('button', { name: '重做', exact: true }).click()
+  await expect(page.getByText('已重做：标定底图', { exact: true })).toBeVisible()
+  await expect(page.getByText('底图：已标定', { exact: true })).toBeVisible()
+
+  await page.getByRole('button', { name: '移除底图', exact: true }).click()
+  await page.getByRole('button', { name: '确认', exact: true }).click()
+  await expect(page.getByText('底图：未导入', { exact: true })).toBeVisible()
+  await tools.getByRole('button', { name: '撤销', exact: true }).click()
+  await expect(page.getByText('已撤销：移除底图', { exact: true })).toBeVisible()
+  await expect(page.getByText('底图：已标定', { exact: true })).toBeVisible()
   expect(methods).toEqual(expect.arrayContaining([
     'POST underlay upload',
     'PUT underlay attach',
     'GET underlay content',
     'POST underlay calibration',
+    'POST underlay history',
   ]))
+  expect(underlayAttachBodies).toHaveLength(2)
+  expect(underlayAttachBodies[0]).toMatchObject({
+    sourceId: underlaySourceId,
+    expectedFloorRevision: 7,
+    expectedContentRevision: 7,
+    clientInstanceId: expect.any(String),
+    leaseId: ownedLease().leaseId,
+    commandBatchId: expect.any(String),
+  })
+  expect(underlayAttachBodies[1]).toMatchObject({
+    sourceId: null,
+    expectedFloorRevision: 11,
+    expectedContentRevision: 11,
+  })
   expect(underlayBodies).toHaveLength(1)
   expect(underlayBodies[0]).toMatchObject({
     floorLogicalId: floorId,
@@ -150,6 +186,28 @@ test('uploads and calibrates an image underlay without internal identifiers', as
     pixelWidth: 1440,
     pixelHeight: 900,
     expectedFloorRevision: 8,
+    expectedContentRevision: 8,
+    clientInstanceId: expect.any(String),
+    leaseId: ownedLease().leaseId,
+    commandBatchId: expect.any(String),
+  })
+  expect(underlayHistoryBodies).toHaveLength(3)
+  expect(underlayHistoryBodies[0]).toMatchObject({
+    schemaVersion: 1,
+    direction: 'Undo',
+    expectedFloorRevision: 9,
+    expectedContentRevision: 9,
+    historySha256: 'c'.repeat(64),
+  })
+  expect(underlayHistoryBodies[1]).toMatchObject({
+    direction: 'Redo',
+    expectedFloorRevision: 10,
+    expectedContentRevision: 10,
+  })
+  expect(underlayHistoryBodies[2]).toMatchObject({
+    direction: 'Undo',
+    expectedFloorRevision: 12,
+    expectedContentRevision: 12,
   })
   expect(errors).toEqual([])
 })
@@ -1039,6 +1097,8 @@ async function installSpaceStudioFixtures(
     cadApplyHistory?: boolean
     cadApplyBodies?: Array<Record<string, any>>
     underlayBodies?: Array<Record<string, any>>
+    underlayAttachBodies?: Array<Record<string, any>>
+    underlayHistoryBodies?: Array<Record<string, any>>
     matchBodies?: Array<Record<string, any>>
     matchHistoryBodies?: Array<Record<string, any>>
     mergeEnabled?: boolean
@@ -1129,6 +1189,26 @@ async function installSpaceStudioFixtures(
     scene.locations[1].codeOrigin = 'Adopted'
     scene.locations[1].externalBindingState = 'Bound'
   }
+  const underlaySnapshots = new Map<string, {
+    before: Record<string, any>
+    after: Record<string, any>
+  }>()
+  const underlaySnapshot = () => ({
+    sourceId: scene.floor.underlaySourceId,
+    calibrationId: scene.floor.underlayCalibrationId,
+    scale: scene.floor.underlayScale,
+    offsetX: scene.floor.underlayOffsetX,
+    offsetY: scene.floor.underlayOffsetY,
+    rotationZ: scene.floor.underlayRotationZ,
+  })
+  const restoreUnderlay = (snapshot: Record<string, any>) => {
+    scene.floor.underlaySourceId = snapshot.sourceId
+    scene.floor.underlayCalibrationId = snapshot.calibrationId
+    scene.floor.underlayScale = snapshot.scale
+    scene.floor.underlayOffsetX = snapshot.offsetX
+    scene.floor.underlayOffsetY = snapshot.offsetY
+    scene.floor.underlayRotationZ = snapshot.rotationZ
+  }
   await page.route((url) => url.pathname.startsWith('/api/'), async (route) => {
     const request = route.request()
     const url = new URL(request.url())
@@ -1146,6 +1226,7 @@ async function installSpaceStudioFixtures(
     const cadCapabilityPath = `/api/space/design/v1/sites/${scene.siteId}/cad-capability`
     const underlayUploadPath = `/api/space/design/v1/versions/${versionId}/underlay-sources`
     const underlayAttachPath = `/api/space/design/v1/versions/${versionId}/floors/${floorId}/underlay`
+    const underlayHistoryPath = `${underlayAttachPath}:compensate`
     const underlayContentPath = `/api/space/design/v1/versions/${versionId}/sources/${underlaySourceId}/content`
     const underlayCalibrationPath = `/api/space/design/v1/versions/${versionId}/sources/${underlaySourceId}/underlay-calibration`
     const excelCadMatchPath = `/api/space/design/v1/versions/${versionId}/excel-cad-matches/${excelCadMatchJobId}`
@@ -1167,9 +1248,56 @@ async function installSpaceStudioFixtures(
     }
     if (url.pathname === underlayAttachPath && request.method() === 'PUT') {
       methods.push('PUT underlay attach')
-      scene.floor.revisionNumber = 8
-      scene.floor.underlaySourceId = underlaySourceId
-      await route.fulfill({ json: { floor: scene.floor } })
+      const body = request.postDataJSON() as Record<string, any>
+      options.underlayAttachBodies?.push(body)
+      const before = underlaySnapshot()
+      scene.floor.underlaySourceId = body.sourceId ?? undefined
+      scene.floor.underlayCalibrationId = undefined
+      scene.floor.underlayScale = undefined
+      scene.floor.underlayOffsetX = 0
+      scene.floor.underlayOffsetY = 0
+      scene.floor.underlayRotationZ = 0
+      scene.floor.revisionNumber++
+      scene.contentRevision++
+      underlaySnapshots.set(body.commandBatchId, {
+        before,
+        after: underlaySnapshot(),
+      })
+      await route.fulfill({ json: {
+        floor: scene.floor,
+        versionContentRevision: scene.contentRevision,
+        history: {
+          schemaVersion: 1,
+          originalCommandBatchId: body.commandBatchId,
+          operationType: 'UnderlaySet',
+          historySha256: 'c'.repeat(64),
+        },
+        idempotentReplay: false,
+      } })
+      return
+    }
+    if (url.pathname === underlayHistoryPath && request.method() === 'POST') {
+      methods.push('POST underlay history')
+      const body = request.postDataJSON() as Record<string, any>
+      options.underlayHistoryBodies?.push(body)
+      const snapshots = underlaySnapshots.get(body.originalCommandBatchId)
+      if (!snapshots) {
+        await route.fulfill({ status: 422, json: { code: 'SPACE_UNDERLAY_HISTORY_INVALID' } })
+        return
+      }
+      restoreUnderlay(body.direction === 'Undo' ? snapshots.before : snapshots.after)
+      scene.floor.revisionNumber++
+      scene.contentRevision++
+      await route.fulfill({ json: {
+        schemaVersion: 1,
+        originalCommandBatchId: body.originalCommandBatchId,
+        commandBatchId: body.commandBatchId,
+        direction: body.direction,
+        historySha256: body.historySha256,
+        floor: scene.floor,
+        versionContentRevision: scene.contentRevision,
+        idempotentReplay: false,
+      } })
       return
     }
     if (url.pathname === underlayContentPath) {
@@ -1184,12 +1312,18 @@ async function installSpaceStudioFixtures(
       methods.push('POST underlay calibration')
       const body = request.postDataJSON() as Record<string, any>
       options.underlayBodies?.push(body)
-      scene.floor.revisionNumber = 9
+      const before = underlaySnapshot()
+      scene.floor.revisionNumber++
+      scene.contentRevision++
       scene.floor.underlayCalibrationId = 'bbbbbbbb-4444-4444-4444-444444444444'
       scene.floor.underlayScale = 10
       scene.floor.underlayOffsetX = 0
       scene.floor.underlayOffsetY = 0
       scene.floor.underlayRotationZ = 0
+      underlaySnapshots.set(body.commandBatchId, {
+        before,
+        after: underlaySnapshot(),
+      })
       await route.fulfill({
         json: {
           floor: scene.floor,
@@ -1211,6 +1345,14 @@ async function installSpaceStudioFixtures(
             validationErrorMillimeters: 0,
             errorThresholdMillimeters: 50,
           },
+          versionContentRevision: scene.contentRevision,
+          history: {
+            schemaVersion: 1,
+            originalCommandBatchId: body.commandBatchId,
+            operationType: 'UnderlayCalibrate',
+            historySha256: 'c'.repeat(64),
+          },
+          idempotentReplay: false,
         },
       })
       return

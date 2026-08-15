@@ -170,6 +170,64 @@ public sealed class SpaceFloorRevision : SpaceRevisionEntity
         UnderlayRotationZ = 0;
     }
 
+    public void DetachUnderlay()
+    {
+        UnderlaySourceId = null;
+        UnderlayCalibrationId = null;
+        UnderlayScale = null;
+        UnderlayOffsetX = 0;
+        UnderlayOffsetY = 0;
+        UnderlayRotationZ = 0;
+    }
+
+    public void RestoreUnderlaySnapshot(
+        SpaceModelSource? source,
+        SpaceUnderlayCalibration? calibration,
+        decimal? scale,
+        int offsetX,
+        int offsetY,
+        decimal rotationZ)
+    {
+        if (source is null)
+        {
+            if (calibration is not null || scale.HasValue || offsetX != 0 ||
+                offsetY != 0 || rotationZ != 0)
+            {
+                throw new ArgumentException(
+                    "A detached underlay snapshot cannot contain calibration data.");
+            }
+            DetachUnderlay();
+            return;
+        }
+
+        AttachUnderlay(source);
+        if (calibration is null)
+        {
+            if (scale.HasValue || offsetX != 0 || offsetY != 0 || rotationZ != 0)
+            {
+                throw new ArgumentException(
+                    "An uncalibrated underlay snapshot cannot contain a transform.");
+            }
+            // AttachUnderlay is intentionally idempotent for the same source,
+            // so explicitly restore the uncalibrated pointer state as well.
+            UnderlayCalibrationId = null;
+            UnderlayScale = null;
+            UnderlayOffsetX = 0;
+            UnderlayOffsetY = 0;
+            UnderlayRotationZ = 0;
+            return;
+        }
+        if (scale != calibration.MillimetersPerPixel ||
+            offsetX != calibration.OffsetX ||
+            offsetY != calibration.OffsetY ||
+            rotationZ != calibration.RotationZ)
+        {
+            throw new ArgumentException(
+                "The underlay snapshot transform does not match its calibration.");
+        }
+        ApplyUnderlayCalibration(source, calibration);
+    }
+
     public void ApplyUnderlayCalibration(
         SpaceModelSource source,
         SpaceUnderlayCalibration calibration)

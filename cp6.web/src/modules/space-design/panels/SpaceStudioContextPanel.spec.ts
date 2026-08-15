@@ -34,9 +34,13 @@ describe('SpaceStudioContextPanel', () => {
     expect(calibrate.text()).toBe('标定底图')
     await calibrate.trigger('click')
     expect(wrapper.emitted('calibrateUnderlay')).toHaveLength(1)
+    const remove = wrapper.get('[data-test="remove-underlay"]')
+    await remove.trigger('click')
+    expect(wrapper.emitted('removeUnderlay')).toHaveLength(1)
 
     await wrapper.setProps({ calibrated: true, readonly: true })
     expect(calibrate.text()).toBe('重新标定底图')
     expect(calibrate.attributes('disabled')).toBeDefined()
+    expect(remove.attributes('disabled')).toBeDefined()
   })
 })
