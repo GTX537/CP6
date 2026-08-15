@@ -50,4 +50,27 @@ describe('DesignBatchToolsPanel', () => {
 
     expect(wrapper.emitted('split')).toHaveLength(1)
   })
+
+  it('exposes copy only for an eligible editor selection', async () => {
+    const wrapper = mount(DesignBatchToolsPanel, {
+      props: {
+        selectedCount: 1,
+        canCopy: false,
+        copyHint: '资产实例不能通过通用元素复制',
+      },
+      global: {
+        plugins: [ElementPlus],
+        directives: { permission: {} },
+      },
+    })
+    const copy = wrapper.get('[data-test="copy-objects"]')
+
+    expect(copy.attributes('disabled')).toBeDefined()
+    expect(wrapper.text()).toContain('资产实例不能通过通用元素复制')
+
+    await wrapper.setProps({ canCopy: true, copyHint: undefined })
+    await copy.trigger('click')
+
+    expect(wrapper.emitted('copy')).toHaveLength(1)
+  })
 })

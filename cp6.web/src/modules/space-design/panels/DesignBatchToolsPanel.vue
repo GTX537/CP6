@@ -18,6 +18,8 @@ const props = defineProps<{
   mergeHint?: string
   canSplit?: boolean
   splitHint?: string
+  canCopy?: boolean
+  copyHint?: string
 }>()
 
 const emit = defineEmits<{
@@ -27,6 +29,7 @@ const emit = defineEmits<{
   remove: []
   merge: []
   split: []
+  copy: []
   array: [payload: GenerateRackArrayPayload]
   undo: []
   redo: []
@@ -185,6 +188,18 @@ const disabled = computed(() => props.busy || props.readonly)
         拆分异常对象
       </el-button>
       <el-button
+        v-permission="'space:model:edit'"
+        type="primary"
+        plain
+        size="small"
+        data-test="copy-objects"
+        :title="copyHint"
+        :disabled="disabled || !canCopy"
+        @click="emit('copy')"
+      >
+        复制
+      </el-button>
+      <el-button
         type="danger"
         plain
         size="small"
@@ -199,6 +214,9 @@ const disabled = computed(() => props.busy || props.readonly)
     </span>
     <span v-if="selectedCount === 1 && splitHint" class="merge-hint">
       {{ splitHint }}
+    </span>
+    <span v-if="selectedCount >= 1 && copyHint" class="merge-hint">
+      {{ copyHint }}
     </span>
 
     <details class="array-tools" :class="{ unavailable: !selectedRackCode }">
