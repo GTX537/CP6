@@ -17950,6 +17950,8 @@
           "commandBatchId",
           "floorRevision",
           "idempotentReplay",
+          "redoCommands",
+          "undoCommands",
           "versionContentRevision",
           "workspaceSha256"
         ],
@@ -17976,6 +17978,18 @@
           },
           "idempotentReplay": {
             "type": "boolean"
+          },
+          "undoCommands": {
+            "type": "array",
+            "items": {
+              "$ref": "#/components/schemas/CP6.Space.Contracts.SpaceSavedElementCommandDto"
+            }
+          },
+          "redoCommands": {
+            "type": "array",
+            "items": {
+              "$ref": "#/components/schemas/CP6.Space.Contracts.SpaceSavedElementCommandDto"
+            }
           }
         },
         "additionalProperties": false
@@ -23890,6 +23904,16 @@
               "$ref": "#/components/schemas/CP6.Space.Contracts.SpaceSceneElementAttributeDto"
             },
             "nullable": true
+          },
+          "beforeElement": {
+            "$ref": "#/components/schemas/CP6.Space.Contracts.SpaceSceneElementDto"
+          },
+          "beforeAttributes": {
+            "type": "array",
+            "items": {
+              "$ref": "#/components/schemas/CP6.Space.Contracts.SpaceSceneElementAttributeDto"
+            },
+            "nullable": true
           }
         },
         "additionalProperties": false
@@ -28891,6 +28915,26 @@
           "rotationZ": {
             "type": "number",
             "format": "double"
+          }
+        },
+        "additionalProperties": false
+      },
+      "CP6.Space.Contracts.SpaceSavedElementCommandDto": {
+        "required": [
+          "targetLogicalId",
+          "type"
+        ],
+        "type": "object",
+        "properties": {
+          "type": {
+            "type": "string"
+          },
+          "targetLogicalId": {
+            "type": "string",
+            "format": "uuid"
+          },
+          "updateProperties": {
+            "$ref": "#/components/schemas/CP6.Space.Contracts.SpaceUpdateElementPropertiesDto"
           }
         },
         "additionalProperties": false

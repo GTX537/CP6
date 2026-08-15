@@ -14073,6 +14073,8 @@ export class ApplySpaceCadChangesetResponse implements IApplySpaceCadChangesetRe
     appliedChangeCount!: number;
     workspaceSha256!: string;
     idempotentReplay!: boolean;
+    undoCommands!: SpaceSavedElementCommandDto[];
+    redoCommands!: SpaceSavedElementCommandDto[];
 
     constructor(data?: IApplySpaceCadChangesetResponse) {
         if (data) {
@@ -14080,6 +14082,10 @@ export class ApplySpaceCadChangesetResponse implements IApplySpaceCadChangesetRe
                 if (data.hasOwnProperty(property))
                     (this as any)[property] = (data as any)[property];
             }
+        }
+        if (!data) {
+            this.undoCommands = [];
+            this.redoCommands = [];
         }
     }
 
@@ -14091,6 +14097,16 @@ export class ApplySpaceCadChangesetResponse implements IApplySpaceCadChangesetRe
             this.appliedChangeCount = _data["appliedChangeCount"];
             this.workspaceSha256 = _data["workspaceSha256"];
             this.idempotentReplay = _data["idempotentReplay"];
+            if (Array.isArray(_data["undoCommands"])) {
+                this.undoCommands = [] as any;
+                for (let item of _data["undoCommands"])
+                    this.undoCommands!.push(SpaceSavedElementCommandDto.fromJS(item));
+            }
+            if (Array.isArray(_data["redoCommands"])) {
+                this.redoCommands = [] as any;
+                for (let item of _data["redoCommands"])
+                    this.redoCommands!.push(SpaceSavedElementCommandDto.fromJS(item));
+            }
         }
     }
 
@@ -14109,6 +14125,16 @@ export class ApplySpaceCadChangesetResponse implements IApplySpaceCadChangesetRe
         data["appliedChangeCount"] = this.appliedChangeCount;
         data["workspaceSha256"] = this.workspaceSha256;
         data["idempotentReplay"] = this.idempotentReplay;
+        if (Array.isArray(this.undoCommands)) {
+            data["undoCommands"] = [];
+            for (let item of this.undoCommands)
+                data["undoCommands"].push(item ? item.toJSON() : undefined as any);
+        }
+        if (Array.isArray(this.redoCommands)) {
+            data["redoCommands"] = [];
+            for (let item of this.redoCommands)
+                data["redoCommands"].push(item ? item.toJSON() : undefined as any);
+        }
         return data;
     }
 }
@@ -14120,6 +14146,8 @@ export interface IApplySpaceCadChangesetResponse {
     appliedChangeCount: number;
     workspaceSha256: string;
     idempotentReplay: boolean;
+    undoCommands: SpaceSavedElementCommandDto[];
+    redoCommands: SpaceSavedElementCommandDto[];
 }
 
 export class ApplySpaceElementCommandBatchRequest implements IApplySpaceElementCommandBatchRequest {
@@ -23913,6 +23941,8 @@ export class SpaceElementCommandResultDto implements ISpaceElementCommandResultD
     targetLogicalId?: string;
     element?: SpaceSceneElementDto;
     attributes?: SpaceSceneElementAttributeDto[] | undefined;
+    beforeElement?: SpaceSceneElementDto;
+    beforeAttributes?: SpaceSceneElementAttributeDto[] | undefined;
 
     constructor(data?: ISpaceElementCommandResultDto) {
         if (data) {
@@ -23933,6 +23963,12 @@ export class SpaceElementCommandResultDto implements ISpaceElementCommandResultD
                 this.attributes = [] as any;
                 for (let item of _data["attributes"])
                     this.attributes!.push(SpaceSceneElementAttributeDto.fromJS(item));
+            }
+            this.beforeElement = _data["beforeElement"] ? SpaceSceneElementDto.fromJS(_data["beforeElement"]) : undefined as any;
+            if (Array.isArray(_data["beforeAttributes"])) {
+                this.beforeAttributes = [] as any;
+                for (let item of _data["beforeAttributes"])
+                    this.beforeAttributes!.push(SpaceSceneElementAttributeDto.fromJS(item));
             }
         }
     }
@@ -23955,6 +23991,12 @@ export class SpaceElementCommandResultDto implements ISpaceElementCommandResultD
             for (let item of this.attributes)
                 data["attributes"].push(item ? item.toJSON() : undefined as any);
         }
+        data["beforeElement"] = this.beforeElement ? this.beforeElement.toJSON() : undefined as any;
+        if (Array.isArray(this.beforeAttributes)) {
+            data["beforeAttributes"] = [];
+            for (let item of this.beforeAttributes)
+                data["beforeAttributes"].push(item ? item.toJSON() : undefined as any);
+        }
         return data;
     }
 }
@@ -23965,6 +24007,8 @@ export interface ISpaceElementCommandResultDto {
     targetLogicalId?: string;
     element?: SpaceSceneElementDto;
     attributes?: SpaceSceneElementAttributeDto[] | undefined;
+    beforeElement?: SpaceSceneElementDto;
+    beforeAttributes?: SpaceSceneElementAttributeDto[] | undefined;
 }
 
 export class SpaceExcelCadApplyDto implements ISpaceExcelCadApplyDto {
@@ -31570,6 +31614,50 @@ export class SpaceRotateObjectDto implements ISpaceRotateObjectDto {
 
 export interface ISpaceRotateObjectDto {
     rotationZ?: number;
+}
+
+export class SpaceSavedElementCommandDto implements ISpaceSavedElementCommandDto {
+    type!: string;
+    targetLogicalId!: string;
+    updateProperties?: SpaceUpdateElementPropertiesDto;
+
+    constructor(data?: ISpaceSavedElementCommandDto) {
+        if (data) {
+            for (var property in data) {
+                if (data.hasOwnProperty(property))
+                    (this as any)[property] = (data as any)[property];
+            }
+        }
+    }
+
+    init(_data?: any) {
+        if (_data) {
+            this.type = _data["type"];
+            this.targetLogicalId = _data["targetLogicalId"];
+            this.updateProperties = _data["updateProperties"] ? SpaceUpdateElementPropertiesDto.fromJS(_data["updateProperties"]) : undefined as any;
+        }
+    }
+
+    static fromJS(data: any): SpaceSavedElementCommandDto {
+        data = typeof data === 'object' ? data : {};
+        let result = new SpaceSavedElementCommandDto();
+        result.init(data);
+        return result;
+    }
+
+    toJSON(data?: any) {
+        data = typeof data === 'object' ? data : {};
+        data["type"] = this.type;
+        data["targetLogicalId"] = this.targetLogicalId;
+        data["updateProperties"] = this.updateProperties ? this.updateProperties.toJSON() : undefined as any;
+        return data;
+    }
+}
+
+export interface ISpaceSavedElementCommandDto {
+    type: string;
+    targetLogicalId: string;
+    updateProperties?: SpaceUpdateElementPropertiesDto;
 }
 
 export class SpaceSceneAisleDto implements ISpaceSceneAisleDto {

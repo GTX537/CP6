@@ -591,6 +591,17 @@ public sealed class SpaceCadParseJobTests
         Assert.True(replay.IdempotentReplay);
         Assert.Equal(applied.FloorRevision, replay.FloorRevision);
         Assert.Equal(1, applied.AppliedChangeCount);
+        var addUndo = Assert.Single(applied.UndoCommands);
+        Assert.Equal(SpaceElementCommandContract.DeleteObject, addUndo.Type);
+        Assert.Equal(change.LogicalId, addUndo.TargetLogicalId);
+        Assert.Null(addUndo.UpdateProperties);
+        var addRedo = Assert.Single(applied.RedoCommands);
+        Assert.Equal(
+            SpaceElementCommandContract.RestoreLogicalObject,
+            addRedo.Type);
+        Assert.Equal(change.LogicalId, addRedo.TargetLogicalId);
+        Assert.Equal(applied.UndoCommands, replay.UndoCommands);
+        Assert.Equal(applied.RedoCommands, replay.RedoCommands);
         var element = Assert.Single(await fixture.Context.ElementRevisions
             .AsNoTracking()
             .ToListAsync());
@@ -752,11 +763,72 @@ public sealed class SpaceCadParseJobTests
                 contentRevision,
                 contentHash);
 
-        var locked = await fixture.Design.ApplyElementCommandsAsync(
+        var parsedX = element.X;
+        var manualCorrection = await fixture.Design.ApplyElementCommandsAsync(
             fixture.Version.Id,
             floor.LogicalId,
             command(
                 1,
+                version.ContentRevision,
+                version.ContentHash,
+                update(element, element.X + 250)));
+        var manualX = Assert.Single(manualCorrection.AffectedObjects).Element.X;
+        fixture.Context.ChangeTracker.Clear();
+        var correctionParse = await fixture.Service.StartAsync(
+            fixture.Version.Id,
+            fixture.Source.Id,
+            await ConfirmPreparationAsync(
+                fixture,
+                provider.Request,
+                provider.SemanticPreviewSha256),
+            "cad-review-correction-history");
+        await CompleteParseAsync(fixture, provider, correctionParse.JobId);
+        fixture.Context.ChangeTracker.Clear();
+        var correctionWorkspace = await fixture.Service.GetReviewWorkspaceAsync(
+            fixture.Version.Id,
+            fixture.Source.Id,
+            correctionParse.JobId);
+        var modify = Assert.Single(correctionWorkspace.Changes!);
+        Assert.Equal(SpaceCadChangeKind.Modify, modify.Kind);
+        var correctionApply = new ApplySpaceCadChangesetRequest(
+            Guid.NewGuid(),
+            clientId,
+            lease.LeaseId,
+            ExpectedFloorRevision: 2,
+            correctionWorkspace.EditorContentRevision,
+            correctionWorkspace.EditorContentHash,
+            correctionWorkspace.WorkspaceSha256,
+            [modify.ChangeId]);
+        var correctionApplied = await fixture.Service.ApplyReviewChangesAsync(
+            fixture.Version.Id,
+            fixture.Source.Id,
+            correctionParse.JobId,
+            correctionApply);
+        var modifyUndo = Assert.Single(correctionApplied.UndoCommands);
+        var modifyRedo = Assert.Single(correctionApplied.RedoCommands);
+        Assert.Equal(SpaceElementCommandContract.UpdateProperties, modifyUndo.Type);
+        Assert.Equal(manualX, modifyUndo.UpdateProperties!.X);
+        Assert.Equal(SpaceElementCommandContract.UpdateProperties, modifyRedo.Type);
+        Assert.Equal(parsedX, modifyRedo.UpdateProperties!.X);
+        var correctionReplay = await fixture.Service.ApplyReviewChangesAsync(
+            fixture.Version.Id,
+            fixture.Source.Id,
+            correctionParse.JobId,
+            correctionApply);
+        Assert.True(correctionReplay.IdempotentReplay);
+        Assert.Equal(correctionApplied.UndoCommands, correctionReplay.UndoCommands);
+        Assert.Equal(correctionApplied.RedoCommands, correctionReplay.RedoCommands);
+
+        fixture.Context.ChangeTracker.Clear();
+        version = await fixture.Context.Versions.SingleAsync(item =>
+            item.Id == fixture.Version.Id);
+        element = await fixture.Context.ElementRevisions.SingleAsync();
+
+        var locked = await fixture.Design.ApplyElementCommandsAsync(
+            fixture.Version.Id,
+            floor.LogicalId,
+            command(
+                3,
                 version.ContentRevision,
                 version.ContentHash,
                 update(element, element.X + 250, true)));
@@ -772,7 +844,7 @@ public sealed class SpaceCadParseJobTests
             fixture.Version.Id,
             floor.LogicalId,
             command(
-                2,
+                4,
                 version.ContentRevision,
                 version.ContentHash,
                 update(element, element.X + 250)));
@@ -820,7 +892,7 @@ public sealed class SpaceCadParseJobTests
                     Guid.NewGuid(),
                     clientId,
                     lease.LeaseId,
-                    ExpectedFloorRevision: 3,
+                    ExpectedFloorRevision: 5,
                     workspace.EditorContentRevision,
                     workspace.EditorContentHash,
                     workspace.WorkspaceSha256,

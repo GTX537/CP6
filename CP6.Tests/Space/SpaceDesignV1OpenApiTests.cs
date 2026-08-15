@@ -1777,7 +1777,7 @@ public sealed class SpaceDesignV1OpenApiTests
     }
 
     [Fact]
-    public void Cad_review_apply_and_manual_create_are_required_in_generated_clients()
+    public void Cad_review_apply_history_and_manual_create_are_required_in_generated_clients()
     {
         using var document = ReadContract();
         var operation = document.RootElement
@@ -1806,6 +1806,22 @@ public sealed class SpaceDesignV1OpenApiTests
             "expectedContentRevision",
             "workspaceSha256",
             "changeIds");
+        AssertExactRequired(
+            schemas.GetProperty(
+                "CP6.Space.Contracts.ApplySpaceCadChangesetResponse"),
+            "commandBatchId",
+            "floorRevision",
+            "versionContentRevision",
+            "appliedChangeCount",
+            "workspaceSha256",
+            "idempotentReplay",
+            "undoCommands",
+            "redoCommands");
+        AssertExactRequired(
+            schemas.GetProperty(
+                "CP6.Space.Contracts.SpaceSavedElementCommandDto"),
+            "type",
+            "targetLogicalId");
         AssertExactRequired(
             schemas.GetProperty("CP6.Space.Contracts.SpaceCreateElementDto"),
             "elementType",
@@ -1846,6 +1862,18 @@ public sealed class SpaceDesignV1OpenApiTests
             "expectedContentRevision",
             "workspaceSha256",
             "changeIds");
+        AssertRequiredTypeScriptProperties(
+            ExtractTypeBlock(
+                typescript,
+                "export interface IApplySpaceCadChangesetResponse"),
+            "undoCommands",
+            "redoCommands");
+        AssertRequiredTypeScriptProperties(
+            ExtractTypeBlock(
+                typescript,
+                "export interface ISpaceSavedElementCommandDto"),
+            "type",
+            "targetLogicalId");
         var createElementTypeScript = ExtractTypeBlock(
             typescript,
             "export interface ISpaceCreateElementDto");

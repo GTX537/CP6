@@ -701,13 +701,16 @@ public sealed class SpaceCadParseService(
                 request.ExpectedContentHash,
                 applyFingerprint),
             cancellationToken);
+        var history = BuildCadApplyHistory(applied);
         return new ApplySpaceCadChangesetResponse(
             applied.CommandBatchId,
             applied.FloorRevision,
             applied.VersionContentRevision,
             selected.LongLength,
             request.WorkspaceSha256,
-            applied.IdempotentReplay);
+            applied.IdempotentReplay,
+            history.UndoCommands,
+            history.RedoCommands);
     }
 
     private async Task<SpaceCadPreviewSetV2> ReadPreviewSetAsync(
@@ -1049,6 +1052,99 @@ public sealed class SpaceCadParseService(
     private static string ChangeId(string sourceRef, Guid logicalId) =>
         $"cad-change-{Hash($"{sourceRef}\n{logicalId:D}")[..32]}";
 
+    private static CadApplyHistory BuildCadApplyHistory(
+        ApplySpaceElementCommandBatchResponse applied)
+    {
+        var undo = new List<SpaceSavedElementCommandDto>();
+        var redo = new List<SpaceSavedElementCommandDto>();
+        foreach (var result in applied.AffectedObjects)
+        {
+            switch (result.Type)
+            {
+                case SpaceElementCommandContract.CreateElement:
+                    undo.Add(new SpaceSavedElementCommandDto(
+                        SpaceElementCommandContract.DeleteObject,
+                        result.TargetLogicalId));
+                    redo.Add(new SpaceSavedElementCommandDto(
+                        SpaceElementCommandContract.RestoreLogicalObject,
+                        result.TargetLogicalId));
+                    break;
+                case SpaceElementCommandContract.UpdateProperties:
+                    if (result.BeforeElement is null ||
+                        result.BeforeAttributes is null)
+                    {
+                        throw new InvalidDataException(
+                            "A CAD modify result is missing its pre-apply snapshot.");
+                    }
+                    undo.Add(new SpaceSavedElementCommandDto(
+                        SpaceElementCommandContract.UpdateProperties,
+                        result.TargetLogicalId,
+                        UpdateFromSnapshot(
+                            result.BeforeElement,
+                            result.BeforeAttributes)));
+                    redo.Add(new SpaceSavedElementCommandDto(
+                        SpaceElementCommandContract.UpdateProperties,
+                        result.TargetLogicalId,
+                        UpdateFromSnapshot(result.Element, result.Attributes)));
+                    break;
+                case SpaceElementCommandContract.DeleteObject:
+                    undo.Add(new SpaceSavedElementCommandDto(
+                        SpaceElementCommandContract.RestoreLogicalObject,
+                        result.TargetLogicalId));
+                    redo.Add(new SpaceSavedElementCommandDto(
+                        SpaceElementCommandContract.DeleteObject,
+                        result.TargetLogicalId));
+                    break;
+                default:
+                    throw new InvalidDataException(
+                        $"CAD Apply returned unsupported history command '{result.Type}'.");
+            }
+        }
+        if (undo.Count == 0 || undo.Count != redo.Count)
+        {
+            throw new InvalidDataException(
+                "CAD Apply did not return a complete reversible command set.");
+        }
+        undo.Reverse();
+        return new CadApplyHistory(undo.ToArray(), redo.ToArray());
+    }
+
+    private static SpaceUpdateElementPropertiesDto UpdateFromSnapshot(
+        SpaceSceneElementDto element,
+        IReadOnlyList<SpaceSceneElementAttributeDto> attributes)
+    {
+        if (element.IsManualCorrectionLocked)
+        {
+            throw new InvalidDataException(
+                "A locked manual correction cannot enter CAD Apply history.");
+        }
+        return new SpaceUpdateElementPropertiesDto(
+            element.GeometryJson,
+            element.X,
+            element.Y,
+            element.Z,
+            element.RotationZ,
+            element.Width,
+            element.Height,
+            element.Depth,
+            element.BusinessCode,
+            element.LinkedEntityType,
+            element.LinkedLogicalId,
+            attributes.Select(attribute =>
+                new SpaceElementAttributeWriteDto(
+                    attribute.Namespace,
+                    attribute.Key,
+                    attribute.ValueType,
+                    attribute.Value,
+                    attribute.Unit))
+                .ToArray(),
+            element.ElementType);
+    }
+
+    private sealed record CadApplyHistory(
+        IReadOnlyList<SpaceSavedElementCommandDto> UndoCommands,
+        IReadOnlyList<SpaceSavedElementCommandDto> RedoCommands);
+
     private static string CadApplyFingerprint(
         Guid versionId,
         Guid sourceId,
@@ -1141,13 +1237,16 @@ public sealed class SpaceCadParseService(
                 "The CAD changeset replay no longer matches the current floor revision.",
                 recoveryAction: "reload-floor-scene");
         }
+        var history = BuildCadApplyHistory(applied);
         return new ApplySpaceCadChangesetResponse(
             applied.CommandBatchId,
             applied.FloorRevision,
             applied.VersionContentRevision,
             request.ChangeIds.Count,
             request.WorkspaceSha256,
-            IdempotentReplay: true);
+            IdempotentReplay: true,
+            history.UndoCommands,
+            history.RedoCommands);
     }
 
     private async Task<ApplySpaceCadChangesetResponse?>

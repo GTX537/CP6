@@ -23501,6 +23501,14 @@ namespace CP6.Space.Client
         [System.Text.Json.Serialization.JsonPropertyName("idempotentReplay")]
         public bool IdempotentReplay { get; set; } = default!;
 
+        [System.Text.Json.Serialization.JsonPropertyName("undoCommands")]
+        [System.ComponentModel.DataAnnotations.Required]
+        public System.Collections.Generic.ICollection<SpaceSavedElementCommandDto> UndoCommands { get; set; } = new System.Collections.ObjectModel.Collection<SpaceSavedElementCommandDto>();
+
+        [System.Text.Json.Serialization.JsonPropertyName("redoCommands")]
+        [System.ComponentModel.DataAnnotations.Required]
+        public System.Collections.Generic.ICollection<SpaceSavedElementCommandDto> RedoCommands { get; set; } = new System.Collections.ObjectModel.Collection<SpaceSavedElementCommandDto>();
+
     }
 
     [System.CodeDom.Compiler.GeneratedCode("NJsonSchema", "14.7.1.0 (NJsonSchema v11.6.1.0 (Newtonsoft.Json v13.0.0.0))")]
@@ -28224,6 +28232,12 @@ namespace CP6.Space.Client
         [System.Text.Json.Serialization.JsonPropertyName("attributes")]
         public System.Collections.Generic.ICollection<SpaceSceneElementAttributeDto>? Attributes { get; set; } = default!;
 
+        [System.Text.Json.Serialization.JsonPropertyName("beforeElement")]
+        public SpaceSceneElementDto BeforeElement { get; set; } = default!;
+
+        [System.Text.Json.Serialization.JsonPropertyName("beforeAttributes")]
+        public System.Collections.Generic.ICollection<SpaceSceneElementAttributeDto>? BeforeAttributes { get; set; } = default!;
+
     }
 
     [System.CodeDom.Compiler.GeneratedCode("NJsonSchema", "14.7.1.0 (NJsonSchema v11.6.1.0 (Newtonsoft.Json v13.0.0.0))")]
@@ -31974,6 +31988,23 @@ namespace CP6.Space.Client
 
         [System.Text.Json.Serialization.JsonPropertyName("rotationZ")]
         public double RotationZ { get; set; } = default!;
+
+    }
+
+    [System.CodeDom.Compiler.GeneratedCode("NJsonSchema", "14.7.1.0 (NJsonSchema v11.6.1.0 (Newtonsoft.Json v13.0.0.0))")]
+    public partial class SpaceSavedElementCommandDto
+    {
+
+        [System.Text.Json.Serialization.JsonPropertyName("type")]
+        [System.ComponentModel.DataAnnotations.Required(AllowEmptyStrings = true)]
+        public string Type { get; set; } = default!;
+
+        [System.Text.Json.Serialization.JsonPropertyName("targetLogicalId")]
+        [System.ComponentModel.DataAnnotations.Required(AllowEmptyStrings = true)]
+        public System.Guid TargetLogicalId { get; set; } = default!;
+
+        [System.Text.Json.Serialization.JsonPropertyName("updateProperties")]
+        public SpaceUpdateElementPropertiesDto UpdateProperties { get; set; } = default!;
 
     }
 

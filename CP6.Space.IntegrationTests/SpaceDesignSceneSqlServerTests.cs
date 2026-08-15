@@ -532,6 +532,19 @@ public sealed class SpaceDesignSceneSqlServerTests
                 updated.AffectedObjects[0].Element.ElementType);
             Assert.Equal("C-100", updated.AffectedObjects[0].Element.BusinessCode);
             Assert.Equal(2, updated.AffectedObjects[0].Attributes.Count);
+            Assert.Equal(
+                SpaceElementTypes.Column,
+                updated.AffectedObjects[0].BeforeElement!.ElementType);
+            Assert.Equal(1000, updated.AffectedObjects[0].BeforeElement!.X);
+            Assert.Equal(
+                "Column A",
+                Assert.Single(updated.AffectedObjects[0].BeforeAttributes!).Value);
+            Assert.Equal(
+                updated.AffectedObjects[0].BeforeElement,
+                replay.AffectedObjects[0].BeforeElement);
+            Assert.Equal(
+                updated.AffectedObjects[0].BeforeAttributes,
+                replay.AffectedObjects[0].BeforeAttributes);
             Assert.Single(context.ElementCommandBatches);
             Assert.Single(context.ElementCommandRecords);
             var audit = await context.ElementCommandRecords
