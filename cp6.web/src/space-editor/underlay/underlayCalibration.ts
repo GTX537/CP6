@@ -27,6 +27,46 @@ export interface UnderlayCalibrationPreview {
   offsetY: number
   rotationZ: number
   validationErrorMillimeters: number
+  errorThresholdMillimeters: number
+}
+
+export interface UnderlayTwoPointPlacementInput {
+  point1Pixel: UnderlayPixelPoint
+  point2Pixel: UnderlayPixelPoint
+  originWorld: UnderlayWorldPoint
+  distanceMillimeters: number
+  rotationZ: number
+}
+
+export function deriveSecondCalibrationWorldPoint(
+  input: UnderlayTwoPointPlacementInput,
+): UnderlayWorldPoint {
+  requireFinite(input.point1Pixel.x, 'point1Pixel.x')
+  requireFinite(input.point1Pixel.y, 'point1Pixel.y')
+  requireFinite(input.point2Pixel.x, 'point2Pixel.x')
+  requireFinite(input.point2Pixel.y, 'point2Pixel.y')
+  requireFinite(input.originWorld.x, 'originWorld.x')
+  requireFinite(input.originWorld.y, 'originWorld.y')
+  requireFinite(input.rotationZ, 'rotationZ')
+  requirePositive(input.distanceMillimeters, 'distanceMillimeters')
+
+  const pixelDx = input.point2Pixel.x - input.point1Pixel.x
+  const pixelDy = input.point1Pixel.y - input.point2Pixel.y
+  if (Math.hypot(pixelDx, pixelDy) < 10) {
+    throw new Error('Calibration points must be at least 10 pixels apart')
+  }
+
+  const worldAngle = Math.atan2(pixelDy, pixelDx) + input.rotationZ * Math.PI / 180
+  return {
+    x: round(
+      input.originWorld.x + input.distanceMillimeters * Math.cos(worldAngle),
+      8,
+    ),
+    y: round(
+      input.originWorld.y + input.distanceMillimeters * Math.sin(worldAngle),
+      8,
+    ),
+  }
 }
 
 export function calculateUnderlayCalibration(
@@ -104,6 +144,7 @@ export function calculateUnderlayCalibration(
       ),
       4,
     ),
+    errorThresholdMillimeters: round(Math.max(50, worldDistance * 0.002), 4),
   }
 }
 

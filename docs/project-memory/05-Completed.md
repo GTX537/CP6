@@ -1,5 +1,12 @@
 # 已完成能力与近期里程碑
 
+## 2026-08-15 Space Studio 两点实距标定工作流
+
+- 底图标定明确为 P1 原点、P2 比例点和独立验证点 V；用户直接输入真实距离、世界原点、旋转和 V 世界坐标，不再手工换算 P2 世界坐标。
+- 工作台以栅格 Y-up 坐标和整数毫米请求合同计算比例/旋转/偏移，预览第三点误差与 `max(50mm, 实距×0.2%)` 阈值；无效或超限输入在提交前失败关闭。
+- 保存继续复用 Design V1 租约、双 Revision、数据库 UTC、幂等 CommandBatch 和公共撤销/重做。Web 841/841、Space Studio Playwright 23/23、production build 和完整 Release solution 通过。详细报告见 `docs/space/reports/2026-08-15-space-studio-underlay-calibration-workflow.md`。
+- LM-FR-021 仓库实现闭环；真实 PDF/图片、多路径、Provider、WMS 和 Pilot 接受仍未完成，WP4 保持 Partial/Pending，核心 GA 保持 72% / `NoGo`。
+
 ## 2026-08-15 Space Studio 托盘与静态设备构件库
 
 - 构件库与既有 Zone/Aisle/Rack/Location 表单同页，补齐墙、柱、门、月台、托盘和输送线、AGV、叉车、工作台、电子秤、充电站六类固定静态设备。
