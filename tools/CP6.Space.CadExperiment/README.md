@@ -16,6 +16,9 @@ It provides a set of bounded development capabilities:
 - `convert-dev-ir`: converts a bounded development DXF into the versioned,
   vendor-neutral CAD IR contract through the mandatory conformance runner and
   writes a deterministic JSON fixture.
+- `convert-autocad-dev-ir`: uses an explicitly supplied, locally installed
+  AutoCAD Core Console to export a staged DWG to DXF, then passes that DXF
+  through the same deterministic CAD IR converter and conformance runner.
 - `prepare-dev-coordinate`: applies an explicit unit, origin, rotation and
   target-floor confirmation to a development CAD IR package.
 - `build-dev-inventory`: creates a source/transform-bound layer, block and
@@ -58,10 +61,12 @@ It provides a set of bounded development capabilities:
   baselines, scores below 80 and ambiguous first/second place, then emits a
   hash-bound report plus import-ready Site certification inputs only on Pass.
 
-The tool implements a development-only `ICadConverter` and small-fixture JSON
-sink. It does not write Draft data, join `CP6.slnx`, read native DWG, or qualify
-as a licensed production adapter. Formal E02-S02 acceptance remains blocked
-until E02-S01 has a licensed, scored selection.
+The tool implements development-only `ICadConverter` paths and a small-fixture
+JSON sink. It can read native DWG only through the explicitly configured local
+AutoCAD Core Console bridge; it does not write Draft data, join `CP6.slnx`,
+register a runtime Provider or qualify as a licensed production adapter. Formal
+E02-S02 acceptance remains blocked until E02-S01 has a licensed, scored primary
+and backup selection.
 
 The tool entry never invokes `ICadConverter` directly. Its conversion goes through
 `SpaceCadConverterContractRunner`, the same vendor-neutral protocol boundary required
@@ -132,6 +137,35 @@ explicit issues, validates the package contract and prints the source and IR
 hashes. It is intentionally limited to UTF-8/ASCII DXF files up to 25 MiB and
 uses an in-memory JSON sink for development fixtures only. Production-sized
 artifacts require the isolated streaming Worker sink selected after E02-S01.
+
+## Convert a local development DWG through AutoCAD Core Console
+
+```powershell
+dotnet run --project tools\CP6.Space.CadExperiment -c Release -- `
+  convert-autocad-dev-ir `
+  --input <authorized-local-development.dwg> `
+  --accoreconsole "D:\AutoCAD 2025\accoreconsole.exe" `
+  --work-root "D:\CP6-Cad-Work" `
+  --output "D:\CP6-Cad-Output\sample.cad-ir.json" `
+  --timeout-seconds 300
+```
+
+The command binds the result to the original DWG SHA-256 and the exact Core
+Console file version. Raw DWG and intermediate DXF bytes are staged in a unique
+`attempts` subdirectory and removed after every run. The child process receives
+`_autodesk-runtime-cache` under the same D-drive root as TEMP/TMP because
+Autodesk Activity Insights can keep its own package binaries locked after Core
+Console exits and can retain the child working-directory handle. The Core Console
+process therefore also starts from that cache instead of the raw-data attempt.
+The persistent cache is rejected if any DWG/DXF appears in it.
+The child process runs without a shell and is terminated with its process tree
+on timeout or cancellation. Use a D-drive working root with adequate capacity.
+
+This remains development evidence: the command does not verify legal rights,
+disable all network access, register a Site Provider, supply a backup chain or
+count an Autodesk sample as a golden CAD. Run the installed executable gate by
+setting `CP6_TEST_AUTOCAD_CORE_CONSOLE`, `CP6_TEST_AUTOCAD_DWG`, and
+`CP6_TEST_AUTOCAD_WORK_ROOT` before the focused test.
 
 ## Confirm coordinates and assign a target floor
 

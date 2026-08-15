@@ -34,6 +34,9 @@ public static class Program
                 "convert-dev-ir" => await ConvertDevelopmentIrAsync(
                     commandLine,
                     cancellation.Token),
+                "convert-autocad-dev-ir" => await ConvertAutoCadDevelopmentIrAsync(
+                    commandLine,
+                    cancellation.Token),
                 "prepare-dev-coordinate" => await PrepareDevelopmentCoordinateAsync(
                     commandLine,
                     cancellation.Token),
@@ -245,6 +248,46 @@ public static class Program
         await using var source = File.OpenRead(input);
         var sink = new DevelopmentCadIrFileSink(request, output);
         var converter = new DevelopmentDxfCadConverter();
+        var result = await SpaceCadConverterContractRunner.ConvertAsync(
+            converter,
+            request,
+            source,
+            sink,
+            cancellationToken);
+        Console.WriteLine(JsonSerializer.Serialize(result, CadExperimentJson.Options));
+        return 0;
+    }
+
+    private static async Task<int> ConvertAutoCadDevelopmentIrAsync(
+        CommandLine commandLine,
+        CancellationToken cancellationToken)
+    {
+        var input = Path.GetFullPath(commandLine.Required("--input"));
+        if (!Path.GetExtension(input).Equals(".dwg", StringComparison.OrdinalIgnoreCase))
+        {
+            throw new ArgumentException(
+                "The AutoCAD Core Console development converter accepts .dwg files only.");
+        }
+        var output = Path.GetFullPath(commandLine.Required("--output"));
+        var workRoot = Path.GetFullPath(commandLine.Required("--work-root"));
+        var exporter = new AutoCadCoreConsoleDwgExporter(
+            commandLine.Required("--accoreconsole"),
+            Path.Combine(workRoot, "_autodesk-runtime-cache"),
+            TimeSpan.FromSeconds(commandLine.Integer("--timeout-seconds", 300)));
+        var sourceHash = await DatasetAuditor.ComputeSha256Async(input, cancellationToken);
+        var request = new SpaceCadConversionRequest(
+            Guid.Parse("11111111-1111-1111-1111-111111111111"),
+            Guid.Parse("22222222-2222-2222-2222-222222222222"),
+            Guid.Parse("33333333-3333-3333-3333-333333333333"),
+            sourceHash,
+            SpaceCadSourceFormat.Dwg,
+            AutoCadCoreConsoleDevelopmentConverter.ConverterId,
+            exporter.ProviderVersion);
+        await using var source = File.OpenRead(input);
+        var sink = new DevelopmentCadIrFileSink(request, output);
+        var converter = new AutoCadCoreConsoleDevelopmentConverter(
+            exporter,
+            Path.Combine(workRoot, "attempts"));
         var result = await SpaceCadConverterContractRunner.ConvertAsync(
             converter,
             request,
@@ -1634,6 +1677,10 @@ public static class Program
               generate-stress --kind <50mb|million> --output <path>
               generate-dev-corpus --output <directory>
               convert-dev-ir --input <dxf-path> --output <cad-ir-json-path>
+              convert-autocad-dev-ir --input <dwg-path>
+                  --accoreconsole <accoreconsole.exe-path>
+                  --work-root <isolated-development-directory>
+                  --output <cad-ir-json-path> [--timeout-seconds <n>]
               prepare-dev-coordinate --input <cad-ir-json-path>
                   --confirmation <confirmation-json-path>
                   --output <prepared-cad-ir-json-path>
