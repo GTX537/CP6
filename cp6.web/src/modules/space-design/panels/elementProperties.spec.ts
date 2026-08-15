@@ -6,6 +6,7 @@ import {
 } from './elementProperties'
 
 const element = {
+  elementType: 'Column',
   geometryJson:
     '{"schemaVersion":1,"kind":"box","width":400,"height":5000,"depth":400}',
   x: 1000,
@@ -29,6 +30,7 @@ describe('elementProperties', () => {
       },
     ])
     draft.x = 1200
+    draft.elementType = 'Door'
     draft.width = 600
     draft.height = 5200
     draft.depth = 500
@@ -36,6 +38,7 @@ describe('elementProperties', () => {
     const payload = buildElementPropertiesPayload(element, draft)
 
     expect(payload.x).toBe(1200)
+    expect(payload.elementType).toBe('Door')
     expect(payload.attributes).toEqual([
       {
         namespace: 'design',
@@ -62,6 +65,12 @@ describe('elementProperties', () => {
     )
 
     draft.width = 400
+    draft.elementType = 'LiveRobot'
+    expect(() => buildElementPropertiesPayload(element, draft)).toThrow(
+      'supported Space element type',
+    )
+
+    draft.elementType = 'Column'
     draft.linkedEntityType = 'Location'
     expect(() => buildElementPropertiesPayload(element, draft)).toThrow('paired')
 

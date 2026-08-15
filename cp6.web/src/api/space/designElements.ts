@@ -9,6 +9,7 @@ import type { EditorCommandInput } from '@/modules/space-design/commands/editorB
 const root = '/space/design/v1'
 
 export interface ElementPropertiesPayload {
+  elementType?: string
   geometryJson: string
   x: number
   y: number

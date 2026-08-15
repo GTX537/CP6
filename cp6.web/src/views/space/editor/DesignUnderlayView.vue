@@ -2274,6 +2274,7 @@ function elementPropertiesPayload(
   element: ISpaceSceneElementDto,
 ): ElementPropertiesPayload {
   return {
+    elementType: element.elementType,
     geometryJson: element.geometryJson ?? '{}',
     x: element.x ?? 0,
     y: element.y ?? 0,

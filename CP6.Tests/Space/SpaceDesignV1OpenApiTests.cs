@@ -1502,6 +1502,30 @@ public sealed class SpaceDesignV1OpenApiTests
     }
 
     [Fact]
+    public void Element_property_commands_expose_the_optional_retype_contract()
+    {
+        using var document = ReadContract();
+        var schema = document.RootElement
+            .GetProperty("components")
+            .GetProperty("schemas")
+            .GetProperty(
+                "CP6.Space.Contracts.SpaceUpdateElementPropertiesDto");
+        var elementType = schema.GetProperty("properties")
+            .GetProperty("elementType");
+
+        Assert.Equal("string", elementType.GetProperty("type").GetString());
+        if (schema.TryGetProperty("required", out var required))
+        {
+            Assert.DoesNotContain(
+                required.EnumerateArray().Select(item => item.GetString()),
+                item => string.Equals(
+                    item,
+                    "elementType",
+                    StringComparison.Ordinal));
+        }
+    }
+
+    [Fact]
     public void Layout_commands_require_all_concurrency_fences_and_generated_clients()
     {
         using var document = ReadContract();

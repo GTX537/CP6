@@ -1,13 +1,13 @@
 # Space Studio V1 核心 GA 仓库完成度审计
 
 日期：2026-08-15
-审计基线：`main@518b41fb79024c2245f3aa6b38d8cfbdfe246726`
+审计基线：`main@3dab2826aa099dbe69e8cdf995c93b73cea1bc8f`
 
 ## 结论
 
 当前核心 GA 继续为 **72% / `NoGo`**。本次审计确认，AutoCAD Core Console 开发转换链已经进入远端 `main`，但它没有改变 WP3 的 `Partial/Pending`，也没有关闭任何真实 Provider、黄金 CAD、Pilot 或签字门禁。
 
-仓库内可独立实现的 WP1、WP2、WP4、WP5、WP6 已保持 `implementationStatus=Complete`；WP0 因实名治理输入缺失保持 `Partial`，WP3 因正式主备 Provider 缺失保持 `Partial`，WP7/WP8 保持 `ExternalExecution`。所有 Gate 的 `acceptanceStatus` 仍为 `Pending`。
+仓库内可独立实现的 WP1、WP2、WP5、WP6 已保持 `implementationStatus=Complete`；详细 Spec 复核确认 LM-FR-017 的 CAD 异常对象“合并、拆分、重画”仍缺失，因此 WP4 从过宽的 `Complete` 校正为 `Partial`。WP0 因实名治理输入缺失保持 `Partial`，WP3 因正式主备 Provider 缺失保持 `Partial`，WP7/WP8 保持 `ExternalExecution`。所有 Gate 的 `acceptanceStatus` 仍为 `Pending`。
 
 审计期间发现 PowerShell 7.6 默认把 JSON ISO-8601 字符串解析为 `DateTime`，使证据校验器丢失原始 `Z` 表示并误拒合法证明。四个 GA 校验器现通过共享兼容层在支持 `-DateKind` 的宿主强制保留 JSON 字符串，在 Windows PowerShell 5.1 继续使用原生字符串行为；没有放宽时间格式、UTC 或未来时间校验。
 
@@ -19,7 +19,7 @@
 | WP1 Design V1 手工建模 | Complete | Pending | 空白画布、Layout/Element、编码、租约/Revision/幂等链有仓库自动化；独立 QA/Pilot 未签 |
 | WP2 CAD 起始向导 | Complete | Pending | DWG/DXF Preparation、显式单位/坐标/Mapping 确认与解析启动已交付；真实授权文件 E2E 未接受 |
 | WP3 Site 主备 Provider | Partial | Pending | Provider 合同、认证、评分、路由、SQL 门禁与 AutoCAD 开发适配器已交付；没有两条 Site 批准的生产链 |
-| WP4 三路径闭环 | Complete | Pending | CAD、Excel、底图、空白画布和发布入口有仓库测试；真实文件、WMS 和现场闭环未接受 |
+| WP4 三路径闭环 | Partial | Pending | CAD、Excel、底图、空白画布和发布入口有仓库测试；异常对象改类型和删除已交付，合并、拆分、重画仍缺失；真实文件、WMS 和现场闭环未接受 |
 | WP5 Viewer/可达性/性能 | Complete | Pending | Published-only 边界、交互、自动化与 Iris Xe 原始性能记录已交付；独立 UX/辅助技术和生产等价 E2E 未签 |
 | WP6 发布/WMS/安全/恢复 | Complete | Pending | 发布 Fence、LocalDB 真库、权限矩阵、恢复指标与运行手册已交付；生产等价 WMS/告警/恢复演练未接受 |
 | WP7 黄金 CAD | ExternalExecution | Pending | 证据协议与校验器已交付；20 份授权样本、双标注、10/5/5 和主备实测不存在 |

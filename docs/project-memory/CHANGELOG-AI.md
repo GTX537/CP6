@@ -2,6 +2,12 @@
 
 > 依据 Git log 汇总，不替代完整 Git 历史。重点记录影响接手判断的里程碑。
 
+## 2026-08-15：Space Studio CAD 异常对象改类型
+
+- `UpdateProperties` 现在可在同一 Design V1 命令批内改变通用元素语义类型，保留 LogicalId 并继续使用 Lease、Revision、幂等及审计 Fence；资产实例和未知类型失败关闭。
+- 工作台属性检查器、撤销/重做、OpenAPI、C#/TypeScript SDK 与自动化同步；真 SQL、领域、契约、前端和 Playwright 聚焦门禁通过。
+- 详细 Spec LM-FR-017 的删除已有实现，但合并、拆分、重画仍缺；WP4 从过宽的 Complete 校正为 Partial，核心 GA 仍为 72% / No-Go。
+
 ## 2026-08-15：Space AutoCAD Core Console 开发转换链
 
 - 新增实验型 `ICadConverter`/`convert-autocad-dev-ir`，通过显式本机 Core Console 路径将 DWG 导出为 DXF，并继续进入既有确定性 CAD IR 和共合同执行器。

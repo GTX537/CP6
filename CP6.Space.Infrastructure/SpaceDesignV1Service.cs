@@ -2611,6 +2611,8 @@ public sealed class SpaceDesignV1Service :
                 case SpaceElementCommandContract.UpdateProperties
                     when command.UpdateProperties is not null &&
                          payloadCount == 1:
+                    ValidateOptionalElementType(
+                        command.UpdateProperties.ElementType);
                     if (command.UpdateProperties.Attributes is null ||
                         command.UpdateProperties.Attributes.Count > 100)
                     {
@@ -4088,6 +4090,20 @@ public sealed class SpaceDesignV1Service :
                     "UpdateProperties can target only a common element.");
             }
             if (command.Type ==
+                    SpaceElementCommandContract.UpdateProperties &&
+                element?.ModelAssetId is not null &&
+                !string.IsNullOrWhiteSpace(
+                    command.UpdateProperties!.ElementType) &&
+                !string.Equals(
+                    command.UpdateProperties.ElementType.Trim(),
+                    element.ElementType,
+                    StringComparison.OrdinalIgnoreCase))
+            {
+                throw Invalid(
+                    "commands.updateProperties.elementType",
+                    "An asset-backed element cannot be retyped.");
+            }
+            if (command.Type ==
                     SpaceElementCommandContract.GenerateRackArray &&
                 isElement)
             {
@@ -4447,6 +4463,14 @@ public sealed class SpaceDesignV1Service :
         List<SpaceElementAttribute> attributes,
         SpaceUpdateElementPropertiesDto payload)
     {
+        if (!string.IsNullOrWhiteSpace(payload.ElementType) &&
+            !string.Equals(
+                payload.ElementType.Trim(),
+                element.ElementType,
+                StringComparison.OrdinalIgnoreCase))
+        {
+            element.Retype(payload.ElementType);
+        }
         element.UpdateGeometry(payload.GeometryJson);
         element.ConfigurePlacement(
             payload.X,
@@ -4463,6 +4487,22 @@ public sealed class SpaceDesignV1Service :
 
         ApplyElementAttributes(element, attributes, payload.Attributes);
         return JsonSerializer.Serialize(payload, JsonOptions);
+    }
+
+    private static void ValidateOptionalElementType(string? elementType)
+    {
+        if (elementType is null)
+            return;
+        var normalized = elementType.Trim();
+        if (normalized.Length == 0 ||
+            !SpaceElementTypes.Supported.Contains(
+                normalized,
+                StringComparer.OrdinalIgnoreCase))
+        {
+            throw Invalid(
+                "commands.updateProperties.elementType",
+                "A supported Space element type is required when retyping an element.");
+        }
     }
 
     private async Task<bool> LogicalIdsExistAsync(

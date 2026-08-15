@@ -823,6 +823,17 @@ public sealed class SpaceElementRevision : SpaceRevisionEntity
         GeometryJson = validated;
     }
 
+    public void Retype(string elementType)
+    {
+        if (ModelAssetId.HasValue)
+        {
+            throw new InvalidOperationException(
+                "An asset-backed element cannot be retyped.");
+        }
+
+        ElementType = SpaceElementTypes.Normalize(elementType, nameof(elementType));
+    }
+
     public void UpdateDefinition(
         Guid floorLogicalId,
         string elementType,

@@ -32,6 +32,7 @@ describe('designElementsApi', () => {
       '33333333-3333-3333-3333-333333333333',
       element,
       {
+        elementType: 'Door',
         geometryJson:
           '{"schemaVersion":1,"kind":"box","width":1,"height":1,"depth":1}',
         x: 1,
@@ -62,6 +63,7 @@ describe('designElementsApi', () => {
           type: 'UpdateProperties',
           targetLogicalId: element.revision?.logicalId,
           updateProperties: {
+            elementType: 'Door',
             x: 1,
             y: 2,
             z: 3,

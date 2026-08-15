@@ -506,7 +506,8 @@ public sealed class SpaceDesignSceneSqlServerTests
                                     SpaceElementAttributeValueTypes.String,
                                     "steel",
                                     null),
-                            ]))
+                            ],
+                            ElementType: SpaceElementTypes.Door))
                 ]);
 
             var updated = await service.ApplyElementCommandsAsync(
@@ -525,6 +526,9 @@ public sealed class SpaceDesignSceneSqlServerTests
             Assert.Equal(updated.FloorRevision, replay.FloorRevision);
             Assert.Single(updated.AffectedObjects);
             Assert.Equal(1200, updated.AffectedObjects[0].Element.X);
+            Assert.Equal(
+                SpaceElementTypes.Door,
+                updated.AffectedObjects[0].Element.ElementType);
             Assert.Equal("C-100", updated.AffectedObjects[0].Element.BusinessCode);
             Assert.Equal(2, updated.AffectedObjects[0].Attributes.Count);
             Assert.Single(context.ElementCommandBatches);
@@ -534,7 +538,35 @@ public sealed class SpaceDesignSceneSqlServerTests
                 .SingleAsync();
             Assert.Contains("\"businessCode\":null", audit.BeforeJson);
             Assert.Contains("\"businessCode\":\"C-100\"", audit.AfterJson);
+            Assert.Contains("\"elementType\":\"Door\"", audit.AfterJson);
             Assert.Contains("\"label\"", audit.AfterJson);
+
+            var unsupportedRetype = update with
+            {
+                CommandBatchId = Guid.NewGuid(),
+                ExpectedFloorRevision = 1,
+                Commands =
+                [
+                    update.Commands[0] with
+                    {
+                        CommandId = Guid.NewGuid(),
+                        UpdateProperties =
+                            update.Commands[0].UpdateProperties! with
+                            {
+                                ElementType = "LiveRobot",
+                            },
+                    },
+                ],
+            };
+            var unsupportedProblem =
+                await Assert.ThrowsAsync<SpaceProblemException>(
+                    () => service.ApplyElementCommandsAsync(
+                        draft.Id,
+                        floor.LogicalId,
+                        unsupportedRetype));
+            Assert.Equal(SpaceErrorCodes.RequestInvalid, unsupportedProblem.Code);
+            Assert.Equal(400, unsupportedProblem.StatusCode);
+            Assert.Single(context.ElementCommandBatches);
 
             var stale = new ApplySpaceElementCommandBatchRequest(
                 SpaceElementCommandContract.SchemaVersion,
