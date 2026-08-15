@@ -4,6 +4,7 @@ param(
 )
 
 $ErrorActionPreference = 'Stop'
+. (Join-Path $PSScriptRoot 'SpaceGaJson.ps1')
 $repo = Split-Path -Parent $PSScriptRoot
 if ([string]::IsNullOrWhiteSpace($ManifestPath)) {
     $ManifestPath = Join-Path $repo (
@@ -25,7 +26,7 @@ if (!(Test-Path -LiteralPath $manifestFullPath -PathType Leaf)) {
 }
 
 $manifest = Get-Content -LiteralPath $manifestFullPath -Raw |
-    ConvertFrom-Json
+    ConvertFrom-SpaceGaJson
 $errors = [System.Collections.Generic.List[string]]::new()
 
 function Add-ValidationError {
@@ -335,7 +336,7 @@ foreach ($input in @($manifest.externalInputs)) {
                     if ($input.id -eq 'NAMED_GA_SIGNERS') {
                         $kickoffManifest = Get-Content `
                             -LiteralPath $kickoffManifestFullPath `
-                            -Raw | ConvertFrom-Json
+                            -Raw | ConvertFrom-SpaceGaJson
                         foreach ($signer in @($manifest.signers)) {
                             $kickoffSigner = @(
                                 $kickoffManifest.namedGaSigners.signers |

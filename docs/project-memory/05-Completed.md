@@ -5,6 +5,7 @@
 - 新增实验型 `convert-autocad-dev-ir` 和 `ICadConverter`，以显式 Core Console 路径把原生 DWG 转为中间 DXF，再复用既有确定性 CAD IR 转换与共合同执行器。
 - 原始 DWG/中间 DXF 仅进入 D 盘每次唯一 `attempts` 目录，校验源哈希与 Core Console 文件版本；Activity Insights 持久运行包进入不允许出现 DWG/DXF 的独立缓存。子进程无 Shell，具备超时/取消进程树终止和原始数据目录清理重试。
 - 本机签名有效的 AutoCAD 2025 Core Console 安装型测试 1/1 通过；Autodesk Floor Plan 样例连续两次得到相同 CAD IR SHA，4,424 个实体中 4,422 个受支持。该结果仅为开发证据，不计 Provider 认证、黄金 CAD 或 GA 完成度。
+- GA 总索引已把该开发报告登记到 WP3，并把 2026-08-15 仓库完成度审计登记到 WP0，路径校验通过；共享 JSON 兼容层让四个证据校验器在 PowerShell 7.6 保留 ISO 时间字符串，同时保持 Windows PowerShell 5.1 行为和原有严格门禁。证据保持实现态，不进入接受证明，核心 GA 仍为 72% / `NoGo`。
 
 ## 2026-08-15 Space Studio 单人开发人员种子
 

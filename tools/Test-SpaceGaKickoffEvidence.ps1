@@ -7,6 +7,7 @@ param(
 )
 
 $ErrorActionPreference = 'Stop'
+. (Join-Path $PSScriptRoot 'SpaceGaJson.ps1')
 $repo = Split-Path -Parent $PSScriptRoot
 $manifestFullPath = [System.IO.Path]::GetFullPath($ManifestPath)
 $repoFullPath = [System.IO.Path]::GetFullPath($repo).TrimEnd(
@@ -535,7 +536,7 @@ if (!$manifestFullPath.StartsWith(
 }
 
 $manifest = Get-Content -LiteralPath $manifestFullPath -Raw |
-    ConvertFrom-Json
+    ConvertFrom-SpaceGaJson
 $requiredInputIds = @(
     'NAMED_GA_SIGNERS',
     'CORE_TEAM_ALLOCATION',

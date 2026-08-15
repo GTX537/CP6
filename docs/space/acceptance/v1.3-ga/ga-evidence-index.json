@@ -2,7 +2,7 @@
   "schemaVersion": 1,
   "programId": "CP6_SPACE_STUDIO_V1_CORE_GA",
   "scope": "CoreGA",
-  "asOfDate": "2026-08-14",
+  "asOfDate": "2026-08-15",
   "declaredStatus": "NoGo",
   "baselinePercent": 72,
   "gaPercent": 100,
@@ -121,7 +121,8 @@
       ],
       "evidencePaths": [
         "docs/project-memory/PROJECT_STATE.md",
-        "docs/space/reports/2026-08-14-ga-evidence-attestation.md"
+        "docs/space/reports/2026-08-14-ga-evidence-attestation.md",
+        "docs/space/reports/2026-08-15-space-ga-repository-completion-audit.md"
       ],
       "acceptedEvidence": [],
       "acceptanceCriteria": [
@@ -194,7 +195,8 @@
         "docs/space/reports/2026-08-14-cad-mapping-replay-snapshot.md",
         "docs/space/reports/2026-08-14-cad-provider-version-fence.md",
         "docs/space/reports/2026-08-14-cad-converter-conformance-runner.md",
-        "docs/space/reports/2026-08-14-space-cad-provider-sqlserver-gate.md"
+        "docs/space/reports/2026-08-14-space-cad-provider-sqlserver-gate.md",
+        "docs/space/reports/2026-08-15-space-autocad-core-console-development.md"
       ],
       "acceptedEvidence": [],
       "acceptanceCriteria": [
