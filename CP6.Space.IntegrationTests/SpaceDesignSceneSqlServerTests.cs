@@ -1464,6 +1464,214 @@ public sealed class SpaceDesignSceneSqlServerTests
     }
 
     [SqlServerFact]
+    public async Task Manual_correction_lock_persists_and_fences_CAD_changesets()
+    {
+        await WithDatabaseAsync(async (connectionString, execution, clock) =>
+        {
+            await using var context = CreateContext(
+                connectionString,
+                execution,
+                clock);
+            var seeded = await SeedDesignModelAsync(
+                context,
+                execution.ActorId,
+                clock.UtcNow);
+            var draft = SpaceModelVersion.CreateDraft(
+                execution.TenantId,
+                seeded.Model.Id,
+                2,
+                "Manual correction lock",
+                seeded.Published.Id);
+            seeded.Model.ReserveDraft(draft);
+            var floor = SpaceFloorRevision.Create(
+                execution.TenantId,
+                draft.Id,
+                Guid.NewGuid(),
+                seeded.Model.SiteId,
+                1,
+                "F1",
+                "Floor 1",
+                height: 6000);
+            var fileId = Guid.NewGuid();
+            var file = SpaceFile.CreateUploading(
+                fileId,
+                execution.TenantId,
+                $"{execution.TenantId:N}/{fileId:N}/source.content",
+                "warehouse.dxf",
+                "application/vnd.autocad.dxf",
+                SpaceFileRetentionClass.Source);
+            file.CompleteQuarantine(
+                "application/vnd.autocad.dxf",
+                ".dxf",
+                1,
+                new string('a', 64));
+            file.BeginScanning();
+            file.MarkClean("sql-test", "1");
+            var source = SpaceModelSource.CreateFileSource(
+                execution.TenantId,
+                draft.Id,
+                SpaceSourceType.Dxf,
+                file,
+                "warehouse.dxf");
+            context.AddRange(draft, floor, file, source);
+            await context.SaveChangesAsync();
+            var clientId = Guid.NewGuid();
+            var lease = SpaceEditLease.Create(
+                execution.TenantId,
+                draft.Id,
+                floor.LogicalId,
+                execution.ActorId,
+                "CAD reviewer",
+                clientId,
+                clock.UtcNow,
+                TimeSpan.FromSeconds(90));
+            context.EditLeases.Add(lease);
+            await context.SaveChangesAsync();
+            var service = NewService(
+                context,
+                execution,
+                clock,
+                seeded.Model.SiteId);
+            var logicalId = Guid.NewGuid();
+            var created = await service.ApplyElementCommandsAsync(
+                draft.Id,
+                floor.LogicalId,
+                new ApplySpaceElementCommandBatchRequest(
+                    SpaceElementCommandContract.SchemaVersion,
+                    Guid.NewGuid(),
+                    clientId,
+                    lease.LeaseId,
+                    ExpectedFloorRevision: 0,
+                    [new SpaceElementCommandDto(
+                        Guid.NewGuid(),
+                        SpaceElementCommandContract.CreateElement,
+                        logicalId,
+                        UpdateProperties: null,
+                        CreateElement: new SpaceCreateElementDto(
+                            SpaceElementTypes.Wall,
+                            """
+                            {"schemaVersion":1,"kind":"box","width":5000,"height":3000,"depth":200}
+                            """,
+                            1000,
+                            2000,
+                            0,
+                            0,
+                            5000,
+                            3000,
+                            200,
+                            null,
+                            null,
+                            source.Id,
+                            "CAD:H:WALL-1",
+                            []))],
+                    ExpectedContentRevision: 0,
+                    ExpectedContentHash: null,
+                    ChangesetSha256: new string('b', 64)));
+            var element = Assert.Single(created.AffectedObjects).Element;
+            SpaceUpdateElementPropertiesDto update(
+                SpaceSceneElementDto current,
+                int x,
+                bool? lockState = null) => new(
+                    current.GeometryJson,
+                    x,
+                    current.Y,
+                    current.Z,
+                    current.RotationZ,
+                    current.Width,
+                    current.Height,
+                    current.Depth,
+                    current.BusinessCode,
+                    current.LinkedEntityType,
+                    current.LinkedLogicalId,
+                    [],
+                    current.ElementType,
+                    lockState);
+            async Task<SpaceModelVersion> version() =>
+                await context.Versions.SingleAsync(candidate =>
+                    candidate.Id == draft.Id);
+
+            var currentVersion = await version();
+            var locked = await service.ApplyElementCommandsAsync(
+                draft.Id,
+                floor.LogicalId,
+                new ApplySpaceElementCommandBatchRequest(
+                    SpaceElementCommandContract.SchemaVersion,
+                    Guid.NewGuid(),
+                    clientId,
+                    lease.LeaseId,
+                    ExpectedFloorRevision: 1,
+                    [new SpaceElementCommandDto(
+                        Guid.NewGuid(),
+                        SpaceElementCommandContract.UpdateProperties,
+                        logicalId,
+                        update(element, 1250, true))],
+                    currentVersion.ContentRevision,
+                    currentVersion.ContentHash));
+            element = Assert.Single(locked.AffectedObjects).Element;
+            Assert.True(element.IsManualCorrectionLocked);
+            Assert.Equal(1, element.UserCorrectionVersion);
+
+            context.ChangeTracker.Clear();
+            var persisted = await context.ElementRevisions.AsNoTracking()
+                .SingleAsync(candidate => candidate.LogicalId == logicalId);
+            Assert.True(persisted.IsManualCorrectionLocked);
+            Assert.Equal(1, persisted.UserCorrectionVersion);
+            Assert.Equal(execution.ActorId, persisted.ManualCorrectionUpdatedBy);
+            Assert.NotNull(persisted.ManualCorrectionUpdatedAtUtc);
+
+            currentVersion = await version();
+            var revised = await service.ApplyElementCommandsAsync(
+                draft.Id,
+                floor.LogicalId,
+                new ApplySpaceElementCommandBatchRequest(
+                    SpaceElementCommandContract.SchemaVersion,
+                    Guid.NewGuid(),
+                    clientId,
+                    lease.LeaseId,
+                    ExpectedFloorRevision: 2,
+                    [new SpaceElementCommandDto(
+                        Guid.NewGuid(),
+                        SpaceElementCommandContract.UpdateProperties,
+                        logicalId,
+                        update(element, 1500))],
+                    currentVersion.ContentRevision,
+                    currentVersion.ContentHash));
+            element = Assert.Single(revised.AffectedObjects).Element;
+            Assert.Equal(2, element.UserCorrectionVersion);
+            Assert.Equal(1500, element.X);
+
+            currentVersion = await version();
+            var batchesBefore = await context.ElementCommandBatches.CountAsync();
+            var blocked = await Assert.ThrowsAsync<SpaceProblemException>(() =>
+                service.ApplyElementCommandsAsync(
+                    draft.Id,
+                    floor.LogicalId,
+                    new ApplySpaceElementCommandBatchRequest(
+                        SpaceElementCommandContract.SchemaVersion,
+                        Guid.NewGuid(),
+                        clientId,
+                        lease.LeaseId,
+                        ExpectedFloorRevision: 3,
+                        [new SpaceElementCommandDto(
+                            Guid.NewGuid(),
+                            SpaceElementCommandContract.UpdateProperties,
+                            logicalId,
+                            update(element, 1750))],
+                        currentVersion.ContentRevision,
+                        currentVersion.ContentHash,
+                        ChangesetSha256: new string('c', 64))));
+            Assert.Equal(SpaceErrorCodes.CadManualCorrectionLocked, blocked.Code);
+            Assert.Equal(
+                batchesBefore,
+                await context.ElementCommandBatches.CountAsync());
+            Assert.Equal(
+                1500,
+                (await context.ElementRevisions.AsNoTracking()
+                    .SingleAsync(candidate => candidate.LogicalId == logicalId)).X);
+        });
+    }
+
+    [SqlServerFact]
     public async Task Mixed_editor_batches_array_and_saved_compensation_are_atomic()
     {
         await WithDatabaseAsync(async (connectionString, execution, clock) =>

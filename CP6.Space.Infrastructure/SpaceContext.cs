@@ -2359,6 +2359,14 @@ public sealed class SpaceContext : DbContext
                     "([ModelAssetId] IS NOT NULL AND [ModelAssetScope] IS NOT NULL AND [ModelAssetOwnerTenantId] IS NOT NULL AND " +
                     "(([ModelAssetScope] = 0 AND [ModelAssetOwnerTenantId] = '00000000-0000-0000-0000-000000000000') OR " +
                     "([ModelAssetScope] = 1 AND [ModelAssetOwnerTenantId] = [TenantId])))");
+                table.HasCheckConstraint(
+                    "CK_Space_ElementRevision_ManualCorrection",
+                    "[UserCorrectionVersion] >= 0 AND " +
+                    "([IsManualCorrectionLocked] = 0 OR " +
+                    "([SourceId] IS NOT NULL AND [SourceRef] IS NOT NULL AND " +
+                    "[UserCorrectionVersion] > 0 AND " +
+                    "[ManualCorrectionUpdatedBy] IS NOT NULL AND " +
+                    "[ManualCorrectionUpdatedAtUtc] IS NOT NULL))");
             });
         entity.Property(x => x.ElementType).HasMaxLength(100).IsRequired();
         entity.Property(x => x.GeometryJson).HasColumnType("nvarchar(max)").IsRequired();
@@ -2368,6 +2376,8 @@ public sealed class SpaceContext : DbContext
         entity.Property(x => x.RotationZ).HasColumnType("decimal(9,4)");
         entity.Property(x => x.BusinessCode).HasMaxLength(200);
         entity.Property(x => x.LinkedEntityType).HasMaxLength(100);
+        entity.Property(x => x.ManualCorrectionUpdatedAtUtc)
+            .HasColumnType("datetime2");
 
         entity.HasIndex(
                 x => new

@@ -91,6 +91,8 @@ export interface CadReviewChange {
   isSelected: boolean
   canApply: boolean
   blockingReasonCode?: string
+  isManualCorrectionLocked: boolean
+  userCorrectionVersion: number
   beforeBounds?: CadReviewBounds
   afterBounds?: CadReviewBounds
 }
@@ -254,6 +256,22 @@ function parseChanges(value: Record<string, unknown>): void {
     requireText(candidate.objectType, `changes[${index}].objectType`, 128)
     if (typeof candidate.isSelected !== 'boolean' || typeof candidate.canApply !== 'boolean') {
       throw new Error(`changes[${index}] selection state is invalid`)
+    }
+    if (typeof candidate.isManualCorrectionLocked !== 'boolean') {
+      throw new Error(`changes[${index}] manual correction lock state is invalid`)
+    }
+    requireInteger(
+      candidate.userCorrectionVersion,
+      `changes[${index}].userCorrectionVersion`,
+      0,
+    )
+    if (candidate.isManualCorrectionLocked && (
+      candidate.kind !== 'Conflict'
+      || candidate.canApply
+      || candidate.userCorrectionVersion === 0
+      || candidate.blockingReasonCode !== 'SPACE_CAD_MANUAL_CORRECTION_LOCKED'
+    )) {
+      throw new Error(`changes[${index}] manual correction lock is inconsistent`)
     }
     if (candidate.confidence !== undefined &&
       (typeof candidate.confidence !== 'number' || candidate.confidence < 0 || candidate.confidence > 1)) {

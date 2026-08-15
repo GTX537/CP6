@@ -19813,6 +19813,8 @@ export class SpaceCadChangeV1 implements ISpaceCadChangeV1 {
     isSelected!: boolean;
     canApply!: boolean;
     blockingReasonCode?: string | undefined;
+    isManualCorrectionLocked!: boolean;
+    userCorrectionVersion!: number;
     beforeBounds?: SpaceCadMillimeterBoundsV1;
     afterBounds?: SpaceCadMillimeterBoundsV1;
 
@@ -19837,6 +19839,8 @@ export class SpaceCadChangeV1 implements ISpaceCadChangeV1 {
             this.isSelected = _data["isSelected"];
             this.canApply = _data["canApply"];
             this.blockingReasonCode = _data["blockingReasonCode"];
+            this.isManualCorrectionLocked = _data["isManualCorrectionLocked"];
+            this.userCorrectionVersion = _data["userCorrectionVersion"];
             this.beforeBounds = _data["beforeBounds"] ? SpaceCadMillimeterBoundsV1.fromJS(_data["beforeBounds"]) : undefined as any;
             this.afterBounds = _data["afterBounds"] ? SpaceCadMillimeterBoundsV1.fromJS(_data["afterBounds"]) : undefined as any;
         }
@@ -19861,6 +19865,8 @@ export class SpaceCadChangeV1 implements ISpaceCadChangeV1 {
         data["isSelected"] = this.isSelected;
         data["canApply"] = this.canApply;
         data["blockingReasonCode"] = this.blockingReasonCode;
+        data["isManualCorrectionLocked"] = this.isManualCorrectionLocked;
+        data["userCorrectionVersion"] = this.userCorrectionVersion;
         data["beforeBounds"] = this.beforeBounds ? this.beforeBounds.toJSON() : undefined as any;
         data["afterBounds"] = this.afterBounds ? this.afterBounds.toJSON() : undefined as any;
         return data;
@@ -19878,6 +19884,8 @@ export interface ISpaceCadChangeV1 {
     isSelected: boolean;
     canApply: boolean;
     blockingReasonCode?: string | undefined;
+    isManualCorrectionLocked: boolean;
+    userCorrectionVersion: number;
     beforeBounds?: SpaceCadMillimeterBoundsV1;
     afterBounds?: SpaceCadMillimeterBoundsV1;
 }
@@ -31770,6 +31778,10 @@ export class SpaceSceneElementDto implements ISpaceSceneElementDto {
     businessCode?: string | undefined;
     linkedEntityType?: string | undefined;
     linkedLogicalId?: string | undefined;
+    isManualCorrectionLocked?: boolean;
+    userCorrectionVersion?: number;
+    manualCorrectionUpdatedBy?: string | undefined;
+    manualCorrectionUpdatedAtUtc?: Date | undefined;
 
     constructor(data?: ISpaceSceneElementDto) {
         if (data) {
@@ -31799,6 +31811,10 @@ export class SpaceSceneElementDto implements ISpaceSceneElementDto {
             this.businessCode = _data["businessCode"];
             this.linkedEntityType = _data["linkedEntityType"];
             this.linkedLogicalId = _data["linkedLogicalId"];
+            this.isManualCorrectionLocked = _data["isManualCorrectionLocked"];
+            this.userCorrectionVersion = _data["userCorrectionVersion"];
+            this.manualCorrectionUpdatedBy = _data["manualCorrectionUpdatedBy"];
+            this.manualCorrectionUpdatedAtUtc = _data["manualCorrectionUpdatedAtUtc"] ? new Date(_data["manualCorrectionUpdatedAtUtc"].toString()) : undefined as any;
         }
     }
 
@@ -31828,6 +31844,10 @@ export class SpaceSceneElementDto implements ISpaceSceneElementDto {
         data["businessCode"] = this.businessCode;
         data["linkedEntityType"] = this.linkedEntityType;
         data["linkedLogicalId"] = this.linkedLogicalId;
+        data["isManualCorrectionLocked"] = this.isManualCorrectionLocked;
+        data["userCorrectionVersion"] = this.userCorrectionVersion;
+        data["manualCorrectionUpdatedBy"] = this.manualCorrectionUpdatedBy;
+        data["manualCorrectionUpdatedAtUtc"] = this.manualCorrectionUpdatedAtUtc ? this.manualCorrectionUpdatedAtUtc.toISOString() : undefined as any;
         return data;
     }
 }
@@ -31850,6 +31870,10 @@ export interface ISpaceSceneElementDto {
     businessCode?: string | undefined;
     linkedEntityType?: string | undefined;
     linkedLogicalId?: string | undefined;
+    isManualCorrectionLocked?: boolean;
+    userCorrectionVersion?: number;
+    manualCorrectionUpdatedBy?: string | undefined;
+    manualCorrectionUpdatedAtUtc?: Date | undefined;
 }
 
 export class SpaceSceneFloorDto implements ISpaceSceneFloorDto {
@@ -32638,6 +32662,7 @@ export class SpaceUpdateElementPropertiesDto implements ISpaceUpdateElementPrope
     linkedLogicalId?: string | undefined;
     attributes?: SpaceElementAttributeWriteDto[] | undefined;
     elementType?: string | undefined;
+    manualCorrectionLocked?: boolean | undefined;
 
     constructor(data?: ISpaceUpdateElementPropertiesDto) {
         if (data) {
@@ -32667,6 +32692,7 @@ export class SpaceUpdateElementPropertiesDto implements ISpaceUpdateElementPrope
                     this.attributes!.push(SpaceElementAttributeWriteDto.fromJS(item));
             }
             this.elementType = _data["elementType"];
+            this.manualCorrectionLocked = _data["manualCorrectionLocked"];
         }
     }
 
@@ -32696,6 +32722,7 @@ export class SpaceUpdateElementPropertiesDto implements ISpaceUpdateElementPrope
                 data["attributes"].push(item ? item.toJSON() : undefined as any);
         }
         data["elementType"] = this.elementType;
+        data["manualCorrectionLocked"] = this.manualCorrectionLocked;
         return data;
     }
 }
@@ -32714,6 +32741,7 @@ export interface ISpaceUpdateElementPropertiesDto {
     linkedLogicalId?: string | undefined;
     attributes?: SpaceElementAttributeWriteDto[] | undefined;
     elementType?: string | undefined;
+    manualCorrectionLocked?: boolean | undefined;
 }
 
 export class SpaceUpdateLayoutAisleDto implements ISpaceUpdateLayoutAisleDto {

@@ -1,5 +1,12 @@
 # 已完成能力与近期里程碑
 
+## 2026-08-15 Space Studio CAD 人工校正锁定
+
+- CAD 来源通用元素可在属性检查器中原子保存并锁定/解除锁定；Design Revision 持久保存锁状态、单调校正版本、最后操作者与 UTC 时间，锁定后的继续编辑递增版本，撤销/重做显式恢复锁状态。
+- 重新解析同一 SourceRef 时，锁定对象的修改或删除转为不可应用的 Blocking Conflict；审核空间展示并定位校正版本，Design V1 对任何携带 CAD Changeset 身份且指向锁定对象的命令执行最终 409 Fence，保证零写入。
+- 新增加法迁移与版本克隆映射，OpenAPI/C#/TypeScript SDK 同步。门禁通过：Space Unit 533/533、CAD reparse 1/1、OpenAPI 45/45、Web 809/809、Space Studio Playwright 20/20、SQL Server LocalDB 1/1 且 0 skipped、Vue production build、EF 无模型漂移及 Release solution 0 warning/0 error。详细报告见 `docs/space/reports/2026-08-15-space-studio-manual-correction-lock.md`。
+- LM-FR-018 仓库实现已闭环；WP4 仍为 Partial/Pending，真实 CAD/Provider/WMS/Pilot/签字不因本项自动完成，核心 GA 保持 72% / `NoGo`。
+
 ## 2026-08-15 Space Studio 对象复制
 
 - 批量检查器可复制 1–100 个 Active 通用元素和货架，允许混合选择；确认前零写入，确认后 `CreateElement` 与 `GenerateRackArray` 使用同一 Lease/Revision/Content Hash/幂等原子批。

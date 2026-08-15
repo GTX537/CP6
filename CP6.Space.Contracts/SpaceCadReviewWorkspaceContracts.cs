@@ -51,6 +51,8 @@ public sealed record SpaceCadChangeV1(
     bool IsSelected,
     bool CanApply,
     string? BlockingReasonCode,
+    bool IsManualCorrectionLocked,
+    long UserCorrectionVersion,
     SpaceCadMillimeterBoundsV1? BeforeBounds,
     SpaceCadMillimeterBoundsV1? AfterBounds);
 

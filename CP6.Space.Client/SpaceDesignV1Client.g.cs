@@ -25950,6 +25950,12 @@ namespace CP6.Space.Client
         [System.Text.Json.Serialization.JsonPropertyName("blockingReasonCode")]
         public string? BlockingReasonCode { get; set; } = default!;
 
+        [System.Text.Json.Serialization.JsonPropertyName("isManualCorrectionLocked")]
+        public bool IsManualCorrectionLocked { get; set; } = default!;
+
+        [System.Text.Json.Serialization.JsonPropertyName("userCorrectionVersion")]
+        public long UserCorrectionVersion { get; set; } = default!;
+
         [System.Text.Json.Serialization.JsonPropertyName("beforeBounds")]
         public SpaceCadMillimeterBoundsV1 BeforeBounds { get; set; } = default!;
 
@@ -32113,6 +32119,18 @@ namespace CP6.Space.Client
         [System.Text.Json.Serialization.JsonPropertyName("linkedLogicalId")]
         public System.Guid? LinkedLogicalId { get; set; } = default!;
 
+        [System.Text.Json.Serialization.JsonPropertyName("isManualCorrectionLocked")]
+        public bool IsManualCorrectionLocked { get; set; } = default!;
+
+        [System.Text.Json.Serialization.JsonPropertyName("userCorrectionVersion")]
+        public long UserCorrectionVersion { get; set; } = default!;
+
+        [System.Text.Json.Serialization.JsonPropertyName("manualCorrectionUpdatedBy")]
+        public System.Guid? ManualCorrectionUpdatedBy { get; set; } = default!;
+
+        [System.Text.Json.Serialization.JsonPropertyName("manualCorrectionUpdatedAtUtc")]
+        public System.DateTimeOffset? ManualCorrectionUpdatedAtUtc { get; set; } = default!;
+
     }
 
     [System.CodeDom.Compiler.GeneratedCode("NJsonSchema", "14.7.1.0 (NJsonSchema v11.6.1.0 (Newtonsoft.Json v13.0.0.0))")]
@@ -32556,6 +32574,9 @@ namespace CP6.Space.Client
 
         [System.Text.Json.Serialization.JsonPropertyName("elementType")]
         public string? ElementType { get; set; } = default!;
+
+        [System.Text.Json.Serialization.JsonPropertyName("manualCorrectionLocked")]
+        public bool? ManualCorrectionLocked { get; set; } = default!;
 
     }
 

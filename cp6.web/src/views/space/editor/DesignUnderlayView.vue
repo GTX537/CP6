@@ -1806,7 +1806,13 @@ async function saveElement(payload: ElementPropertiesPayload): Promise<void> {
   try {
     const logicalId = element.revision?.logicalId
     if (!logicalId) throw new Error('Element logical identity is missing')
-    const before = elementPropertiesPayload(element)
+    const lockChanged = payload.manualCorrectionLocked !== undefined
+    const before = {
+      ...elementPropertiesPayload(element),
+      ...(lockChanged
+        ? { manualCorrectionLocked: Boolean(element.isManualCorrectionLocked) }
+        : {}),
+    }
     await applyEditorCommands([
       {
         type: 'UpdateProperties',
@@ -1815,7 +1821,9 @@ async function saveElement(payload: ElementPropertiesPayload): Promise<void> {
       },
     ])
     history.push({
-      label: '修改通用元素属性',
+      label: lockChanged
+        ? (payload.manualCorrectionLocked ? '锁定人工校正' : '解除人工校正锁定')
+        : '修改通用元素属性',
       undo: [
         {
           type: 'UpdateProperties',
@@ -1833,7 +1841,11 @@ async function saveElement(payload: ElementPropertiesPayload): Promise<void> {
     })
     touchHistory()
     await loadScene()
-    ElMessage.success(t('元素属性已保存'))
+    ElMessage.success(t(lockChanged
+      ? (payload.manualCorrectionLocked
+          ? '人工校正已保存并锁定'
+          : '人工校正锁定已解除')
+      : '元素属性已保存'))
   } catch {
     ElMessage.error(t('元素保存失败，请刷新场景后重试'))
   } finally {

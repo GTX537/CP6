@@ -77,6 +77,8 @@ public static class SpaceErrorCodes
     public const string EditLeaseTakeoverDenied =
         "SPACE_EDIT_LEASE_TAKEOVER_DENIED";
     public const string ParseChangesetStale = "SPACE_PARSE_CHANGESET_STALE";
+    public const string CadManualCorrectionLocked =
+        "SPACE_CAD_MANUAL_CORRECTION_LOCKED";
     public const string ValidationBlocking = "SPACE_VALIDATION_BLOCKING";
     public const string PublishReconciliationRequired =
         "SPACE_PUBLISH_RECONCILIATION_REQUIRED";

@@ -21112,11 +21112,13 @@
         "required": [
           "canApply",
           "changeId",
+          "isManualCorrectionLocked",
           "isSelected",
           "kind",
           "logicalId",
           "objectType",
-          "sourceRef"
+          "sourceRef",
+          "userCorrectionVersion"
         ],
         "type": "object",
         "properties": {
@@ -21154,6 +21156,13 @@
           "blockingReasonCode": {
             "type": "string",
             "nullable": true
+          },
+          "isManualCorrectionLocked": {
+            "type": "boolean"
+          },
+          "userCorrectionVersion": {
+            "type": "integer",
+            "format": "int64"
           },
           "beforeBounds": {
             "$ref": "#/components/schemas/CP6.Space.Contracts.SpaceCadMillimeterBoundsV1"
@@ -29067,6 +29076,23 @@
             "type": "string",
             "format": "uuid",
             "nullable": true
+          },
+          "isManualCorrectionLocked": {
+            "type": "boolean"
+          },
+          "userCorrectionVersion": {
+            "type": "integer",
+            "format": "int64"
+          },
+          "manualCorrectionUpdatedBy": {
+            "type": "string",
+            "format": "uuid",
+            "nullable": true
+          },
+          "manualCorrectionUpdatedAtUtc": {
+            "type": "string",
+            "format": "date-time",
+            "nullable": true
           }
         },
         "additionalProperties": false
@@ -29646,6 +29672,10 @@
           },
           "elementType": {
             "type": "string",
+            "nullable": true
+          },
+          "manualCorrectionLocked": {
+            "type": "boolean",
             "nullable": true
           }
         },

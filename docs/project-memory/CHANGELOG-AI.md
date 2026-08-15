@@ -2,6 +2,12 @@
 
 > 依据 Git log 汇总，不替代完整 Git 历史。重点记录影响接手判断的里程碑。
 
+## 2026-08-15：Space Studio CAD 人工校正锁定
+
+- CAD 来源通用元素新增持久人工校正锁、单调版本、最后操作者和 UTC 时间；锁定/解除锁定继续走现有 Lease/Revision/幂等 `UpdateProperties` 原子批，锁定后的人工编辑递增版本。
+- 重新解析命中锁定 SourceRef 时只生成不可应用的 Blocking Conflict，审核空间可定位并显示版本；CAD Changeset 最终 Apply Fence 返回稳定 `SPACE_CAD_MANUAL_CORRECTION_LOCKED`，防止绕过 UI 覆盖。
+- 加法迁移、版本克隆、OpenAPI/双 SDK、Space Unit 533、Web 809、Playwright 20、真实 LocalDB 1、CAD reparse 1、Release build 与 EF 模型门禁通过。LM-FR-018 仓库实现闭环；WP4 仍为 Partial/Pending，GA 保持 72% / `NoGo`。
+
 ## 2026-08-15：Space Studio 对象复制
 
 - 批量检查器新增 1–100 个 Active 通用元素/货架复制，并允许在一个 Design V1 原子命令批中混合 `CreateElement` 与 `GenerateRackArray`；确认前零 Draft 写入。

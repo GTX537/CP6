@@ -172,7 +172,11 @@ public sealed record SpaceSceneElementDto(
     int Depth,
     string? BusinessCode,
     string? LinkedEntityType,
-    Guid? LinkedLogicalId);
+    Guid? LinkedLogicalId,
+    bool IsManualCorrectionLocked,
+    long UserCorrectionVersion,
+    Guid? ManualCorrectionUpdatedBy,
+    DateTime? ManualCorrectionUpdatedAtUtc);
 
 public sealed record SpaceSceneElementAttributeDto(
     Guid Id,

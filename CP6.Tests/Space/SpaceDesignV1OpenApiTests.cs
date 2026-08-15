@@ -1502,7 +1502,7 @@ public sealed class SpaceDesignV1OpenApiTests
     }
 
     [Fact]
-    public void Element_property_commands_expose_the_optional_retype_contract()
+    public void Element_property_commands_expose_optional_retype_and_manual_lock_contracts()
     {
         using var document = ReadContract();
         var schema = document.RootElement
@@ -1512,17 +1512,78 @@ public sealed class SpaceDesignV1OpenApiTests
                 "CP6.Space.Contracts.SpaceUpdateElementPropertiesDto");
         var elementType = schema.GetProperty("properties")
             .GetProperty("elementType");
+        var manualCorrectionLocked = schema.GetProperty("properties")
+            .GetProperty("manualCorrectionLocked");
 
         Assert.Equal("string", elementType.GetProperty("type").GetString());
+        Assert.Equal(
+            "boolean",
+            manualCorrectionLocked.GetProperty("type").GetString());
+        Assert.True(
+            manualCorrectionLocked.GetProperty("nullable").GetBoolean());
         if (schema.TryGetProperty("required", out var required))
         {
+            var requiredProperties = required.EnumerateArray()
+                .Select(item => item.GetString())
+                .ToArray();
             Assert.DoesNotContain(
-                required.EnumerateArray().Select(item => item.GetString()),
+                requiredProperties,
                 item => string.Equals(
                     item,
                     "elementType",
                     StringComparison.Ordinal));
+            Assert.DoesNotContain(
+                requiredProperties,
+                item => string.Equals(
+                    item,
+                    "manualCorrectionLocked",
+                    StringComparison.Ordinal));
         }
+    }
+
+    [Fact]
+    public void Scene_and_CAD_review_expose_manual_correction_lock_state()
+    {
+        using var document = ReadContract();
+        var schemas = document.RootElement
+            .GetProperty("components")
+            .GetProperty("schemas");
+        var sceneProperties = schemas
+            .GetProperty("CP6.Space.Contracts.SpaceSceneElementDto")
+            .GetProperty("properties");
+        Assert.Equal(
+            "boolean",
+            sceneProperties.GetProperty("isManualCorrectionLocked")
+                .GetProperty("type")
+                .GetString());
+        Assert.Equal(
+            "int64",
+            sceneProperties.GetProperty("userCorrectionVersion")
+                .GetProperty("format")
+                .GetString());
+
+        var cadChange = schemas
+            .GetProperty("CP6.Space.Contracts.SpaceCadChangeV1");
+        var cadRequired = cadChange.GetProperty("required")
+            .EnumerateArray()
+            .Select(item => item.GetString())
+            .ToHashSet(StringComparer.Ordinal);
+        Assert.Contains("isManualCorrectionLocked", cadRequired);
+        Assert.Contains("userCorrectionVersion", cadRequired);
+
+        var typescript = File.ReadAllText(
+            Path.Combine(
+                RepositoryRoot,
+                "sdk",
+                "typescript",
+                "space-design-v1",
+                "spaceDesignV1Client.ts"));
+        AssertRequiredTypeScriptProperties(
+            ExtractTypeBlock(
+                typescript,
+                "export interface ISpaceCadChangeV1"),
+            "isManualCorrectionLocked",
+            "userCorrectionVersion");
     }
 
     [Fact]
