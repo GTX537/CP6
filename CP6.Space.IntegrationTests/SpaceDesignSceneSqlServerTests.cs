@@ -1728,13 +1728,115 @@ public sealed class SpaceDesignSceneSqlServerTests
                     SpaceLifecycleState.Active.ToString(),
                     candidate.Revision.LifecycleState));
 
-            var atomicFailure =
+            var copiedElementId = Guid.NewGuid();
+            var copied = await service.ApplyElementCommandsAsync(
+                draft.Id,
+                floor.LogicalId,
                 new ApplySpaceElementCommandBatchRequest(
                     SpaceElementCommandContract.SchemaVersion,
                     Guid.NewGuid(),
                     clientId,
                     editLease.LeaseId,
                     ExpectedFloorRevision: 5,
+                    [
+                        new SpaceElementCommandDto(
+                            Guid.NewGuid(),
+                            SpaceElementCommandContract.CreateElement,
+                            copiedElementId,
+                            null,
+                            CreateElement: new SpaceCreateElementDto(
+                                SpaceElementTypes.Column,
+                                """
+                                {"schemaVersion":1,"kind":"box","width":400,"height":5000,"depth":400}
+                                """,
+                                X: 2400,
+                                Y: 700,
+                                Z: 0,
+                                RotationZ: 0,
+                                Width: 400,
+                                Height: 5000,
+                                Depth: 400,
+                                BusinessCode: null,
+                                ParentLogicalId: null,
+                                SourceId: null,
+                                SourceRef: null,
+                                Attributes: [])),
+                        new SpaceElementCommandDto(
+                            Guid.NewGuid(),
+                            SpaceElementCommandContract.GenerateRackArray,
+                            rack.LogicalId,
+                            null,
+                            GenerateRackArray:
+                                new SpaceGenerateRackArrayDto(
+                                    Rows: 1,
+                                    Columns: 2,
+                                    RowGap: 0,
+                                    ColumnGap: 500,
+                                    StaggerOffset: 0,
+                                    CodePrefix: "R-TEMPLATE-COPY-",
+                                    StartNumber: 1,
+                                    CodeDigits: 3)),
+                    ]));
+
+            Assert.Equal(6, copied.FloorRevision);
+            Assert.Equal(copiedElementId, copied.AffectedObjects.Single()
+                .Element.Revision.LogicalId);
+            var copiedRackId = copied.AffectedRacks!.Single()
+                .Revision.LogicalId;
+            Assert.Equal(
+                "R-TEMPLATE-COPY-001",
+                copied.AffectedRacks!.Single().RackCode);
+            Assert.Single(copied.AffectedRackLevels!);
+            Assert.All(
+                copied.AffectedLocations!,
+                copiedLocation =>
+                {
+                    Assert.Null(copiedLocation.LocationCode);
+                    Assert.Equal(
+                        SpaceExternalBindingState.Unbound.ToString(),
+                        copiedLocation.ExternalBindingState);
+                });
+
+            var copiedIds = new[] { copiedElementId, copiedRackId };
+            var copyUndo = await service.ApplyElementCommandsAsync(
+                draft.Id,
+                floor.LogicalId,
+                LifecycleBatch(
+                    clientId,
+                    editLease.LeaseId,
+                    expectedFloorRevision: 6,
+                    SpaceElementCommandContract.DeleteObject,
+                    copiedIds));
+            Assert.Equal(7, copyUndo.FloorRevision);
+            Assert.Equal(
+                SpaceLifecycleState.RemoveRequested.ToString(),
+                copyUndo.AffectedObjects.Single().Element.Revision.LifecycleState);
+            Assert.Equal(
+                SpaceLifecycleState.RemoveRequested.ToString(),
+                copyUndo.AffectedRacks!.Single().Revision.LifecycleState);
+
+            var copyRedo = await service.ApplyElementCommandsAsync(
+                draft.Id,
+                floor.LogicalId,
+                LifecycleBatch(
+                    clientId,
+                    editLease.LeaseId,
+                    expectedFloorRevision: 7,
+                    SpaceElementCommandContract.RestoreLogicalObject,
+                    copiedIds));
+            Assert.Equal(8, copyRedo.FloorRevision);
+            Assert.Equal(copiedElementId, copyRedo.AffectedObjects.Single()
+                .Element.Revision.LogicalId);
+            Assert.Equal(copiedRackId, copyRedo.AffectedRacks!.Single()
+                .Revision.LogicalId);
+
+            var atomicFailure =
+                new ApplySpaceElementCommandBatchRequest(
+                    SpaceElementCommandContract.SchemaVersion,
+                    Guid.NewGuid(),
+                    clientId,
+                    editLease.LeaseId,
+                    ExpectedFloorRevision: 8,
                     [
                         new SpaceElementCommandDto(
                             Guid.NewGuid(),
@@ -1755,6 +1857,7 @@ public sealed class SpaceDesignSceneSqlServerTests
                     atomicFailure));
 
             Assert.Equal(SpaceErrorCodes.LogicalIdNotFound, problem.Code);
+            var failedCopyElementId = Guid.NewGuid();
             var codeConflict =
                 await Assert.ThrowsAsync<SpaceProblemException>(
                     () => service.ApplyElementCommandsAsync(
@@ -1765,8 +1868,30 @@ public sealed class SpaceDesignSceneSqlServerTests
                             Guid.NewGuid(),
                             clientId,
                             editLease.LeaseId,
-                            ExpectedFloorRevision: 5,
+                            ExpectedFloorRevision: 8,
                             [
+                                new SpaceElementCommandDto(
+                                    Guid.NewGuid(),
+                                    SpaceElementCommandContract.CreateElement,
+                                    failedCopyElementId,
+                                    null,
+                                    CreateElement: new SpaceCreateElementDto(
+                                        SpaceElementTypes.Column,
+                                        """
+                                        {"schemaVersion":1,"kind":"box","width":400,"height":5000,"depth":400}
+                                        """,
+                                        X: 2800,
+                                        Y: 700,
+                                        Z: 0,
+                                        RotationZ: 0,
+                                        Width: 400,
+                                        Height: 5000,
+                                        Depth: 400,
+                                        BusinessCode: null,
+                                        ParentLogicalId: null,
+                                        SourceId: null,
+                                        SourceRef: null,
+                                        Attributes: [])),
                                 new SpaceElementCommandDto(
                                     Guid.NewGuid(),
                                     SpaceElementCommandContract
@@ -1785,6 +1910,10 @@ public sealed class SpaceDesignSceneSqlServerTests
                                             CodeDigits: 3)),
                             ])));
             Assert.Equal(SpaceErrorCodes.CommandConflict, codeConflict.Code);
+            Assert.False(await context.ElementRevisions
+                .AsNoTracking()
+                .AnyAsync(candidate =>
+                    candidate.LogicalId == failedCopyElementId));
             Assert.Equal(
                 1000,
                 await context.RackRevisions
@@ -1793,19 +1922,20 @@ public sealed class SpaceDesignSceneSqlServerTests
                     .Select(candidate => candidate.X)
                     .SingleAsync());
             Assert.Equal(
-                5,
+                8,
                 await context.FloorRevisions
                     .AsNoTracking()
                     .Where(candidate => candidate.Id == floor.Id)
                     .Select(candidate => candidate.Revision)
                     .SingleAsync());
-            Assert.Equal(5, await context.ElementCommandBatches.CountAsync());
-            Assert.Equal(11, await context.ElementCommandRecords.CountAsync());
+            Assert.Equal(8, await context.ElementCommandBatches.CountAsync());
+            Assert.Equal(17, await context.ElementCommandRecords.CountAsync());
             var arrayAudit = await context.ElementCommandRecords
                 .AsNoTracking()
                 .SingleAsync(candidate =>
                     candidate.CommandType ==
-                    SpaceElementCommandContract.GenerateRackArray);
+                    SpaceElementCommandContract.GenerateRackArray &&
+                    candidate.PayloadJson.Contains("\"codePrefix\":\"ARR-\""));
             Assert.Contains("\"generatedRacks\"", arrayAudit.AfterJson);
             Assert.Contains("\"rackCode\":\"ARR-001\"", arrayAudit.AfterJson);
         });

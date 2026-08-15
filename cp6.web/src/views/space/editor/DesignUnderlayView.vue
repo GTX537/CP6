@@ -62,6 +62,11 @@ import {
   validateElementRedrawTarget,
   type ElementRedrawPoint,
 } from '@/modules/space-design/commands/elementRedraw'
+import {
+  buildObjectCopyPlan,
+  inspectObjectCopySelection,
+  type ObjectCopySource,
+} from '@/modules/space-design/commands/objectCopy'
 import DesignBatchToolsPanel from '@/modules/space-design/panels/DesignBatchToolsPanel.vue'
 import { sceneElementPropertiesPayload } from '@/modules/space-design/panels/elementProperties'
 import DesignLocationCodingPanel from '@/modules/space-design/coding/DesignLocationCodingPanel.vue'
@@ -485,6 +490,19 @@ const elementMergeState = computed<{
   } catch (error) {
     return {
       error: error instanceof Error ? error.message : '当前选择不能合并',
+    }
+  }
+})
+const objectCopyState = computed<{ eligible: boolean; reason: string }>(() => {
+  if (selectedEditorObjectCount.value !== selectedObjects.value.length) {
+    return { eligible: false, reason: '仅支持复制通用元素和货架' }
+  }
+  try {
+    return inspectObjectCopySelection(selectedCopySources())
+  } catch (error) {
+    return {
+      eligible: false,
+      reason: error instanceof Error ? error.message : '当前选择不能复制',
     }
   }
 })
@@ -1878,6 +1896,79 @@ async function rotateSelected(degrees: number): Promise<void> {
   )
 }
 
+async function copySelectedObjects(): Promise<void> {
+  if (!objectCopyState.value.eligible || savingElement.value || readonlyScene.value) {
+    ElMessage.warning(objectCopyState.value.reason || '当前选择不能复制')
+    return
+  }
+  let plan
+  try {
+    plan = buildObjectCopyPlan(selectedCopySources(), activeRacks.value)
+  } catch (error) {
+    ElMessage.warning(error instanceof Error ? error.message : '当前选择不能复制')
+    return
+  }
+  try {
+    await ElMessageBox.confirm(
+      `将复制 ${plan.elementLogicalIds.length} 个通用元素和 ${plan.expectedRackCopies} 个货架。通用元素保留几何、类型、父级和设计属性，清除唯一业务编码、业务链接与 CAD 来源；货架复制逐层规格和未绑定库位并生成新编码。操作作为一个原子批保存且可撤销，是否继续？`,
+      '确认复制对象',
+      {
+        type: 'warning',
+        confirmButtonText: '确认复制',
+        cancelButtonText: '取消',
+      },
+    )
+  } catch {
+    return
+  }
+
+  savingElement.value = true
+  try {
+    const response = await applyEditorCommands(plan.commands)
+    const affectedElementIds = new Set((response.affectedObjects ?? [])
+      .map((affected) => affected.targetLogicalId)
+      .filter((id): id is string => Boolean(id)))
+    if (plan.elementLogicalIds.some((logicalId) => !affectedElementIds.has(logicalId))) {
+      throw new Error('Copy response did not contain every generated element')
+    }
+    const rackLogicalIds = (response.affectedRacks ?? [])
+      .map((rack) => rack.revision?.logicalId)
+      .filter((id): id is string => Boolean(id))
+    if (rackLogicalIds.length !== plan.expectedRackCopies) {
+      throw new Error('Copy response did not contain every generated rack')
+    }
+    const copied = [
+      ...plan.elementLogicalIds.map((logicalId) => ({
+        logicalId,
+        ownerKind: 'Element' as const,
+      })),
+      ...rackLogicalIds.map((logicalId) => ({
+        logicalId,
+        ownerKind: 'Rack' as const,
+      })),
+    ]
+    history.push({
+      label: `复制 ${copied.length} 个对象`,
+      undo: copied.map(({ logicalId }) => ({
+        type: 'DeleteObject',
+        targetLogicalId: logicalId,
+      })),
+      redo: copied.map(({ logicalId }) => ({
+        type: 'RestoreLogicalObject',
+        targetLogicalId: logicalId,
+      })),
+    })
+    touchHistory()
+    await loadScene()
+    selectObjects(copied, 'replace')
+    ElMessage.success(`已复制 ${copied.length} 个草稿对象`)
+  } catch {
+    ElMessage.error('对象复制失败，请刷新场景后重试')
+  } finally {
+    savingElement.value = false
+  }
+}
+
 async function mergeSelectedElements(): Promise<void> {
   const plan = elementMergeState.value.plan
   if (!plan) {
@@ -2561,6 +2652,42 @@ function selectedSnapshots(): EditorObjectSnapshot[] {
   })
 }
 
+function selectedCopySources(): ObjectCopySource[] {
+  const scene = designScene.value
+  if (!scene) return []
+  return selectedObjects.value.map((selection) => {
+    if (selection.ownerKind === 'Element') {
+      const element = activeElements.value.find(
+        (candidate) => candidate.revision?.logicalId === selection.logicalId,
+      )
+      if (!element) throw new Error(`Selected element ${selection.logicalId} is unavailable`)
+      const revisionId = element.revision?.revisionId?.toLowerCase()
+      const attributes = (scene.elementAttributes ?? [])
+        .filter((attribute) =>
+          attribute.elementRevisionId?.toLowerCase() === revisionId)
+        .map((attribute) => ({
+          namespace: attribute.namespace ?? '',
+          key: attribute.key ?? '',
+          valueType: attribute.valueType ?? 'String',
+          value: attribute.value,
+          unit: attribute.unit,
+        }))
+      return { ownerKind: 'Element' as const, element, attributes }
+    }
+    if (selection.ownerKind === 'Rack') {
+      const rack = activeRacks.value.find(
+        (candidate) => candidate.revision?.logicalId === selection.logicalId,
+      )
+      if (!rack) throw new Error(`Selected rack ${selection.logicalId} is unavailable`)
+      const hasActiveLevel = (scene.rackLevels ?? []).some((level) =>
+        level.rackLogicalId === selection.logicalId &&
+        level.revision?.lifecycleState === 'Active')
+      return { ownerKind: 'Rack' as const, rack, hasActiveLevel }
+    }
+    throw new Error('Only common elements and racks can be copied')
+  })
+}
+
 function drawableBounds(drawable: ElementCanvasDrawable) {
   if (drawable.kind === 'polygon') {
     const xs = drawable.points.map((point) => point.x)
@@ -3125,12 +3252,15 @@ function tabClientInstanceId(): string {
             :merge-hint="elementMergeState.error"
             :can-split="Boolean(elementSplitState.plan)"
             :split-hint="elementSplitState.error"
+            :can-copy="objectCopyState.eligible"
+            :copy-hint="objectCopyState.reason"
             @align="alignSelected"
             @distribute="distributeSelected"
             @rotate="rotateSelected"
             @remove="removeSelected"
             @merge="mergeSelectedElements"
             @split="splitSelectedElement"
+            @copy="copySelectedObjects"
             @array="generateRackArray"
             @undo="undoSavedCommand"
             @redo="redoSavedCommand"

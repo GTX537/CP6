@@ -2,6 +2,12 @@
 
 > 依据 Git log 汇总，不替代完整 Git 历史。重点记录影响接手判断的里程碑。
 
+## 2026-08-15：Space Studio 对象复制
+
+- 批量检查器新增 1–100 个 Active 通用元素/货架复制，并允许在一个 Design V1 原子命令批中混合 `CreateElement` 与 `GenerateRackArray`；确认前零 Draft 写入。
+- 元素副本清除唯一 BusinessCode、业务链接和 CAD 来源但保留设计几何/属性；货架副本复制 Active 层及 Generated/Unbound 空编码库位。撤销/重做只 Delete/Restore 原新 LogicalId，不重复创建。
+- 复制聚焦、前端全量、真 SQL 混合批、Playwright、Space Unit、OpenAPI、类型检查、构建、SDK drift 和 GA 自测通过。LM-FR-023 仓库实现闭环；WP4 仍为 Partial/Pending，GA 保持 72% / `NoGo`。
+
 ## 2026-08-15：Space Studio CAD 异常对象画布重画
 
 - 工作台新增单个 Active 非资产通用元素的 2D 多边形重画；本地绘制在显式确认前零 Draft 写入，3–100 点、重复、零面积、自交和 Int32 包络均失败关闭。

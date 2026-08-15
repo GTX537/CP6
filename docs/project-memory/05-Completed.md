@@ -1,5 +1,12 @@
 # 已完成能力与近期里程碑
 
+## 2026-08-15 Space Studio 对象复制
+
+- 批量检查器可复制 1–100 个 Active 通用元素和货架，允许混合选择；确认前零写入，确认后 `CreateElement` 与 `GenerateRackArray` 使用同一 Lease/Revision/Content Hash/幂等原子批。
+- 通用元素副本保留几何、类型、父级和设计属性，但清除唯一业务编码、业务链接及 CAD 来源；货架副本复制 Active RackLevel 与空编码、Generated/Unbound Location，不复制 WMS 绑定语义，并生成 Zone 内新编码。
+- 撤销/重做只对既有新 LogicalId 执行 Delete/Restore，不重复 Create。复制聚焦 4/4、面板 3/3、前端全量 805/805、真 SQL 1/1、Space Studio Playwright 19/19、Space Unit 531/531、OpenAPI 44/44、类型检查、构建、SDK drift 与 GA 自测通过。详细报告见 `docs/space/reports/2026-08-15-space-studio-object-copy.md`。
+- LM-FR-023 的对齐、等距分布、复制、旋转和阵列仓库实现现已闭环；WP4 保持 Partial/Pending，GA 保持 72% / `NoGo`。
+
 ## 2026-08-15 Space Studio CAD 异常对象画布重画
 
 - 单个 Active 非资产通用元素可在 2D 画布进入重画模式；R/Enter/Backspace/Esc 与命令栏按钮可达，状态栏持续显示本地未保存顶点。3–100 点、重复、零面积、自交和 Int32 包络校验均在显式确认前完成，取消时 Draft 零写入。

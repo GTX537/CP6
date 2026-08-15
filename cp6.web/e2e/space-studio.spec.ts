@@ -714,6 +714,72 @@ test('redraws a CAD exception on canvas without changing its identity', async ({
   expect(errors).toEqual([])
 })
 
+test('copies a Draft element only after confirmation and reuses stable redo identity', async ({ page }) => {
+  const errors = collectPageErrors(page)
+  const editorBodies: Array<Record<string, any>> = []
+  await installSpaceStudioFixtures(page, [], { editorBodies })
+  await page.setViewportSize({ width: 1440, height: 900 })
+  await page.goto(studioUrl)
+  await expect(page.locator('.studio-title-state').getByText('租约至', { exact: false })).toBeVisible()
+  await expect(page.locator('.el-loading-mask')).toHaveCount(0)
+
+  const canvas = page.locator('.canvas .konvajs-content')
+  const bounds = await canvas.boundingBox()
+  expect(bounds).not.toBeNull()
+  await page.mouse.click(
+    bounds!.x + (5_200 + 200) * 0.05,
+    bounds!.y + bounds!.height - (2_400 + 200) * 0.05,
+  )
+  await expect(page.locator('.studio-statusbar')).toContainText('选择 1')
+
+  await page.getByRole('tab', { name: '批量', exact: true }).click()
+  const tools = page.locator('[data-test="design-batch-tools"]')
+  await tools.locator('[data-test="copy-objects"]').click()
+  await expect(page.getByText('确认复制对象', { exact: true })).toBeVisible()
+  expect(editorBodies).toHaveLength(0)
+  await page.getByRole('button', { name: '确认复制', exact: true }).click()
+
+  await expect(page.getByText('已复制 1 个草稿对象', { exact: true })).toBeVisible()
+  await expect.poll(() => editorBodies.length).toBe(1)
+  const created = editorBodies[0]!.commands[0]
+  expect(created).toMatchObject({
+    type: 'CreateElement',
+    createElement: {
+      elementType: 'Column',
+      x: 6_100,
+      y: 2_400,
+      z: 0,
+      width: 400,
+      height: 3_000,
+      depth: 400,
+      attributes: [],
+    },
+  })
+  expect(created.targetLogicalId).not.toBe(columnId)
+  expect(created.createElement).not.toHaveProperty('businessCode')
+  expect(created.createElement).not.toHaveProperty('linkedEntityType')
+  expect(created.createElement).not.toHaveProperty('sourceId')
+
+  await tools.getByRole('button', { name: '撤销', exact: true }).click()
+  await expect(page.getByText('已撤销：复制 1 个对象', { exact: true })).toBeVisible()
+  await expect.poll(() => editorBodies.length).toBe(2)
+  expect(editorBodies[1]!.commands).toEqual(expect.arrayContaining([expect.objectContaining({
+    type: 'DeleteObject',
+    targetLogicalId: created.targetLogicalId,
+  })]))
+
+  await tools.getByRole('button', { name: '重做', exact: true }).click()
+  await expect(page.getByText('已重做：复制 1 个对象', { exact: true })).toBeVisible()
+  await expect.poll(() => editorBodies.length).toBe(3)
+  expect(editorBodies[2]!.commands).toEqual(expect.arrayContaining([expect.objectContaining({
+    type: 'RestoreLogicalObject',
+    targetLogicalId: created.targetLogicalId,
+  })]))
+  expect(editorBodies.flatMap((body) => body.commands)
+    .filter((command: any) => command.type === 'CreateElement')).toHaveLength(1)
+  expect(errors).toEqual([])
+})
+
 test('previews protected location codes and explicitly applies the frozen proposal', async ({ page }) => {
   const errors = collectPageErrors(page)
   const methods: string[] = []
@@ -1415,6 +1481,11 @@ async function installSpaceStudioFixtures(
             targetLogicalId: command.targetLogicalId,
           })),
           affectedElements,
+          affectedObjects: affectedElements.map((element) => ({
+            targetLogicalId: element.revision.logicalId,
+            element,
+            attributes: [],
+          })),
           affectedRacks,
           affectedRackLevels: [],
           affectedLocations: [],
