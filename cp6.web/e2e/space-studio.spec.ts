@@ -615,6 +615,105 @@ test('splits a CAD exception group with inherited properties and stable redo ide
   expect(errors).toEqual([])
 })
 
+test('redraws a CAD exception on canvas without changing its identity', async ({ page }) => {
+  const errors = collectPageErrors(page)
+  const editorBodies: Array<Record<string, any>> = []
+  await installSpaceStudioFixtures(page, [], { editorBodies })
+  await page.setViewportSize({ width: 1440, height: 900 })
+  await page.goto(studioUrl)
+  await expect(page.locator('.studio-title-state').getByText('租约至', { exact: false })).toBeVisible()
+  await expect(page.locator('.el-loading-mask')).toHaveCount(0)
+
+  const canvas = page.locator('.canvas .konvajs-content')
+  const bounds = await canvas.boundingBox()
+  expect(bounds).not.toBeNull()
+  const clickWorld = async (x: number, y: number) => page.mouse.click(
+    bounds!.x + x * 0.05,
+    bounds!.y + bounds!.height - y * 0.05,
+  )
+  await clickWorld(5_400, 2_600)
+  await expect(page.locator('.studio-statusbar')).toContainText('选择 1')
+
+  await page.locator('[data-testid="space-redraw-tool"]').click()
+  await expect(page.locator('.studio-title-state')).toContainText('未保存重画')
+  await clickWorld(4_800, 2_200)
+  await clickWorld(5_600, 2_200)
+  await clickWorld(5_700, 2_900)
+  await clickWorld(4_900, 3_000)
+  await expect(page.locator('.studio-statusbar')).toContainText('重画 4/100 点')
+  expect(editorBodies).toHaveLength(0)
+
+  await page.locator('[data-testid="space-redraw-complete"]').click()
+  await expect(page.getByText('确认重画', { exact: true })).toBeVisible()
+  expect(editorBodies).toHaveLength(0)
+  await page.getByRole('button', { name: '确认保存', exact: true }).click()
+
+  await expect(page.getByText('重画异常对象', { exact: true })).toBeVisible()
+  await expect.poll(() => editorBodies.length).toBe(1)
+  expect(editorBodies[0]).toMatchObject({
+    leaseId: ownedLease().leaseId,
+    expectedFloorRevision: 7,
+    commands: [{
+      type: 'UpdateProperties',
+      targetLogicalId: columnId,
+      updateProperties: {
+        elementType: 'Column',
+        x: 4_800,
+        y: 2_200,
+        z: 0,
+        rotationZ: 0,
+        width: 900,
+        height: 3_000,
+        depth: 800,
+        businessCode: 'COL-01',
+      },
+    }],
+  })
+  expect(JSON.parse(
+    editorBodies[0]!.commands[0].updateProperties.geometryJson,
+  )).toEqual({
+    schemaVersion: 1,
+    kind: 'polygon',
+    outer: [
+      { x: 0, y: 0 },
+      { x: 800, y: 0 },
+      { x: 900, y: 700 },
+      { x: 100, y: 800 },
+    ],
+    holes: [],
+    height: 3_000,
+  })
+
+  const toolbar = page.locator('.studio-commandbar')
+  await toolbar.getByRole('button', { name: '撤销', exact: true }).click()
+  await expect(page.getByText('已撤销：重画异常对象', { exact: true })).toBeVisible()
+  await expect.poll(() => editorBodies.length).toBe(2)
+  expect(editorBodies[1]!.commands[0]).toMatchObject({
+    type: 'UpdateProperties',
+    targetLogicalId: columnId,
+    updateProperties: {
+      geometryJson: '{"schemaVersion":1,"kind":"box","width":400,"height":3000,"depth":400}',
+      x: 5_200,
+      y: 2_400,
+      width: 400,
+      depth: 400,
+    },
+  })
+
+  await toolbar.getByRole('button', { name: '重做', exact: true }).click()
+  await expect(page.getByText('已重做：重画异常对象', { exact: true })).toBeVisible()
+  await expect.poll(() => editorBodies.length).toBe(3)
+  expect(editorBodies[2]!.commands[0]).toMatchObject({
+    type: 'UpdateProperties',
+    targetLogicalId: columnId,
+  })
+  expect(JSON.parse(editorBodies[2]!.commands[0].updateProperties.geometryJson).kind)
+    .toBe('polygon')
+  expect(editorBodies.flatMap((body) => body.commands)
+    .every((command: any) => command.targetLogicalId === columnId)).toBe(true)
+  expect(errors).toEqual([])
+})
+
 test('previews protected location codes and explicitly applies the frozen proposal', async ({ page }) => {
   const errors = collectPageErrors(page)
   const methods: string[] = []

@@ -1,25 +1,32 @@
 # 已完成能力与近期里程碑
 
+## 2026-08-15 Space Studio CAD 异常对象画布重画
+
+- 单个 Active 非资产通用元素可在 2D 画布进入重画模式；R/Enter/Backspace/Esc 与命令栏按钮可达，状态栏持续显示本地未保存顶点。3–100 点、重复、零面积、自交和 Int32 包络校验均在显式确认前完成，取消时 Draft 零写入。
+- 确认后只提交同一 LogicalId 的 `UpdateProperties`，将世界轮廓规范化为局部多边形并保留类型、BusinessCode、业务链接、设计属性及 CAD SourceId/SourceRef；撤销/重做仍为同一 ID 的补偿更新，2D/3D 消费同一几何。
+- 门禁通过：重画聚焦 6/6、前端 800/800、Space Unit 531/531、OpenAPI 44/44、SQL Server LocalDB 1/1 且 0 skipped、Space Studio Playwright 18/18、Vue type-check、production build、Release solution 0 warning/0 error、SDK drift 和 GA 证据 36/36。详细报告见 `docs/space/reports/2026-08-15-space-cad-exception-redraw.md`。
+- 该纵切关闭 LM-FR-017 的“重画”，五项异常处理仓库能力现均已实现。WP4 仍保持 Partial/Pending，须继续复核其它 LM-FR 并取得真实 CAD/Excel/PDF/Provider/WMS 接受证据；GA 保持 72% / `NoGo`。
+
 ## 2026-08-15 Space Studio CAD 异常对象拆分
 
 - 单个 Active 非资产 `group` 元素可拆成 2–100 个独立元素：首部件保留当前 LogicalId，其余部件分配新 LogicalId，并继承类型、父级、BusinessCode、业务链接、设计属性和成对的 CAD SourceId/SourceRef。
 - 正向/撤销/重做分别复用 `UpdateProperties + CreateElement`、`UpdateProperties + DeleteObject`、`UpdateProperties + RestoreLogicalObject` 原子批；重做保持相同新 LogicalId且不会重复 Create。组合整体移动/旋转按参数化渲染器同一坐标变换展开，2D/3D 拆分前后等价。
 - `SpaceCreateElementDto` 以可选成对字段补齐业务链接继承，OpenAPI、双 SDK 和零写入验证同步。门禁通过：Space Unit 531/531、前端 794/794、SQL Server LocalDB 1/1 且 0 skipped、Space Studio Playwright 17/17、Vue type-check、production build、Release solution、SDK drift 和 GA 证据 36/36。详细报告见 `docs/space/reports/2026-08-15-space-cad-exception-split.md`。
-- 该纵切关闭 LM-FR-017 的“拆分”；当前只剩画布重画为 P0。WP4 保持 Partial，GA 保持 72% / `NoGo`。
+- 该纵切关闭 LM-FR-017 的“拆分”；画布重画已由后续独立纵切关闭。WP4 保持 Partial，GA 保持 72% / `NoGo`。
 
 ## 2026-08-15 Space Studio CAD 异常对象合并
 
 - 新增受约束的 `group` 组合几何，允许 2–20 个通用元素在保留首选 LogicalId 的前提下合并；来源 LogicalId/SourceId/SourceRef、相对位置、旋转、尺寸和原始几何均保留，资产、元数据或属性冲突失败关闭。
 - 合并复用现有 `UpdateProperties + DeleteObject` 原子命令，撤销复用 `UpdateProperties + RestoreLogicalObject` 补偿批次，没有第二套写接口；2D/3D 递归渲染共享同一 LogicalId，工作台提供显式确认和可达按钮。
 - 门禁通过：Space Element 50/50、Space Unit 531/531、前端聚焦 21/21 与全量 788/788、Vue type-check、SQL Server LocalDB 1/1 且 0 skipped、Space Studio Playwright 16/16、完整 Release solution 0 warning/0 error、production build、SDK drift 和 GA 证据 36/36。详细报告见 `docs/space/reports/2026-08-15-space-cad-exception-merge.md`。
-- 该纵切关闭 LM-FR-017 的“合并”；拆分已由后续独立纵切关闭，当前画布重画仍为 P0。WP4 保持 Partial，GA 保持 72% / `NoGo`。
+- 该纵切关闭 LM-FR-017 的“合并”；拆分与画布重画已由后续独立纵切关闭。WP4 保持 Partial，GA 保持 72% / `NoGo`。
 
 ## 2026-08-15 Space Studio CAD 异常对象改类型
 
 - Design V1 `UpdateProperties` 增加可选 `ElementType`，支持通用元素在保留 LogicalId 的情况下切换到受支持语义类型；资产实例拒绝改型，未知类型在零写入前失败。
 - 工作台属性检查器增加构件类型选择；保存、场景刷新、命令审计及撤销/重做继续复用 Lease、Floor/Content Revision 与幂等命令批，没有建立第二套设计权威。
 - 生成 OpenAPI、C# 与 TypeScript SDK 已同步；真 SQL 1/1、Space Unit 全量 526/526、OpenAPI 44/44、前端全量 780/780、Vue type-check 和 Space Studio Playwright 全量 15/15 通过。
-- 该纵切只关闭 LM-FR-017 的“改类型”；删除为既有能力，合并与拆分已由后续独立纵切关闭，当前仅重画仍是 P0。WP4 因此为 Partial，GA 保持 72% / `NoGo`。
+- 该纵切只关闭 LM-FR-017 的“改类型”；删除为既有能力，合并、拆分与重画已由后续独立纵切关闭。WP4 仍为 Partial，GA 保持 72% / `NoGo`。
 
 ## 2026-08-15 Space AutoCAD Core Console 开发转换链
 
