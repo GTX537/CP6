@@ -101,6 +101,30 @@ describe('designProjectApi', () => {
     )
   })
 
+  it('creates a tenant warehouse template with an idempotency key', async () => {
+    vi.mocked(http.post).mockResolvedValue({} as never)
+    const request = {
+      templateCode: 'PRIVATE-01',
+      name: 'Private warehouse',
+      schemaVersion: 1,
+      floors: [],
+      zones: [],
+      aisles: [],
+      racks: [],
+    }
+
+    await designProjectApi.createTenantWarehouseTemplate(
+      request,
+      'tenant-template-key',
+    )
+
+    expect(http.post).toHaveBeenCalledWith(
+      '/space/design/v1/templates',
+      request,
+      { headers: { 'Idempotency-Key': 'tenant-template-key' } },
+    )
+  })
+
   it('applies one sealed template floor to a leased Draft floor', async () => {
     vi.mocked(http.post).mockResolvedValue({} as never)
     const request = {

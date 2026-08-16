@@ -24,6 +24,23 @@ const template = SpaceWarehouseTemplateDto.fromJS({
   },
 })
 
+const tenantTemplate = SpaceWarehouseTemplateDto.fromJS({
+  id: 'tenant-template-1',
+  scope: 'Tenant',
+  templateCode: 'PRIVATE-01',
+  name: '华东仓私有模板',
+  description: 'Tenant warehouse',
+  status: 'Active',
+  latestVersion: {
+    id: 'tenant-template-version-1',
+    versionNo: 1,
+    schemaVersion: 1,
+    contentHash: 'c'.repeat(64),
+    status: 'Ready',
+    counts: { floors: 1, zones: 1, aisles: 1, racks: 1, locations: 20 },
+  },
+})
+
 const preview = SpaceWarehouseTemplateInstantiationPreviewDto.fromJS({
   schemaVersion: 1,
   templateId: 'template-1',
@@ -107,5 +124,21 @@ describe('DesignWarehouseTemplatePanel', () => {
       .attributes('disabled')).toBeDefined()
     expect(wrapper.get('[data-testid="warehouse-template-apply"]').text())
       .toContain('安全重试')
+  })
+
+  it('labels tenant templates and hides a preview sealed for another template', async () => {
+    const wrapper = mount(DesignWarehouseTemplatePanel, {
+      props: { templates: [template, tenantTemplate], preview },
+    })
+
+    expect(wrapper.text()).toContain('租户私有 · 华东仓私有模板')
+    await wrapper.get('[data-testid="warehouse-template-select"]')
+      .setValue('tenant-template-1')
+    expect(wrapper.find('.seal').exists()).toBe(false)
+    expect(wrapper.find('[data-testid="warehouse-template-apply"]').exists())
+      .toBe(false)
+
+    await wrapper.get('[data-testid="warehouse-template-preview"]').trigger('click')
+    expect(wrapper.emitted('preview')?.at(-1)?.[0]).toEqual(tenantTemplate)
   })
 })

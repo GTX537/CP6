@@ -5,6 +5,8 @@ import type {
   ICreateSpaceFloorRequest,
   ICreateSpaceFloorResponse,
   ICreateSpaceVersionResponse,
+  ICreateTenantSpaceWarehouseTemplateRequest,
+  ICreateTenantSpaceWarehouseTemplateResponse,
   ISpaceModelDto,
   ISpaceSceneFloorDto,
   ISpaceVersionDto,
@@ -69,6 +71,17 @@ export const designProjectApi = {
     return http.get<unknown, ISpaceWarehouseTemplateDto[]>(
       `${root}/templates`,
       scope ? { params: { scope } } : undefined,
+    )
+  },
+
+  createTenantWarehouseTemplate(
+    request: ICreateTenantSpaceWarehouseTemplateRequest,
+    idempotencyKey: string = crypto.randomUUID(),
+  ) {
+    return http.post<unknown, ICreateTenantSpaceWarehouseTemplateResponse>(
+      `${root}/templates`,
+      request,
+      { headers: { 'Idempotency-Key': idempotencyKey } },
     )
   },
 

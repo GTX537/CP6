@@ -2411,7 +2411,7 @@ public sealed class SpaceDesignV1Service :
         }
     }
 
-    public Task<IReadOnlyList<SpaceWarehouseTemplateDto>>
+    public async Task<IReadOnlyList<SpaceWarehouseTemplateDto>>
         GetWarehouseTemplatesAsync(
             string? scope,
             CancellationToken cancellationToken = default)
@@ -2435,19 +2435,175 @@ public sealed class SpaceDesignV1Service :
                 "Supported warehouse template scopes are System and Tenant.");
         }
 
-        IReadOnlyList<SpaceWarehouseTemplateDto> result =
-            SpaceBuiltInWarehouseTemplates.List()
-                .Where(template =>
-                    string.IsNullOrWhiteSpace(normalizedScope) ||
-                    string.Equals(
-                        template.Scope,
-                        normalizedScope,
-                        StringComparison.OrdinalIgnoreCase))
-                .ToArray();
-        return Task.FromResult(result);
+        var result = new List<SpaceWarehouseTemplateDto>();
+        var includeSystem = string.IsNullOrWhiteSpace(normalizedScope) ||
+            string.Equals(
+                normalizedScope,
+                "System",
+                StringComparison.OrdinalIgnoreCase);
+        var includeTenant = string.IsNullOrWhiteSpace(normalizedScope) ||
+            string.Equals(
+                normalizedScope,
+                "Tenant",
+                StringComparison.OrdinalIgnoreCase);
+        if (includeSystem)
+            result.AddRange(SpaceBuiltInWarehouseTemplates.List());
+        if (includeTenant)
+        {
+            var templates = await _context.WarehouseTemplates
+                .AsNoTracking()
+                .OrderBy(template => template.NormalizedTemplateCode)
+                .ThenBy(template => template.Id)
+                .ToArrayAsync(cancellationToken);
+            var templateIds = templates.Select(template => template.Id).ToArray();
+            var versions = templateIds.Length == 0
+                ? []
+                : await _context.WarehouseTemplateVersions
+                    .AsNoTracking()
+                    .Where(version => templateIds.Contains(version.TemplateId))
+                    .ToArrayAsync(cancellationToken);
+            var currentVersionByTemplate = templates.ToDictionary(
+                template => template.Id,
+                template => template.CurrentVersion);
+            var currentByTemplate = versions
+                .Where(version =>
+                    currentVersionByTemplate.TryGetValue(
+                        version.TemplateId,
+                        out var currentVersion) &&
+                    version.VersionNo == currentVersion)
+                .ToDictionary(version => version.TemplateId);
+            result.AddRange(templates.Select(template =>
+                ToDto(template, currentByTemplate[template.Id])));
+        }
+        return result;
     }
 
-    public Task<SpaceWarehouseTemplateInstantiationPreviewDto>
+    public async Task<CreateTenantSpaceWarehouseTemplateResponse>
+        CreateTenantWarehouseTemplateAsync(
+            CreateTenantSpaceWarehouseTemplateRequest request,
+            string idempotencyKey,
+            CancellationToken cancellationToken = default)
+    {
+        ArgumentNullException.ThrowIfNull(request);
+        EnsureExecutionContext();
+        EnsureInternalEditor();
+        cancellationToken.ThrowIfCancellationRequested();
+
+        SpaceWarehouseTemplate template;
+        SpaceWarehouseTemplateInstantiationPreviewDto preview;
+        SpaceWarehouseTemplateVersion version;
+        try
+        {
+            template = SpaceWarehouseTemplate.CreateTenant(
+                _execution.TenantId,
+                request.TemplateCode,
+                request.Name,
+                request.Description);
+            var versionId = Guid.NewGuid();
+            preview = SpaceWarehouseTemplatePlanCodec.Seal(
+                template.Id,
+                versionId,
+                request.SchemaVersion,
+                request.Floors,
+                request.Zones,
+                request.Aisles,
+                request.Racks);
+            version = SpaceWarehouseTemplateVersion.CreateReady(
+                _execution.TenantId,
+                versionId,
+                template.Id,
+                versionNo: 1,
+                preview.SchemaVersion,
+                SpaceWarehouseTemplatePlanCodec.SerializeContent(preview),
+                preview.TemplateContentHash,
+                preview.Counts.Floors,
+                preview.Counts.Zones,
+                preview.Counts.Aisles,
+                preview.Counts.Racks,
+                preview.Counts.Locations);
+        }
+        catch (ArgumentException exception)
+        {
+            throw Invalid("warehouseTemplate", exception.Message);
+        }
+
+        const string operation = "create-tenant-warehouse-template";
+        var normalizedRequest = new CreateTenantSpaceWarehouseTemplateRequest(
+            template.TemplateCode,
+            template.Name,
+            template.Description,
+            preview.SchemaVersion,
+            preview.Floors,
+            preview.Zones,
+            preview.Aisles,
+            preview.Racks);
+        var requestHash = Hash(
+            JsonSerializer.Serialize(normalizedRequest, JsonOptions));
+        var keyHash = IdempotencyKeyHash(operation, idempotencyKey);
+        var replay = await ReadWarehouseTemplateReplayAsync(
+            operation,
+            keyHash,
+            requestHash,
+            cancellationToken);
+        if (replay is not null)
+            return replay;
+
+        await using var transaction = await _context.Database
+            .BeginTransactionAsync(IsolationLevel.Serializable, cancellationToken);
+        try
+        {
+            var concurrentReplay = await ReadWarehouseTemplateReplayAsync(
+                operation,
+                keyHash,
+                requestHash,
+                cancellationToken);
+            if (concurrentReplay is not null)
+            {
+                await transaction.CommitAsync(cancellationToken);
+                return concurrentReplay;
+            }
+
+            _context.WarehouseTemplates.Add(template);
+            _context.WarehouseTemplateVersions.Add(version);
+            await _context.SaveChangesAsync(cancellationToken);
+            var response = new CreateTenantSpaceWarehouseTemplateResponse(
+                ToDto(template, version),
+                IdempotentReplay: false);
+            _context.IdempotencyRecords.Add(
+                NewIdempotencyRecord(
+                    operation,
+                    keyHash,
+                    requestHash,
+                    JsonSerializer.Serialize(response, JsonOptions),
+                    HttpCreated));
+            await _context.SaveChangesAsync(cancellationToken);
+            await transaction.CommitAsync(cancellationToken);
+            return response;
+        }
+        catch (DbUpdateException)
+        {
+            await transaction.RollbackAsync(CancellationToken.None);
+            _context.ChangeTracker.Clear();
+            var concurrentReplay = await ReadWarehouseTemplateReplayAsync(
+                operation,
+                keyHash,
+                requestHash,
+                cancellationToken);
+            if (concurrentReplay is not null)
+                return concurrentReplay;
+            throw Conflict(
+                SpaceErrorCodes.WarehouseTemplateConflict,
+                "A tenant warehouse template with this code already exists.",
+                "choose-another-template-code");
+        }
+        catch
+        {
+            await transaction.RollbackAsync(CancellationToken.None);
+            throw;
+        }
+    }
+
+    public async Task<SpaceWarehouseTemplateInstantiationPreviewDto>
         PreviewWarehouseTemplateAsync(
             Guid templateId,
             PreviewSpaceWarehouseTemplateRequest request,
@@ -2464,36 +2620,11 @@ public sealed class SpaceDesignV1Service :
                 "Template and template version identities are required.");
         }
 
-        var template = SpaceBuiltInWarehouseTemplates.List()
-            .SingleOrDefault(candidate => candidate.Id == templateId);
-        if (template is null)
-        {
-            throw new SpaceProblemException(
-                SpaceErrorCodes.WarehouseTemplateNotFound,
-                404,
-                "Warehouse template not found.",
-                recoveryAction: "reload-template-catalog");
-        }
-        if (template.LatestVersion.Id != request.TemplateVersionId)
-        {
-            throw Conflict(
-                SpaceErrorCodes.WarehouseTemplateVersionConflict,
-                "The requested warehouse template version is not current.",
-                "reload-template-catalog");
-        }
-        if (!SpaceBuiltInWarehouseTemplates.TryPreview(
-                templateId,
-                request.TemplateVersionId,
-                out var preview) ||
-            preview is null)
-        {
-            throw new SpaceProblemException(
-                SpaceErrorCodes.WarehouseTemplateNotFound,
-                404,
-                "Warehouse template preview not found.",
-                recoveryAction: "reload-template-catalog");
-        }
-        return Task.FromResult(preview);
+        var resolved = await ResolveWarehouseTemplateAsync(
+            templateId,
+            request.TemplateVersionId,
+            cancellationToken);
+        return resolved.Preview;
     }
 
     public async Task<ApplySpaceWarehouseTemplateFloorResponse>
@@ -2544,35 +2675,11 @@ public sealed class SpaceDesignV1Service :
                 "Template, floor, command batch and proposal identities are required.");
         }
 
-        var template = SpaceBuiltInWarehouseTemplates.List()
-            .SingleOrDefault(candidate => candidate.Id == templateId);
-        if (template is null)
-        {
-            throw new SpaceProblemException(
-                SpaceErrorCodes.WarehouseTemplateNotFound,
-                404,
-                "Warehouse template not found.",
-                recoveryAction: "reload-template-catalog");
-        }
-        if (template.LatestVersion.Id != request.TemplateVersionId)
-        {
-            throw Conflict(
-                SpaceErrorCodes.WarehouseTemplateVersionConflict,
-                "The requested warehouse template version is not current.",
-                "preview-warehouse-template-again");
-        }
-        if (!SpaceBuiltInWarehouseTemplates.TryPreview(
-                templateId,
-                request.TemplateVersionId,
-                out var preview) ||
-            preview is null)
-        {
-            throw new SpaceProblemException(
-                SpaceErrorCodes.WarehouseTemplateNotFound,
-                404,
-                "Warehouse template preview not found.",
-                recoveryAction: "reload-template-catalog");
-        }
+        var resolved = await ResolveWarehouseTemplateAsync(
+            templateId,
+            request.TemplateVersionId,
+            cancellationToken);
+        var preview = resolved.Preview;
         if (!string.Equals(
                 preview.ProposalHash,
                 request.ProposalHash,
@@ -2584,8 +2691,7 @@ public sealed class SpaceDesignV1Service :
                 "preview-warehouse-template-again");
         }
         if (!SpaceBuiltInWarehouseTemplates.TryBuildFloorCommandBatch(
-                templateId,
-                request.TemplateVersionId,
+                preview,
                 request.TemplateFloorKey,
                 versionId,
                 floorLogicalId,
@@ -2633,6 +2739,92 @@ public sealed class SpaceDesignV1Service :
             counts,
             applied.CommandBatchId,
             applied.IdempotentReplay);
+    }
+
+    private async Task<ResolvedWarehouseTemplate>
+        ResolveWarehouseTemplateAsync(
+            Guid templateId,
+            Guid templateVersionId,
+            CancellationToken cancellationToken)
+    {
+        var systemTemplate = SpaceBuiltInWarehouseTemplates.List()
+            .SingleOrDefault(candidate => candidate.Id == templateId);
+        if (systemTemplate is not null)
+        {
+            if (systemTemplate.LatestVersion.Id != templateVersionId)
+            {
+                throw Conflict(
+                    SpaceErrorCodes.WarehouseTemplateVersionConflict,
+                    "The requested warehouse template version is not current.",
+                    "reload-template-catalog");
+            }
+            if (!SpaceBuiltInWarehouseTemplates.TryPreview(
+                    templateId,
+                    templateVersionId,
+                    out var systemPreview) ||
+                systemPreview is null)
+            {
+                throw new SpaceProblemException(
+                    SpaceErrorCodes.WarehouseTemplateNotFound,
+                    404,
+                    "Warehouse template preview not found.",
+                    recoveryAction: "reload-template-catalog");
+            }
+            return new ResolvedWarehouseTemplate(
+                systemTemplate,
+                systemPreview);
+        }
+
+        var tenantTemplate = await _context.WarehouseTemplates
+            .AsNoTracking()
+            .SingleOrDefaultAsync(
+                candidate => candidate.Id == templateId,
+                cancellationToken);
+        if (tenantTemplate is null)
+        {
+            throw new SpaceProblemException(
+                SpaceErrorCodes.WarehouseTemplateNotFound,
+                404,
+                "Warehouse template not found.",
+                recoveryAction: "reload-template-catalog");
+        }
+        var tenantVersion = await _context.WarehouseTemplateVersions
+            .AsNoTracking()
+            .SingleOrDefaultAsync(
+                candidate =>
+                    candidate.Id == templateVersionId &&
+                    candidate.TemplateId == templateId,
+                cancellationToken);
+        if (tenantVersion is null ||
+            tenantVersion.VersionNo != tenantTemplate.CurrentVersion)
+        {
+            throw Conflict(
+                SpaceErrorCodes.WarehouseTemplateVersionConflict,
+                "The requested warehouse template version is not current.",
+                "reload-template-catalog");
+        }
+
+        SpaceWarehouseTemplateInstantiationPreviewDto tenantPreview;
+        try
+        {
+            tenantPreview = SpaceWarehouseTemplatePlanCodec.ReadAndSeal(
+                templateId,
+                templateVersionId,
+                tenantVersion.ContentJson,
+                tenantVersion.ContentHash);
+        }
+        catch (InvalidDataException exception)
+        {
+            throw new SpaceProblemException(
+                SpaceErrorCodes.WarehouseTemplateVersionConflict,
+                409,
+                "The tenant warehouse template version is invalid.",
+                exception.Message,
+                "contact-support");
+        }
+        return new ResolvedWarehouseTemplate(
+            ToDto(tenantTemplate, tenantVersion),
+            tenantPreview);
     }
 
     public async Task<CreateSpaceVersionResponse> CreateVersionAsync(
@@ -5834,6 +6026,26 @@ public sealed class SpaceDesignV1Service :
         { IdempotentReplay = true };
     }
 
+    private async Task<CreateTenantSpaceWarehouseTemplateResponse?>
+        ReadWarehouseTemplateReplayAsync(
+            string operation,
+            string keyHash,
+            string requestHash,
+            CancellationToken cancellationToken)
+    {
+        var record = await FindIdempotencyAsync(
+            operation,
+            keyHash,
+            cancellationToken);
+        if (record is null)
+            return null;
+        EnsureMatchingIdempotency(record, requestHash);
+        return Deserialize<CreateTenantSpaceWarehouseTemplateResponse>(
+                record.ResponseJson)
+            with
+            { IdempotentReplay = true };
+    }
+
     private Task<SpaceIdempotencyRecord?> FindIdempotencyAsync(
         string operation,
         string keyHash,
@@ -6161,6 +6373,29 @@ public sealed class SpaceDesignV1Service :
                 latestVersion.Status.ToString(),
                 RowVersion(latestVersion.RowVersion)),
             RowVersion(asset.RowVersion));
+
+    private static SpaceWarehouseTemplateDto ToDto(
+        SpaceWarehouseTemplate template,
+        SpaceWarehouseTemplateVersion latestVersion) =>
+        new(
+            template.Id,
+            "Tenant",
+            template.TemplateCode,
+            template.Name,
+            template.Description,
+            "Active",
+            new SpaceWarehouseTemplateVersionDto(
+                latestVersion.Id,
+                latestVersion.VersionNo,
+                latestVersion.SchemaVersion,
+                latestVersion.ContentHash,
+                new SpaceWarehouseTemplateCountsDto(
+                    latestVersion.FloorCount,
+                    latestVersion.ZoneCount,
+                    latestVersion.AisleCount,
+                    latestVersion.RackCount,
+                    latestVersion.LocationCount),
+                "Ready"));
 
     private static SpaceSceneElementAttributeDto ToSceneDto(
         SpaceElementAttribute attribute) =>
@@ -6621,6 +6856,10 @@ public sealed class SpaceDesignV1Service :
             "The Space request conflicts with current state.",
             detail,
             recoveryAction);
+
+    private sealed record ResolvedWarehouseTemplate(
+        SpaceWarehouseTemplateDto Template,
+        SpaceWarehouseTemplateInstantiationPreviewDto Preview);
 
     private const int HttpOk = 200;
     private const int HttpCreated = 201;

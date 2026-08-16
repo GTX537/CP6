@@ -31,6 +31,10 @@ const selectedTemplate = computed(() =>
   props.templates[0],
 )
 
+const selectedPreview = computed(() =>
+  props.preview?.templateId === selectedTemplate.value?.id ? props.preview : null,
+)
+
 watch(
   () => props.templates,
   (templates) => {
@@ -42,7 +46,7 @@ watch(
 )
 
 watch(
-  () => [props.preview, props.currentFloorCode] as const,
+  () => [selectedPreview.value, props.currentFloorCode] as const,
   ([preview]) => {
     if (!preview) {
       selectedFloorKey.value = ''
@@ -57,9 +61,9 @@ watch(
 )
 
 function floorCounts(floor: ISpaceWarehouseTemplateFloorPlanDto) {
-  const zones = props.preview?.zones.filter((item) => item.floorKey === floor.key) ?? []
-  const aisles = props.preview?.aisles.filter((item) => item.floorKey === floor.key) ?? []
-  const racks = props.preview?.racks.filter((item) => item.floorKey === floor.key) ?? []
+  const zones = selectedPreview.value?.zones.filter((item) => item.floorKey === floor.key) ?? []
+  const aisles = selectedPreview.value?.aisles.filter((item) => item.floorKey === floor.key) ?? []
+  const racks = selectedPreview.value?.racks.filter((item) => item.floorKey === floor.key) ?? []
   return {
     zones: zones.length,
     aisles: aisles.length,
@@ -89,7 +93,7 @@ function applyFloor(): void {
   <section class="template-panel" aria-labelledby="warehouse-template-title">
     <div class="panel-heading">
       <div>
-        <span class="eyebrow">SYSTEM TEMPLATE</span>
+        <span class="eyebrow">VERSIONED TEMPLATE</span>
         <h3 id="warehouse-template-title">整仓模板</h3>
       </div>
       <span class="scope">按楼层原子写入</span>
@@ -107,6 +111,7 @@ function applyFloor(): void {
         :disabled="loading || busy || retryPending || templates.length === 0"
       >
         <option v-for="item in templates" :key="item.id" :value="item.id">
+          {{ item.scope === 'Tenant' ? '租户私有' : '系统' }} ·
           {{ item.name }} · v{{ item.latestVersion.versionNo }}
         </option>
       </select>
@@ -125,16 +130,16 @@ function applyFloor(): void {
       当前没有可用模板；手工构件仍可继续。
     </p>
 
-    <template v-if="preview">
+    <template v-if="selectedPreview">
       <div class="seal" role="status">
         <strong>预览已密封</strong>
-        <code :title="preview.proposalHash">{{ preview.proposalHash }}</code>
+        <code :title="selectedPreview.proposalHash">{{ selectedPreview.proposalHash }}</code>
       </div>
 
       <fieldset>
         <legend>选择写入当前楼层的模板楼层</legend>
         <label
-          v-for="item in preview.floors"
+          v-for="item in selectedPreview.floors"
           :key="item.key"
           class="floor-option"
           :class="{ matched: item.floorCode === currentFloorCode }"

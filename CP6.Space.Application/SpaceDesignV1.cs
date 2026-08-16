@@ -119,6 +119,12 @@ public interface ISpaceDesignV1Service
         string? scope,
         CancellationToken cancellationToken = default);
 
+    Task<CreateTenantSpaceWarehouseTemplateResponse>
+        CreateTenantWarehouseTemplateAsync(
+            CreateTenantSpaceWarehouseTemplateRequest request,
+            string idempotencyKey,
+            CancellationToken cancellationToken = default);
+
     Task<SpaceWarehouseTemplateInstantiationPreviewDto>
         PreviewWarehouseTemplateAsync(
             Guid templateId,

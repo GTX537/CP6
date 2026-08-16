@@ -2163,6 +2163,161 @@ public sealed class SpaceDesignSceneSqlServerTests
     }
 
     [SqlServerFact]
+    public async Task Tenant_warehouse_template_is_idempotent_isolated_and_applyable()
+    {
+        await WithDatabaseAsync(async (connectionString, execution, clock) =>
+        {
+            CreateTenantSpaceWarehouseTemplateResponse created;
+            var request = TenantWarehouseTemplateRequest("PRIVATE-WAREHOUSE");
+            await using (var context = CreateContext(
+                             connectionString,
+                             execution,
+                             clock))
+            {
+                var service = NewService(
+                    context,
+                    execution,
+                    clock,
+                    Guid.NewGuid());
+                created = await service.CreateTenantWarehouseTemplateAsync(
+                    request,
+                    "tenant-template-create");
+                var replay = await service.CreateTenantWarehouseTemplateAsync(
+                    request,
+                    "tenant-template-create");
+                Assert.False(created.IdempotentReplay);
+                Assert.True(replay.IdempotentReplay);
+                Assert.Equal(created.Template.Id, replay.Template.Id);
+                Assert.Equal("Tenant", created.Template.Scope);
+                Assert.Equal(1, created.Template.LatestVersion.VersionNo);
+                Assert.Equal(4, created.Template.LatestVersion.Counts.Locations);
+
+                var tenantCatalog = await service.GetWarehouseTemplatesAsync("Tenant");
+                Assert.Single(tenantCatalog);
+                Assert.Equal(created.Template.Id, tenantCatalog[0].Id);
+                Assert.Equal(2, (await service.GetWarehouseTemplatesAsync(null)).Count);
+                var preview = await service.PreviewWarehouseTemplateAsync(
+                    created.Template.Id,
+                    new PreviewSpaceWarehouseTemplateRequest(
+                        created.Template.LatestVersion.Id));
+                Assert.Equal(
+                    created.Template.LatestVersion.ContentHash,
+                    preview.TemplateContentHash);
+                Assert.False(preview.WritesDraft);
+
+                var changedReplay = await Assert.ThrowsAsync<SpaceProblemException>(
+                    () => service.CreateTenantWarehouseTemplateAsync(
+                        request with { Name = "Changed request" },
+                        "tenant-template-create"));
+                Assert.Equal(SpaceErrorCodes.IdempotencyConflict, changedReplay.Code);
+                var duplicate = await Assert.ThrowsAsync<SpaceProblemException>(
+                    () => service.CreateTenantWarehouseTemplateAsync(
+                        request with { TemplateCode = "private-warehouse" },
+                        "tenant-template-duplicate"));
+                Assert.Equal(SpaceErrorCodes.WarehouseTemplateConflict, duplicate.Code);
+
+                var version = await context.WarehouseTemplateVersions.SingleAsync();
+                context.Entry(version).Property(value => value.ContentHash)
+                    .CurrentValue = new string('f', 64);
+                await Assert.ThrowsAsync<InvalidOperationException>(
+                    () => context.SaveChangesAsync());
+                context.ChangeTracker.Clear();
+
+                var seeded = await SeedDesignModelAsync(
+                    context,
+                    execution.ActorId,
+                    clock.UtcNow);
+                var draft = SpaceModelVersion.CreateDraft(
+                    execution.TenantId,
+                    seeded.Model.Id,
+                    2,
+                    "Tenant template Draft",
+                    seeded.Published.Id);
+                seeded.Model.ReserveDraft(draft);
+                var floor = SpaceFloorRevision.Create(
+                    execution.TenantId,
+                    draft.Id,
+                    Guid.NewGuid(),
+                    seeded.Model.SiteId,
+                    1,
+                    "F1",
+                    "Floor 1",
+                    height: 6000);
+                context.AddRange(draft, floor);
+                await context.SaveChangesAsync();
+                var clientId = Guid.NewGuid();
+                var lease = SpaceEditLease.Create(
+                    execution.TenantId,
+                    draft.Id,
+                    floor.LogicalId,
+                    execution.ActorId,
+                    "Editor",
+                    clientId,
+                    clock.UtcNow,
+                    TimeSpan.FromSeconds(90));
+                context.EditLeases.Add(lease);
+                await context.SaveChangesAsync();
+
+                service = NewService(
+                    context,
+                    execution,
+                    clock,
+                    seeded.Model.SiteId);
+                preview = await service.PreviewWarehouseTemplateAsync(
+                    created.Template.Id,
+                    new PreviewSpaceWarehouseTemplateRequest(
+                        created.Template.LatestVersion.Id));
+                var applied = await service.ApplyWarehouseTemplateFloorAsync(
+                    draft.Id,
+                    floor.LogicalId,
+                    created.Template.Id,
+                    new ApplySpaceWarehouseTemplateFloorRequest(
+                        SpaceWarehouseTemplateContract.SchemaVersion,
+                        seeded.Model.SiteId,
+                        created.Template.LatestVersion.Id,
+                        preview.ProposalHash,
+                        "floor:f1",
+                        Guid.NewGuid(),
+                        clientId,
+                        lease.LeaseId,
+                        ExpectedFloorRevision: 0,
+                        ExpectedContentRevision: 0));
+                Assert.Equal(1, applied.AppliedCounts.Zones);
+                Assert.Equal(1, applied.AppliedCounts.Aisles);
+                Assert.Equal(1, applied.AppliedCounts.Racks);
+                Assert.Equal(4, applied.AppliedCounts.Locations);
+                Assert.Single(await context.RackRevisions.ToArrayAsync());
+                Assert.Equal(4, await context.LocationRevisions.CountAsync());
+            }
+
+            var otherExecution = new TestExecutionContext(
+                Guid.NewGuid(),
+                Guid.NewGuid());
+            await using var otherContext = CreateContext(
+                connectionString,
+                otherExecution,
+                clock);
+            var otherService = NewService(
+                otherContext,
+                otherExecution,
+                clock,
+                Guid.NewGuid());
+            Assert.Empty(await otherService.GetWarehouseTemplatesAsync("Tenant"));
+            var hidden = await Assert.ThrowsAsync<SpaceProblemException>(() =>
+                otherService.PreviewWarehouseTemplateAsync(
+                    created.Template.Id,
+                    new PreviewSpaceWarehouseTemplateRequest(
+                        created.Template.LatestVersion.Id)));
+            Assert.Equal(SpaceErrorCodes.WarehouseTemplateNotFound, hidden.Code);
+            var sameCode = await otherService.CreateTenantWarehouseTemplateAsync(
+                request,
+                "other-tenant-template");
+            Assert.NotEqual(created.Template.Id, sameCode.Template.Id);
+            Assert.Single(await otherService.GetWarehouseTemplatesAsync("Tenant"));
+        });
+    }
+
+    [SqlServerFact]
     public async Task Warehouse_template_floor_apply_is_leased_atomic_and_replayable()
     {
         await WithDatabaseAsync(async (connectionString, execution, clock) =>
@@ -3095,6 +3250,65 @@ public sealed class SpaceDesignSceneSqlServerTests
                     logicalId,
                     null))
                 .ToArray());
+
+    private static CreateTenantSpaceWarehouseTemplateRequest
+        TenantWarehouseTemplateRequest(string templateCode) =>
+        new(
+            templateCode,
+            "Private warehouse",
+            "Tenant private immutable template",
+            SpaceWarehouseTemplateContract.SchemaVersion,
+            [
+                new SpaceWarehouseTemplateFloorPlanDto(
+                    "floor:f1",
+                    "F1",
+                    "Floor 1",
+                    1,
+                    0,
+                    10_000,
+                    8_000,
+                    6_000),
+            ],
+            [
+                new SpaceWarehouseTemplateZonePlanDto(
+                    "zone:z1",
+                    "floor:f1",
+                    "Z1",
+                    "Storage",
+                    0,
+                    0,
+                    10_000,
+                    8_000),
+            ],
+            [
+                new SpaceWarehouseTemplateAislePlanDto(
+                    "aisle:a1",
+                    "floor:f1",
+                    "zone:z1",
+                    "A1",
+                    5_000,
+                    0,
+                    5_000,
+                    8_000),
+            ],
+            [
+                new SpaceWarehouseTemplateRackPlanDto(
+                    "rack:r1",
+                    "floor:f1",
+                    "zone:z1",
+                    "aisle:a1",
+                    "R1",
+                    1_000,
+                    1_000,
+                    0,
+                    0,
+                    2_000,
+                    1_000,
+                    3_000,
+                    2,
+                    2,
+                    1),
+            ]);
 
     private static SpaceDesignV1Service NewService(
         SpaceContext context,

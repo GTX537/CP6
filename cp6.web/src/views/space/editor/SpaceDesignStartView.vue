@@ -306,9 +306,9 @@ onBeforeUnmount(() => {
       <section v-if="!draftVersion" class="floor-section template-section">
         <div class="section-heading">
           <div>
-            <p class="step-label">PLATFORM TEMPLATE CATALOG</p>
-            <h2>平台整仓模板</h2>
-            <p class="template-help">模板版本和内容哈希不可变；当前仅提供布局预览，不会写入 Draft。</p>
+            <p class="step-label">VERSIONED TEMPLATE CATALOG</p>
+            <h2>整仓模板目录</h2>
+            <p class="template-help">系统与租户私有模板的版本和内容哈希不可变；当前仅提供布局预览，不会写入 Draft。</p>
           </div>
         </div>
         <div v-if="warehouseTemplates.length" class="template-list">

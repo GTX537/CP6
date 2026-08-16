@@ -395,6 +395,12 @@ export interface ISpaceDesignV1Client {
     placeWmsAdoption(versionId: string, adoptionId: string, body: PlaceSpaceWmsAdoptionRequest): Promise<SpaceWmsAdoptionCommandResponse>;
 
     /**
+     * @param idempotency_Key Opaque caller key; 1-128 UTF-8 bytes. Reuse with a different request returns SPACE_IDEMPOTENCY_KEY_REUSED.
+     * @return Created
+     */
+    createTenantWarehouseTemplate(idempotency_Key: string, body: CreateTenantSpaceWarehouseTemplateRequest): Promise<CreateTenantSpaceWarehouseTemplateResponse>;
+
+    /**
      * @param scope (optional)
      * @return OK
      */
@@ -7170,6 +7176,98 @@ export class SpaceDesignV1Client implements ISpaceDesignV1Client {
             });
         }
         return Promise.resolve<SpaceWmsAdoptionCommandResponse>(null as any);
+    }
+
+    /**
+     * @param idempotency_Key Opaque caller key; 1-128 UTF-8 bytes. Reuse with a different request returns SPACE_IDEMPOTENCY_KEY_REUSED.
+     * @return Created
+     */
+    createTenantWarehouseTemplate(idempotency_Key: string, body: CreateTenantSpaceWarehouseTemplateRequest): Promise<CreateTenantSpaceWarehouseTemplateResponse> {
+        let url_ = this.baseUrl + "/api/space/design/v1/templates";
+        url_ = url_.replace(/[?&]$/, "");
+
+        const content_ = JSON.stringify(body);
+
+        let options_: RequestInit = {
+            body: content_,
+            method: "POST",
+            headers: {
+                "Idempotency-Key": idempotency_Key !== undefined && idempotency_Key !== null ? "" + idempotency_Key : "",
+                "Content-Type": "application/json",
+                "Accept": "application/json"
+            }
+        };
+
+        return this.http.fetch(url_, options_).then((_response: Response) => {
+            return this.processCreateTenantWarehouseTemplate(_response);
+        });
+    }
+
+    protected processCreateTenantWarehouseTemplate(response: Response): Promise<CreateTenantSpaceWarehouseTemplateResponse> {
+        const status = response.status;
+        let _headers: any = {}; if (response.headers && response.headers.forEach) { response.headers.forEach((v: any, k: any) => _headers[k] = v); };
+        if (status === 201) {
+            return response.text().then((_responseText) => {
+            let result201: any = null;
+            let resultData201 = _responseText === "" ? null : JSON.parse(_responseText, this.jsonParseReviver);
+            result201 = CreateTenantSpaceWarehouseTemplateResponse.fromJS(resultData201);
+            return result201;
+            });
+        } else if (status === 400) {
+            return response.text().then((_responseText) => {
+            let result400: any = null;
+            let resultData400 = _responseText === "" ? null : JSON.parse(_responseText, this.jsonParseReviver);
+            result400 = SpaceDesignProblemDetails.fromJS(resultData400);
+            return throwException("Bad Request", status, _responseText, _headers, result400);
+            });
+        } else if (status === 401) {
+            return response.text().then((_responseText) => {
+            let result401: any = null;
+            let resultData401 = _responseText === "" ? null : JSON.parse(_responseText, this.jsonParseReviver);
+            result401 = SpaceDesignProblemDetails.fromJS(resultData401);
+            return throwException("Unauthorized", status, _responseText, _headers, result401);
+            });
+        } else if (status === 403) {
+            return response.text().then((_responseText) => {
+            let result403: any = null;
+            let resultData403 = _responseText === "" ? null : JSON.parse(_responseText, this.jsonParseReviver);
+            result403 = SpaceDesignProblemDetails.fromJS(resultData403);
+            return throwException("Forbidden", status, _responseText, _headers, result403);
+            });
+        } else if (status === 404) {
+            return response.text().then((_responseText) => {
+            let result404: any = null;
+            let resultData404 = _responseText === "" ? null : JSON.parse(_responseText, this.jsonParseReviver);
+            result404 = SpaceDesignProblemDetails.fromJS(resultData404);
+            return throwException("Not Found", status, _responseText, _headers, result404);
+            });
+        } else if (status === 409) {
+            return response.text().then((_responseText) => {
+            let result409: any = null;
+            let resultData409 = _responseText === "" ? null : JSON.parse(_responseText, this.jsonParseReviver);
+            result409 = SpaceDesignProblemDetails.fromJS(resultData409);
+            return throwException("Conflict", status, _responseText, _headers, result409);
+            });
+        } else if (status === 422) {
+            return response.text().then((_responseText) => {
+            let result422: any = null;
+            let resultData422 = _responseText === "" ? null : JSON.parse(_responseText, this.jsonParseReviver);
+            result422 = SpaceDesignProblemDetails.fromJS(resultData422);
+            return throwException("Unprocessable Content", status, _responseText, _headers, result422);
+            });
+        } else if (status === 500) {
+            return response.text().then((_responseText) => {
+            let result500: any = null;
+            let resultData500 = _responseText === "" ? null : JSON.parse(_responseText, this.jsonParseReviver);
+            result500 = SpaceDesignProblemDetails.fromJS(resultData500);
+            return throwException("Internal Server Error", status, _responseText, _headers, result500);
+            });
+        } else if (status !== 200 && status !== 204) {
+            return response.text().then((_responseText) => {
+            return throwException("An unexpected server error occurred.", status, _responseText, _headers);
+            });
+        }
+        return Promise.resolve<CreateTenantSpaceWarehouseTemplateResponse>(null as any);
     }
 
     /**
@@ -18604,6 +18702,151 @@ export interface ICreateSpaceVersionResponse {
     jobId?: string;
     jobStatusUrl?: string | undefined;
     idempotentReplay?: boolean;
+}
+
+export class CreateTenantSpaceWarehouseTemplateRequest implements ICreateTenantSpaceWarehouseTemplateRequest {
+    templateCode!: string;
+    name!: string;
+    description?: string | undefined;
+    schemaVersion!: number;
+    floors!: SpaceWarehouseTemplateFloorPlanDto[];
+    zones!: SpaceWarehouseTemplateZonePlanDto[];
+    aisles!: SpaceWarehouseTemplateAislePlanDto[];
+    racks!: SpaceWarehouseTemplateRackPlanDto[];
+
+    constructor(data?: ICreateTenantSpaceWarehouseTemplateRequest) {
+        if (data) {
+            for (var property in data) {
+                if (data.hasOwnProperty(property))
+                    (this as any)[property] = (data as any)[property];
+            }
+        }
+        if (!data) {
+            this.floors = [];
+            this.zones = [];
+            this.aisles = [];
+            this.racks = [];
+        }
+    }
+
+    init(_data?: any) {
+        if (_data) {
+            this.templateCode = _data["templateCode"];
+            this.name = _data["name"];
+            this.description = _data["description"];
+            this.schemaVersion = _data["schemaVersion"];
+            if (Array.isArray(_data["floors"])) {
+                this.floors = [] as any;
+                for (let item of _data["floors"])
+                    this.floors!.push(SpaceWarehouseTemplateFloorPlanDto.fromJS(item));
+            }
+            if (Array.isArray(_data["zones"])) {
+                this.zones = [] as any;
+                for (let item of _data["zones"])
+                    this.zones!.push(SpaceWarehouseTemplateZonePlanDto.fromJS(item));
+            }
+            if (Array.isArray(_data["aisles"])) {
+                this.aisles = [] as any;
+                for (let item of _data["aisles"])
+                    this.aisles!.push(SpaceWarehouseTemplateAislePlanDto.fromJS(item));
+            }
+            if (Array.isArray(_data["racks"])) {
+                this.racks = [] as any;
+                for (let item of _data["racks"])
+                    this.racks!.push(SpaceWarehouseTemplateRackPlanDto.fromJS(item));
+            }
+        }
+    }
+
+    static fromJS(data: any): CreateTenantSpaceWarehouseTemplateRequest {
+        data = typeof data === 'object' ? data : {};
+        let result = new CreateTenantSpaceWarehouseTemplateRequest();
+        result.init(data);
+        return result;
+    }
+
+    toJSON(data?: any) {
+        data = typeof data === 'object' ? data : {};
+        data["templateCode"] = this.templateCode;
+        data["name"] = this.name;
+        data["description"] = this.description;
+        data["schemaVersion"] = this.schemaVersion;
+        if (Array.isArray(this.floors)) {
+            data["floors"] = [];
+            for (let item of this.floors)
+                data["floors"].push(item ? item.toJSON() : undefined as any);
+        }
+        if (Array.isArray(this.zones)) {
+            data["zones"] = [];
+            for (let item of this.zones)
+                data["zones"].push(item ? item.toJSON() : undefined as any);
+        }
+        if (Array.isArray(this.aisles)) {
+            data["aisles"] = [];
+            for (let item of this.aisles)
+                data["aisles"].push(item ? item.toJSON() : undefined as any);
+        }
+        if (Array.isArray(this.racks)) {
+            data["racks"] = [];
+            for (let item of this.racks)
+                data["racks"].push(item ? item.toJSON() : undefined as any);
+        }
+        return data;
+    }
+}
+
+export interface ICreateTenantSpaceWarehouseTemplateRequest {
+    templateCode: string;
+    name: string;
+    description?: string | undefined;
+    schemaVersion: number;
+    floors: SpaceWarehouseTemplateFloorPlanDto[];
+    zones: SpaceWarehouseTemplateZonePlanDto[];
+    aisles: SpaceWarehouseTemplateAislePlanDto[];
+    racks: SpaceWarehouseTemplateRackPlanDto[];
+}
+
+export class CreateTenantSpaceWarehouseTemplateResponse implements ICreateTenantSpaceWarehouseTemplateResponse {
+    template!: SpaceWarehouseTemplateDto;
+    idempotentReplay!: boolean;
+
+    constructor(data?: ICreateTenantSpaceWarehouseTemplateResponse) {
+        if (data) {
+            for (var property in data) {
+                if (data.hasOwnProperty(property))
+                    (this as any)[property] = (data as any)[property];
+            }
+        }
+        if (!data) {
+            this.template = new SpaceWarehouseTemplateDto();
+        }
+    }
+
+    init(_data?: any) {
+        if (_data) {
+            this.template = _data["template"] ? SpaceWarehouseTemplateDto.fromJS(_data["template"]) : new SpaceWarehouseTemplateDto();
+            this.idempotentReplay = _data["idempotentReplay"];
+        }
+    }
+
+    static fromJS(data: any): CreateTenantSpaceWarehouseTemplateResponse {
+        data = typeof data === 'object' ? data : {};
+        let result = new CreateTenantSpaceWarehouseTemplateResponse();
+        result.init(data);
+        return result;
+    }
+
+    toJSON(data?: any) {
+        data = typeof data === 'object' ? data : {};
+        data["template"] = this.template ? this.template.toJSON() : undefined as any;
+        data["idempotentReplay"] = this.idempotentReplay;
+        return data;
+    }
+}
+
+export interface ICreateTenantSpaceWarehouseTemplateResponse {
+    template: SpaceWarehouseTemplateDto;
+    idempotentReplay: boolean;
 }
 
 export class IngestSpaceDeviceEventsRequest implements IIngestSpaceDeviceEventsRequest {

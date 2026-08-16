@@ -944,10 +944,10 @@ async function loadWarehouseTemplates(): Promise<void> {
   warehouseTemplateLoading.value = true
   warehouseTemplateError.value = ''
   try {
-    warehouseTemplates.value = await designProjectApi.getWarehouseTemplates('System')
+    warehouseTemplates.value = await designProjectApi.getWarehouseTemplates()
   } catch {
     warehouseTemplates.value = []
-    warehouseTemplateError.value = '系统模板目录暂不可用；手工构件仍可继续。'
+    warehouseTemplateError.value = '整仓模板目录暂不可用；手工构件仍可继续。'
   } finally {
     warehouseTemplateLoading.value = false
   }

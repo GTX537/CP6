@@ -1,5 +1,14 @@
 # 已完成能力与近期里程碑
 
+## 2026-08-16 Space Tenant 私有整仓模板
+
+- 新增租户私有整仓模板头与 append-only 版本表；租户内编码大小写不敏感唯一，版本保存规范计划 JSON、内容 SHA-256、各类对象计数和创建审计，复合租户外键阻止跨租户版本归属。
+- Design V1 新增带幂等键的 Tenant 模板创建接口；服务端只接受 schema v1 类型化计划，并校验父链、唯一 Key/编码、坐标、尺寸整除、逐楼层命令上限和总库位上限。租户接口不能创建或改写 System 模板。
+- 现有目录、密封 Preview 与逐层 Lease/Revision Apply 同时解析内置 System 和当前租户模板；另一个租户猜测模板/版本 ID 返回 NotFound，同一模板编码可在不同租户独立存在。
+- Space Studio 工作台读取合并目录、显示“系统/租户私有”作用域，并只展示与当前所选模板一致的密封 Preview；API wrapper 为后续受控模板制作 UI 保留创建合同。
+- 门禁：新增真实 SQL 聚焦 2/2；全量 Space Integration 456/456（0 skipped）、Space Unit 549/549、CP6.Tests 2,934 passed / 19 项既有环境门禁 skipped、Web 884/884、Space Studio Playwright 26/26；OpenAPI/权限聚焦 96/96、EF pending-model clean、双 SDK drift、Vue TypeScript、生产构建和完整 solution Release 均通过。完整证据见 `docs/space/reports/2026-08-16-space-tenant-warehouse-template.md`。
+- Tenant 模板持久化与消费纵切已闭环；仓库人员模板制作表单、四模式统一 Draft 创建向导和 Template 创建来源持久化仍未完成，因此 LM-FR-001/WP1 保持 Partial/Pending，核心 GA 保持 72% / `NoGo`。
+
 ## 2026-08-16 Space Studio 历史 CAD 审核结果目录
 
 - Design V1 新增 Floor 级只读候选目录，只枚举同 Version/Floor、成功完成且来源格式为 DWG/DXF 的 CAD Parse Job；服务端从持久 Payload 读取冻结 Base Content Revision/Hash，不用请求时的当前值伪造新鲜度。

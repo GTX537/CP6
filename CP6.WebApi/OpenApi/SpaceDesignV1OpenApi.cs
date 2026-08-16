@@ -272,6 +272,21 @@ public sealed class SpaceWmsRuntimeSchemaFilter : ISchemaFilter
                 "status",
                 "latestVersion",
             ],
+            [typeof(CreateTenantSpaceWarehouseTemplateRequest)] =
+            [
+                "templateCode",
+                "name",
+                "schemaVersion",
+                "floors",
+                "zones",
+                "aisles",
+                "racks",
+            ],
+            [typeof(CreateTenantSpaceWarehouseTemplateResponse)] =
+            [
+                "template",
+                "idempotentReplay",
+            ],
             [typeof(PreviewSpaceWarehouseTemplateRequest)] =
             [
                 "templateVersionId",
@@ -2228,6 +2243,7 @@ public sealed class SpaceDesignV1OperationFilter : IOperationFilter
                 "CreateSource" or
                 "RemoveSource" or
                 "CreateAsset" or
+                "CreateTenantWarehouseTemplate" or
                 "AttachUnderlay" or
                 "CalibrateUnderlay" or
                 "ReplaceProviderConfiguration" or

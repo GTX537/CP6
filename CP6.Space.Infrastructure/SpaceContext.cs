@@ -85,6 +85,10 @@ public sealed class SpaceContext : DbContext
         Set<SpaceDesignAttribute>();
     public DbSet<SpaceAsset> Assets => Set<SpaceAsset>();
     public DbSet<SpaceAssetVersion> AssetVersions => Set<SpaceAssetVersion>();
+    public DbSet<SpaceWarehouseTemplate> WarehouseTemplates =>
+        Set<SpaceWarehouseTemplate>();
+    public DbSet<SpaceWarehouseTemplateVersion> WarehouseTemplateVersions =>
+        Set<SpaceWarehouseTemplateVersion>();
     public DbSet<SpaceRackGenerationProfile> RackGenerationProfiles =>
         Set<SpaceRackGenerationProfile>();
     public DbSet<SpaceRackGenerationProfileVersion>
@@ -186,6 +190,8 @@ public sealed class SpaceContext : DbContext
         ConfigureDesignAttribute(modelBuilder);
         ConfigureAsset(modelBuilder);
         ConfigureAssetVersion(modelBuilder);
+        ConfigureWarehouseTemplate(modelBuilder);
+        ConfigureWarehouseTemplateVersion(modelBuilder);
         ConfigureRackGenerationProfile(modelBuilder);
         ConfigureRackGenerationProfileVersion(modelBuilder);
         ConfigureElementRevision(modelBuilder);
@@ -266,6 +272,7 @@ public sealed class SpaceContext : DbContext
         ProtectAiCapacityLedger();
         ProtectAiPolicyHistory();
         ProtectAssetLibrary();
+        ProtectWarehouseTemplateVersions();
         ProtectRackGenerationProfiles();
         ProtectUnderlayCalibrationHistory();
         ProtectElementCommandHistory();
@@ -294,6 +301,7 @@ public sealed class SpaceContext : DbContext
         ProtectAiCapacityLedger();
         ProtectAiPolicyHistory();
         ProtectAssetLibrary();
+        ProtectWarehouseTemplateVersions();
         ProtectRackGenerationProfiles();
         ProtectUnderlayCalibrationHistory();
         ProtectElementCommandHistory();
@@ -2223,6 +2231,87 @@ public sealed class SpaceContext : DbContext
         entity.HasQueryFilter(
             x => x.Scope == SpaceAssetScope.System ||
                  x.OwnerTenantId == CurrentTenantId);
+    }
+
+    private void ConfigureWarehouseTemplate(ModelBuilder modelBuilder)
+    {
+        var entity = modelBuilder.Entity<SpaceWarehouseTemplate>();
+        entity.ToTable(
+            "Space_WarehouseTemplate",
+            table => table.HasCheckConstraint(
+                "CK_Space_WarehouseTemplate_CurrentVersion",
+                "[CurrentVersion] > 0"));
+        entity.HasKey(x => x.Id);
+        entity.Property(x => x.Id).ValueGeneratedNever();
+        entity.HasAlternateKey(x => new { x.TenantId, x.Id })
+            .HasName("AK_Space_WarehouseTemplate_TenantId_Id");
+        ConfigureTenantEntity(entity);
+        entity.Property(x => x.TemplateCode).HasMaxLength(100).IsRequired();
+        entity.Property(x => x.NormalizedTemplateCode)
+            .HasMaxLength(100)
+            .IsRequired();
+        entity.Property(x => x.Name).HasMaxLength(200).IsRequired();
+        entity.Property(x => x.Description).HasMaxLength(1000);
+        entity.Property(x => x.RowVersion).IsRowVersion();
+        entity.HasIndex(x => new { x.TenantId, x.NormalizedTemplateCode })
+            .IsUnique()
+            .HasFilter("[IsDeleted] = 0")
+            .HasDatabaseName(
+                "UX_Space_WarehouseTemplate_Tenant_Code_Active");
+        entity.HasQueryFilter(
+            x => x.TenantId == CurrentTenantId && !x.IsDeleted);
+    }
+
+    private void ConfigureWarehouseTemplateVersion(ModelBuilder modelBuilder)
+    {
+        var entity = modelBuilder.Entity<SpaceWarehouseTemplateVersion>();
+        entity.ToTable(
+            "Space_WarehouseTemplateVersion",
+            table =>
+            {
+                table.HasCheckConstraint(
+                    "CK_Space_WarehouseTemplateVersion_VersionNo",
+                    "[VersionNo] > 0");
+                table.HasCheckConstraint(
+                    "CK_Space_WarehouseTemplateVersion_SchemaVersion",
+                    "[SchemaVersion] > 0");
+                table.HasCheckConstraint(
+                    "CK_Space_WarehouseTemplateVersion_Counts",
+                    "[FloorCount] > 0 AND [ZoneCount] >= 0 AND " +
+                    "[AisleCount] >= 0 AND [RackCount] >= 0 AND " +
+                    "[LocationCount] >= 0");
+            });
+        entity.HasKey(x => x.Id);
+        entity.Property(x => x.Id).ValueGeneratedNever();
+        entity.HasAlternateKey(x => new { x.TenantId, x.Id })
+            .HasName("AK_Space_WarehouseTemplateVersion_TenantId_Id");
+        ConfigureTenantEntity(entity);
+        entity.Property(x => x.ContentJson)
+            .HasColumnType("nvarchar(max)")
+            .IsRequired();
+        entity.Property(x => x.ContentHash)
+            .HasColumnType("char(64)")
+            .IsUnicode(false)
+            .IsFixedLength()
+            .HasMaxLength(64)
+            .IsRequired();
+        entity.HasIndex(x => new { x.TenantId, x.TemplateId, x.VersionNo })
+            .IsUnique()
+            .HasFilter("[IsDeleted] = 0")
+            .HasDatabaseName(
+                "UX_Space_WarehouseTemplateVersion_Template_Version");
+        entity.HasIndex(x => new { x.TenantId, x.ContentHash })
+            .HasDatabaseName(
+                "IX_Space_WarehouseTemplateVersion_ContentHash");
+        entity.HasOne<SpaceWarehouseTemplate>()
+            .WithMany()
+            .HasForeignKey(x => new { x.TenantId, x.TemplateId })
+            .HasPrincipalKey(x => new { x.TenantId, x.Id })
+            .OnDelete(DeleteBehavior.Restrict)
+            .HasConstraintName(
+                "FK_Space_WarehouseTemplateVersion_Template_Tenant");
+        entity.HasQueryFilter(
+            x => x.TenantId == CurrentTenantId && !x.IsDeleted);
     }
 
     private void ConfigureRackGenerationProfile(ModelBuilder modelBuilder)
@@ -6525,6 +6614,28 @@ public sealed class SpaceContext : DbContext
         {
             if (entry.State is EntityState.Added or EntityState.Modified)
                 entry.Entity.EnsureAssetReferenceConsistency();
+        }
+    }
+
+    private void ProtectWarehouseTemplateVersions()
+    {
+        foreach (var entry in ChangeTracker.Entries<SpaceWarehouseTemplate>())
+        {
+            if (entry.State is EntityState.Modified or EntityState.Deleted)
+            {
+                throw new InvalidOperationException(
+                    "Tenant warehouse template heads are immutable in Design V1.");
+            }
+        }
+
+        foreach (var entry in ChangeTracker
+                     .Entries<SpaceWarehouseTemplateVersion>())
+        {
+            if (entry.State is EntityState.Modified or EntityState.Deleted)
+            {
+                throw new InvalidOperationException(
+                    "Tenant warehouse template versions are immutable.");
+            }
         }
     }
 

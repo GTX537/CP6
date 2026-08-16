@@ -63,6 +63,37 @@ public static class SpaceBuiltInWarehouseTemplates
             return false;
         }
 
+        return TryBuildFloorCommandBatch(
+            preview,
+            templateFloorKey,
+            modelVersionId,
+            floorLogicalId,
+            commandBatchId,
+            clientInstanceId,
+            leaseId,
+            expectedFloorRevision,
+            expectedContentRevision,
+            out templateFloor,
+            out counts,
+            out commandBatch);
+    }
+
+    public static bool TryBuildFloorCommandBatch(
+        SpaceWarehouseTemplateInstantiationPreviewDto preview,
+        string templateFloorKey,
+        Guid modelVersionId,
+        Guid floorLogicalId,
+        Guid commandBatchId,
+        Guid clientInstanceId,
+        Guid leaseId,
+        long expectedFloorRevision,
+        long expectedContentRevision,
+        out SpaceWarehouseTemplateFloorPlanDto? templateFloor,
+        out SpaceWarehouseTemplateCountsDto? counts,
+        out ApplySpaceLayoutCommandBatchRequest? commandBatch)
+    {
+        ArgumentNullException.ThrowIfNull(preview);
+
         templateFloor = preview.Floors.SingleOrDefault(candidate =>
             string.Equals(
                 candidate.Key,
@@ -103,14 +134,14 @@ public static class SpaceBuiltInWarehouseTemplates
         var zoneIds = zones.ToDictionary(
             candidate => candidate.Key,
             candidate => TemplateObjectId(
-                templateVersionId,
+                preview.TemplateVersionId,
                 modelVersionId,
                 floorLogicalId,
                 candidate.Key));
         var aisleIds = aisles.ToDictionary(
             candidate => candidate.Key,
             candidate => TemplateObjectId(
-                templateVersionId,
+                preview.TemplateVersionId,
                 modelVersionId,
                 floorLogicalId,
                 candidate.Key));
@@ -154,7 +185,7 @@ public static class SpaceBuiltInWarehouseTemplates
         commands.AddRange(racks.Select(rack =>
         {
             var rackId = TemplateObjectId(
-                templateVersionId,
+                preview.TemplateVersionId,
                 modelVersionId,
                 floorLogicalId,
                 rack.Key);
@@ -168,7 +199,7 @@ public static class SpaceBuiltInWarehouseTemplates
                     rack.RackCode,
                     rack.RackCode,
                     "Selective",
-                    templateVersionId,
+                    preview.TemplateVersionId,
                     rack.X,
                     rack.Y,
                     rack.Z,

@@ -29,6 +29,20 @@ public sealed record SpaceWarehouseTemplateDto(
     string Status,
     SpaceWarehouseTemplateVersionDto LatestVersion);
 
+public sealed record CreateTenantSpaceWarehouseTemplateRequest(
+    string TemplateCode,
+    string Name,
+    string? Description,
+    int SchemaVersion,
+    IReadOnlyList<SpaceWarehouseTemplateFloorPlanDto> Floors,
+    IReadOnlyList<SpaceWarehouseTemplateZonePlanDto> Zones,
+    IReadOnlyList<SpaceWarehouseTemplateAislePlanDto> Aisles,
+    IReadOnlyList<SpaceWarehouseTemplateRackPlanDto> Racks);
+
+public sealed record CreateTenantSpaceWarehouseTemplateResponse(
+    SpaceWarehouseTemplateDto Template,
+    bool IdempotentReplay);
+
 public sealed record PreviewSpaceWarehouseTemplateRequest(
     Guid TemplateVersionId);
 

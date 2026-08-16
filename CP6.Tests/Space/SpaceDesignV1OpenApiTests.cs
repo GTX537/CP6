@@ -163,8 +163,8 @@ public sealed class SpaceDesignV1OpenApiTests
             .Select(operation =>
                 operation.Value.GetProperty("operationId").GetString())
             .ToArray();
-        Assert.Equal(147, operationIds.Length);
-        Assert.Equal(147, operationIds.Distinct().Count());
+        Assert.Equal(148, operationIds.Length);
+        Assert.Equal(148, operationIds.Distinct().Count());
         Assert.Contains("GetCapability", operationIds);
         Assert.Contains("ReplaceProviderConfiguration", operationIds);
         Assert.Contains("GetPolicy", operationIds);
@@ -229,6 +229,7 @@ public sealed class SpaceDesignV1OpenApiTests
         Assert.Contains("GetFloors", operationIds);
         Assert.Contains("CreateFloor", operationIds);
         Assert.Contains("GetWarehouseTemplates", operationIds);
+        Assert.Contains("CreateTenantWarehouseTemplate", operationIds);
         Assert.Contains("PreviewWarehouseTemplate", operationIds);
         Assert.Contains("ApplyWarehouseTemplateFloor", operationIds);
         Assert.Contains("CreateSource", operationIds);
@@ -1570,6 +1571,26 @@ public sealed class SpaceDesignV1OpenApiTests
                 .GetProperty("get")
                 .GetProperty("operationId")
                 .GetString());
+        var create = paths.GetProperty("/api/space/design/v1/templates")
+            .GetProperty("post");
+        Assert.Equal(
+            "CreateTenantWarehouseTemplate",
+            create.GetProperty("operationId").GetString());
+        Assert.True(
+            create.GetProperty("requestBody").GetProperty("required")
+                .GetBoolean());
+        AssertExactRequired(
+            Schema(
+                document.RootElement.GetProperty("components")
+                    .GetProperty("schemas"),
+                "CP6.Space.Contracts.CreateTenantSpaceWarehouseTemplateRequest"),
+            "templateCode",
+            "name",
+            "schemaVersion",
+            "floors",
+            "zones",
+            "aisles",
+            "racks");
         var preview = paths
             .GetProperty(
                 "/api/space/design/v1/templates/{templateId}/instantiate")
@@ -2559,6 +2580,9 @@ public sealed class SpaceDesignV1OpenApiTests
     [InlineData(
         "/api/space/design/v1/assets",
         "201")]
+    [InlineData(
+        "/api/space/design/v1/templates",
+        "201")]
     public void Write_operations_require_body_idempotency_and_replay_header(
         string path,
         string successStatus)
@@ -2654,6 +2678,7 @@ public sealed class SpaceDesignV1OpenApiTests
                      "GetAssets",
                      "DownloadStandardExcelTemplate",
                      "CreateAsset",
+                     "CreateTenantWarehouseTemplate",
                      "GetSources",
                      "CreateSource",
                      "UploadExcelSource",

@@ -2,6 +2,13 @@
 
 > 依据 Git log 汇总，不替代完整 Git 历史。重点记录影响接手判断的里程碑。
 
+## 2026-08-16：Space Tenant 私有整仓模板
+
+- 新增当前租户整仓模板与不可变版本持久化，保存规范化计划、内容 SHA、计数、审计、租户内唯一编码及复合租户外键；System 模板保持代码内置只读。
+- Design V1 新增幂等创建，目录/密封 Preview/Lease+双 Revision 逐层 Apply 同时支持 System/Tenant；服务端验证父链、尺寸、命令和库位上限，跨租户模板 ID 猜测失败关闭。
+- Space Studio 合并显示系统与租户私有模板，切换模板后不会误用前一个密封 Preview。全量 Space Integration 456、Space Unit 549、CP6.Tests 2,934、Web 884、Space Studio Playwright 26，以及 OpenAPI/权限 96、EF/SDK drift、Vue TypeScript 和生产构建均通过。
+- Tenant 模板持久化纵切闭环；模板制作表单、四模式统一向导和 Template 创建来源仍 Pending，LM-FR-001/WP1 与 GA 保持 Partial/Pending、72% / `NoGo`。
+
 ## 2026-08-16：Space Studio 历史 CAD 审核结果目录
 
 - Design V1 新增 Version/Floor 级 CAD Review Candidate 目录，按持久 Parse Payload 的 Base Content Revision/Hash 判定新鲜度；当前且 Artifact 完整的结果可加载，旧结果只允许重新解析。

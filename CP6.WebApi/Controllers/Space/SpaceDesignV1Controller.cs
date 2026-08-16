@@ -617,6 +617,29 @@ public sealed class SpaceDesignV1Controller(
             request,
             cancellationToken);
 
+    [HttpPost("templates")]
+    [RequirePermission("space", "model:edit", UseProblemDetails = true)]
+    [ProducesResponseType<CreateTenantSpaceWarehouseTemplateResponse>(
+        StatusCodes.Status201Created)]
+    public async Task<IActionResult> CreateTenantWarehouseTemplate(
+        [FromHeader(Name = "Idempotency-Key"), Required]
+        string idempotencyKey,
+        [FromBody, Required]
+        CreateTenantSpaceWarehouseTemplateRequest request,
+        CancellationToken cancellationToken)
+    {
+        var result = await service.CreateTenantWarehouseTemplateAsync(
+            request,
+            idempotencyKey,
+            cancellationToken);
+        Response.Headers["Idempotent-Replay"] =
+            result.IdempotentReplay ? "true" : "false";
+        return CreatedAtAction(
+            nameof(GetWarehouseTemplates),
+            new { scope = "Tenant" },
+            result);
+    }
+
     [HttpGet("templates")]
     [RequirePermission("space", "model:read", UseProblemDetails = true)]
     [ProducesResponseType<IReadOnlyList<SpaceWarehouseTemplateDto>>(

@@ -31,6 +31,8 @@ public static class SpaceErrorCodes
         "SPACE_WAREHOUSE_TEMPLATE_PROPOSAL_STALE";
     public const string WarehouseTemplateFloorNotFound =
         "SPACE_WAREHOUSE_TEMPLATE_FLOOR_NOT_FOUND";
+    public const string WarehouseTemplateConflict =
+        "SPACE_WAREHOUSE_TEMPLATE_CONFLICT";
     public const string IdempotencyConflict = "SPACE_IDEMPOTENCY_KEY_REUSED";
     public const string IdempotencyKeyRequired = "SPACE_IDEMPOTENCY_KEY_REQUIRED";
     public const string CursorInvalid = "SPACE_CURSOR_INVALID";
