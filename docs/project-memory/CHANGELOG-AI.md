@@ -2,6 +2,12 @@
 
 > 依据 Git log 汇总，不替代完整 Git 历史。重点记录影响接手判断的里程碑。
 
+## 2026-08-15：Space 上传重复内容复用提示
+
+- CAD 上传前端合同不再丢弃服务端 `Reused`；CAD 与 PDF/图片底图重复内容会明确提示按 SHA-256 复用受控文件或当前来源。
+- 客户端不计算权威哈希、不跳过扫描；重复底图继续执行同一 Clean/Scanning/Rejected 与挂接流程。
+- 聚焦测试 10、Vue TypeScript、Web 全量 858 及 production build 通过。Excel 统一上传 UI 与 LM-FR-005 来源删除预检仍待实现，WP4 和 GA 72% / `NoGo` 不变。
+
 ## 2026-08-15：Space Draft 来源与阻断摘要
 
 - Design V1 Version 合同新增来源、创建者、创建/更新时间和 Open Blocking 数量；列表和详情使用同一聚合语义，Open Blocking 不包含已解决问题或 Warning。
