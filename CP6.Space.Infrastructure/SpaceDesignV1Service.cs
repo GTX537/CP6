@@ -110,13 +110,39 @@ public sealed class SpaceDesignV1Service :
             .Skip(offset)
             .Take(limit + 1)
             .ToListAsync(cancellationToken);
+        var visibleVersionIds = rows
+            .Take(limit)
+            .Select(version => version.Id)
+            .ToArray();
+        var blockingCounts = visibleVersionIds.Length == 0
+            ? new Dictionary<Guid, int>()
+            : await _context.Issues
+                .AsNoTracking()
+                .Where(issue =>
+                    issue.ModelVersionId.HasValue &&
+                    visibleVersionIds.Contains(issue.ModelVersionId.Value) &&
+                    issue.Status == SpaceIssueStatus.Open &&
+                    issue.Severity == SpaceIssueSeverity.Blocking)
+                .GroupBy(issue => issue.ModelVersionId!.Value)
+                .Select(group => new
+                {
+                    VersionId = group.Key,
+                    Count = group.Count(),
+                })
+                .ToDictionaryAsync(
+                    item => item.VersionId,
+                    item => item.Count,
+                    cancellationToken);
         return Page(
             rows,
             limit,
             offset,
             "versions",
             filterHash,
-            version => ToDto(version, model.SiteId));
+            version => ToDto(
+                version,
+                model.SiteId,
+                blockingCounts.GetValueOrDefault(version.Id)));
     }
 
     public async Task<SpaceVersionDto> GetVersionAsync(
@@ -135,7 +161,15 @@ public sealed class SpaceDesignV1Service :
             throw NotFound(SpaceErrorCodes.VersionNotFound, "Space version");
 
         EnsureReadable(result.Model);
-        return ToDto(result.Version, result.Model.SiteId);
+        var openBlockingCount = await _context.Issues
+            .AsNoTracking()
+            .CountAsync(
+                issue =>
+                    issue.ModelVersionId == versionId &&
+                    issue.Status == SpaceIssueStatus.Open &&
+                    issue.Severity == SpaceIssueSeverity.Blocking,
+                cancellationToken);
+        return ToDto(result.Version, result.Model.SiteId, openBlockingCount);
     }
 
     public async Task<IReadOnlyList<SpaceSceneFloorDto>> GetFloorsAsync(
@@ -5917,7 +5951,8 @@ public sealed class SpaceDesignV1Service :
 
     private static SpaceVersionDto ToDto(
         SpaceModelVersion version,
-        Guid siteId) =>
+        Guid siteId,
+        int openBlockingCount) =>
         new(
             version.Id,
             version.ModelId,
@@ -5931,7 +5966,17 @@ public sealed class SpaceDesignV1Service :
             version.ValidatedHash,
             version.PublishedAtUtc,
             RowVersion(version.RowVersion),
-            version.Purpose.ToString());
+            version.Purpose.ToString(),
+            VersionCreationSource(version),
+            version.CreatedBy,
+            version.CreatedAtUtc,
+            version.ModifiedAtUtc ?? version.CreatedAtUtc,
+            openBlockingCount);
+
+    private static string VersionCreationSource(SpaceModelVersion version) =>
+        version.BasedOnVersionId.HasValue
+            ? SpaceVersionCreationSources.PublishedVersion
+            : SpaceVersionCreationSources.Blank;
 
     private static SpaceSourceDto ToDto(SpaceModelSource source) =>
         new(

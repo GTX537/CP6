@@ -228,6 +228,10 @@ describe('DesignAiProposalDecisionPanel atomic apply', () => {
       status: 'Draft',
       contentRevision: 43,
       rowVersion: 'version-row-version',
+      creationSource: 'Blank',
+      createdAtUtc: new Date('2026-08-15T12:00:00Z'),
+      updatedAtUtc: new Date('2026-08-15T12:00:00Z'),
+      openBlockingCount: 0,
     })
     vi.mocked(aiProposalReviewApi.createGenerationRun).mockResolvedValue({
       schemaVersion: 1,

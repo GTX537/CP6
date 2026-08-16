@@ -1,5 +1,12 @@
 # 已完成能力与近期里程碑
 
+## 2026-08-15 Space Draft 来源与阻断摘要
+
+- Design V1 Version 列表与详情新增来源、创建者、创建/更新时间和 Open Blocking 数；现有 Blank/PublishedVersion 创建路径返回稳定来源语义，历史创建者为空时不伪造姓名。
+- Space Studio 活动 Draft 卡片直接展示这些字段；Blocking 数量使用文字与阻断语义色，日期按浏览器区域格式显示。
+- Space Integration 真库 444/444、Space Unit 537/537、CP6.Tests 2,926（19 个既有环境门禁跳过）、Web 856/856、OpenAPI/双 SDK、EF、类型检查、生产构建及完整 solution Release 0 warning / 0 error 通过。详见 `docs/space/reports/2026-08-15-space-draft-summary-metadata.md`。
+- 当前已支持的 Draft 创建路径 LM-FR-002 摘要缺口关闭；System/Tenant Template 创建来源须随四模式向导持久化，创建者显示名解析也仍为后续边界。LM-FR-001/WP1 保持 Partial/Pending，核心 GA 保持 72% / `NoGo`。
+
 ## 2026-08-15 Space System 整仓模板按楼层写入 Draft
 
 - 新增 `POST /api/space/design/v1/versions/{versionId}/floors/{floorLogicalId}/templates/{templateId}:apply`，只接受服务端内置模板版本和密封 Proposal，按一个模板楼层生成确定性的 Zone/Aisle/Rack/逐层规格/Location 命令。

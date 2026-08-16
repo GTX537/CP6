@@ -31584,6 +31584,12 @@
         "additionalProperties": false
       },
       "CP6.Space.Contracts.SpaceVersionDto": {
+        "required": [
+          "createdAtUtc",
+          "creationSource",
+          "openBlockingCount",
+          "updatedAtUtc"
+        ],
         "type": "object",
         "properties": {
           "id": {
@@ -31639,6 +31645,26 @@
           "purpose": {
             "type": "string",
             "nullable": true
+          },
+          "creationSource": {
+            "type": "string"
+          },
+          "createdBy": {
+            "type": "string",
+            "format": "uuid",
+            "nullable": true
+          },
+          "createdAtUtc": {
+            "type": "string",
+            "format": "date-time"
+          },
+          "updatedAtUtc": {
+            "type": "string",
+            "format": "date-time"
+          },
+          "openBlockingCount": {
+            "type": "integer",
+            "format": "int32"
           }
         },
         "additionalProperties": false

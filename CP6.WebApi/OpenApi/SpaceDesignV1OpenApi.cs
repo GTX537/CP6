@@ -339,6 +339,13 @@ public sealed class SpaceWmsRuntimeSchemaFilter : ISchemaFilter
                 "commandBatchId",
                 "idempotentReplay",
             ],
+            [typeof(SpaceVersionDto)] =
+            [
+                "creationSource",
+                "createdAtUtc",
+                "updatedAtUtc",
+                "openBlockingCount",
+            ],
             [typeof(SpacePublishPreviewDto)] =
             [
                 "validationWarningCount",

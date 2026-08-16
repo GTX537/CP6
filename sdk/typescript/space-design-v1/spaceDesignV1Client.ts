@@ -34760,6 +34760,11 @@ export class SpaceVersionDto implements ISpaceVersionDto {
     publishedAtUtc?: Date | undefined;
     rowVersion?: string | undefined;
     purpose?: string | undefined;
+    creationSource!: string;
+    createdBy?: string | undefined;
+    createdAtUtc!: Date;
+    updatedAtUtc!: Date;
+    openBlockingCount!: number;
 
     constructor(data?: ISpaceVersionDto) {
         if (data) {
@@ -34785,6 +34790,11 @@ export class SpaceVersionDto implements ISpaceVersionDto {
             this.publishedAtUtc = _data["publishedAtUtc"] ? new Date(_data["publishedAtUtc"].toString()) : undefined as any;
             this.rowVersion = _data["rowVersion"];
             this.purpose = _data["purpose"];
+            this.creationSource = _data["creationSource"];
+            this.createdBy = _data["createdBy"];
+            this.createdAtUtc = _data["createdAtUtc"] ? new Date(_data["createdAtUtc"].toString()) : undefined as any;
+            this.updatedAtUtc = _data["updatedAtUtc"] ? new Date(_data["updatedAtUtc"].toString()) : undefined as any;
+            this.openBlockingCount = _data["openBlockingCount"];
         }
     }
 
@@ -34810,6 +34820,11 @@ export class SpaceVersionDto implements ISpaceVersionDto {
         data["publishedAtUtc"] = this.publishedAtUtc ? this.publishedAtUtc.toISOString() : undefined as any;
         data["rowVersion"] = this.rowVersion;
         data["purpose"] = this.purpose;
+        data["creationSource"] = this.creationSource;
+        data["createdBy"] = this.createdBy;
+        data["createdAtUtc"] = this.createdAtUtc ? this.createdAtUtc.toISOString() : undefined as any;
+        data["updatedAtUtc"] = this.updatedAtUtc ? this.updatedAtUtc.toISOString() : undefined as any;
+        data["openBlockingCount"] = this.openBlockingCount;
         return data;
     }
 }
@@ -34828,6 +34843,11 @@ export interface ISpaceVersionDto {
     publishedAtUtc?: Date | undefined;
     rowVersion?: string | undefined;
     purpose?: string | undefined;
+    creationSource: string;
+    createdBy?: string | undefined;
+    createdAtUtc: Date;
+    updatedAtUtc: Date;
+    openBlockingCount: number;
 }
 
 export class SpaceWarehouseTemplateAislePlanDto implements ISpaceWarehouseTemplateAislePlanDto {
