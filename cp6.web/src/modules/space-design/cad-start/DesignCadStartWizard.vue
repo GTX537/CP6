@@ -3,6 +3,7 @@ import { computed, nextTick, onBeforeUnmount, onMounted, reactive, ref, watch } 
 import {
   designCadParseApi,
   type PreviewSpaceCadPreparationResponse,
+  type SpaceCadCoordinateIssue,
   type SpaceCadGeometryRule,
   type SpaceCadLayerMappingOverride,
   type SpaceCadMappingProfile,
@@ -345,6 +346,37 @@ function message(cause: unknown, fallback: string): string {
   return fallback
 }
 
+function formatCadNumber(value: number): string {
+  if (!Number.isFinite(value)) return '无效'
+  return value.toFixed(3).replace(/\.?0+$/, '')
+}
+
+function formatCadBounds(
+  bounds: { minX: number; minY: number; maxX: number; maxY: number } | undefined,
+  unit: string,
+): string {
+  if (!bounds) return '未识别到可用范围'
+  const width = Math.abs(bounds.maxX - bounds.minX)
+  const height = Math.abs(bounds.maxY - bounds.minY)
+  return `X ${formatCadNumber(bounds.minX)}～${formatCadNumber(bounds.maxX)}；Y ${formatCadNumber(bounds.minY)}～${formatCadNumber(bounds.maxY)}；宽 ${formatCadNumber(width)} × 高 ${formatCadNumber(height)} ${unit}`
+}
+
+function coordinateIssueHint(issue: SpaceCadCoordinateIssue): string {
+  if (issue.code === 'SPACE_CAD_UNIT_UNKNOWN') return 'CAD 未声明可靠单位，必须人工选择。'
+  if (issue.code === 'SPACE_CAD_EXTENT_IMPLAUSIBLE') {
+    return issue.detailToken === 'below-minimum'
+      ? '换算范围过小，可能选择了错误单位或比例。'
+      : '换算范围过大，可能选择了错误单位或比例。'
+  }
+  if (issue.code === 'SPACE_CAD_FLOOR_BOUNDARY_EXCEEDED') {
+    return '确认后的图形超出目标楼层边界。'
+  }
+  if (issue.code === 'SPACE_CAD_ENTITY_FLOOR_BOUNDARY_EXCEEDED') {
+    return '该对象超出目标楼层边界。'
+  }
+  return issue.detailToken ?? '需要人工复核。'
+}
+
 function handleDialogKeydown(event: KeyboardEvent): void {
   if (event.key === 'Escape') {
     event.preventDefault()
@@ -491,10 +523,52 @@ function handleDialogKeydown(event: KeyboardEvent): void {
               <span>低置信候选 {{ preview.semanticPreview?.summary.candidateCount ?? 0 }}</span>
               <span class="blocking">阻断 {{ coordinateBlockingCount + (preview.mappingPreview?.summary.blockingCount ?? 0) + (preview.semanticPreview?.summary.blockingCount ?? 0) }}</span>
             </div>
-            <p class="analysis">
-              CAD 建议单位 {{ preview.coordinateAnalysis.suggestedUnit }}；
-              范围{{ preview.coordinateAnalysis.isSuggestedExtentPlausible ? '合理' : '需要复核' }}。
-            </p>
+            <section class="coordinate-analysis" aria-label="CAD 单位、比例与范围建议">
+              <dl>
+                <div>
+                  <dt>自动建议单位</dt>
+                  <dd>{{ preview.coordinateAnalysis.suggestedUnit }}</dd>
+                </div>
+                <div>
+                  <dt>自动建议比例</dt>
+                  <dd>
+                    {{ preview.coordinateAnalysis.suggestedScaleToMillimeters == null
+                      ? '未识别，必须人工确认'
+                      : `1 来源单位 = ${formatCadNumber(preview.coordinateAnalysis.suggestedScaleToMillimeters)} mm` }}
+                  </dd>
+                </div>
+                <div class="wide">
+                  <dt>原始图纸范围（来源单位）</dt>
+                  <dd>{{ formatCadBounds(preview.coordinateAnalysis.sourceBounds, '来源单位') }}</dd>
+                </div>
+                <div class="wide">
+                  <dt>自动换算范围（mm）</dt>
+                  <dd>{{ formatCadBounds(preview.coordinateAnalysis.suggestedBoundsMillimeters, 'mm') }}</dd>
+                </div>
+              </dl>
+              <p
+                class="analysis-verdict"
+                :class="{ warning: !preview.coordinateAnalysis.isSuggestedExtentPlausible }"
+              >
+                {{ preview.coordinateAnalysis.isSuggestedExtentPlausible
+                  ? '自动比例与图纸范围合理，仍需人工确认。'
+                  : '自动比例或图纸范围异常，必须核对单位后重新预览。' }}
+              </p>
+              <ul
+                v-if="preview.coordinateAnalysis.issues.length"
+                class="coordinate-issues"
+                aria-label="CAD 自动单位与范围问题"
+              >
+                <li
+                  v-for="issue in preview.coordinateAnalysis.issues"
+                  :key="`analysis:${issue.code}:${issue.detailToken ?? ''}`"
+                  :class="{ blocking: issue.severity === 'Blocking' }"
+                >
+                  <strong>{{ issue.severity }}</strong> · {{ issue.code }} ·
+                  {{ coordinateIssueHint(issue) }}
+                </li>
+              </ul>
+            </section>
             <ul
               v-if="preview.coordinateIssues.length"
               class="coordinate-issues"
@@ -506,7 +580,8 @@ function handleDialogKeydown(event: KeyboardEvent): void {
                 :class="{ blocking: issue.severity === 'Blocking' }"
               >
                 <strong>{{ issue.severity }}</strong> · {{ issue.code }} ·
-                {{ issue.sourceRef ? `对象 ${issue.sourceRef}` : '整份 CAD' }}
+                {{ issue.sourceRef ? `对象 ${issue.sourceRef}` : '整份 CAD' }} ·
+                {{ coordinateIssueHint(issue) }}
               </li>
             </ul>
             <p v-if="previewDirty" class="dirty-notice" role="status">
@@ -667,7 +742,14 @@ button:disabled { cursor:not-allowed; opacity:.45; }
 .primary { border-color:#18c2c9; color:#041014; background:#18c2c9; font-weight:800; }
 .metrics { display:grid; grid-template-columns:repeat(3,minmax(0,1fr)); gap:8px; margin-bottom:14px; }
 .metrics span { padding:10px; border:1px solid #2a3950; border-radius:6px; background:#0d1626; }
-.analysis { margin:0 0 12px; color:#c6d2e3; }
+.coordinate-analysis { display:grid; gap:10px; margin:0 0 14px; padding:14px; border:1px solid #2a3950; border-radius:6px; background:#0d1626; }
+.coordinate-analysis dl { display:grid; grid-template-columns:repeat(2,minmax(0,1fr)); gap:10px; margin:0; }
+.coordinate-analysis dl div { display:grid; gap:3px; }
+.coordinate-analysis dl .wide { grid-column:1/-1; }
+.coordinate-analysis dt { color:#8cebf0; font-size:13px; font-weight:800; }
+.coordinate-analysis dd { margin:0; color:#f4f7fb; font-size:16px; line-height:1.45; overflow-wrap:anywhere; }
+.analysis-verdict { margin:0; color:#9cf0c3; font-size:16px; }
+.analysis-verdict.warning { color:#ffd27a; }
 .dirty-notice { margin:0 0 14px; padding:12px; border:1px solid #a97921; border-radius:6px; color:#ffd27a; background:#2a2114; }
 .inventory-review { display:grid; gap:14px; margin:0 0 16px; }
 .inventory-heading { display:flex; align-items:end; justify-content:space-between; gap:16px; }

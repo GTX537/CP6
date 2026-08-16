@@ -2,6 +2,12 @@
 
 > 依据 Git log 汇总，不替代完整 Git 历史。重点记录影响接手判断的里程碑。
 
+## 2026-08-16：Space CAD 输入与坐标确认
+
+- LM-FR-010 明确以同一受控上传链接受 DWG/DXF：前端显式格式、服务端扩展名/MIME/签名校验、隔离扫描和 CAD IR/Preparation/Parse 权威不变。
+- LM-FR-011 起始向导新增自动建议单位、mm 比例、原始图纸 X/Y/宽高、自动换算毫米范围、异常状态与原因展示；两类人工确认及 Preview 失效机制保持失败关闭。
+- Space Unit 546、Web 869、Vue TypeScript、生产构建与完整 solution Release 0 warning / 0 error 通过；AutoCAD 2025 Core Console 真实 DWG 开发合同用例 1/1 通过。LM-FR-010～011 仓库实现闭环，但生产主备 Provider 与核心 GA 仍为 Pending、72% / `NoGo`。
+
 ## 2026-08-16：Space CAD 语义与质量诊断
 
 - 复核并关闭 LM-FR-014/015 的仓库口径：七类核心 CAD 语义及逐提案 SourceRef、规则、置信度、位置均继续由同一 Semantic Preview/Diagnostic Index 提供。
