@@ -176,6 +176,169 @@ describe('DesignCadStartWizard', () => {
     wrapper.unmount()
   })
 
+  it('shows layer and block inventory and submits explicit per-layer overrides', async () => {
+    vi.mocked(designCadParseApi.previewPreparation).mockResolvedValue({
+      baseContentRevision: 3,
+      readyForParsing: false,
+      coordinateAnalysis: {
+        suggestedUnit: 'Millimeter',
+        isSuggestedExtentPlausible: true,
+        issues: [],
+      },
+      coordinateMetadata: {
+        confirmedUnit: 'Millimeter',
+        confirmedScaleToMillimeters: 1,
+      },
+      inventorySummary: {
+        layerCount: 2,
+        blockCount: 1,
+        entityCount: 12,
+        supportedEntityCount: 11,
+        unsupportedEntityCount: 1,
+      },
+      inventory: {
+        summary: {
+          layerCount: 2,
+          emptyLayerCount: 0,
+          blockCount: 1,
+          undefinedBlockCount: 0,
+          blockReferenceCount: 3,
+          attributedBlockReferenceCount: 2,
+          entityCount: 12,
+          supportedEntityCount: 11,
+          unsupportedEntityCount: 1,
+        },
+        layers: [
+          {
+            layerId: 'WALL',
+            name: 'WALL',
+            color: 'ACI:7',
+            lineType: 'CONTINUOUS',
+            isVisible: true,
+            entityCount: 8,
+            supportedEntityCount: 8,
+            unsupportedEntityCount: 0,
+            blockReferenceCount: 0,
+            attributedEntityCount: 0,
+            entityTypeCounts: { Line: 8 },
+          },
+          {
+            layerId: 'MISC',
+            name: 'MISC',
+            color: '#ff6600',
+            lineType: 'DASHED',
+            isVisible: false,
+            entityCount: 4,
+            supportedEntityCount: 3,
+            unsupportedEntityCount: 1,
+            blockReferenceCount: 3,
+            attributedEntityCount: 2,
+            entityTypeCounts: { BlockReference: 3, Unknown: 1 },
+          },
+        ],
+        blocks: [
+          {
+            blockId: 'B:RACK-A',
+            name: 'RACK-A',
+            isDefined: true,
+            isExternalReference: false,
+            definitionEntityCount: 4,
+            referenceCount: 3,
+            attributedReferenceCount: 2,
+            attributes: [{ name: 'CODE', referenceCount: 2, distinctValueCount: 2 }],
+          },
+        ],
+      },
+      mappingProfile: {
+        profileId: 'profile-1',
+        version: 1,
+        name: 'Warehouse profile',
+        scope: 'System',
+        definitionSha256: 'a'.repeat(64),
+        ruleCount: 8,
+      },
+      mappingPreview: {
+        layerOverrides: [],
+        decisions: [
+          {
+            sourceKind: 'Layer',
+            sourceKey: 'WALL',
+            layerId: 'WALL',
+            objectCount: 8,
+            status: 'Mapped',
+            decisionSource: 'ProfileRule',
+            ruleId: 'wall-layer',
+            target: 'Wall',
+            geometryRule: 'Centerline',
+            confidenceWeight: .95,
+          },
+          {
+            sourceKind: 'Layer',
+            sourceKey: 'MISC',
+            layerId: 'MISC',
+            objectCount: 4,
+            status: 'Unmapped',
+            decisionSource: 'None',
+          },
+        ],
+        summary: {
+          mappedLayerCount: 1,
+          unmappedLayerCount: 1,
+          conflictLayerCount: 0,
+          mappedBlockCount: 1,
+          unmappedBlockCount: 0,
+          blockingCount: 1,
+          warningCount: 0,
+        },
+      },
+    })
+    const wrapper = mount(DesignCadStartWizard, {
+      props: {
+        siteId: 'site-1',
+        versionId: 'version-1',
+        sourceId: 'source-1',
+        floorLogicalId: 'floor-1',
+      },
+      attachTo: document.body,
+    })
+    await flushPromises()
+
+    await wrapper.get('select[aria-label="来源单位"]').setValue('Millimeter')
+    await wrapper.get('select[aria-label="映射 Profile"]').setValue('profile-1:1')
+    expect(wrapper.get('select[aria-label="映射 Profile"]').text()).toContain('系统公共')
+    await wrapper.get('.fields > .primary').trigger('click')
+    await flushPromises()
+
+    const inventory = wrapper.get('[aria-label="CAD 图层与块清单"]')
+    expect(inventory.text()).toContain('ACI:7')
+    expect(inventory.text()).toContain('CONTINUOUS')
+    expect(inventory.text()).toContain('MISC · 隐藏')
+    expect(inventory.text()).toContain('未映射')
+    await wrapper.get('.block-review summary').trigger('click')
+    expect(wrapper.get('[aria-label="CAD 块清单"]').text()).toContain('RACK-A')
+
+    await wrapper.get('select[aria-label="图层 MISC 覆盖方式"]').setValue('Zone')
+    expect(wrapper.get('[role="status"]').text()).toContain('必须重新生成预览')
+    expect(wrapper.get('footer .primary').attributes('disabled')).toBeDefined()
+    await wrapper.get('.fields > .primary').trigger('click')
+    await flushPromises()
+
+    expect(designCadParseApi.previewPreparation).toHaveBeenLastCalledWith(
+      'version-1',
+      'source-1',
+      expect.objectContaining({
+        layerOverrides: [{
+          layerId: 'MISC',
+          ignore: false,
+          target: 'Zone',
+          geometryRule: 'ClosedBoundary',
+          confidenceWeight: .95,
+        }],
+      }),
+    )
+    wrapper.unmount()
+  })
+
   it('moves focus into the modal and supports Escape without waiting for APIs', async () => {
     const wrapper = mount(DesignCadStartWizard, {
       props: {

@@ -45,6 +45,22 @@ public sealed record SpaceCadPreparationStatusDto(
     bool ReadyForPreparation,
     string? BlockingCode);
 
+public sealed record SpaceCadPreparationInventoryDto(
+    SpaceCadInventorySummaryV1 Summary,
+    IReadOnlyList<SpaceCadLayerInventoryV1> Layers,
+    IReadOnlyList<SpaceCadPreparationBlockInventoryDto> Blocks);
+
+public sealed record SpaceCadPreparationBlockInventoryDto(
+    string BlockId,
+    string Name,
+    bool IsDefined,
+    bool IsExternalReference,
+    long DefinitionEntityCount,
+    long ReferenceCount,
+    long AttributedReferenceCount,
+    IReadOnlyList<SpaceCadBlockAttributeInventoryV1> Attributes,
+    SpaceCadBoundsV1? ReferenceBounds);
+
 public sealed record PreviewSpaceCadPreparationResponse(
     Guid? PreparationId,
     DateTime? ExpiresAtUtc,
@@ -54,6 +70,7 @@ public sealed record PreviewSpaceCadPreparationResponse(
     SpaceCadCoordinateAnalysisV1 CoordinateAnalysis,
     SpaceCadCoordinateMetadataV1 CoordinateMetadata,
     SpaceCadInventorySummaryV1? InventorySummary,
+    SpaceCadPreparationInventoryDto? Inventory,
     SpaceCadMappingProfileSummaryDto MappingProfile,
     SpaceCadMappingPreviewV1? MappingPreview,
     SpaceCadSemanticPreviewV1? SemanticPreview,

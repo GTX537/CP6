@@ -49,6 +49,18 @@ public sealed class SpaceCadPreparationServiceTests
         Assert.Equal(preview.PreparationId, preview.StartRequest!.PreparationId);
         Assert.Equal(fixture.Floor.LogicalId, preview.StartRequest.FloorLogicalId);
         Assert.Equal(0, preview.BaseContentRevision);
+        Assert.NotNull(preview.Inventory);
+        var layer = Assert.Single(preview.Inventory!.Layers);
+        Assert.Equal("WALL", layer.Name);
+        Assert.Equal("ACI:7", layer.Color);
+        Assert.Equal("CONTINUOUS", layer.LineType);
+        Assert.True(layer.IsVisible);
+        Assert.Equal(1, layer.EntityCount);
+        var block = Assert.Single(preview.Inventory.Blocks);
+        Assert.Equal("RACK-A", block.Name);
+        Assert.True(block.IsDefined);
+        Assert.Equal(0, block.ReferenceCount);
+        Assert.Equal(preview.InventorySummary, preview.Inventory.Summary);
         var preparation = Assert.Single(
             await fixture.Context.CadParsePreparations.ToListAsync());
         var snapshot = SpaceCadMappingReplaySnapshot.Deserialize(
@@ -306,7 +318,7 @@ public sealed class SpaceCadPreparationServiceTests
                     "deterministic-test",
                     "1.0"),
                 [new SpaceCadIrLayerV1("WALL", "WALL", 1, "ACI:7", "CONTINUOUS")],
-                [],
+                [new SpaceCadIrBlockV1("B:RACK-A", "RACK-A", false, null, 0)],
                 [new SpaceCadIrEntityV1(
                     "H:WALL-1",
                     SpaceCadIrEntityType.Line,
@@ -325,7 +337,7 @@ public sealed class SpaceCadPreparationServiceTests
                 [],
                 new SpaceCadIrSummaryV1(
                     1,
-                    0,
+                    1,
                     1,
                     1,
                     0,

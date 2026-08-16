@@ -26594,6 +26594,9 @@ namespace CP6.Space.Client
         [System.Text.Json.Serialization.JsonPropertyName("inventorySummary")]
         public SpaceCadInventorySummaryV1 InventorySummary { get; set; } = default!;
 
+        [System.Text.Json.Serialization.JsonPropertyName("inventory")]
+        public SpaceCadPreparationInventoryDto Inventory { get; set; } = default!;
+
         [System.Text.Json.Serialization.JsonPropertyName("mappingProfile")]
         public SpaceCadMappingProfileSummaryDto MappingProfile { get; set; } = default!;
 
@@ -27805,6 +27808,22 @@ namespace CP6.Space.Client
     }
 
     [System.CodeDom.Compiler.GeneratedCode("NJsonSchema", "14.7.1.0 (NJsonSchema v11.6.1.0 (Newtonsoft.Json v13.0.0.0))")]
+    public partial class SpaceCadBlockAttributeInventoryV1
+    {
+
+        [System.Text.Json.Serialization.JsonPropertyName("name")]
+        [System.ComponentModel.DataAnnotations.Required(AllowEmptyStrings = true)]
+        public string Name { get; set; } = default!;
+
+        [System.Text.Json.Serialization.JsonPropertyName("referenceCount")]
+        public long ReferenceCount { get; set; } = default!;
+
+        [System.Text.Json.Serialization.JsonPropertyName("distinctValueCount")]
+        public long DistinctValueCount { get; set; } = default!;
+
+    }
+
+    [System.CodeDom.Compiler.GeneratedCode("NJsonSchema", "14.7.1.0 (NJsonSchema v11.6.1.0 (Newtonsoft.Json v13.0.0.0))")]
     public partial class SpaceCadBoundsV1
     {
 
@@ -28205,6 +28224,51 @@ namespace CP6.Space.Client
 
         [System.Runtime.Serialization.EnumMember(Value = @"Blocking")]
         Blocking = 2,
+
+    }
+
+    [System.CodeDom.Compiler.GeneratedCode("NJsonSchema", "14.7.1.0 (NJsonSchema v11.6.1.0 (Newtonsoft.Json v13.0.0.0))")]
+    public partial class SpaceCadLayerInventoryV1
+    {
+
+        [System.Text.Json.Serialization.JsonPropertyName("layerId")]
+        [System.ComponentModel.DataAnnotations.Required(AllowEmptyStrings = true)]
+        public string LayerId { get; set; } = default!;
+
+        [System.Text.Json.Serialization.JsonPropertyName("name")]
+        [System.ComponentModel.DataAnnotations.Required(AllowEmptyStrings = true)]
+        public string Name { get; set; } = default!;
+
+        [System.Text.Json.Serialization.JsonPropertyName("color")]
+        public string? Color { get; set; } = default!;
+
+        [System.Text.Json.Serialization.JsonPropertyName("lineType")]
+        public string? LineType { get; set; } = default!;
+
+        [System.Text.Json.Serialization.JsonPropertyName("isVisible")]
+        public bool IsVisible { get; set; } = default!;
+
+        [System.Text.Json.Serialization.JsonPropertyName("entityCount")]
+        public long EntityCount { get; set; } = default!;
+
+        [System.Text.Json.Serialization.JsonPropertyName("supportedEntityCount")]
+        public long SupportedEntityCount { get; set; } = default!;
+
+        [System.Text.Json.Serialization.JsonPropertyName("unsupportedEntityCount")]
+        public long UnsupportedEntityCount { get; set; } = default!;
+
+        [System.Text.Json.Serialization.JsonPropertyName("blockReferenceCount")]
+        public long BlockReferenceCount { get; set; } = default!;
+
+        [System.Text.Json.Serialization.JsonPropertyName("attributedEntityCount")]
+        public long AttributedEntityCount { get; set; } = default!;
+
+        [System.Text.Json.Serialization.JsonPropertyName("entityTypeCounts")]
+        [System.ComponentModel.DataAnnotations.Required]
+        public System.Collections.Generic.IDictionary<string, long> EntityTypeCounts { get; set; } = new System.Collections.Generic.Dictionary<string, long>();
+
+        [System.Text.Json.Serialization.JsonPropertyName("bounds")]
+        public SpaceCadBoundsV1 Bounds { get; set; } = default!;
 
     }
 
@@ -28635,6 +28699,60 @@ namespace CP6.Space.Client
 
         [System.Text.Json.Serialization.JsonPropertyName("z")]
         public double Z { get; set; } = default!;
+
+    }
+
+    [System.CodeDom.Compiler.GeneratedCode("NJsonSchema", "14.7.1.0 (NJsonSchema v11.6.1.0 (Newtonsoft.Json v13.0.0.0))")]
+    public partial class SpaceCadPreparationBlockInventoryDto
+    {
+
+        [System.Text.Json.Serialization.JsonPropertyName("blockId")]
+        [System.ComponentModel.DataAnnotations.Required(AllowEmptyStrings = true)]
+        public string BlockId { get; set; } = default!;
+
+        [System.Text.Json.Serialization.JsonPropertyName("name")]
+        [System.ComponentModel.DataAnnotations.Required(AllowEmptyStrings = true)]
+        public string Name { get; set; } = default!;
+
+        [System.Text.Json.Serialization.JsonPropertyName("isDefined")]
+        public bool IsDefined { get; set; } = default!;
+
+        [System.Text.Json.Serialization.JsonPropertyName("isExternalReference")]
+        public bool IsExternalReference { get; set; } = default!;
+
+        [System.Text.Json.Serialization.JsonPropertyName("definitionEntityCount")]
+        public long DefinitionEntityCount { get; set; } = default!;
+
+        [System.Text.Json.Serialization.JsonPropertyName("referenceCount")]
+        public long ReferenceCount { get; set; } = default!;
+
+        [System.Text.Json.Serialization.JsonPropertyName("attributedReferenceCount")]
+        public long AttributedReferenceCount { get; set; } = default!;
+
+        [System.Text.Json.Serialization.JsonPropertyName("attributes")]
+        [System.ComponentModel.DataAnnotations.Required]
+        public System.Collections.Generic.ICollection<SpaceCadBlockAttributeInventoryV1> Attributes { get; set; } = new System.Collections.ObjectModel.Collection<SpaceCadBlockAttributeInventoryV1>();
+
+        [System.Text.Json.Serialization.JsonPropertyName("referenceBounds")]
+        public SpaceCadBoundsV1 ReferenceBounds { get; set; } = default!;
+
+    }
+
+    [System.CodeDom.Compiler.GeneratedCode("NJsonSchema", "14.7.1.0 (NJsonSchema v11.6.1.0 (Newtonsoft.Json v13.0.0.0))")]
+    public partial class SpaceCadPreparationInventoryDto
+    {
+
+        [System.Text.Json.Serialization.JsonPropertyName("summary")]
+        [System.ComponentModel.DataAnnotations.Required]
+        public SpaceCadInventorySummaryV1 Summary { get; set; } = new SpaceCadInventorySummaryV1();
+
+        [System.Text.Json.Serialization.JsonPropertyName("layers")]
+        [System.ComponentModel.DataAnnotations.Required]
+        public System.Collections.Generic.ICollection<SpaceCadLayerInventoryV1> Layers { get; set; } = new System.Collections.ObjectModel.Collection<SpaceCadLayerInventoryV1>();
+
+        [System.Text.Json.Serialization.JsonPropertyName("blocks")]
+        [System.ComponentModel.DataAnnotations.Required]
+        public System.Collections.Generic.ICollection<SpaceCadPreparationBlockInventoryDto> Blocks { get; set; } = new System.Collections.ObjectModel.Collection<SpaceCadPreparationBlockInventoryDto>();
 
     }
 

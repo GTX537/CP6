@@ -30,7 +30,7 @@
 ## 未关闭范围
 
 - 本纵切不实现物理文件销毁；真实对象存储的 Retention/Tombstone 演练仍属于生产等价安全与恢复证据。
-- LM-FR-006～016、019/019A 仍须继续逐项审计三条路径的剩余差距。
+- LM-FR-010～016、019/019A 仍须继续逐项审计三条路径的剩余差距。
 - 真实授权 DWG/DXF/Excel/PDF、两条 Site 批准 Provider、CP6 WMS、双仓 14 天 Pilot 和五方签字仍是核心 GA 硬门槛。
 
 因此 LM-FR-005 的仓库实现完成，但 WP4 继续为 `Partial/Pending`，核心 GA 继续为 72% / `NoGo`。

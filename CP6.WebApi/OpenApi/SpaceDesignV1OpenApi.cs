@@ -472,6 +472,60 @@ public sealed class SpaceWmsRuntimeSchemaFilter : ISchemaFilter
                 "layerId",
                 "ignore",
             ],
+            [typeof(SpaceCadPreparationInventoryDto)] =
+            [
+                "summary",
+                "layers",
+                "blocks",
+            ],
+            [typeof(SpaceCadInventorySummaryV1)] =
+            [
+                "layerCount",
+                "emptyLayerCount",
+                "blockCount",
+                "undefinedBlockCount",
+                "blockReferenceCount",
+                "attributedBlockReferenceCount",
+                "entityCount",
+                "supportedEntityCount",
+                "unsupportedEntityCount",
+            ],
+            [typeof(SpaceCadLayerInventoryV1)] =
+            [
+                "layerId",
+                "name",
+                "isVisible",
+                "entityCount",
+                "supportedEntityCount",
+                "unsupportedEntityCount",
+                "blockReferenceCount",
+                "attributedEntityCount",
+                "entityTypeCounts",
+            ],
+            [typeof(SpaceCadPreparationBlockInventoryDto)] =
+            [
+                "blockId",
+                "name",
+                "isDefined",
+                "isExternalReference",
+                "definitionEntityCount",
+                "referenceCount",
+                "attributedReferenceCount",
+                "attributes",
+            ],
+            [typeof(SpaceCadBlockAttributeInventoryV1)] =
+            [
+                "name",
+                "referenceCount",
+                "distinctValueCount",
+            ],
+            [typeof(SpaceCadBoundsV1)] =
+            [
+                "minX",
+                "minY",
+                "maxX",
+                "maxY",
+            ],
             [typeof(StartSpaceCadParseRequest)] =
             [
                 "preparationId",

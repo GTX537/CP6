@@ -1,12 +1,20 @@
 # 已完成能力与近期里程碑
 
+## 2026-08-16 Space CAD 图层/块审核与逐层 Override
+
+- Design V1 CAD Preparation Preview 复用现有确定性 Inventory/Mapping 权威，新增面向审核的完整图层与块清单；原始 CAD 字节和逐块引用明细不进入浏览器。
+- CAD 向导可搜索并查看图层颜色、线型、可见性、对象/支持/未支持计数和块定义/引用/属性计数；映射 Profile 明确显示系统公共或租户私有 Scope。
+- 每个图层可显式沿用 Profile、忽略或覆盖语义目标，并调整几何规则和置信度。单位、坐标、Profile 或 Override 变化都会撤销确认并阻止使用旧 Preview 启动 Parse，重新预览后由服务端密封完整 Override Snapshot。
+- 门禁为 Space Unit 540/540、Space Integration 真 SQL 447/447（0 skipped）、CP6.Tests 2,932、Web 863、Vue TypeScript、production build、OpenAPI/双 SDK 和完整 solution Release 0 warning / 0 error。详见 `docs/space/reports/2026-08-16-space-cad-inventory-layer-overrides.md`。
+- LM-FR-012 仓库实现闭环；LM-FR-013 只关闭逐层 Override 与 Scope 展示，租户私有 Profile 持久化/管理仍待完成。WP4 保持 Partial/Pending，核心 GA 保持 72% / `NoGo`。
+
 ## 2026-08-15 Space 来源移除引用预检
 
 - 新增 Design V1 来源移除预检与确认 Apply：预检按“阻断/保留”分类返回 Draft、任务、生成、底图、设计对象/元数据和历史审计引用，Apply 使用 Expected ContentRevision、Expected Source RowVersion、Idempotency-Key 与 Serializable 事务重新复核。
 - 活动引用或预检后的并发变化统一零写入；成功只软删除来源记录。物理文件、终态 Job、工件、问题、标定和导入审计继续受原有保留权威管理，不级联删除。
 - Space Studio 来源面板展示引用计数、只读保护和明确保留提示；OpenAPI、C#/TypeScript SDK、权限矩阵和稳定 `SPACE_SOURCE_REFERENCED` 错误同步。
 - 全量门禁为 Space Unit 540/540、Space Integration 真 SQL 447/447（0 skipped）、CP6.Tests 2,932、Web 862、OpenAPI/双 SDK/EF/production build 和完整 solution Release 0 warning / 0 error。详见 `docs/space/reports/2026-08-15-space-source-removal-preflight.md`。
-- LM-FR-005 仓库实现闭环；LM-FR-006～016、019/019A 与真实多路径接受证据仍待完成，WP4 保持 Partial/Pending，核心 GA 保持 72% / `NoGo`。
+- LM-FR-005 仓库实现闭环；LM-FR-010～016、019/019A 与真实多路径接受证据仍待完成，WP4 保持 Partial/Pending，核心 GA 保持 72% / `NoGo`。
 
 ## 2026-08-15 Space 上传重复内容复用提示
 

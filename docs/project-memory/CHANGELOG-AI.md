@@ -2,6 +2,13 @@
 
 > 依据 Git log 汇总，不替代完整 Git 历史。重点记录影响接手判断的里程碑。
 
+## 2026-08-16：Space CAD 图层/块审核与逐层 Override
+
+- Design V1 CAD Preparation Preview 新增审核清单，向导可查看和搜索图层名称、颜色、线型、可见性、对象计数，以及块定义、引用和属性引用计数。
+- 映射 Profile 选择器明确 System/Tenant Scope；逐图层可沿用 Profile、忽略或覆盖语义目标、几何规则和置信度。输入或 Override 变化会使旧 Preview 失效，重新预览后才允许启动 Parse。
+- OpenAPI、C#/TypeScript SDK 和前端类型同步；Space Unit 540、真 SQL Space Integration 447（0 skipped）、CP6.Tests 2,932、Web 863、类型检查、生产构建和完整 solution Release 0 warning / 0 error 通过。
+- LM-FR-012 仓库实现闭环；LM-FR-013 的 Tenant 私有 Profile 持久化/管理仍待完成。WP4 与核心 GA 仍为 Partial/Pending、72% / `NoGo`。
+
 ## 2026-08-15：Space 来源移除引用预检
 
 - Design V1 新增来源移除预检和确认 Apply；活动任务、生成、底图及当前设计引用会阻断，历史 Job/工件/问题/标定/导入审计明确保留。
