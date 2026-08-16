@@ -7,7 +7,8 @@ namespace CP6.Space.Application;
 
 public static class SpaceBuiltInWarehouseTemplates
 {
-    public const int SchemaVersion = 1;
+    public const int SchemaVersion = SpaceWarehouseTemplateContract.SchemaVersion;
+    public const int MaximumFloorCommandCount = 300;
 
     private static readonly Lazy<CatalogEntry> StandardWarehouse =
         new(CreateStandardWarehouse, LazyThreadSafetyMode.ExecutionAndPublication);
@@ -35,6 +36,170 @@ public static class SpaceBuiltInWarehouseTemplates
         }
 
         preview = entry.Preview;
+        return true;
+    }
+
+    public static bool TryBuildFloorCommandBatch(
+        Guid templateId,
+        Guid templateVersionId,
+        string templateFloorKey,
+        Guid modelVersionId,
+        Guid floorLogicalId,
+        Guid commandBatchId,
+        Guid clientInstanceId,
+        Guid leaseId,
+        long expectedFloorRevision,
+        long expectedContentRevision,
+        out SpaceWarehouseTemplateFloorPlanDto? templateFloor,
+        out SpaceWarehouseTemplateCountsDto? counts,
+        out ApplySpaceLayoutCommandBatchRequest? commandBatch)
+    {
+        if (!TryPreview(templateId, templateVersionId, out var preview) ||
+            preview is null)
+        {
+            templateFloor = null;
+            counts = null;
+            commandBatch = null;
+            return false;
+        }
+
+        templateFloor = preview.Floors.SingleOrDefault(candidate =>
+            string.Equals(
+                candidate.Key,
+                templateFloorKey?.Trim(),
+                StringComparison.Ordinal));
+        if (templateFloor is null)
+        {
+            counts = null;
+            commandBatch = null;
+            return false;
+        }
+        var selectedFloor = templateFloor;
+
+        var zones = preview.Zones
+            .Where(candidate => candidate.FloorKey == selectedFloor.Key)
+            .ToArray();
+        var zoneKeys = zones.Select(candidate => candidate.Key).ToHashSet();
+        var aisles = preview.Aisles
+            .Where(candidate => candidate.FloorKey == selectedFloor.Key)
+            .ToArray();
+        if (aisles.Any(candidate => !zoneKeys.Contains(candidate.ZoneKey)))
+        {
+            throw new InvalidOperationException(
+                "The built-in warehouse template contains an invalid aisle parent chain.");
+        }
+        var aisleKeys = aisles.Select(candidate => candidate.Key).ToHashSet();
+        var racks = preview.Racks
+            .Where(candidate => candidate.FloorKey == selectedFloor.Key)
+            .ToArray();
+        if (racks.Any(candidate =>
+                !zoneKeys.Contains(candidate.ZoneKey) ||
+                !aisleKeys.Contains(candidate.AisleKey)))
+        {
+            throw new InvalidOperationException(
+                "The built-in warehouse template contains an invalid floor parent chain.");
+        }
+
+        var zoneIds = zones.ToDictionary(
+            candidate => candidate.Key,
+            candidate => TemplateObjectId(
+                templateVersionId,
+                modelVersionId,
+                floorLogicalId,
+                candidate.Key));
+        var aisleIds = aisles.ToDictionary(
+            candidate => candidate.Key,
+            candidate => TemplateObjectId(
+                templateVersionId,
+                modelVersionId,
+                floorLogicalId,
+                candidate.Key));
+        var commands = new List<SpaceLayoutCommandDto>(
+            zones.Length + aisles.Length + racks.Length);
+        commands.AddRange(zones.Select(zone =>
+            new SpaceLayoutCommandDto(
+                CommandId(commandBatchId, SpaceLayoutCommandContract.CreateZone, zone.Key),
+                SpaceLayoutCommandContract.CreateZone,
+                zoneIds[zone.Key],
+                CreateZone: new SpaceCreateLayoutZoneDto(
+                    zone.ZoneCode,
+                    zone.ZoneCode,
+                    ZoneType(zone.ZoneType),
+                    RectanglePolygon(
+                        zone.MinX,
+                        zone.MinY,
+                        zone.MaxX,
+                        zone.MaxY),
+                    ZoneColor(zone.ZoneType),
+                    null))));
+        commands.AddRange(aisles.Select(aisle =>
+        {
+            const int halfWidth = 1_500;
+            var minX = checked(Math.Min(aisle.StartX, aisle.EndX) - halfWidth);
+            var minY = checked(Math.Min(aisle.StartY, aisle.EndY) - halfWidth);
+            var maxX = checked(Math.Max(aisle.StartX, aisle.EndX) + halfWidth);
+            var maxY = checked(Math.Max(aisle.StartY, aisle.EndY) + halfWidth);
+            return new SpaceLayoutCommandDto(
+                CommandId(commandBatchId, SpaceLayoutCommandContract.CreateAisle, aisle.Key),
+                SpaceLayoutCommandContract.CreateAisle,
+                aisleIds[aisle.Key],
+                CreateAisle: new SpaceCreateLayoutAisleDto(
+                    zoneIds[aisle.ZoneKey],
+                    aisle.AisleCode,
+                    aisle.AisleCode,
+                    Direction(aisle),
+                    RectanglePolygon(minX, minY, maxX, maxY),
+                    Centerline(aisle)));
+        }));
+        commands.AddRange(racks.Select(rack =>
+        {
+            var rackId = TemplateObjectId(
+                templateVersionId,
+                modelVersionId,
+                floorLogicalId,
+                rack.Key);
+            return new SpaceLayoutCommandDto(
+                CommandId(commandBatchId, SpaceLayoutCommandContract.CreateRack, rack.Key),
+                SpaceLayoutCommandContract.CreateRack,
+                rackId,
+                CreateRack: new SpaceCreateLayoutRackDto(
+                    zoneIds[rack.ZoneKey],
+                    aisleIds[rack.AisleKey],
+                    rack.RackCode,
+                    rack.RackCode,
+                    "Selective",
+                    templateVersionId,
+                    rack.X,
+                    rack.Y,
+                    rack.Z,
+                    rack.RotationZ,
+                    rack.Width,
+                    rack.Depth,
+                    rack.Height,
+                    RackLevels(rack)));
+        }));
+        if (commands.Count > MaximumFloorCommandCount)
+        {
+            throw new InvalidOperationException(
+                "The built-in warehouse template exceeds the floor command limit.");
+        }
+
+        var locationCount = racks.Sum(candidate => checked(
+            candidate.Columns * candidate.Levels * candidate.Depths));
+        counts = new SpaceWarehouseTemplateCountsDto(
+            Floors: 1,
+            zones.Length,
+            aisles.Length,
+            racks.Length,
+            locationCount);
+        commandBatch = new ApplySpaceLayoutCommandBatchRequest(
+            SpaceLayoutCommandContract.SchemaVersion,
+            commandBatchId,
+            clientInstanceId,
+            leaseId,
+            expectedFloorRevision,
+            expectedContentRevision,
+            commands);
         return true;
     }
 
@@ -160,6 +325,116 @@ public static class SpaceBuiltInWarehouseTemplates
         }
         return decimal.ToInt32(value);
     }
+
+    private static IReadOnlyList<SpaceCreateLayoutRackLevelDto> RackLevels(
+        SpaceWarehouseTemplateRackPlanDto rack)
+    {
+        if (rack.Columns <= 0 || rack.Levels <= 0 || rack.Depths <= 0)
+            throw new InvalidOperationException("Rack counts must be positive.");
+        if (rack.Height % rack.Levels != 0 ||
+            rack.Width % rack.Columns != 0 ||
+            rack.Depth % rack.Depths != 0)
+        {
+            throw new InvalidOperationException(
+                "Rack dimensions must divide exactly into the requested cells.");
+        }
+        var levelHeight = rack.Height / rack.Levels;
+        var cellWidth = rack.Width / rack.Columns;
+        var cellDepth = rack.Depth / rack.Depths;
+        const int beamHeight = 100;
+        if (levelHeight <= beamHeight || cellWidth <= 0 || cellDepth <= 0)
+            throw new InvalidOperationException("Rack dimensions cannot form a valid level plan.");
+        return Enumerable.Range(1, rack.Levels)
+            .Select(levelNo => new SpaceCreateLayoutRackLevelDto(
+                levelNo,
+                checked((levelNo - 1) * levelHeight),
+                levelHeight - beamHeight,
+                rack.Columns,
+                rack.Depths,
+                cellWidth,
+                cellDepth,
+                beamHeight,
+                MaxLoad: null,
+                LocationCodePrefix: null))
+            .ToArray();
+    }
+
+    private static Guid TemplateObjectId(
+        Guid templateVersionId,
+        Guid modelVersionId,
+        Guid floorLogicalId,
+        string key) =>
+        DeterministicId(
+            $"template-object\n{templateVersionId:D}\n{modelVersionId:D}\n" +
+            $"{floorLogicalId:D}\n{key}");
+
+    private static Guid CommandId(Guid commandBatchId, string type, string key) =>
+        DeterministicId($"template-command\n{commandBatchId:D}\n{type}\n{key}");
+
+    private static Guid DeterministicId(string material)
+    {
+        var hash = SHA256.HashData(Encoding.UTF8.GetBytes(material));
+        return new Guid(hash.AsSpan(0, 16));
+    }
+
+    private static string RectanglePolygon(
+        int minX,
+        int minY,
+        int maxX,
+        int maxY) =>
+        JsonSerializer.Serialize(
+            new
+            {
+                schemaVersion = 1,
+                points = new[]
+                {
+                    new[] { minX, minY },
+                    new[] { maxX, minY },
+                    new[] { maxX, maxY },
+                    new[] { minX, maxY },
+                },
+            },
+            new JsonSerializerOptions(JsonSerializerDefaults.Web));
+
+    private static string Centerline(
+        SpaceWarehouseTemplateAislePlanDto aisle) =>
+        JsonSerializer.Serialize(
+            new
+            {
+                schemaVersion = 1,
+                points = new[]
+                {
+                    new[] { aisle.StartX, aisle.StartY },
+                    new[] { aisle.EndX, aisle.EndY },
+                },
+            },
+            new JsonSerializerOptions(JsonSerializerDefaults.Web));
+
+    private static short Direction(SpaceWarehouseTemplateAislePlanDto aisle) =>
+        (short)(Math.Abs(aisle.EndX - aisle.StartX) >=
+                Math.Abs(aisle.EndY - aisle.StartY)
+            ? 1
+            : 2);
+
+    private static short ZoneType(string value) => value switch
+    {
+        "Receiving" => 1,
+        "Storage" => 2,
+        "Shipping" => 3,
+        "Picking" => 4,
+        "Packing" => 5,
+        _ => 0,
+    };
+
+    private static string ZoneColor(string value) => value switch
+    {
+        "Receiving" => "#2f9e44",
+        "Storage" => "#0ca6b2",
+        "Shipping" => "#f08c00",
+        "Picking" => "#7048e8",
+        "Packing" => "#d6336c",
+        _ => "#64748b",
+    };
 
     private static string Sha256(string value) =>
         Convert.ToHexString(

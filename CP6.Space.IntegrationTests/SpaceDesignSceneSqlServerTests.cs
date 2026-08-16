@@ -2163,6 +2163,138 @@ public sealed class SpaceDesignSceneSqlServerTests
     }
 
     [SqlServerFact]
+    public async Task Warehouse_template_floor_apply_is_leased_atomic_and_replayable()
+    {
+        await WithDatabaseAsync(async (connectionString, execution, clock) =>
+        {
+            await using var context = CreateContext(
+                connectionString,
+                execution,
+                clock);
+            var seeded = await SeedDesignModelAsync(
+                context,
+                execution.ActorId,
+                clock.UtcNow);
+            var draft = SpaceModelVersion.CreateDraft(
+                execution.TenantId,
+                seeded.Model.Id,
+                2,
+                "System template Draft",
+                seeded.Published.Id);
+            seeded.Model.ReserveDraft(draft);
+            var floor = SpaceFloorRevision.Create(
+                execution.TenantId,
+                draft.Id,
+                Guid.NewGuid(),
+                seeded.Model.SiteId,
+                1,
+                "F1",
+                "Floor 1",
+                height: 6000);
+            context.AddRange(draft, floor);
+            await context.SaveChangesAsync();
+
+            var clientId = Guid.NewGuid();
+            var lease = SpaceEditLease.Create(
+                execution.TenantId,
+                draft.Id,
+                floor.LogicalId,
+                execution.ActorId,
+                "Editor",
+                clientId,
+                clock.UtcNow,
+                TimeSpan.FromSeconds(90));
+            context.EditLeases.Add(lease);
+            await context.SaveChangesAsync();
+            var service = NewService(
+                context,
+                execution,
+                clock,
+                seeded.Model.SiteId);
+            var template = Assert.Single(
+                await service.GetWarehouseTemplatesAsync("System"));
+            var preview = await service.PreviewWarehouseTemplateAsync(
+                template.Id,
+                new PreviewSpaceWarehouseTemplateRequest(
+                    template.LatestVersion.Id));
+            var templateFloor = Assert.Single(
+                preview.Floors,
+                candidate => candidate.FloorCode == "F1");
+            var request = new ApplySpaceWarehouseTemplateFloorRequest(
+                SpaceWarehouseTemplateContract.SchemaVersion,
+                seeded.Model.SiteId,
+                template.LatestVersion.Id,
+                preview.ProposalHash,
+                templateFloor.Key,
+                Guid.NewGuid(),
+                clientId,
+                lease.LeaseId,
+                ExpectedFloorRevision: 0,
+                ExpectedContentRevision: 0);
+
+            var leaseFirst = await Assert.ThrowsAsync<SpaceProblemException>(
+                () => service.ApplyWarehouseTemplateFloorAsync(
+                    draft.Id,
+                    floor.LogicalId,
+                    template.Id,
+                    request with
+                    {
+                        LeaseId = Guid.NewGuid(),
+                        ProposalHash = new string('c', 64),
+                    }));
+            Assert.Equal(SpaceErrorCodes.EditLeaseLost, leaseFirst.Code);
+
+            var stale = await Assert.ThrowsAsync<SpaceProblemException>(() =>
+                service.ApplyWarehouseTemplateFloorAsync(
+                    draft.Id,
+                    floor.LogicalId,
+                    template.Id,
+                    request with { ProposalHash = new string('c', 64) }));
+            Assert.Equal(
+                SpaceErrorCodes.WarehouseTemplateProposalStale,
+                stale.Code);
+            Assert.Empty(await context.ElementCommandBatches.ToArrayAsync());
+            Assert.Empty(await context.ZoneRevisions.ToArrayAsync());
+
+            var applied = await service.ApplyWarehouseTemplateFloorAsync(
+                draft.Id,
+                floor.LogicalId,
+                template.Id,
+                request);
+            Assert.False(applied.IdempotentReplay);
+            Assert.Equal(1, applied.FloorRevision);
+            Assert.Equal(1, applied.VersionContentRevision);
+            Assert.Equal(3, applied.AppliedCounts.Zones);
+            Assert.Equal(10, applied.AppliedCounts.Aisles);
+            Assert.Equal(250, applied.AppliedCounts.Racks);
+            Assert.Equal(5_000, applied.AppliedCounts.Locations);
+            Assert.Equal(3, await context.ZoneRevisions.CountAsync());
+            Assert.Equal(10, await context.AisleRevisions.CountAsync());
+            Assert.Equal(250, await context.RackRevisions.CountAsync());
+            Assert.Equal(1_250, await context.RackLevelRevisions.CountAsync());
+            Assert.Equal(5_000, await context.LocationRevisions.CountAsync());
+            Assert.Equal(263, await context.ElementCommandRecords.CountAsync());
+            Assert.Contains(
+                "140000",
+                await context.FloorRevisions
+                    .Where(candidate => candidate.Id == floor.Id)
+                    .Select(candidate => candidate.BoundaryJson)
+                    .SingleAsync());
+
+            var replay = await service.ApplyWarehouseTemplateFloorAsync(
+                draft.Id,
+                floor.LogicalId,
+                template.Id,
+                request);
+            Assert.True(replay.IdempotentReplay);
+            Assert.Equal(applied.CommandBatchId, replay.CommandBatchId);
+            Assert.Equal(250, await context.RackRevisions.CountAsync());
+            Assert.Equal(5_000, await context.LocationRevisions.CountAsync());
+            Assert.Single(await context.ElementCommandBatches.ToArrayAsync());
+        });
+    }
+
+    [SqlServerFact]
     public async Task Layout_commands_create_coded_warehouse_atomically()
     {
         await WithDatabaseAsync(async (connectionString, execution, clock) =>

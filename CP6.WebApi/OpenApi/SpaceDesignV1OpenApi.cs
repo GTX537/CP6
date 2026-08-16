@@ -310,6 +310,35 @@ public sealed class SpaceWmsRuntimeSchemaFilter : ISchemaFilter
                 "racks",
                 "writesDraft",
             ],
+            [typeof(ApplySpaceWarehouseTemplateFloorRequest)] =
+            [
+                "schemaVersion",
+                "siteId",
+                "templateVersionId",
+                "proposalHash",
+                "templateFloorKey",
+                "commandBatchId",
+                "clientInstanceId",
+                "leaseId",
+                "expectedFloorRevision",
+                "expectedContentRevision",
+            ],
+            [typeof(ApplySpaceWarehouseTemplateFloorResponse)] =
+            [
+                "schemaVersion",
+                "templateId",
+                "templateVersionId",
+                "templateContentHash",
+                "proposalHash",
+                "templateFloorKey",
+                "modelVersionId",
+                "floorLogicalId",
+                "floorRevision",
+                "versionContentRevision",
+                "appliedCounts",
+                "commandBatchId",
+                "idempotentReplay",
+            ],
             [typeof(SpacePublishPreviewDto)] =
             [
                 "validationWarningCount",

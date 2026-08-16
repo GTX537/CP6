@@ -1,5 +1,7 @@
 import http from '../http'
 import type {
+  IApplySpaceWarehouseTemplateFloorRequest,
+  IApplySpaceWarehouseTemplateFloorResponse,
   ICreateSpaceFloorRequest,
   ICreateSpaceFloorResponse,
   ICreateSpaceVersionResponse,
@@ -74,6 +76,20 @@ export const designProjectApi = {
     return http.post<unknown, ISpaceWarehouseTemplateInstantiationPreviewDto>(
       `${root}/templates/${encodeURIComponent(templateId)}/instantiate`,
       { templateVersionId },
+    )
+  },
+
+  applyWarehouseTemplateFloor(
+    versionId: string,
+    floorLogicalId: string,
+    templateId: string,
+    request: IApplySpaceWarehouseTemplateFloorRequest,
+  ) {
+    return http.post<unknown, IApplySpaceWarehouseTemplateFloorResponse>(
+      `${root}/versions/${encodeURIComponent(versionId)}` +
+        `/floors/${encodeURIComponent(floorLogicalId)}` +
+        `/templates/${encodeURIComponent(templateId)}:apply`,
+      request,
     )
   },
 }

@@ -602,4 +602,24 @@ public sealed class SpaceDesignV1Controller(
             templateId,
             request,
             cancellationToken);
+
+    [HttpPost(
+        "versions/{versionId:guid}/floors/{floorLogicalId:guid}/templates/{templateId:guid}:apply")]
+    [RequirePermission("space", "model:edit", UseProblemDetails = true)]
+    [ProducesResponseType<ApplySpaceWarehouseTemplateFloorResponse>(
+        StatusCodes.Status200OK)]
+    public Task<ApplySpaceWarehouseTemplateFloorResponse>
+        ApplyWarehouseTemplateFloor(
+            Guid versionId,
+            Guid floorLogicalId,
+            Guid templateId,
+            [FromBody, Required]
+            ApplySpaceWarehouseTemplateFloorRequest request,
+            CancellationToken cancellationToken) =>
+        service.ApplyWarehouseTemplateFloorAsync(
+            versionId,
+            floorLogicalId,
+            templateId,
+            request,
+            cancellationToken);
 }

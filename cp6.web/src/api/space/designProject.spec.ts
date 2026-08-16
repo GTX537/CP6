@@ -100,4 +100,33 @@ describe('designProjectApi', () => {
       { templateVersionId: 'version-1' },
     )
   })
+
+  it('applies one sealed template floor to a leased Draft floor', async () => {
+    vi.mocked(http.post).mockResolvedValue({} as never)
+    const request = {
+      schemaVersion: 1,
+      siteId: 'site-1',
+      templateVersionId: 'template-version-1',
+      proposalHash: 'a'.repeat(64),
+      templateFloorKey: 'F1',
+      commandBatchId: 'batch-1',
+      clientInstanceId: 'client-1',
+      leaseId: 'lease-1',
+      expectedFloorRevision: 2,
+      expectedContentRevision: 3,
+    }
+
+    await designProjectApi.applyWarehouseTemplateFloor(
+      'version/1',
+      'floor/1',
+      'template/1',
+      request,
+    )
+
+    expect(http.post).toHaveBeenCalledWith(
+      '/space/design/v1/versions/version%2F1/floors/floor%2F1/' +
+        'templates/template%2F1:apply',
+      request,
+    )
+  })
 })

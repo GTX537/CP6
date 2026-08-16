@@ -2,7 +2,7 @@
 
 ## P0：Space Studio v1.3 GA 外部与扩展门禁
 
-- LM-FR-001 的 `Blank` 初始化、Design Floor shell、Site 入口、楼层选择和首份不可变 System 整仓模板目录/零写入预览已有自动化纵切；页面不再要求内部 ID，也不会猜测旧运行态楼层或业务默认值。剩余 P0 是 Tenant 私有整仓模板的持久化/隔离、Template → Draft 原子 Apply，以及 Blank/Published/System/Tenant 四模式统一创建向导和 LM-FR-002 来源、创建者、更新时间、Blocking 摘要。不得用单构件 Asset、预览结果、旧运行态模板或默认楼层冒充已创建仓库。LM-FR-001/WP1 保持 Partial/Pending。
+- LM-FR-001 的 `Blank` 初始化、Design Floor shell、Site 入口、楼层选择、首份不可变 System 整仓模板目录/零写入预览，以及 System Template → 既有 Draft Floor 的分楼层原子 Apply 已有自动化纵切；页面不再要求内部 ID，也不会猜测旧运行态楼层或业务默认值。剩余 P0 是 Tenant 私有整仓模板的持久化/跨租户隔离、Blank/Published/System/Tenant 四模式统一创建向导，以及 LM-FR-002 来源、创建者、更新时间和 Blocking 摘要。System Apply 目前要求先显式创建 Draft/Floor，且模板两个楼层需分别确认；不得用单构件 Asset、预览结果、旧运行态模板或默认楼层冒充已创建仓库。LM-FR-001/WP1 保持 Partial/Pending。
 - WP4 详细 Spec LM-FR-017～029 的编辑器系列已有仓库实现；两点实距标定、构件库、统一历史、2D/3D 同源、选择/视角/未保存状态、四步清单、问题筛选定位和窄屏只读均有自动化。三条路径主链仍须继续审计 LM-FR-002～016、019/019A 与当前 Typed Changeset/Provider 实现的剩余差距。上述仓库闭环不自动把 WP4 标回 Complete，也不得用 Mock/fixture 替代真实 DWG/DXF/Excel/PDF、Provider、WMS 与 Pilot 接受。
 - AutoCAD 2025 Core Console 的实验型 DWG→DXF→CAD IR 链已在本机通过并登记到 WP3 实现证据，但它不是已认证 Site Provider：下一步需先通过 Autodesk 更新/修复处理 GUI `acad.exe` 的 `HashMismatch`，再确认许可证允许的 Worker/自动化部署边界、禁网或出口控制、客户/Site 批准，并与至少一个独立备用 Provider 在同一 20 份真实黄金集上评分。未完成这些条件前不得注册生产运行时、填写 `acceptedEvidence` 或关闭 WP3/WP7。
 - 单人开发可使用 `00001`～`00005` 的 `DevelopmentSeed` 完成本地角色切换与权限测试，但它们不能计入 `CORE_TEAM_ALLOCATION`、Pilot 或五方签字。进入正式 GA 前仍必须登记具有真实身份和审批权的 Product、QA、WMS、Architecture、Security 签字人；如后续需要可登录开发账号，应另立身份/最小权限任务，不在证据人员册中保存密码或 Token。

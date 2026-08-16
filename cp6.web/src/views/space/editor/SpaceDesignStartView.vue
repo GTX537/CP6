@@ -335,7 +335,7 @@ onBeforeUnmount(() => {
             {{ templatePreview.counts?.locations }} 库位
           </span>
           <code>{{ templatePreview.proposalHash }}</code>
-          <small>Template → Draft 原子 Apply 将在下一独立纵切接通。</small>
+          <small>先创建 Draft 与目标楼层，再在 Space Studio「构件」中按楼层原子写入。</small>
         </div>
       </section>
 

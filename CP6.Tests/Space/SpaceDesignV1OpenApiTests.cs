@@ -77,6 +77,7 @@ public sealed class SpaceDesignV1OpenApiTests
             "/api/space/design/v1/versions/{versionId}/floors/{floorLogicalId}/layout-commands",
             "/api/space/design/v1/versions/{versionId}/floors/{floorLogicalId}/location-codes:preview",
             "/api/space/design/v1/versions/{versionId}/floors/{floorLogicalId}/location-codes:apply",
+            "/api/space/design/v1/versions/{versionId}/floors/{floorLogicalId}/templates/{templateId}:apply",
             "/api/space/design/v1/versions/{versionId}/floors/{floorLogicalId}/scene",
             "/api/space/design/v1/versions/{versionId}/floors/{floorLogicalId}/underlay",
             "/api/space/design/v1/versions/{versionId}/floors/{floorLogicalId}/underlay:compensate",
@@ -157,8 +158,8 @@ public sealed class SpaceDesignV1OpenApiTests
             .Select(operation =>
                 operation.Value.GetProperty("operationId").GetString())
             .ToArray();
-        Assert.Equal(140, operationIds.Length);
-        Assert.Equal(140, operationIds.Distinct().Count());
+        Assert.Equal(141, operationIds.Length);
+        Assert.Equal(141, operationIds.Distinct().Count());
         Assert.Contains("GetCapability", operationIds);
         Assert.Contains("ReplaceProviderConfiguration", operationIds);
         Assert.Contains("GetPolicy", operationIds);
@@ -223,6 +224,7 @@ public sealed class SpaceDesignV1OpenApiTests
         Assert.Contains("CreateFloor", operationIds);
         Assert.Contains("GetWarehouseTemplates", operationIds);
         Assert.Contains("PreviewWarehouseTemplate", operationIds);
+        Assert.Contains("ApplyWarehouseTemplateFloor", operationIds);
         Assert.Contains("CreateSource", operationIds);
         Assert.Contains("GetScene", operationIds);
         Assert.Contains("GetPublishedScene", operationIds);
@@ -1580,6 +1582,43 @@ public sealed class SpaceDesignV1OpenApiTests
             .Select(property => property.GetString()!)
             .ToArray();
         Assert.Equal(["templateVersionId"], required);
+    }
+
+    [Fact]
+    public void Warehouse_template_floor_apply_is_required_and_revision_fenced()
+    {
+        using var document = ReadContract();
+        var root = document.RootElement;
+        var operation = root.GetProperty("paths")
+            .GetProperty(
+                "/api/space/design/v1/versions/{versionId}/floors/" +
+                "{floorLogicalId}/templates/{templateId}:apply")
+            .GetProperty("post");
+
+        Assert.Equal(
+            "ApplyWarehouseTemplateFloor",
+            operation.GetProperty("operationId").GetString());
+        Assert.True(operation.GetProperty("requestBody")
+            .GetProperty("required")
+            .GetBoolean());
+        Assert.True(operation.GetProperty("responses")
+            .TryGetProperty("200", out _));
+
+        var schemas = root.GetProperty("components").GetProperty("schemas");
+        AssertExactRequired(
+            Schema(
+                schemas,
+                "CP6.Space.Contracts.ApplySpaceWarehouseTemplateFloorRequest"),
+            "schemaVersion",
+            "siteId",
+            "templateVersionId",
+            "proposalHash",
+            "templateFloorKey",
+            "commandBatchId",
+            "clientInstanceId",
+            "leaseId",
+            "expectedFloorRevision",
+            "expectedContentRevision");
     }
 
     [Fact]

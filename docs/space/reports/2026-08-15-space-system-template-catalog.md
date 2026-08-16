@@ -11,6 +11,8 @@ Design V1 现在提供第一份版本化、不可变的平台整仓模板目录�
 
 租户私有不可变模板、Template → Draft 原子 Apply 及 Blank/Published/System/Tenant 四模式统一创建向导仍未完成，因此 LM-FR-001/WP1 保持 `Partial/Pending`，核心 GA 保持 72% / `NoGo`。
 
+> 后续状态（2026-08-15）：System Template → 既有 Draft Floor 的分楼层原子 Apply 已由独立纵切交付，见 `2026-08-15-space-system-template-floor-apply.md`。Tenant 私有模板与四模式统一向导仍未完成，整体状态不变。
+
 ## 合同与安全边界
 
 - `GET /api/space/design/v1/templates` 返回内部用户可见的整仓模板目录，可显式按 `System` 或 `Tenant` 过滤；当前 `Tenant` 结果诚实为空。

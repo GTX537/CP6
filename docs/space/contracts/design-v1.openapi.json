@@ -8180,6 +8180,155 @@
         }
       }
     },
+    "/api/space/design/v1/versions/{versionId}/floors/{floorLogicalId}/templates/{templateId}:apply": {
+      "post": {
+        "tags": [
+          "SpaceDesignV1"
+        ],
+        "operationId": "ApplyWarehouseTemplateFloor",
+        "parameters": [
+          {
+            "name": "versionId",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "string",
+              "format": "uuid"
+            }
+          },
+          {
+            "name": "floorLogicalId",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "string",
+              "format": "uuid"
+            }
+          },
+          {
+            "name": "templateId",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "string",
+              "format": "uuid"
+            }
+          }
+        ],
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/CP6.Space.Contracts.ApplySpaceWarehouseTemplateFloorRequest"
+              }
+            },
+            "text/json": {
+              "schema": {
+                "$ref": "#/components/schemas/CP6.Space.Contracts.ApplySpaceWarehouseTemplateFloorRequest"
+              }
+            },
+            "application/*+json": {
+              "schema": {
+                "$ref": "#/components/schemas/CP6.Space.Contracts.ApplySpaceWarehouseTemplateFloorRequest"
+              }
+            }
+          },
+          "required": true
+        },
+        "responses": {
+          "400": {
+            "description": "Bad Request",
+            "content": {
+              "application/problem+json": {
+                "schema": {
+                  "$ref": "#/components/schemas/CP6.WebApi.OpenApi.SpaceDesignProblemDetails"
+                }
+              }
+            }
+          },
+          "401": {
+            "description": "Unauthorized",
+            "content": {
+              "application/problem+json": {
+                "schema": {
+                  "$ref": "#/components/schemas/CP6.WebApi.OpenApi.SpaceDesignProblemDetails"
+                }
+              }
+            }
+          },
+          "403": {
+            "description": "Forbidden",
+            "content": {
+              "application/problem+json": {
+                "schema": {
+                  "$ref": "#/components/schemas/CP6.WebApi.OpenApi.SpaceDesignProblemDetails"
+                }
+              }
+            }
+          },
+          "404": {
+            "description": "Not Found",
+            "content": {
+              "application/problem+json": {
+                "schema": {
+                  "$ref": "#/components/schemas/CP6.WebApi.OpenApi.SpaceDesignProblemDetails"
+                }
+              }
+            }
+          },
+          "409": {
+            "description": "Conflict",
+            "content": {
+              "application/problem+json": {
+                "schema": {
+                  "$ref": "#/components/schemas/CP6.WebApi.OpenApi.SpaceDesignProblemDetails"
+                }
+              }
+            }
+          },
+          "422": {
+            "description": "Unprocessable Content",
+            "content": {
+              "application/problem+json": {
+                "schema": {
+                  "$ref": "#/components/schemas/CP6.WebApi.OpenApi.SpaceDesignProblemDetails"
+                }
+              }
+            }
+          },
+          "500": {
+            "description": "Internal Server Error",
+            "content": {
+              "application/problem+json": {
+                "schema": {
+                  "$ref": "#/components/schemas/CP6.WebApi.OpenApi.SpaceDesignProblemDetails"
+                }
+              }
+            }
+          },
+          "200": {
+            "description": "OK",
+            "content": {
+              "text/plain": {
+                "schema": {
+                  "$ref": "#/components/schemas/CP6.Space.Contracts.ApplySpaceWarehouseTemplateFloorResponse"
+                }
+              },
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/CP6.Space.Contracts.ApplySpaceWarehouseTemplateFloorResponse"
+                }
+              },
+              "text/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/CP6.Space.Contracts.ApplySpaceWarehouseTemplateFloorResponse"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
     "/api/space/design/v1/sites/{siteId}/device-mappings": {
       "get": {
         "tags": [
@@ -19118,6 +19267,130 @@
             "items": {
               "$ref": "#/components/schemas/CP6.Space.Contracts.SpaceLocationCodeProposalItemDto"
             }
+          },
+          "idempotentReplay": {
+            "type": "boolean"
+          }
+        },
+        "additionalProperties": false
+      },
+      "CP6.Space.Contracts.ApplySpaceWarehouseTemplateFloorRequest": {
+        "required": [
+          "clientInstanceId",
+          "commandBatchId",
+          "expectedContentRevision",
+          "expectedFloorRevision",
+          "leaseId",
+          "proposalHash",
+          "schemaVersion",
+          "siteId",
+          "templateFloorKey",
+          "templateVersionId"
+        ],
+        "type": "object",
+        "properties": {
+          "schemaVersion": {
+            "type": "integer",
+            "format": "int32"
+          },
+          "siteId": {
+            "type": "string",
+            "format": "uuid"
+          },
+          "templateVersionId": {
+            "type": "string",
+            "format": "uuid"
+          },
+          "proposalHash": {
+            "type": "string"
+          },
+          "templateFloorKey": {
+            "type": "string"
+          },
+          "commandBatchId": {
+            "type": "string",
+            "format": "uuid"
+          },
+          "clientInstanceId": {
+            "type": "string",
+            "format": "uuid"
+          },
+          "leaseId": {
+            "type": "string",
+            "format": "uuid"
+          },
+          "expectedFloorRevision": {
+            "type": "integer",
+            "format": "int64"
+          },
+          "expectedContentRevision": {
+            "type": "integer",
+            "format": "int64"
+          }
+        },
+        "additionalProperties": false
+      },
+      "CP6.Space.Contracts.ApplySpaceWarehouseTemplateFloorResponse": {
+        "required": [
+          "appliedCounts",
+          "commandBatchId",
+          "floorLogicalId",
+          "floorRevision",
+          "idempotentReplay",
+          "modelVersionId",
+          "proposalHash",
+          "schemaVersion",
+          "templateContentHash",
+          "templateFloorKey",
+          "templateId",
+          "templateVersionId",
+          "versionContentRevision"
+        ],
+        "type": "object",
+        "properties": {
+          "schemaVersion": {
+            "type": "integer",
+            "format": "int32"
+          },
+          "templateId": {
+            "type": "string",
+            "format": "uuid"
+          },
+          "templateVersionId": {
+            "type": "string",
+            "format": "uuid"
+          },
+          "templateContentHash": {
+            "type": "string"
+          },
+          "proposalHash": {
+            "type": "string"
+          },
+          "templateFloorKey": {
+            "type": "string"
+          },
+          "modelVersionId": {
+            "type": "string",
+            "format": "uuid"
+          },
+          "floorLogicalId": {
+            "type": "string",
+            "format": "uuid"
+          },
+          "floorRevision": {
+            "type": "integer",
+            "format": "int64"
+          },
+          "versionContentRevision": {
+            "type": "integer",
+            "format": "int64"
+          },
+          "appliedCounts": {
+            "$ref": "#/components/schemas/CP6.Space.Contracts.SpaceWarehouseTemplateCountsDto"
+          },
+          "commandBatchId": {
+            "type": "string",
+            "format": "uuid"
           },
           "idempotentReplay": {
             "type": "boolean"

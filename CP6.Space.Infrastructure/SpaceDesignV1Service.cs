@@ -1087,12 +1087,30 @@ public sealed class SpaceDesignV1Service :
         }
     }
 
-    public async Task<ApplySpaceLayoutCommandBatchResponse>
+    public Task<ApplySpaceLayoutCommandBatchResponse>
         ApplyLayoutCommandsAsync(
             Guid versionId,
             Guid floorLogicalId,
             ApplySpaceLayoutCommandBatchRequest request,
-            CancellationToken cancellationToken = default)
+            CancellationToken cancellationToken = default) =>
+        ApplyLayoutCommandsCoreAsync(
+            versionId,
+            floorLogicalId,
+            request,
+            maximumCommandCount: 100,
+            requestHashBinding: null,
+            configureFloor: null,
+            cancellationToken);
+
+    private async Task<ApplySpaceLayoutCommandBatchResponse>
+        ApplyLayoutCommandsCoreAsync(
+            Guid versionId,
+            Guid floorLogicalId,
+            ApplySpaceLayoutCommandBatchRequest request,
+            int maximumCommandCount,
+            string? requestHashBinding,
+            Action<SpaceFloorRevision>? configureFloor,
+            CancellationToken cancellationToken)
     {
         ArgumentNullException.ThrowIfNull(request);
         EnsureExecutionContext();
@@ -1105,9 +1123,11 @@ public sealed class SpaceDesignV1Service :
             request.LeaseId,
             request.ClientInstanceId,
             cancellationToken);
-        var requestHash = Hash(
-            $"layout\n{versionId:D}\n{floorLogicalId:D}\n" +
-            JsonSerializer.Serialize(request, JsonOptions));
+        var serializedRequest = JsonSerializer.Serialize(request, JsonOptions);
+        var requestHash = Hash(requestHashBinding is null
+            ? $"layout\n{versionId:D}\n{floorLogicalId:D}\n{serializedRequest}"
+            : $"layout\n{versionId:D}\n{floorLogicalId:D}\n" +
+              $"{requestHashBinding}\n{serializedRequest}");
 
         await using var transaction = await _context.Database
             .BeginTransactionAsync(
@@ -1181,7 +1201,8 @@ public sealed class SpaceDesignV1Service :
                     "reload-floor-scene");
             }
 
-            ValidateLayoutCommandBatch(request);
+            ValidateLayoutCommandBatch(request, maximumCommandCount);
+            configureFloor?.Invoke(floor);
             var concurrentReplay = await ReadLayoutCommandReplayAsync(
                 request.CommandBatchId,
                 requestHash,
@@ -2414,6 +2435,145 @@ public sealed class SpaceDesignV1Service :
         return Task.FromResult(preview);
     }
 
+    public async Task<ApplySpaceWarehouseTemplateFloorResponse>
+        ApplyWarehouseTemplateFloorAsync(
+            Guid versionId,
+            Guid floorLogicalId,
+            Guid templateId,
+            ApplySpaceWarehouseTemplateFloorRequest request,
+            CancellationToken cancellationToken = default)
+    {
+        ArgumentNullException.ThrowIfNull(request);
+        EnsureExecutionContext();
+        EnsureInternalEditor();
+        var model = await FindModelByVersionAsync(versionId, cancellationToken);
+        EnsureWritable(model);
+        await EnsureActiveEditLeaseAsync(
+            versionId,
+            floorLogicalId,
+            request.LeaseId,
+            request.ClientInstanceId,
+            cancellationToken);
+
+        if (request.SchemaVersion != SpaceWarehouseTemplateContract.SchemaVersion)
+        {
+            throw new SpaceProblemException(
+                SpaceErrorCodes.CommandSchemaUnsupported,
+                422,
+                "The warehouse template Apply schema is not supported.",
+                $"schemaVersion must be " +
+                $"{SpaceWarehouseTemplateContract.SchemaVersion}.",
+                "upgrade-client");
+        }
+        if (request.SiteId == Guid.Empty || request.SiteId != model.SiteId)
+        {
+            throw Conflict(
+                SpaceErrorCodes.VersionConflict,
+                "The target Site does not match the Draft version.",
+                "reload-design-project");
+        }
+        if (templateId == Guid.Empty ||
+            request.TemplateVersionId == Guid.Empty ||
+            request.CommandBatchId == Guid.Empty ||
+            string.IsNullOrWhiteSpace(request.TemplateFloorKey) ||
+            !IsSha256(request.ProposalHash))
+        {
+            throw Invalid(
+                "templateApply",
+                "Template, floor, command batch and proposal identities are required.");
+        }
+
+        var template = SpaceBuiltInWarehouseTemplates.List()
+            .SingleOrDefault(candidate => candidate.Id == templateId);
+        if (template is null)
+        {
+            throw new SpaceProblemException(
+                SpaceErrorCodes.WarehouseTemplateNotFound,
+                404,
+                "Warehouse template not found.",
+                recoveryAction: "reload-template-catalog");
+        }
+        if (template.LatestVersion.Id != request.TemplateVersionId)
+        {
+            throw Conflict(
+                SpaceErrorCodes.WarehouseTemplateVersionConflict,
+                "The requested warehouse template version is not current.",
+                "preview-warehouse-template-again");
+        }
+        if (!SpaceBuiltInWarehouseTemplates.TryPreview(
+                templateId,
+                request.TemplateVersionId,
+                out var preview) ||
+            preview is null)
+        {
+            throw new SpaceProblemException(
+                SpaceErrorCodes.WarehouseTemplateNotFound,
+                404,
+                "Warehouse template preview not found.",
+                recoveryAction: "reload-template-catalog");
+        }
+        if (!string.Equals(
+                preview.ProposalHash,
+                request.ProposalHash,
+                StringComparison.Ordinal))
+        {
+            throw Conflict(
+                SpaceErrorCodes.WarehouseTemplateProposalStale,
+                "The warehouse template proposal changed after preview.",
+                "preview-warehouse-template-again");
+        }
+        if (!SpaceBuiltInWarehouseTemplates.TryBuildFloorCommandBatch(
+                templateId,
+                request.TemplateVersionId,
+                request.TemplateFloorKey,
+                versionId,
+                floorLogicalId,
+                request.CommandBatchId,
+                request.ClientInstanceId,
+                request.LeaseId,
+                request.ExpectedFloorRevision,
+                request.ExpectedContentRevision,
+                out var templateFloor,
+                out var counts,
+                out var commandBatch) ||
+            templateFloor is null ||
+            counts is null ||
+            commandBatch is null)
+        {
+            throw new SpaceProblemException(
+                SpaceErrorCodes.WarehouseTemplateFloorNotFound,
+                404,
+                "Warehouse template floor not found.",
+                recoveryAction: "preview-warehouse-template-again");
+        }
+
+        var applied = await ApplyLayoutCommandsCoreAsync(
+            versionId,
+            floorLogicalId,
+            commandBatch,
+            SpaceBuiltInWarehouseTemplates.MaximumFloorCommandCount,
+            $"template\n{templateId:D}\n{request.TemplateVersionId:D}\n" +
+            $"{request.ProposalHash}\n{templateFloor.Key}",
+            floor => floor.ConfigureBoundary(
+                TemplateFloorBoundary(templateFloor),
+                "LOCAL_MM_Z_UP"),
+            cancellationToken);
+        return new ApplySpaceWarehouseTemplateFloorResponse(
+            SpaceWarehouseTemplateContract.SchemaVersion,
+            templateId,
+            request.TemplateVersionId,
+            preview.TemplateContentHash,
+            preview.ProposalHash,
+            templateFloor.Key,
+            versionId,
+            floorLogicalId,
+            applied.FloorRevision,
+            applied.VersionContentRevision,
+            counts,
+            applied.CommandBatchId,
+            applied.IdempotentReplay);
+    }
+
     public async Task<CreateSpaceVersionResponse> CreateVersionAsync(
         Guid siteId,
         CreateSpaceVersionRequest request,
@@ -2978,7 +3138,8 @@ public sealed class SpaceDesignV1Service :
     }
 
     private static void ValidateLayoutCommandBatch(
-        ApplySpaceLayoutCommandBatchRequest request)
+        ApplySpaceLayoutCommandBatchRequest request,
+        int maximumCommandCount)
     {
         if (request.SchemaVersion != SpaceLayoutCommandContract.SchemaVersion)
         {
@@ -3007,11 +3168,16 @@ public sealed class SpaceDesignV1Service :
                 "expectedContentRevision",
                 "A non-negative revision is required.");
         }
-        if (request.Commands is null || request.Commands.Count is < 1 or > 100)
+        if (maximumCommandCount < 1)
+            throw new ArgumentOutOfRangeException(nameof(maximumCommandCount));
+        if (request.Commands is null ||
+            request.Commands.Count < 1 ||
+            request.Commands.Count > maximumCommandCount)
         {
             throw Invalid(
                 "commands",
-                "A layout command batch must contain between 1 and 100 commands.");
+                $"A layout command batch must contain between 1 and " +
+                $"{maximumCommandCount} commands.");
         }
         if (request.Commands.Any(command => command is null))
             throw Invalid("commands", "Command entries cannot be null.");
@@ -3661,6 +3827,23 @@ public sealed class SpaceDesignV1Service :
             : string.Create(
                 CultureInfo.InvariantCulture,
                 $"{prefix.Trim()}-L{levelNo:00}-C{columnNo:000}-D{depthNo:00}");
+
+    private static string TemplateFloorBoundary(
+        SpaceWarehouseTemplateFloorPlanDto floor) =>
+        JsonSerializer.Serialize(
+            new
+            {
+                schemaVersion = 1,
+                kind = "polygon",
+                points = new[]
+                {
+                    new[] { 0, 0 },
+                    new[] { floor.Width, 0 },
+                    new[] { floor.Width, floor.Depth },
+                    new[] { 0, floor.Depth },
+                },
+            },
+            JsonOptions);
 
     private async Task<ApplySpaceLayoutCommandBatchResponse?>
         ReadLayoutCommandReplayAsync(
