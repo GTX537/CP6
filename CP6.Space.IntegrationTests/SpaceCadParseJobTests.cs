@@ -653,6 +653,127 @@ public sealed class SpaceCadParseJobTests
     }
 
     [Fact]
+    public async Task Cad_changeset_applies_more_than_the_interactive_command_limit_atomically()
+    {
+        const int changeCount = 101;
+        await using var fixture = await CreateFixtureAsync();
+        var provider = new ReviewWorkspaceProvider(
+            fixture.Execution.TenantId,
+            fixture.Source.Sha256,
+            changeCount);
+        var model = await fixture.Context.Models.SingleAsync();
+        var floor = SpaceFloorRevision.Create(
+            fixture.Execution.TenantId,
+            fixture.Version.Id,
+            provider.Request.FloorLogicalId,
+            model.SiteId,
+            1,
+            "F1",
+            "Floor 1",
+            0,
+            6000);
+        fixture.Context.FloorRevisions.Add(floor);
+        await fixture.Context.SaveChangesAsync();
+        var started = await fixture.Service.StartAsync(
+            fixture.Version.Id,
+            fixture.Source.Id,
+            await ConfirmPreparationAsync(
+                fixture,
+                provider.Request,
+                provider.SemanticPreviewSha256),
+            "cad-review-large-apply");
+        await CompleteParseAsync(fixture, provider, started.JobId);
+        fixture.Context.ChangeTracker.Clear();
+
+        var workspace = await fixture.Service.GetReviewWorkspaceAsync(
+            fixture.Version.Id,
+            fixture.Source.Id,
+            started.JobId);
+        Assert.Equal(changeCount, workspace.Changes!.Count);
+        Assert.All(workspace.Changes, change => Assert.True(change.CanApply));
+        var clientId = Guid.NewGuid();
+        var lease = SpaceEditLease.Create(
+            fixture.Execution.TenantId,
+            fixture.Version.Id,
+            floor.LogicalId,
+            fixture.Execution.ActorId,
+            "CAD reviewer",
+            clientId,
+            Now,
+            TimeSpan.FromSeconds(90));
+        fixture.Context.EditLeases.Add(lease);
+        await fixture.Context.SaveChangesAsync();
+
+        var interactive = await Assert.ThrowsAsync<SpaceProblemException>(() =>
+            fixture.Design.ApplyElementCommandsAsync(
+                fixture.Version.Id,
+                floor.LogicalId,
+                new ApplySpaceElementCommandBatchRequest(
+                    SpaceElementCommandContract.SchemaVersion,
+                    Guid.NewGuid(),
+                    clientId,
+                    lease.LeaseId,
+                    ExpectedFloorRevision: 0,
+                    workspace.Changes.Select(change =>
+                        new SpaceElementCommandDto(
+                            Guid.NewGuid(),
+                            SpaceElementCommandContract.CreateElement,
+                            change.LogicalId,
+                            UpdateProperties: null,
+                            CreateElement: new SpaceCreateElementDto(
+                                SpaceElementTypes.Wall,
+                                """
+                                {"schemaVersion":1,"kind":"box","width":10000,"height":6000,"depth":200}
+                                """,
+                                0,
+                                0,
+                                0,
+                                0,
+                                10_000,
+                                6_000,
+                                200,
+                                null,
+                                null,
+                                fixture.Source.Id,
+                                change.SourceRef,
+                                [])))
+                        .ToArray(),
+                    workspace.EditorContentRevision,
+                    workspace.EditorContentHash,
+                    workspace.ChangesetSha256)));
+        Assert.Equal(SpaceErrorCodes.RequestInvalid, interactive.Code);
+        Assert.Contains("between 1 and 100", interactive.Detail);
+
+        var applied = await fixture.Service.ApplyReviewChangesAsync(
+            fixture.Version.Id,
+            fixture.Source.Id,
+            started.JobId,
+            new ApplySpaceCadChangesetRequest(
+                Guid.NewGuid(),
+                clientId,
+                lease.LeaseId,
+                ExpectedFloorRevision: 0,
+                workspace.EditorContentRevision,
+                workspace.EditorContentHash,
+                workspace.WorkspaceSha256,
+                workspace.Changes.Select(change => change.ChangeId).ToArray()));
+
+        Assert.Equal(changeCount, applied.AppliedChangeCount);
+        Assert.Equal(changeCount, applied.UndoCommands.Count);
+        Assert.Equal(changeCount, applied.RedoCommands.Count);
+        Assert.Equal(1, applied.FloorRevision);
+        Assert.Equal(
+            workspace.EditorContentRevision + 1,
+            applied.VersionContentRevision);
+        Assert.Equal(
+            changeCount,
+            await fixture.Context.ElementRevisions.AsNoTracking().CountAsync());
+        Assert.Single(await fixture.Context.ElementCommandBatches
+            .AsNoTracking()
+            .ToListAsync());
+    }
+
+    [Fact]
     public async Task Locked_manual_correction_survives_reparse_as_a_blocking_conflict()
     {
         await using var fixture = await CreateFixtureAsync();
@@ -1305,8 +1426,13 @@ public sealed class SpaceCadParseJobTests
         private readonly SpaceCadSemanticPreviewV1 _semantic;
         private readonly SpaceCadSemanticDiagnosticIndexV1 _diagnostics;
 
-        public ReviewWorkspaceProvider(Guid tenantId, string sourceSha256)
+        public ReviewWorkspaceProvider(
+            Guid tenantId,
+            string sourceSha256,
+            int wallCount = 1)
         {
+            if (wallCount < 1)
+                throw new ArgumentOutOfRangeException(nameof(wallCount));
             _tenantId = tenantId;
             var fileId = Guid.NewGuid();
             var sourceId = Guid.NewGuid();
@@ -1318,6 +1444,32 @@ public sealed class SpaceCadParseJobTests
                 SpaceCadSourceFormat.Dxf,
                 "review-test",
                 "1.0");
+            var entities = Enumerable.Range(0, wallCount)
+                .Select(index =>
+                {
+                    var y = checked(index * 1_000m);
+                    return new SpaceCadIrEntityV1(
+                        $"H:WALL-{index + 1}",
+                        SpaceCadIrEntityType.Line,
+                        "LINE",
+                        "WALL",
+                        null,
+                        [new(0, y), new(10_000, y)],
+                        null,
+                        null,
+                        null,
+                        SpaceCadAffineTransformV1.Identity,
+                        new SpaceCadBoundsV1(0, y, 10_000, y),
+                        false,
+                        true,
+                        new Dictionary<string, string>());
+                })
+                .ToArray();
+            var packageBounds = new SpaceCadBoundsV1(
+                0,
+                0,
+                10_000,
+                checked((wallCount - 1) * 1_000m));
             _package = new SpaceCadIrPackageV1(
                 new SpaceCadIrDocumentV1(
                     SpaceCadIrVersions.SchemaVersion,
@@ -1327,35 +1479,26 @@ public sealed class SpaceCadParseJobTests
                     SpaceCadUnit.Millimeter,
                     1,
                     SpaceCadIrVersions.CoordinateSystem,
-                    new SpaceCadBoundsV1(0, 0, 10_000, 0),
+                    packageBounds,
                     "review-test",
                     "1.0"),
-                [new SpaceCadIrLayerV1("WALL", "WALL", 1, "ACI:7", "CONTINUOUS")],
-                [],
-                [new SpaceCadIrEntityV1(
-                    "H:WALL-1",
-                    SpaceCadIrEntityType.Line,
-                    "LINE",
+                [new SpaceCadIrLayerV1(
                     "WALL",
-                    null,
-                    [new(0, 0), new(10_000, 0)],
-                    null,
-                    null,
-                    null,
-                    SpaceCadAffineTransformV1.Identity,
-                    new SpaceCadBoundsV1(0, 0, 10_000, 0),
-                    false,
-                    true,
-                    new Dictionary<string, string>())],
+                    "WALL",
+                    wallCount,
+                    "ACI:7",
+                    "CONTINUOUS")],
+                [],
+                entities,
                 [],
                 new SpaceCadIrSummaryV1(
                     1,
                     0,
-                    1,
-                    1,
+                    wallCount,
+                    wallCount,
                     0,
                     0,
-                    new SpaceCadBoundsV1(0, 0, 10_000, 0)));
+                    packageBounds));
             var floor = new SpaceCadFloorAssignmentV1(
                 Guid.NewGuid(),
                 "F1",

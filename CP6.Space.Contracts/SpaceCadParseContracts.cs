@@ -1,3 +1,5 @@
+using System.ComponentModel.DataAnnotations;
+
 namespace CP6.Space.Contracts;
 
 public sealed record UploadSpaceCadSourceResponse(
@@ -127,6 +129,8 @@ public sealed record ApplySpaceCadChangesetRequest(
     long ExpectedContentRevision,
     string? ExpectedContentHash,
     string WorkspaceSha256,
+    [property: MinLength(1)]
+    [property: MaxLength(SpaceCadReviewWorkspaceVersions.MaximumApplyChanges)]
     IReadOnlyList<string> ChangeIds);
 
 public sealed record ApplySpaceCadChangesetResponse(

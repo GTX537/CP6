@@ -610,12 +610,39 @@ public sealed class SpaceDesignV1Service :
             floors);
     }
 
-    public async Task<ApplySpaceElementCommandBatchResponse>
+    public Task<ApplySpaceElementCommandBatchResponse>
         ApplyElementCommandsAsync(
             Guid versionId,
             Guid floorLogicalId,
             ApplySpaceElementCommandBatchRequest request,
-            CancellationToken cancellationToken = default)
+            CancellationToken cancellationToken = default) =>
+        ApplyElementCommandsCoreAsync(
+            versionId,
+            floorLogicalId,
+            request,
+            maximumCommandCount: 100,
+            cancellationToken);
+
+    public Task<ApplySpaceElementCommandBatchResponse>
+        ApplyCadElementCommandsAsync(
+            Guid versionId,
+            Guid floorLogicalId,
+            ApplySpaceElementCommandBatchRequest request,
+            CancellationToken cancellationToken = default) =>
+        ApplyElementCommandsCoreAsync(
+            versionId,
+            floorLogicalId,
+            request,
+            SpaceCadReviewWorkspaceVersions.MaximumApplyChanges,
+            cancellationToken);
+
+    private async Task<ApplySpaceElementCommandBatchResponse>
+        ApplyElementCommandsCoreAsync(
+            Guid versionId,
+            Guid floorLogicalId,
+            ApplySpaceElementCommandBatchRequest request,
+            int maximumCommandCount,
+            CancellationToken cancellationToken)
     {
         ArgumentNullException.ThrowIfNull(request);
         EnsureExecutionContext();
@@ -713,7 +740,7 @@ public sealed class SpaceDesignV1Service :
                     "reload-floor-scene");
             }
 
-            ValidateElementCommandBatch(request);
+            ValidateElementCommandBatch(request, maximumCommandCount);
             var concurrentReplay = await ReadElementCommandReplayAsync(
                 request.CommandBatchId,
                 requestHash,
@@ -3202,7 +3229,8 @@ public sealed class SpaceDesignV1Service :
     }
 
     private static void ValidateElementCommandBatch(
-        ApplySpaceElementCommandBatchRequest request)
+        ApplySpaceElementCommandBatchRequest request,
+        int maximumCommandCount)
     {
         if (request.SchemaVersion != SpaceElementCommandContract.SchemaVersion)
         {
@@ -3237,12 +3265,19 @@ public sealed class SpaceDesignV1Service :
                 "expectedContentRevision",
                 "A complete CAD changeset content fence is required.");
         }
+        if (maximumCommandCount is < 1 or >
+                SpaceCadReviewWorkspaceVersions.MaximumApplyChanges)
+        {
+            throw new ArgumentOutOfRangeException(nameof(maximumCommandCount));
+        }
         if (request.Commands is null ||
-            request.Commands.Count is < 1 or > 100)
+            request.Commands.Count < 1 ||
+            request.Commands.Count > maximumCommandCount)
         {
             throw Invalid(
                 "commands",
-                "A command batch must contain between 1 and 100 commands.");
+                $"A command batch must contain between 1 and " +
+                $"{maximumCommandCount} commands.");
         }
         if (request.Commands.Any(command => command is null))
             throw Invalid("commands", "Command entries cannot be null.");

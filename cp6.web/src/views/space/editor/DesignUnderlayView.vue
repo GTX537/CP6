@@ -202,6 +202,7 @@ const aiReviewWorkspace = ref<AiProposalReviewWorkspace | null>(null)
 const aiReviewPanelVisible = ref(false)
 const aiDecisionPanelVisible = ref(false)
 const aiGenerationPanelVisible = ref(false)
+const aiGenerationSourceId = ref('')
 const inspectorTab = ref<InspectorTab>('properties')
 const sourceListRefreshKey = ref(0)
 const activeAiReviewItemId = ref('')
@@ -1748,6 +1749,7 @@ function openAiDecisionPanel(): void {
 }
 
 function openAiGenerationPanel(): void {
+  aiGenerationSourceId.value = ''
   aiGenerationPanelVisible.value = true
   aiDecisionPanelVisible.value = false
   matchPanelVisible.value = false
@@ -1760,6 +1762,7 @@ function openAiGenerationPanel(): void {
 
 function closeAiGenerationPanel(): void {
   aiGenerationPanelVisible.value = false
+  aiGenerationSourceId.value = ''
 }
 
 function closeAiDecisionPanel(): void {
@@ -3434,8 +3437,9 @@ function openCadReviewWorkspace(): void {
   else chooseCadReviewArtifact()
 }
 
-function openRuleOnlyCreation(): void {
+function openRuleOnlyCreation(sourceId = ''): void {
   inspectorTab.value = 'issues'
+  aiGenerationSourceId.value = sourceId
   aiGenerationPanelVisible.value = true
   cadReviewPanelVisible.value = false
   ElMessage.info('请在 RuleOnly 模式中选择已上传 CAD 来源和货架模板；结果确认后才写入 Draft。')
@@ -3977,6 +3981,7 @@ function tabClientInstanceId(): string {
         v-else-if="inspectorTab === 'issues' && aiGenerationPanelVisible && designScene?.contentRevision !== undefined"
         :version-id="versionId"
         :current-content-revision="designScene.contentRevision"
+        :initial-source-id="aiGenerationSourceId || undefined"
         @close="closeAiGenerationPanel"
         @created="onAiRunCreated"
       />
@@ -4004,6 +4009,7 @@ function tabClientInstanceId(): string {
         :stale="cadReviewWorkspaceStale"
         @select="focusCadReviewItem"
         @apply-changes="applyCadReviewChanges"
+        @open-rule-only="openRuleOnlyCreation"
         @close="closeCadReviewPanel"
       />
       <DesignElementPropertiesPanel

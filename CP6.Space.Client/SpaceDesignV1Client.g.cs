@@ -25541,6 +25541,8 @@ namespace CP6.Space.Client
 
         [System.Text.Json.Serialization.JsonPropertyName("changeIds")]
         [System.ComponentModel.DataAnnotations.Required]
+        [System.ComponentModel.DataAnnotations.MinLength(1)]
+        [System.ComponentModel.DataAnnotations.MaxLength(10000)]
         public System.Collections.Generic.ICollection<string> ChangeIds { get; set; } = new System.Collections.ObjectModel.Collection<string>();
 
     }

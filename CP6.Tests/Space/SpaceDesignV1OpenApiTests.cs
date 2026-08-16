@@ -2159,6 +2159,14 @@ public sealed class SpaceDesignV1OpenApiTests
             "expectedContentRevision",
             "workspaceSha256",
             "changeIds");
+        var changeIds = schemas
+            .GetProperty("CP6.Space.Contracts.ApplySpaceCadChangesetRequest")
+            .GetProperty("properties")
+            .GetProperty("changeIds");
+        Assert.Equal(1, changeIds.GetProperty("minItems").GetInt32());
+        Assert.Equal(
+            SpaceCadReviewWorkspaceVersions.MaximumApplyChanges,
+            changeIds.GetProperty("maxItems").GetInt32());
         AssertExactRequired(
             schemas.GetProperty(
                 "CP6.Space.Contracts.ApplySpaceCadChangesetResponse"),

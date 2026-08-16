@@ -419,6 +419,23 @@ test('records confirmed CAD changes in the shared undo and redo stack', async ({
   expect(errors).toEqual([])
 })
 
+test('routes CAD layout conflicts into RuleOnly with the current source preselected', async ({ page }) => {
+  const errors = collectPageErrors(page)
+  await installSpaceStudioFixtures(page, [], {
+    cadReview: true,
+    cadApplyHistory: true,
+  })
+  await page.setViewportSize({ width: 1440, height: 900 })
+  await page.goto(`${studioUrl}?cadSourceId=${cadSourceId}&cadParseJobId=${cadParseJobId}`)
+
+  await page.getByRole('button', { name: /^问题/ }).click()
+  await page.getByRole('button', { name: '使用当前 CAD 来源进入规则生成' }).click()
+  await expect(page.getByRole('heading', { name: '规则生成' })).toBeVisible()
+  await expect(page.locator('[data-test="ai-generation-source"]'))
+    .toContainText('warehouse.dxf')
+  expect(errors).toEqual([])
+})
+
 test('held lease exposes wait and audited takeover recovery', async ({ page }) => {
   await installSpaceStudioFixtures(page, [], { leaseHeld: true })
   await page.setViewportSize({ width: 1440, height: 900 })
@@ -1410,6 +1427,10 @@ async function installSpaceStudioFixtures(
     const cadPreparationPath = `/api/space/design/v1/versions/${versionId}/sources/${cadSourceId}/cad-preparations:preview`
     const cadParsePath = `/api/space/design/v1/versions/${versionId}/sources/${cadSourceId}/cad-parses`
     const cadCapabilityPath = `/api/space/design/v1/sites/${scene.siteId}/cad-capability`
+    const versionPath = `/api/space/design/v1/versions/${versionId}`
+    const sourceListPath = `${versionPath}/sources`
+    const rackProfilePath = '/api/space/design/v1/rack-generation-profiles'
+    const warehouseTemplatePath = '/api/space/design/v1/templates'
     const underlayUploadPath = `/api/space/design/v1/versions/${versionId}/underlay-sources`
     const underlayAttachPath = `/api/space/design/v1/versions/${versionId}/floors/${floorId}/underlay`
     const underlayHistoryPath = `${underlayAttachPath}:compensate`
@@ -1419,6 +1440,42 @@ async function installSpaceStudioFixtures(
 
     if (url.pathname === scenePath) {
       await route.fulfill({ json: scene })
+      return
+    }
+    if (url.pathname === versionPath && request.method() === 'GET') {
+      await route.fulfill({
+        json: {
+          id: versionId,
+          status: 'Draft',
+          contentRevision: scene.contentRevision,
+          rowVersion: 'AAAAAAAAB9E=',
+        },
+      })
+      return
+    }
+    if (url.pathname === sourceListPath && request.method() === 'GET') {
+      await route.fulfill({
+        json: {
+          items: [{
+            id: cadSourceId,
+            modelVersionId: versionId,
+            sourceType: 'Dxf',
+            displayName: 'warehouse.dxf',
+            state: 'PreviewReady',
+            mappingProfileId: '99999999-9999-9999-9999-999999999999',
+            mappingProfileVersion: 1,
+            sha256: '8'.repeat(64),
+          }],
+        },
+      })
+      return
+    }
+    if (url.pathname === rackProfilePath && request.method() === 'GET') {
+      await route.fulfill({ json: { items: [] } })
+      return
+    }
+    if (url.pathname === warehouseTemplatePath && request.method() === 'GET') {
+      await route.fulfill({ json: [] })
       return
     }
     if (url.pathname === underlayUploadPath && request.method() === 'POST') {
@@ -1755,13 +1812,23 @@ async function installSpaceStudioFixtures(
           coordinateAnalysis: {
             suggestedUnit: 'Millimeter',
             suggestedScaleToMillimeters: 1,
+            sourceBounds: { minX: 0, minY: 0, maxX: 10_000, maxY: 8_000 },
+            suggestedBoundsMillimeters: {
+              minX: 0,
+              minY: 0,
+              maxX: 10_000,
+              maxY: 8_000,
+            },
             isSuggestedExtentPlausible: true,
+            requiresUnitConfirmation: true,
             issues: [],
           },
           coordinateMetadata: {
             confirmedUnit: 'Millimeter',
             confirmedScaleToMillimeters: 1,
+            preparedBounds: { minX: 0, minY: 0, maxX: 10_000, maxY: 8_000 },
           },
+          coordinateIssues: [],
           inventorySummary: {
             layerCount: 1,
             blockCount: 0,
@@ -1778,6 +1845,18 @@ async function installSpaceStudioFixtures(
             ruleCount: 8,
           },
           mappingPreview: {
+            layerOverrides: [],
+            decisions: [{
+              sourceKind: 'Layer',
+              sourceKey: 'WALL',
+              layerId: 'WALL',
+              objectCount: 1,
+              status: 'Mapped',
+              decisionSource: 'ProfileRule',
+              ruleId: 'wall-rule',
+              target: 'Wall',
+              confidenceWeight: 1,
+            }],
             summary: {
               mappedLayerCount: 1,
               unmappedLayerCount: 0,
@@ -2195,7 +2274,15 @@ async function installSpaceStudioFixtures(
       return
     }
     if (url.pathname === '/api/pub/role-perm/my-actions') {
-      await route.fulfill({ json: { data: ['space:model:edit', 'space:model:lease:takeover'] } })
+      await route.fulfill({
+        json: {
+          data: [
+            'space:model:edit',
+            'space:model:lease:takeover',
+            'space:model:generate-ai',
+          ],
+        },
+      })
       return
     }
     await route.fulfill({ json: {} })
@@ -2507,13 +2594,26 @@ function cadReviewWorkspaceFixture(includeChanges = false) {
               maxY: 2800,
               maxZ: 3000,
             },
+          }, {
+            changeId: 'cad-change-rack-rule-only',
+            kind: 'Conflict',
+            logicalId: rackId,
+            sourceRef: 'H:RACK-001',
+            previewObjectId: 'preview-rack',
+            objectType: 'Rack',
+            confidence: 0.99,
+            isSelected: false,
+            canApply: false,
+            blockingReasonCode: 'SPACE_CAD_REQUIRES_RULE_ONLY_REVIEW',
+            isManualCorrectionLocked: false,
+            userCorrectionVersion: 0,
           }],
           changeSummary: {
-            totalCount: 1,
+            totalCount: 2,
             addCount: 0,
             modifyCount: 1,
             deleteCount: 0,
-            conflictCount: 0,
+            conflictCount: 1,
             lowConfidenceCount: 0,
             unrecognizedCount: 0,
             selectedCount: 1,

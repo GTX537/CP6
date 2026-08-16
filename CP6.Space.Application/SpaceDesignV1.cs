@@ -91,6 +91,12 @@ public interface ISpaceDesignV1Service
         ApplySpaceElementCommandBatchRequest request,
         CancellationToken cancellationToken = default);
 
+    Task<ApplySpaceElementCommandBatchResponse> ApplyCadElementCommandsAsync(
+        Guid versionId,
+        Guid floorLogicalId,
+        ApplySpaceElementCommandBatchRequest request,
+        CancellationToken cancellationToken = default);
+
     Task<ApplySpaceLayoutCommandBatchResponse> ApplyLayoutCommandsAsync(
         Guid versionId,
         Guid floorLogicalId,

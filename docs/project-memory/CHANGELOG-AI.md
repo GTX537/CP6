@@ -2,6 +2,13 @@
 
 > 依据 Git log 汇总，不替代完整 Git 历史。重点记录影响接手判断的里程碑。
 
+## 2026-08-16：Space CAD 待审变更集与 RuleOnly 交接
+
+- LM-FR-019/019A 深审闭环：六类变更独立汇总/筛选，客户端验证 Change Summary 与选择语义，Workspace 更新不再沿用旧选择。
+- CAD 静态元素专用 Apply 上限提高到 10,000，仍复用租约、Floor/Content Revision、幂等与单事务；101 项纵切证明一次 Revision。公开手工命令的 100 项边界未放宽。
+- Zone/Aisle/Rack 保持设计态领域模型，通过审核面板显式交接既有 RuleOnly → Proposal Review → Atomic Apply，并预选当前 CAD 来源，未新增第二套布局权威。
+- Space Integration 15、Space Unit 546、CP6.Tests 2,933 passed / 19 environment-skipped、Web 873、OpenAPI 55、Space Studio Playwright 24、生产 Web 构建、完整 solution Release 0 warning / 0 error 与 SDK drift 通过。仓库闭环不替代真实 Provider/黄金 CAD/Pilot；核心 GA 仍为 72% / `NoGo`。
+
 ## 2026-08-16：Space CAD 输入与坐标确认
 
 - LM-FR-010 明确以同一受控上传链接受 DWG/DXF：前端显式格式、服务端扩展名/MIME/签名校验、隔离扫描和 CAD IR/Preparation/Parse 权威不变。
