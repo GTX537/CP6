@@ -190,6 +190,23 @@ public sealed class SpaceCadParseController(
             cancellationToken);
 
     [HttpGet(
+        "versions/{versionId:guid}/floors/{floorLogicalId:guid}/" +
+        "cad-review-candidates")]
+    [RequirePermission("space", "model:read", UseProblemDetails = true)]
+    [ProducesResponseType<SpaceCadReviewCandidateListDto>(
+        StatusCodes.Status200OK)]
+    public Task<SpaceCadReviewCandidateListDto> ListReviewCandidates(
+        Guid versionId,
+        Guid floorLogicalId,
+        [FromQuery, Range(1, 100)] int limit = 50,
+        CancellationToken cancellationToken = default) =>
+        service.ListReviewCandidatesAsync(
+            versionId,
+            floorLogicalId,
+            limit,
+            cancellationToken);
+
+    [HttpGet(
         "versions/{versionId:guid}/sources/{sourceId:guid}/" +
         "cad-parses/{jobId:guid}/review-workspace")]
     [RequirePermission("space", "model:read", UseProblemDetails = true)]

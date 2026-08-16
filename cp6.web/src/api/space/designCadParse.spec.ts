@@ -21,6 +21,16 @@ describe('designCadParseApi', () => {
     )
   })
 
+  it('discovers review candidates for the current version and floor', async () => {
+    vi.mocked(http.get).mockResolvedValue({})
+    await designCadParseApi.listReviewCandidates('version-1', 'floor-1')
+
+    expect(http.get).toHaveBeenCalledWith(
+      '/space/design/v1/versions/version-1/floors/floor-1/cad-review-candidates',
+      { params: { limit: 50 } },
+    )
+  })
+
   it('loads the server-owned CAD capability for a Site', async () => {
     vi.mocked(http.get).mockResolvedValue({})
     await designCadParseApi.getCadCapability('site-1')

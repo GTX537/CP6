@@ -470,11 +470,34 @@ public sealed class SpaceCadParseJobTests
         Assert.Equal(SpaceElementTypes.Wall, change.ObjectType);
         Assert.Equal(1, workspace.ChangeSummary!.AddCount);
 
+        var currentCandidates = await fixture.Service.ListReviewCandidatesAsync(
+            fixture.Version.Id,
+            request.FloorLogicalId,
+            50);
+        Assert.Equal(0, currentCandidates.CurrentContentRevision);
+        Assert.False(currentCandidates.Truncated);
+        var currentCandidate = Assert.Single(currentCandidates.Items);
+        Assert.Equal(fixture.Source.Id, currentCandidate.SourceId);
+        Assert.Equal(started.JobId, currentCandidate.JobId);
+        Assert.Equal("warehouse.dxf", currentCandidate.SourceDisplayName);
+        Assert.True(currentCandidate.IsCurrentRevision);
+        Assert.True(currentCandidate.CanLoadReview);
+        Assert.Equal(request.MappingProfileId, currentCandidate.MappingProfileId);
+
         var version = await fixture.Context.Versions.SingleAsync(
             item => item.Id == fixture.Version.Id);
         version.TouchContent();
         await fixture.Context.SaveChangesAsync();
         fixture.Context.ChangeTracker.Clear();
+
+        var historicalCandidates = await fixture.Service.ListReviewCandidatesAsync(
+            fixture.Version.Id,
+            request.FloorLogicalId,
+            50);
+        Assert.Equal(1, historicalCandidates.CurrentContentRevision);
+        var historicalCandidate = Assert.Single(historicalCandidates.Items);
+        Assert.False(historicalCandidate.IsCurrentRevision);
+        Assert.False(historicalCandidate.CanLoadReview);
 
         var stale = await Assert.ThrowsAsync<SpaceProblemException>(() =>
             fixture.Service.GetReviewWorkspaceAsync(

@@ -114,6 +114,34 @@ public sealed record SpaceCadParseDto(
     string? LastErrorSummary,
     IReadOnlyList<SpaceCadParseArtifactDto> Artifacts);
 
+public sealed record SpaceCadReviewCandidateDto(
+    Guid SourceId,
+    string SourceDisplayName,
+    string SourceType,
+    string SourceSha256,
+    Guid JobId,
+    string JobStatus,
+    string SourceState,
+    Guid FloorLogicalId,
+    long BaseContentRevision,
+    string? BaseContentHash,
+    bool IsCurrentRevision,
+    bool CanLoadReview,
+    DateTime RequestedAtUtc,
+    DateTime? FinishedAtUtc,
+    string? PreferredProviderKey,
+    string? PreferredProviderVersion,
+    Guid MappingProfileId,
+    int MappingProfileVersion);
+
+public sealed record SpaceCadReviewCandidateListDto(
+    Guid ModelVersionId,
+    Guid FloorLogicalId,
+    long CurrentContentRevision,
+    string? CurrentContentHash,
+    bool Truncated,
+    IReadOnlyList<SpaceCadReviewCandidateDto> Items);
+
 public sealed record SpaceCadParseActionResponse(
     Guid JobId,
     string Status,

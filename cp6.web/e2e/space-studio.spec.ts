@@ -430,6 +430,35 @@ test('uploads Excel from current CAD and reaches authoritative Apply without int
   expect(errors).toEqual([])
 })
 
+test('discovers current CAD review history and sends stale results through reparse', async ({ page }) => {
+  const errors = collectPageErrors(page)
+  const methods: string[] = []
+  await installSpaceStudioFixtures(page, methods, { cadReview: true })
+  await page.setViewportSize({ width: 1440, height: 900 })
+  await page.goto(studioUrl)
+
+  await page.locator('[data-test="open-existing-cad"]').click()
+  const picker = page.locator('[data-test="cad-review-candidate-picker"]')
+  await expect(picker.getByRole('heading', { name: '选择已有 CAD 解析结果' }))
+    .toBeVisible()
+  await picker.getByRole('button', { name: '加载 warehouse.dxf 的审核结果' }).click()
+
+  await expect(page).toHaveURL(new RegExp(
+    `cadSourceId=${cadSourceId}.*cadParseJobId=${cadParseJobId}`,
+  ))
+  await expect(page.locator('[data-test="open-excel-cad"]')).toBeEnabled()
+
+  await page.locator('[data-test="open-existing-cad"]').click()
+  await picker.getByRole('button', { name: '重新解析 warehouse.dxf' }).click()
+  await expect(page.getByRole('heading', { name: '确认楼层、单位、坐标与映射' }))
+    .toBeVisible()
+  await expect(page).toHaveURL(new RegExp(`cadSourceId=${cadSourceId}`))
+  await expect(page).not.toHaveURL(/cadParseJobId=/)
+
+  expect(methods).toContain('GET CAD review candidates')
+  expect(errors).toEqual([])
+})
+
 test('records confirmed CAD changes in the shared undo and redo stack', async ({ page }) => {
   const errors = collectPageErrors(page)
   const cadApplyBodies: Array<Record<string, any>> = []
@@ -1483,6 +1512,7 @@ async function installSpaceStudioFixtures(
     const cadProfilesPath = `/api/space/design/v1/versions/${versionId}/cad-mapping-profiles`
     const cadPreparationPath = `/api/space/design/v1/versions/${versionId}/sources/${cadSourceId}/cad-preparations:preview`
     const cadParsePath = `/api/space/design/v1/versions/${versionId}/sources/${cadSourceId}/cad-parses`
+    const cadCandidatePath = `/api/space/design/v1/versions/${versionId}/floors/${floorId}/cad-review-candidates`
     const cadCapabilityPath = `/api/space/design/v1/sites/${scene.siteId}/cad-capability`
     const versionPath = `/api/space/design/v1/versions/${versionId}`
     const sourceListPath = `${versionPath}/sources`
@@ -1501,6 +1531,61 @@ async function installSpaceStudioFixtures(
 
     if (url.pathname === scenePath) {
       await route.fulfill({ json: scene })
+      return
+    }
+    if (url.pathname === cadCandidatePath && request.method() === 'GET') {
+      methods.push('GET CAD review candidates')
+      await route.fulfill({
+        json: {
+          modelVersionId: versionId,
+          floorLogicalId: floorId,
+          currentContentRevision: scene.contentRevision,
+          currentContentHash: scene.contentHash,
+          truncated: false,
+          items: [
+            {
+              sourceId: cadSourceId,
+              sourceDisplayName: 'warehouse.dxf',
+              sourceType: 'Dxf',
+              sourceSha256: '8'.repeat(64),
+              jobId: cadParseJobId,
+              jobStatus: 'Succeeded',
+              sourceState: 'PreviewReady',
+              floorLogicalId: floorId,
+              baseContentRevision: scene.contentRevision,
+              baseContentHash: scene.contentHash,
+              isCurrentRevision: true,
+              canLoadReview: true,
+              requestedAtUtc: '2026-08-16T10:00:00Z',
+              finishedAtUtc: '2026-08-16T10:02:00Z',
+              preferredProviderKey: 'autocad-core-console',
+              preferredProviderVersion: '25.0',
+              mappingProfileId: 'cad-profile-1',
+              mappingProfileVersion: 1,
+            },
+            {
+              sourceId: cadSourceId,
+              sourceDisplayName: 'warehouse.dxf',
+              sourceType: 'Dxf',
+              sourceSha256: '8'.repeat(64),
+              jobId: 'aaaaaaaa-5555-5555-5555-555555555555',
+              jobStatus: 'Succeeded',
+              sourceState: 'PreviewReady',
+              floorLogicalId: floorId,
+              baseContentRevision: 3,
+              baseContentHash: '3'.repeat(64),
+              isCurrentRevision: false,
+              canLoadReview: false,
+              requestedAtUtc: '2026-08-15T10:00:00Z',
+              finishedAtUtc: '2026-08-15T10:02:00Z',
+              preferredProviderKey: 'autocad-core-console',
+              preferredProviderVersion: '25.0',
+              mappingProfileId: 'cad-profile-1',
+              mappingProfileVersion: 1,
+            },
+          ],
+        },
+      })
       return
     }
     if (url.pathname === versionPath && request.method() === 'GET') {

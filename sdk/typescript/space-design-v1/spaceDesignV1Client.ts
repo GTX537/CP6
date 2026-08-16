@@ -166,6 +166,12 @@ export interface ISpaceDesignV1Client {
     getParse(versionId: string, sourceId: string, jobId: string): Promise<SpaceCadParseDto>;
 
     /**
+     * @param limit (optional)
+     * @return OK
+     */
+    listReviewCandidates(versionId: string, floorLogicalId: string, limit: number | undefined): Promise<SpaceCadReviewCandidateListDto>;
+
+    /**
      * @return OK
      */
     getReviewWorkspace(versionId: string, sourceId: string, jobId: string): Promise<SpaceCadReviewWorkspaceV1>;
@@ -3310,6 +3316,103 @@ export class SpaceDesignV1Client implements ISpaceDesignV1Client {
             });
         }
         return Promise.resolve<SpaceCadParseDto>(null as any);
+    }
+
+    /**
+     * @param limit (optional)
+     * @return OK
+     */
+    listReviewCandidates(versionId: string, floorLogicalId: string, limit: number | undefined): Promise<SpaceCadReviewCandidateListDto> {
+        let url_ = this.baseUrl + "/api/space/design/v1/versions/{versionId}/floors/{floorLogicalId}/cad-review-candidates?";
+        if (versionId === undefined || versionId === null)
+            throw new globalThis.Error("The parameter 'versionId' must be defined.");
+        url_ = url_.replace("{versionId}", encodeURIComponent("" + versionId));
+        if (floorLogicalId === undefined || floorLogicalId === null)
+            throw new globalThis.Error("The parameter 'floorLogicalId' must be defined.");
+        url_ = url_.replace("{floorLogicalId}", encodeURIComponent("" + floorLogicalId));
+        if (limit === null)
+            throw new globalThis.Error("The parameter 'limit' cannot be null.");
+        else if (limit !== undefined)
+            url_ += "limit=" + encodeURIComponent("" + limit) + "&";
+        url_ = url_.replace(/[?&]$/, "");
+
+        let options_: RequestInit = {
+            method: "GET",
+            headers: {
+                "Accept": "application/json"
+            }
+        };
+
+        return this.http.fetch(url_, options_).then((_response: Response) => {
+            return this.processListReviewCandidates(_response);
+        });
+    }
+
+    protected processListReviewCandidates(response: Response): Promise<SpaceCadReviewCandidateListDto> {
+        const status = response.status;
+        let _headers: any = {}; if (response.headers && response.headers.forEach) { response.headers.forEach((v: any, k: any) => _headers[k] = v); };
+        if (status === 200) {
+            return response.text().then((_responseText) => {
+            let result200: any = null;
+            let resultData200 = _responseText === "" ? null : JSON.parse(_responseText, this.jsonParseReviver);
+            result200 = SpaceCadReviewCandidateListDto.fromJS(resultData200);
+            return result200;
+            });
+        } else if (status === 400) {
+            return response.text().then((_responseText) => {
+            let result400: any = null;
+            let resultData400 = _responseText === "" ? null : JSON.parse(_responseText, this.jsonParseReviver);
+            result400 = SpaceDesignProblemDetails.fromJS(resultData400);
+            return throwException("Bad Request", status, _responseText, _headers, result400);
+            });
+        } else if (status === 401) {
+            return response.text().then((_responseText) => {
+            let result401: any = null;
+            let resultData401 = _responseText === "" ? null : JSON.parse(_responseText, this.jsonParseReviver);
+            result401 = SpaceDesignProblemDetails.fromJS(resultData401);
+            return throwException("Unauthorized", status, _responseText, _headers, result401);
+            });
+        } else if (status === 403) {
+            return response.text().then((_responseText) => {
+            let result403: any = null;
+            let resultData403 = _responseText === "" ? null : JSON.parse(_responseText, this.jsonParseReviver);
+            result403 = SpaceDesignProblemDetails.fromJS(resultData403);
+            return throwException("Forbidden", status, _responseText, _headers, result403);
+            });
+        } else if (status === 404) {
+            return response.text().then((_responseText) => {
+            let result404: any = null;
+            let resultData404 = _responseText === "" ? null : JSON.parse(_responseText, this.jsonParseReviver);
+            result404 = SpaceDesignProblemDetails.fromJS(resultData404);
+            return throwException("Not Found", status, _responseText, _headers, result404);
+            });
+        } else if (status === 409) {
+            return response.text().then((_responseText) => {
+            let result409: any = null;
+            let resultData409 = _responseText === "" ? null : JSON.parse(_responseText, this.jsonParseReviver);
+            result409 = SpaceDesignProblemDetails.fromJS(resultData409);
+            return throwException("Conflict", status, _responseText, _headers, result409);
+            });
+        } else if (status === 422) {
+            return response.text().then((_responseText) => {
+            let result422: any = null;
+            let resultData422 = _responseText === "" ? null : JSON.parse(_responseText, this.jsonParseReviver);
+            result422 = SpaceDesignProblemDetails.fromJS(resultData422);
+            return throwException("Unprocessable Content", status, _responseText, _headers, result422);
+            });
+        } else if (status === 500) {
+            return response.text().then((_responseText) => {
+            let result500: any = null;
+            let resultData500 = _responseText === "" ? null : JSON.parse(_responseText, this.jsonParseReviver);
+            result500 = SpaceDesignProblemDetails.fromJS(resultData500);
+            return throwException("Internal Server Error", status, _responseText, _headers, result500);
+            });
+        } else if (status !== 200 && status !== 204) {
+            return response.text().then((_responseText) => {
+            return throwException("An unexpected server error occurred.", status, _responseText, _headers);
+            });
+        }
+        return Promise.resolve<SpaceCadReviewCandidateListDto>(null as any);
     }
 
     /**
@@ -24076,6 +24179,174 @@ export interface ISpaceCadProviderSlotDto {
     qualified: boolean;
     runtimeAvailable: boolean;
     currentlyValid: boolean;
+}
+
+export class SpaceCadReviewCandidateDto implements ISpaceCadReviewCandidateDto {
+    sourceId?: string;
+    sourceDisplayName?: string | undefined;
+    sourceType?: string | undefined;
+    sourceSha256?: string | undefined;
+    jobId?: string;
+    jobStatus?: string | undefined;
+    sourceState?: string | undefined;
+    floorLogicalId?: string;
+    baseContentRevision?: number;
+    baseContentHash?: string | undefined;
+    isCurrentRevision?: boolean;
+    canLoadReview?: boolean;
+    requestedAtUtc?: Date;
+    finishedAtUtc?: Date | undefined;
+    preferredProviderKey?: string | undefined;
+    preferredProviderVersion?: string | undefined;
+    mappingProfileId?: string;
+    mappingProfileVersion?: number;
+
+    constructor(data?: ISpaceCadReviewCandidateDto) {
+        if (data) {
+            for (var property in data) {
+                if (data.hasOwnProperty(property))
+                    (this as any)[property] = (data as any)[property];
+            }
+        }
+    }
+
+    init(_data?: any) {
+        if (_data) {
+            this.sourceId = _data["sourceId"];
+            this.sourceDisplayName = _data["sourceDisplayName"];
+            this.sourceType = _data["sourceType"];
+            this.sourceSha256 = _data["sourceSha256"];
+            this.jobId = _data["jobId"];
+            this.jobStatus = _data["jobStatus"];
+            this.sourceState = _data["sourceState"];
+            this.floorLogicalId = _data["floorLogicalId"];
+            this.baseContentRevision = _data["baseContentRevision"];
+            this.baseContentHash = _data["baseContentHash"];
+            this.isCurrentRevision = _data["isCurrentRevision"];
+            this.canLoadReview = _data["canLoadReview"];
+            this.requestedAtUtc = _data["requestedAtUtc"] ? new Date(_data["requestedAtUtc"].toString()) : undefined as any;
+            this.finishedAtUtc = _data["finishedAtUtc"] ? new Date(_data["finishedAtUtc"].toString()) : undefined as any;
+            this.preferredProviderKey = _data["preferredProviderKey"];
+            this.preferredProviderVersion = _data["preferredProviderVersion"];
+            this.mappingProfileId = _data["mappingProfileId"];
+            this.mappingProfileVersion = _data["mappingProfileVersion"];
+        }
+    }
+
+    static fromJS(data: any): SpaceCadReviewCandidateDto {
+        data = typeof data === 'object' ? data : {};
+        let result = new SpaceCadReviewCandidateDto();
+        result.init(data);
+        return result;
+    }
+
+    toJSON(data?: any) {
+        data = typeof data === 'object' ? data : {};
+        data["sourceId"] = this.sourceId;
+        data["sourceDisplayName"] = this.sourceDisplayName;
+        data["sourceType"] = this.sourceType;
+        data["sourceSha256"] = this.sourceSha256;
+        data["jobId"] = this.jobId;
+        data["jobStatus"] = this.jobStatus;
+        data["sourceState"] = this.sourceState;
+        data["floorLogicalId"] = this.floorLogicalId;
+        data["baseContentRevision"] = this.baseContentRevision;
+        data["baseContentHash"] = this.baseContentHash;
+        data["isCurrentRevision"] = this.isCurrentRevision;
+        data["canLoadReview"] = this.canLoadReview;
+        data["requestedAtUtc"] = this.requestedAtUtc ? this.requestedAtUtc.toISOString() : undefined as any;
+        data["finishedAtUtc"] = this.finishedAtUtc ? this.finishedAtUtc.toISOString() : undefined as any;
+        data["preferredProviderKey"] = this.preferredProviderKey;
+        data["preferredProviderVersion"] = this.preferredProviderVersion;
+        data["mappingProfileId"] = this.mappingProfileId;
+        data["mappingProfileVersion"] = this.mappingProfileVersion;
+        return data;
+    }
+}
+
+export interface ISpaceCadReviewCandidateDto {
+    sourceId?: string;
+    sourceDisplayName?: string | undefined;
+    sourceType?: string | undefined;
+    sourceSha256?: string | undefined;
+    jobId?: string;
+    jobStatus?: string | undefined;
+    sourceState?: string | undefined;
+    floorLogicalId?: string;
+    baseContentRevision?: number;
+    baseContentHash?: string | undefined;
+    isCurrentRevision?: boolean;
+    canLoadReview?: boolean;
+    requestedAtUtc?: Date;
+    finishedAtUtc?: Date | undefined;
+    preferredProviderKey?: string | undefined;
+    preferredProviderVersion?: string | undefined;
+    mappingProfileId?: string;
+    mappingProfileVersion?: number;
+}
+
+export class SpaceCadReviewCandidateListDto implements ISpaceCadReviewCandidateListDto {
+    modelVersionId?: string;
+    floorLogicalId?: string;
+    currentContentRevision?: number;
+    currentContentHash?: string | undefined;
+    truncated?: boolean;
+    items?: SpaceCadReviewCandidateDto[] | undefined;
+
+    constructor(data?: ISpaceCadReviewCandidateListDto) {
+        if (data) {
+            for (var property in data) {
+                if (data.hasOwnProperty(property))
+                    (this as any)[property] = (data as any)[property];
+            }
+        }
+    }
+
+    init(_data?: any) {
+        if (_data) {
+            this.modelVersionId = _data["modelVersionId"];
+            this.floorLogicalId = _data["floorLogicalId"];
+            this.currentContentRevision = _data["currentContentRevision"];
+            this.currentContentHash = _data["currentContentHash"];
+            this.truncated = _data["truncated"];
+            if (Array.isArray(_data["items"])) {
+                this.items = [] as any;
+                for (let item of _data["items"])
+                    this.items!.push(SpaceCadReviewCandidateDto.fromJS(item));
+            }
+        }
+    }
+
+    static fromJS(data: any): SpaceCadReviewCandidateListDto {
+        data = typeof data === 'object' ? data : {};
+        let result = new SpaceCadReviewCandidateListDto();
+        result.init(data);
+        return result;
+    }
+
+    toJSON(data?: any) {
+        data = typeof data === 'object' ? data : {};
+        data["modelVersionId"] = this.modelVersionId;
+        data["floorLogicalId"] = this.floorLogicalId;
+        data["currentContentRevision"] = this.currentContentRevision;
+        data["currentContentHash"] = this.currentContentHash;
+        data["truncated"] = this.truncated;
+        if (Array.isArray(this.items)) {
+            data["items"] = [];
+            for (let item of this.items)
+                data["items"].push(item ? item.toJSON() : undefined as any);
+        }
+        return data;
+    }
+}
+
+export interface ISpaceCadReviewCandidateListDto {
+    modelVersionId?: string;
+    floorLogicalId?: string;
+    currentContentRevision?: number;
+    currentContentHash?: string | undefined;
+    truncated?: boolean;
+    items?: SpaceCadReviewCandidateDto[] | undefined;
 }
 
 export enum SpaceCadReviewItemKind {

@@ -87,6 +87,12 @@ public interface ISpaceCadParseService
         Guid jobId,
         CancellationToken cancellationToken = default);
 
+    Task<SpaceCadReviewCandidateListDto> ListReviewCandidatesAsync(
+        Guid versionId,
+        Guid floorLogicalId,
+        int limit,
+        CancellationToken cancellationToken = default);
+
     Task<SpaceCadReviewWorkspaceV1> GetReviewWorkspaceAsync(
         Guid versionId,
         Guid sourceId,

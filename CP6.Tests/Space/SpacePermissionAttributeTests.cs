@@ -92,6 +92,8 @@ public class SpacePermissionAttributeTests
             ["SpaceCadParseController.GetMappingProfiles"] =
                 "space:source:upload",
             ["SpaceCadParseController.GetParse"] = "space:model:read",
+            ["SpaceCadParseController.ListReviewCandidates"] =
+                "space:model:read",
             ["SpaceCadParseController.GetReviewWorkspace"] =
                 "space:model:read",
             ["SpaceCadMappingProfileController.GetCadMappingProfiles"] =

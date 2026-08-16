@@ -336,6 +336,125 @@ public sealed class SpaceCadParseService(
             artifacts);
     }
 
+    public async Task<SpaceCadReviewCandidateListDto> ListReviewCandidatesAsync(
+        Guid versionId,
+        Guid floorLogicalId,
+        int limit,
+        CancellationToken cancellationToken = default)
+    {
+        EnsureExecutionContext();
+        if (versionId == Guid.Empty || floorLogicalId == Guid.Empty)
+            throw NotFound();
+        if (limit is < 1 or > 100)
+            throw Invalid("The candidate limit must be between 1 and 100.");
+
+        var scope = await (
+                from version in context.Versions.AsNoTracking()
+                join model in context.Models.AsNoTracking()
+                    on version.ModelId equals model.Id
+                where version.Id == versionId
+                select new { Version = version, Model = model })
+            .SingleOrDefaultAsync(cancellationToken);
+        if (scope is null)
+            throw NotFound();
+        EnsureReadable(scope.Model);
+
+        var floorExists = await context.FloorRevisions.AsNoTracking().AnyAsync(
+            floor =>
+                floor.ModelVersionId == versionId &&
+                floor.LogicalId == floorLogicalId &&
+                floor.LifecycleState == SpaceLifecycleState.Active,
+            cancellationToken);
+        if (!floorExists)
+            throw NotFound();
+
+        var query =
+            from job in context.Jobs.AsNoTracking()
+            join source in context.Sources.AsNoTracking()
+                on job.SubjectId equals source.Id
+            where source.ModelVersionId == versionId &&
+                  (source.SourceType == SpaceSourceType.Dwg ||
+                   source.SourceType == SpaceSourceType.Dxf) &&
+                  job.JobType == SpaceJobType.CadParse &&
+                  job.SubjectType == SpaceJobSubjectType.ModelSource &&
+                  job.Status == SpaceJobStatus.Succeeded
+            orderby job.FinishedAtUtc descending, job.RequestedAtUtc descending
+            select new
+            {
+                SourceId = source.Id,
+                source.DisplayName,
+                source.SourceType,
+                source.Sha256,
+                SourceState = source.State,
+                JobId = job.Id,
+                JobStatus = job.Status,
+                job.RequestedAtUtc,
+                job.FinishedAtUtc,
+                job.PayloadJson,
+                HasPreviewSet = context.Artifacts.Any(
+                    artifact =>
+                        artifact.ArtifactType == SpaceArtifactType.PreviewSet &&
+                        (artifact.JobId == job.Id ||
+                         (job.RetryOfJobId.HasValue &&
+                          artifact.JobId == job.RetryOfJobId.Value))),
+            };
+
+        var candidates = new List<SpaceCadReviewCandidateDto>(limit + 1);
+        await foreach (var row in query.AsAsyncEnumerable()
+                           .WithCancellation(cancellationToken))
+        {
+            if (!TryDeserializeCandidatePayload(row.PayloadJson, out var payload) ||
+                payload.ModelVersionId != versionId ||
+                payload.SourceId != row.SourceId ||
+                payload.FloorLogicalId != floorLogicalId ||
+                !SourceFormatMatches(payload.SourceFormat, row.SourceType))
+            {
+                continue;
+            }
+
+            var isCurrentRevision =
+                payload.BaseContentRevision == scope.Version.ContentRevision &&
+                string.Equals(
+                    payload.BaseContentHash,
+                    scope.Version.ContentHash,
+                    StringComparison.Ordinal);
+            var canLoadReview =
+                isCurrentRevision &&
+                row.SourceState == SpaceSourceState.PreviewReady &&
+                row.HasPreviewSet;
+
+            candidates.Add(new SpaceCadReviewCandidateDto(
+                row.SourceId,
+                row.DisplayName,
+                row.SourceType.ToString(),
+                row.Sha256,
+                row.JobId,
+                row.JobStatus.ToString(),
+                row.SourceState.ToString(),
+                payload.FloorLogicalId,
+                payload.BaseContentRevision,
+                payload.BaseContentHash,
+                isCurrentRevision,
+                canLoadReview,
+                row.RequestedAtUtc,
+                row.FinishedAtUtc,
+                payload.PreferredProviderKey,
+                payload.PreferredProviderVersion,
+                payload.MappingProfileId,
+                payload.MappingProfileVersion));
+            if (candidates.Count > limit)
+                break;
+        }
+
+        return new SpaceCadReviewCandidateListDto(
+            versionId,
+            floorLogicalId,
+            scope.Version.ContentRevision,
+            scope.Version.ContentHash,
+            candidates.Count > limit,
+            candidates.Take(limit).ToArray());
+    }
+
     public async Task<SpaceCadReviewWorkspaceV1> GetReviewWorkspaceAsync(
         Guid versionId,
         Guid sourceId,
@@ -1927,6 +2046,35 @@ public sealed class SpaceCadParseService(
             throw Invalid("The stored CAD parse payload is invalid.");
         }
     }
+
+    private static bool TryDeserializeCandidatePayload(
+        string json,
+        out SpaceCadParseJobPayload payload)
+    {
+        try
+        {
+            payload = JsonSerializer.Deserialize<SpaceCadParseJobPayload>(
+                          json,
+                          JsonOptions)!;
+            return payload is not null &&
+                   payload.SchemaVersion is (
+                       SpaceCadParsePayloadVersions.LegacyBaseRevision or
+                       SpaceCadParsePayloadVersions.LegacyProviderRouting or
+                       SpaceCadParsePayloadVersions.LegacyMappingReplay or
+                       SpaceCadParsePayloadVersions.Current);
+        }
+        catch (JsonException)
+        {
+            payload = null!;
+            return false;
+        }
+    }
+
+    private static bool SourceFormatMatches(
+        SpaceCadSourceFormat format,
+        SpaceSourceType sourceType) =>
+        (format == SpaceCadSourceFormat.Dwg && sourceType == SpaceSourceType.Dwg) ||
+        (format == SpaceCadSourceFormat.Dxf && sourceType == SpaceSourceType.Dxf);
 
     private static StartSpaceCadParseResponse Response(
         SpaceJob job,

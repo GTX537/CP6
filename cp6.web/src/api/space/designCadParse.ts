@@ -17,6 +17,36 @@ export interface SpaceCadParse {
   }>
 }
 
+export interface SpaceCadReviewCandidate {
+  sourceId: string
+  sourceDisplayName: string
+  sourceType: string
+  sourceSha256: string
+  jobId: string
+  jobStatus: string
+  sourceState: string
+  floorLogicalId: string
+  baseContentRevision: number
+  baseContentHash?: string
+  isCurrentRevision: boolean
+  canLoadReview: boolean
+  requestedAtUtc: string
+  finishedAtUtc?: string
+  preferredProviderKey?: string
+  preferredProviderVersion?: string
+  mappingProfileId: string
+  mappingProfileVersion: number
+}
+
+export interface SpaceCadReviewCandidateList {
+  modelVersionId: string
+  floorLogicalId: string
+  currentContentRevision: number
+  currentContentHash?: string
+  truncated: boolean
+  items: SpaceCadReviewCandidate[]
+}
+
 export interface UploadSpaceCadSourceResponse {
   file: { id: string; state: string; sha256?: string }
   source: { id: string; state: string; sha256: string }
@@ -329,6 +359,13 @@ export const designCadParseApi = {
 
   get(versionId: string, sourceId: string, jobId: string) {
     return http.get<unknown, SpaceCadParse>(url(versionId, sourceId, jobId))
+  },
+
+  listReviewCandidates(versionId: string, floorLogicalId: string, limit = 50) {
+    return http.get<unknown, SpaceCadReviewCandidateList>(
+      `${root}/versions/${versionId}/floors/${floorLogicalId}/cad-review-candidates`,
+      { params: { limit } },
+    )
   },
 
   getReviewWorkspace(versionId: string, sourceId: string, jobId: string) {

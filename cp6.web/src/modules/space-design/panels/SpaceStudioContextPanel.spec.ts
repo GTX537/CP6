@@ -129,6 +129,25 @@ describe('SpaceStudioContextPanel', () => {
     expect(wrapper.emitted('openExcelCad')).toHaveLength(1)
   })
 
+  it('opens the historical CAD result catalog in edit and read-only modes', async () => {
+    const wrapper = mount(SpaceStudioContextPanel, {
+      props: {
+        hasCurrentCad: false,
+        hasUnderlay: false,
+        calibrated: false,
+        readonly: true,
+        underlayVisible: true,
+        underlayOpacity: 55,
+        underlayLocked: true,
+      },
+    })
+
+    const action = wrapper.get('[data-test="open-existing-cad"]')
+    expect(action.attributes('disabled')).toBeUndefined()
+    await action.trigger('click')
+    expect(wrapper.emitted('openExistingCad')).toHaveLength(1)
+  })
+
   it('exposes working underlay visibility, opacity and lock controls', async () => {
     const wrapper = mount(SpaceStudioContextPanel, {
       props: {

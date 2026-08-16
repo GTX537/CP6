@@ -2,11 +2,17 @@
 
 > 依据 Git log 汇总，不替代完整 Git 历史。重点记录影响接手判断的里程碑。
 
+## 2026-08-16：Space Studio 历史 CAD 审核结果目录
+
+- Design V1 新增 Version/Floor 级 CAD Review Candidate 目录，按持久 Parse Payload 的 Base Content Revision/Hash 判定新鲜度；当前且 Artifact 完整的结果可加载，旧结果只允许重新解析。
+- Space Studio 用户可从来源面板选择已有结果，无需填写 SourceId/JobId；切换候选会清理旧 CAD/Excel/Preflight/Match 状态，只读用户可查看但不能触发重新解析。
+- Space Integration 15、OpenAPI/权限 95、双 SDK drift、Web 882、Space Studio Playwright 26、Vue TypeScript 与生产构建通过。该纵切关闭历史候选目录的仓库 UI 边界，不替代真实 Provider/文件/WMS/Pilot；WP4 与 GA 保持 Partial/Pending、72% / `NoGo`。
+
 ## 2026-08-16：Space Studio 当前 CAD + Excel 统一工作流
 
 - 来源模式接通当前新鲜 CAD Review Workspace → `.xlsx` 上传/扫描等待 → 服务器 Mapping Profile → Excel 预检 → 显式确认 → 权威匹配 → 既有 Lease/Revision Apply，无需用户填写内部 ID。
 - Excel Source/Preflight Job 写入 URL 支持刷新恢复；Blocking 预检失败关闭，匹配 Job 自动轮询，删除 CAD/Excel 来源会同步清理依赖路由状态。确认 Apply 前 Draft 零写入。
-- Web 878、Space Studio Playwright 25、Vue TypeScript 和生产构建通过。当前工作会话 UI 已闭环，但历史 CAD 候选目录、真实 Provider/文件/WMS/Pilot 仍 Pending；WP4 与 GA 保持 Partial/Pending、72% / `NoGo`。
+- Web 878、Space Studio Playwright 25、Vue TypeScript 和生产构建通过。当前工作会话 UI 已闭环，历史 CAD 候选目录已由同日后续纵切补齐；真实 Provider/文件/WMS/Pilot 仍 Pending，WP4 与 GA 保持 Partial/Pending、72% / `NoGo`。
 
 ## 2026-08-16：Space CAD 待审变更集与 RuleOnly 交接
 

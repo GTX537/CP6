@@ -105,6 +105,7 @@ import {
 import { CadIssueOverlayLayer } from '@/modules/space-design/cad-review/CadIssueOverlayLayer'
 import { ElementRedrawOverlayLayer } from '@/modules/space-design/canvas2d/ElementRedrawOverlayLayer'
 import DesignCadIssuePanel from '@/modules/space-design/cad-review/DesignCadIssuePanel.vue'
+import DesignCadReviewCandidatePicker from '@/modules/space-design/cad-review/DesignCadReviewCandidatePicker.vue'
 import DesignExcelCadMatchPanel from '@/modules/space-design/cad-review/DesignExcelCadMatchPanel.vue'
 import DesignCadStartWizard from '@/modules/space-design/cad-start/DesignCadStartWizard.vue'
 import DesignExcelCadStartWizard from '@/modules/space-design/excel-cad/DesignExcelCadStartWizard.vue'
@@ -200,6 +201,7 @@ const floor = ref<ISpaceSceneFloorDto | null>(null)
 const selectedObjects = ref<CanvasObjectRef[]>([])
 const cadReviewWorkspace = ref<CadReviewWorkspace | null>(null)
 const cadWizardVisible = ref(false)
+const cadCandidatePickerVisible = ref(false)
 const excelCadWizardVisible = ref(Boolean(
   excelSourceId.value && excelPreflightJobId.value && !matchJobId.value,
 ))
@@ -1099,6 +1101,64 @@ function chooseCadReviewArtifact(): void {
 
 function chooseCadFile(): void {
   cadFileInputRef.value?.click()
+}
+
+function openExistingCadCatalog(): void {
+  cadCandidatePickerVisible.value = true
+}
+
+async function selectExistingCadReview(
+  sourceId: string,
+  jobId: string,
+): Promise<void> {
+  const {
+    cadSourceId: _oldCadSource,
+    cadParseJobId: _oldCadJob,
+    excelSourceId: _oldExcelSource,
+    excelPreflightJobId: _oldPreflight,
+    matchJobId: _oldMatch,
+    ...remainingQuery
+  } = route.query
+  cadCandidatePickerVisible.value = false
+  cadReviewWorkspace.value = null
+  cadReviewPanelVisible.value = false
+  excelCadWizardVisible.value = false
+  matchPanelVisible.value = false
+  parseError.value = ''
+  stopParseElapsed()
+  await router.replace({
+    query: {
+      ...remainingQuery,
+      cadSourceId: sourceId,
+      cadParseJobId: jobId,
+    },
+  })
+  void monitorCadParse()
+}
+
+async function reparseExistingCad(sourceId: string): Promise<void> {
+  const {
+    cadSourceId: _oldCadSource,
+    cadParseJobId: _oldCadJob,
+    excelSourceId: _oldExcelSource,
+    excelPreflightJobId: _oldPreflight,
+    matchJobId: _oldMatch,
+    ...remainingQuery
+  } = route.query
+  cadCandidatePickerVisible.value = false
+  cadReviewWorkspace.value = null
+  cadReviewPanelVisible.value = false
+  excelCadWizardVisible.value = false
+  matchPanelVisible.value = false
+  parseStatus.value = ''
+  parseProgress.value = 0
+  parseError.value = ''
+  stopParseElapsed()
+  await router.replace({
+    query: { ...remainingQuery, cadSourceId: sourceId },
+  })
+  cadWizardVisible.value = true
+  ElMessage.info('历史结果不会直接写入 Draft；请重新确认坐标、映射与当前 Revision。')
 }
 
 function openExcelCadWorkflow(): void {
@@ -3767,6 +3827,7 @@ function tabClientInstanceId(): string {
         @calibrate-underlay="beginCalibration"
         @remove-underlay="removeUnderlay"
         @choose-cad="chooseCadFile"
+        @open-existing-cad="openExistingCadCatalog"
         @open-excel-cad="openExcelCadWorkflow"
         @download-template="downloadStandardExcelTemplate"
         @open-cad-review="openCadReviewWorkspace"
@@ -4183,6 +4244,15 @@ function tabClientInstanceId(): string {
       :floor-logical-id="floorLogicalId"
       @close="cadWizardVisible = false"
       @started="onCadParseStarted"
+    />
+    <DesignCadReviewCandidatePicker
+      v-if="cadCandidatePickerVisible && versionId && floorLogicalId"
+      :version-id="versionId"
+      :floor-logical-id="floorLogicalId"
+      :readonly="readonlyScene"
+      @close="cadCandidatePickerVisible = false"
+      @select="selectExistingCadReview"
+      @reparse="reparseExistingCad"
     />
     <DesignExcelCadStartWizard
       v-if="excelCadWizardVisible && hasCurrentCadForExcel && designScene?.contentRevision !== undefined"

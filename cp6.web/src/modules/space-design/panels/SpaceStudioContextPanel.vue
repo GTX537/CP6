@@ -28,6 +28,7 @@ const emit = defineEmits<{
   calibrateUnderlay: []
   removeUnderlay: []
   chooseCad: []
+  openExistingCad: []
   openExcelCad: []
   downloadTemplate: []
   openCadReview: []
@@ -116,6 +117,11 @@ function sourceRemoved(sourceId: string, versionContentRevision: number): void {
         <button type="button" class="primary" :disabled="readonly" @click="emit('chooseCad')">
           上传 DWG / DXF
         </button>
+        <button
+          type="button"
+          data-test="open-existing-cad"
+          @click="emit('openExistingCad')"
+        >选择已有 CAD 结果</button>
         <button
           type="button"
           data-test="open-excel-cad"

@@ -87,6 +87,7 @@ public sealed class SpaceDesignV1OpenApiTests
             "/api/space/design/v1/versions/{versionId}/floors/{floorLogicalId}/lease/{leaseId}:renew",
             "/api/space/design/v1/versions/{versionId}/floors/{floorLogicalId}/lease/{leaseId}:release",
             "/api/space/design/v1/versions/{versionId}/floors/{floorLogicalId}/lease:takeover",
+            "/api/space/design/v1/versions/{versionId}/floors/{floorLogicalId}/cad-review-candidates",
             "/api/space/design/v1/versions/{versionId}/files/{fileId}",
             "/api/space/design/v1/versions/{versionId}/excel-sources",
             "/api/space/design/v1/versions/{versionId}/excel-cad-matches",
@@ -162,8 +163,8 @@ public sealed class SpaceDesignV1OpenApiTests
             .Select(operation =>
                 operation.Value.GetProperty("operationId").GetString())
             .ToArray();
-        Assert.Equal(146, operationIds.Length);
-        Assert.Equal(146, operationIds.Distinct().Count());
+        Assert.Equal(147, operationIds.Length);
+        Assert.Equal(147, operationIds.Distinct().Count());
         Assert.Contains("GetCapability", operationIds);
         Assert.Contains("ReplaceProviderConfiguration", operationIds);
         Assert.Contains("GetPolicy", operationIds);
@@ -207,6 +208,7 @@ public sealed class SpaceDesignV1OpenApiTests
         Assert.Contains("UploadCadSource", operationIds);
         Assert.Contains("StartParse", operationIds);
         Assert.Contains("GetParse", operationIds);
+        Assert.Contains("ListReviewCandidates", operationIds);
         Assert.Contains("GetReviewWorkspace", operationIds);
         Assert.Contains("ApplyReviewChanges", operationIds);
         Assert.Contains("CancelParse", operationIds);
