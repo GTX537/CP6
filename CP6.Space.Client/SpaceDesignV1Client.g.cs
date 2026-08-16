@@ -458,6 +458,26 @@ namespace CP6.Space.Client
         /// <exception cref="ApiException">A server side error occurred.</exception>
         System.Threading.Tasks.Task<CreateSpaceSourceResponse> CreateSourceAsync(System.Guid versionId, string idempotency_Key, CreateSpaceSourceRequest body, System.Threading.CancellationToken cancellationToken);
 
+        /// <returns>OK</returns>
+        /// <exception cref="ApiException">A server side error occurred.</exception>
+        System.Threading.Tasks.Task<SpaceSourceRemovalPreviewDto> GetSourceRemovalPreviewAsync(System.Guid versionId, System.Guid sourceId);
+
+        /// <param name="cancellationToken">A cancellation token that can be used by other objects or threads to receive notice of cancellation.</param>
+        /// <returns>OK</returns>
+        /// <exception cref="ApiException">A server side error occurred.</exception>
+        System.Threading.Tasks.Task<SpaceSourceRemovalPreviewDto> GetSourceRemovalPreviewAsync(System.Guid versionId, System.Guid sourceId, System.Threading.CancellationToken cancellationToken);
+
+        /// <param name="idempotency_Key">Opaque caller key; 1-128 UTF-8 bytes. Reuse with a different request returns SPACE_IDEMPOTENCY_KEY_REUSED.</param>
+        /// <returns>OK</returns>
+        /// <exception cref="ApiException">A server side error occurred.</exception>
+        System.Threading.Tasks.Task<RemoveSpaceSourceResponse> RemoveSourceAsync(System.Guid versionId, System.Guid sourceId, string idempotency_Key, RemoveSpaceSourceRequest body);
+
+        /// <param name="cancellationToken">A cancellation token that can be used by other objects or threads to receive notice of cancellation.</param>
+        /// <param name="idempotency_Key">Opaque caller key; 1-128 UTF-8 bytes. Reuse with a different request returns SPACE_IDEMPOTENCY_KEY_REUSED.</param>
+        /// <returns>OK</returns>
+        /// <exception cref="ApiException">A server side error occurred.</exception>
+        System.Threading.Tasks.Task<RemoveSpaceSourceResponse> RemoveSourceAsync(System.Guid versionId, System.Guid sourceId, string idempotency_Key, RemoveSpaceSourceRequest body, System.Threading.CancellationToken cancellationToken);
+
         /// <returns>Accepted</returns>
         /// <exception cref="ApiException">A server side error occurred.</exception>
         System.Threading.Tasks.Task<UploadSpaceUnderlayResponse> UploadUnderlayAsync(System.Guid versionId, FileParameter file, SpaceSourceType? sourceType);
@@ -8609,6 +8629,335 @@ namespace CP6.Space.Client
                         if (status_ == 201)
                         {
                             var objectResponse_ = await ReadObjectResponseAsync<CreateSpaceSourceResponse>(response_, headers_, cancellationToken).ConfigureAwait(false);
+                            if (objectResponse_.Object == null)
+                            {
+                                throw new ApiException("Response was null which was not expected.", status_, objectResponse_.Text, headers_, null);
+                            }
+                            return objectResponse_.Object;
+                        }
+                        else
+                        if (status_ == 400)
+                        {
+                            var objectResponse_ = await ReadObjectResponseAsync<SpaceDesignProblemDetails>(response_, headers_, cancellationToken).ConfigureAwait(false);
+                            if (objectResponse_.Object == null)
+                            {
+                                throw new ApiException("Response was null which was not expected.", status_, objectResponse_.Text, headers_, null);
+                            }
+                            throw new ApiException<SpaceDesignProblemDetails>("Bad Request", status_, objectResponse_.Text, headers_, objectResponse_.Object, null);
+                        }
+                        else
+                        if (status_ == 401)
+                        {
+                            var objectResponse_ = await ReadObjectResponseAsync<SpaceDesignProblemDetails>(response_, headers_, cancellationToken).ConfigureAwait(false);
+                            if (objectResponse_.Object == null)
+                            {
+                                throw new ApiException("Response was null which was not expected.", status_, objectResponse_.Text, headers_, null);
+                            }
+                            throw new ApiException<SpaceDesignProblemDetails>("Unauthorized", status_, objectResponse_.Text, headers_, objectResponse_.Object, null);
+                        }
+                        else
+                        if (status_ == 403)
+                        {
+                            var objectResponse_ = await ReadObjectResponseAsync<SpaceDesignProblemDetails>(response_, headers_, cancellationToken).ConfigureAwait(false);
+                            if (objectResponse_.Object == null)
+                            {
+                                throw new ApiException("Response was null which was not expected.", status_, objectResponse_.Text, headers_, null);
+                            }
+                            throw new ApiException<SpaceDesignProblemDetails>("Forbidden", status_, objectResponse_.Text, headers_, objectResponse_.Object, null);
+                        }
+                        else
+                        if (status_ == 404)
+                        {
+                            var objectResponse_ = await ReadObjectResponseAsync<SpaceDesignProblemDetails>(response_, headers_, cancellationToken).ConfigureAwait(false);
+                            if (objectResponse_.Object == null)
+                            {
+                                throw new ApiException("Response was null which was not expected.", status_, objectResponse_.Text, headers_, null);
+                            }
+                            throw new ApiException<SpaceDesignProblemDetails>("Not Found", status_, objectResponse_.Text, headers_, objectResponse_.Object, null);
+                        }
+                        else
+                        if (status_ == 409)
+                        {
+                            var objectResponse_ = await ReadObjectResponseAsync<SpaceDesignProblemDetails>(response_, headers_, cancellationToken).ConfigureAwait(false);
+                            if (objectResponse_.Object == null)
+                            {
+                                throw new ApiException("Response was null which was not expected.", status_, objectResponse_.Text, headers_, null);
+                            }
+                            throw new ApiException<SpaceDesignProblemDetails>("Conflict", status_, objectResponse_.Text, headers_, objectResponse_.Object, null);
+                        }
+                        else
+                        if (status_ == 422)
+                        {
+                            var objectResponse_ = await ReadObjectResponseAsync<SpaceDesignProblemDetails>(response_, headers_, cancellationToken).ConfigureAwait(false);
+                            if (objectResponse_.Object == null)
+                            {
+                                throw new ApiException("Response was null which was not expected.", status_, objectResponse_.Text, headers_, null);
+                            }
+                            throw new ApiException<SpaceDesignProblemDetails>("Unprocessable Content", status_, objectResponse_.Text, headers_, objectResponse_.Object, null);
+                        }
+                        else
+                        if (status_ == 500)
+                        {
+                            var objectResponse_ = await ReadObjectResponseAsync<SpaceDesignProblemDetails>(response_, headers_, cancellationToken).ConfigureAwait(false);
+                            if (objectResponse_.Object == null)
+                            {
+                                throw new ApiException("Response was null which was not expected.", status_, objectResponse_.Text, headers_, null);
+                            }
+                            throw new ApiException<SpaceDesignProblemDetails>("Internal Server Error", status_, objectResponse_.Text, headers_, objectResponse_.Object, null);
+                        }
+                        else
+                        {
+                            var responseData_ = response_.Content == null ? null : await ReadAsStringAsync(response_.Content, cancellationToken).ConfigureAwait(false);
+                            throw new ApiException("The HTTP status code of the response was not expected (" + status_ + ").", status_, responseData_, headers_, null);
+                        }
+                    }
+                    finally
+                    {
+                        if (disposeResponse_)
+                            response_.Dispose();
+                    }
+                }
+            }
+            finally
+            {
+                if (disposeClient_)
+                    client_.Dispose();
+            }
+        }
+
+        /// <returns>OK</returns>
+        /// <exception cref="ApiException">A server side error occurred.</exception>
+        public virtual System.Threading.Tasks.Task<SpaceSourceRemovalPreviewDto> GetSourceRemovalPreviewAsync(System.Guid versionId, System.Guid sourceId)
+        {
+            return GetSourceRemovalPreviewAsync(versionId, sourceId, System.Threading.CancellationToken.None);
+        }
+
+        /// <param name="cancellationToken">A cancellation token that can be used by other objects or threads to receive notice of cancellation.</param>
+        /// <returns>OK</returns>
+        /// <exception cref="ApiException">A server side error occurred.</exception>
+        public virtual async System.Threading.Tasks.Task<SpaceSourceRemovalPreviewDto> GetSourceRemovalPreviewAsync(System.Guid versionId, System.Guid sourceId, System.Threading.CancellationToken cancellationToken)
+        {
+            if (versionId == null)
+                throw new System.ArgumentNullException("versionId");
+
+            if (sourceId == null)
+                throw new System.ArgumentNullException("sourceId");
+
+            var client_ = _httpClient;
+            var disposeClient_ = false;
+            try
+            {
+                using (var request_ = new System.Net.Http.HttpRequestMessage())
+                {
+                    request_.Method = new System.Net.Http.HttpMethod("GET");
+                    request_.Headers.Accept.Add(System.Net.Http.Headers.MediaTypeWithQualityHeaderValue.Parse("application/json"));
+
+                    var urlBuilder_ = new System.Text.StringBuilder();
+
+                    // Operation Path: "api/space/design/v1/versions/{versionId}/sources/{sourceId}/removal-preview"
+                    urlBuilder_.Append("api/space/design/v1/versions/");
+                    urlBuilder_.Append(System.Uri.EscapeDataString(ConvertToString(versionId, System.Globalization.CultureInfo.InvariantCulture)));
+                    urlBuilder_.Append("/sources/");
+                    urlBuilder_.Append(System.Uri.EscapeDataString(ConvertToString(sourceId, System.Globalization.CultureInfo.InvariantCulture)));
+                    urlBuilder_.Append("/removal-preview");
+
+                    PrepareRequest(client_, request_, urlBuilder_);
+
+                    var url_ = urlBuilder_.ToString();
+                    request_.RequestUri = new System.Uri(url_, System.UriKind.RelativeOrAbsolute);
+
+                    PrepareRequest(client_, request_, url_);
+
+                    var response_ = await client_.SendAsync(request_, System.Net.Http.HttpCompletionOption.ResponseHeadersRead, cancellationToken).ConfigureAwait(false);
+                    var disposeResponse_ = true;
+                    try
+                    {
+                        var headers_ = new System.Collections.Generic.Dictionary<string, System.Collections.Generic.IEnumerable<string>>();
+                        foreach (var item_ in response_.Headers)
+                            headers_[item_.Key] = item_.Value;
+                        if (response_.Content != null && response_.Content.Headers != null)
+                        {
+                            foreach (var item_ in response_.Content.Headers)
+                                headers_[item_.Key] = item_.Value;
+                        }
+
+                        ProcessResponse(client_, response_);
+
+                        var status_ = (int)response_.StatusCode;
+                        if (status_ == 200)
+                        {
+                            var objectResponse_ = await ReadObjectResponseAsync<SpaceSourceRemovalPreviewDto>(response_, headers_, cancellationToken).ConfigureAwait(false);
+                            if (objectResponse_.Object == null)
+                            {
+                                throw new ApiException("Response was null which was not expected.", status_, objectResponse_.Text, headers_, null);
+                            }
+                            return objectResponse_.Object;
+                        }
+                        else
+                        if (status_ == 400)
+                        {
+                            var objectResponse_ = await ReadObjectResponseAsync<SpaceDesignProblemDetails>(response_, headers_, cancellationToken).ConfigureAwait(false);
+                            if (objectResponse_.Object == null)
+                            {
+                                throw new ApiException("Response was null which was not expected.", status_, objectResponse_.Text, headers_, null);
+                            }
+                            throw new ApiException<SpaceDesignProblemDetails>("Bad Request", status_, objectResponse_.Text, headers_, objectResponse_.Object, null);
+                        }
+                        else
+                        if (status_ == 401)
+                        {
+                            var objectResponse_ = await ReadObjectResponseAsync<SpaceDesignProblemDetails>(response_, headers_, cancellationToken).ConfigureAwait(false);
+                            if (objectResponse_.Object == null)
+                            {
+                                throw new ApiException("Response was null which was not expected.", status_, objectResponse_.Text, headers_, null);
+                            }
+                            throw new ApiException<SpaceDesignProblemDetails>("Unauthorized", status_, objectResponse_.Text, headers_, objectResponse_.Object, null);
+                        }
+                        else
+                        if (status_ == 403)
+                        {
+                            var objectResponse_ = await ReadObjectResponseAsync<SpaceDesignProblemDetails>(response_, headers_, cancellationToken).ConfigureAwait(false);
+                            if (objectResponse_.Object == null)
+                            {
+                                throw new ApiException("Response was null which was not expected.", status_, objectResponse_.Text, headers_, null);
+                            }
+                            throw new ApiException<SpaceDesignProblemDetails>("Forbidden", status_, objectResponse_.Text, headers_, objectResponse_.Object, null);
+                        }
+                        else
+                        if (status_ == 404)
+                        {
+                            var objectResponse_ = await ReadObjectResponseAsync<SpaceDesignProblemDetails>(response_, headers_, cancellationToken).ConfigureAwait(false);
+                            if (objectResponse_.Object == null)
+                            {
+                                throw new ApiException("Response was null which was not expected.", status_, objectResponse_.Text, headers_, null);
+                            }
+                            throw new ApiException<SpaceDesignProblemDetails>("Not Found", status_, objectResponse_.Text, headers_, objectResponse_.Object, null);
+                        }
+                        else
+                        if (status_ == 409)
+                        {
+                            var objectResponse_ = await ReadObjectResponseAsync<SpaceDesignProblemDetails>(response_, headers_, cancellationToken).ConfigureAwait(false);
+                            if (objectResponse_.Object == null)
+                            {
+                                throw new ApiException("Response was null which was not expected.", status_, objectResponse_.Text, headers_, null);
+                            }
+                            throw new ApiException<SpaceDesignProblemDetails>("Conflict", status_, objectResponse_.Text, headers_, objectResponse_.Object, null);
+                        }
+                        else
+                        if (status_ == 422)
+                        {
+                            var objectResponse_ = await ReadObjectResponseAsync<SpaceDesignProblemDetails>(response_, headers_, cancellationToken).ConfigureAwait(false);
+                            if (objectResponse_.Object == null)
+                            {
+                                throw new ApiException("Response was null which was not expected.", status_, objectResponse_.Text, headers_, null);
+                            }
+                            throw new ApiException<SpaceDesignProblemDetails>("Unprocessable Content", status_, objectResponse_.Text, headers_, objectResponse_.Object, null);
+                        }
+                        else
+                        if (status_ == 500)
+                        {
+                            var objectResponse_ = await ReadObjectResponseAsync<SpaceDesignProblemDetails>(response_, headers_, cancellationToken).ConfigureAwait(false);
+                            if (objectResponse_.Object == null)
+                            {
+                                throw new ApiException("Response was null which was not expected.", status_, objectResponse_.Text, headers_, null);
+                            }
+                            throw new ApiException<SpaceDesignProblemDetails>("Internal Server Error", status_, objectResponse_.Text, headers_, objectResponse_.Object, null);
+                        }
+                        else
+                        {
+                            var responseData_ = response_.Content == null ? null : await ReadAsStringAsync(response_.Content, cancellationToken).ConfigureAwait(false);
+                            throw new ApiException("The HTTP status code of the response was not expected (" + status_ + ").", status_, responseData_, headers_, null);
+                        }
+                    }
+                    finally
+                    {
+                        if (disposeResponse_)
+                            response_.Dispose();
+                    }
+                }
+            }
+            finally
+            {
+                if (disposeClient_)
+                    client_.Dispose();
+            }
+        }
+
+        /// <param name="idempotency_Key">Opaque caller key; 1-128 UTF-8 bytes. Reuse with a different request returns SPACE_IDEMPOTENCY_KEY_REUSED.</param>
+        /// <returns>OK</returns>
+        /// <exception cref="ApiException">A server side error occurred.</exception>
+        public virtual System.Threading.Tasks.Task<RemoveSpaceSourceResponse> RemoveSourceAsync(System.Guid versionId, System.Guid sourceId, string idempotency_Key, RemoveSpaceSourceRequest body)
+        {
+            return RemoveSourceAsync(versionId, sourceId, idempotency_Key, body, System.Threading.CancellationToken.None);
+        }
+
+        /// <param name="cancellationToken">A cancellation token that can be used by other objects or threads to receive notice of cancellation.</param>
+        /// <param name="idempotency_Key">Opaque caller key; 1-128 UTF-8 bytes. Reuse with a different request returns SPACE_IDEMPOTENCY_KEY_REUSED.</param>
+        /// <returns>OK</returns>
+        /// <exception cref="ApiException">A server side error occurred.</exception>
+        public virtual async System.Threading.Tasks.Task<RemoveSpaceSourceResponse> RemoveSourceAsync(System.Guid versionId, System.Guid sourceId, string idempotency_Key, RemoveSpaceSourceRequest body, System.Threading.CancellationToken cancellationToken)
+        {
+            if (versionId == null)
+                throw new System.ArgumentNullException("versionId");
+
+            if (sourceId == null)
+                throw new System.ArgumentNullException("sourceId");
+
+            if (body == null)
+                throw new System.ArgumentNullException("body");
+
+            var client_ = _httpClient;
+            var disposeClient_ = false;
+            try
+            {
+                using (var request_ = new System.Net.Http.HttpRequestMessage())
+                {
+
+                    if (idempotency_Key == null)
+                        throw new System.ArgumentNullException("idempotency_Key");
+                    request_.Headers.TryAddWithoutValidation("Idempotency-Key", ConvertToString(idempotency_Key, System.Globalization.CultureInfo.InvariantCulture));
+                    var json_ = System.Text.Json.JsonSerializer.SerializeToUtf8Bytes(body, JsonSerializerSettings);
+                    var content_ = new System.Net.Http.ByteArrayContent(json_);
+                    content_.Headers.ContentType = System.Net.Http.Headers.MediaTypeHeaderValue.Parse("application/json");
+                    request_.Content = content_;
+                    request_.Method = new System.Net.Http.HttpMethod("POST");
+                    request_.Headers.Accept.Add(System.Net.Http.Headers.MediaTypeWithQualityHeaderValue.Parse("application/json"));
+
+                    var urlBuilder_ = new System.Text.StringBuilder();
+
+                    // Operation Path: "api/space/design/v1/versions/{versionId}/sources/{sourceId}:remove"
+                    urlBuilder_.Append("api/space/design/v1/versions/");
+                    urlBuilder_.Append(System.Uri.EscapeDataString(ConvertToString(versionId, System.Globalization.CultureInfo.InvariantCulture)));
+                    urlBuilder_.Append("/sources/");
+                    urlBuilder_.Append(System.Uri.EscapeDataString(ConvertToString(sourceId, System.Globalization.CultureInfo.InvariantCulture)));
+                    urlBuilder_.Append(":remove");
+
+                    PrepareRequest(client_, request_, urlBuilder_);
+
+                    var url_ = urlBuilder_.ToString();
+                    request_.RequestUri = new System.Uri(url_, System.UriKind.RelativeOrAbsolute);
+
+                    PrepareRequest(client_, request_, url_);
+
+                    var response_ = await client_.SendAsync(request_, System.Net.Http.HttpCompletionOption.ResponseHeadersRead, cancellationToken).ConfigureAwait(false);
+                    var disposeResponse_ = true;
+                    try
+                    {
+                        var headers_ = new System.Collections.Generic.Dictionary<string, System.Collections.Generic.IEnumerable<string>>();
+                        foreach (var item_ in response_.Headers)
+                            headers_[item_.Key] = item_.Value;
+                        if (response_.Content != null && response_.Content.Headers != null)
+                        {
+                            foreach (var item_ in response_.Content.Headers)
+                                headers_[item_.Key] = item_.Value;
+                        }
+
+                        ProcessResponse(client_, response_);
+
+                        var status_ = (int)response_.StatusCode;
+                        if (status_ == 200)
+                        {
+                            var objectResponse_ = await ReadObjectResponseAsync<RemoveSpaceSourceResponse>(response_, headers_, cancellationToken).ConfigureAwait(false);
                             if (objectResponse_.Object == null)
                             {
                                 throw new ApiException("Response was null which was not expected.", status_, objectResponse_.Text, headers_, null);
@@ -26400,6 +26749,38 @@ namespace CP6.Space.Client
     }
 
     [System.CodeDom.Compiler.GeneratedCode("NJsonSchema", "14.7.1.0 (NJsonSchema v11.6.1.0 (Newtonsoft.Json v13.0.0.0))")]
+    public partial class RemoveSpaceSourceRequest
+    {
+
+        [System.Text.Json.Serialization.JsonPropertyName("expectedContentRevision")]
+        public long ExpectedContentRevision { get; set; } = default!;
+
+        [System.Text.Json.Serialization.JsonPropertyName("expectedSourceRowVersion")]
+        [System.ComponentModel.DataAnnotations.Required(AllowEmptyStrings = true)]
+        public string ExpectedSourceRowVersion { get; set; } = default!;
+
+    }
+
+    [System.CodeDom.Compiler.GeneratedCode("NJsonSchema", "14.7.1.0 (NJsonSchema v11.6.1.0 (Newtonsoft.Json v13.0.0.0))")]
+    public partial class RemoveSpaceSourceResponse
+    {
+
+        [System.Text.Json.Serialization.JsonPropertyName("sourceId")]
+        [System.ComponentModel.DataAnnotations.Required(AllowEmptyStrings = true)]
+        public System.Guid SourceId { get; set; } = default!;
+
+        [System.Text.Json.Serialization.JsonPropertyName("versionContentRevision")]
+        public long VersionContentRevision { get; set; } = default!;
+
+        [System.Text.Json.Serialization.JsonPropertyName("physicalFileRetained")]
+        public bool PhysicalFileRetained { get; set; } = default!;
+
+        [System.Text.Json.Serialization.JsonPropertyName("idempotentReplay")]
+        public bool IdempotentReplay { get; set; } = default!;
+
+    }
+
+    [System.CodeDom.Compiler.GeneratedCode("NJsonSchema", "14.7.1.0 (NJsonSchema v11.6.1.0 (Newtonsoft.Json v13.0.0.0))")]
     public partial class ReplaceSpaceCadProviderConfigurationRequest
     {
 
@@ -34068,6 +34449,64 @@ namespace CP6.Space.Client
 
         [System.Text.Json.Serialization.JsonPropertyName("rowVersion")]
         public string? RowVersion { get; set; } = default!;
+
+    }
+
+    [System.CodeDom.Compiler.GeneratedCode("NJsonSchema", "14.7.1.0 (NJsonSchema v11.6.1.0 (Newtonsoft.Json v13.0.0.0))")]
+    public partial class SpaceSourceRemovalPreviewDto
+    {
+
+        [System.Text.Json.Serialization.JsonPropertyName("sourceId")]
+        [System.ComponentModel.DataAnnotations.Required(AllowEmptyStrings = true)]
+        public System.Guid SourceId { get; set; } = default!;
+
+        [System.Text.Json.Serialization.JsonPropertyName("fileId")]
+        public System.Guid? FileId { get; set; } = default!;
+
+        [System.Text.Json.Serialization.JsonPropertyName("displayName")]
+        [System.ComponentModel.DataAnnotations.Required(AllowEmptyStrings = true)]
+        public string DisplayName { get; set; } = default!;
+
+        [System.Text.Json.Serialization.JsonPropertyName("sourceType")]
+        [System.ComponentModel.DataAnnotations.Required(AllowEmptyStrings = true)]
+        public string SourceType { get; set; } = default!;
+
+        [System.Text.Json.Serialization.JsonPropertyName("state")]
+        [System.ComponentModel.DataAnnotations.Required(AllowEmptyStrings = true)]
+        public string State { get; set; } = default!;
+
+        [System.Text.Json.Serialization.JsonPropertyName("versionContentRevision")]
+        public long VersionContentRevision { get; set; } = default!;
+
+        [System.Text.Json.Serialization.JsonPropertyName("sourceRowVersion")]
+        [System.ComponentModel.DataAnnotations.Required(AllowEmptyStrings = true)]
+        public string SourceRowVersion { get; set; } = default!;
+
+        [System.Text.Json.Serialization.JsonPropertyName("canRemove")]
+        public bool CanRemove { get; set; } = default!;
+
+        [System.Text.Json.Serialization.JsonPropertyName("physicalFileRetained")]
+        public bool PhysicalFileRetained { get; set; } = default!;
+
+        [System.Text.Json.Serialization.JsonPropertyName("references")]
+        [System.ComponentModel.DataAnnotations.Required]
+        public System.Collections.Generic.ICollection<SpaceSourceRemovalReferenceDto> References { get; set; } = new System.Collections.ObjectModel.Collection<SpaceSourceRemovalReferenceDto>();
+
+    }
+
+    [System.CodeDom.Compiler.GeneratedCode("NJsonSchema", "14.7.1.0 (NJsonSchema v11.6.1.0 (Newtonsoft.Json v13.0.0.0))")]
+    public partial class SpaceSourceRemovalReferenceDto
+    {
+
+        [System.Text.Json.Serialization.JsonPropertyName("code")]
+        [System.ComponentModel.DataAnnotations.Required(AllowEmptyStrings = true)]
+        public string Code { get; set; } = default!;
+
+        [System.Text.Json.Serialization.JsonPropertyName("count")]
+        public int Count { get; set; } = default!;
+
+        [System.Text.Json.Serialization.JsonPropertyName("blocksRemoval")]
+        public bool BlocksRemoval { get; set; } = default!;
 
     }
 

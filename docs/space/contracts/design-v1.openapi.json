@@ -6023,6 +6023,283 @@
         }
       }
     },
+    "/api/space/design/v1/versions/{versionId}/sources/{sourceId}/removal-preview": {
+      "get": {
+        "tags": [
+          "SpaceDesignV1"
+        ],
+        "operationId": "GetSourceRemovalPreview",
+        "parameters": [
+          {
+            "name": "versionId",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "string",
+              "format": "uuid"
+            }
+          },
+          {
+            "name": "sourceId",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "string",
+              "format": "uuid"
+            }
+          }
+        ],
+        "responses": {
+          "400": {
+            "description": "Bad Request",
+            "content": {
+              "application/problem+json": {
+                "schema": {
+                  "$ref": "#/components/schemas/CP6.WebApi.OpenApi.SpaceDesignProblemDetails"
+                }
+              }
+            }
+          },
+          "401": {
+            "description": "Unauthorized",
+            "content": {
+              "application/problem+json": {
+                "schema": {
+                  "$ref": "#/components/schemas/CP6.WebApi.OpenApi.SpaceDesignProblemDetails"
+                }
+              }
+            }
+          },
+          "403": {
+            "description": "Forbidden",
+            "content": {
+              "application/problem+json": {
+                "schema": {
+                  "$ref": "#/components/schemas/CP6.WebApi.OpenApi.SpaceDesignProblemDetails"
+                }
+              }
+            }
+          },
+          "404": {
+            "description": "Not Found",
+            "content": {
+              "application/problem+json": {
+                "schema": {
+                  "$ref": "#/components/schemas/CP6.WebApi.OpenApi.SpaceDesignProblemDetails"
+                }
+              }
+            }
+          },
+          "409": {
+            "description": "Conflict",
+            "content": {
+              "application/problem+json": {
+                "schema": {
+                  "$ref": "#/components/schemas/CP6.WebApi.OpenApi.SpaceDesignProblemDetails"
+                }
+              }
+            }
+          },
+          "422": {
+            "description": "Unprocessable Content",
+            "content": {
+              "application/problem+json": {
+                "schema": {
+                  "$ref": "#/components/schemas/CP6.WebApi.OpenApi.SpaceDesignProblemDetails"
+                }
+              }
+            }
+          },
+          "500": {
+            "description": "Internal Server Error",
+            "content": {
+              "application/problem+json": {
+                "schema": {
+                  "$ref": "#/components/schemas/CP6.WebApi.OpenApi.SpaceDesignProblemDetails"
+                }
+              }
+            }
+          },
+          "200": {
+            "description": "OK",
+            "content": {
+              "text/plain": {
+                "schema": {
+                  "$ref": "#/components/schemas/CP6.Space.Contracts.SpaceSourceRemovalPreviewDto"
+                }
+              },
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/CP6.Space.Contracts.SpaceSourceRemovalPreviewDto"
+                }
+              },
+              "text/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/CP6.Space.Contracts.SpaceSourceRemovalPreviewDto"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/api/space/design/v1/versions/{versionId}/sources/{sourceId}:remove": {
+      "post": {
+        "tags": [
+          "SpaceDesignV1"
+        ],
+        "operationId": "RemoveSource",
+        "parameters": [
+          {
+            "name": "versionId",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "string",
+              "format": "uuid"
+            }
+          },
+          {
+            "name": "sourceId",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "string",
+              "format": "uuid"
+            }
+          },
+          {
+            "name": "Idempotency-Key",
+            "in": "header",
+            "description": "Opaque caller key; 1-128 UTF-8 bytes. Reuse with a different request returns SPACE_IDEMPOTENCY_KEY_REUSED.",
+            "required": true,
+            "schema": {
+              "type": "string"
+            }
+          }
+        ],
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/CP6.Space.Contracts.RemoveSpaceSourceRequest"
+              }
+            },
+            "text/json": {
+              "schema": {
+                "$ref": "#/components/schemas/CP6.Space.Contracts.RemoveSpaceSourceRequest"
+              }
+            },
+            "application/*+json": {
+              "schema": {
+                "$ref": "#/components/schemas/CP6.Space.Contracts.RemoveSpaceSourceRequest"
+              }
+            }
+          },
+          "required": true
+        },
+        "responses": {
+          "400": {
+            "description": "Bad Request",
+            "content": {
+              "application/problem+json": {
+                "schema": {
+                  "$ref": "#/components/schemas/CP6.WebApi.OpenApi.SpaceDesignProblemDetails"
+                }
+              }
+            }
+          },
+          "401": {
+            "description": "Unauthorized",
+            "content": {
+              "application/problem+json": {
+                "schema": {
+                  "$ref": "#/components/schemas/CP6.WebApi.OpenApi.SpaceDesignProblemDetails"
+                }
+              }
+            }
+          },
+          "403": {
+            "description": "Forbidden",
+            "content": {
+              "application/problem+json": {
+                "schema": {
+                  "$ref": "#/components/schemas/CP6.WebApi.OpenApi.SpaceDesignProblemDetails"
+                }
+              }
+            }
+          },
+          "404": {
+            "description": "Not Found",
+            "content": {
+              "application/problem+json": {
+                "schema": {
+                  "$ref": "#/components/schemas/CP6.WebApi.OpenApi.SpaceDesignProblemDetails"
+                }
+              }
+            }
+          },
+          "409": {
+            "description": "Conflict",
+            "content": {
+              "application/problem+json": {
+                "schema": {
+                  "$ref": "#/components/schemas/CP6.WebApi.OpenApi.SpaceDesignProblemDetails"
+                }
+              }
+            }
+          },
+          "422": {
+            "description": "Unprocessable Content",
+            "content": {
+              "application/problem+json": {
+                "schema": {
+                  "$ref": "#/components/schemas/CP6.WebApi.OpenApi.SpaceDesignProblemDetails"
+                }
+              }
+            }
+          },
+          "500": {
+            "description": "Internal Server Error",
+            "content": {
+              "application/problem+json": {
+                "schema": {
+                  "$ref": "#/components/schemas/CP6.WebApi.OpenApi.SpaceDesignProblemDetails"
+                }
+              }
+            }
+          },
+          "200": {
+            "description": "OK",
+            "headers": {
+              "Idempotent-Replay": {
+                "description": "True when this response replays a stored result.",
+                "schema": {
+                  "type": "boolean"
+                }
+              }
+            },
+            "content": {
+              "text/plain": {
+                "schema": {
+                  "$ref": "#/components/schemas/CP6.Space.Contracts.RemoveSpaceSourceResponse"
+                }
+              },
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/CP6.Space.Contracts.RemoveSpaceSourceResponse"
+                }
+              },
+              "text/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/CP6.Space.Contracts.RemoveSpaceSourceResponse"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
     "/api/space/design/v1/versions/{versionId}/underlay-sources": {
       "post": {
         "tags": [
@@ -21171,6 +21448,49 @@
         },
         "additionalProperties": false
       },
+      "CP6.Space.Contracts.RemoveSpaceSourceRequest": {
+        "required": [
+          "expectedContentRevision",
+          "expectedSourceRowVersion"
+        ],
+        "type": "object",
+        "properties": {
+          "expectedContentRevision": {
+            "type": "integer",
+            "format": "int64"
+          },
+          "expectedSourceRowVersion": {
+            "type": "string"
+          }
+        },
+        "additionalProperties": false
+      },
+      "CP6.Space.Contracts.RemoveSpaceSourceResponse": {
+        "required": [
+          "idempotentReplay",
+          "physicalFileRetained",
+          "sourceId",
+          "versionContentRevision"
+        ],
+        "type": "object",
+        "properties": {
+          "sourceId": {
+            "type": "string",
+            "format": "uuid"
+          },
+          "versionContentRevision": {
+            "type": "integer",
+            "format": "int64"
+          },
+          "physicalFileRetained": {
+            "type": "boolean"
+          },
+          "idempotentReplay": {
+            "type": "boolean"
+          }
+        },
+        "additionalProperties": false
+      },
       "CP6.Space.Contracts.ReplaceSpaceCadProviderConfigurationRequest": {
         "required": [
           "certifications",
@@ -31027,6 +31347,82 @@
           "rowVersion": {
             "type": "string",
             "nullable": true
+          }
+        },
+        "additionalProperties": false
+      },
+      "CP6.Space.Contracts.SpaceSourceRemovalPreviewDto": {
+        "required": [
+          "canRemove",
+          "displayName",
+          "fileId",
+          "physicalFileRetained",
+          "references",
+          "sourceId",
+          "sourceRowVersion",
+          "sourceType",
+          "state",
+          "versionContentRevision"
+        ],
+        "type": "object",
+        "properties": {
+          "sourceId": {
+            "type": "string",
+            "format": "uuid"
+          },
+          "fileId": {
+            "type": "string",
+            "format": "uuid",
+            "nullable": true
+          },
+          "displayName": {
+            "type": "string"
+          },
+          "sourceType": {
+            "type": "string"
+          },
+          "state": {
+            "type": "string"
+          },
+          "versionContentRevision": {
+            "type": "integer",
+            "format": "int64"
+          },
+          "sourceRowVersion": {
+            "type": "string"
+          },
+          "canRemove": {
+            "type": "boolean"
+          },
+          "physicalFileRetained": {
+            "type": "boolean"
+          },
+          "references": {
+            "type": "array",
+            "items": {
+              "$ref": "#/components/schemas/CP6.Space.Contracts.SpaceSourceRemovalReferenceDto"
+            }
+          }
+        },
+        "additionalProperties": false
+      },
+      "CP6.Space.Contracts.SpaceSourceRemovalReferenceDto": {
+        "required": [
+          "blocksRemoval",
+          "code",
+          "count"
+        ],
+        "type": "object",
+        "properties": {
+          "code": {
+            "type": "string"
+          },
+          "count": {
+            "type": "integer",
+            "format": "int32"
+          },
+          "blocksRemoval": {
+            "type": "boolean"
           }
         },
         "additionalProperties": false

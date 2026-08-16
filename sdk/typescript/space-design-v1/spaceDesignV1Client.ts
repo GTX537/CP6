@@ -280,6 +280,17 @@ export interface ISpaceDesignV1Client {
     createSource(versionId: string, idempotency_Key: string, body: CreateSpaceSourceRequest): Promise<CreateSpaceSourceResponse>;
 
     /**
+     * @return OK
+     */
+    getSourceRemovalPreview(versionId: string, sourceId: string): Promise<SpaceSourceRemovalPreviewDto>;
+
+    /**
+     * @param idempotency_Key Opaque caller key; 1-128 UTF-8 bytes. Reuse with a different request returns SPACE_IDEMPOTENCY_KEY_REUSED.
+     * @return OK
+     */
+    removeSource(versionId: string, sourceId: string, idempotency_Key: string, body: RemoveSpaceSourceRequest): Promise<RemoveSpaceSourceResponse>;
+
+    /**
      * @param file (optional)
      * @param sourceType (optional)
      * @return Accepted
@@ -5191,6 +5202,196 @@ export class SpaceDesignV1Client implements ISpaceDesignV1Client {
             });
         }
         return Promise.resolve<CreateSpaceSourceResponse>(null as any);
+    }
+
+    /**
+     * @return OK
+     */
+    getSourceRemovalPreview(versionId: string, sourceId: string): Promise<SpaceSourceRemovalPreviewDto> {
+        let url_ = this.baseUrl + "/api/space/design/v1/versions/{versionId}/sources/{sourceId}/removal-preview";
+        if (versionId === undefined || versionId === null)
+            throw new globalThis.Error("The parameter 'versionId' must be defined.");
+        url_ = url_.replace("{versionId}", encodeURIComponent("" + versionId));
+        if (sourceId === undefined || sourceId === null)
+            throw new globalThis.Error("The parameter 'sourceId' must be defined.");
+        url_ = url_.replace("{sourceId}", encodeURIComponent("" + sourceId));
+        url_ = url_.replace(/[?&]$/, "");
+
+        let options_: RequestInit = {
+            method: "GET",
+            headers: {
+                "Accept": "application/json"
+            }
+        };
+
+        return this.http.fetch(url_, options_).then((_response: Response) => {
+            return this.processGetSourceRemovalPreview(_response);
+        });
+    }
+
+    protected processGetSourceRemovalPreview(response: Response): Promise<SpaceSourceRemovalPreviewDto> {
+        const status = response.status;
+        let _headers: any = {}; if (response.headers && response.headers.forEach) { response.headers.forEach((v: any, k: any) => _headers[k] = v); };
+        if (status === 200) {
+            return response.text().then((_responseText) => {
+            let result200: any = null;
+            let resultData200 = _responseText === "" ? null : JSON.parse(_responseText, this.jsonParseReviver);
+            result200 = SpaceSourceRemovalPreviewDto.fromJS(resultData200);
+            return result200;
+            });
+        } else if (status === 400) {
+            return response.text().then((_responseText) => {
+            let result400: any = null;
+            let resultData400 = _responseText === "" ? null : JSON.parse(_responseText, this.jsonParseReviver);
+            result400 = SpaceDesignProblemDetails.fromJS(resultData400);
+            return throwException("Bad Request", status, _responseText, _headers, result400);
+            });
+        } else if (status === 401) {
+            return response.text().then((_responseText) => {
+            let result401: any = null;
+            let resultData401 = _responseText === "" ? null : JSON.parse(_responseText, this.jsonParseReviver);
+            result401 = SpaceDesignProblemDetails.fromJS(resultData401);
+            return throwException("Unauthorized", status, _responseText, _headers, result401);
+            });
+        } else if (status === 403) {
+            return response.text().then((_responseText) => {
+            let result403: any = null;
+            let resultData403 = _responseText === "" ? null : JSON.parse(_responseText, this.jsonParseReviver);
+            result403 = SpaceDesignProblemDetails.fromJS(resultData403);
+            return throwException("Forbidden", status, _responseText, _headers, result403);
+            });
+        } else if (status === 404) {
+            return response.text().then((_responseText) => {
+            let result404: any = null;
+            let resultData404 = _responseText === "" ? null : JSON.parse(_responseText, this.jsonParseReviver);
+            result404 = SpaceDesignProblemDetails.fromJS(resultData404);
+            return throwException("Not Found", status, _responseText, _headers, result404);
+            });
+        } else if (status === 409) {
+            return response.text().then((_responseText) => {
+            let result409: any = null;
+            let resultData409 = _responseText === "" ? null : JSON.parse(_responseText, this.jsonParseReviver);
+            result409 = SpaceDesignProblemDetails.fromJS(resultData409);
+            return throwException("Conflict", status, _responseText, _headers, result409);
+            });
+        } else if (status === 422) {
+            return response.text().then((_responseText) => {
+            let result422: any = null;
+            let resultData422 = _responseText === "" ? null : JSON.parse(_responseText, this.jsonParseReviver);
+            result422 = SpaceDesignProblemDetails.fromJS(resultData422);
+            return throwException("Unprocessable Content", status, _responseText, _headers, result422);
+            });
+        } else if (status === 500) {
+            return response.text().then((_responseText) => {
+            let result500: any = null;
+            let resultData500 = _responseText === "" ? null : JSON.parse(_responseText, this.jsonParseReviver);
+            result500 = SpaceDesignProblemDetails.fromJS(resultData500);
+            return throwException("Internal Server Error", status, _responseText, _headers, result500);
+            });
+        } else if (status !== 200 && status !== 204) {
+            return response.text().then((_responseText) => {
+            return throwException("An unexpected server error occurred.", status, _responseText, _headers);
+            });
+        }
+        return Promise.resolve<SpaceSourceRemovalPreviewDto>(null as any);
+    }
+
+    /**
+     * @param idempotency_Key Opaque caller key; 1-128 UTF-8 bytes. Reuse with a different request returns SPACE_IDEMPOTENCY_KEY_REUSED.
+     * @return OK
+     */
+    removeSource(versionId: string, sourceId: string, idempotency_Key: string, body: RemoveSpaceSourceRequest): Promise<RemoveSpaceSourceResponse> {
+        let url_ = this.baseUrl + "/api/space/design/v1/versions/{versionId}/sources/{sourceId}:remove";
+        if (versionId === undefined || versionId === null)
+            throw new globalThis.Error("The parameter 'versionId' must be defined.");
+        url_ = url_.replace("{versionId}", encodeURIComponent("" + versionId));
+        if (sourceId === undefined || sourceId === null)
+            throw new globalThis.Error("The parameter 'sourceId' must be defined.");
+        url_ = url_.replace("{sourceId}", encodeURIComponent("" + sourceId));
+        url_ = url_.replace(/[?&]$/, "");
+
+        const content_ = JSON.stringify(body);
+
+        let options_: RequestInit = {
+            body: content_,
+            method: "POST",
+            headers: {
+                "Idempotency-Key": idempotency_Key !== undefined && idempotency_Key !== null ? "" + idempotency_Key : "",
+                "Content-Type": "application/json",
+                "Accept": "application/json"
+            }
+        };
+
+        return this.http.fetch(url_, options_).then((_response: Response) => {
+            return this.processRemoveSource(_response);
+        });
+    }
+
+    protected processRemoveSource(response: Response): Promise<RemoveSpaceSourceResponse> {
+        const status = response.status;
+        let _headers: any = {}; if (response.headers && response.headers.forEach) { response.headers.forEach((v: any, k: any) => _headers[k] = v); };
+        if (status === 200) {
+            return response.text().then((_responseText) => {
+            let result200: any = null;
+            let resultData200 = _responseText === "" ? null : JSON.parse(_responseText, this.jsonParseReviver);
+            result200 = RemoveSpaceSourceResponse.fromJS(resultData200);
+            return result200;
+            });
+        } else if (status === 400) {
+            return response.text().then((_responseText) => {
+            let result400: any = null;
+            let resultData400 = _responseText === "" ? null : JSON.parse(_responseText, this.jsonParseReviver);
+            result400 = SpaceDesignProblemDetails.fromJS(resultData400);
+            return throwException("Bad Request", status, _responseText, _headers, result400);
+            });
+        } else if (status === 401) {
+            return response.text().then((_responseText) => {
+            let result401: any = null;
+            let resultData401 = _responseText === "" ? null : JSON.parse(_responseText, this.jsonParseReviver);
+            result401 = SpaceDesignProblemDetails.fromJS(resultData401);
+            return throwException("Unauthorized", status, _responseText, _headers, result401);
+            });
+        } else if (status === 403) {
+            return response.text().then((_responseText) => {
+            let result403: any = null;
+            let resultData403 = _responseText === "" ? null : JSON.parse(_responseText, this.jsonParseReviver);
+            result403 = SpaceDesignProblemDetails.fromJS(resultData403);
+            return throwException("Forbidden", status, _responseText, _headers, result403);
+            });
+        } else if (status === 404) {
+            return response.text().then((_responseText) => {
+            let result404: any = null;
+            let resultData404 = _responseText === "" ? null : JSON.parse(_responseText, this.jsonParseReviver);
+            result404 = SpaceDesignProblemDetails.fromJS(resultData404);
+            return throwException("Not Found", status, _responseText, _headers, result404);
+            });
+        } else if (status === 409) {
+            return response.text().then((_responseText) => {
+            let result409: any = null;
+            let resultData409 = _responseText === "" ? null : JSON.parse(_responseText, this.jsonParseReviver);
+            result409 = SpaceDesignProblemDetails.fromJS(resultData409);
+            return throwException("Conflict", status, _responseText, _headers, result409);
+            });
+        } else if (status === 422) {
+            return response.text().then((_responseText) => {
+            let result422: any = null;
+            let resultData422 = _responseText === "" ? null : JSON.parse(_responseText, this.jsonParseReviver);
+            result422 = SpaceDesignProblemDetails.fromJS(resultData422);
+            return throwException("Unprocessable Content", status, _responseText, _headers, result422);
+            });
+        } else if (status === 500) {
+            return response.text().then((_responseText) => {
+            let result500: any = null;
+            let resultData500 = _responseText === "" ? null : JSON.parse(_responseText, this.jsonParseReviver);
+            result500 = SpaceDesignProblemDetails.fromJS(resultData500);
+            return throwException("Internal Server Error", status, _responseText, _headers, result500);
+            });
+        } else if (status !== 200 && status !== 204) {
+            return response.text().then((_responseText) => {
+            return throwException("An unexpected server error occurred.", status, _responseText, _headers);
+            });
+        }
+        return Promise.resolve<RemoveSpaceSourceResponse>(null as any);
     }
 
     /**
@@ -18820,6 +19021,94 @@ export interface IRefreshSpaceWmsAdoptionResponse {
     unboundCount?: number;
     boundCount?: number;
     differenceCount?: number;
+}
+
+export class RemoveSpaceSourceRequest implements IRemoveSpaceSourceRequest {
+    expectedContentRevision!: number;
+    expectedSourceRowVersion!: string;
+
+    constructor(data?: IRemoveSpaceSourceRequest) {
+        if (data) {
+            for (var property in data) {
+                if (data.hasOwnProperty(property))
+                    (this as any)[property] = (data as any)[property];
+            }
+        }
+    }
+
+    init(_data?: any) {
+        if (_data) {
+            this.expectedContentRevision = _data["expectedContentRevision"];
+            this.expectedSourceRowVersion = _data["expectedSourceRowVersion"];
+        }
+    }
+
+    static fromJS(data: any): RemoveSpaceSourceRequest {
+        data = typeof data === 'object' ? data : {};
+        let result = new RemoveSpaceSourceRequest();
+        result.init(data);
+        return result;
+    }
+
+    toJSON(data?: any) {
+        data = typeof data === 'object' ? data : {};
+        data["expectedContentRevision"] = this.expectedContentRevision;
+        data["expectedSourceRowVersion"] = this.expectedSourceRowVersion;
+        return data;
+    }
+}
+
+export interface IRemoveSpaceSourceRequest {
+    expectedContentRevision: number;
+    expectedSourceRowVersion: string;
+}
+
+export class RemoveSpaceSourceResponse implements IRemoveSpaceSourceResponse {
+    sourceId!: string;
+    versionContentRevision!: number;
+    physicalFileRetained!: boolean;
+    idempotentReplay!: boolean;
+
+    constructor(data?: IRemoveSpaceSourceResponse) {
+        if (data) {
+            for (var property in data) {
+                if (data.hasOwnProperty(property))
+                    (this as any)[property] = (data as any)[property];
+            }
+        }
+    }
+
+    init(_data?: any) {
+        if (_data) {
+            this.sourceId = _data["sourceId"];
+            this.versionContentRevision = _data["versionContentRevision"];
+            this.physicalFileRetained = _data["physicalFileRetained"];
+            this.idempotentReplay = _data["idempotentReplay"];
+        }
+    }
+
+    static fromJS(data: any): RemoveSpaceSourceResponse {
+        data = typeof data === 'object' ? data : {};
+        let result = new RemoveSpaceSourceResponse();
+        result.init(data);
+        return result;
+    }
+
+    toJSON(data?: any) {
+        data = typeof data === 'object' ? data : {};
+        data["sourceId"] = this.sourceId;
+        data["versionContentRevision"] = this.versionContentRevision;
+        data["physicalFileRetained"] = this.physicalFileRetained;
+        data["idempotentReplay"] = this.idempotentReplay;
+        return data;
+    }
+}
+
+export interface IRemoveSpaceSourceResponse {
+    sourceId: string;
+    versionContentRevision: number;
+    physicalFileRetained: boolean;
+    idempotentReplay: boolean;
 }
 
 export class ReplaceSpaceCadProviderConfigurationRequest implements IReplaceSpaceCadProviderConfigurationRequest {
@@ -33953,6 +34242,133 @@ export interface ISpaceSourceDto {
     unit?: string | undefined;
     scaleToMillimeters?: number | undefined;
     rowVersion?: string | undefined;
+}
+
+export class SpaceSourceRemovalPreviewDto implements ISpaceSourceRemovalPreviewDto {
+    sourceId!: string;
+    fileId!: string | undefined;
+    displayName!: string;
+    sourceType!: string;
+    state!: string;
+    versionContentRevision!: number;
+    sourceRowVersion!: string;
+    canRemove!: boolean;
+    physicalFileRetained!: boolean;
+    references!: SpaceSourceRemovalReferenceDto[];
+
+    constructor(data?: ISpaceSourceRemovalPreviewDto) {
+        if (data) {
+            for (var property in data) {
+                if (data.hasOwnProperty(property))
+                    (this as any)[property] = (data as any)[property];
+            }
+        }
+        if (!data) {
+            this.references = [];
+        }
+    }
+
+    init(_data?: any) {
+        if (_data) {
+            this.sourceId = _data["sourceId"];
+            this.fileId = _data["fileId"];
+            this.displayName = _data["displayName"];
+            this.sourceType = _data["sourceType"];
+            this.state = _data["state"];
+            this.versionContentRevision = _data["versionContentRevision"];
+            this.sourceRowVersion = _data["sourceRowVersion"];
+            this.canRemove = _data["canRemove"];
+            this.physicalFileRetained = _data["physicalFileRetained"];
+            if (Array.isArray(_data["references"])) {
+                this.references = [] as any;
+                for (let item of _data["references"])
+                    this.references!.push(SpaceSourceRemovalReferenceDto.fromJS(item));
+            }
+        }
+    }
+
+    static fromJS(data: any): SpaceSourceRemovalPreviewDto {
+        data = typeof data === 'object' ? data : {};
+        let result = new SpaceSourceRemovalPreviewDto();
+        result.init(data);
+        return result;
+    }
+
+    toJSON(data?: any) {
+        data = typeof data === 'object' ? data : {};
+        data["sourceId"] = this.sourceId;
+        data["fileId"] = this.fileId;
+        data["displayName"] = this.displayName;
+        data["sourceType"] = this.sourceType;
+        data["state"] = this.state;
+        data["versionContentRevision"] = this.versionContentRevision;
+        data["sourceRowVersion"] = this.sourceRowVersion;
+        data["canRemove"] = this.canRemove;
+        data["physicalFileRetained"] = this.physicalFileRetained;
+        if (Array.isArray(this.references)) {
+            data["references"] = [];
+            for (let item of this.references)
+                data["references"].push(item ? item.toJSON() : undefined as any);
+        }
+        return data;
+    }
+}
+
+export interface ISpaceSourceRemovalPreviewDto {
+    sourceId: string;
+    fileId: string | undefined;
+    displayName: string;
+    sourceType: string;
+    state: string;
+    versionContentRevision: number;
+    sourceRowVersion: string;
+    canRemove: boolean;
+    physicalFileRetained: boolean;
+    references: SpaceSourceRemovalReferenceDto[];
+}
+
+export class SpaceSourceRemovalReferenceDto implements ISpaceSourceRemovalReferenceDto {
+    code!: string;
+    count!: number;
+    blocksRemoval!: boolean;
+
+    constructor(data?: ISpaceSourceRemovalReferenceDto) {
+        if (data) {
+            for (var property in data) {
+                if (data.hasOwnProperty(property))
+                    (this as any)[property] = (data as any)[property];
+            }
+        }
+    }
+
+    init(_data?: any) {
+        if (_data) {
+            this.code = _data["code"];
+            this.count = _data["count"];
+            this.blocksRemoval = _data["blocksRemoval"];
+        }
+    }
+
+    static fromJS(data: any): SpaceSourceRemovalReferenceDto {
+        data = typeof data === 'object' ? data : {};
+        let result = new SpaceSourceRemovalReferenceDto();
+        result.init(data);
+        return result;
+    }
+
+    toJSON(data?: any) {
+        data = typeof data === 'object' ? data : {};
+        data["code"] = this.code;
+        data["count"] = this.count;
+        data["blocksRemoval"] = this.blocksRemoval;
+        return data;
+    }
+}
+
+export interface ISpaceSourceRemovalReferenceDto {
+    code: string;
+    count: number;
+    blocksRemoval: boolean;
 }
 
 export class SpaceUnderlayCalibrationDto implements ISpaceUnderlayCalibrationDto {

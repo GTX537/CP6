@@ -36,6 +36,8 @@ public sealed class SpaceDesignControlPlaneSubjectFilterTests
                 nameof(SpaceDesignV1Controller.GetSources), "Source"),
             (typeof(SpaceDesignV1Controller),
                 nameof(SpaceDesignV1Controller.CreateSource), "Upload"),
+            (typeof(SpaceDesignV1Controller),
+                nameof(SpaceDesignV1Controller.RemoveSource), "SourceRemoval"),
             (typeof(SpaceEditLeaseController),
                 nameof(SpaceEditLeaseController.GetEditLease), "Lease"),
             (typeof(SpaceValidationController),

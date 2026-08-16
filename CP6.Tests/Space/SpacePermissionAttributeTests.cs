@@ -98,6 +98,8 @@ public class SpacePermissionAttributeTests
             ["SpaceDesignV1Controller.GetWarehouseTemplates"] =
                 "space:model:read",
             ["SpaceDesignV1Controller.GetSources"] = "space:model:read",
+            ["SpaceDesignV1Controller.GetSourceRemovalPreview"] =
+                "space:model:read",
             ["SpaceDesignV1Controller.GetFile"] = "space:model:read",
             ["SpaceDesignV1Controller.GetUnderlayContent"] = "space:model:read",
             ["SpacePublishController.GetHistoricalRepublish"] = "space:model:read",
@@ -321,6 +323,7 @@ public class SpacePermissionAttributeTests
 
     [Theory]
     [InlineData(nameof(SpaceDesignV1Controller.CreateSource))]
+    [InlineData(nameof(SpaceDesignV1Controller.RemoveSource))]
     [InlineData(nameof(SpaceDesignV1Controller.UploadUnderlay))]
     [InlineData(nameof(SpaceDesignV1Controller.AttachUnderlay))]
     [InlineData(nameof(SpaceDesignV1Controller.CalibrateUnderlay))]

@@ -85,6 +85,37 @@ public sealed class SpaceWmsRuntimeSchemaFilter : ISchemaFilter
     private static readonly IReadOnlyDictionary<Type, string[]>
         RequiredProperties = new Dictionary<Type, string[]>
         {
+            [typeof(RemoveSpaceSourceRequest)] =
+            [
+                "expectedContentRevision",
+                "expectedSourceRowVersion",
+            ],
+            [typeof(RemoveSpaceSourceResponse)] =
+            [
+                "sourceId",
+                "versionContentRevision",
+                "physicalFileRetained",
+                "idempotentReplay",
+            ],
+            [typeof(SpaceSourceRemovalReferenceDto)] =
+            [
+                "code",
+                "count",
+                "blocksRemoval",
+            ],
+            [typeof(SpaceSourceRemovalPreviewDto)] =
+            [
+                "sourceId",
+                "fileId",
+                "displayName",
+                "sourceType",
+                "state",
+                "versionContentRevision",
+                "sourceRowVersion",
+                "canRemove",
+                "physicalFileRetained",
+                "references",
+            ],
             [typeof(ConfirmSpaceExcelCadMatchRequest)] =
             [
                 "confirmed",
@@ -1720,7 +1751,11 @@ public sealed class SpaceWmsRuntimeSchemaFilter : ISchemaFilter
             Property(schema, propertyName).Nullable = false;
         }
 
-        if (context.Type == typeof(AttachSpaceUnderlayRequest))
+        if (context.Type == typeof(SpaceSourceRemovalPreviewDto))
+        {
+            SetNullable(schema, true, "fileId");
+        }
+        else if (context.Type == typeof(AttachSpaceUnderlayRequest))
         {
             // sourceId is required so callers must explicitly choose attach/replace
             // or detach, while null is the intentional detach value.
@@ -2041,6 +2076,7 @@ public sealed class SpaceDesignV1OperationFilter : IOperationFilter
         if (operation.OperationId is not (
                 "CreateVersion" or
                 "CreateSource" or
+                "RemoveSource" or
                 "CreateAsset" or
                 "AttachUnderlay" or
                 "CalibrateUnderlay" or
@@ -2089,6 +2125,7 @@ public sealed class SpaceDesignV1OperationFilter : IOperationFilter
                 "CreateGenerationRun" =>
                 StatusCodes.Status202Accepted.ToString(),
             "AttachUnderlay" or
+                "RemoveSource" or
                 "CalibrateUnderlay" or
                 "ReplaceProviderConfiguration" or
                 "UpdatePolicy" or
