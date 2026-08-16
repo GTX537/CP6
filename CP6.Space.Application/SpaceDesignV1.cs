@@ -119,6 +119,14 @@ public interface ISpaceDesignV1Service
             PreviewSpaceWarehouseTemplateRequest request,
             CancellationToken cancellationToken = default);
 
+    Task<ApplySpaceWarehouseTemplateFloorResponse>
+        ApplyWarehouseTemplateFloorAsync(
+            Guid versionId,
+            Guid floorLogicalId,
+            Guid templateId,
+            ApplySpaceWarehouseTemplateFloorRequest request,
+            CancellationToken cancellationToken = default);
+
     Task<CreateSpaceVersionResponse> CreateVersionAsync(
         Guid siteId,
         CreateSpaceVersionRequest request,

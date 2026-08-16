@@ -1,5 +1,10 @@
 namespace CP6.Space.Contracts;
 
+public static class SpaceWarehouseTemplateContract
+{
+    public const int SchemaVersion = 1;
+}
+
 public sealed record SpaceWarehouseTemplateCountsDto(
     int Floors,
     int Zones,
@@ -86,3 +91,30 @@ public sealed record SpaceWarehouseTemplateInstantiationPreviewDto(
     IReadOnlyList<SpaceWarehouseTemplateAislePlanDto> Aisles,
     IReadOnlyList<SpaceWarehouseTemplateRackPlanDto> Racks,
     bool WritesDraft);
+
+public sealed record ApplySpaceWarehouseTemplateFloorRequest(
+    int SchemaVersion,
+    Guid SiteId,
+    Guid TemplateVersionId,
+    string ProposalHash,
+    string TemplateFloorKey,
+    Guid CommandBatchId,
+    Guid ClientInstanceId,
+    Guid LeaseId,
+    long ExpectedFloorRevision,
+    long ExpectedContentRevision);
+
+public sealed record ApplySpaceWarehouseTemplateFloorResponse(
+    int SchemaVersion,
+    Guid TemplateId,
+    Guid TemplateVersionId,
+    string TemplateContentHash,
+    string ProposalHash,
+    string TemplateFloorKey,
+    Guid ModelVersionId,
+    Guid FloorLogicalId,
+    long FloorRevision,
+    long VersionContentRevision,
+    SpaceWarehouseTemplateCountsDto AppliedCounts,
+    Guid CommandBatchId,
+    bool IdempotentReplay);

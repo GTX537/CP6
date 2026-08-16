@@ -2,6 +2,13 @@
 
 > 依据 Git log 汇总，不替代完整 Git 历史。重点记录影响接手判断的里程碑。
 
+## 2026-08-15：Space System 整仓模板按楼层写入 Draft
+
+- Design V1 新增模板楼层 Apply：服务端从不可变 System 模板确定性生成 Zone/Aisle/Rack/逐层规格/Location，以 Site、Proposal Hash、Lease、双 Revision 和 CommandBatch 失败关闭；一个模板楼层一个 Serializable 原子事务。
+- Space Studio「构件」面板接通密封预览、模板楼层选择、数量确认、只读保护和状态未知时的原批安全重试；完成前 Draft 零写入，成功后继续由同一 Design Scene 驱动 2D/3D。
+- 标准 F1 真库验证 3 区、10 巷道、250 货架、1,250 层定义和 5,000 库位；Space Unit 537、Space Integration 真库 443、CP6.Tests 2,925、Web 856 及 OpenAPI/双 SDK/EF/生产构建通过。
+- Tenant 私有模板和四模式统一创建向导仍未完成，LM-FR-001/WP1 保持 Partial/Pending，GA 72% / `NoGo` 不变。
+
 ## 2026-08-15：Space System 整仓模板目录与预览
 
 - Design V1 新增 System/Tenant 整仓模板目录和实例化预览合同；首份 System 模板从确定性标准仓布局生成，固定 2 层、7 区、20 巷道、500 货架和 10,000 库位。

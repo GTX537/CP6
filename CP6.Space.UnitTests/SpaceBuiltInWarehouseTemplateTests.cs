@@ -1,4 +1,5 @@
 using CP6.Space.Application;
+using CP6.Space.Contracts;
 
 namespace CP6.Space.UnitTests;
 
@@ -75,6 +76,104 @@ public sealed class SpaceBuiltInWarehouseTemplateTests
         Assert.False(SpaceBuiltInWarehouseTemplates.TryPreview(
             template.Id,
             Guid.NewGuid(),
+            out _));
+    }
+
+    [Fact]
+    public void Standard_template_builds_a_deterministic_floor_command_batch()
+    {
+        var template = Assert.Single(SpaceBuiltInWarehouseTemplates.List());
+        Assert.True(SpaceBuiltInWarehouseTemplates.TryPreview(
+            template.Id,
+            template.LatestVersion.Id,
+            out var preview));
+        Assert.NotNull(preview);
+        var floor = Assert.Single(
+            preview.Floors,
+            candidate => candidate.FloorCode == "F1");
+        var modelVersionId = Guid.NewGuid();
+        var floorLogicalId = Guid.NewGuid();
+        var commandBatchId = Guid.NewGuid();
+        var clientInstanceId = Guid.NewGuid();
+        var leaseId = Guid.NewGuid();
+
+        Assert.True(SpaceBuiltInWarehouseTemplates.TryBuildFloorCommandBatch(
+            template.Id,
+            template.LatestVersion.Id,
+            floor.Key,
+            modelVersionId,
+            floorLogicalId,
+            commandBatchId,
+            clientInstanceId,
+            leaseId,
+            expectedFloorRevision: 4,
+            expectedContentRevision: 9,
+            out var selectedFloor,
+            out var counts,
+            out var batch));
+        Assert.NotNull(selectedFloor);
+        Assert.NotNull(counts);
+        Assert.NotNull(batch);
+        Assert.Equal(floor, selectedFloor);
+        Assert.Equal(1, counts.Floors);
+        Assert.Equal(3, counts.Zones);
+        Assert.Equal(10, counts.Aisles);
+        Assert.Equal(250, counts.Racks);
+        Assert.Equal(5_000, counts.Locations);
+        Assert.Equal(263, batch.Commands.Count);
+        Assert.Equal(3, batch.Commands.Count(candidate =>
+            candidate.Type == SpaceLayoutCommandContract.CreateZone));
+        Assert.Equal(10, batch.Commands.Count(candidate =>
+            candidate.Type == SpaceLayoutCommandContract.CreateAisle));
+        Assert.Equal(250, batch.Commands.Count(candidate =>
+            candidate.Type == SpaceLayoutCommandContract.CreateRack));
+        Assert.Equal(commandBatchId, batch.CommandBatchId);
+        Assert.Equal(clientInstanceId, batch.ClientInstanceId);
+        Assert.Equal(leaseId, batch.LeaseId);
+        Assert.Equal(4, batch.ExpectedFloorRevision);
+        Assert.Equal(9, batch.ExpectedContentRevision);
+        Assert.Equal(
+            5_000,
+            batch.Commands
+                .Where(candidate => candidate.CreateRack is not null)
+                .SelectMany(candidate => candidate.CreateRack!.Levels)
+                .Sum(level => level.BinCount * level.DepthCount));
+
+        Assert.True(SpaceBuiltInWarehouseTemplates.TryBuildFloorCommandBatch(
+            template.Id,
+            template.LatestVersion.Id,
+            floor.Key,
+            modelVersionId,
+            floorLogicalId,
+            commandBatchId,
+            clientInstanceId,
+            leaseId,
+            4,
+            9,
+            out _,
+            out _,
+            out var replayBatch));
+        Assert.NotNull(replayBatch);
+        Assert.Equal(
+            batch.Commands.Select(candidate => candidate.CommandId),
+            replayBatch.Commands.Select(candidate => candidate.CommandId));
+        Assert.Equal(
+            batch.Commands.Select(candidate => candidate.TargetLogicalId),
+            replayBatch.Commands.Select(candidate => candidate.TargetLogicalId));
+
+        Assert.False(SpaceBuiltInWarehouseTemplates.TryBuildFloorCommandBatch(
+            template.Id,
+            template.LatestVersion.Id,
+            "floor:unknown",
+            modelVersionId,
+            floorLogicalId,
+            commandBatchId,
+            clientInstanceId,
+            leaseId,
+            4,
+            9,
+            out _,
+            out _,
             out _));
     }
 }

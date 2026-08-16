@@ -6,6 +6,7 @@ import { ElMessage, ElMessageBox } from 'element-plus'
 import { isAxiosError } from 'axios'
 import { designLeaseApi, type SpaceEditLease } from '@/api/space/designLease'
 import { designCadParseApi } from '@/api/space/designCadParse'
+import { designProjectApi } from '@/api/space/designProject'
 import {
   designCodingApi,
   type LocationCodingEnvelope,
@@ -87,6 +88,7 @@ import SpaceStudioContextPanel from '@/modules/space-design/panels/SpaceStudioCo
 import SpaceStudioChecklist from '@/modules/space-design/panels/SpaceStudioChecklist.vue'
 import DesignLayoutCreatePanel from '@/modules/space-design/layout/DesignLayoutCreatePanel.vue'
 import DesignLayoutPropertiesPanel from '@/modules/space-design/layout/DesignLayoutPropertiesPanel.vue'
+import DesignWarehouseTemplatePanel from '@/modules/space-design/templates/DesignWarehouseTemplatePanel.vue'
 import type {
   LayoutCreateIntent,
   LayoutParentOption,
@@ -151,6 +153,8 @@ import type {
   ISpaceUpdateLayoutAisleDto,
   ISpaceUpdateLayoutRackDto,
   ISpaceUpdateLayoutZoneDto,
+  ISpaceWarehouseTemplateDto,
+  ISpaceWarehouseTemplateInstantiationPreviewDto,
   IPreviewSpaceLocationCodesResponse,
 } from '../../../../../sdk/typescript/space-design-v1/spaceDesignV1Client'
 
@@ -207,6 +211,27 @@ const uploading = ref(false)
 const downloadingTemplate = ref(false)
 const savingCalibration = ref(false)
 const savingElement = ref(false)
+const warehouseTemplates = ref<ISpaceWarehouseTemplateDto[]>([])
+const warehouseTemplatePreview = ref<ISpaceWarehouseTemplateInstantiationPreviewDto | null>(null)
+const warehouseTemplateLoading = ref(false)
+const warehouseTemplateApplying = ref(false)
+const warehouseTemplateError = ref('')
+const pendingWarehouseTemplateApply = ref<{
+  templateId: string
+  templateFloorKey: string
+  request: {
+    schemaVersion: number
+    siteId: string
+    templateVersionId: string
+    proposalHash: string
+    templateFloorKey: string
+    commandBatchId: string
+    clientInstanceId: string
+    leaseId: string
+    expectedFloorRevision: number
+    expectedContentRevision: number
+  }
+} | null>(null)
 const calibrationMode = ref(false)
 const statusText = ref('')
 const saveState = ref<'idle' | 'saving' | 'saved' | 'failed'>('idle')
@@ -622,6 +647,7 @@ const calibrationWithinTolerance = computed(() => {
 onMounted(async () => {
   window.addEventListener('resize', updateViewportWidth)
   window.addEventListener('keydown', onStudioKeydown)
+  window.addEventListener('beforeunload', protectPendingDraftWork)
   await nextTick()
   if (!canvasRef.value) return
   stage = new UnderlayStage(canvasRef.value)
@@ -654,6 +680,7 @@ onMounted(async () => {
   })
   resizeObserver.observe(canvasRef.value)
   await loadScene()
+  void loadWarehouseTemplates()
   if (narrowReadonly.value) {
     projectionMode.value = '3d'
     inspectorTab.value = 'issues'
@@ -687,6 +714,10 @@ const publishReady = computed(
 )
 
 onBeforeRouteUpdate(async () => {
+  if (pendingWarehouseTemplateApply.value) {
+    ElMessage.warning('模板 Apply 状态尚未确认；请先按原幂等请求安全重试，再切换楼层')
+    return false
+  }
   if (redrawSession.value) {
     try {
       await ElMessageBox.confirm(
@@ -726,6 +757,7 @@ onBeforeUnmount(() => {
   disposed = true
   window.removeEventListener('resize', updateViewportWidth)
   window.removeEventListener('keydown', onStudioKeydown)
+  window.removeEventListener('beforeunload', protectPendingDraftWork)
   if (leaseRenewTimer !== null) window.clearInterval(leaseRenewTimer)
   if (parseElapsedTimer !== null) window.clearInterval(parseElapsedTimer)
   const leaseId = lease.value?.leaseId
@@ -883,6 +915,161 @@ async function loadScene(): Promise<void> {
     ElMessage.error(t('底图场景加载失败'))
   } finally {
     loading.value = false
+  }
+}
+
+async function loadWarehouseTemplates(): Promise<void> {
+  warehouseTemplateLoading.value = true
+  warehouseTemplateError.value = ''
+  try {
+    warehouseTemplates.value = await designProjectApi.getWarehouseTemplates('System')
+  } catch {
+    warehouseTemplates.value = []
+    warehouseTemplateError.value = '系统模板目录暂不可用；手工构件仍可继续。'
+  } finally {
+    warehouseTemplateLoading.value = false
+  }
+}
+
+async function previewWarehouseTemplate(
+  template: ISpaceWarehouseTemplateDto,
+): Promise<void> {
+  if (warehouseTemplateLoading.value || warehouseTemplateApplying.value ||
+    savingElement.value) return
+  warehouseTemplateLoading.value = true
+  warehouseTemplateError.value = ''
+  try {
+    warehouseTemplatePreview.value = await designProjectApi.previewWarehouseTemplate(
+      template.id,
+      template.latestVersion.id,
+    )
+    pendingWarehouseTemplateApply.value = null
+    ElMessage.success('模板预览已密封；确认前 Draft 保持不变')
+  } catch {
+    warehouseTemplatePreview.value = null
+    warehouseTemplateError.value = '模板预览失败，请重新加载目录后再试。'
+  } finally {
+    warehouseTemplateLoading.value = false
+  }
+}
+
+async function applyWarehouseTemplateFloor(payload: {
+  templateId: string
+  templateFloorKey: string
+}): Promise<void> {
+  const scene = designScene.value
+  const currentFloor = floor.value
+  const currentLeaseId = lease.value?.leaseId
+  const preview = warehouseTemplatePreview.value
+  if (!scene || !currentFloor || !currentLeaseId || !preview ||
+    readonlyScene.value || warehouseTemplateApplying.value || savingElement.value) return
+
+  const pending = pendingWarehouseTemplateApply.value
+  const canRetryPending = pending?.templateId === payload.templateId &&
+    pending.templateFloorKey === payload.templateFloorKey
+  if (pending && !canRetryPending) {
+    warehouseTemplateError.value =
+      '已有状态未确认的模板命令包；请先按原模板楼层安全重试。'
+    return
+  }
+  let request = canRetryPending ? pending.request : null
+  if (!request) {
+    const templateFloor = preview.floors.find(
+      (item) => item.key === payload.templateFloorKey,
+    )
+    if (!templateFloor || preview.templateId !== payload.templateId) {
+      warehouseTemplateError.value = '模板预览与所选楼层不一致，请重新预览。'
+      return
+    }
+    const racks = preview.racks.filter(
+      (item) => item.floorKey === payload.templateFloorKey,
+    )
+    const locationCount = racks.reduce(
+      (total, rack) => total + rack.columns * rack.levels * rack.depths,
+      0,
+    )
+    try {
+      await ElMessageBox.confirm(
+        `将模板 ${templateFloor.floorCode} 原子写入当前楼层，预计新增 ` +
+          `${racks.length} 个货架和 ${locationCount} 个库位。` +
+          '操作仅修改当前 Draft，不直接修改 Published/WMS。是否继续？',
+        '确认整仓模板写入',
+        {
+          type: 'warning',
+          confirmButtonText: '确认写入 Draft',
+          cancelButtonText: '取消',
+        },
+      )
+    } catch {
+      return
+    }
+    const siteId = String(scene.siteId ?? '')
+    if (!siteId) {
+      warehouseTemplateError.value = '当前场景缺少 Site 身份，无法安全写入模板。'
+      return
+    }
+    request = {
+      schemaVersion: 1,
+      siteId,
+      templateVersionId: preview.templateVersionId,
+      proposalHash: preview.proposalHash,
+      templateFloorKey: payload.templateFloorKey,
+      commandBatchId: crypto.randomUUID(),
+      clientInstanceId,
+      leaseId: currentLeaseId,
+      expectedFloorRevision: currentFloor.revisionNumber ?? 0,
+      expectedContentRevision: scene.contentRevision ?? 0,
+    }
+    pendingWarehouseTemplateApply.value = {
+      ...payload,
+      request,
+    }
+  }
+
+  warehouseTemplateApplying.value = true
+  savingElement.value = true
+  saveState.value = 'saving'
+  warehouseTemplateError.value = ''
+  try {
+    const response = await designProjectApi.applyWarehouseTemplateFloor(
+      versionId.value,
+      floorLogicalId.value,
+      payload.templateId,
+      request,
+    )
+    pendingWarehouseTemplateApply.value = null
+    saveState.value = 'saved'
+    lastSavedAt.value = new Date()
+    await loadScene()
+    ElMessage.success(
+      `模板楼层已原子写入：${response.appliedCounts.racks} 个货架、` +
+        `${response.appliedCounts.locations} 个库位` +
+        (response.idempotentReplay ? '（幂等重放）' : ''),
+    )
+  } catch (error) {
+    saveState.value = 'failed'
+    const code = isAxiosError(error) ? error.response?.data?.code : undefined
+    if (code === 'SPACE_EDIT_LEASE_LOST') {
+      loseEditLease()
+      warehouseTemplateError.value = '编辑租约已丢失；模板未部分写入。'
+    } else if (code === 'SPACE_WAREHOUSE_TEMPLATE_PROPOSAL_STALE') {
+      pendingWarehouseTemplateApply.value = null
+      warehouseTemplatePreview.value = null
+      warehouseTemplateError.value = '模板 Proposal 已过期且零写入，请重新生成预览。'
+    } else if (
+      code === 'SPACE_FLOOR_REVISION_CONFLICT' ||
+      code === 'SPACE_VERSION_CONFLICT'
+    ) {
+      pendingWarehouseTemplateApply.value = null
+      revisionConflict.value = true
+      warehouseTemplateError.value = 'Draft 已变化且零写入；请刷新场景并重新确认模板。'
+    } else {
+      warehouseTemplateError.value =
+        '模板 Apply 状态未确认；原命令包已保留，可按原幂等请求安全重试。'
+    }
+  } finally {
+    warehouseTemplateApplying.value = false
+    savingElement.value = false
   }
 }
 
@@ -3380,6 +3567,15 @@ function delay(milliseconds: number): Promise<void> {
   return new Promise((resolve) => setTimeout(resolve, milliseconds))
 }
 
+function protectPendingDraftWork(event: BeforeUnloadEvent): void {
+  if (!pendingWarehouseTemplateApply.value &&
+    !unsavedEnvelope.value &&
+    !unsavedCodingEnvelope.value &&
+    !redrawSession.value) return
+  event.preventDefault()
+  event.returnValue = ''
+}
+
 function tabClientInstanceId(): string {
   const key = 'cp6-space-studio-client-instance'
   try {
@@ -3471,6 +3667,19 @@ function tabClientInstanceId(): string {
         @underlay-lock-change="locked = $event"
       >
         <template #assets>
+          <DesignWarehouseTemplatePanel
+            :templates="warehouseTemplates"
+            :preview="warehouseTemplatePreview"
+            :current-floor-code="floor?.floorCode"
+            :readonly="readonlyScene || Boolean(unsavedEnvelope) || Boolean(unsavedCodingEnvelope)"
+            :loading="warehouseTemplateLoading"
+            :busy="savingElement || warehouseTemplateApplying"
+            :retry-pending="Boolean(pendingWarehouseTemplateApply)"
+            :pending-floor-key="pendingWarehouseTemplateApply?.templateFloorKey"
+            :error="warehouseTemplateError"
+            @preview="previewWarehouseTemplate"
+            @apply="applyWarehouseTemplateFloor"
+          />
           <DesignLayoutCreatePanel
             :zones="activeZones"
             :aisles="activeAisles"

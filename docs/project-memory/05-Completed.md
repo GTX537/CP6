@@ -1,5 +1,13 @@
 # 已完成能力与近期里程碑
 
+## 2026-08-15 Space System 整仓模板按楼层写入 Draft
+
+- 新增 `POST /api/space/design/v1/versions/{versionId}/floors/{floorLogicalId}/templates/{templateId}:apply`，只接受服务端内置模板版本和密封 Proposal，按一个模板楼层生成确定性的 Zone/Aisle/Rack/逐层规格/Location 命令。
+- Apply 绑定目标 Site、页面 Lease/ClientInstance、Floor/Content Revision 与 CommandBatch；整批和 Floor 边界在同一 Serializable 事务中提交，正常 Layout 命令仍保持 100 条上限，受控模板内部上限为 300 条。
+- Space Studio「构件」面板可预览模板、按目标 Floor 编码优先选择模板楼层、显示逐楼层计数并显式确认；状态未知时冻结选择并按原命令包安全重试，窄屏、只读、无租约和 Revision 冲突禁止写入。
+- Space Unit 537/537、Space Integration 真库 443/443、CP6.Tests 2,925（19 个既有环境门禁跳过）、Web 856/856、OpenAPI/双 SDK、权限、EF、类型检查、生产构建及完整 solution Release 0 warning / 0 error 通过。详见 `docs/space/reports/2026-08-15-space-system-template-floor-apply.md`。
+- Tenant 私有模板和 Blank/Published/System/Tenant 四模式统一向导仍未完成；LM-FR-001/WP1 保持 Partial/Pending，核心 GA 保持 72% / `NoGo`。
+
 ## 2026-08-15 Space System 整仓模板目录与预览纵切
 
 - 新增 Design V1 整仓模板 GET 与实例化预览 POST 合同；平台内置标准模板固定模板/版本/内容 SHA，并只包含 2 层、7 区、20 巷道、500 货架与 10,000 库位的设计布局。
