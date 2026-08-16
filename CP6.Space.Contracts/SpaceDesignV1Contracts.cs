@@ -13,6 +13,12 @@ public sealed record SpaceModelDto(
     Guid? CurrentPublishedVersionId,
     string RowVersion);
 
+public static class SpaceVersionCreationSources
+{
+    public const string Blank = "Blank";
+    public const string PublishedVersion = "PublishedVersion";
+}
+
 public sealed record SpaceVersionDto(
     Guid Id,
     Guid ModelId,
@@ -26,7 +32,12 @@ public sealed record SpaceVersionDto(
     string? ValidatedHash,
     DateTime? PublishedAtUtc,
     string RowVersion,
-    string Purpose = "Production");
+    string Purpose,
+    string CreationSource,
+    Guid? CreatedBy,
+    DateTime CreatedAtUtc,
+    DateTime UpdatedAtUtc,
+    int OpenBlockingCount);
 
 public sealed record CreateSpaceVersionRequest(
     string Name,

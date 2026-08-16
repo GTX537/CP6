@@ -216,6 +216,22 @@ function floorLogicalIdOf(floor: ISpaceSceneFloorDto) {
   return floor.revision?.logicalId ?? ''
 }
 
+function creationSourceLabel(source?: string) {
+  if (source === 'PublishedVersion') return '已发布版'
+  if (source === 'Blank') return '空白'
+  return source || '未知'
+}
+
+function actorLabel(actorId?: string) {
+  return actorId || '系统/历史数据'
+}
+
+function dateTimeLabel(value?: Date) {
+  if (!value) return '未知'
+  const date = value instanceof Date ? value : new Date(value)
+  return Number.isNaN(date.getTime()) ? '未知' : date.toLocaleString()
+}
+
 function goBack() {
   router.push('/space')
 }
@@ -349,7 +365,16 @@ onBeforeUnmount(() => {
             <div><dt>版本</dt><dd>{{ draftVersion.versionNo }}</dd></div>
             <div><dt>状态</dt><dd>{{ draftVersion.status }}</dd></div>
             <div><dt>Content Revision</dt><dd>{{ draftVersion.contentRevision }}</dd></div>
-            <div><dt>来源</dt><dd>{{ draftVersion.basedOnVersionId ? 'Published' : 'Blank' }}</dd></div>
+            <div><dt>来源</dt><dd>{{ creationSourceLabel(draftVersion.creationSource) }}</dd></div>
+            <div><dt>创建者</dt><dd class="identity-value">{{ actorLabel(draftVersion.createdBy) }}</dd></div>
+            <div><dt>创建时间</dt><dd>{{ dateTimeLabel(draftVersion.createdAtUtc) }}</dd></div>
+            <div><dt>更新时间</dt><dd>{{ dateTimeLabel(draftVersion.updatedAtUtc) }}</dd></div>
+            <div>
+              <dt>Blocking</dt>
+              <dd :class="{ blocking: (draftVersion.openBlockingCount ?? 0) > 0 }">
+                {{ draftVersion.openBlockingCount ?? 0 }}
+              </dd>
+            </div>
           </dl>
         </section>
 
@@ -540,6 +565,8 @@ button:disabled { cursor: not-allowed; opacity: .45; }
 .version-summary dl div { min-width: 110px; }
 .version-summary dt { color: var(--space-studio-muted); font-size: 13px; }
 .version-summary dd { margin: 5px 0 0; font-family: ui-monospace, SFMono-Regular, Consolas, monospace; }
+.version-summary .identity-value { max-width: 260px; overflow-wrap: anywhere; }
+.version-summary dd.blocking { color: #ffb4b4; font-weight: 800; }
 .floor-list { display: grid; grid-template-columns: repeat(auto-fill, minmax(260px, 1fr)); gap: 14px; margin-top: 22px; }
 .template-list { display: grid; grid-template-columns: repeat(auto-fill, minmax(320px, 1fr)); gap: 14px; margin-top: 22px; }
 .template-card {

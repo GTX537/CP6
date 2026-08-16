@@ -144,6 +144,7 @@
         "Independent QA acceptance record"
       ],
       "evidencePaths": [
+        "docs/space/reports/2026-08-15-space-draft-summary-metadata.md",
         "docs/space/reports/2026-08-15-space-system-template-floor-apply.md",
         "docs/space/reports/2026-08-15-space-system-template-catalog.md",
         "docs/space/reports/2026-08-15-space-design-floor-shell.md",

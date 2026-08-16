@@ -2,6 +2,13 @@
 
 > 依据 Git log 汇总，不替代完整 Git 历史。重点记录影响接手判断的里程碑。
 
+## 2026-08-15：Space Draft 来源与阻断摘要
+
+- Design V1 Version 合同新增来源、创建者、创建/更新时间和 Open Blocking 数量；列表和详情使用同一聚合语义，Open Blocking 不包含已解决问题或 Warning。
+- Space Studio 活动 Draft 摘要直接展示这些字段，历史创建者缺失时明确显示系统/历史数据，不伪造人员姓名。
+- Space Integration 真库 444、Space Unit 537、CP6.Tests 2,926、Web 856 及 OpenAPI/双 SDK/EF/生产构建通过，完整 solution Release 0 warning / 0 error。
+- 当前 Blank/PublishedVersion 创建路径的 LM-FR-002 摘要缺口关闭；System/Tenant Template 创建来源仍随四模式向导处理，LM-FR-001/WP1 和 GA 72% / `NoGo` 不变。
+
 ## 2026-08-15：Space System 整仓模板按楼层写入 Draft
 
 - Design V1 新增模板楼层 Apply：服务端从不可变 System 模板确定性生成 Zone/Aisle/Rack/逐层规格/Location，以 Site、Proposal Hash、Lease、双 Revision 和 CommandBatch 失败关闭；一个模板楼层一个 Serializable 原子事务。

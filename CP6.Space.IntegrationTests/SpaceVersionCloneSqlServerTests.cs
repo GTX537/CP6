@@ -77,6 +77,92 @@ public sealed class SpaceVersionCloneSqlServerTests
         Assert.Equal(SpaceErrorCodes.ExternalSubjectDenied, denied.Code);
     }
 
+    [SqlServerFact]
+    public async Task Draft_summary_reports_provenance_audit_times_and_open_blocking_count()
+    {
+        await WithDatabaseAsync(async (context, execution, clock) =>
+        {
+            var (model, published) = await SeedPublishedAsync(
+                context,
+                execution.ActorId,
+                includeSnapshot: false);
+            model.BeginCutover(Guid.NewGuid());
+            model.MarkFrozen();
+            model.MarkBootstrapping();
+            model.MarkVerified(published);
+            model.ActivateDesignV1();
+            await context.SaveChangesAsync();
+            var draft = SpaceModelVersion.CreateBlankDraft(
+                execution.TenantId,
+                model.Id,
+                2,
+                "Draft summary",
+                Guid.NewGuid());
+            var publishedClone = SpaceModelVersion.CreateInitializingClone(
+                execution.TenantId,
+                model.Id,
+                3,
+                "Published clone summary",
+                published.Id,
+                Guid.NewGuid());
+            model.ReserveDraft(draft);
+            var openBlocking = SpaceModelIssue.Create(
+                execution.TenantId,
+                draft.Id,
+                null,
+                null,
+                SpaceIssueSeverity.Blocking,
+                "BLOCKING_OPEN");
+            var resolvedBlocking = SpaceModelIssue.Create(
+                execution.TenantId,
+                draft.Id,
+                null,
+                null,
+                SpaceIssueSeverity.Blocking,
+                "BLOCKING_RESOLVED");
+            resolvedBlocking.Resolve(Guid.NewGuid());
+            var openWarning = SpaceModelIssue.Create(
+                execution.TenantId,
+                draft.Id,
+                null,
+                null,
+                SpaceIssueSeverity.Warning,
+                "WARNING_OPEN");
+            context.AddRange(
+                draft,
+                publishedClone,
+                openBlocking,
+                resolvedBlocking,
+                openWarning);
+            await context.SaveChangesAsync();
+
+            var service = NewDesignService(context, execution, clock);
+            var detail = await service.GetVersionAsync(draft.Id);
+            var publishedCloneDetail = await service.GetVersionAsync(
+                publishedClone.Id);
+            var listed = Assert.Single((await service.GetVersionsAsync(
+                model.SiteId,
+                "Draft",
+                50,
+                cursor: null)).Items);
+
+            foreach (var summary in new[] { detail, listed })
+            {
+                Assert.Equal(
+                    SpaceVersionCreationSources.Blank,
+                    summary.CreationSource);
+                Assert.Equal(execution.ActorId, summary.CreatedBy);
+                Assert.Equal(clock.UtcNow, summary.CreatedAtUtc);
+                Assert.Equal(clock.UtcNow, summary.UpdatedAtUtc);
+                Assert.Equal(1, summary.OpenBlockingCount);
+                Assert.Equal("Draft", summary.Status);
+            }
+            Assert.Equal(
+                SpaceVersionCreationSources.PublishedVersion,
+                publishedCloneDetail.CreationSource);
+        });
+    }
+
     [Fact]
     public async Task Queued_clone_cancellation_releases_the_reserved_draft()
     {
@@ -603,7 +689,6 @@ public sealed class SpaceVersionCloneSqlServerTests
                 version => version.Id == published.Id);
             var job = await context.Jobs.SingleAsync(
                 candidate => candidate.Id == started.Result.JobId);
-
             Assert.Equal(0, started.Counts.Total);
             Assert.Equal(SpaceVersionStatus.Draft, target.Status);
             Assert.Equal(published.Id, target.BasedOnVersionId);

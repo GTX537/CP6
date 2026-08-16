@@ -48,6 +48,11 @@ const version = {
   contentRevision: 0,
   rowVersion: 'rv-version',
   purpose: 'Production',
+  creationSource: 'Blank',
+  createdBy: '00000000-0000-0000-0000-000000000001',
+  createdAtUtc: new Date('2026-08-15T12:00:00Z'),
+  updatedAtUtc: new Date('2026-08-15T12:30:00Z'),
+  openBlockingCount: 2,
 }
 
 const floor = SpaceSceneFloorDto.fromJS({
@@ -123,6 +128,10 @@ describe('SpaceDesignStartView', () => {
     expect(designProjectApi.getVersion).toHaveBeenCalledWith('version-1')
     expect(wrapper.text()).toContain('Blank warehouse')
     expect(wrapper.text()).toContain('F1 · Ground floor')
+    expect(wrapper.text()).toContain('空白')
+    expect(wrapper.text()).toContain('00000000-0000-0000-0000-000000000001')
+    expect(wrapper.text()).toContain('Blocking')
+    expect(wrapper.text()).toContain('2')
 
     await wrapper.get('[data-floor-id="floor-1"]').trigger('click')
     expect(push).toHaveBeenCalledWith({

@@ -1622,6 +1622,22 @@ public sealed class SpaceDesignV1OpenApiTests
     }
 
     [Fact]
+    public void Version_summary_contract_requires_LM_FR_002_metadata()
+    {
+        using var document = ReadContract();
+        var schemas = document.RootElement
+            .GetProperty("components")
+            .GetProperty("schemas");
+
+        AssertExactRequired(
+            Schema(schemas, "CP6.Space.Contracts.SpaceVersionDto"),
+            "creationSource",
+            "createdAtUtc",
+            "updatedAtUtc",
+            "openBlockingCount");
+    }
+
+    [Fact]
     public void Element_property_commands_expose_optional_retype_and_manual_lock_contracts()
     {
         using var document = ReadContract();
