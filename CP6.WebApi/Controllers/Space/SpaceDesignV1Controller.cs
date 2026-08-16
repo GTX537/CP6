@@ -147,6 +147,43 @@ public sealed class SpaceDesignV1Controller(
         CancellationToken cancellationToken) =>
         service.GetVersionAsync(versionId, cancellationToken);
 
+    [HttpGet("versions/{versionId:guid}/floors")]
+    [RequirePermission("space", "model:read", UseProblemDetails = true)]
+    [ProducesResponseType<IReadOnlyList<SpaceSceneFloorDto>>(
+        StatusCodes.Status200OK)]
+    public Task<IReadOnlyList<SpaceSceneFloorDto>> GetFloors(
+        Guid versionId,
+        CancellationToken cancellationToken) =>
+        service.GetFloorsAsync(versionId, cancellationToken);
+
+    [HttpPost("versions/{versionId:guid}/floors")]
+    [RequirePermission("space", "model:edit", UseProblemDetails = true)]
+    [ProducesResponseType<CreateSpaceFloorResponse>(
+        StatusCodes.Status201Created)]
+    public async Task<IActionResult> CreateFloor(
+        Guid versionId,
+        [FromHeader(Name = "Idempotency-Key"), Required]
+        string idempotencyKey,
+        [FromBody, Required] CreateSpaceFloorRequest request,
+        CancellationToken cancellationToken)
+    {
+        var result = await service.CreateFloorAsync(
+            versionId,
+            request,
+            idempotencyKey,
+            cancellationToken);
+        Response.Headers["Idempotent-Replay"] =
+            result.IdempotentReplay ? "true" : "false";
+        return CreatedAtAction(
+            nameof(GetScene),
+            new
+            {
+                versionId,
+                floorLogicalId = result.Floor.Revision.LogicalId,
+            },
+            result);
+    }
+
     [HttpGet("versions/{versionId:guid}/floors/{floorLogicalId:guid}/scene")]
     [RequirePermission("space", "model:read")]
     [ProducesResponseType<SpaceDesignSceneDto>(StatusCodes.Status200OK)]

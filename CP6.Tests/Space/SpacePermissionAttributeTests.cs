@@ -82,6 +82,7 @@ public class SpacePermissionAttributeTests
                 "space:model:read",
             ["SpaceDesignV1Controller.GetVersions"] = "space:model:read",
             ["SpaceDesignV1Controller.GetVersion"] = "space:model:read",
+            ["SpaceDesignV1Controller.GetFloors"] = "space:model:read",
             ["SpaceDesignV1Controller.GetScene"] = "space:model:read",
             ["SpaceEditLeaseController.GetEditLease"] = "space:model:edit",
             ["SpaceCadParseController.GetPreparationStatus"] =

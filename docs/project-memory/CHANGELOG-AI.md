@@ -2,11 +2,17 @@
 
 > 依据 Git log 汇总，不替代完整 Git 历史。重点记录影响接手判断的里程碑。
 
+## 2026-08-15：Design V1 Floor shell 与项目入口
+
+- Space 首页新增 Site 级 Space Studio 入口，可发现活动 Draft、列出/选择活动设计楼层；没有 Draft/Floor 时分别显式创建 Blank 与 Floor shell。
+- 新 Floor 合同要求全部业务字段、Expected Content Revision 和 Idempotency-Key，使用 Version 级 SQL application lock 与 Serializable 事务提交；创建后进入既有 Floor Lease 工作台。
+- 真 SQL 聚焦 4/4、Space Unit 534/534、Space Integration 真库全量 441/441、CP6.Tests 2,923 通过、Web 全量 848/848，并通过 OpenAPI/双 SDK/EF/GA 证据门禁、类型检查与生产构建；完整 solution Release 0 warning / 0 error。整仓 System/Tenant 模板和四模式统一向导仍缺，LM-FR-001/WP1 为 Partial，GA 72% / `NoGo` 不变。
+
 ## 2026-08-15：Design V1 空白 Draft 初始化
 
 - 版本创建接口新增 `Blank` 模式：强制无基线、不继承线上快照、不移动 Published 指针，并保留唯一活动 Draft 约束。
 - 新增可审计的完成态初始化 Job/Attempt；Operation fence、请求 Hash、SQL 事务和 Idempotency-Key 关闭重复或异参重放。
-- 领域聚焦 7、真 SQL 聚焦 2、Space Integration 真库全量 437 通过且 0 skipped。楼层初始化/选择与平台/租户整仓模板仍待实现，LM-FR-001/WP1 为 Partial，GA 72% / `NoGo` 不变。
+- 领域聚焦 7、真 SQL 聚焦 2、Space Integration 真库全量 437 通过且 0 skipped。该纵切当时未创建楼层；楼层初始化/选择随后由独立纵切补齐，平台/租户整仓模板仍待实现。LM-FR-001/WP1 为 Partial，GA 72% / `NoGo` 不变。
 
 ## 2026-08-15：Space Studio LM-FR-025～029 最终工作台 UX 要求
 

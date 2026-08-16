@@ -1,11 +1,19 @@
 # 已完成能力与近期里程碑
 
+## 2026-08-15 Design V1 Floor shell 与项目入口纵切
+
+- Space 首页新增按 Site 进入 `Space Studio` 的用户入口；页面自动读取活动 Draft 与活动设计楼层，不再要求用户手工拼 VersionId/FloorLogicalId。
+- 新增 Design V1 Floor GET/POST 合同。创建必须显式提交编码、名称、层级、标高、层高和 Expected Content Revision，并以 Version 级 SQL 锁、Serializable 事务、Content Revision 与 Idempotency-Key 原子提交。
+- Floor 创建后直接进入既有 `DesignUnderlayView`，后续继续遵循 Floor Lease、Floor Revision 与 Command Batch；低于 1280px 的入口禁止写入。
+- 真 SQL 聚焦 4/4、Space Unit 534/534、Space Integration 真库全量 441/441、CP6.Tests 2,923 通过、Web 全量 848/848、OpenAPI/双 SDK/EF/GA 证据门禁、Vue TypeScript 与生产构建通过；完整 solution Release 0 warning / 0 error。详见 `docs/space/reports/2026-08-15-space-design-floor-shell.md`。
+- 本纵切不实现整仓 System/Tenant 模板或四模式统一创建向导，LM-FR-001/WP1 仍为 Partial/Pending，核心 GA 仍为 72% / `NoGo`。
+
 ## 2026-08-15 Design V1 空白 Draft 初始化纵切
 
 - `POST /api/space/design/v1/sites/{siteId}/versions` 新增 `Blank` 模式；草稿不继承 Published 内容，拒绝 `BasedOnVersionId`，保留线上指针并占用唯一活动 Draft 槽。
 - 新增 `InitializeVersion` 完成态 Job/Attempt 和 `space-blank-v1` 初始化身份；Version Operation fence、请求 Hash、SQL 事务及既有 Idempotency-Key 共同保证重放返回同一 Version/Job，不同输入失败关闭。
 - 领域聚焦 7/7、SQL Server LocalDB 聚焦 2/2、Space Integration 真库全量 437/437 且 0 skipped。详细报告见 `docs/space/reports/2026-08-15-space-design-blank-draft.md`。
-- 该纵切不创建或猜测 Floor，也不实现平台/租户整仓模板。LM-FR-001 与 WP1 保持 Partial/Pending，核心 GA 保持 72% / `NoGo`。
+- 该版本纵切不创建或猜测 Floor；Floor 初始化/选择随后由独立纵切交付。平台/租户整仓模板仍缺，LM-FR-001 与 WP1 保持 Partial/Pending，核心 GA 保持 72% / `NoGo`。
 
 ## 2026-08-15 Space Studio LM-FR-025～029 最终工作台 UX 要求
 

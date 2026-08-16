@@ -200,6 +200,21 @@ public sealed class SpaceWmsRuntimeSchemaFilter : ISchemaFilter
                 "contentHash",
                 "floors",
             ],
+            [typeof(CreateSpaceFloorRequest)] =
+            [
+                "floorCode",
+                "name",
+                "level",
+                "elevation",
+                "height",
+                "expectedContentRevision",
+            ],
+            [typeof(CreateSpaceFloorResponse)] =
+            [
+                "floor",
+                "versionContentRevision",
+                "idempotentReplay",
+            ],
             [typeof(SpacePublishPreviewDto)] =
             [
                 "validationWarningCount",

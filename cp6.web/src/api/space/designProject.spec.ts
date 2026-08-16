@@ -1,0 +1,83 @@
+import { beforeEach, describe, expect, it, vi } from 'vitest'
+import http from '../http'
+import { designProjectApi } from './designProject'
+
+vi.mock('../http', () => ({
+  default: {
+    get: vi.fn(),
+    post: vi.fn(),
+  },
+}))
+
+describe('designProjectApi', () => {
+  beforeEach(() => {
+    vi.clearAllMocks()
+  })
+
+  it('loads the active design project and its floors', async () => {
+    vi.mocked(http.get).mockResolvedValue({} as never)
+
+    await designProjectApi.getModel('site/1')
+    await designProjectApi.getVersion('version/1')
+    await designProjectApi.getFloors('version/1')
+
+    expect(http.get).toHaveBeenNthCalledWith(
+      1,
+      '/space/design/v1/sites/site%2F1/model',
+    )
+    expect(http.get).toHaveBeenNthCalledWith(
+      2,
+      '/space/design/v1/versions/version%2F1',
+    )
+    expect(http.get).toHaveBeenNthCalledWith(
+      3,
+      '/space/design/v1/versions/version%2F1/floors',
+    )
+  })
+
+  it('creates an explicit blank version and floor with idempotency fences', async () => {
+    vi.mocked(http.post).mockResolvedValue({} as never)
+
+    await designProjectApi.createBlankVersion(
+      'site-1',
+      'Blank warehouse',
+      'version-key',
+    )
+    await designProjectApi.createFloor(
+      'version-1',
+      {
+        floorCode: 'F1',
+        name: 'Ground floor',
+        level: 1,
+        elevation: 0,
+        height: 6000,
+        expectedContentRevision: 0,
+      },
+      'floor-key',
+    )
+
+    expect(http.post).toHaveBeenNthCalledWith(
+      1,
+      '/space/design/v1/sites/site-1/versions',
+      {
+        name: 'Blank warehouse',
+        basedOnVersionId: null,
+        createMode: 'Blank',
+      },
+      { headers: { 'Idempotency-Key': 'version-key' } },
+    )
+    expect(http.post).toHaveBeenNthCalledWith(
+      2,
+      '/space/design/v1/versions/version-1/floors',
+      {
+        floorCode: 'F1',
+        name: 'Ground floor',
+        level: 1,
+        elevation: 0,
+        height: 6000,
+        expectedContentRevision: 0,
+      },
+      { headers: { 'Idempotency-Key': 'floor-key' } },
+    )
+  })
+})

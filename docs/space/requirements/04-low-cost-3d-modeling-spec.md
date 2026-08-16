@@ -653,6 +653,8 @@ Space Studio 使用独立编辑器子主题，不套普通 CP6 业务页的卡�
 | POST | `/api/space/design/v1/sites/{siteId}/versions` | 创建草稿 |
 | GET | `/api/space/design/v1/sites/{siteId}/versions` | 版本列表 |
 | GET | `/api/space/design/v1/versions/{versionId}` | 版本详情 |
+| GET | `/api/space/design/v1/versions/{versionId}/floors` | 列出版本中的活动设计楼层，供项目入口选择 |
+| POST | `/api/space/design/v1/versions/{versionId}/floors` | 以显式编码、名称、层级、标高、层高和 Expected Content Revision 初始化 Floor shell；创建后再申请 Floor Lease |
 | POST | `/api/space/design/v1/versions/{versionId}/upload-sessions` | 创建安全上传会话 |
 | POST | `/api/space/design/v1/versions/{versionId}/sources` | 关联已扫描来源 |
 | GET | `/api/space/design/v1/versions/{versionId}/sources` | 来源列表 |

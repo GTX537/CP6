@@ -66,6 +66,16 @@ public interface ISpaceDesignV1Service
         Guid versionId,
         CancellationToken cancellationToken = default);
 
+    Task<IReadOnlyList<SpaceSceneFloorDto>> GetFloorsAsync(
+        Guid versionId,
+        CancellationToken cancellationToken = default);
+
+    Task<CreateSpaceFloorResponse> CreateFloorAsync(
+        Guid versionId,
+        CreateSpaceFloorRequest request,
+        string idempotencyKey,
+        CancellationToken cancellationToken = default);
+
     Task<SpaceDesignSceneDto> GetSceneAsync(
         Guid versionId,
         Guid floorLogicalId,

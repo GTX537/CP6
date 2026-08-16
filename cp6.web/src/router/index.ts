@@ -310,6 +310,13 @@ const staticRoutes: RouteRecordRaw[] = [
     component: () => import('@/views/space/editor/FloorEditor.vue'),
     meta: { standalone: true, title: 'Space 编辑器' }
   },
+  // Space Design V1 项目入口（显式创建 Blank Draft 与 Floor shell 后进入统一工作台）
+  {
+    path: '/space/design/sites/:siteId/start',
+    name: 'space-design-start',
+    component: () => import('@/views/space/editor/SpaceDesignStartView.vue'),
+    meta: { standalone: true, title: 'Space Studio' }
+  },
   // Space Design V1 底图（独立路由；只消费 Design Revision，不读取 Legacy UnderlayImage URL）
   {
     path: '/space/design/:versionId/floors/:floorLogicalId/underlay',
