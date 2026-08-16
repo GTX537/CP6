@@ -1,5 +1,5 @@
 // @vitest-environment jsdom
-import { beforeEach, describe, expect, it, vi } from 'vitest'
+import { afterEach, beforeEach, describe, expect, it, vi } from 'vitest'
 import { flushPromises, mount } from '@vue/test-utils'
 import ElementPlus from 'element-plus'
 import { designExcelCadMatchApi } from '@/api/space/designExcelCadMatch'
@@ -70,6 +70,8 @@ const editableProps = {
 }
 
 describe('DesignExcelCadMatchPanel', () => {
+  afterEach(() => vi.useRealTimers())
+
   beforeEach(() => {
     vi.clearAllMocks()
     vi.mocked(designExcelCadMatchApi.get).mockResolvedValue(response as never)
@@ -125,6 +127,26 @@ describe('DesignExcelCadMatchPanel', () => {
       excelRowId: 'row-1',
       matchedSourceRef: 'H:160',
     })
+  })
+
+  it('automatically refreshes a queued match until the authoritative artifact is ready', async () => {
+    vi.useFakeTimers()
+    vi.mocked(designExcelCadMatchApi.get)
+      .mockResolvedValueOnce({ ...response, jobStatus: 'Running', canConfirm: false } as never)
+      .mockResolvedValueOnce(response as never)
+    const wrapper = mount(DesignExcelCadMatchPanel, {
+      props: { ...editableProps },
+      global: { plugins: [ElementPlus] },
+    })
+    await flushPromises()
+    expect(wrapper.get('[data-test="match-pending"]').text())
+      .toContain('自动刷新进度')
+
+    await vi.advanceTimersByTimeAsync(2_000)
+    await flushPromises()
+    expect(designExcelCadMatchApi.get).toHaveBeenCalledTimes(2)
+    expect(wrapper.get('[data-test="match-summary"]').text()).toContain('新增 1')
+    wrapper.unmount()
   })
 
   it('marks a drifted Draft stale and disables canvas location', async () => {

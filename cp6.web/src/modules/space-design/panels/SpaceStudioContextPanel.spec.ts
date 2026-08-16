@@ -107,6 +107,28 @@ describe('SpaceStudioContextPanel', () => {
     expect(calibrate.attributes('title')).toBeUndefined()
   })
 
+  it('opens Excel matching only when a current CAD review is loaded', async () => {
+    const wrapper = mount(SpaceStudioContextPanel, {
+      props: {
+        hasCurrentCad: false,
+        hasUnderlay: false,
+        calibrated: false,
+        readonly: false,
+        underlayVisible: true,
+        underlayOpacity: 55,
+        underlayLocked: true,
+      },
+    })
+
+    const action = wrapper.get('[data-test="open-excel-cad"]')
+    expect(action.attributes('disabled')).toBeDefined()
+    expect(action.attributes('title')).toBe('请先完成并加载 CAD 审核')
+    await wrapper.setProps({ hasCurrentCad: true })
+    expect(action.attributes('disabled')).toBeUndefined()
+    await action.trigger('click')
+    expect(wrapper.emitted('openExcelCad')).toHaveLength(1)
+  })
+
   it('exposes working underlay visibility, opacity and lock controls', async () => {
     const wrapper = mount(SpaceStudioContextPanel, {
       props: {

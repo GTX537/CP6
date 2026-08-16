@@ -14,6 +14,7 @@ defineProps<{
   parseProgress?: number
   parseElapsed?: string
   parseError?: string
+  hasCurrentCad?: boolean
   hasUnderlay: boolean
   calibrated: boolean
   readonly: boolean
@@ -27,6 +28,7 @@ const emit = defineEmits<{
   calibrateUnderlay: []
   removeUnderlay: []
   chooseCad: []
+  openExcelCad: []
   downloadTemplate: []
   openCadReview: []
   cancelParse: []
@@ -114,6 +116,13 @@ function sourceRemoved(sourceId: string, versionContentRevision: number): void {
         <button type="button" class="primary" :disabled="readonly" @click="emit('chooseCad')">
           上传 DWG / DXF
         </button>
+        <button
+          type="button"
+          data-test="open-excel-cad"
+          :disabled="readonly || !hasCurrentCad"
+          :title="hasCurrentCad ? '使用当前已加载的 CAD 结果' : '请先完成并加载 CAD 审核'"
+          @click="emit('openExcelCad')"
+        >上传 Excel 并匹配当前 CAD</button>
         <button type="button" @click="emit('downloadTemplate')">下载标准 Excel</button>
         <button type="button" @click="emit('openCadReview')">打开 CAD 审核</button>
 

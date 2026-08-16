@@ -11,6 +11,7 @@ describe('uploadReuseNotice', () => {
     expect(uploadReuseNotice('CAD', true)).toBe(
       '检测到重复CAD内容，已按 SHA-256 复用受控文件或当前来源，不会重复保存原文件。',
     )
+    expect(uploadReuseNotice('Excel', true)).toContain('重复Excel内容')
     expect(uploadReuseNotice('底图', true)).toContain('重复底图内容')
   })
 })

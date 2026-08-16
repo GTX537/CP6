@@ -1,4 +1,4 @@
-export type SpaceUploadSourceKind = 'CAD' | '底图'
+export type SpaceUploadSourceKind = 'CAD' | 'Excel' | '底图'
 
 export function uploadReuseNotice(
   sourceKind: SpaceUploadSourceKind,

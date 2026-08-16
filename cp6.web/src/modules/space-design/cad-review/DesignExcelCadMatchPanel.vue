@@ -1,5 +1,5 @@
 <script setup lang="ts">
-import { computed, ref, watch } from 'vue'
+import { computed, onBeforeUnmount, ref, watch } from 'vue'
 import { designExcelCadMatchApi } from '@/api/space/designExcelCadMatch'
 import type {
   ISpaceExcelCadApplyDto,
@@ -36,6 +36,8 @@ const sourceRef = ref('')
 const onlyLocatable = ref(false)
 const currentCursor = ref<string>()
 const previousCursors = ref<Array<string | undefined>>([])
+let matchPollGeneration = 0
+let confirmationPollGeneration = 0
 
 const rows = computed(() => result.value?.rows ?? [])
 const summary = computed(() => result.value?.summary)
@@ -62,7 +64,13 @@ watch(
   { immediate: true },
 )
 
+onBeforeUnmount(() => {
+  matchPollGeneration += 1
+  confirmationPollGeneration += 1
+})
+
 async function resetAndLoad(): Promise<void> {
+  const generation = ++matchPollGeneration
   confirmation.value = null
   applyJobId.value = ''
   emittedApplyJobId.value = ''
@@ -70,6 +78,17 @@ async function resetAndLoad(): Promise<void> {
   currentCursor.value = undefined
   previousCursors.value = []
   await loadPage()
+  for (let attempt = 0; attempt < 450
+    && generation === matchPollGeneration
+    && !terminal.value
+    && !error.value; attempt += 1) {
+    await delay(2_000)
+    if (generation !== matchPollGeneration) return
+    await loadPage()
+  }
+  if (generation === matchPollGeneration && !terminal.value && !error.value) {
+    error.value = '等待权威匹配超时；后台任务仍可通过“应用筛选 / 刷新”继续恢复。'
+  }
 }
 
 async function confirmMatch(): Promise<void> {
@@ -97,11 +116,25 @@ async function confirmMatch(): Promise<void> {
       `excel-cad-apply:${props.jobId}:${match.artifactPayloadSha256}`,
     )
     applyJobId.value = accepted.applyJobId ?? ''
-    if (applyJobId.value) await refreshConfirmation()
+    if (applyJobId.value) await monitorConfirmation()
   } catch {
     confirmationError.value = '确认写入失败；草稿未发生部分写入，请刷新后重试。'
   } finally {
     confirming.value = false
+  }
+}
+
+async function monitorConfirmation(): Promise<void> {
+  const generation = ++confirmationPollGeneration
+  for (let attempt = 0; attempt < 450 && generation === confirmationPollGeneration; attempt += 1) {
+    await refreshConfirmation()
+    const status = confirmation.value?.jobStatus ?? ''
+    if (['Succeeded', 'Failed', 'Cancelled', 'DeadLetter'].includes(status)
+      || confirmationError.value) return
+    await delay(2_000)
+  }
+  if (generation === confirmationPollGeneration) {
+    confirmationError.value = '等待 Apply 超时；请使用“刷新写入状态”继续恢复。'
   }
 }
 
@@ -186,6 +219,10 @@ function dispositionType(value?: string) {
 function shortHash(value?: string): string {
   return value ? `${value.slice(0, 10)}…${value.slice(-8)}` : '—'
 }
+
+function delay(milliseconds: number): Promise<void> {
+  return new Promise(resolve => window.setTimeout(resolve, milliseconds))
+}
 </script>
 
 <template>
@@ -219,7 +256,7 @@ function shortHash(value?: string): string {
       data-test="match-pending"
       type="info"
       :closable="false"
-      title="服务端正在生成权威匹配产物，可点击刷新查看进度。"
+      title="服务端正在生成权威匹配产物，工作台会自动刷新进度。"
     />
 
     <div class="summary-grid" data-test="match-summary">

@@ -1,5 +1,13 @@
 # 已完成能力与近期里程碑
 
+## 2026-08-16 Space Studio 当前 CAD + Excel 统一工作流
+
+- 来源模式新增“上传 Excel 并匹配当前 CAD”；入口只消费本楼层已自动加载且与当前 Draft Revision 一致的 CAD Review Workspace，不要求用户填写 SourceId、ParseJobId、FloorId 或 Revision。
+- `.xlsx` 上传继续走既有 Design V1 隔离来源链；工作台等待服务器 Ready、选择服务器 Mapping Profile、自动轮询预检，并展示行数、有效数、Info/Warning/Blocking 与工作表/行/列恢复提示。Blocking 或服务器不可确认时失败关闭。
+- Excel Source/Preflight Job 持久在 URL 中支持刷新恢复；显式复核后，匹配绑定当前 CAD/Excel/Floor/Content Revision，自动轮询到权威结果并进入既有 Lease/Revision/Artifact Apply 与统一撤销/重做链。确认前 Draft 零写入。
+- Web 全量 878/878、Space Studio Playwright 25/25、Vue TypeScript 和生产构建通过。详见 `docs/space/reports/2026-08-16-space-excel-current-cad-workflow.md`。
+- 当前工作会话的统一 Excel 上传 UI 已闭环；历史 CAD 候选目录与真实 DWG/DXF+Excel/Provider/WMS/Pilot 接受仍未关闭，WP4 保持 Partial/Pending，核心 GA 保持 72% / `NoGo`。
+
 ## 2026-08-16 Space CAD 待审变更集与 RuleOnly 交接
 
 - LM-FR-019 保持 Job → Clean PreviewSet → 绑定 Source/Transform/Mapping/Base Revision 的自动 Workspace 加载；用户不再下载或重传 JSON，stale 继续返回 `SPACE_PARSE_CHANGESET_STALE` 且零写入。
@@ -55,7 +63,7 @@
 - CAD 前端上传合同补齐服务端 `file/reused` 事实；CAD 与 PDF/图片底图检测到重复内容时明确提示按 SHA-256 复用受控文件或当前来源，不会重复保存原文件。
 - 复用判断仍完全来自隔离上传服务；客户端不生成哈希、不跳过安全扫描，重复底图继续按 Clean/Scanning/Rejected 状态进入既有挂接链。
 - 聚焦测试 10/10、Vue TypeScript、Web 全量 858/858 和 production build 通过。详见 `docs/space/reports/2026-08-15-space-upload-reuse-notice.md`。
-- Excel 后端/SDK 已有 `Reused` 合同，但统一 Excel 上传 UI 仍待三路径向导；LM-FR-005 已由后续来源移除预检纵切闭环。WP4 保持 Partial/Pending，核心 GA 保持 72% / `NoGo`。
+- Excel 后端/SDK 已有 `Reused` 合同；该条记录时缺失的当前 CAD + Excel 上传 UI 已由 2026-08-16 后续纵切闭环，历史 CAD 候选目录仍待实现。LM-FR-005 已由后续来源移除预检纵切闭环。WP4 保持 Partial/Pending，核心 GA 保持 72% / `NoGo`。
 
 ## 2026-08-15 Space Draft 来源与阻断摘要
 
