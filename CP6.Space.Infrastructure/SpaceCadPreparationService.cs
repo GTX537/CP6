@@ -283,6 +283,7 @@ public sealed class SpaceCadPreparationService(
             analysis,
             prepared.Metadata,
             inventory.Summary,
+            ToReviewInventory(inventory),
             ToSummary(profile),
             mapping,
             semantic,
@@ -424,10 +425,28 @@ public sealed class SpaceCadPreparationService(
             analysis,
             metadata,
             inventory?.Summary,
+            inventory is null ? null : ToReviewInventory(inventory),
             ToSummary(profile),
             mapping,
             semantic,
             StartRequest: null);
+
+    private static SpaceCadPreparationInventoryDto ToReviewInventory(
+        SpaceCadInventoryV1 inventory) =>
+        new(
+            inventory.Summary,
+            inventory.Layers,
+            inventory.Blocks.Select(block =>
+                new SpaceCadPreparationBlockInventoryDto(
+                    block.BlockId,
+                    block.Name,
+                    block.IsDefined,
+                    block.IsExternalReference,
+                    block.DefinitionEntityCount,
+                    block.ReferenceCount,
+                    block.AttributedReferenceCount,
+                    block.Attributes,
+                    block.ReferenceBounds)).ToArray());
 
     private static SpaceCadMappingProfileSummaryDto ToSummary(
         SpaceCadMappingProfileV1 value) =>

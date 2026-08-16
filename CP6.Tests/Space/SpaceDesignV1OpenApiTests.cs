@@ -3107,6 +3107,67 @@ public sealed class SpaceDesignV1OpenApiTests
             Schema(schemas, "CP6.Space.Contracts.SpaceCadLayerMappingOverrideV1"),
             "layerId",
             "ignore");
+        AssertExactRequired(
+            Schema(schemas, "CP6.Space.Contracts.SpaceCadPreparationInventoryDto"),
+            "summary",
+            "layers",
+            "blocks");
+        AssertExactRequired(
+            Schema(schemas, "CP6.Space.Contracts.SpaceCadInventorySummaryV1"),
+            "layerCount",
+            "emptyLayerCount",
+            "blockCount",
+            "undefinedBlockCount",
+            "blockReferenceCount",
+            "attributedBlockReferenceCount",
+            "entityCount",
+            "supportedEntityCount",
+            "unsupportedEntityCount");
+        AssertExactRequired(
+            Schema(schemas, "CP6.Space.Contracts.SpaceCadLayerInventoryV1"),
+            "layerId",
+            "name",
+            "isVisible",
+            "entityCount",
+            "supportedEntityCount",
+            "unsupportedEntityCount",
+            "blockReferenceCount",
+            "attributedEntityCount",
+            "entityTypeCounts");
+        var blockInventory = Schema(
+            schemas,
+            "CP6.Space.Contracts.SpaceCadPreparationBlockInventoryDto");
+        AssertExactRequired(
+            blockInventory,
+            "blockId",
+            "name",
+            "isDefined",
+            "isExternalReference",
+            "definitionEntityCount",
+            "referenceCount",
+            "attributedReferenceCount",
+            "attributes");
+        Assert.False(blockInventory.GetProperty("properties")
+            .TryGetProperty("externalReferenceToken", out _));
+        AssertExactRequired(
+            Schema(schemas, "CP6.Space.Contracts.SpaceCadBlockAttributeInventoryV1"),
+            "name",
+            "referenceCount",
+            "distinctValueCount");
+        AssertExactRequired(
+            Schema(schemas, "CP6.Space.Contracts.SpaceCadBoundsV1"),
+            "minX",
+            "minY",
+            "maxX",
+            "maxY");
+        var previewResponse = Schema(
+            schemas,
+            "CP6.Space.Contracts.PreviewSpaceCadPreparationResponse");
+        Assert.True(previewResponse.GetProperty("properties")
+            .TryGetProperty("inventory", out var inventory));
+        Assert.Equal(
+            "#/components/schemas/CP6.Space.Contracts.SpaceCadPreparationInventoryDto",
+            inventory.GetProperty("$ref").GetString());
     }
 
     [Fact]

@@ -18628,6 +18628,7 @@ export class PreviewSpaceCadPreparationResponse implements IPreviewSpaceCadPrepa
     coordinateAnalysis?: SpaceCadCoordinateAnalysisV1;
     coordinateMetadata?: SpaceCadCoordinateMetadataV1;
     inventorySummary?: SpaceCadInventorySummaryV1;
+    inventory?: SpaceCadPreparationInventoryDto;
     mappingProfile?: SpaceCadMappingProfileSummaryDto;
     mappingPreview?: SpaceCadMappingPreviewV1;
     semanticPreview?: SpaceCadSemanticPreviewV1;
@@ -18652,6 +18653,7 @@ export class PreviewSpaceCadPreparationResponse implements IPreviewSpaceCadPrepa
             this.coordinateAnalysis = _data["coordinateAnalysis"] ? SpaceCadCoordinateAnalysisV1.fromJS(_data["coordinateAnalysis"]) : undefined as any;
             this.coordinateMetadata = _data["coordinateMetadata"] ? SpaceCadCoordinateMetadataV1.fromJS(_data["coordinateMetadata"]) : undefined as any;
             this.inventorySummary = _data["inventorySummary"] ? SpaceCadInventorySummaryV1.fromJS(_data["inventorySummary"]) : undefined as any;
+            this.inventory = _data["inventory"] ? SpaceCadPreparationInventoryDto.fromJS(_data["inventory"]) : undefined as any;
             this.mappingProfile = _data["mappingProfile"] ? SpaceCadMappingProfileSummaryDto.fromJS(_data["mappingProfile"]) : undefined as any;
             this.mappingPreview = _data["mappingPreview"] ? SpaceCadMappingPreviewV1.fromJS(_data["mappingPreview"]) : undefined as any;
             this.semanticPreview = _data["semanticPreview"] ? SpaceCadSemanticPreviewV1.fromJS(_data["semanticPreview"]) : undefined as any;
@@ -18676,6 +18678,7 @@ export class PreviewSpaceCadPreparationResponse implements IPreviewSpaceCadPrepa
         data["coordinateAnalysis"] = this.coordinateAnalysis ? this.coordinateAnalysis.toJSON() : undefined as any;
         data["coordinateMetadata"] = this.coordinateMetadata ? this.coordinateMetadata.toJSON() : undefined as any;
         data["inventorySummary"] = this.inventorySummary ? this.inventorySummary.toJSON() : undefined as any;
+        data["inventory"] = this.inventory ? this.inventory.toJSON() : undefined as any;
         data["mappingProfile"] = this.mappingProfile ? this.mappingProfile.toJSON() : undefined as any;
         data["mappingPreview"] = this.mappingPreview ? this.mappingPreview.toJSON() : undefined as any;
         data["semanticPreview"] = this.semanticPreview ? this.semanticPreview.toJSON() : undefined as any;
@@ -18693,6 +18696,7 @@ export interface IPreviewSpaceCadPreparationResponse {
     coordinateAnalysis?: SpaceCadCoordinateAnalysisV1;
     coordinateMetadata?: SpaceCadCoordinateMetadataV1;
     inventorySummary?: SpaceCadInventorySummaryV1;
+    inventory?: SpaceCadPreparationInventoryDto;
     mappingProfile?: SpaceCadMappingProfileSummaryDto;
     mappingPreview?: SpaceCadMappingPreviewV1;
     semanticPreview?: SpaceCadSemanticPreviewV1;
@@ -21357,11 +21361,55 @@ export interface ISpaceCadAffineTransformV1 {
     offsetZ?: number;
 }
 
+export class SpaceCadBlockAttributeInventoryV1 implements ISpaceCadBlockAttributeInventoryV1 {
+    name!: string;
+    referenceCount!: number;
+    distinctValueCount!: number;
+
+    constructor(data?: ISpaceCadBlockAttributeInventoryV1) {
+        if (data) {
+            for (var property in data) {
+                if (data.hasOwnProperty(property))
+                    (this as any)[property] = (data as any)[property];
+            }
+        }
+    }
+
+    init(_data?: any) {
+        if (_data) {
+            this.name = _data["name"];
+            this.referenceCount = _data["referenceCount"];
+            this.distinctValueCount = _data["distinctValueCount"];
+        }
+    }
+
+    static fromJS(data: any): SpaceCadBlockAttributeInventoryV1 {
+        data = typeof data === 'object' ? data : {};
+        let result = new SpaceCadBlockAttributeInventoryV1();
+        result.init(data);
+        return result;
+    }
+
+    toJSON(data?: any) {
+        data = typeof data === 'object' ? data : {};
+        data["name"] = this.name;
+        data["referenceCount"] = this.referenceCount;
+        data["distinctValueCount"] = this.distinctValueCount;
+        return data;
+    }
+}
+
+export interface ISpaceCadBlockAttributeInventoryV1 {
+    name: string;
+    referenceCount: number;
+    distinctValueCount: number;
+}
+
 export class SpaceCadBoundsV1 implements ISpaceCadBoundsV1 {
-    minX?: number;
-    minY?: number;
-    maxX?: number;
-    maxY?: number;
+    minX!: number;
+    minY!: number;
+    maxX!: number;
+    maxY!: number;
 
     constructor(data?: ISpaceCadBoundsV1) {
         if (data) {
@@ -21399,10 +21447,10 @@ export class SpaceCadBoundsV1 implements ISpaceCadBoundsV1 {
 }
 
 export interface ISpaceCadBoundsV1 {
-    minX?: number;
-    minY?: number;
-    maxX?: number;
-    maxY?: number;
+    minX: number;
+    minY: number;
+    maxX: number;
+    maxY: number;
 }
 
 export enum SpaceCadChangeKind {
@@ -21937,15 +21985,15 @@ export enum SpaceCadGeometryRule {
 }
 
 export class SpaceCadInventorySummaryV1 implements ISpaceCadInventorySummaryV1 {
-    layerCount?: number;
-    emptyLayerCount?: number;
-    blockCount?: number;
-    undefinedBlockCount?: number;
-    blockReferenceCount?: number;
-    attributedBlockReferenceCount?: number;
-    entityCount?: number;
-    supportedEntityCount?: number;
-    unsupportedEntityCount?: number;
+    layerCount!: number;
+    emptyLayerCount!: number;
+    blockCount!: number;
+    undefinedBlockCount!: number;
+    blockReferenceCount!: number;
+    attributedBlockReferenceCount!: number;
+    entityCount!: number;
+    supportedEntityCount!: number;
+    unsupportedEntityCount!: number;
     bounds?: SpaceCadBoundsV1;
 
     constructor(data?: ISpaceCadInventorySummaryV1) {
@@ -21996,15 +22044,15 @@ export class SpaceCadInventorySummaryV1 implements ISpaceCadInventorySummaryV1 {
 }
 
 export interface ISpaceCadInventorySummaryV1 {
-    layerCount?: number;
-    emptyLayerCount?: number;
-    blockCount?: number;
-    undefinedBlockCount?: number;
-    blockReferenceCount?: number;
-    attributedBlockReferenceCount?: number;
-    entityCount?: number;
-    supportedEntityCount?: number;
-    unsupportedEntityCount?: number;
+    layerCount: number;
+    emptyLayerCount: number;
+    blockCount: number;
+    undefinedBlockCount: number;
+    blockReferenceCount: number;
+    attributedBlockReferenceCount: number;
+    entityCount: number;
+    supportedEntityCount: number;
+    unsupportedEntityCount: number;
     bounds?: SpaceCadBoundsV1;
 }
 
@@ -22012,6 +22060,101 @@ export enum SpaceCadIssueSeverity {
     Info = "Info",
     Warning = "Warning",
     Blocking = "Blocking",
+}
+
+export class SpaceCadLayerInventoryV1 implements ISpaceCadLayerInventoryV1 {
+    layerId!: string;
+    name!: string;
+    color?: string | undefined;
+    lineType?: string | undefined;
+    isVisible!: boolean;
+    entityCount!: number;
+    supportedEntityCount!: number;
+    unsupportedEntityCount!: number;
+    blockReferenceCount!: number;
+    attributedEntityCount!: number;
+    entityTypeCounts!: { [key: string]: number; };
+    bounds?: SpaceCadBoundsV1;
+
+    constructor(data?: ISpaceCadLayerInventoryV1) {
+        if (data) {
+            for (var property in data) {
+                if (data.hasOwnProperty(property))
+                    (this as any)[property] = (data as any)[property];
+            }
+        }
+        if (!data) {
+            this.entityTypeCounts = {};
+        }
+    }
+
+    init(_data?: any) {
+        if (_data) {
+            this.layerId = _data["layerId"];
+            this.name = _data["name"];
+            this.color = _data["color"];
+            this.lineType = _data["lineType"];
+            this.isVisible = _data["isVisible"];
+            this.entityCount = _data["entityCount"];
+            this.supportedEntityCount = _data["supportedEntityCount"];
+            this.unsupportedEntityCount = _data["unsupportedEntityCount"];
+            this.blockReferenceCount = _data["blockReferenceCount"];
+            this.attributedEntityCount = _data["attributedEntityCount"];
+            if (_data["entityTypeCounts"]) {
+                this.entityTypeCounts = {} as any;
+                for (let key in _data["entityTypeCounts"]) {
+                    if (_data["entityTypeCounts"].hasOwnProperty(key))
+                        (this.entityTypeCounts as any)![key] = _data["entityTypeCounts"][key];
+                }
+            }
+            this.bounds = _data["bounds"] ? SpaceCadBoundsV1.fromJS(_data["bounds"]) : undefined as any;
+        }
+    }
+
+    static fromJS(data: any): SpaceCadLayerInventoryV1 {
+        data = typeof data === 'object' ? data : {};
+        let result = new SpaceCadLayerInventoryV1();
+        result.init(data);
+        return result;
+    }
+
+    toJSON(data?: any) {
+        data = typeof data === 'object' ? data : {};
+        data["layerId"] = this.layerId;
+        data["name"] = this.name;
+        data["color"] = this.color;
+        data["lineType"] = this.lineType;
+        data["isVisible"] = this.isVisible;
+        data["entityCount"] = this.entityCount;
+        data["supportedEntityCount"] = this.supportedEntityCount;
+        data["unsupportedEntityCount"] = this.unsupportedEntityCount;
+        data["blockReferenceCount"] = this.blockReferenceCount;
+        data["attributedEntityCount"] = this.attributedEntityCount;
+        if (this.entityTypeCounts) {
+            data["entityTypeCounts"] = {};
+            for (let key in this.entityTypeCounts) {
+                if (this.entityTypeCounts.hasOwnProperty(key))
+                    (data["entityTypeCounts"] as any)[key] = (this.entityTypeCounts as any)[key];
+            }
+        }
+        data["bounds"] = this.bounds ? this.bounds.toJSON() : undefined as any;
+        return data;
+    }
+}
+
+export interface ISpaceCadLayerInventoryV1 {
+    layerId: string;
+    name: string;
+    color?: string | undefined;
+    lineType?: string | undefined;
+    isVisible: boolean;
+    entityCount: number;
+    supportedEntityCount: number;
+    unsupportedEntityCount: number;
+    blockReferenceCount: number;
+    attributedEntityCount: number;
+    entityTypeCounts: { [key: string]: number; };
+    bounds?: SpaceCadBoundsV1;
 }
 
 export class SpaceCadLayerMappingOverrideV1 implements ISpaceCadLayerMappingOverrideV1 {
@@ -22850,6 +22993,150 @@ export interface ISpaceCadPointV1 {
     x: number;
     y: number;
     z?: number;
+}
+
+export class SpaceCadPreparationBlockInventoryDto implements ISpaceCadPreparationBlockInventoryDto {
+    blockId!: string;
+    name!: string;
+    isDefined!: boolean;
+    isExternalReference!: boolean;
+    definitionEntityCount!: number;
+    referenceCount!: number;
+    attributedReferenceCount!: number;
+    attributes!: SpaceCadBlockAttributeInventoryV1[];
+    referenceBounds?: SpaceCadBoundsV1;
+
+    constructor(data?: ISpaceCadPreparationBlockInventoryDto) {
+        if (data) {
+            for (var property in data) {
+                if (data.hasOwnProperty(property))
+                    (this as any)[property] = (data as any)[property];
+            }
+        }
+        if (!data) {
+            this.attributes = [];
+        }
+    }
+
+    init(_data?: any) {
+        if (_data) {
+            this.blockId = _data["blockId"];
+            this.name = _data["name"];
+            this.isDefined = _data["isDefined"];
+            this.isExternalReference = _data["isExternalReference"];
+            this.definitionEntityCount = _data["definitionEntityCount"];
+            this.referenceCount = _data["referenceCount"];
+            this.attributedReferenceCount = _data["attributedReferenceCount"];
+            if (Array.isArray(_data["attributes"])) {
+                this.attributes = [] as any;
+                for (let item of _data["attributes"])
+                    this.attributes!.push(SpaceCadBlockAttributeInventoryV1.fromJS(item));
+            }
+            this.referenceBounds = _data["referenceBounds"] ? SpaceCadBoundsV1.fromJS(_data["referenceBounds"]) : undefined as any;
+        }
+    }
+
+    static fromJS(data: any): SpaceCadPreparationBlockInventoryDto {
+        data = typeof data === 'object' ? data : {};
+        let result = new SpaceCadPreparationBlockInventoryDto();
+        result.init(data);
+        return result;
+    }
+
+    toJSON(data?: any) {
+        data = typeof data === 'object' ? data : {};
+        data["blockId"] = this.blockId;
+        data["name"] = this.name;
+        data["isDefined"] = this.isDefined;
+        data["isExternalReference"] = this.isExternalReference;
+        data["definitionEntityCount"] = this.definitionEntityCount;
+        data["referenceCount"] = this.referenceCount;
+        data["attributedReferenceCount"] = this.attributedReferenceCount;
+        if (Array.isArray(this.attributes)) {
+            data["attributes"] = [];
+            for (let item of this.attributes)
+                data["attributes"].push(item ? item.toJSON() : undefined as any);
+        }
+        data["referenceBounds"] = this.referenceBounds ? this.referenceBounds.toJSON() : undefined as any;
+        return data;
+    }
+}
+
+export interface ISpaceCadPreparationBlockInventoryDto {
+    blockId: string;
+    name: string;
+    isDefined: boolean;
+    isExternalReference: boolean;
+    definitionEntityCount: number;
+    referenceCount: number;
+    attributedReferenceCount: number;
+    attributes: SpaceCadBlockAttributeInventoryV1[];
+    referenceBounds?: SpaceCadBoundsV1;
+}
+
+export class SpaceCadPreparationInventoryDto implements ISpaceCadPreparationInventoryDto {
+    summary!: SpaceCadInventorySummaryV1;
+    layers!: SpaceCadLayerInventoryV1[];
+    blocks!: SpaceCadPreparationBlockInventoryDto[];
+
+    constructor(data?: ISpaceCadPreparationInventoryDto) {
+        if (data) {
+            for (var property in data) {
+                if (data.hasOwnProperty(property))
+                    (this as any)[property] = (data as any)[property];
+            }
+        }
+        if (!data) {
+            this.summary = new SpaceCadInventorySummaryV1();
+            this.layers = [];
+            this.blocks = [];
+        }
+    }
+
+    init(_data?: any) {
+        if (_data) {
+            this.summary = _data["summary"] ? SpaceCadInventorySummaryV1.fromJS(_data["summary"]) : new SpaceCadInventorySummaryV1();
+            if (Array.isArray(_data["layers"])) {
+                this.layers = [] as any;
+                for (let item of _data["layers"])
+                    this.layers!.push(SpaceCadLayerInventoryV1.fromJS(item));
+            }
+            if (Array.isArray(_data["blocks"])) {
+                this.blocks = [] as any;
+                for (let item of _data["blocks"])
+                    this.blocks!.push(SpaceCadPreparationBlockInventoryDto.fromJS(item));
+            }
+        }
+    }
+
+    static fromJS(data: any): SpaceCadPreparationInventoryDto {
+        data = typeof data === 'object' ? data : {};
+        let result = new SpaceCadPreparationInventoryDto();
+        result.init(data);
+        return result;
+    }
+
+    toJSON(data?: any) {
+        data = typeof data === 'object' ? data : {};
+        data["summary"] = this.summary ? this.summary.toJSON() : undefined as any;
+        if (Array.isArray(this.layers)) {
+            data["layers"] = [];
+            for (let item of this.layers)
+                data["layers"].push(item ? item.toJSON() : undefined as any);
+        }
+        if (Array.isArray(this.blocks)) {
+            data["blocks"] = [];
+            for (let item of this.blocks)
+                data["blocks"].push(item ? item.toJSON() : undefined as any);
+        }
+        return data;
+    }
+}
+
+export interface ISpaceCadPreparationInventoryDto {
+    summary: SpaceCadInventorySummaryV1;
+    layers: SpaceCadLayerInventoryV1[];
+    blocks: SpaceCadPreparationBlockInventoryDto[];
 }
 
 export class SpaceCadPreparationStatusDto implements ISpaceCadPreparationStatusDto {

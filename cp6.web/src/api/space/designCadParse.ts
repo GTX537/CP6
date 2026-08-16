@@ -95,6 +95,67 @@ export interface StartSpaceCadParseRequest {
   mappingPreviewSha256: string
 }
 
+export type SpaceCadSemanticTarget =
+  | 'Wall'
+  | 'Column'
+  | 'Door'
+  | 'Dock'
+  | 'Zone'
+  | 'Aisle'
+  | 'Rack'
+  | 'Equipment'
+  | 'VerticalCirculation'
+  | 'Annotation'
+  | 'Guide'
+  | 'RestrictedArea'
+
+export type SpaceCadGeometryRule =
+  | 'DirectGeometry'
+  | 'Centerline'
+  | 'ClosedBoundary'
+
+export interface SpaceCadLayerMappingOverride {
+  layerId: string
+  ignore: boolean
+  target?: SpaceCadSemanticTarget
+  targetSubtype?: string
+  geometryRule?: SpaceCadGeometryRule
+  defaultHeightMillimeters?: number
+  defaultThicknessMillimeters?: number
+  confidenceWeight?: number
+}
+
+export interface SpaceCadLayerInventory {
+  layerId: string
+  name: string
+  color?: string
+  lineType?: string
+  isVisible: boolean
+  entityCount: number
+  supportedEntityCount: number
+  unsupportedEntityCount: number
+  blockReferenceCount: number
+  attributedEntityCount: number
+  entityTypeCounts: Record<string, number>
+  bounds?: { minX: number; minY: number; maxX: number; maxY: number }
+}
+
+export interface SpaceCadBlockInventory {
+  blockId: string
+  name: string
+  isDefined: boolean
+  isExternalReference: boolean
+  definitionEntityCount: number
+  referenceCount: number
+  attributedReferenceCount: number
+  attributes: Array<{
+    name: string
+    referenceCount: number
+    distinctValueCount: number
+  }>
+  referenceBounds?: { minX: number; minY: number; maxX: number; maxY: number }
+}
+
 export interface PreviewSpaceCadPreparationResponse {
   preparationId?: string
   expiresAtUtc?: string
@@ -119,8 +180,37 @@ export interface PreviewSpaceCadPreparationResponse {
     supportedEntityCount: number
     unsupportedEntityCount: number
   }
+  inventory?: {
+    summary: {
+      layerCount: number
+      emptyLayerCount: number
+      blockCount: number
+      undefinedBlockCount: number
+      blockReferenceCount: number
+      attributedBlockReferenceCount: number
+      entityCount: number
+      supportedEntityCount: number
+      unsupportedEntityCount: number
+    }
+    layers: SpaceCadLayerInventory[]
+    blocks: SpaceCadBlockInventory[]
+  }
   mappingProfile: SpaceCadMappingProfile
   mappingPreview?: {
+    layerOverrides: SpaceCadLayerMappingOverride[]
+    decisions: Array<{
+      sourceKind: 'Layer' | 'Block'
+      sourceKey: string
+      layerId?: string
+      objectCount: number
+      status: 'Mapped' | 'Unmapped' | 'Ignored' | 'Conflict'
+      decisionSource: 'ProfileRule' | 'LayerOverride' | 'None'
+      ruleId?: string
+      target?: SpaceCadSemanticTarget
+      targetSubtype?: string
+      geometryRule?: string
+      confidenceWeight?: number
+    }>
     summary: {
       mappedLayerCount: number
       unmappedLayerCount: number
@@ -195,7 +285,7 @@ export const designCadParseApi = {
       rotationZDegrees: number
       mappingProfileId: string
       mappingProfileVersion: number
-      layerOverrides: unknown[]
+      layerOverrides: SpaceCadLayerMappingOverride[]
     },
   ) {
     return http.post<unknown, PreviewSpaceCadPreparationResponse>(

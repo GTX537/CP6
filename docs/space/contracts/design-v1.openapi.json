@@ -21240,6 +21240,9 @@
           "inventorySummary": {
             "$ref": "#/components/schemas/CP6.Space.Contracts.SpaceCadInventorySummaryV1"
           },
+          "inventory": {
+            "$ref": "#/components/schemas/CP6.Space.Contracts.SpaceCadPreparationInventoryDto"
+          },
           "mappingProfile": {
             "$ref": "#/components/schemas/CP6.Space.Contracts.SpaceCadMappingProfileSummaryDto"
           },
@@ -22818,7 +22821,35 @@
         },
         "additionalProperties": false
       },
+      "CP6.Space.Contracts.SpaceCadBlockAttributeInventoryV1": {
+        "required": [
+          "distinctValueCount",
+          "name",
+          "referenceCount"
+        ],
+        "type": "object",
+        "properties": {
+          "name": {
+            "type": "string"
+          },
+          "referenceCount": {
+            "type": "integer",
+            "format": "int64"
+          },
+          "distinctValueCount": {
+            "type": "integer",
+            "format": "int64"
+          }
+        },
+        "additionalProperties": false
+      },
       "CP6.Space.Contracts.SpaceCadBoundsV1": {
+        "required": [
+          "maxX",
+          "maxY",
+          "minX",
+          "minY"
+        ],
         "type": "object",
         "properties": {
           "minX": {
@@ -23189,6 +23220,17 @@
         "type": "string"
       },
       "CP6.Space.Contracts.SpaceCadInventorySummaryV1": {
+        "required": [
+          "attributedBlockReferenceCount",
+          "blockCount",
+          "blockReferenceCount",
+          "emptyLayerCount",
+          "entityCount",
+          "layerCount",
+          "supportedEntityCount",
+          "undefinedBlockCount",
+          "unsupportedEntityCount"
+        ],
         "type": "object",
         "properties": {
           "layerCount": {
@@ -23240,6 +23282,70 @@
           "Blocking"
         ],
         "type": "string"
+      },
+      "CP6.Space.Contracts.SpaceCadLayerInventoryV1": {
+        "required": [
+          "attributedEntityCount",
+          "blockReferenceCount",
+          "entityCount",
+          "entityTypeCounts",
+          "isVisible",
+          "layerId",
+          "name",
+          "supportedEntityCount",
+          "unsupportedEntityCount"
+        ],
+        "type": "object",
+        "properties": {
+          "layerId": {
+            "type": "string"
+          },
+          "name": {
+            "type": "string"
+          },
+          "color": {
+            "type": "string",
+            "nullable": true
+          },
+          "lineType": {
+            "type": "string",
+            "nullable": true
+          },
+          "isVisible": {
+            "type": "boolean"
+          },
+          "entityCount": {
+            "type": "integer",
+            "format": "int64"
+          },
+          "supportedEntityCount": {
+            "type": "integer",
+            "format": "int64"
+          },
+          "unsupportedEntityCount": {
+            "type": "integer",
+            "format": "int64"
+          },
+          "blockReferenceCount": {
+            "type": "integer",
+            "format": "int64"
+          },
+          "attributedEntityCount": {
+            "type": "integer",
+            "format": "int64"
+          },
+          "entityTypeCounts": {
+            "type": "object",
+            "additionalProperties": {
+              "type": "integer",
+              "format": "int64"
+            }
+          },
+          "bounds": {
+            "$ref": "#/components/schemas/CP6.Space.Contracts.SpaceCadBoundsV1"
+          }
+        },
+        "additionalProperties": false
       },
       "CP6.Space.Contracts.SpaceCadLayerMappingOverrideV1": {
         "required": [
@@ -23753,6 +23859,81 @@
           "z": {
             "type": "number",
             "format": "double"
+          }
+        },
+        "additionalProperties": false
+      },
+      "CP6.Space.Contracts.SpaceCadPreparationBlockInventoryDto": {
+        "required": [
+          "attributedReferenceCount",
+          "attributes",
+          "blockId",
+          "definitionEntityCount",
+          "isDefined",
+          "isExternalReference",
+          "name",
+          "referenceCount"
+        ],
+        "type": "object",
+        "properties": {
+          "blockId": {
+            "type": "string"
+          },
+          "name": {
+            "type": "string"
+          },
+          "isDefined": {
+            "type": "boolean"
+          },
+          "isExternalReference": {
+            "type": "boolean"
+          },
+          "definitionEntityCount": {
+            "type": "integer",
+            "format": "int64"
+          },
+          "referenceCount": {
+            "type": "integer",
+            "format": "int64"
+          },
+          "attributedReferenceCount": {
+            "type": "integer",
+            "format": "int64"
+          },
+          "attributes": {
+            "type": "array",
+            "items": {
+              "$ref": "#/components/schemas/CP6.Space.Contracts.SpaceCadBlockAttributeInventoryV1"
+            }
+          },
+          "referenceBounds": {
+            "$ref": "#/components/schemas/CP6.Space.Contracts.SpaceCadBoundsV1"
+          }
+        },
+        "additionalProperties": false
+      },
+      "CP6.Space.Contracts.SpaceCadPreparationInventoryDto": {
+        "required": [
+          "blocks",
+          "layers",
+          "summary"
+        ],
+        "type": "object",
+        "properties": {
+          "summary": {
+            "$ref": "#/components/schemas/CP6.Space.Contracts.SpaceCadInventorySummaryV1"
+          },
+          "layers": {
+            "type": "array",
+            "items": {
+              "$ref": "#/components/schemas/CP6.Space.Contracts.SpaceCadLayerInventoryV1"
+            }
+          },
+          "blocks": {
+            "type": "array",
+            "items": {
+              "$ref": "#/components/schemas/CP6.Space.Contracts.SpaceCadPreparationBlockInventoryDto"
+            }
           }
         },
         "additionalProperties": false
