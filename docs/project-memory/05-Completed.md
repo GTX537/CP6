@@ -1,12 +1,20 @@
 # 已完成能力与近期里程碑
 
+## 2026-08-16 Space 租户私有 CAD Mapping Profile
+
+- 新增 `Space_LayerMappingProfile` 与 append-only `Space_LayerMappingProfileVersion`：Tenant 过滤、复合外键、唯一名称/版本、RowVersion、规范 Profile JSON、Definition SHA-256、复制来源和创建审计均持久化；已发布迁移未修改。
+- System Profile 保持只读；租户可复制系统/本租户版本、结构化维护图层与块匹配规则、启停方案，并以 `ExpectedRowVersion + Idempotency-Key` 追加新版本。跨租户读取/复制返回稳定 NotFound，旧版本更新/删除由 `SpaceContext` 失败关闭。
+- Design V1 新增 CAD Profile 管理 list/get/save，Preparation Catalog 自动消费当前租户版本；OpenAPI、C#/TypeScript SDK、权限矩阵和 Problem Details 同步。CAD 起始向导无需填写内部 ID，可复制/编辑规则并在保存后自动刷新选中新启用版本。
+- 门禁为 Space Unit 540/540、Space Integration 真 SQL 453/453（0 skipped）、CP6.Tests 2,933、Web 866、Vue TypeScript、production build、OpenAPI/双 SDK、EF 无 pending model changes，以及完整 solution Release 0 warning / 0 error。详见 `docs/space/reports/2026-08-16-space-tenant-cad-mapping-profiles.md`。
+- LM-FR-013 仓库实现闭环；WP4 仍需真实多路径、Provider、黄金 CAD、WMS 与 Pilot 接受证据，核心 GA 保持 72% / `NoGo`。
+
 ## 2026-08-16 Space CAD 图层/块审核与逐层 Override
 
 - Design V1 CAD Preparation Preview 复用现有确定性 Inventory/Mapping 权威，新增面向审核的完整图层与块清单；原始 CAD 字节和逐块引用明细不进入浏览器。
 - CAD 向导可搜索并查看图层颜色、线型、可见性、对象/支持/未支持计数和块定义/引用/属性计数；映射 Profile 明确显示系统公共或租户私有 Scope。
 - 每个图层可显式沿用 Profile、忽略或覆盖语义目标，并调整几何规则和置信度。单位、坐标、Profile 或 Override 变化都会撤销确认并阻止使用旧 Preview 启动 Parse，重新预览后由服务端密封完整 Override Snapshot。
 - 门禁为 Space Unit 540/540、Space Integration 真 SQL 447/447（0 skipped）、CP6.Tests 2,932、Web 863、Vue TypeScript、production build、OpenAPI/双 SDK 和完整 solution Release 0 warning / 0 error。详见 `docs/space/reports/2026-08-16-space-cad-inventory-layer-overrides.md`。
-- LM-FR-012 仓库实现闭环；LM-FR-013 只关闭逐层 Override 与 Scope 展示，租户私有 Profile 持久化/管理仍待完成。WP4 保持 Partial/Pending，核心 GA 保持 72% / `NoGo`。
+- LM-FR-012 仓库实现闭环；当时 LM-FR-013 只关闭逐层 Override 与 Scope 展示，租户私有 Profile 已由同日后续任务闭环。WP4 保持 Partial/Pending，核心 GA 保持 72% / `NoGo`。
 
 ## 2026-08-15 Space 来源移除引用预检
 

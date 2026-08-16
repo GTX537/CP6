@@ -62,6 +62,8 @@ public sealed class SpaceDesignV1OpenApiTests
             "/api/space/design/v1/generation-runs/{runId}/issues",
             "/api/space/design/v1/generation-runs/{runId}/decisions",
             "/api/space/design/v1/generation-runs/{runId}/decisions:batch",
+            "/api/space/design/v1/mapping-profiles/cad",
+            "/api/space/design/v1/mapping-profiles/cad/{profileId}",
             "/api/space/design/v1/mapping-profiles/excel",
             "/api/space/design/v1/mapping-profiles/excel/{profileId}",
             "/api/space/design/v1/mapping-profiles/excel/preview",
@@ -160,8 +162,8 @@ public sealed class SpaceDesignV1OpenApiTests
             .Select(operation =>
                 operation.Value.GetProperty("operationId").GetString())
             .ToArray();
-        Assert.Equal(143, operationIds.Length);
-        Assert.Equal(143, operationIds.Distinct().Count());
+        Assert.Equal(146, operationIds.Length);
+        Assert.Equal(146, operationIds.Distinct().Count());
         Assert.Contains("GetCapability", operationIds);
         Assert.Contains("ReplaceProviderConfiguration", operationIds);
         Assert.Contains("GetPolicy", operationIds);
@@ -3168,6 +3170,61 @@ public sealed class SpaceDesignV1OpenApiTests
         Assert.Equal(
             "#/components/schemas/CP6.Space.Contracts.SpaceCadPreparationInventoryDto",
             inventory.GetProperty("$ref").GetString());
+    }
+
+    [Fact]
+    public void Cad_mapping_profile_contract_is_versioned_and_typed()
+    {
+        using var document = ReadContract();
+        var root = document.RootElement;
+        var paths = root.GetProperty("paths");
+        var collection = paths.GetProperty(
+            "/api/space/design/v1/mapping-profiles/cad");
+        Assert.True(collection.TryGetProperty("get", out _));
+        var save = collection.GetProperty("post");
+        Assert.True(save.GetProperty("requestBody")
+            .GetProperty("required").GetBoolean());
+        var idempotency = save.GetProperty("parameters")
+            .EnumerateArray()
+            .Single(parameter => parameter.GetProperty("name").GetString() ==
+                "Idempotency-Key");
+        Assert.True(idempotency.GetProperty("required").GetBoolean());
+        Assert.True(paths.GetProperty(
+                "/api/space/design/v1/mapping-profiles/cad/{profileId}")
+            .TryGetProperty("get", out _));
+
+        var schemas = root.GetProperty("components").GetProperty("schemas");
+        AssertExactRequired(
+            Schema(schemas, "CP6.Space.Contracts.SaveSpaceCadMappingProfileRequest"),
+            "name",
+            "isEnabled",
+            "rules");
+        AssertExactRequired(
+            Schema(schemas, "CP6.Space.Contracts.SaveSpaceCadMappingProfileResponse"),
+            "profile",
+            "created",
+            "idempotentReplay");
+        AssertExactRequired(
+            Schema(schemas, "CP6.Space.Contracts.SpaceCadMappingProfileDto"),
+            "id",
+            "name",
+            "scope",
+            "version",
+            "isReadOnly",
+            "isEnabled",
+            "definitionSha256",
+            "rules");
+        AssertExactRequired(
+            Schema(schemas, "CP6.Space.Contracts.SpaceCadMappingRuleV1"),
+            "ruleId",
+            "priority",
+            "sourceKind",
+            "matchKind",
+            "pattern",
+            "target",
+            "geometryRule",
+            "confidenceWeight",
+            "isRequired");
     }
 
     [Fact]

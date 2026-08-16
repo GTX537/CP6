@@ -61,9 +61,12 @@ public sealed class StandardSpaceCadMappingProfileCatalog :
                     SpaceCadSemanticTarget.Rack, SpaceCadGeometryRule.DirectGeometry, .90m),
             ]));
 
+    public static SpaceCadMappingProfileV1 SystemProfile =>
+        Standard with { Rules = Standard.Rules.ToArray() };
+
     public Task<IReadOnlyList<SpaceCadMappingProfileV1>> ListAsync(
         CancellationToken cancellationToken = default) =>
-        Task.FromResult<IReadOnlyList<SpaceCadMappingProfileV1>>([Standard]);
+        Task.FromResult<IReadOnlyList<SpaceCadMappingProfileV1>>([SystemProfile]);
 
     public Task<SpaceCadMappingProfileV1?> FindAsync(
         Guid profileId,
@@ -71,7 +74,7 @@ public sealed class StandardSpaceCadMappingProfileCatalog :
         CancellationToken cancellationToken = default) =>
         Task.FromResult(
             profileId == Standard.ProfileId && version == Standard.Version
-                ? Standard
+                ? SystemProfile
                 : null);
 
     private static SpaceCadMappingRuleV1 Rule(

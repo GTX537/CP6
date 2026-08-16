@@ -35,6 +35,23 @@ public interface ISpaceCadMappingProfileCatalog
         CancellationToken cancellationToken = default);
 }
 
+public interface ISpaceCadMappingProfileService :
+    ISpaceCadMappingProfileCatalog
+{
+    Task<IReadOnlyList<SpaceCadMappingProfileDto>> GetProfilesAsync(
+        CancellationToken cancellationToken = default);
+
+    Task<SpaceCadMappingProfileDto> GetProfileAsync(
+        Guid profileId,
+        int? version = null,
+        CancellationToken cancellationToken = default);
+
+    Task<SaveSpaceCadMappingProfileResponse> SaveProfileAsync(
+        SaveSpaceCadMappingProfileRequest request,
+        string idempotencyKey,
+        CancellationToken cancellationToken = default);
+}
+
 public interface ISpaceCadPreparationService
 {
     Task<SpaceCadPreparationStatusDto> GetStatusAsync(

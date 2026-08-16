@@ -125,6 +125,14 @@ public static class SpaceErrorCodes
         "SPACE_CAD_PREPARATION_EXPIRED";
     public const string CadPreparationUnavailable =
         "SPACE_CAD_PREPARATION_UNAVAILABLE";
+    public const string CadMappingProfileInvalid =
+        "SPACE_CAD_MAPPING_PROFILE_INVALID";
+    public const string CadMappingProfileNotFound =
+        "SPACE_CAD_MAPPING_PROFILE_NOT_FOUND";
+    public const string CadMappingProfileConflict =
+        "SPACE_CAD_MAPPING_PROFILE_CONFLICT";
+    public const string CadMappingProfileReadOnly =
+        "SPACE_CAD_MAPPING_PROFILE_READ_ONLY";
     public const string CadProviderConfigurationInvalid =
         "SPACE_CAD_PROVIDER_CONFIGURATION_INVALID";
     public const string CadProviderRevisionConflict =

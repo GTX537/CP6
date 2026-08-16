@@ -9,6 +9,8 @@ import {
   type SpaceCadSemanticTarget,
   type SpaceCadSiteCapability,
 } from '@/api/space/designCadParse'
+import type { SpaceCadMappingProfileDetail } from '@/api/space/designCadMappingProfiles'
+import DesignCadMappingProfileManager from './DesignCadMappingProfileManager.vue'
 
 const props = defineProps<{
   siteId: string
@@ -204,6 +206,26 @@ async function buildPreview(): Promise<void> {
     error.value = message(cause, 'CAD 准备预览失败；当前 Draft 未变更')
   } finally {
     busy.value = false
+  }
+}
+
+async function handleMappingProfileSaved(
+  saved: SpaceCadMappingProfileDetail,
+): Promise<void> {
+  try {
+    profiles.value = await designCadParseApi.listMappingProfiles(props.versionId)
+    const current = profiles.value.find((profile) =>
+      profile.profileId === saved.id && profile.version === saved.version,
+    )
+    if (current) {
+      form.mappingProfileKey = `${current.profileId}:${current.version}`
+    }
+    markPreviewDirty()
+  } catch (cause) {
+    error.value = message(
+      cause,
+      'Profile 已保存，但向导刷新失败；请重新打开 CAD 起始向导。',
+    )
   }
 }
 
@@ -428,21 +450,28 @@ function handleDialogKeydown(event: KeyboardEvent): void {
 
         <section class="step">
           <span class="step-number">3</span>
-          <div class="fields">
-            <h3>映射 Profile</h3>
-            <label>语义映射
-              <select v-model="form.mappingProfileKey" aria-label="映射 Profile">
-                <option value="" disabled>请选择服务器已知 Profile</option>
-                <option
-                  v-for="profile in profiles"
-                  :key="`${profile.profileId}:${profile.version}`"
-                  :value="`${profile.profileId}:${profile.version}`"
-                >{{ profile.name }} · {{ profile.scope === 'Tenant' ? '租户私有' : '系统公共' }} · v{{ profile.version }} · {{ profile.ruleCount }} 条规则</option>
-              </select>
-            </label>
-            <button type="button" class="primary" :disabled="!canPreview || busy" @click="buildPreview">
-              {{ busy ? '处理中…' : previewDirty ? '重新生成语义预览' : '生成语义预览' }}
-            </button>
+          <div>
+            <div class="fields">
+              <h3>映射 Profile</h3>
+              <label>语义映射
+                <select v-model="form.mappingProfileKey" aria-label="映射 Profile">
+                  <option value="" disabled>请选择服务器已知 Profile</option>
+                  <option
+                    v-for="profile in profiles"
+                    :key="`${profile.profileId}:${profile.version}`"
+                    :value="`${profile.profileId}:${profile.version}`"
+                  >{{ profile.name }} · {{ profile.scope === 'Tenant' ? '租户私有' : '系统公共' }} · v{{ profile.version }} · {{ profile.ruleCount }} 条规则</option>
+                </select>
+              </label>
+              <button type="button" class="primary" :disabled="!canPreview || busy" @click="buildPreview">
+                {{ busy ? '处理中…' : previewDirty ? '重新生成语义预览' : '生成语义预览' }}
+              </button>
+            </div>
+            <DesignCadMappingProfileManager
+              :initial-profile-id="selectedProfile?.profileId"
+              :initial-profile-version="selectedProfile?.version"
+              @saved="handleMappingProfileSaved"
+            />
           </div>
         </section>
 

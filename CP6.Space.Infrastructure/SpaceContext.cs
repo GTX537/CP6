@@ -139,6 +139,10 @@ public sealed class SpaceContext : DbContext
         Set<SpaceFieldPolicy>();
     public DbSet<SpaceFieldPolicyField> FieldPolicyFields =>
         Set<SpaceFieldPolicyField>();
+    public DbSet<SpaceCadMappingProfile> CadMappingProfiles =>
+        Set<SpaceCadMappingProfile>();
+    public DbSet<SpaceCadMappingProfileVersion> CadMappingProfileVersions =>
+        Set<SpaceCadMappingProfileVersion>();
     public DbSet<SpaceExcelMappingProfile> ExcelMappingProfiles =>
         Set<SpaceExcelMappingProfile>();
     public DbSet<SpaceExcelMappingProfileVersion> ExcelMappingProfileVersions =>
@@ -209,6 +213,8 @@ public sealed class SpaceContext : DbContext
         ConfigureExternalGrantObject(modelBuilder);
         ConfigureFieldPolicy(modelBuilder);
         ConfigureFieldPolicyField(modelBuilder);
+        ConfigureCadMappingProfile(modelBuilder);
+        ConfigureCadMappingProfileVersion(modelBuilder);
         ConfigureExcelMappingProfile(modelBuilder);
         ConfigureExcelMappingProfileVersion(modelBuilder);
         ConfigurePutawayRecommendation(modelBuilder);
@@ -265,6 +271,7 @@ public sealed class SpaceContext : DbContext
         ProtectElementCommandHistory();
         ProtectEditLeaseTakeoverAuditHistory();
         ProtectCadProviderCertificationHistory();
+        ProtectCadMappingVersionHistory();
         ProtectExcelMappingVersionHistory();
         ProtectPersonnelEventHistory();
         ProtectDeviceEventHistory();
@@ -292,6 +299,7 @@ public sealed class SpaceContext : DbContext
         ProtectElementCommandHistory();
         ProtectEditLeaseTakeoverAuditHistory();
         ProtectCadProviderCertificationHistory();
+        ProtectCadMappingVersionHistory();
         ProtectExcelMappingVersionHistory();
         ProtectPersonnelEventHistory();
         ProtectDeviceEventHistory();
@@ -4793,6 +4801,80 @@ public sealed class SpaceContext : DbContext
             x => x.TenantId == CurrentTenantId && !x.IsDeleted);
     }
 
+    private void ConfigureCadMappingProfile(ModelBuilder modelBuilder)
+    {
+        var entity = modelBuilder.Entity<SpaceCadMappingProfile>();
+        entity.ToTable(
+            "Space_LayerMappingProfile",
+            table => table.HasCheckConstraint(
+                "CK_Space_LayerMappingProfile_CurrentVersion",
+                "[CurrentVersion] > 0"));
+        entity.HasKey(x => x.Id);
+        entity.Property(x => x.Id).ValueGeneratedNever();
+        entity.HasAlternateKey(x => new { x.TenantId, x.Id })
+            .HasName("AK_Space_LayerMappingProfile_TenantId_Id");
+        ConfigureTenantEntity(entity);
+        entity.Property(x => x.Name).HasMaxLength(200).IsRequired();
+        entity.Property(x => x.NormalizedName)
+            .HasMaxLength(200)
+            .IsRequired();
+        entity.Property(x => x.RowVersion).IsRowVersion();
+        entity.HasIndex(x => new { x.TenantId, x.NormalizedName })
+            .IsUnique()
+            .HasFilter("[IsDeleted] = 0")
+            .HasDatabaseName("UX_Space_LayerMappingProfile_CurrentName");
+        entity.HasQueryFilter(
+            x => x.TenantId == CurrentTenantId && !x.IsDeleted);
+    }
+
+    private void ConfigureCadMappingProfileVersion(ModelBuilder modelBuilder)
+    {
+        var entity = modelBuilder.Entity<SpaceCadMappingProfileVersion>();
+        entity.ToTable(
+            "Space_LayerMappingProfileVersion",
+            table =>
+            {
+                table.HasCheckConstraint(
+                    "CK_Space_LayerMappingProfileVersion_Version",
+                    "[Version] > 0");
+                table.HasCheckConstraint(
+                    "CK_Space_LayerMappingProfileVersion_Base",
+                    "([BasedOnProfileId] IS NULL AND [BasedOnVersion] IS NULL) OR " +
+                    "([BasedOnProfileId] IS NOT NULL AND [BasedOnVersion] > 0)");
+            });
+        entity.HasKey(x => x.Id);
+        entity.Property(x => x.Id).ValueGeneratedNever();
+        entity.HasAlternateKey(x => new { x.TenantId, x.Id })
+            .HasName("AK_Space_LayerMappingProfileVersion_TenantId_Id");
+        ConfigureTenantEntity(entity);
+        entity.Property(x => x.DefinitionJson)
+            .HasColumnType("nvarchar(max)")
+            .IsRequired();
+        entity.Property(x => x.DefinitionHash)
+            .HasColumnType("char(64)")
+            .IsUnicode(false)
+            .IsFixedLength()
+            .HasMaxLength(64)
+            .IsRequired();
+        entity.HasIndex(x => new { x.TenantId, x.ProfileId, x.Version })
+            .IsUnique()
+            .HasFilter("[IsDeleted] = 0")
+            .HasDatabaseName(
+                "UX_Space_LayerMappingProfileVersion_Profile_Version");
+        entity.HasIndex(x => new { x.TenantId, x.DefinitionHash })
+            .HasDatabaseName(
+                "IX_Space_LayerMappingProfileVersion_DefinitionHash");
+        entity.HasOne<SpaceCadMappingProfile>()
+            .WithMany()
+            .HasForeignKey(x => new { x.TenantId, x.ProfileId })
+            .HasPrincipalKey(x => new { x.TenantId, x.Id })
+            .OnDelete(DeleteBehavior.Restrict)
+            .HasConstraintName(
+                "FK_Space_LayerMappingProfileVersion_Profile_Tenant");
+        entity.HasQueryFilter(
+            x => x.TenantId == CurrentTenantId && !x.IsDeleted);
+    }
+
     private void ConfigureExcelMappingProfile(ModelBuilder modelBuilder)
     {
         var entity = modelBuilder.Entity<SpaceExcelMappingProfile>();
@@ -6199,6 +6281,19 @@ public sealed class SpaceContext : DbContext
             {
                 throw new InvalidOperationException(
                     "Device alarm-state identity cannot be reassigned or deleted.");
+            }
+        }
+    }
+
+    private void ProtectCadMappingVersionHistory()
+    {
+        foreach (var entry in ChangeTracker
+            .Entries<SpaceCadMappingProfileVersion>())
+        {
+            if (entry.State is EntityState.Modified or EntityState.Deleted)
+            {
+                throw new InvalidOperationException(
+                    "CAD mapping profile versions are append-only.");
             }
         }
     }

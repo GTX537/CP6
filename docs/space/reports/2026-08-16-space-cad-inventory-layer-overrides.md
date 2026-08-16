@@ -44,3 +44,7 @@ LM-FR-013 本次只关闭逐图层 Override 和 Profile Scope 展示：用户可
 - 本机 AutoCAD Core Console 仍只是一条开发转换链，不是 Site 已认证主 Provider；真实主备 Provider、20 份授权黄金 CAD、CP6 WMS、双仓 14 天 Pilot 和五方签字均未关闭。
 
 因此 LM-FR-012 的仓库实现完成，LM-FR-013 部分完成；WP4 继续为 `Partial/Pending`，核心 GA 继续为 72% / `NoGo`。
+
+## 后续状态
+
+同日后续任务已补齐 Tenant 私有 Profile 的持久化、版本管理、权限、跨租户隔离和工作台管理 UI；当前结论以 `2026-08-16-space-tenant-cad-mapping-profiles.md` 为准，LM-FR-013 仓库实现已闭环。
