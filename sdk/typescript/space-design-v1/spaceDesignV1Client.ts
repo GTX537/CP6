@@ -227,6 +227,16 @@ export interface ISpaceDesignV1Client {
     /**
      * @return OK
      */
+    getFloors(versionId: string): Promise<SpaceSceneFloorDto[]>;
+
+    /**
+     * @return Created
+     */
+    createFloor(versionId: string, idempotency_Key: string, body: CreateSpaceFloorRequest): Promise<CreateSpaceFloorResponse>;
+
+    /**
+     * @return OK
+     */
     getScene(versionId: string, floorLogicalId: string): Promise<SpaceDesignSceneDto>;
 
     /**
@@ -4289,6 +4299,196 @@ export class SpaceDesignV1Client implements ISpaceDesignV1Client {
             });
         }
         return Promise.resolve<SpaceVersionDto>(null as any);
+    }
+
+    /**
+     * @return OK
+     */
+    getFloors(versionId: string): Promise<SpaceSceneFloorDto[]> {
+        let url_ = this.baseUrl + "/api/space/design/v1/versions/{versionId}/floors";
+        if (versionId === undefined || versionId === null)
+            throw new globalThis.Error("The parameter 'versionId' must be defined.");
+        url_ = url_.replace("{versionId}", encodeURIComponent("" + versionId));
+        url_ = url_.replace(/[?&]$/, "");
+
+        let options_: RequestInit = {
+            method: "GET",
+            headers: {
+                "Accept": "application/json"
+            }
+        };
+
+        return this.http.fetch(url_, options_).then((_response: Response) => {
+            return this.processGetFloors(_response);
+        });
+    }
+
+    protected processGetFloors(response: Response): Promise<SpaceSceneFloorDto[]> {
+        const status = response.status;
+        let _headers: any = {}; if (response.headers && response.headers.forEach) { response.headers.forEach((v: any, k: any) => _headers[k] = v); };
+        if (status === 200) {
+            return response.text().then((_responseText) => {
+            let result200: any = null;
+            let resultData200 = _responseText === "" ? null : JSON.parse(_responseText, this.jsonParseReviver);
+            if (Array.isArray(resultData200)) {
+                result200 = [] as any;
+                for (let item of resultData200)
+                    result200!.push(SpaceSceneFloorDto.fromJS(item));
+            }
+            else {
+                result200 = null as any;
+            }
+            return result200;
+            });
+        } else if (status === 400) {
+            return response.text().then((_responseText) => {
+            let result400: any = null;
+            let resultData400 = _responseText === "" ? null : JSON.parse(_responseText, this.jsonParseReviver);
+            result400 = SpaceDesignProblemDetails.fromJS(resultData400);
+            return throwException("Bad Request", status, _responseText, _headers, result400);
+            });
+        } else if (status === 401) {
+            return response.text().then((_responseText) => {
+            let result401: any = null;
+            let resultData401 = _responseText === "" ? null : JSON.parse(_responseText, this.jsonParseReviver);
+            result401 = SpaceDesignProblemDetails.fromJS(resultData401);
+            return throwException("Unauthorized", status, _responseText, _headers, result401);
+            });
+        } else if (status === 403) {
+            return response.text().then((_responseText) => {
+            let result403: any = null;
+            let resultData403 = _responseText === "" ? null : JSON.parse(_responseText, this.jsonParseReviver);
+            result403 = SpaceDesignProblemDetails.fromJS(resultData403);
+            return throwException("Forbidden", status, _responseText, _headers, result403);
+            });
+        } else if (status === 404) {
+            return response.text().then((_responseText) => {
+            let result404: any = null;
+            let resultData404 = _responseText === "" ? null : JSON.parse(_responseText, this.jsonParseReviver);
+            result404 = SpaceDesignProblemDetails.fromJS(resultData404);
+            return throwException("Not Found", status, _responseText, _headers, result404);
+            });
+        } else if (status === 409) {
+            return response.text().then((_responseText) => {
+            let result409: any = null;
+            let resultData409 = _responseText === "" ? null : JSON.parse(_responseText, this.jsonParseReviver);
+            result409 = SpaceDesignProblemDetails.fromJS(resultData409);
+            return throwException("Conflict", status, _responseText, _headers, result409);
+            });
+        } else if (status === 422) {
+            return response.text().then((_responseText) => {
+            let result422: any = null;
+            let resultData422 = _responseText === "" ? null : JSON.parse(_responseText, this.jsonParseReviver);
+            result422 = SpaceDesignProblemDetails.fromJS(resultData422);
+            return throwException("Unprocessable Content", status, _responseText, _headers, result422);
+            });
+        } else if (status === 500) {
+            return response.text().then((_responseText) => {
+            let result500: any = null;
+            let resultData500 = _responseText === "" ? null : JSON.parse(_responseText, this.jsonParseReviver);
+            result500 = SpaceDesignProblemDetails.fromJS(resultData500);
+            return throwException("Internal Server Error", status, _responseText, _headers, result500);
+            });
+        } else if (status !== 200 && status !== 204) {
+            return response.text().then((_responseText) => {
+            return throwException("An unexpected server error occurred.", status, _responseText, _headers);
+            });
+        }
+        return Promise.resolve<SpaceSceneFloorDto[]>(null as any);
+    }
+
+    /**
+     * @return Created
+     */
+    createFloor(versionId: string, idempotency_Key: string, body: CreateSpaceFloorRequest): Promise<CreateSpaceFloorResponse> {
+        let url_ = this.baseUrl + "/api/space/design/v1/versions/{versionId}/floors";
+        if (versionId === undefined || versionId === null)
+            throw new globalThis.Error("The parameter 'versionId' must be defined.");
+        url_ = url_.replace("{versionId}", encodeURIComponent("" + versionId));
+        url_ = url_.replace(/[?&]$/, "");
+
+        const content_ = JSON.stringify(body);
+
+        let options_: RequestInit = {
+            body: content_,
+            method: "POST",
+            headers: {
+                "Idempotency-Key": idempotency_Key !== undefined && idempotency_Key !== null ? "" + idempotency_Key : "",
+                "Content-Type": "application/json",
+                "Accept": "application/json"
+            }
+        };
+
+        return this.http.fetch(url_, options_).then((_response: Response) => {
+            return this.processCreateFloor(_response);
+        });
+    }
+
+    protected processCreateFloor(response: Response): Promise<CreateSpaceFloorResponse> {
+        const status = response.status;
+        let _headers: any = {}; if (response.headers && response.headers.forEach) { response.headers.forEach((v: any, k: any) => _headers[k] = v); };
+        if (status === 201) {
+            return response.text().then((_responseText) => {
+            let result201: any = null;
+            let resultData201 = _responseText === "" ? null : JSON.parse(_responseText, this.jsonParseReviver);
+            result201 = CreateSpaceFloorResponse.fromJS(resultData201);
+            return result201;
+            });
+        } else if (status === 400) {
+            return response.text().then((_responseText) => {
+            let result400: any = null;
+            let resultData400 = _responseText === "" ? null : JSON.parse(_responseText, this.jsonParseReviver);
+            result400 = SpaceDesignProblemDetails.fromJS(resultData400);
+            return throwException("Bad Request", status, _responseText, _headers, result400);
+            });
+        } else if (status === 401) {
+            return response.text().then((_responseText) => {
+            let result401: any = null;
+            let resultData401 = _responseText === "" ? null : JSON.parse(_responseText, this.jsonParseReviver);
+            result401 = SpaceDesignProblemDetails.fromJS(resultData401);
+            return throwException("Unauthorized", status, _responseText, _headers, result401);
+            });
+        } else if (status === 403) {
+            return response.text().then((_responseText) => {
+            let result403: any = null;
+            let resultData403 = _responseText === "" ? null : JSON.parse(_responseText, this.jsonParseReviver);
+            result403 = SpaceDesignProblemDetails.fromJS(resultData403);
+            return throwException("Forbidden", status, _responseText, _headers, result403);
+            });
+        } else if (status === 404) {
+            return response.text().then((_responseText) => {
+            let result404: any = null;
+            let resultData404 = _responseText === "" ? null : JSON.parse(_responseText, this.jsonParseReviver);
+            result404 = SpaceDesignProblemDetails.fromJS(resultData404);
+            return throwException("Not Found", status, _responseText, _headers, result404);
+            });
+        } else if (status === 409) {
+            return response.text().then((_responseText) => {
+            let result409: any = null;
+            let resultData409 = _responseText === "" ? null : JSON.parse(_responseText, this.jsonParseReviver);
+            result409 = SpaceDesignProblemDetails.fromJS(resultData409);
+            return throwException("Conflict", status, _responseText, _headers, result409);
+            });
+        } else if (status === 422) {
+            return response.text().then((_responseText) => {
+            let result422: any = null;
+            let resultData422 = _responseText === "" ? null : JSON.parse(_responseText, this.jsonParseReviver);
+            result422 = SpaceDesignProblemDetails.fromJS(resultData422);
+            return throwException("Unprocessable Content", status, _responseText, _headers, result422);
+            });
+        } else if (status === 500) {
+            return response.text().then((_responseText) => {
+            let result500: any = null;
+            let resultData500 = _responseText === "" ? null : JSON.parse(_responseText, this.jsonParseReviver);
+            result500 = SpaceDesignProblemDetails.fromJS(resultData500);
+            return throwException("Internal Server Error", status, _responseText, _headers, result500);
+            });
+        } else if (status !== 200 && status !== 204) {
+            return response.text().then((_responseText) => {
+            return throwException("An unexpected server error occurred.", status, _responseText, _headers);
+            });
+        }
+        return Promise.resolve<CreateSpaceFloorResponse>(null as any);
     }
 
     /**
@@ -16213,6 +16413,109 @@ export interface ICreateSpaceFieldPolicyRequest {
     audienceType: string;
     fields: SpaceFieldPolicyFieldRequest[];
     canExport?: boolean;
+}
+
+export class CreateSpaceFloorRequest implements ICreateSpaceFloorRequest {
+    floorCode!: string;
+    name!: string;
+    level!: number;
+    elevation!: number;
+    height!: number;
+    expectedContentRevision!: number;
+
+    constructor(data?: ICreateSpaceFloorRequest) {
+        if (data) {
+            for (var property in data) {
+                if (data.hasOwnProperty(property))
+                    (this as any)[property] = (data as any)[property];
+            }
+        }
+    }
+
+    init(_data?: any) {
+        if (_data) {
+            this.floorCode = _data["floorCode"];
+            this.name = _data["name"];
+            this.level = _data["level"];
+            this.elevation = _data["elevation"];
+            this.height = _data["height"];
+            this.expectedContentRevision = _data["expectedContentRevision"];
+        }
+    }
+
+    static fromJS(data: any): CreateSpaceFloorRequest {
+        data = typeof data === 'object' ? data : {};
+        let result = new CreateSpaceFloorRequest();
+        result.init(data);
+        return result;
+    }
+
+    toJSON(data?: any) {
+        data = typeof data === 'object' ? data : {};
+        data["floorCode"] = this.floorCode;
+        data["name"] = this.name;
+        data["level"] = this.level;
+        data["elevation"] = this.elevation;
+        data["height"] = this.height;
+        data["expectedContentRevision"] = this.expectedContentRevision;
+        return data;
+    }
+}
+
+export interface ICreateSpaceFloorRequest {
+    floorCode: string;
+    name: string;
+    level: number;
+    elevation: number;
+    height: number;
+    expectedContentRevision: number;
+}
+
+export class CreateSpaceFloorResponse implements ICreateSpaceFloorResponse {
+    floor!: SpaceSceneFloorDto;
+    versionContentRevision!: number;
+    idempotentReplay!: boolean;
+
+    constructor(data?: ICreateSpaceFloorResponse) {
+        if (data) {
+            for (var property in data) {
+                if (data.hasOwnProperty(property))
+                    (this as any)[property] = (data as any)[property];
+            }
+        }
+        if (!data) {
+            this.floor = new SpaceSceneFloorDto();
+        }
+    }
+
+    init(_data?: any) {
+        if (_data) {
+            this.floor = _data["floor"] ? SpaceSceneFloorDto.fromJS(_data["floor"]) : new SpaceSceneFloorDto();
+            this.versionContentRevision = _data["versionContentRevision"];
+            this.idempotentReplay = _data["idempotentReplay"];
+        }
+    }
+
+    static fromJS(data: any): CreateSpaceFloorResponse {
+        data = typeof data === 'object' ? data : {};
+        let result = new CreateSpaceFloorResponse();
+        result.init(data);
+        return result;
+    }
+
+    toJSON(data?: any) {
+        data = typeof data === 'object' ? data : {};
+        data["floor"] = this.floor ? this.floor.toJSON() : undefined as any;
+        data["versionContentRevision"] = this.versionContentRevision;
+        data["idempotentReplay"] = this.idempotentReplay;
+        return data;
+    }
+}
+
+export interface ICreateSpaceFloorResponse {
+    floor: SpaceSceneFloorDto;
+    versionContentRevision: number;
+    idempotentReplay: boolean;
 }
 
 export class CreateSpacePlanningComparisonRequest implements ICreateSpacePlanningComparisonRequest {

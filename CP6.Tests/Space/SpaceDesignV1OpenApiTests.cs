@@ -69,6 +69,7 @@ public sealed class SpaceDesignV1OpenApiTests
             "/api/space/design/v1/republishes/{republishId}",
             "/api/space/design/v1/versions/{historicalVersionId}/republish",
             "/api/space/design/v1/versions/{versionId}",
+            "/api/space/design/v1/versions/{versionId}/floors",
             "/api/space/design/v1/versions/{versionId}/generation-runs",
             "/api/space/design/v1/versions/{versionId}/floors/{floorLogicalId}/commands",
             "/api/space/design/v1/versions/{versionId}/floors/{floorLogicalId}/layout-commands",
@@ -154,8 +155,8 @@ public sealed class SpaceDesignV1OpenApiTests
             .Select(operation =>
                 operation.Value.GetProperty("operationId").GetString())
             .ToArray();
-        Assert.Equal(136, operationIds.Length);
-        Assert.Equal(136, operationIds.Distinct().Count());
+        Assert.Equal(138, operationIds.Length);
+        Assert.Equal(138, operationIds.Distinct().Count());
         Assert.Contains("GetCapability", operationIds);
         Assert.Contains("ReplaceProviderConfiguration", operationIds);
         Assert.Contains("GetPolicy", operationIds);
@@ -216,6 +217,8 @@ public sealed class SpaceDesignV1OpenApiTests
         Assert.Contains("DownloadErrorReport", operationIds);
         Assert.Contains("CreateAsset", operationIds);
         Assert.Contains("CreateVersion", operationIds);
+        Assert.Contains("GetFloors", operationIds);
+        Assert.Contains("CreateFloor", operationIds);
         Assert.Contains("CreateSource", operationIds);
         Assert.Contains("GetScene", operationIds);
         Assert.Contains("GetPublishedScene", operationIds);
@@ -1502,6 +1505,44 @@ public sealed class SpaceDesignV1OpenApiTests
             .Select(property => property.GetString())
             .ToHashSet(StringComparer.Ordinal);
         Assert.Contains("leaseId", required);
+    }
+
+    [Fact]
+    public void Floor_initialization_exposes_read_and_required_create_contracts()
+    {
+        using var document = ReadContract();
+        var path = document.RootElement
+            .GetProperty("paths")
+            .GetProperty(
+                "/api/space/design/v1/versions/{versionId}/floors");
+        Assert.Equal(
+            "GetFloors",
+            path.GetProperty("get").GetProperty("operationId").GetString());
+
+        var create = path.GetProperty("post");
+        Assert.Equal(
+            "CreateFloor",
+            create.GetProperty("operationId").GetString());
+        Assert.True(
+            create.GetProperty("requestBody").GetProperty("required")
+                .GetBoolean());
+        var required = document.RootElement
+            .GetProperty("components")
+            .GetProperty("schemas")
+            .GetProperty("CP6.Space.Contracts.CreateSpaceFloorRequest")
+            .GetProperty("required")
+            .EnumerateArray()
+            .Select(property => property.GetString())
+            .ToHashSet(StringComparer.Ordinal);
+        Assert.True(required.SetEquals(
+        [
+            "floorCode",
+            "name",
+            "level",
+            "elevation",
+            "height",
+            "expectedContentRevision",
+        ]));
     }
 
     [Fact]

@@ -138,6 +138,164 @@ public sealed class SpaceDesignV1Service :
         return ToDto(result.Version, result.Model.SiteId);
     }
 
+    public async Task<IReadOnlyList<SpaceSceneFloorDto>> GetFloorsAsync(
+        Guid versionId,
+        CancellationToken cancellationToken = default)
+    {
+        EnsureExecutionContext();
+        EnsureInternalEditor();
+        var model = await FindModelByVersionAsync(versionId, cancellationToken);
+        EnsureReadable(model);
+
+        var floors = await _context.FloorRevisions
+            .AsNoTracking()
+            .Where(candidate =>
+                candidate.ModelVersionId == versionId &&
+                candidate.LifecycleState == SpaceLifecycleState.Active)
+            .OrderBy(candidate => candidate.Level)
+            .ThenBy(candidate => candidate.FloorCode)
+            .ThenBy(candidate => candidate.LogicalId)
+            .ToArrayAsync(cancellationToken);
+        return floors.Select(ToSceneDto).ToArray();
+    }
+
+    public async Task<CreateSpaceFloorResponse> CreateFloorAsync(
+        Guid versionId,
+        CreateSpaceFloorRequest request,
+        string idempotencyKey,
+        CancellationToken cancellationToken = default)
+    {
+        EnsureExecutionContext();
+        EnsureInternalEditor();
+        ArgumentNullException.ThrowIfNull(request);
+        var model = await FindModelByVersionAsync(versionId, cancellationToken);
+        EnsureWritable(model);
+
+        var normalizedRequest = new CreateSpaceFloorRequest(
+            RequireText(request.FloorCode, 100, "floorCode"),
+            RequireText(request.Name, 200, "name"),
+            request.Level,
+            request.Elevation,
+            request.Height,
+            request.ExpectedContentRevision);
+        if (normalizedRequest.Height < 0)
+        {
+            throw Invalid(
+                "height",
+                "height must be greater than or equal to zero.");
+        }
+        if (normalizedRequest.ExpectedContentRevision < 0)
+        {
+            throw Invalid(
+                "expectedContentRevision",
+                "expectedContentRevision must be greater than or equal to zero.");
+        }
+
+        var operation = $"create-floor:{versionId:D}";
+        var requestHash = Hash(
+            JsonSerializer.Serialize(normalizedRequest, JsonOptions));
+        var keyHash = IdempotencyKeyHash(operation, idempotencyKey);
+        var replay = await ReadFloorReplayAsync(
+            operation,
+            keyHash,
+            requestHash,
+            cancellationToken);
+        if (replay is not null)
+            return replay;
+
+        await using var transaction = await _context.Database
+            .BeginTransactionAsync(
+                IsolationLevel.Serializable,
+                cancellationToken);
+        try
+        {
+            await AcquireVersionFloorInitializationLockAsync(
+                versionId,
+                cancellationToken);
+            replay = await ReadFloorReplayAsync(
+                operation,
+                keyHash,
+                requestHash,
+                cancellationToken);
+            if (replay is not null)
+            {
+                await transaction.CommitAsync(cancellationToken);
+                return replay;
+            }
+
+            var version = await _context.Versions
+                              .SingleOrDefaultAsync(
+                                  candidate => candidate.Id == versionId,
+                                  cancellationToken)
+                          ?? throw NotFound(
+                              SpaceErrorCodes.VersionNotFound,
+                              "Space version");
+            if (version.Purpose != SpaceModelVersionPurpose.Production ||
+                version.Status != SpaceVersionStatus.Draft)
+            {
+                throw Conflict(
+                    SpaceErrorCodes.VersionStateInvalid,
+                    "Only a production Draft version accepts new floors.",
+                    "open-or-create-draft");
+            }
+            if (version.ContentRevision !=
+                normalizedRequest.ExpectedContentRevision)
+            {
+                throw Conflict(
+                    SpaceErrorCodes.ConcurrencyConflict,
+                    $"Expected content revision " +
+                    $"{normalizedRequest.ExpectedContentRevision}, but the " +
+                    $"current revision is {version.ContentRevision}.",
+                    "reload-design-project");
+            }
+            if (await _context.FloorRevisions.AnyAsync(
+                    candidate =>
+                        candidate.ModelVersionId == versionId &&
+                        candidate.FloorCode == normalizedRequest.FloorCode,
+                    cancellationToken))
+            {
+                throw Conflict(
+                    SpaceErrorCodes.VersionConflict,
+                    "The Draft already contains that floor code.",
+                    "choose-another-floor-code");
+            }
+
+            var floor = SpaceFloorRevision.Create(
+                _execution.TenantId,
+                versionId,
+                Guid.NewGuid(),
+                model.SiteId,
+                normalizedRequest.Level,
+                normalizedRequest.FloorCode,
+                normalizedRequest.Name,
+                normalizedRequest.Elevation,
+                normalizedRequest.Height);
+            _context.FloorRevisions.Add(floor);
+            version.TouchContent();
+            await _context.SaveChangesAsync(cancellationToken);
+
+            var response = new CreateSpaceFloorResponse(
+                ToSceneDto(floor),
+                version.ContentRevision,
+                IdempotentReplay: false);
+            _context.IdempotencyRecords.Add(
+                NewIdempotencyRecord(
+                    operation,
+                    keyHash,
+                    requestHash,
+                    JsonSerializer.Serialize(response, JsonOptions),
+                    HttpCreated));
+            await _context.SaveChangesAsync(cancellationToken);
+            await transaction.CommitAsync(cancellationToken);
+            return response;
+        }
+        catch
+        {
+            await transaction.RollbackAsync(CancellationToken.None);
+            throw;
+        }
+    }
+
     public async Task<SpaceDesignSceneDto> GetSceneAsync(
         Guid versionId,
         Guid floorLogicalId,
@@ -4955,6 +5113,41 @@ public sealed class SpaceDesignV1Service :
         }
     }
 
+    private async Task AcquireVersionFloorInitializationLockAsync(
+        Guid versionId,
+        CancellationToken cancellationToken)
+    {
+        if (!_context.Database.IsSqlServer())
+            return;
+
+        var result = new SqlParameter("@result", SqlDbType.Int)
+        {
+            Direction = ParameterDirection.Output,
+        };
+        var resource = new SqlParameter("@resource", SqlDbType.NVarChar, 255)
+        {
+            Value = $"cp6:space:version-floor-init:{_execution.TenantId:N}:" +
+                    $"{versionId:N}",
+        };
+        await _context.Database.ExecuteSqlRawAsync(
+            """
+            EXEC @result = sys.sp_getapplock
+                @Resource = @resource,
+                @LockMode = 'Exclusive',
+                @LockOwner = 'Transaction',
+                @LockTimeout = 15000;
+            """,
+            [result, resource],
+            cancellationToken);
+        if (Convert.ToInt32(result.Value) < 0)
+        {
+            throw Conflict(
+                SpaceErrorCodes.ConcurrencyConflict,
+                "The version floor initialization session is busy.",
+                "retry-floor-creation");
+        }
+    }
+
     private async Task<SpaceModel> FindModelByVersionAsync(
         Guid versionId,
         CancellationToken cancellationToken)
@@ -5065,6 +5258,24 @@ public sealed class SpaceDesignV1Service :
             return null;
         EnsureMatchingIdempotency(record, requestHash);
         return Deserialize<CreateSpaceSourceResponse>(record.ResponseJson)
+            with
+        { IdempotentReplay = true };
+    }
+
+    private async Task<CreateSpaceFloorResponse?> ReadFloorReplayAsync(
+        string operation,
+        string keyHash,
+        string requestHash,
+        CancellationToken cancellationToken)
+    {
+        var record = await FindIdempotencyAsync(
+            operation,
+            keyHash,
+            cancellationToken);
+        if (record is null)
+            return null;
+        EnsureMatchingIdempotency(record, requestHash);
+        return Deserialize<CreateSpaceFloorResponse>(record.ResponseJson)
             with
         { IdempotentReplay = true };
     }
@@ -5510,7 +5721,7 @@ public sealed class SpaceDesignV1Service :
         throw new SpaceProblemException(
             SpaceErrorCodes.ExternalSubjectDenied,
             403,
-            "External principals cannot access Draft location coding.",
+            "External principals cannot access Draft design APIs.",
             recoveryAction: "use-internal-space-editor");
     }
 

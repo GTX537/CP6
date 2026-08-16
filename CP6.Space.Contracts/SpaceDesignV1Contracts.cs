@@ -43,6 +43,19 @@ public sealed record CreateSpaceVersionResponse(
     string JobStatusUrl,
     bool IdempotentReplay);
 
+public sealed record CreateSpaceFloorRequest(
+    string FloorCode,
+    string Name,
+    int Level,
+    int Elevation,
+    int Height,
+    long ExpectedContentRevision);
+
+public sealed record CreateSpaceFloorResponse(
+    SpaceSceneFloorDto Floor,
+    long VersionContentRevision,
+    bool IdempotentReplay);
+
 public sealed record SpaceSourceDto(
     Guid Id,
     Guid ModelVersionId,

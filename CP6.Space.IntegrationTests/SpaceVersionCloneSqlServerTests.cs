@@ -245,6 +245,280 @@ public sealed class SpaceVersionCloneSqlServerTests
     }
 
     [SqlServerFact]
+    public async Task Design_v1_floor_creation_is_explicit_idempotent_and_listed()
+    {
+        await WithDatabaseAsync(async (context, execution, clock) =>
+        {
+            var (model, published) = await SeedPublishedAsync(
+                context,
+                execution.ActorId,
+                includeSnapshot: false);
+            model.BeginCutover(Guid.NewGuid());
+            model.MarkFrozen();
+            model.MarkBootstrapping();
+            model.MarkVerified(published);
+            model.ActivateDesignV1();
+            await context.SaveChangesAsync();
+            var service = NewDesignService(context, execution, clock);
+            var draft = await service.CreateVersionAsync(
+                model.SiteId,
+                new CreateSpaceVersionRequest("Blank site", null, "Blank"),
+                "blank-floor-version");
+            var request = new CreateSpaceFloorRequest(
+                "F1",
+                "Ground floor",
+                1,
+                125,
+                6_000,
+                ExpectedContentRevision: 0);
+
+            var first = await service.CreateFloorAsync(
+                draft.Id,
+                request,
+                "create-floor-f1");
+            var replay = await service.CreateFloorAsync(
+                draft.Id,
+                request,
+                "create-floor-f1");
+            var floors = await service.GetFloorsAsync(draft.Id);
+            var scene = await service.GetSceneAsync(
+                draft.Id,
+                first.Floor.Revision.LogicalId);
+
+            Assert.False(first.IdempotentReplay);
+            Assert.True(replay.IdempotentReplay);
+            Assert.Equal(first.Floor.Revision.LogicalId, replay.Floor.Revision.LogicalId);
+            Assert.Equal(1, first.VersionContentRevision);
+            Assert.Equal("F1", first.Floor.FloorCode);
+            Assert.Equal("Ground floor", first.Floor.Name);
+            Assert.Equal(1, first.Floor.Level);
+            Assert.Equal(125, first.Floor.Elevation);
+            Assert.Equal(6_000, first.Floor.Height);
+            Assert.Equal(0, first.Floor.RevisionNumber);
+            Assert.Single(floors);
+            Assert.Equal(first.Floor.Revision.LogicalId, floors[0].Revision.LogicalId);
+            Assert.Empty(scene.Zones);
+            Assert.Empty(scene.Racks);
+            Assert.Empty(scene.Locations);
+            Assert.Empty(scene.Elements);
+            Assert.Equal(1, scene.ContentRevision);
+
+            var reusedKey = await Assert.ThrowsAsync<SpaceProblemException>(() =>
+                service.CreateFloorAsync(
+                    draft.Id,
+                    request with { Name = "Changed" },
+                    "create-floor-f1"));
+            Assert.Equal(SpaceErrorCodes.IdempotencyConflict, reusedKey.Code);
+        });
+    }
+
+    [SqlServerFact]
+    public async Task Design_v1_floor_creation_fails_closed_on_stale_or_duplicate_input()
+    {
+        await WithDatabaseAsync(async (context, execution, clock) =>
+        {
+            var (model, published) = await SeedPublishedAsync(
+                context,
+                execution.ActorId,
+                includeSnapshot: false);
+            model.BeginCutover(Guid.NewGuid());
+            model.MarkFrozen();
+            model.MarkBootstrapping();
+            model.MarkVerified(published);
+            model.ActivateDesignV1();
+            await context.SaveChangesAsync();
+            var service = NewDesignService(context, execution, clock);
+            var draft = await service.CreateVersionAsync(
+                model.SiteId,
+                new CreateSpaceVersionRequest("Blank site", null, "Blank"),
+                "blank-floor-fences");
+            var request = new CreateSpaceFloorRequest(
+                "F1",
+                "Ground floor",
+                1,
+                0,
+                6_000,
+                ExpectedContentRevision: 0);
+            await service.CreateFloorAsync(draft.Id, request, "floor-first");
+
+            var stale = await Assert.ThrowsAsync<SpaceProblemException>(() =>
+                service.CreateFloorAsync(
+                    draft.Id,
+                    request with { FloorCode = "F2", Name = "Second floor" },
+                    "floor-stale"));
+            Assert.Equal(SpaceErrorCodes.ConcurrencyConflict, stale.Code);
+
+            var duplicate = await Assert.ThrowsAsync<SpaceProblemException>(() =>
+                service.CreateFloorAsync(
+                    draft.Id,
+                    request with
+                    {
+                        FloorCode = "f1",
+                        Name = "Duplicate",
+                        ExpectedContentRevision = 1,
+                    },
+                    "floor-duplicate"));
+            Assert.Equal(SpaceErrorCodes.VersionConflict, duplicate.Code);
+
+            context.ChangeTracker.Clear();
+            Assert.Single(await context.FloorRevisions
+                .Where(candidate => candidate.ModelVersionId == draft.Id)
+                .ToArrayAsync());
+            Assert.Equal(
+                1,
+                (await context.Versions.SingleAsync(
+                    candidate => candidate.Id == draft.Id)).ContentRevision);
+        });
+    }
+
+    [SqlServerFact]
+    public async Task Design_v1_floor_endpoints_reject_external_principals()
+    {
+        await WithDatabaseAsync(async (context, execution, clock) =>
+        {
+            var (model, published) = await SeedPublishedAsync(
+                context,
+                execution.ActorId,
+                includeSnapshot: false);
+            model.BeginCutover(Guid.NewGuid());
+            model.MarkFrozen();
+            model.MarkBootstrapping();
+            model.MarkVerified(published);
+            model.ActivateDesignV1();
+            var draft = SpaceModelVersion.CreateBlankDraft(
+                execution.TenantId,
+                model.Id,
+                2,
+                "External denied",
+                Guid.NewGuid());
+            model.ReserveDraft(draft);
+            context.Versions.Add(draft);
+            await context.SaveChangesAsync();
+
+            var externalExecution = new TestExecutionContext(
+                execution.TenantId,
+                Guid.NewGuid(),
+                Guid.NewGuid(),
+                IsExternal: true);
+            await using var externalContext = CreateContext(
+                context.Database.GetConnectionString()!,
+                externalExecution,
+                clock);
+            var service = NewDesignService(
+                externalContext,
+                externalExecution,
+                clock);
+
+            var read = await Assert.ThrowsAsync<SpaceProblemException>(() =>
+                service.GetFloorsAsync(draft.Id));
+            var write = await Assert.ThrowsAsync<SpaceProblemException>(() =>
+                service.CreateFloorAsync(
+                    draft.Id,
+                    new CreateSpaceFloorRequest(
+                        "F1",
+                        "Ground floor",
+                        1,
+                        0,
+                        6_000,
+                        ExpectedContentRevision: 0),
+                    "external-floor"));
+
+            Assert.Equal(SpaceErrorCodes.ExternalSubjectDenied, read.Code);
+            Assert.Equal(SpaceErrorCodes.ExternalSubjectDenied, write.Code);
+            Assert.Empty(await context.FloorRevisions
+                .Where(candidate => candidate.ModelVersionId == draft.Id)
+                .ToArrayAsync());
+        });
+    }
+
+    [SqlServerFact]
+    public async Task Design_v1_concurrent_floor_initialization_allows_one_revision_winner()
+    {
+        await WithDatabaseAsync(async (context, execution, clock) =>
+        {
+            var (model, published) = await SeedPublishedAsync(
+                context,
+                execution.ActorId,
+                includeSnapshot: false);
+            model.BeginCutover(Guid.NewGuid());
+            model.MarkFrozen();
+            model.MarkBootstrapping();
+            model.MarkVerified(published);
+            model.ActivateDesignV1();
+            var draft = SpaceModelVersion.CreateBlankDraft(
+                execution.TenantId,
+                model.Id,
+                2,
+                "Concurrent floors",
+                Guid.NewGuid());
+            model.ReserveDraft(draft);
+            context.Versions.Add(draft);
+            await context.SaveChangesAsync();
+
+            var connectionString = context.Database.GetConnectionString()!;
+            var firstExecution = execution with
+            {
+                ActorId = Guid.NewGuid(),
+                CorrelationId = Guid.NewGuid(),
+            };
+            var secondExecution = execution with
+            {
+                ActorId = Guid.NewGuid(),
+                CorrelationId = Guid.NewGuid(),
+            };
+            await using var firstContext = CreateContext(
+                connectionString,
+                firstExecution,
+                clock);
+            await using var secondContext = CreateContext(
+                connectionString,
+                secondExecution,
+                clock);
+            var firstService = NewDesignService(firstContext, firstExecution, clock);
+            var secondService = NewDesignService(secondContext, secondExecution, clock);
+
+            static async Task<string> RunAsync(
+                SpaceDesignV1Service service,
+                Guid versionId,
+                string floorCode,
+                string key)
+            {
+                try
+                {
+                    await service.CreateFloorAsync(
+                        versionId,
+                        new CreateSpaceFloorRequest(
+                            floorCode,
+                            floorCode,
+                            1,
+                            0,
+                            6_000,
+                            ExpectedContentRevision: 0),
+                        key);
+                    return "Succeeded";
+                }
+                catch (SpaceProblemException exception)
+                {
+                    return exception.Code;
+                }
+            }
+
+            var outcomes = await Task.WhenAll(
+                RunAsync(firstService, draft.Id, "F1", "concurrent-floor-1"),
+                RunAsync(secondService, draft.Id, "F2", "concurrent-floor-2"));
+
+            Assert.Single(outcomes, outcome => outcome == "Succeeded");
+            Assert.Single(
+                outcomes,
+                outcome => outcome == SpaceErrorCodes.ConcurrencyConflict);
+            context.ChangeTracker.Clear();
+            Assert.Single(await context.FloorRevisions
+                .Where(candidate => candidate.ModelVersionId == draft.Id)
+                .ToArrayAsync());
+        });
+    }
+
+    [SqlServerFact]
     public async Task Empty_published_warehouse_clones_to_an_empty_draft()
     {
         await WithDatabaseAsync(async (context, execution, clock) =>
@@ -870,7 +1144,8 @@ public sealed class SpaceVersionCloneSqlServerTests
     private sealed record TestExecutionContext(
         Guid TenantId,
         Guid ActorId,
-        Guid CorrelationId)
+        Guid CorrelationId,
+        bool IsExternal = false)
         : ISpaceExecutionContext, ISpaceCorrelationContext;
 
     private sealed class TestAccess(Guid expectedSiteId)

@@ -18,6 +18,13 @@
         <CpSectionHeader :title="s.siteName">
           <span class="cp-mono site-code">{{ s.siteCode }}</span>
           <template #extra>
+            <el-button
+              v-permission="'space:model:read'"
+              link
+              type="primary"
+              size="small"
+              @click="gotoStudio(s)"
+            >Space Studio</el-button>
             <el-button link type="primary" size="small" @click="gotoViewer(s)">{{ t('space.home.viewer3d') }}</el-button>
             <el-button link type="primary" size="small" @click="gotoStacked(s)">{{ t('space.home.stacked') }}</el-button>
             <el-button v-if="permissionStore.has('space-control-tower:view')" link type="warning" size="small" @click="gotoTower(s)">{{ t('space.home.controlTower') }}</el-button>
@@ -87,6 +94,9 @@ function gotoViewer(s: SiteVO) { router.push({ name: 'space-viewer', params: { s
 function gotoStacked(s: SiteVO) { router.push({ name: 'space-stacked', params: { siteId: s.id } }) }
 function gotoTower(s: SiteVO) { router.push({ name: 'space-control-tower', params: { siteId: s.id } }) }
 function gotoPlanning(s: SiteVO) { router.push({ path: '/space/planning', query: { siteId: s.id } }) }
+function gotoStudio(s: SiteVO) {
+  router.push({ name: 'space-design-start', params: { siteId: s.id } })
+}
 function gotoEditor(f: FloorVO) { router.push({ name: 'space-editor', params: { floorId: f.id } }) }
 function gotoFloorViewer(s: SiteVO, f: FloorVO) {
   router.push({ name: 'space-viewer', params: { siteId: s.id }, query: { floorId: f.id } })
