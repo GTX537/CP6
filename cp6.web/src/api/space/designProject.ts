@@ -6,6 +6,8 @@ import type {
   ISpaceModelDto,
   ISpaceSceneFloorDto,
   ISpaceVersionDto,
+  ISpaceWarehouseTemplateDto,
+  ISpaceWarehouseTemplateInstantiationPreviewDto,
 } from '../../../../sdk/typescript/space-design-v1/spaceDesignV1Client'
 
 const root = '/space/design/v1'
@@ -58,6 +60,20 @@ export const designProjectApi = {
       {
         headers: { 'Idempotency-Key': idempotencyKey },
       },
+    )
+  },
+
+  getWarehouseTemplates(scope?: 'System' | 'Tenant') {
+    return http.get<unknown, ISpaceWarehouseTemplateDto[]>(
+      `${root}/templates`,
+      scope ? { params: { scope } } : undefined,
+    )
+  },
+
+  previewWarehouseTemplate(templateId: string, templateVersionId: string) {
+    return http.post<unknown, ISpaceWarehouseTemplateInstantiationPreviewDto>(
+      `${root}/templates/${encodeURIComponent(templateId)}/instantiate`,
+      { templateVersionId },
     )
   },
 }

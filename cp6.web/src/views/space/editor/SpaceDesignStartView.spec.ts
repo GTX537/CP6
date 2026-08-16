@@ -3,7 +3,11 @@ import { beforeEach, describe, expect, it, vi } from 'vitest'
 import { flushPromises, mount } from '@vue/test-utils'
 import { designProjectApi } from '@/api/space/designProject'
 import SpaceDesignStartView from './SpaceDesignStartView.vue'
-import { SpaceSceneFloorDto } from '../../../../../sdk/typescript/space-design-v1/spaceDesignV1Client'
+import {
+  SpaceSceneFloorDto,
+  SpaceWarehouseTemplateDto,
+  SpaceWarehouseTemplateInstantiationPreviewDto,
+} from '../../../../../sdk/typescript/space-design-v1/spaceDesignV1Client'
 
 const { push } = vi.hoisted(() => ({ push: vi.fn() }))
 
@@ -19,6 +23,8 @@ vi.mock('@/api/space/designProject', () => ({
     getFloors: vi.fn(),
     createBlankVersion: vi.fn(),
     createFloor: vi.fn(),
+    getWarehouseTemplates: vi.fn(),
+    previewWarehouseTemplate: vi.fn(),
   },
 }))
 
@@ -65,6 +71,37 @@ const floor = SpaceSceneFloorDto.fromJS({
   revisionNumber: 0,
 })
 
+const warehouseTemplate = SpaceWarehouseTemplateDto.fromJS({
+  id: 'template-1',
+  scope: 'System',
+  templateCode: 'SPACE-STANDARD-01',
+  name: 'CP6 标准货架仓',
+  description: 'Standard warehouse',
+  status: 'Active',
+  latestVersion: {
+    id: 'template-version-1',
+    versionNo: 1,
+    schemaVersion: 1,
+    contentHash: 'a'.repeat(64),
+    status: 'Ready',
+    counts: { floors: 2, zones: 7, aisles: 20, racks: 500, locations: 10_000 },
+  },
+})
+
+const warehouseTemplatePreview = SpaceWarehouseTemplateInstantiationPreviewDto.fromJS({
+  schemaVersion: 1,
+  templateId: 'template-1',
+  templateVersionId: 'template-version-1',
+  templateContentHash: 'a'.repeat(64),
+  proposalHash: 'b'.repeat(64),
+  counts: { floors: 2, zones: 7, aisles: 20, racks: 500, locations: 10_000 },
+  floors: [],
+  zones: [],
+  aisles: [],
+  racks: [],
+  writesDraft: false,
+})
+
 describe('SpaceDesignStartView', () => {
   beforeEach(() => {
     vi.clearAllMocks()
@@ -72,6 +109,10 @@ describe('SpaceDesignStartView', () => {
     vi.mocked(designProjectApi.getModel).mockResolvedValue(model)
     vi.mocked(designProjectApi.getVersion).mockResolvedValue(version)
     vi.mocked(designProjectApi.getFloors).mockResolvedValue([floor])
+    vi.mocked(designProjectApi.getWarehouseTemplates)
+      .mockResolvedValue([warehouseTemplate])
+    vi.mocked(designProjectApi.previewWarehouseTemplate)
+      .mockResolvedValue(warehouseTemplatePreview)
   })
 
   it('lists the active Draft floors and opens the selected floor', async () => {
@@ -161,5 +202,44 @@ describe('SpaceDesignStartView', () => {
     expect(wrapper.find('[data-testid="narrow-notice"]').exists()).toBe(true)
     expect(wrapper.get('[data-testid="create-draft"]').attributes('disabled'))
       .toBeDefined()
+  })
+
+  it('previews a system warehouse template without writing a Draft', async () => {
+    vi.mocked(designProjectApi.getModel).mockResolvedValue({
+      ...model,
+      activeDraftVersionId: undefined,
+    })
+
+    const wrapper = mount(SpaceDesignStartView)
+    await flushPromises()
+
+    expect(wrapper.text()).toContain('CP6 标准货架仓')
+    await wrapper.get('[data-template-id="template-1"]').trigger('click')
+    await flushPromises()
+
+    expect(designProjectApi.previewWarehouseTemplate).toHaveBeenCalledWith(
+      'template-1',
+      'template-version-1',
+    )
+    expect(wrapper.text()).toContain('预览已密封，未写入 Draft')
+    expect(wrapper.text()).toContain('10000 库位')
+    expect(wrapper.text()).toContain('b'.repeat(64))
+  })
+
+  it('keeps Blank creation available when the template catalog fails', async () => {
+    vi.mocked(designProjectApi.getModel).mockResolvedValue({
+      ...model,
+      activeDraftVersionId: undefined,
+    })
+    vi.mocked(designProjectApi.getWarehouseTemplates)
+      .mockRejectedValue(new Error('catalog unavailable'))
+
+    const wrapper = mount(SpaceDesignStartView)
+    await flushPromises()
+
+    expect(wrapper.text()).toContain('模板目录暂不可用')
+    expect(wrapper.text()).toContain('空白 Draft 创建仍可继续')
+    expect(wrapper.get('[data-testid="create-draft"]').attributes('disabled'))
+      .toBeUndefined()
   })
 })

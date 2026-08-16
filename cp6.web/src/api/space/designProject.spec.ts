@@ -80,4 +80,24 @@ describe('designProjectApi', () => {
       { headers: { 'Idempotency-Key': 'floor-key' } },
     )
   })
+
+  it('loads and previews the immutable warehouse template catalog', async () => {
+    vi.mocked(http.get).mockResolvedValue({} as never)
+    vi.mocked(http.post).mockResolvedValue({} as never)
+
+    await designProjectApi.getWarehouseTemplates('System')
+    await designProjectApi.previewWarehouseTemplate(
+      'template/1',
+      'version-1',
+    )
+
+    expect(http.get).toHaveBeenCalledWith(
+      '/space/design/v1/templates',
+      { params: { scope: 'System' } },
+    )
+    expect(http.post).toHaveBeenCalledWith(
+      '/space/design/v1/templates/template%2F1/instantiate',
+      { templateVersionId: 'version-1' },
+    )
+  })
 })

@@ -1,5 +1,13 @@
 # 已完成能力与近期里程碑
 
+## 2026-08-15 Space System 整仓模板目录与预览纵切
+
+- 新增 Design V1 整仓模板 GET 与实例化预览 POST 合同；平台内置标准模板固定模板/版本/内容 SHA，并只包含 2 层、7 区、20 巷道、500 货架与 10,000 库位的设计布局。
+- 预览返回完整 Floor/Zone/Aisle/Rack 父级计划和 Proposal Hash，固定 `writesDraft=false`；旧模板版本、非法 scope、未知模板和外部主体失败关闭。
+- Space Studio 项目入口可以展示平台模板计数并查看密封预览；OpenAPI、双 SDK、权限矩阵和前端类型同步。
+- Space Unit 536/536、CP6.Tests 2,924 通过、Web 851/851、契约/SDK/EF/GA 证据门禁和生产构建通过；完整 solution Release 0 warning / 0 error。
+- 本纵切不实现租户私有模板、Template → Draft Apply 或四模式统一向导，LM-FR-001/WP1 仍为 Partial/Pending，核心 GA 仍为 72% / `NoGo`。详见 `docs/space/reports/2026-08-15-space-system-template-catalog.md`。
+
 ## 2026-08-15 Design V1 Floor shell 与项目入口纵切
 
 - Space 首页新增按 Site 进入 `Space Studio` 的用户入口；页面自动读取活动 Draft 与活动设计楼层，不再要求用户手工拼 VersionId/FloorLogicalId。

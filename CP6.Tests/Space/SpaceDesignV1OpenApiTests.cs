@@ -39,6 +39,8 @@ public sealed class SpaceDesignV1OpenApiTests
             "/api/space/design/v1/sites/{siteId}/personnel",
             "/api/space/design/v1/sites/{siteId}/personnel/trajectory",
             "/api/space/design/v1/sites/{siteId}/versions",
+            "/api/space/design/v1/templates",
+            "/api/space/design/v1/templates/{templateId}/instantiate",
             "/api/space/design/v1/sites/{siteId}/runtime/inventory",
             "/api/space/design/v1/sites/{siteId}/runtime/inventory/locate",
             "/api/space/design/v1/sites/{siteId}/runtime/overview",
@@ -155,8 +157,8 @@ public sealed class SpaceDesignV1OpenApiTests
             .Select(operation =>
                 operation.Value.GetProperty("operationId").GetString())
             .ToArray();
-        Assert.Equal(138, operationIds.Length);
-        Assert.Equal(138, operationIds.Distinct().Count());
+        Assert.Equal(140, operationIds.Length);
+        Assert.Equal(140, operationIds.Distinct().Count());
         Assert.Contains("GetCapability", operationIds);
         Assert.Contains("ReplaceProviderConfiguration", operationIds);
         Assert.Contains("GetPolicy", operationIds);
@@ -219,6 +221,8 @@ public sealed class SpaceDesignV1OpenApiTests
         Assert.Contains("CreateVersion", operationIds);
         Assert.Contains("GetFloors", operationIds);
         Assert.Contains("CreateFloor", operationIds);
+        Assert.Contains("GetWarehouseTemplates", operationIds);
+        Assert.Contains("PreviewWarehouseTemplate", operationIds);
         Assert.Contains("CreateSource", operationIds);
         Assert.Contains("GetScene", operationIds);
         Assert.Contains("GetPublishedScene", operationIds);
@@ -1543,6 +1547,39 @@ public sealed class SpaceDesignV1OpenApiTests
             "height",
             "expectedContentRevision",
         ]));
+    }
+
+    [Fact]
+    public void Warehouse_template_catalog_exposes_required_preview_contract()
+    {
+        using var document = ReadContract();
+        var paths = document.RootElement.GetProperty("paths");
+        Assert.Equal(
+            "GetWarehouseTemplates",
+            paths.GetProperty("/api/space/design/v1/templates")
+                .GetProperty("get")
+                .GetProperty("operationId")
+                .GetString());
+        var preview = paths
+            .GetProperty(
+                "/api/space/design/v1/templates/{templateId}/instantiate")
+            .GetProperty("post");
+        Assert.Equal(
+            "PreviewWarehouseTemplate",
+            preview.GetProperty("operationId").GetString());
+        Assert.True(
+            preview.GetProperty("requestBody").GetProperty("required")
+                .GetBoolean());
+        var required = document.RootElement
+            .GetProperty("components")
+            .GetProperty("schemas")
+            .GetProperty(
+                "CP6.Space.Contracts.PreviewSpaceWarehouseTemplateRequest")
+            .GetProperty("required")
+            .EnumerateArray()
+            .Select(property => property.GetString()!)
+            .ToArray();
+        Assert.Equal(["templateVersionId"], required);
     }
 
     [Fact]

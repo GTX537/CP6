@@ -7,6 +7,8 @@ import type {
   ISpaceModelDto,
   ISpaceSceneFloorDto,
   ISpaceVersionDto,
+  ISpaceWarehouseTemplateDto,
+  ISpaceWarehouseTemplateInstantiationPreviewDto,
 } from '../../../../../sdk/typescript/space-design-v1/spaceDesignV1Client'
 
 const route = useRoute()
@@ -15,10 +17,14 @@ const siteId = computed(() => String(route.params.siteId ?? ''))
 const model = ref<ISpaceModelDto | null>(null)
 const draftVersion = ref<ISpaceVersionDto | null>(null)
 const floors = ref<ISpaceSceneFloorDto[]>([])
+const warehouseTemplates = ref<ISpaceWarehouseTemplateDto[]>([])
+const templatePreview = ref<ISpaceWarehouseTemplateInstantiationPreviewDto | null>(null)
 const loading = ref(true)
 const savingDraft = ref(false)
 const savingFloor = ref(false)
+const previewingTemplateId = ref('')
 const errorText = ref('')
+const templateErrorText = ref('')
 const addingFloor = ref(false)
 const viewportWidth = ref(window.innerWidth)
 const draftName = ref('')
@@ -59,8 +65,15 @@ async function loadDraft(versionId: string) {
 async function loadProject() {
   loading.value = true
   errorText.value = ''
+  templateErrorText.value = ''
   try {
     model.value = await designProjectApi.getModel(siteId.value)
+    try {
+      warehouseTemplates.value = await designProjectApi.getWarehouseTemplates()
+    } catch (error) {
+      warehouseTemplates.value = []
+      templateErrorText.value = errorMessage(error)
+    }
     if (model.value.activeDraftVersionId) {
       await loadDraft(model.value.activeDraftVersionId)
     } else {
@@ -71,6 +84,28 @@ async function loadProject() {
     errorText.value = errorMessage(error)
   } finally {
     loading.value = false
+  }
+}
+
+async function previewWarehouseTemplate(template: ISpaceWarehouseTemplateDto) {
+  const templateId = template.id
+  const templateVersionId = template.latestVersion?.id
+  if (!templateId || !templateVersionId) {
+    errorText.value = '模板版本标识不完整，请重新加载。'
+    return
+  }
+
+  previewingTemplateId.value = templateId
+  errorText.value = ''
+  try {
+    templatePreview.value = await designProjectApi.previewWarehouseTemplate(
+      templateId,
+      templateVersionId,
+    )
+  } catch (error) {
+    errorText.value = errorMessage(error)
+  } finally {
+    previewingTemplateId.value = ''
   }
 }
 
@@ -250,6 +285,58 @@ onBeforeUnmount(() => {
             :disabled="savingDraft || isNarrow"
           >{{ savingDraft ? '创建中…' : '创建空白 Draft' }}</button>
         </form>
+      </section>
+
+      <section v-if="!draftVersion" class="floor-section template-section">
+        <div class="section-heading">
+          <div>
+            <p class="step-label">PLATFORM TEMPLATE CATALOG</p>
+            <h2>平台整仓模板</h2>
+            <p class="template-help">模板版本和内容哈希不可变；当前仅提供布局预览，不会写入 Draft。</p>
+          </div>
+        </div>
+        <div v-if="warehouseTemplates.length" class="template-list">
+          <article
+            v-for="item in warehouseTemplates"
+            :key="item.id"
+            class="template-card"
+          >
+            <div>
+              <span class="floor-level">{{ item.scope }}</span>
+              <h3>{{ item.name }}</h3>
+              <p>{{ item.description }}</p>
+            </div>
+            <dl>
+              <div><dt>楼层</dt><dd>{{ item.latestVersion?.counts?.floors }}</dd></div>
+              <div><dt>货架</dt><dd>{{ item.latestVersion?.counts?.racks }}</dd></div>
+              <div><dt>库位</dt><dd>{{ item.latestVersion?.counts?.locations }}</dd></div>
+              <div><dt>版本</dt><dd>v{{ item.latestVersion?.versionNo }}</dd></div>
+            </dl>
+            <button
+              class="secondary-button"
+              type="button"
+              :data-template-id="item.id"
+              :disabled="previewingTemplateId === item.id"
+              @click="previewWarehouseTemplate(item)"
+            >{{ previewingTemplateId === item.id ? '生成中…' : '查看实例化预览' }}</button>
+          </article>
+        </div>
+        <p v-else-if="templateErrorText" class="template-error" role="alert">
+          模板目录暂不可用：{{ templateErrorText }}。空白 Draft 创建仍可继续。
+        </p>
+        <p v-else class="template-help">当前没有可用整仓模板。</p>
+        <div v-if="templatePreview" class="template-preview" role="status">
+          <strong>预览已密封，未写入 Draft</strong>
+          <span>
+            {{ templatePreview.counts?.floors }} 层 ·
+            {{ templatePreview.counts?.zones }} 区 ·
+            {{ templatePreview.counts?.aisles }} 巷道 ·
+            {{ templatePreview.counts?.racks }} 货架 ·
+            {{ templatePreview.counts?.locations }} 库位
+          </span>
+          <code>{{ templatePreview.proposalHash }}</code>
+          <small>Template → Draft 原子 Apply 将在下一独立纵切接通。</small>
+        </div>
       </section>
 
       <template v-else>
@@ -454,6 +541,32 @@ button:disabled { cursor: not-allowed; opacity: .45; }
 .version-summary dt { color: var(--space-studio-muted); font-size: 13px; }
 .version-summary dd { margin: 5px 0 0; font-family: ui-monospace, SFMono-Regular, Consolas, monospace; }
 .floor-list { display: grid; grid-template-columns: repeat(auto-fill, minmax(260px, 1fr)); gap: 14px; margin-top: 22px; }
+.template-list { display: grid; grid-template-columns: repeat(auto-fill, minmax(320px, 1fr)); gap: 14px; margin-top: 22px; }
+.template-card {
+  display: grid;
+  gap: 18px;
+  border: 1px solid #31535d;
+  background: #091a22;
+  padding: 20px;
+}
+.template-card h3 { margin: 8px 0 0; font-size: 20px; }
+.template-card p,
+.template-help { margin-top: 8px; color: var(--space-studio-muted); font-size: 16px; }
+.template-error { margin-top: 18px; color: #ffd0d0; font-size: 16px; }
+.template-card dl { display: grid; grid-template-columns: repeat(4, 1fr); gap: 10px; margin: 0; }
+.template-card dt { color: var(--space-studio-muted); font-size: 13px; }
+.template-card dd { margin: 4px 0 0; font-weight: 800; }
+.template-preview {
+  display: grid;
+  gap: 8px;
+  margin-top: 18px;
+  border-left: 4px solid var(--space-studio-accent);
+  background: rgb(38 215 211 / 8%);
+  padding: 16px;
+  font-size: 16px;
+}
+.template-preview code { overflow-wrap: anywhere; color: var(--space-studio-accent); }
+.template-preview small { color: var(--space-studio-muted); font-size: 14px; }
 .floor-card {
   min-height: 150px;
   display: grid;
