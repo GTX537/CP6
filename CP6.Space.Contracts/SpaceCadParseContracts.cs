@@ -69,6 +69,7 @@ public sealed record PreviewSpaceCadPreparationResponse(
     bool ReadyForParsing,
     SpaceCadCoordinateAnalysisV1 CoordinateAnalysis,
     SpaceCadCoordinateMetadataV1 CoordinateMetadata,
+    IReadOnlyList<SpaceCadConversionIssueV1> CoordinateIssues,
     SpaceCadInventorySummaryV1? InventorySummary,
     SpaceCadPreparationInventoryDto? Inventory,
     SpaceCadMappingProfileSummaryDto MappingProfile,

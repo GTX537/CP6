@@ -27088,10 +27088,16 @@ namespace CP6.Space.Client
         public bool ReadyForParsing { get; set; } = default!;
 
         [System.Text.Json.Serialization.JsonPropertyName("coordinateAnalysis")]
-        public SpaceCadCoordinateAnalysisV1 CoordinateAnalysis { get; set; } = default!;
+        [System.ComponentModel.DataAnnotations.Required]
+        public SpaceCadCoordinateAnalysisV1 CoordinateAnalysis { get; set; } = new SpaceCadCoordinateAnalysisV1();
 
         [System.Text.Json.Serialization.JsonPropertyName("coordinateMetadata")]
-        public SpaceCadCoordinateMetadataV1 CoordinateMetadata { get; set; } = default!;
+        [System.ComponentModel.DataAnnotations.Required]
+        public SpaceCadCoordinateMetadataV1 CoordinateMetadata { get; set; } = new SpaceCadCoordinateMetadataV1();
+
+        [System.Text.Json.Serialization.JsonPropertyName("coordinateIssues")]
+        [System.ComponentModel.DataAnnotations.Required]
+        public System.Collections.Generic.ICollection<SpaceCadConversionIssueV1> CoordinateIssues { get; set; } = new System.Collections.ObjectModel.Collection<SpaceCadConversionIssueV1>();
 
         [System.Text.Json.Serialization.JsonPropertyName("inventorySummary")]
         public SpaceCadInventorySummaryV1 InventorySummary { get; set; } = default!;
@@ -27100,7 +27106,8 @@ namespace CP6.Space.Client
         public SpaceCadPreparationInventoryDto Inventory { get; set; } = default!;
 
         [System.Text.Json.Serialization.JsonPropertyName("mappingProfile")]
-        public SpaceCadMappingProfileSummaryDto MappingProfile { get; set; } = default!;
+        [System.ComponentModel.DataAnnotations.Required]
+        public SpaceCadMappingProfileSummaryDto MappingProfile { get; set; } = new SpaceCadMappingProfileSummaryDto();
 
         [System.Text.Json.Serialization.JsonPropertyName("mappingPreview")]
         public SpaceCadMappingPreviewV1 MappingPreview { get; set; } = default!;
@@ -28522,9 +28529,11 @@ namespace CP6.Space.Client
     {
 
         [System.Text.Json.Serialization.JsonPropertyName("code")]
-        public string? Code { get; set; } = default!;
+        [System.ComponentModel.DataAnnotations.Required(AllowEmptyStrings = true)]
+        public string Code { get; set; } = default!;
 
         [System.Text.Json.Serialization.JsonPropertyName("severity")]
+        [System.ComponentModel.DataAnnotations.Required(AllowEmptyStrings = true)]
         [System.Text.Json.Serialization.JsonConverter(typeof(System.Text.Json.Serialization.JsonStringEnumConverter<SpaceCadIssueSeverity>))]
         public SpaceCadIssueSeverity Severity { get; set; } = default!;
 
@@ -28544,9 +28553,11 @@ namespace CP6.Space.Client
         public int SchemaVersion { get; set; } = default!;
 
         [System.Text.Json.Serialization.JsonPropertyName("sourceSha256")]
-        public string? SourceSha256 { get; set; } = default!;
+        [System.ComponentModel.DataAnnotations.Required(AllowEmptyStrings = true)]
+        public string SourceSha256 { get; set; } = default!;
 
         [System.Text.Json.Serialization.JsonPropertyName("suggestedUnit")]
+        [System.ComponentModel.DataAnnotations.Required(AllowEmptyStrings = true)]
         [System.Text.Json.Serialization.JsonConverter(typeof(System.Text.Json.Serialization.JsonStringEnumConverter<SpaceCadUnit>))]
         public SpaceCadUnit SuggestedUnit { get; set; } = default!;
 
@@ -28566,7 +28577,8 @@ namespace CP6.Space.Client
         public bool RequiresUnitConfirmation { get; set; } = default!;
 
         [System.Text.Json.Serialization.JsonPropertyName("issues")]
-        public System.Collections.Generic.ICollection<SpaceCadConversionIssueV1>? Issues { get; set; } = default!;
+        [System.ComponentModel.DataAnnotations.Required]
+        public System.Collections.Generic.ICollection<SpaceCadConversionIssueV1> Issues { get; set; } = new System.Collections.ObjectModel.Collection<SpaceCadConversionIssueV1>();
 
     }
 
@@ -28578,12 +28590,14 @@ namespace CP6.Space.Client
         public int SchemaVersion { get; set; } = default!;
 
         [System.Text.Json.Serialization.JsonPropertyName("sourceSha256")]
-        public string? SourceSha256 { get; set; } = default!;
+        [System.ComponentModel.DataAnnotations.Required(AllowEmptyStrings = true)]
+        public string SourceSha256 { get; set; } = default!;
 
         [System.Text.Json.Serialization.JsonPropertyName("unitConfirmed")]
         public bool UnitConfirmed { get; set; } = default!;
 
         [System.Text.Json.Serialization.JsonPropertyName("detectedUnit")]
+        [System.ComponentModel.DataAnnotations.Required(AllowEmptyStrings = true)]
         [System.Text.Json.Serialization.JsonConverter(typeof(System.Text.Json.Serialization.JsonStringEnumConverter<SpaceCadUnit>))]
         public SpaceCadUnit DetectedUnit { get; set; } = default!;
 
@@ -28591,6 +28605,7 @@ namespace CP6.Space.Client
         public double? DetectedScaleToMillimeters { get; set; } = default!;
 
         [System.Text.Json.Serialization.JsonPropertyName("confirmedUnit")]
+        [System.ComponentModel.DataAnnotations.Required(AllowEmptyStrings = true)]
         [System.Text.Json.Serialization.JsonConverter(typeof(System.Text.Json.Serialization.JsonStringEnumConverter<SpaceCadUnit>))]
         public SpaceCadUnit ConfirmedUnit { get; set; } = default!;
 
@@ -28598,19 +28613,23 @@ namespace CP6.Space.Client
         public double ConfirmedScaleToMillimeters { get; set; } = default!;
 
         [System.Text.Json.Serialization.JsonPropertyName("sourceOriginInSourceUnits")]
-        public SpaceCadPointV1 SourceOriginInSourceUnits { get; set; } = default!;
+        [System.ComponentModel.DataAnnotations.Required]
+        public SpaceCadPointV1 SourceOriginInSourceUnits { get; set; } = new SpaceCadPointV1();
 
         [System.Text.Json.Serialization.JsonPropertyName("floorOriginMillimeters")]
-        public SpaceCadMillimeterPointV1 FloorOriginMillimeters { get; set; } = default!;
+        [System.ComponentModel.DataAnnotations.Required]
+        public SpaceCadMillimeterPointV1 FloorOriginMillimeters { get; set; } = new SpaceCadMillimeterPointV1();
 
         [System.Text.Json.Serialization.JsonPropertyName("rotationZDegrees")]
         public double RotationZDegrees { get; set; } = default!;
 
         [System.Text.Json.Serialization.JsonPropertyName("targetFloor")]
-        public SpaceCadFloorAssignmentV1 TargetFloor { get; set; } = default!;
+        [System.ComponentModel.DataAnnotations.Required]
+        public SpaceCadFloorAssignmentV1 TargetFloor { get; set; } = new SpaceCadFloorAssignmentV1();
 
         [System.Text.Json.Serialization.JsonPropertyName("sourceToFloorTransform")]
-        public SpaceCadAffineTransformV1 SourceToFloorTransform { get; set; } = default!;
+        [System.ComponentModel.DataAnnotations.Required]
+        public SpaceCadAffineTransformV1 SourceToFloorTransform { get; set; } = new SpaceCadAffineTransformV1();
 
         [System.Text.Json.Serialization.JsonPropertyName("sourceBounds")]
         public SpaceCadBoundsV1 SourceBounds { get; set; } = default!;
@@ -28619,7 +28638,8 @@ namespace CP6.Space.Client
         public SpaceCadBoundsV1 PreparedBounds { get; set; } = default!;
 
         [System.Text.Json.Serialization.JsonPropertyName("transformSha256")]
-        public string? TransformSha256 { get; set; } = default!;
+        [System.ComponentModel.DataAnnotations.Required(AllowEmptyStrings = true)]
+        public string TransformSha256 { get; set; } = default!;
 
     }
 
@@ -28683,10 +28703,12 @@ namespace CP6.Space.Client
     {
 
         [System.Text.Json.Serialization.JsonPropertyName("floorLogicalId")]
+        [System.ComponentModel.DataAnnotations.Required(AllowEmptyStrings = true)]
         public System.Guid FloorLogicalId { get; set; } = default!;
 
         [System.Text.Json.Serialization.JsonPropertyName("floorCode")]
-        public string? FloorCode { get; set; } = default!;
+        [System.ComponentModel.DataAnnotations.Required(AllowEmptyStrings = true)]
+        public string FloorCode { get; set; } = default!;
 
         [System.Text.Json.Serialization.JsonPropertyName("level")]
         public int Level { get; set; } = default!;
@@ -28695,10 +28717,12 @@ namespace CP6.Space.Client
         public int ElevationMillimeters { get; set; } = default!;
 
         [System.Text.Json.Serialization.JsonPropertyName("coordinateSystem")]
-        public string? CoordinateSystem { get; set; } = default!;
+        [System.ComponentModel.DataAnnotations.Required(AllowEmptyStrings = true)]
+        public string CoordinateSystem { get; set; } = default!;
 
         [System.Text.Json.Serialization.JsonPropertyName("boundaryBounds")]
-        public SpaceCadBoundsV1 BoundaryBounds { get; set; } = default!;
+        [System.ComponentModel.DataAnnotations.Required]
+        public SpaceCadBoundsV1 BoundaryBounds { get; set; } = new SpaceCadBoundsV1();
 
     }
 

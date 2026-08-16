@@ -18923,14 +18923,15 @@ export interface IPreviewSpaceCadPreparationRequest {
 export class PreviewSpaceCadPreparationResponse implements IPreviewSpaceCadPreparationResponse {
     preparationId?: string | undefined;
     expiresAtUtc?: Date | undefined;
-    baseContentRevision?: number;
+    baseContentRevision!: number;
     baseContentHash?: string | undefined;
-    readyForParsing?: boolean;
-    coordinateAnalysis?: SpaceCadCoordinateAnalysisV1;
-    coordinateMetadata?: SpaceCadCoordinateMetadataV1;
+    readyForParsing!: boolean;
+    coordinateAnalysis!: SpaceCadCoordinateAnalysisV1;
+    coordinateMetadata!: SpaceCadCoordinateMetadataV1;
+    coordinateIssues!: SpaceCadConversionIssueV1[];
     inventorySummary?: SpaceCadInventorySummaryV1;
     inventory?: SpaceCadPreparationInventoryDto;
-    mappingProfile?: SpaceCadMappingProfileSummaryDto;
+    mappingProfile!: SpaceCadMappingProfileSummaryDto;
     mappingPreview?: SpaceCadMappingPreviewV1;
     semanticPreview?: SpaceCadSemanticPreviewV1;
     startRequest?: StartSpaceCadParseRequest;
@@ -18942,6 +18943,12 @@ export class PreviewSpaceCadPreparationResponse implements IPreviewSpaceCadPrepa
                     (this as any)[property] = (data as any)[property];
             }
         }
+        if (!data) {
+            this.coordinateAnalysis = new SpaceCadCoordinateAnalysisV1();
+            this.coordinateMetadata = new SpaceCadCoordinateMetadataV1();
+            this.coordinateIssues = [];
+            this.mappingProfile = new SpaceCadMappingProfileSummaryDto();
+        }
     }
 
     init(_data?: any) {
@@ -18951,11 +18958,16 @@ export class PreviewSpaceCadPreparationResponse implements IPreviewSpaceCadPrepa
             this.baseContentRevision = _data["baseContentRevision"];
             this.baseContentHash = _data["baseContentHash"];
             this.readyForParsing = _data["readyForParsing"];
-            this.coordinateAnalysis = _data["coordinateAnalysis"] ? SpaceCadCoordinateAnalysisV1.fromJS(_data["coordinateAnalysis"]) : undefined as any;
-            this.coordinateMetadata = _data["coordinateMetadata"] ? SpaceCadCoordinateMetadataV1.fromJS(_data["coordinateMetadata"]) : undefined as any;
+            this.coordinateAnalysis = _data["coordinateAnalysis"] ? SpaceCadCoordinateAnalysisV1.fromJS(_data["coordinateAnalysis"]) : new SpaceCadCoordinateAnalysisV1();
+            this.coordinateMetadata = _data["coordinateMetadata"] ? SpaceCadCoordinateMetadataV1.fromJS(_data["coordinateMetadata"]) : new SpaceCadCoordinateMetadataV1();
+            if (Array.isArray(_data["coordinateIssues"])) {
+                this.coordinateIssues = [] as any;
+                for (let item of _data["coordinateIssues"])
+                    this.coordinateIssues!.push(SpaceCadConversionIssueV1.fromJS(item));
+            }
             this.inventorySummary = _data["inventorySummary"] ? SpaceCadInventorySummaryV1.fromJS(_data["inventorySummary"]) : undefined as any;
             this.inventory = _data["inventory"] ? SpaceCadPreparationInventoryDto.fromJS(_data["inventory"]) : undefined as any;
-            this.mappingProfile = _data["mappingProfile"] ? SpaceCadMappingProfileSummaryDto.fromJS(_data["mappingProfile"]) : undefined as any;
+            this.mappingProfile = _data["mappingProfile"] ? SpaceCadMappingProfileSummaryDto.fromJS(_data["mappingProfile"]) : new SpaceCadMappingProfileSummaryDto();
             this.mappingPreview = _data["mappingPreview"] ? SpaceCadMappingPreviewV1.fromJS(_data["mappingPreview"]) : undefined as any;
             this.semanticPreview = _data["semanticPreview"] ? SpaceCadSemanticPreviewV1.fromJS(_data["semanticPreview"]) : undefined as any;
             this.startRequest = _data["startRequest"] ? StartSpaceCadParseRequest.fromJS(_data["startRequest"]) : undefined as any;
@@ -18978,6 +18990,11 @@ export class PreviewSpaceCadPreparationResponse implements IPreviewSpaceCadPrepa
         data["readyForParsing"] = this.readyForParsing;
         data["coordinateAnalysis"] = this.coordinateAnalysis ? this.coordinateAnalysis.toJSON() : undefined as any;
         data["coordinateMetadata"] = this.coordinateMetadata ? this.coordinateMetadata.toJSON() : undefined as any;
+        if (Array.isArray(this.coordinateIssues)) {
+            data["coordinateIssues"] = [];
+            for (let item of this.coordinateIssues)
+                data["coordinateIssues"].push(item ? item.toJSON() : undefined as any);
+        }
         data["inventorySummary"] = this.inventorySummary ? this.inventorySummary.toJSON() : undefined as any;
         data["inventory"] = this.inventory ? this.inventory.toJSON() : undefined as any;
         data["mappingProfile"] = this.mappingProfile ? this.mappingProfile.toJSON() : undefined as any;
@@ -18991,14 +19008,15 @@ export class PreviewSpaceCadPreparationResponse implements IPreviewSpaceCadPrepa
 export interface IPreviewSpaceCadPreparationResponse {
     preparationId?: string | undefined;
     expiresAtUtc?: Date | undefined;
-    baseContentRevision?: number;
+    baseContentRevision: number;
     baseContentHash?: string | undefined;
-    readyForParsing?: boolean;
-    coordinateAnalysis?: SpaceCadCoordinateAnalysisV1;
-    coordinateMetadata?: SpaceCadCoordinateMetadataV1;
+    readyForParsing: boolean;
+    coordinateAnalysis: SpaceCadCoordinateAnalysisV1;
+    coordinateMetadata: SpaceCadCoordinateMetadataV1;
+    coordinateIssues: SpaceCadConversionIssueV1[];
     inventorySummary?: SpaceCadInventorySummaryV1;
     inventory?: SpaceCadPreparationInventoryDto;
-    mappingProfile?: SpaceCadMappingProfileSummaryDto;
+    mappingProfile: SpaceCadMappingProfileSummaryDto;
     mappingPreview?: SpaceCadMappingPreviewV1;
     semanticPreview?: SpaceCadSemanticPreviewV1;
     startRequest?: StartSpaceCadParseRequest;
@@ -21721,13 +21739,13 @@ export interface ISpaceAssetVersionDto {
 }
 
 export class SpaceCadAffineTransformV1 implements ISpaceCadAffineTransformV1 {
-    m11?: number;
-    m12?: number;
-    m21?: number;
-    m22?: number;
-    offsetX?: number;
-    offsetY?: number;
-    offsetZ?: number;
+    m11!: number;
+    m12!: number;
+    m21!: number;
+    m22!: number;
+    offsetX!: number;
+    offsetY!: number;
+    offsetZ!: number;
 
     constructor(data?: ISpaceCadAffineTransformV1) {
         if (data) {
@@ -21771,13 +21789,13 @@ export class SpaceCadAffineTransformV1 implements ISpaceCadAffineTransformV1 {
 }
 
 export interface ISpaceCadAffineTransformV1 {
-    m11?: number;
-    m12?: number;
-    m21?: number;
-    m22?: number;
-    offsetX?: number;
-    offsetY?: number;
-    offsetZ?: number;
+    m11: number;
+    m12: number;
+    m21: number;
+    m22: number;
+    offsetX: number;
+    offsetY: number;
+    offsetZ: number;
 }
 
 export class SpaceCadBlockAttributeInventoryV1 implements ISpaceCadBlockAttributeInventoryV1 {
@@ -22045,8 +22063,8 @@ export enum SpaceCadConfidenceBand {
 }
 
 export class SpaceCadConversionIssueV1 implements ISpaceCadConversionIssueV1 {
-    code?: string | undefined;
-    severity?: SpaceCadIssueSeverity;
+    code!: string;
+    severity!: SpaceCadIssueSeverity;
     sourceRef?: string | undefined;
     detailToken?: string | undefined;
 
@@ -22086,22 +22104,22 @@ export class SpaceCadConversionIssueV1 implements ISpaceCadConversionIssueV1 {
 }
 
 export interface ISpaceCadConversionIssueV1 {
-    code?: string | undefined;
-    severity?: SpaceCadIssueSeverity;
+    code: string;
+    severity: SpaceCadIssueSeverity;
     sourceRef?: string | undefined;
     detailToken?: string | undefined;
 }
 
 export class SpaceCadCoordinateAnalysisV1 implements ISpaceCadCoordinateAnalysisV1 {
-    schemaVersion?: number;
-    sourceSha256?: string | undefined;
-    suggestedUnit?: SpaceCadUnit;
+    schemaVersion!: number;
+    sourceSha256!: string;
+    suggestedUnit!: SpaceCadUnit;
     suggestedScaleToMillimeters?: number | undefined;
     sourceBounds?: SpaceCadBoundsV1;
     suggestedBoundsMillimeters?: SpaceCadBoundsV1;
-    isSuggestedExtentPlausible?: boolean;
-    requiresUnitConfirmation?: boolean;
-    issues?: SpaceCadConversionIssueV1[] | undefined;
+    isSuggestedExtentPlausible!: boolean;
+    requiresUnitConfirmation!: boolean;
+    issues!: SpaceCadConversionIssueV1[];
 
     constructor(data?: ISpaceCadCoordinateAnalysisV1) {
         if (data) {
@@ -22109,6 +22127,9 @@ export class SpaceCadCoordinateAnalysisV1 implements ISpaceCadCoordinateAnalysis
                 if (data.hasOwnProperty(property))
                     (this as any)[property] = (data as any)[property];
             }
+        }
+        if (!data) {
+            this.issues = [];
         }
     }
 
@@ -22157,33 +22178,33 @@ export class SpaceCadCoordinateAnalysisV1 implements ISpaceCadCoordinateAnalysis
 }
 
 export interface ISpaceCadCoordinateAnalysisV1 {
-    schemaVersion?: number;
-    sourceSha256?: string | undefined;
-    suggestedUnit?: SpaceCadUnit;
+    schemaVersion: number;
+    sourceSha256: string;
+    suggestedUnit: SpaceCadUnit;
     suggestedScaleToMillimeters?: number | undefined;
     sourceBounds?: SpaceCadBoundsV1;
     suggestedBoundsMillimeters?: SpaceCadBoundsV1;
-    isSuggestedExtentPlausible?: boolean;
-    requiresUnitConfirmation?: boolean;
-    issues?: SpaceCadConversionIssueV1[] | undefined;
+    isSuggestedExtentPlausible: boolean;
+    requiresUnitConfirmation: boolean;
+    issues: SpaceCadConversionIssueV1[];
 }
 
 export class SpaceCadCoordinateMetadataV1 implements ISpaceCadCoordinateMetadataV1 {
-    schemaVersion?: number;
-    sourceSha256?: string | undefined;
-    unitConfirmed?: boolean;
-    detectedUnit?: SpaceCadUnit;
+    schemaVersion!: number;
+    sourceSha256!: string;
+    unitConfirmed!: boolean;
+    detectedUnit!: SpaceCadUnit;
     detectedScaleToMillimeters?: number | undefined;
-    confirmedUnit?: SpaceCadUnit;
-    confirmedScaleToMillimeters?: number;
-    sourceOriginInSourceUnits?: SpaceCadPointV1;
-    floorOriginMillimeters?: SpaceCadMillimeterPointV1;
-    rotationZDegrees?: number;
-    targetFloor?: SpaceCadFloorAssignmentV1;
-    sourceToFloorTransform?: SpaceCadAffineTransformV1;
+    confirmedUnit!: SpaceCadUnit;
+    confirmedScaleToMillimeters!: number;
+    sourceOriginInSourceUnits!: SpaceCadPointV1;
+    floorOriginMillimeters!: SpaceCadMillimeterPointV1;
+    rotationZDegrees!: number;
+    targetFloor!: SpaceCadFloorAssignmentV1;
+    sourceToFloorTransform!: SpaceCadAffineTransformV1;
     sourceBounds?: SpaceCadBoundsV1;
     preparedBounds?: SpaceCadBoundsV1;
-    transformSha256?: string | undefined;
+    transformSha256!: string;
 
     constructor(data?: ISpaceCadCoordinateMetadataV1) {
         if (data) {
@@ -22191,6 +22212,12 @@ export class SpaceCadCoordinateMetadataV1 implements ISpaceCadCoordinateMetadata
                 if (data.hasOwnProperty(property))
                     (this as any)[property] = (data as any)[property];
             }
+        }
+        if (!data) {
+            this.sourceOriginInSourceUnits = new SpaceCadPointV1();
+            this.floorOriginMillimeters = new SpaceCadMillimeterPointV1();
+            this.targetFloor = new SpaceCadFloorAssignmentV1();
+            this.sourceToFloorTransform = new SpaceCadAffineTransformV1();
         }
     }
 
@@ -22203,11 +22230,11 @@ export class SpaceCadCoordinateMetadataV1 implements ISpaceCadCoordinateMetadata
             this.detectedScaleToMillimeters = _data["detectedScaleToMillimeters"];
             this.confirmedUnit = _data["confirmedUnit"];
             this.confirmedScaleToMillimeters = _data["confirmedScaleToMillimeters"];
-            this.sourceOriginInSourceUnits = _data["sourceOriginInSourceUnits"] ? SpaceCadPointV1.fromJS(_data["sourceOriginInSourceUnits"]) : undefined as any;
-            this.floorOriginMillimeters = _data["floorOriginMillimeters"] ? SpaceCadMillimeterPointV1.fromJS(_data["floorOriginMillimeters"]) : undefined as any;
+            this.sourceOriginInSourceUnits = _data["sourceOriginInSourceUnits"] ? SpaceCadPointV1.fromJS(_data["sourceOriginInSourceUnits"]) : new SpaceCadPointV1();
+            this.floorOriginMillimeters = _data["floorOriginMillimeters"] ? SpaceCadMillimeterPointV1.fromJS(_data["floorOriginMillimeters"]) : new SpaceCadMillimeterPointV1();
             this.rotationZDegrees = _data["rotationZDegrees"];
-            this.targetFloor = _data["targetFloor"] ? SpaceCadFloorAssignmentV1.fromJS(_data["targetFloor"]) : undefined as any;
-            this.sourceToFloorTransform = _data["sourceToFloorTransform"] ? SpaceCadAffineTransformV1.fromJS(_data["sourceToFloorTransform"]) : undefined as any;
+            this.targetFloor = _data["targetFloor"] ? SpaceCadFloorAssignmentV1.fromJS(_data["targetFloor"]) : new SpaceCadFloorAssignmentV1();
+            this.sourceToFloorTransform = _data["sourceToFloorTransform"] ? SpaceCadAffineTransformV1.fromJS(_data["sourceToFloorTransform"]) : new SpaceCadAffineTransformV1();
             this.sourceBounds = _data["sourceBounds"] ? SpaceCadBoundsV1.fromJS(_data["sourceBounds"]) : undefined as any;
             this.preparedBounds = _data["preparedBounds"] ? SpaceCadBoundsV1.fromJS(_data["preparedBounds"]) : undefined as any;
             this.transformSha256 = _data["transformSha256"];
@@ -22243,21 +22270,21 @@ export class SpaceCadCoordinateMetadataV1 implements ISpaceCadCoordinateMetadata
 }
 
 export interface ISpaceCadCoordinateMetadataV1 {
-    schemaVersion?: number;
-    sourceSha256?: string | undefined;
-    unitConfirmed?: boolean;
-    detectedUnit?: SpaceCadUnit;
+    schemaVersion: number;
+    sourceSha256: string;
+    unitConfirmed: boolean;
+    detectedUnit: SpaceCadUnit;
     detectedScaleToMillimeters?: number | undefined;
-    confirmedUnit?: SpaceCadUnit;
-    confirmedScaleToMillimeters?: number;
-    sourceOriginInSourceUnits?: SpaceCadPointV1;
-    floorOriginMillimeters?: SpaceCadMillimeterPointV1;
-    rotationZDegrees?: number;
-    targetFloor?: SpaceCadFloorAssignmentV1;
-    sourceToFloorTransform?: SpaceCadAffineTransformV1;
+    confirmedUnit: SpaceCadUnit;
+    confirmedScaleToMillimeters: number;
+    sourceOriginInSourceUnits: SpaceCadPointV1;
+    floorOriginMillimeters: SpaceCadMillimeterPointV1;
+    rotationZDegrees: number;
+    targetFloor: SpaceCadFloorAssignmentV1;
+    sourceToFloorTransform: SpaceCadAffineTransformV1;
     sourceBounds?: SpaceCadBoundsV1;
     preparedBounds?: SpaceCadBoundsV1;
-    transformSha256?: string | undefined;
+    transformSha256: string;
 }
 
 export enum SpaceCadDiagnosticLocationKind {
@@ -22340,12 +22367,12 @@ export interface ISpaceCadDiagnosticLocationV1 {
 }
 
 export class SpaceCadFloorAssignmentV1 implements ISpaceCadFloorAssignmentV1 {
-    floorLogicalId?: string;
-    floorCode?: string | undefined;
-    level?: number;
-    elevationMillimeters?: number;
-    coordinateSystem?: string | undefined;
-    boundaryBounds?: SpaceCadBoundsV1;
+    floorLogicalId!: string;
+    floorCode!: string;
+    level!: number;
+    elevationMillimeters!: number;
+    coordinateSystem!: string;
+    boundaryBounds!: SpaceCadBoundsV1;
 
     constructor(data?: ISpaceCadFloorAssignmentV1) {
         if (data) {
@@ -22353,6 +22380,9 @@ export class SpaceCadFloorAssignmentV1 implements ISpaceCadFloorAssignmentV1 {
                 if (data.hasOwnProperty(property))
                     (this as any)[property] = (data as any)[property];
             }
+        }
+        if (!data) {
+            this.boundaryBounds = new SpaceCadBoundsV1();
         }
     }
 
@@ -22363,7 +22393,7 @@ export class SpaceCadFloorAssignmentV1 implements ISpaceCadFloorAssignmentV1 {
             this.level = _data["level"];
             this.elevationMillimeters = _data["elevationMillimeters"];
             this.coordinateSystem = _data["coordinateSystem"];
-            this.boundaryBounds = _data["boundaryBounds"] ? SpaceCadBoundsV1.fromJS(_data["boundaryBounds"]) : undefined as any;
+            this.boundaryBounds = _data["boundaryBounds"] ? SpaceCadBoundsV1.fromJS(_data["boundaryBounds"]) : new SpaceCadBoundsV1();
         }
     }
 
@@ -22387,12 +22417,12 @@ export class SpaceCadFloorAssignmentV1 implements ISpaceCadFloorAssignmentV1 {
 }
 
 export interface ISpaceCadFloorAssignmentV1 {
-    floorLogicalId?: string;
-    floorCode?: string | undefined;
-    level?: number;
-    elevationMillimeters?: number;
-    coordinateSystem?: string | undefined;
-    boundaryBounds?: SpaceCadBoundsV1;
+    floorLogicalId: string;
+    floorCode: string;
+    level: number;
+    elevationMillimeters: number;
+    coordinateSystem: string;
+    boundaryBounds: SpaceCadBoundsV1;
 }
 
 export enum SpaceCadGeometryRule {

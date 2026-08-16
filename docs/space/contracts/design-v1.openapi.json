@@ -21584,6 +21584,14 @@
         "additionalProperties": false
       },
       "CP6.Space.Contracts.PreviewSpaceCadPreparationResponse": {
+        "required": [
+          "baseContentRevision",
+          "coordinateAnalysis",
+          "coordinateIssues",
+          "coordinateMetadata",
+          "mappingProfile",
+          "readyForParsing"
+        ],
         "type": "object",
         "properties": {
           "preparationId": {
@@ -21612,6 +21620,12 @@
           },
           "coordinateMetadata": {
             "$ref": "#/components/schemas/CP6.Space.Contracts.SpaceCadCoordinateMetadataV1"
+          },
+          "coordinateIssues": {
+            "type": "array",
+            "items": {
+              "$ref": "#/components/schemas/CP6.Space.Contracts.SpaceCadConversionIssueV1"
+            }
           },
           "inventorySummary": {
             "$ref": "#/components/schemas/CP6.Space.Contracts.SpaceCadInventorySummaryV1"
@@ -23226,6 +23240,15 @@
         "additionalProperties": false
       },
       "CP6.Space.Contracts.SpaceCadAffineTransformV1": {
+        "required": [
+          "m11",
+          "m12",
+          "m21",
+          "m22",
+          "offsetX",
+          "offsetY",
+          "offsetZ"
+        ],
         "type": "object",
         "properties": {
           "m11": {
@@ -23448,11 +23471,14 @@
         "type": "string"
       },
       "CP6.Space.Contracts.SpaceCadConversionIssueV1": {
+        "required": [
+          "code",
+          "severity"
+        ],
         "type": "object",
         "properties": {
           "code": {
-            "type": "string",
-            "nullable": true
+            "type": "string"
           },
           "severity": {
             "$ref": "#/components/schemas/CP6.Space.Contracts.SpaceCadIssueSeverity"
@@ -23469,6 +23495,14 @@
         "additionalProperties": false
       },
       "CP6.Space.Contracts.SpaceCadCoordinateAnalysisV1": {
+        "required": [
+          "issues",
+          "isSuggestedExtentPlausible",
+          "requiresUnitConfirmation",
+          "schemaVersion",
+          "sourceSha256",
+          "suggestedUnit"
+        ],
         "type": "object",
         "properties": {
           "schemaVersion": {
@@ -23476,8 +23510,7 @@
             "format": "int32"
           },
           "sourceSha256": {
-            "type": "string",
-            "nullable": true
+            "type": "string"
           },
           "suggestedUnit": {
             "$ref": "#/components/schemas/CP6.Space.Contracts.SpaceCadUnit"
@@ -23503,13 +23536,26 @@
             "type": "array",
             "items": {
               "$ref": "#/components/schemas/CP6.Space.Contracts.SpaceCadConversionIssueV1"
-            },
-            "nullable": true
+            }
           }
         },
         "additionalProperties": false
       },
       "CP6.Space.Contracts.SpaceCadCoordinateMetadataV1": {
+        "required": [
+          "confirmedScaleToMillimeters",
+          "confirmedUnit",
+          "detectedUnit",
+          "floorOriginMillimeters",
+          "rotationZDegrees",
+          "schemaVersion",
+          "sourceOriginInSourceUnits",
+          "sourceSha256",
+          "sourceToFloorTransform",
+          "targetFloor",
+          "transformSha256",
+          "unitConfirmed"
+        ],
         "type": "object",
         "properties": {
           "schemaVersion": {
@@ -23517,8 +23563,7 @@
             "format": "int32"
           },
           "sourceSha256": {
-            "type": "string",
-            "nullable": true
+            "type": "string"
           },
           "unitConfirmed": {
             "type": "boolean"
@@ -23561,8 +23606,7 @@
             "$ref": "#/components/schemas/CP6.Space.Contracts.SpaceCadBoundsV1"
           },
           "transformSha256": {
-            "type": "string",
-            "nullable": true
+            "type": "string"
           }
         },
         "additionalProperties": false
@@ -23619,6 +23663,14 @@
         "additionalProperties": false
       },
       "CP6.Space.Contracts.SpaceCadFloorAssignmentV1": {
+        "required": [
+          "boundaryBounds",
+          "coordinateSystem",
+          "elevationMillimeters",
+          "floorCode",
+          "floorLogicalId",
+          "level"
+        ],
         "type": "object",
         "properties": {
           "floorLogicalId": {
@@ -23626,8 +23678,7 @@
             "format": "uuid"
           },
           "floorCode": {
-            "type": "string",
-            "nullable": true
+            "type": "string"
           },
           "level": {
             "type": "integer",
@@ -23638,8 +23689,7 @@
             "format": "int32"
           },
           "coordinateSystem": {
-            "type": "string",
-            "nullable": true
+            "type": "string"
           },
           "boundaryBounds": {
             "$ref": "#/components/schemas/CP6.Space.Contracts.SpaceCadBoundsV1"

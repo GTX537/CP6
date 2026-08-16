@@ -120,6 +120,7 @@ describe('DesignCadStartWizard', () => {
         confirmedUnit: 'Millimeter',
         confirmedScaleToMillimeters: 1,
       },
+      coordinateIssues: [],
       mappingProfile: {
         profileId: 'profile-1',
         version: 1,
@@ -189,6 +190,19 @@ describe('DesignCadStartWizard', () => {
         confirmedUnit: 'Millimeter',
         confirmedScaleToMillimeters: 1,
       },
+      coordinateIssues: [
+        {
+          code: 'SPACE_CAD_FLOOR_BOUNDARY_EXCEEDED',
+          severity: 'Blocking',
+          detailToken: 'outside-target-floor',
+        },
+        {
+          code: 'SPACE_CAD_ENTITY_FLOOR_BOUNDARY_EXCEEDED',
+          severity: 'Warning',
+          sourceRef: 'H:100',
+          detailToken: 'outside-target-floor',
+        },
+      ],
       inventorySummary: {
         layerCount: 2,
         blockCount: 1,
@@ -314,6 +328,10 @@ describe('DesignCadStartWizard', () => {
     expect(inventory.text()).toContain('CONTINUOUS')
     expect(inventory.text()).toContain('MISC · 隐藏')
     expect(inventory.text()).toContain('未映射')
+    const coordinateIssues = wrapper.get('[aria-label="CAD 坐标与越界问题"]')
+    expect(coordinateIssues.text()).toContain('SPACE_CAD_FLOOR_BOUNDARY_EXCEEDED')
+    expect(coordinateIssues.text()).toContain('对象 H:100')
+    expect(wrapper.get('.metrics .blocking').text()).toContain('阻断 2')
     await wrapper.get('.block-review summary').trigger('click')
     expect(wrapper.get('[aria-label="CAD 块清单"]').text()).toContain('RACK-A')
 

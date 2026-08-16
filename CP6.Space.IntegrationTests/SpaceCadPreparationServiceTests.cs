@@ -86,6 +86,39 @@ public sealed class SpaceCadPreparationServiceTests
     }
 
     [Fact]
+    public async Task Preview_returns_document_and_entity_boundary_issues_with_source_refs()
+    {
+        await using var fixture = await CreateFixtureAsync();
+        fixture.Floor.ConfigureBoundary(
+            "[[0,0],[5000,0],[5000,5000],[0,5000]]",
+            SpaceCadCoordinateVersions.TargetCoordinateSystem);
+        await fixture.Context.SaveChangesAsync();
+        _ = await fixture.Service.GetStatusAsync(
+            fixture.Version.Id,
+            fixture.Source.Id);
+        var profile = Assert.Single(
+            await fixture.Service.ListProfilesAsync(fixture.Version.Id));
+
+        var preview = await fixture.Service.PreviewAsync(
+            fixture.Version.Id,
+            fixture.Source.Id,
+            Request(fixture.Floor.LogicalId, profile));
+
+        Assert.False(preview.ReadyForParsing);
+        Assert.Null(preview.StartRequest);
+        Assert.Contains(
+            preview.CoordinateIssues,
+            issue => issue.Code == "SPACE_CAD_FLOOR_BOUNDARY_EXCEEDED"
+                     && issue.Severity == SpaceCadIssueSeverity.Blocking
+                     && issue.SourceRef is null);
+        Assert.Contains(
+            preview.CoordinateIssues,
+            issue => issue.Code == "SPACE_CAD_ENTITY_FLOOR_BOUNDARY_EXCEEDED"
+                     && issue.Severity == SpaceCadIssueSeverity.Warning
+                     && issue.SourceRef == "H:WALL-1");
+    }
+
+    [Fact]
     public async Task Start_rejects_a_sealed_preparation_after_draft_revision_changes()
     {
         await using var fixture = await CreateFixtureAsync();
