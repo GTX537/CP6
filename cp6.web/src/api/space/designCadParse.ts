@@ -113,6 +113,8 @@ export type SpaceCadGeometryRule =
   | 'DirectGeometry'
   | 'Centerline'
   | 'ClosedBoundary'
+  | 'BlockFootprint'
+  | 'InsertionPoint'
 
 export interface SpaceCadLayerMappingOverride {
   layerId: string

@@ -472,6 +472,41 @@ public sealed class SpaceWmsRuntimeSchemaFilter : ISchemaFilter
                 "layerId",
                 "ignore",
             ],
+            [typeof(SaveSpaceCadMappingProfileRequest)] =
+            [
+                "name",
+                "isEnabled",
+                "rules",
+            ],
+            [typeof(SaveSpaceCadMappingProfileResponse)] =
+            [
+                "profile",
+                "created",
+                "idempotentReplay",
+            ],
+            [typeof(SpaceCadMappingProfileDto)] =
+            [
+                "id",
+                "name",
+                "scope",
+                "version",
+                "isReadOnly",
+                "isEnabled",
+                "definitionSha256",
+                "rules",
+            ],
+            [typeof(SpaceCadMappingRuleV1)] =
+            [
+                "ruleId",
+                "priority",
+                "sourceKind",
+                "matchKind",
+                "pattern",
+                "target",
+                "geometryRule",
+                "confidenceWeight",
+                "isRequired",
+            ],
             [typeof(SpaceCadPreparationInventoryDto)] =
             [
                 "summary",

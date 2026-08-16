@@ -94,6 +94,10 @@ public class SpacePermissionAttributeTests
             ["SpaceCadParseController.GetParse"] = "space:model:read",
             ["SpaceCadParseController.GetReviewWorkspace"] =
                 "space:model:read",
+            ["SpaceCadMappingProfileController.GetCadMappingProfiles"] =
+                "space:model:read",
+            ["SpaceCadMappingProfileController.GetCadMappingProfile"] =
+                "space:model:read",
             ["SpaceDesignV1Controller.GetAssets"] = "space:model:read",
             ["SpaceDesignV1Controller.GetWarehouseTemplates"] =
                 "space:model:read",
@@ -253,7 +257,7 @@ public class SpacePermissionAttributeTests
     public void SpaceControllers_AreDiscovered()
     {
         // 守卫：确保反射确实扫到全部 controller（防命名空间/程序集变动导致「空扫空过」）。
-        Assert.Equal(45, SpaceControllers.Count());
+        Assert.Equal(46, SpaceControllers.Count());
     }
 
     [Fact]

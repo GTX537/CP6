@@ -2,6 +2,13 @@
 
 > 依据 Git log 汇总，不替代完整 Git 历史。重点记录影响接手判断的里程碑。
 
+## 2026-08-16：Space 租户私有 CAD Mapping Profile
+
+- Design V1 新增 CAD Mapping Profile 管理权威：系统版本只读，租户复制后以 RowVersion、幂等键和 append-only 版本表保存规则快照、Definition SHA-256、复制来源与审计。
+- Preparation Catalog 自动合并 System 与当前租户 Profile；跨租户读取/复制失败关闭。CAD 起始向导新增结构化规则管理、启停、复制和追加版本，无需手填 Profile ID/Version。
+- 新增可回滚 EF 迁移、OpenAPI/双 SDK、权限与管理 UI 自动化；Space Unit 540、真 SQL Space Integration 453（0 skipped）、CP6.Tests 2,933、Web 866、生产构建和完整 solution Release 0 warning / 0 error 通过。
+- LM-FR-013 仓库实现闭环；WP4 与核心 GA 仍为 Partial/Pending、72% / `NoGo`。
+
 ## 2026-08-16：Space CAD 图层/块审核与逐层 Override
 
 - Design V1 CAD Preparation Preview 新增审核清单，向导可查看和搜索图层名称、颜色、线型、可见性、对象计数，以及块定义、引用和属性引用计数。

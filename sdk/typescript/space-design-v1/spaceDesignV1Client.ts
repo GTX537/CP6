@@ -118,6 +118,22 @@ export interface ISpaceDesignV1Client {
     createProposalBatchDecision(runId: string, idempotency_Key: string, body: CreateSpaceAiProposalBatchDecisionRequest): Promise<SpaceAiProposalDecisionResponse>;
 
     /**
+     * @return OK
+     */
+    getCadMappingProfiles(): Promise<SpaceCadMappingProfileDto[]>;
+
+    /**
+     * @return OK
+     */
+    saveCadMappingProfile(idempotency_Key: string, body: SaveSpaceCadMappingProfileRequest): Promise<SaveSpaceCadMappingProfileResponse>;
+
+    /**
+     * @param version (optional)
+     * @return OK
+     */
+    getCadMappingProfile(profileId: string, version: number | undefined): Promise<SpaceCadMappingProfileDto>;
+
+    /**
      * @param sourceFormat (optional)
      * @param file (optional)
      * @return Accepted
@@ -2431,6 +2447,291 @@ export class SpaceDesignV1Client implements ISpaceDesignV1Client {
             });
         }
         return Promise.resolve<SpaceAiProposalDecisionResponse>(null as any);
+    }
+
+    /**
+     * @return OK
+     */
+    getCadMappingProfiles(): Promise<SpaceCadMappingProfileDto[]> {
+        let url_ = this.baseUrl + "/api/space/design/v1/mapping-profiles/cad";
+        url_ = url_.replace(/[?&]$/, "");
+
+        let options_: RequestInit = {
+            method: "GET",
+            headers: {
+                "Accept": "application/json"
+            }
+        };
+
+        return this.http.fetch(url_, options_).then((_response: Response) => {
+            return this.processGetCadMappingProfiles(_response);
+        });
+    }
+
+    protected processGetCadMappingProfiles(response: Response): Promise<SpaceCadMappingProfileDto[]> {
+        const status = response.status;
+        let _headers: any = {}; if (response.headers && response.headers.forEach) { response.headers.forEach((v: any, k: any) => _headers[k] = v); };
+        if (status === 200) {
+            return response.text().then((_responseText) => {
+            let result200: any = null;
+            let resultData200 = _responseText === "" ? null : JSON.parse(_responseText, this.jsonParseReviver);
+            if (Array.isArray(resultData200)) {
+                result200 = [] as any;
+                for (let item of resultData200)
+                    result200!.push(SpaceCadMappingProfileDto.fromJS(item));
+            }
+            else {
+                result200 = null as any;
+            }
+            return result200;
+            });
+        } else if (status === 400) {
+            return response.text().then((_responseText) => {
+            let result400: any = null;
+            let resultData400 = _responseText === "" ? null : JSON.parse(_responseText, this.jsonParseReviver);
+            result400 = SpaceDesignProblemDetails.fromJS(resultData400);
+            return throwException("Bad Request", status, _responseText, _headers, result400);
+            });
+        } else if (status === 401) {
+            return response.text().then((_responseText) => {
+            let result401: any = null;
+            let resultData401 = _responseText === "" ? null : JSON.parse(_responseText, this.jsonParseReviver);
+            result401 = SpaceDesignProblemDetails.fromJS(resultData401);
+            return throwException("Unauthorized", status, _responseText, _headers, result401);
+            });
+        } else if (status === 403) {
+            return response.text().then((_responseText) => {
+            let result403: any = null;
+            let resultData403 = _responseText === "" ? null : JSON.parse(_responseText, this.jsonParseReviver);
+            result403 = SpaceDesignProblemDetails.fromJS(resultData403);
+            return throwException("Forbidden", status, _responseText, _headers, result403);
+            });
+        } else if (status === 404) {
+            return response.text().then((_responseText) => {
+            let result404: any = null;
+            let resultData404 = _responseText === "" ? null : JSON.parse(_responseText, this.jsonParseReviver);
+            result404 = SpaceDesignProblemDetails.fromJS(resultData404);
+            return throwException("Not Found", status, _responseText, _headers, result404);
+            });
+        } else if (status === 409) {
+            return response.text().then((_responseText) => {
+            let result409: any = null;
+            let resultData409 = _responseText === "" ? null : JSON.parse(_responseText, this.jsonParseReviver);
+            result409 = SpaceDesignProblemDetails.fromJS(resultData409);
+            return throwException("Conflict", status, _responseText, _headers, result409);
+            });
+        } else if (status === 422) {
+            return response.text().then((_responseText) => {
+            let result422: any = null;
+            let resultData422 = _responseText === "" ? null : JSON.parse(_responseText, this.jsonParseReviver);
+            result422 = SpaceDesignProblemDetails.fromJS(resultData422);
+            return throwException("Unprocessable Content", status, _responseText, _headers, result422);
+            });
+        } else if (status === 500) {
+            return response.text().then((_responseText) => {
+            let result500: any = null;
+            let resultData500 = _responseText === "" ? null : JSON.parse(_responseText, this.jsonParseReviver);
+            result500 = SpaceDesignProblemDetails.fromJS(resultData500);
+            return throwException("Internal Server Error", status, _responseText, _headers, result500);
+            });
+        } else if (status !== 200 && status !== 204) {
+            return response.text().then((_responseText) => {
+            return throwException("An unexpected server error occurred.", status, _responseText, _headers);
+            });
+        }
+        return Promise.resolve<SpaceCadMappingProfileDto[]>(null as any);
+    }
+
+    /**
+     * @return OK
+     */
+    saveCadMappingProfile(idempotency_Key: string, body: SaveSpaceCadMappingProfileRequest): Promise<SaveSpaceCadMappingProfileResponse> {
+        let url_ = this.baseUrl + "/api/space/design/v1/mapping-profiles/cad";
+        url_ = url_.replace(/[?&]$/, "");
+
+        const content_ = JSON.stringify(body);
+
+        let options_: RequestInit = {
+            body: content_,
+            method: "POST",
+            headers: {
+                "Idempotency-Key": idempotency_Key !== undefined && idempotency_Key !== null ? "" + idempotency_Key : "",
+                "Content-Type": "application/json",
+                "Accept": "application/json"
+            }
+        };
+
+        return this.http.fetch(url_, options_).then((_response: Response) => {
+            return this.processSaveCadMappingProfile(_response);
+        });
+    }
+
+    protected processSaveCadMappingProfile(response: Response): Promise<SaveSpaceCadMappingProfileResponse> {
+        const status = response.status;
+        let _headers: any = {}; if (response.headers && response.headers.forEach) { response.headers.forEach((v: any, k: any) => _headers[k] = v); };
+        if (status === 200) {
+            return response.text().then((_responseText) => {
+            let result200: any = null;
+            let resultData200 = _responseText === "" ? null : JSON.parse(_responseText, this.jsonParseReviver);
+            result200 = SaveSpaceCadMappingProfileResponse.fromJS(resultData200);
+            return result200;
+            });
+        } else if (status === 201) {
+            return response.text().then((_responseText) => {
+            let result201: any = null;
+            let resultData201 = _responseText === "" ? null : JSON.parse(_responseText, this.jsonParseReviver);
+            result201 = SaveSpaceCadMappingProfileResponse.fromJS(resultData201);
+            return result201;
+            });
+        } else if (status === 400) {
+            return response.text().then((_responseText) => {
+            let result400: any = null;
+            let resultData400 = _responseText === "" ? null : JSON.parse(_responseText, this.jsonParseReviver);
+            result400 = SpaceDesignProblemDetails.fromJS(resultData400);
+            return throwException("Bad Request", status, _responseText, _headers, result400);
+            });
+        } else if (status === 401) {
+            return response.text().then((_responseText) => {
+            let result401: any = null;
+            let resultData401 = _responseText === "" ? null : JSON.parse(_responseText, this.jsonParseReviver);
+            result401 = SpaceDesignProblemDetails.fromJS(resultData401);
+            return throwException("Unauthorized", status, _responseText, _headers, result401);
+            });
+        } else if (status === 403) {
+            return response.text().then((_responseText) => {
+            let result403: any = null;
+            let resultData403 = _responseText === "" ? null : JSON.parse(_responseText, this.jsonParseReviver);
+            result403 = SpaceDesignProblemDetails.fromJS(resultData403);
+            return throwException("Forbidden", status, _responseText, _headers, result403);
+            });
+        } else if (status === 404) {
+            return response.text().then((_responseText) => {
+            let result404: any = null;
+            let resultData404 = _responseText === "" ? null : JSON.parse(_responseText, this.jsonParseReviver);
+            result404 = SpaceDesignProblemDetails.fromJS(resultData404);
+            return throwException("Not Found", status, _responseText, _headers, result404);
+            });
+        } else if (status === 409) {
+            return response.text().then((_responseText) => {
+            let result409: any = null;
+            let resultData409 = _responseText === "" ? null : JSON.parse(_responseText, this.jsonParseReviver);
+            result409 = SpaceDesignProblemDetails.fromJS(resultData409);
+            return throwException("Conflict", status, _responseText, _headers, result409);
+            });
+        } else if (status === 422) {
+            return response.text().then((_responseText) => {
+            let result422: any = null;
+            let resultData422 = _responseText === "" ? null : JSON.parse(_responseText, this.jsonParseReviver);
+            result422 = SpaceDesignProblemDetails.fromJS(resultData422);
+            return throwException("Unprocessable Content", status, _responseText, _headers, result422);
+            });
+        } else if (status === 500) {
+            return response.text().then((_responseText) => {
+            let result500: any = null;
+            let resultData500 = _responseText === "" ? null : JSON.parse(_responseText, this.jsonParseReviver);
+            result500 = SpaceDesignProblemDetails.fromJS(resultData500);
+            return throwException("Internal Server Error", status, _responseText, _headers, result500);
+            });
+        } else if (status !== 200 && status !== 204) {
+            return response.text().then((_responseText) => {
+            return throwException("An unexpected server error occurred.", status, _responseText, _headers);
+            });
+        }
+        return Promise.resolve<SaveSpaceCadMappingProfileResponse>(null as any);
+    }
+
+    /**
+     * @param version (optional)
+     * @return OK
+     */
+    getCadMappingProfile(profileId: string, version: number | undefined): Promise<SpaceCadMappingProfileDto> {
+        let url_ = this.baseUrl + "/api/space/design/v1/mapping-profiles/cad/{profileId}?";
+        if (profileId === undefined || profileId === null)
+            throw new globalThis.Error("The parameter 'profileId' must be defined.");
+        url_ = url_.replace("{profileId}", encodeURIComponent("" + profileId));
+        if (version === null)
+            throw new globalThis.Error("The parameter 'version' cannot be null.");
+        else if (version !== undefined)
+            url_ += "version=" + encodeURIComponent("" + version) + "&";
+        url_ = url_.replace(/[?&]$/, "");
+
+        let options_: RequestInit = {
+            method: "GET",
+            headers: {
+                "Accept": "application/json"
+            }
+        };
+
+        return this.http.fetch(url_, options_).then((_response: Response) => {
+            return this.processGetCadMappingProfile(_response);
+        });
+    }
+
+    protected processGetCadMappingProfile(response: Response): Promise<SpaceCadMappingProfileDto> {
+        const status = response.status;
+        let _headers: any = {}; if (response.headers && response.headers.forEach) { response.headers.forEach((v: any, k: any) => _headers[k] = v); };
+        if (status === 200) {
+            return response.text().then((_responseText) => {
+            let result200: any = null;
+            let resultData200 = _responseText === "" ? null : JSON.parse(_responseText, this.jsonParseReviver);
+            result200 = SpaceCadMappingProfileDto.fromJS(resultData200);
+            return result200;
+            });
+        } else if (status === 400) {
+            return response.text().then((_responseText) => {
+            let result400: any = null;
+            let resultData400 = _responseText === "" ? null : JSON.parse(_responseText, this.jsonParseReviver);
+            result400 = SpaceDesignProblemDetails.fromJS(resultData400);
+            return throwException("Bad Request", status, _responseText, _headers, result400);
+            });
+        } else if (status === 401) {
+            return response.text().then((_responseText) => {
+            let result401: any = null;
+            let resultData401 = _responseText === "" ? null : JSON.parse(_responseText, this.jsonParseReviver);
+            result401 = SpaceDesignProblemDetails.fromJS(resultData401);
+            return throwException("Unauthorized", status, _responseText, _headers, result401);
+            });
+        } else if (status === 403) {
+            return response.text().then((_responseText) => {
+            let result403: any = null;
+            let resultData403 = _responseText === "" ? null : JSON.parse(_responseText, this.jsonParseReviver);
+            result403 = SpaceDesignProblemDetails.fromJS(resultData403);
+            return throwException("Forbidden", status, _responseText, _headers, result403);
+            });
+        } else if (status === 404) {
+            return response.text().then((_responseText) => {
+            let result404: any = null;
+            let resultData404 = _responseText === "" ? null : JSON.parse(_responseText, this.jsonParseReviver);
+            result404 = SpaceDesignProblemDetails.fromJS(resultData404);
+            return throwException("Not Found", status, _responseText, _headers, result404);
+            });
+        } else if (status === 409) {
+            return response.text().then((_responseText) => {
+            let result409: any = null;
+            let resultData409 = _responseText === "" ? null : JSON.parse(_responseText, this.jsonParseReviver);
+            result409 = SpaceDesignProblemDetails.fromJS(resultData409);
+            return throwException("Conflict", status, _responseText, _headers, result409);
+            });
+        } else if (status === 422) {
+            return response.text().then((_responseText) => {
+            let result422: any = null;
+            let resultData422 = _responseText === "" ? null : JSON.parse(_responseText, this.jsonParseReviver);
+            result422 = SpaceDesignProblemDetails.fromJS(resultData422);
+            return throwException("Unprocessable Content", status, _responseText, _headers, result422);
+            });
+        } else if (status === 500) {
+            return response.text().then((_responseText) => {
+            let result500: any = null;
+            let resultData500 = _responseText === "" ? null : JSON.parse(_responseText, this.jsonParseReviver);
+            result500 = SpaceDesignProblemDetails.fromJS(resultData500);
+            return throwException("Internal Server Error", status, _responseText, _headers, result500);
+            });
+        } else if (status !== 200 && status !== 204) {
+            return response.text().then((_responseText) => {
+            return throwException("An unexpected server error occurred.", status, _responseText, _headers);
+            });
+        }
+        return Promise.resolve<SpaceCadMappingProfileDto>(null as any);
     }
 
     /**
@@ -19293,6 +19594,124 @@ export interface IRetrySpacePublishAttemptResponse {
     idempotentReplay?: boolean;
 }
 
+export class SaveSpaceCadMappingProfileRequest implements ISaveSpaceCadMappingProfileRequest {
+    profileId?: string | undefined;
+    name!: string;
+    isEnabled!: boolean;
+    rules!: SpaceCadMappingRuleV1[];
+    expectedRowVersion?: string | undefined;
+    copyFromProfileId?: string | undefined;
+    copyFromVersion?: number | undefined;
+
+    constructor(data?: ISaveSpaceCadMappingProfileRequest) {
+        if (data) {
+            for (var property in data) {
+                if (data.hasOwnProperty(property))
+                    (this as any)[property] = (data as any)[property];
+            }
+        }
+        if (!data) {
+            this.rules = [];
+        }
+    }
+
+    init(_data?: any) {
+        if (_data) {
+            this.profileId = _data["profileId"];
+            this.name = _data["name"];
+            this.isEnabled = _data["isEnabled"];
+            if (Array.isArray(_data["rules"])) {
+                this.rules = [] as any;
+                for (let item of _data["rules"])
+                    this.rules!.push(SpaceCadMappingRuleV1.fromJS(item));
+            }
+            this.expectedRowVersion = _data["expectedRowVersion"];
+            this.copyFromProfileId = _data["copyFromProfileId"];
+            this.copyFromVersion = _data["copyFromVersion"];
+        }
+    }
+
+    static fromJS(data: any): SaveSpaceCadMappingProfileRequest {
+        data = typeof data === 'object' ? data : {};
+        let result = new SaveSpaceCadMappingProfileRequest();
+        result.init(data);
+        return result;
+    }
+
+    toJSON(data?: any) {
+        data = typeof data === 'object' ? data : {};
+        data["profileId"] = this.profileId;
+        data["name"] = this.name;
+        data["isEnabled"] = this.isEnabled;
+        if (Array.isArray(this.rules)) {
+            data["rules"] = [];
+            for (let item of this.rules)
+                data["rules"].push(item ? item.toJSON() : undefined as any);
+        }
+        data["expectedRowVersion"] = this.expectedRowVersion;
+        data["copyFromProfileId"] = this.copyFromProfileId;
+        data["copyFromVersion"] = this.copyFromVersion;
+        return data;
+    }
+}
+
+export interface ISaveSpaceCadMappingProfileRequest {
+    profileId?: string | undefined;
+    name: string;
+    isEnabled: boolean;
+    rules: SpaceCadMappingRuleV1[];
+    expectedRowVersion?: string | undefined;
+    copyFromProfileId?: string | undefined;
+    copyFromVersion?: number | undefined;
+}
+
+export class SaveSpaceCadMappingProfileResponse implements ISaveSpaceCadMappingProfileResponse {
+    profile!: SpaceCadMappingProfileDto;
+    created!: boolean;
+    idempotentReplay!: boolean;
+
+    constructor(data?: ISaveSpaceCadMappingProfileResponse) {
+        if (data) {
+            for (var property in data) {
+                if (data.hasOwnProperty(property))
+                    (this as any)[property] = (data as any)[property];
+            }
+        }
+        if (!data) {
+            this.profile = new SpaceCadMappingProfileDto();
+        }
+    }
+
+    init(_data?: any) {
+        if (_data) {
+            this.profile = _data["profile"] ? SpaceCadMappingProfileDto.fromJS(_data["profile"]) : new SpaceCadMappingProfileDto();
+            this.created = _data["created"];
+            this.idempotentReplay = _data["idempotentReplay"];
+        }
+    }
+
+    static fromJS(data: any): SaveSpaceCadMappingProfileResponse {
+        data = typeof data === 'object' ? data : {};
+        let result = new SaveSpaceCadMappingProfileResponse();
+        result.init(data);
+        return result;
+    }
+
+    toJSON(data?: any) {
+        data = typeof data === 'object' ? data : {};
+        data["profile"] = this.profile ? this.profile.toJSON() : undefined as any;
+        data["created"] = this.created;
+        data["idempotentReplay"] = this.idempotentReplay;
+        return data;
+    }
+}
+
+export interface ISaveSpaceCadMappingProfileResponse {
+    profile: SpaceCadMappingProfileDto;
+    created: boolean;
+    idempotentReplay: boolean;
+}
+
 export class SaveSpaceExcelMappingProfileRequest implements ISaveSpaceExcelMappingProfileRequest {
     profileId?: string | undefined;
     name!: string;
@@ -22374,6 +22793,12 @@ export interface ISpaceCadMappingIssueV1 {
     detailToken?: string | undefined;
 }
 
+export enum SpaceCadMappingMatchKind {
+    Exact = "Exact",
+    Glob = "Glob",
+    Regex = "Regex",
+}
+
 export class SpaceCadMappingPreviewSummaryV1 implements ISpaceCadMappingPreviewSummaryV1 {
     layerCount?: number;
     mappedLayerCount?: number;
@@ -22578,6 +23003,101 @@ export interface ISpaceCadMappingPreviewV1 {
     previewSha256?: string | undefined;
 }
 
+export class SpaceCadMappingProfileDto implements ISpaceCadMappingProfileDto {
+    id!: string;
+    name!: string;
+    scope!: SpaceCadMappingScope;
+    version!: number;
+    isReadOnly!: boolean;
+    isEnabled!: boolean;
+    definitionSha256!: string;
+    rules!: SpaceCadMappingRuleV1[];
+    basedOnProfileId?: string | undefined;
+    basedOnVersion?: number | undefined;
+    rowVersion?: string | undefined;
+    createdAtUtc?: Date | undefined;
+    createdBy?: string | undefined;
+
+    constructor(data?: ISpaceCadMappingProfileDto) {
+        if (data) {
+            for (var property in data) {
+                if (data.hasOwnProperty(property))
+                    (this as any)[property] = (data as any)[property];
+            }
+        }
+        if (!data) {
+            this.rules = [];
+        }
+    }
+
+    init(_data?: any) {
+        if (_data) {
+            this.id = _data["id"];
+            this.name = _data["name"];
+            this.scope = _data["scope"];
+            this.version = _data["version"];
+            this.isReadOnly = _data["isReadOnly"];
+            this.isEnabled = _data["isEnabled"];
+            this.definitionSha256 = _data["definitionSha256"];
+            if (Array.isArray(_data["rules"])) {
+                this.rules = [] as any;
+                for (let item of _data["rules"])
+                    this.rules!.push(SpaceCadMappingRuleV1.fromJS(item));
+            }
+            this.basedOnProfileId = _data["basedOnProfileId"];
+            this.basedOnVersion = _data["basedOnVersion"];
+            this.rowVersion = _data["rowVersion"];
+            this.createdAtUtc = _data["createdAtUtc"] ? new Date(_data["createdAtUtc"].toString()) : undefined as any;
+            this.createdBy = _data["createdBy"];
+        }
+    }
+
+    static fromJS(data: any): SpaceCadMappingProfileDto {
+        data = typeof data === 'object' ? data : {};
+        let result = new SpaceCadMappingProfileDto();
+        result.init(data);
+        return result;
+    }
+
+    toJSON(data?: any) {
+        data = typeof data === 'object' ? data : {};
+        data["id"] = this.id;
+        data["name"] = this.name;
+        data["scope"] = this.scope;
+        data["version"] = this.version;
+        data["isReadOnly"] = this.isReadOnly;
+        data["isEnabled"] = this.isEnabled;
+        data["definitionSha256"] = this.definitionSha256;
+        if (Array.isArray(this.rules)) {
+            data["rules"] = [];
+            for (let item of this.rules)
+                data["rules"].push(item ? item.toJSON() : undefined as any);
+        }
+        data["basedOnProfileId"] = this.basedOnProfileId;
+        data["basedOnVersion"] = this.basedOnVersion;
+        data["rowVersion"] = this.rowVersion;
+        data["createdAtUtc"] = this.createdAtUtc ? this.createdAtUtc.toISOString() : undefined as any;
+        data["createdBy"] = this.createdBy;
+        return data;
+    }
+}
+
+export interface ISpaceCadMappingProfileDto {
+    id: string;
+    name: string;
+    scope: SpaceCadMappingScope;
+    version: number;
+    isReadOnly: boolean;
+    isEnabled: boolean;
+    definitionSha256: string;
+    rules: SpaceCadMappingRuleV1[];
+    basedOnProfileId?: string | undefined;
+    basedOnVersion?: number | undefined;
+    rowVersion?: string | undefined;
+    createdAtUtc?: Date | undefined;
+    createdBy?: string | undefined;
+}
+
 export class SpaceCadMappingProfileSummaryDto implements ISpaceCadMappingProfileSummaryDto {
     profileId?: string;
     version?: number;
@@ -22636,6 +23156,103 @@ export interface ISpaceCadMappingProfileSummaryDto {
     isEnabled?: boolean;
     definitionSha256?: string | undefined;
     ruleCount?: number;
+}
+
+export class SpaceCadMappingRuleV1 implements ISpaceCadMappingRuleV1 {
+    ruleId!: string;
+    priority!: number;
+    sourceKind!: SpaceCadMappingSourceKind;
+    matchKind!: SpaceCadMappingMatchKind;
+    pattern!: string;
+    attributeName?: string | undefined;
+    attributeMatchKind?: SpaceCadMappingMatchKind;
+    attributePattern?: string | undefined;
+    target!: SpaceCadSemanticTarget;
+    targetSubtype?: string | undefined;
+    geometryRule!: SpaceCadGeometryRule;
+    defaultHeightMillimeters?: number | undefined;
+    defaultThicknessMillimeters?: number | undefined;
+    confidenceWeight!: number;
+    isRequired!: boolean;
+
+    constructor(data?: ISpaceCadMappingRuleV1) {
+        if (data) {
+            for (var property in data) {
+                if (data.hasOwnProperty(property))
+                    (this as any)[property] = (data as any)[property];
+            }
+        }
+    }
+
+    init(_data?: any) {
+        if (_data) {
+            this.ruleId = _data["ruleId"];
+            this.priority = _data["priority"];
+            this.sourceKind = _data["sourceKind"];
+            this.matchKind = _data["matchKind"];
+            this.pattern = _data["pattern"];
+            this.attributeName = _data["attributeName"];
+            this.attributeMatchKind = _data["attributeMatchKind"];
+            this.attributePattern = _data["attributePattern"];
+            this.target = _data["target"];
+            this.targetSubtype = _data["targetSubtype"];
+            this.geometryRule = _data["geometryRule"];
+            this.defaultHeightMillimeters = _data["defaultHeightMillimeters"];
+            this.defaultThicknessMillimeters = _data["defaultThicknessMillimeters"];
+            this.confidenceWeight = _data["confidenceWeight"];
+            this.isRequired = _data["isRequired"];
+        }
+    }
+
+    static fromJS(data: any): SpaceCadMappingRuleV1 {
+        data = typeof data === 'object' ? data : {};
+        let result = new SpaceCadMappingRuleV1();
+        result.init(data);
+        return result;
+    }
+
+    toJSON(data?: any) {
+        data = typeof data === 'object' ? data : {};
+        data["ruleId"] = this.ruleId;
+        data["priority"] = this.priority;
+        data["sourceKind"] = this.sourceKind;
+        data["matchKind"] = this.matchKind;
+        data["pattern"] = this.pattern;
+        data["attributeName"] = this.attributeName;
+        data["attributeMatchKind"] = this.attributeMatchKind;
+        data["attributePattern"] = this.attributePattern;
+        data["target"] = this.target;
+        data["targetSubtype"] = this.targetSubtype;
+        data["geometryRule"] = this.geometryRule;
+        data["defaultHeightMillimeters"] = this.defaultHeightMillimeters;
+        data["defaultThicknessMillimeters"] = this.defaultThicknessMillimeters;
+        data["confidenceWeight"] = this.confidenceWeight;
+        data["isRequired"] = this.isRequired;
+        return data;
+    }
+}
+
+export interface ISpaceCadMappingRuleV1 {
+    ruleId: string;
+    priority: number;
+    sourceKind: SpaceCadMappingSourceKind;
+    matchKind: SpaceCadMappingMatchKind;
+    pattern: string;
+    attributeName?: string | undefined;
+    attributeMatchKind?: SpaceCadMappingMatchKind;
+    attributePattern?: string | undefined;
+    target: SpaceCadSemanticTarget;
+    targetSubtype?: string | undefined;
+    geometryRule: SpaceCadGeometryRule;
+    defaultHeightMillimeters?: number | undefined;
+    defaultThicknessMillimeters?: number | undefined;
+    confidenceWeight: number;
+    isRequired: boolean;
+}
+
+export enum SpaceCadMappingScope {
+    System = "System",
+    Tenant = "Tenant",
 }
 
 export enum SpaceCadMappingSourceKind {
