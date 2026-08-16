@@ -201,6 +201,17 @@ public sealed class SpaceModelSource : SpaceTenantEntity
         State = SpaceSourceState.Rejected;
     }
 
+    public void Remove()
+    {
+        if (State is SpaceSourceState.Scanning or SpaceSourceState.Parsing)
+        {
+            throw new SpaceFileStateException(
+                "A source with work in progress cannot be removed.");
+        }
+
+        MarkEntityDeleted();
+    }
+
     public void CompleteFileScan(SpaceFile file)
     {
         ArgumentNullException.ThrowIfNull(file);

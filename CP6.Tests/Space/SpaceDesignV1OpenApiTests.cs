@@ -95,6 +95,8 @@ public sealed class SpaceDesignV1OpenApiTests
             "/api/space/design/v1/versions/{versionId}/cad-sources",
             "/api/space/design/v1/versions/{versionId}/cad-mapping-profiles",
             "/api/space/design/v1/versions/{versionId}/sources",
+            "/api/space/design/v1/versions/{versionId}/sources/{sourceId}/removal-preview",
+            "/api/space/design/v1/versions/{versionId}/sources/{sourceId}:remove",
             "/api/space/design/v1/versions/{versionId}/sources/{sourceId}/content",
             "/api/space/design/v1/versions/{versionId}/sources/{sourceId}/excel-preflights",
             "/api/space/design/v1/versions/{versionId}/sources/{sourceId}/excel-preflights/{jobId}",
@@ -158,8 +160,8 @@ public sealed class SpaceDesignV1OpenApiTests
             .Select(operation =>
                 operation.Value.GetProperty("operationId").GetString())
             .ToArray();
-        Assert.Equal(141, operationIds.Length);
-        Assert.Equal(141, operationIds.Distinct().Count());
+        Assert.Equal(143, operationIds.Length);
+        Assert.Equal(143, operationIds.Distinct().Count());
         Assert.Contains("GetCapability", operationIds);
         Assert.Contains("ReplaceProviderConfiguration", operationIds);
         Assert.Contains("GetPolicy", operationIds);
@@ -226,6 +228,8 @@ public sealed class SpaceDesignV1OpenApiTests
         Assert.Contains("PreviewWarehouseTemplate", operationIds);
         Assert.Contains("ApplyWarehouseTemplateFloor", operationIds);
         Assert.Contains("CreateSource", operationIds);
+        Assert.Contains("GetSourceRemovalPreview", operationIds);
+        Assert.Contains("RemoveSource", operationIds);
         Assert.Contains("GetScene", operationIds);
         Assert.Contains("GetPublishedScene", operationIds);
         Assert.Contains("ApplyElementCommands", operationIds);
@@ -1772,6 +1776,116 @@ public sealed class SpaceDesignV1OpenApiTests
     }
 
     [Fact]
+    public void Source_removal_requires_preview_fences_and_generated_client_fields()
+    {
+        using var document = ReadContract();
+        var root = document.RootElement;
+        var remove = root.GetProperty("paths")
+            .GetProperty(
+                "/api/space/design/v1/versions/{versionId}/sources/" +
+                "{sourceId}:remove")
+            .GetProperty("post");
+        Assert.True(remove.GetProperty("requestBody")
+            .GetProperty("required").GetBoolean());
+        Assert.True(remove.GetProperty("responses")
+            .GetProperty("200").GetProperty("headers")
+            .TryGetProperty("Idempotent-Replay", out _));
+
+        var schemas = root.GetProperty("components").GetProperty("schemas");
+        AssertExactRequired(
+            Schema(schemas, "CP6.Space.Contracts.RemoveSpaceSourceRequest"),
+            "expectedContentRevision",
+            "expectedSourceRowVersion");
+        AssertExactRequired(
+            Schema(schemas, "CP6.Space.Contracts.RemoveSpaceSourceResponse"),
+            "sourceId",
+            "versionContentRevision",
+            "physicalFileRetained",
+            "idempotentReplay");
+        AssertExactRequired(
+            Schema(
+                schemas,
+                "CP6.Space.Contracts.SpaceSourceRemovalReferenceDto"),
+            "code",
+            "count",
+            "blocksRemoval");
+        var preview = Schema(
+            schemas,
+            "CP6.Space.Contracts.SpaceSourceRemovalPreviewDto");
+        var previewRequired = preview.GetProperty("required")
+            .EnumerateArray()
+            .Select(property => property.GetString()!)
+            .ToHashSet(StringComparer.Ordinal);
+        Assert.Equal(
+            new HashSet<string>(StringComparer.Ordinal)
+            {
+                "sourceId",
+                "fileId",
+                "displayName",
+                "sourceType",
+                "state",
+                "versionContentRevision",
+                "sourceRowVersion",
+                "canRemove",
+                "physicalFileRetained",
+                "references",
+            },
+            previewRequired);
+        AssertNonNullable(
+            preview,
+            "sourceId",
+            "displayName",
+            "sourceType",
+            "state",
+            "versionContentRevision",
+            "sourceRowVersion",
+            "canRemove",
+            "physicalFileRetained",
+            "references");
+        Assert.True(
+            preview.GetProperty("properties")
+                .GetProperty("fileId")
+                .GetProperty("nullable")
+                .GetBoolean());
+
+        var typescript = File.ReadAllText(
+            Path.Combine(
+                RepositoryRoot,
+                "sdk",
+                "typescript",
+                "space-design-v1",
+                "spaceDesignV1Client.ts"));
+        AssertRequiredTypeScriptProperties(
+            ExtractTypeBlock(
+                typescript,
+                "export interface IRemoveSpaceSourceRequest"),
+            "expectedContentRevision",
+            "expectedSourceRowVersion");
+        AssertRequiredTypeScriptProperties(
+            ExtractTypeBlock(
+                typescript,
+                "export interface IRemoveSpaceSourceResponse"),
+            "sourceId",
+            "versionContentRevision",
+            "physicalFileRetained",
+            "idempotentReplay");
+        AssertRequiredTypeScriptProperties(
+            ExtractTypeBlock(
+                typescript,
+                "export interface ISpaceSourceRemovalPreviewDto"),
+            "sourceId",
+            "fileId",
+            "displayName",
+            "sourceType",
+            "state",
+            "versionContentRevision",
+            "sourceRowVersion",
+            "canRemove",
+            "physicalFileRetained",
+            "references");
+    }
+
+    [Fact]
     public void Excel_CAD_compensation_requires_sealed_history_and_all_fences()
     {
         using var document = ReadContract();
@@ -2427,6 +2541,9 @@ public sealed class SpaceDesignV1OpenApiTests
     [InlineData(
         "/api/space/design/v1/versions/{versionId}/sources",
         "201")]
+    [InlineData(
+        "/api/space/design/v1/versions/{versionId}/sources/{sourceId}:remove",
+        "200")]
     [InlineData(
         "/api/space/design/v1/assets",
         "201")]

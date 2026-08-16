@@ -5,8 +5,11 @@ import {
   spaceStudioComponentPresets,
   type SpaceStudioComponentPresetId,
 } from '@/modules/space-design/components/staticComponentCatalog'
+import DesignSourceList from '@/modules/space-design/sources/DesignSourceList.vue'
 
 defineProps<{
+  versionId?: string
+  sourceRefreshKey?: number
   parseStatus?: string
   parseProgress?: number
   parseElapsed?: string
@@ -33,6 +36,7 @@ const emit = defineEmits<{
   underlayVisibilityChange: [visible: boolean]
   underlayOpacityChange: [opacity: number]
   underlayLockChange: [locked: boolean]
+  sourceRemoved: [sourceId: string, versionContentRevision: number]
 }>()
 
 type Mode = 'source' | 'assets' | 'layers' | 'history' | 'settings'
@@ -62,6 +66,10 @@ function emitOpacity(event: Event): void {
   if (Number.isInteger(value) && value >= 0 && value <= 100) {
     emit('underlayOpacityChange', value)
   }
+}
+
+function sourceRemoved(sourceId: string, versionContentRevision: number): void {
+  emit('sourceRemoved', sourceId, versionContentRevision)
 }
 </script>
 
@@ -124,6 +132,12 @@ function emitOpacity(event: Event): void {
         <div class="source-state">
           底图：{{ hasUnderlay ? (calibrated ? '已标定' : '待标定') : '未导入' }}
         </div>
+        <DesignSourceList
+          :version-id="versionId ?? ''"
+          :readonly="readonly"
+          :refresh-key="sourceRefreshKey"
+          @source-removed="sourceRemoved"
+        />
       </template>
 
       <template v-else-if="activeMode === 'assets'">

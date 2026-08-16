@@ -203,6 +203,7 @@ const aiReviewPanelVisible = ref(false)
 const aiDecisionPanelVisible = ref(false)
 const aiGenerationPanelVisible = ref(false)
 const inspectorTab = ref<InspectorTab>('properties')
+const sourceListRefreshKey = ref(0)
 const activeAiReviewItemId = ref('')
 const loading = ref(true)
 const projectionMode = ref<SpaceStudioProjectionMode>(
@@ -1094,6 +1095,7 @@ async function onCadFileSelected(event: Event): Promise<void> {
   uploading.value = true
   try {
     const uploaded = await designCadParseApi.upload(versionId.value, file)
+    sourceListRefreshKey.value += 1
     parseStatus.value = uploaded.source.state
     await router.replace({
       query: {
@@ -1848,6 +1850,7 @@ async function onFileSelected(event: Event): Promise<void> {
     if (!fileId || !sourceId) {
       throw new Error('Underlay upload response is incomplete')
     }
+    sourceListRefreshKey.value += 1
     const reuseNotice = uploadReuseNotice('底图', result.reused)
     if (reuseNotice) ElMessage.info(reuseNotice)
 
@@ -1921,6 +1924,7 @@ async function attachAndRender(sourceId: string): Promise<void> {
   history.push(entry)
   touchHistory()
   floor.value = response.floor
+  sourceListRefreshKey.value += 1
   visible.value = true
   locked.value = false
   cancelCalibration()
@@ -1972,11 +1976,34 @@ async function removeUnderlay(): Promise<void> {
     touchHistory()
     cancelCalibration()
     await loadScene()
+    sourceListRefreshKey.value += 1
     ElMessage.success(t('底图已移除，可使用撤销恢复'))
   } catch (error) {
     handleUnderlayWriteError(error)
     ElMessage.error(t('底图移除失败，请刷新后重试'))
   }
+}
+
+async function onSourceRemoved(
+  sourceId: string,
+  _versionContentRevision: number,
+): Promise<void> {
+  sourceListRefreshKey.value += 1
+  if (sourceId === cadSourceId.value) {
+    const {
+      cadSourceId: _removedSource,
+      cadParseJobId: _removedJob,
+      ...remainingQuery
+    } = route.query
+    cadReviewWorkspace.value = null
+    cadReviewPanelVisible.value = false
+    cadWizardVisible.value = false
+    parseStatus.value = ''
+    parseProgress.value = 0
+    parseError.value = ''
+    await router.replace({ query: remainingQuery })
+  }
+  await loadScene()
 }
 
 async function loadContent(sourceId: string): Promise<void> {
@@ -3650,6 +3677,8 @@ function tabClientInstanceId(): string {
 
     <section class="workspace">
       <SpaceStudioContextPanel
+        :version-id="versionId"
+        :source-refresh-key="sourceListRefreshKey"
         :parse-status="parseStatus"
         :parse-progress="parseProgress"
         :parse-elapsed="parseElapsed"
@@ -3673,6 +3702,7 @@ function tabClientInstanceId(): string {
         @underlay-visibility-change="visible = $event"
         @underlay-opacity-change="opacity = $event"
         @underlay-lock-change="locked = $event"
+        @source-removed="onSourceRemoved"
       >
         <template #assets>
           <DesignWarehouseTemplatePanel

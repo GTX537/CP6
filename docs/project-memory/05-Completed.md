@@ -1,11 +1,19 @@
 # 已完成能力与近期里程碑
 
+## 2026-08-15 Space 来源移除引用预检
+
+- 新增 Design V1 来源移除预检与确认 Apply：预检按“阻断/保留”分类返回 Draft、任务、生成、底图、设计对象/元数据和历史审计引用，Apply 使用 Expected ContentRevision、Expected Source RowVersion、Idempotency-Key 与 Serializable 事务重新复核。
+- 活动引用或预检后的并发变化统一零写入；成功只软删除来源记录。物理文件、终态 Job、工件、问题、标定和导入审计继续受原有保留权威管理，不级联删除。
+- Space Studio 来源面板展示引用计数、只读保护和明确保留提示；OpenAPI、C#/TypeScript SDK、权限矩阵和稳定 `SPACE_SOURCE_REFERENCED` 错误同步。
+- 全量门禁为 Space Unit 540/540、Space Integration 真 SQL 447/447（0 skipped）、CP6.Tests 2,932、Web 862、OpenAPI/双 SDK/EF/production build 和完整 solution Release 0 warning / 0 error。详见 `docs/space/reports/2026-08-15-space-source-removal-preflight.md`。
+- LM-FR-005 仓库实现闭环；LM-FR-006～016、019/019A 与真实多路径接受证据仍待完成，WP4 保持 Partial/Pending，核心 GA 保持 72% / `NoGo`。
+
 ## 2026-08-15 Space 上传重复内容复用提示
 
 - CAD 前端上传合同补齐服务端 `file/reused` 事实；CAD 与 PDF/图片底图检测到重复内容时明确提示按 SHA-256 复用受控文件或当前来源，不会重复保存原文件。
 - 复用判断仍完全来自隔离上传服务；客户端不生成哈希、不跳过安全扫描，重复底图继续按 Clean/Scanning/Rejected 状态进入既有挂接链。
 - 聚焦测试 10/10、Vue TypeScript、Web 全量 858/858 和 production build 通过。详见 `docs/space/reports/2026-08-15-space-upload-reuse-notice.md`。
-- Excel 后端/SDK 已有 `Reused` 合同，但统一 Excel 上传 UI 仍待三路径向导；LM-FR-005 来源删除预检也未实现。WP4 保持 Partial/Pending，核心 GA 保持 72% / `NoGo`。
+- Excel 后端/SDK 已有 `Reused` 合同，但统一 Excel 上传 UI 仍待三路径向导；LM-FR-005 已由后续来源移除预检纵切闭环。WP4 保持 Partial/Pending，核心 GA 保持 72% / `NoGo`。
 
 ## 2026-08-15 Space Draft 来源与阻断摘要
 

@@ -147,6 +147,18 @@ public interface ISpaceDesignV1Service
         string idempotencyKey,
         CancellationToken cancellationToken = default);
 
+    Task<SpaceSourceRemovalPreviewDto> GetSourceRemovalPreviewAsync(
+        Guid versionId,
+        Guid sourceId,
+        CancellationToken cancellationToken = default);
+
+    Task<RemoveSpaceSourceResponse> RemoveSourceAsync(
+        Guid versionId,
+        Guid sourceId,
+        RemoveSpaceSourceRequest request,
+        string idempotencyKey,
+        CancellationToken cancellationToken = default);
+
     Task<SpaceJobDto> GetJobAsync(
         Guid jobId,
         CancellationToken cancellationToken = default);

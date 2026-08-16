@@ -349,6 +349,61 @@ public sealed class SpaceSourceFileTests
         Assert.Equal(SpaceArtifactType.Thumbnail, artifact.ArtifactType);
     }
 
+    [Fact]
+    public void Ready_source_can_be_logically_removed_without_deleting_its_file()
+    {
+        var file = NewCleanFile(
+            TenantId,
+            ".pdf",
+            SpaceFileRetentionClass.Source);
+        var source = SpaceModelSource.CreateFileSource(
+            TenantId,
+            Guid.NewGuid(),
+            SpaceSourceType.Pdf,
+            file,
+            "Unused plan");
+
+        source.Remove();
+
+        Assert.True(source.IsDeleted);
+        Assert.False(file.IsDeleted);
+        Assert.Equal(SpaceFileState.Clean, file.State);
+    }
+
+    [Theory]
+    [InlineData(false)]
+    [InlineData(true)]
+    public void Source_with_work_in_progress_cannot_be_removed(bool parsing)
+    {
+        var file = parsing
+            ? NewCleanFile(
+                TenantId,
+                ".pdf",
+                SpaceFileRetentionClass.Source)
+            : NewQuarantinedFile(
+                TenantId,
+                ".pdf",
+                SpaceFileRetentionClass.Source);
+        var source = parsing
+            ? SpaceModelSource.CreateFileSource(
+                TenantId,
+                Guid.NewGuid(),
+                SpaceSourceType.Pdf,
+                file,
+                "Parsing plan")
+            : SpaceModelSource.CreatePendingFileSource(
+                TenantId,
+                Guid.NewGuid(),
+                SpaceSourceType.Pdf,
+                file,
+                "Scanning plan");
+        if (parsing)
+            source.BeginParsing();
+
+        Assert.Throws<SpaceFileStateException>(() => source.Remove());
+        Assert.False(source.IsDeleted);
+    }
+
     private static SpaceFileUploadService NewUploadService(
         FakeQuarantineStore quarantine,
         FakeFileCatalog catalog,

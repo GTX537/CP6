@@ -91,6 +91,50 @@ public sealed record CreateSpaceSourceResponse(
     SpaceSourceDto Source,
     bool IdempotentReplay);
 
+public static class SpaceSourceRemovalReferenceCodes
+{
+    public const string VersionNotDraft = "VERSION_NOT_DRAFT";
+    public const string SourceInProgress = "SOURCE_IN_PROGRESS";
+    public const string ActiveJobs = "ACTIVE_JOB_REFERENCE";
+    public const string JobAudit = "JOB_AUDIT_REFERENCE";
+    public const string Artifacts = "ARTIFACT_REFERENCE";
+    public const string Issues = "ISSUE_REFERENCE";
+    public const string CadPreparations = "CAD_PREPARATION_REFERENCE";
+    public const string ActiveGenerationRuns = "ACTIVE_GENERATION_REFERENCE";
+    public const string GenerationAudit = "GENERATION_AUDIT_REFERENCE";
+    public const string Underlays = "UNDERLAY_REFERENCE";
+    public const string DesignRevisions = "DESIGN_REVISION_REFERENCE";
+    public const string DesignMetadata = "DESIGN_METADATA_REFERENCE";
+    public const string ImportAudit = "IMPORT_AUDIT_REFERENCE";
+}
+
+public sealed record SpaceSourceRemovalReferenceDto(
+    string Code,
+    int Count,
+    bool BlocksRemoval);
+
+public sealed record SpaceSourceRemovalPreviewDto(
+    Guid SourceId,
+    Guid? FileId,
+    string DisplayName,
+    string SourceType,
+    string State,
+    long VersionContentRevision,
+    string SourceRowVersion,
+    bool CanRemove,
+    bool PhysicalFileRetained,
+    IReadOnlyList<SpaceSourceRemovalReferenceDto> References);
+
+public sealed record RemoveSpaceSourceRequest(
+    long ExpectedContentRevision,
+    string ExpectedSourceRowVersion);
+
+public sealed record RemoveSpaceSourceResponse(
+    Guid SourceId,
+    long VersionContentRevision,
+    bool PhysicalFileRetained,
+    bool IdempotentReplay);
+
 public sealed record SpaceFileDto(
     Guid Id,
     string OriginalName,

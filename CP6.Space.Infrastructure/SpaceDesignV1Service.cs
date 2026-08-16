@@ -2917,6 +2917,186 @@ public sealed class SpaceDesignV1Service :
         }
     }
 
+    public async Task<SpaceSourceRemovalPreviewDto>
+        GetSourceRemovalPreviewAsync(
+            Guid versionId,
+            Guid sourceId,
+            CancellationToken cancellationToken = default)
+    {
+        EnsureExecutionContext();
+        var model = await FindModelByVersionAsync(
+            versionId,
+            cancellationToken);
+        EnsureReadable(model);
+
+        var version = await _context.Versions
+                          .AsNoTracking()
+                          .SingleOrDefaultAsync(
+                              candidate => candidate.Id == versionId,
+                              cancellationToken)
+                      ?? throw NotFound(
+                          SpaceErrorCodes.VersionNotFound,
+                          "Space version");
+        var source = await _context.Sources
+                         .AsNoTracking()
+                         .SingleOrDefaultAsync(
+                             candidate =>
+                                 candidate.Id == sourceId &&
+                                 candidate.ModelVersionId == versionId,
+                             cancellationToken)
+                     ?? throw NotFound(
+                         SpaceErrorCodes.SourceNotFound,
+                         "Space source");
+        var references = await GetSourceRemovalReferencesAsync(
+            version,
+            source,
+            cancellationToken);
+
+        return SourceRemovalPreview(version, source, references);
+    }
+
+    public async Task<RemoveSpaceSourceResponse> RemoveSourceAsync(
+        Guid versionId,
+        Guid sourceId,
+        RemoveSpaceSourceRequest request,
+        string idempotencyKey,
+        CancellationToken cancellationToken = default)
+    {
+        ArgumentNullException.ThrowIfNull(request);
+        EnsureExecutionContext();
+        var model = await FindModelByVersionAsync(
+            versionId,
+            cancellationToken);
+        EnsureWritable(model);
+        if (request.ExpectedContentRevision < 0)
+        {
+            throw Invalid(
+                "expectedContentRevision",
+                "expectedContentRevision must be greater than or equal to zero.");
+        }
+        var expectedSourceRowVersion = ParseSourceRowVersion(
+            request.ExpectedSourceRowVersion);
+
+        var normalizedRequest = new RemoveSpaceSourceRequest(
+            request.ExpectedContentRevision,
+            Convert.ToBase64String(expectedSourceRowVersion));
+        var operation = $"remove-source:{versionId:D}:{sourceId:D}";
+        var requestHash = Hash(
+            JsonSerializer.Serialize(normalizedRequest, JsonOptions));
+        var keyHash = IdempotencyKeyHash(operation, idempotencyKey);
+        var replay = await ReadSourceRemovalReplayAsync(
+            operation,
+            keyHash,
+            requestHash,
+            cancellationToken);
+        if (replay is not null)
+            return replay;
+
+        await using var transaction = await _context.Database
+            .BeginTransactionAsync(
+                IsolationLevel.Serializable,
+                cancellationToken);
+        try
+        {
+            var concurrentReplay = await ReadSourceRemovalReplayAsync(
+                operation,
+                keyHash,
+                requestHash,
+                cancellationToken);
+            if (concurrentReplay is not null)
+            {
+                await transaction.CommitAsync(cancellationToken);
+                return concurrentReplay;
+            }
+
+            var version = await _context.Versions
+                              .SingleOrDefaultAsync(
+                                  candidate => candidate.Id == versionId,
+                                  cancellationToken)
+                          ?? throw NotFound(
+                              SpaceErrorCodes.VersionNotFound,
+                              "Space version");
+            var source = await _context.Sources
+                             .SingleOrDefaultAsync(
+                                 candidate =>
+                                     candidate.Id == sourceId &&
+                                     candidate.ModelVersionId == versionId,
+                                 cancellationToken)
+                         ?? throw NotFound(
+                             SpaceErrorCodes.SourceNotFound,
+                             "Space source");
+            if (version.Status != SpaceVersionStatus.Draft ||
+                version.Purpose != SpaceModelVersionPurpose.Production)
+            {
+                throw Conflict(
+                    SpaceErrorCodes.VersionStateInvalid,
+                    "Only a production Draft version accepts source removal.",
+                    "open-or-create-draft");
+            }
+            if (version.ContentRevision != request.ExpectedContentRevision ||
+                !source.RowVersion.AsSpan().SequenceEqual(expectedSourceRowVersion))
+            {
+                throw Conflict(
+                    SpaceErrorCodes.SourceConflict,
+                    "The source or Draft revision changed after removal preview.",
+                    "refresh-source-removal-preview");
+            }
+
+            var references = await GetSourceRemovalReferencesAsync(
+                version,
+                source,
+                cancellationToken);
+            if (references.Any(reference => reference.BlocksRemoval))
+            {
+                throw Conflict(
+                    SpaceErrorCodes.SourceReferenced,
+                    "The source is referenced and cannot be removed.",
+                    "refresh-source-removal-preview");
+            }
+
+            source.Remove();
+            version.TouchContent();
+            await _context.SaveChangesAsync(cancellationToken);
+
+            var response = new RemoveSpaceSourceResponse(
+                source.Id,
+                version.ContentRevision,
+                PhysicalFileRetained: source.FileId.HasValue,
+                IdempotentReplay: false);
+            _context.IdempotencyRecords.Add(
+                NewIdempotencyRecord(
+                    operation,
+                    keyHash,
+                    requestHash,
+                    JsonSerializer.Serialize(response, JsonOptions),
+                    HttpOk));
+            await _context.SaveChangesAsync(cancellationToken);
+            await transaction.CommitAsync(cancellationToken);
+            return response;
+        }
+        catch (DbUpdateException)
+        {
+            await transaction.RollbackAsync(CancellationToken.None);
+            _context.ChangeTracker.Clear();
+            var concurrentReplay = await ReadSourceRemovalReplayAsync(
+                operation,
+                keyHash,
+                requestHash,
+                cancellationToken);
+            if (concurrentReplay is not null)
+                return concurrentReplay;
+            throw Conflict(
+                SpaceErrorCodes.SourceConflict,
+                "The source changed concurrently.",
+                "refresh-source-removal-preview");
+        }
+        catch
+        {
+            await transaction.RollbackAsync(CancellationToken.None);
+            throw;
+        }
+    }
+
     public async Task<SpaceJobDto> GetJobAsync(
         Guid jobId,
         CancellationToken cancellationToken = default)
@@ -5561,7 +5741,26 @@ public sealed class SpaceDesignV1Service :
         EnsureMatchingIdempotency(record, requestHash);
         return Deserialize<CreateSpaceSourceResponse>(record.ResponseJson)
             with
-        { IdempotentReplay = true };
+            { IdempotentReplay = true };
+    }
+
+    private async Task<RemoveSpaceSourceResponse?>
+        ReadSourceRemovalReplayAsync(
+            string operation,
+            string keyHash,
+            string requestHash,
+            CancellationToken cancellationToken)
+    {
+        var record = await FindIdempotencyAsync(
+            operation,
+            keyHash,
+            cancellationToken);
+        if (record is null)
+            return null;
+        EnsureMatchingIdempotency(record, requestHash);
+        return Deserialize<RemoveSpaceSourceResponse>(record.ResponseJson)
+            with
+            { IdempotentReplay = true };
     }
 
     private async Task<CreateSpaceFloorResponse?> ReadFloorReplayAsync(
@@ -5978,6 +6177,217 @@ public sealed class SpaceDesignV1Service :
             ? SpaceVersionCreationSources.PublishedVersion
             : SpaceVersionCreationSources.Blank;
 
+    private async Task<IReadOnlyList<SpaceSourceRemovalReferenceDto>>
+        GetSourceRemovalReferencesAsync(
+            SpaceModelVersion version,
+            SpaceModelSource source,
+            CancellationToken cancellationToken)
+    {
+        var tenantId = _execution.TenantId;
+        var versionId = version.Id;
+        var sourceId = source.Id;
+        var sourceIdentity = sourceId.ToString("D");
+        var references = new List<SpaceSourceRemovalReferenceDto>();
+
+        void Add(string code, int count, bool blocksRemoval)
+        {
+            if (count > 0)
+            {
+                references.Add(
+                    new SpaceSourceRemovalReferenceDto(
+                        code,
+                        count,
+                        blocksRemoval));
+            }
+        }
+
+        Add(
+            SpaceSourceRemovalReferenceCodes.VersionNotDraft,
+            version.Status == SpaceVersionStatus.Draft &&
+            version.Purpose == SpaceModelVersionPurpose.Production
+                ? 0
+                : 1,
+            blocksRemoval: true);
+        Add(
+            SpaceSourceRemovalReferenceCodes.SourceInProgress,
+            source.State is SpaceSourceState.Scanning or SpaceSourceState.Parsing
+                ? 1
+                : 0,
+            blocksRemoval: true);
+
+        var jobs = _context.Jobs
+            .IgnoreQueryFilters()
+            .Where(job =>
+                job.TenantId == tenantId &&
+                ((job.SubjectType == SpaceJobSubjectType.ModelSource &&
+                  job.SubjectId == sourceId) ||
+                 (job.PayloadJson != null &&
+                  job.PayloadJson.Contains(sourceIdentity))));
+        var activeJobs = await jobs.CountAsync(
+            job =>
+                job.Status == SpaceJobStatus.Queued ||
+                job.Status == SpaceJobStatus.Running,
+            cancellationToken);
+        var allJobs = await jobs.CountAsync(cancellationToken);
+        Add(
+            SpaceSourceRemovalReferenceCodes.ActiveJobs,
+            activeJobs,
+            blocksRemoval: true);
+        Add(
+            SpaceSourceRemovalReferenceCodes.JobAudit,
+            allJobs - activeJobs,
+            blocksRemoval: false);
+
+        Add(
+            SpaceSourceRemovalReferenceCodes.Artifacts,
+            await _context.Artifacts.IgnoreQueryFilters().CountAsync(
+                artifact =>
+                    artifact.TenantId == tenantId &&
+                    artifact.ModelVersionId == versionId &&
+                    artifact.SourceId == sourceId,
+                cancellationToken),
+            blocksRemoval: false);
+        Add(
+            SpaceSourceRemovalReferenceCodes.Issues,
+            await _context.Issues.IgnoreQueryFilters().CountAsync(
+                issue =>
+                    issue.TenantId == tenantId &&
+                    issue.ModelVersionId == versionId &&
+                    issue.SourceId == sourceId,
+                cancellationToken),
+            blocksRemoval: false);
+        Add(
+            SpaceSourceRemovalReferenceCodes.CadPreparations,
+            await _context.CadParsePreparations.IgnoreQueryFilters().CountAsync(
+                preparation =>
+                    preparation.TenantId == tenantId &&
+                    preparation.ModelVersionId == versionId &&
+                    preparation.SourceId == sourceId,
+                cancellationToken),
+            blocksRemoval: false);
+
+        var generationRuns = _context.GenerationRuns
+            .IgnoreQueryFilters()
+            .Where(run =>
+                run.TenantId == tenantId &&
+                run.ModelVersionId == versionId &&
+                run.SourceId == sourceId);
+        var activeGenerationRuns = await generationRuns.CountAsync(
+            run => run.IsCurrent,
+            cancellationToken);
+        var allGenerationRuns = await generationRuns.CountAsync(
+            cancellationToken);
+        Add(
+            SpaceSourceRemovalReferenceCodes.ActiveGenerationRuns,
+            activeGenerationRuns,
+            blocksRemoval: true);
+        Add(
+            SpaceSourceRemovalReferenceCodes.GenerationAudit,
+            allGenerationRuns - activeGenerationRuns,
+            blocksRemoval: false);
+
+        var underlayReferences = await _context.FloorRevisions.CountAsync(
+            floor =>
+                floor.ModelVersionId == versionId &&
+                floor.UnderlaySourceId == sourceId,
+            cancellationToken);
+        Add(
+            SpaceSourceRemovalReferenceCodes.Underlays,
+            underlayReferences,
+            blocksRemoval: true);
+        var calibrationAudit = await _context.UnderlayCalibrations
+            .IgnoreQueryFilters()
+            .CountAsync(
+                calibration =>
+                    calibration.TenantId == tenantId &&
+                    calibration.ModelVersionId == versionId &&
+                    calibration.SourceId == sourceId,
+                cancellationToken);
+        Add(
+            SpaceSourceRemovalReferenceCodes.Underlays,
+            calibrationAudit,
+            blocksRemoval: false);
+
+        var designRevisionReferences =
+            await _context.FloorRevisions.CountAsync(
+                revision =>
+                    revision.ModelVersionId == versionId &&
+                    revision.SourceId == sourceId,
+                cancellationToken) +
+            await _context.ZoneRevisions.CountAsync(
+                revision =>
+                    revision.ModelVersionId == versionId &&
+                    revision.SourceId == sourceId,
+                cancellationToken) +
+            await _context.AisleRevisions.CountAsync(
+                revision =>
+                    revision.ModelVersionId == versionId &&
+                    revision.SourceId == sourceId,
+                cancellationToken) +
+            await _context.RackRevisions.CountAsync(
+                revision =>
+                    revision.ModelVersionId == versionId &&
+                    revision.SourceId == sourceId,
+                cancellationToken) +
+            await _context.RackLevelRevisions.CountAsync(
+                revision =>
+                    revision.ModelVersionId == versionId &&
+                    revision.SourceId == sourceId,
+                cancellationToken) +
+            await _context.LocationRevisions.CountAsync(
+                revision =>
+                    revision.ModelVersionId == versionId &&
+                    revision.SourceId == sourceId,
+                cancellationToken) +
+            await _context.ElementRevisions.CountAsync(
+                revision =>
+                    revision.ModelVersionId == versionId &&
+                    revision.SourceId == sourceId,
+                cancellationToken);
+        Add(
+            SpaceSourceRemovalReferenceCodes.DesignRevisions,
+            designRevisionReferences,
+            blocksRemoval: true);
+
+        var designMetadataReferences =
+            await _context.LocationExternalBindings.CountAsync(
+                binding =>
+                    binding.ModelVersionId == versionId &&
+                    binding.SourceId == sourceId,
+                cancellationToken) +
+            await _context.DesignAttributes.CountAsync(
+                attribute =>
+                    attribute.ModelVersionId == versionId &&
+                    attribute.SourceId == sourceId,
+                cancellationToken);
+        Add(
+            SpaceSourceRemovalReferenceCodes.DesignMetadata,
+            designMetadataReferences,
+            blocksRemoval: true);
+        Add(
+            SpaceSourceRemovalReferenceCodes.ImportAudit,
+            source.ImportedCommandBatchId.HasValue ? 1 : 0,
+            blocksRemoval: false);
+
+        return references;
+    }
+
+    private static SpaceSourceRemovalPreviewDto SourceRemovalPreview(
+        SpaceModelVersion version,
+        SpaceModelSource source,
+        IReadOnlyList<SpaceSourceRemovalReferenceDto> references) =>
+        new(
+            source.Id,
+            source.FileId,
+            source.DisplayName,
+            source.SourceType.ToString(),
+            source.State.ToString(),
+            version.ContentRevision,
+            RowVersion(source.RowVersion),
+            references.All(reference => !reference.BlocksRemoval),
+            PhysicalFileRetained: source.FileId.HasValue,
+            references);
+
     private static SpaceSourceDto ToDto(SpaceModelSource source) =>
         new(
             source.Id,
@@ -6127,6 +6537,23 @@ public sealed class SpaceDesignV1Service :
             CultureInfo.InvariantCulture,
             $"V{versionNo:000000}");
 
+    private static byte[] ParseSourceRowVersion(string? value)
+    {
+        try
+        {
+            var parsed = Convert.FromBase64String(value?.Trim() ?? string.Empty);
+            if (parsed.Length != 8)
+                throw new FormatException();
+            return parsed;
+        }
+        catch (FormatException)
+        {
+            throw Invalid(
+                "expectedSourceRowVersion",
+                "A valid SQL row-version token is required.");
+        }
+    }
+
     private static string RowVersion(byte[] rowVersion) =>
         Convert.ToBase64String(rowVersion ?? []);
 
@@ -6160,6 +6587,7 @@ public sealed class SpaceDesignV1Service :
             detail,
             recoveryAction);
 
+    private const int HttpOk = 200;
     private const int HttpCreated = 201;
     private const int HttpAccepted = 202;
 }

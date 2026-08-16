@@ -309,6 +309,44 @@ public sealed class SpaceDesignV1Controller(
             result);
     }
 
+    [HttpGet(
+        "versions/{versionId:guid}/sources/{sourceId:guid}/removal-preview")]
+    [RequirePermission("space", "model:read", UseProblemDetails = true)]
+    [ProducesResponseType<SpaceSourceRemovalPreviewDto>(
+        StatusCodes.Status200OK)]
+    public Task<SpaceSourceRemovalPreviewDto> GetSourceRemovalPreview(
+        Guid versionId,
+        Guid sourceId,
+        CancellationToken cancellationToken) =>
+        service.GetSourceRemovalPreviewAsync(
+            versionId,
+            sourceId,
+            cancellationToken);
+
+    [HttpPost("versions/{versionId:guid}/sources/{sourceId:guid}:remove")]
+    [RequirePermission("space", "source:upload", UseProblemDetails = true)]
+    [RequirePermission("space", "model:edit", UseProblemDetails = true)]
+    [ProducesResponseType<RemoveSpaceSourceResponse>(
+        StatusCodes.Status200OK)]
+    public async Task<IActionResult> RemoveSource(
+        Guid versionId,
+        Guid sourceId,
+        [FromHeader(Name = "Idempotency-Key"), Required]
+        string idempotencyKey,
+        [FromBody, Required] RemoveSpaceSourceRequest request,
+        CancellationToken cancellationToken)
+    {
+        var result = await service.RemoveSourceAsync(
+            versionId,
+            sourceId,
+            request,
+            idempotencyKey,
+            cancellationToken);
+        Response.Headers["Idempotent-Replay"] =
+            result.IdempotentReplay ? "true" : "false";
+        return Ok(result);
+    }
+
     [HttpPost("versions/{versionId:guid}/underlay-sources")]
     [Consumes("multipart/form-data")]
     [RequirePermission("space", "source:upload", UseProblemDetails = true)]
