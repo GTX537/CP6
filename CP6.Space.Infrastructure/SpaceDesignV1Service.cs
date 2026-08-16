@@ -2329,6 +2329,91 @@ public sealed class SpaceDesignV1Service :
         }
     }
 
+    public Task<IReadOnlyList<SpaceWarehouseTemplateDto>>
+        GetWarehouseTemplatesAsync(
+            string? scope,
+            CancellationToken cancellationToken = default)
+    {
+        EnsureExecutionContext();
+        EnsureInternalEditor();
+        cancellationToken.ThrowIfCancellationRequested();
+        var normalizedScope = scope?.Trim();
+        if (!string.IsNullOrWhiteSpace(normalizedScope) &&
+            !string.Equals(
+                normalizedScope,
+                "System",
+                StringComparison.OrdinalIgnoreCase) &&
+            !string.Equals(
+                normalizedScope,
+                "Tenant",
+                StringComparison.OrdinalIgnoreCase))
+        {
+            throw Invalid(
+                "scope",
+                "Supported warehouse template scopes are System and Tenant.");
+        }
+
+        IReadOnlyList<SpaceWarehouseTemplateDto> result =
+            SpaceBuiltInWarehouseTemplates.List()
+                .Where(template =>
+                    string.IsNullOrWhiteSpace(normalizedScope) ||
+                    string.Equals(
+                        template.Scope,
+                        normalizedScope,
+                        StringComparison.OrdinalIgnoreCase))
+                .ToArray();
+        return Task.FromResult(result);
+    }
+
+    public Task<SpaceWarehouseTemplateInstantiationPreviewDto>
+        PreviewWarehouseTemplateAsync(
+            Guid templateId,
+            PreviewSpaceWarehouseTemplateRequest request,
+            CancellationToken cancellationToken = default)
+    {
+        EnsureExecutionContext();
+        EnsureInternalEditor();
+        ArgumentNullException.ThrowIfNull(request);
+        cancellationToken.ThrowIfCancellationRequested();
+        if (templateId == Guid.Empty || request.TemplateVersionId == Guid.Empty)
+        {
+            throw Invalid(
+                "templateVersionId",
+                "Template and template version identities are required.");
+        }
+
+        var template = SpaceBuiltInWarehouseTemplates.List()
+            .SingleOrDefault(candidate => candidate.Id == templateId);
+        if (template is null)
+        {
+            throw new SpaceProblemException(
+                SpaceErrorCodes.WarehouseTemplateNotFound,
+                404,
+                "Warehouse template not found.",
+                recoveryAction: "reload-template-catalog");
+        }
+        if (template.LatestVersion.Id != request.TemplateVersionId)
+        {
+            throw Conflict(
+                SpaceErrorCodes.WarehouseTemplateVersionConflict,
+                "The requested warehouse template version is not current.",
+                "reload-template-catalog");
+        }
+        if (!SpaceBuiltInWarehouseTemplates.TryPreview(
+                templateId,
+                request.TemplateVersionId,
+                out var preview) ||
+            preview is null)
+        {
+            throw new SpaceProblemException(
+                SpaceErrorCodes.WarehouseTemplateNotFound,
+                404,
+                "Warehouse template preview not found.",
+                recoveryAction: "reload-template-catalog");
+        }
+        return Task.FromResult(preview);
+    }
+
     public async Task<CreateSpaceVersionResponse> CreateVersionAsync(
         Guid siteId,
         CreateSpaceVersionRequest request,

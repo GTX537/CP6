@@ -362,6 +362,17 @@ export interface ISpaceDesignV1Client {
     placeWmsAdoption(versionId: string, adoptionId: string, body: PlaceSpaceWmsAdoptionRequest): Promise<SpaceWmsAdoptionCommandResponse>;
 
     /**
+     * @param scope (optional)
+     * @return OK
+     */
+    getWarehouseTemplates(scope: string | undefined): Promise<SpaceWarehouseTemplateDto[]>;
+
+    /**
+     * @return OK
+     */
+    previewWarehouseTemplate(templateId: string, body: PreviewSpaceWarehouseTemplateRequest): Promise<SpaceWarehouseTemplateInstantiationPreviewDto>;
+
+    /**
      * @param sourceId (optional)
      * @param limit (optional)
      * @param cursor (optional)
@@ -6549,6 +6560,197 @@ export class SpaceDesignV1Client implements ISpaceDesignV1Client {
             });
         }
         return Promise.resolve<SpaceWmsAdoptionCommandResponse>(null as any);
+    }
+
+    /**
+     * @param scope (optional)
+     * @return OK
+     */
+    getWarehouseTemplates(scope: string | undefined): Promise<SpaceWarehouseTemplateDto[]> {
+        let url_ = this.baseUrl + "/api/space/design/v1/templates?";
+        if (scope === null)
+            throw new globalThis.Error("The parameter 'scope' cannot be null.");
+        else if (scope !== undefined)
+            url_ += "scope=" + encodeURIComponent("" + scope) + "&";
+        url_ = url_.replace(/[?&]$/, "");
+
+        let options_: RequestInit = {
+            method: "GET",
+            headers: {
+                "Accept": "application/json"
+            }
+        };
+
+        return this.http.fetch(url_, options_).then((_response: Response) => {
+            return this.processGetWarehouseTemplates(_response);
+        });
+    }
+
+    protected processGetWarehouseTemplates(response: Response): Promise<SpaceWarehouseTemplateDto[]> {
+        const status = response.status;
+        let _headers: any = {}; if (response.headers && response.headers.forEach) { response.headers.forEach((v: any, k: any) => _headers[k] = v); };
+        if (status === 200) {
+            return response.text().then((_responseText) => {
+            let result200: any = null;
+            let resultData200 = _responseText === "" ? null : JSON.parse(_responseText, this.jsonParseReviver);
+            if (Array.isArray(resultData200)) {
+                result200 = [] as any;
+                for (let item of resultData200)
+                    result200!.push(SpaceWarehouseTemplateDto.fromJS(item));
+            }
+            else {
+                result200 = null as any;
+            }
+            return result200;
+            });
+        } else if (status === 400) {
+            return response.text().then((_responseText) => {
+            let result400: any = null;
+            let resultData400 = _responseText === "" ? null : JSON.parse(_responseText, this.jsonParseReviver);
+            result400 = SpaceDesignProblemDetails.fromJS(resultData400);
+            return throwException("Bad Request", status, _responseText, _headers, result400);
+            });
+        } else if (status === 401) {
+            return response.text().then((_responseText) => {
+            let result401: any = null;
+            let resultData401 = _responseText === "" ? null : JSON.parse(_responseText, this.jsonParseReviver);
+            result401 = SpaceDesignProblemDetails.fromJS(resultData401);
+            return throwException("Unauthorized", status, _responseText, _headers, result401);
+            });
+        } else if (status === 403) {
+            return response.text().then((_responseText) => {
+            let result403: any = null;
+            let resultData403 = _responseText === "" ? null : JSON.parse(_responseText, this.jsonParseReviver);
+            result403 = SpaceDesignProblemDetails.fromJS(resultData403);
+            return throwException("Forbidden", status, _responseText, _headers, result403);
+            });
+        } else if (status === 404) {
+            return response.text().then((_responseText) => {
+            let result404: any = null;
+            let resultData404 = _responseText === "" ? null : JSON.parse(_responseText, this.jsonParseReviver);
+            result404 = SpaceDesignProblemDetails.fromJS(resultData404);
+            return throwException("Not Found", status, _responseText, _headers, result404);
+            });
+        } else if (status === 409) {
+            return response.text().then((_responseText) => {
+            let result409: any = null;
+            let resultData409 = _responseText === "" ? null : JSON.parse(_responseText, this.jsonParseReviver);
+            result409 = SpaceDesignProblemDetails.fromJS(resultData409);
+            return throwException("Conflict", status, _responseText, _headers, result409);
+            });
+        } else if (status === 422) {
+            return response.text().then((_responseText) => {
+            let result422: any = null;
+            let resultData422 = _responseText === "" ? null : JSON.parse(_responseText, this.jsonParseReviver);
+            result422 = SpaceDesignProblemDetails.fromJS(resultData422);
+            return throwException("Unprocessable Content", status, _responseText, _headers, result422);
+            });
+        } else if (status === 500) {
+            return response.text().then((_responseText) => {
+            let result500: any = null;
+            let resultData500 = _responseText === "" ? null : JSON.parse(_responseText, this.jsonParseReviver);
+            result500 = SpaceDesignProblemDetails.fromJS(resultData500);
+            return throwException("Internal Server Error", status, _responseText, _headers, result500);
+            });
+        } else if (status !== 200 && status !== 204) {
+            return response.text().then((_responseText) => {
+            return throwException("An unexpected server error occurred.", status, _responseText, _headers);
+            });
+        }
+        return Promise.resolve<SpaceWarehouseTemplateDto[]>(null as any);
+    }
+
+    /**
+     * @return OK
+     */
+    previewWarehouseTemplate(templateId: string, body: PreviewSpaceWarehouseTemplateRequest): Promise<SpaceWarehouseTemplateInstantiationPreviewDto> {
+        let url_ = this.baseUrl + "/api/space/design/v1/templates/{templateId}/instantiate";
+        if (templateId === undefined || templateId === null)
+            throw new globalThis.Error("The parameter 'templateId' must be defined.");
+        url_ = url_.replace("{templateId}", encodeURIComponent("" + templateId));
+        url_ = url_.replace(/[?&]$/, "");
+
+        const content_ = JSON.stringify(body);
+
+        let options_: RequestInit = {
+            body: content_,
+            method: "POST",
+            headers: {
+                "Content-Type": "application/json",
+                "Accept": "application/json"
+            }
+        };
+
+        return this.http.fetch(url_, options_).then((_response: Response) => {
+            return this.processPreviewWarehouseTemplate(_response);
+        });
+    }
+
+    protected processPreviewWarehouseTemplate(response: Response): Promise<SpaceWarehouseTemplateInstantiationPreviewDto> {
+        const status = response.status;
+        let _headers: any = {}; if (response.headers && response.headers.forEach) { response.headers.forEach((v: any, k: any) => _headers[k] = v); };
+        if (status === 200) {
+            return response.text().then((_responseText) => {
+            let result200: any = null;
+            let resultData200 = _responseText === "" ? null : JSON.parse(_responseText, this.jsonParseReviver);
+            result200 = SpaceWarehouseTemplateInstantiationPreviewDto.fromJS(resultData200);
+            return result200;
+            });
+        } else if (status === 400) {
+            return response.text().then((_responseText) => {
+            let result400: any = null;
+            let resultData400 = _responseText === "" ? null : JSON.parse(_responseText, this.jsonParseReviver);
+            result400 = SpaceDesignProblemDetails.fromJS(resultData400);
+            return throwException("Bad Request", status, _responseText, _headers, result400);
+            });
+        } else if (status === 401) {
+            return response.text().then((_responseText) => {
+            let result401: any = null;
+            let resultData401 = _responseText === "" ? null : JSON.parse(_responseText, this.jsonParseReviver);
+            result401 = SpaceDesignProblemDetails.fromJS(resultData401);
+            return throwException("Unauthorized", status, _responseText, _headers, result401);
+            });
+        } else if (status === 403) {
+            return response.text().then((_responseText) => {
+            let result403: any = null;
+            let resultData403 = _responseText === "" ? null : JSON.parse(_responseText, this.jsonParseReviver);
+            result403 = SpaceDesignProblemDetails.fromJS(resultData403);
+            return throwException("Forbidden", status, _responseText, _headers, result403);
+            });
+        } else if (status === 404) {
+            return response.text().then((_responseText) => {
+            let result404: any = null;
+            let resultData404 = _responseText === "" ? null : JSON.parse(_responseText, this.jsonParseReviver);
+            result404 = SpaceDesignProblemDetails.fromJS(resultData404);
+            return throwException("Not Found", status, _responseText, _headers, result404);
+            });
+        } else if (status === 409) {
+            return response.text().then((_responseText) => {
+            let result409: any = null;
+            let resultData409 = _responseText === "" ? null : JSON.parse(_responseText, this.jsonParseReviver);
+            result409 = SpaceDesignProblemDetails.fromJS(resultData409);
+            return throwException("Conflict", status, _responseText, _headers, result409);
+            });
+        } else if (status === 422) {
+            return response.text().then((_responseText) => {
+            let result422: any = null;
+            let resultData422 = _responseText === "" ? null : JSON.parse(_responseText, this.jsonParseReviver);
+            result422 = SpaceDesignProblemDetails.fromJS(resultData422);
+            return throwException("Unprocessable Content", status, _responseText, _headers, result422);
+            });
+        } else if (status === 500) {
+            return response.text().then((_responseText) => {
+            let result500: any = null;
+            let resultData500 = _responseText === "" ? null : JSON.parse(_responseText, this.jsonParseReviver);
+            result500 = SpaceDesignProblemDetails.fromJS(resultData500);
+            return throwException("Internal Server Error", status, _responseText, _headers, result500);
+            });
+        } else if (status !== 200 && status !== 204) {
+            return response.text().then((_responseText) => {
+            return throwException("An unexpected server error occurred.", status, _responseText, _headers);
+            });
+        }
+        return Promise.resolve<SpaceWarehouseTemplateInstantiationPreviewDto>(null as any);
     }
 
     /**
@@ -18243,6 +18445,42 @@ export interface IPreviewSpaceLocationCodesResponse {
     protectedCount: number;
     rules: SpaceLocationCodingRuleDto[];
     items: SpaceLocationCodeProposalItemDto[];
+}
+
+export class PreviewSpaceWarehouseTemplateRequest implements IPreviewSpaceWarehouseTemplateRequest {
+    templateVersionId!: string;
+
+    constructor(data?: IPreviewSpaceWarehouseTemplateRequest) {
+        if (data) {
+            for (var property in data) {
+                if (data.hasOwnProperty(property))
+                    (this as any)[property] = (data as any)[property];
+            }
+        }
+    }
+
+    init(_data?: any) {
+        if (_data) {
+            this.templateVersionId = _data["templateVersionId"];
+        }
+    }
+
+    static fromJS(data: any): PreviewSpaceWarehouseTemplateRequest {
+        data = typeof data === 'object' ? data : {};
+        let result = new PreviewSpaceWarehouseTemplateRequest();
+        result.init(data);
+        return result;
+    }
+
+    toJSON(data?: any) {
+        data = typeof data === 'object' ? data : {};
+        data["templateVersionId"] = this.templateVersionId;
+        return data;
+    }
+}
+
+export interface IPreviewSpaceWarehouseTemplateRequest {
+    templateVersionId: string;
 }
 
 export class RefreshSpaceWmsAdoptionResponse implements IRefreshSpaceWmsAdoptionResponse {
@@ -34327,6 +34565,579 @@ export interface ISpaceVersionDto {
     publishedAtUtc?: Date | undefined;
     rowVersion?: string | undefined;
     purpose?: string | undefined;
+}
+
+export class SpaceWarehouseTemplateAislePlanDto implements ISpaceWarehouseTemplateAislePlanDto {
+    key!: string;
+    floorKey!: string;
+    zoneKey!: string;
+    aisleCode!: string;
+    startX!: number;
+    startY!: number;
+    endX!: number;
+    endY!: number;
+
+    constructor(data?: ISpaceWarehouseTemplateAislePlanDto) {
+        if (data) {
+            for (var property in data) {
+                if (data.hasOwnProperty(property))
+                    (this as any)[property] = (data as any)[property];
+            }
+        }
+    }
+
+    init(_data?: any) {
+        if (_data) {
+            this.key = _data["key"];
+            this.floorKey = _data["floorKey"];
+            this.zoneKey = _data["zoneKey"];
+            this.aisleCode = _data["aisleCode"];
+            this.startX = _data["startX"];
+            this.startY = _data["startY"];
+            this.endX = _data["endX"];
+            this.endY = _data["endY"];
+        }
+    }
+
+    static fromJS(data: any): SpaceWarehouseTemplateAislePlanDto {
+        data = typeof data === 'object' ? data : {};
+        let result = new SpaceWarehouseTemplateAislePlanDto();
+        result.init(data);
+        return result;
+    }
+
+    toJSON(data?: any) {
+        data = typeof data === 'object' ? data : {};
+        data["key"] = this.key;
+        data["floorKey"] = this.floorKey;
+        data["zoneKey"] = this.zoneKey;
+        data["aisleCode"] = this.aisleCode;
+        data["startX"] = this.startX;
+        data["startY"] = this.startY;
+        data["endX"] = this.endX;
+        data["endY"] = this.endY;
+        return data;
+    }
+}
+
+export interface ISpaceWarehouseTemplateAislePlanDto {
+    key: string;
+    floorKey: string;
+    zoneKey: string;
+    aisleCode: string;
+    startX: number;
+    startY: number;
+    endX: number;
+    endY: number;
+}
+
+export class SpaceWarehouseTemplateCountsDto implements ISpaceWarehouseTemplateCountsDto {
+    floors!: number;
+    zones!: number;
+    aisles!: number;
+    racks!: number;
+    locations!: number;
+
+    constructor(data?: ISpaceWarehouseTemplateCountsDto) {
+        if (data) {
+            for (var property in data) {
+                if (data.hasOwnProperty(property))
+                    (this as any)[property] = (data as any)[property];
+            }
+        }
+    }
+
+    init(_data?: any) {
+        if (_data) {
+            this.floors = _data["floors"];
+            this.zones = _data["zones"];
+            this.aisles = _data["aisles"];
+            this.racks = _data["racks"];
+            this.locations = _data["locations"];
+        }
+    }
+
+    static fromJS(data: any): SpaceWarehouseTemplateCountsDto {
+        data = typeof data === 'object' ? data : {};
+        let result = new SpaceWarehouseTemplateCountsDto();
+        result.init(data);
+        return result;
+    }
+
+    toJSON(data?: any) {
+        data = typeof data === 'object' ? data : {};
+        data["floors"] = this.floors;
+        data["zones"] = this.zones;
+        data["aisles"] = this.aisles;
+        data["racks"] = this.racks;
+        data["locations"] = this.locations;
+        return data;
+    }
+}
+
+export interface ISpaceWarehouseTemplateCountsDto {
+    floors: number;
+    zones: number;
+    aisles: number;
+    racks: number;
+    locations: number;
+}
+
+export class SpaceWarehouseTemplateDto implements ISpaceWarehouseTemplateDto {
+    id!: string;
+    scope!: string;
+    templateCode!: string;
+    name!: string;
+    description?: string | undefined;
+    status!: string;
+    latestVersion!: SpaceWarehouseTemplateVersionDto;
+
+    constructor(data?: ISpaceWarehouseTemplateDto) {
+        if (data) {
+            for (var property in data) {
+                if (data.hasOwnProperty(property))
+                    (this as any)[property] = (data as any)[property];
+            }
+        }
+        if (!data) {
+            this.latestVersion = new SpaceWarehouseTemplateVersionDto();
+        }
+    }
+
+    init(_data?: any) {
+        if (_data) {
+            this.id = _data["id"];
+            this.scope = _data["scope"];
+            this.templateCode = _data["templateCode"];
+            this.name = _data["name"];
+            this.description = _data["description"];
+            this.status = _data["status"];
+            this.latestVersion = _data["latestVersion"] ? SpaceWarehouseTemplateVersionDto.fromJS(_data["latestVersion"]) : new SpaceWarehouseTemplateVersionDto();
+        }
+    }
+
+    static fromJS(data: any): SpaceWarehouseTemplateDto {
+        data = typeof data === 'object' ? data : {};
+        let result = new SpaceWarehouseTemplateDto();
+        result.init(data);
+        return result;
+    }
+
+    toJSON(data?: any) {
+        data = typeof data === 'object' ? data : {};
+        data["id"] = this.id;
+        data["scope"] = this.scope;
+        data["templateCode"] = this.templateCode;
+        data["name"] = this.name;
+        data["description"] = this.description;
+        data["status"] = this.status;
+        data["latestVersion"] = this.latestVersion ? this.latestVersion.toJSON() : undefined as any;
+        return data;
+    }
+}
+
+export interface ISpaceWarehouseTemplateDto {
+    id: string;
+    scope: string;
+    templateCode: string;
+    name: string;
+    description?: string | undefined;
+    status: string;
+    latestVersion: SpaceWarehouseTemplateVersionDto;
+}
+
+export class SpaceWarehouseTemplateFloorPlanDto implements ISpaceWarehouseTemplateFloorPlanDto {
+    key!: string;
+    floorCode!: string;
+    name!: string;
+    level!: number;
+    elevation!: number;
+    width!: number;
+    depth!: number;
+    height!: number;
+
+    constructor(data?: ISpaceWarehouseTemplateFloorPlanDto) {
+        if (data) {
+            for (var property in data) {
+                if (data.hasOwnProperty(property))
+                    (this as any)[property] = (data as any)[property];
+            }
+        }
+    }
+
+    init(_data?: any) {
+        if (_data) {
+            this.key = _data["key"];
+            this.floorCode = _data["floorCode"];
+            this.name = _data["name"];
+            this.level = _data["level"];
+            this.elevation = _data["elevation"];
+            this.width = _data["width"];
+            this.depth = _data["depth"];
+            this.height = _data["height"];
+        }
+    }
+
+    static fromJS(data: any): SpaceWarehouseTemplateFloorPlanDto {
+        data = typeof data === 'object' ? data : {};
+        let result = new SpaceWarehouseTemplateFloorPlanDto();
+        result.init(data);
+        return result;
+    }
+
+    toJSON(data?: any) {
+        data = typeof data === 'object' ? data : {};
+        data["key"] = this.key;
+        data["floorCode"] = this.floorCode;
+        data["name"] = this.name;
+        data["level"] = this.level;
+        data["elevation"] = this.elevation;
+        data["width"] = this.width;
+        data["depth"] = this.depth;
+        data["height"] = this.height;
+        return data;
+    }
+}
+
+export interface ISpaceWarehouseTemplateFloorPlanDto {
+    key: string;
+    floorCode: string;
+    name: string;
+    level: number;
+    elevation: number;
+    width: number;
+    depth: number;
+    height: number;
+}
+
+export class SpaceWarehouseTemplateInstantiationPreviewDto implements ISpaceWarehouseTemplateInstantiationPreviewDto {
+    schemaVersion!: number;
+    templateId!: string;
+    templateVersionId!: string;
+    templateContentHash!: string;
+    proposalHash!: string;
+    counts!: SpaceWarehouseTemplateCountsDto;
+    floors!: SpaceWarehouseTemplateFloorPlanDto[];
+    zones!: SpaceWarehouseTemplateZonePlanDto[];
+    aisles!: SpaceWarehouseTemplateAislePlanDto[];
+    racks!: SpaceWarehouseTemplateRackPlanDto[];
+    writesDraft!: boolean;
+
+    constructor(data?: ISpaceWarehouseTemplateInstantiationPreviewDto) {
+        if (data) {
+            for (var property in data) {
+                if (data.hasOwnProperty(property))
+                    (this as any)[property] = (data as any)[property];
+            }
+        }
+        if (!data) {
+            this.counts = new SpaceWarehouseTemplateCountsDto();
+            this.floors = [];
+            this.zones = [];
+            this.aisles = [];
+            this.racks = [];
+        }
+    }
+
+    init(_data?: any) {
+        if (_data) {
+            this.schemaVersion = _data["schemaVersion"];
+            this.templateId = _data["templateId"];
+            this.templateVersionId = _data["templateVersionId"];
+            this.templateContentHash = _data["templateContentHash"];
+            this.proposalHash = _data["proposalHash"];
+            this.counts = _data["counts"] ? SpaceWarehouseTemplateCountsDto.fromJS(_data["counts"]) : new SpaceWarehouseTemplateCountsDto();
+            if (Array.isArray(_data["floors"])) {
+                this.floors = [] as any;
+                for (let item of _data["floors"])
+                    this.floors!.push(SpaceWarehouseTemplateFloorPlanDto.fromJS(item));
+            }
+            if (Array.isArray(_data["zones"])) {
+                this.zones = [] as any;
+                for (let item of _data["zones"])
+                    this.zones!.push(SpaceWarehouseTemplateZonePlanDto.fromJS(item));
+            }
+            if (Array.isArray(_data["aisles"])) {
+                this.aisles = [] as any;
+                for (let item of _data["aisles"])
+                    this.aisles!.push(SpaceWarehouseTemplateAislePlanDto.fromJS(item));
+            }
+            if (Array.isArray(_data["racks"])) {
+                this.racks = [] as any;
+                for (let item of _data["racks"])
+                    this.racks!.push(SpaceWarehouseTemplateRackPlanDto.fromJS(item));
+            }
+            this.writesDraft = _data["writesDraft"];
+        }
+    }
+
+    static fromJS(data: any): SpaceWarehouseTemplateInstantiationPreviewDto {
+        data = typeof data === 'object' ? data : {};
+        let result = new SpaceWarehouseTemplateInstantiationPreviewDto();
+        result.init(data);
+        return result;
+    }
+
+    toJSON(data?: any) {
+        data = typeof data === 'object' ? data : {};
+        data["schemaVersion"] = this.schemaVersion;
+        data["templateId"] = this.templateId;
+        data["templateVersionId"] = this.templateVersionId;
+        data["templateContentHash"] = this.templateContentHash;
+        data["proposalHash"] = this.proposalHash;
+        data["counts"] = this.counts ? this.counts.toJSON() : undefined as any;
+        if (Array.isArray(this.floors)) {
+            data["floors"] = [];
+            for (let item of this.floors)
+                data["floors"].push(item ? item.toJSON() : undefined as any);
+        }
+        if (Array.isArray(this.zones)) {
+            data["zones"] = [];
+            for (let item of this.zones)
+                data["zones"].push(item ? item.toJSON() : undefined as any);
+        }
+        if (Array.isArray(this.aisles)) {
+            data["aisles"] = [];
+            for (let item of this.aisles)
+                data["aisles"].push(item ? item.toJSON() : undefined as any);
+        }
+        if (Array.isArray(this.racks)) {
+            data["racks"] = [];
+            for (let item of this.racks)
+                data["racks"].push(item ? item.toJSON() : undefined as any);
+        }
+        data["writesDraft"] = this.writesDraft;
+        return data;
+    }
+}
+
+export interface ISpaceWarehouseTemplateInstantiationPreviewDto {
+    schemaVersion: number;
+    templateId: string;
+    templateVersionId: string;
+    templateContentHash: string;
+    proposalHash: string;
+    counts: SpaceWarehouseTemplateCountsDto;
+    floors: SpaceWarehouseTemplateFloorPlanDto[];
+    zones: SpaceWarehouseTemplateZonePlanDto[];
+    aisles: SpaceWarehouseTemplateAislePlanDto[];
+    racks: SpaceWarehouseTemplateRackPlanDto[];
+    writesDraft: boolean;
+}
+
+export class SpaceWarehouseTemplateRackPlanDto implements ISpaceWarehouseTemplateRackPlanDto {
+    key!: string;
+    floorKey!: string;
+    zoneKey!: string;
+    aisleKey!: string;
+    rackCode!: string;
+    x!: number;
+    y!: number;
+    z!: number;
+    rotationZ!: number;
+    width!: number;
+    depth!: number;
+    height!: number;
+    columns!: number;
+    levels!: number;
+    depths!: number;
+
+    constructor(data?: ISpaceWarehouseTemplateRackPlanDto) {
+        if (data) {
+            for (var property in data) {
+                if (data.hasOwnProperty(property))
+                    (this as any)[property] = (data as any)[property];
+            }
+        }
+    }
+
+    init(_data?: any) {
+        if (_data) {
+            this.key = _data["key"];
+            this.floorKey = _data["floorKey"];
+            this.zoneKey = _data["zoneKey"];
+            this.aisleKey = _data["aisleKey"];
+            this.rackCode = _data["rackCode"];
+            this.x = _data["x"];
+            this.y = _data["y"];
+            this.z = _data["z"];
+            this.rotationZ = _data["rotationZ"];
+            this.width = _data["width"];
+            this.depth = _data["depth"];
+            this.height = _data["height"];
+            this.columns = _data["columns"];
+            this.levels = _data["levels"];
+            this.depths = _data["depths"];
+        }
+    }
+
+    static fromJS(data: any): SpaceWarehouseTemplateRackPlanDto {
+        data = typeof data === 'object' ? data : {};
+        let result = new SpaceWarehouseTemplateRackPlanDto();
+        result.init(data);
+        return result;
+    }
+
+    toJSON(data?: any) {
+        data = typeof data === 'object' ? data : {};
+        data["key"] = this.key;
+        data["floorKey"] = this.floorKey;
+        data["zoneKey"] = this.zoneKey;
+        data["aisleKey"] = this.aisleKey;
+        data["rackCode"] = this.rackCode;
+        data["x"] = this.x;
+        data["y"] = this.y;
+        data["z"] = this.z;
+        data["rotationZ"] = this.rotationZ;
+        data["width"] = this.width;
+        data["depth"] = this.depth;
+        data["height"] = this.height;
+        data["columns"] = this.columns;
+        data["levels"] = this.levels;
+        data["depths"] = this.depths;
+        return data;
+    }
+}
+
+export interface ISpaceWarehouseTemplateRackPlanDto {
+    key: string;
+    floorKey: string;
+    zoneKey: string;
+    aisleKey: string;
+    rackCode: string;
+    x: number;
+    y: number;
+    z: number;
+    rotationZ: number;
+    width: number;
+    depth: number;
+    height: number;
+    columns: number;
+    levels: number;
+    depths: number;
+}
+
+export class SpaceWarehouseTemplateVersionDto implements ISpaceWarehouseTemplateVersionDto {
+    id!: string;
+    versionNo!: number;
+    schemaVersion!: number;
+    contentHash!: string;
+    counts!: SpaceWarehouseTemplateCountsDto;
+    status!: string;
+
+    constructor(data?: ISpaceWarehouseTemplateVersionDto) {
+        if (data) {
+            for (var property in data) {
+                if (data.hasOwnProperty(property))
+                    (this as any)[property] = (data as any)[property];
+            }
+        }
+        if (!data) {
+            this.counts = new SpaceWarehouseTemplateCountsDto();
+        }
+    }
+
+    init(_data?: any) {
+        if (_data) {
+            this.id = _data["id"];
+            this.versionNo = _data["versionNo"];
+            this.schemaVersion = _data["schemaVersion"];
+            this.contentHash = _data["contentHash"];
+            this.counts = _data["counts"] ? SpaceWarehouseTemplateCountsDto.fromJS(_data["counts"]) : new SpaceWarehouseTemplateCountsDto();
+            this.status = _data["status"];
+        }
+    }
+
+    static fromJS(data: any): SpaceWarehouseTemplateVersionDto {
+        data = typeof data === 'object' ? data : {};
+        let result = new SpaceWarehouseTemplateVersionDto();
+        result.init(data);
+        return result;
+    }
+
+    toJSON(data?: any) {
+        data = typeof data === 'object' ? data : {};
+        data["id"] = this.id;
+        data["versionNo"] = this.versionNo;
+        data["schemaVersion"] = this.schemaVersion;
+        data["contentHash"] = this.contentHash;
+        data["counts"] = this.counts ? this.counts.toJSON() : undefined as any;
+        data["status"] = this.status;
+        return data;
+    }
+}
+
+export interface ISpaceWarehouseTemplateVersionDto {
+    id: string;
+    versionNo: number;
+    schemaVersion: number;
+    contentHash: string;
+    counts: SpaceWarehouseTemplateCountsDto;
+    status: string;
+}
+
+export class SpaceWarehouseTemplateZonePlanDto implements ISpaceWarehouseTemplateZonePlanDto {
+    key!: string;
+    floorKey!: string;
+    zoneCode!: string;
+    zoneType!: string;
+    minX!: number;
+    minY!: number;
+    maxX!: number;
+    maxY!: number;
+
+    constructor(data?: ISpaceWarehouseTemplateZonePlanDto) {
+        if (data) {
+            for (var property in data) {
+                if (data.hasOwnProperty(property))
+                    (this as any)[property] = (data as any)[property];
+            }
+        }
+    }
+
+    init(_data?: any) {
+        if (_data) {
+            this.key = _data["key"];
+            this.floorKey = _data["floorKey"];
+            this.zoneCode = _data["zoneCode"];
+            this.zoneType = _data["zoneType"];
+            this.minX = _data["minX"];
+            this.minY = _data["minY"];
+            this.maxX = _data["maxX"];
+            this.maxY = _data["maxY"];
+        }
+    }
+
+    static fromJS(data: any): SpaceWarehouseTemplateZonePlanDto {
+        data = typeof data === 'object' ? data : {};
+        let result = new SpaceWarehouseTemplateZonePlanDto();
+        result.init(data);
+        return result;
+    }
+
+    toJSON(data?: any) {
+        data = typeof data === 'object' ? data : {};
+        data["key"] = this.key;
+        data["floorKey"] = this.floorKey;
+        data["zoneCode"] = this.zoneCode;
+        data["zoneType"] = this.zoneType;
+        data["minX"] = this.minX;
+        data["minY"] = this.minY;
+        data["maxX"] = this.maxX;
+        data["maxY"] = this.maxY;
+        return data;
+    }
+}
+
+export interface ISpaceWarehouseTemplateZonePlanDto {
+    key: string;
+    floorKey: string;
+    zoneCode: string;
+    zoneType: string;
+    minX: number;
+    minY: number;
+    maxX: number;
+    maxY: number;
 }
 
 export class SpaceWmsAdoptionCommandResponse implements ISpaceWmsAdoptionCommandResponse {

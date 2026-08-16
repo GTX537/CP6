@@ -215,6 +215,101 @@ public sealed class SpaceWmsRuntimeSchemaFilter : ISchemaFilter
                 "versionContentRevision",
                 "idempotentReplay",
             ],
+            [typeof(SpaceWarehouseTemplateCountsDto)] =
+            [
+                "floors",
+                "zones",
+                "aisles",
+                "racks",
+                "locations",
+            ],
+            [typeof(SpaceWarehouseTemplateVersionDto)] =
+            [
+                "id",
+                "versionNo",
+                "schemaVersion",
+                "contentHash",
+                "counts",
+                "status",
+            ],
+            [typeof(SpaceWarehouseTemplateDto)] =
+            [
+                "id",
+                "scope",
+                "templateCode",
+                "name",
+                "status",
+                "latestVersion",
+            ],
+            [typeof(PreviewSpaceWarehouseTemplateRequest)] =
+            [
+                "templateVersionId",
+            ],
+            [typeof(SpaceWarehouseTemplateFloorPlanDto)] =
+            [
+                "key",
+                "floorCode",
+                "name",
+                "level",
+                "elevation",
+                "width",
+                "depth",
+                "height",
+            ],
+            [typeof(SpaceWarehouseTemplateZonePlanDto)] =
+            [
+                "key",
+                "floorKey",
+                "zoneCode",
+                "zoneType",
+                "minX",
+                "minY",
+                "maxX",
+                "maxY",
+            ],
+            [typeof(SpaceWarehouseTemplateAislePlanDto)] =
+            [
+                "key",
+                "floorKey",
+                "zoneKey",
+                "aisleCode",
+                "startX",
+                "startY",
+                "endX",
+                "endY",
+            ],
+            [typeof(SpaceWarehouseTemplateRackPlanDto)] =
+            [
+                "key",
+                "floorKey",
+                "zoneKey",
+                "aisleKey",
+                "rackCode",
+                "x",
+                "y",
+                "z",
+                "rotationZ",
+                "width",
+                "depth",
+                "height",
+                "columns",
+                "levels",
+                "depths",
+            ],
+            [typeof(SpaceWarehouseTemplateInstantiationPreviewDto)] =
+            [
+                "schemaVersion",
+                "templateId",
+                "templateVersionId",
+                "templateContentHash",
+                "proposalHash",
+                "counts",
+                "floors",
+                "zones",
+                "aisles",
+                "racks",
+                "writesDraft",
+            ],
             [typeof(SpacePublishPreviewDto)] =
             [
                 "validationWarningCount",

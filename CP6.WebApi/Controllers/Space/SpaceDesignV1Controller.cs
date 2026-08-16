@@ -578,4 +578,28 @@ public sealed class SpaceDesignV1Controller(
             adoptionId,
             request,
             cancellationToken);
+
+    [HttpGet("templates")]
+    [RequirePermission("space", "model:read", UseProblemDetails = true)]
+    [ProducesResponseType<IReadOnlyList<SpaceWarehouseTemplateDto>>(
+        StatusCodes.Status200OK)]
+    public Task<IReadOnlyList<SpaceWarehouseTemplateDto>>
+        GetWarehouseTemplates(
+            [FromQuery] string? scope = null,
+            CancellationToken cancellationToken = default) =>
+        service.GetWarehouseTemplatesAsync(scope, cancellationToken);
+
+    [HttpPost("templates/{templateId:guid}/instantiate")]
+    [RequirePermission("space", "model:edit", UseProblemDetails = true)]
+    [ProducesResponseType<SpaceWarehouseTemplateInstantiationPreviewDto>(
+        StatusCodes.Status200OK)]
+    public Task<SpaceWarehouseTemplateInstantiationPreviewDto>
+        PreviewWarehouseTemplate(
+            Guid templateId,
+            [FromBody, Required] PreviewSpaceWarehouseTemplateRequest request,
+            CancellationToken cancellationToken) =>
+        service.PreviewWarehouseTemplateAsync(
+            templateId,
+            request,
+            cancellationToken);
 }

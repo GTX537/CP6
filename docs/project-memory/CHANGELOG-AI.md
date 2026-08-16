@@ -2,6 +2,13 @@
 
 > 依据 Git log 汇总，不替代完整 Git 历史。重点记录影响接手判断的里程碑。
 
+## 2026-08-15：Space System 整仓模板目录与预览
+
+- Design V1 新增 System/Tenant 整仓模板目录和实例化预览合同；首份 System 模板从确定性标准仓布局生成，固定 2 层、7 区、20 巷道、500 货架和 10,000 库位。
+- 预览密封模板/版本/内容/Proposal SHA 与完整父级计划，明确 `writesDraft=false`；外部主体、旧版本、未知模板及非法 scope 失败关闭，OpenAPI/双 SDK/前端目录同步。
+- Space Unit 536/536、CP6.Tests 2,924、Web 851/851 与完整 solution Release 0 warning / 0 error；SDK/EF/GA 证据门禁通过。
+- Tenant 私有模板、Template → Draft Apply 和四模式统一向导未完成，LM-FR-001/WP1 仍为 Partial，GA 72% / `NoGo` 不变。
+
 ## 2026-08-15：Design V1 Floor shell 与项目入口
 
 - Space 首页新增 Site 级 Space Studio 入口，可发现活动 Draft、列出/选择活动设计楼层；没有 Draft/Floor 时分别显式创建 Blank 与 Floor shell。

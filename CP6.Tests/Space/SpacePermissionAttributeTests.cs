@@ -95,6 +95,8 @@ public class SpacePermissionAttributeTests
             ["SpaceCadParseController.GetReviewWorkspace"] =
                 "space:model:read",
             ["SpaceDesignV1Controller.GetAssets"] = "space:model:read",
+            ["SpaceDesignV1Controller.GetWarehouseTemplates"] =
+                "space:model:read",
             ["SpaceDesignV1Controller.GetSources"] = "space:model:read",
             ["SpaceDesignV1Controller.GetFile"] = "space:model:read",
             ["SpaceDesignV1Controller.GetUnderlayContent"] = "space:model:read",

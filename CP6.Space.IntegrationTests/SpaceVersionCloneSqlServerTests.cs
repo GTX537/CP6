@@ -18,6 +18,66 @@ public sealed class SpaceVersionCloneSqlServerTests
         "bbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbb";
 
     [Fact]
+    public async Task Warehouse_template_catalog_is_internal_scoped_and_preview_only()
+    {
+        var execution = new TestExecutionContext(
+            Guid.NewGuid(),
+            Guid.NewGuid(),
+            Guid.NewGuid());
+        var clock = new TestClock();
+        await using var context = CreateInMemoryContext(
+            execution.TenantId,
+            execution.ActorId,
+            clock);
+        var service = NewDesignService(context, execution, clock);
+
+        var all = await service.GetWarehouseTemplatesAsync(null);
+        var system = await service.GetWarehouseTemplatesAsync("system");
+        var tenant = await service.GetWarehouseTemplatesAsync("Tenant");
+        var template = Assert.Single(all);
+        Assert.Single(system);
+        Assert.Empty(tenant);
+
+        var preview = await service.PreviewWarehouseTemplateAsync(
+            template.Id,
+            new PreviewSpaceWarehouseTemplateRequest(
+                template.LatestVersion.Id));
+        Assert.False(preview.WritesDraft);
+        Assert.Equal(template.LatestVersion.ContentHash,
+            preview.TemplateContentHash);
+
+        var stale = await Assert.ThrowsAsync<SpaceProblemException>(() =>
+            service.PreviewWarehouseTemplateAsync(
+                template.Id,
+                new PreviewSpaceWarehouseTemplateRequest(Guid.NewGuid())));
+        Assert.Equal(
+            SpaceErrorCodes.WarehouseTemplateVersionConflict,
+            stale.Code);
+
+        var invalidScope = await Assert.ThrowsAsync<SpaceProblemException>(() =>
+            service.GetWarehouseTemplatesAsync("SystemOrTenant"));
+        Assert.Equal(SpaceErrorCodes.RequestInvalid, invalidScope.Code);
+
+        var externalExecution = execution with
+        {
+            ActorId = Guid.NewGuid(),
+            CorrelationId = Guid.NewGuid(),
+            IsExternal = true,
+        };
+        await using var externalContext = CreateInMemoryContext(
+            externalExecution.TenantId,
+            externalExecution.ActorId,
+            clock);
+        var externalService = NewDesignService(
+            externalContext,
+            externalExecution,
+            clock);
+        var denied = await Assert.ThrowsAsync<SpaceProblemException>(() =>
+            externalService.GetWarehouseTemplatesAsync(null));
+        Assert.Equal(SpaceErrorCodes.ExternalSubjectDenied, denied.Code);
+    }
+
+    [Fact]
     public async Task Queued_clone_cancellation_releases_the_reserved_draft()
     {
         var tenantId = Guid.NewGuid();
