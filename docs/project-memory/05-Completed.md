@@ -1,5 +1,14 @@
 # 已完成能力与近期里程碑
 
+## 2026-08-16 Space CAD 待审变更集与 RuleOnly 交接
+
+- LM-FR-019 保持 Job → Clean PreviewSet → 绑定 Source/Transform/Mapping/Base Revision 的自动 Workspace 加载；用户不再下载或重传 JSON，stale 继续返回 `SPACE_PARSE_CHANGESET_STALE` 且零写入。
+- LM-FR-019A 的工作台完整显示并筛选新增、修改、删除、冲突、低置信度和未识别六类变更；客户端验证 Change Summary、可 Apply 类型和选择一致性，并在密封 Workspace 变化时重置旧选择。
+- 通用静态元素的 CAD Apply 使用内部专用上限 10,000 项，公开手工 Element Command 仍为 100 项；101 项服务集成用例验证单事务、一次 Floor/Content Revision、完整 Undo/Redo 和一个幂等批次。
+- Zone/Aisle/Rack 保持设计态领域权威，不伪装成 `Space_Element`；对应冲突可从同一审核面板一键进入既有 RuleOnly/Proposal Review/Atomic Apply，并自动预选当前 CAD 来源。
+- 门禁：Space Cad Parse Integration 15/15、Space Unit 546/546、CP6.Tests 2,933 passed / 19 environment-skipped、Web 873/873、OpenAPI 55/55、Space Studio Playwright 24/24、生产 Web 构建、完整 solution Release 0 warning / 0 error 与双 SDK drift 通过。完整证据见 `docs/space/reports/2026-08-16-space-cad-review-changeset-handoff.md`。
+- LM-FR-019/019A 仓库实现闭环；真实 Provider、黄金 CAD、三路径现场浏览器、WMS 和 Pilot 不因此关闭，核心 GA 继续 72% / `NoGo`。
+
 ## 2026-08-16 Space CAD 输入与坐标确认
 
 - LM-FR-010 延续唯一 Design V1 来源链：工作台文件选择器接受 `.dwg/.dxf`，客户端显式提交 `Dwg/Dxf`，服务端按扩展名、声明 MIME 和文件签名失败关闭，再进入隔离扫描与同一 CAD IR/Preparation/Parse 合同。

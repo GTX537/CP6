@@ -184,4 +184,112 @@ describe('DesignCadIssuePanel', () => {
     expect(changeset.find('input[type="checkbox"]').attributes('disabled'))
       .toBeDefined()
   })
+
+  it('shows all six change kinds and routes layout objects to the current CAD RuleOnly flow', async () => {
+    const kinds = ['Add', 'Modify', 'Delete', 'Conflict', 'LowConfidence', 'Unrecognized'] as const
+    const changes = kinds.map((kind, index) => ({
+      changeId: `cad-change-${kind}`,
+      kind,
+      logicalId: `11111111-1111-1111-1111-${String(index + 1).padStart(12, '0')}`,
+      sourceRef: `CAD:H:${kind}`,
+      objectType: kind === 'Conflict' ? 'Rack' : 'Column',
+      isSelected: kind === 'Add',
+      canApply: ['Add', 'Modify', 'Delete'].includes(kind),
+      blockingReasonCode: kind === 'Conflict'
+        ? 'SPACE_CAD_REQUIRES_RULE_ONLY_REVIEW'
+        : undefined,
+      isManualCorrectionLocked: false,
+      userCorrectionVersion: 0,
+    }))
+    const changesWorkspace = {
+      ...workspace,
+      sourceId: '66666666-6666-6666-6666-666666666666',
+      cadParseJobId: '77777777-7777-7777-7777-777777777777',
+      semanticPreviewSha256: 'e'.repeat(64),
+      changesetSha256: 'f'.repeat(64),
+      changes,
+      changeSummary: {
+        totalCount: 6,
+        addCount: 1,
+        modifyCount: 1,
+        deleteCount: 1,
+        conflictCount: 1,
+        lowConfidenceCount: 1,
+        unrecognizedCount: 1,
+        selectedCount: 1,
+        applyEligibleCount: 3,
+      },
+    } satisfies CadReviewWorkspace
+    const wrapper = mount(DesignCadIssuePanel, {
+      props: { workspace: changesWorkspace },
+      global: { plugins: [ElementPlus] },
+    })
+
+    const summary = wrapper.get('[aria-label="CAD 六类变更汇总"]')
+    for (const label of ['新增', '修改', '删除', '冲突', '低置信度', '未识别']) {
+      expect(summary.text()).toContain(label)
+    }
+    wrapper.findAllComponents({ name: 'ElSelect' })[0]!
+      .vm.$emit('update:modelValue', 'Conflict')
+    await nextTick()
+    expect(wrapper.findAll('.change-row')).toHaveLength(1)
+    expect(wrapper.get('.change-row').text()).toContain('Conflict · Rack')
+    expect(wrapper.text()).toContain('1 个 Zone / Aisle / Rack')
+    await wrapper.get('.rule-only-route button').trigger('click')
+    expect(wrapper.emitted('openRuleOnly')?.[0]).toEqual([
+      '66666666-6666-6666-6666-666666666666',
+    ])
+  })
+
+  it('resets the selected changes when a new sealed workspace replaces the current one', async () => {
+    const change = (id: string, kind: 'Add' | 'Modify') => ({
+      changeId: id,
+      kind,
+      logicalId: id === 'cad-change-first'
+        ? '11111111-1111-1111-1111-111111111111'
+        : '22222222-2222-2222-2222-222222222222',
+      sourceRef: `CAD:${id}`,
+      objectType: 'Column',
+      isSelected: true,
+      canApply: true,
+      isManualCorrectionLocked: false,
+      userCorrectionVersion: 0,
+    })
+    const withChange = (
+      workspaceSha256: string,
+      selected: ReturnType<typeof change>,
+    ): CadReviewWorkspace => ({
+      ...workspace,
+      workspaceSha256,
+      sourceId: '66666666-6666-6666-6666-666666666666',
+      cadParseJobId: '77777777-7777-7777-7777-777777777777',
+      semanticPreviewSha256: 'e'.repeat(64),
+      changesetSha256: 'f'.repeat(64),
+      changes: [selected],
+      changeSummary: {
+        totalCount: 1,
+        addCount: selected.kind === 'Add' ? 1 : 0,
+        modifyCount: selected.kind === 'Modify' ? 1 : 0,
+        deleteCount: 0,
+        conflictCount: 0,
+        lowConfidenceCount: 0,
+        unrecognizedCount: 0,
+        selectedCount: 1,
+        applyEligibleCount: 1,
+      },
+    })
+    const wrapper = mount(DesignCadIssuePanel, {
+      props: { workspace: withChange('1'.repeat(64), change('cad-change-first', 'Add')) },
+      global: { plugins: [ElementPlus] },
+    })
+
+    await wrapper.get('.changeset > .el-button').trigger('click')
+    expect(wrapper.emitted('applyChanges')?.[0]).toEqual([['cad-change-first']])
+    await wrapper.setProps({
+      workspace: withChange('2'.repeat(64), change('cad-change-second', 'Modify')),
+    })
+    await nextTick()
+    await wrapper.get('.changeset > .el-button').trigger('click')
+    expect(wrapper.emitted('applyChanges')?.[1]).toEqual([['cad-change-second']])
+  })
 })

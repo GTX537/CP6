@@ -573,7 +573,8 @@ public sealed class SpaceCadParseService(
             request.ExpectedContentHash is not null &&
                 !IsSha256(request.ExpectedContentHash) ||
             request.ChangeIds is null ||
-            request.ChangeIds.Count is < 1 or > 100 ||
+            request.ChangeIds.Count is < 1 or >
+                SpaceCadReviewWorkspaceVersions.MaximumApplyChanges ||
             request.ChangeIds.Any(string.IsNullOrWhiteSpace) ||
             request.ChangeIds.Distinct(StringComparer.Ordinal).Count() !=
                 request.ChangeIds.Count)
@@ -687,7 +688,7 @@ public sealed class SpaceCadParseService(
                 null),
             _ => throw Invalid("The selected CAD change is not applyable."),
         }).ToArray();
-        var applied = await design.ApplyElementCommandsAsync(
+        var applied = await design.ApplyCadElementCommandsAsync(
             versionId,
             workspace.FloorLogicalId,
             new ApplySpaceElementCommandBatchRequest(

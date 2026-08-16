@@ -19559,6 +19559,8 @@
             "type": "string"
           },
           "changeIds": {
+            "maxItems": 10000,
+            "minItems": 1,
             "type": "array",
             "items": {
               "type": "string"

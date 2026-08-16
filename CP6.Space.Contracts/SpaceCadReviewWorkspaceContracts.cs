@@ -8,6 +8,7 @@ public static class SpaceCadReviewWorkspaceVersions
     public const int DefaultPageSize = 50;
     public const int MaximumPageSize = 200;
     public const int MaximumItems = 100_000;
+    public const int MaximumApplyChanges = 10_000;
 }
 
 [JsonConverter(typeof(JsonStringEnumConverter))]

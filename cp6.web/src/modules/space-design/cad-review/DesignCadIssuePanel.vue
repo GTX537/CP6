@@ -1,7 +1,8 @@
 <script setup lang="ts">
-import { computed, ref } from 'vue'
+import { computed, ref, watch } from 'vue'
 import {
   filterCadReviewItems,
+  type CadChangeKind,
   type CadReviewItem,
   type CadReviewItemKind,
   type CadReviewItemStatus,
@@ -21,18 +22,45 @@ const props = withDefaults(defineProps<{
 const emit = defineEmits<{
   select: [item: CadReviewItem]
   applyChanges: [changeIds: string[]]
+  openRuleOnly: [sourceId: string]
   close: []
 }>()
+
+const maximumApplyChanges = 10_000
+const maximumRenderedChanges = 200
 
 const status = ref<CadReviewItemStatus | ''>('Open')
 const severity = ref<CadReviewSeverity | ''>('')
 const kind = ref<CadReviewItemKind | ''>('')
 const search = ref('')
 const onlyLocatable = ref(false)
-const selectedChangeIds = ref<string[]>(
-  (props.workspace.changes ?? [])
+const changeKind = ref<CadChangeKind | ''>('')
+
+function defaultSelectedChangeIds(): string[] {
+  return (props.workspace.changes ?? [])
     .filter(change => change.isSelected && change.canApply)
-    .map(change => change.changeId),
+    .map(change => change.changeId)
+    .slice(0, maximumApplyChanges)
+}
+
+const selectedChangeIds = ref<string[]>(defaultSelectedChangeIds())
+const selectedChangeIdSet = computed(() => new Set(selectedChangeIds.value))
+const filteredChanges = computed(() => (props.workspace.changes ?? []).filter(
+  change => !changeKind.value || change.kind === changeKind.value,
+))
+const renderedChanges = computed(() =>
+  filteredChanges.value.slice(0, maximumRenderedChanges),
+)
+const ruleOnlyChanges = computed(() => (props.workspace.changes ?? []).filter(
+  change => change.blockingReasonCode === 'SPACE_CAD_REQUIRES_RULE_ONLY_REVIEW',
+))
+
+watch(
+  () => props.workspace.workspaceSha256,
+  () => {
+    selectedChangeIds.value = defaultSelectedChangeIds()
+    changeKind.value = ''
+  },
 )
 
 const items = computed(() => filterCadReviewItems(props.workspace, {
@@ -62,7 +90,7 @@ function severityType(value: CadReviewSeverity) {
 function toggleChange(changeId: string, checked: boolean): void {
   const ids = new Set(selectedChangeIds.value)
   checked ? ids.add(changeId) : ids.delete(changeId)
-  selectedChangeIds.value = [...ids].slice(0, 100)
+  selectedChangeIds.value = [...ids].slice(0, maximumApplyChanges)
 }
 </script>
 
@@ -93,18 +121,33 @@ function toggleChange(changeId: string, checked: boolean): void {
     <section v-if="workspace.changes?.length" class="changeset" data-test="cad-changeset">
       <header>
         <strong>待审变更集</strong>
-        <span>
-          +{{ workspace.changeSummary?.addCount ?? 0 }} /
-          ~{{ workspace.changeSummary?.modifyCount ?? 0 }} /
-          −{{ workspace.changeSummary?.deleteCount ?? 0 }} /
-          冲突 {{ workspace.changeSummary?.conflictCount ?? 0 }}
-        </span>
+        <span>可合入 {{ workspace.changeSummary?.applyEligibleCount ?? 0 }} · 已选 {{ selectedChangeIds.length }}</span>
       </header>
+      <dl class="change-summary" aria-label="CAD 六类变更汇总">
+        <div><dt>新增</dt><dd>{{ workspace.changeSummary?.addCount ?? 0 }}</dd></div>
+        <div><dt>修改</dt><dd>{{ workspace.changeSummary?.modifyCount ?? 0 }}</dd></div>
+        <div><dt>删除</dt><dd>{{ workspace.changeSummary?.deleteCount ?? 0 }}</dd></div>
+        <div><dt>冲突</dt><dd>{{ workspace.changeSummary?.conflictCount ?? 0 }}</dd></div>
+        <div><dt>低置信度</dt><dd>{{ workspace.changeSummary?.lowConfidenceCount ?? 0 }}</dd></div>
+        <div><dt>未识别</dt><dd>{{ workspace.changeSummary?.unrecognizedCount ?? 0 }}</dd></div>
+      </dl>
+      <div class="change-toolbar">
+        <el-select v-model="changeKind" aria-label="CAD 变更类型" placeholder="全部变更类型">
+          <el-option label="全部变更类型" value="" />
+          <el-option label="新增" value="Add" />
+          <el-option label="修改" value="Modify" />
+          <el-option label="删除" value="Delete" />
+          <el-option label="冲突" value="Conflict" />
+          <el-option label="低置信度" value="LowConfidence" />
+          <el-option label="未识别" value="Unrecognized" />
+        </el-select>
+        <span>显示 {{ renderedChanges.length }} / {{ filteredChanges.length }}</span>
+      </div>
       <div class="change-list">
-        <label v-for="change in workspace.changes" :key="change.changeId" class="change-row">
+        <label v-for="change in renderedChanges" :key="change.changeId" class="change-row">
           <el-checkbox
-            :model-value="selectedChangeIds.includes(change.changeId)"
-            :disabled="stale || !change.canApply || (!selectedChangeIds.includes(change.changeId) && selectedChangeIds.length >= 100)"
+            :model-value="selectedChangeIdSet.has(change.changeId)"
+            :disabled="stale || !change.canApply || (!selectedChangeIdSet.has(change.changeId) && selectedChangeIds.length >= maximumApplyChanges)"
             @change="toggleChange(change.changeId, Boolean($event))"
           />
           <span>
@@ -120,6 +163,20 @@ function toggleChange(changeId: string, checked: boolean): void {
             </small>
           </span>
         </label>
+      </div>
+      <p v-if="filteredChanges.length > maximumRenderedChanges" class="change-limit">
+        为保持工作台流畅，当前类型一次显示前 {{ maximumRenderedChanges }} 项；可切换类型继续复核。
+      </p>
+      <div v-if="ruleOnlyChanges.length && workspace.sourceId" class="rule-only-route">
+        <p>
+          {{ ruleOnlyChanges.length }} 个 Zone / Aisle / Rack 业务布局对象需进入既有 RuleOnly
+          生成与 Atomic Apply，不能伪装成通用元素写入。
+        </p>
+        <el-button
+          v-permission="'space:model:generate-ai'"
+          :disabled="stale"
+          @click="emit('openRuleOnly', workspace.sourceId)"
+        >使用当前 CAD 来源进入规则生成</el-button>
       </div>
       <el-button
         v-permission="'space:model:edit'"
@@ -321,10 +378,19 @@ function toggleChange(changeId: string, checked: boolean): void {
 
 .changeset { margin: 12px 0; padding: 10px; border: 1px solid var(--space-studio-accent, #0e7490); border-radius: 6px; background: var(--space-studio-panel-raised, #f0f9ff); }
 .changeset > header { display: flex; justify-content: space-between; gap: 8px; margin-bottom: 8px; font-size: 14px; }
+.change-summary { display:grid; grid-template-columns:repeat(3,minmax(0,1fr)); gap:6px; margin:0 0 10px; }
+.change-summary div { display:flex; justify-content:space-between; gap:4px; padding:6px; border:1px solid var(--space-studio-border,#dfe4ea); border-radius:4px; background:var(--space-studio-panel,#fff); }
+.change-summary dt { color:var(--space-studio-muted,#667085); font-size:13px; }
+.change-summary dd { margin:0; font-size:14px; font-weight:800; }
+.change-toolbar { display:flex; align-items:center; justify-content:space-between; gap:8px; margin-bottom:8px; color:var(--space-studio-muted,#667085); font-size:13px; }
+.change-toolbar :deep(.el-select) { flex:1; }
 .change-list { display: grid; gap: 6px; max-height: 220px; overflow: auto; margin-bottom: 10px; }
 .change-row { display: grid; grid-template-columns: auto 1fr; gap: 8px; align-items: start; padding: 7px; background: var(--space-studio-panel, #fff); border-radius: 4px; }
 .change-row span { display: grid; gap: 2px; min-width: 0; }
 .change-row small { color: var(--space-studio-muted, #667085); font-size: 14px; overflow-wrap: anywhere; }
+.change-limit { margin:0 0 10px; color:var(--space-studio-muted,#667085); font-size:13px; }
+.rule-only-route { margin:0 0 10px; padding:10px; border:1px solid var(--space-studio-warning,#f59e0b); border-radius:5px; background:color-mix(in srgb,var(--space-studio-warning,#f59e0b) 10%,var(--space-studio-panel,#fff)); }
+.rule-only-route p { margin:0 0 8px; font-size:14px; line-height:1.45; }
 .cad-review-panel :deep(.el-button),
 .cad-review-panel :deep(.el-input__wrapper),
 .cad-review-panel :deep(.el-select__wrapper),
