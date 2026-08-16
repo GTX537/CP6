@@ -167,20 +167,18 @@ export interface PreviewSpaceCadPreparationResponse {
   coordinateAnalysis: {
     suggestedUnit: string
     suggestedScaleToMillimeters?: number
+    sourceBounds?: { minX: number; minY: number; maxX: number; maxY: number }
+    suggestedBoundsMillimeters?: { minX: number; minY: number; maxX: number; maxY: number }
     isSuggestedExtentPlausible: boolean
-    issues: Array<{ code: string; severity: string }>
+    requiresUnitConfirmation: boolean
+    issues: SpaceCadCoordinateIssue[]
   }
   coordinateMetadata: {
     confirmedUnit: string
     confirmedScaleToMillimeters: number
     preparedBounds?: { minX: number; minY: number; maxX: number; maxY: number }
   }
-  coordinateIssues: Array<{
-    code: string
-    severity: string
-    sourceRef?: string
-    detailToken?: string
-  }>
+  coordinateIssues: SpaceCadCoordinateIssue[]
   inventorySummary?: {
     layerCount: number
     blockCount: number
@@ -249,8 +247,22 @@ export interface PreviewSpaceCadPreparationResponse {
   startRequest?: StartSpaceCadParseRequest
 }
 
+export interface SpaceCadCoordinateIssue {
+  code: string
+  severity: string
+  sourceRef?: string
+  detailToken?: string
+}
+
 function url(versionId: string, sourceId: string, jobId: string) {
   return `${root}/versions/${versionId}/sources/${sourceId}/cad-parses/${jobId}`
+}
+
+function sourceFormat(fileName: string): 'Dwg' | 'Dxf' {
+  const normalized = fileName.trim().toLocaleLowerCase()
+  if (normalized.endsWith('.dwg')) return 'Dwg'
+  if (normalized.endsWith('.dxf')) return 'Dxf'
+  throw new Error('CAD 导入仅支持 .dwg 或 .dxf 文件。')
 }
 
 export const designCadParseApi = {
@@ -262,7 +274,7 @@ export const designCadParseApi = {
 
   upload(versionId: string, file: File) {
     const form = new FormData()
-    form.append('SourceFormat', file.name.toLowerCase().endsWith('.dwg') ? 'Dwg' : 'Dxf')
+    form.append('SourceFormat', sourceFormat(file.name))
     form.append('File', file)
     return http.post<unknown, UploadSpaceCadSourceResponse>(
       `${root}/versions/${versionId}/cad-sources`,

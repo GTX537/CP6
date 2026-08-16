@@ -65,18 +65,34 @@ describe('designCadParseApi', () => {
     )
   })
 
-  it('uploads DWG/DXF and retries with an idempotency key', async () => {
+  it.each([
+    ['warehouse.dwg', 'Dwg'],
+    ['warehouse.dxf', 'Dxf'],
+  ])('uploads %s with the explicit %s format', async (fileName, sourceFormat) => {
     vi.mocked(http.post).mockResolvedValue({})
-    const file = new File(['cad'], 'warehouse.dxf')
+    const file = new File(['cad'], fileName)
     await designCadParseApi.upload('version-1', file)
-    await designCadParseApi.retry('version-1', 'source-1', 'job-1', 'retry-1')
 
     const upload = vi.mocked(http.post).mock.calls[0]!
     expect(upload[0]).toBe('/space/design/v1/versions/version-1/cad-sources')
     expect(upload[1]).toBeInstanceOf(FormData)
-    expect((upload[1] as FormData).get('SourceFormat')).toBe('Dxf')
+    expect((upload[1] as FormData).get('SourceFormat')).toBe(sourceFormat)
+  })
+
+  it('rejects unsupported extensions before sending an upload request', () => {
+    const file = new File(['cad'], 'warehouse.pdf')
+
+    expect(() => designCadParseApi.upload('version-1', file))
+      .toThrow('CAD 导入仅支持 .dwg 或 .dxf 文件')
+    expect(http.post).not.toHaveBeenCalled()
+  })
+
+  it('retries with an idempotency key', async () => {
+    vi.mocked(http.post).mockResolvedValue({})
+    await designCadParseApi.retry('version-1', 'source-1', 'job-1', 'retry-1')
+
     expect(http.post).toHaveBeenNthCalledWith(
-      2,
+      1,
       '/space/design/v1/versions/version-1/sources/source-1/cad-parses/job-1:retry',
       undefined,
       { headers: { 'Idempotency-Key': 'retry-1' } },

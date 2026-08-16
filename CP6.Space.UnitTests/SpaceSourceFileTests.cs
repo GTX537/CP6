@@ -52,6 +52,37 @@ public sealed class SpaceSourceFileTests
         Assert.Equal(result.File.Sha256, scanJob.InputHash);
     }
 
+    [Theory]
+    [InlineData(
+        SpaceSourceType.Dwg,
+        "warehouse.dwg",
+        "application/vnd.autocad.dwg",
+        "AC1032development-dwg")]
+    [InlineData(
+        SpaceSourceType.Dxf,
+        "warehouse.dxf",
+        "application/vnd.autocad.dxf",
+        "0\nSECTION\n2\nHEADER\n0\nENDSEC\n0\nEOF")]
+    public async Task Upload_accepts_signature_bound_dwg_and_dxf_sources(
+        SpaceSourceType sourceType,
+        string fileName,
+        string contentType,
+        string payloadText)
+    {
+        var quarantine = new FakeQuarantineStore();
+        var service = NewUploadService(quarantine, new FakeFileCatalog());
+
+        var result = await service.UploadAsync(
+            new SpaceFileUploadRequest(sourceType, fileName, contentType),
+            new MemoryStream(Encoding.ASCII.GetBytes(payloadText)));
+
+        Assert.False(result.Reused);
+        Assert.Equal(Path.GetExtension(fileName), result.File.Extension);
+        Assert.Equal(contentType, result.File.DetectedContentType);
+        Assert.Equal(SpaceFileState.Quarantined, result.File.State);
+        Assert.Equal(1, quarantine.Sessions.Single().CommitCount);
+    }
+
     [Fact]
     public async Task Duplicate_hash_reuses_metadata_and_aborts_the_second_object()
     {

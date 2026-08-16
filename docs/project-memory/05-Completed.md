@@ -1,5 +1,14 @@
 # 已完成能力与近期里程碑
 
+## 2026-08-16 Space CAD 输入与坐标确认
+
+- LM-FR-010 延续唯一 Design V1 来源链：工作台文件选择器接受 `.dwg/.dxf`，客户端显式提交 `Dwg/Dxf`，服务端按扩展名、声明 MIME 和文件签名失败关闭，再进入隔离扫描与同一 CAD IR/Preparation/Parse 合同。
+- LM-FR-011 的服务端确定性分析继续提供建议单位、mm 比例、原始范围、建议毫米范围、合理性和稳定问题；起始向导现完整展示 X/Y/宽高、比例与异常原因，而不是只显示“合理/需复核”。
+- 单位/原点/旋转/楼层转换与映射语义继续分开显式确认；修改任一输入或逐层 Override 都会使旧 Preview 和确认失效，Parse 只消费服务端密封的 Start Request。
+- 门禁为 Space Unit 546/546、Web 869/869、Vue TypeScript、Web 生产构建和完整 solution Release 0 warning / 0 error。
+- 安装型 AutoCAD 2025 Core Console 使用真实 Autodesk DWG 的开发合同用例 1/1、0 skipped；它不是 Site 已认证生产 Provider。仓库自动化见 `docs/space/reports/2026-08-16-space-cad-input-coordinate-confirmation.md`。
+- LM-FR-010～011 仓库实现闭环；生产主备 Provider、20 份黄金 CAD、真实浏览器三路径、Pilot 与签字仍为 GA 门禁，核心 GA 保持 72% / `NoGo`。
+
 ## 2026-08-16 Space CAD 语义与质量诊断
 
 - 复核确认 LM-FR-014 的墙/柱/门/月台/区域/巷道/货架目标和 LM-FR-015 的 SourceRef、命中规则、几何规则、置信度及画布位置已由现有 Semantic Preview/Diagnostic Index 权威覆盖。

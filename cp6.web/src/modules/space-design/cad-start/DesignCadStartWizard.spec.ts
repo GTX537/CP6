@@ -113,7 +113,11 @@ describe('DesignCadStartWizard', () => {
       readyForParsing: true,
       coordinateAnalysis: {
         suggestedUnit: 'Millimeter',
+        suggestedScaleToMillimeters: 1,
+        sourceBounds: { minX: 0, minY: 0, maxX: 100, maxY: 50 },
+        suggestedBoundsMillimeters: { minX: 0, minY: 0, maxX: 100, maxY: 50 },
         isSuggestedExtentPlausible: true,
+        requiresUnitConfirmation: true,
         issues: [],
       },
       coordinateMetadata: {
@@ -160,6 +164,10 @@ describe('DesignCadStartWizard', () => {
     await wrapper.get('.fields > .primary').trigger('click')
     await flushPromises()
 
+    const coordinateAnalysis = wrapper.get('[aria-label="CAD 单位、比例与范围建议"]')
+    expect(coordinateAnalysis.text()).toContain('1 来源单位 = 1 mm')
+    expect(coordinateAnalysis.text()).toContain('宽 100 × 高 50 来源单位')
+    expect(coordinateAnalysis.text()).toContain('自动比例与图纸范围合理，仍需人工确认')
     expect(startButton.attributes('disabled')).toBeDefined()
     const confirmations = wrapper.findAll('.confirmation input')
     await confirmations[0]!.setValue(true)
@@ -183,8 +191,16 @@ describe('DesignCadStartWizard', () => {
       readyForParsing: false,
       coordinateAnalysis: {
         suggestedUnit: 'Millimeter',
-        isSuggestedExtentPlausible: true,
-        issues: [],
+        suggestedScaleToMillimeters: 1,
+        sourceBounds: { minX: 0, minY: 0, maxX: 0.1, maxY: 0.1 },
+        suggestedBoundsMillimeters: { minX: 0, minY: 0, maxX: 0.1, maxY: 0.1 },
+        isSuggestedExtentPlausible: false,
+        requiresUnitConfirmation: true,
+        issues: [{
+          code: 'SPACE_CAD_EXTENT_IMPLAUSIBLE',
+          severity: 'Blocking',
+          detailToken: 'below-minimum',
+        }],
       },
       coordinateMetadata: {
         confirmedUnit: 'Millimeter',
@@ -331,6 +347,10 @@ describe('DesignCadStartWizard', () => {
     const coordinateIssues = wrapper.get('[aria-label="CAD 坐标与越界问题"]')
     expect(coordinateIssues.text()).toContain('SPACE_CAD_FLOOR_BOUNDARY_EXCEEDED')
     expect(coordinateIssues.text()).toContain('对象 H:100')
+    expect(wrapper.get('[aria-label="CAD 自动单位与范围问题"]').text())
+      .toContain('换算范围过小，可能选择了错误单位或比例')
+    expect(wrapper.get('[aria-label="CAD 单位、比例与范围建议"]').text())
+      .toContain('自动比例或图纸范围异常')
     expect(wrapper.get('.metrics .blocking').text()).toContain('阻断 2')
     await wrapper.get('.block-review summary').trigger('click')
     expect(wrapper.get('[aria-label="CAD 块清单"]').text()).toContain('RACK-A')
