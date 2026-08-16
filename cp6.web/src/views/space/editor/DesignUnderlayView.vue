@@ -107,6 +107,7 @@ import { ElementRedrawOverlayLayer } from '@/modules/space-design/canvas2d/Eleme
 import DesignCadIssuePanel from '@/modules/space-design/cad-review/DesignCadIssuePanel.vue'
 import DesignExcelCadMatchPanel from '@/modules/space-design/cad-review/DesignExcelCadMatchPanel.vue'
 import DesignCadStartWizard from '@/modules/space-design/cad-start/DesignCadStartWizard.vue'
+import DesignExcelCadStartWizard from '@/modules/space-design/excel-cad/DesignExcelCadStartWizard.vue'
 import {
   cadReviewFreshness,
   parseCadReviewWorkspace,
@@ -181,6 +182,10 @@ const generationRunId = computed(() => String(route.query.generationRunId ?? '')
 const matchJobId = computed(() => String(route.query.matchJobId ?? ''))
 const cadSourceId = computed(() => String(route.query.cadSourceId ?? ''))
 const cadParseJobId = computed(() => String(route.query.cadParseJobId ?? ''))
+const excelSourceId = computed(() => String(route.query.excelSourceId ?? ''))
+const excelPreflightJobId = computed(
+  () => String(route.query.excelPreflightJobId ?? ''),
+)
 const initialFloorViewState = readFloorViewState(
   versionId.value,
   floorLogicalId.value,
@@ -195,6 +200,9 @@ const floor = ref<ISpaceSceneFloorDto | null>(null)
 const selectedObjects = ref<CanvasObjectRef[]>([])
 const cadReviewWorkspace = ref<CadReviewWorkspace | null>(null)
 const cadWizardVisible = ref(false)
+const excelCadWizardVisible = ref(Boolean(
+  excelSourceId.value && excelPreflightJobId.value && !matchJobId.value,
+))
 const cadReviewPanelVisible = ref(false)
 const matchPanelVisible = ref(Boolean(matchJobId.value))
 const activeCadReviewItemId = ref('')
@@ -357,6 +365,14 @@ const cadReviewWorkspaceFreshness = computed(() => {
 const cadReviewWorkspaceStale = computed(
   () => cadReviewWorkspaceFreshness.value?.fresh === false,
 )
+const hasCurrentCadForExcel = computed(() => Boolean(
+  cadSourceId.value
+  && cadParseJobId.value
+  && cadReviewWorkspace.value
+  && cadReviewWorkspace.value.sourceId === cadSourceId.value
+  && cadReviewWorkspace.value.cadParseJobId === cadParseJobId.value
+  && !cadReviewWorkspaceStale.value,
+))
 const aiReviewWorkspaceFreshness = computed(() => {
   const workspace = aiReviewWorkspace.value
   const scene = designScene.value
@@ -823,6 +839,7 @@ watch([visible, opacity, locked], () => {
 
 watch(matchJobId, (jobId) => {
   if (jobId) {
+    excelCadWizardVisible.value = false
     openMatchPanel()
     return
   }
@@ -1082,6 +1099,43 @@ function chooseCadReviewArtifact(): void {
 
 function chooseCadFile(): void {
   cadFileInputRef.value?.click()
+}
+
+function openExcelCadWorkflow(): void {
+  if (!hasCurrentCadForExcel.value) {
+    ElMessage.warning('请先完成并加载当前楼层的 CAD 审核，再上传 Excel。')
+    return
+  }
+  excelCadWizardVisible.value = true
+}
+
+function onExcelSourceUploaded(): void {
+  sourceListRefreshKey.value += 1
+}
+
+async function onExcelPreflightStarted(
+  sourceId: string,
+  jobId: string,
+): Promise<void> {
+  await router.replace({
+    query: {
+      ...route.query,
+      excelSourceId: sourceId,
+      excelPreflightJobId: jobId,
+    },
+  })
+}
+
+async function onExcelCadMatchStarted(jobId: string): Promise<void> {
+  await router.replace({
+    query: {
+      ...route.query,
+      matchJobId: jobId,
+    },
+  })
+  excelCadWizardVisible.value = false
+  openMatchPanel()
+  ElMessage.success('Excel–CAD 权威匹配已启动；确认 Apply 前 Draft 保持不变。')
 }
 
 async function onCadFileSelected(event: Event): Promise<void> {
@@ -1996,6 +2050,9 @@ async function onSourceRemoved(
     const {
       cadSourceId: _removedSource,
       cadParseJobId: _removedJob,
+      excelSourceId: _removedExcelSource,
+      excelPreflightJobId: _removedPreflightJob,
+      matchJobId: _removedMatchJob,
       ...remainingQuery
     } = route.query
     cadReviewWorkspace.value = null
@@ -2004,6 +2061,18 @@ async function onSourceRemoved(
     parseStatus.value = ''
     parseProgress.value = 0
     parseError.value = ''
+    excelCadWizardVisible.value = false
+    matchPanelVisible.value = false
+    await router.replace({ query: remainingQuery })
+  } else if (sourceId === excelSourceId.value) {
+    const {
+      excelSourceId: _removedExcelSource,
+      excelPreflightJobId: _removedPreflightJob,
+      matchJobId: _removedMatchJob,
+      ...remainingQuery
+    } = route.query
+    excelCadWizardVisible.value = false
+    matchPanelVisible.value = false
     await router.replace({ query: remainingQuery })
   }
   await loadScene()
@@ -3687,6 +3756,7 @@ function tabClientInstanceId(): string {
         :parse-progress="parseProgress"
         :parse-elapsed="parseElapsed"
         :parse-error="parseError"
+        :has-current-cad="hasCurrentCadForExcel"
         :has-underlay="hasUnderlay"
         :calibrated="calibrated"
         :readonly="readonlyScene"
@@ -3697,6 +3767,7 @@ function tabClientInstanceId(): string {
         @calibrate-underlay="beginCalibration"
         @remove-underlay="removeUnderlay"
         @choose-cad="chooseCadFile"
+        @open-excel-cad="openExcelCadWorkflow"
         @download-template="downloadStandardExcelTemplate"
         @open-cad-review="openCadReviewWorkspace"
         @cancel-parse="cancelCadParse"
@@ -4112,6 +4183,20 @@ function tabClientInstanceId(): string {
       :floor-logical-id="floorLogicalId"
       @close="cadWizardVisible = false"
       @started="onCadParseStarted"
+    />
+    <DesignExcelCadStartWizard
+      v-if="excelCadWizardVisible && hasCurrentCadForExcel && designScene?.contentRevision !== undefined"
+      :version-id="versionId"
+      :floor-logical-id="floorLogicalId"
+      :cad-source-id="cadSourceId"
+      :cad-parse-job-id="cadParseJobId"
+      :current-content-revision="designScene.contentRevision"
+      :initial-excel-source-id="excelSourceId || undefined"
+      :initial-preflight-job-id="excelPreflightJobId || undefined"
+      @close="excelCadWizardVisible = false"
+      @source-uploaded="onExcelSourceUploaded"
+      @preflight-started="onExcelPreflightStarted"
+      @started="onExcelCadMatchStarted"
     />
   </div>
 </template>

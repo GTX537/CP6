@@ -2,6 +2,12 @@
 
 > 依据 Git log 汇总，不替代完整 Git 历史。重点记录影响接手判断的里程碑。
 
+## 2026-08-16：Space Studio 当前 CAD + Excel 统一工作流
+
+- 来源模式接通当前新鲜 CAD Review Workspace → `.xlsx` 上传/扫描等待 → 服务器 Mapping Profile → Excel 预检 → 显式确认 → 权威匹配 → 既有 Lease/Revision Apply，无需用户填写内部 ID。
+- Excel Source/Preflight Job 写入 URL 支持刷新恢复；Blocking 预检失败关闭，匹配 Job 自动轮询，删除 CAD/Excel 来源会同步清理依赖路由状态。确认 Apply 前 Draft 零写入。
+- Web 878、Space Studio Playwright 25、Vue TypeScript 和生产构建通过。当前工作会话 UI 已闭环，但历史 CAD 候选目录、真实 Provider/文件/WMS/Pilot 仍 Pending；WP4 与 GA 保持 Partial/Pending、72% / `NoGo`。
+
 ## 2026-08-16：Space CAD 待审变更集与 RuleOnly 交接
 
 - LM-FR-019/019A 深审闭环：六类变更独立汇总/筛选，客户端验证 Change Summary 与选择语义，Workspace 更新不再沿用旧选择。
@@ -46,7 +52,7 @@
 
 - CAD 上传前端合同不再丢弃服务端 `Reused`；CAD 与 PDF/图片底图重复内容会明确提示按 SHA-256 复用受控文件或当前来源。
 - 客户端不计算权威哈希、不跳过扫描；重复底图继续执行同一 Clean/Scanning/Rejected 与挂接流程。
-- 聚焦测试 10、Vue TypeScript、Web 全量 858 及 production build 通过。Excel 统一上传 UI 仍待实现；LM-FR-005 已由后续来源移除预检纵切闭环，WP4 和 GA 72% / `NoGo` 不变。
+- 聚焦测试 10、Vue TypeScript、Web 全量 858 及 production build 通过。该条记录时缺失的当前 CAD + Excel UI 已由 2026-08-16 后续纵切闭环；LM-FR-005 已由后续来源移除预检纵切闭环，WP4 和 GA 72% / `NoGo` 不变。
 
 ## 2026-08-15：Space Draft 来源与阻断摘要
 

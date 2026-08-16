@@ -14,6 +14,8 @@ const underlaySourceId = 'bbbbbbbb-2222-2222-2222-222222222222'
 const underlayFileId = 'bbbbbbbb-3333-3333-3333-333333333333'
 const excelCadMatchJobId = 'cccccccc-2222-2222-2222-222222222222'
 const excelCadApplyJobId = 'cccccccc-3333-3333-3333-333333333333'
+const excelSourceId = 'cccccccc-5555-5555-5555-555555555555'
+const excelPreflightJobId = 'cccccccc-6666-6666-6666-666666666666'
 const studioUrl = `/space/design/${versionId}/floors/${floorId}/underlay`
 
 test('1440x900 provides the full editor and a consistent local 3D preview', async ({ page }) => {
@@ -371,6 +373,60 @@ test('reviews and confirms the authoritative CAD plus Excel match in the studio'
     expectedFloorRevision: 9,
     expectedContentRevision: 9,
   })
+  expect(errors).toEqual([])
+})
+
+test('uploads Excel from current CAD and reaches authoritative Apply without internal identifiers', async ({ page }) => {
+  const errors = collectPageErrors(page)
+  const methods: string[] = []
+  const excelCadStartBodies: Array<Record<string, any>> = []
+  const matchBodies: Array<Record<string, any>> = []
+  await installSpaceStudioFixtures(page, methods, {
+    cadReview: true,
+    excelCadStartBodies,
+    matchBodies,
+  })
+  await page.setViewportSize({ width: 1440, height: 900 })
+  await page.goto(`${studioUrl}?cadSourceId=${cadSourceId}&cadParseJobId=${cadParseJobId}`)
+
+  const openWizard = page.locator('[data-test="open-excel-cad"]')
+  await expect(openWizard).toBeEnabled()
+  await openWizard.click()
+  const wizard = page.locator('[data-test="excel-cad-start-wizard"]')
+  await expect(wizard.getByRole('heading', { name: 'Excel + CAD 权威匹配' })).toBeVisible()
+  await wizard.locator('input[type="file"]').setInputFiles({
+    name: 'warehouse-master-data.xlsx',
+    mimeType: 'application/vnd.openxmlformats-officedocument.spreadsheetml.sheet',
+    buffer: Buffer.from('fixture-xlsx'),
+  })
+  await wizard.getByRole('button', { name: '上传并运行预检', exact: true }).click()
+  await expect(wizard.locator('[data-test="excel-preflight-summary"]'))
+    .toContainText('数据行 12')
+  await wizard.locator('.confirmation input').check()
+  await wizard.getByRole('button', { name: '确认并生成匹配结果', exact: true }).click()
+
+  await expect(page.getByRole('heading', { name: 'Excel–CAD 权威匹配' })).toBeVisible()
+  await page.locator('[data-test="confirm-match"]').click()
+  await expect(page.locator('[data-test="confirmation-succeeded"]')).toBeVisible()
+
+  expect(methods).toEqual(expect.arrayContaining([
+    'POST Excel upload',
+    'POST Excel preflight',
+    'GET Excel preflight',
+    'POST Excel-CAD match',
+    'GET Excel-CAD match',
+    'POST Excel-CAD confirmation',
+    'GET Excel-CAD confirmation',
+  ]))
+  expect(excelCadStartBodies).toEqual([{
+    excelSourceId,
+    preflightJobId: excelPreflightJobId,
+    cadSourceId,
+    cadParseJobId,
+    floorLogicalId: floorId,
+    expectedContentRevision: 7,
+  }])
+  expect(matchBodies).toHaveLength(1)
   expect(errors).toEqual([])
 })
 
@@ -1295,6 +1351,7 @@ async function installSpaceStudioFixtures(
     underlayHistoryBodies?: Array<Record<string, any>>
     matchBodies?: Array<Record<string, any>>
     matchHistoryBodies?: Array<Record<string, any>>
+    excelCadStartBodies?: Array<Record<string, any>>
     mergeEnabled?: boolean
     splitEnabled?: boolean
     underlayAttached?: boolean
@@ -1436,6 +1493,10 @@ async function installSpaceStudioFixtures(
     const underlayHistoryPath = `${underlayAttachPath}:compensate`
     const underlayContentPath = `/api/space/design/v1/versions/${versionId}/sources/${underlaySourceId}/content`
     const underlayCalibrationPath = `/api/space/design/v1/versions/${versionId}/sources/${underlaySourceId}/underlay-calibration`
+    const excelUploadPath = `/api/space/design/v1/versions/${versionId}/excel-sources`
+    const excelMappingProfilesPath = '/api/space/design/v1/mapping-profiles/excel'
+    const excelPreflightPath = `/api/space/design/v1/versions/${versionId}/sources/${excelSourceId}/excel-preflights`
+    const excelCadMatchStartPath = `/api/space/design/v1/versions/${versionId}/excel-cad-matches`
     const excelCadMatchPath = `/api/space/design/v1/versions/${versionId}/excel-cad-matches/${excelCadMatchJobId}`
 
     if (url.pathname === scenePath) {
@@ -1456,16 +1517,26 @@ async function installSpaceStudioFixtures(
     if (url.pathname === sourceListPath && request.method() === 'GET') {
       await route.fulfill({
         json: {
-          items: [{
-            id: cadSourceId,
-            modelVersionId: versionId,
-            sourceType: 'Dxf',
-            displayName: 'warehouse.dxf',
-            state: 'PreviewReady',
-            mappingProfileId: '99999999-9999-9999-9999-999999999999',
-            mappingProfileVersion: 1,
-            sha256: '8'.repeat(64),
-          }],
+          items: [
+            {
+              id: cadSourceId,
+              modelVersionId: versionId,
+              sourceType: 'Dxf',
+              displayName: 'warehouse.dxf',
+              state: 'PreviewReady',
+              mappingProfileId: '99999999-9999-9999-9999-999999999999',
+              mappingProfileVersion: 1,
+              sha256: '8'.repeat(64),
+            },
+            {
+              id: excelSourceId,
+              modelVersionId: versionId,
+              sourceType: 'Excel',
+              displayName: 'warehouse-master-data.xlsx',
+              state: 'Ready',
+              sha256: '7'.repeat(64),
+            },
+          ],
         },
       })
       return
@@ -1633,6 +1704,92 @@ async function installSpaceStudioFixtures(
             historySha256: 'c'.repeat(64),
           },
           idempotentReplay: false,
+        },
+      })
+      return
+    }
+    if (url.pathname === excelMappingProfilesPath && request.method() === 'GET') {
+      await route.fulfill({
+        json: [{
+          id: 'excel-profile-1',
+          name: '标准货架主数据',
+          scope: 'System',
+          version: 1,
+          isReadOnly: true,
+          definitionHash: '6'.repeat(64),
+          definition: {
+            schemaVersion: 1,
+            unknownColumnPolicy: 'Warning',
+            emptyValuePolicy: 'Reject',
+            duplicateRowPolicy: 'Reject',
+            sheets: [],
+          },
+        }],
+      })
+      return
+    }
+    if (url.pathname === excelUploadPath && request.method() === 'POST') {
+      methods.push('POST Excel upload')
+      await route.fulfill({
+        status: 201,
+        json: {
+          file: { id: 'cccccccc-7777-7777-7777-777777777777', state: 'Clean' },
+          source: {
+            id: excelSourceId,
+            displayName: 'warehouse-master-data.xlsx',
+            state: 'Ready',
+          },
+          reused: false,
+        },
+      })
+      return
+    }
+    if (url.pathname === excelPreflightPath && request.method() === 'POST') {
+      methods.push('POST Excel preflight')
+      await route.fulfill({
+        status: 202,
+        json: { jobId: excelPreflightJobId, status: 'Queued' },
+      })
+      return
+    }
+    if (url.pathname === `${excelPreflightPath}/${excelPreflightJobId}`
+      && request.method() === 'GET') {
+      methods.push('GET Excel preflight')
+      await route.fulfill({
+        json: {
+          jobId: excelPreflightJobId,
+          modelVersionId: versionId,
+          sourceId: excelSourceId,
+          status: 'Succeeded',
+          sourceState: 'Ready',
+          mappingProfileId: 'excel-profile-1',
+          mappingProfileVersion: 1,
+          mappingDefinitionHash: '6'.repeat(64),
+          parserVersion: 'excel-v1',
+          canConfirm: true,
+          infoCount: 0,
+          warningCount: 0,
+          blockingCount: 0,
+          sheetCount: 1,
+          dataRowCount: 12,
+          validRowCount: 12,
+          returnedIssueCount: 0,
+          issuesTruncated: false,
+          errorReportUrl: `${excelPreflightPath}/${excelPreflightJobId}/report`,
+          issues: [],
+        },
+      })
+      return
+    }
+    if (url.pathname === excelCadMatchStartPath && request.method() === 'POST') {
+      methods.push('POST Excel-CAD match')
+      options.excelCadStartBodies?.push(request.postDataJSON() as Record<string, any>)
+      await route.fulfill({
+        status: 202,
+        json: {
+          jobId: excelCadMatchJobId,
+          jobStatus: 'Queued',
+          jobStatusUrl: excelCadMatchPath,
         },
       })
       return
@@ -2441,8 +2598,8 @@ function excelCadMatchFixture() {
     modelVersionId: versionId,
     jobStatus: 'Succeeded',
     processorVersion: 'space-excel-cad-match-v1',
-    excelSourceId: 'cccccccc-5555-5555-5555-555555555555',
-    preflightJobId: 'cccccccc-6666-6666-6666-666666666666',
+    excelSourceId,
+    preflightJobId: excelPreflightJobId,
     cadSourceId,
     cadParseJobId,
     floorLogicalId: floorId,
