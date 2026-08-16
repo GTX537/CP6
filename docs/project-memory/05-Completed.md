@@ -1,5 +1,12 @@
 # 已完成能力与近期里程碑
 
+## 2026-08-15 Space 上传重复内容复用提示
+
+- CAD 前端上传合同补齐服务端 `file/reused` 事实；CAD 与 PDF/图片底图检测到重复内容时明确提示按 SHA-256 复用受控文件或当前来源，不会重复保存原文件。
+- 复用判断仍完全来自隔离上传服务；客户端不生成哈希、不跳过安全扫描，重复底图继续按 Clean/Scanning/Rejected 状态进入既有挂接链。
+- 聚焦测试 10/10、Vue TypeScript、Web 全量 858/858 和 production build 通过。详见 `docs/space/reports/2026-08-15-space-upload-reuse-notice.md`。
+- Excel 后端/SDK 已有 `Reused` 合同，但统一 Excel 上传 UI 仍待三路径向导；LM-FR-005 来源删除预检也未实现。WP4 保持 Partial/Pending，核心 GA 保持 72% / `NoGo`。
+
 ## 2026-08-15 Space Draft 来源与阻断摘要
 
 - Design V1 Version 列表与详情新增来源、创建者、创建/更新时间和 Open Blocking 数；现有 Blank/PublishedVersion 创建路径返回稳定来源语义，历史创建者为空时不伪造姓名。

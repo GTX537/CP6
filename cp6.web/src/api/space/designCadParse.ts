@@ -18,9 +18,11 @@ export interface SpaceCadParse {
 }
 
 export interface UploadSpaceCadSourceResponse {
+  file: { id: string; state: string; sha256?: string }
   source: { id: string; state: string; sha256: string }
   scanJobId?: string
   jobStatusUrl?: string
+  reused: boolean
 }
 
 export interface SpaceCadMappingProfile {

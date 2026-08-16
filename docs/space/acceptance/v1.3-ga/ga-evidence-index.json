@@ -223,6 +223,7 @@
         "Draft to Validate, Publish, CP6 WMS and Published evidence"
       ],
       "evidencePaths": [
+        "docs/space/reports/2026-08-15-space-upload-reuse-notice.md",
         "docs/space/reports/2026-08-14-space-studio-path-closure.md",
         "docs/space/reports/2026-08-15-space-cad-exception-retype.md",
         "docs/space/reports/2026-08-15-space-cad-exception-merge.md",

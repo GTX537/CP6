@@ -89,6 +89,7 @@ import SpaceStudioChecklist from '@/modules/space-design/panels/SpaceStudioCheck
 import DesignLayoutCreatePanel from '@/modules/space-design/layout/DesignLayoutCreatePanel.vue'
 import DesignLayoutPropertiesPanel from '@/modules/space-design/layout/DesignLayoutPropertiesPanel.vue'
 import DesignWarehouseTemplatePanel from '@/modules/space-design/templates/DesignWarehouseTemplatePanel.vue'
+import { uploadReuseNotice } from '@/modules/space-design/sources/uploadReuseNotice'
 import type {
   LayoutCreateIntent,
   LayoutParentOption,
@@ -1101,7 +1102,12 @@ async function onCadFileSelected(event: Event): Promise<void> {
       },
     })
     cadWizardVisible.value = true
-    ElMessage.success('CAD 已上传。安全扫描完成后可按冻结映射启动解析。')
+    const reuseNotice = uploadReuseNotice('CAD', uploaded.reused)
+    if (reuseNotice) {
+      ElMessage.info(reuseNotice)
+    } else {
+      ElMessage.success('CAD 已上传。安全扫描完成后可按冻结映射启动解析。')
+    }
   } catch {
     ElMessage.error('CAD 上传失败，当前 Draft 未变更')
   } finally {
@@ -1842,6 +1848,8 @@ async function onFileSelected(event: Event): Promise<void> {
     if (!fileId || !sourceId) {
       throw new Error('Underlay upload response is incomplete')
     }
+    const reuseNotice = uploadReuseNotice('底图', result.reused)
+    if (reuseNotice) ElMessage.info(reuseNotice)
 
     if (result.file?.state === 'Clean') {
       await attachAndRender(sourceId)
