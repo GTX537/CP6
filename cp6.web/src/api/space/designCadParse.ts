@@ -175,6 +175,12 @@ export interface PreviewSpaceCadPreparationResponse {
     confirmedScaleToMillimeters: number
     preparedBounds?: { minX: number; minY: number; maxX: number; maxY: number }
   }
+  coordinateIssues: Array<{
+    code: string
+    severity: string
+    sourceRef?: string
+    detailToken?: string
+  }>
   inventorySummary?: {
     layerCount: number
     blockCount: number

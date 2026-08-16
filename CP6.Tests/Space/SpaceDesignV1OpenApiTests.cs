@@ -3165,11 +3165,25 @@ public sealed class SpaceDesignV1OpenApiTests
         var previewResponse = Schema(
             schemas,
             "CP6.Space.Contracts.PreviewSpaceCadPreparationResponse");
+        AssertExactRequired(
+            previewResponse,
+            "baseContentRevision",
+            "readyForParsing",
+            "coordinateAnalysis",
+            "coordinateMetadata",
+            "coordinateIssues",
+            "mappingProfile");
         Assert.True(previewResponse.GetProperty("properties")
             .TryGetProperty("inventory", out var inventory));
         Assert.Equal(
             "#/components/schemas/CP6.Space.Contracts.SpaceCadPreparationInventoryDto",
             inventory.GetProperty("$ref").GetString());
+        var coordinateIssues = previewResponse.GetProperty("properties")
+            .GetProperty("coordinateIssues");
+        Assert.Equal("array", coordinateIssues.GetProperty("type").GetString());
+        Assert.Equal(
+            "#/components/schemas/CP6.Space.Contracts.SpaceCadConversionIssueV1",
+            coordinateIssues.GetProperty("items").GetProperty("$ref").GetString());
     }
 
     [Fact]

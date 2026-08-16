@@ -90,6 +90,9 @@ const canStart = computed(() =>
   Boolean(preview.value?.readyForParsing && preview.value.startRequest) &&
   !previewDirty.value && confirmedConversion.value && confirmedMapping.value && !busy.value,
 )
+const coordinateBlockingCount = computed(() =>
+  preview.value?.coordinateIssues.filter((issue) => issue.severity === 'Blocking').length ?? 0,
+)
 const filteredLayers = computed(() => {
   const query = layerSearch.value.trim().toLocaleLowerCase()
   const layers = preview.value?.inventory?.layers ?? []
@@ -486,12 +489,26 @@ function handleDialogKeydown(event: KeyboardEvent): void {
               <span>未支持 {{ preview.inventorySummary?.unsupportedEntityCount ?? 0 }}</span>
               <span>映射冲突 {{ preview.mappingPreview?.summary.conflictLayerCount ?? 0 }}</span>
               <span>低置信候选 {{ preview.semanticPreview?.summary.candidateCount ?? 0 }}</span>
-              <span class="blocking">阻断 {{ (preview.mappingPreview?.summary.blockingCount ?? 0) + (preview.semanticPreview?.summary.blockingCount ?? 0) }}</span>
+              <span class="blocking">阻断 {{ coordinateBlockingCount + (preview.mappingPreview?.summary.blockingCount ?? 0) + (preview.semanticPreview?.summary.blockingCount ?? 0) }}</span>
             </div>
             <p class="analysis">
               CAD 建议单位 {{ preview.coordinateAnalysis.suggestedUnit }}；
               范围{{ preview.coordinateAnalysis.isSuggestedExtentPlausible ? '合理' : '需要复核' }}。
             </p>
+            <ul
+              v-if="preview.coordinateIssues.length"
+              class="coordinate-issues"
+              aria-label="CAD 坐标与越界问题"
+            >
+              <li
+                v-for="issue in preview.coordinateIssues"
+                :key="`${issue.code}:${issue.sourceRef ?? 'document'}:${issue.detailToken ?? ''}`"
+                :class="{ blocking: issue.severity === 'Blocking' }"
+              >
+                <strong>{{ issue.severity }}</strong> · {{ issue.code }} ·
+                {{ issue.sourceRef ? `对象 ${issue.sourceRef}` : '整份 CAD' }}
+              </li>
+            </ul>
             <p v-if="previewDirty" class="dirty-notice" role="status">
               单位、坐标、Profile 或逐层映射已修改。必须重新生成预览后才能启动解析。
             </p>
@@ -676,6 +693,7 @@ button:disabled { cursor:not-allowed; opacity:.45; }
 .semantic-list-head { position:sticky; top:0; color:#8cebf0; background:#0d1626; font-size:13px; font-weight:800; }
 .semantic-row + .semantic-row { border-top:1px solid #2a3950; }
 .blocking,.error { color:#ff8590; }
+.coordinate-issues { margin:10px 0; padding-left:24px; font-size:16px; line-height:1.5; }
 .confirmation { display:flex; align-items:flex-start; gap:10px; margin:10px 0; font-size:16px; }
 .confirmation input { width:44px; height:44px; flex:0 0 44px; margin:0; }
 .error { padding:14px 22px; background:#321922; }

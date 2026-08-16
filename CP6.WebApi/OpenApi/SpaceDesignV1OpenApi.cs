@@ -456,6 +456,63 @@ public sealed class SpaceWmsRuntimeSchemaFilter : ISchemaFilter
                 "mappingProfileVersion",
                 "layerOverrides",
             ],
+            [typeof(PreviewSpaceCadPreparationResponse)] =
+            [
+                "baseContentRevision",
+                "readyForParsing",
+                "coordinateAnalysis",
+                "coordinateMetadata",
+                "coordinateIssues",
+                "mappingProfile",
+            ],
+            [typeof(SpaceCadCoordinateAnalysisV1)] =
+            [
+                "schemaVersion",
+                "sourceSha256",
+                "suggestedUnit",
+                "isSuggestedExtentPlausible",
+                "requiresUnitConfirmation",
+                "issues",
+            ],
+            [typeof(SpaceCadCoordinateMetadataV1)] =
+            [
+                "schemaVersion",
+                "sourceSha256",
+                "unitConfirmed",
+                "detectedUnit",
+                "confirmedUnit",
+                "confirmedScaleToMillimeters",
+                "sourceOriginInSourceUnits",
+                "floorOriginMillimeters",
+                "rotationZDegrees",
+                "targetFloor",
+                "sourceToFloorTransform",
+                "transformSha256",
+            ],
+            [typeof(SpaceCadConversionIssueV1)] =
+            [
+                "code",
+                "severity",
+            ],
+            [typeof(SpaceCadFloorAssignmentV1)] =
+            [
+                "floorLogicalId",
+                "floorCode",
+                "level",
+                "elevationMillimeters",
+                "coordinateSystem",
+                "boundaryBounds",
+            ],
+            [typeof(SpaceCadAffineTransformV1)] =
+            [
+                "m11",
+                "m12",
+                "m21",
+                "m22",
+                "offsetX",
+                "offsetY",
+                "offsetZ",
+            ],
             [typeof(SpaceCadPointV1)] =
             [
                 "x",
@@ -1849,6 +1906,10 @@ public sealed class SpaceWmsRuntimeSchemaFilter : ISchemaFilter
             // sourceId is required so callers must explicitly choose attach/replace
             // or detach, while null is the intentional detach value.
             SetNullable(schema, true, "sourceId");
+        }
+        else if (context.Type == typeof(SpaceCadConversionIssueV1))
+        {
+            SetNullable(schema, true, "sourceRef", "detailToken");
         }
         else if (context.Type == typeof(SpacePublishedViewerSceneDto))
         {

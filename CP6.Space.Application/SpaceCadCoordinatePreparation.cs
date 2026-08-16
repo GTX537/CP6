@@ -107,6 +107,11 @@ public static class SpaceCadCoordinatePreparation
             confirmation.TargetFloor.BoundaryBounds,
             effectiveLimits.BoundaryToleranceMillimeters,
             issues);
+        AddEntityBoundaryIssues(
+            entities,
+            confirmation.TargetFloor.BoundaryBounds,
+            effectiveLimits.BoundaryToleranceMillimeters,
+            issues);
 
         var document = package.Document with
         {
@@ -358,6 +363,36 @@ public static class SpaceCadCoordinatePreparation
                     DetailToken: "outside-target-floor"));
         }
     }
+
+    private static void AddEntityBoundaryIssues(
+        IReadOnlyList<SpaceCadIrEntityV1> entities,
+        SpaceCadBoundsV1 boundary,
+        decimal tolerance,
+        ICollection<SpaceCadConversionIssueV1> issues)
+    {
+        foreach (var entity in entities
+                     .Where(entity => entity.Bounds is { } bounds
+                         && IsOutsideBoundary(bounds, boundary, tolerance))
+                     .OrderBy(entity => entity.SourceRef, StringComparer.Ordinal))
+        {
+            AddIssue(
+                issues,
+                new SpaceCadConversionIssueV1(
+                    "SPACE_CAD_ENTITY_FLOOR_BOUNDARY_EXCEEDED",
+                    SpaceCadIssueSeverity.Warning,
+                    entity.SourceRef,
+                    "outside-target-floor"));
+        }
+    }
+
+    private static bool IsOutsideBoundary(
+        SpaceCadBoundsV1 bounds,
+        SpaceCadBoundsV1 boundary,
+        decimal tolerance) =>
+        bounds.MinX < boundary.MinX - tolerance
+        || bounds.MinY < boundary.MinY - tolerance
+        || bounds.MaxX > boundary.MaxX + tolerance
+        || bounds.MaxY > boundary.MaxY + tolerance;
 
     private static void ValidateLimits(SpaceCadCoordinateLimitsV1 limits)
     {

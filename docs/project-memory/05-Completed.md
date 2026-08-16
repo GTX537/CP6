@@ -1,5 +1,13 @@
 # 已完成能力与近期里程碑
 
+## 2026-08-16 Space CAD 语义与质量诊断
+
+- 复核确认 LM-FR-014 的墙/柱/门/月台/区域/巷道/货架目标和 LM-FR-015 的 SourceRef、命中规则、几何规则、置信度及画布位置已由现有 Semantic Preview/Diagnostic Index 权威覆盖。
+- LM-FR-016 补齐稳定分类：零长度、零面积、缺失半径与退化变换进入 `SPACE_CAD_SEMANTIC_ZERO_SIZE`；开放边界进入 `SPACE_CAD_SEMANTIC_BOUNDARY_UNCLOSED`；楼层越界保留全图 Blocking，并追加逐对象 SourceRef Warning，经 Preparation/OpenAPI/双 SDK 直接进入 CAD 起始向导的问题清单。
+- 新增同目标面积几何重叠检查：Polygon/Circle 使用边界预筛和实际相交判断，只为真实正面积重叠的双方生成可定位 `SPACE_CAD_SEMANTIC_GEOMETRY_OVERLAP`，边界接触、不同目标包含和降级 BlockInstance 不报重叠。
+- 门禁为 Space Unit 544/544、CAD Preparation/Parse/BuildScene/Excel 集成聚焦 37/37、CAD 实验工具常规门禁 39 passed / 1 个安装环境用例 skipped、OpenAPI 55/55、CAD 向导 4/4、Vue TypeScript、CP6.Tests 2,933、完整 solution Release 0 warning / 0 error；配置安装环境后，签名有效的 AutoCAD 2025 Core Console 真实 Autodesk DWG 用例另行 1/1、0 skipped。详见 `docs/space/reports/2026-08-16-space-cad-semantic-quality-diagnostics.md`。
+- LM-FR-014～016 仓库实现闭环；真实主备 Provider、20 份授权黄金 CAD、双仓 Pilot 与五方签字仍未完成，WP4 继续 Partial/Pending，核心 GA 保持 72% / `NoGo`。
+
 ## 2026-08-16 Space 租户私有 CAD Mapping Profile
 
 - 新增 `Space_LayerMappingProfile` 与 append-only `Space_LayerMappingProfileVersion`：Tenant 过滤、复合外键、唯一名称/版本、RowVersion、规范 Profile JSON、Definition SHA-256、复制来源和创建审计均持久化；已发布迁移未修改。

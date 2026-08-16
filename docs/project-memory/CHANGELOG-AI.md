@@ -2,6 +2,12 @@
 
 > 依据 Git log 汇总，不替代完整 Git 历史。重点记录影响接手判断的里程碑。
 
+## 2026-08-16：Space CAD 语义与质量诊断
+
+- 复核并关闭 LM-FR-014/015 的仓库口径：七类核心 CAD 语义及逐提案 SourceRef、规则、置信度、位置均继续由同一 Semantic Preview/Diagnostic Index 提供。
+- LM-FR-016 新增零尺寸、无法闭合和实际面积重叠的稳定问题代码；楼层越界在既有全图 Blocking 之外追加逐对象 SourceRef，并经 Preparation/OpenAPI/双 SDK 展示到 CAD 起始向导。
+- Space Unit 544、CAD Preparation/Parse/BuildScene/Excel 集成聚焦 37、CAD 实验工具常规门禁 39 passed / 1 个安装环境用例 skipped、OpenAPI 55、CAD 向导 4、CP6.Tests 2,933、完整 solution Release 0 warning / 0 error，以及配置安装环境后的 AutoCAD 2025 Core Console 真实 DWG 1/1 通过；LM-FR-014～016 仓库实现闭环，WP4 与核心 GA 仍为 Partial/Pending、72% / `NoGo`。
+
 ## 2026-08-16：Space 租户私有 CAD Mapping Profile
 
 - Design V1 新增 CAD Mapping Profile 管理权威：系统版本只读，租户复制后以 RowVersion、幂等键和 append-only 版本表保存规则快照、Definition SHA-256、复制来源与审计。
