@@ -29,6 +29,44 @@ export default defineConfig({
       '@': fileURLToPath(new URL('./src', import.meta.url))
     },
   },
+  build: {
+    chunkSizeWarningLimit: 600,
+    modulePreload: {
+      resolveDependencies(filename, deps) {
+        // 首屏入口禁止预加载非主路径的重型子页面 Vendor 包（如 PDF、Canvas、3D），保持首屏网络极简
+        return deps.filter(dep => !dep.includes('vendor-pdf') && !dep.includes('vendor-canvas') && !dep.includes('vendor-3d'))
+      }
+    },
+    rollupOptions: {
+      output: {
+        manualChunks(id) {
+          if (id.includes('node_modules')) {
+            if (id.includes('three')) {
+              return 'vendor-3d'
+            }
+            if (id.includes('konva') || id.includes('@vue-flow')) {
+              return 'vendor-canvas'
+            }
+            if (id.includes('pdfjs-dist')) {
+              return 'vendor-pdf'
+            }
+            if (id.includes('element-plus') || id.includes('@element-plus/icons-vue')) {
+              return 'vendor-element-plus'
+            }
+            if (
+              id.includes('/vue/') ||
+              id.includes('/vue-router/') ||
+              id.includes('/pinia/') ||
+              id.includes('/vue-i18n/') ||
+              id.includes('@vue/')
+            ) {
+              return 'vendor-vue'
+            }
+          }
+        },
+      },
+    },
+  },
   server: {
     host: '0.0.0.0',
     port: 5173,
