@@ -1,5 +1,11 @@
 # 当前待办与优先级
 
+## P0：CRM V1 公开同步与 M0
+
+- `CP6-SAAS-V1-PUBLIC-CONTRACT` 当前仍为 Candidate；先完成公开同步审核，再把公开摘要和 merge commit 回写私有聚合记录。仓库或文档存在本身不构成 M0 Go。
+- M0 唯一人类批准角色是 `ProgramOwner`。依次关闭 `DEC-001`、`DEC-003` 至 `DEC-009` 的合同和专业证据，复核 `DEC-000`/`DEC-002`，并强制 Critical/High 清零、分支保护及必需检查；任何硬门禁不得豁免。
+- 只有公开同步 Complete 且 M0 Go 后才能解锁 CRM01；此前 Draft PR #8 只作为候选继续评审。
+
 ## P0：Space Studio v1.3 GA 外部与扩展门禁
 
 - LM-FR-001 的 `Blank` 初始化、Design Floor shell、Site 入口、楼层选择、不可变 System/Tenant 整仓模板目录/零写入预览、Tenant 模板持久化/跨租户隔离，以及两类 Template → 既有 Draft Floor 的分楼层原子 Apply 已有自动化纵切；现有 Blank/PublishedVersion Draft 的 LM-FR-002 来源、稳定创建者 ID、创建/更新时间和 Open Blocking 摘要也已交付。剩余 P0 是面向仓库人员的受控模板制作表单、Blank/Published/System/Tenant 四模式统一创建向导、对应模板创建来源的持久化，以及如需姓名时受控的历史身份显示合同。Template Apply 目前要求先显式创建 Draft/Floor，多楼层需分别确认；不得用单构件 Asset、预览结果、旧运行态模板或默认楼层冒充已创建仓库。LM-FR-001/WP1 保持 Partial/Pending。

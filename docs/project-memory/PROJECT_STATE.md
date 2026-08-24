@@ -1,6 +1,12 @@
 # 项目当前状态
 
-最后更新：2026-08-16
+最后更新：2026-08-24
+
+## CP6 SaaS V1 公开工程契约候选（2026-08-24 主线续接）
+
+- 私有 `GTX537/CP6.CRM` 的 Frozen 产品 merge commit 为 `07a7bb0b50f33b0cb70c18c14f83be77c725626d`，产品摘要为 `e210cb804d5b499e725c0ddeca84bb1157d09eb5304bc3b77b031142db84287b`；R00 `CP6-SAAS-R00` 摘要为 `64a53dd895aedc20a51288ad0ffdb69f60ddc7c22012c1df83984efba5adbc03`。
+- 公开 `CP6-SAAS-V1-PUBLIC-CONTRACT` 仍是 Candidate，只同步四仓职责、领域/API/事件、安全、发布与 M0 开工规则；价格、支付供应商、商业 cohort、个人审批身份和内部风险记录不公开。
+- Draft PR #8 已合并 `main@0a14581f` 并消除旧项目记忆冲突。公开同步尚未达到 Complete，M0 保持 No-Go；唯一人类批准角色为 ProgramOwner，专业证据、Critical/High、分支保护和必需检查不可豁免。
 
 ## Space Studio v1.3 核心实现（2026-08-12）
 

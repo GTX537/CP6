@@ -2,6 +2,12 @@
 
 > 依据 Git log 汇总，不替代完整 Git 历史。重点记录影响接手判断的里程碑。
 
+## 2026-08-24：CP6 SaaS V1 公开工程契约候选续接当前主线
+
+- Draft PR #8 已合并 `main@0a14581f`，公开 `CP6-SAAS-V1-PUBLIC-CONTRACT` Candidate 继续绑定 Frozen 产品摘要 `e210cb804d5b499e725c0ddeca84bb1157d09eb5304bc3b77b031142db84287b` 与 R00 摘要 `64a53dd895aedc20a51288ad0ffdb69f60ddc7c22012c1df83984efba5adbc03`。
+- 续接保留四仓边界、API/事件/数据、安全、迁移、SLO、候选身份、M0 规则、审批 JSON 和失败关闭验证器，同时保留 8 月 16 日以后主线项目记忆。
+- 公开同步仍为 Candidate、M0 仍为 No-Go；没有因此解锁 CRM 业务开发、云资源、数据库迁移或部署。
+
 ## 2026-08-16：Space Tenant 私有整仓模板
 
 - 新增当前租户整仓模板与不可变版本持久化，保存规范化计划、内容 SHA、计数、审计、租户内唯一编码及复合租户外键；System 模板保持代码内置只读。
