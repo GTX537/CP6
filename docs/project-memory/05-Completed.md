@@ -1,5 +1,13 @@
 # 已完成能力与近期里程碑
 
+## 2026-08-24 仓库分支整顿与 WIP 恢复
+
+- 建立整顿前全引用 Git bundle、各脏 worktree 状态/patch/原始未跟踪文件与 SHA-256 清单；根工作区安全恢复为干净 `main@0a14581f`，没有通过 reset/覆盖丢弃用户数据。
+- 删除 61 个已进入 `main` 的远端分支和 9 个仅需归档的陈旧远端分支；关闭陈旧 PR #3；清除 10 个旧本地分支和 8 个旧 worktree。所有被删除引用均可从归档 bundle 或远端/patch 证据恢复。
+- 把旧根目录混合 WIP 拆成登录体验、日期时间规范化、Kafka Dispose 三个当前-main分支并推送；分别完成 6/6 前端聚焦测试+类型检查、Web 174 文件/886 测试+类型检查+生产构建、CP6.Core Release 0 warning/0 error。
+- CRM Draft PR #7/#8 均已合并当前 `main` 基线；PR #8 的公共契约本地校验通过。两者保持 Draft，不把治理文档同步冒充产品批准或可发布状态。
+- 完整证据与分支逐项处置见 `docs/project-memory/11-Branch-Consolidation-20260824.md`。
+
 ## 2026-08-16 Space Tenant 私有整仓模板
 
 - 新增租户私有整仓模板头与 append-only 版本表；租户内编码大小写不敏感唯一，版本保存规范计划 JSON、内容 SHA-256、各类对象计数和创建审计，复合租户外键阻止跨租户版本归属。

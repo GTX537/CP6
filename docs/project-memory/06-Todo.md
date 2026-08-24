@@ -1,5 +1,15 @@
 # 当前待办与优先级
 
+## P0：整顿后的仓库治理与续开发边界
+
+- 为 `main` 启用保护：只允许经 PR 合并，要求始终运行的 `windows-and-web`、`android`、`sql-integration` 检查，禁止 force-push/删除，并要求解决会话；保护启用后以 GitHub API 回读为完成证据。仓库可见性按本阶段决定保持 Public。
+- 独立修复 `tools/Test-SpaceGaEvidence.Tests.ps1`：目前 36/36 断言通过，但预期失败的最后一个子进程把 `$LASTEXITCODE=1` 泄漏为脚本最终退出码，导致 GA CI 假红。必须新增退出码回归并在单独分支/PR完成，不得通过放宽 GA 校验绕过。
+- `codex/login-experience-recovery-20260824@1a5a58f`：补 LoginView 组件/浏览器验收、审查大幅模板重排与可访问性后再提 PR；当前只有 helper 6/6 和 Vue type-check 证据。
+- `codex/datetime-normalization-recovery-20260824@fd0b64fc`：审查 35 文件跨域修改与日期语义，补项目记忆/变更说明；当前 Web 174 文件/886 测试、Vue type-check 和 production build 已通过，是三个恢复分支中最接近可合并的一支。
+- `codex/kafka-dispose-recovery-20260824@1ee78fa6`：补 Dispose/异常/日志策略的行为测试并确认生命周期语义；当前仅 CP6.Core Release build 0 warning/0 error，不得直接合并。
+- CRM Draft PR #7 和 #8 已基于当前 `main`，继续等待各自产品/治理确认与 CI。PR #7 的 Cloudflare Workers 外部构建失败需单独归因；PR #8 公共契约校验已通过。两者保持 Draft，不纳入本次干净 `main`。
+- 完成整顿后把本机归档复制到第二介质，再考虑清理 `D:\CP6-archives\2026-08-24-branch-consolidation`；在此之前禁止删除 bundle、patch、原始未跟踪文件或 SHA-256 清单。
+
 ## P0：Space Studio v1.3 GA 外部与扩展门禁
 
 - LM-FR-001 的 `Blank` 初始化、Design Floor shell、Site 入口、楼层选择、不可变 System/Tenant 整仓模板目录/零写入预览、Tenant 模板持久化/跨租户隔离，以及两类 Template → 既有 Draft Floor 的分楼层原子 Apply 已有自动化纵切；现有 Blank/PublishedVersion Draft 的 LM-FR-002 来源、稳定创建者 ID、创建/更新时间和 Open Blocking 摘要也已交付。剩余 P0 是面向仓库人员的受控模板制作表单、Blank/Published/System/Tenant 四模式统一创建向导、对应模板创建来源的持久化，以及如需姓名时受控的历史身份显示合同。Template Apply 目前要求先显式创建 Draft/Floor，多楼层需分别确认；不得用单构件 Asset、预览结果、旧运行态模板或默认楼层冒充已创建仓库。LM-FR-001/WP1 保持 Partial/Pending。
