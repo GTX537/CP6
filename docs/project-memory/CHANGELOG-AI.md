@@ -2,6 +2,12 @@
 
 > 依据 Git log 汇总，不替代完整 Git 历史。重点记录影响接手判断的里程碑。
 
+## 2026-08-24：Space GA 退出码假红修复
+
+- 修复 `Test-SpaceGaEvidence.Tests.ps1` 在 36/36 通过后仍向 GitHub Actions 泄漏末个预期失败子进程退出码 `1` 的问题；根因是 PowerShell 全局 `$LASTEXITCODE` 未在负向用例完成断言后清除。
+- 新增汇总前退出码回归断言；只清除已经被测试消费的子进程状态，不放宽 Attestation、Pilot、Golden CAD、Kickoff、人员种子或核心 GA `NoGo` 校验。
+- Actions 风格直接调用与独立进程调用均为 Attestation 36/36、退出码 `0`；完整 Space GA 顺序验证为 36/36、21/21、31/31、28/28、8/8，所有进程退出码均为 `0`。
+
 ## 2026-08-24：仓库分支整顿与 WIP 当前-main恢复
 
 - 以 `main@0a14581f` 为基线完成分支审计；整顿前 105 refs、脏 worktree patch、原始未跟踪文件和校验数据已本地归档。

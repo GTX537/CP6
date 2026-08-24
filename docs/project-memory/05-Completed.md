@@ -1,5 +1,11 @@
 # 已完成能力与近期里程碑
 
+## 2026-08-24 Space GA 退出码假红修复
+
+- 根因是 `Invoke-ValidatorCase` 已正确消费预期失败的 validator 退出码，但未清除 PowerShell 全局 `$LASTEXITCODE`；末项负向用例因此让 Actions 在 36/36 通过后仍返回 `1`。
+- 每个 validator 用例现在先完成期望退出码与稳定错误码断言，再将已消费状态归零；汇总前新增全局退出码回归断言。真实 validator 失败仍会抛错，GA 证据失败关闭语义未改变。
+- 直接 Actions 风格调用和独立进程调用均得到 Attestation 36/36、退出码 `0`；完整 Space GA 工作流另通过 Pilot 21/21、Golden CAD 31/31、Kickoff 28/28 和人员种子 8/8。
+
 ## 2026-08-24 仓库分支整顿与 WIP 恢复
 
 - 建立整顿前全引用 Git bundle、各脏 worktree 状态/patch/原始未跟踪文件与 SHA-256 清单；根工作区安全恢复为干净 `main@0a14581f`，没有通过 reset/覆盖丢弃用户数据。
