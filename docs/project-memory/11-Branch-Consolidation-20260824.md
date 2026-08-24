@@ -148,8 +148,8 @@ git clone D:\CP6-archives\2026-08-24-branch-consolidation\cp6-all-refs-before-cl
 
 ## 9. 后续顺序
 
-1. 合并本报告的整顿 PR，拉取并核对 `main == origin/main`。
-2. 启用并回读 `main` 分支保护。
+1. 已完成：整顿 PR #9 合并为 `main@2abf451dcb0e3e776967604874daaff04ff97594`，根工作区已核对 `main == origin/main`。
+2. 已完成：GitHub API 回读确认 `main` 严格要求 PR、最新主线、`windows-and-web`/`android`/`sql-integration` 和对话解决；管理员不得绕过，force-push/删除关闭。
 3. 独立修复 Space GA 测试脚本退出码假红。
 4. 优先审查日期时间规范化分支；登录和 Kafka 分支分别补齐验收与行为测试。
 5. 等 CRM #7/#8 的 CI 与产品/治理确认，保持 Draft 直到决策闭环。

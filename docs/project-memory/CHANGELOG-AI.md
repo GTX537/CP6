@@ -8,6 +8,7 @@
 - 远端删除 61 个已合并分支和 9 个归档型陈旧分支，关闭 PR #3；旧本地 worktree/分支已清理，根工作区恢复为干净 `main`。
 - 旧根目录 WIP 被拆为登录体验、日期时间规范化、Kafka Dispose 三个独立当前-main分支并推送；每个分支只保留单一职责和独立验证证据。
 - CRM Draft PR #7/#8 合并当前 `main` 后继续保留 Draft；PR #8 公共契约验证已恢复为绿色。仓库可见性保持 Public，未执行生产部署。
+- 整顿记录经 PR #9 合并为 `main@2abf451d`；随后启用并回读 `main` 严格保护，要求 PR、最新主线、三个常驻检查及对话解决，管理员不得绕过，force-push/删除关闭。
 - 详细恢复与后续开发边界见 `docs/project-memory/11-Branch-Consolidation-20260824.md`。
 
 ## 2026-08-16：Space Tenant 私有整仓模板
