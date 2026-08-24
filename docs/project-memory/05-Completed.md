@@ -6,6 +6,7 @@
 - 删除 61 个已进入 `main` 的远端分支和 9 个仅需归档的陈旧远端分支；关闭陈旧 PR #3；清除 10 个旧本地分支和 8 个旧 worktree。所有被删除引用均可从归档 bundle 或远端/patch 证据恢复。
 - 把旧根目录混合 WIP 拆成登录体验、日期时间规范化、Kafka Dispose 三个当前-main分支并推送；分别完成 6/6 前端聚焦测试+类型检查、Web 174 文件/886 测试+类型检查+生产构建、CP6.Core Release 0 warning/0 error。
 - CRM Draft PR #7/#8 均已合并当前 `main` 基线；PR #8 的公共契约本地校验通过。两者保持 Draft，不把治理文档同步冒充产品批准或可发布状态。
+- `main` 已启用严格分支保护：要求最新主线、PR、`windows-and-web`/`android`/`sql-integration` 三项检查和对话解决；管理员同样受保护，force-push 与分支删除被禁止。
 - 完整证据与分支逐项处置见 `docs/project-memory/11-Branch-Consolidation-20260824.md`。
 
 ## 2026-08-16 Space Tenant 私有整仓模板
