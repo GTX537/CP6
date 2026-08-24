@@ -2,6 +2,13 @@
 
 最后更新：2026-08-24
 
+## CRM V1 产品需求草案（2026-08-24）
+
+- 新增 `docs/crm/CRM-V1-PRD.md` v0.1，状态为 `Draft for Product Review`。文档以 2026-08-14 私有 `GTX537/CP6.CRM` Frozen SaaS V1 为长期产品目标，并把已批准的 Lead Pilot C 分栏工作台定义为第一可见交付。
+- PRD 已统一 Website/Manual/Import Intake、Lead/Opportunity/PublicSubmission/IntegrationProcess 状态、22 个权限动作、DataScope/PII/Entitlement、幂等/ETag/412、CP6 ERP 与 ExternalEvidence 两种成交权威、Site/CMS、Portal、移动端、KPI、采用门禁和未来升级接口。
+- 当前代码事实不变：`main` 只有 20 表 Foundation、状态机、迁移、6 个禁用菜单和 22 个动作；没有 CRM Controller、独立 API、Next.js/React Native 客户端或可用 CRM 页面。私有 CRM 仓当前为 docs-only。
+- 本 PRD 只是产品评审工件，不覆盖公开仓 Draft PR #8 的 Public Contract Sync，也不把 M0 从 No-Go 改为 Go。评审通过后仍须记录批准 commit，完成 Public Sync 和 M0，才可按 Lead Pilot 切片拆实施票。
+
 ## Space GA 退出码假红修复（2026-08-24）
 
 - Attestation、Pilot、Golden CAD、Kickoff 和 Development Personnel Seed 五个负向测试套件都会在末个预期失败的 validator 子进程后把 `$LASTEXITCODE=1` 留在调用方全局作用域；GitHub Actions 的 `pwsh` 包装器因此把断言全绿的测试误判为失败。

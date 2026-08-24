@@ -1,5 +1,11 @@
 # 已完成能力与近期里程碑
 
+## 2026-08-24 CRM V1 产品需求草案
+
+- 完成 `docs/crm/CRM-V1-PRD.md` v0.1，把 Frozen SaaS V1 与当前 Foundation、旧三仓规划和 Lead Pilot 批准设计对齐为一份可评审产品合同。
+- 文档明确前端 IA/页面状态/Lead Pilot 交互、后端状态机/事务/权限/幂等/并发/错误、四仓数据主权、CP6 ERP 与 ExternalEvidence 成交路径，以及 API/event/custom-field/channel 的升级边界。
+- CRM 文档入口已补充 PRD，并更正私有 `GTX537/CP6.CRM` 已存在但仍为 docs-only 的事实。该里程碑只表示需求草案完成，不表示产品批准、Public Contract Sync、M0、业务代码或上线完成。
+
 ## 2026-08-24 Space GA 退出码假红修复
 
 - 根因是五个 Space GA 负向测试辅助函数已正确消费预期失败的 validator 退出码，但都未清除 PowerShell 全局 `$LASTEXITCODE`；末项负向用例因此让 Actions 在断言全绿后仍返回 `1`。

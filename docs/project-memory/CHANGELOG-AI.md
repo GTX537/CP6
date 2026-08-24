@@ -2,6 +2,12 @@
 
 > 依据 Git log 汇总，不替代完整 Git 历史。重点记录影响接手判断的里程碑。
 
+## 2026-08-24：CRM V1 产品需求草案
+
+- 新增 `docs/crm/CRM-V1-PRD.md` v0.1，按 Frozen SaaS V1 长期范围和 Lead Pilot 首个切片，定义 CRM 前端效果、后端命令/状态、数据主权、权限/PII/Entitlement、失败恢复、验收和升级接口。
+- 更新 CRM 文档入口与项目状态，明确私有 CRM 仓目前为 docs-only，当前 `main` 仍只有 Foundation；产品草案不冒充已实现功能。
+- PRD 状态为 Draft。Public Contract Sync 仍 Pending，M0 仍 No-Go；必须先完成产品评审和治理门禁，才可拆实施票。
+
 ## 2026-08-24：Space GA 退出码假红修复
 
 - 修复 Attestation、Pilot、Golden CAD、Kickoff 和人员种子五个负向套件在断言全绿后仍向 GitHub Actions 泄漏末个预期失败子进程退出码 `1` 的问题；根因是 PowerShell 全局 `$LASTEXITCODE` 未在负向用例完成断言后清除。
