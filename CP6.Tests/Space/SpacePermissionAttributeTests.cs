@@ -41,6 +41,8 @@ public class SpacePermissionAttributeTests
         "space-publish:publish", "space-publish:deactivate", "space-publish:adopt",
         "space-audit:read",
         "space:model:read", "space:model:edit", "space:model:validate",
+        "space:model:lease:takeover",
+        "space:model:provider:manage",
         "space:model:publish", "space:model:rollback",
         "space:source:upload",
         "space:model:generate-ai", "space:model:review-ai",
@@ -76,11 +78,34 @@ public class SpacePermissionAttributeTests
             ["SpaceAuditController.Query"] = "space-audit:read",
             ["SpaceAuditController.Timeline"] = "space-audit:read",
             ["SpaceDesignV1Controller.GetModel"] = "space:model:read",
+            ["SpaceDesignV1Controller.GetPublishedScene"] =
+                "space:model:read",
             ["SpaceDesignV1Controller.GetVersions"] = "space:model:read",
             ["SpaceDesignV1Controller.GetVersion"] = "space:model:read",
+            ["SpaceDesignV1Controller.GetFloors"] = "space:model:read",
             ["SpaceDesignV1Controller.GetScene"] = "space:model:read",
+            ["SpaceEditLeaseController.GetEditLease"] = "space:model:edit",
+            ["SpaceCadParseController.GetPreparationStatus"] =
+                "space:source:upload",
+            ["SpaceCadProviderController.GetCapability"] =
+                "space:model:read",
+            ["SpaceCadParseController.GetMappingProfiles"] =
+                "space:source:upload",
+            ["SpaceCadParseController.GetParse"] = "space:model:read",
+            ["SpaceCadParseController.ListReviewCandidates"] =
+                "space:model:read",
+            ["SpaceCadParseController.GetReviewWorkspace"] =
+                "space:model:read",
+            ["SpaceCadMappingProfileController.GetCadMappingProfiles"] =
+                "space:model:read",
+            ["SpaceCadMappingProfileController.GetCadMappingProfile"] =
+                "space:model:read",
             ["SpaceDesignV1Controller.GetAssets"] = "space:model:read",
+            ["SpaceDesignV1Controller.GetWarehouseTemplates"] =
+                "space:model:read",
             ["SpaceDesignV1Controller.GetSources"] = "space:model:read",
+            ["SpaceDesignV1Controller.GetSourceRemovalPreview"] =
+                "space:model:read",
             ["SpaceDesignV1Controller.GetFile"] = "space:model:read",
             ["SpaceDesignV1Controller.GetUnderlayContent"] = "space:model:read",
             ["SpacePublishController.GetHistoricalRepublish"] = "space:model:read",
@@ -234,7 +259,7 @@ public class SpacePermissionAttributeTests
     public void SpaceControllers_AreDiscovered()
     {
         // 守卫：确保反射确实扫到全部 controller（防命名空间/程序集变动导致「空扫空过」）。
-        Assert.Equal(42, SpaceControllers.Count());
+        Assert.Equal(46, SpaceControllers.Count());
     }
 
     [Fact]
@@ -304,6 +329,7 @@ public class SpacePermissionAttributeTests
 
     [Theory]
     [InlineData(nameof(SpaceDesignV1Controller.CreateSource))]
+    [InlineData(nameof(SpaceDesignV1Controller.RemoveSource))]
     [InlineData(nameof(SpaceDesignV1Controller.UploadUnderlay))]
     [InlineData(nameof(SpaceDesignV1Controller.AttachUnderlay))]
     [InlineData(nameof(SpaceDesignV1Controller.CalibrateUnderlay))]
@@ -327,6 +353,76 @@ public class SpacePermissionAttributeTests
         [
             "space:source:upload",
             "space:model:edit",
+        ]));
+    }
+
+    [Theory]
+    [InlineData(nameof(SpaceCadParseController.GetPreparationStatus))]
+    [InlineData(nameof(SpaceCadParseController.GetMappingProfiles))]
+    [InlineData(nameof(SpaceCadParseController.PreviewPreparation))]
+    [InlineData(nameof(SpaceCadParseController.StartParse))]
+    public void Cad_preparation_requires_upload_and_model_edit(
+        string methodName)
+    {
+        var method = typeof(SpaceCadParseController).GetMethod(methodName);
+        Assert.NotNull(method);
+        var permissions = CustomAttributeData
+            .GetCustomAttributes(method!)
+            .Where(data => data.AttributeType == typeof(RequirePermissionAttribute))
+            .Select(data =>
+                $"{data.ConstructorArguments[0].Value}:" +
+                $"{data.ConstructorArguments[1].Value}")
+            .ToHashSet();
+
+        Assert.True(permissions.SetEquals(
+        [
+            "space:source:upload",
+            "space:model:edit",
+        ]));
+    }
+
+    [Fact]
+    public void Lease_takeover_requires_edit_and_takeover_permissions()
+    {
+        var method = typeof(SpaceEditLeaseController).GetMethod(
+            nameof(SpaceEditLeaseController.TakeoverEditLease));
+        Assert.NotNull(method);
+
+        var permissions = CustomAttributeData
+            .GetCustomAttributes(method!)
+            .Where(data =>
+                data.AttributeType == typeof(RequirePermissionAttribute))
+            .Select(data =>
+                $"{data.ConstructorArguments[0].Value}:" +
+                $"{data.ConstructorArguments[1].Value}")
+            .ToHashSet();
+
+        Assert.True(permissions.SetEquals(
+        [
+            "space:model:edit",
+            "space:model:lease:takeover",
+        ]));
+    }
+
+    [Fact]
+    public void Cad_provider_configuration_requires_dedicated_permission()
+    {
+        var method = typeof(SpaceCadProviderController).GetMethod(
+            nameof(SpaceCadProviderController.ReplaceProviderConfiguration));
+        Assert.NotNull(method);
+
+        var permissions = CustomAttributeData
+            .GetCustomAttributes(method!)
+            .Where(data =>
+                data.AttributeType == typeof(RequirePermissionAttribute))
+            .Select(data =>
+                $"{data.ConstructorArguments[0].Value}:" +
+                $"{data.ConstructorArguments[1].Value}")
+            .ToHashSet();
+
+        Assert.True(permissions.SetEquals(
+        [
+            "space:model:provider:manage",
         ]));
     }
 

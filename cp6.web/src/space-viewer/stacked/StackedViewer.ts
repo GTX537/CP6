@@ -4,9 +4,9 @@ import { Loop } from '../core/Loop'
 import { SceneRoot } from '../core/SceneRoot'
 import { SceneBuilder } from '../build/SceneBuilder'
 import { CameraController } from '../navigate/CameraController'
-import { floorApi } from '@/api/space/floor'
-import { sceneApi } from '@/api/space/scene'
 import type { InstancedBuckets } from '../build/InstancedBuckets'
+import { publishedFloorId, toPublishedFloorView } from '@/api/space/designPublishedScene'
+import type { ISpaceDesignSceneDto } from '../../../../sdk/typescript/space-design-v1/spaceDesignV1Client'
 
 // ── Pure helper (exported for TDD) ────────────────────────────────────────────
 
@@ -36,8 +36,8 @@ export function accumulateFloorZ(
  * (Renderer + Scene + SceneRoot + PerspectiveCamera + Loop + CameraController).
  *
  * Key difference from SpaceViewer:
- *  - loadSite() fetches every floor in sequence and places each floor's scene
- *    objects inside a Group at position.z = accumulateFloorZ elevation (mm,
+ *  - loadPublished() accepts only server-selected Published Design V1 scenes
+ *    and places each floor inside a Group at cumulative elevation (mm,
  *    data-space — SceneRoot's 0.001 scale converts to world metres).
  *  - No _clearSceneData between floors: all floor groups coexist.
  */
@@ -55,6 +55,7 @@ export class StackedViewer {
   private _floorGroups = new Map<string, Group>()
   /** floorId → InstancedBuckets for that floor (for future picking) */
   private _floorBuckets = new Map<string, InstancedBuckets>()
+  private _floorDisposers = new Map<string, () => void>()
   /** locationCode → floor/location identity for analytics overlays and realtime refresh. */
   private _codeToLocation = new Map<string, { floorId: string; locationId: string }>()
 
@@ -109,38 +110,42 @@ export class StackedViewer {
   // ── Multi-floor loading ──────────────────────────────────────────────────────
 
   /**
-   * Fetch all floors for `siteId`, build their scenes, and stack them at
-   * cumulative Z elevations.  Each floor's objects live in their own Group so
-   * setFloorVisible() can toggle individual floors independently.
+   * Build the server-selected Published scenes at cumulative Z elevations.
+   * Each floor's objects live in its own Group so setFloorVisible() can toggle
+   * individual floors independently.
    */
-  async loadSite(siteId: string): Promise<void> {
-    const floors = (await floorApi.list(siteId)).data
+  async loadPublished(scenes: readonly ISpaceDesignSceneDto[]): Promise<void> {
+    this._clearPublishedData()
+    const floors = scenes.map(toPublishedFloorView)
 
     // Compute Z elevation for each floor (sorted by level asc, bottom=0)
     this._floorZ = accumulateFloorZ(
       floors.map((f) => ({ id: f.id, level: f.level, height: f.height })),
     )
 
-    // Build each floor's scene and add to sceneRoot
-    for (const f of floors) {
-      const editorScene = (await sceneApi.get(f.id)).data
-      const result = new SceneBuilder().build(editorScene)
+    try {
+      // Build each floor's scene and add to sceneRoot
+      for (const scene of scenes) {
+        const floorId = publishedFloorId(scene)
+        const result = new SceneBuilder().buildPublished(scene)
 
-      const grp = new Group()
-      // position.z in SceneRoot's local (data-space mm); SceneRoot's rotation+scale
-      // transforms this to the correct world-space Y elevation (mm * 0.001 = metres).
-      grp.position.z = this._floorZ.get(f.id) ?? 0
+        const grp = new Group()
+        // position.z is data-space mm; SceneRoot converts it to world metres.
+        grp.position.z = this._floorZ.get(floorId) ?? 0
 
-      for (const o of result.objects) {
-        grp.add(o)
+        for (const object of result.objects) grp.add(object)
+
+        this._sceneRoot.add(grp)
+        this._floorGroups.set(floorId, grp)
+        this._floorBuckets.set(floorId, result.buckets)
+        this._floorDisposers.set(floorId, result.dispose)
+        for (const [locationId, code] of result.locationCodes) {
+          this._codeToLocation.set(code, { floorId, locationId })
+        }
       }
-
-      this._sceneRoot.add(grp)
-      this._floorGroups.set(f.id, grp)
-      this._floorBuckets.set(f.id, result.buckets)
-      for (const [locationId, code] of result.locationCodes) {
-        this._codeToLocation.set(code, { floorId: f.id, locationId })
-      }
+    } catch (error) {
+      this._clearPublishedData()
+      throw error
     }
 
     // Frame camera to the union bounding box of the whole stacked scene
@@ -190,21 +195,25 @@ export class StackedViewer {
 
   start(): void { this._loop.start() }
 
+  private _clearPublishedData(): void {
+    for (const buckets of this._floorBuckets.values()) buckets.dispose()
+    this._floorBuckets.clear()
+    for (const dispose of this._floorDisposers.values()) dispose()
+    this._floorDisposers.clear()
+    this._floorGroups.clear()
+    this._codeToLocation.clear()
+    while (this._sceneRoot.children.length > 0) {
+      const child = this._sceneRoot.children[0]
+      if (child) this._sceneRoot.remove(child)
+    }
+  }
+
   dispose(): void {
     this._loop.stop()
     window.removeEventListener('resize', this._onResize)
     this._cameraController.dispose()
 
-    for (const buckets of this._floorBuckets.values()) {
-      buckets.dispose()
-    }
-    this._floorBuckets.clear()
-    this._codeToLocation.clear()
-
-    while (this._sceneRoot.children.length > 0) {
-      const child = this._sceneRoot.children[0]
-      if (child) this._sceneRoot.remove(child)
-    }
+    this._clearPublishedData()
 
     this._renderer.dispose()
   }

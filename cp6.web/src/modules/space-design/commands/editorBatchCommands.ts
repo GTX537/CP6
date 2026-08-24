@@ -43,17 +43,37 @@ export interface EditorCommandInput {
     | 'DeleteObject'
     | 'RestoreLogicalObject'
     | 'GenerateRackArray'
+    | 'CreateElement'
     | 'UpdateProperties'
   targetLogicalId: string
   moveObject?: MoveObjectPayload
   rotateObject?: RotateObjectPayload
   generateRackArray?: GenerateRackArrayPayload
+  createElement?: {
+    elementType: string
+    geometryJson: string
+    x: number
+    y: number
+    z: number
+    rotationZ: number
+    width: number
+    height: number
+    depth: number
+    businessCode?: string
+    parentLogicalId?: string
+    sourceId?: string
+    sourceRef?: string
+    attributes: unknown[]
+    linkedEntityType?: string
+    linkedLogicalId?: string
+  }
   updateProperties?: unknown
 }
 
 export interface ReversibleCommandBatch {
   forward: EditorCommandInput[]
   reverse: EditorCommandInput[]
+  redo?: EditorCommandInput[]
 }
 
 export type AlignmentMode =
@@ -66,10 +86,54 @@ export type AlignmentMode =
 
 export type DistributionMode = 'horizontal' | 'vertical'
 
-export interface EditorHistoryEntry {
+export interface CommandHistoryEntry {
   label: string
   undo: EditorCommandInput[]
   redo: EditorCommandInput[]
+}
+
+export interface ExcelCadCompensationHistory {
+  matchJobId: string
+  applyJobId: string
+  historySha256: string
+  historyCommandCount: number
+  pendingUndoCommandBatchId?: string
+  pendingRedoCommandBatchId?: string
+}
+
+export interface ExcelCadHistoryEntry {
+  label: string
+  excelCadCompensation: ExcelCadCompensationHistory
+}
+
+export interface UnderlayCompensationHistory {
+  originalCommandBatchId: string
+  historySha256: string
+  operationType: 'UnderlaySet' | 'UnderlayCalibrate'
+  pendingUndoCommandBatchId?: string
+  pendingRedoCommandBatchId?: string
+}
+
+export interface UnderlayHistoryEntry {
+  label: string
+  underlayCompensation: UnderlayCompensationHistory
+}
+
+export type EditorHistoryEntry =
+  | CommandHistoryEntry
+  | ExcelCadHistoryEntry
+  | UnderlayHistoryEntry
+
+export function isExcelCadHistoryEntry(
+  entry: EditorHistoryEntry,
+): entry is ExcelCadHistoryEntry {
+  return 'excelCadCompensation' in entry
+}
+
+export function isUnderlayHistoryEntry(
+  entry: EditorHistoryEntry,
+): entry is UnderlayHistoryEntry {
+  return 'underlayCompensation' in entry
 }
 
 export class SavedCommandHistory {
@@ -205,6 +269,26 @@ export function buildRotationBatch(
       rotateObject: { rotationZ: object.rotationZ },
     })),
   }
+}
+
+export function buildTranslationBatch(
+  objects: readonly EditorObjectSnapshot[],
+  deltaX: number,
+  deltaY: number,
+): ReversibleCommandBatch {
+  if (!Number.isFinite(deltaX) || !Number.isFinite(deltaY)) {
+    throw new Error('Object translation is invalid')
+  }
+  const x = Math.round(deltaX)
+  const y = Math.round(deltaY)
+  if (objects.length === 0 || (x === 0 && y === 0)) {
+    return { forward: [], reverse: [] }
+  }
+  return moveBatch(objects.map((object) => ({
+    object,
+    x: object.x + x,
+    y: object.y + y,
+  })))
 }
 
 export function buildDeleteBatch(

@@ -26,9 +26,13 @@ describe('designElementsApi', () => {
       'version-1',
       'floor-1',
       7,
+      12,
+      'a'.repeat(64),
       '22222222-2222-2222-2222-222222222222',
+      '33333333-3333-3333-3333-333333333333',
       element,
       {
+        elementType: 'Door',
         geometryJson:
           '{"schemaVersion":1,"kind":"box","width":1,"height":1,"depth":1}',
         x: 1,
@@ -50,12 +54,16 @@ describe('designElementsApi', () => {
     expect(body).toMatchObject({
       schemaVersion: 1,
       clientInstanceId: '22222222-2222-2222-2222-222222222222',
+      leaseId: '33333333-3333-3333-3333-333333333333',
       expectedFloorRevision: 7,
+      expectedContentRevision: 12,
+      expectedContentHash: 'a'.repeat(64),
       commands: [
         {
           type: 'UpdateProperties',
           targetLogicalId: element.revision?.logicalId,
           updateProperties: {
+            elementType: 'Door',
             x: 1,
             y: 2,
             z: 3,
@@ -70,7 +78,10 @@ describe('designElementsApi', () => {
       'version-1',
       'floor-1',
       8,
+      13,
+      'b'.repeat(64),
       '22222222-2222-2222-2222-222222222222',
+      '33333333-3333-3333-3333-333333333333',
       element,
     )
 
@@ -84,13 +95,33 @@ describe('designElementsApi', () => {
     expect(body.commands[0]).not.toHaveProperty('updateProperties')
   })
 
+  it('reuses a prepared envelope for a safe retry', async () => {
+    const envelope = designElementsApi.createEnvelope(
+      8,
+      13,
+      'b'.repeat(64),
+      '22222222-2222-2222-2222-222222222222',
+      '33333333-3333-3333-3333-333333333333',
+      [{ type: 'DeleteObject', targetLogicalId: element.revision!.logicalId! }],
+    )
+
+    await designElementsApi.sendEnvelope('version-1', 'floor-1', envelope)
+    await designElementsApi.sendEnvelope('version-1', 'floor-1', envelope)
+
+    expect(vi.mocked(http.post).mock.calls[0]?.[1]).toBe(envelope)
+    expect(vi.mocked(http.post).mock.calls[1]?.[1]).toBe(envelope)
+  })
+
   it('fails closed when the selected element has no logical identity', () => {
     expect(() =>
       designElementsApi.remove(
         'version-1',
         'floor-1',
         8,
+        13,
+        'b'.repeat(64),
         '22222222-2222-2222-2222-222222222222',
+        '33333333-3333-3333-3333-333333333333',
         {} as ISpaceSceneElementDto,
       ),
     ).toThrow('The selected element has no logical identity.')

@@ -7,6 +7,7 @@ import type {
 import {
   buildElementPropertiesPayload,
   createElementPropertiesDraft,
+  SPACE_ELEMENT_TYPES,
   type ElementPropertiesDraft,
 } from './elementProperties'
 
@@ -49,10 +50,22 @@ function addAttribute(): void {
   })
 }
 
-function save(): void {
+function save(manualCorrectionLocked?: boolean): void {
   if (error.value) return
-  emit('save', buildElementPropertiesPayload(props.element, draft))
+  emit('save', {
+    ...buildElementPropertiesPayload(props.element, draft),
+    ...(manualCorrectionLocked === undefined
+      ? {}
+      : { manualCorrectionLocked }),
+  })
 }
+
+const sourceBacked = computed(() => Boolean(
+  props.element.revision?.sourceId && props.element.revision?.sourceRef,
+))
+const correctionLocked = computed(() =>
+  Boolean(props.element.isManualCorrectionLocked),
+)
 </script>
 
 <template>
@@ -69,7 +82,37 @@ function save(): void {
       <el-tag size="small">{{ element.revision?.lifecycleState }}</el-tag>
     </div>
 
+    <el-alert
+      v-if="sourceBacked"
+      class="correction-lock-state"
+      :type="correctionLocked ? 'warning' : 'info'"
+      :closable="false"
+      :title="correctionLocked
+        ? `人工校正已锁定 v${element.userCorrectionVersion ?? 0}`
+        : '来源对象尚未锁定；重新解析可提出替换或删除。'"
+      :description="correctionLocked
+        ? '后续保存仍受保护并递增版本；CAD 重新解析只能产生 Blocking 冲突。'
+        : '保存并锁定会把当前表单与锁状态原子写入同一命令批。'"
+      data-test="manual-correction-lock-state"
+    />
+
     <fieldset class="property-fields" :disabled="readonly || saving">
+      <el-divider content-position="left">构件语义</el-divider>
+      <label>构件类型
+        <el-select
+          v-model="draft.elementType"
+          data-test="element-type"
+          aria-label="构件类型"
+        >
+          <el-option
+            v-for="type in SPACE_ELEMENT_TYPES"
+            :key="type"
+            :label="type"
+            :value="type"
+          />
+        </el-select>
+      </label>
+
       <el-divider content-position="left">位置与尺寸（mm）</el-divider>
       <div class="number-grid">
         <label>X <el-input-number v-model="draft.x" :step="100" /></label>
@@ -140,9 +183,31 @@ function save(): void {
         type="primary"
         :loading="saving"
         :disabled="readonly || Boolean(error)"
-        @click="save"
+        @click="save()"
       >
         保存属性
+      </el-button>
+      <el-button
+        v-if="sourceBacked && !correctionLocked"
+        v-permission="'space:model:edit'"
+        data-test="lock-manual-correction"
+        type="warning"
+        :loading="saving"
+        :disabled="readonly || Boolean(error)"
+        @click="save(true)"
+      >
+        保存并锁定
+      </el-button>
+      <el-button
+        v-else-if="sourceBacked"
+        v-permission="'space:model:edit'"
+        data-test="unlock-manual-correction"
+        plain
+        :loading="saving"
+        :disabled="readonly || Boolean(error)"
+        @click="save(false)"
+      >
+        保存并解除锁定
       </el-button>
     </div>
   </aside>
@@ -153,8 +218,9 @@ function save(): void {
   width: 390px;
   padding: 16px;
   overflow: auto;
-  background: #fff;
-  border-left: 1px solid #dfe4ea;
+  color: var(--space-studio-text, #101828);
+  background: var(--space-studio-panel, #fff);
+  border-left: 1px solid var(--space-studio-border, #dfe4ea);
 }
 
 .panel-heading,
@@ -167,10 +233,14 @@ function save(): void {
 
 .logical-id {
   margin-top: 4px;
-  color: #64748b;
+  color: var(--space-studio-muted, #64748b);
   font-family: monospace;
-  font-size: 11px;
+  font-size: 13px;
   word-break: break-all;
+}
+
+.correction-lock-state {
+  margin: 12px 0;
 }
 
 .number-grid {
@@ -190,8 +260,8 @@ label {
   display: grid;
   gap: 4px;
   margin-bottom: 10px;
-  color: #475569;
-  font-size: 12px;
+  color: var(--space-studio-muted, #475569);
+  font-size: 14px;
 }
 
 .attribute-row {
@@ -200,7 +270,7 @@ label {
   gap: 6px;
   margin-bottom: 10px;
   padding-bottom: 10px;
-  border-bottom: 1px solid #eef2f6;
+  border-bottom: 1px solid var(--space-studio-border, #eef2f6);
 }
 
 .panel-actions {
@@ -208,15 +278,24 @@ label {
   bottom: -16px;
   margin: 18px -16px -16px;
   padding: 12px 16px;
-  background: #fff;
-  border-top: 1px solid #dfe4ea;
+  background: var(--space-studio-panel, #fff);
+  border-top: 1px solid var(--space-studio-border, #dfe4ea);
 }
+
+.element-properties :deep(.el-button),
+.element-properties :deep(.el-input__wrapper),
+.element-properties :deep(.el-select__wrapper),
+.element-properties :deep(.el-input-number) { min-height: 44px; }
+.element-properties :deep(.el-button:focus-visible),
+.element-properties :deep(.el-input__wrapper:focus-within),
+.element-properties :deep(.el-select__wrapper:focus-within),
+.element-properties :deep(.el-input-number:focus-within) { outline: 3px solid var(--space-studio-focus, #0e7490); outline-offset: 2px; }
 
 @media (max-width: 900px) {
   .element-properties {
     width: 100%;
     max-height: 45vh;
-    border-top: 1px solid #dfe4ea;
+    border-top: 1px solid var(--space-studio-border, #dfe4ea);
     border-left: 0;
   }
 }

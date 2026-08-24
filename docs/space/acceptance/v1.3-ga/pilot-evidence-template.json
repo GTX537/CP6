@@ -1,0 +1,110 @@
+{
+  "schemaVersion": 1,
+  "programId": "CP6_SPACE_STUDIO_V1_CORE_GA",
+  "evidenceClass": "WP8_TWO_SITE_PILOT",
+  "conclusion": "Pending",
+  "sites": [
+    {
+      "siteRef": "urn:cp6-space-site:replace-with-opaque-greenfield-reference",
+      "siteType": "Greenfield",
+      "runStartDate": null,
+      "runEndDate": null,
+      "continuousRunDays": 0,
+      "dailyRecordCount": 0,
+      "dailyRecordDates": [],
+      "defects": {
+        "s1Count": null,
+        "s2Count": null,
+        "s3Opened": null,
+        "s3WithUsableWorkaround": null,
+        "s3ClosedBeforeSignoff": null,
+        "s3OpenAtSignoff": null
+      },
+      "metrics": {
+        "modelingDurationMinutes": null,
+        "manualModificationCount": null,
+        "twoDThreeDObjectConsistencyPercent": null,
+        "wmsConsistencyPercent": null
+      },
+      "recovery": {
+        "automaticIncidentCount": null,
+        "automaticMaxMinutes": null,
+        "manualIncidentCount": null,
+        "manualMaxMinutes": null,
+        "oldPublishedContinuouslyAvailable": false
+      },
+      "boundaries": {
+        "publishedViewerOnly": false,
+        "noLongTermDualWrite": false
+      },
+      "evidence": {
+        "runLog": {},
+        "metrics": {},
+        "defectClosure": {},
+        "businessOutcome": {},
+        "openIssuesAppendix": {}
+      },
+      "confirmations": {
+        "customerWarehouseRepresentative": {
+          "name": null,
+          "evidence": {}
+        },
+        "implementationLead": {
+          "name": null,
+          "evidence": {}
+        }
+      }
+    },
+    {
+      "siteRef": "urn:cp6-space-site:replace-with-opaque-retrofit-reference",
+      "siteType": "Retrofit",
+      "runStartDate": null,
+      "runEndDate": null,
+      "continuousRunDays": 0,
+      "dailyRecordCount": 0,
+      "dailyRecordDates": [],
+      "defects": {
+        "s1Count": null,
+        "s2Count": null,
+        "s3Opened": null,
+        "s3WithUsableWorkaround": null,
+        "s3ClosedBeforeSignoff": null,
+        "s3OpenAtSignoff": null
+      },
+      "metrics": {
+        "modelingDurationMinutes": null,
+        "manualModificationCount": null,
+        "twoDThreeDObjectConsistencyPercent": null,
+        "wmsConsistencyPercent": null
+      },
+      "recovery": {
+        "automaticIncidentCount": null,
+        "automaticMaxMinutes": null,
+        "manualIncidentCount": null,
+        "manualMaxMinutes": null,
+        "oldPublishedContinuouslyAvailable": false
+      },
+      "boundaries": {
+        "publishedViewerOnly": false,
+        "noLongTermDualWrite": false
+      },
+      "evidence": {
+        "runLog": {},
+        "metrics": {},
+        "defectClosure": {},
+        "businessOutcome": {},
+        "openIssuesAppendix": {}
+      },
+      "confirmations": {
+        "customerWarehouseRepresentative": {
+          "name": null,
+          "evidence": {}
+        },
+        "implementationLead": {
+          "name": null,
+          "evidence": {}
+        }
+      }
+    }
+  ]
+}

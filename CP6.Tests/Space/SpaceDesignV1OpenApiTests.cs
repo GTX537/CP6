@@ -27,6 +27,9 @@ public sealed class SpaceDesignV1OpenApiTests
         var expectedPaths = new[]
         {
             "/api/space/design/v1/sites/{siteId}/model",
+            "/api/space/design/v1/sites/{siteId}/published-scene",
+            "/api/space/design/v1/sites/{siteId}/cad-capability",
+            "/api/space/design/v1/sites/{siteId}/cad-provider-configuration",
             "/api/space/design/v1/sites/{siteId}/publish-attempts",
             "/api/space/design/v1/sites/{siteId}/device-events",
             "/api/space/design/v1/sites/{siteId}/devices",
@@ -36,6 +39,8 @@ public sealed class SpaceDesignV1OpenApiTests
             "/api/space/design/v1/sites/{siteId}/personnel",
             "/api/space/design/v1/sites/{siteId}/personnel/trajectory",
             "/api/space/design/v1/sites/{siteId}/versions",
+            "/api/space/design/v1/templates",
+            "/api/space/design/v1/templates/{templateId}/instantiate",
             "/api/space/design/v1/sites/{siteId}/runtime/inventory",
             "/api/space/design/v1/sites/{siteId}/runtime/inventory/locate",
             "/api/space/design/v1/sites/{siteId}/runtime/overview",
@@ -57,6 +62,8 @@ public sealed class SpaceDesignV1OpenApiTests
             "/api/space/design/v1/generation-runs/{runId}/issues",
             "/api/space/design/v1/generation-runs/{runId}/decisions",
             "/api/space/design/v1/generation-runs/{runId}/decisions:batch",
+            "/api/space/design/v1/mapping-profiles/cad",
+            "/api/space/design/v1/mapping-profiles/cad/{profileId}",
             "/api/space/design/v1/mapping-profiles/excel",
             "/api/space/design/v1/mapping-profiles/excel/{profileId}",
             "/api/space/design/v1/mapping-profiles/excel/preview",
@@ -66,24 +73,43 @@ public sealed class SpaceDesignV1OpenApiTests
             "/api/space/design/v1/republishes/{republishId}",
             "/api/space/design/v1/versions/{historicalVersionId}/republish",
             "/api/space/design/v1/versions/{versionId}",
+            "/api/space/design/v1/versions/{versionId}/floors",
             "/api/space/design/v1/versions/{versionId}/generation-runs",
             "/api/space/design/v1/versions/{versionId}/floors/{floorLogicalId}/commands",
+            "/api/space/design/v1/versions/{versionId}/floors/{floorLogicalId}/layout-commands",
+            "/api/space/design/v1/versions/{versionId}/floors/{floorLogicalId}/location-codes:preview",
+            "/api/space/design/v1/versions/{versionId}/floors/{floorLogicalId}/location-codes:apply",
+            "/api/space/design/v1/versions/{versionId}/floors/{floorLogicalId}/templates/{templateId}:apply",
             "/api/space/design/v1/versions/{versionId}/floors/{floorLogicalId}/scene",
             "/api/space/design/v1/versions/{versionId}/floors/{floorLogicalId}/underlay",
+            "/api/space/design/v1/versions/{versionId}/floors/{floorLogicalId}/underlay:compensate",
+            "/api/space/design/v1/versions/{versionId}/floors/{floorLogicalId}/lease",
+            "/api/space/design/v1/versions/{versionId}/floors/{floorLogicalId}/lease/{leaseId}:renew",
+            "/api/space/design/v1/versions/{versionId}/floors/{floorLogicalId}/lease/{leaseId}:release",
+            "/api/space/design/v1/versions/{versionId}/floors/{floorLogicalId}/lease:takeover",
+            "/api/space/design/v1/versions/{versionId}/floors/{floorLogicalId}/cad-review-candidates",
             "/api/space/design/v1/versions/{versionId}/files/{fileId}",
             "/api/space/design/v1/versions/{versionId}/excel-sources",
             "/api/space/design/v1/versions/{versionId}/excel-cad-matches",
             "/api/space/design/v1/versions/{versionId}/excel-cad-matches/{jobId}",
             "/api/space/design/v1/versions/{versionId}/excel-cad-matches/{matchJobId}/confirmations",
             "/api/space/design/v1/versions/{versionId}/excel-cad-matches/{matchJobId}/confirmations/{applyJobId}",
+            "/api/space/design/v1/versions/{versionId}/excel-cad-matches/{matchJobId}/confirmations/{applyJobId}:compensate",
             "/api/space/design/v1/versions/{versionId}/cad-sources",
+            "/api/space/design/v1/versions/{versionId}/cad-mapping-profiles",
             "/api/space/design/v1/versions/{versionId}/sources",
+            "/api/space/design/v1/versions/{versionId}/sources/{sourceId}/removal-preview",
+            "/api/space/design/v1/versions/{versionId}/sources/{sourceId}:remove",
             "/api/space/design/v1/versions/{versionId}/sources/{sourceId}/content",
             "/api/space/design/v1/versions/{versionId}/sources/{sourceId}/excel-preflights",
             "/api/space/design/v1/versions/{versionId}/sources/{sourceId}/excel-preflights/{jobId}",
             "/api/space/design/v1/versions/{versionId}/sources/{sourceId}/excel-preflights/{jobId}/report",
             "/api/space/design/v1/versions/{versionId}/sources/{sourceId}/cad-parses",
+            "/api/space/design/v1/versions/{versionId}/sources/{sourceId}/cad-preparations/status",
+            "/api/space/design/v1/versions/{versionId}/sources/{sourceId}/cad-preparations:preview",
             "/api/space/design/v1/versions/{versionId}/sources/{sourceId}/cad-parses/{jobId}",
+            "/api/space/design/v1/versions/{versionId}/sources/{sourceId}/cad-parses/{jobId}/review-workspace",
+            "/api/space/design/v1/versions/{versionId}/sources/{sourceId}/cad-parses/{jobId}/review-workspace:apply",
             "/api/space/design/v1/versions/{versionId}/sources/{sourceId}/cad-parses/{jobId}:cancel",
             "/api/space/design/v1/versions/{versionId}/sources/{sourceId}/cad-parses/{jobId}:retry",
             "/api/space/design/v1/versions/{versionId}/sources/{sourceId}/underlay-calibration",
@@ -137,8 +163,10 @@ public sealed class SpaceDesignV1OpenApiTests
             .Select(operation =>
                 operation.Value.GetProperty("operationId").GetString())
             .ToArray();
-        Assert.Equal(118, operationIds.Length);
-        Assert.Equal(118, operationIds.Distinct().Count());
+        Assert.Equal(148, operationIds.Length);
+        Assert.Equal(148, operationIds.Distinct().Count());
+        Assert.Contains("GetCapability", operationIds);
+        Assert.Contains("ReplaceProviderConfiguration", operationIds);
         Assert.Contains("GetPolicy", operationIds);
         Assert.Contains("UpdatePolicy", operationIds);
         Assert.Contains("GetUsage", operationIds);
@@ -180,6 +208,9 @@ public sealed class SpaceDesignV1OpenApiTests
         Assert.Contains("UploadCadSource", operationIds);
         Assert.Contains("StartParse", operationIds);
         Assert.Contains("GetParse", operationIds);
+        Assert.Contains("ListReviewCandidates", operationIds);
+        Assert.Contains("GetReviewWorkspace", operationIds);
+        Assert.Contains("ApplyReviewChanges", operationIds);
         Assert.Contains("CancelParse", operationIds);
         Assert.Contains("RetryParse", operationIds);
         Assert.Contains("CreateValidation", operationIds);
@@ -195,13 +226,26 @@ public sealed class SpaceDesignV1OpenApiTests
         Assert.Contains("DownloadErrorReport", operationIds);
         Assert.Contains("CreateAsset", operationIds);
         Assert.Contains("CreateVersion", operationIds);
+        Assert.Contains("GetFloors", operationIds);
+        Assert.Contains("CreateFloor", operationIds);
+        Assert.Contains("GetWarehouseTemplates", operationIds);
+        Assert.Contains("CreateTenantWarehouseTemplate", operationIds);
+        Assert.Contains("PreviewWarehouseTemplate", operationIds);
+        Assert.Contains("ApplyWarehouseTemplateFloor", operationIds);
         Assert.Contains("CreateSource", operationIds);
+        Assert.Contains("GetSourceRemovalPreview", operationIds);
+        Assert.Contains("RemoveSource", operationIds);
         Assert.Contains("GetScene", operationIds);
+        Assert.Contains("GetPublishedScene", operationIds);
         Assert.Contains("ApplyElementCommands", operationIds);
+        Assert.Contains("ApplyLayoutCommands", operationIds);
+        Assert.Contains("PreviewLocationCodes", operationIds);
+        Assert.Contains("ApplyLocationCodes", operationIds);
         Assert.Contains("UploadUnderlay", operationIds);
         Assert.Contains("GetFile", operationIds);
         Assert.Contains("GetUnderlayContent", operationIds);
         Assert.Contains("AttachUnderlay", operationIds);
+        Assert.Contains("CompensateUnderlay", operationIds);
         Assert.Contains("GetUnderlayCalibration", operationIds);
         Assert.Contains("CalibrateUnderlay", operationIds);
         Assert.Contains("RefreshWmsAdoption", operationIds);
@@ -278,6 +322,49 @@ public sealed class SpaceDesignV1OpenApiTests
                 .GetProperty("format")
                 .GetString());
         Assert.True(exchangeResponses.GetProperty("409")
+            .GetProperty("content")
+            .TryGetProperty("application/problem+json", out _));
+    }
+
+    [Fact]
+    public void Published_viewer_scene_contract_is_required_and_overlay_free()
+    {
+        using var document = ReadContract();
+        var root = document.RootElement;
+        var schema = Schema(
+            root.GetProperty("components").GetProperty("schemas"),
+            "CP6.Space.Contracts.SpacePublishedViewerSceneDto");
+        AssertExactRequiredNames(
+            schema,
+            "schemaVersion",
+            "authority",
+            "runtimeOverlayIncluded",
+            "siteId",
+            "publishedVersionId",
+            "publishedAtUtc",
+            "contentRevision",
+            "contentHash",
+            "floors");
+        AssertNullable(schema, "publishedAtUtc", "contentHash");
+        AssertNonNullable(
+            schema,
+            "schemaVersion",
+            "authority",
+            "runtimeOverlayIncluded",
+            "siteId",
+            "publishedVersionId",
+            "contentRevision",
+            "floors");
+
+        var operation = root.GetProperty("paths")
+            .GetProperty(
+                "/api/space/design/v1/sites/{siteId}/published-scene")
+            .GetProperty("get");
+        Assert.Equal(
+            "GetPublishedScene",
+            operation.GetProperty("operationId").GetString());
+        Assert.True(operation.GetProperty("responses")
+            .GetProperty("404")
             .GetProperty("content")
             .TryGetProperty("application/problem+json", out _));
     }
@@ -1422,6 +1509,841 @@ public sealed class SpaceDesignV1OpenApiTests
                 .GetProperty("schema")
                 .GetProperty("$ref")
                 .GetString());
+
+        var requestSchema = document.RootElement
+            .GetProperty("components")
+            .GetProperty("schemas")
+            .GetProperty(
+                "CP6.Space.Contracts.ApplySpaceElementCommandBatchRequest");
+        var required = requestSchema.GetProperty("required")
+            .EnumerateArray()
+            .Select(property => property.GetString())
+            .ToHashSet(StringComparer.Ordinal);
+        Assert.Contains("leaseId", required);
+    }
+
+    [Fact]
+    public void Floor_initialization_exposes_read_and_required_create_contracts()
+    {
+        using var document = ReadContract();
+        var path = document.RootElement
+            .GetProperty("paths")
+            .GetProperty(
+                "/api/space/design/v1/versions/{versionId}/floors");
+        Assert.Equal(
+            "GetFloors",
+            path.GetProperty("get").GetProperty("operationId").GetString());
+
+        var create = path.GetProperty("post");
+        Assert.Equal(
+            "CreateFloor",
+            create.GetProperty("operationId").GetString());
+        Assert.True(
+            create.GetProperty("requestBody").GetProperty("required")
+                .GetBoolean());
+        var required = document.RootElement
+            .GetProperty("components")
+            .GetProperty("schemas")
+            .GetProperty("CP6.Space.Contracts.CreateSpaceFloorRequest")
+            .GetProperty("required")
+            .EnumerateArray()
+            .Select(property => property.GetString())
+            .ToHashSet(StringComparer.Ordinal);
+        Assert.True(required.SetEquals(
+        [
+            "floorCode",
+            "name",
+            "level",
+            "elevation",
+            "height",
+            "expectedContentRevision",
+        ]));
+    }
+
+    [Fact]
+    public void Warehouse_template_catalog_exposes_required_preview_contract()
+    {
+        using var document = ReadContract();
+        var paths = document.RootElement.GetProperty("paths");
+        Assert.Equal(
+            "GetWarehouseTemplates",
+            paths.GetProperty("/api/space/design/v1/templates")
+                .GetProperty("get")
+                .GetProperty("operationId")
+                .GetString());
+        var create = paths.GetProperty("/api/space/design/v1/templates")
+            .GetProperty("post");
+        Assert.Equal(
+            "CreateTenantWarehouseTemplate",
+            create.GetProperty("operationId").GetString());
+        Assert.True(
+            create.GetProperty("requestBody").GetProperty("required")
+                .GetBoolean());
+        AssertExactRequired(
+            Schema(
+                document.RootElement.GetProperty("components")
+                    .GetProperty("schemas"),
+                "CP6.Space.Contracts.CreateTenantSpaceWarehouseTemplateRequest"),
+            "templateCode",
+            "name",
+            "schemaVersion",
+            "floors",
+            "zones",
+            "aisles",
+            "racks");
+        var preview = paths
+            .GetProperty(
+                "/api/space/design/v1/templates/{templateId}/instantiate")
+            .GetProperty("post");
+        Assert.Equal(
+            "PreviewWarehouseTemplate",
+            preview.GetProperty("operationId").GetString());
+        Assert.True(
+            preview.GetProperty("requestBody").GetProperty("required")
+                .GetBoolean());
+        var required = document.RootElement
+            .GetProperty("components")
+            .GetProperty("schemas")
+            .GetProperty(
+                "CP6.Space.Contracts.PreviewSpaceWarehouseTemplateRequest")
+            .GetProperty("required")
+            .EnumerateArray()
+            .Select(property => property.GetString()!)
+            .ToArray();
+        Assert.Equal(["templateVersionId"], required);
+    }
+
+    [Fact]
+    public void Warehouse_template_floor_apply_is_required_and_revision_fenced()
+    {
+        using var document = ReadContract();
+        var root = document.RootElement;
+        var operation = root.GetProperty("paths")
+            .GetProperty(
+                "/api/space/design/v1/versions/{versionId}/floors/" +
+                "{floorLogicalId}/templates/{templateId}:apply")
+            .GetProperty("post");
+
+        Assert.Equal(
+            "ApplyWarehouseTemplateFloor",
+            operation.GetProperty("operationId").GetString());
+        Assert.True(operation.GetProperty("requestBody")
+            .GetProperty("required")
+            .GetBoolean());
+        Assert.True(operation.GetProperty("responses")
+            .TryGetProperty("200", out _));
+
+        var schemas = root.GetProperty("components").GetProperty("schemas");
+        AssertExactRequired(
+            Schema(
+                schemas,
+                "CP6.Space.Contracts.ApplySpaceWarehouseTemplateFloorRequest"),
+            "schemaVersion",
+            "siteId",
+            "templateVersionId",
+            "proposalHash",
+            "templateFloorKey",
+            "commandBatchId",
+            "clientInstanceId",
+            "leaseId",
+            "expectedFloorRevision",
+            "expectedContentRevision");
+    }
+
+    [Fact]
+    public void Version_summary_contract_requires_LM_FR_002_metadata()
+    {
+        using var document = ReadContract();
+        var schemas = document.RootElement
+            .GetProperty("components")
+            .GetProperty("schemas");
+
+        AssertExactRequired(
+            Schema(schemas, "CP6.Space.Contracts.SpaceVersionDto"),
+            "creationSource",
+            "createdAtUtc",
+            "updatedAtUtc",
+            "openBlockingCount");
+    }
+
+    [Fact]
+    public void Element_property_commands_expose_optional_retype_and_manual_lock_contracts()
+    {
+        using var document = ReadContract();
+        var schema = document.RootElement
+            .GetProperty("components")
+            .GetProperty("schemas")
+            .GetProperty(
+                "CP6.Space.Contracts.SpaceUpdateElementPropertiesDto");
+        var elementType = schema.GetProperty("properties")
+            .GetProperty("elementType");
+        var manualCorrectionLocked = schema.GetProperty("properties")
+            .GetProperty("manualCorrectionLocked");
+
+        Assert.Equal("string", elementType.GetProperty("type").GetString());
+        Assert.Equal(
+            "boolean",
+            manualCorrectionLocked.GetProperty("type").GetString());
+        Assert.True(
+            manualCorrectionLocked.GetProperty("nullable").GetBoolean());
+        if (schema.TryGetProperty("required", out var required))
+        {
+            var requiredProperties = required.EnumerateArray()
+                .Select(item => item.GetString())
+                .ToArray();
+            Assert.DoesNotContain(
+                requiredProperties,
+                item => string.Equals(
+                    item,
+                    "elementType",
+                    StringComparison.Ordinal));
+            Assert.DoesNotContain(
+                requiredProperties,
+                item => string.Equals(
+                    item,
+                    "manualCorrectionLocked",
+                    StringComparison.Ordinal));
+        }
+    }
+
+    [Fact]
+    public void Scene_and_CAD_review_expose_manual_correction_lock_state()
+    {
+        using var document = ReadContract();
+        var schemas = document.RootElement
+            .GetProperty("components")
+            .GetProperty("schemas");
+        var sceneProperties = schemas
+            .GetProperty("CP6.Space.Contracts.SpaceSceneElementDto")
+            .GetProperty("properties");
+        Assert.Equal(
+            "boolean",
+            sceneProperties.GetProperty("isManualCorrectionLocked")
+                .GetProperty("type")
+                .GetString());
+        Assert.Equal(
+            "int64",
+            sceneProperties.GetProperty("userCorrectionVersion")
+                .GetProperty("format")
+                .GetString());
+
+        var cadChange = schemas
+            .GetProperty("CP6.Space.Contracts.SpaceCadChangeV1");
+        var cadRequired = cadChange.GetProperty("required")
+            .EnumerateArray()
+            .Select(item => item.GetString())
+            .ToHashSet(StringComparer.Ordinal);
+        Assert.Contains("isManualCorrectionLocked", cadRequired);
+        Assert.Contains("userCorrectionVersion", cadRequired);
+
+        var typescript = File.ReadAllText(
+            Path.Combine(
+                RepositoryRoot,
+                "sdk",
+                "typescript",
+                "space-design-v1",
+                "spaceDesignV1Client.ts"));
+        AssertRequiredTypeScriptProperties(
+            ExtractTypeBlock(
+                typescript,
+                "export interface ISpaceCadChangeV1"),
+            "isManualCorrectionLocked",
+            "userCorrectionVersion");
+    }
+
+    [Fact]
+    public void Excel_CAD_confirmation_requires_edit_session_and_revision_fences()
+    {
+        using var document = ReadContract();
+        var operation = document.RootElement
+            .GetProperty("paths")
+            .GetProperty(
+                "/api/space/design/v1/versions/{versionId}/excel-cad-matches/" +
+                "{matchJobId}/confirmations")
+            .GetProperty("post");
+        Assert.True(
+            operation.GetProperty("requestBody")
+                .GetProperty("required")
+                .GetBoolean());
+
+        var schemas = document.RootElement.GetProperty("components")
+            .GetProperty("schemas");
+        AssertExactRequired(
+            Schema(
+                schemas,
+                "CP6.Space.Contracts.ConfirmSpaceExcelCadMatchRequest"),
+            "confirmed",
+            "artifactId",
+            "artifactPayloadSha256",
+            "expectedContentRevision",
+            "clientInstanceId",
+            "leaseId",
+            "expectedFloorRevision");
+
+        var typescript = File.ReadAllText(
+            Path.Combine(
+                RepositoryRoot,
+                "sdk",
+                "typescript",
+                "space-design-v1",
+                "spaceDesignV1Client.ts"));
+        AssertRequiredTypeScriptProperties(
+            ExtractTypeBlock(
+                typescript,
+                "export interface IConfirmSpaceExcelCadMatchRequest"),
+            "confirmed",
+            "artifactId",
+            "artifactPayloadSha256",
+            "expectedContentRevision",
+            "clientInstanceId",
+            "leaseId",
+            "expectedFloorRevision");
+    }
+
+    [Fact]
+    public void Source_removal_requires_preview_fences_and_generated_client_fields()
+    {
+        using var document = ReadContract();
+        var root = document.RootElement;
+        var remove = root.GetProperty("paths")
+            .GetProperty(
+                "/api/space/design/v1/versions/{versionId}/sources/" +
+                "{sourceId}:remove")
+            .GetProperty("post");
+        Assert.True(remove.GetProperty("requestBody")
+            .GetProperty("required").GetBoolean());
+        Assert.True(remove.GetProperty("responses")
+            .GetProperty("200").GetProperty("headers")
+            .TryGetProperty("Idempotent-Replay", out _));
+
+        var schemas = root.GetProperty("components").GetProperty("schemas");
+        AssertExactRequired(
+            Schema(schemas, "CP6.Space.Contracts.RemoveSpaceSourceRequest"),
+            "expectedContentRevision",
+            "expectedSourceRowVersion");
+        AssertExactRequired(
+            Schema(schemas, "CP6.Space.Contracts.RemoveSpaceSourceResponse"),
+            "sourceId",
+            "versionContentRevision",
+            "physicalFileRetained",
+            "idempotentReplay");
+        AssertExactRequired(
+            Schema(
+                schemas,
+                "CP6.Space.Contracts.SpaceSourceRemovalReferenceDto"),
+            "code",
+            "count",
+            "blocksRemoval");
+        var preview = Schema(
+            schemas,
+            "CP6.Space.Contracts.SpaceSourceRemovalPreviewDto");
+        var previewRequired = preview.GetProperty("required")
+            .EnumerateArray()
+            .Select(property => property.GetString()!)
+            .ToHashSet(StringComparer.Ordinal);
+        Assert.Equal(
+            new HashSet<string>(StringComparer.Ordinal)
+            {
+                "sourceId",
+                "fileId",
+                "displayName",
+                "sourceType",
+                "state",
+                "versionContentRevision",
+                "sourceRowVersion",
+                "canRemove",
+                "physicalFileRetained",
+                "references",
+            },
+            previewRequired);
+        AssertNonNullable(
+            preview,
+            "sourceId",
+            "displayName",
+            "sourceType",
+            "state",
+            "versionContentRevision",
+            "sourceRowVersion",
+            "canRemove",
+            "physicalFileRetained",
+            "references");
+        Assert.True(
+            preview.GetProperty("properties")
+                .GetProperty("fileId")
+                .GetProperty("nullable")
+                .GetBoolean());
+
+        var typescript = File.ReadAllText(
+            Path.Combine(
+                RepositoryRoot,
+                "sdk",
+                "typescript",
+                "space-design-v1",
+                "spaceDesignV1Client.ts"));
+        AssertRequiredTypeScriptProperties(
+            ExtractTypeBlock(
+                typescript,
+                "export interface IRemoveSpaceSourceRequest"),
+            "expectedContentRevision",
+            "expectedSourceRowVersion");
+        AssertRequiredTypeScriptProperties(
+            ExtractTypeBlock(
+                typescript,
+                "export interface IRemoveSpaceSourceResponse"),
+            "sourceId",
+            "versionContentRevision",
+            "physicalFileRetained",
+            "idempotentReplay");
+        AssertRequiredTypeScriptProperties(
+            ExtractTypeBlock(
+                typescript,
+                "export interface ISpaceSourceRemovalPreviewDto"),
+            "sourceId",
+            "fileId",
+            "displayName",
+            "sourceType",
+            "state",
+            "versionContentRevision",
+            "sourceRowVersion",
+            "canRemove",
+            "physicalFileRetained",
+            "references");
+    }
+
+    [Fact]
+    public void Excel_CAD_compensation_requires_sealed_history_and_all_fences()
+    {
+        using var document = ReadContract();
+        var operation = document.RootElement
+            .GetProperty("paths")
+            .GetProperty(
+                "/api/space/design/v1/versions/{versionId}/excel-cad-matches/" +
+                "{matchJobId}/confirmations/{applyJobId}:compensate")
+            .GetProperty("post");
+        Assert.Equal(
+            "CompensateConfirmation",
+            operation.GetProperty("operationId").GetString());
+        Assert.True(operation.GetProperty("requestBody")
+            .GetProperty("required").GetBoolean());
+
+        var schemas = document.RootElement.GetProperty("components")
+            .GetProperty("schemas");
+        AssertExactRequired(
+            Schema(
+                schemas,
+                "CP6.Space.Contracts.CompensateSpaceExcelCadApplyRequest"),
+            "schemaVersion",
+            "direction",
+            "commandBatchId",
+            "clientInstanceId",
+            "leaseId",
+            "expectedFloorRevision",
+            "expectedContentRevision",
+            "historySha256");
+
+        var typescript = File.ReadAllText(
+            Path.Combine(
+                RepositoryRoot,
+                "sdk",
+                "typescript",
+                "space-design-v1",
+                "spaceDesignV1Client.ts"));
+        AssertRequiredTypeScriptProperties(
+            ExtractTypeBlock(
+                typescript,
+                "export interface ICompensateSpaceExcelCadApplyRequest"),
+            "schemaVersion",
+            "direction",
+            "commandBatchId",
+            "clientInstanceId",
+            "leaseId",
+            "expectedFloorRevision",
+            "expectedContentRevision",
+            "historySha256");
+    }
+
+    [Fact]
+    public void Layout_commands_require_all_concurrency_fences_and_generated_clients()
+    {
+        using var document = ReadContract();
+        var operation = document.RootElement
+            .GetProperty("paths")
+            .GetProperty(
+                "/api/space/design/v1/versions/{versionId}/floors/" +
+                "{floorLogicalId}/layout-commands")
+            .GetProperty("post");
+        Assert.Equal(
+            "ApplyLayoutCommands",
+            operation.GetProperty("operationId").GetString());
+        Assert.True(
+            operation.GetProperty("requestBody")
+                .GetProperty("required")
+                .GetBoolean());
+
+        var requestSchema = document.RootElement
+            .GetProperty("components")
+            .GetProperty("schemas")
+            .GetProperty(
+                "CP6.Space.Contracts.ApplySpaceLayoutCommandBatchRequest");
+        var required = requestSchema.GetProperty("required")
+            .EnumerateArray()
+            .Select(property => property.GetString())
+            .ToHashSet(StringComparer.Ordinal);
+        Assert.Contains("commandBatchId", required);
+        Assert.Contains("clientInstanceId", required);
+        Assert.Contains("leaseId", required);
+        Assert.Contains("expectedFloorRevision", required);
+        Assert.Contains("expectedContentRevision", required);
+        Assert.Contains("commands", required);
+
+        var typescript = File.ReadAllText(
+            Path.Combine(
+                RepositoryRoot,
+                "sdk",
+                "typescript",
+                "space-design-v1",
+                "spaceDesignV1Client.ts"));
+        var request = ExtractTypeBlock(
+            typescript,
+            "export interface IApplySpaceLayoutCommandBatchRequest");
+        AssertRequiredTypeScriptProperties(
+            request,
+            "commandBatchId",
+            "clientInstanceId",
+            "leaseId",
+            "expectedFloorRevision",
+            "expectedContentRevision",
+            "commands");
+        var response = ExtractTypeBlock(
+            typescript,
+            "export interface IApplySpaceLayoutCommandBatchResponse");
+        AssertRequiredTypeScriptProperties(
+            response,
+            "commandBatchId",
+            "floorRevision",
+            "versionContentRevision",
+            "appliedCommands",
+            "affectedZones",
+            "affectedAisles",
+            "affectedRacks",
+            "affectedRackLevels",
+            "affectedLocations",
+            "idempotentReplay");
+
+        var schemas = document.RootElement.GetProperty("components")
+            .GetProperty("schemas");
+        AssertExactRequired(
+            Schema(schemas, "CP6.Space.Contracts.SpaceUpdateLayoutRackDto"),
+            "zoneLogicalId",
+            "rackCode",
+            "x",
+            "y",
+            "z",
+            "rotationZ",
+            "width",
+            "depth",
+            "height",
+            "levels");
+        AssertExactRequired(
+            Schema(schemas, "CP6.Space.Contracts.SpaceDeleteLayoutObjectDto"),
+            "cascade");
+        AssertRequiredTypeScriptProperties(
+            ExtractTypeBlock(
+                typescript,
+                "export interface ISpaceDeleteLayoutObjectDto"),
+            "cascade");
+    }
+
+    [Fact]
+    public void Location_coding_requires_preview_then_fenced_apply_and_generated_clients()
+    {
+        using var document = ReadContract();
+        var paths = document.RootElement.GetProperty("paths");
+        var schemas = document.RootElement.GetProperty("components")
+            .GetProperty("schemas");
+
+        var preview = paths.GetProperty(
+                "/api/space/design/v1/versions/{versionId}/floors/" +
+                "{floorLogicalId}/location-codes:preview")
+            .GetProperty("post");
+        Assert.Equal(
+            "PreviewLocationCodes",
+            preview.GetProperty("operationId").GetString());
+        Assert.True(
+            preview.GetProperty("requestBody")
+                .GetProperty("required")
+                .GetBoolean());
+        AssertExactRequired(
+            Schema(
+                schemas,
+                "CP6.Space.Contracts.PreviewSpaceLocationCodesRequest"),
+            "schemaVersion",
+            "mode",
+            "expectedFloorRevision",
+            "expectedContentRevision");
+
+        var apply = paths.GetProperty(
+                "/api/space/design/v1/versions/{versionId}/floors/" +
+                "{floorLogicalId}/location-codes:apply")
+            .GetProperty("post");
+        Assert.Equal(
+            "ApplyLocationCodes",
+            apply.GetProperty("operationId").GetString());
+        Assert.True(
+            apply.GetProperty("requestBody")
+                .GetProperty("required")
+                .GetBoolean());
+        AssertExactRequired(
+            Schema(
+                schemas,
+                "CP6.Space.Contracts.ApplySpaceLocationCodesRequest"),
+            "schemaVersion",
+            "commandBatchId",
+            "clientInstanceId",
+            "leaseId",
+            "mode",
+            "expectedFloorRevision",
+            "expectedContentRevision",
+            "proposalHash");
+
+        var typescript = File.ReadAllText(
+            Path.Combine(
+                RepositoryRoot,
+                "sdk",
+                "typescript",
+                "space-design-v1",
+                "spaceDesignV1Client.ts"));
+        AssertRequiredTypeScriptProperties(
+            ExtractTypeBlock(
+                typescript,
+                "export interface IPreviewSpaceLocationCodesRequest"),
+            "schemaVersion",
+            "mode",
+            "expectedFloorRevision",
+            "expectedContentRevision");
+        AssertRequiredTypeScriptProperties(
+            ExtractTypeBlock(
+                typescript,
+                "export interface IApplySpaceLocationCodesRequest"),
+            "schemaVersion",
+            "commandBatchId",
+            "clientInstanceId",
+            "leaseId",
+            "mode",
+            "expectedFloorRevision",
+            "expectedContentRevision",
+            "proposalHash");
+    }
+
+    [Fact]
+    public void Generated_command_batch_client_requires_the_edit_lease()
+    {
+        var typescript = File.ReadAllText(
+            Path.Combine(
+                RepositoryRoot,
+                "sdk",
+                "typescript",
+                "space-design-v1",
+                "spaceDesignV1Client.ts"));
+        var request = ExtractTypeBlock(
+            typescript,
+            "export interface IApplySpaceElementCommandBatchRequest");
+
+        AssertRequiredTypeScriptProperties(request, "leaseId");
+    }
+
+    [Fact]
+    public void Cad_review_apply_history_and_manual_create_are_required_in_generated_clients()
+    {
+        using var document = ReadContract();
+        var operation = document.RootElement
+            .GetProperty("paths")
+            .GetProperty(
+                "/api/space/design/v1/versions/{versionId}/sources/{sourceId}/" +
+                "cad-parses/{jobId}/review-workspace:apply")
+            .GetProperty("post");
+        Assert.Equal(
+            "ApplyReviewChanges",
+            operation.GetProperty("operationId").GetString());
+        Assert.True(operation.GetProperty("requestBody")
+            .GetProperty("required")
+            .GetBoolean());
+
+        var schemas = document.RootElement
+            .GetProperty("components")
+            .GetProperty("schemas");
+        AssertExactRequired(
+            schemas.GetProperty(
+                "CP6.Space.Contracts.ApplySpaceCadChangesetRequest"),
+            "commandBatchId",
+            "clientInstanceId",
+            "leaseId",
+            "expectedFloorRevision",
+            "expectedContentRevision",
+            "workspaceSha256",
+            "changeIds");
+        var changeIds = schemas
+            .GetProperty("CP6.Space.Contracts.ApplySpaceCadChangesetRequest")
+            .GetProperty("properties")
+            .GetProperty("changeIds");
+        Assert.Equal(1, changeIds.GetProperty("minItems").GetInt32());
+        Assert.Equal(
+            SpaceCadReviewWorkspaceVersions.MaximumApplyChanges,
+            changeIds.GetProperty("maxItems").GetInt32());
+        AssertExactRequired(
+            schemas.GetProperty(
+                "CP6.Space.Contracts.ApplySpaceCadChangesetResponse"),
+            "commandBatchId",
+            "floorRevision",
+            "versionContentRevision",
+            "appliedChangeCount",
+            "workspaceSha256",
+            "idempotentReplay",
+            "undoCommands",
+            "redoCommands");
+        AssertExactRequired(
+            schemas.GetProperty(
+                "CP6.Space.Contracts.SpaceSavedElementCommandDto"),
+            "type",
+            "targetLogicalId");
+        AssertExactRequired(
+            schemas.GetProperty("CP6.Space.Contracts.SpaceCreateElementDto"),
+            "elementType",
+            "geometryJson",
+            "x",
+            "y",
+            "z",
+            "rotationZ",
+            "width",
+            "height",
+            "depth",
+            "attributes");
+        var createElementProperties = schemas
+            .GetProperty("CP6.Space.Contracts.SpaceCreateElementDto")
+            .GetProperty("properties");
+        Assert.True(createElementProperties.TryGetProperty(
+            "linkedEntityType",
+            out _));
+        Assert.True(createElementProperties.TryGetProperty(
+            "linkedLogicalId",
+            out _));
+
+        var typescript = File.ReadAllText(
+            Path.Combine(
+                RepositoryRoot,
+                "sdk",
+                "typescript",
+                "space-design-v1",
+                "spaceDesignV1Client.ts"));
+        AssertRequiredTypeScriptProperties(
+            ExtractTypeBlock(
+                typescript,
+                "export interface IApplySpaceCadChangesetRequest"),
+            "commandBatchId",
+            "clientInstanceId",
+            "leaseId",
+            "expectedFloorRevision",
+            "expectedContentRevision",
+            "workspaceSha256",
+            "changeIds");
+        AssertRequiredTypeScriptProperties(
+            ExtractTypeBlock(
+                typescript,
+                "export interface IApplySpaceCadChangesetResponse"),
+            "undoCommands",
+            "redoCommands");
+        AssertRequiredTypeScriptProperties(
+            ExtractTypeBlock(
+                typescript,
+                "export interface ISpaceSavedElementCommandDto"),
+            "type",
+            "targetLogicalId");
+        var createElementTypeScript = ExtractTypeBlock(
+            typescript,
+            "export interface ISpaceCreateElementDto");
+        AssertRequiredTypeScriptProperties(
+            createElementTypeScript,
+            "elementType",
+            "geometryJson",
+            "x",
+            "y",
+            "z",
+            "rotationZ",
+            "width",
+            "height",
+            "depth",
+            "attributes");
+        Assert.Contains(
+            "linkedEntityType?: string | undefined;",
+            createElementTypeScript,
+            StringComparison.Ordinal);
+        Assert.Contains(
+            "linkedLogicalId?: string | undefined;",
+            createElementTypeScript,
+            StringComparison.Ordinal);
+    }
+
+    [Theory]
+    [InlineData(
+        "/api/space/design/v1/versions/{versionId}/floors/{floorLogicalId}/lease",
+        "CP6.Space.Contracts.AcquireSpaceEditLeaseRequest")]
+    [InlineData(
+        "/api/space/design/v1/versions/{versionId}/floors/{floorLogicalId}/lease/{leaseId}:renew",
+        "CP6.Space.Contracts.ContinueSpaceEditLeaseRequest")]
+    [InlineData(
+        "/api/space/design/v1/versions/{versionId}/floors/{floorLogicalId}/lease/{leaseId}:release",
+        "CP6.Space.Contracts.ContinueSpaceEditLeaseRequest")]
+    [InlineData(
+        "/api/space/design/v1/versions/{versionId}/floors/{floorLogicalId}/lease:takeover",
+        "CP6.Space.Contracts.TakeoverSpaceEditLeaseRequest")]
+    public void Lease_mutations_require_their_json_body(
+        string path,
+        string requestSchema)
+    {
+        using var document = ReadContract();
+        var body = document.RootElement
+            .GetProperty("paths")
+            .GetProperty(path)
+            .GetProperty("post")
+            .GetProperty("requestBody");
+
+        Assert.True(body.GetProperty("required").GetBoolean());
+        Assert.Equal(
+            $"#/components/schemas/{requestSchema}",
+            body.GetProperty("content")
+                .GetProperty("application/json")
+                .GetProperty("schema")
+                .GetProperty("$ref")
+                .GetString());
+    }
+
+    [Fact]
+    public void Generated_lease_clients_require_session_fence_fields()
+    {
+        var typescript = File.ReadAllText(
+            Path.Combine(
+                RepositoryRoot,
+                "sdk",
+                "typescript",
+                "space-design-v1",
+                "spaceDesignV1Client.ts"));
+
+        AssertRequiredTypeScriptProperties(
+            ExtractTypeBlock(
+                typescript,
+                "export interface IAcquireSpaceEditLeaseRequest"),
+            "clientInstanceId");
+        AssertRequiredTypeScriptProperties(
+            ExtractTypeBlock(
+                typescript,
+                "export interface IContinueSpaceEditLeaseRequest"),
+            "clientInstanceId");
+        AssertRequiredTypeScriptProperties(
+            ExtractTypeBlock(
+                typescript,
+                "export interface ITakeoverSpaceEditLeaseRequest"),
+            "clientInstanceId",
+            "reason");
     }
 
     [Fact]
@@ -1556,6 +2478,24 @@ public sealed class SpaceDesignV1OpenApiTests
                 .GetProperty("200")
                 .GetProperty("headers")
                 .TryGetProperty("Idempotent-Replay", out _));
+
+        var schema = document.RootElement.GetProperty("components")
+            .GetProperty("schemas")
+            .GetProperty("CP6.Space.Contracts.AttachSpaceUnderlayRequest");
+        Assert.Equal(
+            new[]
+            {
+                "clientInstanceId",
+                "commandBatchId",
+                "expectedContentRevision",
+                "expectedFloorRevision",
+                "leaseId",
+                "sourceId",
+            },
+            schema.GetProperty("required").EnumerateArray()
+                .Select(item => item.GetString()).OrderBy(item => item));
+        Assert.True(schema.GetProperty("properties")
+            .GetProperty("sourceId").GetProperty("nullable").GetBoolean());
     }
 
     [Fact]
@@ -1593,6 +2533,40 @@ public sealed class SpaceDesignV1OpenApiTests
                 .TryGetProperty("Idempotent-Replay", out _));
     }
 
+    [Fact]
+    public void Underlay_compensation_requires_sealed_history_lease_and_revisions()
+    {
+        using var document = ReadContract();
+        var operation = document.RootElement.GetProperty("paths")
+            .GetProperty(
+                "/api/space/design/v1/versions/{versionId}/floors/{floorLogicalId}/underlay:compensate")
+            .GetProperty("post");
+        Assert.True(operation.GetProperty("requestBody")
+            .GetProperty("required").GetBoolean());
+        Assert.True(operation.GetProperty("parameters").EnumerateArray()
+            .Single(item => item.GetProperty("name").GetString() == "Idempotency-Key")
+            .GetProperty("required").GetBoolean());
+
+        var schema = document.RootElement.GetProperty("components")
+            .GetProperty("schemas")
+            .GetProperty("CP6.Space.Contracts.CompensateSpaceUnderlayRequest");
+        Assert.Equal(
+            new[]
+            {
+                "clientInstanceId",
+                "commandBatchId",
+                "direction",
+                "expectedContentRevision",
+                "expectedFloorRevision",
+                "historySha256",
+                "leaseId",
+                "originalCommandBatchId",
+                "schemaVersion",
+            },
+            schema.GetProperty("required").EnumerateArray()
+                .Select(item => item.GetString()).OrderBy(item => item));
+    }
+
     [Theory]
     [InlineData(
         "/api/space/design/v1/sites/{siteId}/versions",
@@ -1601,7 +2575,13 @@ public sealed class SpaceDesignV1OpenApiTests
         "/api/space/design/v1/versions/{versionId}/sources",
         "201")]
     [InlineData(
+        "/api/space/design/v1/versions/{versionId}/sources/{sourceId}:remove",
+        "200")]
+    [InlineData(
         "/api/space/design/v1/assets",
+        "201")]
+    [InlineData(
+        "/api/space/design/v1/templates",
         "201")]
     public void Write_operations_require_body_idempotency_and_replay_header(
         string path,
@@ -1698,6 +2678,7 @@ public sealed class SpaceDesignV1OpenApiTests
                      "GetAssets",
                      "DownloadStandardExcelTemplate",
                      "CreateAsset",
+                     "CreateTenantWarehouseTemplate",
                      "GetSources",
                      "CreateSource",
                      "UploadExcelSource",
@@ -1708,6 +2689,7 @@ public sealed class SpaceDesignV1OpenApiTests
                      "GetFile",
                      "GetUnderlayContent",
                      "AttachUnderlay",
+                     "CompensateUnderlay",
                      "GetUnderlayCalibration",
                      "CalibrateUnderlay",
                      "GetJob",
@@ -2006,6 +2988,332 @@ public sealed class SpaceDesignV1OpenApiTests
             "occupiedLocationRatePercent: number | null | undefined;",
             warehouseInventory,
             StringComparison.Ordinal);
+    }
+
+    [Fact]
+    public void Cad_provider_configuration_is_explicit_required_and_idempotent()
+    {
+        using var document = ReadContract();
+        var root = document.RootElement;
+        var operation = root.GetProperty("paths")
+            .GetProperty(
+                "/api/space/design/v1/sites/{siteId}/cad-provider-configuration")
+            .GetProperty("put");
+
+        Assert.True(operation.GetProperty("requestBody")
+            .GetProperty("required").GetBoolean());
+        var idempotency = operation.GetProperty("parameters")
+            .EnumerateArray()
+            .Single(parameter =>
+                parameter.GetProperty("name").GetString() ==
+                "Idempotency-Key");
+        Assert.Equal("header", idempotency.GetProperty("in").GetString());
+        Assert.True(idempotency.GetProperty("required").GetBoolean());
+        Assert.True(operation.GetProperty("responses")
+            .GetProperty("200")
+            .GetProperty("headers")
+            .TryGetProperty("Idempotent-Replay", out _));
+
+        var schemas = root.GetProperty("components").GetProperty("schemas");
+        AssertExactRequired(
+            Schema(
+                schemas,
+                "CP6.Space.Contracts.ReplaceSpaceCadProviderConfigurationRequest"),
+            "expectedConfigurationRevision",
+            "reason",
+            "certifications");
+        AssertExactRequired(
+            Schema(
+                schemas,
+                  "CP6.Space.Contracts.SpaceCadProviderCertificationInputDto"),
+              "providerKey",
+              "providerVersion",
+              "role",
+            "deploymentMode",
+            "dataBoundary",
+            "approvalEvidenceReference",
+            "validFromUtc",
+            "expiresAtUtc",
+            "supportsDwg",
+            "supportsDxf",
+            "licensingApproved",
+            "securityApproved",
+            "dataRegionApproved",
+            "deletionRetentionApproved",
+            "qualificationScore",
+            "qualificationRubricVersion",
+            "goldenDatasetSha256",
+            "frozenEnvironmentSha256",
+            "qualificationEvidenceReference");
+        AssertNullable(
+            Schema(
+                schemas,
+                "CP6.Space.Contracts.SpaceCadProviderCertificationInputDto"),
+            "secretReference");
+        AssertExactRequired(
+            Schema(
+                schemas,
+                  "CP6.Space.Contracts.SpaceCadProviderSlotDto"),
+              "providerKey",
+              "providerVersion",
+              "displayName",
+            "role",
+            "deploymentMode",
+            "dataBoundary",
+            "approvalEvidenceReference",
+            "secretReferenceConfigured",
+            "validFromUtc",
+            "expiresAtUtc",
+            "supportsDwg",
+            "supportsDxf",
+            "licensingApproved",
+            "securityApproved",
+            "dataRegionApproved",
+            "deletionRetentionApproved",
+            "qualified",
+            "runtimeAvailable",
+            "currentlyValid");
+        var providerSlot = Schema(
+            schemas,
+            "CP6.Space.Contracts.SpaceCadProviderSlotDto");
+        AssertNullable(providerSlot, "qualificationScore");
+        AssertNullable(providerSlot, "qualificationRubricVersion");
+        AssertNullable(providerSlot, "goldenDatasetSha256");
+        AssertNullable(providerSlot, "frozenEnvironmentSha256");
+        AssertNullable(providerSlot, "qualificationEvidenceReference");
+        AssertExactRequired(
+            Schema(schemas, "CP6.Space.Contracts.SpaceCadSiteCapabilityDto"),
+            "siteId",
+            "configurationRevision",
+            "canPrepareCad",
+            "cadGaReady",
+            "blockingCodes",
+            "evaluatedAtUtc");
+    }
+
+    [Fact]
+    public void Cad_preparation_contract_seals_preview_and_parse_start_fields()
+    {
+        using var document = ReadContract();
+        var root = document.RootElement;
+        var paths = root.GetProperty("paths");
+        var preview = paths.GetProperty(
+                "/api/space/design/v1/versions/{versionId}/sources/{sourceId}/cad-preparations:preview")
+            .GetProperty("post");
+        Assert.True(preview.GetProperty("requestBody")
+            .GetProperty("required").GetBoolean());
+        var start = paths.GetProperty(
+                "/api/space/design/v1/versions/{versionId}/sources/{sourceId}/cad-parses")
+            .GetProperty("post");
+        Assert.True(start.GetProperty("requestBody")
+            .GetProperty("required").GetBoolean());
+
+        var schemas = root.GetProperty("components").GetProperty("schemas");
+        AssertExactRequired(
+            Schema(schemas, "CP6.Space.Contracts.PreviewSpaceCadPreparationRequest"),
+            "floorLogicalId",
+            "confirmedUnit",
+            "sourceOriginInSourceUnits",
+            "floorOriginMillimeters",
+            "rotationZDegrees",
+            "mappingProfileId",
+            "mappingProfileVersion",
+            "layerOverrides");
+        AssertExactRequired(
+            Schema(schemas, "CP6.Space.Contracts.StartSpaceCadParseRequest"),
+            "preparationId",
+            "floorLogicalId",
+            "confirmedUnit",
+            "confirmedScaleToMillimeters",
+            "coordinateMetadataJson",
+            "coordinateTransformSha256",
+            "mappingProfileId",
+            "mappingProfileVersion",
+            "mappingDefinitionSha256",
+            "mappingPreviewSha256");
+        AssertExactRequired(
+            Schema(schemas, "CP6.Space.Contracts.SpaceCadPointV1"),
+            "x",
+            "y");
+        AssertExactRequired(
+            Schema(schemas, "CP6.Space.Contracts.SpaceCadMillimeterPointV1"),
+            "x",
+            "y",
+            "z");
+        AssertExactRequired(
+            Schema(schemas, "CP6.Space.Contracts.SpaceCadLayerMappingOverrideV1"),
+            "layerId",
+            "ignore");
+        AssertExactRequired(
+            Schema(schemas, "CP6.Space.Contracts.SpaceCadPreparationInventoryDto"),
+            "summary",
+            "layers",
+            "blocks");
+        AssertExactRequired(
+            Schema(schemas, "CP6.Space.Contracts.SpaceCadInventorySummaryV1"),
+            "layerCount",
+            "emptyLayerCount",
+            "blockCount",
+            "undefinedBlockCount",
+            "blockReferenceCount",
+            "attributedBlockReferenceCount",
+            "entityCount",
+            "supportedEntityCount",
+            "unsupportedEntityCount");
+        AssertExactRequired(
+            Schema(schemas, "CP6.Space.Contracts.SpaceCadLayerInventoryV1"),
+            "layerId",
+            "name",
+            "isVisible",
+            "entityCount",
+            "supportedEntityCount",
+            "unsupportedEntityCount",
+            "blockReferenceCount",
+            "attributedEntityCount",
+            "entityTypeCounts");
+        var blockInventory = Schema(
+            schemas,
+            "CP6.Space.Contracts.SpaceCadPreparationBlockInventoryDto");
+        AssertExactRequired(
+            blockInventory,
+            "blockId",
+            "name",
+            "isDefined",
+            "isExternalReference",
+            "definitionEntityCount",
+            "referenceCount",
+            "attributedReferenceCount",
+            "attributes");
+        Assert.False(blockInventory.GetProperty("properties")
+            .TryGetProperty("externalReferenceToken", out _));
+        AssertExactRequired(
+            Schema(schemas, "CP6.Space.Contracts.SpaceCadBlockAttributeInventoryV1"),
+            "name",
+            "referenceCount",
+            "distinctValueCount");
+        AssertExactRequired(
+            Schema(schemas, "CP6.Space.Contracts.SpaceCadBoundsV1"),
+            "minX",
+            "minY",
+            "maxX",
+            "maxY");
+        var previewResponse = Schema(
+            schemas,
+            "CP6.Space.Contracts.PreviewSpaceCadPreparationResponse");
+        AssertExactRequired(
+            previewResponse,
+            "baseContentRevision",
+            "readyForParsing",
+            "coordinateAnalysis",
+            "coordinateMetadata",
+            "coordinateIssues",
+            "mappingProfile");
+        Assert.True(previewResponse.GetProperty("properties")
+            .TryGetProperty("inventory", out var inventory));
+        Assert.Equal(
+            "#/components/schemas/CP6.Space.Contracts.SpaceCadPreparationInventoryDto",
+            inventory.GetProperty("$ref").GetString());
+        var coordinateIssues = previewResponse.GetProperty("properties")
+            .GetProperty("coordinateIssues");
+        Assert.Equal("array", coordinateIssues.GetProperty("type").GetString());
+        Assert.Equal(
+            "#/components/schemas/CP6.Space.Contracts.SpaceCadConversionIssueV1",
+            coordinateIssues.GetProperty("items").GetProperty("$ref").GetString());
+    }
+
+    [Fact]
+    public void Cad_mapping_profile_contract_is_versioned_and_typed()
+    {
+        using var document = ReadContract();
+        var root = document.RootElement;
+        var paths = root.GetProperty("paths");
+        var collection = paths.GetProperty(
+            "/api/space/design/v1/mapping-profiles/cad");
+        Assert.True(collection.TryGetProperty("get", out _));
+        var save = collection.GetProperty("post");
+        Assert.True(save.GetProperty("requestBody")
+            .GetProperty("required").GetBoolean());
+        var idempotency = save.GetProperty("parameters")
+            .EnumerateArray()
+            .Single(parameter => parameter.GetProperty("name").GetString() ==
+                "Idempotency-Key");
+        Assert.True(idempotency.GetProperty("required").GetBoolean());
+        Assert.True(paths.GetProperty(
+                "/api/space/design/v1/mapping-profiles/cad/{profileId}")
+            .TryGetProperty("get", out _));
+
+        var schemas = root.GetProperty("components").GetProperty("schemas");
+        AssertExactRequired(
+            Schema(schemas, "CP6.Space.Contracts.SaveSpaceCadMappingProfileRequest"),
+            "name",
+            "isEnabled",
+            "rules");
+        AssertExactRequired(
+            Schema(schemas, "CP6.Space.Contracts.SaveSpaceCadMappingProfileResponse"),
+            "profile",
+            "created",
+            "idempotentReplay");
+        AssertExactRequired(
+            Schema(schemas, "CP6.Space.Contracts.SpaceCadMappingProfileDto"),
+            "id",
+            "name",
+            "scope",
+            "version",
+            "isReadOnly",
+            "isEnabled",
+            "definitionSha256",
+            "rules");
+        AssertExactRequired(
+            Schema(schemas, "CP6.Space.Contracts.SpaceCadMappingRuleV1"),
+            "ruleId",
+            "priority",
+            "sourceKind",
+            "matchKind",
+            "pattern",
+            "target",
+            "geometryRule",
+            "confidenceWeight",
+            "isRequired");
+    }
+
+    [Fact]
+    public void Publish_warning_acknowledgement_contract_is_explicit()
+    {
+        using var document = ReadContract();
+        var schemas = document.RootElement
+            .GetProperty("components")
+            .GetProperty("schemas");
+        var request = Schema(
+            schemas,
+            "CP6.Space.Contracts.CreateSpacePublishAttemptRequest");
+        var requestProperties = request.GetProperty("properties");
+        Assert.True(requestProperties.TryGetProperty(
+            "warningAcknowledgementHash",
+            out var requestHash));
+        Assert.Equal("string", requestHash.GetProperty("type").GetString());
+        Assert.True(requestHash.GetProperty("nullable").GetBoolean());
+        if (request.TryGetProperty("required", out var requestRequired))
+        {
+            Assert.DoesNotContain(
+                "warningAcknowledgementHash",
+                requestRequired.EnumerateArray()
+                    .Select(value => value.GetString()));
+        }
+
+        var preview = Schema(
+            schemas,
+            "CP6.Space.Contracts.SpacePublishPreviewDto");
+        var previewProperties = preview.GetProperty("properties");
+        Assert.True(previewProperties.TryGetProperty(
+            "validationWarningCount",
+            out var warningCount));
+        Assert.Equal("integer", warningCount.GetProperty("type").GetString());
+        Assert.True(previewProperties.TryGetProperty(
+            "warningAcknowledgementHash",
+            out var previewHash));
+        Assert.Equal("string", previewHash.GetProperty("type").GetString());
+        Assert.True(previewHash.GetProperty("nullable").GetBoolean());
+        AssertExactRequired(preview, "validationWarningCount");
     }
 
     private static JsonElement Schema(JsonElement schemas, string name) =>

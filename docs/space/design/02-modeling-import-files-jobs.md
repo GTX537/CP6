@@ -70,7 +70,11 @@ public interface IFileSafetyScanner
 
 public interface ICadConverter
 {
-    Task<CadConversionResult> ConvertAsync(CadConversionRequest request, CancellationToken ct);
+    Task<SpaceCadConversionResult> ConvertAsync(
+        SpaceCadConversionRequest request,
+        Stream source,
+        ISpaceCadIrSink sink,
+        CancellationToken ct);
 }
 
 public interface ICadSemanticParser
@@ -85,6 +89,13 @@ public interface IExcelModelParser
 ```
 
 领域和 Application 只能依赖这些端口，不依赖具体 CAD SDK、杀毒引擎、对象存储 SDK 或 Excel 库类型。
+
+`ICadConverter` 的所有执行必须经过 Application 层的
+`SpaceCadConverterContractRunner`，不得由 WebApi、Worker 命令处理器或工具入口直接调用。
+Runner 把调用方提供的隔离区 Source 包装为只读且不转移所有权，按顺序校验流式
+Document → Layer/Block → Entity → Complete 协议，并把返回结果与 Sink 实际提交的
+Artifact SHA、Summary、Issue、Provider Key/Version 完整绑定。适配器即使捕获并忽略一次
+写 Source 或 Sink 协议异常，整次转换仍失败关闭；供应商 SDK 类型和临时路径不得穿过该边界。
 
 ### 3.2 部署边界
 
@@ -329,6 +340,11 @@ IR 以 Artifact 保存。大文件使用流式记录格式，API 不一次返回
 - 几何解释规则、默认高度/厚度。
 - 置信度权重和必须图层标记。
 
+Design V1 以 `/api/space/design/v1/mapping-profiles/cad` 提供租户 Profile 的
+list/get/save 权威。System 版本只读；租户复制后保存完整规则快照和 SHA-256，
+后续修改必须携带 RowVersion 与 Idempotency-Key，并追加不可变版本，不能原地覆盖。
+Profile/Version 以 Tenant 复合外键隔离，第一版不允许读取或复制其他租户方案。
+
 解析器输出 Preview Item：
 
 - 临时 `previewObjectId`，不是永久 LogicalId。
@@ -343,6 +359,12 @@ IR 以 Artifact 保存。大文件使用流式记录格式，API 不一次返回
 - `< 0.70` 只显示候选，不进入确认集。
 
 用户可修正类型、几何和属性并锁定。重新解析时，锁定校正通过 `SourceRef + userCorrectionVersion` 重新应用；无法重放时产生 Blocking，不静默覆盖。
+
+### 7.4 Preparation 到 Parse 的确定性重放
+
+向导确认后，服务端把 Tenant、Source SHA、Mapping Profile ID/Version、Profile Definition SHA、Inventory/Source Structure/Mapping Preview SHA，以及完整 Layer Overrides 写入规范排序、SHA-256 密封的 Mapping Replay Snapshot。Preparation 与后台 Parse Job 都保存同一快照，客户端不能提交或修改该字段。
+
+历史 schema v4 首次封存 Mapping Replay Snapshot；当前新 Parse Job 使用 schema v5，在同一快照上继续封存 Provider Key + Version。启动服务和 Worker 必须分别在入队前、Provider 调用前复核快照身份、哈希及 Provider 版本。Provider 使用不可变 Profile 版本和快照覆盖重新生成 Mapping Preview，并验证结果与快照期望值完全一致；不一致时失败关闭，不产生 PreviewSet 或 Draft 写入。schema v2–v4 只用于历史 Job 兼容，不允许新建。
 
 ## 8. Excel 流程
 

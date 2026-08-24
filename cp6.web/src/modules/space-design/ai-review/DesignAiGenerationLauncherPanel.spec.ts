@@ -53,6 +53,10 @@ describe('DesignAiGenerationLauncherPanel', () => {
       status: 'Draft',
       contentRevision: 42,
       rowVersion: 'version-row-version',
+      creationSource: 'Blank',
+      createdAtUtc: new Date('2026-08-15T12:00:00Z'),
+      updatedAtUtc: new Date('2026-08-15T12:00:00Z'),
+      openBlockingCount: 0,
     })
     vi.mocked(aiProposalReviewApi.getSources).mockResolvedValue({
       items: [new SpaceSourceDto({
@@ -177,5 +181,38 @@ describe('DesignAiGenerationLauncherPanel', () => {
 
     expect(wrapper.get('[data-test="create-rule-only-run"]').attributes('disabled'))
       .toBeDefined()
+  })
+
+  it('preselects the CAD source that requested the RuleOnly handoff', async () => {
+    vi.mocked(aiProposalReviewApi.getSources).mockResolvedValue({
+      items: [
+        new SpaceSourceDto({
+          id: 'source-1',
+          sourceType: 'Dwg',
+          state: 'PreviewReady',
+          mappingProfileId: 'mapping-1',
+          mappingProfileVersion: 3,
+        }),
+        new SpaceSourceDto({
+          id: 'source-2',
+          sourceType: 'Dxf',
+          state: 'PreviewReady',
+          mappingProfileId: 'mapping-2',
+          mappingProfileVersion: 4,
+        }),
+      ],
+    })
+    const wrapper = mount(DesignAiGenerationLauncherPanel, {
+      props: {
+        versionId: 'version-1',
+        currentContentRevision: 42,
+        initialSourceId: 'source-2',
+      },
+      global,
+    })
+    await flushPromises()
+
+    expect((wrapper.vm as unknown as { selectedSourceId: string }).selectedSourceId)
+      .toBe('source-2')
   })
 })

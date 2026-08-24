@@ -2,6 +2,8 @@ using CP6.Space.Application;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.DependencyInjection.Extensions;
+using Microsoft.Extensions.Logging;
+using Microsoft.Extensions.Logging.Abstractions;
 
 namespace CP6.Space.Infrastructure;
 
@@ -132,6 +134,9 @@ public static class SpaceInfrastructureRegistration
         services.AddScoped<
             ISpacePublishActivityService,
             SpacePublishActivityService>();
+        services.AddScoped<
+            ISpacePublishRecoveryMetricsSnapshotProvider,
+            SpacePublishRecoveryMetricsSnapshotProvider>();
         services.AddScoped<ISpaceHistoricalRepublishPublishStarter>(provider =>
             provider.GetRequiredService<SpacePublishOrchestrator>());
         services.AddScoped<ISpacePublishJobExecutor>(provider =>
@@ -261,13 +266,41 @@ public static class SpaceInfrastructureRegistration
             ISpacePlanningExchangeService,
             SpacePlanningExchangeService>();
         services.AddScoped<SpaceSourceCoordinator>();
-        services.AddScoped<ISpaceDesignV1Service, SpaceDesignV1Service>();
+        services.AddScoped<ISpaceLocationCodeRuleProvider,
+            Cp6SpaceLocationCodeRuleProvider>();
+        services.AddScoped<SpaceDesignV1Service>();
+        services.AddScoped<ISpaceDesignV1Service>(provider =>
+            provider.GetRequiredService<SpaceDesignV1Service>());
+        services.AddScoped<ISpaceDesignCodingService>(provider =>
+            provider.GetRequiredService<SpaceDesignV1Service>());
+        services.AddScoped<ISpaceEditLeaseService, SpaceEditLeaseService>();
         services.AddScoped<
             ISpaceRackGenerationProfileService,
             SpaceRackGenerationProfileService>();
         services.TryAddScoped<
-            ISpaceCadParseProvider,
-            UnavailableSpaceCadParseProvider>();
+            ISpaceCadProviderRegistry,
+            SpaceCadProviderRegistry>();
+        services.AddScoped(provider => new SpaceCadProviderRouter(
+            provider.GetRequiredService<SpaceContext>(),
+            provider.GetRequiredService<ISpaceCadProviderRegistry>(),
+            provider.GetRequiredService<ISpaceClock>(),
+            provider.GetService<ILogger<SpaceCadProviderRouter>>() ??
+                NullLogger<SpaceCadProviderRouter>.Instance));
+        services.TryAddScoped<ISpaceCadParseProvider>(provider =>
+            provider.GetRequiredService<SpaceCadProviderRouter>());
+        services.TryAddScoped<ISpaceCadPreparationProvider>(provider =>
+            provider.GetRequiredService<SpaceCadProviderRouter>());
+        services.AddScoped<
+            ISpaceCadProviderCapabilityService,
+            SpaceCadProviderCapabilityService>();
+        services.AddScoped<
+            ISpaceCadMappingProfileService,
+            SpaceCadMappingProfileService>();
+        services.AddScoped<ISpaceCadMappingProfileCatalog>(provider =>
+            provider.GetRequiredService<ISpaceCadMappingProfileService>());
+        services.AddScoped<
+            ISpaceCadPreparationService,
+            SpaceCadPreparationService>();
         services.AddScoped<
             ISpaceCadParseJobStepExecutor,
             SpaceCadParseJobStepExecutor>();

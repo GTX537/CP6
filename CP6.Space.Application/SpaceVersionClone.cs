@@ -7,12 +7,36 @@ public static class SpaceVersionCloneContract
     public const string ProcessorVersion = "space-clone-v2";
 }
 
+public static class SpaceBlankVersionContract
+{
+    public const string ProcessorVersion = "space-blank-v1";
+}
+
 public sealed record SpaceVersionCloneRequest(
     Guid ModelId,
     string Name,
     Guid OperationId);
 
 public sealed record SpaceVersionCloneStartResult(
+    Guid ModelVersionId,
+    long VersionNo,
+    SpaceVersionStatus VersionStatus,
+    Guid JobId,
+    SpaceJobStatus JobStatus,
+    bool Reused);
+
+public sealed record SpaceBlankVersionRequest(
+    Guid ModelId,
+    string Name,
+    Guid OperationId,
+    string InputHash);
+
+public sealed record SpaceBlankVersionPayload(
+    Guid ModelId,
+    Guid TargetVersionId,
+    Guid OperationId);
+
+public sealed record SpaceBlankVersionStartResult(
     Guid ModelVersionId,
     long VersionNo,
     SpaceVersionStatus VersionStatus,
@@ -59,6 +83,10 @@ public interface ISpaceVersionCloneStore
     Task<SpaceVersionCloneStartResult> StartAsync(
         SpaceVersionCloneRequest request,
         CancellationToken cancellationToken = default);
+
+    Task<SpaceBlankVersionStartResult> StartBlankAsync(
+        SpaceBlankVersionRequest request,
+        CancellationToken cancellationToken = default);
 }
 
 public interface ISpaceVersionCloneProcessor
@@ -97,5 +125,23 @@ public sealed class SpaceVersionCloneCoordinator
             throw new ArgumentException("Clone operation is required.", nameof(request));
 
         return _store.StartAsync(request, cancellationToken);
+    }
+
+    public Task<SpaceBlankVersionStartResult> StartBlankAsync(
+        SpaceBlankVersionRequest request,
+        CancellationToken cancellationToken = default)
+    {
+        ArgumentNullException.ThrowIfNull(request);
+        if (_execution.TenantId == Guid.Empty || _execution.ActorId == Guid.Empty)
+        {
+            throw new SpaceTenantScopeException(
+                "A verified Space tenant and actor are required.");
+        }
+        if (request.ModelId == Guid.Empty)
+            throw new ArgumentException("Model is required.", nameof(request));
+        if (request.OperationId == Guid.Empty)
+            throw new ArgumentException("Initialization operation is required.", nameof(request));
+
+        return _store.StartBlankAsync(request, cancellationToken);
     }
 }

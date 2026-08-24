@@ -120,13 +120,44 @@ public sealed class SpaceCadSemanticDiagnosticTests
                 "SPACE_CAD_SEMANTIC_BLOCK_FOOTPRINT_UNAVAILABLE",
                 item.Code));
         Assert.Equal(
-            "SPACE_CAD_SEMANTIC_GEOMETRY_REJECTED",
+            "SPACE_CAD_SEMANTIC_ZERO_SIZE",
             Assert.Single(source.Items).Code);
         Assert.Throws<ArgumentOutOfRangeException>(() =>
             SpaceCadSemanticDiagnostics.QueryDiagnostics(
                 index,
                 new SpaceCadSemanticDiagnosticQueryV1(
                     Limit: SpaceCadSemanticDiagnosticVersions.MaximumPageSize + 1)));
+    }
+
+    [Fact]
+    public void Overlap_diagnostics_are_locatable_for_both_objects()
+    {
+        var scenario = SpaceCadSemanticParserTests.Scenario(addOverlappingZone: true);
+        var semantic = SpaceCadSemanticParser.Parse(
+            scenario.Request,
+            scenario.Preparation,
+            scenario.Inventory,
+            scenario.Profile,
+            scenario.MappingPreview);
+
+        var index = SpaceCadSemanticDiagnostics.Build(
+            scenario.Request,
+            scenario.Preparation,
+            scenario.Inventory,
+            scenario.Profile,
+            scenario.MappingPreview,
+            semantic);
+
+        var overlaps = index.Diagnostics
+            .Where(item => item.Code == "SPACE_CAD_SEMANTIC_GEOMETRY_OVERLAP")
+            .ToArray();
+        Assert.Equal(2, overlaps.Length);
+        Assert.All(overlaps, item =>
+        {
+            Assert.Equal(SpaceCadDiagnosticRecovery.InspectGeometry, item.Recovery);
+            Assert.True(item.Location.CanFocusCanvas);
+            Assert.Equal(SpaceCadDiagnosticLocationKind.Entity, item.Location.Kind);
+        });
     }
 
     [Fact]

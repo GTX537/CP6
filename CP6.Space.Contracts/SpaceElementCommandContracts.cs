@@ -9,6 +9,7 @@ public static class SpaceElementCommandContract
     public const string DeleteObject = "DeleteObject";
     public const string RestoreLogicalObject = "RestoreLogicalObject";
     public const string GenerateRackArray = "GenerateRackArray";
+    public const string CreateElement = "CreateElement";
 }
 
 public sealed record SpaceElementAttributeWriteDto(
@@ -30,7 +31,9 @@ public sealed record SpaceUpdateElementPropertiesDto(
     string? BusinessCode,
     string? LinkedEntityType,
     Guid? LinkedLogicalId,
-    IReadOnlyList<SpaceElementAttributeWriteDto> Attributes);
+    IReadOnlyList<SpaceElementAttributeWriteDto> Attributes,
+    string? ElementType = null,
+    bool? ManualCorrectionLocked = null);
 
 public sealed record SpaceMoveObjectDto(
     int X,
@@ -57,21 +60,46 @@ public sealed record SpaceElementCommandDto(
     SpaceUpdateElementPropertiesDto? UpdateProperties,
     SpaceMoveObjectDto? MoveObject = null,
     SpaceRotateObjectDto? RotateObject = null,
-    SpaceGenerateRackArrayDto? GenerateRackArray = null);
+    SpaceGenerateRackArrayDto? GenerateRackArray = null,
+    SpaceCreateElementDto? CreateElement = null);
+
+public sealed record SpaceCreateElementDto(
+    string ElementType,
+    string GeometryJson,
+    int X,
+    int Y,
+    int Z,
+    decimal RotationZ,
+    int Width,
+    int Height,
+    int Depth,
+    string? BusinessCode,
+    Guid? ParentLogicalId,
+    Guid? SourceId,
+    string? SourceRef,
+    IReadOnlyList<SpaceElementAttributeWriteDto> Attributes,
+    string? LinkedEntityType = null,
+    Guid? LinkedLogicalId = null);
 
 public sealed record ApplySpaceElementCommandBatchRequest(
     int SchemaVersion,
     Guid CommandBatchId,
     Guid ClientInstanceId,
+    Guid LeaseId,
     long ExpectedFloorRevision,
-    IReadOnlyList<SpaceElementCommandDto> Commands);
+    IReadOnlyList<SpaceElementCommandDto> Commands,
+    long? ExpectedContentRevision = null,
+    string? ExpectedContentHash = null,
+    string? ChangesetSha256 = null);
 
 public sealed record SpaceElementCommandResultDto(
     Guid CommandId,
     string Type,
     Guid TargetLogicalId,
     SpaceSceneElementDto Element,
-    IReadOnlyList<SpaceSceneElementAttributeDto> Attributes);
+    IReadOnlyList<SpaceSceneElementAttributeDto> Attributes,
+    SpaceSceneElementDto? BeforeElement = null,
+    IReadOnlyList<SpaceSceneElementAttributeDto>? BeforeAttributes = null);
 
 public sealed record ApplySpaceElementCommandBatchResponse(
     Guid CommandBatchId,

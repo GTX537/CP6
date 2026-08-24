@@ -264,7 +264,6 @@ async function handleLogin() {
       return
     }
     sessionStorage.setItem('cp6-login-transition', 'pending')
-    await new Promise(resolve => window.setTimeout(resolve, 700))
     router.push('/')
   } catch (err: any) {
     // 错误由 http.ts 拦截器统一提示文案；此处仅在"同名多租户"时展开租户编码输入

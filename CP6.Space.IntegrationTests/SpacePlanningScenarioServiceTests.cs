@@ -269,5 +269,10 @@ public sealed class SpacePlanningScenarioServiceTests
             SpaceVersionCloneRequest request,
             CancellationToken cancellationToken = default) =>
             throw new NotSupportedException();
+
+        public Task<SpaceBlankVersionStartResult> StartBlankAsync(
+            SpaceBlankVersionRequest request,
+            CancellationToken cancellationToken = default) =>
+            throw new NotSupportedException();
     }
 }

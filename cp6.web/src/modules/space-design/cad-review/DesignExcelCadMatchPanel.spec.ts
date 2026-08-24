@@ -1,5 +1,5 @@
 // @vitest-environment jsdom
-import { beforeEach, describe, expect, it, vi } from 'vitest'
+import { afterEach, beforeEach, describe, expect, it, vi } from 'vitest'
 import { flushPromises, mount } from '@vue/test-utils'
 import ElementPlus from 'element-plus'
 import { designExcelCadMatchApi } from '@/api/space/designExcelCadMatch'
@@ -60,7 +60,18 @@ const response = {
   }],
 }
 
+const editableProps = {
+  versionId: 'version-1',
+  jobId: 'job-1',
+  currentContentRevision: 7,
+  currentFloorRevision: 3,
+  clientInstanceId: 'client-1',
+  leaseId: 'lease-1',
+}
+
 describe('DesignExcelCadMatchPanel', () => {
+  afterEach(() => vi.useRealTimers())
+
   beforeEach(() => {
     vi.clearAllMocks()
     vi.mocked(designExcelCadMatchApi.get).mockResolvedValue(response as never)
@@ -79,15 +90,18 @@ describe('DesignExcelCadMatchPanel', () => {
       jobStatus: 'Succeeded',
       expectedContentRevision: 7,
       idempotentReplay: false,
+      result: {
+        schemaVersion: 2,
+        historySha256: 'd'.repeat(64),
+        historyCommandCount: 3,
+      },
     } as never)
   })
 
   it('loads only server-authoritative rows and emits a locate intent', async () => {
     const wrapper = mount(DesignExcelCadMatchPanel, {
       props: {
-        versionId: 'version-1',
-        jobId: 'job-1',
-        currentContentRevision: 7,
+        ...editableProps,
       },
       global: { plugins: [ElementPlus] },
     })
@@ -115,11 +129,30 @@ describe('DesignExcelCadMatchPanel', () => {
     })
   })
 
+  it('automatically refreshes a queued match until the authoritative artifact is ready', async () => {
+    vi.useFakeTimers()
+    vi.mocked(designExcelCadMatchApi.get)
+      .mockResolvedValueOnce({ ...response, jobStatus: 'Running', canConfirm: false } as never)
+      .mockResolvedValueOnce(response as never)
+    const wrapper = mount(DesignExcelCadMatchPanel, {
+      props: { ...editableProps },
+      global: { plugins: [ElementPlus] },
+    })
+    await flushPromises()
+    expect(wrapper.get('[data-test="match-pending"]').text())
+      .toContain('自动刷新进度')
+
+    await vi.advanceTimersByTimeAsync(2_000)
+    await flushPromises()
+    expect(designExcelCadMatchApi.get).toHaveBeenCalledTimes(2)
+    expect(wrapper.get('[data-test="match-summary"]').text()).toContain('新增 1')
+    wrapper.unmount()
+  })
+
   it('marks a drifted Draft stale and disables canvas location', async () => {
     const wrapper = mount(DesignExcelCadMatchPanel, {
       props: {
-        versionId: 'version-1',
-        jobId: 'job-1',
+        ...editableProps,
         currentContentRevision: 8,
       },
       global: { plugins: [ElementPlus] },
@@ -133,12 +166,26 @@ describe('DesignExcelCadMatchPanel', () => {
     expect(wrapper.text()).toContain('当前仅可审阅')
   })
 
+  it('keeps confirmation read-only without an owned edit lease', async () => {
+    const wrapper = mount(DesignExcelCadMatchPanel, {
+      props: {
+        ...editableProps,
+        leaseId: undefined,
+      },
+      global: { plugins: [ElementPlus] },
+    })
+    await flushPromises()
+
+    expect(wrapper.get('[data-test="confirm-match"]').attributes('disabled'))
+      .toBeDefined()
+    expect(wrapper.text()).toContain('当前仅可审阅')
+    expect(designExcelCadMatchApi.confirm).not.toHaveBeenCalled()
+  })
+
   it('requires an explicit click and confirms the exact artifact identity', async () => {
     const wrapper = mount(DesignExcelCadMatchPanel, {
       props: {
-        versionId: 'version-1',
-        jobId: 'job-1',
-        currentContentRevision: 7,
+        ...editableProps,
       },
       global: { plugins: [ElementPlus] },
     })
@@ -156,6 +203,9 @@ describe('DesignExcelCadMatchPanel', () => {
         artifactId: 'artifact-1',
         artifactPayloadSha256: 'a'.repeat(64),
         expectedContentRevision: 7,
+        clientInstanceId: 'client-1',
+        leaseId: 'lease-1',
+        expectedFloorRevision: 3,
       },
       `excel-cad-apply:job-1:${'a'.repeat(64)}`,
     )
@@ -166,5 +216,12 @@ describe('DesignExcelCadMatchPanel', () => {
     )
     expect(wrapper.get('[data-test="confirmation-succeeded"]').text())
       .toContain('重复确认不会重复创建货架')
+    expect(wrapper.emitted('applied')?.[0]?.[0]).toMatchObject({
+      applyJobId: 'apply-1',
+      result: {
+        historySha256: 'd'.repeat(64),
+        historyCommandCount: 3,
+      },
+    })
   })
 })

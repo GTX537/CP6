@@ -1,0 +1,118 @@
+{
+  "schemaVersion": 1,
+  "programId": "CP6_SPACE_STUDIO_V1_CORE_GA",
+  "evidenceClass": "WP7_GOLDEN_CAD_FORMAL_EVIDENCE",
+  "conclusion": "Pending",
+  "dataset": {
+    "datasetVersion": null,
+    "goldenDatasetSha256": null,
+    "sourceSetSha256": null,
+    "frozenAtUtc": null,
+    "holdoutFrozenAtUtc": null,
+    "frozenWorkerEnvironmentSha256": null,
+    "applicationCommitSha": null,
+    "parserVersion": null,
+    "mappingProfileVersion": null,
+    "ruleSetVersion": null,
+    "expectedAnswerVersion": null,
+    "isImmutable": false,
+    "integrityAuditPassed": false,
+    "integrityAuditEvidence": {},
+    "samples": [
+      {
+        "sampleRef": "urn:cp6-space-golden-cad:replace-with-opaque-reference",
+        "sourceSha256": null,
+        "sourceSizeBytes": null,
+        "sourceFormat": "DWG|DXF",
+        "split": "Calibration|Validation|ReleaseHoldout",
+        "layoutFamily": "L1|L2|L3|L4|L5",
+        "license": "ApprovedCustomerDerived",
+        "usedForTuning": false,
+        "authorizationEvidence": {},
+        "deidentificationEvidence": {},
+        "annotation": {
+          "annotatorA": null,
+          "annotatorB": null,
+          "qaArbitrator": null,
+          "evidence": {}
+        }
+      }
+    ]
+  },
+  "providers": [
+    {
+      "role": "Primary",
+      "providerKey": null,
+      "providerVersion": null,
+      "qualificationScore": null,
+      "releaseEligible": false,
+      "providerConfigSha256": null,
+      "evaluationReportSha256": null,
+      "goldenDatasetSha256": null,
+      "evaluatedSourceSetSha256": null,
+      "frozenWorkerEnvironmentSha256": null,
+      "overallMetrics": {
+        "targetCoveragePercent": null,
+        "overallAccuracyPercent": null,
+        "highConfidencePrecisionPercent": null,
+        "highConfidenceWilsonLowerBoundPercent": null,
+        "manualOperationReductionPercent": null
+      },
+      "outOfSampleMetrics": {
+        "targetCoveragePercent": null,
+        "overallAccuracyPercent": null,
+        "highConfidencePrecisionPercent": null,
+        "highConfidenceWilsonLowerBoundPercent": null,
+        "manualOperationReductionPercent": null
+      },
+      "holdoutUnreportedBlockingOmissions": null,
+      "performance": {
+        "standardCadSizeBytes": null,
+        "standardCadSha256": null,
+        "frozenWorkerEnvironmentSha256": null,
+        "reviewReadyDurationsMinutes": [],
+        "trainedUserReadyDurationsMinutes": [],
+        "evidence": {}
+      },
+      "qualificationEvidence": {},
+      "evaluationEvidence": {}
+    },
+    {
+      "role": "Backup",
+      "providerKey": null,
+      "providerVersion": null,
+      "qualificationScore": null,
+      "releaseEligible": false,
+      "providerConfigSha256": null,
+      "evaluationReportSha256": null,
+      "goldenDatasetSha256": null,
+      "evaluatedSourceSetSha256": null,
+      "frozenWorkerEnvironmentSha256": null,
+      "overallMetrics": {
+        "targetCoveragePercent": null,
+        "overallAccuracyPercent": null,
+        "highConfidencePrecisionPercent": null,
+        "highConfidenceWilsonLowerBoundPercent": null,
+        "manualOperationReductionPercent": null
+      },
+      "outOfSampleMetrics": {
+        "targetCoveragePercent": null,
+        "overallAccuracyPercent": null,
+        "highConfidencePrecisionPercent": null,
+        "highConfidenceWilsonLowerBoundPercent": null,
+        "manualOperationReductionPercent": null
+      },
+      "holdoutUnreportedBlockingOmissions": null,
+      "performance": {
+        "standardCadSizeBytes": null,
+        "standardCadSha256": null,
+        "frozenWorkerEnvironmentSha256": null,
+        "reviewReadyDurationsMinutes": [],
+        "trainedUserReadyDurationsMinutes": [],
+        "evidence": {}
+      },
+      "qualificationEvidence": {},
+      "evaluationEvidence": {}
+    }
+  ]
+}

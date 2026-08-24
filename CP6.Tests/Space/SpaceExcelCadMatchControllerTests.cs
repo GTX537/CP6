@@ -106,7 +106,10 @@ public sealed class SpaceExcelCadMatchControllerTests
             true,
             Guid.NewGuid(),
             new string('a', 64),
-            7);
+            7,
+            Guid.NewGuid(),
+            Guid.NewGuid(),
+            3);
         var response = new ConfirmSpaceExcelCadMatchResponse(
             matchJobId,
             Guid.NewGuid(),
@@ -174,6 +177,59 @@ public sealed class SpaceExcelCadMatchControllerTests
             CancellationToken.None);
 
         Assert.Same(response, result);
+        apply.VerifyAll();
+    }
+
+    [Fact]
+    public async Task Compensate_confirmation_forwards_sealed_history_and_replay_header()
+    {
+        var versionId = Guid.NewGuid();
+        var matchJobId = Guid.NewGuid();
+        var applyJobId = Guid.NewGuid();
+        var request = new CompensateSpaceExcelCadApplyRequest(
+            SpaceExcelCadApplyVersions.SchemaVersion,
+            SpaceExcelCadCompensationDirections.Undo,
+            Guid.NewGuid(),
+            Guid.NewGuid(),
+            Guid.NewGuid(),
+            8,
+            12,
+            new string('a', 64));
+        var response = new CompensateSpaceExcelCadApplyResponse(
+            SpaceExcelCadApplyVersions.SchemaVersion,
+            matchJobId,
+            applyJobId,
+            request.CommandBatchId,
+            request.Direction,
+            request.HistorySha256,
+            5,
+            9,
+            13,
+            IdempotentReplay: true);
+        var apply = new Mock<ISpaceExcelCadApplyService>();
+        apply.Setup(item => item.CompensateAsync(
+                versionId,
+                matchJobId,
+                applyJobId,
+                request,
+                "history-key",
+                It.IsAny<CancellationToken>()))
+            .ReturnsAsync(response);
+        var controller = NewController(
+            new Mock<ISpaceExcelCadMatchService>().Object,
+            apply.Object);
+
+        var result = await controller.CompensateConfirmation(
+            versionId,
+            matchJobId,
+            applyJobId,
+            "history-key",
+            request,
+            CancellationToken.None);
+
+        var ok = Assert.IsType<OkObjectResult>(result.Result);
+        Assert.Same(response, ok.Value);
+        Assert.Equal("true", controller.Response.Headers["Idempotent-Replay"]);
         apply.VerifyAll();
     }
 

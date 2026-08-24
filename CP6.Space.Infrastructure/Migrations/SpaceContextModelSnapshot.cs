@@ -614,6 +614,448 @@ namespace CP6.Space.Infrastructure.Migrations
                         });
                 });
 
+            modelBuilder.Entity("CP6.Space.Domain.SpaceCadMappingProfile", b =>
+                {
+                    b.Property<Guid>("Id")
+                        .HasColumnType("uniqueidentifier");
+
+                    b.Property<DateTime>("CreatedAtUtc")
+                        .HasColumnType("datetime2");
+
+                    b.Property<Guid?>("CreatedBy")
+                        .HasColumnType("uniqueidentifier");
+
+                    b.Property<int>("CurrentVersion")
+                        .HasColumnType("int");
+
+                    b.Property<bool>("IsDeleted")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("bit")
+                        .HasDefaultValue(false);
+
+                    b.Property<DateTime?>("ModifiedAtUtc")
+                        .HasColumnType("datetime2");
+
+                    b.Property<Guid?>("ModifiedBy")
+                        .HasColumnType("uniqueidentifier");
+
+                    b.Property<string>("Name")
+                        .IsRequired()
+                        .HasMaxLength(200)
+                        .HasColumnType("nvarchar(200)");
+
+                    b.Property<string>("NormalizedName")
+                        .IsRequired()
+                        .HasMaxLength(200)
+                        .HasColumnType("nvarchar(200)");
+
+                    b.Property<byte[]>("RowVersion")
+                        .IsConcurrencyToken()
+                        .IsRequired()
+                        .ValueGeneratedOnAddOrUpdate()
+                        .HasColumnType("rowversion");
+
+                    b.Property<Guid>("TenantId")
+                        .HasColumnType("uniqueidentifier");
+
+                    b.HasKey("Id");
+
+                    b.HasAlternateKey("TenantId", "Id")
+                        .HasName("AK_Space_LayerMappingProfile_TenantId_Id");
+
+                    b.HasIndex("TenantId", "NormalizedName")
+                        .IsUnique()
+                        .HasDatabaseName("UX_Space_LayerMappingProfile_CurrentName")
+                        .HasFilter("[IsDeleted] = 0");
+
+                    b.ToTable("Space_LayerMappingProfile", null, t =>
+                        {
+                            t.HasCheckConstraint("CK_Space_LayerMappingProfile_CurrentVersion", "[CurrentVersion] > 0");
+                        });
+                });
+
+            modelBuilder.Entity("CP6.Space.Domain.SpaceCadMappingProfileVersion", b =>
+                {
+                    b.Property<Guid>("Id")
+                        .HasColumnType("uniqueidentifier");
+
+                    b.Property<Guid?>("BasedOnProfileId")
+                        .HasColumnType("uniqueidentifier");
+
+                    b.Property<int?>("BasedOnVersion")
+                        .HasColumnType("int");
+
+                    b.Property<DateTime>("CreatedAtUtc")
+                        .HasColumnType("datetime2");
+
+                    b.Property<Guid?>("CreatedBy")
+                        .HasColumnType("uniqueidentifier");
+
+                    b.Property<string>("DefinitionHash")
+                        .IsRequired()
+                        .HasMaxLength(64)
+                        .IsUnicode(false)
+                        .HasColumnType("char(64)")
+                        .IsFixedLength();
+
+                    b.Property<string>("DefinitionJson")
+                        .IsRequired()
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<bool>("IsDeleted")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("bit")
+                        .HasDefaultValue(false);
+
+                    b.Property<DateTime?>("ModifiedAtUtc")
+                        .HasColumnType("datetime2");
+
+                    b.Property<Guid?>("ModifiedBy")
+                        .HasColumnType("uniqueidentifier");
+
+                    b.Property<Guid>("ProfileId")
+                        .HasColumnType("uniqueidentifier");
+
+                    b.Property<Guid>("TenantId")
+                        .HasColumnType("uniqueidentifier");
+
+                    b.Property<int>("Version")
+                        .HasColumnType("int");
+
+                    b.HasKey("Id");
+
+                    b.HasAlternateKey("TenantId", "Id")
+                        .HasName("AK_Space_LayerMappingProfileVersion_TenantId_Id");
+
+                    b.HasIndex("TenantId", "DefinitionHash")
+                        .HasDatabaseName("IX_Space_LayerMappingProfileVersion_DefinitionHash");
+
+                    b.HasIndex("TenantId", "ProfileId", "Version")
+                        .IsUnique()
+                        .HasDatabaseName("UX_Space_LayerMappingProfileVersion_Profile_Version")
+                        .HasFilter("[IsDeleted] = 0");
+
+                    b.ToTable("Space_LayerMappingProfileVersion", null, t =>
+                        {
+                            t.HasCheckConstraint("CK_Space_LayerMappingProfileVersion_Base", "([BasedOnProfileId] IS NULL AND [BasedOnVersion] IS NULL) OR ([BasedOnProfileId] IS NOT NULL AND [BasedOnVersion] > 0)");
+
+                            t.HasCheckConstraint("CK_Space_LayerMappingProfileVersion_Version", "[Version] > 0");
+                        });
+                });
+
+            modelBuilder.Entity("CP6.Space.Domain.SpaceCadParsePreparation", b =>
+                {
+                    b.Property<Guid>("Id")
+                        .HasColumnType("uniqueidentifier");
+
+                    b.Property<string>("BaseContentHash")
+                        .HasMaxLength(64)
+                        .IsUnicode(false)
+                        .HasColumnType("char(64)")
+                        .IsFixedLength();
+
+                    b.Property<long>("BaseContentRevision")
+                        .HasColumnType("bigint");
+
+                    b.Property<decimal>("ConfirmedScaleToMillimeters")
+                        .HasPrecision(18, 9)
+                        .HasColumnType("decimal(18,9)");
+
+                    b.Property<string>("ConfirmedUnit")
+                        .IsRequired()
+                        .HasMaxLength(50)
+                        .HasColumnType("nvarchar(50)");
+
+                    b.Property<string>("CoordinateMetadataJson")
+                        .IsRequired()
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<string>("CoordinateTransformSha256")
+                        .IsRequired()
+                        .HasMaxLength(64)
+                        .IsUnicode(false)
+                        .HasColumnType("char(64)")
+                        .IsFixedLength();
+
+                    b.Property<DateTime>("CreatedAtUtc")
+                        .HasColumnType("datetime2");
+
+                    b.Property<Guid?>("CreatedBy")
+                        .HasColumnType("uniqueidentifier");
+
+                    b.Property<DateTime>("ExpiresAtUtc")
+                        .HasColumnType("datetime2");
+
+                    b.Property<Guid>("FloorLogicalId")
+                        .HasColumnType("uniqueidentifier");
+
+                    b.Property<bool>("IsDeleted")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("bit")
+                        .HasDefaultValue(false);
+
+                    b.Property<string>("MappingDefinitionSha256")
+                        .IsRequired()
+                        .HasMaxLength(64)
+                        .IsUnicode(false)
+                        .HasColumnType("char(64)")
+                        .IsFixedLength();
+
+                    b.Property<string>("MappingPreviewSha256")
+                        .IsRequired()
+                        .HasMaxLength(64)
+                        .IsUnicode(false)
+                        .HasColumnType("char(64)")
+                        .IsFixedLength();
+
+                    b.Property<Guid>("MappingProfileId")
+                        .HasColumnType("uniqueidentifier");
+
+                    b.Property<int>("MappingProfileVersion")
+                        .HasColumnType("int");
+
+                    b.Property<string>("MappingReplaySnapshotJson")
+                        .IsRequired()
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<Guid>("ModelVersionId")
+                        .HasColumnType("uniqueidentifier");
+
+                    b.Property<DateTime?>("ModifiedAtUtc")
+                        .HasColumnType("datetime2");
+
+                    b.Property<Guid?>("ModifiedBy")
+                        .HasColumnType("uniqueidentifier");
+
+                    b.Property<string>("ProviderKey")
+                        .HasMaxLength(64)
+                        .IsUnicode(false)
+                        .HasColumnType("varchar(64)");
+
+                    b.Property<string>("ProviderVersion")
+                        .HasMaxLength(100)
+                        .IsUnicode(false)
+                        .HasColumnType("varchar(100)");
+
+                    b.Property<bool>("ReadyForParsing")
+                        .HasColumnType("bit");
+
+                    b.Property<string>("SemanticPreviewSha256")
+                        .IsRequired()
+                        .HasMaxLength(64)
+                        .IsUnicode(false)
+                        .HasColumnType("char(64)")
+                        .IsFixedLength();
+
+                    b.Property<Guid>("SourceId")
+                        .HasColumnType("uniqueidentifier");
+
+                    b.Property<string>("SourceSha256")
+                        .IsRequired()
+                        .HasMaxLength(64)
+                        .IsUnicode(false)
+                        .HasColumnType("char(64)")
+                        .IsFixedLength();
+
+                    b.Property<Guid>("TenantId")
+                        .HasColumnType("uniqueidentifier");
+
+                    b.HasKey("Id");
+
+                    b.HasIndex("TenantId", "ModelVersionId", "SourceId", "ExpiresAtUtc")
+                        .HasDatabaseName("IX_Space_CadParsePreparation_Source_Expiry");
+
+                    b.ToTable("Space_CadParsePreparation", (string)null);
+                });
+
+            modelBuilder.Entity("CP6.Space.Domain.SpaceCadSiteProviderCertification", b =>
+                {
+                    b.Property<Guid>("Id")
+                        .HasColumnType("uniqueidentifier");
+
+                    b.Property<string>("ApprovalEvidenceReference")
+                        .IsRequired()
+                        .HasMaxLength(500)
+                        .IsUnicode(false)
+                        .HasColumnType("varchar(500)");
+
+                    b.Property<Guid>("ConfigurationId")
+                        .HasColumnType("uniqueidentifier");
+
+                    b.Property<DateTime>("CreatedAtUtc")
+                        .HasColumnType("datetime2");
+
+                    b.Property<Guid?>("CreatedBy")
+                        .HasColumnType("uniqueidentifier");
+
+                    b.Property<short>("DataBoundary")
+                        .HasColumnType("smallint");
+
+                    b.Property<bool>("DataRegionApproved")
+                        .HasColumnType("bit");
+
+                    b.Property<bool>("DeletionRetentionApproved")
+                        .HasColumnType("bit");
+
+                    b.Property<short>("DeploymentMode")
+                        .HasColumnType("smallint");
+
+                    b.Property<DateTime>("ExpiresAtUtc")
+                        .HasColumnType("datetime2");
+
+                    b.Property<string>("FrozenEnvironmentSha256")
+                        .HasMaxLength(64)
+                        .IsUnicode(false)
+                        .HasColumnType("varchar(64)");
+
+                    b.Property<string>("GoldenDatasetSha256")
+                        .HasMaxLength(64)
+                        .IsUnicode(false)
+                        .HasColumnType("varchar(64)");
+
+                    b.Property<bool>("IsDeleted")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("bit")
+                        .HasDefaultValue(false);
+
+                    b.Property<bool>("LicensingApproved")
+                        .HasColumnType("bit");
+
+                    b.Property<DateTime?>("ModifiedAtUtc")
+                        .HasColumnType("datetime2");
+
+                    b.Property<Guid?>("ModifiedBy")
+                        .HasColumnType("uniqueidentifier");
+
+                    b.Property<string>("ProviderKey")
+                        .IsRequired()
+                        .HasMaxLength(64)
+                        .IsUnicode(false)
+                        .HasColumnType("varchar(64)");
+
+                    b.Property<string>("ProviderVersion")
+                        .IsRequired()
+                        .HasMaxLength(100)
+                        .IsUnicode(false)
+                        .HasColumnType("varchar(100)");
+
+                    b.Property<string>("QualificationEvidenceReference")
+                        .HasMaxLength(500)
+                        .IsUnicode(false)
+                        .HasColumnType("varchar(500)");
+
+                    b.Property<string>("QualificationRubricVersion")
+                        .HasMaxLength(100)
+                        .IsUnicode(false)
+                        .HasColumnType("varchar(100)");
+
+                    b.Property<int?>("QualificationScore")
+                        .HasColumnType("int");
+
+                    b.Property<short>("Role")
+                        .HasColumnType("smallint");
+
+                    b.Property<string>("SecretReference")
+                        .HasMaxLength(256)
+                        .IsUnicode(false)
+                        .HasColumnType("varchar(256)");
+
+                    b.Property<bool>("SecurityApproved")
+                        .HasColumnType("bit");
+
+                    b.Property<Guid>("SiteId")
+                        .HasColumnType("uniqueidentifier");
+
+                    b.Property<bool>("SupportsDwg")
+                        .HasColumnType("bit");
+
+                    b.Property<bool>("SupportsDxf")
+                        .HasColumnType("bit");
+
+                    b.Property<Guid>("TenantId")
+                        .HasColumnType("uniqueidentifier");
+
+                    b.Property<DateTime>("ValidFromUtc")
+                        .HasColumnType("datetime2");
+
+                    b.HasKey("Id");
+
+                    b.HasIndex("TenantId", "ConfigurationId", "ProviderKey")
+                        .IsUnique()
+                        .HasDatabaseName("UX_Space_CadProviderCertification_Provider");
+
+                    b.HasIndex("TenantId", "ConfigurationId", "Role")
+                        .IsUnique()
+                        .HasDatabaseName("UX_Space_CadProviderCertification_Role");
+
+                    b.HasIndex("TenantId", "SiteId", "ExpiresAtUtc")
+                        .HasDatabaseName("IX_Space_CadProviderCertification_Site_Expiry");
+
+                    b.ToTable("Space_CadSiteProviderCertification", null, t =>
+                        {
+                            t.HasCheckConstraint("CK_Space_CadProviderCertification_QualificationScore", "[QualificationScore] IS NULL OR ([QualificationScore] >= 0 AND [QualificationScore] <= 100)");
+                        });
+                });
+
+            modelBuilder.Entity("CP6.Space.Domain.SpaceCadSiteProviderConfiguration", b =>
+                {
+                    b.Property<Guid>("Id")
+                        .HasColumnType("uniqueidentifier");
+
+                    b.Property<DateTime>("ApprovedAtUtc")
+                        .HasColumnType("datetime2");
+
+                    b.Property<Guid>("ApprovedBy")
+                        .HasColumnType("uniqueidentifier");
+
+                    b.Property<string>("ChangeReason")
+                        .IsRequired()
+                        .HasMaxLength(500)
+                        .HasColumnType("nvarchar(500)");
+
+                    b.Property<long>("ConfigurationRevision")
+                        .HasColumnType("bigint");
+
+                    b.Property<DateTime>("CreatedAtUtc")
+                        .HasColumnType("datetime2");
+
+                    b.Property<Guid?>("CreatedBy")
+                        .HasColumnType("uniqueidentifier");
+
+                    b.Property<bool>("IsCurrent")
+                        .HasColumnType("bit");
+
+                    b.Property<bool>("IsDeleted")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("bit")
+                        .HasDefaultValue(false);
+
+                    b.Property<DateTime?>("ModifiedAtUtc")
+                        .HasColumnType("datetime2");
+
+                    b.Property<Guid?>("ModifiedBy")
+                        .HasColumnType("uniqueidentifier");
+
+                    b.Property<Guid>("SiteId")
+                        .HasColumnType("uniqueidentifier");
+
+                    b.Property<Guid>("TenantId")
+                        .HasColumnType("uniqueidentifier");
+
+                    b.HasKey("Id");
+
+                    b.HasIndex("TenantId", "SiteId")
+                        .IsUnique()
+                        .HasDatabaseName("UX_Space_CadProviderConfiguration_Current")
+                        .HasFilter("[IsCurrent] = 1 AND [IsDeleted] = 0");
+
+                    b.HasIndex("TenantId", "SiteId", "ConfigurationRevision")
+                        .IsUnique()
+                        .HasDatabaseName("UX_Space_CadProviderConfiguration_Site_Revision");
+
+                    b.ToTable("Space_CadSiteProviderConfiguration", (string)null);
+                });
+
             modelBuilder.Entity("CP6.Space.Domain.SpaceDesignAttribute", b =>
                 {
                     b.Property<Guid>("Id")
@@ -1305,6 +1747,145 @@ namespace CP6.Space.Infrastructure.Migrations
                         });
                 });
 
+            modelBuilder.Entity("CP6.Space.Domain.SpaceEditLease", b =>
+                {
+                    b.Property<Guid>("Id")
+                        .HasColumnType("uniqueidentifier");
+
+                    b.Property<DateTime>("AcquiredAtUtc")
+                        .HasColumnType("datetime2");
+
+                    b.Property<Guid>("ClientInstanceId")
+                        .HasColumnType("uniqueidentifier");
+
+                    b.Property<DateTime>("CreatedAtUtc")
+                        .HasColumnType("datetime2");
+
+                    b.Property<Guid?>("CreatedBy")
+                        .HasColumnType("uniqueidentifier");
+
+                    b.Property<DateTime>("ExpiresAtUtc")
+                        .HasColumnType("datetime2");
+
+                    b.Property<Guid>("FloorLogicalId")
+                        .HasColumnType("uniqueidentifier");
+
+                    b.Property<string>("HolderDisplayName")
+                        .IsRequired()
+                        .HasMaxLength(200)
+                        .HasColumnType("nvarchar(200)");
+
+                    b.Property<bool>("IsDeleted")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("bit")
+                        .HasDefaultValue(false);
+
+                    b.Property<DateTime>("LastRenewedAtUtc")
+                        .HasColumnType("datetime2");
+
+                    b.Property<Guid>("LeaseId")
+                        .HasColumnType("uniqueidentifier");
+
+                    b.Property<Guid>("ModelVersionId")
+                        .HasColumnType("uniqueidentifier");
+
+                    b.Property<DateTime?>("ModifiedAtUtc")
+                        .HasColumnType("datetime2");
+
+                    b.Property<Guid?>("ModifiedBy")
+                        .HasColumnType("uniqueidentifier");
+
+                    b.Property<Guid>("OwnerUserId")
+                        .HasColumnType("uniqueidentifier");
+
+                    b.Property<byte[]>("RowVersion")
+                        .IsConcurrencyToken()
+                        .IsRequired()
+                        .ValueGeneratedOnAddOrUpdate()
+                        .HasColumnType("rowversion");
+
+                    b.Property<Guid>("TenantId")
+                        .HasColumnType("uniqueidentifier");
+
+                    b.HasKey("Id");
+
+                    b.HasIndex("TenantId", "ModelVersionId", "FloorLogicalId")
+                        .IsUnique()
+                        .HasDatabaseName("UX_Space_EditLease_Version_Floor");
+
+                    b.ToTable("Space_EditLease", (string)null);
+                });
+
+            modelBuilder.Entity("CP6.Space.Domain.SpaceEditLeaseTakeoverAudit", b =>
+                {
+                    b.Property<Guid>("Id")
+                        .HasColumnType("uniqueidentifier");
+
+                    b.Property<Guid>("ClientInstanceId")
+                        .HasColumnType("uniqueidentifier");
+
+                    b.Property<Guid>("CorrelationId")
+                        .HasColumnType("uniqueidentifier");
+
+                    b.Property<DateTime>("CreatedAtUtc")
+                        .HasColumnType("datetime2");
+
+                    b.Property<Guid?>("CreatedBy")
+                        .HasColumnType("uniqueidentifier");
+
+                    b.Property<Guid>("FloorLogicalId")
+                        .HasColumnType("uniqueidentifier");
+
+                    b.Property<bool>("IsDeleted")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("bit")
+                        .HasDefaultValue(false);
+
+                    b.Property<Guid>("ModelVersionId")
+                        .HasColumnType("uniqueidentifier");
+
+                    b.Property<DateTime?>("ModifiedAtUtc")
+                        .HasColumnType("datetime2");
+
+                    b.Property<Guid?>("ModifiedBy")
+                        .HasColumnType("uniqueidentifier");
+
+                    b.Property<Guid>("NewLeaseId")
+                        .HasColumnType("uniqueidentifier");
+
+                    b.Property<Guid>("PreviousLeaseId")
+                        .HasColumnType("uniqueidentifier");
+
+                    b.Property<Guid>("PreviousOwnerUserId")
+                        .HasColumnType("uniqueidentifier");
+
+                    b.Property<string>("Reason")
+                        .IsRequired()
+                        .HasMaxLength(500)
+                        .HasColumnType("nvarchar(500)");
+
+                    b.Property<string>("RequestSource")
+                        .IsRequired()
+                        .HasMaxLength(500)
+                        .HasColumnType("nvarchar(500)");
+
+                    b.Property<DateTime>("TakenOverAtUtc")
+                        .HasColumnType("datetime2");
+
+                    b.Property<Guid>("TakenOverByUserId")
+                        .HasColumnType("uniqueidentifier");
+
+                    b.Property<Guid>("TenantId")
+                        .HasColumnType("uniqueidentifier");
+
+                    b.HasKey("Id");
+
+                    b.HasIndex("TenantId", "ModelVersionId", "FloorLogicalId", "TakenOverAtUtc")
+                        .HasDatabaseName("IX_Space_EditLeaseTakeoverAudit_Floor_TakenOver");
+
+                    b.ToTable("Space_EditLeaseTakeoverAudit", (string)null);
+                });
+
             modelBuilder.Entity("CP6.Space.Domain.SpaceElementAttribute", b =>
                 {
                     b.Property<Guid>("Id")
@@ -1380,6 +1961,12 @@ namespace CP6.Space.Infrastructure.Migrations
                     b.Property<Guid>("AppliedBy")
                         .HasColumnType("uniqueidentifier");
 
+                    b.Property<string>("ChangesetSha256")
+                        .HasMaxLength(64)
+                        .IsUnicode(false)
+                        .HasColumnType("char(64)")
+                        .IsFixedLength();
+
                     b.Property<Guid>("ClientInstanceId")
                         .HasColumnType("uniqueidentifier");
 
@@ -1388,6 +1975,15 @@ namespace CP6.Space.Infrastructure.Migrations
 
                     b.Property<Guid?>("CreatedBy")
                         .HasColumnType("uniqueidentifier");
+
+                    b.Property<string>("ExpectedContentHash")
+                        .HasMaxLength(64)
+                        .IsUnicode(false)
+                        .HasColumnType("char(64)")
+                        .IsFixedLength();
+
+                    b.Property<long?>("ExpectedContentRevision")
+                        .HasColumnType("bigint");
 
                     b.Property<long>("ExpectedFloorRevision")
                         .HasColumnType("bigint");
@@ -1399,6 +1995,9 @@ namespace CP6.Space.Infrastructure.Migrations
                         .ValueGeneratedOnAdd()
                         .HasColumnType("bit")
                         .HasDefaultValue(false);
+
+                    b.Property<Guid?>("LeaseId")
+                        .HasColumnType("uniqueidentifier");
 
                     b.Property<Guid>("ModelVersionId")
                         .HasColumnType("uniqueidentifier");
@@ -1546,6 +2145,9 @@ namespace CP6.Space.Infrastructure.Migrations
                         .HasColumnType("bit")
                         .HasDefaultValue(false);
 
+                    b.Property<bool>("IsManualCorrectionLocked")
+                        .HasColumnType("bit");
+
                     b.Property<short>("LifecycleState")
                         .HasColumnType("smallint");
 
@@ -1557,6 +2159,12 @@ namespace CP6.Space.Infrastructure.Migrations
                         .HasColumnType("uniqueidentifier");
 
                     b.Property<Guid>("LogicalId")
+                        .HasColumnType("uniqueidentifier");
+
+                    b.Property<DateTime?>("ManualCorrectionUpdatedAtUtc")
+                        .HasColumnType("datetime2");
+
+                    b.Property<Guid?>("ManualCorrectionUpdatedBy")
                         .HasColumnType("uniqueidentifier");
 
                     b.Property<Guid?>("ModelAssetId")
@@ -1599,6 +2207,9 @@ namespace CP6.Space.Infrastructure.Migrations
                     b.Property<Guid>("TenantId")
                         .HasColumnType("uniqueidentifier");
 
+                    b.Property<long>("UserCorrectionVersion")
+                        .HasColumnType("bigint");
+
                     b.Property<int>("Width")
                         .HasColumnType("int");
 
@@ -1625,6 +2236,8 @@ namespace CP6.Space.Infrastructure.Migrations
                     b.ToTable("Space_ElementRevision", null, t =>
                         {
                             t.HasCheckConstraint("CK_Space_ElementRevision_Geometry", "[RotationZ] >= 0 AND [RotationZ] < 360 AND [Width] >= 0 AND [Height] >= 0 AND [Depth] >= 0");
+
+                            t.HasCheckConstraint("CK_Space_ElementRevision_ManualCorrection", "[UserCorrectionVersion] >= 0 AND ([IsManualCorrectionLocked] = 0 OR ([SourceId] IS NOT NULL AND [SourceRef] IS NOT NULL AND [UserCorrectionVersion] > 0 AND [ManualCorrectionUpdatedBy] IS NOT NULL AND [ManualCorrectionUpdatedAtUtc] IS NOT NULL))");
 
                             t.HasCheckConstraint("CK_Space_ElementRevision_ModelAssetScope", "([ModelAssetId] IS NULL AND [ModelAssetScope] IS NULL AND [ModelAssetOwnerTenantId] IS NULL) OR ([ModelAssetId] IS NOT NULL AND [ModelAssetScope] IS NOT NULL AND [ModelAssetOwnerTenantId] IS NOT NULL AND (([ModelAssetScope] = 0 AND [ModelAssetOwnerTenantId] = '00000000-0000-0000-0000-000000000000') OR ([ModelAssetScope] = 1 AND [ModelAssetOwnerTenantId] = [TenantId])))");
                         });
@@ -6908,6 +7521,158 @@ namespace CP6.Space.Infrastructure.Migrations
                         });
                 });
 
+            modelBuilder.Entity("CP6.Space.Domain.SpaceWarehouseTemplate", b =>
+                {
+                    b.Property<Guid>("Id")
+                        .HasColumnType("uniqueidentifier");
+
+                    b.Property<DateTime>("CreatedAtUtc")
+                        .HasColumnType("datetime2");
+
+                    b.Property<Guid?>("CreatedBy")
+                        .HasColumnType("uniqueidentifier");
+
+                    b.Property<int>("CurrentVersion")
+                        .HasColumnType("int");
+
+                    b.Property<string>("Description")
+                        .HasMaxLength(1000)
+                        .HasColumnType("nvarchar(1000)");
+
+                    b.Property<bool>("IsDeleted")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("bit")
+                        .HasDefaultValue(false);
+
+                    b.Property<DateTime?>("ModifiedAtUtc")
+                        .HasColumnType("datetime2");
+
+                    b.Property<Guid?>("ModifiedBy")
+                        .HasColumnType("uniqueidentifier");
+
+                    b.Property<string>("Name")
+                        .IsRequired()
+                        .HasMaxLength(200)
+                        .HasColumnType("nvarchar(200)");
+
+                    b.Property<string>("NormalizedTemplateCode")
+                        .IsRequired()
+                        .HasMaxLength(100)
+                        .HasColumnType("nvarchar(100)");
+
+                    b.Property<byte[]>("RowVersion")
+                        .IsConcurrencyToken()
+                        .IsRequired()
+                        .ValueGeneratedOnAddOrUpdate()
+                        .HasColumnType("rowversion");
+
+                    b.Property<string>("TemplateCode")
+                        .IsRequired()
+                        .HasMaxLength(100)
+                        .HasColumnType("nvarchar(100)");
+
+                    b.Property<Guid>("TenantId")
+                        .HasColumnType("uniqueidentifier");
+
+                    b.HasKey("Id");
+
+                    b.HasAlternateKey("TenantId", "Id")
+                        .HasName("AK_Space_WarehouseTemplate_TenantId_Id");
+
+                    b.HasIndex("TenantId", "NormalizedTemplateCode")
+                        .IsUnique()
+                        .HasDatabaseName("UX_Space_WarehouseTemplate_Tenant_Code_Active")
+                        .HasFilter("[IsDeleted] = 0");
+
+                    b.ToTable("Space_WarehouseTemplate", null, t =>
+                        {
+                            t.HasCheckConstraint("CK_Space_WarehouseTemplate_CurrentVersion", "[CurrentVersion] > 0");
+                        });
+                });
+
+            modelBuilder.Entity("CP6.Space.Domain.SpaceWarehouseTemplateVersion", b =>
+                {
+                    b.Property<Guid>("Id")
+                        .HasColumnType("uniqueidentifier");
+
+                    b.Property<int>("AisleCount")
+                        .HasColumnType("int");
+
+                    b.Property<string>("ContentHash")
+                        .IsRequired()
+                        .HasMaxLength(64)
+                        .IsUnicode(false)
+                        .HasColumnType("char(64)")
+                        .IsFixedLength();
+
+                    b.Property<string>("ContentJson")
+                        .IsRequired()
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<DateTime>("CreatedAtUtc")
+                        .HasColumnType("datetime2");
+
+                    b.Property<Guid?>("CreatedBy")
+                        .HasColumnType("uniqueidentifier");
+
+                    b.Property<int>("FloorCount")
+                        .HasColumnType("int");
+
+                    b.Property<bool>("IsDeleted")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("bit")
+                        .HasDefaultValue(false);
+
+                    b.Property<int>("LocationCount")
+                        .HasColumnType("int");
+
+                    b.Property<DateTime?>("ModifiedAtUtc")
+                        .HasColumnType("datetime2");
+
+                    b.Property<Guid?>("ModifiedBy")
+                        .HasColumnType("uniqueidentifier");
+
+                    b.Property<int>("RackCount")
+                        .HasColumnType("int");
+
+                    b.Property<int>("SchemaVersion")
+                        .HasColumnType("int");
+
+                    b.Property<Guid>("TemplateId")
+                        .HasColumnType("uniqueidentifier");
+
+                    b.Property<Guid>("TenantId")
+                        .HasColumnType("uniqueidentifier");
+
+                    b.Property<int>("VersionNo")
+                        .HasColumnType("int");
+
+                    b.Property<int>("ZoneCount")
+                        .HasColumnType("int");
+
+                    b.HasKey("Id");
+
+                    b.HasAlternateKey("TenantId", "Id")
+                        .HasName("AK_Space_WarehouseTemplateVersion_TenantId_Id");
+
+                    b.HasIndex("TenantId", "ContentHash")
+                        .HasDatabaseName("IX_Space_WarehouseTemplateVersion_ContentHash");
+
+                    b.HasIndex("TenantId", "TemplateId", "VersionNo")
+                        .IsUnique()
+                        .HasDatabaseName("UX_Space_WarehouseTemplateVersion_Template_Version")
+                        .HasFilter("[IsDeleted] = 0");
+
+                    b.ToTable("Space_WarehouseTemplateVersion", null, t =>
+                        {
+                            t.HasCheckConstraint("CK_Space_WarehouseTemplateVersion_Counts", "[FloorCount] > 0 AND [ZoneCount] >= 0 AND [AisleCount] >= 0 AND [RackCount] >= 0 AND [LocationCount] >= 0");
+
+                            t.HasCheckConstraint("CK_Space_WarehouseTemplateVersion_SchemaVersion", "[SchemaVersion] > 0");
+
+                            t.HasCheckConstraint("CK_Space_WarehouseTemplateVersion_VersionNo", "[VersionNo] > 0");
+                        });
+                });
+
             modelBuilder.Entity("CP6.Space.Domain.SpaceWmsAdoption", b =>
                 {
                     b.Property<Guid>("Id")
@@ -7282,6 +8047,47 @@ namespace CP6.Space.Infrastructure.Migrations
                         .HasConstraintName("FK_Space_AssetVersion_Asset_Scope_Owner_Asset");
                 });
 
+            modelBuilder.Entity("CP6.Space.Domain.SpaceCadMappingProfileVersion", b =>
+                {
+                    b.HasOne("CP6.Space.Domain.SpaceCadMappingProfile", null)
+                        .WithMany()
+                        .HasForeignKey("TenantId", "ProfileId")
+                        .HasPrincipalKey("TenantId", "Id")
+                        .OnDelete(DeleteBehavior.Restrict)
+                        .IsRequired()
+                        .HasConstraintName("FK_Space_LayerMappingProfileVersion_Profile_Tenant");
+                });
+
+            modelBuilder.Entity("CP6.Space.Domain.SpaceCadParsePreparation", b =>
+                {
+                    b.HasOne("CP6.Space.Domain.SpaceModelVersion", null)
+                        .WithMany()
+                        .HasForeignKey("TenantId", "ModelVersionId")
+                        .HasPrincipalKey("TenantId", "Id")
+                        .OnDelete(DeleteBehavior.Restrict)
+                        .IsRequired()
+                        .HasConstraintName("FK_Space_CadParsePreparation_Version_Tenant");
+
+                    b.HasOne("CP6.Space.Domain.SpaceModelSource", null)
+                        .WithMany()
+                        .HasForeignKey("TenantId", "ModelVersionId", "SourceId")
+                        .HasPrincipalKey("TenantId", "ModelVersionId", "Id")
+                        .OnDelete(DeleteBehavior.Restrict)
+                        .IsRequired()
+                        .HasConstraintName("FK_Space_CadParsePreparation_Source_Tenant");
+                });
+
+            modelBuilder.Entity("CP6.Space.Domain.SpaceCadSiteProviderCertification", b =>
+                {
+                    b.HasOne("CP6.Space.Domain.SpaceCadSiteProviderConfiguration", null)
+                        .WithMany()
+                        .HasForeignKey("TenantId", "ConfigurationId")
+                        .HasPrincipalKey("TenantId", "Id")
+                        .OnDelete(DeleteBehavior.Restrict)
+                        .IsRequired()
+                        .HasConstraintName("FK_Space_CadProviderCertification_Configuration_Tenant");
+                });
+
             modelBuilder.Entity("CP6.Space.Domain.SpaceDesignAttribute", b =>
                 {
                     b.HasOne("CP6.Space.Domain.SpaceModelVersion", null)
@@ -7362,6 +8168,36 @@ namespace CP6.Space.Infrastructure.Migrations
                         .OnDelete(DeleteBehavior.Restrict)
                         .IsRequired()
                         .HasConstraintName("FK_Space_DispatchRecommendation_Version_Tenant");
+                });
+
+            modelBuilder.Entity("CP6.Space.Domain.SpaceEditLease", b =>
+                {
+                    b.HasOne("CP6.Space.Domain.SpaceModelVersion", null)
+                        .WithMany()
+                        .HasForeignKey("TenantId", "ModelVersionId")
+                        .HasPrincipalKey("TenantId", "Id")
+                        .OnDelete(DeleteBehavior.Restrict)
+                        .IsRequired()
+                        .HasConstraintName("FK_Space_EditLease_Version_Tenant");
+
+                    b.HasOne("CP6.Space.Domain.SpaceFloorRevision", null)
+                        .WithMany()
+                        .HasForeignKey("TenantId", "ModelVersionId", "FloorLogicalId")
+                        .HasPrincipalKey("TenantId", "ModelVersionId", "LogicalId")
+                        .OnDelete(DeleteBehavior.Restrict)
+                        .IsRequired()
+                        .HasConstraintName("FK_Space_EditLease_Floor_Tenant_Version_Logical");
+                });
+
+            modelBuilder.Entity("CP6.Space.Domain.SpaceEditLeaseTakeoverAudit", b =>
+                {
+                    b.HasOne("CP6.Space.Domain.SpaceModelVersion", null)
+                        .WithMany()
+                        .HasForeignKey("TenantId", "ModelVersionId")
+                        .HasPrincipalKey("TenantId", "Id")
+                        .OnDelete(DeleteBehavior.Restrict)
+                        .IsRequired()
+                        .HasConstraintName("FK_Space_EditLeaseTakeoverAudit_Version_Tenant");
                 });
 
             modelBuilder.Entity("CP6.Space.Domain.SpaceElementAttribute", b =>
@@ -8385,6 +9221,17 @@ namespace CP6.Space.Infrastructure.Migrations
                         .OnDelete(DeleteBehavior.Restrict)
                         .IsRequired()
                         .HasConstraintName("FK_Space_ValidationRun_Version_Tenant");
+                });
+
+            modelBuilder.Entity("CP6.Space.Domain.SpaceWarehouseTemplateVersion", b =>
+                {
+                    b.HasOne("CP6.Space.Domain.SpaceWarehouseTemplate", null)
+                        .WithMany()
+                        .HasForeignKey("TenantId", "TemplateId")
+                        .HasPrincipalKey("TenantId", "Id")
+                        .OnDelete(DeleteBehavior.Restrict)
+                        .IsRequired()
+                        .HasConstraintName("FK_Space_WarehouseTemplateVersion_Template_Tenant");
                 });
 
             modelBuilder.Entity("CP6.Space.Domain.SpaceWmsAdoption", b =>

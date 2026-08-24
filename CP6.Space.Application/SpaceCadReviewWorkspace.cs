@@ -19,7 +19,11 @@ public static class SpaceCadReviewWorkspace
         SpaceCadSemanticDiagnosticIndexV1 diagnosticIndex,
         SpaceExcelEditorSnapshotV1 editorSnapshot,
         SpaceExcelCadMatchPreviewV1? matchPreview = null,
-        SpaceCadReviewWorkspaceV1? previousWorkspace = null)
+        SpaceCadReviewWorkspaceV1? previousWorkspace = null,
+        Guid? sourceId = null,
+        Guid? cadParseJobId = null,
+        string? semanticPreviewSha256 = null,
+        IReadOnlyList<SpaceCadChangeV1>? changes = null)
     {
         ArgumentNullException.ThrowIfNull(diagnosticIndex);
         ArgumentNullException.ThrowIfNull(editorSnapshot);
@@ -82,6 +86,10 @@ public static class SpaceCadReviewWorkspace
             }
         }
 
+        var canonicalChanges = CanonicalChanges(changes ?? []);
+        foreach (var change in canonicalChanges)
+            ValidateChange(change);
+
         var openItems = diagnosticIndex.Diagnostics
             .Select(DiagnosticItem)
             .Concat(diagnosticIndex.Evidence
@@ -94,6 +102,11 @@ public static class SpaceCadReviewWorkspace
                     or SpaceExcelCadMatchDisposition.Error)
                 .Select(item => ExcelItem(item, diagnosticIndex.FloorLogicalId))
                 ?? [])
+            .Concat(canonicalChanges
+                .Where(item => item.IsManualCorrectionLocked)
+                .Select(item => ManualCorrectionItem(
+                    item,
+                    diagnosticIndex.FloorLogicalId)))
             .ToDictionary(item => item.TrackingKey, StringComparer.Ordinal);
 
         var resolvedItems = previousWorkspace?.Items
@@ -114,6 +127,17 @@ public static class SpaceCadReviewWorkspace
                 "CAD review workspace exceeds the bounded item count.");
         }
 
+        var changesetSha256 = sourceId.HasValue
+            ? ComputeSha256(CanonicalJson(new
+            {
+                sourceId,
+                cadParseJobId,
+                semanticPreviewSha256,
+                editorSnapshot.ContentRevision,
+                editorSnapshot.ContentHash,
+                changes = canonicalChanges,
+            }))
+            : null;
         var withoutHash = new SpaceCadReviewWorkspaceV1(
             SpaceCadReviewWorkspaceVersions.SchemaVersion,
             IsReadOnlyWorkspace: true,
@@ -129,7 +153,13 @@ public static class SpaceCadReviewWorkspace
             previousWorkspace?.WorkspaceSha256,
             items,
             Summary(items),
-            WorkspaceSha256: string.Empty);
+            WorkspaceSha256: string.Empty,
+            sourceId,
+            cadParseJobId,
+            semanticPreviewSha256,
+            canonicalChanges,
+            ChangeSummary(canonicalChanges),
+            changesetSha256);
         var workspace = withoutHash with
         {
             WorkspaceSha256 = ComputeSha256(CanonicalJson(withoutHash)),
@@ -166,7 +196,18 @@ public static class SpaceCadReviewWorkspace
                 && !IsSha256(workspace.PreviousWorkspaceSha256)
             || !IsSha256(workspace.WorkspaceSha256)
             || workspace.Items.Count > SpaceCadReviewWorkspaceVersions.MaximumItems
-            || !workspace.Items.SequenceEqual(CanonicalItems(workspace.Items)))
+            || !workspace.Items.SequenceEqual(CanonicalItems(workspace.Items))
+            || workspace.SourceId == Guid.Empty
+            || workspace.CadParseJobId == Guid.Empty
+            || workspace.SourceId.HasValue != workspace.CadParseJobId.HasValue
+            || workspace.SourceId.HasValue !=
+                (workspace.SemanticPreviewSha256 is not null)
+            || workspace.SemanticPreviewSha256 is not null &&
+                !IsSha256(workspace.SemanticPreviewSha256)
+            || workspace.SourceId.HasValue !=
+                (workspace.ChangesetSha256 is not null)
+            || workspace.ChangesetSha256 is not null &&
+                !IsSha256(workspace.ChangesetSha256))
         {
             throw new InvalidDataException("CAD review workspace identity is invalid.");
         }
@@ -186,6 +227,42 @@ public static class SpaceCadReviewWorkspace
         {
             throw new InvalidDataException(
                 "CAD review workspace summary is inconsistent.");
+        }
+        var changes = workspace.Changes ?? [];
+        if (changes.Count > SpaceCadReviewWorkspaceVersions.MaximumItems ||
+            !changes.SequenceEqual(CanonicalChanges(changes)) ||
+            changes.Select(item => item.ChangeId).Distinct(StringComparer.Ordinal)
+                .Count() != changes.Count ||
+            changes.Select(item => item.LogicalId).Distinct().Count() != changes.Count)
+        {
+            throw new InvalidDataException("CAD review changeset is invalid.");
+        }
+        foreach (var change in changes)
+            ValidateChange(change);
+        if (workspace.ChangeSummary != ChangeSummary(changes))
+        {
+            throw new InvalidDataException(
+                "CAD review changeset summary is inconsistent.");
+        }
+        if (workspace.SourceId.HasValue)
+        {
+            var expectedChangesetSha256 = ComputeSha256(CanonicalJson(new
+            {
+                sourceId = workspace.SourceId,
+                cadParseJobId = workspace.CadParseJobId,
+                semanticPreviewSha256 = workspace.SemanticPreviewSha256,
+                ContentRevision = workspace.EditorContentRevision,
+                ContentHash = workspace.EditorContentHash,
+                changes = CanonicalChanges(changes),
+            }));
+            if (!string.Equals(
+                    workspace.ChangesetSha256,
+                    expectedChangesetSha256,
+                    StringComparison.Ordinal))
+            {
+                throw new InvalidDataException(
+                    "CAD review changeset hash is invalid.");
+            }
         }
         var expectedHash = ComputeSha256(CanonicalJson(
             workspace with { WorkspaceSha256 = string.Empty }));
@@ -327,6 +404,38 @@ public static class SpaceCadReviewWorkspace
             row.MatchEvidenceSha256);
     }
 
+    private static SpaceCadReviewItemV1 ManualCorrectionItem(
+        SpaceCadChangeV1 change,
+        Guid floorLogicalId)
+    {
+        var bounds = change.BeforeBounds ?? change.AfterBounds;
+        return Item(
+            $"cad-manual-correction:{change.ChangeId}:v{change.UserCorrectionVersion}",
+            SpaceCadReviewItemKind.SemanticDiagnostic,
+            SpaceCadIssueSeverity.Blocking,
+            SpaceErrorCodes.CadManualCorrectionLocked,
+            [],
+            $"userCorrectionVersion={change.UserCorrectionVersion}",
+            "keep-manual-correction-or-unlock",
+            change.SourceRef,
+            change.PreviewObjectId,
+            change.LogicalId,
+            null,
+            null,
+            new SpaceCadDiagnosticLocationV1(
+                SpaceCadDiagnosticLocationKind.Entity,
+                floorLogicalId,
+                LayerId: null,
+                BlockName: null,
+                change.SourceRef,
+                change.PreviewObjectId,
+                bounds,
+                Anchor: null,
+                SuggestedPaddingMillimeters: 1_000,
+                CanFocusCanvas: bounds is not null),
+            ComputeSha256(CanonicalJson(change)));
+    }
+
     private static SpaceCadReviewItemV1 Item(
         string trackingKey,
         SpaceCadReviewItemKind kind,
@@ -455,6 +564,64 @@ public static class SpaceCadReviewWorkspace
         .ThenBy(item => item.Kind)
         .ThenBy(item => item.TrackingKey, StringComparer.Ordinal)
         .ToArray();
+
+    private static SpaceCadChangeV1[] CanonicalChanges(
+        IEnumerable<SpaceCadChangeV1> changes) => changes
+        .OrderBy(item => item.Kind)
+        .ThenBy(item => item.SourceRef, StringComparer.Ordinal)
+        .ThenBy(item => item.LogicalId)
+        .ToArray();
+
+    private static SpaceCadChangeSummaryV1 ChangeSummary(
+        IEnumerable<SpaceCadChangeV1> source)
+    {
+        var changes = source as IReadOnlyList<SpaceCadChangeV1>
+            ?? source.ToArray();
+        return new SpaceCadChangeSummaryV1(
+            changes.Count,
+            changes.LongCount(item => item.Kind == SpaceCadChangeKind.Add),
+            changes.LongCount(item => item.Kind == SpaceCadChangeKind.Modify),
+            changes.LongCount(item => item.Kind == SpaceCadChangeKind.Delete),
+            changes.LongCount(item => item.Kind == SpaceCadChangeKind.Conflict),
+            changes.LongCount(item => item.Kind == SpaceCadChangeKind.LowConfidence),
+            changes.LongCount(item => item.Kind == SpaceCadChangeKind.Unrecognized),
+            changes.LongCount(item => item.IsSelected),
+            changes.LongCount(item => item.CanApply));
+    }
+
+    private static void ValidateChange(SpaceCadChangeV1 change)
+    {
+        ArgumentNullException.ThrowIfNull(change);
+        var expectedId =
+            $"cad-change-{ComputeSha256($"{change.SourceRef}\n{change.LogicalId:D}")[..32]}";
+        if (!change.ChangeId.Equals(expectedId, StringComparison.Ordinal) ||
+            !Enum.IsDefined(change.Kind) ||
+            change.LogicalId == Guid.Empty ||
+            !IsSourceRef(change.SourceRef) ||
+            change.PreviewObjectId is not null &&
+                !IsToken(change.PreviewObjectId) ||
+            !IsToken(change.ObjectType) ||
+            change.Confidence is < 0 or > 1 ||
+            change.IsSelected && !change.CanApply ||
+            change.CanApply && change.Kind is not (
+                SpaceCadChangeKind.Add or
+                SpaceCadChangeKind.Modify or
+                SpaceCadChangeKind.Delete) ||
+            change.UserCorrectionVersion < 0 ||
+            change.IsManualCorrectionLocked &&
+                (change.UserCorrectionVersion <= 0 ||
+                 change.Kind != SpaceCadChangeKind.Conflict ||
+                 change.CanApply ||
+                 !string.Equals(
+                     change.BlockingReasonCode,
+                     SpaceErrorCodes.CadManualCorrectionLocked,
+                     StringComparison.Ordinal)) ||
+            change.BlockingReasonCode is not null &&
+                !IsToken(change.BlockingReasonCode))
+        {
+            throw new InvalidDataException("CAD review change is invalid.");
+        }
+    }
 
     private static SpaceCadReviewWorkspaceSummaryV1 Summary(
         IReadOnlyList<SpaceCadReviewItemV1> items) => new(

@@ -112,8 +112,79 @@ public sealed class SpaceCadSemanticParserTests
         Assert.Contains(
             preview.Issues,
             issue => issue.SourceRef == zeroLength.Source.SourceRef
-                     && issue.Code == "SPACE_CAD_SEMANTIC_GEOMETRY_REJECTED"
+                     && issue.Code == "SPACE_CAD_SEMANTIC_ZERO_SIZE"
                      && issue.DetailToken == "path-requires-two-distinct-points");
+    }
+
+    [Fact]
+    public void Parse_reports_unclosed_boundaries_and_each_overlapping_area_object()
+    {
+        var scenario = Scenario(
+            addOverlappingZone: true,
+            addUnclosedZone: true);
+
+        var preview = SpaceCadSemanticParser.Parse(
+            scenario.Request,
+            scenario.Preparation,
+            scenario.Inventory,
+            scenario.Profile,
+            scenario.MappingPreview);
+
+        var unclosed = Assert.Single(
+            preview.Issues,
+            issue => issue.Code == "SPACE_CAD_SEMANTIC_BOUNDARY_UNCLOSED");
+        Assert.Equal("H:143", unclosed.SourceRef);
+        Assert.Equal(
+            "closed-boundary-requires-closed-polyline-or-circle",
+            unclosed.DetailToken);
+
+        var overlaps = preview.Issues
+            .Where(issue => issue.Code ==
+                "SPACE_CAD_SEMANTIC_GEOMETRY_OVERLAP")
+            .ToArray();
+        Assert.Equal(2, overlaps.Length);
+        Assert.Equal(
+            ["H:140", "H:142"],
+            overlaps.Select(issue => issue.SourceRef).Order(StringComparer.Ordinal));
+        Assert.All(overlaps, issue => Assert.StartsWith("overlaps:cad-preview-", issue.DetailToken));
+    }
+
+    [Fact]
+    public void Parse_does_not_report_overlap_for_boundary_contact_or_different_targets()
+    {
+        var scenario = Scenario(addTouchingZone: true);
+
+        var preview = SpaceCadSemanticParser.Parse(
+            scenario.Request,
+            scenario.Preparation,
+            scenario.Inventory,
+            scenario.Profile,
+            scenario.MappingPreview);
+
+        Assert.DoesNotContain(
+            preview.Issues,
+            issue => issue.Code == "SPACE_CAD_SEMANTIC_GEOMETRY_OVERLAP");
+    }
+
+    [Fact]
+    public void Parse_reports_overlap_for_coincident_polygon_with_reversed_winding()
+    {
+        var scenario = Scenario(addCoincidentReversedZone: true);
+
+        var preview = SpaceCadSemanticParser.Parse(
+            scenario.Request,
+            scenario.Preparation,
+            scenario.Inventory,
+            scenario.Profile,
+            scenario.MappingPreview);
+
+        Assert.Equal(
+            ["H:140", "H:145"],
+            preview.Issues
+                .Where(issue => issue.Code ==
+                    "SPACE_CAD_SEMANTIC_GEOMETRY_OVERLAP")
+                .Select(issue => issue.SourceRef)
+                .Order(StringComparer.Ordinal));
     }
 
     [Fact]
@@ -244,7 +315,10 @@ public sealed class SpaceCadSemanticParserTests
         bool requiredUnsupported = false,
         bool addDistantZone = false,
         bool addOverlappingZone = false,
-        bool useConcaveZone = false)
+        bool useConcaveZone = false,
+        bool addUnclosedZone = false,
+        bool addTouchingZone = false,
+        bool addCoincidentReversedZone = false)
     {
         var request = new SpaceCadConversionRequest(
             TenantId,
@@ -341,6 +415,45 @@ public sealed class SpaceCadSemanticParserTests
                     "LWPOLYLINE", "ZONE",
                     Rectangle(500, 500, 7_500, 7_500),
                     new(500, 500, 7_500, 7_500),
+                    isClosed: true),
+            ];
+        }
+        if (addUnclosedZone)
+        {
+            entities =
+            [
+                .. entities,
+                Entity(
+                    "H:143", SpaceCadIrEntityType.Polyline,
+                    "LWPOLYLINE", "ZONE",
+                    Rectangle(9_100, 0, 9_800, 1_000),
+                    new(9_100, 0, 9_800, 1_000),
+                    isClosed: false),
+            ];
+        }
+        if (addTouchingZone)
+        {
+            entities =
+            [
+                .. entities,
+                Entity(
+                    "H:144", SpaceCadIrEntityType.ClosedPolyline,
+                    "LWPOLYLINE", "ZONE",
+                    Rectangle(8_000, 0, 8_800, 1_000),
+                    new(8_000, 0, 8_800, 1_000),
+                    isClosed: true),
+            ];
+        }
+        if (addCoincidentReversedZone)
+        {
+            entities =
+            [
+                .. entities,
+                Entity(
+                    "H:145", SpaceCadIrEntityType.ClosedPolyline,
+                    "LWPOLYLINE", "ZONE",
+                    primaryZonePoints.Reverse().ToArray(),
+                    new(0, 0, 8_000, 8_000),
                     isClosed: true),
             ];
         }

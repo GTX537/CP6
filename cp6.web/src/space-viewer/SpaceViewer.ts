@@ -10,10 +10,10 @@ import { LabelVirtualizer } from './labels/LabelVirtualizer'
 import { CameraController, easeInOutCubic } from './navigate/CameraController'
 import { Picker } from './navigate/Picker'
 import { Highlighter } from './navigate/Highlighter'
-import { sceneApi } from '@/api/space/scene'
 import type { ViewerHandle } from './api/ViewerHandle'
 import type { InstancedBuckets } from './build/InstancedBuckets'
 import type { PickResult } from '@/types/space/viewer'
+import type { ISpaceDesignSceneDto } from '../../../sdk/typescript/space-design-v1/spaceDesignV1Client'
 
 export class SpaceViewer implements ViewerHandle {
   private _renderer: Renderer
@@ -28,6 +28,7 @@ export class SpaceViewer implements ViewerHandle {
   private _codeToId = new Map<string, string>()
   private _currentFloorId = ''
   private _selectedLocationId: string | null = null
+  private _sceneDispose: (() => void) | null = null
 
   private _frustumCuller = new FrustumCuller()
   private _lodController = new LodController()
@@ -144,6 +145,8 @@ export class SpaceViewer implements ViewerHandle {
       this._buckets.dispose()
       this._buckets = null
     }
+    this._sceneDispose?.()
+    this._sceneDispose = null
     this._locationCodes.clear()
     this._codeToId.clear()
     while (this._sceneRoot.children.length > 0) {
@@ -152,23 +155,22 @@ export class SpaceViewer implements ViewerHandle {
     }
   }
 
-  async load(floorId: string): Promise<void> {
+  async load(scene: ISpaceDesignSceneDto): Promise<void> {
     const generation = ++this._loadGeneration
     this._clearSceneData()
-    this._currentFloorId = floorId
-    const env = await sceneApi.get(floorId)
-    if (generation !== this._loadGeneration) return
-    const editorScene = env.data
+    this._currentFloorId = scene.floor?.revision?.logicalId ?? ''
 
     const builder = new SceneBuilder()
-    const result = builder.build(editorScene, {
-      onProgress: (done, total) => {
-        this._progressCbs.forEach((cb) => cb(done, total))
-        this.requestRender()
-      },
-    })
+    const result = builder.buildPublished(scene)
+    if (generation !== this._loadGeneration) {
+      result.buckets.dispose()
+      result.dispose()
+      return
+    }
 
     this._buckets = result.buckets
+    this._sceneDispose = result.dispose
+    this._progressCbs.forEach((cb) => cb(1, 1))
     this._locationCodes = result.locationCodes
     this._codeToId = new Map()
     for (const [id, code] of result.locationCodes) this._codeToId.set(code, id)
@@ -193,6 +195,8 @@ export class SpaceViewer implements ViewerHandle {
       this._buckets.dispose()
       this._buckets = null
     }
+    this._sceneDispose?.()
+    this._sceneDispose = null
 
     while (this._sceneRoot.children.length > 0) {
       const child = this._sceneRoot.children[0]

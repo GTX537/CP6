@@ -1,9 +1,11 @@
 import type {
   ISpaceDesignSceneDto,
+  SpaceSceneAisleDto,
   SpaceSceneElementDto,
   SpaceSceneRackDto,
   SpaceSceneRackLevelDto,
   SpaceSceneRevisionDto,
+  SpaceSceneZoneDto,
 } from '../../../../sdk/typescript/space-design-v1/spaceDesignV1Client'
 
 export const PARAMETRIC_RENDERER_VERSION = 'space-parametric-v1'
@@ -75,21 +77,46 @@ type ElementInput = Omit<
   revision?: RevisionInput
 }
 
+type ZoneInput = Omit<
+  Pick<
+    SpaceSceneZoneDto,
+    'revision' | 'zoneCode' | 'polygonJson' | 'color'
+  >,
+  'revision'
+> & { revision?: RevisionInput }
+
+type AisleInput = Omit<
+  Pick<
+    SpaceSceneAisleDto,
+    'revision' | 'zoneLogicalId' | 'aisleCode' | 'polygonJson'
+  >,
+  'revision'
+> & { revision?: RevisionInput }
+
 export type ParametricDesignSceneInput = Pick<
   ISpaceDesignSceneDto,
   'schemaVersion' | 'authority' | 'runtimeOverlayIncluded'
 > & {
+  zones?: readonly ZoneInput[]
+  aisles?: readonly AisleInput[]
   racks?: readonly RackInput[]
   rackLevels?: readonly RackLevelInput[]
   elements?: readonly ElementInput[]
 }
 
-export type ParametricOwnerKind = 'Rack' | 'RackLevel' | 'Element'
+export type ParametricOwnerKind =
+  | 'Zone'
+  | 'Aisle'
+  | 'Rack'
+  | 'RackLevel'
+  | 'Element'
 
 export type ParametricMaterialRole =
   | 'rack-envelope'
   | 'rack-beam'
   | 'rack-cell'
+  | 'zone'
+  | 'aisle'
   | 'element'
   | 'asset-placeholder'
 
@@ -187,6 +214,22 @@ export function buildParametricRenderPlan(
   }
 
   const allRacks = requireArray(scene.racks, 'racks')
+  const zones = (scene.zones ?? [])
+    .filter(isActiveRevision)
+    .slice()
+    .sort((left, right) =>
+      logicalId(left.revision, 'zone').localeCompare(
+        logicalId(right.revision, 'zone'),
+      ),
+    )
+  const aisles = (scene.aisles ?? [])
+    .filter(isActiveRevision)
+    .slice()
+    .sort((left, right) =>
+      logicalId(left.revision, 'aisle').localeCompare(
+        logicalId(right.revision, 'aisle'),
+      ),
+    )
   const allRackIds = new Set(
     allRacks.map((rack) => logicalId(rack.revision, 'rack')),
   )
@@ -233,6 +276,12 @@ export function buildParametricRenderPlan(
   const polygons: ParametricPolygonPrimitive[] = []
   const keys = new Set<string>()
 
+  for (const zone of zones) {
+    addLayoutPolygon(zone, 'Zone', polygons, keys)
+  }
+  for (const aisle of aisles) {
+    addLayoutPolygon(aisle, 'Aisle', polygons, keys)
+  }
   for (const rack of racks) {
     addRackPrimitives(rack, levelsByRack, boxes, keys)
   }
@@ -247,6 +296,44 @@ export function buildParametricRenderPlan(
     polygons,
     primitiveCount: boxes.length + polygons.length,
   }
+}
+
+function addLayoutPolygon(
+  value: ZoneInput | AisleInput,
+  ownerKind: 'Zone' | 'Aisle',
+  polygons: ParametricPolygonPrimitive[],
+  keys: Set<string>,
+): void {
+  const kind = ownerKind.toLowerCase()
+  const id = logicalId(value.revision, kind)
+  const lifecycleState = requireText(
+    value.revision?.lifecycleState,
+    `${kind}.${id}.lifecycleState`,
+  )
+  const outer = parseLayoutPolygon(value.polygonJson, `${kind}.${id}.polygonJson`)
+  const key = `${kind}:${id}:polygon`
+  requireUniqueKey(keys, key)
+  const isAisle = ownerKind === 'Aisle'
+  polygons.push({
+    key,
+    logicalId: id,
+    ownerKind,
+    parentLogicalId: isAisle
+      ? requireGuid((value as AisleInput).zoneLogicalId, `${kind}.${id}.zoneLogicalId`)
+      : undefined,
+    businessCode: optionalText(
+      isAisle ? (value as AisleInput).aisleCode : (value as ZoneInput).zoneCode,
+    ),
+    elementType: ownerKind,
+    materialRole: isAisle ? 'aisle' : 'zone',
+    lifecycleState,
+    kind: 'extruded-polygon',
+    origin: { x: 0, y: 0, z: isAisle ? 12 : 0 },
+    outer,
+    holes: [],
+    height: isAisle ? 16 : 10,
+    rotationZ: 0,
+  })
 }
 
 function addRackPrimitives(
@@ -451,8 +538,12 @@ function addElementPrimitives(
   boxes: ParametricBoxPrimitive[],
   polygons: ParametricPolygonPrimitive[],
   keys: Set<string>,
+  keyPrefix?: string,
+  groupDepth = 0,
+  groupPartBudget: { count: number } = { count: 0 },
 ): void {
   const logicalIdValue = logicalId(element.revision, 'element')
+  const primitiveKeyPrefix = keyPrefix ?? `element:${logicalIdValue}`
   const lifecycleState = requireText(
     element.revision?.lifecycleState,
     `element.${logicalIdValue}.lifecycleState`,
@@ -529,7 +620,7 @@ function addElementPrimitives(
       requireMatchingEnvelope(element, size, logicalIdValue)
       pushBox(boxes, keys, {
         ...identity,
-        key: `element:${logicalIdValue}:box`,
+        key: `${primitiveKeyPrefix}:box`,
         materialRole: modelAssetId ? 'asset-placeholder' : 'element',
         kind: 'box',
         center: originBoxCenter(origin, size, rotationZ),
@@ -575,7 +666,7 @@ function addElementPrimitives(
         )
         pushBox(boxes, keys, {
           ...identity,
-          key: `element:${logicalIdValue}:path:${index}`,
+          key: `${primitiveKeyPrefix}:path:${index}`,
           materialRole: modelAssetId ? 'asset-placeholder' : 'element',
           kind: 'box',
           center: localCenterToWorld(
@@ -613,7 +704,7 @@ function addElementPrimitives(
         geometry.height,
         `element.${logicalIdValue}.geometry.height`,
       )
-      const key = `element:${logicalIdValue}:polygon`
+      const key = `${primitiveKeyPrefix}:polygon`
       requireUniqueKey(keys, key)
       polygons.push({
         ...identity,
@@ -650,7 +741,7 @@ function addElementPrimitives(
       }
       pushBox(boxes, keys, {
         ...identity,
-        key: `element:${logicalIdValue}:point`,
+        key: `${primitiveKeyPrefix}:point`,
         materialRole: modelAssetId ? 'asset-placeholder' : 'element',
         kind: 'box',
         center: localCenterToWorld(
@@ -663,6 +754,56 @@ function addElementPrimitives(
         size,
         rotationZ,
       })
+      return
+    }
+    case 'group': {
+      if (modelAssetId) {
+        throw invalid(
+          `element.${logicalIdValue}.modelAssetId`,
+          'group geometry cannot attach an asset version',
+        )
+      }
+      if (groupDepth >= 8) {
+        throw invalid(
+          `element.${logicalIdValue}.geometry`,
+          'group geometry nesting cannot exceed 8 levels',
+        )
+      }
+      const parts = geometryGroupParts(
+        geometry.parts,
+        `element.${logicalIdValue}.geometry.parts`,
+        groupPartBudget,
+      )
+      for (const [index, part] of parts.entries()) {
+        const partOrigin = localCenterToWorld(
+          origin,
+          rotationZ,
+          part.x,
+          part.y,
+          part.z,
+        )
+        addElementPrimitives(
+          {
+            ...element,
+            geometryJson: JSON.stringify(part.geometry),
+            modelAssetId: undefined,
+            modelAssetScope: undefined,
+            x: partOrigin.x,
+            y: partOrigin.y,
+            z: partOrigin.z,
+            rotationZ: normalizeRotation(rotationZ + part.rotationZ),
+            width: part.width,
+            height: part.height,
+            depth: part.depth,
+          },
+          boxes,
+          polygons,
+          keys,
+          `${primitiveKeyPrefix}:group:${index}`,
+          groupDepth + 1,
+          groupPartBudget,
+        )
+      }
       return
     }
     case 'asset': {
@@ -708,7 +849,7 @@ function addElementPrimitives(
         (size.depth / 2) * Math.cos(assetRadians)
       pushBox(boxes, keys, {
         ...identity,
-        key: `element:${logicalIdValue}:asset:${geometryAssetId}`,
+        key: `${primitiveKeyPrefix}:asset:${geometryAssetId}`,
         materialRole: 'asset-placeholder',
         kind: 'box',
         center: localCenterToWorld(
@@ -840,6 +981,128 @@ function parseGeometry(
     throw invalid(`${field}.kind`, 'geometry kind is required')
   }
   return parsed as Record<string, unknown> & { kind: string }
+}
+
+interface GeometryGroupPart {
+  sourceLogicalId: string
+  sourceId?: string
+  sourceRef?: string
+  x: number
+  y: number
+  z: number
+  rotationZ: number
+  width: number
+  height: number
+  depth: number
+  geometry: Record<string, unknown> & { kind: string }
+}
+
+function geometryGroupParts(
+  value: unknown,
+  field: string,
+  budget: { count: number },
+): GeometryGroupPart[] {
+  if (!Array.isArray(value) || value.length < 2) {
+    throw invalid(field, 'at least two group parts are required')
+  }
+  return value.map((candidate, index) => {
+    const partField = `${field}[${index}]`
+    budget.count += 1
+    if (budget.count > 100) {
+      throw invalid(field, 'group geometry cannot contain more than 100 parts')
+    }
+    if (!isRecord(candidate)) {
+      throw invalid(partField, 'group part must be an object')
+    }
+    const sourceLogicalId = requireGuid(
+      candidate.sourceLogicalId,
+      `${partField}.sourceLogicalId`,
+    )
+    const sourceId = candidate.sourceId === undefined
+      ? undefined
+      : requireGuid(candidate.sourceId, `${partField}.sourceId`)
+    let sourceRef: string | undefined
+    if (candidate.sourceRef !== undefined) {
+      if (
+        typeof candidate.sourceRef !== 'string'
+        || !candidate.sourceRef.trim()
+        || candidate.sourceRef.trim().length > 500
+      ) {
+        throw invalid(
+          `${partField}.sourceRef`,
+          'source reference must be non-empty text up to 500 characters',
+        )
+      }
+      sourceRef = candidate.sourceRef.trim()
+    }
+    if (typeof candidate.rotationZ !== 'number') {
+      throw invalid(`${partField}.rotationZ`, 'rotation is required')
+    }
+    if (!isRecord(candidate.geometry)) {
+      throw invalid(`${partField}.geometry`, 'nested geometry is required')
+    }
+    if (candidate.geometry.schemaVersion !== 1) {
+      throw invalid(
+        `${partField}.geometry.schemaVersion`,
+        'only geometry schemaVersion 1 is supported',
+      )
+    }
+    if (typeof candidate.geometry.kind !== 'string') {
+      throw invalid(`${partField}.geometry.kind`, 'geometry kind is required')
+    }
+    if (candidate.geometry.kind === 'asset') {
+      throw invalid(
+        `${partField}.geometry.kind`,
+        'group geometry cannot contain asset geometry',
+      )
+    }
+    return {
+      sourceLogicalId,
+      sourceId,
+      sourceRef,
+      x: positiveOrNegativeGeometryInteger(candidate.x, `${partField}.x`),
+      y: positiveOrNegativeGeometryInteger(candidate.y, `${partField}.y`),
+      z: positiveOrNegativeGeometryInteger(candidate.z, `${partField}.z`),
+      rotationZ: requireRotation(candidate.rotationZ, `${partField}.rotationZ`),
+      width: positiveGeometryInteger(candidate.width, `${partField}.width`),
+      height: positiveGeometryInteger(candidate.height, `${partField}.height`),
+      depth: positiveGeometryInteger(candidate.depth, `${partField}.depth`),
+      geometry: candidate.geometry as Record<string, unknown> & { kind: string },
+    }
+  })
+}
+
+function parseLayoutPolygon(
+  value: string | undefined,
+  field: string,
+): DataPoint3[] {
+  if (!value) throw invalid(field, 'polygon JSON is required')
+  let parsed: unknown
+  try {
+    parsed = JSON.parse(value)
+  } catch {
+    throw invalid(field, 'polygon JSON is invalid')
+  }
+  if (!isRecord(parsed) || parsed.schemaVersion !== 1) {
+    throw invalid(field, 'polygon schemaVersion 1 is required')
+  }
+  if (!Array.isArray(parsed.points) || parsed.points.length < 3) {
+    throw invalid(`${field}.points`, 'at least three points are required')
+  }
+  return parsed.points.map((point, index) => {
+    if (
+      !Array.isArray(point) ||
+      point.length < 2 ||
+      !Number.isInteger(point[0]) ||
+      !Number.isInteger(point[1])
+    ) {
+      throw invalid(
+        `${field}.points[${index}]`,
+        'an [x,y] integer millimeter pair is required',
+      )
+    }
+    return { x: point[0], y: point[1], z: 0 }
+  })
 }
 
 function geometryPoints(

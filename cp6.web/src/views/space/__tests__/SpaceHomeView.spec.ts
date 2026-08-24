@@ -84,12 +84,14 @@ describe('SpaceHomeView', () => {
     for (const b of btnsByText(w, 'space.home.viewer3d')) await b.trigger('click')
     for (const b of btnsByText(w, 'space.home.stacked')) await b.trigger('click')
     for (const b of btnsByText(w, 'space.home.controlTower')) await b.trigger('click')
+    for (const b of btnsByText(w, 'Space Studio')) await b.trigger('click')
     // 楼层行「編集」→ space-editor(params.floorId)
     for (const b of btnsByText(w, 'space.common.edit')) await b.trigger('click')
 
     expect(push).toHaveBeenCalledWith({ name: 'space-viewer', params: { siteId: 's1' } })
     expect(push).toHaveBeenCalledWith({ name: 'space-stacked', params: { siteId: 's1' } })
     expect(push).toHaveBeenCalledWith({ name: 'space-control-tower', params: { siteId: 's1' } })
+    expect(push).toHaveBeenCalledWith({ name: 'space-design-start', params: { siteId: 's1' } })
     expect(push).toHaveBeenCalledWith({ name: 'space-editor', params: { floorId: 'f1' } })
     // 楼层行「3D」携 query.floorId
     expect(push).toHaveBeenCalledWith({ name: 'space-viewer', params: { siteId: 's1' }, query: { floorId: 'f1' } })

@@ -40,6 +40,23 @@ public sealed class SpaceVersionCloneTests
     }
 
     [Fact]
+    public void Blank_draft_has_no_base_and_keeps_its_initialization_fence()
+    {
+        var operationId = Guid.NewGuid();
+        var draft = SpaceModelVersion.CreateBlankDraft(
+            TenantId,
+            Guid.NewGuid(),
+            1,
+            "Blank warehouse",
+            operationId);
+
+        Assert.Equal(SpaceVersionStatus.Draft, draft.Status);
+        Assert.Null(draft.BasedOnVersionId);
+        Assert.Equal(operationId, draft.CloneOperationId);
+        Assert.Equal(0, draft.ContentRevision);
+    }
+
+    [Fact]
     public void Failed_clone_releases_only_its_own_reservation()
     {
         var model = SpaceModel.Create(TenantId, Guid.NewGuid());
@@ -166,6 +183,21 @@ public sealed class SpaceVersionCloneTests
                     SpaceVersionStatus.Initializing,
                     Guid.NewGuid(),
                     SpaceJobStatus.Queued,
+                    false));
+        }
+
+        public Task<SpaceBlankVersionStartResult> StartBlankAsync(
+            SpaceBlankVersionRequest request,
+            CancellationToken cancellationToken = default)
+        {
+            CallCount++;
+            return Task.FromResult(
+                new SpaceBlankVersionStartResult(
+                    Guid.NewGuid(),
+                    1,
+                    SpaceVersionStatus.Draft,
+                    Guid.NewGuid(),
+                    SpaceJobStatus.Succeeded,
                     false));
         }
     }

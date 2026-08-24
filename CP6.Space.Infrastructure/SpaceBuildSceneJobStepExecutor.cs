@@ -673,7 +673,7 @@ public sealed class SpaceBuildSceneJobStepExecutor(
             preview);
     }
 
-    private async Task<(Guid ArtifactId, SpaceCadPreviewSetV1 Preview)>
+    private async Task<(Guid ArtifactId, SpaceCadPreviewSetV2 Preview)>
         LoadPreviewAsync(
             SpaceGenerationRun run,
             SpaceModelSource source,
@@ -1527,7 +1527,7 @@ public sealed class SpaceBuildSceneJobStepExecutor(
         SpaceModelVersion Version,
         SpaceModelSource Source,
         Guid PreviewArtifactId,
-        SpaceCadPreviewSetV1 Preview);
+        SpaceCadPreviewSetV2 Preview);
 
     private sealed record PersistedPreview(
         SpaceArtifact Artifact,

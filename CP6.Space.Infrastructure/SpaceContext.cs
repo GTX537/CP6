@@ -85,6 +85,10 @@ public sealed class SpaceContext : DbContext
         Set<SpaceDesignAttribute>();
     public DbSet<SpaceAsset> Assets => Set<SpaceAsset>();
     public DbSet<SpaceAssetVersion> AssetVersions => Set<SpaceAssetVersion>();
+    public DbSet<SpaceWarehouseTemplate> WarehouseTemplates =>
+        Set<SpaceWarehouseTemplate>();
+    public DbSet<SpaceWarehouseTemplateVersion> WarehouseTemplateVersions =>
+        Set<SpaceWarehouseTemplateVersion>();
     public DbSet<SpaceRackGenerationProfile> RackGenerationProfiles =>
         Set<SpaceRackGenerationProfile>();
     public DbSet<SpaceRackGenerationProfileVersion>
@@ -98,6 +102,15 @@ public sealed class SpaceContext : DbContext
         Set<SpaceElementCommandBatch>();
     public DbSet<SpaceElementCommandRecord> ElementCommandRecords =>
         Set<SpaceElementCommandRecord>();
+    public DbSet<SpaceEditLease> EditLeases => Set<SpaceEditLease>();
+    public DbSet<SpaceEditLeaseTakeoverAudit> EditLeaseTakeoverAudits =>
+        Set<SpaceEditLeaseTakeoverAudit>();
+    public DbSet<SpaceCadParsePreparation> CadParsePreparations =>
+        Set<SpaceCadParsePreparation>();
+    public DbSet<SpaceCadSiteProviderConfiguration> CadProviderConfigurations =>
+        Set<SpaceCadSiteProviderConfiguration>();
+    public DbSet<SpaceCadSiteProviderCertification> CadProviderCertifications =>
+        Set<SpaceCadSiteProviderCertification>();
     public DbSet<SpaceWmsAdoption> WmsAdoptions =>
         Set<SpaceWmsAdoption>();
     public DbSet<SpacePersonnelEvent> PersonnelEvents =>
@@ -130,6 +143,10 @@ public sealed class SpaceContext : DbContext
         Set<SpaceFieldPolicy>();
     public DbSet<SpaceFieldPolicyField> FieldPolicyFields =>
         Set<SpaceFieldPolicyField>();
+    public DbSet<SpaceCadMappingProfile> CadMappingProfiles =>
+        Set<SpaceCadMappingProfile>();
+    public DbSet<SpaceCadMappingProfileVersion> CadMappingProfileVersions =>
+        Set<SpaceCadMappingProfileVersion>();
     public DbSet<SpaceExcelMappingProfile> ExcelMappingProfiles =>
         Set<SpaceExcelMappingProfile>();
     public DbSet<SpaceExcelMappingProfileVersion> ExcelMappingProfileVersions =>
@@ -173,12 +190,19 @@ public sealed class SpaceContext : DbContext
         ConfigureDesignAttribute(modelBuilder);
         ConfigureAsset(modelBuilder);
         ConfigureAssetVersion(modelBuilder);
+        ConfigureWarehouseTemplate(modelBuilder);
+        ConfigureWarehouseTemplateVersion(modelBuilder);
         ConfigureRackGenerationProfile(modelBuilder);
         ConfigureRackGenerationProfileVersion(modelBuilder);
         ConfigureElementRevision(modelBuilder);
         ConfigureElementAttribute(modelBuilder);
         ConfigureElementCommandBatch(modelBuilder);
         ConfigureElementCommandRecord(modelBuilder);
+        ConfigureEditLease(modelBuilder);
+        ConfigureEditLeaseTakeoverAudit(modelBuilder);
+        ConfigureCadParsePreparation(modelBuilder);
+        ConfigureCadProviderConfiguration(modelBuilder);
+        ConfigureCadProviderCertification(modelBuilder);
         ConfigureWmsAdoption(modelBuilder);
         ConfigurePersonnelEvent(modelBuilder);
         ConfigurePersonnelState(modelBuilder);
@@ -195,6 +219,8 @@ public sealed class SpaceContext : DbContext
         ConfigureExternalGrantObject(modelBuilder);
         ConfigureFieldPolicy(modelBuilder);
         ConfigureFieldPolicyField(modelBuilder);
+        ConfigureCadMappingProfile(modelBuilder);
+        ConfigureCadMappingProfileVersion(modelBuilder);
         ConfigureExcelMappingProfile(modelBuilder);
         ConfigureExcelMappingProfileVersion(modelBuilder);
         ConfigurePutawayRecommendation(modelBuilder);
@@ -246,9 +272,13 @@ public sealed class SpaceContext : DbContext
         ProtectAiCapacityLedger();
         ProtectAiPolicyHistory();
         ProtectAssetLibrary();
+        ProtectWarehouseTemplateVersions();
         ProtectRackGenerationProfiles();
         ProtectUnderlayCalibrationHistory();
         ProtectElementCommandHistory();
+        ProtectEditLeaseTakeoverAuditHistory();
+        ProtectCadProviderCertificationHistory();
+        ProtectCadMappingVersionHistory();
         ProtectExcelMappingVersionHistory();
         ProtectPersonnelEventHistory();
         ProtectDeviceEventHistory();
@@ -271,9 +301,13 @@ public sealed class SpaceContext : DbContext
         ProtectAiCapacityLedger();
         ProtectAiPolicyHistory();
         ProtectAssetLibrary();
+        ProtectWarehouseTemplateVersions();
         ProtectRackGenerationProfiles();
         ProtectUnderlayCalibrationHistory();
         ProtectElementCommandHistory();
+        ProtectEditLeaseTakeoverAuditHistory();
+        ProtectCadProviderCertificationHistory();
+        ProtectCadMappingVersionHistory();
         ProtectExcelMappingVersionHistory();
         ProtectPersonnelEventHistory();
         ProtectDeviceEventHistory();
@@ -2199,6 +2233,87 @@ public sealed class SpaceContext : DbContext
                  x.OwnerTenantId == CurrentTenantId);
     }
 
+    private void ConfigureWarehouseTemplate(ModelBuilder modelBuilder)
+    {
+        var entity = modelBuilder.Entity<SpaceWarehouseTemplate>();
+        entity.ToTable(
+            "Space_WarehouseTemplate",
+            table => table.HasCheckConstraint(
+                "CK_Space_WarehouseTemplate_CurrentVersion",
+                "[CurrentVersion] > 0"));
+        entity.HasKey(x => x.Id);
+        entity.Property(x => x.Id).ValueGeneratedNever();
+        entity.HasAlternateKey(x => new { x.TenantId, x.Id })
+            .HasName("AK_Space_WarehouseTemplate_TenantId_Id");
+        ConfigureTenantEntity(entity);
+        entity.Property(x => x.TemplateCode).HasMaxLength(100).IsRequired();
+        entity.Property(x => x.NormalizedTemplateCode)
+            .HasMaxLength(100)
+            .IsRequired();
+        entity.Property(x => x.Name).HasMaxLength(200).IsRequired();
+        entity.Property(x => x.Description).HasMaxLength(1000);
+        entity.Property(x => x.RowVersion).IsRowVersion();
+        entity.HasIndex(x => new { x.TenantId, x.NormalizedTemplateCode })
+            .IsUnique()
+            .HasFilter("[IsDeleted] = 0")
+            .HasDatabaseName(
+                "UX_Space_WarehouseTemplate_Tenant_Code_Active");
+        entity.HasQueryFilter(
+            x => x.TenantId == CurrentTenantId && !x.IsDeleted);
+    }
+
+    private void ConfigureWarehouseTemplateVersion(ModelBuilder modelBuilder)
+    {
+        var entity = modelBuilder.Entity<SpaceWarehouseTemplateVersion>();
+        entity.ToTable(
+            "Space_WarehouseTemplateVersion",
+            table =>
+            {
+                table.HasCheckConstraint(
+                    "CK_Space_WarehouseTemplateVersion_VersionNo",
+                    "[VersionNo] > 0");
+                table.HasCheckConstraint(
+                    "CK_Space_WarehouseTemplateVersion_SchemaVersion",
+                    "[SchemaVersion] > 0");
+                table.HasCheckConstraint(
+                    "CK_Space_WarehouseTemplateVersion_Counts",
+                    "[FloorCount] > 0 AND [ZoneCount] >= 0 AND " +
+                    "[AisleCount] >= 0 AND [RackCount] >= 0 AND " +
+                    "[LocationCount] >= 0");
+            });
+        entity.HasKey(x => x.Id);
+        entity.Property(x => x.Id).ValueGeneratedNever();
+        entity.HasAlternateKey(x => new { x.TenantId, x.Id })
+            .HasName("AK_Space_WarehouseTemplateVersion_TenantId_Id");
+        ConfigureTenantEntity(entity);
+        entity.Property(x => x.ContentJson)
+            .HasColumnType("nvarchar(max)")
+            .IsRequired();
+        entity.Property(x => x.ContentHash)
+            .HasColumnType("char(64)")
+            .IsUnicode(false)
+            .IsFixedLength()
+            .HasMaxLength(64)
+            .IsRequired();
+        entity.HasIndex(x => new { x.TenantId, x.TemplateId, x.VersionNo })
+            .IsUnique()
+            .HasFilter("[IsDeleted] = 0")
+            .HasDatabaseName(
+                "UX_Space_WarehouseTemplateVersion_Template_Version");
+        entity.HasIndex(x => new { x.TenantId, x.ContentHash })
+            .HasDatabaseName(
+                "IX_Space_WarehouseTemplateVersion_ContentHash");
+        entity.HasOne<SpaceWarehouseTemplate>()
+            .WithMany()
+            .HasForeignKey(x => new { x.TenantId, x.TemplateId })
+            .HasPrincipalKey(x => new { x.TenantId, x.Id })
+            .OnDelete(DeleteBehavior.Restrict)
+            .HasConstraintName(
+                "FK_Space_WarehouseTemplateVersion_Template_Tenant");
+        entity.HasQueryFilter(
+            x => x.TenantId == CurrentTenantId && !x.IsDeleted);
+    }
+
     private void ConfigureRackGenerationProfile(ModelBuilder modelBuilder)
     {
         var entity = modelBuilder.Entity<SpaceRackGenerationProfile>();
@@ -2341,6 +2456,14 @@ public sealed class SpaceContext : DbContext
                     "([ModelAssetId] IS NOT NULL AND [ModelAssetScope] IS NOT NULL AND [ModelAssetOwnerTenantId] IS NOT NULL AND " +
                     "(([ModelAssetScope] = 0 AND [ModelAssetOwnerTenantId] = '00000000-0000-0000-0000-000000000000') OR " +
                     "([ModelAssetScope] = 1 AND [ModelAssetOwnerTenantId] = [TenantId])))");
+                table.HasCheckConstraint(
+                    "CK_Space_ElementRevision_ManualCorrection",
+                    "[UserCorrectionVersion] >= 0 AND " +
+                    "([IsManualCorrectionLocked] = 0 OR " +
+                    "([SourceId] IS NOT NULL AND [SourceRef] IS NOT NULL AND " +
+                    "[UserCorrectionVersion] > 0 AND " +
+                    "[ManualCorrectionUpdatedBy] IS NOT NULL AND " +
+                    "[ManualCorrectionUpdatedAtUtc] IS NOT NULL))");
             });
         entity.Property(x => x.ElementType).HasMaxLength(100).IsRequired();
         entity.Property(x => x.GeometryJson).HasColumnType("nvarchar(max)").IsRequired();
@@ -2350,6 +2473,8 @@ public sealed class SpaceContext : DbContext
         entity.Property(x => x.RotationZ).HasColumnType("decimal(9,4)");
         entity.Property(x => x.BusinessCode).HasMaxLength(200);
         entity.Property(x => x.LinkedEntityType).HasMaxLength(100);
+        entity.Property(x => x.ManualCorrectionUpdatedAtUtc)
+            .HasColumnType("datetime2");
 
         entity.HasIndex(
                 x => new
@@ -2476,6 +2601,16 @@ public sealed class SpaceContext : DbContext
             .IsFixedLength()
             .HasMaxLength(64)
             .IsRequired();
+        entity.Property(x => x.ExpectedContentHash)
+            .HasColumnType("char(64)")
+            .IsUnicode(false)
+            .IsFixedLength()
+            .HasMaxLength(64);
+        entity.Property(x => x.ChangesetSha256)
+            .HasColumnType("char(64)")
+            .IsUnicode(false)
+            .IsFixedLength()
+            .HasMaxLength(64);
         entity.Property(x => x.ResponseJson).HasColumnType("nvarchar(max)");
         entity.Property(x => x.AppliedAtUtc).HasColumnType("datetime2");
 
@@ -2543,6 +2678,231 @@ public sealed class SpaceContext : DbContext
             .HasConstraintName(
                 "FK_Space_ElementCommandRecord_Batch_Tenant");
 
+        entity.HasQueryFilter(x => x.TenantId == CurrentTenantId && !x.IsDeleted);
+    }
+
+    private void ConfigureEditLease(ModelBuilder modelBuilder)
+    {
+        var entity = modelBuilder.Entity<SpaceEditLease>();
+        entity.ToTable("Space_EditLease");
+        entity.HasKey(x => x.Id);
+        entity.Property(x => x.Id).ValueGeneratedNever();
+        ConfigureTenantEntity(entity);
+        entity.Property(x => x.ExpiresAtUtc).HasColumnType("datetime2");
+        entity.Property(x => x.HolderDisplayName).HasMaxLength(200).IsRequired();
+        entity.Property(x => x.AcquiredAtUtc).HasColumnType("datetime2");
+        entity.Property(x => x.LastRenewedAtUtc).HasColumnType("datetime2");
+        entity.Property(x => x.RowVersion).IsRowVersion();
+        entity.HasIndex(x => new
+        {
+            x.TenantId,
+            x.ModelVersionId,
+            x.FloorLogicalId,
+        })
+            .IsUnique()
+            .HasDatabaseName("UX_Space_EditLease_Version_Floor");
+        entity.HasOne<SpaceModelVersion>()
+            .WithMany()
+            .HasForeignKey(x => new { x.TenantId, x.ModelVersionId })
+            .HasPrincipalKey(x => new { x.TenantId, x.Id })
+            .OnDelete(DeleteBehavior.Restrict)
+            .HasConstraintName("FK_Space_EditLease_Version_Tenant");
+        entity.HasOne<SpaceFloorRevision>()
+            .WithMany()
+            .HasForeignKey(x => new
+            {
+                x.TenantId,
+                x.ModelVersionId,
+                x.FloorLogicalId,
+            })
+            .HasPrincipalKey(x => new
+            {
+                x.TenantId,
+                x.ModelVersionId,
+                x.LogicalId,
+            })
+            .OnDelete(DeleteBehavior.Restrict)
+            .HasConstraintName("FK_Space_EditLease_Floor_Tenant_Version_Logical");
+        entity.HasQueryFilter(x => x.TenantId == CurrentTenantId && !x.IsDeleted);
+    }
+
+    private void ConfigureEditLeaseTakeoverAudit(ModelBuilder modelBuilder)
+    {
+        var entity = modelBuilder.Entity<SpaceEditLeaseTakeoverAudit>();
+        entity.ToTable("Space_EditLeaseTakeoverAudit");
+        entity.HasKey(x => x.Id);
+        entity.Property(x => x.Id).ValueGeneratedNever();
+        ConfigureTenantEntity(entity);
+        entity.Property(x => x.Reason).HasMaxLength(500).IsRequired();
+        entity.Property(x => x.RequestSource).HasMaxLength(500).IsRequired();
+        entity.Property(x => x.TakenOverAtUtc).HasColumnType("datetime2");
+        entity.HasIndex(x => new
+        {
+            x.TenantId,
+            x.ModelVersionId,
+            x.FloorLogicalId,
+            x.TakenOverAtUtc,
+        })
+            .HasDatabaseName("IX_Space_EditLeaseTakeoverAudit_Floor_TakenOver");
+        entity.HasOne<SpaceModelVersion>()
+            .WithMany()
+            .HasForeignKey(x => new { x.TenantId, x.ModelVersionId })
+            .HasPrincipalKey(x => new { x.TenantId, x.Id })
+            .OnDelete(DeleteBehavior.Restrict)
+            .HasConstraintName("FK_Space_EditLeaseTakeoverAudit_Version_Tenant");
+        entity.HasQueryFilter(x => x.TenantId == CurrentTenantId && !x.IsDeleted);
+    }
+
+    private void ConfigureCadParsePreparation(ModelBuilder modelBuilder)
+    {
+        var entity = modelBuilder.Entity<SpaceCadParsePreparation>();
+        entity.ToTable("Space_CadParsePreparation");
+        entity.HasKey(x => x.Id);
+        entity.Property(x => x.Id).ValueGeneratedNever();
+        ConfigureTenantEntity(entity);
+        entity.Property(x => x.SourceSha256)
+            .HasMaxLength(64).IsUnicode(false).IsFixedLength().IsRequired();
+        entity.Property(x => x.ConfirmedUnit).HasMaxLength(50).IsRequired();
+        entity.Property(x => x.ConfirmedScaleToMillimeters)
+            .HasPrecision(18, 9).IsRequired();
+        entity.Property(x => x.CoordinateMetadataJson)
+            .HasColumnType("nvarchar(max)").IsRequired();
+        entity.Property(x => x.CoordinateTransformSha256)
+            .HasMaxLength(64).IsUnicode(false).IsFixedLength().IsRequired();
+        entity.Property(x => x.MappingDefinitionSha256)
+            .HasMaxLength(64).IsUnicode(false).IsFixedLength().IsRequired();
+        entity.Property(x => x.MappingPreviewSha256)
+            .HasMaxLength(64).IsUnicode(false).IsFixedLength().IsRequired();
+        entity.Property(x => x.MappingReplaySnapshotJson)
+            .HasColumnType("nvarchar(max)").IsRequired();
+        entity.Property(x => x.SemanticPreviewSha256)
+            .HasMaxLength(64).IsUnicode(false).IsFixedLength().IsRequired();
+        entity.Property(x => x.ProviderKey)
+            .HasMaxLength(64).IsUnicode(false);
+        entity.Property(x => x.ProviderVersion)
+            .HasMaxLength(100).IsUnicode(false);
+        entity.Property(x => x.BaseContentHash)
+            .HasMaxLength(64).IsUnicode(false).IsFixedLength();
+        entity.Property(x => x.ExpiresAtUtc).HasColumnType("datetime2");
+        entity.HasIndex(x => new
+        {
+            x.TenantId,
+            x.ModelVersionId,
+            x.SourceId,
+            x.ExpiresAtUtc,
+        }).HasDatabaseName("IX_Space_CadParsePreparation_Source_Expiry");
+        entity.HasOne<SpaceModelVersion>()
+            .WithMany()
+            .HasForeignKey(x => new { x.TenantId, x.ModelVersionId })
+            .HasPrincipalKey(x => new { x.TenantId, x.Id })
+            .OnDelete(DeleteBehavior.Restrict)
+            .HasConstraintName("FK_Space_CadParsePreparation_Version_Tenant");
+        entity.HasOne<SpaceModelSource>()
+            .WithMany()
+            .HasForeignKey(x => new
+            {
+                x.TenantId,
+                x.ModelVersionId,
+                x.SourceId,
+            })
+            .HasPrincipalKey(x => new
+            {
+                x.TenantId,
+                x.ModelVersionId,
+                x.Id,
+            })
+            .OnDelete(DeleteBehavior.Restrict)
+            .HasConstraintName("FK_Space_CadParsePreparation_Source_Tenant");
+        entity.HasQueryFilter(x => x.TenantId == CurrentTenantId && !x.IsDeleted);
+    }
+
+    private void ConfigureCadProviderConfiguration(ModelBuilder modelBuilder)
+    {
+        var entity = modelBuilder.Entity<SpaceCadSiteProviderConfiguration>();
+        entity.ToTable("Space_CadSiteProviderConfiguration");
+        entity.HasKey(x => x.Id);
+        entity.Property(x => x.Id).ValueGeneratedNever();
+        ConfigureTenantEntity(entity);
+        entity.Property(x => x.ChangeReason).HasMaxLength(500).IsRequired();
+        entity.Property(x => x.ApprovedAtUtc).HasColumnType("datetime2");
+        entity.HasAlternateKey(x => new
+        {
+            x.TenantId,
+            x.Id,
+        });
+        entity.HasIndex(x => new
+        {
+            x.TenantId,
+            x.SiteId,
+            x.ConfigurationRevision,
+        }).IsUnique().HasDatabaseName(
+            "UX_Space_CadProviderConfiguration_Site_Revision");
+        entity.HasIndex(x => new { x.TenantId, x.SiteId })
+            .IsUnique()
+            .HasFilter("[IsCurrent] = 1 AND [IsDeleted] = 0")
+            .HasDatabaseName("UX_Space_CadProviderConfiguration_Current");
+        entity.HasQueryFilter(x => x.TenantId == CurrentTenantId && !x.IsDeleted);
+    }
+
+    private void ConfigureCadProviderCertification(ModelBuilder modelBuilder)
+    {
+        var entity = modelBuilder.Entity<SpaceCadSiteProviderCertification>();
+        entity.ToTable("Space_CadSiteProviderCertification");
+        entity.HasKey(x => x.Id);
+        entity.Property(x => x.Id).ValueGeneratedNever();
+        ConfigureTenantEntity(entity);
+        entity.Property(x => x.ProviderKey)
+            .HasMaxLength(64).IsUnicode(false).IsRequired();
+        entity.Property(x => x.ProviderVersion)
+            .HasMaxLength(SpaceCadProviderVersion.MaximumLength)
+            .IsUnicode(false).IsRequired();
+        entity.Property(x => x.Role).HasConversion<short>();
+        entity.Property(x => x.DeploymentMode).HasConversion<short>();
+        entity.Property(x => x.DataBoundary).HasConversion<short>();
+        entity.Property(x => x.ApprovalEvidenceReference)
+            .HasMaxLength(500).IsUnicode(false).IsRequired();
+        entity.Property(x => x.SecretReference)
+            .HasMaxLength(256).IsUnicode(false);
+        entity.Property(x => x.QualificationRubricVersion)
+            .HasMaxLength(100).IsUnicode(false);
+        entity.Property(x => x.GoldenDatasetSha256)
+            .HasMaxLength(64).IsUnicode(false);
+        entity.Property(x => x.FrozenEnvironmentSha256)
+            .HasMaxLength(64).IsUnicode(false);
+        entity.Property(x => x.QualificationEvidenceReference)
+            .HasMaxLength(500).IsUnicode(false);
+        entity.Property(x => x.ValidFromUtc).HasColumnType("datetime2");
+        entity.Property(x => x.ExpiresAtUtc).HasColumnType("datetime2");
+        entity.ToTable(table => table.HasCheckConstraint(
+            "CK_Space_CadProviderCertification_QualificationScore",
+            "[QualificationScore] IS NULL OR " +
+            "([QualificationScore] >= 0 AND [QualificationScore] <= 100)"));
+        entity.HasIndex(x => new
+        {
+            x.TenantId,
+            x.ConfigurationId,
+            x.ProviderKey,
+        }).IsUnique().HasDatabaseName(
+            "UX_Space_CadProviderCertification_Provider");
+        entity.HasIndex(x => new
+        {
+            x.TenantId,
+            x.ConfigurationId,
+            x.Role,
+        }).IsUnique().HasDatabaseName(
+            "UX_Space_CadProviderCertification_Role");
+        entity.HasIndex(x => new
+        {
+            x.TenantId,
+            x.SiteId,
+            x.ExpiresAtUtc,
+        }).HasDatabaseName("IX_Space_CadProviderCertification_Site_Expiry");
+        entity.HasOne<SpaceCadSiteProviderConfiguration>()
+            .WithMany()
+            .HasForeignKey(x => new { x.TenantId, x.ConfigurationId })
+            .HasPrincipalKey(x => new { x.TenantId, x.Id })
+            .OnDelete(DeleteBehavior.Restrict)
+            .HasConstraintName("FK_Space_CadProviderCertification_Configuration_Tenant");
         entity.HasQueryFilter(x => x.TenantId == CurrentTenantId && !x.IsDeleted);
     }
 
@@ -4530,6 +4890,80 @@ public sealed class SpaceContext : DbContext
             x => x.TenantId == CurrentTenantId && !x.IsDeleted);
     }
 
+    private void ConfigureCadMappingProfile(ModelBuilder modelBuilder)
+    {
+        var entity = modelBuilder.Entity<SpaceCadMappingProfile>();
+        entity.ToTable(
+            "Space_LayerMappingProfile",
+            table => table.HasCheckConstraint(
+                "CK_Space_LayerMappingProfile_CurrentVersion",
+                "[CurrentVersion] > 0"));
+        entity.HasKey(x => x.Id);
+        entity.Property(x => x.Id).ValueGeneratedNever();
+        entity.HasAlternateKey(x => new { x.TenantId, x.Id })
+            .HasName("AK_Space_LayerMappingProfile_TenantId_Id");
+        ConfigureTenantEntity(entity);
+        entity.Property(x => x.Name).HasMaxLength(200).IsRequired();
+        entity.Property(x => x.NormalizedName)
+            .HasMaxLength(200)
+            .IsRequired();
+        entity.Property(x => x.RowVersion).IsRowVersion();
+        entity.HasIndex(x => new { x.TenantId, x.NormalizedName })
+            .IsUnique()
+            .HasFilter("[IsDeleted] = 0")
+            .HasDatabaseName("UX_Space_LayerMappingProfile_CurrentName");
+        entity.HasQueryFilter(
+            x => x.TenantId == CurrentTenantId && !x.IsDeleted);
+    }
+
+    private void ConfigureCadMappingProfileVersion(ModelBuilder modelBuilder)
+    {
+        var entity = modelBuilder.Entity<SpaceCadMappingProfileVersion>();
+        entity.ToTable(
+            "Space_LayerMappingProfileVersion",
+            table =>
+            {
+                table.HasCheckConstraint(
+                    "CK_Space_LayerMappingProfileVersion_Version",
+                    "[Version] > 0");
+                table.HasCheckConstraint(
+                    "CK_Space_LayerMappingProfileVersion_Base",
+                    "([BasedOnProfileId] IS NULL AND [BasedOnVersion] IS NULL) OR " +
+                    "([BasedOnProfileId] IS NOT NULL AND [BasedOnVersion] > 0)");
+            });
+        entity.HasKey(x => x.Id);
+        entity.Property(x => x.Id).ValueGeneratedNever();
+        entity.HasAlternateKey(x => new { x.TenantId, x.Id })
+            .HasName("AK_Space_LayerMappingProfileVersion_TenantId_Id");
+        ConfigureTenantEntity(entity);
+        entity.Property(x => x.DefinitionJson)
+            .HasColumnType("nvarchar(max)")
+            .IsRequired();
+        entity.Property(x => x.DefinitionHash)
+            .HasColumnType("char(64)")
+            .IsUnicode(false)
+            .IsFixedLength()
+            .HasMaxLength(64)
+            .IsRequired();
+        entity.HasIndex(x => new { x.TenantId, x.ProfileId, x.Version })
+            .IsUnique()
+            .HasFilter("[IsDeleted] = 0")
+            .HasDatabaseName(
+                "UX_Space_LayerMappingProfileVersion_Profile_Version");
+        entity.HasIndex(x => new { x.TenantId, x.DefinitionHash })
+            .HasDatabaseName(
+                "IX_Space_LayerMappingProfileVersion_DefinitionHash");
+        entity.HasOne<SpaceCadMappingProfile>()
+            .WithMany()
+            .HasForeignKey(x => new { x.TenantId, x.ProfileId })
+            .HasPrincipalKey(x => new { x.TenantId, x.Id })
+            .OnDelete(DeleteBehavior.Restrict)
+            .HasConstraintName(
+                "FK_Space_LayerMappingProfileVersion_Profile_Tenant");
+        entity.HasQueryFilter(
+            x => x.TenantId == CurrentTenantId && !x.IsDeleted);
+    }
+
     private void ConfigureExcelMappingProfile(ModelBuilder modelBuilder)
     {
         var entity = modelBuilder.Entity<SpaceExcelMappingProfile>();
@@ -5720,6 +6154,48 @@ public sealed class SpaceContext : DbContext
         entity.Property(x => x.IsDeleted).HasDefaultValue(false);
     }
 
+    private void ProtectEditLeaseTakeoverAuditHistory()
+    {
+        if (ChangeTracker.Entries<SpaceEditLeaseTakeoverAudit>()
+            .Any(entry => entry.State is EntityState.Modified or EntityState.Deleted))
+        {
+            throw new InvalidOperationException(
+                "Edit lease takeover audit records are immutable.");
+        }
+    }
+
+    private void ProtectCadProviderCertificationHistory()
+    {
+        if (ChangeTracker.Entries<SpaceCadSiteProviderCertification>()
+            .Any(entry => entry.State is EntityState.Modified or EntityState.Deleted))
+        {
+            throw new InvalidOperationException(
+                "CAD Provider certification records are immutable.");
+        }
+
+        foreach (var entry in ChangeTracker
+                     .Entries<SpaceCadSiteProviderConfiguration>())
+        {
+            if (entry.State == EntityState.Deleted)
+                throw new InvalidOperationException(
+                    "CAD Provider configuration history is append-only.");
+            if (entry.State != EntityState.Modified)
+                continue;
+            var allowed = new HashSet<string>(StringComparer.Ordinal)
+            {
+                nameof(SpaceCadSiteProviderConfiguration.IsCurrent),
+                nameof(SpaceCadSiteProviderConfiguration.ModifiedAtUtc),
+                nameof(SpaceCadSiteProviderConfiguration.ModifiedBy),
+            };
+            if (entry.Properties.Any(property =>
+                    property.IsModified && !allowed.Contains(property.Metadata.Name)))
+            {
+                throw new InvalidOperationException(
+                    "Historical CAD Provider configuration fields are immutable.");
+            }
+        }
+    }
+
     private void ProtectPutawayRecommendationHistory()
     {
         if (ChangeTracker.Entries<SpacePutawayRecommendation>()
@@ -5894,6 +6370,19 @@ public sealed class SpaceContext : DbContext
             {
                 throw new InvalidOperationException(
                     "Device alarm-state identity cannot be reassigned or deleted.");
+            }
+        }
+    }
+
+    private void ProtectCadMappingVersionHistory()
+    {
+        foreach (var entry in ChangeTracker
+            .Entries<SpaceCadMappingProfileVersion>())
+        {
+            if (entry.State is EntityState.Modified or EntityState.Deleted)
+            {
+                throw new InvalidOperationException(
+                    "CAD mapping profile versions are append-only.");
             }
         }
     }
@@ -6125,6 +6614,28 @@ public sealed class SpaceContext : DbContext
         {
             if (entry.State is EntityState.Added or EntityState.Modified)
                 entry.Entity.EnsureAssetReferenceConsistency();
+        }
+    }
+
+    private void ProtectWarehouseTemplateVersions()
+    {
+        foreach (var entry in ChangeTracker.Entries<SpaceWarehouseTemplate>())
+        {
+            if (entry.State is EntityState.Modified or EntityState.Deleted)
+            {
+                throw new InvalidOperationException(
+                    "Tenant warehouse template heads are immutable in Design V1.");
+            }
+        }
+
+        foreach (var entry in ChangeTracker
+                     .Entries<SpaceWarehouseTemplateVersion>())
+        {
+            if (entry.State is EntityState.Modified or EntityState.Deleted)
+            {
+                throw new InvalidOperationException(
+                    "Tenant warehouse template versions are immutable.");
+            }
         }
     }
 

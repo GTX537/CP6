@@ -1,6 +1,11 @@
 import { describe, expect, it } from 'vitest'
 import { Matrix4, Quaternion, Vector3 } from 'three'
-import type { ISpaceDesignSceneDto } from '../../../../../sdk/typescript/space-design-v1/spaceDesignV1Client'
+import {
+  SpaceSceneAisleDto,
+  SpaceSceneRevisionDto,
+  SpaceSceneZoneDto,
+  type ISpaceDesignSceneDto,
+} from '../../../../../sdk/typescript/space-design-v1/spaceDesignV1Client'
 import { SceneBuilder } from '@/space-viewer/build/SceneBuilder'
 import {
   buildSceneProjectionEvidence,
@@ -14,6 +19,8 @@ const COLUMN_ID = '33333333-3333-3333-3333-333333333333'
 const WALL_ID = '44444444-4444-4444-4444-444444444444'
 const DOCK_ID = '55555555-5555-5555-5555-555555555555'
 const REMOVED_ID = '66666666-6666-6666-6666-666666666666'
+const ZONE_ID = '99999999-9999-9999-9999-999999999999'
+const AISLE_ID = 'aaaaaaaa-bbbb-cccc-dddd-eeeeeeeeeeee'
 
 describe('2D/3D shared Design scene projection', () => {
   it('exports equal SHA-256 manifests from the canvas plan and actual 3D objects', async () => {
@@ -117,6 +124,40 @@ describe('2D/3D shared Design scene projection', () => {
     expect(evidence.differences).toContain(`object mismatch ${COLUMN_ID}`)
     expect(evidence.editorHash).not.toBe(evidence.viewerHash)
 
+    build.dispose()
+  })
+
+  it('keeps Zone and Aisle context identical in the 2D and 3D manifests', async () => {
+    const scene = designScene()
+    scene.zones = [new SpaceSceneZoneDto({
+      revision: new SpaceSceneRevisionDto({ logicalId: ZONE_ID, lifecycleState: 'Active' }),
+      zoneCode: 'Z-A',
+      polygonJson: '{"schemaVersion":1,"points":[[0,0],[12000,0],[12000,8000],[0,8000]]}',
+    })]
+    scene.aisles = [new SpaceSceneAisleDto({
+      revision: new SpaceSceneRevisionDto({ logicalId: AISLE_ID, lifecycleState: 'Active' }),
+      zoneLogicalId: ZONE_ID,
+      aisleCode: 'A-01',
+      polygonJson: '{"schemaVersion":1,"points":[[500,0],[2500,0],[2500,8000],[500,8000]]}',
+    })]
+    const build = new SceneBuilder().buildDesign(scene)
+
+    const evidence = await buildSceneProjectionEvidence(scene, build)
+
+    expect(evidence.consistent).toBe(true)
+    expect(evidence.editor.objects).toEqual(expect.arrayContaining([
+      expect.objectContaining({
+        logicalId: ZONE_ID,
+        ownerKind: 'Zone',
+        businessCode: 'Z-A',
+      }),
+      expect.objectContaining({
+        logicalId: AISLE_ID,
+        ownerKind: 'Aisle',
+        parentLogicalId: ZONE_ID,
+        businessCode: 'A-01',
+      }),
+    ]))
     build.dispose()
   })
 })

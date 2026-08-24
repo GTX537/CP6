@@ -59,6 +59,76 @@ describe('buildElementCanvasPlan', () => {
     ])
   })
 
+  it('keeps every group part selectable through the survivor logical identity', () => {
+    const logicalId = 'aaaaaaaa-aaaa-aaaa-aaaa-aaaaaaaaaaaa'
+    const scene = {
+      schemaVersion: 1,
+      authority: 'DesignRevision',
+      runtimeOverlayIncluded: false,
+      racks: [],
+      rackLevels: [],
+      elements: [{
+        revision: { logicalId, lifecycleState: 'Active' },
+        elementType: 'Column',
+        geometryJson: JSON.stringify({
+          schemaVersion: 1,
+          kind: 'group',
+          parts: [
+            {
+              sourceLogicalId: logicalId,
+              x: 0,
+              y: 0,
+              z: 0,
+              rotationZ: 0,
+              width: 100,
+              height: 1000,
+              depth: 100,
+              geometry: {
+                schemaVersion: 1,
+                kind: 'box',
+                width: 100,
+                height: 1000,
+                depth: 100,
+              },
+            },
+            {
+              sourceLogicalId: 'bbbbbbbb-bbbb-bbbb-bbbb-bbbbbbbbbbbb',
+              x: 500,
+              y: 0,
+              z: 0,
+              rotationZ: 0,
+              width: 100,
+              height: 1000,
+              depth: 100,
+              geometry: {
+                schemaVersion: 1,
+                kind: 'box',
+                width: 100,
+                height: 1000,
+                depth: 100,
+              },
+            },
+          ],
+        }),
+        x: 0,
+        y: 0,
+        z: 0,
+        rotationZ: 0,
+        width: 600,
+        height: 1000,
+        depth: 100,
+      }],
+    } as unknown as ISpaceDesignSceneDto
+
+    const plan = buildElementCanvasPlan(scene)
+
+    expect(plan).toHaveLength(2)
+    expect(plan.map((drawable) => drawable.logicalId)).toEqual([
+      logicalId,
+      logicalId,
+    ])
+  })
+
   it('projects the active rack envelope as a shared selectable object', () => {
     const rackId = '44444444-4444-4444-4444-444444444444'
     const scene = {
@@ -145,5 +215,58 @@ describe('buildElementCanvasPlan', () => {
     expect(polygon.points[0]).toEqual({ x: 1000, y: 2000 })
     expect(polygon.points[1]?.x).toBeCloseTo(1000)
     expect(polygon.points[1]?.y).toBeCloseTo(2100)
+  })
+
+  it('projects active Zone and Aisle revisions as shared layout context', () => {
+    const zoneId = '77777777-7777-7777-7777-777777777777'
+    const aisleId = '88888888-8888-8888-8888-888888888888'
+    const scene = {
+      schemaVersion: 1,
+      authority: 'DesignRevision',
+      runtimeOverlayIncluded: false,
+      zones: [{
+        revision: { logicalId: zoneId, lifecycleState: 'Active' },
+        zoneCode: 'Z-A',
+        polygonJson: '{"schemaVersion":1,"points":[[0,0],[10000,0],[10000,8000],[0,8000]]}',
+      }],
+      aisles: [{
+        revision: { logicalId: aisleId, lifecycleState: 'Active' },
+        zoneLogicalId: zoneId,
+        aisleCode: 'A-01',
+        polygonJson: '{"schemaVersion":1,"points":[[1000,0],[3000,0],[3000,8000],[1000,8000]]}',
+      }],
+      racks: [],
+      rackLevels: [],
+      elements: [],
+    } as unknown as ISpaceDesignSceneDto
+
+    const plan = buildElementCanvasPlan(scene)
+
+    expect(plan).toEqual([
+      {
+        kind: 'polygon',
+        logicalId: zoneId,
+        ownerKind: 'Zone',
+        elementType: 'Zone',
+        points: [
+          { x: 0, y: 0 },
+          { x: 10_000, y: 0 },
+          { x: 10_000, y: 8_000 },
+          { x: 0, y: 8_000 },
+        ],
+      },
+      {
+        kind: 'polygon',
+        logicalId: aisleId,
+        ownerKind: 'Aisle',
+        elementType: 'Aisle',
+        points: [
+          { x: 1_000, y: 0 },
+          { x: 3_000, y: 0 },
+          { x: 3_000, y: 8_000 },
+          { x: 1_000, y: 8_000 },
+        ],
+      },
+    ])
   })
 })

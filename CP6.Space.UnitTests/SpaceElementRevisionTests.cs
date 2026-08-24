@@ -52,11 +52,27 @@ public sealed class SpaceElementRevisionTests
         Assert.Throws<ArgumentException>(() => NewElement("ForkliftLiveTelemetry"));
     }
 
+    [Fact]
+    public void Draft_element_can_be_retyped_without_replacing_its_identity_or_geometry()
+    {
+        var element = NewElement(SpaceElementTypes.Column);
+        var logicalId = element.LogicalId;
+        var geometry = element.GeometryJson;
+
+        element.Retype(" door ");
+
+        Assert.Equal(SpaceElementTypes.Door, element.ElementType);
+        Assert.Equal(logicalId, element.LogicalId);
+        Assert.Equal(geometry, element.GeometryJson);
+        Assert.Throws<ArgumentException>(() => element.Retype("LiveRobot"));
+    }
+
     [Theory]
     [InlineData("""{"schemaVersion":1,"kind":"point","x":10,"y":-20,"z":0}""")]
     [InlineData("""{"schemaVersion":1,"kind":"path","points":[{"x":0,"y":0},{"x":100,"y":100,"z":5}],"width":20}""")]
     [InlineData("""{"schemaVersion":1,"kind":"polygon","outer":[{"x":0,"y":0},{"x":100,"y":0},{"x":100,"y":100}],"holes":[[{"x":10,"y":10},{"x":20,"y":10},{"x":20,"y":20}]],"height":3000}""")]
     [InlineData(BoxGeometry)]
+    [InlineData("""{"schemaVersion":1,"kind":"group","parts":[{"sourceLogicalId":"11111111-1111-1111-1111-111111111111","sourceRef":"CAD-A","x":0,"y":0,"z":0,"rotationZ":0,"width":800,"height":2200,"depth":400,"geometry":{"schemaVersion":1,"kind":"box","width":800,"height":2200,"depth":400}},{"sourceLogicalId":"22222222-2222-2222-2222-222222222222","sourceId":"33333333-3333-3333-3333-333333333333","x":900,"y":0,"z":0,"rotationZ":90,"width":400,"height":2200,"depth":100,"geometry":{"schemaVersion":1,"kind":"path","points":[{"x":0,"y":0,"z":0},{"x":400,"y":0,"z":0}],"width":100}}]}""")]
     [InlineData("""{"schemaVersion":1,"kind":"asset","assetVersionId":"11111111-1111-1111-1111-111111111111","transform":{}}""")]
     public void Frozen_geometry_kinds_accept_versioned_integer_shapes(
         string geometryJson)
@@ -73,6 +89,9 @@ public sealed class SpaceElementRevisionTests
     [InlineData("""{"schemaVersion":1,"kind":"path","points":[{"x":0,"y":0}],"width":1}""")]
     [InlineData("""{"schemaVersion":1,"kind":"polygon","outer":[{"x":0,"y":0},{"x":1,"y":0},{"x":1,"y":1}],"holes":[[]],"height":1}""")]
     [InlineData("""{"schemaVersion":1,"kind":"asset","assetVersionId":"00000000-0000-0000-0000-000000000000","transform":{}}""")]
+    [InlineData("""{"schemaVersion":1,"kind":"group","parts":[{"sourceLogicalId":"11111111-1111-1111-1111-111111111111","x":0,"y":0,"z":0,"rotationZ":0,"width":1,"height":1,"depth":1,"geometry":{"schemaVersion":1,"kind":"box","width":1,"height":1,"depth":1}}]}""")]
+    [InlineData("""{"schemaVersion":1,"kind":"group","parts":[{"sourceLogicalId":"not-a-guid","x":0,"y":0,"z":0,"rotationZ":0,"width":1,"height":1,"depth":1,"geometry":{"schemaVersion":1,"kind":"box","width":1,"height":1,"depth":1}},{"sourceLogicalId":"22222222-2222-2222-2222-222222222222","x":0,"y":0,"z":0,"rotationZ":0,"width":1,"height":1,"depth":1,"geometry":{"schemaVersion":1,"kind":"box","width":1,"height":1,"depth":1}}]}""")]
+    [InlineData("""{"schemaVersion":1,"kind":"group","parts":[{"sourceLogicalId":"11111111-1111-1111-1111-111111111111","x":0,"y":0,"z":0,"rotationZ":0,"width":1,"height":1,"depth":1,"geometry":{"schemaVersion":1,"kind":"asset","assetVersionId":"33333333-3333-3333-3333-333333333333","transform":{}}},{"sourceLogicalId":"22222222-2222-2222-2222-222222222222","x":0,"y":0,"z":0,"rotationZ":0,"width":1,"height":1,"depth":1,"geometry":{"schemaVersion":1,"kind":"box","width":1,"height":1,"depth":1}}]}""")]
     [InlineData("""{"schemaVersion":1,"kind":"unknown"}""")]
     public void Invalid_or_unknown_geometry_fails_closed(string geometryJson)
     {
@@ -92,6 +111,21 @@ public sealed class SpaceElementRevisionTests
         Assert.Equal(updated, element.GeometryJson);
         Assert.Throws<ArgumentException>(
             () => element.UpdateGeometry("""{"schemaVersion":99,"kind":"point"}"""));
+    }
+
+    [Fact]
+    public void Group_geometry_nesting_fails_closed_beyond_the_frozen_limit()
+    {
+        const string leaf =
+            """{"schemaVersion":1,"kind":"box","width":1,"height":1,"depth":1}""";
+        var geometry = leaf;
+        for (var depth = 0; depth < 9; depth++)
+        {
+            geometry = $$"""{"schemaVersion":1,"kind":"group","parts":[{"sourceLogicalId":"11111111-1111-1111-1111-111111111111","x":0,"y":0,"z":0,"rotationZ":0,"width":1,"height":1,"depth":1,"geometry":{{geometry}}},{"sourceLogicalId":"22222222-2222-2222-2222-222222222222","x":1,"y":0,"z":0,"rotationZ":0,"width":1,"height":1,"depth":1,"geometry":{{leaf}}}]}""";
+        }
+
+        Assert.Throws<ArgumentException>(
+            () => NewElement(SpaceElementTypes.Column, geometry));
     }
 
     [Theory]
@@ -259,6 +293,59 @@ public sealed class SpaceElementRevisionTests
                 logicalId));
     }
 
+    [Fact]
+    public void Manual_correction_lock_requires_a_source_and_tracks_versions()
+    {
+        var actor = Guid.NewGuid();
+        var first = new DateTime(2026, 8, 15, 12, 0, 0, DateTimeKind.Utc);
+        var second = first.AddMinutes(1);
+        var element = NewElement(SpaceElementTypes.Wall);
+
+        Assert.Throws<InvalidOperationException>(() =>
+            element.SetManualCorrectionLock(true, actor, first));
+
+        element.AttachSource(NewCadSource(), "CAD:H:WALL-1");
+        element.SetManualCorrectionLock(true, actor, first);
+
+        Assert.True(element.IsManualCorrectionLocked);
+        Assert.Equal(1, element.UserCorrectionVersion);
+        Assert.Equal(actor, element.ManualCorrectionUpdatedBy);
+        Assert.Equal(first, element.ManualCorrectionUpdatedAtUtc);
+        Assert.Throws<InvalidOperationException>(() =>
+            element.SetManualCorrectionLock(true, actor, first));
+
+        element.MarkLockedManualCorrectionChanged(actor, second);
+        Assert.Equal(2, element.UserCorrectionVersion);
+        Assert.Equal(second, element.ManualCorrectionUpdatedAtUtc);
+
+        element.SetManualCorrectionLock(false, actor, second);
+        element.MarkLockedManualCorrectionChanged(actor, second.AddMinutes(1));
+        Assert.False(element.IsManualCorrectionLocked);
+        Assert.Equal(2, element.UserCorrectionVersion);
+
+        element.SetManualCorrectionLock(true, actor, second.AddMinutes(2));
+        Assert.True(element.IsManualCorrectionLocked);
+        Assert.Equal(3, element.UserCorrectionVersion);
+    }
+
+    [Fact]
+    public void Manual_correction_updates_require_utc_and_real_actor_identity()
+    {
+        var element = NewElement(SpaceElementTypes.Column);
+        element.AttachSource(NewCadSource(), "CAD:H:COLUMN-1");
+
+        Assert.Throws<ArgumentException>(() =>
+            element.SetManualCorrectionLock(
+                true,
+                Guid.Empty,
+                DateTime.SpecifyKind(DateTime.Now, DateTimeKind.Local)));
+        Assert.Throws<ArgumentException>(() =>
+            element.SetManualCorrectionLock(
+                true,
+                Guid.NewGuid(),
+                DateTime.SpecifyKind(DateTime.Now, DateTimeKind.Local)));
+    }
+
     private static SpaceElementRevision NewElement(
         string elementType,
         string geometryJson = BoxGeometry) =>
@@ -269,6 +356,30 @@ public sealed class SpaceElementRevisionTests
             FloorLogicalId,
             elementType,
             geometryJson);
+
+    private static SpaceModelSource NewCadSource()
+    {
+        var file = SpaceFile.CreateUploading(
+            Guid.NewGuid(),
+            TenantId,
+            $"{TenantId:N}/{Guid.NewGuid():N}/source.content",
+            "warehouse.dxf",
+            "application/vnd.autocad.dxf",
+            SpaceFileRetentionClass.Source);
+        file.CompleteQuarantine(
+            "application/vnd.autocad.dxf",
+            ".dxf",
+            1,
+            new string('a', 64));
+        file.BeginScanning();
+        file.MarkClean("unit-test", "1");
+        return SpaceModelSource.CreateFileSource(
+            TenantId,
+            VersionId,
+            SpaceSourceType.Dxf,
+            file,
+            "warehouse.dxf");
+    }
 
     private const string BoxGeometry =
         """{"schemaVersion":1,"kind":"box","width":800,"height":2200,"depth":400}""";

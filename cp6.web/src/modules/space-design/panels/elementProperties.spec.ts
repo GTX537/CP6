@@ -6,6 +6,7 @@ import {
 } from './elementProperties'
 
 const element = {
+  elementType: 'Column',
   geometryJson:
     '{"schemaVersion":1,"kind":"box","width":400,"height":5000,"depth":400}',
   x: 1000,
@@ -29,6 +30,7 @@ describe('elementProperties', () => {
       },
     ])
     draft.x = 1200
+    draft.elementType = 'Door'
     draft.width = 600
     draft.height = 5200
     draft.depth = 500
@@ -36,6 +38,7 @@ describe('elementProperties', () => {
     const payload = buildElementPropertiesPayload(element, draft)
 
     expect(payload.x).toBe(1200)
+    expect(payload.elementType).toBe('Door')
     expect(payload.attributes).toEqual([
       {
         namespace: 'design',
@@ -62,6 +65,12 @@ describe('elementProperties', () => {
     )
 
     draft.width = 400
+    draft.elementType = 'LiveRobot'
+    expect(() => buildElementPropertiesPayload(element, draft)).toThrow(
+      'supported Space element type',
+    )
+
+    draft.elementType = 'Column'
     draft.linkedEntityType = 'Location'
     expect(() => buildElementPropertiesPayload(element, draft)).toThrow('paired')
 
@@ -82,6 +91,50 @@ describe('elementProperties', () => {
     ]
     expect(() => buildElementPropertiesPayload(element, draft)).toThrow(
       'unique',
+    )
+  })
+
+  it('allows whole-group placement edits but rejects direct group resizing', () => {
+    const group = {
+      ...element,
+      geometryJson: JSON.stringify({
+        schemaVersion: 1,
+        kind: 'group',
+        parts: [
+          {
+            sourceLogicalId: '11111111-1111-1111-1111-111111111111',
+            x: 0,
+            y: 0,
+            z: 0,
+            rotationZ: 0,
+            width: 400,
+            height: 5000,
+            depth: 400,
+            geometry: JSON.parse(element.geometryJson!),
+          },
+          {
+            sourceLogicalId: '22222222-2222-2222-2222-222222222222',
+            x: 800,
+            y: 0,
+            z: 0,
+            rotationZ: 0,
+            width: 400,
+            height: 5000,
+            depth: 400,
+            geometry: JSON.parse(element.geometryJson!),
+          },
+        ],
+      }),
+      width: 1200,
+    } as ISpaceSceneElementDto
+    const draft = createElementPropertiesDraft(group, [])
+    draft.x = 1500
+
+    expect(buildElementPropertiesPayload(group, draft).x).toBe(1500)
+
+    draft.width = 1300
+    expect(() => buildElementPropertiesPayload(group, draft)).toThrow(
+      'Group geometry dimensions cannot be edited directly',
     )
   })
 })

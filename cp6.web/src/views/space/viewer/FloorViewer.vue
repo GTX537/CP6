@@ -3,7 +3,7 @@
     <!-- Left sidebar: floor list -->
     <div class="viewer-sidebar">
       <FloorList
-        :site-id="siteId"
+        :floors="publishedFloors"
         :current-floor-id="currentFloorId"
         @switch-floor="onSwitchFloor"
       />
@@ -208,6 +208,12 @@ import { SpaceViewer } from '@/space-viewer/SpaceViewer'
 import { Locator } from '@/space-viewer/navigate/Locator'
 import { StockOverlay } from '@/space-viewer/overlay/StockOverlay'
 import { spaceRuntimeApi } from '@/api/space/runtime'
+import {
+  designPublishedSceneApi,
+  indexPublishedViewerScene,
+} from '@/api/space/designPublishedScene'
+import type { FloorVO } from '@/types/space/scene'
+import type { ISpaceDesignSceneDto } from '../../../../../sdk/typescript/space-design-v1/spaceDesignV1Client'
 import type { OverlayMode, WmsStockDto } from '@/types/space/overlay'
 import type { SpaceDataSource } from '@/types/space/dataSource'
 import { isUsableDataSource } from '@/types/space/dataSource'
@@ -269,7 +275,9 @@ const progressText = ref('')
 const errorMsg = ref('')
 const selectedId = ref<string | null>(null)
 const currentFloorId = ref('')
+const publishedFloors = ref<FloorVO[]>([])
 const siteId = (route.params['siteId'] as string) || ''
+let publishedScenes: ReadonlyMap<string, ISpaceDesignSceneDto> = new Map()
 
 let viewer: SpaceViewer | null = null
 let locator: Locator | null = null
@@ -414,7 +422,7 @@ async function loadFloor(floorId: string): Promise<void> {
   errorMsg.value = ''
   progressText.value = ''
   try {
-    await viewer.load(floorId)
+    await loadPublishedGeometry(floorId)
     currentFloorId.value = floorId
     viewer.home()
     void refreshStock()   // 楼层就绪后叠加库存（currentFloorId 已设，避免 onReady 早触发拿空 floorId）
@@ -422,6 +430,14 @@ async function loadFloor(floorId: string): Promise<void> {
     errorMsg.value = t('加载失败')
     loading.value = false
   }
+}
+
+async function loadPublishedGeometry(floorId: string): Promise<void> {
+  const scene = publishedScenes.get(floorId)
+  if (!viewer || !scene) {
+    throw new Error(`Published floor ${floorId} is unavailable.`)
+  }
+  await viewer.load(scene)
 }
 
 async function onSwitchFloor(floorId: string): Promise<void> {
@@ -886,7 +902,7 @@ async function onToggleAbcOverlay(enabled: boolean): Promise<void> {
   abcOverlayOn.value = false
   overlay.clearAbcOverlay()
   if (overlay.mode === 'off' && currentFloorId.value) {
-    await viewer.load(currentFloorId.value)
+    await loadPublishedGeometry(currentFloorId.value)
   } else {
     overlay.apply()
   }
@@ -930,7 +946,7 @@ async function refreshStock(): Promise<void> {
     stockRefreshState.value = recordRuntimeResult(stockRefreshState.value, overlay.source)
     if (!isUsableDataSource(stockSource.value)) {
       selectedStock.value = null
-      await viewer?.load(currentFloorId.value)
+      await loadPublishedGeometry(currentFloorId.value)
       ElMessage.warning(t('搴撳瓨鏁版嵁婧愪笉鍙敤'))
       return
     }
@@ -1030,7 +1046,7 @@ async function onClearSpatialFilter(): Promise<void> {
 async function clearSpatialFilterColors(): Promise<void> {
   overlay?.clearSpatialFilter()
   if (overlay?.mode === 'off' && viewer && currentFloorId.value) {
-    await viewer.load(currentFloorId.value)
+    await loadPublishedGeometry(currentFloorId.value)
   } else {
     overlay?.apply()
   }
@@ -1160,7 +1176,7 @@ async function onToggleWorkload(): Promise<void> {
     overlayMode.value = 'off'
     overlay?.setMode('off')
     if (polling.value) { overlay?.stopPolling(); polling.value = false }
-    await viewer.load(currentFloorId.value)  // 复位为默认灰（不重叠 07 着色）
+    await loadPublishedGeometry(currentFloorId.value)  // 复位为默认灰（不重叠 07 着色）
     heatmap.setEnabled(true)
     await heatmap.refresh(currentFloorId.value, workloadWin.from, exclusiveTo(workloadWin.to))
     workloadSource.value = heatmap.source
@@ -1187,7 +1203,7 @@ async function onApplyWorkload(win: { from: string; to: string }): Promise<void>
     if (!isUsableDataSource(workloadSource.value)) {
       heatmap.setEnabled(false)
       workloadOn.value = false
-      await viewer?.load(currentFloorId.value)
+      await loadPublishedGeometry(currentFloorId.value)
       ElMessage.warning(t('Workload data source is unavailable'))
     }
   }
@@ -1424,9 +1440,25 @@ onMounted(async () => {
     (locationId) => { selectedId.value = locationId; syncSelectedStock() },
   )
 
-  const initialFloorId = (route.query['floorId'] as string) || ''
+  let published
+  try {
+    published = indexPublishedViewerScene(
+      await designPublishedSceneApi.get(siteId),
+      siteId,
+    )
+  } catch {
+    errorMsg.value = t('加载失败')
+    return
+  }
+  publishedScenes = published.scenes
+  publishedFloors.value = published.floors
+
+  const requestedFloorId = (route.query['floorId'] as string) || ''
+  const initialFloorId = publishedScenes.has(requestedFloorId)
+    ? requestedFloorId
+    : publishedFloors.value[0]?.id ?? ''
   if (!initialFloorId) {
-    errorMsg.value = t('请通过 floorId 参数指定初始楼层')
+    errorMsg.value = t('当前站点没有可查看的已发布楼层')
     return
   }
 

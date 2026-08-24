@@ -1,0 +1,36 @@
+groups:
+  - name: cp6-space-publish-recovery
+    rules:
+      - alert: CP6SpacePublishAutomaticRecoverySloBreach
+        expr: cp6_space_publish_recovery_slo_breaches{state="waiting_retry"} > 0
+        labels:
+          severity: critical
+          service: cp6-space
+          owner: space-wms
+        annotations:
+          summary: Space publish automatic recovery exceeded 15 minutes
+          description: At least one publish attempt remains in waiting_retry beyond the core GA recovery target. The current Published version must remain active while the attempt is investigated.
+          runbook: docs/space/runbooks/publish-recovery.md
+
+      - alert: CP6SpacePublishManualRecoverySloBreach
+        expr: sum(cp6_space_publish_recovery_slo_breaches{state=~"manual_intervention|reconciliation_required"}) > 0
+        labels:
+          severity: critical
+          service: cp6-space
+          owner: space-wms
+        annotations:
+          summary: Space publish manual recovery exceeded 4 hours
+          description: At least one publish attempt requiring operator action remains unresolved beyond the core GA recovery target. Do not bypass the PublishPlan or write directly to WMS.
+          runbook: docs/space/runbooks/publish-recovery.md
+
+      - alert: CP6SpacePublishRecoveryMetricsAbsent
+        expr: absent(cp6_space_publish_recovery_attempts)
+        for: 10m
+        labels:
+          severity: warning
+          service: cp6-space
+          owner: platform
+        annotations:
+          summary: Space publish recovery metrics are absent
+          description: The CP6 metrics target has not exposed Space publish recovery gauges for 10 minutes. Check API health, scrape configuration, and SpaceObservability:MetricsEnabled.
+          runbook: docs/space/runbooks/publish-recovery.md

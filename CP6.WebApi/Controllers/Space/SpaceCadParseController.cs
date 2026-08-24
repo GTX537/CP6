@@ -51,7 +51,8 @@ public sealed class UploadSpaceCadSourceForm
     StatusCodes.Status500InternalServerError,
     "application/problem+json")]
 public sealed class SpaceCadParseController(
-    ISpaceCadParseService service) : ControllerBase
+    ISpaceCadParseService service,
+    ISpaceCadPreparationService preparation) : ControllerBase
 {
     private const long CadUploadLimit = 100L * 1024L * 1024L;
 
@@ -97,6 +98,52 @@ public sealed class SpaceCadParseController(
         return Accepted(result.JobStatusUrl, result);
     }
 
+    [HttpGet(
+        "versions/{versionId:guid}/sources/{sourceId:guid}/" +
+        "cad-preparations/status")]
+    [RequirePermission("space", "source:upload", UseProblemDetails = true)]
+    [RequirePermission("space", "model:edit", UseProblemDetails = true)]
+    [ProducesResponseType<SpaceCadPreparationStatusDto>(
+        StatusCodes.Status200OK)]
+    public Task<SpaceCadPreparationStatusDto> GetPreparationStatus(
+        Guid versionId,
+        Guid sourceId,
+        CancellationToken cancellationToken) =>
+        preparation.GetStatusAsync(versionId, sourceId, cancellationToken);
+
+    [HttpGet("versions/{versionId:guid}/cad-mapping-profiles")]
+    [RequirePermission("space", "source:upload", UseProblemDetails = true)]
+    [RequirePermission("space", "model:edit", UseProblemDetails = true)]
+    [ProducesResponseType<IReadOnlyList<SpaceCadMappingProfileSummaryDto>>(
+        StatusCodes.Status200OK)]
+    public Task<IReadOnlyList<SpaceCadMappingProfileSummaryDto>>
+        GetMappingProfiles(
+            Guid versionId,
+            CancellationToken cancellationToken) =>
+        preparation.ListProfilesAsync(versionId, cancellationToken);
+
+    [HttpPost(
+        "versions/{versionId:guid}/sources/{sourceId:guid}/" +
+        "cad-preparations:preview")]
+    [SpaceAuditOperation(
+        "space.cad-preparation.preview",
+        "ModelSource",
+        PermissionCode = "space:model:edit")]
+    [RequirePermission("space", "source:upload", UseProblemDetails = true)]
+    [RequirePermission("space", "model:edit", UseProblemDetails = true)]
+    [ProducesResponseType<PreviewSpaceCadPreparationResponse>(
+        StatusCodes.Status200OK)]
+    public Task<PreviewSpaceCadPreparationResponse> PreviewPreparation(
+        Guid versionId,
+        Guid sourceId,
+        [FromBody, Required] PreviewSpaceCadPreparationRequest request,
+        CancellationToken cancellationToken) =>
+        preparation.PreviewAsync(
+            versionId,
+            sourceId,
+            request,
+            cancellationToken);
+
     [HttpPost(
         "versions/{versionId:guid}/sources/{sourceId:guid}/cad-parses")]
     [SpaceAuditOperation(
@@ -129,6 +176,7 @@ public sealed class SpaceCadParseController(
     [HttpGet(
         "versions/{versionId:guid}/sources/{sourceId:guid}/" +
         "cad-parses/{jobId:guid}")]
+    [RequirePermission("space", "model:read", UseProblemDetails = true)]
     [ProducesResponseType<SpaceCadParseDto>(StatusCodes.Status200OK)]
     public Task<SpaceCadParseDto> GetParse(
         Guid versionId,
@@ -139,6 +187,62 @@ public sealed class SpaceCadParseController(
             versionId,
             sourceId,
             jobId,
+            cancellationToken);
+
+    [HttpGet(
+        "versions/{versionId:guid}/floors/{floorLogicalId:guid}/" +
+        "cad-review-candidates")]
+    [RequirePermission("space", "model:read", UseProblemDetails = true)]
+    [ProducesResponseType<SpaceCadReviewCandidateListDto>(
+        StatusCodes.Status200OK)]
+    public Task<SpaceCadReviewCandidateListDto> ListReviewCandidates(
+        Guid versionId,
+        Guid floorLogicalId,
+        [FromQuery, Range(1, 100)] int limit = 50,
+        CancellationToken cancellationToken = default) =>
+        service.ListReviewCandidatesAsync(
+            versionId,
+            floorLogicalId,
+            limit,
+            cancellationToken);
+
+    [HttpGet(
+        "versions/{versionId:guid}/sources/{sourceId:guid}/" +
+        "cad-parses/{jobId:guid}/review-workspace")]
+    [RequirePermission("space", "model:read", UseProblemDetails = true)]
+    [ProducesResponseType<SpaceCadReviewWorkspaceV1>(StatusCodes.Status200OK)]
+    public Task<SpaceCadReviewWorkspaceV1> GetReviewWorkspace(
+        Guid versionId,
+        Guid sourceId,
+        Guid jobId,
+        CancellationToken cancellationToken) =>
+        service.GetReviewWorkspaceAsync(
+            versionId,
+            sourceId,
+            jobId,
+            cancellationToken);
+
+    [HttpPost(
+        "versions/{versionId:guid}/sources/{sourceId:guid}/" +
+        "cad-parses/{jobId:guid}/review-workspace:apply")]
+    [SpaceAuditOperation(
+        "space.cad-changeset.apply",
+        "Job",
+        PermissionCode = "space:model:edit")]
+    [RequirePermission("space", "model:edit", UseProblemDetails = true)]
+    [ProducesResponseType<ApplySpaceCadChangesetResponse>(
+        StatusCodes.Status200OK)]
+    public Task<ApplySpaceCadChangesetResponse> ApplyReviewChanges(
+        Guid versionId,
+        Guid sourceId,
+        Guid jobId,
+        [FromBody, Required] ApplySpaceCadChangesetRequest request,
+        CancellationToken cancellationToken) =>
+        service.ApplyReviewChangesAsync(
+            versionId,
+            sourceId,
+            jobId,
+            request,
             cancellationToken);
 
     [HttpPost(

@@ -9,6 +9,7 @@ import type { EditorCommandInput } from '@/modules/space-design/commands/editorB
 const root = '/space/design/v1'
 
 export interface ElementPropertiesPayload {
+  elementType?: string
   geometryJson: string
   x: number
   y: number
@@ -21,6 +22,18 @@ export interface ElementPropertiesPayload {
   linkedEntityType?: string
   linkedLogicalId?: string
   attributes: ISpaceElementAttributeWriteDto[]
+  manualCorrectionLocked?: boolean
+}
+
+export interface EditorCommandEnvelope {
+  schemaVersion: number
+  commandBatchId: string
+  clientInstanceId: string
+  leaseId: string
+  expectedFloorRevision: number
+  expectedContentRevision: number
+  expectedContentHash: string
+  commands: Array<EditorCommandInput & { commandId: string }>
 }
 
 export const designElementsApi = {
@@ -28,7 +41,10 @@ export const designElementsApi = {
     versionId: string,
     floorLogicalId: string,
     expectedFloorRevision: number,
+    expectedContentRevision: number,
+    expectedContentHash: string,
     clientInstanceId: string,
+    leaseId: string,
     element: ISpaceSceneElementDto,
     payload: ElementPropertiesPayload,
   ) {
@@ -37,7 +53,10 @@ export const designElementsApi = {
       versionId,
       floorLogicalId,
       expectedFloorRevision,
+      expectedContentRevision,
+      expectedContentHash,
       clientInstanceId,
+      leaseId,
       [
         {
           type: 'UpdateProperties',
@@ -52,7 +71,10 @@ export const designElementsApi = {
     versionId: string,
     floorLogicalId: string,
     expectedFloorRevision: number,
+    expectedContentRevision: number,
+    expectedContentHash: string,
     clientInstanceId: string,
+    leaseId: string,
     element: ISpaceSceneElementDto,
   ) {
     const targetLogicalId = requireLogicalId(element)
@@ -60,7 +82,10 @@ export const designElementsApi = {
       versionId,
       floorLogicalId,
       expectedFloorRevision,
+      expectedContentRevision,
+      expectedContentHash,
       clientInstanceId,
+      leaseId,
       [
         {
           type: 'DeleteObject',
@@ -74,19 +99,52 @@ export const designElementsApi = {
     versionId: string,
     floorLogicalId: string,
     expectedFloorRevision: number,
+    expectedContentRevision: number,
+    expectedContentHash: string,
     clientInstanceId: string,
+    leaseId: string,
     commands: readonly EditorCommandInput[],
   ) {
-    return apply(versionId, floorLogicalId, {
+    const envelope = designElementsApi.createEnvelope(
+      expectedFloorRevision,
+      expectedContentRevision,
+      expectedContentHash,
+      clientInstanceId,
+      leaseId,
+      commands,
+    )
+    return designElementsApi.sendEnvelope(versionId, floorLogicalId, envelope)
+  },
+
+  createEnvelope(
+    expectedFloorRevision: number,
+    expectedContentRevision: number,
+    expectedContentHash: string,
+    clientInstanceId: string,
+    leaseId: string,
+    commands: readonly EditorCommandInput[],
+  ): EditorCommandEnvelope {
+    return {
       schemaVersion: 1,
       commandBatchId: crypto.randomUUID(),
       clientInstanceId,
+      leaseId,
       expectedFloorRevision,
+      expectedContentRevision,
+      expectedContentHash,
       commands: commands.map((command) => ({
         ...command,
         commandId: crypto.randomUUID(),
       })),
-    })
+    }
+  },
+
+  sendEnvelope(
+    versionId: string,
+    floorLogicalId: string,
+    envelope: EditorCommandEnvelope,
+  ) {
+    return apply(versionId, floorLogicalId, envelope)
   },
 }
 

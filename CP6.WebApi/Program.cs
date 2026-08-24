@@ -31,10 +31,13 @@ if (builder.Environment.IsProduction())
 
 builder.Services.AddScoped<OperLogFilter>();
 builder.Services.AddScoped<SpaceAuditActionFilter>();
+builder.Services.AddScoped<SpaceDesignControlPlaneSubjectFilter>();
 builder.Services.AddControllers(options =>
 {
     options.Filters.AddService<OperLogFilter>();
     options.Filters.AddService<SpaceAuditActionFilter>();
+    options.Filters.AddService<SpaceDesignControlPlaneSubjectFilter>(
+        SpaceDesignControlPlaneSubjectFilter.OrderValue);
 });
 builder.Services.Configure<Microsoft.AspNetCore.Mvc.ApiBehaviorOptions>(
     options =>
@@ -411,6 +414,9 @@ builder.Services.AddScoped<CP6.Core.Services.Space.Observability.ISpaceExecution
 builder.Services.AddScoped<
     CP6.Space.Application.ISpaceExecutionContext,
     CP6.WebApi.Services.HttpSpaceApplicationExecutionContext>();
+builder.Services.AddScoped<CP6.Space.Application.ISpaceCorrelationContext>(
+    sp => (CP6.Space.Application.ISpaceCorrelationContext)sp
+        .GetRequiredService<CP6.Space.Application.ISpaceExecutionContext>());
 builder.Services.AddScoped<
     ISpaceDesignAccessEvaluator,
     CP6.WebApi.Services.CompatibilitySpaceDesignAccessEvaluator>();
@@ -765,6 +771,8 @@ builder.Services.AddScoped<CP6.Core.Services.Integration.IBridgeMetricsSnapshotP
 builder.Services.AddSingleton<CP6.WebApi.Observability.BridgeMetricsCollector>();
 builder.Services.AddSingleton<
     CP6.WebApi.Observability.SpaceAuditMetricsCollector>();
+builder.Services.AddSingleton<
+    CP6.WebApi.Observability.SpacePublishRecoveryMetricsCollector>();
 
 // S 类认证加固（T1）：Security 配置 + BCrypt 密码哈希服务
 builder.Services.Configure<CP6.Core.Services.Sys.SecurityOptions>(builder.Configuration.GetSection("Security"));
@@ -3063,5 +3071,10 @@ CP6.WebApi.Observability.SpaceAuditMetricsRegistration.RegisterIfEnabled(
     app.Configuration.GetValue<bool?>(
         "SpaceObservability:MetricsEnabled") ?? true,
     app.Services);
+CP6.WebApi.Observability.SpacePublishRecoveryMetricsRegistration
+    .RegisterIfEnabled(
+        app.Configuration.GetValue<bool?>(
+            "SpaceObservability:MetricsEnabled") ?? true,
+        app.Services);
 
 app.Run();

@@ -9,6 +9,12 @@ public static class SpaceCadMappingVersions
     public const int MaximumOverrides = 5_000;
 }
 
+public static class SpaceCadMappingReplaySnapshotVersions
+{
+    public const int SchemaVersion = 1;
+    public const int MaximumSerializedLength = 1024 * 1024;
+}
+
 [JsonConverter(typeof(JsonStringEnumConverter))]
 public enum SpaceCadMappingScope
 {
@@ -76,21 +82,21 @@ public enum SpaceCadMappingDecisionSource
 }
 
 public sealed record SpaceCadMappingRuleV1(
-    string RuleId,
-    int Priority,
-    SpaceCadMappingSourceKind SourceKind,
-    SpaceCadMappingMatchKind MatchKind,
-    string Pattern,
+    [property: JsonRequired] string RuleId,
+    [property: JsonRequired] int Priority,
+    [property: JsonRequired] SpaceCadMappingSourceKind SourceKind,
+    [property: JsonRequired] SpaceCadMappingMatchKind MatchKind,
+    [property: JsonRequired] string Pattern,
     string? AttributeName,
     SpaceCadMappingMatchKind? AttributeMatchKind,
     string? AttributePattern,
-    SpaceCadSemanticTarget Target,
+    [property: JsonRequired] SpaceCadSemanticTarget Target,
     string? TargetSubtype,
-    SpaceCadGeometryRule GeometryRule,
+    [property: JsonRequired] SpaceCadGeometryRule GeometryRule,
     decimal? DefaultHeightMillimeters,
     decimal? DefaultThicknessMillimeters,
-    decimal ConfidenceWeight,
-    bool IsRequired);
+    [property: JsonRequired] decimal ConfidenceWeight,
+    [property: JsonRequired] bool IsRequired);
 
 public sealed record SpaceCadMappingProfileDraftV1(
     int SchemaVersion,
@@ -116,6 +122,35 @@ public sealed record SpaceCadMappingProfileV1(
     int? BasedOnVersion,
     IReadOnlyList<SpaceCadMappingRuleV1> Rules,
     string DefinitionSha256);
+
+public sealed record SpaceCadMappingProfileDto(
+    Guid Id,
+    string Name,
+    SpaceCadMappingScope Scope,
+    int Version,
+    bool IsReadOnly,
+    bool IsEnabled,
+    string DefinitionSha256,
+    IReadOnlyList<SpaceCadMappingRuleV1> Rules,
+    Guid? BasedOnProfileId,
+    int? BasedOnVersion,
+    string? RowVersion,
+    DateTime? CreatedAtUtc,
+    Guid? CreatedBy);
+
+public sealed record SaveSpaceCadMappingProfileRequest(
+    Guid? ProfileId,
+    [property: JsonRequired] string Name,
+    [property: JsonRequired] bool IsEnabled,
+    [property: JsonRequired] IReadOnlyList<SpaceCadMappingRuleV1> Rules,
+    string? ExpectedRowVersion = null,
+    Guid? CopyFromProfileId = null,
+    int? CopyFromVersion = null);
+
+public sealed record SaveSpaceCadMappingProfileResponse(
+    SpaceCadMappingProfileDto Profile,
+    bool Created,
+    bool IdempotentReplay);
 
 public sealed record SpaceCadLayerMappingOverrideV1(
     string LayerId,
@@ -182,3 +217,16 @@ public sealed record SpaceCadMappingPreviewV1(
     SpaceCadMappingPreviewSummaryV1 Summary,
     bool ReadyForSemanticParsing,
     string PreviewSha256);
+
+public sealed record SpaceCadMappingReplaySnapshotV1(
+    int SchemaVersion,
+    Guid TenantId,
+    Guid ProfileId,
+    int ProfileVersion,
+    string ProfileDefinitionSha256,
+    string SourceSha256,
+    string ExpectedInventorySha256,
+    string ExpectedSourceStructureSha256,
+    string ExpectedMappingPreviewSha256,
+    IReadOnlyList<SpaceCadLayerMappingOverrideV1> LayerOverrides,
+    string SnapshotSha256);

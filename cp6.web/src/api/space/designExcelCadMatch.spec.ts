@@ -60,6 +60,9 @@ describe('designExcelCadMatchApi', () => {
       artifactId: 'artifact-1',
       artifactPayloadSha256: 'a'.repeat(64),
       expectedContentRevision: 7,
+      clientInstanceId: 'client-1',
+      leaseId: 'lease-1',
+      expectedFloorRevision: 3,
     }
 
     await designExcelCadMatchApi.confirm(
@@ -85,6 +88,34 @@ describe('designExcelCadMatchApi', () => {
 
     expect(http.get).toHaveBeenCalledWith(
       '/space/design/v1/versions/version-1/excel-cad-matches/match-1/confirmations/apply-1',
+    )
+  })
+
+  it('compensates one sealed Apply history with revisions and idempotency', async () => {
+    const request = {
+      schemaVersion: 2,
+      direction: 'Undo',
+      commandBatchId: 'history-batch-1',
+      clientInstanceId: 'client-1',
+      leaseId: 'lease-1',
+      expectedFloorRevision: 8,
+      expectedContentRevision: 12,
+      historySha256: 'c'.repeat(64),
+    }
+
+    await designExcelCadMatchApi.compensate(
+      'version-1',
+      'match-1',
+      'apply-1',
+      request,
+      'history-key-1',
+    )
+
+    expect(http.post).toHaveBeenCalledWith(
+      '/space/design/v1/versions/version-1/excel-cad-matches/match-1'
+      + '/confirmations/apply-1:compensate',
+      request,
+      { headers: { 'Idempotency-Key': 'history-key-1' } },
     )
   })
 })

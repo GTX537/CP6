@@ -1,5 +1,5 @@
 <script setup lang="ts">
-import { computed, ref, watch } from 'vue'
+import { computed, onBeforeUnmount, ref, watch } from 'vue'
 import { designExcelCadMatchApi } from '@/api/space/designExcelCadMatch'
 import type {
   ISpaceExcelCadApplyDto,
@@ -11,10 +11,14 @@ const props = defineProps<{
   versionId: string
   jobId: string
   currentContentRevision?: number
+  currentFloorRevision?: number
+  clientInstanceId?: string
+  leaseId?: string
 }>()
 
 const emit = defineEmits<{
   locate: [row: ISpaceExcelCadRackMatchV1]
+  applied: [confirmation: ISpaceExcelCadApplyDto]
   close: []
 }>()
 
@@ -25,12 +29,15 @@ const confirming = ref(false)
 const confirmationError = ref('')
 const confirmation = ref<ISpaceExcelCadApplyDto | null>(null)
 const applyJobId = ref('')
+const emittedApplyJobId = ref('')
 const disposition = ref('')
 const rackCode = ref('')
 const sourceRef = ref('')
 const onlyLocatable = ref(false)
 const currentCursor = ref<string>()
 const previousCursors = ref<Array<string | undefined>>([])
+let matchPollGeneration = 0
+let confirmationPollGeneration = 0
 
 const rows = computed(() => result.value?.rows ?? [])
 const summary = computed(() => result.value?.summary)
@@ -45,7 +52,11 @@ const stale = computed(() =>
   && result.value?.expectedContentRevision !== undefined
   && props.currentContentRevision !== result.value.expectedContentRevision,
 )
-const canConfirm = computed(() => result.value?.canConfirm === true && !stale.value)
+const canConfirm = computed(() => result.value?.canConfirm === true
+  && !stale.value
+  && props.currentFloorRevision !== undefined
+  && Boolean(props.clientInstanceId)
+  && Boolean(props.leaseId))
 
 watch(
   () => [props.versionId, props.jobId],
@@ -53,19 +64,40 @@ watch(
   { immediate: true },
 )
 
+onBeforeUnmount(() => {
+  matchPollGeneration += 1
+  confirmationPollGeneration += 1
+})
+
 async function resetAndLoad(): Promise<void> {
+  const generation = ++matchPollGeneration
   confirmation.value = null
   applyJobId.value = ''
+  emittedApplyJobId.value = ''
   confirmationError.value = ''
   currentCursor.value = undefined
   previousCursors.value = []
   await loadPage()
+  for (let attempt = 0; attempt < 450
+    && generation === matchPollGeneration
+    && !terminal.value
+    && !error.value; attempt += 1) {
+    await delay(2_000)
+    if (generation !== matchPollGeneration) return
+    await loadPage()
+  }
+  if (generation === matchPollGeneration && !terminal.value && !error.value) {
+    error.value = '等待权威匹配超时；后台任务仍可通过“应用筛选 / 刷新”继续恢复。'
+  }
 }
 
 async function confirmMatch(): Promise<void> {
   const match = result.value
   if (!canConfirm.value || !match?.artifactId || !match.artifactPayloadSha256
-      || match.expectedContentRevision === undefined) return
+      || match.expectedContentRevision === undefined
+      || props.currentFloorRevision === undefined
+      || !props.clientInstanceId
+      || !props.leaseId) return
   confirming.value = true
   confirmationError.value = ''
   try {
@@ -77,11 +109,14 @@ async function confirmMatch(): Promise<void> {
         artifactId: match.artifactId,
         artifactPayloadSha256: match.artifactPayloadSha256,
         expectedContentRevision: match.expectedContentRevision,
+        clientInstanceId: props.clientInstanceId,
+        leaseId: props.leaseId,
+        expectedFloorRevision: props.currentFloorRevision,
       },
       `excel-cad-apply:${props.jobId}:${match.artifactPayloadSha256}`,
     )
     applyJobId.value = accepted.applyJobId ?? ''
-    if (applyJobId.value) await refreshConfirmation()
+    if (applyJobId.value) await monitorConfirmation()
   } catch {
     confirmationError.value = '确认写入失败；草稿未发生部分写入，请刷新后重试。'
   } finally {
@@ -89,15 +124,36 @@ async function confirmMatch(): Promise<void> {
   }
 }
 
+async function monitorConfirmation(): Promise<void> {
+  const generation = ++confirmationPollGeneration
+  for (let attempt = 0; attempt < 450 && generation === confirmationPollGeneration; attempt += 1) {
+    await refreshConfirmation()
+    const status = confirmation.value?.jobStatus ?? ''
+    if (['Succeeded', 'Failed', 'Cancelled', 'DeadLetter'].includes(status)
+      || confirmationError.value) return
+    await delay(2_000)
+  }
+  if (generation === confirmationPollGeneration) {
+    confirmationError.value = '等待 Apply 超时；请使用“刷新写入状态”继续恢复。'
+  }
+}
+
 async function refreshConfirmation(): Promise<void> {
   if (!applyJobId.value) return
   confirmationError.value = ''
   try {
-    confirmation.value = await designExcelCadMatchApi.getConfirmation(
+    const loaded = await designExcelCadMatchApi.getConfirmation(
       props.versionId,
       props.jobId,
       applyJobId.value,
     )
+    confirmation.value = loaded
+    if (loaded.jobStatus === 'Succeeded'
+      && loaded.applyJobId
+      && emittedApplyJobId.value !== loaded.applyJobId) {
+      emittedApplyJobId.value = loaded.applyJobId
+      emit('applied', loaded)
+    }
   } catch {
     confirmationError.value = '确认任务状态加载失败，请稍后刷新。'
   }
@@ -163,6 +219,10 @@ function dispositionType(value?: string) {
 function shortHash(value?: string): string {
   return value ? `${value.slice(0, 10)}…${value.slice(-8)}` : '—'
 }
+
+function delay(milliseconds: number): Promise<void> {
+  return new Promise(resolve => window.setTimeout(resolve, milliseconds))
+}
 </script>
 
 <template>
@@ -196,7 +256,7 @@ function shortHash(value?: string): string {
       data-test="match-pending"
       type="info"
       :closable="false"
-      title="服务端正在生成权威匹配产物，可点击刷新查看进度。"
+      title="服务端正在生成权威匹配产物，工作台会自动刷新进度。"
     />
 
     <div class="summary-grid" data-test="match-summary">
@@ -320,8 +380,9 @@ function shortHash(value?: string): string {
   width: 420px;
   padding: 14px;
   overflow: auto;
-  background: #fff;
-  border-left: 1px solid #dfe4ea;
+  color: var(--space-studio-text, #101828);
+  background: var(--space-studio-panel, #fff);
+  border-left: 1px solid var(--space-studio-border, #dfe4ea);
 }
 
 .panel-header,
@@ -340,10 +401,9 @@ function shortHash(value?: string): string {
 
 .panel-header p,
 .authority,
-.match-row,
 .pagination {
-  color: #667085;
-  font-size: 12px;
+  color: var(--space-studio-muted, #667085);
+  font-size: 14px;
 }
 
 .panel-header p {
@@ -359,7 +419,7 @@ function shortHash(value?: string): string {
 
 .summary-grid span {
   padding: 8px;
-  background: #f8fafc;
+  background: var(--space-studio-panel-raised, #f8fafc);
   border-radius: 6px;
 }
 
@@ -377,8 +437,9 @@ function shortHash(value?: string): string {
   align-items: center;
   gap: 8px;
   margin-bottom: 12px;
-  color: #475467;
-  font-size: 12px;
+  color: var(--space-studio-muted, #475467);
+  font-size: 16px;
+  line-height: 1.45;
 }
 
 .confirmation :deep(.el-alert) {
@@ -399,13 +460,17 @@ function shortHash(value?: string): string {
 .match-row {
   display: grid;
   width: 100%;
+  min-height: 44px;
   padding: 10px;
   margin-bottom: 8px;
   text-align: left;
-  background: #f8fafc;
-  border: 1px solid #e2e8f0;
+  background: var(--space-studio-panel-raised, #f8fafc);
+  border: 1px solid var(--space-studio-border, #e2e8f0);
   border-radius: 6px;
   cursor: pointer;
+  color: var(--space-studio-text, #475467);
+  font-size: 16px;
+  line-height: 1.45;
   gap: 4px;
 }
 
@@ -418,6 +483,11 @@ function shortHash(value?: string): string {
   opacity: 0.7;
 }
 
+.match-row:focus-visible {
+  outline: 3px solid var(--space-studio-focus, #0e7490);
+  outline-offset: 2px;
+}
+
 .row-title {
   justify-content: flex-start;
 }
@@ -428,15 +498,23 @@ function shortHash(value?: string): string {
 
 .empty {
   padding: 28px 8px;
-  color: #94a3b8;
+  color: var(--space-studio-muted, #64748b);
   text-align: center;
 }
+
+.match-panel :deep(.el-button),
+.match-panel :deep(.el-input__wrapper),
+.match-panel :deep(.el-select__wrapper),
+.match-panel :deep(.el-checkbox) { min-height: 44px; }
+.match-panel :deep(.el-button:focus-visible),
+.match-panel :deep(.el-input__wrapper:focus-within),
+.match-panel :deep(.el-select__wrapper:focus-within) { outline: 3px solid var(--space-studio-focus, #0e7490); outline-offset: 2px; }
 
 @media (max-width: 900px) {
   .match-panel {
     width: 100%;
     max-height: 50vh;
-    border-top: 1px solid #dfe4ea;
+    border-top: 1px solid var(--space-studio-border, #dfe4ea);
     border-left: 0;
   }
 }

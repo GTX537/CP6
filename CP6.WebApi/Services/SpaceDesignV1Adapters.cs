@@ -29,6 +29,28 @@ public sealed class HttpSpaceApplicationExecutionContext(
 
     public Guid CorrelationId => Current?.CorrelationId ?? Guid.Empty;
 
+    public string? ActorDisplayName => Current?.ActorName;
+
+    public string RequestSource
+    {
+        get
+        {
+            var context = http.HttpContext;
+            if (context is null)
+                return "unknown";
+            var userAgent = context.Request.Headers.UserAgent.ToString().Trim();
+            var remoteAddress = context.Connection.RemoteIpAddress?.ToString();
+            var source = string.IsNullOrWhiteSpace(userAgent)
+                ? remoteAddress
+                : string.IsNullOrWhiteSpace(remoteAddress)
+                    ? userAgent
+                    : $"{remoteAddress} | {userAgent}";
+            return string.IsNullOrWhiteSpace(source)
+                ? "unknown"
+                : source.Length <= 500 ? source : source[..500];
+        }
+    }
+
     public bool IsExternal =>
         Current is not null &&
         http.HttpContext?.User.Identities

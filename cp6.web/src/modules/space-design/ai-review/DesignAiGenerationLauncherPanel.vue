@@ -1,5 +1,5 @@
 <script setup lang="ts">
-import { computed, onMounted, ref } from 'vue'
+import { computed, onMounted, ref, watch } from 'vue'
 import { isAxiosError } from 'axios'
 import { ElMessage, ElMessageBox } from 'element-plus'
 import { aiProposalReviewApi } from '@/api/space/aiProposalReview'
@@ -12,6 +12,7 @@ import type {
 const props = defineProps<{
   versionId: string
   currentContentRevision: number
+  initialSourceId?: string
 }>()
 const emit = defineEmits<{
   close: []
@@ -53,6 +54,15 @@ const canCreate = computed(() => Boolean(
 
 onMounted(() => void load())
 
+watch(
+  () => props.initialSourceId,
+  (sourceId) => {
+    if (sourceId && eligibleSources.value.some(source => source.id === sourceId)) {
+      selectedSourceId.value = sourceId
+    }
+  },
+)
+
 async function load(): Promise<void> {
   loading.value = true
   try {
@@ -72,7 +82,11 @@ async function load(): Promise<void> {
       profile.latestVersion?.id === selectedRackProfileVersionId.value)) {
       selectedRackProfileVersionId.value = ''
     }
-    if (!eligibleSources.value.some(source => source.id === selectedSourceId.value)) {
+    if (props.initialSourceId && eligibleSources.value.some(
+      source => source.id === props.initialSourceId,
+    )) {
+      selectedSourceId.value = props.initialSourceId
+    } else if (!eligibleSources.value.some(source => source.id === selectedSourceId.value)) {
       selectedSourceId.value = eligibleSources.value.length === 1
         ? eligibleSources.value[0]?.id ?? ''
         : ''

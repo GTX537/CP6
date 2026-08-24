@@ -72,6 +72,43 @@ export interface CadReviewWorkspaceSummary {
   excelReviewCount: number
 }
 
+export type CadChangeKind =
+  | 'Add'
+  | 'Modify'
+  | 'Delete'
+  | 'Conflict'
+  | 'LowConfidence'
+  | 'Unrecognized'
+
+export interface CadReviewChange {
+  changeId: string
+  kind: CadChangeKind
+  logicalId: string
+  sourceRef: string
+  previewObjectId?: string
+  objectType: string
+  confidence?: number
+  isSelected: boolean
+  canApply: boolean
+  blockingReasonCode?: string
+  isManualCorrectionLocked: boolean
+  userCorrectionVersion: number
+  beforeBounds?: CadReviewBounds
+  afterBounds?: CadReviewBounds
+}
+
+export interface CadReviewChangeSummary {
+  totalCount: number
+  addCount: number
+  modifyCount: number
+  deleteCount: number
+  conflictCount: number
+  lowConfidenceCount: number
+  unrecognizedCount: number
+  selectedCount: number
+  applyEligibleCount: number
+}
+
 export interface CadReviewWorkspace {
   schemaVersion: 1
   isReadOnlyWorkspace: true
@@ -88,6 +125,12 @@ export interface CadReviewWorkspace {
   items: CadReviewItem[]
   summary: CadReviewWorkspaceSummary
   workspaceSha256: string
+  sourceId?: string
+  cadParseJobId?: string
+  semanticPreviewSha256?: string
+  changes?: CadReviewChange[]
+  changeSummary?: CadReviewChangeSummary
+  changesetSha256?: string
 }
 
 export interface CadReviewFilters {
@@ -166,6 +209,10 @@ export function parseCadReviewWorkspace(input: string | unknown): CadReviewWorks
   requireSha(value.editorSnapshotSha256, 'editorSnapshotSha256')
   optionalSha(value.previousWorkspaceSha256, 'previousWorkspaceSha256')
   requireSha(value.workspaceSha256, 'workspaceSha256')
+  optionalGuid(value.sourceId, 'sourceId')
+  optionalGuid(value.cadParseJobId, 'cadParseJobId')
+  optionalSha(value.semanticPreviewSha256, 'semanticPreviewSha256')
+  optionalSha(value.changesetSha256, 'changesetSha256')
   if (!Array.isArray(value.items) || value.items.length > 100_000) {
     throw new Error('CAD review workspace items are invalid or too large')
   }
@@ -183,7 +230,101 @@ export function parseCadReviewWorkspace(input: string | unknown): CadReviewWorks
   })
   const expectedSummary = summarizeCadReviewItems(items)
   assertSummary(value.summary, expectedSummary)
+  parseChanges(value)
   return value as unknown as CadReviewWorkspace
+}
+
+function parseChanges(value: Record<string, unknown>): void {
+  if (value.changes === undefined) {
+    if (value.changeSummary !== undefined || value.changesetSha256 !== undefined) {
+      throw new Error('CAD review changeset metadata exists without changes')
+    }
+    return
+  }
+  if (!Array.isArray(value.changes) || value.changes.length > 100_000) {
+    throw new Error('CAD review changeset is invalid or too large')
+  }
+  requireGuid(value.sourceId, 'sourceId')
+  requireGuid(value.cadParseJobId, 'cadParseJobId')
+  requireSha(value.semanticPreviewSha256, 'semanticPreviewSha256')
+  requireSha(value.changesetSha256, 'changesetSha256')
+  const ids = new Set<string>()
+  const changes: CadReviewChange[] = []
+  for (const [index, candidate] of value.changes.entries()) {
+    assertRecord(candidate, `changes[${index}]`)
+    requireText(candidate.changeId, `changes[${index}].changeId`, 128)
+    if (ids.has(String(candidate.changeId))) throw new Error('Duplicate CAD change identity')
+    ids.add(String(candidate.changeId))
+    const kind = String(candidate.kind) as CadChangeKind
+    if (!['Add', 'Modify', 'Delete', 'Conflict', 'LowConfidence', 'Unrecognized']
+      .includes(kind)) throw new Error(`changes[${index}].kind is invalid`)
+    requireGuid(candidate.logicalId, `changes[${index}].logicalId`)
+    requireText(candidate.sourceRef, `changes[${index}].sourceRef`, 200)
+    requireText(candidate.objectType, `changes[${index}].objectType`, 128)
+    if (typeof candidate.isSelected !== 'boolean' || typeof candidate.canApply !== 'boolean') {
+      throw new Error(`changes[${index}] selection state is invalid`)
+    }
+    if (candidate.isSelected && !candidate.canApply) {
+      throw new Error(`changes[${index}] selected state is not applyable`)
+    }
+    if (candidate.canApply && !['Add', 'Modify', 'Delete'].includes(kind)) {
+      throw new Error(`changes[${index}] kind cannot be applied directly`)
+    }
+    if (typeof candidate.isManualCorrectionLocked !== 'boolean') {
+      throw new Error(`changes[${index}] manual correction lock state is invalid`)
+    }
+    requireInteger(
+      candidate.userCorrectionVersion,
+      `changes[${index}].userCorrectionVersion`,
+      0,
+    )
+    if (candidate.isManualCorrectionLocked && (
+      candidate.kind !== 'Conflict'
+      || candidate.canApply
+      || candidate.userCorrectionVersion === 0
+      || candidate.blockingReasonCode !== 'SPACE_CAD_MANUAL_CORRECTION_LOCKED'
+    )) {
+      throw new Error(`changes[${index}] manual correction lock is inconsistent`)
+    }
+    if (candidate.confidence !== undefined &&
+      (typeof candidate.confidence !== 'number' || candidate.confidence < 0 || candidate.confidence > 1)) {
+      throw new Error(`changes[${index}].confidence is invalid`)
+    }
+    optionalText(candidate.previewObjectId, `changes[${index}].previewObjectId`, 128)
+    optionalText(candidate.blockingReasonCode, `changes[${index}].blockingReasonCode`, 128)
+    if (candidate.beforeBounds !== undefined) parseBounds(candidate.beforeBounds, index)
+    if (candidate.afterBounds !== undefined) parseBounds(candidate.afterBounds, index)
+    changes.push(candidate as unknown as CadReviewChange)
+  }
+  assertCadChangeSummary(value.changeSummary, summarizeCadReviewChanges(changes))
+}
+
+export function summarizeCadReviewChanges(
+  changes: readonly CadReviewChange[],
+): CadReviewChangeSummary {
+  return {
+    totalCount: changes.length,
+    addCount: changes.filter(change => change.kind === 'Add').length,
+    modifyCount: changes.filter(change => change.kind === 'Modify').length,
+    deleteCount: changes.filter(change => change.kind === 'Delete').length,
+    conflictCount: changes.filter(change => change.kind === 'Conflict').length,
+    lowConfidenceCount: changes.filter(change => change.kind === 'LowConfidence').length,
+    unrecognizedCount: changes.filter(change => change.kind === 'Unrecognized').length,
+    selectedCount: changes.filter(change => change.isSelected).length,
+    applyEligibleCount: changes.filter(change => change.canApply).length,
+  }
+}
+
+function assertCadChangeSummary(
+  value: unknown,
+  expected: CadReviewChangeSummary,
+): void {
+  assertRecord(value, 'changeSummary')
+  for (const [key, count] of Object.entries(expected)) {
+    if (value[key] !== count) {
+      throw new Error(`CAD review changeSummary.${key} is inconsistent`)
+    }
+  }
 }
 
 export function filterCadReviewItems(
@@ -426,6 +567,10 @@ function requireGuid(value: unknown, name: string): void {
   ) {
     throw new Error(`${name} is not a GUID`)
   }
+}
+
+function optionalGuid(value: unknown, name: string): void {
+  if (value !== undefined) requireGuid(value, name)
 }
 
 function requireInteger(value: unknown, name: string, minimum?: number): void {

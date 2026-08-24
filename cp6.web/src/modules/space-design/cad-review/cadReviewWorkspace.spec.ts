@@ -166,4 +166,84 @@ describe('cadReviewWorkspace', () => {
       ownerKind: 'Element',
     })
   })
+
+  it('accepts only a non-applyable versioned manual-correction conflict', () => {
+    const candidate = {
+      ...workspace(),
+      sourceId: '66666666-6666-6666-6666-666666666666',
+      cadParseJobId: '77777777-7777-7777-7777-777777777777',
+      semanticPreviewSha256: sha('3'),
+      changesetSha256: sha('4'),
+      changes: [{
+        changeId: 'cad-change-locked',
+        kind: 'Conflict',
+        logicalId: '11111111-1111-1111-1111-111111111111',
+        sourceRef: 'CAD:H:COLUMN-1',
+        objectType: 'Column',
+        isSelected: false,
+        canApply: false,
+        blockingReasonCode: 'SPACE_CAD_MANUAL_CORRECTION_LOCKED',
+        isManualCorrectionLocked: true,
+        userCorrectionVersion: 3,
+      }],
+      changeSummary: {
+        totalCount: 1,
+        addCount: 0,
+        modifyCount: 0,
+        deleteCount: 0,
+        conflictCount: 1,
+        lowConfidenceCount: 0,
+        unrecognizedCount: 0,
+        selectedCount: 0,
+        applyEligibleCount: 0,
+      },
+    }
+
+    expect(parseCadReviewWorkspace(candidate).changes?.[0]).toMatchObject({
+      isManualCorrectionLocked: true,
+      userCorrectionVersion: 3,
+    })
+    candidate.changes[0]!.canApply = true
+    expect(() => parseCadReviewWorkspace(candidate))
+      .toThrow(/cannot be applied directly/)
+  })
+
+  it('rejects inconsistent change summaries and selected non-applyable changes', () => {
+    const candidate = {
+      ...workspace(),
+      sourceId: '66666666-6666-6666-6666-666666666666',
+      cadParseJobId: '77777777-7777-7777-7777-777777777777',
+      semanticPreviewSha256: sha('3'),
+      changesetSha256: sha('4'),
+      changes: [{
+        changeId: 'cad-change-add',
+        kind: 'Add',
+        logicalId: '11111111-1111-1111-1111-111111111111',
+        sourceRef: 'CAD:H:COLUMN-1',
+        objectType: 'Column',
+        isSelected: true,
+        canApply: true,
+        isManualCorrectionLocked: false,
+        userCorrectionVersion: 0,
+      }],
+      changeSummary: {
+        totalCount: 1,
+        addCount: 1,
+        modifyCount: 0,
+        deleteCount: 0,
+        conflictCount: 0,
+        lowConfidenceCount: 0,
+        unrecognizedCount: 0,
+        selectedCount: 1,
+        applyEligibleCount: 1,
+      },
+    }
+
+    expect(parseCadReviewWorkspace(candidate).changeSummary?.addCount).toBe(1)
+    candidate.changeSummary.addCount = 0
+    expect(() => parseCadReviewWorkspace(candidate)).toThrow(/changeSummary.addCount/)
+    candidate.changeSummary.addCount = 1
+    candidate.changes[0]!.canApply = false
+    expect(() => parseCadReviewWorkspace(candidate)).toThrow(/selected state/)
+  })
 })

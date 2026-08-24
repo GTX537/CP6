@@ -1,0 +1,152 @@
+{
+  "schemaVersion": 1,
+  "programId": "CP6_SPACE_STUDIO_V1_CORE_GA",
+  "evidenceClass": "M0_EXTERNAL_INPUT_READINESS",
+  "conclusion": "Pending",
+  "kickoffDate": null,
+  "targetGaDate": null,
+  "namedGaSigners": {
+    "inputId": "NAMED_GA_SIGNERS",
+    "status": "Pending",
+    "ownerName": null,
+    "completionEvidence": {},
+    "signers": [
+      {
+        "role": "Product",
+        "name": null,
+        "approvalAuthorityConfirmed": false,
+        "appointmentEvidence": {}
+      },
+      {
+        "role": "QA",
+        "name": null,
+        "approvalAuthorityConfirmed": false,
+        "appointmentEvidence": {}
+      },
+      {
+        "role": "WMS",
+        "name": null,
+        "approvalAuthorityConfirmed": false,
+        "appointmentEvidence": {}
+      },
+      {
+        "role": "Architecture",
+        "name": null,
+        "approvalAuthorityConfirmed": false,
+        "appointmentEvidence": {}
+      },
+      {
+        "role": "Security",
+        "name": null,
+        "approvalAuthorityConfirmed": false,
+        "appointmentEvidence": {}
+      }
+    ]
+  },
+  "coreTeamAllocation": {
+    "inputId": "CORE_TEAM_ALLOCATION",
+    "status": "Pending",
+    "ownerName": null,
+    "completionEvidence": {},
+    "members": [
+      {
+        "name": null,
+        "discipline": "Backend|Frontend3D|QA",
+        "allocationPercent": null,
+        "startDate": null,
+        "endDate": null,
+        "allocationEvidence": {}
+      }
+    ],
+    "sharedAssignments": [
+      {
+        "role": "Product|WMS|Architecture|Security|DevOps",
+        "name": null,
+        "assignmentEvidence": {}
+      }
+    ]
+  },
+  "authorizedGoldenCadCandidates": {
+    "inputId": "AUTHORIZED_GOLDEN_CAD_CANDIDATES",
+    "status": "Pending",
+    "ownerName": null,
+    "completionEvidence": {},
+    "candidateSetVersion": null,
+    "candidateSetSha256": null,
+    "candidates": [
+      {
+        "sampleRef": "urn:cp6-space-golden-cad:replace-with-opaque-reference",
+        "sourceSha256": null,
+        "sourceSizeBytes": null,
+        "sourceFormat": "DWG|DXF",
+        "layoutFamily": "L1|L2|L3|L4|L5",
+        "license": "ApprovedCustomerDerived",
+        "authorizedForGoldenEvaluation": false,
+        "authorizationEvidence": {},
+        "deidentificationEvidence": {}
+      }
+    ]
+  },
+  "providerApprovalsAndIsolatedWorker": {
+    "inputId": "PROVIDER_APPROVALS_AND_ISOLATED_WORKER",
+    "status": "Pending",
+    "ownerName": null,
+    "completionEvidence": {},
+    "candidateProviders": [
+      {
+        "providerKey": null,
+        "providerVersion": null,
+        "adapterContract": "ICadConverter",
+        "dataBoundary": "ControlledIsolatedWorker|ApprovedCloud",
+        "licensingApproved": false,
+        "securityApproved": false,
+        "dataRegionApproved": false,
+        "retentionDeletionApproved": false,
+        "licensingEvidence": {},
+        "securityEvidence": {},
+        "dataRegionEvidence": {},
+        "retentionDeletionEvidence": {},
+        "cloudApprovals": {
+          "tenantApproved": false,
+          "customerApproved": false,
+          "securityApproved": false,
+          "tenantEvidence": {},
+          "customerEvidence": {},
+          "securityEvidence": {}
+        }
+      }
+    ],
+    "worker": {
+      "workerRef": "urn:cp6-space-ga-worker:replace-with-opaque-reference",
+      "environmentSha256": null,
+      "isolated": false,
+      "secretsByReferenceOnly": false,
+      "rawCadRetentionMode": "Ephemeral",
+      "outboundNetworkPolicy": "DenyByDefault",
+      "readinessEvidence": {}
+    }
+  },
+  "twoPilotSitesAndWmsWindows": {
+    "inputId": "TWO_PILOT_SITES_AND_WMS_WINDOWS",
+    "status": "Pending",
+    "ownerName": null,
+    "completionEvidence": {},
+    "sites": [
+      {
+        "siteRef": "urn:cp6-space-ga-site:replace-with-opaque-reference",
+        "siteType": "Greenfield|Retrofit",
+        "businessOwner": null,
+        "implementationOwner": null,
+        "wmsOwner": null,
+        "wmsSystem": "CP6_WMS",
+        "wmsWindowStartUtc": null,
+        "wmsWindowEndUtc": null,
+        "plannedPilotStartDate": null,
+        "plannedPilotEndDate": null,
+        "pilotWindowConfirmed": false,
+        "selectionEvidence": {},
+        "wmsWindowEvidence": {}
+      }
+    ]
+  }
+}

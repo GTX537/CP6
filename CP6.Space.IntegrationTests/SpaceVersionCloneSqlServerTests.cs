@@ -18,6 +18,152 @@ public sealed class SpaceVersionCloneSqlServerTests
         "bbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbb";
 
     [Fact]
+    public async Task Warehouse_template_catalog_is_internal_scoped_and_preview_only()
+    {
+        var execution = new TestExecutionContext(
+            Guid.NewGuid(),
+            Guid.NewGuid(),
+            Guid.NewGuid());
+        var clock = new TestClock();
+        await using var context = CreateInMemoryContext(
+            execution.TenantId,
+            execution.ActorId,
+            clock);
+        var service = NewDesignService(context, execution, clock);
+
+        var all = await service.GetWarehouseTemplatesAsync(null);
+        var system = await service.GetWarehouseTemplatesAsync("system");
+        var tenant = await service.GetWarehouseTemplatesAsync("Tenant");
+        var template = Assert.Single(all);
+        Assert.Single(system);
+        Assert.Empty(tenant);
+
+        var preview = await service.PreviewWarehouseTemplateAsync(
+            template.Id,
+            new PreviewSpaceWarehouseTemplateRequest(
+                template.LatestVersion.Id));
+        Assert.False(preview.WritesDraft);
+        Assert.Equal(template.LatestVersion.ContentHash,
+            preview.TemplateContentHash);
+
+        var stale = await Assert.ThrowsAsync<SpaceProblemException>(() =>
+            service.PreviewWarehouseTemplateAsync(
+                template.Id,
+                new PreviewSpaceWarehouseTemplateRequest(Guid.NewGuid())));
+        Assert.Equal(
+            SpaceErrorCodes.WarehouseTemplateVersionConflict,
+            stale.Code);
+
+        var invalidScope = await Assert.ThrowsAsync<SpaceProblemException>(() =>
+            service.GetWarehouseTemplatesAsync("SystemOrTenant"));
+        Assert.Equal(SpaceErrorCodes.RequestInvalid, invalidScope.Code);
+
+        var externalExecution = execution with
+        {
+            ActorId = Guid.NewGuid(),
+            CorrelationId = Guid.NewGuid(),
+            IsExternal = true,
+        };
+        await using var externalContext = CreateInMemoryContext(
+            externalExecution.TenantId,
+            externalExecution.ActorId,
+            clock);
+        var externalService = NewDesignService(
+            externalContext,
+            externalExecution,
+            clock);
+        var denied = await Assert.ThrowsAsync<SpaceProblemException>(() =>
+            externalService.GetWarehouseTemplatesAsync(null));
+        Assert.Equal(SpaceErrorCodes.ExternalSubjectDenied, denied.Code);
+    }
+
+    [SqlServerFact]
+    public async Task Draft_summary_reports_provenance_audit_times_and_open_blocking_count()
+    {
+        await WithDatabaseAsync(async (context, execution, clock) =>
+        {
+            var (model, published) = await SeedPublishedAsync(
+                context,
+                execution.ActorId,
+                includeSnapshot: false);
+            model.BeginCutover(Guid.NewGuid());
+            model.MarkFrozen();
+            model.MarkBootstrapping();
+            model.MarkVerified(published);
+            model.ActivateDesignV1();
+            await context.SaveChangesAsync();
+            var draft = SpaceModelVersion.CreateBlankDraft(
+                execution.TenantId,
+                model.Id,
+                2,
+                "Draft summary",
+                Guid.NewGuid());
+            var publishedClone = SpaceModelVersion.CreateInitializingClone(
+                execution.TenantId,
+                model.Id,
+                3,
+                "Published clone summary",
+                published.Id,
+                Guid.NewGuid());
+            model.ReserveDraft(draft);
+            var openBlocking = SpaceModelIssue.Create(
+                execution.TenantId,
+                draft.Id,
+                null,
+                null,
+                SpaceIssueSeverity.Blocking,
+                "BLOCKING_OPEN");
+            var resolvedBlocking = SpaceModelIssue.Create(
+                execution.TenantId,
+                draft.Id,
+                null,
+                null,
+                SpaceIssueSeverity.Blocking,
+                "BLOCKING_RESOLVED");
+            resolvedBlocking.Resolve(Guid.NewGuid());
+            var openWarning = SpaceModelIssue.Create(
+                execution.TenantId,
+                draft.Id,
+                null,
+                null,
+                SpaceIssueSeverity.Warning,
+                "WARNING_OPEN");
+            context.AddRange(
+                draft,
+                publishedClone,
+                openBlocking,
+                resolvedBlocking,
+                openWarning);
+            await context.SaveChangesAsync();
+
+            var service = NewDesignService(context, execution, clock);
+            var detail = await service.GetVersionAsync(draft.Id);
+            var publishedCloneDetail = await service.GetVersionAsync(
+                publishedClone.Id);
+            var listed = Assert.Single((await service.GetVersionsAsync(
+                model.SiteId,
+                "Draft",
+                50,
+                cursor: null)).Items);
+
+            foreach (var summary in new[] { detail, listed })
+            {
+                Assert.Equal(
+                    SpaceVersionCreationSources.Blank,
+                    summary.CreationSource);
+                Assert.Equal(execution.ActorId, summary.CreatedBy);
+                Assert.Equal(clock.UtcNow, summary.CreatedAtUtc);
+                Assert.Equal(clock.UtcNow, summary.UpdatedAtUtc);
+                Assert.Equal(1, summary.OpenBlockingCount);
+                Assert.Equal("Draft", summary.Status);
+            }
+            Assert.Equal(
+                SpaceVersionCreationSources.PublishedVersion,
+                publishedCloneDetail.CreationSource);
+        });
+    }
+
+    [Fact]
     public async Task Queued_clone_cancellation_releases_the_reserved_draft()
     {
         var tenantId = Guid.NewGuid();
@@ -147,6 +293,378 @@ public sealed class SpaceVersionCloneSqlServerTests
     }
 
     [SqlServerFact]
+    public async Task Blank_mode_creates_an_idempotent_editable_draft_without_published_base()
+    {
+        await WithDatabaseAsync(async (context, execution, clock) =>
+        {
+            var model = SpaceModel.Create(execution.TenantId, Guid.NewGuid());
+            context.Models.Add(model);
+            await context.SaveChangesAsync();
+
+            var operationId = Guid.NewGuid();
+            var request = new SpaceBlankVersionRequest(
+                model.Id,
+                "Blank warehouse",
+                operationId,
+                new string('a', 64));
+            var store = new EfSpaceVersionCloneStore(context, execution, clock);
+
+            var first = await store.StartBlankAsync(request);
+            var duplicate = await store.StartBlankAsync(request);
+
+            context.ChangeTracker.Clear();
+            var draft = await context.Versions.SingleAsync(
+                candidate => candidate.Id == first.ModelVersionId);
+            var reloadedModel = await context.Models.SingleAsync(
+                candidate => candidate.Id == model.Id);
+            var job = await context.Jobs.SingleAsync(
+                candidate => candidate.Id == first.JobId);
+            var attempt = await context.JobAttempts.SingleAsync(
+                candidate => candidate.JobId == job.Id);
+
+            Assert.False(first.Reused);
+            Assert.True(duplicate.Reused);
+            Assert.Equal(first.ModelVersionId, duplicate.ModelVersionId);
+            Assert.Equal(first.JobId, duplicate.JobId);
+            Assert.Equal(SpaceVersionStatus.Draft, draft.Status);
+            Assert.Null(draft.BasedOnVersionId);
+            Assert.Equal(operationId, draft.CloneOperationId);
+            Assert.Equal(draft.Id, reloadedModel.ActiveDraftVersionId);
+            Assert.Null(reloadedModel.CurrentPublishedVersionId);
+            Assert.Equal(SpaceJobType.InitializeVersion, job.JobType);
+            Assert.Equal(SpaceJobStatus.Succeeded, job.Status);
+            Assert.Equal(SpaceJobAttemptOutcome.Succeeded, attempt.Outcome);
+            Assert.Empty(await context.FloorRevisions
+                .Where(candidate => candidate.ModelVersionId == draft.Id)
+                .ToArrayAsync());
+            await Assert.ThrowsAsync<SpaceVersionConflictException>(() =>
+                store.StartBlankAsync(request with { Name = "Changed input" }));
+        });
+    }
+
+    [SqlServerFact]
+    public async Task Design_v1_blank_create_supports_replay_and_rejects_a_base_version()
+    {
+        await WithDatabaseAsync(async (context, execution, clock) =>
+        {
+            var (model, published) = await SeedPublishedAsync(
+                context,
+                execution.ActorId,
+                includeSnapshot: false);
+            model.BeginCutover(Guid.NewGuid());
+            model.MarkFrozen();
+            model.MarkBootstrapping();
+            model.MarkVerified(published);
+            model.ActivateDesignV1();
+            await context.SaveChangesAsync();
+            var service = NewDesignService(context, execution, clock);
+
+            var first = await service.CreateVersionAsync(
+                model.SiteId,
+                new CreateSpaceVersionRequest("Blank site", null, "Blank"),
+                "blank-version-request");
+            var replay = await service.CreateVersionAsync(
+                model.SiteId,
+                new CreateSpaceVersionRequest("Blank site", null, "Blank"),
+                "blank-version-request");
+
+            Assert.Equal(SpaceVersionStatus.Draft.ToString(), first.Status);
+            Assert.False(first.IdempotentReplay);
+            Assert.True(replay.IdempotentReplay);
+            Assert.Equal(first.Id, replay.Id);
+            Assert.Equal(first.JobId, replay.JobId);
+            Assert.Equal(
+                SpaceJobStatus.Succeeded,
+                (await context.Jobs.SingleAsync(job => job.Id == first.JobId)).Status);
+
+            var invalid = await Assert.ThrowsAsync<SpaceProblemException>(() =>
+                service.CreateVersionAsync(
+                    model.SiteId,
+                    new CreateSpaceVersionRequest(
+                        "Invalid blank",
+                        Guid.NewGuid(),
+                        "Blank"),
+                    "invalid-blank-version-request"));
+            Assert.Equal(SpaceErrorCodes.RequestInvalid, invalid.Code);
+            Assert.Equal(400, invalid.StatusCode);
+        });
+    }
+
+    [SqlServerFact]
+    public async Task Design_v1_floor_creation_is_explicit_idempotent_and_listed()
+    {
+        await WithDatabaseAsync(async (context, execution, clock) =>
+        {
+            var (model, published) = await SeedPublishedAsync(
+                context,
+                execution.ActorId,
+                includeSnapshot: false);
+            model.BeginCutover(Guid.NewGuid());
+            model.MarkFrozen();
+            model.MarkBootstrapping();
+            model.MarkVerified(published);
+            model.ActivateDesignV1();
+            await context.SaveChangesAsync();
+            var service = NewDesignService(context, execution, clock);
+            var draft = await service.CreateVersionAsync(
+                model.SiteId,
+                new CreateSpaceVersionRequest("Blank site", null, "Blank"),
+                "blank-floor-version");
+            var request = new CreateSpaceFloorRequest(
+                "F1",
+                "Ground floor",
+                1,
+                125,
+                6_000,
+                ExpectedContentRevision: 0);
+
+            var first = await service.CreateFloorAsync(
+                draft.Id,
+                request,
+                "create-floor-f1");
+            var replay = await service.CreateFloorAsync(
+                draft.Id,
+                request,
+                "create-floor-f1");
+            var floors = await service.GetFloorsAsync(draft.Id);
+            var scene = await service.GetSceneAsync(
+                draft.Id,
+                first.Floor.Revision.LogicalId);
+
+            Assert.False(first.IdempotentReplay);
+            Assert.True(replay.IdempotentReplay);
+            Assert.Equal(first.Floor.Revision.LogicalId, replay.Floor.Revision.LogicalId);
+            Assert.Equal(1, first.VersionContentRevision);
+            Assert.Equal("F1", first.Floor.FloorCode);
+            Assert.Equal("Ground floor", first.Floor.Name);
+            Assert.Equal(1, first.Floor.Level);
+            Assert.Equal(125, first.Floor.Elevation);
+            Assert.Equal(6_000, first.Floor.Height);
+            Assert.Equal(0, first.Floor.RevisionNumber);
+            Assert.Single(floors);
+            Assert.Equal(first.Floor.Revision.LogicalId, floors[0].Revision.LogicalId);
+            Assert.Empty(scene.Zones);
+            Assert.Empty(scene.Racks);
+            Assert.Empty(scene.Locations);
+            Assert.Empty(scene.Elements);
+            Assert.Equal(1, scene.ContentRevision);
+
+            var reusedKey = await Assert.ThrowsAsync<SpaceProblemException>(() =>
+                service.CreateFloorAsync(
+                    draft.Id,
+                    request with { Name = "Changed" },
+                    "create-floor-f1"));
+            Assert.Equal(SpaceErrorCodes.IdempotencyConflict, reusedKey.Code);
+        });
+    }
+
+    [SqlServerFact]
+    public async Task Design_v1_floor_creation_fails_closed_on_stale_or_duplicate_input()
+    {
+        await WithDatabaseAsync(async (context, execution, clock) =>
+        {
+            var (model, published) = await SeedPublishedAsync(
+                context,
+                execution.ActorId,
+                includeSnapshot: false);
+            model.BeginCutover(Guid.NewGuid());
+            model.MarkFrozen();
+            model.MarkBootstrapping();
+            model.MarkVerified(published);
+            model.ActivateDesignV1();
+            await context.SaveChangesAsync();
+            var service = NewDesignService(context, execution, clock);
+            var draft = await service.CreateVersionAsync(
+                model.SiteId,
+                new CreateSpaceVersionRequest("Blank site", null, "Blank"),
+                "blank-floor-fences");
+            var request = new CreateSpaceFloorRequest(
+                "F1",
+                "Ground floor",
+                1,
+                0,
+                6_000,
+                ExpectedContentRevision: 0);
+            await service.CreateFloorAsync(draft.Id, request, "floor-first");
+
+            var stale = await Assert.ThrowsAsync<SpaceProblemException>(() =>
+                service.CreateFloorAsync(
+                    draft.Id,
+                    request with { FloorCode = "F2", Name = "Second floor" },
+                    "floor-stale"));
+            Assert.Equal(SpaceErrorCodes.ConcurrencyConflict, stale.Code);
+
+            var duplicate = await Assert.ThrowsAsync<SpaceProblemException>(() =>
+                service.CreateFloorAsync(
+                    draft.Id,
+                    request with
+                    {
+                        FloorCode = "f1",
+                        Name = "Duplicate",
+                        ExpectedContentRevision = 1,
+                    },
+                    "floor-duplicate"));
+            Assert.Equal(SpaceErrorCodes.VersionConflict, duplicate.Code);
+
+            context.ChangeTracker.Clear();
+            Assert.Single(await context.FloorRevisions
+                .Where(candidate => candidate.ModelVersionId == draft.Id)
+                .ToArrayAsync());
+            Assert.Equal(
+                1,
+                (await context.Versions.SingleAsync(
+                    candidate => candidate.Id == draft.Id)).ContentRevision);
+        });
+    }
+
+    [SqlServerFact]
+    public async Task Design_v1_floor_endpoints_reject_external_principals()
+    {
+        await WithDatabaseAsync(async (context, execution, clock) =>
+        {
+            var (model, published) = await SeedPublishedAsync(
+                context,
+                execution.ActorId,
+                includeSnapshot: false);
+            model.BeginCutover(Guid.NewGuid());
+            model.MarkFrozen();
+            model.MarkBootstrapping();
+            model.MarkVerified(published);
+            model.ActivateDesignV1();
+            var draft = SpaceModelVersion.CreateBlankDraft(
+                execution.TenantId,
+                model.Id,
+                2,
+                "External denied",
+                Guid.NewGuid());
+            model.ReserveDraft(draft);
+            context.Versions.Add(draft);
+            await context.SaveChangesAsync();
+
+            var externalExecution = new TestExecutionContext(
+                execution.TenantId,
+                Guid.NewGuid(),
+                Guid.NewGuid(),
+                IsExternal: true);
+            await using var externalContext = CreateContext(
+                context.Database.GetConnectionString()!,
+                externalExecution,
+                clock);
+            var service = NewDesignService(
+                externalContext,
+                externalExecution,
+                clock);
+
+            var read = await Assert.ThrowsAsync<SpaceProblemException>(() =>
+                service.GetFloorsAsync(draft.Id));
+            var write = await Assert.ThrowsAsync<SpaceProblemException>(() =>
+                service.CreateFloorAsync(
+                    draft.Id,
+                    new CreateSpaceFloorRequest(
+                        "F1",
+                        "Ground floor",
+                        1,
+                        0,
+                        6_000,
+                        ExpectedContentRevision: 0),
+                    "external-floor"));
+
+            Assert.Equal(SpaceErrorCodes.ExternalSubjectDenied, read.Code);
+            Assert.Equal(SpaceErrorCodes.ExternalSubjectDenied, write.Code);
+            Assert.Empty(await context.FloorRevisions
+                .Where(candidate => candidate.ModelVersionId == draft.Id)
+                .ToArrayAsync());
+        });
+    }
+
+    [SqlServerFact]
+    public async Task Design_v1_concurrent_floor_initialization_allows_one_revision_winner()
+    {
+        await WithDatabaseAsync(async (context, execution, clock) =>
+        {
+            var (model, published) = await SeedPublishedAsync(
+                context,
+                execution.ActorId,
+                includeSnapshot: false);
+            model.BeginCutover(Guid.NewGuid());
+            model.MarkFrozen();
+            model.MarkBootstrapping();
+            model.MarkVerified(published);
+            model.ActivateDesignV1();
+            var draft = SpaceModelVersion.CreateBlankDraft(
+                execution.TenantId,
+                model.Id,
+                2,
+                "Concurrent floors",
+                Guid.NewGuid());
+            model.ReserveDraft(draft);
+            context.Versions.Add(draft);
+            await context.SaveChangesAsync();
+
+            var connectionString = context.Database.GetConnectionString()!;
+            var firstExecution = execution with
+            {
+                ActorId = Guid.NewGuid(),
+                CorrelationId = Guid.NewGuid(),
+            };
+            var secondExecution = execution with
+            {
+                ActorId = Guid.NewGuid(),
+                CorrelationId = Guid.NewGuid(),
+            };
+            await using var firstContext = CreateContext(
+                connectionString,
+                firstExecution,
+                clock);
+            await using var secondContext = CreateContext(
+                connectionString,
+                secondExecution,
+                clock);
+            var firstService = NewDesignService(firstContext, firstExecution, clock);
+            var secondService = NewDesignService(secondContext, secondExecution, clock);
+
+            static async Task<string> RunAsync(
+                SpaceDesignV1Service service,
+                Guid versionId,
+                string floorCode,
+                string key)
+            {
+                try
+                {
+                    await service.CreateFloorAsync(
+                        versionId,
+                        new CreateSpaceFloorRequest(
+                            floorCode,
+                            floorCode,
+                            1,
+                            0,
+                            6_000,
+                            ExpectedContentRevision: 0),
+                        key);
+                    return "Succeeded";
+                }
+                catch (SpaceProblemException exception)
+                {
+                    return exception.Code;
+                }
+            }
+
+            var outcomes = await Task.WhenAll(
+                RunAsync(firstService, draft.Id, "F1", "concurrent-floor-1"),
+                RunAsync(secondService, draft.Id, "F2", "concurrent-floor-2"));
+
+            Assert.Single(outcomes, outcome => outcome == "Succeeded");
+            Assert.Single(
+                outcomes,
+                outcome => outcome == SpaceErrorCodes.ConcurrencyConflict);
+            context.ChangeTracker.Clear();
+            Assert.Single(await context.FloorRevisions
+                .Where(candidate => candidate.ModelVersionId == draft.Id)
+                .ToArrayAsync());
+        });
+    }
+
+    [SqlServerFact]
     public async Task Empty_published_warehouse_clones_to_an_empty_draft()
     {
         await WithDatabaseAsync(async (context, execution, clock) =>
@@ -171,7 +689,6 @@ public sealed class SpaceVersionCloneSqlServerTests
                 version => version.Id == published.Id);
             var job = await context.Jobs.SingleAsync(
                 candidate => candidate.Id == started.Result.JobId);
-
             Assert.Equal(0, started.Counts.Total);
             Assert.Equal(SpaceVersionStatus.Draft, target.Status);
             Assert.Equal(published.Id, target.BasedOnVersionId);
@@ -694,6 +1211,22 @@ public sealed class SpaceVersionCloneSqlServerTests
         return result;
     }
 
+    private static SpaceDesignV1Service NewDesignService(
+        SpaceContext context,
+        TestExecutionContext execution,
+        TestClock clock)
+    {
+        var cloneStore = new EfSpaceVersionCloneStore(context, execution, clock);
+        return new SpaceDesignV1Service(
+            context,
+            execution,
+            clock,
+            new TestCursorCodec(),
+            new TestAccessEvaluator(),
+            new SpaceVersionCloneCoordinator(execution, cloneStore),
+            new SpaceSourceCoordinator(execution));
+    }
+
     private static async Task WithDatabaseAsync(
         Func<SpaceContext, TestExecutionContext, TestClock, Task> action)
     {
@@ -756,7 +1289,8 @@ public sealed class SpaceVersionCloneSqlServerTests
     private sealed record TestExecutionContext(
         Guid TenantId,
         Guid ActorId,
-        Guid CorrelationId)
+        Guid CorrelationId,
+        bool IsExternal = false)
         : ISpaceExecutionContext, ISpaceCorrelationContext;
 
     private sealed class TestAccess(Guid expectedSiteId)
@@ -769,5 +1303,24 @@ public sealed class SpaceVersionCloneSqlServerTests
     private sealed class TestClock : ISpaceClock
     {
         public DateTime UtcNow { get; } = DateTime.UtcNow;
+    }
+
+    private sealed class TestAccessEvaluator : ISpaceDesignAccessEvaluator
+    {
+        public void EnsureSiteAccess(Guid siteId, bool write)
+        {
+        }
+    }
+
+    private sealed class TestCursorCodec : ISpaceCursorCodec
+    {
+        public string Encode(SpaceCursorState state) =>
+            throw new NotSupportedException();
+
+        public SpaceCursorState Decode(
+            string cursor,
+            string expectedResource,
+            string expectedFilterHash) =>
+            throw new NotSupportedException();
     }
 }

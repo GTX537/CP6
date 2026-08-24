@@ -85,6 +85,567 @@ public sealed class SpaceWmsRuntimeSchemaFilter : ISchemaFilter
     private static readonly IReadOnlyDictionary<Type, string[]>
         RequiredProperties = new Dictionary<Type, string[]>
         {
+            [typeof(RemoveSpaceSourceRequest)] =
+            [
+                "expectedContentRevision",
+                "expectedSourceRowVersion",
+            ],
+            [typeof(RemoveSpaceSourceResponse)] =
+            [
+                "sourceId",
+                "versionContentRevision",
+                "physicalFileRetained",
+                "idempotentReplay",
+            ],
+            [typeof(SpaceSourceRemovalReferenceDto)] =
+            [
+                "code",
+                "count",
+                "blocksRemoval",
+            ],
+            [typeof(SpaceSourceRemovalPreviewDto)] =
+            [
+                "sourceId",
+                "fileId",
+                "displayName",
+                "sourceType",
+                "state",
+                "versionContentRevision",
+                "sourceRowVersion",
+                "canRemove",
+                "physicalFileRetained",
+                "references",
+            ],
+            [typeof(ConfirmSpaceExcelCadMatchRequest)] =
+            [
+                "confirmed",
+                "artifactId",
+                "artifactPayloadSha256",
+                "expectedContentRevision",
+                "clientInstanceId",
+                "leaseId",
+                "expectedFloorRevision",
+            ],
+            [typeof(CompensateSpaceExcelCadApplyRequest)] =
+            [
+                "schemaVersion",
+                "direction",
+                "commandBatchId",
+                "clientInstanceId",
+                "leaseId",
+                "expectedFloorRevision",
+                "expectedContentRevision",
+                "historySha256",
+            ],
+            [typeof(CompensateSpaceExcelCadApplyResponse)] =
+            [
+                "schemaVersion",
+                "matchJobId",
+                "applyJobId",
+                "commandBatchId",
+                "direction",
+                "historySha256",
+                "historyCommandCount",
+                "floorRevision",
+                "versionContentRevision",
+                "idempotentReplay",
+            ],
+            [typeof(AttachSpaceUnderlayRequest)] =
+            [
+                "sourceId",
+                "expectedFloorRevision",
+                "expectedContentRevision",
+                "clientInstanceId",
+                "leaseId",
+                "commandBatchId",
+            ],
+            [typeof(AttachSpaceUnderlayResponse)] =
+            [
+                "floor",
+                "versionContentRevision",
+                "history",
+                "idempotentReplay",
+            ],
+            [typeof(SaveSpaceUnderlayCalibrationRequest)] =
+            [
+                "floorLogicalId",
+                "pageNumber",
+                "pixelWidth",
+                "pixelHeight",
+                "point1",
+                "point2",
+                "validationPoint",
+                "expectedFloorRevision",
+                "expectedContentRevision",
+                "clientInstanceId",
+                "leaseId",
+                "commandBatchId",
+            ],
+            [typeof(SaveSpaceUnderlayCalibrationResponse)] =
+            [
+                "floor",
+                "calibration",
+                "versionContentRevision",
+                "history",
+                "idempotentReplay",
+            ],
+            [typeof(SpaceUnderlayHistoryDto)] =
+            [
+                "schemaVersion",
+                "originalCommandBatchId",
+                "operationType",
+                "historySha256",
+            ],
+            [typeof(CompensateSpaceUnderlayRequest)] =
+            [
+                "schemaVersion",
+                "direction",
+                "originalCommandBatchId",
+                "historySha256",
+                "commandBatchId",
+                "clientInstanceId",
+                "leaseId",
+                "expectedFloorRevision",
+                "expectedContentRevision",
+            ],
+            [typeof(CompensateSpaceUnderlayResponse)] =
+            [
+                "schemaVersion",
+                "originalCommandBatchId",
+                "commandBatchId",
+                "direction",
+                "historySha256",
+                "floor",
+                "versionContentRevision",
+                "idempotentReplay",
+            ],
+            [typeof(SpacePublishedViewerSceneDto)] =
+            [
+                "schemaVersion",
+                "authority",
+                "runtimeOverlayIncluded",
+                "siteId",
+                "publishedVersionId",
+                "publishedAtUtc",
+                "contentRevision",
+                "contentHash",
+                "floors",
+            ],
+            [typeof(CreateSpaceFloorRequest)] =
+            [
+                "floorCode",
+                "name",
+                "level",
+                "elevation",
+                "height",
+                "expectedContentRevision",
+            ],
+            [typeof(CreateSpaceFloorResponse)] =
+            [
+                "floor",
+                "versionContentRevision",
+                "idempotentReplay",
+            ],
+            [typeof(SpaceWarehouseTemplateCountsDto)] =
+            [
+                "floors",
+                "zones",
+                "aisles",
+                "racks",
+                "locations",
+            ],
+            [typeof(SpaceWarehouseTemplateVersionDto)] =
+            [
+                "id",
+                "versionNo",
+                "schemaVersion",
+                "contentHash",
+                "counts",
+                "status",
+            ],
+            [typeof(SpaceWarehouseTemplateDto)] =
+            [
+                "id",
+                "scope",
+                "templateCode",
+                "name",
+                "status",
+                "latestVersion",
+            ],
+            [typeof(CreateTenantSpaceWarehouseTemplateRequest)] =
+            [
+                "templateCode",
+                "name",
+                "schemaVersion",
+                "floors",
+                "zones",
+                "aisles",
+                "racks",
+            ],
+            [typeof(CreateTenantSpaceWarehouseTemplateResponse)] =
+            [
+                "template",
+                "idempotentReplay",
+            ],
+            [typeof(PreviewSpaceWarehouseTemplateRequest)] =
+            [
+                "templateVersionId",
+            ],
+            [typeof(SpaceWarehouseTemplateFloorPlanDto)] =
+            [
+                "key",
+                "floorCode",
+                "name",
+                "level",
+                "elevation",
+                "width",
+                "depth",
+                "height",
+            ],
+            [typeof(SpaceWarehouseTemplateZonePlanDto)] =
+            [
+                "key",
+                "floorKey",
+                "zoneCode",
+                "zoneType",
+                "minX",
+                "minY",
+                "maxX",
+                "maxY",
+            ],
+            [typeof(SpaceWarehouseTemplateAislePlanDto)] =
+            [
+                "key",
+                "floorKey",
+                "zoneKey",
+                "aisleCode",
+                "startX",
+                "startY",
+                "endX",
+                "endY",
+            ],
+            [typeof(SpaceWarehouseTemplateRackPlanDto)] =
+            [
+                "key",
+                "floorKey",
+                "zoneKey",
+                "aisleKey",
+                "rackCode",
+                "x",
+                "y",
+                "z",
+                "rotationZ",
+                "width",
+                "depth",
+                "height",
+                "columns",
+                "levels",
+                "depths",
+            ],
+            [typeof(SpaceWarehouseTemplateInstantiationPreviewDto)] =
+            [
+                "schemaVersion",
+                "templateId",
+                "templateVersionId",
+                "templateContentHash",
+                "proposalHash",
+                "counts",
+                "floors",
+                "zones",
+                "aisles",
+                "racks",
+                "writesDraft",
+            ],
+            [typeof(ApplySpaceWarehouseTemplateFloorRequest)] =
+            [
+                "schemaVersion",
+                "siteId",
+                "templateVersionId",
+                "proposalHash",
+                "templateFloorKey",
+                "commandBatchId",
+                "clientInstanceId",
+                "leaseId",
+                "expectedFloorRevision",
+                "expectedContentRevision",
+            ],
+            [typeof(ApplySpaceWarehouseTemplateFloorResponse)] =
+            [
+                "schemaVersion",
+                "templateId",
+                "templateVersionId",
+                "templateContentHash",
+                "proposalHash",
+                "templateFloorKey",
+                "modelVersionId",
+                "floorLogicalId",
+                "floorRevision",
+                "versionContentRevision",
+                "appliedCounts",
+                "commandBatchId",
+                "idempotentReplay",
+            ],
+            [typeof(SpaceVersionDto)] =
+            [
+                "creationSource",
+                "createdAtUtc",
+                "updatedAtUtc",
+                "openBlockingCount",
+            ],
+            [typeof(SpacePublishPreviewDto)] =
+            [
+                "validationWarningCount",
+            ],
+            [typeof(ReplaceSpaceCadProviderConfigurationRequest)] =
+            [
+                "expectedConfigurationRevision",
+                "reason",
+                "certifications",
+            ],
+            [typeof(SpaceCadProviderCertificationInputDto)] =
+            [
+                "providerKey",
+                "providerVersion",
+                "role",
+                "deploymentMode",
+                "dataBoundary",
+                "approvalEvidenceReference",
+                "validFromUtc",
+                "expiresAtUtc",
+                "supportsDwg",
+                "supportsDxf",
+                "licensingApproved",
+                "securityApproved",
+                "dataRegionApproved",
+                "deletionRetentionApproved",
+                "qualificationScore",
+                "qualificationRubricVersion",
+                "goldenDatasetSha256",
+                "frozenEnvironmentSha256",
+                "qualificationEvidenceReference",
+            ],
+            [typeof(SpaceCadProviderSlotDto)] =
+            [
+                "providerKey",
+                "providerVersion",
+                "displayName",
+                "role",
+                "deploymentMode",
+                "dataBoundary",
+                "approvalEvidenceReference",
+                "secretReferenceConfigured",
+                "validFromUtc",
+                "expiresAtUtc",
+                "supportsDwg",
+                "supportsDxf",
+                "licensingApproved",
+                "securityApproved",
+                "dataRegionApproved",
+                "deletionRetentionApproved",
+                "qualified",
+                "runtimeAvailable",
+                "currentlyValid",
+            ],
+            [typeof(SpaceCadSiteCapabilityDto)] =
+            [
+                "siteId",
+                "configurationRevision",
+                "canPrepareCad",
+                "cadGaReady",
+                "blockingCodes",
+                "evaluatedAtUtc",
+            ],
+            [typeof(ReplaceSpaceCadProviderConfigurationResponse)] =
+            [
+                "capability",
+                "idempotentReplay",
+            ],
+            [typeof(PreviewSpaceCadPreparationRequest)] =
+            [
+                "floorLogicalId",
+                "confirmedUnit",
+                "sourceOriginInSourceUnits",
+                "floorOriginMillimeters",
+                "rotationZDegrees",
+                "mappingProfileId",
+                "mappingProfileVersion",
+                "layerOverrides",
+            ],
+            [typeof(PreviewSpaceCadPreparationResponse)] =
+            [
+                "baseContentRevision",
+                "readyForParsing",
+                "coordinateAnalysis",
+                "coordinateMetadata",
+                "coordinateIssues",
+                "mappingProfile",
+            ],
+            [typeof(SpaceCadCoordinateAnalysisV1)] =
+            [
+                "schemaVersion",
+                "sourceSha256",
+                "suggestedUnit",
+                "isSuggestedExtentPlausible",
+                "requiresUnitConfirmation",
+                "issues",
+            ],
+            [typeof(SpaceCadCoordinateMetadataV1)] =
+            [
+                "schemaVersion",
+                "sourceSha256",
+                "unitConfirmed",
+                "detectedUnit",
+                "confirmedUnit",
+                "confirmedScaleToMillimeters",
+                "sourceOriginInSourceUnits",
+                "floorOriginMillimeters",
+                "rotationZDegrees",
+                "targetFloor",
+                "sourceToFloorTransform",
+                "transformSha256",
+            ],
+            [typeof(SpaceCadConversionIssueV1)] =
+            [
+                "code",
+                "severity",
+            ],
+            [typeof(SpaceCadFloorAssignmentV1)] =
+            [
+                "floorLogicalId",
+                "floorCode",
+                "level",
+                "elevationMillimeters",
+                "coordinateSystem",
+                "boundaryBounds",
+            ],
+            [typeof(SpaceCadAffineTransformV1)] =
+            [
+                "m11",
+                "m12",
+                "m21",
+                "m22",
+                "offsetX",
+                "offsetY",
+                "offsetZ",
+            ],
+            [typeof(SpaceCadPointV1)] =
+            [
+                "x",
+                "y",
+            ],
+            [typeof(SpaceCadMillimeterPointV1)] =
+            [
+                "x",
+                "y",
+                "z",
+            ],
+            [typeof(SpaceCadLayerMappingOverrideV1)] =
+            [
+                "layerId",
+                "ignore",
+            ],
+            [typeof(SaveSpaceCadMappingProfileRequest)] =
+            [
+                "name",
+                "isEnabled",
+                "rules",
+            ],
+            [typeof(SaveSpaceCadMappingProfileResponse)] =
+            [
+                "profile",
+                "created",
+                "idempotentReplay",
+            ],
+            [typeof(SpaceCadMappingProfileDto)] =
+            [
+                "id",
+                "name",
+                "scope",
+                "version",
+                "isReadOnly",
+                "isEnabled",
+                "definitionSha256",
+                "rules",
+            ],
+            [typeof(SpaceCadMappingRuleV1)] =
+            [
+                "ruleId",
+                "priority",
+                "sourceKind",
+                "matchKind",
+                "pattern",
+                "target",
+                "geometryRule",
+                "confidenceWeight",
+                "isRequired",
+            ],
+            [typeof(SpaceCadPreparationInventoryDto)] =
+            [
+                "summary",
+                "layers",
+                "blocks",
+            ],
+            [typeof(SpaceCadInventorySummaryV1)] =
+            [
+                "layerCount",
+                "emptyLayerCount",
+                "blockCount",
+                "undefinedBlockCount",
+                "blockReferenceCount",
+                "attributedBlockReferenceCount",
+                "entityCount",
+                "supportedEntityCount",
+                "unsupportedEntityCount",
+            ],
+            [typeof(SpaceCadLayerInventoryV1)] =
+            [
+                "layerId",
+                "name",
+                "isVisible",
+                "entityCount",
+                "supportedEntityCount",
+                "unsupportedEntityCount",
+                "blockReferenceCount",
+                "attributedEntityCount",
+                "entityTypeCounts",
+            ],
+            [typeof(SpaceCadPreparationBlockInventoryDto)] =
+            [
+                "blockId",
+                "name",
+                "isDefined",
+                "isExternalReference",
+                "definitionEntityCount",
+                "referenceCount",
+                "attributedReferenceCount",
+                "attributes",
+            ],
+            [typeof(SpaceCadBlockAttributeInventoryV1)] =
+            [
+                "name",
+                "referenceCount",
+                "distinctValueCount",
+            ],
+            [typeof(SpaceCadBoundsV1)] =
+            [
+                "minX",
+                "minY",
+                "maxX",
+                "maxY",
+            ],
+            [typeof(StartSpaceCadParseRequest)] =
+            [
+                "preparationId",
+                "floorLogicalId",
+                "confirmedUnit",
+                "confirmedScaleToMillimeters",
+                "coordinateMetadataJson",
+                "coordinateTransformSha256",
+                "mappingProfileId",
+                "mappingProfileVersion",
+                "mappingDefinitionSha256",
+                "mappingPreviewSha256",
+            ],
             [typeof(SpaceRackGenerationProfileLevelDto)] =
             [
                 "levelNo",
@@ -133,6 +694,288 @@ public sealed class SpaceWmsRuntimeSchemaFilter : ISchemaFilter
             [
                 "profile",
                 "idempotentReplay",
+            ],
+            [typeof(ApplySpaceElementCommandBatchRequest)] =
+            [
+                "schemaVersion",
+                "commandBatchId",
+                "clientInstanceId",
+                "leaseId",
+                "expectedFloorRevision",
+                "commands",
+            ],
+            [typeof(ApplySpaceLayoutCommandBatchRequest)] =
+            [
+                "schemaVersion",
+                "commandBatchId",
+                "clientInstanceId",
+                "leaseId",
+                "expectedFloorRevision",
+                "expectedContentRevision",
+                "commands",
+            ],
+            [typeof(SpaceLayoutCommandDto)] =
+            [
+                "commandId",
+                "type",
+                "targetLogicalId",
+            ],
+            [typeof(SpaceCreateLayoutZoneDto)] =
+            [
+                "zoneCode",
+                "zoneType",
+                "polygonJson",
+            ],
+            [typeof(SpaceCreateLayoutAisleDto)] =
+            [
+                "zoneLogicalId",
+                "aisleCode",
+                "direction",
+                "polygonJson",
+                "centerlineJson",
+            ],
+            [typeof(SpaceCreateLayoutRackDto)] =
+            [
+                "zoneLogicalId",
+                "rackCode",
+                "x",
+                "y",
+                "z",
+                "rotationZ",
+                "width",
+                "depth",
+                "height",
+                "levels",
+            ],
+            [typeof(SpaceCreateLayoutRackLevelDto)] =
+            [
+                "levelNo",
+                "bottomZ",
+                "clearHeight",
+                "binCount",
+                "depthCount",
+                "cellWidth",
+                "cellDepth",
+                "beamHeight",
+            ],
+            [typeof(SpaceUpdateLayoutZoneDto)] =
+            [
+                "zoneCode",
+                "zoneType",
+                "polygonJson",
+            ],
+            [typeof(SpaceUpdateLayoutAisleDto)] =
+            [
+                "zoneLogicalId",
+                "aisleCode",
+                "direction",
+                "polygonJson",
+                "centerlineJson",
+            ],
+            [typeof(SpaceUpdateLayoutRackDto)] =
+            [
+                "zoneLogicalId",
+                "rackCode",
+                "x",
+                "y",
+                "z",
+                "rotationZ",
+                "width",
+                "depth",
+                "height",
+                "levels",
+            ],
+            [typeof(SpaceUpdateLayoutRackLevelDto)] =
+            [
+                "levelNo",
+                "bottomZ",
+                "clearHeight",
+                "binCount",
+                "depthCount",
+                "cellWidth",
+                "cellDepth",
+                "beamHeight",
+            ],
+            [typeof(SpaceDeleteLayoutObjectDto)] =
+            [
+                "cascade",
+            ],
+            [typeof(SpaceLocationCodeSegmentDto)] =
+            [
+                "key",
+                "name",
+                "source",
+                "width",
+                "pad",
+                "start",
+                "step",
+                "separator",
+                "upper",
+                "fixedValue",
+                "optional",
+            ],
+            [typeof(PreviewSpaceLocationCodesRequest)] =
+            [
+                "schemaVersion",
+                "mode",
+                "expectedFloorRevision",
+                "expectedContentRevision",
+            ],
+            [typeof(SpaceLocationCodingRuleDto)] =
+            [
+                "ruleId",
+                "ruleName",
+                "scopeType",
+                "ruleHash",
+            ],
+            [typeof(SpaceLocationCodeProposalItemDto)] =
+            [
+                "locationLogicalId",
+                "rackLogicalId",
+                "rackCode",
+                "columnNo",
+                "levelNo",
+                "depthNo",
+                "decision",
+                "reason",
+            ],
+            [typeof(PreviewSpaceLocationCodesResponse)] =
+            [
+                "schemaVersion",
+                "modelVersionId",
+                "floorLogicalId",
+                "mode",
+                "baseFloorRevision",
+                "baseContentRevision",
+                "proposalHash",
+                "ruleSetHash",
+                "changedCount",
+                "unchangedCount",
+                "protectedCount",
+                "rules",
+                "items",
+            ],
+            [typeof(ApplySpaceLocationCodesRequest)] =
+            [
+                "schemaVersion",
+                "commandBatchId",
+                "clientInstanceId",
+                "leaseId",
+                "mode",
+                "expectedFloorRevision",
+                "expectedContentRevision",
+                "proposalHash",
+            ],
+            [typeof(ApplySpaceLocationCodesResponse)] =
+            [
+                "commandBatchId",
+                "floorRevision",
+                "versionContentRevision",
+                "proposalHash",
+                "appliedCount",
+                "appliedItems",
+                "idempotentReplay",
+            ],
+            [typeof(SpaceLayoutCommandResultDto)] =
+            [
+                "commandId",
+                "type",
+                "targetLogicalId",
+            ],
+            [typeof(ApplySpaceLayoutCommandBatchResponse)] =
+            [
+                "commandBatchId",
+                "floorRevision",
+                "versionContentRevision",
+                "appliedCommands",
+                "affectedZones",
+                "affectedAisles",
+                "affectedRacks",
+                "affectedRackLevels",
+                "affectedLocations",
+                "idempotentReplay",
+            ],
+            [typeof(SpaceElementCommandDto)] =
+            [
+                "commandId",
+                "type",
+                "targetLogicalId",
+            ],
+            [typeof(SpaceCreateElementDto)] =
+            [
+                "elementType",
+                "geometryJson",
+                "x",
+                "y",
+                "z",
+                "rotationZ",
+                "width",
+                "height",
+                "depth",
+                "attributes",
+            ],
+            [typeof(ApplySpaceCadChangesetRequest)] =
+            [
+                "commandBatchId",
+                "clientInstanceId",
+                "leaseId",
+                "expectedFloorRevision",
+                "expectedContentRevision",
+                "workspaceSha256",
+                "changeIds",
+            ],
+            [typeof(ApplySpaceCadChangesetResponse)] =
+            [
+                "commandBatchId",
+                "floorRevision",
+                "versionContentRevision",
+                "appliedChangeCount",
+                "workspaceSha256",
+                "idempotentReplay",
+                "undoCommands",
+                "redoCommands",
+            ],
+            [typeof(SpaceSavedElementCommandDto)] =
+            [
+                "type",
+                "targetLogicalId",
+            ],
+            [typeof(SpaceCadChangeV1)] =
+            [
+                "changeId",
+                "kind",
+                "logicalId",
+                "sourceRef",
+                "objectType",
+                "isSelected",
+                "canApply",
+                "isManualCorrectionLocked",
+                "userCorrectionVersion",
+            ],
+            [typeof(SpaceCadChangeSummaryV1)] =
+            [
+                "totalCount",
+                "addCount",
+                "modifyCount",
+                "deleteCount",
+                "conflictCount",
+                "lowConfidenceCount",
+                "unrecognizedCount",
+                "selectedCount",
+                "applyEligibleCount",
+            ],
+            [typeof(AcquireSpaceEditLeaseRequest)] =
+            [
+                "clientInstanceId",
+            ],
+            [typeof(ContinueSpaceEditLeaseRequest)] =
+            [
+                "clientInstanceId",
+            ],
+            [typeof(TakeoverSpaceEditLeaseRequest)] =
+            [
+                "clientInstanceId",
+                "reason",
             ],
             [typeof(SpaceWmsRuntimeInventoryResponse)] =
             [
@@ -1069,7 +1912,25 @@ public sealed class SpaceWmsRuntimeSchemaFilter : ISchemaFilter
             Property(schema, propertyName).Nullable = false;
         }
 
-        if (context.Type == typeof(SpaceWmsRuntimeInventoryItemDto))
+        if (context.Type == typeof(SpaceSourceRemovalPreviewDto))
+        {
+            SetNullable(schema, true, "fileId");
+        }
+        else if (context.Type == typeof(AttachSpaceUnderlayRequest))
+        {
+            // sourceId is required so callers must explicitly choose attach/replace
+            // or detach, while null is the intentional detach value.
+            SetNullable(schema, true, "sourceId");
+        }
+        else if (context.Type == typeof(SpaceCadConversionIssueV1))
+        {
+            SetNullable(schema, true, "sourceRef", "detailToken");
+        }
+        else if (context.Type == typeof(SpacePublishedViewerSceneDto))
+        {
+            SetNullable(schema, true, "publishedAtUtc", "contentHash");
+        }
+        else if (context.Type == typeof(SpaceWmsRuntimeInventoryItemDto))
         {
             SetNullable(
                 schema,
@@ -1380,9 +2241,12 @@ public sealed class SpaceDesignV1OperationFilter : IOperationFilter
         if (operation.OperationId is not (
                 "CreateVersion" or
                 "CreateSource" or
+                "RemoveSource" or
                 "CreateAsset" or
+                "CreateTenantWarehouseTemplate" or
                 "AttachUnderlay" or
                 "CalibrateUnderlay" or
+                "ReplaceProviderConfiguration" or
                 "UpdatePolicy" or
                 "ApplyGenerationProposals" or
                 "CancelGenerationRun" or
@@ -1427,7 +2291,9 @@ public sealed class SpaceDesignV1OperationFilter : IOperationFilter
                 "CreateGenerationRun" =>
                 StatusCodes.Status202Accepted.ToString(),
             "AttachUnderlay" or
+                "RemoveSource" or
                 "CalibrateUnderlay" or
+                "ReplaceProviderConfiguration" or
                 "UpdatePolicy" or
                 "CancelGenerationRun" or
                 "DiscardGenerationRun" or

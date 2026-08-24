@@ -1,5 +1,5 @@
 import { describe, expect, it } from 'vitest'
-import { Matrix4, Quaternion, Vector3 } from 'three'
+import { Matrix4, Mesh, Quaternion, Vector3 } from 'three'
 import { SceneBuilder } from '../build/SceneBuilder'
 import {
   ParametricRenderPlanError,
@@ -97,6 +97,130 @@ describe('ParametricRenderPlan', () => {
     })
     expect(asset.center).toEqual({ x: -637, y: 951, z: 1080 })
     expect(asset.rotationZ).toBe(120)
+  })
+
+  it('renders a lossless group as one logical element with stable part keys', () => {
+    const scene = emptyScene()
+    const logicalId = '99999999-9999-9999-9999-999999999999'
+    scene.elements = [{
+      revision: revision(logicalId),
+      elementType: 'Column',
+      geometryJson: JSON.stringify({
+        schemaVersion: 1,
+        kind: 'group',
+        parts: [
+          {
+            sourceLogicalId: logicalId,
+            sourceRef: 'CAD-COLUMN-A',
+            x: 0,
+            y: 0,
+            z: 0,
+            rotationZ: 0,
+            width: 400,
+            height: 3000,
+            depth: 400,
+            geometry: {
+              schemaVersion: 1,
+              kind: 'box',
+              width: 400,
+              height: 3000,
+              depth: 400,
+            },
+          },
+          {
+            sourceLogicalId: 'aaaaaaaa-1111-1111-1111-111111111111',
+            x: 1000,
+            y: 0,
+            z: 0,
+            rotationZ: 90,
+            width: 500,
+            height: 1000,
+            depth: 100,
+            geometry: {
+              schemaVersion: 1,
+              kind: 'path',
+              points: [{ x: 0, y: 0, z: 0 }, { x: 500, y: 0, z: 0 }],
+              width: 100,
+            },
+          },
+        ],
+      }),
+      x: 1000,
+      y: 2000,
+      z: 0,
+      rotationZ: 90,
+      width: 1400,
+      height: 3000,
+      depth: 500,
+    }]
+
+    const plan = buildParametricRenderPlan(scene)
+
+    expect(plan.boxes).toHaveLength(2)
+    expect(plan.boxes.map((part) => part.logicalId)).toEqual([
+      logicalId,
+      logicalId,
+    ])
+    expect(plan.boxes.map((part) => part.key)).toEqual([
+      `element:${logicalId}:group:0:box`,
+      `element:${logicalId}:group:1:path:0`,
+    ])
+    expectPoint(plan.boxes[0]!.center, { x: 800, y: 2200, z: 1500 })
+    expectPoint(plan.boxes[1]!.center, { x: 750, y: 3000, z: 500 })
+    expect(plan.boxes[1]!.rotationZ).toBe(180)
+  })
+
+  it('renders DesignRevision zones and aisles from their authoritative polygons', () => {
+    const scene = emptyScene()
+    const zoneId = '77777777-7777-7777-7777-777777777777'
+    const secondZoneId = '99999999-9999-9999-9999-999999999999'
+    const aisleId = '88888888-8888-8888-8888-888888888888'
+    scene.zones = [
+      {
+        revision: { logicalId: zoneId, lifecycleState: 'Active' },
+        zoneCode: 'Z-A',
+        polygonJson: '{"schemaVersion":1,"points":[[0,0],[10000,0],[10000,8000],[0,8000]]}',
+      },
+      {
+        revision: { logicalId: secondZoneId, lifecycleState: 'Active' },
+        zoneCode: 'Z-B',
+        polygonJson: '{"schemaVersion":1,"points":[[12000,0],[20000,0],[20000,8000],[12000,8000]]}',
+      },
+    ]
+    scene.aisles = [{
+      revision: { logicalId: aisleId, lifecycleState: 'Active' },
+      zoneLogicalId: zoneId,
+      aisleCode: 'A-01',
+      polygonJson: '{"schemaVersion":1,"points":[[1000,0],[3000,0],[3000,8000],[1000,8000]]}',
+    }]
+
+    const plan = buildParametricRenderPlan(scene)
+
+    expect(plan.polygons).toHaveLength(3)
+    expect(plan.polygons[0]).toMatchObject({
+      logicalId: zoneId,
+      ownerKind: 'Zone',
+      businessCode: 'Z-A',
+      materialRole: 'zone',
+      height: 10,
+    })
+    expect(plan.polygons[2]).toMatchObject({
+      logicalId: aisleId,
+      ownerKind: 'Aisle',
+      parentLogicalId: zoneId,
+      businessCode: 'A-01',
+      materialRole: 'aisle',
+      height: 16,
+    })
+
+    const build = new SceneBuilder().buildDesign(scene)
+    expect(build.plan.polygons).toHaveLength(3)
+    const polygonMeshes = build.objects[0]!.children.filter(
+      (candidate): candidate is Mesh => candidate instanceof Mesh,
+    )
+    expect(polygonMeshes).toHaveLength(3)
+    expect(polygonMeshes[0]!.material).not.toBe(polygonMeshes[1]!.material)
+    build.dispose()
   })
 
   it('builds shared instanced meshes with data-axis scale and stable pick maps', () => {

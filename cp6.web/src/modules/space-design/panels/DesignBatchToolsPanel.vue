@@ -14,6 +14,12 @@ const props = defineProps<{
   readonly?: boolean
   canUndo?: boolean
   canRedo?: boolean
+  canMerge?: boolean
+  mergeHint?: string
+  canSplit?: boolean
+  splitHint?: string
+  canCopy?: boolean
+  copyHint?: string
 }>()
 
 const emit = defineEmits<{
@@ -21,6 +27,9 @@ const emit = defineEmits<{
   distribute: [mode: DistributionMode]
   rotate: [degrees: number]
   remove: []
+  merge: []
+  split: []
+  copy: []
   array: [payload: GenerateRackArrayPayload]
   undo: []
   redo: []
@@ -155,6 +164,42 @@ const disabled = computed(() => props.busy || props.readonly)
         右转 90°
       </el-button>
       <el-button
+        v-permission="'space:model:edit'"
+        type="primary"
+        plain
+        size="small"
+        data-test="merge-elements"
+        :title="mergeHint"
+        :disabled="disabled || !canMerge"
+        @click="emit('merge')"
+      >
+        合并异常对象
+      </el-button>
+      <el-button
+        v-permission="'space:model:edit'"
+        type="primary"
+        plain
+        size="small"
+        data-test="split-element"
+        :title="splitHint"
+        :disabled="disabled || !canSplit"
+        @click="emit('split')"
+      >
+        拆分异常对象
+      </el-button>
+      <el-button
+        v-permission="'space:model:edit'"
+        type="primary"
+        plain
+        size="small"
+        data-test="copy-objects"
+        :title="copyHint"
+        :disabled="disabled || !canCopy"
+        @click="emit('copy')"
+      >
+        复制
+      </el-button>
+      <el-button
         type="danger"
         plain
         size="small"
@@ -164,6 +209,15 @@ const disabled = computed(() => props.busy || props.readonly)
         删除
       </el-button>
     </div>
+    <span v-if="selectedCount >= 2 && mergeHint" class="merge-hint">
+      {{ mergeHint }}
+    </span>
+    <span v-if="selectedCount === 1 && splitHint" class="merge-hint">
+      {{ splitHint }}
+    </span>
+    <span v-if="selectedCount >= 1 && copyHint" class="merge-hint">
+      {{ copyHint }}
+    </span>
 
     <details class="array-tools" :class="{ unavailable: !selectedRackCode }">
       <summary>货架阵列</summary>
@@ -195,44 +249,48 @@ const disabled = computed(() => props.busy || props.readonly)
 
 <style scoped>
 .batch-tools {
-  display: flex;
-  align-items: center;
+  display:flex;
+  flex-direction:column;
+  align-items:stretch;
   gap: 12px;
-  min-height: 52px;
-  padding: 6px 16px;
-  overflow-x: auto;
-  background: #f8fafc;
-  border-bottom: 1px solid #dfe4ea;
-  white-space: nowrap;
+  padding:16px;
+  color:var(--space-studio-text, #0f172a);
+  background:var(--space-studio-panel, #f8fafc);
 }
 
 .selection-summary,
 .button-group,
 .array-preview {
   display: flex;
+  flex-wrap:wrap;
   align-items: center;
   gap: 6px;
 }
 
 .hint {
-  color: #64748b;
-  font-size: 11px;
+  color:var(--space-studio-muted, #64748b);
+  font-size:13px;
 }
 
 .bounds-preview {
   color: #0f766e;
   font-family: monospace;
-  font-size: 11px;
+  font-size:13px;
+}
+
+.merge-hint {
+  color:var(--space-studio-muted, #64748b);
+  font-size:13px;
 }
 
 .button-group > span {
-  color: #475569;
-  font-size: 12px;
+  color:var(--space-studio-muted, #475569);
+  font-size:13px;
 }
 
 .array-tools {
   padding: 5px 8px;
-  border: 1px solid #cbd5e1;
+  border:1px solid var(--space-studio-border, #cbd5e1);
   border-radius: 6px;
 }
 
@@ -242,13 +300,13 @@ const disabled = computed(() => props.busy || props.readonly)
 
 .array-tools summary {
   cursor: pointer;
-  font-size: 12px;
+  font-size:14px;
   font-weight: 650;
 }
 
 .array-fields {
   display: grid;
-  grid-template-columns: repeat(4, minmax(130px, 1fr));
+  grid-template-columns:1fr;
   gap: 6px;
   margin-top: 8px;
 }
@@ -257,14 +315,15 @@ const disabled = computed(() => props.busy || props.readonly)
   display: flex;
   align-items: center;
   gap: 4px;
-  color: #475569;
-  font-size: 11px;
+  justify-content:space-between;
+  color:var(--space-studio-muted, #475569);
+  font-size:13px;
 }
 
 .array-preview {
-  justify-content: flex-end;
+  justify-content:flex-start;
   margin-top: 6px;
-  color: #334155;
-  font-size: 11px;
+  color:var(--space-studio-muted, #334155);
+  font-size:13px;
 }
 </style>

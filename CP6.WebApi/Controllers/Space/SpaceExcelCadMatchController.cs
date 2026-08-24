@@ -155,4 +155,37 @@ public sealed class SpaceExcelCadMatchController(
             matchJobId,
             applyJobId,
             cancellationToken);
+
+    [HttpPost(
+        "versions/{versionId:guid}/excel-cad-matches/{matchJobId:guid}/" +
+        "confirmations/{applyJobId:guid}:compensate")]
+    [SpaceAuditOperation(
+        "space.excel-cad-match.confirmation.compensate",
+        "Job",
+        ResourceIdArgument = "applyJobId",
+        PermissionCode = "space:model:edit")]
+    [RequirePermission("space", "model:edit", UseProblemDetails = true)]
+    [ProducesResponseType<CompensateSpaceExcelCadApplyResponse>(
+        StatusCodes.Status200OK)]
+    public async Task<ActionResult<CompensateSpaceExcelCadApplyResponse>>
+        CompensateConfirmation(
+            Guid versionId,
+            Guid matchJobId,
+            Guid applyJobId,
+            [FromHeader(Name = "Idempotency-Key"), Required]
+            string idempotencyKey,
+            [FromBody, Required] CompensateSpaceExcelCadApplyRequest request,
+            CancellationToken cancellationToken)
+    {
+        var result = await applyService.CompensateAsync(
+            versionId,
+            matchJobId,
+            applyJobId,
+            request,
+            idempotencyKey,
+            cancellationToken);
+        Response.Headers["Idempotent-Replay"] =
+            result.IdempotentReplay ? "true" : "false";
+        return Ok(result);
+    }
 }

@@ -5,6 +5,7 @@ import {
   buildDeleteBatch,
   buildDistributionBatch,
   buildRotationBatch,
+  buildTranslationBatch,
   type EditorObjectSnapshot,
 } from './editorBatchCommands'
 
@@ -68,6 +69,26 @@ describe('editor batch commands', () => {
       'RestoreLogicalObject',
       'RestoreLogicalObject',
     ])
+  })
+
+  it('translates the selected objects as one reversible drag batch', () => {
+    const batch = buildTranslationBatch(objects.slice(0, 2), 125.4, -50.2)
+
+    expect(batch.forward.map((command) => command.moveObject)).toEqual([
+      { x: 125, y: -50, z: 0 },
+      { x: 155, y: -50, z: 0 },
+    ])
+    expect(batch.reverse.map((command) => command.moveObject)).toEqual([
+      { x: 0, y: 0, z: 0 },
+      { x: 30, y: 0, z: 0 },
+    ])
+  })
+
+  it('does not produce a command for a sub-millimetre drag', () => {
+    expect(buildTranslationBatch(objects, 0.4, -0.4)).toEqual({
+      forward: [],
+      reverse: [],
+    })
   })
 
   it('moves entries between saved undo and redo stacks only on completion', () => {
