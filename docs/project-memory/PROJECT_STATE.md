@@ -2,6 +2,14 @@
 
 最后更新：2026-08-24
 
+## 白天临时家庭测试服务器（2026-08-24）
+
+- 当前阶段选择由本机 Docker Desktop 承载 CP6，Cloudflare Tunnel 仅把容器内的 Web/API 转发到 `cp6.uk` 与 `api.cp6.uk`；它是供同事白天临时测试的开发环境，不是云主机或正式生产部署。
+- 新增根目录 `cp6-daytime-server.bat` 和 `scripts/Invoke-Cp6DaytimeServer.ps1`：支持复用现有镜像启动、显式重建后启动、状态检查、仅关闭公网 Tunnel，以及安全停止全部 Compose 服务。全部停止使用 `docker compose stop`，保留容器和 SQL Server/Redis/RabbitMQ/Kafka/i18n 命名卷。
+- 流程不会修改 Windows 睡眠、电源计划或计划任务。电脑睡眠、关机、Docker Desktop 停止或网络中断时，`cp6.uk` 暂时不可访问是预期行为；恢复后由用户手动启动/检查。
+- 2026-08-24 只读实机验收确认 7 个服务运行，DB/Redis/MQ/Kafka 健康；本机 Web/API 与公网 Web/API 四个地址均为 HTTP 200。为保护正在使用的环境，本任务没有执行重启、重建或停止。
+- Cloudflare Workers 中名为 `estimate` 的 Git 集成仍是独立外部清理项，不参与本机 Docker + Tunnel 运行链，也不因本流程交付而视为已修复。
+
 ## Space GA 退出码假红修复（2026-08-24）
 
 - Attestation、Pilot、Golden CAD、Kickoff 和 Development Personnel Seed 五个负向测试套件都会在末个预期失败的 validator 子进程后把 `$LASTEXITCODE=1` 留在调用方全局作用域；GitHub Actions 的 `pwsh` 包装器因此把断言全绿的测试误判为失败。

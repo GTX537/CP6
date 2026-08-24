@@ -1,5 +1,11 @@
 # 已完成能力与近期里程碑
 
+## 2026-08-24 白天临时家庭测试服务器控制流程
+
+- 新增可双击菜单 `cp6-daytime-server.bat` 及 PowerShell 控制器，统一提供 `start`、`start-build`、`status`、`close`、`stop` 五个入口；启动前检查 Docker、`.env`、Compose、Tunnel 配置和本机凭证文件。
+- `close` 只停止 Compose 内的 `cp6-cloudflared`，保留本机 API/Web/基础服务；`stop` 使用 `docker compose stop` 安全停止全栈并保留所有命名卷。脚本不会自动结束主机上的其他 cloudflared 进程，也不会修改 Windows 睡眠或电源设置。
+- 合同测试覆盖 PowerShell 语法、动作/入口映射、四个 HTTP 地址、Tunnel 单独关闭、数据保留停止、凭证预检和禁止电源修改；实机只读状态检查确认 7 个服务及本机/公网 Web/API 全部就绪、HTTP 200。为避免中断当前使用者，没有执行现场启停或重建。
+
 ## 2026-08-24 Space GA 退出码假红修复
 
 - 根因是五个 Space GA 负向测试辅助函数已正确消费预期失败的 validator 退出码，但都未清除 PowerShell 全局 `$LASTEXITCODE`；末项负向用例因此让 Actions 在断言全绿后仍返回 `1`。
